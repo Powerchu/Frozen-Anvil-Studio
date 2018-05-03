@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Image;
+	struct Image;
 }
 
 namespace ImageParser

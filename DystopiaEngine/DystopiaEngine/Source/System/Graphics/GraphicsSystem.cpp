@@ -15,10 +15,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System\Graphics\GraphicsSystem.h"		// File header
-#include "System\Graphics\GraphicsDefs.h"		// eGraphicSettings
+#include "System\Graphics\GraphicsDefs.h"		// eGfxSettings
 #include "Utility\DebugAssert.h"				// DEBUG_ASSERT
 
-//#define GLEW_STATIC				// Use glew as a static library
+//#define GLEW_STATIC			// Use glew as a static library
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable window's min & max macros
 
@@ -202,7 +202,7 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(void* _deviceContext) noexcep
 		0
 	};
 	mOpenGL		= nullptr;
-	mAvailable	= eGraphicSettings::GRAPHICS_ALL;
+	mAvailable	= eGfxSettings::GRAPHICS_ALL;
 
 	// Try to create at least OpenGL 4.3
 	attrbs[3] = 3;
@@ -223,7 +223,7 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(void* _deviceContext) noexcep
 	}
 
 	// Failed, try 3.1...
-	mAvailable &= ~(eGraphicSettings::GRAPHICS_MSAA);
+	mAvailable &= ~(eGfxSettings::GRAPHICS_MSAA);
 
 	attrbs[3] = 1;
 	mOpenGL = wglCreateContextAttribsARB(static_cast<HDC>(_deviceContext), NULL, attrbs);
