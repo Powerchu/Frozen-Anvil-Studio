@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Source\Behaviour\Behaviour.cpp">
+      <Filter>Game Engine\Behaviours\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Component.cpp">
+      <Filter>Game Engine\Components\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\GameObject.cpp">
+      <Filter>Game Engine\Objects\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Input\InputSystem.cpp">
+      <Filter>Game Engine\Systems\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Matrix4.cpp">
+      <Filter>Math\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Time\Timer.cpp">
+      <Filter>Game Engine\Systems\Time\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Time\TimeSystem.cpp">
+      <Filter>Game Engine\Systems\Time\TimeSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Window\WindowManager.cpp">
+      <Filter>Game Engine\Systems\Window\WindowMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\GraphicsSystem.cpp">
+      <Filter>Game Engine\Systems\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\Editor.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\Mesh.cpp">
+      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\Shader.cpp">
+      <Filter>Game Engine\Systems\Graphic\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\Texture.cpp">
+      <Filter>Game Engine\Systems\Graphic\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IO\ImageParser.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\Behaviour\Behaviour.h">
+      <Filter>Game Engine\Behaviours\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Component.h">
+      <Filter>Game Engine\Components\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\ComponentList.h">
+      <Filter>Game Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\DebugAssert.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Object\GameObject.h">
+      <Filter>Game Engine\Objects\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Globals.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Input\InputMap.h">
+      <Filter>Game Engine\Systems\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Input\InputSystem.h">
+      <Filter>Game Engine\Systems\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\MathInternal.h">
+      <Filter>Math\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Matrix4.h">
+      <Filter>Math\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\MathUtility.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\Meta.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\MetaHelper.h">
+      <Filter>Utility\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\SharedPtr.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Sound\SoundTypes.h">
+      <Filter>Game Engine\Systems\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Sound\SoundSystem.h">
+      <Filter>Game Engine\Systems\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Base\Systems.h">
+      <Filter>Game Engine\Systems\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\SystemTypes.h">
+      <Filter>Game Engine\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Time\Timer.h">
+      <Filter>Game Engine\Systems\Time\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Time\TimeSystem.h">
+      <Filter>Game Engine\Systems\Time\TimeSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\Utility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Transform.h">
+      <Filter>Game Engine\Components\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vector4.h">
+      <Filter>Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Window\Window.h">
+      <Filter>Game Engine\Systems\Window\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Window\WindowManager.h">
+      <Filter>Game Engine\Systems\Window\WindowMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\GraphicsSystem.h">
+      <Filter>Game Engine\Systems\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Queue.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Stack.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Heap.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\AutoArray.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Quaternion.h">
+      <Filter>Math\Quaternion</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\GraphicsDefs.h">
+      <Filter>Game Engine\Systems\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\Shader.h">
+      <Filter>Game Engine\Systems\Graphic\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\Mesh.h">
+      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\Texture.h">
+      <Filter>Game Engine\Systems\Graphic\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\Image.h" />
+    <ClInclude Include="Include\IO\ImageParser.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="DataStructures">
+      <UniqueIdentifier>{eb63fdcc-07e5-4f1c-912e-e3a07186afd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine">
+      <UniqueIdentifier>{f243e0ef-6cc1-4bd0-a916-11ea00e5fd0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{0d090c43-8f9a-4eaf-aede-5deaa35adb5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Objects">
+      <UniqueIdentifier>{4da8a124-b030-4c13-b6be-3b188124e78e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Objects\GameObject">
+      <UniqueIdentifier>{d7e4d44d-e259-4ec1-9554-6728a951e48a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components">
+      <UniqueIdentifier>{1659bbd7-e88f-4e66-9cdf-1901764f819e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Base">
+      <UniqueIdentifier>{a35616a5-19e4-4bc2-af5e-0c02f80da478}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Behaviours">
+      <UniqueIdentifier>{020eed9a-8a0c-4899-8590-e0afb31a86e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Behaviours\Base">
+      <UniqueIdentifier>{c97d3aa3-5b7c-4177-af2b-fad4401f67bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems">
+      <UniqueIdentifier>{03cf0727-64b4-49b1-afd3-ee95f7daaca9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Input">
+      <UniqueIdentifier>{8606c7ee-7dd1-48c8-a0e6-4d80d6c19acb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{3f5956ae-fff1-4be6-b55e-b5f48dd32dfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Internals">
+      <UniqueIdentifier>{31fc573b-916a-4ed2-930c-b75f38bbf559}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Vector">
+      <UniqueIdentifier>{f7f6e1bf-c16f-484d-ad3b-9555586dc6b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Matrix">
+      <UniqueIdentifier>{d0c3d4bd-d7db-4908-95c0-5a34bc63713b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Internals">
+      <UniqueIdentifier>{653235b1-829a-4e08-abcf-1a0c2e6e858a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Sound">
+      <UniqueIdentifier>{56b31b90-65f1-4456-a03d-9da6a141f04d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Base">
+      <UniqueIdentifier>{3b8d4ceb-73e7-474d-a35d-b7cae9c20a5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Time">
+      <UniqueIdentifier>{5548d900-d240-4d59-8806-d0b1e376ee69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Time\Timer">
+      <UniqueIdentifier>{09721bb6-c897-456a-90f6-eed9ca30d69f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Time\TimeSystem">
+      <UniqueIdentifier>{74754573-e75f-41bb-9e3b-8faf2a596b7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Transform">
+      <UniqueIdentifier>{db6c0e8c-91cc-4674-8b6b-342e89564a00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Window">
+      <UniqueIdentifier>{d13ca3f9-4e92-41f2-904b-7cfbb87498c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Window\Window">
+      <UniqueIdentifier>{13649ec8-2e18-4072-93db-40516bc19e4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Window\WindowMgr">
+      <UniqueIdentifier>{0217ae1a-712b-42b4-b663-961b9a4f341d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic">
+      <UniqueIdentifier>{d5f3a7f3-18d8-4339-adac-24b2e434121d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Quaternion">
+      <UniqueIdentifier>{62cc8dbf-53df-4943-8e52-4fe9a1962670}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor">
+      <UniqueIdentifier>{9b48d693-6c4c-41cf-8adf-840c40362547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\IMGUI">
+      <UniqueIdentifier>{adfd2fea-e1aa-4980-9366-739bf3f0446f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor">
+      <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Mesh">
+      <UniqueIdentifier>{ca90d672-42da-4174-9947-7cdd5a3d812c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Shader">
+      <UniqueIdentifier>{2df11722-19eb-493a-9952-074d5e70fcc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Texture">
+      <UniqueIdentifier>{3bc26b14-c587-4f68-bc2e-389cf63bf598}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO">
+      <UniqueIdentifier>{71af5d2c-d76f-466e-86b2-86752b7aff0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\TextSerialiser">
+      <UniqueIdentifier>{500db7cd-deed-4efd-b173-f377dfb115d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\BinarySerialiser">
+      <UniqueIdentifier>{d6c8bc2a-a1b7-4fde-9efc-c753457d7130}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\ImageParser">
+      <UniqueIdentifier>{8fc9bc42-e537-436b-9608-0fb8466bebc6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

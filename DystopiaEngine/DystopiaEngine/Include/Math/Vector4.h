@@ -1,0 +1,672 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	Vector4.h
+\author Tan Jie Wei Jacky (100%)
+\par    email: t.jieweijacky\@digipen.edu
+\brief
+	Experimental
+	Seems to be slower on member access but faster on function calls
+	All the inlining means that everything has to be in the header file
+
+	Inform me if you need any utility functions
+
+	Reference: https://software.intel.com/sites/landingpage/IntrinsicsGuide
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
+#ifndef _VECTOR4_H_
+#define _VECTOR4_H_
+
+#if defined(DEBUG) | defined(_DEBUG)
+#include "Math\MathUtility.h"
+#include "Utility\DebugAssert.h"
+#endif // Debug only includes
+
+#include <new>				// nothrow_t
+#include <cmath>			// sqrtf
+#include <exception>		// bad_alloc
+#include <xmmintrin.h>		// SSE
+#include <emmintrin.h>		// SSE 2
+#include <tmmintrin.h>		// SSE 3
+#include <smmintrin.h>		// SSE 4.1
+
+namespace Math
+{
+	#define _CALL	__vectorcall
+	#define ALLIGN	16
+	#define USE_DP	1
+
+	struct Matrix4;
+
+	/*!
+	\struct Vector4
+	\brief
+		Generic Math 4 Dimensional Space Vector. 
+	*/
+	union __declspec(align (ALLIGN)) Vector4
+	{
+		// ====================================== CONSTRUCTORS ======================================= // 
+
+		inline Vector4(void) noexcept;
+		inline Vector4(const Vector4&) noexcept;
+		inline Vector4(float x, float y, float z, float w = 0) noexcept;
+
+
+		// ==================================== VECTOR OPERATIONS ==================================== // 
+
+		// Converts the vector to unit length
+		inline Vector4& _CALL Normalise(void);
+
+		// Computes the dot product of this vector and other vector
+		inline float _CALL Dot(const Vector4) const;
+
+		// Computes the cross product of this vector and other vector 
+		// Will zero out the w components of the vector
+		inline Vector4& _CALL Cross(const Vector4);
+
+		// Projects the Vector4 onto the input vector
+		inline Vector4& _CALL Project(const Vector4);
+
+		inline float _CALL Magnitude(void) const;
+		inline float _CALL MagnitudeSqr(void) const;
+
+
+		// ======================================== OPERATORS ======================================= // 
+
+		// Potentially Slow?, please try to avoid!
+		inline float& _CALL operator[](const unsigned _nIndex);
+		inline const float _CALL operator[](const unsigned _nIndex) const;
+
+		inline Vector4 _CALL operator-(void) const;
+		inline Vector4& _CALL operator*=(const float);
+		inline Vector4& _CALL operator*=(const Vector4);
+		inline Vector4& _CALL operator/=(const float);
+		inline Vector4& _CALL operator+=(const Vector4);
+		inline Vector4& _CALL operator-=(const Vector4);
+
+#if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
+		//inline void* operator new (std::size_t);
+		//inline void* operator new (std::size_t, const std::nothrow_t&) noexcept;
+		//inline void* operator new (std::size_t, void*) noexcept;
+
+		//inline void* operator new[] (std::size_t);
+		//inline void* operator new[] (std::size_t, const std::nothrow_t&) noexcept;
+		//inline void* operator new[] (std::size_t, void*) noexcept;
+
+		//inline void operator delete (void*) noexcept;
+		//inline void operator delete (void*, const std::nothrow_t&) noexcept;
+		//inline void operator delete (void*, void*) noexcept;
+
+		//inline void operator delete[] (void*) noexcept;
+		//inline void operator delete[] (void*, const std::nothrow_t&) noexcept;
+		//inline void operator delete[] (void*, void*) noexcept;
+#endif	// ! WIN64
+
+	private:
+		__m128 mData;
+
+		template <unsigned N>
+		struct DataMember
+		{
+
+			inline DataMember<N>& _CALL operator= (float _rhs)
+			{
+			#if defined(_INCLUDED_SMM)	// SSE4.1 supported
+				// Hopefully faster
+				mData = _mm_insert_ps(mData, _mm_set_ss(_rhs), N << 4);
+			#else						// No SSE 4.1
+				// There's probably a better way but I can't think of one
+				// Shuffle affected subset to low bits
+				// move assigned float into it and shuffle it back
+				mData = _mm_shuffle_ps(mData, mData, shuffleMask);
+				mData = _mm_move_ss(mData, _mm_set_ss(_rhs));
+				mData = _mm_shuffle_ps(mData, mData, shuffleMask);
+			#endif
+				
+				return *this;
+			}
+
+			inline _CALL operator float(void) const
+			{
+				// Copy the wanted value everywhere, and return the first 32 bits as a float
+				return _mm_cvtss_f32(_mm_shuffle_ps(mData, mData, _MM_SHUFFLE(N, N, N, N)));
+			}
+
+		private:
+			__m128 mData;
+
+			static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
+		};
+
+		// While we're at it, might as well add swizzle masks
+		// DataMember  -> 1 shuffle
+		// SwizzleMask -> 1 shuffle
+		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
+		struct SwizzleMask
+		{
+
+			template<bool = (X != Y) && (X != Z) && (X != W) && (Y != Z) && (Y != W) && (Z != W)>
+			SwizzleMask& _CALL operator= (Vector4 _rhs)
+			{
+				mData = _mm_shuffle_ps(_rhs.mData, _rhs.mData, shuffleWrite);
+				return *this;
+			}
+
+			template<>
+			SwizzleMask& _CALL operator= <false> (Vector4)
+			{
+				static_assert(false, "Vector4 Error: lvalue cannot be duplicate.");
+				return *this;
+			}
+
+			inline _CALL operator Vector4 (void) const
+			{
+				return Vector4{ Get() };
+			}
+
+			inline __m128 _CALL Get(void) const
+			{
+				return _mm_shuffle_ps(mData, mData, shuffleRead);
+			}
+
+		private:
+			__m128 mData;
+
+			static constexpr unsigned shuffleRead = _MM_SHUFFLE(W, Z, Y, X);
+			static constexpr unsigned shuffleWrite = (3 << (2*W)) | (2 << (2*Z)) | (1 << (2*Y)) | (0 << (2*X));
+		};
+
+		inline explicit Vector4(__m128) noexcept;
+
+		static inline __m128 _CALL InvSqrt(__m128);
+		static inline __m128 _CALL Dot(__m128, __m128);
+
+		// Matrix needs the __m128 member
+		friend struct Math::Matrix4;
+
+	public:
+		DataMember<0> x;
+		DataMember<1> y;
+		DataMember<2> z;
+		DataMember<3> w;
+
+		SwizzleMask<0, 0, 0, 0> xxxx;
+		SwizzleMask<0, 0, 1, 1> xxyy;
+		SwizzleMask<0, 0, 2, 2> xxzz;
+		SwizzleMask<0, 1, 0, 1> xyxy;
+		SwizzleMask<1, 1, 1, 1> yyyy;
+		SwizzleMask<2, 0, 1, 3> zxyw; // Used by cross product 
+		SwizzleMask<2, 2, 2, 2> zzzz;
+		SwizzleMask<3, 3, 3, 3> wwww;
+
+		friend inline Vector4 _CALL Abs(const Vector4);
+	};
+
+	// Converts a vector into unit length
+	inline Vector4 _CALL Normalise(const Vector4);
+
+	// Computes the dot product of two vectors
+	inline float _CALL Dot(const Vector4, const Vector4);
+
+	// Computes the cross product of two vectors
+	inline Vector4 _CALL Cross(const Vector4, const Vector4);
+
+	// Projects lhs onto rhs
+	inline Vector4 _CALL Project(const Vector4, const Vector4);
+
+
+	// ====================================== MATH UTILITY ======================================= // 
+	// Manually overload the math utility functions which cannot be called for type Vector4
+
+	inline Vector4 _CALL Abs(const Vector4);
+
+
+	// ==================================== VECTOR GENERATORS ==================================== // 
+
+	inline Vector4 _CALL MakePoint3D(float _x, float _y, float _z);
+	inline Vector4 _CALL MakeVector3D(float _x, float _y, float _z);
+
+
+	// ======================================== OPERATORS ======================================== // 
+
+	inline Vector4 _CALL operator-(const Vector4, const Vector4);
+	inline Vector4 _CALL operator+(const Vector4, const Vector4);
+	inline Vector4 _CALL operator*(const Vector4, const Vector4);
+	inline Vector4 _CALL operator*(const float, const Vector4);
+	inline Vector4 _CALL operator*(const Vector4, const float);
+	inline Vector4 _CALL operator/(const Vector4, const float);
+
+	using Vec4		= Vector4;
+	using Vector3D	= Vector4;
+	using Vec3D		= Vector4;
+	using Point3D	= Vector4;
+	using Pt3D		= Vector4;
+	using Color		= Vector4;
+}
+
+
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+inline Math::Vector4::Vector4(void) noexcept :
+	mData{ _mm_setzero_ps() }
+{
+
+}
+
+inline Math::Vector4::Vector4(const Vector4& v) noexcept :
+	mData{ v.mData }
+{
+
+}
+
+inline Math::Vector4::Vector4(float x, float y, float z, float w) noexcept :
+	mData{ _mm_set_ps(w, z, y, x) }
+{
+
+}
+
+inline Math::Vector4::Vector4(__m128 v) noexcept :
+	mData{ v }
+{
+
+}
+
+inline Math::Vector4& _CALL Math::Vector4::Normalise(void)
+{
+#if defined(DEBUG) | defined(_DEBUG)
+	DEBUG_ASSERT(IsZero(Dot(*this)), "Vector4 Error: Normalising a zero vector.\n");
+#endif
+
+	// 0x71 -> High (7) Ignore first (w) component for multiplication
+	//      -> Low  (F) Store into all components
+	__m128 invSqrt = InvSqrt(Dot(mData, mData));
+	mData = _mm_mul_ps(invSqrt, mData);
+
+	return *this;
+}
+
+inline float _CALL Math::Vector4::Dot(const Vector4 _rhs) const
+{
+	return _mm_cvtss_f32(Dot(mData, _rhs.mData));
+}
+
+inline Math::Vector4& _CALL Math::Vector4::Cross(const Vector4 _rhs)
+{
+	// x = (a.y * b.z) - (a.z * b.y)
+	// y = (a.z * b.x) - (a.x * b.z)
+	// z = (a.x * b.y) - (a.y * b.x
+	// w = (a.w * b.w) - (a.w * b.w)
+
+	mData = Vector4{
+			_mm_sub_ps( _mm_mul_ps(mData, _rhs.zxyw.Get()),
+						_mm_mul_ps(zxyw.Get(), _rhs.mData))
+	}.zxyw.Get();
+
+	return *this;
+}
+
+inline Math::Vector4& _CALL Math::Vector4::Project(const Vector4 _rhs)
+{
+#if defined(DEBUG) | defined(_DEBUG)
+	DEBUG_ASSERT(IsZero(_rhs.Dot(_rhs)), "Vector4 Error: Projection onto zero vector.\n");
+#endif
+
+	// 0x71 -> High (7) Ignore first (w) component for multiplication
+	//      -> Low  (F) Store into all components
+	__m128 invMag = InvSqrt(Dot(_rhs.mData, _rhs.mData));
+	mData = _mm_mul_ps(mData, invMag);
+
+	return *this;
+}
+
+inline float _CALL Math::Vector4::Magnitude(void) const
+{
+	return std::sqrtf(MagnitudeSqr());
+}
+
+inline float _CALL Math::Vector4::MagnitudeSqr(void) const
+{
+	return Dot(*this);
+}
+
+
+inline Math::Vector4 _CALL Math::Normalise(Vector4 _vec)
+{
+	return _vec.Normalise();
+}
+
+// Computes the dot product of two vectors
+inline float _CALL Math::Dot(const Vector4 _lhs, const Vector4 _rhs)
+{
+	return _lhs.Dot(_rhs);
+}
+
+inline Math::Vector4 _CALL Math::Cross(Vector4 _lhs, Vector4 _rhs)
+{
+	return _lhs.Cross(_rhs);
+}
+
+// Projects lhs onto rhs
+inline Math::Vector4 _CALL Math::Project(Vector4 _lhs, Vector4 _rhs)
+{
+	return _lhs.Project(_rhs);
+}
+
+inline Math::Vector4 _CALL Math::Abs(Vector4 _v)
+{
+	__m128i signBits = _mm_set1_epi32(0x7FFFFFFF); // Set all the bits except for the sign bit to 1
+
+	// Bitwise AND operator
+	return Vector4{ _mm_and_ps(_v.mData, _mm_castsi128_ps(signBits)) };
+}
+
+// Helper function to reduce approx. error on rsqrt
+inline __m128  _CALL Math::Vector4::InvSqrt(__m128 _v)
+{
+	__m128 three = _mm_set_ps1(3.f);
+	__m128 half  = _mm_set_ps1(.5f);
+
+	// 1 iteration newton's method
+	__m128 temp  = _mm_rsqrt_ps(_v);
+	__m128 iter  = _mm_mul_ps(_mm_mul_ps(temp, temp), _v);
+
+	temp = _mm_mul_ps(half, temp);
+	iter = _mm_sub_ps(three, iter);
+
+	return _mm_mul_ps(temp, iter);
+}
+
+// Internal function for return the dot product as a Vector4 type
+inline __m128 _CALL Math::Vector4::Dot(__m128 _lhs, __m128 _rhs)
+{
+#if USE_DP & defined(_INCLUDED_SMM)	// SSE 4.1
+
+	// 0x71 -> High (F) Multiply and sum all components
+	//      -> Low  (F) Store result of sum into all components
+	return _mm_dp_ps(_lhs, _rhs, 0xFF);
+
+#elif defined(_INCLUDED_PMM)		// SSE 3
+
+	__m128 temp = _mm_mul_ps(_lhs, _rhs);
+	temp = _mm_hadd_ps(temp, temp);
+	return _mm_hadd_ps(temp, temp);
+
+#else								// FALL BACK
+
+	__m128 temp = _mm_mul_ps(_lhs, _rhs);
+	__m128 shuf = _mm_add_ps(temp, _mm_shuffle_ps(temp, temp, _MM_SHUFFLE(2, 3, 0, 1)));
+	return _mm_add_ps(shuf, _mm_shuffle_ps(shuf, shuf, _MM_SHUFFLE(1, 0, 3, 2)));
+
+#endif
+}
+
+
+
+// ============================================= VECTOR GENERATORS ============================================== // 
+
+
+inline Math::Point3D _CALL Math::MakePoint3D(float _x, float _y, float _z)
+{
+	return Vector4{ _x, _y, _z, 1.f };
+}
+
+inline Math::Vector3D _CALL Math::MakeVector3D(float _x, float _y, float _z)
+{
+	return Vector4{ _x, _y, _z, .0f };
+}
+
+
+
+// =========================================== TEMPLATE SPECIAL CASES =========================================== // 
+
+
+template<>
+inline Math::Vector4::DataMember<0>& _CALL Math::Vector4::DataMember<0>::operator= (float _rhs)
+{
+	mData = _mm_move_ss(mData, _mm_set_ss(_rhs));
+
+	return *this;
+}
+
+template<>
+inline _CALL Math::Vector4::DataMember<0>::operator float(void) const
+{
+	// We happen to want the value that's already the first
+	// so we can skip the shuffle and just return it
+	// - Compiler seems to do this special case optimisation even without this
+	//   But I'll leave it here anyway
+	return _mm_cvtss_f32(mData);
+}
+
+// No automatic compiler instruction change for the following special shuffles
+// I guess since intel guide says it's the same
+// Although there seems to be a consensus that these are faster than shuffle
+// Perhaps on older CPUs and moot on newer ones
+
+template<>
+inline __m128 _CALL Math::Vector4::SwizzleMask<0, 0, 1, 1>::Get(void) const
+{
+	return _mm_unpacklo_ps(mData, mData);
+}
+
+template<>
+inline __m128 _CALL Math::Vector4::SwizzleMask<2, 2, 3, 3>::Get(void) const
+{
+	return _mm_unpackhi_ps(mData, mData);
+}
+
+template<>
+inline __m128 _CALL Math::Vector4::SwizzleMask<0, 1, 0, 1>::Get(void) const
+{
+	return _mm_movelh_ps(mData, mData);
+}
+
+template<>
+inline __m128 _CALL Math::Vector4::SwizzleMask<2, 3, 2, 3>::Get(void) const
+{
+	return _mm_movelh_ps(mData, mData);
+}
+
+#if defined(_INCLUDED_PMM)		// SSE 3
+
+template<>
+inline __m128 _CALL Math::Vector4::SwizzleMask<0, 0, 2, 2>::Get(void) const
+{
+	return _mm_moveldup_ps(mData);
+}
+
+template<>
+inline __m128 _CALL Math::Vector4::SwizzleMask<1, 1, 3, 3>::Get(void) const
+{
+	return _mm_movehdup_ps(mData);
+}
+
+#endif							// SSE 3
+
+// ============================================ OPERATOR OVERLOADING ============================================ // 
+
+
+
+inline float& _CALL Math::Vector4::operator[] (const unsigned _nIndex)
+{
+#if defined(DEBUG) | defined(_DEBUG)
+	DEBUG_ASSERT(_nIndex > 3, "Vector4 Error: Array index out of range.");
+#endif
+
+	// Visual Studio compiler only?
+	return mData.m128_f32[_nIndex];
+}
+
+inline const float _CALL Math::Vector4::operator[] (const unsigned _nIndex) const
+{
+#if defined(DEBUG) | defined(_DEBUG)
+	DEBUG_ASSERT(_nIndex > 3, "Vector4 Error: Array index out of range.");
+#endif
+
+	// Visual Studio compiler only?
+	return mData.m128_f32[_nIndex];
+}
+
+inline Math::Vector4& _CALL Math::Vector4::operator*=(const float _fScalar)
+{
+	mData = _mm_mul_ps(mData, _mm_set_ps1(_fScalar));
+	return *this;
+}
+
+inline Math::Vector4&_CALL Math::Vector4::operator*=(const Vector4 _rhs)
+{
+	mData = _mm_mul_ps(mData, _rhs.mData);
+	return *this;
+}
+
+inline Math::Vector4& _CALL Math::Vector4::operator/=(const float _fScalar)
+{
+	mData = _mm_mul_ps(mData, _mm_set_ps1(1.f / _fScalar));
+	return *this;
+}
+
+inline Math::Vector4& _CALL Math::Vector4::operator+=(const Vector4 _rhs)
+{
+	mData = _mm_add_ps(mData, _rhs.mData);
+	return *this;
+}
+
+inline Math::Vector4& _CALL Math::Vector4::operator-=(const Vector4 _rhs)
+{
+	mData = _mm_sub_ps(mData, _rhs.mData);
+	return *this;
+}
+
+inline Math::Vector4 _CALL Math::Vector4::operator-(void) const
+{
+	static __m128i signBits = _mm_set1_epi32(0x80000000);
+
+	// Flip all sign bits
+	return Vector4{ _mm_xor_ps(mData, _mm_castsi128_ps(signBits)) };
+}
+
+inline Math::Vector4 _CALL Math::operator-(Vector4 _lhs, const Vector4 _rhs)
+{
+	return _lhs -= _rhs;
+}
+
+inline Math::Vector4 _CALL Math::operator+(Vector4 _lhs, const Vector4 _rhs)
+{
+	return _lhs += _rhs;
+}
+
+inline Math::Vector4 _CALL Math::operator*(Vector4 _lhs, const Vector4 _rhs)
+{
+	return _lhs *= _rhs;
+}
+
+inline Math::Vector4 _CALL Math::operator*(const float _lhs, Vector4 _rhs)
+{
+	return _rhs *= _lhs;
+}
+
+inline Math::Vector4 _CALL Math::operator*(Vector4 _lhs, const float _rhs)
+{
+	return _lhs *= _rhs;
+}
+
+inline Math::Vector4 _CALL Math::operator/(Vector4 _lhs, const float _rhs)
+{
+	return _lhs /= _rhs;
+}
+
+//inline void* Math::Vector4::operator new (std::size_t _sz)
+//{
+//	void* ret = _aligned_malloc(_sz, ALLIGN);
+//
+//	if (ret)
+//		return ret;
+//	
+//	throw std::bad_alloc{};
+//}
+//
+//inline void* Math::Vector4::operator new (std::size_t _sz, const std::nothrow_t&) noexcept
+//{
+//	return _aligned_malloc(_sz, ALLIGN);
+//}
+//
+//inline void* Math::Vector4::operator new (std::size_t _sz, void* _ptr) noexcept
+//{
+//	return ::operator new(_sz, _ptr);
+//}
+//
+//inline void* Math::Vector4::operator new[](std::size_t _sz)
+//{
+//	void* ret = _aligned_malloc(_sz, ALLIGN);
+//
+//	if (ret)
+//		return ret;
+//
+//	throw std::bad_alloc{};
+//}
+//
+//inline void* Math::Vector4::operator new[](std::size_t _sz, const std::nothrow_t&) noexcept
+//{
+//	return _aligned_malloc(_sz, ALLIGN);
+//}
+//
+//inline void* Math::Vector4::operator new[](std::size_t _sz, void* _ptr) noexcept
+//{
+//	return ::operator new[](_sz, _ptr);
+//}
+//
+//inline void  Math::Vector4::operator delete (void* _ptr) noexcept
+//{
+//	_aligned_free(_ptr);
+//}
+//
+//inline void  Math::Vector4::operator delete (void* _ptr, const std::nothrow_t&) noexcept
+//{
+//	delete static_cast<Vector4*>(_ptr);
+//}
+//
+//inline void  Math::Vector4::operator delete (void*, void*) noexcept
+//{
+//	return;
+//}
+//
+//inline void  Math::Vector4::operator delete[](void* _ptr) noexcept
+//{
+//	_aligned_free(_ptr);
+//}
+//
+//inline void  Math::Vector4::operator delete[](void* _ptr, const std::nothrow_t&) noexcept
+//{
+//	delete[] static_cast<Vector4*>(_ptr);
+//}
+//
+//inline void  Math::Vector4::operator delete[](void*, void*) noexcept
+//{
+//	return;
+//}
+
+
+
+// Remove all our defines
+#ifdef USE_DP
+#undef USE_DP
+#endif
+#ifdef ALLIGN
+#undef ALLIGN
+#endif
+#ifdef _CALL
+#undef _CALL
+#endif
+
+
+
+#endif		// INCLUDE GUARD
+

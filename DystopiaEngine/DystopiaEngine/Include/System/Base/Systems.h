@@ -1,0 +1,37 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	Systems.h
+\author Tan Jie Wei Jacky (100%)
+\par    email: t.jieweijacky\@digipen.edu
+\brief
+	Contains the Systems public interface the program core uses.
+	Please update SystemTypes.h when adding a new system
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
+#ifndef _SYSTEMS_H_
+#define _SYSTEMS_H_
+
+namespace Dystopia
+{
+	class TextSerialiser;
+
+	class Systems
+	{
+	public:
+		virtual bool Init(void)						= 0;
+		virtual void Update(float)					= 0;
+		virtual void Shutdown(void)					= 0;
+
+		virtual void LoadDefaults(void)				{ };
+		virtual void LoadSettings(TextSerialiser&)	{ };
+	};
+}
+
+
+
+#endif		// INCLUDE GUARD
+
