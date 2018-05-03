@@ -28,7 +28,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	win->Init();
 
 	gfx->InitOpenGL(win->GetWindow());
-
 	gfx->Shutdown();
 	win->Shutdown();
 

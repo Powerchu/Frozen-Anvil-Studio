@@ -41,6 +41,9 @@
       <Filter>Game Engine\Systems\Graphic\Texture</Filter>
     </ClCompile>
     <ClCompile Include="Source\IO\ImageParser.cpp" />
+    <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
+    <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -150,6 +153,9 @@
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\Image.h" />
     <ClInclude Include="Include\IO\ImageParser.h" />
+    <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
+    <ClInclude Include="..\Dependancies\ImGui\imgui.h" />
+    <ClInclude Include="..\Dependancies\ImGui\imgui_internal.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
