@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
+#include "EGUI.h"
 
 // Entry point for editor
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
@@ -26,8 +27,13 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	win->LoadDefaults();
 	win->Init();
-
 	gfx->InitOpenGL(win->GetWindow());
+
+	Dystopia::EGUI::Init(win, gfx);
+	Dystopia::EGUI::StartFrame();
+	Dystopia::EGUI::Render();
+	Dystopia::EGUI::Shutdown();
+
 	gfx->Shutdown();
 	win->Shutdown();
 
@@ -36,6 +42,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	return 0;
 }
+
 
 
 #endif		// EDITOR ONLY

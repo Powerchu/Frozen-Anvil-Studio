@@ -33,6 +33,7 @@
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
     <ClCompile Include="Source\Component\Component.cpp" />
     <ClCompile Include="Source\Editor\Editor.cpp" />
+    <ClCompile Include="Source\Editor\EGUI.cpp" />
     <ClCompile Include="Source\IO\ImageParser.cpp" />
     <ClCompile Include="Source\Math\Matrix4.cpp" />
     <ClCompile Include="Source\Object\GameObject.cpp" />
@@ -86,6 +87,7 @@
     <ClInclude Include="Include\Utility\Meta.h" />
     <ClInclude Include="Include\Utility\MetaHelper.h" />
     <ClInclude Include="Include\Utility\Utility.h" />
+    <ClInclude Include="Source\Editor\EGUI.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>

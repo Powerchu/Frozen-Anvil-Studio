@@ -44,6 +44,9 @@
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Source\Editor\EGUI.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -156,6 +159,9 @@
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui_internal.h" />
+    <ClInclude Include="Source\Editor\EGUI.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
