@@ -18,10 +18,11 @@ namespace Dystopia
 {
 	class WindowManager;
 	class GraphicsSystem;
+	class InputManager;
 
 	namespace EGUI
 	{
-		void Init(WindowManager *_pWin, GraphicsSystem *_pGfx);
+		bool Init(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInputMgr);
 		void StartFrame();
 		void Render();
 		void Shutdown();

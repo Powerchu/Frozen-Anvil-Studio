@@ -14,6 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "EGUI.h"
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
+#include "System\Input\InputSystem.h"
+#include "System\Input\InputMap.h"
+#include "Math\Vector4.h"
 #include "imgui.h"
 #include "GL\glew.h"
 #include <iostream>
@@ -91,8 +94,12 @@ public:
 // encapsulation data
 static Dystopia::WindowManager		*g_pWindow			= NULL;
 static Dystopia::GraphicsSystem		*g_pGfx				= NULL;
+static Dystopia::InputManager		*g_pInputMgr		= NULL;
 static ImDrawData					*g_pDrawData		= NULL;
 static GLState						*g_pGLState			= NULL;
+// static double					g_Time = 0.0f;
+static bool							g_MouseJustPressed[3] = { false, false, false };
+// static GLFWcursor*				g_MouseCursors[ImGuiMouseCursor_COUNT] = { 0 };
 
 // openGL data
 static char				g_GlslVersion[32]			= "#version 150";
@@ -122,7 +129,12 @@ static const char* GetClipBoardText(void *_pUserData)
 	return NULL;
 }
 
-void CreateDefaultFont()
+static void InstallInputCallbacks()
+{
+	// bind the results of inputs to also call certain functions here
+}
+
+static void CreateDefaultFont()
 {
 	// Backup GL state
 	GLint last_texture, last_array_buffer, last_vertex_array;
@@ -178,14 +190,14 @@ void CreateDefaultFont()
 	glGenBuffers(1, &g_ElementsHandle);
 
 	/* create font */
-
 	// Build texture atlas
 	ImGuiIO& io = ImGui::GetIO();
 	unsigned char* pixels;
 	int width, height;
-	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);   // Load as RGBA 32-bits (75% of the memory is wasted, but default font is so small) because it is more likely to be compatible with user's existing shaders. If your ImTextureId represent a higher-level concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
-
-															  // Upload texture to graphics system
+	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);		// Load as RGBA 32-bits (75% of the memory is wasted, but default font is so small) because it is 
+																// more likely to be compatible with user's existing shaders. If your ImTextureId represent a higher-level 
+																// concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
+																// Upload texture to graphics system
 	GLint last_texture2;
 	glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture2);
 	glGenTextures(1, &g_FontTexture);
@@ -200,9 +212,7 @@ void CreateDefaultFont()
 
 	// Restore state
 	glBindTexture(GL_TEXTURE_2D, last_texture2);
-
 	/* end create font */
-
 
 	// Restore modified GL state
 	glBindTexture(GL_TEXTURE_2D, last_texture);
@@ -210,58 +220,60 @@ void CreateDefaultFont()
 	glBindVertexArray(last_vertex_array);
 }
 
-void Dystopia::EGUI::Init(Dystopia::WindowManager *_pWin, Dystopia::GraphicsSystem *_pGfx)
+bool Dystopia::EGUI::Init(Dystopia::WindowManager *_pWin, Dystopia::GraphicsSystem *_pGfx, Dystopia::InputManager *_pInputMgr)
 {
+	// if (!_pWin && !_pGfx && !_pInputMgr) return false;
 	std::cout << "HI EGUI ABSDIBASODA!!!";
 	g_pWindow = _pWin;
 	g_pGfx = _pGfx;
+	g_pInputMgr = _pInputMgr;
 	g_pGLState = new GLState();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
 
-	// // Store GL version string so we can refer to it later in case we recreate shaders.
+	// Store GL version string so we can refer to it later in case we recreate shaders.
 	// if (glsl_version == NULL)
 	// 	glsl_version = "#version 150";
-	// IM_ASSERT((int)strlen(glsl_version) + 2 < IM_ARRAYSIZE(g_GlslVersion));
-	// strcpy(g_GlslVersion, glsl_version);
-	// strcat(g_GlslVersion, "\n");
+	IM_ASSERT((int)strlen("#version 150") + 2 < IM_ARRAYSIZE(g_GlslVersion));
+	strcpy(g_GlslVersion, "#version 150");
+	strcat(g_GlslVersion, "\n");
 
 	// Setup back-end capabilities flags
 	ImGuiIO& io = ImGui::GetIO();
 	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;   // We can honor GetMouseCursor() values (optional)
 	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;    // We can honor io.WantSetMousePos requests (optional, rarely used)
-
 															// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
-	// io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
-	// io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
-	// io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
-	// io.KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
-	// io.KeyMap[ImGuiKey_DownArrow] = GLFW_KEY_DOWN;
-	// io.KeyMap[ImGuiKey_PageUp] = GLFW_KEY_PAGE_UP;
-	// io.KeyMap[ImGuiKey_PageDown] = GLFW_KEY_PAGE_DOWN;
-	// io.KeyMap[ImGuiKey_Home] = GLFW_KEY_HOME;
-	// io.KeyMap[ImGuiKey_End] = GLFW_KEY_END;
-	// io.KeyMap[ImGuiKey_Insert] = GLFW_KEY_INSERT;
-	// io.KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
-	// io.KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;
-	// io.KeyMap[ImGuiKey_Space] = GLFW_KEY_SPACE;
-	// io.KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
-	// io.KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
-	// io.KeyMap[ImGuiKey_A] = GLFW_KEY_A;
-	// io.KeyMap[ImGuiKey_C] = GLFW_KEY_C;
-	// io.KeyMap[ImGuiKey_V] = GLFW_KEY_V;
-	// io.KeyMap[ImGuiKey_X] = GLFW_KEY_X;
-	// io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
-	// io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
+
+	// io.KeyMap[ImGuiKey_Tab]			= eButton::KEYBOARD_TAB;
+	// io.KeyMap[ImGuiKey_LeftArrow]	= eButton::KEYBOARD_LEFT;
+	// io.KeyMap[ImGuiKey_RightArrow]	= eButton::KEYBOARD_RIGHT;
+	// io.KeyMap[ImGuiKey_UpArrow]		= eButton::KEYBOARD_UP;
+	// io.KeyMap[ImGuiKey_DownArrow]	= eButton::KEYBOARD_DOWN;
+	// io.KeyMap[ImGuiKey_PageUp]		= eButton::KEYBOARD_PAGEUP;
+	// io.KeyMap[ImGuiKey_PageDown]	= eButton::KEYBOARD_PAGEDOWN;
+	// io.KeyMap[ImGuiKey_Home]		= eButton::KEYBOARD_HOME;
+	// io.KeyMap[ImGuiKey_End]			= eButton::KEYBOARD_END;
+	// io.KeyMap[ImGuiKey_Insert]		= eButton::KEYBOARD_INSERT;
+	// io.KeyMap[ImGuiKey_Delete]		= eButton::KEYBOARD_DELETE;
+	// io.KeyMap[ImGuiKey_Backspace]	= eButton::KEYBOARD_BACKSPACE;
+	// io.KeyMap[ImGuiKey_Space]		= eButton::KEYBOARD_SPACEBAR;
+	// io.KeyMap[ImGuiKey_Enter]		= eButton::KEYBOARD_ENTER;
+	// io.KeyMap[ImGuiKey_Escape]		= eButton::KEYBOARD_ESCAPE;
+	// io.KeyMap[ImGuiKey_A]			= eButton::KEYBOARD_A;
+	// io.KeyMap[ImGuiKey_C]			= eButton::KEYBOARD_C;
+	// io.KeyMap[ImGuiKey_V]			= eButton::KEYBOARD_V;
+	// io.KeyMap[ImGuiKey_X]			= eButton::KEYBOARD_X;
+	// io.KeyMap[ImGuiKey_Y]			= eButton::KEYBOARD_Y;
+	// io.KeyMap[ImGuiKey_Z]			= eButton::KEYBOARD_Z;
 
 	io.SetClipboardTextFn = SetClipBoardText;
 	io.GetClipboardTextFn = GetClipBoardText;
-	io.ClipboardUserData = g_pWindow->GetWindow();
+	// io.ClipboardUserData = g_pWindow->GetWindow(); // pointer to both a windows and context
 #ifdef _WIN32
 	io.ImeWindowHandle = g_pWindow->GetWindow();
 #endif
-	// // Load cursors
-	// // FIXME: GLFW doesn't expose suitable cursors for ResizeAll, ResizeNESW, ResizeNWSE. We revert to arrow cursor for those.
+	// Load cursors
+	// FIXME: GLFW doesn't expose suitable cursors for ResizeAll, ResizeNESW, ResizeNWSE. We revert to arrow cursor for those.
 	// g_MouseCursors[ImGuiMouseCursor_Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 	// g_MouseCursors[ImGuiMouseCursor_TextInput] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
 	// g_MouseCursors[ImGuiMouseCursor_ResizeAll] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
@@ -269,33 +281,33 @@ void Dystopia::EGUI::Init(Dystopia::WindowManager *_pWin, Dystopia::GraphicsSyst
 	// g_MouseCursors[ImGuiMouseCursor_ResizeEW] = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
 	// g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 	// g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
-	// 
+	 
 	// if (install_callbacks)
-	// 	ImGui_ImplGlfw_InstallCallbacks(window);
+	// 	InstallInputCallbacks();
+	return true;
 }
 
 void Dystopia::EGUI::StartFrame()
 {
-	return;
 	if (!g_FontTexture) CreateDefaultFont();
 
 	ImGuiIO& io = ImGui::GetIO();
 
-	// // Setup display size (every frame to accommodate for window resizing)
-	// int w, h;
-	// int display_w, display_h;
+	// Setup display size (every frame to accommodate for window resizing)
+	int w, h;
+	int display_w, display_h;
 	// glfwGetWindowSize(g_Window, &w, &h);
 	// glfwGetFramebufferSize(g_Window, &display_w, &display_h);
-	// io.DisplaySize = ImVec2((float)w, (float)h);
-	// io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0, h > 0 ? ((float)display_h / h) : 0);
-	// 
+	io.DisplaySize = ImVec2((float)w, (float)h);
+	io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0, h > 0 ? ((float)display_h / h) : 0);
+
 	// // Setup time step
 	// double current_time = glfwGetTime();
 	// io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f / 60.0f);
 	// g_Time = current_time;
-	// 
-	// // Setup inputs
-	// // (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
+	 
+	// Setup inputs
+	// (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
 	// if (glfwGetWindowAttrib(g_Window, GLFW_FOCUSED))
 	// {
 	// 	// Set OS mouse position if requested (only used when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
@@ -377,16 +389,16 @@ void Dystopia::EGUI::StartFrame()
 
 void Dystopia::EGUI::Render()
 {
-	return;
+	ImGui::Render();
 	g_pDrawData = ImGui::GetDrawData();
 
-	// // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
-	// ImGuiIO& io = ImGui::GetIO();
-	// int fb_width = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
-	// int fb_height = (int)(io.DisplaySize.y * io.DisplayFramebufferScale.y);
-	// if (fb_width == 0 || fb_height == 0)
-	// 	return;
-	// g_pDrawData->ScaleClipRects(io.DisplayFramebufferScale);
+	// Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
+	ImGuiIO& io = ImGui::GetIO();
+	int fb_width = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
+	int fb_height = (int)(io.DisplaySize.y * io.DisplayFramebufferScale.y);
+	if (fb_width == 0 || fb_height == 0)
+		return;
+	g_pDrawData->ScaleClipRects(io.DisplayFramebufferScale);
 
 	// Backup GL state
 	g_pGLState->BackUp();
@@ -400,19 +412,19 @@ void Dystopia::EGUI::Render()
 	glEnable(GL_SCISSOR_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	// // Setup viewport, orthographic projection matrix
-	// glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
-	// const float ortho_projection[4][4] =
-	// {
-	// 	{ 2.0f / io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
-	// 	{ 0.0f,                  2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
-	// 	{ 0.0f,                  0.0f,                  -1.0f, 0.0f },
-	// 	{ -1.0f,                  1.0f,                   0.0f, 1.0f },
-	// };
-	// glUseProgram(g_ShaderHandle);
-	// glUniform1i(g_AttribLocationTex, 0);
-	// glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
-	// glBindSampler(0, 0); // Rely on combined texture/sampler state.
+	// Setup viewport, orthographic projection matrix
+	glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
+	const float ortho_projection[4][4] =
+	{
+		{ 2.0f / io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
+		{ 0.0f,                  2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
+		{ 0.0f,                  0.0f,                  -1.0f, 0.0f },
+		{ -1.0f,                  1.0f,                   0.0f, 1.0f },
+	};
+	glUseProgram(g_ShaderHandle);
+	glUniform1i(g_AttribLocationTex, 0);
+	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
+	glBindSampler(0, 0); // Rely on combined texture/sampler state.
 
 	// Recreate the VAO every time 
 	// (This is to easily allow multiple GL contexts. VAO are not shared among GL contexts, and we don't track creation/deletion of windows so we don't have an obvious key to use to cache them.)

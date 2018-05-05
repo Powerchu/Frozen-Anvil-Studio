@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
+#include "System\Input\InputSystem.h"
 #include "EGUI.h"
 
 // Entry point for editor
@@ -24,15 +25,18 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	Dystopia::WindowManager *win = new Dystopia::WindowManager{};
 	Dystopia::GraphicsSystem *gfx = new Dystopia::GraphicsSystem{};
+	//Dystopia::InputManager *input = new Dystopia::InputManager{};
 
 	win->LoadDefaults();
 	win->Init();
 	gfx->InitOpenGL(win->GetWindow());
 
-	Dystopia::EGUI::Init(win, gfx);
-	Dystopia::EGUI::StartFrame();
-	Dystopia::EGUI::Render();
-	Dystopia::EGUI::Shutdown();
+	if (Dystopia::EGUI::Init(win, gfx, NULL))
+	{
+		Dystopia::EGUI::StartFrame();
+		Dystopia::EGUI::Render();
+		Dystopia::EGUI::Shutdown();
+	}
 
 	gfx->Shutdown();
 	win->Shutdown();
