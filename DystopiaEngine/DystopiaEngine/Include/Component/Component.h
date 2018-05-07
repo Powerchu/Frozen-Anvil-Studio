@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class GameObject;
+	class TextSerialiser;
 
 	class Component
 	{
@@ -55,8 +56,8 @@ namespace Dystopia
 
 		virtual Component* Duplicate() const;
 
-		virtual void Serialise() = 0;
-		virtual void Unserialise() = 0;
+		virtual void Serialise(TextSerialiser&) = 0;
+		virtual void Unserialise(TextSerialiser&) = 0;
 
 	private:
 

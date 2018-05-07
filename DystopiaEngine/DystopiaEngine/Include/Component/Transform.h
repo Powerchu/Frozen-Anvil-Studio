@@ -31,44 +31,44 @@ namespace Dystopia
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		Transform(void) {};
+		Transform(void);
 		Transform(Transform&);
-		Transform(const float _x, const float _y,
-			const float _fScaleX = 1.f, const float _fScaleY = 1.f,
-			const float _fRotationRadians = 0);
+
+
+		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
 		void SetGlobalPosition(const Math::Point3D&);
-		void SetGlobalPosition(const float _x, const float _y);
+		void SetGlobalPosition(const float _x, const float _y, const float _z);
 
-		void SetRotation(const float _fRadians);
-		void SetRotationDeg(const float _fDegrees);
+//		void SetRotation(const float _fRadians);
+//		void SetRotationDeg(const float _fDegrees);
 
 		void SetScale(const Math::Vec4& _vScale);
-		void SetScale(const float _fScaleX, const float _fScaleY);
+		void SetScale(const float _fScaleX, const float _fScaleY, const float _fScaleZ);
 
 		void SetPosition(const Math::Point3D&);
-		void SetPosition(const float _x, const float _y);
+		void SetPosition(const float _x, const float _y, const float _z);
 
 		Math::Vec4 GetGlobalRotation(void) const;
-		Math::Vec4 GetGlobalRotationDeg(void) const;
+//		Math::Vec4 GetGlobalRotationDeg(void) const;
 		Math::Vec4 GetGlobalScale(void) const;
 		Math::Point3D GetGlobalPosition(void) const;
 
-		float GetRotation(void) const;
-		float GetRotationDeg(void) const;
+		Math::Vec4 GetRotation(void) const;
+//		Math::Vec4 GetRotationDeg(void) const;
 		Math::Vec4 GetScale(void) const;
 		Math::Point3D GetPosition(void) const;
+
+		void SetParent(Transform*);
+		void OnParentRemove(Transform*);
 
 		Math::Matrix4 GetTransformMatrix(void);
 		const Math::Matrix4& GetLocalTransformMatrix(void);
 
-		Transform* Duplicate(void) const
-		{
-			return nullptr;
-		}
+		Transform* Duplicate(void) const;
 
-		void Serialise() {};
-		void Unserialise() {};
+		void Serialise(TextSerialiser&);
+		void Unserialise(TextSerialiser&);
 
 	private:
 

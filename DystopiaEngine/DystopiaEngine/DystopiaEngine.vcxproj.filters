@@ -37,13 +37,30 @@
     <ClCompile Include="Source\System\Graphics\Shader.cpp">
       <Filter>Game Engine\Systems\Graphic\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Graphics\Texture.cpp">
-      <Filter>Game Engine\Systems\Graphic\Texture</Filter>
+    <ClCompile Include="Source\IO\ImageParser.cpp">
+      <Filter>IO\ImageParser</Filter>
     </ClCompile>
-    <ClCompile Include="Source\IO\ImageParser.cpp" />
-    <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
-    <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
-    <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Source\System\Graphics\Texture2D.cpp">
+      <Filter>Game Engine\Systems\Graphic\Texture\Texture2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\Texture.cpp">
+      <Filter>Game Engine\Systems\Graphic\Texture\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Camera.cpp">
+      <Filter>Game Engine\Components\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Transform.cpp">
+      <Filter>Game Engine\Components\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\ImGui\imgui.cpp">
+      <Filter>Editor\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp">
+      <Filter>Editor\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp">
+      <Filter>Editor\IMGUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -148,14 +165,33 @@
     <ClInclude Include="Include\System\Graphics\Mesh.h">
       <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\Texture.h">
+    <ClInclude Include="Include\System\Graphics\Image.h">
       <Filter>Game Engine\Systems\Graphic\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\Image.h" />
-    <ClInclude Include="Include\IO\ImageParser.h" />
-    <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
-    <ClInclude Include="..\Dependancies\ImGui\imgui.h" />
-    <ClInclude Include="..\Dependancies\ImGui\imgui_internal.h" />
+    <ClInclude Include="Include\IO\ImageParser.h">
+      <Filter>IO\ImageParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\Texture2D.h">
+      <Filter>Game Engine\Systems\Graphic\Texture\Texture2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\Texture.h">
+      <Filter>Game Engine\Systems\Graphic\Texture\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Camera.h">
+      <Filter>Game Engine\Components\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\ImGui\imconfig.h">
+      <Filter>Editor\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\ImGui\imgui.h">
+      <Filter>Editor\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\ImGui\imgui_internal.h">
+      <Filter>Editor\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Object\ObjectFlags.h">
+      <Filter>Game Engine\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -268,6 +304,15 @@
     </Filter>
     <Filter Include="IO\ImageParser">
       <UniqueIdentifier>{8fc9bc42-e537-436b-9608-0fb8466bebc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Camera">
+      <UniqueIdentifier>{a431a473-6a2d-4d39-8e59-fa4404bc38b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Texture\Texture2D">
+      <UniqueIdentifier>{c92ba0ed-6357-4281-a0d3-359d3010b84a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Texture\Base">
+      <UniqueIdentifier>{d711054b-eec8-4405-90e8-2d5d221f7414}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

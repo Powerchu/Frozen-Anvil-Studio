@@ -23,6 +23,8 @@ typedef struct HWND__* HWND;
 
 namespace Dystopia
 {
+	class Window;
+
 	class WindowManager : public Systems
 	{
 	public:
@@ -44,7 +46,9 @@ namespace Dystopia
 		void ToggleFullscreen(bool _bFullscreen);
 		void ShowCursor(bool _bShow) const;
 
-		void* GetWindow(void)
+		Window GetMainWindow(void);
+
+		void* GetWindow(void) const
 		{
 			return mWindow;
 		}

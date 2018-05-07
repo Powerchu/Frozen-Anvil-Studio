@@ -38,7 +38,7 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
 		bool Init(void);
-		void Update(float);
+		void Update(float);		// Draws only the main view
 		void Shutdown(void);
 
 		// Sets up Window for openGL rendering

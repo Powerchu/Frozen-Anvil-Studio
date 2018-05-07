@@ -15,21 +15,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component\Component.h"	// Component
 #include "Behaviour\Behaviour.h"	// Behaviour
 #include "Utility\Utility.h"		// Move
+#include "Object\ObjectFlags.h"		// eObjFlags
 
 Dystopia::GameObject::GameObject(bool _bActive) :
-	mbActive{ _bActive }, mComponents{}, mBehaviours{}, mnID{ 0xFFFFFFFF }
+	mComponents{}, mBehaviours{}, mnID{ 0xFFFFFFFF }, mnFlags{ FLAG_NONE }
 {
 
 }
 
 Dystopia::GameObject::GameObject(unsigned _ID, bool _bActive) :
-	mbActive{ _bActive }, mComponents{}, mBehaviours{}, mnID{ _ID }
+	mComponents{}, mBehaviours{}, mnID{ _ID }, mnFlags{ FLAG_NONE }
 {
 
 }
 
 Dystopia::GameObject::GameObject(GameObject&& _obj) :
-	mbActive{ _obj.mbActive }, mnID{ _obj.mnID },
+	mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags },
 	mComponents{ Utility::Move(_obj.mComponents) },
 	mBehaviours{ Utility::Move(_obj.mBehaviours) }
 {
@@ -37,6 +38,7 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) :
 	_obj.mBehaviours.clear();
 
 	_obj.mnID = 0xFFFFFFFF;
+	_obj.mnFlags = FLAG_REMOVE;
 }
 
 Dystopia::GameObject::~GameObject(void)
@@ -47,12 +49,15 @@ Dystopia::GameObject::~GameObject(void)
 
 bool Dystopia::GameObject::IsActive(void) const
 {
-	return mbActive;
+	return mnFlags & FLAG_ACTIVE;
 }
 
 void Dystopia::GameObject::SetActive(const bool _bEnable)
 {
-	mbActive = _bEnable;
+	if(_bEnable)
+		mnFlags |=  FLAG_ACTIVE;
+	else
+		mnFlags &= ~FLAG_ACTIVE;
 }
 
 
@@ -127,15 +132,17 @@ void Dystopia::GameObject::PurgeComponents(void)
 	mBehaviours.clear();
 }
 
-void Dystopia::GameObject::Serialise()
+
+void Dystopia::GameObject::Serialise(TextSerialiser& _in)
 {
-	ForcePing(mComponents, &Component::Serialise);
-	ForcePing(mBehaviours, &Behaviour::Serialise);
+	ForcePing(mComponents, &Component::Serialise, _in);
+	ForcePing(mBehaviours, &Behaviour::Serialise, _in);
 }
-void Dystopia::GameObject::Unserialise()
+
+void Dystopia::GameObject::Unserialise(TextSerialiser& _out)
 {
-	ForcePing(mComponents, &Component::Unserialise);
-	ForcePing(mBehaviours, &Behaviour::Unserialise);
+	ForcePing(mComponents, &Component::Unserialise, _out);
+	ForcePing(mBehaviours, &Behaviour::Unserialise, _out);
 }
 
 Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
