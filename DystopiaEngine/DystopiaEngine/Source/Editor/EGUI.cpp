@@ -120,21 +120,21 @@ static unsigned int		g_ElementsHandle			= 0;
 
 static void SetClipBoardText(void *_pUserData, const char *_pText)
 {
-	// set the clipboard text somewhere
+	// Set the clipboard text somewhere
 	_pUserData;
 	_pText;
 }
 
 static const char* GetClipBoardText(void *_pUserData)
 {
-	// return the text
+	// Return the text
 	_pUserData;
 	return NULL;
 }
 
 static void InstallInputCallbacks()
 {
-	// bind the results of inputs to also call certain functions here
+	// Bind the results of inputs to also call certain functions here
 }
 
 static void CreateDefaultFont()
@@ -225,11 +225,8 @@ static void CreateDefaultFont()
 
 bool Dystopia::EGUI::Init(Dystopia::WindowManager *_pWin, Dystopia::GraphicsSystem *_pGfx, Dystopia::InputManager *_pInputMgr)
 {
-	// if (!_pWin && !_pGfx && !_pInputMgr) return false;
+	if (!Dystopia::EGUI::ChangeSystems(_pWin, _pGfx, _pInputMgr)) return false;
 	std::cout << "HI EGUI ABSDIBASODA!!!";
-	g_pWindow = _pWin;
-	g_pGfx = _pGfx;
-	g_pInputMgr = _pInputMgr;
 	g_pGLState = new GLState();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
@@ -424,10 +421,10 @@ void Dystopia::EGUI::Render()
 	glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
 	const float ortho_projection[4][4] =
 	{
-		{ 2.0f / io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
-		{ 0.0f,                  2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
-		{ 0.0f,                  0.0f,                  -1.0f, 0.0f },
-		{ -1.0f,                  1.0f,                   0.0f, 1.0f },
+		{ 2.0f / io.DisplaySize.x, 0.0f,                     0.0f, 0.0f },
+		{ 0.0f,                    2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
+		{ 0.0f,                    0.0f,                    -1.0f, 0.0f },
+		{ -1.0f,                   1.0f,                     0.0f, 1.0f },
 	};
 	glUseProgram(g_ShaderHandle);
 	glUniform1i(g_AttribLocationTex, 0);
@@ -514,5 +511,16 @@ void Dystopia::EGUI::Shutdown()
 	delete g_pGLState;
 }
 
+bool Dystopia::EGUI::ChangeSystems(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInputMgr)
+{
+	if (!_pWin || !_pGfx || !_pInputMgr) return false;
+	g_pWindow = _pWin;
+	g_pGfx = _pGfx;
+	g_pInputMgr = _pInputMgr;
+	return true;
+}
+
 #endif // EDITOR ONLY
+
+
 

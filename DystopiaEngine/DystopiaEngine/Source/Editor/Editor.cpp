@@ -33,8 +33,13 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	if (Dystopia::EGUI::Init(win, gfx, input))
 	{
-		Dystopia::EGUI::StartFrame();
-		Dystopia::EGUI::Render();
+		bool toClose = true;
+		while (!toClose)
+		{
+			Dystopia::EGUI::StartFrame();
+
+			Dystopia::EGUI::Render();
+		}
 		Dystopia::EGUI::Shutdown();
 	}
 
