@@ -107,5 +107,7 @@ Math::Vector4 Dystopia::InputManager::GetMousePosition(void)
 Dystopia::InputManager::KeyBinding& Dystopia::InputManager::KeyBinding::operator = (eButton _nBtn)
 {
 	mnKey = _nBtn;
+
+	return *this;
 }
 
