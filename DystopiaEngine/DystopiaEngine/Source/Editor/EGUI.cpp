@@ -11,6 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#if EDITOR
+
 #include "EGUI.h"
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
@@ -20,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "imgui.h"
 #include "GL\glew.h"
 #include <iostream>
+#include <Windows.h>
 
 // GL state to store previous draw data before render and to restore after render
 class GLState
@@ -268,7 +271,7 @@ bool Dystopia::EGUI::Init(Dystopia::WindowManager *_pWin, Dystopia::GraphicsSyst
 
 	io.SetClipboardTextFn = SetClipBoardText;
 	io.GetClipboardTextFn = GetClipBoardText;
-	// io.ClipboardUserData = g_pWindow->GetWindow(); // pointer to both a windows and context
+	io.ClipboardUserData = GetDC(static_cast<HWND>(g_pWindow->GetWindow())); // pointer to both a windows and context
 #ifdef _WIN32
 	io.ImeWindowHandle = g_pWindow->GetWindow();
 #endif
@@ -308,32 +311,37 @@ void Dystopia::EGUI::StartFrame()
 	 
 	// Setup inputs
 	// (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
-	// if (glfwGetWindowAttrib(g_Window, GLFW_FOCUSED))
-	// {
-	// 	// Set OS mouse position if requested (only used when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
-	// 	if (io.WantSetMousePos)
-	// 	{
-	// 		glfwSetCursorPos(g_Window, (double)io.MousePos.x, (double)io.MousePos.y);
-	// 	}
-	// 	else
-	// 	{
-	// 		double mouse_x, mouse_y;
-	// 		glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
-	// 		io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);
-	// 	}
-	// }
-	// else
-	// {
-	// 	io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
-	// }
-	// 
-	// for (int i = 0; i < 3; i++)
-	// {
-	// 	// If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
-	// 	io.MouseDown[i] = g_MouseJustPressed[i] || glfwGetMouseButton(g_Window, i) != 0;
-	// 	g_MouseJustPressed[i] = false;
-	// }
-	// 
+	if (g_pWindow)//glfwGetWindowAttrib(g_Window, GLFW_FOCUSED))
+	{
+		// Set OS mouse position if requested (only used when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
+		if (io.WantSetMousePos)
+		{
+			// TODO: Set cursor position here
+			//glfwSetCursorPos(g_Window, (double)io.MousePos.x, (double)io.MousePos.y);
+		}
+		else
+		{
+			double mouse_x, mouse_y;
+			// Get cursor position here
+			Math::Vec4 pos = g_pInputMgr->GetMousePosition();
+			mouse_x = pos.x;
+			mouse_y = pos.y;
+			//glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
+			io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);
+		}
+	}
+	else
+	{
+		io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+	}
+	
+	for (int i = 0; i < 3; i++)
+	{
+		// If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
+		// io.MouseDown[i] = g_MouseJustPressed[i] || glfwGetMouseButton(g_Window, i) != 0;
+		g_MouseJustPressed[i] = false;
+	}
+	
 	// // Update OS/hardware mouse cursor if imgui isn't drawing a software cursor
 	// if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0 && glfwGetInputMode(g_Window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED)
 	// {
@@ -461,7 +469,7 @@ void Dystopia::EGUI::Render()
 			else
 			{
 				glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
-				//glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
+				glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
 				glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, idx_buffer_offset);
 			}
 			idx_buffer_offset += pcmd->ElemCount;
@@ -479,9 +487,8 @@ void Dystopia::EGUI::Shutdown()
 	// for (ImGuiMouseCursor cursor_n = 0; cursor_n < ImGuiMouseCursor_COUNT; cursor_n++)
 	// 	glfwDestroyCursor(g_MouseCursors[cursor_n]);
 	// memset(g_MouseCursors, 0, sizeof(g_MouseCursors));
-	// 
-	// // Destroy OpenGL objects
 
+	// Destroy OpenGL objects
 	if (g_VboHandle) glDeleteBuffers(1, &g_VboHandle);
 	if (g_ElementsHandle) glDeleteBuffers(1, &g_ElementsHandle);
 	g_VboHandle = g_ElementsHandle = 0;
@@ -506,4 +513,6 @@ void Dystopia::EGUI::Shutdown()
 
 	delete g_pGLState;
 }
+
+#endif // EDITOR ONLY
 

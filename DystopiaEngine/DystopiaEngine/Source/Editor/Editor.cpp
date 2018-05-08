@@ -25,19 +25,20 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	Dystopia::WindowManager *win = new Dystopia::WindowManager{};
 	Dystopia::GraphicsSystem *gfx = new Dystopia::GraphicsSystem{};
-	//Dystopia::InputManager *input = new Dystopia::InputManager{};
+	Dystopia::InputManager *input = new Dystopia::InputManager{};
 
 	win->LoadDefaults();
 	win->Init();
 	gfx->InitOpenGL(win->GetWindow());
 
-	if (Dystopia::EGUI::Init(win, gfx, NULL))
+	if (Dystopia::EGUI::Init(win, gfx, input))
 	{
 		Dystopia::EGUI::StartFrame();
 		Dystopia::EGUI::Render();
 		Dystopia::EGUI::Shutdown();
 	}
 
+	input->Shutdown();
 	gfx->Shutdown();
 	win->Shutdown();
 
