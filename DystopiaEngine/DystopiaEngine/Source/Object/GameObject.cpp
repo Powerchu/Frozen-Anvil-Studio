@@ -93,8 +93,6 @@ void Dystopia::GameObject::PostUpdate(void)
 
 void Dystopia::GameObject::Destroy(void)
 {
-	mbActive = false;
-
 	Ping(mComponents, &Component::OnDestroy);
 	Ping(mBehaviours, &Behaviour::OnDestroy);
 }
