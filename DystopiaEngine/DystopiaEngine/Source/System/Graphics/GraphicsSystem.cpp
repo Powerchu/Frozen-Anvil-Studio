@@ -9,22 +9,25 @@
 	! ---- INCLUDES TEMPORARY CODE ---- !
 	ctrl+F TEMPORARY to find them and see how to replace them
 
+	TODO: Draw batching.
+
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Graphics\GraphicsSystem.h"		// File header
-#include "System\Graphics\GraphicsDefs.h"		// eGfxSettings
-#include "Utility\DebugAssert.h"				// DEBUG_ASSERT
+#include "System\Graphics\GraphicsSystem.h"	// File header
+#include "System\Graphics\GraphicsDefs.h"	// eGraphicSettings
+#include "Utility\DebugAssert.h"			// DEBUG_ASSERT
+#include "Component\Camera.h"				// Camera
 
-//#define GLEW_STATIC			// Use glew as a static library
+//#define GLEW_STATIC 			// Use glew as a static library
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable window's min & max macros
 
 #include <windows.h>			// WinAPI
 #include <GL\glew.h>
-#include <GL\wglew.h>			// openGL Windows ext
+#include <GL\wglew.h>			// glew Windows ext
 #include <GL\GL.h>
 #include <cstdio>
 #include <string>
@@ -52,7 +55,26 @@ bool Dystopia::GraphicsSystem::Init(void)
 
 void Dystopia::GraphicsSystem::Update(float)
 {
+	// We only care about the game view
+	
+	// For every camera in the game window (can be more than 1!)
+	for (; false;)
+	{
+		// If the camera is inactive, skip
 
+		// Get Camera's layer, we only want to draw inclusive stuff
+
+		// Draw the game objects to screen based on the camera
+		for (; false;)
+		{
+			// if Game Object is inactive or
+			// Game Object's layer does not match the camera
+			// Skip it
+
+
+			// Draw batching?
+		}
+	}
 }
 
 void Dystopia::GraphicsSystem::StartFrame(Window& )

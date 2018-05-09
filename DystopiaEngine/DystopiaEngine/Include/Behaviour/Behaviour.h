@@ -40,9 +40,6 @@ namespace Dystopia
 		void OnCollisionEnter(const CollisionEvent&);
 		void OnCollisionStay (const CollisionEvent&);
 		void OnCollisionExit (const CollisionEvent&);
-
-		virtual void Serialise()	= 0;
-		virtual void Unserialise()	= 0;
 	};
 }
 

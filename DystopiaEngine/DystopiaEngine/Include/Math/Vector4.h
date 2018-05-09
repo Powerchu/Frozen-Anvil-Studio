@@ -111,68 +111,45 @@ namespace Math
 		template <unsigned N>
 		struct DataMember
 		{
-
-			inline DataMember<N>& _CALL operator= (float _rhs)
-			{
-			#if defined(_INCLUDED_SMM)	// SSE4.1 supported
-				// Hopefully faster
-				mData = _mm_insert_ps(mData, _mm_set_ss(_rhs), N << 4);
-			#else						// No SSE 4.1
-				// There's probably a better way but I can't think of one
-				// Shuffle affected subset to low bits
-				// move assigned float into it and shuffle it back
-				mData = _mm_shuffle_ps(mData, mData, shuffleMask);
-				mData = _mm_move_ss(mData, _mm_set_ss(_rhs));
-				mData = _mm_shuffle_ps(mData, mData, shuffleMask);
-			#endif
-				
-				return *this;
-			}
-
-			inline _CALL operator float(void) const
-			{
-				// Copy the wanted value everywhere, and return the first 32 bits as a float
-				return _mm_cvtss_f32(_mm_shuffle_ps(mData, mData, _MM_SHUFFLE(N, N, N, N)));
-			}
+			inline DataMember<N>& _CALL operator= (float _rhs);
+			inline _CALL operator float(void) const;
 
 		private:
+
 			__m128 mData;
 
 			static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
 		};
 
 		// While we're at it, might as well add swizzle masks
-		// DataMember  -> 1 shuffle
-		// SwizzleMask -> 1 shuffle
+		// DataMember  -> 1 shuffle (read)
+		// SwizzleMask -> 1 shuffle (read & write)
 		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
 		struct SwizzleMask
 		{
-
 			template<bool = (X != Y) && (X != Z) && (X != W) && (Y != Z) && (Y != W) && (Z != W)>
-			SwizzleMask& _CALL operator= (Vector4 _rhs)
+			inline SwizzleMask& _CALL operator = (Vector4 _rhs)
 			{
 				mData = _mm_shuffle_ps(_rhs.mData, _rhs.mData, shuffleWrite);
 				return *this;
 			}
 
-			template<>
-			SwizzleMask& _CALL operator= <false> (Vector4)
+			template <>
+			inline SwizzleMask& _CALL operator = <false> (Vector4)
 			{
 				static_assert(false, "Vector4 Error: lvalue cannot be duplicate.");
 				return *this;
 			}
+
+			inline __m128 _CALL Get(void) const;
 
 			inline _CALL operator Vector4 (void) const
 			{
 				return Vector4{ Get() };
 			}
 
-			inline __m128 _CALL Get(void) const
-			{
-				return _mm_shuffle_ps(mData, mData, shuffleRead);
-			}
-
 		private:
+
 			__m128 mData;
 
 			static constexpr unsigned shuffleRead = _MM_SHUFFLE(W, Z, Y, X);
@@ -256,25 +233,25 @@ namespace Math
 
 
 inline Math::Vector4::Vector4(void) noexcept :
-	mData{ _mm_setzero_ps() }
+	mData( _mm_setzero_ps() )
 {
 
 }
 
 inline Math::Vector4::Vector4(const Vector4& v) noexcept :
-	mData{ v.mData }
+	mData( v.mData )
 {
 
 }
 
 inline Math::Vector4::Vector4(float x, float y, float z, float w) noexcept :
-	mData{ _mm_set_ps(w, z, y, x) }
+	mData( _mm_set_ps(w, z, y, x) )
 {
 
 }
 
 inline Math::Vector4::Vector4(__m128 v) noexcept :
-	mData{ v }
+	mData( v )
 {
 
 }
@@ -305,12 +282,16 @@ inline Math::Vector4& _CALL Math::Vector4::Cross(const Vector4 _rhs)
 	// z = (a.x * b.y) - (a.y * b.x
 	// w = (a.w * b.w) - (a.w * b.w)
 
+	/*
 	mData = Vector4{
 			_mm_sub_ps( _mm_mul_ps(mData, _rhs.zxyw.Get()),
 						_mm_mul_ps(zxyw.Get(), _rhs.mData))
 	}.zxyw.Get();
 
 	return *this;
+	*/
+
+	return *this = ((*this * _rhs.zxyw) - (zxyw * _rhs)).zxyw;
 }
 
 inline Math::Vector4& _CALL Math::Vector4::Project(const Vector4 _rhs)
@@ -425,8 +406,30 @@ inline Math::Vector3D _CALL Math::MakeVector3D(float _x, float _y, float _z)
 
 
 
-// =========================================== TEMPLATE SPECIAL CASES =========================================== // 
+// =============================================== NESTED CLASSES =============================================== // 
 
+
+template <unsigned N>
+inline Math::Vector4::DataMember<N>& _CALL Math::Vector4::DataMember<N>::operator= (float _rhs)
+{
+#if defined(_INCLUDED_SMM)	// SSE4.1 supported
+
+	// Hopefully faster
+	mData = _mm_insert_ps(mData, _mm_set_ss(_rhs), N << 4);
+
+#else						// No SSE 4.1
+
+	// There's probably a better way but I can't think of one
+	// Shuffle affected subset to low bits
+	// move assigned float into it and shuffle it back
+	mData = _mm_shuffle_ps(mData, mData, shuffleMask);
+	mData = _mm_move_ss(mData, _mm_set_ss(_rhs));
+	mData = _mm_shuffle_ps(mData, mData, shuffleMask);
+
+#endif
+
+	return *this;
+}
 
 template<>
 inline Math::Vector4::DataMember<0>& _CALL Math::Vector4::DataMember<0>::operator= (float _rhs)
@@ -434,6 +437,13 @@ inline Math::Vector4::DataMember<0>& _CALL Math::Vector4::DataMember<0>::operato
 	mData = _mm_move_ss(mData, _mm_set_ss(_rhs));
 
 	return *this;
+}
+
+template <unsigned N>
+inline _CALL Math::Vector4::DataMember<N>::operator float(void) const
+{
+	// Copy the wanted value everywhere, and return the first 32 bits as a float
+	return _mm_cvtss_f32(_mm_shuffle_ps(mData, mData, _MM_SHUFFLE(N, N, N, N)));
 }
 
 template<>
@@ -444,6 +454,13 @@ inline _CALL Math::Vector4::DataMember<0>::operator float(void) const
 	// - Compiler seems to do this special case optimisation even without this
 	//   But I'll leave it here anyway
 	return _mm_cvtss_f32(mData);
+}
+
+
+template <unsigned X, unsigned Y, unsigned Z, unsigned W>
+inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::Get(void) const
+{
+	return _mm_shuffle_ps(mData, mData, shuffleRead);
 }
 
 // No automatic compiler instruction change for the following special shuffles

@@ -27,6 +27,15 @@ namespace Dystopia
 
 		GRAPHICS_ALL				= 0xFFFFFFFF
 	};
+
+	namespace Gfx
+	{
+		struct Viewport
+		{
+			int mnX, mnY;
+			int mnWidth, mnHeight;
+		};
+	}
 }
 
 
