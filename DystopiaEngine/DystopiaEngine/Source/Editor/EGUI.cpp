@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Input\InputSystem.h"
 #include "System\Input\InputMap.h"
 #include "Math\Vector4.h"
-#include "imgui.h"
+#include "..\..\Dependancies\ImGui\imgui.h"
 #include "GL\glew.h"
 #include <iostream>
 #include <Windows.h>
