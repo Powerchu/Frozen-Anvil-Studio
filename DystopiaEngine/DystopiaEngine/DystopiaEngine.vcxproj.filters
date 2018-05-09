@@ -61,6 +61,9 @@
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp">
       <Filter>Editor\IMGUI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\EGUI.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -191,6 +194,9 @@
     </ClInclude>
     <ClInclude Include="Include\Object\ObjectFlags.h">
       <Filter>Game Engine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Editor\EGUI.h">
+      <Filter>Editor\Editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

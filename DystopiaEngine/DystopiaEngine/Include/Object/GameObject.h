@@ -160,7 +160,7 @@ namespace Dystopia
 	{
 		for (T* e : _arr)
 		{
-			(e->*_pfunc)(static_cast<Args&&>(args)...);
+			(e->*_pfunc)(static_cast<Args&&>(_args)...);
 		}
 	}
 }

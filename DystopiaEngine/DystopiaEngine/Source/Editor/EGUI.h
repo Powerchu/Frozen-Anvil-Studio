@@ -11,6 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#if EDITOR
 #ifndef _EDITOR_GUI_H_
 #define _EDITOR_GUI_H_
 
@@ -26,7 +27,10 @@ namespace Dystopia
 		void StartFrame();
 		void Render();
 		void Shutdown();
+		bool ChangeWin(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInputMgr);
 	}
 }
 
-#endif // !_EDITOR_GUI_H_
+#endif	// !_EDITOR_GUI_H_
+#endif	// EDITOR ONLY
+

@@ -11,15 +11,17 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#if EDITOR
 #include "EGUI.h"
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Input\InputSystem.h"
 #include "System\Input\InputMap.h"
 #include "Math\Vector4.h"
-#include "imgui.h"
+#include "..\..\Dependancies\ImGui\imgui.h"
 #include "GL\glew.h"
 #include <iostream>
+#include <Windows.h>
 
 // GL state to store previous draw data before render and to restore after render
 class GLState
@@ -222,11 +224,8 @@ static void CreateDefaultFont()
 
 bool Dystopia::EGUI::Init(Dystopia::WindowManager *_pWin, Dystopia::GraphicsSystem *_pGfx, Dystopia::InputManager *_pInputMgr)
 {
-	// if (!_pWin && !_pGfx && !_pInputMgr) return false;
+	if (!ChangeWin(_pWin, _pGfx, _pInputMgr)) return false;
 	std::cout << "HI EGUI ABSDIBASODA!!!";
-	g_pWindow = _pWin;
-	g_pGfx = _pGfx;
-	g_pInputMgr = _pInputMgr;
 	g_pGLState = new GLState();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
@@ -268,7 +267,7 @@ bool Dystopia::EGUI::Init(Dystopia::WindowManager *_pWin, Dystopia::GraphicsSyst
 
 	io.SetClipboardTextFn = SetClipBoardText;
 	io.GetClipboardTextFn = GetClipBoardText;
-	// io.ClipboardUserData = g_pWindow->GetWindow(); // pointer to both a windows and context
+	io.ClipboardUserData = GetDC(static_cast<HWND>(g_pWindow->GetWindow()));
 #ifdef _WIN32
 	io.ImeWindowHandle = g_pWindow->GetWindow();
 #endif
@@ -506,4 +505,19 @@ void Dystopia::EGUI::Shutdown()
 
 	delete g_pGLState;
 }
+
+bool Dystopia::EGUI::ChangeWin(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInputMgr)
+{
+	if (!_pWin || !_pGfx || !_pInputMgr) return false;
+	g_pWindow = _pWin;
+	g_pGfx = _pGfx;
+	g_pInputMgr = _pInputMgr;
+	return true;
+}
+
+
+
+#endif	// EDITOR ONLY
+
+
 
