@@ -35,6 +35,10 @@
     <ClCompile Include="Source\Component\Transform.cpp" />
     <ClCompile Include="Source\Editor\Editor.cpp" />
     <ClCompile Include="Source\Editor\EGUI.cpp" />
+    <ClCompile Include="Source\Editor\EGuiCallbacks.cpp" />
+    <ClCompile Include="Source\Editor\EGuiDisplay.cpp" />
+    <ClCompile Include="Source\Editor\Inspector.cpp" />
+    <ClCompile Include="Source\Editor\ResourceView.cpp" />
     <ClCompile Include="Source\IO\ImageParser.cpp" />
     <ClCompile Include="Source\Math\Matrix4.cpp" />
     <ClCompile Include="Source\Object\GameObject.cpp" />
@@ -62,6 +66,10 @@
     <ClInclude Include="Include\DataStructure\Queue.h" />
     <ClInclude Include="Include\DataStructure\SharedPtr.h" />
     <ClInclude Include="Include\DataStructure\Stack.h" />
+    <ClInclude Include="Include\Editor\Editor.h" />
+    <ClInclude Include="Include\Editor\EGUI.h" />
+    <ClInclude Include="Include\Editor\Inspector.h" />
+    <ClInclude Include="Include\Editor\ResourceView.h" />
     <ClInclude Include="Include\Globals.h" />
     <ClInclude Include="Include\IO\ImageParser.h" />
     <ClInclude Include="Include\Math\MathInternal.h" />
@@ -93,7 +101,6 @@
     <ClInclude Include="Include\Utility\Meta.h" />
     <ClInclude Include="Include\Utility\MetaHelper.h" />
     <ClInclude Include="Include\Utility\Utility.h" />
-    <ClInclude Include="Source\Editor\EGUI.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>

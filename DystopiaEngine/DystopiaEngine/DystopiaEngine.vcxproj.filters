@@ -64,6 +64,18 @@
     <ClCompile Include="Source\Editor\EGUI.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\EGuiCallbacks.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EGuiDisplay.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\Inspector.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\ResourceView.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -195,8 +207,17 @@
     <ClInclude Include="Include\Object\ObjectFlags.h">
       <Filter>Game Engine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Editor\EGUI.h">
+    <ClInclude Include="Include\Editor\EGUI.h">
       <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Inspector.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Editor.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\ResourceView.h">
+      <Filter>Editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
