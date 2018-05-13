@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	ResourceView.cpp
+\file	HierarchyView.cpp
 \author Digipen (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -12,58 +12,58 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\ResourceView.h"
-#include <string>
+#include "Editor\EGUI.h"
+#include "Editor\HierarchyView.h"
+#include "Object\GameObject.h"
 
 constexpr float DEFAULT_WIDTH = 300;
 constexpr float DEFAULT_HEIGHT = 300;
 
 namespace Dystopia
 {
-	ResourceView::ResourceView()
-		: mWidth{ DEFAULT_WIDTH }, mHeight{ DEFAULT_HEIGHT }, mpFocusData{ nullptr }
-	{
-	}
-	
-	ResourceView::~ResourceView()
-	{
-	}
-	
-	void ResourceView::Init()
+	HierarchyView::HierarchyView()
+		: mWidth{ DEFAULT_WIDTH }, mHeight{ DEFAULT_HEIGHT }, mpFocusGameObj{ nullptr }, mpCurrentScene{ nullptr }
 	{
 	}
 
-	void ResourceView::Update(const float& _dt)
+	HierarchyView::~HierarchyView()
+	{
+	}
+
+	void HierarchyView::Init()
+	{
+	}
+
+	void HierarchyView::Update(const float& _dt)
 	{
 		_dt;
 	}
 
-	void ResourceView::Shutdown()
+	void HierarchyView::Shutdown()
 	{
 	}
 
-	void ResourceView::SetWidth(float _width)
+	void HierarchyView::SetWidth(float _width)
 	{
 		mWidth = _width;
 	}
 
-	void ResourceView::SetHeight(float _height)
+	void HierarchyView::SetHeight(float _height)
 	{
 		mHeight = _height;
 	}
 
-	void ResourceView::Window()
+	void HierarchyView::Window()
 	{
+		if (!mpCurrentScene) return;
+
+		// Do for all objects in the scene
+		// Dystopia::EGUI::Display::Label(mpFocusGameObj->GetName().c_str()); 
 	}
 
 }
 
 
-
-
 #endif // EDITOR
-
-
-
 
 

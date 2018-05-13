@@ -193,7 +193,7 @@ namespace Dystopia
 		return true;
 	}
 
-	void GuiSystem::StartFrame(const double& _dt)
+	void GuiSystem::StartFrame(const float& _dt)
 	{
 		ImGui::SetCurrentContext(mpCtx);
 		if (!mFontTexture) CreateDefaultFont();

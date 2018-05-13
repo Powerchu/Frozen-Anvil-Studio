@@ -32,13 +32,14 @@ namespace Dystopia
 		namespace Display
 		{
 			void MainMenuBar();
-
+			void CollapseHeader(const char*);
 			void Label(const char*, ...);
 			void TextField(const char*, char*, size_t);
 			bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 0.0f);
 			bool CheckBox(const char*, bool*);
 			bool DragFloat(const char*, float*, float _dragSpeed= 1.0f, float _min= 0.0f, float _max= 0.0f);
-			bool DragInt(const char*, int*, int _dragSpeed = 1.0f, int _min = 0, int _max = 0);
+			bool DragInt(const char*, int*, float _dragSpeed = 1.0f, int _min = 0, int _max = 0);
+			bool SelectableTxt(const char*, bool*);
 		}
 
 		namespace FileCallbacks
@@ -60,7 +61,7 @@ namespace Dystopia
 		~GuiSystem();
 
 		bool Init(WindowManager*, GraphicsSystem*, InputManager*);
-		void StartFrame(const double&);
+		void StartFrame(const float&);
 		void EndFrame();
 		void Shutdown();
 

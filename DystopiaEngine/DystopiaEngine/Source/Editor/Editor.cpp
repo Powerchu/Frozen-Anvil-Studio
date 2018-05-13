@@ -41,7 +41,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	{
 		editor->StartFrame();
 
-		editor->UpdateFrame(editor->PreviousFrameTime());
+		editor->UpdateFrame(static_cast<float>(editor->PreviousFrameTime()));
 		
 		editor->EndFrame();
 	}

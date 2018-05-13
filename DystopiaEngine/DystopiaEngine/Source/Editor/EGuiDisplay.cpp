@@ -110,7 +110,7 @@ bool DragFloat(const char* _label, float* _outputFloat, float _dragSpeed, float 
 	ImGui::DragFloat("", _outputFloat, _dragSpeed, _min, _max);
 }
 
-bool DragInt(const char* _label, int* _outputInt, int _dragSpeed, int _min, int _max)
+bool DragInt(const char* _label, int* _outputInt, float _dragSpeed, int _min, int _max)
 {
 	Label(_label);
 	ImGui::SameLine();
@@ -143,8 +143,15 @@ bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpee
 	ImGui::PopItemWidth();
 }
 
+void CollapseHeader(const char* _header)
+{
+	ImGui::CollapsingHeader(_header, ImGuiTreeNodeFlags_DefaultOpen);
+}
 
-
+bool SelectableTxt(const char* _label, bool* _outputBool)
+{
+	ImGui::Selectable(_label, _outputBool);
+}
 
 }}}	// NAMESPACE DYSTOPIA::EGUI::DISPLAY
 

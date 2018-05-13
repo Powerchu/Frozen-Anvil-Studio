@@ -16,11 +16,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\Inspector.h"
 #include "Math\Vector4.h"
 #include "Editor\EGUI.h"
+#include "Object\GameObject.h"
+#include "Component\Component.h"
+#include "DataStructure\AutoArray.h"
+
+constexpr float DEFAULT_WIDTH = 300;
+constexpr float DEFAULT_HEIGHT = 300;
 
 namespace Dystopia
 {
 	Inspector::Inspector()
-		: mWidth{ 300 }, mHeight{ 300 }, mpFocusGameObj{ nullptr }
+		: mWidth{ DEFAULT_WIDTH }, mHeight{ DEFAULT_HEIGHT }, mpFocusGameObj{ nullptr }
 	{}
 
 	Inspector::~Inspector()
@@ -33,6 +39,7 @@ namespace Dystopia
 	void Inspector::Update(const float _dt)
 	{
 		_dt;
+
 	}
 
 	void Inspector::Shutdown()
@@ -49,9 +56,25 @@ namespace Dystopia
 		mHeight = _height;
 	}
 
+	void Inspector::SetFocusObj(GameObject* _target)
+	{
+		mpFocusGameObj = _target;
+	}
+
+	void Inspector::RemoveFocus()
+	{
+		mpFocusGameObj = nullptr;
+	}
+
 	void Inspector::Window()
 	{
 		if (!mpFocusGameObj) return;
+
+		AutoArray<Component*> pAllComponents = mpFocusGameObj->GetComponents<Component>();
+		for (auto e : pAllComponents)
+		{
+			// e->Editor() or e->Window()
+		}
 	}
 }
 

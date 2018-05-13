@@ -37,6 +37,7 @@
     <ClCompile Include="Source\Editor\EGUI.cpp" />
     <ClCompile Include="Source\Editor\EGuiCallbacks.cpp" />
     <ClCompile Include="Source\Editor\EGuiDisplay.cpp" />
+    <ClCompile Include="Source\Editor\HierarchyView.cpp" />
     <ClCompile Include="Source\Editor\Inspector.cpp" />
     <ClCompile Include="Source\Editor\ResourceView.cpp" />
     <ClCompile Include="Source\IO\ImageParser.cpp" />
@@ -68,6 +69,7 @@
     <ClInclude Include="Include\DataStructure\Stack.h" />
     <ClInclude Include="Include\Editor\Editor.h" />
     <ClInclude Include="Include\Editor\EGUI.h" />
+    <ClInclude Include="Include\Editor\HierarchyView.h" />
     <ClInclude Include="Include\Editor\Inspector.h" />
     <ClInclude Include="Include\Editor\ResourceView.h" />
     <ClInclude Include="Include\Globals.h" />

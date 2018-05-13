@@ -24,12 +24,14 @@ namespace Dystopia
 		Inspector();
 		~Inspector();
 		void Init();
-		void Update(const float _delta);
+		void Update(const float);
 		void Shutdown();
 
 		void Window();
-		void SetWidth(float _width);
-		void SetHeight(float _height);
+		void SetWidth(float);
+		void SetHeight(float);
+		void SetFocusObj(GameObject*);
+		void RemoveFocus();
 
 	private:
 		float mWidth;

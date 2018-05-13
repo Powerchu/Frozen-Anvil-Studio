@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	ResourceView.h
+\file	HierarchyView.h
 \author Digipen (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -12,17 +12,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#ifndef _RESOURCE_VIEW_H_
-#define _RESOURCE_VIEW_H_
+#ifndef _HIERARCHY_H_
+#define _HIERARCHY_H_
 
 namespace Dystopia
 {
-	class ResourceView
+	class GameObject;
+	class Scene;
+
+	class HierarchyView
 	{
 	public:
-		ResourceView();
-		~ResourceView();
-
+		HierarchyView();
+		~HierarchyView();
 		void Init();
 		void Update(const float&);
 		void Shutdown();
@@ -34,14 +36,13 @@ namespace Dystopia
 	private:
 		float mWidth;
 		float mHeight;
-		void *mpFocusData;
+		GameObject *mpFocusGameObj;
+		Scene *mpCurrentScene;
 	};
 }
 
-#endif //_RESOURCE_VIEW_H_
-#endif //EDITOR
-
-
+#endif // _HEIRARCHY_H_
+#endif // EDITOR
 
 
 
