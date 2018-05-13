@@ -38,6 +38,7 @@ namespace Dystopia
 		{
 			Timer mDelay;
 			virtual void Invoke(void) = 0;
+			virtual ~QueueObject()    = 0;
 		};
 
 		template <class Invokable>
@@ -48,6 +49,8 @@ namespace Dystopia
 
 			InvokeMe(float, unsigned, Invokable&&);
 			inline void Invoke(void);
+
+			~InvokeMe() = default;
 		};
 
 		Heap<QueueObject*> mPQueue;
@@ -70,9 +73,10 @@ namespace Dystopia
 		{
 			mPQueue.Insert(new InvokeMe<T>{ _fSeconds, _nIterations, Utility::Forward<T>(_pInvokable) },
 				[](const QueueObject* _lhs, const QueueObject* _rhs)->bool
-			{
-				return _lhs->mDelay.Time() < _rhs->mDelay.Time();
-			});
+				{
+					return _lhs->mDelay.Time() < _rhs->mDelay.Time();
+				}
+			);
 		}
 	};
 

@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	enum eGfxSettings
+	enum eGfxSettings : unsigned
 	{
 		GRAPHICS_MSAA				= 1 << 0,
 		GRAPHICS_FXAA				= 1 << 1,

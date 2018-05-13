@@ -17,17 +17,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\GraphicsSystem.h"
 
 // Entry point for editor
-int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
+int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
-	hInstance;
-
 	Dystopia::WindowManager *win = new Dystopia::WindowManager{};
 	Dystopia::GraphicsSystem *gfx = new Dystopia::GraphicsSystem{};
 
 	win->LoadDefaults();
 	win->Init();
 
-	gfx->InitOpenGL(win->GetWindow());
+	gfx->InitOpenGL(win->GetMainWindow());
 
 	gfx->Shutdown();
 	win->Shutdown();

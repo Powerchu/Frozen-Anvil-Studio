@@ -25,8 +25,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _COMMANDPROMPT	1
 #define ENGINE_NAME		L"Dystopia Engine"
 
-constexpr auto	DEFAULT_WINDOWSTYLE		= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-constexpr auto	DEFAULT_WINDOWSTYLE_EX	= WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+constexpr long	DEFAULT_WINDOWSTYLE		= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+constexpr long	DEFAULT_WINDOWSTYLE_EX	= WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
 
 constexpr bool	DEFAULT_FULLSCREEN		= false;
 constexpr int	DEFAULT_WIDTH			= 1600;
@@ -38,23 +38,36 @@ namespace Dystopia
 {
 	LRESULT WINAPI MessageProcessor(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		PAINTSTRUCT ps;
-		HDC hdc;
-
 		switch (message)
 		{
-		case WM_PAINT:
-			hdc = BeginPaint(hWnd, &ps);
-
-			EndPaint(hWnd, &ps);
+		case WM_SETFOCUS:
+			/*
+			if (mbFullscreen)
+			{
+				DEVMODE mode{};
+				mode.dmSize = sizeof(DEVMODE);
+				mode.dmPelsWidth = mWidth;
+				mode.dmPelsHeight = mHeight;
+				mode.dmBitsPerPel = 32;
+				mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
+				ChangeDisplaySettings(&mode, 0);
+			} */
+			break;
+		case WM_KILLFOCUS:
+			/*
+			if (mbFullscreen)
+			{
+				ChangeDisplaySettings(NULL, 0);
+			} */
 			break;
 		}
 
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
-	WindowManager::WindowManager(void)
-		: mbFullscreen{ DEFAULT_FULLSCREEN }, mHInstance { GetModuleHandle(nullptr) }
+	WindowManager::WindowManager(void) : 
+		mbFullscreen{ DEFAULT_FULLSCREEN }, mHInstance { GetModuleHandle(nullptr) },
+		mWindows{ 1 }
 	{
 
 	}
@@ -128,7 +141,7 @@ namespace Dystopia
 		RECT WindowRect{ 0, 0, LOGO_WIDTH, LOGO_HEIGHT };
 		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
 
-		mWindow = CreateWindowEx(
+		HWND window = CreateWindowEx(
 			WS_EX_APPWINDOW,
 			L"SplashWindow",
 			NULL,
@@ -139,14 +152,10 @@ namespace Dystopia
 			NULL, NULL, mHInstance, NULL
 		);
 
-		//SetWindowLong(mWindow, GWL_STYLE,
-		//	GetWindowLong(mWindow, GWL_STYLE)
-		//);
-
 		long left = (GetSystemMetrics(SM_CXSCREEN) - LOGO_WIDTH) >> 1,
 			top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
 		// center the window
-		SetWindowPos(mWindow, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
+		SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
 
 	#else
 
@@ -171,38 +180,26 @@ namespace Dystopia
 
 	#endif
 
-		::ShowCursor(EDITOR);
-		ShowWindow(mWindow, SW_SHOW);
-		UpdateWindow(mWindow);
+		mWindows.EmplaceBack(window);
+		mWindows[0].ShowCursor(EDITOR);
+
+		ShowWindow(window, SW_SHOW);
+//		UpdateWindow(window);
+
 
 		return true;
 	}
 
 	void WindowManager::Update(float)
 	{
-		//if (GetActiveWindow() == mWindow)
-		//{
-		//	if (mbFullscreen)
-		//	{
-		//		DEVMODE mode{};
-		//		mode.dmSize = sizeof(DEVMODE);
-		//		mode.dmPelsWidth = mWidth;
-		//		mode.dmPelsHeight = mHeight;
-		//		mode.dmBitsPerPel = 32;
-		//		mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
-		//		ChangeDisplaySettings(&mode, 0);
-		//	}
-		//	else
-		//	{
-		//		ChangeDisplaySettings(NULL, 0);
-		//	}
-		//}
-
 		MSG msg;
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		for (Window& w : mWindows)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			while (PeekMessage(&msg, w.GetWindowHandle(), 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
 	}
 
@@ -222,11 +219,13 @@ namespace Dystopia
 		mWindowStyleEx	= DEFAULT_WINDOWSTYLE_EX;
 		mWidth			= DEFAULT_WIDTH;
 		mHeight			= DEFAULT_HEIGHT;
+
+		GetMainWindow().SetStyle(mWindowStyle, mWindowStyleEx);
 	}
 
 	void WindowManager::LoadSettings(TextSerialiser&)
 	{
-
+		GetMainWindow().SetStyle(mWindowStyle, mWindowStyleEx);
 	}
 
 	void WindowManager::ToggleFullscreen(bool _bFullscreen)
@@ -236,7 +235,13 @@ namespace Dystopia
 
 	void WindowManager::ShowCursor(bool _bShow) const
 	{
-		::ShowCursor(_bShow);
+		for (Window& w : mWindows)
+			w.ShowCursor(_bShow);
+	}
+
+	Window& WindowManager::GetMainWindow(void) const
+	{
+		return const_cast<Window&>(mWindows[0]);
 	}
 }
 

@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _WINDOW_MANAGER_H_
 
 #include "System\Base\Systems.h"		// Base Class
+#include "DataStructure\AutoArray.h"	// AutoArray
 
 #include <string>
 
@@ -46,18 +47,13 @@ namespace Dystopia
 		void ToggleFullscreen(bool _bFullscreen);
 		void ShowCursor(bool _bShow) const;
 
-		Window GetMainWindow(void);
-
-		void* GetWindow(void) const
-		{
-			return mWindow;
-		}
+		Window& GetMainWindow(void) const;
 
 	private:
 
 		std::wstring mTitle;
+		AutoArray<Window> mWindows;
 
-		HWND mWindow;
 		HINSTANCE mHInstance;
 
 		int mWidth, mHeight;

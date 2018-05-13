@@ -31,8 +31,8 @@ namespace Dystopia
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		explicit GameObject(bool _bActive = true);
-		GameObject(unsigned _ID, bool _bActive = true);
+		GameObject(void);
+		explicit GameObject(unsigned _ID);
 		GameObject(GameObject&&);
 
 		~GameObject(void);
@@ -160,7 +160,7 @@ namespace Dystopia
 	{
 		for (T* e : _arr)
 		{
-			(e->*_pfunc)(static_cast<Args&&>(args)...);
+			(e->*_pfunc)(static_cast<Args&&>(_args)...);
 		}
 	}
 }

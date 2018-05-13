@@ -35,6 +35,7 @@
     <ClCompile Include="Source\Component\Transform.cpp" />
     <ClCompile Include="Source\Editor\Editor.cpp" />
     <ClCompile Include="Source\IO\ImageParser.cpp" />
+    <ClCompile Include="Source\IO\TextSerialiser.cpp" />
     <ClCompile Include="Source\Math\Matrix4.cpp" />
     <ClCompile Include="Source\Object\GameObject.cpp" />
     <ClCompile Include="Source\Component\Camera.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="Source\System\Input\InputSystem.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
+    <ClCompile Include="Source\System\Window\Window.cpp" />
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +65,7 @@
     <ClInclude Include="Include\DataStructure\Stack.h" />
     <ClInclude Include="Include\Globals.h" />
     <ClInclude Include="Include\IO\ImageParser.h" />
+    <ClInclude Include="Include\IO\TextSerialiser.h" />
     <ClInclude Include="Include\Math\MathInternal.h" />
     <ClInclude Include="Include\Math\MathUtility.h" />
     <ClInclude Include="Include\Math\Matrix4.h" />
