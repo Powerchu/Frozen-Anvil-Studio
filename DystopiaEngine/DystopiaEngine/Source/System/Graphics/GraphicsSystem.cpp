@@ -78,12 +78,12 @@ void Dystopia::GraphicsSystem::Update(float)
 	}
 }
 
-void Dystopia::GraphicsSystem::StartFrame(Window& )
+void Dystopia::GraphicsSystem::StartFrame(void)
 {
 
 }
 
-void Dystopia::GraphicsSystem::EndFrame(Window& )
+void Dystopia::GraphicsSystem::EndFrame(void)
 {
 
 }

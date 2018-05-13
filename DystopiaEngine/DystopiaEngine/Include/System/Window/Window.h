@@ -49,6 +49,8 @@ namespace Dystopia
 
 		Queue<eButton> mInputQueue;
 	};
+
+	bool operator== (const Window&, const Window&);
 }
 
 

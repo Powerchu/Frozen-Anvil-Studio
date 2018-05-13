@@ -64,5 +64,10 @@ void Dystopia::Window::ShowCursor(int _bShow) const
 }
 
 
+bool Dystopia::operator== (const Window& _lhs, const Window& _rhs)
+{
+	return _lhs.GetWindowHandle() == _rhs.GetWindowHandle();
+}
+
 
 

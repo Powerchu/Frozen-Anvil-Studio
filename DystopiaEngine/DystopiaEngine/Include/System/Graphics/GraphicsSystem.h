@@ -55,8 +55,8 @@ namespace Dystopia
 
 	private:
 
-		void StartFrame(Window&);
-		void EndFrame(Window&);
+		void StartFrame(void);
+		void EndFrame(void);
 
 		bool SelectOpenGLVersion(Window&) noexcept;
 
