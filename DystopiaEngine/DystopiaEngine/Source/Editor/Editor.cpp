@@ -27,6 +27,10 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 
 	gfx->InitOpenGL(win->GetMainWindow());
 
+	win->DestroySplash();
+
+	while (true);
+
 	gfx->Shutdown();
 	win->Shutdown();
 

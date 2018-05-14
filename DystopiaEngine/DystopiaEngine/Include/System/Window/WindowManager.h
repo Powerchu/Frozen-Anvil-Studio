@@ -43,6 +43,7 @@ namespace Dystopia
 		void LoadDefaults(void);
 		void LoadSettings(TextSerialiser&);
 
+		void DestroySplash(void);
 
 		void ToggleFullscreen(bool _bFullscreen);
 		void ShowCursor(bool _bShow) const;
@@ -61,6 +62,8 @@ namespace Dystopia
 		unsigned long mWindowStyle;
 		unsigned long mWindowStyleEx;
 		bool mbFullscreen;
+
+		void ReAdjustWindow(Window&);
 	};
 }
 

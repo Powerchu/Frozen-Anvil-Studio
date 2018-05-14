@@ -74,12 +74,13 @@ namespace Dystopia
 
 	WindowManager::~WindowManager(void)
 	{
-
+		UnregisterClass(L"MainWindow", mHInstance);
 	}
 
 	bool WindowManager::Init(void)
 	{
 	#if _COMMANDPROMPT
+
 		if (AllocConsole())
 		{
 			FILE* file;
@@ -90,31 +91,8 @@ namespace Dystopia
 
 			SetConsoleTitle(ENGINE_NAME);
 		}
-	#endif
 
-	#if EDITOR
-
-		WNDCLASSEX editorSplash
-		{
-			sizeof(WNDCLASSEX),
-			CS_CLASSDC,
-			MessageProcessor,
-			0, 0,
-			GetModuleHandle(NULL),
-			NULL,
-			LoadCursor(NULL, IDC_ARROW),
-			NULL, // Background
-			NULL,
-			L"SplashWindow",
-			NULL // Icon
-		};
-
-		if (!RegisterClassEx(&editorSplash))
-		{
-			throw;
-		}
-
-	#endif // EDITOR ONLY
+	#endif	// Show Command Prompt
 		
 		WNDCLASSEX mainWindow
 		{
@@ -143,7 +121,7 @@ namespace Dystopia
 
 		HWND window = CreateWindowEx(
 			WS_EX_APPWINDOW,
-			L"SplashWindow",
+			L"MainWindow",
 			NULL,
 			WS_POPUP | WS_DLGFRAME,
 			CW_USEDEFAULT, CW_USEDEFAULT,
@@ -153,7 +131,7 @@ namespace Dystopia
 		);
 
 		long left = (GetSystemMetrics(SM_CXSCREEN) - LOGO_WIDTH) >> 1,
-			top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
+			 top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
 		// center the window
 		SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
 
@@ -162,7 +140,7 @@ namespace Dystopia
 		RECT WindowRect{ 0, 0, mWidth, mHeight };
 		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
 
-		mWindow = CreateWindowEx(
+		HWND window = CreateWindowEx(
 			mWindowStyleEx,
 			L"MainWindow",
 			mTitle.c_str(),
@@ -176,7 +154,7 @@ namespace Dystopia
 		long left = (GetSystemMetrics(SM_CXSCREEN) - mWidth) >> 1,
 			top = (GetSystemMetrics(SM_CYSCREEN) - mHeight) >> 1;
 		// center the window
-		SetWindowPos(mWindow, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
+		SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
 
 	#endif
 
@@ -219,13 +197,11 @@ namespace Dystopia
 		mWindowStyleEx	= DEFAULT_WINDOWSTYLE_EX;
 		mWidth			= DEFAULT_WIDTH;
 		mHeight			= DEFAULT_HEIGHT;
-
-		GetMainWindow().SetStyle(mWindowStyle, mWindowStyleEx);
 	}
 
 	void WindowManager::LoadSettings(TextSerialiser&)
 	{
-		GetMainWindow().SetStyle(mWindowStyle, mWindowStyleEx);
+
 	}
 
 	void WindowManager::ToggleFullscreen(bool _bFullscreen)
@@ -243,6 +219,32 @@ namespace Dystopia
 	{
 		return const_cast<Window&>(mWindows[0]);
 	}
+
+	void WindowManager::DestroySplash(void)
+	{
+		mWindows[0].SetStyle(mWindowStyle, mWindowStyleEx);
+
+		ReAdjustWindow(mWindows[0]);
+	}
+
+	void WindowManager::ReAdjustWindow(Window& _window)
+	{
+		RECT WindowRect{ 0, 0, mWidth, mHeight };
+		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
+
+		mWidth = WindowRect.right - WindowRect.left;
+		mHeight = WindowRect.bottom - WindowRect.top;
+
+		long left = (GetSystemMetrics(SM_CXSCREEN) - mWidth) >> 1,
+			 top = (GetSystemMetrics(SM_CYSCREEN) - mHeight) >> 1;
+
+		// center the window
+		SetWindowPos(_window.GetWindowHandle(), NULL,
+			left, top, mWidth, mHeight,
+			SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE
+		);
+	}
+
 }
 
 

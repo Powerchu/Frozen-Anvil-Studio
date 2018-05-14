@@ -24,7 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 //#define GLEW_STATIC 			// Use glew as a static library
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
-#define NOMINMAX				// Disable window's min & max macros
+#define NOMINMAX				// Disable Window header min & max macros
 
 #include <windows.h>			// WinAPI
 #include <GL\glew.h>
@@ -76,16 +76,18 @@ void Dystopia::GraphicsSystem::Update(float)
 			// Draw batching?
 		}
 	}
+
+	// Final draw to combine layers & draw to screen
 }
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
-
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
-
+	SwapBuffers(mCurrent->GetDeviceContext());
 }
 
 void Dystopia::GraphicsSystem::Shutdown(void)
@@ -128,16 +130,19 @@ Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _fileP
 
 bool Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
 {
+	mCurrent = &_window;
 	wglMakeCurrent(_window.GetDeviceContext(), static_cast<HGLRC>(mOpenGL));
 }
 
 bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 {
+	mCurrent = &_window;
+
 	// Use to specify the color format we want and openGL support
 	PIXELFORMATDESCRIPTOR pfd{};
 
-	pfd.nSize		 = sizeof(PIXELFORMATDESCRIPTOR);	// Specified by Windows
-	pfd.nVersion	 = 1;								// Specified by Windows
+	pfd.nSize		 = sizeof(PIXELFORMATDESCRIPTOR);	// Windows requirement
+	pfd.nVersion	 = 1;								// Windows requirement
 	pfd.dwFlags		 = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW;
 	pfd.iPixelType	 = PFD_TYPE_RGBA;
 	pfd.cColorBits	 = 32;

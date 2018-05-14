@@ -36,7 +36,7 @@ namespace Dystopia
 		HDC GetDeviceContext(void) const;
 
 		void SetTitle(const std::wstring&);
-		void SetStyle(long, long);
+		void SetStyle(long _nStyle, long _nStyleEx);
 
 		void ShowCursor(int _bShow) const;
 

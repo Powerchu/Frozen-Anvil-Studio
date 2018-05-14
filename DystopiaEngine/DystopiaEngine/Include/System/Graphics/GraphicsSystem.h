@@ -55,13 +55,14 @@ namespace Dystopia
 
 	private:
 
+		void* mOpenGL;
+		int mPixelFormat, mAvailable;
+		Window* mCurrent;
+
 		void StartFrame(void);
 		void EndFrame(void);
 
 		bool SelectOpenGLVersion(Window&) noexcept;
-
-		void* mOpenGL;
-		int mPixelFormat, mAvailable;
 	};
 }
 
