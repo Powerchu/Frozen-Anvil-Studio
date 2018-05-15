@@ -82,6 +82,8 @@
     <ClCompile Include="Source\IO\TextSerialiser.cpp">
       <Filter>IO\TextSerialiser</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\EGUI.cpp" />
+    <ClCompile Include="Source\Editor\Dock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -231,6 +233,7 @@
     <ClInclude Include="Include\IO\TextSerialiser.h">
       <Filter>IO\TextSerialiser</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\Dock.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
