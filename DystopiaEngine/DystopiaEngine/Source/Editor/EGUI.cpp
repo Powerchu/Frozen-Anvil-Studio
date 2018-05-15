@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 
 #include "Editor\EGUI.h"
+#include "System\Window\Window.h"
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Input\InputSystem.h"
@@ -174,9 +175,9 @@ namespace Dystopia
 
 		io.SetClipboardTextFn = SetClipBoardText;
 		io.GetClipboardTextFn = GetClipBoardText;
-		io.ClipboardUserData = GetDC(static_cast<HWND>(mpWin->GetWindow())); // pointer to both a windows and context
+		io.ClipboardUserData = mpWin->GetMainWindow().GetDeviceContext(); // pointer to both a windows and context
 	#ifdef _WIN32
-		io.ImeWindowHandle = mpWin->GetWindow();
+		io.ImeWindowHandle = mpWin->GetMainWindow().GetWindowHandle();
 	#endif
 		// Load cursors
 		// FIXME: GLFW doesn't expose suitable cursors for ResizeAll, ResizeNESW, ResizeNWSE. We revert to arrow cursor for those.
@@ -205,6 +206,8 @@ namespace Dystopia
 		int display_w, display_h;
 		// glfwGetWindowSize(mpWin, &w, &h);
 		// glfwGetFramebufferSize(mpWin, &display_w, &display_h);
+		w = display_w = 1600;
+		h = display_h = 900;
 		io.DisplaySize = ImVec2((float)w, (float)h);
 		io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0, h > 0 ? ((float)display_h / h) : 0);
 
@@ -295,10 +298,23 @@ namespace Dystopia
 
 		// Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
 		ImGui::NewFrame();
+
+
+		glViewport(0, 0, 1600, 900);
+		glClearColor(0.2f, 0.3f, 0.3f, 1.f);
+		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
 	void GuiSystem::EndFrame()
 	{
+
+		ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+
+		ImGui::Begin("Inspector Window", false, flags);
+		ImGui::TextWrapped("Hello Inspector! Note that coordinates are top left 0,0");
+		ImGui::End();
+
+
 		ImGui::SetCurrentContext(mpCtx);
 		ImGui::Render();
 		mpDrawData = ImGui::GetDrawData();
@@ -382,6 +398,8 @@ namespace Dystopia
 
 		// Restore modified GL state
 		mpGLState->Restore();
+
+		SwapBuffers(mpWin->GetMainWindow().GetDeviceContext());
 	}
 
 	void GuiSystem::Shutdown()

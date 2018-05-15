@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Input\InputSystem.h"
+#include "System\Time\Timer.h"
 #include "Editor\Editor.h"
 #include "Editor\EGUI.h"
 #include <iostream>
@@ -29,19 +30,28 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	Dystopia::GraphicsSystem *gfx = new Dystopia::GraphicsSystem{};
 	Dystopia::InputManager *input = new Dystopia::InputManager{};
 	Dystopia::Editor *editor = new Dystopia::Editor{};
+	Dystopia::Timer timer{};
 
 	win->LoadDefaults();
 	win->Init();
-	gfx->InitOpenGL(win->GetWindow());
+	gfx->InitOpenGL(win->GetMainWindow());
 	input->LoadDefaults();
 	input->Init();
+
+	win->DestroySplash();
 
 	editor->Init(win, gfx, input);
 	while (!editor->IsClosing())
 	{
+		float dt = timer.Elapsed();	//static_cast<float>(editor->PreviousFrameTime());
+		timer.Lap();
+
+		win->Update(dt);
+		input->Update(dt);
+
 		editor->StartFrame();
 
-		editor->UpdateFrame(static_cast<float>(editor->PreviousFrameTime()));
+		editor->UpdateFrame(dt);
 		
 		editor->EndFrame();
 	}
@@ -74,9 +84,9 @@ namespace Dystopia
 		mpGfx = _pGfx;
 		mpInput = _pInput;
 
-		SharedPtr<GuiSystem> pGui = CreateShared<GuiSystem>(new GuiSystem{});
+		GuiSystem* pGui =new GuiSystem{};
 		if (!pGui->Init(mpWin, mpGfx, mpInput)) mCurrentState = EDITOR_EXIT;
-		//mGuiSysArray.push_back(pGui);
+			mGuiSysArray.push_back(pGui);
 	}
 
 	void Editor::StartFrame()

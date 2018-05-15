@@ -70,7 +70,7 @@ namespace Dystopia
 		// SceneManager *mpSceneMgr;
 
 		AutoArray<SharedPtr<Inspector>> mInspectorArray;
-		AutoArray<SharedPtr<GuiSystem>> mGuiSysArray;
+		AutoArray<GuiSystem*> mGuiSysArray;
 		void UpdateState();
 		void Play();
 		void Save();
