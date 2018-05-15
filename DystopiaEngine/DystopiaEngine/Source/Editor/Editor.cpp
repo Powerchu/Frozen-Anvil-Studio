@@ -74,9 +74,9 @@ namespace Dystopia
 		mpGfx = _pGfx;
 		mpInput = _pInput;
 
-		SharedPtr<GuiSystem> pGui = CreateShared<GuiSystem>(new GuiSystem{});
+		GuiSystem *pGui = new GuiSystem{};
 		if (!pGui->Init(mpWin, mpGfx, mpInput)) mCurrentState = EDITOR_EXIT;
-		//mGuiSysArray.push_back(pGui);
+			mGuiSysArray.push_back(pGui);
 	}
 
 	void Editor::StartFrame()

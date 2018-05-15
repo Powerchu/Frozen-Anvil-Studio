@@ -79,6 +79,9 @@
     <ClCompile Include="Source\Editor\HierarchyView.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\Dock.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -223,6 +226,9 @@
       <Filter>Editor\Editor</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\HierarchyView.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Dock.h">
       <Filter>Editor\Editor</Filter>
     </ClInclude>
   </ItemGroup>
