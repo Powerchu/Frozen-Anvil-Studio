@@ -477,49 +477,47 @@ inline Math::Matrix4 _CALL Math::operator* (Matrix4 _lhs, const Matrix4 _rhs)
 inline Math::Vector4 _CALL Math::Matrix4::operator* (const Vector4 _rhs) const
 {
 	// No idea if any of these provides any speed up against the plain old version
-	__m128 dot1 = _mm_setzero_ps(), dot2 = _mm_setzero_ps(), 
-		dot3 = _mm_setzero_ps(), dot4 = _mm_setzero_ps();
+	Vector4 dot1, dot2, dot3, dot4;
 
 #if USE_DP & defined(_INCLUDED_SMM)	// SSE 4.1
 	
-	dot1 = _mm_dp_ps(mData[0].mData, _rhs.mData, 0xF1); // Store into 1st component
-	dot2 = _mm_dp_ps(mData[1].mData, _rhs.mData, 0xF2); // Store into 2nd ...
-	dot3 = _mm_dp_ps(mData[2].mData, _rhs.mData, 0xF4); // Store into 3rd ...
-	dot4 = _mm_dp_ps(mData[3].mData, _rhs.mData, 0xF8); // Store into 4th ...
+	dot1.mData = _mm_dp_ps(mData[0].mData, _rhs.mData, 0xF1); // Store into 1st component
+	dot2.mData = _mm_dp_ps(mData[1].mData, _rhs.mData, 0xF2); // Store into 2nd ...
+	dot3.mData = _mm_dp_ps(mData[2].mData, _rhs.mData, 0xF4); // Store into 3rd ...
+	dot4.mData = _mm_dp_ps(mData[3].mData, _rhs.mData, 0xF8); // Store into 4th ...
 
-	dot1 = _mm_add_ps(dot1, dot2);
-	dot3 = _mm_add_ps(dot3, dot4);
+	dot1 = dot1 + dot2;
+	dot3 = dot3 + dot4;
 
-	return Vector4{ _mm_add_ps(dot1, dot3) };
+	return dot1 + dot3;
 
 #elif defined(_INCLUDED_PMM)		// SSE 3
 
-	dot1 = _mm_mul_ps(mData[0].mData, _rhs.mData);
-	dot2 = _mm_mul_ps(mData[1].mData, _rhs.mData);
-	dot3 = _mm_mul_ps(mData[2].mData, _rhs.mData);
-	dot4 = _mm_mul_ps(mData[3].mData, _rhs.mData);
+	dot1 = mData[0] * _rhs;
+	dot2 = mData[1] * _rhs;
+	dot3 = mData[2] * _rhs;
+	dot4 = mData[3] * _rhs;
 
-	dot1 = _mm_hadd_ps(dot1, dot2);
-	dot3 = _mm_hadd_ps(dot3, dot4);
+	dot1.mData = _mm_hadd_ps(dot1.mData, dot2.mData);
+	dot3.mData = _mm_hadd_ps(dot3.mData, dot4.mData);
 
-	return Vector4{ _mm_hadd_ps(dot1, dot3) };
+	return Vector4{ _mm_hadd_ps(dot1.mData, dot3.mData) };
 
 #else								// Fallback (SSE 2)
-
-	dot1 = _mm_mul_ps(mData[0].mData, _rhs.mData);
-	dot2 = _mm_mul_ps(mData[1].mData, _rhs.mData);
-	dot3 = _mm_mul_ps(mData[2].mData, _rhs.mData);
-	dot4 = _mm_mul_ps(mData[3].mData, _rhs.mData);
+	
+	dot1 = mData[0] * _rhs;
+	dot2 = mData[1] * _rhs;
+	dot3 = mData[2] * _rhs;
+	dot4 = mData[3] * _rhs;
 
 	// Cause registers to flush to memory? - Apparently not
 	// Looks like the compiler changes it to shuffles for us
-	// And the resulting assembly looks like a disaster
 
 	return Vector4{
-		dot1.m128_f32[0] + dot1.m128_f32[1] + dot1.m128_f32[2] + dot1.m128_f32[3],
-		dot2.m128_f32[0] + dot2.m128_f32[1] + dot2.m128_f32[2] + dot2.m128_f32[3],
-		dot3.m128_f32[0] + dot3.m128_f32[1] + dot3.m128_f32[2] + dot3.m128_f32[3],
-		dot4.m128_f32[0] + dot4.m128_f32[1] + dot4.m128_f32[2] + dot4.m128_f32[3]
+		dot1.x + dot1.y + dot1.z + dot1.w,
+		dot2.x + dot2.y + dot2.z + dot2.w,
+		dot3.x + dot3.y + dot3.z + dot3.w,
+		dot4.x + dot4.y + dot4.z + dot4.w
 	};
 
 #endif

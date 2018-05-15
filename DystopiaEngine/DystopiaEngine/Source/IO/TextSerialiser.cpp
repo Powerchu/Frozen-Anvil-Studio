@@ -39,7 +39,20 @@ void Dystopia::TextSerialiser::InsertStartBlock(const std::string& _strName)
 	mFile << "[START_" << _strName << "]\n";
 }
 
-void Dystopia::TextSerialiser::ConsumeBlock(void)
+void Dystopia::TextSerialiser::ConsumeStartBlock(void)
+{
+	do {
+		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
+
+		if (mFile.peek() == 'S')
+		{
+			mFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			break;
+		}
+	} while (mFile.good());
+}
+
+void Dystopia::TextSerialiser::ConsumeEndBlock(void)
 {
 	do {
 		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
