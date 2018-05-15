@@ -16,15 +16,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	enum eObjFlag
+	enum eObjFlag : unsigned
 	{
-		FLAG_NONE			= 0,
-		FLAG_ACTIVE			= 1 << 0,
+		FLAG_NONE			= 0u,
+		FLAG_ACTIVE			= 1u << 0,
 
-		FLAG_LAYER_UI		= 1 << 5,
-		FLAG_LAYER_WORLD	= 1 << 6,
+		FLAG_LAYER_UI		= 1u << 5,
+		FLAG_LAYER_WORLD	= 1u << 6,
 
-		FLAG_REMOVE			= 1 << 31,
+		FLAG_REMOVE			= 1u << 31,
 	};
 
 

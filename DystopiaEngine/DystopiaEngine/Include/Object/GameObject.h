@@ -31,8 +31,8 @@ namespace Dystopia
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		explicit GameObject(bool _bActive = true);
-		GameObject(unsigned _ID, bool _bActive = true);
+		GameObject(void);
+		explicit GameObject(unsigned _ID);
 		GameObject(GameObject&&);
 
 		~GameObject(void);
