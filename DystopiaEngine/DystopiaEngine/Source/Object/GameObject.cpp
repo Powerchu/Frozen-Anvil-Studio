@@ -17,13 +17,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\Utility.h"		// Move
 #include "Object\ObjectFlags.h"		// eObjFlags
 
-Dystopia::GameObject::GameObject(bool _bActive) :
+Dystopia::GameObject::GameObject(void) :
 	mComponents{}, mBehaviours{}, mnID{ 0xFFFFFFFF }, mnFlags{ FLAG_NONE }
 {
 
 }
 
-Dystopia::GameObject::GameObject(unsigned _ID, bool _bActive) :
+Dystopia::GameObject::GameObject(unsigned _ID) :
 	mComponents{}, mBehaviours{}, mnID{ _ID }, mnFlags{ FLAG_NONE }
 {
 
@@ -75,19 +75,19 @@ void Dystopia::GameObject::Init(void)
 
 void Dystopia::GameObject::Update(const float _fDeltaTime)
 {
-	Ping(mComponents, &Component::Update, _fDeltaTime);
+//	Ping(mComponents, &Component::Update, _fDeltaTime);
 	Ping(mBehaviours, &Behaviour::Update, _fDeltaTime);
 }
 
 void Dystopia::GameObject::FixedUpdate(const float _fFixedDT)
 {
-	Ping(mComponents, &Component::FixedUpdate, _fFixedDT);
+//	Ping(mComponents, &Component::FixedUpdate, _fFixedDT);
 	Ping(mBehaviours, &Behaviour::FixedUpdate, _fFixedDT);
 }
 
 void Dystopia::GameObject::PostUpdate(void)
 {
-	Ping(mComponents, &Component::PostUpdate);
+//	Ping(mComponents, &Component::PostUpdate);
 	Ping(mBehaviours, &Behaviour::PostUpdate);
 }
 

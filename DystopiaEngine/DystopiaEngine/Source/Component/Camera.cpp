@@ -37,12 +37,12 @@ void Dystopia::Camera::Init(void)
 	if (nullptr == mTransform)
 		mTransform = GetOwner()->GetComponent<Transform>();
 }
-
+/*
 void Dystopia::Camera::Update(const float)
 {
 
 }
-/*
+
 void Dystopia::Camera::SetMainCamera(void)
 {
 	CameraManager::SetMainCamera(this);
