@@ -41,9 +41,9 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
 		void Init(void);
-
+		/*
 		void Update(const float dt);
-
+		*/
 		void SetMainCamera(void);
 		bool IsMainCamera(void) const;
 

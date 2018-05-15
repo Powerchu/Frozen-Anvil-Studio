@@ -67,7 +67,7 @@ void Dystopia::InputManager::Shutdown(void)
 void Dystopia::InputManager::LoadDefaults(void)
 {
 	mButtonMap.clear();
-	mButtonMap.reserve(eUserButton::TOTAL_USERBUTTONS);
+	mButtonMap.reserve(static_cast<unsigned>(eUserButton::TOTAL_USERBUTTONS));
 
 	LoadDefaultUserKeys();
 }
@@ -98,10 +98,10 @@ bool Dystopia::InputManager::IsKeyReleased(eUserButton _nBtn)
 
 Math::Vector4 Dystopia::InputManager::GetMousePosition(void)
 {
-	tagPOINT pos;
+	POINT pos;
 	GetCursorPos(&pos);
 
-	return Math::Vector4{ pos.x * 1.f, pos.y * 1.f, .0f };
+	return Math::MakePoint3D(pos.x * 1.f, pos.y * 1.f, .0f);
 }
 
 Dystopia::InputManager::KeyBinding& Dystopia::InputManager::KeyBinding::operator = (eButton _nBtn)
@@ -110,4 +110,5 @@ Dystopia::InputManager::KeyBinding& Dystopia::InputManager::KeyBinding::operator
 
 	return *this;
 }
+
 

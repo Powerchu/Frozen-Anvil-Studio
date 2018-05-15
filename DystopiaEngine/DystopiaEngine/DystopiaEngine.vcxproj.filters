@@ -61,6 +61,12 @@
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp">
       <Filter>Editor\IMGUI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Window\Window.cpp">
+      <Filter>Game Engine\Systems\Window\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IO\TextSerialiser.cpp">
+      <Filter>IO\TextSerialiser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -191,6 +197,9 @@
     </ClInclude>
     <ClInclude Include="Include\Object\ObjectFlags.h">
       <Filter>Game Engine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\IO\TextSerialiser.h">
+      <Filter>IO\TextSerialiser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
