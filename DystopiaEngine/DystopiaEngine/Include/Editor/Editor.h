@@ -18,7 +18,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure\AutoArray.h"
 #include "DataStructure\SharedPtr.h"
 #include <chrono>
-#include <memory>
 
 namespace Dystopia
 {
@@ -71,8 +70,7 @@ namespace Dystopia
 		// SceneManager *mpSceneMgr;
 
 		AutoArray<SharedPtr<Inspector>> mInspectorArray;
-		
-		AutoArray<GuiSystem*> mGuiSysArray;
+		AutoArray<SharedPtr<GuiSystem>> mGuiSysArray;
 		void UpdateState();
 		void Play();
 		void Save();

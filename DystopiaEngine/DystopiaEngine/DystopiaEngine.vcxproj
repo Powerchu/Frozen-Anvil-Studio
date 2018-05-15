@@ -33,7 +33,6 @@
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
     <ClCompile Include="Source\Component\Component.cpp" />
     <ClCompile Include="Source\Component\Transform.cpp" />
-    <ClCompile Include="Source\Editor\Dock.cpp" />
     <ClCompile Include="Source\Editor\Editor.cpp" />
     <ClCompile Include="Source\Editor\EGUI.cpp" />
     <ClCompile Include="Source\Editor\EGuiCallbacks.cpp" />
@@ -70,7 +69,6 @@
     <ClInclude Include="Include\DataStructure\Queue.h" />
     <ClInclude Include="Include\DataStructure\SharedPtr.h" />
     <ClInclude Include="Include\DataStructure\Stack.h" />
-    <ClInclude Include="Include\Editor\Dock.h" />
     <ClInclude Include="Include\Editor\Editor.h" />
     <ClInclude Include="Include\Editor\EGUI.h" />
     <ClInclude Include="Include\Editor\HierarchyView.h" />
