@@ -29,6 +29,20 @@ namespace Math
 	// Floating point error tolerance
 	constexpr float epsilon = 0.0000001f;
 
+	template<typename Num>
+	inline typename Utility::EnableIf<Utility::IsNumeric<Num>::value, Num>::type Abs(const Num _x)
+	{
+		return _x < 0 ? -_x : _x;
+	}
+
+	// Deprecated
+	template<const unsigned n, class T>
+	inline T Abs(T _vec)
+	{
+		InternalHelper::AbsHelper<T, n - 1>::CalculateAbs(_vec);
+		return _vec;
+	}
+
 	inline bool IsZero(float _fScalar)
 	{
 		return _fScalar > -epsilon && _fScalar < epsilon;
@@ -42,6 +56,19 @@ namespace Math
 	inline float Max(float _x, float _y)
 	{
 		return _x < _y ? _y : _x;
+	}
+
+	// Checks if two floats are approximately equal
+	// Returns false if one of the numbers is zero
+	inline bool ApproxEq(float _lhs, float _rhs)
+	{
+		float diff = Abs(_lhs - _rhs);
+
+		_lhs = Abs(_lhs);
+		_rhs = Abs(_rhs);
+
+		float scale = Max(_lhs, _rhs);
+		return diff < (scale * epsilon);
 	}
 
 	inline float Clamp(float _fInput, float _fMin, float _fMax)
@@ -61,20 +88,6 @@ namespace Math
 		constexpr float RadDegRatio = 180.f / pi;
 
 		return _fRadians * RadDegRatio;
-	}
-
-	template<typename Num>
-	inline typename Utility::EnableIf<Utility::IsNumeric<Num>::value, Num>::type Abs(const Num _x)
-	{
-		return _x < 0 ? -_x : _x;
-	}
-
-	// Deprecated
-	template<const unsigned n, class T>
-	inline T Abs(T _vec)
-	{
-		InternalHelper::AbsHelper<T, n - 1>::CalculateAbs(_vec);
-		return _vec;
 	}
 
 	template<class T>

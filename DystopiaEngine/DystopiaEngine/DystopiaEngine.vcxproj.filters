@@ -201,7 +201,9 @@
     <ClInclude Include="Include\Math\Matrix4.h">
       <Filter>Math\Matrix\Matrix4</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Math\Matrix2.h" />
+    <ClInclude Include="Include\Math\Matrix2.h">
+      <Filter>Math\Matrix\Matrix2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

@@ -23,8 +23,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Math
 {
 	#define _CALL	__vectorcall
-	#define ALLIGN	16
-	#define USE_DP	1
 
 	struct Matrix2
 	{
@@ -200,12 +198,6 @@ inline Math::Matrix2 _CALL Math::operator/ (Matrix2 _lhs, const float _rhs)
 
 
 // Remove all our defines
-#ifdef USE_DP
-#undef USE_DP
-#endif
-#ifdef ALLIGN
-#undef ALLIGN
-#endif
 #ifdef _CALL
 #undef _CALL
 #endif

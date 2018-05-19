@@ -18,7 +18,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _MATRIX_4_H_
 
 #if defined(DEBUG) | defined(_DEBUG)
-#include "MathUtility.h"
 #include "DebugAssert.h"
 #endif // Debug only includes
 
@@ -219,7 +218,7 @@ inline Math::Matrix4& _CALL Math::Matrix4::Transpose(void) noexcept
 	__m128 row3 = _mm_unpackhi_ps(mData[2].mData, mData[3].mData);
 
 	// movehl flips the order of assignment
-	// so we flip to get back the right order
+	// so we flip to get back the right order   // ie.
 	mData[0].mData = _mm_movelh_ps(row0, row1); // movelh : a1 a2 b1 b2
 	mData[1].mData = _mm_movehl_ps(row1, row0); // movehl : b3 b4 a3 a4
 	mData[2].mData = _mm_movelh_ps(row2, row3);

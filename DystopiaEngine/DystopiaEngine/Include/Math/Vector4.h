@@ -73,6 +73,8 @@ namespace Math
 		inline float _CALL Magnitude(void) const;
 		inline float _CALL MagnitudeSqr(void) const;
 
+		inline Vector4& _CALL Reciprocal(void);
+
 
 		// ======================================== OPERATORS ======================================= // 
 
@@ -200,6 +202,8 @@ namespace Math
 	// Projects lhs onto rhs
 	inline Vector4 _CALL Project(const Vector4, const Vector4);
 
+	inline Vector4 _CALL Reciprocal(const Vector4);
+
 
 	// ====================================== MATH UTILITY ======================================= // 
 	// Manually overload the math utility functions which cannot be called for type Vector4
@@ -284,9 +288,35 @@ inline Math::Vector4& _CALL Math::Vector4::Normalise(void)
 	return *this;
 }
 
+inline Math::Vector4 _CALL Math::Normalise(Vector4 _vec)
+{
+	return _vec.Normalise();
+}
+
+inline Math::Vector4& _CALL Math::Vector4::Reciprocal(void)
+{
+	__m128 temp = _mm_rcp_ps(mData);
+
+	mData = _mm_mul_ps(mData, _mm_mul_ps(temp, temp));
+	mData = _mm_sub_ps(_mm_add_ps(temp, temp), mData);
+
+	return *this;
+}
+
+inline Math::Vector4 _CALL Math::Reciprocal(Vector4 _v)
+{
+	return _v.Reciprocal();
+}
+
 inline float _CALL Math::Vector4::Dot(const Vector4 _rhs) const
 {
 	return _mm_cvtss_f32(Dot(mData, _rhs.mData));
+}
+
+// Computes the dot product of two vectors
+inline float _CALL Math::Dot(const Vector4 _lhs, const Vector4 _rhs)
+{
+	return _lhs.Dot(_rhs);
 }
 
 inline Math::Vector4& _CALL Math::Vector4::Cross(const Vector4 _rhs)
@@ -297,6 +327,11 @@ inline Math::Vector4& _CALL Math::Vector4::Cross(const Vector4 _rhs)
 	// w = (a.w * b.w) - (a.w * b.w)
 
 	return *this = ((*this * _rhs.zxyw) - (zxyw * _rhs)).zxyw;
+}
+
+inline Math::Vector4 _CALL Math::Cross(Vector4 _lhs, Vector4 _rhs)
+{
+	return _lhs.Cross(_rhs);
 }
 
 inline Math::Vector4& _CALL Math::Vector4::Project(const Vector4 _rhs)
@@ -313,6 +348,13 @@ inline Math::Vector4& _CALL Math::Vector4::Project(const Vector4 _rhs)
 	return *this;
 }
 
+// Projects lhs onto rhs
+inline Math::Vector4 _CALL Math::Project(Vector4 _lhs, Vector4 _rhs)
+{
+	return _lhs.Project(_rhs);
+}
+
+
 inline float _CALL Math::Vector4::Magnitude(void) const
 {
 	return std::sqrtf(MagnitudeSqr());
@@ -323,28 +365,6 @@ inline float _CALL Math::Vector4::MagnitudeSqr(void) const
 	return Dot(*this);
 }
 
-
-inline Math::Vector4 _CALL Math::Normalise(Vector4 _vec)
-{
-	return _vec.Normalise();
-}
-
-// Computes the dot product of two vectors
-inline float _CALL Math::Dot(const Vector4 _lhs, const Vector4 _rhs)
-{
-	return _lhs.Dot(_rhs);
-}
-
-inline Math::Vector4 _CALL Math::Cross(Vector4 _lhs, Vector4 _rhs)
-{
-	return _lhs.Cross(_rhs);
-}
-
-// Projects lhs onto rhs
-inline Math::Vector4 _CALL Math::Project(Vector4 _lhs, Vector4 _rhs)
-{
-	return _lhs.Project(_rhs);
-}
 
 inline Math::Vector4 _CALL Math::Abs(const Vector4 _v)
 {

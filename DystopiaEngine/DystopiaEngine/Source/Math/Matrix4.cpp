@@ -16,6 +16,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Math\Matrix4.h"		// File Header
 
+#include <xmmintrin.h>			// SSE
+#include <emmintrin.h>			// SSE 2
+#include <tmmintrin.h>			// SSE 3
+#include <smmintrin.h>			// SSE 4.1
+
 float _vectorcall Math::Matrix4::Determinant(void) const
 {
 	return .0f;
@@ -51,6 +56,24 @@ Math::Matrix4& _vectorcall Math::Matrix4::Inverse(void)
 
 Math::Matrix4& _vectorcall Math::Matrix4::AffineInverse(void)
 {
-	return *this;
+	Vector4 mag{ .0f, .0f, .0f, 1.f };
+	mag += mData[0] * mData[0];
+	mag += mData[1] * mData[1];
+	mag += mData[2] * mData[2];
+	mag.Reciprocal();
+	mag.w = .0f;
+
+	Matrix4 inverse = *this;
+
+	inverse.mData[0] *= mag;
+	inverse.mData[1] *= mag;
+	inverse.mData[2] *= mag;
+
+	inverse.mData[3] = Vector4{ .0f, .0f, .0f, 1.f };
+	inverse.mData[3] -= inverse.mData[0] * mData[0].wwww;
+	inverse.mData[3] -= inverse.mData[1] * mData[1].wwww;
+	inverse.mData[3] -= inverse.mData[2] * mData[2].wwww;
+
+	return *this = inverse.Transpose();
 }
 
