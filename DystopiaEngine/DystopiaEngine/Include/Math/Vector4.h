@@ -51,8 +51,9 @@ namespace Math
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		inline Vector4(void) noexcept;
-		inline Vector4(const Vector4&) noexcept;
+		inline Vector4 (const Vector4&) noexcept;
 		inline Vector4(float x, float y, float z, float w = 0) noexcept;
+		inline explicit Vector4(__m128) noexcept;
 
 
 		// ==================================== VECTOR OPERATIONS ==================================== // 
@@ -60,14 +61,13 @@ namespace Math
 		// Converts the vector to unit length
 		inline Vector4& _CALL Normalise(void);
 
-		// Computes the dot product of this vector and other vector
+		// Computes the dot product of this vector and a given vector
 		inline float _CALL Dot(const Vector4) const;
 
-		// Computes the cross product of this vector and other vector 
-		// Will zero out the w components of the vector
+		// Computes the cross product of this vector and a given vector 
 		inline Vector4& _CALL Cross(const Vector4);
 
-		// Projects the Vector4 onto the input vector
+		// Projects the Vector4 onto the given vector
 		inline Vector4& _CALL Project(const Vector4);
 
 		inline float _CALL Magnitude(void) const;
@@ -80,7 +80,7 @@ namespace Math
 		inline float& _CALL operator[](const unsigned _nIndex);
 		inline const float _CALL operator[](const unsigned _nIndex) const;
 
-		inline Vector4 _CALL operator-(void) const;
+		inline Vector4  _CALL operator-(void) const;
 		inline Vector4& _CALL operator*=(const float);
 		inline Vector4& _CALL operator*=(const Vector4);
 		inline Vector4& _CALL operator/=(const float);
@@ -88,6 +88,7 @@ namespace Math
 		inline Vector4& _CALL operator-=(const Vector4);
 
 #if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
+
 		//inline void* operator new (std::size_t);
 		//inline void* operator new (std::size_t, const std::nothrow_t&) noexcept;
 		//inline void* operator new (std::size_t, void*) noexcept;
@@ -103,6 +104,7 @@ namespace Math
 		//inline void operator delete[] (void*) noexcept;
 		//inline void operator delete[] (void*, const std::nothrow_t&) noexcept;
 		//inline void operator delete[] (void*, void*) noexcept;
+
 #endif	// ! WIN64
 
 	private:
@@ -141,11 +143,11 @@ namespace Math
 				return *this;
 			}
 
-			inline __m128 _CALL Get(void) const;
+			inline __m128 _CALL GetRaw(void) const;
 
 			inline _CALL operator Vector4 (void) const
 			{
-				return Vector4{ Get() };
+				return Vector4{ GetRaw() };
 			}
 
 		private:
@@ -155,8 +157,6 @@ namespace Math
 			static constexpr unsigned shuffleRead = _MM_SHUFFLE(W, Z, Y, X);
 			static constexpr unsigned shuffleWrite = (3 << (2*W)) | (2 << (2*Z)) | (1 << (2*Y)) | (0 << (2*X));
 		};
-
-		inline explicit Vector4(__m128) noexcept;
 
 		static inline __m128 _CALL InvSqrt(__m128);
 		static inline __m128 _CALL Dot(__m128, __m128);
@@ -174,12 +174,18 @@ namespace Math
 		SwizzleMask<0, 0, 1, 1> xxyy;
 		SwizzleMask<0, 0, 2, 2> xxzz;
 		SwizzleMask<0, 1, 0, 1> xyxy;
+		SwizzleMask<0, 2, 1, 3> xzyw;
+		SwizzleMask<0, 3, 0, 3> xwxw;
+		SwizzleMask<1, 0, 3, 2> yxwz;
 		SwizzleMask<1, 1, 1, 1> yyyy;
 		SwizzleMask<2, 0, 1, 3> zxyw; // Used by cross product 
+		SwizzleMask<2, 1, 2, 1> zyzy;
 		SwizzleMask<2, 2, 2, 2> zzzz;
+		SwizzleMask<2, 3, 0, 1> zwxy;
+		SwizzleMask<3, 1, 2, 0> wyzx;
 		SwizzleMask<3, 3, 3, 3> wwww;
 
-		friend inline Vector4 _CALL Abs(const Vector4);
+		inline __m128 _CALL GetRaw(void) const noexcept;
 	};
 
 	// Converts a vector into unit length
@@ -199,6 +205,9 @@ namespace Math
 	// Manually overload the math utility functions which cannot be called for type Vector4
 
 	inline Vector4 _CALL Abs(const Vector4);
+
+	inline Vector4 _CALL Min(const Vector4, const Vector4);
+	inline Vector4 _CALL Max(const Vector4, const Vector4);
 
 
 	// ==================================== VECTOR GENERATORS ==================================== // 
@@ -232,28 +241,33 @@ namespace Math
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
-inline Math::Vector4::Vector4(void) noexcept :
-	mData( _mm_setzero_ps() )
+inline Math::Vector4::Vector4(void) noexcept
+	: mData( _mm_setzero_ps() )
 {
 
 }
 
-inline Math::Vector4::Vector4(const Vector4& v) noexcept :
-	mData( v.mData )
+inline Math::Vector4::Vector4(const Vector4& v) noexcept 
+	: mData( v.mData )
 {
 
 }
 
-inline Math::Vector4::Vector4(float x, float y, float z, float w) noexcept :
-	mData( _mm_set_ps(w, z, y, x) )
+inline Math::Vector4::Vector4(float x, float y, float z, float w) noexcept 
+	: mData( _mm_set_ps(w, z, y, x) )
 {
 
 }
 
-inline Math::Vector4::Vector4(__m128 v) noexcept :
-	mData( v )
+inline Math::Vector4::Vector4(__m128 v) noexcept
+	: mData( v )
 {
 
+}
+
+inline __m128 _CALL Math::Vector4::GetRaw(void) const noexcept
+{
+	return mData;
 }
 
 inline Math::Vector4& _CALL Math::Vector4::Normalise(void)
@@ -279,17 +293,8 @@ inline Math::Vector4& _CALL Math::Vector4::Cross(const Vector4 _rhs)
 {
 	// x = (a.y * b.z) - (a.z * b.y)
 	// y = (a.z * b.x) - (a.x * b.z)
-	// z = (a.x * b.y) - (a.y * b.x
+	// z = (a.x * b.y) - (a.y * b.x)
 	// w = (a.w * b.w) - (a.w * b.w)
-
-	/*
-	mData = Vector4{
-			_mm_sub_ps( _mm_mul_ps(mData, _rhs.zxyw.Get()),
-						_mm_mul_ps(zxyw.Get(), _rhs.mData))
-	}.zxyw.Get();
-
-	return *this;
-	*/
 
 	return *this = ((*this * _rhs.zxyw) - (zxyw * _rhs)).zxyw;
 }
@@ -341,19 +346,47 @@ inline Math::Vector4 _CALL Math::Project(Vector4 _lhs, Vector4 _rhs)
 	return _lhs.Project(_rhs);
 }
 
-inline Math::Vector4 _CALL Math::Abs(Vector4 _v)
+inline Math::Vector4 _CALL Math::Abs(const Vector4 _v)
 {
 	__m128i signBits = _mm_set1_epi32(0x7FFFFFFF); // Set all the bits except for the sign bit to 1
 
 	// Bitwise AND operator
-	return Vector4{ _mm_and_ps(_v.mData, _mm_castsi128_ps(signBits)) };
+	return Vector4{ _mm_and_ps(_v.GetRaw(), _mm_castsi128_ps(signBits)) };
+}
+
+/*!
+\brief
+	Piece-wise Min of two Vector4
+
+\return Vector4
+	Returns a Vector4 where 
+	x = Min( lhs.x, rhs.x ), y = Min( lhs.y, rhs.y ) ... 
+	etc.
+*/
+inline Math::Vector4 _CALL Math::Min(const Vector4 _lhs, const Vector4 _rhs)
+{
+	return Vector4{ _mm_min_ps(_lhs.GetRaw(), _rhs.GetRaw()) };
+}
+
+/*!
+\brief
+	Piece-wise Max of two Vector4
+
+\return Vector4
+	Returns a Vector4 where 
+	x = Max( lhs.x, rhs.x ), y = Max( lhs.y, rhs.y ) ... 
+	etc.
+*/
+inline Math::Vector4 _CALL Math::Max(const Vector4 _lhs, const Vector4 _rhs)
+{
+	return Vector4{ _mm_max_ps(_lhs.GetRaw(), _rhs.GetRaw()) };
 }
 
 // Helper function to reduce approx. error on rsqrt
 inline __m128  _CALL Math::Vector4::InvSqrt(__m128 _v)
 {
-	__m128 three = _mm_set_ps1(3.f);
-	__m128 half  = _mm_set_ps1(.5f);
+	static const __m128 three = _mm_set_ps1(3.f);
+	static const __m128 half  = _mm_set_ps1(.5f);
 
 	// 1 iteration newton's method
 	__m128 temp  = _mm_rsqrt_ps(_v);
@@ -365,7 +398,7 @@ inline __m128  _CALL Math::Vector4::InvSqrt(__m128 _v)
 	return _mm_mul_ps(temp, iter);
 }
 
-// Internal function for return the dot product as a Vector4 type
+// Internal function for returning the dot product as a Vector4 type
 inline __m128 _CALL Math::Vector4::Dot(__m128 _lhs, __m128 _rhs)
 {
 #if USE_DP & defined(_INCLUDED_SMM)	// SSE 4.1
@@ -382,10 +415,14 @@ inline __m128 _CALL Math::Vector4::Dot(__m128 _lhs, __m128 _rhs)
 
 #else								// FALL BACK
 
+	Vector4 temp = _lhs * _rhs;
+	Vector4 shuf = temp + temp.zwxy;
+	return (shuf + shuf.yxwz).GetRaw();
+	/*
 	__m128 temp = _mm_mul_ps(_lhs, _rhs);
 	__m128 shuf = _mm_add_ps(temp, _mm_shuffle_ps(temp, temp, _MM_SHUFFLE(2, 3, 0, 1)));
 	return _mm_add_ps(shuf, _mm_shuffle_ps(shuf, shuf, _MM_SHUFFLE(1, 0, 3, 2)));
-
+	*/
 #endif
 }
 
@@ -458,7 +495,7 @@ inline _CALL Math::Vector4::DataMember<0>::operator float(void) const
 
 
 template <unsigned X, unsigned Y, unsigned Z, unsigned W>
-inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::Get(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::GetRaw(void) const
 {
 	return _mm_shuffle_ps(mData, mData, shuffleRead);
 }
@@ -469,25 +506,25 @@ inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::Get(void) const
 // Perhaps on older CPUs and moot on newer ones
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<0, 0, 1, 1>::Get(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<0, 0, 1, 1>::GetRaw(void) const
 {
 	return _mm_unpacklo_ps(mData, mData);
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<2, 2, 3, 3>::Get(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<2, 2, 3, 3>::GetRaw(void) const
 {
 	return _mm_unpackhi_ps(mData, mData);
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<0, 1, 0, 1>::Get(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<0, 1, 0, 1>::GetRaw(void) const
 {
 	return _mm_movelh_ps(mData, mData);
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<2, 3, 2, 3>::Get(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<2, 3, 2, 3>::GetRaw(void) const
 {
 	return _mm_movelh_ps(mData, mData);
 }
@@ -495,13 +532,13 @@ inline __m128 _CALL Math::Vector4::SwizzleMask<2, 3, 2, 3>::Get(void) const
 #if defined(_INCLUDED_PMM)		// SSE 3
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<0, 0, 2, 2>::Get(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<0, 0, 2, 2>::GetRaw(void) const
 {
 	return _mm_moveldup_ps(mData);
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<1, 1, 3, 3>::Get(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<1, 1, 3, 3>::GetRaw(void) const
 {
 	return _mm_movehdup_ps(mData);
 }

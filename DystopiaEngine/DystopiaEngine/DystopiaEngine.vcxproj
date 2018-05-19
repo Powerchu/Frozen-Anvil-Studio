@@ -68,6 +68,7 @@
     <ClInclude Include="Include\IO\TextSerialiser.h" />
     <ClInclude Include="Include\Math\MathInternal.h" />
     <ClInclude Include="Include\Math\MathUtility.h" />
+    <ClInclude Include="Include\Math\Matrix2.h" />
     <ClInclude Include="Include\Math\Matrix4.h" />
     <ClInclude Include="Include\Math\Quaternion.h" />
     <ClInclude Include="Include\Math\Vector4.h" />
