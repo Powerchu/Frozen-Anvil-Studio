@@ -1,38 +1,52 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Mesh.h
+\file	MeshSystem.h
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Mesh
+	Manages the creation, loading and destruction of Meshes.
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _MESH_H_
-#define _MESH_H_
+#ifndef _MESHSYS_H_
+#define _MESHSYS_H_
+
+#include "DataStructure\AutoArray.h"
 
 #include <string>
 
 
 namespace Dystopia
 {
-	class Mesh
+	class Mesh;
+
+	class MeshSystem final
 	{
 	public:
 
-		Mesh(void) noexcept;
+		void Init(void);
+		void Shutdown(void) noexcept;
 
-		void UseMesh(int _nMode) const;
+		void StartMesh(void);
+		void LoadMesh(const std::string&);
+		Mesh EndMesh(void);
 
-		
+		void FreeMeshes(void);
+
+
 	private:
 
-		unsigned mVAO, mnVertices, mnOffset;
+		AutoArray<struct Vertex>  vtx;
+		AutoArray<struct Normal>  normals;
+		AutoArray<struct UV>      uvs;
+		AutoArray<struct RawMesh> mpMeshes;
 	};
 }
+
+
 
 
 

@@ -1,40 +1,32 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Mesh.h
+\file	RawMesh.h
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Mesh
+	"Raw" Mesh Data
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _MESH_H_
-#define _MESH_H_
+#include "System\Graphics\RawMesh.h"	// File Header
 
-#include <string>
+#include <GL\glew.h>
 
 
-namespace Dystopia
+Dystopia::RawMesh::RawMesh(void) noexcept
+	: mVtxCount{ 0 }
 {
-	class Mesh
-	{
-	public:
-
-		Mesh(void) noexcept;
-
-		void UseMesh(int _nMode) const;
-
-		
-	private:
-
-		unsigned mVAO, mnVertices, mnOffset;
-	};
+	glGenVertexArrays(1, &mVAO);
+	glGenBuffers(3, &mVtxBuffer);
 }
 
+Dystopia::RawMesh::~RawMesh(void)
+{
+	glDeleteBuffers(3, &mVtxBuffer);
+	glDeleteVertexArrays(1, &mVAO);
+}
 
-
-#endif		// INCLUDE GUARD
 
