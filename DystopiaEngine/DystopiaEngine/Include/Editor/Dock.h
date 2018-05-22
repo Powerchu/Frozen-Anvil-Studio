@@ -16,14 +16,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _DOCK_H_
 #define _DOCK_H_
 #include "Math\Vector4.h"
+#include "DataStructure\AutoArray.h"
 
-typedef int ImGuiWindowFlags;
-typedef unsigned int ImU32;
-
-namespace ImGui
-{
-	struct ImVec2;
-}
+#ifndef IMGUI_API
+#include <imgui.h>
+#endif //IMGUI_API
 
 namespace Dystopia
 {
@@ -62,7 +59,7 @@ namespace Dystopia
 					eSTAT_DRAGGED
 				};
 
-				class Dock
+				struct Dock
 				{
 				public:
 					Dock();
@@ -78,7 +75,6 @@ namespace Dystopia
 					void SetPosSize(const ImVec2&, const ImVec2&);
 					void SetChildPosSize(const ImVec2&, const ImVec2&);
 
-				private:
 					char* mpLabel;
 					Dock* mpNextTab;
 					Dock* mpPrevTab;
@@ -97,8 +93,53 @@ namespace Dystopia
 					bool mFirst;
 				};
 
-			private:
+				DockContext();
+				~DockContext();
+				void Shutdown();
+				void PutInBG();
+				void Split();
+				void CheckNonexistent();
+				void SetDockActive();
+				void HandleDrag(Dock&);
+				void FillLocation(Dock&);
+				void DoUndock(Dock&);
+				void DoDock(Dock&, Dock*, eDockSlot);
+				void DrawTabbarListBtn(Dock&);
+				void RootDock(const ImVec2&, const ImVec2&);
+				void TryDockToStoredLocation(Dock&);
+				void CleanDocks();
+				void End();
+				static void SetDockPosSize(Dock&, Dock&, eDockSlot, Dock&);
+				static ImRect GetDockedRect(const ImRect&, eDockSlot);
+				static ImRect GetSlotRect(ImRect, eDockSlot);
+				static ImRect GetSlotRectOnBorder(ImRect, eDockSlot);
+				static eDockSlot GetSlotFromCode(char code);
+				static char GetLocationCode(Dock* dock);
 
+				Dock* GetDockAt(const ImVec2&) const;
+				Dock& GetDock(const char*, bool, const ImVec2&);
+				Dock* GetRootDock();
+				Dock* FindNonContainer(Dock&);
+
+				bool Begin();
+				bool DockSlots(Dock&, Dock*, const ImRect&, bool);
+				bool Tabbar(Dock&, bool);
+
+				int GetDockIndex(Dock*);
+
+			private:
+				//ImVector<Dock*> m_docks;
+				AutoArray<Dock*> mDocksArr;
+				Dock *mpCurrent;
+				Dock *mpNextParent;
+				ImVec2 mDragOffset;
+				ImVec2 mWorkspacePos;
+				ImVec2 mWorkspaceSize;
+				int mLastFrame;
+				eEndAction mEndAction;
+				eDockSlot mNextDockSlot;
+				bool mIsBeginOpen;
+				bool mIsFirstCall;
 			};
 
 			DockContext* CreateContext();
