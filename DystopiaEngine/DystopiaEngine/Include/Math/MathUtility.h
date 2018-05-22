@@ -20,8 +20,10 @@
 
 namespace Math
 {
+	// Exponential Function
+	constexpr float e   = 2.7182818284590452353602874713526f;
 	// Mathematical PI
-	constexpr float pi = 3.1415926535897932384626433832795f;
+	constexpr float pi  = 3.1415926535897932384626433832795f;
 	// 2 * PI
 	constexpr float pi2 = 2.f * pi;
 	// Golden ratio
