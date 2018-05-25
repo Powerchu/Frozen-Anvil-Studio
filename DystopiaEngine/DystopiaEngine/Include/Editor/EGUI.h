@@ -12,10 +12,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-
 #ifndef _EDITOR_GUI_H_
 #define _EDITOR_GUI_H_
 #include "Math\Vector4.h"
+#include "Editor\Dock.h"
+
 struct ImDrawData;
 struct ImGuiContext;
 
@@ -52,6 +53,11 @@ namespace Dystopia
 			void SaveAs(FncPtrCallback);
 			void Quit(FncPtrCallback);
 		}
+		
+		namespace Dock
+		{
+			class DockContext;
+		}
 	}
 
 	class GuiSystem
@@ -85,8 +91,9 @@ namespace Dystopia
 		unsigned int	mVboHandle;
 		unsigned int	mElementsHandle;
 		bool			mMouseJustPressed[3];
-
 		void	CreateDefaultFont();
+
+		EGUI::Dock::DockContext *mpDockCtx;
 	};
 }
 

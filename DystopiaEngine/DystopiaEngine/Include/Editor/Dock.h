@@ -15,12 +15,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _DOCK_H_
 #define _DOCK_H_
-#include "Math\Vector4.h"
+#include "../../Dependancies/ImGui/imgui.h"
+#include "../../Dependancies/ImGui/imgui_internal.h"
 #include "DataStructure\AutoArray.h"
-
-#ifndef IMGUI_API
-#include <imgui.h>
-#endif //IMGUI_API
 
 namespace Dystopia
 {
@@ -119,13 +116,19 @@ namespace Dystopia
 				Dock* GetDockAt(const ImVec2&) const;
 				Dock& GetDock(const char*, bool, const ImVec2&);
 				Dock* GetRootDock();
-				Dock* FindNonContainer(Dock&);
+				Dock* FindNonContainer(Dock*);
 
-				bool Begin();
+				bool Begin(const char *, bool *, ImGuiWindowFlags , const ImVec2&);
 				bool DockSlots(Dock&, Dock*, const ImRect&, bool);
 				bool Tabbar(Dock&, bool);
 
 				int GetDockIndex(Dock*);
+
+				void DebugWindow();
+
+				void SetNextDockSlot(eDockSlot);
+				void SetWorkspacePos(ImVec2);
+				void SetWorkspaceSize(ImVec2);
 
 			private:
 				//ImVector<Dock*> m_docks;
@@ -152,11 +155,10 @@ namespace Dystopia
 			void Shutdown();
 			void SetNextDock(eDockSlot);
 
-			bool Begin(const char*, bool *_opened = nullptr, ImGuiWindowFlags _flags = 0, const Math::Vector4& _defSize = Math::Vector4{ 0, 0, 0, 0 });
-			void End();
+			bool BeginDock(const char*, bool *_opened = nullptr, ImGuiWindowFlags _flags = 0, const ImVec2& _defSize = ImVec2{ 0, 0 });
+			void EndDock();
 			void SetActive();
 			void DebugWindow();
-
 		}
 	}
 }

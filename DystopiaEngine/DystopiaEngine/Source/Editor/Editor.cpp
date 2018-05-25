@@ -109,6 +109,36 @@ namespace Dystopia
 
 	void Editor::EndFrame()
 	{
+		EGUI::Display::MainMenuBar();
+		ImGui::SetNextWindowPos(ImVec2{ 0,0 });
+		ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+		const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | 
+										ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | 
+										ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
+		
+		const float oldWindowRounding = ImGui::GetStyle().WindowRounding;
+		const bool visible = ImGui::Begin("imguidock window (= lumix engine's dock system)", NULL, flags);
+		ImGui::GetStyle().WindowRounding = oldWindowRounding;
+		ImGui::GetStyle().WindowRounding = 0;
+
+		if (visible)
+		{
+			EGUI::Dock::BeginSpace(); //ImGui::BeginDockspace();
+			static char tmp[128];
+			for (int i = 0; i< 1; i++)
+			{
+				sprintf(tmp, "Dock %d", i);
+				if (i == 9)
+					EGUI::Dock::SetNextDock(EGUI::Dock::eDockSlot::eDOCK_BOTTOM); //ImGui::SetNextDock(ImGuiDockSlot_Bottom);// optional
+				if (EGUI::Dock::BeginDock(tmp)) //if (ImGui::BeginDock(tmp))
+					ImGui::Text("Content of dock window %d goes here", i);
+
+				EGUI::Dock::EndDock(); //ImGui::EndDock();
+			}
+			EGUI::Dock::EndSpace(); //ImGui::EndDockspace();
+		}
+		ImGui::End();
+
 		for (auto e : mGuiSysArray)
 			e->EndFrame();
 

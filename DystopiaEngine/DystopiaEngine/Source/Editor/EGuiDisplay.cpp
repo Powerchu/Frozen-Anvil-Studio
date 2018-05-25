@@ -13,7 +13,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor\EGUI.h"
-#include "..\..\Dependancies\ImGui\imgui.h"
 
 namespace Dystopia{
 namespace EGUI{

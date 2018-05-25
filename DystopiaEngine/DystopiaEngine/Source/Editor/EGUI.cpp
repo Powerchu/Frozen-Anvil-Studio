@@ -20,7 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Input\InputSystem.h"
 #include "System\Input\InputMap.h"
 #include "Math\Vector4.h"
-#include "..\..\Dependancies\ImGui\imgui.h"
 #include "GL\glew.h"
 #include <iostream>
 #include <Windows.h>
@@ -191,6 +190,10 @@ namespace Dystopia
 	 
 		// if (install_callbacks)
 		// 	InstallInputCallbacks();
+
+		mpDockCtx = EGUI::Dock::CreateContext();
+		EGUI::Dock::SetContext(mpDockCtx);
+
 		return true;
 	}
 
@@ -307,14 +310,6 @@ namespace Dystopia
 
 	void GuiSystem::EndFrame()
 	{
-
-		ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
-
-		ImGui::Begin("Inspector Window", false, flags);
-		ImGui::TextWrapped("Hello Inspector! Note that coordinates are top left 0,0");
-		ImGui::End();
-
-
 		ImGui::SetCurrentContext(mpCtx);
 		ImGui::Render();
 		mpDrawData = ImGui::GetDrawData();
@@ -434,6 +429,9 @@ namespace Dystopia
 		}
 
 		delete mpGLState;
+
+		EGUI::Dock::DestroyContext(mpDockCtx);
+		mpDockCtx = nullptr;
 		ImGui::DestroyContext(mpCtx);
 	}
 
