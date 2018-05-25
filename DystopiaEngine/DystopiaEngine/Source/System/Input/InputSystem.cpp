@@ -26,6 +26,10 @@ void Dystopia::InputManager::LoadDefaultUserKeys(void)
 	mButtonMap[eUserButton::BUTTON_LEFT  ] = eButton::KEYBOARD_LEFT;
 	mButtonMap[eUserButton::BUTTON_RIGHT ] = eButton::KEYBOARD_RIGHT;
 
+	mButtonMap[eUserButton::MOUSE_L] = eButton::MOUSE_LEFT;
+	mButtonMap[eUserButton::MOUSE_R] = eButton::MOUSE_RIGHT;
+	mButtonMap[eUserButton::MOUSE_M] = eButton::MOUSE_MIDDLE;
+
 	mButtonMap[eUserButton::BUTTON_PAUSE ] = eButton::KEYBOARD_P;
 	mButtonMap[eUserButton::BUTTON_CANCEL] = eButton::KEYBOARD_ESCAPE;
 }

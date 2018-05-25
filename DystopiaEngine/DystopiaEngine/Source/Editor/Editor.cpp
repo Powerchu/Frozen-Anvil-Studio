@@ -68,6 +68,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	return 0;
 }
 
+
+
+
 namespace Dystopia
 {
 	Editor::Editor(void)
@@ -104,7 +107,7 @@ namespace Dystopia
 
 		// if (mCurrentState == EDITOR_PLAY) call for update of current scene
 		if (mCurrentState == EDITOR_PAUSE) return;
-		std::cout << _dt << "\n";
+		std::cout << mpInput->GetMousePosition().x << " / " << mpInput->GetMousePosition().y << std::endl;
 	}
 
 	void Editor::EndFrame()
@@ -120,7 +123,7 @@ namespace Dystopia
 		const bool visible = ImGui::Begin("imguidock window (= lumix engine's dock system)", NULL, flags);
 		ImGui::GetStyle().WindowRounding = oldWindowRounding;
 		ImGui::GetStyle().WindowRounding = 0;
-
+		
 		if (visible)
 		{
 			EGUI::Dock::BeginSpace(); //ImGui::BeginDockspace();
@@ -132,7 +135,7 @@ namespace Dystopia
 					EGUI::Dock::SetNextDock(EGUI::Dock::eDockSlot::eDOCK_BOTTOM); //ImGui::SetNextDock(ImGuiDockSlot_Bottom);// optional
 				if (EGUI::Dock::BeginDock(tmp)) //if (ImGui::BeginDock(tmp))
 					ImGui::Text("Content of dock window %d goes here", i);
-
+		
 				EGUI::Dock::EndDock(); //ImGui::EndDock();
 			}
 			EGUI::Dock::EndSpace(); //ImGui::EndDockspace();

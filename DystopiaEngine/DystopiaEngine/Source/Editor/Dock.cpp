@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor\Dock.h"
+#include <iostream>
 
 namespace Dystopia {
 namespace EGUI {	

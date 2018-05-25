@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor\EGUI.h"
+#include <iostream>
 
 namespace Dystopia{
 namespace EGUI{
@@ -25,6 +26,7 @@ void MainMenuBar()
 	{
 		if (ImGui::BeginMenu("File"))
 		{
+			std::cout << "1\n";
 			if (ImGui::MenuItem("New"))
 			{
 				// TODO: Some actual function

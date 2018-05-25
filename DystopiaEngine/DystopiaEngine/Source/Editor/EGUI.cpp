@@ -38,11 +38,6 @@ static const char* GetClipBoardText(void *_pUserData)
 	return NULL;
 }
 
-static void InstallInputCallbacks()
-{
-	// Bind the results of inputs to also call certain functions here
-}
-
 namespace Dystopia
 {
 	// GL state to store previous draw data before render and to restore after render
@@ -132,7 +127,6 @@ namespace Dystopia
 		mpGfx = _pGfx;
 		mpInput = _pInput;
 
-		std::cout << "HI EGUI ABSDIBASODA!!!";
 		mpGLState = new GLState();
 		mpCtx = ImGui::CreateContext();
 		ImGui::StyleColorsDark();
@@ -165,12 +159,12 @@ namespace Dystopia
 		// io.KeyMap[ImGuiKey_Space]		= eButton::KEYBOARD_SPACEBAR;
 		// io.KeyMap[ImGuiKey_Enter]		= eButton::KEYBOARD_ENTER;
 		// io.KeyMap[ImGuiKey_Escape]		= eButton::KEYBOARD_ESCAPE;
-		// io.KeyMap[ImGuiKey_A]			= eButton::KEYBOARD_A;
-		// io.KeyMap[ImGuiKey_C]			= eButton::KEYBOARD_C;
-		// io.KeyMap[ImGuiKey_V]			= eButton::KEYBOARD_V;
-		// io.KeyMap[ImGuiKey_X]			= eButton::KEYBOARD_X;
-		// io.KeyMap[ImGuiKey_Y]			= eButton::KEYBOARD_Y;
-		// io.KeyMap[ImGuiKey_Z]			= eButton::KEYBOARD_Z;
+		io.KeyMap[ImGuiKey_A]			= static_cast<int>(eButton::KEYBOARD_A);
+		io.KeyMap[ImGuiKey_C]			= static_cast<int>(eButton::KEYBOARD_C);
+		io.KeyMap[ImGuiKey_V]			= static_cast<int>(eButton::KEYBOARD_V);
+		io.KeyMap[ImGuiKey_X]			= static_cast<int>(eButton::KEYBOARD_X);
+		io.KeyMap[ImGuiKey_Y]			= static_cast<int>(eButton::KEYBOARD_Y);
+		io.KeyMap[ImGuiKey_Z]			= static_cast<int>(eButton::KEYBOARD_Z);
 
 		io.SetClipboardTextFn = SetClipBoardText;
 		io.GetClipboardTextFn = GetClipBoardText;
@@ -189,8 +183,8 @@ namespace Dystopia
 		// g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 	 
 		// if (install_callbacks)
-		// 	InstallInputCallbacks();
-
+		// InstallInputCallbacks();
+		
 		mpDockCtx = EGUI::Dock::CreateContext();
 		EGUI::Dock::SetContext(mpDockCtx);
 
@@ -199,10 +193,16 @@ namespace Dystopia
 
 	void GuiSystem::StartFrame(const float& _dt)
 	{
-		ImGui::SetCurrentContext(mpCtx);
 		if (!mFontTexture) CreateDefaultFont();
 
+		ImGui::SetCurrentContext(mpCtx);
 		ImGuiIO& io = ImGui::GetIO();
+
+		// update inputs to imgui io
+		UpdateMouseInputs();
+		UpdateScrollInputs();
+		UpdateKeyInputs();
+		UpdateCharInputs();
 
 		// Setup display size (every frame to accommodate for window resizing)
 		int w, h;
@@ -219,7 +219,7 @@ namespace Dystopia
 
 		// Setup inputs
 		// (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
-		if (mpWin)//glfwGetWindowAttrib(g_Window, GLFW_FOCUSED))
+		if (mpWin) //glfwGetWindowAttrib(g_Window, GLFW_FOCUSED))
 		{
 			// Set OS mouse position if requested (only used when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
 			if (io.WantSetMousePos)
@@ -234,19 +234,16 @@ namespace Dystopia
 				Math::Vec4 pos = mpInput->GetMousePosition();
 				mouse_x = pos.x;
 				mouse_y = pos.y;
-				//glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
-				io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);
+ 				io.MousePos = ImVec2((float)mouse_x, (float)mouse_y); //glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
 			}
 		}
 		else
-		{
 			io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
-		}
 
 		for (int i = 0; i < 3; i++)
 		{
 			// If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
-			// io.MouseDown[i] = g_MouseJustPressed[i] || glfwGetMouseButton(g_Window, i) != 0;
+			io.MouseDown[i] = mMouseJustPressed[i] || mpInput->IsKeyPressed(static_cast<eUserButton>(static_cast<int>(eUserButton::MOUSE_L) + i)); // io.MouseDown[i] = g_MouseJustPressed[i] || glfwGetMouseButton(g_Window, i) != 0;
 			mMouseJustPressed[i] = false;
 		}
 
@@ -301,7 +298,6 @@ namespace Dystopia
 
 		// Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
 		ImGui::NewFrame();
-
 
 		glViewport(0, 0, 1600, 900);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.f);
@@ -519,6 +515,34 @@ namespace Dystopia
 		glBindTexture(GL_TEXTURE_2D, last_texture);
 		glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
 		glBindVertexArray(last_vertex_array);
+	}
+
+	void GuiSystem::UpdateCharInputs()
+	{
+		// update char inputs
+		ImGuiIO& io = ImGui::GetIO();
+		unsigned char c;			// what is c?
+
+		if (c > 0 && c < 0x10000)
+			io.AddInputCharacter(static_cast<unsigned short>(c));
+	}
+
+	void GuiSystem::UpdateMouseInputs()
+	{
+		// update mouse inputs
+		mMouseJustPressed[0] = mpInput->IsKeyPressed(eUserButton::MOUSE_L);
+		mMouseJustPressed[1] = mpInput->IsKeyPressed(eUserButton::MOUSE_R);
+		mMouseJustPressed[2] = mpInput->IsKeyPressed(eUserButton::MOUSE_M);
+	}
+	
+	void GuiSystem::UpdateKeyInputs()
+	{
+		// this should be use more for game inputs? but allows some hotkeys in editor
+	}
+	
+	void GuiSystem::UpdateScrollInputs()
+	{
+		// get scroll inputs from windows programming or from input manager?
 	}
 }
 

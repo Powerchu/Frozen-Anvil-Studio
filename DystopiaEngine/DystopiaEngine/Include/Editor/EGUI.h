@@ -90,8 +90,13 @@ namespace Dystopia
 		int				mAttribLocationColor;
 		unsigned int	mVboHandle;
 		unsigned int	mElementsHandle;
-		bool			mMouseJustPressed[3];
-		void	CreateDefaultFont();
+		bool			mMouseJustPressed[3];	// 0 is left, 1 is right, 2 is middle
+
+		void			CreateDefaultFont();
+		void			UpdateCharInputs();
+		void			UpdateMouseInputs();
+		void			UpdateKeyInputs();
+		void			UpdateScrollInputs();
 
 		EGUI::Dock::DockContext *mpDockCtx;
 	};
