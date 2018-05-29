@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_GUI_H_
 #include "Math\Vector4.h"
 #include "Editor\Dock.h"
+#include <string>
 
 struct ImDrawData;
 struct ImGuiContext;
@@ -78,7 +79,7 @@ namespace Dystopia
 		InputManager	*mpInput;
 		ImDrawData		*mpDrawData;
 		GLState			*mpGLState;
-		char			mGlslVersion[32];
+		std::string		mGlslVersion;
 		GLuint			mFontTexture;
 		int				mShaderHandle;
 		int				mVertHandle;

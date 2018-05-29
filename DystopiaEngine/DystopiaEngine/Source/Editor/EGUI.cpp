@@ -111,7 +111,7 @@ namespace Dystopia
 	};
 
 	GuiSystem::GuiSystem()
-		: mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mpDrawData{ nullptr }, mpGLState{ nullptr }, mGlslVersion{"#version 150"},
+		: mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mpDrawData{ nullptr }, mpGLState{ nullptr }, mGlslVersion{ "#version 150" },
 		mFontTexture{ 0 }, mShaderHandle{ 0 }, mVertHandle{ 0 }, mFragHandle{ 0 }, mAttribLocationTex{ 0 }, mAttribLocationProjMtx{ 0 },
 		mAttribLocationPosition{ 0 }, mAttribLocationUV{ 0 }, mAttribLocationColor{ 0 }, mVboHandle{ 0 }, mElementsHandle{ 0 },
 		mMouseJustPressed{ false, false, false }, mpCtx{ nullptr }
@@ -134,9 +134,9 @@ namespace Dystopia
 		// Store GL version string so we can refer to it later in case we recreate shaders.
 		// if (glsl_version == NULL)
 		// 	glsl_version = "#version 150";
-		IM_ASSERT((int)strlen("#version 150") + 2 < IM_ARRAYSIZE(mGlslVersion));
-		strcpy(mGlslVersion, "#version 150");
-		strcat(mGlslVersion, "\n");
+		//IM_ASSERT((int)strlen("#version 150") + 2 < IM_ARRAYSIZE(mGlslVersion.c_str()));
+		mGlslVersion = "#version 150";
+		mGlslVersion += "\n";
 
 		// Setup back-end capabilities flags
 		ImGuiIO& io = ImGui::GetIO();
@@ -463,8 +463,8 @@ namespace Dystopia
 			"	Out_Color = FramColor * texture( Texture, FramUV.st);\n"
 			"}\n";
 
-		const GLchar* vertex_shader_with_version[2] = { mGlslVersion, vertex_shader };
-		const GLchar* fragment_shader_with_version[2] = { mGlslVersion, fragment_shader };
+		const GLchar* vertex_shader_with_version[2] = { mGlslVersion.c_str(), vertex_shader };
+		const GLchar* fragment_shader_with_version[2] = { mGlslVersion.c_str(), fragment_shader };
 
 		mShaderHandle = glCreateProgram();
 		mVertHandle = glCreateShader(GL_VERTEX_SHADER);
@@ -521,7 +521,7 @@ namespace Dystopia
 	{
 		// update char inputs
 		ImGuiIO& io = ImGui::GetIO();
-		unsigned char c;			// what is c?
+		unsigned char c = '0';			// what is c?
 
 		if (c > 0 && c < 0x10000)
 			io.AddInputCharacter(static_cast<unsigned short>(c));

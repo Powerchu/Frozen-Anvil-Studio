@@ -78,7 +78,7 @@ DockContext::Dock& DockContext::Dock::GetFirstTab()
 	Dock* temp = this;
 	while (temp->mpPrevTab)
 		temp = temp->mpPrevTab;
-	return *this;
+	return *temp;
 }
 
 void DockContext::Dock::SetActive()
@@ -337,9 +337,9 @@ void DockContext::HandleDrag(Dock& _dock)
 	_dock.mPos = ImVec2{ ImGui::GetIO().MousePos.x - mDragOffset.x ,
 						 ImGui::GetIO().MousePos.y - mDragOffset.y };
 
-	ImVec2 max{ pDestDock->mPos.x + pDestDock->mSize.x , pDestDock->mPos.y + pDestDock->mSize.y };
 	if (pDestDock)
 	{
+		ImVec2 max{ pDestDock->mPos.x + pDestDock->mSize.x , pDestDock->mPos.y + pDestDock->mSize.y };
 		if (DockSlots(_dock, pDestDock, ImRect{pDestDock->mPos, max}, false))
 		{
 			canvas->PopClipRect();
@@ -348,7 +348,7 @@ void DockContext::HandleDrag(Dock& _dock)
 		}
 	}
 	
-	max = ImVec2{mWorkspacePos.x + mWorkspaceSize.x, mWorkspacePos .y + mWorkspaceSize.y};
+	ImVec2 max{mWorkspacePos.x + mWorkspaceSize.x, mWorkspacePos .y + mWorkspaceSize.y};
 	if (DockSlots(_dock, nullptr, ImRect{ mWorkspacePos, max }, true))
 	{
 		canvas->PopClipRect();
@@ -996,10 +996,10 @@ bool DockContext::Begin(const char *_label, bool *_opened, ImGuiWindowFlags _fla
 							 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings |
 							 ImGuiWindowFlags_NoBringToFrontOnFocus | _flags;
 
-	char tempBuffer[256];
-	strcpy(tempBuffer, _label);
-	strcat(tempBuffer, "_docled");
-	bool ret = ImGui::BeginChild(tempBuffer, size, true, flags);
+	std::string tempBuffer;
+	tempBuffer = _label;
+	tempBuffer += "_docled";
+	bool ret = ImGui::BeginChild(tempBuffer.c_str(), size, true, flags);
 	ImGui::PopStyleColor(2);
 	
 	if (dock.mStatus == eSTAT_DRAGGED)
@@ -1198,7 +1198,7 @@ DockContext* GetContext()
 
 void BeginSpace()
 {
-	IM_ASSERT(g_dock != NULL && "No current context. Did you call ImGui::CreateDockContext() or ImGui::SetCurrentDockContext()?");
+	IM_ASSERT(g_pDock != NULL && "No current context. Did you call ImGui::CreateDockContext() or ImGui::SetCurrentDockContext()?");
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar;
 	
 	ImGui::BeginChild("###workspace", ImVec2{ 0,0 }, false, flags);
@@ -1219,31 +1219,31 @@ void Shutdown()
 
 void SetNextDock(eDockSlot _slot)
 {
-	IM_ASSERT(g_dock != NULL && "No current context. Did you call ImGui::CreateDockContext() or ImGui::SetCurrentDockContext()?");
+	IM_ASSERT(g_pDock != NULL && "No current context. Did you call ImGui::CreateDockContext() or ImGui::SetCurrentDockContext()?");
 	g_pDock->SetNextDockSlot(_slot);
 }
 
 bool BeginDock(const char *_label, bool *_opened, ImGuiWindowFlags _flags, const ImVec2& _defSize)
 {
-	IM_ASSERT(g_dock != NULL && "No current context. Did you call ImGui::CreateDockContext() or ImGui::SetCurrentDockContext()?");
+	IM_ASSERT(g_pDock != NULL && "No current context. Did you call ImGui::CreateDockContext() or ImGui::SetCurrentDockContext()?");
 	return g_pDock->Begin(_label, _opened, _flags, _defSize);
 }
 
 void EndDock()
 {
-	IM_ASSERT(g_dock != NULL && "No current context. Did you call ImGui::CreateDockContext() or ImGui::SetCurrentDockContext()?");
+	IM_ASSERT(g_pDock != NULL && "No current context. Did you call ImGui::CreateDockContext() or ImGui::SetCurrentDockContext()?");
 	g_pDock->End();
 }
 
 void SetActive()
 {
-	IM_ASSERT(g_dock != NULL && "No current context. Did you call ImGui::CreateDockContext() or ImGui::SetCurrentDockContext()?");
+	IM_ASSERT(g_pDock != NULL && "No current context. Did you call ImGui::CreateDockContext() or ImGui::SetCurrentDockContext()?");
 	g_pDock->SetDockActive();
 }
 
 void DebugWindow()
 {
-	IM_ASSERT(g_dock != NULL && "No current context. Did you call ImGui::CreateDockContext() or ImGui::SetCurrentDockContext()?");
+	IM_ASSERT(g_pDock != NULL && "No current context. Did you call ImGui::CreateDockContext() or ImGui::SetCurrentDockContext()?");
 	g_pDock->DebugWindow();
 }
 

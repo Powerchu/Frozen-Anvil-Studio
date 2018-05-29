@@ -14,6 +14,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _RESOURCE_VIEW_H_
 #define _RESOURCE_VIEW_H_
+#include "DataStructure\AutoArray.h"
+#include <string>
+#include <vector>
+ 
+static const std::string GLOBAL_DEFAULT_PROJECT_PATH = "..";
 
 namespace Dystopia
 {
@@ -27,11 +32,38 @@ namespace Dystopia
 		void Update(const float&);
 		void Shutdown();
 
+		void StartCrawl();
 		void Window();
 		void SetWidth(float);
 		void SetHeight(float);
 
+
+		struct CrawlFile
+		{
+			CrawlFile(const std::string&);
+			std::string mFileName;
+		};
+
+		struct CrawlFolder
+		{
+			CrawlFolder(const char*);
+			CrawlFolder(const std::string&);
+			~CrawlFolder();
+
+			void SetParent(CrawlFolder*);
+			void AddFolder(CrawlFolder*);
+			void AddFile(const std::string&);
+			void Crawl();
+			void PrintAll();
+
+			std::string mFolderName;
+			CrawlFolder *mpParentFolder;
+			AutoArray<CrawlFolder*> mArrChildFolders;
+			std::vector<CrawlFile> mArrFiles;
+		};
+
 	private:
+		CrawlFolder *mpCrawlData;
 		float mWidth;
 		float mHeight;
 		void *mpFocusData;

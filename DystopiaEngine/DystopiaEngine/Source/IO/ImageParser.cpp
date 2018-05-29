@@ -91,7 +91,7 @@ namespace BMP
 		// Check if we know how to read the file type
 		if (_header.mType != 'MB')
 		{
-			DEBUG_PRINT("ImageParser Error: File type not BMP \"%s\"!", _path.c_str());
+//			DEBUG_PRINT("ImageParser Error: File type not BMP \"%s\"!", _path.c_str());
 			return true;
 		}
 
@@ -106,7 +106,7 @@ namespace BMP
 		return false;
 	}
 
-	uint32_t* ColorPalette(std::ifstream& _file, InfoBMP& _fileInfo, ColorRGBA(&_palette)[256])
+	void ColorPalette(std::ifstream& _file, InfoBMP& _fileInfo, ColorRGBA(&_palette)[256])
 	{
 		for (unsigned n = 0; n < _fileInfo.mNumColors; ++n)
 		{
@@ -314,7 +314,7 @@ bool ImageParser::WriteBMP(const std::string& _path, void* _pImg, int _nWidth, i
 	}
 
 	file.write(static_cast<char*>(_pImg), imgSize);
-
+	return true;
 }
 
 

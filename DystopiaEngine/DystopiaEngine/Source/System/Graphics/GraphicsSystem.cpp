@@ -113,12 +113,12 @@ void Dystopia::GraphicsSystem::LevelLoad(TextSerialiser&)
 
 Dystopia::Mesh* Dystopia::GraphicsSystem::LoadMesh(const std::string&)
 {
-
+	return nullptr;
 }
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string&)
 {
-
+	return nullptr;
 }
 
 Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _filePath)
@@ -126,12 +126,14 @@ Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _fileP
 	std::string strName, strVert, strGeo, strFrag;
 
 	_filePath; strName; strVert; strGeo; strFrag;
+	return nullptr;
 }
 
 bool Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
 {
 	mCurrent = &_window;
 	wglMakeCurrent(_window.GetDeviceContext(), static_cast<HGLRC>(mOpenGL));
+	return true;
 }
 
 bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
@@ -155,7 +157,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	if (0 == nPxFormat) // Check if we got something back
 	{
-		DEBUG_ASSERT("Graphics System Error: ChoosePixelFormat fail! \n");
+		DEBUG_PRINT("Graphics System Error: ChoosePixelFormat fail! \n");
 
 		return false;
 	}
@@ -165,7 +167,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	if (!bResult) // This shouldn't happen
 	{
-		DEBUG_ASSERT("Graphics System Error: SetPixelFormat fail! \n");
+		DEBUG_PRINT("Graphics System Error: SetPixelFormat fail! \n");
 
 		return false;
 	}
@@ -179,7 +181,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	if (err != GLEW_OK)
 	{
-		DEBUG_ASSERT("Graphics System Error: GLEW init fail! \n");
+		DEBUG_PRINT("Graphics System Error: GLEW init fail! \n");
 
 		return false;
 	}
@@ -187,7 +189,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	// Check if gl 3.1 and above context is supported
 	if (wglewIsSupported("WGL_ARB_create_context") == 1 && !SelectOpenGLVersion(_window))
 	{
-		DEBUG_ASSERT("Graphics System Error: OpenGL 3.1 and above not supported! \n");
+		DEBUG_PRINT("Graphics System Error: OpenGL 3.1 and above not supported! \n");
 
 		return false;
 	}

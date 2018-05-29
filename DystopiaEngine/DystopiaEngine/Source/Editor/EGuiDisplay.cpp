@@ -101,21 +101,27 @@ bool CheckBox(const char* _label, bool* _outputBool)
 {
 	Label(_label);
 	ImGui::SameLine();
-	ImGui::Checkbox("", _outputBool);
+	if (ImGui::Checkbox("", _outputBool))
+		return true;
+	return false;
 }
 
 bool DragFloat(const char* _label, float* _outputFloat, float _dragSpeed, float _min, float _max)
 {
 	Label(_label);
 	ImGui::SameLine();
-	ImGui::DragFloat("", _outputFloat, _dragSpeed, _min, _max);
+	if (ImGui::DragFloat("", _outputFloat, _dragSpeed, _min, _max))
+		return true;
+	return false;
 }
 
 bool DragInt(const char* _label, int* _outputInt, float _dragSpeed, int _min, int _max)
 {
 	Label(_label);
 	ImGui::SameLine();
-	ImGui::DragInt("", _outputInt, _dragSpeed, _min, _max);
+	if (ImGui::DragInt("", _outputInt, _dragSpeed, _min, _max))
+		return true;
+	return false;
 }
 
 bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max)
@@ -142,6 +148,8 @@ bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpee
 	ImGui::SameLine();
 	if (ImGui::DragFloat("", &z, _dragSpeed, _min, _max)) _outputVec->z = z;
 	ImGui::PopItemWidth();
+
+	return false;
 }
 
 void CollapseHeader(const char* _header)
@@ -151,7 +159,9 @@ void CollapseHeader(const char* _header)
 
 bool SelectableTxt(const char* _label, bool* _outputBool)
 {
-	ImGui::Selectable(_label, _outputBool);
+	if (ImGui::Selectable(_label, _outputBool))
+		return true;
+	return false;
 }
 
 }}}	// NAMESPACE DYSTOPIA::EGUI::DISPLAY

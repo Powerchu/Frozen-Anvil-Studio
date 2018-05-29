@@ -19,7 +19,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\Timer.h"
 #include "Editor\Editor.h"
 #include "Editor\EGUI.h"
+#include "Editor\ResourceView.h"
+#include "Editor\Inspector.h"
+#include "Editor\HierarchyView.h"
 #include <iostream>
+#include <bitset>
 
 // Entry point for editor
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
@@ -87,9 +91,15 @@ namespace Dystopia
 		mpGfx = _pGfx;
 		mpInput = _pInput;
 
-		GuiSystem* pGui =new GuiSystem{};
+		ResourceView *pResView = new ResourceView{};
+		GuiSystem *pGui =new GuiSystem{};
+
 		if (!pGui->Init(mpWin, mpGfx, mpInput)) mCurrentState = EDITOR_EXIT;
-			mGuiSysArray.push_back(pGui);
+		mGuiSysArray.push_back(pGui);
+
+		pResView->Init();
+
+		Save();
 	}
 
 	void Editor::StartFrame()
@@ -107,35 +117,54 @@ namespace Dystopia
 
 		// if (mCurrentState == EDITOR_PLAY) call for update of current scene
 		if (mCurrentState == EDITOR_PAUSE) return;
-		std::cout << mpInput->GetMousePosition().x << " / " << mpInput->GetMousePosition().y << std::endl;
 	}
 
 	void Editor::EndFrame()
 	{
 		EGUI::Display::MainMenuBar();
 		ImGui::SetNextWindowPos(ImVec2{ 0,0 });
-		ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
-		const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | 
-										ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | 
-										ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
-		
-		const float oldWindowRounding = ImGui::GetStyle().WindowRounding;
-		const bool visible = ImGui::Begin("imguidock window (= lumix engine's dock system)", NULL, flags);
-		ImGui::GetStyle().WindowRounding = oldWindowRounding;
-		ImGui::GetStyle().WindowRounding = 0;
-		
-		if (visible)
+		//ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+		//const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | 
+		//								ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | 
+		//								ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
+		//
+		//const float oldWindowRounding = ImGui::GetStyle().WindowRounding;
+		//const bool visible = ImGui::Begin("imguidock window (= lumix engine's dock system)", NULL, flags);
+		//ImGui::GetStyle().WindowRounding = oldWindowRounding;
+		//ImGui::GetStyle().WindowRounding = 0;
+		//
+		//if (visible)
+		//{
+		//	EGUI::Dock::BeginSpace(); //ImGui::BeginDockspace();
+		//	static char tmp[128];
+		//	for (int i = 0; i< 1; i++)
+		//	{
+		//		sprintf_s(tmp, "Dock %d", i);
+		//		if (i == 9)
+		//			EGUI::Dock::SetNextDock(EGUI::Dock::eDockSlot::eDOCK_BOTTOM); //ImGui::SetNextDock(ImGuiDockSlot_Bottom);// optional
+		//		if (EGUI::Dock::BeginDock(tmp)) //if (ImGui::BeginDock(tmp))
+		//			ImGui::Text("Content of dock window %d goes here", i);
+		//
+		//		EGUI::Dock::EndDock(); //ImGui::EndDock();
+		//	}
+		//	EGUI::Dock::EndSpace(); //ImGui::EndDockspace();
+		//}
+		//ImGui::End();
+
+		ImGui::SetNextWindowSize(ImVec2(500, 500));
+		ImGui::SetNextWindowBgAlpha(0.95f);
+		if (ImGui::Begin("imguidock window (= lumix engine's dock system)", NULL, ImGuiWindowFlags_NoScrollbar))
 		{
 			EGUI::Dock::BeginSpace(); //ImGui::BeginDockspace();
 			static char tmp[128];
-			for (int i = 0; i< 1; i++)
+			for (int i = 0; i< 2; i++)
 			{
-				sprintf(tmp, "Dock %d", i);
+				sprintf_s(tmp, "Dock %d", i);
 				if (i == 9)
 					EGUI::Dock::SetNextDock(EGUI::Dock::eDockSlot::eDOCK_BOTTOM); //ImGui::SetNextDock(ImGuiDockSlot_Bottom);// optional
 				if (EGUI::Dock::BeginDock(tmp)) //if (ImGui::BeginDock(tmp))
 					ImGui::Text("Content of dock window %d goes here", i);
-		
+
 				EGUI::Dock::EndDock(); //ImGui::EndDock();
 			}
 			EGUI::Dock::EndSpace(); //ImGui::EndDockspace();
@@ -217,6 +246,18 @@ namespace Dystopia
 	void Editor::Save()
 	{
 		// call for serialization of all in current scene
+
+		std::string myString = "Hello World";
+		int myInt = 5;
+		float myFloat = 10.23125f;
+		double myDouble = 1231053;
+
+		for (std::size_t i = 0; i < myString.size(); ++i)
+			std::cout << std::bitset<8>(myString.c_str()[i]) << std::endl;
+
+		std::cout << std::bitset<8>(myInt) << std::endl;
+		std::cout << std::bitset<8>(myFloat) << std::endl;
+		std::cout << std::bitset<8>(myDouble) << std::endl;
 	}
 
 	void Editor::Load()

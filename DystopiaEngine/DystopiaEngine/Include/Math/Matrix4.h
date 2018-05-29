@@ -18,8 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _MATRIX_4_H_
 
 #if defined(DEBUG) | defined(_DEBUG)
-#include "MathUtility.h"
-#include "DebugAssert.h"
+#include "Math/MathUtility.h"
+#include "Utility/DebugAssert.h"
 #endif // Debug only includes
 
 #include "Math\Vector4.h"		// Vector4
