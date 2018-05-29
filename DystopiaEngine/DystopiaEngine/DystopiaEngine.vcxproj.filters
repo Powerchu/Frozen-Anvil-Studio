@@ -67,6 +67,12 @@
     <ClCompile Include="Source\Math\Matrix4.cpp">
       <Filter>Math\Matrix\Matrix4</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Graphics\RawMesh.cpp">
+      <Filter>Game Engine\Systems\Graphic\Mesh\Raw</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
+      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -204,6 +210,15 @@
     <ClInclude Include="Include\Math\Matrix2.h">
       <Filter>Math\Matrix\Matrix2</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Graphics\RawMesh.h">
+      <Filter>Game Engine\Systems\Graphic\Mesh\Raw</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
+      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\VertexDefs.h">
+      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -337,6 +352,9 @@
     </Filter>
     <Filter Include="Math\Matrix\Matrix2">
       <UniqueIdentifier>{83acf256-2e61-44e4-83bf-a3932a6fabc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Mesh\Raw">
+      <UniqueIdentifier>{466ff2cb-a158-4c05-a63f-87c44bb584ce}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -14,6 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _MESHSYS_H_
 #define _MESHSYS_H_
 
+#include "System\Graphics\VertexDefs.h"
+#include "System\Graphics\Mesh.h"
+#include "System\Graphics\RawMesh.h"
 #include "DataStructure\AutoArray.h"
 
 #include <string>
@@ -21,8 +24,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Mesh;
-
 	class MeshSystem final
 	{
 	public:
@@ -32,17 +33,18 @@ namespace Dystopia
 
 		void StartMesh(void);
 		void LoadMesh(const std::string&);
-		Mesh EndMesh(void);
+		void EndMesh(void);
 
 		void FreeMeshes(void);
 
-
 	private:
 
-		AutoArray<struct Vertex>  vtx;
-		AutoArray<struct Normal>  normals;
-		AutoArray<struct UV>      uvs;
-		AutoArray<struct RawMesh> mpMeshes;
+		AutoArray<UV>      mUVs;
+		AutoArray<Vertex>  mVtx;
+		AutoArray<short>   mIndex;
+
+		AutoArray<Mesh>    mpMeshes;
+		AutoArray<RawMesh> mpRawMeshes;
 	};
 }
 

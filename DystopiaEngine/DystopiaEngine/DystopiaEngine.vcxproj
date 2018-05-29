@@ -41,6 +41,8 @@
     <ClCompile Include="Source\Component\Camera.cpp" />
     <ClCompile Include="Source\System\Graphics\GraphicsSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Mesh.cpp" />
+    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp" />
+    <ClCompile Include="Source\System\Graphics\RawMesh.cpp" />
     <ClCompile Include="Source\System\Graphics\Shader.cpp" />
     <ClCompile Include="Source\System\Graphics\Texture.cpp" />
     <ClCompile Include="Source\System\Graphics\Texture2D.cpp" />
@@ -80,9 +82,12 @@
     <ClInclude Include="Include\System\Graphics\GraphicsSystem.h" />
     <ClInclude Include="Include\System\Graphics\Image.h" />
     <ClInclude Include="Include\System\Graphics\Mesh.h" />
+    <ClInclude Include="Include\System\Graphics\MeshSystem.h" />
+    <ClInclude Include="Include\System\Graphics\RawMesh.h" />
     <ClInclude Include="Include\System\Graphics\Shader.h" />
     <ClInclude Include="Include\System\Graphics\Texture.h" />
     <ClInclude Include="Include\System\Graphics\Texture2D.h" />
+    <ClInclude Include="Include\System\Graphics\VertexDefs.h" />
     <ClInclude Include="Include\System\Input\InputMap.h" />
     <ClInclude Include="Include\System\Input\InputSystem.h" />
     <ClInclude Include="Include\System\Sound\SoundSystem.h" />

@@ -145,7 +145,7 @@ namespace Math
 				return *this;
 			}
 
-			inline __m128 _CALL GetRaw(void) const;
+			inline __m128 _CALL GetRaw(void) const noexcept;
 
 			inline _CALL operator Vector4 (void) const
 			{
@@ -515,7 +515,7 @@ inline _CALL Math::Vector4::DataMember<0>::operator float(void) const
 
 
 template <unsigned X, unsigned Y, unsigned Z, unsigned W>
-inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::GetRaw(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::GetRaw(void) const noexcept
 {
 	return _mm_shuffle_ps(mData, mData, shuffleRead);
 }
@@ -526,25 +526,25 @@ inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::GetRaw(void) const
 // Perhaps on older CPUs and moot on newer ones
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<0, 0, 1, 1>::GetRaw(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<0, 0, 1, 1>::GetRaw(void) const noexcept
 {
 	return _mm_unpacklo_ps(mData, mData);
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<2, 2, 3, 3>::GetRaw(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<2, 2, 3, 3>::GetRaw(void) const noexcept
 {
 	return _mm_unpackhi_ps(mData, mData);
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<0, 1, 0, 1>::GetRaw(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<0, 1, 0, 1>::GetRaw(void) const noexcept
 {
 	return _mm_movelh_ps(mData, mData);
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<2, 3, 2, 3>::GetRaw(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<2, 3, 2, 3>::GetRaw(void) const noexcept
 {
 	return _mm_movelh_ps(mData, mData);
 }
@@ -552,13 +552,13 @@ inline __m128 _CALL Math::Vector4::SwizzleMask<2, 3, 2, 3>::GetRaw(void) const
 #if defined(_INCLUDED_PMM)		// SSE 3
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<0, 0, 2, 2>::GetRaw(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<0, 0, 2, 2>::GetRaw(void) const noexcept
 {
 	return _mm_moveldup_ps(mData);
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<1, 1, 3, 3>::GetRaw(void) const
+inline __m128 _CALL Math::Vector4::SwizzleMask<1, 1, 3, 3>::GetRaw(void) const noexcept
 {
 	return _mm_movehdup_ps(mData);
 }

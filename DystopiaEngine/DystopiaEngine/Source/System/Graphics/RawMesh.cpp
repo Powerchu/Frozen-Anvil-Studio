@@ -12,6 +12,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System\Graphics\RawMesh.h"	// File Header
+#include "System\Graphics\VertexDefs.h"
+#include "DataStructure\AutoArray.h"
 
 #include <GL\glew.h>
 
@@ -20,13 +22,37 @@ Dystopia::RawMesh::RawMesh(void) noexcept
 	: mVtxCount{ 0 }
 {
 	glGenVertexArrays(1, &mVAO);
-	glGenBuffers(3, &mVtxBuffer);
+	glGenBuffers(2, &mVtxBuffer);
 }
 
 Dystopia::RawMesh::~RawMesh(void)
 {
-	glDeleteBuffers(3, &mVtxBuffer);
+	glDeleteBuffers(2, &mVtxBuffer);
 	glDeleteVertexArrays(1, &mVAO);
+}
+
+void Dystopia::RawMesh::BindMesh(void) const
+{
+	glBindVertexArray(mVAO);
+}
+
+void Dystopia::RawMesh::UnbindMesh(void) const
+{
+	glBindVertexArray(0);
+}
+
+void Dystopia::RawMesh::BuildMesh(AutoArray<Vertex>& _pVtx, AutoArray<UV>& _pUVs)
+{
+	BindMesh();
+
+	glBindBuffer(GL_ARRAY_BUFFER, mVtxBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _pVtx.size(), &_pVtx[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);						                    // Vertices
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(sizeof(Vertex)));	// Normals
+
+	glBindBuffer(GL_ARRAY_BUFFER, mUVBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(UV) * _pUVs.size(), &_pUVs[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(UV), 0);												// UV
 }
 
 

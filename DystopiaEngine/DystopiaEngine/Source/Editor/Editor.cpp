@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
+#include "System\Graphics\MeshSystem.h"
 
 #include <vector>
 #include "Math\Matrix4.h"
@@ -42,6 +43,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
 	Dystopia::WindowManager *win = new Dystopia::WindowManager{};
 	Dystopia::GraphicsSystem *gfx = new Dystopia::GraphicsSystem{};
+	Dystopia::MeshSystem *mesh = new Dystopia::MeshSystem{};
 
 	win->LoadDefaults();
 	win->Init();
@@ -49,18 +51,13 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	gfx->InitOpenGL(win->GetMainWindow());
 	gfx->Init();
 
+	mesh->Init();
+
 	win->DestroySplash();
 
-	Matrix4 m = Translate(rand()*.1f, rand()*.33f, rand()*-2.1492f) * RotateZ(pi * .271524f) * RotateY(0.4721745f) * RotateX(2.2581259f) * 
-		Scale(rand() * pi, rand() * phi, rand() * 1.12481247f);
-
-	PrintMatrix((m));
-	std::cout << "==================\n";
-	PrintMatrix(AffineInverse(m));
-	std::cout << "==================\n";
-	PrintMatrix(m * AffineInverse(m));
-	std::cout << "==================\n";
-	PrintMatrix(AffineInverse(m) * m);
+	mesh->StartMesh();
+	mesh->LoadMesh("Resource/Meshes/Quad.txt");
+	mesh->EndMesh();
 
 	while (true)
 	{

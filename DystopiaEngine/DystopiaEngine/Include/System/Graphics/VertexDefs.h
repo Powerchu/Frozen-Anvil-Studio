@@ -23,13 +23,6 @@ namespace Dystopia
 		float x, y, z;
 	};
 
-	struct Normal
-	{
-		Normal(void) : x{ .0f }, y{ .0f }, z{ 1.f } {};
-
-		float x, y, z;
-	};
-
 	struct UV
 	{
 		float u, v;
@@ -38,35 +31,24 @@ namespace Dystopia
 
 inline std::fstream& operator >> (std::fstream& _lhs, Dystopia::Vertex& _rhs)
 {
-	_lhs >> _rhs.x >> _rhs.y >> _rhs.z;
-
-	return _lhs;
-}
-
-inline std::fstream& operator >> (std::fstream& _lhs, Dystopia::Normal& _rhs)
-{
-	_lhs >> _rhs.x >> _rhs.y >> _rhs.z;
+	_lhs >> _rhs.x;
+	_lhs.ignore(1) >> _rhs.y;
+	_lhs.ignore(1) >> _rhs.z;
 
 	return _lhs;
 }
 
 inline std::fstream& operator >> (std::fstream& _lhs, Dystopia::UV& _rhs)
 {
-	_lhs << _rhs.u << _rhs.v;
+	_lhs >> _rhs.u;
+	_lhs.ignore(1) >> _rhs.v;
 
 	return _lhs;
 }
 
 inline std::fstream& operator << (std::fstream& _lhs, Dystopia::Vertex& _rhs)
 {
-	_lhs << _rhs.x << _rhs.y << _rhs.z;
-
-	return _lhs;
-}
-
-inline std::fstream& operator << (std::fstream& _lhs, Dystopia::Normal& _rhs)
-{
-	_lhs << _rhs.x << _rhs.y << _rhs.z;
+	_lhs << _rhs.x << ',' << _rhs.y << ',' << _rhs.z;
 
 	return _lhs;
 }

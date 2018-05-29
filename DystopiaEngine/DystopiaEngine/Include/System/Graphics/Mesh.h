@@ -16,21 +16,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <string>
 
-
 namespace Dystopia
 {
+	class MeshSystem;
+
 	class Mesh
 	{
 	public:
 
 		Mesh(void) noexcept;
+		Mesh(unsigned, unsigned, size_t) noexcept;
 
 		void UseMesh(int _nMode) const;
 
+		void SetName(const std::string&);
+		const std::string& GetName(void) const;
 		
+		static void LinkSystem(MeshSystem* _pSystem);
+
 	private:
 
-		unsigned mVAO, mnVertices, mnOffset;
+		bool mbUnique;
+		unsigned mVAO, mnVertices;
+		void* mnOffset;
+		
+		std::string mName;
+
+		static MeshSystem* mpSystem;
 	};
 }
 

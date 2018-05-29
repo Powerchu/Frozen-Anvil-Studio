@@ -43,7 +43,7 @@ namespace Dystopia
 
 		// Sets up Window for openGL rendering
 		bool InitOpenGL(Window&);
-		bool BindOpenGL(Window&) noexcept;
+		void BindOpenGL(Window&) noexcept;
 
 		void LoadDefaults(void);
 		void LoadSettings(TextSerialiser&);

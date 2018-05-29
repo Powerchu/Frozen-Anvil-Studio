@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _RAWMESH_H_
 #define _RAWMESH_H_
 
+#include "System\Graphics\VertexDefs.h"
+#include "DataStructure\AutoArray.h"
 
 namespace Dystopia
 {
@@ -21,6 +23,11 @@ namespace Dystopia
 	{
 		RawMesh(void) noexcept;
 		~RawMesh(void);
+
+		void BindMesh  (void) const;
+		void UnbindMesh(void) const;
+
+		void BuildMesh(AutoArray<Vertex>&, AutoArray<UV>&);
 
 		unsigned mVAO, mVtxBuffer, mUVBuffer, mEBO;
 		unsigned short mVtxCount;

@@ -16,12 +16,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\RawMesh.h"
 #include "System\Graphics\VertexDefs.h"
 #include "IO\TextSerialiser.h"
+#include "Math\MathUtility.h"
 
 #include <GL\glew.h>
-
+#include <iostream>
 
 void Dystopia::MeshSystem::Init(void)
 {
+	Mesh::LinkSystem(this);
 	mpMeshes.reserve(10);
 
 	glEnableVertexAttribArray(0);
@@ -40,44 +42,84 @@ void Dystopia::MeshSystem::Shutdown(void) noexcept
 
 void Dystopia::MeshSystem::StartMesh(void)
 {
-	mpMeshes.EmplaceBack();
+	mpRawMeshes.EmplaceBack();
 }
 
 void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 {
+	RawMesh& CurrentMesh = mpRawMeshes.back();
 	TextSerialiser input = TextSerialiser::OpenFile(_strPath, TextSerialiser::MODE_READ);
 
 	unsigned short nVtxCount = 0;
 	input.Read(nVtxCount);
 
-	vtx.reserve(nVtxCount);
-	normals.reserve(nVtxCount);
-	uvs.reserve(nVtxCount);
+	mUVs.reserve(nVtxCount);
+	mVtx.reserve(nVtxCount * 2);
+	mIndex.reserve(nVtxCount * 3);
 
 	input.ConsumeStartBlock();
 
 	Vertex vtxBuf;
-	Normal normBuf;
+	Vertex normBuf;
 	UV uvBuf;
+
 	for (unsigned short n = 0; n < nVtxCount; ++n)
 	{
 		input.Read(vtxBuf);
 		input.Read(normBuf);
 		input.Read(uvBuf);
 
-		vtx.EmplaceBack(vtxBuf);
-		normals.EmplaceBack(normBuf);
-		uvs.EmplaceBack(uvBuf);
+		mVtx.EmplaceBack(vtxBuf);
+		mVtx.EmplaceBack(normBuf);
+		mUVs.EmplaceBack(uvBuf);
+
+	#if defined(_DEBUG) | defined(DEBUG)
+		std::cout << vtxBuf.x  << "," << vtxBuf.y  << "," << vtxBuf.y  << " : ";
+		std::cout << normBuf.x << "," << normBuf.y << "," << normBuf.y << " : ";
+		std::cout << uvBuf.u   << "," << uvBuf.v   << "\n";
+	#endif
 	}
 
-	input.ConsumeEndBlock();
+	input.ConsumeStartBlock();
 
-	mpMeshes.back().mVtxCount += nVtxCount;
+	short nIndex;
+	unsigned nNumIndices = 0, nCurrOffset = mIndex.size();
+	while (!input.EndOfInput())
+	{
+		input.Read(nIndex);
+
+		++nNumIndices;
+		mIndex.EmplaceBack<short>(nIndex + CurrentMesh.mVtxCount);
+
+	#if defined(_DEBUG) | defined(DEBUG)
+		std::cout << nIndex << ",";
+	#endif
+	}
+
+	mpMeshes.EmplaceBack(CurrentMesh.mVAO, nNumIndices, nCurrOffset);
+	CurrentMesh.mVtxCount += nVtxCount;
+
+	input.ConsumeStartBlock();
+
+	std::string strMeshName;
+
+	input.Read(strMeshName);
+	mpMeshes.back().SetName(strMeshName);
+
+#if defined(_DEBUG) | defined(DEBUG)
+	std::cout << "\n" << strMeshName << std::endl;
+#endif
+
+	input.ConsumeEndBlock();
 }
 
-Dystopia::Mesh Dystopia::MeshSystem::EndMesh(void)
+void Dystopia::MeshSystem::EndMesh(void)
 {
-
+	mpRawMeshes.back().BuildMesh(mVtx, mUVs);
+	
+	mVtx.clear();
+	mUVs.clear();
+	mIndex.clear();
 }
 
 void Dystopia::MeshSystem::FreeMeshes(void)
