@@ -74,25 +74,24 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 		mUVs.EmplaceBack(uvBuf);
 
 	#if defined(_DEBUG) | defined(DEBUG)
-		std::cout << vtxBuf.x  << "," << vtxBuf.y  << "," << vtxBuf.y  << " : ";
-		std::cout << normBuf.x << "," << normBuf.y << "," << normBuf.y << " : ";
+		std::cout << vtxBuf.x  << "," << vtxBuf.y  << "," << vtxBuf.z  << " : ";
+		std::cout << normBuf.x << "," << normBuf.y << "," << normBuf.z << " : ";
 		std::cout << uvBuf.u   << "," << uvBuf.v   << "\n";
 	#endif
 	}
 
 	input.ConsumeStartBlock();
 
-	short nIndex;
 	unsigned nNumIndices = 0, nCurrOffset = mIndex.size();
 	while (!input.EndOfInput())
 	{
-		input.Read(nIndex);
+		mIndex.EmplaceBack();
+		input.Read(mIndex.back());
 
 		++nNumIndices;
-		mIndex.EmplaceBack<short>(nIndex + CurrentMesh.mVtxCount);
 
 	#if defined(_DEBUG) | defined(DEBUG)
-		std::cout << nIndex << ",";
+		std::cout << mIndex.back() << ",";
 	#endif
 	}
 
@@ -101,13 +100,10 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 
 	input.ConsumeStartBlock();
 
-	std::string strMeshName;
-
-	input.Read(strMeshName);
-	mpMeshes.back().SetName(strMeshName);
+	input.Read(const_cast<std::string&>(mpMeshes.back().GetName()));
 
 #if defined(_DEBUG) | defined(DEBUG)
-	std::cout << "\n" << strMeshName << std::endl;
+	std::cout << "\n" << mpMeshes.back().GetName() << std::endl;
 #endif
 
 	input.ConsumeEndBlock();
@@ -115,7 +111,7 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 
 void Dystopia::MeshSystem::EndMesh(void)
 {
-	mpRawMeshes.back().BuildMesh(mVtx, mUVs);
+	mpRawMeshes.back().BuildMesh(mVtx, mUVs, mIndex);
 	
 	mVtx.clear();
 	mUVs.clear();
