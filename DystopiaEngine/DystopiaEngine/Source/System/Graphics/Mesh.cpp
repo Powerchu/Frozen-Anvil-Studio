@@ -5,6 +5,7 @@
 \par    email: t.jieweijacky\@digipen.edu
 \brief
 	Mesh
+	TODO: Mesh Runtime modification
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -49,6 +50,11 @@ void Dystopia::Mesh::SetName(const std::string& _strName)
 const std::string& Dystopia::Mesh::GetName(void) const
 {
 	return mName;
+}
+
+bool Dystopia::Mesh::IsUnique(void) const
+{
+	return mbUnique;
 }
 
 

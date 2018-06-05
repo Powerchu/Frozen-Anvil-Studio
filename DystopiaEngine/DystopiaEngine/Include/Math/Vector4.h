@@ -343,7 +343,7 @@ inline Math::Vector4& _CALL Math::Vector4::Negate(void) noexcept
 		FLAGS & 0x8 ? 0x80000000 : 0
 	);
 
-	mData = _mm_and_ps(mData, _mm_castsi128_ps(Negator));
+	mData = _mm_xor_ps(mData, _mm_castsi128_ps(Negator));
 
 	return *this;
 }
@@ -570,6 +570,12 @@ template <unsigned X, unsigned Y, unsigned Z, unsigned W>
 inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::GetRaw(void) const noexcept
 {
 	return _mm_shuffle_ps(mData, mData, shuffleRead);
+}
+
+template<>
+inline __m128 _CALL Math::Vector4::SwizzleMask<0, 1, 2, 3>::GetRaw(void) const noexcept
+{
+	return mData;
 }
 
 // No automatic compiler instruction change for the following special shuffles

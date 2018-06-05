@@ -56,6 +56,8 @@ bool Dystopia::GraphicsSystem::Init(void)
 
 void Dystopia::GraphicsSystem::Update(float)
 {
+	StartFrame();
+
 	// We only care about the game view
 	
 	// For every camera in the game window (can be more than 1!)
@@ -78,6 +80,8 @@ void Dystopia::GraphicsSystem::Update(float)
 	}
 
 	// Final draw to combine layers & draw to screen
+
+	EndFrame();
 }
 
 void Dystopia::GraphicsSystem::StartFrame(void)

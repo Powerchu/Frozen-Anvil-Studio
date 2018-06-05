@@ -62,6 +62,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	while (true)
 	{
 		win->Update(1.f);
+		gfx->Update(1.f);
 	}
 
 	gfx->Shutdown();

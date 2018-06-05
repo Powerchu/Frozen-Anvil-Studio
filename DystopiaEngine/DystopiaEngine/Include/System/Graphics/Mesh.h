@@ -34,6 +34,8 @@ namespace Dystopia
 		
 		static void LinkSystem(MeshSystem* _pSystem);
 
+		bool IsUnique(void) const;
+
 	private:
 
 		bool mbUnique;

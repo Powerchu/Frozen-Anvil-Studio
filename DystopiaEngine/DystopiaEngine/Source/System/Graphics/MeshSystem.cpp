@@ -72,12 +72,6 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 		mVtx.EmplaceBack(vtxBuf);
 		mVtx.EmplaceBack(normBuf);
 		mUVs.EmplaceBack(uvBuf);
-
-	#if defined(_DEBUG) | defined(DEBUG)
-		std::cout << vtxBuf.x  << "," << vtxBuf.y  << "," << vtxBuf.z  << " : ";
-		std::cout << normBuf.x << "," << normBuf.y << "," << normBuf.z << " : ";
-		std::cout << uvBuf.u   << "," << uvBuf.v   << "\n";
-	#endif
 	}
 
 	input.ConsumeStartBlock();
@@ -89,10 +83,6 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 		input.Read(mIndex.back());
 
 		++nNumIndices;
-
-	#if defined(_DEBUG) | defined(DEBUG)
-		std::cout << mIndex.back() << ",";
-	#endif
 	}
 
 	mpMeshes.EmplaceBack(CurrentMesh.mVAO, nNumIndices, nCurrOffset);
@@ -101,10 +91,6 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 	input.ConsumeStartBlock();
 
 	input.Read(const_cast<std::string&>(mpMeshes.back().GetName()));
-
-#if defined(_DEBUG) | defined(DEBUG)
-	std::cout << "\n" << mpMeshes.back().GetName() << std::endl;
-#endif
 
 	input.ConsumeEndBlock();
 }

@@ -341,12 +341,6 @@
     <Filter Include="Game Engine\Systems\Graphic\Texture\Base">
       <UniqueIdentifier>{d711054b-eec8-4405-90e8-2d5d221f7414}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Systems\Graphic\Mesh\VAO">
-      <UniqueIdentifier>{361189d3-5914-46f3-937a-b865c7205b0e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\Systems\Graphic\Mesh\VBO">
-      <UniqueIdentifier>{ab3d5699-55d9-47a9-a355-4e50239c4438}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Math\Matrix\Matrix4">
       <UniqueIdentifier>{e940c69c-1f12-4de9-8d64-d7782d10122b}</UniqueIdentifier>
     </Filter>
