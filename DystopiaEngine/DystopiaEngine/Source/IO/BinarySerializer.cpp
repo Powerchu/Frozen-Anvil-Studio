@@ -13,13 +13,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "IO\BinarySerializer.h"
-
-#include <limits>		// numeric_limit
-#include <string>		// string
-#include <fstream>		// fstream, ifstream, ofstream, streamsize
+#include <iostream>
 
 Dystopia::BinarySerializer::BinarySerializer(void) :
-	mbBlockRead{ true }, mFile{}
+	mbBlockRead{ true }, mFile{}, mfpWrite{ Dystopia::System::GetSoftwareEndian() ? &Dystopia::BinarySerializer::WriteLE : &Dystopia::BinarySerializer::WriteBE }
 {
 
 }
@@ -76,13 +73,27 @@ void Dystopia::BinarySerializer::Validate(void)
 	//}
 }
 
-Dystopia::BinarySerializer Dystopia::BinarySerializer::OpenFile(const std::string& _strFilename, int _nMode)
+Dystopia::BinarySerializer Dystopia::BinarySerializer::OpenFile(const std::string& _strFilename, int /*_nMode*/)
 {
-	//BinarySerializer file;
-	//
+	BinarySerializer file;
 	//file.mFile.open(_strFilename, _nMode);
-	//
-	//return file;
+	file.mFile.open(_strFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary);
+	return file;
 }
 
+void Dystopia::BinarySerializer::WriteBE(const char *_pStart, const size_t _size)
+{
+	mFile.write(_pStart, _size);
+}
 
+void Dystopia::BinarySerializer::WriteLE(const char *_pStart, const size_t _size)
+{
+	size_t pos = _size;
+	const char *pElement = nullptr;
+	do
+	{
+		pElement = _pStart + (pos - 1);
+		mFile.put(*pElement);
+		pos--;
+	} while (pos);
+}

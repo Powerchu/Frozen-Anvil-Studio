@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ResourceView.h"
 #include "Editor\Inspector.h"
 #include "Editor\HierarchyView.h"
+#include "IO\BinarySerializer.h"
 #include <iostream>
 #include <bitset>
 
@@ -35,6 +36,13 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	Dystopia::InputManager *input = new Dystopia::InputManager{};
 	Dystopia::Editor *editor = new Dystopia::Editor{};
 	Dystopia::Timer timer{};
+	Dystopia::BinarySerializer binSer = Dystopia::BinarySerializer::OpenFile("TestBinSer.txt", 2);
+	int testVar_int = 5;
+	float testVar_float = 99.23f;
+	double testVar_double = 1255.3245f;
+	char testVar_char = 'A';
+	binSer.Write(99);
+	binSer.~BinarySerializer();
 
 	win->LoadDefaults();
 	win->Init();

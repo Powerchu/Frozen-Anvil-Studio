@@ -5,7 +5,22 @@
 \par    email:
 \@digipen.edu
 \brief
-INSERT BRIEF HERE
+reference usage of text brought over as reference for structural
+TextSer.. = Text::OpenFile("");
+InsertStartBlock("ME");
+tetxser.. << variable;
+tetxser.. << variable;
+tetxser.. << variable;
+tetxser.. << variable;
+InsertEndBlock("End ME");
+
+TextSer.. = Text::OpenFile("");
+ConsumeStart();
+tetxser.. >> variable;
+tetxser.. >> variable;
+tetxser.. >> variable;
+tetxser.. >> variable;
+ConsumeEnd();
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -15,8 +30,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _BINARY_SERIALIZER_H_
 #define _BINARY_SERIALIZER_H_
 #include <cstdint>
-#include <string>
-#include <fstream>
+#include <limits>		// numeric_limit
+#include <string>		// string
+#include <fstream>		// fstream, ifstream, ofstream, streamsize
 
 namespace Dystopia
 {
@@ -51,8 +67,14 @@ namespace Dystopia
 		~BinarySerializer(void);
 
 	private:
+		typedef void(BinarySerializer::*MemFnPtr)(const char*, const size_t);
+
 		bool mbBlockRead;
 		std::fstream mFile;
+		MemFnPtr mfpWrite;
+
+		void WriteBE(const char*, const size_t);
+		void WriteLE(const char*, const size_t);
 
 		explicit BinarySerializer(void);
 		BinarySerializer(const BinarySerializer&) = delete; // Disallow copying!
@@ -72,21 +94,20 @@ namespace Dystopia
 }
 
 template <typename T>
-Dystopia::BinarySerializer& operator << (Dystopia::TextSerialiser&, const T&);
+Dystopia::BinarySerializer& operator << (Dystopia::BinarySerializer&, const T&);
 
 template <typename T>
-Dystopia::BinarySerializer& operator >> (Dystopia::TextSerialiser&, const T&);
+Dystopia::BinarySerializer& operator >> (Dystopia::BinarySerializer&, const T&);
 
 
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
-
 
 template <typename T>
 Dystopia::BinarySerializer& Dystopia::BinarySerializer::Write(const T& _rhs)
 {
 	//mFile << _rhs << ',';
-
-
+	size_t size = sizeof(_rhs);
+	(this->*mfpWrite)(reinterpret_cast<const char*>(&_rhs), size);
 	return *this;
 }
 
@@ -107,13 +128,13 @@ Dystopia::BinarySerializer& Dystopia::BinarySerializer::Read(const T& _rhs)
 template <typename T>
 Dystopia::BinarySerializer& operator << (Dystopia::BinarySerializer& _file, const T& _rhs)
 {
-	//return _file.Write(_rhs);
+	return _file.Write(_rhs);
 }
 
 template <typename T>
 Dystopia::BinarySerializer& operator >> (Dystopia::BinarySerializer& _file, const T& _rhs)
 {
-	//return _file.Read(_rhs);
+	return _file.Read(_rhs);
 }
 
 
