@@ -67,14 +67,14 @@ namespace Dystopia
 		~BinarySerializer(void);
 
 	private:
-		typedef void(BinarySerializer::*MemFnPtr)(const char*, const size_t);
+		typedef void(BinarySerializer::*MemFnPtr)(const char * const &, const size_t);
 
 		bool mbBlockRead;
 		std::fstream mFile;
 		MemFnPtr mfpWrite;
 
-		void WriteBE(const char*, const size_t);
-		void WriteLE(const char*, const size_t);
+		void WriteBE(const char * const &, const size_t);
+		void WriteLE(const char * const &, const size_t);
 
 		explicit BinarySerializer(void);
 		BinarySerializer(const BinarySerializer&) = delete; // Disallow copying!

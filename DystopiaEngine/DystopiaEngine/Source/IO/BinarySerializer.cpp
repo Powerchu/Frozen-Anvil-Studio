@@ -73,20 +73,20 @@ void Dystopia::BinarySerializer::Validate(void)
 	//}
 }
 
-Dystopia::BinarySerializer Dystopia::BinarySerializer::OpenFile(const std::string& _strFilename, int /*_nMode*/)
+Dystopia::BinarySerializer Dystopia::BinarySerializer::OpenFile(const std::string& _strFilename, int _nMode)
 {
 	BinarySerializer file;
 	//file.mFile.open(_strFilename, _nMode);
-	file.mFile.open(_strFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary);
+	file.mFile.open(_strFilename, std::ios_base::out | std::ios_base::binary);
 	return file;
 }
 
-void Dystopia::BinarySerializer::WriteBE(const char *_pStart, const size_t _size)
+void Dystopia::BinarySerializer::WriteBE(const char * const &_pStart, const size_t _size)
 {
-	mFile.write(_pStart, _size);
+	mFile.write(reinterpret_cast<const char*>(_pStart), _size);
 }
 
-void Dystopia::BinarySerializer::WriteLE(const char *_pStart, const size_t _size)
+void Dystopia::BinarySerializer::WriteLE(const char * const &_pStart, const size_t _size)
 {
 	size_t pos = _size;
 	const char *pElement = nullptr;
