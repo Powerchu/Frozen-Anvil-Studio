@@ -75,6 +75,8 @@ namespace Math
 
 		inline Vector4& _CALL Reciprocal(void);
 
+		template <unsigned FLAGS>
+		inline Vector4 _CALL Negate(void) noexcept
 
 		// ======================================== OPERATORS ======================================= // 
 
@@ -147,10 +149,7 @@ namespace Math
 
 			inline __m128 _CALL GetRaw(void) const noexcept;
 
-			inline _CALL operator Vector4 (void) const
-			{
-				return Vector4{ GetRaw() };
-			}
+			inline _CALL operator Math::Vector4 (void) const;
 
 		private:
 
@@ -178,6 +177,7 @@ namespace Math
 		SwizzleMask<0, 1, 0, 1> xyxy;
 		SwizzleMask<0, 2, 1, 3> xzyw;
 		SwizzleMask<0, 3, 0, 3> xwxw;
+		SwizzleMask<1, 0, 2, 3> yxzw;
 		SwizzleMask<1, 0, 3, 2> yxwz;
 		SwizzleMask<1, 1, 1, 1> yyyy;
 		SwizzleMask<2, 0, 1, 3> zxyw; // Used by cross product 
@@ -186,6 +186,28 @@ namespace Math
 		SwizzleMask<2, 3, 0, 1> zwxy;
 		SwizzleMask<3, 1, 2, 0> wyzx;
 		SwizzleMask<3, 3, 3, 3> wwww;
+
+		enum Flags : char
+		{
+			NEGATE_X = 1 << 0,
+			NEGATE_Y = 1 << 1,
+			NEGATE_Z = 1 << 2,
+			NEGATE_W = 1 << 3,
+
+			NEGATE_XY = NEGATE_X | NEGATE_Y,
+			NEGATE_XZ = NEGATE_X | NEGATE_Z,
+			NEGATE_XW = NEGATE_X | NEGATE_W,
+			NEGATE_YZ = NEGATE_Y | NEGATE_Z,
+			NEGATE_YW = NEGATE_Y | NEGATE_W,
+			NEGATE_ZW = NEGATE_Z | NEGATE_W,
+
+			NEGATE_XYZ = NEGATE_XY | NEGATE_Z,
+			NEGATE_XYW = NEGATE_XY | NEGATE_W,
+			NEGATE_XZW = NEGATE_XZ | NEGATE_W,
+			NEGATE_YZW = NEGATE_YZ | NEGATE_Z,
+
+			NEGATE_XYZW = NEGATE_XY | NEGATE_ZW
+		};
 
 		inline __m128 _CALL GetRaw(void) const noexcept;
 	};
@@ -306,6 +328,19 @@ inline Math::Vector4& _CALL Math::Vector4::Reciprocal(void)
 inline Math::Vector4 _CALL Math::Reciprocal(Vector4 _v)
 {
 	return _v.Reciprocal();
+}
+
+template <unsigned FLAGS>
+inline Math::Vector4& _CALL Math::Vector4::Negate(void) noexcept
+{
+	constexpr __m128 Negator = _mm_set_epi32(
+		FLAGS & 0x1 ? 0x80000000 : 0,
+		FLAGS & 0x2 ? 0x80000000 : 0,
+		FLAGS & 0x4 ? 0x80000000 : 0,
+		FLAGS & 0x8 ? 0x80000000 : 0
+	);
+
+	mData = _mm_and_ps(mData, Negator);
 }
 
 inline float _CALL Math::Vector4::Dot(const Vector4 _rhs) const
@@ -513,6 +548,12 @@ inline _CALL Math::Vector4::DataMember<0>::operator float(void) const
 	return _mm_cvtss_f32(mData);
 }
 
+
+template<unsigned X, unsigned Y, unsigned Z, unsigned W>
+inline _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::operator Math::Vector4(void) const
+{
+	return Vector4{ GetRaw() };
+}
 
 template <unsigned X, unsigned Y, unsigned Z, unsigned W>
 inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::GetRaw(void) const noexcept

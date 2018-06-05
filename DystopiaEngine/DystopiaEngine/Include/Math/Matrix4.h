@@ -475,10 +475,10 @@ inline Math::Vector4 _CALL Math::Matrix4::operator* (const Vector4 _rhs) const
 
 #if USE_DP & defined(_INCLUDED_SMM)	// SSE 4.1
 	
-	dot1.mData = _mm_dp_ps(mData[0].mData, _rhs.mData, 0xF1); // Store into 1st component
-	dot2.mData = _mm_dp_ps(mData[1].mData, _rhs.mData, 0xF2); // Store into 2nd ...
-	dot3.mData = _mm_dp_ps(mData[2].mData, _rhs.mData, 0xF4); // Store into 3rd ...
-	dot4.mData = _mm_dp_ps(mData[3].mData, _rhs.mData, 0xF8); // Store into 4th ...
+	dot1.mData = _mm_dp_ps(mData[0].GetRaw(), _rhs.GetRaw(), 0xF1); // Store into 1st component
+	dot2.mData = _mm_dp_ps(mData[1].GetRaw(), _rhs.GetRaw(), 0xF2); // Store into 2nd ...
+	dot3.mData = _mm_dp_ps(mData[2].GetRaw(), _rhs.GetRaw(), 0xF4); // Store into 3rd ...
+	dot4.mData = _mm_dp_ps(mData[3].GetRaw(), _rhs.GetRaw(), 0xF8); // Store into 4th ...
 
 	dot1 = dot1 + dot2;
 	dot3 = dot3 + dot4;
@@ -492,10 +492,10 @@ inline Math::Vector4 _CALL Math::Matrix4::operator* (const Vector4 _rhs) const
 	dot3 = mData[2] * _rhs;
 	dot4 = mData[3] * _rhs;
 
-	dot1.mData = _mm_hadd_ps(dot1.mData, dot2.mData);
-	dot3.mData = _mm_hadd_ps(dot3.mData, dot4.mData);
+	dot1.mData = _mm_hadd_ps(dot1.GetRaw(), dot2.GetRaw());
+	dot3.mData = _mm_hadd_ps(dot3.GetRaw(), dot4.GetRaw());
 
-	return Vector4{ _mm_hadd_ps(dot1.mData, dot3.mData) };
+	return Vector4{ _mm_hadd_ps(dot1.GetRaw(), dot3.GetRaw()) };
 
 #else								// Fallback (SSE 2)
 	
