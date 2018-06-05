@@ -76,7 +76,7 @@ namespace Math
 		inline Vector4& _CALL Reciprocal(void);
 
 		template <unsigned FLAGS>
-		inline Vector4 _CALL Negate(void) noexcept
+		inline Vector4& _CALL Negate(void) noexcept;
 
 		// ======================================== OPERATORS ======================================= // 
 
@@ -226,6 +226,9 @@ namespace Math
 
 	inline Vector4 _CALL Reciprocal(const Vector4);
 
+	template <unsigned FLAGS>
+	inline Vector4 _CALL Negate(const Vector4) noexcept;
+
 
 	// ====================================== MATH UTILITY ======================================= // 
 	// Manually overload the math utility functions which cannot be called for type Vector4
@@ -333,14 +336,22 @@ inline Math::Vector4 _CALL Math::Reciprocal(Vector4 _v)
 template <unsigned FLAGS>
 inline Math::Vector4& _CALL Math::Vector4::Negate(void) noexcept
 {
-	constexpr __m128 Negator = _mm_set_epi32(
+	static __m128i Negator = _mm_set_epi32(
 		FLAGS & 0x1 ? 0x80000000 : 0,
 		FLAGS & 0x2 ? 0x80000000 : 0,
 		FLAGS & 0x4 ? 0x80000000 : 0,
 		FLAGS & 0x8 ? 0x80000000 : 0
 	);
 
-	mData = _mm_and_ps(mData, Negator);
+	mData = _mm_and_ps(mData, _mm_castsi128_ps(Negator));
+
+	return *this;
+}
+
+template <unsigned FLAGS>
+inline Math::Vector4 _CALL Math::Negate(Vector4 _v) noexcept
+{
+	return v.Negate<FLAGS>();
 }
 
 inline float _CALL Math::Vector4::Dot(const Vector4 _rhs) const
