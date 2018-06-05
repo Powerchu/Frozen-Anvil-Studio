@@ -88,6 +88,9 @@
     <ClCompile Include="Source\Editor\Dock.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="Source\IO\BinarySerializer.cpp">
+      <Filter>IO\BinarySerialiser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -239,6 +242,9 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\Dock.h">
       <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\IO\BinarySerializer.h">
+      <Filter>IO\BinarySerialiser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

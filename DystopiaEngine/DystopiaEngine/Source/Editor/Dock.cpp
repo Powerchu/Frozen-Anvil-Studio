@@ -347,16 +347,18 @@ void DockContext::HandleDrag(Dock& _dock)
 			return;
 		}
 	}
-	
-	ImVec2 max{mWorkspacePos.x + mWorkspaceSize.x, mWorkspacePos .y + mWorkspaceSize.y};
-	if (DockSlots(_dock, nullptr, ImRect{ mWorkspacePos, max }, true))
+	else
 	{
-		canvas->PopClipRect();
-		ImGui::End();
-		return;
+		ImVec2 max{ mWorkspacePos.x + mWorkspaceSize.x, mWorkspacePos.y + mWorkspaceSize.y };
+		if (DockSlots(_dock, nullptr, ImRect{ mWorkspacePos, max }, true))
+		{
+			canvas->PopClipRect();
+			ImGui::End();
+			return;
+		}
 	}
 
-	max = ImVec2{_dock.mPos.x + _dock.mSize.x, _dock.mPos.y + _dock.mSize.y };
+	ImVec2 max{_dock.mPos.x + _dock.mSize.x, _dock.mPos.y + _dock.mSize.y };
 	canvas->AddRectFilled(_dock.mPos, max, dockedColor);
 	canvas->PopClipRect();
 	if (!ImGui::IsMouseDown(0))
