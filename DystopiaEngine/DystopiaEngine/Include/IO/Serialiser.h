@@ -69,7 +69,7 @@ namespace Dystopia
 		void SetBlockingFlag(bool _bBlockRead);
 
 
-		// ========================== DERIVED CLASSES SHOULD OVERLOAD THESE ========================== // 
+		// ========================== DERIVED CLASSES SHOULD OVERRIDE THESE ========================== // 
 
 		void ReadEndBlock   (void);
 		bool ReadStartBlock (void);
@@ -83,7 +83,8 @@ namespace Dystopia
 
 		bool Validate(void);
 
-		// The above functions in this section all defaults to doing nothing
+		// The above functions in this section all default to doing nothing
+		// If doing nothing is the desired action, it is ok to not override
 
 	private:
 
