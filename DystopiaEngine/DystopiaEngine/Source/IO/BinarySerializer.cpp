@@ -1,9 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
 \file	BinarySerializer.cpp
-\author Digipen (100%)
-\par    email:
-\@digipen.edu
+\author Shannon Tan (100%)
+\par    email: t.shannon\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -13,10 +12,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "IO\BinarySerializer.h"
+#include "DataStructure\Stack.h"
 #include <iostream>
 
 Dystopia::BinarySerializer::BinarySerializer(void) :
-	mbBlockRead{ true }, mFile{}, mfpWrite{ Dystopia::System::GetSoftwareEndian() ? &Dystopia::BinarySerializer::WriteLE : &Dystopia::BinarySerializer::WriteBE }
+	mbBlockRead{ true }, mFile{}, 
+	mfpWrite{ Dystopia::System::GetSoftwareEndian() ? &Dystopia::BinarySerializer::WriteLE : &Dystopia::BinarySerializer::WriteBE },
+	mfpRead{ Dystopia::System::GetSoftwareEndian() ? &Dystopia::BinarySerializer::ReadLE : &Dystopia::BinarySerializer::ReadBE }
 {
 
 }
@@ -77,7 +79,7 @@ Dystopia::BinarySerializer Dystopia::BinarySerializer::OpenFile(const std::strin
 {
 	BinarySerializer file;
 	//file.mFile.open(_strFilename, _nMode);
-	file.mFile.open(_strFilename, std::ios_base::out | std::ios_base::binary);
+	file.mFile.open(_strFilename, _nMode | std::ios_base::binary);
 	return file;
 }
 
@@ -97,3 +99,31 @@ void Dystopia::BinarySerializer::WriteLE(const char * const &_pStart, const size
 		pos--;
 	} while (pos);
 }
+
+void Dystopia::BinarySerializer::ReadBE(char * const &_pStart, const size_t _size)
+{
+	mFile.read(_pStart, _size);
+}
+
+void Dystopia::BinarySerializer::ReadLE(char * const &_pStart, const size_t _size)
+{
+	Stack<char> tempStack{ static_cast<unsigned int>(_size) };
+	char tempChar;
+
+	size_t track = _size;
+	do
+	{
+		mFile.read(&tempChar, 1);
+		tempStack.Push(tempChar);
+		track--;
+	} while (track);
+
+	while (!tempStack.IsEmpty()) 
+	{
+		tempChar = tempStack.Peek();
+		tempStack.Pop();
+		*(_pStart + track) = tempChar;
+		track++;
+	}
+}
+

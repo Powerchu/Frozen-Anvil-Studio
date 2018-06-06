@@ -1,9 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
 \file	BinarySerializer.h
-\author Digipen (100%)
-\par    email:
-\@digipen.edu
+\author Shannon Tan (100%)
+\par    email: t.shannon\@digipen.edu
 \brief
 reference usage of text brought over as reference for structural
 TextSer.. = Text::OpenFile("");
@@ -59,6 +58,8 @@ namespace Dystopia
 		static BinarySerializer OpenFile(const std::string&, int = MODE_READ);
 
 		template <typename T>
+		BinarySerializer& Read(T&);
+		template <typename T>
 		BinarySerializer& Read(const T&);
 
 		template <typename T>
@@ -68,13 +69,17 @@ namespace Dystopia
 
 	private:
 		typedef void(BinarySerializer::*MemFnPtr)(const char * const &, const size_t);
+		typedef void(BinarySerializer::*MemFnPtr2)(char * const &, const size_t);
 
 		bool mbBlockRead;
 		std::fstream mFile;
 		MemFnPtr mfpWrite;
+		MemFnPtr2 mfpRead;
 
 		void WriteBE(const char * const &, const size_t);
 		void WriteLE(const char * const &, const size_t);
+		void ReadBE(char * const &, const size_t);
+		void ReadLE(char * const &, const size_t);
 
 		explicit BinarySerializer(void);
 		BinarySerializer(const BinarySerializer&) = delete; // Disallow copying!
@@ -105,24 +110,27 @@ Dystopia::BinarySerializer& operator >> (Dystopia::BinarySerializer&, const T&);
 template <typename T>
 Dystopia::BinarySerializer& Dystopia::BinarySerializer::Write(const T& _rhs)
 {
-	//mFile << _rhs << ',';
-	size_t size = sizeof(_rhs);
-	(this->*mfpWrite)(reinterpret_cast<const char*>(&_rhs), size);
+	(this->*mfpWrite)(reinterpret_cast<const char*>(&_rhs), sizeof(_rhs));
+	return *this;
+}
+
+template <typename T>
+Dystopia::BinarySerializer& Dystopia::BinarySerializer::Read(T& _rhs)
+{
+	if (!mbBlockRead)
+		(this->*mfpRead)(reinterpret_cast<char*>(&_rhs), sizeof(_rhs));
+	else
+		_rhs = T{};
+	
+	Validate();
 	return *this;
 }
 
 template <typename T>
 Dystopia::BinarySerializer& Dystopia::BinarySerializer::Read(const T& _rhs)
 {
-	//if (!mbBlockRead)
-	//	mFile >> _rhs;
-	//else
-	//	_rhs = T{};
-	//
-	//Validate();
-
-
-	return *this;
+	std::remove_const<T>::type &temp = const_cast<std::remove_const<T>::type&>(_rhs);
+	return Read(temp);
 }
 
 template <typename T>
@@ -132,7 +140,7 @@ Dystopia::BinarySerializer& operator << (Dystopia::BinarySerializer& _file, cons
 }
 
 template <typename T>
-Dystopia::BinarySerializer& operator >> (Dystopia::BinarySerializer& _file, const T& _rhs)
+Dystopia::BinarySerializer& operator >> (Dystopia::BinarySerializer& _file, T& _rhs)
 {
 	return _file.Read(_rhs);
 }

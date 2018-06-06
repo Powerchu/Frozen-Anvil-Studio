@@ -36,13 +36,36 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	Dystopia::InputManager *input = new Dystopia::InputManager{};
 	Dystopia::Editor *editor = new Dystopia::Editor{};
 	Dystopia::Timer timer{};
-	Dystopia::BinarySerializer binSer = Dystopia::BinarySerializer::OpenFile("TestBinSer.txt", 2);
+
+	/* =======================================================================================*/
+	/* =========================Start of Binary Serializer Test Case =========================*/
+	/* Serialize */
+	Dystopia::BinarySerializer binSer = Dystopia::BinarySerializer::OpenFile("TestBinSer.txt2", 2);
 	int testVar_int = 5;
 	float testVar_float = 99.23f;
 	double testVar_double = 1255.3245f;
 	char testVar_char = 'A';
-	binSer.Write(99);
+	binSer.Write(testVar_char);
+	binSer.Write(testVar_int);
+	binSer.Write(testVar_float);
+	binSer.Write(testVar_double);
 	binSer.~BinarySerializer();
+
+	/* Alter values */
+	testVar_int = 12312;
+	testVar_float = 3.21;
+	testVar_double = 123.009f;
+	testVar_char = 'J';
+
+	/* Deserialize*/
+	Dystopia::BinarySerializer binSer2 = Dystopia::BinarySerializer::OpenFile("TestBinSer.txt2", 1);
+	binSer2.Read(testVar_char);
+	binSer2.Read(testVar_int);
+	binSer2.Read(testVar_float);
+	binSer2.Read(testVar_double);
+	binSer2.~BinarySerializer();
+	/* =========================End of Binary Serializer Test Case ===========================*/
+	/* =======================================================================================*/
 
 	win->LoadDefaults();
 	win->Init();

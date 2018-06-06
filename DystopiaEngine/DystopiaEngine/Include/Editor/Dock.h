@@ -1,9 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
 \file	Dock.h
-\author Digipen (100%)
-\par    email: 
-\@digipen.edu
+\author Shannon Tan (100%)
+\par    email: t.shannon\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
