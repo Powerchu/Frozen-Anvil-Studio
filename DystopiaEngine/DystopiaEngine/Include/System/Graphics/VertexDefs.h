@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _VERTEX_DEFS_H_
 #define _VERTEX_DEFS_H_
 
-#include <fstream>
+#include "IO\Serialiser.h"
 
 namespace Dystopia
 {

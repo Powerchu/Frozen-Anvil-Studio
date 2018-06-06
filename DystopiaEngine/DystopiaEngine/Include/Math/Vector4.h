@@ -623,8 +623,9 @@ inline __m128 _CALL Math::Vector4::SwizzleMask<1, 1, 3, 3>::GetRaw(void) const n
 
 #endif							// SSE 3
 
-// ============================================ OPERATOR OVERLOADING ============================================ // 
 
+
+// ============================================ OPERATOR OVERLOADING ============================================ // 
 
 
 inline float& _CALL Math::Vector4::operator[] (const unsigned _nIndex)

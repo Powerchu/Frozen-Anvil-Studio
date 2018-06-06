@@ -219,6 +219,9 @@
     <ClInclude Include="Include\System\Graphics\VertexDefs.h">
       <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="Include\IO\Serialiser.h">
+      <Filter>IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

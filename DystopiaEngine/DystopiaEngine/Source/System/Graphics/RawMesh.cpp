@@ -44,7 +44,7 @@ void Dystopia::RawMesh::UnbindMesh(void) const
 void Dystopia::RawMesh::BuildMesh(AutoArray<Vertex>& _pVtx, AutoArray<UV>& _pUVs, AutoArray<short>& _nIndices)
 {
 	BindMesh();
-	int err;
+//	int err;
 	glBindBuffer(GL_ARRAY_BUFFER, mVtxBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _pVtx.size(), &_pVtx[0], GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);						                    // Vertices
