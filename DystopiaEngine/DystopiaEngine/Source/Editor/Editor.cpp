@@ -52,6 +52,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	float testVar_float = 99.23f;
 	double testVar_double = 1255.3245f;
 	char testVar_char = 'A';
+
 	binSer.Write(testVar_char);
 	binSer.Write(testVar_int);
 	binSer.Write(testVar_float);

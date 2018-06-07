@@ -43,48 +43,48 @@ Dystopia::BinarySerializer::~BinarySerializer(void)
 
 void Dystopia::BinarySerializer::WriteEndBlock(const std::string& _strName)
 {
-	mFile << "\n[END_" << _strName << "]\n";
+	//mFile << "\n[END_" << _strName << "]\n";
 }
 
 void Dystopia::BinarySerializer::WriteStartBlock(const std::string& _strName)
 {
-	mFile << "[START_" << _strName << "]\n";
+	//mFile << "[START_" << _strName << "]\n";
 }
 
 bool Dystopia::BinarySerializer::ReadStartBlock(void)
 {
-	do {
-		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
-
-		if (mFile.peek() == 'S')
-		{
-			mFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			return true;
-		}
-	} while (mFile.good());
+	//do {
+	//	mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
+	//
+	//	if (mFile.peek() == 'S')
+	//	{
+	//		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	//		return true;
+	//	}
+	//} while (mFile.good());
 
 	return false;
 }
 
 void Dystopia::BinarySerializer::ReadEndBlock(void)
 {
-	do {
-		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
-
-		if (mFile.peek() == 'E')
-		{
-			mFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			break;
-		}
-	} while (mFile.good());
+	//do {
+	//	mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
+	//
+	//	if (mFile.peek() == 'E')
+	//	{
+	//		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	//		break;
+	//	}
+	//} while (mFile.good());
 }
 
 bool Dystopia::BinarySerializer::Validate(void)
 {
-	if (mFile.peek() == ',')
-		mFile.ignore(1);
-
-	return mFile.peek() != '\n';
+	//if (mFile.peek() == ',')
+	//	mFile.ignore(1);
+	//
+	//return mFile.peek() != '\n';
 }
 
 Dystopia::BinarySerializer Dystopia::BinarySerializer::OpenFile(const std::string& _strFilename, int _nMode)
