@@ -85,6 +85,7 @@ bool Dystopia::BinarySerializer::Validate(void)
 	//	mFile.ignore(1);
 	//
 	//return mFile.peek() != '\n';
+	return true;
 }
 
 Dystopia::BinarySerializer Dystopia::BinarySerializer::OpenFile(const std::string& _strFilename, int _nMode)
