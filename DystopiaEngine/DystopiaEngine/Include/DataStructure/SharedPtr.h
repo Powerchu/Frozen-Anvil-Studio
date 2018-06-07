@@ -60,9 +60,6 @@ public:
 
 	inline explicit operator bool(void) const { return !!mpObj; }
 
-	// Disallow pointers to SharedPtr
-	static void* operator new (std::size_t) = delete;
-
 	inline T* GetPtr(void) const;
 
 private:

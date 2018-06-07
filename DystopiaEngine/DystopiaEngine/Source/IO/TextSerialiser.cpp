@@ -12,14 +12,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "IO\TextSerialiser.h"		// File Header
+#include "Utility\Utility.h"
 
 #include <limits>		// numeric_limit
 #include <string>		// string
 #include <fstream>		// fstream, ifstream, ofstream, streamsize
 
+#include <iostream>
 
 Dystopia::TextSerialiser::TextSerialiser(void) :
-	mbBlockRead{ true }, mFile { }
+	mFile { }
+{
+
+}
+
+Dystopia::TextSerialiser::TextSerialiser(std::fstream& _file) :
+	mFile{ Utility::Move(_file) }
 {
 
 }
@@ -29,17 +37,17 @@ Dystopia::TextSerialiser::~TextSerialiser(void)
 	mFile.close();
 }
 
-void Dystopia::TextSerialiser::InsertEndBlock(const std::string& _strName)
+void Dystopia::TextSerialiser::WriteEndBlock(const std::string& _strName)
 {
 	mFile << "\n[END_" << _strName << "]\n";
 }
 
-void Dystopia::TextSerialiser::InsertStartBlock(const std::string& _strName)
+void Dystopia::TextSerialiser::WriteStartBlock(const std::string& _strName)
 {
 	mFile << "[START_" << _strName << "]\n";
 }
 
-void Dystopia::TextSerialiser::ConsumeStartBlock(void)
+bool Dystopia::TextSerialiser::ReadStartBlock(void)
 {
 	do {
 		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
@@ -47,12 +55,14 @@ void Dystopia::TextSerialiser::ConsumeStartBlock(void)
 		if (mFile.peek() == 'S')
 		{
 			mFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			break;
+			return true;
 		}
 	} while (mFile.good());
+
+	return false;
 }
 
-void Dystopia::TextSerialiser::ConsumeEndBlock(void)
+void Dystopia::TextSerialiser::ReadEndBlock(void)
 {
 	do {
 		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
@@ -65,24 +75,24 @@ void Dystopia::TextSerialiser::ConsumeEndBlock(void)
 	} while (mFile.good());
 }
 
-void Dystopia::TextSerialiser::Validate(void)
+bool Dystopia::TextSerialiser::Validate(void)
 {
 	if (mFile.peek() == ',')
 		mFile.ignore(1);
 
-	if (mFile.peek() == '\n')
-	{
-		mbBlockRead = true;
-	}
+	return mFile.peek() != '\n';
 }
 
 Dystopia::TextSerialiser Dystopia::TextSerialiser::OpenFile(const std::string& _strFilename, int _nMode)
 {
-	TextSerialiser file;
+	std::fstream file;
 
-	file.mFile.open(_strFilename, _nMode);
+	file.open(_strFilename, _nMode);
 
-	return file;
+	if (file.fail())
+		__debugbreak();
+
+	return TextSerialiser{ file };
 }
 
 

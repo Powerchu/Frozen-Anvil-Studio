@@ -17,49 +17,42 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <string>
 #include <fstream>
 
+#include "IO\Serialiser.h"
+
 namespace Dystopia
 {
-	class TextSerialiser
+	class TextSerialiser : public SerialiserBase<TextSerialiser>
 	{
 	public:
-		static constexpr int MODE_READ = std::ios::in;
-		static constexpr int MODE_WRITE = std::ios::out;
+		friend class SerialiserBase<TextSerialiser>;
 
 		TextSerialiser(TextSerialiser&&) = default;
-
-		void InsertEndBlock(const std::string& = "");
-		void InsertStartBlock(const std::string& = "");
-
-		void ConsumeStartBlock(void);
-		void ConsumeEndBlock(void);
+		~TextSerialiser(void);
 
 		static TextSerialiser OpenFile(const std::string&, int = MODE_READ);
 
-		template <typename T>
-		TextSerialiser& Read(const T&);
-
-		template <typename T>
-		TextSerialiser& Write(const T&);
-
-		~TextSerialiser(void);
 
 	private:
-
-		bool mbBlockRead;
 		std::fstream mFile;
 
 		explicit TextSerialiser(void);
+		explicit TextSerialiser(std::fstream&);
 		TextSerialiser(const TextSerialiser&) = delete; // Disallow copying!
 
-		void Validate(void);
+		void ReadEndBlock(void);
+		bool ReadStartBlock(void);
+
+		void WriteEndBlock(const std::string&);
+		void WriteStartBlock(const std::string&);
+
+		template <typename T>
+		void ApplyRead(T&);
+		template <typename T>
+		void ApplyWrite(const T&);
+
+		bool Validate(void);
 	};
 }
-
-template <typename T>
-Dystopia::TextSerialiser& operator << (Dystopia::TextSerialiser&, const T&);
-
-template <typename T>
-Dystopia::TextSerialiser& operator >> (Dystopia::TextSerialiser&, const T&);
 
 
 
@@ -70,35 +63,15 @@ Dystopia::TextSerialiser& operator >> (Dystopia::TextSerialiser&, const T&);
 
 
 template <typename T>
-Dystopia::TextSerialiser& Dystopia::TextSerialiser::Write(const T& _rhs)
+void Dystopia::TextSerialiser::ApplyWrite(const T& _rhs)
 {
 	mFile << _rhs << ',';
-
-	return *this;
 }
 
 template <typename T>
-Dystopia::TextSerialiser& Dystopia::TextSerialiser::Read(const T& _rhs)
+void Dystopia::TextSerialiser::ApplyRead(T& _rhs)
 {
-	if (!mbBlockRead)
-		mFile >> _rhs;
-	else
-		_rhs = T{};
-
-	Validate();
-	return *this;
-}
-
-template <typename T>
-Dystopia::TextSerialiser& operator << (Dystopia::TextSerialiser& _file, const T& _rhs)
-{
-	return _file.Write(_rhs);
-}
-
-template <typename T>
-Dystopia::TextSerialiser& operator >> (Dystopia::TextSerialiser& _file, const T& _rhs)
-{
-	return _file.Read(_rhs);
+	mFile >> _rhs;
 }
 
 

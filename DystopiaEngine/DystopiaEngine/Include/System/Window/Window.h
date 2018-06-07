@@ -29,6 +29,7 @@ namespace Dystopia
 	public:
 
 		explicit Window(HWND);
+		Window(Window&&) = default;
 
 		const Queue<eButton>& GetInputQueue(void) const;
 

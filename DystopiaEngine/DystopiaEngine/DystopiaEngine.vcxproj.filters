@@ -13,9 +13,6 @@
     <ClCompile Include="Source\System\Input\InputSystem.cpp">
       <Filter>Game Engine\Systems\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Math\Matrix4.cpp">
-      <Filter>Math\Matrix</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Time\Timer.cpp">
       <Filter>Game Engine\Systems\Time\Timer</Filter>
     </ClCompile>
@@ -82,6 +79,15 @@
     <ClCompile Include="Source\IO\TextSerialiser.cpp">
       <Filter>IO\TextSerialiser</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Math\Matrix4.cpp">
+      <Filter>Math\Matrix\Matrix4</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\RawMesh.cpp">
+      <Filter>Game Engine\Systems\Graphic\Mesh\Raw</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
+      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Editor\EGUI.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
@@ -119,9 +125,6 @@
     </ClInclude>
     <ClInclude Include="Include\Math\MathInternal.h">
       <Filter>Math\Internals</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Math\Matrix4.h">
-      <Filter>Math\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="Include\Math\MathUtility.h">
       <Filter>Math</Filter>
@@ -239,6 +242,24 @@
     </ClInclude>
     <ClInclude Include="Include\IO\TextSerialiser.h">
       <Filter>IO\TextSerialiser</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Matrix4.h">
+      <Filter>Math\Matrix\Matrix4</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Matrix2.h">
+      <Filter>Math\Matrix\Matrix2</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\RawMesh.h">
+      <Filter>Game Engine\Systems\Graphic\Mesh\Raw</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
+      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\VertexDefs.h">
+      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\IO\Serialiser.h">
+      <Filter>IO</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\Dock.h">
       <Filter>Editor\Editor</Filter>
@@ -367,6 +388,15 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Texture\Base">
       <UniqueIdentifier>{d711054b-eec8-4405-90e8-2d5d221f7414}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Matrix\Matrix4">
+      <UniqueIdentifier>{e940c69c-1f12-4de9-8d64-d7782d10122b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Matrix\Matrix2">
+      <UniqueIdentifier>{83acf256-2e61-44e4-83bf-a3932a6fabc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Mesh\Raw">
+      <UniqueIdentifier>{466ff2cb-a158-4c05-a63f-87c44bb584ce}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

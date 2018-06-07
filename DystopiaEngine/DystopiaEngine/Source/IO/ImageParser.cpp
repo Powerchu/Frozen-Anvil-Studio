@@ -86,7 +86,7 @@ namespace
 
 namespace BMP
 {
-	bool IsUnreadable(HeaderBMP _header, InfoBMP _info)
+	bool IsUnreadable(HeaderBMP _header, InfoBMP _info, std::string _path)
 	{
 		// Check if we know how to read the file type
 		if (_header.mType != 'MB')
@@ -234,7 +234,7 @@ Image ImageParser::LoadBMP(const std::string& _path)
 	}
 
 	// Early bail checks before we do anything
-	if (BMP::IsUnreadable(fileHeader, fileInfo))
+	if (BMP::IsUnreadable(fileHeader, fileInfo, _path))
 	{
 		file.close();
 		return { 0, 0, nullptr };

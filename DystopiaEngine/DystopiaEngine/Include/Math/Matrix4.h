@@ -18,8 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _MATRIX_4_H_
 
 #if defined(DEBUG) | defined(_DEBUG)
-#include "Math/MathUtility.h"
-#include "Utility/DebugAssert.h"
+#include "Utility\DebugAssert.h"
 #endif // Debug only includes
 
 #include "Math\Vector4.h"		// Vector4
@@ -58,12 +57,14 @@ namespace Math
 
 		float _CALL Determinant(void) const;
 
-		inline Matrix4& _CALL Identity(void);
+		inline Matrix4& _CALL Identity(void) noexcept;
+
 		// Not implemented!
-		Matrix4& _CALL       Inverse(void);
+		Matrix4& _CALL Inverse(void);
 		// Not implemented!
 		Matrix4& _CALL AffineInverse(void);
-		inline Matrix4& _CALL Transpose(void);
+
+		inline Matrix4& _CALL Transpose(void) noexcept;
 
 		inline Vector4 _CALL GetRow(const unsigned _nRow) const;
 		inline Vector4 _CALL GetColumn(const unsigned _nCol) const;
@@ -109,12 +110,10 @@ namespace Math
 		Vector4 mData[4];
 	};
 
-	inline Matrix4 _CALL Identity (void);
-
 	inline Matrix4 _CALL       Inverse(const Matrix4);
 	inline Matrix4 _CALL AffineInverse(const Matrix4);
 
-	inline Matrix4 _CALL Transpose(const Matrix4);
+	inline Matrix4 _CALL Transpose(const Matrix4) noexcept;
 
 
 	// ==================================== MATRIX GENERATORS ==================================== // 
@@ -199,12 +198,12 @@ inline Math::Matrix4::Matrix4(const float(&_arr)[16]) noexcept :
 
 }
 
-inline Math::Matrix4& _CALL Math::Matrix4::Identity(void)
+inline Math::Matrix4& _CALL Math::Matrix4::Identity(void) noexcept
 {
 	return *this = Matrix4{};
 }
 
-inline Math::Matrix4& _CALL Math::Matrix4::Transpose(void)
+inline Math::Matrix4& _CALL Math::Matrix4::Transpose(void) noexcept
 {
 	// It's hard to tell what this is doing so here's a diagram
 	// 0 1 2 3  ->  0 4 1 5  ->  0 4 8 C
@@ -219,7 +218,7 @@ inline Math::Matrix4& _CALL Math::Matrix4::Transpose(void)
 	__m128 row3 = _mm_unpackhi_ps(mData[2].mData, mData[3].mData);
 
 	// movehl flips the order of assignment
-	// so we flip to get back the right order
+	// so we flip to get back the right order   // ie.
 	mData[0].mData = _mm_movelh_ps(row0, row1); // movelh : a1 a2 b1 b2
 	mData[1].mData = _mm_movehl_ps(row1, row0); // movehl : b3 b4 a3 a4
 	mData[2].mData = _mm_movelh_ps(row2, row3);
@@ -246,11 +245,6 @@ inline Math::Vector4 _CALL Math::Matrix4::GetColumn(const unsigned _nCol) const
 	return Math::Transpose(*this).mData[_nCol];
 }
 
-inline Math::Matrix4 _CALL Math::Identity(void)
-{
-	return Matrix4{};
-}
-
 inline Math::Matrix4 _CALL Math::Inverse(Matrix4 _mat)
 {
 	return _mat.Inverse();
@@ -261,7 +255,7 @@ inline Math::Matrix4 _CALL Math::AffineInverse(Matrix4 _mat)
 	return _mat.AffineInverse();
 }
 
-inline Math::Matrix4 _CALL Math::Transpose(Matrix4 _mat)
+inline Math::Matrix4 _CALL Math::Transpose(Matrix4 _mat) noexcept
 {
 	return _mat.Transpose();
 }
@@ -420,7 +414,7 @@ inline Math::Matrix4& _CALL Math::Matrix4::operator-= (const Matrix4 _rhs)
 	return *this;
 }
 
-__forceinline Math::Matrix4& _CALL Math::Matrix4::operator*= (const Matrix4 _rhs)
+inline Math::Matrix4& _CALL Math::Matrix4::operator*= (const Matrix4 _rhs)
 {
 	for (unsigned n = 0; n < 4; ++n)
 	{
@@ -481,10 +475,10 @@ inline Math::Vector4 _CALL Math::Matrix4::operator* (const Vector4 _rhs) const
 
 #if USE_DP & defined(_INCLUDED_SMM)	// SSE 4.1
 	
-	dot1.mData = _mm_dp_ps(mData[0].mData, _rhs.mData, 0xF1); // Store into 1st component
-	dot2.mData = _mm_dp_ps(mData[1].mData, _rhs.mData, 0xF2); // Store into 2nd ...
-	dot3.mData = _mm_dp_ps(mData[2].mData, _rhs.mData, 0xF4); // Store into 3rd ...
-	dot4.mData = _mm_dp_ps(mData[3].mData, _rhs.mData, 0xF8); // Store into 4th ...
+	dot1.mData = _mm_dp_ps(mData[0].GetRaw(), _rhs.GetRaw(), 0xF1); // Store into 1st component
+	dot2.mData = _mm_dp_ps(mData[1].GetRaw(), _rhs.GetRaw(), 0xF2); // Store into 2nd ...
+	dot3.mData = _mm_dp_ps(mData[2].GetRaw(), _rhs.GetRaw(), 0xF4); // Store into 3rd ...
+	dot4.mData = _mm_dp_ps(mData[3].GetRaw(), _rhs.GetRaw(), 0xF8); // Store into 4th ...
 
 	dot1 = dot1 + dot2;
 	dot3 = dot3 + dot4;
@@ -498,10 +492,10 @@ inline Math::Vector4 _CALL Math::Matrix4::operator* (const Vector4 _rhs) const
 	dot3 = mData[2] * _rhs;
 	dot4 = mData[3] * _rhs;
 
-	dot1.mData = _mm_hadd_ps(dot1.mData, dot2.mData);
-	dot3.mData = _mm_hadd_ps(dot3.mData, dot4.mData);
+	dot1.mData = _mm_hadd_ps(dot1.GetRaw(), dot2.GetRaw());
+	dot3.mData = _mm_hadd_ps(dot3.GetRaw(), dot4.GetRaw());
 
-	return Vector4{ _mm_hadd_ps(dot1.mData, dot3.mData) };
+	return Vector4{ _mm_hadd_ps(dot1.GetRaw(), dot3.GetRaw()) };
 
 #else								// Fallback (SSE 2)
 	

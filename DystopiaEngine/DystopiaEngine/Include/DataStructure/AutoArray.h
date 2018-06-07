@@ -436,6 +436,8 @@ void AutoArray<T>::Sort(Comparator _pTest)
 	}
 }
 
+#include <utility>
+
 template <class T>
 void AutoArray<T>::GrowArray(int _newSize)
 {
@@ -444,7 +446,7 @@ void AutoArray<T>::GrowArray(int _newSize)
 #endif
 
 	unsigned nNewSize = _newSize == 0 ? static_cast<unsigned>((mnSize>0?mnSize:1) * 1.61803f + .5f) : _newSize;
-	T* pNewArray = static_cast<T*>(Construct(nNewSize * sizeof(T)));
+	T* pNewArray = static_cast<T*>(Construct(nNewSize));
 	T* temp = mpArray;
 
 	mpArray = pNewArray;
@@ -452,7 +454,7 @@ void AutoArray<T>::GrowArray(int _newSize)
 
 	ArrayMove(temp);
 
-//	DestroyArray(temp, temp + mnLast);
+	DestroyArray(temp, temp + mnLast);
 	Destruct(temp);
 }
 
@@ -477,7 +479,10 @@ inline void AutoArray<T>::ArrayMove(T* _other)
 template <typename T>
 inline T* AutoArray<T>::Construct(unsigned _nSize)
 {
-	return static_cast<T*> (::operator new[](_nSize * sizeof(T), std::nothrow));
+	void* ptr = ::operator new[](_nSize * sizeof(T), std::nothrow);
+	memset(ptr, 0, _nSize * sizeof(T));
+
+	return static_cast<T*> (ptr);
 }
 
 template <typename T>

@@ -22,7 +22,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\DebugAssert.h"			// DEBUG_ASSERT
 #include "Component\Camera.h"				// Camera
 
-//#define GLEW_STATIC 			// Use glew as a static library
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable Window header min & max macros
 
@@ -33,8 +32,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <cstdio>
 #include <string>
 
-#undef GLEW_STATIC				// Stop defines from spilling into code
-#undef WIN32_LEAN_AND_MEAN
+#undef WIN32_LEAN_AND_MEAN		// Stop defines from spilling into code
 #undef NOMINMAX
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
@@ -51,11 +49,15 @@ Dystopia::GraphicsSystem::~GraphicsSystem(void)
 
 bool Dystopia::GraphicsSystem::Init(void)
 {
+	glEnable(GL_DEPTH_TEST);
+
 	return true;
 }
 
 void Dystopia::GraphicsSystem::Update(float)
 {
+	StartFrame();
+
 	// We only care about the game view
 	
 	// For every camera in the game window (can be more than 1!)
@@ -78,6 +80,8 @@ void Dystopia::GraphicsSystem::Update(float)
 	}
 
 	// Final draw to combine layers & draw to screen
+
+	EndFrame();
 }
 
 void Dystopia::GraphicsSystem::StartFrame(void)
@@ -126,14 +130,14 @@ Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _fileP
 	std::string strName, strVert, strGeo, strFrag;
 
 	_filePath; strName; strVert; strGeo; strFrag;
+
 	return nullptr;
 }
 
-bool Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
+void Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
 {
 	mCurrent = &_window;
 	wglMakeCurrent(_window.GetDeviceContext(), static_cast<HGLRC>(mOpenGL));
-	return true;
 }
 
 bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)

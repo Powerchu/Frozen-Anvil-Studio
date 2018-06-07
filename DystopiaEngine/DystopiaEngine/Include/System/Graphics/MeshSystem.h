@@ -1,52 +1,54 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Mesh.h
+\file	MeshSystem.h
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Mesh
+	Manages the creation, loading and destruction of Meshes.
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _MESH_H_
-#define _MESH_H_
+#ifndef _MESHSYS_H_
+#define _MESHSYS_H_
+
+#include "System\Graphics\VertexDefs.h"
+#include "System\Graphics\Mesh.h"
+#include "System\Graphics\RawMesh.h"
+#include "DataStructure\AutoArray.h"
 
 #include <string>
 
+
 namespace Dystopia
 {
-	class MeshSystem;
-
-	class Mesh
+	class MeshSystem final
 	{
 	public:
 
-		Mesh(void) noexcept;
-		Mesh(unsigned, unsigned, size_t) noexcept;
+		void Init(void);
+		void Shutdown(void) noexcept;
 
-		void UseMesh(int _nMode) const;
+		void StartMesh(void);
+		void LoadMesh(const std::string&);
+		void EndMesh(void);
 
-		void SetName(const std::string&);
-		const std::string& GetName(void) const;
-		
-		static void LinkSystem(MeshSystem* _pSystem);
-
-		bool IsUnique(void) const;
+		void FreeMeshes(void);
 
 	private:
 
-		bool mbUnique;
-		unsigned mVAO, mnVertices;
-		void* mnOffset;
-		
-		std::string mName;
+		AutoArray<UV>      mUVs;
+		AutoArray<Vertex>  mVtx;
+		AutoArray<short>   mIndex;
 
-		static MeshSystem* mpSystem;
+		AutoArray<Mesh>    mpMeshes;
+		AutoArray<RawMesh> mpRawMeshes;
 	};
 }
+
+
 
 
 
