@@ -30,12 +30,15 @@ namespace Dystopia
 		void InsertEndBlock(const std::string& = "");
 		void InsertStartBlock(const std::string& = "");
 
-		void ConsumeBlock(void);
+		void ConsumeStartBlock(void);
+		void ConsumeEndBlock(void);
+
+		bool EndOfInput(void) const;
 
 		static TextSerialiser OpenFile(const std::string&, int = MODE_READ);
 
 		template <typename T>
-		TextSerialiser& Read(const T&);
+		TextSerialiser& Read(T&);
 
 		template <typename T>
 		TextSerialiser& Write(const T&);
@@ -48,6 +51,7 @@ namespace Dystopia
 		std::fstream mFile;
 
 		explicit TextSerialiser(void);
+		explicit TextSerialiser(std::fstream&);
 		TextSerialiser(const TextSerialiser&) = delete; // Disallow copying!
 
 		void Validate(void);
@@ -71,17 +75,18 @@ Dystopia::TextSerialiser& operator >> (Dystopia::TextSerialiser&, const T&);
 template <typename T>
 Dystopia::TextSerialiser& Dystopia::TextSerialiser::Write(const T& _rhs)
 {
-	if(!mbBlockRead)
-		mFile << _rhs << ',';
+	mFile << _rhs << ',';
 
 	return *this;
 }
 
 template <typename T>
-Dystopia::TextSerialiser& Dystopia::TextSerialiser::Read(const T& _rhs)
+Dystopia::TextSerialiser& Dystopia::TextSerialiser::Read(T& _rhs)
 {
 	if (!mbBlockRead)
 		mFile >> _rhs;
+	else
+		_rhs = T{};
 
 	Validate();
 	return *this;

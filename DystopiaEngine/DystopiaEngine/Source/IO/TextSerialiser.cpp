@@ -12,14 +12,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "IO\TextSerialiser.h"		// File Header
+#include "Utility\Utility.h"
 
 #include <limits>		// numeric_limit
 #include <string>		// string
 #include <fstream>		// fstream, ifstream, ofstream, streamsize
 
+#include <iostream>
 
 Dystopia::TextSerialiser::TextSerialiser(void) :
 	mbBlockRead{ true }, mFile { }
+{
+
+}
+
+Dystopia::TextSerialiser::TextSerialiser(std::fstream& _file) :
+	mbBlockRead{ false }, mFile{ Utility::Move(_file) }
 {
 
 }
@@ -39,7 +47,21 @@ void Dystopia::TextSerialiser::InsertStartBlock(const std::string& _strName)
 	mFile << "[START_" << _strName << "]\n";
 }
 
-void Dystopia::TextSerialiser::ConsumeBlock(void)
+void Dystopia::TextSerialiser::ConsumeStartBlock(void)
+{
+	do {
+		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
+
+		if (mFile.peek() == 'S')
+		{
+			mFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			mbBlockRead = false;
+			break;
+		}
+	} while (mFile.good());
+}
+
+void Dystopia::TextSerialiser::ConsumeEndBlock(void)
 {
 	do {
 		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
@@ -50,6 +72,11 @@ void Dystopia::TextSerialiser::ConsumeBlock(void)
 			break;
 		}
 	} while (mFile.good());
+}
+
+bool Dystopia::TextSerialiser::EndOfInput(void) const
+{
+	return mbBlockRead;
 }
 
 void Dystopia::TextSerialiser::Validate(void)
@@ -65,11 +92,14 @@ void Dystopia::TextSerialiser::Validate(void)
 
 Dystopia::TextSerialiser Dystopia::TextSerialiser::OpenFile(const std::string& _strFilename, int _nMode)
 {
-	TextSerialiser file;
+	std::fstream file;
 
-	file.mFile.open(_strFilename, _nMode);
+	file.open(_strFilename, _nMode);
 
-	return file;
+	if (file.fail())
+		__debugbreak();
+
+	return TextSerialiser{ file };
 }
 
 

@@ -1,50 +1,36 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Mesh.h
+\file	RawMesh.h
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Mesh
+	"Raw" Mesh Data
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _MESH_H_
-#define _MESH_H_
+#ifndef _RAWMESH_H_
+#define _RAWMESH_H_
 
-#include <string>
+#include "System\Graphics\VertexDefs.h"
+#include "DataStructure\AutoArray.h"
 
 namespace Dystopia
 {
-	class MeshSystem;
-
-	class Mesh
+	struct RawMesh
 	{
-	public:
+		RawMesh(void) noexcept;
+		~RawMesh(void);
 
-		Mesh(void) noexcept;
-		Mesh(unsigned, unsigned, size_t) noexcept;
+		void BindMesh  (void) const;
+		void UnbindMesh(void) const;
 
-		void UseMesh(int _nMode) const;
+		void BuildMesh(AutoArray<Vertex>&, AutoArray<UV>&, AutoArray<short>&);
 
-		void SetName(const std::string&);
-		const std::string& GetName(void) const;
-		
-		static void LinkSystem(MeshSystem* _pSystem);
-
-		bool IsUnique(void) const;
-
-	private:
-
-		bool mbUnique;
-		unsigned mVAO, mnVertices;
-		void* mnOffset;
-		
-		std::string mName;
-
-		static MeshSystem* mpSystem;
+		unsigned mVAO, mVtxBuffer, mUVBuffer, mEBO;
+		unsigned short mVtxCount;
 	};
 }
 

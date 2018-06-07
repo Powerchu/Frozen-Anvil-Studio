@@ -229,6 +229,8 @@ namespace Dystopia
 
 	void WindowManager::ReAdjustWindow(Window& _window)
 	{
+		ShowWindow(_window.GetWindowHandle(), SW_HIDE);
+
 		RECT WindowRect{ 0, 0, mWidth, mHeight };
 		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
 
@@ -241,8 +243,11 @@ namespace Dystopia
 		// center the window
 		SetWindowPos(_window.GetWindowHandle(), NULL,
 			left, top, mWidth, mHeight,
-			SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE
+			SWP_NOZORDER | SWP_NOACTIVATE
 		);
+
+
+		ShowWindow(_window.GetWindowHandle(), SW_SHOW);
 	}
 
 }
