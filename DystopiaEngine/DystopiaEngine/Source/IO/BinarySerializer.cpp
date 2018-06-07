@@ -13,14 +13,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "IO\BinarySerializer.h"
 #include "DataStructure\Stack.h"
+#include "Utility\Utility.h"
 #include <iostream>
 
-Dystopia::BinarySerializer::BinarySerializer(void) :
-	mbBlockRead{ true }, mFile{}, 
+#include <limits>		// numeric_limit
+#include <string>		// string
+#include <fstream>		// fstream, ifstream, ofstream, streamsize
+
+#include <iostream>
+
+Dystopia::BinarySerializer::BinarySerializer(void) 
+	: mFile{}, 
 	mfpWrite{ Dystopia::System::GetSoftwareEndian() ? &Dystopia::BinarySerializer::WriteLE : &Dystopia::BinarySerializer::WriteBE },
 	mfpRead{ Dystopia::System::GetSoftwareEndian() ? &Dystopia::BinarySerializer::ReadLE : &Dystopia::BinarySerializer::ReadBE }
 {
+}
 
+Dystopia::BinarySerializer::BinarySerializer(std::fstream& _file) 
+	: mFile{ Utility::Move(_file) },
+	mfpWrite{ Dystopia::System::GetSoftwareEndian() ? &Dystopia::BinarySerializer::WriteLE : &Dystopia::BinarySerializer::WriteBE },
+	mfpRead{ Dystopia::System::GetSoftwareEndian() ? &Dystopia::BinarySerializer::ReadLE : &Dystopia::BinarySerializer::ReadBE }
+{
 }
 
 Dystopia::BinarySerializer::~BinarySerializer(void)
@@ -28,59 +41,62 @@ Dystopia::BinarySerializer::~BinarySerializer(void)
 	mFile.close();
 }
 
-void Dystopia::BinarySerializer::InsertEndBlock(const std::string& _strName)
+void Dystopia::BinarySerializer::WriteEndBlock(const std::string& _strName)
 {
-	//mFile << "\n[END_" << _strName << "]\n";
+	mFile << "\n[END_" << _strName << "]\n";
 }
 
-void Dystopia::BinarySerializer::InsertStartBlock(const std::string& _strName)
+void Dystopia::BinarySerializer::WriteStartBlock(const std::string& _strName)
 {
-	//mFile << "[START_" << _strName << "]\n";
+	mFile << "[START_" << _strName << "]\n";
 }
 
-void Dystopia::BinarySerializer::ConsumeStartBlock(void)
+bool Dystopia::BinarySerializer::ReadStartBlock(void)
 {
-	//do {
-	//	mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
-	//
-	//	if (mFile.peek() == 'S')
-	//	{
-	//		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	//		break;
-	//	}
-	//} while (mFile.good());
+	do {
+		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
+
+		if (mFile.peek() == 'S')
+		{
+			mFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			return true;
+		}
+	} while (mFile.good());
+
+	return false;
 }
 
-void Dystopia::BinarySerializer::ConsumeEndBlock(void)
+void Dystopia::BinarySerializer::ReadEndBlock(void)
 {
-	//do {
-	//	mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
-	//
-	//	if (mFile.peek() == 'E')
-	//	{
-	//		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	//		break;
-	//	}
-	//} while (mFile.good());
+	do {
+		mFile.ignore(std::numeric_limits<std::streamsize>::max(), '[');
+
+		if (mFile.peek() == 'E')
+		{
+			mFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			break;
+		}
+	} while (mFile.good());
 }
 
-void Dystopia::BinarySerializer::Validate(void)
+bool Dystopia::BinarySerializer::Validate(void)
 {
-	//if (mFile.peek() == ',')
-	//	mFile.ignore(1);
-	//
-	//if (mFile.peek() == '\n')
-	//{
-	//	mbBlockRead = true;
-	//}
+	if (mFile.peek() == ',')
+		mFile.ignore(1);
+
+	return mFile.peek() != '\n';
 }
 
 Dystopia::BinarySerializer Dystopia::BinarySerializer::OpenFile(const std::string& _strFilename, int _nMode)
 {
-	BinarySerializer file;
-	//file.mFile.open(_strFilename, _nMode);
-	file.mFile.open(_strFilename, _nMode | std::ios_base::binary);
-	return file;
+	std::fstream file;
+
+	file.open(_strFilename, _nMode | std::ios_base::binary);
+
+	if (file.fail())
+		__debugbreak();
+
+	return BinarySerializer{ file };
 }
 
 void Dystopia::BinarySerializer::WriteBE(const char * const &_pStart, const size_t _size)
@@ -124,6 +140,21 @@ void Dystopia::BinarySerializer::ReadLE(char * const &_pStart, const size_t _siz
 		tempStack.Pop();
 		*(_pStart + track) = tempChar;
 		track++;
+	}
+}
+
+void Dystopia::BinarySerializer::ManualEndainOverride(eEndianess endian)
+{
+	switch (endian)
+	{
+	case eENDIAN_LITTLE:
+		mfpWrite = &Dystopia::BinarySerializer::WriteLE;
+		mfpRead = &Dystopia::BinarySerializer::ReadLE;
+		break;
+	case eENDIAN_BIG:
+		mfpWrite = &Dystopia::BinarySerializer::WriteBE;
+		mfpRead = &Dystopia::BinarySerializer::ReadBE;
+		break;
 	}
 }
 

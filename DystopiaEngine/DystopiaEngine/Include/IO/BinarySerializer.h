@@ -28,10 +28,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _BINARY_SERIALIZER_H_
 #define _BINARY_SERIALIZER_H_
-#include <cstdint>
-#include <limits>		// numeric_limit
-#include <string>		// string
-#include <fstream>		// fstream, ifstream, ofstream, streamsize
+#include <string>
+#include <fstream>
+
+#include "IO\Serialiser.h"
 
 namespace Dystopia
 {
@@ -41,50 +41,49 @@ namespace Dystopia
 		eENDIAN_BIG
 	};
 
-	class BinarySerializer
+	class BinarySerializer : public SerialiserBase<BinarySerializer>
 	{
 	public:
-		static constexpr int MODE_READ = std::ios::in;
-		static constexpr int MODE_WRITE = std::ios::out;
+		friend class SerialiserBase<BinarySerializer>;
 
 		BinarySerializer(BinarySerializer&&) = default;
-
-		void InsertEndBlock(const std::string& = "");
-		void InsertStartBlock(const std::string& = "");
-
-		void ConsumeStartBlock(void);
-		void ConsumeEndBlock(void);
+		~BinarySerializer(void);
 
 		static BinarySerializer OpenFile(const std::string&, int = MODE_READ);
 
-		template <typename T>
-		BinarySerializer& Read(T&);
-		template <typename T>
-		BinarySerializer& Read(const T&);
-
-		template <typename T>
-		BinarySerializer& Write(const T&);
-
-		~BinarySerializer(void);
+		void ManualEndainOverride(eEndianess);
 
 	private:
+
+		explicit BinarySerializer(void);
+		explicit BinarySerializer(std::fstream&);
+		BinarySerializer(const BinarySerializer&) = delete; // Disallow copying!
+
 		typedef void(BinarySerializer::*MemFnPtr)(const char * const &, const size_t);
 		typedef void(BinarySerializer::*MemFnPtr2)(char * const &, const size_t);
 
-		bool mbBlockRead;
 		std::fstream mFile;
+		bool mbBlockRead;
 		MemFnPtr mfpWrite;
 		MemFnPtr2 mfpRead;
+
+		void ReadEndBlock(void);
+		bool ReadStartBlock(void);
+
+		void WriteEndBlock(const std::string&);
+		void WriteStartBlock(const std::string&);
+
+		template <typename T>
+		void ApplyRead(T&);
+		template <typename T>
+		void ApplyWrite(const T&);
+
+		bool Validate(void);
 
 		void WriteBE(const char * const &, const size_t);
 		void WriteLE(const char * const &, const size_t);
 		void ReadBE(char * const &, const size_t);
 		void ReadLE(char * const &, const size_t);
-
-		explicit BinarySerializer(void);
-		BinarySerializer(const BinarySerializer&) = delete; // Disallow copying!
-
-		void Validate(void);
 	};
 
 	namespace System
@@ -98,59 +97,20 @@ namespace Dystopia
 	}
 }
 
-template <typename T>
-Dystopia::BinarySerializer& operator << (Dystopia::BinarySerializer&, const T&);
-
-template <typename T>
-Dystopia::BinarySerializer& operator >> (Dystopia::BinarySerializer&, const T&);
-
 
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 template <typename T>
-Dystopia::BinarySerializer& Dystopia::BinarySerializer::Write(const T& _rhs)
+void Dystopia::BinarySerializer::ApplyWrite(const T& _rhs)
 {
 	(this->*mfpWrite)(reinterpret_cast<const char*>(&_rhs), sizeof(_rhs));
-	return *this;
 }
 
 template <typename T>
-Dystopia::BinarySerializer& Dystopia::BinarySerializer::Read(T& _rhs)
+void Dystopia::BinarySerializer::ApplyRead(T& _rhs)
 {
-	if (!mbBlockRead)
-		(this->*mfpRead)(reinterpret_cast<char*>(&_rhs), sizeof(_rhs));
-	else
-		_rhs = T{};
-	
-	Validate();
-	return *this;
+	(this->*mfpRead)(reinterpret_cast<char*>(&_rhs), sizeof(_rhs));
 }
-
-template <typename T>
-Dystopia::BinarySerializer& Dystopia::BinarySerializer::Read(const T& _rhs)
-{
-	std::remove_const<T>::type &temp = const_cast<std::remove_const<T>::type&>(_rhs);
-	return Read(temp);
-}
-
-template <typename T>
-Dystopia::BinarySerializer& operator << (Dystopia::BinarySerializer& _file, const T& _rhs)
-{
-	return _file.Write(_rhs);
-}
-
-template <typename T>
-Dystopia::BinarySerializer& operator >> (Dystopia::BinarySerializer& _file, T& _rhs)
-{
-	return _file.Read(_rhs);
-}
-
-
-
-
-
-
-
 
 
 
