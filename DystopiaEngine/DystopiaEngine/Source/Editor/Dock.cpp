@@ -335,6 +335,9 @@ void DockContext::HandleDrag(Dock& _dock)
 	_dock.mPos = ImVec2{ ImGui::GetIO().MousePos.x - mDragOffset.x ,
 						 ImGui::GetIO().MousePos.y - mDragOffset.y };
 
+	//_dock.mPos.x = (_dock.mPos.x < 0) ? 0 : ((_dock.mPos.x > 100) ? 100 : _dock.mPos.x);
+	//_dock.mPos.y = (_dock.mPos.y < 0) ? 0 : _dock.mPos.y;
+
 	if (pDestDock)
 	{
 		ImVec2 max{ pDestDock->mPos.x + pDestDock->mSize.x , pDestDock->mPos.y + pDestDock->mSize.y };
