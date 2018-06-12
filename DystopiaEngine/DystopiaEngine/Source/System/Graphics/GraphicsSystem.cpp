@@ -241,7 +241,7 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 	}
 
 	// Failed, try 3.2...
-	mAvailable &= ~(GRAPHICS_COMPUTE | GRAPHICS_TESS);
+	mAvailable &= ~(eGfxSettings::GRAPHICS_COMPUTE | eGfxSettings::GRAPHICS_TESS);
 
 	attrbs[1] = 3; attrbs[3] = 2;
 	mOpenGL = wglCreateContextAttribsARB(_window.GetDeviceContext(), NULL, attrbs);
