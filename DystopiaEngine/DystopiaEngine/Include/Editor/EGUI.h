@@ -55,10 +55,6 @@ namespace Dystopia
 			void Quit(FncPtrCallback);
 		}
 		
-		namespace Dock
-		{
-			class DockContext;
-		}
 	}
 
 	class GuiSystem

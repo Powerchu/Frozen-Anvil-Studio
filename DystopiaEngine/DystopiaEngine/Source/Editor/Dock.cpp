@@ -1255,6 +1255,211 @@ void DebugWindow()
 
 }}} // namespace DYSTOPIA::EGUI::DOCK
 
+
+/*================================================================================================================================*/
+/*================================================== NEW VERSION TESTING W-I-P ===================================================*/
+namespace EGUI
+{
+
+	DockLayout::DockTab::DockTab()
+		: mpLabel{ nullptr }, mpNextTab{ nullptr }, mpPrevTab{ nullptr }, 
+		mPosition{ ImVec2{0,0} }, mSize{ ImVec2{ 0,0 } }, mFloatSize{ ImVec2{ 0,0 } }, mId{ 0 }, mLastFrame{ 0 }, 
+		mInvalidFrame{ 0 }, mActive{ false }, mOpened{ false }, mFirst{ false }, mLocation{}, mDockStatus{ eDOCK_STATUS_INVALID }
+	{
+	}
+	DockLayout::DockTab::~DockTab()
+	{
+		delete mpLabel;
+	}
+
+	DockLayout::DockTab& DockLayout::DockTab::GetFirstTab()
+	{
+		DockTab* tempTab = this;
+		while (tempTab->mpPrevTab)
+			tempTab = GetPrevTab();
+		return *tempTab;
+	}
+
+	DockLayout::DockTab* DockLayout::DockTab::GetNextTab()
+	{
+		return mpNextTab;
+	}
+
+	DockLayout::DockTab* DockLayout::DockTab::GetPrevTab()
+	{
+		return mpPrevTab;
+	}
+
+	void DockLayout::DockTab::SetActive()
+	{
+		mActive = true;
+	}
+
+	void DockLayout::DockTab::SetPosSize(const ImVec2& _pos, const ImVec2& _size)
+	{
+		mPosition = _pos;
+		mSize = _size;
+	}
+	
+	ImU32 DockLayout::DockTab::GetID() const
+	{
+		return mId;
+	}
+
+	void DockLayout::DockTab::SetID(ImU32 _id)
+	{
+		mId = _id;
+	}
+
+
+
+
+
+
+
+	DockLayout::DockLayout()
+		: mArrSlotPairTabPtr{}, mArrSlotPairSize{}, mArrSlotPairPosition{}
+	{
+	}
+
+	DockLayout::~DockLayout()
+	{
+		for (auto e : mArrSlotPairTabPtr)
+			delete e.second;
+	}
+
+	void DockLayout::LoadDefaults()
+	{
+		mArrSlotPairSize.push_back(std::make_pair(ePANEL_SLOT_LEFT, ImVec2{ 100, 400 }));
+		mArrSlotPairSize.push_back(std::make_pair(ePANEL_SLOT_MIDDLE, ImVec2{ 500, 400 }));
+		mArrSlotPairSize.push_back(std::make_pair(ePANEL_SLOT_BOTTOM, ImVec2{ 600, 200 }));
+		mArrSlotPairSize.push_back(std::make_pair(ePANEL_SLOT_RIGHT, ImVec2{ 200, 600 }));
+
+		mArrSlotPairPosition.push_back(std::make_pair(ePANEL_SLOT_LEFT, ImVec2{ 0, 0 }));
+		mArrSlotPairPosition.push_back(std::make_pair(ePANEL_SLOT_MIDDLE, ImVec2{ 100, 0 }));
+		mArrSlotPairPosition.push_back(std::make_pair(ePANEL_SLOT_BOTTOM, ImVec2{ 0, 400 }));
+		mArrSlotPairPosition.push_back(std::make_pair(ePANEL_SLOT_RIGHT, ImVec2{ 600, 0 }));
+	}
+
+	void DockLayout::InsertTab(ePanelSlot _slot, DockTab *_tab)
+	{
+		mArrSlotPairTabPtr.push_back(std::make_pair(_slot, _tab));
+	}
+
+	void DockLayout::RemoveTab(DockTab *_tab)
+	{
+		for (unsigned int i = 0; i < mArrSlotPairTabPtr.size(); ++i)
+		{
+			if (mArrSlotPairTabPtr[i].second == _tab)
+			{
+				mArrSlotPairTabPtr.FastRemove(i);
+				return;
+			}
+		}
+	}
+
+	ImVec2 DockLayout::GetPosition(ePanelSlot _slot) const
+	{
+		for (auto e : mArrSlotPairPosition)
+		{
+			if (e.first == _slot)
+				return e.second;
+		}
+		return ImVec2{ 0, 0 };
+	}
+
+	ImVec2 DockLayout::GetSize(ePanelSlot _slot) const
+	{
+		for (auto e : mArrSlotPairSize)
+		{
+			if (e.first == _slot)
+				return e.second;
+		}
+		return ImVec2{ 0, 0 };
+	}
+
+	void DockLayout::SetPosition(ePanelSlot _slot, ImVec2 _pos)
+	{
+		for (auto e : mArrSlotPairPosition)
+		{
+			if (e.first == _slot)
+				e.second = _pos;
+		}
+	}
+
+	void DockLayout::SetSize(ePanelSlot _slot, ImVec2 _size)
+	{
+		for (auto e : mArrSlotPairSize)
+		{
+			if (e.first == _slot)
+				e.second = _size;
+		}
+	}
+
+	void DockLayout::BeginDockTab(const char *_label, bool *_opened, ImGuiWindowFlags _flags, const ImVec2& _defSize)
+	{
+		DockTab& dockTab = GetDockTab(_label, !_opened || *_opened, _defSize);
+	}
+
+	DockLayout::DockTab& DockLayout::GetDockTab(const char *_label, bool _opened, const ImVec2& _defSize)
+	{
+		ImU32 id = ImHash(_label, 0);
+		for (auto e : mArrSlotPairTabPtr)
+		{
+			if (e.second->GetID() == id)
+				return *e.second;
+		}
+
+		DockTab* newTab = new DockTab{};
+		// mDocksArr.push_back(newDock);
+		// 
+		// newTab->mpLabel = ImStrdup(_label); IM_ASSERT(newDock->mpLabel);
+		// newTab->mId = id;
+		// newTab->SetActive();
+		// newTab->mStatus = (mDocksArr.size() == 1) ? eSTAT_DOCK : eSTAT_FLOAT;
+		// newTab->mPos = ImVec2{ 0,0 };
+		// newTab->mSize.x = _defSize.x < 0 ? ImGui::GetIO().DisplaySize.x : _defSize.x;
+		// newTab->mSize.y = _defSize.y < 0 ? ImGui::GetIO().DisplaySize.y : _defSize.y;
+		// newTab->mFloatmodeSize = _defSize;
+		// newTab->mOpened = _opened;
+		// newTab->mFirst = true;
+		// newTab->mLastFrame = 0;
+		// newTab->mLocation[0] = 0;
+		return *newTab;
+	}
+
+
+
+
+} // namespace EGUI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif //EDITOR
 
 

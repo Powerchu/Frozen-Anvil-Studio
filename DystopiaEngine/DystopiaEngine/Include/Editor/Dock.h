@@ -162,6 +162,86 @@ namespace Dystopia
 	}
 }
 
+
+
+// Work-In-Progress
+namespace EGUI
+{
+	enum ePanelSlot
+	{
+		ePANEL_SLOT_INVALID = -1,
+		ePANEL_SLOT_LEFT,
+		ePANEL_SLOT_MIDDLE,
+		ePANEL_SLOT_BOTTOM,
+		ePANEL_SLOT_RIGHT,
+	};
+
+	class DockLayout
+	{
+		enum eDockStatus
+		{
+			eDOCK_STATUS_INVALID = -1,
+			eDOCK_STATUS_FLOAT,
+			eDOCK_STATUS_DRAGGED,
+			eDOCK_STATUS_DOCKED
+		};
+
+		class DockTab
+		{
+		public:
+			DockTab();
+			~DockTab();
+
+			DockTab&	GetFirstTab();
+			DockTab*	GetNextTab();
+			DockTab*	GetPrevTab();
+			void		SetActive();
+			void		SetPosSize(const ImVec2&, const ImVec2&);
+			void		SetID(ImU32);
+			ImU32		GetID() const;
+
+		private:
+			char		*mpLabel;
+			DockTab		*mpNextTab;
+			DockTab		*mpPrevTab;
+			ImVec2		mPosition;
+			ImVec2		mSize;
+			ImVec2		mFloatSize;
+			ImU32		mId;
+			int			mLastFrame;
+			int			mInvalidFrame;
+			bool		mActive;
+			bool		mOpened;
+			bool		mFirst;
+			char		mLocation[16];
+			eDockStatus	mDockStatus;
+		};
+
+	public:
+		DockLayout();
+		~DockLayout();
+
+		void		LoadDefaults();
+		void		InsertTab(ePanelSlot, DockTab *);
+		void		RemoveTab(DockTab *);
+		ImVec2		GetPosition(ePanelSlot) const;
+		ImVec2		GetSize(ePanelSlot) const;
+		void		SetPosition(ePanelSlot, ImVec2);
+		void		SetSize(ePanelSlot, ImVec2);
+		void		BeginDockTab(const char *, bool *_opened = nullptr, ImGuiWindowFlags _flags = 0, const ImVec2& _defSize = ImVec2{ 0, 0 });
+
+	private:
+		AutoArray<std::pair<ePanelSlot, DockTab*>>	mArrSlotPairTabPtr;
+		AutoArray<std::pair<ePanelSlot, ImVec2>>	mArrSlotPairSize;
+		AutoArray<std::pair<ePanelSlot, ImVec2>>	mArrSlotPairPosition;
+
+		DockTab&	GetDockTab(const char*, bool _opened, const ImVec2& _defSize);
+	};
+}
+
+
+
+
 #endif //_DOCK_H_
 #endif //EDITOR
 
