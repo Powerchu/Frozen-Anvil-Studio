@@ -42,11 +42,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	/* Serialize */
 	// TOGGLE the binSer open file and manual endian override to test between little and big endian
 
-	// Dystopia::BinarySerializer binSer = Dystopia::BinarySerializer::OpenFile("TestBinSerLittle", 2);
-	// binSer.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_LITTLE);
+	Dystopia::BinarySerializer binSer = Dystopia::BinarySerializer::OpenFile("TestBinSerLittle", 2);
+	binSer.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_LITTLE);
 
-	Dystopia::BinarySerializer binSer = Dystopia::BinarySerializer::OpenFile("TestBinSerBig", 2);
-	binSer.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_BIG);
+	// Dystopia::BinarySerializer binSer = Dystopia::BinarySerializer::OpenFile("TestBinSerBig", 2);
+	// binSer.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_BIG);
 
 	int testVar_int = 5;
 	float testVar_float = 99.23f;
@@ -68,11 +68,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	/* Deserialize*/
 	// TOGGLE the binSer open file and manual endian override to test between little and big endian
 
-	// Dystopia::BinarySerializer binSer2 = Dystopia::BinarySerializer::OpenFile("TestBinSerLittle", 1);
-	// binSer.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_LITTLE);
+	Dystopia::BinarySerializer binSer2 = Dystopia::BinarySerializer::OpenFile("TestBinSerLittle", 1);
+	binSer2.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_LITTLE);
 
-	Dystopia::BinarySerializer binSer2 = Dystopia::BinarySerializer::OpenFile("TestBinSerBig", 1);
-	binSer.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_BIG);
+	// Dystopia::BinarySerializer binSer2 = Dystopia::BinarySerializer::OpenFile("TestBinSerBig", 1);
+	// binSer2.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_BIG);
 
 	binSer2.Read(testVar_char);
 	binSer2.Read(testVar_int);
