@@ -48,8 +48,8 @@ namespace Dystopia
 		void LoadDefaults(void);
 		void LoadSettings(TextSerialiser&);
 
-		void	 LevelLoad(TextSerialiser&);
-		Mesh*	 LoadMesh(const std::string&);
+		void     LevelLoad(TextSerialiser&);
+		void     LoadMesh(const std::string&);
 		Texture* LoadTexture(const std::string&);
 		Shader*	 LoadShader(const std::string&);
 

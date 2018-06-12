@@ -28,9 +28,6 @@
     <ClCompile Include="Source\Editor\Editor.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Graphics\Mesh.cpp">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Graphics\Shader.cpp">
       <Filter>Game Engine\Systems\Graphic\Shader</Filter>
     </ClCompile>
@@ -70,8 +67,14 @@
     <ClCompile Include="Source\System\Graphics\RawMesh.cpp">
       <Filter>Game Engine\Systems\Graphic\Mesh\Raw</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Graphics\Mesh.cpp">
+      <Filter>Game Engine\Systems\Graphic\Mesh\Mesh</Filter>
+    </ClCompile>
     <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
       <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Include\System\Driver\Driver.cpp">
+      <Filter>Game Engine\Systems\Driver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,9 +174,6 @@
     <ClInclude Include="Include\System\Graphics\Shader.h">
       <Filter>Game Engine\Systems\Graphic\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\Mesh.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Graphics\Image.h">
       <Filter>Game Engine\Systems\Graphic\Texture</Filter>
     </ClInclude>
@@ -213,14 +213,23 @@
     <ClInclude Include="Include\System\Graphics\RawMesh.h">
       <Filter>Game Engine\Systems\Graphic\Mesh\Raw</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Graphics\VertexDefs.h">
       <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\Serialiser.h">
       <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\Mesh.h">
+      <Filter>Game Engine\Systems\Graphic\Mesh\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
+      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vector2.h">
+      <Filter>Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Driver\Driver.h">
+      <Filter>Game Engine\Systems\Driver</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -352,6 +361,15 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Mesh\Raw">
       <UniqueIdentifier>{466ff2cb-a158-4c05-a63f-87c44bb584ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Mesh\Mesh">
+      <UniqueIdentifier>{5301a2cd-6232-4bb5-ba8e-c8bbce651e7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Shader\Programs">
+      <UniqueIdentifier>{25efe6f2-2810-44e2-bb62-561d5426d05d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Driver">
+      <UniqueIdentifier>{5218dddd-4e8e-4b28-9f3d-f179f71e8edc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

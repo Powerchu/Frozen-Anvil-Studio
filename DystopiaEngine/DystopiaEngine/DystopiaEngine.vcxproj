@@ -30,6 +30,7 @@
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Include\System\Driver\Driver.cpp" />
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
     <ClCompile Include="Source\Component\Component.cpp" />
     <ClCompile Include="Source\Component\Transform.cpp" />
@@ -79,6 +80,7 @@
     <ClInclude Include="Include\Object\ObjectFlags.h" />
     <ClInclude Include="Include\System\Base\Systems.h" />
     <ClInclude Include="Include\Component\Camera.h" />
+    <ClInclude Include="Include\System\Driver\Driver.h" />
     <ClInclude Include="Include\System\Graphics\GraphicsDefs.h" />
     <ClInclude Include="Include\System\Graphics\GraphicsSystem.h" />
     <ClInclude Include="Include\System\Graphics\Image.h" />
@@ -102,6 +104,7 @@
     <ClInclude Include="Include\Utility\Meta.h" />
     <ClInclude Include="Include\Utility\MetaHelper.h" />
     <ClInclude Include="Include\Utility\Utility.h" />
+    <ClInclude Include="Include\Math\Vector2.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>

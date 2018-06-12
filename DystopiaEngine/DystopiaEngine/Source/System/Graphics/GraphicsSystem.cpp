@@ -115,9 +115,9 @@ void Dystopia::GraphicsSystem::LevelLoad(TextSerialiser&)
 
 }
 
-Dystopia::Mesh* Dystopia::GraphicsSystem::LoadMesh(const std::string&)
+void Dystopia::GraphicsSystem::LoadMesh(const std::string&)
 {
-	return nullptr;
+
 }
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string&)

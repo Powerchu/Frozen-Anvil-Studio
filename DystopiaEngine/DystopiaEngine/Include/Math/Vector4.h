@@ -305,8 +305,6 @@ inline Math::Vector4& _CALL Math::Vector4::Normalise(void)
 	DEBUG_ASSERT(IsZero(Dot(*this)), "Vector4 Error: Normalising a zero vector.\n");
 #endif
 
-	// 0x71 -> High (7) Ignore first (w) component for multiplication
-	//      -> Low  (F) Store into all components
 	__m128 invSqrt = InvSqrt(Dot(mData, mData));
 	mData = _mm_mul_ps(invSqrt, mData);
 
@@ -386,12 +384,10 @@ inline Math::Vector4& _CALL Math::Vector4::Project(const Vector4 _rhs)
 	DEBUG_ASSERT(IsZero(_rhs.Dot(_rhs)), "Vector4 Error: Projection onto zero vector.\n");
 #endif
 
-	// 0x71 -> High (7) Ignore first (w) component for multiplication
-	//      -> Low  (F) Store into all components
-	__m128 invMag = InvSqrt(Dot(_rhs.mData, _rhs.mData));
-	mData = _mm_mul_ps(mData, invMag);
+	Vector4 dotB{ Dot(_rhs.mData, _rhs.mData) };
+	*this = Vector4 { Dot(mData, _rhs.mData) };
 
-	return *this;
+	return *this *= dotB.Reciprocal() * _rhs;
 }
 
 // Projects lhs onto rhs

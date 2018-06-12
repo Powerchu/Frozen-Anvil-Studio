@@ -13,6 +13,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System\Input\InputSystem.h"
 #include "System\Input\InputMap.h"
+#include "System\Window\WindowManager.h"
+#include "System\Window\Window.h"
+#include "Math\Vector2.h"
+#include "Math\Vector4.h"
 
 #define WIN32_LEAN_AND_MEAN			// Exclude rare stuff from Window's header
 #include <Windows.h>
@@ -96,12 +100,22 @@ bool Dystopia::InputManager::IsKeyReleased(eUserButton _nBtn)
 	return mButtonMap[_nBtn].mbReleased;
 }
 
-Math::Vector4 Dystopia::InputManager::GetMousePosition(void)
+Math::Vector2 Dystopia::InputManager::GetMousePosition(void)
 {
 	POINT pos;
 	GetCursorPos(&pos);
+	ScreenToClient(0, &pos);
 
-	return Math::MakePoint3D(pos.x * 1.f, pos.y * 1.f, .0f);
+	return Math::Vector2(pos.x * 1.f, pos.y * 1.f);
+}
+
+Math::Vector2 Dystopia::InputManager::GetMousePosition(Dystopia::Window& _activeWindow)
+{
+	POINT pos;
+	GetCursorPos(&pos);
+	ScreenToClient(_activeWindow.GetWindowHandle(), &pos);
+
+	return Math::Vector2(pos.x * 1.f, pos.y * 1.f);
 }
 
 Dystopia::InputManager::KeyBinding& Dystopia::InputManager::KeyBinding::operator = (eButton _nBtn)
