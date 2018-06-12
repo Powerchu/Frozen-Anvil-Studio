@@ -74,6 +74,7 @@ namespace Dystopia
 		for (auto e : pAllComponents)
 		{
 			// e->Editor() or e->Window()
+			e;
 		}
 	}
 }

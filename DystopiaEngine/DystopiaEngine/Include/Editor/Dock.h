@@ -165,91 +165,35 @@ namespace Dystopia
 
 
 // Work-In-Progress
-namespace EGUI
+namespace EGUI2
 {
-	enum ePanelSlot
-	{
-		ePANEL_SLOT_INVALID = -1,
-		ePANEL_SLOT_LEFT,
-		ePANEL_SLOT_MIDDLE,
-		ePANEL_SLOT_BOTTOM,
-		ePANEL_SLOT_RIGHT,
-		ePANEL_SLOT_NONE
-	};
+	typedef int ImGuiWindowFlags;
 
-	class DockLayout
+	namespace Docking
 	{
-		enum eDockStatus
+		enum eDockSlot
 		{
-			eDOCK_STATUS_INVALID = -1,
-			eDOCK_STATUS_FLOAT,
-			eDOCK_STATUS_DRAGGED,
-			eDOCK_STATUS_DOCKED
+			eDOCK_SLOT_LEFT,
+			eDOCK_SLOT_RIGHT,
+			eDOCK_SLOT_TOP,
+			eDOCK_SLOT_BOTTOM,
+			eDOCK_SLOT_TAB,
+
+			eDOCK_SLOT_FLOATING,
+			eDOCK_SLOT_NONE
 		};
 
-		class DockTab
-		{
-		public:
-			DockTab();
-			~DockTab();
+		bool BeginPanel();
+		void EndPanel();
+		void ShutdownPanel();
 
-			DockTab&	GetFirstTab();
-			DockTab*	GetNextTab();
-			DockTab*	GetPrevTab();
-			void		SetActive();
-			void		SetPosition(const ImVec2&);
-			void		SetSize(const ImVec2&);
-			void		SetFloatModeSize(const ImVec2&);
-			void		SetPosSize(const ImVec2&, const ImVec2&);
-			void		SetID(ImU32);
-			void		SetLabel(const char*);
-			void		SetStatus(eDockStatus);
-			void		SetOpened(bool);
-			void		SetFirst(bool);
-			bool		IsFirst() const;
-			bool		IsOpened() const;
-			ImU32		GetID() const;
+		void SetNextSlot(const char *, eDockSlot);
 
-		private:
-			char		*mpLabel;
-			DockTab		*mpNextTab;
-			DockTab		*mpPrevTab;
-			ImVec2		mPosition;
-			ImVec2		mSize;
-			ImVec2		mFloatSize;
-			ImU32		mId;
-			int			mLastFrame;
-			int			mInvalidFrame;
-			bool		mActive;
-			bool		mOpened;
-			bool		mFirst;
-			char		mLocation[16];
-			eDockStatus	mDockStatus;
-		};
-
-	public:
-		DockLayout();
-		~DockLayout();
-
-		void		LoadDefaults();
-		void		InsertTab(ePanelSlot, DockTab *);
-		void		RemoveTab(DockTab *);
-		ImVec2		GetPosition(ePanelSlot) const;
-		ImVec2		GetSize(ePanelSlot) const;
-		void		SetPosition(ePanelSlot, ImVec2);
-		void		SetSize(ePanelSlot, ImVec2);
-		void		BeginDockTab(const char *, bool *_opened = nullptr, ImGuiWindowFlags _flags = 0, const ImVec2& _defSize = ImVec2{ 0, 0 });
-
-	private:
-		AutoArray<std::pair<ePanelSlot, DockTab*>>	mArrSlotPairTabPtr;
-		AutoArray<std::pair<ePanelSlot, ImVec2>>	mArrSlotPairSize;
-		AutoArray<std::pair<ePanelSlot, ImVec2>>	mArrSlotPairPosition;
-
-		DockTab&	GetDockTab(const char*, bool _opened, const ImVec2& _defSize);
-	};
+		bool BeginTab(const char *, bool * = nullptr, ImGuiWindowFlags = 0);
+		void EndTab();
+		void InitTab();
+	}
 }
-
-
 
 
 #endif //_DOCK_H_

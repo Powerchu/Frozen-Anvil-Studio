@@ -41,12 +41,12 @@ Dystopia::BinarySerializer::~BinarySerializer(void)
 	mFile.close();
 }
 
-void Dystopia::BinarySerializer::WriteEndBlock(const std::string& _strName)
+void Dystopia::BinarySerializer::WriteEndBlock(const std::string& /*_strName*/)
 {
 	//mFile << "\n[END_" << _strName << "]\n";
 }
 
-void Dystopia::BinarySerializer::WriteStartBlock(const std::string& _strName)
+void Dystopia::BinarySerializer::WriteStartBlock(const std::string& /*_strName*/)
 {
 	//mFile << "[START_" << _strName << "]\n";
 }

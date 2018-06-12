@@ -50,7 +50,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	int testVar_int = 5;
 	float testVar_float = 99.23f;
-	double testVar_double = 1255.3245f;
+	double testVar_double = 1255.3245;
 	char testVar_char = 'A';
 
 	binSer.Write(testVar_char);
@@ -61,8 +61,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	/* Alter values */
 	testVar_int = 12312;
-	testVar_float = 3.21;
-	testVar_double = 123.009f;
+	testVar_float = 3.21f;
+	testVar_double = 123.009;
 	testVar_char = 'J';
 
 	/* Deserialize*/
@@ -155,7 +155,7 @@ namespace Dystopia
 			e->StartFrame(mPrevFrameTime);
 	}
 
-	void Editor::UpdateFrame(const float& _dt)
+	void Editor::UpdateFrame(const float& /*_dt*/)
 	{
 		//mpWin->Update(_dt);
 		//mpInput->Update(_dt);
@@ -197,23 +197,44 @@ namespace Dystopia
 		//}
 		//ImGui::End();
 
+		// ImGui::SetNextWindowSize(ImVec2(500, 500));
+		// ImGui::SetNextWindowBgAlpha(0.95f);
+		// if (ImGui::Begin("imguidock window (= lumix engine's dock system)", NULL, ImGuiWindowFlags_NoScrollbar))
+		// {
+		// 	EGUI::Dock::BeginSpace(); //ImGui::BeginDockspace();
+		// 	static char tmp[128];
+		// 	for (int i = 0; i< 2; i++)
+		// 	{
+		// 		sprintf_s(tmp, "Dock %d", i);
+		// 		if (i == 9)
+		// 			EGUI::Dock::SetNextDock(EGUI::Dock::eDockSlot::eDOCK_BOTTOM); //ImGui::SetNextDock(ImGuiDockSlot_Bottom);// optional
+		// 		if (EGUI::Dock::BeginDock(tmp)) //if (ImGui::BeginDock(tmp))
+		// 			ImGui::Text("Content of dock window %d goes here", i);
+		// 
+		// 		EGUI::Dock::EndDock(); //ImGui::EndDock();
+		// 	}
+		// 	EGUI::Dock::EndSpace(); //ImGui::EndDockspace();
+		// }
+		// ImGui::End();
+
 		ImGui::SetNextWindowSize(ImVec2(500, 500));
 		ImGui::SetNextWindowBgAlpha(0.95f);
-		if (ImGui::Begin("imguidock window (= lumix engine's dock system)", NULL, ImGuiWindowFlags_NoScrollbar))
+		if (ImGui::Begin("Dock Demo"))
 		{
-			EGUI::Dock::BeginSpace(); //ImGui::BeginDockspace();
-			static char tmp[128];
-			for (int i = 0; i< 2; i++)
-			{
-				sprintf_s(tmp, "Dock %d", i);
-				if (i == 9)
-					EGUI::Dock::SetNextDock(EGUI::Dock::eDockSlot::eDOCK_BOTTOM); //ImGui::SetNextDock(ImGuiDockSlot_Bottom);// optional
-				if (EGUI::Dock::BeginDock(tmp)) //if (ImGui::BeginDock(tmp))
-					ImGui::Text("Content of dock window %d goes here", i);
+			// dock layout by hard-coded or .ini file
+			EGUI2::Docking::BeginPanel();
 
-				EGUI::Dock::EndDock(); //ImGui::EndDock();
+			if (EGUI2::Docking::BeginTab("Dock 1")) {
+				ImGui::Text("I'm wakasdao!");
 			}
-			EGUI::Dock::EndSpace(); //ImGui::EndDockspace();
+			EGUI2::Docking::EndTab();
+
+			if (EGUI2::Docking::BeginTab("Dock 2")) {
+				ImGui::Text("I'm korelsa!");
+			}
+			EGUI2::Docking::EndTab();
+
+			EGUI2::Docking::EndPanel();
 		}
 		ImGui::End();
 
@@ -292,18 +313,6 @@ namespace Dystopia
 	void Editor::Save()
 	{
 		// call for serialization of all in current scene
-
-		std::string myString = "Hello World";
-		int myInt = 5;
-		float myFloat = 10.23125f;
-		double myDouble = 1231053;
-
-		for (std::size_t i = 0; i < myString.size(); ++i)
-			std::cout << std::bitset<8>(myString.c_str()[i]) << std::endl;
-
-		std::cout << std::bitset<8>(myInt) << std::endl;
-		std::cout << std::bitset<8>(myFloat) << std::endl;
-		std::cout << std::bitset<8>(myDouble) << std::endl;
 	}
 
 	void Editor::Load()

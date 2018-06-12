@@ -13,6 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor\Dock.h"
 #include <iostream>
+#include <map>
+#include <string>
 
 namespace Dystopia {
 namespace EGUI {	
@@ -615,7 +617,7 @@ void DockContext::CleanDocks()
 {
 	bool restart = false;
 
-	for (int i = 0, c = mDocksArr.size(); i < c; ++i)
+	for (unsigned int i = 0, c = mDocksArr.size(); i < c; ++i)
 	{
 		Dock& dock = *mDocksArr[i];
 		if (!dock.mLastFrame && dock.mStatus != eSTAT_FLOAT && !dock.mpChildren[0])
@@ -1256,237 +1258,1208 @@ void DebugWindow()
 }}} // namespace DYSTOPIA::EGUI::DOCK
 
 
-/*================================================================================================================================*/
+/*////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 /*================================================== NEW VERSION TESTING W-I-P ===================================================*/
-namespace EGUI
+
+
+ImVec2& operator+=(ImVec2& lhs, const ImVec2& rhs)
 {
+	lhs.x += rhs.x;
+	lhs.y += rhs.y;
+	return lhs;
+}
 
-	DockLayout::DockTab::DockTab()
-		: mpLabel{ nullptr }, mpNextTab{ nullptr }, mpPrevTab{ nullptr }, 
-		mPosition{ ImVec2{0,0} }, mSize{ ImVec2{ 0,0 } }, mFloatSize{ ImVec2{ 0,0 } }, mId{ 0 }, mLastFrame{ 0 }, 
-		mInvalidFrame{ 0 }, mActive{ false }, mOpened{ false }, mFirst{ false }, mLocation{}, mDockStatus{ eDOCK_STATUS_INVALID }
+ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
+{
+	ImVec2 temp = lhs;
+	temp += rhs;
+	return temp;
+}
+
+ImVec2& operator-=(ImVec2& lhs, const ImVec2& rhs)
+{
+	lhs.x -= rhs.x;
+	lhs.y -= rhs.y;
+	return lhs;
+}
+
+ImVec2 operator-(const ImVec2& lhs, const ImVec2& rhs)
+{
+	ImVec2 temp = lhs;
+	temp -= rhs;
+	return temp;
+}
+
+
+ImVec2 operator*(const ImVec2& lhs, const float& rhs)
+{
+	ImVec2 temp{lhs.x * rhs, lhs.y * rhs };
+	return temp;
+}
+
+
+
+/*========================================================= Declaration ==========================================================*/
+
+namespace EGUI2
+{
+	namespace Docking
+	{
+		enum eAction
+		{
+			eACTION_NONE,
+			eACTION_PANEL,
+			eACTION_END,
+			eACTION_END_CHILD
+		};
+
+		enum eStatus
+		{
+			eSTATUS_DOCKED,
+			eSTATUS_FLOATING,
+			eSTATUS_DRAGGED
+		};
+
+		struct DockTab
+		{
+			char	*mpLabel;
+			DockTab *mpNextTab;
+			DockTab *mpPrevTab;
+			DockTab *mpParentTab;
+			DockTab *mpChildren[2];
+			ImVec2	mPosition;
+			ImVec2	mSize;
+			eStatus	mStatus;
+			ImU32	mID;
+			bool	mActive;
+			bool	mOpened;
+			bool	mFirst;
+			int		mLastFrame;
+			int		mInvalidFrame;
+			char	mLocation[16];
+
+			DockTab();
+			~DockTab();
+
+			bool IsHorizontal() const;
+			ImVec2 GetMinSize() const;
+			void SetParent(DockTab *_tab);
+			DockTab& GetRootTab();
+			DockTab& GetFirstTab();
+			DockTab& GetSiblingTab();
+			void SetActive();
+			bool IsContainer() const;
+			void SetPositionSize(const ImVec2&, const ImVec2&);
+			void SetChildPositionSize(const ImVec2&, const ImVec2&);
+		};
+	}
+}
+
+/*========================================================= Definitions ==========================================================*/
+
+namespace EGUI2 {
+namespace Docking {
+
+	DockTab::DockTab()
+		: mID{ 0 }, mpNextTab{ nullptr }, mpPrevTab{ nullptr }, mpParentTab{ nullptr },
+		mPosition{ ImVec2{ 0, 0 } }, mSize{ ImVec2{ 0,0 } }, mActive{ true }, mStatus{ eSTATUS_FLOATING },
+		mpLabel{ nullptr }, mOpened{ false }, mLocation{ 0 }, mpChildren{ nullptr }, mFirst{ false },
+		mLastFrame{ 0 }, mInvalidFrame{ 0 }
 	{
 	}
-	DockLayout::DockTab::~DockTab()
+
+	DockTab::~DockTab()
 	{
-		delete mpLabel;
+		ImGui::MemFree(mpLabel);
 	}
 
-	DockLayout::DockTab& DockLayout::DockTab::GetFirstTab()
+	bool DockTab::IsHorizontal() const
 	{
-		DockTab* tempTab = this;
-		while (tempTab->mpPrevTab)
-			tempTab = GetPrevTab();
-		return *tempTab;
+		return mpChildren[0]->mPosition.x < mpChildren[1]->mPosition.x;
 	}
 
-	DockLayout::DockTab* DockLayout::DockTab::GetNextTab()
+	ImVec2 DockTab::GetMinSize() const
 	{
-		return mpNextTab;
+		if (!mpChildren[0]) return ImVec2{ 16, 16 + ImGui::GetTextLineHeightWithSpacing() };
+
+		ImVec2 size0 = mpChildren[0]->GetMinSize();
+		ImVec2 size1 = mpChildren[1]->GetMinSize();
+		return IsHorizontal() ? ImVec2{ size0.x + size1.x, ImMax(size0.y, size1.y) }
+		: ImVec2{ ImMax(size0.x, size1.x), size0.y + size1.y };
 	}
 
-	DockLayout::DockTab* DockLayout::DockTab::GetPrevTab()
+	void DockTab::SetParent(DockTab *_tab)
 	{
-		return mpPrevTab;
+		mpParentTab = _tab;
+		for (DockTab *tempTab = mpPrevTab; tempTab; tempTab = tempTab->mpPrevTab) tempTab->mpParentTab = _tab;
+		for (DockTab *tempTab = mpNextTab; tempTab; tempTab = tempTab->mpNextTab) tempTab->mpParentTab = _tab;
 	}
 
-	void DockLayout::DockTab::SetActive()
+	DockTab& DockTab::GetRootTab()
+	{
+		DockTab *tab = this;
+		while (tab->mpParentTab)
+			tab = tab->mpParentTab;
+		return *tab;
+	}
+
+	DockTab& DockTab::GetFirstTab()
+	{
+		DockTab *tmpTab = this;
+		while (tmpTab->mpPrevTab)
+			tmpTab = tmpTab->mpPrevTab;
+		return *tmpTab;
+	}
+
+	DockTab& DockTab::GetSiblingTab()
+	{
+		IM_ASSERT(mpParentTab);
+		return (mpParentTab->mpChildren[0] == &GetFirstTab()) ? *mpParentTab->mpChildren[1]
+			: *mpParentTab->mpChildren[0];
+	}
+
+	void DockTab::SetActive()
 	{
 		mActive = true;
+		for (DockTab *tmp = mpPrevTab; tmp; tmp = tmp->mpPrevTab) tmp->mActive = false;
+		for (DockTab *tmp = mpNextTab; tmp; tmp = tmp->mpNextTab) tmp->mActive = false;
 	}
 
-	void DockLayout::DockTab::SetPosSize(const ImVec2& _pos, const ImVec2& _size)
+	bool DockTab::IsContainer() const
 	{
-		SetPosition(_pos);
-		SetSize(_size);
-	}
-	
-	ImU32 DockLayout::DockTab::GetID() const
-	{
-		return mId;
+		return mpChildren[0] != nullptr;
 	}
 
-	void DockLayout::DockTab::SetID(ImU32 _id)
-	{
-		mId = _id;
-	}
-
-	void DockLayout::DockTab::SetLabel(const char *_label)
-	{
-		if (mpLabel)
-			delete mpLabel;
-		mpLabel = new char[strlen(_label) + 1];
-		std::copy(mpLabel, mpLabel + strlen(_label), _label);
-	}
-	
-	void DockLayout::DockTab::SetStatus(eDockStatus _status)
-	{
-		mDockStatus = _status;
-	}
-
-	void DockLayout::DockTab::SetPosition(const ImVec2& _pos)
-	{
-		mPosition = _pos;
-	}
-
-	void DockLayout::DockTab::SetSize(const ImVec2& _size)
+	void DockTab::SetPositionSize(const ImVec2& _pos, const ImVec2& _size)
 	{
 		mSize = _size;
-	}
-
-	void DockLayout::DockTab::SetFloatModeSize(const ImVec2& _size)
-	{
-		mFloatSize = _size;
-	}
-
-	void DockLayout::DockTab::SetOpened(bool _opened)
-	{
-		mOpened = _opened;
-	}
-
-	bool DockLayout::DockTab::IsOpened() const
-	{
-		return mOpened;
-	}
-
-	void DockLayout::DockTab::SetFirst(bool _isFirst)
-	{
-		mFirst = _isFirst;
-	}
-
-	bool DockLayout::DockTab::IsFirst() const
-	{
-		return mFirst;
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	DockLayout::DockLayout()
-		: mArrSlotPairTabPtr{}, mArrSlotPairSize{}, mArrSlotPairPosition{}
-	{
-	}
-
-	DockLayout::~DockLayout()
-	{
-		for (auto e : mArrSlotPairTabPtr)
-			delete e.second;
-	}
-
-	void DockLayout::LoadDefaults()
-	{
-		mArrSlotPairSize.push_back(std::make_pair(ePANEL_SLOT_LEFT, ImVec2{ 100, 400 }));
-		mArrSlotPairSize.push_back(std::make_pair(ePANEL_SLOT_MIDDLE, ImVec2{ 500, 400 }));
-		mArrSlotPairSize.push_back(std::make_pair(ePANEL_SLOT_BOTTOM, ImVec2{ 600, 200 }));
-		mArrSlotPairSize.push_back(std::make_pair(ePANEL_SLOT_RIGHT, ImVec2{ 200, 600 }));
-
-		mArrSlotPairPosition.push_back(std::make_pair(ePANEL_SLOT_LEFT, ImVec2{ 0, 0 }));
-		mArrSlotPairPosition.push_back(std::make_pair(ePANEL_SLOT_MIDDLE, ImVec2{ 100, 0 }));
-		mArrSlotPairPosition.push_back(std::make_pair(ePANEL_SLOT_BOTTOM, ImVec2{ 0, 400 }));
-		mArrSlotPairPosition.push_back(std::make_pair(ePANEL_SLOT_RIGHT, ImVec2{ 600, 0 }));
-	}
-
-	void DockLayout::InsertTab(ePanelSlot _slot, DockTab *_tab)
-	{
-		RemoveTab(_tab);
-		mArrSlotPairTabPtr.push_back(std::make_pair(_slot, _tab));
-	}
-
-	void DockLayout::RemoveTab(DockTab *_tab)
-	{
-		for (unsigned int i = 0; i < mArrSlotPairTabPtr.size(); ++i)
+		mPosition = _pos;
+		for (DockTab *tmp = mpPrevTab; tmp; tmp = tmp->mpPrevTab)
 		{
-			if (mArrSlotPairTabPtr[i].second == _tab)
+			tmp->mSize = _size;
+			tmp->mPosition = _pos;
+		}
+		for (DockTab *tmp = mpNextTab; tmp; tmp = tmp->mpNextTab)
+		{
+			tmp->mSize = _size;
+			tmp->mPosition = _pos;
+		}
+
+		if (!IsContainer()) return;
+		SetChildPositionSize(_pos, _size);
+	}
+
+	void DockTab::SetChildPositionSize(const ImVec2& _pos, const ImVec2& _size)
+	{
+		ImVec2 newSize = mpChildren[0]->mSize;
+		if (IsHorizontal())
+		{
+			newSize.y = _size.y;
+			float ratio = _size.x * mpChildren[0]->mSize.x;
+			ratio /= (mpChildren[0]->mSize.x + mpChildren[1]->mSize.x);
+			newSize.x = static_cast<float>(ratio);
+
+			if (newSize.x < mpChildren[0]->GetMinSize().x)
+				newSize.x = mpChildren[0]->GetMinSize().x;
+			else if (_size.x - newSize.x < mpChildren[1]->GetMinSize().x)
+				newSize.x = _size.x - mpChildren[1]->GetMinSize().x;
+
+			mpChildren[0]->SetPositionSize(_pos, newSize);
+			newSize.x = _size.x - mpChildren[0]->mSize.x;
+
+			ImVec2 newPos = _pos;
+			newPos.x += mpChildren[0]->mSize.x;
+			mpChildren[1]->SetPositionSize(newPos, newSize);
+		}
+		else
+		{
+			newSize.x = _size.x;
+			float ratio = _size.y * mpChildren[0]->mSize.y;
+			ratio /= (mpChildren[0]->mSize.y + mpChildren[1]->mSize.y);
+			newSize.y = static_cast<float>(ratio);
+
+			if (newSize.y < mpChildren[0]->GetMinSize().y)
+				newSize.y = mpChildren[0]->GetMinSize().y;
+			else if (_size.y - newSize.y < mpChildren[1]->GetMinSize().y)
+				newSize.y = _size.y - mpChildren[1]->GetMinSize().y;
+
+			mpChildren[0]->SetPositionSize(_pos, newSize);
+			newSize.y = _size.y - mpChildren[0]->mSize.y;
+
+			ImVec2 newPos = _pos;
+			newPos.y += mpChildren[0]->mSize.y;
+			mpChildren[1]->SetPositionSize(newPos, newSize);
+		}
+	}
+
+	struct DockPanel
+	{
+		AutoArray<DockTab*> mArrDockTabs;
+		DockTab		*mpCurrentTab;
+		DockTab		*mpNextParentTab;
+		ImVec2		mDragOffset;
+		int			mLastFrame;
+		eAction		mAction;
+		ImVec2		mPanelPosition;
+		ImVec2		mPanelSize;
+		eDockSlot	mNextDockSlot;
+
+		DockPanel()
+			: mpCurrentTab{ nullptr }, mpNextParentTab{ nullptr }, mDragOffset{ ImVec2{ 0, 0 } },
+			mLastFrame{ 0 }, mAction{ eACTION_NONE }, mPanelPosition{ ImVec2{ 0, 0} }, mPanelSize{ ImVec2{ 0, 0 } },
+			mNextDockSlot{ eDOCK_SLOT_TAB }
+		{
+		}
+
+		~DockPanel()
+		{
+		}
+
+		DockTab& GetDockTab(const char* _label, bool _opened)
+		{
+			ImU32 id = ImHash(_label, 0);
+			for (auto e : mArrDockTabs)
 			{
-				mArrSlotPairTabPtr.FastRemove(i);
-				return;
+				if (e->mID == id)
+					return *e;
+			}
+
+			DockTab* newTab = new DockTab;
+			mArrDockTabs.push_back(newTab);
+
+			newTab->mpLabel = new char[strlen(_label) + 1];
+			newTab->mpLabel = ImStrdup(_label);
+			newTab->mID = id;
+			newTab->SetActive();
+			newTab->mStatus = (mArrDockTabs.size() == 1) ? eSTATUS_DOCKED : eSTATUS_FLOATING;
+			newTab->mSize = ImGui::GetIO().DisplaySize;
+			newTab->mOpened = _opened;
+			newTab->mFirst = true;
+			newTab->mLocation[0] = 0;
+			return *newTab;
+		}
+
+		void PutInBackground()
+		{
+			ImGuiWindow *pWin = ImGui::GetCurrentWindow();
+			ImGuiContext& ctx = *GImGui;
+			if (ctx.Windows[0] == pWin) return;
+
+			for (int i = 0; i < ctx.Windows.Size; ++i)
+			{
+				if (ctx.Windows[i] == pWin)
+				{
+					for (int j = i - 1; j >= 0; --j)
+						ctx.Windows[j + 1] = ctx.Windows[j];
+					ctx.Windows[0] = pWin;
+					break;
+				}
 			}
 		}
-	}
 
-	ImVec2 DockLayout::GetPosition(ePanelSlot _slot) const
-	{
-		for (auto e : mArrSlotPairPosition)
+		void GetDrawPresets(ImU32 *_outColor, ImU32 *_outColorHovered, ImDrawList **_outDrawList)
 		{
-			if (e.first == _slot)
-				return e.second;
-		}
-		return ImVec2{ 0, 0 };
-	}
-
-	ImVec2 DockLayout::GetSize(ePanelSlot _slot) const
-	{
-		for (auto e : mArrSlotPairSize)
-		{
-			if (e.first == _slot)
-				return e.second;
-		}
-		return ImVec2{ 0, 0 };
-	}
-
-	void DockLayout::SetPosition(ePanelSlot _slot, ImVec2 _pos)
-	{
-		for (auto e : mArrSlotPairPosition)
-		{
-			if (e.first == _slot)
-				e.second = _pos;
-		}
-	}
-
-	void DockLayout::SetSize(ePanelSlot _slot, ImVec2 _size)
-	{
-		for (auto e : mArrSlotPairSize)
-		{
-			if (e.first == _slot)
-				e.second = _size;
-		}
-	}
-
-	void DockLayout::BeginDockTab(const char *_label, bool *_opened, ImGuiWindowFlags _flags, const ImVec2& _defSize)
-	{
-		DockTab& dockTab = GetDockTab(_label, !_opened || *_opened, _defSize);
-	}
-
-	DockLayout::DockTab& DockLayout::GetDockTab(const char *_label, bool _opened, const ImVec2& _defSize)
-	{
-		ImU32 id = ImHash(_label, 0);
-		for (auto e : mArrSlotPairTabPtr)
-		{
-			if (e.second->GetID() == id)
-				return *e.second;
+			*_outColor = ImGui::GetColorU32(ImGuiCol_Button);
+			*_outColorHovered = ImGui::GetColorU32(ImGuiCol_ButtonHovered);
+			*_outDrawList = ImGui::GetWindowDrawList();
 		}
 
-		DockTab* newTab = new DockTab{};
-		mArrSlotPairTabPtr.push_back(std::make_pair(ePANEL_SLOT_NONE, newTab));
+		void Split()
+		{
+			if (ImGui::GetFrameCount() == mLastFrame) return;
+
+			mLastFrame = ImGui::GetFrameCount();
+			PutInBackground();
+
+			for (auto e : mArrDockTabs)
+			{
+				if (!e->mpParentTab && (e->mStatus == eSTATUS_DOCKED))
+					e->SetPositionSize(mPanelPosition, mPanelSize);
+			}
+
+			ImU32 color;
+			ImU32 colorHovered;
+			ImDrawList *pDrawList;
+			GetDrawPresets(&color, &colorHovered, &pDrawList);
+
+			ImGuiIO& io = ImGui::GetIO();
+
+			for (unsigned int i = 0; i < mArrDockTabs.size(); ++i)
+			{
+				DockTab& tab = *mArrDockTabs[i];
+				if (!tab.IsContainer()) continue;
+
+				ImGui::PushID(i);
+				if (!ImGui::IsMouseDown(0)) tab.mStatus = eSTATUS_DOCKED;
+
+				ImVec2 pos0 = tab.mpChildren[0]->mPosition;
+				ImVec2 pos1 = tab.mpChildren[1]->mPosition;
+				ImVec2 size0 = tab.mpChildren[0]->mSize;
+				ImVec2 size1 = tab.mpChildren[1]->mSize;
+
+				ImGuiMouseCursor cursor;
+
+				ImVec2 dSize{ 0,0 };
+				ImVec2 minSize0 = tab.mpChildren[0]->GetMinSize();
+				ImVec2 minSize1 = tab.mpChildren[1]->GetMinSize();
+
+				if (tab.IsHorizontal())
+				{
+					cursor = ImGuiMouseCursor_ResizeEW;
+					ImGui::SetCursorScreenPos(ImVec2{ tab.mPosition.x + size0.x, tab.mPosition.y });
+					ImGui::InvisibleButton("split", ImVec2{ 3, tab.mSize.y });
+
+					if (tab.mStatus == eSTATUS_DRAGGED) dSize.x = io.MouseDelta.x;
+
+					dSize.x = -ImMin(-dSize.x, tab.mpChildren[0]->mSize.x - minSize0.x);
+					dSize.x = ImMin(dSize.x, tab.mpChildren[1]->mSize.x - minSize1.x);
+
+					size0 += dSize;
+					size1 -= dSize;
+					pos0 = tab.mPosition;
+					pos1.x = pos0.x + size0.x;
+					pos1.y = tab.mPosition.y;
+					size0.y = size1.y = tab.mSize.y;
+					size0.x = ImMax(minSize0.x, tab.mSize.x - size1.x);
+					size1.x = ImMax(minSize1.x, tab.mSize.x - size0.x);
+				}
+				else
+				{
+					cursor = ImGuiMouseCursor_ResizeNS;
+					ImGui::SetCursorScreenPos(ImVec2{ tab.mPosition.x, tab.mPosition.y + size0.y - 3 });
+					ImGui::InvisibleButton("split", ImVec2{ tab.mSize.x, 3 });
+					if (tab.mStatus == eSTATUS_DRAGGED) dSize.y = io.MouseDelta.y;
+
+					dSize.y = -ImMin(-dSize.y, tab.mpChildren[0]->mSize.y - minSize0.y);
+					dSize.y = ImMin(dSize.y, tab.mpChildren[1]->mSize.y - minSize1.y);
+
+
+					size0 += dSize;
+					size1 -= dSize;
+					pos0 = tab.mPosition;
+					pos1.x = tab.mPosition.x;
+					pos1.y = pos0.y + size0.y;
+					size0.x = size1.x = tab.mSize.x;
+					size0.y = ImMax(minSize0.y, tab.mSize.y - size1.y);
+					size1.y = ImMax(minSize1.y, tab.mSize.y - size0.y);
+				}
+
+				tab.mpChildren[0]->SetPositionSize(pos0, size0);
+				tab.mpChildren[1]->SetPositionSize(pos1, size1);
+
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetMouseCursor(cursor);
+					if (ImGui::IsMouseClicked(0)) tab.mStatus = eSTATUS_DRAGGED;
+				}
+
+				pDrawList->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
+					ImGui::IsItemHovered() ? colorHovered : color);
+				ImGui::PopID();
+			}
+		}
+
+		void CheckNonExistent()
+		{
+			int frameLimit = ImMax(0, ImGui::GetFrameCount() - 2);
+			for (auto e : mArrDockTabs)
+			{
+				if (e->IsContainer()) continue;
+				if (e->mStatus == eSTATUS_FLOATING) continue;
+				if (e->mLastFrame < frameLimit)
+				{
+					++e->mInvalidFrame;
+					if (e->mInvalidFrame > 2)
+					{
+						DoUndockTab(e);
+						e->mStatus = eSTATUS_FLOATING;
+					}
+					return;
+				}
+				e->mInvalidFrame = 0;
+			}
+		}
+
+		DockTab* GetTabAt() const
+		{
+			for (auto e : mArrDockTabs)
+			{
+				if (e->IsContainer()) continue;
+				if (e->mStatus != eSTATUS_DOCKED) continue;
+				if (ImGui::IsMouseHoveringRect(e->mPosition, e->mPosition + e->mSize, false))
+					return e;
+
+			}
+			return nullptr;
+		}
+
+		static ImRect GetDockedTabRect(const ImRect& _rect, eDockSlot _slot)
+		{
+			ImVec2 halfSize = _rect.GetSize() * 0.5f;
+			ImVec2 maxMidY{ _rect.Max.x, _rect.Min.y + halfSize.y };
+			ImVec2 midX{ halfSize.x, 0 };
+			ImVec2 midY{ 0, halfSize.y };
+			ImVec2 maxMidX{ _rect.Min.x + halfSize.x, _rect.Max.y };
+			switch (_slot)
+			{
+			default: return _rect;
+			case eDOCK_SLOT_TOP:
+				return ImRect(_rect.Min, maxMidY);
+			case eDOCK_SLOT_RIGHT:
+				return ImRect(_rect.Min + midX, _rect.Max);
+			case eDOCK_SLOT_BOTTOM:
+				return ImRect(_rect.Min + midY, _rect.Max);
+			case eDOCK_SLOT_LEFT:
+				return ImRect(_rect.Min, maxMidX);
+			}
+		}
+
+		static ImRect GetSlotRect(ImRect _parentRect, eDockSlot _slot)
+		{
+			ImVec2 size = _parentRect.Max - _parentRect.Min;
+			ImVec2 center = _parentRect.Min + size * 0.5f;
+			ImVec2 diagonalOffset{ 20, 20 };
+			ImVec2 topSlotMin{ -20, -50 };
+			ImVec2 topSlotMax{ 20, -30 };
+			ImVec2 rightSlotMin{ 30, -20 };
+			ImVec2 rightSlotMax{ 50, 20 };
+			ImVec2 bottomSlotMin{ -20, 30 };
+			ImVec2 bottomSlotMax{ 20, 50 };
+			ImVec2 leftSlotMin{ -50, -20 };
+			ImVec2 leftSlotMax{ -30, 20 };
+			switch (_slot)
+			{
+			default:
+				return ImRect{ center - diagonalOffset, center + diagonalOffset };
+			case eDOCK_SLOT_TOP:
+				return ImRect{ center + topSlotMin, center + topSlotMax };
+			case eDOCK_SLOT_RIGHT:
+				return ImRect{ center + rightSlotMin, center + rightSlotMax };
+			case eDOCK_SLOT_BOTTOM:
+				return ImRect{ center + bottomSlotMin, center + bottomSlotMax };
+			case eDOCK_SLOT_LEFT:
+				return ImRect{ center + leftSlotMin, center + leftSlotMax };
+			}
+		}
+
+		static ImRect GetBorderSlotRect(ImRect _parentRect, eDockSlot _slot)
+		{
+			ImVec2 size = _parentRect.Max - _parentRect.Min;
+			ImVec2 center = _parentRect.Min + size * 0.5f;
+			ImVec2 topSlotMin{ center.x - 20, _parentRect.Min.y + 10 };
+			ImVec2 topSlotMax{ center.x + 20, _parentRect.Min.y + 30 };
+			ImVec2 rightSlotMin{ _parentRect.Min.x + 10, center.y - 20 };
+			ImVec2 rightSlotMax{ _parentRect.Min.x + 30, center.y + 20 };
+			ImVec2 bottomSlotMin{ center.x - 20, _parentRect.Max.y - 30 };
+			ImVec2 bottomSlotMax{ center.x + 20, _parentRect.Max.y - 10 };
+			ImVec2 leftSlotMin{ _parentRect.Max.x - 30, center.y - 20 };
+			ImVec2 leftSlotMax{ _parentRect.Max.x - 10, center.y + 20 };
+
+			switch (_slot)
+			{
+			case eDOCK_SLOT_TOP:
+				return ImRect{ topSlotMin, topSlotMax };
+			case eDOCK_SLOT_LEFT:
+				return ImRect{ center + rightSlotMin, center + rightSlotMax };
+			case eDOCK_SLOT_BOTTOM:
+				return ImRect{ center + bottomSlotMin, center + bottomSlotMax };
+			case eDOCK_SLOT_RIGHT:
+				return ImRect{ center + leftSlotMin, center + leftSlotMax };
+			default: IM_ASSERT(false);
+			}
+			IM_ASSERT(false);
+			return ImRect{};
+		}
+
+		DockTab* GetRootTab()
+		{
+			for (auto e : mArrDockTabs)
+			{
+				if (!e->mpParentTab && (e->mStatus == eSTATUS_DOCKED || e->mpChildren[0]))
+					return e;
+			}
+			return nullptr;
+		}
+
+		bool DockTabSlots(DockTab& _tab, DockTab *_dest, const ImRect& _rect, bool _border)
+		{
+			ImDrawList *pDrawList;
+			ImU32 color;
+			ImU32 colorHovered;
+			ImVec2 mousePos = ImGui::GetIO().MousePos;
+			
+			GetDrawPresets(&color, &colorHovered, &pDrawList);
+			
+			for (int i = 0; i < (_border ? 4 : 5); ++i)
+			{
+				ImRect tempRect = _border ? GetBorderSlotRect(_rect, static_cast<eDockSlot>(i))
+										  : GetSlotRect(_rect, static_cast<eDockSlot>(i));
+
+				bool hovered = tempRect.Contains(mousePos);
+				pDrawList->AddRectFilled(tempRect.Min, tempRect.Max, hovered ? colorHovered : color);
+				if (!hovered) continue;
+
+				if (!ImGui::IsMouseDown(0))
+				{
+					DoDockTab(_tab, _dest ? _dest : GetRootTab(), static_cast<eDockSlot>(i));
+					return true;
+				}
+
+				ImRect dockedRect = GetDockedTabRect(_rect, static_cast<eDockSlot>(i));
+				pDrawList->AddRectFilled(dockedRect.Min, dockedRect.Max, ImGui::GetColorU32(ImGuiCol_Button));
+			}
+			return false;
+		}
+
+		void HandleDragging(DockTab& _tab)
+		{
+			DockTab* dest = GetTabAt();
+			ImGuiWindowFlags flags = ImGuiWindowFlags_Tooltip | ImGuiWindowFlags_NoTitleBar |
+									 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
+									 ImGuiWindowFlags_NoSavedSettings | 
+									 ImGuiWindowFlags_AlwaysAutoResize;
+			
+			ImGui::SetNextWindowPos(ImVec2{ 0,0 });
+			ImGui::SetNextWindowBgAlpha(0.f);
+			ImGui::Begin("##overlay", nullptr, flags);
+			
+			ImDrawList *pDrawList = ImGui::GetWindowDrawList();
+			pDrawList->PushClipRectFullScreen();
+
+			ImU32 dockedColor = ImGui::GetColorU32(ImGuiCol_FrameBg);
+			dockedColor = (dockedColor & 0x00ffFFFF) | 0x80000000;
+			_tab.mPosition = ImGui::GetIO().MousePos - mDragOffset;
+
+			if (dest)
+			{
+				if (DockTabSlots(_tab, dest, ImRect{dest->mPosition, dest->mPosition + dest->mSize}, false))
+				{
+					pDrawList->PopClipRect();
+					ImGui::End();
+					return;
+				}
+			}
+
+			if (DockTabSlots(_tab, nullptr, ImRect{ mPanelPosition, mPanelPosition + mPanelSize }, true))
+			{
+				pDrawList->PopClipRect();
+				ImGui::End();
+				return;
+			}
+
+			pDrawList->AddRectFilled(_tab.mPosition, _tab.mPosition + _tab.mSize, dockedColor);
+			pDrawList->PopClipRect();
+
+			if (!ImGui::IsMouseDown(0))
+			{
+				_tab.mStatus = eSTATUS_FLOATING;
+				_tab.mLocation[0] = 0;
+				_tab.SetActive();
+			}
+			ImGui::End();
+		}
+
+		void FillLocation(DockTab& _tab)
+		{
+			if (_tab.mStatus == eSTATUS_FLOATING) return;
+
+			char *c = _tab.mLocation;
+			DockTab* temp = &_tab;
+			while (temp->mpParentTab)
+			{
+				*c = GetLocationCode(temp);
+				temp = temp->mpParentTab;
+				++c;
+			}
+			*c = 0;
+		}
+
+		void DoUndockTab(DockTab *_tab)
+		{
+			if (_tab->mpPrevTab)
+				_tab->mpPrevTab->SetActive();
+			else if (_tab->mpNextTab)
+				_tab->mpNextTab->SetActive();
+			else
+				_tab->mActive = false;
+			
+			DockTab *pContainer = _tab->mpParentTab;
+			if (pContainer)
+			{
+				DockTab& siblingTab = _tab->GetSiblingTab();
+				if (pContainer->mpChildren[0] == _tab)
+					pContainer->mpChildren[0] = _tab->mpNextTab;
+				else if (pContainer->mpChildren[1] == _tab)
+					pContainer->mpChildren[1] = _tab->mpNextTab;
+
+				bool remove = !pContainer->mpChildren[0] || !pContainer->mpChildren[1];
+				if (remove)
+				{
+					if (pContainer->mpParentTab)
+					{
+						DockTab *pChild = pContainer->mpParentTab->mpChildren[0] == pContainer 
+							? pContainer->mpParentTab->mpChildren[0]
+							: pContainer->mpParentTab->mpChildren[1];
+
+						pChild = &siblingTab;
+						pChild->SetPositionSize(pContainer->mPosition, pContainer->mSize);
+						pChild->SetParent(pContainer->mpParentTab);
+					}
+					else
+					{
+						if (pContainer->mpChildren[0])
+						{
+							pContainer->mpChildren[0]->SetParent(nullptr);
+							pContainer->mpChildren[0]->SetPositionSize(pContainer->mPosition, pContainer->mSize);
+						}
+						if (pContainer->mpChildren[1])
+						{
+							pContainer->mpChildren[1]->SetParent(nullptr);
+							pContainer->mpChildren[1]->SetPositionSize(pContainer->mPosition, pContainer->mSize);
+						}
+
+
+					}
+					for (unsigned int i = 0; i < mArrDockTabs.size(); ++i)
+					{
+						if (mArrDockTabs[i] == pContainer)
+						{
+							mArrDockTabs.FastRemove(i);
+							break;
+						}
+					}
+
+					if (pContainer == mpNextParentTab)
+						mpNextParentTab = nullptr;
+					pContainer->~DockTab();
+					delete pContainer;
+				}
+			}
+			if (_tab->mpPrevTab) _tab->mpPrevTab->mpNextTab = _tab->mpNextTab;
+			if (_tab->mpNextTab) _tab->mpNextTab->mpPrevTab = _tab->mpPrevTab;
+			_tab->mpParentTab = _tab->mpPrevTab = _tab->mpNextTab = nullptr;
+		}
+
+		void DrawTabbarListButton(DockTab& _tab)
+		{
+			if (!_tab.mpNextTab) return;
+
+			ImDrawList *pDrawList = ImGui::GetWindowDrawList();
+			if (ImGui::InvisibleButton("list", ImVec2{ 16,16 }))
+				ImGui::OpenPopup("tabListPopup");
+
+			if (ImGui::BeginPopup("tabListPopup"))
+			{
+				DockTab *temp = &_tab;
+				while (temp)
+				{
+					bool dummy = false;
+					if (ImGui::Selectable(temp->mpLabel, &dummy))
+					{
+						temp->SetActive();
+						mpNextParentTab = temp;
+					}
+					temp = temp->mpNextTab;
+				}
+				ImGui::EndPopup();
+			}
+
+			ImVec2 min = ImGui::GetItemRectMin();
+			ImVec2 max = ImGui::GetItemRectMax();
+			ImVec2 center = (min + max) * 0.5f;
+			ImU32 color = ImGui::IsItemHovered() 
+						? ImGui::GetColorU32(ImGuiCol_FrameBgActive)
+						: ImGui::GetColorU32(ImGuiCol_Text);
+			pDrawList->AddRectFilled(
+				ImVec2{ center.x - 4, min.y + 3 },
+				ImVec2{ center.x + 4, min.y + 5 }, 
+				color);
+			pDrawList->AddTriangleFilled(
+				ImVec2{ center.x - 4, min.y + 7 },
+				ImVec2{ center.x + 4, min.y + 7 },
+				ImVec2{ center.x, min.y + 12 },
+				color);
+		}
+
+		bool Tabbar(DockTab& _tab, bool _closeBtn)
+		{
+			float height = 2 * ImGui::GetTextLineHeightWithSpacing();
+			ImVec2 size{ _tab.mSize.x, height };
+			bool tabClosed = false;
+
+			ImGui::SetCursorScreenPos(_tab.mPosition);
+			char buffer[20];
+			ImFormatString(buffer, IM_ARRAYSIZE(buffer), "tabs%d", static_cast<int>(_tab.mID));
+			if (ImGui::BeginChild(buffer, size, true))
+			{
+				DockTab* dockTab = &_tab;
+
+				ImDrawList *pDrawList = ImGui::GetWindowDrawList();
+				ImU32 color = ImGui::GetColorU32(ImGuiCol_FrameBg);
+				ImU32 colorActive = ImGui::GetColorU32(ImGuiCol_FrameBgActive);
+				ImU32 colorHovered = ImGui::GetColorU32(ImGuiCol_FrameBgHovered);
+				ImU32 textCol = ImGui::GetColorU32(ImGuiCol_Text);
+				float lineHeight = ImGui::GetTextLineHeightWithSpacing();
+				float tabBase;
+
+				DrawTabbarListButton(_tab);
+				while (dockTab)
+				{
+					ImGui::SameLine(0, 15);
+
+					const char *textEnd = ImGui::FindRenderedTextEnd(dockTab->mpLabel);
+					size = ImVec2{ ImGui::CalcTextSize(dockTab->mpLabel, textEnd).x, lineHeight };
+					if (ImGui::InvisibleButton(dockTab->mpLabel, size))
+					{
+						dockTab->SetActive();
+						mpNextParentTab = dockTab;
+					}
+
+					if (ImGui::IsItemActive() && ImGui::IsMouseDragging())
+					{
+						mDragOffset = ImGui::GetMousePos() - dockTab->mPosition;
+						DoUndockTab(dockTab);
+						dockTab->mStatus = eSTATUS_DRAGGED;
+					}
+
+					bool hovered = ImGui::IsItemHovered();
+					ImVec2 pos = ImGui::GetItemRectMin();
+					if (dockTab->mActive && _closeBtn)
+					{
+						size.x += 16 + ImGui::GetStyle().ItemSpacing.x;
+						ImGui::SameLine();
+						tabClosed = ImGui::InvisibleButton("close", ImVec2{ 16, 16 });
+						ImVec2 center = (ImGui::GetItemRectMin() + ImGui::GetItemRectMax()) * 0.5f;
+						ImVec2 offset1{ 3.5f, 3.5f };
+						ImVec2 offset2{ -3.5f, 3.5f };
+						pDrawList->AddLine(center - offset1, center + offset1, textCol);
+						pDrawList->AddLine(center - offset2, center + offset2, textCol);
+					}
+					
+					tabBase = pos.y;
+					pDrawList->PathClear();
+					pDrawList->PathLineTo(pos + ImVec2{ -15, size.y });
+					pDrawList->PathBezierCurveTo(pos + ImVec2{ -10, size.y },
+												 pos + ImVec2{ -5, 0 }, 
+												 pos, 
+												 10);
+					pDrawList->PathLineTo(pos + ImVec2{ size.x, 0 });
+					pDrawList->PathBezierCurveTo(pos + ImVec2{ size.x + 5, 0 },
+												 pos + ImVec2{ size.x + 10, size.y },
+												 pos + ImVec2{ size.x + 15, size.y },
+												 10);
+					pDrawList->PathFillConvex(hovered ? colorHovered : (dockTab->mActive ? colorActive : color));
+					pDrawList->AddText(pos + ImVec2{ 0,1 }, textCol, dockTab->mpLabel, textEnd);
+					dockTab = dockTab->mpNextTab;
+				}
+				ImVec2 cp{ _tab.mPosition.x , tabBase + lineHeight };
+				pDrawList->AddLine(cp, cp + ImVec2{ _tab.mSize.x, 0 }, color);
+			}
+			ImGui::EndChild();
+			return tabClosed;
+		}
+
+		static void SetDockPosSize(DockTab& _dest, DockTab& _tab, eDockSlot _slot, DockTab& _container)
+		{
+			IM_ASSERT(!_tab.mpPrevTab && !_tab.mpNextTab && !_tab.mpChildren[0] && !_tab.mpChildren[1]);
+
+			_dest.mPosition = _tab.mPosition = _container.mPosition;
+			_dest.mSize = _tab.mSize = _container.mSize;
+
+			switch (_slot)
+			{
+			case eDOCK_SLOT_BOTTOM:
+				_dest.mSize.y *= 0.5f;
+				_tab.mSize.y *= 0.5f;
+				_tab.mPosition.y += _dest.mSize.y;
+				break;
+			case eDOCK_SLOT_RIGHT:
+				_dest.mSize.x *= 0.5f;
+				_tab.mSize.x *= 0.5f;
+				_tab.mPosition.x += _dest.mSize.x;
+				break;
+			case eDOCK_SLOT_LEFT:
+				_dest.mSize.x *= 0.5f;
+				_tab.mSize.x *= 0.5f;
+				_dest.mPosition.x += _tab.mSize.x;
+				break;
+			case eDOCK_SLOT_TOP:
+				_dest.mSize.y *= 0.5f;
+				_tab.mSize.y *= 0.5f;
+				_dest.mPosition.y += _tab.mSize.y;
+				break;
+			default: 
+				IM_ASSERT(false); 
+			}
+			
+			_dest.SetPositionSize(_dest.mPosition, _dest.mSize);
+
+			if (_container.mpChildren[1]->mPosition.x < _container.mpChildren[0]->mPosition.x ||
+				_container.mpChildren[1]->mPosition.y < _container.mpChildren[1]->mPosition.y)
+			{
+				std::swap(_container.mpChildren[0], _container.mpChildren[1]);
+			}
+		}
+
+		void DoDockTab(DockTab& _tab, DockTab *_dest, eDockSlot _slot)
+		{
+			IM_ASSERT(!_tab.mpParentTab);
+			if (!_dest)
+			{
+				_tab.mStatus = eSTATUS_DOCKED;
+				_tab.SetPositionSize(mPanelPosition, mPanelSize);
+			}
+			else if (_slot == eDOCK_SLOT_TAB)
+			{
+				DockTab *temp = _dest;
+				while (temp->mpNextTab) temp = temp->mpNextTab;
+
+				auto inLinkList = [](const DockTab *linkedList, const DockTab *checkNode)
+				{
+					bool isLinkedNode = (linkedList == checkNode);
+
+					const DockTab *tempTab = linkedList;
+					while (!isLinkedNode && tempTab->mpPrevTab)
+					{
+						tempTab = tempTab->mpPrevTab;
+						isLinkedNode = (tempTab == checkNode);
+					}
+
+					tempTab = linkedList;
+
+					while (!isLinkedNode && tempTab->mpNextTab)
+					{
+						tempTab = tempTab->mpNextTab;
+						isLinkedNode = (tempTab == checkNode);
+					}
+
+					return isLinkedNode;
+				};
+
+				if (!inLinkList(_dest, &_tab))
+				{
+					temp->mpNextTab = &_tab;
+					_tab.mpPrevTab = temp;
+					_tab.mSize = temp->mSize;
+					_tab.mPosition = temp->mPosition;
+					_tab.mpParentTab = _dest->mpParentTab;
+					_tab.mStatus = eSTATUS_DOCKED;
+				}
+			}
+			else if (_slot == eDOCK_SLOT_NONE)
+			{
+				_tab.mStatus = eSTATUS_FLOATING;
+			}
+			else
+			{
+				DockTab *newContainer = new DockTab{};
+				mArrDockTabs.push_back(newContainer);
+				newContainer->mpChildren[0] = &(_dest->GetFirstTab());
+				newContainer->mpChildren[1] = &_tab;
+				newContainer->mpParentTab = _dest->mpParentTab;
+				newContainer->mSize = _dest->mSize;
+				newContainer->mPosition = _dest->mPosition;
+				newContainer->mStatus = eSTATUS_DOCKED;
+				newContainer->mpLabel = ImStrdup("");
+
+				if (!_dest->mpParentTab)
+				{
+				}
+				else if (&(_dest->GetFirstTab()) == _dest->mpParentTab->mpChildren[0])
+					_dest->mpParentTab->mpChildren[0] = newContainer;
+				else
+					_dest->mpParentTab->mpChildren[1] = newContainer;
+
+				_dest->SetParent(newContainer);
+				_tab.mpParentTab = newContainer;
+				_tab.mStatus = eSTATUS_DOCKED;
+				SetDockPosSize(*_dest, _tab, _slot, *newContainer);
+			}
+			_tab.SetActive();
+		}
+
+		void RootDockTab(const ImVec2& _pos, const ImVec2& _size)
+		{
+			DockTab *pRoot = GetRootTab();
+			if (!pRoot) return;
+
+			ImVec2 minSize = pRoot->GetMinSize();
+			ImVec2 requestedSize = _size;
+			pRoot->SetPositionSize(_pos, ImMax(minSize, requestedSize));
+		}
+
+		static eDockSlot GetSlotFromLocationCode(char code)
+		{
+			switch (code)
+			{
+			case '1' : 
+				return eDOCK_SLOT_LEFT;
+			case '2':
+				return eDOCK_SLOT_TOP;
+			case '3':
+				return eDOCK_SLOT_BOTTOM;
+			default :
+				return eDOCK_SLOT_RIGHT;
+			}
+		}
 		
-		newTab->SetLabel(_label);
-		newTab->SetID(id);
-		newTab->SetActive();
-		newTab->SetStatus((mArrSlotPairTabPtr.size() == 1) ? eDOCK_STATUS_DOCKED : eDOCK_STATUS_FLOAT);
-		newTab->SetPosition(ImVec2{ 0,0 });
-		newTab->SetSize(ImVec2{ _defSize.x < 0 ? ImGui::GetIO().DisplaySize.x : _defSize.x , _defSize.y < 0 ? ImGui::GetIO().DisplaySize.y : _defSize.y });
-		newTab->SetFloatModeSize(_defSize);
-		newTab->SetOpened(_opened);
-		newTab->SetFirst(true);
-		// newTab->mLastFrame = 0;
-		// newTab->mLocation[0] = 0;
-		return *newTab;
+		static char GetLocationCode(DockTab *_tab)
+		{
+			if (!_tab) return '0';
+			if (_tab->mpParentTab->IsHorizontal())
+			{
+				if (_tab->mPosition.x < _tab->mpParentTab->mpChildren[0]->mPosition.x) return '1';
+				if (_tab->mPosition.x < _tab->mpParentTab->mpChildren[1]->mPosition.x) return '1';
+				return '0';
+			}
+			else
+			{
+				if (_tab->mPosition.y < _tab->mpParentTab->mpChildren[0]->mPosition.y) return '2';
+				if (_tab->mPosition.y < _tab->mpParentTab->mpChildren[1]->mPosition.y) return '2';
+				return '3';
+			}
+		}
+
+		void TryDockToStoredLocation(DockTab& _tab)
+		{
+			if (_tab.mStatus == eSTATUS_DOCKED) return;
+			if (_tab.mLocation[0] == 0) return;
+
+			DockTab *temp = GetRootTab();
+			if (!temp) return;
+
+			DockTab *prev = nullptr;
+			char *c = _tab.mLocation + strlen(_tab.mLocation) - 1;
+			while (c >= _tab.mLocation && temp)
+			{
+				prev = temp;
+				temp = (*c == GetLocationCode(temp->mpChildren[0])) ? temp->mpChildren[0] : temp->mpChildren[1];
+				if (temp) --c;
+			}
+			DoDockTab(_tab, temp ? temp : prev, temp ? eDOCK_SLOT_TAB : GetSlotFromLocationCode(*c));
+		}
+		
+		bool Begin(const char *_label, bool *_open, ImGuiWindowFlags _flags)
+		{
+			eDockSlot nextSlot = mNextDockSlot;
+			mNextDockSlot = eDOCK_SLOT_TAB;
+			DockTab& tab = GetDockTab(_label, !_open || *_open);
+
+			if (!tab.mOpened && (!_open || *_open)) TryDockToStoredLocation(tab);
+
+			tab.mLastFrame = ImGui::GetFrameCount();
+			if (strcmp(tab.mpLabel, _label) != 0)
+			{
+				ImGui::MemFree(tab.mpLabel);
+				tab.mpLabel = ImStrdup(_label);
+			}
+			mAction = eACTION_NONE;
+
+			bool prevOpen = tab.mOpened;
+			bool first = tab.mFirst;
+
+			if (tab.mFirst && _open) *_open = tab.mOpened;
+
+			tab.mFirst = first;
+			if (_open && !*_open)
+			{
+				if (tab.mStatus != eSTATUS_FLOATING)
+				{
+					FillLocation(tab);
+					DoUndockTab(&tab);
+					tab.mStatus = eSTATUS_FLOATING;
+				}
+				tab.mOpened = false;
+				return false;
+			}
+			tab.mOpened = true;
+			CheckNonExistent();
+
+			if (first || (prevOpen != tab.mOpened))
+			{
+				DockTab *pRoot = mpNextParentTab ? mpNextParentTab : GetRootTab();
+				if (pRoot && (&tab != pRoot) && !tab.mpParentTab)
+					DoDockTab(tab, pRoot, nextSlot);
+				mpNextParentTab = &tab;
+			}
+
+			mpCurrentTab = &tab;
+			if (tab.mStatus == eSTATUS_DRAGGED) HandleDragging(tab);
+			
+			if (tab.mStatus == eSTATUS_FLOATING)
+			{
+				ImGui::SetNextWindowPos(tab.mPosition);
+				ImGui::SetNextWindowSize(tab.mSize);
+				ImGui::SetNextWindowBgAlpha(-1.f);
+				bool ret = ImGui::Begin(_label, _open, ImGuiWindowFlags_NoCollapse | _flags);
+				mAction = eACTION_END;
+				tab.mPosition = ImGui::GetWindowPos();
+				tab.mSize = ImGui::GetWindowSize();
+
+				ImGuiContext& ctx = *GImGui;
+
+				if (ctx.ActiveId == ImGui::GetCurrentWindow()->GetID("#MOVE") && ctx.IO.MouseDown[0])
+				{
+					mDragOffset = ImGui::GetMousePos() - tab.mPosition;
+					DoUndockTab(&tab); 
+					tab.mStatus = eSTATUS_DRAGGED;
+				}
+				return ret;
+			}
+
+			if (!tab.mActive && tab.mStatus != eSTATUS_DRAGGED) return false;
+
+			mAction = eACTION_END_CHILD;
+			Split();
+			ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0,0,0,0 });
+			float tabbarHeight = ImGui::GetTextLineHeightWithSpacing();
+			if (Tabbar(tab.GetFirstTab(), _open != nullptr))
+			{
+				FillLocation(tab);
+				*_open = false;
+			}
+
+			ImVec2 pos = tab.mPosition;
+			ImVec2 size = tab.mSize;
+			pos.y += tabbarHeight + ImGui::GetStyle().WindowPadding.y;
+			size.y -= tabbarHeight + ImGui::GetStyle().WindowPadding.y;
+
+			ImGui::SetCursorScreenPos(pos);
+			ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
+									 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+									 ImGuiWindowFlags_NoSavedSettings |
+									 ImGuiWindowFlags_NoBringToFrontOnFocus | _flags;
+			bool ret = ImGui::BeginChild(_label, size, true, flags);
+			ImGui::PopStyleColor();
+			return ret;
+		}
+
+		void End()
+		{
+			mpCurrentTab = nullptr;
+			if (mAction == eACTION_END)
+				ImGui::End();
+			else if (mAction == eACTION_END_CHILD)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0,0,0,0 });
+				ImGui::EndChild();
+				ImGui::PopStyleColor();
+			}
+		}
+	};
+
+	static std::map<std::string, DockPanel> gPanelList;
+	static const char *curDockPanel = nullptr;
+
+	int GetDockPanelIndex(const DockPanel& _context, DockTab *_tab)
+	{
+		if (!_tab) return -1;
+
+		for (unsigned int i = 0; i < _context.mArrDockTabs.size(); ++i)
+		{
+			if (_tab == _context.mArrDockTabs[i])
+				return i;
+		}
+
+		IM_ASSERT(false);
+		return -1;
+	}
+
+	DockTab* GetDockByIndex(const DockPanel& _context, unsigned int _index)
+	{
+		return (_index >= 0 && _index < _context.mArrDockTabs.size())
+				? _context.mArrDockTabs[_index]
+				: nullptr;
+	}
+
+	// TODO SOME SERIALIZATION
+
+
+	bool BeginPanel()
+	{
+		ImGuiContext& ctx = *GImGui;
+		curDockPanel = ctx.CurrentWindow->Name;
+
+		IM_ASSERT(curDockPanel);
+
+		if (!curDockPanel) return false;
+
+		ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar;
+		char child_name[1024];
+		sprintf_s(child_name, "##%s", curDockPanel);
+		bool result = ImGui::BeginChild(child_name, ImVec2{ 0,0 }, false, flags);
+
+		DockPanel& panel = gPanelList[curDockPanel];
+		panel.mPanelPosition = ImGui::GetWindowPos();
+		panel.mPanelSize = ImGui::GetWindowSize();
+
+		return result;
+	}
+	
+	void EndPanel()
+	{
+		ImGui::EndChild();
+		curDockPanel = nullptr;
+	}
+
+	void ShutdownPanel()
+	{
+		for (auto& e : gPanelList)
+		{
+			DockPanel& context = e.second;
+			for (unsigned int k = 0, count = context.mArrDockTabs.size(); k < count; k++)
+			{
+				context.mArrDockTabs[k]->~DockTab();
+				delete context.mArrDockTabs[k];
+				context.mArrDockTabs[k] = nullptr;
+			}
+			context.mArrDockTabs.clear();
+		}
+		gPanelList.clear();
+	}
+
+	void SetNextSlot(const char *_label, eDockSlot _slot)
+	{
+		if (_label && gPanelList.find(_label) != gPanelList.end())
+			gPanelList[_label].mNextDockSlot = _slot;
+	}
+
+	bool BeginTab(const char *_label, bool *_open, ImGuiWindowFlags _flags)
+	{
+		IM_ASSERT(curDockPanel);
+		if (!curDockPanel) return false;
+
+		if (gPanelList.find(curDockPanel) != gPanelList.end())
+		{
+			DockPanel& context = gPanelList[curDockPanel];
+
+			char newLabel[128];
+			sprintf_s(newLabel, "%s##%s", _label, curDockPanel);
+			return context.Begin(newLabel, _open, _flags);
+		}
+		return false;
+	}
+
+	void EndTab()
+	{
+		IM_ASSERT(curDockPanel);
+		if (!curDockPanel) return;
+
+		if (gPanelList.find(curDockPanel) != gPanelList.end())
+		{
+			DockPanel& context = gPanelList[curDockPanel];
+			context.End();
+		}
+	}
+
+	void InitTab()
+	{
+		ImGuiContext& gtx = *GImGui;
+		gtx;
 	}
 
 
-
-
-} // namespace EGUI
+}} // namespace EGUI::Dock
 
 
 
