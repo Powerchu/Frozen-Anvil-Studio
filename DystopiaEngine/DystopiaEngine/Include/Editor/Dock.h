@@ -174,6 +174,7 @@ namespace EGUI
 		ePANEL_SLOT_MIDDLE,
 		ePANEL_SLOT_BOTTOM,
 		ePANEL_SLOT_RIGHT,
+		ePANEL_SLOT_NONE
 	};
 
 	class DockLayout
@@ -196,8 +197,17 @@ namespace EGUI
 			DockTab*	GetNextTab();
 			DockTab*	GetPrevTab();
 			void		SetActive();
+			void		SetPosition(const ImVec2&);
+			void		SetSize(const ImVec2&);
+			void		SetFloatModeSize(const ImVec2&);
 			void		SetPosSize(const ImVec2&, const ImVec2&);
 			void		SetID(ImU32);
+			void		SetLabel(const char*);
+			void		SetStatus(eDockStatus);
+			void		SetOpened(bool);
+			void		SetFirst(bool);
+			bool		IsFirst() const;
+			bool		IsOpened() const;
 			ImU32		GetID() const;
 
 		private:

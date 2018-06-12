@@ -1297,8 +1297,8 @@ namespace EGUI
 
 	void DockLayout::DockTab::SetPosSize(const ImVec2& _pos, const ImVec2& _size)
 	{
-		mPosition = _pos;
-		mSize = _size;
+		SetPosition(_pos);
+		SetSize(_size);
 	}
 	
 	ImU32 DockLayout::DockTab::GetID() const
@@ -1310,6 +1310,61 @@ namespace EGUI
 	{
 		mId = _id;
 	}
+
+	void DockLayout::DockTab::SetLabel(const char *_label)
+	{
+		if (mpLabel)
+			delete mpLabel;
+		mpLabel = new char[strlen(_label) + 1];
+		std::copy(mpLabel, mpLabel + strlen(_label), _label);
+	}
+	
+	void DockLayout::DockTab::SetStatus(eDockStatus _status)
+	{
+		mDockStatus = _status;
+	}
+
+	void DockLayout::DockTab::SetPosition(const ImVec2& _pos)
+	{
+		mPosition = _pos;
+	}
+
+	void DockLayout::DockTab::SetSize(const ImVec2& _size)
+	{
+		mSize = _size;
+	}
+
+	void DockLayout::DockTab::SetFloatModeSize(const ImVec2& _size)
+	{
+		mFloatSize = _size;
+	}
+
+	void DockLayout::DockTab::SetOpened(bool _opened)
+	{
+		mOpened = _opened;
+	}
+
+	bool DockLayout::DockTab::IsOpened() const
+	{
+		return mOpened;
+	}
+
+	void DockLayout::DockTab::SetFirst(bool _isFirst)
+	{
+		mFirst = _isFirst;
+	}
+
+	bool DockLayout::DockTab::IsFirst() const
+	{
+		return mFirst;
+	}
+
+
+
+
+
+
+
 
 
 
@@ -1343,6 +1398,7 @@ namespace EGUI
 
 	void DockLayout::InsertTab(ePanelSlot _slot, DockTab *_tab)
 	{
+		RemoveTab(_tab);
 		mArrSlotPairTabPtr.push_back(std::make_pair(_slot, _tab));
 	}
 
@@ -1411,18 +1467,17 @@ namespace EGUI
 		}
 
 		DockTab* newTab = new DockTab{};
-		// mDocksArr.push_back(newDock);
-		// 
-		// newTab->mpLabel = ImStrdup(_label); IM_ASSERT(newDock->mpLabel);
-		// newTab->mId = id;
-		// newTab->SetActive();
-		// newTab->mStatus = (mDocksArr.size() == 1) ? eSTAT_DOCK : eSTAT_FLOAT;
-		// newTab->mPos = ImVec2{ 0,0 };
-		// newTab->mSize.x = _defSize.x < 0 ? ImGui::GetIO().DisplaySize.x : _defSize.x;
-		// newTab->mSize.y = _defSize.y < 0 ? ImGui::GetIO().DisplaySize.y : _defSize.y;
-		// newTab->mFloatmodeSize = _defSize;
-		// newTab->mOpened = _opened;
-		// newTab->mFirst = true;
+		mArrSlotPairTabPtr.push_back(std::make_pair(ePANEL_SLOT_NONE, newTab));
+		
+		newTab->SetLabel(_label);
+		newTab->SetID(id);
+		newTab->SetActive();
+		newTab->SetStatus((mArrSlotPairTabPtr.size() == 1) ? eDOCK_STATUS_DOCKED : eDOCK_STATUS_FLOAT);
+		newTab->SetPosition(ImVec2{ 0,0 });
+		newTab->SetSize(ImVec2{ _defSize.x < 0 ? ImGui::GetIO().DisplaySize.x : _defSize.x , _defSize.y < 0 ? ImGui::GetIO().DisplaySize.y : _defSize.y });
+		newTab->SetFloatModeSize(_defSize);
+		newTab->SetOpened(_opened);
+		newTab->SetFirst(true);
 		// newTab->mLastFrame = 0;
 		// newTab->mLocation[0] = 0;
 		return *newTab;
@@ -1432,31 +1487,6 @@ namespace EGUI
 
 
 } // namespace EGUI
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
