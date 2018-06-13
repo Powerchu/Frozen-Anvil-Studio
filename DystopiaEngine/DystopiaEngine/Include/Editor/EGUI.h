@@ -15,6 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_GUI_H_
 #define _EDITOR_GUI_H_
 #include "Math\Vector4.h"
+#include "../../Dependancies/ImGui/imgui.h"
+#include "../../Dependancies/ImGui/imgui_internal.h"
 #include "Editor\Dock.h"
 #include <string>
 
