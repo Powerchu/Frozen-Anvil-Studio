@@ -34,14 +34,13 @@ namespace EGUI2
 			eDOCK_SLOT_NONE
 		};
 
-		bool BeginDockspace();
-		void EndDockspace();
-		void ShutdownDock();
-		void SetNextDock(const char*, eDockSlot);
-		bool BeginDock(const char*, bool* = nullptr, ImGuiWindowFlags = 0);
-		void EndDock();
-		void DockDebugWindow(const char*);
-		void InitDock();
+		bool BeginDockableSpace();
+		void EndDockableSpace();
+		void ShutdownTabs();
+		void SetNextTabs(const char*, eDockSlot);
+		bool BeginTabs(const char*, bool* = nullptr, ImGuiWindowFlags = 0);
+		void EndTabs();
+		void InitTabs();
 	}
 }
 

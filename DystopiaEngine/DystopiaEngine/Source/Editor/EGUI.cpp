@@ -185,9 +185,6 @@ namespace Dystopia
 		// if (install_callbacks)
 		// InstallInputCallbacks();
 		
-		mpDockCtx = EGUI::Dock::CreateContext();
-		EGUI::Dock::SetContext(mpDockCtx);
-
 		return true;
 	}
 
@@ -426,8 +423,6 @@ namespace Dystopia
 
 		delete mpGLState;
 
-		EGUI::Dock::DestroyContext(mpDockCtx);
-		mpDockCtx = nullptr;
 		ImGui::DestroyContext(mpCtx);
 	}
 

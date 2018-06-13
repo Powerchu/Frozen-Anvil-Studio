@@ -97,7 +97,6 @@ namespace Dystopia
 		void			UpdateKeyInputs();
 		void			UpdateScrollInputs();
 
-		EGUI::Dock::DockContext *mpDockCtx;
 	};
 }
 
