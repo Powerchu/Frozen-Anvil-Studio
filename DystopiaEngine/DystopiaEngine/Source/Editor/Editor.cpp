@@ -119,7 +119,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 }
 
 
-
+/*///////////////////////////////////////////////////////////////////// EDITOR CLASS ////////////////////////////////////////////////////////////////////////////////*/
 
 namespace Dystopia
 {
@@ -151,6 +151,10 @@ namespace Dystopia
 		mStartTime = std::chrono::high_resolution_clock::now();
 		for (auto e : mGuiSysArray)
 			e->StartFrame(mPrevFrameTime);
+
+		if (EGUI::StartTab("Tab1"))
+			EGUI::Display::Label("I'm ahahahaa!");
+		EGUI::EndTab();
 	}
 
 	void Editor::UpdateFrame(const float& /*_dt*/)
@@ -165,32 +169,6 @@ namespace Dystopia
 
 	void Editor::EndFrame()
 	{
-		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar;
-
-		EGUI::Display::MainMenuBar();
-		ImGui::SetNextWindowPos(ImVec2{ 0, 18 });
-		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - 18});
-		ImGui::SetNextWindowBgAlpha(1.f);
-		if (ImGui::Begin("Dock Demo", nullptr, flags))
-		{
-			EGUI2::Docking::BeginDockableSpace();
-		
-			if (EGUI2::Docking::BeginTabs("Dock 1"))
-			{
-				ImGui::Text("I'm weaksdaweas!");
-			}
-			EGUI2::Docking::EndTabs();
-
-			if (EGUI2::Docking::BeginTabs("Dock 2"))
-			{
-				ImGui::Text("I'm weaksdaweas!");
-			}
-			EGUI2::Docking::EndTabs();
-		
-			EGUI2::Docking::EndDockableSpace();
-		}
-		ImGui::End();
-
 		for (auto e : mGuiSysArray)
 			e->EndFrame();
 

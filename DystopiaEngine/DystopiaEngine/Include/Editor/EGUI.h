@@ -15,14 +15,42 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_GUI_H_
 #define _EDITOR_GUI_H_
 #include "Math\Vector4.h"
-#include "../../Dependancies/ImGui/imgui.h"
-#include "../../Dependancies/ImGui/imgui_internal.h"
 #include "Editor\Dock.h"
 #include <string>
 
+namespace EGUI
+{
+	bool StartTab(const char*, bool* = nullptr, ImGuiWindowFlags = 0);
+	void EndTab();
+
+	namespace Display
+	{
+		void MainMenuBar();
+		void CollapseHeader(const char*);
+		void Label(const char*, ...);
+		void TextField(const char*, char*, size_t);
+		bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 0.0f);
+		bool CheckBox(const char*, bool*);
+		bool DragFloat(const char*, float*, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 0.0f);
+		bool DragInt(const char*, int*, float _dragSpeed = 1.0f, int _min = 0, int _max = 0);
+		bool SelectableTxt(const char*, bool*);
+	}
+
+	namespace FileCallbacks
+	{
+		typedef void(*FncPtrCallback)();
+		void New(FncPtrCallback);
+		void Open(FncPtrCallback);
+		void OpenRecent(FncPtrCallback);
+		void Save(FncPtrCallback);
+		void SaveAs(FncPtrCallback);
+		void Quit(FncPtrCallback);
+	}
+
+}
+
 struct ImDrawData;
 struct ImGuiContext;
-
 namespace Dystopia
 {
 	class WindowManager;
@@ -30,34 +58,6 @@ namespace Dystopia
 	class InputManager;
 	class GLState;
 	typedef unsigned int GLuint;
-
-	namespace EGUI
-	{
-		namespace Display
-		{
-			void MainMenuBar();
-			void CollapseHeader(const char*);
-			void Label(const char*, ...);
-			void TextField(const char*, char*, size_t);
-			bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 0.0f);
-			bool CheckBox(const char*, bool*);
-			bool DragFloat(const char*, float*, float _dragSpeed= 1.0f, float _min= 0.0f, float _max= 0.0f);
-			bool DragInt(const char*, int*, float _dragSpeed = 1.0f, int _min = 0, int _max = 0);
-			bool SelectableTxt(const char*, bool*);
-		}
-
-		namespace FileCallbacks
-		{
-			typedef void(*FncPtrCallback)();
-			void New(FncPtrCallback);
-			void Open(FncPtrCallback);
-			void OpenRecent(FncPtrCallback);
-			void Save(FncPtrCallback);
-			void SaveAs(FncPtrCallback);
-			void Quit(FncPtrCallback);
-		}
-		
-	}
 
 	class GuiSystem
 	{
@@ -96,6 +96,9 @@ namespace Dystopia
 		void			UpdateMouseInputs();
 		void			UpdateKeyInputs();
 		void			UpdateScrollInputs();
+
+		void			StartFullDockableSpace();
+		void			EndFullDockableSpace();
 
 	};
 }

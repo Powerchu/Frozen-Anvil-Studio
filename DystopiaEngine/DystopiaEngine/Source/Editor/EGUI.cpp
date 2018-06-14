@@ -21,6 +21,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Input\InputMap.h"
 #include "Math\Vector4.h"
 #include "GL\glew.h"
+#include "../../Dependancies/ImGui/imgui.h"
+#include "../../Dependancies/ImGui/imgui_internal.h"
 #include <iostream>
 #include <Windows.h>
 
@@ -295,6 +297,8 @@ namespace Dystopia
 
 		// Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
 		ImGui::NewFrame();
+		EGUI::Display::MainMenuBar();
+		StartFullDockableSpace();
 
 		glViewport(0, 0, 1600, 900);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.f);
@@ -304,6 +308,7 @@ namespace Dystopia
 	void GuiSystem::EndFrame()
 	{
 		ImGui::SetCurrentContext(mpCtx);
+		EndFullDockableSpace();
 		ImGui::Render();
 		mpDrawData = ImGui::GetDrawData();
 
@@ -539,6 +544,26 @@ namespace Dystopia
 	{
 		// get scroll inputs from windows programming or from input manager?
 	}
+
+	void GuiSystem::StartFullDockableSpace()
+	{
+		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | 
+								 ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoCollapse |	
+								 ImGuiWindowFlags_NoInputs;
+		ImGui::SetNextWindowPos(ImVec2{ 0, 18 });
+		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - 18 });
+		ImGui::SetNextWindowBgAlpha(1.f);
+		ImGui::Begin("Dockable Space", nullptr, flags);
+		EGUI::Docking::BeginDockableSpace();
+		
+	}
+
+	void GuiSystem::EndFullDockableSpace()
+	{
+		EGUI::Docking::EndDockableSpace();
+		ImGui::End();
+	}
+
 }
 
 #endif // EDITOR ONLY

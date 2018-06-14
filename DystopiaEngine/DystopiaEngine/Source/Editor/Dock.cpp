@@ -55,7 +55,7 @@ ImVec2 operator*(const ImVec2& lhs, const float& rhs)
 	return temp;
 }
 
-namespace EGUI2{
+namespace EGUI{
 namespace Docking{
 /*========================================================= Declaration ==========================================================*/
 enum eEndAction
@@ -1073,9 +1073,9 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	mCurrentTab = &_tab;
 	if (_tab.mStatus == eSTATUS_DRAGGED) HandleDragging(_tab);
 
-	bool is_float = _tab.mStatus == eSTATUS_FLOATING;
+	bool floating = _tab.mStatus == eSTATUS_FLOATING;
 
-	if (is_float)
+	if (floating)
 	{
 		ImGui::SetNextWindowPos(_tab.mPos);
 		ImGui::SetNextWindowSize(_tab.mSize);
@@ -1428,7 +1428,7 @@ void InitTabs()
 }
 
 
-}} // namespace EGUI2::Tabsing
+}} // namespace EGUI::Docking
 
 #endif //EDITOR
 

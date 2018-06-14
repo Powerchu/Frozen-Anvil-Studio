@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _DOCK_H_
 
 // Work-In-Progress
-namespace EGUI2
+namespace EGUI
 {
 	typedef int ImGuiWindowFlags;
 
