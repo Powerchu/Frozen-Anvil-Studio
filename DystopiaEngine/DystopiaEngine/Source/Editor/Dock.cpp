@@ -564,10 +564,11 @@ ImRect DockSpace::GetSlotRectOnBorder(ImRect _parentR, eDockSlot _slot)
 		return ImRect{ ImVec2{ center.x - 20, _parentR.Max.y - 30 }, ImVec2{ center.x + 20, _parentR.Max.y - 10 } };
 	case eDOCK_SLOT_RIGHT:
 		return ImRect{ ImVec2{ _parentR.Max.x - 30, center.y - 20 }, ImVec2{ _parentR.Max.x - 10, center.y + 20 } };
-	default: IM_ASSERT(false);
+	default:
+		return ImRect{ center - ImVec2{ 20, 20 }, center + ImVec2{ 20, 20 } };
 	}
-	IM_ASSERT(false);
-	return ImRect{};
+	//IM_ASSERT(false);
+	//return ImRect{};
 }
 
 Tabs* DockSpace::GetMainRootTab()
@@ -585,7 +586,7 @@ bool DockSpace::TabCanSlot(Tabs& _tab, Tabs *_pDestTab, const ImRect& _rect, boo
 {
 	ImDrawList *pCanvas = ImGui::GetWindowDrawList();
 	ImVec2 mousePos = ImGui::GetIO().MousePos;
-	for (int i = 0; i < (_onBorder ? 4 : 5); ++i)
+	for (int i = 0; i < 5/*(_onBorder ? 4 : 5)*/; ++i)
 	{
 		ImRect rect = _onBorder ? GetSlotRectOnBorder(_rect, static_cast<eDockSlot>(i))
 								: GetSlotRect(_rect, static_cast<eDockSlot>(i));
@@ -596,10 +597,10 @@ bool DockSpace::TabCanSlot(Tabs& _tab, Tabs *_pDestTab, const ImRect& _rect, boo
 		if (!hovered) continue;
 		if (!ImGui::IsMouseDown(0))
 		{
-			DockTab(_tab, _pDestTab ? _pDestTab : GetMainRootTab(), (eDockSlot)i);
+			DockTab(_tab, _pDestTab ? _pDestTab : GetMainRootTab(), static_cast<eDockSlot>(i));
 			return true;
 		}
-		ImRect dockedRect = GetDockedTabRect(_rect, (eDockSlot)i);
+		ImRect dockedRect = GetDockedTabRect(_rect, static_cast<eDockSlot>(i));
 		pCanvas->AddRectFilled(dockedRect.Min, dockedRect.Max, ImGui::GetColorU32(ImGuiCol_Button));
 	}
 	return false;

@@ -19,7 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace EGUI
 {
-
 	bool StartTab(const char *_pLabel, bool *_pOpen, ImGuiWindowFlags _flags)
 	{
 		return EGUI::Docking::BeginTabs(_pLabel, _pOpen, _flags);
@@ -30,70 +29,33 @@ namespace EGUI
 		EGUI::Docking::EndTabs();
 	}
 
+	bool StartMainMenuBar()
+	{
+		return ImGui::BeginMainMenuBar();
+	}
+
+	bool StartMenuHeader(const char *_pLabel)
+	{
+		return ImGui::BeginMenu(_pLabel);
+	}
+
+	bool StartMenuBody(const char *_pLabel)
+	{
+		return ImGui::MenuItem(_pLabel);
+	}
+
+	void EndMainMenuBar()
+	{
+		ImGui::EndMainMenuBar();
+	}
+
+	void EndMenuHeader()
+	{
+		ImGui::EndMenu();
+	}
+
 	namespace Display
 	{
-		void MainMenuBar()
-		{
-			if (ImGui::BeginMainMenuBar())
-			{
-				if (ImGui::BeginMenu("File"))
-				{
-					std::cout << "1\n";
-					if (ImGui::MenuItem("New"))
-					{
-						// TODO: Some actual function
-					}
-					if (ImGui::MenuItem("Open", "Ctrl+O"))
-					{
-						// TODO: Some actual function
-					}
-					if (ImGui::BeginMenu("Open Recent"))
-					{
-						if (ImGui::MenuItem("some_recent_crap.cpp"))
-						{
-							// TODO: Some actual function
-						}
-						if (ImGui::MenuItem("more_recent_crap.h"))
-						{
-							// TODO: Some actual function
-						}
-						if (ImGui::BeginMenu("More.."))
-						{
-							ImGui::MenuItem("surprise_theres_more_crap.h");
-							ImGui::EndMenu();
-						}
-						ImGui::EndMenu();
-					}
-					if (ImGui::MenuItem("Save", "Ctrl+S"))
-					{
-						// TODO: Some actual function
-					}
-					if (ImGui::MenuItem("Save As.."))
-					{
-						// TODO: Some actual function
-					}
-					ImGui::Separator();
-					if (ImGui::MenuItem("Quit", "Alt+F4"))
-					{
-						// TODO: Some actual function
-					}
-					ImGui::EndMenu();
-				}
-				// TODO: Some actual function for all the bottom
-				if (ImGui::BeginMenu("Edit"))
-				{
-					if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-					if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-					ImGui::Separator();
-					if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-					if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-					if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-					ImGui::EndMenu();
-				}
-				ImGui::EndMainMenuBar();
-			}
-		}
-	
 		void Label(const char* _formatLabel, ...)
 		{
 			va_list args;

@@ -60,6 +60,9 @@ namespace Dystopia
 	private:
 		eEditorState mCurrentState;
 		eEditorState mNextState;
+
+		int mExtraTabCounter;
+
 		std::chrono::high_resolution_clock::time_point mStartTime;
 		std::chrono::high_resolution_clock::time_point mEndTime;
 		double mPrevFrameTime;
@@ -77,6 +80,7 @@ namespace Dystopia
 		void Load();
 		void TempSave();
 		void TempLoad();
+		void MainMenu();
 	};
 }
 

@@ -14,7 +14,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor\EGUI.h"
 
+namespace EGUI
+{
 
+
+}
 
 
 #endif // EDITOR

@@ -22,10 +22,15 @@ namespace EGUI
 {
 	bool StartTab(const char*, bool* = nullptr, ImGuiWindowFlags = 0);
 	void EndTab();
+	
+	bool StartMainMenuBar();
+	bool StartMenuHeader(const char*);
+	bool StartMenuBody(const char*);
+	void EndMainMenuBar();
+	void EndMenuHeader();
 
 	namespace Display
 	{
-		void MainMenuBar();
 		void CollapseHeader(const char*);
 		void Label(const char*, ...);
 		void TextField(const char*, char*, size_t);
@@ -35,18 +40,6 @@ namespace EGUI
 		bool DragInt(const char*, int*, float _dragSpeed = 1.0f, int _min = 0, int _max = 0);
 		bool SelectableTxt(const char*, bool*);
 	}
-
-	namespace FileCallbacks
-	{
-		typedef void(*FncPtrCallback)();
-		void New(FncPtrCallback);
-		void Open(FncPtrCallback);
-		void OpenRecent(FncPtrCallback);
-		void Save(FncPtrCallback);
-		void SaveAs(FncPtrCallback);
-		void Quit(FncPtrCallback);
-	}
-
 }
 
 struct ImDrawData;
@@ -99,7 +92,6 @@ namespace Dystopia
 
 		void			StartFullDockableSpace();
 		void			EndFullDockableSpace();
-
 	};
 }
 

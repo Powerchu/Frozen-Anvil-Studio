@@ -125,7 +125,7 @@ namespace Dystopia
 {
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mStartTime{}, mEndTime{}, mPrevFrameTime{ 0 },
-		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mGuiSysArray{0}
+		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mGuiSysArray{ 0 }, mExtraTabCounter{ 0 }
 	{}
 
 	Editor::~Editor(void)
@@ -152,6 +152,8 @@ namespace Dystopia
 		for (auto e : mGuiSysArray)
 			e->StartFrame(mPrevFrameTime);
 
+		MainMenu();
+
 		if (EGUI::StartTab("Tab1"))
 			EGUI::Display::Label("I'm ahahahaa!");
 		EGUI::EndTab();
@@ -162,7 +164,24 @@ namespace Dystopia
 		//mpWin->Update(_dt);
 		//mpInput->Update(_dt);
 		//mpGfx->Update(_dt);
-
+		char buffer1[8];
+		char buffer2[8];
+		for (int i = 0; i < mExtraTabCounter; ++i)
+		{
+			char tempBuff[128];
+			_itoa_s(i, buffer1, 10);
+			_itoa_s(i, buffer2, 10);
+			strcpy_s(tempBuff, "Spawned Tab ");
+			strcat_s(tempBuff, buffer1);
+			if (EGUI::StartTab(tempBuff))
+			{
+				strcpy_s(tempBuff, "I am Tab ");
+				strcat_s(tempBuff, buffer2);
+				EGUI::Display::Label(tempBuff);
+			}
+			EGUI::EndTab();
+		}
+		
 		// if (mCurrentState == EDITOR_PLAY) call for update of current scene
 		if (mCurrentState == EDITOR_PAUSE) return;
 	}
@@ -235,6 +254,66 @@ namespace Dystopia
 		mCurrentState = mNextState;
 	}
 
+	void Editor::MainMenu()
+	{
+		if (EGUI::StartMainMenuBar())
+		{
+			if (EGUI::StartMenuHeader("File"))
+			{
+				if (EGUI::StartMenuBody("New (Spawn Tabs)"))
+				{
+					// TODO: Some actual function
+					++mExtraTabCounter;
+				}
+				if (EGUI::StartMenuBody("Open"))
+				{
+					// TODO: Some actual function
+				}
+				if (EGUI::StartMenuHeader("Open Recent"))
+				{
+					if (EGUI::StartMenuBody("some_recent_crap.cpp"))
+					{
+						// TODO: Some actual function
+					}
+					if (EGUI::StartMenuBody("some_recent_crap.h"))
+					{
+						// TODO: Some actual function
+					}
+					if (EGUI::StartMenuHeader("More.."))
+					{
+						EGUI::StartMenuBody("surprise_theres_more_crap.h");
+						EGUI::EndMenuHeader();
+					}
+					EGUI::EndMenuHeader();
+				}
+				if (EGUI::StartMenuBody("Save"))
+				{
+					// TODO: Some actual function
+				}
+				if (EGUI::StartMenuBody("Save As.."))
+				{
+					// TODO: Some actual function
+				}
+				if (EGUI::StartMenuBody("Quit"))
+				{
+					// TODO: Some actual function
+				}
+				EGUI::EndMenuHeader();
+			}
+			// TODO: Some actual function for all the bottom
+			if (EGUI::StartMenuHeader("Edit"))
+			{
+				if (EGUI::StartMenuBody("Undo")) {}
+				if (EGUI::StartMenuBody("Redo")) {}  // Disabled ite
+				if (EGUI::StartMenuBody("Cut")) {}
+				if (EGUI::StartMenuBody("Copy")) {}
+				if (EGUI::StartMenuBody("Paste")) {}
+				EGUI::EndMenuHeader();
+			}
+			EGUI::EndMainMenuBar();
+		}
+	}
+
 	void Editor::Play()
 	{
 		// call for Init of the current scene. Assuming scene manager knows which is the current scene 
@@ -263,4 +342,3 @@ namespace Dystopia
 }
 
 #endif		// EDITOR ONLY
-
