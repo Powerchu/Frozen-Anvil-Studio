@@ -186,7 +186,6 @@ namespace Dystopia
 	 
 		// if (install_callbacks)
 		// InstallInputCallbacks();
-		
 		return true;
 	}
 
