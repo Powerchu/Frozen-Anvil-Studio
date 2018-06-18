@@ -31,14 +31,17 @@ namespace EGUI
 
 	namespace Display
 	{
-		void CollapseHeader(const char*);
 		void Label(const char*, ...);
 		void TextField(const char*, char*, size_t);
+		bool CollapseHeader(const char*);
 		bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 0.0f);
 		bool CheckBox(const char*, bool*);
 		bool DragFloat(const char*, float*, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 0.0f);
 		bool DragInt(const char*, int*, float _dragSpeed = 1.0f, int _min = 0, int _max = 0);
 		bool SelectableTxt(const char*, bool*);
+		bool SelectableTxt(const char*, bool = false);
+		bool SelectableTxtDouble(const char*, bool*);
+		bool SelectableTxtDouble(const char*, bool = false);
 	}
 }
 

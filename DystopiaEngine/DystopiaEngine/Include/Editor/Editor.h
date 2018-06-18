@@ -25,6 +25,9 @@ namespace Dystopia
 	class InputManager;
 	class GuiSystem;
 	class Inspector;
+	class ResourceView;
+	class HierarchyView;
+	class Inspector;
 	//class SceneManager;
 	//class Scene;
 
@@ -47,7 +50,7 @@ namespace Dystopia
 
 		void Init(WindowManager*, GraphicsSystem*, InputManager*);
 		void StartFrame();
-		void UpdateFrame(const float&);
+		void UpdateFrame(const float);
 		void EndFrame();
 		void Shutdown();
 
@@ -69,10 +72,14 @@ namespace Dystopia
 		WindowManager *mpWin;
 		GraphicsSystem *mpGfx;
 		InputManager *mpInput;
+		HierarchyView *mpHierarchy;
+		Inspector *mpInspector;
+		ResourceView *mpResource;
 		// SceneManager *mpSceneMgr;
 
 		AutoArray<SharedPtr<Inspector>> mInspectorArray;
 		AutoArray<GuiSystem*> mGuiSysArray;
+		const char *mpDockableSpace;
 		void UpdateState();
 		void Play();
 		void Save();
