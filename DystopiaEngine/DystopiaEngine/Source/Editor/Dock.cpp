@@ -459,7 +459,7 @@ void DockSpace::SplitTabs()
 		else
 		{
 			cursor = ImGuiMouseCursor_ResizeNS;
-			SplitTabHorizontal(pTab, dsize, pos0, pos1, size0, size1);
+			SplitTabVertical(pTab, dsize, pos0, pos1, size0, size1);
 		}
 		pTab->mArrChildPtr[0]->SetPosSize(pos0, size0);
 		pTab->mArrChildPtr[1]->SetPosSize(pos1, size1);
@@ -1074,9 +1074,7 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	mCurrentTab = &_tab;
 	if (_tab.mStatus == eSTATUS_DRAGGED) HandleDragging(_tab);
 
-	bool floating = _tab.mStatus == eSTATUS_FLOATING;
-
-	if (floating)
+	if (_tab.mStatus == eSTATUS_FLOATING)
 	{
 		ImGui::SetNextWindowPos(_tab.mPos);
 		ImGui::SetNextWindowSize(_tab.mSize);

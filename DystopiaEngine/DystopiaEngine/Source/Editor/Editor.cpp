@@ -125,7 +125,8 @@ namespace Dystopia
 {
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mStartTime{}, mEndTime{}, mPrevFrameTime{ 0 },
-		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mGuiSysArray{ 0 }, mExtraTabCounter{ 0 }
+		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mGuiSysArray{ 0 }, mExtraTabCounter{ 0 },
+		mpHierarchy{ nullptr }, mpInspector{ nullptr }, mpResource{ nullptr }, mpDockableSpace{ "Dockable Space" }
 	{}
 
 	Editor::~Editor(void)
@@ -136,14 +137,13 @@ namespace Dystopia
 		mpWin = _pWin;
 		mpGfx = _pGfx;
 		mpInput = _pInput;
+		mpHierarchy = new HierarchyView{};
+		mpInspector = new Inspector{};
+		mpResource = new ResourceView{};
 
-		ResourceView *pResView = new ResourceView{};
 		GuiSystem *pGui =new GuiSystem{};
-
 		if (!pGui->Init(mpWin, mpGfx, mpInput)) mCurrentState = EDITOR_EXIT;
 		mGuiSysArray.push_back(pGui);
-
-		pResView->Init();
 	}
 
 	void Editor::StartFrame()
@@ -153,17 +153,38 @@ namespace Dystopia
 			e->StartFrame(mPrevFrameTime);
 
 		MainMenu();
-
-		if (EGUI::StartTab("Tab1"))
-			EGUI::Display::Label("I'm ahahahaa!");
-		EGUI::EndTab();
 	}
 
-	void Editor::UpdateFrame(const float& /*_dt*/)
+	void Editor::UpdateFrame(const float _dt)
 	{
 		//mpWin->Update(_dt);
 		//mpInput->Update(_dt);
 		//mpGfx->Update(_dt);
+
+		mpInspector->Update(_dt);
+		EGUI::Docking::SetNextTabs(mpDockableSpace, EGUI::Docking::eDOCK_SLOT_RIGHT);
+		if (EGUI::StartTab("Inspector"))
+			mpInspector->Window();
+		EGUI::EndTab();
+
+		mpResource->Update(_dt);
+		EGUI::Docking::SetNextTabs(mpDockableSpace, EGUI::Docking::eDOCK_SLOT_LEFT);
+		if (EGUI::StartTab("Resource"))
+			mpResource->Window();
+		EGUI::EndTab();
+
+		mpHierarchy->Update(_dt);
+		EGUI::Docking::SetNextTabs(mpDockableSpace, EGUI::Docking::eDOCK_SLOT_TOP);
+		if (EGUI::StartTab("Hierarchy"))
+			mpHierarchy->Window();
+		EGUI::EndTab();
+
+		EGUI::Docking::SetNextTabs(mpDockableSpace, EGUI::Docking::eDOCK_SLOT_RIGHT);
+		if (EGUI::StartTab("Tab1"))
+			EGUI::Display::Label("I'm ahahahaa!");
+		EGUI::EndTab();
+
+
 		char buffer1[8];
 		char buffer2[8];
 		for (int i = 0; i < mExtraTabCounter; ++i)
@@ -181,7 +202,7 @@ namespace Dystopia
 			}
 			EGUI::EndTab();
 		}
-		
+
 		// if (mCurrentState == EDITOR_PLAY) call for update of current scene
 		if (mCurrentState == EDITOR_PAUSE) return;
 	}
@@ -203,6 +224,9 @@ namespace Dystopia
 		mpWin = nullptr;
 		mpGfx = nullptr;
 		mpInput = nullptr;
+		if (mpHierarchy) delete mpHierarchy;
+		if (mpInspector) delete mpInspector;
+		if (mpResource) delete mpResource;
 		while (!mGuiSysArray.IsEmpty())
 		{
 			mGuiSysArray.back()->Shutdown();
