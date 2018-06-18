@@ -549,7 +549,7 @@ namespace Dystopia
 								 ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoCollapse |	
 								 ImGuiWindowFlags_NoInputs;
 		ImGui::SetNextWindowPos(ImVec2{ 0, 18 });
-		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - 18 });
+		ImGui::SetNextWindowSize(ImVec2{ 300,300 });//(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - 18 });
 		ImGui::SetNextWindowBgAlpha(1.f);
 		ImGui::Begin("Dockable Space", nullptr, flags);
 		EGUI::Docking::BeginDockableSpace();

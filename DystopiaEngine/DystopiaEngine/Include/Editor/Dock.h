@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _DOCK_H_
 #define _DOCK_H_
+#include "Math\Vector4.h"
 
 // Work-In-Progress
 namespace EGUI
@@ -22,6 +23,8 @@ namespace EGUI
 
 	namespace Docking
 	{
+		constexpr unsigned int MAX_TAB_SIZE_STACK = 10;
+
 		enum eDockSlot
 		{
 			eDOCK_SLOT_LEFT,
@@ -41,6 +44,10 @@ namespace EGUI
 		bool BeginTabs(const char*, bool* = nullptr, ImGuiWindowFlags = 0);
 		void EndTabs();
 		void InitTabs();
+
+		void PushTabSize(const Math::Vec4&);
+		void PushTabSize(const float&, const float&);
+		void PopTabSize();
 	}
 }
 

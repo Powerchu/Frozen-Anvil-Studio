@@ -96,7 +96,6 @@ namespace Dystopia
 }
 
 #endif // !_EDITOR_GUI_H_
-
 #endif // EDITOR ONLY
 
 

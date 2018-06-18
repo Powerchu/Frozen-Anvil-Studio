@@ -140,6 +140,5 @@ namespace EGUI
 	
 	}
 }	// NAMESPACE DYSTOPIA::EGUI::DISPLAY
-
 #endif // EDITOR
 

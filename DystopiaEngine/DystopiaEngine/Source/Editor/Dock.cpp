@@ -12,9 +12,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor\Dock.h"
-#include "DataStructure\AutoArray.h"
 #include "../../DepEndancies/ImGui/imgui.h"
 #include "../../DepEndancies/ImGui/imgui_internal.h"
+#include "DataStructure\Stack.h"
 #include <iostream>
 #include <map>
 #include <string>
@@ -58,6 +58,9 @@ ImVec2 operator*(const ImVec2& lhs, const float& rhs)
 namespace EGUI{
 namespace Docking{
 /*========================================================= Declaration ==========================================================*/
+
+static Stack<ImVec2> gSizeStack{ MAX_TAB_SIZE_STACK };
+
 enum eEndAction
 {
 	eEND_ACTION_NONE,
@@ -119,7 +122,7 @@ struct DockSpace
 	int			mLastFrame;
 	eDockSlot	mNextSlot;
 	eEndAction	mEndAction;
-	AutoArray<Tabs*>	mArrTabs;
+	ImVector<Tabs*>	mArrTabs;
 
 	DockSpace();
 	~DockSpace();
@@ -346,7 +349,7 @@ Tabs* DockSpace::CreateNewTab(const char *_pLabel, bool _opened, ImU32 _id)
 	pNewTab->SetActive();
 	pNewTab->mStatus = (mArrTabs.size() == 1) ? eSTATUS_DOCKED : eSTATUS_FLOATING;
 	pNewTab->mPos = ImVec2{ 0, 0 };
-	pNewTab->mSize = ImGui::GetIO().DisplaySize;
+	pNewTab->mSize = gSizeStack.IsEmpty() ? ImGui::GetIO().DisplaySize * 0.5f : gSizeStack.Peek();
 	pNewTab->mOpened = _opened;
 	pNewTab->mFirst = true;
 	pNewTab->mLastFrame = 0;
@@ -459,7 +462,7 @@ void DockSpace::SplitTabs()
 		else
 		{
 			cursor = ImGuiMouseCursor_ResizeNS;
-			SplitTabHorizontal(pTab, dsize, pos0, pos1, size0, size1);
+			SplitTabVertical(pTab, dsize, pos0, pos1, size0, size1);
 		}
 		pTab->mArrChildPtr[0]->SetPosSize(pos0, size0);
 		pTab->mArrChildPtr[1]->SetPosSize(pos1, size1);
@@ -564,11 +567,10 @@ ImRect DockSpace::GetSlotRectOnBorder(ImRect _parentR, eDockSlot _slot)
 		return ImRect{ ImVec2{ center.x - 20, _parentR.Max.y - 30 }, ImVec2{ center.x + 20, _parentR.Max.y - 10 } };
 	case eDOCK_SLOT_RIGHT:
 		return ImRect{ ImVec2{ _parentR.Max.x - 30, center.y - 20 }, ImVec2{ _parentR.Max.x - 10, center.y + 20 } };
-	default:
-		return ImRect{ center - ImVec2{ 20, 20 }, center + ImVec2{ 20, 20 } };
+	default: IM_ASSERT(false);
 	}
-	//IM_ASSERT(false);
-	//return ImRect{};
+	IM_ASSERT(false);
+	return ImRect{};
 }
 
 Tabs* DockSpace::GetMainRootTab()
@@ -586,7 +588,7 @@ bool DockSpace::TabCanSlot(Tabs& _tab, Tabs *_pDestTab, const ImRect& _rect, boo
 {
 	ImDrawList *pCanvas = ImGui::GetWindowDrawList();
 	ImVec2 mousePos = ImGui::GetIO().MousePos;
-	for (int i = 0; i < 5/*(_onBorder ? 4 : 5)*/; ++i)
+	for (int i = 0; i < (_onBorder ? 4 : 5); ++i)
 	{
 		ImRect rect = _onBorder ? GetSlotRectOnBorder(_rect, static_cast<eDockSlot>(i))
 								: GetSlotRect(_rect, static_cast<eDockSlot>(i));
@@ -712,7 +714,7 @@ void DockSpace::UndockTab(Tabs& _tab)
 			{
 				if (mArrTabs[i] == pHolder)
 				{
-					mArrTabs.FastRemove(i);
+					mArrTabs.erase(mArrTabs.begin() + i);
 					break;
 				}
 			}
@@ -1073,17 +1075,15 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 
 	mCurrentTab = &_tab;
 	if (_tab.mStatus == eSTATUS_DRAGGED) HandleDragging(_tab);
-
-	bool floating = _tab.mStatus == eSTATUS_FLOATING;
-
-	if (floating)
+	if (_tab.mStatus == eSTATUS_FLOATING)
 	{
 		ImGui::SetNextWindowPos(_tab.mPos);
-		ImGui::SetNextWindowSize(_tab.mSize);
+		ImGui::SetNextWindowSize(_tab.mSize, ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowBgAlpha(-1.f);
 		bool ret = ImGui::Begin(_pLabel, _pOpened, ImGuiWindowFlags_NoCollapse | _flags); 
 		mEndAction = eEND_ACTION_END;
 		_tab.mPos = ImGui::GetWindowPos();
-		_tab.mSize = ImGui::GetWindowSize();
+		_tab.mSize = gSizeStack.IsEmpty() ? ImGui::GetWindowSize() : gSizeStack.Peek();
 
 		ImGuiContext& g = *GImGui;
 
@@ -1118,6 +1118,7 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 							 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 							 ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBringToFrontOnFocus |
 							 _flags;
+
 	bool ret = ImGui::BeginChild(_pLabel, size, true, flags);
 	ImGui::PopStyleColor();
 
@@ -1242,6 +1243,22 @@ void EndTabs()
 		DockSpace& space = gDockable[curPanel];
 		space.End();
 	}
+}
+
+void PushTabSize(const Math::Vec4& _size)
+{
+	gSizeStack.Push(ImVec2{_size.x, _size.y});
+}
+
+void PushTabSize(const float& _x, const float& _y)
+{
+	gSizeStack.Push(ImVec2{ _x, _y });
+}
+
+void PopTabSize()
+{
+	if (gSizeStack.IsEmpty()) return;
+	gSizeStack.Pop();
 }
 
 /*========================================================= Serializer ===========================================================*/

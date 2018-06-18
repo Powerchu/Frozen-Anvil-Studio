@@ -144,6 +144,7 @@ namespace Dystopia
 		mGuiSysArray.push_back(pGui);
 
 		pResView->Init();
+		EGUI::Docking::PushTabSize(Math::Vec4{ 400, 200, 0, 0 });
 	}
 
 	void Editor::StartFrame()
@@ -166,6 +167,7 @@ namespace Dystopia
 		//mpGfx->Update(_dt);
 		char buffer1[8];
 		char buffer2[8];
+		EGUI::Docking::SetNextTabs("Spawned Tab 0", EGUI::Docking::eDOCK_SLOT_BOTTOM);
 		for (int i = 0; i < mExtraTabCounter; ++i)
 		{
 			char tempBuff[128];
