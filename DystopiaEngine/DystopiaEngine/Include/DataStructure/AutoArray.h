@@ -20,9 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif // Debug only includes
 
 #include "Utility\Utility.h"	// Move
+#include "Math\MathUtility.h"	// phi
 
-#include <new>					// std::nothrow
-#include <exception>			// std::bad_alloc
+#include <new>					// operator new
 
 template<class T>
 class AutoArray
@@ -155,38 +155,16 @@ AutoArray<T>::AutoArray(void) noexcept :
 
 template <class T>
 AutoArray<T>::AutoArray(unsigned _nSize) :
-	mnSize{ _nSize }, mnLast{ 0 }, mpArray{ nullptr }
+	mnSize{ _nSize }, mnLast{ 0 }, mpArray{ Construct(_nSize) }
 {
-	if (!_nSize)
-		return;
-
-	mpArray = Construct(_nSize);
-
-	if (!mpArray)
-	{
-		mnSize = 0;
-		throw std::bad_alloc{};
-	}
 }
 
 template <class T>
 AutoArray<T>::AutoArray(const AutoArray<T>& _other) :
-	mnSize{ _other.mnSize }, mnLast{ _other.mnLast }, mpArray{ nullptr }
+	mnSize{ _other.mnSize }, mnLast{ _other.mnLast }, mpArray{ Construct(_other.mnSize * sizeof(T)) }
 {
-	if (!_other.mnSize)
-		return;
-
-	mpArray = Construct(_other.mnSize * sizeof(T));
-
-	if (mpArray)
-	{
-		ArrayCopy(_other.mpArray);
-	}
-	else
-	{
-		mnSize = mnLast = 0;
-		throw std::bad_alloc{};
-	}
+	memset(mpArray, 0, mnSize * sizeof(T));
+	ArrayCopy(_other.mpArray);
 }
 
 template <class T>
@@ -288,7 +266,7 @@ void AutoArray<T>::Insert(const T& _obj)
 		GrowArray();
 	}
 
-	mpArray[mnLast] = _obj;
+	new (mpArray + mnLast) T{ _obj };
 	++mnLast;
 }
 
@@ -341,7 +319,7 @@ inline void AutoArray<T>::Remove(void)
 	Destroy(*(mpArray + mnLast));
 }
 
-// Removess all matching elements
+// Removes all matching elements
 template<class T>
 inline void AutoArray<T>::Remove(const T& _obj)
 {
@@ -362,7 +340,7 @@ inline void AutoArray<T>::Remove(const T& _obj)
 		++start;
 	}
 
-	std::size_t count = goal - start;
+	auto count = goal - start;
 	while (count--)
 		Remove();
 }
@@ -445,8 +423,8 @@ void AutoArray<T>::GrowArray(int _newSize)
 	DEBUG_LOG(_newSize < 0, "DynamicArray Error: Array size is negative!\n");
 #endif
 
-	unsigned nNewSize = _newSize == 0 ? static_cast<unsigned>((mnSize>0?mnSize:1) * 1.61803f + .5f) : _newSize;
-	T* pNewArray = static_cast<T*>(Construct(nNewSize));
+	unsigned nNewSize = _newSize == 0 ? static_cast<unsigned>((mnSize>0?mnSize:1) * Math::phi + .5f) : _newSize;
+	T* pNewArray = Construct(nNewSize);
 	T* temp = mpArray;
 
 	mpArray = pNewArray;
@@ -472,15 +450,15 @@ inline void AutoArray<T>::ArrayMove(T* _other)
 {
 	for (unsigned n = 0; n < mnLast; ++n)
 	{
-		*(mpArray + n) = Utility::Move(*(_other + n));
+		new (mpArray + n) T{ Utility::Move(*(_other + n)) };
 	}
 }
 
 template <typename T>
 inline T* AutoArray<T>::Construct(unsigned _nSize)
 {
-	void* ptr = ::operator new[](_nSize * sizeof(T), std::nothrow);
-	memset(ptr, 0, _nSize * sizeof(T));
+	T* ptr = static_cast<T*>(operator new[](_nSize * sizeof(T)));
+//	memset(ptr, 0, _nSize * sizeof(T));
 
 	return static_cast<T*> (ptr);
 }
