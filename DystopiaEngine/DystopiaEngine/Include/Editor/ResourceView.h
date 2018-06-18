@@ -55,15 +55,19 @@ namespace Dystopia
 			void AddFile(const std::string&);
 			void Crawl();
 			void PrintAll();
+			bool FileExist(const std::string&);
+			bool FolderExist(const std::string&);
 
 			std::string mFolderName;
 			CrawlFolder *mpParentFolder;
 			AutoArray<CrawlFolder*> mArrChildFolders;
-			std::vector<CrawlFile> mArrFiles;
+			AutoArray<CrawlFile> mArrFiles;
 		};
 
 	private:
 		CrawlFolder *mpCrawlData;
+		CrawlFolder *mpCurrentFolder;
+		int mSelectedID;
 		float mWidth;
 		float mHeight;
 		void *mpFocusData;

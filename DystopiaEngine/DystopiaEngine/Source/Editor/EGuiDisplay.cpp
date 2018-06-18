@@ -75,27 +75,21 @@ namespace EGUI
 		{
 			Label(_label);
 			ImGui::SameLine();
-			if (ImGui::Checkbox("", _outputBool))
-				return true;
-			return false;
+			return  (ImGui::Checkbox("", _outputBool));
 		}
 	
 		bool DragFloat(const char* _label, float* _outputFloat, float _dragSpeed, float _min, float _max)
 		{
 			Label(_label);
 			ImGui::SameLine();
-			if (ImGui::DragFloat("", _outputFloat, _dragSpeed, _min, _max))
-				return true;
-			return false;
+			return (ImGui::DragFloat("", _outputFloat, _dragSpeed, _min, _max));
 		}
 	
 		bool DragInt(const char* _label, int* _outputInt, float _dragSpeed, int _min, int _max)
 		{
 			Label(_label);
 			ImGui::SameLine();
-			if (ImGui::DragInt("", _outputInt, _dragSpeed, _min, _max))
-				return true;
-			return false;
+			return (ImGui::DragInt("", _outputInt, _dragSpeed, _min, _max));
 		}
 	
 		bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max)
@@ -126,18 +120,34 @@ namespace EGUI
 			return false;
 		}
 	
-		void CollapseHeader(const char* _header)
+		bool CollapseHeader(const char* _header)
 		{
-			ImGui::CollapsingHeader(_header, ImGuiTreeNodeFlags_DefaultOpen);
+			return ImGui::CollapsingHeader(_header, ImGuiTreeNodeFlags_DefaultOpen);
 		}
-	
+
+		bool SelectableTxt(const char* _label, bool _outputBool)
+		{
+			return (ImGui::Selectable(_label, _outputBool));
+		}
+
 		bool SelectableTxt(const char* _label, bool* _outputBool)
 		{
-			if (ImGui::Selectable(_label, _outputBool))
+			return (ImGui::Selectable(_label, _outputBool));
+		}
+
+		bool SelectableTxtDouble(const char* _label, bool _outputBool)
+		{
+			return (ImGui::Selectable(_label, _outputBool, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0);
+		}
+
+		bool SelectableTxtDouble(const char* _label, bool* _outputBool)
+		{
+			if ((ImGui::Selectable(_label, _outputBool, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0))
 				return true;
+			else
+				*_outputBool = false;
 			return false;
 		}
-	
 	}
 }	// NAMESPACE DYSTOPIA::EGUI::DISPLAY
 
