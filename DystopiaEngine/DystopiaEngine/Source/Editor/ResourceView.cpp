@@ -96,7 +96,6 @@ namespace Dystopia
 	{
 		mpCrawlData = new CrawlFolder{ GLOBAL_DEFAULT_PROJECT_PATH.c_str() };
 		mpCrawlData->Crawl();
-		mpCrawlData->PrintAll();
 		mpCurrentFolder = mpCrawlData;
 	}
 
@@ -110,7 +109,6 @@ namespace Dystopia
 		if (EGUI::Display::SelectableTxtDouble(showName.c_str(), highlighted))
 		{
 			mLastSelected = mTrySelect;
-			std::cout << "Double clicked folder with current ID: " << mLastSelected << std::endl;
 			if (!mLastSelected)
 			{
 				mpCurrentFolder = mpCurrentFolder->GetParent();
@@ -138,10 +136,7 @@ namespace Dystopia
 	{
 		bool highlighted = (mTrySelect == mLastSelected) ? true : false;
 		if (EGUI::Display::SelectableTxt((_file.mFileName).c_str(), highlighted))
-		{
 			mLastSelected = mTrySelect;
-			std::cout << "Single clicked file with current ID: " << mLastSelected << std::endl;
-		}
 		mTrySelect++;
 	}
 
@@ -178,7 +173,6 @@ namespace Dystopia
 		WIN32_FIND_DATAA data;
 		std::string dataBuffer, pathBuffer{ mFolderName };
 		pathBuffer += "\\*";
-		std::cout << "Crawling : " << pathBuffer << std::endl;
 		HANDLE hfind = FindFirstFileA(pathBuffer.c_str(), &data);
 		if (hfind != INVALID_HANDLE_VALUE)
 		{
@@ -202,9 +196,7 @@ namespace Dystopia
 						if (!FileExist(data.cFileName))
 							AddFile(data.cFileName);
 					}
-
 					dataBuffer += data.cFileName;
-					std::cout << dataBuffer << std::endl;
 					dataBuffer.clear();
 				}
 			} while (FindNextFileA(hfind, &data));

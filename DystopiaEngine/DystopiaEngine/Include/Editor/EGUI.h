@@ -29,6 +29,12 @@ namespace EGUI
 	void EndMainMenuBar();
 	void EndMenuHeader();
 
+	bool StartChild(const char*, const Math::Vec4& = Math::Vec4{ 0, 0, 0, 0 });
+	bool StartChild(const char*, const float& = 0, const float& = 0);
+	void EndChild();
+
+	void SameLine();
+
 	namespace Display
 	{
 		void Label(const char*, ...);

@@ -1125,11 +1125,13 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
 							 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 							 ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBringToFrontOnFocus |
-							 _flags;
+							 ImGuiWindowFlags_AlwaysUseWindowPadding | _flags;
 
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10,10 });
 	bool ret = ImGui::BeginChild(_pLabel, size, true, flags);
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
+	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();
 	return ret;
 }

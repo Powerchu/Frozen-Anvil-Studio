@@ -54,6 +54,26 @@ namespace EGUI
 		ImGui::EndMenu();
 	}
 
+	bool StartChild(const char *_pLabel, const Math::Vec4& _size)
+	{
+		return ImGui::BeginChild(_pLabel, ImVec2{ _size.x, _size.y }, false);
+	}
+
+	bool StartChild(const char *_pLabel, const float& _x, const float& _y)
+	{
+		return ImGui::BeginChild(_pLabel, ImVec2{ _x, _y }, false);
+	}
+
+	void EndChild()
+	{
+		ImGui::EndChild();
+	}
+
+	void SameLine()
+	{
+		ImGui::SameLine();
+	}
+
 	namespace Display
 	{
 		void Label(const char* _formatLabel, ...)
