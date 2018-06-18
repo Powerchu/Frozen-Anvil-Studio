@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\EGUI.h"
 #include <iostream>
 #include <Windows.h>
+#include "../../Dependancies/ImGui/imgui.h"
 
 constexpr float DEFAULT_WIDTH = 300;
 constexpr float DEFAULT_HEIGHT = 300;
@@ -23,7 +24,8 @@ constexpr float DEFAULT_HEIGHT = 300;
 namespace Dystopia
 {
 	ResourceView::ResourceView()
-		: mWidth{ DEFAULT_WIDTH }, mHeight{ DEFAULT_HEIGHT }, mpFocusData{ nullptr }, mpCrawlData{ nullptr }, mpCurrentFolder{ nullptr }, mSelectedID{ 0 }
+		: mWidth{ DEFAULT_WIDTH }, mHeight{ DEFAULT_HEIGHT }, mpFocusData{ nullptr }, mpCrawlData{ nullptr }, mpCurrentFolder{ nullptr }, 
+		mLastSelected{ -1 }, mTrySelect{ 0 }, mRefreshCrawl{ false }
 	{
 	}
 	
@@ -45,48 +47,47 @@ namespace Dystopia
 	{
 	}
 
-	void ResourceView::SetWidth(float _width)
+	void ResourceView::SetWidth(const float& _width)
 	{
 		mWidth = _width;
 	}
 
-	void ResourceView::SetHeight(float _height)
+	void ResourceView::SetHeight(const float& _height)
 	{
 		mHeight = _height;
 	}
 
+	void ResourceView::SetSize(const Math::Vec4& _size)
+	{
+		SetSize(_size.x, _size.y);
+	}
+
+	void ResourceView::SetSize(const float& _x, const float& _y)
+	{
+		SetWidth(_x);
+		SetHeight(_y);
+	}
+
 	void ResourceView::Window()
 	{
-		int i = 0;
-
+		mTrySelect = 0;
 		if (EGUI::Display::CollapseHeader(mpCurrentFolder->mFolderName.c_str()))
 		{
+			mTrySelect = mpCurrentFolder->mpParentFolder ? 0 : 1;
+			if (!mTrySelect)
+				FolderInterface(mpCurrentFolder->mpParentFolder);
 			for (auto e : mpCurrentFolder->mArrChildFolders)
+				FolderInterface(e);
+			for (auto& e : mpCurrentFolder->mArrFiles)
+				FileInterface(e);
+			mRefreshCrawl = true;
+		}
+		else
+		{
+			if (mRefreshCrawl)
 			{
-				if (EGUI::Display::SelectableTxtDouble((e->mFolderName).c_str(), false))
-				{
-					mSelectedID = i;
-					std::cout << "Double clicked folder with current ID: " << mSelectedID << std::endl;
-					for (unsigned int j = 0; j < mpCurrentFolder->mArrChildFolders.size(); ++j)
-					{
-						if (j == static_cast<unsigned int>(i))
-						{
-							mpCurrentFolder = mpCurrentFolder->mArrChildFolders[j];
-							mpCurrentFolder->Crawl();
-							break;
-						}
-					}
-				}
-				i++;
-			}
-			for (auto e : mpCurrentFolder->mArrFiles)
-			{
-				if (EGUI::Display::SelectableTxt((e.mFileName).c_str(), false))
-				{
-					mSelectedID = i;
-					std::cout << "Single clicked file with current ID: " << mSelectedID << std::endl;
-				}
-				i++;
+				mpCurrentFolder->Crawl();
+				mRefreshCrawl = false;
 			}
 		}
 	}
@@ -99,16 +100,61 @@ namespace Dystopia
 		mpCurrentFolder = mpCrawlData;
 	}
 
+	void ResourceView::FolderInterface(CrawlFolder *_pFolder)
+	{
+		std::string showName = _pFolder->mFolderName;
+		if (_pFolder == mpCurrentFolder->mpParentFolder)
+			showName = "[Back to previous Folder]";
+
+		bool highlighted = (mTrySelect == mLastSelected) ? true : false;
+		if (EGUI::Display::SelectableTxtDouble(showName.c_str(), highlighted))
+		{
+			mLastSelected = mTrySelect;
+			std::cout << "Double clicked folder with current ID: " << mLastSelected << std::endl;
+			if (!mLastSelected)
+			{
+				mpCurrentFolder = mpCurrentFolder->GetParent();
+				mpCurrentFolder->Crawl();
+				mLastSelected = -1;
+			}
+			else
+			{
+				for (unsigned int j = 0; j < mpCurrentFolder->mArrChildFolders.size(); ++j)
+				{
+					if (j == static_cast<unsigned int>(mLastSelected - 1))
+					{
+						mpCurrentFolder = mpCurrentFolder->mArrChildFolders[j];
+						mpCurrentFolder->Crawl();
+						mLastSelected = -1;
+						break;
+					}
+				}
+			}
+		}
+		mTrySelect++;
+	}
+
+	void ResourceView::FileInterface(CrawlFile& _file)
+	{
+		bool highlighted = (mTrySelect == mLastSelected) ? true : false;
+		if (EGUI::Display::SelectableTxt((_file.mFileName).c_str(), highlighted))
+		{
+			mLastSelected = mTrySelect;
+			std::cout << "Single clicked file with current ID: " << mLastSelected << std::endl;
+		}
+		mTrySelect++;
+	}
+
 	ResourceView::CrawlFile::CrawlFile(const std::string& _name)
 		: mFileName{ _name }
 	{}
 
 	ResourceView::CrawlFolder::CrawlFolder(const char* _myName)
-		: mFolderName{ _myName }
+		: mFolderName{ _myName }, mpParentFolder{ nullptr }
 	{}
 
 	ResourceView::CrawlFolder::CrawlFolder(const std::string &_myName)
-		: mFolderName{ _myName }
+		: mFolderName{ _myName }, mpParentFolder{ nullptr }
 	{}
 
 	ResourceView::CrawlFolder::~CrawlFolder()
@@ -134,22 +180,28 @@ namespace Dystopia
 		pathBuffer += "\\*";
 		std::cout << "Crawling : " << pathBuffer << std::endl;
 		HANDLE hfind = FindFirstFileA(pathBuffer.c_str(), &data);
-
 		if (hfind != INVALID_HANDLE_VALUE)
 		{
 			do
 			{
 				if (strcmp(data.cFileName, ".") && strcmp(data.cFileName, "..") && data.dwFileAttributes != FILE_ATTRIBUTE_HIDDEN)
 				{
-					if (data.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY && !FolderExist(mFolderName + "\\" + data.cFileName))
+					if (data.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
 					{
-						CrawlFolder *pfolder = new CrawlFolder{ mFolderName + "\\" + data.cFileName };
-						pfolder->SetParent(this);
-						AddFolder(pfolder);
-						dataBuffer += "<DIR>";
+						std::string pFolderNamePath = mFolderName + "\\" + data.cFileName;
+						if (!FolderExist(pFolderNamePath))
+						{
+							CrawlFolder *pfolder = new CrawlFolder{ pFolderNamePath };
+							pfolder->SetParent(this);
+							AddFolder(pfolder);
+							dataBuffer += "<DIR>";
+						}
 					}
-					else if (!FileExist(data.cFileName))
-						AddFile(data.cFileName);
+					else
+					{
+						if (!FileExist(data.cFileName))
+							AddFile(data.cFileName);
+					}
 
 					dataBuffer += data.cFileName;
 					std::cout << dataBuffer << std::endl;
@@ -158,6 +210,11 @@ namespace Dystopia
 			} while (FindNextFileA(hfind, &data));
 			FindClose(hfind);
 		}
+	}
+
+	ResourceView::CrawlFolder* ResourceView::CrawlFolder::GetParent()
+	{
+		return mpParentFolder;
 	}
 
 	void ResourceView::CrawlFolder::SetParent(CrawlFolder* _parent)

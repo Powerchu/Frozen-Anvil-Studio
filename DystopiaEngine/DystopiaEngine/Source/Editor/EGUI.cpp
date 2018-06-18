@@ -122,12 +122,13 @@ namespace Dystopia
 	GuiSystem::~GuiSystem()
 	{}
 
-	bool GuiSystem::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInput)
+	bool GuiSystem::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInput, const char *_pMainDockspaceName)
 	{
 		if (!_pWin || !_pGfx || !_pInput) return false;
 		mpWin = _pWin;
 		mpGfx = _pGfx;
 		mpInput = _pInput;
+		mpMainDockspace = _pMainDockspaceName;
 
 		mpGLState = new GLState();
 		mpCtx = ImGui::CreateContext();
@@ -548,12 +549,16 @@ namespace Dystopia
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | 
 								 ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoCollapse |	
 								 ImGuiWindowFlags_NoInputs;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::SetNextWindowPos(ImVec2{ 0, 18 });
 		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - 18 });
 		ImGui::SetNextWindowBgAlpha(1.f);
-		ImGui::Begin("Dockable Space", nullptr, flags);
+		ImGui::Begin(mpMainDockspace, nullptr, flags);
 		EGUI::Docking::BeginDockableSpace();
-		
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
 	}
 
 	void GuiSystem::EndFullDockableSpace()
@@ -562,7 +567,12 @@ namespace Dystopia
 		ImGui::End();
 	}
 
-}
+	const char* GuiSystem::GetMainDockspaceName() const
+	{
+		return mpMainDockspace;
+	}
+
+}		// namespace Dystopia
 
 #endif // EDITOR ONLY
 

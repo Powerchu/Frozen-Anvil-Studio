@@ -126,14 +126,14 @@ namespace Dystopia
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mStartTime{}, mEndTime{}, mPrevFrameTime{ 0 },
 		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mGuiSysArray{ 0 }, mExtraTabCounter{ 0 },
-		mpHierarchy{ nullptr }, mpInspector{ nullptr }, mpResource{ nullptr }, mpDockableSpace{ "Dockable Space" }
+		mpHierarchy{ nullptr }, mpInspector{ nullptr }, mpResource{ nullptr }
 	{}
 
 	Editor::~Editor(void)
 	{}
 
 	void Editor::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInput)
-	{
+	{ 
 		mpWin = _pWin;
 		mpGfx = _pGfx;
 		mpInput = _pInput;
@@ -142,7 +142,7 @@ namespace Dystopia
 		mpResource = new ResourceView{};
 		mpResource->Init();
 
-		GuiSystem *pGui =new GuiSystem{};
+		GuiSystem *pGui = new GuiSystem{};
 		if (!pGui->Init(mpWin, mpGfx, mpInput)) mCurrentState = EDITOR_EXIT;
 		mGuiSysArray.push_back(pGui);
 	}
@@ -163,24 +163,27 @@ namespace Dystopia
 		//mpGfx->Update(_dt);
 
 		mpInspector->Update(_dt);
-		EGUI::Docking::SetNextTabs(mpDockableSpace, EGUI::Docking::eDOCK_SLOT_RIGHT);
+		EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
 		if (EGUI::StartTab("Inspector"))
 			mpInspector->Window();
 		EGUI::EndTab();
-
+	
 		mpResource->Update(_dt);
-		EGUI::Docking::SetNextTabs(mpDockableSpace, EGUI::Docking::eDOCK_SLOT_LEFT);
+		EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_LEFT);
 		if (EGUI::StartTab("Resource"))
+		{
+			mpResource->SetSize(EGUI::Docking::GetTabSize("Resource"));
 			mpResource->Window();
+		}
 		EGUI::EndTab();
 
 		mpHierarchy->Update(_dt);
-		EGUI::Docking::SetNextTabs(mpDockableSpace, EGUI::Docking::eDOCK_SLOT_TOP);
+		EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_TOP);
 		if (EGUI::StartTab("Hierarchy"))
 			mpHierarchy->Window();
 		EGUI::EndTab();
 
-		EGUI::Docking::SetNextTabs(mpDockableSpace, EGUI::Docking::eDOCK_SLOT_RIGHT);
+		EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
 		if (EGUI::StartTab("Tab1"))
 			EGUI::Display::Label("I'm ahahahaa!");
 		EGUI::EndTab();

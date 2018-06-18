@@ -79,7 +79,6 @@ namespace Dystopia
 
 		AutoArray<SharedPtr<Inspector>> mInspectorArray;
 		AutoArray<GuiSystem*> mGuiSysArray;
-		const char *mpDockableSpace;
 		void UpdateState();
 		void Play();
 		void Save();

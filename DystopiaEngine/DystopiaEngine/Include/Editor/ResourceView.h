@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _RESOURCE_VIEW_H_
 #define _RESOURCE_VIEW_H_
 #include "DataStructure\AutoArray.h"
+#include "Math\Vector4.h"
 #include <string>
 #include <vector>
  
@@ -34,9 +35,10 @@ namespace Dystopia
 
 		void StartCrawl();
 		void Window();
-		void SetWidth(float);
-		void SetHeight(float);
-
+		void SetWidth(const float&);
+		void SetHeight(const float&);
+		void SetSize(const Math::Vec4& );
+		void SetSize(const float&, const float&);
 
 		struct CrawlFile
 		{
@@ -50,6 +52,7 @@ namespace Dystopia
 			CrawlFolder(const std::string&);
 			~CrawlFolder();
 
+			CrawlFolder* GetParent();
 			void SetParent(CrawlFolder*);
 			void AddFolder(CrawlFolder*);
 			void AddFile(const std::string&);
@@ -65,12 +68,17 @@ namespace Dystopia
 		};
 
 	private:
+		void FolderInterface(CrawlFolder*);
+		void FileInterface(CrawlFile&);
+
 		CrawlFolder *mpCrawlData;
 		CrawlFolder *mpCurrentFolder;
-		int mSelectedID;
-		float mWidth;
-		float mHeight;
-		void *mpFocusData;
+		void		*mpFocusData;
+		int			mLastSelected;
+		int			mTrySelect;
+		bool		mRefreshCrawl;
+		float		mWidth;
+		float		mHeight;
 	};
 }
 

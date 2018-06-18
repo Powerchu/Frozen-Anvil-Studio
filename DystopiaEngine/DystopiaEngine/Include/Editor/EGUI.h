@@ -61,10 +61,12 @@ namespace Dystopia
 		GuiSystem();
 		~GuiSystem();
 
-		bool Init(WindowManager*, GraphicsSystem*, InputManager*);
+		bool Init(WindowManager*, GraphicsSystem*, InputManager*, const char* = "MainDockable");
 		void StartFrame(const float&);
 		void EndFrame();
 		void Shutdown();
+
+		const char* GetMainDockspaceName() const;
 
 	private:
 		ImGuiContext	*mpCtx;
@@ -75,6 +77,7 @@ namespace Dystopia
 		GLState			*mpGLState;
 		std::string		mGlslVersion;
 		GLuint			mFontTexture;
+		const char		*mpMainDockspace;
 		int				mShaderHandle;
 		int				mVertHandle;
 		int				mFragHandle;
