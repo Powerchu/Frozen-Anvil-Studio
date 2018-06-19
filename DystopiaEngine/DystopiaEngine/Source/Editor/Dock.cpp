@@ -618,7 +618,7 @@ void DockSpace::HandleDragging(Tabs& _tab)
 	ImGui::SetNextWindowBgAlpha(0.f);
 	ImGui::Begin("##Overlay", nullptr, flags);
 
-	ImU32 dockedCol = (ImGui::GetColorU32(ImGuiCol_FrameBg) & 0x00ffFFFF) | 0x80000000;
+	//ImU32 dockedCol = (ImGui::GetColorU32(ImGuiCol_FrameBg) & 0x00ffFFFF) | 0x80000000;
 	ImDrawList *pCanvas = ImGui::GetWindowDrawList();
 	pCanvas->PushClipRectFullScreen();
 
@@ -640,7 +640,7 @@ void DockSpace::HandleDragging(Tabs& _tab)
 		ImGui::End();
 		return;
 	}
-	pCanvas->AddRectFilled(_tab.mPos, _tab.mPos + _tab.mSize, dockedCol);
+	//pCanvas->AddRectFilled(_tab.mPos, _tab.mPos + _tab.mSize, dockedCol);
 	pCanvas->PopClipRect();
 
 	if (!ImGui::IsMouseDown(0))
@@ -1286,6 +1286,25 @@ Math::Vec4 GetTabSize(const char *_pTabName)
 		for (unsigned int i = 0; i < space.mArrTabs.size(); ++i)
 			if (space.mArrTabs[i]->mId == id)
 				return Math::Vec4{ space.mArrTabs[i]->mSize.x, space.mArrTabs[i]->mSize.y, 0, 0 };
+	}
+	return Math::Vec4{};
+}
+
+Math::Vec4 GetTabPosition(const char *_pTabName)
+{
+	IM_ASSERT(curPanel);
+
+	if (!curPanel)	return Math::Vec4{};
+
+	if (gDockable.find(curPanel) != gDockable.end())
+	{
+		DockSpace& space = gDockable[curPanel];
+		char bufferLabel[128];
+		sprintf_s(bufferLabel, "%s##%s", _pTabName, curPanel);
+		ImU32 id = ImHash(bufferLabel, 0);
+		for (unsigned int i = 0; i < space.mArrTabs.size(); ++i)
+			if (space.mArrTabs[i]->mId == id)
+				return Math::Vec4{ space.mArrTabs[i]->mPos.x, space.mArrTabs[i]->mPos.y, 0, 0 };
 	}
 	return Math::Vec4{};
 }
