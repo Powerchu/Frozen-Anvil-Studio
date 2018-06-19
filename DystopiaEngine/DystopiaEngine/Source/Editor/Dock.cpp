@@ -361,7 +361,7 @@ Tabs* DockSpace::CreateNewTab(const char *_pLabel, bool _opened, ImU32 _id)
 Tabs& DockSpace::GetTab(const char *_pLabel, bool _opened)
 {
 	ImU32 id = ImHash(_pLabel, 0);
-	for (unsigned int i = 0; i < mArrTabs.size(); ++i)
+	for (int i = 0; i < mArrTabs.size(); ++i)
 		if (mArrTabs[i]->mId == id) return *mArrTabs[i];
 
 	return *CreateNewTab(_pLabel, _opened, id);
@@ -438,8 +438,8 @@ void DockSpace::SplitTabs()
 			e->SetPosSize(mPanelPos, mPanelSize);
 	}
 
-	ImDrawList* pCanvas = ImGui::GetWindowDrawList();
-	for (unsigned int i = 0; i < mArrTabs.size(); ++i)
+	//ImDrawList* pCanvas = ImGui::GetWindowDrawList();
+	for (int i = 0; i < mArrTabs.size(); ++i)
 	{
 		Tabs *pTab = mArrTabs[i];
 		if (!pTab->IsAContainer()) continue;
@@ -485,7 +485,7 @@ void DockSpace::SplitTabs()
 void DockSpace::CheckForNonExistentTab()
 {
 	int frame_limit = ImMax(0, ImGui::GetFrameCount() - 2);
-	for (unsigned int i = 0; i < mArrTabs.size(); ++i)
+	for (int i = 0; i < mArrTabs.size(); ++i)
 	{
 		Tabs *pTab = mArrTabs[i];
 		if (pTab->IsAContainer()) continue;
@@ -506,7 +506,7 @@ void DockSpace::CheckForNonExistentTab()
 
 Tabs* DockSpace::GetTabAtMouse() const
 {
-	for (unsigned int i = 0; i < mArrTabs.size(); ++i)
+	for (int i = 0; i < mArrTabs.size(); ++i)
 	{
 		Tabs *pTab = mArrTabs[i];
 		if (pTab->IsAContainer()) continue;
@@ -575,7 +575,7 @@ ImRect DockSpace::GetSlotRectOnBorder(ImRect _parentR, eDockSlot _slot)
 
 Tabs* DockSpace::GetMainRootTab()
 {
-	for (unsigned int i = 0; i < mArrTabs.size(); ++i)
+	for (int i = 0; i < mArrTabs.size(); ++i)
 	{
 		if (!mArrTabs[i]->mpParentTab)
 			if (mArrTabs[i]->mStatus == eSTATUS_DOCKED || mArrTabs[i]->mArrChildPtr[0])
@@ -710,7 +710,7 @@ void DockSpace::UndockTab(Tabs& _tab)
 					pHolder->mArrChildPtr[1]->SetPosSize(pHolder->mPos, pHolder->mSize);
 				}
 			}
-			for (unsigned int i = 0; i < mArrTabs.size(); ++i)
+			for (int i = 0; i < mArrTabs.size(); ++i)
 			{
 				if (mArrTabs[i] == pHolder)
 				{
@@ -1160,18 +1160,16 @@ static const char* curPanel = nullptr;
 int GetTabIndex(const DockSpace& _space, Tabs *_pTab)
 {
 	if (!_pTab) return -1;
-
-	for (unsigned int i = 0; i < _space.mArrTabs.size(); ++i)
+	for (int i = 0; i < _space.mArrTabs.size(); ++i)
 	{
 		if (_pTab == _space.mArrTabs[i])
 			return i;
 	}
-
 	IM_ASSERT(false);
 	return -1;
 }
 
-Tabs* GetTabByIndex(const DockSpace& _space, unsigned int _idx)
+Tabs* GetTabByIndex(const DockSpace& _space, int _idx)
 {
 	return (_idx >= 0 && _idx < _space.mArrTabs.size()) ? _space.mArrTabs[_idx] : nullptr;
 }
@@ -1283,7 +1281,7 @@ Math::Vec4 GetTabSize(const char *_pTabName)
 		char bufferLabel[128];
 		sprintf_s(bufferLabel, "%s##%s", _pTabName, curPanel);
 		ImU32 id = ImHash(bufferLabel, 0);
-		for (unsigned int i = 0; i < space.mArrTabs.size(); ++i)
+		for (int i = 0; i < space.mArrTabs.size(); ++i)
 			if (space.mArrTabs[i]->mId == id)
 				return Math::Vec4{ space.mArrTabs[i]->mSize.x, space.mArrTabs[i]->mSize.y, 0, 0 };
 	}
@@ -1302,7 +1300,7 @@ Math::Vec4 GetTabPosition(const char *_pTabName)
 		char bufferLabel[128];
 		sprintf_s(bufferLabel, "%s##%s", _pTabName, curPanel);
 		ImU32 id = ImHash(bufferLabel, 0);
-		for (unsigned int i = 0; i < space.mArrTabs.size(); ++i)
+		for (int i = 0; i < space.mArrTabs.size(); ++i)
 			if (space.mArrTabs[i]->mId == id)
 				return Math::Vec4{ space.mArrTabs[i]->mPos.x, space.mArrTabs[i]->mPos.y, 0, 0 };
 	}
