@@ -102,6 +102,16 @@ namespace Dystopia
 	void ResourceView::FolderInterface(CrawlFolder *_pFolder)
 	{
 		std::string showName = _pFolder->mFolderName;
+
+		if (ImGui::TreeNode(showName.c_str()))
+		{
+			_pFolder->Crawl();
+			for (auto e : _pFolder->mArrChildFolders)
+				FolderInterface(e);
+			ImGui::TreePop();
+		}
+		return;
+
 		if (_pFolder == mpCurrentFolder->mpParentFolder)
 			showName = "[Back to previous Folder]";
 
