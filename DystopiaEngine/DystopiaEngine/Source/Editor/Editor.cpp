@@ -198,6 +198,7 @@ namespace Dystopia
 			_itoa_s(i, buffer2, 10);
 			strcpy_s(tempBuff, "Spawned Tab ");
 			strcat_s(tempBuff, buffer1);
+			EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_NONE);
 			if (EGUI::StartTab(tempBuff))
 			{
 				strcpy_s(tempBuff, "I am Tab ");
