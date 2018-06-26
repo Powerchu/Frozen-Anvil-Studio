@@ -55,6 +55,9 @@ namespace Utility
 		using type = T;
 	};
 
+	template <bool _b, typename T>
+	using EnableIf_t = typename EnableIf<_b, T>::type;
+
 	template <typename T, typename U>
 	struct IsSame : Constant <bool, false> {};
 

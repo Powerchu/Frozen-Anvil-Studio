@@ -19,8 +19,23 @@ namespace Dystopia
 {
 	class EngineCore final  
 	{
+	public:
 
+		template <class T>
+		T* GetSystem(void) const;
+
+	private:
+		EngineCore(void);
 	};
+
+}
+
+
+
+template<class T>
+inline T* Dystopia::EngineCore::GetSystem(void) const
+{
+	return nullptr;
 }
 
 
