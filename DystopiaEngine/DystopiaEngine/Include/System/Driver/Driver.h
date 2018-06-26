@@ -14,6 +14,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _ENGINE_DRIVER_H_
 #define _ENGINE_DRIVER_H_
 
+#include "DataStructure\SharedPtr.h"
+#include "DataStructure\AutoArray.h"
+
+#include "System\SystemTypes.h"
+#include "System\Base\Systems.h"
 
 namespace Dystopia
 {
@@ -21,10 +26,17 @@ namespace Dystopia
 	{
 	public:
 
+		static SharedPtr<EngineCore> GetInstance(void);
+
 		template <class T>
 		T* GetSystem(void) const;
+		template <class T>
+		T* GetSubSystem(void) const;
 
 	private:
+
+		AutoArray<Systems> Systems;
+
 		EngineCore(void);
 	};
 
@@ -34,6 +46,12 @@ namespace Dystopia
 
 template<class T>
 inline T* Dystopia::EngineCore::GetSystem(void) const
+{
+	return nullptr;
+}
+
+template<class T>
+inline T* Dystopia::EngineCore::GetSubSystem(void) const
 {
 	return nullptr;
 }

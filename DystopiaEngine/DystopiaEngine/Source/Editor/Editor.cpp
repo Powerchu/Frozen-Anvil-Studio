@@ -21,6 +21,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <string>
 
+#include "Math\Vector2.h"
+#include "Math\Vector4.h"
 #include "Math\Matrix4.h"
 #include <iostream>
 using namespace Math;
@@ -79,6 +81,21 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	win->LoadDefaults();
 	win->Init();
 
+	Math::Vector2 x{ (rand() % 10) * 1.f, (rand() % 10) * 1.f };
+	const Math::Vector2 y{ 0, 2 };
+
+	PrintVector(x.xxxx);
+	PrintVector(x.yyyy);
+	PrintVector(x.xyxx);
+	PrintVector(x.yyxx);
+	PrintVector(x.yxxy);
+
+	x.yx = Math::Vector2{ 11, 13 };
+	Math::Vector4 vr = x.yxyy;
+
+	PrintVector(vr);
+	PrintVector(x.yxyy);
+
 	gfx->InitOpenGL(win->GetMainWindow());
 	gfx->Init();
 
@@ -89,8 +106,6 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	mesh->StartMesh();
 	mesh->LoadMesh("Resource/Meshes/Quad.txt");
 	mesh->EndMesh();
-
-	PrintStuff();
 
 	while (true)
 	{
