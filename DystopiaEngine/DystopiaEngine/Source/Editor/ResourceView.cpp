@@ -81,6 +81,8 @@ namespace Dystopia
 				mpCrawlData->mArrFiles.clear();
 				mpCrawlData->Crawl();
 				mRefreshCrawl = false;
+				for (auto e : mpCrawlData->mArrChildFolders)
+					EGUI::Display::OpenTreeNode(e->mFolderName.c_str(), false);
 			}
 
 			for (auto e : mpCrawlData->mArrChildFolders)
@@ -103,8 +105,7 @@ namespace Dystopia
 
 	void ResourceView::FolderInterface(CrawlFolder *_pFolder)
 	{
-		std::string showName = _pFolder->mFolderName;
-		if (EGUI::Display::StartTreeNode(showName.c_str()))
+		if (EGUI::Display::StartTreeNode(_pFolder->mFolderName.c_str()))
 		{
 			if (_pFolder->mRefreshMe)
 			{
@@ -114,6 +115,8 @@ namespace Dystopia
 				_pFolder->mArrFiles.clear();
 				_pFolder->Crawl();
 				_pFolder->mRefreshMe = false;
+				for (auto e : _pFolder->mArrChildFolders)
+					EGUI::Display::OpenTreeNode(e->mFolderName.c_str(), false);
 			}
 
 			for (auto e : _pFolder->mArrChildFolders)
@@ -147,14 +150,13 @@ namespace Dystopia
 	{}
 
 	ResourceView::CrawlFolder::CrawlFolder(const std::string &_myName)
-		: mFolderName{ _myName }, mpParentFolder{ nullptr }
+		: mFolderName{ _myName }, mpParentFolder{ nullptr }, mRefreshMe{ true }
 	{}
 
 	ResourceView::CrawlFolder::~CrawlFolder()
 	{
 		for (auto e : mArrChildFolders)
 			delete e;
-		EGUI::Display::OpenTreeNode(mFolderName.c_str(), false);
 	}
 
 	void ResourceView::CrawlFolder::AddFolder(CrawlFolder *_subFolder)

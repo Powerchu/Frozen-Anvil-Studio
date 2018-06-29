@@ -25,6 +25,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO\BinarySerializer.h"
 #include <iostream>
 #include <bitset>
+#define _CRTDBG_MAP_ALLOC  
+#include <stdlib.h>  
+#include <crtdbg.h>  
 
 // Entry point for editor
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
@@ -57,7 +60,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	binSer.Write(testVar_int);
 	binSer.Write(testVar_float);
 	binSer.Write(testVar_double);
-	binSer.~BinarySerializer();
 
 	/* Alter values */
 	testVar_int = 12312;
@@ -78,7 +80,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	binSer2.Read(testVar_int);
 	binSer2.Read(testVar_float);
 	binSer2.Read(testVar_double);
-	binSer2.~BinarySerializer();
 	/* =========================End of Binary Serializer Test Case ===========================*/
 	/* =======================================================================================*/
 
@@ -111,10 +112,12 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	gfx->Shutdown();
 	win->Shutdown();
 
+	delete editor;
 	delete win;
 	delete gfx;
 	delete input;
 
+	_CrtDumpMemoryLeaks();
 	return 0;
 }
 
@@ -152,7 +155,6 @@ namespace Dystopia
 		mStartTime = std::chrono::high_resolution_clock::now();
 		for (auto e : mGuiSysArray)
 			e->StartFrame(mPrevFrameTime);
-
 		MainMenu();
 	}
 
@@ -188,7 +190,6 @@ namespace Dystopia
 			EGUI::Display::Label("I'm ahahahaa!");
 		EGUI::EndTab();
 
-
 		char buffer1[8];
 		char buffer2[8];
 		for (int i = 0; i < mExtraTabCounter; ++i)
@@ -207,7 +208,6 @@ namespace Dystopia
 			}
 			EGUI::EndTab();
 		}
-
 		// if (mCurrentState == EDITOR_PLAY) call for update of current scene
 		if (mCurrentState == EDITOR_PAUSE) return;
 	}
@@ -229,9 +229,24 @@ namespace Dystopia
 		mpWin = nullptr;
 		mpGfx = nullptr;
 		mpInput = nullptr;
-		if (mpHierarchy) delete mpHierarchy;
-		if (mpInspector) delete mpInspector;
-		if (mpResource) delete mpResource;
+
+		EGUI::Docking::ShutdownTabs();
+
+		if (mpHierarchy)
+		{
+			mpHierarchy->Shutdown();
+			delete mpHierarchy;
+		}
+		if (mpInspector) 
+		{
+			mpInspector->Shutdown();
+			delete mpInspector;
+		}
+		if (mpResource)
+		{
+			mpResource->Shutdown();
+			delete mpResource;
+		}
 		while (!mGuiSysArray.IsEmpty())
 		{
 			mGuiSysArray.back()->Shutdown();
@@ -326,6 +341,7 @@ namespace Dystopia
 				if (EGUI::StartMenuBody("Quit"))
 				{
 					// TODO: Some actual function
+					ChangeState(Dystopia::EDITOR_EXIT);
 				}
 				EGUI::EndMenuHeader();
 			}
