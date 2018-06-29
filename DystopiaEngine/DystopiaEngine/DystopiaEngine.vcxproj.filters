@@ -26,7 +26,7 @@
       <Filter>Game Engine\Systems\Graphic</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Editor.cpp">
-      <Filter>Editor\Editor</Filter>
+      <Filter>Editor\Systems</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\Mesh.cpp">
       <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
@@ -61,21 +61,6 @@
     <ClCompile Include="Source\System\Window\Window.cpp">
       <Filter>Game Engine\Systems\Window\Window</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EGuiCallbacks.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EGuiDisplay.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Inspector.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\ResourceView.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\HierarchyView.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\IO\TextSerialiser.cpp">
       <Filter>IO\TextSerialiser</Filter>
     </ClCompile>
@@ -88,14 +73,26 @@
     <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
       <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EGUI.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Dock.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\IO\BinarySerializer.cpp">
       <Filter>IO\BinarySerialiser</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\HierarchyView.cpp">
+      <Filter>Editor\Systems\Hierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\ResourceView.cpp">
+      <Filter>Editor\Systems\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\Dock.cpp">
+      <Filter>Editor\Systems\Docking</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EGUI.cpp">
+      <Filter>Editor\Systems\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\Inspector.cpp">
+      <Filter>Editor\Systems\Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EGuiDisplay.cpp">
+      <Filter>Editor\Systems\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -225,20 +222,8 @@
     <ClInclude Include="Include\Object\ObjectFlags.h">
       <Filter>Game Engine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\EGUI.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\Inspector.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\Editor.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\ResourceView.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\HierarchyView.h">
-      <Filter>Editor\Editor</Filter>
+      <Filter>Editor\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\TextSerialiser.h">
       <Filter>IO\TextSerialiser</Filter>
@@ -261,11 +246,23 @@
     <ClInclude Include="Include\IO\Serialiser.h">
       <Filter>IO</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\Dock.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Include\IO\BinarySerializer.h">
       <Filter>IO\BinarySerialiser</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\HierarchyView.h">
+      <Filter>Editor\Systems\Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\ResourceView.h">
+      <Filter>Editor\Systems\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Dock.h">
+      <Filter>Editor\Systems\Docking</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EGUI.h">
+      <Filter>Editor\Systems\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Inspector.h">
+      <Filter>Editor\Systems\Inspector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -356,9 +353,6 @@
     <Filter Include="Editor\IMGUI">
       <UniqueIdentifier>{adfd2fea-e1aa-4980-9366-739bf3f0446f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor">
-      <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Mesh">
       <UniqueIdentifier>{ca90d672-42da-4174-9947-7cdd5a3d812c}</UniqueIdentifier>
     </Filter>
@@ -397,6 +391,27 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Mesh\Raw">
       <UniqueIdentifier>{466ff2cb-a158-4c05-a63f-87c44bb584ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Systems">
+      <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Systems\Hierarchy">
+      <UniqueIdentifier>{906f0146-1116-4f0b-857f-1b0b4bcc43c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Systems\Resource">
+      <UniqueIdentifier>{3c08c0c6-b523-44ae-98ef-48b87c318ea8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Systems\Docking">
+      <UniqueIdentifier>{34a1246a-c7f5-4d3e-8782-89bda07d0ff3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Systems\UI">
+      <UniqueIdentifier>{5ebbd455-7289-4ca0-ae0a-e93d5864eca0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Systems\Inspector">
+      <UniqueIdentifier>{73aa6123-3e9a-4b83-96d4-d2df50a31dc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Systems\Commands">
+      <UniqueIdentifier>{fa4a1355-e83c-435a-9efc-82303a68ef59}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

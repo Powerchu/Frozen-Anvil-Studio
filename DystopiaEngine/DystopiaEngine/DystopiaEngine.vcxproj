@@ -36,7 +36,6 @@
     <ClCompile Include="Source\Editor\Dock.cpp" />
     <ClCompile Include="Source\Editor\Editor.cpp" />
     <ClCompile Include="Source\Editor\EGUI.cpp" />
-    <ClCompile Include="Source\Editor\EGuiCallbacks.cpp" />
     <ClCompile Include="Source\Editor\EGuiDisplay.cpp" />
     <ClCompile Include="Source\Editor\HierarchyView.cpp" />
     <ClCompile Include="Source\Editor\Inspector.cpp" />
