@@ -250,6 +250,7 @@ namespace Dystopia
 		while (!mGuiSysArray.IsEmpty())
 		{
 			mGuiSysArray.back()->Shutdown();
+			delete mGuiSysArray.back();
 			mGuiSysArray.pop_back();
 		}
 	}
