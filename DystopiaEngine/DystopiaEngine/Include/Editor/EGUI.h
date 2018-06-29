@@ -37,17 +37,20 @@ namespace EGUI
 
 	namespace Display
 	{
-		void Label(const char*, ...);
-		void TextField(const char*, char*, size_t);
-		bool CollapseHeader(const char*);
-		bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 0.0f);
-		bool CheckBox(const char*, bool*);
-		bool DragFloat(const char*, float*, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 0.0f);
-		bool DragInt(const char*, int*, float _dragSpeed = 1.0f, int _min = 0, int _max = 0);
-		bool SelectableTxt(const char*, bool*);
-		bool SelectableTxt(const char*, bool = false);
-		bool SelectableTxtDouble(const char*, bool*);
-		bool SelectableTxtDouble(const char*, bool = false);
+		void Label(const char *_label, ...);
+		void TextField(const char *_label, char *_pOutText, size_t);
+		bool CollapsingHeader(const char *_label);
+		bool VectorFields(const char *_label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 0.0f);
+		bool CheckBox(const char *_label, bool *_pOutBool);
+		bool DragFloat(const char *_label, float *_pOutFloat, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 0.0f);
+		bool DragInt(const char *_label, int *_pOutInt, float _dragSpeed = 1.0f, int _min = 0, int _max = 0);
+		bool SelectableTxt(const char *_label, bool *_pSelected);
+		bool SelectableTxt(const char *_label, bool = false);
+		bool SelectableTxtDouble(const char *_label, bool *_pSelected);
+		bool SelectableTxtDouble(const char *_label, bool = false);
+		bool StartTreeNode(const char *_label);
+		void OpenTreeNode(const char *_label, bool _collapseMe);
+		void EndTreeNode();
 	}
 }
 

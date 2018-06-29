@@ -140,7 +140,7 @@ namespace EGUI
 			return false;
 		}
 	
-		bool CollapseHeader(const char* _header)
+		bool CollapsingHeader(const char* _header)
 		{
 			return ImGui::CollapsingHeader(_header, ImGuiTreeNodeFlags_DefaultOpen);
 		}
@@ -168,6 +168,22 @@ namespace EGUI
 				*_outputBool = false;
 			return false;
 		}
+
+		bool StartTreeNode(const char *_label)
+		{
+			return ImGui::TreeNode(_label);
+		}
+
+		void OpenTreeNode(const char *_label, bool _collapseMe)
+		{
+			ImGui::GetStateStorage()->SetInt(ImGui::GetID(_label), static_cast<int>(_collapseMe));
+		}
+
+		void EndTreeNode()
+		{
+			ImGui::TreePop();
+		}
+
 	}
 }	// NAMESPACE DYSTOPIA::EGUI::DISPLAY
 #endif // EDITOR
