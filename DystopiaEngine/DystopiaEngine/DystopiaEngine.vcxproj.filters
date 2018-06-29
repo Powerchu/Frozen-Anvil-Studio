@@ -94,6 +94,9 @@
     <ClCompile Include="Source\Editor\EGuiDisplay.cpp">
       <Filter>Editor\Systems\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Commands.cpp">
+      <Filter>Editor\Systems\Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -263,6 +266,9 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\Inspector.h">
       <Filter>Editor\Systems\Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands.h">
+      <Filter>Editor\Systems\Commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
