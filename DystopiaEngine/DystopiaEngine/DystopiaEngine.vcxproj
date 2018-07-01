@@ -30,10 +30,10 @@
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="Commands.cpp" />
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
     <ClCompile Include="Source\Component\Component.cpp" />
     <ClCompile Include="Source\Component\Transform.cpp" />
+    <ClCompile Include="Source\Editor\Commands.cpp" />
     <ClCompile Include="Source\Editor\Dock.cpp" />
     <ClCompile Include="Source\Editor\Editor.cpp" />
     <ClCompile Include="Source\Editor\EGUI.cpp" />
@@ -64,7 +64,6 @@
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui_internal.h" />
-    <ClInclude Include="Commands.h" />
     <ClInclude Include="Include\Behaviour\Behaviour.h" />
     <ClInclude Include="Include\Component\Component.h" />
     <ClInclude Include="Include\Component\ComponentList.h" />
@@ -74,6 +73,7 @@
     <ClInclude Include="Include\DataStructure\Queue.h" />
     <ClInclude Include="Include\DataStructure\SharedPtr.h" />
     <ClInclude Include="Include\DataStructure\Stack.h" />
+    <ClInclude Include="Include\Editor\Commands.h" />
     <ClInclude Include="Include\Editor\Dock.h" />
     <ClInclude Include="Include\Editor\Editor.h" />
     <ClInclude Include="Include\Editor\EGUI.h" />

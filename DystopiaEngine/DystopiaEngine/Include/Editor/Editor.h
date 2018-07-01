@@ -28,6 +28,7 @@ namespace Dystopia
 	class ResourceView;
 	class HierarchyView;
 	class Inspector;
+	class CommandHandler;
 	//class SceneManager;
 	//class Scene;
 
@@ -75,6 +76,7 @@ namespace Dystopia
 		HierarchyView *mpHierarchy;
 		Inspector *mpInspector;
 		ResourceView *mpResource;
+		CommandHandler *mpComdHandler;
 		// SceneManager *mpSceneMgr;
 
 		AutoArray<SharedPtr<Inspector>> mInspectorArray;

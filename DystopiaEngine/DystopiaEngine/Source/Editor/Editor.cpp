@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ResourceView.h"
 #include "Editor\Inspector.h"
 #include "Editor\HierarchyView.h"
+#include "Editor\Commands.h"
 #include "IO\BinarySerializer.h"
 #include <iostream>
 #include <bitset>
@@ -143,6 +144,7 @@ namespace Dystopia
 		mpHierarchy = new HierarchyView{};
 		mpInspector = new Inspector{};
 		mpResource = new ResourceView{};
+		mpComdHandler = new CommandHandler{};
 		mpResource->Init();
 
 		GuiSystem *pGui = new GuiSystem{};

@@ -197,7 +197,6 @@ namespace Dystopia
 			} while (FindNextFileA(hfind, &data));
 			FindClose(hfind);
 		}
-		std::cout << "Crawling : " << mFolderName << std::endl;
 	}
 
 	ResourceView::CrawlFolder* ResourceView::CrawlFolder::GetParent()

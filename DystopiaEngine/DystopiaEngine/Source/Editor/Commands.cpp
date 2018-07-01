@@ -11,12 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Commands.h"
+#include "Editor\Commands.h"
 
 namespace Dystopia
 {
 	CommandHandler::CommandHandler(size_t _nHistory)
-		: mDeqRedo{ _nHistory }, mDeqUndo{ _nHistory }, mMaxHistory{ _nHistory }
+		: mDeqRedo{ _nHistory }, mDeqUndo{ _nHistory }
 	{
 	}
 
@@ -26,9 +26,9 @@ namespace Dystopia
 		mDeqUndo.clear();
 	}
 
-	void CommandHandler::InvokeCommand(const Commands& _comd)
+	void CommandHandler::InvokeCommand(Commands *_comd)
 	{
-		_comd.ExecuteDo();
+		_comd->ExecuteDo();
 
 		if (mDeqUndo.size() == mDeqUndo.max_size())
 			mDeqUndo.pop_front();
@@ -41,7 +41,7 @@ namespace Dystopia
 	{
 		if (mDeqUndo.empty()) return;
 
-		mDeqUndo.back().ExecuteUndo();
+		mDeqUndo.back()->ExecuteUndo();
 
 		if (mDeqRedo.size() == mDeqRedo.max_size())
 			mDeqRedo.pop_front();
@@ -56,11 +56,6 @@ namespace Dystopia
 
 		InvokeCommand(mDeqRedo.back());
 		mDeqRedo.pop_back();
-	}
-
-	size_t CommandHandler::MaxCommand() const
-	{
-		return mMaxHistory;
 	}
 }
 

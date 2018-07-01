@@ -18,24 +18,25 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	struct Commands
+	class Commands
 	{
-		virtual void ExecuteDo() const;
-		virtual void ExecuteUndo() const;
+	public:
+		virtual void ExecuteDo() const=0;
+		virtual void ExecuteUndo() const=0;
 	};
 
 	// Command handler to record all commands made in the editor. *Intended only for editor class to use*
 	class CommandHandler
 	{
 	public:
-		// Constructs with a fixed size (maximum history of commands recorded).
+		// Constructs with a fixed size	maximum history of commands recorded).
 		CommandHandler(size_t _nHistory=30);
 
 		// Destructor
 		~CommandHandler();
 
 		// Calls the ExecuteDo function of the param command and passes it into the undo deque, also empties the redo deque
-		void InvokeCommand(const Commands& _comd);
+		void InvokeCommand(Commands *_comd);
 
 		// Calls the ExecuteUndo function of latest command in the undo deque and puts it into the redo deque
 		void UndoCommand();
@@ -43,13 +44,10 @@ namespace Dystopia
 		// Performs InvokeCommand on the latest command in the redo deque 
 		void RedoCommand();
 
-		size_t MaxCommand() const;
-
 	private:
-		std::deque<Commands> mDeqRedo;
-		std::deque<Commands> mDeqUndo;
+		std::deque<Commands*> mDeqRedo;
+		std::deque<Commands*> mDeqUndo;
 		unsigned mNextActionID;
-		size_t mMaxHistory;
 	};
 }
 
