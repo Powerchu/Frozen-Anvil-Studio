@@ -270,6 +270,9 @@
     <ClInclude Include="Include\Editor\Commands.h">
       <Filter>Editor\Systems\Commands</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\CommandList.h">
+      <Filter>Editor\Systems\Commands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

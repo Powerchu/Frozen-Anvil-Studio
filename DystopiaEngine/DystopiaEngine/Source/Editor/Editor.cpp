@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\Inspector.h"
 #include "Editor\HierarchyView.h"
 #include "Editor\Commands.h"
+#include "Editor\CommandList.h"
 #include "IO\BinarySerializer.h"
 #include <iostream>
 #include <bitset>
@@ -310,7 +311,7 @@ namespace Dystopia
 				if (EGUI::StartMenuBody("New (Spawn Tabs)"))
 				{
 					// TODO: Some actual function
-					++mExtraTabCounter;
+					mpComdHandler->InvokeCommand(new AssignValueComd<int> { &mExtraTabCounter, mExtraTabCounter + 1 });
 				}
 				if (EGUI::StartMenuBody("Open"))
 				{
@@ -351,8 +352,8 @@ namespace Dystopia
 			// TODO: Some actual function for all the bottom
 			if (EGUI::StartMenuHeader("Edit"))
 			{
-				if (EGUI::StartMenuBody("Undo")) {}
-				if (EGUI::StartMenuBody("Redo")) {}  // Disabled ite
+				if (EGUI::StartMenuBody("Undo")) { mpComdHandler->UndoCommand(); }
+				if (EGUI::StartMenuBody("Redo")) { mpComdHandler->RedoCommand(); }  // Disabled ite
 				if (EGUI::StartMenuBody("Cut")) {}
 				if (EGUI::StartMenuBody("Copy")) {}
 				if (EGUI::StartMenuBody("Paste")) {}

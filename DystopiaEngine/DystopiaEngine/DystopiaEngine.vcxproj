@@ -73,6 +73,7 @@
     <ClInclude Include="Include\DataStructure\Queue.h" />
     <ClInclude Include="Include\DataStructure\SharedPtr.h" />
     <ClInclude Include="Include\DataStructure\Stack.h" />
+    <ClInclude Include="Include\Editor\CommandList.h" />
     <ClInclude Include="Include\Editor\Commands.h" />
     <ClInclude Include="Include\Editor\Dock.h" />
     <ClInclude Include="Include\Editor\Editor.h" />

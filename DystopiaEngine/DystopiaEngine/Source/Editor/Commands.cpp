@@ -12,16 +12,34 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Editor\Commands.h"
+#include "Editor\CommandList.h"
 
 namespace Dystopia
 {
 	CommandHandler::CommandHandler(size_t _nHistory)
-		: mDeqRedo{ _nHistory }, mDeqUndo{ _nHistory }
+		: mDeqRedo{ _nHistory, nullptr }, mDeqUndo{ _nHistory, nullptr }
 	{
 	}
 
 	CommandHandler::~CommandHandler()
 	{
+		for (auto e : mDeqRedo)
+		{
+			if (e)
+			{
+				delete e;
+				e = nullptr;
+			}
+		}
+		for (auto e : mDeqUndo)
+		{
+			if (e)
+			{
+				delete e;
+				e = nullptr;
+			}
+		}
+
 		mDeqRedo.clear();
 		mDeqUndo.clear();
 	}
@@ -31,7 +49,7 @@ namespace Dystopia
 		_comd->ExecuteDo();
 
 		if (mDeqUndo.size() == mDeqUndo.max_size())
-			mDeqUndo.pop_front();
+			PopFrontOfDeque(mDeqUndo);
 
 		mDeqUndo.push_back(_comd);
 		mDeqRedo.clear();
@@ -39,12 +57,12 @@ namespace Dystopia
 
 	void CommandHandler::UndoCommand()
 	{
-		if (mDeqUndo.empty()) return;
+		if (!mDeqUndo.back()) return;
 
 		mDeqUndo.back()->ExecuteUndo();
 
 		if (mDeqRedo.size() == mDeqRedo.max_size())
-			mDeqRedo.pop_front();
+			PopFrontOfDeque(mDeqRedo);
 
 		mDeqRedo.push_back(mDeqUndo.back());
 		mDeqUndo.pop_back();
@@ -52,10 +70,20 @@ namespace Dystopia
 
 	void CommandHandler::RedoCommand()
 	{
-		if (mDeqRedo.empty()) return;
+		if (!mDeqRedo.back()) return;
 
-		InvokeCommand(mDeqRedo.back());
+		Commands *pTemp = mDeqRedo.back();
 		mDeqRedo.pop_back();
+		InvokeCommand(pTemp);
+	}
+
+	void CommandHandler::PopFrontOfDeque(std::deque<Commands*>& _targetDeque)
+	{
+		if (_targetDeque.front())
+		{
+			delete _targetDeque.front();
+			_targetDeque.pop_front();
+		}
 	}
 }
 

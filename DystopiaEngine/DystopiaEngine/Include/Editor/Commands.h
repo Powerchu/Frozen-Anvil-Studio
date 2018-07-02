@@ -18,12 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Commands
-	{
-	public:
-		virtual void ExecuteDo() const=0;
-		virtual void ExecuteUndo() const=0;
-	};
+	struct Commands;
 
 	// Command handler to record all commands made in the editor. *Intended only for editor class to use*
 	class CommandHandler
@@ -45,6 +40,8 @@ namespace Dystopia
 		void RedoCommand();
 
 	private:
+		void PopFrontOfDeque(std::deque<Commands*>&);
+
 		std::deque<Commands*> mDeqRedo;
 		std::deque<Commands*> mDeqUndo;
 		unsigned mNextActionID;
