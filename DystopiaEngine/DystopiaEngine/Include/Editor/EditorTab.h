@@ -40,8 +40,6 @@ namespace Dystopia
 		
 	private:
 		Math::Vec4 mSize;
-
-		static AutoArray<EditorTab*> mAllTabs;
 	};
 }
 

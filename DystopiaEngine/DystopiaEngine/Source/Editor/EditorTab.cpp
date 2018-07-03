@@ -17,13 +17,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	AutoArray<EditorTab*> EditorTab::mAllTabs;
-
 	EditorTab::EditorTab()
 		: mSize{ Math::Vec4{ 0,0,0,0 } }
-	{
-		mAllTabs.push_back(this);
-	}
+	{}
 
 	EditorTab::~EditorTab()
 	{}
@@ -37,5 +33,4 @@ namespace Dystopia
 	{
 		mSize = Math::Vec4{ _x, _y, 0, 0 };
 	}
-
 }
