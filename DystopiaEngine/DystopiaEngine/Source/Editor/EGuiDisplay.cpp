@@ -112,32 +112,43 @@ namespace EGUI
 			return (ImGui::DragInt("", _outputInt, _dragSpeed, _min, _max));
 		}
 	
-		bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max)
+		bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
 		{
-			const float width = 50;
-	
+			bool changed = false;
 			float x, y, z;
 			x = _outputVec->x;
 			y = _outputVec->y;
 			z = _outputVec->z;
 	
-			ImGui::PushItemWidth(width);
+			ImGui::PushItemWidth(_width);
 			Label(_label);
 			ImGui::SameLine();
 			Label("X:");
 			ImGui::SameLine();
-			if (ImGui::DragFloat("", &x, _dragSpeed, _min, _max)) _outputVec->x = x;
+			if (ImGui::DragFloat("", &x, _dragSpeed, _min, _max))
+			{
+				_outputVec->x = x;
+				changed = true;
+			}
 			ImGui::SameLine();
 			Label("Y:");
 			ImGui::SameLine();
-			if (ImGui::DragFloat("", &y, _dragSpeed, _min, _max)) _outputVec->y = y;
+			if (ImGui::DragFloat("", &y, _dragSpeed, _min, _max))
+			{
+				_outputVec->y = y;
+				changed = true;
+			}
 			ImGui::SameLine();
 			Label("Z:");
 			ImGui::SameLine();
-			if (ImGui::DragFloat("", &z, _dragSpeed, _min, _max)) _outputVec->z = z;
+			if (ImGui::DragFloat("", &z, _dragSpeed, _min, _max))
+			{
+				changed = true;
+				_outputVec->z = z;
+			}
 			ImGui::PopItemWidth();
 	
-			return false;
+			return changed;
 		}
 	
 		bool CollapsingHeader(const char* _header)

@@ -25,11 +25,15 @@ namespace Dystopia
 	public:
 		EditorTab();
 		~EditorTab();
+
+		/************************************************************************************************************/
+		/* TODO: Implement your own definitions for the pure virtual functions in your class that needs to be a tab */
 		virtual void Init() = 0;
 		virtual void Update(const float&) = 0;
 		virtual void Window() = 0;
 		virtual void Shutdown() = 0;
 		virtual std::string GetLabel() const = 0;
+		/************************************************************************************************************/
 
 		void SetSize(const Math::Vec4&);
 		void SetSize(const float&, const float&);

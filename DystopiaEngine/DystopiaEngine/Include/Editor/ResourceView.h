@@ -30,10 +30,19 @@ namespace Dystopia
 		ResourceView();
 		~ResourceView();
 
+		/* Init() is called immediately after the creation of the object */
 		virtual void Init() override;
+
+		/* Update() is called before Window(), so alter most variables (frame based) here to be printed in Window() later */
 		virtual void Update(const float&) override;
+
+		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
 		virtual void Window() override;
+
+		/* Shutdown() is called right before deleting this object */
 		virtual void Shutdown() override;
+
+		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const override;
 
 		void StartCrawl();
