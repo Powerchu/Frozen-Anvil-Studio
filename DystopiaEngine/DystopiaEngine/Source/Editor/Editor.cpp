@@ -313,7 +313,7 @@ namespace Dystopia
 				if (EGUI::StartMenuBody("New (Spawn Tabs)"))
 				{
 					// TODO: Some actual function
-					mpComdHandler->InvokeCommand(new AssignValueComd<int> { &mExtraTabCounter, mExtraTabCounter + 1 });
+					mpComdHandler->InvokeCommand(new ComdModifyValue<int> { &mExtraTabCounter, mExtraTabCounter + 1 });
 				}
 				if (EGUI::StartMenuBody("Open"))
 				{

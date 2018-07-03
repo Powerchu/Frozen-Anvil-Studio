@@ -18,6 +18,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <stdlib.h>
 #include <iostream>
 
+constexpr unsigned int Default_VectorField_Alignment_Left = 100;
+constexpr unsigned int Default_VectorField_Alignment_Height = 2;
+
 namespace EGUI
 {
 	bool StartTab(const char *_pLabel, bool *_pOpen, ImGuiWindowFlags _flags)
@@ -126,10 +129,12 @@ namespace EGUI
 			field3 += _label;
 
 			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label);
-			ImGui::SameLine();
+			ImGui::SameLine(Default_VectorField_Alignment_Left);
 			Label("X:");
 			ImGui::SameLine();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			if (ImGui::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max))
 			{
 				_outputVec->x = x;

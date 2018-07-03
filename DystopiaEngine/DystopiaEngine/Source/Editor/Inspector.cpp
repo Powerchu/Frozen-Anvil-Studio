@@ -56,11 +56,20 @@ namespace Dystopia
 
 	void Inspector::Window()
 	{
-		Math::Vec4 field{ 0,0,0,0 };
-		if (EGUI::Display::VectorFields("Vec Me", &field))
+		Math::Vec4 field{ 0,0,0,0 };	// replace with component variables
+		Math::Vec4 field2{ 0,0,0,0 };
+		if (EGUI::Display::CollapsingHeader("Temporary Transform"))	// replace with for loop of all components name
 		{
+			if (EGUI::Display::VectorFields("Position", &field))
+			{
 
+			}
+			if (EGUI::Display::VectorFields("Size", &field2))
+			{
+
+			}
 		}
+		
 
 		if (!mpFocusGameObj) return;
 

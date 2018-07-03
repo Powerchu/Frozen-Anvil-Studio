@@ -25,13 +25,13 @@ namespace Dystopia
 	};
 
 	template <typename T>
-	struct AssignValueComd : Commands
+	struct ComdModifyValue : Commands
 	{
-		AssignValueComd(T* _value, const T& _newV)
+		ComdModifyValue(T* _value, const T& _newV)
 			: mValue{ _value }, oldValue{ *_value }, newValue{ _newV }
 		{}
 
-		~AssignValueComd()
+		~ComdModifyValue()
 		{}
 
 		void ExecuteDo() override
@@ -49,33 +49,32 @@ namespace Dystopia
 		T* mValue;
 	};
 
-	// template <typename T>
-	// struct CreateObjectComd : Commands
-	// {
-	// 	CreateObjectComd(T*& _object, const Math::Vec4& _pos)
-	// 		: mObject{ _object }
-	// 	{
-	// 		_object = nullptr;
-	// 	}
-	// 
-	// 	~CreateObjectComd()
-	// 	{
-	// 		delete mObject;
-	// 	}
-	// 
-	// 	void ExecuteDo() override
-	// 	{
-	// 		//mInstance = _object->Duplicate();
-	// 	}
-	// 	void ExecuteUndo() override
-	// 	{
-	// 		//*mValue = oldValue;
-	// 	}
-	// 
-	// private:
-	// 	T* mObject;
-	// 	T* mInstance;
-	// };
+	template <typename T>
+	struct ComdCreateObject : Commands
+	{
+		ComdCreateObject(T*& _object, const Math::Vec4& _pos)
+			: mObject{ _object }
+		{
+			_object = nullptr;
+		}
+	
+		~ComdCreateObject()
+		{
+			delete mObject;
+		}
+	
+		void ExecuteDo() override
+		{
+			//mInstance = _object->Duplicate();
+		}
+		void ExecuteUndo() override
+		{
+			//*mValue = oldValue;
+		}
+	
+	private:
+		T* mObject;
+	};
 }
 
 #endif //_COMMAND_LIST_H_
