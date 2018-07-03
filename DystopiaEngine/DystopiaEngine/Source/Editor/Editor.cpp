@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\HierarchyView.h"
 #include "Editor\Commands.h"
 #include "Editor\CommandList.h"
+#include "Editor\EditorTab.h"
 #include "IO\BinarySerializer.h"
 #include <iostream>
 #include <bitset>
@@ -130,8 +131,7 @@ namespace Dystopia
 {
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mStartTime{}, mEndTime{}, mPrevFrameTime{ 0 },
-		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mGuiSysArray{ 0 }, mExtraTabCounter{ 0 },
-		mpHierarchy{ nullptr }, mpInspector{ nullptr }, mpResource{ nullptr }
+		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mGuiSysArray{ 0 }, mExtraTabCounter{ 0 }
 	{}
 
 	Editor::~Editor(void)
@@ -142,11 +142,15 @@ namespace Dystopia
 		mpWin = _pWin;
 		mpGfx = _pGfx;
 		mpInput = _pInput;
-		mpHierarchy = new HierarchyView{};
-		mpInspector = new Inspector{};
-		mpResource = new ResourceView{};
+
+		mTabsArray.push_back(new Inspector{});
+		mTabsArray.push_back(new ResourceView{});
+		mTabsArray.push_back(new HierarchyView{});
+		
+		for (auto e : mTabsArray)
+			e->Init();
+
 		mpComdHandler = new CommandHandler{};
-		mpResource->Init();
 
 		GuiSystem *pGui = new GuiSystem{};
 		if (!pGui->Init(mpWin, mpGfx, mpInput)) mCurrentState = EDITOR_EXIT;
@@ -167,31 +171,31 @@ namespace Dystopia
 		//mpInput->Update(_dt);
 		//mpGfx->Update(_dt);
 
-		mpInspector->Update(_dt);
-		EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
-		if (EGUI::StartTab("Inspector"))
-			mpInspector->Window();
-		EGUI::EndTab();
-	
-		mpResource->Update(_dt);
-		EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_LEFT);
-		if (EGUI::StartTab("Resource"))
+		for (unsigned int i = 0; i < mTabsArray.size(); ++i)
 		{
-			mpResource->SetSize(EGUI::Docking::GetTabSize("Resource"));
-			mpResource->Window();
+			EditorTab *pTab = mTabsArray[i];
+			pTab->Update(_dt);
+
+			switch (i)
+			{
+			case 0: EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
+				break;
+			case 1: EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_LEFT);
+				break;
+			case 2: EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_TOP);
+				break;
+			case 3: EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
+				break;
+			default: EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_NONE);
+			}
+
+			if (EGUI::StartTab(pTab->GetLabel().c_str()))
+			{
+				pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()));
+				pTab->Window();
+			}
+			EGUI::EndTab();
 		}
-		EGUI::EndTab();
-
-		mpHierarchy->Update(_dt);
-		EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_TOP);
-		if (EGUI::StartTab("Hierarchy"))
-			mpHierarchy->Window();
-		EGUI::EndTab();
-
-		EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
-		if (EGUI::StartTab("Tab1"))
-			EGUI::Display::Label("I'm ahahahaa!");
-		EGUI::EndTab();
 
 		char buffer1[8];
 		char buffer2[8];
@@ -233,23 +237,21 @@ namespace Dystopia
 		mpGfx = nullptr;
 		mpInput = nullptr;
 
+		delete mpComdHandler;
+		mpComdHandler = nullptr;
+
 		EGUI::Docking::ShutdownTabs();
 
-		if (mpHierarchy)
+		for (auto e : mTabsArray)
 		{
-			mpHierarchy->Shutdown();
-			delete mpHierarchy;
+			if (e)
+			{
+				e->Shutdown();
+				delete e;
+				e = nullptr;
+			}
 		}
-		if (mpInspector) 
-		{
-			mpInspector->Shutdown();
-			delete mpInspector;
-		}
-		if (mpResource)
-		{
-			mpResource->Shutdown();
-			delete mpResource;
-		}
+
 		while (!mGuiSysArray.IsEmpty())
 		{
 			mGuiSysArray.back()->Shutdown();

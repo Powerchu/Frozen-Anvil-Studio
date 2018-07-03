@@ -97,6 +97,9 @@
     <ClCompile Include="Source\Editor\Commands.cpp">
       <Filter>Editor\Systems\Commands</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\EditorTab.cpp">
+      <Filter>Editor\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -272,6 +275,9 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\CommandList.h">
       <Filter>Editor\Systems\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorTab.h">
+      <Filter>Editor\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -22,7 +22,7 @@ constexpr float DEFAULT_HEIGHT = 300;
 namespace Dystopia
 {
 	HierarchyView::HierarchyView()
-		: mWidth{ DEFAULT_WIDTH }, mHeight{ DEFAULT_HEIGHT }, mpFocusGameObj{ nullptr }, mpCurrentScene{ nullptr }
+		: mLabel{ "Hierarchy" }, mpFocusGameObj{ nullptr }, mpCurrentScene{ nullptr }
 	{
 	}
 
@@ -43,14 +43,9 @@ namespace Dystopia
 	{
 	}
 
-	void HierarchyView::SetWidth(float _width)
+	std::string HierarchyView::GetLabel() const
 	{
-		mWidth = _width;
-	}
-
-	void HierarchyView::SetHeight(float _height)
-	{
-		mHeight = _height;
+		return mLabel;
 	}
 
 	void HierarchyView::Window()

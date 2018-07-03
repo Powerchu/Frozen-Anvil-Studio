@@ -24,14 +24,12 @@ constexpr float DEFAULT_HEIGHT = 300;
 namespace Dystopia
 {
 	ResourceView::ResourceView()
-		: mWidth{ DEFAULT_WIDTH }, mHeight{ DEFAULT_HEIGHT }, mpFocusData{ nullptr }, mpCrawlData{ nullptr }, 
-		mLastSelected{ -1 }, mRefreshCrawl{ false }
-	{
-	}
+		: mpFocusData{ nullptr }, mpCrawlData{ nullptr }, mLastSelected{ -1 }, mRefreshCrawl{ false },
+		mLabel{ "Resource" }
+	{}
 	
 	ResourceView::~ResourceView()
-	{
-	}
+	{}
 	
 	void ResourceView::Init()
 	{
@@ -48,25 +46,9 @@ namespace Dystopia
 		delete mpCrawlData;
 	}
 
-	void ResourceView::SetWidth(const float& _width)
+	std::string ResourceView::GetLabel() const
 	{
-		mWidth = _width;
-	}
-
-	void ResourceView::SetHeight(const float& _height)
-	{
-		mHeight = _height;
-	}
-
-	void ResourceView::SetSize(const Math::Vec4& _size)
-	{
-		SetSize(_size.x, _size.y);
-	}
-
-	void ResourceView::SetSize(const float& _x, const float& _y)
-	{
-		SetWidth(_x);
-		SetHeight(_y);
+		return mLabel;
 	}
 
 	void ResourceView::Window()

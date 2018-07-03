@@ -48,8 +48,34 @@ namespace Dystopia
 		T newValue;
 		T* mValue;
 	};
-	
 
+	// template <typename T>
+	// struct CreateObjectComd : Commands
+	// {
+	// 	CreateObjectComd(T*& _object, const Math::Vec4& _pos)
+	// 		: mObject{ _object }
+	// 	{
+	// 		_object = nullptr;
+	// 	}
+	// 
+	// 	~CreateObjectComd()
+	// 	{
+	// 		delete mObject;
+	// 	}
+	// 
+	// 	void ExecuteDo() override
+	// 	{
+	// 		//mInstance = _object->Duplicate();
+	// 	}
+	// 	void ExecuteUndo() override
+	// 	{
+	// 		//*mValue = oldValue;
+	// 	}
+	// 
+	// private:
+	// 	T* mObject;
+	// 	T* mInstance;
+	// };
 }
 
 #endif //_COMMAND_LIST_H_

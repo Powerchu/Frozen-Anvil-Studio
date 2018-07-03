@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _RESOURCE_VIEW_H_
 #define _RESOURCE_VIEW_H_
 #include "DataStructure\AutoArray.h"
+#include "EditorTab.h"
 #include "Math\Vector4.h"
 #include <string>
 #include <vector>
@@ -23,29 +24,24 @@ static const std::string GLOBAL_DEFAULT_PROJECT_PATH = "..";
 
 namespace Dystopia
 {
-	class ResourceView
+	class ResourceView : public EditorTab
 	{
 	public:
 		ResourceView();
 		~ResourceView();
 
-		void Init();
-		void Update(const float&);
-		void Shutdown();
+		virtual void Init() override;
+		virtual void Update(const float&) override;
+		virtual void Window() override;
+		virtual void Shutdown() override;
+		virtual std::string GetLabel() const override;
 
 		void StartCrawl();
-		void Window();
-		void SetWidth(const float&);
-		void SetHeight(const float&);
-		void SetSize(const Math::Vec4& );
-		void SetSize(const float&, const float&);
-
 		struct CrawlFile
 		{
 			CrawlFile(const std::string&);
 			std::string mFileName;
 		};
-
 		struct CrawlFolder
 		{
 			CrawlFolder(const char*);
@@ -74,8 +70,7 @@ namespace Dystopia
 		void		*mpFocusData;
 		int			mLastSelected;
 		bool		mRefreshCrawl;
-		float		mWidth;
-		float		mHeight;
+		std::string mLabel;
 	};
 }
 

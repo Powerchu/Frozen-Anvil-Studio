@@ -14,28 +14,26 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _HIERARCHY_H_
 #define _HIERARCHY_H_
+#include "EditorTab.h"
 
 namespace Dystopia
 {
 	class GameObject;
 	class Scene;
 
-	class HierarchyView
+	class HierarchyView : public EditorTab
 	{
 	public:
 		HierarchyView();
 		~HierarchyView();
-		void Init();
-		void Update(const float&);
-		void Shutdown();
-
-		void Window();
-		void SetWidth(float);
-		void SetHeight(float);
+		virtual void Init() override;
+		virtual void Update(const float&) override;
+		virtual void Window() override;
+		virtual void Shutdown() override;
+		virtual std::string GetLabel() const override;
 
 	private:
-		float mWidth;
-		float mHeight;
+		std::string mLabel;
 		GameObject *mpFocusGameObj;
 		Scene *mpCurrentScene;
 	};

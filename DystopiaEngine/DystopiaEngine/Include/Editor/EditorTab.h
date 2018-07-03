@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Inspector.h
+\file	EditorTab.h
 \author Digipen (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -12,38 +12,35 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#ifndef _INSPECTOR_H_
-#define _INSPECTOR_H_
-#include "EditorTab.h"
+#ifndef _EDITOR_TAB_H_
+#define _EDITOR_TAB_H_
+#include "Math\Vector4.h"
+#include "DataStructure\AutoArray.h"
+#include <string>
 
 namespace Dystopia
 {
-	class GameObject;
-
-	class Inspector : public EditorTab
+	class EditorTab
 	{
 	public:
-		Inspector();
-		~Inspector();
-		virtual void Init() override;
-		virtual void Update(const float&) override;
-		virtual void Window() override;
-		virtual void Shutdown() override;
-		virtual std::string GetLabel() const override;
+		EditorTab();
+		~EditorTab();
+		virtual void Init() = 0;
+		virtual void Update(const float&) = 0;
+		virtual void Window() = 0;
+		virtual void Shutdown() = 0;
+		virtual std::string GetLabel() const = 0;
 
-		void SetFocusObj(GameObject*);
-		void RemoveFocus();
-
+		void SetSize(const Math::Vec4&);
+		void SetSize(const float&, const float&);
+		
 	private:
-		std::string mLabel;
-		GameObject *mpFocusGameObj;
+		Math::Vec4 mSize;
+
+		static AutoArray<EditorTab*> mAllTabs;
 	};
 }
 
-
-
-#endif // _INSPECTOR_H_
-
-#endif // EDITOR 
-
+#endif //_EDITOR_TAB_H_
+#endif // EDITOR
 

@@ -36,6 +36,7 @@
     <ClCompile Include="Source\Editor\Commands.cpp" />
     <ClCompile Include="Source\Editor\Dock.cpp" />
     <ClCompile Include="Source\Editor\Editor.cpp" />
+    <ClCompile Include="Source\Editor\EditorTab.cpp" />
     <ClCompile Include="Source\Editor\EGUI.cpp" />
     <ClCompile Include="Source\Editor\EGuiDisplay.cpp" />
     <ClCompile Include="Source\Editor\HierarchyView.cpp" />
@@ -77,6 +78,7 @@
     <ClInclude Include="Include\Editor\Commands.h" />
     <ClInclude Include="Include\Editor\Dock.h" />
     <ClInclude Include="Include\Editor\Editor.h" />
+    <ClInclude Include="Include\Editor\EditorTab.h" />
     <ClInclude Include="Include\Editor\EGUI.h" />
     <ClInclude Include="Include\Editor\HierarchyView.h" />
     <ClInclude Include="Include\Editor\Inspector.h" />
