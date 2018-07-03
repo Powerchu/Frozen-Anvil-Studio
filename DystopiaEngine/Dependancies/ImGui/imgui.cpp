@@ -7428,7 +7428,7 @@ void ImGui::TextUnformatted(const char* text, const char* text_end)
         // From this point we will only compute the width of lines that are visible. Optimization only available when word-wrapping is disabled.
         // We also don't vertically center the text within the line full height, which is unlikely to matter because we are likely the biggest and only item on the line.
         const char* line = text;
-        const float line_height = GetTextLineHeight();
+		const float line_height = GetTextLineHeight();
         const ImRect clip_rect = window->ClipRect;
         ImVec2 text_size(0,0);
 

@@ -12,13 +12,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-
 #include "Editor\Inspector.h"
-#include "Math\Vector4.h"
 #include "Editor\EGUI.h"
 #include "Object\GameObject.h"
 #include "Component\Component.h"
-#include "DataStructure\AutoArray.h"
 
 namespace Dystopia
 {
@@ -59,6 +56,12 @@ namespace Dystopia
 
 	void Inspector::Window()
 	{
+		Math::Vec4 field{ 0,0,0,0 };
+		if (EGUI::Display::VectorFields("Vec Me", &field))
+		{
+
+		}
+
 		if (!mpFocusGameObj) return;
 
 		AutoArray<Component*> pAllComponents = mpFocusGameObj->GetComponents<Component>();

@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\EGUI.h"
 #include "../../Dependancies/ImGui/imgui.h"
 #include "../../Dependancies/ImGui/imgui_internal.h"
+#include <stdlib.h>
 #include <iostream>
 
 namespace EGUI
@@ -115,17 +116,21 @@ namespace EGUI
 		bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
 		{
 			bool changed = false;
+			std::string field1 = "##VecFieldX", field2 = "##VecFieldY", field3 = "##VecFieldZ";
 			float x, y, z;
 			x = _outputVec->x;
 			y = _outputVec->y;
 			z = _outputVec->z;
-	
+			field1 += _label;
+			field2 += _label;
+			field3 += _label;
+
 			ImGui::PushItemWidth(_width);
 			Label(_label);
 			ImGui::SameLine();
 			Label("X:");
 			ImGui::SameLine();
-			if (ImGui::DragFloat("", &x, _dragSpeed, _min, _max))
+			if (ImGui::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max))
 			{
 				_outputVec->x = x;
 				changed = true;
@@ -133,7 +138,7 @@ namespace EGUI
 			ImGui::SameLine();
 			Label("Y:");
 			ImGui::SameLine();
-			if (ImGui::DragFloat("", &y, _dragSpeed, _min, _max))
+			if (ImGui::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max))
 			{
 				_outputVec->y = y;
 				changed = true;
@@ -141,13 +146,12 @@ namespace EGUI
 			ImGui::SameLine();
 			Label("Z:");
 			ImGui::SameLine();
-			if (ImGui::DragFloat("", &z, _dragSpeed, _min, _max))
+			if (ImGui::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max))
 			{
 				changed = true;
 				_outputVec->z = z;
 			}
 			ImGui::PopItemWidth();
-	
 			return changed;
 		}
 	
