@@ -14,10 +14,29 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 #include "DataStructure\SharedPtr.h"
 
+#include "System\Time\TimeSystem.h"
+#include "System\Input\InputSystem.h"
+#include "System\Sound\SoundSystem.h"
+#include "System\Graphics\GraphicsSystem.h"
+
+#include <tuple>
+
+namespace
+{
+	using AllSys = std::tuple<
+		Dystopia::TimeSystem, Dystopia::InputManager, Dystopia::SoundSystem, Dystopia::GraphicsSystem
+	>;
+}
+
 SharedPtr<Dystopia::EngineCore> Dystopia::EngineCore::GetInstance(void)
 {
 	static SharedPtr<EngineCore> pInstance;
 	return pInstance;
+}
+
+void Dystopia::EngineCore::Init(void)
+{
+
 }
 
 #if !EDITOR

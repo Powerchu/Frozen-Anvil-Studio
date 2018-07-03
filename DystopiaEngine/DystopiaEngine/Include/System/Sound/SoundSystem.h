@@ -34,7 +34,7 @@ namespace FMOD
 namespace Dystopia
 {
 	class AudioSource;
-	struct SoundSystem::SoundInfo;
+	struct SoundInfo;
 
 	class SoundSystem : public Systems
 	{

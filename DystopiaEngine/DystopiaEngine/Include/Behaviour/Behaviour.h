@@ -26,7 +26,7 @@ namespace Dystopia
 	public:
 
 		using TAG = BehaviourTag;
-		static const eComponents TYPE = eComponents::BASE_COMPONENT;
+		static constexpr eComponents TYPE = eComponents::BASE_COMPONENT;
 		virtual const eComponents GetComponentType(void) const { return TYPE; };
 
 

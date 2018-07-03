@@ -20,6 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\SystemTypes.h"
 #include "System\Base\Systems.h"
 
+
+
 namespace Dystopia
 {
 	class EngineCore final  
@@ -29,13 +31,18 @@ namespace Dystopia
 		static SharedPtr<EngineCore> GetInstance(void);
 
 		template <class T>
-		T* GetSystem(void) const;
+		SharedPtr<T> GetSystem(void) const;
+		template<unsigned eSYSTEMS>
+		auto GetSystem(void) const;
 		template <class T>
 		T* GetSubSystem(void) const;
 
+		void Init(void);
+
 	private:
 
-		AutoArray<Systems> Systems;
+		AutoArray<Systems*> SystemList;
+		AutoArray<Systems*> SystemTable;
 
 		EngineCore(void);
 	};
@@ -45,9 +52,15 @@ namespace Dystopia
 
 
 template<class T>
-inline T* Dystopia::EngineCore::GetSystem(void) const
+inline SharedPtr<T> Dystopia::EngineCore::GetSystem(void) const
 {
-	return nullptr;
+	return SystemTable[0];
+}
+
+template<unsigned eSYSTEMS>
+inline auto Dystopia::EngineCore::GetSystem(void) const
+{
+	return &SystemTable[eSYSTEMS];
 }
 
 template<class T>

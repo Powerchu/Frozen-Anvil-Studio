@@ -19,6 +19,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Utility
 {
+	template <bool, typename true_t, typename false_t>
+	struct IfElse
+	{
+		using type = true_t;
+		using result = true_t;
+	};
+
+	template <typename true_t, typename false_t>
+	struct IfElse<false, true_t, false_t>
+	{
+		using type = false_t;
+		using result = false_t;
+	};
+
+	template <bool b, typename true_t, typename false_t>
+	using IfElse_t = typename IfElse<b, true_t, false_t>::result;
+
 	template <typename T>
 	struct RemoveRef
 	{
