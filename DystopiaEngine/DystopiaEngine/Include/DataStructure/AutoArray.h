@@ -19,10 +19,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\DebugAssert.h"
 #endif // Debug only includes
 
-#include "Utility\Utility.h"	// Move
-#include "Math\MathUtility.h"	// phi
+#include "Utility\Utility.h"			// Move
+#include "Math\MathUtility.h"			// phi
+#include "Utility\Meta.h"
+#include "Utility\MetaDataStructures.h" // TypeList
 
-#include <new>					// operator new
+#include <new>     // operator new
 
 template<class T>
 class AutoArray

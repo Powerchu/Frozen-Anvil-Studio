@@ -19,6 +19,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Utility
 {
+	// Constant
+	// ========= ===========================================================
+
+	template <typename T, T _value>
+	struct Constant
+	{
+		static constexpr T value = _value;
+	};
+
+
+	// If - Else
+	// =========== =========================================================
+
 	template <bool, typename true_t, typename false_t>
 	struct IfElse
 	{
@@ -35,6 +48,10 @@ namespace Utility
 
 	template <bool b, typename true_t, typename false_t>
 	using IfElse_t = typename IfElse<b, true_t, false_t>::result;
+
+
+	// RemoveRef
+	// ========== ==========================================================
 
 	template <typename T>
 	struct RemoveRef
@@ -54,11 +71,9 @@ namespace Utility
 		using type = T;
 	};
 
-	template <typename T, T _value>
-	struct Constant
-	{
-		static constexpr T value = _value;
-	};
+
+	// EnableIf
+	// ========= ===========================================================
 
 	template<bool _b, typename T>
 	struct EnableIf
@@ -75,50 +90,106 @@ namespace Utility
 	template <bool _b, typename T>
 	using EnableIf_t = typename EnableIf<_b, T>::type;
 
+
+	// IsSame
+	// ======== ============================================================
+
 	template <typename T, typename U>
 	struct IsSame : Constant <bool, false> {};
 
 	template <typename T>
 	struct IsSame<T, T> : Constant <bool, true> {};
 
-	template <typename T>
-	struct NotLvalueRef : Constant<bool, true> {};
+
+	// Is l-value ref
+	// ================ ====================================================
 
 	template <typename T>
-	struct NotLvalueRef<T&> : Constant<bool, false> {};
+	struct IsLvalueRef : Constant<bool, false> {};
+
+	template <typename T>
+	struct IsLvalueRef<T&> : Constant<bool, true> {};
+
+	template <typename T>
+	struct NotLvalueRef : Constant<bool, IsLvalueRef<T>::value> {};
+
+
+	// Is Integral
+	// ============= =======================================================
 
 	template <typename T>
 	struct IsIntegral : Constant<bool,
-		IsSame<char, T>					::value ||
-		IsSame<unsigned char, T>		::value ||
-		IsSame<short, T>				::value ||
-		IsSame<unsigned short, T>		::value ||
-		IsSame<int, T>					::value ||
-		IsSame<unsigned, T>				::value ||
-		IsSame<long, T>					::value ||
-		IsSame<unsigned long, T>		::value ||
-		IsSame<long long, T>			::value ||
-		IsSame<unsigned long long, T>	::value
+		IsSame<char, T>				  ::value ||
+		IsSame<unsigned char, T>	  ::value ||
+		IsSame<short, T>			  ::value ||
+		IsSame<unsigned short, T>	  ::value ||
+		IsSame<int, T>				  ::value ||
+		IsSame<unsigned, T>			  ::value ||
+		IsSame<long, T>				  ::value ||
+		IsSame<unsigned long, T>	  ::value ||
+		IsSame<long long, T>		  ::value ||
+		IsSame<unsigned long long, T> ::value
 	> {};
+
+
+	// Is Float
+	// =========== =========================================================
 
 	template <typename T>
 	struct IsFloatType : Constant<bool,
-		IsSame<float, T>		::value ||
-		IsSame<double, T>		::value ||
-		IsSame<long double, T>	::value
+		IsSame<float, T>	   ::value ||
+		IsSame<double, T>	   ::value ||
+		IsSame<long double, T> ::value
 	> {};
+
+
+	// Is Numeral
+	// =========== =========================================================
 
 	template <typename T>
 	struct IsNumeric : Constant<bool,
-		IsIntegral<T>			::value ||
-		IsFloatType<T>			::value
+		IsIntegral<T>  ::value ||
+		IsFloatType<T> ::value
 	> {};
+
+
+	// Is Signed
+	// =========== =========================================================
 
 	template <typename T>
 	struct IsSigned : Constant<bool, ((T( -1 )) < (T( 0 )))> {};
 
+
+	// Has Members
+	// ============= =======================================================
+
 	template <typename T>
-	struct HasMember : Constant<bool, sizeof(Helper::HasMember<T>(nullptr)) == sizeof(char)> {};
+	struct HasMember : Constant<bool, 
+		sizeof(Helper::HasMember<T>(nullptr)) == sizeof(char)>
+	{};
+
+
+	// Is Pointer
+	// ============= =======================================================
+
+	template <typename ... T>
+	struct IsPointer;
+
+	template <typename Ty, typename ... T>
+	struct IsPointer<Ty, T...> : Constant <bool, false>
+	{};
+
+	template <typename Ty, typename ... T>
+	struct IsPointer<Ty*, T...> : Constant <bool, IsPointer<T...>::value>
+	{};
+
+	template <typename Ty>
+	struct IsPointer<Ty> : Constant <bool, false>
+	{};
+
+	template <typename Ty>
+	struct IsPointer<Ty*> : Constant <bool, true>
+	{};
 }
 
 

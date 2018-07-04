@@ -108,9 +108,6 @@
     <ClInclude Include="Include\Math\MathUtility.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Utility\Meta.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Utility\MetaHelper.h">
       <Filter>Utility\Internals</Filter>
     </ClInclude>
@@ -232,7 +229,13 @@
       <Filter>Game Engine\Systems\Driver</Filter>
     </ClInclude>
     <ClInclude Include="Include\Utility\MetaAlgorithms.h">
-      <Filter>Utility</Filter>
+      <Filter>Utility\Meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\Meta.h">
+      <Filter>Utility\Meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\MetaDataStructures.h">
+      <Filter>Utility\Meta</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -373,6 +376,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Driver">
       <UniqueIdentifier>{5218dddd-4e8e-4b28-9f3d-f179f71e8edc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Meta">
+      <UniqueIdentifier>{6a9f286f-47a9-4b59-9ff5-dda9a16e59f1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

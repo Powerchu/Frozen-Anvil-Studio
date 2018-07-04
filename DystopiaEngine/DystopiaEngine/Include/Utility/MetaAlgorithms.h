@@ -16,52 +16,58 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility\Meta.h"
 #include "Utility\MetaHelper.h"
+#include "Utility\MetaDataStructures.h"
 
 namespace Utility
 {
-	template <unsigned label, typename T>
-	struct Indexer
-	{
-		using type = T;
-		static constexpr unsigned value = label;
-	};
-
-	template <unsigned _label, typename T>
-	using Indexer_t = typename Indexer<_label, T>::type;
-
-	template <typename ... Ty>
-	struct Collection;
-
-
 	// =========================================== COMPILE TIME FIND =========================================== //
 
 
 	template <typename Ty, typename ... Arr>
 	struct Find
 	{
-		using result_t = typename Helper::Finder<Ty, Arr...>::result_t;
+		using result = typename Helper::Finder<Ty, Arr...>::result;
 	};
 
 	template <typename Ty, template <typename...> typename Set, typename ...T>
 	struct Find<Ty, Set<T...>>
 	{
-		using result_t = typename Find<Ty, T...>::result_t;
+		using result = typename Find<Ty, T...>::result;
 	};
 
 	template <typename Ty, typename ... T, unsigned ... vals>
 	struct Find<Ty, Indexer<vals,T>...>
 	{
-		using result_t = typename Helper::Finder<Ty, Indexer<vals, T>...>::result_t;
+		using result = typename Helper::Finder<Ty, Indexer<vals, T>...>::result;
 	};
 
 	template <typename Ty, typename ...Arr>
-	using Find_t = typename Find<Ty, Arr...>::result_t;
+	using Find_t = typename Find<Ty, Arr...>::result;
 
 
 	// =========================================== COMPILE TIME SORT =========================================== //
 
-	template <typename T>
+
+	template <typename Pred, typename T>
 	struct Sort;
+
+//	template <typename Pred, typename T>
+//	using Sort_t = typename Sort<Pred, T>::type;
+
+
+	// ============================================ MAKE TYPE LIST ============================================ //
+
+	template <typename ... Ty>
+	struct MakeTypeList;
+
+	template <template <typename...> typename Set, typename ... Ty>
+	struct MakeTypeList <Set<Ty...>>
+	{
+		using type = typename Helper::TypeListMaker<Ty...>::type;
+	};
+
+	template <typename ... T>
+	using MakeTypeList_t = typename MakeTypeList<T...>::type;
 }
 
 

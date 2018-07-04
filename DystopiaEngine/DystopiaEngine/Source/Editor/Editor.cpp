@@ -13,9 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 
+#include "System\Driver\Driver.h"
 #include "System\Window\WindowManager.h"
-#include "System\Graphics\GraphicsSystem.h"
-#include "System\Graphics\MeshSystem.h"
 
 #include "DataStructure\AutoArray.h"
 
@@ -25,9 +24,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\Vector4.h"
 #include "Math\Matrix4.h"
 #include <iostream>
-using namespace Math;
+
 #define _ZERO_(_X_) (IsZero(_X_) ? .0f : _X_)
-void PrintVector(Vec4 _v)
+void PrintVector(Math::Vec4 _v)
 {
 	std::cout << 
 		_ZERO_(_v.x) << " " <<
@@ -35,7 +34,7 @@ void PrintVector(Vec4 _v)
 		_ZERO_(_v.z) << " " <<
 		_ZERO_(_v.w) << std::endl;
 }
-void PrintMatrix(Mat4 _m)
+void PrintMatrix(Math::Mat4 _m)
 {
 	for (int n = 0; n < 4; ++n)
 	{
@@ -43,38 +42,28 @@ void PrintMatrix(Mat4 _m)
 	}
 }
 
+float Rand(int lim)
+{
+	return (rand() % lim) * 1.f;
+}
+
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
-	Dystopia::WindowManager *win = new Dystopia::WindowManager{};
-	Dystopia::GraphicsSystem *gfx = new Dystopia::GraphicsSystem{};
-	Dystopia::MeshSystem *mesh = new Dystopia::MeshSystem{};
+	auto driver = Dystopia::EngineCore::GetInstance();
 
-	win->LoadDefaults();
-	win->Init();
-
-	gfx->InitOpenGL(win->GetMainWindow());
-	gfx->Init();
-
-	mesh->Init();
-
-	win->DestroySplash();
-
-	mesh->StartMesh();
-	mesh->LoadMesh("Resource/Meshes/Quad.txt");
-	mesh->EndMesh();
+	driver->LoadSettings();
+	driver->Init();
+//	mesh->StartMesh();
+//	mesh->LoadMesh("Resource/Meshes/Quad.txt");
+//	mesh->EndMesh();
 
 	while (true)
 	{
-		win->Update(1.f);
-		gfx->Update(1.f);
+		driver->Update();
 	}
 
-	gfx->Shutdown();
-	win->Shutdown();
-
-	delete win;
-	delete gfx;
+	driver->Shutdown();
 
 	return 0;
 }

@@ -39,13 +39,13 @@ namespace Dystopia
 			Utility::Indexer<eSYSTEMS::TIME_SYSTEM    , TimeSystem     >,
 			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM   , InputManager   >,
 			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM  , WindowManager  >,
-			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM   , SoundSystem    >,
+//			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM   , SoundSystem    >,
 			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM , GraphicsSystem >
 		>;
 
 	public:
 
-		static SharedPtr<EngineCore> GetInstance(void);
+		static SharedPtr<EngineCore> GetInstance(void) noexcept;
 
 		template <class T>
 		T* const GetSystem(void) const;
@@ -53,8 +53,10 @@ namespace Dystopia
 		template <class T>
 		T* const GetSubSystem(void) const;
 
+		void LoadSettings(void);
 		void Init(void);
 		void Update(void);
+		void Shutdown(void);
 
 	private:
 
@@ -72,7 +74,7 @@ namespace Dystopia
 template<class T>
 inline T* const Dystopia::EngineCore::GetSystem(void) const
 {
-	return static_cast<T*const>(SystemTable[Utility::Find_t<T, AllSys>::value]);
+	return static_cast<T*>(SystemTable[Utility::Find_t<T, AllSys>::value]);
 }
 
 template<class T>

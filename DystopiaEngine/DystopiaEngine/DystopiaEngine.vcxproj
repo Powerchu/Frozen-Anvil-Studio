@@ -103,6 +103,7 @@
     <ClInclude Include="Include\Utility\DebugAssert.h" />
     <ClInclude Include="Include\Utility\Meta.h" />
     <ClInclude Include="Include\Utility\MetaAlgorithms.h" />
+    <ClInclude Include="Include\Utility\MetaDataStructures.h" />
     <ClInclude Include="Include\Utility\MetaHelper.h" />
     <ClInclude Include="Include\Utility\Utility.h" />
     <ClInclude Include="Include\Math\Vector2.h" />

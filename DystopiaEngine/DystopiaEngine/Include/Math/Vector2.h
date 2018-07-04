@@ -86,6 +86,7 @@ namespace Math
 			inline bool operator == (float);
 			inline bool operator != (float);
 
+			inline _CALL operator float&(void);
 			inline _CALL operator float(void) const;
 
 		private:
@@ -321,6 +322,12 @@ template<unsigned N>
 inline bool Math::Vector2::Swizzle<N>::operator != (float _fScalar)
 {
 	return !(*this == _fScalar);
+}
+
+template<unsigned N>
+inline _CALL Math::Vector2::Swizzle<N>::operator float&(void)
+{
+	return elem[N];
 }
 
 template <unsigned N>

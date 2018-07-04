@@ -14,22 +14,57 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 #include "DataStructure\SharedPtr.h"
 
+#include "Utility\MetaAlgorithms.h"
+#include "Utility\MetaDataStructures.h"
+
 #include "System\Time\TimeSystem.h"
 #include "System\Input\InputSystem.h"
 #include "System\Sound\SoundSystem.h"
 #include "System\Graphics\GraphicsSystem.h"
+#include "System\Window\WindowManager.h"
 
-
-SharedPtr<Dystopia::EngineCore> Dystopia::EngineCore::GetInstance(void)
+namespace
 {
-	static SharedPtr<EngineCore> pInstance;
+	template <typename Ty>
+	inline void RecursiveNewInsertAutoArray(AutoArray<Ty>&)
+	{
+	}
+
+	template <typename Ty, typename T, typename ... Ts>
+	inline void RecursiveNewInsertAutoArray(AutoArray<Ty>& _arr)
+	{
+		_arr.EmplaceBack(new T{});
+		RecursiveNewInsertAutoArray<Ty, Ts...>(_arr);
+	}
+
+	template <typename Ty, typename ... T>
+	AutoArray<Ty> MakeAutoArray(Utility::TypeList<T...>)
+	{
+		AutoArray<Ty> ret{sizeof...(T)};
+
+		RecursiveNewInsertAutoArray<Ty, T...>(ret);
+
+		return ret;
+	}
+}
+
+
+SharedPtr<Dystopia::EngineCore> Dystopia::EngineCore::GetInstance(void) noexcept
+{
+	static SharedPtr<EngineCore> pInstance = CreateShared(new EngineCore{});
 	return pInstance;
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mTime{}, SystemTable{ eSYSTEMS::TOTAL_SYSTEMS }, SystemList{ eSYSTEMS::TOTAL_SYSTEMS }
+	mTime{}, SystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<AllSys>{}) }, SystemList{ Utility::SizeofList<AllSys>::value }
 {
 
+}
+
+void Dystopia::EngineCore::LoadSettings(void)
+{
+	for (auto& e : SystemTable)
+		e->LoadDefaults();
 }
 
 void Dystopia::EngineCore::Init(void)
@@ -43,12 +78,12 @@ void Dystopia::EngineCore::Init(void)
 	{
 		if (e->Init())
 		{
-			delete e;
-			e = nullptr;
+			SystemList.EmplaceBack(e);
 		}
 		else
 		{
-			SystemList.EmplaceBack(e);
+			delete e;
+			e = nullptr;
 		}
 	}
 
@@ -69,6 +104,18 @@ void Dystopia::EngineCore::Update(void)
 	}
 
 	GetSystem<GraphicsSystem>();
+}
+
+void Dystopia::EngineCore::Shutdown(void)
+{
+	for (auto& e : SystemList)
+		e->Shutdown();
+
+	for (auto& e : SystemList)
+		delete e;
+
+	SystemList.clear();
+	SystemTable.clear();
 }
 
 #if !EDITOR

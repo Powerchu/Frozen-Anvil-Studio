@@ -37,7 +37,10 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
+		void PreInit(void);
 		bool Init(void);
+		void PostInit(void);
+
 		void Update(float _dt);
 		void Shutdown(void);
 		void LoadDefaults(void);

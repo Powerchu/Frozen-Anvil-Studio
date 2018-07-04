@@ -14,19 +14,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _META_HELPER_H_
 #define _META_HELPER_H_
 
-#include <type_traits>
+#include "Utility/MetaDataStructures.h"
 
 namespace Utility
 {
-	// Forward Decl
-	template <unsigned label, typename T>
-	struct Indexer;
-
-	template <typename T, typename U>
-	struct IsSame;
+	// Foward Decls
 
 	template <bool, typename true_t, typename false_t>
 	struct IfElse;
+
+	template <typename T, typename U>
+	struct IsSame;
 
 	namespace Helper
 	{
@@ -40,7 +38,7 @@ namespace Utility
 		constexpr int HasMember(...)		{ return 0; }
 
 
-	// =========================================== COMPILE TIME FIND  =========================================== // 
+	// =========================================== COMPILE TIME FIND =========================================== // 
 	// Make result be false instead of compile error?
 
 		template <typename Ty, typename ... Arr>
@@ -49,10 +47,12 @@ namespace Utility
 		template <typename Ty, typename first, typename ... Arr>
 		struct Finder<Ty, first, Arr...>
 		{
-			using result_t = typename IfElse<
+			using type = typename IfElse<
 				IsSame<Ty, first >::value,
-				Ty, typename Finder<Ty, Arr...>::result_t
+				Finder<Ty, Ty> , Finder<Ty, Arr...>
 			>::type;
+
+			using result = typename type::result;
 		};
 
 		template <typename Ty, typename last>
@@ -60,25 +60,43 @@ namespace Utility
 		{
 			static_assert(IsSame<Ty, last>::value, "Compile time search error: Type not found.");
 
-			using result_t = last;
+			using result = last;
 		};
 
 		template <typename Ty, typename T, typename ... Ts, unsigned val, unsigned ... vals>
 		struct Finder<Ty, Indexer<val, T>, Indexer<vals, Ts>...>
 		{
-			using result_t = typename IfElse<
+			using type = typename IfElse<
 				IsSame<Ty, T>::value,
-				Indexer<val, Ty>,
-				typename Finder<Ty, Indexer<vals, Ts>...>::result_t
+				Finder<Ty, Indexer<val, Ty>>,
+				Finder<Ty, Indexer<vals, Ts>...>
 			>::type;
+
+			using result = typename type::result;
 		};
 
-		template <typename Ty, typename T, unsigned vals>
-		struct Finder<Ty, Indexer<vals, T>>
+		template <typename Ty, typename T, unsigned val>
+		struct Finder<Ty, Indexer<val, T>>
 		{
 			static_assert(IsSame<Ty, T>::value, "Compile time search error: Type not found.");
 
-			using result_t = Indexer<vals, Ty>;
+			using type = Finder;
+			using result = Indexer<val, Ty>;
+		};
+
+
+	// =========================================== INITIALISER LIST ============================================ // 
+
+		template <typename ... Ty>
+		struct TypeListMaker
+		{
+			using type = TypeList<Ty...>;
+		};
+
+		template <unsigned ...vals, typename ... Ty>
+		struct TypeListMaker<Indexer<vals, Ty>...>
+		{
+			using type = TypeList<Ty...>;
 		};
 	}
 }
