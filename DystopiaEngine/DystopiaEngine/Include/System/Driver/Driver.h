@@ -19,28 +19,46 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System\SystemTypes.h"
 #include "System\Base\Systems.h"
+#include "System\Time\Timer.h"
 
+#include "Utility\Meta.h"
+#include "Utility\MetaAlgorithms.h"
 
 
 namespace Dystopia
 {
+	class TimeSystem;
+	class InputManager;
+	class WindowManager;
+	class SoundSystem;
+	class GraphicsSystem;
+
 	class EngineCore final  
 	{
+		using AllSys = Utility::Collection <
+			Utility::Indexer<eSYSTEMS::TIME_SYSTEM    , TimeSystem     >,
+			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM   , InputManager   >,
+			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM  , WindowManager  >,
+			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM   , SoundSystem    >,
+			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM , GraphicsSystem >
+		>;
+
 	public:
 
 		static SharedPtr<EngineCore> GetInstance(void);
 
 		template <class T>
-		SharedPtr<T> GetSystem(void) const;
-		template<unsigned eSYSTEMS>
-		auto GetSystem(void) const;
+		T* const GetSystem(void) const;
+
 		template <class T>
-		T* GetSubSystem(void) const;
+		T* const GetSubSystem(void) const;
 
 		void Init(void);
+		void Update(void);
 
 	private:
 
+		Timer mTime;
 		AutoArray<Systems*> SystemList;
 		AutoArray<Systems*> SystemTable;
 
@@ -52,19 +70,13 @@ namespace Dystopia
 
 
 template<class T>
-inline SharedPtr<T> Dystopia::EngineCore::GetSystem(void) const
+inline T* const Dystopia::EngineCore::GetSystem(void) const
 {
-	return SystemTable[0];
-}
-
-template<unsigned eSYSTEMS>
-inline auto Dystopia::EngineCore::GetSystem(void) const
-{
-	return &SystemTable[eSYSTEMS];
+	return static_cast<T*const>(SystemTable[Utility::Find_t<T, AllSys>::value]);
 }
 
 template<class T>
-inline T* Dystopia::EngineCore::GetSubSystem(void) const
+inline T* const Dystopia::EngineCore::GetSubSystem(void) const
 {
 	return nullptr;
 }

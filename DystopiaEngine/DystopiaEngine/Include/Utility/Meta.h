@@ -118,7 +118,7 @@ namespace Utility
 	struct IsSigned : Constant<bool, ((T( -1 )) < (T( 0 )))> {};
 
 	template <typename T>
-	struct HasMember : Constant<bool, Helper::HasMember<T>(nullptr)> {};
+	struct HasMember : Constant<bool, sizeof(Helper::HasMember<T>(nullptr)) == sizeof(char)> {};
 }
 
 

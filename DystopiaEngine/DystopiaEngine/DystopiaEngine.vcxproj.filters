@@ -231,7 +231,7 @@
     <ClInclude Include="Include\System\Driver\Driver.h">
       <Filter>Game Engine\Systems\Driver</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DataStructure\MetaAlgorithms.h">
+    <ClInclude Include="Include\Utility\MetaAlgorithms.h">
       <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>

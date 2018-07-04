@@ -19,14 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Sound\SoundSystem.h"
 #include "System\Graphics\GraphicsSystem.h"
 
-#include <tuple>
-
-namespace
-{
-	using AllSys = std::tuple<
-		Dystopia::TimeSystem, Dystopia::InputManager, Dystopia::SoundSystem, Dystopia::GraphicsSystem
-	>;
-}
 
 SharedPtr<Dystopia::EngineCore> Dystopia::EngineCore::GetInstance(void)
 {
@@ -34,9 +26,49 @@ SharedPtr<Dystopia::EngineCore> Dystopia::EngineCore::GetInstance(void)
 	return pInstance;
 }
 
-void Dystopia::EngineCore::Init(void)
+Dystopia::EngineCore::EngineCore(void) :
+	mTime{}, SystemTable{ eSYSTEMS::TOTAL_SYSTEMS }, SystemList{ eSYSTEMS::TOTAL_SYSTEMS }
 {
 
+}
+
+void Dystopia::EngineCore::Init(void)
+{
+	mTime.Lap();
+
+	for (auto& e : SystemTable)
+		e->PreInit();
+
+	for (auto& e : SystemTable)
+	{
+		if (e->Init())
+		{
+			delete e;
+			e = nullptr;
+		}
+		else
+		{
+			SystemList.EmplaceBack(e);
+		}
+	}
+
+	for (auto& e : SystemList)
+		e->PostInit();
+
+	mTime.Lap();
+}
+
+void Dystopia::EngineCore::Update(void)
+{
+	float dt = mTime.Elapsed();
+	mTime.Lap();
+
+	for (auto& e : SystemList)
+	{
+		e->Update(dt);
+	}
+
+	GetSystem<GraphicsSystem>();
 }
 
 #if !EDITOR
@@ -53,3 +85,4 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 }
 
 #endif
+

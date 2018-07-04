@@ -43,34 +43,6 @@ void PrintMatrix(Mat4 _m)
 	}
 }
 
-void PrintStuff(void)
-{
-
-	AutoArray<std::string> x;
-
-	x.push_back("What");
-	x.EmplaceBack("On Earth");
-
-	for (int i = 0; i < 100; ++i)
-		x.push_back("EXPLODE");
-	x.clear();
-
-	for (int n = 0; n < 200; ++n)
-		x.EmplaceBack("DEATH");
-
-	x[176] = "HOLY SHIT MAN";
-	x.back() = "WILL I EXPLODE? NOBODY KNOWS!";
-
-	std::cout << x[176] << std::endl;
-	std::cout << x.back() << std::endl;
-	x.back() = "OH THE INTENSITY, OH THE TENSION, OH THE SUSPENSE, OH THE RAW WILDNESS";
-	x = x;
-
-	AutoArray<std::string> y = x;
-	std::cout << x.back() << std::endl;
-	std::cout << y.back() << std::endl;
-}
-
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {

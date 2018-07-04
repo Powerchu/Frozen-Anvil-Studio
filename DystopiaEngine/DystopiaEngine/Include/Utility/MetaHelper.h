@@ -32,33 +32,53 @@ namespace Utility
 	{
 		// If it has a member, we can instantiate type of member pointer
 		template <typename T>
-		constexpr bool HasMember(T T::*)	{ return true; }
+		constexpr char HasMember(T T::*)	{ return 1; }
 
 		// Force false overload to have the lowest rank so that
 		// it will only be picked if substution for "true" overload fails
 		template <typename T>
-		constexpr bool HasMember(...)		{ return false; }
+		constexpr int HasMember(...)		{ return 0; }
 
+
+	// =========================================== COMPILE TIME FIND  =========================================== // 
+	// Make result be false instead of compile error?
 
 		template <typename Ty, typename ... Arr>
 		struct Finder;
 
+		template <typename Ty, typename first, typename ... Arr>
+		struct Finder<Ty, first, Arr...>
+		{
+			using result_t = typename IfElse<
+				IsSame<Ty, first >::value,
+				Ty, typename Finder<Ty, Arr...>::result_t
+			>::type;
+		};
+
+		template <typename Ty, typename last>
+		struct Finder<Ty, last>
+		{
+			static_assert(IsSame<Ty, last>::value, "Compile time search error: Type not found.");
+
+			using result_t = last;
+		};
+
 		template <typename Ty, typename T, typename ... Ts, unsigned val, unsigned ... vals>
 		struct Finder<Ty, Indexer<val, T>, Indexer<vals, Ts>...>
 		{
-			using result = typename IfElse<
+			using result_t = typename IfElse<
 				IsSame<Ty, T>::value,
 				Indexer<val, Ty>,
-				Finder<Ty, Indexer<vals, Ts>...>
+				typename Finder<Ty, Indexer<vals, Ts>...>::result_t
 			>::type;
 		};
 
 		template <typename Ty, typename T, unsigned vals>
 		struct Finder<Ty, Indexer<vals, T>>
 		{
-			static_assert(IsSame<Ty, T>::value, "Compile time search error.");
+			static_assert(IsSame<Ty, T>::value, "Compile time search error: Type not found.");
 
-			using result = Indexer<vals, Ty>;
+			using result_t = Indexer<vals, Ty>;
 		};
 	}
 }
