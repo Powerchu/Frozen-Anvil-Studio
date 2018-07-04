@@ -13,11 +13,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Editor\Commands.h"
 #include "Editor\CommandList.h"
+#include "..\..\Dependancies\ImGui\imgui.h"
+#include <typeinfo>
 
 namespace Dystopia
 {
 	CommandHandler::CommandHandler(size_t _nHistory)
-		: mDeqRedo{ _nHistory, nullptr }, mDeqUndo{ _nHistory, nullptr }
+		: mDeqRedo{ _nHistory, nullptr }, mDeqUndo{ _nHistory, nullptr }, mRecording{ false },
+		mpTarget{ nullptr }, mpOriginalVal{ nullptr }, mTargetSize{ 0 }
 	{
 	}
 
@@ -84,6 +87,30 @@ namespace Dystopia
 			delete _targetDeque.front();
 			_targetDeque.pop_front();
 		}
+	}
+
+	void CommandHandler::UpdateRecording()
+	{
+
+	}
+
+	void CommandHandler::EndRecording()
+	{
+		if (!mRecording) return;
+		if (mpOriginalVal)
+		{
+			delete mpOriginalVal;
+		}
+
+		mTargetSize = 0;
+		mpOriginalVal = nullptr;
+		mpTarget = nullptr;
+		mRecording = false;
+	}
+
+	bool CommandHandler::IsRecording() const
+	{
+		return mRecording;
 	}
 }
 

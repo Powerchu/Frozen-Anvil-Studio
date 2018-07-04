@@ -39,12 +39,31 @@ namespace Dystopia
 		// Performs InvokeCommand on the latest command in the redo deque 
 		void RedoCommand();
 
+		template<typename T>
+		void StartRecording(T* _target)
+		{ 
+			if (mRecording) return;
+
+			mpTarget = _target;
+			mpOriginalVal = new T{ *_target };
+			mTargetSize = sizeof(*_target);
+			mRecording = true;
+		}
+
+		void UpdateRecording();
+		void EndRecording();
+		bool IsRecording() const;
+
 	private:
 		void PopFrontOfDeque(std::deque<Commands*>&);
 
 		std::deque<Commands*> mDeqRedo;
 		std::deque<Commands*> mDeqUndo;
-		unsigned mNextActionID;
+
+		bool mRecording;
+		void *mpTarget;
+		void *mpOriginalVal;
+		size_t mTargetSize;
 	};
 }
 

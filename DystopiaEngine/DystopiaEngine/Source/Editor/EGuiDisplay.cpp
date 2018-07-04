@@ -13,6 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor\EGUI.h"
+#include "Editor\Commands.h"
+#include "Editor\CommandList.h"
 #include "../../Dependancies/ImGui/imgui.h"
 #include "../../Dependancies/ImGui/imgui_internal.h"
 #include <stdlib.h>
@@ -20,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 constexpr unsigned int Default_VectorField_Alignment_Left = 100;
 constexpr unsigned int Default_VectorField_Alignment_Height = 2;
+
 namespace EGUI
 {
 	bool StartTab(const char *_pLabel, bool *_pOpen, ImGuiWindowFlags _flags)
