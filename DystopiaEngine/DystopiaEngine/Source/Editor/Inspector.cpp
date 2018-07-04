@@ -16,11 +16,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\EGUI.h"
 #include "Object\GameObject.h"
 #include "Component\Component.h"
+#include <iostream>
 
 namespace Dystopia
 {
 	Inspector::Inspector()
-		: mpFocusGameObj{ nullptr }, mLabel{ "Inspector" }
+		: mpFocusGameObj{ nullptr }, mLabel{ "Inspector" }, mDemoVec{ Math::Vec4{0,0,0,0} }
 	{}
 
 	Inspector::~Inspector()
@@ -56,18 +57,18 @@ namespace Dystopia
 
 	void Inspector::Window()
 	{
-		Math::Vec4 field{ 0,0,0,0 };	// replace with component variables
-		Math::Vec4 field2{ 0,0,0,0 };
+		float x = mDemoVec.x;
+		float y = mDemoVec.y;
+		float z = mDemoVec.z;
 		if (EGUI::Display::CollapsingHeader("Temporary Transform"))	// replace with for loop of all components name
 		{
-			if (EGUI::Display::VectorFields("Position", &field))
+			if (EGUI::Display::VectorFields("Demo Vec", &mDemoVec, 0.1f, 0.f, 10.f))
 			{
-
+				x = mDemoVec.x;
+				y = mDemoVec.y;
+				z = mDemoVec.z;
 			}
-			if (EGUI::Display::VectorFields("Size", &field2))
-			{
-
-			}
+			EGUI::Display::Label("Variable mDemoVec x : [%.3f] y: [%.3f] z:[%.3f]", x, y, z);
 		}
 		
 

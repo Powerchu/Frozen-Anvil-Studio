@@ -45,6 +45,7 @@ namespace Dystopia
 		void RemoveFocus();
 
 	private:
+		Math::Vec4 mDemoVec;
 		std::string mLabel;
 		GameObject *mpFocusGameObj;
 	};
