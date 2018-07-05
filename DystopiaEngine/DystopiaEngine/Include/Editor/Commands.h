@@ -39,8 +39,12 @@ namespace Dystopia
 		// Performs InvokeCommand on the latest command in the redo deque 
 		void RedoCommand();
 
+		// Attempt to create a command that last several frames. Like a continuously changing variable but at some point you want to revert back to 
+		// Takes in a pointer to the variable to be changed and keeps the initial first call as the value to revert back when undo is called.
+		// Only 1 pointer can be stored to recording at any given time. 
+		// DO NOT pass in any variable that you would be deleted without EndRecording being called.
 		template<typename T>
-		void StartRecording(T* _target)
+		void StartRecording(T*& _target)
 		{ 
 			if (mRecording) return;
 

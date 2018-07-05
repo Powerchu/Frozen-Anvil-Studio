@@ -91,7 +91,6 @@ namespace Dystopia
 
 	void CommandHandler::UpdateRecording()
 	{
-
 	}
 
 	void CommandHandler::EndRecording()
