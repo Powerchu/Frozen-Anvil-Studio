@@ -173,10 +173,7 @@ namespace Utility
 	// ============= =======================================================
 
 	template <typename ... T>
-	struct IsPointer;
-
-	template <typename Ty, typename ... T>
-	struct IsPointer<Ty, T...> : Constant <bool, false>
+	struct IsPointer : Constant <bool, false>
 	{};
 
 	template <typename Ty, typename ... T>
