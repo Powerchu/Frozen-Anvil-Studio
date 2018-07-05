@@ -51,7 +51,6 @@ namespace Dystopia
 
 			mpTarget = _target;
 			mpOriginalVal = new T{ *_target };
-			mTargetSize = sizeof(*_target);
 			mRecording = true;
 		}
 
@@ -61,14 +60,11 @@ namespace Dystopia
 
 	private:
 		void PopFrontOfDeque(std::deque<Commands*>&);
-
 		std::deque<Commands*> mDeqRedo;
 		std::deque<Commands*> mDeqUndo;
-
 		bool mRecording;
 		void *mpTarget;
 		void *mpOriginalVal;
-		size_t mTargetSize;
 	};
 }
 

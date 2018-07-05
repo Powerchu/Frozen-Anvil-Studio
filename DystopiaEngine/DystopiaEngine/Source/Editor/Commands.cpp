@@ -20,8 +20,8 @@ namespace Dystopia
 {
 	CommandHandler::CommandHandler(size_t _nHistory)
 		: mDeqRedo{ _nHistory, nullptr }, mDeqUndo{ _nHistory, nullptr }, mRecording{ false },
-		mpTarget{ nullptr }, mpOriginalVal{ nullptr }, mTargetSize{ 0 }
-	{
+		mpTarget{ nullptr }, mpOriginalVal{ nullptr }
+	{;
 	}
 
 	CommandHandler::~CommandHandler()
@@ -101,7 +101,6 @@ namespace Dystopia
 			delete mpOriginalVal;
 		}
 
-		mTargetSize = 0;
 		mpOriginalVal = nullptr;
 		mpTarget = nullptr;
 		mRecording = false;
