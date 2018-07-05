@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _COMMANDS_H_
 #define _COMMANDS_H_
 #include <deque>
+#include <tuple>
 
 namespace Dystopia
 {
@@ -44,7 +45,7 @@ namespace Dystopia
 		// Only 1 pointer can be stored to recording at any given time. 
 		// DO NOT pass in any variable that you would be deleted without EndRecording being called.
 		template<typename T>
-		void StartRecording(T*& _target)
+		void StartRecording(T* _target)
 		{ 
 			if (mRecording) return;
 
