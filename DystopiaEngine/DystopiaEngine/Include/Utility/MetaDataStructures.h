@@ -38,6 +38,16 @@ namespace Utility
 	struct TypeList
 	{};
 
+	template <typename T, T ...>
+	struct IntegralList;
+
+	template <typename L, typename R>
+	struct Duplex
+	{
+		using lhs = L;
+		using rhs = R;
+	};
+
 
 
 	// ========================================= CERTAIN USEFUL STRUCTS ======================================== //
@@ -51,6 +61,62 @@ namespace Utility
 	{
 		static constexpr auto value = sizeof...(T);
 	};
+
+	template <typename Ty, template <typename, Ty...> typename Set, Ty ... vals>
+	struct SizeofList<Set<Ty, vals...>>
+	{
+		static constexpr auto value = sizeof...(vals);
+	};
+
+
+
+	template <typename ...Tys>
+	struct MetaConcat;
+
+	template <template <typename ...> typename Set, typename ... Tys>
+	struct MetaConcat<Set<Tys...>>
+	{
+		using type = Set<Tys...>;
+	};
+
+	template <template <typename ...> typename Set, typename ... lhs, typename ... rhs>
+	struct MetaConcat<Set<lhs...>, Set<rhs...>>
+	{
+		using type = Set<lhs..., rhs...>;
+	};
+
+	template <template <typename ...> typename Set, typename ... lhs, typename ... rhs, typename ... Rest>
+	struct MetaConcat<Set<lhs...>, Set<rhs...>, Rest...>
+	{
+		using type = typename MetaConcat<
+			Set<lhs..., rhs...>,
+			typename MetaConcat<Rest...>::type
+		>::type;
+	};
+
+	template <typename T, template <typename, T ...> typename Set, T ... vals>
+	struct MetaConcat<Set<T, vals...>>
+	{
+		using type = Set<T, vals...>;
+	};
+
+	template <typename T, template <typename, T ...> typename Set, T ... LHS, T ... RHS>
+	struct MetaConcat<Set<T, LHS...>, Set<T, RHS...>>
+	{
+		using type = Set<T, LHS..., RHS...>;
+	};
+
+	template <typename T, template <typename, T ...> typename Set, T ... LHS, T ... RHS, typename ... Rest>
+	struct MetaConcat<Set<T, LHS...>, Set<T, RHS...>, Rest...>
+	{
+		using type = typename MetaConcat<
+			Set<T, LHS..., RHS...>,
+			typename MetaConcat<Rest...>::type
+		>::type;
+	};
+
+	template <typename ... T>
+	using MetaConcat_t = typename MetaConcat<T...>::type;
 }
 
 

@@ -36,18 +36,16 @@ namespace Utility
 	struct IfElse
 	{
 		using type = true_t;
-		using result = true_t;
 	};
 
 	template <typename true_t, typename false_t>
 	struct IfElse<false, true_t, false_t>
 	{
 		using type = false_t;
-		using result = false_t;
 	};
 
 	template <bool b, typename true_t, typename false_t>
-	using IfElse_t = typename IfElse<b, true_t, false_t>::result;
+	using IfElse_t = typename IfElse<b, true_t, false_t>::type;
 
 
 	// RemoveRef
@@ -71,17 +69,20 @@ namespace Utility
 		using type = T;
 	};
 
+	template <typename T>
+	using RemoveRef_t = typename RemoveRef<T>::type;
+
 
 	// EnableIf
 	// ========= ===========================================================
 
-	template<bool _b, typename T>
+	template <bool _b, typename T>
 	struct EnableIf
 	{
 		// Force fail if false
 	};
 
-	template<typename T>
+	template <typename T>
 	struct EnableIf<true, T>
 	{
 		using type = T;
@@ -111,7 +112,7 @@ namespace Utility
 	struct IsLvalueRef<T&> : Constant<bool, true> {};
 
 	template <typename T>
-	struct NotLvalueRef : Constant<bool, IsLvalueRef<T>::value> {};
+	struct NotLvalueRef : Constant<bool, !IsLvalueRef<T>::value> {};
 
 
 	// Is Integral
@@ -178,10 +179,6 @@ namespace Utility
 
 	template <typename Ty, typename ... T>
 	struct IsPointer<Ty*, T...> : Constant <bool, IsPointer<T...>::value>
-	{};
-
-	template <typename Ty>
-	struct IsPointer<Ty> : Constant <bool, false>
 	{};
 
 	template <typename Ty>

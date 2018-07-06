@@ -68,7 +68,7 @@ namespace Utility
 		{
 			using type = typename IfElse<
 				IsSame<Ty, T>::value,
-				Finder<Ty, Indexer<val, Ty>>,
+				Finder<Ty, Indexer<val, T>>,
 				Finder<Ty, Indexer<vals, Ts>...>
 			>::type;
 
@@ -97,6 +97,79 @@ namespace Utility
 		struct TypeListMaker<Indexer<vals, Ty>...>
 		{
 			using type = TypeList<Ty...>;
+		};
+
+
+	// ========================================= COMPILE TIME PARTITION ======================================== // 
+
+
+
+		template <typename T, template <typename, T, T> typename Op, T, typename ... Ty>
+		struct MetaPartitionerValue;
+
+		template <typename T, template <typename, T, T> typename Op, 
+				  template <typename, T...> typename Set, T pivot, T next, T ... rest>
+		struct MetaPartitionerValue<T, Op, pivot, Set<T, next, rest...>>
+		{
+			using type = typename MetaPartitionerValue<T, Op, pivot, Set<T, rest...>>::result;
+
+			using result = Duplex <
+				MetaConcat_t <typename IfElse < Op<T, pivot, next>::value, Set<T, next>, Set<T>>::type, typename type::lhs>,
+				MetaConcat_t <typename IfElse <!Op<T, pivot, next>::value, Set<T, next>, Set<T>>::type, typename type::rhs>
+			>;
+		};
+
+		template <typename T, template <typename, T, T> typename Op,
+				  template <typename, T...> typename Set, T pivot, T next>
+		struct MetaPartitionerValue<T, Op, pivot, Set<T, next>>
+		{
+			using result = Duplex <
+				typename IfElse < Op<T, pivot, next>::value, Set<T, next>, Set<T> >::type,
+				typename IfElse <!Op<T, pivot, next>::value, Set<T, next>, Set<T> >::type
+			>;
+		};
+
+		template <template <typename, typename> typename Op, typename pivot, typename ... Ty>
+		struct MetaPartitionerType;
+
+		template <template <typename, typename> typename Op,
+				  typename pivot, typename next, typename ... rest>
+		struct MetaPartitionerType<Op, pivot, next, rest...>
+		{
+			using type = typename MetaPartitionerType<Op, pivot, rest...>::result;
+
+			using result = Duplex <
+				MetaConcat_t <typename IfElse < Op<pivot, next>::value, Collection<next>, Collection<>>::type, typename type::lhs>,
+				MetaConcat_t <typename IfElse <!Op<pivot, next>::value, Collection<next>, Collection<>>::type, typename type::rhs>
+			>;
+		};
+
+		template <template <typename, typename> typename Op, typename pivot, typename next>
+		struct MetaPartitionerType<Op, pivot, next>
+		{
+			using result = Duplex <
+				typename IfElse < Op<pivot, next>::value, Collection<next>, Collection<> >::type,
+				typename IfElse <!Op<pivot, next>::value, Collection<next>, Collection<> >::type
+			>;
+		};
+
+
+	// ============================================ COMPILE TIME FIND ========================================== // 
+		// Make result be false instead of compile error?
+
+		template <typename Op, typename ... Arr>
+		struct MetaSorter;
+
+		template <typename Ty, typename T, typename ... Ts, unsigned val, unsigned ... vals>
+		struct MetaSorter<Ty, Indexer<val, T>, Indexer<vals, Ts>...>
+		{
+			using result = int;
+		};
+
+		template <typename Ty, typename T, unsigned val>
+		struct MetaSorter<Ty, Indexer<val, T>>
+		{
+			using result = int;
 		};
 	}
 }

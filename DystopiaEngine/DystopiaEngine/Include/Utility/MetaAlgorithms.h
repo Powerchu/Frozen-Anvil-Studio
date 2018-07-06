@@ -24,35 +24,70 @@ namespace Utility
 
 
 	template <typename Ty, typename ... Arr>
-	struct Find
+	struct MetaFind
 	{
 		using result = typename Helper::Finder<Ty, Arr...>::result;
 	};
 
 	template <typename Ty, template <typename...> typename Set, typename ...T>
-	struct Find<Ty, Set<T...>>
+	struct MetaFind<Ty, Set<T...>>
 	{
-		using result = typename Find<Ty, T...>::result;
+		using result = typename MetaFind<Ty, T...>::result;
 	};
 
 	template <typename Ty, typename ... T, unsigned ... vals>
-	struct Find<Ty, Indexer<vals,T>...>
+	struct MetaFind<Ty, Indexer<vals,T>...>
 	{
 		using result = typename Helper::Finder<Ty, Indexer<vals, T>...>::result;
 	};
 
 	template <typename Ty, typename ...Arr>
-	using Find_t = typename Find<Ty, Arr...>::result;
+	using MetaFind_t = typename MetaFind<Ty, Arr...>::result;
+
+
+	// ======================================= COMPILE TIME PARTITIONING ======================================= //
+
+
+	template <template <typename U, U, U> typename Op, typename Pivot, typename T>
+	struct MetaPartitionValue;
+
+	template <typename T, template <typename U, U, U> typename Op, template <typename, T ...> typename Set, T pivot, T ... vals>
+	struct MetaPartitionValue<Op, Set<T, pivot>, Set<T, vals...>>
+	{
+		using result = typename Helper::MetaPartitionerValue<T, Op, pivot, Set<T, vals...>>::result;
+	};
+
+
+	template <template <typename, typename> typename Op, typename ... T>
+	struct MetaPartitionType;
+
+	template <template <typename, typename> typename Op, template <typename...> typename Set, typename pivot, typename ... Ty>
+	struct MetaPartitionType<Op, pivot, Set<Ty...>>
+	{
+		using result = typename Helper::MetaPartitionerType<Op, pivot, Ty...>::result;
+	};
+
+	template <template <typename, typename> typename Op, typename pivot, typename ... Ty>
+	struct MetaPartitionType<Op, pivot, Ty...>
+	{
+		using result = typename Helper::MetaPartitionerType<Op, pivot, Ty...>::result;
+	};
 
 
 	// =========================================== COMPILE TIME SORT =========================================== //
 
 
-	template <typename Pred, typename T>
-	struct Sort;
+	template <typename Op, typename ... T>
+	struct MetaSort;
 
-//	template <typename Pred, typename T>
-//	using Sort_t = typename Sort<Pred, T>::type;
+	template <typename Op, template <typename...> typename Set, typename ...T>
+	struct MetaSort<Op, Set<T...>>
+	{
+		using result = typename Helper::MetaSorter<Op, T...>::result;
+	};
+
+	template <typename Op, typename T>
+	using MetaSort_t = typename MetaSort<Op, T>::result;
 
 
 	// ============================================ MAKE TYPE LIST ============================================ //
