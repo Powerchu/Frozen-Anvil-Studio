@@ -25,6 +25,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\Matrix4.h"
 #include <iostream>
 
+#include "Utility/MetaAlgorithms.h"
+#include "Utility/MetaDataStructures.h"
+
 #define _ZERO_(_X_) (IsZero(_X_) ? .0f : _X_)
 void PrintVector(Math::Vec4 _v)
 {

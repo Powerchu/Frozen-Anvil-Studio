@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Input\InputMap.h"
 #include "System\Window\WindowManager.h"
 #include "System\Window\Window.h"
+#include "System\Driver\Driver.h"
 #include "Math\Vector2.h"
 #include "Math\Vector4.h"
 
@@ -35,7 +36,7 @@ void Dystopia::InputManager::LoadDefaultUserKeys(void)
 }
 
 Dystopia::InputManager::InputManager(void) :
-	mButtonMap{  }
+	mButtonMap{ static_cast<unsigned>(eUserButton::TOTAL_USERBUTTONS) }
 {
 
 }
@@ -71,7 +72,6 @@ void Dystopia::InputManager::Shutdown(void)
 void Dystopia::InputManager::LoadDefaults(void)
 {
 	mButtonMap.clear();
-	mButtonMap.reserve(static_cast<unsigned>(eUserButton::TOTAL_USERBUTTONS));
 
 	LoadDefaultUserKeys();
 }
@@ -104,13 +104,15 @@ Math::Vector2 Dystopia::InputManager::GetMousePosition(void)
 {
 	POINT pos;
 	GetCursorPos(&pos);
-	ScreenToClient(0, &pos);
+	ScreenToClient(
+		EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetWindowHandle(), 
+		&pos
+	);
 
-	// TODO*****
 	return Math::Vector2(pos.x * 1.f, pos.y * 1.f);
 }
 
-Math::Vector2 Dystopia::InputManager::GetMousePosition(Dystopia::Window& _activeWindow)
+Math::Vector2 Dystopia::InputManager::GetMousePosition(const Dystopia::Window& _activeWindow)
 {
 	POINT pos;
 	GetCursorPos(&pos);

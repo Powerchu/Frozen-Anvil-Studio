@@ -42,21 +42,21 @@ namespace Utility
 	// Make result be false instead of compile error?
 
 		template <typename Ty, typename ... Arr>
-		struct Finder;
+		struct MetaFinder;
 
 		template <typename Ty, typename first, typename ... Arr>
-		struct Finder<Ty, first, Arr...>
+		struct MetaFinder<Ty, first, Arr...>
 		{
 			using type = typename IfElse<
 				IsSame<Ty, first >::value,
-				Finder<Ty, Ty> , Finder<Ty, Arr...>
+				MetaFinder<Ty, Ty> , MetaFinder<Ty, Arr...>
 			>::type;
 
 			using result = typename type::result;
 		};
 
 		template <typename Ty, typename last>
-		struct Finder<Ty, last>
+		struct MetaFinder<Ty, last>
 		{
 			static_assert(IsSame<Ty, last>::value, "Compile time search error: Type not found.");
 
@@ -64,39 +64,39 @@ namespace Utility
 		};
 
 		template <typename Ty, typename T, typename ... Ts, unsigned val, unsigned ... vals>
-		struct Finder<Ty, Indexer<val, T>, Indexer<vals, Ts>...>
+		struct MetaFinder<Ty, Indexer<val, T>, Indexer<vals, Ts>...>
 		{
 			using type = typename IfElse<
 				IsSame<Ty, T>::value,
-				Finder<Ty, Indexer<val, T>>,
-				Finder<Ty, Indexer<vals, Ts>...>
+				MetaFinder<Ty, Indexer<val, T>>,
+				MetaFinder<Ty, Indexer<vals, Ts>...>
 			>::type;
 
 			using result = typename type::result;
 		};
 
 		template <typename Ty, typename T, unsigned val>
-		struct Finder<Ty, Indexer<val, T>>
+		struct MetaFinder<Ty, Indexer<val, T>>
 		{
 			static_assert(IsSame<Ty, T>::value, "Compile time search error: Type not found.");
 
-			using type = Finder;
+			using type = MetaFinder;
 			using result = Indexer<val, Ty>;
 		};
 
 
 	// ============================================ TYPE LIST MAKER ============================================ // 
 
-		template <typename ... Ty>
+		template <template <typename...> typename Ret_t, typename ... Ty>
 		struct TypeListMaker
 		{
-			using type = TypeList<Ty...>;
+			using type = Ret_t<Ty...>;
 		};
 
-		template <unsigned ...vals, typename ... Ty>
-		struct TypeListMaker<Indexer<vals, Ty>...>
+		template <template <typename...> typename Ret_t, unsigned ... vals, typename ... Ty>
+		struct TypeListMaker<Ret_t, Indexer<vals, Ty>...>
 		{
-			using type = TypeList<Ty...>;
+			using type = Ret_t<Ty...>;
 		};
 
 
@@ -114,8 +114,8 @@ namespace Utility
 			using type = typename MetaPartitionerValue<T, Op, pivot, Set<T, rest...>>::result;
 
 			using result = Duplex <
-				MetaConcat_t <typename IfElse < Op<T, pivot, next>::value, Set<T, next>, Set<T>>::type, typename type::lhs>,
-				MetaConcat_t <typename IfElse <!Op<T, pivot, next>::value, Set<T, next>, Set<T>>::type, typename type::rhs>
+				typename MetaConcat <typename IfElse < Op<T, next, pivot>::value, Set<T, next>, Set<T>>::type, typename type::lhs>::type,
+				typename MetaConcat <typename IfElse <!Op<T, next, pivot>::value, Set<T, next>, Set<T>>::type, typename type::rhs>::type
 			>;
 		};
 
@@ -124,52 +124,139 @@ namespace Utility
 		struct MetaPartitionerValue<T, Op, pivot, Set<T, next>>
 		{
 			using result = Duplex <
-				typename IfElse < Op<T, pivot, next>::value, Set<T, next>, Set<T> >::type,
-				typename IfElse <!Op<T, pivot, next>::value, Set<T, next>, Set<T> >::type
+				typename IfElse < Op<T, next, pivot>::value, Set<T, next>, Set<T> >::type,
+				typename IfElse <!Op<T, next, pivot>::value, Set<T, next>, Set<T> >::type
 			>;
 		};
 
-		template <template <typename, typename> typename Op, typename pivot, typename ... Ty>
+		template <template <typename, typename> typename Op, typename ... Ty>
 		struct MetaPartitionerType;
 
-		template <template <typename, typename> typename Op,
+		template <template <typename, typename> typename Op, template <typename...> typename Set,
 				  typename pivot, typename next, typename ... rest>
-		struct MetaPartitionerType<Op, pivot, next, rest...>
+		struct MetaPartitionerType<Op, Set<pivot, next, rest...>>
 		{
-			using type = typename MetaPartitionerType<Op, pivot, rest...>::result;
+			using type = typename MetaPartitionerType<Op, Set<pivot, rest...>>::result;
 
 			using result = Duplex <
-				MetaConcat_t <typename IfElse < Op<pivot, next>::value, Collection<next>, Collection<>>::type, typename type::lhs>,
-				MetaConcat_t <typename IfElse <!Op<pivot, next>::value, Collection<next>, Collection<>>::type, typename type::rhs>
+				typename MetaConcat <typename IfElse < Op<next, pivot>::value, Set<next>, Set<>>::type, typename type::lhs>::type,
+				typename MetaConcat <typename IfElse <!Op<next, pivot>::value, Set<next>, Set<>>::type, typename type::rhs>::type
 			>;
 		};
 
-		template <template <typename, typename> typename Op, typename pivot, typename next>
-		struct MetaPartitionerType<Op, pivot, next>
+		template <template <typename, typename> typename Op, template <typename...> typename Set, typename pivot, typename next>
+		struct MetaPartitionerType<Op, Set<pivot, next>>
 		{
 			using result = Duplex <
-				typename IfElse < Op<pivot, next>::value, Collection<next>, Collection<> >::type,
-				typename IfElse <!Op<pivot, next>::value, Collection<next>, Collection<> >::type
+				typename IfElse < Op<next, pivot>::value, Set<next>, Set<> >::type,
+				typename IfElse <!Op<next, pivot>::value, Set<next>, Set<> >::type
 			>;
 		};
 
 
-	// ============================================ COMPILE TIME FIND ========================================== // 
-		// Make result be false instead of compile error?
+	// ============================================ COMPILE TIME SORT ========================================== // 
 
-		template <typename Op, typename ... Arr>
-		struct MetaSorter;
+		template <template <typename, typename> typename Op, typename ... Arr>
+		struct MetaSorterT;
 
-		template <typename Ty, typename T, typename ... Ts, unsigned val, unsigned ... vals>
-		struct MetaSorter<Ty, Indexer<val, T>, Indexer<vals, Ts>...>
+		template <template <typename, typename> typename Op, template <typename...> typename Set, typename Pivot, typename ... Ty>
+		struct MetaSorterT<Op, Set<Pivot, Ty...>>
 		{
-			using result = int;
+		private:
+			using type = typename MetaPartitionerType<Op, Set<Pivot, Ty...>>::result;
+
+			using lhs = typename MetaSorterT<Op, typename type::lhs>::result;
+			using rhs = typename MetaSorterT<Op, typename type::rhs>::result;
+
+		public:
+			using result = typename MetaConcat<lhs, Set<Pivot>, rhs>::type;
 		};
 
-		template <typename Ty, typename T, unsigned val>
-		struct MetaSorter<Ty, Indexer<val, T>>
+		template <template <typename, typename> typename Op, template <typename...> typename Set, typename Pivot>
+		struct MetaSorterT<Op, Set<Pivot>>
 		{
-			using result = int;
+			using result = Set<Pivot>;
+		};
+
+		template <template <typename, typename> typename Op, template <typename...> typename Set>
+		struct MetaSorterT<Op, Set<>>
+		{
+			using result = Set<>;
+		};
+
+		template <template <typename T, T, T> typename Op, typename ... Arr>
+		struct MetaSorterV;
+		 
+		template <typename T, template <typename, T, T> typename Op, template <typename, T...> typename Set, T Pivot, T ... vals>
+		struct MetaSorterV<Op, Set<T, Pivot, vals...>>
+		{
+		private:
+			using type = typename MetaPartitionerValue<T, Op, Pivot, Set<T, vals...>>::result;
+
+			using lhs = typename MetaSorterV<Op, typename type::lhs>::result;
+			using rhs = typename MetaSorterV<Op, typename type::rhs>::result;
+
+		public:
+			using result = typename MetaConcat<lhs, Set<T, Pivot>, rhs>::type;
+		};
+
+		template <typename T, template <typename, T, T> typename Op, template <typename, T...> typename Set, T Pivot>
+		struct MetaSorterV<Op, Set<T, Pivot>>
+		{
+			using result = Set<T, Pivot>;
+		};
+
+		template <typename T, template <typename, T, T> typename Op, template <typename, T...> typename Set>
+		struct MetaSorterV<Op, Set<T>>
+		{
+			using result = Set<T>;
+		};
+
+
+	// ============================================ COMPILE TIME SORT ========================================== // 
+
+		template <unsigned N, typename T>
+		struct MetaExtractor;
+
+		template <unsigned N, template <typename...> typename Set, typename Ty, typename ... R>
+		struct MetaExtractor <N, Set<Ty, R...>>
+		{
+			using result = typename MetaExtractor <N - 1, Set<R...>>::result;
+		};
+
+		template <template <typename...> typename Set, typename Ty, typename ... R>
+		struct MetaExtractor <0, Set<Ty, R...>>
+		{
+			using result = Ty;
+		};
+
+		template <unsigned N, typename T, template <typename, T...> typename Set, T val, T ... rest>
+		struct MetaExtractor <N, Set<T, val, rest...>>
+		{
+			using result = typename MetaExtractor <N - 1, Set<T, rest...>>::result;
+		};
+
+		template <typename T, template <typename, T...> typename Set, T val, T ... rest>
+		struct MetaExtractor <0, Set<T, val, rest...>>
+		{
+			using result = Set<T, val>;
+		};
+
+		template <unsigned N, typename T>
+		struct MetaExtractorV;
+
+		template <unsigned N, typename T, T val, T ... rest,
+			template <typename, T...> class Set>
+		struct MetaExtractorV<N, Set<T, val, rest...>>
+		{
+			static constexpr T value = MetaExtractorV <N - 1, Set<T, rest...>>::value;
+		};
+
+		template <typename T, T val, T ... rest,
+			template <typename, T...> class Set>
+		struct MetaExtractorV<0, Set<T, val, rest...>>
+		{
+			static constexpr T value = val;
 		};
 	}
 }

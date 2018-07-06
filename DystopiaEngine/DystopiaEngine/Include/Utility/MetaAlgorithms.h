@@ -26,7 +26,7 @@ namespace Utility
 	template <typename Ty, typename ... Arr>
 	struct MetaFind
 	{
-		using result = typename Helper::Finder<Ty, Arr...>::result;
+		using result = typename Helper::MetaFinder<Ty, Arr...>::result;
 	};
 
 	template <typename Ty, template <typename...> typename Set, typename ...T>
@@ -38,7 +38,7 @@ namespace Utility
 	template <typename Ty, typename ... T, unsigned ... vals>
 	struct MetaFind<Ty, Indexer<vals,T>...>
 	{
-		using result = typename Helper::Finder<Ty, Indexer<vals, T>...>::result;
+		using result = typename Helper::MetaFinder<Ty, Indexer<vals, T>...>::result;
 	};
 
 	template <typename Ty, typename ...Arr>
@@ -77,32 +77,73 @@ namespace Utility
 	// =========================================== COMPILE TIME SORT =========================================== //
 
 
-	template <typename Op, typename ... T>
-	struct MetaSort;
+	template <template <typename, typename> typename Op, typename ... T>
+	struct MetaSortType;
 
-	template <typename Op, template <typename...> typename Set, typename ...T>
-	struct MetaSort<Op, Set<T...>>
+	template <template <typename, typename> typename Op, template <typename...> typename Set, typename ...T>
+	struct MetaSortType<Op, Set<T...>>
 	{
-		using result = typename Helper::MetaSorter<Op, T...>::result;
+		using result = typename Helper::MetaSorterT<Op, Set<T...>>::result;
 	};
 
-	template <typename Op, typename T>
-	using MetaSort_t = typename MetaSort<Op, T>::result;
+	template <template <typename T, T, T> typename Op, typename ... Tys>
+	struct MetaSortValue;
+
+	template <typename T, template <typename, T, T> typename Op, template <typename, T...> typename Set, T ...vals>
+	struct MetaSortValue<Op, Set<T, vals...>>
+	{
+		using result = typename Helper::MetaSorterV<Op, Set<T, vals...>>::result;
+	};
+
+	template <template <typename, typename> typename Op, typename T>
+	using MetaSortT_t = typename MetaSortType<Op, T>::result;
 
 
 	// ============================================ MAKE TYPE LIST ============================================ //
 
-	template <typename ... Ty>
+
+	template <template <typename...> typename ret_t, typename ... Ty>
 	struct MakeTypeList;
 
-	template <template <typename...> typename Set, typename ... Ty>
-	struct MakeTypeList <Set<Ty...>>
+	template <template <typename...> typename ret_t, template <typename...> typename Set, typename ... Ty>
+	struct MakeTypeList <ret_t, Set<Ty...>>
 	{
-		using type = typename Helper::TypeListMaker<Ty...>::type;
+		using type = typename Helper::TypeListMaker<ret_t, Ty...>::type;
 	};
 
-	template <typename ... T>
-	using MakeTypeList_t = typename MakeTypeList<T...>::type;
+	template <template <typename...> typename ret_t, typename ... T>
+	using MakeTypeList_t = typename MakeTypeList<ret_t, T...>::type;
+
+
+	// ============================================ META EXTRACTOR ============================================ //
+
+
+	template <unsigned N, typename T, typename ... Ty>
+	struct MetaExtract
+	{
+	private:
+		using curr = typename Helper::MetaExtractor<N, T>::result;
+		using rest = typename MetaExtract<N, Ty...>::result;
+
+	public:
+
+		using result = typename MetaConcat<curr, rest>::type;
+	};
+
+	template <unsigned N, typename T>
+	struct MetaExtract<N, T>
+	{
+		using result = typename Helper::MetaExtractor<N, T>::result;
+	};
+
+	template <unsigned N, typename T>
+	struct MetaExtractV
+	{
+		static constexpr auto value = typename Helper::MetaExtractorV<N, T>::value;
+	};
+
+	template <unsigned N, typename ... T>
+	using MetaExtract_t = typename MetaExtract<N, T...>::result;
 }
 
 

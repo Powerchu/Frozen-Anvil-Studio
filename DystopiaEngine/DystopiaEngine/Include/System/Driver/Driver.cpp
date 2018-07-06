@@ -12,8 +12,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System\Driver\Driver.h"
-#include "DataStructure\SharedPtr.h"
 
+#include "Globals.h"
+#include "DataStructure\SharedPtr.h"
 #include "Utility\MetaAlgorithms.h"
 #include "Utility\MetaDataStructures.h"
 
@@ -23,15 +24,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Window\WindowManager.h"
 
+
 namespace
 {
 	template <typename Ty>
-	inline void RecursiveNewInsertAutoArray(AutoArray<Ty>&)
+	void RecursiveNewInsertAutoArray(AutoArray<Ty>&)
 	{
+
 	}
 
 	template <typename Ty, typename T, typename ... Ts>
-	inline void RecursiveNewInsertAutoArray(AutoArray<Ty>& _arr)
+	void RecursiveNewInsertAutoArray(AutoArray<Ty>& _arr)
 	{
 		_arr.EmplaceBack(new T{});
 		RecursiveNewInsertAutoArray<Ty, Ts...>(_arr);
@@ -49,14 +52,15 @@ namespace
 }
 
 
-SharedPtr<Dystopia::EngineCore> Dystopia::EngineCore::GetInstance(void) noexcept
+SharedPtr<Dystopia::EngineCore> const & Dystopia::EngineCore::GetInstance(void) noexcept
 {
 	static SharedPtr<EngineCore> pInstance = CreateShared(new EngineCore{});
 	return pInstance;
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mTime{}, SystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<AllSys>{}) }, SystemList{ Utility::SizeofList<AllSys>::value }
+	mTime{}, SystemList{ Utility::SizeofList<AllSys>::value },
+	SystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) }
 {
 
 }
@@ -93,6 +97,21 @@ void Dystopia::EngineCore::Init(void)
 	mTime.Lap();
 }
 
+void Dystopia::EngineCore::FixedUpdate(void)
+{
+	static float dt = .0f;
+
+	while (dt > _FIXED_UPDATE_DT)
+	{
+		for (auto& e : SystemList)
+		{
+			e->FixedUpdate(dt);
+		}
+
+		dt -= _FIXED_UPDATE_DT;
+	}
+}
+
 void Dystopia::EngineCore::Update(void)
 {
 	float dt = mTime.Elapsed();
@@ -102,8 +121,6 @@ void Dystopia::EngineCore::Update(void)
 	{
 		e->Update(dt);
 	}
-
-	GetSystem<GraphicsSystem>();
 }
 
 void Dystopia::EngineCore::Shutdown(void)

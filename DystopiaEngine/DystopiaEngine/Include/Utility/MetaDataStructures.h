@@ -50,8 +50,34 @@ namespace Utility
 
 
 
+
+	
+	// ============================================== META FUNCTORS ============================================= //
+
+
+
+	template <typename T, T lhs, T rhs>
+	struct MetaLessThanV
+	{
+		static constexpr bool value = lhs < rhs;
+	};
+
+	template <typename T, typename U>
+	struct MetaLessThan;
+
+	template <template <unsigned, typename ...> typename Set, unsigned lhs, unsigned rhs, typename ... L, typename ... R>
+	struct MetaLessThan<Set<lhs, L...>, Set<rhs, R...>>
+	{
+		static constexpr bool value = lhs < rhs;
+	};
+
+
+
+
+
 	// ========================================= CERTAIN USEFUL STRUCTS ======================================== //
 
+	
 
 	template <typename T>
 	struct SizeofList;
@@ -73,19 +99,19 @@ namespace Utility
 	template <typename ...Tys>
 	struct MetaConcat;
 
-	template <template <typename ...> typename Set, typename ... Tys>
+	template <template <typename ...> class Set, typename ... Tys>
 	struct MetaConcat<Set<Tys...>>
 	{
 		using type = Set<Tys...>;
 	};
 
-	template <template <typename ...> typename Set, typename ... lhs, typename ... rhs>
+	template <template <typename ...> class Set, typename ... lhs, typename ... rhs>
 	struct MetaConcat<Set<lhs...>, Set<rhs...>>
 	{
 		using type = Set<lhs..., rhs...>;
 	};
 
-	template <template <typename ...> typename Set, typename ... lhs, typename ... rhs, typename ... Rest>
+	template <template <typename ...> class Set, typename ... lhs, typename ... rhs, typename ... Rest>
 	struct MetaConcat<Set<lhs...>, Set<rhs...>, Rest...>
 	{
 		using type = typename MetaConcat<
@@ -94,19 +120,19 @@ namespace Utility
 		>::type;
 	};
 
-	template <typename T, template <typename, T ...> typename Set, T ... vals>
+	template <typename T, template <typename, T ...> class Set, T ... vals>
 	struct MetaConcat<Set<T, vals...>>
 	{
 		using type = Set<T, vals...>;
 	};
 
-	template <typename T, template <typename, T ...> typename Set, T ... LHS, T ... RHS>
+	template <typename T, template <typename, T ...> class Set, T ... LHS, T ... RHS>
 	struct MetaConcat<Set<T, LHS...>, Set<T, RHS...>>
 	{
 		using type = Set<T, LHS..., RHS...>;
 	};
 
-	template <typename T, template <typename, T ...> typename Set, T ... LHS, T ... RHS, typename ... Rest>
+	template <typename T, template <typename, T ...> class Set, T ... LHS, T ... RHS, typename ... Rest>
 	struct MetaConcat<Set<T, LHS...>, Set<T, RHS...>, Rest...>
 	{
 		using type = typename MetaConcat<

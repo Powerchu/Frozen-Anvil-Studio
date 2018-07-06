@@ -35,6 +35,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #define _SAVE_VERSION			1
 
+#define _FIXED_UPDATE_DT		.02f
 
 #endif
 

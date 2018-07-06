@@ -32,6 +32,11 @@ namespace Dystopia
 
 		virtual void LoadDefaults(void)				{ };
 		virtual void LoadSettings(TextSerialiser&)	{ };
+
+//		virtual void ReceiveMessage(const Message&) = 0;
+
+		virtual ~Systems(void)						= default;
+
 	};
 }
 

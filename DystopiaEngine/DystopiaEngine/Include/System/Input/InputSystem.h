@@ -47,9 +47,8 @@ namespace Dystopia
 		bool IsKeyPressed(eUserButton);
 		bool IsKeyReleased(eUserButton);
 
-		// Temporary
 		Math::Vector2 GetMousePosition(void);
-		Math::Vector2 GetMousePosition(Window&);
+		Math::Vector2 GetMousePosition(const Window&);
 
 	private:
 

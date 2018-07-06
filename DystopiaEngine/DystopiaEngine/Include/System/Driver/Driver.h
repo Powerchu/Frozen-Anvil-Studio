@@ -24,7 +24,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\Meta.h"
 #include "Utility\MetaAlgorithms.h"
 
-
 namespace Dystopia
 {
 	class TimeSystem;
@@ -35,17 +34,17 @@ namespace Dystopia
 
 	class EngineCore final  
 	{
-		using AllSys = Utility::Collection <
+		using AllSys = typename Utility::MetaSortType <Utility::MetaLessThan, Utility::Collection <
 			Utility::Indexer<eSYSTEMS::TIME_SYSTEM    , TimeSystem     >,
 			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM   , InputManager   >,
 			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM  , WindowManager  >,
 //			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM   , SoundSystem    >,
 			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM , GraphicsSystem >
-		>;
+		>>::result;
 
 	public:
 
-		static SharedPtr<EngineCore> GetInstance(void) noexcept;
+		static SharedPtr<EngineCore> const & GetInstance(void) noexcept;
 
 		template <class T>
 		T* const GetSystem(void) const;
@@ -55,6 +54,7 @@ namespace Dystopia
 
 		void LoadSettings(void);
 		void Init(void);
+		void FixedUpdate(void);
 		void Update(void);
 		void Shutdown(void);
 
@@ -74,7 +74,7 @@ namespace Dystopia
 template<class T>
 inline T* const Dystopia::EngineCore::GetSystem(void) const
 {
-	return static_cast<T*>(SystemTable[Utility::Find_t<T, AllSys>::value]);
+	return static_cast<T*>(SystemTable[Utility::MetaFind_t<T, AllSys>::value]);
 }
 
 template<class T>
