@@ -15,12 +15,27 @@
 #ifndef _MATH_INTERNAL_H_
 #define _MATH_INTERNAL_H_
 
+#include <cstdint>
+#include <emmintrin.h>		// SSE 2 [__m128i]
+
 namespace Math
 {
-	namespace InternalHelper
+	namespace Internal
 	{
-		// Forward decl
-		template<class T, const unsigned index> struct AbsHelper;
+		namespace
+		{
+			union VectorConverter
+			{
+				int32_t _val[4];
+				__m128i vec;
+			};
+		}
+
+		template <int32_t _X, int32_t _Y, int32_t _Z, int32_t _W>
+		inline constexpr __m128i ConstVec4()
+		{
+			return VectorConverter{ _X, _Y, _Z, _W }.vec;
+		}
 
 		// Hurray for code bloat!
 		template<class T, const unsigned index>
