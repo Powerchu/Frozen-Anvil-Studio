@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	CommandHandler::CommandHandler(size_t _nHistory)
-		: mDeqRedo{ _nHistory, nullptr }, mDeqUndo{ _nHistory, nullptr }, mRecording{ false },
+		: mDeqRedo{ _nHistory }, mDeqUndo{ _nHistory }, mRecording{ false },
 		mpRecorder{ nullptr }
 	{}
 
@@ -59,7 +59,7 @@ namespace Dystopia
 
 	void CommandHandler::UndoCommand()
 	{
-		if (!mDeqUndo.back()) return;
+		if (!mDeqUndo.size()) return;
 
 		mDeqUndo.back()->ExecuteUndo();
 
@@ -72,20 +72,21 @@ namespace Dystopia
 
 	void CommandHandler::RedoCommand()
 	{
-		if (!mDeqRedo.back()) return;
+		if (!mDeqRedo.size()) return;
 
-		Commands *pTemp = mDeqRedo.back();
+		mDeqRedo.back()->ExecuteDo();
+
+		if (mDeqUndo.size() == mDeqUndo.max_size())
+			PopFrontOfDeque(mDeqUndo);
+
+		mDeqUndo.push_back(mDeqRedo.back());
 		mDeqRedo.pop_back();
-		InvokeCommand(pTemp);
 	}
 
 	void CommandHandler::PopFrontOfDeque(std::deque<Commands*>& _targetDeque)
 	{
-		if (!_targetDeque.size() && _targetDeque.front())
-		{
-			delete _targetDeque.front();
-			_targetDeque.pop_front();
-		}
+		delete _targetDeque.front();
+		_targetDeque.pop_front();
 	}
 
 	void CommandHandler::EndRecording()
