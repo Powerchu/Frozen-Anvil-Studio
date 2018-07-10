@@ -15,26 +15,40 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _SCENE_SYSTEM_H_
 
 #include "System\Base\Systems.h"
+#include "System\Scene\Scene.h"
 
 #include <string>
 
 namespace Dystopia
 {
-	class Scene;
-
 	class SceneSystem : public Systems
 	{
 	public:
+
+		SceneSystem(void);
+		~SceneSystem(void);
+
+		void PreInit(void);
+		bool Init(void);
+		void PostInit(void);
+
+		void Update(float);
+		void Shutdown(void);
+
+		void LoadDefaults(void);
+		void LoadSettings(TextSerialiser&);
+
+//		void ReceiveMessage(const Message&);
 		
 		void LoadScene(const std::string&);
 
 		Scene& GetCurrentScene(void) const;
 
 		template <typename T>
-		T* FindGameObject(const std::string&);
+		T* FindGameObject(const std::string& _strName);
 
 		template <typename T>
-		T* FindGameObject(size_t);
+		T* FindGameObject(size_t _nID);
 
 	private:
 

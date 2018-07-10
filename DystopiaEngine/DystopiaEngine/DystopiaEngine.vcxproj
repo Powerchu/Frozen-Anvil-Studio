@@ -30,7 +30,7 @@
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="Include\System\Driver\Driver.cpp" />
+    <ClCompile Include="Source\System\Driver\Driver.cpp" />
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
     <ClCompile Include="Source\Component\Component.cpp" />
     <ClCompile Include="Source\Component\Transform.cpp" />
@@ -48,6 +48,7 @@
     <ClCompile Include="Source\System\Graphics\Texture.cpp" />
     <ClCompile Include="Source\System\Graphics\Texture2D.cpp" />
     <ClCompile Include="Source\System\Input\InputSystem.cpp" />
+    <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
     <ClCompile Include="Source\System\Window\Window.cpp" />
@@ -93,6 +94,7 @@
     <ClInclude Include="Include\System\Graphics\VertexDefs.h" />
     <ClInclude Include="Include\System\Input\InputMap.h" />
     <ClInclude Include="Include\System\Input\InputSystem.h" />
+    <ClInclude Include="Include\System\Scene\Scene.h" />
     <ClInclude Include="Include\System\Scene\SceneSystem.h" />
     <ClInclude Include="Include\System\Sound\SoundSystem.h" />
     <ClInclude Include="Include\System\Sound\SoundTypes.h" />

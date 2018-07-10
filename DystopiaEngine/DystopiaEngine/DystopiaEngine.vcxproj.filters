@@ -73,8 +73,11 @@
     <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
       <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Include\System\Driver\Driver.cpp">
+    <ClCompile Include="Source\System\Driver\Driver.cpp">
       <Filter>Game Engine\Systems\Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Scene\SceneSystem.cpp">
+      <Filter>Game Engine\Systems\Scene\SceneSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -237,7 +240,12 @@
     <ClInclude Include="Include\Utility\MetaDataStructures.h">
       <Filter>Utility\Meta</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Scene\SceneSystem.h" />
+    <ClInclude Include="Include\System\Scene\SceneSystem.h">
+      <Filter>Game Engine\Systems\Scene\SceneSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Scene\Scene.h">
+      <Filter>Game Engine\Systems\Scene\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -383,6 +391,12 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Scene">
       <UniqueIdentifier>{ddb89e65-93e8-4262-89d0-be65eefb7603}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Scene\SceneSystem">
+      <UniqueIdentifier>{5320a59f-d009-4e91-9157-c1635f9a123b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Scene\Scene">
+      <UniqueIdentifier>{f3eae6d5-d8fd-463f-9178-71e46cda18c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

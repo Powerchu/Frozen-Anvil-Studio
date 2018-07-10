@@ -102,7 +102,8 @@ namespace Dystopia
 
 	private:
 
-		unsigned mnID, mnFlags;
+		size_t mnID;
+		unsigned mnFlags;
 		std::string mName;
 
 		Transform mTransform;
@@ -124,6 +125,7 @@ namespace Dystopia
 		template<typename T, typename U, typename Ret, typename ...Params, typename ...Args>
 		inline void ForcePing(AutoArray<T*>& _arr, Ret(U::*_pfunc)(Params ...), Args&& ..._args);
 	};
+}
 
 
 
@@ -133,27 +135,26 @@ namespace Dystopia
 	// ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
-	template <typename T>
-	inline void GameObject::AddComponent(T* _pComponent)
-	{
-		AddComponent(_pComponent, typename T::TAG{});
-	}
+template <typename T>
+inline void Dystopia::GameObject::AddComponent(T* _pComponent)
+{
+	AddComponent(_pComponent, typename T::TAG{});
+}
 
-	inline void GameObject::AddComponent(Component* _pComponent, ComponentTag)
-	{
-		mComponents.push_back(_pComponent);
-	}
+inline void Dystopia::GameObject::AddComponent(Component* _pComponent, ComponentTag)
+{
+	mComponents.push_back(_pComponent);
+}
 
-	inline void GameObject::AddComponent(Component* _pBehaviour, BehaviourTag)
-	{
-		mBehaviours.push_back(static_cast<Behaviour*>(_pBehaviour));
-	}
+inline void Dystopia::GameObject::AddComponent(Component* _pBehaviour, BehaviourTag)
+{
+	mBehaviours.push_back(static_cast<Behaviour*>(_pBehaviour));
+}
 
-	template <typename T>
-	inline void GameObject::RemoveComponent(T* _pComponent)
-	{
-		RemoveComponent(_pComponent, typename T::TAG{});
-	}
+template <typename T>
+inline void Dystopia::GameObject::RemoveComponent(T* _pComponent)
+{
+	RemoveComponent(_pComponent, typename T::TAG{});
 }
 
 
