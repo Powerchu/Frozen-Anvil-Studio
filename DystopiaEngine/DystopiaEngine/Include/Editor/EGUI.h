@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_GUI_H_
 #include "Math\Vector4.h"
 #include "Editor\Dock.h"
+#include "DataStructure\AutoArray.h"
 #include <string>
 namespace Dystopia
 {
@@ -258,17 +259,16 @@ namespace Dystopia
 		GuiSystem();
 		~GuiSystem();
 
-		bool Init(WindowManager*, GraphicsSystem*, InputManager*, const char* = "MainDockable");
-		void StartFrame(const float&);
-		void EndFrame();
-		void Shutdown();
-
-		const char* GetMainDockspaceName() const;
+		bool			Init(WindowManager*, GraphicsSystem*, InputManager*, const char* = "MainDockable");
+		void			StartFrame(const float&);
+		void			EndFrame();
+		void			Shutdown();
 
 		void			UpdateCharInputs(unsigned int c);
 		void			UpdateMouseInputs();
 		void			UpdateKeyInputs();
 		void			UpdateScrollInputs();
+		const char*		GetMainDockspaceName() const;
 
 	private:
 		ImGuiContext	*mpCtx;
@@ -295,6 +295,7 @@ namespace Dystopia
 		void			CreateDefaultFont();
 		void			StartFullDockableSpace();
 		void			EndFullDockableSpace();
+		void			DefaultColorSettings();
 	};
 }
 

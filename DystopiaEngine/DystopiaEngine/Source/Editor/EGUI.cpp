@@ -188,6 +188,7 @@ namespace Dystopia
 	 
 		// if (install_callbacks)
 		// InstallInputCallbacks();
+		DefaultColorSettings();
 		return true;
 	}
 
@@ -422,6 +423,9 @@ namespace Dystopia
 
 		delete mpGLState;
 
+		// Look for DefaultColorSetting() function and MATCH the integer with the same amount of PushStyleColor
+		ImGui::PopStyleColor(6);
+
 		ImGui::DestroyContext(mpCtx);
 	}
 
@@ -563,6 +567,16 @@ namespace Dystopia
 	const char* GuiSystem::GetMainDockspaceName() const
 	{
 		return mpMainDockspace;
+	}
+
+	void GuiSystem::DefaultColorSettings()
+	{
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 1
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 2
+		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4{ 0.5f, 0.5f, 0.5f, 0.5f });				// 3
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 4
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 5
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.5f, 0.5f, 0.5f, 0.5f });				// 6
 	}
 
 }		// namespace Dystopia

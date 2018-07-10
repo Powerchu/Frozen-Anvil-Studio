@@ -37,20 +37,18 @@ namespace EGUI
 			eDOCK_SLOT_NONE
 		};
 
-		bool BeginDockableSpace();
-		void EndDockableSpace();
-		void ShutdownTabs();
-		void SetNextTabs(const char*, eDockSlot);
-		bool BeginTabs(const char*, bool* = nullptr, ImGuiWindowFlags = 0);
-		void EndTabs();
-		void InitTabs();
-
-		void PushTabSize(const Math::Vec4&);
-		void PushTabSize(const float&, const float&);
-		void PopTabSize();
-
-		Math::Vec4 GetTabSize(const char*_tabName);
-		Math::Vec4 GetTabPosition(const char*_tabName);
+		bool		BeginDockableSpace();
+		void		EndDockableSpace();
+		void		ShutdownTabs();
+		void		SetNextTabs(const char*, eDockSlot);
+		bool		BeginTabs(const char*, bool* = nullptr, ImGuiWindowFlags = 0);
+		void		EndTabs();
+		void		InitTabs();
+		void		PushTabSize(const Math::Vec4&);
+		void		PushTabSize(const float&, const float&);
+		void		PopTabSize();
+		Math::Vec4	GetTabSize(const char*_tabName);
+		Math::Vec4	GetTabPosition(const char*_tabName);
 	}
 }
 

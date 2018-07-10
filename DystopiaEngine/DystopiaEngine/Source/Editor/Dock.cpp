@@ -18,8 +18,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <iostream>
 #include <map>
 #include <string>
-/*////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
-/*================================================== NEW VERSION TESTING W-I-P ===================================================*/
 
 ImVec2& operator+=(ImVec2& lhs, const ImVec2& rhs)
 {
@@ -57,6 +55,7 @@ ImVec2 operator*(const ImVec2& lhs, const float& rhs)
 
 namespace EGUI{
 namespace Docking{
+
 /*========================================================= Declaration ==========================================================*/
 
 static Stack<ImVec2> gSizeStack{ MAX_TAB_SIZE_STACK };
@@ -390,8 +389,8 @@ void DockSpace::SplitTabHorizontal(Tabs *_pTab, ImVec2& _oDSize, ImVec2& _oPos0,
 	ImVec2 min_size0 = _pTab->mArrChildPtr[0]->GetMinSize();
 	ImVec2 min_size1 = _pTab->mArrChildPtr[1]->GetMinSize();
 
-	ImGui::SetCursorScreenPos(ImVec2(_pTab->mPos.x + _oSize0.x - 2, _pTab->mPos.y));
-	ImGui::InvisibleButton("split", ImVec2(4, _pTab->mSize.y));
+	ImGui::SetCursorScreenPos(ImVec2(_pTab->mPos.x + _oSize0.x - 5, _pTab->mPos.y));
+	ImGui::InvisibleButton("split", ImVec2(10, _pTab->mSize.y));
 	if (_pTab->mStatus == eSTATUS_DRAGGED)
 		_oDSize.x = ImGui::GetIO().MouseDelta.x;
 	_oDSize.x = -ImMin(-_oDSize.x, _pTab->mArrChildPtr[0]->mSize.x - min_size0.x);
@@ -410,8 +409,8 @@ void DockSpace::SplitTabVertical(Tabs *_pTab, ImVec2& _oDSize, ImVec2& _oPos0, I
 {
 	ImVec2 min_size0 = _pTab->mArrChildPtr[0]->GetMinSize();
 	ImVec2 min_size1 = _pTab->mArrChildPtr[1]->GetMinSize();
-	ImGui::SetCursorScreenPos(ImVec2(_pTab->mPos.x, _pTab->mPos.y + _oSize0.y - 2));
-	ImGui::InvisibleButton("split", ImVec2(_pTab->mSize.x, 4));
+	ImGui::SetCursorScreenPos(ImVec2(_pTab->mPos.x, _pTab->mPos.y + _oSize0.y - 5));
+	ImGui::InvisibleButton("split", ImVec2(_pTab->mSize.x, 10));
 	if (_pTab->mStatus == eSTATUS_DRAGGED)
 		_oDSize.y = ImGui::GetIO().MouseDelta.y;
 	_oDSize.y = -ImMin(-_oDSize.y, _pTab->mArrChildPtr[0]->mSize.y - min_size0.y);
@@ -1316,7 +1315,7 @@ struct readHelper
 };
 static readHelper rhelper;
 
-static void* readOpen(ImGuiContext* ctx, ImGuiSettingsHandler* handler, const char* name)
+static void* readOpen(ImGuiContext* /*ctx*/, ImGuiSettingsHandler* /*handler*/, const char* name)
 {
 	static std::string context_panel = "";
 
@@ -1363,7 +1362,7 @@ static void* readOpen(ImGuiContext* ctx, ImGuiSettingsHandler* handler, const ch
 	return (void*)&rhelper;
 }
 
-static void readLine(ImGuiContext* ctx, ImGuiSettingsHandler* handler, void* entry, const char* line_start)
+static void readLine(ImGuiContext* /*ctx*/, ImGuiSettingsHandler* /*handler*/, void* entry, const char* line_start)
 {
 	readHelper* userdata = (readHelper*)entry;
 
@@ -1381,27 +1380,27 @@ static void readLine(ImGuiContext* ctx, ImGuiSettingsHandler* handler, void* ent
 		}
 		else if (sscanf_s(line_start, "x=%d", &x) == 1)
 		{
-			userdata->dock->mPos.x = (float)x;
+			userdata->dock->mPos.x = static_cast<float>(x);
 		}
 		else if (sscanf_s(line_start, "y=%d", &y) == 1)
 		{
-			userdata->dock->mPos.y = (float)y;
+			userdata->dock->mPos.y = static_cast<float>(y);
 		}
 		else if (sscanf_s(line_start, "size_x=%d", &size_x) == 1)
 		{
-			userdata->dock->mSize.x = (float)size_x;
+			userdata->dock->mSize.x = static_cast<float>(size_x);
 		}
 		else if (sscanf_s(line_start, "size_y=%d", &size_y) == 1)
 		{
-			userdata->dock->mSize.y = (float)size_y;
+			userdata->dock->mSize.y = static_cast<float>(size_y);
 		}
 		else if (sscanf_s(line_start, "mActive=%d", &mActive) == 1)
 		{
-			userdata->dock->mActive = (bool)mActive;
+			userdata->dock->mActive = (mActive) ? true : false;
 		}
 		else if (sscanf_s(line_start, "opened=%d", &opened) == 1)
 		{
-			userdata->dock->mOpened = (bool)opened;
+			userdata->dock->mOpened = (opened) ? true : false ;
 		}
 		else if (sscanf_s(line_start, "mLocation=%[^\n^\r]", mLocation) == 1)
 		{
@@ -1409,7 +1408,7 @@ static void readLine(ImGuiContext* ctx, ImGuiSettingsHandler* handler, void* ent
 		}
 		else if (sscanf_s(line_start, "status=%d", &status) == 1)
 		{
-			userdata->dock->mStatus = (eStatus) status;
+			userdata->dock->mStatus = static_cast<eStatus>(status);
 		}
 		else if (sscanf_s(line_start, "prev=%d", &prev) == 1)
 		{
@@ -1434,7 +1433,7 @@ static void readLine(ImGuiContext* ctx, ImGuiSettingsHandler* handler, void* ent
 	}
 }
 
-static void writeAll(ImGuiContext* ctx, ImGuiSettingsHandler* handler, ImGuiTextBuffer* buf)
+static void writeAll(ImGuiContext* /*ctx*/, ImGuiSettingsHandler* handler, ImGuiTextBuffer* buf)
 {
 	int totalTabsNum = 0;
 	for (const auto& iter : gDockable)
