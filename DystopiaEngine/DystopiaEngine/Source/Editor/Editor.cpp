@@ -12,7 +12,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Input\InputSystem.h"
@@ -26,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\CommandList.h"
 #include "Editor\EditorTab.h"
 #include "IO\BinarySerializer.h"
+#include "System\Driver\Driver.h"
 #include <iostream>
 #include <bitset>
 #define _CRTDBG_MAP_ALLOC  
@@ -37,71 +37,24 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 {
 	hInstance;
 
-	Dystopia::WindowManager *win = new Dystopia::WindowManager{};
-	Dystopia::GraphicsSystem *gfx = new Dystopia::GraphicsSystem{};
-	Dystopia::InputManager *input = new Dystopia::InputManager{};
+	auto driver = Dystopia::EngineCore::GetInstance();
 	Dystopia::Editor *editor = new Dystopia::Editor{};
-	Dystopia::Timer timer{};
+	Dystopia::Timer *timer = new Dystopia::Timer{};
 
-	/* =======================================================================================*/
-	/* =========================Start of Binary Serializer Test Case =========================*/
-	/* Serialize */
-	// TOGGLE the binSer open file and manual endian override to test between little and big endian
+	driver->LoadSettings();
+	driver->Init();
+	editor->Init(driver->GetSystem<Dystopia::WindowManager>(),
+				 driver->GetSystem<Dystopia::GraphicsSystem>(),
+				 driver->GetSystem<Dystopia::InputManager>());
 
-	Dystopia::BinarySerializer binSer = Dystopia::BinarySerializer::OpenFile("TestBinSerLittle", 2);
-	binSer.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_LITTLE);
 
-	// Dystopia::BinarySerializer binSer = Dystopia::BinarySerializer::OpenFile("TestBinSerBig", 2);
-	// binSer.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_BIG);
-
-	int testVar_int = 5;
-	float testVar_float = 99.23f;
-	double testVar_double = 1255.3245;
-	char testVar_char = 'A';
-
-	binSer.Write(testVar_char);
-	binSer.Write(testVar_int);
-	binSer.Write(testVar_float);
-	binSer.Write(testVar_double);
-
-	/* Alter values */
-	testVar_int = 12312;
-	testVar_float = 3.21f;
-	testVar_double = 123.009;
-	testVar_char = 'J';
-
-	/* Deserialize*/
-	// TOGGLE the binSer open file and manual endian override to test between little and big endian
-
-	Dystopia::BinarySerializer binSer2 = Dystopia::BinarySerializer::OpenFile("TestBinSerLittle", 1);
-	binSer2.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_LITTLE);
-
-	// Dystopia::BinarySerializer binSer2 = Dystopia::BinarySerializer::OpenFile("TestBinSerBig", 1);
-	// binSer2.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_BIG);
-
-	binSer2.Read(testVar_char);
-	binSer2.Read(testVar_int);
-	binSer2.Read(testVar_float);
-	binSer2.Read(testVar_double);
-	/* =========================End of Binary Serializer Test Case ===========================*/
-	/* =======================================================================================*/
-
-	win->LoadDefaults();
-	win->Init();
-	gfx->InitOpenGL(win->GetMainWindow());
-	input->LoadDefaults();
-	input->Init();
-
-	win->DestroySplash();
-
-	editor->Init(win, gfx, input);
 	while (!editor->IsClosing())
 	{
-		float dt = timer.Elapsed();	//static_cast<float>(editor->PreviousFrameTime());
-		timer.Lap();
-
-		win->Update(dt);
-		input->Update(dt);
+		float dt = timer->Elapsed();
+		timer->Lap();
+		driver->GetSystem<Dystopia::InputManager>()->Update(dt);
+		driver->GetSystem<Dystopia::WindowManager>()->Update(dt);
+		// driver->Update();
 
 		editor->StartFrame();
 
@@ -109,16 +62,10 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 		
 		editor->EndFrame();
 	}
+
 	editor->Shutdown();
-
-	input->Shutdown();
-	gfx->Shutdown();
-	win->Shutdown();
-
+	driver->Shutdown();
 	delete editor;
-	delete win;
-	delete gfx;
-	delete input;
 
 	_CrtDumpMemoryLeaks();
 	return 0;
@@ -162,7 +109,7 @@ namespace Dystopia
 	{
 		mStartTime = std::chrono::high_resolution_clock::now();
 		for (auto e : mGuiSysArray)
-			e->StartFrame(mPrevFrameTime);
+			e->StartFrame(static_cast<float>(mPrevFrameTime));
 		MainMenu();
 	}
 
@@ -355,8 +302,8 @@ namespace Dystopia
 			// TODO: Some actual function for all the bottom
 			if (EGUI::StartMenuHeader("Edit"))
 			{
-				if (EGUI::StartMenuBody("Undo")) { mpComdHandler->UndoCommand(); }
-				if (EGUI::StartMenuBody("Redo")) { mpComdHandler->RedoCommand(); }  // Disabled ite
+				if (EGUI::StartMenuBody("Undo","Ctrl + Z")) { mpComdHandler->UndoCommand(); }
+				if (EGUI::StartMenuBody("Redo", "Ctrl + Y")) { mpComdHandler->RedoCommand(); }  // Disabled ite
 				if (EGUI::StartMenuBody("Cut")) {}
 				if (EGUI::StartMenuBody("Copy")) {}
 				if (EGUI::StartMenuBody("Paste")) {}

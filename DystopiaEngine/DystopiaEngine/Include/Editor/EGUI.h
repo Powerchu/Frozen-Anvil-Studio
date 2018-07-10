@@ -43,8 +43,8 @@ namespace EGUI
 	void SetContext(Dystopia::CommandHandler *_pContext);
 	void RemoveContext();
 	bool StartMainMenuBar();
-	bool StartMenuHeader(const char*);
-	bool StartMenuBody(const char*);
+	bool StartMenuHeader(const std::string&);
+	bool StartMenuBody(const std::string&, const std::string& _shortcut="");
 	void EndMainMenuBar();
 	void EndMenuHeader();
 
@@ -63,7 +63,7 @@ namespace EGUI
 			EndTab();
 	======================================================================================================================= */
 	// Call to Start a new Tab
-	bool StartTab(const char*, bool* = nullptr, ImGuiWindowFlags = 0);
+	bool StartTab(const std::string&, bool* = nullptr, ImGuiWindowFlags = 0);
 	// Call to End the Tab segment
 	void EndTab();
 
@@ -81,9 +81,9 @@ namespace EGUI
 			EGUI::EndChild();
 	======================================================================================================================= */
 	// Call to Start Child window in the current window you are in 
-	bool StartChild(const char*, const Math::Vec4& = Math::Vec4{ 0, 0, 0, 0 });
+	bool StartChild(const std::string&, const Math::Vec4& = Math::Vec4{ 0, 0, 0, 0 });
 	// Call to Start Child window in the current window you are in 
-	bool StartChild(const char*, const float& = 0, const float& = 0);
+	bool StartChild(const std::string&, const float& = 0, const float& = 0);
 	// Call to end the child window and proceed back to the parent window
 	void EndChild();
 
@@ -110,13 +110,14 @@ namespace EGUI
 		void Label(const char *_label, ...);
 		/* =======================================================================================================================
 		Brief:
+				NOT WORKING 10/7/18
 				Creates a editable text field with a label to the left of the text field. If edited, the _pOutText will be changed
 				accordingly. The size limits the number of characters accepted. 
 		Usage:
 				char buffer[size];
 				EGUI::Display::TextField("This is an editable text field: ", &buffer, size);
 		======================================================================================================================= */
-		void TextField(const char *_label, char *_pOutText, size_t);
+		void TextField(const std::string& _label, char *_pOutText, size_t _size);
 		/* =======================================================================================================================
 		Brief:
 				Starts a Collaspe-able header that can be clicked to open or close - Which is also the return-ed bool.
@@ -127,7 +128,7 @@ namespace EGUI
 					// EGUI::Display::Label("Things inside this header");
 				}
 		======================================================================================================================= */
-		bool CollapsingHeader(const char *_label);
+		bool CollapsingHeader(const std::string& _label);
 		/* =======================================================================================================================
 		Brief:
 				Creates an editable vector field that is pre-arranged for you. Returns true if any of the variable is changed.
@@ -140,7 +141,7 @@ namespace EGUI
 					// if the variable position is changed in any form. Do someting here:
 				}
 		======================================================================================================================= */
-		bool VectorFields(const char *_label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 1.0f, float = 50.f);
+		bool VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 1.0f, float = 50.f);
 		/* =======================================================================================================================
 		Brief:
 				Creats a check box for a boolean variable. Returns true when the check box is clicked, toggles the _pOutBool
@@ -151,7 +152,7 @@ namespace EGUI
 					// The checkbox is clicked (toggleMe if its true or false does not matter). Do something here:
 				}
 		======================================================================================================================= */
-		bool CheckBox(const char *_label, bool *_pOutBool);
+		bool CheckBox(const std::string& _label, bool *_pOutBool);
 		/* =======================================================================================================================
 		Brief:
 				Creates a draggable float editable field. Returns if the value is changed
@@ -162,7 +163,7 @@ namespace EGUI
 					// value of MeFloat has been changed. Do something here:
 				}
 		======================================================================================================================= */
-		bool DragFloat(const char *_label, float *_pOutFloat, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 1.0f);
+		bool DragFloat(const std::string& _label, float *_pOutFloat, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 1.0f);
 		/* =======================================================================================================================
 		Brief:
 				Creates a draggable int editable field. Returns if the value is changed
@@ -173,7 +174,7 @@ namespace EGUI
 					// value of MeInt has been changed. Do something here:
 				}
 		======================================================================================================================= */
-		bool DragInt(const char *_label, int *_pOutInt, float _dragSpeed = 1.0f, int _min = 0, int _max = 0);
+		bool DragInt(const std::string& _label, int *_pOutInt, float _dragSpeed = 1.0f, int _min = 0, int _max = 0);
 		/* =======================================================================================================================
 		Brief:
 				Creates a selectable text field. Returns if the text field is clicked is changed
@@ -189,9 +190,9 @@ namespace EGUI
 				}
 		======================================================================================================================= */
 		// Creates a selectable text field with an output bool to toggle
-		bool SelectableTxt(const char *_label, bool *_pSelected);
+		bool SelectableTxt(const std::string& _label, bool *_pSelected);
 		// Creates a selectable text field with a bool to determine if it is highlighted (selected) or not
-		bool SelectableTxt(const char *_label, bool = false);
+		bool SelectableTxt(const std::string& _label, bool = false);
 		/* =======================================================================================================================
 		Brief:
 				Creates a double click selectable text field. Returns true only when the text field is double clicked
@@ -207,9 +208,9 @@ namespace EGUI
 				}
 		======================================================================================================================= */
 		// Creates a selectable text field with an output bool to toggle
-		bool SelectableTxtDouble(const char *_label, bool *_pSelected);
+		bool SelectableTxtDouble(const std::string& _label, bool *_pSelected);
 		// Creates a selectable text field with a bool to determine if it is highlighted (selected) or not
-		bool SelectableTxtDouble(const char *_label, bool = false);
+		bool SelectableTxtDouble(const std::string& _label, bool = false);
 		/* =======================================================================================================================
 		Brief:
 				Start of a Tree Node (like the one you see in ResourceView I believe - 3 July 2018). Returns true if tree is opened.
@@ -232,9 +233,9 @@ namespace EGUI
 				}
 		======================================================================================================================= */
 		// Start a tree node 
-		bool StartTreeNode(const char *_label); 
+		bool StartTreeNode(const std::string& _label);
 		// Set a specific tree node to be collapsed (closed) or not
-		void OpenTreeNode(const char *_label, bool _collapseMe);
+		void OpenTreeNode(const std::string& _label, bool _collapseMe);
 		//End a tree Node
 		void EndTreeNode();
 	}
@@ -242,6 +243,7 @@ namespace EGUI
 
 struct ImDrawData;
 struct ImGuiContext;
+
 namespace Dystopia
 {
 	class WindowManager;
@@ -262,6 +264,11 @@ namespace Dystopia
 		void Shutdown();
 
 		const char* GetMainDockspaceName() const;
+
+		void			UpdateCharInputs(unsigned int c);
+		void			UpdateMouseInputs();
+		void			UpdateKeyInputs();
+		void			UpdateScrollInputs();
 
 	private:
 		ImGuiContext	*mpCtx;
@@ -286,11 +293,6 @@ namespace Dystopia
 		bool			mMouseJustPressed[3];	// 0 is left, 1 is right, 2 is middle
 
 		void			CreateDefaultFont();
-		void			UpdateCharInputs();
-		void			UpdateMouseInputs();
-		void			UpdateKeyInputs();
-		void			UpdateScrollInputs();
-
 		void			StartFullDockableSpace();
 		void			EndFullDockableSpace();
 	};

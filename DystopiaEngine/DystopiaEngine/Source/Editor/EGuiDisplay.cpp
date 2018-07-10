@@ -20,8 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <stdlib.h>
 #include <iostream>
 
-constexpr unsigned int Default_VectorField_Alignment_Left = 100;
-constexpr unsigned int Default_VectorField_Alignment_Height = 2;
+constexpr float Default_VectorField_Alignment_Left = 100.f;
+constexpr float Default_VectorField_Alignment_Height = 2.f;
 
 Dystopia::CommandHandler *gContextComdHND = nullptr;
 
@@ -37,9 +37,9 @@ namespace EGUI
 		gContextComdHND = nullptr;
 	}
 
-	bool StartTab(const char *_pLabel, bool *_pOpen, ImGuiWindowFlags _flags)
+	bool StartTab(const std::string& _label, bool *_pOpen, ImGuiWindowFlags _flags)
 	{
-		return EGUI::Docking::BeginTabs(_pLabel, _pOpen, _flags);
+		return EGUI::Docking::BeginTabs(_label.c_str(), _pOpen, _flags);
 	}
 
 	void EndTab()
@@ -52,14 +52,14 @@ namespace EGUI
 		return ImGui::BeginMainMenuBar();
 	}
 
-	bool StartMenuHeader(const char *_pLabel)
+	bool StartMenuHeader(const std::string& _label)
 	{
-		return ImGui::BeginMenu(_pLabel);
+		return ImGui::BeginMenu(_label.c_str());
 	}
 
-	bool StartMenuBody(const char *_pLabel)
+	bool StartMenuBody(const std::string& _label, const std::string& _shortcut)
 	{
-		return ImGui::MenuItem(_pLabel);
+		return ImGui::MenuItem(_label.c_str(), _shortcut.c_str());
 	}
 
 	void EndMainMenuBar()
@@ -72,14 +72,14 @@ namespace EGUI
 		ImGui::EndMenu();
 	}
 
-	bool StartChild(const char *_pLabel, const Math::Vec4& _size)
+	bool StartChild(const std::string& _label, const Math::Vec4& _size)
 	{
-		return ImGui::BeginChild(_pLabel, ImVec2{ _size.x, _size.y }, false);
+		return ImGui::BeginChild(_label.c_str(), ImVec2{ _size.x, _size.y }, false);
 	}
 
-	bool StartChild(const char *_pLabel, const float& _x, const float& _y)
+	bool StartChild(const std::string& _label, const float& _x, const float& _y)
 	{
-		return ImGui::BeginChild(_pLabel, ImVec2{ _x, _y }, false);
+		return ImGui::BeginChild(_label.c_str(), ImVec2{ _x, _y }, false);
 	}
 
 	void EndChild()
@@ -102,35 +102,82 @@ namespace EGUI
 			va_end(args);
 		}
 	
-		void TextField(const char* _label, char* _outputbuffer, size_t _size)
+		void TextField(const std::string& _label, char* _outputbuffer, size_t _size)
 		{
-			Label(_label);
+			ImGuiInputTextFlags flags = ImGuiInputTextFlags_CharsHexadecimal |
+										ImGuiInputTextFlags_AutoSelectAll |
+										ImGuiInputTextFlags_EnterReturnsTrue;
+
+			Label(_label.c_str());
 			ImGui::SameLine();
-			ImGui::InputText("", _outputbuffer, _size, ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_AutoSelectAll);
+			if (ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags))
+			{
+			}
 		}
 	
-		bool CheckBox(const char* _label, bool* _outputBool)
+		bool CheckBox(const std::string& _label, bool* _outputBool)
 		{
-			Label(_label);
+			bool changed = false;
+			Label(_label.c_str());
 			ImGui::SameLine();
-			return  (ImGui::Checkbox("", _outputBool));
+			if (ImGui::Checkbox(("###CheckBox" + _label).c_str(), _outputBool))
+			{
+				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
+				{
+					gContextComdHND->StartRecording(_outputBool);
+				}
+				changed = true;
+			}
+			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
+			{
+				gContextComdHND->EndRecording();
+			}
+			return changed;
 		}
 	
-		bool DragFloat(const char* _label, float* _outputFloat, float _dragSpeed, float _min, float _max)
+		bool DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max)
 		{
-			Label(_label);
+			bool changed = false;
+			Label(_label.c_str());
 			ImGui::SameLine();
-			return (ImGui::DragFloat("", _outputFloat, _dragSpeed, _min, _max));
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			if (ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max))
+			{
+				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
+				{
+					gContextComdHND->StartRecording(_outputFloat);
+				}
+				changed = true;
+			}
+			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
+			{
+				gContextComdHND->EndRecording();
+			}
+			return changed;
 		}
 	
-		bool DragInt(const char* _label, int* _outputInt, float _dragSpeed, int _min, int _max)
+		bool DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max)
 		{
-			Label(_label);
+			bool changed = false;
+			Label(_label.c_str());
 			ImGui::SameLine();
-			return (ImGui::DragInt("", _outputInt, _dragSpeed, _min, _max));
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			if (ImGui::DragInt(("###DragInt" + _label).c_str(), _outputInt, _dragSpeed, _min, _max))
+			{
+				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
+				{
+					gContextComdHND->StartRecording(_outputInt);
+				}
+				changed = true;
+			}
+			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
+			{
+				gContextComdHND->EndRecording();
+			}
+			return changed;
 		}
 	
-		bool VectorFields(const char* _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
+		bool VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
 		{
 			bool changed = false;
 			std::string field1 = "##VecFieldX", field2 = "##VecFieldY", field3 = "##VecFieldZ";
@@ -144,7 +191,7 @@ namespace EGUI
 
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
-			Label(_label);
+			Label(_label.c_str());
 			ImGui::SameLine(Default_VectorField_Alignment_Left);
 			Label("X:");
 			ImGui::SameLine();
@@ -153,7 +200,7 @@ namespace EGUI
 			{
 				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
 				{
-					gContextComdHND->StartRecording(_outputVec);
+					gContextComdHND->StartRecording(&_outputVec->x);
 				}
 				_outputVec->x = x;
 				changed = true;
@@ -165,7 +212,7 @@ namespace EGUI
 			{
 				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
 				{
-					gContextComdHND->StartRecording(_outputVec);
+					gContextComdHND->StartRecording(&_outputVec->y);
 				}
 				_outputVec->y = y;
 				changed = true;
@@ -177,13 +224,12 @@ namespace EGUI
 			{
 				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
 				{
-					gContextComdHND->StartRecording(_outputVec);
+					gContextComdHND->StartRecording(&_outputVec->z);
 				}
 				changed = true;
 				_outputVec->z = z;
 			}
 			ImGui::PopItemWidth();
-			std::cout << gContextComdHND->IsRecording() << " / " << ImGui::IsMouseDown(0) << std::endl;
 			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
 			{
 				gContextComdHND->EndRecording();
@@ -192,43 +238,43 @@ namespace EGUI
 			return changed;
 		}
 	
-		bool CollapsingHeader(const char* _header)
+		bool CollapsingHeader(const std::string& _label)
 		{
-			return ImGui::CollapsingHeader(_header, ImGuiTreeNodeFlags_DefaultOpen);
+			return ImGui::CollapsingHeader(_label.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
 		}
 
-		bool SelectableTxt(const char* _label, bool _outputBool)
+		bool SelectableTxt(const std::string& _label, bool _outputBool)
 		{
-			return (ImGui::Selectable(_label, _outputBool));
+			return (ImGui::Selectable(_label.c_str(), _outputBool));
 		}
 
-		bool SelectableTxt(const char* _label, bool* _outputBool)
+		bool SelectableTxt(const std::string& _label, bool* _outputBool)
 		{
-			return (ImGui::Selectable(_label, _outputBool));
+			return (ImGui::Selectable(_label.c_str(), _outputBool));
 		}
 
-		bool SelectableTxtDouble(const char* _label, bool _outputBool)
+		bool SelectableTxtDouble(const std::string& _label, bool _outputBool)
 		{
-			return (ImGui::Selectable(_label, _outputBool, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0);
+			return (ImGui::Selectable(_label.c_str(), _outputBool, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0);
 		}
 
-		bool SelectableTxtDouble(const char* _label, bool* _outputBool)
+		bool SelectableTxtDouble(const std::string& _label, bool* _outputBool)
 		{
-			if ((ImGui::Selectable(_label, _outputBool, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0))
+			if ((ImGui::Selectable(_label.c_str(), _outputBool, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0))
 				return true;
 			else
 				*_outputBool = false;
 			return false;
 		}
 
-		bool StartTreeNode(const char *_label)
+		bool StartTreeNode(const std::string&_label)
 		{
-			return ImGui::TreeNode(_label);
+			return ImGui::TreeNode(_label.c_str());
 		}
 
-		void OpenTreeNode(const char *_label, bool _collapseMe)
+		void OpenTreeNode(const std::string&_label, bool _collapseMe)
 		{
-			ImGui::GetStateStorage()->SetInt(ImGui::GetID(_label), static_cast<int>(_collapseMe));
+			ImGui::GetStateStorage()->SetInt(ImGui::GetID(_label.c_str()), static_cast<int>(_collapseMe));
 		}
 
 		void EndTreeNode()

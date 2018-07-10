@@ -22,6 +22,7 @@ namespace Dystopia
 	{
 		virtual void ExecuteDo() = 0;
 		virtual void ExecuteUndo() = 0;
+		virtual bool Unchanged() const = 0;
 	};
 
 	template <typename T>
@@ -41,6 +42,11 @@ namespace Dystopia
 		void ExecuteUndo() override
 		{
 			*mValue = mOldValue;
+		}
+
+		bool Unchanged() const
+		{
+			return (mOldValue == mNewValue);
 		}
 
 	private:
@@ -70,6 +76,11 @@ namespace Dystopia
 		void ExecuteUndo() override
 		{
 			//*mValue = oldValue;
+		}
+
+		bool Unchanged() const
+		{
+			return false;
 		}
 	
 	private:
@@ -108,6 +119,11 @@ namespace Dystopia
 		void ExecuteUndo() override
 		{
 			*mpTarget = mOldValue;
+		}
+
+		bool Unchanged() const
+		{
+			return (mOldValue == mNewValue);
 		}
 
 	private:

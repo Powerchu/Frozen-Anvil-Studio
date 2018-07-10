@@ -21,7 +21,10 @@ namespace Dystopia
 	CommandHandler::CommandHandler(size_t _nHistory)
 		: mDeqRedo{ _nHistory }, mDeqUndo{ _nHistory }, mRecording{ false },
 		mpRecorder{ nullptr }
-	{}
+	{
+		mDeqRedo.clear();
+		mDeqUndo.clear();
+	}
 
 	CommandHandler::~CommandHandler()
 	{
@@ -59,7 +62,7 @@ namespace Dystopia
 
 	void CommandHandler::UndoCommand()
 	{
-		if (!mDeqUndo.size()) return;
+		if (!mDeqUndo.size()) return; 
 
 		mDeqUndo.back()->ExecuteUndo();
 
@@ -95,7 +98,7 @@ namespace Dystopia
 		if (mpRecorder)
 		{
 			mpRecorder->EndRecord();
-			InvokeCommand(mpRecorder);
+			if (!mpRecorder->Unchanged()) InvokeCommand(mpRecorder);
 			mpRecorder = nullptr;
 		}
 		mRecording = false;

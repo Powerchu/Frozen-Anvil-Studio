@@ -46,6 +46,7 @@ namespace Dystopia
 
 	private:
 		Math::Vec4 mDemoVec;
+		char mDemoText[32];
 		std::string mLabel;
 		GameObject *mpFocusGameObj;
 	};

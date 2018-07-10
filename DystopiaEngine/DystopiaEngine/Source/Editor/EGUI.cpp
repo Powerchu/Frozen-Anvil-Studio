@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Input\InputSystem.h"
 #include "System\Input\InputMap.h"
 #include "Math\Vector4.h"
+#include "Math\Vector2.h"
 #include "GL\glew.h"
 #include "../../Dependancies/ImGui/imgui.h"
 #include "../../Dependancies/ImGui/imgui_internal.h"
@@ -157,11 +158,11 @@ namespace Dystopia
 		// io.KeyMap[ImGuiKey_Home]		= eButton::KEYBOARD_HOME;
 		// io.KeyMap[ImGuiKey_End]			= eButton::KEYBOARD_END;
 		// io.KeyMap[ImGuiKey_Insert]		= eButton::KEYBOARD_INSERT;
-		// io.KeyMap[ImGuiKey_Delete]		= eButton::KEYBOARD_DELETE;
-		// io.KeyMap[ImGuiKey_Backspace]	= eButton::KEYBOARD_BACKSPACE;
-		// io.KeyMap[ImGuiKey_Space]		= eButton::KEYBOARD_SPACEBAR;
-		// io.KeyMap[ImGuiKey_Enter]		= eButton::KEYBOARD_ENTER;
-		// io.KeyMap[ImGuiKey_Escape]		= eButton::KEYBOARD_ESCAPE;
+		io.KeyMap[ImGuiKey_Delete]		= static_cast<int>(eButton::KEYBOARD_DELETE);
+		io.KeyMap[ImGuiKey_Backspace]	= static_cast<int>(eButton::KEYBOARD_BACKSPACE);
+		io.KeyMap[ImGuiKey_Space]		= static_cast<int>(eButton::KEYBOARD_SPACEBAR);
+		io.KeyMap[ImGuiKey_Enter]		= static_cast<int>(eButton::KEYBOARD_ENTER);
+		io.KeyMap[ImGuiKey_Escape]		= static_cast<int>(eButton::KEYBOARD_ESCAPE);
 		io.KeyMap[ImGuiKey_A]			= static_cast<int>(eButton::KEYBOARD_A);
 		io.KeyMap[ImGuiKey_C]			= static_cast<int>(eButton::KEYBOARD_C);
 		io.KeyMap[ImGuiKey_V]			= static_cast<int>(eButton::KEYBOARD_V);
@@ -197,12 +198,6 @@ namespace Dystopia
 		ImGui::SetCurrentContext(mpCtx);
 		ImGuiIO& io = ImGui::GetIO();
 
-		// update inputs to imgui io
-		UpdateMouseInputs();
-		UpdateScrollInputs();
-		UpdateKeyInputs();
-		UpdateCharInputs();
-
 		// Setup display size (every frame to accommodate for window resizing)
 		int w, h;
 		int display_w, display_h;
@@ -230,7 +225,7 @@ namespace Dystopia
 			{
 				double mouse_x, mouse_y;
 				// Get cursor position here
-				Math::Vec4 pos = mpInput->GetMousePosition();
+				Math::Vec2 pos = mpInput->GetMousePosition();
 				mouse_x = pos.x;
 				mouse_y = pos.y;
  				io.MousePos = ImVec2((float)mouse_x, (float)mouse_y); //glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
@@ -516,12 +511,10 @@ namespace Dystopia
 		glBindVertexArray(last_vertex_array);
 	}
 
-	void GuiSystem::UpdateCharInputs()
+	void GuiSystem::UpdateCharInputs(unsigned int c)
 	{
 		// update char inputs
 		ImGuiIO& io = ImGui::GetIO();
-		unsigned char c = '0';			// what is c?
-
 		if (c > 0 && c < 0x10000)
 			io.AddInputCharacter(static_cast<unsigned short>(c));
 	}

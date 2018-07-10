@@ -21,8 +21,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	Inspector::Inspector()
-		: mpFocusGameObj{ nullptr }, mLabel{ "Inspector" }, mDemoVec{ Math::Vec4{0,0,0,0} }
-	{}
+		: mpFocusGameObj{ nullptr }, mLabel{ "Inspector" }, mDemoVec{ Math::Vec4{0,0,0,0} },
+		mDemoText{ "hello" }
+	{
+	}
 
 	Inspector::~Inspector()
 	{}
@@ -62,6 +64,8 @@ namespace Dystopia
 		float z = mDemoVec.z;
 		if (EGUI::Display::CollapsingHeader("Temporary Transform"))	// replace with for loop of all components name
 		{
+			EGUI::Display::TextField("mDemoText", mDemoText, 32);
+
 			if (EGUI::Display::VectorFields("Demo Vec", &mDemoVec, 0.1f, 0.f, 10.f))
 			{
 				x = mDemoVec.x;
