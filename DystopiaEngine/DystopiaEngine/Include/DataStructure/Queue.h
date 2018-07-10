@@ -26,6 +26,8 @@ public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
 	explicit Queue(unsigned _nSize);
+	Queue(Queue&&);
+	Queue(const Queue&) = delete;
 
 	~Queue(void);
 
@@ -88,8 +90,6 @@ public:
 		unsigned mnPos, mnLimit;
 	};
 
-	Queue& operator = (Queue&&) = default;
-
 private:
 
 	T* mpArray;
@@ -112,6 +112,13 @@ private:
 template <typename T>
 Queue<T>::Queue(unsigned _nSize) :
 	mpArray{ new T[_nSize] }, mnFront{ 0 }, mnBack{ 0 }, mnSize{ 0 }, mnCap{ _nSize }
+{
+
+}
+
+template <typename T>
+Queue<T>::Queue(Queue<T>&& _o) :
+	mpArray{ _o.mpArray }, mnFront{ _o.mnFront }, mnBack{ _o.mnBack }, mnSize{ _o.mnSize }, mnCap{ _o.mnCap }
 {
 
 }

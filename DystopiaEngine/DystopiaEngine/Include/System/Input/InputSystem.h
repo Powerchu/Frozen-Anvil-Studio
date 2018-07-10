@@ -16,13 +16,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System\Base\Systems.h"		// Base Class
 #include "DataStructure\AutoArray.h"	// AutoArray
+#include "Math\Vector2.h"               // Vector2
 #include "Math\Vector4.h"				// Vector4
 
-enum eButton;
-enum eUserButton;
+enum eButton : unsigned short;
+enum eUserButton : unsigned short;
 
 namespace Dystopia
 {
+	class Window;
 	class TextSerialiser;
 
 	class InputManager : public Systems
@@ -45,8 +47,8 @@ namespace Dystopia
 		bool IsKeyPressed(eUserButton);
 		bool IsKeyReleased(eUserButton);
 
-		// Temporary
-		Math::Vector4 GetMousePosition(void);
+		Math::Vector2 GetMousePosition(void);
+		Math::Vector2 GetMousePosition(const Window&);
 
 	private:
 

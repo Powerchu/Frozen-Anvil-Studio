@@ -119,9 +119,9 @@ namespace Math
 	// ==================================== MATRIX GENERATORS ==================================== // 
 
 	inline Matrix4 _CALL Scale(const Vector4);
-	inline Matrix4 _CALL Scale(float _fScaleX, float _fScaleY, float _fScaleZ);
+	inline Matrix4 _CALL Scale(float _fScaleX, float _fScaleY, float _fScaleZ = 1);
 	inline Matrix4 _CALL Translate(const Vector4);
-	inline Matrix4 _CALL Translate(float _fTranslateX, float _fTranslateY, float _fTranslateZ);
+	inline Matrix4 _CALL Translate(float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
 	inline Matrix4 _CALL RotateX(float _fRadians);
 	inline Matrix4 _CALL RotateY(float _fRadians);
 	inline Matrix4 _CALL RotateZ(float _fRadians);
@@ -130,17 +130,17 @@ namespace Math
 	inline Matrix4 _CALL RotateZDeg(float _fDegrees);
 
 	inline Matrix4 _CALL RotYTrans(float _fRadians, Vector4);
-	inline Matrix4 _CALL RotYTrans(float _fRadians, float _fTranslateX, float _fTranslateY, float _fTranslateZ);
+	inline Matrix4 _CALL RotYTrans(float _fRadians, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
 	inline Matrix4 _CALL RotXTrans(float _fRadians, Vector4);
-	inline Matrix4 _CALL RotXTrans(float _fRadians, float _fTranslateX, float _fTranslateY, float _fTranslateZ);
+	inline Matrix4 _CALL RotXTrans(float _fRadians, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
 	inline Matrix4 _CALL RotZTrans(float _fRadians, Vector4);
-	inline Matrix4 _CALL RotZTrans(float _fRadians, float _fTranslateX, float _fTranslateY, float _fTranslateZ);
+	inline Matrix4 _CALL RotZTrans(float _fRadians, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
 	inline Matrix4 _CALL RotYTransDeg(float _fDegrees, Vector4);
-	inline Matrix4 _CALL RotYTransDeg(float _fDegrees, float _fTranslateX, float _fTranslateY, float _fTranslateZ);
+	inline Matrix4 _CALL RotYTransDeg(float _fDegrees, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
 	inline Matrix4 _CALL RotXTransDeg(float _fDegrees, Vector4);
-	inline Matrix4 _CALL RotXTransDeg(float _fDegrees, float _fTranslateX, float _fTranslateY, float _fTranslateZ);
+	inline Matrix4 _CALL RotXTransDeg(float _fDegrees, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
 	inline Matrix4 _CALL RotZTransDeg(float _fDegrees, Vector4);
-	inline Matrix4 _CALL RotZTransDeg(float _fDegrees, float _fTranslateX, float _fTranslateY, float _fTranslateZ);
+	inline Matrix4 _CALL RotZTransDeg(float _fDegrees, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
 
 
 	// ======================================== OPERATORS ======================================== // 
@@ -389,12 +389,12 @@ inline Math::Matrix4 _CALL Math::RotZTransDeg(float _fDegrees, float _fTranslate
 
 inline float& _CALL      Math::Matrix4::operator[] (const unsigned _nIndex)
 {
-	return mData[_nIndex >> 2][_nIndex % 4];
+	return mData[_nIndex >> 2][_nIndex & 3];
 }
 
 inline const float _CALL Math::Matrix4::operator[] (const unsigned _nIndex) const
 {
-	return mData[_nIndex >> 2][_nIndex % 4];
+	return mData[_nIndex >> 2][_nIndex & 3];
 }
 
 

@@ -55,7 +55,7 @@ inline std::fstream& operator << (std::fstream& _lhs, Dystopia::Vertex& _rhs)
 
 inline std::fstream& operator << (std::fstream& _lhs, Dystopia::UV& _rhs)
 {
-	_lhs << _rhs.u << _rhs.v;
+	_lhs << _rhs.u << ',' << _rhs.v;
 
 	return _lhs;
 }

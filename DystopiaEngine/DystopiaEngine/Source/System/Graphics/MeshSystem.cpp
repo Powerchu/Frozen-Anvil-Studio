@@ -48,7 +48,7 @@ void Dystopia::MeshSystem::StartMesh(void)
 void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 {
 	RawMesh& CurrentMesh = mpRawMeshes.back();
-	TextSerialiser input = Serialiser::OpenFile<TextSerialiser>(_strPath, TextSerialiser::MODE_READ);
+	TextSerialiser input = Serialiser::OpenFile<TextSerialiser>(_strPath, Serialiser::MODE_READ);
 
 	unsigned short nVtxCount = 0;
 	input.Read(nVtxCount);
@@ -80,7 +80,7 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 	while (!input.EndOfInput())
 	{
 		mIndex.EmplaceBack();
-		input.Read(mIndex.back());
+		input >> mIndex.back();
 
 		++nNumIndices;
 	}
@@ -90,7 +90,7 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 
 	input.ConsumeStartBlock();
 
-	input.Read(const_cast<std::string&>(mpMeshes.back().GetName()));
+	input >> const_cast<std::string&>(mpMeshes.back().GetName());
 
 	input.ConsumeEndBlock();
 }
@@ -106,7 +106,7 @@ void Dystopia::MeshSystem::EndMesh(void)
 
 void Dystopia::MeshSystem::FreeMeshes(void)
 {
-
+	// TODO
 }
 
 

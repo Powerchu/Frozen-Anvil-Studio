@@ -40,6 +40,10 @@ Dystopia::Texture2D::Texture2D(const std::string& _strPath, bool _bAlpha) :
 	{
 		img = ImageParser::LoadJPG(_strPath);
 	}
+	else
+	{
+		return;
+	}
 
 	SetWidth(img.mnWidth);
 	SetHeight(img.mnHeight);

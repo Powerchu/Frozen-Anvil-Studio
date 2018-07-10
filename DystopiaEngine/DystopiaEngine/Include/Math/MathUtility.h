@@ -44,7 +44,7 @@ namespace Math
 	template<const unsigned n, class T>
 	inline T Abs(T _vec)
 	{
-		InternalHelper::AbsHelper<T, n - 1>::CalculateAbs(_vec);
+		Internal::AbsHelper<T, n - 1>::CalculateAbs(_vec);
 		return _vec;
 	}
 
@@ -104,7 +104,7 @@ namespace Math
 	template<int exponent, class T>
 	inline constexpr T Power(T _x)
 	{
-		return InternalHelper::PowerCalc<T, exponent < 0, exponent < 0 ? -exponent : exponent>::Power(_x);
+		return Internal::PowerCalc<T, exponent < 0, exponent < 0 ? -exponent : exponent>::Power(_x);
 	}
 }
 

@@ -22,12 +22,21 @@ namespace Dystopia
 	class Systems
 	{
 	public:
+		virtual void PreInit(void)					{ };
 		virtual bool Init(void)						= 0;
+		virtual void PostInit(void)					{ };
+
+		virtual void FixedUpdate(float)				{ };
 		virtual void Update(float)					= 0;
 		virtual void Shutdown(void)					= 0;
 
 		virtual void LoadDefaults(void)				{ };
 		virtual void LoadSettings(TextSerialiser&)	{ };
+
+//		virtual void ReceiveMessage(const Message&) = 0;
+
+		virtual ~Systems(void)						= default;
+
 	};
 }
 

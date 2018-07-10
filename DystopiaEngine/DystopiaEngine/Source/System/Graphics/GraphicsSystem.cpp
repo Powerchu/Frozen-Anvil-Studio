@@ -18,7 +18,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System\Graphics\GraphicsSystem.h"	// File header
 #include "System\Graphics\GraphicsDefs.h"	// eGraphicSettings
+#include "System\Window\WindowManager.h"	// WindowManager
 #include "System\Window\Window.h"			// Window
+#include "System\Driver\Driver.h"			// EngineCore
 #include "Utility\DebugAssert.h"			// DEBUG_ASSERT
 #include "Component\Camera.h"				// Camera
 
@@ -47,11 +49,21 @@ Dystopia::GraphicsSystem::~GraphicsSystem(void)
 }
 
 
+void Dystopia::GraphicsSystem::PreInit(void)
+{
+	InitOpenGL(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow());
+}
+
 bool Dystopia::GraphicsSystem::Init(void)
 {
 	glEnable(GL_DEPTH_TEST);
 
 	return true;
+}
+
+void Dystopia::GraphicsSystem::PostInit(void)
+{
+
 }
 
 void Dystopia::GraphicsSystem::Update(float)
@@ -115,9 +127,9 @@ void Dystopia::GraphicsSystem::LevelLoad(TextSerialiser&)
 
 }
 
-Dystopia::Mesh* Dystopia::GraphicsSystem::LoadMesh(const std::string&)
+void Dystopia::GraphicsSystem::LoadMesh(const std::string&)
 {
-	return nullptr;
+
 }
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string&)
@@ -241,7 +253,7 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 	}
 
 	// Failed, try 3.2...
-	mAvailable &= ~(GRAPHICS_COMPUTE | GRAPHICS_TESS);
+	mAvailable &= ~(eGfxSettings::GRAPHICS_COMPUTE | eGfxSettings::GRAPHICS_TESS);
 
 	attrbs[1] = 3; attrbs[3] = 2;
 	mOpenGL = wglCreateContextAttribsARB(_window.GetDeviceContext(), NULL, attrbs);

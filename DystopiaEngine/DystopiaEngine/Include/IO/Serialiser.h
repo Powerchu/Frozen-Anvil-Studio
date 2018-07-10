@@ -130,6 +130,8 @@ template<class Serialiser_t>
 inline void Dystopia::SerialiserBase<Serialiser_t>::ConsumeEndBlock(void)
 {
 	GetType().ReadEndBlock();
+
+	mbBlockRead = true;
 }
 
 template<class Serialiser_t>
@@ -178,7 +180,7 @@ inline void Dystopia::SerialiserBase<Serialiser_t>::ReadEndBlock(void)
 template<class Serialiser_t>
 inline bool Dystopia::SerialiserBase<Serialiser_t>::ReadStartBlock(void)
 {
-	return false;
+	return true;
 }
 
 template<class Serialiser_t>
