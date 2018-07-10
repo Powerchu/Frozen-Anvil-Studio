@@ -44,11 +44,8 @@ namespace Dystopia
 
 		Scene& GetCurrentScene(void) const;
 
-		template <typename T>
-		T* FindGameObject(const std::string& _strName);
-
-		template <typename T>
-		T* FindGameObject(size_t _nID);
+		GameObject* FindGameObject(size_t _nID);
+		GameObject* FindGameObject(const std::string& _strName);
 
 	private:
 
@@ -57,6 +54,15 @@ namespace Dystopia
 		Scene *mpPrevScene;
 	};
 }
+
+
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
 
 #endif
 
