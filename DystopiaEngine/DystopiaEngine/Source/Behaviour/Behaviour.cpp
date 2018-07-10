@@ -19,6 +19,21 @@ Dystopia::Behaviour::Behaviour(void) :
 
 }
 
+void Dystopia::Behaviour::Update(const float)
+{
+
+}
+
+void Dystopia::Behaviour::FixedUpdate(const float)
+{
+
+}
+
+void Dystopia::Behaviour::PostUpdate(void)
+{
+
+}
+
 void Dystopia::Behaviour::OnCollisionEnter(const CollisionEvent&)
 {
 

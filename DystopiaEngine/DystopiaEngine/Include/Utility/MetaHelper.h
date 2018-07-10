@@ -23,7 +23,7 @@ namespace Utility
 		constexpr bool HasMember(T T::*)	{ return true; }
 
 		// Force false overload to have the lowest rank so that
-		// it will only be picked if substution for true overload fails
+		// it will only be picked if substution for "true" overload fails
 		template <typename T>
 		constexpr bool HasMember(...)		{ return false; }
 	}

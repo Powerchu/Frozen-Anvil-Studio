@@ -14,19 +14,44 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _WINDOW_H_
 #define _WINDOW_H_
 
-typedef struct HINSTANCE__* HINSTANCE;
+#include "DataStructure\Queue.h"
+#include "System\Input\InputMap.h"
+
+#include <string>
+
 typedef struct HWND__* HWND;
+typedef struct HDC__* HDC;
 
 namespace Dystopia
 {
-
-	struct Window
+	class Window
 	{
+	public:
+
+		explicit Window(HWND);
+		Window(Window&&) = default;
+
+		const Queue<eButton>& GetInputQueue(void) const;
+
+		HWND GetWindowHandle(void) const;
+		HDC GetDeviceContext(void) const;
+
+		void SetTitle(const std::wstring&);
+		void SetStyle(long _nStyle, long _nStyleEx);
+
+		void ShowCursor(int _bShow) const;
+
+		Window& operator= (Window&&) = default;
 
 	private:
 
-		HWND mWindow;
+		HWND mHandle;
+		HDC mDeviceContext;
+
+		Queue<eButton> mInputQueue;
 	};
+
+	bool operator== (const Window&, const Window&);
 }
 
 

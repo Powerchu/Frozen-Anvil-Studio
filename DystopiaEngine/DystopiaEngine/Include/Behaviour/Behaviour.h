@@ -37,12 +37,13 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
+		virtual void Update(const float _fDeltaTime);
+		virtual void FixedUpdate(const float _fDeltaTime);
+		virtual void PostUpdate(void);
+
 		void OnCollisionEnter(const CollisionEvent&);
 		void OnCollisionStay (const CollisionEvent&);
 		void OnCollisionExit (const CollisionEvent&);
-
-		virtual void Serialise()	= 0;
-		virtual void Unserialise()	= 0;
 	};
 }
 

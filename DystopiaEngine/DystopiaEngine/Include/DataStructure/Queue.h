@@ -67,7 +67,7 @@ public:
 	// Returns false otherwise
 	inline bool IsEmpty(void) const;
 
-	struct QueueIterator : std::input_iterator_tag
+	struct QueueIterator
 	{
 		explicit QueueIterator(const T*, unsigned, unsigned) noexcept;
 
@@ -80,21 +80,25 @@ public:
 		bool operator == (const QueueIterator&) const noexcept;
 		bool operator != (const QueueIterator&) const noexcept;
 
+		using iterator_category = std::input_iterator_tag;
+
 	private:
 
 		const T* mpArray;
 		unsigned mnPos, mnLimit;
-
-
-		// ======================================== OPERATORS ======================================== // 
-
-		Queue& operator = (const Queue&) = delete;
 	};
+
+	Queue& operator = (Queue&&) = default;
 
 private:
 
 	T* mpArray;
 	unsigned mnFront, mnBack, mnSize, mnCap;
+
+
+	// ======================================== OPERATORS ======================================== // 
+
+	Queue& operator = (const Queue&) = delete;
 };
 
 
@@ -107,9 +111,9 @@ private:
 
 template <typename T>
 Queue<T>::Queue(unsigned _nSize) :
-	mpArray{ nullptr }, mnFront{ 0 }, mnBack{ 0 }, mnSize{ 0 }, mnCap{ _nSize }
+	mpArray{ new T[_nSize] }, mnFront{ 0 }, mnBack{ 0 }, mnSize{ 0 }, mnCap{ _nSize }
 {
-	mpArray = new T[_nSize];
+
 }
 
 template <typename T>

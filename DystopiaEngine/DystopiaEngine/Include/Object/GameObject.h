@@ -31,8 +31,8 @@ namespace Dystopia
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		explicit GameObject(bool _bActive = true);
-		GameObject(unsigned _ID, bool _bActive = true);
+		GameObject(void);
+		explicit GameObject(unsigned _ID);
 		GameObject(GameObject&&);
 
 		~GameObject(void);
@@ -62,10 +62,8 @@ namespace Dystopia
 		template <typename T>
 		void RemoveComponent(T*);
 
-		void PurgeComponents(void);
-
-		void Serialise();
-		void Unserialise();
+		void Serialise(TextSerialiser&);
+		void Unserialise(TextSerialiser&);
 
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
@@ -102,13 +100,10 @@ namespace Dystopia
 		}
 
 
-	protected:
-
-		bool mbActive;
-		unsigned mnID;
-		std::string mName;
-
 	private:
+
+		unsigned mnID, mnFlags;
+		std::string mName;
 
 		Transform mTransform;
 		AutoArray<Component*> mComponents;
@@ -120,6 +115,8 @@ namespace Dystopia
 		void AddComponent(Component*, BehaviourTag);
 		void RemoveComponent(Component*, ComponentTag);
 		void RemoveComponent(Component*, BehaviourTag);
+
+		void PurgeComponents(void);
 
 		template<typename T, typename U, typename Ret, typename ...Params, typename ...Args>
 		inline void Ping(AutoArray<T*>& _arr, Ret(U::*_pfunc)(Params ...), Args&& ..._args);
@@ -163,7 +160,7 @@ namespace Dystopia
 	{
 		for (T* e : _arr)
 		{
-			(e->*_pfunc)(static_cast<Args&&>(args)...);
+			(e->*_pfunc)(static_cast<Args&&>(_args)...);
 		}
 	}
 }

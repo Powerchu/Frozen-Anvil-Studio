@@ -29,10 +29,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 using Dystopia::Image;
 
-// Copied out of glew.h since we don't want to include the whole file
-#define GL_RGB	0x1907
-#define GL_RGBA	0x1908
-
 namespace
 {
 	// Taken from Wikipedia
@@ -40,7 +36,7 @@ namespace
 	{
 		uint16_t mType;
 		uint32_t mBytes;
-		uint32_t mReserved;	// Actually 2 seperate fields but we don't care about them anyway
+		uint32_t mReserved;	// Actually 2 seperate fields but ignored anyway
 		uint32_t mOffset;
 	};
 
@@ -63,7 +59,7 @@ namespace
 	struct HeaderPNG
 	{
 		uint8_t mIgnore;
-		uint8_t mFormat[3];			// This must say "PNG" in ASCII 
+		uint8_t mFormat[3];			// This must be ASCII "PNG" 
 		uint8_t mDontCare[4];
 	};
 
@@ -90,7 +86,7 @@ namespace
 
 namespace BMP
 {
-	bool IsUnreadable(HeaderBMP _header, InfoBMP _info)
+	bool IsUnreadable(HeaderBMP _header, InfoBMP _info, std::string _path)
 	{
 		// Check if we know how to read the file type
 		if (_header.mType != 'MB')
@@ -110,7 +106,7 @@ namespace BMP
 		return false;
 	}
 
-	uint32_t* ColorPalette(std::ifstream& _file, InfoBMP& _fileInfo, ColorRGBA(&_palette)[256])
+	void ColorPalette(std::ifstream& _file, InfoBMP& _fileInfo, ColorRGBA(&_palette)[256])
 	{
 		for (unsigned n = 0; n < _fileInfo.mNumColors; ++n)
 		{
@@ -127,9 +123,9 @@ namespace BMP
 		DEBUG_PRINT("Read image using color palette!\n");
 		ColorRGBA* data = new ColorRGBA[_info.mWidth * std::abs(_info.mHeight)];
 
-		for (unsigned n = 0; n < std::abs(_info.mHeight); ++n)
+		for (int n = 0; n < std::abs(_info.mHeight); ++n)
 		{
-			for (unsigned m = 0; m < _info.mWidth; ++m)
+			for (int m = 0; m < _info.mWidth; ++m)
 			{
 				uint8_t i;
 				_in.read(reinterpret_cast<char*>(&i), sizeof(uint8_t));
@@ -157,7 +153,7 @@ namespace BMP
 		uint8_t* data = new uint8_t[size];
 		uint8_t* ptr = data;
 
-		for (unsigned n = 0; n < std::abs(_info.mHeight); ++n)
+		for (int n = 0; n < std::abs(_info.mHeight); ++n)
 		{
 			_in.read(reinterpret_cast<char*>(ptr), chunkLength);
 			_in.ignore(padding);
@@ -174,7 +170,7 @@ namespace BMP
 		DEBUG_PRINT("Read image as RGBA color!\n");
 		ColorRGBA* data = new ColorRGBA[_info.mWidth * std::abs(_info.mHeight)];
 
-		for (unsigned n = 0; n < _info.mWidth * std::abs(_info.mHeight); ++n)
+		for (int n = 0; n < _info.mWidth * std::abs(_info.mHeight); ++n)
 		{
 			_in.read(reinterpret_cast<char*>(&data[n].sub.b), 1);
 			_in.read(reinterpret_cast<char*>(&data[n].sub.g), 1);
@@ -187,21 +183,22 @@ namespace BMP
 
 	Image ReadData(std::ifstream& _in, InfoBMP _info, ColorRGBA(&_palette)[256])
 	{
-		Image data = { 0, nullptr };
+		Image data = { 
+			static_cast<unsigned>(_info.mWidth ), 
+			static_cast<unsigned>(_info.mHeight), 
+			nullptr
+		};
 
 		switch (_info.mBits)
 		{
 		case 8:
-			data.mnFormat	= GL_RGBA;
-			data.mImageData	= Palette_ColorBMP(_in, _info, _palette);
+			data.mpImageData = Palette_ColorBMP(_in, _info, _palette);
 			break;
 		case 24:
-			data.mnFormat	= GL_RGB;
-			data.mImageData = RGB_ColorBMP(_in, _info);
+			data.mpImageData = RGB_ColorBMP(_in, _info);
 			break;
 		case 32:
-			data.mnFormat	= GL_RGBA;
-			data.mImageData	= RGBA_ColorBMP(_in, _info);
+			data.mpImageData = RGBA_ColorBMP(_in, _info);
 			break;
 		}
 
@@ -220,7 +217,7 @@ Image ImageParser::LoadBMP(const std::string& _path)
 	{
 		DEBUG_PRINT("ImageParser Warning: File \"%s\" not found!", _path.c_str());
 		file.close();
-		return { 0, nullptr };
+		return { 0, 0, nullptr };
 	}
 
 	// Read the BMP and info Headers
@@ -237,10 +234,10 @@ Image ImageParser::LoadBMP(const std::string& _path)
 	}
 
 	// Early bail checks before we do anything
-	if (BMP::IsUnreadable(fileHeader, fileInfo))
+	if (BMP::IsUnreadable(fileHeader, fileInfo, _path))
 	{
 		file.close();
-		return { 0, nullptr };
+		return { 0, 0, nullptr };
 	}
 
 	// Read color palette if there is one
@@ -267,7 +264,12 @@ Image ImageParser::LoadBMP(const std::string& _path)
 
 Image ImageParser::LoadPNG(const std::string&)
 {
+	return Image{};
+}
 
+Image ImageParser::LoadJPG(const std::string&)
+{
+	return Image{};
 }
 
 bool ImageParser::WriteBMP(const std::string& _path, void* _pImg, int _nWidth, int _nHeight)
@@ -312,5 +314,7 @@ bool ImageParser::WriteBMP(const std::string& _path, void* _pImg, int _nWidth, i
 	}
 
 	file.write(static_cast<char*>(_pImg), imgSize);
-
+	return true;
 }
+
+
