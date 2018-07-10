@@ -151,6 +151,7 @@ namespace Dystopia
 			e->Init();
 
 		mpComdHandler = new CommandHandler{};
+		EGUI::SetContext(mpComdHandler);
 
 		GuiSystem *pGui = new GuiSystem{};
 		if (!pGui->Init(mpWin, mpGfx, mpInput)) mCurrentState = EDITOR_EXIT;

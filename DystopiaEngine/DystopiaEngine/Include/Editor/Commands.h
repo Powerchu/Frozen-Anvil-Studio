@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	struct Commands;
+	struct RecordBase;
 
 	// Command handler to record all commands made in the editor. *Intended only for editor class to use*
 	class CommandHandler
@@ -48,23 +49,21 @@ namespace Dystopia
 		void StartRecording(T* _target)
 		{ 
 			if (mRecording) return;
-
-			mpTarget = _target;
-			mpOriginalVal = new T{ *_target };
+			mpRecorder = new ComdRecord<T>(_target);
 			mRecording = true;
 		}
 
-		void UpdateRecording();
+		// Call after done recording the data 
 		void EndRecording();
+
 		bool IsRecording() const;
 
 	private:
 		void PopFrontOfDeque(std::deque<Commands*>&);
 		std::deque<Commands*> mDeqRedo;
 		std::deque<Commands*> mDeqUndo;
+		RecordBase* mpRecorder;
 		bool mRecording;
-		void *mpTarget;
-		void *mpOriginalVal;
 	};
 }
 

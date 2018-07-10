@@ -20,9 +20,8 @@ namespace Dystopia
 {
 	CommandHandler::CommandHandler(size_t _nHistory)
 		: mDeqRedo{ _nHistory, nullptr }, mDeqUndo{ _nHistory, nullptr }, mRecording{ false },
-		mpTarget{ nullptr }, mpOriginalVal{ nullptr }
-	{;
-	}
+		mpRecorder{ nullptr }
+	{}
 
 	CommandHandler::~CommandHandler()
 	{
@@ -82,27 +81,22 @@ namespace Dystopia
 
 	void CommandHandler::PopFrontOfDeque(std::deque<Commands*>& _targetDeque)
 	{
-		if (_targetDeque.front())
+		if (!_targetDeque.size() && _targetDeque.front())
 		{
 			delete _targetDeque.front();
 			_targetDeque.pop_front();
 		}
 	}
 
-	void CommandHandler::UpdateRecording()
-	{
-	}
-
 	void CommandHandler::EndRecording()
 	{
 		if (!mRecording) return;
-		if (mpOriginalVal)
+		if (mpRecorder)
 		{
-			delete mpOriginalVal;
+			mpRecorder->EndRecord();
+			InvokeCommand(mpRecorder);
+			mpRecorder = nullptr;
 		}
-
-		mpOriginalVal = nullptr;
-		mpTarget = nullptr;
 		mRecording = false;
 	}
 

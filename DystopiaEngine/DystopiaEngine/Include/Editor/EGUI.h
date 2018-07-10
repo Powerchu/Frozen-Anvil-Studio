@@ -22,7 +22,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\Vector4.h"
 #include "Editor\Dock.h"
 #include <string>
-
+namespace Dystopia
+{
+	class CommandHandler;
+}
 /* =======================================================================================================================
 	Brief:
 		If you call any Start... functions, please remember to call their respective End... functions.
@@ -37,6 +40,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 ======================================================================================================================= */
 namespace EGUI
 {
+	void SetContext(Dystopia::CommandHandler *_pContext);
+	void RemoveContext();
 	bool StartMainMenuBar();
 	bool StartMenuHeader(const char*);
 	bool StartMenuBody(const char*);

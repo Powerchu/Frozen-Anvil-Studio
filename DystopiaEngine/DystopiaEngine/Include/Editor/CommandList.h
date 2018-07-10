@@ -28,7 +28,7 @@ namespace Dystopia
 	struct ComdModifyValue : Commands
 	{
 		ComdModifyValue(T* _value, const T& _newV)
-			: mValue{ _value }, oldValue{ *_value }, newValue{ _newV }
+			: mValue{ _value }, mOldValue{ *_value }, mNewValue{ _newV }
 		{}
 
 		~ComdModifyValue()
@@ -36,16 +36,16 @@ namespace Dystopia
 
 		void ExecuteDo() override
 		{
-			*mValue = newValue;
+			*mValue = mNewValue;
 		}
 		void ExecuteUndo() override
 		{
-			*mValue = oldValue;
+			*mValue = mOldValue;
 		}
 
 	private:
-		T oldValue;
-		T newValue;
+		T mOldValue;
+		T mNewValue;
 		T* mValue;
 	};
 
@@ -74,6 +74,46 @@ namespace Dystopia
 	
 	private:
 		T* mObject;
+	};
+
+
+	struct RecordBase : Commands
+	{
+		virtual void EndRecord() = 0;
+		virtual ~RecordBase() {}
+	};
+
+	template <typename T>
+	struct ComdRecord : RecordBase
+	{
+		ComdRecord(T*& rhs)
+			: mpTarget{ rhs }, mOldValue{ *mpTarget }, mNewValue{ mOldValue }
+		{}
+
+		void EndRecord()
+		{
+			mNewValue = *mpTarget;
+		}
+
+		T* GetPointer()
+		{
+			return mpTarget;
+		}
+
+		void ExecuteDo() override
+		{
+			*mpTarget = mNewValue;
+		}
+
+		void ExecuteUndo() override
+		{
+			*mpTarget = mOldValue;
+		}
+
+	private:
+		T* mpTarget;
+		T mOldValue;
+		T mNewValue;
 	};
 }
 

@@ -23,8 +23,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 constexpr unsigned int Default_VectorField_Alignment_Left = 100;
 constexpr unsigned int Default_VectorField_Alignment_Height = 2;
 
+Dystopia::CommandHandler *gContextComdHND = nullptr;
+
 namespace EGUI
 {
+	void SetContext(Dystopia::CommandHandler *_pContext)
+	{
+		gContextComdHND = _pContext;
+	}
+
+	void RemoveContext()
+	{
+		gContextComdHND = nullptr;
+	}
+
 	bool StartTab(const char *_pLabel, bool *_pOpen, ImGuiWindowFlags _flags)
 	{
 		return EGUI::Docking::BeginTabs(_pLabel, _pOpen, _flags);
@@ -139,6 +151,10 @@ namespace EGUI
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			if (ImGui::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max))
 			{
+				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
+				{
+					gContextComdHND->StartRecording(_outputVec);
+				}
 				_outputVec->x = x;
 				changed = true;
 			}
@@ -147,6 +163,10 @@ namespace EGUI
 			ImGui::SameLine();
 			if (ImGui::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max))
 			{
+				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
+				{
+					gContextComdHND->StartRecording(_outputVec);
+				}
 				_outputVec->y = y;
 				changed = true;
 			}
@@ -155,10 +175,20 @@ namespace EGUI
 			ImGui::SameLine();
 			if (ImGui::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max))
 			{
+				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
+				{
+					gContextComdHND->StartRecording(_outputVec);
+				}
 				changed = true;
 				_outputVec->z = z;
 			}
 			ImGui::PopItemWidth();
+			std::cout << gContextComdHND->IsRecording() << " / " << ImGui::IsMouseDown(0) << std::endl;
+			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
+			{
+				gContextComdHND->EndRecording();
+			}
+
 			return changed;
 		}
 	
