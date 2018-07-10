@@ -53,16 +53,16 @@ namespace Dystopia
 		void Destroy(void);
 		void Unload(void);
 
-		void OnCollisionEnter(CollisionEvent&);
-		void OnCollisionStay (CollisionEvent&);
-		void OnCollisionExit (CollisionEvent&);
+		void OnCollisionEnter(const CollisionEvent&);
+		void OnCollisionStay (const CollisionEvent&);
+		void OnCollisionExit (const CollisionEvent&);
 
 		template <typename T>
 		void AddComponent(T*);
 		template <typename T>
 		void RemoveComponent(T*);
 
-		void Serialise(TextSerialiser&);
+		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
 
 		// Creates an exact copy of the Game Object
@@ -78,7 +78,7 @@ namespace Dystopia
 			{
 				if (T::TYPE == e->GetComponentType())
 				{
-					return dynamic_cast<T*>(e);
+					return static_cast<T*>(e);
 				}
 			}
 			return nullptr;
@@ -92,7 +92,7 @@ namespace Dystopia
 			{
 				if (T::TYPE == e->GetComponentType())
 				{
-					temp.Insert(dynamic_cast<T*>(e));
+					temp.Insert(static_cast<T*>(e));
 				}
 			}
 
@@ -111,10 +111,10 @@ namespace Dystopia
 
 		GameObject(const GameObject&) = delete;
 
-		void AddComponent(Component*, ComponentTag);
-		void AddComponent(Component*, BehaviourTag);
-		void RemoveComponent(Component*, ComponentTag);
-		void RemoveComponent(Component*, BehaviourTag);
+		inline void AddComponent(Component*, ComponentTag);
+		inline void AddComponent(Component*, BehaviourTag);
+		inline void RemoveComponent(Component*, ComponentTag);
+		inline void RemoveComponent(Component*, BehaviourTag);
 
 		void PurgeComponents(void);
 
@@ -139,29 +139,20 @@ namespace Dystopia
 		AddComponent(_pComponent, typename T::TAG{});
 	}
 
+	inline void GameObject::AddComponent(Component* _pComponent, ComponentTag)
+	{
+		mComponents.push_back(_pComponent);
+	}
+
+	inline void GameObject::AddComponent(Component* _pBehaviour, BehaviourTag)
+	{
+		mBehaviours.push_back(static_cast<Behaviour*>(_pBehaviour));
+	}
+
 	template <typename T>
 	inline void GameObject::RemoveComponent(T* _pComponent)
 	{
 		RemoveComponent(_pComponent, typename T::TAG{});
-	}
-
-	template<typename T, typename U, typename Ret, typename ...Params, typename ...Args>
-	inline void GameObject::Ping(AutoArray<T*>& _arr, Ret(U::*_pfunc)(Params ...), Args&& ..._args)
-	{
-		for (T* e : _arr)
-		{
-			if (e->IsActive())
-				(e->*_pfunc)(static_cast<Args&&>(_args)...);
-		}
-	}
-
-	template<typename T, typename U, typename Ret, typename ...Params, typename ...Args>
-	inline void GameObject::ForcePing(AutoArray<T*>& _arr, Ret(U::*_pfunc)(Params ...), Args&& ..._args)
-	{
-		for (T* e : _arr)
-		{
-			(e->*_pfunc)(static_cast<Args&&>(_args)...);
-		}
 	}
 }
 

@@ -237,6 +237,7 @@
     <ClInclude Include="Include\Utility\MetaDataStructures.h">
       <Filter>Utility\Meta</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Scene\SceneSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -379,6 +380,9 @@
     </Filter>
     <Filter Include="Utility\Meta">
       <UniqueIdentifier>{6a9f286f-47a9-4b59-9ff5-dda9a16e59f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Scene">
+      <UniqueIdentifier>{ddb89e65-93e8-4262-89d0-be65eefb7603}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -17,6 +17,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\Utility.h"		// Move
 #include "Object\ObjectFlags.h"		// eObjFlags
 
+#define Ping(_ARR, _FUNC, ...)			\
+for (auto& e : _ARR)					\
+	if (e->IsActive())					\
+		e-> ## _FUNC ##( __VA_ARGS__ )
+
+#define ForcePing(_ARR, _FUNC, ...)		\
+for (auto& e : _ARR)					\
+	e-> ## _FUNC ##( __VA_ARGS__ )
+
 Dystopia::GameObject::GameObject(void) :
 	mComponents{}, mBehaviours{}, mnID{ 0xFFFFFFFF }, mnFlags{ FLAG_NONE }
 {
@@ -63,60 +72,60 @@ void Dystopia::GameObject::SetActive(const bool _bEnable)
 
 void Dystopia::GameObject::Load(void)
 {
-	ForcePing(mComponents, &Component::Load);
-	ForcePing(mBehaviours, &Behaviour::Load);
+	ForcePing(mComponents, Load);
+	ForcePing(mBehaviours, Load);
 }
 
 void Dystopia::GameObject::Init(void)
 {
-	ForcePing(mComponents, &Component::Init);
-	ForcePing(mBehaviours, &Behaviour::Init);
+	ForcePing(mComponents, Init);
+	ForcePing(mBehaviours, Init);
 }
 
 void Dystopia::GameObject::Update(const float _fDeltaTime)
 {
-//	Ping(mComponents, &Component::Update, _fDeltaTime);
-	Ping(mBehaviours, &Behaviour::Update, _fDeltaTime);
+//	Ping(mComponents, Update, _fDeltaTime);
+	Ping(mBehaviours, Update, _fDeltaTime);
 }
 
 void Dystopia::GameObject::FixedUpdate(const float _fFixedDT)
 {
-//	Ping(mComponents, &Component::FixedUpdate, _fFixedDT);
-	Ping(mBehaviours, &Behaviour::FixedUpdate, _fFixedDT);
+//	Ping(mComponents, FixedUpdate, _fFixedDT);
+	Ping(mBehaviours, FixedUpdate, _fFixedDT);
 }
 
 void Dystopia::GameObject::PostUpdate(void)
 {
 //	Ping(mComponents, &Component::PostUpdate);
-	Ping(mBehaviours, &Behaviour::PostUpdate);
+	Ping(mBehaviours, PostUpdate);
 }
 
 void Dystopia::GameObject::Destroy(void)
 {
-	Ping(mComponents, &Component::OnDestroy);
-	Ping(mBehaviours, &Behaviour::OnDestroy);
+	Ping(mComponents, OnDestroy);
+	Ping(mBehaviours, OnDestroy);
 }
 
 void Dystopia::GameObject::Unload(void)
 {
-	ForcePing(mComponents, &Component::Unload);
-	ForcePing(mBehaviours, &Behaviour::Unload);
+	ForcePing(mComponents, Unload);
+	ForcePing(mBehaviours, Unload);
 }
 
 
-void Dystopia::GameObject::OnCollisionEnter(CollisionEvent& _pEvent)
+void Dystopia::GameObject::OnCollisionEnter(const CollisionEvent& _pEvent)
 {
-	Ping(mBehaviours, &Behaviour::OnCollisionEnter, _pEvent);
+	Ping(mBehaviours, OnCollisionEnter, _pEvent);
 }
 
-void Dystopia::GameObject::OnCollisionStay(CollisionEvent& _pEvent)
+void Dystopia::GameObject::OnCollisionStay(const CollisionEvent& _pEvent)
 {
-	Ping(mBehaviours, &Behaviour::OnCollisionStay, _pEvent);
+	Ping(mBehaviours, OnCollisionStay, _pEvent);
 }
 
-void Dystopia::GameObject::OnCollisionExit(CollisionEvent& _pEvent)
+void Dystopia::GameObject::OnCollisionExit(const CollisionEvent& _pEvent)
 {
-	Ping(mBehaviours, &Behaviour::OnCollisionExit, _pEvent);
+	Ping(mBehaviours, OnCollisionExit, _pEvent);
 }
 
 void Dystopia::GameObject::PurgeComponents(void)
@@ -131,16 +140,16 @@ void Dystopia::GameObject::PurgeComponents(void)
 }
 
 
-void Dystopia::GameObject::Serialise(TextSerialiser& _in)
+void Dystopia::GameObject::Serialise(TextSerialiser& _in) const
 {
-	ForcePing(mComponents, &Component::Serialise, _in);
-	ForcePing(mBehaviours, &Behaviour::Serialise, _in);
+	ForcePing(mComponents, Serialise, _in);
+	ForcePing(mBehaviours, Serialise, _in);
 }
 
 void Dystopia::GameObject::Unserialise(TextSerialiser& _out)
 {
-	ForcePing(mComponents, &Component::Unserialise, _out);
-	ForcePing(mBehaviours, &Behaviour::Unserialise, _out);
+	ForcePing(mComponents, Unserialise, _out);
+	ForcePing(mBehaviours, Unserialise, _out);
 }
 
 Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
@@ -158,4 +167,9 @@ void Dystopia::GameObject::SetName(const std::string& _strName)
 {
 	mName = _strName;
 }
+
+
+#undef Ping
+#undef ForcePing
+
 

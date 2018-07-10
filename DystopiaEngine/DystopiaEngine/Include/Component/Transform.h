@@ -67,7 +67,7 @@ namespace Dystopia
 
 		Transform* Duplicate(void) const;
 
-		void Serialise(TextSerialiser&);
+		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
 
 	private:

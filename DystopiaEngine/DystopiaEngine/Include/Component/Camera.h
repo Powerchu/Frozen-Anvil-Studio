@@ -86,7 +86,7 @@ namespace Dystopia
 		const Math::Matrix4& GetViewMatrix(void);
 
 		Camera* Duplicate(void) const;
-		void Serialise(TextSerialiser&);
+		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
 
 

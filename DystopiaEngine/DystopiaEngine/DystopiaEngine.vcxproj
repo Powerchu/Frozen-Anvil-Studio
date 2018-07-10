@@ -93,6 +93,7 @@
     <ClInclude Include="Include\System\Graphics\VertexDefs.h" />
     <ClInclude Include="Include\System\Input\InputMap.h" />
     <ClInclude Include="Include\System\Input\InputSystem.h" />
+    <ClInclude Include="Include\System\Scene\SceneSystem.h" />
     <ClInclude Include="Include\System\Sound\SoundSystem.h" />
     <ClInclude Include="Include\System\Sound\SoundTypes.h" />
     <ClInclude Include="Include\System\SystemTypes.h" />

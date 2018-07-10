@@ -195,7 +195,7 @@ Dystopia::Transform* Dystopia::Transform::Duplicate(void) const
 	return nullptr;
 }
 
-void Dystopia::Transform::Serialise(TextSerialiser&)
+void Dystopia::Transform::Serialise(TextSerialiser&) const
 {
 
 }

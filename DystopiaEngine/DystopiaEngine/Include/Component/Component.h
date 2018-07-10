@@ -56,7 +56,7 @@ namespace Dystopia
 
 		virtual Component* Duplicate() const;
 
-		virtual void Serialise(TextSerialiser&) = 0;
+		virtual void Serialise(TextSerialiser&) const = 0;
 		virtual void Unserialise(TextSerialiser&) = 0;
 
 	private:

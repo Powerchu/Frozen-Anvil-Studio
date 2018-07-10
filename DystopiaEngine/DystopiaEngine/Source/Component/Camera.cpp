@@ -166,7 +166,7 @@ Dystopia::Camera* Dystopia::Camera::Duplicate(void) const
 	return nullptr;
 }
 
-void Dystopia::Camera::Serialise(TextSerialiser&)
+void Dystopia::Camera::Serialise(TextSerialiser&) const
 {
 
 }
