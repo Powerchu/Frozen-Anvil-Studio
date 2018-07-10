@@ -47,16 +47,12 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 				 driver->GetSystem<Dystopia::GraphicsSystem>(),
 				 driver->GetSystem<Dystopia::InputManager>());
 
-
 	while (!editor->IsClosing())
 	{
 		float dt = timer->Elapsed();
 		timer->Lap();
-		driver->GetSystem<Dystopia::InputManager>()->Update(dt);
-		driver->GetSystem<Dystopia::WindowManager>()->Update(dt);
-		// driver->Update();
 
-		editor->StartFrame();
+		editor->StartFrame(dt);
 
 		editor->UpdateFrame(dt);
 		
@@ -77,8 +73,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 namespace Dystopia
 {
 	Editor::Editor(void)
-		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mStartTime{}, mEndTime{}, mPrevFrameTime{ 0 },
-		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mGuiSysArray{ 0 }, mExtraTabCounter{ 0 }
+		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mPrevFrameTime{ 0 }, mpComdHandler{ new CommandHandler{} },
+		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mpGuiSystem{ new GuiSystem{} }, mExtraTabCounter{ 0 }
 	{}
 
 	Editor::~Editor(void)
@@ -93,30 +89,27 @@ namespace Dystopia
 		mTabsArray.push_back(new Inspector{});
 		mTabsArray.push_back(new ResourceView{});
 		mTabsArray.push_back(new HierarchyView{});
-		
+
+		EGUI::SetContext(mpComdHandler);
+
 		for (auto e : mTabsArray)
 			e->Init();
 
-		mpComdHandler = new CommandHandler{};
-		EGUI::SetContext(mpComdHandler);
-
-		GuiSystem *pGui = new GuiSystem{};
-		if (!pGui->Init(mpWin, mpGfx, mpInput)) mCurrentState = EDITOR_EXIT;
-		mGuiSysArray.push_back(pGui);
+		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
+			mCurrentState = EDITOR_EXIT;
 	}
 
-	void Editor::StartFrame()
+	void Editor::StartFrame(const float& _dt)
 	{
-		mStartTime = std::chrono::high_resolution_clock::now();
-		for (auto e : mGuiSysArray)
-			e->StartFrame(static_cast<float>(mPrevFrameTime));
+		mpWin->Update(_dt);
+		mpInput->Update(_dt);
+
+		mpGuiSystem->StartFrame(static_cast<float>(mPrevFrameTime));
 		MainMenu();
 	}
 
-	void Editor::UpdateFrame(const float _dt)
+	void Editor::UpdateFrame(const float& _dt)
 	{
-		//mpWin->Update(_dt);
-		//mpInput->Update(_dt);
 		//mpGfx->Update(_dt);
 
 		for (unsigned int i = 0; i < mTabsArray.size(); ++i)
@@ -126,15 +119,15 @@ namespace Dystopia
 
 			switch (i)
 			{
-			case 0: EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
+			case 0: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
 				break;
-			case 1: EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_LEFT);
+			case 1: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_LEFT);
 				break;
-			case 2: EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_TOP);
+			case 2: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_TOP);
 				break;
-			case 3: EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
+			case 3: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
 				break;
-			default: EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_NONE);
+			default: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_NONE);
 			}
 
 			if (EGUI::StartTab(pTab->GetLabel().c_str()))
@@ -154,7 +147,7 @@ namespace Dystopia
 			_itoa_s(i, buffer2, 10);
 			strcpy_s(tempBuff, "Spawned Tab ");
 			strcat_s(tempBuff, buffer1);
-			EGUI::Docking::SetNextTabs(mGuiSysArray[0]->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_NONE);
+			EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_NONE);
 			if (EGUI::StartTab(tempBuff))
 			{
 				strcpy_s(tempBuff, "I am Tab ");
@@ -169,27 +162,15 @@ namespace Dystopia
 
 	void Editor::EndFrame()
 	{
-		for (auto e : mGuiSysArray)
-			e->EndFrame();
+		mpGuiSystem->EndFrame();
 
-		if (mCurrentState != mNextState) UpdateState();
-
-		mEndTime = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<double> time = mEndTime - mStartTime;
-		mPrevFrameTime = time.count();
+		if (mCurrentState != mNextState) 
+			UpdateState();
 	}
 
 	void Editor::Shutdown()
 	{
-		mpWin = nullptr;
-		mpGfx = nullptr;
-		mpInput = nullptr;
-
-		delete mpComdHandler;
-		mpComdHandler = nullptr;
-
 		EGUI::Docking::ShutdownTabs();
-
 		for (auto e : mTabsArray)
 		{
 			if (e)
@@ -200,12 +181,16 @@ namespace Dystopia
 			}
 		}
 
-		while (!mGuiSysArray.IsEmpty())
-		{
-			mGuiSysArray.back()->Shutdown();
-			delete mGuiSysArray.back();
-			mGuiSysArray.pop_back();
-		}
+		mpWin = nullptr;
+		mpGfx = nullptr;
+		mpInput = nullptr;
+
+		delete mpComdHandler;
+		mpComdHandler = nullptr;
+
+		mpGuiSystem->Shutdown();
+		delete mpGuiSystem;
+		mpGuiSystem = nullptr;
 	}
 
 	eEditorState Editor::CurrentState() const
@@ -295,6 +280,7 @@ namespace Dystopia
 				if (EGUI::StartMenuBody("Quit"))
 				{
 					// TODO: Some actual function
+					Save();
 					ChangeState(Dystopia::EDITOR_EXIT);
 				}
 				EGUI::EndMenuHeader();
@@ -322,6 +308,8 @@ namespace Dystopia
 	void Editor::Save()
 	{
 		// call for serialization of all in current scene
+		BinarySerializer serial = BinarySerializer::OpenFile("SaveSettingsFile", std::ios::out);
+
 	}
 
 	void Editor::Load()

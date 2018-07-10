@@ -50,7 +50,6 @@ namespace Dystopia
 		~BinarySerializer(void);
 
 		static BinarySerializer OpenFile(const std::string&, int = MODE_READ);
-
 		void ManualEndainOverride(eEndianess);
 
 	private:
@@ -62,28 +61,25 @@ namespace Dystopia
 		typedef void(BinarySerializer::*MemFnPtr)(const char * const &, const size_t);
 		typedef void(BinarySerializer::*MemFnPtr2)(char * const &, const size_t);
 
-		std::fstream mFile;
-		bool mbBlockRead;
-		MemFnPtr mfpWrite;
-		MemFnPtr2 mfpRead;
+		std::fstream	mFile;
+		bool			mbBlockRead;
+		MemFnPtr		mfpWrite;
+		MemFnPtr2		mfpRead;
 
-		void ReadEndBlock(void);
-		bool ReadStartBlock(void);
-
-		void WriteEndBlock(const std::string&);
-		void WriteStartBlock(const std::string&);
+		bool			Validate(void);
+		bool			ReadStartBlock(void);
+		void			ReadEndBlock(void);
+		void			WriteEndBlock(const std::string&);
+		void			WriteStartBlock(const std::string&);
+		void			WriteBE(const char * const &, const size_t);
+		void			WriteLE(const char * const &, const size_t);
+		void			ReadBE(char * const &, const size_t);
+		void			ReadLE(char * const &, const size_t);
 
 		template <typename T>
 		void ApplyRead(T&);
 		template <typename T>
 		void ApplyWrite(const T&);
-
-		bool Validate(void);
-
-		void WriteBE(const char * const &, const size_t);
-		void WriteLE(const char * const &, const size_t);
-		void ReadBE(char * const &, const size_t);
-		void ReadLE(char * const &, const size_t);
 	};
 
 	namespace System

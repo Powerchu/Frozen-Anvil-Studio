@@ -57,29 +57,29 @@ namespace Dystopia
 			CrawlFolder(const std::string&);
 			~CrawlFolder();
 
-			CrawlFolder* GetParent();
-			void SetParent(CrawlFolder*);
-			void AddFolder(CrawlFolder*);
-			void AddFile(const std::string&);
-			void Crawl();
-			void PrintAll();
+			CrawlFolder*	GetParent();
+			void			SetParent(CrawlFolder*);
+			void			AddFolder(CrawlFolder*);
+			void			AddFile(const std::string&);
+			void			Crawl();
+			void			PrintAll();
 
-			std::string mFolderName;
-			CrawlFolder *mpParentFolder;
-			AutoArray<CrawlFolder*> mArrChildFolders;
-			AutoArray<CrawlFile> mArrFiles;
-			bool mRefreshMe;
+			std::string				mFolderName;
+			CrawlFolder				*mpParentFolder;
+			AutoArray<CrawlFolder*>	mArrChildFolders;
+			AutoArray<CrawlFile>	mArrFiles;
+			bool					mRefreshMe;
 		};
 
 	private:
-		void FolderInterface(CrawlFolder*);
-		void FileInterface(CrawlFile&);
+		CrawlFolder		*mpCrawlData;
+		void			*mpFocusData;
+		int				mLastSelected;
+		bool			mRefreshCrawl;
+		std::string		mLabel;
 
-		CrawlFolder *mpCrawlData;
-		void		*mpFocusData;
-		int			mLastSelected;
-		bool		mRefreshCrawl;
-		std::string mLabel;
+		void			FolderInterface(CrawlFolder*);
+		void			FileInterface(CrawlFile&);
 	};
 }
 

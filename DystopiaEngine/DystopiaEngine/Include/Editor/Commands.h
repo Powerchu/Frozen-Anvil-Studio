@@ -31,16 +31,12 @@ namespace Dystopia
 
 		// Destructor
 		~CommandHandler();
-
 		// Calls the ExecuteDo function of the param command and passes it into the undo deque, also empties the redo deque
 		void InvokeCommand(Commands *_comd);
-
 		// Calls the ExecuteUndo function of latest command in the undo deque and puts it into the redo deque
 		void UndoCommand();
-
 		// Performs InvokeCommand on the latest command in the redo deque 
 		void RedoCommand();
-
 		// Attempt to create a command that last several frames. Like a continuously changing variable but at some point you want to revert back to 
 		// Takes in a pointer to the variable to be changed and keeps the initial first call as the value to revert back when undo is called.
 		// Only 1 pointer can be stored to recording at any given time. 
@@ -59,11 +55,11 @@ namespace Dystopia
 		bool IsRecording() const;
 
 	private:
-		void PopFrontOfDeque(std::deque<Commands*>&);
-		std::deque<Commands*> mDeqRedo;
-		std::deque<Commands*> mDeqUndo;
-		RecordBase* mpRecorder;
-		bool mRecording;
+		RecordBase				*mpRecorder;
+		std::deque<Commands*>	mDeqRedo;
+		std::deque<Commands*>	mDeqUndo;
+		bool					mRecording;
+		void					PopFrontOfDeque(std::deque<Commands*>&);
 	};
 }
 

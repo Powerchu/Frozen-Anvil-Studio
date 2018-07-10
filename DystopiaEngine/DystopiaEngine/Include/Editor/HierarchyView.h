@@ -43,9 +43,9 @@ namespace Dystopia
 		virtual std::string GetLabel() const override;
 
 	private:
-		std::string mLabel;
-		GameObject *mpFocusGameObj;
-		Scene *mpCurrentScene;
+		std::string		mLabel;
+		GameObject		*mpFocusGameObj;
+		Scene			*mpCurrentScene;
 	};
 }
 

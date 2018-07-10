@@ -35,20 +35,9 @@ namespace Dystopia
 		~ComdModifyValue()
 		{}
 
-		void ExecuteDo() override
-		{
-			*mValue = mNewValue;
-		}
-		void ExecuteUndo() override
-		{
-			*mValue = mOldValue;
-		}
-
-		bool Unchanged() const
-		{
-			return (mOldValue == mNewValue);
-		}
-
+		void	ExecuteDo() override	{ *mValue = mNewValue; }
+		void	ExecuteUndo() override	{ *mValue = mOldValue; } 
+		bool	Unchanged() const		{ return (mOldValue == mNewValue); }
 	private:
 		T mOldValue;
 		T mNewValue;
@@ -69,19 +58,9 @@ namespace Dystopia
 			delete mObject;
 		}
 	
-		void ExecuteDo() override
-		{
-			//mInstance = _object->Duplicate();
-		}
-		void ExecuteUndo() override
-		{
-			//*mValue = oldValue;
-		}
-
-		bool Unchanged() const
-		{
-			return false;
-		}
+		void	ExecuteDo() override	{ /*mInstance = _object->Duplicate();*/ }
+		void	ExecuteUndo() override	{ /**mValue = oldValue;*/ }
+		bool	Unchanged() const		{ return false; }
 	
 	private:
 		T* mObject;
@@ -101,30 +80,11 @@ namespace Dystopia
 			: mpTarget{ rhs }, mOldValue{ *mpTarget }, mNewValue{ mOldValue }
 		{}
 
-		void EndRecord()
-		{
-			mNewValue = *mpTarget;
-		}
-
-		T* GetPointer()
-		{
-			return mpTarget;
-		}
-
-		void ExecuteDo() override
-		{
-			*mpTarget = mNewValue;
-		}
-
-		void ExecuteUndo() override
-		{
-			*mpTarget = mOldValue;
-		}
-
-		bool Unchanged() const
-		{
-			return (mOldValue == mNewValue);
-		}
+		void	EndRecord()				{ mNewValue = *mpTarget; }
+		T*		GetPointer()			{ return mpTarget; }
+		void	ExecuteDo() override	{ *mpTarget = mNewValue; }
+		void	ExecuteUndo() override	{ *mpTarget = mOldValue; }
+		bool	Unchanged() const		{ return (mOldValue == mNewValue); }
 
 	private:
 		T* mpTarget;

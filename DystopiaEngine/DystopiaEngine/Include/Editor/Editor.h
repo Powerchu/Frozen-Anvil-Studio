@@ -46,43 +46,36 @@ namespace Dystopia
 		Editor(void);
 		~Editor();
 
-		void Init(WindowManager*, GraphicsSystem*, InputManager*);
-		void StartFrame();
-		void UpdateFrame(const float);
-		void EndFrame();
-		void Shutdown();
-
-		void ChangeState(eEditorState);
-		eEditorState CurrentState() const;
-		bool IsClosing() const;
-		double PreviousFrameTime() const;
+		void			Init(WindowManager*, GraphicsSystem*, InputManager*);
+		void			StartFrame(const float&);
+		void			UpdateFrame(const float&);
+		void			EndFrame();
+		void			Shutdown();
+		void			ChangeState(eEditorState);
+		eEditorState	CurrentState() const;
+		bool			IsClosing() const;
+		double			PreviousFrameTime() const;
 
 	private:
-		eEditorState mCurrentState;
-		eEditorState mNextState;
-
-		int mExtraTabCounter;
-
-		std::chrono::high_resolution_clock::time_point mStartTime;
-		std::chrono::high_resolution_clock::time_point mEndTime;
-		double mPrevFrameTime;
-
-		WindowManager *mpWin;
-		GraphicsSystem *mpGfx;
-		InputManager *mpInput;
-		CommandHandler *mpComdHandler;
+		eEditorState	mCurrentState;
+		eEditorState	mNextState;
+		int				mExtraTabCounter;
+		double			mPrevFrameTime;
+		WindowManager	*mpWin;
+		GraphicsSystem	*mpGfx;
+		InputManager	*mpInput;
+		CommandHandler	*mpComdHandler;
+		GuiSystem		*mpGuiSystem;
 		// SceneManager *mpSceneMgr;
 
-		AutoArray<GuiSystem*> mGuiSysArray;
 		AutoArray<EditorTab*> mTabsArray;
-
-		void UpdateState();
-		void Play();
-		void Save();
-		void Load();
-		void TempSave();
-		void TempLoad();
-		void MainMenu();
+		void			UpdateState();
+		void			Play();
+		void			Save();
+		void			Load();
+		void			TempSave();
+		void			TempLoad();
+		void			MainMenu();
 	};
 }
 
