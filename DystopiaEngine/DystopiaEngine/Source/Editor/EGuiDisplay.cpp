@@ -108,8 +108,10 @@ namespace EGUI
 										ImGuiInputTextFlags_AutoSelectAll |
 										ImGuiInputTextFlags_EnterReturnsTrue;
 
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
 			ImGui::SameLine();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			if (ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags))
 			{
 			}
@@ -118,8 +120,10 @@ namespace EGUI
 		bool CheckBox(const std::string& _label, bool* _outputBool)
 		{
 			bool changed = false;
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
 			ImGui::SameLine();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			if (ImGui::Checkbox(("###CheckBox" + _label).c_str(), _outputBool))
 			{
 				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
@@ -138,6 +142,7 @@ namespace EGUI
 		bool DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max)
 		{
 			bool changed = false;
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
 			ImGui::SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
@@ -159,6 +164,7 @@ namespace EGUI
 		bool DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max)
 		{
 			bool changed = false;
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
 			ImGui::SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);

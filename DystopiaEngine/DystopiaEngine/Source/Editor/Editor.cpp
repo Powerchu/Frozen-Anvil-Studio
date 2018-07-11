@@ -289,7 +289,7 @@ namespace Dystopia
 			if (EGUI::StartMenuHeader("Edit"))
 			{
 				if (EGUI::StartMenuBody("Undo","Ctrl + Z")) { mpComdHandler->UndoCommand(); }
-				if (EGUI::StartMenuBody("Redo", "Ctrl + Y")) { mpComdHandler->RedoCommand(); }  // Disabled ite
+				if (EGUI::StartMenuBody("Redo", "Ctrl + Y")) { mpComdHandler->RedoCommand(); } 
 				if (EGUI::StartMenuBody("Cut")) {}
 				if (EGUI::StartMenuBody("Copy")) {}
 				if (EGUI::StartMenuBody("Paste")) {}
