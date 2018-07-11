@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Commands.h
+\file	CommandList.h
 \author Shannon Tan (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -23,6 +23,12 @@ namespace Dystopia
 		virtual void ExecuteDo() = 0;
 		virtual void ExecuteUndo() = 0;
 		virtual bool Unchanged() const = 0;
+	};
+
+	struct RecordBase : Commands
+	{
+		virtual void EndRecord() = 0;
+		virtual ~RecordBase() {}
 	};
 
 	template <typename T>
@@ -64,13 +70,6 @@ namespace Dystopia
 	
 	private:
 		T* mObject;
-	};
-
-
-	struct RecordBase : Commands
-	{
-		virtual void EndRecord() = 0;
-		virtual ~RecordBase() {}
 	};
 
 	template <typename T>

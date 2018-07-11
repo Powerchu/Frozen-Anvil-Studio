@@ -103,8 +103,7 @@ namespace Dystopia
 	{
 		mpWin->Update(_dt);
 		mpInput->Update(_dt);
-
-		mpGuiSystem->StartFrame(static_cast<float>(mPrevFrameTime));
+		mpGuiSystem->StartFrame(_dt);
 		MainMenu();
 	}
 

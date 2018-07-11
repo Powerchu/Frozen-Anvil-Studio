@@ -20,11 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace EGUI
 {
 	typedef int ImGuiWindowFlags;
-
 	namespace Docking
 	{
 		constexpr unsigned int MAX_TAB_SIZE_STACK = 10;
-
 		enum eDockSlot
 		{
 			eDOCK_SLOT_LEFT,

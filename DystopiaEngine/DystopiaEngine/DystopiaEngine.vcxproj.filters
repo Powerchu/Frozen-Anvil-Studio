@@ -103,6 +103,9 @@
     <ClCompile Include="Source\System\Driver\Driver.cpp">
       <Filter>Game Engine\Systems\Driver</Filter>
     </ClCompile>
+    <ClCompile Include="UIPayload.cpp">
+      <Filter>Editor\Systems\Payload</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -294,6 +297,9 @@
     <ClInclude Include="Include\System\Driver\Driver.h">
       <Filter>Game Engine\Systems\Driver</Filter>
     </ClInclude>
+    <ClInclude Include="UIPayload.h">
+      <Filter>Editor\Systems\Payload</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -448,6 +454,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Driver">
       <UniqueIdentifier>{238c243a-65c5-4e4b-8ebb-9797a55cb924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Systems\Payload">
+      <UniqueIdentifier>{7e25cedb-8210-4e66-bbd8-5e2419094c62}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

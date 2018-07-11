@@ -244,7 +244,6 @@ namespace EGUI
 
 struct ImDrawData;
 struct ImGuiContext;
-
 namespace Dystopia
 {
 	class WindowManager;
