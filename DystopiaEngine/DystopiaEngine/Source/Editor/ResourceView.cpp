@@ -25,7 +25,7 @@ namespace Dystopia
 {
 	ResourceView::ResourceView()
 		: mpFocusData{ nullptr }, mpCrawlData{ nullptr }, mLastSelected{ -1 }, mRefreshCrawl{ false },
-		mLabel{ "Resource" }
+		mLabel{ "Resource" }, mpLastFolder{ nullptr }
 	{}
 	
 	ResourceView::~ResourceView()
@@ -34,6 +34,7 @@ namespace Dystopia
 	void ResourceView::Init()
 	{
 		StartCrawl();
+		mpLastFolder = mpCrawlData;
 	}
 
 	void ResourceView::Update(const float& _dt)
@@ -53,30 +54,67 @@ namespace Dystopia
 
 	void ResourceView::Window()
 	{
-		if (EGUI::Display::CollapsingHeader(mpCrawlData->mFolderName.c_str()))
+		const float maxSizeY = Size().y - 55;
+		const float maxSizeX = Size().x - 7;
+		const float leftColX = 250;
+		const float smallY = 20;
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0);
 		{
-			if (mRefreshCrawl)
 			{
-				for (auto e : mpCrawlData->mArrChildFolders)
-					delete e;
-				mpCrawlData->mArrChildFolders.clear();
-				mpCrawlData->mArrFiles.clear();
-				mpCrawlData->Crawl();
-				mRefreshCrawl = false;
-				for (auto e : mpCrawlData->mArrChildFolders)
-					EGUI::Display::OpenTreeNode(e->mFolderName.c_str(), false);
-			}
+				ImGui::BeginChild("ResourceChild1", ImVec2{ maxSizeX, smallY }, true);
 
-			for (auto e : mpCrawlData->mArrChildFolders)
-				FolderInterface(e);
-			for (auto &e : mpCrawlData->mArrFiles)
-				FileInterface(e);
+				ImGui::EndChild();
+			}
+			{
+				ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.1f, 0.1f, 0.1f, 0.2f });
+				ImGui::BeginChild("ResourceChild2", ImVec2{ leftColX, maxSizeY }, true);
+				if (EGUI::Display::CollapsingHeader(mpCrawlData->mFolderName.c_str()))
+				{
+					if (mRefreshCrawl)
+					{
+						mpLastFolder = mpCrawlData;
+						for (auto e : mpCrawlData->mArrChildFolders)
+							delete e;
+						mpCrawlData->mArrChildFolders.clear();
+						mpCrawlData->mArrFiles.clear();
+						mpCrawlData->Crawl();
+						mRefreshCrawl = false;
+						for (auto e : mpCrawlData->mArrChildFolders)
+							EGUI::Display::OpenTreeNode(e->mFolderName.c_str(), false);
+					}
+
+					for (auto e : mpCrawlData->mArrChildFolders)
+						FolderInterface(e);
+				}
+				else
+				{
+					if (!mRefreshCrawl)
+					{
+						mpLastFolder = nullptr;
+						mRefreshCrawl = true;
+					}
+				}
+				ImGui::EndChild();
+			}
+			ImGui::SameLine(leftColX + 4);
+			{
+				ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0, 0, 0, 0 });
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10, 10 });
+				ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1);
+				ImGui::BeginChild("ResourceChild3", ImVec2{ maxSizeX - leftColX - 3, maxSizeY }, true);
+				if (mpLastFolder)
+				{
+					EGUI::Display::Label(mpLastFolder->mFolderName.c_str());
+					ImGui::Separator();
+					for (auto &e : mpLastFolder->mArrFiles)
+						FileInterface(e);
+				}
+				ImGui::EndChild();
+			}
 		}
-		else
-		{
-			if (!mRefreshCrawl)
-				mRefreshCrawl = true;
-		}
+		ImGui::PopStyleVar(4);
+		ImGui::PopStyleColor(2);
 	}
 
 	void ResourceView::StartCrawl()
@@ -91,6 +129,7 @@ namespace Dystopia
 		{
 			if (_pFolder->mRefreshMe)
 			{
+				mpLastFolder = _pFolder;
 				for (auto e : _pFolder->mArrChildFolders)
 					delete e;
 				_pFolder->mArrChildFolders.clear();
@@ -103,15 +142,16 @@ namespace Dystopia
 
 			for (auto e : _pFolder->mArrChildFolders)
 				FolderInterface(e);
-			for (auto &e : _pFolder->mArrFiles)
-				FileInterface(e);
 
 			EGUI::Display::EndTreeNode();
 		}
 		else
 		{
 			if (!_pFolder->mRefreshMe)
+			{
+				mpLastFolder = _pFolder->GetParent();
 				_pFolder->mRefreshMe = true;
+			}
 		}
 	}
 

@@ -72,7 +72,7 @@ namespace EGUI
 		ImGui::EndMenu();
 	}
 
-	bool StartChild(const std::string& _label, const Math::Vec4& _size)
+	bool StartChild(const std::string& _label, const Math::Vec2& _size)
 	{
 		return ImGui::BeginChild(_label.c_str(), ImVec2{ _size.x, _size.y }, false);
 	}

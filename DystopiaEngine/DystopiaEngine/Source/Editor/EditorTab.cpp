@@ -18,19 +18,41 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	EditorTab::EditorTab()
-		: mSize{ Math::Vec4{ 0,0,0,0 } }
+		: mSize{ Math::Vec2{ 0, 0 } }, mPos{ Math::Vec2{ 0, 0 } }
 	{}
 
 	EditorTab::~EditorTab()
 	{}
 
-	void EditorTab::SetSize(const Math::Vec4& _size)
+	void EditorTab::SetSize(const Math::Vec2& _size)
 	{
 		mSize = _size;
 	}
 
 	void EditorTab::SetSize(const float& _x, const float& _y)
 	{
-		mSize = Math::Vec4{ _x, _y, 0, 0 };
+		mSize = Math::Vec2{ _x, _y };
 	}
+
+	void EditorTab::SetPosition(const Math::Vec2& _pos)
+	{
+		mPos = _pos;
+	}
+
+	void EditorTab::SetPosition(const float& _x, const float& _y)
+	{
+		mPos = Math::Vec2{ _x, _y };
+	}
+
+	Math::Vec2 EditorTab::Size() const
+	{
+		return mSize;
+	}
+
+	Math::Vec2 EditorTab::Position() const
+	{
+		return mPos;
+	}
+
+
 }

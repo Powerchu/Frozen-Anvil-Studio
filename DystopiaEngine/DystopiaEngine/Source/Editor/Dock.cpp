@@ -49,7 +49,7 @@ ImVec2 operator-(const ImVec2& lhs, const ImVec2& rhs)
 
 ImVec2 operator*(const ImVec2& lhs, const float& rhs)
 {
-	ImVec2 temp{lhs.x * rhs, lhs.y * rhs };
+	ImVec2 temp{ lhs.x * rhs, lhs.y * rhs };
 	return temp;
 }
 
@@ -1126,7 +1126,7 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 							 ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBringToFrontOnFocus |
 							 ImGuiWindowFlags_AlwaysUseWindowPadding | _flags;
 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10,10 });
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 1,1 });
 	bool ret = ImGui::BeginChild(_pLabel, size, true, flags);
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
@@ -1268,11 +1268,11 @@ void PopTabSize()
 	gSizeStack.Pop();
 }
 
-Math::Vec4 GetTabSize(const char *_pTabName)
+Math::Vec2 GetTabSize(const char *_pTabName)
 {
 	IM_ASSERT(curPanel);
 
-	if (!curPanel)	return Math::Vec4{};
+	if (!curPanel)	return Math::Vec2{};
 
 	if (gDockable.find(curPanel) != gDockable.end())
 	{
@@ -1282,16 +1282,16 @@ Math::Vec4 GetTabSize(const char *_pTabName)
 		ImU32 id = ImHash(bufferLabel, 0);
 		for (int i = 0; i < space.mArrTabs.size(); ++i)
 			if (space.mArrTabs[i]->mId == id)
-				return Math::Vec4{ space.mArrTabs[i]->mSize.x, space.mArrTabs[i]->mSize.y, 0, 0 };
+				return Math::Vec2{ space.mArrTabs[i]->mSize.x, space.mArrTabs[i]->mSize.y };
 	}
-	return Math::Vec4{};
+	return Math::Vec2{};
 }
 
-Math::Vec4 GetTabPosition(const char *_pTabName)
+Math::Vec2 GetTabPosition(const char *_pTabName)
 {
 	IM_ASSERT(curPanel);
 
-	if (!curPanel)	return Math::Vec4{};
+	if (!curPanel)	return Math::Vec2{};
 
 	if (gDockable.find(curPanel) != gDockable.end())
 	{
@@ -1301,9 +1301,9 @@ Math::Vec4 GetTabPosition(const char *_pTabName)
 		ImU32 id = ImHash(bufferLabel, 0);
 		for (int i = 0; i < space.mArrTabs.size(); ++i)
 			if (space.mArrTabs[i]->mId == id)
-				return Math::Vec4{ space.mArrTabs[i]->mPos.x, space.mArrTabs[i]->mPos.y, 0, 0 };
+				return Math::Vec2{ space.mArrTabs[i]->mPos.x, space.mArrTabs[i]->mPos.y };
 	}
-	return Math::Vec4{};
+	return Math::Vec2{};
 }
 
 /*========================================================= Serializer ===========================================================*/

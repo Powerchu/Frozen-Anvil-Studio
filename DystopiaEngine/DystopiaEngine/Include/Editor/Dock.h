@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _DOCK_H_
 #define _DOCK_H_
 #include "Math\Vector4.h"
+#include "Math\Vector2.h"
 
 // Work-In-Progress
 namespace EGUI
@@ -45,8 +46,8 @@ namespace EGUI
 		void		PushTabSize(const Math::Vec4&);
 		void		PushTabSize(const float&, const float&);
 		void		PopTabSize();
-		Math::Vec4	GetTabSize(const char*_tabName);
-		Math::Vec4	GetTabPosition(const char*_tabName);
+		Math::Vec2	GetTabSize(const char*_tabName);
+		Math::Vec2	GetTabPosition(const char*_tabName);
 	}
 }
 

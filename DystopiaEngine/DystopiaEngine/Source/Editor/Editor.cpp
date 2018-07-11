@@ -132,6 +132,7 @@ namespace Dystopia
 			if (EGUI::StartTab(pTab->GetLabel().c_str()))
 			{
 				pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()));
+				pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
 				pTab->Window();
 			}
 			EGUI::EndTab();

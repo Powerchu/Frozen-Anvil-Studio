@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_TAB_H_
 #define _EDITOR_TAB_H_
 #include "Math\Vector4.h"
+#include "Math\Vector2.h"
 #include "DataStructure\AutoArray.h"
 #include <string>
 
@@ -34,11 +35,16 @@ namespace Dystopia
 		virtual void		Shutdown() = 0;
 		virtual std::string GetLabel() const = 0;
 		/************************************************************************************************************/
-		void				SetSize(const Math::Vec4&);
+		void				SetSize(const Math::Vec2&);
 		void				SetSize(const float&, const float&);
+		void				SetPosition(const Math::Vec2&);
+		void				SetPosition(const float&, const float&);
+		Math::Vec2			Size() const;
+		Math::Vec2			Position() const;
 		
 	private:
-		Math::Vec4 mSize;
+		Math::Vec2 mSize;
+		Math::Vec2 mPos;
 	};
 }
 

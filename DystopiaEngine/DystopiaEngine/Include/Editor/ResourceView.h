@@ -73,6 +73,7 @@ namespace Dystopia
 
 	private:
 		CrawlFolder		*mpCrawlData;
+		CrawlFolder		*mpLastFolder;
 		void			*mpFocusData;
 		int				mLastSelected;
 		bool			mRefreshCrawl;
