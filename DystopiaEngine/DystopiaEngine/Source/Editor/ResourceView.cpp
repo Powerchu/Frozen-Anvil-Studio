@@ -107,8 +107,12 @@ namespace Dystopia
 				{
 					EGUI::Display::Label(mpLastFolder->mFolderName.c_str());
 					ImGui::Separator();
-					for (auto &e : mpLastFolder->mArrFiles)
-						FileInterface(e);
+					for (unsigned int i = 0; i < mpLastFolder->mArrFiles.size(); ++i)
+					{
+						ImGui::PushID(i);
+						FileInterface(mpLastFolder->mArrFiles[i], i);
+						ImGui::PopID();
+					}
 				}
 				ImGui::EndChild();
 			}
@@ -155,12 +159,21 @@ namespace Dystopia
 		}
 	}
 
-	void ResourceView::FileInterface(CrawlFile& _file)
+	void ResourceView::FileInterface(CrawlFile& _file, unsigned int& _id)
 	{
-		if (EGUI::Display::SelectableTxt(_file.mFileName.c_str()))
-		{
+		ImGui::Indent(10);	
+		//if (EGUI::Display::SelectableTxt(_file.mFileName.c_str()))
+		//{
+		//}
+		ImGui::Button(_file.mFileName.c_str(), ImVec2{ 200, 20 } );
 
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		{
+			ImGui::SetDragDropPayload("RSCV_CELL", &_file, sizeof(CrawlFile));
+			ImGui::Text("Move %s", _file.mFileName.c_str());
+			ImGui::EndDragDropSource();
 		}
+		ImGui::Unindent(10);
 	}
 
 	ResourceView::CrawlFile::CrawlFile(const std::string& _name)

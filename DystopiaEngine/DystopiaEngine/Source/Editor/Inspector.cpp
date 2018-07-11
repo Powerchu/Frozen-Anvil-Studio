@@ -13,16 +13,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor\Inspector.h"
+#include "Editor\ResourceView.h"
 #include "Editor\EGUI.h"
 #include "Object\GameObject.h"
 #include "Component\Component.h"
+#include "../../Dependancies/ImGui/imgui.h"
 #include <iostream>
 
 namespace Dystopia
 {
 	Inspector::Inspector()
 		: mpFocusGameObj{ nullptr }, mLabel{ "Inspector" }, mDemoVec{ Math::Vec4{0,0,0,0} },
-		mDemoText{ "hello" }
+		mDemoText{ "hello" }, mDemoName{ "" }
 	{
 	}
 
@@ -74,7 +76,21 @@ namespace Dystopia
 			}
 			EGUI::Display::Label("Variable mDemoVec x : [%.3f] y: [%.3f] z:[%.3f]", x, y, z);
 		}
-		
+
+		EGUI::Display::Label("Accepting things from Resource view: ");
+		ImGui::SameLine();
+		ImGui::Button((mDemoName + "##AcceptsRSCV_CELL").c_str(), ImVec2{ 200, 20 });
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RSCV_CELL"))
+			{
+				IM_ASSERT(payload->DataSize == sizeof(Dystopia::ResourceView::CrawlFile));
+				Dystopia::ResourceView::CrawlFile payload_n = *(const Dystopia::ResourceView::CrawlFile*)payload->Data;
+				mDemoName = payload_n.mFileName;
+			}
+			ImGui::EndDragDropTarget();
+		}
+
 
 		if (!mpFocusGameObj) return;
 

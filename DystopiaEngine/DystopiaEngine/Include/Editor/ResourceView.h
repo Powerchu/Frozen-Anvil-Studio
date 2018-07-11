@@ -80,7 +80,7 @@ namespace Dystopia
 		std::string		mLabel;
 
 		void			FolderInterface(CrawlFolder*);
-		void			FileInterface(CrawlFile&);
+		void			FileInterface(CrawlFile&, unsigned int&);
 	};
 }
 
