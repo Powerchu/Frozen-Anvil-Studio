@@ -83,6 +83,7 @@
     <ClInclude Include="Include\Editor\EGUI.h" />
     <ClInclude Include="Include\Editor\HierarchyView.h" />
     <ClInclude Include="Include\Editor\Inspector.h" />
+    <ClInclude Include="Include\Editor\Payloads.h" />
     <ClInclude Include="Include\Editor\ResourceView.h" />
     <ClInclude Include="Include\Globals.h" />
     <ClInclude Include="Include\IO\BinarySerializer.h" />

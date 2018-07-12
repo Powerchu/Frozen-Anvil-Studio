@@ -294,6 +294,9 @@
     <ClInclude Include="Include\System\Driver\Driver.h">
       <Filter>Game Engine\Systems\Driver</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\Payloads.h">
+      <Filter>Editor\Systems\Payloads</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -448,6 +451,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Driver">
       <UniqueIdentifier>{238c243a-65c5-4e4b-8ebb-9797a55cb924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Systems\Payloads">
+      <UniqueIdentifier>{6ae347d0-607b-4c8f-97f3-2047a93d26fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

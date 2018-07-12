@@ -21,12 +21,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_GUI_H_
 #include "Math\Vector4.h"
 #include "Editor\Dock.h"
-#include "DataStructure\AutoArray.h"
+#include "Editor\Payloads.h"
+#include "Utility\DebugAssert.h"
 #include <string>
 namespace Dystopia
 {
 	class CommandHandler;
 }
+
 /* =======================================================================================================================
 	Brief:
 		If you call any Start... functions, please remember to call their respective End... functions.
@@ -239,8 +241,64 @@ namespace EGUI
 		void OpenTreeNode(const std::string& _label, bool _collapseMe);
 		//End a tree Node
 		void EndTreeNode();
+
+		/* =======================================================================================================================
+		Brief:
+			Sets the previos UI widget/item to be a payload type. Preferably call according to the usage please. 
+			Usage shows that button will have additional of being a payload type
+		Usage:
+			ImGui::Button("Hello", ImVec2{ 200, 20 } );
+			if (EGUI::Display::StartPayload(EGUI::ePAY_LOAD_1, &_file, sizeof(CrawlFile), "Hello"))
+			{
+				EGUI::Display::EndPayload();
+			}
+		======================================================================================================================= */
+		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const std::string& _toolTip);
+		// Call EndPayLoad at the end of StartPayLoad return true. See StartPayLoad usage
+		void EndPayload();
+		/* =======================================================================================================================
+		Brief:
+			Sets the previos UI widget/item to be receiving a payload type. Preferably call according to the usage please.
+			Usage shows that button will have additional of being a payload reciever type
+		Usage:
+			ImGui::Button(("$$acceptDemo").c_str(), ImVec2{ 200, 20 });
+			using PayloadType = Dystopia::ResourceView::CrawlFile;
+			if (PayloadType *t = EGUI::Display::StartPayloadReceiver<PayloadType>(EGUI::ePAY_LOAD_1))
+			{
+				mDemoName = (*t).mFileName;
+				EGUI::Display::EndPayloadReceiver();
+			}
+		======================================================================================================================= */
+		template <typename Specified>
+		Specified* StartPayloadReceiver(ePayloadTags _tagLoad)
+		{
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EGUI::ToString(_tagLoad)))
+				{
+					DEBUG_ASSERT(payload->DataSize == sizeof(Specified), "Error at EGUI");
+					return static_cast<Specified*>(payload->Data);
+				}
+			}
+			return nullptr;
+		}
+		// Call EndPayloadReceiver at the end of StartPayloadReceiver return true. See StartPayloadReceiver usage
+		void EndPayloadReceiver();
+		/* =======================================================================================================================
+		Brief:
+			
+		Usage:
+			
+		======================================================================================================================= */
+		bool DropDownSelection(const std::string& _label, unsigned int _currentIndex, const std::string *_arrayOfStrings, size_t _size);
+
+
 	}
 }
+
+/*========================================================================================================================================================*/
+/*====================================================================== GUI SYSTEM ======================================================================*/
+/*========================================================================================================================================================*/
 
 struct ImDrawData;
 struct ImGuiContext;

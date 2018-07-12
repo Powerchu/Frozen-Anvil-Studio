@@ -22,7 +22,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 constexpr float Default_VectorField_Alignment_Left = 100.f;
 constexpr float Default_VectorField_Alignment_Height = 2.f;
-
 Dystopia::CommandHandler *gContextComdHND = nullptr;
 
 namespace EGUI
@@ -286,6 +285,32 @@ namespace EGUI
 		void EndTreeNode()
 		{
 			ImGui::TreePop();
+		}
+
+		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const std::string& _toolTip)
+		{
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				ImGui::SetDragDropPayload(EGUI::ToString(_tagLoad), _pData, _dataSize);
+				ImGui::Text("%s", _toolTip.c_str());
+				return true;
+			}
+			return false;
+		}
+
+		void EndPayload()
+		{
+			ImGui::EndDragDropSource();
+		}
+
+		void EndPayloadReceiver()
+		{
+			ImGui::EndDragDropTarget();
+		}
+		
+		bool DropDownSelection(const std::string& _label, unsigned int& _currentIndex, const std::string *_arrayOfStrings, size_t _size)
+		{
+			return true;
 		}
 
 	}

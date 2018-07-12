@@ -162,16 +162,10 @@ namespace Dystopia
 	void ResourceView::FileInterface(CrawlFile& _file, unsigned int& _id)
 	{
 		ImGui::Indent(10);	
-		//if (EGUI::Display::SelectableTxt(_file.mFileName.c_str()))
-		//{
-		//}
 		ImGui::Button(_file.mFileName.c_str(), ImVec2{ 200, 20 } );
-
-		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		if (EGUI::Display::StartPayload(EGUI::ePAY_LOAD_1, &_file, sizeof(CrawlFile), _file.mFileName.c_str()))
 		{
-			ImGui::SetDragDropPayload("RSCV_CELL", &_file, sizeof(CrawlFile));
-			ImGui::Text("Move %s", _file.mFileName.c_str());
-			ImGui::EndDragDropSource();
+			EGUI::Display::EndPayload();
 		}
 		ImGui::Unindent(10);
 	}

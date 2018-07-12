@@ -80,17 +80,16 @@ namespace Dystopia
 		EGUI::Display::Label("Accepting things from Resource view: ");
 		ImGui::SameLine();
 		ImGui::Button((mDemoName + "##AcceptsRSCV_CELL").c_str(), ImVec2{ 200, 20 });
-		if (ImGui::BeginDragDropTarget())
+		using PayloadType = Dystopia::ResourceView::CrawlFile;
+		if (PayloadType *t = EGUI::Display::StartPayloadReceiver<PayloadType>(EGUI::ePAY_LOAD_1))
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RSCV_CELL"))
-			{
-				IM_ASSERT(payload->DataSize == sizeof(Dystopia::ResourceView::CrawlFile));
-				Dystopia::ResourceView::CrawlFile payload_n = *(const Dystopia::ResourceView::CrawlFile*)payload->Data;
-				mDemoName = payload_n.mFileName;
-			}
-			ImGui::EndDragDropTarget();
+			mDemoName = (*t).mFileName;
+			EGUI::Display::EndPayloadReceiver();
 		}
 
+		const char* items[] = { "", "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO" };
+		static int item_current = 0;
+		ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
 
 		if (!mpFocusGameObj) return;
 
