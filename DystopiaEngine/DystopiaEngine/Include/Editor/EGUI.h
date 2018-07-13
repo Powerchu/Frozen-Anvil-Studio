@@ -20,9 +20,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_GUI_H_
 #define _EDITOR_GUI_H_
 #include "Math\Vector4.h"
+#include "DataStructure\AutoArray.h"
+#include "Utility\DebugAssert.h"
 #include "Editor\Dock.h"
 #include "Editor\Payloads.h"
-#include "Utility\DebugAssert.h"
 #include <string>
 namespace Dystopia
 {
@@ -276,7 +277,7 @@ namespace EGUI
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EGUI::ToString(_tagLoad)))
 				{
-					DEBUG_ASSERT(payload->DataSize == sizeof(Specified), "Error at EGUI");
+					DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
 					return static_cast<Specified*>(payload->Data);
 				}
 			}
@@ -290,7 +291,7 @@ namespace EGUI
 		Usage:
 			
 		======================================================================================================================= */
-		bool DropDownSelection(const std::string& _label, unsigned int _currentIndex, const std::string *_arrayOfStrings, size_t _size);
+		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems);
 
 
 	}

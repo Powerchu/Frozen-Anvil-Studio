@@ -77,9 +77,12 @@ namespace Dystopia
 			EGUI::Display::Label("Variable mDemoVec x : [%.3f] y: [%.3f] z:[%.3f]", x, y, z);
 		}
 
-		EGUI::Display::Label("Accepting things from Resource view: ");
-		ImGui::SameLine();
-		ImGui::Button((mDemoName + "##AcceptsRSCV_CELL").c_str(), ImVec2{ 200, 20 });
+		static int i = 0;
+		AutoArray<std::string> arr;
+		arr.push_back("");
+		arr.push_back("item1");
+		arr.push_back("item2");
+		EGUI::Display::DropDownSelection("TestDropDown", i, arr);
 		using PayloadType = Dystopia::ResourceView::CrawlFile;
 		if (PayloadType *t = EGUI::Display::StartPayloadReceiver<PayloadType>(EGUI::ePAY_LOAD_1))
 		{
@@ -87,11 +90,8 @@ namespace Dystopia
 			EGUI::Display::EndPayloadReceiver();
 		}
 
-		const char* items[] = { "", "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO" };
-		static int item_current = 0;
-		ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
-
-		if (!mpFocusGameObj) return;
+		if (!mpFocusGameObj) 
+			return;
 
 		AutoArray<Component*> pAllComponents = mpFocusGameObj->GetComponents<Component>();
 		for (auto e : pAllComponents)

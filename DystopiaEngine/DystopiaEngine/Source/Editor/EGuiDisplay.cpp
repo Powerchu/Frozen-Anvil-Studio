@@ -307,10 +307,16 @@ namespace EGUI
 		{
 			ImGui::EndDragDropTarget();
 		}
-		
-		bool DropDownSelection(const std::string& _label, unsigned int& _currentIndex, const std::string *_arrayOfStrings, size_t _size)
+
+		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems)
 		{
-			return true;
+			AutoArray<const char*> arrCharPtr;
+			for (const auto &e : _arrOfItems)
+				arrCharPtr.push_back(e.c_str());
+
+			Label(_label.c_str());
+			SameLine();
+			return ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), arrCharPtr.size());
 		}
 
 	}
