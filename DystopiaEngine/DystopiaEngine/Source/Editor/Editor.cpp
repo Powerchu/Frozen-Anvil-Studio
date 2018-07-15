@@ -54,7 +54,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	auto driver = Dystopia::EngineCore::GetInstance();
 	Dystopia::Editor *editor = new Dystopia::Editor{};
 	Dystopia::Timer *timer = new Dystopia::Timer{};
-
+	
 	driver->LoadSettings();
 	driver->Init();
 	editor->Init(driver->GetSystem<Dystopia::WindowManager>(),
@@ -125,7 +125,6 @@ namespace Dystopia
 	void Editor::UpdateFrame(const float& _dt)
 	{
 		//mpGfx->Update(_dt);
-
 		for (unsigned int i = 0; i < mTabsArray.size(); ++i)
 		{
 			EditorTab *pTab = mTabsArray[i];
