@@ -75,9 +75,10 @@ namespace EGUI
 	{
 		ImGui::Indent(_spacing);
 	}
-	void UnIndent()
+
+	void UnIndent(float _spacing)
 	{
-		ImGui::Unindent();
+		ImGui::Unindent(_spacing);
 	}
 
 	bool StartChild(const std::string& _label, const Math::Vec2& _size, bool _showBorder, const Math::Vec4& _colour)
@@ -117,6 +118,8 @@ namespace EGUI
 		{
 			va_list args;
 			va_start(args, _formatLabel);
+			ImGui::TextV(" ", args);
+			ImGui::SameLine();
 			ImGui::TextV(_formatLabel, args);
 			va_end(args);
 		}
@@ -292,14 +295,19 @@ namespace EGUI
 			return false;
 		}
 
-		bool StartTreeNode(const std::string&_label)
+		bool StartTreeNode(const std::string&_label, bool* _outClicked)
 		{
-			return ImGui::TreeNode(_label.c_str());
+			return ImGui::TreeNode(_label.c_str(), _outClicked);
 		}
 
-		void OpenTreeNode(const std::string&_label, bool _collapseMe)
+		void OpenTreeNode(const std::string&_label, bool _open)
 		{
-			ImGui::GetStateStorage()->SetInt(ImGui::GetID(_label.c_str()), (_collapseMe) ? 1 : 0);
+			ImGuiStorage* pStorage = ImGui::GetStateStorage();
+			ImGuiID key = ImGui::GetID(_label.c_str());
+			if (!_open && pStorage->GetInt(key))
+				pStorage->SetInt(key, 0);
+			else if (_open && !pStorage->GetInt(key))
+				pStorage->SetInt(key, 1);
 		}
 
 		void EndTreeNode()

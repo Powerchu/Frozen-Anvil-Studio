@@ -19,12 +19,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\Vector4.h"
 #include <string>
 #include <vector>
- 
-static const std::string GLOBAL_DEFAULT_PROJECT_PATH = "..\\DystopiaEngine";
-static const std::string GLOBAL_DEFAULT_PROJECT_NAME = "DystopiaEngine";
 
 namespace Dystopia
 {
+	static constexpr size_t MAX_SEARCH_SIZE = 128;
+
 	class ResourceView : public EditorTab
 	{
 	public:
@@ -83,6 +82,7 @@ namespace Dystopia
 		int				mLastSelected;
 		bool			mRefreshCrawl;
 		std::string		mLabel;
+		char			mSearchBarText[MAX_SEARCH_SIZE];
 
 		void			ReCrawl(CrawlFolder*);
 		void			FolderInterface(CrawlFolder*);

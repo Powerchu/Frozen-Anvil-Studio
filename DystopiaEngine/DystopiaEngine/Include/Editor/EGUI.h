@@ -52,7 +52,7 @@ namespace EGUI
 	void EndMainMenuBar();
 	void EndMenuHeader();
 	void Indent(float _spacing = 10.f);
-	void UnIndent();
+	void UnIndent(float _spacing = 10.f);
 
 	/* =======================================================================================================================
 	Brief:	
@@ -247,9 +247,9 @@ namespace EGUI
 				}
 		======================================================================================================================= */
 		// Start a tree node 
-		bool StartTreeNode(const std::string& _label);
+		bool StartTreeNode(const std::string& _label, bool* _outClicked = nullptr);
 		// Set a specific tree node to be collapsed (closed) or not
-		void OpenTreeNode(const std::string& _label, bool _collapseMe);
+		void OpenTreeNode(const std::string& _label, bool _open);
 		//End a tree Node
 		void EndTreeNode();
 		/* =======================================================================================================================

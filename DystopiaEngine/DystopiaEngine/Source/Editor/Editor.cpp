@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 
+#include <memory>
 #define _CRTDBG_MAP_ALLOC
 #include <cstdlib>
 #include <crtdbg.h>
@@ -45,6 +46,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 // Entry point for editor
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 {
+#if defined(DEBUG) | defined(_DEBUG)
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 	hInstance;
 
 	auto driver = Dystopia::EngineCore::GetInstance();

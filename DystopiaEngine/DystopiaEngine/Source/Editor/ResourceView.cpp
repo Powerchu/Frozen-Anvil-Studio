@@ -19,15 +19,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <stdlib.h>
 #include <tchar.h>
 #include "../../Dependancies/ImGui/imgui.h"
+#include "../../Dependancies/ImGui/imgui_internal.h"
 
-constexpr float DEFAULT_WIDTH = 300;
-constexpr float DEFAULT_HEIGHT = 300;
+static constexpr float DEFAULT_WIDTH = 300;
+static constexpr float DEFAULT_HEIGHT = 300;
+static const std::string GLOBAL_DEFAULT_PROJECT_PATH = "..\\DystopiaEngine";
+static const std::string GLOBAL_DEFAULT_PROJECT_NAME = "DystopiaEngine";
 
 namespace Dystopia
 {
 	ResourceView::ResourceView()
 		: mpFocusData{ nullptr }, mpRootFolder{ nullptr }, mLastSelected{ -1 }, mRefreshCrawl{ false },
-		mLabel{ "Resource" }, mpCurrentFolder{ nullptr }
+		mLabel{ "Resource" }, mpCurrentFolder{ nullptr }, mSearchBarText{ "" }
 	{}
 	
 	ResourceView::~ResourceView()
@@ -57,13 +60,11 @@ namespace Dystopia
 	void ResourceView::Window()
 	{
 		static constexpr float leftColX = 250;
-		static constexpr float smallY = 20;
+		static constexpr float smallY = 50;
 		const float maxSizeY = Size().y - 55;
 		const float maxSizeX = Size().x - 7;
 		{
-			EGUI::StartChild("ResourceChild1", Math::Vec2{ maxSizeX, smallY });
-
-			EGUI::EndChild();
+			EGUI::Display::TextField("Search", mSearchBarText, MAX_SEARCH_SIZE);
 		}
 		{
 			EGUI::StartChild("ResourceChild2", Math::Vec2{ leftColX, maxSizeY });
@@ -79,9 +80,11 @@ namespace Dystopia
 				EGUI::Display::HorizontalSeparator();
 				for (unsigned int i = 0; i < mpCurrentFolder->mArrFiles.size(); ++i)
 				{
+					EGUI::Indent(10);
 					ImGui::PushID(i);
 					FileInterface(mpCurrentFolder->mArrFiles[i]);
 					ImGui::PopID();
+					EGUI::UnIndent(10);
 				}
 			}
 			EGUI::EndChild();
@@ -96,15 +99,16 @@ namespace Dystopia
 
 	void ResourceView::FolderInterface(CrawlFolder *_pFolder)
 	{
+		bool temp = false;
 		if (_pFolder->mRefreshMe) ReCrawl(_pFolder);
 
 		if (_pFolder->mArrChildFolders.size())
 		{
-			if (EGUI::Display::StartTreeNode(_pFolder->mFolderName.c_str()))
+			if (EGUI::Display::StartTreeNode(_pFolder->mFolderName.c_str(), &temp))
 			{
 				if (_pFolder->mToggle)
 				{
-					mpCurrentFolder = _pFolder;
+					if (temp) mpCurrentFolder = _pFolder;
 					_pFolder->mToggle = false;
 				}
 				for (auto e : _pFolder->mArrChildFolders)
@@ -123,34 +127,34 @@ namespace Dystopia
 		}
 		else
 		{
+			EGUI::Indent(20);
 			if (EGUI::Display::SelectableTxt(_pFolder->mFolderName.c_str()))
 			{
 				mpCurrentFolder = _pFolder;
 			}
+			EGUI::UnIndent(20);
 		}
 	}
 
 	void ResourceView::FileInterface(CrawlFile& _file)
 	{
-		ImGui::Indent(10);	
 		ImGui::Button(_file.mFileName.c_str(), ImVec2{ 200, 20 } );
 		if (EGUI::Display::StartPayload(EGUI::ePAY_LOAD_1, &_file, sizeof(CrawlFile), _file.mFileName.c_str()))
 		{
 			EGUI::Display::EndPayload();
 		}
-		ImGui::Unindent(10);
 	}
 
 	void ResourceView::ReCrawl(CrawlFolder *_pFolder)
 	{
-		for (auto e : _pFolder->mArrChildFolders)
-			EGUI::Display::OpenTreeNode(e->mFolderName.c_str(), false);
 		for (auto e : _pFolder->mArrChildFolders)
 			delete e;
 		_pFolder->mArrChildFolders.clear();
 		_pFolder->mArrFiles.clear();
 		_pFolder->Crawl();
 		_pFolder->mRefreshMe = false;
+		for (auto e : _pFolder->mArrChildFolders)
+			EGUI::Display::OpenTreeNode(e->mFolderName.c_str(), false);
 	}
 
 	ResourceView::CrawlFile::CrawlFile(const char* _name, const char* _path)
@@ -171,6 +175,7 @@ namespace Dystopia
 
 	ResourceView::CrawlFolder::~CrawlFolder()
 	{
+		this->mpParentFolder = nullptr;
 		for (auto e : mArrChildFolders)
 			delete e;
 	}
