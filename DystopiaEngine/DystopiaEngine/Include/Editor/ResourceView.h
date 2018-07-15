@@ -20,7 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <string>
 #include <vector>
  
-static const std::string GLOBAL_DEFAULT_PROJECT_PATH = "..";
+static const std::string GLOBAL_DEFAULT_PROJECT_PATH = "..\\DystopiaEngine";
+static const std::string GLOBAL_DEFAULT_PROJECT_NAME = "DystopiaEngine";
 
 namespace Dystopia
 {
@@ -48,23 +49,27 @@ namespace Dystopia
 		void StartCrawl();
 		struct CrawlFile
 		{
-			CrawlFile(const std::string&);
+			CrawlFile(const std::string& _name, const std::string& _path);
+			CrawlFile(const char* _name, const char* _path);
 			std::string mFileName;
+			std::string mFilePath;
 		};
 		struct CrawlFolder
 		{
-			CrawlFolder(const char*);
-			CrawlFolder(const std::string&);
+			CrawlFolder(const char* _name, const char* _path);
+			CrawlFolder(const std::string& _name, const std::string& _path);
 			~CrawlFolder();
 
 			CrawlFolder*	GetParent();
 			void			SetParent(CrawlFolder*);
 			void			AddFolder(CrawlFolder*);
-			void			AddFile(const std::string&);
+			void			AddFile(const std::string& _name, const std::string& _path);
 			void			Crawl();
 			void			PrintAll();
 
 			std::string				mFolderName;
+			std::string				mFolderPath;
+			bool					mToggle;
 			CrawlFolder				*mpParentFolder;
 			AutoArray<CrawlFolder*>	mArrChildFolders;
 			AutoArray<CrawlFile>	mArrFiles;
@@ -72,15 +77,16 @@ namespace Dystopia
 		};
 
 	private:
-		CrawlFolder		*mpCrawlData;
-		CrawlFolder		*mpLastFolder;
+		CrawlFolder		*mpRootFolder;
+		CrawlFolder		*mpCurrentFolder;
 		void			*mpFocusData;
 		int				mLastSelected;
 		bool			mRefreshCrawl;
 		std::string		mLabel;
 
+		void			ReCrawl(CrawlFolder*);
 		void			FolderInterface(CrawlFolder*);
-		void			FileInterface(CrawlFile&, unsigned int&);
+		void			FileInterface(CrawlFile&);
 	};
 }
 

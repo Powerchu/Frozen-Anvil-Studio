@@ -51,6 +51,8 @@ namespace EGUI
 	bool StartMenuBody(const std::string&, const std::string& _shortcut="");
 	void EndMainMenuBar();
 	void EndMenuHeader();
+	void Indent(float _spacing = 10.f);
+	void UnIndent();
 
 	/* =======================================================================================================================
 	Brief:	
@@ -85,25 +87,33 @@ namespace EGUI
 			EGUI::EndChild();
 	======================================================================================================================= */
 	// Call to Start Child window in the current window you are in 
-	bool StartChild(const std::string&, const Math::Vec2& = Math::Vec2{ 0, 0 });
+	bool StartChild(const std::string&, const Math::Vec2& = { 0, 0 }, bool _showBorder = true,
+					const Math::Vec4& _colour = { 0.1f, 0.1f, 0.1f, 0.1f });
 	// Call to Start Child window in the current window you are in 
-	bool StartChild(const std::string&, const float& = 0, const float& = 0);
+	bool StartChild(const std::string&, const float& = 0, const float& = 0, bool _showBorder = true, 
+					const Math::Vec4& _colour = { 0.1f, 0.1f, 0.1f, 0.1f });
 	// Call to end the child window and proceed back to the parent window
 	void EndChild();
 
 	/* =======================================================================================================================
 	Brief:
-			Makes the next UI item to be printed on the right side of the previous UI item. 
+			Makes the next UI item to be printed on the right side of the previous UI item. If custom offset > 0, starts 
+			counting from left alignment of the imgui window its being called in
 			(Defualt is - below the previous item)	
 	Usage:
 			EGUI::Display::Label("start");
 			EGUI::SameLine();
 			EGUI::Display::Label("end");
 	======================================================================================================================= */
-	void SameLine();
+	void SameLine(float _customOffset = 0.f);
 
 	namespace Display
 	{
+		/* =======================================================================================================================
+		Brief:
+				Draws a horizontal line in the current imgui window
+		======================================================================================================================= */
+		void HorizontalSeparator();
 		/* =======================================================================================================================
 		Brief:
 				Creates a text display (non-editable). Used like a printf function.
@@ -242,33 +252,32 @@ namespace EGUI
 		void OpenTreeNode(const std::string& _label, bool _collapseMe);
 		//End a tree Node
 		void EndTreeNode();
-
 		/* =======================================================================================================================
 		Brief:
-			Sets the previos UI widget/item to be a payload type. Preferably call according to the usage please. 
-			Usage shows that button will have additional of being a payload type
+				Sets the previos UI widget/item to be a payload type. Preferably call according to the usage please. 
+				Usage shows that button will have additional of being a payload type
 		Usage:
-			ImGui::Button("Hello", ImVec2{ 200, 20 } );
-			if (EGUI::Display::StartPayload(EGUI::ePAY_LOAD_1, &_file, sizeof(CrawlFile), "Hello"))
-			{
-				EGUI::Display::EndPayload();
-			}
+				ImGui::Button("Hello", ImVec2{ 200, 20 } );
+				if (EGUI::Display::StartPayload(EGUI::ePAY_LOAD_1, &_file, sizeof(CrawlFile), "Hello"))
+				{
+					EGUI::Display::EndPayload();
+				}
 		======================================================================================================================= */
 		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const std::string& _toolTip);
 		// Call EndPayLoad at the end of StartPayLoad return true. See StartPayLoad usage
 		void EndPayload();
 		/* =======================================================================================================================
 		Brief:
-			Sets the previos UI widget/item to be receiving a payload type. Preferably call according to the usage please.
-			Usage shows that button will have additional of being a payload reciever type
+				Sets the previos UI widget/item to be receiving a payload type. Preferably call according to the usage please.
+				Usage shows that button will have additional of being a payload reciever type
 		Usage:
-			ImGui::Button(("$$acceptDemo").c_str(), ImVec2{ 200, 20 });
-			using PayloadType = Dystopia::ResourceView::CrawlFile;
-			if (PayloadType *t = EGUI::Display::StartPayloadReceiver<PayloadType>(EGUI::ePAY_LOAD_1))
-			{
-				mDemoName = (*t).mFileName;
-				EGUI::Display::EndPayloadReceiver();
-			}
+				ImGui::Button(("##acceptDemo").c_str(), ImVec2{ 200, 20 });
+				using PayloadType = Dystopia::ResourceView::CrawlFile;
+				if (PayloadType *t = EGUI::Display::StartPayloadReceiver<PayloadType>(EGUI::ePAY_LOAD_1))
+				{
+					mDemoName = (*t).mFileName;
+					EGUI::Display::EndPayloadReceiver();
+				}
 		======================================================================================================================= */
 		template <typename Specified>
 		Specified* StartPayloadReceiver(ePayloadTags _tagLoad)
@@ -287,13 +296,17 @@ namespace EGUI
 		void EndPayloadReceiver();
 		/* =======================================================================================================================
 		Brief:
-			
+				Creates a drop down box with selectable strings. The currently selected index will be stored into the second
+				parameter variable.
 		Usage:
-			
+				static int i = 0;
+				AutoArray<std::string> arr;
+				arr.push_back("");
+				arr.push_back("item1");
+				arr.push_back("item2");
+				EGUI::Display::DropDownSelection("TestDropDown", i, arr);
 		======================================================================================================================= */
 		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems);
-
-
 	}
 }
 

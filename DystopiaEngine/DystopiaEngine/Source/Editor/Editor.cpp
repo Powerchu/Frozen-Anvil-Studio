@@ -12,6 +12,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
+
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+
+#ifdef _DEBUG
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+#else
+#define DBG_NEW new
+#endif
+
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Input\InputSystem.h"
@@ -28,9 +41,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 #include <iostream>
 #include <bitset>
-#define _CRTDBG_MAP_ALLOC  
-#include <stdlib.h>  
-#include <crtdbg.h>  
 
 // Entry point for editor
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
@@ -46,21 +56,22 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	editor->Init(driver->GetSystem<Dystopia::WindowManager>(),
 				 driver->GetSystem<Dystopia::GraphicsSystem>(),
 				 driver->GetSystem<Dystopia::InputManager>());
-
+	
 	while (!editor->IsClosing())
 	{
 		float dt = timer->Elapsed();
 		timer->Lap();
-
+	
 		editor->StartFrame(dt);
-
+	
 		editor->UpdateFrame(dt);
 		
 		editor->EndFrame();
 	}
-
+	
 	editor->Shutdown();
 	driver->Shutdown();
+	delete timer;
 	delete editor;
 
 	_CrtDumpMemoryLeaks();

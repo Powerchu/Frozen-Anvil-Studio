@@ -71,28 +71,48 @@ namespace EGUI
 		ImGui::EndMenu();
 	}
 
-	bool StartChild(const std::string& _label, const Math::Vec2& _size)
+	void Indent(float _spacing)
 	{
-		return ImGui::BeginChild(_label.c_str(), ImVec2{ _size.x, _size.y }, false);
+		ImGui::Indent(_spacing);
+	}
+	void UnIndent()
+	{
+		ImGui::Unindent();
 	}
 
-	bool StartChild(const std::string& _label, const float& _x, const float& _y)
+	bool StartChild(const std::string& _label, const Math::Vec2& _size, bool _showBorder, const Math::Vec4& _colour)
 	{
-		return ImGui::BeginChild(_label.c_str(), ImVec2{ _x, _y }, false);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10, 10 });
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ _colour.x, _colour.y, _colour.z, _colour.w });
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0, 0, 0, 0 });
+		return ImGui::BeginChild(_label.c_str(), ImVec2{ _size.x, _size.y }, _showBorder);
+	}
+
+	bool StartChild(const std::string& _label, const float& _x, const float& _y, bool _showBorder, const Math::Vec4& _colour)
+	{
+		return StartChild(_label, Math::Vec2{ _x, _y }, _showBorder, _colour);
 	}
 
 	void EndChild()
 	{
 		ImGui::EndChild();
+		ImGui::PopStyleColor(2);
+		ImGui::PopStyleVar(2);
 	}
 
-	void SameLine()
+	void SameLine(float _customOffset)
 	{
-		ImGui::SameLine();
+		ImGui::SameLine(_customOffset);
 	}
 
 	namespace Display
 	{
+		void HorizontalSeparator()
+		{
+			ImGui::Separator();
+		}
+
 		void Label(const char* _formatLabel, ...)
 		{
 			va_list args;
@@ -245,7 +265,7 @@ namespace EGUI
 	
 		bool CollapsingHeader(const std::string& _label)
 		{
-			return ImGui::CollapsingHeader(_label.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+			return ImGui::CollapsingHeader(_label.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoAutoOpenOnLog | ImGuiTreeNodeFlags_OpenOnArrow);
 		}
 
 		bool SelectableTxt(const std::string& _label, bool _outputBool)
@@ -279,7 +299,7 @@ namespace EGUI
 
 		void OpenTreeNode(const std::string&_label, bool _collapseMe)
 		{
-			ImGui::GetStateStorage()->SetInt(ImGui::GetID(_label.c_str()), static_cast<int>(_collapseMe));
+			ImGui::GetStateStorage()->SetInt(ImGui::GetID(_label.c_str()), (_collapseMe) ? 1 : 0);
 		}
 
 		void EndTreeNode()
@@ -314,8 +334,10 @@ namespace EGUI
 			for (const auto &e : _arrOfItems)
 				arrCharPtr.push_back(e.c_str());
 
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
 			SameLine();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			return ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), arrCharPtr.size());
 		}
 

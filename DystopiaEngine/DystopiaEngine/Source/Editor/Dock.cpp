@@ -794,8 +794,8 @@ bool DockSpace::TabBar(Tabs& _tab, bool _closeBtn)
 	bool tabClosed = false;
 	char buffer[20];
 
-	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0, 0, 0, 1});
-	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0,0,0,-1 });
+	//ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{1,1, 1, 1});
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0,0,0,-1});
 	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4{ 0.5f, 0.5f, 0.5f, 0.5f });
 	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4{ 0.7f, 0.7f, 0.7f, 0.8f });
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.9f, 0.9f, 0.9f, 1.f });
@@ -850,7 +850,7 @@ bool DockSpace::TabBar(Tabs& _tab, bool _closeBtn)
 		pCanvas->AddLine(cp, cp + ImVec2{ _tab.mSize.x, 0 }, ImGui::GetColorU32(ImGuiCol_FrameBgActive), 3);
 	}
 	ImGui::EndChild();
-	ImGui::PopStyleColor();
+	//ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();

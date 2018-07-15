@@ -554,8 +554,7 @@ namespace Dystopia
 		ImGui::SetNextWindowBgAlpha(1.f);
 		ImGui::Begin(mpMainDockspace, nullptr, flags);
 		EGUI::Docking::BeginDockableSpace();
-		ImGui::PopStyleVar();
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(2);
 	}
 
 	void GuiSystem::EndFullDockableSpace()
