@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	static constexpr size_t MAX_SEARCH_SIZE = 128;
+	static constexpr size_t MAX_SEARCH_SIZE = 64;
 
 	class ResourceView : public EditorTab
 	{

@@ -21,7 +21,7 @@ namespace EGUI
 {
 	enum ePayloadTags
 	{
-		ePAY_LOAD_1,
+		FILE,
 		ePAY_LOAD_2,
 
 		ePAY_LOAD_LAST
@@ -31,7 +31,7 @@ namespace EGUI
 	{
 		switch (_tag)
 		{
-			case ePAY_LOAD_1:	return "ePAY_LOAD_1";
+			case FILE:			return "FILE";
 			case ePAY_LOAD_2:	return "ePAY_LOAD_2";
 			default:			return "ePAY_LOAD_LAST";
 		}

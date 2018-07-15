@@ -51,8 +51,8 @@ namespace EGUI
 	bool StartMenuBody(const std::string&, const std::string& _shortcut="");
 	void EndMainMenuBar();
 	void EndMenuHeader();
-	void Indent(float _spacing = 10.f);
-	void UnIndent(float _spacing = 10.f);
+	void Indent(float _spacing = 20.f);
+	void UnIndent(float _spacing = 20.f);
 
 	/* =======================================================================================================================
 	Brief:	
@@ -132,6 +132,14 @@ namespace EGUI
 				EGUI::Display::TextField("This is an editable text field: ", &buffer, size);
 		======================================================================================================================= */
 		void TextField(const std::string& _label, char *_pOutText, size_t _size);
+		/* =======================================================================================================================
+		Brief:
+				NOT WORKING 10/7/18
+				Creates an empty box. Great for using alongside payloads if you unsure.
+		Usage:
+				EGUI::Display::EmptyBox("Accepting field", 100);
+		======================================================================================================================= */
+		void EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside="");
 		/* =======================================================================================================================
 		Brief:
 				Starts a Collaspe-able header that can be clicked to open or close - Which is also the return-ed bool.

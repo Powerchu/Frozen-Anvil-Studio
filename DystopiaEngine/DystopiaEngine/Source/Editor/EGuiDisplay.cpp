@@ -21,7 +21,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <iostream>
 
 constexpr float Default_VectorField_Alignment_Left = 100.f;
-constexpr float Default_VectorField_Alignment_Height = 2.f;
+constexpr float Default_VectorField_Alignment_Height = 3.0f;
+constexpr float Default_Alightnment_Labels_And_Items = 250.f;
 Dystopia::CommandHandler *gContextComdHND = nullptr;
 
 namespace EGUI
@@ -83,7 +84,7 @@ namespace EGUI
 
 	bool StartChild(const std::string& _label, const Math::Vec2& _size, bool _showBorder, const Math::Vec4& _colour)
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10, 10 });
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 5, 5 });
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ _colour.x, _colour.y, _colour.z, _colour.w });
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0, 0, 0, 0 });
@@ -118,8 +119,6 @@ namespace EGUI
 		{
 			va_list args;
 			va_start(args, _formatLabel);
-			ImGui::TextV(" ", args);
-			ImGui::SameLine();
 			ImGui::TextV(_formatLabel, args);
 			va_end(args);
 		}
@@ -132,11 +131,25 @@ namespace EGUI
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
-			ImGui::SameLine();
+			SameLine(Default_Alightnment_Labels_And_Items);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
-			if (ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags))
-			{
-			}
+			ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags);
+		}
+
+		void EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside)
+		{
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
+			Label(_label.c_str());
+			SameLine(Default_Alightnment_Labels_And_Items);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			ImGui::PushItemWidth(_width);
+			ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+			ImGui::Button((_anythingToShowInside.length()) ? (_anythingToShowInside + "###" + _label).c_str() : ("###EmptyBoxBtn" + _label).c_str(),
+				ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize });
+			ImGui::PopStyleColor(3);
+			ImGui::PopItemWidth();
 		}
 	
 		bool CheckBox(const std::string& _label, bool* _outputBool)
@@ -144,7 +157,7 @@ namespace EGUI
 			bool changed = false;
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
-			ImGui::SameLine();
+			SameLine(Default_Alightnment_Labels_And_Items);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			if (ImGui::Checkbox(("###CheckBox" + _label).c_str(), _outputBool))
 			{
@@ -166,7 +179,7 @@ namespace EGUI
 			bool changed = false;
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
-			ImGui::SameLine();
+			SameLine(Default_Alightnment_Labels_And_Items);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			if (ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max))
 			{
@@ -188,7 +201,7 @@ namespace EGUI
 			bool changed = false;
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
-			ImGui::SameLine();
+			SameLine(Default_Alightnment_Labels_And_Items);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			if (ImGui::DragInt(("###DragInt" + _label).c_str(), _outputInt, _dragSpeed, _min, _max))
 			{
@@ -220,9 +233,9 @@ namespace EGUI
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
-			ImGui::SameLine(Default_VectorField_Alignment_Left);
+			SameLine(Default_Alightnment_Labels_And_Items);
 			Label("X:");
-			ImGui::SameLine();
+			SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			if (ImGui::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max))
 			{
@@ -233,9 +246,9 @@ namespace EGUI
 				_outputVec->x = x;
 				changed = true;
 			}
-			ImGui::SameLine();
+			SameLine();
 			Label("Y:");
-			ImGui::SameLine();
+			SameLine();
 			if (ImGui::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max))
 			{
 				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
@@ -245,9 +258,9 @@ namespace EGUI
 				_outputVec->y = y;
 				changed = true;
 			}
-			ImGui::SameLine();
+			SameLine();
 			Label("Z:");
-			ImGui::SameLine();
+			SameLine();
 			if (ImGui::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max))
 			{
 				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
@@ -268,7 +281,7 @@ namespace EGUI
 	
 		bool CollapsingHeader(const std::string& _label)
 		{
-			return ImGui::CollapsingHeader(_label.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoAutoOpenOnLog | ImGuiTreeNodeFlags_OpenOnArrow);
+			return ImGui::CollapsingHeader(_label.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
 		}
 
 		bool SelectableTxt(const std::string& _label, bool _outputBool)
@@ -344,7 +357,7 @@ namespace EGUI
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
-			SameLine();
+			SameLine(Default_Alightnment_Labels_And_Items);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			return ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), arrCharPtr.size());
 		}

@@ -23,8 +23,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 static constexpr float DEFAULT_WIDTH = 300;
 static constexpr float DEFAULT_HEIGHT = 300;
-static const std::string GLOBAL_DEFAULT_PROJECT_PATH = "..\\DystopiaEngine";
-static const std::string GLOBAL_DEFAULT_PROJECT_NAME = "DystopiaEngine";
+static const std::string GLOBAL_DEFAULT_PROJECT_PATH = "..\\DystopiaEngine\\Resource";
+static const std::string GLOBAL_DEFAULT_PROJECT_NAME = "Resource";
 
 namespace Dystopia
 {
@@ -64,7 +64,10 @@ namespace Dystopia
 		const float maxSizeY = Size().y - 55;
 		const float maxSizeX = Size().x - 7;
 		{
+			EGUI::Indent(5);
 			EGUI::Display::TextField("Search", mSearchBarText, MAX_SEARCH_SIZE);
+			EGUI::UnIndent(5);
+			EGUI::Display::HorizontalSeparator();
 		}
 		{
 			EGUI::StartChild("ResourceChild2", Math::Vec2{ leftColX, maxSizeY });
@@ -139,7 +142,7 @@ namespace Dystopia
 	void ResourceView::FileInterface(CrawlFile& _file)
 	{
 		ImGui::Button(_file.mFileName.c_str(), ImVec2{ 200, 20 } );
-		if (EGUI::Display::StartPayload(EGUI::ePAY_LOAD_1, &_file, sizeof(CrawlFile), _file.mFileName.c_str()))
+		if (EGUI::Display::StartPayload(EGUI::FILE, &_file, sizeof(CrawlFile), _file.mFileName.c_str()))
 		{
 			EGUI::Display::EndPayload();
 		}

@@ -66,6 +66,7 @@ namespace Dystopia
 		float z = mDemoVec.z;
 		if (EGUI::Display::CollapsingHeader("Temporary Transform"))	// replace with for loop of all components name
 		{
+			EGUI::Indent();
 			EGUI::Display::TextField("mDemoText", mDemoText, 32);
 
 			if (EGUI::Display::VectorFields("Demo Vec", &mDemoVec, 0.1f, 0.f, 10.f))
@@ -75,6 +76,7 @@ namespace Dystopia
 				z = mDemoVec.z;
 			}
 			EGUI::Display::Label("Variable mDemoVec x : [%.3f] y: [%.3f] z:[%.3f]", x, y, z);
+			EGUI::UnIndent();
 		}
 
 		static int i = 0;
@@ -82,13 +84,14 @@ namespace Dystopia
 		arr.push_back("");
 		arr.push_back("item1");
 		arr.push_back("item2");
-		EGUI::Display::DropDownSelection("TestDropDown", i, arr);
+		EGUI::Display::EmptyBox("Box to accept payload", 150, mDemoName);
 		using PayloadType = Dystopia::ResourceView::CrawlFile;
-		if (PayloadType *t = EGUI::Display::StartPayloadReceiver<PayloadType>(EGUI::ePAY_LOAD_1))
+		if (PayloadType *t = EGUI::Display::StartPayloadReceiver<PayloadType>(EGUI::FILE))
 		{
 			mDemoName = (*t).mFileName;
 			EGUI::Display::EndPayloadReceiver();
 		}
+		EGUI::Display::DropDownSelection("TestDropDown", i, arr);
 
 		if (!mpFocusGameObj) 
 			return;
