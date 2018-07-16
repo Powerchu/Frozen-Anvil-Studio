@@ -21,16 +21,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../../Dependancies/ImGui/imgui.h"
 #include "../../Dependancies/ImGui/imgui_internal.h"
 
-static constexpr float DEFAULT_WIDTH = 300;
-static constexpr float DEFAULT_HEIGHT = 300;
 static const std::string GLOBAL_DEFAULT_PROJECT_PATH = "..\\DystopiaEngine\\Resource";
 static const std::string GLOBAL_DEFAULT_PROJECT_NAME = "Resource";
 
 namespace Dystopia
 {
 	ResourceView::ResourceView()
-		: mpFocusData{ nullptr }, mpRootFolder{ nullptr }, mLastSelected{ -1 }, mRefreshCrawl{ false },
-		mLabel{ "Resource" }, mpCurrentFolder{ nullptr }, mSearchBarText{ "" }
+		: mpRootFolder{ nullptr }, mLabel{ "Resource" }, mpCurrentFolder{ nullptr }, 
+		mSearchBarText{ "" }, mArrFileSearchResultPtrs{}
 	{}
 	
 	ResourceView::~ResourceView()
@@ -84,13 +82,22 @@ namespace Dystopia
 				for (unsigned int i = 0; i < mpCurrentFolder->mArrFiles.size(); ++i)
 				{
 					EGUI::Indent(10);
-					ImGui::PushID(i);
-					FileInterface(mpCurrentFolder->mArrFiles[i]);
-					ImGui::PopID();
+					EGUI::PushID(i);
+					FileInterface(*mpCurrentFolder->mArrFiles[i]);
+					EGUI::PopID();
 					EGUI::UnIndent(10);
 				}
 			}
 			EGUI::EndChild();
+		}
+	}
+
+	void ResourceView::CrawlAll(CrawlFolder* _pFolder)
+	{
+		for (auto e : _pFolder->mArrChildFolders)
+		{
+			e->Crawl();
+			CrawlAll(e);
 		}
 	}
 
@@ -141,7 +148,7 @@ namespace Dystopia
 
 	void ResourceView::FileInterface(CrawlFile& _file)
 	{
-		ImGui::Button(_file.mFileName.c_str(), ImVec2{ 200, 20 } );
+		EGUI::Display::Button(_file.mFileName.c_str(), Math::Vec2{ 200, 20 } );
 		if (EGUI::Display::StartPayload(EGUI::FILE, &_file, sizeof(CrawlFile), _file.mFileName.c_str()))
 		{
 			EGUI::Display::EndPayload();
@@ -153,6 +160,8 @@ namespace Dystopia
 		for (auto e : _pFolder->mArrChildFolders)
 			delete e;
 		_pFolder->mArrChildFolders.clear();
+		for (auto e : _pFolder->mArrFiles)
+			delete e;
 		_pFolder->mArrFiles.clear();
 		_pFolder->Crawl();
 		_pFolder->mRefreshMe = false;
@@ -160,12 +169,27 @@ namespace Dystopia
 			EGUI::Display::OpenTreeNode(e->mFolderName.c_str(), false);
 	}
 
-	ResourceView::CrawlFile::CrawlFile(const char* _name, const char* _path)
-		: mFileName{ _name }, mFilePath{ _path }
+	void ResourceView::FindFile(CrawlFolder *_pFolder, const std::string& _item)
+	{
+		if (!_pFolder) return;
+
+		for (auto e : _pFolder->mArrFiles)
+		{
+			if (!e->mFileName.find(_item)) mArrFileSearchResultPtrs.push_back(e);
+		}
+
+		for (auto e : _pFolder->mArrChildFolders)
+		{
+			FindFile(e, _item);
+		}
+	}
+
+	ResourceView::CrawlFile::CrawlFile(const char* _name, const char* _path, CrawlFolder* _pParent)
+		: mFileName{ _name }, mFilePath{ _path }, mpParentFolder{ _pParent }
 	{}
 
-	ResourceView::CrawlFile::CrawlFile(const std::string& _name, const std::string& _path)
-		: mFileName{ _name }, mFilePath{ _path }
+	ResourceView::CrawlFile::CrawlFile(const std::string& _name, const std::string& _path, CrawlFolder* _pParent)
+		: mFileName{ _name }, mFilePath{ _path }, mpParentFolder{ _pParent }
 	{}
 
 	ResourceView::CrawlFolder::CrawlFolder(const char* _name, const char* _path)
@@ -181,6 +205,8 @@ namespace Dystopia
 		this->mpParentFolder = nullptr;
 		for (auto e : mArrChildFolders)
 			delete e;
+		for (auto e : mArrFiles)
+			delete e;
 	}
 
 	void ResourceView::CrawlFolder::AddFolder(CrawlFolder *_subFolder)
@@ -190,7 +216,7 @@ namespace Dystopia
 
 	void ResourceView::CrawlFolder::AddFile(const std::string& _name, const std::string& _path)
 	{
-		mArrFiles.EmplaceBack(CrawlFile{ _name, _path });
+		mArrFiles.EmplaceBack(new CrawlFile{ _name, _path, this });
 	}
 
 	void ResourceView::CrawlFolder::Crawl()
@@ -241,7 +267,7 @@ namespace Dystopia
 			std::cout << "   " << e->mFolderName << std::endl;
 		std::cout << "Files: \n";
 		for (auto e : mArrFiles)
-			std::cout << "   " << e.mFileName << std::endl;
+			std::cout << "   " << e->mFileName << std::endl;
 		std::cout << "\n======End of Folder Data======\n";
 		
 	}

@@ -53,6 +53,8 @@ namespace EGUI
 	void EndMenuHeader();
 	void Indent(float _spacing = 20.f);
 	void UnIndent(float _spacing = 20.f);
+	void PushID(int);
+	void PopID();
 
 	/* =======================================================================================================================
 	Brief:	
@@ -265,8 +267,8 @@ namespace EGUI
 				Sets the previos UI widget/item to be a payload type. Preferably call according to the usage please. 
 				Usage shows that button will have additional of being a payload type
 		Usage:
-				ImGui::Button("Hello", ImVec2{ 200, 20 } );
-				if (EGUI::Display::StartPayload(EGUI::ePAY_LOAD_1, &_file, sizeof(CrawlFile), "Hello"))
+				EGUI::Button("Hello", Math::Vec2{ 200, 20 } );
+				if (EGUI::Display::StartPayload(EGUI::FILE, &(*_file), sizeof(File), "Hello"))
 				{
 					EGUI::Display::EndPayload();
 				}
@@ -279,11 +281,10 @@ namespace EGUI
 				Sets the previos UI widget/item to be receiving a payload type. Preferably call according to the usage please.
 				Usage shows that button will have additional of being a payload reciever type
 		Usage:
-				ImGui::Button(("##acceptDemo").c_str(), ImVec2{ 200, 20 });
-				using PayloadType = Dystopia::ResourceView::CrawlFile;
-				if (PayloadType *t = EGUI::Display::StartPayloadReceiver<PayloadType>(EGUI::ePAY_LOAD_1))
+				EGUI::Display::EmptyBox("Box to accept payload", 150, mDemoName);
+				if (File *t = EGUI::Display::StartPayloadReceiver<File>(EGUI::FILE))
 				{
-					mDemoName = (*t).mFileName;
+					mDemoName = (*t).mName;
 					EGUI::Display::EndPayloadReceiver();
 				}
 		======================================================================================================================= */
@@ -315,6 +316,14 @@ namespace EGUI
 				EGUI::Display::DropDownSelection("TestDropDown", i, arr);
 		======================================================================================================================= */
 		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems);
+		/* =======================================================================================================================
+		Brief:
+				Creates a button
+		Usage:
+				EGUI::Button("Demo", ImVec2{ 200, 20 });
+		======================================================================================================================= */
+		bool Button(const std::string& _label, const Math::Vec2& _size);
+
 	}
 }
 

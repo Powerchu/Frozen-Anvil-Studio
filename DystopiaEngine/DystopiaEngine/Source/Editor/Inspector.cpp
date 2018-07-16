@@ -13,7 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor\Inspector.h"
-#include "Editor\ResourceView.h"
+#include "Editor\ProjectResource.h"
 #include "Editor\EGUI.h"
 #include "Object\GameObject.h"
 #include "Component\Component.h"
@@ -85,10 +85,9 @@ namespace Dystopia
 		arr.push_back("item1");
 		arr.push_back("item2");
 		EGUI::Display::EmptyBox("Box to accept payload", 150, mDemoName);
-		using PayloadType = Dystopia::ResourceView::CrawlFile;
-		if (PayloadType *t = EGUI::Display::StartPayloadReceiver<PayloadType>(EGUI::FILE))
+		if (File *t = EGUI::Display::StartPayloadReceiver<File>(EGUI::FILE))
 		{
-			mDemoName = (*t).mFileName;
+			mDemoName = (*t).mName;
 			EGUI::Display::EndPayloadReceiver();
 		}
 		EGUI::Display::DropDownSelection("TestDropDown", i, arr);

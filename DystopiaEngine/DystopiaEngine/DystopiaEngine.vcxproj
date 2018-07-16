@@ -30,6 +30,7 @@
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\System\Driver\Driver.cpp" />
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
     <ClCompile Include="Source\Component\Component.cpp" />
@@ -42,7 +43,6 @@
     <ClCompile Include="Source\Editor\EGuiDisplay.cpp" />
     <ClCompile Include="Source\Editor\HierarchyView.cpp" />
     <ClCompile Include="Source\Editor\Inspector.cpp" />
-    <ClCompile Include="Source\Editor\ResourceView.cpp" />
     <ClCompile Include="Source\IO\BinarySerializer.cpp" />
     <ClCompile Include="Source\IO\ImageParser.cpp" />
     <ClCompile Include="Source\IO\TextSerialiser.cpp" />
@@ -84,7 +84,7 @@
     <ClInclude Include="Include\Editor\HierarchyView.h" />
     <ClInclude Include="Include\Editor\Inspector.h" />
     <ClInclude Include="Include\Editor\Payloads.h" />
-    <ClInclude Include="Include\Editor\ResourceView.h" />
+    <ClInclude Include="Include\Editor\ProjectResource.h" />
     <ClInclude Include="Include\Globals.h" />
     <ClInclude Include="Include\IO\BinarySerializer.h" />
     <ClInclude Include="Include\IO\ImageParser.h" />

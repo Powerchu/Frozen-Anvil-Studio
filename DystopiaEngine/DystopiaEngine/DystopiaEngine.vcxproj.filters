@@ -79,9 +79,6 @@
     <ClCompile Include="Source\Editor\HierarchyView.cpp">
       <Filter>Editor\Systems\Hierarchy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\ResourceView.cpp">
-      <Filter>Editor\Systems\Resource</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\Dock.cpp">
       <Filter>Editor\Systems\Docking</Filter>
     </ClCompile>
@@ -102,6 +99,9 @@
     </ClCompile>
     <ClCompile Include="Source\System\Driver\Driver.cpp">
       <Filter>Game Engine\Systems\Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\ProjectResource.cpp">
+      <Filter>Editor\Systems\Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -258,9 +258,6 @@
     <ClInclude Include="Include\Editor\HierarchyView.h">
       <Filter>Editor\Systems\Hierarchy</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\ResourceView.h">
-      <Filter>Editor\Systems\Resource</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\Dock.h">
       <Filter>Editor\Systems\Docking</Filter>
     </ClInclude>
@@ -296,6 +293,9 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\Payloads.h">
       <Filter>Editor\Systems\Payloads</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\ProjectResource.h">
+      <Filter>Editor\Systems\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

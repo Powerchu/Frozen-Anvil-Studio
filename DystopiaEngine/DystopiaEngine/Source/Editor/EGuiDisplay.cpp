@@ -108,6 +108,16 @@ namespace EGUI
 		ImGui::SameLine(_customOffset);
 	}
 
+	void PushID(int id)
+	{
+		ImGui::PushID(id);
+	}
+
+	void PopID()
+	{
+		ImGui::PopID();
+	}
+
 	namespace Display
 	{
 		void HorizontalSeparator()
@@ -360,6 +370,11 @@ namespace EGUI
 			SameLine(Default_Alightnment_Labels_And_Items);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			return ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), arrCharPtr.size());
+		}
+		
+		bool Button(const std::string& _label, const Math::Vec2& _size)
+		{
+			return ImGui::Button(_label.c_str(), ImVec2{ _size.x, _size.y });
 		}
 
 	}

@@ -27,6 +27,9 @@ namespace Dystopia
 	class ResourceView : public EditorTab
 	{
 	public:
+		struct CrawlFolder;
+		struct CrawlFile;
+
 		ResourceView();
 		~ResourceView();
 
@@ -45,48 +48,52 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const override;
 
-		void StartCrawl();
+		void FindFile(CrawlFolder *,const std::string&);
+
 		struct CrawlFile
 		{
-			CrawlFile(const std::string& _name, const std::string& _path);
-			CrawlFile(const char* _name, const char* _path);
-			std::string mFileName;
-			std::string mFilePath;
+			CrawlFile(const std::string& _name, const std::string& _path, CrawlFolder* _pParent);
+			CrawlFile(const char* _name, const char* _path, CrawlFolder* _pParent);
+
+			std::string		mFileName;
+			std::string		mFilePath;
+			CrawlFolder		*mpParentFolder;
 		};
+
 		struct CrawlFolder
 		{
 			CrawlFolder(const char* _name, const char* _path);
 			CrawlFolder(const std::string& _name, const std::string& _path);
 			~CrawlFolder();
 
-			CrawlFolder*	GetParent();
-			void			SetParent(CrawlFolder*);
-			void			AddFolder(CrawlFolder*);
-			void			AddFile(const std::string& _name, const std::string& _path);
-			void			Crawl();
-			void			PrintAll();
+			CrawlFolder*			GetParent();
+			void					SetParent(CrawlFolder*);
+			void					AddFolder(CrawlFolder*);
+			void					AddFile(const std::string& _name, const std::string& _path);
+			void					Crawl();
+			void					PrintAll();
 
 			std::string				mFolderName;
 			std::string				mFolderPath;
 			bool					mToggle;
 			CrawlFolder				*mpParentFolder;
 			AutoArray<CrawlFolder*>	mArrChildFolders;
-			AutoArray<CrawlFile>	mArrFiles;
+			AutoArray<CrawlFile*>	mArrFiles;
 			bool					mRefreshMe;
 		};
 
 	private:
-		CrawlFolder		*mpRootFolder;
-		CrawlFolder		*mpCurrentFolder;
-		void			*mpFocusData;
-		int				mLastSelected;
-		bool			mRefreshCrawl;
-		std::string		mLabel;
-		char			mSearchBarText[MAX_SEARCH_SIZE];
-
-		void			ReCrawl(CrawlFolder*);
-		void			FolderInterface(CrawlFolder*);
-		void			FileInterface(CrawlFile&);
+		AutoArray<CrawlFile*>	mArrFileSearchResultPtrs;
+		CrawlFolder				*mpRootFolder;
+		CrawlFolder				*mpCurrentFolder;
+		std::string				mLabel;
+		char					mSearchBarText[MAX_SEARCH_SIZE];
+		
+		void					StartCrawl();
+		void					ReCrawl(CrawlFolder*);
+		void					CrawlAll(CrawlFolder*);
+		void					FolderInterface(CrawlFolder*);
+		void					FileInterface(CrawlFile&);
 	};
 }
 

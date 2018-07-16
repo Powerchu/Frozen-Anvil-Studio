@@ -32,12 +32,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\Timer.h"
 #include "Editor\Editor.h"
 #include "Editor\EGUI.h"
-#include "Editor\ResourceView.h"
 #include "Editor\Inspector.h"
 #include "Editor\HierarchyView.h"
 #include "Editor\Commands.h"
 #include "Editor\CommandList.h"
 #include "Editor\EditorTab.h"
+#include "Editor\ProjectResource.h"
 #include "IO\BinarySerializer.h"
 #include "System\Driver\Driver.h"
 #include <iostream>
@@ -102,7 +102,7 @@ namespace Dystopia
 		mpInput = _pInput;
 
 		mTabsArray.push_back(new Inspector{});
-		mTabsArray.push_back(new ResourceView{});
+		mTabsArray.push_back(new ProjectResource{});
 		mTabsArray.push_back(new HierarchyView{});
 
 		EGUI::SetContext(mpComdHandler);
