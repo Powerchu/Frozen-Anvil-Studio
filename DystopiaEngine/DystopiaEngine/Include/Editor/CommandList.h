@@ -39,7 +39,9 @@ namespace Dystopia
 		{}
 
 		~ComdModifyValue()
-		{}
+		{
+			mValue = nullptr;
+		}
 
 		void	ExecuteDo() override	{ *mValue = mNewValue; }
 		void	ExecuteUndo() override	{ *mValue = mOldValue; } 
@@ -78,6 +80,11 @@ namespace Dystopia
 		ComdRecord(T*& rhs)
 			: mpTarget{ rhs }, mOldValue{ *mpTarget }, mNewValue{ mOldValue }
 		{}
+
+		~ComdRecord()
+		{
+			mpTarget = nullptr;
+		}
 
 		void	EndRecord()				{ mNewValue = *mpTarget; }
 		T*		GetPointer()			{ return mpTarget; }

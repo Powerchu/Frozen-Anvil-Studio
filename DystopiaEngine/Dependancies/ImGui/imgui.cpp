@@ -8799,7 +8799,7 @@ bool ImGui::TreeNode(const char* label, bool* _outClicked)
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
-    return TreeNodeBehavior(window->GetID(label), 0, label, NULL, _outClicked);
+    return TreeNodeBehavior(window->GetID(label), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick, label, NULL, _outClicked);
 }
 
 void ImGui::TreeAdvanceToLabelPos()

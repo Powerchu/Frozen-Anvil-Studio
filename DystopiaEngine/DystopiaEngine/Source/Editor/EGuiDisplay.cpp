@@ -146,21 +146,31 @@ namespace EGUI
 			ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags);
 		}
 
-		void EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside)
+		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside)
 		{
+			bool clicked = false;
+			ImVec4 greyColor = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
+			ImVec4 btnHoveredColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered);
+			ImVec4 btnActiveColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive);
+			bool show = _anythingToShowInside.length() ? true : false;
+
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
 			SameLine(Default_Alightnment_Labels_And_Items);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			
 			ImGui::PushItemWidth(_width);
-			ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::Button((_anythingToShowInside.length()) ? (_anythingToShowInside + "###" + _label).c_str() : ("###EmptyBoxBtn" + _label).c_str(),
-				ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize });
+			ImGui::PushStyleColor(ImGuiCol_Button, greyColor);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, show ? btnHoveredColor : greyColor);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, show ? btnActiveColor : greyColor);
+			if (ImGui::Button(show ? (_anythingToShowInside + "###" + _label).c_str() : ("###EmptyBoxBtn" + _label).c_str(), 
+				ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize }))
+			{
+				if (show) clicked = true;
+			}
 			ImGui::PopStyleColor(3);
 			ImGui::PopItemWidth();
+			return clicked;
 		}
 	
 		bool CheckBox(const std::string& _label, bool* _outputBool)

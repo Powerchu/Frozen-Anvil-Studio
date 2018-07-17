@@ -22,6 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	/********************************************************************* FILE & FOLDER *********************************************************************/
+
 	struct File;
 	struct CrawlItem
 	{
@@ -52,11 +54,13 @@ namespace Dystopia
 		Folder*	mpParentFolder;
 	};
 
+	/****************************************************************** PROJECT RESOURCE ********************************************************************/
+
 	static constexpr size_t MAX_SEARCH = 64;
 	class ProjectResource : public EditorTab
 	{
 	public:
-		ProjectResource();
+		static ProjectResource* GetInstance();
 		~ProjectResource();
 
 		/* Init() is called immediately after the creation of the object */
@@ -77,6 +81,8 @@ namespace Dystopia
 		void FocusOnFile(const std::string& _fileName);
 
 	private:
+		ProjectResource(void);
+
 		AutoArray<File*>	mArrAllFiles;
 		AutoArray<File*>	mSearchResultFiles;
 		std::string			mLabel;
@@ -85,6 +91,7 @@ namespace Dystopia
 		Folder				*mpRootFolder;
 		Folder				*mpCurrentFolder;
 
+		bool				FindFirstOne(AutoArray<File*>& _outResult, const std::string& _item);
 		void				FindFile(AutoArray<File*>& _outResult, const std::string& _item);
 		void				GetAllFiles(AutoArray<File*>& _outResult, Folder*);
 		void				SortAllFiles(AutoArray<File*>& _outResult);

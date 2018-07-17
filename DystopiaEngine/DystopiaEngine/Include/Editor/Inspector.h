@@ -23,7 +23,7 @@ namespace Dystopia
 	class Inspector : public EditorTab
 	{
 	public:
-		Inspector();
+		static Inspector* GetInstance();
 		~Inspector();
 
 		/* Init() is called immediately after the creation of the object */
@@ -45,6 +45,7 @@ namespace Dystopia
 		void	RemoveFocus();
 
 	private:
+		Inspector(void);
 		char			mDemoText[32];
 		Math::Vec4		mDemoVec;
 		std::string		mLabel;

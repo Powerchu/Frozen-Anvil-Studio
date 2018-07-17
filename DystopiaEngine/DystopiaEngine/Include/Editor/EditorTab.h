@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	class CommandHandler;
 	class EditorTab
 	{
 	public:
@@ -39,14 +40,17 @@ namespace Dystopia
 		void				SetSize(const float&, const float&);
 		void				SetPosition(const Math::Vec2&);
 		void				SetPosition(const float&, const float&);
+		void				SetComdContext(CommandHandler * const);
 		Math::Vec2			Size() const;
 		Math::Vec2			Position() const;
 		bool*				GetOpenedBool();
 		
 	private:
-		Math::Vec2 mSize;
-		Math::Vec2 mPos;
-		bool mIsOpened;
+		Math::Vec2			mSize;
+		Math::Vec2			mPos;
+		bool				mIsOpened;
+	protected:
+		CommandHandler		*mpComdHandler;
 	};
 }
 

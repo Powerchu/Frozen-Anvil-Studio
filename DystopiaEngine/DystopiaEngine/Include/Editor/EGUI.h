@@ -24,7 +24,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\DebugAssert.h"
 #include "Editor\Dock.h"
 #include "Editor\Payloads.h"
+#include "../../Dependancies/ImGui/imgui.h"
 #include <string>
+
 namespace Dystopia
 {
 	class CommandHandler;
@@ -137,11 +139,12 @@ namespace EGUI
 		/* =======================================================================================================================
 		Brief:
 				NOT WORKING 10/7/18
-				Creates an empty box. Great for using alongside payloads if you unsure.
+				Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked. 
+				If the last string param is empty, hovering wont show and clicking wont return true
 		Usage:
 				EGUI::Display::EmptyBox("Accepting field", 100);
 		======================================================================================================================= */
-		void EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside="");
+		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside="");
 		/* =======================================================================================================================
 		Brief:
 				Starts a Collaspe-able header that can be clicked to open or close - Which is also the return-ed bool.

@@ -21,11 +21,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 static const std::string DEFAULT_PATH = "..\\DystopiaEngine";
 static const std::string DEFAULT_NAME = "DystopiaEngine";
-
 static float delay = 5;
+
 namespace Dystopia
 {
 	/********************************************************************* FILE & FOLDER *********************************************************************/
+
 	CrawlItem::CrawlItem(const std::string& _name, const std::string& _path)
 		: mName{ _name }, mPath{ _path }
 	{}
@@ -87,8 +88,17 @@ namespace Dystopia
 
 	/****************************************************************** PROJECT RESOURCE ********************************************************************/
 
+	static ProjectResource* gpInstance = 0;
+	ProjectResource* ProjectResource::GetInstance()
+	{
+		if (gpInstance) return gpInstance;
+
+		gpInstance = new ProjectResource{};
+		return gpInstance;
+	}
+
 	ProjectResource::ProjectResource()
-		: mLabel{ "Resource View" }, mSearchText{}, mpRootFolder{ nullptr }, mpCurrentFolder{ nullptr }, 
+		: mLabel{ "Resource View" }, mSearchText{"Dy"}, mpRootFolder{ nullptr }, mpCurrentFolder{ nullptr }, 
 		mArrAllFiles{}, mSearchResultFiles{}, mSearchTextLastFrame{}
 	{}
 
@@ -98,7 +108,9 @@ namespace Dystopia
 	void ProjectResource::Init()
 	{
 		mpRootFolder = new Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };
+		mpCurrentFolder = mpRootFolder;
 		FullCrawl(mpRootFolder);
+
 		mArrAllFiles.clear();
 		GetAllFiles(mArrAllFiles, mpRootFolder);
 		SortAllFiles(mArrAllFiles);
@@ -127,6 +139,16 @@ namespace Dystopia
 			SearchResultWindow();
 	}
 
+	void ProjectResource::Shutdown()
+	{
+		mSearchResultFiles.clear();
+		mArrAllFiles.clear();
+		delete mpRootFolder;
+		mpRootFolder = nullptr;
+		mpCurrentFolder = nullptr;
+	}
+
+
 	void ProjectResource::SearchWindow()
 	{
 		EGUI::Indent(5);
@@ -138,6 +160,19 @@ namespace Dystopia
 	void ProjectResource::FolderWindow()
 	{
 		EGUI::StartChild("FolderWindow", Math::Vec2{ 250, Size().y - 55 });
+		if (EGUI::Display::Button("Refresh Current Folder", Math::Vec2{ 235, 20 }) && mpCurrentFolder)
+		{
+			if (strlen(mSearchText))
+			{
+				strcpy_s(mSearchText, "");
+				mpCurrentFolder = mpRootFolder;
+			}
+			mpCurrentFolder->ClearFolder();
+			FullCrawl(mpCurrentFolder);
+			mArrAllFiles.clear();
+			GetAllFiles(mArrAllFiles, mpRootFolder);
+			SortAllFiles(mArrAllFiles);
+		}
 		FolderUI(mpRootFolder);
 		EGUI::EndChild();
 	}
@@ -167,13 +202,21 @@ namespace Dystopia
 
 		EGUI::Display::Label("Searching: %s", mSearchText);
 		EGUI::Display::HorizontalSeparator();
-		for (unsigned int i = 0; i < mSearchResultFiles.size(); ++i)
+		size_t size = mSearchResultFiles.size();
+		if (size)
 		{
-			EGUI::Indent(10);
-			EGUI::PushID(i);
-			FileUI(mSearchResultFiles[i]);
-			EGUI::PopID();
-			EGUI::UnIndent(10);
+			for (unsigned int i = 0; i < size; ++i)
+			{
+				EGUI::Indent(10);
+				EGUI::PushID(i);
+				FileUI(mSearchResultFiles[i]);
+				EGUI::PopID();
+				EGUI::UnIndent(10);
+			}
+		}
+		else
+		{
+			EGUI::Display::Label("%s cannot be found", mSearchText);
 		}
 		EGUI::EndChild();
 	}
@@ -182,18 +225,7 @@ namespace Dystopia
 	{
 		strcpy_s(mSearchText, "");
 		mSearchResultFiles.clear();
-		FindFile(mSearchResultFiles, _fileName);
-
-		if (mSearchResultFiles.size() == 1) mpCurrentFolder = mSearchResultFiles[0]->mpParentFolder;
-	}
-
-	void ProjectResource::Shutdown()
-	{
-		mSearchResultFiles.clear();
-		mArrAllFiles.clear();
-		delete mpRootFolder;
-		mpRootFolder = nullptr;
-		mpCurrentFolder = nullptr;
+		mpCurrentFolder = FindFirstOne(mSearchResultFiles, _fileName) ? mSearchResultFiles[0]->mpParentFolder : mpRootFolder;
 	}
 
 	std::string ProjectResource::GetLabel() const
@@ -207,6 +239,19 @@ namespace Dystopia
 		{
 			if (!e->mName.find(_item)) _outResult.push_back(e);
 		}
+	}
+
+	bool ProjectResource::FindFirstOne(AutoArray<File*>& _outResult, const std::string& _item)
+	{
+		for (auto e : mArrAllFiles)
+		{
+			if (!e->mName.find(_item))
+			{
+				_outResult.push_back(e);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	void ProjectResource::GetAllFiles(AutoArray<File*>& _outResult, Folder* _folder)
@@ -232,17 +277,6 @@ namespace Dystopia
 				for (auto e : _folder->mArrPtrFolders)
 					FolderUI(e);
 				EGUI::Display::EndTreeNode();
-			}
-			else
-			{
-				if (clickedThisFrame && !strlen(mSearchText))
-				{
-					_folder->ClearFolder();
-					FullCrawl(_folder);
-					mArrAllFiles.clear();
-					GetAllFiles(mArrAllFiles, mpRootFolder);
-					SortAllFiles(mArrAllFiles);
-				}
 			}
 			mpCurrentFolder = (clickedThisFrame) ? _folder : mpCurrentFolder;
 		}

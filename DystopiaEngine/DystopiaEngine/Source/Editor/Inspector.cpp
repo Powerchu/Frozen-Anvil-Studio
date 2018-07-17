@@ -15,13 +15,24 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\Inspector.h"
 #include "Editor\ProjectResource.h"
 #include "Editor\EGUI.h"
+#include "Editor\Commands.h"
+#include "Editor\CommandList.h"
 #include "Object\GameObject.h"
 #include "Component\Component.h"
-#include "../../Dependancies/ImGui/imgui.h"
 #include <iostream>
 
 namespace Dystopia
 {
+	static Inspector* gpInstance = 0;
+
+	Inspector* Inspector::GetInstance()
+	{
+		if (gpInstance) return gpInstance;
+
+		gpInstance = new Inspector{};
+		return gpInstance;
+	}
+
 	Inspector::Inspector()
 		: mpFocusGameObj{ nullptr }, mLabel{ "Inspector" }, mDemoVec{ Math::Vec4{0,0,0,0} },
 		mDemoText{ "hello" }, mDemoName{ "" }
@@ -40,25 +51,6 @@ namespace Dystopia
 	void Inspector::Update(const float& _dt)
 	{
 		_dt;
-	}
-
-	void Inspector::Shutdown()
-	{
-	}
-	
-	std::string Inspector::GetLabel() const
-	{
-		return mLabel;
-	}
-
-	void Inspector::SetFocusObj(GameObject* _target)
-	{
-		mpFocusGameObj = _target;
-	}
-
-	void Inspector::RemoveFocus()
-	{
-		mpFocusGameObj = nullptr;
 	}
 
 	void Inspector::Window()
@@ -86,16 +78,27 @@ namespace Dystopia
 		arr.push_back("");
 		arr.push_back("item1");
 		arr.push_back("item2");
-		EGUI::Display::EmptyBox("Box to accept payload", 150, mDemoName);
+
+		if (EGUI::Display::EmptyBox("Box to accept payload", 150, mDemoName))
+		{
+			ProjectResource::GetInstance()->FocusOnFile(mDemoName);
+		}
 		if (File *t = EGUI::Display::StartPayloadReceiver<File>(EGUI::FILE))
 		{
-			mDemoName = (*t).mName;
+			if (mpComdHandler)
+			{
+				mpComdHandler->InvokeCommand(new ComdModifyValue<std::string>{&mDemoName, (*t).mName });
+			}
+			else
+			{
+				mDemoName = (*t).mName;
+			}
 			EGUI::Display::EndPayloadReceiver();
 		}
+
 		EGUI::Display::DropDownSelection("TestDropDown", i, arr);
 
-		if (!mpFocusGameObj) 
-			return;
+		if (!mpFocusGameObj) return;
 
 		AutoArray<Component*> pAllComponents = mpFocusGameObj->GetComponents<Component>();
 		for (auto e : pAllComponents)
@@ -103,6 +106,26 @@ namespace Dystopia
 			// e->Editor() or e->Window()
 			e;
 		}
+	}
+
+	void Inspector::Shutdown()
+	{
+		mpFocusGameObj = nullptr;
+	}
+
+	std::string Inspector::GetLabel() const
+	{
+		return mLabel;
+	}
+
+	void Inspector::SetFocusObj(GameObject* _target)
+	{
+		mpFocusGameObj = _target;
+	}
+
+	void Inspector::RemoveFocus()
+	{
+		mpFocusGameObj = nullptr;
 	}
 }
 

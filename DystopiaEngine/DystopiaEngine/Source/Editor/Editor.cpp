@@ -52,7 +52,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	hInstance;
 
 	auto driver = Dystopia::EngineCore::GetInstance();
-	Dystopia::Editor *editor = new Dystopia::Editor{};
+	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	Dystopia::Timer *timer = new Dystopia::Timer{};
 	
 	driver->LoadSettings();
@@ -84,9 +84,17 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 
 /*///////////////////////////////////////////////////////////////////// EDITOR CLASS ////////////////////////////////////////////////////////////////////////////////*/
-
 namespace Dystopia
 {
+	static Editor* gpInstance = 0;
+	Editor* Editor::GetInstance()
+	{
+		if (gpInstance) return gpInstance;
+
+		gpInstance = new Editor{};
+		return gpInstance;
+	}
+
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mPrevFrameTime{ 0 }, mpComdHandler{ new CommandHandler{} },
 		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mpGuiSystem{ new GuiSystem{} }, mExtraTabCounter{ 0 }
@@ -101,14 +109,16 @@ namespace Dystopia
 		mpGfx = _pGfx;
 		mpInput = _pInput;
 
-		mTabsArray.push_back(new Inspector{});
-		mTabsArray.push_back(new ProjectResource{});
+		mTabsArray.push_back(Inspector::GetInstance());
+		mTabsArray.push_back(ProjectResource::GetInstance());
 		mTabsArray.push_back(new HierarchyView{});
 
 		EGUI::SetContext(mpComdHandler);
-
 		for (auto e : mTabsArray)
+		{
 			e->Init();
+			e->SetComdContext(mpComdHandler);
+		}
 
 		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
 			mCurrentState = EDITOR_EXIT;
@@ -205,6 +215,8 @@ namespace Dystopia
 		mpGuiSystem->Shutdown();
 		delete mpGuiSystem;
 		mpGuiSystem = nullptr;
+
+		EGUI::RemoveContext();
 	}
 
 	eEditorState Editor::CurrentState() const

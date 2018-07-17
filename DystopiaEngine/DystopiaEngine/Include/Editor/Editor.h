@@ -43,7 +43,7 @@ namespace Dystopia
 	class Editor
 	{
 	public:
-		Editor(void);
+		static Editor*	GetInstance();
 		~Editor();
 
 		void			Init(WindowManager*, GraphicsSystem*, InputManager*);
@@ -57,6 +57,8 @@ namespace Dystopia
 		double			PreviousFrameTime() const;
 
 	private:
+		Editor(void);
+
 		eEditorState	mCurrentState;
 		eEditorState	mNextState;
 		int				mExtraTabCounter;
