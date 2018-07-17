@@ -41,10 +41,12 @@ namespace Dystopia
 		void				SetPosition(const float&, const float&);
 		Math::Vec2			Size() const;
 		Math::Vec2			Position() const;
+		bool*				GetOpenedBool();
 		
 	private:
 		Math::Vec2 mSize;
 		Math::Vec2 mPos;
+		bool mIsOpened;
 	};
 }
 

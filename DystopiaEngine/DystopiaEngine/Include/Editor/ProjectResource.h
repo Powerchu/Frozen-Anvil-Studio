@@ -47,6 +47,7 @@ namespace Dystopia
 	{
 		File(const std::string& _name, const std::string& _path, Folder * const _parent);
 		~File();
+		bool operator<(const File&);
 
 		Folder*	mpParentFolder;
 	};
@@ -73,17 +74,20 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const override;
 
-		void FindFile(Folder* _startFromFolder, AutoArray<File*>& _outResult, const std::string& _item);
+		void FindFile(AutoArray<File*>& _outResult, const std::string& _item);
 
 	private:
-		std::string		mLabel;
-		char			mSearchText[MAX_SEARCH];
-		Folder			*mpRootFolder;
-		Folder			*mpCurrentFolder;
-
-		void			FullCrawl(Folder*);
-		void			FolderUI(Folder*);
-		void			FileUI(File*);
+		AutoArray<File*>	mArrAllFiles;
+		std::string			mLabel;
+		char				mSearchText[MAX_SEARCH];
+		Folder				*mpRootFolder;
+		Folder				*mpCurrentFolder;
+		
+		void				GetAllFiles(AutoArray<File*>& _outResult, Folder*);
+		void				SortAllFiles(AutoArray<File*>& _outResult);
+		void				FullCrawl(Folder*);
+		void				FolderUI(Folder*);
+		void				FileUI(File*);
 	};
 }
 

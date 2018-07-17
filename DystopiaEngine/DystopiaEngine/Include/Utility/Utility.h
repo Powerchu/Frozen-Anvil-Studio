@@ -13,7 +13,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _UTILITY_H_
 #define _UTILITY_H_
-
 #include "Utility\Meta.h"
 
 namespace Utility
@@ -64,7 +63,6 @@ namespace Utility
 	template<class Itor, typename Comparator, class Obj = typename RemoveRef<decltype(*Itor{})>::type >
 	void Sort(Itor _begin, Itor _end, Comparator _pTest = [](Obj& lhs, Obj& rhs)->bool { return lhs < rhs; })
 	{
-		std::sort(_begin, _end);
 		Obj temp;
 
 		Itor pStart = _begin;

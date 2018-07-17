@@ -143,7 +143,7 @@ namespace Dystopia
 			default: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_NONE);
 			}
 
-			if (EGUI::StartTab(pTab->GetLabel().c_str()))
+			if (EGUI::StartTab(pTab->GetLabel().c_str(), pTab->GetOpenedBool()))
 			{
 				pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()));
 				pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
@@ -309,6 +309,19 @@ namespace Dystopia
 				if (EGUI::StartMenuBody("Paste")) {}
 				EGUI::EndMenuHeader();
 			}
+			
+			if (EGUI::StartMenuHeader("Windows"))
+			{
+				for (auto e : mTabsArray)
+				{
+					if (EGUI::StartMenuBody(e->GetLabel()))
+					{
+						*(e->GetOpenedBool()) = true;
+					}
+				}
+				EGUI::EndMenuHeader();
+			}
+
 			EGUI::EndMainMenuBar();
 		}
 	}

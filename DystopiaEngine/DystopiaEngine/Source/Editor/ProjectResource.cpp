@@ -77,9 +77,14 @@ namespace Dystopia
 	{
 		mpParentFolder = nullptr;
 	}
+	
+	bool File::operator<(const File& rhs)
+	{
+		 return mName.compare(rhs.mName) <= 0;
+	}
 
 	ProjectResource::ProjectResource()
-		: mLabel{ "Resource View" }, mSearchText{}, mpRootFolder{ nullptr }, mpCurrentFolder{ nullptr }
+		: mLabel{ "Resource View" }, mSearchText{}, mpRootFolder{ nullptr }, mpCurrentFolder{ nullptr }, mArrAllFiles{}
 	{}
 
 	ProjectResource::~ProjectResource()
@@ -89,6 +94,9 @@ namespace Dystopia
 	{
 		mpRootFolder = new Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };
 		FullCrawl(mpRootFolder);
+		mArrAllFiles.clear();
+		GetAllFiles(mArrAllFiles, mpRootFolder);
+		SortAllFiles(mArrAllFiles);
 	}
 
 	void ProjectResource::Update(const float& _dt)
@@ -135,6 +143,7 @@ namespace Dystopia
 
 	void ProjectResource::Shutdown()
 	{
+		mArrAllFiles.clear();
 		delete mpRootFolder;
 		mpRootFolder = nullptr;
 		mpCurrentFolder = nullptr;
@@ -145,15 +154,25 @@ namespace Dystopia
 		return mLabel;
 	}
 
-	void ProjectResource::FindFile(Folder* _startFromFolder, AutoArray<File*>& _outResult, const std::string& _item)
+	void ProjectResource::FindFile(AutoArray<File*>& _outResult, const std::string& _item)
 	{
-		for (auto e : _startFromFolder->mArrPtrFiles)
+		for (auto e : mArrAllFiles)
 		{
-			if (!e->mName.find(_item))	// should return 0 if name matches item from index 0 of string
-			{
-				_outResult.push_back(e);
-			}
+			if (!e->mName.find(_item)) _outResult.push_back(e);
 		}
+	}
+
+	void ProjectResource::GetAllFiles(AutoArray<File*>& _outResult, Folder* _folder)
+	{
+		for (auto e : _folder->mArrPtrFiles)
+			_outResult.push_back(e);
+		for (auto e : _folder->mArrPtrFolders)
+			GetAllFiles(_outResult, e);
+	}
+
+	void ProjectResource::SortAllFiles(AutoArray<File*>& _outResult)
+	{
+		_outResult.Sort([](File* lhs, File* rhs)->bool { return *lhs < *rhs; });
 	}
 
 	void ProjectResource::FolderUI(Folder* _folder)
@@ -173,6 +192,9 @@ namespace Dystopia
 				{
 					_folder->ClearFolder();
 					FullCrawl(_folder);
+					mArrAllFiles.clear();
+					GetAllFiles(mArrAllFiles, mpRootFolder);
+					SortAllFiles(mArrAllFiles);
 				}
 			}
 			mpCurrentFolder = (clickedThisFrame) ? _folder : mpCurrentFolder;

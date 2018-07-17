@@ -29,7 +29,9 @@ namespace Dystopia
 	}
 
 	Inspector::~Inspector()
-	{}
+	{
+	
+	}
 
 	void Inspector::Init()
 	{

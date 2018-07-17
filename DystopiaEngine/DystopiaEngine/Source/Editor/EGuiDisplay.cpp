@@ -152,6 +152,7 @@ namespace EGUI
 			Label(_label.c_str());
 			SameLine(Default_Alightnment_Labels_And_Items);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			
 			ImGui::PushItemWidth(_width);
 			ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
