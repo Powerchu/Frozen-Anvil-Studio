@@ -158,6 +158,11 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 }
 
 
+size_t Dystopia::GameObject::GetID()
+{
+	return mnID;
+}
+
 std::string Dystopia::GameObject::GetName(void) const
 {
 	return mName;

@@ -86,15 +86,16 @@ SharedPtr<Dystopia::EngineCore> const & Dystopia::EngineCore::GetInstance(void) 
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mTime{}, SystemList{ Utility::SizeofList<AllSys>::value },
-	SystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) }
+	mTime{}, mSystemList{ Utility::SizeofList<AllSys>::value },
+	mSystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) },
+	mSubSystems { MakeAutoArray<void*>(Utility::MakeTypeList_t<Utility::TypeList, SubSys>{}) }
 {
 	using SanityCheck = typename ErrorOnDupe<AllSys>::eval;
 }
 
 void Dystopia::EngineCore::LoadSettings(void)
 {
-	for (auto& e : SystemTable)
+	for (auto& e : mSystemTable)
 		e->LoadDefaults();
 }
 
@@ -102,14 +103,14 @@ void Dystopia::EngineCore::Init(void)
 {
 	mTime.Lap();
 
-	for (auto& e : SystemTable)
+	for (auto& e : mSystemTable)
 		e->PreInit();
 
-	for (auto& e : SystemTable)
+	for (auto& e : mSystemTable)
 	{
 		if (e->Init())
 		{
-			SystemList.EmplaceBack(e);
+			mSystemList.EmplaceBack(e);
 		}
 		else
 		{
@@ -118,7 +119,7 @@ void Dystopia::EngineCore::Init(void)
 		}
 	}
 
-	for (auto& e : SystemList)
+	for (auto& e : mSystemList)
 		e->PostInit();
 
 	mTime.Lap();
@@ -130,7 +131,7 @@ void Dystopia::EngineCore::FixedUpdate(void)
 
 	while (dt > _FIXED_UPDATE_DT)
 	{
-		for (auto& e : SystemList)
+		for (auto& e : mSystemList)
 		{
 			e->FixedUpdate(dt);
 		}
@@ -144,7 +145,7 @@ void Dystopia::EngineCore::Update(void)
 	float dt = mTime.Elapsed();
 	mTime.Lap();
 
-	for (auto& e : SystemList)
+	for (auto& e : mSystemList)
 	{
 		e->Update(dt);
 	}
@@ -152,14 +153,14 @@ void Dystopia::EngineCore::Update(void)
 
 void Dystopia::EngineCore::Shutdown(void)
 {
-	for (auto& e : SystemList)
+	for (auto& e : mSystemList)
 		e->Shutdown();
 
-	for (auto& e : SystemList)
+	for (auto& e : mSystemList)
 		delete e;
 
-	SystemList.clear();
-	SystemTable.clear();
+	mSystemList.clear();
+	mSystemTable.clear();
 }
 
 #if !EDITOR

@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System\Base\Systems.h"
 #include "System\Scene\Scene.h"
+#include "DataStructure\Stack.h"
 
 #include <string>
 
@@ -32,6 +33,7 @@ namespace Dystopia
 		bool Init(void);
 		void PostInit(void);
 
+		void FixedUpdate(float);
 		void Update(float);
 		void Shutdown(void);
 
@@ -40,12 +42,12 @@ namespace Dystopia
 
 //		void ReceiveMessage(const Message&);
 		
-		void LoadScene(const std::string&);
+		void LoadScene(const std::string& _strFile);
 
-		Scene& GetCurrentScene(void) const;
+		inline Scene& GetCurrentScene(void) const;
 
-		GameObject* FindGameObject(size_t _nID);
-		GameObject* FindGameObject(const std::string& _strName);
+		inline GameObject* FindGameObject(size_t _nID);
+		inline GameObject* FindGameObject(const std::string& _strName);
 
 	private:
 
@@ -61,6 +63,22 @@ namespace Dystopia
 
 
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+inline Dystopia::Scene& Dystopia::SceneSystem::GetCurrentScene(void) const
+{
+	return *mpCurrScene;
+}
+
+inline Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject(size_t _nID)
+{
+	return mpCurrScene->FindGameObject(_nID);
+}
+
+inline Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject(const std::string& _strName)
+{
+	return mpCurrScene->FindGameObject(_strName);
+}
 
 
 

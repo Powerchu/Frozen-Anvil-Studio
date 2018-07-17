@@ -29,6 +29,12 @@ namespace Dystopia
 		Scene(void);
 		~Scene(void);
 
+		void Init(void);
+
+		void FixedUpdate(float _dt);
+		void Update(float _dt);
+		void Shutdown(void);
+
 		GameObject* FindGameObject(size_t);
 		GameObject* FindGameObject(const std::string&);
 

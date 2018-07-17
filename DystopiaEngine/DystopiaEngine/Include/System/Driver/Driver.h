@@ -35,6 +35,7 @@ namespace Dystopia
 			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM   , class InputManager   >,
 			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM  , class WindowManager  >,
 //			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM   , class SoundSystem    >,
+			Utility::Indexer<eSYSTEMS::SCENE_SYSTEM   , class SceneSystem    >,
 			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM , class GraphicsSystem >
 		>>;
 
@@ -62,8 +63,9 @@ namespace Dystopia
 	private:
 
 		Timer mTime;
-		AutoArray<Systems*> SystemList;
-		AutoArray<Systems*> SystemTable;
+		AutoArray<Systems*> mSystemList;
+		AutoArray<Systems*> mSystemTable;
+		AutoArray<void*>	mSubSystems;
 
 		EngineCore(void);
 	};
@@ -75,13 +77,13 @@ namespace Dystopia
 template<class T>
 inline T* const Dystopia::EngineCore::GetSystem(void) const
 {
-	return static_cast<T*>(SystemTable[Utility::MetaFind_t<T, AllSys>::value]);
+	return static_cast<T*>(mSystemTable[Utility::MetaFind_t<T, AllSys>::value]);
 }
 
 template<class T>
 inline T* const Dystopia::EngineCore::GetSubSystem(void) const
 {
-	return nullptr;
+	return static_cast<T*>(mSubSystems[Utility::MetaFind_t<T, SubSys>::value]);
 }
 
 

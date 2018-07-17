@@ -48,6 +48,7 @@
     <ClCompile Include="Source\System\Graphics\Texture.cpp" />
     <ClCompile Include="Source\System\Graphics\Texture2D.cpp" />
     <ClCompile Include="Source\System\Input\InputSystem.cpp" />
+    <ClCompile Include="Source\System\Scene\Scene.cpp" />
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />

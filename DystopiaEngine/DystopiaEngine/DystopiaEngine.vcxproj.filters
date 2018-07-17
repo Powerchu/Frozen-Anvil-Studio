@@ -79,6 +79,7 @@
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp">
       <Filter>Game Engine\Systems\Scene\SceneSystem</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Scene\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">

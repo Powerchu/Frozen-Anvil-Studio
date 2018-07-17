@@ -68,6 +68,7 @@ namespace Dystopia
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
 
+		size_t GetID();
 		std::string GetName(void) const;
 		void SetName(const std::string&);
 
@@ -118,12 +119,6 @@ namespace Dystopia
 		inline void RemoveComponent(Component*, BehaviourTag);
 
 		void PurgeComponents(void);
-
-		template<typename T, typename U, typename Ret, typename ...Params, typename ...Args>
-		inline void Ping(AutoArray<T*>& _arr, Ret(U::*_pfunc)(Params ...), Args&& ..._args);
-
-		template<typename T, typename U, typename Ret, typename ...Params, typename ...Args>
-		inline void ForcePing(AutoArray<T*>& _arr, Ret(U::*_pfunc)(Params ...), Args&& ..._args);
 	};
 }
 
@@ -155,6 +150,32 @@ template <typename T>
 inline void Dystopia::GameObject::RemoveComponent(T* _pComponent)
 {
 	RemoveComponent(_pComponent, typename T::TAG{});
+}
+
+inline void Dystopia::GameObject::RemoveComponent(Component* _pComponent, ComponentTag)
+{
+	for (unsigned n = 0; n < mComponents.size(); ++n)
+	{
+		if (_pComponent == mComponents[n])
+		{
+			mComponents.FastRemove(n);
+			break;
+		}
+	}
+}
+
+inline void Dystopia::GameObject::RemoveComponent(Component* _pComponent, BehaviourTag)
+{
+	Behaviour* const pRemove = static_cast<Behaviour*>(_pComponent);
+
+	for (unsigned n = 0; n < mBehaviours.size(); ++n)
+	{
+		if (pRemove == mBehaviours[n])
+		{
+			mBehaviours.FastRemove(n);
+			break;
+		}
+	}
 }
 
 
