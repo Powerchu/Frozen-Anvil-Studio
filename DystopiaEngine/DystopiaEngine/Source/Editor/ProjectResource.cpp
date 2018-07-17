@@ -22,8 +22,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 static const std::string DEFAULT_PATH = "..\\DystopiaEngine";
 static const std::string DEFAULT_NAME = "DystopiaEngine";
 
+static float delay = 5;
 namespace Dystopia
 {
+	/********************************************************************* FILE & FOLDER *********************************************************************/
 	CrawlItem::CrawlItem(const std::string& _name, const std::string& _path)
 		: mName{ _name }, mPath{ _path }
 	{}
@@ -83,8 +85,11 @@ namespace Dystopia
 		 return mName.compare(rhs.mName) <= 0;
 	}
 
+	/****************************************************************** PROJECT RESOURCE ********************************************************************/
+
 	ProjectResource::ProjectResource()
-		: mLabel{ "Resource View" }, mSearchText{}, mpRootFolder{ nullptr }, mpCurrentFolder{ nullptr }, mArrAllFiles{}
+		: mLabel{ "Resource View" }, mSearchText{}, mpRootFolder{ nullptr }, mpCurrentFolder{ nullptr }, 
+		mArrAllFiles{}, mSearchResultFiles{}, mSearchTextLastFrame{}
 	{}
 
 	ProjectResource::~ProjectResource()
@@ -102,47 +107,89 @@ namespace Dystopia
 	void ProjectResource::Update(const float& _dt)
 	{
 		_dt;
+		std::string searchString = mSearchText;
+		if (searchString.compare(mSearchTextLastFrame))
+		{
+			mSearchResultFiles.clear();
+			FindFile(mSearchResultFiles, mSearchText);
+			strcpy_s(mSearchTextLastFrame, mSearchText);
+		}
 	}
 
 	void ProjectResource::Window()
 	{
-		static constexpr float leftColX = 250;
-		static constexpr float smallY = 50;
-		const float maxSizeY = Size().y - 55;
-		const float maxSizeX = Size().x - 7;
+		SearchWindow();
+		FolderWindow();
+		EGUI::SameLine(254);
+		if (!strlen(mSearchText))
+			FileWindow();
+		else
+			SearchResultWindow();
+	}
+
+	void ProjectResource::SearchWindow()
+	{
+		EGUI::Indent(5);
+		EGUI::Display::TextField("SearchWindow", mSearchText, MAX_SEARCH);
+		EGUI::UnIndent(5);
+		EGUI::Display::HorizontalSeparator();
+	}
+
+	void ProjectResource::FolderWindow()
+	{
+		EGUI::StartChild("FolderWindow", Math::Vec2{ 250, Size().y - 55 });
+		FolderUI(mpRootFolder);
+		EGUI::EndChild();
+	}
+
+	void ProjectResource::FileWindow()
+	{
+		EGUI::StartChild("FileWindow", Math::Vec2{ Size().x - 260, Size().y - 55 });
+		if (mpCurrentFolder)
 		{
-			EGUI::Indent(5);
-			EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH);
-			EGUI::UnIndent(5);
+			EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
 			EGUI::Display::HorizontalSeparator();
-		}
-		{
-			EGUI::StartChild("ResourceChild2", Math::Vec2{ leftColX, maxSizeY });
-			FolderUI(mpRootFolder);
-			EGUI::EndChild();
-		}
-		EGUI::SameLine(leftColX + 4);
-		{
-			EGUI::StartChild("ResourceChild3", Math::Vec2{ maxSizeX - leftColX - 3, maxSizeY });
-			if (mpCurrentFolder)
+			for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
 			{
-				EGUI::Display::Label(mpCurrentFolder->mName.c_str());
-				EGUI::Display::HorizontalSeparator();
-				for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
-				{
-					EGUI::Indent(10);
-					EGUI::PushID(i);
-					FileUI(mpCurrentFolder->mArrPtrFiles[i]);
-					EGUI::PopID();
-					EGUI::UnIndent(10);
-				}
+				EGUI::Indent(10);
+				EGUI::PushID(i);
+				FileUI(mpCurrentFolder->mArrPtrFiles[i]);
+				EGUI::PopID();
+				EGUI::UnIndent(10);
 			}
-			EGUI::EndChild();
 		}
+		EGUI::EndChild();
+	}
+	
+	void ProjectResource::SearchResultWindow()
+	{
+		EGUI::StartChild("SearchResultWindow", Math::Vec2{ Size().x - 260, Size().y - 55 });
+
+		EGUI::Display::Label("Searching: %s", mSearchText);
+		EGUI::Display::HorizontalSeparator();
+		for (unsigned int i = 0; i < mSearchResultFiles.size(); ++i)
+		{
+			EGUI::Indent(10);
+			EGUI::PushID(i);
+			FileUI(mSearchResultFiles[i]);
+			EGUI::PopID();
+			EGUI::UnIndent(10);
+		}
+		EGUI::EndChild();
+	}
+
+	void ProjectResource::FocusOnFile(const std::string& _fileName)
+	{
+		strcpy_s(mSearchText, "");
+		mSearchResultFiles.clear();
+		FindFile(mSearchResultFiles, _fileName);
+
+		if (mSearchResultFiles.size() == 1) mpCurrentFolder = mSearchResultFiles[0]->mpParentFolder;
 	}
 
 	void ProjectResource::Shutdown()
 	{
+		mSearchResultFiles.clear();
 		mArrAllFiles.clear();
 		delete mpRootFolder;
 		mpRootFolder = nullptr;
@@ -188,7 +235,7 @@ namespace Dystopia
 			}
 			else
 			{
-				if (clickedThisFrame)
+				if (clickedThisFrame && !strlen(mSearchText))
 				{
 					_folder->ClearFolder();
 					FullCrawl(_folder);

@@ -74,20 +74,27 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const override;
 
-		void FindFile(AutoArray<File*>& _outResult, const std::string& _item);
+		void FocusOnFile(const std::string& _fileName);
 
 	private:
 		AutoArray<File*>	mArrAllFiles;
+		AutoArray<File*>	mSearchResultFiles;
 		std::string			mLabel;
 		char				mSearchText[MAX_SEARCH];
+		char				mSearchTextLastFrame[MAX_SEARCH];
 		Folder				*mpRootFolder;
 		Folder				*mpCurrentFolder;
-		
+
+		void				FindFile(AutoArray<File*>& _outResult, const std::string& _item);
 		void				GetAllFiles(AutoArray<File*>& _outResult, Folder*);
 		void				SortAllFiles(AutoArray<File*>& _outResult);
 		void				FullCrawl(Folder*);
 		void				FolderUI(Folder*);
 		void				FileUI(File*);
+		void				SearchWindow();
+		void				FolderWindow();
+		void				FileWindow();
+		void				SearchResultWindow();
 	};
 }
 
