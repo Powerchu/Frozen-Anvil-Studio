@@ -98,6 +98,9 @@ namespace Utility
 	template <template <typename, typename> typename Op, typename T>
 	using MetaSortT_t = typename MetaSortType<Op, T>::result;
 
+	template <template <typename T, T, T> typename Op, typename ... Tys>
+	using MetaSortV_t = typename MetaSortValue<Op, Tys...>::result;
+
 
 	// ============================================ MAKE TYPE LIST ============================================ //
 
@@ -114,7 +117,7 @@ namespace Utility
 	template <template <typename...> typename ret_t, typename ... T>
 	using MakeTypeList_t = typename MakeTypeList<ret_t, T...>::type;
 
-
+	
 	// ============================================ META EXTRACTOR ============================================ //
 
 
@@ -144,6 +147,20 @@ namespace Utility
 
 	template <unsigned N, typename ... T>
 	using MetaExtract_t = typename MetaExtract<N, T...>::result;
+
+
+	// ============================================= AUTO INDEXER ============================================= //
+
+
+	template <typename ... Ty>
+	struct MetaAutoIndexer
+	{
+	private:
+		using indices = MetaMakeRange_t<sizeof...(Ty)>;
+
+	public:
+		using result = typename Helper::MetaAutoIndexerMake<indices, Ty...>::result;
+	};
 }
 
 

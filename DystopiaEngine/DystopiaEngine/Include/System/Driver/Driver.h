@@ -24,23 +24,24 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\Meta.h"
 #include "Utility\MetaAlgorithms.h"
 
+
+
 namespace Dystopia
 {
-	class TimeSystem;
-	class InputManager;
-	class WindowManager;
-	class SoundSystem;
-	class GraphicsSystem;
-
 	class EngineCore final  
 	{
-		using AllSys = typename Utility::MetaSortType <Utility::MetaLessThan, Utility::Collection <
-			Utility::Indexer<eSYSTEMS::TIME_SYSTEM    , TimeSystem     >,
-			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM   , InputManager   >,
-			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM  , WindowManager  >,
-//			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM   , SoundSystem    >,
-			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM , GraphicsSystem >
-		>>::result;
+		using AllSys = Utility::MetaSortT_t <Utility::MetaLessThan, Utility::Collection <
+			Utility::Indexer<eSYSTEMS::TIME_SYSTEM    , class TimeSystem     >,
+			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM   , class InputManager   >,
+			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM  , class WindowManager  >,
+//			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM   , class SoundSystem    >,
+			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM , class GraphicsSystem >
+		>>;
+
+		using SubSys = typename Utility::MetaAutoIndexer <
+			class MeshSystem,
+			class CameraSystem
+		>::result;
 
 	public:
 

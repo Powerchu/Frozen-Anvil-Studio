@@ -141,8 +141,64 @@ namespace Utility
 		>::type;
 	};
 
+	template <template <unsigned ...> class Set, unsigned ... LHS, unsigned ... RHS, typename ... Rest>
+	struct MetaConcat<Set<LHS...>, Set<RHS...>, Rest...>
+	{
+		using type = typename MetaConcat<
+			Set<LHS..., RHS...>,
+			typename MetaConcat<Rest...>::type
+		>::type;
+	};
+
+	template <template <unsigned ...> class Set, unsigned ... LHS, unsigned ... RHS>
+	struct MetaConcat<Set<LHS...>, Set<RHS...>>
+	{
+		using type = Set<LHS..., RHS...>;
+	};
+
+	template <template <unsigned ...> class Set, unsigned ... Vs>
+	struct MetaConcat<Set<Vs...>>
+	{
+		using type = Set<Vs...>;
+	};
+
 	template <typename ... T>
 	using MetaConcat_t = typename MetaConcat<T...>::type;
+
+
+
+	template <unsigned limit>
+	struct MetaMakeRange
+	{
+	private:
+		template <unsigned ... Vals>
+		struct Range;
+
+		template <unsigned min, unsigned max>
+		struct RangeBuilder
+		{
+		private:
+			static constexpr unsigned midpt = (max + min) >> 1;
+
+		public:
+			using result = MetaConcat_t<
+				typename RangeBuilder<min, midpt>::result,
+				typename RangeBuilder<midpt+1, max>::result
+			>;
+		};
+
+		template <unsigned x>
+		struct RangeBuilder<x, x>
+		{
+			using result = Range<x>;
+		};
+
+	public:
+		using result = typename RangeBuilder<0, limit - 1>::result;
+	};
+
+	template <unsigned limit>
+	using MetaMakeRange_t = typename MetaMakeRange<limit>::result;
 }
 
 
