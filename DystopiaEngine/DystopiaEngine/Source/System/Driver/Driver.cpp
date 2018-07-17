@@ -49,7 +49,34 @@ namespace
 
 		return ret;
 	}
+
+	template <typename T>
+	struct ErrorOnDupe;
+
+	template <
+		template <typename ...> class Set,
+		template <unsigned, typename> class Holder,
+		typename ... Tys, unsigned ... Ns,
+		typename Ty1, typename Ty2, unsigned N1, unsigned N2>
+	struct ErrorOnDupe <Set<Holder<N1, Ty1>, Holder<N2, Ty2>, Holder<Ns, Tys>...>>
+	{
+		static_assert(!(N1 == N2), "System Error: Systems cannot have the same index! (Same enum?).");
+
+		using eval = typename ErrorOnDupe<Set<Holder<N2, Ty2>, Holder<Ns, Tys>...>>::eval;
+	};
+
+	template <
+		template <typename ...> class Set,
+		template <unsigned, typename> class Holder,
+		typename Ty1, typename Ty2, unsigned N1, unsigned N2>
+	struct ErrorOnDupe <Set<Holder<N1, Ty1>, Holder<N2, Ty2>>>
+	{
+		static_assert(!(N1 == N2), "System Error: Systems cannot have the same index! (Same enum?).");
+
+		using eval = void;
+	};
 }
+
 
 
 SharedPtr<Dystopia::EngineCore> const & Dystopia::EngineCore::GetInstance(void) noexcept
@@ -62,7 +89,7 @@ Dystopia::EngineCore::EngineCore(void) :
 	mTime{}, SystemList{ Utility::SizeofList<AllSys>::value },
 	SystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) }
 {
-
+	using SanityCheck = typename ErrorOnDupe<AllSys>::eval;
 }
 
 void Dystopia::EngineCore::LoadSettings(void)
