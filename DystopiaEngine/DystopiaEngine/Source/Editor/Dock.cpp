@@ -431,7 +431,7 @@ void DockSpace::SplitTabs()
 
 	mLastFrame = ImGui::GetFrameCount();
 	PlaceIntoBG();
-	for (auto e : mArrTabs)
+	for (auto& e : mArrTabs)
 	{
 		if (!e->mpParentTab && (e->mStatus == eSTATUS_DOCKED))
 			e->SetPosSize(mPanelPos, mPanelSize);

@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 constexpr float Default_VectorField_Alignment_Left = 100.f;
 constexpr float Default_VectorField_Alignment_Height = 3.0f;
-constexpr float Default_Alightnment_Labels_And_Items = 250.f;
+constexpr float Default_Alightnment_Labels_And_Items = 150.f;
 Dystopia::CommandHandler *gContextComdHND = nullptr;
 
 namespace EGUI

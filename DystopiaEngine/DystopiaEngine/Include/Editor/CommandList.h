@@ -53,27 +53,27 @@ namespace Dystopia
 		T* mValue;
 	};
 
-	template <typename T>
-	struct ComdCreateObject : Commands
-	{
-		ComdCreateObject(T*& _object, const Math::Vec4& _pos)
-			: mObject{ _object }
-		{
-			_object = nullptr;
-		}
-	
-		~ComdCreateObject()
-		{
-			delete mObject;
-		}
-	
-		void	ExecuteDo() override	{ /*mInstance = _object->Duplicate();*/ }
-		void	ExecuteUndo() override	{ /**mValue = oldValue;*/ }
-		bool	Unchanged() const		{ return false; }
-	
-	private:
-		T* mObject;
-	};
+	// template <typename T>
+	// struct ComdCreateObject : Commands
+	// {
+	// 	ComdCreateObject(T*& _object, const Math::Vec4& _pos)
+	// 		: mObject{ _object }
+	// 	{
+	// 		_object = nullptr;
+	// 	}
+	// 
+	// 	~ComdCreateObject()
+	// 	{
+	// 		delete mObject;
+	// 	}
+	// 
+	// 	void	ExecuteDo() override	{ /*mInstance = _object->Duplicate();*/ }
+	// 	void	ExecuteUndo() override	{ /**mValue = oldValue;*/ }
+	// 	bool	Unchanged() const		{ return false; }
+	// 
+	// private:
+	// 	T* mObject;
+	// };
 
 	template <typename T>
 	struct ComdRecord : RecordBase

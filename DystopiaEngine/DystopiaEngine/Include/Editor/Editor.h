@@ -61,7 +61,6 @@ namespace Dystopia
 
 		eEditorState	mCurrentState;
 		eEditorState	mNextState;
-		int				mExtraTabCounter;
 		double			mPrevFrameTime;
 		WindowManager	*mpWin;
 		GraphicsSystem	*mpGfx;

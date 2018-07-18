@@ -97,7 +97,7 @@ namespace Dystopia
 
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mPrevFrameTime{ 0 }, mpComdHandler{ new CommandHandler{} },
-		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mpGuiSystem{ new GuiSystem{} }, mExtraTabCounter{ 0 }
+		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mpGuiSystem{ new GuiSystem{} }
 	{}
 
 	Editor::~Editor(void)
@@ -114,7 +114,7 @@ namespace Dystopia
 		mTabsArray.push_back(new HierarchyView{});
 
 		EGUI::SetContext(mpComdHandler);
-		for (auto e : mTabsArray)
+		for (auto& e : mTabsArray)
 		{
 			e->Init();
 			e->SetComdContext(mpComdHandler);
@@ -162,24 +162,6 @@ namespace Dystopia
 			EGUI::EndTab();
 		}
 
-		char buffer1[8];
-		char buffer2[8];
-		for (int i = 0; i < mExtraTabCounter; ++i)
-		{
-			char tempBuff[128];
-			_itoa_s(i, buffer1, 10);
-			_itoa_s(i, buffer2, 10);
-			strcpy_s(tempBuff, "Spawned Tab ");
-			strcat_s(tempBuff, buffer1);
-			EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_NONE);
-			if (EGUI::StartTab(tempBuff))
-			{
-				strcpy_s(tempBuff, "I am Tab ");
-				strcat_s(tempBuff, buffer2);
-				EGUI::Display::Label(tempBuff);
-			}
-			EGUI::EndTab();
-		}
 		// if (mCurrentState == EDITOR_PLAY) call for update of current scene
 		if (mCurrentState == EDITOR_PAUSE) return;
 	}
@@ -195,14 +177,11 @@ namespace Dystopia
 	void Editor::Shutdown()
 	{
 		EGUI::Docking::ShutdownTabs();
-		for (auto e : mTabsArray)
+		for (auto& e : mTabsArray)
 		{
-			if (e)
-			{
-				e->Shutdown();
-				delete e;
-				e = nullptr;
-			}
+			e->Shutdown();
+			delete e;
+			e = nullptr;
 		}
 
 		mpWin = nullptr;
@@ -269,10 +248,9 @@ namespace Dystopia
 		{
 			if (EGUI::StartMenuHeader("File"))
 			{
-				if (EGUI::StartMenuBody("New (Spawn Tabs)"))
+				if (EGUI::StartMenuBody("New"))
 				{
 					// TODO: Some actual function
-					mpComdHandler->InvokeCommand(new ComdModifyValue<int> { &mExtraTabCounter, mExtraTabCounter + 1 });
 				}
 				if (EGUI::StartMenuBody("Open"))
 				{
@@ -324,7 +302,7 @@ namespace Dystopia
 			
 			if (EGUI::StartMenuHeader("Windows"))
 			{
-				for (auto e : mTabsArray)
+				for (auto& e : mTabsArray)
 				{
 					if (EGUI::StartMenuBody(e->GetLabel()))
 					{

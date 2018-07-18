@@ -64,10 +64,16 @@ namespace Dystopia
 
 	void Folder::ClearFolder()
 	{
-		for (auto e : mArrPtrFiles)
+		for (auto& e : mArrPtrFiles)
+		{
 			delete e;
-		for (auto e : mArrPtrFolders)
+			e = nullptr;
+		}
+		for (auto& e : mArrPtrFolders)
+		{
 			delete e;
+			e = nullptr;
+		}
 		mArrPtrFiles.clear();
 		mArrPtrFolders.clear();
 	}
@@ -120,7 +126,7 @@ namespace Dystopia
 	{
 		_dt;
 		std::string searchString = mSearchText;
-		if (searchString.compare(mSearchTextLastFrame))
+		if (searchString.length() && searchString.compare(mSearchTextLastFrame))
 		{
 			mSearchResultFiles.clear();
 			FindFile(mSearchResultFiles, mSearchText);
@@ -152,7 +158,7 @@ namespace Dystopia
 	void ProjectResource::SearchWindow()
 	{
 		EGUI::Indent(5);
-		EGUI::Display::TextField("SearchWindow", mSearchText, MAX_SEARCH);
+		EGUI::Display::TextField("Search Bar", mSearchText, MAX_SEARCH);
 		EGUI::UnIndent(5);
 		EGUI::Display::HorizontalSeparator();
 	}

@@ -28,23 +28,16 @@ namespace Dystopia
 
 	CommandHandler::~CommandHandler()
 	{
-		for (auto e : mDeqRedo)
+		for (auto& e : mDeqRedo)
 		{
-			if (e)
-			{
-				delete e;
-				e = nullptr;
-			}
+			delete e;
+			e = nullptr;
 		}
-		for (auto e : mDeqUndo)
+		for (auto& e : mDeqUndo)
 		{
-			if (e)
-			{
-				delete e;
-				e = nullptr;
-			}
+			delete e;
+			e = nullptr;
 		}
-
 		mDeqRedo.clear();
 		mDeqUndo.clear();
 	}
@@ -56,10 +49,14 @@ namespace Dystopia
 		if (mDeqUndo.size() == mDeqUndo.max_size())
 			PopFrontOfDeque(mDeqUndo);
 
-		mDeqUndo.push_back(_comd);
-		for (auto e : mDeqRedo)
+		for (auto& e : mDeqRedo)
+		{
 			delete e;
+			e = nullptr;
+		}
+
 		mDeqRedo.clear();
+		mDeqUndo.push_back(_comd);
 	}
 
 	void CommandHandler::UndoCommand()
