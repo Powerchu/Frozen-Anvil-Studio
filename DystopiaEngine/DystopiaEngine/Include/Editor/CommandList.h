@@ -23,6 +23,7 @@ namespace Dystopia
 		virtual void ExecuteDo() = 0;
 		virtual void ExecuteUndo() = 0;
 		virtual bool Unchanged() const = 0;
+		virtual ~Commands() {}
 	};
 
 	struct RecordBase : Commands

@@ -57,6 +57,8 @@ namespace Dystopia
 			PopFrontOfDeque(mDeqUndo);
 
 		mDeqUndo.push_back(_comd);
+		for (auto e : mDeqRedo)
+			delete e;
 		mDeqRedo.clear();
 	}
 
@@ -88,8 +90,9 @@ namespace Dystopia
 
 	void CommandHandler::PopFrontOfDeque(std::deque<Commands*>& _targetDeque)
 	{
-		delete _targetDeque.front();
+		Commands *pTemp = _targetDeque.front();
 		_targetDeque.pop_front();
+		delete pTemp;
 	}
 
 	void CommandHandler::EndRecording()

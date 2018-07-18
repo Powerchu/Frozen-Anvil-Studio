@@ -83,16 +83,10 @@ namespace Dystopia
 		{
 			ProjectResource::GetInstance()->FocusOnFile(mDemoName);
 		}
+
 		if (File *t = EGUI::Display::StartPayloadReceiver<File>(EGUI::FILE))
 		{
-			if (mpComdHandler)
-			{
-				mpComdHandler->InvokeCommand(new ComdModifyValue<std::string>{&mDemoName, (*t).mName });
-			}
-			else
-			{
-				mDemoName = (*t).mName;
-			}
+			mpComdHandler->InvokeCommand(new ComdModifyValue<std::string>{ &mDemoName, (*t).mName });
 			EGUI::Display::EndPayloadReceiver();
 		}
 

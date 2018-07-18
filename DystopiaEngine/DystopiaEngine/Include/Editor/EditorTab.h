@@ -26,7 +26,7 @@ namespace Dystopia
 	{
 	public:
 		EditorTab();
-		~EditorTab();
+		virtual ~EditorTab();
 
 		/************************************************************************************************************/
 		/* TODO: Implement your own definitions for the pure virtual functions in your class that needs to be a tab */
