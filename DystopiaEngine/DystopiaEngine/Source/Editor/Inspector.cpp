@@ -94,12 +94,6 @@ namespace Dystopia
 
 		if (!mpFocusGameObj) return;
 
-		AutoArray<Component*> pAllComponents = mpFocusGameObj->GetComponents<Component>();
-		for (auto e : pAllComponents)
-		{
-			// e->Editor() or e->Window()
-			e;
-		}
 	}
 
 	void Inspector::Shutdown()
