@@ -26,6 +26,7 @@ namespace Dystopia
 		CrawlItem(const std::string& _name, const std::string& _path);
 		std::string mName;
 		std::string mPath;
+		std::string mLowerCaseName;
 	};
 
 	struct Folder : CrawlItem
@@ -80,7 +81,8 @@ namespace Dystopia
 		ProjectResource(void);
 
 		AutoArray<File*>	mArrAllFiles;
-		AutoArray<File*>	mSearchResultFiles;
+		AutoArray<File*>	mArrFilesSearchedThisFrame;
+		AutoArray<File*>	mArrFilesSearchedLastFrame;
 		std::string			mLabel;
 		char				mSearchText[MAX_SEARCH];
 		char				mSearchTextLastFrame[MAX_SEARCH];
@@ -88,7 +90,7 @@ namespace Dystopia
 		Folder				*mpCurrentFolder;
 
 		bool				FindFirstOne(AutoArray<File*>& _outResult, const std::string& _item);
-		void				FindFile(AutoArray<File*>& _outResult, const std::string& _item);
+		void				FindFile(AutoArray<File*>& _outResult, std::string& _item, const AutoArray<File*>& _fromArr);
 		void				GetAllFiles(AutoArray<File*>& _outResult, Folder*);
 		void				SortAllFiles(AutoArray<File*>& _outResult);
 		void				FullCrawl(Folder*);
@@ -98,6 +100,7 @@ namespace Dystopia
 		void				FolderWindow();
 		void				FileWindow();
 		void				SearchResultWindow();
+		void				MakeStringLower(std::string& _transformMe);
 	};
 }
 

@@ -218,7 +218,7 @@ namespace EGUI
 		// Creates a selectable text field with an output bool to toggle
 		bool SelectableTxt(const std::string& _label, bool *_pSelected);
 		// Creates a selectable text field with a bool to determine if it is highlighted (selected) or not
-		bool SelectableTxt(const std::string& _label, bool = false);
+		bool SelectableTxt(const std::string& _label, bool _highlight = false);
 		/* =======================================================================================================================
 		Brief:
 				Creates a double click selectable text field. Returns true only when the text field is double clicked
@@ -259,7 +259,7 @@ namespace EGUI
 				}
 		======================================================================================================================= */
 		// Start a tree node 
-		bool StartTreeNode(const std::string& _label, bool* _outClicked = nullptr);
+		bool StartTreeNode(const std::string& _label, bool* _outClicked = nullptr, bool _highlighted = false, bool _noArrow = false);
 		// Set a specific tree node to be collapsed (closed) or not
 		void OpenTreeNode(const std::string& _label, bool _open);
 		//End a tree Node
@@ -322,10 +322,24 @@ namespace EGUI
 		Brief:
 				Creates a button
 		Usage:
-				EGUI::Button("Demo", ImVec2{ 200, 20 });
+				EGUI::Display::Button("Demo", ImVec2{ 200, 20 });
 		======================================================================================================================= */
 		bool Button(const std::string& _label, const Math::Vec2& _size);
-
+		/* =======================================================================================================================
+		Brief:
+				Creates a small tick icon
+		Usage:
+				EGUI::Display::TickIcon(10,10);
+		======================================================================================================================= */
+		void TickIcon(float width = 5.f, float height = 5.f, float _thickness = 1.f, Math::Vec4 _colour = Math::Vec4{ 1.f, 1.f, 0.4f, 1.f });
+		/* =======================================================================================================================
+		Brief:
+				Creates a dummy area. Used only to offset ImGui stuff. Does absolutely nothing except for manipulating UI 
+				arrangements
+		Usage:
+				EGUI::Display::Dummy(10,10);
+		======================================================================================================================= */
+		void Dummy(float width = 0.f, float height = 0.f);
 	}
 }
 

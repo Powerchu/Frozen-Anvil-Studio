@@ -93,15 +93,6 @@ namespace Utility
 		rhs = Move(tmp);
 	}
 
-
-
-
-
-
-
-
-
-
 }
 
 

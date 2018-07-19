@@ -8794,12 +8794,12 @@ bool ImGui::TreeNode(const void* ptr_id, const char* fmt, ...)
     return is_open;
 }
 
-bool ImGui::TreeNode(const char* label, bool* _outClicked)
+bool ImGui::TreeNode(const char* label, bool* _outClicked, ImGuiTreeNodeFlags _flags)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
-    return TreeNodeBehavior(window->GetID(label), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick, label, NULL, _outClicked);
+    return TreeNodeBehavior(window->GetID(label), _flags, label, NULL, _outClicked);
 }
 
 void ImGui::TreeAdvanceToLabelPos()

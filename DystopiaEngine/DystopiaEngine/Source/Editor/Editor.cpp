@@ -137,7 +137,7 @@ namespace Dystopia
 		mpWin->Update(_dt);
 		mpInput->Update(_dt);
 		mpGuiSystem->StartFrame(_dt);
-		MainMenu();
+		MainMenuBar();
 	}
 
 	void Editor::UpdateFrame(const float& _dt)
@@ -250,75 +250,97 @@ namespace Dystopia
 		mCurrentState = mNextState;
 	}
 
-	void Editor::MainMenu()
+	void Editor::MainMenuBar()
 	{
 		if (EGUI::StartMainMenuBar())
 		{
-			if (EGUI::StartMenuHeader("File"))
-			{
-				if (EGUI::StartMenuBody("New"))
-				{
-					// TODO: Some actual function
-				}
-				if (EGUI::StartMenuBody("Open"))
-				{
-					// TODO: Some actual function
-				}
-				if (EGUI::StartMenuHeader("Open Recent"))
-				{
-					if (EGUI::StartMenuBody("some_recent_crap.cpp"))
-					{
-						// TODO: Some actual function
-					}
-					if (EGUI::StartMenuBody("some_recent_crap.h"))
-					{
-						// TODO: Some actual function
-					}
-					if (EGUI::StartMenuHeader("More.."))
-					{
-						EGUI::StartMenuBody("surprise_theres_more_crap.h");
-						EGUI::EndMenuHeader();
-					}
-					EGUI::EndMenuHeader();
-				}
-				if (EGUI::StartMenuBody("Save"))
-				{
-					// TODO: Some actual function
-				}
-				if (EGUI::StartMenuBody("Save As.."))
-				{
-					// TODO: Some actual function
-				}
-				if (EGUI::StartMenuBody("Quit"))
-				{
-					// TODO: Some actual function
-					Save();
-					ChangeState(Dystopia::EDITOR_EXIT);
-				}
-				EGUI::EndMenuHeader();
-			}
-			// TODO: Some actual function for all the bottom
-			if (EGUI::StartMenuHeader("Edit"))
-			{
-				if (EGUI::StartMenuBody("Undo","Ctrl + Z")) { mpComdHandler->UndoCommand(); }
-				if (EGUI::StartMenuBody("Redo", "Ctrl + Y")) { mpComdHandler->RedoCommand(); } 
-				if (EGUI::StartMenuBody("Cut")) {}
-				if (EGUI::StartMenuBody("Copy")) {}
-				if (EGUI::StartMenuBody("Paste")) {}
-				EGUI::EndMenuHeader();
-			}
-			
-			if (EGUI::StartMenuHeader("Windows"))
-			{
-				for (auto& e : mTabsArray)
-				{
-					if (EGUI::StartMenuBody(e->GetLabel())) 
-						*(e->GetOpenedBool()) = !*(e->GetOpenedBool());
-				}
-				EGUI::EndMenuHeader();
-			}
+			MMFile();
+			MMEdit();
+			MMView();
 
 			EGUI::EndMainMenuBar();
+		}
+	}
+
+	void Editor::MMFile()
+	{
+		if (EGUI::StartMenuHeader("File"))
+		{
+			if (EGUI::StartMenuBody("New"))
+			{
+				// TODO: Some actual function
+			}
+			if (EGUI::StartMenuBody("Open"))
+			{
+				// TODO: Some actual function
+			}
+			if (EGUI::StartMenuHeader("Open Recent"))
+			{
+				if (EGUI::StartMenuBody("some_recent_crap.cpp"))
+				{
+					// TODO: Some actual function
+				}
+				if (EGUI::StartMenuBody("some_recent_crap.h"))
+				{
+					// TODO: Some actual function
+				}
+				if (EGUI::StartMenuHeader("More.."))
+				{
+					EGUI::StartMenuBody("surprise_theres_more_crap.h");
+					EGUI::EndMenuHeader();
+				}
+				EGUI::EndMenuHeader();
+			}
+			if (EGUI::StartMenuBody("Save"))
+			{
+				// TODO: Some actual function
+			}
+			if (EGUI::StartMenuBody("Save As.."))
+			{
+				// TODO: Some actual function
+			}
+			if (EGUI::StartMenuBody("Quit"))
+			{
+				// TODO: Some actual function
+				Save();
+				ChangeState(Dystopia::EDITOR_EXIT);
+			}
+			EGUI::EndMenuHeader();
+		}
+	}
+
+	void Editor::MMEdit()
+	{
+		// TODO: Some actual function for all the bottom
+		if (EGUI::StartMenuHeader("Edit"))
+		{
+			if (EGUI::StartMenuBody("Undo", "Ctrl + Z")) { mpComdHandler->UndoCommand(); }
+			if (EGUI::StartMenuBody("Redo", "Ctrl + Y")) { mpComdHandler->RedoCommand(); }
+			if (EGUI::StartMenuBody("Cut")) {}
+			if (EGUI::StartMenuBody("Copy")) {}
+			if (EGUI::StartMenuBody("Paste")) {}
+			EGUI::EndMenuHeader();
+		}
+
+	}
+
+	void Editor::MMView()
+	{
+		if (EGUI::StartMenuHeader("View"))
+		{
+			for (auto& e : mTabsArray)
+			{
+				if (*(e->GetOpenedBool())) 
+					EGUI::Display::TickIcon(10, 10);
+				else 
+					EGUI::Display::Dummy(10, 10);
+
+				EGUI::SameLine();
+
+				if (EGUI::StartMenuBody(e->GetLabel()))
+					*(e->GetOpenedBool()) = !*(e->GetOpenedBool());
+			}
+			EGUI::EndMenuHeader();
 		}
 	}
 

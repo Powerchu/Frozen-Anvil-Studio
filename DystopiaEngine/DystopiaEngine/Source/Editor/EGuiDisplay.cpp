@@ -305,9 +305,12 @@ namespace EGUI
 			return ImGui::CollapsingHeader(_label.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
 		}
 
-		bool SelectableTxt(const std::string& _label, bool _outputBool)
+		bool SelectableTxt(const std::string& _label, bool _highlight)
 		{
-			return (ImGui::Selectable(_label.c_str(), _outputBool));
+			if (_highlight) ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
+			bool ret = ImGui::Selectable(_label.c_str(), _highlight);
+			if (_highlight) ImGui::PopStyleColor();
+			return ret;
 		}
 
 		bool SelectableTxt(const std::string& _label, bool* _outputBool)
@@ -315,9 +318,9 @@ namespace EGUI
 			return (ImGui::Selectable(_label.c_str(), _outputBool));
 		}
 
-		bool SelectableTxtDouble(const std::string& _label, bool _outputBool)
+		bool SelectableTxtDouble(const std::string& _label, bool _highlight)
 		{
-			return (ImGui::Selectable(_label.c_str(), _outputBool, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0);
+			return (ImGui::Selectable(_label.c_str(), _highlight, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0);
 		}
 
 		bool SelectableTxtDouble(const std::string& _label, bool* _outputBool)
@@ -329,9 +332,21 @@ namespace EGUI
 			return false;
 		}
 
-		bool StartTreeNode(const std::string&_label, bool* _outClicked)
+		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow)
 		{
-			return ImGui::TreeNode(_label.c_str(), _outClicked);
+			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick; 
+			flags = _highlighted ? flags | ImGuiTreeNodeFlags_Selected : flags;
+			flags = _noArrow ? flags | ImGuiTreeNodeFlags_Leaf : flags;
+
+			if (_highlighted)
+				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
+
+			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, flags);
+
+			if (_highlighted) 
+				ImGui::PopStyleColor();
+
+			return ret;
 		}
 
 		void OpenTreeNode(const std::string&_label, bool _open)
@@ -387,7 +402,26 @@ namespace EGUI
 		{
 			return ImGui::Button(_label.c_str(), ImVec2{ _size.x, _size.y });
 		}
+		
+		void TickIcon(float width, float height, float _thickness, Math::Vec4 _colour)
+		{
+			ImVec2 pos = ImGui::GetCursorScreenPos();
+			ImDrawList* pCanvas = ImGui::GetWindowDrawList();
+			const ImU32 col32 = static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w});
 
+			pCanvas->AddLine(ImVec2{ pos.x, pos.y + height * 0.5f }, 
+							 ImVec2{ pos.x + width * 0.25f, pos.y + height }, col32, _thickness);
+			pCanvas->AddLine(ImVec2{ pos.x + width * 0.25f, pos.y + height },
+							 ImVec2{ pos.x + width, pos.y}, col32, _thickness);
+
+			ImGui::Dummy(ImVec2{ width, height });
+		}
+
+		void Dummy(float width, float height)
+		{
+			ImGui::Dummy(ImVec2{ width, height });
+		}
+		
 	}
 }	// NAMESPACE DYSTOPIA::EGUI::DISPLAY
 #endif // EDITOR

@@ -77,7 +77,10 @@ namespace Dystopia
 		void			Load();
 		void			TempSave();
 		void			TempLoad();
-		void			MainMenu();
+		void			MainMenuBar();
+		void			MMFile();
+		void			MMEdit();
+		void			MMView();
 	};
 }
 
