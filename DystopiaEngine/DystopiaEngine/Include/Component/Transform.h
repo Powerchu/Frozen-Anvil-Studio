@@ -32,7 +32,7 @@ namespace Dystopia
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		Transform(void);
-		Transform(Transform&);
+		Transform(const Transform&);
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 

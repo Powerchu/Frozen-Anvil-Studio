@@ -114,9 +114,9 @@ namespace Dystopia
 		GameObject(const GameObject&) = delete;
 
 		inline void AddComponent(Component*, ComponentTag);
-		inline void AddComponent(Component*, BehaviourTag);
+		inline void AddComponent(Behaviour*, BehaviourTag);
 		inline void RemoveComponent(Component*, ComponentTag);
-		inline void RemoveComponent(Component*, BehaviourTag);
+		inline void RemoveComponent(Behaviour*, BehaviourTag);
 
 		void PurgeComponents(void);
 	};
@@ -139,11 +139,13 @@ inline void Dystopia::GameObject::AddComponent(T* _pComponent)
 inline void Dystopia::GameObject::AddComponent(Component* _pComponent, ComponentTag)
 {
 	mComponents.push_back(_pComponent);
+	_pComponent->SetOwner(this);
 }
 
-inline void Dystopia::GameObject::AddComponent(Component* _pBehaviour, BehaviourTag)
+inline void Dystopia::GameObject::AddComponent(Behaviour* _pBehaviour, BehaviourTag)
 {
 	mBehaviours.push_back(static_cast<Behaviour*>(_pBehaviour));
+	_pBehaviour->SetOwner(this);
 }
 
 template <typename T>
@@ -164,7 +166,7 @@ inline void Dystopia::GameObject::RemoveComponent(Component* _pComponent, Compon
 	}
 }
 
-inline void Dystopia::GameObject::RemoveComponent(Component* _pComponent, BehaviourTag)
+inline void Dystopia::GameObject::RemoveComponent(Behaviour* _pComponent, BehaviourTag)
 {
 	Behaviour* const pRemove = static_cast<Behaviour*>(_pComponent);
 
