@@ -1042,7 +1042,8 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	eDockSlot nextSlot = mNextSlot;
 	mNextSlot = eDOCK_SLOT_TAB;
 	Tabs& _tab = GetTab(_pLabel, !_pOpened || *_pOpened);
-	if (!_tab.mOpened && (!_pOpened || *_pOpened)) TryDockTabToStoredLocation(_tab);
+	if (!_tab.mOpened && (!_pOpened || *_pOpened)) 
+		TryDockTabToStoredLocation(_tab);
 
 	_tab.mLastFrame = ImGui::GetFrameCount();
 	if (strcmp(_tab.mpLabel, _pLabel) != 0)

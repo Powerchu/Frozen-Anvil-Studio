@@ -25,21 +25,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #else
 #define DBG_NEW new
 #endif
-
+/* System includes */
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Input\InputSystem.h"
 #include "System\Time\Timer.h"
+#include "System\Driver\Driver.h"
+#include "IO\BinarySerializer.h"
+/* Editor includes */
 #include "Editor\Editor.h"
 #include "Editor\EGUI.h"
-#include "Editor\Inspector.h"
-#include "Editor\HierarchyView.h"
 #include "Editor\Commands.h"
 #include "Editor\CommandList.h"
-#include "Editor\EditorTab.h"
+#include "Editor\Inspector.h"
+#include "Editor\HierarchyView.h"
 #include "Editor\ProjectResource.h"
-#include "IO\BinarySerializer.h"
-#include "System\Driver\Driver.h"
+#include "Editor\SceneView.h"
+/* library includes */
 #include <iostream>
 #include <bitset>
 
@@ -56,11 +58,13 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	Dystopia::Timer *timer = new Dystopia::Timer{};
 	
 	driver->LoadSettings();
+	editor->LoadDefaults();
+
 	driver->Init();
 	editor->Init(driver->GetSystem<Dystopia::WindowManager>(),
 				 driver->GetSystem<Dystopia::GraphicsSystem>(),
 				 driver->GetSystem<Dystopia::InputManager>());
-	
+
 	while (!editor->IsClosing())
 	{
 		float dt = timer->Elapsed();
@@ -109,10 +113,6 @@ namespace Dystopia
 		mpGfx = _pGfx;
 		mpInput = _pInput;
 
-		mTabsArray.push_back(Inspector::GetInstance());
-		mTabsArray.push_back(ProjectResource::GetInstance());
-		mTabsArray.push_back(new HierarchyView{});
-
 		EGUI::SetContext(mpComdHandler);
 		for (auto& e : mTabsArray)
 		{
@@ -122,6 +122,14 @@ namespace Dystopia
 
 		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
 			mCurrentState = EDITOR_EXIT;
+	}
+
+	void Editor::LoadDefaults()
+	{
+		mTabsArray.push_back(Inspector::GetInstance());
+		mTabsArray.push_back(ProjectResource::GetInstance());
+		mTabsArray.push_back(HierarchyView::GetInstance());
+		mTabsArray.push_back(SceneView::GetInstance());
 	}
 
 	void Editor::StartFrame(const float& _dt)
@@ -304,10 +312,8 @@ namespace Dystopia
 			{
 				for (auto& e : mTabsArray)
 				{
-					if (EGUI::StartMenuBody(e->GetLabel()))
-					{
-						*(e->GetOpenedBool()) = true;
-					}
+					if (EGUI::StartMenuBody(e->GetLabel())) 
+						*(e->GetOpenedBool()) = !*(e->GetOpenedBool());
 				}
 				EGUI::EndMenuHeader();
 			}

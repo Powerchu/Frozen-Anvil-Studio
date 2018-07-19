@@ -14,11 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR 
 #ifndef _PROJECT_RESOURCE_H_
 #define _PROJECT_RESOURCE_H_
-#include "DataStructure\AutoArray.h"
 #include "EditorTab.h"
-#include "Math\Vector4.h"
-#include <string>
-#include <vector>
 
 namespace Dystopia
 {

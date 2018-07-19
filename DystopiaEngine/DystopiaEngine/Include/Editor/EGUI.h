@@ -19,7 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _EDITOR_GUI_H_
 #define _EDITOR_GUI_H_
-#include "Math\Vector4.h"
 #include "DataStructure\AutoArray.h"
 #include "Utility\DebugAssert.h"
 #include "Editor\Dock.h"

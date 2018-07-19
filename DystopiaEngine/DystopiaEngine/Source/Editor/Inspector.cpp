@@ -34,7 +34,8 @@ namespace Dystopia
 	}
 
 	Inspector::Inspector()
-		: mpFocusGameObj{ nullptr }, mLabel{ "Inspector" }, mDemoVec{ Math::Vec4{0,0,0,0} },
+		: EditorTab{ true }, 
+		mpFocusGameObj{ nullptr }, mLabel{ "Inspector" }, mDemoVec{ Math::Vec4{0,0,0,0} },
 		mDemoText{ "hello" }, mDemoName{ "" }
 	{
 	}

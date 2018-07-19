@@ -1,10 +1,10 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Inspector.h
-\author Digipen (100%)
+\file	SceneView.h
+\author Shannon Tan (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
-INSERT BRIEF HERE
+BRIEF HERE
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -12,53 +12,42 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#ifndef _INSPECTOR_H_
-#define _INSPECTOR_H_
+#ifndef _SCENE_VIEW_H_
+#define _SCENE_VIEW_H_
 #include "EditorTab.h"
 
 namespace Dystopia
 {
-	class GameObject;
-
-	class Inspector : public EditorTab
+	class SceneView : public EditorTab
 	{
 	public:
-		static Inspector* GetInstance();
-		~Inspector();
+		static SceneView* GetInstance();
+		~SceneView();
 
 		/* Init() is called immediately after the creation of the object */
-		virtual void Init() override;
-		
+		virtual void Init();
+
 		/* Update() is called before Window(), so alter most variables (frame based) here to be printed in Window() later */
-		virtual void Update(const float&) override;
+		virtual void Update(const float&);
 
 		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
-		virtual void Window() override;
+		virtual void Window();
 
 		/* Shutdown() is called right before deleting this object */
-		virtual void Shutdown() override;
+		virtual void Shutdown();
 
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
-		virtual std::string GetLabel() const override;
-
-		void	SetFocusObj(GameObject*);
-		void	RemoveFocus();
+		virtual std::string GetLabel() const;
 
 	private:
-		Inspector(void);
+		SceneView(void);
 
-		char			mDemoText[32];
-		Math::Vec4		mDemoVec;
-		std::string		mLabel;
-		std::string		mDemoName;
-		GameObject		*mpFocusGameObj;
+		std::string	mLabel;
+
 	};
+
 }
 
-
-
-#endif // _INSPECTOR_H_
-
-#endif // EDITOR 
-
+#endif //_SCENE_VIEW_H_
+#endif //EDITOR
 

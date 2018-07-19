@@ -24,7 +24,7 @@ namespace Dystopia
 	class HierarchyView : public EditorTab
 	{
 	public:
-		HierarchyView();
+		static HierarchyView* GetInstance();
 		~HierarchyView();
 
 		/* Init() is called immediately after the creation of the object */
@@ -43,6 +43,8 @@ namespace Dystopia
 		virtual std::string GetLabel() const override;
 
 	private:
+		HierarchyView(void);
+
 		std::string		mLabel;
 		GameObject		*mpFocusGameObj;
 		Scene			*mpCurrentScene;

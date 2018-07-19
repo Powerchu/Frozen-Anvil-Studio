@@ -104,7 +104,8 @@ namespace Dystopia
 	}
 
 	ProjectResource::ProjectResource()
-		: mLabel{ "Resource View" }, mSearchText{"Dy"}, mpRootFolder{ nullptr }, mpCurrentFolder{ nullptr }, 
+		: EditorTab{ true },
+		mLabel{ "Resource View" }, mSearchText{"Dy"}, mpRootFolder{ nullptr }, mpCurrentFolder{ nullptr }, 
 		mArrAllFiles{}, mSearchResultFiles{}, mSearchTextLastFrame{}
 	{}
 

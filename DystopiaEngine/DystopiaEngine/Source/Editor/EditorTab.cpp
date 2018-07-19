@@ -18,8 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	EditorTab::EditorTab()
-		: mSize{ Math::Vec2{ 0, 0 } }, mPos{ Math::Vec2{ 0, 0 } }, mIsOpened{ true }, mpComdHandler{ nullptr }
+	EditorTab::EditorTab(bool _defaultOpen)
+		: mSize{ Math::Vec2{ 0, 0 } }, mPos{ Math::Vec2{ 0, 0 } }, mIsOpened{ _defaultOpen }, mpComdHandler{ nullptr }
 	{}
 
 	EditorTab::~EditorTab()

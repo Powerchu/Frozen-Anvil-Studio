@@ -21,8 +21,18 @@ constexpr float DEFAULT_HEIGHT = 300;
 
 namespace Dystopia
 {
+	static HierarchyView* gpInstance = 0;
+	HierarchyView* HierarchyView::GetInstance()
+	{
+		if (gpInstance) return gpInstance;
+
+		gpInstance = new HierarchyView{};
+		return gpInstance;
+	}
+
 	HierarchyView::HierarchyView()
-		: mLabel{ "Hierarchy" }, mpFocusGameObj{ nullptr }, mpCurrentScene{ nullptr }
+		: EditorTab{ true }, 
+		mLabel{ "Hierarchy" }, mpFocusGameObj{ nullptr }, mpCurrentScene{ nullptr }
 	{
 	}
 
@@ -50,6 +60,19 @@ namespace Dystopia
 
 	void HierarchyView::Window()
 	{
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+		// Primitives
+		static float thickness = 2.0f;
+		const ImU32 col32 = ImColor(ImVec4(1.0f, 1.0f, 0.4f, 1.0f));
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		pos.x += 4;
+		pos.y += 4;
+		draw_list->AddBezierCurve(ImVec2{ pos.x, pos.y + 50.f },
+								  ImVec2{ pos.x + 30.f, pos.y + 150.f },
+								  ImVec2{ pos.x + 60, pos.y + 100.f},
+								  ImVec2{ pos.x + 100.f, pos.y}, col32, thickness);
+
 		if (!mpCurrentScene) return;
 
 		// Do for all objects in the scene

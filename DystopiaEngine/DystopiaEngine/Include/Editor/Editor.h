@@ -47,6 +47,7 @@ namespace Dystopia
 		~Editor();
 
 		void			Init(WindowManager*, GraphicsSystem*, InputManager*);
+		void			LoadDefaults();
 		void			StartFrame(const float&);
 		void			UpdateFrame(const float&);
 		void			EndFrame();

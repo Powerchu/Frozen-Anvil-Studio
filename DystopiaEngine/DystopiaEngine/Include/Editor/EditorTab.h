@@ -25,17 +25,23 @@ namespace Dystopia
 	class EditorTab
 	{
 	public:
-		EditorTab();
+		EditorTab(bool _defaultOpen = true);
 		virtual ~EditorTab();
 
 		/************************************************************************************************************/
 		/* TODO: Implement your own definitions for the pure virtual functions in your class that needs to be a tab */
+		/* Init() is called immediately after the creation of the object */
 		virtual void		Init() = 0;
+		/* Update() is called before Window(), so alter most variables (frame based) here to be printed in Window() later */
 		virtual void		Update(const float&) = 0;
+		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
 		virtual void		Window() = 0;
+		/* Shutdown() is called right before deleting this object */
 		virtual void		Shutdown() = 0;
+		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const = 0;
 		/************************************************************************************************************/
+
 		void				SetSize(const Math::Vec2&);
 		void				SetSize(const float&, const float&);
 		void				SetPosition(const Math::Vec2&);

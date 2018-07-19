@@ -103,6 +103,9 @@
     <ClCompile Include="Source\Editor\ProjectResource.cpp">
       <Filter>Editor\Systems\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\SceneView.cpp">
+      <Filter>Editor\Systems\SceneView</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -297,6 +300,9 @@
     <ClInclude Include="Include\Editor\ProjectResource.h">
       <Filter>Editor\Systems\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\SceneView.h">
+      <Filter>Editor\Systems\SceneView</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -454,6 +460,9 @@
     </Filter>
     <Filter Include="Editor\Systems\Payloads">
       <UniqueIdentifier>{6ae347d0-607b-4c8f-97f3-2047a93d26fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Systems\SceneView">
+      <UniqueIdentifier>{770c1cc6-aceb-40be-8cc4-1b8752a78079}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
