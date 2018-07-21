@@ -137,6 +137,7 @@ namespace Dystopia
 			ImGuiPopupRef& popup_ref = g.OpenPopupStack[g.CurrentPopupStack.Size];
 			popup_ref.OpenPopupPos = pos;
 		}
+
 		EGUI::UnIndent(inde);
 		ComponentsDropDownList();
 	}
