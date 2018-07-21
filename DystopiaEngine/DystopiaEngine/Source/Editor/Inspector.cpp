@@ -121,22 +121,34 @@ namespace Dystopia
 
 	void Inspector::AddComponentButton()
 	{
+		ImGui::Separator();
 		static const ImVec2 btnSize{250, 20};
 		float mid = Size().x / 2;
-
-		EGUI::Indent(mid - (btnSize.x / 2));
+		float inde = mid - (btnSize.x / 2);
+		inde = (inde < 20) ? 20 : inde;
+		EGUI::Indent(inde);
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		pos.y += btnSize.y;
+		pos.x -= 1;
 		if (ImGui::Button("Add Component", btnSize))
 		{
 			ImGui::OpenPopup("Inspector Component List");
+			ImGuiContext& g = *ImGui::GetCurrentContext();
+			ImGuiPopupRef& popup_ref = g.OpenPopupStack[g.CurrentPopupStack.Size];
+			popup_ref.OpenPopupPos = pos;
 		}
-		EGUI::UnIndent(mid - (btnSize.x / 2));
+		EGUI::UnIndent(inde);
 		ComponentsDropDownList();
 	}
 
 	void Inspector::ComponentsDropDownList()
 	{
+		std::string components[5] = { "Com1", "Com2", "Com3", "Com4", "Com5" };
 		if (ImGui::BeginPopup("Inspector Component List"))
 		{
+			ImGui::Dummy(ImVec2{ 250 - 15, 5 });
+			for (const auto& e : components)
+				EGUI::Display::SelectableTxt(e, false);
 
 			ImGui::EndPopup();
 		}

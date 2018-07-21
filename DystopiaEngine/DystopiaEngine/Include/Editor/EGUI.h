@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\Dock.h"
 #include "Editor\Payloads.h"
 #include "../../Dependancies/ImGui/imgui.h"
+#include "../../Dependancies/ImGui/imgui_internal.h"
 #include <string>
 
 namespace Dystopia

@@ -15,8 +15,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\EGUI.h"
 #include "Editor\Commands.h"
 #include "Editor\CommandList.h"
-#include "../../Dependancies/ImGui/imgui.h"
-#include "../../Dependancies/ImGui/imgui_internal.h"
 #include <stdlib.h>
 #include <iostream>
 

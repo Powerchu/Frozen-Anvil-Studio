@@ -22,8 +22,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\Vector4.h"
 #include "Math\Vector2.h"
 #include "GL\glew.h"
-#include "../../Dependancies/ImGui/imgui.h"
-#include "../../Dependancies/ImGui/imgui_internal.h"
 #include <iostream>
 #include <Windows.h>
 
