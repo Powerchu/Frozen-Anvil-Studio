@@ -40,3 +40,18 @@ Dystopia::GameObject* Dystopia::Scene::FindGameObject(const std::string& _strNam
 
 	return nullptr;
 }
+
+void Dystopia::Scene::FixedUpdate(float _dt)
+{
+}
+
+void Dystopia::Scene::Update(float _dt)
+{
+}
+
+void Dystopia::Scene::Shutdown(void)
+{
+}
+
+
+

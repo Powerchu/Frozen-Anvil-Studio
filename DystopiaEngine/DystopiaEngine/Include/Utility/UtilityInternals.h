@@ -34,19 +34,19 @@ namespace Interns {
 			b{ std::forward<B>(_beg) }, e{ std::forward<E>(_end) }
 		{}
 
-		inline Itor&& begin()
+		inline Itor begin()
 		{
-			return std::forward<Itor>(b);
+			return (b);
 		}
 
-		inline Itor&& end()
+		inline Itor end()
 		{
-			return std::forward<Itor>(e);
+			return (e);
 		}
 
 	private:
-		Itor&& b;
-		Itor&& e;
+		Itor b;
+		Itor e;
 	};
 
 	template <typename T>
@@ -57,29 +57,31 @@ namespace Interns {
 			b{ std::forward<B>(_beg) }, e{ std::forward<E>(_end) }
 		{}
 
+		using rItor_t = ReverseItor<T*>;
+
 		inline T* begin()
 		{
-			return std::forward<Itor>(b);
+			return b;
 		}
 
 		inline T* end()
 		{
-			return std::forward<Itor>(e);
+			return e;
 		}
 
-		inline T* rbegin()
+		inline rItor_t rbegin()
 		{
-			return --e;
+			return rItor_t{ e };
 		}
 
-		inline T* rend()
+		inline rItor_t rend()
 		{
-			return --b;
+			return rItor_t{ b };
 		}
 
-		inline RangeMaker Reverse(void) const
+		inline RangeMaker<rItor_t> Reverse(void) const
 		{
-			return RangeMaker{ ReverseItor<T*>(e - 1), ReverseItor<T*>(b - 1) };
+			return RangeMaker<rItor_t>{ rItor_t{ e }, rItor_t{ b } };
 		}
 
 	private:
@@ -95,29 +97,31 @@ namespace Interns {
 			b{ std::forward<B>(_beg) }, e{ std::forward<E>(_end) }
 		{}
 
+		using rItor_t = ReverseItor<const T*>;
+
 		inline T* begin()
 		{
-			return std::forward<Itor>(b);
+			return b;
 		}
 
 		inline T* end()
 		{
-			return std::forward<Itor>(e);
+			return e;
 		}
 
 		inline T* rbegin()
 		{
-			return --e;
+			return rItor_t{ --e };
 		}
 
 		inline T* rend()
 		{
-			return --b;
+			return rItor_t{ --b };
 		}
 
-		inline RangeMaker Reverse(void) const
+		inline RangeMaker<rItor_t> Reverse(void) const
 		{
-			return RangeMaker{ e - 1, b - 1 };
+			return RangeMaker<rItor_t>{ rItor_t{ e }, rItor_t{ b } };
 		}
 
 	private:

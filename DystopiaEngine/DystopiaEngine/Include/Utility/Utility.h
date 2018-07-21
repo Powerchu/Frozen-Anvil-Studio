@@ -97,7 +97,7 @@ namespace Utility
 	}
 
 	template <typename T>
-	RangeObj<T> Range(T&& begin, T&& end)
+	Interns::RangeMaker<T> Range(T&& begin, T&& end)
 	{
 		return Interns::RangeMaker<T>{ Forward<T>(begin), Forward<T>(end) };
 	}
@@ -112,8 +112,11 @@ namespace Utility
 	{
 		T mItor;
 
-		explicit ReverseItor(T&& _it) : mItor{ _it }
-		{}
+		template <typename U>
+		explicit ReverseItor(U&& _it) : mItor{ std::forward<U>(_it) }
+		{
+			--mItor; 
+		}
 
 		ReverseItor& operator ++ (void)
 		{
@@ -134,7 +137,7 @@ namespace Utility
 			return *this;
 		}
 
-		ReverseItor operator ++ (int)
+		ReverseItor operator -- (int)
 		{
 			auto ret = *this;
 			++mItor;
