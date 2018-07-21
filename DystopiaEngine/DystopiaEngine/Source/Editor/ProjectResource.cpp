@@ -20,8 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <stdlib.h>
 #include <tchar.h>
 
-static const std::string DEFAULT_PATH = "..\\DystopiaEngine";
-static const std::string DEFAULT_NAME = "DystopiaEngine";
+static const std::string DEFAULT_PATH = "..\\DystopiaEngine\\Resource";
+static const std::string DEFAULT_NAME = "Resource";
 static float delay = 5;
 
 namespace Dystopia
@@ -36,7 +36,8 @@ namespace Dystopia
 
 	Folder::Folder(const std::string& _name, const std::string& _path, Folder * const _parent)
 		: CrawlItem{ _name, _path }, mpParentFolder{ _parent }, mArrPtrFiles{}, mArrPtrFolders{}
-	{}
+	{
+	}
 
 	Folder::~Folder()
 	{
@@ -96,8 +97,9 @@ namespace Dystopia
 	}
 
 	/****************************************************************** PROJECT RESOURCE ********************************************************************/
-	static float time1 = 0.f;
+	
 	static ProjectResource* gpInstance = 0;
+	
 	ProjectResource* ProjectResource::GetInstance()
 	{
 		if (gpInstance) return gpInstance;
@@ -108,8 +110,9 @@ namespace Dystopia
 
 	ProjectResource::ProjectResource()
 		: EditorTab{ true },
-		mLabel{ "Resource View" }, mSearchText{"Dy"}, mSearchTextLastFrame{}, mpRootFolder{ nullptr }, 
-		mpCurrentFolder{ nullptr }, mArrAllFiles{}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{}
+		mLabel{ "Resource View" }, mSearchText{""}, mSearchTextLastFrame{""}, mpRootFolder{ nullptr }, 
+		mpCurrentFolder{ nullptr }, mArrAllFiles{}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
+		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}
 	{}
 
 	ProjectResource::~ProjectResource()
@@ -117,6 +120,9 @@ namespace Dystopia
 
 	void ProjectResource::Init()
 	{
+		mWaitFlags = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | 
+					 FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE | 
+					 FILE_NOTIFY_CHANGE_LAST_WRITE;
 		mpRootFolder = new Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };
 		mpCurrentFolder = mpRootFolder;
 		FullCrawl(mpRootFolder);
@@ -124,13 +130,59 @@ namespace Dystopia
 		mArrAllFiles.clear();
 		GetAllFiles(mArrAllFiles, mpRootFolder);
 		SortAllFiles(mArrAllFiles);
+
+		std::wstring wPath{ DEFAULT_PATH.begin(), DEFAULT_PATH.end() };
+		mChangeHandle[0] = FindFirstChangeNotification(wPath.c_str(), true, mWaitFlags);
+		if (mChangeHandle[0] == INVALID_HANDLE_VALUE || !mChangeHandle[0])
+		{
+			ExitProcess(GetLastError());
+		}
 	}
 
 	void ProjectResource::Update(const float& _dt)
 	{
 		_dt;
-		time1 += _dt;
+		mWaitStatus = WaitForMultipleObjects(1, mChangeHandle, false, 0);
+		switch (mWaitStatus)
+		{
+		case WAIT_OBJECT_0:
+			RefreshResourceFolder();
+			if (!FindNextChangeNotification(mChangeHandle[0]))
+			{
+				ExitProcess(GetLastError());
+			}
+			break;
+		case WAIT_FAILED:
+			ExitProcess(GetLastError());
+			break;
+		}
 
+		UpdateSearch();
+	}
+
+	void ProjectResource::Window()
+	{
+		SearchWindow();
+		FolderWindow();
+		EGUI::SameLine(254);
+		if (!strlen(mSearchText))
+			FileWindow();
+		else
+			SearchResultWindow();
+	}
+
+	void ProjectResource::Shutdown()
+	{
+		mArrFilesSearchedThisFrame.clear();
+		mArrFilesSearchedLastFrame.clear();
+		mArrAllFiles.clear();
+		delete mpRootFolder;
+		mpRootFolder = nullptr;
+		mpCurrentFolder = nullptr;
+	}
+
+	void ProjectResource::UpdateSearch()
+	{
 		std::string currentSearch = mSearchText;
 		std::string previousSearch = mSearchTextLastFrame;
 		if (currentSearch.length() && currentSearch != previousSearch)
@@ -156,28 +208,6 @@ namespace Dystopia
 		}
 	}
 
-	void ProjectResource::Window()
-	{
-		SearchWindow();
-		FolderWindow();
-		EGUI::SameLine(254);
-		if (!strlen(mSearchText))
-			FileWindow();
-		else
-			SearchResultWindow();
-	}
-
-	void ProjectResource::Shutdown()
-	{
-		mArrFilesSearchedThisFrame.clear();
-		mArrFilesSearchedLastFrame.clear();
-		mArrAllFiles.clear();
-		delete mpRootFolder;
-		mpRootFolder = nullptr;
-		mpCurrentFolder = nullptr;
-	}
-
-
 	void ProjectResource::SearchWindow()
 	{
 		EGUI::Indent(5);
@@ -189,19 +219,6 @@ namespace Dystopia
 	void ProjectResource::FolderWindow()
 	{
 		EGUI::StartChild("FolderWindow", Math::Vec2{ 250, Size().y - 55 });
-		if (EGUI::Display::Button("Refresh Current Folder", Math::Vec2{ 235, 20 }) && mpCurrentFolder)
-		{
-			if (strlen(mSearchText))
-			{
-				strcpy_s(mSearchText, "");
-				mpCurrentFolder = mpRootFolder;
-			}
-			mpCurrentFolder->ClearFolder();
-			FullCrawl(mpCurrentFolder);
-			mArrAllFiles.clear();
-			GetAllFiles(mArrAllFiles, mpRootFolder);
-			SortAllFiles(mArrAllFiles);
-		}
 		FolderUI(mpRootFolder);
 		EGUI::EndChild();
 	}
@@ -210,7 +227,7 @@ namespace Dystopia
 	{
 		EGUI::StartChild("FileWindow", Math::Vec2{ Size().x - 260, Size().y - 55 });
 		if (mpCurrentFolder)
-		{
+		{ 
 			EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
 			EGUI::Display::HorizontalSeparator();
 			for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
@@ -250,6 +267,24 @@ namespace Dystopia
 		EGUI::EndChild();
 	}
 
+	void ProjectResource::RefreshResourceFolder()
+	{
+		if (strlen(mSearchText)) strcpy_s(mSearchText, "");
+		std::string currentSelectionName = mpCurrentFolder ? mpCurrentFolder->mName : "";
+
+		mArrAllFiles.clear();
+		mArrFilesSearchedThisFrame.clear();
+		mArrFilesSearchedLastFrame.clear();
+
+		delete mpRootFolder;
+		mpRootFolder = new Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };;
+
+		FullCrawl(mpRootFolder);
+		GetAllFiles(mArrAllFiles, mpRootFolder);
+		SortAllFiles(mArrAllFiles);
+		mpCurrentFolder = FindFolder(currentSelectionName);
+	}
+
 	void ProjectResource::FocusOnFile(const std::string& _fileName)
 	{
 		strcpy_s(mSearchText, "");
@@ -263,10 +298,23 @@ namespace Dystopia
 		return mLabel;
 	}
 
+	Folder* ProjectResource::FindFolder(const std::string& _name)
+	{
+		if (_name.length())
+		{
+			for (auto& e : mArrAllFiles)
+			{
+				if (e->mpParentFolder->mName == _name)
+					return e->mpParentFolder;
+			}
+		}
+		return mpRootFolder;
+	}
+
 	void ProjectResource::FindFile(AutoArray<File*>& _outResult, std::string& _item, const AutoArray<File*>& _fromArr)
 	{
 		MakeStringLower(_item);
-		for (auto e : _fromArr)
+		for (auto& e : _fromArr)
 		{
 			if (!e->mLowerCaseName.find(_item))
 				_outResult.push_back(e);
@@ -275,7 +323,7 @@ namespace Dystopia
 
 	bool ProjectResource::FindFirstOne(AutoArray<File*>& _outResult, const std::string& _item)
 	{
-		for (auto e : mArrAllFiles)
+		for (auto& e : mArrAllFiles)
 		{
 			if (!e->mName.find(_item))
 			{
@@ -288,9 +336,9 @@ namespace Dystopia
 
 	void ProjectResource::GetAllFiles(AutoArray<File*>& _outResult, Folder* _folder)
 	{
-		for (auto e : _folder->mArrPtrFiles)
+		for (auto& e : _folder->mArrPtrFiles)
 			_outResult.push_back(e);
-		for (auto e : _folder->mArrPtrFolders)
+		for (auto& e : _folder->mArrPtrFolders)
 			GetAllFiles(_outResult, e);
 	}
 
@@ -307,7 +355,7 @@ namespace Dystopia
 
 		if (EGUI::Display::StartTreeNode(_folder->mName.c_str(), &clickedThisFrame, flagIt, hideArrow))
 		{
-			for (auto e : _folder->mArrPtrFolders)
+			for (auto& e : _folder->mArrPtrFolders)
 				FolderUI(e);
 			EGUI::Display::EndTreeNode();
 		}
@@ -326,7 +374,7 @@ namespace Dystopia
 	void ProjectResource::FullCrawl(Folder* _folder)
 	{
 		_folder->Crawl();
-		for (auto e : _folder->mArrPtrFolders)
+		for (auto& e : _folder->mArrPtrFolders)
 			FullCrawl(e);
 	}
 
@@ -338,5 +386,4 @@ namespace Dystopia
 }
 
 #endif //EDITOR
-
 

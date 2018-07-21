@@ -16,6 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _PROJECT_RESOURCE_H_
 #include "EditorTab.h"
 
+typedef void *HANDLE;
+typedef unsigned long DWORD;
+
 namespace Dystopia
 {
 	/********************************************************************* FILE & FOLDER *********************************************************************/
@@ -36,6 +39,7 @@ namespace Dystopia
 
 		void				Crawl();
 		void				ClearFolder();
+
 		Folder*				mpParentFolder;
 		AutoArray<File*>	mArrPtrFiles;
 		AutoArray<Folder*>	mArrPtrFolders;
@@ -88,11 +92,15 @@ namespace Dystopia
 		char				mSearchTextLastFrame[MAX_SEARCH];
 		Folder				*mpRootFolder;
 		Folder				*mpCurrentFolder;
+		HANDLE				mChangeHandle[1];
+		DWORD				mWaitStatus;
+		DWORD				mWaitFlags;
 
 		bool				FindFirstOne(AutoArray<File*>& _outResult, const std::string& _item);
 		void				FindFile(AutoArray<File*>& _outResult, std::string& _item, const AutoArray<File*>& _fromArr);
 		void				GetAllFiles(AutoArray<File*>& _outResult, Folder*);
 		void				SortAllFiles(AutoArray<File*>& _outResult);
+		Folder*				FindFolder(const std::string& _name);
 		void				FullCrawl(Folder*);
 		void				FolderUI(Folder*);
 		void				FileUI(File*);
@@ -101,6 +109,8 @@ namespace Dystopia
 		void				FileWindow();
 		void				SearchResultWindow();
 		void				MakeStringLower(std::string& _transformMe);
+		void				UpdateSearch();
+		void				RefreshResourceFolder();
 	};
 }
 
