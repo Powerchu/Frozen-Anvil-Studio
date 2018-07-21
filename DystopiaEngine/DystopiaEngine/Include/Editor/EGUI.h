@@ -137,13 +137,12 @@ namespace EGUI
 		void TextField(const std::string& _label, char *_pOutText, size_t _size);
 		/* =======================================================================================================================
 		Brief:
-				NOT WORKING 10/7/18
 				Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked. 
-				If the last string param is empty, hovering wont show and clicking wont return true
+				If the last bool param is false, hovering wont show and clicking wont return true
 		Usage:
 				EGUI::Display::EmptyBox("Accepting field", 100);
 		======================================================================================================================= */
-		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside="");
+		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside="", bool _iteractive = false);
 		/* =======================================================================================================================
 		Brief:
 				Starts a Collaspe-able header that can be clicked to open or close - Which is also the return-ed bool.
@@ -167,7 +166,8 @@ namespace EGUI
 					// if the variable position is changed in any form. Do someting here:
 				}
 		======================================================================================================================= */
-		bool VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 1.0f, float = 50.f);
+		bool VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, float _min = 0.0f, 
+						  float _max = 1.0f, float = 50.f);
 		/* =======================================================================================================================
 		Brief:
 				Creats a check box for a boolean variable. Returns true when the check box is clicked, toggles the _pOutBool
@@ -262,6 +262,8 @@ namespace EGUI
 		bool StartTreeNode(const std::string& _label, bool* _outClicked = nullptr, bool _highlighted = false, bool _noArrow = false);
 		// Set a specific tree node to be collapsed (closed) or not
 		void OpenTreeNode(const std::string& _label, bool _open);
+		// opens the next tree node
+		void OpenTreeNode(bool _open = true);
 		//End a tree Node
 		void EndTreeNode();
 		/* =======================================================================================================================
@@ -327,19 +329,43 @@ namespace EGUI
 		bool Button(const std::string& _label, const Math::Vec2& _size);
 		/* =======================================================================================================================
 		Brief:
-				Creates a small tick icon
-		Usage:
-				EGUI::Display::TickIcon(10,10);
-		======================================================================================================================= */
-		void TickIcon(float width = 5.f, float height = 5.f, float _thickness = 1.f, Math::Vec4 _colour = Math::Vec4{ 1.f, 1.f, 0.4f, 1.f });
-		/* =======================================================================================================================
-		Brief:
-				Creates a dummy area. Used only to offset ImGui stuff. Does absolutely nothing except for manipulating UI 
+				Creates a dummy area. Used only to offset ImGui stuff. Does absolutely nothing except for manipulating UI
 				arrangements
 		Usage:
 				EGUI::Display::Dummy(10,10);
 		======================================================================================================================= */
 		void Dummy(float width = 0.f, float height = 0.f);
+		/* =======================================================================================================================
+		Brief:
+				Creates a small tick icon
+				For best display, use the same ratio of w and h
+		Usage:
+				EGUI::Display::IconTick(10,10);
+		======================================================================================================================= */
+		void IconTick(float width = 5.f, float height = 5.f, float _thickness = 1.f, 
+					  const Math::Vec4& _colour = Math::Vec4{ 1.f, 1.f, 0.4f, 1.f });
+		/* =======================================================================================================================
+		Brief:
+				Creates a small folder icon. DO NOT have a color with less than 0.3f for any of the RGBA.
+				Returns true when clicked
+				For best display, use a 10 : 6 ratio for width and height respectively.
+		Usage:
+				EGUI::Display::IconFolder();
+		======================================================================================================================= */
+		bool IconFolder(const std::string& _uniqueId, float width = 15.f, float height = 9.f, bool _open = false,
+						const Math::Vec4& _colour = Math::Vec4{ 1.f, 1.f, 0.4f, 1.f });
+		/* =======================================================================================================================
+		Brief:
+				Creates a small circle icon thingy. Like the one you see in unity field boxes.
+				Returns true when clicked
+				For best display, use small radiuses < 10
+		Usage:
+				EGUI::Display::IconCircle();
+		======================================================================================================================= */
+		bool IconCircle(const std::string& _uniqueID, float radius = 10.f, float offsetX = 0.f,
+					    float offsetY = 0.f, const Math::Vec4& _colour = Math::Vec4{ 0.7f, 0.7f, 0.7f, 0.8f });
+
+		void Outline(float _x, float _y);
 	}
 }
 

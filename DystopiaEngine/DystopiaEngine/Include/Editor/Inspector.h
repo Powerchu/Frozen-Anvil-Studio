@@ -51,7 +51,13 @@ namespace Dystopia
 		Math::Vec4		mDemoVec;
 		std::string		mLabel;
 		std::string		mDemoName;
+		
+		bool			mShowListOfComponents;
+		
 		GameObject		*mpFocusGameObj;
+
+		void			AddComponentButton();
+		void			ComponentsDropDownList();
 	};
 }
 

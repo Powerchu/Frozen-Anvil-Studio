@@ -84,12 +84,15 @@ namespace Dystopia
 	private:
 		ProjectResource(void);
 
+		const File*			mFocusedFile;
 		AutoArray<File*>	mArrAllFiles;
 		AutoArray<File*>	mArrFilesSearchedThisFrame;
 		AutoArray<File*>	mArrFilesSearchedLastFrame;
 		std::string			mLabel;
 		char				mSearchText[MAX_SEARCH];
 		char				mSearchTextLastFrame[MAX_SEARCH];
+		float				mFocusMaxDuration;
+		float				mFocusCurDuration;
 		Folder				*mpRootFolder;
 		Folder				*mpCurrentFolder;
 		HANDLE				mChangeHandle[1];

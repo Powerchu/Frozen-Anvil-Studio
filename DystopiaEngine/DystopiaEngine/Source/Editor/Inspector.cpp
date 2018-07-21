@@ -12,9 +12,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
+#include "Editor\EGUI.h"
 #include "Editor\Inspector.h"
 #include "Editor\ProjectResource.h"
-#include "Editor\EGUI.h"
 #include "Editor\Commands.h"
 #include "Editor\CommandList.h"
 #include "Object\GameObject.h"
@@ -80,21 +80,23 @@ namespace Dystopia
 		arr.push_back("item1");
 		arr.push_back("item2");
 
-		if (EGUI::Display::EmptyBox("Box to accept payload", 150, mDemoName))
+		if (EGUI::Display::EmptyBox("Box to accept payload", 150, mDemoName, true) && mDemoName.length())
 		{
 			ProjectResource::GetInstance()->FocusOnFile(mDemoName);
 		}
-
 		if (File *t = EGUI::Display::StartPayloadReceiver<File>(EGUI::FILE))
 		{
 			mpComdHandler->InvokeCommand(new ComdModifyValue<std::string>{ &mDemoName, (*t).mName });
 			EGUI::Display::EndPayloadReceiver();
 		}
-
+		EGUI::SameLine(); 
+		if (EGUI::Display::IconCircle("payload1box", 6, 0, 3) && mDemoName.length())
+		{
+			ProjectResource::GetInstance()->FocusOnFile(mDemoName);
+		}
 		EGUI::Display::DropDownSelection("TestDropDown", i, arr);
 
-		if (!mpFocusGameObj) return;
-
+		AddComponentButton();
 	}
 
 	void Inspector::Shutdown()
@@ -115,6 +117,29 @@ namespace Dystopia
 	void Inspector::RemoveFocus()
 	{
 		mpFocusGameObj = nullptr;
+	}
+
+	void Inspector::AddComponentButton()
+	{
+		static const ImVec2 btnSize{250, 20};
+		float mid = Size().x / 2;
+
+		EGUI::Indent(mid - (btnSize.x / 2));
+		if (ImGui::Button("Add Component", btnSize))
+		{
+			ImGui::OpenPopup("Inspector Component List");
+		}
+		EGUI::UnIndent(mid - (btnSize.x / 2));
+		ComponentsDropDownList();
+	}
+
+	void Inspector::ComponentsDropDownList()
+	{
+		if (ImGui::BeginPopup("Inspector Component List"))
+		{
+
+			ImGui::EndPopup();
+		}
 	}
 }
 

@@ -331,7 +331,7 @@ namespace Dystopia
 			for (auto& e : mTabsArray)
 			{
 				if (*(e->GetOpenedBool())) 
-					EGUI::Display::TickIcon(10, 10);
+					EGUI::Display::IconTick(10, 10);
 				else 
 					EGUI::Display::Dummy(10, 10);
 

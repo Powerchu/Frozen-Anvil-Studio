@@ -110,9 +110,10 @@ namespace Dystopia
 
 	ProjectResource::ProjectResource()
 		: EditorTab{ true },
-		mLabel{ "Resource View" }, mSearchText{""}, mSearchTextLastFrame{""}, mpRootFolder{ nullptr }, 
+		mLabel{ "Resource View" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
 		mpCurrentFolder{ nullptr }, mArrAllFiles{}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
-		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}
+		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mFocusMaxDuration{ 0 },
+		mFocusCurDuration{ 0 }
 	{}
 
 	ProjectResource::~ProjectResource()
@@ -123,6 +124,7 @@ namespace Dystopia
 		mWaitFlags = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | 
 					 FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE | 
 					 FILE_NOTIFY_CHANGE_LAST_WRITE;
+
 		mpRootFolder = new Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };
 		mpCurrentFolder = mpRootFolder;
 		FullCrawl(mpRootFolder);
@@ -156,7 +158,6 @@ namespace Dystopia
 			ExitProcess(GetLastError());
 			break;
 		}
-
 		UpdateSearch();
 	}
 
@@ -177,6 +178,7 @@ namespace Dystopia
 		mArrFilesSearchedLastFrame.clear();
 		mArrAllFiles.clear();
 		delete mpRootFolder;
+		mFocusedFile = nullptr;
 		mpRootFolder = nullptr;
 		mpCurrentFolder = nullptr;
 	}
@@ -245,7 +247,6 @@ namespace Dystopia
 	void ProjectResource::SearchResultWindow()
 	{
 		EGUI::StartChild("SearchResultWindow", Math::Vec2{ Size().x - 260, Size().y - 55 });
-
 		EGUI::Display::Label("Searching: %s", mSearchText);
 		EGUI::Display::HorizontalSeparator();
 		size_t size = mArrFilesSearchedThisFrame.size();
@@ -290,7 +291,16 @@ namespace Dystopia
 		strcpy_s(mSearchText, "");
 		mArrFilesSearchedLastFrame.clear();
 		mArrFilesSearchedThisFrame.clear();
-		mpCurrentFolder = FindFirstOne(mArrFilesSearchedThisFrame, _fileName) ? mArrFilesSearchedThisFrame[0]->mpParentFolder : mpRootFolder;
+		if (FindFirstOne(mArrFilesSearchedThisFrame, _fileName))
+		{
+			mpCurrentFolder = mArrFilesSearchedThisFrame[0]->mpParentFolder;
+			mFocusedFile = mArrFilesSearchedThisFrame[0];
+		}
+		else
+		{
+			mpCurrentFolder = mpRootFolder;
+			mFocusedFile = nullptr;
+		}
 	}
 
 	std::string ProjectResource::GetLabel() const
@@ -350,23 +360,38 @@ namespace Dystopia
 	void ProjectResource::FolderUI(Folder* _folder)
 	{
 		bool clickedThisFrame = false;
+		bool clickedFolderIcon = false;
 		bool flagIt = (mpCurrentFolder == _folder) ? true : false;
 		bool hideArrow = _folder->mArrPtrFolders.size() ? false : true;
-
+		if (EGUI::Display::IconFolder(_folder->mLowerCaseName, 15, 9, flagIt))
+		{
+			clickedFolderIcon = true;
+			EGUI::Display::OpenTreeNode();
+		}
+		EGUI::SameLine();
 		if (EGUI::Display::StartTreeNode(_folder->mName.c_str(), &clickedThisFrame, flagIt, hideArrow))
 		{
 			for (auto& e : _folder->mArrPtrFolders)
 				FolderUI(e);
 			EGUI::Display::EndTreeNode();
 		}
-		mpCurrentFolder = (clickedThisFrame) ? _folder : mpCurrentFolder;
+		if (clickedThisFrame || clickedFolderIcon)
+		{
+			mFocusedFile = nullptr;
+			mpCurrentFolder = _folder;
+		}
 	}
 
 	void ProjectResource::FileUI(File* _file)
 	{
-		EGUI::Display::Button(_file->mName.c_str(), Math::Vec2{ 200, 20 });
+		static const Math::Vec2 btnSize{ 200, 20 };
+
+		if (_file == mFocusedFile) EGUI::Display::Outline(200, 20);
+
+		EGUI::Display::Button(_file->mName.c_str(), btnSize);
 		if (EGUI::Display::StartPayload(EGUI::FILE, &(*_file), sizeof(File), _file->mName.c_str()))
 		{
+			mFocusedFile = nullptr;
 			EGUI::Display::EndPayload();
 		}
 	}
