@@ -145,6 +145,7 @@ namespace Dystopia
 		//mpGfx->Update(_dt);
 		for (unsigned int i = 0; i < mTabsArray.size(); ++i)
 		{
+			EGUI::PushID(i);
 			EditorTab *pTab = mTabsArray[i];
 			pTab->Update(_dt);
 
@@ -168,6 +169,7 @@ namespace Dystopia
 				pTab->Window();
 			}
 			EGUI::EndTab();
+			EGUI::PopID();
 		}
 
 		// if (mCurrentState == EDITOR_PLAY) call for update of current scene

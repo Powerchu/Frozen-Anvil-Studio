@@ -165,7 +165,7 @@ namespace Dystopia
 	{
 		SearchWindow();
 		FolderWindow();
-		EGUI::SameLine(254);
+		EGUI::SameLine(2);
 		if (!strlen(mSearchText))
 			FileWindow();
 		else
@@ -213,7 +213,7 @@ namespace Dystopia
 	void ProjectResource::SearchWindow()
 	{
 		EGUI::Indent(5);
-		EGUI::ChangeLabelSpacing(55);
+		EGUI::ChangeLabelSpacing(10);
 		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH);
 		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(5);
@@ -222,14 +222,14 @@ namespace Dystopia
 
 	void ProjectResource::FolderWindow()
 	{
-		EGUI::StartChild("FolderWindow", Math::Vec2{ 250, Size().y - 55 });
+		EGUI::StartChild("FolderWindow", Math::Vec2{ 200, Size().y - 55 });
 		FolderUI(mpRootFolder);
 		EGUI::EndChild();
 	}
 
 	void ProjectResource::FileWindow()
 	{
-		EGUI::StartChild("FileWindow", Math::Vec2{ Size().x - 260, Size().y - 55 });
+		EGUI::StartChild("FileWindow", Math::Vec2{ Size().x - 200, Size().y - 55 });
 		if (mpCurrentFolder)
 		{ 
 			EGUI::Display::Label(mpCurrentFolder->mPath.c_str());

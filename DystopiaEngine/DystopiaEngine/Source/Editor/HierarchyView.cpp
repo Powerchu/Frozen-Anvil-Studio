@@ -32,7 +32,7 @@ namespace Dystopia
 
 	HierarchyView::HierarchyView()
 		: EditorTab{ true }, 
-		mLabel{ "Hierarchy" }, mpFocusGameObj{ nullptr }, mpCurrentScene{ nullptr }
+		mLabel{ "Hierarchy" }, mpFocusGameObj{ nullptr }, mpCurrentScene{ nullptr }, mSearchText{ "" }
 	{
 	}
 
@@ -61,10 +61,8 @@ namespace Dystopia
 	void HierarchyView::Window()
 	{
 		SearchBar();
-		EGUI::SameLine();
-		CreateButton();
 
-		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 52 }))
+		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
 
 		}
@@ -87,10 +85,11 @@ namespace Dystopia
 	void HierarchyView::SearchBar()
 	{
 		EGUI::Indent(5);
-		EGUI::ChangeLabelSpacing(55);
-		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH);
+		EGUI::ChangeLabelSpacing(10);
+		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, true);
 		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(5);
+		EGUI::Display::HorizontalSeparator();
 	}
 }
 

@@ -50,6 +50,8 @@ namespace EGUI
 	void RemoveContext();
 	void ChangeLabelSpacing(float _amount);
 	void ChangeLabelSpacing();
+	void ChangeAlignmentYOffset(float _amount);
+	void ChangeAlignmentYOffset();
 
 	bool StartMainMenuBar();
 	bool StartMenuHeader(const std::string&);
@@ -112,7 +114,7 @@ namespace EGUI
 			EGUI::SameLine();
 			EGUI::Display::Label("end");
 	======================================================================================================================= */
-	void SameLine(float _customOffset = 0.f);
+	void SameLine(float _customOffset = 5.f);
 
 	namespace Display
 	{

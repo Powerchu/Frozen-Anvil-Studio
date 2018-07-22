@@ -75,8 +75,7 @@ namespace Dystopia
 			EGUI::Display::Label("Variable mDemoVec x : [%.3f] y: [%.3f] z:[%.3f]", x, y, z);
 			EGUI::UnIndent();
 		}
-
-		if (EGUI::Display::EmptyBox("Box to accept payload", 150, mDemoName, true) && mDemoName.length())
+		if (EGUI::Display::EmptyBox("Payload", 150, mDemoName, true) && mDemoName.length())
 		{
 			ProjectResource::GetInstance()->FocusOnFile(mDemoName);
 		}
@@ -116,20 +115,20 @@ namespace Dystopia
 		char arr3[MAX_SEARCH] = "This is where the object name goes";
 		static bool checked = true;
 
-		EGUI::PushID(0);
 		EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
-		EGUI::SameLine(55);
+		EGUI::SameLine(10);
 		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 50 }, false, Math::Vec4{ 0,0,0,0 }))
 		{
 			EGUI::Display::CheckBox("GameObjActive", &checked, false);
 			EGUI::SameLine();
-			EGUI::Display::TextField("GameObjName", arr3, MAX_SEARCH, false);
-			EGUI::Display::DropDownSelection("Tag", i, arr, 250);
+			EGUI::Display::TextField("GameObjName", arr3, MAX_SEARCH, false, 350.f);
+			EGUI::Display::DropDownSelection("Tag", i, arr, 100);
 			EGUI::SameLine();
-			EGUI::Display::DropDownSelection("Layer", j, arr2, 250);
+			EGUI::ChangeAlignmentYOffset(0);
+			EGUI::Display::DropDownSelection("Layer", j, arr2, 100);
+			EGUI::ChangeAlignmentYOffset();
 		}
 		EGUI::EndChild();
-		EGUI::PopID();
 	}
 
 	std::string Inspector::GetLabel() const

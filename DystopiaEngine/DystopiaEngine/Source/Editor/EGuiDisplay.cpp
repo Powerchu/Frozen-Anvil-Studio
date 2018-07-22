@@ -18,9 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <stdlib.h>
 #include <iostream>
 
-constexpr float Default_VectorField_Alignment_Left = 100.f;
-constexpr float Default_VectorField_Alignment_Height = 3.0f;
-static float Default_Alightnment_Labels_And_Items = 150.f;
+static float DefaultAlighnmentOffsetY = 3.f;
+static float DefaultAlighnmentSpacing = 10.f;
 Dystopia::CommandHandler *gContextComdHND = nullptr;
 
 namespace EGUI
@@ -37,12 +36,22 @@ namespace EGUI
 
 	void ChangeLabelSpacing(float _amount)
 	{
-		Default_Alightnment_Labels_And_Items = _amount;
+		DefaultAlighnmentSpacing = _amount;
 	}
 
 	void ChangeLabelSpacing()
 	{
-		Default_Alightnment_Labels_And_Items = 150.f;
+		DefaultAlighnmentSpacing = 10.f;
+	}
+
+	void ChangeAlignmentYOffset(float _amount)
+	{
+		DefaultAlighnmentOffsetY = _amount;
+	}
+
+	void ChangeAlignmentYOffset()
+	{
+		DefaultAlighnmentOffsetY = 3.f;
 	}
 
 	bool StartTab(const std::string& _label, bool *_pOpen, ImGuiWindowFlags _flags)
@@ -113,7 +122,7 @@ namespace EGUI
 
 	void SameLine(float _customOffset)
 	{
-		ImGui::SameLine(_customOffset);
+		ImGui::SameLine(0, _customOffset);
 	}
 
 	void PushID(int id)
@@ -149,10 +158,10 @@ namespace EGUI
 			ImGui::PushItemWidth(_width);
 			if (_showLabel)
 			{
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(Default_Alightnment_Labels_And_Items);
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+				SameLine(DefaultAlighnmentSpacing);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags);
 			ImGui::PopItemWidth();
@@ -168,10 +177,10 @@ namespace EGUI
 
 			if (_showLabel)
 			{
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(Default_Alightnment_Labels_And_Items);
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+				SameLine(DefaultAlighnmentSpacing);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 
 			ImGui::PushItemWidth(_width);
@@ -193,10 +202,10 @@ namespace EGUI
 			bool changed = false;
 			if (_showLabel)
 			{
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(Default_Alightnment_Labels_And_Items);
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+				SameLine(DefaultAlighnmentSpacing);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			if (ImGui::Checkbox(("###CheckBox" + _label).c_str(), _outputBool))
 			{
@@ -216,10 +225,10 @@ namespace EGUI
 		bool DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max)
 		{
 			bool changed = false;
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine(Default_Alightnment_Labels_And_Items);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			SameLine(DefaultAlighnmentSpacing);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			if (ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max))
 			{
 				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
@@ -238,10 +247,10 @@ namespace EGUI
 		bool DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max)
 		{
 			bool changed = false;
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine(Default_Alightnment_Labels_And_Items);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			SameLine(DefaultAlighnmentSpacing);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			if (ImGui::DragInt(("###DragInt" + _label).c_str(), _outputInt, _dragSpeed, _min, _max))
 			{
 				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
@@ -270,12 +279,12 @@ namespace EGUI
 			field3 += _label;
 
 			ImGui::PushItemWidth(_width);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine(Default_Alightnment_Labels_And_Items);
+			SameLine(DefaultAlighnmentSpacing);
 			Label("X:");
 			SameLine();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			if (ImGui::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max))
 			{
 				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
@@ -415,10 +424,10 @@ namespace EGUI
 				arrCharPtr.push_back(e.c_str());
 
 			ImGui::PushItemWidth(_width);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
 			SameLine();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			bool ret = ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), arrCharPtr.size());
 			ImGui::PopItemWidth();
 			return ret;
