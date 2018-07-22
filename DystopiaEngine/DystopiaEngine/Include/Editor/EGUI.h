@@ -48,6 +48,9 @@ namespace EGUI
 {
 	void SetContext(Dystopia::CommandHandler *_pContext);
 	void RemoveContext();
+	void ChangeLabelSpacing(float _amount);
+	void ChangeLabelSpacing();
+
 	bool StartMainMenuBar();
 	bool StartMenuHeader(const std::string&);
 	bool StartMenuBody(const std::string&, const std::string& _shortcut="");
@@ -135,7 +138,7 @@ namespace EGUI
 				char buffer[size];
 				EGUI::Display::TextField("This is an editable text field: ", &buffer, size);
 		======================================================================================================================= */
-		void TextField(const std::string& _label, char *_pOutText, size_t _size);
+		void TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true);
 		/* =======================================================================================================================
 		Brief:
 				Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked. 
@@ -143,7 +146,8 @@ namespace EGUI
 		Usage:
 				EGUI::Display::EmptyBox("Accepting field", 100);
 		======================================================================================================================= */
-		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside="", bool _iteractive = false);
+		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside="", 
+					  bool _iteractive = false, bool _showLabel = true);
 		/* =======================================================================================================================
 		Brief:
 				Starts a Collaspe-able header that can be clicked to open or close - Which is also the return-ed bool.
@@ -179,7 +183,7 @@ namespace EGUI
 					// The checkbox is clicked (toggleMe if its true or false does not matter). Do something here:
 				}
 		======================================================================================================================= */
-		bool CheckBox(const std::string& _label, bool *_pOutBool);
+		bool CheckBox(const std::string& _label, bool *_pOutBool, bool _showLabel = true);
 		/* =======================================================================================================================
 		Brief:
 				Creates a draggable float editable field. Returns if the value is changed
@@ -320,7 +324,7 @@ namespace EGUI
 				arr.push_back("item2");
 				EGUI::Display::DropDownSelection("TestDropDown", i, arr);
 		======================================================================================================================= */
-		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems);
+		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width = 100);
 		/* =======================================================================================================================
 		Brief:
 				Creates a button
@@ -351,7 +355,7 @@ namespace EGUI
 				Returns true when clicked
 				For best display, use a 10 : 6 ratio for width and height respectively.
 		Usage:
-				EGUI::Display::IconFolder();
+				EGUI::Display::IconFolder("something");
 		======================================================================================================================= */
 		bool IconFolder(const std::string& _uniqueId, float width = 15.f, float height = 9.f, bool _open = false,
 						const Math::Vec4& _colour = Math::Vec4{ 1.f, 1.f, 0.4f, 1.f });
@@ -361,11 +365,23 @@ namespace EGUI
 				Returns true when clicked
 				For best display, use small radiuses < 10
 		Usage:
-				EGUI::Display::IconCircle();
+				EGUI::Display::IconCircle("something");
 		======================================================================================================================= */
 		bool IconCircle(const std::string& _uniqueID, float radius = 10.f, float offsetX = 0.f,
 					    float offsetY = 0.f, const Math::Vec4& _colour = Math::Vec4{ 0.7f, 0.7f, 0.7f, 0.8f });
-
+		/* =======================================================================================================================
+		Brief:
+				Creates a small game object icon. Returns true when clicked
+		Usage:
+				EGUI::Display::IconGameObj("something");
+		======================================================================================================================= */
+		bool IconGameObj(const std::string& _uniqueId, float _width = 10.f, float _height = 10.f);
+		/* =======================================================================================================================
+		Brief:
+				Creates a box outline given the width and height
+		Usage:
+				EGUI::Display::Outline(your ui width, height);
+		======================================================================================================================= */
 		void Outline(float _x, float _y);
 	}
 }

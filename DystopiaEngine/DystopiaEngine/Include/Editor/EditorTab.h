@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	static constexpr size_t MAX_SEARCH = 64;
 	class CommandHandler;
 	class EditorTab
 	{

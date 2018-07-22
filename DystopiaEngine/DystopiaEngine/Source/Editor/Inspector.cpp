@@ -56,6 +56,8 @@ namespace Dystopia
 
 	void Inspector::Window()
 	{
+		GameObjectDetails();
+
 		float x = mDemoVec.x;
 		float y = mDemoVec.y;
 		float z = mDemoVec.z;
@@ -74,12 +76,6 @@ namespace Dystopia
 			EGUI::UnIndent();
 		}
 
-		static int i = 0;
-		AutoArray<std::string> arr;
-		arr.push_back("");
-		arr.push_back("item1");
-		arr.push_back("item2");
-
 		if (EGUI::Display::EmptyBox("Box to accept payload", 150, mDemoName, true) && mDemoName.length())
 		{
 			ProjectResource::GetInstance()->FocusOnFile(mDemoName);
@@ -94,7 +90,8 @@ namespace Dystopia
 		{
 			ProjectResource::GetInstance()->FocusOnFile(mDemoName);
 		}
-		EGUI::Display::DropDownSelection("TestDropDown", i, arr);
+
+
 
 		AddComponentButton();
 	}
@@ -102,6 +99,37 @@ namespace Dystopia
 	void Inspector::Shutdown()
 	{
 		mpFocusGameObj = nullptr;
+	}
+
+	void Inspector::GameObjectDetails()
+	{
+		static int i = 0;
+		static int j = 0;
+		AutoArray<std::string> arr;
+		arr.push_back("");
+		arr.push_back("item1");
+		arr.push_back("item2");
+		AutoArray<std::string> arr2;
+		arr2.push_back("item3");
+		arr2.push_back("item4");
+		arr2.push_back("item5");
+		char arr3[MAX_SEARCH];
+		bool checked = true;
+
+		EGUI::PushID(0);
+		EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
+		EGUI::SameLine(55);
+		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 50 }, false, Math::Vec4{ 0,0,0,0 }))
+		{
+			EGUI::Display::CheckBox("GameObjActive", &checked, false);
+			EGUI::SameLine();
+			EGUI::Display::TextField("GameObjName", arr3, MAX_SEARCH, false);
+			EGUI::Display::DropDownSelection("Tag", i, arr, 250);
+			EGUI::SameLine();
+			EGUI::Display::DropDownSelection("Layer", j, arr2, 250);
+		}
+		EGUI::EndChild();
+		EGUI::PopID();
 	}
 
 	std::string Inspector::GetLabel() const

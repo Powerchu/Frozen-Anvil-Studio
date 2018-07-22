@@ -56,6 +56,7 @@ namespace Dystopia
 		
 		GameObject		*mpFocusGameObj;
 
+		void			GameObjectDetails();
 		void			AddComponentButton();
 		void			ComponentsDropDownList();
 	};

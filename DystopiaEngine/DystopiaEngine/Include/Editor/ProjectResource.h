@@ -57,7 +57,6 @@ namespace Dystopia
 
 	/****************************************************************** PROJECT RESOURCE ********************************************************************/
 
-	static constexpr size_t MAX_SEARCH = 64;
 	class ProjectResource : public EditorTab
 	{
 	public:

@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 constexpr float Default_VectorField_Alignment_Left = 100.f;
 constexpr float Default_VectorField_Alignment_Height = 3.0f;
-constexpr float Default_Alightnment_Labels_And_Items = 150.f;
+static float Default_Alightnment_Labels_And_Items = 150.f;
 Dystopia::CommandHandler *gContextComdHND = nullptr;
 
 namespace EGUI
@@ -33,6 +33,16 @@ namespace EGUI
 	void RemoveContext()
 	{
 		gContextComdHND = nullptr;
+	}
+
+	void ChangeLabelSpacing(float _amount)
+	{
+		Default_Alightnment_Labels_And_Items = _amount;
+	}
+
+	void ChangeLabelSpacing()
+	{
+		Default_Alightnment_Labels_And_Items = 150.f;
 	}
 
 	bool StartTab(const std::string& _label, bool *_pOpen, ImGuiWindowFlags _flags)
@@ -131,20 +141,23 @@ namespace EGUI
 			va_end(args);
 		}
 
-		void TextField(const std::string& _label, char* _outputbuffer, size_t _size)
+		void TextField(const std::string& _label, char* _outputbuffer, size_t _size, bool _showLabel)
 		{
 			ImGuiInputTextFlags flags = ImGuiInputTextFlags_CharsHexadecimal |
 				ImGuiInputTextFlags_AutoSelectAll |
 				ImGuiInputTextFlags_EnterReturnsTrue;
 
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
-			Label(_label.c_str());
-			SameLine(Default_Alightnment_Labels_And_Items);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			if (_showLabel)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
+				Label(_label.c_str());
+				SameLine(Default_Alightnment_Labels_And_Items);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			}
 			ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags);
 		}
 
-		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside, bool _iteractive)
+		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside, bool _iteractive, bool _showLabel)
 		{
 			bool clicked = false;
 			ImVec4 greyColor = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
@@ -152,10 +165,13 @@ namespace EGUI
 			ImVec4 btnActiveColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive);
 			bool show = _iteractive ? true : false;
 
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
-			Label(_label.c_str());
-			SameLine(Default_Alightnment_Labels_And_Items);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			if (_showLabel)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
+				Label(_label.c_str());
+				SameLine(Default_Alightnment_Labels_And_Items);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			}
 
 			ImGui::PushItemWidth(_width);
 			ImGui::PushStyleColor(ImGuiCol_Button, greyColor);
@@ -171,13 +187,16 @@ namespace EGUI
 			return clicked;
 		}
 
-		bool CheckBox(const std::string& _label, bool* _outputBool)
+		bool CheckBox(const std::string& _label, bool* _outputBool, bool _showLabel)
 		{
 			bool changed = false;
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
-			Label(_label.c_str());
-			SameLine(Default_Alightnment_Labels_And_Items);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			if (_showLabel)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
+				Label(_label.c_str());
+				SameLine(Default_Alightnment_Labels_And_Items);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
+			}
 			if (ImGui::Checkbox(("###CheckBox" + _label).c_str(), _outputBool))
 			{
 				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
@@ -388,17 +407,20 @@ namespace EGUI
 			ImGui::EndDragDropTarget();
 		}
 
-		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems)
+		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width)
 		{
 			AutoArray<const char*> arrCharPtr;
 			for (const auto &e : _arrOfItems)
 				arrCharPtr.push_back(e.c_str());
 
+			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
 			Label(_label.c_str());
-			SameLine(Default_Alightnment_Labels_And_Items);
+			SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
-			return ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), arrCharPtr.size());
+			bool ret = ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), arrCharPtr.size());
+			ImGui::PopItemWidth();
+			return ret;
 		}
 
 		bool Button(const std::string& _label, const Math::Vec2& _size)
@@ -427,10 +449,10 @@ namespace EGUI
 
 		bool IconFolder(const std::string& _uniqueId, float width, float height, bool _open, const Math::Vec4& _colour)
 		{
-			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
-			ImVec2			pos = ImGui::GetCursorScreenPos();
-			const ImU32		col32 = static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
-			const ImU32		col32Dull = static_cast<ImColor>(ImVec4{ _colour.x - 0.2f, _colour.y - 0.2f, _colour.z - 0.2f, _colour.w });
+			ImDrawList*		pCanvas		= ImGui::GetWindowDrawList();
+			ImVec2			pos			= ImGui::GetCursorScreenPos();
+			const ImU32		col32		= static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
+			const ImU32		col32Dull	= static_cast<ImColor>(ImVec4{ _colour.x - 0.2f, _colour.y - 0.2f, _colour.z - 0.2f, _colour.w });
 			const float iconWidth = (width * 0.8f);
 			const float offset = (height * 0.2f);
 			ImVec2 topLeft{ pos.x, pos.y + offset };
@@ -486,14 +508,54 @@ namespace EGUI
 		bool IconCircle(const std::string& _uniqueId, float radius, float offsetX, float offsetY, const Math::Vec4& _colour)
 		{
 			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
-			ImVec2			pos = ImGui::GetCursorScreenPos();
-			const ImU32		col32 = static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
+			ImVec2			pos		= ImGui::GetCursorScreenPos();
+			const ImU32		col32	= static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
 
 			ImVec2 centre{ pos.x + radius + offsetX, pos.y + radius + offsetY };
 			pCanvas->AddCircle(centre, radius, col32);
 			pCanvas->AddCircleFilled(centre, radius / 4, col32);
 			return ImGui::InvisibleButton(("##iconCircle" + _uniqueId).c_str(), 
 				   ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
+		}
+
+		bool IconGameObj(const std::string& _uniqueId, float _width, float _height)
+		{
+			const ImU32		col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
+			const ImU32		col32G = static_cast<ImColor>(ImVec4{ 0,1,0,1 });
+			const ImU32		col32B = static_cast<ImColor>(ImVec4{ 0,0,1,1 });
+			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
+			ImVec2			pos		= ImGui::GetCursorScreenPos();
+			ImVec2 midTop{ pos.x + (_width/2), pos.y };
+			ImVec2 mid{ midTop.x, midTop.y + (_width /3) };
+			ImVec2 midBot{ mid.x, midTop.y + (_height * 0.8f) };
+			ImVec2 midLeft{ pos.x + (_width * 0.1f), (midTop.y + mid.y) / 2 };
+			ImVec2 midRight{ pos.x + (_width * 0.9f), midLeft.y };
+			ImVec2 botLeft{ midLeft.x + (_width / 8), midTop.y + (3 * (_height /5))};
+			ImVec2 botRight{ midRight.x - (_width / 8), botLeft.y };
+
+			pCanvas->PathClear();
+			pCanvas->PathLineTo(midTop);
+			pCanvas->PathLineTo(midLeft);
+			pCanvas->PathLineTo(mid);
+			pCanvas->PathLineTo(midRight);
+			//pCanvas->PathFillConvex(col32G);
+			pCanvas->PathStroke(col32G, true);
+			pCanvas->PathClear();
+			pCanvas->PathLineTo(midLeft);
+			pCanvas->PathLineTo(botLeft);
+			pCanvas->PathLineTo(midBot);
+			//pCanvas->PathLineTo(mid);
+			//pCanvas->PathFillConvex(col32B);
+			pCanvas->PathStroke(col32B, false);
+			pCanvas->PathClear();
+			pCanvas->PathLineTo(mid);
+			pCanvas->PathLineTo(midBot);
+			pCanvas->PathLineTo(botRight);
+			pCanvas->PathLineTo(midRight);
+			//pCanvas->PathFillConvex(col32R);
+			pCanvas->PathStroke(col32R, false);
+
+			return ImGui::InvisibleButton(("##iconGameObj" + _uniqueId).c_str(), ImVec2{ _width, _height });
 		}
 		
 		void Outline(float _x, float _y)
@@ -508,7 +570,6 @@ namespace EGUI
 			if (push_clip_rect) window->DrawList->PushClipRectFullScreen();
 			window->DrawList->AddRect(r.Min, r.Max, ImGui::GetColorU32(ImGuiCol_DragDropTarget), 0.0f, ~0, 2.0f);
 			if (push_clip_rect) window->DrawList->PopClipRect();
-
 
 			ImGui::SetCursorScreenPos(pos);
 		}
