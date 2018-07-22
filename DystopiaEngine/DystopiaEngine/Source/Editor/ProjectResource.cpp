@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <stdlib.h>
 #include <tchar.h>
 
-static const std::string DEFAULT_PATH = "..\\DystopiaEngine\\Resource";
+static const std::string DEFAULT_PATH = "..\\DystopiaEngine";// \\Resource";
 static const std::string DEFAULT_NAME = "Resource";
 static float delay = 5;
 
@@ -166,10 +166,12 @@ namespace Dystopia
 		SearchWindow();
 		FolderWindow();
 		EGUI::SameLine(2);
+		EGUI::StartChild("FileWindow", Math::Vec2{ Size().x - 210, Size().y - 55 });
 		if (!strlen(mSearchText))
 			FileWindow();
 		else
 			SearchResultWindow();
+		EGUI::EndChild();
 	}
 
 	void ProjectResource::Shutdown()
@@ -212,9 +214,11 @@ namespace Dystopia
 
 	void ProjectResource::SearchWindow()
 	{
+		float width = Size().x - 70;
+		width = (width < 20) ? 20 : width;
 		EGUI::Indent(5);
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH);
+		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, true, width);
 		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(5);
 		EGUI::Display::HorizontalSeparator();
@@ -229,26 +233,25 @@ namespace Dystopia
 
 	void ProjectResource::FileWindow()
 	{
-		EGUI::StartChild("FileWindow", Math::Vec2{ Size().x - 200, Size().y - 55 });
 		if (mpCurrentFolder)
 		{ 
 			EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
 			EGUI::Display::HorizontalSeparator();
 			for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
 			{
-				EGUI::Indent(10);
+				EGUI::Indent(10);// +(i * 210));
 				EGUI::PushID(i);
 				FileUI(mpCurrentFolder->mArrPtrFiles[i]);
 				EGUI::PopID();
-				EGUI::UnIndent(10);
+				EGUI::UnIndent(10);// +(i * 210));
+				//if ( i <  mpCurrentFolder->mArrPtrFiles.size() - 1)
+				//	EGUI::SameLine();
 			}
 		}
-		EGUI::EndChild();
 	}
 	
 	void ProjectResource::SearchResultWindow()
 	{
-		EGUI::StartChild("SearchResultWindow", Math::Vec2{ Size().x - 260, Size().y - 55 });
 		EGUI::Display::Label("Searching: %s", mSearchText);
 		EGUI::Display::HorizontalSeparator();
 		size_t size = mArrFilesSearchedThisFrame.size();
@@ -267,7 +270,6 @@ namespace Dystopia
 		{
 			EGUI::Display::Label("%s cannot be found", mSearchText);
 		}
-		EGUI::EndChild();
 	}
 
 	void ProjectResource::RefreshResourceFolder()

@@ -389,8 +389,8 @@ void DockSpace::SplitTabHorizontal(Tabs *_pTab, ImVec2& _oDSize, ImVec2& _oPos0,
 	ImVec2 min_size0 = _pTab->mArrChildPtr[0]->GetMinSize();
 	ImVec2 min_size1 = _pTab->mArrChildPtr[1]->GetMinSize();
 
-	ImGui::SetCursorScreenPos(ImVec2(_pTab->mPos.x + _oSize0.x - 5, _pTab->mPos.y));
-	ImGui::InvisibleButton("split", ImVec2(10, _pTab->mSize.y));
+	ImGui::SetCursorScreenPos(ImVec2(_pTab->mPos.x + _oSize0.x - 2.5f, _pTab->mPos.y));
+	ImGui::InvisibleButton("split", ImVec2(5, _pTab->mSize.y));
 	if (_pTab->mStatus == eSTATUS_DRAGGED)
 		_oDSize.x = ImGui::GetIO().MouseDelta.x;
 	_oDSize.x = -ImMin(-_oDSize.x, _pTab->mArrChildPtr[0]->mSize.x - min_size0.x);
@@ -409,8 +409,8 @@ void DockSpace::SplitTabVertical(Tabs *_pTab, ImVec2& _oDSize, ImVec2& _oPos0, I
 {
 	ImVec2 min_size0 = _pTab->mArrChildPtr[0]->GetMinSize();
 	ImVec2 min_size1 = _pTab->mArrChildPtr[1]->GetMinSize();
-	ImGui::SetCursorScreenPos(ImVec2(_pTab->mPos.x, _pTab->mPos.y + _oSize0.y - 5));
-	ImGui::InvisibleButton("split", ImVec2(_pTab->mSize.x, 10));
+	ImGui::SetCursorScreenPos(ImVec2(_pTab->mPos.x, _pTab->mPos.y + _oSize0.y - 2.5f));
+	ImGui::InvisibleButton("split", ImVec2(_pTab->mSize.x, 5));
 	if (_pTab->mStatus == eSTATUS_DRAGGED)
 		_oDSize.y = ImGui::GetIO().MouseDelta.y;
 	_oDSize.y = -ImMin(-_oDSize.y, _pTab->mArrChildPtr[0]->mSize.y - min_size0.y);
