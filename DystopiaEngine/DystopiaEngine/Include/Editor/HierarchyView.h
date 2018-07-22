@@ -48,6 +48,10 @@ namespace Dystopia
 		std::string		mLabel;
 		GameObject		*mpFocusGameObj;
 		Scene			*mpCurrentScene;
+		char			mSearchText[MAX_SEARCH];
+
+		void			SearchBar();
+		void			CreateButton();
 	};
 }
 

@@ -141,12 +141,12 @@ namespace EGUI
 			va_end(args);
 		}
 
-		void TextField(const std::string& _label, char* _outputbuffer, size_t _size, bool _showLabel)
+		void TextField(const std::string& _label, char* _outputbuffer, size_t _size, bool _showLabel, float _width)
 		{
 			ImGuiInputTextFlags flags = ImGuiInputTextFlags_CharsHexadecimal |
-				ImGuiInputTextFlags_AutoSelectAll |
-				ImGuiInputTextFlags_EnterReturnsTrue;
-
+										ImGuiInputTextFlags_AutoSelectAll |
+										ImGuiInputTextFlags_EnterReturnsTrue;
+			ImGui::PushItemWidth(_width);
 			if (_showLabel)
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + Default_VectorField_Alignment_Height);
@@ -155,6 +155,7 @@ namespace EGUI
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - Default_VectorField_Alignment_Height);
 			}
 			ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags);
+			ImGui::PopItemWidth();
 		}
 
 		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside, bool _iteractive, bool _showLabel)

@@ -212,11 +212,11 @@ namespace Dystopia
 
 	void ProjectResource::SearchWindow()
 	{
-		EGUI::PushID(0);
 		EGUI::Indent(5);
+		EGUI::ChangeLabelSpacing(55);
 		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH);
+		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(5);
-		EGUI::PopID();
 		EGUI::Display::HorizontalSeparator();
 	}
 

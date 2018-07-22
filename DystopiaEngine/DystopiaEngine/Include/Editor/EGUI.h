@@ -138,7 +138,7 @@ namespace EGUI
 				char buffer[size];
 				EGUI::Display::TextField("This is an editable text field: ", &buffer, size);
 		======================================================================================================================= */
-		void TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true);
+		void TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true, float _width = 250);
 		/* =======================================================================================================================
 		Brief:
 				Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked. 
@@ -331,7 +331,7 @@ namespace EGUI
 		Usage:
 				EGUI::Display::Button("Demo", ImVec2{ 200, 20 });
 		======================================================================================================================= */
-		bool Button(const std::string& _label, const Math::Vec2& _size);
+		bool Button(const std::string& _label, const Math::Vec2& _size = Math::Vec2{ 50,18 });
 		/* =======================================================================================================================
 		Brief:
 				Creates a dummy area. Used only to offset ImGui stuff. Does absolutely nothing except for manipulating UI

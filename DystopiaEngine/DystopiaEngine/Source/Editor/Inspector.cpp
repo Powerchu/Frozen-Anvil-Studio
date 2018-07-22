@@ -113,8 +113,8 @@ namespace Dystopia
 		arr2.push_back("item3");
 		arr2.push_back("item4");
 		arr2.push_back("item5");
-		char arr3[MAX_SEARCH];
-		bool checked = true;
+		char arr3[MAX_SEARCH] = "This is where the object name goes";
+		static bool checked = true;
 
 		EGUI::PushID(0);
 		EGUI::Display::IconGameObj("GameObjIcon", 50, 50);

@@ -60,12 +60,38 @@ namespace Dystopia
 
 	void HierarchyView::Window()
 	{
+		SearchBar();
+		EGUI::SameLine();
+		CreateButton();
+
+		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 52 }))
+		{
+
+		}
+		EGUI::EndChild();
+
 		if (!mpCurrentScene) return;
 
 		// Do for all objects in the scene
 		// Dystopia::EGUI::Display::Label(mpFocusGameObj->GetName().c_str()); 
 	}
 
+	void HierarchyView::CreateButton()
+	{
+		if (EGUI::Display::Button("Create", Math::Vec2{ 50, 18 }))
+		{
+
+		}
+	}
+
+	void HierarchyView::SearchBar()
+	{
+		EGUI::Indent(5);
+		EGUI::ChangeLabelSpacing(55);
+		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH);
+		EGUI::ChangeLabelSpacing();
+		EGUI::UnIndent(5);
+	}
 }
 
 
