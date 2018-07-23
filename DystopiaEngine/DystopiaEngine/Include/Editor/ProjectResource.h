@@ -90,13 +90,12 @@ namespace Dystopia
 		std::string			mLabel;
 		char				mSearchText[MAX_SEARCH];
 		char				mSearchTextLastFrame[MAX_SEARCH];
-		float				mFocusMaxDuration;
-		float				mFocusCurDuration;
 		Folder				*mpRootFolder;
 		Folder				*mpCurrentFolder;
 		HANDLE				mChangeHandle[1];
 		DWORD				mWaitStatus;
 		DWORD				mWaitFlags;
+		Math::Vec2			mPayloadRect;
 
 		bool				FindFirstOne(AutoArray<File*>& _outResult, const std::string& _item);
 		void				FindFile(AutoArray<File*>& _outResult, std::string& _item, const AutoArray<File*>& _fromArr);

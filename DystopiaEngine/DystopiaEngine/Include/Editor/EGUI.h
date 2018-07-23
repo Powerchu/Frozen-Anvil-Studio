@@ -275,8 +275,17 @@ namespace EGUI
 		void EndTreeNode();
 		/* =======================================================================================================================
 		Brief:
+				All in one payload creator. Created this function for intended use of resource viewer the custom
+				drag and drop icons with its label below an icon. Might extend this some other day 23/7/18
+		Usage:
+				Very specific as of creation date.
+		======================================================================================================================= */
+		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
+						   const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize);
+		/* =======================================================================================================================
+		Brief:
 				Sets the previos UI widget/item to be a payload type. Preferably call according to the usage please. 
-				Usage shows that button will have additional of being a payload type
+				Usage shows that button will have additional of being a payload type.
 		Usage:
 				EGUI::Button("Hello", Math::Vec2{ 200, 20 } );
 				if (EGUI::Display::StartPayload(EGUI::FILE, &(*_file), sizeof(File), "Hello"))

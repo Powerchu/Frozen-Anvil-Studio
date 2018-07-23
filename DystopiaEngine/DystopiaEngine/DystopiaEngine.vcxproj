@@ -30,6 +30,7 @@
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
     <ClCompile Include="Source\System\Driver\Driver.cpp" />
@@ -78,6 +79,7 @@
     <ClInclude Include="Include\DataStructure\Stack.h" />
     <ClInclude Include="Include\Editor\CommandList.h" />
     <ClInclude Include="Include\Editor\Commands.h" />
+    <ClInclude Include="Include\Editor\ConsoleLog.h" />
     <ClInclude Include="Include\Editor\Dock.h" />
     <ClInclude Include="Include\Editor\Editor.h" />
     <ClInclude Include="Include\Editor\EditorTab.h" />

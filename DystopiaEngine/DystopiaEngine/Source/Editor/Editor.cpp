@@ -41,6 +41,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\HierarchyView.h"
 #include "Editor\ProjectResource.h"
 #include "Editor\SceneView.h"
+#include "Editor\ConsoleLog.h"
 /* library includes */
 #include <iostream>
 #include <bitset>
@@ -130,6 +131,7 @@ namespace Dystopia
 		mTabsArray.push_back(ProjectResource::GetInstance());
 		mTabsArray.push_back(HierarchyView::GetInstance());
 		mTabsArray.push_back(SceneView::GetInstance());
+		mTabsArray.push_back(ConsoleLog::GetInstance());
 	}
 
 	void Editor::StartFrame(const float& _dt)

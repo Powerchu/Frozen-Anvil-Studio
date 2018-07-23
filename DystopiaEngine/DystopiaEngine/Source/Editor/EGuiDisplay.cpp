@@ -417,6 +417,45 @@ namespace EGUI
 			ImGui::EndDragDropTarget();
 		}
 
+		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
+						   const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize)
+		{
+			const ImU32		col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
+			ImVec2 pos = ImGui::GetCursorScreenPos();
+			ImVec2 size{ _displaytSize.x, _displaytSize.y };
+			const float iconWidth = size.x / 2;
+			const float iconHeight = size.y / 2;
+			const float offsetX = iconWidth / 2;
+			const float offsetY = iconHeight / 4;
+			ImVec2 posIcon{ pos.x + offsetX, pos.y + offsetY };
+			ImVec2 posText{ pos.x + (offsetX/2), pos.y + iconHeight + (2* offsetY) };
+			ImDrawList* pCanvas = ImGui::GetWindowDrawList();
+
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
+			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), size);
+			ImGui::PopStyleColor();
+			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
+			if (payload) EndPayload();
+			ImGui::SetCursorScreenPos(posIcon);
+			pCanvas->PathClear();
+			pCanvas->PathLineTo(posIcon);
+			pCanvas->PathLineTo(ImVec2{ posIcon.x + (iconWidth * 0.7f), posIcon.y });
+			pCanvas->PathLineTo(ImVec2{ posIcon.x + iconWidth, posIcon.y + (iconWidth * 0.3f)});
+			pCanvas->PathLineTo(ImVec2{ posIcon.x + iconWidth, posIcon.y + iconHeight });
+			pCanvas->PathLineTo(ImVec2{ posIcon.x, posIcon.y + iconHeight });
+			pCanvas->PathStroke(col32R, true);
+			ImGui::SetCursorScreenPos(posText);
+			ImGui::TextWrapped(_label.c_str());
+			//if (StartChild(("###ChildFrameCustomPayload" + _uniqueId).c_str(), Math::Vec2{ size.x*0.75f, size.y*0.25f }, false))
+			//{
+			//	ImGui::TextWrapped(_label.c_str());
+			//	EndChild();
+			//}
+			ImGui::SetCursorScreenPos(pos);
+			ImGui::Dummy(size);
+			return btn;
+		}
+
 		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width)
 		{
 			AutoArray<const char*> arrCharPtr;
@@ -493,14 +532,14 @@ namespace EGUI
 			}
 			else
 			{
-				ImVec2 inside{ topLeft.x + (0.2f * width), topLeft.y + (height * 0.25f) };
+				ImVec2 inside{ topLeft.x + (0.2f * width), topLeft.y + (height * 0.4f) };
 				pCanvas->PathClear();
 				pCanvas->PathLineTo(botLeft);
 				pCanvas->PathLineTo(topLeft);
 				pCanvas->PathLineTo(tabTop);
 				pCanvas->PathLineTo(tabBot);
 				pCanvas->PathLineTo(topRight);
-				pCanvas->PathLineTo(ImVec2{ topRight.x, topLeft.y + (height * 0.25f) });
+				pCanvas->PathLineTo(ImVec2{ topRight.x, topLeft.y + (height * 0.4f) });
 				pCanvas->PathStroke(col32, true);
 
 				pCanvas->PathClear();

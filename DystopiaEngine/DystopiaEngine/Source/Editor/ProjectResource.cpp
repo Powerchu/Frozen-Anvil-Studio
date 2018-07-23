@@ -110,10 +110,9 @@ namespace Dystopia
 
 	ProjectResource::ProjectResource()
 		: EditorTab{ true },
-		mLabel{ "Resource View" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
+		mLabel{ "Project" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
 		mpCurrentFolder{ nullptr }, mArrAllFiles{}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
-		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mFocusMaxDuration{ 0 },
-		mFocusCurDuration{ 0 }
+		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 50, 60 }
 	{}
 
 	ProjectResource::~ProjectResource()
@@ -163,10 +162,11 @@ namespace Dystopia
 
 	void ProjectResource::Window()
 	{
+		Math::Vec2 fileWindowSize = Math::Vec2{ Size().x - 210, Size().y - 55 };
 		SearchWindow();
 		FolderWindow();
 		EGUI::SameLine(2);
-		EGUI::StartChild("FileWindow", Math::Vec2{ Size().x - 210, Size().y - 55 });
+		EGUI::StartChild("FileWindow", fileWindowSize);
 		if (!strlen(mSearchText))
 			FileWindow();
 		else
@@ -388,16 +388,21 @@ namespace Dystopia
 
 	void ProjectResource::FileUI(File* _file)
 	{
-		static const Math::Vec2 btnSize{ 200, 20 };
+		if (_file == mFocusedFile) EGUI::Display::Outline(mPayloadRect.x, mPayloadRect.y);
 
-		if (_file == mFocusedFile) EGUI::Display::Outline(200, 20);
-
-		EGUI::Display::Button(_file->mName.c_str(), btnSize);
-		if (EGUI::Display::StartPayload(EGUI::FILE, &(*_file), sizeof(File), _file->mName.c_str()))
+		if (EGUI::Display::CustomPayload(("###projectView" + _file->mName).c_str(), _file->mName.c_str(), _file->mName.c_str(), 
+			mPayloadRect, EGUI::FILE, &(*_file), sizeof(File)))
 		{
-			mFocusedFile = nullptr;
-			EGUI::Display::EndPayload();
 		}
+		//if (EGUI::Display::Button(_file->mName.c_str(), mPayloadRect))
+		//{
+		//	mFocusedFile = nullptr;
+		//}
+		//if (EGUI::Display::StartPayload(EGUI::FILE, &(*_file), sizeof(File), _file->mName.c_str()))
+		//{
+		//	mFocusedFile = nullptr;
+		//	EGUI::Display::EndPayload();
+		//}
 	}
 
 	void ProjectResource::FullCrawl(Folder* _folder)
