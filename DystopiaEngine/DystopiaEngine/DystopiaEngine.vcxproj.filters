@@ -73,8 +73,14 @@
     <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
       <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Include\System\Driver\Driver.cpp">
+    <ClCompile Include="Source\System\Driver\Driver.cpp">
       <Filter>Game Engine\Systems\Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Scene\SceneSystem.cpp">
+      <Filter>Game Engine\Systems\Scene\SceneSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Scene\Scene.cpp">
+      <Filter>Game Engine\Systems\Scene\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,9 +113,6 @@
     </ClInclude>
     <ClInclude Include="Include\Math\MathUtility.h">
       <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\Meta.h">
-      <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="Include\Utility\MetaHelper.h">
       <Filter>Utility\Internals</Filter>
@@ -230,6 +233,24 @@
     </ClInclude>
     <ClInclude Include="Include\System\Driver\Driver.h">
       <Filter>Game Engine\Systems\Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\MetaAlgorithms.h">
+      <Filter>Utility\Meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\Meta.h">
+      <Filter>Utility\Meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\MetaDataStructures.h">
+      <Filter>Utility\Meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Scene\SceneSystem.h">
+      <Filter>Game Engine\Systems\Scene\SceneSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Scene\Scene.h">
+      <Filter>Game Engine\Systems\Scene\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\UtilityInternals.h">
+      <Filter>Utility\Internals</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -370,6 +391,18 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Driver">
       <UniqueIdentifier>{5218dddd-4e8e-4b28-9f3d-f179f71e8edc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Meta">
+      <UniqueIdentifier>{6a9f286f-47a9-4b59-9ff5-dda9a16e59f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Scene">
+      <UniqueIdentifier>{ddb89e65-93e8-4262-89d0-be65eefb7603}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Scene\SceneSystem">
+      <UniqueIdentifier>{5320a59f-d009-4e91-9157-c1635f9a123b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Scene\Scene">
+      <UniqueIdentifier>{f3eae6d5-d8fd-463f-9178-71e46cda18c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

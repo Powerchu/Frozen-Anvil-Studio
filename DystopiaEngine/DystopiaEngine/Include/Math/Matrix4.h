@@ -389,12 +389,12 @@ inline Math::Matrix4 _CALL Math::RotZTransDeg(float _fDegrees, float _fTranslate
 
 inline float& _CALL      Math::Matrix4::operator[] (const unsigned _nIndex)
 {
-	return mData[_nIndex >> 2][_nIndex % 4];
+	return mData[_nIndex >> 2][_nIndex & 3];
 }
 
 inline const float _CALL Math::Matrix4::operator[] (const unsigned _nIndex) const
 {
-	return mData[_nIndex >> 2][_nIndex % 4];
+	return mData[_nIndex >> 2][_nIndex & 3];
 }
 
 

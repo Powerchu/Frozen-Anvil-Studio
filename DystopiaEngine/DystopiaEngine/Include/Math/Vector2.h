@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif // Debug only includes
 
 #include "Math\MathUtility.h"
+#include "Math\Vector4.h"
 
 #include <cmath>
 
@@ -31,13 +32,13 @@ namespace Math
 	\brief
 		Generic Math 2 Dimensional Space Vector. 
 	*/
-	struct Vector2
+	union Vector2
 	{
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		inline Vector2(void) noexcept;
-		inline Vector2(const Vector2&) noexcept;
-		inline Vector2(float x, float y) noexcept;
+		inline constexpr Vector2(void) noexcept;
+//		inline Vector2(const Vector2&) noexcept;
+		inline constexpr Vector2(float x, float y) noexcept;
 
 
 		// ==================================== VECTOR OPERATIONS ==================================== // 
@@ -68,7 +69,84 @@ namespace Math
 		inline Vector2& _CALL operator+=(const Vector2);
 		inline Vector2& _CALL operator-=(const Vector2);
 
-		float x, y;
+	private:
+
+		template <unsigned ...Sz>
+		struct Swizzle : SwizzleMask
+		{		};
+
+		template <unsigned N>
+		struct Swizzle<N>
+		{
+			inline Swizzle<N>& operator = (float);
+			inline Swizzle<N>& operator += (float);
+			inline Swizzle<N>& operator -= (float);
+			inline Swizzle<N>& operator *= (float);
+			inline Swizzle<N>& operator /= (float);
+			inline bool operator == (float);
+			inline bool operator != (float);
+
+			inline _CALL operator float&(void);
+			inline _CALL operator float(void) const;
+
+		private:
+			float elem[2];
+		};
+
+		template <unsigned X, unsigned Y>
+		struct Swizzle<X, Y>
+		{
+			inline constexpr _CALL operator Math::Vector2 (void) const;
+
+			template <bool = X != Y>
+			inline Swizzle<X, Y>& _CALL operator = (const Vector2);
+
+			template <>
+			inline Swizzle<X, Y>& _CALL operator = <false> (const Vector2)
+			{
+				static_assert(false, "Vector2 Error: lvalue cannot be duplicate.");
+				return *this;
+			}
+
+		private:
+			float elem[2];
+		};
+
+		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
+		struct Swizzle<X, Y, Z, W>
+		{
+			inline constexpr _CALL operator Math::Vector4 (void) const;
+
+		private:
+			float elem[2];
+		};
+
+		float elem[2];
+
+	public:
+
+		Swizzle<0> x;
+		Swizzle<1> y;
+		Swizzle<0, 0> xx;
+		Swizzle<0, 1> xy;
+		Swizzle<1, 0> yx;
+		Swizzle<1, 1> yy;
+		Swizzle<0, 0, 0, 0> xxxx;
+		Swizzle<0, 0, 0, 1> xxxy;
+		Swizzle<0, 0, 1, 0> xxyx;
+		Swizzle<0, 0, 1, 1> xxyy;
+		Swizzle<0, 1, 0, 0> xyxx;
+		Swizzle<0, 1, 0, 1> xyxy;
+		Swizzle<0, 1, 1, 0> xyyx;
+		Swizzle<0, 1, 1, 1> xyyy;
+		Swizzle<1, 0, 0, 0> yxxx;
+		Swizzle<1, 0, 0, 1> yxxy;
+		Swizzle<1, 0, 1, 0> yxyx;
+		Swizzle<1, 0, 1, 1> yxyy;
+		Swizzle<1, 1, 0, 0> yyxx;
+		Swizzle<1, 1, 0, 1> yyxy;
+		Swizzle<1, 1, 1, 0> yyyx;
+		Swizzle<1, 1, 1, 1> yyyy;
 	};
 
 	// Converts a vector into unit length
@@ -111,20 +189,14 @@ namespace Math
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
-inline Math::Vector2::Vector2(void) noexcept
-	: x{ 0 }, y{ 0 }
+inline constexpr Math::Vector2::Vector2(void) noexcept
+	: elem { 0 }
 {
 
 }
 
-inline Math::Vector2::Vector2(const Vector2& v) noexcept
-	: x{ v.x }, y{ v.y }
-{
-
-}
-
-inline Math::Vector2::Vector2(float _x, float _y) noexcept
-	: x{ _x }, y{ _y }
+inline constexpr Math::Vector2::Vector2(float _x, float _y) noexcept
+	: elem{ _x, _y }
 {
 
 }
@@ -197,25 +269,122 @@ inline float _CALL Math::Vector2::MagnitudeSqr(void) const
 
 inline Math::Vector2 _CALL Math::Abs(const Vector2 _v)
 {
-	return Vector2{ Math::Abs(_v.x), Math::Abs(_v.y) };
+	return Vector2{ Math::Abs<float>(_v.x), Math::Abs<float>(_v.y) };
 }
+
+
+
+// =============================================== NESTED CLASSES =============================================== // 
+
+
+template <unsigned N>
+inline Math::Vector2::Swizzle<N>& Math::Vector2::Swizzle<N>::operator = (float _fScalar)
+{
+	elem[N] = _fScalar;
+	return *this;
+}
+
+template<unsigned N>
+inline Math::Vector2::Swizzle<N>& Math::Vector2::Swizzle<N>::operator += (float _fScalar)
+{
+	elem[N] += _fScalar;
+	return *this;
+}
+
+template<unsigned N>
+inline Math::Vector2::Swizzle<N>& Math::Vector2::Swizzle<N>::operator -= (float _fScalar)
+{
+	elem[N] -= _fScalar;
+	return *this;
+}
+
+template<unsigned N>
+inline Math::Vector2::Swizzle<N>& Math::Vector2::Swizzle<N>::operator *= (float _fScalar)
+{
+	elem[N] *= _fScalar;
+	return *this;
+}
+
+template<unsigned N>
+inline Math::Vector2::Swizzle<N>& Math::Vector2::Swizzle<N>::operator /= (float _fScalar)
+{
+	elem[N] /= _fScalar;
+	return *this;
+}
+
+template<unsigned N>
+inline bool Math::Vector2::Swizzle<N>::operator == (float _fScalar)
+{
+	return elem[N] == _fScalar;
+}
+
+template<unsigned N>
+inline bool Math::Vector2::Swizzle<N>::operator != (float _fScalar)
+{
+	return !(*this == _fScalar);
+}
+
+template<unsigned N>
+inline _CALL Math::Vector2::Swizzle<N>::operator float&(void)
+{
+	return elem[N];
+}
+
+template <unsigned N>
+inline _CALL Math::Vector2::Swizzle<N>::operator float(void) const
+{
+	return elem[N];
+}
+
+template <unsigned X, unsigned Y> template <bool>
+inline Math::Vector2::Swizzle<X, Y>& _CALL Math::Vector2::Swizzle<X, Y>::operator = (const Vector2 _rhs)
+{
+	elem[X] = _rhs.elem[0];
+	elem[Y] = _rhs.elem[1];
+
+	return *this;
+}
+
+template <unsigned X, unsigned Y>
+inline constexpr _CALL Math::Vector2::Swizzle<X, Y>::operator Math::Vector2(void) const
+{
+	return Vector2{ elem[X], elem[Y] };
+}
+
+template <unsigned X, unsigned Y, unsigned Z, unsigned W>
+inline constexpr _CALL Math::Vector2::Swizzle<X, Y, Z, W>::operator Math::Vector4(void) const
+{
+	return Vector4{ elem[X], elem[Y], elem[Z], elem[W] };
+}
+
 
 
 // ============================================ OPERATOR OVERLOADING ============================================ // 
 
 
+inline float& _CALL Math::Vector2::operator[](const unsigned _nIndex)
+{
+	return elem[_nIndex];
+}
+
+inline const float _CALL Math::Vector2::operator[](const unsigned _nIndex) const
+{
+	return elem[_nIndex];
+}
+
+
 inline Math::Vector2& _CALL Math::Vector2::operator*=(const float _fScalar)
 {
-	x *= _fScalar;
-	y *= _fScalar;
+	elem[0] *= _fScalar;
+	elem[1] *= _fScalar;
 
 	return *this;
 }
 
 inline Math::Vector2&_CALL Math::Vector2::operator*=(const Vector2 _rhs)
 {
-	x *= _rhs.x;
-	y *= _rhs.y;
+	elem[0] *= _rhs.x;
+	elem[1] *= _rhs.y;
 
 	return *this;
 }
@@ -227,16 +396,16 @@ inline Math::Vector2& _CALL Math::Vector2::operator/=(float _fScalar)
 
 inline Math::Vector2& _CALL Math::Vector2::operator+=(const Vector2 _rhs)
 {
-	x += _rhs.x;
-	y += _rhs.y;
+	elem[0] += _rhs.x;
+	elem[1] += _rhs.y;
 
 	return *this;
 }
 
 inline Math::Vector2& _CALL Math::Vector2::operator-=(const Vector2 _rhs)
 {
-	x -= _rhs.x;
-	y -= _rhs.y;
+	elem[0] -= _rhs.x;
+	elem[1] -= _rhs.y;
 
 	return *this;
 }

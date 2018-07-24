@@ -37,7 +37,10 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
+		void PreInit(void);
 		bool Init(void);
+		void PostInit(void);
+
 		void Update(float);		// Draws the currently bounded window
 		void Shutdown(void);
 

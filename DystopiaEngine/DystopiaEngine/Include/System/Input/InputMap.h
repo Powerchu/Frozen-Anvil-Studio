@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _INPUTMAP_H_
 #define _INPUTMAP_H_
 
-enum eUserButton
+enum eUserButton : unsigned short
 {
 	BUTTON_UP, 
 	BUTTON_DOWN,
@@ -32,7 +32,7 @@ enum eUserButton
 	TOTAL_USERBUTTONS
 };
 
-enum eButton
+enum eButton : unsigned short
 {
 	MOUSE_LEFT			= 0x01,
 	MOUSE_RIGHT,
@@ -105,6 +105,9 @@ enum eButton
 	KEYBOARD_BACKSPACE	= 0x08,
 	KEYBOARD_TAB,
 	KEYBOARD_ENTER		= 0x0D,
+	KEYBOARD_SHIFT		= 0x10,
+	KEYBOARD_CTRL,
+	KEYBOARD_ALT,
 	KEYBOARD_ESCAPE		= 0x1B,
 	KEYBOARD_LSHIFT		= 0xA0,
 	KEYBOARD_RSHIFT,

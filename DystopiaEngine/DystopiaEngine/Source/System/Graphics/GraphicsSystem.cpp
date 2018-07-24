@@ -18,7 +18,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System\Graphics\GraphicsSystem.h"	// File header
 #include "System\Graphics\GraphicsDefs.h"	// eGraphicSettings
+#include "System\Window\WindowManager.h"	// WindowManager
 #include "System\Window\Window.h"			// Window
+#include "System\Driver\Driver.h"			// EngineCore
 #include "Utility\DebugAssert.h"			// DEBUG_ASSERT
 #include "Component\Camera.h"				// Camera
 
@@ -47,11 +49,21 @@ Dystopia::GraphicsSystem::~GraphicsSystem(void)
 }
 
 
+void Dystopia::GraphicsSystem::PreInit(void)
+{
+	InitOpenGL(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow());
+}
+
 bool Dystopia::GraphicsSystem::Init(void)
 {
 	glEnable(GL_DEPTH_TEST);
 
 	return true;
+}
+
+void Dystopia::GraphicsSystem::PostInit(void)
+{
+
 }
 
 void Dystopia::GraphicsSystem::Update(float)

@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _UTILITY_H_
 
 #include "Utility\Meta.h"
+#include "Utility\UtilityInternals.h"
 
 namespace Utility
 {
@@ -94,6 +95,75 @@ namespace Utility
 		lhs = Move(rhs);
 		rhs = Move(tmp);
 	}
+
+	template <typename T>
+	Interns::RangeMaker<T> Range(T&& begin, T&& end)
+	{
+		return Interns::RangeMaker<T>{ Forward<T>(begin), Forward<T>(end) };
+	}
+
+	/*!
+	\brief
+		Wrapper struct for iterator to increment it in the reverse direction.
+		Iterators must point to the correct values for reverse traversal.
+	*/
+	template <typename T>
+	struct ReverseItor
+	{
+		T mItor;
+
+		template <typename U>
+		explicit ReverseItor(U&& _it) : mItor{ std::forward<U>(_it) }
+		{
+			--mItor; 
+		}
+
+		ReverseItor& operator ++ (void)
+		{
+			--mItor;
+			return *this;
+		}
+
+		ReverseItor operator ++ (int)
+		{
+			auto ret = *this;
+			--mItor;
+			return ret;
+		}
+
+		ReverseItor& operator -- (void)
+		{
+			++mItor;
+			return *this;
+		}
+
+		ReverseItor operator -- (int)
+		{
+			auto ret = *this;
+			++mItor;
+			return ret;
+		}
+
+		decltype(auto) operator*(void) const
+		{
+			return *mItor;
+		}
+
+		decltype(auto) operator->(void) const
+		{
+			return mItor;
+		}
+
+		auto operator== (const ReverseItor& rhs) const
+		{
+			return mItor == rhs.mItor;
+		}
+
+		auto operator!= (const ReverseItor& rhs) const
+		{
+			return mItor != rhs.mItor;
+		}
+	};
 }
 
 

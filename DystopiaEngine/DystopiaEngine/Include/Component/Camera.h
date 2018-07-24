@@ -28,7 +28,7 @@ namespace Dystopia
 	class Camera : public Component
 	{
 	public:
-		static const eComponents TYPE = eComponents::TRANSFORM;
+		static constexpr eComponents TYPE = eComponents::TRANSFORM;
 		const eComponents GetComponentType(void) const { return TYPE; };
 
 
@@ -86,7 +86,7 @@ namespace Dystopia
 		const Math::Matrix4& GetViewMatrix(void);
 
 		Camera* Duplicate(void) const;
-		void Serialise(TextSerialiser&);
+		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
 
 

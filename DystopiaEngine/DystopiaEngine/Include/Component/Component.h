@@ -26,7 +26,7 @@ namespace Dystopia
 	public:
 
 		using TAG = ComponentTag;
-		static const eComponents TYPE = eComponents::BASE_COMPONENT;
+		static constexpr eComponents TYPE = eComponents::BASE_COMPONENT;
 		virtual const eComponents GetComponentType(void) const { return TYPE; };
 
 
@@ -56,7 +56,7 @@ namespace Dystopia
 
 		virtual Component* Duplicate() const;
 
-		virtual void Serialise(TextSerialiser&) = 0;
+		virtual void Serialise(TextSerialiser&) const = 0;
 		virtual void Unserialise(TextSerialiser&) = 0;
 
 	private:

@@ -20,14 +20,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _VECTOR4_H_
 #define _VECTOR4_H_
 
+#include "Utility/Meta.h"	            // EnableIf
+#include "Utility/MetaAlgorithms.h"     // MetaSortV
+#include "Utility/MetaDataStructures.h" // IntegralList
+
 #if defined(DEBUG) | defined(_DEBUG)
 #include "Math\MathUtility.h"
 #include "Utility\DebugAssert.h"
 #endif // Debug only includes
 
+#if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
 #include <new>				// nothrow_t
-#include <cmath>			// sqrtf
 #include <exception>		// bad_alloc
+#endif
+
+#include <cmath>			// sqrtf
 #include <xmmintrin.h>		// SSE
 #include <emmintrin.h>		// SSE 2
 #include <tmmintrin.h>		// SSE 3
@@ -114,31 +121,38 @@ namespace Math
 	private:
 		__m128 mData;
 
+		template <unsigned ... Vals>
+		struct SwizzleMask;
+
 		template <unsigned N>
-		struct DataMember
+		struct SwizzleMask<N>
 		{
-			inline DataMember<N>& _CALL operator= (float _rhs);
+			inline SwizzleMask<N>& _CALL operator= (float _rhs);
 			inline _CALL operator float(void) const;
 
 		private:
-
 			__m128 mData;
 
 			static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
 		};
 
+		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
+		struct IsLvalueSwizzle
+		{
+			static constexpr bool value = (X != Y) && (X != Z) && (X != W) && (Y != Z) && (Y != W) && (Z != W);
+		};
+
 		// While we're at it, might as well add swizzle masks
-		// DataMember  -> 1 shuffle (read)
+		// SwizzleMask  -> 1 shuffle (read)
 		// SwizzleMask -> 1 shuffle (read & write)
 		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
-		struct SwizzleMask
+		struct SwizzleMask<X, Y, Z, W>
 		{
-			template<bool = (X != Y) && (X != Z) && (X != W) && (Y != Z) && (Y != W) && (Z != W)>
-			inline SwizzleMask& _CALL operator = (Vector4 _rhs)
-			{
-				mData = _mm_shuffle_ps(_rhs.mData, _rhs.mData, shuffleWrite);
-				return *this;
-			}
+			SwizzleMask() = default;
+			SwizzleMask(__m128 _data) : mData{ _data } {}
+
+			template<bool = IsLvalueSwizzle<X, Y, Z, W>::value>
+			inline SwizzleMask& _CALL operator = (Vector4 _rhs);
 
 			template <>
 			inline SwizzleMask& _CALL operator = <false> (Vector4)
@@ -147,12 +161,15 @@ namespace Math
 				return *this;
 			}
 
+			template<unsigned Q, unsigned R, unsigned S, unsigned T, typename ret_t = Utility::EnableIf_t<IsLvalueSwizzle<X, Y, Z, W>::value, SwizzleMask>>
+			inline ret_t& _CALL operator = (SwizzleMask<Q, R, S, T> _rhs);
+
 			inline __m128 _CALL GetRaw(void) const noexcept;
+			inline __m128 _CALL _GetRawUnshuf(void) const noexcept;
 
 			inline _CALL operator Math::Vector4 (void) const;
 
 		private:
-
 			__m128 mData;
 
 			static constexpr unsigned shuffleRead = _MM_SHUFFLE(W, Z, Y, X);
@@ -166,20 +183,23 @@ namespace Math
 		friend struct Math::Matrix4;
 
 	public:
-		DataMember<0> x;
-		DataMember<1> y;
-		DataMember<2> z;
-		DataMember<3> w;
+		SwizzleMask<0> x;
+		SwizzleMask<1> y;
+		SwizzleMask<2> z;
+		SwizzleMask<3> w;
 
 		SwizzleMask<0, 0, 0, 0> xxxx;
 		SwizzleMask<0, 0, 1, 1> xxyy;
 		SwizzleMask<0, 0, 2, 2> xxzz;
 		SwizzleMask<0, 1, 0, 1> xyxy;
+		SwizzleMask<0, 1, 2, 3> xyzw;
 		SwizzleMask<0, 2, 1, 3> xzyw;
 		SwizzleMask<0, 3, 0, 3> xwxw;
 		SwizzleMask<1, 0, 2, 3> yxzw;
 		SwizzleMask<1, 0, 3, 2> yxwz;
 		SwizzleMask<1, 1, 1, 1> yyyy;
+		SwizzleMask<1, 3, 0, 2> ywxz;
+		SwizzleMask<1, 3, 2, 0> ywzx;
 		SwizzleMask<2, 0, 1, 3> zxyw; // Used by cross product 
 		SwizzleMask<2, 1, 2, 1> zyzy;
 		SwizzleMask<2, 2, 2, 2> zzzz;
@@ -334,11 +354,11 @@ inline Math::Vector4 _CALL Math::Reciprocal(Vector4 _v)
 template <unsigned FLAGS>
 inline Math::Vector4& _CALL Math::Vector4::Negate(void) noexcept
 {
-	static __m128i Negator = _mm_set_epi32(
-		FLAGS & 0x1 ? 0x80000000 : 0,
-		FLAGS & 0x2 ? 0x80000000 : 0,
+	static const __m128i Negator = _mm_set_epi32(
+		FLAGS & 0x8 ? 0x80000000 : 0,
 		FLAGS & 0x4 ? 0x80000000 : 0,
-		FLAGS & 0x8 ? 0x80000000 : 0
+		FLAGS & 0x2 ? 0x80000000 : 0,
+		FLAGS & 0x1 ? 0x80000000 : 0
 	);
 
 	mData = _mm_xor_ps(mData, _mm_castsi128_ps(Negator));
@@ -509,7 +529,7 @@ inline Math::Vector3D _CALL Math::MakeVector3D(float _x, float _y, float _z)
 
 
 template <unsigned N>
-inline Math::Vector4::DataMember<N>& _CALL Math::Vector4::DataMember<N>::operator= (float _rhs)
+inline Math::Vector4::SwizzleMask<N>& _CALL Math::Vector4::SwizzleMask<N>::operator= (float _rhs)
 {
 #if defined(_INCLUDED_SMM)	// SSE4.1 supported
 
@@ -519,7 +539,7 @@ inline Math::Vector4::DataMember<N>& _CALL Math::Vector4::DataMember<N>::operato
 #else						// No SSE 4.1
 
 	// There's probably a better way but I can't think of one
-	// Shuffle affected subset to low bits
+	// Shuffle the affected subset to low bits
 	// move assigned float into it and shuffle it back
 	mData = _mm_shuffle_ps(mData, mData, shuffleMask);
 	mData = _mm_move_ss(mData, _mm_set_ss(_rhs));
@@ -531,7 +551,7 @@ inline Math::Vector4::DataMember<N>& _CALL Math::Vector4::DataMember<N>::operato
 }
 
 template<>
-inline Math::Vector4::DataMember<0>& _CALL Math::Vector4::DataMember<0>::operator= (float _rhs)
+inline Math::Vector4::SwizzleMask<0>& _CALL Math::Vector4::SwizzleMask<0>::operator= (float _rhs)
 {
 	mData = _mm_move_ss(mData, _mm_set_ss(_rhs));
 
@@ -539,14 +559,14 @@ inline Math::Vector4::DataMember<0>& _CALL Math::Vector4::DataMember<0>::operato
 }
 
 template <unsigned N>
-inline _CALL Math::Vector4::DataMember<N>::operator float(void) const
+inline _CALL Math::Vector4::SwizzleMask<N>::operator float(void) const
 {
 	// Copy the wanted value everywhere, and return the first 32 bits as a float
 	return _mm_cvtss_f32(_mm_shuffle_ps(mData, mData, _MM_SHUFFLE(N, N, N, N)));
 }
 
 template<>
-inline _CALL Math::Vector4::DataMember<0>::operator float(void) const
+inline _CALL Math::Vector4::SwizzleMask<0>::operator float(void) const
 {
 	// We happen to want the value that's already the first
 	// so we can skip the shuffle and just return it
@@ -555,6 +575,63 @@ inline _CALL Math::Vector4::DataMember<0>::operator float(void) const
 	return _mm_cvtss_f32(mData);
 }
 
+
+
+template<unsigned X, unsigned Y, unsigned Z, unsigned W> template<bool>
+inline Math::Vector4::SwizzleMask<X, Y, Z, W>& _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::operator = (Math::Vector4 _rhs)
+{
+	mData = _mm_shuffle_ps(_rhs.mData, _rhs.mData, shuffleWrite);
+	return *this;
+}
+
+template<> template<>
+inline Math::Vector4::SwizzleMask<0, 1, 2, 3>& _CALL Math::Vector4::SwizzleMask<0, 1, 2, 3>::operator = <true> (Math::Vector4 _rhs)
+{
+	mData = _rhs.mData;
+	return *this;
+}
+
+namespace
+{
+	template <typename, typename>
+	struct SwizzleCompare;
+
+	template <typename T, T lhs, T rhs, T ... ls, T ... rs>
+	struct SwizzleCompare<Utility::IntegralList<T, lhs, ls...>, Utility::IntegralList<T, rhs, rs...>>
+	{
+		static constexpr bool value = lhs < rhs;
+	};
+}
+
+template<unsigned X, unsigned Y, unsigned Z, unsigned W> template<unsigned Q, unsigned R, unsigned S, unsigned T, typename ret_t>
+inline ret_t& _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::operator = (SwizzleMask<Q, R, S, T> _rhs)
+{
+	using ReSwizzle_t = Utility::MetaSortT_t <SwizzleCompare, 
+		Utility::Collection<
+			Utility::IntegralList<unsigned, X, Q>, 
+			Utility::IntegralList<unsigned, Y, R>,
+			Utility::IntegralList<unsigned, Z, S>,
+			Utility::IntegralList<unsigned, W, T>
+		>
+	>;
+
+	using Result_t = Utility::MetaExtract_t< 1,
+		Utility::MetaExtract_t<0, ReSwizzle_t>,
+		Utility::MetaExtract_t<1, ReSwizzle_t>,
+		Utility::MetaExtract_t<2, ReSwizzle_t>,
+		Utility::MetaExtract_t<3, ReSwizzle_t>
+	>;
+
+	using NewSwizzle_t = Math::Vector4::SwizzleMask <
+		Utility::MetaExtractV<0, Result_t>::value,
+		Utility::MetaExtractV<1, Result_t>::value,
+		Utility::MetaExtractV<2, Result_t>::value,
+		Utility::MetaExtractV<3, Result_t>::value
+	>;
+
+	mData = NewSwizzle_t { _rhs._GetRawUnshuf() }.GetRaw();
+	return *this;
+}
 
 template<unsigned X, unsigned Y, unsigned Z, unsigned W>
 inline _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::operator Math::Vector4(void) const
@@ -566,6 +643,12 @@ template <unsigned X, unsigned Y, unsigned Z, unsigned W>
 inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::GetRaw(void) const noexcept
 {
 	return _mm_shuffle_ps(mData, mData, shuffleRead);
+}
+
+template<unsigned X, unsigned Y, unsigned Z, unsigned W>
+inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::_GetRawUnshuf(void) const noexcept
+{
+	return mData;
 }
 
 template<>

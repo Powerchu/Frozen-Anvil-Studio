@@ -25,14 +25,14 @@ namespace Dystopia
 	class Transform : public Component
 	{
 	public:
-		static const eComponents TYPE = eComponents::TRANSFORM;
+		static constexpr eComponents TYPE = eComponents::TRANSFORM;
 		const eComponents GetComponentType(void) const { return TYPE; };
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		Transform(void);
-		Transform(Transform&);
+		Transform(const Transform&);
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
@@ -67,7 +67,7 @@ namespace Dystopia
 
 		Transform* Duplicate(void) const;
 
-		void Serialise(TextSerialiser&);
+		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
 
 	private:

@@ -77,9 +77,9 @@ namespace Dystopia
 		UnregisterClass(L"MainWindow", mHInstance);
 	}
 
-	bool WindowManager::Init(void)
+	void WindowManager::PreInit(void)
 	{
-	#if _COMMANDPROMPT
+#if _COMMANDPROMPT
 
 		if (AllocConsole())
 		{
@@ -87,13 +87,13 @@ namespace Dystopia
 
 			freopen_s(&file, "CONOUT$", "wt", stdout);
 			freopen_s(&file, "CONOUT$", "wt", stderr);
-//			freopen_s(&file, "CONOUT$", "wt", stdin);
+			//			freopen_s(&file, "CONOUT$", "wt", stdin);
 
 			SetConsoleTitle(ENGINE_NAME);
 		}
 
-	#endif	// Show Command Prompt
-		
+#endif	// Show Command Prompt
+
 		WNDCLASSEX mainWindow
 		{
 			sizeof(WNDCLASSEX),
@@ -113,8 +113,8 @@ namespace Dystopia
 		{
 			throw;
 		}
-		
-	#if EDITOR
+
+#if EDITOR
 
 		RECT WindowRect{ 0, 0, LOGO_WIDTH, LOGO_HEIGHT };
 		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
@@ -131,11 +131,11 @@ namespace Dystopia
 		);
 
 		long left = (GetSystemMetrics(SM_CXSCREEN) - LOGO_WIDTH) >> 1,
-			 top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
+			top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
 		// center the window
 		SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
 
-	#else
+#else
 
 		RECT WindowRect{ 0, 0, mWidth, mHeight };
 		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
@@ -156,16 +156,23 @@ namespace Dystopia
 		// center the window
 		SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
 
-	#endif
+#endif
 
 		mWindows.EmplaceBack(window);
 		mWindows[0].ShowCursor(EDITOR);
 
 		ShowWindow(window, SW_SHOW);
 //		UpdateWindow(window);
+	}
 
-
+	bool WindowManager::Init(void)
+	{
 		return true;
+	}
+
+	void WindowManager::PostInit(void)
+	{
+		this->DestroySplash();
 	}
 
 	void WindowManager::Update(float)

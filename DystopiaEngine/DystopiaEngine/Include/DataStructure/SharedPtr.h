@@ -29,7 +29,7 @@ namespace std {
 }
 
 #if defined(DEBUG) | defined(_DEBUG)
-#include "DebugAssert.h"
+#include "Utility\DebugAssert.h"
 
 #include <typeinfo>
 #endif // Debug only includes

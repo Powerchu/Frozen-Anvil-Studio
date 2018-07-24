@@ -59,7 +59,7 @@ void Dystopia::RawMesh::BuildMesh(AutoArray<Vertex>& _pVtx, AutoArray<UV>& _pUVs
 
 	UnbindMesh();
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 
