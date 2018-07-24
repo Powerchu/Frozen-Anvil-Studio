@@ -91,7 +91,7 @@ namespace BMP
 		// Check if we know how to read the file type
 		if (_header.mType != 'MB')
 		{
-			DEBUG_PRINT("ImageParser Error: File type not BMP \"%s\"!", _path.c_str());
+//			DEBUG_PRINT("ImageParser Error: File type not BMP \"%s\"!", _path.c_str());
 			return true;
 		}
 
