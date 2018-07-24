@@ -1,26 +1,32 @@
 #pragma once
-#ifndef COLLISION_SYSTEM
-#define COLLISION_SYSTEM
+#ifndef COLLISION_SYSTEM_H
+#define COLLISION_SYSTEM_H
 
 #include "DataStructure\AutoArray.h"
+#include "System\Base\Systems.h"
 
 namespace Dystopia
 {
 	class Collider;
 
-	class CollisionSystem
+	class CollisionSystem : public Systems
 	{
 	public:
 
-		static CollisionSystem * GetInstance();
+		~CollisionSystem();
 
-		void Init();
+		CollisionSystem();
 
-		void Update(const float & _dt);
+		virtual void PreInit(void);
+		virtual bool Init(void);
+		virtual void PostInit(void);
 
-		void FixedUpdate(const float & _dt);
+		virtual void FixedUpdate(float);
+		virtual void Update(float);
+		virtual void Shutdown(void);
 
-		void Terminate();
+		virtual void LoadDefaults(void) { };
+		virtual void LoadSettings(TextSerialiser&) { };
 
 		void InsertCollider(Collider * const & _Col);
 
@@ -30,12 +36,6 @@ namespace Dystopia
 		bool ConvexToConvexCollision(Collider const * const & _ColA,
 			                         Collider const * const & _ColB)const;
 	private:
-
-		static CollisionSystem * mpManager;
-
-		~CollisionSystem();
-
-		CollisionSystem();
 
 		AutoArray<Collider * > mArrOfCollider;
 	};

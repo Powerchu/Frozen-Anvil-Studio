@@ -2,18 +2,20 @@
 
 #include "Object\GameObject.h"
 #include "Behaviour\Behaviour.h"
+#include "System\Driver\Driver.h"
+#include "System\Collision\CollisionSystem.h"
 
 namespace Dystopia
 {
 	Collider::Collider()
 		:mv3Offset{0,0,0,0}
 	{
-		CollisionSystem::GetInstance()->InsertCollider(this);
+		EngineCore::GetInstance()->GetSystem<CollisionSystem>()->InsertCollider(this);
 	}
 	Collider::Collider(const Math::Point3D & _offset)
 		: mv3Offset{ _offset }
 	{
-		CollisionSystem::GetInstance()->InsertCollider(this);
+		EngineCore::GetInstance()->GetSystem<CollisionSystem>()->InsertCollider(this);
 	}
 	void Collider::Load(void)
 	{
@@ -36,7 +38,7 @@ namespace Dystopia
 	{
 		return this->mv3Offset;
 	}
-	void Collider::Serialise(TextSerialiser&)
+	void Collider::Serialise(TextSerialiser&) const
 	{
 	}
 	void Collider::Unserialise(TextSerialiser&)

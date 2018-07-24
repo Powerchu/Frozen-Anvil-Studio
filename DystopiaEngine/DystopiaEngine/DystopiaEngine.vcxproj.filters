@@ -115,6 +115,18 @@
     <ClCompile Include="Source\System\Scene\Scene.cpp">
       <Filter>Game Engine\Systems\Scene\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\AABB.cpp">
+      <Filter>Game Engine\Components\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Collider.cpp">
+      <Filter>Game Engine\Components\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Convex.cpp">
+      <Filter>Game Engine\Components\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Collision\CollisionSystem.cpp">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -324,6 +336,12 @@
     <ClInclude Include="Include\Utility\UtilityInternals.h">
       <Filter>Utility\Internals</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\Collider.h">
+      <Filter>Game Engine\Components\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Collision\CollisionSystem.h">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -496,6 +514,12 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Scene\Scene">
       <UniqueIdentifier>{f3eae6d5-d8fd-463f-9178-71e46cda18c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Collider">
+      <UniqueIdentifier>{1133441c-fabd-4aca-9ff6-3827e8642748}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Collision">
+      <UniqueIdentifier>{b594c75f-4729-452e-96dd-7620db0d54f5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

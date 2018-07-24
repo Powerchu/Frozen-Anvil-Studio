@@ -1,22 +1,23 @@
-#include "System\Collider\CollisionSystem.h"
+#include "System\Collision\CollisionSystem.h"
 #include "Component\Collider.h"
 #include <map>
 #include <utility>
 
 namespace Dystopia
 {
-	CollisionSystem * CollisionSystem::mpManager = nullptr;
-	
-	CollisionSystem * CollisionSystem::GetInstance()
-	{
-		return !mpManager ? (mpManager = new CollisionSystem) : mpManager;
-	}
-
-	void CollisionSystem::Init()
+	void CollisionSystem::PreInit(void)
 	{
 	}
+	bool CollisionSystem::Init()
+	{
+		return true;
+	}
 
-	void CollisionSystem::Update(const float & _dt)
+	void CollisionSystem::PostInit(void)
+	{
+	}
+
+	void CollisionSystem::Update(float _dt)
 	{
 		_dt;
 		using CollisionTable = std::pair<eColliderType, eColliderType>;
@@ -53,12 +54,12 @@ namespace Dystopia
 		}
 	}
 
-	void CollisionSystem::FixedUpdate(const float & _dt)
+	void CollisionSystem::FixedUpdate(float _dt)
 	{
 		_dt;
 	}
 
-	void CollisionSystem::Terminate()
+	void CollisionSystem::Shutdown()
 	{
 		for (Collider * const & elem : mArrOfCollider)
 		{

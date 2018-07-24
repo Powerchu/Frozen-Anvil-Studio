@@ -6,7 +6,7 @@
 #include "Component\ComponentList.h"           /*Component List*/
 #include "Math\Vector4.h"                      /*Vector*/
 #include "DataStructure\AutoArray.h"	       /*AutoArray Data Structure*/
-#include "System/Collider/CollisionSystem.h"   /*Collision System*/
+#include "System\Collision\CollisionSystem.h"            /*Collision System*/
 
 #define CLOCKWISE 1
 /*
@@ -84,7 +84,7 @@ namespace Dystopia
 
 		Math::Vec3D GetOffSet() const;
 		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&);
+		virtual void Serialise(TextSerialiser&) const;
 		virtual void Unserialise(TextSerialiser&);
 
 		virtual ~Collider();
@@ -129,8 +129,7 @@ namespace Dystopia
 		virtual Convex* Duplicate() const;
 
 		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&);
-
+		virtual void Serialise(TextSerialiser&) const;
 		virtual void Unserialise(TextSerialiser&);
 
 		virtual ~Convex();
@@ -187,7 +186,7 @@ namespace Dystopia
 		virtual AABB* Duplicate() const;
 
 		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&);
+		virtual void Serialise(TextSerialiser&) const;
 		virtual void Unserialise(TextSerialiser&);
 
 		/*Collision Check Functions*/
@@ -229,7 +228,7 @@ namespace Dystopia
 		virtual Triangle* Duplicate() const;
 
 		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&);
+		virtual void Serialise(TextSerialiser&) const;
 		virtual void Unserialise(TextSerialiser&);
 	private:
 	};

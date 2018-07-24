@@ -33,7 +33,7 @@ namespace Dystopia
 
 	}
 
-	void Convex::Serialise(TextSerialiser&)
+	void Convex::Serialise(TextSerialiser&) const
 	{
 	}
 

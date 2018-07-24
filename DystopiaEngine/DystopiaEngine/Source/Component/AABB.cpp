@@ -63,7 +63,7 @@ namespace Dystopia
 	}
 
 	/*Serialise and Unserialise*/
-	void  AABB::Serialise(TextSerialiser&)
+	void  AABB::Serialise(TextSerialiser&) const
 	{
 
 	}

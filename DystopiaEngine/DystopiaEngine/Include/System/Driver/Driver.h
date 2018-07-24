@@ -31,12 +31,13 @@ namespace Dystopia
 	class EngineCore final  
 	{
 		using AllSys = Utility::MetaSortT_t <Utility::MetaLessThan, Utility::Collection <
-			Utility::Indexer<eSYSTEMS::TIME_SYSTEM    , class TimeSystem     >,
-			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM   , class InputManager   >,
-			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM  , class WindowManager  >,
-//			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM   , class SoundSystem    >,
-			Utility::Indexer<eSYSTEMS::SCENE_SYSTEM   , class SceneSystem    >,
-			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM , class GraphicsSystem >
+			Utility::Indexer<eSYSTEMS::TIME_SYSTEM       , class TimeSystem     >,
+			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM      , class InputManager   >,
+			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM     , class WindowManager  >,
+			Utility::Indexer<eSYSTEMS::COLLISION_SYSTEM  , class CollisionSystem>,
+//			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM      , class SoundSystem    >,
+			Utility::Indexer<eSYSTEMS::SCENE_SYSTEM      , class SceneSystem    >,
+			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM    , class GraphicsSystem >
 		>>;
 
 		using SubSys = typename Utility::MetaAutoIndexer <
