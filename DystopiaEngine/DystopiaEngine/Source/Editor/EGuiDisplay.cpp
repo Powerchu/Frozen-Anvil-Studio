@@ -428,7 +428,7 @@ namespace EGUI
 			const float offsetX = iconWidth / 2;
 			const float offsetY = iconHeight / 4;
 			ImVec2 posIcon{ pos.x + offsetX, pos.y + offsetY };
-			ImVec2 posText{ pos.x + (offsetX/2), pos.y + iconHeight + (2* offsetY) };
+			ImVec2 posText{ pos.x, pos.y + iconHeight + (2* offsetY) };
 			ImDrawList* pCanvas = ImGui::GetWindowDrawList();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
@@ -446,11 +446,6 @@ namespace EGUI
 			pCanvas->PathStroke(col32R, true);
 			ImGui::SetCursorScreenPos(posText);
 			ImGui::TextWrapped(_label.c_str());
-			//if (StartChild(("###ChildFrameCustomPayload" + _uniqueId).c_str(), Math::Vec2{ size.x*0.75f, size.y*0.25f }, false))
-			//{
-			//	ImGui::TextWrapped(_label.c_str());
-			//	EndChild();
-			//}
 			ImGui::SetCursorScreenPos(pos);
 			ImGui::Dummy(size);
 			return btn;

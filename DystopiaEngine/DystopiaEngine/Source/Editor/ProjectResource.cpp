@@ -112,7 +112,7 @@ namespace Dystopia
 		: EditorTab{ true },
 		mLabel{ "Project" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
 		mpCurrentFolder{ nullptr }, mArrAllFiles{}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
-		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 50, 60 }
+		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 90 }
 	{}
 
 	ProjectResource::~ProjectResource()
@@ -168,9 +168,9 @@ namespace Dystopia
 		EGUI::SameLine(2);
 		EGUI::StartChild("FileWindow", fileWindowSize);
 		if (!strlen(mSearchText))
-			FileWindow();
+			FileWindow(fileWindowSize);
 		else
-			SearchResultWindow();
+			SearchResultWindow(fileWindowSize);
 		EGUI::EndChild();
 	}
 
@@ -231,26 +231,34 @@ namespace Dystopia
 		EGUI::EndChild();
 	}
 
-	void ProjectResource::FileWindow()
+	void ProjectResource::FileWindow(const Math::Vec2& _mySize)
 	{
+		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.5f };
+		unsigned int columns = static_cast<unsigned int>(_mySize.x / buffedSize.x);
+		columns = columns ? columns : 1 ;
+
 		if (mpCurrentFolder)
 		{ 
 			EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
 			EGUI::Display::HorizontalSeparator();
 			for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
 			{
-				EGUI::Indent(10);// +(i * 210));
-				EGUI::PushID(i);
-				FileUI(mpCurrentFolder->mArrPtrFiles[i]);
-				EGUI::PopID();
-				EGUI::UnIndent(10);// +(i * 210));
-				//if ( i <  mpCurrentFolder->mArrPtrFiles.size() - 1)
-				//	EGUI::SameLine();
+				File* pFile = mpCurrentFolder->mArrPtrFiles[i];
+				if (i % columns) EGUI::SameLine();
+				if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false, Math::Vec4{0,0,0,0}))
+				{
+					EGUI::Indent(10);
+					EGUI::PushID(i);
+					FileUI(pFile);
+					EGUI::PopID();
+					EGUI::UnIndent(10);
+				}
+				EGUI::EndChild();
 			}
 		}
 	}
 	
-	void ProjectResource::SearchResultWindow()
+	void ProjectResource::SearchResultWindow(const Math::Vec2& _mySize)
 	{
 		EGUI::Display::Label("Searching: %s", mSearchText);
 		EGUI::Display::HorizontalSeparator();
@@ -390,8 +398,8 @@ namespace Dystopia
 	{
 		if (_file == mFocusedFile) EGUI::Display::Outline(mPayloadRect.x, mPayloadRect.y);
 
-		if (EGUI::Display::CustomPayload(("###projectView" + _file->mName).c_str(), _file->mName.c_str(), _file->mName.c_str(), 
-			mPayloadRect, EGUI::FILE, &(*_file), sizeof(File)))
+		if (EGUI::Display::CustomPayload(("###ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
+			_file->mName.c_str(), mPayloadRect, EGUI::FILE, &(*_file), sizeof(File)))
 		{
 		}
 		//if (EGUI::Display::Button(_file->mName.c_str(), mPayloadRect))

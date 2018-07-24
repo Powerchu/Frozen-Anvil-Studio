@@ -107,8 +107,8 @@ namespace Dystopia
 		void				FileUI(File*);
 		void				SearchWindow();
 		void				FolderWindow();
-		void				FileWindow();
-		void				SearchResultWindow();
+		void				FileWindow(const Math::Vec2& _mySize);
+		void				SearchResultWindow(const Math::Vec2& _mySize);
 		void				MakeStringLower(std::string& _transformMe);
 		void				UpdateSearch();
 		void				RefreshResourceFolder();
