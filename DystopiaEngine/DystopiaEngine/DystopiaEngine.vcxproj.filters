@@ -315,6 +315,12 @@
     <ClInclude Include="Include\Editor\ScriptFormatter.h">
       <Filter>Editor\ScriptFormat</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Behaviours\MyScriptFromInspector\MyScriptFromInspector.cpp">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\MyScriptFromInspector\MyScriptFromInspector.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -481,6 +487,9 @@
     </Filter>
     <Filter Include="Editor\ScriptFormat">
       <UniqueIdentifier>{9a14f238-4e7d-494c-87af-70d664cf07a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{4eae12d7-9f83-4a7d-942c-d803ec34cefc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
