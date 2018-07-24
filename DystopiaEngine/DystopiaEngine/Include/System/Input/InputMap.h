@@ -29,6 +29,10 @@ enum eUserButton : unsigned short
 	BUTTON_PAUSE,
 	BUTTON_CANCEL,
 
+	MOUSE_L,
+	MOUSE_R,
+	MOUSE_M,
+
 	TOTAL_USERBUTTONS
 };
 

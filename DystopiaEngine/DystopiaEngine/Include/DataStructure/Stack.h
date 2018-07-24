@@ -14,6 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _STACK_H_
 #define _STACK_H_
 
+#if defined(DEBUG) | defined(_DEBUG)
+#include "Utility\DebugAssert.h"
+#endif // Debug only includes
+
 template <typename T>
 class Stack
 {
@@ -78,7 +82,7 @@ void Stack<T>::Push(const T& _obj)
 #if defined(debug) | defined(_DEBUG)
 	if (mnSize == mnCap)
 	{
-		DEBUG_ASSERT(mnSize == mnCap, "Stack Error: Attempted push into full stack! \n");
+		assert(mnSize == mnCap && "Stack Error: Attempted push into full stack! \n");
 		--mnSize;
 		return;
 	}
@@ -94,7 +98,7 @@ void Stack<T>::Pop(void)
 #if defined(debug) | defined(_DEBUG)
 	if (IsEmpty())
 	{
-		DEBUG_ASSERT(IsEmpty(), "Stack Error: Attempted pop from empty stack! \n");
+		assert(IsEmpty() && "Stack Error: Attempted pop from empty stack! \n");
 		--mnSize;
 		return;
 	}
