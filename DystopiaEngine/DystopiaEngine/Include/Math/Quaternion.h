@@ -18,22 +18,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _QUARTERNION_H_
 #define _QUARTERNION_H_
 
+#include "Vector4.h"		// Vector4
+
 #include <cmath>			// sqrtf
 #include <xmmintrin.h>		// SSE
 #include <emmintrin.h>		// SSE 2
 #include <tmmintrin.h>		// SSE 3
 #include <smmintrin.h>		// SSE 4.1
 
+
 namespace Math
 {
 	#define _CALL	__vectorcall
-	#define ALLIGN	16
-	#define USE_DP	0
 	
 	/*!
 	\struct Quaternion
 	\brief
-		Representing 3D rotations
+		Representing rotations
 	*/
 	union Quaternion
 	{
@@ -48,31 +49,32 @@ namespace Math
 
 		// ==================================== VECTOR OPERATIONS ==================================== // 
 
-		// Converts the vector to unit length
+		// Converts the Quaternion to unit length
 		inline Quaternion& _CALL Normalise(void);
 
-		// Computes the dot product of this vector and a given vector
+		// Computes the dot product of this Quaternion and a given Quaternion
 		inline float _CALL Dot(const Quaternion) const;
 
-		// Computes the cross product of this vector and a given vector 
+		// Computes the cross product of this Quaternion and a given Quaternion 
 		inline Quaternion& _CALL Cross(const Quaternion);
 
-		// Projects the Vector4 onto the given vector
+		// Projects the Quaternion onto the given Quaternion
 		inline Quaternion& _CALL Project(const Quaternion);
 
 		inline float _CALL Magnitude(void) const;
 		inline float _CALL MagnitudeSqr(void) const;
 
 		inline Quaternion& _CALL Reciprocal(void);
+		inline Quaternion& _CALL Conjugate(void);
 
-		template <unsigned FLAGS>
+		template <NegateFlag FLAGS>
 		inline Quaternion& _CALL Negate(void) noexcept;
+
 
 		// ======================================== OPERATORS ======================================= // 
 
-		// Potentially Slow?, please try to avoid!
-		inline float& _CALL operator[](const unsigned _nIndex);
-		inline const float _CALL operator[](const unsigned _nIndex) const;
+		//inline float& _CALL operator[](const unsigned _nIndex);
+		//inline const float _CALL operator[](const unsigned _nIndex) const;
 
 		inline Quaternion  _CALL operator-(void) const;
 		inline Quaternion& _CALL operator*=(const float);
@@ -81,106 +83,241 @@ namespace Math
 		inline Quaternion& _CALL operator+=(const Quaternion);
 		inline Quaternion& _CALL operator-=(const Quaternion);
 
+		
+		// ================================= QUATERNION GENERATORS ================================= // 
+
+		static inline Quaternion _CALL FromEuler   (float _x, float _y, float _z);
+		static inline Quaternion _CALL FromEulerDeg(float _x, float _y, float _z);
+
 
 	private:
 
-		template <unsigned ... Vals>
-		struct Swizzle;
-
-		template <unsigned N>
-		struct Swizzle<N>
-		{
-			inline Swizzle<N>& _CALL operator= (float _rhs);
-			inline _CALL operator float(void) const;
-
-		private:
-
-			__m128 mData;
-
-			static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
-		};
-
-		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
-		struct IsLvalueSwizzle
-		{
-			static constexpr bool value = (X != Y) && (X != Z) && (X != W) && (Y != Z) && (Y != W) && (Z != W);
-		};
-
-		// While we're at it, might as well add swizzle masks
-		// DataMember  -> 1 shuffle (read)
-		// SwizzleMask -> 1 shuffle (read & write)
-		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
-		struct Swizzle<X,Y,Z,W>
-		{
-			Swizzle() = default;
-			Swizzle(__m128 _data) : mData{ _data } {}
-
-			template<bool = IsLvalueSwizzle<X, Y, Z, W>::value>
-			inline Swizzle& _CALL operator = (Quaternion _rhs);
-
-			template <>
-			inline Swizzle& _CALL operator = <false> (Quaternion)
-			{
-				static_assert(false, "Quaternion Error: lvalue cannot be duplicate.");
-				return *this;
-			}
-
-			template<unsigned Q, unsigned R, unsigned S, unsigned T, typename ret_t = Utility::EnableIf_t<IsLvalueSwizzle<X, Y, Z, W>::value, Swizzle>>
-			inline ret_t& _CALL operator = (Swizzle<Q, R, S, T> _rhs);
-
-			inline __m128 _CALL GetRaw(void) const noexcept;
-			inline __m128 _CALL _GetRawUnshuf(void) const noexcept;
-
-			inline _CALL operator Math::Quaternion(void) const;
-
-		private:
-			__m128 mData;
-
-			static constexpr unsigned shuffleRead = _MM_SHUFFLE(W, Z, Y, X);
-			static constexpr unsigned shuffleWrite = (3 << (2 * W)) | (2 << (2 * Z)) | (1 << (2 * Y)) | (0 << (2 * X));
-		};
-
-		static inline __m128 _CALL InvSqrt(__m128);
-		static inline __m128 _CALL Dot(__m128, __m128);
-
-		__m128 mData;
-
-	public:
-		Swizzle<0> x;
-		Swizzle<1> y;
-		Swizzle<2> z;
-		Swizzle<3> w;
-
-		Swizzle<0, 0, 0, 0> xxxx;
-		Swizzle<0, 0, 1, 1> xxyy;
-		Swizzle<0, 0, 2, 2> xxzz;
-		Swizzle<0, 1, 0, 1> xyxy;
-		Swizzle<0, 1, 2, 3> xyzw;
-		Swizzle<0, 2, 1, 3> xzyw;
-		Swizzle<0, 3, 0, 3> xwxw;
-		Swizzle<1, 0, 2, 3> yxzw;
-		Swizzle<1, 0, 3, 2> yxwz;
-		Swizzle<1, 1, 1, 1> yyyy;
-		Swizzle<1, 3, 0, 2> ywxz;
-		Swizzle<1, 3, 2, 0> ywzx;
-		Swizzle<2, 0, 1, 3> zxyw;
-		Swizzle<2, 1, 2, 1> zyzy;
-		Swizzle<2, 2, 2, 2> zzzz;
-		Swizzle<2, 3, 0, 1> zwxy;
-		Swizzle<3, 1, 2, 0> wyzx;
-		Swizzle<3, 3, 3, 3> wwww;
+		Math::Vector4 mData;
 	};
+
+	// Converts a vector into unit length
+	inline Quaternion _CALL Normalise(const Quaternion);
+
+	// Computes the dot product of two Quaternions
+	inline float _CALL Dot(const Quaternion, const Quaternion);
+
+	// Computes the cross product of two Quaternions
+	inline Quaternion _CALL Cross(const Quaternion, const Quaternion);
+
+	// Projects lhs onto rhs
+	inline Quaternion _CALL Project(const Quaternion, const Quaternion);
+
+	inline Quaternion _CALL Reciprocal(const Quaternion);
+
+	inline Quaternion _CALL Conjugate(const Quaternion);
+
+
+	// ====================================== MATH UTILITY ======================================= // 
+	// Manually overload the math utility functions which cannot be called for type Quaternion
+
+	//inline Quaternion _CALL Abs(const Quaternion);
+
+	//inline Quaternion _CALL Min(const Quaternion, const Quaternion);
+	//inline Quaternion _CALL Max(const Quaternion, const Quaternion);
+
+
+	// ======================================== OPERATORS ======================================== // 
+
+	inline Quaternion _CALL operator-(const Quaternion, const Quaternion);
+	inline Quaternion _CALL operator+(const Quaternion, const Quaternion);
+	inline Quaternion _CALL operator*(const Quaternion, const Quaternion);
+	inline Quaternion _CALL operator*(const float, const Quaternion);
+	inline Quaternion _CALL operator*(const Quaternion, const float);
+	inline Quaternion _CALL operator/(const Quaternion, const float);
 }
 
 
 
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+inline Math::Quaternion::Quaternion(void) noexcept
+	: mData{ }
+{
+
+}
+
+inline Math::Quaternion::Quaternion(const Quaternion& _Q) noexcept
+	: mData{ _Q.mData }
+{
+
+}
+
+inline Math::Quaternion::Quaternion(float x, float y, float z, float w) noexcept
+	: mData{ x,y,z,w }
+{
+
+}
+
+inline Math::Quaternion::Quaternion(__m128 _Q) noexcept
+	: mData{ _Q }
+{
+
+}
+
+inline Math::Quaternion& _CALL Math::Quaternion::Normalise(void)
+{
+	mData.Normalise();
+	return *this;
+}
+
+inline Math::Quaternion _CALL Math::Normalise(Quaternion _Q)
+{
+	return _Q.Normalise();
+}
+
+inline Math::Quaternion& _CALL Math::Quaternion::Reciprocal(void)
+{
+	mData.Reciprocal();
+	return *this;
+}
+
+inline Math::Quaternion _CALL Math::Reciprocal(Quaternion _Q)
+{
+	return _Q.Reciprocal();
+}
+
+inline Math::Quaternion& _CALL Math::Quaternion::Conjugate(void)
+{
+	mData.Negate<NegateFlag::XYZ>();
+	return *this;
+}
+
+inline Math::Quaternion _CALL Math::Conjugate(Quaternion _Q)
+{
+	return _Q.Conjugate();
+}
+
+inline float _CALL Math::Quaternion::Dot(const Quaternion _rhs) const
+{
+	return .0f;
+}
+
+inline float _CALL Math::Dot(const Quaternion _lhs, const Quaternion _rhs)
+{
+	return _lhs.Dot(_rhs);
+}
+
+inline Math::Quaternion& _CALL Math::Quaternion::Cross(const Quaternion _rhs)
+{
+	return *this;
+}
+
+inline Math::Quaternion _CALL Math::Cross(Quaternion _lhs, Quaternion _rhs)
+{
+	return _lhs.Cross(_rhs);
+}
+
+inline Math::Quaternion& _CALL Math::Quaternion::Project(const Quaternion _rhs)
+{
+	return *this;
+}
+
+// Projects lhs onto rhs
+inline Math::Quaternion _CALL Math::Project(Quaternion _lhs, Quaternion _rhs)
+{
+	return _lhs.Project(_rhs);
+}
+
+
+inline float _CALL Math::Quaternion::Magnitude(void) const
+{
+	return mData.Magnitude();
+}
+
+inline float _CALL Math::Quaternion::MagnitudeSqr(void) const
+{
+	return mData.MagnitudeSqr();
+}
+
+template <Math::NegateFlag FLAGS>
+inline Math::Quaternion& _CALL Math::Quaternion::Negate(void) noexcept
+{
+	mData.Negate<FLAGS>();
+	return *this;
+}
+
+
+
+// ============================================ OPERATOR OVERLOADING ============================================ // 
+
+
+inline Math::Quaternion& _CALL Math::Quaternion::operator*=(const float _fScalar)
+{
+	mData *= _fScalar;
+	return *this;
+}
+
+inline Math::Quaternion&_CALL Math::Quaternion::operator*=(const Quaternion _rhs)
+{
+	return *this;
+}
+
+inline Math::Quaternion& _CALL Math::Quaternion::operator/=(const float _fScalar)
+{
+	return *this *= (1/_fScalar);
+}
+
+inline Math::Quaternion& _CALL Math::Quaternion::operator+=(const Quaternion _rhs)
+{
+	mData += _rhs.mData;
+	return *this;
+}
+
+inline Math::Quaternion& _CALL Math::Quaternion::operator-=(const Quaternion _rhs)
+{
+	mData -= _rhs.mData;
+	return *this;
+}
+
+inline Math::Quaternion _CALL Math::Quaternion::operator-(void) const
+{
+	return Quaternion{ *this }.Negate<NegateFlag::XYZW>();
+}
+
+inline Math::Quaternion _CALL Math::operator-(Quaternion _lhs, const Quaternion _rhs)
+{
+	return _lhs -= _rhs;
+}
+
+inline Math::Quaternion _CALL Math::operator+(Quaternion _lhs, const Quaternion _rhs)
+{
+	return _lhs += _rhs;
+}
+
+inline Math::Quaternion _CALL Math::operator*(Quaternion _lhs, const Quaternion _rhs)
+{
+	return _lhs *= _rhs;
+}
+
+inline Math::Quaternion _CALL Math::operator*(const float _lhs, Quaternion _rhs)
+{
+	return _rhs *= _lhs;
+}
+
+inline Math::Quaternion _CALL Math::operator*(Quaternion _lhs, const float _rhs)
+{
+	return _lhs *= _rhs;
+}
+
+inline Math::Quaternion _CALL Math::operator/(Quaternion _lhs, const float _rhs)
+{
+	return _lhs /= _rhs;
+}
+
+
+
+
+
 // Remove all our defines
-#ifdef USE_DP
-#undef USE_DP
-#endif
-#ifdef ALLIGN
-#undef ALLIGN
-#endif
 #ifdef _CALL
 #undef _CALL
 #endif

@@ -48,6 +48,28 @@ namespace Math
 
 	struct Matrix4;
 
+	enum class NegateFlag : unsigned char
+	{
+		X = 1 << 0,
+		Y = 1 << 1,
+		Z = 1 << 2,
+		W = 1 << 3,
+
+		XY = X | Y,
+		XZ = X | Z,
+		XW = X | W,
+		YZ = Y | Z,
+		YW = Y | W,
+		ZW = Z | W,
+
+		XYZ = XY | Z,
+		XYW = XY | W,
+		XZW = XZ | W,
+		YZW = YZ | Z,
+
+		XYZW = XY | ZW
+	};
+
 	/*!
 	\struct Vector4
 	\brief
@@ -82,8 +104,9 @@ namespace Math
 
 		inline Vector4& _CALL Reciprocal(void);
 
-		template <unsigned FLAGS>
+		template <NegateFlag>
 		inline Vector4& _CALL Negate(void) noexcept;
+
 
 		// ======================================== OPERATORS ======================================= // 
 
@@ -207,28 +230,6 @@ namespace Math
 		SwizzleMask<3, 1, 2, 0> wyzx;
 		SwizzleMask<3, 3, 3, 3> wwww;
 
-		enum Flags : char
-		{
-			NEGATE_X = 1 << 0,
-			NEGATE_Y = 1 << 1,
-			NEGATE_Z = 1 << 2,
-			NEGATE_W = 1 << 3,
-
-			NEGATE_XY = NEGATE_X | NEGATE_Y,
-			NEGATE_XZ = NEGATE_X | NEGATE_Z,
-			NEGATE_XW = NEGATE_X | NEGATE_W,
-			NEGATE_YZ = NEGATE_Y | NEGATE_Z,
-			NEGATE_YW = NEGATE_Y | NEGATE_W,
-			NEGATE_ZW = NEGATE_Z | NEGATE_W,
-
-			NEGATE_XYZ = NEGATE_XY | NEGATE_Z,
-			NEGATE_XYW = NEGATE_XY | NEGATE_W,
-			NEGATE_XZW = NEGATE_XZ | NEGATE_W,
-			NEGATE_YZW = NEGATE_YZ | NEGATE_Z,
-
-			NEGATE_XYZW = NEGATE_XY | NEGATE_ZW
-		};
-
 		inline __m128 _CALL GetRaw(void) const noexcept;
 	};
 
@@ -351,7 +352,7 @@ inline Math::Vector4 _CALL Math::Reciprocal(Vector4 _v)
 	return _v.Reciprocal();
 }
 
-template <unsigned FLAGS>
+template <Math::NegateFlag FLAGS>
 inline Math::Vector4& _CALL Math::Vector4::Negate(void) noexcept
 {
 	static const __m128i Negator = _mm_set_epi32(

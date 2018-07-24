@@ -35,37 +35,29 @@ namespace Math
 
 
 	template<typename Num>
-	inline typename Utility::EnableIf<Utility::IsNumeric<Num>::value, Num>::type Abs(const Num _x)
+	inline constexpr typename Utility::EnableIf<Utility::IsNumeric<Num>::value, Num>::type Abs(const Num _x)
 	{
 		return _x < 0 ? -_x : _x;
 	}
 
-	// Deprecated
-	template<const unsigned n, class T>
-	inline T Abs(T _vec)
-	{
-		Internal::AbsHelper<T, n - 1>::CalculateAbs(_vec);
-		return _vec;
-	}
-
-	inline bool IsZero(float _fScalar)
+	inline constexpr bool IsZero(float _fScalar)
 	{
 		return _fScalar > -epsilon && _fScalar < epsilon;
 	}
 
-	inline float Min(float _x, float _y)
+	inline constexpr float Min(float _x, float _y)
 	{
 		return _x > _y ? _y : _x;
 	}
 
-	inline float Max(float _x, float _y)
+	inline constexpr float Max(float _x, float _y)
 	{
 		return _x < _y ? _y : _x;
 	}
 
 	// Checks if two floats are approximately equal
 	// Returns false if one of the numbers is zero
-	inline bool ApproxEq(float _lhs, float _rhs)
+	inline constexpr bool ApproxEq(float _lhs, float _rhs)
 	{
 		float diff = Abs(_lhs - _rhs);
 
@@ -76,19 +68,19 @@ namespace Math
 		return diff < (scale * epsilon);
 	}
 
-	inline float Clamp(float _fInput, float _fMin, float _fMax)
+	inline constexpr float Clamp(float _fInput, float _fMin, float _fMax)
 	{
 		return Max(_fMin, Min(_fMax, _fInput));
 	}
 
-	inline float DegToRad(float _fDegrees)
+	inline constexpr float DegToRad(float _fDegrees)
 	{
 		constexpr float DegRadRatio = pi / 180.f;
 
 		return _fDegrees * DegRadRatio;
 	}
 
-	inline float RadToDeg(float _fRadians)
+	inline constexpr float RadToDeg(float _fRadians)
 	{
 		constexpr float RadDegRatio = 180.f / pi;
 
@@ -96,7 +88,7 @@ namespace Math
 	}
 
 	template<class T>
-	inline T Lerp(T _start, T _end, float _fRatio)
+	inline constexpr T Lerp(T _start, T _end, float _fRatio)
 	{
 		return (1.f - _fRatio) * _start + _fRatio * _end;
 	}

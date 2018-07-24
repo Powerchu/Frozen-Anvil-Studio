@@ -19,10 +19,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\MetaDataStructures.h"
 
 #include "System\Time\TimeSystem.h"
+#include "System\Scene\SceneSystem.h"
 #include "System\Input\InputSystem.h"
 #include "System\Sound\SoundSystem.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Window\WindowManager.h"
+
+#include "System\Graphics\MeshSystem.h"
 
 
 namespace
@@ -36,7 +39,7 @@ namespace
 	template <typename Ty, typename T, typename ... Ts>
 	void RecursiveNewInsertAutoArray(AutoArray<Ty>& _arr)
 	{
-		_arr.EmplaceBack(new T{});
+		_arr.Insert(new T{});
 		RecursiveNewInsertAutoArray<Ty, Ts...>(_arr);
 	}
 
