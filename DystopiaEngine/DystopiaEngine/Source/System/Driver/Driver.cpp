@@ -24,6 +24,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Window\WindowManager.h"
 
+#include "System\Graphics\MeshSystem.h"
+#include "System\Scene\SceneSystem.h"
 
 namespace
 {
