@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-/* Start Script Format */
+
 #include "_SF_ClassName_.h"
 #include "Math\Vector2.h"
 #include "System\Input\InputSystem.h"
@@ -63,7 +63,6 @@ namespace Dystopia
 	{
 	}
 }
-/* End Script Format */
 
 
 

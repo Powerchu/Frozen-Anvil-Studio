@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-/* Start Script Format */
+
 #ifndef _MyScriptFromInspector_H_
 #define _MyScriptFromInspector_H_
 #include "Component\Component.h"
@@ -51,7 +51,5 @@ namespace Dystopia
 }
 
 #endif //_MyScriptFromInspector_H_
-
-/* End Script Format */
 
 
