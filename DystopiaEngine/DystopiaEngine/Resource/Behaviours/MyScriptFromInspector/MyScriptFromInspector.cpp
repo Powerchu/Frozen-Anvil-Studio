@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	_SF_ClassName_.cpp
-\author _SF_CreatorName_ (100%)
-\par    email: _SF_CreatorLogin_\@digipen.edu
+\file	MyScriptFromInspector.cpp
+\author Tan Shannon (100%)
+\par    email: t.shannon\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -12,7 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 /* Start Script Format */
-#include "_SF_ClassName_.h"
+#include "MyScriptFromInspector.h"
 #include "Math\Vector2.h"
 #include "System\Input\InputSystem.h"
 #include "System\Input\InputMap.h"
@@ -20,19 +20,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	_SF_ClassName_::_SF_ClassName_()
+	MyScriptFromInspector::MyScriptFromInspector()
 	{
 	}
 
-	_SF_ClassName_::~_SF_ClassName_()
+	MyScriptFromInspector::~MyScriptFromInspector()
 	{
 	}
 
-	void _SF_ClassName_::Load()
+	void MyScriptFromInspector::Load()
 	{
 	}
 
-	void _SF_ClassName_::Init()
+	void MyScriptFromInspector::Init()
 	{
 	}
 
@@ -42,24 +42,24 @@ namespace Dystopia
 	virtual void PostUpdate(void);
 	*/
 
-	void _SF_ClassName_::OnDestroy()
+	void MyScriptFromInspector::OnDestroy()
 	{
 	}
 
-	void _SF_ClassName_::Unload()
+	void MyScriptFromInspector::Unload()
 	{
 	}
 
-	Component* _SF_ClassName_::Duplicate() const
+	Component* MyScriptFromInspector::Duplicate() const
 	{
 		return nullptr;
 	}
 
-	void _SF_ClassName_::Serialise(TextSerialiser& _ser)
+	void MyScriptFromInspector::Serialise(TextSerialiser& _ser)
 	{
 	}
 
-	void _SF_ClassName_::Unserialise(TextSerialiser& _ser)
+	void MyScriptFromInspector::Unserialise(TextSerialiser& _ser)
 	{
 	}
 }

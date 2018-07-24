@@ -109,9 +109,6 @@
     <ClCompile Include="Source\Editor\ConsoleLog.cpp">
       <Filter>Editor\Systems\Log</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\BehaviourFormat\BehaviourScript.cpp">
-      <Filter>Editor\ScriptFormat</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp">
       <Filter>Editor\ScriptFormat</Filter>
     </ClCompile>
@@ -314,9 +311,6 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\ConsoleLog.h">
       <Filter>Editor\Systems\Log</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Behaviours\BehaviourFormat\BehaviourScript.h">
-      <Filter>Editor\ScriptFormat</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\ScriptFormatter.h">
       <Filter>Editor\ScriptFormat</Filter>

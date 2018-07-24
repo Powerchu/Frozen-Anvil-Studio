@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\Inspector.h"
 #include "Editor\ProjectResource.h"
 #include "Editor\Commands.h"
+#include "Editor\ScriptFormatter.h"
 #include "Object\GameObject.h"
 #include "Component\Component.h"
 #include <iostream>
@@ -46,6 +47,7 @@ namespace Dystopia
 
 	void Inspector::Init()
 	{
+		GenerateScript("MyScriptFromInspector", "Tan Shannon", "t.shannon");
 	}
 
 	void Inspector::Update(const float& _dt)

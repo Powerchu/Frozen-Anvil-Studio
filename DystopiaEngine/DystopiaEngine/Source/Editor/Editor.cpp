@@ -50,7 +50,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 	hInstance;
 
@@ -82,8 +82,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	driver->Shutdown();
 	delete timer;
 	delete editor;
-
-	_CrtDumpMemoryLeaks();
+	// Automatically called by _CRTDBG_LEAK_CHECK_DF flag when proccess ends. 
+	// This will ensure static variables are not taken into account
+	//_CrtDumpMemoryLeaks(); 
 	return 0;
 }
 

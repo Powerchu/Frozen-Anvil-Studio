@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	void GenerateScript(const std::string& _fileName);
+	bool GenerateScript(const std::string& _className, const std::string& _creatorName, const std::string& _creatorLogin);
 }
 
 
