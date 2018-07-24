@@ -46,12 +46,14 @@ namespace Dystopia
 		HierarchyView(void);
 
 		std::string		mLabel;
+		std::string		mPopupID;
 		GameObject		*mpFocusGameObj;
 		Scene			*mpCurrentScene;
 		char			mSearchText[MAX_SEARCH];
 
 		void			SearchBar();
 		void			CreateButton();
+		void			CreatePopup();
 	};
 }
 

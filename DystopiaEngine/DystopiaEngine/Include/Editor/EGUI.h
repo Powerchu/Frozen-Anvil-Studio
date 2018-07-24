@@ -325,6 +325,29 @@ namespace EGUI
 		void EndPayloadReceiver();
 		/* =======================================================================================================================
 		Brief:
+				Opens a little popup window that is passed into the param. BASICALLY - the param is the same as the _uniqueID 
+				of the StartPopup function you want to call.
+				Note : For the second boolean param of OpenPopup is set to false, the popup will be defaulted to the
+				bottom left of the last ui item called. In the usage case, it would be the bottom left of the Button("Add Co..")
+				Leave it to true if can, or use the DropDownSelection function instead
+		Usage:
+				if (EGUI::Display::Button("Add Component", btnSize))
+				{
+					EGUI::Display::OpenPopup("Inspector Component List", false);
+				}
+				if (EGUI::Display::StartPopup("Inspector Component List"))
+				{
+					EGUI::Display::Dummy(235, 5);
+					EGUI::Display::EndPopup();
+				}
+		======================================================================================================================= */
+		void OpenPopup(const std::string& _thePopupID, bool _toOpenAtMousePos = true);
+		// Creates a popup window that is tied to the _uniqueID. Call OpenPopup with its ID to open it
+		bool StartPopup(const std::string& _uniqueID);
+		// call this at the end of the StartPopup function when it is true. Determines the end of the popup
+		void EndPopup();
+		/* =======================================================================================================================
+		Brief:
 				Creates a drop down box with selectable strings. The currently selected index will be stored into the second
 				parameter variable.
 		Usage:
@@ -387,6 +410,14 @@ namespace EGUI
 				EGUI::Display::IconGameObj("something");
 		======================================================================================================================= */
 		bool IconGameObj(const std::string& _uniqueId, float _width = 10.f, float _height = 10.f);
+		/* =======================================================================================================================
+		Brief:
+				Creates a small File icon. Returns true when clicked
+		Usage:
+				EGUI::Display::IconFile("something");
+		======================================================================================================================= */
+		bool IconFile(const std::string& _uniqueId, float _width = 10.f, float _height = 10.f,
+					  const Math::Vec4& _colour = Math::Vec4{ 0.2f, 0.8f, 0.7f, 0.8f });
 		/* =======================================================================================================================
 		Brief:
 				Creates a box outline given the width and height

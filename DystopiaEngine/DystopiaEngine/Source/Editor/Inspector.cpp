@@ -16,7 +16,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\Inspector.h"
 #include "Editor\ProjectResource.h"
 #include "Editor\Commands.h"
-#include "Editor\CommandList.h"
 #include "Object\GameObject.h"
 #include "Component\Component.h"
 #include <iostream>
@@ -104,9 +103,8 @@ namespace Dystopia
 			ProjectResource::GetInstance()->FocusOnFile(mDemoName);
 		}
 
-
-
 		AddComponentButton();
+		
 	}
 
 	void Inspector::Shutdown()
@@ -162,23 +160,20 @@ namespace Dystopia
 
 	void Inspector::AddComponentButton()
 	{
-		ImGui::Separator();
-		static const ImVec2 btnSize{250, 20};
+		EGUI::Display::HorizontalSeparator();
+		static const Math::Vec2 btnSize{250, 20};
 		float mid = Size().x / 2;
 		float inde = mid - (btnSize.x / 2);
 		inde = (inde < 20) ? 20 : inde;
 		EGUI::Indent(inde);
-		ImVec2 pos = ImGui::GetCursorScreenPos();
-		pos.y += btnSize.y;
-		pos.x -= 1;
-		if (ImGui::Button("Add Component", btnSize))
+		if (EGUI::Display::Button("Add Component", btnSize))
 		{
-			ImGui::OpenPopup("Inspector Component List");
-			ImGuiContext& g = *ImGui::GetCurrentContext();
-			ImGuiPopupRef& popup_ref = g.OpenPopupStack[g.CurrentPopupStack.Size];
-			popup_ref.OpenPopupPos = pos;
+			EGUI::Display::OpenPopup("Inspector Component List", false);
 		}
+		if (EGUI::Display::Button("Add Behaviour", btnSize))
+		{
 
+		}
 		EGUI::UnIndent(inde);
 		ComponentsDropDownList();
 	}
@@ -186,13 +181,13 @@ namespace Dystopia
 	void Inspector::ComponentsDropDownList()
 	{
 		std::string components[5] = { "Com1", "Com2", "Com3", "Com4", "Com5" };
-		if (ImGui::BeginPopup("Inspector Component List"))
+		if (EGUI::Display::StartPopup("Inspector Component List"))
 		{
-			ImGui::Dummy(ImVec2{ 250 - 15, 5 });
+			EGUI::Display::Dummy(235, 2);
 			for (const auto& e : components)
 				EGUI::Display::SelectableTxt(e, false);
 
-			ImGui::EndPopup();
+			EGUI::Display::EndPopup();
 		}
 	}
 }

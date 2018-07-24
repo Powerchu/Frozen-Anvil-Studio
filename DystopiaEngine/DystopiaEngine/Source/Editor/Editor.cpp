@@ -330,17 +330,16 @@ namespace Dystopia
 
 	void Editor::MMView()
 	{
+		static constexpr float icon = 10.f;
 		if (EGUI::StartMenuHeader("View"))
 		{
 			for (auto& e : mTabsArray)
 			{
 				if (*(e->GetOpenedBool())) 
-					EGUI::Display::IconTick(10, 10);
+					EGUI::Display::IconTick(icon, icon);
 				else 
-					EGUI::Display::Dummy(10, 10);
-
+					EGUI::Display::Dummy(icon, icon);
 				EGUI::SameLine();
-
 				if (EGUI::StartMenuBody(e->GetLabel()))
 					*(e->GetOpenedBool()) = !*(e->GetOpenedBool());
 			}

@@ -32,7 +32,8 @@ namespace Dystopia
 
 	HierarchyView::HierarchyView()
 		: EditorTab{ true }, 
-		mLabel{ "Hierarchy" }, mpFocusGameObj{ nullptr }, mpCurrentScene{ nullptr }, mSearchText{ "" }
+		mLabel{ "Hierarchy" }, mpFocusGameObj{ nullptr }, mpCurrentScene{ nullptr }, mSearchText{ "" },
+		mPopupID{ "Create Objects From Hierarchy" }
 	{
 	}
 
@@ -60,7 +61,11 @@ namespace Dystopia
 
 	void HierarchyView::Window()
 	{
+		CreateButton();
+		EGUI::ChangeAlignmentYOffset(0);
+		EGUI::SameLine();
 		SearchBar();
+		EGUI::ChangeAlignmentYOffset();
 
 		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
@@ -76,22 +81,36 @@ namespace Dystopia
 
 	void HierarchyView::CreateButton()
 	{
+		EGUI::Indent(5);
 		if (EGUI::Display::Button("Create", Math::Vec2{ 50, 18 }))
 		{
-
+			EGUI::Display::OpenPopup(mPopupID);
 		}
+		EGUI::UnIndent(5);
+		CreatePopup();
 	}
 
 	void HierarchyView::SearchBar()
 	{
-		float width = Size().x - 70;
+		float width = Size().x - 70 - 55;
 		width = (width < 20) ? 20 : width;
-		EGUI::Indent(5);
 		EGUI::ChangeLabelSpacing(10);
 		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, true, width);
 		EGUI::ChangeLabelSpacing();
-		EGUI::UnIndent(5);
 		EGUI::Display::HorizontalSeparator();
+	}
+
+	void HierarchyView::CreatePopup()
+	{
+		if (EGUI::Display::StartPopup(mPopupID))
+		{
+			std::string creatable[5] = { "obj1", "obj2", "obj3", "obj4", "obj5" };
+			// for loop everything that can be created
+			for (const auto& e : creatable)
+				EGUI::Display::SelectableTxt(e, false);
+
+			EGUI::Display::EndPopup();
+		}
 	}
 }
 

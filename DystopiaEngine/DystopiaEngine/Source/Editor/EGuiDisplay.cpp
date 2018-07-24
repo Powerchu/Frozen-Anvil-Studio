@@ -420,7 +420,7 @@ namespace EGUI
 		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
 						   const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize)
 		{
-			const ImU32		col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
+			const ImU32	col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
 			ImVec2 pos = ImGui::GetCursorScreenPos();
 			ImVec2 size{ _displaytSize.x, _displaytSize.y };
 			const float iconWidth = size.x / 2;
@@ -428,8 +428,7 @@ namespace EGUI
 			const float offsetX = iconWidth / 2;
 			const float offsetY = iconHeight / 4;
 			ImVec2 posIcon{ pos.x + offsetX, pos.y + offsetY };
-			ImVec2 posText{ pos.x, pos.y + iconHeight + (2* offsetY) };
-			ImDrawList* pCanvas = ImGui::GetWindowDrawList();
+			ImVec2 posText{ pos.x + 1, pos.y + iconHeight + (2* offsetY) };
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), size);
@@ -437,18 +436,33 @@ namespace EGUI
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
 			if (payload) EndPayload();
 			ImGui::SetCursorScreenPos(posIcon);
-			pCanvas->PathClear();
-			pCanvas->PathLineTo(posIcon);
-			pCanvas->PathLineTo(ImVec2{ posIcon.x + (iconWidth * 0.7f), posIcon.y });
-			pCanvas->PathLineTo(ImVec2{ posIcon.x + iconWidth, posIcon.y + (iconWidth * 0.3f)});
-			pCanvas->PathLineTo(ImVec2{ posIcon.x + iconWidth, posIcon.y + iconHeight });
-			pCanvas->PathLineTo(ImVec2{ posIcon.x, posIcon.y + iconHeight });
-			pCanvas->PathStroke(col32R, true);
+			IconFile(_uniqueId.c_str(), size.x, size.y);
 			ImGui::SetCursorScreenPos(posText);
 			ImGui::TextWrapped(_label.c_str());
-			ImGui::SetCursorScreenPos(pos);
-			ImGui::Dummy(size);
 			return btn;
+		}
+
+		void OpenPopup(const std::string& _thePopupID, bool _toOpenAtMousePos)
+		{
+			ImGui::OpenPopup(_thePopupID.c_str());
+			if (!_toOpenAtMousePos)
+			{
+				ImGuiContext& g = *ImGui::GetCurrentContext();
+				ImGuiWindow* pGuiWin = g.CurrentWindow;
+				ImRect callerRect = pGuiWin->DC.LastItemRect;
+				ImGuiPopupRef& popup_ref = g.OpenPopupStack[g.CurrentPopupStack.Size];
+				popup_ref.OpenPopupPos = callerRect.GetBL();
+			}
+		}
+
+		bool StartPopup(const std::string& _uniqueID)
+		{
+			return ImGui::BeginPopup(_uniqueID.c_str());
+		}
+
+		void EndPopup()
+		{
+			ImGui::EndPopup();
 		}
 
 		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width)
@@ -582,24 +596,40 @@ namespace EGUI
 			pCanvas->PathLineTo(midLeft);
 			pCanvas->PathLineTo(mid);
 			pCanvas->PathLineTo(midRight);
-			//pCanvas->PathFillConvex(col32G);
 			pCanvas->PathStroke(col32G, true);
 			pCanvas->PathClear();
 			pCanvas->PathLineTo(midLeft);
 			pCanvas->PathLineTo(botLeft);
 			pCanvas->PathLineTo(midBot);
-			//pCanvas->PathLineTo(mid);
-			//pCanvas->PathFillConvex(col32B);
 			pCanvas->PathStroke(col32B, false);
 			pCanvas->PathClear();
 			pCanvas->PathLineTo(mid);
 			pCanvas->PathLineTo(midBot);
 			pCanvas->PathLineTo(botRight);
 			pCanvas->PathLineTo(midRight);
-			//pCanvas->PathFillConvex(col32R);
 			pCanvas->PathStroke(col32R, false);
 
 			return ImGui::InvisibleButton(("##iconGameObj" + _uniqueId).c_str(), ImVec2{ _width, _height });
+		}
+
+		bool IconFile(const std::string& _uniqueId, float _width, float _height, const Math::Vec4& _colour)
+		{
+			const ImU32 col32 = static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w});
+			ImVec2 pos = ImGui::GetCursorScreenPos();
+			ImVec2 size{ _width, _height };
+			const float iconWidth = size.x / 2;
+			const float iconHeight = size.y / 2;
+			ImDrawList* pCanvas = ImGui::GetWindowDrawList();
+
+			pCanvas->PathClear();
+			pCanvas->PathLineTo(pos);
+			pCanvas->PathLineTo(ImVec2{ pos.x + (iconWidth * 0.7f), pos.y });
+			pCanvas->PathLineTo(ImVec2{ pos.x + iconWidth, pos.y + (iconWidth * 0.3f) });
+			pCanvas->PathLineTo(ImVec2{ pos.x + iconWidth, pos.y + iconHeight });
+			pCanvas->PathLineTo(ImVec2{ pos.x, pos.y + iconHeight });
+			pCanvas->PathStroke(col32, true);
+			ImGui::SetCursorScreenPos(pos);
+			return ImGui::InvisibleButton(("###IconFile" + _uniqueId).c_str(), size);;
 		}
 		
 		void Outline(float _x, float _y)

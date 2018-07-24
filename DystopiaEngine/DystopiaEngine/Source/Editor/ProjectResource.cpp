@@ -20,8 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <stdlib.h>
 #include <tchar.h>
 
-static const std::string DEFAULT_PATH = "..\\DystopiaEngine";// \\Resource";
-static const std::string DEFAULT_NAME = "Resource";
+static const std::string DEFAULT_PATH = "..\\DystopiaEngine";
+static const std::string DEFAULT_NAME = "DystopiaEngine";
 static float delay = 5;
 
 namespace Dystopia
@@ -244,8 +244,9 @@ namespace Dystopia
 			for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
 			{
 				File* pFile = mpCurrentFolder->mArrPtrFiles[i];
+				const std::string id = "ProjectResourceFileWindow" + pFile->mName + std::to_string(i);
 				if (i % columns) EGUI::SameLine();
-				if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false, Math::Vec4{0,0,0,0}))
+				if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{0,0,0,0}))
 				{
 					EGUI::Indent(10);
 					EGUI::PushID(i);
@@ -260,6 +261,10 @@ namespace Dystopia
 	
 	void ProjectResource::SearchResultWindow(const Math::Vec2& _mySize)
 	{
+		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.5f };
+		unsigned int columns = static_cast<unsigned int>(_mySize.x / buffedSize.x);
+		columns = columns ? columns : 1;
+
 		EGUI::Display::Label("Searching: %s", mSearchText);
 		EGUI::Display::HorizontalSeparator();
 		size_t size = mArrFilesSearchedThisFrame.size();
@@ -267,11 +272,18 @@ namespace Dystopia
 		{
 			for (unsigned int i = 0; i < size; ++i)
 			{
-				EGUI::Indent(10);
-				EGUI::PushID(i);
-				FileUI(mArrFilesSearchedThisFrame[i]);
-				EGUI::PopID();
-				EGUI::UnIndent(10);
+				File* pFile = mArrFilesSearchedThisFrame[i];
+				const std::string id = "ProjectResourceSearchResultWindow" + pFile->mName + std::to_string(i);
+				if (i % columns) EGUI::SameLine();
+				if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{ 0,0,0,0 }))
+				{
+					EGUI::Indent(10);
+					EGUI::PushID(i);
+					FileUI(pFile);
+					EGUI::PopID();
+					EGUI::UnIndent(10);
+				}
+				EGUI::EndChild();
 			}
 		}
 		else
@@ -401,6 +413,7 @@ namespace Dystopia
 		if (EGUI::Display::CustomPayload(("###ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
 			_file->mName.c_str(), mPayloadRect, EGUI::FILE, &(*_file), sizeof(File)))
 		{
+			mFocusedFile = _file;
 		}
 		//if (EGUI::Display::Button(_file->mName.c_str(), mPayloadRect))
 		//{

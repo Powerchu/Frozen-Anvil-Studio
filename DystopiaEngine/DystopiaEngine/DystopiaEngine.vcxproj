@@ -30,9 +30,11 @@
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehaviourFormat\BehaviourScript.cpp" />
     <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
+    <ClCompile Include="Source\Editor\ScriptFormatter.cpp" />
     <ClCompile Include="Source\System\Driver\Driver.cpp" />
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
     <ClCompile Include="Source\Component\Component.cpp" />
@@ -89,6 +91,7 @@
     <ClInclude Include="Include\Editor\Payloads.h" />
     <ClInclude Include="Include\Editor\ProjectResource.h" />
     <ClInclude Include="Include\Editor\SceneView.h" />
+    <ClInclude Include="Include\Editor\ScriptFormatter.h" />
     <ClInclude Include="Include\Globals.h" />
     <ClInclude Include="Include\IO\BinarySerializer.h" />
     <ClInclude Include="Include\IO\ImageParser.h" />
@@ -131,6 +134,7 @@
     <ClInclude Include="Include\Utility\MetaHelper.h" />
     <ClInclude Include="Include\Utility\Utility.h" />
     <ClInclude Include="Include\Math\Vector2.h" />
+    <ClInclude Include="Resource\Behaviours\BehaviourFormat\BehaviourScript.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>

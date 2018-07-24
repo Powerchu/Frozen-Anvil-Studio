@@ -109,6 +109,10 @@
     <ClCompile Include="Source\Editor\ConsoleLog.cpp">
       <Filter>Editor\Systems\Log</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehaviourFormat\BehaviourScript.cpp">
+      <Filter>Editor\ScriptFormat</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\ScriptFormatter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -309,6 +313,10 @@
     <ClInclude Include="Include\Editor\ConsoleLog.h">
       <Filter>Editor\Systems\Log</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehaviourFormat\BehaviourScript.h">
+      <Filter>Editor\ScriptFormat</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\ScriptFormatter.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -472,6 +480,9 @@
     </Filter>
     <Filter Include="Editor\Systems\Log">
       <UniqueIdentifier>{6936f02f-3d30-411a-ad25-d61c764a6c90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\ScriptFormat">
+      <UniqueIdentifier>{9a14f238-4e7d-494c-87af-70d664cf07a1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
