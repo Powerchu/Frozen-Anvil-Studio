@@ -112,7 +112,9 @@
     <ClCompile Include="Resource\Behaviours\BehaviourFormat\BehaviourScript.cpp">
       <Filter>Editor\ScriptFormat</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\ScriptFormatter.cpp" />
+    <ClCompile Include="Source\Editor\ScriptFormatter.cpp">
+      <Filter>Editor\ScriptFormat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -316,7 +318,9 @@
     <ClInclude Include="Resource\Behaviours\BehaviourFormat\BehaviourScript.h">
       <Filter>Editor\ScriptFormat</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\ScriptFormatter.h" />
+    <ClInclude Include="Include\Editor\ScriptFormatter.h">
+      <Filter>Editor\ScriptFormat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
