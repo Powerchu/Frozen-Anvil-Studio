@@ -33,9 +33,9 @@ static const std::string TokensToReplace[tokenCount] =
 
 namespace Dystopia
 {	
-	bool MakeFolder(const std::wstring& _foldPath)
+	BOOL MakeFolder(const std::wstring& _foldPath)
 	{
-		return static_cast<bool>(CreateDirectory(_foldPath.c_str(), NULL));
+		return CreateDirectory(_foldPath.c_str(), NULL);
 	}
 
 	std::ofstream MakeFile(const std::string& _fullPath)
