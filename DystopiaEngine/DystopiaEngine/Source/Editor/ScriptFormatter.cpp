@@ -19,9 +19,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <Windows.h>
 #include <iostream>
 
-static const std::string Default_Creation_Folder = "..\\DystopiaEngine\\Resource\\Behaviours";
-static const std::string TemplateBodyPath = "..\\DystopiaEngine\\Resource\\Behaviours\\BehaviourFormat\\BehaviourScript.cpp";
-static const std::string TemplateHeaderPath = "..\\DystopiaEngine\\Resource\\Behaviours\\BehaviourFormat\\BehaviourScript.h";
+static const std::string ProjectFolder = "..\\DystopiaEngine";
+static const std::string ResourceFolder = "Resource";
+static const std::string BehavioursFolder = "Behaviours";
+static const std::string Default_Creation_Folder = ProjectFolder + "\\" + ResourceFolder + "\\" + BehavioursFolder;
+static const std::string TemplateBodyPath = Default_Creation_Folder + "\\BehaviourFormat\\BehaviourScript.cpp";
+static const std::string TemplateHeaderPath = Default_Creation_Folder + "\\BehaviourFormat\\BehaviourScript.h";
 static constexpr int tokenCount = 4;
 static const std::string TokensToReplace[tokenCount] =
 {
