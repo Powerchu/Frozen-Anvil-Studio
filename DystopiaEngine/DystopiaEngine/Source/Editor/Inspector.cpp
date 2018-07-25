@@ -173,7 +173,7 @@ namespace Dystopia
 		}
 		if (EGUI::Display::Button("Add Behaviour", btnSize))
 		{
-			if (GenerateScript("MyScriptFromInspector", "Tan Shannon", "t.shannon"))
+			if (GenerateScript("MyScript2", "Tan Shannon", "t.shannon"))
 				std::cout << "Script Added to the visual studio project. Please arrange the filters and code in visual then come back to test it!\n";
 			else
 				std::cout << "Script already Exists! Aborted!\n";

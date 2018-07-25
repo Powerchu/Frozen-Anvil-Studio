@@ -23,8 +23,8 @@ static const std::string ProjectFolder = "..\\DystopiaEngine";
 static const std::string ResourceFolder = "Resource";
 static const std::string BehavioursFolder = "Behaviours";
 static const std::string Default_Creation_Folder = ProjectFolder + "\\" + ResourceFolder + "\\" + BehavioursFolder;
-static const std::string TemplateBodyPath = Default_Creation_Folder + "\\BehaviourFormat\\BehaviourScript.cpp";
-static const std::string TemplateHeaderPath = Default_Creation_Folder + "\\BehaviourFormat\\BehaviourScript.h";
+static const std::string TemplateBodyPath = ProjectFolder + "\\" + ResourceFolder + "\\BehaviourFormat\\BehaviourScript.cpp";
+static const std::string TemplateHeaderPath = ProjectFolder + "\\" + ResourceFolder + "\\BehaviourFormat\\BehaviourScript.h";
 static constexpr int tokenCount = 4;
 static const std::string TokensToReplace[tokenCount] =
 {

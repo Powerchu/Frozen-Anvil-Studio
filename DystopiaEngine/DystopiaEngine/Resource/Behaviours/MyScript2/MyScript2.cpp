@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	MyScriptFromInspector.cpp
+\file	MyScript2.cpp
 \author Tan Shannon (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -12,7 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 
-#include "MyScriptFromInspector.h"
+#include "MyScript2.h"
 #include "Math\Vector2.h"
 #include "System\Input\InputSystem.h"
 #include "System\Input\InputMap.h"
@@ -20,19 +20,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	MyScriptFromInspector::MyScriptFromInspector()
+	MyScript2::MyScript2()
 	{
 	}
 
-	MyScriptFromInspector::~MyScriptFromInspector()
+	MyScript2::~MyScript2()
 	{
 	}
 
-	void MyScriptFromInspector::Load()
+	void MyScript2::Load()
 	{
 	}
 
-	void MyScriptFromInspector::Init()
+	void MyScript2::Init()
 	{
 	}
 
@@ -42,24 +42,24 @@ namespace Dystopia
 	virtual void PostUpdate(void);
 	*/
 
-	void MyScriptFromInspector::OnDestroy()
+	void MyScript2::OnDestroy()
 	{
 	}
 
-	void MyScriptFromInspector::Unload()
+	void MyScript2::Unload()
 	{
 	}
 
-	Component* MyScriptFromInspector::Duplicate() const
+	Component* MyScript2::Duplicate() const
 	{
 		return nullptr;
 	}
 
-	void MyScriptFromInspector::Serialise(TextSerialiser& _ser)
+	void MyScript2::Serialise(TextSerialiser& _ser)
 	{
 	}
 
-	void MyScriptFromInspector::Unserialise(TextSerialiser& _ser)
+	void MyScript2::Unserialise(TextSerialiser& _ser)
 	{
 	}
 }

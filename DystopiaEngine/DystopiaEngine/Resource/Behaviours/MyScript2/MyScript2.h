@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	MyScriptFromInspector.h
+\file	MyScript2.h
 \author Tan Shannon (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -12,17 +12,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 
-#ifndef _MyScriptFromInspector_H_
-#define _MyScriptFromInspector_H_
+#ifndef _MyScript2_H_
+#define _MyScript2_H_
 #include "Component\Component.h"
 
 namespace Dystopia
 {
-	class MyScriptFromInspector : Component
+	class MyScript2 : Component
 	{
 	public:
-		MyScriptFromInspector();
-		~MyScriptFromInspector();
+		MyScript2();
+		~MyScript2();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -50,6 +50,6 @@ namespace Dystopia
 	};
 }
 
-#endif //_MyScriptFromInspector_H_
+#endif //_MyScript2_H_
 
 
