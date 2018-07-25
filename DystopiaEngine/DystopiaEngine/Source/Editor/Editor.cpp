@@ -107,7 +107,9 @@ namespace Dystopia
 	{}
 
 	Editor::~Editor(void)
-	{}
+	{
+		
+	}
 
 	void Editor::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInput)
 	{ 
