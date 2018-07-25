@@ -64,7 +64,6 @@
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
     <ClCompile Include="Source\System\Window\Window.cpp" />
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
-    <ClCompile Include="Resource\Behaviours\**\*.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
@@ -134,7 +133,6 @@
     <ClInclude Include="Include\Utility\MetaHelper.h" />
     <ClInclude Include="Include\Utility\Utility.h" />
     <ClInclude Include="Include\Math\Vector2.h" />
-    <ClInclude Include="Resource\Behaviours\**\*.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>
