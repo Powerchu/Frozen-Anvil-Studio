@@ -30,27 +30,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	template <typename Ty>
-	void RecursiveNewInsertAutoArray(AutoArray<Ty>&)
-	{
-
-	}
-
-	template <typename Ty, typename T, typename ... Ts>
-	void RecursiveNewInsertAutoArray(AutoArray<Ty>& _arr)
-	{
-		_arr.Insert(new T{});
-		RecursiveNewInsertAutoArray<Ty, Ts...>(_arr);
-	}
-
 	template <typename Ty, typename ... T>
 	AutoArray<Ty> MakeAutoArray(Utility::TypeList<T...>)
 	{
-		AutoArray<Ty> ret{sizeof...(T)};
-
-		RecursiveNewInsertAutoArray<Ty, T...>(ret);
-
-		return ret;
+		 return AutoArray<Ty>{ static_cast<Ty>(new T{})...};
 	}
 
 	template <typename T>

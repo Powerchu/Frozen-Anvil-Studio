@@ -57,7 +57,7 @@ namespace Math
 
 	// Checks if two floats are approximately equal
 	// Returns false if one of the numbers is zero
-	inline constexpr bool ApproxEq(float _lhs, float _rhs)
+	inline bool ApproxEq(float _lhs, float _rhs)
 	{
 		float diff = Abs(_lhs - _rhs);
 
@@ -75,16 +75,12 @@ namespace Math
 
 	inline constexpr float DegToRad(float _fDegrees)
 	{
-		constexpr float DegRadRatio = pi / 180.f;
-
-		return _fDegrees * DegRadRatio;
+		return _fDegrees * (pi / 180.f);
 	}
 
 	inline constexpr float RadToDeg(float _fRadians)
 	{
-		constexpr float RadDegRatio = 180.f / pi;
-
-		return _fRadians * RadDegRatio;
+		return _fRadians * (180.f / pi);
 	}
 
 	template<class T>

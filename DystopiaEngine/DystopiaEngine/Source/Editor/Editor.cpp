@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\Vector2.h"
 #include "Math\Vector4.h"
 #include "Math\Matrix4.h"
+#include "Math\Angles.h"
 #include <iostream>
 
 #include "Utility/MetaAlgorithms.h"

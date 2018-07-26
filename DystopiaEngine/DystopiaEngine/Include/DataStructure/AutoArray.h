@@ -24,8 +24,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\Meta.h"
 #include "Utility\MetaDataStructures.h" // TypeList
 
-#include <new>     // operator new
-
+#include <new>				// operator new
+#include <utility>			// decay
+#include <initializer_list> // init-list 
+#include <iostream>
 template<class T>
 class AutoArray
 {
@@ -36,6 +38,12 @@ public:
 	explicit AutoArray(unsigned _nSize);
 	AutoArray(const AutoArray<T>& _other);
 	AutoArray(AutoArray<T>&& _other) noexcept;
+	template <typename U, typename = 
+		Utility::EnableIf_t<
+			Utility::IsSame<std::decay_t<U>, T>::value &&
+			!Utility::IsIntegral<std::decay_t<U>>::value
+	>>
+	AutoArray(std::initializer_list<U>);
 
 	~AutoArray(void);
 
@@ -175,6 +183,14 @@ AutoArray<T>::AutoArray(AutoArray<T>&& _other) noexcept :
 {
 	_other.mpArray = nullptr;
 	_other.mnSize = _other.mnLast = 0;
+}
+
+template <class T> template <typename U, typename>
+AutoArray<T>::AutoArray(std::initializer_list<U> _il) :
+	AutoArray(static_cast<unsigned>(_il.size()))
+{
+	for (auto& e : _il)
+		EmplaceBack(e);
 }
 
 template <class T>

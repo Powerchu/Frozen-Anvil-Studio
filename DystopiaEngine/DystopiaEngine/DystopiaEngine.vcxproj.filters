@@ -252,6 +252,9 @@
     <ClInclude Include="Include\Utility\UtilityInternals.h">
       <Filter>Utility\Internals</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Math\Angles.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
