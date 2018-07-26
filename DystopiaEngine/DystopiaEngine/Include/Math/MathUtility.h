@@ -20,7 +20,7 @@
 
 namespace Math
 {
-	// Exponential Function
+	// Exponential Constant
 	constexpr float euler = 2.7182818284590452353602874713526f;
 	// Mathematical PI
 	constexpr float pi    = 3.1415926535897932384626433832795f;
@@ -32,7 +32,6 @@ namespace Math
 	constexpr float sqrt2 = 1.4142135623730950488016887242096f;
 	// Floating point error tolerance
 	constexpr float epsilon = 0.0000001f;
-
 
 	template<typename Num>
 	inline constexpr typename Utility::EnableIf<Utility::IsNumeric<Num>::value, Num>::type Abs(const Num _x)

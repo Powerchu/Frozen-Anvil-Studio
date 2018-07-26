@@ -51,6 +51,7 @@ namespace Math
 		) noexcept;
 		inline explicit Matrix4(const Vector4(&)[4]) noexcept;
 		inline explicit Matrix4(const float (&)[16]) noexcept;
+		inline explicit Matrix4(const Vector4, const Vector4, const Vector4, const Vector4) noexcept;
 
 
 		// ==================================== MATRIX OPERATIONS ==================================== // 
@@ -171,16 +172,6 @@ inline Math::Matrix4::Matrix4(void) noexcept :
 
 }
 
-inline Math::Matrix4::Matrix4(
-	const float a, const float b, const float c, const float d,
-	const float e, const float f, const float g, const float h,
-	const float i, const float j, const float k, const float l,
-	const float m, const float n, const float o, const float p
-) noexcept : mData{ {a, b, c, d}, {e, f, g, h}, {i, j, k, l}, {m, n, o, p} }
-{
-
-}
-
 inline Math::Matrix4::Matrix4(const Vector4(&_arr)[4]) noexcept :
 	mData{ _arr[0], _arr[1], _arr[2], _arr[3] }
 {
@@ -197,6 +188,24 @@ inline Math::Matrix4::Matrix4(const float(&_arr)[16]) noexcept :
 {
 
 }
+
+inline Math::Matrix4::Matrix4(
+	const float a, const float b, const float c, const float d,
+	const float e, const float f, const float g, const float h,
+	const float i, const float j, const float k, const float l,
+	const float m, const float n, const float o, const float p
+) noexcept : mData{ {a, b, c, d}, {e, f, g, h}, {i, j, k, l}, {m, n, o, p} }
+{
+
+}
+
+inline Math::Matrix4::Matrix4(
+	const Vector4 _v1, const Vector4 _v2,
+	const Vector4 _v3, const Vector4 _v4
+) noexcept : mData{ _v1, _v2, _v3, _v4 }
+{
+}
+
 
 inline Math::Matrix4& _CALL Math::Matrix4::Identity(void) noexcept
 {

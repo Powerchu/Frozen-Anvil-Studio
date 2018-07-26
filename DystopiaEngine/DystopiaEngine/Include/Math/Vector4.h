@@ -213,21 +213,31 @@ namespace Math
 
 		SwizzleMask<0, 0, 0, 0> xxxx;
 		SwizzleMask<0, 0, 1, 1> xxyy;
+		SwizzleMask<0, 0, 1, 2> xxyz;
 		SwizzleMask<0, 0, 2, 2> xxzz;
 		SwizzleMask<0, 1, 0, 1> xyxy;
+		SwizzleMask<0, 1, 1, 1> xyyy;
 		SwizzleMask<0, 1, 2, 3> xyzw;
+		SwizzleMask<0, 1, 3, 2> xywz;
+		SwizzleMask<0, 2, 1, 1> xzyy;
 		SwizzleMask<0, 2, 1, 3> xzyw;
 		SwizzleMask<0, 3, 0, 3> xwxw;
+		SwizzleMask<0, 3, 2, 3> xwzw;
 		SwizzleMask<1, 0, 2, 3> yxzw;
 		SwizzleMask<1, 0, 3, 2> yxwz;
 		SwizzleMask<1, 1, 1, 1> yyyy;
 		SwizzleMask<1, 3, 0, 2> ywxz;
+		SwizzleMask<1, 3, 1, 3> ywyw;
 		SwizzleMask<1, 3, 2, 0> ywzx;
-		SwizzleMask<2, 0, 1, 3> zxyw; // Used by cross product 
+		SwizzleMask<2, 0, 1, 3> zxyw;
 		SwizzleMask<2, 1, 2, 1> zyzy;
 		SwizzleMask<2, 2, 2, 2> zzzz;
+		SwizzleMask<2, 3, 0, 0> zwxx;
 		SwizzleMask<2, 3, 0, 1> zwxy;
+		SwizzleMask<2, 3, 2, 3> zwzw;
+		SwizzleMask<2, 3, 3, 2> zwwz;
 		SwizzleMask<3, 1, 2, 0> wyzx;
+		SwizzleMask<3, 2, 0, 1> wzxy;
 		SwizzleMask<3, 3, 3, 3> wwww;
 
 		inline __m128 _CALL GetRaw(void) const noexcept;

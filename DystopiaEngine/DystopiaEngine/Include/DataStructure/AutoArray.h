@@ -40,7 +40,7 @@ public:
 	AutoArray(AutoArray<T>&& _other) noexcept;
 	template <typename U, typename = 
 		Utility::EnableIf_t<
-			Utility::IsSame<std::decay_t<U>, T>::value &&
+			 Utility::IsSame<std::decay_t<U>, T>::value &&
 			!Utility::IsIntegral<std::decay_t<U>>::value
 	>>
 	AutoArray(std::initializer_list<U>);

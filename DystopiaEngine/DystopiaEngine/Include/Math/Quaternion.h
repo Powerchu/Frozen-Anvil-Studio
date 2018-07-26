@@ -8,8 +8,6 @@
 
 	NOTE: Cannot inherit Vector4 due to it and this being unions
 
-Reference: https://software.intel.com/sites/landingpage/IntrinsicsGuide
-
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
@@ -18,13 +16,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _QUARTERNION_H_
 #define _QUARTERNION_H_
 
-#include "Vector4.h"		// Vector4
+#include "Math\Vector4.h"	// Vector4
+#include "Math\Matrix4.h"	// Matrix4
 
-#include <cmath>			// sqrtf
-#include <xmmintrin.h>		// SSE
-#include <emmintrin.h>		// SSE 2
-#include <tmmintrin.h>		// SSE 3
-#include <smmintrin.h>		// SSE 4.1
+#include <cmath>			// sin, cos, asin, acos
 
 
 namespace Math
@@ -64,11 +59,13 @@ namespace Math
 		inline float _CALL Magnitude(void) const;
 		inline float _CALL MagnitudeSqr(void) const;
 
-		inline Quaternion& _CALL Reciprocal(void);
-		inline Quaternion& _CALL Conjugate(void);
+		inline Quaternion& _CALL Conjugate(void) noexcept;
 
 		template <NegateFlag FLAGS>
 		inline Quaternion& _CALL Negate(void) noexcept;
+
+		Matrix4 _CALL Matrix(void) const noexcept;
+
 
 
 		// ======================================== OPERATORS ======================================= // 
@@ -107,10 +104,9 @@ namespace Math
 	// Projects lhs onto rhs
 	inline Quaternion _CALL Project(const Quaternion, const Quaternion);
 
-	inline Quaternion _CALL Reciprocal(const Quaternion);
-
 	inline Quaternion _CALL Conjugate(const Quaternion);
 
+	inline Matrix4 _CALL Matrix(const Quaternion) noexcept;
 
 	// ====================================== MATH UTILITY ======================================= // 
 	// Manually overload the math utility functions which cannot be called for type Quaternion
@@ -174,17 +170,6 @@ inline Math::Quaternion _CALL Math::Normalise(Quaternion _Q)
 	return _Q.Normalise();
 }
 
-inline Math::Quaternion& _CALL Math::Quaternion::Reciprocal(void)
-{
-	mData.Reciprocal();
-	return *this;
-}
-
-inline Math::Quaternion _CALL Math::Reciprocal(Quaternion _Q)
-{
-	return _Q.Reciprocal();
-}
-
 inline Math::Quaternion& _CALL Math::Quaternion::Conjugate(void)
 {
 	mData.Negate<NegateFlag::XYZ>();
@@ -243,6 +228,25 @@ inline Math::Quaternion& _CALL Math::Quaternion::Negate(void) noexcept
 {
 	mData.Negate<FLAGS>();
 	return *this;
+}
+
+Math::Matrix4 _CALL Math::Quaternion::Matrix(void) const noexcept
+{
+	float scale = 2.f / mData.MagnitudeSqr();
+
+	Vec4 t3 = mData.ywyw;
+	Vec4 t1 = mData.xxyy * mData.xywz; // b^2, bc, ac, cd
+	Vec4 t2 = mData.zzzz * mData.zwxy; // d^2, ad, bd, bc
+	t3 *= t3;						   // c^2, a^2, c^2, a^2
+//	Vec4 t4 = t1 + ~t2; // TODO : Use ~ for alternating operation? alternatives ++ --
+//	Vec4 t1 = t2 + ~t1;
+
+	return Matrix4{};
+}
+
+inline Math::Matrix4 _CALL Math::Matrix(const Quaternion _Q) noexcept
+{
+	return _Q.Matrix();
 }
 
 
