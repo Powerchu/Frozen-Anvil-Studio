@@ -53,6 +53,7 @@
     <ClCompile Include="Source\Math\Matrix4.cpp" />
     <ClCompile Include="Source\Object\GameObject.cpp" />
     <ClCompile Include="Source\Component\Camera.cpp" />
+    <ClCompile Include="Source\System\Events\EventSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\GraphicsSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Mesh.cpp" />
     <ClCompile Include="Source\System\Graphics\MeshSystem.cpp" />
@@ -67,6 +68,7 @@
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\System\Events\EventSystem.h" />
     <ClInclude Include="Resource\Behaviours\**\*.h" />
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui.h" />

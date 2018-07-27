@@ -112,6 +112,7 @@
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp">
       <Filter>Editor\ScriptFormat</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Events\EventSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -315,6 +316,7 @@
     <ClInclude Include="Include\Editor\ScriptFormatter.h">
       <Filter>Editor\ScriptFormat</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Events\EventSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -484,6 +486,9 @@
     </Filter>
     <Filter Include="Scripts">
       <UniqueIdentifier>{4eae12d7-9f83-4a7d-942c-d803ec34cefc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Events">
+      <UniqueIdentifier>{17ecd9b4-fbe3-451d-b22d-d6a833992d7a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
