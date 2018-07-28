@@ -13,23 +13,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Events\EventSystem.h"
 #include <string>
 
-namespace Dystopia
+EventID EventHash(const char* _eventName)
 {
-	EventID EventHash(const char* _eventName)
+	EventID hash = OFFSET_BASIS;
+	size_t len = strlen(_eventName) + 1;
+	for (size_t i = 0; i < len; ++i)
 	{
-		EventID hash = OFFSET_BASIS;
-		size_t len = strlen(_eventName) + 1;
-		for (size_t i = 0; i < len; ++i)
-		{
-			hash ^= *_eventName++;
-			hash *= FNV_PRIME;
-		}
-		return hash;
+		hash ^= *_eventName++;
+		hash *= FNV_PRIME;
 	}
-
-
-
-
-
+	return hash;
 }
 
+/*********************************************************** Event Callback ***********************************************************/
+
+/*********************************************************** Event Data ***********************************************************/
+
+/*********************************************************** Event System ***********************************************************/
