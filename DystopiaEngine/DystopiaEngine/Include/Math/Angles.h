@@ -17,21 +17,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "MathUtility.h"
 
-#define NO_UNDERSCORE 1
-
 namespace Math
 {
 	class Angle
 	{
+		static constexpr float RadToDeg = 180.f / Math::pi;
+
 	public:
-		float constexpr Radians(void) const
+		inline float constexpr Radians(void) const
 		{
 			return mfAngle;
 		}
 
-		float constexpr Degrees(void) const
+		inline float constexpr Degrees(void) const
 		{
-			return RadToDeg(mfAngle);
+			return RadToDeg * mfAngle;
 		}
 
 		explicit constexpr Angle(float _angle) :
@@ -39,7 +39,7 @@ namespace Math
 		{}
 
 	private:
-		float mfAngle;
+		const float mfAngle;
 	};
 
 	class Radians : public Angle
@@ -52,14 +52,16 @@ namespace Math
 
 	class Degrees : public Angle
 	{
+		static constexpr float DegToRad = Math::pi / 180.f;
+
 	public:
 		explicit constexpr Degrees(float _angle) :
-			Angle{ DegToRad(_angle) }
+			Angle{ _angle * DegToRad }
 		{}
 	};
 }
 
-// For some reason Visual Studios don't like these when they are not in global namespace
+// For some reason Visual Studio doesn't like these when they are not in global namespace
 
 #if NO_UNDERSCORE
 #pragma warning(push)
@@ -109,9 +111,9 @@ constexpr Math::Degrees operator ""_deg(unsigned long long _angle)
 }
 
 #endif
-
-
 #undef NO_UNDERSCORE
+
+
 
 #endif		// INCLUDE GUARD
 

@@ -26,8 +26,7 @@ namespace Dystopia
 	public:
 
 		using TAG = ComponentTag;
-		static constexpr eComponents TYPE = eComponents::BASE_COMPONENT;
-		virtual const eComponents GetComponentType(void) const { return TYPE; };
+		virtual unsigned GetComponentType(void) const { return unsigned(-1); };
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 

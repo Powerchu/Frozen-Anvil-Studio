@@ -121,6 +121,10 @@ namespace Math
 		inline Vector4& _CALL operator+=(const Vector4);
 		inline Vector4& _CALL operator-=(const Vector4);
 
+		// Alternate + and -
+		// x + x , y - y , z + z , w - w
+		inline Vector4& _CALL AddSub(const Vector4);
+
 #if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
 
 		//inline void* operator new (std::size_t);
@@ -231,6 +235,7 @@ namespace Math
 		SwizzleMask<1, 3, 2, 0> ywzx;
 		SwizzleMask<2, 0, 1, 3> zxyw;
 		SwizzleMask<2, 1, 2, 1> zyzy;
+		SwizzleMask<2, 2, 2, 3> zzzw;
 		SwizzleMask<2, 2, 2, 2> zzzz;
 		SwizzleMask<2, 3, 0, 0> zwxx;
 		SwizzleMask<2, 3, 0, 1> zwxy;
@@ -284,6 +289,10 @@ namespace Math
 	inline Vector4 _CALL operator*(const float, const Vector4);
 	inline Vector4 _CALL operator*(const Vector4, const float);
 	inline Vector4 _CALL operator/(const Vector4, const float);
+
+	// Alternate + and -
+	// x + x , y - y , z + z , w - w
+	inline Vector4 _CALL AddSub(const Vector4, const Vector4);
 
 	using Vec4		= Vector4;
 	using Vector3D	= Vector4;
@@ -768,6 +777,12 @@ inline Math::Vector4& _CALL Math::Vector4::operator-=(const Vector4 _rhs)
 	return *this;
 }
 
+inline Math::Vector4& _CALL Math::Vector4::AddSub(const Vector4 _rhs)
+{
+	mData = _mm_addsub_ps(mData, _rhs.mData);
+	return *this;
+}
+
 inline Math::Vector4 _CALL Math::Vector4::operator-(void) const
 {
 	static __m128i signBits = _mm_set1_epi32(0x80000000);
@@ -784,6 +799,11 @@ inline Math::Vector4 _CALL Math::operator-(Vector4 _lhs, const Vector4 _rhs)
 inline Math::Vector4 _CALL Math::operator+(Vector4 _lhs, const Vector4 _rhs)
 {
 	return _lhs += _rhs;
+}
+
+inline Math::Vector4 _CALL Math::AddSub(Vector4 _lhs, const Vector4 _rhs)
+{
+	return _lhs.AddSub(_rhs);
 }
 
 inline Math::Vector4 _CALL Math::operator*(Vector4 _lhs, const Vector4 _rhs)

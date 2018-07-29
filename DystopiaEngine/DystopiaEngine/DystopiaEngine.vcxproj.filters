@@ -255,6 +255,9 @@
     <ClInclude Include="Include\Math\Angles.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DataStructure\Pointer.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

@@ -73,32 +73,10 @@ namespace Dystopia
 		void SetName(const std::string&);
 
 		template<class T>
-		T* GetComponent(void) const
-		{
-			for (Component * e : mComponents)
-			{
-				if (T::TYPE == e->GetComponentType())
-				{
-					return static_cast<T*>(e);
-				}
-			}
-			return nullptr;
-		}
+		T* GetComponent(void) const;
 
 		template<class T>
-		AutoArray<T*> GetComponents(void) const
-		{
-			AutoArray<T*> temp{};
-			for (Component * e : mComponents)
-			{
-				if (T::TYPE == e->GetComponentType())
-				{
-					temp.Insert(static_cast<T*>(e));
-				}
-			}
-
-			return temp;
-		}
+		AutoArray<T*> GetComponents(void) const;
 
 
 	private:
@@ -118,6 +96,9 @@ namespace Dystopia
 		inline void RemoveComponent(Component*, ComponentTag);
 		inline void RemoveComponent(Behaviour*, BehaviourTag);
 
+		template <typename T> T* GetComponent(ComponentTag) const;
+		template <typename T> T* GetComponent(BehaviourTag) const;
+
 		void PurgeComponents(void);
 	};
 }
@@ -127,7 +108,7 @@ namespace Dystopia
 
 
 
-	// ============================================ FUNCTION DEFINITIONS ============================================ // 
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
 template <typename T>
@@ -152,6 +133,55 @@ template <typename T>
 inline void Dystopia::GameObject::RemoveComponent(T* _pComponent)
 {
 	RemoveComponent(_pComponent, typename T::TAG{});
+}
+
+template <typename T>
+T* Dystopia::GameObject::GetComponent(void) const
+{
+	return GetComponent<T>(T::TAG{});
+}
+
+template <typename T>
+T* Dystopia::GameObject::GetComponent(ComponentTag) const
+{
+	for (Component* e : mComponents)
+	{
+		if (Utility::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
+		{
+			return static_cast<T*>(e);
+		}
+	}
+
+	return nullptr;
+}
+
+template <typename T>
+T* Dystopia::GameObject::GetComponent(BehaviourTag) const
+{
+	for (Behaviour* e : mBehaviours)
+	{
+		if (Utility::MetaFind_t<T, AllBehaviours>::value == e->GetComponentType())
+		{
+			return static_cast<T*>(e);
+		}
+	}
+
+	return nullptr;
+}
+
+template <typename T>
+AutoArray<T*> Dystopia::GameObject::GetComponents(void) const
+{
+	AutoArray<T*> temp{};
+	for (Component * e : mComponents)
+	{
+		if (T::TYPE == e->GetComponentType())
+		{
+			temp.Insert(static_cast<T*>(e));
+		}
+	}
+
+	return temp;
 }
 
 inline void Dystopia::GameObject::RemoveComponent(Component* _pComponent, ComponentTag)

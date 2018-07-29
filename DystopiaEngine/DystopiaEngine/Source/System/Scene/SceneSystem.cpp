@@ -43,9 +43,6 @@ void Dystopia::SceneSystem::FixedUpdate(float _dt)
 	{
 		mpCurrScene->FixedUpdate(_dt);
 	}
-	else
-	{
-	}
 }
 
 void Dystopia::SceneSystem::Update(float _dt)

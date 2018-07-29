@@ -73,6 +73,50 @@ namespace Utility
 	using RemoveRef_t = typename RemoveRef<T>::type;
 
 
+	// RemoveConst
+	// ============= =======================================================
+
+	template <typename T>
+	struct RemoveConst
+	{
+		using type = T;
+	};
+
+	template<typename T>
+	struct RemoveConst<const T>
+	{
+		using type = T;
+	};
+
+	template <typename T>
+	using RemoveConst_t = typename RemoveConst<T>::type;
+
+
+	// Decay
+	// ======== ============================================================
+
+	template <typename T>
+	struct Decay
+	{
+		using type = RemoveConst_t<RemoveRef_t<T>>;
+	};
+
+	template <typename T, typename ... Ty>
+	struct Decay<T(Ty...)>
+	{
+		using type = T(*)(Ty...);
+	};
+
+	template <typename T, size_t N>
+	struct Decay<T[N]>
+	{
+		using type = T*;
+	};
+
+	template <typename T>
+	using Decay_t = typename Decay<T>::type;
+
+
 	// EnableIf
 	// ========= ===========================================================
 

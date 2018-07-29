@@ -113,6 +113,7 @@
     <ClInclude Include="Include\Utility\Utility.h" />
     <ClInclude Include="Include\Math\Vector2.h" />
     <ClInclude Include="Include\Utility\UtilityInternals.h" />
+    <ClInclude Include="Include\DataStructure\Pointer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>

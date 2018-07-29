@@ -235,11 +235,21 @@ Math::Matrix4 _CALL Math::Quaternion::Matrix(void) const noexcept
 	float scale = 2.f / mData.MagnitudeSqr();
 
 	Vec4 t3 = mData.ywyw;
-	Vec4 t1 = mData.xxyy * mData.xywz; // b^2, bc, ac, cd
-	Vec4 t2 = mData.zzzz * mData.zwxy; // d^2, ad, bd, bc
-	t3 *= t3;						   // c^2, a^2, c^2, a^2
-//	Vec4 t4 = t1 + ~t2; // TODO : Use ~ for alternating operation? alternatives ++ --
-//	Vec4 t1 = t2 + ~t1;
+	Vec4 t1 = mData.xxyy * mData.xywz; // xx, xy, yw, yz
+	Vec4 t2 = mData.zzzw * mData.zwxy; // zz, zw, xz, yw
+	t3 *= t3;						   // yy, ww, yy, ww
+
+	// TODO : Use ~ for alternating operation? alternatives ++ --
+	Vec4 t4 = AddSub(t2, t1);				 // Add-Sub -> xx + zz, xy - zw, yw + xz, yz - xw
+	Vec4 t1 = AddSub(t1.yxwz, t2.yxwz);      // Add-Sub -> xy + zw, xx - zz, yz + xw, yw - xz
+
+
+	// Goal :
+	// ww + xx - yy - zz,    2 (xy - zw)   ,    2 (xz + cw)   , 0
+	//    2 (xy + zw)   , ww - xx + yy - zz,    2 (yz - xw)   , 0
+	//    2 (xz - cw)   ,    2 (yz + xw)   , ww - xx - yy + zz, 0
+	//          0       ,          0       ,          0       , 1
+
 
 	return Matrix4{};
 }

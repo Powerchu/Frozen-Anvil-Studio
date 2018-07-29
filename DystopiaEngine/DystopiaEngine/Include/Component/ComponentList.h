@@ -15,23 +15,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _COMPONENTLIST_H_
 #define _COMPONENTLIST_H_
 
+#include "Utility\MetaAlgorithms.h"
+
 namespace Dystopia
 {
-	enum eComponents
-	{
-		BASE_COMPONENT = -1,
-
-		TRANSFORM,
-		RENDERER,
-		COLLIDER,
-		RIGID_BODY,
-		SPRITE_ANIMATOR,
-		CAMERA,
-		AUDIO_SOURCE,
-		PARTICLE_EMITTER,
-
-		TOTAL_COMPONENTS
-	};
+	using AllComponents = Utility::MetaAutoIndexer <
+		class Transform,
+		class Camera
+	>::result;
 
 	// Generic Tag for Components
 	struct ComponentTag {}; 
