@@ -68,7 +68,8 @@ namespace Dystopia
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
 
-		size_t GetID();
+		size_t GetID(void) const;
+		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
 		void SetName(const std::string&);
 
@@ -110,6 +111,12 @@ namespace Dystopia
 
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
+
+
+inline unsigned Dystopia::GameObject::GetFlags(void) const
+{
+	return mnFlags;
+}
 
 template <typename T>
 inline void Dystopia::GameObject::AddComponent(T* _pComponent)

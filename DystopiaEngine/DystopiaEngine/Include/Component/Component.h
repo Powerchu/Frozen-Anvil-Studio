@@ -42,11 +42,7 @@ namespace Dystopia
 
 		virtual void Load(void);
 		virtual void Init(void);
-		/*
-		virtual void Update(const float _fDeltaTime);
-		virtual void FixedUpdate(const float _fDeltaTime);
-		virtual void PostUpdate(void);
-		*/
+
 		virtual void OnDestroy(void);
 		virtual void Unload(void);
 
@@ -64,7 +60,7 @@ namespace Dystopia
 
 	protected:
 
-		bool mbActive;
+		unsigned mnFlags;
 	};
 }
 
