@@ -17,7 +17,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <tuple>
 
 typedef unsigned int EventID;
-typedef unsigned int EventCallbackID;
 constexpr EventID FNV_PRIME = 16777619u;
 constexpr EventID OFFSET_BASIS = 2166136261u;
 EventID EventHash(const char* _eventName);
@@ -29,62 +28,54 @@ constexpr EventID EventHashC(const char(&_eventName)[N], unsigned int I = N)
 					(EventHashC(_eventName, I - 1) ^ (_eventName[I - 1])) * FNV_PRIME;
 }
 
-template<typename A, typename ... Bs>
-struct Function_Traits
-{};
-
-template<typename ReturnT, typename ... Args, Args ... params>
-struct Function_Traits<ReturnT(&)(Args...), params ...>
-{
-	static constexpr bool is_mem_fn = false;
-	using return_t = ReturnT;
-	std::tuple arg_tuple = std::make_tuple<Args...>;
-	std::tuple param_tuple = std::make_tuple<std::forward<Args>(params) ...>;
-};
-
-template<class Caller, typename ReturnT, typename ... Args, Args ... params>
-struct Function_Traits<ReturnT(Caller::*)(Args...), params ...>
-{
-	static constexpr bool is_mem_fn = true;
-	using return_t = ReturnT;
-	using class_t = Caller;
-	std::tuple arg_tuple = std::make_tuple<Args...>;
-	std::tuple param_tuple = std::make_tuple<std::forward<Args>(params) ...>;
-};
-
-template<typename Fn>
+template<typename A>
 struct FunctionWrapper
 {};
 
 template<typename ReturnType, typename ... Args>
 struct FunctionWrapper<ReturnType(&)(Args...)>
 {
-	FunctionWrapper(ReturnType(&f)(Args...))
-		: fn{ f }
+	FunctionWrapper(ReturnType(&rhs)(Args...))
+		: fcallback{ rhs }
 	{}
 
 	ReturnType operator()(Args ... params)
 	{
-		return fn(params ...);
+		return fcallback(params ...);
 	}
-	ReturnType(&fn)(Args...);
+
+	ReturnType(&fcallback)(Args...);
 };
 
-template<typename ReturnType, typename Caller, typename ... Args>
-struct FunctionWrapper<ReturnType(Caller::*)(Args...)>
+template<typename ReturnType, typename C, typename ... Args>
+struct FunctionWrapper<ReturnType(C::*)(Args...)>
 {
-	FunctionWrapper(ReturnType(Caller::*fn)(Args...), Caller const * const call)
-		:pCaller{ call }, mfn{ fn }
+	FunctionWrapper(ReturnType(C::*mfp)(Args...), C*  user)
+		: fcallback{ mfp }, caller{ user }
 	{}
 
 	ReturnType operator()(Args ... params)
 	{
-		return (pCaller->*mfn)(params ...);
+		return (caller->*fcallback)(params ...);
 	}
-	ReturnType(Caller::*mfn)(Args...);
-	Caller* pCaller;
+
+	C* caller;
+	ReturnType(C::*fcallback)(Args...);
 };
 
+template<typename ReturnType, typename ... Args>
+auto Bind(ReturnType(&f)(Args...))
+{
+	FunctionWrapper<ReturnType(&)(Args...)> func = f;
+	return func;
+}
+
+template<typename ReturnType, typename C, typename ... Args>
+auto Bind(ReturnType(C::*f)(Args...), C* user)
+{
+	FunctionWrapper<ReturnType(C::*)(Args...)> func = { f, user };
+	return func;
+}
 
 class EventCallback
 {
