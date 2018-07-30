@@ -52,17 +52,39 @@ struct Function_Traits<ReturnT(Caller::*)(Args...), params ...>
 	std::tuple param_tuple = std::make_tuple<std::forward<Args>(params) ...>;
 };
 
-template<typename ReturnT, typename ... Args, Args ... params>
-ReturnT Bind(ReturnT(&fn)(Args ...), params ...)
-{
-	return fn(params ...);
-}
+template<typename Fn>
+struct FunctionWrapper
+{};
 
-template<typename Caller, typename ReturnT, typename ... Args, Args ... params>
-ReturnT Bind(Caller * const owner, ReturnT(Caller::*fn)(Args ...), params ...)
+template<typename ReturnType, typename ... Args>
+struct FunctionWrapper<ReturnType(&)(Args...)>
 {
-	return (owner->*fn)(params ...);
-}
+	FunctionWrapper(ReturnType(&f)(Args...))
+		: fn{ f }
+	{}
+
+	ReturnType operator()(Args ... params)
+	{
+		return fn(params ...);
+	}
+	ReturnType(&fn)(Args...);
+};
+
+template<typename ReturnType, typename Caller, typename ... Args>
+struct FunctionWrapper<ReturnType(Caller::*)(Args...)>
+{
+	FunctionWrapper(ReturnType(Caller::*fn)(Args...), Caller const * const call)
+		:pCaller{ call }, mfn{ fn }
+	{}
+
+	ReturnType operator()(Args ... params)
+	{
+		return (pCaller->*mfn)(params ...);
+	}
+	ReturnType(Caller::*mfn)(Args...);
+	Caller* pCaller;
+};
+
 
 class EventCallback
 {

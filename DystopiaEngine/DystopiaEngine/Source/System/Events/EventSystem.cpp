@@ -11,7 +11,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System\Events\EventSystem.h"
-#include <string>
 
 EventID EventHash(const char* _eventName)
 {
