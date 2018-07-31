@@ -31,6 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Input\InputSystem.h"
 #include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
+#include "System\Events\EventSystem.h"
 #include "IO\BinarySerializer.h"
 /* Editor includes */
 #include "Editor\Editor.h"
@@ -45,6 +46,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* library includes */
 #include <iostream>
 #include <bitset>
+
+struct X
+{
+	void goo() { std::cout << "Member function goo" << std::endl; }
+	void hoo() { std::cout << "Member function hoo" << std::endl; }
+	void foo() { std::cout << "Member function foo" << std::endl; }
+};
+void goo() { std::cout << "Non member function goo" << std::endl; }
+void hoo() { std::cout << "Non member function hoo" << std::endl; }
+void foo() { std::cout << "Non member function foo" << std::endl; }
 
 // Entry point for editor
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
@@ -65,6 +76,17 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	editor->Init(driver->GetSystem<Dystopia::WindowManager>(),
 				 driver->GetSystem<Dystopia::GraphicsSystem>(),
 				 driver->GetSystem<Dystopia::InputManager>());
+
+	X x1;
+	EventSystem *es = new EventSystem{};
+	EventID id1 = es->CreateEvent("EventTester1");
+	EventID id2 = es->CreateEvent("EventTester2");
+	EventID id3 = es->CreateEvent("EventTester3");
+	es->Bind("EventTester1", &X::foo, &x1);
+	es->Bind("EventTester1", &X::goo, &x1);
+	es->Bind(id1, &X::hoo, &x1);
+	es->Fire(id1);		   
+	delete es;
 
 	while (!editor->IsClosing())
 	{
