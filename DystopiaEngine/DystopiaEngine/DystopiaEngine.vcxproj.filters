@@ -109,6 +109,12 @@
     <ClCompile Include="Source\Editor\ConsoleLog.cpp">
       <Filter>Editor\Systems\Log</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Scene\SceneSystem.cpp">
+      <Filter>Game Engine\Systems\Scene\SceneSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Scene\Scene.cpp">
+      <Filter>Game Engine\Systems\Scene\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp">
       <Filter>Editor\ScriptFormat</Filter>
     </ClCompile>
@@ -313,6 +319,15 @@
     <ClInclude Include="Include\Editor\ConsoleLog.h">
       <Filter>Editor\Systems\Log</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Scene\SceneSystem.h">
+      <Filter>Game Engine\Systems\Scene\SceneSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Scene\Scene.h">
+      <Filter>Game Engine\Systems\Scene\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\UtilityInternals.h">
+      <Filter>Utility\Internals</Filter>
+    </ClInclude>
     <ClInclude Include="Include\Editor\ScriptFormatter.h">
       <Filter>Editor\ScriptFormat</Filter>
     </ClInclude>
@@ -480,6 +495,15 @@
     </Filter>
     <Filter Include="Editor\Systems\Log">
       <UniqueIdentifier>{6936f02f-3d30-411a-ad25-d61c764a6c90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Scene">
+      <UniqueIdentifier>{ddb89e65-93e8-4262-89d0-be65eefb7603}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Scene\SceneSystem">
+      <UniqueIdentifier>{5320a59f-d009-4e91-9157-c1635f9a123b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Scene\Scene">
+      <UniqueIdentifier>{f3eae6d5-d8fd-463f-9178-71e46cda18c6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\ScriptFormat">
       <UniqueIdentifier>{9a14f238-4e7d-494c-87af-70d664cf07a1}</UniqueIdentifier>

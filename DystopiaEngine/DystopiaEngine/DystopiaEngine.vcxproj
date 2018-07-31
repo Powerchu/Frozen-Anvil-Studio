@@ -62,6 +62,8 @@
     <ClCompile Include="Source\System\Graphics\Texture.cpp" />
     <ClCompile Include="Source\System\Graphics\Texture2D.cpp" />
     <ClCompile Include="Source\System\Input\InputSystem.cpp" />
+    <ClCompile Include="Source\System\Scene\Scene.cpp" />
+    <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
     <ClCompile Include="Source\System\Window\Window.cpp" />
@@ -123,6 +125,8 @@
     <ClInclude Include="Include\System\Graphics\VertexDefs.h" />
     <ClInclude Include="Include\System\Input\InputMap.h" />
     <ClInclude Include="Include\System\Input\InputSystem.h" />
+    <ClInclude Include="Include\System\Scene\Scene.h" />
+    <ClInclude Include="Include\System\Scene\SceneSystem.h" />
     <ClInclude Include="Include\System\Sound\SoundSystem.h" />
     <ClInclude Include="Include\System\Sound\SoundTypes.h" />
     <ClInclude Include="Include\System\SystemTypes.h" />
@@ -137,6 +141,7 @@
     <ClInclude Include="Include\Utility\MetaHelper.h" />
     <ClInclude Include="Include\Utility\Utility.h" />
     <ClInclude Include="Include\Math\Vector2.h" />
+    <ClInclude Include="Include\Utility\UtilityInternals.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>

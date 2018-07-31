@@ -24,7 +24,7 @@ Dystopia::Transform::Transform(void) :
 
 }
 
-Dystopia::Transform::Transform(Transform& _oOther) :
+Dystopia::Transform::Transform(const Transform& _oOther) :
 	mRotation{ _oOther.mRotation }, mScale(_oOther.mScale), mPosition(_oOther.mPosition),
 	mMatrix{}, mbChanged(true), mpParent(nullptr)
 {
@@ -195,7 +195,7 @@ Dystopia::Transform* Dystopia::Transform::Duplicate(void) const
 	return nullptr;
 }
 
-void Dystopia::Transform::Serialise(TextSerialiser&)
+void Dystopia::Transform::Serialise(TextSerialiser&) const
 {
 
 }

@@ -84,10 +84,13 @@ namespace Math
 
 	private:
 
+		template <unsigned ... Vals>
+		struct Swizzle;
+
 		template <unsigned N>
-		struct DataMember
+		struct Swizzle<N>
 		{
-			inline DataMember<N>& _CALL operator= (float _rhs);
+			inline Swizzle<N>& _CALL operator= (float _rhs);
 			inline _CALL operator float(void) const;
 
 		private:
@@ -107,7 +110,7 @@ namespace Math
 		// DataMember  -> 1 shuffle (read)
 		// SwizzleMask -> 1 shuffle (read & write)
 		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
-		struct Swizzle
+		struct Swizzle<X,Y,Z,W>
 		{
 			Swizzle() = default;
 			Swizzle(__m128 _data) : mData{ _data } {}
@@ -143,10 +146,10 @@ namespace Math
 		__m128 mData;
 
 	public:
-		DataMember<0> x;
-		DataMember<1> y;
-		DataMember<2> z;
-		DataMember<3> w;
+		Swizzle<0> x;
+		Swizzle<1> y;
+		Swizzle<2> z;
+		Swizzle<3> w;
 
 		Swizzle<0, 0, 0, 0> xxxx;
 		Swizzle<0, 0, 1, 1> xxyy;
@@ -160,7 +163,7 @@ namespace Math
 		Swizzle<1, 1, 1, 1> yyyy;
 		Swizzle<1, 3, 0, 2> ywxz;
 		Swizzle<1, 3, 2, 0> ywzx;
-		Swizzle<2, 0, 1, 3> zxyw; // Used by cross product 
+		Swizzle<2, 0, 1, 3> zxyw;
 		Swizzle<2, 1, 2, 1> zyzy;
 		Swizzle<2, 2, 2, 2> zzzz;
 		Swizzle<2, 3, 0, 1> zwxy;

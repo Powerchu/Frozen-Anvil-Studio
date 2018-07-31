@@ -121,14 +121,16 @@ namespace Math
 	private:
 		__m128 mData;
 
+		template <unsigned ... Vals>
+		struct SwizzleMask;
+
 		template <unsigned N>
-		struct DataMember
+		struct SwizzleMask<N>
 		{
-			inline DataMember<N>& _CALL operator= (float _rhs);
+			inline SwizzleMask<N>& _CALL operator= (float _rhs);
 			inline _CALL operator float(void) const;
 
 		private:
-
 			__m128 mData;
 
 			static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
@@ -141,10 +143,10 @@ namespace Math
 		};
 
 		// While we're at it, might as well add swizzle masks
-		// DataMember  -> 1 shuffle (read)
+		// SwizzleMask  -> 1 shuffle (read)
 		// SwizzleMask -> 1 shuffle (read & write)
 		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
-		struct SwizzleMask
+		struct SwizzleMask<X, Y, Z, W>
 		{
 			SwizzleMask() = default;
 			SwizzleMask(__m128 _data) : mData{ _data } {}
@@ -181,10 +183,10 @@ namespace Math
 		friend struct Math::Matrix4;
 
 	public:
-		DataMember<0> x;
-		DataMember<1> y;
-		DataMember<2> z;
-		DataMember<3> w;
+		SwizzleMask<0> x;
+		SwizzleMask<1> y;
+		SwizzleMask<2> z;
+		SwizzleMask<3> w;
 
 		SwizzleMask<0, 0, 0, 0> xxxx;
 		SwizzleMask<0, 0, 1, 1> xxyy;
@@ -527,7 +529,7 @@ inline Math::Vector3D _CALL Math::MakeVector3D(float _x, float _y, float _z)
 
 
 template <unsigned N>
-inline Math::Vector4::DataMember<N>& _CALL Math::Vector4::DataMember<N>::operator= (float _rhs)
+inline Math::Vector4::SwizzleMask<N>& _CALL Math::Vector4::SwizzleMask<N>::operator= (float _rhs)
 {
 #if defined(_INCLUDED_SMM)	// SSE4.1 supported
 
@@ -549,7 +551,7 @@ inline Math::Vector4::DataMember<N>& _CALL Math::Vector4::DataMember<N>::operato
 }
 
 template<>
-inline Math::Vector4::DataMember<0>& _CALL Math::Vector4::DataMember<0>::operator= (float _rhs)
+inline Math::Vector4::SwizzleMask<0>& _CALL Math::Vector4::SwizzleMask<0>::operator= (float _rhs)
 {
 	mData = _mm_move_ss(mData, _mm_set_ss(_rhs));
 
@@ -557,14 +559,14 @@ inline Math::Vector4::DataMember<0>& _CALL Math::Vector4::DataMember<0>::operato
 }
 
 template <unsigned N>
-inline _CALL Math::Vector4::DataMember<N>::operator float(void) const
+inline _CALL Math::Vector4::SwizzleMask<N>::operator float(void) const
 {
 	// Copy the wanted value everywhere, and return the first 32 bits as a float
 	return _mm_cvtss_f32(_mm_shuffle_ps(mData, mData, _MM_SHUFFLE(N, N, N, N)));
 }
 
 template<>
-inline _CALL Math::Vector4::DataMember<0>::operator float(void) const
+inline _CALL Math::Vector4::SwizzleMask<0>::operator float(void) const
 {
 	// We happen to want the value that's already the first
 	// so we can skip the shuffle and just return it

@@ -76,7 +76,7 @@ namespace Utility
 	// EnableIf
 	// ========= ===========================================================
 
-	template <bool _b, typename T>
+	template <bool _b, typename T = void>
 	struct EnableIf
 	{
 		// Force fail if false
@@ -88,7 +88,7 @@ namespace Utility
 		using type = T;
 	};
 
-	template <bool _b, typename T>
+	template <bool _b, typename T = void>
 	using EnableIf_t = typename EnableIf<_b, T>::type;
 
 

@@ -133,23 +133,12 @@ namespace Utility
 		struct MetaPartitionerType;
 
 		template <template <typename, typename> typename Op, template <typename...> typename Set,
-				  typename pivot, typename next, typename ... rest>
-		struct MetaPartitionerType<Op, Set<pivot, next, rest...>>
-		{
-			using type = typename MetaPartitionerType<Op, Set<pivot, rest...>>::result;
-
-			using result = Duplex <
-				typename MetaConcat <typename IfElse < Op<next, pivot>::value, Set<next>, Set<>>::type, typename type::lhs>::type,
-				typename MetaConcat <typename IfElse <!Op<next, pivot>::value, Set<next>, Set<>>::type, typename type::rhs>::type
-			>;
-		};
-
-		template <template <typename, typename> typename Op, template <typename...> typename Set, typename pivot, typename next>
-		struct MetaPartitionerType<Op, Set<pivot, next>>
+				  typename pivot, typename ... rest>
+		struct MetaPartitionerType<Op, Set<pivot, rest...>>
 		{
 			using result = Duplex <
-				typename IfElse < Op<next, pivot>::value, Set<next>, Set<> >::type,
-				typename IfElse <!Op<next, pivot>::value, Set<next>, Set<> >::type
+				MetaConcat_t <typename IfElse < Op<rest, pivot>::value, Set<rest>, Set<>>::type ...>,
+				MetaConcat_t <typename IfElse <!Op<rest, pivot>::value, Set<rest>, Set<>>::type ...>
 			>;
 		};
 
@@ -257,6 +246,16 @@ namespace Utility
 		struct MetaExtractorV<0, Set<T, val, rest...>>
 		{
 			static constexpr T value = val;
+		};
+
+
+		template <typename Index, typename ... Ty>
+		struct MetaAutoIndexerMake;
+
+		template <template <unsigned...> class Set, unsigned ... Ns, typename ... Ty>
+		struct MetaAutoIndexerMake<Set<Ns...>, Ty...>
+		{
+			using result = Collection< Indexer<Ns, Ty>... > ;
 		};
 	}
 }

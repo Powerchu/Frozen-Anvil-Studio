@@ -12,16 +12,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System\Driver\Driver.h"
+
 #include "Globals.h"
 #include "DataStructure\SharedPtr.h"
 #include "Utility\MetaAlgorithms.h"
 #include "Utility\MetaDataStructures.h"
+
 #include "System\Time\TimeSystem.h"
 #include "System\Input\InputSystem.h"
 #include "System\Sound\SoundSystem.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Window\WindowManager.h"
 
+#include "System\Graphics\MeshSystem.h"
+#include "System\Scene\SceneSystem.h"
 
 namespace
 {
@@ -47,7 +51,34 @@ namespace
 
 		return ret;
 	}
+
+	template <typename T>
+	struct ErrorOnDupe;
+
+	template <
+		template <typename ...> class Set,
+		template <unsigned, typename> class Holder,
+		typename ... Tys, unsigned ... Ns,
+		typename Ty1, typename Ty2, unsigned N1, unsigned N2>
+	struct ErrorOnDupe <Set<Holder<N1, Ty1>, Holder<N2, Ty2>, Holder<Ns, Tys>...>>
+	{
+		static_assert(!(N1 == N2), "System Error: Systems cannot have the same index! (Same enum?).");
+
+		using eval = typename ErrorOnDupe<Set<Holder<N2, Ty2>, Holder<Ns, Tys>...>>::eval;
+	};
+
+	template <
+		template <typename ...> class Set,
+		template <unsigned, typename> class Holder,
+		typename Ty1, typename Ty2, unsigned N1, unsigned N2>
+	struct ErrorOnDupe <Set<Holder<N1, Ty1>, Holder<N2, Ty2>>>
+	{
+		static_assert(!(N1 == N2), "System Error: Systems cannot have the same index! (Same enum?).");
+
+		using eval = void;
+	};
 }
+
 
 
 SharedPtr<Dystopia::EngineCore> const & Dystopia::EngineCore::GetInstance(void) noexcept
@@ -57,15 +88,16 @@ SharedPtr<Dystopia::EngineCore> const & Dystopia::EngineCore::GetInstance(void) 
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mTime{}, SystemList{ Utility::SizeofList<AllSys>::value },
-	SystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) }
+	mTime{}, mSystemList{ Utility::SizeofList<AllSys>::value },
+	mSystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) },
+	mSubSystems { MakeAutoArray<void*>(Utility::MakeTypeList_t<Utility::TypeList, SubSys>{}) }
 {
-
+	using SanityCheck = typename ErrorOnDupe<AllSys>::eval;
 }
 
 void Dystopia::EngineCore::LoadSettings(void)
 {
-	for (auto& e : SystemTable)
+	for (auto& e : mSystemTable)
 		e->LoadDefaults();
 }
 
@@ -73,14 +105,14 @@ void Dystopia::EngineCore::Init(void)
 {
 	mTime.Lap();
 
-	for (auto& e : SystemTable)
+	for (auto& e : mSystemTable)
 		e->PreInit();
 
-	for (auto& e : SystemTable)
+	for (auto& e : mSystemTable)
 	{
 		if (e->Init())
 		{
-			SystemList.EmplaceBack(e);
+			mSystemList.EmplaceBack(e);
 		}
 		else
 		{
@@ -89,7 +121,7 @@ void Dystopia::EngineCore::Init(void)
 		}
 	}
 
-	for (auto& e : SystemList)
+	for (auto& e : mSystemList)
 		e->PostInit();
 
 	mTime.Lap();
@@ -101,7 +133,7 @@ void Dystopia::EngineCore::FixedUpdate(void)
 
 	while (dt > _FIXED_UPDATE_DT)
 	{
-		for (auto& e : SystemList)
+		for (auto& e : mSystemList)
 		{
 			e->FixedUpdate(dt);
 		}
@@ -115,7 +147,7 @@ void Dystopia::EngineCore::Update(void)
 	float dt = mTime.Elapsed();
 	mTime.Lap();
 
-	for (auto& e : SystemList)
+	for (auto& e : mSystemList)
 	{
 		e->Update(dt);
 	}
@@ -123,14 +155,14 @@ void Dystopia::EngineCore::Update(void)
 
 void Dystopia::EngineCore::Shutdown(void)
 {
-	for (auto& e : SystemList)
+	for (auto& e : mSystemList)
 		e->Shutdown();
 
-	for (auto& e : SystemList)
+	for (auto& e : mSystemList)
 		delete e;
 
-	SystemList.clear();
-	SystemTable.clear();
+	mSystemList.clear();
+	mSystemTable.clear();
 }
 
 #if !EDITOR
