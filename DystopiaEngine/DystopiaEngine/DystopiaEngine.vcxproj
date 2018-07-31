@@ -33,6 +33,7 @@
     <ClCompile Include="Source\Component\AABB.cpp" />
     <ClCompile Include="Source\Component\Collider.cpp" />
     <ClCompile Include="Source\Component\Convex.cpp" />
+    <ClCompile Include="Source\Component\RigidBody.cpp" />
     <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
@@ -63,6 +64,7 @@
     <ClCompile Include="Source\System\Graphics\Texture.cpp" />
     <ClCompile Include="Source\System\Graphics\Texture2D.cpp" />
     <ClCompile Include="Source\System\Input\InputSystem.cpp" />
+    <ClCompile Include="Source\System\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="Source\System\Scene\Scene.cpp" />
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
@@ -78,6 +80,7 @@
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Component.h" />
     <ClInclude Include="Include\Component\ComponentList.h" />
+    <ClInclude Include="Include\Component\RigidBody.h" />
     <ClInclude Include="Include\Component\Transform.h" />
     <ClInclude Include="Include\DataStructure\AutoArray.h" />
     <ClInclude Include="Include\DataStructure\Heap.h" />
@@ -125,6 +128,7 @@
     <ClInclude Include="Include\System\Graphics\VertexDefs.h" />
     <ClInclude Include="Include\System\Input\InputMap.h" />
     <ClInclude Include="Include\System\Input\InputSystem.h" />
+    <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
     <ClInclude Include="Include\System\Scene\Scene.h" />
     <ClInclude Include="Include\System\Scene\SceneSystem.h" />
     <ClInclude Include="Include\System\Sound\SoundSystem.h" />

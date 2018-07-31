@@ -34,6 +34,7 @@ namespace Dystopia
 			Utility::Indexer<eSYSTEMS::TIME_SYSTEM       , class TimeSystem     >,
 			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM      , class InputManager   >,
 			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM     , class WindowManager  >,
+			Utility::Indexer<eSYSTEMS::PHYSICS_SYSTEM    , class CollisionSystem>,
 			Utility::Indexer<eSYSTEMS::COLLISION_SYSTEM  , class CollisionSystem>,
 //			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM      , class SoundSystem    >,
 			Utility::Indexer<eSYSTEMS::SCENE_SYSTEM      , class SceneSystem    >,

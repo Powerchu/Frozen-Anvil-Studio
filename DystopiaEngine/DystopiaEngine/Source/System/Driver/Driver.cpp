@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Collision\CollisionSystem.h"
 #include "System\Graphics\MeshSystem.h"
 #include "System\Scene\SceneSystem.h"
+#include "System\Physics\PhysicsSystem.h"
 
 namespace
 {

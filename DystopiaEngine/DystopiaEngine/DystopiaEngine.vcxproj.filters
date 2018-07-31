@@ -127,6 +127,12 @@
     <ClCompile Include="Source\System\Collision\CollisionSystem.cpp">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\RigidBody.cpp">
+      <Filter>Game Engine\Components\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Physics\PhysicsSystem.cpp">
+      <Filter>Game Engine\Systems\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -342,6 +348,12 @@
     <ClInclude Include="Include\System\Collision\CollisionSystem.h">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\RigidBody.h">
+      <Filter>Game Engine\Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
+      <Filter>Game Engine\Systems\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -520,6 +532,12 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Collision">
       <UniqueIdentifier>{b594c75f-4729-452e-96dd-7620db0d54f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Physics">
+      <UniqueIdentifier>{2db22bea-e7f7-4105-b15b-22694ceec275}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Physics">
+      <UniqueIdentifier>{7f623c8c-d488-48c4-b917-fdb953cc4b5f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
