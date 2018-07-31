@@ -81,8 +81,33 @@ class EventCallback
 {
 public:
 
-private:
+	EventCallback(void(&rhs)(void))
+		: pModelEvent{ }
+	{}
 
+	template<class Caller>
+	EventCallback(void(Caller::*rhs)(void), Caller* const caller)
+		: pModelEvent{}
+	{}
+
+	~EventCallback()
+	{
+		delete pModelEvent;
+	}
+
+	void Fire() const
+	{
+		pModelEvent->Fire();
+	}
+
+private:
+	struct Concept
+	{
+		virtual void Fire() const;
+		virtual ~Concept() {}
+	};
+
+	Concept * const pModelEvent;
 };
 
 class Event

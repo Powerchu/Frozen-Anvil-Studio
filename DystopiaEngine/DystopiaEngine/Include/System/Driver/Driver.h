@@ -48,6 +48,8 @@ namespace Dystopia
 
 		static SharedPtr<EngineCore> const & GetInstance(void) noexcept;
 
+		~EngineCore(void) = default;
+
 		template <class T>
 		T* const GetSystem(void) const;
 
