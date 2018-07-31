@@ -150,17 +150,17 @@ public:
 
 	EventID		CreateEvent(const char* _eventName);
 
-	void		Fire(EventID _byID)							const;
-	void		Fire(const char* _byName)					const;
-	Event*		GetEvent(EventID _byID)						const;
-	Event*		GetEvent(const char* _byName)				const;
-	bool		Bind(EventID _byID, void(&_fn)(void))		const;
-	bool		Bind(const char* _byName, void(&_fn)(void))	const;
-	void		UnBindAll(EventID _byID)					const;
-	void		UnBindAll(const char* _byName)				const;
+	void		Fire(EventID _byID)									const;
+	void		Fire(const char* _byName)							const;
+	Event*		GetEvent(EventID _byID)								const;
+	Event*		GetEvent(const char* _byName)						const;
+	bool		BindToEvent(EventID _byID, void(&_fn)(void))		const;
+	bool		BindToEvent(const char* _byName, void(&_fn)(void))	const;
+	void		UnBindAllFromEvent(EventID _byID)					const;
+	void		UnBindAllFromEvent(const char* _byName)				const;
 
 	template<class Caller>
-	bool Bind(EventID _byID, void(Caller::*_fn)(void), Caller* const _user) const
+	bool BindToEvent(EventID _byID, void(Caller::*_fn)(void), Caller* const _user) const
 	{
 		Event* p = GetEvent(_byID);
 		if (p)
@@ -172,13 +172,13 @@ public:
 	}
 
 	template<class Caller>
-	bool Bind(const char* _byName, void(Caller::*_fn)(void), Caller* const _user) const
+	bool BindToEvent(const char* _byName, void(Caller::*_fn)(void), Caller* const _user) const
 	{
-		return Bind(EventHash(_byName), _fn, _user);
+		return BindToEvent(EventHash(_byName), _fn, _user);
 	}
 
 	template<class Caller>
-	bool UnBind(EventID _byID, Caller * const _user) const
+	bool UnBindFromEvent(EventID _byID, Caller * const _user) const
 	{
 		Event* p = GetEvent(_byID);
 		if (p)
@@ -190,17 +190,15 @@ public:
 	}
 
 	template<class Caller>
-	bool UnBind(const char* _byName, Caller * const _user) const
+	bool UnBindFromEvent(const char* _byName, Caller * const _user) const
 	{
-		return UnBind(EventHash(_byName), _user);
+		return UnBindFromEvent(EventHash(_byName), _user);
 	}
 
 private:
 	AutoArray<EventID>	mArrAllIDs;
 	AutoArray<Event*>	mArrEvents;
 };
-
-
 
 
 

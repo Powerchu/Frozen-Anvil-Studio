@@ -156,7 +156,7 @@ Event* EventSystem::GetEvent(const char* _byName) const
 	return GetEvent(EventHash(_byName));
 }
 
-bool EventSystem::Bind(EventID _byID, void(&_fn)(void)) const
+bool EventSystem::BindToEvent(EventID _byID, void(&_fn)(void)) const
 {
 	Event* p = GetEvent(_byID);
 	if (p)
@@ -167,21 +167,21 @@ bool EventSystem::Bind(EventID _byID, void(&_fn)(void)) const
 	return false;
 }
 
-bool EventSystem::Bind(const char* _byName, void(&_fn)(void)) const
+bool EventSystem::BindToEvent(const char* _byName, void(&_fn)(void)) const
 {
-	return Bind(EventHash(_byName), _fn);
+	return BindToEvent(EventHash(_byName), _fn);
 }
 
-void EventSystem::UnBindAll(EventID _byID) const
+void EventSystem::UnBindAllFromEvent(EventID _byID) const
 {
 	Event *p = GetEvent(_byID);
 
 	if (p) p->UnbindAll();
 }
 
-void EventSystem::UnBindAll(const char* _byName) const
+void EventSystem::UnBindAllFromEvent(const char* _byName) const
 {
-	UnBindAll(EventHash(_byName));
+	UnBindAllFromEvent(EventHash(_byName));
 }
 
 

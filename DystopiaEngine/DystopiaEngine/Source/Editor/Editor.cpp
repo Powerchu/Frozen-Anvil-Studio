@@ -49,6 +49,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 struct X
 {
+	X(EventSystem* e)
+		:es{ e }
+	{
+		es->BindToEvent("EventTester1", &X::goo, this);
+	}
+	~X()
+	{
+		es->UnBindFromEvent("EventTester1", this);
+	}
+	EventSystem* es;
+
 	void goo() { std::cout << "Member function goo" << std::endl; }
 	void hoo() { std::cout << "Member function hoo" << std::endl; }
 	void foo() { std::cout << "Member function foo" << std::endl; }
@@ -77,15 +88,12 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 				 driver->GetSystem<Dystopia::GraphicsSystem>(),
 				 driver->GetSystem<Dystopia::InputManager>());
 
-	X x1;
 	EventSystem *es = new EventSystem{};
-	EventID id1 = es->CreateEvent("EventTester1");
-	EventID id2 = es->CreateEvent("EventTester2");
-	EventID id3 = es->CreateEvent("EventTester3");
-	es->Bind("EventTester1", &X::foo, &x1);
-	es->Bind("EventTester1", &X::goo, &x1);
-	es->Bind(id1, &X::hoo, &x1);
-	es->Fire(id1);		   
+	es->CreateEvent("EventTester1");
+	{
+		X x1{ es };
+		es->Fire("EventTester1");
+	}
 	delete es;
 
 	while (!editor->IsClosing())
