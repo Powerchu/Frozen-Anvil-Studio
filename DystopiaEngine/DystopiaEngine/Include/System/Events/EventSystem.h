@@ -82,32 +82,70 @@ class EventCallback
 public:
 
 	EventCallback(void(&rhs)(void))
-		: pModelEvent{ }
+		: mpModelEvent{ new Model<void(&)(void)>{ rhs } }
 	{}
 
 	template<class Caller>
 	EventCallback(void(Caller::*rhs)(void), Caller* const caller)
-		: pModelEvent{}
+		: mpModelEvent{ }
 	{}
 
 	~EventCallback()
 	{
-		delete pModelEvent;
+		delete mpModelEvent;
 	}
 
 	void Fire() const
 	{
-		pModelEvent->Fire();
+		mpModelEvent->Fire();
 	}
 
 private:
 	struct Concept
 	{
-		virtual void Fire() const;
+		virtual void Fire() const = 0;
 		virtual ~Concept() {}
 	};
 
-	Concept * const pModelEvent;
+	template<typename A>
+	struct Model : Concept
+	{
+		void Fire() const override
+		{}
+	};
+	
+	template<>
+	struct Model<void(&)(void)> : Concept
+	{
+		Model(void(&f)(void))
+			: mf{ &f }
+		{}
+
+		void Fire() const override
+		{
+			mf();
+		}
+
+		void(*mf)(void);
+	};
+
+	template<class Caller>
+	struct Model<void(Caller::*)(void)> : Concept
+	{
+		Model(void(Caller::*f)(void), Caller * const c)
+			: mfp{ f }, mpCaller { c }
+		{}
+
+		void Fire() const override
+		{
+			(mpCaller->*mfp)();
+		}
+
+		void(Caller::*mfp)(void);
+		Caller * const mpCaller;
+	};
+
+	Concept * const mpModelEvent;
 };
 
 class Event
