@@ -202,6 +202,8 @@ private:
 
 
 
+/* Possible future extension for return types and parameters not void */
+
 template<typename A>
 struct FunctionWrapper
 {};
