@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	_SF_ClassName_.h
-\author _SF_CreatorName_ (100%)
-\par    email: _SF_CreatorLogin_\@digipen.edu
+\file	Whatever.h
+\author Tan Shannon (100%)
+\par    email: t.shannon\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -12,17 +12,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 
-#ifndef _SF_DefineScriptName_H_
-#define _SF_DefineScriptName_H_
+#ifndef _Whatever_H_
+#define _Whatever_H_
 #include "Component\Component.h"
 
 namespace Dystopia
 {
-	class _SF_ClassName_ : Component
+	class Whatever : Component
 	{
 	public:
-		_SF_ClassName_();
-		~_SF_ClassName_();
+		Whatever();
+		~Whatever();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -50,6 +50,6 @@ namespace Dystopia
 	};
 }
 
-#endif //_SF_DefineScriptName_H_
+#endif //_Whatever_H_
 
 

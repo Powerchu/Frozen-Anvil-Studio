@@ -185,16 +185,16 @@ namespace Dystopia
 		EventSystem();
 		~EventSystem();
 
-		void PreInit(void);
-		bool Init(void);
-		void PostInit(void);
+		void		PreInit(void);
+		bool		Init(void);
+		void		PostInit(void);
 
-		void FixedUpdate(float);
-		void Update(float);
-		void Shutdown(void);
+		void		FixedUpdate(float);
+		void		Update(float);
+		void		Shutdown(void);
 
-		void LoadDefaults(void);
-		void LoadSettings(TextSerialiser&);
+		void		LoadDefaults(void);
+		void		LoadSettings(TextSerialiser&);
 
 		EventID		CreateEvent(const char* _eventName);
 		void		Fire(EventID _byID);
@@ -256,7 +256,6 @@ namespace Dystopia
 		}
 
 	private:
-
 		AutoArray<Event*>	mArrEvents;
 		AutoArray<EventID>	mArrAllIDs;
 		AutoArray<EventID>	mArrPendingFireIDs;

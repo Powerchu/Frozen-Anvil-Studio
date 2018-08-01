@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	_SF_ClassName_.cpp
-\author _SF_CreatorName_ (100%)
-\par    email: _SF_CreatorLogin_\@digipen.edu
+\file	Whatever.cpp
+\author Tan Shannon (100%)
+\par    email: t.shannon\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -12,7 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 
-#include "_SF_ClassName_.h"
+#include "Whatever.h"
 #include "Math\Vector2.h"
 #include "System\Input\InputSystem.h"
 #include "System\Input\InputMap.h"
@@ -20,19 +20,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	_SF_ClassName_::_SF_ClassName_()
+	Whatever::Whatever()
 	{
 	}
 
-	_SF_ClassName_::~_SF_ClassName_()
+	Whatever::~Whatever()
 	{
 	}
 
-	void _SF_ClassName_::Load()
+	void Whatever::Load()
 	{
 	}
 
-	void _SF_ClassName_::Init()
+	void Whatever::Init()
 	{
 	}
 
@@ -42,24 +42,24 @@ namespace Dystopia
 	virtual void PostUpdate(void);
 	*/
 
-	void _SF_ClassName_::OnDestroy()
+	void Whatever::OnDestroy()
 	{
 	}
 
-	void _SF_ClassName_::Unload()
+	void Whatever::Unload()
 	{
 	}
 
-	Component* _SF_ClassName_::Duplicate() const
+	Component* Whatever::Duplicate() const
 	{
 		return nullptr;
 	}
 
-	void _SF_ClassName_::Serialise(TextSerialiser& _ser) const
+	void Whatever::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-	void _SF_ClassName_::Unserialise(TextSerialiser& _ser)
+	void Whatever::Unserialise(TextSerialiser& _ser)
 	{
 	}
 }
