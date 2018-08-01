@@ -96,7 +96,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 				 driver->GetSystem<Dystopia::InputManager>());
 
 	/* Start of Event System usage example */
-	Dystopia::EventSystem *es = Dystopia::EventSystem::GetInstance();
+	Dystopia::EventSystem *es = driver->GetSystem<Dystopia::EventSystem>();
 	{
 		Dystopia::X x1{ es };
 		es->Fire("EventTester1");
@@ -104,8 +104,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 		es->Fire("EventTester3");
 		es->FireAllPending();
 	}
-	es->Shutdown();
-	delete es;
 	/* End of Event System usage example */
 
 	while (!editor->IsClosing())

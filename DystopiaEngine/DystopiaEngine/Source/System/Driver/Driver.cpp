@@ -27,6 +27,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\MeshSystem.h"
 #include "System\Scene\SceneSystem.h"
 
+#include "System\Events\EventSystem.h"
+
 namespace
 {
 	template <typename Ty>

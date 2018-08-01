@@ -106,15 +106,6 @@ namespace Dystopia
 
 	/*********************************************************** Event System ***********************************************************/
 
-	static EventSystem* gpInstance = 0;
-	EventSystem* EventSystem::GetInstance()
-	{
-		if (gpInstance) return gpInstance;
-
-		gpInstance = new EventSystem{};
-		return gpInstance;
-	}
-
 	EventSystem::EventSystem()
 		: mArrEvents{}, mArrAllIDs{}, mArrPendingFireIDs{}
 	{}
@@ -122,7 +113,7 @@ namespace Dystopia
 	EventSystem::~EventSystem()
 	{}
 
-	void EventSystem::Shutdown()
+	void EventSystem::Shutdown(void)
 	{
 		for (auto& e : mArrEvents)
 			delete e;
@@ -130,6 +121,29 @@ namespace Dystopia
 		mArrAllIDs.clear();
 		mArrPendingFireIDs.clear();
 	}
+
+	void EventSystem::PreInit(void)
+	{}
+
+	bool EventSystem::Init(void)
+	{
+		return true;
+	}
+
+	void EventSystem::PostInit(void)
+	{}
+
+	void EventSystem::FixedUpdate(float)
+	{}
+
+	void EventSystem::Update(float)
+	{}
+
+	void EventSystem::LoadDefaults(void)
+	{}
+
+	void EventSystem::LoadSettings(TextSerialiser& _ser)
+	{}
 
 	EventID	EventSystem::CreateEvent(const char* _eventName)
 	{

@@ -47,6 +47,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EVENTSYSTEM_H_
 #define _EVENTSYSTEM_H_
 #include "DataStructure\AutoArray.h"
+#include "System\Base\Systems.h"
 
 namespace Dystopia
 {
@@ -178,17 +179,27 @@ namespace Dystopia
 		AutoArray<EventCallback*>	mArrEventCallbacks;
 	};
 
-	class EventSystem
+	class EventSystem : public Systems
 	{
 	public:
-		static EventSystem* GetInstance();
+		EventSystem();
 		~EventSystem();
+
+		void PreInit(void);
+		bool Init(void);
+		void PostInit(void);
+
+		void FixedUpdate(float);
+		void Update(float);
+		void Shutdown(void);
+
+		void LoadDefaults(void);
+		void LoadSettings(TextSerialiser&);
 
 		EventID		CreateEvent(const char* _eventName);
 		void		Fire(EventID _byID);
 		void		Fire(const char* _byName);
 		void		FireAllPending();
-		void		Shutdown();
 		bool		BindToEvent(const char* _byName, void(&_fn)(void));
 
 		void		FireNow(EventID _byID)								const;
@@ -245,7 +256,6 @@ namespace Dystopia
 		}
 
 	private:
-		EventSystem();
 
 		AutoArray<Event*>	mArrEvents;
 		AutoArray<EventID>	mArrAllIDs;
