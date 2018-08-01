@@ -47,26 +47,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <iostream>
 #include <bitset>
 
-struct X
+namespace Dystopia
 {
-	X(EventSystem* e)
-		:es{ e }
+	struct X
 	{
-		es->BindToEvent("EventTester1", &X::goo, this);
-	}
-	~X()
-	{
-		es->UnBindFromEvent("EventTester1", this);
-	}
-	EventSystem* es;
+		X(EventSystem* e)
+			:es{ e }
+		{
+			es->BindToEvent("EventTester1", &X::goo, this);
+			es->BindToEvent("EventTester2", &X::foo, this);
+			es->BindToEvent("EventTester3", &X::hoo, this);
+		}
+		~X()
+		{
+			es->UnBindFromEvent("EventTester1", this);
+			es->UnBindFromEvent("EventTester2", this);
+			es->UnBindFromEvent("EventTester3", this);
+		}
+		EventSystem* es;
 
-	void goo() { std::cout << "Member function goo" << std::endl; }
-	void hoo() { std::cout << "Member function hoo" << std::endl; }
-	void foo() { std::cout << "Member function foo" << std::endl; }
-};
-void goo() { std::cout << "Non member function goo" << std::endl; }
-void hoo() { std::cout << "Non member function hoo" << std::endl; }
-void foo() { std::cout << "Non member function foo" << std::endl; }
+		void goo() { std::cout << "Member function goo" << std::endl; }
+		void hoo() { std::cout << "Member function hoo" << std::endl; }
+		void foo() { std::cout << "Member function foo" << std::endl; }
+	};
+	void goo() { std::cout << "Non member function goo" << std::endl; }
+	void hoo() { std::cout << "Non member function hoo" << std::endl; }
+	void foo() { std::cout << "Non member function foo" << std::endl; }
+}
 
 // Entry point for editor
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
@@ -88,13 +95,18 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 				 driver->GetSystem<Dystopia::GraphicsSystem>(),
 				 driver->GetSystem<Dystopia::InputManager>());
 
-	EventSystem *es = new EventSystem{};
-	es->CreateEvent("EventTester1");
+	/* Start of Event System usage example */
+	Dystopia::EventSystem *es = Dystopia::EventSystem::GetInstance();
 	{
-		X x1{ es };
+		Dystopia::X x1{ es };
 		es->Fire("EventTester1");
+		es->Fire("EventTester2");
+		es->Fire("EventTester3");
+		es->FireAllPending();
 	}
+	es->Shutdown();
 	delete es;
+	/* End of Event System usage example */
 
 	while (!editor->IsClosing())
 	{
@@ -107,7 +119,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 		
 		editor->EndFrame();
 	}
-	
+
 	editor->Shutdown();
 	driver->Shutdown();
 	delete timer;
