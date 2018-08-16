@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::SceneSystem::SceneSystem(void) :
-	mpCurrScene{ nullptr }, mpNextScene{ nullptr }, mpPrevScene{ nullptr }
+	mpCurrScene{ nullptr }, mpNextScene{ nullptr }
 {
 }
 

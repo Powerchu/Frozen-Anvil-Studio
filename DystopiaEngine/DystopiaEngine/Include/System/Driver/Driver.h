@@ -50,6 +50,9 @@ namespace Dystopia
 		template <class T>
 		T* const GetSystem(void) const;
 
+		template <unsigned N, class T = Utility::MetaExtract_t<N, AllSys>>
+		T* const GetSystem(void) const;
+
 		template <class T>
 		T* const GetSubSystem(void) const;
 
@@ -83,6 +86,12 @@ template<class T>
 inline T* const Dystopia::EngineCore::GetSystem(void) const
 {
 	return static_cast<T*>(mSystemTable[Utility::MetaFind_t<T, AllSys>::value]);
+}
+
+template<unsigned _N, class T>
+inline T* const Dystopia::EngineCore::GetSystem(void) const
+{
+	return static_cast<T*>(mSystemTable[_N]);
 }
 
 template<class T>

@@ -22,14 +22,13 @@ namespace Utility
 	template <typename T>
 	constexpr inline typename RemoveRef<T>::type&& Move(T&& _obj) noexcept
 	{
-		return static_cast<typename RemoveRef<T>::type&&>(_obj);
+		return static_cast<Utility::RemoveRef_t<T>&&>(_obj);
 	}
 
 
 	template <typename T>
 	constexpr inline T&& Forward(typename RemoveRef<T>::type& _obj) noexcept
 	{
-		// T -> T&& or T& -> T&
 		return static_cast<T&&>(_obj);
 	}
 
@@ -38,7 +37,6 @@ namespace Utility
 	{
 		static_assert(NotLvalueRef<T>::value, "%s (%d): Invalid forwarding call.", __FILE__, __LINE__ );
 		
-		// T&& -> T&&
 		return static_cast<T&&>(_obj);
 	}
 
@@ -86,14 +84,38 @@ namespace Utility
 	}
 
 
+	template <class Itor>
+	Itor MoveInit(Itor _begin, const Itor _end, Itor _dest)
+	{
+		while (_begin != _end)
+		{
+			new (*_dest) Utility::Decay_t<decltype(*_dest)> { Utility::Move(*_begin) };
+			++_dest; ++_begin
+		}
+
+		return _dest;
+	}
+
+	template <class Itor>
+	Itor CopyInit(Itor _begin, const Itor _end, Itor _dest)
+	{
+		while(_begin != _end)
+		{
+			new (*_dest) Utility::Decay_t<decltype(*_dest)> { *_begin };
+			++_dest; ++_begin
+		}
+
+		return _dest;
+	}
+
 	// Swaps lhs with rhs
 	template<typename T>
 	inline void Swap(T& lhs, T& rhs)
 	{
-		T tmp{ Move(lhs) };
+		T tmp{ Utility::Move(lhs) };
 
-		lhs = Move(rhs);
-		rhs = Move(tmp);
+		lhs = Utility::Move(rhs);
+		rhs = Utility::Move(tmp);
 	}
 
 	template <typename T>
