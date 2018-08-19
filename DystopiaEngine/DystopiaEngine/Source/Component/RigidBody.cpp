@@ -1,5 +1,5 @@
 #include "Component\RigidBody.h"
-
+#include "Component\Transform.h"
 namespace Dystopia
 {
 	Dystopia::RigidBody::RigidBody(void)
@@ -28,10 +28,10 @@ namespace Dystopia
 
 	RigidBody * Dystopia::RigidBody::Duplicate() const
 	{
-		return nullptr;
+		return new RigidBody{ *this };
 	}
 
-	void Dystopia::RigidBody::Serialise(TextSerialiser &)
+	void Dystopia::RigidBody::Serialise(TextSerialiser &) const
 	{
 	}
 
@@ -41,10 +41,36 @@ namespace Dystopia
 
 	void Dystopia::RigidBody::Update(float _dt)
 	{
+
+	}
+	void RigidBody::LateUpdate(float _dt)
+	{
+
+		/*Reset Cumulative Force*/
+		ResetCumulative();
 	}
 
-	void RigidBody::AddForce(float const & _force)
+	void RigidBody::AddForce(Math::Vec3D const & _force)
 	{
+		mCumulativeVector += _force;
+	}
+
+	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
+	{
+		AddForce(_force, _point, mOwnerTransform->GetGlobalPosition());
+	}
+
+	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point, Math::Point3D const & _origin)
+	{
+		Math::Vec3D && displacement_v = _point - _origin;
+		Math::Vector3D Angular = Cross(_force, displacement_v) / displacement_v.MagnitudeSqr();
+		mAngularVelocity  += Angular;
+		mCumulativeVector += _force;
+	}
+
+	void RigidBody::ResetCumulative()
+	{
+		mCumulativeVector = { 0,0,0,0 };
 	}
 
 }
