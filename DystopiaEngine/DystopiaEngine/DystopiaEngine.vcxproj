@@ -63,8 +63,10 @@
     <ClInclude Include="Include\Component\Component.h" />
     <ClInclude Include="Include\Component\ComponentList.h" />
     <ClInclude Include="Include\Component\Transform.h" />
+    <ClInclude Include="Include\DataStructure\Array.h" />
     <ClInclude Include="Include\DataStructure\AutoArray.h" />
     <ClInclude Include="Include\DataStructure\Heap.h" />
+    <ClInclude Include="Include\DataStructure\MagicArray.h" />
     <ClInclude Include="Include\DataStructure\Queue.h" />
     <ClInclude Include="Include\DataStructure\SharedPtr.h" />
     <ClInclude Include="Include\DataStructure\Stack.h" />

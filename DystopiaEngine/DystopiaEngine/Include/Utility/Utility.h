@@ -44,20 +44,22 @@ namespace Utility
 	// Increments the value by 1 and
 	// wraps the value back to 0 when it reaches Limit
 	// ie. within the range of 0 inclusive and Limit exclusive
-	inline int LoopIncrement(int _nToIncrement, const int _nLimit) noexcept
+	template <typename T>
+	inline T LoopIncrement(T _nToIncrement, const T _nLimit) noexcept
 	{
-		return ++_nToIncrement < _nLimit ? _nToIncrement : _nToIncrement = 0;
-	}
-
-	// Increments the value by 1 and
-	// wraps the value back to 0 when it reaches Limit
-	// ie. within the range of 0 inclusive and Limit exclusive
-	inline unsigned LoopIncrement(unsigned _nToIncrement, const unsigned _nLimit) noexcept
-	{
+		static_assert(IsIntegral<T>::value, "Value to increment must be integral");
 		return ++_nToIncrement < _nLimit ? _nToIncrement : _nToIncrement = 0;
 	}
 
 
+	// Checks if *positive* number is a power of 2
+	template <typename T>
+	inline constexpr bool IsPowerOf2(T _nValue)
+	{
+		static_assert(IsIntegral<T>::value, "Value must be integral");
+		return _nValue && 0 == (_nValue & _nValue - 1);
+	}
+	
 	// Sorts a given array using insertion sort. 
 	// Defaults to sorting the array in ascending order
 	template<class Itor, typename Comparator, class Obj = typename RemoveRef<decltype(*Itor{})>::type >
@@ -108,9 +110,10 @@ namespace Utility
 		return _dest;
 	}
 
+
 	// Swaps lhs with rhs
 	template<typename T>
-	inline void Swap(T& lhs, T& rhs)
+	constexpr inline void Swap(T& lhs, T& rhs)
 	{
 		T tmp{ Utility::Move(lhs) };
 
@@ -118,11 +121,13 @@ namespace Utility
 		rhs = Utility::Move(tmp);
 	}
 
+
 	template <typename T>
 	Interns::RangeMaker<T> Range(T&& begin, T&& end)
 	{
 		return Interns::RangeMaker<T>{ Forward<T>(begin), Forward<T>(end) };
 	}
+
 
 	/*!
 	\brief

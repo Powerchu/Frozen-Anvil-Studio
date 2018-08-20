@@ -165,9 +165,6 @@
     <ClInclude Include="Include\DataStructure\Heap.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DataStructure\AutoArray.h">
-      <Filter>DataStructures</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Math\Quaternion.h">
       <Filter>Math\Quaternion</Filter>
     </ClInclude>
@@ -257,6 +254,15 @@
     </ClInclude>
     <ClInclude Include="Include\DataStructure\Pointer.h">
       <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\AutoArray.h">
+      <Filter>DataStructures\Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Array.h">
+      <Filter>DataStructures\Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\MagicArray.h">
+      <Filter>DataStructures\Arrays</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -409,6 +415,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Scene\Scene">
       <UniqueIdentifier>{f3eae6d5-d8fd-463f-9178-71e46cda18c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataStructures\Arrays">
+      <UniqueIdentifier>{e471095b-299b-49a3-ae39-89a0de8825c4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

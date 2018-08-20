@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\WindowManager.h"
 
 #include "DataStructure\AutoArray.h"
+#include "DataStructure\MagicArray.h"
 
 #include <string>
 
@@ -55,6 +56,8 @@ float Rand(int lim)
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
 	auto driver = Dystopia::EngineCore::GetInstance();
+
+	MagicArrayBuilder<int>::SetBlockSize<128>::type x;
 
 	driver->LoadSettings();
 	driver->Init();

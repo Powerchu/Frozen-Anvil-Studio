@@ -202,7 +202,7 @@ namespace Utility
 	// =========== =========================================================
 
 	template <typename T>
-	struct IsSigned : Constant<bool, ((T( -1 )) < (T( 0 )))> {};
+	struct IsSigned : Constant<bool, T( -1 ) < T( 0 )> {};
 
 
 	// Has Members

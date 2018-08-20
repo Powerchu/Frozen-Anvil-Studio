@@ -12,8 +12,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef DYNAMIC_ARRAY
-#define DYNAMIC_ARRAY
+#ifndef _DYNAMIC_ARRAY_
+#define _DYNAMIC_ARRAY_
 
 #if defined(DEBUG) | defined(_DEBUG)
 #include "Utility\DebugAssert.h"
@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <new>				// operator new
 #include <cstring>			// memcpy
 #include <initializer_list> // init-list
+
 
 template<class T>
 class AutoArray
@@ -65,16 +66,16 @@ public:
 	inline Itor_t end(void) const noexcept;
 
 	// Gets the last element
-	inline T& back(void) const;
+	inline T& back(void) const noexcept;
 
 	// Gets the current number of elements in the array
-	inline unsigned size(void) const noexcept;
+	inline Sz_t size(void) const noexcept;
 
 	// Synonymous to Insert
 	inline void push_back(const T& _obj);
 
 	// Synonymous to Remove
-	inline void pop_back(void);
+	inline void pop_back(void) noexcept;
 
 	// Empties the array
 	inline void clear(void) noexcept;
@@ -96,10 +97,10 @@ public:
 	void EmplaceBack(Args &&...args);
 
 	// Removes the last element of the array
-	inline void Remove(void);
+	inline void Remove(void) noexcept;
 
 	// Remove all matching elements
-	inline void Remove(const T&);
+	inline void Remove(const T&) noexcept;
 
 	// Remove an element at the specified position of the array
 	// Preserves the current order of the array
@@ -132,6 +133,7 @@ public:
 
 	AutoArray& operator= (const AutoArray& _other);
 	AutoArray& operator= (AutoArray&& _other) noexcept;
+
 
 private:
 
