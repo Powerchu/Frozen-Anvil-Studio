@@ -285,13 +285,13 @@ inline void AutoArray<T>::reserve(Sz_t _nSize)
 template <class T>
 void AutoArray<T>::Insert(const T& _obj)
 {
-	if (mnLast == mnSize)
+	if (mpLast == mpEnd)
 	{
 		GrowArray();
 	}
 
-	new (mpArray + mnLast) T{ _obj };
-	++mnLast;
+	new (mpLast) T{ _obj };
+	++mpLast;
 }
 
 // Insert an element to the specified position
@@ -405,14 +405,6 @@ inline void AutoArray<T>::Remove(Itor_t _pObj)
 template <class T>
 inline void AutoArray<T>::FastRemove(const Sz_t _nIndex)
 {
-#if _DEBUG
-	if (_nIndex < mnLast - 1)
-	{
-		DEBUG_PRINT("AutoArray Error: Invalid Remove Index!\n");
-		return;
-	}
-#endif
-	
 	FastRemove(mpArray + _nIndex);
 }
 
@@ -424,7 +416,7 @@ inline void AutoArray<T>::FastRemove(const Itor_t& _pObj)
 	if (mpArray == mpLast) return __debugbreak();
 
 
-	if (_nIndex < mnLast - 1)
+	if (!(_pObj < mpLast))
 	{
 		DEBUG_PRINT("AutoArray Error: Invalid Remove Index!\n");
 		return;
@@ -491,10 +483,6 @@ template <class T>
 inline void AutoArray<T>::ArrayMove(Ptr_t _src, Sz_t _sz, Ptr_t _dest)
 {
 	std::memcpy(_dest, _src, sizeof(T) * _sz);
-	//for (Sz_t n = 0; n < mnLast; ++n)
-	//{
-	//	new (mpArray + n) T{ Utility::Move(*(_other + n)) };
-	//}
 }
 
 template <typename T>
@@ -541,7 +529,7 @@ template <class T>
 const T& AutoArray<T>::operator[] (const Sz_t _nIndex) const
 {
 #if _DEBUG
-	if (!(_nIndex < mnSize))
+	if (!(mpArray + _nIndex < mpLast))
 	{
 		DEBUG_PRINT("AutoArray Error: Array index out of range!\n");
 		__debugbreak();
@@ -558,7 +546,7 @@ AutoArray<T>& AutoArray<T>::operator= (const AutoArray<T>& _other)
 	if (size() < sz)
 		GrowArray(sz);
 
-	ArrayCopy(_other.mpArray);
+	ArrayCopy(_other.mpArray, _other.mpLast, mpArray);
 	return *this;
 }
 
