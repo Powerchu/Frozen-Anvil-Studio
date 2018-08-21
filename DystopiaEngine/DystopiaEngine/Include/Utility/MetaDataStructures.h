@@ -15,10 +15,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _META_DATASTRUCTS_H_
 #define _META_DATASTRUCTS_H_
 
-#include "Utility\MetaHelper.h"
-
 namespace Utility
 {
+	struct NULL_TYPE;
+
 	template <unsigned label, typename T>
 	struct Indexer
 	{

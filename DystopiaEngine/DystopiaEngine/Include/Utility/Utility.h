@@ -113,7 +113,7 @@ namespace Utility
 
 	// Swaps lhs with rhs
 	template<typename T>
-	constexpr inline void Swap(T& lhs, T& rhs)
+	inline void Swap(T& lhs, T& rhs)
 	{
 		T tmp{ Utility::Move(lhs) };
 

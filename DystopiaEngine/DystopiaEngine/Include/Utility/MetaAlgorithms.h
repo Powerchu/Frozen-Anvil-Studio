@@ -24,21 +24,18 @@ namespace Utility
 
 
 	template <typename Ty, typename ... Arr>
-	struct MetaFind
+	struct MetaFind : public Helper::MetaFinder<Ty, Arr...>
 	{
-		using result = typename Helper::MetaFinder<Ty, Arr...>::result;
 	};
 
 	template <typename Ty, template <typename...> typename Set, typename ...T>
-	struct MetaFind<Ty, Set<T...>>
+	struct MetaFind<Ty, Set<T...>> : public MetaFind<Ty, T...>
 	{
-		using result = typename MetaFind<Ty, T...>::result;
 	};
 
 	template <typename Ty, typename ... T, unsigned ... vals>
-	struct MetaFind<Ty, Indexer<vals,T>...>
+	struct MetaFind<Ty, Indexer<vals,T>...> : public Helper::MetaFinder<Ty, Indexer<vals, T>...>
 	{
-		using result = typename Helper::MetaFinder<Ty, Indexer<vals, T>...>::result;
 	};
 
 	template <typename Ty, typename ...Arr>

@@ -15,58 +15,62 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _ARRAY_H_
 
 #include "Utility\Meta.h"
+#include "Utility\Utility.h"
 
 
 template <typename T, size_t SIZE>
 class Array
 {
+public:
 	// ==================================== CONTAINER DEFINES ==================================== // 
 
-	using Itor_t = T * ;
-	using Val_t = T;
-	using Ptr_t = T * ;
-	using Sz_t = size_t;
+	using Itor_t      = T *;
+	using ConstItor_t = T const *;
+	using Val_t       = T;
+	using ConstVal_t  = T const;
+	using Ptr_t       = T *;
+	using Sz_t        = size_t;
 
 	static constexpr Sz_t mnSize = SIZE;
 
 
+private:
+	template <typename ... Us>
+	struct IsAnyArray
+	{
+		static constexpr bool value = false;
+	};
+	template <typename U, typename ... Us>
+	struct IsAnyArray<U, Us...>
+	{
+		static constexpr bool value = IsAnyArray<Us...>::value;
+	};
+	template <typename U, size_t SZ, typename ... Us>
+	struct IsAnyArray<Array<U, SZ>, Us...>
+	{
+		static constexpr bool value = true;
+	};
+public:
+
+
 	// ====================================== CONSTRUCTORS ======================================= // 
 
-	Array(void) noexcept;
-	explicit Array(Sz_t _nSize);
-	Array(const Array& _other);
-	Array(Array&& _other) noexcept;
-	template <typename ... U> Array(U&& ...);
-
-	~Array(void);
+	template <typename ... U, typename =
+		Utility::EnableIf_t<!IsAnyArray<Utility::Decay_t<U>...>::value>>
+	Array(U&& ...) noexcept;
+	Array(const Array&) = default;
+	Array(Array&&) noexcept = default;
 
 
 	// =================================== CONTAINER FUNCTIONS =================================== // 
 
-	inline Itor_t begin(void) const noexcept;
-	inline Itor_t end(void) const noexcept;
+	inline Itor_t      end(void) noexcept;
+	inline ConstItor_t end(void) const noexcept;
+	inline Itor_t      begin(void) noexcept;
+	inline ConstItor_t begin(void) const noexcept;
 
 	constexpr inline Sz_t size(void) const noexcept;
 
-	//inline void push_back(const T& _obj);
-	//inline void pop_back(void) noexcept;
-
-	//inline void clear(void) noexcept;
-
-	//void Insert(const T& _obj);
-	//void Insert(const T& _obj, const Sz_t _nIndex);
-	//void Insert(const T& _obj, const Itor_t _pPos);
-
-	template<typename ...Args>
-	Itor_t Emplace(Args &&...args);
-
-	// Removes the last element of the array
-	//inline void Remove(void);
-	//inline void Remove(const T&);
-	//void Remove(const Sz_t _nIndex);
-	//void Remove(const Itor_t _pObj);
-
-	inline bool IsEmpty(void) const noexcept;
 
 
 	// ======================================== OPERATORS ======================================== // 
@@ -74,13 +78,15 @@ class Array
 	Val_t& operator[] (Sz_t _nIndex);
 	const Val_t& operator[] (Sz_t _nIndex) const;
 
-	Array& operator= (const Array& _other);
-	Array& operator= (Array&& _other) noexcept;
+	template<typename U>
+	auto operator= (const Array<U, SIZE>&) -> Utility::EnableIf_t<!Utility::IsSame<T, U>::value, Array&>;
+	Array& operator= (const Array&) = default;
+	Array& operator= (Array&&) noexcept = default;
 	
 
 private:
 
-	T[SIZE] mArray;
+	T mArray[SIZE];
 };
 
 
@@ -91,14 +97,78 @@ private:
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
-// here
+namespace Ctor
+{
+	template <typename T, typename ... Us>
+	constexpr Array<T, sizeof...(Us)> MakeArray(Us&&... args) noexcept
+	{
+		return Array<T, sizeof...(Us)>{ Utility::Forward<Us>(args)... };
+	}
+}
+
+template <typename T, size_t Sz> template <typename ... U, typename>
+Array<T, Sz>::Array(U&& ... _Args) noexcept
+	: mArray { Utility::Forward<U>(_Args)... }
+{
+}
+
+template <typename T, size_t Sz>
+inline typename Array<T, Sz>::Itor_t Array<T, Sz>::begin(void) noexcept
+{
+	return mArray;
+}
+
+template <typename T, size_t Sz>
+inline typename Array<T, Sz>::ConstItor_t Array<T, Sz>::begin(void) const noexcept
+{
+	return mArray;
+}
+
+template <typename T, size_t Sz>
+inline typename Array<T, Sz>::Itor_t Array<T, Sz>::end(void) noexcept
+{
+	return mArray + Sz;
+}
+
+template <typename T, size_t Sz>
+inline typename Array<T, Sz>::ConstItor_t Array<T, Sz>::end(void) const noexcept
+{
+	return mArray + Sz;
+}
+
+template <typename T, size_t Sz>
+constexpr inline typename Array<T, Sz>::Sz_t Array<T, Sz>::size(void) const noexcept
+{
+	return Sz;
+}
 
 
 
 // ============================================ OPERATOR OVERLOADING ============================================ // 
 
 
-// here
+template <typename T, size_t Sz>
+inline typename Array<T, Sz>::Val_t& Array<T, Sz>::operator[] (const Sz_t _nIndex)
+{
+	return mArray[_nIndex];
+}
+
+template <typename T, size_t Sz>
+inline typename Array<T, Sz>::ConstVal_t& Array<T, Sz>::operator[] (const Sz_t _nIndex) const
+{
+	return mArray[_nIndex];
+}
+
+template <typename T, size_t Sz> template<typename U>
+auto Array<T, Sz>::operator= (const Array<U, Sz>& _other) -> Utility::EnableIf_t<!Utility::IsSame<T, U>::value, Array&>
+{
+	Itor_t dest = mArray;
+
+	for (auto& e : _other)
+		*dest++ = e;
+
+	return *this;
+}
 
 
 

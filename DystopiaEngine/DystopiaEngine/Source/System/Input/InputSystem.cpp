@@ -71,8 +71,6 @@ void Dystopia::InputManager::Shutdown(void)
 
 void Dystopia::InputManager::LoadDefaults(void)
 {
-	mButtonMap.clear();
-
 	LoadDefaultUserKeys();
 }
 

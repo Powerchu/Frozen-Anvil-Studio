@@ -23,30 +23,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 template <typename, typename>
 class MagicArray;
 
-template <typename T, unsigned BLOCK_SIZE = 32, unsigned MAX_BLOCKS = 32>
-struct MagicArrayBuilder
+namespace Ctor
 {
-	static_assert(Utility::IsPowerOf2(BLOCK_SIZE), "Block Size must be a power of 2");
+	template <typename T, unsigned BLOCK_SIZE = 32, unsigned MAX_BLOCKS = 32>
+	struct MagicArrayBuilder
+	{
+		static_assert(Utility::IsPowerOf2(BLOCK_SIZE), "Block Size must be a power of 2");
 
-	template <unsigned NEW_SIZE>
-	using SetBlockSize = MagicArrayBuilder<T, NEW_SIZE, MAX_BLOCKS>;
+		template <unsigned NEW_SIZE>
+		using SetBlockSize = MagicArrayBuilder<T, NEW_SIZE, MAX_BLOCKS>;
 
-	template <unsigned NEW_SIZE>
-	using SetBlockLimit = MagicArrayBuilder<T, BLOCK_SIZE, NEW_SIZE>;
+		template <unsigned NEW_SIZE>
+		using SetBlockLimit = MagicArrayBuilder<T, BLOCK_SIZE, NEW_SIZE>;
 
-	using type = MagicArray<T, MagicArrayBuilder>;
+		using type = MagicArray<T, MagicArrayBuilder>;
 
 
-private:
-	static constexpr unsigned blk_sz = BLOCK_SIZE;
-	static constexpr unsigned blk_max = MAX_BLOCKS;
+	private:
+		static constexpr unsigned blk_sz = BLOCK_SIZE;
+		static constexpr unsigned blk_max = MAX_BLOCKS;
 
-	friend class MagicArray<T, MagicArrayBuilder>;
+		friend class MagicArray<T, MagicArrayBuilder>;
 
-	MagicArrayBuilder() = delete;
-	MagicArrayBuilder(MagicArrayBuilder&&) = delete;
-	MagicArrayBuilder(const MagicArrayBuilder&) = delete;
-};
+		MagicArrayBuilder() = delete;
+		MagicArrayBuilder(MagicArrayBuilder&&) = delete;
+		MagicArrayBuilder(const MagicArrayBuilder&) = delete;
+	};
+}
 
 template <typename T, typename Params = MagicArrayBuilder<T>>
 class MagicArray

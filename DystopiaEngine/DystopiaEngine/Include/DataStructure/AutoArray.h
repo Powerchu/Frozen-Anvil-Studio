@@ -219,8 +219,13 @@ inline typename AutoArray<T>::Itor_t AutoArray<T>::end(void) const noexcept
 
 // Gets the last element
 template <class T>
-inline T& AutoArray<T>::back(void) const
+inline T& AutoArray<T>::back(void) const noexcept
 {
+#if _DEBUG
+	DEBUG_LOG(mpArray == mpLast, "DynamicArray Error: Array is empty!\n");
+	if (mpArray == mpLast) __debugbreak();
+#endif
+
 	return *(mpLast - 1);
 }
 
@@ -246,7 +251,7 @@ inline void AutoArray<T>::push_back(const T& _obj)
 
 // Removes the last element of the array. Synonymous to RemoveLast
 template <class T>
-inline void AutoArray<T>::pop_back(void)
+inline void AutoArray<T>::pop_back(void) noexcept
 {
 	Remove();
 }
@@ -338,7 +343,7 @@ void AutoArray<T>::EmplaceBack(Args &&...args)
 
 // Removes the last element of the array
 template <class T>
-inline void AutoArray<T>::Remove(void)
+inline void AutoArray<T>::Remove(void) noexcept
 {
 #if _DEBUG
 	DEBUG_LOG(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
@@ -351,7 +356,7 @@ inline void AutoArray<T>::Remove(void)
 
 // Removes all matching elements
 template<class T>
-inline void AutoArray<T>::Remove(const T& _obj)
+inline void AutoArray<T>::Remove(const T& _obj) noexcept
 {
 	Itor_t start  = begin();
 	Itor_t target = start;

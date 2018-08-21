@@ -85,7 +85,10 @@ namespace Dystopia
 template<class T>
 inline T* const Dystopia::EngineCore::GetSystem(void) const
 {
-	return static_cast<T*>(mSystemTable[Utility::MetaFind_t<T, AllSys>::value]);
+	using type = Utility::MetaFind<T, AllSys>;
+	static_assert(type::value, "Error: System not found!");
+
+	return static_cast<T*>(mSystemTable[type::result::value]);
 }
 
 template<unsigned _N, class T>
@@ -97,7 +100,10 @@ inline T* const Dystopia::EngineCore::GetSystem(void) const
 template<class T>
 inline T* const Dystopia::EngineCore::GetSubSystem(void) const
 {
-	return static_cast<T*>(mSubSystems[Utility::MetaFind_t<T, SubSys>::value]);
+	using type = Utility::MetaFind<T, SubSys>;
+	static_assert(type::value, "Error: Sub-System not found!");
+
+	return static_cast<T*>(mSubSystems[type::result::value]);
 }
 
 
