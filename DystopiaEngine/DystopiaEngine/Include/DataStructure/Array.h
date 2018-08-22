@@ -27,7 +27,6 @@ public:
 	using Itor_t      = T *;
 	using ConstItor_t = T const *;
 	using Val_t       = T;
-	using ConstVal_t  = T const;
 	using Ptr_t       = T *;
 	using Sz_t        = size_t;
 
@@ -61,6 +60,8 @@ public:
 	Array(const Array&) = default;
 	Array(Array&&) noexcept = default;
 
+	~Array(void) noexcept {};
+
 
 	// =================================== CONTAINER FUNCTIONS =================================== // 
 
@@ -76,7 +77,7 @@ public:
 	// ======================================== OPERATORS ======================================== // 
 
 	Val_t& operator[] (Sz_t _nIndex);
-	const Val_t& operator[] (Sz_t _nIndex) const;
+	Val_t const& operator[] (Sz_t _nIndex) const;
 
 	template<typename U>
 	auto operator= (const Array<U, SIZE>&) -> Utility::EnableIf_t<!Utility::IsSame<T, U>::value, Array&>;
@@ -154,7 +155,7 @@ inline typename Array<T, Sz>::Val_t& Array<T, Sz>::operator[] (const Sz_t _nInde
 }
 
 template <typename T, size_t Sz>
-inline typename Array<T, Sz>::ConstVal_t& Array<T, Sz>::operator[] (const Sz_t _nIndex) const
+inline typename Array<T, Sz>::Val_t const& Array<T, Sz>::operator[] (const Sz_t _nIndex) const
 {
 	return mArray[_nIndex];
 }

@@ -100,11 +100,11 @@ public:
 	inline void Remove(void) noexcept;
 
 	// Remove all matching elements
-	inline void Remove(const T&) noexcept;
+	void Remove(const T&) noexcept;
 
 	// Remove an element at the specified position of the array
 	// Preserves the current order of the array
-	void Remove(const Sz_t _nIndex);
+	inline void Remove(const Sz_t _nIndex);
 
 	// Remove an element pointed by the iterator to the array
 	// Preserves the current order of the array
@@ -356,7 +356,7 @@ inline void AutoArray<T>::Remove(void) noexcept
 
 // Removes all matching elements
 template<class T>
-inline void AutoArray<T>::Remove(const T& _obj) noexcept
+void AutoArray<T>::Remove(const T& _obj) noexcept
 {
 	Itor_t start  = begin();
 	Itor_t target = start;
@@ -383,7 +383,7 @@ inline void AutoArray<T>::Remove(const T& _obj) noexcept
 // Remove an element at the specified position of the array
 // Maintains the current order of the array
 template <class T>
-void AutoArray<T>::Remove(const Sz_t _nIndex)
+inline void AutoArray<T>::Remove(const Sz_t _nIndex)
 {
 	Remove(mpArray + _nIndex);
 }

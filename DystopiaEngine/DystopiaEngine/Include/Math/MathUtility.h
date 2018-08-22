@@ -59,12 +59,14 @@ namespace Math
 		return _fScalar > -epsilon && _fScalar < epsilon;
 	}
 
-	inline constexpr float Min(float _x, float _y)
+	template <typename T>
+	inline constexpr T Min(T _x, T _y)
 	{
-		return _x > _y ? _y : _x;
+		return _y < _x ? _y : _x;
 	}
 
-	inline constexpr float Max(float _x, float _y)
+	template <typename T>
+	inline constexpr T Max(T _x, T _y)
 	{
 		return _x < _y ? _y : _x;
 	}
@@ -98,6 +100,18 @@ namespace Math
 	{
 		return Internal::PowerCalc<T, exponent <0, Abs(exponent)>::Power(_x);
 	}
+
+	template <size_t _val>
+	struct Log2
+	{
+		static constexpr size_t value = 1 + Log2<_val / 2>::value;
+	};
+
+	template <>
+	struct Log2<1>
+	{
+		static constexpr size_t value = 1;
+	};
 }
 
 
