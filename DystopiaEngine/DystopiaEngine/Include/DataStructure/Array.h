@@ -60,7 +60,8 @@ public:
 	Array(const Array&) = default;
 	Array(Array&&) noexcept = default;
 
-	~Array(void) noexcept {};
+	// For some reason the dtor disappears even if I = default
+	~Array(void) noexcept {}
 
 
 	// =================================== CONTAINER FUNCTIONS =================================== // 

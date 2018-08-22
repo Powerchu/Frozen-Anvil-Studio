@@ -64,7 +64,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 //	mesh->LoadMesh("Resource/Meshes/Quad.txt");
 //	mesh->EndMesh();
 
-//	Ctor::MagicArrayBuilder<int>::SetBlockSize<128>::type x;
+	Ctor::MagicArrayBuilder<int>::SetBlockSize<2>::type x;
 
 	Array<float, 128> y{ 7.1f, 8.f };
 	Array<short, 128> z;
@@ -76,6 +76,23 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	auto w{ y };
 	y = y;
 	y = z;
+
+	int random = Math::Min(5, 16);
+
+	x.Insert(random);
+	x.Insert(6);
+	auto ptr = x.Insert(5);
+	x.Emplace(Math::Max(5, 16));
+
+	for (auto& e : x)
+		std::cout << e << " ";
+	std::cout << std::endl;
+
+	x.Remove(ptr);
+
+	for (auto& e : x)
+		std::cout << e << " ";
+	std::cout << std::endl;
 
 	while (true)
 	{

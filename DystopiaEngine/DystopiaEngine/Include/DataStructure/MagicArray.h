@@ -59,10 +59,12 @@ namespace Ctor
 template <typename T, typename Params = MagicArrayBuilder<T>>
 class MagicArray
 {
+	struct Iterator;
+
 public:
 	// ==================================== CONTAINER DEFINES ==================================== // 
 
-	using Itor_t = T*;
+	using Itor_t = Iterator;
 	using Val_t  = T;
 	using Ptr_t  = T *;
 	using Sz_t   = unsigned;
@@ -79,35 +81,37 @@ public:
 
 	// =================================== CONTAINER FUNCTIONS =================================== // 
 
-	inline Itor_t begin(void) const noexcept;
+	// Returns a forward iterator
+	inline Itor_t begin(void) const noexcept; 
 	inline Itor_t end(void) const noexcept;
 
-	inline Sz_t size(void) const noexcept;
-	inline Sz_t Cap(void) const noexcept;
+//	inline Sz_t size(void) const noexcept;
+	constexpr inline Sz_t Cap(void) const noexcept;
 
 	void clear(void) noexcept;
 
-	inline void shrink(void);
-	inline void reserve(Sz_t _nSize);
+//	inline void shrink(void);
+//	inline void reserve(Sz_t _nSize);
 
 	Ptr_t Insert(const Val_t& _obj);
 	Ptr_t Insert(const Val_t& _obj, const Sz_t _nIndex);
 
 	template<typename ...Ps>
-	Itor_t Emplace(Ps&& ...args);
+	Ptr_t Emplace(Ps&& ...args);
 
 	//inline void Remove(void) noexcept;
 	//inline void Remove(const T&) noexcept;
-	void Remove(const Sz_t _nIndex);
-	void Remove(const Itor_t _pObj);
+	inline void Remove(const Sz_t _nIndex);
+	void Remove(const Ptr_t _pObj);
+//	void Remove(const Itor_t _pObj);
 
 	inline bool IsEmpty(void) const noexcept;
 
 
 	// ======================================== OPERATORS ======================================== // 
 
-	Val_t& operator[] (const Sz_t _nIndex);
-	const Val_t& operator[] (const Sz_t _nIndex) const;
+	Val_t& operator[] (const Sz_t _nIndex) noexcept;
+	const Val_t& operator[] (const Sz_t _nIndex) const noexcept;
 
 	MagicArray& operator= (const MagicArray& _other);
 	MagicArray& operator= (MagicArray&& _other) noexcept;
@@ -122,7 +126,9 @@ private:
 		T* mpArray;
 		uint64_t present[Params::blk_sz > 63 ? Params::blk_sz >> 6 : 1]{ ~Range };
 
-		bool IsFull(void) const;
+		static inline uint64_t GetPresentIndex(uint64_t);
+
+		bool IsFull(void) const noexcept;
 		T* NextEmpty(void) const;
 
 		template <typename ... Ps>
@@ -133,10 +139,29 @@ private:
 		~Block(void);
 	};
 
+	struct Iterator
+	{
+		Block const * mpBlock;
+		Ptr_t mpAt;
+		Sz_t mnIndex;
+
+		Iterator(Block const *, const Ptr_t&, Sz_t);
+
+		Itor_t operator++(int) noexcept;
+		Itor_t& operator++(void) noexcept;
+
+		Val_t& operator* (void) const noexcept;
+		Ptr_t operator->(void) const noexcept;
+		bool operator== (const Iterator&) const noexcept;
+		bool operator!= (const Iterator&) const noexcept;
+
+		explicit operator bool(void) const noexcept;
+	};
+
 
 	void Allocate(Block&);
+	void Destroy(Val_t&) noexcept;
 
-	Block* mpCurrent;
 	Array<Block, Params::blk_max> mDirectory;
 };
 
@@ -178,10 +203,49 @@ MagicArray<T, PP>::~MagicArray(void)
 		delete e.mpArray;
 }
 
+template<typename T, typename PP>
+inline typename MagicArray<T, PP>::Itor_t MagicArray<T, PP>::begin(void) const noexcept
+{
+	return Itor_t{ &mDirectory[0], mDirectory[0].mpArray, 0 };
+}
+
+template<typename T, typename PP>
+inline typename MagicArray<T, PP>::Itor_t MagicArray<T, PP>::end(void) const noexcept
+{
+	return MagicArray<T, PP>::Itor_t{ nullptr, nullptr, 0 };
+}
+
+template<typename T, typename PP>
+constexpr inline typename MagicArray<T, PP>::Sz_t MagicArray<T, PP>::Cap(void) const noexcept
+{
+	return PP::blk_sz * PP::blk_max;
+}
+
 template <typename T, typename PP>
 void MagicArray<T, PP>::clear(void) noexcept
 {
-	
+	for (auto& blk : mDirectory)
+	{
+		auto ptr = blk.mpArray;
+		if (ptr)
+		{
+			for (auto& e : blk.present)
+			{
+				e &= blk.Range;
+				while (e)
+				{
+					if (e & 0x1)
+						Destroy(*ptr);
+					e >>= 1;
+					++ptr;
+				}
+			}
+
+			blk.present[0] = ~blk.Range;
+		}
+		else
+			break;
+	}
 }
 
 template <typename T, typename PP>
@@ -211,14 +275,14 @@ typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Insert(const Val_t& _obj, c
 	auto offset = _nIndex & PP::offset;
 	Ptr_t ptr = page.mpArray + offset;
 
-	if (0x1 & (page.present[offset >> 6] >> (_nIndex & 63)))
+	if (0x1 & (page.present[page.GetPresentIndex(offset)] >> (_nIndex & 63)))
 	{
 		*ptr = _obj;
 	}
 	else
 	{
 		new (ptr) T{ _obj };
-		page.present[offset >> 6] |= 1Ui64 << (_nIndex & 63);
+		page.present[page.GetPresentIndex(offset)] |= 1Ui64 << (_nIndex & 63);
 	}
 
 	return ptr;
@@ -239,6 +303,59 @@ typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Emplace(Ps&& ...args)
 }
 
 template<typename T, typename PP>
+inline void MagicArray<T, PP>::Remove(const Sz_t _nIndex)
+{
+	auto& blk = mDirectory[_nIndex >> PP::shift];
+	auto offset = _nIndex & PP::offset;
+
+#if _DEBUG
+	if (0x1 & (page.present[blk.GetPresentIndex(offset)] >> (_nIndex & 63)))
+	{
+		__debugbreak();
+	}
+#endif
+
+
+	Destroy(blk.mpArray[offset]);
+	page.present[page.GetPresentIndex(offset)] &= ~(1Ui64 << (_nIndex & 63));
+}
+
+template<typename T, typename PP>
+void MagicArray<T, PP>::Remove(const Ptr_t _pObj)
+{
+	for (auto& blk : mDirectory)
+	{
+		auto diff = _pObj - blk.mpArray;
+
+		if (diff < PP::blk_sz && diff >= 0)
+		{
+			Destroy(*_pObj);
+			blk.present[blk.GetPresentIndex(diff)] &= ~(1Ui64 << (diff & 63Ui64));
+			return;
+		}
+	}
+}
+
+template<typename T, typename PP>
+inline bool MagicArray<T, PP>::IsEmpty(void) const noexcept
+{
+	for (auto& blk : mDirectory)
+	{
+		if (blk.mpArray)
+		{
+			for (auto e : present)
+				if (~e & Range)
+					return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	return true;
+}
+
+template<typename T, typename PP>
 inline void MagicArray<T, PP>::Allocate(Block& _blk)
 {
 	_blk.mpArray = static_cast<T*>(::operator new[](sizeof(T) * PP::blk_sz));
@@ -250,14 +367,23 @@ inline void MagicArray<T, PP>::Allocate(Block& _blk)
 
 
 template <typename T, typename PP>
-T& MagicArray<T, PP>::operator[] (Sz_t _nIndex)
+T& MagicArray<T, PP>::operator[] (Sz_t _nIndex) noexcept
 {
 	return const_cast<T&>(const_cast<const MagicArray&>(*this)[_nIndex]);
 }
 
 template <typename T, typename PP>
-const T& MagicArray<T, PP>::operator[] (Sz_t _nIndex) const
+const T& MagicArray<T, PP>::operator[] (Sz_t _nIndex) const noexcept
 {
+#if _DEBUG
+	/* Array index out of range */
+	auto blk = mDirectory[_nIndex >> PP::shift]
+	if (nullptr == blk.mpArray)
+		__debugbreak();
+	if (0 == (0x1 & (blk.present[page.GetPresentIndex(_nIndex & PP::offset)] >> (_nIndex & 63))))
+		__debugbreak();
+#endif
+
 	return mDirectory[_nIndex >> PP::shift].mpArray[_nIndex & PP::offset];
 }
 
@@ -286,8 +412,14 @@ MagicArray<T, PP>& MagicArray<T, PP>::operator= (MagicArray<T, PP>&& _other) noe
 // =============================================== NESTED CLASSES =============================================== // 
 
 
+template<typename T, typename Params>
+inline typename uint64_t MagicArray<T, Params>::Block::GetPresentIndex(uint64_t _nIndex)
+{
+	return _nIndex >> 6;
+}
+
 template <typename T, typename PP>
-bool MagicArray<T, PP>::Block::IsFull(void) const
+bool MagicArray<T, PP>::Block::IsFull(void) const noexcept
 {
 	for (auto& e : present)
 		if (0 != (~e & Range))
@@ -371,9 +503,81 @@ typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Block::InsertNextEmpty(cons
 }
 
 template<typename T, typename Params>
+inline void MagicArray<T, Params>::Destroy(Val_t& it) noexcept
+{
+	it;
+	it.~T();
+}
+
+template<typename T, typename Params>
 inline MagicArray<T, Params>::Block::~Block(void)
 {
 	::operator delete[] (static_cast<void*>(mpArray));
+}
+
+template<typename T, typename Params>
+inline MagicArray<T, Params>::Iterator::Iterator(Block const * _pBlk, const Ptr_t& _pAt, Sz_t _nIndex) :
+	mpBlock{ _pBlk }, mpAt{ _pAt }, mnIndex{ _nIndex }
+{
+}
+
+template<typename T, typename PP>
+inline typename MagicArray<T, PP>::Itor_t MagicArray<T, PP>::Iterator::operator++(int) noexcept
+{
+	It_t cpy = *this;
+	++*this;
+	return cpy;
+}
+
+template<typename T, typename PP>
+inline typename MagicArray<T, PP>::Itor_t& MagicArray<T, PP>::Iterator::operator++(void) noexcept
+{
+	do
+	{
+		if (++mnIndex < PP::blk_sz)
+		{
+			++mpAt;
+		}
+		else
+		{
+			++mpBlock;
+			mpAt = mpBlock->mpArray;
+			mnIndex = 0;
+			if (!mpAt)
+				break;
+		}
+	} while (0 == (0x1 & (mpBlock->present[Block::GetPresentIndex(mnIndex)] >> (mnIndex & 63))));
+	return *this;
+}
+
+template<typename T, typename PP>
+inline typename MagicArray<T, PP>::Val_t& MagicArray<T, PP>::Iterator::operator*(void) const noexcept
+{
+	return *mpAt;
+}
+
+template<typename T, typename PP>
+inline typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Iterator::operator->(void) const noexcept
+{
+	return mpAt;
+}
+
+template<typename T, typename PP>
+inline bool MagicArray<T, PP>::Iterator::operator == (const Iterator& _rhs) const noexcept
+{
+	return mpAt == _rhs.mpAt;
+}
+
+template<typename T, typename PP>
+inline bool MagicArray<T, PP>::Iterator::operator != (const Iterator& _rhs) const noexcept
+{
+	return mpAt != _rhs.mpAt;
+}
+
+template<typename T, typename PP>
+inline MagicArray<T, PP>::Iterator::operator bool(void) const noexcept
+{
+	return !!mpAt;
 }
 
 
