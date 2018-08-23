@@ -70,6 +70,7 @@
     <ClInclude Include="Include\DataStructure\Queue.h" />
     <ClInclude Include="Include\DataStructure\SharedPtr.h" />
     <ClInclude Include="Include\DataStructure\Stack.h" />
+    <ClInclude Include="Include\Allocator\DefaultAlloc.h" />
     <ClInclude Include="Include\Globals.h" />
     <ClInclude Include="Include\IO\ImageParser.h" />
     <ClInclude Include="Include\IO\Serialiser.h" />

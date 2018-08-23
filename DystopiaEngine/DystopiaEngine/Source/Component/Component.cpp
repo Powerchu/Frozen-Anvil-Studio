@@ -45,22 +45,7 @@ void Dystopia::Component::Init(void)
 {
 
 }
-/*
-void Dystopia::Component::Update(const float)
-{
 
-}
-
-void Dystopia::Component::FixedUpdate(const float)
-{
-
-}
-
-void Dystopia::Component::PostUpdate(void)
-{
-
-}
-*/
 void Dystopia::Component::OnDestroy(void)
 {
 

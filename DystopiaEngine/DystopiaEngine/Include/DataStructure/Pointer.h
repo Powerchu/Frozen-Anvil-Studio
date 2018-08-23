@@ -37,8 +37,11 @@ public:
 
 	T& operator*  (void) { return *mpObj; }
 	T* operator-> (void) { return  mpObj; }
+	T& operator[] (long long _nI) { return mpObj[_nI]; }
+
 	const T& operator*  (void) const { return *mpObj; }
 	const T* operator-> (void) const { return  mpObj; }
+	const T& operator[] (long long _nI) const { return mpObj[_nI]; }
 
 	inline explicit operator bool(void) const { return !!mpObj; }
 

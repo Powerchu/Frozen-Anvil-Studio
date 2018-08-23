@@ -92,7 +92,7 @@ namespace Utility
 		while (_begin != _end)
 		{
 			new (*_dest) Utility::Decay_t<decltype(*_dest)> { Utility::Move(*_begin) };
-			++_dest; ++_begin
+			++_dest; ++_begin;
 		}
 
 		return _dest;
@@ -104,7 +104,7 @@ namespace Utility
 		while(_begin != _end)
 		{
 			new (*_dest) Utility::Decay_t<decltype(*_dest)> { *_begin };
-			++_dest; ++_begin
+			++_dest; ++_begin;
 		}
 
 		return _dest;

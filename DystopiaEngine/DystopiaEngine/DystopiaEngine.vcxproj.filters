@@ -117,9 +117,6 @@
     <ClInclude Include="Include\Utility\MetaHelper.h">
       <Filter>Utility\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DataStructure\SharedPtr.h">
-      <Filter>DataStructures</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Sound\SoundTypes.h">
       <Filter>Game Engine\Systems\Sound</Filter>
     </ClInclude>
@@ -252,9 +249,6 @@
     <ClInclude Include="Include\Math\Angles.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DataStructure\Pointer.h">
-      <Filter>DataStructures</Filter>
-    </ClInclude>
     <ClInclude Include="Include\DataStructure\AutoArray.h">
       <Filter>DataStructures\Arrays</Filter>
     </ClInclude>
@@ -263,6 +257,15 @@
     </ClInclude>
     <ClInclude Include="Include\DataStructure\MagicArray.h">
       <Filter>DataStructures\Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Pointer.h">
+      <Filter>DataStructures\Pointers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\SharedPtr.h">
+      <Filter>DataStructures\Pointers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\DefaultAlloc.h">
+      <Filter>Allocator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -418,6 +421,12 @@
     </Filter>
     <Filter Include="DataStructures\Arrays">
       <UniqueIdentifier>{e471095b-299b-49a3-ae39-89a0de8825c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataStructures\Pointers">
+      <UniqueIdentifier>{18df8a70-9eb3-4517-bc4c-eab131c7ea0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Allocator">
+      <UniqueIdentifier>{cb8bd5e1-4ded-433d-b8cb-f70eceff126d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -136,7 +136,6 @@ private:
 		Ptr_t InsertNextEmpty(const Val_t& _obj);
 
 		Block(void) noexcept = default;
-		~Block(void);
 	};
 
 	struct Iterator
@@ -200,7 +199,10 @@ MagicArray<T, PP>::~MagicArray(void)
 	clear();
 
 	for (auto& e : mDirectory)
-		delete e.mpArray;
+	{
+		::operator delete[](static_cast<void*>(e.mpArray));
+		e.mpArray = nullptr;
+	}
 }
 
 template<typename T, typename PP>
@@ -507,12 +509,6 @@ inline void MagicArray<T, Params>::Destroy(Val_t& it) noexcept
 {
 	it;
 	it.~T();
-}
-
-template<typename T, typename Params>
-inline MagicArray<T, Params>::Block::~Block(void)
-{
-	::operator delete[] (static_cast<void*>(mpArray));
 }
 
 template<typename T, typename Params>

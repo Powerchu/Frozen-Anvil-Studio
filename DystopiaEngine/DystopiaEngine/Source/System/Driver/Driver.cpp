@@ -37,25 +37,25 @@ namespace
 	}
 
 	template <typename T>
-	struct ErrorOnDupe;
+	struct ErrorOnDuplicate;
 
 	template <
 		template <typename ...> class Set,
 		template <unsigned, typename> class Holder,
 		typename ... Tys, unsigned ... Ns,
 		typename Ty1, typename Ty2, unsigned N1, unsigned N2>
-	struct ErrorOnDupe <Set<Holder<N1, Ty1>, Holder<N2, Ty2>, Holder<Ns, Tys>...>>
+	struct ErrorOnDuplicate <Set<Holder<N1, Ty1>, Holder<N2, Ty2>, Holder<Ns, Tys>...>>
 	{
 		static_assert(!(N1 == N2), "System Error: Systems cannot have the same index! (Same enum?).");
 
-		using eval = typename ErrorOnDupe<Set<Holder<N2, Ty2>, Holder<Ns, Tys>...>>::eval;
+		using eval = typename ErrorOnDuplicate<Set<Holder<N2, Ty2>, Holder<Ns, Tys>...>>::eval;
 	};
 
 	template <
 		template <typename ...> class Set,
 		template <unsigned, typename> class Holder,
 		typename Ty1, typename Ty2, unsigned N1, unsigned N2>
-	struct ErrorOnDupe <Set<Holder<N1, Ty1>, Holder<N2, Ty2>>>
+	struct ErrorOnDuplicate <Set<Holder<N1, Ty1>, Holder<N2, Ty2>>>
 	{
 		static_assert(!(N1 == N2), "System Error: Systems cannot have the same index! (Same enum?).");
 
@@ -75,7 +75,7 @@ Dystopia::EngineCore::EngineCore(void) :
 	mSystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) },
 	mSubSystems { MakeAutoArray<void*>(Utility::MakeTypeList_t<Utility::TypeList, SubSys>{}) }
 {
-	using SanityCheck = typename ErrorOnDupe<AllSys>::eval;
+	using SanityCheck = typename ErrorOnDuplicate<AllSys>::eval;
 }
 
 void Dystopia::EngineCore::LoadSettings(void)
@@ -133,6 +133,11 @@ void Dystopia::EngineCore::Update(void)
 	for (auto& e : mSystemList)
 	{
 		e->Update(dt);
+	}
+
+	for (auto& e : mSystemList)
+	{
+		e->PostUpdate();
 	}
 }
 

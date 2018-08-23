@@ -60,7 +60,8 @@ public:
 	Array(const Array&) = default;
 	Array(Array&&) noexcept = default;
 
-	// For some reason the dtor disappears even if I = default
+	// For some reason the dtor disappears even if I "= default" it.
+	// Also the defaulted one might crash Microsoft Compiler
 	~Array(void) noexcept {}
 
 

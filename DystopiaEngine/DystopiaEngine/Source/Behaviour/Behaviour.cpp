@@ -19,6 +19,14 @@ Dystopia::Behaviour::Behaviour(void) :
 
 }
 
+void Dystopia::Behaviour::Load(void)
+{
+}
+
+void Dystopia::Behaviour::Init(void)
+{
+}
+
 void Dystopia::Behaviour::Update(const float)
 {
 
@@ -32,6 +40,14 @@ void Dystopia::Behaviour::FixedUpdate(const float)
 void Dystopia::Behaviour::PostUpdate(void)
 {
 
+}
+
+void Dystopia::Behaviour::OnDestroy(void)
+{
+}
+
+void Dystopia::Behaviour::Unload(void)
+{
 }
 
 void Dystopia::Behaviour::OnCollisionEnter(const CollisionEvent&)

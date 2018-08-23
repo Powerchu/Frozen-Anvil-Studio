@@ -23,13 +23,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\MathUtility.h"			// phi
 #include "Utility\Meta.h"				// Decay, IsSame, EnableIf, IsIntegral
 #include "Utility\MetaDataStructures.h" // TypeList
+#include "Allocator\DefaultAlloc.h"		// DefaultAllocator
 
 #include <new>				// operator new
 #include <cstring>			// memcpy
 #include <initializer_list> // init-list
 
 
-template<class T>
+template<class T, class Alloc = Dystopia::DefaultAllocator<T[]>>
 class AutoArray
 {
 public:
@@ -161,42 +162,42 @@ private:
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
-template <class T>
-AutoArray<T>::AutoArray(void) noexcept : 
+template <class T, class A>
+AutoArray<T, A>::AutoArray(void) noexcept : 
 	mpArray{ nullptr }, mpEnd{ nullptr }, mpLast{ nullptr }
 {
 }
 
-template <class T>
-AutoArray<T>::AutoArray(Sz_t _nSize) :
+template <class T, class A>
+AutoArray<T, A>::AutoArray(Sz_t _nSize) :
 	mpArray{ Allocate(_nSize) }, mpEnd{ mpArray + _nSize }, mpLast{ mpArray }
 {
 }
 
-template <class T>
-AutoArray<T>::AutoArray(const AutoArray<T>& _other) :
+template <class T, class A>
+AutoArray<T, A>::AutoArray(const AutoArray<T, A>& _other) :
 	mpArray{ Allocate(_other.size()) }, mpEnd{ mpArray + _other.size() },
 	mpLast{ ArrayCopy(_other.mpArray, _other.mpLast, mpArray) }
 {
 }
 
-template <class T>
-AutoArray<T>::AutoArray(AutoArray<T>&& _other) noexcept :
+template <class T, class A>
+AutoArray<T, A>::AutoArray(AutoArray<T, A>&& _other) noexcept :
 	mpArray{ _other.mpArray }, mpEnd{ _other.mpEnd }, mpLast{ _other.mpLast }
 {
 	_other.mpArray = _other.mpEnd = _other.mpLast = nullptr;
 }
 
-template <class T> template <typename U, typename>
-AutoArray<T>::AutoArray(std::initializer_list<U> _il) :
+template <class T, class A> template <typename U, typename>
+AutoArray<T, A>::AutoArray(std::initializer_list<U> _il) :
 	AutoArray(static_cast<Sz_t>(_il.size()))
 {
 	for (auto& e : _il)
 		EmplaceBack(Utility::Move(e));
 }
 
-template <class T>
-AutoArray<T>::~AutoArray(void)
+template <class T, class A>
+AutoArray<T, A>::~AutoArray(void)
 {
 	clear();
 	Deallocate(mpArray);
@@ -204,22 +205,22 @@ AutoArray<T>::~AutoArray(void)
 
 
 // Gets the pointer to the first element
-template <class T>
-inline typename AutoArray<T>::Itor_t AutoArray<T>::begin(void) const noexcept
+template <class T, class A>
+inline typename AutoArray<T, A>::Itor_t AutoArray<T, A>::begin(void) const noexcept
 {
 	return mpArray;
 }
 
 // Gets the pointer to the end of the array
-template <class T>
-inline typename AutoArray<T>::Itor_t AutoArray<T>::end(void) const noexcept
+template <class T, class A>
+inline typename AutoArray<T, A>::Itor_t AutoArray<T, A>::end(void) const noexcept
 {
 	return mpLast;
 }
 
 // Gets the last element
-template <class T>
-inline T& AutoArray<T>::back(void) const noexcept
+template <class T, class A>
+inline T& AutoArray<T, A>::back(void) const noexcept
 {
 #if _DEBUG
 	DEBUG_LOG(mpArray == mpLast, "DynamicArray Error: Array is empty!\n");
@@ -230,43 +231,43 @@ inline T& AutoArray<T>::back(void) const noexcept
 }
 
 // Gets the current number of elements in the array
-template <class T>
-inline typename AutoArray<T>::Sz_t AutoArray<T>::size(void) const noexcept
+template <class T, class A>
+inline typename AutoArray<T, A>::Sz_t AutoArray<T, A>::size(void) const noexcept
 {
 	return static_cast<Sz_t>(mpLast - mpArray);
 }
 
-template<class T>
-inline typename AutoArray<T>::Sz_t AutoArray<T>::Cap(void) const noexcept
+template<class T, class A>
+inline typename AutoArray<T, A>::Sz_t AutoArray<T, A>::Cap(void) const noexcept
 {
 	return static_cast<Sz_t>(mpEnd - mpArray);
 }
 
 // Inserts to the back of the array. Synonymous to Insert
-template <class T>
-inline void AutoArray<T>::push_back(const T& _obj)
+template <class T, class A>
+inline void AutoArray<T, A>::push_back(const T& _obj)
 {
 	Insert(_obj);
 }
 
 // Removes the last element of the array. Synonymous to RemoveLast
-template <class T>
-inline void AutoArray<T>::pop_back(void) noexcept
+template <class T, class A>
+inline void AutoArray<T, A>::pop_back(void) noexcept
 {
 	Remove();
 }
 
 // Empties the array
-template <class T>
-inline void AutoArray<T>::clear(void) noexcept
+template <class T, class A>
+inline void AutoArray<T, A>::clear(void) noexcept
 {
 	DestroyArray(mpArray, mpLast);
 	mpLast = mpArray;
 }
 
 // Minimises the memory used by the array
-template <class T>
-inline void AutoArray<T>::shrink(void)
+template <class T, class A>
+inline void AutoArray<T, A>::shrink(void)
 {
 	Sz_t sz = size();
 	if (!sz)
@@ -279,8 +280,8 @@ inline void AutoArray<T>::shrink(void)
 }
 
 // Ensures that there are _nSize amounts of empty slots
-template <class T>
-inline void AutoArray<T>::reserve(Sz_t _nSize)
+template <class T, class A>
+inline void AutoArray<T, A>::reserve(Sz_t _nSize)
 {
 	Sz_t sz = size();
 	if(sz + _nSize > mpEnd - mpArray)
@@ -289,8 +290,8 @@ inline void AutoArray<T>::reserve(Sz_t _nSize)
 
 
 // Inserts an element to the back of the array
-template <class T>
-void AutoArray<T>::Insert(const T& _obj)
+template <class T, class A>
+void AutoArray<T, A>::Insert(const T& _obj)
 {
 	if (mpLast == mpEnd)
 	{
@@ -302,8 +303,8 @@ void AutoArray<T>::Insert(const T& _obj)
 }
 
 // Insert an element to the specified position
-template <class T>
-void AutoArray<T>::Insert(const T& _obj, const Sz_t _nIndex)
+template <class T, class A>
+void AutoArray<T, A>::Insert(const T& _obj, const Sz_t _nIndex)
 {
 #if _DEBUG
 	if (!(_nIndex < size()))
@@ -330,8 +331,8 @@ void AutoArray<T>::Insert(const T& _obj, const Sz_t _nIndex)
 }
 
 // In-place insert an element to the back of the array
-template <class T> template<typename ...Args>
-void AutoArray<T>::EmplaceBack(Args &&...args)
+template <class T, class A> template<typename ...Args>
+void AutoArray<T, A>::EmplaceBack(Args &&...args)
 {
 	if (mpLast == mpEnd)
 		GrowArray();
@@ -342,8 +343,8 @@ void AutoArray<T>::EmplaceBack(Args &&...args)
 
 
 // Removes the last element of the array
-template <class T>
-inline void AutoArray<T>::Remove(void) noexcept
+template <class T, class A>
+inline void AutoArray<T, A>::Remove(void) noexcept
 {
 #if _DEBUG
 	DEBUG_LOG(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
@@ -355,8 +356,8 @@ inline void AutoArray<T>::Remove(void) noexcept
 }
 
 // Removes all matching elements
-template<class T>
-void AutoArray<T>::Remove(const T& _obj) noexcept
+template<class T, class A>
+void AutoArray<T, A>::Remove(const T& _obj) noexcept
 {
 	Itor_t start  = begin();
 	Itor_t target = start;
@@ -382,14 +383,14 @@ void AutoArray<T>::Remove(const T& _obj) noexcept
 
 // Remove an element at the specified position of the array
 // Maintains the current order of the array
-template <class T>
-inline void AutoArray<T>::Remove(const Sz_t _nIndex)
+template <class T, class A>
+inline void AutoArray<T, A>::Remove(const Sz_t _nIndex)
 {
 	Remove(mpArray + _nIndex);
 }
 
-template<class T>
-inline void AutoArray<T>::Remove(Itor_t _pObj)
+template<class T, class A>
+inline void AutoArray<T, A>::Remove(Itor_t _pObj)
 {
 #if _DEBUG
 	DEBUG_LOG(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
@@ -409,14 +410,14 @@ inline void AutoArray<T>::Remove(Itor_t _pObj)
 
 // Remove an element at the specified position of the array
 // Destroys the current order of the array
-template <class T>
-inline void AutoArray<T>::FastRemove(const Sz_t _nIndex)
+template <class T, class A>
+inline void AutoArray<T, A>::FastRemove(const Sz_t _nIndex)
 {
 	FastRemove(mpArray + _nIndex);
 }
 
-template<class T>
-inline void AutoArray<T>::FastRemove(const Itor_t& _pObj)
+template<class T, class A>
+inline void AutoArray<T, A>::FastRemove(const Itor_t& _pObj)
 {
 #if _DEBUG
 	DEBUG_LOG(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
@@ -435,8 +436,8 @@ inline void AutoArray<T>::FastRemove(const Itor_t& _pObj)
 	Destroy(*mpLast);
 }
 
-template <class T>
-inline bool AutoArray<T>::IsEmpty(void) const noexcept
+template <class T, class A>
+inline bool AutoArray<T, A>::IsEmpty(void) const noexcept
 {
 	return mpArray == mpLast;
 }
@@ -444,8 +445,8 @@ inline bool AutoArray<T>::IsEmpty(void) const noexcept
 
 // Sorts the array.
 // Defaults to sorting in ascending order based on the '<' operator
-template <class T> template<typename Comparator>
-void AutoArray<T>::Sort(Comparator _pTest)
+template <class T, class A> template<typename Comparator>
+void AutoArray<T, A>::Sort(Comparator _pTest)
 {
 	const Sz_t last = mpLast - mpArray;
 	T temp;
@@ -464,8 +465,8 @@ void AutoArray<T>::Sort(Comparator _pTest)
 	}
 }
 
-template <class T>
-void AutoArray<T>::GrowArray(Sz_t _newSize)
+template <class T, class A>
+void AutoArray<T, A>::GrowArray(Sz_t _newSize)
 {
 	Sz_t cap_old = Cap(), sz = size();
 	Sz_t cap_new = !_newSize ? static_cast<Sz_t>(cap_old > 1 ? cap_old * Math::phi : 2) : _newSize;
@@ -480,39 +481,41 @@ void AutoArray<T>::GrowArray(Sz_t _newSize)
 	mpLast  = mpArray + sz;
 }
 
-template <class T>
-inline void AutoArray<T>::ArrayCopy(Itor_t _src_beg, Itor_t _src_end, Itor_t _dest)
+template <class T, class A>
+inline void AutoArray<T, A>::ArrayCopy(Itor_t _src_beg, Itor_t _src_end, Itor_t _dest)
 {
 	Utility::CopyInit(_src_beg, _src_end, _dest);
 }
 
-template <class T>
-inline void AutoArray<T>::ArrayMove(Ptr_t _src, Sz_t _sz, Ptr_t _dest)
+template <class T, class A>
+inline void AutoArray<T, A>::ArrayMove(Ptr_t _src, Sz_t _sz, Ptr_t _dest)
 {
 	std::memcpy(_dest, _src, sizeof(T) * _sz);
 }
 
-template <typename T>
-inline T* AutoArray<T>::Allocate(Sz_t _nSize)
+template <typename T, class A>
+inline T* AutoArray<T, A>::Allocate(Sz_t _nSize)
 {
-	return static_cast<T*>(operator new[](_nSize * sizeof(T)));
+//	return static_cast<T*>(::operator new[](_nSize * sizeof(T)));
+	return A::Alloc(_nSize);
 }
 
-template <typename T>
-inline void AutoArray<T>::Deallocate(Itor_t _arr)
+template <typename T, class A>
+inline void AutoArray<T, A>::Deallocate(Itor_t _arr)
 {
-	::operator delete[](static_cast<void*>(_arr));
+//	::operator delete[] (static_cast<void*>(_arr));
+	A::Free(_arr);
 }
 
-template <class T>
-inline void AutoArray<T>::Destroy(T& _obj)
+template <class T, class A>
+inline void AutoArray<T, A>::Destroy(T& _obj)
 {
 	_obj; // Stop unreferenced parameter warnings for basic types
 	_obj.~T();
 }
 
-template <class T>
-inline void AutoArray<T>::DestroyArray(Itor_t _pBegin, Itor_t _pEnd)
+template <class T, class A>
+inline void AutoArray<T, A>::DestroyArray(Itor_t _pBegin, Itor_t _pEnd)
 {
 	// Destroy (or at least attempt to) in reverse order of creation
 	while (_pBegin != _pEnd)
@@ -526,14 +529,14 @@ inline void AutoArray<T>::DestroyArray(Itor_t _pBegin, Itor_t _pEnd)
 // ============================================ OPERATOR OVERLOADING ============================================ // 
 
 
-template <class T>
-T& AutoArray<T>::operator[] (const Sz_t _nIndex)
+template <class T, class A>
+T& AutoArray<T, A>::operator[] (const Sz_t _nIndex)
 {
 	return const_cast<T&>(static_cast<AutoArray const &>(*this)[_nIndex]);
 }
 
-template <class T>
-const T& AutoArray<T>::operator[] (const Sz_t _nIndex) const
+template <class T, class A>
+const T& AutoArray<T, A>::operator[] (const Sz_t _nIndex) const
 {
 #if _DEBUG
 	if (!(mpArray + _nIndex < mpLast))
@@ -546,8 +549,8 @@ const T& AutoArray<T>::operator[] (const Sz_t _nIndex) const
 	return *(mpArray + _nIndex);
 }
 
-template <class T>
-AutoArray<T>& AutoArray<T>::operator= (const AutoArray<T>& _other)
+template <class T, class A>
+AutoArray<T, A>& AutoArray<T, A>::operator= (const AutoArray<T, A>& _other)
 {
 	Sz_t sz = _other.size();
 	if (size() < sz)
@@ -557,8 +560,8 @@ AutoArray<T>& AutoArray<T>::operator= (const AutoArray<T>& _other)
 	return *this;
 }
 
-template <class T>
-AutoArray<T>& AutoArray<T>::operator= (AutoArray<T>&& _other) noexcept
+template <class T, class A>
+AutoArray<T, A>& AutoArray<T, A>::operator= (AutoArray<T, A>&& _other) noexcept
 {
 	Utility::Swap(mpEnd  , _other.mpEnd  );
 	Utility::Swap(mpLast , _other.mpLast );

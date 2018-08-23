@@ -57,6 +57,14 @@ void Dystopia::SceneSystem::Update(float _dt)
 	}
 }
 
+void Dystopia::SceneSystem::PostUpdate(void)
+{
+	if (mpNextScene == mpCurrScene)
+	{
+		mpCurrScene->PostUpdate();
+	}
+}
+
 void Dystopia::SceneSystem::Shutdown(void)
 {
 }

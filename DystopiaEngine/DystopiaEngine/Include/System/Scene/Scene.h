@@ -33,10 +33,12 @@ namespace Dystopia
 
 		void FixedUpdate(float _dt);
 		void Update(float _dt);
+		void PostUpdate(void);
+
 		void Shutdown(void);
 
-		GameObject* FindGameObject(size_t);
-		GameObject* FindGameObject(const std::string&);
+		GameObject* FindGameObject(const size_t _nID);
+		GameObject* FindGameObject(const std::string& _strName);
 
 	private:
 
