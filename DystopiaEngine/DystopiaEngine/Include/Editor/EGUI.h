@@ -27,10 +27,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../../Dependancies/ImGui/imgui_internal.h"
 #include <string>
 
+/* forward declare just becuz */
+struct ImDrawData;
+struct ImGuiContext;
+
 namespace Dystopia
 {
 	class CommandHandler;
+	class WindowManager;
+	class GraphicsSystem;
+	class InputManager;
+	class GLState;
+	typedef unsigned int GLuint;
 }
+/* ========================== */
 
 /* =======================================================================================================================
 	Brief:
@@ -432,16 +442,8 @@ namespace EGUI
 /*====================================================================== GUI SYSTEM ======================================================================*/
 /*========================================================================================================================================================*/
 
-struct ImDrawData;
-struct ImGuiContext;
 namespace Dystopia
 {
-	class WindowManager;
-	class GraphicsSystem;
-	class InputManager;
-	class GLState;
-	typedef unsigned int GLuint;
-
 	class GuiSystem
 	{
 	public:

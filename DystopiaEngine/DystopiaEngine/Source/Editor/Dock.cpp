@@ -389,8 +389,8 @@ void DockSpace::SplitTabHorizontal(Tabs *_pTab, ImVec2& _oDSize, ImVec2& _oPos0,
 	ImVec2 min_size0 = _pTab->mArrChildPtr[0]->GetMinSize();
 	ImVec2 min_size1 = _pTab->mArrChildPtr[1]->GetMinSize();
 
-	ImGui::SetCursorScreenPos(ImVec2(_pTab->mPos.x + _oSize0.x - 2.5f, _pTab->mPos.y));
-	ImGui::InvisibleButton("split", ImVec2(5, _pTab->mSize.y));
+	ImGui::SetCursorScreenPos(ImVec2(_pTab->mPos.x + _oSize0.x - 4.5f, _pTab->mPos.y));
+	ImGui::InvisibleButton("split", ImVec2(9, _pTab->mSize.y));
 	if (_pTab->mStatus == eSTATUS_DRAGGED)
 		_oDSize.x = ImGui::GetIO().MouseDelta.x;
 	_oDSize.x = -ImMin(-_oDSize.x, _pTab->mArrChildPtr[0]->mSize.x - min_size0.x);
@@ -409,8 +409,8 @@ void DockSpace::SplitTabVertical(Tabs *_pTab, ImVec2& _oDSize, ImVec2& _oPos0, I
 {
 	ImVec2 min_size0 = _pTab->mArrChildPtr[0]->GetMinSize();
 	ImVec2 min_size1 = _pTab->mArrChildPtr[1]->GetMinSize();
-	ImGui::SetCursorScreenPos(ImVec2(_pTab->mPos.x, _pTab->mPos.y + _oSize0.y - 2.5f));
-	ImGui::InvisibleButton("split", ImVec2(_pTab->mSize.x, 5));
+	ImGui::SetCursorScreenPos(ImVec2(_pTab->mPos.x, _pTab->mPos.y + _oSize0.y - 4.5f));
+	ImGui::InvisibleButton("split", ImVec2(_pTab->mSize.x, 9));
 	if (_pTab->mStatus == eSTATUS_DRAGGED)
 		_oDSize.y = ImGui::GetIO().MouseDelta.y;
 	_oDSize.y = -ImMin(-_oDSize.y, _pTab->mArrChildPtr[0]->mSize.y - min_size0.y);
@@ -455,13 +455,13 @@ void DockSpace::SplitTabs()
 
 		if (pTab->IsHorizontal())
 		{
-			cursor = ImGuiMouseCursor_ResizeEW;
 			SplitTabHorizontal(pTab, dsize, pos0, pos1, size0, size1);
+			cursor = ImGuiMouseCursor_ResizeEW;
 		}
 		else
 		{
-			cursor = ImGuiMouseCursor_ResizeNS;
 			SplitTabVertical(pTab, dsize, pos0, pos1, size0, size1);
+			cursor = ImGuiMouseCursor_ResizeNS;
 		}
 		pTab->mArrChildPtr[0]->SetPosSize(pos0, size0);
 		pTab->mArrChildPtr[1]->SetPosSize(pos1, size1);
@@ -469,6 +469,7 @@ void DockSpace::SplitTabs()
 		if (ImGui::IsItemHovered())
 		{
 			ImGui::SetMouseCursor(cursor);
+			std::cout << "Is hovered\n";
 			if (ImGui::IsMouseClicked(0))
 				pTab->mStatus = eSTATUS_DRAGGED;
 		}
@@ -622,7 +623,6 @@ void DockSpace::HandleDragging(Tabs& _tab)
 	pCanvas->PushClipRectFullScreen();
 
 	Tabs *pDestTab = GetTabAtMouse();
-
 	_tab.mPos = ImGui::GetIO().MousePos - mDragOffset;
 	if (pDestTab)
 	{
@@ -1081,7 +1081,8 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 		mpNextParentTab = &_tab;
 	}
 	mCurrentTab = &_tab;
-	if (_tab.mStatus == eSTATUS_DRAGGED) HandleDragging(_tab);
+	if (_tab.mStatus == eSTATUS_DRAGGED) 
+		HandleDragging(_tab);
 	if (_tab.mStatus == eSTATUS_FLOATING)
 	{
 		ImGui::SetNextWindowPos(first ? ImVec2{ 100, 100 } : _tab.mPos);

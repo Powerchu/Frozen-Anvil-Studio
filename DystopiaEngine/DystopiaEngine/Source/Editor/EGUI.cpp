@@ -24,6 +24,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "GL\glew.h"
 #include <iostream>
 #include <Windows.h>
+#include <windef.h>
+
+HCURSOR	gCursorTypes[8];
 
 static void SetClipBoardText(void *_pUserData, const char *_pText)
 {
@@ -175,15 +178,15 @@ namespace Dystopia
 		io.ImeWindowHandle = mpWin->GetMainWindow().GetWindowHandle();
 	#endif
 		// Load cursors
-		// FIXME: GLFW doesn't expose suitable cursors for ResizeAll, ResizeNESW, ResizeNWSE. We revert to arrow cursor for those.
-		// g_MouseCursors[ImGuiMouseCursor_Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
-		// g_MouseCursors[ImGuiMouseCursor_TextInput] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
-		// g_MouseCursors[ImGuiMouseCursor_ResizeAll] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
-		// g_MouseCursors[ImGuiMouseCursor_ResizeNS] = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
-		// g_MouseCursors[ImGuiMouseCursor_ResizeEW] = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
-		// g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
-		// g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
-	 
+		gCursorTypes[ImGuiMouseCursor_Arrow]		= LoadCursor(NULL, IDC_ARROW);
+		gCursorTypes[ImGuiMouseCursor_TextInput]	= LoadCursor(NULL, IDC_IBEAM);
+		gCursorTypes[ImGuiMouseCursor_ResizeAll]	= LoadCursor(NULL, IDC_SIZEALL);
+		gCursorTypes[ImGuiMouseCursor_ResizeNS]		= LoadCursor(NULL, IDC_SIZENS);
+		gCursorTypes[ImGuiMouseCursor_ResizeEW]		= LoadCursor(NULL, IDC_SIZEWE);
+		gCursorTypes[ImGuiMouseCursor_ResizeNESW]	= LoadCursor(NULL, IDC_SIZENESW);
+		gCursorTypes[ImGuiMouseCursor_ResizeNWSE]	= LoadCursor(NULL, IDC_SIZENWSE);
+		gCursorTypes[ImGuiMouseCursor_Hand]			= LoadCursor(NULL, IDC_HAND);
+
 		// if (install_callbacks)
 		// InstallInputCallbacks();
 		DefaultColorSettings();
@@ -198,101 +201,47 @@ namespace Dystopia
 		ImGuiIO& io = ImGui::GetIO();
 
 		// Setup display size (every frame to accommodate for window resizing)
-		int w, h;
-		int display_w, display_h;
+		int w, h, display_w, display_h;
 		// glfwGetWindowSize(mpWin, &w, &h);
 		// glfwGetFramebufferSize(mpWin, &display_w, &display_h);
 		w = display_w = 1600;
 		h = display_h = 900;
-		io.DisplaySize = ImVec2((float)w, (float)h);
-		io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0, h > 0 ? ((float)display_h / h) : 0);
-
+		io.DisplaySize = ImVec2{ static_cast<float>(w), static_cast<float>(h) };
+		io.DisplayFramebufferScale = ImVec2{ w > 0 ? static_cast<float>(display_w / w) : 0, 
+											 h > 0 ? static_cast<float>(display_h / h) : 0 };
 		// Setup time step
 		io.DeltaTime = _dt;
 
 		// Setup inputs
-		// (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
-		if (mpWin) //glfwGetWindowAttrib(g_Window, GLFW_FOCUSED))
+		if (mpWin) // should check if this window is the focused window
 		{
-			// Set OS mouse position if requested (only used when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
-			if (io.WantSetMousePos)
-			{
-				// TODO: Set cursor position here
-				//glfwSetCursorPos(g_Window, (double)io.MousePos.x, (double)io.MousePos.y);
-			}
-			else
-			{
-				double mouse_x, mouse_y;
-				// Get cursor position here
-				Math::Vec2 pos = mpInput->GetMousePosition();
-				mouse_x = pos.x;
-				mouse_y = pos.y;
- 				io.MousePos = ImVec2((float)mouse_x, (float)mouse_y); //glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
-			}
+			float x, y;
+			x = mpInput->GetMousePosition().x;
+			y = mpInput->GetMousePosition().y;
+			io.MousePos = ImVec2{ x, y };
 		}
 		else
+		{
 			io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+		}
 
 		for (int i = 0; i < 3; i++)
 		{
 			// If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
-			io.MouseDown[i] = mMouseJustPressed[i] || mpInput->IsKeyPressed(static_cast<eUserButton>(static_cast<int>(eUserButton::MOUSE_L) + i)); // io.MouseDown[i] = g_MouseJustPressed[i] || glfwGetMouseButton(g_Window, i) != 0;
+			// io.MouseDown[i] = g_MouseJustPressed[i] || glfwGetMouseButton(g_Window, i) != 0;
+			io.MouseDown[i] = mMouseJustPressed[i] || mpInput->IsKeyPressed(static_cast<eUserButton>(static_cast<int>(eUserButton::MOUSE_L) + i)); 
 			mMouseJustPressed[i] = false;
 		}
 
-		// // Update OS/hardware mouse cursor if imgui isn't drawing a software cursor
-		// if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0 && glfwGetInputMode(g_Window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED)
-		// {
-		// 	ImGuiMouseCursor cursor = ImGui::GetMouseCursor();
-		// 	if (io.MouseDrawCursor || cursor == ImGuiMouseCursor_None)
-		// 	{
-		// 		glfwSetInputMode(g_Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-		// 	}
-		// 	else
-		// 	{
-		// 		glfwSetCursor(g_Window, g_MouseCursors[cursor] ? g_MouseCursors[cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
-		// 		glfwSetInputMode(g_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		// 	}
-		// }
-
-		// 	// Gamepad navigation mapping [BETA]
-		// 	memset(io.NavInputs, 0, sizeof(io.NavInputs));
-		// 	if (io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad)
-		// 	{
-		// 		// Update gamepad inputs
-		// #define MAP_BUTTON(NAV_NO, BUTTON_NO)       { if (buttons_count > BUTTON_NO && buttons[BUTTON_NO] == GLFW_PRESS) io.NavInputs[NAV_NO] = 1.0f; }
-		// #define MAP_ANALOG(NAV_NO, AXIS_NO, V0, V1) { float v = (axes_count > AXIS_NO) ? axes[AXIS_NO] : V0; v = (v - V0) / (V1 - V0); if (v > 1.0f) v = 1.0f; if (io.NavInputs[NAV_NO] < v) io.NavInputs[NAV_NO] = v; }
-		// 		int axes_count = 0, buttons_count = 0;
-		// 		const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axes_count);
-		// 		const unsigned char* buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttons_count);
-		// 		MAP_BUTTON(ImGuiNavInput_Activate, 0);     // Cross / A
-		// 		MAP_BUTTON(ImGuiNavInput_Cancel, 1);     // Circle / B
-		// 		MAP_BUTTON(ImGuiNavInput_Menu, 2);     // Square / X
-		// 		MAP_BUTTON(ImGuiNavInput_Input, 3);     // Triangle / Y
-		// 		MAP_BUTTON(ImGuiNavInput_DpadLeft, 13);    // D-Pad Left
-		// 		MAP_BUTTON(ImGuiNavInput_DpadRight, 11);    // D-Pad Right
-		// 		MAP_BUTTON(ImGuiNavInput_DpadUp, 10);    // D-Pad Up
-		// 		MAP_BUTTON(ImGuiNavInput_DpadDown, 12);    // D-Pad Down
-		// 		MAP_BUTTON(ImGuiNavInput_FocusPrev, 4);     // L1 / LB
-		// 		MAP_BUTTON(ImGuiNavInput_FocusNext, 5);     // R1 / RB
-		// 		MAP_BUTTON(ImGuiNavInput_TweakSlow, 4);     // L1 / LB
-		// 		MAP_BUTTON(ImGuiNavInput_TweakFast, 5);     // R1 / RB
-		// 		MAP_ANALOG(ImGuiNavInput_LStickLeft, 0, -0.3f, -0.9f);
-		// 		MAP_ANALOG(ImGuiNavInput_LStickRight, 0, +0.3f, +0.9f);
-		// 		MAP_ANALOG(ImGuiNavInput_LStickUp, 1, +0.3f, +0.9f);
-		// 		MAP_ANALOG(ImGuiNavInput_LStickDown, 1, -0.3f, -0.9f);
-		// #undef MAP_BUTTON
-		// #undef MAP_ANALOG
-		// 		if (axes_count > 0 && buttons_count > 0)
-		// 			io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
-		// 		else
-		// 			io.BackendFlags &= ~ImGuiBackendFlags_HasGamepad;
-		// 	}
+		// Update cursor icon
+		if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0 )
+		{
+			SetCursor(gCursorTypes[ImGui::GetMouseCursor()]);
+		}
 
 		// Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
 		ImGui::NewFrame();
 		StartFullDockableSpace();
-
 		glViewport(0, 0, 1600, 900);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
