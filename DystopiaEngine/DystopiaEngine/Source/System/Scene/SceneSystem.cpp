@@ -69,14 +69,17 @@ void Dystopia::SceneSystem::PostUpdate(void)
 
 void Dystopia::SceneSystem::Shutdown(void)
 {
+
 }
 
 void Dystopia::SceneSystem::LoadDefaults(void)
 {
+
 }
 
 void Dystopia::SceneSystem::LoadSettings(TextSerialiser&)
 {
+
 }
 
 void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)

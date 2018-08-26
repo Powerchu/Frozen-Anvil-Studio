@@ -67,7 +67,7 @@ public:
 	using Itor_t = Iterator;
 	using Val_t  = T;
 	using Ptr_t  = T *;
-	using Sz_t   = unsigned;
+	using Sz_t   = unsigned long long;
 
 
 	// ====================================== CONSTRUCTORS ======================================= // 

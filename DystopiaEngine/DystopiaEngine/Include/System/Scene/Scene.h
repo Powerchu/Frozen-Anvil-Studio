@@ -46,6 +46,7 @@ namespace Dystopia
 	private:
 
 		AutoArray<GameObject> mGameObjs;
+		//Ctor::MagicArrayBuilder<GameObject>::SetBlockLimit<16>::SetBlockSize<256>::type mGameObjs;
 	};
 }
 
