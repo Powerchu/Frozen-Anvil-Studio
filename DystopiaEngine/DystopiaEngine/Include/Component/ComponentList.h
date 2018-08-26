@@ -30,16 +30,16 @@ namespace Dystopia
 	// Tag for Components that are behaviours
 	struct BehaviourTag : ComponentTag {};
 
-	using SysRef_t  = unsigned short;
-	using CompRef_t = unsigned short;
-	using GUID_t    = unsigned long long;
+	//using SysRef_t  = unsigned;
+	//using CompRef_t = unsigned;
+	//using GUID_t    = unsigned long long;
 
-	struct ComponentID
-	{
-		GUID_t mID;
-		CompRef_t mComponent;
-		SysRef_t  mSystem;
-	};
+	//struct ComponentID
+	//{
+	//	GUID_t mID;
+	//	CompRef_t mComponent;
+	//	SysRef_t  mSystem;
+	//};
 }
 
 

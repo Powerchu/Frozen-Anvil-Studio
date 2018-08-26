@@ -27,6 +27,7 @@ namespace Dystopia
 
 		using TAG = ComponentTag;
 		using SYSTEM = class NULL_SYSTEM;
+		virtual unsigned GetComponentType(void) const {	return unsigned(-1); };
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -43,8 +44,10 @@ namespace Dystopia
 		void Load(void);
 		void Init(void);
 
-		void OnDestroy(void);
+		virtual void GameObjectDestroy(void);
 		void Unload(void);
+
+		void DestroyComponent(void);
 
 		void SetOwner(GameObject*);
 		GameObject* GetOwner(void) const;

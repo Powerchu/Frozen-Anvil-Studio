@@ -26,6 +26,7 @@ Dystopia::SceneSystem::~SceneSystem(void)
 
 void Dystopia::SceneSystem::PreInit(void)
 {
+	mpCurrScene = new Scene{};
 }
 
 bool Dystopia::SceneSystem::Init(void)
@@ -35,6 +36,7 @@ bool Dystopia::SceneSystem::Init(void)
 
 void Dystopia::SceneSystem::PostInit(void)
 {
+	mpNextScene = mpCurrScene;
 }
 
 void Dystopia::SceneSystem::FixedUpdate(float _dt)

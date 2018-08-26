@@ -6,6 +6,9 @@
 \brief
 	Wrapper class for pointers
 
+\warning
+	The default constructor allocates. For no allocation, construct with nullptr
+
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the 
 prior written consent of DigiPen Institute of Technology is prohibited.
@@ -15,15 +18,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _GENERICPOINTER_H_
 
 #include "Utility\Utility.h"
+#include "Allocator\DefaultAlloc.h"	// DefaultAllocator
 
-template <class T>
+template <class T, class Alloc = Dystopia::DefaultAllocator<T>>
 class Pointer
 {
 public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
-	constexpr Pointer(void) noexcept;
-	explicit Pointer(T* _pObj) noexcept;
+	Pointer(void);
+	constexpr explicit Pointer(T* const _pObj) noexcept;
 	Pointer(const Pointer&) = delete;
 	Pointer(Pointer&& _pPointer) noexcept;
 
@@ -33,7 +37,7 @@ public:
 	// ======================================== OPERATORS ======================================== // 
 
 	Pointer& operator=(std::nullptr_t);
-	Pointer& operator=(Pointer<T>&& _pPointer) noexcept;
+	Pointer& operator=(Pointer&& _pPointer) noexcept;
 
 	T& operator*  (void) { return *mpObj; }
 	T* operator-> (void) { return  mpObj; }
@@ -52,18 +56,7 @@ public:
 
 private:
 
-	T * mpObj;
-
-	template <typename Ty>
-	struct Destroyer
-	{
-		static void Destroy(Ty* _pObj) { delete _pObj; }
-	};
-	template <typename Ty>
-	struct Destroyer <Ty[]>
-	{
-		static void Destroy(Ty(*_pObj)[]) { delete[] _pObj; }
-	};
+	T* mpObj;
 };
 
 
@@ -74,36 +67,40 @@ private:
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
-template <class T>
-constexpr Pointer<T>::Pointer(void) noexcept
-	: mpObj{ nullptr }
+/*!
+  \warning
+    The default constructor allocates
+*/
+template <class T, class A>
+Pointer<T, A>::Pointer(void)
+	: mpObj{ A::Alloc() }
 {
 
 }
 
-template <class T>
-Pointer<T>::Pointer(Pointer&& _pPointer) noexcept
+template <class T, class A>
+Pointer<T, A>::Pointer(Pointer&& _pPointer) noexcept
 	: Pointer{ _pPointer.mpObj }
 {
 	_pPointer.mpObj = nullptr;
 }
 
-template <class T>
-Pointer<T>::Pointer(T* _pObj) noexcept
+template <class T, class A>
+constexpr Pointer<T, A>::Pointer(T* _pObj) noexcept
 	: mpObj{ _pObj }
 {
 
 }
 
-template <class T>
-Pointer<T>::~Pointer(void)
+template <class T, class A>
+Pointer<T, A>::~Pointer(void)
 {
-	Destroyer<T>::Destroy(mpObj);
+	A::Free(mpObj);
 	mpObj = nullptr;
 }
 
-template <class T>
-inline T* Pointer<T>::GetRaw(void) const
+template <class T, class A>
+inline T* Pointer<T, A>::GetRaw(void) const
 {
 	return mpObj;
 }
@@ -113,63 +110,81 @@ inline T* Pointer<T>::GetRaw(void) const
 // ============================================ OPERATOR OVERLOADING ============================================ // 
 
 
-template <class T>
-Pointer<T>& Pointer<T>::operator = (std::nullptr_t)
+template <class T, class A>
+Pointer<T, A>& Pointer<T, A>::operator = (std::nullptr_t)
 {
 	~Pointer();
 	return *this;
 }
 
-template <class T>
-Pointer<T>& Pointer<T>::operator = (Pointer<T>&& _ptr) noexcept
+template <class T, class A>
+Pointer<T, A>& Pointer<T, A>::operator = (Pointer<T, A>&& _ptr) noexcept
 {
 	Utility::Swap(mpObj, _ptr.mpObj);
 	return *this;
 }
 
-template <typename Ty>
-inline bool operator == (const Pointer<Ty>& _p, std::nullptr_t)
+template <class Ty, class A>
+inline bool operator == (const Pointer<Ty, A>& _p, std::nullptr_t)
 {
 	return nullptr == _p;
 }
 
-template <typename Ty>
-inline bool operator == (std::nullptr_t, const Pointer<Ty>& _p)
+template <class Ty, class A>
+inline bool operator == (std::nullptr_t, const Pointer<Ty, A>& _p)
 {
 	return nullptr == _p.GetRaw();
 }
 
-template <typename Ty>
-inline bool operator != (const Pointer<Ty>& _p, std::nullptr_t)
+template <class Ty, class A>
+inline bool operator != (const Pointer<Ty, A>& _p, std::nullptr_t)
 {
 	return nullptr != _p;
 }
-template <typename Ty>
-inline bool operator != (std::nullptr_t, const Pointer<Ty>& _p)
+template <class Ty, class A>
+inline bool operator != (std::nullptr_t, const Pointer<Ty, A>& _p)
 {
 	return (nullptr != p.GetRaw());
 }
 
-template <typename LHS, typename RHS>
-inline bool operator == (const Pointer<LHS>& _pL, const Pointer<RHS>& _pR)
+template <typename Ty1, typename Ty2, typename A>
+inline bool operator == (const Pointer<Ty1, A>& _pL, const Pointer<Ty2, A>& _pR)
 {
 	return _pL.GetRaw() == _pR.GetRaw();
 }
 
-template <typename LHS, typename RHS>
-inline bool operator != (const Pointer<LHS>& _pL, const Pointer<RHS>& _pR)
+template <typename Ty1, typename A1, typename Ty2, typename A2>
+inline bool operator != (const Pointer<Ty1, A1>& _pL, const Pointer<Ty2, A2>& _pR)
 {
-	return  _pL.GetRaw() != _pR.GetRaw();;
+	return  false;
 }
 
-template <typename Ty>
-inline bool operator! (const Pointer<Ty>& _ptr)
+template <typename Ty, typename A>
+inline bool operator! (const Pointer<Ty, A>& _ptr)
 {
 	return !_ptr.GetRaw();
 }
 
-template<class T> template<typename ...Param>
-inline Pointer<T> Pointer<T>::CreatePointer(Param&& ... Args)
+template <typename Ty, typename A, typename T>
+inline auto operator - (const Pointer<Ty, A>& _lhs, T* const _rhs)
+{
+	return _lhs.GetRaw() - _rhs;
+}
+
+template <typename Ty, typename A, typename T>
+inline auto operator - (T* const _lhs, const Pointer<Ty, A>& _rhs)
+{
+	return _lhs - _rhs.GetRaw();
+}
+
+template <typename Ty1, typename A1, typename Ty2, typename A2>
+inline auto operator - (const Pointer<Ty1, A1>& _lhs, const Pointer<Ty2, A2>& _rhs)
+{
+	return _lhs.GetRaw() - _rhs.GetRaw();
+}
+
+template<class T, class A> template<typename ...Param>
+inline Pointer<T, A> Pointer<T, A>::CreatePointer(Param&& ... Args)
 {
 	return Pointer{ new T { Utility::Forward<Param>(Args) ... } };
 }

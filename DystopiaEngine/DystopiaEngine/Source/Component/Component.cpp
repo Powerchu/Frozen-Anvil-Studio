@@ -46,7 +46,7 @@ void Dystopia::Component::Init(void)
 
 }
 
-void Dystopia::Component::OnDestroy(void)
+void Dystopia::Component::GameObjectDestroy(void)
 {
 
 }
@@ -54,6 +54,12 @@ void Dystopia::Component::OnDestroy(void)
 void Dystopia::Component::Unload(void)
 {
 
+}
+
+
+void Dystopia::Component::DestroyComponent(void)
+{
+	mnFlags = FLAG_REMOVE;
 }
 
 

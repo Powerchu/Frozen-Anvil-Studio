@@ -15,7 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object\ObjectFlags.h"
 
 
-Dystopia::Scene::Scene(void)
+Dystopia::Scene::Scene(void) :
+	mGameObjs{ 100 }
 {
 }
 

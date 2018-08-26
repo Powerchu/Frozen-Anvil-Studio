@@ -43,7 +43,7 @@ namespace Dystopia
 		virtual void FixedUpdate(const float _fDeltaTime);
 		virtual void PostUpdate(void);
 
-		virtual void OnDestroy(void);
+		virtual void GameObjectDestroy(void);
 		virtual void Unload(void);
 
 		void OnCollisionEnter(const CollisionEvent&);

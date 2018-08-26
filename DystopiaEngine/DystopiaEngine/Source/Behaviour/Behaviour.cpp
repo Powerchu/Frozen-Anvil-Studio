@@ -42,7 +42,7 @@ void Dystopia::Behaviour::PostUpdate(void)
 
 }
 
-void Dystopia::Behaviour::OnDestroy(void)
+void Dystopia::Behaviour::GameObjectDestroy(void)
 {
 }
 
