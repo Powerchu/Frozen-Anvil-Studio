@@ -11,6 +11,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System\Events\EventSystem.h"
+#include <functional>
 
 namespace Dystopia
 {

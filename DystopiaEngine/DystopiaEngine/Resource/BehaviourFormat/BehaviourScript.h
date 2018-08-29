@@ -11,14 +11,13 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-
 #ifndef _SF_DefineScriptName_H_
 #define _SF_DefineScriptName_H_
-#include "Component\Component.h"
+#include "Behaviour\Behaviour.h"
 
 namespace Dystopia
 {
-	class _SF_ClassName_ : Component
+	class _SF_ClassName_ : Behaviour
 	{
 	public:
 		_SF_ClassName_();
@@ -27,14 +26,11 @@ namespace Dystopia
 		virtual void Load(void) override;
 		virtual void Init(void) override;
 
-		/*
-		virtual void Update(const float _fDeltaTime);
-		virtual void FixedUpdate(const float _fDeltaTime);
-		virtual void PostUpdate(void);
-		*/
+		virtual void Update(const float _fDeltaTime) override;
+		virtual void FixedUpdate(const float _fDeltaTime) override;
+		virtual void PostUpdate(void) override;
 
-		virtual void OnDestroy(void) override;
-
+		virtual void GameObjectDestroy(void) override;
 		virtual void Unload(void) override;
 		
 		virtual Component* Duplicate() const override;

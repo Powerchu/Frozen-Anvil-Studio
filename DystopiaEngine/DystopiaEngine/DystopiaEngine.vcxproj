@@ -27,7 +27,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Resource\Behaviours\**\*.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
@@ -73,7 +72,6 @@
   <ItemGroup>
     <ClInclude Include="Include\Editor\CallbackManager.h" />
     <ClInclude Include="Include\System\Events\EventSystem.h" />
-    <ClInclude Include="Resource\Behaviours\**\*.h" />
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui_internal.h" />

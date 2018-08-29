@@ -117,7 +117,6 @@
     <ClCompile Include="Source\System\Events\EventSystem.cpp">
       <Filter>Game Engine\Systems\Events</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\**\*.cpp" />
     <ClCompile Include="Source\Editor\CallbackManager.cpp">
       <Filter>Editor\Systems\Callback</Filter>
     </ClCompile>
@@ -345,7 +344,6 @@
     <ClInclude Include="Include\Allocator\DefaultAlloc.h">
       <Filter>Allocator</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\**\*.h" />
     <ClInclude Include="Include\Editor\CallbackManager.h">
       <Filter>Editor\Systems\Callback</Filter>
     </ClInclude>
