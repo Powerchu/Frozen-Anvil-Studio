@@ -75,7 +75,7 @@ template <class T, class A>
 Pointer<T, A>::Pointer(void)
 	: mpObj{ A::Alloc() }
 {
-
+	::new (mpObj) T{};
 }
 
 template <class T, class A>
@@ -95,6 +95,7 @@ constexpr Pointer<T, A>::Pointer(T* _pObj) noexcept
 template <class T, class A>
 Pointer<T, A>::~Pointer(void)
 {
+	mpObj->~T();
 	A::Free(mpObj);
 	mpObj = nullptr;
 }

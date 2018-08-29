@@ -20,6 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure\MagicArray.h"
 #include "DataStructure\Array.h"
 
+#include "DataStructure\Pointer.h"
+
 #include <string>
 
 #include "Math\Vector2.h"

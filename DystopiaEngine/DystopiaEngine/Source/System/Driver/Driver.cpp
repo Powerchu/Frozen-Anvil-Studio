@@ -66,8 +66,8 @@ namespace
 
 Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 {
-	static Pointer<EngineCore> pInstance{ };
-	return pInstance.GetRaw();
+	static EngineCore oInstance{ };
+	return &oInstance;
 }
 
 Dystopia::EngineCore::EngineCore(void) :
