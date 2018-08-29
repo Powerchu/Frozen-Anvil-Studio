@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #else
 #define DBG_NEW new
 #endif
+
 /* System includes */
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
@@ -33,6 +34,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 #include "System\Events\EventSystem.h"
 #include "IO\BinarySerializer.h"
+
 /* Editor includes */
 #include "Editor\Editor.h"
 #include "Editor\EGUI.h"
@@ -43,6 +45,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ProjectResource.h"
 #include "Editor\SceneView.h"
 #include "Editor\ConsoleLog.h"
+
 /* library includes */
 #include <iostream>
 #include <bitset>
@@ -142,13 +145,15 @@ namespace Dystopia
 	}
 
 	Editor::Editor(void)
-		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mPrevFrameTime{ 0 }, mpComdHandler{ new CommandHandler{} },
-		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mpGuiSystem{ new GuiSystem{} }
+		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mPrevFrameTime{ 0 }, 
+		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr },
+		mpEditorEventSys{ new EventSystem{} },
+		mpComdHandler{ new CommandHandler{} },
+		mpGuiSystem{ new GuiSystem{} }
 	{}
 
 	Editor::~Editor(void)
 	{
-		
 	}
 
 	void Editor::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInput)
@@ -187,7 +192,7 @@ namespace Dystopia
 
 	void Editor::UpdateFrame(const float& _dt)
 	{
-		//mpGfx->Update(_dt);
+		//mpGfx->Update(_dt); // causes double frame buffer swap per frame, need determine either editor gfx or driver gfx do
 		for (unsigned int i = 0; i < mTabsArray.size(); ++i)
 		{
 			EGUI::PushID(i);
@@ -242,6 +247,10 @@ namespace Dystopia
 		mpWin = nullptr;
 		mpGfx = nullptr;
 		mpInput = nullptr;
+
+		mpEditorEventSys->Shutdown();
+		delete mpEditorEventSys;
+		mpEditorEventSys = nullptr;
 
 		delete mpComdHandler;
 		mpComdHandler = nullptr;
