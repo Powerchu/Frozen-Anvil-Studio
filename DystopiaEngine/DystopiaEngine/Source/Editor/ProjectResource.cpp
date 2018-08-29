@@ -116,13 +116,22 @@ namespace Dystopia
 	{}
 
 	ProjectResource::~ProjectResource()
-	{}
+	{
+		mpEditorEventSys->UnBindFromEvent("EditorLeftClick", this);
+	}
 
 	void ProjectResource::Init()
 	{
 		mWaitFlags = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | 
 					 FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE | 
 					 FILE_NOTIFY_CHANGE_LAST_WRITE;
+
+		std::wstring wPath{ DEFAULT_PATH.begin(), DEFAULT_PATH.end() };
+		mChangeHandle[0] = FindFirstChangeNotification(wPath.c_str(), true, mWaitFlags);
+		if (mChangeHandle[0] == INVALID_HANDLE_VALUE || !mChangeHandle[0])
+		{
+			ExitProcess(GetLastError());
+		}
 
 		mpRootFolder = new Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };
 		mpCurrentFolder = mpRootFolder;
@@ -132,12 +141,7 @@ namespace Dystopia
 		GetAllFiles(mArrAllFiles, mpRootFolder);
 		SortAllFiles(mArrAllFiles);
 
-		std::wstring wPath{ DEFAULT_PATH.begin(), DEFAULT_PATH.end() };
-		mChangeHandle[0] = FindFirstChangeNotification(wPath.c_str(), true, mWaitFlags);
-		if (mChangeHandle[0] == INVALID_HANDLE_VALUE || !mChangeHandle[0])
-		{
-			ExitProcess(GetLastError());
-		}
+		mpEditorEventSys->BindToEvent("EditorLeftClick", &ProjectResource::RemoveFocusOnFile, this);
 	}
 
 	void ProjectResource::Update(const float& _dt)
@@ -323,8 +327,12 @@ namespace Dystopia
 		else
 		{
 			mpCurrentFolder = mpRootFolder;
-			mFocusedFile = nullptr;
 		}
+	}
+
+	void ProjectResource::RemoveFocusOnFile()
+	{
+		mFocusedFile = nullptr;
 	}
 
 	std::string ProjectResource::GetLabel() const
