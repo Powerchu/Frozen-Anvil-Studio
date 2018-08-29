@@ -20,7 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	typedef unsigned int EventID;
 	class WindowManager;
 	class GraphicsSystem;
 	class InputManager;
@@ -57,19 +56,20 @@ namespace Dystopia
 		void			ChangeState(eEditorState);
 		eEditorState	CurrentState() const;
 		bool			IsClosing() const;
+		double			PreviousFrameTime() const;
 
 	private:
 		Editor(void);
 
 		eEditorState	mCurrentState;
 		eEditorState	mNextState;
+		double			mPrevFrameTime;
 		WindowManager	*mpWin;
 		GraphicsSystem	*mpGfx;
 		InputManager	*mpInput;
 		EventSystem		*mpEditorEventSys;
 		CommandHandler	*mpComdHandler;
 		GuiSystem		*mpGuiSystem;
-		EventID			mLeftClickEventID;
 		// SceneManager *mpSceneMgr;
 
 		AutoArray<EditorTab*> mTabsArray;

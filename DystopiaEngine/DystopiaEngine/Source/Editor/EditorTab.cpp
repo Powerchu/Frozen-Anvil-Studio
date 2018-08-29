@@ -13,19 +13,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Editor\EditorTab.h"
 #include "Editor\Editor.h"
+#include "Editor\Commands.h"
+#include "Editor\CommandList.h"
 
 namespace Dystopia
 {
 	EditorTab::EditorTab(bool _defaultOpen)
-		: mSize{ Math::Vec2{ 0, 0 } }, mPos{ Math::Vec2{ 0, 0 } }, mIsOpened{ _defaultOpen },
-		mpComdHandler{ nullptr },
-		mpEditorEventSys{ nullptr }
+		: mSize{ Math::Vec2{ 0, 0 } }, mPos{ Math::Vec2{ 0, 0 } }, mIsOpened{ _defaultOpen }, mpComdHandler{ nullptr }
 	{}
 
 	EditorTab::~EditorTab()
 	{
 		mpComdHandler = nullptr;
-		mpEditorEventSys = nullptr;
 	}
 
 	void EditorTab::SetSize(const Math::Vec2& _size)
@@ -68,8 +67,4 @@ namespace Dystopia
 		mpComdHandler = _ctx;
 	}
 
-	void EditorTab::SetEventSysContext(EventSystem * const _ctx)
-	{
-		mpEditorEventSys = _ctx;
-	}
 }

@@ -118,6 +118,9 @@
       <Filter>Game Engine\Systems\Events</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\**\*.cpp" />
+    <ClCompile Include="Source\Editor\CallbackManager.cpp">
+      <Filter>Editor\Systems\Callback</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -334,6 +337,9 @@
       <Filter>DataStructures</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\**\*.h" />
+    <ClInclude Include="Include\Editor\CallbackManager.h">
+      <Filter>Editor\Systems\Callback</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -506,6 +512,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Events">
       <UniqueIdentifier>{17ecd9b4-fbe3-451d-b22d-d6a833992d7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Systems\Callback">
+      <UniqueIdentifier>{9340914a-5c53-42c9-86f2-fb660fa6d771}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -30,7 +30,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Input\InputSystem.h"
-#include "System\Input\InputMap.h"
 #include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
 #include "System\Events\EventSystem.h"
@@ -146,7 +145,7 @@ namespace Dystopia
 	}
 
 	Editor::Editor(void)
-		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, 
+		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mPrevFrameTime{ 0 }, 
 		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr },
 		mpEditorEventSys{ new EventSystem{} },
 		mpComdHandler{ new CommandHandler{} },
@@ -163,20 +162,15 @@ namespace Dystopia
 		mpGfx = _pGfx;
 		mpInput = _pInput;
 
-		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
-		{
-			mCurrentState = EDITOR_EXIT;
-			return;
-		}
-
 		EGUI::SetContext(mpComdHandler);
-		mLeftClickEventID = mpEditorEventSys->CreateEvent("EditorLeftClick");
 		for (auto& e : mTabsArray)
 		{
-			e->SetComdContext(mpComdHandler);
-			e->SetEventSysContext(mpEditorEventSys);
 			e->Init();
+			e->SetComdContext(mpComdHandler);
 		}
+
+		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
+			mCurrentState = EDITOR_EXIT;
 	}
 
 	void Editor::LoadDefaults()
@@ -193,11 +187,6 @@ namespace Dystopia
 		mpWin->Update(_dt);
 		mpInput->Update(_dt);
 		mpGuiSystem->StartFrame(_dt);
-
-		if (mpInput->IsKeyTriggered(MOUSE_L))
-			mpEditorEventSys->Fire(mLeftClickEventID);
-
-		mpEditorEventSys->FireAllPending();
 		MainMenuBar();
 	}
 
@@ -259,7 +248,6 @@ namespace Dystopia
 		mpGfx = nullptr;
 		mpInput = nullptr;
 
-
 		mpEditorEventSys->Shutdown();
 		delete mpEditorEventSys;
 		mpEditorEventSys = nullptr;
@@ -287,6 +275,11 @@ namespace Dystopia
 	bool Editor::IsClosing() const
 	{
 		return !mCurrentState;
+	}
+
+	double Editor::PreviousFrameTime() const
+	{
+		return mPrevFrameTime;
 	}
 
 	void Editor::UpdateState()
