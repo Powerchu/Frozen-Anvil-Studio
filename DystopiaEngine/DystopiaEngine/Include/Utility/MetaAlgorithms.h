@@ -161,6 +161,9 @@ namespace Utility
 	public:
 		using result = typename Helper::MetaAutoIndexerMake<indices, Ty...>::result;
 	};
+
+	template <typename ... Ty>
+	using MetaAutoIndexer_t = typename MetaAutoIndexer<Ty...>::result;
 }
 
 

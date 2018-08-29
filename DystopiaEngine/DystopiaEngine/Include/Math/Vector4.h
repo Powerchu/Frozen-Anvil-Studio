@@ -48,6 +48,28 @@ namespace Math
 
 	struct Matrix4;
 
+	enum class NegateFlag : unsigned char
+	{
+		X = 1 << 0,
+		Y = 1 << 1,
+		Z = 1 << 2,
+		W = 1 << 3,
+
+		XY = X | Y,
+		XZ = X | Z,
+		XW = X | W,
+		YZ = Y | Z,
+		YW = Y | W,
+		ZW = Z | W,
+
+		XYZ = XY | Z,
+		XYW = XY | W,
+		XZW = XZ | W,
+		YZW = YZ | Z,
+
+		XYZW = XY | ZW
+	};
+
 	/*!
 	\struct Vector4
 	\brief
@@ -82,8 +104,9 @@ namespace Math
 
 		inline Vector4& _CALL Reciprocal(void);
 
-		template <unsigned FLAGS>
+		template <NegateFlag>
 		inline Vector4& _CALL Negate(void) noexcept;
+
 
 		// ======================================== OPERATORS ======================================= // 
 
@@ -97,6 +120,10 @@ namespace Math
 		inline Vector4& _CALL operator/=(const float);
 		inline Vector4& _CALL operator+=(const Vector4);
 		inline Vector4& _CALL operator-=(const Vector4);
+
+		// Alternate + and -
+		// x + x , y - y , z + z , w - w
+		inline Vector4& _CALL AddSub(const Vector4);
 
 #if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
 
@@ -190,44 +217,33 @@ namespace Math
 
 		SwizzleMask<0, 0, 0, 0> xxxx;
 		SwizzleMask<0, 0, 1, 1> xxyy;
+		SwizzleMask<0, 0, 1, 2> xxyz;
 		SwizzleMask<0, 0, 2, 2> xxzz;
 		SwizzleMask<0, 1, 0, 1> xyxy;
+		SwizzleMask<0, 1, 1, 1> xyyy;
 		SwizzleMask<0, 1, 2, 3> xyzw;
+		SwizzleMask<0, 1, 3, 2> xywz;
+		SwizzleMask<0, 2, 1, 1> xzyy;
 		SwizzleMask<0, 2, 1, 3> xzyw;
 		SwizzleMask<0, 3, 0, 3> xwxw;
+		SwizzleMask<0, 3, 2, 3> xwzw;
 		SwizzleMask<1, 0, 2, 3> yxzw;
 		SwizzleMask<1, 0, 3, 2> yxwz;
 		SwizzleMask<1, 1, 1, 1> yyyy;
 		SwizzleMask<1, 3, 0, 2> ywxz;
+		SwizzleMask<1, 3, 1, 3> ywyw;
 		SwizzleMask<1, 3, 2, 0> ywzx;
-		SwizzleMask<2, 0, 1, 3> zxyw; // Used by cross product 
+		SwizzleMask<2, 0, 1, 3> zxyw;
 		SwizzleMask<2, 1, 2, 1> zyzy;
+		SwizzleMask<2, 2, 2, 3> zzzw;
 		SwizzleMask<2, 2, 2, 2> zzzz;
+		SwizzleMask<2, 3, 0, 0> zwxx;
 		SwizzleMask<2, 3, 0, 1> zwxy;
+		SwizzleMask<2, 3, 2, 3> zwzw;
+		SwizzleMask<2, 3, 3, 2> zwwz;
 		SwizzleMask<3, 1, 2, 0> wyzx;
+		SwizzleMask<3, 2, 0, 1> wzxy;
 		SwizzleMask<3, 3, 3, 3> wwww;
-
-		enum Flags : char
-		{
-			NEGATE_X = 1 << 0,
-			NEGATE_Y = 1 << 1,
-			NEGATE_Z = 1 << 2,
-			NEGATE_W = 1 << 3,
-
-			NEGATE_XY = NEGATE_X | NEGATE_Y,
-			NEGATE_XZ = NEGATE_X | NEGATE_Z,
-			NEGATE_XW = NEGATE_X | NEGATE_W,
-			NEGATE_YZ = NEGATE_Y | NEGATE_Z,
-			NEGATE_YW = NEGATE_Y | NEGATE_W,
-			NEGATE_ZW = NEGATE_Z | NEGATE_W,
-
-			NEGATE_XYZ = NEGATE_XY | NEGATE_Z,
-			NEGATE_XYW = NEGATE_XY | NEGATE_W,
-			NEGATE_XZW = NEGATE_XZ | NEGATE_W,
-			NEGATE_YZW = NEGATE_YZ | NEGATE_Z,
-
-			NEGATE_XYZW = NEGATE_XY | NEGATE_ZW
-		};
 
 		inline __m128 _CALL GetRaw(void) const noexcept;
 	};
@@ -273,6 +289,10 @@ namespace Math
 	inline Vector4 _CALL operator*(const float, const Vector4);
 	inline Vector4 _CALL operator*(const Vector4, const float);
 	inline Vector4 _CALL operator/(const Vector4, const float);
+
+	// Alternate + and -
+	// x + x , y - y , z + z , w - w
+	inline Vector4 _CALL AddSub(const Vector4, const Vector4);
 
 	using Vec4		= Vector4;
 	using Vector3D	= Vector4;
@@ -351,7 +371,7 @@ inline Math::Vector4 _CALL Math::Reciprocal(Vector4 _v)
 	return _v.Reciprocal();
 }
 
-template <unsigned FLAGS>
+template <Math::NegateFlag FLAGS>
 inline Math::Vector4& _CALL Math::Vector4::Negate(void) noexcept
 {
 	static const __m128i Negator = _mm_set_epi32(
@@ -757,6 +777,12 @@ inline Math::Vector4& _CALL Math::Vector4::operator-=(const Vector4 _rhs)
 	return *this;
 }
 
+inline Math::Vector4& _CALL Math::Vector4::AddSub(const Vector4 _rhs)
+{
+	mData = _mm_addsub_ps(mData, _rhs.mData);
+	return *this;
+}
+
 inline Math::Vector4 _CALL Math::Vector4::operator-(void) const
 {
 	static __m128i signBits = _mm_set1_epi32(0x80000000);
@@ -773,6 +799,11 @@ inline Math::Vector4 _CALL Math::operator-(Vector4 _lhs, const Vector4 _rhs)
 inline Math::Vector4 _CALL Math::operator+(Vector4 _lhs, const Vector4 _rhs)
 {
 	return _lhs += _rhs;
+}
+
+inline Math::Vector4 _CALL Math::AddSub(Vector4 _lhs, const Vector4 _rhs)
+{
+	return _lhs.AddSub(_rhs);
 }
 
 inline Math::Vector4 _CALL Math::operator*(Vector4 _lhs, const Vector4 _rhs)

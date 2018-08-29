@@ -14,44 +14,26 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 
 #include "Globals.h"
-#include "DataStructure\SharedPtr.h"
+#include "DataStructure\Pointer.h"
 #include "Utility\MetaAlgorithms.h"
 #include "Utility\MetaDataStructures.h"
 
 #include "System\Time\TimeSystem.h"
+#include "System\Scene\SceneSystem.h"
 #include "System\Input\InputSystem.h"
 #include "System\Sound\SoundSystem.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Window\WindowManager.h"
 
 #include "System\Graphics\MeshSystem.h"
-#include "System\Scene\SceneSystem.h"
 
-#include "System\Events\EventSystem.h"
 
 namespace
 {
-	template <typename Ty>
-	void RecursiveNewInsertAutoArray(AutoArray<Ty>&)
-	{
-
-	}
-
-	template <typename Ty, typename T, typename ... Ts>
-	void RecursiveNewInsertAutoArray(AutoArray<Ty>& _arr)
-	{
-		_arr.EmplaceBack(new T{});
-		RecursiveNewInsertAutoArray<Ty, Ts...>(_arr);
-	}
-
 	template <typename Ty, typename ... T>
 	AutoArray<Ty> MakeAutoArray(Utility::TypeList<T...>)
 	{
-		AutoArray<Ty> ret{sizeof...(T)};
-
-		RecursiveNewInsertAutoArray<Ty, T...>(ret);
-
-		return ret;
+		 return AutoArray<Ty>{ static_cast<Ty>(new T{})...};
 	}
 
 	template <typename T>
@@ -82,11 +64,10 @@ namespace
 }
 
 
-
-SharedPtr<Dystopia::EngineCore> const & Dystopia::EngineCore::GetInstance(void) noexcept
+Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 {
-	static SharedPtr<EngineCore> pInstance = CreateShared(new EngineCore{});
-	return pInstance;
+	static Pointer<EngineCore> pInstance{ new EngineCore{} };
+	return pInstance.GetRaw();
 }
 
 Dystopia::EngineCore::EngineCore(void) :

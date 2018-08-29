@@ -102,6 +102,7 @@
     <ClInclude Include="Include\IO\ImageParser.h" />
     <ClInclude Include="Include\IO\Serialiser.h" />
     <ClInclude Include="Include\IO\TextSerialiser.h" />
+    <ClInclude Include="Include\Math\Angles.h" />
     <ClInclude Include="Include\Math\MathInternal.h" />
     <ClInclude Include="Include\Math\MathUtility.h" />
     <ClInclude Include="Include\Math\Matrix2.h" />
@@ -142,6 +143,7 @@
     <ClInclude Include="Include\Utility\Utility.h" />
     <ClInclude Include="Include\Math\Vector2.h" />
     <ClInclude Include="Include\Utility\UtilityInternals.h" />
+    <ClInclude Include="Include\DataStructure\Pointer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>

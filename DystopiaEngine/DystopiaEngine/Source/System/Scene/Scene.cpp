@@ -12,7 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System\Scene\Scene.h"
-
+#include "Object\ObjectFlags.h"
 
 
 Dystopia::Scene::Scene(void)
@@ -43,6 +43,9 @@ Dystopia::GameObject* Dystopia::Scene::FindGameObject(const std::string& _strNam
 
 void Dystopia::Scene::FixedUpdate(float _dt)
 {
+	for (auto& e : mGameObjs)
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
+			e.Update(_dt);
 }
 
 void Dystopia::Scene::Update(float _dt)

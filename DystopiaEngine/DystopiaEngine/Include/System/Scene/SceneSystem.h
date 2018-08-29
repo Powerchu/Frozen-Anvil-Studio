@@ -53,7 +53,6 @@ namespace Dystopia
 
 		Scene *mpNextScene;
 		Scene *mpCurrScene;
-		Scene *mpPrevScene;
 	};
 }
 

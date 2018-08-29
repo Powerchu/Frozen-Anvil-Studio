@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::SceneSystem::SceneSystem(void) :
-	mpCurrScene{ nullptr }, mpNextScene{ nullptr }, mpPrevScene{ nullptr }
+	mpCurrScene{ nullptr }, mpNextScene{ nullptr }
 {
 }
 
@@ -43,9 +43,6 @@ void Dystopia::SceneSystem::FixedUpdate(float _dt)
 	{
 		mpCurrScene->FixedUpdate(_dt);
 	}
-	else
-	{
-	}
 }
 
 void Dystopia::SceneSystem::Update(float _dt)
@@ -56,6 +53,7 @@ void Dystopia::SceneSystem::Update(float _dt)
 	}
 	else
 	{
+		
 	}
 }
 

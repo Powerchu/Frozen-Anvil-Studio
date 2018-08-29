@@ -14,7 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _ENGINE_DRIVER_H_
 #define _ENGINE_DRIVER_H_
 
-#include "DataStructure\SharedPtr.h"
 #include "DataStructure\AutoArray.h"
 
 #include "System\SystemTypes.h"
@@ -47,11 +46,14 @@ namespace Dystopia
 
 	public:
 
-		static SharedPtr<EngineCore> const & GetInstance(void) noexcept;
+		static EngineCore* GetInstance(void) noexcept;
 
 		~EngineCore(void) = default;
 
 		template <class T>
+		T* const GetSystem(void) const;
+
+		template <unsigned N, class T = Utility::MetaExtract_t<N, AllSys>>
 		T* const GetSystem(void) const;
 
 		template <class T>
@@ -77,10 +79,22 @@ namespace Dystopia
 
 
 
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
 template<class T>
 inline T* const Dystopia::EngineCore::GetSystem(void) const
 {
 	return static_cast<T*>(mSystemTable[Utility::MetaFind_t<T, AllSys>::value]);
+}
+
+template<unsigned _N, class T>
+inline T* const Dystopia::EngineCore::GetSystem(void) const
+{
+	return static_cast<T*>(mSystemTable[_N]);
 }
 
 template<class T>

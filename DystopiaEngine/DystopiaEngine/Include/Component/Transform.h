@@ -19,14 +19,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\Vector4.h"				// Vector4
 #include "Math\Matrix4.h"				// Matrix4
 #include "DataStructure\AutoArray.h"	// AutoArray
+#include "Utility\MetaAlgorithms.h"		// MetaFind
 
 namespace Dystopia
 {
 	class Transform : public Component
 	{
 	public:
-		static constexpr eComponents TYPE = eComponents::TRANSFORM;
-		const eComponents GetComponentType(void) const { return TYPE; };
+		unsigned GetComponentType(void) const
+		{
+			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value; 
+		};
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 

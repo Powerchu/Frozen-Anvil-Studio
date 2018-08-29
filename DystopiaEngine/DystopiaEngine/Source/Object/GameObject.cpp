@@ -63,10 +63,7 @@ bool Dystopia::GameObject::IsActive(void) const
 
 void Dystopia::GameObject::SetActive(const bool _bEnable)
 {
-	if(_bEnable)
-		mnFlags |=  FLAG_ACTIVE;
-	else
-		mnFlags &= ~FLAG_ACTIVE;
+	mnFlags = _bEnable ? mnFlags | FLAG_ACTIVE : mnFlags & ~FLAG_ACTIVE;
 }
 
 
@@ -158,7 +155,7 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 }
 
 
-size_t Dystopia::GameObject::GetID()
+size_t Dystopia::GameObject::GetID(void) const
 {
 	return mnID;
 }

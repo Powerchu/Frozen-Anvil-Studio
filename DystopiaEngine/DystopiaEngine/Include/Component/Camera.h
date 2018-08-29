@@ -28,8 +28,10 @@ namespace Dystopia
 	class Camera : public Component
 	{
 	public:
-		static constexpr eComponents TYPE = eComponents::TRANSFORM;
-		const eComponents GetComponentType(void) const { return TYPE; };
+		unsigned GetComponentType(void) const
+		{
+			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+		};
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 
