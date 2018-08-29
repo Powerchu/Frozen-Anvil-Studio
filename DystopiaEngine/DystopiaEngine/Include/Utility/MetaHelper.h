@@ -14,17 +14,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _META_HELPER_H_
 #define _META_HELPER_H_
 
-#include "Utility/MetaDataStructures.h"
+#include "Utility\MetaDataStructures.h"
 
 namespace Utility
 {
 	// Foward Decls
-
 	template <bool, typename true_t, typename false_t>
 	struct IfElse;
 
 	template <typename T, typename U>
 	struct IsSame;
+
+	template <bool, typename>
+	struct EnableIf;
 
 	namespace Helper
 	{
@@ -42,46 +44,37 @@ namespace Utility
 	// Make result be false instead of compile error?
 
 		template <typename Ty, typename ... Arr>
-		struct MetaFinder;
+		struct MetaFinder
+		{
+			static constexpr bool value = false;
+		};
 
 		template <typename Ty, typename first, typename ... Arr>
-		struct MetaFinder<Ty, first, Arr...>
+		struct MetaFinder<Ty, first, Arr...> : public IfElse< IsSame<Ty, first>::value,
+			MetaFinder<Ty, Ty>, MetaFinder<Ty, Arr...>>::type
 		{
-			using type = typename IfElse<
-				IsSame<Ty, first >::value,
-				MetaFinder<Ty, Ty> , MetaFinder<Ty, Arr...>
-			>::type;
-
-			using result = typename type::result;
 		};
 
 		template <typename Ty, typename last>
 		struct MetaFinder<Ty, last>
 		{
-			static_assert(IsSame<Ty, last>::value, "Compile time search error: Type not found.");
-
-			using result = last;
+			static constexpr bool value = IsSame<Ty, last>::value;
+			using result = typename IfElse<value, last, NULL_TYPE>::type;
 		};
 
 		template <typename Ty, typename T, typename ... Ts, unsigned val, unsigned ... vals>
-		struct MetaFinder<Ty, Indexer<val, T>, Indexer<vals, Ts>...>
-		{
-			using type = typename IfElse<
-				IsSame<Ty, T>::value,
+		struct MetaFinder<Ty, Indexer<val, T>, Indexer<vals, Ts>...> : public
+			IfElse< IsSame<Ty, T>::value,
 				MetaFinder<Ty, Indexer<val, T>>,
-				MetaFinder<Ty, Indexer<vals, Ts>...>
-			>::type;
-
-			using result = typename type::result;
+				MetaFinder<Ty, Indexer<vals, Ts>...>>::type
+		{
 		};
 
 		template <typename Ty, typename T, unsigned val>
 		struct MetaFinder<Ty, Indexer<val, T>>
 		{
-			static_assert(IsSame<Ty, T>::value, "Compile time search error: Type not found.");
-
-			using type = MetaFinder;
-			using result = Indexer<val, Ty>;
+			static constexpr bool value = IsSame<Ty, T>::value;
+			using result = typename IfElse<value, Indexer<val, Ty>, NULL_TYPE>::type;
 		};
 
 

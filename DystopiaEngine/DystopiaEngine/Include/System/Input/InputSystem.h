@@ -14,13 +14,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _INPUT_MANAGER_H_
 #define _INPUT_MANAGER_H_
 
-#include "System\Base\Systems.h"		// Base Class
-#include "DataStructure\AutoArray.h"	// AutoArray
-#include "Math\Vector2.h"               // Vector2
-#include "Math\Vector4.h"				// Vector4
-
-enum eButton : unsigned short;
-enum eUserButton : unsigned short;
+#include "System\Base\Systems.h"   // Base Class
+#include "DataStructure\Array.h"   // Array
+#include "Math\Vector2.h"          // Vector2
+#include "Math\Vector4.h"		   // Vector4
+#include "System\Input\InputMap.h"
 
 namespace Dystopia
 {
@@ -54,7 +52,7 @@ namespace Dystopia
 
 		struct KeyBinding
 		{
-			int mnKey;
+			unsigned mnKey;
 
 			bool mbTriggered;
 			bool mbPressed;
@@ -63,7 +61,7 @@ namespace Dystopia
 			KeyBinding& operator = (eButton);
 		};
 
-		AutoArray<KeyBinding> mButtonMap;
+		Array<KeyBinding, eUserButton::TOTAL_USERBUTTONS> mButtonMap;
 
 		void LoadDefaultUserKeys(void);
 	};

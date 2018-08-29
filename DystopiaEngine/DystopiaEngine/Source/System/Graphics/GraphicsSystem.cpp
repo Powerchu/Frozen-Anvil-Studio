@@ -98,7 +98,11 @@ void Dystopia::GraphicsSystem::Update(float)
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
+#if !defined(EDITOR)
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+#else
+	glClear(GL_DEPTH_BUFFER_BIT);
+#endif
 }
 
 void Dystopia::GraphicsSystem::EndFrame(void)

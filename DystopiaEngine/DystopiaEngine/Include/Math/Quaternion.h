@@ -47,12 +47,15 @@ namespace Math
 		// Converts the Quaternion to unit length
 		inline Quaternion& _CALL Normalise(void);
 
+		// TODO
 		// Computes the dot product of this Quaternion and a given Quaternion
 		inline float _CALL Dot(const Quaternion) const;
 
+		// TODO
 		// Computes the cross product of this Quaternion and a given Quaternion 
 		inline Quaternion& _CALL Cross(const Quaternion);
 
+		// TODO
 		// Projects the Quaternion onto the given Quaternion
 		inline Quaternion& _CALL Project(const Quaternion);
 
@@ -64,6 +67,7 @@ namespace Math
 		template <NegateFlag FLAGS>
 		inline Quaternion& _CALL Negate(void) noexcept;
 
+		// TODO
 		Matrix4 _CALL Matrix(void) const noexcept;
 
 

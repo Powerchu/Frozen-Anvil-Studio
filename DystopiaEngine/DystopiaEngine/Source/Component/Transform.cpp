@@ -19,14 +19,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Transform::Transform(void) :
 	mRotation{ .0f, .0f, .0f }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f },
-	mMatrix{}, mbChanged(true), mpParent(nullptr)
+	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }
 {
 
 }
 
 Dystopia::Transform::Transform(const Transform& _oOther) :
-	mRotation{ _oOther.mRotation }, mScale(_oOther.mScale), mPosition(_oOther.mPosition),
-	mMatrix{}, mbChanged(true), mpParent(nullptr)
+	mRotation{ _oOther.mRotation }, mScale{ _oOther.mScale }, mPosition{ _oOther.mPosition },
+	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }
 {
 
 }
