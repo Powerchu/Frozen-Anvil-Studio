@@ -149,6 +149,9 @@ void Dystopia::EngineCore::Shutdown(void)
 	for (auto& e : mSystemList)
 		delete e;
 
+	for (auto& e : mSubSystems)
+		delete e;
+
 	mSystemList.clear();
 	mSystemTable.clear();
 }
