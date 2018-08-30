@@ -30,6 +30,7 @@
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Source\System\Camera\CameraSystem.cpp" />
     <ClCompile Include="Source\System\Driver\Driver.cpp" />
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
     <ClCompile Include="Source\Component\Component.cpp" />
@@ -86,6 +87,7 @@
     <ClInclude Include="Include\Object\ObjectFlags.h" />
     <ClInclude Include="Include\System\Base\Systems.h" />
     <ClInclude Include="Include\Component\Camera.h" />
+    <ClInclude Include="Include\System\Camera\CameraSystem.h" />
     <ClInclude Include="Include\System\Driver\Driver.h" />
     <ClInclude Include="Include\System\Graphics\GraphicsDefs.h" />
     <ClInclude Include="Include\System\Graphics\GraphicsSystem.h" />

@@ -65,13 +65,10 @@
       <Filter>Math\Matrix\Matrix4</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\RawMesh.cpp">
-      <Filter>Game Engine\Systems\Graphic\Mesh\Raw</Filter>
+      <Filter>Game Engine\SubSystems\Mesh\Raw</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\Mesh.cpp">
-      <Filter>Game Engine\Systems\Graphic\Mesh\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+      <Filter>Game Engine\SubSystems\Mesh\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Driver\Driver.cpp">
       <Filter>Game Engine\Systems\Driver</Filter>
@@ -81,6 +78,12 @@
     </ClCompile>
     <ClCompile Include="Source\System\Scene\Scene.cpp">
       <Filter>Game Engine\Systems\Scene\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
+      <Filter>Game Engine\SubSystems\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Camera\CameraSystem.cpp">
+      <Filter>Game Engine\SubSystems\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -208,19 +211,13 @@
       <Filter>Math\Matrix\Matrix2</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\RawMesh.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh\Raw</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\VertexDefs.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+      <Filter>Game Engine\SubSystems\Mesh\Raw</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\Serialiser.h">
       <Filter>IO</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\Mesh.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+      <Filter>Game Engine\SubSystems\Mesh\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Include\Math\Vector2.h">
       <Filter>Math\Vector</Filter>
@@ -266,6 +263,15 @@
     </ClInclude>
     <ClInclude Include="Include\Allocator\DefaultAlloc.h">
       <Filter>Allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
+      <Filter>Game Engine\SubSystems\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\VertexDefs.h">
+      <Filter>Game Engine\SubSystems\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Camera\CameraSystem.h">
+      <Filter>Game Engine\SubSystems\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -395,12 +401,6 @@
     <Filter Include="Math\Matrix\Matrix2">
       <UniqueIdentifier>{83acf256-2e61-44e4-83bf-a3932a6fabc0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Systems\Graphic\Mesh\Raw">
-      <UniqueIdentifier>{466ff2cb-a158-4c05-a63f-87c44bb584ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\Systems\Graphic\Mesh\Mesh">
-      <UniqueIdentifier>{5301a2cd-6232-4bb5-ba8e-c8bbce651e7f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Shader\Programs">
       <UniqueIdentifier>{25efe6f2-2810-44e2-bb62-561d5426d05d}</UniqueIdentifier>
     </Filter>
@@ -427,6 +427,21 @@
     </Filter>
     <Filter Include="Allocator">
       <UniqueIdentifier>{cb8bd5e1-4ded-433d-b8cb-f70eceff126d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems">
+      <UniqueIdentifier>{d8fe077b-10ae-424b-8fe4-0d7e981a07a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Mesh">
+      <UniqueIdentifier>{52eb0a18-1d2a-4df4-a7ff-be29e199b7b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Mesh\Mesh">
+      <UniqueIdentifier>{5301a2cd-6232-4bb5-ba8e-c8bbce651e7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Mesh\Raw">
+      <UniqueIdentifier>{466ff2cb-a158-4c05-a63f-87c44bb584ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Camera">
+      <UniqueIdentifier>{c6d69b09-93e3-434e-a4bc-e25fb0c06c6d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

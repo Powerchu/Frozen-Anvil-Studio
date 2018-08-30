@@ -81,6 +81,8 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 
 	int random = Math::Min(5, 16);
 
+	Pointer<int> why{};
+
 	x.Insert(random);
 	x.Insert(6);
 	auto ptr = x.Insert(5);

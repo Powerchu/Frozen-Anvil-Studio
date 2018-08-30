@@ -50,7 +50,5 @@ namespace Dystopia
 
 
 
-
-
 #endif		// INCLUDE GUARD
 

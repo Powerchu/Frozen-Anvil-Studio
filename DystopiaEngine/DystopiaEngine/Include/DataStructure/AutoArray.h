@@ -144,7 +144,7 @@ private:
 
 	void GrowArray(Sz_t = 0);
 
-	static inline void ArrayCopy(Itor_t _src_beg, Itor_t _src_end, Itor_t _dest);
+	static inline Itor_t ArrayCopy(Itor_t _src_beg, Itor_t _src_end, Itor_t _dest);
 	static inline void ArrayMove(Ptr_t _src, Sz_t _sz, Ptr_t _dest);
 
 	static inline Ptr_t Allocate(Sz_t);
@@ -482,9 +482,9 @@ void AutoArray<T, A>::GrowArray(Sz_t _newSize)
 }
 
 template <class T, class A>
-inline void AutoArray<T, A>::ArrayCopy(Itor_t _src_beg, Itor_t _src_end, Itor_t _dest)
+inline AutoArray<T, A>::Itor_t AutoArray<T, A>::ArrayCopy(Itor_t _src_beg, Itor_t _src_end, Itor_t _dest)
 {
-	Utility::CopyInit(_src_beg, _src_end, _dest);
+	return Utility::CopyInit(_src_beg, _src_end, _dest);
 }
 
 template <class T, class A>
