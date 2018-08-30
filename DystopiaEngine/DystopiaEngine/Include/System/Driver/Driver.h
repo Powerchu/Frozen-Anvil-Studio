@@ -40,7 +40,7 @@ namespace Dystopia
 		>>;
 
 		using SubSys = typename Utility::MetaAutoIndexer <
-//			class CameraSystem,
+			class CameraSystem,
 			class MeshSystem
 		>::result;
 

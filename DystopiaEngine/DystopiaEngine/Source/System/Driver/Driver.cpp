@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\WindowManager.h"
 
 #include "System\Graphics\MeshSystem.h"
+#include "System\Camera\CameraSystem.h"
 #include "System\Events\EventSystem.h"
 
 namespace
@@ -66,8 +67,8 @@ namespace
 
 Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 {
-	static Pointer<EngineCore> pInstance{ };
-	return pInstance.GetRaw();
+	static EngineCore oInstance{ };
+	return &oInstance;
 }
 
 Dystopia::EngineCore::EngineCore(void) :
@@ -170,4 +171,5 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 }
 
 #endif
+
 

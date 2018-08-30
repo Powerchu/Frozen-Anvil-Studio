@@ -28,6 +28,8 @@ namespace Dystopia
 	class Camera : public Component
 	{
 	public:
+
+		using SYSTEM = class CameraSystem;
 		unsigned GetComponentType(void) const
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
@@ -36,7 +38,7 @@ namespace Dystopia
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		Camera(const int _fWidth = 1920, const int _fHeight = 1080);
+		Camera(const int _fWidth = 1600, const int _fHeight = 900);
 		~Camera(void);
 
 
@@ -63,11 +65,11 @@ namespace Dystopia
 		// Modifies the view area of the camera
 		void SetSize(const unsigned _nWidth, const unsigned _nHeight);
 
-		// Zoom X & Y axis uniformly
-		// Input taken in percentage form, 1.0f == 100%.
-		void SetZoom(const float _fZoom);
-		// Input taken in percentage form, 1.0f == 100%.
-		void SetZoom(const float _fZoomX, const float _fZoomY);
+		//// Zoom X & Y axis uniformly
+		//// Input taken in percentage form, 1.0f == 100%.
+		//void SetZoom(const float _fZoom);
+		//// Input taken in percentage form, 1.0f == 100%.
+		//void SetZoom(const float _fZoomX, const float _fZoomY);
 
 		void SetRotation(const float);
 		void SetRotationDeg(const float);

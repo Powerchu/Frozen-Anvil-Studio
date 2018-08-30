@@ -26,10 +26,7 @@
       <Filter>Game Engine\Systems\Graphic</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Editor.cpp">
-      <Filter>Editor\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\Graphics\Mesh.cpp">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+      <Filter>Editor\Editor</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\Shader.cpp">
       <Filter>Game Engine\Systems\Graphic\Shader</Filter>
@@ -68,57 +65,25 @@
       <Filter>Math\Matrix\Matrix4</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\RawMesh.cpp">
-      <Filter>Game Engine\Systems\Graphic\Mesh\Raw</Filter>
+      <Filter>Game Engine\SubSystems\Mesh\Raw</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\IO\BinarySerializer.cpp">
-      <Filter>IO\BinarySerialiser</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\HierarchyView.cpp">
-      <Filter>Editor\Systems\Hierarchy</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Dock.cpp">
-      <Filter>Editor\Systems\Docking</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EGUI.cpp">
-      <Filter>Editor\Systems\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Inspector.cpp">
-      <Filter>Editor\Systems\Inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EGuiDisplay.cpp">
-      <Filter>Editor\Systems\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Commands.cpp">
-      <Filter>Editor\Systems\Commands</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EditorTab.cpp">
-      <Filter>Editor\Systems</Filter>
+    <ClCompile Include="Source\System\Graphics\Mesh.cpp">
+      <Filter>Game Engine\SubSystems\Mesh\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Driver\Driver.cpp">
       <Filter>Game Engine\Systems\Driver</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\ProjectResource.cpp">
-      <Filter>Editor\Systems\Resource</Filter>
+    <ClCompile Include="Source\System\Scene\SceneSystem.cpp">
+      <Filter>Game Engine\Systems\Scene\SceneSystem</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\SceneView.cpp">
-      <Filter>Editor\Systems\SceneView</Filter>
+    <ClCompile Include="Source\System\Scene\Scene.cpp">
+      <Filter>Game Engine\Systems\Scene\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\ConsoleLog.cpp">
-      <Filter>Editor\Systems\Log</Filter>
+    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
+      <Filter>Game Engine\SubSystems\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\ScriptFormatter.cpp">
-      <Filter>Editor\ScriptFormat</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\Scene\Scene.cpp" />
-    <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
-    <ClCompile Include="Source\System\Events\EventSystem.cpp">
-      <Filter>Game Engine\Systems\Events</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\CallbackManager.cpp">
-      <Filter>Editor\Systems\Callback</Filter>
+    <ClCompile Include="Source\System\Camera\CameraSystem.cpp">
+      <Filter>Game Engine\SubSystems\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -209,9 +174,6 @@
     <ClInclude Include="Include\System\Graphics\Shader.h">
       <Filter>Game Engine\Systems\Graphic\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\Mesh.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Graphics\Image.h">
       <Filter>Game Engine\Systems\Graphic\Texture</Filter>
     </ClInclude>
@@ -239,9 +201,6 @@
     <ClInclude Include="Include\Object\ObjectFlags.h">
       <Filter>Game Engine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\Editor.h">
-      <Filter>Editor\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="Include\IO\TextSerialiser.h">
       <Filter>IO\TextSerialiser</Filter>
     </ClInclude>
@@ -252,49 +211,13 @@
       <Filter>Math\Matrix\Matrix2</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\RawMesh.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh\Raw</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\VertexDefs.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+      <Filter>Game Engine\SubSystems\Mesh\Raw</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\Serialiser.h">
       <Filter>IO</Filter>
     </ClInclude>
-    <ClInclude Include="Include\IO\BinarySerializer.h">
-      <Filter>IO\BinarySerialiser</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\HierarchyView.h">
-      <Filter>Editor\Systems\Hierarchy</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\Dock.h">
-      <Filter>Editor\Systems\Docking</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EGUI.h">
-      <Filter>Editor\Systems\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\Inspector.h">
-      <Filter>Editor\Systems\Inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\Commands.h">
-      <Filter>Editor\Systems\Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\CommandList.h">
-      <Filter>Editor\Systems\Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EditorTab.h">
-      <Filter>Editor\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\MetaDataStructures.h">
-      <Filter>Utility\Meta</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\MetaAlgorithms.h">
-      <Filter>Utility\Meta</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\Meta.h">
-      <Filter>Utility\Meta</Filter>
+    <ClInclude Include="Include\System\Graphics\Mesh.h">
+      <Filter>Game Engine\SubSystems\Mesh\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Include\Math\Vector2.h">
       <Filter>Math\Vector</Filter>
@@ -302,26 +225,23 @@
     <ClInclude Include="Include\System\Driver\Driver.h">
       <Filter>Game Engine\Systems\Driver</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\Payloads.h">
-      <Filter>Editor\Systems\Payloads</Filter>
+    <ClInclude Include="Include\Utility\MetaAlgorithms.h">
+      <Filter>Utility\Meta</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\ProjectResource.h">
-      <Filter>Editor\Systems\Resource</Filter>
+    <ClInclude Include="Include\Utility\Meta.h">
+      <Filter>Utility\Meta</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\SceneView.h">
-      <Filter>Editor\Systems\SceneView</Filter>
+    <ClInclude Include="Include\Utility\MetaDataStructures.h">
+      <Filter>Utility\Meta</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\ConsoleLog.h">
-      <Filter>Editor\Systems\Log</Filter>
+    <ClInclude Include="Include\System\Scene\SceneSystem.h">
+      <Filter>Game Engine\Systems\Scene\SceneSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\ScriptFormatter.h">
-      <Filter>Editor\ScriptFormat</Filter>
+    <ClInclude Include="Include\System\Scene\Scene.h">
+      <Filter>Game Engine\Systems\Scene\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Scene\Scene.h" />
-    <ClInclude Include="Include\System\Scene\SceneSystem.h" />
-    <ClInclude Include="Include\Utility\UtilityInternals.h" />
-    <ClInclude Include="Include\System\Events\EventSystem.h">
-      <Filter>Game Engine\Systems\Events</Filter>
+    <ClInclude Include="Include\Utility\UtilityInternals.h">
+      <Filter>Utility\Internals</Filter>
     </ClInclude>
     <ClInclude Include="Include\Math\Angles.h">
       <Filter>Math</Filter>
@@ -344,8 +264,14 @@
     <ClInclude Include="Include\Allocator\DefaultAlloc.h">
       <Filter>Allocator</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\CallbackManager.h">
-      <Filter>Editor\Systems\Callback</Filter>
+    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
+      <Filter>Game Engine\SubSystems\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\VertexDefs.h">
+      <Filter>Game Engine\SubSystems\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Camera\CameraSystem.h">
+      <Filter>Game Engine\SubSystems\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -436,6 +362,9 @@
     <Filter Include="Editor\IMGUI">
       <UniqueIdentifier>{adfd2fea-e1aa-4980-9366-739bf3f0446f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Editor\Editor">
+      <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Mesh">
       <UniqueIdentifier>{ca90d672-42da-4174-9947-7cdd5a3d812c}</UniqueIdentifier>
     </Filter>
@@ -472,56 +401,23 @@
     <Filter Include="Math\Matrix\Matrix2">
       <UniqueIdentifier>{83acf256-2e61-44e4-83bf-a3932a6fabc0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Systems\Graphic\Mesh\Raw">
-      <UniqueIdentifier>{466ff2cb-a158-4c05-a63f-87c44bb584ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems">
-      <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\Hierarchy">
-      <UniqueIdentifier>{906f0146-1116-4f0b-857f-1b0b4bcc43c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\Resource">
-      <UniqueIdentifier>{3c08c0c6-b523-44ae-98ef-48b87c318ea8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\Docking">
-      <UniqueIdentifier>{34a1246a-c7f5-4d3e-8782-89bda07d0ff3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\UI">
-      <UniqueIdentifier>{5ebbd455-7289-4ca0-ae0a-e93d5864eca0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\Inspector">
-      <UniqueIdentifier>{73aa6123-3e9a-4b83-96d4-d2df50a31dc0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\Commands">
-      <UniqueIdentifier>{fa4a1355-e83c-435a-9efc-82303a68ef59}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\Meta">
-      <UniqueIdentifier>{a97bd027-be4d-412f-ba0f-3c382ab724e9}</UniqueIdentifier>
+    <Filter Include="Game Engine\Systems\Graphic\Shader\Programs">
+      <UniqueIdentifier>{25efe6f2-2810-44e2-bb62-561d5426d05d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Systems\Driver">
-      <UniqueIdentifier>{238c243a-65c5-4e4b-8ebb-9797a55cb924}</UniqueIdentifier>
+      <UniqueIdentifier>{5218dddd-4e8e-4b28-9f3d-f179f71e8edc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Systems\Payloads">
-      <UniqueIdentifier>{6ae347d0-607b-4c8f-97f3-2047a93d26fd}</UniqueIdentifier>
+    <Filter Include="Utility\Meta">
+      <UniqueIdentifier>{6a9f286f-47a9-4b59-9ff5-dda9a16e59f1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Systems\SceneView">
-      <UniqueIdentifier>{770c1cc6-aceb-40be-8cc4-1b8752a78079}</UniqueIdentifier>
+    <Filter Include="Game Engine\Systems\Scene">
+      <UniqueIdentifier>{ddb89e65-93e8-4262-89d0-be65eefb7603}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Systems\Log">
-      <UniqueIdentifier>{6936f02f-3d30-411a-ad25-d61c764a6c90}</UniqueIdentifier>
+    <Filter Include="Game Engine\Systems\Scene\SceneSystem">
+      <UniqueIdentifier>{5320a59f-d009-4e91-9157-c1635f9a123b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\ScriptFormat">
-      <UniqueIdentifier>{9a14f238-4e7d-494c-87af-70d664cf07a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripts">
-      <UniqueIdentifier>{4eae12d7-9f83-4a7d-942c-d803ec34cefc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\Systems\Events">
-      <UniqueIdentifier>{17ecd9b4-fbe3-451d-b22d-d6a833992d7a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\Callback">
-      <UniqueIdentifier>{9340914a-5c53-42c9-86f2-fb660fa6d771}</UniqueIdentifier>
+    <Filter Include="Game Engine\Systems\Scene\Scene">
+      <UniqueIdentifier>{f3eae6d5-d8fd-463f-9178-71e46cda18c6}</UniqueIdentifier>
     </Filter>
     <Filter Include="DataStructures\Arrays">
       <UniqueIdentifier>{e471095b-299b-49a3-ae39-89a0de8825c4}</UniqueIdentifier>
@@ -531,6 +427,21 @@
     </Filter>
     <Filter Include="Allocator">
       <UniqueIdentifier>{cb8bd5e1-4ded-433d-b8cb-f70eceff126d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems">
+      <UniqueIdentifier>{d8fe077b-10ae-424b-8fe4-0d7e981a07a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Mesh">
+      <UniqueIdentifier>{52eb0a18-1d2a-4df4-a7ff-be29e199b7b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Mesh\Mesh">
+      <UniqueIdentifier>{5301a2cd-6232-4bb5-ba8e-c8bbce651e7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Mesh\Raw">
+      <UniqueIdentifier>{466ff2cb-a158-4c05-a63f-87c44bb584ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Camera">
+      <UniqueIdentifier>{c6d69b09-93e3-434e-a4bc-e25fb0c06c6d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
