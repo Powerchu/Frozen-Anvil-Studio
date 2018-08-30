@@ -116,7 +116,9 @@ namespace Dystopia
 	{}
 
 	ProjectResource::~ProjectResource()
-	{}
+	{
+		mpEditorEventSys->UnBindFromEvent("LeftClick", this);
+	}
 
 	void ProjectResource::Init()
 	{
@@ -131,6 +133,8 @@ namespace Dystopia
 		mArrAllFiles.clear();
 		GetAllFiles(mArrAllFiles, mpRootFolder);
 		SortAllFiles(mArrAllFiles);
+
+		mpEditorEventSys->BindToEvent("LeftClick", &ProjectResource::RemoveFocusOnFile, this);
 
 		std::wstring wPath{ DEFAULT_PATH.begin(), DEFAULT_PATH.end() };
 		mChangeHandle[0] = FindFirstChangeNotification(wPath.c_str(), true, mWaitFlags);
@@ -325,6 +329,11 @@ namespace Dystopia
 			mpCurrentFolder = mpRootFolder;
 			mFocusedFile = nullptr;
 		}
+	}
+
+	void ProjectResource::RemoveFocusOnFile()
+	{
+		mFocusedFile = nullptr;
 	}
 
 	std::string ProjectResource::GetLabel() const

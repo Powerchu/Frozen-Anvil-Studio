@@ -15,7 +15,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\EGUI.h"
 #include "Editor\Inspector.h"
 #include "Editor\ProjectResource.h"
-#include "Editor\Commands.h"
 #include "Editor\ScriptFormatter.h"
 #include "Object\GameObject.h"
 #include "Component\Component.h"

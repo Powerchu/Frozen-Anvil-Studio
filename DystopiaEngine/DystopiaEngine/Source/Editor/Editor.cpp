@@ -30,6 +30,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Input\InputSystem.h"
+#include "System\Input\InputMap.h"
 #include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
 #include "System\Events\EventSystem.h"
@@ -165,8 +166,9 @@ namespace Dystopia
 		EGUI::SetContext(mpComdHandler);
 		for (auto& e : mTabsArray)
 		{
-			e->Init();
 			e->SetComdContext(mpComdHandler);
+			e->SetEventSysContext(mpEditorEventSys);
+			e->Init();
 		}
 
 		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
@@ -187,6 +189,11 @@ namespace Dystopia
 		mpWin->Update(_dt);
 		mpInput->Update(_dt);
 		mpGuiSystem->StartFrame(_dt);
+
+		if (mpInput->IsKeyTriggered(MOUSE_L))
+			mpEditorEventSys->Fire("LeftClick");
+
+		mpEditorEventSys->FireAllPending();
 		MainMenuBar();
 	}
 

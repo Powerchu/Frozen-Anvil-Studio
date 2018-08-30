@@ -14,15 +14,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _EDITOR_TAB_H_
 #define _EDITOR_TAB_H_
-#include "Math\Vector4.h"
 #include "Math\Vector2.h"
-#include "DataStructure\AutoArray.h"
+#include "Editor\Commands.h"
+#include "Editor\CommandList.h"
+#include "System\Events\EventSystem.h"
 #include <string>
 
 namespace Dystopia
 {
 	static constexpr size_t MAX_SEARCH = 64;
 	class CommandHandler;
+	class EventSystem;
 	class EditorTab
 	{
 	public:
@@ -48,6 +50,7 @@ namespace Dystopia
 		void				SetPosition(const Math::Vec2&);
 		void				SetPosition(const float&, const float&);
 		void				SetComdContext(CommandHandler * const);
+		void				SetEventSysContext(EventSystem * const);
 		Math::Vec2			Size() const;
 		Math::Vec2			Position() const;
 		bool*				GetOpenedBool();
@@ -56,8 +59,10 @@ namespace Dystopia
 		Math::Vec2			mSize;
 		Math::Vec2			mPos;
 		bool				mIsOpened;
+
 	protected:
 		CommandHandler		*mpComdHandler;
+		EventSystem			*mpEditorEventSys;
 	};
 }
 

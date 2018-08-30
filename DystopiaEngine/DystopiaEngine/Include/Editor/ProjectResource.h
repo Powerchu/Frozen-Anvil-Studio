@@ -79,6 +79,7 @@ namespace Dystopia
 		virtual std::string GetLabel() const override;
 
 		void FocusOnFile(const std::string& _fileName);
+		void RemoveFocusOnFile();
 
 	private:
 		ProjectResource(void);
