@@ -1,5 +1,6 @@
 #include "Component\RigidBody.h"
 #include "Component\Transform.h"
+
 namespace Dystopia
 {
 	Dystopia::RigidBody::RigidBody(void)
@@ -57,7 +58,7 @@ namespace Dystopia
 
 	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
 	{
-		AddForce(_force, _point, mOwnerTransform->GetGlobalPosition());
+		//AddForce(_force, _point, mOwnerTransform->GetGlobalPosition());
 	}
 
 	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point, Math::Point3D const & _origin)
