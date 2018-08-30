@@ -28,10 +28,15 @@ namespace Dystopia
 
 		virtual void FixedUpdate(float)				{ };
 		virtual void Update(float)					= 0;
+		virtual void PostUpdate(void)				{ };
 		virtual void Shutdown(void)					= 0;
 
 		virtual void LoadDefaults(void)				{ };
 		virtual void LoadSettings(TextSerialiser&)	{ };
+
+		// For systems that have components
+//		Component* GetComponent(GUID_t)
+//		GUID_t RequestComponent();
 
 //		virtual void ReceiveMessage(const Message&) = 0;
 

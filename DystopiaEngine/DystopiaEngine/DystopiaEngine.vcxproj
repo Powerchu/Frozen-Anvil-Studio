@@ -82,8 +82,10 @@
     <ClInclude Include="Include\Component\ComponentList.h" />
     <ClInclude Include="Include\Component\RigidBody.h" />
     <ClInclude Include="Include\Component\Transform.h" />
+    <ClInclude Include="Include\DataStructure\Array.h" />
     <ClInclude Include="Include\DataStructure\AutoArray.h" />
     <ClInclude Include="Include\DataStructure\Heap.h" />
+    <ClInclude Include="Include\DataStructure\MagicArray.h" />
     <ClInclude Include="Include\DataStructure\Queue.h" />
     <ClInclude Include="Include\DataStructure\SharedPtr.h" />
     <ClInclude Include="Include\DataStructure\Stack.h" />
@@ -99,11 +101,13 @@
     <ClInclude Include="Include\Editor\Payloads.h" />
     <ClInclude Include="Include\Editor\ProjectResource.h" />
     <ClInclude Include="Include\Editor\SceneView.h" />
+    <ClInclude Include="Include\Allocator\DefaultAlloc.h" />
     <ClInclude Include="Include\Globals.h" />
     <ClInclude Include="Include\IO\BinarySerializer.h" />
     <ClInclude Include="Include\IO\ImageParser.h" />
     <ClInclude Include="Include\IO\Serialiser.h" />
     <ClInclude Include="Include\IO\TextSerialiser.h" />
+    <ClInclude Include="Include\Math\Angles.h" />
     <ClInclude Include="Include\Math\MathInternal.h" />
     <ClInclude Include="Include\Math\MathUtility.h" />
     <ClInclude Include="Include\Math\Matrix2.h" />
@@ -146,6 +150,7 @@
     <ClInclude Include="Include\Utility\Utility.h" />
     <ClInclude Include="Include\Math\Vector2.h" />
     <ClInclude Include="Include\Utility\UtilityInternals.h" />
+    <ClInclude Include="Include\DataStructure\Pointer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>
@@ -279,7 +284,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/DEDITOR</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR /std:c++latest</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

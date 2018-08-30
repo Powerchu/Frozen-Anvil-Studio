@@ -18,16 +18,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility\Meta.h"		// IsSame
 
-// Copied size_t out of microsoft header
-// Just in case it is not defined in any of the includes
-namespace std {
-#ifdef _WIN64
-	typedef unsigned __int64 size_t;
-#else
-	typedef unsigned int     size_t;
-#endif
-}
-
 #if defined(DEBUG) | defined(_DEBUG)
 #include "Utility\DebugAssert.h"
 
@@ -60,7 +50,7 @@ public:
 
 	inline explicit operator bool(void) const { return !!mpObj; }
 
-	inline T* GetPtr(void) const;
+	inline T* GetRaw(void) const;
 
 private:
 
@@ -120,7 +110,7 @@ inline SharedPtr<T> DynamicPtrCast(const SharedPtr<U>& _pPtr)
 {
 	SharedPtr<T> ret{};
 
-	ret.mpObj = dynamic_cast<T>(_pPtr.GetPtr());
+	ret.mpObj = dynamic_cast<T>(_pPtr.GetRaw());
 
 	if (ret.mpObj)
 	{
@@ -175,7 +165,7 @@ SharedPtr<T>::~SharedPtr(void)
 }
 
 template <class T>
-inline T* SharedPtr<T>::GetPtr(void) const
+inline T* SharedPtr<T>::GetRaw(void) const
 {
 	return mpObj;
 }
@@ -243,7 +233,7 @@ SharedPtr<T>& SharedPtr<T>::operator = (SharedPtr<T>&& _pPointer) noexcept
 template <typename Type>
 inline bool operator== (const SharedPtr<Type>& _p, std::nullptr_t)
 {
-	return nullptr == _p.GetPtr();
+	return nullptr == _p.GetRaw();
 }
 
 template <typename Type>
@@ -255,7 +245,7 @@ inline bool operator== (std::nullptr_t, const SharedPtr<Type>& _p)
 template <typename Type>
 inline bool operator!= (const SharedPtr<Type>& _p, std::nullptr_t)
 {
-	return _p.GetPtr() != nullptr;
+	return _p.GetRaw() != nullptr;
 }
 template <typename Type>
 inline bool operator!= (std::nullptr_t, const SharedPtr<Type>& _p)
@@ -266,19 +256,19 @@ inline bool operator!= (std::nullptr_t, const SharedPtr<Type>& _p)
 template <typename TypeA, typename TypeB>
 inline bool operator== (const SharedPtr<TypeA>& _pL, const SharedPtr<TypeB>& _pR)
 {
-	return _pL.GetPtr() == _pR.GetPtr();
+	return _pL.GetRaw() == _pR.GetRaw();
 }
 
 template <typename TypeA, typename TypeB>
 inline bool operator!= (const SharedPtr<TypeA>& _pL, const SharedPtr<TypeB>& _pR)
 {
-	return _pL.GetPtr() != _pR.GetPtr();
+	return _pL.GetRaw() != _pR.GetRaw();
 }
 
 template <typename Type>
 inline bool operator! (const SharedPtr<Type>& _pL)
 {
-	return !_pL.GetPtr();
+	return !_pL.GetRaw();
 }
 
 

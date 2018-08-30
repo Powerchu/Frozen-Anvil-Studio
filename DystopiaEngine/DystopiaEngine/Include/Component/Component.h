@@ -26,8 +26,8 @@ namespace Dystopia
 	public:
 
 		using TAG = ComponentTag;
-		static constexpr eComponents TYPE = eComponents::BASE_COMPONENT;
-		virtual const eComponents GetComponentType(void) const { return TYPE; };
+		using SYSTEM = class NULL_SYSTEM;
+		virtual unsigned GetComponentType(void) const {	return unsigned(-1); };
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -41,15 +41,13 @@ namespace Dystopia
 		bool IsActive(void) const;
 		void SetActive(const bool _bEnable);
 
-		virtual void Load(void);
-		virtual void Init(void);
-		/*
-		virtual void Update(const float _fDeltaTime);
-		virtual void FixedUpdate(const float _fDeltaTime);
-		virtual void PostUpdate(void);
-		*/
-		virtual void OnDestroy(void);
-		virtual void Unload(void);
+		void Load(void);
+		void Init(void);
+
+		virtual void GameObjectDestroy(void);
+		void Unload(void);
+
+		void DestroyComponent(void);
 
 		void SetOwner(GameObject*);
 		GameObject* GetOwner(void) const;
@@ -65,7 +63,7 @@ namespace Dystopia
 
 	protected:
 
-		bool mbActive;
+		unsigned mnFlags;
 	};
 }
 

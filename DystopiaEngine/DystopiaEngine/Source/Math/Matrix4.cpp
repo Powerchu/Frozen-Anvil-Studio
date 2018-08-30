@@ -7,6 +7,8 @@
 	Experimental, using the experimental Vector4
 	All the inlining means that everything has to be in the header file
 
+	TODO: General Matrix Inverse
+
 	Reference: https://software.intel.com/sites/landingpage/IntrinsicsGuide
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.

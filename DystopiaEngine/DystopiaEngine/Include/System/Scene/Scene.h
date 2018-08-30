@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GAME_SCENE_H_
 #define _GAME_SCENE_H_
 
-#include "System\Base\Systems.h"
+#include "Utility\Utility.h"
 #include "Object\GameObject.h"
 #include "DataStructure\AutoArray.h"
 
@@ -33,17 +33,40 @@ namespace Dystopia
 
 		void FixedUpdate(float _dt);
 		void Update(float _dt);
+		void PostUpdate(void);
+
 		void Shutdown(void);
 
-		GameObject* FindGameObject(size_t);
-		GameObject* FindGameObject(const std::string&);
+		template <typename ... Ty>
+		GameObject* InsertGameObject(Ty&& ...);
+
+		GameObject* FindGameObject(const size_t _nID);
+		GameObject* FindGameObject(const std::string& _strName);
 
 	private:
 
 		AutoArray<GameObject> mGameObjs;
+		//Ctor::MagicArrayBuilder<GameObject>::SetBlockLimit<16>::SetBlockSize<256>::type mGameObjs;
 	};
 }
 
-#endif
 
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+
+template <typename ... Ty>
+Dystopia::GameObject* Dystopia::Scene::InsertGameObject(Ty&& ..._args)
+{
+	mGameObjs.EmplaceBack(Utility::Forward<Ty>(_args)...);
+	return mGameObjs.end();
+}
+
+
+
+#endif		// INCLUDE GUARD
 

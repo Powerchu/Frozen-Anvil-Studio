@@ -22,14 +22,13 @@ namespace Utility
 	template <typename T>
 	constexpr inline typename RemoveRef<T>::type&& Move(T&& _obj) noexcept
 	{
-		return static_cast<typename RemoveRef<T>::type&&>(_obj);
+		return static_cast<Utility::RemoveRef_t<T>&&>(_obj);
 	}
 
 
 	template <typename T>
 	constexpr inline T&& Forward(typename RemoveRef<T>::type& _obj) noexcept
 	{
-		// T -> T&& or T& -> T&
 		return static_cast<T&&>(_obj);
 	}
 
@@ -38,7 +37,6 @@ namespace Utility
 	{
 		static_assert(NotLvalueRef<T>::value, "%s (%d): Invalid forwarding call.", __FILE__, __LINE__ );
 		
-		// T&& -> T&&
 		return static_cast<T&&>(_obj);
 	}
 
@@ -46,20 +44,22 @@ namespace Utility
 	// Increments the value by 1 and
 	// wraps the value back to 0 when it reaches Limit
 	// ie. within the range of 0 inclusive and Limit exclusive
-	inline int LoopIncrement(int _nToIncrement, const int _nLimit) noexcept
+	template <typename T>
+	inline T LoopIncrement(T _nToIncrement, const T _nLimit) noexcept
 	{
-		return ++_nToIncrement < _nLimit ? _nToIncrement : _nToIncrement = 0;
-	}
-
-	// Increments the value by 1 and
-	// wraps the value back to 0 when it reaches Limit
-	// ie. within the range of 0 inclusive and Limit exclusive
-	inline unsigned LoopIncrement(unsigned _nToIncrement, const unsigned _nLimit) noexcept
-	{
+		static_assert(IsIntegral<T>::value, "Value to increment must be integral");
 		return ++_nToIncrement < _nLimit ? _nToIncrement : _nToIncrement = 0;
 	}
 
 
+	// Checks if *positive* number is a power of 2
+	template <typename T>
+	inline constexpr bool IsPowerOf2(T _nValue)
+	{
+		static_assert(IsIntegral<T>::value, "Value must be integral");
+		return _nValue && 0 == (_nValue & _nValue - 1);
+	}
+	
 	// Sorts a given array using insertion sort. 
 	// Defaults to sorting the array in ascending order
 	template<class Itor, typename Comparator, class Obj = typename RemoveRef<decltype(*Itor{})>::type >
@@ -86,21 +86,48 @@ namespace Utility
 	}
 
 
+	template <class Itor>
+	Itor MoveInit(Itor _begin, const Itor _end, Itor _dest)
+	{
+		while (_begin != _end)
+		{
+			new (*_dest) Utility::Decay_t<decltype(*_dest)> { Utility::Move(*_begin) };
+			++_dest; ++_begin;
+		}
+
+		return _dest;
+	}
+
+	template <class Itor>
+	Itor CopyInit(Itor _begin, const Itor _end, Itor _dest)
+	{
+		while(_begin != _end)
+		{
+			new (*_dest) Utility::Decay_t<decltype(*_dest)> { *_begin };
+			++_dest; ++_begin;
+		}
+
+		return _dest;
+	}
+
+
 	// Swaps lhs with rhs
 	template<typename T>
 	inline void Swap(T& lhs, T& rhs)
 	{
-		T tmp{ Move(lhs) };
+		T tmp{ Utility::Move(lhs) };
 
-		lhs = Move(rhs);
-		rhs = Move(tmp);
+		lhs = Utility::Move(rhs);
+		rhs = Utility::Move(tmp);
 	}
+
 
 	template <typename T>
 	Interns::RangeMaker<T> Range(T&& begin, T&& end)
 	{
 		return Interns::RangeMaker<T>{ Forward<T>(begin), Forward<T>(end) };
 	}
+
 
 	/*!
 	\brief
