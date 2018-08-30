@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\WindowManager.h"
 
 #include "System\Graphics\MeshSystem.h"
+#include "System\Camera\CameraSystem.h"
 
 
 namespace

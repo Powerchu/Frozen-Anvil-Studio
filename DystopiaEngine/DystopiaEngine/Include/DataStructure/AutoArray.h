@@ -482,7 +482,7 @@ void AutoArray<T, A>::GrowArray(Sz_t _newSize)
 }
 
 template <class T, class A>
-inline AutoArray<T, A>::Itor_t AutoArray<T, A>::ArrayCopy(Itor_t _src_beg, Itor_t _src_end, Itor_t _dest)
+inline typename AutoArray<T, A>::Itor_t AutoArray<T, A>::ArrayCopy(Itor_t _src_beg, Itor_t _src_end, Itor_t _dest)
 {
 	return Utility::CopyInit(_src_beg, _src_end, _dest);
 }

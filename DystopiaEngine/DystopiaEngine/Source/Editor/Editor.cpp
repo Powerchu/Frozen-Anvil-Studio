@@ -68,6 +68,10 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 
 	Ctor::MagicArrayBuilder<int>::SetBlockSize<2>::type x;
 
+	Math::Vec4 sdasd;
+
+	sdasd.Negate<Math::NegateFlag::XYZW>();
+
 	Array<float, 128> y{ 7.1f, 8.f };
 	Array<short, 128> z;
 

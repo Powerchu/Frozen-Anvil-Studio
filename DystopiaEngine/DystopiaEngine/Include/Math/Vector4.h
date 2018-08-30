@@ -375,10 +375,10 @@ template <Math::NegateFlag FLAGS>
 inline Math::Vector4& _CALL Math::Vector4::Negate(void) noexcept
 {
 	static const __m128i Negator = _mm_set_epi32(
-		FLAGS & 0x8 ? 0x80000000 : 0,
-		FLAGS & 0x4 ? 0x80000000 : 0,
-		FLAGS & 0x2 ? 0x80000000 : 0,
-		FLAGS & 0x1 ? 0x80000000 : 0
+		static_cast<unsigned char>(FLAGS) & 0x8 ? 0x80000000 : 0,
+		static_cast<unsigned char>(FLAGS) & 0x4 ? 0x80000000 : 0,
+		static_cast<unsigned char>(FLAGS) & 0x2 ? 0x80000000 : 0,
+		static_cast<unsigned char>(FLAGS) & 0x1 ? 0x80000000 : 0
 	);
 
 	mData = _mm_xor_ps(mData, _mm_castsi128_ps(Negator));
