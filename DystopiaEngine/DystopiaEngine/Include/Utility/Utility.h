@@ -86,24 +86,24 @@ namespace Utility
 	}
 
 
-	template <class Itor>
+	template <class Itor, class Ty = Utility::Decay_t<decltype(*std::declval<Itor>())>>
 	Itor MoveInit(Itor _begin, const Itor _end, Itor _dest)
 	{
 		while (_begin != _end)
 		{
-			new (*_dest) Utility::Decay_t<decltype(*_dest)> { Utility::Move(*_begin) };
+			new (&*_dest) Ty { Utility::Move(*_begin) };
 			++_dest; ++_begin;
 		}
 
 		return _dest;
 	}
 
-	template <class Itor>
+	template <class Itor, class Ty = Utility::Decay_t<decltype(*std::declval<Itor>())>>
 	Itor CopyInit(Itor _begin, const Itor _end, Itor _dest)
 	{
 		while(_begin != _end)
 		{
-			new (*_dest) Utility::Decay_t<decltype(*_dest)> { *_begin };
+			new (&*_dest) Ty { *_begin };
 			++_dest; ++_begin;
 		}
 
