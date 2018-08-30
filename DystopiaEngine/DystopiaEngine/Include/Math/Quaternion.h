@@ -174,7 +174,7 @@ inline Math::Quaternion _CALL Math::Normalise(Quaternion _Q)
 	return _Q.Normalise();
 }
 
-inline Math::Quaternion& _CALL Math::Quaternion::Conjugate(void)
+inline Math::Quaternion& _CALL Math::Quaternion::Conjugate(void) noexcept
 {
 	mData.Negate<NegateFlag::XYZ>();
 	return *this;

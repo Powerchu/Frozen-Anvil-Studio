@@ -62,7 +62,6 @@ namespace Math
 
 		// Not implemented!
 		Matrix4& _CALL Inverse(void);
-		// Not implemented!
 		Matrix4& _CALL AffineInverse(void);
 
 		inline Matrix4& _CALL Transpose(void) noexcept;
