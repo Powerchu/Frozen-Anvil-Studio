@@ -78,6 +78,11 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	auto arr1 = Ctor::MakeArray<float>(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f, 12.f, 13.f, 14.f, 15.f, 16.f);
 	auto arr2 = Ctor::MakeArray<double>(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f);
 
+	int aa[5];
+	int ab[5];
+
+	Utility::CopyInit(aa, aa + 5, ab);
+
 	arr2 = arr1;
 	auto w{ y };
 	y = y;
