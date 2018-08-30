@@ -245,7 +245,7 @@ Math::Matrix4 _CALL Math::Quaternion::Matrix(void) const noexcept
 
 	// TODO : Use ~ for alternating operation? alternatives ++ --
 	Vec4 t4 = AddSub(t2, t1);				 // Add-Sub -> xx + zz, xy - zw, yw + xz, yz - xw
-	Vec4 t1 = AddSub(t1.yxwz, t2.yxwz);      // Add-Sub -> xy + zw, xx - zz, yz + xw, yw - xz
+	t1 = AddSub(t1.yxwz, t2.yxwz);      // Add-Sub -> xy + zw, xx - zz, yz + xw, yw - xz
 
 
 	// Goal :

@@ -16,8 +16,10 @@ namespace Dystopia
 	{
 	public:
 		using TAG = ComponentTag;
-		static constexpr eComponents TYPE = eComponents::RIGID_BODY;
-		virtual const eComponents GetComponentType(void) const { return TYPE; };
+		unsigned GetComponentType(void) const
+		{
+			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+		};
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 

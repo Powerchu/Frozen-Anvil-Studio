@@ -7,6 +7,7 @@
 #include "Math\Vector4.h"                      /*Vector*/
 #include "DataStructure\AutoArray.h"	       /*AutoArray Data Structure*/
 #include "System\Collision\CollisionSystem.h"            /*Collision System*/
+#include "Utility\MetaAlgorithms.h"		// MetaFind
 
 #define CLOCKWISE 1
 /*
@@ -60,8 +61,10 @@ namespace Dystopia
 	{
 	public:
 
-		static const eComponents TYPE = eComponents::COLLIDER;
-		const eComponents GetComponentType(void) const { return TYPE; };
+		unsigned GetComponentType(void) const
+		{
+			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+		};
 
 		static const eColliderType ColliderType = eColliderType::BASE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
@@ -99,8 +102,6 @@ namespace Dystopia
 	class Convex : public virtual Collider
 	{
 	public:
-		static const eComponents TYPE = eComponents::COLLIDER;
-		const eComponents GetComponentType(void) const { return TYPE; };
 
 		static const eColliderType ColliderType = eColliderType::CONVEX;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
@@ -162,8 +163,6 @@ namespace Dystopia
 	class AABB : public Convex
 	{
 	public:
-		static const eComponents TYPE = eComponents::COLLIDER;
-		const eComponents GetComponentType(void) const { return TYPE; };
 
 		static const eColliderType ColliderType = eColliderType::AABB;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
@@ -205,8 +204,6 @@ namespace Dystopia
 	class Triangle : public Convex
 	{
 	public:
-		static const eComponents TYPE = eComponents::COLLIDER;
-		const eComponents GetComponentType(void) const { return TYPE; };
 
 		static const eColliderType ColliderType = eColliderType::TRIANGLE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }

@@ -145,9 +145,9 @@ namespace Dystopia
 			Math::Vec3D EdgeNorm;
 			EdgeNorm.xyzw = EdgeVec.yxzw;
 #ifdef CLOCKWISE
-			EdgeNorm.Negate<Math::Vec4::Flags::NEGATE_Y>();
+			EdgeNorm.Negate<Math::NegateFlag::Y>();
 #else
-			EdgeNorm.Negate<Math::Vec4::Flags::NEGATE_X>();
+			EdgeNorm.Negate<Math::NegateFlag::X>();
 #endif
 			EdgeNorm.Normalise();
 			double distance = EdgeNorm.Dot(a.mPosition);
@@ -208,16 +208,18 @@ namespace Dystopia
 
 				/*Get the Left Hand Normal of LastToFirst*/
 				_v3Dir = Math::Vec3D{ -LastToFirst.y, LastToFirst.x,0,0 };
+
 				/*Ensure that the normal is pointing away from the inside
 				  of the triangle. If it is not, inverse it*/
 				_v3Dir = Dot(_v3Dir, _Simplex[1].mPosition) > 0 ? -_v3Dir : _v3Dir;
+
 				if (Dot(_v3Dir, v) > 0)
 				{
 					/*
 					  Remove the First vertex from the shape so that we can
 					  find a new one
 					*/
-					_Simplex.Remove(0);
+					_Simplex.Remove(static_cast<unsigned>(0));
 					/*The origin is outside of the shape*/
 					return false;
 
