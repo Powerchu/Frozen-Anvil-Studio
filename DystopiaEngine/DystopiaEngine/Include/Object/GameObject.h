@@ -61,6 +61,8 @@ namespace Dystopia
 
 		template <typename T>
 		void AddComponent();
+		void AddComponent(Component*, ComponentTag);
+		void AddComponent(Behaviour*, BehaviourTag);
 		template <typename T>
 		void RemoveComponent();
 		void RemoveComponent(Component*);

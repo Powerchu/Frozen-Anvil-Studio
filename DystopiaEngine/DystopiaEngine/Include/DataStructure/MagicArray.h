@@ -20,7 +20,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "DataStructure\Array.h"
 
+#include <intrin.h>			// _BitScanForward64
 #include <initializer_list> // init-list
+
+#pragma intrinsic(_BitScanForward64)
 
 
 template <typename, typename>
@@ -56,7 +59,7 @@ namespace Ctor
 	};
 }
 
-template <typename T, typename Params = MagicArrayBuilder<T>>
+template <typename T, typename Params = Ctor::MagicArrayBuilder<T>>
 class MagicArray
 {
 	struct Iterator;
