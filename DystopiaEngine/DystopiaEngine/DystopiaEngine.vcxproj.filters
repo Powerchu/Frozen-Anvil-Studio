@@ -128,15 +128,6 @@
       <Filter>IO\BinarySerialiser</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
-    <ClCompile Include="Source\Component\AABB.cpp">
-      <Filter>Game Engine\Components\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Component\Collider.cpp">
-      <Filter>Game Engine\Components\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Component\Convex.cpp">
-      <Filter>Game Engine\Components\Colliders</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Component\RigidBody.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
@@ -145,6 +136,15 @@
     </ClCompile>
     <ClCompile Include="Source\System\Physics\PhysicsSystem.cpp">
       <Filter>Game Engine\Systems\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\AABB.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\Collider.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\Convex.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
