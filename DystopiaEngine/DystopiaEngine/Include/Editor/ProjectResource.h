@@ -79,6 +79,7 @@ namespace Dystopia
 		virtual std::string GetLabel() const override;
 
 		void FocusOnFile(const std::string& _fileName);
+		void RemoveFocusOnFile();
 
 	private:
 		ProjectResource(void);
@@ -107,8 +108,8 @@ namespace Dystopia
 		void				FileUI(File*);
 		void				SearchWindow();
 		void				FolderWindow();
-		void				FileWindow();
-		void				SearchResultWindow();
+		void				FileWindow(const Math::Vec2& _mySize);
+		void				SearchResultWindow(const Math::Vec2& _mySize);
 		void				MakeStringLower(std::string& _transformMe);
 		void				UpdateSearch();
 		void				RefreshResourceFolder();

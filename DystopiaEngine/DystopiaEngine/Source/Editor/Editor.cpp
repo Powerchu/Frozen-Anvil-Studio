@@ -25,13 +25,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #else
 #define DBG_NEW new
 #endif
+
 /* System includes */
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Input\InputSystem.h"
+#include "System\Input\InputMap.h"
 #include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
+#include "System\Events\EventSystem.h"
 #include "IO\BinarySerializer.h"
+
 /* Editor includes */
 #include "Editor\Editor.h"
 #include "Editor\EGUI.h"
@@ -42,15 +46,44 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ProjectResource.h"
 #include "Editor\SceneView.h"
 #include "Editor\ConsoleLog.h"
+
 /* library includes */
 #include <iostream>
 #include <bitset>
+
+namespace Dystopia
+{
+	struct X
+	{
+		X(EventSystem* e)
+			:es{ e }
+		{
+			es->BindToEvent("EventTester1", &X::goo, this);
+			es->BindToEvent("EventTester2", &X::foo, this);
+			es->BindToEvent("EventTester3", &X::hoo, this);
+		}
+		~X()
+		{
+			es->UnBindFromEvent("EventTester1", this);
+			es->UnBindFromEvent("EventTester2", this);
+			es->UnBindFromEvent("EventTester3", this);
+		}
+		EventSystem* es;
+
+		void goo() { std::cout << "Member function goo" << std::endl; }
+		void hoo() { std::cout << "Member function hoo" << std::endl; }
+		void foo() { std::cout << "Member function foo" << std::endl; }
+	};
+	void goo() { std::cout << "Non member function goo" << std::endl; }
+	void hoo() { std::cout << "Non member function hoo" << std::endl; }
+	void foo() { std::cout << "Non member function foo" << std::endl; }
+}
 
 // Entry point for editor
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 	hInstance;
 
@@ -66,6 +99,17 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 				 driver->GetSystem<Dystopia::GraphicsSystem>(),
 				 driver->GetSystem<Dystopia::InputManager>());
 
+	/* Start of Event System usage example */
+	Dystopia::EventSystem *es = driver->GetSystem<Dystopia::EventSystem>();
+	{
+		Dystopia::X x1{ es };
+		es->Fire("EventTester1");
+		es->Fire("EventTester2");
+		es->Fire("EventTester3");
+		es->FireAllPending();
+	}
+	/* End of Event System usage example */
+
 	while (!editor->IsClosing())
 	{
 		float dt = timer->Elapsed();
@@ -77,13 +121,14 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 		
 		editor->EndFrame();
 	}
-	
+
 	editor->Shutdown();
 	driver->Shutdown();
 	delete timer;
 	delete editor;
-
-	_CrtDumpMemoryLeaks();
+	// Automatically called by _CRTDBG_LEAK_CHECK_DF flag when proccess ends. 
+	// This will ensure static variables are not taken into account
+	//_CrtDumpMemoryLeaks(); 
 	return 0;
 }
 
@@ -101,12 +146,16 @@ namespace Dystopia
 	}
 
 	Editor::Editor(void)
-		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mPrevFrameTime{ 0 }, mpComdHandler{ new CommandHandler{} },
-		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr }, mpGuiSystem{ new GuiSystem{} }
+		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mPrevFrameTime{ 0 }, 
+		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr },
+		mpEditorEventSys{ new EventSystem{} },
+		mpComdHandler{ new CommandHandler{} },
+		mpGuiSystem{ new GuiSystem{} }
 	{}
 
 	Editor::~Editor(void)
-	{}
+	{
+	}
 
 	void Editor::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInput)
 	{ 
@@ -117,8 +166,9 @@ namespace Dystopia
 		EGUI::SetContext(mpComdHandler);
 		for (auto& e : mTabsArray)
 		{
-			e->Init();
 			e->SetComdContext(mpComdHandler);
+			e->SetEventSysContext(mpEditorEventSys);
+			e->Init();
 		}
 
 		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
@@ -139,12 +189,17 @@ namespace Dystopia
 		mpWin->Update(_dt);
 		mpInput->Update(_dt);
 		mpGuiSystem->StartFrame(_dt);
+
+		if (mpInput->IsKeyTriggered(MOUSE_L))
+			mpEditorEventSys->Fire("LeftClick");
+
+		mpEditorEventSys->FireAllPending();
 		MainMenuBar();
 	}
 
 	void Editor::UpdateFrame(const float& _dt)
 	{
-		//mpGfx->Update(_dt);
+		//mpGfx->Update(_dt); // causes double frame buffer swap per frame, need determine either editor gfx or driver gfx do
 		for (unsigned int i = 0; i < mTabsArray.size(); ++i)
 		{
 			EGUI::PushID(i);
@@ -199,6 +254,10 @@ namespace Dystopia
 		mpWin = nullptr;
 		mpGfx = nullptr;
 		mpInput = nullptr;
+
+		mpEditorEventSys->Shutdown();
+		delete mpEditorEventSys;
+		mpEditorEventSys = nullptr;
 
 		delete mpComdHandler;
 		mpComdHandler = nullptr;
@@ -330,17 +389,16 @@ namespace Dystopia
 
 	void Editor::MMView()
 	{
+		static constexpr float icon = 10.f;
 		if (EGUI::StartMenuHeader("View"))
 		{
 			for (auto& e : mTabsArray)
 			{
 				if (*(e->GetOpenedBool())) 
-					EGUI::Display::IconTick(10, 10);
+					EGUI::Display::IconTick(icon, icon);
 				else 
-					EGUI::Display::Dummy(10, 10);
-
+					EGUI::Display::Dummy(icon, icon);
 				EGUI::SameLine();
-
 				if (EGUI::StartMenuBody(e->GetLabel()))
 					*(e->GetOpenedBool()) = !*(e->GetOpenedBool());
 			}

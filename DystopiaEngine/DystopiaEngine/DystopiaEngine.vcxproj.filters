@@ -26,10 +26,7 @@
       <Filter>Game Engine\Systems\Graphic</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Editor.cpp">
-      <Filter>Editor\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\Graphics\Mesh.cpp">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
+      <Filter>Editor\Editor</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\Shader.cpp">
       <Filter>Game Engine\Systems\Graphic\Shader</Filter>
@@ -70,44 +67,11 @@
     <ClCompile Include="Source\System\Graphics\RawMesh.cpp">
       <Filter>Game Engine\SubSystems\Mesh\Raw</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\IO\BinarySerializer.cpp">
-      <Filter>IO\BinarySerialiser</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\HierarchyView.cpp">
-      <Filter>Editor\Systems\Hierarchy</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Dock.cpp">
-      <Filter>Editor\Systems\Docking</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EGUI.cpp">
-      <Filter>Editor\Systems\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Inspector.cpp">
-      <Filter>Editor\Systems\Inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EGuiDisplay.cpp">
-      <Filter>Editor\Systems\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Commands.cpp">
-      <Filter>Editor\Systems\Commands</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EditorTab.cpp">
-      <Filter>Editor\Systems</Filter>
+    <ClCompile Include="Source\System\Graphics\Mesh.cpp">
+      <Filter>Game Engine\SubSystems\Mesh\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Driver\Driver.cpp">
       <Filter>Game Engine\Systems\Driver</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\ProjectResource.cpp">
-      <Filter>Editor\Systems\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\SceneView.cpp">
-      <Filter>Editor\Systems\SceneView</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\ConsoleLog.cpp">
-      <Filter>Editor\Systems\Log</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp">
       <Filter>Game Engine\Systems\Scene\SceneSystem</Filter>
@@ -115,29 +79,72 @@
     <ClCompile Include="Source\System\Scene\Scene.cpp">
       <Filter>Game Engine\Systems\Scene\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Component\AABB.cpp">
-      <Filter>Game Engine\Components\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Component\Collider.cpp">
-      <Filter>Game Engine\Components\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Component\Convex.cpp">
-      <Filter>Game Engine\Components\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\Collision\CollisionSystem.cpp">
-      <Filter>Game Engine\Systems\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Component\RigidBody.cpp">
-      <Filter>Game Engine\Components\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\Physics\PhysicsSystem.cpp">
-      <Filter>Game Engine\Systems\Physics</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
       <Filter>Game Engine\SubSystems\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Camera\CameraSystem.cpp">
       <Filter>Game Engine\SubSystems\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorTab.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\CallbackManager.cpp">
+      <Filter>Editor\Callback Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\Commands.cpp">
+      <Filter>Editor\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\ConsoleLog.cpp">
+      <Filter>Editor\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\Dock.cpp">
+      <Filter>Editor\Docking</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EGUI.cpp">
+      <Filter>Editor\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EGuiDisplay.cpp">
+      <Filter>Editor\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\HierarchyView.cpp">
+      <Filter>Editor\Hierarchy View</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\Inspector.cpp">
+      <Filter>Editor\Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\ProjectResource.cpp">
+      <Filter>Editor\Project Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\SceneView.cpp">
+      <Filter>Editor\Scene View</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\ScriptFormatter.cpp">
+      <Filter>Editor\Script Formatter</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Events\EventSystem.cpp">
+      <Filter>Game Engine\Systems\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IO\BinarySerializer.cpp">
+      <Filter>IO\BinarySerialiser</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Source\Component\RigidBody.cpp">
+      <Filter>Game Engine\Components\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Collision\CollisionSystem.cpp">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Physics\PhysicsSystem.cpp">
+      <Filter>Game Engine\Systems\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\AABB.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\Collider.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\Convex.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -228,9 +235,6 @@
     <ClInclude Include="Include\System\Graphics\Shader.h">
       <Filter>Game Engine\Systems\Graphic\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\Mesh.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Graphics\Image.h">
       <Filter>Game Engine\Systems\Graphic\Texture</Filter>
     </ClInclude>
@@ -258,9 +262,6 @@
     <ClInclude Include="Include\Object\ObjectFlags.h">
       <Filter>Game Engine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\Editor.h">
-      <Filter>Editor\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="Include\IO\TextSerialiser.h">
       <Filter>IO\TextSerialiser</Filter>
     </ClInclude>
@@ -271,52 +272,13 @@
       <Filter>Math\Matrix\Matrix2</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\RawMesh.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh\Raw</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\VertexDefs.h">
-      <Filter>Game Engine\Systems\Graphic\Mesh</Filter>
       <Filter>Game Engine\SubSystems\Mesh\Raw</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\Serialiser.h">
       <Filter>IO</Filter>
     </ClInclude>
-    <ClInclude Include="Include\IO\BinarySerializer.h">
-      <Filter>IO\BinarySerialiser</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\HierarchyView.h">
-      <Filter>Editor\Systems\Hierarchy</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\Dock.h">
-      <Filter>Editor\Systems\Docking</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EGUI.h">
-      <Filter>Editor\Systems\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\Inspector.h">
-      <Filter>Editor\Systems\Inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\Commands.h">
-      <Filter>Editor\Systems\Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\CommandList.h">
-      <Filter>Editor\Systems\Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EditorTab.h">
-      <Filter>Editor\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\MetaDataStructures.h">
-      <Filter>Utility\Meta</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\MetaAlgorithms.h">
-      <Filter>Utility\Meta</Filter>
     <ClInclude Include="Include\System\Graphics\Mesh.h">
       <Filter>Game Engine\SubSystems\Mesh\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\Meta.h">
-      <Filter>Utility\Meta</Filter>
     </ClInclude>
     <ClInclude Include="Include\Math\Vector2.h">
       <Filter>Math\Vector</Filter>
@@ -324,17 +286,14 @@
     <ClInclude Include="Include\System\Driver\Driver.h">
       <Filter>Game Engine\Systems\Driver</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\Payloads.h">
-      <Filter>Editor\Systems\Payloads</Filter>
+    <ClInclude Include="Include\Utility\MetaAlgorithms.h">
+      <Filter>Utility\Meta</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\ProjectResource.h">
-      <Filter>Editor\Systems\Resource</Filter>
+    <ClInclude Include="Include\Utility\Meta.h">
+      <Filter>Utility\Meta</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\SceneView.h">
-      <Filter>Editor\Systems\SceneView</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\ConsoleLog.h">
-      <Filter>Editor\Systems\Log</Filter>
+    <ClInclude Include="Include\Utility\MetaDataStructures.h">
+      <Filter>Utility\Meta</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Scene\SceneSystem.h">
       <Filter>Game Engine\Systems\Scene\SceneSystem</Filter>
@@ -366,18 +325,6 @@
     <ClInclude Include="Include\Allocator\DefaultAlloc.h">
       <Filter>Allocator</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\Collider.h">
-      <Filter>Game Engine\Components\Collider</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Collision\CollisionSystem.h">
-      <Filter>Game Engine\Systems\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Component\RigidBody.h">
-      <Filter>Game Engine\Components\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
-      <Filter>Game Engine\Systems\Physics</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Graphics\MeshSystem.h">
       <Filter>Game Engine\SubSystems\Mesh</Filter>
     </ClInclude>
@@ -386,6 +333,67 @@
     </ClInclude>
     <ClInclude Include="Include\System\Camera\CameraSystem.h">
       <Filter>Game Engine\SubSystems\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Editor.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorTab.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\CallbackManager.h">
+      <Filter>Editor\Callback Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\CommandList.h">
+      <Filter>Editor\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Commands.h">
+      <Filter>Editor\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\ConsoleLog.h">
+      <Filter>Editor\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Dock.h">
+      <Filter>Editor\Docking</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EGUI.h">
+      <Filter>Editor\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\HierarchyView.h">
+      <Filter>Editor\Hierarchy View</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Inspector.h">
+      <Filter>Editor\Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\ProjectResource.h">
+      <Filter>Editor\Project Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\SceneView.h">
+      <Filter>Editor\Scene View</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Payloads.h">
+      <Filter>Editor\Payload</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\ScriptFormatter.h">
+      <Filter>Editor\Script Formatter</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Events\EventSystem.h">
+      <Filter>Game Engine\Systems\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\IO\BinarySerializer.h">
+      <Filter>IO\BinarySerialiser</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Include\Component\Collider.h">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\RigidBody.h">
+      <Filter>Game Engine\Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Collision\CollisionSystem.h">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
+      <Filter>Game Engine\Systems\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -476,6 +484,9 @@
     <Filter Include="Editor\IMGUI">
       <UniqueIdentifier>{adfd2fea-e1aa-4980-9366-739bf3f0446f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Editor\Editor">
+      <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Mesh">
       <UniqueIdentifier>{ca90d672-42da-4174-9947-7cdd5a3d812c}</UniqueIdentifier>
     </Filter>
@@ -512,46 +523,14 @@
     <Filter Include="Math\Matrix\Matrix2">
       <UniqueIdentifier>{83acf256-2e61-44e4-83bf-a3932a6fabc0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Systems\Graphic\Mesh\Raw">
-      <UniqueIdentifier>{466ff2cb-a158-4c05-a63f-87c44bb584ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems">
-      <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\Hierarchy">
-      <UniqueIdentifier>{906f0146-1116-4f0b-857f-1b0b4bcc43c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\Resource">
-      <UniqueIdentifier>{3c08c0c6-b523-44ae-98ef-48b87c318ea8}</UniqueIdentifier>
     <Filter Include="Game Engine\Systems\Graphic\Shader\Programs">
       <UniqueIdentifier>{25efe6f2-2810-44e2-bb62-561d5426d05d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Systems\Docking">
-      <UniqueIdentifier>{34a1246a-c7f5-4d3e-8782-89bda07d0ff3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\UI">
-      <UniqueIdentifier>{5ebbd455-7289-4ca0-ae0a-e93d5864eca0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\Inspector">
-      <UniqueIdentifier>{73aa6123-3e9a-4b83-96d4-d2df50a31dc0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\Commands">
-      <UniqueIdentifier>{fa4a1355-e83c-435a-9efc-82303a68ef59}</UniqueIdentifier>
+    <Filter Include="Game Engine\Systems\Driver">
+      <UniqueIdentifier>{5218dddd-4e8e-4b28-9f3d-f179f71e8edc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utility\Meta">
-      <UniqueIdentifier>{a97bd027-be4d-412f-ba0f-3c382ab724e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\Systems\Driver">
-      <UniqueIdentifier>{238c243a-65c5-4e4b-8ebb-9797a55cb924}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\Payloads">
-      <UniqueIdentifier>{6ae347d0-607b-4c8f-97f3-2047a93d26fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\SceneView">
-      <UniqueIdentifier>{770c1cc6-aceb-40be-8cc4-1b8752a78079}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Systems\Log">
-      <UniqueIdentifier>{6936f02f-3d30-411a-ad25-d61c764a6c90}</UniqueIdentifier>
+      <UniqueIdentifier>{6a9f286f-47a9-4b59-9ff5-dda9a16e59f1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Systems\Scene">
       <UniqueIdentifier>{ddb89e65-93e8-4262-89d0-be65eefb7603}</UniqueIdentifier>
@@ -561,18 +540,6 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Scene\Scene">
       <UniqueIdentifier>{f3eae6d5-d8fd-463f-9178-71e46cda18c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\Components\Collider">
-      <UniqueIdentifier>{1133441c-fabd-4aca-9ff6-3827e8642748}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\Systems\Collision">
-      <UniqueIdentifier>{b594c75f-4729-452e-96dd-7620db0d54f5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\Components\Physics">
-      <UniqueIdentifier>{2db22bea-e7f7-4105-b15b-22694ceec275}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\Systems\Physics">
-      <UniqueIdentifier>{7f623c8c-d488-48c4-b917-fdb953cc4b5f}</UniqueIdentifier>
     </Filter>
     <Filter Include="DataStructures\Arrays">
       <UniqueIdentifier>{e471095b-299b-49a3-ae39-89a0de8825c4}</UniqueIdentifier>
@@ -597,6 +564,54 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Camera">
       <UniqueIdentifier>{c6d69b09-93e3-434e-a4bc-e25fb0c06c6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Project Resource">
+      <UniqueIdentifier>{c5ac7258-cd5b-41a2-aa35-e58dbae20806}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Scene View">
+      <UniqueIdentifier>{71a85056-a560-4672-bf11-af0a4c971ad1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Inspector">
+      <UniqueIdentifier>{35530ff6-5930-4a89-b8db-49dcc15bfdda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Docking">
+      <UniqueIdentifier>{06af060e-209f-4067-a5e6-2f4b596f578b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Callback Manager">
+      <UniqueIdentifier>{c8dbf3fe-24be-4c5f-9964-0d10ff8c569e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Commands">
+      <UniqueIdentifier>{573a6f53-0ee9-4c6b-bda7-2e8af2e8b43c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Console">
+      <UniqueIdentifier>{24e718b4-19d5-461a-b934-7fa561a0580b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\UI">
+      <UniqueIdentifier>{f31040be-52b0-48eb-96d0-207560e3376d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Hierarchy View">
+      <UniqueIdentifier>{a885b5ac-c2be-42de-9871-dadd13992aac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Payload">
+      <UniqueIdentifier>{618f59c4-4557-4253-8ca9-16e74a8be22a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Script Formatter">
+      <UniqueIdentifier>{100cb6f9-3343-4db5-bdf7-5fb56c61c436}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Event">
+      <UniqueIdentifier>{d23ded5b-d4bb-4fd0-beda-88279300b1d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Colliders">
+      <UniqueIdentifier>{9029def7-8e95-4722-9309-2656146f5799}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Physics">
+      <UniqueIdentifier>{39a443aa-5f4c-4154-9a2f-4e9d13c00472}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Collision">
+      <UniqueIdentifier>{b1cbecf8-eac1-4a71-add2-85941053a148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Physics">
+      <UniqueIdentifier>{e12aa00d-ccc8-4554-a50e-3b29041273b6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

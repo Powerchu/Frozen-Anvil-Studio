@@ -20,8 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <stdlib.h>
 #include <tchar.h>
 
-static const std::string DEFAULT_PATH = "..\\DystopiaEngine";// \\Resource";
-static const std::string DEFAULT_NAME = "Resource";
+static const std::string DEFAULT_PATH = "..\\DystopiaEngine";
+static const std::string DEFAULT_NAME = "DystopiaEngine";
 static float delay = 5;
 
 namespace Dystopia
@@ -112,11 +112,13 @@ namespace Dystopia
 		: EditorTab{ true },
 		mLabel{ "Project" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
 		mpCurrentFolder{ nullptr }, mArrAllFiles{}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
-		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 50, 60 }
+		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 90 }
 	{}
 
 	ProjectResource::~ProjectResource()
-	{}
+	{
+		mpEditorEventSys->UnBindFromEvent("LeftClick", this);
+	}
 
 	void ProjectResource::Init()
 	{
@@ -131,6 +133,8 @@ namespace Dystopia
 		mArrAllFiles.clear();
 		GetAllFiles(mArrAllFiles, mpRootFolder);
 		SortAllFiles(mArrAllFiles);
+
+		mpEditorEventSys->BindToEvent("LeftClick", &ProjectResource::RemoveFocusOnFile, this);
 
 		std::wstring wPath{ DEFAULT_PATH.begin(), DEFAULT_PATH.end() };
 		mChangeHandle[0] = FindFirstChangeNotification(wPath.c_str(), true, mWaitFlags);
@@ -168,9 +172,9 @@ namespace Dystopia
 		EGUI::SameLine(2);
 		EGUI::StartChild("FileWindow", fileWindowSize);
 		if (!strlen(mSearchText))
-			FileWindow();
+			FileWindow(fileWindowSize);
 		else
-			SearchResultWindow();
+			SearchResultWindow(fileWindowSize);
 		EGUI::EndChild();
 	}
 
@@ -231,27 +235,40 @@ namespace Dystopia
 		EGUI::EndChild();
 	}
 
-	void ProjectResource::FileWindow()
+	void ProjectResource::FileWindow(const Math::Vec2& _mySize)
 	{
+		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.5f };
+		unsigned int columns = static_cast<unsigned int>(_mySize.x / buffedSize.x);
+		columns = columns ? columns : 1 ;
+
 		if (mpCurrentFolder)
 		{ 
 			EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
 			EGUI::Display::HorizontalSeparator();
 			for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
 			{
-				EGUI::Indent(10);// +(i * 210));
-				EGUI::PushID(i);
-				FileUI(mpCurrentFolder->mArrPtrFiles[i]);
-				EGUI::PopID();
-				EGUI::UnIndent(10);// +(i * 210));
-				//if ( i <  mpCurrentFolder->mArrPtrFiles.size() - 1)
-				//	EGUI::SameLine();
+				File* pFile = mpCurrentFolder->mArrPtrFiles[i];
+				const std::string id = "ProjectResourceFileWindow" + pFile->mName + std::to_string(i);
+				if (i % columns) EGUI::SameLine();
+				if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{0,0,0,0}))
+				{
+					EGUI::Indent(10);
+					EGUI::PushID(i);
+					FileUI(pFile);
+					EGUI::PopID();
+					EGUI::UnIndent(10);
+				}
+				EGUI::EndChild();
 			}
 		}
 	}
 	
-	void ProjectResource::SearchResultWindow()
+	void ProjectResource::SearchResultWindow(const Math::Vec2& _mySize)
 	{
+		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.5f };
+		unsigned int columns = static_cast<unsigned int>(_mySize.x / buffedSize.x);
+		columns = columns ? columns : 1;
+
 		EGUI::Display::Label("Searching: %s", mSearchText);
 		EGUI::Display::HorizontalSeparator();
 		size_t size = mArrFilesSearchedThisFrame.size();
@@ -259,11 +276,18 @@ namespace Dystopia
 		{
 			for (unsigned int i = 0; i < size; ++i)
 			{
-				EGUI::Indent(10);
-				EGUI::PushID(i);
-				FileUI(mArrFilesSearchedThisFrame[i]);
-				EGUI::PopID();
-				EGUI::UnIndent(10);
+				File* pFile = mArrFilesSearchedThisFrame[i];
+				const std::string id = "ProjectResourceSearchResultWindow" + pFile->mName + std::to_string(i);
+				if (i % columns) EGUI::SameLine();
+				if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{ 0,0,0,0 }))
+				{
+					EGUI::Indent(10);
+					EGUI::PushID(i);
+					FileUI(pFile);
+					EGUI::PopID();
+					EGUI::UnIndent(10);
+				}
+				EGUI::EndChild();
 			}
 		}
 		else
@@ -305,6 +329,11 @@ namespace Dystopia
 			mpCurrentFolder = mpRootFolder;
 			mFocusedFile = nullptr;
 		}
+	}
+
+	void ProjectResource::RemoveFocusOnFile()
+	{
+		mFocusedFile = nullptr;
 	}
 
 	std::string ProjectResource::GetLabel() const
@@ -390,9 +419,10 @@ namespace Dystopia
 	{
 		if (_file == mFocusedFile) EGUI::Display::Outline(mPayloadRect.x, mPayloadRect.y);
 
-		if (EGUI::Display::CustomPayload(("###projectView" + _file->mName).c_str(), _file->mName.c_str(), _file->mName.c_str(), 
-			mPayloadRect, EGUI::FILE, &(*_file), sizeof(File)))
+		if (EGUI::Display::CustomPayload(("###ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
+			_file->mName.c_str(), mPayloadRect, EGUI::FILE, &(*_file), sizeof(File)))
 		{
+			mFocusedFile = _file;
 		}
 		//if (EGUI::Display::Button(_file->mName.c_str(), mPayloadRect))
 		//{

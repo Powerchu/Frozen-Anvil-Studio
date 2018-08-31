@@ -24,11 +24,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Sound\SoundSystem.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Window\WindowManager.h"
-#include "System\Collision\CollisionSystem.h"
-#include "System\Physics\PhysicsSystem.h"
+#include "System/Collision/CollisionSystem.h"
+#include "System/Physics/PhysicsSystem.h"
 #include "System\Graphics\MeshSystem.h"
 #include "System\Camera\CameraSystem.h"
-
+#include "System\Events\EventSystem.h"
 
 namespace
 {
@@ -149,6 +149,9 @@ void Dystopia::EngineCore::Shutdown(void)
 		e->Shutdown();
 
 	for (auto& e : mSystemList)
+		delete e;
+
+	for (auto& e : mSubSystems)
 		delete e;
 
 	mSystemList.clear();

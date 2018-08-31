@@ -26,6 +26,7 @@ namespace Dystopia
 	class GuiSystem;
 	class CommandHandler;
 	class EditorTab;
+	class EventSystem;
 	//class SceneManager;
 	//class Scene;
 
@@ -66,6 +67,7 @@ namespace Dystopia
 		WindowManager	*mpWin;
 		GraphicsSystem	*mpGfx;
 		InputManager	*mpInput;
+		EventSystem		*mpEditorEventSys;
 		CommandHandler	*mpComdHandler;
 		GuiSystem		*mpGuiSystem;
 		// SceneManager *mpSceneMgr;
