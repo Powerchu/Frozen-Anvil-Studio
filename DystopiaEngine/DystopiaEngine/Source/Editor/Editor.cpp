@@ -96,8 +96,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	driver->Init();
 	editor->Init(driver->GetSystem<Dystopia::WindowManager>(),
-				 driver->GetSystem<Dystopia::GraphicsSystem>(),
-				 driver->GetSystem<Dystopia::InputManager>());
+				 driver->GetSystem<Dystopia::GraphicsSystem>());
 
 	/* Start of Event System usage example */
 	Dystopia::EventSystem *es = driver->GetSystem<Dystopia::EventSystem>();
@@ -147,7 +146,8 @@ namespace Dystopia
 
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mPrevFrameTime{ 0 }, 
-		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr },
+		mpWin{ nullptr }, mpGfx{ nullptr },
+		mpInput{ new InputManager{} },
 		mpEditorEventSys{ new EventSystem{} },
 		mpComdHandler{ new CommandHandler{} },
 		mpGuiSystem{ new GuiSystem{} }
@@ -157,12 +157,11 @@ namespace Dystopia
 	{
 	}
 
-	void Editor::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInput)
+	void Editor::Init(WindowManager *_pWin, GraphicsSystem *_pGfx)
 	{ 
 		mpWin = _pWin;
 		mpGfx = _pGfx;
-		mpInput = _pInput;
-
+		mpInput->Init();
 		EGUI::SetContext(mpComdHandler);
 		for (auto& e : mTabsArray)
 		{
@@ -177,6 +176,7 @@ namespace Dystopia
 
 	void Editor::LoadDefaults()
 	{
+		mpInput->LoadDefaults();
 		mTabsArray.push_back(Inspector::GetInstance());
 		mTabsArray.push_back(ProjectResource::GetInstance());
 		mTabsArray.push_back(HierarchyView::GetInstance());
@@ -253,6 +253,9 @@ namespace Dystopia
 
 		mpWin = nullptr;
 		mpGfx = nullptr;
+
+		mpInput->Shutdown();
+		delete mpInput;
 		mpInput = nullptr;
 
 		mpEditorEventSys->Shutdown();

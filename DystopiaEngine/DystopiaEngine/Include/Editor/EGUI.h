@@ -454,11 +454,6 @@ namespace Dystopia
 		void			StartFrame(const float&);
 		void			EndFrame();
 		void			Shutdown();
-
-		void			UpdateCharInputs(unsigned int c);
-		void			UpdateMouseInputs();
-		void			UpdateKeyInputs();
-		void			UpdateScrollInputs();
 		const char*		GetMainDockspaceName() const;
 
 	private:

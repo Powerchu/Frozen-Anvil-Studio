@@ -462,32 +462,6 @@ namespace Dystopia
 		glBindVertexArray(last_vertex_array);
 	}
 
-	void GuiSystem::UpdateCharInputs(unsigned int c)
-	{
-		// update char inputs
-		ImGuiIO& io = ImGui::GetIO();
-		if (c > 0 && c < 0x10000)
-			io.AddInputCharacter(static_cast<unsigned short>(c));
-	}
-
-	void GuiSystem::UpdateMouseInputs()
-	{
-		// update mouse inputs
-		mMouseJustPressed[0] = mpInput->IsKeyPressed(eUserButton::MOUSE_L);
-		mMouseJustPressed[1] = mpInput->IsKeyPressed(eUserButton::MOUSE_R);
-		mMouseJustPressed[2] = mpInput->IsKeyPressed(eUserButton::MOUSE_M);
-	}
-	
-	void GuiSystem::UpdateKeyInputs()
-	{
-		// this should be use more for game inputs? but allows some hotkeys in editor
-	}
-	
-	void GuiSystem::UpdateScrollInputs()
-	{
-		// get scroll inputs from windows programming or from input manager?
-	}
-
 	void GuiSystem::StartFullDockableSpace()
 	{
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | 
