@@ -6,7 +6,7 @@
 
 namespace Dystopia
 {
-	class PhysicsSystem : Systems
+	class PhysicsSystem : public Systems
 	{
 	public:
 		PhysicsSystem();
