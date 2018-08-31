@@ -68,7 +68,7 @@ namespace Dystopia
 		/*Only need one simplex to check*/
 		static AutoArray<Vertice> Simplex{ 3 };
 		static Math::Vec3D vDir;
-		/*Insert the first Point of the Miwoski difference*/
+		/*Insert the first Miwoski difference point*/
 		vDir = _v3Dir;
 		Simplex.Insert(Vertice{ Support(_pColB, vDir)});
 		/*Negate the Direction*/
@@ -76,9 +76,15 @@ namespace Dystopia
 		/*Continue to loop until the return statement stops it*/
 		while (true)
 		{
+			/*Add the Second Miwoski difference Point */
 			Simplex.Insert(Vertice{ Support(_pColB, vDir) });
+			/*If the Second Miwoski difference point does not go pass the origin,
+			  That means that the Shape of the Miwoski difference does not contain origin*/
 			if (Math::Dot(Simplex.back().mPosition, vDir) <= 0)
 			{
+				/*Clear the simplex for the next function call*/
+				Simplex.clear();
+				/*Return no collision*/
 				return false;
 			}
 			else
@@ -86,7 +92,9 @@ namespace Dystopia
 				/*Check if Simplex contains Origin*/
 				if (ContainOrigin(Simplex, vDir))
 				{
+					/*Clear the simplex for the next function call*/
 					Simplex.clear();
+					/*Return true for collision*/
 					return true;
 				}
 			}
@@ -102,8 +110,12 @@ namespace Dystopia
 	Vertice Convex::GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir)
 	{
 		/*Convert the points to global*/
+		/*Global position of Object*/
 		Transform & _ColATrans = *(_ColA.GetOwner()->GetComponent<Transform>());
+		/*Offset of the collider from Object Local Coordinate System*/
 		Math::Vec3D const & OffSet = _ColA.GetOffSet();
+
+		/*Construct the Matrix for Global Coordinate Conversion*/
 		Math::Matrix3D WorldSpace = Math::Translate(_ColATrans.GetPosition().x + OffSet.x, _ColATrans.GetPosition().y + OffSet.y, 0);
 
 		Vertice * pFirst = _ColA.mVertices.begin();
@@ -145,9 +157,9 @@ namespace Dystopia
 			Math::Vec3D EdgeNorm;
 			EdgeNorm.xyzw = EdgeVec.yxzw;
 #ifdef CLOCKWISE
-			EdgeNorm.Negate<Math::Vec4::Flags::NEGATE_Y>();
+			EdgeNorm.Negate<Math::NegateFlag::Y>();
 #else
-			EdgeNorm.Negate<Math::Vec4::Flags::NEGATE_X>();
+			EdgeNorm.Negate<Math::NegateFlag::X>();
 #endif
 			EdgeNorm.Normalise();
 			double distance = EdgeNorm.Dot(a.mPosition);
@@ -208,16 +220,18 @@ namespace Dystopia
 
 				/*Get the Left Hand Normal of LastToFirst*/
 				_v3Dir = Math::Vec3D{ -LastToFirst.y, LastToFirst.x,0,0 };
+
 				/*Ensure that the normal is pointing away from the inside
 				  of the triangle. If it is not, inverse it*/
 				_v3Dir = Dot(_v3Dir, _Simplex[1].mPosition) > 0 ? -_v3Dir : _v3Dir;
+
 				if (Dot(_v3Dir, v) > 0)
 				{
 					/*
 					  Remove the First vertex from the shape so that we can
 					  find a new one
 					*/
-					_Simplex.Remove(0);
+					_Simplex.Remove(static_cast<unsigned>(0));
 					/*The origin is outside of the shape*/
 					return false;
 

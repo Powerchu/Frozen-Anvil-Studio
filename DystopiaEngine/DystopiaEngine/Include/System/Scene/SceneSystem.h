@@ -35,6 +35,7 @@ namespace Dystopia
 
 		void FixedUpdate(float);
 		void Update(float);
+		void PostUpdate(void);
 		void Shutdown(void);
 
 		void LoadDefaults(void);
@@ -53,7 +54,6 @@ namespace Dystopia
 
 		Scene *mpNextScene;
 		Scene *mpCurrScene;
-		Scene *mpPrevScene;
 	};
 }
 

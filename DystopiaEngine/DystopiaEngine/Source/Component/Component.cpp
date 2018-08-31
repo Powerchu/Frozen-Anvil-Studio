@@ -12,9 +12,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Component\Component.h"		// File Header
+#include "Object\ObjectFlags.h"
 
 Dystopia::Component::Component(void) :
-	mbActive(true), mpOwner(nullptr)
+	mnFlags(FLAG_NONE), mpOwner(nullptr)
 {
 
 }
@@ -26,16 +27,16 @@ Dystopia::Component::~Component(void)
 
 bool Dystopia::Component::IsActive(void) const
 {
-	return mbActive;
+	return mnFlags & FLAG_ACTIVE;
 }
 
 void Dystopia::Component::SetActive(const bool _bEnable)
 {
-	mbActive = _bEnable;
+	mnFlags = _bEnable ? mnFlags | FLAG_ACTIVE : mnFlags & ~FLAG_ACTIVE;
 }
 
 
-void Dystopia::Component::Load(void)
+void Dystopia::Component::Load(void) 
 {
 
 }
@@ -44,23 +45,8 @@ void Dystopia::Component::Init(void)
 {
 
 }
-/*
-void Dystopia::Component::Update(const float)
-{
 
-}
-
-void Dystopia::Component::FixedUpdate(const float)
-{
-
-}
-
-void Dystopia::Component::PostUpdate(void)
-{
-
-}
-*/
-void Dystopia::Component::OnDestroy(void)
+void Dystopia::Component::GameObjectDestroy(void)
 {
 
 }
@@ -68,6 +54,12 @@ void Dystopia::Component::OnDestroy(void)
 void Dystopia::Component::Unload(void)
 {
 
+}
+
+
+void Dystopia::Component::DestroyComponent(void)
+{
+	mnFlags = FLAG_REMOVE;
 }
 
 

@@ -7,12 +7,32 @@
 #include "Math\Vector4.h"                      /*Vector*/
 #include "DataStructure\AutoArray.h"	       /*AutoArray Data Structure*/
 #include "System\Collision\CollisionSystem.h"            /*Collision System*/
+#include "Utility\MetaAlgorithms.h"		// MetaFind
 
 #define CLOCKWISE 1
 /*
                                  -----------AABB
  Collider[BASE]<--- CONVEX <-----|
                                  -----------TRIANGLE
+
+	 There is 3 Coordinate system at play here.
+	 Global Coordinate System
+	 - The Global Position of the object
+	 Local Object Position
+	 - The Local Coordinate System of the Object
+	 Collider Coordinate System
+	 - The Local Coordinate System of the Collider
+
+	 EG. Object Global Coordinates is (10 , 10)
+	 Offset is (4,4)
+	 One of the Collider Vertice Position is (1,2)
+
+	 The Global Position of the Collider Vertice is
+	 (10,10) + (4,4) + (1,2) = (15,16)
+
+	 The Global Position of the Collider is
+	 (10,10) + (4,4)         = (14,14)
+
 */
 namespace Dystopia
 {
@@ -60,8 +80,10 @@ namespace Dystopia
 	{
 	public:
 
-		static const eComponents TYPE = eComponents::COLLIDER;
-		const eComponents GetComponentType(void) const { return TYPE; };
+		unsigned GetComponentType(void) const
+		{
+			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+		};
 
 		static const eColliderType ColliderType = eColliderType::BASE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
@@ -99,8 +121,6 @@ namespace Dystopia
 	class Convex : public virtual Collider
 	{
 	public:
-		static const eComponents TYPE = eComponents::COLLIDER;
-		const eComponents GetComponentType(void) const { return TYPE; };
 
 		static const eColliderType ColliderType = eColliderType::CONVEX;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
@@ -155,6 +175,9 @@ namespace Dystopia
 		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
 
 	protected:
+
+
+		/*The vertices of the collider in the Collider Local Coordinate System*/
 		AutoArray<Vertice> mVertices;
 	};
 
@@ -162,8 +185,6 @@ namespace Dystopia
 	class AABB : public Convex
 	{
 	public:
-		static const eComponents TYPE = eComponents::COLLIDER;
-		const eComponents GetComponentType(void) const { return TYPE; };
 
 		static const eColliderType ColliderType = eColliderType::AABB;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
@@ -205,8 +226,6 @@ namespace Dystopia
 	class Triangle : public Convex
 	{
 	public:
-		static const eComponents TYPE = eComponents::COLLIDER;
-		const eComponents GetComponentType(void) const { return TYPE; };
 
 		static const eColliderType ColliderType = eColliderType::TRIANGLE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }

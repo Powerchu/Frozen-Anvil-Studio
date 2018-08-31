@@ -12,13 +12,14 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include <GL\glew.h>				// glViewport
-
 #include "Component\Camera.h"		// File header
 #include "Component\Transform.h"
 #include "Object\GameObject.h"
 #include "Math\Matrix4.h"
 #include "Math\MathUtility.h"
+
+#include <GL\glew.h>				// glViewport
+
 
 Dystopia::Camera::Camera(const int _fWidth, const int _fHeight) : Component{},
 	mViewport{0, 0, _fWidth, _fHeight}, mView{},

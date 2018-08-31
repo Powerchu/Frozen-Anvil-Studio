@@ -14,7 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _ENGINE_DRIVER_H_
 #define _ENGINE_DRIVER_H_
 
-#include "DataStructure\SharedPtr.h"
 #include "DataStructure\AutoArray.h"
 
 #include "System\SystemTypes.h"
@@ -31,25 +30,32 @@ namespace Dystopia
 	class EngineCore final  
 	{
 		using AllSys = Utility::MetaSortT_t <Utility::MetaLessThan, Utility::Collection <
-			Utility::Indexer<eSYSTEMS::TIME_SYSTEM       , class TimeSystem     >,
-			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM      , class InputManager   >,
-			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM     , class WindowManager  >,
-			Utility::Indexer<eSYSTEMS::COLLISION_SYSTEM  , class CollisionSystem>,
-//			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM      , class SoundSystem    >,
-			Utility::Indexer<eSYSTEMS::SCENE_SYSTEM      , class SceneSystem    >,
-			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM    , class GraphicsSystem >
+			Utility::Indexer<eSYSTEMS::TIME_SYSTEM     , class TimeSystem     >,
+			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM    , class InputManager   >,
+			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM   , class WindowManager  >,
+//			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM    , class SoundSystem    >,
+			Utility::Indexer<eSYSTEMS::SCENE_SYSTEM    , class SceneSystem    >,
+			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM  , class GraphicsSystem >,
+			Utility::Indexer<eSYSTEMS::EVENT_SYSTEM    , class EventSystem    >,
+			Utility::Indexer<eSYSTEMS::COLLISION_SYSTEM, class CollisionSystem>,
+			Utility::Indexer<eSYSTEMS::PHYSICS_SYSTEM  , class PhysicsSystem  >
 		>>;
 
 		using SubSys = typename Utility::MetaAutoIndexer <
-//			class CameraSystem,
+			class CameraSystem,
 			class MeshSystem
 		>::result;
 
 	public:
 
-		static SharedPtr<EngineCore> const & GetInstance(void) noexcept;
+		static EngineCore* GetInstance(void) noexcept;
+
+		~EngineCore(void) = default;
 
 		template <class T>
+		T* const GetSystem(void) const;
+
+		template <unsigned N, class T = Utility::MetaExtract_t<N, AllSys>>
 		T* const GetSystem(void) const;
 
 		template <class T>
@@ -75,16 +81,34 @@ namespace Dystopia
 
 
 
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
 template<class T>
 inline T* const Dystopia::EngineCore::GetSystem(void) const
 {
-	return static_cast<T*>(mSystemTable[Utility::MetaFind_t<T, AllSys>::value]);
+	using type = Utility::MetaFind<T, AllSys>;
+	static_assert(type::value, "Error: System not found!");
+
+	return static_cast<T*>(mSystemTable[type::result::value]);
+}
+
+template<unsigned _N, class T>
+inline T* const Dystopia::EngineCore::GetSystem(void) const
+{
+	return static_cast<T*>(mSystemTable[_N]);
 }
 
 template<class T>
 inline T* const Dystopia::EngineCore::GetSubSystem(void) const
 {
-	return static_cast<T*>(mSubSystems[Utility::MetaFind_t<T, SubSys>::value]);
+	using type = Utility::MetaFind<T, SubSys>;
+	static_assert(type::value, "Error: Sub-System not found!");
+
+	return static_cast<T*>(mSubSystems[type::result::value]);
 }
 
 

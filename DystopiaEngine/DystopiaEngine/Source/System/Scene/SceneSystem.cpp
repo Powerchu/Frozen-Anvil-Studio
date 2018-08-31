@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::SceneSystem::SceneSystem(void) :
-	mpCurrScene{ nullptr }, mpNextScene{ nullptr }, mpPrevScene{ nullptr }
+	mpCurrScene{ nullptr }, mpNextScene{ nullptr }
 {
 }
 
@@ -26,6 +26,7 @@ Dystopia::SceneSystem::~SceneSystem(void)
 
 void Dystopia::SceneSystem::PreInit(void)
 {
+	mpCurrScene = new Scene{};
 }
 
 bool Dystopia::SceneSystem::Init(void)
@@ -35,6 +36,7 @@ bool Dystopia::SceneSystem::Init(void)
 
 void Dystopia::SceneSystem::PostInit(void)
 {
+	mpNextScene = mpCurrScene;
 }
 
 void Dystopia::SceneSystem::FixedUpdate(float _dt)
@@ -42,9 +44,6 @@ void Dystopia::SceneSystem::FixedUpdate(float _dt)
 	if (mpNextScene == mpCurrScene)
 	{
 		mpCurrScene->FixedUpdate(_dt);
-	}
-	else
-	{
 	}
 }
 
@@ -56,19 +55,31 @@ void Dystopia::SceneSystem::Update(float _dt)
 	}
 	else
 	{
+		
+	}
+}
+
+void Dystopia::SceneSystem::PostUpdate(void)
+{
+	if (mpNextScene == mpCurrScene)
+	{
+		mpCurrScene->PostUpdate();
 	}
 }
 
 void Dystopia::SceneSystem::Shutdown(void)
 {
+
 }
 
 void Dystopia::SceneSystem::LoadDefaults(void)
 {
+
 }
 
 void Dystopia::SceneSystem::LoadSettings(TextSerialiser&)
 {
+
 }
 
 void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)

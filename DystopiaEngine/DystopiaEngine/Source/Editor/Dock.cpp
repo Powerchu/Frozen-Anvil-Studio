@@ -455,13 +455,13 @@ void DockSpace::SplitTabs()
 
 		if (pTab->IsHorizontal())
 		{
-			cursor = ImGuiMouseCursor_ResizeEW;
 			SplitTabHorizontal(pTab, dsize, pos0, pos1, size0, size1);
+			cursor = ImGuiMouseCursor_ResizeEW;
 		}
 		else
 		{
-			cursor = ImGuiMouseCursor_ResizeNS;
 			SplitTabVertical(pTab, dsize, pos0, pos1, size0, size1);
+			cursor = ImGuiMouseCursor_ResizeNS;
 		}
 		pTab->mArrChildPtr[0]->SetPosSize(pos0, size0);
 		pTab->mArrChildPtr[1]->SetPosSize(pos1, size1);
@@ -622,7 +622,6 @@ void DockSpace::HandleDragging(Tabs& _tab)
 	pCanvas->PushClipRectFullScreen();
 
 	Tabs *pDestTab = GetTabAtMouse();
-
 	_tab.mPos = ImGui::GetIO().MousePos - mDragOffset;
 	if (pDestTab)
 	{
@@ -1081,7 +1080,8 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 		mpNextParentTab = &_tab;
 	}
 	mCurrentTab = &_tab;
-	if (_tab.mStatus == eSTATUS_DRAGGED) HandleDragging(_tab);
+	if (_tab.mStatus == eSTATUS_DRAGGED) 
+		HandleDragging(_tab);
 	if (_tab.mStatus == eSTATUS_FLOATING)
 	{
 		ImGui::SetNextWindowPos(first ? ImVec2{ 100, 100 } : _tab.mPos);

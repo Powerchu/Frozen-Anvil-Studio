@@ -27,15 +27,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="Source\Component\AABB.cpp" />
-    <ClCompile Include="Source\Component\Collider.cpp" />
-    <ClCompile Include="Source\Component\Convex.cpp" />
+    <ClCompile Include="Source\Component\Colliders\AABB.cpp" />
+    <ClCompile Include="Source\Component\Colliders\Collider.cpp" />
+    <ClCompile Include="Source\Component\Colliders\Convex.cpp" />
+    <ClCompile Include="Source\Component\RigidBody.cpp" />
+    <ClCompile Include="Source\Editor\CallbackManager.cpp" />
     <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
+    <ClCompile Include="Source\Editor\ScriptFormatter.cpp" />
+    <ClCompile Include="Source\System\Camera\CameraSystem.cpp" />
     <ClCompile Include="Source\System\Collision\CollisionSystem.cpp" />
     <ClCompile Include="Source\System\Driver\Driver.cpp" />
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
@@ -55,6 +60,7 @@
     <ClCompile Include="Source\Math\Matrix4.cpp" />
     <ClCompile Include="Source\Object\GameObject.cpp" />
     <ClCompile Include="Source\Component\Camera.cpp" />
+    <ClCompile Include="Source\System\Events\EventSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\GraphicsSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Mesh.cpp" />
     <ClCompile Include="Source\System\Graphics\MeshSystem.cpp" />
@@ -63,6 +69,7 @@
     <ClCompile Include="Source\System\Graphics\Texture.cpp" />
     <ClCompile Include="Source\System\Graphics\Texture2D.cpp" />
     <ClCompile Include="Source\System\Input\InputSystem.cpp" />
+    <ClCompile Include="Source\System\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="Source\System\Scene\Scene.cpp" />
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
@@ -71,16 +78,24 @@
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\Component\Collider.h" />
+    <ClInclude Include="Include\Component\RigidBody.h" />
+    <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
+    <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Include\Editor\CallbackManager.h" />
+    <ClInclude Include="Include\System\Events\EventSystem.h" />
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui_internal.h" />
     <ClInclude Include="Include\Behaviour\Behaviour.h" />
-    <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Component.h" />
     <ClInclude Include="Include\Component\ComponentList.h" />
     <ClInclude Include="Include\Component\Transform.h" />
+    <ClInclude Include="Include\DataStructure\Array.h" />
     <ClInclude Include="Include\DataStructure\AutoArray.h" />
     <ClInclude Include="Include\DataStructure\Heap.h" />
+    <ClInclude Include="Include\DataStructure\MagicArray.h" />
     <ClInclude Include="Include\DataStructure\Queue.h" />
     <ClInclude Include="Include\DataStructure\SharedPtr.h" />
     <ClInclude Include="Include\DataStructure\Stack.h" />
@@ -96,11 +111,14 @@
     <ClInclude Include="Include\Editor\Payloads.h" />
     <ClInclude Include="Include\Editor\ProjectResource.h" />
     <ClInclude Include="Include\Editor\SceneView.h" />
+    <ClInclude Include="Include\Editor\ScriptFormatter.h" />
+    <ClInclude Include="Include\Allocator\DefaultAlloc.h" />
     <ClInclude Include="Include\Globals.h" />
     <ClInclude Include="Include\IO\BinarySerializer.h" />
     <ClInclude Include="Include\IO\ImageParser.h" />
     <ClInclude Include="Include\IO\Serialiser.h" />
     <ClInclude Include="Include\IO\TextSerialiser.h" />
+    <ClInclude Include="Include\Math\Angles.h" />
     <ClInclude Include="Include\Math\MathInternal.h" />
     <ClInclude Include="Include\Math\MathUtility.h" />
     <ClInclude Include="Include\Math\Matrix2.h" />
@@ -111,7 +129,7 @@
     <ClInclude Include="Include\Object\ObjectFlags.h" />
     <ClInclude Include="Include\System\Base\Systems.h" />
     <ClInclude Include="Include\Component\Camera.h" />
-    <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
+    <ClInclude Include="Include\System\Camera\CameraSystem.h" />
     <ClInclude Include="Include\System\Driver\Driver.h" />
     <ClInclude Include="Include\System\Graphics\GraphicsDefs.h" />
     <ClInclude Include="Include\System\Graphics\GraphicsSystem.h" />
@@ -142,6 +160,7 @@
     <ClInclude Include="Include\Utility\Utility.h" />
     <ClInclude Include="Include\Math\Vector2.h" />
     <ClInclude Include="Include\Utility\UtilityInternals.h" />
+    <ClInclude Include="Include\DataStructure\Pointer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>
@@ -275,7 +294,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/DEDITOR</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR /std:c++latest</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
