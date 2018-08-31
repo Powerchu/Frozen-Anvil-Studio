@@ -14,20 +14,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _CAMERA_SYS_H_
 #define _CAMERA_SYS_H_
 
+#include "DataStructure\MagicArray.h"
+#include "Component\Camera.h"
+
 
 namespace Dystopia
 {
-	class Camera;
-
 	class CameraSystem final
 	{
 	public:
 		
-		Camera* RequestSystem(void) const;
+		Camera* RequestComponent(void);
 
 
 	private:
 
+		MagicArray<Camera> mCameras;
 	};
 }
 

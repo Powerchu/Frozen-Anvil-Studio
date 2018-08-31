@@ -180,9 +180,25 @@ namespace Dystopia
 		MSG msg;
 		for (Window& w : mWindows)
 		{
-			while (PeekMessage(&msg, w.GetWindowHandle(), 0, 0, PM_REMOVE))
+			auto& inputQueue = const_cast<Queue<eButton>&>(w.GetInputQueue());
+			inputQueue.clear();
+
+			while (!inputQueue.IsFull() && PeekMessage(&msg, w.GetWindowHandle(), 0, 0, PM_REMOVE))
 			{
 				TranslateMessage(&msg);
+
+				switch (msg.message)
+				{
+				case WM_KEYDOWN:
+				case WM_SYSKEYDOWN:
+					inputQueue.Insert(static_cast<eButton>(msg.wParam));
+					break;
+				case WM_KEYUP:
+				case WM_SYSKEYUP:
+				default:
+					break;
+				}
+
 				DispatchMessage(&msg);
 			}
 		}

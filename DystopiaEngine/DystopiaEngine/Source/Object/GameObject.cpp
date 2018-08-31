@@ -11,11 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Object\GameObject.h"		// File Header
-#include "Component\Component.h"	// Component
-#include "Behaviour\Behaviour.h"	// Behaviour
-#include "Utility\Utility.h"		// Move
-#include "Object\ObjectFlags.h"		// eObjFlags
+#include "Object\GameObject.h"		 // File Header
+#include "Component\Component.h"	 // Component
+#include "Behaviour\Behaviour.h"	 // Behaviour
+#include "Object\ObjectFlags.h"		 // eObjFlags
+#include "DataStructure\AutoArray.h" 
+#include "Utility\Utility.h"		 // Move
 #include "IO\TextSerialiser.h"
 
 #define Ping(_ARR, _FUNC, ...)			\
@@ -140,6 +141,16 @@ void Dystopia::GameObject::PurgeComponents(void)
 	mComponents.clear();
 }
 
+
+void Dystopia::GameObject::AddComponent(Component* _p, ComponentTag)
+{
+	mComponents.Insert(_p);
+}
+
+void Dystopia::GameObject::AddComponent(Behaviour* _p, BehaviourTag)
+{
+	mBehaviours.Insert(_p);
+}
 
 void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)
 {
