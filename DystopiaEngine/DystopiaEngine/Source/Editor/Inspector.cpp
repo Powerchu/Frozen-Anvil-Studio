@@ -33,9 +33,8 @@ namespace Dystopia
 	}
 
 	Inspector::Inspector()
-		: EditorTab{ true }, 
-		mpFocusGameObj{ nullptr }, mLabel{ "Inspector" }, mDemoVec{ Math::Vec4{0,0,0,0} },
-		mDemoText{ "hello" }, mDemoName{ "" }
+		: EditorTab{ true }, mpFocus{ nullptr }, mLabel{ "Inspector" },
+		mDemoVec{ Math::Vec4{0,0,0,0} }, mDemoText{ "hello" }, mDemoName{ "" }
 	{
 	}
 
@@ -109,7 +108,7 @@ namespace Dystopia
 
 	void Inspector::Shutdown()
 	{
-		mpFocusGameObj = nullptr;
+		mpFocus = nullptr;
 	}
 
 	void Inspector::GameObjectDetails()
@@ -148,14 +147,14 @@ namespace Dystopia
 		return mLabel;
 	}
 
-	void Inspector::SetFocusObj(GameObject* _target)
+	void Inspector::SetFocus(GameObject * const _pGameObj)
 	{
-		mpFocusGameObj = _target;
+		mpFocus = _pGameObj;
 	}
 
 	void Inspector::RemoveFocus()
 	{
-		mpFocusGameObj = nullptr;
+		mpFocus = nullptr;
 	}
 
 	void Inspector::AddComponentButton()

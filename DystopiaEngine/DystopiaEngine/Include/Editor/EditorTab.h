@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	static constexpr size_t MAX_SEARCH = 64;
+	class GameObject;
 	class CommandHandler;
 	class EventSystem;
 	class EditorTab
@@ -44,6 +45,9 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const = 0;
 		/************************************************************************************************************/
+
+		virtual void		SetFocus(GameObject * const);
+		virtual void		RemoveFocus();
 
 		void				SetSize(const Math::Vec2&);
 		void				SetSize(const float&, const float&);

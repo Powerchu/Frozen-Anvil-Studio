@@ -19,7 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class GameObject;
-
 	class Inspector : public EditorTab
 	{
 	public:
@@ -41,20 +40,19 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const override;
 
-		void	SetFocusObj(GameObject*);
-		void	RemoveFocus();
+		void	SetFocus(GameObject * const) override final;
+		void	RemoveFocus() override final;
 
 	private:
 		Inspector(void);
 
-		char			mDemoText[32];
-		Math::Vec4		mDemoVec;
+		GameObject		*mpFocus;
 		std::string		mLabel;
 		std::string		mDemoName;
-		
+		Math::Vec4		mDemoVec;
+		char			mDemoText[32];
 		bool			mShowListOfComponents;
 		
-		GameObject		*mpFocusGameObj;
 
 		void			GameObjectDetails();
 		void			AddComponentButton();

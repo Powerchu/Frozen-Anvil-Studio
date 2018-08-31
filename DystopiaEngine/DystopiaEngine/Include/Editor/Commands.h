@@ -32,6 +32,8 @@ namespace Dystopia
 
 		// Destructor
 		~CommandHandler();
+		// shutdown
+		void Shutdown();
 		// Calls the ExecuteDo function of the param command and passes it into the undo deque, also empties the redo deque
 		void InvokeCommand(Commands *_comd);
 		// Calls the ExecuteUndo function of latest command in the undo deque and puts it into the redo deque

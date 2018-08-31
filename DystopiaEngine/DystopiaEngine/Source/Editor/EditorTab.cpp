@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Editor\EditorTab.h"
 #include "Editor\Editor.h"
+#include "Object\GameObject.h"
 
 namespace Dystopia
 {
@@ -25,6 +26,16 @@ namespace Dystopia
 	{
 		mpComdHandler = nullptr;
 		mpEditorEventSys = nullptr;
+	}
+
+	void EditorTab::SetFocus(GameObject * const _pGameObject)
+	{
+		// do nothing
+	}
+
+	void EditorTab::RemoveFocus()
+	{
+		// do nothing
 	}
 
 	void EditorTab::SetSize(const Math::Vec2& _size)

@@ -28,6 +28,11 @@ namespace Dystopia
 
 	CommandHandler::~CommandHandler()
 	{
+		if (!mDeqRedo.empty() || !mDeqUndo.empty()) Shutdown();
+	}
+
+	void CommandHandler::Shutdown()
+	{
 		for (auto& e : mDeqRedo)
 		{
 			delete e;

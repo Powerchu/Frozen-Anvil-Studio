@@ -54,16 +54,14 @@ namespace Dystopia
 		void			EndFrame();
 		void			Shutdown();
 		void			ChangeState(eEditorState);
-		eEditorState	CurrentState() const;
 		bool			IsClosing() const;
-		double			PreviousFrameTime() const;
+		eEditorState	CurrentState() const;
 
 	private:
 		Editor(void);
 
 		eEditorState	mCurrentState;
 		eEditorState	mNextState;
-		double			mPrevFrameTime;
 		WindowManager	*mpWin;
 		GraphicsSystem	*mpGfx;
 		InputManager	*mpInput;
@@ -73,16 +71,27 @@ namespace Dystopia
 		// SceneManager *mpSceneMgr;
 
 		AutoArray<EditorTab*> mTabsArray;
+
+		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
 		void			Play();
 		void			Save();
 		void			Load();
 		void			TempSave();
 		void			TempLoad();
+
+		/* The main menu bar functions */
 		void			MainMenuBar();
 		void			MMFile();
 		void			MMEdit();
 		void			MMView();
+
+		/* The edit functions */
+		void			EditorUndo();
+		void			EditorRedo();
+		void			EditorCopy();
+		void			EditorCut();
+		void			EditorPaste();
 	};
 }
 

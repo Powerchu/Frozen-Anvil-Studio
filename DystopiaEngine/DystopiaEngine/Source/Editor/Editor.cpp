@@ -51,34 +51,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <iostream>
 #include <bitset>
 
-namespace Dystopia
-{
-	struct X
-	{
-		X(EventSystem* e)
-			:es{ e }
-		{
-			es->BindToEvent("EventTester1", &X::goo, this);
-			es->BindToEvent("EventTester2", &X::foo, this);
-			es->BindToEvent("EventTester3", &X::hoo, this);
-		}
-		~X()
-		{
-			es->UnBindFromEvent("EventTester1", this);
-			es->UnBindFromEvent("EventTester2", this);
-			es->UnBindFromEvent("EventTester3", this);
-		}
-		EventSystem* es;
-
-		void goo() { std::cout << "Member function goo" << std::endl; }
-		void hoo() { std::cout << "Member function hoo" << std::endl; }
-		void foo() { std::cout << "Member function foo" << std::endl; }
-	};
-	void goo() { std::cout << "Non member function goo" << std::endl; }
-	void hoo() { std::cout << "Non member function hoo" << std::endl; }
-	void foo() { std::cout << "Non member function foo" << std::endl; }
-}
-
 // Entry point for editor
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 {
@@ -98,17 +70,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	editor->Init(driver->GetSystem<Dystopia::WindowManager>(),
 				 driver->GetSystem<Dystopia::GraphicsSystem>());
 
-	/* Start of Event System usage example */
-	Dystopia::EventSystem *es = driver->GetSystem<Dystopia::EventSystem>();
-	{
-		Dystopia::X x1{ es };
-		es->Fire("EventTester1");
-		es->Fire("EventTester2");
-		es->Fire("EventTester3");
-		es->FireAllPending();
-	}
-	/* End of Event System usage example */
-
 	while (!editor->IsClosing())
 	{
 		float dt = timer->Elapsed();
@@ -125,6 +86,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	driver->Shutdown();
 	delete timer;
 	delete editor;
+
 	// Automatically called by _CRTDBG_LEAK_CHECK_DF flag when proccess ends. 
 	// This will ensure static variables are not taken into account
 	//_CrtDumpMemoryLeaks(); 
@@ -145,8 +107,9 @@ namespace Dystopia
 	}
 
 	Editor::Editor(void)
-		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mPrevFrameTime{ 0 }, 
-		mpWin{ nullptr }, mpGfx{ nullptr },
+		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, 
+		mpWin{ nullptr }, 
+		mpGfx{ nullptr },
 		mpInput{ new InputManager{} },
 		mpEditorEventSys{ new EventSystem{} },
 		mpComdHandler{ new CommandHandler{} },
@@ -251,9 +214,6 @@ namespace Dystopia
 			e = nullptr;
 		}
 
-		mpWin = nullptr;
-		mpGfx = nullptr;
-
 		mpInput->Shutdown();
 		delete mpInput;
 		mpInput = nullptr;
@@ -262,12 +222,17 @@ namespace Dystopia
 		delete mpEditorEventSys;
 		mpEditorEventSys = nullptr;
 
+		mpComdHandler->Shutdown();
 		delete mpComdHandler;
 		mpComdHandler = nullptr;
 
 		mpGuiSystem->Shutdown();
 		delete mpGuiSystem;
 		mpGuiSystem = nullptr;
+
+
+		mpWin = nullptr;
+		mpGfx = nullptr;
 
 		EGUI::RemoveContext();
 	}
@@ -285,11 +250,6 @@ namespace Dystopia
 	bool Editor::IsClosing() const
 	{
 		return !mCurrentState;
-	}
-
-	double Editor::PreviousFrameTime() const
-	{
-		return mPrevFrameTime;
 	}
 
 	void Editor::UpdateState()
@@ -380,14 +340,14 @@ namespace Dystopia
 		// TODO: Some actual function for all the bottom
 		if (EGUI::StartMenuHeader("Edit"))
 		{
-			if (EGUI::StartMenuBody("Undo", "Ctrl + Z")) { mpComdHandler->UndoCommand(); }
-			if (EGUI::StartMenuBody("Redo", "Ctrl + Y")) { mpComdHandler->RedoCommand(); }
-			if (EGUI::StartMenuBody("Cut")) {}
-			if (EGUI::StartMenuBody("Copy")) {}
-			if (EGUI::StartMenuBody("Paste")) {}
+			if (EGUI::StartMenuBody("Undo ", "Ctrl + Z"))	EditorUndo();
+			if (EGUI::StartMenuBody("Redo ", "Ctrl + Y"))	EditorRedo();
+			if (EGUI::StartMenuBody("Cut ", "Ctrl + X"))	EditorCut();
+			if (EGUI::StartMenuBody("Copy ", "Ctrl + C"))	EditorCopy();
+			if (EGUI::StartMenuBody("Paste ", "Ctrl + V"))	EditorPaste();
+
 			EGUI::EndMenuHeader();
 		}
-
 	}
 
 	void Editor::MMView()
@@ -407,6 +367,28 @@ namespace Dystopia
 			}
 			EGUI::EndMenuHeader();
 		}
+	}
+
+	void Editor::EditorUndo()
+	{
+		mpComdHandler->UndoCommand();
+	}
+
+	void Editor::EditorRedo()
+	{
+		mpComdHandler->RedoCommand();
+	}
+
+	void Editor::EditorCopy()
+	{
+	}
+
+	void Editor::EditorCut()
+	{
+	}
+
+	void Editor::EditorPaste()
+	{
 	}
 
 	void Editor::Play()
