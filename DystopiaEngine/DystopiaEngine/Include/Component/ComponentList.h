@@ -21,7 +21,9 @@ namespace Dystopia
 {
 	using AllComponents = Utility::MetaAutoIndexer <
 		class Transform,
-		class Camera
+		class Camera,
+		class Collider,
+		class RigidBody
 	>::result;
 
 	// Generic Tag for Components
