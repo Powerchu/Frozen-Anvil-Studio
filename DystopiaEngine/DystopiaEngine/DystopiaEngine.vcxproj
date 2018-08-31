@@ -31,12 +31,17 @@
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Source\Component\AABB.cpp" />
+    <ClCompile Include="Source\Component\Collider.cpp" />
+    <ClCompile Include="Source\Component\Convex.cpp" />
+    <ClCompile Include="Source\Component\RigidBody.cpp" />
     <ClCompile Include="Source\Editor\CallbackManager.cpp" />
     <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp" />
     <ClCompile Include="Source\System\Camera\CameraSystem.cpp" />
+    <ClCompile Include="Source\System\Collision\CollisionSystem.cpp" />
     <ClCompile Include="Source\System\Driver\Driver.cpp" />
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
     <ClCompile Include="Source\Component\Component.cpp" />
@@ -64,6 +69,7 @@
     <ClCompile Include="Source\System\Graphics\Texture.cpp" />
     <ClCompile Include="Source\System\Graphics\Texture2D.cpp" />
     <ClCompile Include="Source\System\Input\InputSystem.cpp" />
+    <ClCompile Include="Source\System\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="Source\System\Scene\Scene.cpp" />
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
@@ -72,6 +78,10 @@
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\Component\Collider.h" />
+    <ClInclude Include="Include\Component\RigidBody.h" />
+    <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
+    <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
     <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\Editor\CallbackManager.h" />
     <ClInclude Include="Include\System\Events\EventSystem.h" />

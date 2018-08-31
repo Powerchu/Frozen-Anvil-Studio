@@ -128,6 +128,24 @@
       <Filter>IO\BinarySerialiser</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Source\Component\AABB.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Collider.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Convex.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\RigidBody.cpp">
+      <Filter>Game Engine\Components\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Collision\CollisionSystem.cpp">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Physics\PhysicsSystem.cpp">
+      <Filter>Game Engine\Systems\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -365,6 +383,18 @@
       <Filter>IO\BinarySerialiser</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Include\Component\Collider.h">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\RigidBody.h">
+      <Filter>Game Engine\Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Collision\CollisionSystem.h">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
+      <Filter>Game Engine\Systems\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -570,6 +600,18 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Event">
       <UniqueIdentifier>{d23ded5b-d4bb-4fd0-beda-88279300b1d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Colliders">
+      <UniqueIdentifier>{9029def7-8e95-4722-9309-2656146f5799}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Physics">
+      <UniqueIdentifier>{39a443aa-5f4c-4154-9a2f-4e9d13c00472}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Collision">
+      <UniqueIdentifier>{b1cbecf8-eac1-4a71-add2-85941053a148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Physics">
+      <UniqueIdentifier>{e12aa00d-ccc8-4554-a50e-3b29041273b6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
