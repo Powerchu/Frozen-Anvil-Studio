@@ -127,6 +127,7 @@
     <ClCompile Include="Source\IO\BinarySerializer.cpp">
       <Filter>IO\BinarySerialiser</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -363,6 +364,7 @@
     <ClInclude Include="Include\IO\BinarySerializer.h">
       <Filter>IO\BinarySerialiser</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
