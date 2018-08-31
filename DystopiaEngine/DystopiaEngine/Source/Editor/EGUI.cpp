@@ -278,7 +278,7 @@ namespace Dystopia
 		glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
 		const float ortho_projection[4][4] =
 		{
-			{ 2.0f / io.DisplaySize.x, 0.0f,                     0.0f, 0.0f },
+		{ 2.0f / io.DisplaySize.x, 0.0f,                     0.0f, 0.0f },
 		{ 0.0f,                    2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
 		{ 0.0f,                    0.0f,                    -1.0f, 0.0f },
 		{ -1.0f,                   1.0f,                     0.0f, 1.0f },
@@ -484,11 +484,6 @@ namespace Dystopia
 		ImGui::End();
 	}
 
-	const char* GuiSystem::GetMainDockspaceName() const
-	{
-		return mpMainDockspace;
-	}
-
 	void GuiSystem::DefaultColorSettings()
 	{
 		ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 1
@@ -500,6 +495,29 @@ namespace Dystopia
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 7
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 8
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.6f, 0.9f, 0.5f });				// 9
+	}
+
+	void GuiSystem::UpdateChar(unsigned short _c)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		if (_c > 0 && _c < 0x10000) io.AddInputCharacter(_c);
+	}
+
+	void GuiSystem::UpdateScroll(double _xOffset, double _yOffset)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseWheelH += _xOffset;
+		io.MouseWheel += _yOffset;
+	}
+
+	void GuiSystem::UpdateMouse(int _index, bool _state)
+	{
+		if (_index >= 0 < 3) mMouseJustPressed[_index] = _state;
+	}
+
+	const char* GuiSystem::GetMainDockspaceName() const
+	{
+		return mpMainDockspace;
 	}
 
 }		// namespace Dystopia

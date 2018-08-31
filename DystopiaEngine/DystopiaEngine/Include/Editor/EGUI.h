@@ -454,6 +454,11 @@ namespace Dystopia
 		void			StartFrame(const float&);
 		void			EndFrame();
 		void			Shutdown();
+
+		void			UpdateChar(unsigned short);
+		void			UpdateScroll(double _x, double _y);
+		void			UpdateMouse(int, bool);
+
 		const char*		GetMainDockspaceName() const;
 
 	private:
@@ -463,8 +468,8 @@ namespace Dystopia
 		InputManager	*mpInput;
 		ImDrawData		*mpDrawData;
 		GLState			*mpGLState;
-		std::string		mGlslVersion;
 		GLuint			mFontTexture;
+		std::string		mGlslVersion;
 		const char		*mpMainDockspace;
 		int				mShaderHandle;
 		int				mVertHandle;

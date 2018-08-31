@@ -88,9 +88,6 @@
     <ClCompile Include="Source\Editor\EditorTab.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\CallbackManager.cpp">
-      <Filter>Editor\Callback Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\Commands.cpp">
       <Filter>Editor\Commands</Filter>
     </ClCompile>
@@ -340,9 +337,6 @@
     <ClInclude Include="Include\Editor\EditorTab.h">
       <Filter>Editor\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\CallbackManager.h">
-      <Filter>Editor\Callback Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\CommandList.h">
       <Filter>Editor\Commands</Filter>
     </ClInclude>
@@ -576,9 +570,6 @@
     </Filter>
     <Filter Include="Editor\Docking">
       <UniqueIdentifier>{06af060e-209f-4067-a5e6-2f4b596f578b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Callback Manager">
-      <UniqueIdentifier>{c8dbf3fe-24be-4c5f-9964-0d10ff8c569e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Commands">
       <UniqueIdentifier>{573a6f53-0ee9-4c6b-bda7-2e8af2e8b43c}</UniqueIdentifier>
