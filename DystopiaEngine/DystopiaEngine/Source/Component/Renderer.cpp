@@ -1,41 +1,39 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	GameObject.h
+\file	Renderer.cpp
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Flags for Game Objects
+	Basic Renderer.
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _OBJFLAGS_H_
-#define _OBJFLAGS_H_
+#include "Component\Renderer.h"
+#include "System\Graphics\Mesh.h"
 
-namespace Dystopia
+
+Dystopia::Renderer::Renderer(void) noexcept
+	: mnUnique { 0 }, mpMesh { nullptr }
 {
-	enum eObjFlag : unsigned
-	{
-		FLAG_NONE			= 0u,
-		FLAG_ACTIVE			= 1u << 0,
-
-		FLAG_LAYER_UI		= 1u << 5,
-		FLAG_LAYER_WORLD	= 1u << 6,
-
-		FLAG_RESERVED		= 1u << 30,
-
-		FLAG_REMOVE			= 1u << 31,
-
-
-		// ======================  Compound flags ====================== //
-
-		FLAG_ALL_LAYERS     = FLAG_LAYER_UI | FLAG_LAYER_WORLD,
-	};
 }
 
+Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
+{
+	Renderer* pThis = const_cast<Renderer*>(this);
+	++(pThis->mnUnique);
 
+	return pThis;
+}
 
-#endif		// INCLUDE GUARD
+void Dystopia::Renderer::Serialise(TextSerialiser &) const
+{
+}
+
+void Dystopia::Renderer::Unserialise(TextSerialiser &)
+{
+}
+
 

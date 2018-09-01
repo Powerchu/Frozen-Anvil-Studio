@@ -47,6 +47,8 @@ namespace Math
 		// Converts the Quaternion to unit length
 		inline Quaternion& _CALL Normalise(void);
 
+		inline Quaternion& _CALL Identity(void);
+
 		// TODO
 		// Computes the dot product of this Quaternion and a given Quaternion
 		inline float _CALL Dot(const Quaternion) const;
@@ -140,7 +142,7 @@ namespace Math
 
 
 inline Math::Quaternion::Quaternion(void) noexcept
-	: mData{ }
+	: mData{ 0, 0, 0, 1.f }
 {
 
 }
@@ -152,7 +154,7 @@ inline Math::Quaternion::Quaternion(const Quaternion& _Q) noexcept
 }
 
 inline Math::Quaternion::Quaternion(float x, float y, float z, float w) noexcept
-	: mData{ x,y,z,w }
+	: mData{ x, y, z, w }
 {
 
 }
@@ -167,6 +169,11 @@ inline Math::Quaternion& _CALL Math::Quaternion::Normalise(void)
 {
 	mData.Normalise();
 	return *this;
+}
+
+inline Math::Quaternion& _CALL Math::Quaternion::Identity(void)
+{
+	return *this = Quaternion{};
 }
 
 inline Math::Quaternion _CALL Math::Normalise(Quaternion _Q)
@@ -232,30 +239,6 @@ inline Math::Quaternion& _CALL Math::Quaternion::Negate(void) noexcept
 {
 	mData.Negate<FLAGS>();
 	return *this;
-}
-
-Math::Matrix4 _CALL Math::Quaternion::Matrix(void) const noexcept
-{
-	float scale = 2.f / mData.MagnitudeSqr();
-
-	Vec4 t3 = mData.ywyw;
-	Vec4 t1 = mData.xxyy * mData.xywz; // xx, xy, yw, yz
-	Vec4 t2 = mData.zzzw * mData.zwxy; // zz, zw, xz, yw
-	t3 *= t3;						   // yy, ww, yy, ww
-
-	// TODO : Use ~ for alternating operation? alternatives ++ --
-	Vec4 t4 = AddSub(t2, t1);				 // Add-Sub -> xx + zz, xy - zw, yw + xz, yz - xw
-	t1 = AddSub(t1.yxwz, t2.yxwz);      // Add-Sub -> xy + zw, xx - zz, yz + xw, yw - xz
-
-
-	// Goal :
-	// ww + xx - yy - zz,    2 (xy - zw)   ,    2 (xz + cw)   , 0
-	//    2 (xy + zw)   , ww - xx + yy - zz,    2 (yz - xw)   , 0
-	//    2 (xz - cw)   ,    2 (yz + xw)   , ww - xx - yy + zz, 0
-	//          0       ,          0       ,          0       , 1
-
-
-	return Matrix4{};
 }
 
 inline Math::Matrix4 _CALL Math::Matrix(const Quaternion _Q) noexcept

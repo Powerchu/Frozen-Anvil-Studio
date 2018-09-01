@@ -39,7 +39,7 @@ public:
 	using Itor_t = T*;
 	using Val_t  = T;
 	using Ptr_t  = T*;
-	using Sz_t   = unsigned;
+	using Sz_t   = size_t;
 
 
 	// ====================================== CONSTRUCTORS ======================================= // 

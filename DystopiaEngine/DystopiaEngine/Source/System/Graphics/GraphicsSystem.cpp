@@ -18,11 +18,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System\Graphics\GraphicsSystem.h"	// File header
 #include "System\Graphics\GraphicsDefs.h"	// eGraphicSettings
-#include "System\Window\WindowManager.h"	// WindowManager
+#include "System\Window\WindowManager.h"	// Window Manager
 #include "System\Window\Window.h"			// Window
 #include "System\Driver\Driver.h"			// EngineCore
-#include "Utility\DebugAssert.h"			// DEBUG_ASSERT
+#include "System\Camera\CameraSystem.h"     // Camera System
 #include "Component\Camera.h"				// Camera
+
+#include "Object\GameObject.h"              // GameObject
+#include "Object\ObjectFlags.h"
+
+#include "Utility\DebugAssert.h"			// DEBUG_ASSERT
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable Window header min & max macros
@@ -73,21 +78,28 @@ void Dystopia::GraphicsSystem::Update(float)
 	// We only care about the game view
 	
 	// For every camera in the game window (can be more than 1!)
-	for (; false;)
+	for (auto& Cam : EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->GetAllCameras())
 	{
+		auto ActiveFlags = Cam.GetOwner()->GetFlags();
+
 		// If the camera is inactive, skip
-
-		// Get Camera's layer, we only want to draw inclusive stuff
-
-		// Draw the game objects to screen based on the camera
-		for (; false;)
+		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
-			// if Game Object is inactive or
-			// Game Object's layer does not match the camera
-			// Skip it
+			Cam.SetCamera();
+
+			// Get Camera's layer, we only want to draw inclusive stuff
+			ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
+
+			// Draw the game objects to screen based on the camera
+			for (; false;)
+			{
+				// if Game Object is inactive or
+				// Game Object's layer does not match the camera
+				// Skip it
 
 
-			// Draw batching?
+				// Draw batching?
+			}
 		}
 	}
 

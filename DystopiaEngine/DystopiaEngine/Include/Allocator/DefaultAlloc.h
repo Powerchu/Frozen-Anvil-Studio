@@ -30,6 +30,23 @@ namespace Dystopia
 		{
 			Base::Free(static_cast<void*>(_ptr));
 		}
+
+		template <typename ... Ps>
+		static inline Ty* ConstructAlloc(Ps&& ... _Args)
+		{
+			Ty* temp = Alloc();
+
+			// static_cast to avoid includes
+			::new (temp) Ty{ static_cast<Ps&&>(_Args) ... };
+
+			return temp;
+		}
+
+		static inline void DestructFree(Ty* _ptr) noexcept
+		{
+			_ptr->~Ty();
+			Free(_ptr);
+		}
 	};
 
 	template <>

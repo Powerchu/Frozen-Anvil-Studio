@@ -40,6 +40,7 @@
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp" />
+    <ClCompile Include="Source\Math\Quaternion.cpp" />
     <ClCompile Include="Source\System\Camera\CameraSystem.cpp" />
     <ClCompile Include="Source\System\Collision\CollisionSystem.cpp" />
     <ClCompile Include="Source\System\Driver\Driver.cpp" />
