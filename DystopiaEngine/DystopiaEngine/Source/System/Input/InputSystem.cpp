@@ -39,6 +39,7 @@ void Dystopia::InputManager::LoadDefaultUserKeys(void)
 	mButtonMap[eUserButton::BUTTON_CANCEL] = eButton::KEYBOARD_ESCAPE;
 }
 
+
 Dystopia::InputManager::InputManager(void) :
 	mButtonMap{ static_cast<unsigned>(eUserButton::TOTAL_USERBUTTONS) }
 {
