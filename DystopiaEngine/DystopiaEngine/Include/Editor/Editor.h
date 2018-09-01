@@ -22,7 +22,7 @@ namespace Dystopia
 {
 	class WindowManager;
 	class GraphicsSystem;
-	class InputManager;
+	class EditorInput;
 	class GuiSystem;
 	class CommandHandler;
 	class EditorTab;
@@ -64,7 +64,7 @@ namespace Dystopia
 		eEditorState	mNextState;
 		WindowManager	*mpWin;
 		GraphicsSystem	*mpGfx;
-		InputManager	*mpInput;
+		EditorInput	*mpInput;
 		EventSystem		*mpEditorEventSys;
 		CommandHandler	*mpComdHandler;
 		GuiSystem		*mpGuiSystem;

@@ -143,6 +143,8 @@
     <ClCompile Include="Source\Component\Colliders\Convex.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\EditorInputs.cpp" />
+    <ClCompile Include="Source\Editor\EditorEvents.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -389,6 +391,8 @@
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\EditorInputs.h" />
+    <ClInclude Include="Include\Editor\EditorEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

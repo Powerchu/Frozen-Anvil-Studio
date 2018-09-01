@@ -36,6 +36,8 @@
     <ClCompile Include="Source\Component\Colliders\Convex.cpp" />
     <ClCompile Include="Source\Component\RigidBody.cpp" />
     <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
+    <ClCompile Include="Source\Editor\EditorEvents.cpp" />
+    <ClCompile Include="Source\Editor\EditorInputs.cpp" />
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp" />
@@ -79,6 +81,8 @@
   <ItemGroup>
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\RigidBody.h" />
+    <ClInclude Include="Include\Editor\EditorEvents.h" />
+    <ClInclude Include="Include\Editor\EditorInputs.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
     <ClInclude Include="Resource\Behaviours\*\*.h" />

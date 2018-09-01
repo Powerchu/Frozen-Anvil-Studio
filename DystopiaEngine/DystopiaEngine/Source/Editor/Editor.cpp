@@ -29,8 +29,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* System includes */
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
-#include "System\Input\InputSystem.h"
-#include "System\Input\InputMap.h"
 #include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
 #include "System\Events\EventSystem.h"
@@ -46,6 +44,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ProjectResource.h"
 #include "Editor\SceneView.h"
 #include "Editor\ConsoleLog.h"
+#include "Editor\EditorInputs.h"
 
 /* library includes */
 #include <iostream>
@@ -110,7 +109,7 @@ namespace Dystopia
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, 
 		mpWin{ nullptr }, 
 		mpGfx{ nullptr },
-		mpInput{ new InputManager{} },
+		mpInput{ new EditorInput{} },
 		mpEditorEventSys{ new EventSystem{} },
 		mpComdHandler{ new CommandHandler{} },
 		mpGuiSystem{ new GuiSystem{} }
@@ -124,6 +123,7 @@ namespace Dystopia
 	{ 
 		mpWin = _pWin;
 		mpGfx = _pGfx;
+
 		mpInput->Init();
 		EGUI::SetContext(mpComdHandler);
 		for (auto& e : mTabsArray)
@@ -139,7 +139,6 @@ namespace Dystopia
 
 	void Editor::LoadDefaults()
 	{
-		mpInput->LoadDefaults();
 		mTabsArray.push_back(Inspector::GetInstance());
 		mTabsArray.push_back(ProjectResource::GetInstance());
 		mTabsArray.push_back(HierarchyView::GetInstance());
@@ -153,7 +152,7 @@ namespace Dystopia
 		mpInput->Update(_dt);
 		mpGuiSystem->StartFrame(_dt);
 
-		if (mpInput->IsKeyTriggered(MOUSE_L))
+		if (mpInput->IsKeyTriggered(KEY_LMOUSE))
 			mpEditorEventSys->Fire("LeftClick");
 
 		mpEditorEventSys->FireAllPending();
