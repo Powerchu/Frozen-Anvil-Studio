@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\MathUtility.h"
 
 #include "System\Camera\CameraSystem.h"
-#include "System\\Driver\Driver.h"
+#include "System\Driver\Driver.h"
 
 #include "Object\GameObject.h"
 #include "Object\ObjectFlags.h"

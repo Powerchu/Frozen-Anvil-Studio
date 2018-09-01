@@ -43,6 +43,8 @@ namespace Dystopia
 		GameObject* FindGameObject(const size_t _nID);
 		GameObject* FindGameObject(const std::string& _strName);
 
+		inline AutoArray<GameObject>& GetAllGameObjects(void);
+
 	private:
 
 		AutoArray<GameObject> mGameObjs;
@@ -65,6 +67,13 @@ Dystopia::GameObject* Dystopia::Scene::InsertGameObject(Ty&& ..._args)
 	mGameObjs.EmplaceBack(Utility::Forward<Ty>(_args)...);
 	return mGameObjs.end();
 }
+
+
+inline AutoArray<Dystopia::GameObject>& Dystopia::Scene::GetAllGameObjects(void)
+{
+	return mGameObjs;
+}
+
 
 
 

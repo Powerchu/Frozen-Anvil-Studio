@@ -21,6 +21,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\WindowManager.h"	// Window Manager
 #include "System\Window\Window.h"			// Window
 #include "System\Driver\Driver.h"			// EngineCore
+#include "System\Scene\SceneSystem.h"
+#include "System\Scene\Scene.h"
 #include "System\Camera\CameraSystem.h"     // Camera System
 #include "Component\Camera.h"				// Camera
 
@@ -75,10 +77,11 @@ void Dystopia::GraphicsSystem::Update(float)
 {
 	StartFrame();
 
-	// We only care about the game view
-	
+	auto& AllCam = EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->GetAllCameras();
+	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
+
 	// For every camera in the game window (can be more than 1!)
-	for (auto& Cam : EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->GetAllCameras())
+	for (auto& Cam : AllCam)
 	{
 		auto ActiveFlags = Cam.GetOwner()->GetFlags();
 
@@ -91,14 +94,12 @@ void Dystopia::GraphicsSystem::Update(float)
 			ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
 
 			// Draw the game objects to screen based on the camera
-			for (; false;)
+			for (auto& Obj : AllObj)
 			{
-				// if Game Object is inactive or
-				// Game Object's layer does not match the camera
-				// Skip it
-
-
-				// Draw batching?
+				if (Obj.GetFlags() & ActiveFlags)
+				{
+					// Draw batching?
+				}
 			}
 		}
 	}

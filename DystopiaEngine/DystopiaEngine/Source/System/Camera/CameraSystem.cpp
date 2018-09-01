@@ -39,7 +39,7 @@ Dystopia::Camera* Dystopia::CameraSystem::GetMasterCamera(void) const
 	return mpMasterCam;
 }
 
-MagicArray<Dystopia::Camera> Dystopia::CameraSystem::GetAllCameras(void) const
+MagicArray<Dystopia::Camera>& Dystopia::CameraSystem::GetAllCameras(void)
 {
 	return mCameras;
 }

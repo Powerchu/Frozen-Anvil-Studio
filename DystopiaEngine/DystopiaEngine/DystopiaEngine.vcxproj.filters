@@ -146,7 +146,12 @@
     <ClCompile Include="Source\Component\Colliders\Convex.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Math\Quaternion.cpp" />
+    <ClCompile Include="Source\Component\Renderer.cpp">
+      <Filter>Game Engine\Components\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Quaternion.cpp">
+      <Filter>Math\Quaternion</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -396,6 +401,9 @@
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\Renderer.h">
+      <Filter>Game Engine\Components\Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -613,6 +621,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Physics">
       <UniqueIdentifier>{e12aa00d-ccc8-4554-a50e-3b29041273b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Renderer">
+      <UniqueIdentifier>{91edfe0d-9cd2-43b8-a18f-715da13dcbf7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

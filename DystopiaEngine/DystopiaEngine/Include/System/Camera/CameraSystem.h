@@ -34,7 +34,7 @@ namespace Dystopia
 
 		inline bool IsMasterCamera(Camera const*) const;
 
-		MagicArray<Camera> GetAllCameras(void) const;
+		MagicArray<Camera>& GetAllCameras(void);
 
 
 	private:

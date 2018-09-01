@@ -23,13 +23,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class Transform;
-
+	class CameraSystem;
 
 	class Camera : public Component
 	{
 	public:
 
-		using SYSTEM = class CameraSystem;
+		using SYSTEM = CameraSystem;
 		unsigned GetComponentType(void) const
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
