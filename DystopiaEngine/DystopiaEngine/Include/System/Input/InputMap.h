@@ -222,7 +222,6 @@ enum eEditorButton : unsigned short
 	KEY_UP			,
 	KEY_RIGHT		,
 	KEY_DOWN		,
-
 	TOTAL_EDITOR_BUTTONS
 };
 
