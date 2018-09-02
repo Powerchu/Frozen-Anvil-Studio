@@ -13,6 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Editor\EditorTab.h"
 #include "Editor\Editor.h"
+#include "Editor\EditorEvents.h"
+#include "Editor\Commands.h"
 #include "Object\GameObject.h"
 
 namespace Dystopia
@@ -78,7 +80,7 @@ namespace Dystopia
 		mpComdHandler = _ctx;
 	}
 
-	void EditorTab::SetEventSysContext(EventSystem * const _ctx)
+	void EditorTab::SetEventSysContext(EditorEventHandler * const _ctx)
 	{
 		mpEditorEventSys = _ctx;
 	}

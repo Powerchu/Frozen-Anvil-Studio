@@ -31,20 +31,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
-#include "System\Events\EventSystem.h"
 #include "IO\BinarySerializer.h"
 
 /* Editor includes */
 #include "Editor\Editor.h"
 #include "Editor\EGUI.h"
-#include "Editor\Commands.h"
-#include "Editor\CommandList.h"
 #include "Editor\Inspector.h"
 #include "Editor\HierarchyView.h"
 #include "Editor\ProjectResource.h"
 #include "Editor\SceneView.h"
 #include "Editor\ConsoleLog.h"
 #include "Editor\EditorInputs.h"
+#include "Editor\EditorEvents.h"
+#include "Editor\Commands.h"
 
 /* library includes */
 #include <iostream>
@@ -63,7 +62,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	Dystopia::Timer *timer = new Dystopia::Timer{};
 	
 	driver->LoadSettings();
-	editor->LoadDefaults();
 
 	driver->Init();
 	editor->Init(driver->GetSystem<Dystopia::WindowManager>(),
@@ -110,7 +108,7 @@ namespace Dystopia
 		mpWin{ nullptr }, 
 		mpGfx{ nullptr },
 		mpInput{ new EditorInput{} },
-		mpEditorEventSys{ new EventSystem{} },
+		mpEditorEventSys{ new EditorEventHandler{} },
 		mpComdHandler{ new CommandHandler{} },
 		mpGuiSystem{ new GuiSystem{} }
 	{}
@@ -123,15 +121,19 @@ namespace Dystopia
 	{ 
 		mpWin = _pWin;
 		mpGfx = _pGfx;
-
 		mpInput->Init();
+		mpEditorEventSys->Init();
 		EGUI::SetContext(mpComdHandler);
+
+		LoadDefaults();
 		for (auto& e : mTabsArray)
 		{
 			e->SetComdContext(mpComdHandler);
 			e->SetEventSysContext(mpEditorEventSys);
 			e->Init();
 		}
+
+		InstallHotkeys();
 
 		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
 			mCurrentState = EDITOR_EXIT;
@@ -152,8 +154,7 @@ namespace Dystopia
 		mpInput->Update(_dt);
 		mpGuiSystem->StartFrame(_dt);
 
-		if (mpInput->IsKeyTriggered(KEY_LMOUSE))
-			mpEditorEventSys->Fire("LeftClick");
+		UpdateHotkeys();
 
 		mpEditorEventSys->FireAllPending();
 		MainMenuBar();
@@ -205,6 +206,8 @@ namespace Dystopia
 
 	void Editor::Shutdown()
 	{
+		UnInstallHotkeys();
+
 		EGUI::Docking::ShutdownTabs();
 		for (auto& e : mTabsArray)
 		{
@@ -416,6 +419,48 @@ namespace Dystopia
 	void Editor::TempLoad()
 	{
 		// reset all current values to temp file values
+	}
+
+	void Editor::UpdateHotkeys()
+	{
+		if (mpInput->IsKeyTriggered(KEY_LMOUSE))
+			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_LCLICK)->Fire();
+
+		if (mpInput->IsKeyTriggered(KEY_RMOUSE))
+			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_RCLICK)->Fire();
+
+		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Z))
+			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_UNDO)->Fire();
+
+		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Y))
+			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_REDO)->Fire();
+
+		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_C))
+			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_COPY)->Fire();
+
+		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_X))
+			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_CUT)->Fire();
+
+		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_V))
+			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PASTE)->Fire();
+	}
+	
+	void Editor::InstallHotkeys()
+	{
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_UNDO)->Bind(&Editor::EditorUndo, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_REDO)->Bind(&Editor::EditorRedo, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_COPY)->Bind(&Editor::EditorCopy, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_CUT)->Bind(&Editor::EditorCut, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PASTE)->Bind(&Editor::EditorPaste, this);
+	}
+
+	void Editor::UnInstallHotkeys()
+	{
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_UNDO)->Unbind(this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_REDO)->Unbind(this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_COPY)->Unbind(this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_CUT)->Unbind(this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PASTE)->Unbind(this);
 	}
 }
 

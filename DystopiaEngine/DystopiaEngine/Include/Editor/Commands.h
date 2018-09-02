@@ -36,6 +36,13 @@ namespace Dystopia
 		void Shutdown();
 		// Calls the ExecuteDo function of the param command and passes it into the undo deque, also empties the redo deque
 		void InvokeCommand(Commands *_comd);
+		
+		template<typename T>
+		void InvokeCommand(T * const _var, const T& _newVal)
+		{
+			InvokeCommand(new ComdModifyValue<T>{ _var, _newVal });
+		}
+
 		// Calls the ExecuteUndo function of latest command in the undo deque and puts it into the redo deque
 		void UndoCommand();
 		// Performs InvokeCommand on the latest command in the redo deque 

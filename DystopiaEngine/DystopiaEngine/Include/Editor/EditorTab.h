@@ -15,17 +15,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_TAB_H_
 #define _EDITOR_TAB_H_
 #include "Math\Vector2.h"
-#include "Editor\Commands.h"
-#include "Editor\CommandList.h"
-#include "System\Events\EventSystem.h"
 #include <string>
 
 namespace Dystopia
 {
 	static constexpr size_t MAX_SEARCH = 64;
 	class GameObject;
+	class EditorEventHandler;
 	class CommandHandler;
-	class EventSystem;
 	class EditorTab
 	{
 	public:
@@ -54,7 +51,7 @@ namespace Dystopia
 		void				SetPosition(const Math::Vec2&);
 		void				SetPosition(const float&, const float&);
 		void				SetComdContext(CommandHandler * const);
-		void				SetEventSysContext(EventSystem * const);
+		void				SetEventSysContext(EditorEventHandler * const);
 		Math::Vec2			Size() const;
 		Math::Vec2			Position() const;
 		bool*				GetOpenedBool();
@@ -66,7 +63,7 @@ namespace Dystopia
 
 	protected:
 		CommandHandler		*mpComdHandler;
-		EventSystem			*mpEditorEventSys;
+		EditorEventHandler	*mpEditorEventSys;
 	};
 }
 

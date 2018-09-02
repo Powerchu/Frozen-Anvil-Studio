@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\Inspector.h"
 #include "Editor\ProjectResource.h"
 #include "Editor\ScriptFormatter.h"
+#include "Editor\Commands.h"
 #include "Object\GameObject.h"
 #include "Component\Component.h"
 #include <iostream>
@@ -93,7 +94,8 @@ namespace Dystopia
 		}
 		if (File *t = EGUI::Display::StartPayloadReceiver<File>(EGUI::FILE))
 		{
-			mpComdHandler->InvokeCommand(new ComdModifyValue<std::string>{ &mDemoName, (*t).mName });
+			//mpComdHandler->InvokeCommand(new ComdModifyValue<std::string>{ &mDemoName, (*t).mName });
+			mpComdHandler->InvokeCommand(&mDemoName, (*t).mName);
 			EGUI::Display::EndPayloadReceiver();
 		}
 		EGUI::SameLine(); 

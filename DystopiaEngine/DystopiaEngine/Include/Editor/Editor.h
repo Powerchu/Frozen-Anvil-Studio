@@ -26,7 +26,7 @@ namespace Dystopia
 	class GuiSystem;
 	class CommandHandler;
 	class EditorTab;
-	class EventSystem;
+	class EditorEventHandler;
 	//class SceneManager;
 	//class Scene;
 
@@ -60,14 +60,14 @@ namespace Dystopia
 	private:
 		Editor(void);
 
-		eEditorState	mCurrentState;
-		eEditorState	mNextState;
-		WindowManager	*mpWin;
-		GraphicsSystem	*mpGfx;
-		EditorInput	*mpInput;
-		EventSystem		*mpEditorEventSys;
-		CommandHandler	*mpComdHandler;
-		GuiSystem		*mpGuiSystem;
+		eEditorState			mCurrentState;
+		eEditorState			mNextState;
+		WindowManager			*mpWin;
+		GraphicsSystem			*mpGfx;
+		EditorInput				*mpInput;
+		CommandHandler			*mpComdHandler;
+		GuiSystem				*mpGuiSystem;
+		EditorEventHandler		*mpEditorEventSys;
 		// SceneManager *mpSceneMgr;
 
 		AutoArray<EditorTab*> mTabsArray;
@@ -92,6 +92,11 @@ namespace Dystopia
 		void			EditorCopy();
 		void			EditorCut();
 		void			EditorPaste();
+
+		/* EditorEvents */
+		void			UpdateHotkeys();
+		void			InstallHotkeys();
+		void			UnInstallHotkeys();
 	};
 }
 
