@@ -249,7 +249,7 @@ namespace Dystopia
 			for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
 			{
 				File* pFile = mpCurrentFolder->mArrPtrFiles[i];
-				const std::string id = "ProjectResourceFileWindow" + pFile->mName + std::to_string(i);
+				std::string id = "ProjectResourceFileWindow" + pFile->mName + std::to_string(i);
 				if (i % columns) EGUI::SameLine();
 				if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{0,0,0,0}))
 				{

@@ -53,6 +53,16 @@ namespace Dystopia
 		mpEventSystem = nullptr;
 	}
 
+	void EditorEventHandler::Fire(eEditorEvents _e)
+	{
+		GetEvent(_e)->Fire();
+	}
+
+	void EditorEventHandler::FireNow(eEditorEvents _e)
+	{
+		mpEventSystem->Fire(GetEvent(_e)->GetID());
+	}
+
 	void EditorEventHandler::FireAllPending()
 	{
 		mpEventSystem->FireAllPending();

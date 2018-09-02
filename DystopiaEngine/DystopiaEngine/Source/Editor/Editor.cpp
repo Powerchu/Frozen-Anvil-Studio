@@ -423,26 +423,27 @@ namespace Dystopia
 
 	void Editor::UpdateHotkeys()
 	{
+		static int i = 0;
 		if (mpInput->IsKeyTriggered(KEY_LMOUSE))
-			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_LCLICK)->Fire();
+			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_LCLICK);
 
 		if (mpInput->IsKeyTriggered(KEY_RMOUSE))
-			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_RCLICK)->Fire();
+			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_RCLICK);
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Z))
-			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_UNDO)->Fire();
+			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_UNDO);
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Y))
-			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_REDO)->Fire();
+			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_REDO);
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_C))
-			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_COPY)->Fire();
+			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_COPY);
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_X))
-			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_CUT)->Fire();
+			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_CUT);
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_V))
-			mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PASTE)->Fire();
+			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_PASTE);
 	}
 	
 	void Editor::InstallHotkeys()
@@ -462,6 +463,7 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_CUT)->Unbind(this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PASTE)->Unbind(this);
 	}
+
 }
 
 #endif		// EDITOR ONLY

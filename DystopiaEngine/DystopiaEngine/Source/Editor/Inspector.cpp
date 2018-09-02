@@ -105,7 +105,6 @@ namespace Dystopia
 		}
 
 		AddComponentButton();
-		
 	}
 
 	void Inspector::Shutdown()

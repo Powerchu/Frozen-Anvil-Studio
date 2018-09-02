@@ -41,6 +41,8 @@ namespace Dystopia
 		void Init();
 		void Update(float);
 		void Shutdown();
+		void Fire(eEditorEvents);
+		void FireNow(eEditorEvents);
 		void FireAllPending();
 
 		Event* GetEvent(eEditorEvents);

@@ -28,7 +28,7 @@ namespace Dystopia
 	{
 	public:
 		// Constructs with a fixed size	maximum history of commands recorded).
-		CommandHandler(size_t _nHistory=30);
+		CommandHandler(size_t _nHistory=20);
 
 		// Destructor
 		~CommandHandler();
@@ -70,6 +70,7 @@ namespace Dystopia
 		std::deque<Commands*>	mDeqUndo;
 		bool					mRecording;
 		void					PopFrontOfDeque(std::deque<Commands*>&);
+		size_t					mMaxSize;
 	};
 }
 

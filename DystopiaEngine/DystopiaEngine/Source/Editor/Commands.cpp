@@ -19,11 +19,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	CommandHandler::CommandHandler(size_t _nHistory)
-		: mDeqRedo{ _nHistory }, mDeqUndo{ _nHistory }, mRecording{ false },
-		mpRecorder{ nullptr }
+		: mDeqRedo{ }, mDeqUndo{ }, mRecording{ false },
+		mpRecorder{ nullptr }, mMaxSize{ _nHistory }
 	{
-		mDeqRedo.clear();
-		mDeqUndo.clear();
 	}
 
 	CommandHandler::~CommandHandler()
@@ -51,7 +49,7 @@ namespace Dystopia
 	{
 		_comd->ExecuteDo();
 
-		if (mDeqUndo.size() == mDeqUndo.max_size())
+		if (mDeqUndo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqUndo);
 
 		for (auto& e : mDeqRedo)
@@ -70,7 +68,7 @@ namespace Dystopia
 
 		mDeqUndo.back()->ExecuteUndo();
 
-		if (mDeqRedo.size() == mDeqRedo.max_size())
+		if (mDeqRedo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqRedo);
 
 		mDeqRedo.push_back(mDeqUndo.back());
@@ -83,7 +81,7 @@ namespace Dystopia
 
 		mDeqRedo.back()->ExecuteDo();
 
-		if (mDeqUndo.size() == mDeqUndo.max_size())
+		if (mDeqUndo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqUndo);
 
 		mDeqUndo.push_back(mDeqRedo.back());
