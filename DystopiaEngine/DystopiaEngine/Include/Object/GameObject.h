@@ -27,14 +27,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class CollisionEvent;
-
 	class GameObject
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		GameObject(void);
-		explicit GameObject(size_t _ID);
+		explicit GameObject(unsigned long long _ID);
 		GameObject(GameObject&&);
 
 		~GameObject(void);
@@ -73,7 +72,7 @@ namespace Dystopia
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
 
-		size_t GetID(void) const;
+		unsigned long long GetID(void) const;
 		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
 		void SetName(const std::string&);
@@ -96,7 +95,7 @@ namespace Dystopia
 
 	private:
 
-		size_t mnID;
+		unsigned long long mnID;
 		unsigned mnFlags;
 		std::string mName;
 

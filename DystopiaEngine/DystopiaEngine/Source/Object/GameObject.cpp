@@ -12,10 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Object\GameObject.h"		 // File Header
-#include "Component\Component.h"	 // Component
-#include "Behaviour\Behaviour.h"	 // Behaviour
 #include "Object\ObjectFlags.h"		 // eObjFlags
-#include "DataStructure\AutoArray.h" 
 #include "Utility\Utility.h"		 // Move
 #include "IO\TextSerialiser.h"
 
@@ -34,7 +31,7 @@ Dystopia::GameObject::GameObject(void) :
 
 }
 
-Dystopia::GameObject::GameObject(size_t _ID) :
+Dystopia::GameObject::GameObject(unsigned long long _ID) :
 	mComponents{}, mBehaviours{}, mnID{ _ID }, mnFlags{ FLAG_NONE }, mName{ "" }
 {
 
@@ -214,7 +211,7 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 }
 
 
-size_t Dystopia::GameObject::GetID(void) const
+unsigned long long Dystopia::GameObject::GetID(void) const
 {
 	return mnID;
 }

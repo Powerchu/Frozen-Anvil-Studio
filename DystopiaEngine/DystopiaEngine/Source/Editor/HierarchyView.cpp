@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Scene\Scene.h"
 #include "System\Camera\CameraSystem.h"
 #include "System\Driver\Driver.h"
+#include "Utility\GUID.h"
 #include "Component\Camera.h"
 
 constexpr float DEFAULT_WIDTH = 300;
@@ -78,7 +79,9 @@ namespace Dystopia
 			auto& arrayOfGameObjects = mpCurrentScene->GetAllGameObjects();
 			for (auto& obj : arrayOfGameObjects)
 			{
-				if (EGUI::Display::SelectableTxt(obj.GetName(), mpFocus == &obj))
+				if (EGUI::Display::SelectableTxt(obj.GetName() + "##" + 
+												std::to_string(obj.GetID()),
+												mpFocus && (mpFocus->GetID() == obj.GetID())))
 				{
 					GetMainEditor().RemoveFocus();
 					GetMainEditor().SetFocus(obj);
@@ -115,13 +118,13 @@ namespace Dystopia
 		{
 			if (EGUI::Display::SelectableTxt("New GameObject"))
 			{
-				GameObject *pObject = mpCurrentScene->InsertGameObject();
+				GameObject *pObject = mpCurrentScene->InsertGameObject(GUIDGenerator::GetUniqueID());
 				pObject->SetName("GameObject");
 			}
 
 			if (EGUI::Display::SelectableTxt("New Camera"))
 			{
-				GameObject *pObject = mpCurrentScene->InsertGameObject();
+				GameObject *pObject = mpCurrentScene->InsertGameObject(GUIDGenerator::GetUniqueID());
 				pObject->SetName("Camera");
 				pObject->AddComponent(EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->RequestComponent(), typename Camera::TAG{});
 			}
