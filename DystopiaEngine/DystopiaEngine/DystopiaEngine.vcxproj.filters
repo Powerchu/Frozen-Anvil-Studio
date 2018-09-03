@@ -146,6 +146,7 @@
     <ClCompile Include="Source\Component\Colliders\Convex.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
+    <ClCompile Include="GUID.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -395,6 +396,8 @@
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="GUID.h" />
+    <ClInclude Include="ComponentGUID.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
