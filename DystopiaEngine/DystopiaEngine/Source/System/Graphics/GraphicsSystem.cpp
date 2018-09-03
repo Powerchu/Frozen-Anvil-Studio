@@ -117,7 +117,7 @@ void Dystopia::GraphicsSystem::Update(float)
 			{
 				if (Obj.GetFlags() & ActiveFlags)
 				{
-					if (Renderer* r = Obj.GetComponent<Renderer>();)
+					if (Renderer* r = Obj.GetComponent<Renderer>())
 					{
 						r->Draw();
 					}
