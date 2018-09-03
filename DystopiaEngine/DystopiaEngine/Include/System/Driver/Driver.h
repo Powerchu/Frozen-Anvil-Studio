@@ -55,7 +55,7 @@ namespace Dystopia
 		template <class T>
 		T* const GetSystem(void) const;
 
-		template <unsigned N, class T = Utility::MetaExtract_t<N, AllSys>>
+		template <unsigned N, class T = typename Utility::MetaExtract_t<N, AllSys>::type>
 		T* const GetSystem(void) const;
 
 		template <class T>

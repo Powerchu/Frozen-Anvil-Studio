@@ -44,6 +44,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #undef WIN32_LEAN_AND_MEAN		// Stop defines from spilling into code
 #undef NOMINMAX
 
+
+int Dystopia::GraphicsSystem::DRAW_MODE = GL_TRIANGLES;
+const int& Dystopia::GraphicsSystem::GetDrawMode(void) noexcept
+{
+	return DRAW_MODE;
+}
+
+void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
+{
+	DRAW_MODE = _nMode;
+}
+
+
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }
 {
@@ -130,7 +143,7 @@ void Dystopia::GraphicsSystem::Shutdown(void)
 
 void Dystopia::GraphicsSystem::LoadDefaults(void)
 {
-
+	DRAW_MODE = GL_TRIANGLES;
 }
 
 void Dystopia::GraphicsSystem::LoadSettings(TextSerialiser&)

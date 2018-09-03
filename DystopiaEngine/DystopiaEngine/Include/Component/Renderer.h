@@ -43,8 +43,10 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
-		void SetMesh(Mesh*);
-		void SetMesh(const std::string&);
+		void Draw(void) const noexcept;
+		
+		void SetMesh(Mesh*) noexcept;
+		void SetMesh(const std::string&) noexcept;
 
 		Renderer* Duplicate(void) const;
 

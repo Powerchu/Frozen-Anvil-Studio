@@ -496,9 +496,6 @@
     <Filter Include="Editor\Editor">
       <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Systems\Graphic\Mesh">
-      <UniqueIdentifier>{ca90d672-42da-4174-9947-7cdd5a3d812c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Shader">
       <UniqueIdentifier>{2df11722-19eb-493a-9952-074d5e70fcc7}</UniqueIdentifier>
     </Filter>

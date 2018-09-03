@@ -38,6 +38,11 @@ namespace Dystopia
 
 		void FreeMeshes(void);
 
+		// Not implemented
+		void ExportMeshes(void);
+
+		Mesh* GetMesh(const std::string&) noexcept;
+
 	private:
 
 		AutoArray<UV>      mUVs;

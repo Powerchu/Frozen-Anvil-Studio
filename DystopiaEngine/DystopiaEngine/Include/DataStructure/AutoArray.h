@@ -284,7 +284,7 @@ template <class T, class A>
 inline void AutoArray<T, A>::reserve(Sz_t _nSize)
 {
 	Sz_t sz = size();
-	if(sz + _nSize > mpEnd - mpArray)
+	if(static_cast<int64_t>(sz + _nSize) > mpEnd - mpArray)
 		GrowArray(sz + _nSize);
 }
 

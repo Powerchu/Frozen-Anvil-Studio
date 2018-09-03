@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <GL\glew.h>
 #include <iostream>
 
+
 void Dystopia::MeshSystem::Init(void)
 {
 	Mesh::LinkSystem(this);
@@ -78,7 +79,7 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 
 	input.ConsumeStartBlock();
 
-	unsigned nNumIndices = 0, nCurrOffset = mIndex.size();
+	unsigned nNumIndices = 0, nCurrOffset = static_cast<unsigned>(mIndex.size());
 	while (!input.EndOfInput())
 	{
 		mIndex.EmplaceBack();
@@ -109,6 +110,16 @@ void Dystopia::MeshSystem::EndMesh(void)
 void Dystopia::MeshSystem::FreeMeshes(void)
 {
 	mpRawMeshes.clear();
+}
+
+void Dystopia::MeshSystem::ExportMeshes(void)
+{
+
+}
+
+Dystopia::Mesh* Dystopia::MeshSystem::GetMesh(const std::string &) noexcept
+{
+	return nullptr;
 }
 
 

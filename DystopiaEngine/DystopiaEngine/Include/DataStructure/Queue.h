@@ -177,7 +177,7 @@ template <typename T>
 void Queue<T>::Insert(const T& _obj)
 {
 	mpArray[mnBack] = _obj;
-	++mnBack;
+	mnBack = Utility::LoopIncrement(mnBack, mnCap);
 }
 
 template <typename T>

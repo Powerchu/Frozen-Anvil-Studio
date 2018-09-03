@@ -26,8 +26,7 @@ Math::Matrix4 __vectorcall Math::Quaternion::Matrix(void) const noexcept
 	Vec4 t2 = mData.zzzw * mData.zwxy; // zz, zw, xz, yw
 	t3 *= t3;						   // yy, ww, yy, ww
 
-	// TODO : Use ~ for alternating operation? alternatives ++ --
-	Vec4 t4 = AddSub(t2, t1);				 // Add-Sub -> xx + zz, xy - zw, yw + xz, yz - xw
+	Vec4 t4 = AddSub(t2, t1);			// Add-Sub -> xx + zz, xy - zw, yw + xz, yz - xw
 	t1 = AddSub(t1.yxwz, t2.yxwz);      // Add-Sub -> xy + zw, xx - zz, yz + xw, yw - xz
 
 
