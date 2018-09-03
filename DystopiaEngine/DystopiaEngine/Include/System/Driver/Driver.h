@@ -35,6 +35,7 @@ namespace Dystopia
 			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM   , class WindowManager  >,
 //			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM    , class SoundSystem    >,
 			Utility::Indexer<eSYSTEMS::SCENE_SYSTEM    , class SceneSystem    >,
+			Utility::Indexer<eSYSTEMS::CAMERA_SYSTEM   , class CameraSystem   >,
 			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM  , class GraphicsSystem >,
 			Utility::Indexer<eSYSTEMS::EVENT_SYSTEM    , class EventSystem    >,
 			Utility::Indexer<eSYSTEMS::COLLISION_SYSTEM, class CollisionSystem>,
@@ -42,7 +43,6 @@ namespace Dystopia
 		>>;
 
 		using SubSys = typename Utility::MetaAutoIndexer <
-			class CameraSystem,
 			class MeshSystem
 		>::result;
 

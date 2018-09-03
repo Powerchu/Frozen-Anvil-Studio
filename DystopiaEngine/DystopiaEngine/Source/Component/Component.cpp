@@ -14,10 +14,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component\Component.h"		// File Header
 #include "Object\ObjectFlags.h"
 
-Dystopia::Component::Component(void) :
-	mnFlags(FLAG_NONE), mpOwner(nullptr)
+Dystopia::Component::Component(void) noexcept
+	: mnFlags{ FLAG_NONE }, mpOwner{ nullptr }
 {
 
+}
+
+Dystopia::Component::Component(GameObject * _pOwner) noexcept
+	: mnFlags{ FLAG_NONE }, mpOwner{ _pOwner }
+{
 }
 
 Dystopia::Component::~Component(void)

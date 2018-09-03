@@ -83,7 +83,7 @@
       <Filter>Game Engine\SubSystems\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Camera\CameraSystem.cpp">
-      <Filter>Game Engine\SubSystems\Camera</Filter>
+      <Filter>Game Engine\Systems\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\EditorTab.cpp">
       <Filter>Editor\Editor</Filter>
@@ -338,7 +338,7 @@
       <Filter>Game Engine\SubSystems\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Camera\CameraSystem.h">
-      <Filter>Game Engine\SubSystems\Camera</Filter>
+      <Filter>Game Engine\Systems\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\Editor.h">
       <Filter>Editor\Editor</Filter>
@@ -568,9 +568,6 @@
     <Filter Include="Game Engine\SubSystems\Mesh\Raw">
       <UniqueIdentifier>{466ff2cb-a158-4c05-a63f-87c44bb584ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\SubSystems\Camera">
-      <UniqueIdentifier>{c6d69b09-93e3-434e-a4bc-e25fb0c06c6d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\Project Resource">
       <UniqueIdentifier>{c5ac7258-cd5b-41a2-aa35-e58dbae20806}</UniqueIdentifier>
     </Filter>
@@ -621,6 +618,9 @@
     </Filter>
     <Filter Include="Game Engine\Components\Renderer">
       <UniqueIdentifier>{91edfe0d-9cd2-43b8-a18f-715da13dcbf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Camera">
+      <UniqueIdentifier>{c6d69b09-93e3-434e-a4bc-e25fb0c06c6d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

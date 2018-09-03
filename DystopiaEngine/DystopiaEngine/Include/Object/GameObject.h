@@ -33,9 +33,9 @@ namespace Dystopia
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		GameObject(void);
-		explicit GameObject(size_t _ID);
-		GameObject(GameObject&&);
+		GameObject(void) noexcept;
+		explicit GameObject(size_t _ID) noexcept;
+		GameObject(GameObject&&) noexcept;
 
 		~GameObject(void);
 

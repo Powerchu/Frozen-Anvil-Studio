@@ -31,15 +31,24 @@ namespace Dystopia
 		explicit Window(HWND);
 		Window(Window&&) = default;
 
-		const Queue<eButton>& GetInputQueue(void) const;
+		const Queue<eButton>& GetInputQueue(void) const noexcept;
 
-		HWND GetWindowHandle(void) const;
-		HDC GetDeviceContext(void) const;
+		HWND GetWindowHandle(void) const noexcept;
+		HDC GetDeviceContext(void) const noexcept;
+
+		int GetWidth(void) const noexcept;
+		int GetHeight(void) const noexcept;
 
 		void SetTitle(const std::wstring&);
 		void SetStyle(long _nStyle, long _nStyleEx);
+		void SetSize(int _nWidth, int _nHeight);
+
+		void CenterWindow(void) noexcept;
 
 		void ShowCursor(int _bShow) const;
+
+		void Show(void) const noexcept;
+		void Hide(void) const noexcept;
 
 		Window& operator= (Window&&) = default;
 
@@ -47,6 +56,9 @@ namespace Dystopia
 
 		HWND mHandle;
 		HDC mDeviceContext;
+
+		int mnWidth, mnHeight;
+		unsigned long mStyle, mStyleEx;
 
 		Queue<eButton> mInputQueue;
 	};

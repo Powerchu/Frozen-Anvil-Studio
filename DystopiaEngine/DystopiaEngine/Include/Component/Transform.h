@@ -35,7 +35,7 @@ namespace Dystopia
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		Transform(void);
+		explicit Transform(GameObject* _pOwner = nullptr) noexcept;
 		Transform(const Transform&);
 
 

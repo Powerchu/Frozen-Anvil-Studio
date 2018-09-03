@@ -38,7 +38,7 @@ namespace Dystopia
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		Camera(const int _fWidth = 1600, const int _fHeight = 900);
+		Camera(const float _fWidth = 1.f, const float _fHeight = 1.f);
 		~Camera(void);
 
 
@@ -76,8 +76,10 @@ namespace Dystopia
 		void SetRotation(const float);
 		void SetRotationDeg(const float);
 
-		// Sets the screen coordiates and area the camera renders to
+		// Sets the area the camera renders to in absolute screen coordinates
 		void SetViewport(const int _x, const int _y, const int _nWidth, const int _nHeight);
+		// Set the area the camera renders to in relative coordinates, from 0 to 1.0
+		void SetViewport(float _x, float _y, float _nWidth, float _nHeight);
 
 		// Returns the *GLOBAL* position of the Camera
 		Math::Pt3D GetPosition(void) const;

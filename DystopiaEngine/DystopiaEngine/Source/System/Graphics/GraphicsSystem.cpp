@@ -92,7 +92,7 @@ void Dystopia::GraphicsSystem::Update(float)
 {
 	StartFrame();
 
-	auto& AllCam = EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->GetAllCameras();
+	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
 
 	// For every camera in the game window (can be more than 1!)

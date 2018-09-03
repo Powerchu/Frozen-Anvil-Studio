@@ -32,7 +32,8 @@ namespace Dystopia
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		Component(void);
+		Component(void) noexcept;
+		explicit Component(GameObject* _pOwner) noexcept;
 		virtual ~Component(void);
 
 

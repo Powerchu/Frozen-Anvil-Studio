@@ -28,20 +28,21 @@ for (auto& e : _ARR)					\
 for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
 
-Dystopia::GameObject::GameObject(void) :
-	mComponents{}, mBehaviours{}, mnID{ ~0ull }, mnFlags{ FLAG_NONE }
+Dystopia::GameObject::GameObject(void) noexcept
+	: GameObject{ ~(size_t)0 }
 {
 
 }
 
-Dystopia::GameObject::GameObject(size_t _ID) :
-	mComponents{}, mBehaviours{}, mnID{ _ID }, mnFlags{ FLAG_NONE }
+Dystopia::GameObject::GameObject(size_t _ID) noexcept
+	: mnID{ _ID }, mnFlags{ FLAG_NONE },
+	mTransform{ this }, mComponents{}, mBehaviours{}
 {
 
 }
 
-Dystopia::GameObject::GameObject(GameObject&& _obj) :
-	mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags },
+Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
+	: mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags },
 	mComponents{ Utility::Move(_obj.mComponents) },
 	mBehaviours{ Utility::Move(_obj.mBehaviours) }
 {

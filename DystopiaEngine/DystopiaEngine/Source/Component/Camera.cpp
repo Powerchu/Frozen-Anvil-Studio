@@ -23,10 +23,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object\GameObject.h"
 #include "Object\ObjectFlags.h"
 
-#include <GL\glew.h>				// glViewport
 
-
-Dystopia::Camera::Camera(const int _fWidth, const int _fHeight) : Component{},
+Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
 	mViewport{0, 0, _fWidth, _fHeight}, mView{},
 	mTransform{ nullptr }, mInvScreen {}
 {
@@ -54,12 +52,12 @@ void Dystopia::Camera::Update(const float)
 */
 void Dystopia::Camera::SetMasterCamera(void)
 {
-	EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->SetMasterCamera(this);
+	EngineCore::GetInstance()->GetSystem<CameraSystem>()->SetMasterCamera(this);
 }
 
 bool Dystopia::Camera::IsMasterCamera(void) const
 {
-	return EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->IsMasterCamera(this);
+	return EngineCore::GetInstance()->GetSystem<CameraSystem>()->IsMasterCamera(this);
 }
 
 void Dystopia::Camera::InitiallyActive(bool b)
@@ -128,7 +126,7 @@ void Dystopia::Camera::SetRotationDeg(const float _fDegrees)
 */
 void Dystopia::Camera::SetCamera(void)
 {
-	glViewport(mViewport.mnX, mViewport.mnY, mViewport.mnWidth, mViewport.mnHeight);
+	EngineCore::GetInstance()->GetSystem<CameraSystem>()->ApplyViewport(mViewport);
 
 	mView = mTransform->GetTransformMatrix();
 
@@ -145,6 +143,20 @@ void Dystopia::Camera::SetCamera(void)
 }
 
 void Dystopia::Camera::SetViewport(const int _x, const int _y, const int _nWidth, const int _nHeight)
+{
+	const Gfx::AbsViewport& master =
+		EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
+
+	float InvWidth  = 1.f / master.mnWidth;
+	float InvHeight = 1.f / master.mnHeight;
+
+	mViewport.mnX = (_x - master.mnX) * InvWidth;
+	mViewport.mnY = (_y - master.mnY) * InvHeight;
+	mViewport.mnWidth  = _nWidth  * InvWidth;
+	mViewport.mnHeight = _nHeight * InvHeight;
+}
+
+void Dystopia::Camera::SetViewport(float _x, float _y, float _nWidth, float _nHeight)
 {
 	mViewport.mnX = _x;
 	mViewport.mnY = _y;
