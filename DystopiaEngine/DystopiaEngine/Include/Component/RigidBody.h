@@ -42,21 +42,32 @@ namespace Dystopia
 		void LateUpdate(float _dt);
 		/*Add a force at the origin of the body*/
 		void AddForce(Math::Vec3D const & _force);
-		/*
+
+		/*************************************************************************************************
+		\brief
 		Add a force at a point. If point is not origin, this will generate a
 		Angular velocity and Torgue with respect to GameObject Origin
 
 		Make sure _point is in global coordinates
-		*/
+
+		**************************************************************************************************/
 		void AddForce(Math::Vec3D const & _force, Math::Point3D const & _point);
-		/*
+
+		/**************************************************************************************************
+		\brief
 		Add a force at a point. If point is not origin, this will generate a
 		Angular velocity and Torgue with respect to _origin
 
 		Make sure _point & _origin is in global coordinates
-		*/
-		void AddForce(Math::Vec3D const & _force, Math::Point3D const & _point, Math::Point3D const & _origin);
-		/*Resets the Cumulative Force for the current RigidBody*/
+		**************************************************************************************************/
+		void AddForce(Math::Vec3D   const & _force,
+			          Math::Point3D const & _point, 
+			          Math::Point3D const & _origin);
+
+		/**************************************************************************************************
+		\brief
+		Resets the Cumulative Force for the current RigidBody
+		**************************************************************************************************/
 		void ResetCumulative();
 
 	private:

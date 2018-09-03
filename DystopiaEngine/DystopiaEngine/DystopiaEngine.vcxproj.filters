@@ -146,6 +146,9 @@
     <ClCompile Include="Source\Component\Colliders\Convex.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Utility\GUID.cpp">
+      <Filter>Utility\GUID</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -395,6 +398,12 @@
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Utility\GUID.h">
+      <Filter>Utility\GUID</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\ComponentGUID.h">
+      <Filter>Utility\GUID</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -612,6 +621,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Physics">
       <UniqueIdentifier>{e12aa00d-ccc8-4554-a50e-3b29041273b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\GUID">
+      <UniqueIdentifier>{f4948df4-57a5-44f2-a36b-60c01719cef6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
