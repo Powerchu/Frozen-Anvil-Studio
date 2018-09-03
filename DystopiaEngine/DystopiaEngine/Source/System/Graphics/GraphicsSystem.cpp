@@ -133,7 +133,9 @@ void Dystopia::GraphicsSystem::StartFrame(void)
 
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
+#if !defined(EDITOR)
 	SwapBuffers(mCurrent->GetDeviceContext());
+#endif
 }
 
 void Dystopia::GraphicsSystem::Shutdown(void)

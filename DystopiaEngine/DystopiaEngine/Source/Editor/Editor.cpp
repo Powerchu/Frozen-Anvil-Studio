@@ -51,6 +51,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <iostream>
 #include <bitset>
 
+// Temporary Includes 
+#include "Object\GameObject.h"
+
 namespace Dystopia
 {
 	struct X
@@ -91,6 +94,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	Dystopia::Timer *timer = new Dystopia::Timer{};
 	
+	AutoArray<GameObject> test{  };
+
 	driver->LoadSettings();
 	editor->LoadDefaults();
 
