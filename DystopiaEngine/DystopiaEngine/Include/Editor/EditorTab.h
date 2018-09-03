@@ -24,6 +24,8 @@ namespace Dystopia
 	class EditorEventHandler;
 	class CommandHandler;
 	class Scene;
+	class Editor;
+
 	class EditorTab
 	{
 	public:
@@ -44,7 +46,7 @@ namespace Dystopia
 		virtual std::string GetLabel() const = 0;
 		/************************************************************************************************************/
 
-		virtual void		SetFocus(GameObject * const);
+		virtual void		SetFocus(GameObject&);
 		virtual void		RemoveFocus();
 
 		void				SetSize(const Math::Vec2&);
@@ -64,6 +66,8 @@ namespace Dystopia
 		bool				mIsOpened;
 
 	protected:
+		Editor&				GetMainEditor() const;
+
 		CommandHandler		*mpComdHandler;
 		EditorEventHandler	*mpEditorEventSys;
 		Scene				*mpCurrentScene;

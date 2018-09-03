@@ -61,23 +61,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	Dystopia::Editor *editor	= Dystopia::Editor::GetInstance();
 	Dystopia::Timer *timer		= new Dystopia::Timer{};
-
-	AutoArray<std::string> arrayOfStrings;
-	arrayOfStrings.push_back("name1");
-	arrayOfStrings.push_back("name1");
-	arrayOfStrings.push_back("name1");
-	arrayOfStrings.push_back("name1");
-	arrayOfStrings.push_back("name1");
-	arrayOfStrings.push_back("name1");
-	arrayOfStrings.push_back("name1");
-	arrayOfStrings.push_back("name1");
-	arrayOfStrings.push_back("name1");
-	arrayOfStrings.push_back("name1");
-
 	editor->Init();
-
-	for (auto& e : arrayOfStrings)
-		std::cout << e << std::endl;
 	while (!editor->IsClosing())
 	{
 		float dt = timer->Elapsed();
@@ -148,6 +132,7 @@ namespace Dystopia
 			e->SetEventSysContext(mpEditorEventSys);
 			e->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			e->Init();
+			e->RemoveFocus();
 		}
 
 		InstallHotkeys();
@@ -173,7 +158,6 @@ namespace Dystopia
 
 		UpdateKeys();
 		UpdateHotkeys();
-
 		
 		mpEditorEventSys->FireAllPending();
 		MainMenuBar();
@@ -525,6 +509,17 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PASTE)->Unbind(this);
 	}
 
+	void Editor::SetFocus(GameObject& _rObj)
+	{
+		for (auto& e : mTabsArray)
+			e->SetFocus(_rObj);
+	}
+	
+	void Editor::RemoveFocus()
+	{
+		for (auto& e : mTabsArray)
+			e->RemoveFocus();
+	}
 }
 
 #endif		// EDITOR ONLY

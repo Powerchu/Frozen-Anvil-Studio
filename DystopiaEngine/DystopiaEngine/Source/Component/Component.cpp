@@ -79,3 +79,7 @@ Dystopia::Component* Dystopia::Component::Duplicate(void) const
 	return nullptr;
 }
 
+void Dystopia::Component::EditorUI(void) noexcept
+{
+}
+

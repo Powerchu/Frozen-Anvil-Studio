@@ -63,7 +63,7 @@ template <typename ... Ty>
 Dystopia::GameObject* Dystopia::Scene::InsertGameObject(Ty&& ..._args)
 {
 	mGameObjs.EmplaceBack(Utility::Forward<Ty>(_args)...);
-	return mGameObjs.end();
+	return &(mGameObjs.back());
 }
 
 

@@ -32,7 +32,7 @@ namespace Dystopia
 		mpCurrentScene = nullptr;
 	}
 
-	void EditorTab::SetFocus(GameObject * const _pGameObject)
+	void EditorTab::SetFocus(GameObject&)
 	{
 		// do nothing
 	}
@@ -90,6 +90,11 @@ namespace Dystopia
 	void EditorTab::SetSceneContext(Scene * const _ctx)
 	{
 		mpCurrentScene = _ctx;
+	}
+	
+	Editor&	EditorTab::GetMainEditor() const
+	{
+		return *(Editor::GetInstance());
 	}
 
 }

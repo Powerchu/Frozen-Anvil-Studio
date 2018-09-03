@@ -14,8 +14,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor\EGUI.h"
 #include "Editor\HierarchyView.h"
+#include "Editor\EditorEvents.h"
+#include "Editor\Editor.h"
 #include "Object\GameObject.h"
 #include "System\Scene\Scene.h"
+#include "System\Camera\CameraSystem.h"
+#include "System\Driver\Driver.h"
 
 constexpr float DEFAULT_WIDTH = 300;
 constexpr float DEFAULT_HEIGHT = 300;
@@ -32,8 +36,8 @@ namespace Dystopia
 	}
 
 	HierarchyView::HierarchyView()
-		: EditorTab{ true }, 
-		mLabel{ "Hierarchy" }, mpFocusGameObj{ nullptr }, mSearchText{ "" },
+		: EditorTab{ true },  
+		mLabel{ "Hierarchy" }, mpFocus{ nullptr }, mSearchText{ "" },
 		mPopupID{ "Create Objects From Hierarchy" }
 	{
 	}
@@ -70,11 +74,12 @@ namespace Dystopia
 
 		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
-			for (const auto& obj : mpCurrentScene->mGameObjs)
+			for (auto& obj : mpCurrentScene->mGameObjs)
 			{
-				if (EGUI::Display::SelectableTxt(obj.GetName().c_str()))
+				if (EGUI::Display::SelectableTxt(obj.GetName(), mpFocus == &obj))
 				{
-
+					GetMainEditor().RemoveFocus();
+					GetMainEditor().SetFocus(obj);
 				}
 			}
 		}
@@ -104,20 +109,33 @@ namespace Dystopia
 
 	void HierarchyView::CreatePopup()
 	{
-		const static std::string creatable[5] = { "obj1", "obj2", "obj3", "obj4", "obj5" };
 		if (EGUI::Display::StartPopup(mPopupID))
 		{
-			// for loop everything that can be created
-			for (const auto& e : creatable)
+			if (EGUI::Display::SelectableTxt("New GameObject"))
 			{
-				if (EGUI::Display::SelectableTxt(e))
-				{
-					//GameObject *pObject = mpCurrentScene->InsertGameObject();
-					//pObject->SetName(e);
-				}
+				GameObject *pObject = mpCurrentScene->InsertGameObject();
+				pObject->SetName("GameObject");
+			}
+
+			if (EGUI::Display::SelectableTxt("New Camera"))
+			{
+				GameObject *pObject = mpCurrentScene->InsertGameObject();
+				pObject->SetName("Camera");
+				pObject->AddComponent(EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->RequestComponent(), typename Camera::TAG{});
+				
 			}
 			EGUI::Display::EndPopup();
 		}
+	}
+
+	void HierarchyView::SetFocus(GameObject& _rObj)
+	{
+		mpFocus = &_rObj;
+	}
+
+	void HierarchyView::RemoveFocus()
+	{
+		mpFocus = nullptr;
 	}
 }
 

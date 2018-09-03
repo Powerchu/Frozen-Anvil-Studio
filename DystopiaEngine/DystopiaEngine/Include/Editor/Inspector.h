@@ -40,7 +40,7 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const override;
 
-		void	SetFocus(GameObject * const) override final;
+		void	SetFocus(GameObject&) override final;
 		void	RemoveFocus() override final;
 
 	private:
@@ -48,13 +48,11 @@ namespace Dystopia
 
 		GameObject		*mpFocus;
 		std::string		mLabel;
-		std::string		mDemoName;
-		Math::Vec4		mDemoVec;
-		char			mDemoText[32];
 		bool			mShowListOfComponents;
 		
 
 		void			GameObjectDetails();
+		void			GameObjectComponents();
 		void			AddComponentButton();
 		void			ComponentsDropDownList();
 	};

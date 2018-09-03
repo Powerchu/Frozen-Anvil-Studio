@@ -17,8 +17,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ProjectResource.h"
 #include "Editor\ScriptFormatter.h"
 #include "Editor\Commands.h"
+#include "Editor\EditorEvents.h"
+#include "Editor\Editor.h"
 #include "Object\GameObject.h"
-#include "Component\Component.h"
+#include "Component\Transform.h"
 #include <iostream>
 
 namespace Dystopia
@@ -34,8 +36,7 @@ namespace Dystopia
 	}
 
 	Inspector::Inspector()
-		: EditorTab{ true }, mpFocus{ nullptr }, mLabel{ "Inspector" },
-		mDemoVec{ Math::Vec4{0,0,0,0} }, mDemoText{ "hello" }, mDemoName{ "" }
+		: EditorTab{ true }, mpFocus{ nullptr }, mLabel{ "Inspector" }
 	{
 	}
 
@@ -46,6 +47,7 @@ namespace Dystopia
 
 	void Inspector::Init()
 	{
+		
 	}
 
 	void Inspector::Update(const float& _dt)
@@ -55,40 +57,42 @@ namespace Dystopia
 
 	void Inspector::Window()
 	{
+		if (!mpFocus) return;
+
 		GameObjectDetails();
+		GameObjectComponents();
+		////float x = mDemoVec.x;
+		////float y = mDemoVec.y;
+		////float z = mDemoVec.z;
+		////EGUI::Display::HorizontalSeparator();
+		////if (EGUI::Display::StartTreeNode("Temporary Transform"))	// replace with for loop of all components name
+		////{
+		////	EGUI::Display::TextField("mDemoText", mDemoText, 32);
 
-		float x = mDemoVec.x;
-		float y = mDemoVec.y;
-		float z = mDemoVec.z;
-		EGUI::Display::HorizontalSeparator();
-		if (EGUI::Display::StartTreeNode("Temporary Transform"))	// replace with for loop of all components name
-		{
-			EGUI::Display::TextField("mDemoText", mDemoText, 32);
-
-			if (EGUI::Display::VectorFields("Demo Vec", &mDemoVec, 0.1f, 0.f, 10.f))
-			{
-				x = mDemoVec.x;
-				y = mDemoVec.y;
-				z = mDemoVec.z;
-			}
-			EGUI::Display::Label("Variable mDemoVec x : [%.3f] y: [%.3f] z:[%.3f]", x, y, z);
-			EGUI::Display::EndTreeNode();
-		}
-		EGUI::Display::HorizontalSeparator();
-		if (EGUI::Display::EmptyBox("Payload", 150, mDemoName, true) && mDemoName.length())
-		{
-			ProjectResource::GetInstance()->FocusOnFile(mDemoName);
-		}
-		if (File *t = EGUI::Display::StartPayloadReceiver<File>(EGUI::FILE))
-		{
-			mpComdHandler->InvokeCommand(&mDemoName, (*t).mName);
-			EGUI::Display::EndPayloadReceiver();
-		}
-		EGUI::SameLine(); 
-		if (EGUI::Display::IconCircle("payload1box", 6, 0, 3) && mDemoName.length())
-		{
-			ProjectResource::GetInstance()->FocusOnFile(mDemoName);
-		}
+		////	if (EGUI::Display::VectorFields("Demo Vec", &mDemoVec, 0.1f, 0.f, 10.f))
+		////	{
+		////		x = mDemoVec.x;
+		////		y = mDemoVec.y;
+		////		z = mDemoVec.z;
+		////	}
+		////	EGUI::Display::Label("Variable mDemoVec x : [%.3f] y: [%.3f] z:[%.3f]", x, y, z);
+		////	EGUI::Display::EndTreeNode();
+		////}
+		////EGUI::Display::HorizontalSeparator();
+		////if (EGUI::Display::EmptyBox("Payload", 150, mDemoName, true) && mDemoName.length())
+		////{
+		////	ProjectResource::GetInstance()->FocusOnFile(mDemoName);
+		////}
+		////if (File *t = EGUI::Display::StartPayloadReceiver<File>(EGUI::FILE))
+		////{
+		////	mpComdHandler->InvokeCommand(&mDemoName, (*t).mName);
+		////	EGUI::Display::EndPayloadReceiver();
+		////}
+		////EGUI::SameLine(); 
+		////if (EGUI::Display::IconCircle("payload1box", 6, 0, 3) && mDemoName.length())
+		////{
+		////	ProjectResource::GetInstance()->FocusOnFile(mDemoName);
+		////}
 
 		AddComponentButton();
 	}
@@ -100,6 +104,7 @@ namespace Dystopia
 
 	void Inspector::GameObjectDetails()
 	{
+		static bool checked = true;
 		static int i = 0;
 		static int j = 0;
 		AutoArray<std::string> arr;
@@ -110,8 +115,10 @@ namespace Dystopia
 		arr2.push_back("item3");
 		arr2.push_back("item4");
 		arr2.push_back("item5");
-		char arr3[MAX_SEARCH] = "This is where the object name goes";
-		static bool checked = true;
+
+		char buffer[256] = "";
+		std::string name = mpFocus->GetName();
+		strcpy_s(buffer, name.c_str());
 
 		EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
 		EGUI::SameLine(10);
@@ -119,7 +126,11 @@ namespace Dystopia
 		{
 			EGUI::Display::CheckBox("GameObjActive", &checked, false);
 			EGUI::SameLine();
-			EGUI::Display::TextField("GameObjName", arr3, MAX_SEARCH, false, 350.f);
+			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 350.f))
+			{
+				std::string newName{ buffer };
+				mpFocus->SetName((newName == "") ? mpFocus->GetName() : newName);
+			}
 			EGUI::Display::DropDownSelection("Tag", i, arr, 100);
 			EGUI::SameLine();
 			EGUI::ChangeAlignmentYOffset(0);
@@ -129,14 +140,25 @@ namespace Dystopia
 		EGUI::EndChild();
 	}
 
+	void Inspector::GameObjectComponents()
+	{
+		EGUI::Display::HorizontalSeparator();
+		Transform& tempTransform = *mpFocus->GetComponent<Transform>();
+		if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName())) // TODO: Update(append) Name with game object ID
+		{
+			tempTransform.EditorUI();
+			EGUI::Display::EndTreeNode();
+		}
+	}
+
 	std::string Inspector::GetLabel() const
 	{
 		return mLabel;
 	}
 
-	void Inspector::SetFocus(GameObject * const _pGameObj)
+	void Inspector::SetFocus(GameObject& _rGameObj)
 	{
-		mpFocus = _pGameObj;
+		mpFocus = &_rGameObj;
 	}
 
 	void Inspector::RemoveFocus()

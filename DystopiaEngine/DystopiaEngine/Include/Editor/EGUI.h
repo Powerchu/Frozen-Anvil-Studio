@@ -150,7 +150,7 @@ namespace EGUI
 				char buffer[size];
 				EGUI::Display::TextField("This is an editable text field: ", &buffer, size);
 		======================================================================================================================= */
-		void TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true, float _width = 250);
+		bool TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true, float _width = 250);
 		/* =======================================================================================================================
 		Brief:
 				Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked. 

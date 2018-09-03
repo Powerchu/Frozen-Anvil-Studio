@@ -34,6 +34,7 @@ namespace Dystopia
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
 		};
+		const std::string GetEditorName(void) const { return "Camera"; }
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 

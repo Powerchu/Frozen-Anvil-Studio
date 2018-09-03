@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ProjectResource.h"
 #include "Editor\EGUI.h"
 #include "Editor\EditorEvents.h"
+#include "Editor\Editor.h"
 #include <algorithm>
 #include <iostream>
 #include <Windows.h>
