@@ -69,7 +69,7 @@ void Dystopia::SceneSystem::PostUpdate(void)
 
 void Dystopia::SceneSystem::Shutdown(void)
 {
-
+	delete mpCurrScene;
 }
 
 void Dystopia::SceneSystem::LoadDefaults(void)

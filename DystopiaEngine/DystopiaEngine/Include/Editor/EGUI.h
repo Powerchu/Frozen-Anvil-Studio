@@ -36,7 +36,7 @@ namespace Dystopia
 	class CommandHandler;
 	class WindowManager;
 	class GraphicsSystem;
-	class InputManager;
+	class EditorInput;
 	class GLState;
 	typedef unsigned int GLuint;
 }
@@ -150,7 +150,7 @@ namespace EGUI
 				char buffer[size];
 				EGUI::Display::TextField("This is an editable text field: ", &buffer, size);
 		======================================================================================================================= */
-		void TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true, float _width = 250);
+		bool TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true, float _width = 250);
 		/* =======================================================================================================================
 		Brief:
 				Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked. 
@@ -450,26 +450,27 @@ namespace Dystopia
 		GuiSystem();
 		~GuiSystem();
 
-		bool			Init(WindowManager*, GraphicsSystem*, InputManager*, const char* = "MainDockable");
+		bool			Init(WindowManager*, GraphicsSystem*, EditorInput*, const char* = "MainDockable");
 		void			StartFrame(const float&);
 		void			EndFrame();
 		void			Shutdown();
 
-		void			UpdateCharInputs(unsigned int c);
-		void			UpdateMouseInputs();
-		void			UpdateKeyInputs();
-		void			UpdateScrollInputs();
+		void			UpdateChar(unsigned short);
+		void			UpdateScroll(double _x, double _y);
+		void			UpdateMouse(int, bool);
+		void			UpdateKey(int _k, bool _down);
+
 		const char*		GetMainDockspaceName() const;
 
 	private:
 		ImGuiContext	*mpCtx;
 		WindowManager	*mpWin;
 		GraphicsSystem	*mpGfx;
-		InputManager	*mpInput;
+		EditorInput	*mpInput;
 		ImDrawData		*mpDrawData;
 		GLState			*mpGLState;
-		std::string		mGlslVersion;
 		GLuint			mFontTexture;
+		std::string		mGlslVersion;
 		const char		*mpMainDockspace;
 		int				mShaderHandle;
 		int				mVertHandle;

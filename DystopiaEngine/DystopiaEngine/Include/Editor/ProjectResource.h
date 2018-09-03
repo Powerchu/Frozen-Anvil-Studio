@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _PROJECT_RESOURCE_H_
 #define _PROJECT_RESOURCE_H_
 #include "EditorTab.h"
+#include "DataStructure\AutoArray.h"
 
 typedef void *HANDLE;
 typedef unsigned long DWORD;

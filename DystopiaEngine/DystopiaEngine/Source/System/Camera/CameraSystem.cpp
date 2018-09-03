@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Camera\CameraSystem.h" // File Header
 #include "Component\Camera.h"
 
-
-
-
+Dystopia::Camera* Dystopia::CameraSystem::RequestComponent(void)
+{
+	return mCameras.Emplace();
+}

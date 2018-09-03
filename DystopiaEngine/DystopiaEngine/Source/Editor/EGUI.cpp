@@ -14,11 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 
 #include "Editor\EGUI.h"
+#include "Editor\EditorInputs.h"
 #include "System\Window\Window.h"
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
-#include "System\Input\InputSystem.h"
-#include "System\Input\InputMap.h"
 #include "Math\Vector4.h"
 #include "Math\Vector2.h"
 #include "GL\glew.h"
@@ -124,22 +123,20 @@ namespace Dystopia
 	GuiSystem::~GuiSystem()
 	{}
 
-	bool GuiSystem::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInput, const char *_pMainDockspaceName)
+	bool GuiSystem::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, EditorInput *_pInput, const char *_pMainDockspaceName)
 	{
 		if (!_pWin || !_pGfx || !_pInput) return false;
+
 		mpWin = _pWin;
 		mpGfx = _pGfx;
 		mpInput = _pInput;
 		mpMainDockspace = _pMainDockspaceName;
 
-		mpGLState = new GLState();
+		mpGLState = new GLState{};
 		mpCtx = ImGui::CreateContext();
 		ImGui::StyleColorsDark();
 
 		// Store GL version string so we can refer to it later in case we recreate shaders.
-		// if (glsl_version == NULL)
-		// 	glsl_version = "#version 150";
-		//IM_ASSERT((int)strlen("#version 150") + 2 < IM_ARRAYSIZE(mGlslVersion.c_str()));
 		mGlslVersion = "#version 150";
 		mGlslVersion += "\n";
 
@@ -149,27 +146,33 @@ namespace Dystopia
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;    // We can honor io.WantSetMousePos requests (optional, rarely used)
 																// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
 
-		// io.KeyMap[ImGuiKey_Tab]			= eButton::KEYBOARD_TAB;
-		// io.KeyMap[ImGuiKey_LeftArrow]	= eButton::KEYBOARD_LEFT;
-		// io.KeyMap[ImGuiKey_RightArrow]	= eButton::KEYBOARD_RIGHT;
-		// io.KeyMap[ImGuiKey_UpArrow]		= eButton::KEYBOARD_UP;
-		// io.KeyMap[ImGuiKey_DownArrow]	= eButton::KEYBOARD_DOWN;
-		// io.KeyMap[ImGuiKey_PageUp]		= eButton::KEYBOARD_PAGEUP;
-		// io.KeyMap[ImGuiKey_PageDown]	= eButton::KEYBOARD_PAGEDOWN;
-		// io.KeyMap[ImGuiKey_Home]		= eButton::KEYBOARD_HOME;
-		// io.KeyMap[ImGuiKey_End]			= eButton::KEYBOARD_END;
-		// io.KeyMap[ImGuiKey_Insert]		= eButton::KEYBOARD_INSERT;
-		io.KeyMap[ImGuiKey_Delete]		= static_cast<int>(eButton::KEYBOARD_DELETE);
 		io.KeyMap[ImGuiKey_Backspace]	= static_cast<int>(eButton::KEYBOARD_BACKSPACE);
-		io.KeyMap[ImGuiKey_Space]		= static_cast<int>(eButton::KEYBOARD_SPACEBAR);
+		io.KeyMap[ImGuiKey_Tab]			= static_cast<int>(eButton::KEYBOARD_TAB);
+		
 		io.KeyMap[ImGuiKey_Enter]		= static_cast<int>(eButton::KEYBOARD_ENTER);
+		
 		io.KeyMap[ImGuiKey_Escape]		= static_cast<int>(eButton::KEYBOARD_ESCAPE);
-		io.KeyMap[ImGuiKey_A]			= static_cast<int>(eButton::KEYBOARD_A);
-		io.KeyMap[ImGuiKey_C]			= static_cast<int>(eButton::KEYBOARD_C);
-		io.KeyMap[ImGuiKey_V]			= static_cast<int>(eButton::KEYBOARD_V);
-		io.KeyMap[ImGuiKey_X]			= static_cast<int>(eButton::KEYBOARD_X);
-		io.KeyMap[ImGuiKey_Y]			= static_cast<int>(eButton::KEYBOARD_Y);
-		io.KeyMap[ImGuiKey_Z]			= static_cast<int>(eButton::KEYBOARD_Z);
+
+		io.KeyMap[ImGuiKey_Space]		= static_cast<int>(eButton::KEYBOARD_SPACEBAR);
+		io.KeyMap[ImGuiKey_PageUp]		= static_cast<int>(eButton::KEYBOARD_PAGEUP);
+		io.KeyMap[ImGuiKey_PageDown]	= static_cast<int>(eButton::KEYBOARD_PAGEDOWN);
+		io.KeyMap[ImGuiKey_End]			= static_cast<int>(eButton::KEYBOARD_END);
+		io.KeyMap[ImGuiKey_Home]		= static_cast<int>(eButton::KEYBOARD_HOME);
+
+		io.KeyMap[ImGuiKey_LeftArrow]	= static_cast<int>(eButton::KEYBOARD_LEFT);
+		io.KeyMap[ImGuiKey_UpArrow]		= static_cast<int>(eButton::KEYBOARD_UP);
+		io.KeyMap[ImGuiKey_RightArrow]	= static_cast<int>(eButton::KEYBOARD_RIGHT);
+		io.KeyMap[ImGuiKey_DownArrow]	= static_cast<int>(eButton::KEYBOARD_DOWN);
+
+		io.KeyMap[ImGuiKey_Insert]		= static_cast<int>(eButton::KEYBOARD_INSERT);
+		io.KeyMap[ImGuiKey_Delete]		= static_cast<int>(eButton::KEYBOARD_DELETE);
+
+		//io.KeyMap[ImGuiKey_A]			= static_cast<int>(eButton::KEYBOARD_A);
+		//io.KeyMap[ImGuiKey_C]			= static_cast<int>(eButton::KEYBOARD_C);
+		//io.KeyMap[ImGuiKey_V]			= static_cast<int>(eButton::KEYBOARD_V);
+		//io.KeyMap[ImGuiKey_X]			= static_cast<int>(eButton::KEYBOARD_X);
+		//io.KeyMap[ImGuiKey_Y]			= static_cast<int>(eButton::KEYBOARD_Y);
+		//io.KeyMap[ImGuiKey_Z]			= static_cast<int>(eButton::KEYBOARD_Z);
 
 		io.SetClipboardTextFn = SetClipBoardText;
 		io.GetClipboardTextFn = GetClipBoardText;
@@ -187,8 +190,6 @@ namespace Dystopia
 		gCursorTypes[ImGuiMouseCursor_ResizeNWSE]	= LoadCursor(NULL, IDC_SIZENWSE);
 		gCursorTypes[ImGuiMouseCursor_Hand]			= LoadCursor(NULL, IDC_HAND);
 
-		// if (install_callbacks)
-		// InstallInputCallbacks();
 		DefaultColorSettings();
 		return true;
 	}
@@ -227,9 +228,7 @@ namespace Dystopia
 
 		for (int i = 0; i < 3; i++)
 		{
-			// If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
-			// io.MouseDown[i] = g_MouseJustPressed[i] || glfwGetMouseButton(g_Window, i) != 0;
-			io.MouseDown[i] = mMouseJustPressed[i] || mpInput->IsKeyPressed(static_cast<eUserButton>(static_cast<int>(eUserButton::MOUSE_L) + i)); 
+			io.MouseDown[i] = mMouseJustPressed[i] || mpInput->IsKeyPressed(static_cast<eEditorButton>(static_cast<int>(eEditorButton::KEY_LMOUSE) + i));
 			mMouseJustPressed[i] = false;
 		}
 
@@ -278,7 +277,7 @@ namespace Dystopia
 		glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
 		const float ortho_projection[4][4] =
 		{
-			{ 2.0f / io.DisplaySize.x, 0.0f,                     0.0f, 0.0f },
+		{ 2.0f / io.DisplaySize.x, 0.0f,                     0.0f, 0.0f },
 		{ 0.0f,                    2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
 		{ 0.0f,                    0.0f,                    -1.0f, 0.0f },
 		{ -1.0f,                   1.0f,                     0.0f, 1.0f },
@@ -340,10 +339,6 @@ namespace Dystopia
 	void GuiSystem::Shutdown()
 	{
 		ImGui::SetCurrentContext(mpCtx);
-		// // Destroy GLFW mouse cursors
-		// for (ImGuiMouseCursor cursor_n = 0; cursor_n < ImGuiMouseCursor_COUNT; cursor_n++)
-		// 	glfwDestroyCursor(g_MouseCursors[cursor_n]);
-		// memset(g_MouseCursors, 0, sizeof(g_MouseCursors));
 
 		// Destroy OpenGL objects
 		if (mVboHandle) glDeleteBuffers(1, &mVboHandle);
@@ -462,32 +457,6 @@ namespace Dystopia
 		glBindVertexArray(last_vertex_array);
 	}
 
-	void GuiSystem::UpdateCharInputs(unsigned int c)
-	{
-		// update char inputs
-		ImGuiIO& io = ImGui::GetIO();
-		if (c > 0 && c < 0x10000)
-			io.AddInputCharacter(static_cast<unsigned short>(c));
-	}
-
-	void GuiSystem::UpdateMouseInputs()
-	{
-		// update mouse inputs
-		mMouseJustPressed[0] = mpInput->IsKeyPressed(eUserButton::MOUSE_L);
-		mMouseJustPressed[1] = mpInput->IsKeyPressed(eUserButton::MOUSE_R);
-		mMouseJustPressed[2] = mpInput->IsKeyPressed(eUserButton::MOUSE_M);
-	}
-	
-	void GuiSystem::UpdateKeyInputs()
-	{
-		// this should be use more for game inputs? but allows some hotkeys in editor
-	}
-	
-	void GuiSystem::UpdateScrollInputs()
-	{
-		// get scroll inputs from windows programming or from input manager?
-	}
-
 	void GuiSystem::StartFullDockableSpace()
 	{
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | 
@@ -510,11 +479,6 @@ namespace Dystopia
 		ImGui::End();
 	}
 
-	const char* GuiSystem::GetMainDockspaceName() const
-	{
-		return mpMainDockspace;
-	}
-
 	void GuiSystem::DefaultColorSettings()
 	{
 		ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 1
@@ -526,6 +490,35 @@ namespace Dystopia
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 7
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 8
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.6f, 0.9f, 0.5f });				// 9
+	}
+
+	void GuiSystem::UpdateChar(unsigned short _c)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.AddInputCharacter(_c);
+	}
+
+	void GuiSystem::UpdateScroll(double _xOffset, double _yOffset)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseWheelH += _xOffset;
+		io.MouseWheel += _yOffset;
+	}
+
+	void GuiSystem::UpdateMouse(int _index, bool _state)
+	{
+		if (_index >= 0 < 3) mMouseJustPressed[_index] = _state;
+	}
+
+	void GuiSystem::UpdateKey(int _k, bool _down)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.KeysDown[_k] = _down;
+	}
+
+	const char* GuiSystem::GetMainDockspaceName() const
+	{
+		return mpMainDockspace;
 	}
 
 }		// namespace Dystopia

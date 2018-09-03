@@ -28,12 +28,21 @@ namespace Dystopia
 	{
 	public:
 		// Constructs with a fixed size	maximum history of commands recorded).
-		CommandHandler(size_t _nHistory=30);
+		CommandHandler(size_t _nHistory=20);
 
 		// Destructor
 		~CommandHandler();
+		// shutdown
+		void Shutdown();
 		// Calls the ExecuteDo function of the param command and passes it into the undo deque, also empties the redo deque
 		void InvokeCommand(Commands *_comd);
+		
+		template<typename T>
+		void InvokeCommand(T * const _var, const T& _newVal)
+		{
+			InvokeCommand(new ComdModifyValue<T>{ _var, _newVal });
+		}
+
 		// Calls the ExecuteUndo function of latest command in the undo deque and puts it into the redo deque
 		void UndoCommand();
 		// Performs InvokeCommand on the latest command in the redo deque 
@@ -61,6 +70,7 @@ namespace Dystopia
 		std::deque<Commands*>	mDeqUndo;
 		bool					mRecording;
 		void					PopFrontOfDeque(std::deque<Commands*>&);
+		size_t					mMaxSize;
 	};
 }
 

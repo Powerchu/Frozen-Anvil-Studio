@@ -20,14 +20,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	class EngineCore;
 	class WindowManager;
 	class GraphicsSystem;
-	class InputManager;
+	class EditorInput;
 	class GuiSystem;
 	class CommandHandler;
 	class EditorTab;
-	class EventSystem;
-	//class SceneManager;
+	class EditorEventHandler;
+	class SceneSystem;
 	//class Scene;
 
 	enum eEditorState
@@ -47,42 +48,60 @@ namespace Dystopia
 		static Editor*	GetInstance();
 		~Editor();
 
-		void			Init(WindowManager*, GraphicsSystem*, InputManager*);
+		void			Init();
 		void			LoadDefaults();
 		void			StartFrame(const float&);
 		void			UpdateFrame(const float&);
 		void			EndFrame();
 		void			Shutdown();
 		void			ChangeState(eEditorState);
-		eEditorState	CurrentState() const;
+		void			SetFocus(GameObject&);
+		void			RemoveFocus();
 		bool			IsClosing() const;
-		double			PreviousFrameTime() const;
+		eEditorState	CurrentState() const;
 
 	private:
 		Editor(void);
 
-		eEditorState	mCurrentState;
-		eEditorState	mNextState;
-		double			mPrevFrameTime;
-		WindowManager	*mpWin;
-		GraphicsSystem	*mpGfx;
-		InputManager	*mpInput;
-		EventSystem		*mpEditorEventSys;
-		CommandHandler	*mpComdHandler;
-		GuiSystem		*mpGuiSystem;
-		// SceneManager *mpSceneMgr;
+		EngineCore				*mpDriver;
+		WindowManager			*mpWin;
+		GraphicsSystem			*mpGfx;
+		EditorInput				*mpInput;
+		CommandHandler			*mpComdHandler;
+		GuiSystem				*mpGuiSystem;
+		EditorEventHandler		*mpEditorEventSys;
+		SceneSystem				*mpSceneSystem;
 
-		AutoArray<EditorTab*> mTabsArray;
+		AutoArray<EditorTab*>	mTabsArray;
+		eEditorState			mCurrentState;
+		eEditorState			mNextState;
+
+		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
 		void			Play();
 		void			Save();
 		void			Load();
 		void			TempSave();
 		void			TempLoad();
+
+		/* The main menu bar functions */
 		void			MainMenuBar();
 		void			MMFile();
 		void			MMEdit();
 		void			MMView();
+
+		/* The edit functions */
+		void			EditorUndo();
+		void			EditorRedo();
+		void			EditorCopy();
+		void			EditorCut();
+		void			EditorPaste();
+
+		/* EditorEvents */
+		void			UpdateKeys();
+		void			UpdateHotkeys();
+		void			InstallHotkeys();
+		void			UnInstallHotkeys();
 	};
 }
 

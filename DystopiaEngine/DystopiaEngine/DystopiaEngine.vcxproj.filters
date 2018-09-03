@@ -88,9 +88,6 @@
     <ClCompile Include="Source\Editor\EditorTab.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\CallbackManager.cpp">
-      <Filter>Editor\Callback Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\Commands.cpp">
       <Filter>Editor\Commands</Filter>
     </ClCompile>
@@ -145,6 +142,12 @@
     </ClCompile>
     <ClCompile Include="Source\Component\Colliders\Convex.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorEvents.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorInputs.cpp">
+      <Filter>Editor\Editor</Filter>
     </ClCompile>
     <ClCompile Include="Source\Utility\GUID.cpp">
       <Filter>Utility\GUID</Filter>
@@ -343,9 +346,6 @@
     <ClInclude Include="Include\Editor\EditorTab.h">
       <Filter>Editor\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\CallbackManager.h">
-      <Filter>Editor\Callback Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\CommandList.h">
       <Filter>Editor\Commands</Filter>
     </ClInclude>
@@ -397,6 +397,12 @@
     </ClInclude>
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
       <Filter>Game Engine\Systems\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorInputs.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorEvents.h">
+      <Filter>Editor\Editor</Filter>
     </ClInclude>
     <ClInclude Include="Include\Utility\GUID.h">
       <Filter>Utility\GUID</Filter>
@@ -585,9 +591,6 @@
     </Filter>
     <Filter Include="Editor\Docking">
       <UniqueIdentifier>{06af060e-209f-4067-a5e6-2f4b596f578b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Callback Manager">
-      <UniqueIdentifier>{c8dbf3fe-24be-4c5f-9964-0d10ff8c569e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Commands">
       <UniqueIdentifier>{573a6f53-0ee9-4c6b-bda7-2e8af2e8b43c}</UniqueIdentifier>

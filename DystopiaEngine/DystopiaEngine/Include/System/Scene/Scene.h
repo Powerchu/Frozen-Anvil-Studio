@@ -43,7 +43,7 @@ namespace Dystopia
 		GameObject* FindGameObject(const size_t _nID);
 		GameObject* FindGameObject(const std::string& _strName);
 
-	private:
+	//private:
 
 		AutoArray<GameObject> mGameObjs;
 		//Ctor::MagicArrayBuilder<GameObject>::SetBlockLimit<16>::SetBlockSize<256>::type mGameObjs;
@@ -63,7 +63,7 @@ template <typename ... Ty>
 Dystopia::GameObject* Dystopia::Scene::InsertGameObject(Ty&& ..._args)
 {
 	mGameObjs.EmplaceBack(Utility::Forward<Ty>(_args)...);
-	return mGameObjs.end();
+	return &(mGameObjs.back());
 }
 
 

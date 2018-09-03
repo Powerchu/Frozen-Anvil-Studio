@@ -28,7 +28,6 @@ namespace Dystopia
 	class InputManager : public Systems
 	{
 	public:
-
 		InputManager(void);
 		~InputManager(void);
 
@@ -62,7 +61,7 @@ namespace Dystopia
 		};
 
 		Array<KeyBinding, eUserButton::TOTAL_USERBUTTONS> mButtonMap;
-
+		
 		void LoadDefaultUserKeys(void);
 	};
 }

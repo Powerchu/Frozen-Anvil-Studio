@@ -11,11 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Object\GameObject.h"		// File Header
-#include "Component\Component.h"	// Component
-#include "Behaviour\Behaviour.h"	// Behaviour
-#include "Utility\Utility.h"		// Move
-#include "Object\ObjectFlags.h"		// eObjFlags
+#include "Object\GameObject.h"		 // File Header
+#include "Component\Component.h"	 // Component
+#include "Behaviour\Behaviour.h"	 // Behaviour
+#include "Object\ObjectFlags.h"		 // eObjFlags
+#include "DataStructure\AutoArray.h" 
+#include "Utility\Utility.h"		 // Move
 #include "IO\TextSerialiser.h"
 
 #define Ping(_ARR, _FUNC, ...)			\
@@ -28,13 +29,13 @@ for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
 
 Dystopia::GameObject::GameObject(void) :
-	mComponents{}, mBehaviours{}, mnID{ ~0ull }, mnFlags{ FLAG_NONE }
+	mComponents{}, mBehaviours{}, mnID{ ~0ull }, mnFlags{ FLAG_NONE }, mName{ "" }
 {
 
 }
 
 Dystopia::GameObject::GameObject(size_t _ID) :
-	mComponents{}, mBehaviours{}, mnID{ _ID }, mnFlags{ FLAG_NONE }
+	mComponents{}, mBehaviours{}, mnID{ _ID }, mnFlags{ FLAG_NONE }, mName{ "" }
 {
 
 }
@@ -42,7 +43,7 @@ Dystopia::GameObject::GameObject(size_t _ID) :
 Dystopia::GameObject::GameObject(GameObject&& _obj) :
 	mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags },
 	mComponents{ Utility::Move(_obj.mComponents) },
-	mBehaviours{ Utility::Move(_obj.mBehaviours) }
+	mBehaviours{ Utility::Move(_obj.mBehaviours) }, mName{ "" }
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
@@ -140,6 +141,16 @@ void Dystopia::GameObject::PurgeComponents(void)
 	mComponents.clear();
 }
 
+
+void Dystopia::GameObject::AddComponent(Component* _p, ComponentTag)
+{
+	mComponents.Insert(_p);
+}
+
+void Dystopia::GameObject::AddComponent(Behaviour* _p, BehaviourTag)
+{
+	mBehaviours.Insert(_p);
+}
 
 void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)
 {
