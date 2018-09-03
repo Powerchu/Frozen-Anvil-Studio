@@ -98,7 +98,7 @@ inline Math::Matrix2::Matrix2(const float(&_fArr)[4]) noexcept :
 
 inline float _CALL Math::Matrix2::Determinant(void) const noexcept
 {
-	return mData.x * mData.w - mData.y * mData.z;
+	return mData[0] * mData[3] - mData[1] * mData[2];
 }
 
 inline Math::Matrix2& _CALL Math::Matrix2::Identity(void) noexcept

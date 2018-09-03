@@ -231,7 +231,7 @@ namespace Dystopia
 					  Remove the First vertex from the shape so that we can
 					  find a new one
 					*/
-					_Simplex.Remove(static_cast<unsigned>(0));
+					_Simplex.Remove(0ull);
 					/*The origin is outside of the shape*/
 					return false;
 

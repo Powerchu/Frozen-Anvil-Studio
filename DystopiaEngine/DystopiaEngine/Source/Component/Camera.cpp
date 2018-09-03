@@ -14,9 +14,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Component\Camera.h"		// File header
 #include "Component\Transform.h"
-#include "Object\GameObject.h"
 #include "Math\Matrix4.h"
 #include "Math\MathUtility.h"
+
+#include "System\Camera\CameraSystem.h"
+#include "System\Driver\Driver.h"
+
+#include "Object\GameObject.h"
+#include "Object\ObjectFlags.h"
 
 #include <GL\glew.h>				// glViewport
 
@@ -37,23 +42,34 @@ void Dystopia::Camera::Init(void)
 {
 	if (nullptr == mTransform)
 		mTransform = GetOwner()->GetComponent<Transform>();
+
+	if (mnFlags & eObjFlag::FLAG_RESERVED)
+		mnFlags |= eObjFlag::FLAG_ACTIVE;
 }
 /*
 void Dystopia::Camera::Update(const float)
 {
 
 }
-
-void Dystopia::Camera::SetMainCamera(void)
-{
-	CameraManager::SetMainCamera(this);
-}
-
-bool Camera::IsMainCamera(void) const
-{
-	return CameraManager::IsMainCamera(this);
-}
 */
+void Dystopia::Camera::SetMasterCamera(void)
+{
+	EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->SetMasterCamera(this);
+}
+
+bool Dystopia::Camera::IsMasterCamera(void) const
+{
+	return EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->IsMasterCamera(this);
+}
+
+void Dystopia::Camera::InitiallyActive(bool b)
+{
+	if (b)
+		mnFlags |= eObjFlag::FLAG_RESERVED;
+	else
+		mnFlags &= ~eObjFlag::FLAG_RESERVED;
+}
+
 bool Dystopia::Camera::IsWithinCameraBounds(const Math::Pt3D& _vCoords) const
 {
 	if (

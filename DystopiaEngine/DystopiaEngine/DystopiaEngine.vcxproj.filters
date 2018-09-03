@@ -151,6 +151,12 @@
     <ClCompile Include="Source\Utility\GUID.cpp">
       <Filter>Utility\GUID</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\Renderer.cpp">
+      <Filter>Game Engine\Components\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Quaternion.cpp">
+      <Filter>Math\Quaternion</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -408,6 +414,9 @@
     <ClInclude Include="Include\Utility\ComponentGUID.h">
       <Filter>Utility\GUID</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\Renderer.h">
+      <Filter>Game Engine\Components\Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -499,9 +508,6 @@
     </Filter>
     <Filter Include="Editor\Editor">
       <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\Systems\Graphic\Mesh">
-      <UniqueIdentifier>{ca90d672-42da-4174-9947-7cdd5a3d812c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Shader">
       <UniqueIdentifier>{2df11722-19eb-493a-9952-074d5e70fcc7}</UniqueIdentifier>
@@ -622,6 +628,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Physics">
       <UniqueIdentifier>{e12aa00d-ccc8-4554-a50e-3b29041273b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Renderer">
+      <UniqueIdentifier>{91edfe0d-9cd2-43b8-a18f-715da13dcbf7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utility\GUID">
       <UniqueIdentifier>{f4948df4-57a5-44f2-a36b-60c01719cef6}</UniqueIdentifier>

@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <string>
 
+
 namespace Dystopia
 {
 	class Window;
@@ -56,11 +57,16 @@ namespace Dystopia
 		Texture* LoadTexture(const std::string&);
 		Shader*	 LoadShader(const std::string&);
 
+		static const int& GetDrawMode(void) noexcept;
+		static void SetDrawMode(int) noexcept;
+
 	private:
 
 		void* mOpenGL;
 		int mPixelFormat, mAvailable;
 		Window* mCurrent;
+
+		static int DRAW_MODE;
 
 		void StartFrame(void);
 		void EndFrame(void);

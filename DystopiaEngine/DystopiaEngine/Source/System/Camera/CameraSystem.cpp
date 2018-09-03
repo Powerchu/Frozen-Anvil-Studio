@@ -14,7 +14,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Camera\CameraSystem.h" // File Header
 #include "Component\Camera.h"
 
+#include "DataStructure\MagicArray.h"
+
+
+Dystopia::CameraSystem::CameraSystem(void) noexcept
+	: mpMasterCam{ nullptr }, mpUICam{ nullptr }, mCameras{}
+{
+
+}
+
+
 Dystopia::Camera* Dystopia::CameraSystem::RequestComponent(void)
 {
 	return mCameras.Emplace();
 }
+
+void Dystopia::CameraSystem::SetMasterCamera(Camera* _pCamera)
+{
+	mpMasterCam = _pCamera;
+}
+
+Dystopia::Camera* Dystopia::CameraSystem::GetMasterCamera(void) const
+{
+	return mpMasterCam;
+}
+
+MagicArray<Dystopia::Camera>& Dystopia::CameraSystem::GetAllCameras(void)
+{
+	return mCameras;
+}
+

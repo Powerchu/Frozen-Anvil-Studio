@@ -121,7 +121,7 @@ void Dystopia::Transform::SetGlobalPosition(const float _x, const float _y, cons
 }
 
 
-Math::Vec4 Dystopia::Transform::GetGlobalRotation(void) const
+Math::Quaternion Dystopia::Transform::GetGlobalRotation(void) const
 {
 	if (mpParent)
 		return mpParent->GetGlobalRotation() + GetRotation();
@@ -153,7 +153,7 @@ Math::Pt3D Dystopia::Transform::GetGlobalPosition(void) const
 	return GetPosition();
 }
 
-Math::Vec3D Dystopia::Transform::GetRotation(void) const
+Math::Quaternion Dystopia::Transform::GetRotation(void) const
 {
 	return mRotation;
 }

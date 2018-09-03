@@ -24,13 +24,15 @@ namespace Dystopia
 		FLAG_LAYER_UI		= 1u << 5,
 		FLAG_LAYER_WORLD	= 1u << 6,
 
+		FLAG_RESERVED		= 1u << 30,
+
 		FLAG_REMOVE			= 1u << 31,
+
+
+		// ======================  Compound flags ====================== //
+
+		FLAG_ALL_LAYERS     = FLAG_LAYER_UI | FLAG_LAYER_WORLD,
 	};
-
-
-	// ======================  Compound flags ====================== //
-
-	constexpr unsigned FLAG_EXAMPLE = FLAG_LAYER_UI | FLAG_LAYER_WORLD;
 }
 
 

@@ -28,6 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Physics/PhysicsSystem.h"
 #include "System\Graphics\MeshSystem.h"
 #include "System\Camera\CameraSystem.h"
+#include "Component\Camera.h"
 #include "System\Events\EventSystem.h"
 
 namespace
