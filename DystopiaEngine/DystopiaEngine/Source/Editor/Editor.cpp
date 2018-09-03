@@ -29,6 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* System includes */
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
+#include "System\Scene\SceneSystem.h"
 #include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
 #include "IO\BinarySerializer.h"
@@ -57,16 +58,10 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 #endif
 	hInstance;
 
-	auto driver = Dystopia::EngineCore::GetInstance();
-	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
-	Dystopia::Timer *timer = new Dystopia::Timer{};
-	
-	driver->LoadSettings();
+	Dystopia::Editor *editor	= Dystopia::Editor::GetInstance();
+	Dystopia::Timer *timer		= new Dystopia::Timer{};
 
-	driver->Init();
-	editor->Init(driver->GetSystem<Dystopia::WindowManager>(),
-				 driver->GetSystem<Dystopia::GraphicsSystem>());
-
+	editor->Init();
 	while (!editor->IsClosing())
 	{
 		float dt = timer->Elapsed();
@@ -78,9 +73,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 		
 		editor->EndFrame();
 	}
-
 	editor->Shutdown();
-	driver->Shutdown();
 	delete timer;
 	delete editor;
 
@@ -107,6 +100,7 @@ namespace Dystopia
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, 
 		mpWin{ nullptr }, 
 		mpGfx{ nullptr },
+		mpSceneSystem{ nullptr },
 		mpInput{ new EditorInput{} },
 		mpEditorEventSys{ new EditorEventHandler{} },
 		mpComdHandler{ new CommandHandler{} },
@@ -117,15 +111,21 @@ namespace Dystopia
 	{
 	}
 
-	void Editor::Init(WindowManager *_pWin, GraphicsSystem *_pGfx)
-	{ 
-		mpWin = _pWin;
-		mpGfx = _pGfx;
+	void Editor::Init()
+	{
+		mpDriver		= Dystopia::EngineCore::GetInstance();
+		mpDriver->LoadSettings();
+		mpDriver->Init();
+
+		mpWin			= mpDriver->GetSystem<WindowManager>();		// driver init-ed
+		mpGfx			= mpDriver->GetSystem<GraphicsSystem>();	// driver init-ed
+		mpSceneSystem	= mpDriver->GetSystem<SceneSystem>();		// driver init-ed
+
+		LoadDefaults();
 		mpInput->Init();
 		mpEditorEventSys->Init();
 		EGUI::SetContext(mpComdHandler);
 
-		LoadDefaults();
 		for (auto& e : mTabsArray)
 		{
 			e->SetComdContext(mpComdHandler);
@@ -232,6 +232,7 @@ namespace Dystopia
 		delete mpGuiSystem;
 		mpGuiSystem = nullptr;
 
+		mpDriver->Shutdown();
 
 		mpWin = nullptr;
 		mpGfx = nullptr;
@@ -423,32 +424,30 @@ namespace Dystopia
 
 	void Editor::UpdateHotkeys()
 	{
-		static int i = 0;
 		if (mpInput->IsKeyTriggered(KEY_LMOUSE))
-			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_LCLICK);
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_LCLICK);
 
 		if (mpInput->IsKeyTriggered(KEY_RMOUSE))
-			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_RCLICK);
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_RCLICK);
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Z))
-			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_UNDO);
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_UNDO);
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Y))
-			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_REDO);
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_REDO);
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_C))
-			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_COPY);
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_COPY);
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_X))
-			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_CUT);
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_CUT);
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_V))
-			std::cout << ++i << std::endl;// mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_PASTE);
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_PASTE);
 	}
 	
 	void Editor::InstallHotkeys()
 	{
-		return;
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_UNDO)->Bind(&Editor::EditorUndo, this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_REDO)->Bind(&Editor::EditorRedo, this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_COPY)->Bind(&Editor::EditorCopy, this);
@@ -458,7 +457,6 @@ namespace Dystopia
 
 	void Editor::UnInstallHotkeys()
 	{
-		return;
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_UNDO)->Unbind(this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_REDO)->Unbind(this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_COPY)->Unbind(this);

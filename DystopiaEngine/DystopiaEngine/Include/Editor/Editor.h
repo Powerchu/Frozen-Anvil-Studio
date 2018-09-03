@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	class EngineCore;
 	class WindowManager;
 	class GraphicsSystem;
 	class EditorInput;
@@ -27,7 +28,7 @@ namespace Dystopia
 	class CommandHandler;
 	class EditorTab;
 	class EditorEventHandler;
-	//class SceneManager;
+	class SceneSystem;
 	//class Scene;
 
 	enum eEditorState
@@ -47,7 +48,7 @@ namespace Dystopia
 		static Editor*	GetInstance();
 		~Editor();
 
-		void			Init(WindowManager*, GraphicsSystem*);
+		void			Init();
 		void			LoadDefaults();
 		void			StartFrame(const float&);
 		void			UpdateFrame(const float&);
@@ -60,17 +61,18 @@ namespace Dystopia
 	private:
 		Editor(void);
 
-		eEditorState			mCurrentState;
-		eEditorState			mNextState;
+		EngineCore				*mpDriver;
 		WindowManager			*mpWin;
 		GraphicsSystem			*mpGfx;
 		EditorInput				*mpInput;
 		CommandHandler			*mpComdHandler;
 		GuiSystem				*mpGuiSystem;
 		EditorEventHandler		*mpEditorEventSys;
-		// SceneManager *mpSceneMgr;
+		SceneSystem				*mpSceneSystem;
 
-		AutoArray<EditorTab*> mTabsArray;
+		AutoArray<EditorTab*>	mTabsArray;
+		eEditorState			mCurrentState;
+		eEditorState			mNextState;
 
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
