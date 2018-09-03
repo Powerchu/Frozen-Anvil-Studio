@@ -407,7 +407,7 @@ namespace Dystopia
 	void Editor::Save()
 	{
 		// call for serialization of all in current scene
-		BinarySerializer serial = BinarySerializer::OpenFile("SaveSettingsFile", std::ios::out);
+		//BinarySerializer serial = BinarySerializer::OpenFile("SaveSettingsFile", std::ios::out);
 
 	}
 
