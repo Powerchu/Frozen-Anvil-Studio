@@ -458,6 +458,7 @@ namespace Dystopia
 		void			UpdateChar(unsigned short);
 		void			UpdateScroll(double _x, double _y);
 		void			UpdateMouse(int, bool);
+		void			UpdateKey(int _k, bool _down);
 
 		const char*		GetMainDockspaceName() const;
 

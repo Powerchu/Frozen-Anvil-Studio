@@ -152,8 +152,7 @@ namespace EGUI
 
 		void TextField(const std::string& _label, char* _outputbuffer, size_t _size, bool _showLabel, float _width)
 		{
-			ImGuiInputTextFlags flags = ImGuiInputTextFlags_CharsHexadecimal |
-										ImGuiInputTextFlags_AutoSelectAll |
+			ImGuiInputTextFlags flags = ImGuiInputTextFlags_AutoSelectAll |
 										ImGuiInputTextFlags_EnterReturnsTrue;
 			ImGui::PushItemWidth(_width);
 			if (_showLabel)

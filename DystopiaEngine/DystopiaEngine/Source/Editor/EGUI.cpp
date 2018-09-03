@@ -146,27 +146,33 @@ namespace Dystopia
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;    // We can honor io.WantSetMousePos requests (optional, rarely used)
 																// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
 
+		io.KeyMap[ImGuiKey_Backspace]	= static_cast<int>(eButton::KEYBOARD_BACKSPACE);
 		io.KeyMap[ImGuiKey_Tab]			= static_cast<int>(eButton::KEYBOARD_TAB);
-		io.KeyMap[ImGuiKey_LeftArrow]	= static_cast<int>(eButton::KEYBOARD_LEFT);
-		io.KeyMap[ImGuiKey_RightArrow]	= static_cast<int>(eButton::KEYBOARD_RIGHT);
-		io.KeyMap[ImGuiKey_UpArrow]		= static_cast<int>(eButton::KEYBOARD_UP);
-		io.KeyMap[ImGuiKey_DownArrow]	= static_cast<int>(eButton::KEYBOARD_DOWN);
+		
+		io.KeyMap[ImGuiKey_Enter]		= static_cast<int>(eButton::KEYBOARD_ENTER);
+		
+		io.KeyMap[ImGuiKey_Escape]		= static_cast<int>(eButton::KEYBOARD_ESCAPE);
+
+		io.KeyMap[ImGuiKey_Space]		= static_cast<int>(eButton::KEYBOARD_SPACEBAR);
 		io.KeyMap[ImGuiKey_PageUp]		= static_cast<int>(eButton::KEYBOARD_PAGEUP);
 		io.KeyMap[ImGuiKey_PageDown]	= static_cast<int>(eButton::KEYBOARD_PAGEDOWN);
-		io.KeyMap[ImGuiKey_Home]		= static_cast<int>(eButton::KEYBOARD_HOME);
 		io.KeyMap[ImGuiKey_End]			= static_cast<int>(eButton::KEYBOARD_END);
+		io.KeyMap[ImGuiKey_Home]		= static_cast<int>(eButton::KEYBOARD_HOME);
+
+		io.KeyMap[ImGuiKey_LeftArrow]	= static_cast<int>(eButton::KEYBOARD_LEFT);
+		io.KeyMap[ImGuiKey_UpArrow]		= static_cast<int>(eButton::KEYBOARD_UP);
+		io.KeyMap[ImGuiKey_RightArrow]	= static_cast<int>(eButton::KEYBOARD_RIGHT);
+		io.KeyMap[ImGuiKey_DownArrow]	= static_cast<int>(eButton::KEYBOARD_DOWN);
+
 		io.KeyMap[ImGuiKey_Insert]		= static_cast<int>(eButton::KEYBOARD_INSERT);
 		io.KeyMap[ImGuiKey_Delete]		= static_cast<int>(eButton::KEYBOARD_DELETE);
-		io.KeyMap[ImGuiKey_Backspace]	= static_cast<int>(eButton::KEYBOARD_BACKSPACE);
-		io.KeyMap[ImGuiKey_Space]		= static_cast<int>(eButton::KEYBOARD_SPACEBAR);
-		io.KeyMap[ImGuiKey_Enter]		= static_cast<int>(eButton::KEYBOARD_ENTER);
-		io.KeyMap[ImGuiKey_Escape]		= static_cast<int>(eButton::KEYBOARD_ESCAPE);
-		io.KeyMap[ImGuiKey_A]			= static_cast<int>(eButton::KEYBOARD_A);
-		io.KeyMap[ImGuiKey_C]			= static_cast<int>(eButton::KEYBOARD_C);
-		io.KeyMap[ImGuiKey_V]			= static_cast<int>(eButton::KEYBOARD_V);
-		io.KeyMap[ImGuiKey_X]			= static_cast<int>(eButton::KEYBOARD_X);
-		io.KeyMap[ImGuiKey_Y]			= static_cast<int>(eButton::KEYBOARD_Y);
-		io.KeyMap[ImGuiKey_Z]			= static_cast<int>(eButton::KEYBOARD_Z);
+
+		//io.KeyMap[ImGuiKey_A]			= static_cast<int>(eButton::KEYBOARD_A);
+		//io.KeyMap[ImGuiKey_C]			= static_cast<int>(eButton::KEYBOARD_C);
+		//io.KeyMap[ImGuiKey_V]			= static_cast<int>(eButton::KEYBOARD_V);
+		//io.KeyMap[ImGuiKey_X]			= static_cast<int>(eButton::KEYBOARD_X);
+		//io.KeyMap[ImGuiKey_Y]			= static_cast<int>(eButton::KEYBOARD_Y);
+		//io.KeyMap[ImGuiKey_Z]			= static_cast<int>(eButton::KEYBOARD_Z);
 
 		io.SetClipboardTextFn = SetClipBoardText;
 		io.GetClipboardTextFn = GetClipBoardText;
@@ -489,7 +495,7 @@ namespace Dystopia
 	void GuiSystem::UpdateChar(unsigned short _c)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		if (_c > 0 && _c < 0x10000) io.AddInputCharacter(_c);
+		io.AddInputCharacter(_c);
 	}
 
 	void GuiSystem::UpdateScroll(double _xOffset, double _yOffset)
@@ -502,6 +508,12 @@ namespace Dystopia
 	void GuiSystem::UpdateMouse(int _index, bool _state)
 	{
 		if (_index >= 0 < 3) mMouseJustPressed[_index] = _state;
+	}
+
+	void GuiSystem::UpdateKey(int _k, bool _down)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.KeysDown[_k] = _down;
 	}
 
 	const char* GuiSystem::GetMainDockspaceName() const

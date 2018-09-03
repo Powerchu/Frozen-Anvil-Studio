@@ -96,6 +96,7 @@ namespace Dystopia
 		void			EditorPaste();
 
 		/* EditorEvents */
+		void			UpdateKeys();
 		void			UpdateHotkeys();
 		void			InstallHotkeys();
 		void			UnInstallHotkeys();

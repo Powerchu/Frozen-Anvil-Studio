@@ -176,6 +176,7 @@ const T& Queue<T>::First(void) const
 template <typename T>
 void Queue<T>::Insert(const T& _obj)
 {
+	++mnSize;
 	mpArray[mnBack] = _obj;
 	mnBack = Utility::LoopIncrement(mnBack, mnCap);
 }

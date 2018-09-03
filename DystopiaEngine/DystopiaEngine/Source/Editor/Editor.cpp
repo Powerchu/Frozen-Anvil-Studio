@@ -28,6 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 /* System includes */
 #include "System\Window\WindowManager.h"
+#include "System\Window\Window.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Scene\SceneSystem.h"
 #include "System\Time\Timer.h"
@@ -154,6 +155,7 @@ namespace Dystopia
 		mpInput->Update(_dt);
 		mpGuiSystem->StartFrame(_dt);
 
+		UpdateKeys();
 		UpdateHotkeys();
 
 		mpEditorEventSys->FireAllPending();
@@ -422,13 +424,54 @@ namespace Dystopia
 		// reset all current values to temp file values
 	}
 
+	void Editor::UpdateKeys()
+	{
+		const auto& queue = mpWin->GetMainWindow().GetInputQueue();
+
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ENTER, false);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ESCAPE, false);
+
+		for (int i = eButton::KEYBOARD_BACKSPACE; i <= eButton::KEYBOARD_TAB; ++i)
+			mpGuiSystem->UpdateKey(i, false);
+		for (int i = eButton::KEYBOARD_SPACEBAR; i <= eButton::KEYBOARD_HOME; ++i)
+			mpGuiSystem->UpdateKey(i, false);
+		for (int i = eButton::KEYBOARD_LEFT; i <= eButton::KEYBOARD_DOWN; ++i)
+			mpGuiSystem->UpdateKey(i, false);
+		for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
+			mpGuiSystem->UpdateKey(i, false);
+
+		bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
+
+		for (const auto& k : queue)
+		{
+			// 0 to 9
+			if (k >= eButton::KEYBOARD_0 && k <= eButton::KEYBOARD_9)
+				mpGuiSystem->UpdateChar(k);
+			// A to Z
+			else if (k >= eButton::KEYBOARD_A && k <= eButton::KEYBOARD_Z)
+				mpGuiSystem->UpdateChar(caps ? k : k + 32);
+			// numpad 0 to 9
+			else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
+				mpGuiSystem->UpdateChar(k - 49);
+			// misc keys like ctrl, del, back etc
+			else
+				mpGuiSystem->UpdateKey(k, true);
+		}
+	}
+
 	void Editor::UpdateHotkeys()
 	{
 		if (mpInput->IsKeyTriggered(KEY_LMOUSE))
+		{
+			mpGuiSystem->UpdateMouse(KEY_LMOUSE, true);
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_LCLICK);
+		}
 
 		if (mpInput->IsKeyTriggered(KEY_RMOUSE))
+		{
+			mpGuiSystem->UpdateMouse(KEY_RMOUSE, true);
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_RCLICK);
+		}
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Z))
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_UNDO);
