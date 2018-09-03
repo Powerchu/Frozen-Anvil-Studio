@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System\Graphics\GraphicsSystem.h"	// File header
 #include "System\Graphics\GraphicsDefs.h"	// eGraphicSettings
+#include "Component\Renderer.h"
 #include "System\Window\WindowManager.h"	// Window Manager
 #include "System\Window\Window.h"			// Window
 #include "System\Driver\Driver.h"			// EngineCore
@@ -25,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Scene\Scene.h"
 #include "System\Camera\CameraSystem.h"     // Camera System
 #include "Component\Camera.h"				// Camera
+#include "Component\Transform.h"
 
 #include "Object\GameObject.h"              // GameObject
 #include "Object\ObjectFlags.h"
@@ -106,12 +108,19 @@ void Dystopia::GraphicsSystem::Update(float)
 			// Get Camera's layer, we only want to draw inclusive stuff
 			ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
 
+			AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
+				return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
+			});
+
 			// Draw the game objects to screen based on the camera
 			for (auto& Obj : AllObj)
 			{
 				if (Obj.GetFlags() & ActiveFlags)
 				{
-					// Draw batching?
+					if (Renderer* r = Obj.GetComponent<Renderer>();)
+					{
+						r->Draw();
+					}
 				}
 			}
 		}

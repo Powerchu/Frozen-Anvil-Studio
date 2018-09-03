@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <string>
 
+
 namespace Dystopia
 {
 	class Window;
