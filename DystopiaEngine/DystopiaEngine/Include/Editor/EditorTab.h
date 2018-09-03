@@ -23,6 +23,7 @@ namespace Dystopia
 	class GameObject;
 	class EditorEventHandler;
 	class CommandHandler;
+	class Scene;
 	class EditorTab
 	{
 	public:
@@ -52,6 +53,7 @@ namespace Dystopia
 		void				SetPosition(const float&, const float&);
 		void				SetComdContext(CommandHandler * const);
 		void				SetEventSysContext(EditorEventHandler * const);
+		void				SetSceneContext(Scene * const);
 		Math::Vec2			Size() const;
 		Math::Vec2			Position() const;
 		bool*				GetOpenedBool();
@@ -64,6 +66,7 @@ namespace Dystopia
 	protected:
 		CommandHandler		*mpComdHandler;
 		EditorEventHandler	*mpEditorEventSys;
+		Scene				*mpCurrentScene;
 	};
 }
 

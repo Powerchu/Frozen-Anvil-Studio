@@ -62,7 +62,22 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	Dystopia::Editor *editor	= Dystopia::Editor::GetInstance();
 	Dystopia::Timer *timer		= new Dystopia::Timer{};
 
+	AutoArray<std::string> arrayOfStrings;
+	arrayOfStrings.push_back("name1");
+	arrayOfStrings.push_back("name1");
+	arrayOfStrings.push_back("name1");
+	arrayOfStrings.push_back("name1");
+	arrayOfStrings.push_back("name1");
+	arrayOfStrings.push_back("name1");
+	arrayOfStrings.push_back("name1");
+	arrayOfStrings.push_back("name1");
+	arrayOfStrings.push_back("name1");
+	arrayOfStrings.push_back("name1");
+
 	editor->Init();
+
+	for (auto& e : arrayOfStrings)
+		std::cout << e << std::endl;
 	while (!editor->IsClosing())
 	{
 		float dt = timer->Elapsed();
@@ -131,6 +146,7 @@ namespace Dystopia
 		{
 			e->SetComdContext(mpComdHandler);
 			e->SetEventSysContext(mpEditorEventSys);
+			e->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			e->Init();
 		}
 
@@ -158,6 +174,7 @@ namespace Dystopia
 		UpdateKeys();
 		UpdateHotkeys();
 
+		
 		mpEditorEventSys->FireAllPending();
 		MainMenuBar();
 	}
@@ -169,6 +186,7 @@ namespace Dystopia
 		{
 			EGUI::PushID(i);
 			EditorTab *pTab = mTabsArray[i];
+			pTab->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			pTab->Update(_dt);
 
 			switch (i)

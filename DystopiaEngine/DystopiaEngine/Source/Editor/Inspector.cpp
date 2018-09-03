@@ -75,26 +75,12 @@ namespace Dystopia
 			EGUI::Display::EndTreeNode();
 		}
 		EGUI::Display::HorizontalSeparator();
-		if (EGUI::Display::StartTreeNode("Temporary Renderer"))	// replace with for loop of all components name
-		{
-			EGUI::Display::TextField("mDemoText", mDemoText, 32);
-
-			if (EGUI::Display::VectorFields("Demo Vec", &mDemoVec, 0.1f, 0.f, 10.f))
-			{
-				x = mDemoVec.x;
-				y = mDemoVec.y;
-				z = mDemoVec.z;
-			}
-			EGUI::Display::Label("Variable mDemoVec x : [%.3f] y: [%.3f] z:[%.3f]", x, y, z);
-			EGUI::Display::EndTreeNode();
-		}
 		if (EGUI::Display::EmptyBox("Payload", 150, mDemoName, true) && mDemoName.length())
 		{
 			ProjectResource::GetInstance()->FocusOnFile(mDemoName);
 		}
 		if (File *t = EGUI::Display::StartPayloadReceiver<File>(EGUI::FILE))
 		{
-			//mpComdHandler->InvokeCommand(new ComdModifyValue<std::string>{ &mDemoName, (*t).mName });
 			mpComdHandler->InvokeCommand(&mDemoName, (*t).mName);
 			EGUI::Display::EndPayloadReceiver();
 		}

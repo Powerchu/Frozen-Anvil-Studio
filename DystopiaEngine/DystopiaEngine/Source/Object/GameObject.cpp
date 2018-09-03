@@ -29,13 +29,13 @@ for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
 
 Dystopia::GameObject::GameObject(void) :
-	mComponents{}, mBehaviours{}, mnID{ ~0ull }, mnFlags{ FLAG_NONE }
+	mComponents{}, mBehaviours{}, mnID{ ~0ull }, mnFlags{ FLAG_NONE }, mName{ "" }
 {
 
 }
 
 Dystopia::GameObject::GameObject(size_t _ID) :
-	mComponents{}, mBehaviours{}, mnID{ _ID }, mnFlags{ FLAG_NONE }
+	mComponents{}, mBehaviours{}, mnID{ _ID }, mnFlags{ FLAG_NONE }, mName{ "" }
 {
 
 }
@@ -43,7 +43,7 @@ Dystopia::GameObject::GameObject(size_t _ID) :
 Dystopia::GameObject::GameObject(GameObject&& _obj) :
 	mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags },
 	mComponents{ Utility::Move(_obj.mComponents) },
-	mBehaviours{ Utility::Move(_obj.mBehaviours) }
+	mBehaviours{ Utility::Move(_obj.mBehaviours) }, mName{ "" }
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();

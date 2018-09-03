@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\EGUI.h"
 #include "Editor\HierarchyView.h"
 #include "Object\GameObject.h"
+#include "System\Scene\Scene.h"
 
 constexpr float DEFAULT_WIDTH = 300;
 constexpr float DEFAULT_HEIGHT = 300;
@@ -32,7 +33,7 @@ namespace Dystopia
 
 	HierarchyView::HierarchyView()
 		: EditorTab{ true }, 
-		mLabel{ "Hierarchy" }, mpFocusGameObj{ nullptr }, mpCurrentScene{ nullptr }, mSearchText{ "" },
+		mLabel{ "Hierarchy" }, mpFocusGameObj{ nullptr }, mSearchText{ "" },
 		mPopupID{ "Create Objects From Hierarchy" }
 	{
 	}
@@ -69,14 +70,15 @@ namespace Dystopia
 
 		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
+			for (const auto& obj : mpCurrentScene->mGameObjs)
+			{
+				if (EGUI::Display::SelectableTxt(obj.GetName().c_str()))
+				{
 
+				}
+			}
 		}
 		EGUI::EndChild();
-
-		if (!mpCurrentScene) return;
-
-		// Do for all objects in the scene
-		// Dystopia::EGUI::Display::Label(mpFocusGameObj->GetName().c_str()); 
 	}
 
 	void HierarchyView::CreateButton()
@@ -102,13 +104,18 @@ namespace Dystopia
 
 	void HierarchyView::CreatePopup()
 	{
+		const static std::string creatable[5] = { "obj1", "obj2", "obj3", "obj4", "obj5" };
 		if (EGUI::Display::StartPopup(mPopupID))
 		{
-			std::string creatable[5] = { "obj1", "obj2", "obj3", "obj4", "obj5" };
 			// for loop everything that can be created
 			for (const auto& e : creatable)
-				EGUI::Display::SelectableTxt(e, false);
-
+			{
+				if (EGUI::Display::SelectableTxt(e))
+				{
+					//GameObject *pObject = mpCurrentScene->InsertGameObject();
+					//pObject->SetName(e);
+				}
+			}
 			EGUI::Display::EndPopup();
 		}
 	}

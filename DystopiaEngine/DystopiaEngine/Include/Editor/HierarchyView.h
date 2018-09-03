@@ -48,7 +48,6 @@ namespace Dystopia
 		std::string		mLabel;
 		std::string		mPopupID;
 		GameObject		*mpFocusGameObj;
-		Scene			*mpCurrentScene;
 		char			mSearchText[MAX_SEARCH];
 
 		void			SearchBar();
