@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Scene\Scene.h"
 #include "System\Camera\CameraSystem.h"
 #include "System\Driver\Driver.h"
+#include "Component\Camera.h"
 
 constexpr float DEFAULT_WIDTH = 300;
 constexpr float DEFAULT_HEIGHT = 300;
@@ -74,7 +75,8 @@ namespace Dystopia
 
 		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
-			for (auto& obj : mpCurrentScene->mGameObjs)
+			auto& arrayOfGameObjects = mpCurrentScene->GetAllGameObjects();
+			for (auto& obj : arrayOfGameObjects)
 			{
 				if (EGUI::Display::SelectableTxt(obj.GetName(), mpFocus == &obj))
 				{
@@ -122,7 +124,6 @@ namespace Dystopia
 				GameObject *pObject = mpCurrentScene->InsertGameObject();
 				pObject->SetName("Camera");
 				pObject->AddComponent(EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->RequestComponent(), typename Camera::TAG{});
-				
 			}
 			EGUI::Display::EndPopup();
 		}
