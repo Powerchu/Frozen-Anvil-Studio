@@ -124,7 +124,6 @@
     <ClCompile Include="Source\IO\BinarySerializer.cpp">
       <Filter>IO\BinarySerialiser</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="Source\Component\RigidBody.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
@@ -385,7 +384,6 @@
     <ClInclude Include="Include\IO\BinarySerializer.h">
       <Filter>IO\BinarySerialiser</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\Component\Collider.h">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>

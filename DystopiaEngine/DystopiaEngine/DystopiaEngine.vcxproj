@@ -27,8 +27,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Utility\GUID.cpp" />
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Source\Utility\GUID.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
@@ -80,6 +80,7 @@
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Component\Collider.h" />
@@ -88,7 +89,6 @@
     <ClInclude Include="Include\Editor\EditorInputs.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
-    <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\System\Events\EventSystem.h" />
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui.h" />
