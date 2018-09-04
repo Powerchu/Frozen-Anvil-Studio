@@ -19,8 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\Commands.h"
 #include "Editor\EditorEvents.h"
 #include "Editor\Editor.h"
+#include "Utility\ComponentGUID.h"
 #include "Object\GameObject.h"
-#include "Component\Transform.h"
 #include <iostream>
 
 namespace Dystopia
@@ -61,6 +61,7 @@ namespace Dystopia
 
 		GameObjectDetails();
 		GameObjectComponents();
+
 		////float x = mDemoVec.x;
 		////float y = mDemoVec.y;
 		////float z = mDemoVec.z;
@@ -116,7 +117,7 @@ namespace Dystopia
 		arr2.push_back("item4");
 		arr2.push_back("item5");
 
-		char buffer[256] = "";
+		char buffer[MAX_SEARCH * 2] = "";
 		std::string name = mpFocus->GetName();
 		strcpy_s(buffer, name.c_str());
 
@@ -144,7 +145,8 @@ namespace Dystopia
 	{
 		EGUI::Display::HorizontalSeparator();
 		Transform& tempTransform = *mpFocus->GetComponent<Transform>();
-		if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName())) // TODO: Update(append) Name with game object ID
+		if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName() + "##" + 
+										 std::to_string(mpFocus->GetID())))
 		{
 			tempTransform.EditorUI();
 			EGUI::Display::EndTreeNode();
