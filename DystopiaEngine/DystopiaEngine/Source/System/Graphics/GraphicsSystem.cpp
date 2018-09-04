@@ -18,11 +18,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System\Graphics\GraphicsSystem.h"	// File header
 #include "System\Graphics\GraphicsDefs.h"	// eGraphicSettings
-#include "System\Window\WindowManager.h"	// WindowManager
+#include "Component\Renderer.h"
+#include "System\Window\WindowManager.h"	// Window Manager
 #include "System\Window\Window.h"			// Window
 #include "System\Driver\Driver.h"			// EngineCore
-#include "Utility\DebugAssert.h"			// DEBUG_ASSERT
+#include "System\Scene\SceneSystem.h"
+#include "System\Scene\Scene.h"
+#include "System\Camera\CameraSystem.h"     // Camera System
 #include "Component\Camera.h"				// Camera
+#include "Component\Transform.h"
+
+#include "Object\GameObject.h"              // GameObject
+#include "Object\ObjectFlags.h"
+
+#include "Utility\DebugAssert.h"			// DEBUG_ASSERT
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable Window header min & max macros
@@ -36,6 +45,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #undef WIN32_LEAN_AND_MEAN		// Stop defines from spilling into code
 #undef NOMINMAX
+
+
+int Dystopia::GraphicsSystem::DRAW_MODE = GL_TRIANGLES;
+const int& Dystopia::GraphicsSystem::GetDrawMode(void) noexcept
+{
+	return DRAW_MODE;
+}
+
+void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
+{
+	DRAW_MODE = _nMode;
+}
+
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }
@@ -70,24 +92,37 @@ void Dystopia::GraphicsSystem::Update(float)
 {
 	StartFrame();
 
-	// We only care about the game view
-	
+	auto& AllCam = EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->GetAllCameras();
+	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
+
 	// For every camera in the game window (can be more than 1!)
-	for (; false;)
+	for (auto& Cam : AllCam)
 	{
+		auto ActiveFlags = Cam.GetOwner()->GetFlags();
+
 		// If the camera is inactive, skip
-
-		// Get Camera's layer, we only want to draw inclusive stuff
-
-		// Draw the game objects to screen based on the camera
-		for (; false;)
+		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
-			// if Game Object is inactive or
-			// Game Object's layer does not match the camera
-			// Skip it
+			Cam.SetCamera();
 
+			// Get Camera's layer, we only want to draw inclusive stuff
+			ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
 
-			// Draw batching?
+			AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
+				return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
+			});
+
+			// Draw the game objects to screen based on the camera
+			for (auto& Obj : AllObj)
+			{
+				if (Obj.GetFlags() & ActiveFlags)
+				{
+					if (Renderer* r = Obj.GetComponent<Renderer>())
+					{
+						r->Draw();
+					}
+				}
+			}
 		}
 	}
 
@@ -107,7 +142,9 @@ void Dystopia::GraphicsSystem::StartFrame(void)
 
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
+#if !defined(EDITOR)
 	SwapBuffers(mCurrent->GetDeviceContext());
+#endif
 }
 
 void Dystopia::GraphicsSystem::Shutdown(void)
@@ -117,7 +154,7 @@ void Dystopia::GraphicsSystem::Shutdown(void)
 
 void Dystopia::GraphicsSystem::LoadDefaults(void)
 {
-
+	DRAW_MODE = GL_TRIANGLES;
 }
 
 void Dystopia::GraphicsSystem::LoadSettings(TextSerialiser&)

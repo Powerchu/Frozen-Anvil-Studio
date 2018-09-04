@@ -21,10 +21,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <GL\glew.h>
 #include <iostream>
 
+
 void Dystopia::MeshSystem::Init(void)
 {
 	Mesh::LinkSystem(this);
-	mpMeshes.reserve(10);
+//	mpMeshes.reserve(10);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -38,6 +39,8 @@ void Dystopia::MeshSystem::Shutdown(void) noexcept
 	glDisableVertexAttribArray(0);
 
 	mpMeshes.clear();
+
+	FreeMeshes();
 }
 
 void Dystopia::MeshSystem::StartMesh(void)
@@ -76,7 +79,7 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 
 	input.ConsumeStartBlock();
 
-	unsigned nNumIndices = 0, nCurrOffset = mIndex.size();
+	unsigned nNumIndices = 0, nCurrOffset = static_cast<unsigned>(mIndex.size());
 	while (!input.EndOfInput())
 	{
 		mIndex.EmplaceBack();
@@ -85,12 +88,12 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 		++nNumIndices;
 	}
 
-	mpMeshes.EmplaceBack(CurrentMesh.mVAO, nNumIndices, nCurrOffset);
+	auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, nNumIndices, nCurrOffset);
 	CurrentMesh.mVtxCount += nVtxCount;
 
 	input.ConsumeStartBlock();
 
-	input >> const_cast<std::string&>(mpMeshes.back().GetName());
+	input >> const_cast<std::string&>(pCurrMesh->GetName());
 
 	input.ConsumeEndBlock();
 }
@@ -106,7 +109,17 @@ void Dystopia::MeshSystem::EndMesh(void)
 
 void Dystopia::MeshSystem::FreeMeshes(void)
 {
-	// TODO
+	mpRawMeshes.clear();
+}
+
+void Dystopia::MeshSystem::ExportMeshes(void)
+{
+
+}
+
+Dystopia::Mesh* Dystopia::MeshSystem::GetMesh(const std::string &) noexcept
+{
+	return nullptr;
 }
 
 

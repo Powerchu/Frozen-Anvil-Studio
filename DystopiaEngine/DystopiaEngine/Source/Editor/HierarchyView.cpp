@@ -14,7 +14,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor\EGUI.h"
 #include "Editor\HierarchyView.h"
+#include "Editor\EditorEvents.h"
+#include "Editor\Editor.h"
 #include "Object\GameObject.h"
+#include "System\Scene\Scene.h"
+#include "System\Camera\CameraSystem.h"
+#include "System\Driver\Driver.h"
+#include "Utility\GUID.h"
+#include "Component\Camera.h"
 
 constexpr float DEFAULT_WIDTH = 300;
 constexpr float DEFAULT_HEIGHT = 300;
@@ -31,8 +38,8 @@ namespace Dystopia
 	}
 
 	HierarchyView::HierarchyView()
-		: EditorTab{ true }, 
-		mLabel{ "Hierarchy" }, mpFocusGameObj{ nullptr }, mpCurrentScene{ nullptr }, mSearchText{ "" },
+		: EditorTab{ true },  
+		mLabel{ "Hierarchy" }, mpFocus{ nullptr }, mSearchText{ "" },
 		mPopupID{ "Create Objects From Hierarchy" }
 	{
 	}
@@ -69,14 +76,19 @@ namespace Dystopia
 
 		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
-
+			auto& arrayOfGameObjects = mpCurrentScene->GetAllGameObjects();
+			for (auto& obj : arrayOfGameObjects)
+			{
+				if (EGUI::Display::SelectableTxt(obj.GetName() + "##" + 
+												std::to_string(obj.GetID()),
+												mpFocus && (mpFocus->GetID() == obj.GetID())))
+				{
+					GetMainEditor().RemoveFocus();
+					GetMainEditor().SetFocus(obj);
+				}
+			}
 		}
 		EGUI::EndChild();
-
-		if (!mpCurrentScene) return;
-
-		// Do for all objects in the scene
-		// Dystopia::EGUI::Display::Label(mpFocusGameObj->GetName().c_str()); 
 	}
 
 	void HierarchyView::CreateButton()
@@ -104,13 +116,30 @@ namespace Dystopia
 	{
 		if (EGUI::Display::StartPopup(mPopupID))
 		{
-			std::string creatable[5] = { "obj1", "obj2", "obj3", "obj4", "obj5" };
-			// for loop everything that can be created
-			for (const auto& e : creatable)
-				EGUI::Display::SelectableTxt(e, false);
+			if (EGUI::Display::SelectableTxt("New GameObject"))
+			{
+				GameObject *pObject = mpCurrentScene->InsertGameObject(GUIDGenerator::GetUniqueID());
+				pObject->SetName("GameObject");
+			}
 
+			if (EGUI::Display::SelectableTxt("New Camera"))
+			{
+				GameObject *pObject = mpCurrentScene->InsertGameObject(GUIDGenerator::GetUniqueID());
+				pObject->SetName("Camera");
+				pObject->AddComponent(EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->RequestComponent(), typename Camera::TAG{});
+			}
 			EGUI::Display::EndPopup();
 		}
+	}
+
+	void HierarchyView::SetFocus(GameObject& _rObj)
+	{
+		mpFocus = &_rObj;
+	}
+
+	void HierarchyView::RemoveFocus()
+	{
+		mpFocus = nullptr;
 	}
 }
 

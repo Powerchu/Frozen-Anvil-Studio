@@ -28,56 +28,28 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 /* System includes */
 #include "System\Window\WindowManager.h"
+#include "System\Window\Window.h"
 #include "System\Graphics\GraphicsSystem.h"
-#include "System\Input\InputSystem.h"
-#include "System\Input\InputMap.h"
+#include "System\Scene\SceneSystem.h"
 #include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
-#include "System\Events\EventSystem.h"
 #include "IO\BinarySerializer.h"
 
 /* Editor includes */
 #include "Editor\Editor.h"
 #include "Editor\EGUI.h"
-#include "Editor\Commands.h"
-#include "Editor\CommandList.h"
 #include "Editor\Inspector.h"
 #include "Editor\HierarchyView.h"
 #include "Editor\ProjectResource.h"
 #include "Editor\SceneView.h"
 #include "Editor\ConsoleLog.h"
+#include "Editor\EditorInputs.h"
+#include "Editor\EditorEvents.h"
+#include "Editor\Commands.h"
 
 /* library includes */
 #include <iostream>
 #include <bitset>
-
-namespace Dystopia
-{
-	struct X
-	{
-		X(EventSystem* e)
-			:es{ e }
-		{
-			es->BindToEvent("EventTester1", &X::goo, this);
-			es->BindToEvent("EventTester2", &X::foo, this);
-			es->BindToEvent("EventTester3", &X::hoo, this);
-		}
-		~X()
-		{
-			es->UnBindFromEvent("EventTester1", this);
-			es->UnBindFromEvent("EventTester2", this);
-			es->UnBindFromEvent("EventTester3", this);
-		}
-		EventSystem* es;
-
-		void goo() { std::cout << "Member function goo" << std::endl; }
-		void hoo() { std::cout << "Member function hoo" << std::endl; }
-		void foo() { std::cout << "Member function foo" << std::endl; }
-	};
-	void goo() { std::cout << "Non member function goo" << std::endl; }
-	void hoo() { std::cout << "Non member function hoo" << std::endl; }
-	void foo() { std::cout << "Non member function foo" << std::endl; }
-}
 
 // Entry point for editor
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
@@ -87,29 +59,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 #endif
 	hInstance;
 
-	auto driver = Dystopia::EngineCore::GetInstance();
-	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
-	Dystopia::Timer *timer = new Dystopia::Timer{};
-	
-	driver->LoadSettings();
-	editor->LoadDefaults();
-
-	driver->Init();
-	editor->Init(driver->GetSystem<Dystopia::WindowManager>(),
-				 driver->GetSystem<Dystopia::GraphicsSystem>(),
-				 driver->GetSystem<Dystopia::InputManager>());
-
-	/* Start of Event System usage example */
-	Dystopia::EventSystem *es = driver->GetSystem<Dystopia::EventSystem>();
-	{
-		Dystopia::X x1{ es };
-		es->Fire("EventTester1");
-		es->Fire("EventTester2");
-		es->Fire("EventTester3");
-		es->FireAllPending();
-	}
-	/* End of Event System usage example */
-
+	Dystopia::Editor *editor	= Dystopia::Editor::GetInstance();
+	Dystopia::Timer *timer		= new Dystopia::Timer{};
+	editor->Init();
 	while (!editor->IsClosing())
 	{
 		float dt = timer->Elapsed();
@@ -121,11 +73,10 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 		
 		editor->EndFrame();
 	}
-
 	editor->Shutdown();
-	driver->Shutdown();
 	delete timer;
 	delete editor;
+
 	// Automatically called by _CRTDBG_LEAK_CHECK_DF flag when proccess ends. 
 	// This will ensure static variables are not taken into account
 	//_CrtDumpMemoryLeaks(); 
@@ -146,9 +97,12 @@ namespace Dystopia
 	}
 
 	Editor::Editor(void)
-		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mPrevFrameTime{ 0 }, 
-		mpWin{ nullptr }, mpGfx{ nullptr }, mpInput{ nullptr },
-		mpEditorEventSys{ new EventSystem{} },
+		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, 
+		mpWin{ nullptr }, 
+		mpGfx{ nullptr },
+		mpSceneSystem{ nullptr },
+		mpInput{ new EditorInput{} },
+		mpEditorEventSys{ new EditorEventHandler{} },
 		mpComdHandler{ new CommandHandler{} },
 		mpGuiSystem{ new GuiSystem{} }
 	{}
@@ -157,19 +111,31 @@ namespace Dystopia
 	{
 	}
 
-	void Editor::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInput)
-	{ 
-		mpWin = _pWin;
-		mpGfx = _pGfx;
-		mpInput = _pInput;
+	void Editor::Init()
+	{
+		mpDriver		= Dystopia::EngineCore::GetInstance();
+		mpDriver->LoadSettings();
+		mpDriver->Init();
 
+		mpWin			= mpDriver->GetSystem<WindowManager>();		// driver init-ed
+		mpGfx			= mpDriver->GetSystem<GraphicsSystem>();	// driver init-ed
+		mpSceneSystem	= mpDriver->GetSystem<SceneSystem>();		// driver init-ed
+
+		LoadDefaults();
+		mpInput->Init();
+		mpEditorEventSys->Init();
 		EGUI::SetContext(mpComdHandler);
+
 		for (auto& e : mTabsArray)
 		{
 			e->SetComdContext(mpComdHandler);
 			e->SetEventSysContext(mpEditorEventSys);
+			e->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			e->Init();
+			e->RemoveFocus();
 		}
+
+		InstallHotkeys();
 
 		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
 			mCurrentState = EDITOR_EXIT;
@@ -190,9 +156,9 @@ namespace Dystopia
 		mpInput->Update(_dt);
 		mpGuiSystem->StartFrame(_dt);
 
-		if (mpInput->IsKeyTriggered(MOUSE_L))
-			mpEditorEventSys->Fire("LeftClick");
-
+		UpdateKeys();
+		UpdateHotkeys();
+		
 		mpEditorEventSys->FireAllPending();
 		MainMenuBar();
 	}
@@ -204,6 +170,7 @@ namespace Dystopia
 		{
 			EGUI::PushID(i);
 			EditorTab *pTab = mTabsArray[i];
+			pTab->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			pTab->Update(_dt);
 
 			switch (i)
@@ -243,6 +210,8 @@ namespace Dystopia
 
 	void Editor::Shutdown()
 	{
+		UnInstallHotkeys();
+
 		EGUI::Docking::ShutdownTabs();
 		for (auto& e : mTabsArray)
 		{
@@ -251,20 +220,26 @@ namespace Dystopia
 			e = nullptr;
 		}
 
-		mpWin = nullptr;
-		mpGfx = nullptr;
+		mpInput->Shutdown();
+		delete mpInput;
 		mpInput = nullptr;
 
 		mpEditorEventSys->Shutdown();
 		delete mpEditorEventSys;
 		mpEditorEventSys = nullptr;
 
+		mpComdHandler->Shutdown();
 		delete mpComdHandler;
 		mpComdHandler = nullptr;
 
 		mpGuiSystem->Shutdown();
 		delete mpGuiSystem;
 		mpGuiSystem = nullptr;
+
+		mpDriver->Shutdown();
+
+		mpWin = nullptr;
+		mpGfx = nullptr;
 
 		EGUI::RemoveContext();
 	}
@@ -282,11 +257,6 @@ namespace Dystopia
 	bool Editor::IsClosing() const
 	{
 		return !mCurrentState;
-	}
-
-	double Editor::PreviousFrameTime() const
-	{
-		return mPrevFrameTime;
 	}
 
 	void Editor::UpdateState()
@@ -377,14 +347,14 @@ namespace Dystopia
 		// TODO: Some actual function for all the bottom
 		if (EGUI::StartMenuHeader("Edit"))
 		{
-			if (EGUI::StartMenuBody("Undo", "Ctrl + Z")) { mpComdHandler->UndoCommand(); }
-			if (EGUI::StartMenuBody("Redo", "Ctrl + Y")) { mpComdHandler->RedoCommand(); }
-			if (EGUI::StartMenuBody("Cut")) {}
-			if (EGUI::StartMenuBody("Copy")) {}
-			if (EGUI::StartMenuBody("Paste")) {}
+			if (EGUI::StartMenuBody("Undo ", "Ctrl + Z"))	EditorUndo();
+			if (EGUI::StartMenuBody("Redo ", "Ctrl + Y"))	EditorRedo();
+			if (EGUI::StartMenuBody("Cut ", "Ctrl + X"))	EditorCut();
+			if (EGUI::StartMenuBody("Copy ", "Ctrl + C"))	EditorCopy();
+			if (EGUI::StartMenuBody("Paste ", "Ctrl + V"))	EditorPaste();
+
 			EGUI::EndMenuHeader();
 		}
-
 	}
 
 	void Editor::MMView()
@@ -406,6 +376,28 @@ namespace Dystopia
 		}
 	}
 
+	void Editor::EditorUndo()
+	{
+		mpComdHandler->UndoCommand();
+	}
+
+	void Editor::EditorRedo()
+	{
+		mpComdHandler->RedoCommand();
+	}
+
+	void Editor::EditorCopy()
+	{
+	}
+
+	void Editor::EditorCut()
+	{
+	}
+
+	void Editor::EditorPaste()
+	{
+	}
+
 	void Editor::Play()
 	{
 		// call for Init of the current scene. Assuming scene manager knows which is the current scene 
@@ -415,7 +407,7 @@ namespace Dystopia
 	void Editor::Save()
 	{
 		// call for serialization of all in current scene
-		BinarySerializer serial = BinarySerializer::OpenFile("SaveSettingsFile", std::ios::out);
+		//BinarySerializer serial = BinarySerializer::OpenFile("SaveSettingsFile", std::ios::out);
 
 	}
 
@@ -432,6 +424,101 @@ namespace Dystopia
 	void Editor::TempLoad()
 	{
 		// reset all current values to temp file values
+	}
+
+	void Editor::UpdateKeys()
+	{
+		const auto& queue = mpWin->GetMainWindow().GetInputQueue();
+
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ENTER, false);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ESCAPE, false);
+
+		for (int i = eButton::KEYBOARD_BACKSPACE; i <= eButton::KEYBOARD_TAB; ++i)
+			mpGuiSystem->UpdateKey(i, false);
+		for (int i = eButton::KEYBOARD_SPACEBAR; i <= eButton::KEYBOARD_HOME; ++i)
+			mpGuiSystem->UpdateKey(i, false);
+		for (int i = eButton::KEYBOARD_LEFT; i <= eButton::KEYBOARD_DOWN; ++i)
+			mpGuiSystem->UpdateKey(i, false);
+		for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
+			mpGuiSystem->UpdateKey(i, false);
+
+		bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
+
+		for (const auto& k : queue)
+		{
+			// 0 to 9
+			if (k >= eButton::KEYBOARD_0 && k <= eButton::KEYBOARD_9)
+				mpGuiSystem->UpdateChar(k);
+			// A to Z
+			else if (k >= eButton::KEYBOARD_A && k <= eButton::KEYBOARD_Z)
+				mpGuiSystem->UpdateChar(caps ? k : k + 32);
+			// numpad 0 to 9
+			else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
+				mpGuiSystem->UpdateChar(k - 49);
+			// misc keys like ctrl, del, back etc
+			else
+				mpGuiSystem->UpdateKey(k, true);
+		}
+	}
+
+	void Editor::UpdateHotkeys()
+	{
+		if (mpInput->IsKeyTriggered(KEY_LMOUSE))
+		{
+			mpGuiSystem->UpdateMouse(KEY_LMOUSE, true);
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_LCLICK);
+		}
+
+		if (mpInput->IsKeyTriggered(KEY_RMOUSE))
+		{
+			mpGuiSystem->UpdateMouse(KEY_RMOUSE, true);
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_RCLICK);
+		}
+
+		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Z))
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_UNDO);
+
+		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Y))
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_REDO);
+
+		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_C))
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_COPY);
+
+		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_X))
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_CUT);
+
+		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_V))
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_PASTE);
+	}
+	
+	void Editor::InstallHotkeys()
+	{
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_UNDO)->Bind(&Editor::EditorUndo, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_REDO)->Bind(&Editor::EditorRedo, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_COPY)->Bind(&Editor::EditorCopy, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_CUT)->Bind(&Editor::EditorCut, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PASTE)->Bind(&Editor::EditorPaste, this);
+	}
+
+	void Editor::UnInstallHotkeys()
+	{
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_UNDO)->Unbind(this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_REDO)->Unbind(this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_COPY)->Unbind(this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_CUT)->Unbind(this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PASTE)->Unbind(this);
+	}
+
+	void Editor::SetFocus(GameObject& _rObj)
+	{
+		for (auto& e : mTabsArray)
+			e->SetFocus(_rObj);
+	}
+	
+	void Editor::RemoveFocus()
+	{
+		for (auto& e : mTabsArray)
+			e->RemoveFocus();
 	}
 }
 

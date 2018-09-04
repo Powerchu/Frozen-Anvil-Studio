@@ -13,18 +13,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Editor\EditorTab.h"
 #include "Editor\Editor.h"
+#include "Editor\EditorEvents.h"
+#include "Editor\Commands.h"
+#include "System\Scene\Scene.h"
+#include "Object\GameObject.h"
 
 namespace Dystopia
 {
 	EditorTab::EditorTab(bool _defaultOpen)
 		: mSize{ Math::Vec2{ 0, 0 } }, mPos{ Math::Vec2{ 0, 0 } }, mIsOpened{ _defaultOpen }, 
-		mpComdHandler{ nullptr }, mpEditorEventSys{ nullptr }
+		mpComdHandler{ nullptr }, mpEditorEventSys{ nullptr }, mpCurrentScene{ nullptr }
 	{}
 
 	EditorTab::~EditorTab()
 	{
 		mpComdHandler = nullptr;
 		mpEditorEventSys = nullptr;
+		mpCurrentScene = nullptr;
+	}
+
+	void EditorTab::SetFocus(GameObject&)
+	{
+		// do nothing
+	}
+
+	void EditorTab::RemoveFocus()
+	{
+		// do nothing
 	}
 
 	void EditorTab::SetSize(const Math::Vec2& _size)
@@ -67,9 +82,19 @@ namespace Dystopia
 		mpComdHandler = _ctx;
 	}
 
-	void EditorTab::SetEventSysContext(EventSystem * const _ctx)
+	void EditorTab::SetEventSysContext(EditorEventHandler * const _ctx)
 	{
 		mpEditorEventSys = _ctx;
+	}
+
+	void EditorTab::SetSceneContext(Scene * const _ctx)
+	{
+		mpCurrentScene = _ctx;
+	}
+	
+	Editor&	EditorTab::GetMainEditor() const
+	{
+		return *(Editor::GetInstance());
 	}
 
 }

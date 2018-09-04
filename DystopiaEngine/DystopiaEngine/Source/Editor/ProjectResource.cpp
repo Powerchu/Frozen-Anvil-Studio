@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor\ProjectResource.h"
 #include "Editor\EGUI.h"
+#include "Editor\EditorEvents.h"
+#include "Editor\Editor.h"
 #include <algorithm>
 #include <iostream>
 #include <Windows.h>
@@ -117,7 +119,7 @@ namespace Dystopia
 
 	ProjectResource::~ProjectResource()
 	{
-		mpEditorEventSys->UnBindFromEvent("LeftClick", this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_LCLICK)->Unbind(this);
 	}
 
 	void ProjectResource::Init()
@@ -134,7 +136,7 @@ namespace Dystopia
 		GetAllFiles(mArrAllFiles, mpRootFolder);
 		SortAllFiles(mArrAllFiles);
 
-		mpEditorEventSys->BindToEvent("LeftClick", &ProjectResource::RemoveFocusOnFile, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_LCLICK)->Bind(&ProjectResource::RemoveFocusOnFile, this);
 
 		std::wstring wPath{ DEFAULT_PATH.begin(), DEFAULT_PATH.end() };
 		mChangeHandle[0] = FindFirstChangeNotification(wPath.c_str(), true, mWaitFlags);
@@ -248,7 +250,7 @@ namespace Dystopia
 			for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
 			{
 				File* pFile = mpCurrentFolder->mArrPtrFiles[i];
-				const std::string id = "ProjectResourceFileWindow" + pFile->mName + std::to_string(i);
+				std::string id = "ProjectResourceFileWindow" + pFile->mName + std::to_string(i);
 				if (i % columns) EGUI::SameLine();
 				if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{0,0,0,0}))
 				{

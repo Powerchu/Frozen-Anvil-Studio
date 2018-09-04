@@ -49,6 +49,8 @@ public:
 	// Synonymous with Remove
 	inline void pop_front(void);
 
+	void clear(void);
+
 	// Gets the first element of the Queue
 	inline const T& First(void) const;
 
@@ -159,6 +161,12 @@ inline void Queue<T>::pop_front(void)
 	Remove();
 }
 
+template<typename T>
+inline void Queue<T>::clear(void)
+{
+	while (!IsEmpty()) Remove();
+}
+
 template <typename T>
 const T& Queue<T>::First(void) const
 {
@@ -168,8 +176,9 @@ const T& Queue<T>::First(void) const
 template <typename T>
 void Queue<T>::Insert(const T& _obj)
 {
+	++mnSize;
 	mpArray[mnBack] = _obj;
-	++mnBack;
+	mnBack = Utility::LoopIncrement(mnBack, mnCap);
 }
 
 template <typename T>
@@ -239,7 +248,7 @@ const T* Queue<T>::QueueIterator::operator->(void)
 template <typename T>
 bool Queue<T>::QueueIterator::operator == (const QueueIterator& _rhs) const noexcept
 {
-	return mnPos == _rhs.mnPos && mpArray == _rhs.mpArray;
+	return (mnPos == _rhs.mnPos) && (mpArray == _rhs.mpArray);
 }
 
 template <typename T>

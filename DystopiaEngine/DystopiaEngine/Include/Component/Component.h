@@ -16,6 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component\ComponentList.h"	// eComponents
 
+#include <string>
+
+
 namespace Dystopia
 {
 	class GameObject;
@@ -28,7 +31,7 @@ namespace Dystopia
 		using TAG = ComponentTag;
 		using SYSTEM = class NULL_SYSTEM;
 		virtual unsigned GetComponentType(void) const {	return unsigned(-1); };
-
+		virtual const std::string GetEditorName(void) const { return "Generic Component"; }
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
@@ -56,6 +59,7 @@ namespace Dystopia
 
 		virtual void Serialise(TextSerialiser&) const = 0;
 		virtual void Unserialise(TextSerialiser&) = 0;
+		virtual void EditorUI(void) noexcept;
 
 	private:
 

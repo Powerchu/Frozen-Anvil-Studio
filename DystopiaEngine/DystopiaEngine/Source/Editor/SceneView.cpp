@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor\SceneView.h"
+#include "Editor\Editor.h"
 
 namespace Dystopia
 {

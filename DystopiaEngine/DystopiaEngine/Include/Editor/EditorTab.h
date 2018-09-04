@@ -15,16 +15,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_TAB_H_
 #define _EDITOR_TAB_H_
 #include "Math\Vector2.h"
-#include "Editor\Commands.h"
-#include "Editor\CommandList.h"
-#include "System\Events\EventSystem.h"
 #include <string>
 
 namespace Dystopia
 {
-	static constexpr size_t MAX_SEARCH = 64;
+	static constexpr size_t MAX_SEARCH = 128;
+	class GameObject;
+	class EditorEventHandler;
 	class CommandHandler;
-	class EventSystem;
+	class Scene;
+	class Editor;
+
 	class EditorTab
 	{
 	public:
@@ -45,12 +46,16 @@ namespace Dystopia
 		virtual std::string GetLabel() const = 0;
 		/************************************************************************************************************/
 
+		virtual void		SetFocus(GameObject&);
+		virtual void		RemoveFocus();
+
 		void				SetSize(const Math::Vec2&);
 		void				SetSize(const float&, const float&);
 		void				SetPosition(const Math::Vec2&);
 		void				SetPosition(const float&, const float&);
 		void				SetComdContext(CommandHandler * const);
-		void				SetEventSysContext(EventSystem * const);
+		void				SetEventSysContext(EditorEventHandler * const);
+		void				SetSceneContext(Scene * const);
 		Math::Vec2			Size() const;
 		Math::Vec2			Position() const;
 		bool*				GetOpenedBool();
@@ -61,8 +66,11 @@ namespace Dystopia
 		bool				mIsOpened;
 
 	protected:
+		Editor&				GetMainEditor() const;
+
 		CommandHandler		*mpComdHandler;
-		EventSystem			*mpEditorEventSys;
+		EditorEventHandler	*mpEditorEventSys;
+		Scene				*mpCurrentScene;
 	};
 }
 

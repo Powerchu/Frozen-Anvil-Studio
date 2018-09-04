@@ -20,6 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Utility
 {
 	template <typename T>
+	T declval(void) noexcept;
+
+	template <typename T>
 	constexpr inline typename RemoveRef<T>::type&& Move(T&& _obj) noexcept
 	{
 		return static_cast<Utility::RemoveRef_t<T>&&>(_obj);
@@ -86,7 +89,7 @@ namespace Utility
 	}
 
 
-	template <class Itor, class Ty = Utility::Decay_t<decltype(*std::declval<Itor>())>>
+	template <class Itor, class Ty = Utility::Decay_t<decltype(*Utility::declval<Itor>())>>
 	Itor MoveInit(Itor _begin, const Itor _end, Itor _dest)
 	{
 		while (_begin != _end)
@@ -98,7 +101,7 @@ namespace Utility
 		return _dest;
 	}
 
-	template <class Itor, class Ty = Utility::Decay_t<decltype(*std::declval<Itor>())>>
+	template <class Itor, class Ty = Utility::Decay_t<decltype(*Utility::declval<Itor>())>>
 	Itor CopyInit(Itor _begin, const Itor _end, Itor _dest)
 	{
 		while(_begin != _end)

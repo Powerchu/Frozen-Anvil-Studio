@@ -46,7 +46,8 @@ namespace Dystopia
 
 	void EventCallback::Fire() const
 	{
-		if (mpModelEvent) mpModelEvent->Fire();
+		if (mpModelEvent) 
+			mpModelEvent->Fire();
 	}
 
 	EventCallback& EventCallback::operator=(const EventCallback& _rhs)

@@ -88,9 +88,6 @@
     <ClCompile Include="Source\Editor\EditorTab.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\CallbackManager.cpp">
-      <Filter>Editor\Callback Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\Commands.cpp">
       <Filter>Editor\Commands</Filter>
     </ClCompile>
@@ -127,7 +124,6 @@
     <ClCompile Include="Source\IO\BinarySerializer.cpp">
       <Filter>IO\BinarySerialiser</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="Source\Component\RigidBody.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
@@ -146,8 +142,20 @@
     <ClCompile Include="Source\Component\Colliders\Convex.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\EditorEvents.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorInputs.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Utility\GUID.cpp">
       <Filter>Utility\GUID</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Renderer.cpp">
+      <Filter>Game Engine\Components\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Quaternion.cpp">
+      <Filter>Math\Quaternion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -343,9 +351,6 @@
     <ClInclude Include="Include\Editor\EditorTab.h">
       <Filter>Editor\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\CallbackManager.h">
-      <Filter>Editor\Callback Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\CommandList.h">
       <Filter>Editor\Commands</Filter>
     </ClInclude>
@@ -385,7 +390,6 @@
     <ClInclude Include="Include\IO\BinarySerializer.h">
       <Filter>IO\BinarySerialiser</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\Component\Collider.h">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>
@@ -398,11 +402,20 @@
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\EditorInputs.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorEvents.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
     <ClInclude Include="Include\Utility\GUID.h">
       <Filter>Utility\GUID</Filter>
     </ClInclude>
     <ClInclude Include="Include\Utility\ComponentGUID.h">
       <Filter>Utility\GUID</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Renderer.h">
+      <Filter>Game Engine\Components\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -496,9 +509,6 @@
     <Filter Include="Editor\Editor">
       <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Systems\Graphic\Mesh">
-      <UniqueIdentifier>{ca90d672-42da-4174-9947-7cdd5a3d812c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Shader">
       <UniqueIdentifier>{2df11722-19eb-493a-9952-074d5e70fcc7}</UniqueIdentifier>
     </Filter>
@@ -586,9 +596,6 @@
     <Filter Include="Editor\Docking">
       <UniqueIdentifier>{06af060e-209f-4067-a5e6-2f4b596f578b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Callback Manager">
-      <UniqueIdentifier>{c8dbf3fe-24be-4c5f-9964-0d10ff8c569e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\Commands">
       <UniqueIdentifier>{573a6f53-0ee9-4c6b-bda7-2e8af2e8b43c}</UniqueIdentifier>
     </Filter>
@@ -621,6 +628,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Physics">
       <UniqueIdentifier>{e12aa00d-ccc8-4554-a50e-3b29041273b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Renderer">
+      <UniqueIdentifier>{91edfe0d-9cd2-43b8-a18f-715da13dcbf7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utility\GUID">
       <UniqueIdentifier>{f4948df4-57a5-44f2-a36b-60c01719cef6}</UniqueIdentifier>

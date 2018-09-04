@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\Mesh.h"
 #include "System\Graphics\RawMesh.h"
 #include "DataStructure\AutoArray.h"
+#include "DataStructure\MagicArray.h"
 
 #include <string>
 
@@ -37,13 +38,18 @@ namespace Dystopia
 
 		void FreeMeshes(void);
 
+		// Not implemented
+		void ExportMeshes(void);
+
+		Mesh* GetMesh(const std::string&) noexcept;
+
 	private:
 
 		AutoArray<UV>      mUVs;
 		AutoArray<Vertex>  mVtx;
 		AutoArray<short>   mIndex;
 
-		AutoArray<Mesh>    mpMeshes;
+		MagicArray<Mesh>   mpMeshes;
 		AutoArray<RawMesh> mpRawMeshes;
 	};
 }

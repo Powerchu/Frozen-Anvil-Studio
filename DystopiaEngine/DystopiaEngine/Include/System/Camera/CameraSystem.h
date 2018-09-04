@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _CAMERA_SYS_H_
 #define _CAMERA_SYS_H_
 
+#include "DataStructure\MagicArray.h"
+
 
 namespace Dystopia
 {
@@ -23,12 +25,36 @@ namespace Dystopia
 	{
 	public:
 		
-		Camera* RequestSystem(void) const;
+		CameraSystem(void) noexcept;
+
+		Camera* RequestComponent(void);
+
+		void SetMasterCamera(Camera*);
+		Camera* GetMasterCamera(void) const;
+
+		inline bool IsMasterCamera(Camera const*) const;
+
+		MagicArray<Camera>& GetAllCameras(void);
 
 
 	private:
 
+		Camera* mpMasterCam, *mpUICam;
+		Ctor::MagicArrayBuilder<Camera>::SetBlockSize<64>::type mCameras;
 	};
+}
+
+
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+inline bool Dystopia::CameraSystem::IsMasterCamera(Dystopia::Camera const*  _pCamera) const
+{
+	return mpMasterCam == _pCamera;
 }
 
 

@@ -23,17 +23,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class Transform;
-
+	class CameraSystem;
 
 	class Camera : public Component
 	{
 	public:
 
-		using SYSTEM = class CameraSystem;
+		using SYSTEM = CameraSystem;
 		unsigned GetComponentType(void) const
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
 		};
+		const std::string GetEditorName(void) const { return "Camera"; }
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -48,8 +49,10 @@ namespace Dystopia
 		/*
 		void Update(const float dt);
 		*/
-		void SetMainCamera(void);
-		bool IsMainCamera(void) const;
+		void SetMasterCamera(void);
+		bool IsMasterCamera(void) const;
+
+		void InitiallyActive(bool);
 
 		// Checks if screen coords is within the Viewport of the current camera
 		bool IsWithinCameraBounds(const Math::Pt3D&) const;
@@ -77,10 +80,6 @@ namespace Dystopia
 		// Sets the screen coordiates and area the camera renders to
 		void SetViewport(const int _x, const int _y, const int _nWidth, const int _nHeight);
 
-		// Applies the camera bounds to screen
-		// and calculates the camera matrices
-		void SetCamera(void);
-
 		// Returns the *GLOBAL* position of the Camera
 		Math::Pt3D GetPosition(void) const;
 
@@ -92,6 +91,10 @@ namespace Dystopia
 		Camera* Duplicate(void) const;
 		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
+
+		// Applies the camera bounds to screen
+		// and calculates the camera matrices
+		void SetCamera(void);
 
 
 	private:
