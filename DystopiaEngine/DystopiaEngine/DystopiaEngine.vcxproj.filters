@@ -157,6 +157,8 @@
     <ClCompile Include="Source\Math\Quaternion.cpp">
       <Filter>Math\Quaternion</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Source\System\Hotload\HotloadSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -417,6 +419,8 @@
     <ClInclude Include="Include\Component\Renderer.h">
       <Filter>Game Engine\Components\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Include\System\Hotload\HotloadSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

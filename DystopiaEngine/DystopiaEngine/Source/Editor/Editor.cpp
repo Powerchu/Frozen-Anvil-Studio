@@ -33,6 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Scene\SceneSystem.h"
 #include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
+#include "System/Hotload/HotloadSystem.h"
 #include "IO\BinarySerializer.h"
 
 /* Editor includes */
@@ -61,6 +62,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	Dystopia::Editor *editor	= Dystopia::Editor::GetInstance();
 	Dystopia::Timer *timer		= new Dystopia::Timer{};
+	Dystopia::HotloadSystem test;
+	test.Update(0.f);
 	editor->Init();
 	while (!editor->IsClosing())
 	{
