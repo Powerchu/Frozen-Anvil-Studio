@@ -14,18 +14,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 
 #include "Globals.h"
-#include "DataStructure\Pointer.h"
 #include "Utility\MetaAlgorithms.h"
 #include "Utility\MetaDataStructures.h"
+#include "DataStructure\Array.h"
 
 #include "System\Time\TimeSystem.h"
+#include "System\Time\Timer.h"
+#include "System\Time\ScopedTimer.h"
 #include "System\Scene\SceneSystem.h"
 #include "System\Input\InputSystem.h"
 #include "System\Sound\SoundSystem.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Window\WindowManager.h"
-#include "System/Collision/CollisionSystem.h"
-#include "System/Physics/PhysicsSystem.h"
+#include "System\Collision\CollisionSystem.h"
+#include "System\Physics\PhysicsSystem.h"
 #include "System\Graphics\MeshSystem.h"
 #include "System\Camera\CameraSystem.h"
 #include "Component\Camera.h"
@@ -111,11 +113,13 @@ void Dystopia::EngineCore::Init(void)
 		e->PostInit();
 
 	mTime.Lap();
+	mTimeFixed.Lap();
 }
 
 void Dystopia::EngineCore::FixedUpdate(void)
 {
-	static float dt = .0f;
+	static float dt = mTimeFixed.Elapsed();
+	mTimeFixed.Lap();
 
 	while (dt > _FIXED_UPDATE_DT)
 	{

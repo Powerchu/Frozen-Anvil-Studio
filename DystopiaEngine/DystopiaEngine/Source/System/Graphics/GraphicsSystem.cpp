@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System\Graphics\GraphicsSystem.h"	// File header
 #include "System\Graphics\GraphicsDefs.h"	// eGraphicSettings
+#include "System\Graphics\MeshSystem.h"
 #include "Component\Renderer.h"
 #include "System\Window\WindowManager.h"	// Window Manager
 #include "System\Window\Window.h"			// Window
@@ -168,9 +169,13 @@ void Dystopia::GraphicsSystem::LevelLoad(TextSerialiser&)
 
 }
 
-void Dystopia::GraphicsSystem::LoadMesh(const std::string&)
+void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 {
+	MeshSystem* sys = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
 
+	sys->StartMesh();
+	sys->LoadMesh(_filePath);
+	sys->EndMesh();
 }
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string&)
@@ -267,7 +272,8 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	// TEMPORARY print to see what OpenGL version we got
 	// REPLACEMENT : LOGGER OUTPUT
-	std::fprintf(stdout, "Using OpenGL Version %d.%d!\n", mOpenGLMajor, mOpenGLMinor);
+	std::fprintf(stdout, "Graphics System: Using OpenGL Version %d.%d!\n", mOpenGLMajor, mOpenGLMinor);
+	std::fprintf(stdout, "Graphics System: Using %s, %s!\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 
 	// Return true to indicate success
 	return true;

@@ -74,6 +74,7 @@
     <ClCompile Include="Source\System\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="Source\System\Scene\Scene.cpp" />
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
+    <ClCompile Include="Source\System\Time\ScopedTimer.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
     <ClCompile Include="Source\System\Window\Window.cpp" />
@@ -85,6 +86,8 @@
     <ClInclude Include="Include\Component\RigidBody.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
+    <ClInclude Include="Include\System\Time\ScopedTimer.h" />
+    <ClInclude Include="Include\System\Time\TimeDefs.h" />
     <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\Editor\CallbackManager.h" />
     <ClInclude Include="Include\System\Events\EventSystem.h" />

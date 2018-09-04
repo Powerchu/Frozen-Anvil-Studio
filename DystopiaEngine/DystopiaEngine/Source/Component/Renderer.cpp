@@ -29,7 +29,7 @@ void Dystopia::Renderer::Draw(void) const noexcept
 {
 	if (mpMesh)
 	{
-		//mpMesh->UseMesh(GraphicsSystem::GetDrawMode());
+		mpMesh->UseMesh(GraphicsSystem::GetDrawMode());
 	}
 }
 

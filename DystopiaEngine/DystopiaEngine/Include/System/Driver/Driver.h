@@ -29,6 +29,7 @@ namespace Dystopia
 {
 	class EngineCore final  
 	{
+	public:
 		using AllSys = Utility::MetaSortT_t <Utility::MetaLessThan, Utility::Collection <
 			Utility::Indexer<eSYSTEMS::TIME_SYSTEM     , class TimeSystem     >,
 			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM    , class InputManager   >,
@@ -45,8 +46,6 @@ namespace Dystopia
 		using SubSys = typename Utility::MetaAutoIndexer <
 			class MeshSystem
 		>::result;
-
-	public:
 
 		static EngineCore* GetInstance(void) noexcept;
 
@@ -70,6 +69,7 @@ namespace Dystopia
 	private:
 
 		Timer mTime;
+		Timer mTimeFixed;
 		AutoArray<Systems*> mSystemList;
 		AutoArray<Systems*> mSystemTable;
 		AutoArray<void*>	mSubSystems;

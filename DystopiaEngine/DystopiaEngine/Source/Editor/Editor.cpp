@@ -32,6 +32,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Input\InputSystem.h"
 #include "System\Input\InputMap.h"
 #include "System\Time\Timer.h"
+#include "System\Time\ScopedTimer.h"
 #include "System\Driver\Driver.h"
 #include "System\Events\EventSystem.h"
 #include "IO\BinarySerializer.h"
@@ -80,12 +81,11 @@ namespace Dystopia
 }
 
 // Entry point for editor
-int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
+int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-	hInstance;
 
 	auto driver = Dystopia::EngineCore::GetInstance();
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
@@ -114,6 +114,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	{
 		float dt = timer->Elapsed();
 		timer->Lap();
+		Dystopia::ScopedTimer selfDestruct;
 	
 		editor->StartFrame(dt);
 	
