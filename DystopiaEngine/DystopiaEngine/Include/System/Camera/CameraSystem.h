@@ -14,23 +14,69 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _CAMERA_SYS_H_
 #define _CAMERA_SYS_H_
 
+#include "System\Base\Systems.h"
+
 #include "DataStructure\MagicArray.h"
-#include "Component\Camera.h"
+#include "System\Graphics\GraphicsDefs.h"
 
 
 namespace Dystopia
 {
-	class CameraSystem final
+	class Camera;
+
+	class CameraSystem : public Systems
 	{
 	public:
-		
+
+		CameraSystem(void) noexcept;
+
 		Camera* RequestComponent(void);
+
+		bool Init(void);
+		void PostInit(void);
+
+		void Update(float);
+
+		void Shutdown(void);
+
+
+		void SetMasterCamera(Camera*);
+		Camera* GetMasterCamera(void) const;
+
+		inline bool IsMasterCamera(Camera const*) const;
+
+		void SetMasterViewport(int _nX, int _nY, int _nWidth, int _nHeight) noexcept;
+		inline const Gfx::AbsViewport& GetMasterViewport(void) const noexcept;
+
+		void ApplyViewport(const Gfx::Viewport&);
+
+		MagicArray<Camera>& GetAllCameras(void);
 
 
 	private:
 
-		MagicArray<Camera> mCameras;
+		Gfx::AbsViewport mMasterViewport;
+		Camera* mpMasterCam, *mpUICam;
+		Ctor::MagicArrayBuilder<Camera>::SetBlockSize<64>::type mCameras;
 	};
+}
+
+
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+inline bool Dystopia::CameraSystem::IsMasterCamera(Dystopia::Camera const*  _pCamera) const
+{
+	return mpMasterCam == _pCamera;
+}
+
+inline const Dystopia::Gfx::AbsViewport& Dystopia::CameraSystem::GetMasterViewport(void) const noexcept
+{
+	return mMasterViewport;
 }
 
 

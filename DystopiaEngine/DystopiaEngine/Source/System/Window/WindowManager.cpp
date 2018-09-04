@@ -173,6 +173,9 @@ namespace Dystopia
 	void WindowManager::PostInit(void)
 	{
 		this->DestroySplash();
+
+		mWidth  = GetSystemMetrics(SM_CXSCREEN);
+		mHeight = GetSystemMetrics(SM_CYSCREEN);
 	}
 
 	void WindowManager::Update(float)
@@ -210,7 +213,7 @@ namespace Dystopia
 		FreeConsole();
 	#endif
 
-		PostQuitMessage(0);
+		//PostQuitMessage(0);
 	}
 
 	void WindowManager::LoadDefaults(void)
@@ -245,32 +248,13 @@ namespace Dystopia
 
 	void WindowManager::DestroySplash(void)
 	{
+		mWindows[0].Hide();
+
 		mWindows[0].SetStyle(mWindowStyle, mWindowStyleEx);
+		mWindows[0].SetSize(mWidth, mHeight);
+		mWindows[0].CenterWindow();
 
-		ReAdjustWindow(mWindows[0]);
-	}
-
-	void WindowManager::ReAdjustWindow(Window& _window)
-	{
-		ShowWindow(_window.GetWindowHandle(), SW_HIDE);
-
-		RECT WindowRect{ 0, 0, mWidth, mHeight };
-		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
-
-		mWidth = WindowRect.right - WindowRect.left;
-		mHeight = WindowRect.bottom - WindowRect.top;
-
-		long left = (GetSystemMetrics(SM_CXSCREEN) - mWidth) >> 1,
-			 top = (GetSystemMetrics(SM_CYSCREEN) - mHeight) >> 1;
-
-		// center the window
-		SetWindowPos(_window.GetWindowHandle(), NULL,
-			left, top, mWidth, mHeight,
-			SWP_NOZORDER | SWP_NOACTIVATE
-		);
-
-
-		ShowWindow(_window.GetWindowHandle(), SW_SHOW);
+		mWindows[0].Show();
 	}
 
 }

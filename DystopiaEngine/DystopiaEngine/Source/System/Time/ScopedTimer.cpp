@@ -1,41 +1,27 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	GameObject.h
+\file	ScopedTimer.cpp
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Flags for Game Objects
+	Timer that counts the duration from when it was created till it is destroyed
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _OBJFLAGS_H_
-#define _OBJFLAGS_H_
+#include "System\Time\ScopedTimer.h"
+#include "System\Time\TimeDefs.h"
+#include "System\Time\TimeSystem.h"
+#include "System\Driver\Driver.h"
 
-namespace Dystopia
+#include <iostream>
+
+
+void Dystopia::ScopedTimerDefaultAction::PostDuration(Dur_t _dur)
 {
-	enum eObjFlag : unsigned
-	{
-		FLAG_NONE			= 0u,
-		FLAG_ACTIVE			= 1u << 0,
-
-		FLAG_LAYER_UI		= 1u << 5,
-		FLAG_LAYER_WORLD	= 1u << 6,
-
-		FLAG_RESERVED		= 1u << 30,
-
-		FLAG_REMOVE			= 1u << 31,
-
-
-		// ======================  Compound flags ====================== //
-
-		FLAG_ALL_LAYERS     = FLAG_LAYER_UI | FLAG_LAYER_WORLD,
-	};
+	//std::cout << _dur.count() << std::endl;
 }
 
-
-
-#endif		// INCLUDE GUARD
 

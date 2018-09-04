@@ -23,13 +23,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class Transform;
-
+	class CameraSystem;
 
 	class Camera : public Component
 	{
 	public:
 
-		using SYSTEM = class CameraSystem;
+		using SYSTEM = CameraSystem;
 		unsigned GetComponentType(void) const
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
@@ -39,7 +39,7 @@ namespace Dystopia
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		Camera(const int _fWidth = 1600, const int _fHeight = 900);
+		Camera(const float _fWidth = 1.f, const float _fHeight = 1.f);
 		~Camera(void);
 
 
@@ -49,8 +49,10 @@ namespace Dystopia
 		/*
 		void Update(const float dt);
 		*/
-		void SetMainCamera(void);
-		bool IsMainCamera(void) const;
+		void SetMasterCamera(void);
+		bool IsMasterCamera(void) const;
+
+		void InitiallyActive(bool);
 
 		// Checks if screen coords is within the Viewport of the current camera
 		bool IsWithinCameraBounds(const Math::Pt3D&) const;
@@ -75,12 +77,10 @@ namespace Dystopia
 		void SetRotation(const float);
 		void SetRotationDeg(const float);
 
-		// Sets the screen coordiates and area the camera renders to
+		// Sets the area the camera renders to in absolute screen coordinates
 		void SetViewport(const int _x, const int _y, const int _nWidth, const int _nHeight);
-
-		// Applies the camera bounds to screen
-		// and calculates the camera matrices
-		void SetCamera(void);
+		// Set the area the camera renders to in relative coordinates, from 0 to 1.0
+		void SetViewport(float _x, float _y, float _nWidth, float _nHeight);
 
 		// Returns the *GLOBAL* position of the Camera
 		Math::Pt3D GetPosition(void) const;
@@ -93,6 +93,10 @@ namespace Dystopia
 		Camera* Duplicate(void) const;
 		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
+
+		// Applies the camera bounds to screen
+		// and calculates the camera matrices
+		void SetCamera(void);
 
 
 	private:

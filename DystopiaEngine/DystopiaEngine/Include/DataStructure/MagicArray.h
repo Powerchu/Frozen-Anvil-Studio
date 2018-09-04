@@ -31,7 +31,7 @@ class MagicArray;
 
 namespace Ctor
 {
-	template <typename T, unsigned BLOCK_SIZE = 32, unsigned MAX_BLOCKS = 32>
+	template <typename T, unsigned BLOCK_SIZE = 64, unsigned MAX_BLOCKS = 16>
 	struct MagicArrayBuilder
 	{
 		static_assert(Utility::IsPowerOf2(BLOCK_SIZE), "Block Size must be a power of 2");
@@ -114,7 +114,7 @@ public:
 	// ======================================== OPERATORS ======================================== // 
 
 	Val_t& operator[] (const Sz_t _nIndex) noexcept;
-	const Val_t& operator[] (const Sz_t _nIndex) const noexcept;
+	Val_t& operator[] (const Sz_t _nIndex) const noexcept;
 
 	MagicArray& operator= (const MagicArray& _other);
 	MagicArray& operator= (MagicArray&& _other) noexcept;
@@ -378,7 +378,7 @@ T& MagicArray<T, PP>::operator[] (Sz_t _nIndex) noexcept
 }
 
 template <typename T, typename PP>
-const T& MagicArray<T, PP>::operator[] (Sz_t _nIndex) const noexcept
+T& MagicArray<T, PP>::operator[] (Sz_t _nIndex) const noexcept
 {
 #if _DEBUG
 	/* Array index out of range */

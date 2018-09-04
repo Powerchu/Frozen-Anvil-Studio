@@ -70,6 +70,10 @@ void Dystopia::SceneSystem::PostUpdate(void)
 void Dystopia::SceneSystem::Shutdown(void)
 {
 	delete mpCurrScene;
+	if (mpNextScene != mpCurrScene)
+		delete mpNextScene;
+
+	mpNextScene = mpCurrScene = nullptr;
 }
 
 void Dystopia::SceneSystem::LoadDefaults(void)

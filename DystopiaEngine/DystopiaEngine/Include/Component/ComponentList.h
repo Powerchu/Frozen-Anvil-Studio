@@ -23,7 +23,8 @@ namespace Dystopia
 		class Transform,
 		class Camera,
 		class Collider,
-		class RigidBody
+		class RigidBody,
+		class Renderer
 	>::result;
 
 	// Generic Tag for Components

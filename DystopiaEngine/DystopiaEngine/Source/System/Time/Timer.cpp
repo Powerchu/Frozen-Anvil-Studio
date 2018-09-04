@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Timer.h
+\file	Timer.cpp
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
@@ -11,15 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Time\Timer.h"	// File Header
-#include "Math\MathUtility.h"	// epsilon
+#include "System\Time\Timer.h"	  // File Header
+#include "System\Time\TimeDefs.h"
+#include "Math\MathUtility.h"	  // epsilon
 
 namespace Dystopia
 {
-	// Because the whole thing is a pain to type
-	using Clock		= std::chrono::high_resolution_clock;
-	using Duration	= std::chrono::duration<float>;
-
 	Timer::Timer(void) :
 		mCurrent{ Clock::now() }
 	{

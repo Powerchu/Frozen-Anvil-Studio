@@ -27,6 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Component\Renderer.cpp" />
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
@@ -41,6 +42,7 @@
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp" />
+    <ClCompile Include="Source\Math\Quaternion.cpp" />
     <ClCompile Include="Source\System\Camera\CameraSystem.cpp" />
     <ClCompile Include="Source\System\Collision\CollisionSystem.cpp" />
     <ClCompile Include="Source\System\Driver\Driver.cpp" />
@@ -73,6 +75,7 @@
     <ClCompile Include="Source\System\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="Source\System\Scene\Scene.cpp" />
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
+    <ClCompile Include="Source\System\Time\ScopedTimer.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
     <ClCompile Include="Source\System\Window\Window.cpp" />
@@ -80,11 +83,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Component\Collider.h" />
+    <ClInclude Include="Include\Component\Renderer.h" />
     <ClInclude Include="Include\Component\RigidBody.h" />
     <ClInclude Include="Include\Editor\EditorEvents.h" />
     <ClInclude Include="Include\Editor\EditorInputs.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
+    <ClInclude Include="Include\System\Time\ScopedTimer.h" />
+    <ClInclude Include="Include\System\Time\TimeDefs.h" />
     <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\System\Events\EventSystem.h" />
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
@@ -296,8 +302,9 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/DEDITOR /std:c++latest</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

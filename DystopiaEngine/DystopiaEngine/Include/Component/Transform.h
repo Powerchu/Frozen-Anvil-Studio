@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component\Component.h"		// Base Class
 #include "Component\ComponentList.h"	// TRANSFORM
 #include "Math\Vector4.h"				// Vector4
+#include "Math\Quaternion.h"			// Quaternion
 #include "Math\Matrix4.h"				// Matrix4
 #include "DataStructure\AutoArray.h"	// AutoArray
 #include "Utility\MetaAlgorithms.h"		// MetaFind
@@ -34,7 +35,7 @@ namespace Dystopia
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		Transform(void);
+		explicit Transform(GameObject* _pOwner = nullptr) noexcept;
 		Transform(const Transform&);
 
 
@@ -52,12 +53,12 @@ namespace Dystopia
 		void SetPosition(const Math::Point3D&);
 		void SetPosition(const float _x, const float _y, const float _z);
 
-		Math::Vec4 GetGlobalRotation(void) const;
+		Math::Quaternion GetGlobalRotation(void) const;
 //		Math::Vec4 GetGlobalRotationDeg(void) const;
 		Math::Vec4 GetGlobalScale(void) const;
 		Math::Point3D GetGlobalPosition(void) const;
 
-		Math::Vec4 GetRotation(void) const;
+		Math::Quaternion GetRotation(void) const;
 //		Math::Vec4 GetRotationDeg(void) const;
 		Math::Vec4 GetScale(void) const;
 		Math::Point3D GetPosition(void) const;
@@ -82,9 +83,9 @@ namespace Dystopia
 
 		Math::Matrix4 mMatrix;
 
-		Math::Vec4 mRotation;
-		Math::Vec4 mScale;
+		Math::Vec3D mScale;
 		Math::Point3D mPosition;
+		Math::Quaternion mRotation;
 	};
 }
 
