@@ -149,6 +149,15 @@
     <ClCompile Include="Source\Editor\EditorInputs.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\Renderer.cpp">
+      <Filter>Game Engine\Components\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Quaternion.cpp">
+      <Filter>Math\Quaternion</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Time\ScopedTimer.cpp">
+      <Filter>Game Engine\Systems\Time\ScopedTimer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -401,6 +410,15 @@
     <ClInclude Include="Include\Editor\EditorEvents.h">
       <Filter>Editor\Editor</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\Renderer.h">
+      <Filter>Game Engine\Components\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Time\ScopedTimer.h">
+      <Filter>Game Engine\Systems\Time\ScopedTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Time\TimeDefs.h">
+      <Filter>Game Engine\Systems\Time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -615,6 +633,12 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Physics">
       <UniqueIdentifier>{e12aa00d-ccc8-4554-a50e-3b29041273b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Renderer">
+      <UniqueIdentifier>{91edfe0d-9cd2-43b8-a18f-715da13dcbf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Time\ScopedTimer">
+      <UniqueIdentifier>{bd8e2eea-6f09-4a0f-901b-c420c874d331}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
