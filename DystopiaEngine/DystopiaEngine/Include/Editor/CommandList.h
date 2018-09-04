@@ -75,6 +75,13 @@ namespace Dystopia
 	// 	T* mObject;
 	// };
 
+	struct ComdFunctionCalls
+	{
+		template <class Caller, typename ... Params>
+		ComdFunctionCalls(void(Caller::*_pDoFunc)(Params ... params), void(Caller::*_pUndoFunc)(Params ... params), Caller * const _pCaller)
+		{}
+	};
+
 	template <typename T>
 	struct ComdRecord : RecordBase
 	{
