@@ -2,61 +2,57 @@
 #ifndef HOTLOADSYSTEM_H
 #define HOTLOADSYSTEM_H
 
+
 #include "System/Base/Systems.h"
+#include "DataStructure/AutoArray.h"
 #include <windows.h>
 #include <map>
 #include <functional>
 #include <utility>
 namespace Dystopia
 {
-	struct ReferenceFunc
+	enum eFileHandle
 	{
+		eInclude_Index = 0,
+		eSource_Index,
+		eTotalFileHandles
+	};
+	struct DLLWrapper
+	{
+		DLLWrapper(std::wstring _DllFileName, HMODULE _DllModule)
+			:mDllFileName{ _DllFileName },
+			mDllModule{ _DllModule }
+		{
+
+		}
+		bool operator==(DLLWrapper const & _rhs)
+		{
+			return _rhs.mDllFileName == mDllFileName;
+		}
+		HMODULE ReloadDll()
+		{
+			FreeLibrary(mDllModule);
+			mDllModule = LoadLibrary(mDllFileName.c_str());
+			return mDllModule;
+		}
+		bool isValid()
+		{
+			return mDllModule != NULL;
+		}
+		~DLLWrapper()
+		{
+			if (mDllModule)
+				FreeLibrary(mDllModule);
+		}
 	private:
-		struct Concept
-		{
-			virtual ~Concept(){}
-		};
-		template< typename T>
-		struct Model : Concept
-		{
-			template<typename U>
-			Model(U && _rhs)
-				:Obj{ std::forward<U>(_rhs) }
-			{
-
-			}
-
-			T Obj;
-		};
-
-		Concept * ptr;
-	public:
-
-		template<typename RetType, typename ... ParamType>
-		ReferenceFunc(std::function<RetType(ParamType ...)> const & _func)
-			:ptr{operator::new(sizeof(_func))}
-
-		{
-			using ForwardType = std::function<RetType(ParamType ...)> const &;
-			new (ptr) Model <std::forward<ForwardType &>{_func};
-		}
-
-		ReferenceFunc()
-			:ptr{ nullptr }
-		{
-
-		}
-
-		~ReferenceFunc()
-		{
-			operator::delete(ptr);
-		}
+		std::wstring mDllFileName;
+		HMODULE		 mDllModule;
 	};
 
 	struct HotloadSystem : public Systems
 	{
 		virtual void PreInit(void)	{ };
-		virtual bool Init(void) { return true; };
+		virtual bool Init(void);
 		virtual void PostInit(void) { };
 
 		virtual void FixedUpdate(float) { };
@@ -69,7 +65,7 @@ namespace Dystopia
 
 		virtual ~HotloadSystem(void) = default;
 
-		ReferenceFunc GetDllFunc(LPCWSTR _dllFileName, LPCSTR _dllFuncName);
+		//ReferenceFunc GetDllFunc(LPCWSTR _dllFileName, LPCSTR _dllFuncName);
 		FARPROC GetDllFuncTest(LPCWSTR _dllFileName, LPCSTR _dllFuncName);
 
 	private : 
@@ -78,7 +74,12 @@ namespace Dystopia
 		static LPCSTR HEADER_DEFAULT_PATH;
 		static LPCSTR SOURCE_DEFAULT_PATH;
 
-		void Recompile(HANDLE const & _File_Handle);
+		AutoArray<DLLWrapper> mvDLL;
+		HANDLE mFileHandles[eTotalFileHandles];
+		HANDLE mIncludeHandle;
+
+		void Recompile(HANDLE const & _File_Handle, FILE_NOTIFY_INFORMATION * pFileInfo = nullptr);
+		void CheckReloadDll();
 	};
 }
 

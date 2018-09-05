@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Behaviour.h
+\file	Behaviour.h      
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief

@@ -65,7 +65,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	Dystopia::Editor *editor	= Dystopia::Editor::GetInstance();
 	Dystopia::Timer *timer		= new Dystopia::Timer{};
 	Dystopia::HotloadSystem test;
+	test.Init();
 
+	/*
 	LPCWSTR ct = L"TestClass.dll";
 	TestClass * c = new TestClass;
 	std::cout << c->col << std::endl;
@@ -76,8 +78,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	c = fpp();
 	std::cout << c->col << std::endl;
 	delete c;
-
-	test.Update(0.f);
+	*/
+	while(true)
+		test.Update(0.f);
 	editor->Init();
 	while (!editor->IsClosing())
 	{
