@@ -159,6 +159,7 @@
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="Source\System\Hotload\HotloadSystem.cpp" />
+    <ClCompile Include="TestClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -421,6 +422,7 @@
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\System\Hotload\HotloadSystem.h" />
+    <ClInclude Include="TestClass.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

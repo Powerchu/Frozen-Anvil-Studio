@@ -6,7 +6,7 @@ namespace Dystopia
 {
 	/*To Do: Change so that the absolute file path is not hard coded*/
 	LPCSTR HotloadSystem::HEADER_DEFAULT_PATH = "\DystopiaEngine/Include/Behaviour";
-	LPCSTR HotloadSystem::SOURCE_DEFAULT_PATH = "C:\\Users\\Owner\\source\\repos\\Frozen-Anvil-Studio\\DystopiaEngine\\DystopiaEngine\\Source\\Behaviour\\"; /*Absolute file path must be in this format*/
+	LPCSTR HotloadSystem::SOURCE_DEFAULT_PATH = "C:\\Users\\keith.goh\\source\\repos\\Frozen-Anvil-Studio\\DystopiaEngine\\DystopiaEngine\\Source\\Behaviour\\"; /*Absolute file path must be in this format*/
 
 	void Dystopia::HotloadSystem::Update(float)
 	{
@@ -42,6 +42,16 @@ namespace Dystopia
 		/*Load the function*/
 		return ReferenceFunc();
 	}
+	FARPROC HotloadSystem::GetDllFuncTest(LPCWSTR _dllFileName, LPCSTR _dllFuncName)
+	{
+		HMODULE module_handle = LoadLibrary(_dllFileName);
+
+		if (module_handle == NULL)
+			return FARPROC{};
+
+		FARPROC f = GetProcAddress(module_handle, _dllFuncName);
+		return f;
+	}
 	void HotloadSystem::Recompile(HANDLE const & _File_Handle)
 	{
 		/*
@@ -57,8 +67,9 @@ namespace Dystopia
 		/*To Do: Change so that the absolute file path is not hard coded
 		         Locate msvc on computer and have it run cl.exe*/
 		/*Testing that multi process works. This is not the msvc compiler*/
-		LPCWSTR msvc_location = L"C:\\Windows\\System32\\cmd.exe";
-		LPWSTR  command_line  = L"";
+		LPCWSTR msvc_location = L"C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/cl.exe";
+		LPWSTR  command_line  = L"/WX /W4 /EHsc /DLL /nologo C:/Users/keith.goh/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Resource/Behaviours/Whatever.cpp";
+								//"/Fe\"C:\\Users\\keith.goh\\source\\repos\\Frozen-Anvil-Studio\\DystopiaEngine\\Whatever.dll\"";
 		ZeroMemory(&si, sizeof(si));
 		ZeroMemory(&pi, sizeof(pi));
 
@@ -70,7 +81,7 @@ namespace Dystopia
 			NULL,
 			FALSE,
 			CREATE_NEW_CONSOLE,
-			NULL,
+			"SystemRoot=C:\\Windows",
 			NULL,
 			&si,
 			&pi)

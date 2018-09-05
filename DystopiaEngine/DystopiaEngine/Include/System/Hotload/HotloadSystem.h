@@ -70,6 +70,7 @@ namespace Dystopia
 		virtual ~HotloadSystem(void) = default;
 
 		ReferenceFunc GetDllFunc(LPCWSTR _dllFileName, LPCSTR _dllFuncName);
+		FARPROC GetDllFuncTest(LPCWSTR _dllFileName, LPCSTR _dllFuncName);
 
 	private : 
 		
