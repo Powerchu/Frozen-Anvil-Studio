@@ -413,6 +413,9 @@
     <ClInclude Include="Include\System\Time\TimeDefs.h">
       <Filter>Game Engine\Systems\Time</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DataStructure\Variant.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

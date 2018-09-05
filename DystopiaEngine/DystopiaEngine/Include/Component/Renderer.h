@@ -48,6 +48,9 @@ namespace Dystopia
 		void SetMesh(Mesh*) noexcept;
 		void SetMesh(const std::string&) noexcept;
 
+		bool HasTransparency(void) const noexcept;
+
+
 		Renderer* Duplicate(void) const;
 
 		void Serialise(TextSerialiser&) const;

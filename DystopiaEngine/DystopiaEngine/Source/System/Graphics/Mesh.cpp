@@ -42,6 +42,13 @@ void Dystopia::Mesh::UseMesh(int _nMode) const
 	glBindVertexArray(0);
 }
 
+void Dystopia::Mesh::UseMesh(int _nMode, unsigned _nCount) const
+{
+	glBindVertexArray(mVAO);
+	glDrawElementsInstanced(_nMode, mnVertices, GL_UNSIGNED_SHORT, mnOffset, _nCount);
+	glBindVertexArray(0);
+}
+
 void Dystopia::Mesh::SetName(const std::string& _strName)
 {
 	mName = _strName;

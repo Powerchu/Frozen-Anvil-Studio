@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility\MetaHelper.h"
 
+
 namespace Utility
 {
 	// Constant
