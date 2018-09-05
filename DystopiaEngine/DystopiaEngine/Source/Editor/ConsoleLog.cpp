@@ -44,7 +44,7 @@ namespace Dystopia
 
 	}
 
-	void ConsoleLog::Window()
+	void ConsoleLog::EditorUI()
 	{
 		EGUI::Display::Button("Clear");
 		EGUI::Display::HorizontalSeparator();

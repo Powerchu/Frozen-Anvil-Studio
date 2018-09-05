@@ -22,6 +22,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 #include "Utility\GUID.h"
 #include "Component\Camera.h"
+#include <algorithm>
+#include <cctype>
+#include <iostream>
 
 constexpr float DEFAULT_WIDTH = 300;
 constexpr float DEFAULT_HEIGHT = 300;
@@ -39,8 +42,9 @@ namespace Dystopia
 
 	HierarchyView::HierarchyView()
 		: EditorTab{ true },  
-		mLabel{ "Hierarchy" }, mpFocus{ nullptr }, mSearchText{ "" },
-		mPopupID{ "Create Objects From Hierarchy" }
+		mLabel{ "Hierarchy" }, mpFocus{ nullptr }, mSearchText{ "" }, 
+		mPopupID{ "CreateGameObjFromHierarchy" }, 
+		mSearchTextPrevFrame{ "" }, mArrSearchID{}
 	{
 	}
 
@@ -50,15 +54,19 @@ namespace Dystopia
 
 	void HierarchyView::Init()
 	{
+		mArrSearchID.reserve(200);
 	}
 
 	void HierarchyView::Update(const float& _dt)
 	{
 		_dt;
+
+		UpdateSearch();
 	}
 
 	void HierarchyView::Shutdown()
 	{
+		mArrSearchID.clear();
 	}
 
 	std::string HierarchyView::GetLabel() const
@@ -66,7 +74,7 @@ namespace Dystopia
 		return mLabel;
 	}
 
-	void HierarchyView::Window()
+	void HierarchyView::EditorUI()
 	{
 		CreateButton();
 		EGUI::ChangeAlignmentYOffset(0);
@@ -79,13 +87,19 @@ namespace Dystopia
 			auto& arrayOfGameObjects = mpCurrentScene->GetAllGameObjects();
 			for (auto& obj : arrayOfGameObjects)
 			{
-				if (EGUI::Display::SelectableTxt(obj.GetName() + "##" + 
-												std::to_string(obj.GetID()),
-												mpFocus && (mpFocus->GetID() == obj.GetID())))
+				if (strlen(mSearchText))
 				{
-					GetMainEditor().RemoveFocus();
-					GetMainEditor().SetFocus(obj);
+					for (auto& i : mArrSearchID)
+					{
+						if (!(obj.GetID() == i)) 
+							continue;
+
+						GameObjectName(obj);
+						break;
+					}
 				}
+				else
+					GameObjectName(obj);
 			}
 		}
 		EGUI::EndChild();
@@ -112,23 +126,61 @@ namespace Dystopia
 		EGUI::Display::HorizontalSeparator();
 	}
 
+	void HierarchyView::UpdateSearch()
+	{
+		std::string toBeSearched{ mSearchText };
+		if (toBeSearched != std::string{ mSearchTextPrevFrame })
+		{
+			mArrSearchID.clear();
+			for (auto& e : mpCurrentScene->GetAllGameObjects())
+			{
+				std::string item{ e.GetName() };
+				auto it = std::search(item.begin(), item.end(),
+									  toBeSearched.begin(), toBeSearched.end(),
+									  [](char c1, char c2) { return std::toupper(c1) == std::toupper(c2); });
+				if (it == item.begin())
+				{
+					mArrSearchID.push_back(e.GetID());
+				}
+			}
+			strcpy_s(mSearchTextPrevFrame, mSearchText);
+		}
+		else if (!strlen(mSearchText))
+		{
+			mArrSearchID.clear();
+		}
+	}
+
 	void HierarchyView::CreatePopup()
 	{
 		if (EGUI::Display::StartPopup(mPopupID))
 		{
 			if (EGUI::Display::SelectableTxt("New GameObject"))
 			{
+				strcpy_s(mSearchTextPrevFrame, "");
 				GameObject *pObject = mpCurrentScene->InsertGameObject(GUIDGenerator::GetUniqueID());
 				pObject->SetName("GameObject");
 			}
 
 			if (EGUI::Display::SelectableTxt("New Camera"))
 			{
+				strcpy_s(mSearchTextPrevFrame, "");
 				GameObject *pObject = mpCurrentScene->InsertGameObject(GUIDGenerator::GetUniqueID());
 				pObject->SetName("Camera");
-				pObject->AddComponent(EngineCore::GetInstance()->GetSubSystem<CameraSystem>()->RequestComponent(), typename Camera::TAG{});
+				pObject->AddComponent(EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent(), typename Camera::TAG{});
 			}
 			EGUI::Display::EndPopup();
+		}
+	}
+
+	void HierarchyView::GameObjectName(GameObject& _obj)
+	{
+		if (EGUI::Display::SelectableTxt(_obj.GetName() + "##" +
+			std::to_string(_obj.GetID()),
+			mpFocus && (mpFocus->GetID() == _obj.GetID())))
+		{
+			GetMainEditor().RemoveFocus();
+			GetMainEditor().SetFocus(_obj);
 		}
 	}
 

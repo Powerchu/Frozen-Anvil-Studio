@@ -166,7 +166,7 @@ namespace Dystopia
 		UpdateSearch();
 	}
 
-	void ProjectResource::Window()
+	void ProjectResource::EditorUI()
 	{
 		Math::Vec2 fileWindowSize = Math::Vec2{ Size().x - 210, Size().y - 55 };
 		SearchWindow();

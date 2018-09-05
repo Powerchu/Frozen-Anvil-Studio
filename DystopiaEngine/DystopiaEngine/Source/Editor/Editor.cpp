@@ -34,6 +34,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
 #include "IO\BinarySerializer.h"
+#include "Utility\GUID.h"
 
 /* Editor includes */
 #include "Editor\Editor.h"
@@ -190,7 +191,7 @@ namespace Dystopia
 			{
 				pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()));
 				pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
-				pTab->Window();
+				pTab->EditorUI();
 			}
 			EGUI::EndTab();
 			EGUI::PopID();

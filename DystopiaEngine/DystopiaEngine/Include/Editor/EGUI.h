@@ -143,7 +143,6 @@ namespace EGUI
 		void Label(const char *_label, ...);
 		/* =======================================================================================================================
 		Brief:
-				NOT WORKING 10/7/18
 				Creates a editable text field with a label to the left of the text field. If edited, the _pOutText will be changed
 				accordingly. The size limits the number of characters accepted. 
 		Usage:

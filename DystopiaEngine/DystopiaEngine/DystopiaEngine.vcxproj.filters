@@ -158,6 +158,9 @@
     <ClCompile Include="Source\System\Time\ScopedTimer.cpp">
       <Filter>Game Engine\Systems\Time\ScopedTimer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Utility\GUID.cpp">
+      <Filter>Utility\GUID</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -419,6 +422,12 @@
     <ClInclude Include="Include\System\Time\TimeDefs.h">
       <Filter>Game Engine\Systems\Time</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Utility\ComponentGUID.h">
+      <Filter>Utility\GUID</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\GUID.h">
+      <Filter>Utility\GUID</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -639,6 +648,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Time\ScopedTimer">
       <UniqueIdentifier>{bd8e2eea-6f09-4a0f-901b-c420c874d331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\GUID">
+      <UniqueIdentifier>{e32cb155-6561-4a7a-9a47-96058953c24c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

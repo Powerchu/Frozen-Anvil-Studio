@@ -32,7 +32,7 @@ namespace Dystopia
 		virtual void Update(const float&) override;
 
 		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
-		virtual void Window() override;
+		virtual void EditorUI() override;
 
 		/* Shutdown() is called right before deleting this object */
 		virtual void Shutdown() override;

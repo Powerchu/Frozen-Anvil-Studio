@@ -55,7 +55,7 @@ namespace Dystopia
 		_dt;
 	}
 
-	void Inspector::Window()
+	void Inspector::EditorUI()
 	{
 		if (!mpFocus) return;
 

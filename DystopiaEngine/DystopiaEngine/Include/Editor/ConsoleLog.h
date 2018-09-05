@@ -26,7 +26,7 @@ namespace Dystopia
 
 		virtual void Init() override;
 		virtual void Update(const float&) override;
-		virtual void Window() override;
+		virtual void EditorUI() override;
 		virtual void Shutdown() override;
 		virtual std::string GetLabel() const override;
 

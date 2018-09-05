@@ -230,17 +230,17 @@ namespace Utility
 	{};
 
 
-	// Force Evaulate	   Warning: Causes the compiler to crash
-	// ================ ====================================================
-
-	// Warning: Crashes the compiler
-	template <typename T, T value>
-	struct ForceEval : Constant <T, value>
-	{};
-
-	// Warning: Crashes the compiler
-	template <auto _Val>
-	auto ForceEval_v = ForceEval<decltype(_Val), _Val>::value;
+	//// Force Evaulate	   Warning: Causes the compiler to crash
+	//// ================ ====================================================
+	//
+	//// Warning: Crashes the compiler
+	//template <typename T, T value>
+	//struct ForceEval : Constant <T, value>
+	//{};
+	//
+	//// Warning: Crashes the compiler
+	//template <auto _Val>
+	//auto ForceEval_v = ForceEval<decltype(_Val), _Val>::value;
 
 }
 

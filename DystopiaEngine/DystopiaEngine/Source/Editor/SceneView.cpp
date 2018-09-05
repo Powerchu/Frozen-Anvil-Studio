@@ -43,7 +43,7 @@ namespace Dystopia
 		_dt;
 	}
 
-	void SceneView::Window()
+	void SceneView::EditorUI()
 	{
 	}
 
