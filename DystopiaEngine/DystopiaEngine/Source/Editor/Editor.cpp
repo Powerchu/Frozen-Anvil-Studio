@@ -65,14 +65,17 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	Dystopia::Editor *editor	= Dystopia::Editor::GetInstance();
 	Dystopia::Timer *timer		= new Dystopia::Timer{};
 	Dystopia::HotloadSystem test;
+
 	LPCWSTR ct = L"TestClass.dll";
 	TestClass * c = new TestClass;
 	std::cout << c->col << std::endl;
 	auto f = test.GetDllFuncTest(ct, "Clone");
 	using fp = TestClass *(*)();
+	delete c;
 	fp fpp = (fp) f;
 	c = fpp();
 	std::cout << c->col << std::endl;
+	delete c;
 
 	test.Update(0.f);
 	editor->Init();
