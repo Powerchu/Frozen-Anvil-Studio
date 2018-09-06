@@ -76,13 +76,25 @@ Dystopia::GraphicsSystem::~GraphicsSystem(void)
 void Dystopia::GraphicsSystem::PreInit(void)
 {
 	InitOpenGL(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow());
+
+	LoadShader("Resource/Shader/DefaultShaderList.txt");
+	auto file = Serialiser::OpenFile<TextSerialiser>("Resource/Meshes/DefaultMeshList.txt", Serialiser::MODE_READ);
+	MeshSystem* pMeshSys = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
+
+	std::string MeshPath;
+
+	pMeshSys->StartMesh();
+	while (!file.EndOfInput())
+	{
+		file >> MeshPath;
+		pMeshSys->LoadMesh(MeshPath);
+	}
+	pMeshSys->EndMesh();
 }
 
 bool Dystopia::GraphicsSystem::Init(void)
 {
 	glEnable(GL_DEPTH_TEST);
-
-	LoadShader("Resource\Shader\ShaderList.txt");
 
 	return true;
 }
@@ -153,7 +165,10 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 
 void Dystopia::GraphicsSystem::Shutdown(void)
 {
+	auto pCore = EngineCore::GetInstance();
 
+	// We are responsible for this
+	pCore->GetSubSystem<MeshSystem>()->FreeMeshes();
 }
 
 void Dystopia::GraphicsSystem::LoadDefaults(void)
@@ -163,13 +178,13 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 
 void Dystopia::GraphicsSystem::LoadSettings(TextSerialiser&)
 {
-
+	// TODO
 }
 
 
 void Dystopia::GraphicsSystem::LevelLoad(TextSerialiser&)
 {
-
+	// TODO
 }
 
 void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
@@ -198,10 +213,13 @@ Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _fileP
 
 	if (file.EndOfInput())
 	{
+		// TODO
 	}
 	else
 	{
 		file >> strGeo;
+
+		// TODO
 	}
 
 	return nullptr;
@@ -280,6 +298,8 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	// Make our newly created context the active context
 	wglMakeCurrent(_window.GetDeviceContext(), static_cast<HGLRC>(mOpenGL));
 
+#if EDITOR
+
 	// Gets for the openGL version
 	int mOpenGLMajor, mOpenGLMinor;
 	glGetIntegerv(GL_MAJOR_VERSION, &mOpenGLMajor);
@@ -289,6 +309,8 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	// REPLACEMENT : LOGGER OUTPUT
 	std::fprintf(stdout, "Graphics System: Using OpenGL Version %d.%d!\n", mOpenGLMajor, mOpenGLMinor);
 	std::fprintf(stdout, "Graphics System: Using %s, %s!\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+
+#endif
 
 	// Return true to indicate success
 	return true;

@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\MetaDataStructures.h"
 #include "DataStructure\Array.h"
 
+// Systems
 #include "System\Time\TimeSystem.h"
 #include "System\Time\Timer.h"
 #include "System\Time\ScopedTimer.h"
@@ -28,10 +29,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\WindowManager.h"
 #include "System\Collision\CollisionSystem.h"
 #include "System\Physics\PhysicsSystem.h"
-#include "System\Graphics\MeshSystem.h"
 #include "System\Camera\CameraSystem.h"
 #include "Component\Camera.h"
 #include "System\Events\EventSystem.h"
+
+// SubSystems
+#include "System\Graphics\MeshSystem.h"
+#include "System\Profiler\Profiler.h"
+
+
 
 namespace
 {

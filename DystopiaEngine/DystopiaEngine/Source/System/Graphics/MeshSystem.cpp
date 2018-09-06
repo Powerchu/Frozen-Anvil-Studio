@@ -38,8 +38,6 @@ void Dystopia::MeshSystem::Shutdown(void) noexcept
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(0);
 
-	mpMeshes.clear();
-
 	FreeMeshes();
 }
 
@@ -112,6 +110,7 @@ void Dystopia::MeshSystem::EndMesh(void)
 
 void Dystopia::MeshSystem::FreeMeshes(void)
 {
+	mpMeshes.clear();
 	mpRawMeshes.clear();
 }
 

@@ -87,6 +87,7 @@
     <ClInclude Include="Include\DataStructure\Variant.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
+    <ClInclude Include="Include\System\Profiler\Profiler.h" />
     <ClInclude Include="Include\System\Time\ScopedTimer.h" />
     <ClInclude Include="Include\System\Time\TimeDefs.h" />
     <ClInclude Include="Resource\Behaviours\*\*.h" />
