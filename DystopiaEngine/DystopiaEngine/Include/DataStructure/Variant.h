@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\Meta.h"
 #include "Utility\MetaAlgorithms.h"
 
+#include <cstring>
 #include <type_traits>
 
 
@@ -31,10 +32,15 @@ public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
 	inline constexpr Variant(void) noexcept;
+	inline Variant(Variant&&) noexcept = default;
+	inline Variant(const Variant&) noexcept = default;
+
 	template <typename U, typename = VARIANT_ENABLE_IF_SFINAE(U, void)>
-	Variant(const U&) noexcept(std::is_nothrow_copy_constructible_v<U>);
+	inline Variant(const U&) noexcept(std::is_nothrow_copy_constructible_v<U>);
 	template <typename U, typename = VARIANT_ENABLE_IF_SFINAE(U, void)>
-	Variant(U&&) noexcept(std::is_nothrow_move_constructible_v<U>);
+	inline Variant(U&&) noexcept(std::is_nothrow_move_constructible_v<U>);
+
+	~Variant(void) noexcept;
 
 
 	// =================================== CONTAINER FUNCTIONS =================================== // 
@@ -44,7 +50,7 @@ public:
 	inline auto As(void) noexcept -> VARIANT_ENABLE_IF_SFINAE(U, U&);
 
 	template <typename Visitor>
-	void Visit(Visitor&&);
+	inline void Visit(Visitor&&);
 
 
 	// ======================================== OPERATORS ======================================== // 
@@ -55,12 +61,15 @@ public:
 	template <typename U>
 	inline auto operator = (U&&) -> VARIANT_ENABLE_IF_SFINAE(U, Variant&);
 
+	inline Variant& operator = (Variant&&);
+	inline Variant& operator = (const Variant&);
+
 
 private:
 	__declspec (align (Utility::MetaMax<size_t, alignof(Ty) ...>::value))
 		char raw[Utility::MetaMax<size_t, sizeof(Ty) ...>::value];
 
-	short mType;
+	unsigned short mType;
 
 	template <typename U>
 	static void Destroy(U*) noexcept;
@@ -77,8 +86,15 @@ private:
 
 template<typename ... Ty>
 inline constexpr Variant<Ty...>::Variant(void) noexcept
-	: raw{}
+	: raw{}, mType{ ~0 }
 {
+}
+
+template<typename ... Ty>
+inline Variant<Ty...>::~Variant(void) noexcept
+{
+	if (~mType)
+		DestroyCurrent();
 }
 
 template<typename ... Ty> template<typename U, typename>
@@ -109,7 +125,8 @@ inline void Variant<Ty...>::Visit(Visitor&& _visitor)
 		[](char* _raw, Visitor&& _v) -> void { _v(*reinterpret_cast<Ty*>(_raw)); } ...
 	};
 
-	SwitchTable[mType](raw, Utility::Forward<Visitor>(_visitor));
+	if (~mType)
+		SwitchTable[mType](raw, Utility::Forward<Visitor>(_visitor));
 }
 
 
@@ -120,7 +137,8 @@ inline void Variant<Ty...>::DestroyCurrent(void) noexcept
 		[](char* _raw) -> void { Destroy<Ty>(reinterpret_cast<Ty*>(_raw)); } ...
 	};
 
-	SwitchTable[mType](raw);
+	if (~mType)
+		SwitchTable[mType](raw);
 }
 
 template<typename ... Ty> template <typename U>
@@ -150,6 +168,31 @@ inline auto Variant<Ty...>::operator = (U&& _rhs) -> VARIANT_ENABLE_IF_SFINAE(U,
 	mType = Utility::MetaFind_t<Utility::Decay_t<U>, AllTypes>::value;
 	::new (reinterpret_cast<Utility::Decay_t<U>*>(&raw)) Utility::Decay_t<U> { Utility::Move(_rhs) };
 	return *this;
+}
+
+template<typename ... Ty>
+inline Variant<Ty...>& Variant<Ty...>::operator = (Variant<Ty...>&& _rhs)
+{
+	if (this == &rhs)
+		return;
+
+	if (~mType)
+		DestroyCurrent();
+
+	std::memcpy(this, &_rhs, sizeof(Variant<Ty...>));
+	_rhs.mType = short{ ~0 };
+}
+
+template<typename ... Ty>
+inline Variant<Ty...>& Variant<Ty...>::operator=(const Variant<Ty...>& _rhs)
+{
+	if (this == &rhs)
+		return;
+
+	if (~mType)
+		DestroyCurrent();
+
+	std::memcpy(this, &_rhs, sizeof(Variant<Ty...>));
 }
 
 
