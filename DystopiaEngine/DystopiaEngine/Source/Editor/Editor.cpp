@@ -81,6 +81,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	*/
 	while(true)
 		test.Update(0.f);
+
 	editor->Init();
 	while (!editor->IsClosing())
 	{

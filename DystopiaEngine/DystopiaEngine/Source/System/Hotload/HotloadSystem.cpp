@@ -1,7 +1,7 @@
 #include "System/Hotload/HotloadSystem.h"
 
 #include <filesystem>
-#include <array>
+
 
 #define TESTING 1
 #define HOME_WORK 2
@@ -21,6 +21,11 @@ namespace Dystopia
 
 	bool HotloadSystem::Init(void)
 	{
+		/*
+		Use SHGetFolderPathA to get Path to %APPDATA%
+		and assign it to mDll_Folder_Name
+		Remember to ask jacky if he has the HWND
+		*/
 		HANDLE File_Hand_Source   = CreateFileA(SOURCE_DEFAULT_PATH,
 			                                    FILE_LIST_DIRECTORY,
 			                                    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
@@ -28,15 +33,24 @@ namespace Dystopia
 			                                    OPEN_EXISTING,
 			                                    FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
 			                                    NULL);
-		//FindFirstChangeNotificationA(SOURCE_DEFAULT_PATH, true, FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_FILE_NAME);
+
 		HANDLE File_Hand_Includes = CreateFileA(HEADER_DEFAULT_PATH,
-			                                    FILE_LIST_DIRECTORY, 
+			                                    FILE_LIST_DIRECTORY | FILE_ALL_ACCESS,
 			                                    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
 			                                    NULL,
 			                                    OPEN_EXISTING,
 			                                    FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
 			                                    NULL);
 
+
+		HANDLE File_Hand_Dll      = CreateFileA(mDll_Folder_Name.c_str(),
+			                                    FILE_LIST_DIRECTORY,
+			                                    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+			                                    NULL,
+			                                    OPEN_EXISTING,
+			                                    FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
+			                                    NULL);
+		DWORD bytes_read;
 		if (File_Hand_Source == INVALID_HANDLE_VALUE)
 			return false;
 
@@ -45,58 +59,113 @@ namespace Dystopia
 			CloseHandle(File_Hand_Source);
 			return false;
 		}
+		if (File_Hand_Dll == INVALID_HANDLE_VALUE)
+		{
+			CloseHandle(File_Hand_Source);
+			CloseHandle(File_Hand_Includes);
+			return false;
+		}
 
-		mFileHandles[eSource_Index]  = File_Hand_Source;
+		marrOverlapped[eSource_Index].hEvent  = CreateEventA(NULL, true, false,  SOURCE_DEFAULT_PATH);
+		marrOverlapped[eInclude_Index].hEvent = CreateEventA(NULL, true, false,  HEADER_DEFAULT_PATH);
+		marrOverlapped[eDll_Index].hEvent     = CreateEventA(NULL, true, false,  mDll_Folder_Name.c_str());
+
+		mFileHandles[eDll_Index]     = File_Hand_Dll;
 		mFileHandles[eInclude_Index] = File_Hand_Includes;
+		mFileHandles[eSource_Index]  = File_Hand_Source;
+
+		if (mFileHandles[eSource_Index]  == INVALID_HANDLE_VALUE||
+			mFileHandles[eInclude_Index] == INVALID_HANDLE_VALUE||
+			mFileHandles[eDll_Index]     == INVALID_HANDLE_VALUE)
+		{
+			return false;
+		}
+
+		(ReadDirectoryChangesW(mFileHandles[eSource_Index],
+			&marrFileInfo[eSource_Index].front(),
+			marrFileInfo[eSource_Index].size(),
+			true,
+			FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+			&bytes_read,
+			&marrOverlapped[eSource_Index],
+			NULL));
+
+		ReadDirectoryChangesW(mFileHandles[eInclude_Index],
+			&marrFileInfo[eInclude_Index].front(),
+			marrFileInfo[eInclude_Index].size(),
+			true,
+			FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+			&bytes_read,
+			&marrOverlapped[eInclude_Index],
+			NULL);
+
+		ReadDirectoryChangesW(mFileHandles[eDll_Index],
+			&marrFileInfo[eDll_Index].front(),
+			marrFileInfo[eDll_Index].size(),
+			true,
+			FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+			&bytes_read,
+			&marrOverlapped[eDll_Index],
+			NULL);
+
 		return true;
 	}
 
 	void Dystopia::HotloadSystem::Update(float)
 	{
 		/*Keep track of newly created/edited .h/.cpp files for behaviour*/
-
-		static constexpr unsigned NumOfFileInfo = 256;
-		using ArrayFileInfo  = std::array<char, NumOfFileInfo * MAX_PATH * sizeof(WCHAR)>;
-		static ArrayFileInfo buffer;
+		//static constexpr unsigned NumOfFileInfo = 256;
 		DWORD bytes_read;
-
-		if (mFileHandles[eSource_Index] == INVALID_HANDLE_VALUE || mFileHandles[eInclude_Index] == INVALID_HANDLE_VALUE)
+		if (GetOverlappedResult(mFileHandles[eSource_Index], &marrOverlapped[eSource_Index], &bytes_read, false))
 		{
-			return;
+			ResetEvent(marrOverlapped[eSource_Index].hEvent);
+			Recompile(mFileHandles[eSource_Index], reinterpret_cast<FILE_NOTIFY_INFORMATION *>(&marrFileInfo[eSource_Index].front()));
+			
+			/*Not sure if this will cause resource leaks, but ResetEvent is not working for the mFileHandles*/
+			(ReadDirectoryChangesW(mFileHandles[eSource_Index],
+				                   &marrFileInfo[eSource_Index].front(),
+				                   marrFileInfo[eSource_Index].size(),
+				                   true,
+				                   FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+				                   &bytes_read,
+				                   &marrOverlapped[eSource_Index],
+				                   NULL));
 		}
 
-		if (ReadDirectoryChangesW(mFileHandles[eSource_Index],
-			                      &buffer.front(),
-								  buffer.size(),
-			                      true,
-			                      FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
-			                      &bytes_read,
-			                      NULL,
-			                      NULL))
+		if (GetOverlappedResult(mFileHandles[eInclude_Index], &marrOverlapped[eInclude_Index], &bytes_read, false))
 		{
-			Recompile(mFileHandles[eSource_Index], reinterpret_cast<FILE_NOTIFY_INFORMATION *>(&buffer.front()));
+			Recompile(mFileHandles[eInclude_Index], reinterpret_cast<FILE_NOTIFY_INFORMATION *>(&marrFileInfo[eInclude_Index].front()));
+			ResetEvent(marrOverlapped[eInclude_Index].hEvent);
+			(ReadDirectoryChangesW(mFileHandles[eInclude_Index],
+								   &marrFileInfo[eInclude_Index].front(),
+				                   marrFileInfo[eInclude_Index].size(),
+				                   true,
+				                   FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+				                   &bytes_read,
+				                   &marrOverlapped[eInclude_Index],
+				                   NULL));
 		}
-
-		if (ReadDirectoryChangesW(mFileHandles[eInclude_Index],
-			                      &buffer.front(),
-			                      buffer.size(),
-			                      true,
-			                      FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
-			                      &bytes_read,
-			                      NULL,
-			                      NULL))
-		{
-			Recompile(mFileHandles[eInclude_Index], reinterpret_cast<FILE_NOTIFY_INFORMATION *>(&buffer.front()));
-		}
+		isDllModified();
 	}
 
 	void Dystopia::HotloadSystem::Shutdown(void)
 	{
-		if (mFileHandles[eSource_Index] != INVALID_HANDLE_VALUE)
-			CloseHandle(mFileHandles[eSource_Index]);
-
-		if (mFileHandles[eInclude_Index] != INVALID_HANDLE_VALUE)
-			CloseHandle(mFileHandles[eInclude_Index]);
+		for (auto & elem : mFileHandles)
+		{
+			if (elem != INVALID_HANDLE_VALUE)
+			{
+				CancelIo(elem);
+				CloseHandle(elem);
+			}
+		}
+		for (auto & elem : marrOverlapped)
+		{
+			if (elem.hEvent != INVALID_HANDLE_VALUE)
+			{
+				CancelIo(elem.hEvent);
+				CloseHandle(elem.hEvent);
+			}
+		}
 	}
 
 	FARPROC HotloadSystem::GetDllFuncTest(LPCWSTR _dllFileName, LPCSTR _dllFuncName)
@@ -108,6 +177,93 @@ namespace Dystopia
 
 		FARPROC f = GetProcAddress(module_handle, _dllFuncName);
 		return f;
+	}
+	bool HotloadSystem::isDllModified(DLLWrapper * _pDLLWrapper, unsigned size)
+	{
+		DWORD bytes_read;
+
+		if (GetOverlappedResult(mFileHandles[eDll_Index], &marrOverlapped[eDll_Index], &bytes_read, false))
+		{
+			ResetEvent(marrOverlapped[eDll_Index].hEvent);
+
+			for (FILE_NOTIFY_INFORMATION * pstart = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(&marrFileInfo[eDll_Index].front());
+				pstart != nullptr; )
+			{
+				switch (pstart->Action)
+				{
+				case FILE_ACTION_ADDED:
+				{
+					std::wstring DllDir{ mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
+					std::wstring DllName{ pstart->FileName, pstart->FileName + (pstart->FileNameLength/sizeof(*(pstart->FileName))) };
+					DllDir += DllName;
+					HMODULE dllModule = LoadLibrary(DllDir.c_str());
+					if (dllModule != NULL)
+					{
+						mvDLL.Insert(DLLWrapper{DllName, dllModule});
+					}
+				}
+				break;
+				case FILE_ACTION_MODIFIED:
+				{
+					std::wstring DllDir{ mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
+					std::wstring DllName{ pstart->FileName, pstart->FileName + (pstart->FileNameLength / sizeof(*(pstart->FileName))) };
+					DllDir += DllName;
+					/*
+					if (mvDLL.IsEmpty())
+					{
+						HMODULE dllModule = LoadLibrary(DllDir.c_str());
+						if (dllModule != NULL)
+							mvDLL.Insert(DLLWrapper{ DllName, dllModule });
+					}
+					else
+					*/
+					{
+						for (auto & elem : mvDLL)
+						{
+							if (elem == DllName)
+							{
+								elem.ReloadDll();
+							}
+							else
+							{
+								HMODULE dllModule = LoadLibrary(DllDir.c_str());
+								if (dllModule != NULL)
+									mvDLL.Insert(DLLWrapper{ DllName, dllModule });
+							}
+						}
+					}
+
+				}
+				break;
+				case FILE_ACTION_REMOVED:
+				{
+					std::wstring DllName{ pstart->FileName, pstart->FileName + (pstart->FileNameLength / sizeof(*(pstart->FileName))) };
+					std::wstring DllDir{ mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
+					for (auto & elem : mvDLL)
+					{
+						if (elem == DllName)
+						{
+							mvDLL.Remove(&elem);
+						}
+					}
+				}
+				break;
+				}
+				pstart = pstart->NextEntryOffset?reinterpret_cast<FILE_NOTIFY_INFORMATION*>(reinterpret_cast<char *>(pstart) + (pstart->NextEntryOffset)):nullptr;
+			}
+
+			ReadDirectoryChangesW(mFileHandles[eDll_Index],
+				                   &marrFileInfo[eDll_Index].front(),
+				                   marrFileInfo[eDll_Index].size(),
+				                   true,
+				                   FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+				                   &bytes_read,
+				                   &marrOverlapped[eDll_Index],
+				                   NULL);
+
+			return true;
+		}
+		return false;
 	}
 	void HotloadSystem::Recompile(HANDLE const & _File_Handle, FILE_NOTIFY_INFORMATION * pFileInfo)
 	{
