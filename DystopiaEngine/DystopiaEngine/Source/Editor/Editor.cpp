@@ -83,6 +83,31 @@ namespace Dystopia
 	void foo() { std::cout << "Non member function foo" << std::endl; }
 }
 
+struct TestVisitor
+{
+	void operator() (float x)
+	{
+		std::cout << "float " << x << "!\n";
+	}
+	void operator() (double x)
+	{
+		std::cout << "double " << x << "!\n";
+	}
+	void operator() (std::string x)
+	{
+		std::cout << "string " << x << "!\n";
+	}
+	void operator() (Math::Vector4)
+	{
+		std::cout << "Vector4!\n";
+	}
+	void operator() (char x)
+	{
+		std::cout << "char " << x << "!\n";
+	}
+};
+
+
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
@@ -102,6 +127,19 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 				 driver->GetSystem<Dystopia::GraphicsSystem>(),
 				 driver->GetSystem<Dystopia::InputManager>());
 
+	float y = 1.2345f;
+	Variant<float, char, double, std::string, Math::Vector4> idk{ y };
+
+	idk.Visit(TestVisitor{});
+
+	idk = Math::Vector4{};
+
+	idk.Visit(TestVisitor{});
+
+	idk = std::string{ "magical magical class" };
+
+	idk.Visit(TestVisitor{});
+
 	/* Start of Event System usage example */
 	Dystopia::EventSystem *es = driver->GetSystem<Dystopia::EventSystem>();
 	{
@@ -117,7 +155,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	{
 		float dt = timer->Elapsed();
 		timer->Lap();
-		Dystopia::ScopedTimer selfDestruct;
+		Dystopia::ScopedTimer<> selfDestruct;
 	
 		editor->StartFrame(dt);
 	

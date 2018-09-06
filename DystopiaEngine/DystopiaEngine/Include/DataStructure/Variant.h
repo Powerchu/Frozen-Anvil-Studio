@@ -26,6 +26,7 @@ template <typename ... Ty>
 class Variant
 {
 #define VARIANT_ENABLE_IF_SFINAE(_TYPE_, _RET_) Utility::EnableIf_t<Utility::MetaFind<Utility::Decay_t<_TYPE_>, Ty ...>::value, _RET_>
+	using AllTypes = Utility::MetaAutoIndexer_t<Ty...>;
 public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
@@ -42,6 +43,9 @@ public:
 	template <typename U>
 	inline auto As(void) noexcept -> VARIANT_ENABLE_IF_SFINAE(U, U&);
 
+	template <typename Visitor>
+	void Visit(Visitor&&);
+
 
 	// ======================================== OPERATORS ======================================== // 
 
@@ -55,6 +59,12 @@ public:
 private:
 	__declspec (align (Utility::MetaMax<size_t, alignof(Ty) ...>::value))
 		char raw[Utility::MetaMax<size_t, sizeof(Ty) ...>::value];
+
+	short mType;
+
+	template <typename U>
+	static void Destroy(U*) noexcept;
+	inline void DestroyCurrent(void) noexcept;
 };
 
 
@@ -72,13 +82,15 @@ inline constexpr Variant<Ty...>::Variant(void) noexcept
 }
 
 template<typename ... Ty> template<typename U, typename>
-inline Variant<Ty...>::Variant(const U& _obj) noexcept(std::is_nothrow_copy_constructible_v<U>)
+inline Variant<Ty...>::Variant(const U& _obj) noexcept(std::is_nothrow_copy_constructible_v<U>) :
+	mType { Utility::MetaFind_t<Utility::Decay_t<U>, AllTypes>::value }
 {
 	::new (reinterpret_cast<Utility::Decay_t<U>*>(&raw)) Utility::Decay_t<U> { _obj };
 }
 
 template<typename ... Ty> template<typename U, typename>
-inline Variant<Ty...>::Variant(U&& _obj) noexcept(std::is_nothrow_move_constructible_v<U>)
+inline Variant<Ty...>::Variant(U&& _obj) noexcept(std::is_nothrow_move_constructible_v<U>) :
+	mType{ Utility::MetaFind_t<Utility::Decay_t<U>, AllTypes>::value }
 {
 	::new (reinterpret_cast<Utility::Decay_t<U>*>(&raw)) Utility::Decay_t<U> { Utility::Move(_obj) };
 }
@@ -90,6 +102,33 @@ inline auto Variant<Ty...>::As(void) noexcept -> VARIANT_ENABLE_IF_SFINAE(U, U&)
 	return *reinterpret_cast<U*>(&raw);
 }
 
+template<typename ... Ty> template <typename Visitor>
+inline void Variant<Ty...>::Visit(Visitor&& _visitor)
+{
+	static void(*SwitchTable[])(char*, Visitor&&) = {
+		[](char* _raw, Visitor&& _v) -> void { _v(*reinterpret_cast<Ty*>(_raw)); } ...
+	};
+
+	SwitchTable[mType](raw, Utility::Forward<Visitor>(_visitor));
+}
+
+
+template<typename ... Ty>
+inline void Variant<Ty...>::DestroyCurrent(void) noexcept
+{
+	static void(*SwitchTable[])(char*) = {
+		[](char* _raw) -> void { Destroy<Ty>(reinterpret_cast<Ty*>(_raw)); } ...
+	};
+
+	SwitchTable[mType](raw);
+}
+
+template<typename ... Ty> template <typename U>
+static inline void Variant<Ty...>::Destroy(U* _ptr) noexcept
+{
+	_ptr->~U();
+}
+
 
 
 // ============================================ OPERATOR OVERLOADING ============================================ // 
@@ -98,14 +137,18 @@ inline auto Variant<Ty...>::As(void) noexcept -> VARIANT_ENABLE_IF_SFINAE(U, U&)
 template<typename ... Ty> template<typename U>
 inline auto Variant<Ty...>::operator = (const U& _rhs) -> VARIANT_ENABLE_IF_SFINAE(U, Variant&)
 {
-	*reinterpret_cast<U*>(&raw) = _rhs;
+	DestroyCurrent();
+	mType = Utility::MetaFind_t<Utility::Decay_t<U>, AllTypes>::value;
+	::new (reinterpret_cast<Utility::Decay_t<U>*>(&raw)) Utility::Decay_t<U> { _rhs };
 	return *this;
 }
 
 template<typename ... Ty> template<typename U>
 inline auto Variant<Ty...>::operator = (U&& _rhs) -> VARIANT_ENABLE_IF_SFINAE(U, Variant&)
 {
-	*reinterpret_cast<U*>(&raw) = Utility::Move(_rhs);
+	DestroyCurrent();
+	mType = Utility::MetaFind_t<Utility::Decay_t<U>, AllTypes>::value;
+	::new (reinterpret_cast<Utility::Decay_t<U>*>(&raw)) Utility::Decay_t<U> { Utility::Move(_rhs) };
 	return *this;
 }
 
