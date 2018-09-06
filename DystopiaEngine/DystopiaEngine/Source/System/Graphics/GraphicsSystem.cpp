@@ -82,6 +82,8 @@ bool Dystopia::GraphicsSystem::Init(void)
 {
 	glEnable(GL_DEPTH_TEST);
 
+	LoadShader("Resource\Shader\ShaderList.txt");
+
 	return true;
 }
 
