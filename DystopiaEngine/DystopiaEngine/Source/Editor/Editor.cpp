@@ -140,6 +140,8 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 
 	idk.Visit(TestVisitor{});
 
+	driver->GetSystem<Dystopia::GraphicsSystem>()->LoadShader("Resource/Shader/ShaderList.txt");
+
 	/* Start of Event System usage example */
 	Dystopia::EventSystem *es = driver->GetSystem<Dystopia::EventSystem>();
 	{

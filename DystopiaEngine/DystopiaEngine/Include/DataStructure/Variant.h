@@ -27,7 +27,9 @@ template <typename ... Ty>
 class Variant
 {
 #define VARIANT_ENABLE_IF_SFINAE(_TYPE_, _RET_) Utility::EnableIf_t<Utility::MetaFind<Utility::Decay_t<_TYPE_>, Ty ...>::value, _RET_>
+	static_assert(sizeof...(Ty) != 0, "Variant must contain at least one type!");
 	using AllTypes = Utility::MetaAutoIndexer_t<Ty...>;
+
 public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 

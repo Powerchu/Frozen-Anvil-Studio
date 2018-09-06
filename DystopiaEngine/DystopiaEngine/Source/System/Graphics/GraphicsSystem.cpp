@@ -28,6 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Camera\CameraSystem.h"     // Camera System
 #include "Component\Camera.h"				// Camera
 #include "Component\Transform.h"
+#include "IO\TextSerialiser.h"
 
 #include "Object\GameObject.h"              // GameObject
 #include "Object\ObjectFlags.h"
@@ -185,9 +186,21 @@ Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string&)
 
 Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _filePath)
 {
+	auto file = Serialiser::OpenFile<TextSerialiser>(_filePath, Serialiser::MODE_READ);
 	std::string strName, strVert, strGeo, strFrag;
 
-	_filePath; strName; strVert; strGeo; strFrag;
+	file.ConsumeStartBlock();
+	file >> strName;
+	file >> strVert;
+	file >> strFrag;
+
+	if (file.EndOfInput())
+	{
+	}
+	else
+	{
+		file >> strGeo;
+	}
 
 	return nullptr;
 }

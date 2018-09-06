@@ -19,7 +19,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <sstream>		// stringstream
 #include <cstdio>		// printf
 
-#define PRINT_ERRORS (EDITOR)
+#if defined(EDITOR)
+#define PRINT_ERRORS EDITOR
+#else
+#define PRINT_ERRORS 0
+#endif
 
 
 Dystopia::Shader::Shader(void) noexcept :

@@ -74,6 +74,12 @@ void Dystopia::TextSerialiser::ApplyRead(T& _rhs)
 	mFile >> _rhs;
 }
 
+template <>
+inline void Dystopia::TextSerialiser::ApplyRead<std::string>(std::string& _rhs)
+{
+	std::getline(mFile, _rhs, ',');
+}
+
 
 
 #endif		// INCLUDE GUARD

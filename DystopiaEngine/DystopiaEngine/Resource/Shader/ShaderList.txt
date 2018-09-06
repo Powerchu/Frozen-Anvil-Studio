@@ -1,0 +1,2 @@
+[START_SHADER]
+Default Shader,Resources/Shader/DefaultVert.glsl,Resources/Shader/DefaultFrag.glsl

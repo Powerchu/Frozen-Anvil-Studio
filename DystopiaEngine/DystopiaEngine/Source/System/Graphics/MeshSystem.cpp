@@ -79,23 +79,26 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 
 	input.ConsumeStartBlock();
 
-	unsigned nNumIndices = 0, nCurrOffset = static_cast<unsigned>(mIndex.size());
-	while (!input.EndOfInput())
+	do
 	{
-		mIndex.EmplaceBack();
-		input >> mIndex.back();
+		unsigned nNumIndices = 0, nCurrOffset = static_cast<unsigned>(mIndex.size());
+		while (!input.EndOfInput())
+		{
+			mIndex.EmplaceBack();
+			input >> mIndex.back();
 
-		++nNumIndices;
-	}
+			++nNumIndices;
+		}
 
-	auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, nNumIndices, nCurrOffset);
-	CurrentMesh.mVtxCount += nVtxCount;
+		auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, nNumIndices, nCurrOffset);
+		CurrentMesh.mVtxCount += nVtxCount;
 
-	input.ConsumeStartBlock();
+		input.ConsumeStartBlock();
 
-	input >> const_cast<std::string&>(pCurrMesh->GetName());
+		input >> const_cast<std::string&>(pCurrMesh->GetName());
 
-	input.ConsumeEndBlock();
+		input.ConsumeStartBlock();
+	} while (!input.EndOfInput());
 }
 
 void Dystopia::MeshSystem::EndMesh(void)
