@@ -84,6 +84,7 @@
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Renderer.h" />
     <ClInclude Include="Include\Component\RigidBody.h" />
+    <ClInclude Include="Include\DataStructure\Tuple.h" />
     <ClInclude Include="Include\DataStructure\Variant.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />

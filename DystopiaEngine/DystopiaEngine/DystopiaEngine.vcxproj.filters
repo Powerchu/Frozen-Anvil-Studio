@@ -419,6 +419,9 @@
     <ClInclude Include="Include\System\Profiler\Profiler.h">
       <Filter>Game Engine\SubSystems\Profiler</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DataStructure\Tuple.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

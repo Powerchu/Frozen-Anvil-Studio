@@ -69,7 +69,7 @@ Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 
 Dystopia::GraphicsSystem::~GraphicsSystem(void)
 {
-
+	delete EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
 }
 
 

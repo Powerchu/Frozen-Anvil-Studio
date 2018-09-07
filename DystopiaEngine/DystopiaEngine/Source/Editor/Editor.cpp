@@ -35,6 +35,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\ScopedTimer.h"
 #include "System\Driver\Driver.h"
 #include "System\Events\EventSystem.h"
+#include "System\Profiler\Profiler.h"
 #include "IO\BinarySerializer.h"
 
 /* Editor includes */
@@ -166,6 +167,9 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 
 	editor->Shutdown();
 	driver->Shutdown();
+
+	delete driver->GetSubSystem<Dystopia::Profiler>();
+
 	delete timer;
 	delete editor;
 	// Automatically called by _CRTDBG_LEAK_CHECK_DF flag when proccess ends. 

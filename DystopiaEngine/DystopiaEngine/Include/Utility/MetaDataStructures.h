@@ -15,6 +15,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _META_DATASTRUCTS_H_
 #define _META_DATASTRUCTS_H_
 
+
+template <typename ... Ty>
+class Tuple;
+
 namespace Utility
 {
 	struct NULL_TYPE;
@@ -77,7 +81,9 @@ namespace Utility
 
 	// ========================================= CERTAIN USEFUL STRUCTS ======================================== //
 
-	
+
+	// Size of
+	// ========= ================================
 
 	template <typename T>
 	struct SizeofList;
@@ -95,6 +101,8 @@ namespace Utility
 	};
 
 
+	// Concat
+	// ========= ================================
 
 	template <typename ...Tys>
 	struct MetaConcat;
@@ -166,6 +174,8 @@ namespace Utility
 	using MetaConcat_t = typename MetaConcat<T...>::type;
 
 
+	// MakeRange
+	// =========== ===============================
 
 	template <unsigned limit>
 	struct MetaMakeRange
@@ -199,6 +209,25 @@ namespace Utility
 
 	template <unsigned limit>
 	using MetaMakeRange_t = typename MetaMakeRange<limit>::result;
+
+
+	// To Tuple
+	// ========== ================================
+
+	template <typename Ty>
+	struct MetaToTuple;
+
+	//template <template <typename ...> class Set, typename ... Tys>
+	//struct MetaToTuple<Set<Tys...>>
+	//{
+	//	using type = Tuple<Tys...>;
+	//};
+
+	template <template <typename ...> class Set, unsigned ... Ns, typename ... Tys>
+	struct MetaToTuple<Set<Indexer<Ns, Tys>...>>
+	{
+		using type = Tuple <Tys...>;
+	};
 }
 
 
