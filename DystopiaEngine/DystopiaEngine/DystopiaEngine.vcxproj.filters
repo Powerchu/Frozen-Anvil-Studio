@@ -161,6 +161,9 @@
     <ClCompile Include="Source\Utility\GUID.cpp">
       <Filter>Utility\GUID</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\PerformanceProfiler.cpp">
+      <Filter>Editor\Performance</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -428,6 +431,9 @@
     <ClInclude Include="Include\Utility\GUID.h">
       <Filter>Utility\GUID</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\PerformanceProfiler.h">
+      <Filter>Editor\Performance</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -651,6 +657,9 @@
     </Filter>
     <Filter Include="Utility\GUID">
       <UniqueIdentifier>{e32cb155-6561-4a7a-9a47-96058953c24c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Performance">
+      <UniqueIdentifier>{c047ceb5-275e-45b0-90de-511a03bb9780}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

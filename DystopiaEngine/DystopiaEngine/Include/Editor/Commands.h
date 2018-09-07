@@ -43,6 +43,22 @@ namespace Dystopia
 			InvokeCommand(new ComdModifyValue<T>{ _var, _newVal });
 		}
 
+		template<class C, typename ... Params>
+		void InvokeCommand(const unsigned long & _id, 
+						   const FunctionModWrapper<C, Params ...>& _old, 
+						   const FunctionModWrapper<C, Params ...>& _new)
+		{
+			using FMW = FunctionModWrapper<C, Params ...>;
+			InvokeCommand(new ComdModifyComponent<FMW, FMW>{ _id, _new, _old });
+		}
+
+		template<class C, typename ... Params>
+		auto Make_FunctionModWrapper(void(C::*_ptrFunc)(Params ...), const std::remove_reference_t<Params>& ... _vals)
+		{
+			using FMW = FunctionModWrapper<C, Params...>;
+			return FMW{ _ptrFunc, _vals... };
+		}
+
 		// Calls the ExecuteUndo function of latest command in the undo deque and puts it into the redo deque
 		void UndoCommand();
 		// Performs InvokeCommand on the latest command in the redo deque 

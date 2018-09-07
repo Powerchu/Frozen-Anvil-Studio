@@ -61,6 +61,7 @@ namespace Dystopia
 
 		GameObjectDetails();
 		GameObjectComponents();
+		AddComponentButton();
 
 		////float x = mDemoVec.x;
 		////float y = mDemoVec.y;
@@ -95,7 +96,6 @@ namespace Dystopia
 		////	ProjectResource::GetInstance()->FocusOnFile(mDemoName);
 		////}
 
-		AddComponentButton();
 	}
 
 	void Inspector::Shutdown()
@@ -127,16 +127,17 @@ namespace Dystopia
 		{
 			EGUI::Display::CheckBox("GameObjActive", &checked, false);
 			EGUI::SameLine();
-			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 350.f))
+			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 350.f) && strlen(buffer))
 			{
-				std::string newName{ buffer };
-				std::string oldName{ mpFocus->GetName() };
-				using FMW = FunctionModWrapper<GameObject, const std::string&>;
-				FMW f1{ &GameObject::SetName, oldName };
-				FMW f2{ &GameObject::SetName, newName };
-				mpComdHandler->InvokeCommand(new ComdModifyComponent<FMW, FMW>{ mpFocus->GetID(), f2, f1 });
+				auto f_Old = mpComdHandler->Make_FunctionModWrapper(&GameObject::SetName, mpFocus->GetName());
+				auto f_New = mpComdHandler->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
+				mpComdHandler->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 
-				//mpFocus->SetName((newName == "") ? mpFocus->GetName() : newName);
+
+				//using FMW = FunctionModWrapper<GameObject, const std::string&>;
+				//FMW f1{ &GameObject::SetName, oldName };
+				//FMW f2{ &GameObject::SetName, newName };
+				//mpComdHandler->InvokeCommand(new ComdModifyComponent<FMW, FMW>{ mpFocus->GetID(), f2, f1 });
 			}
 			EGUI::Display::DropDownSelection("Tag", i, arr, 100);
 			EGUI::SameLine();
