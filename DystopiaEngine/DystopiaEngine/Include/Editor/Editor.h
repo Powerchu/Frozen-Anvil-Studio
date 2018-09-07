@@ -56,6 +56,7 @@ namespace Dystopia
 		void			Shutdown();
 		void			ChangeState(eEditorState);
 		void			SetFocus(GameObject&);
+		GameObject*		FindGameObject(const unsigned long& _id) const;
 		void			RemoveFocus();
 		bool			IsClosing() const;
 		eEditorState	CurrentState() const;

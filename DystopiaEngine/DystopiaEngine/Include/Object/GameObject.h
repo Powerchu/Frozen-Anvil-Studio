@@ -34,7 +34,7 @@ namespace Dystopia
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		GameObject(void) noexcept;
-		explicit GameObject(size_t _ID) noexcept;
+		explicit GameObject(unsigned long _ID) noexcept;
 		GameObject(GameObject&&) noexcept;
 
 		~GameObject(void);
@@ -73,7 +73,7 @@ namespace Dystopia
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
 
-		size_t GetID(void) const;
+		unsigned long GetID(void) const;
 		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
 		void SetName(const std::string&);
@@ -96,7 +96,7 @@ namespace Dystopia
 
 	private:
 
-		size_t mnID;
+		unsigned long mnID;
 		unsigned mnFlags;
 		std::string mName;
 

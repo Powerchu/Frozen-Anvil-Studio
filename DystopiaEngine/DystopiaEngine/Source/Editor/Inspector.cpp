@@ -130,7 +130,12 @@ namespace Dystopia
 			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 350.f))
 			{
 				std::string newName{ buffer };
-				mpFocus->SetName((newName == "") ? mpFocus->GetName() : newName);
+				using CallType = FunctionModWrapper<GameObject, const std::string&>;
+				CallType oldV{ &GameObject::SetName, mpFocus->GetName() };
+				CallType newV{ &GameObject::SetName, newName };
+				mpComdHandler->InvokeCommand(new ComdModifyComponent<CallType, CallType>{ mpFocus->GetID(), newV, oldV });
+
+				//mpFocus->SetName((newName == "") ? mpFocus->GetName() : newName);
 			}
 			EGUI::Display::DropDownSelection("Tag", i, arr, 100);
 			EGUI::SameLine();

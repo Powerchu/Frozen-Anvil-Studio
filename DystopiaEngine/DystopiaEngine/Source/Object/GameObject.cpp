@@ -34,7 +34,7 @@ Dystopia::GameObject::GameObject(void) noexcept
 
 }
 
-Dystopia::GameObject::GameObject(size_t _ID) noexcept
+Dystopia::GameObject::GameObject(unsigned long _ID) noexcept
 	: mnID{ _ID }, mnFlags{ FLAG_NONE },
 	mTransform{ this }, mComponents{}, mBehaviours{}
 {
@@ -215,7 +215,7 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 }
 
 
-size_t Dystopia::GameObject::GetID(void) const
+unsigned long Dystopia::GameObject::GetID(void) const
 {
 	return mnID;
 }

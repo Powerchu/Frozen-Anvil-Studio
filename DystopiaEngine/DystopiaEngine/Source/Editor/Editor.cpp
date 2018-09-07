@@ -521,6 +521,11 @@ namespace Dystopia
 		for (auto& e : mTabsArray)
 			e->RemoveFocus();
 	}
+
+	GameObject* Editor::FindGameObject(const unsigned long& _id) const
+	{
+		return mpSceneSystem->GetCurrentScene().FindGameObject(_id);
+	}
 }
 
 #endif		// EDITOR ONLY

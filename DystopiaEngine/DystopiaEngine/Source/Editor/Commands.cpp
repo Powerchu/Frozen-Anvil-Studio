@@ -12,7 +12,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Editor\Commands.h"
-#include "Editor\CommandList.h"
 #include "..\..\Dependancies\ImGui\imgui.h"
 #include <typeinfo>
 
@@ -22,6 +21,7 @@ namespace Dystopia
 		: mDeqRedo{ }, mDeqUndo{ }, mRecording{ false },
 		mpRecorder{ nullptr }, mMaxSize{ _nHistory }
 	{
+	
 	}
 
 	CommandHandler::~CommandHandler()
