@@ -19,19 +19,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\GraphicsSystem.h"	// File header
 #include "System\Graphics\GraphicsDefs.h"	// eGraphicSettings
 #include "System\Graphics\MeshSystem.h"
-#include "Component\Renderer.h"
 #include "System\Window\WindowManager.h"	// Window Manager
 #include "System\Window\Window.h"			// Window
-#include "System\Driver\Driver.h"			// EngineCore
 #include "System\Scene\SceneSystem.h"
 #include "System\Scene\Scene.h"
 #include "System\Camera\CameraSystem.h"     // Camera System
-#include "Component\Camera.h"				// Camera
-#include "Component\Transform.h"
+#include "System\Driver\Driver.h"			// EngineCore
+
 #include "IO\TextSerialiser.h"
+#include "IO\ImageParser.h"
 
 #include "Object\GameObject.h"              // GameObject
 #include "Object\ObjectFlags.h"
+#include "Component\Transform.h"
+#include "Component\Renderer.h"
+#include "Component\Camera.h"				// Camera
 
 #include "Utility\DebugAssert.h"			// DEBUG_ASSERT
 
@@ -198,6 +200,9 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string&)
 {
+
+
+
 	return nullptr;
 }
 
