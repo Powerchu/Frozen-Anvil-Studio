@@ -80,17 +80,44 @@ namespace Dystopia
 		T mNewValue;
 	};
 
+	
+
 	template<class Component, typename ... Params>
 	struct FunctionModWrapper
 	{
+	private:
+		template<typename A>
+		struct AuxExecution;
+
+		template<size_t ... Ns>
+		struct AuxExecution<std::index_sequence<Ns ...>>
+		{
+			AuxExecution(FunctionModWrapper<Component, Params...>& p)
+				: parent{ p }
+			{}
+
+			void Execute(Component * const _toMod) const
+			{
+				(_toMod->*(parent.mfptr))(std::get<Ns>(parent.mTupleVariables) ...);
+			}
+
+			FunctionModWrapper<Component, Params...>& parent;
+		};
+
+		void(Component::*mfptr)(Params ...);
+		std::tuple<std::remove_reference_t<Params>...> mTupleVariables;
+		AuxExecution<std::make_index_sequence<sizeof...(Params)>> auxCaller;
+
+	public:
 		FunctionModWrapper(void(Component::*_fnptr)(Params ...), std::remove_reference_t<Params> ... pack)
-			: mfptr{ _fnptr }, 
-			mTupleVariables{ pack... }
+			: mfptr{ _fnptr },
+			mTupleVariables{ pack... }, 
+			auxCaller{ *this }
 		{}
 
 		void Execute(Component * const _toMod) const
 		{
-			(_toMod->*mfptr)(std::get<0>(mTupleVariables));
+			auxCaller.Execute(_toMod);
 		}
 
 		FunctionModWrapper& operator=(const FunctionModWrapper& _rhs)
@@ -99,10 +126,6 @@ namespace Dystopia
 			mTupleVariables = _rhs.mTupleVariables;
 		}
 
-	private:
-		void(Component::*mfptr)(Params ...);
-		std::tuple<std::remove_reference_t<Params>...> mTupleVariables;
-		static constexpr size_t size = sizeof...(Params);
 	};
 
 	template<class Do, class UDo>
@@ -125,7 +148,7 @@ namespace Dystopia
 			Component * pCom = pObj->GetComponent<Component>();
 			if (!pCom) return false;
 
-			mDoFunc.Execute(pCom);
+			//mDoFunc.Execute(pCom, std::make_index_sequence<FMW1::size>);
 			return true;
 		}
 
@@ -137,7 +160,7 @@ namespace Dystopia
 			Component * pCom = pObj->GetComponent<Component>();
 			if (!pCom) return false;
 
-			mUnDoFunc.Execute(pCom);
+			//mUnDoFunc.Execute(pCom, std::make_index_sequence<FMW2::size>);
 			return true;
 		}
 
@@ -147,8 +170,10 @@ namespace Dystopia
 		}
 
 	private:
-		FunctionModWrapper<Component, P1s ...> mDoFunc;
-		FunctionModWrapper<Component, P2s ...> mUnDoFunc;
+		using FMW1 = FunctionModWrapper<Component, P1s ...>;
+		using FMW2 = FunctionModWrapper<Component, P2s ...>;
+		FMW1 mDoFunc;
+		FMW2 mUnDoFunc;
 		unsigned long mID;
 	};
 
@@ -183,8 +208,10 @@ namespace Dystopia
 		}
 
 	private:
-		FunctionModWrapper<GameObject, P1s ...> mDoFunc;
-		FunctionModWrapper<GameObject, P2s ...> mUnDoFunc;
+		using FMW1 = FunctionModWrapper<GameObject, P1s ...>;
+		using FMW2 = FunctionModWrapper<GameObject, P2s ...>;
+		FMW1 mDoFunc;
+		FMW2 mUnDoFunc;
 		unsigned long mID;
 	};
 }

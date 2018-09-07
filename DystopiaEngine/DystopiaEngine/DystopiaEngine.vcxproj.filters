@@ -161,7 +161,7 @@
     <ClCompile Include="Source\Utility\GUID.cpp">
       <Filter>Utility\GUID</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\PerformanceProfiler.cpp">
+    <ClCompile Include="Source\Editor\PerformanceLog.cpp">
       <Filter>Editor\Performance</Filter>
     </ClCompile>
   </ItemGroup>
@@ -431,7 +431,7 @@
     <ClInclude Include="Include\Utility\GUID.h">
       <Filter>Utility\GUID</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\PerformanceProfiler.h">
+    <ClInclude Include="Include\Editor\PerformanceLog.h">
       <Filter>Editor\Performance</Filter>
     </ClInclude>
   </ItemGroup>

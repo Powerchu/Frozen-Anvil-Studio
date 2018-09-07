@@ -39,7 +39,7 @@
     <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
     <ClCompile Include="Source\Editor\EditorEvents.cpp" />
     <ClCompile Include="Source\Editor\EditorInputs.cpp" />
-    <ClCompile Include="Source\Editor\PerformanceProfiler.cpp" />
+    <ClCompile Include="Source\Editor\PerformanceLog.cpp" />
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp" />
@@ -89,7 +89,7 @@
     <ClInclude Include="Include\Component\RigidBody.h" />
     <ClInclude Include="Include\Editor\EditorEvents.h" />
     <ClInclude Include="Include\Editor\EditorInputs.h" />
-    <ClInclude Include="Include\Editor\PerformanceProfiler.h" />
+    <ClInclude Include="Include\Editor\PerformanceLog.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
     <ClInclude Include="Include\System\Time\ScopedTimer.h" />
