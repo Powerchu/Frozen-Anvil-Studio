@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _PROFILER_SYS_H_
 #define _PROFILER_SYS_H_
 
+#include "System\Base\Systems.h"
+
 // Temporary std lib for fast prototyping
 #include <map>
 #include <chrono>
@@ -21,23 +23,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	struct ProfileInfo
-	{
-		std::chrono::milliseconds mFixedUpdate;
-		std::chrono::milliseconds mUpdate;
-		std::chrono::milliseconds mPostUpdate;
-	};
-
-	class Profiler
+	class Profiler : public Systems
 	{
 	public:
+		Profiler(void);
 
-		const std::map<std::string, ProfileInfo>& GetInfo(void) const;
+		bool Init(void) override;
+		void Update(float) override;
+		void Shutdown(void) override;
+
+//		const std::map<std::string, ProfileInfo>& GetInfo(void) const;
+
+		float GetCPUPercentageIdle(void) const;
+		float GetCPUPercentageBusy(void) const;
+		float GetCPUPercentageOS(void) const;
+		float GetCPUPercentageProcess(void) const;
 
 	private:
 
+		uint64_t mnProcIdle, mnProcBusy, mnProcOS;
+		float mfCPU;
+//		std::map<std::string, ProfileInfo> mData;
 
-		std::map<std::string, ProfileInfo> mData;
+		size_t mnPageFaults, mnUsedMem, mnUsedRAM, mnAvailableMem;
+		float mfMemLoad;
+
+		void CalculateCPUUsage(void) noexcept;
+		void CalculateMemoryUsage(void) noexcept;
 	};
 }
 

@@ -156,7 +156,7 @@
       <Filter>Game Engine\Systems\Time\ScopedTimer</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
-      <Filter>Game Engine\SubSystems\Profiler</Filter>
+      <Filter>Game Engine\Systems\Profiler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -420,7 +420,7 @@
       <Filter>DataStructures</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Profiler\Profiler.h">
-      <Filter>Game Engine\SubSystems\Profiler</Filter>
+      <Filter>Game Engine\Systems\Profiler</Filter>
     </ClInclude>
     <ClInclude Include="Include\DataStructure\Tuple.h">
       <Filter>DataStructures</Filter>
@@ -646,7 +646,7 @@
     <Filter Include="Game Engine\Systems\Time\ScopedTimer">
       <UniqueIdentifier>{bd8e2eea-6f09-4a0f-901b-c420c874d331}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\SubSystems\Profiler">
+    <Filter Include="Game Engine\Systems\Profiler">
       <UniqueIdentifier>{c8dea79e-90fb-4f6f-ab66-dec8db735338}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

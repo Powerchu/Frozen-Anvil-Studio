@@ -162,13 +162,13 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	
 		editor->UpdateFrame(dt);
 		
+		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::Profiler>()->Update(dt);
+
 		editor->EndFrame();
 	}
 
 	editor->Shutdown();
 	driver->Shutdown();
-
-	delete driver->GetSubSystem<Dystopia::Profiler>();
 
 	delete timer;
 	delete editor;

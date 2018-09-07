@@ -40,12 +40,12 @@ namespace Dystopia
 			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM  , class GraphicsSystem >,
 			Utility::Indexer<eSYSTEMS::EVENT_SYSTEM    , class EventSystem    >,
 			Utility::Indexer<eSYSTEMS::COLLISION_SYSTEM, class CollisionSystem>,
-			Utility::Indexer<eSYSTEMS::PHYSICS_SYSTEM  , class PhysicsSystem  >
+			Utility::Indexer<eSYSTEMS::PHYSICS_SYSTEM  , class PhysicsSystem  >,
+			Utility::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >
 		>>;
 
 		using SubSys = typename Utility::MetaAutoIndexer <
-			class MeshSystem,
-			class Profiler
+			class MeshSystem
 		>::result;
 
 		static EngineCore* GetInstance(void) noexcept;
