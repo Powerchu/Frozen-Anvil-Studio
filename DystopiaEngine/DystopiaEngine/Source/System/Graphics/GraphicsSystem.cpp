@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Scene\Scene.h"
 #include "System\Camera\CameraSystem.h"     // Camera System
 #include "System\Driver\Driver.h"			// EngineCore
+#include "System\Time\ScopedTimer.h"
 
 #include "IO\TextSerialiser.h"
 #include "IO\ImageParser.h"

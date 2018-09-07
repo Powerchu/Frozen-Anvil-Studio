@@ -27,6 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\System\Profiler\Profiler.cpp" />
     <ClCompile Include="Source\Component\Renderer.cpp" />
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />

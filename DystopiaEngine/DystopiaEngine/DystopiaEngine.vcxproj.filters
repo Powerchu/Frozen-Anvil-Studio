@@ -155,6 +155,9 @@
     <ClCompile Include="Source\System\Time\ScopedTimer.cpp">
       <Filter>Game Engine\Systems\Time\ScopedTimer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Profiler\Profiler.cpp">
+      <Filter>Game Engine\SubSystems\Profiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
