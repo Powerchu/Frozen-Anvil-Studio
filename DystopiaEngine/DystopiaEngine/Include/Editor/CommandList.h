@@ -23,8 +23,8 @@ namespace Dystopia
 {
 	struct Commands
 	{
-		virtual void ExecuteDo() = 0;
-		virtual void ExecuteUndo() = 0;
+		virtual bool ExecuteDo() = 0;
+		virtual bool ExecuteUndo() = 0;
 		virtual bool Unchanged() const = 0;
 		virtual ~Commands() {}
 	};
@@ -47,8 +47,8 @@ namespace Dystopia
 			mValue = nullptr;
 		}
 
-		void	ExecuteDo() override	{ *mValue = mNewValue; }
-		void	ExecuteUndo() override	{ *mValue = mOldValue; } 
+		bool	ExecuteDo() override	{ *mValue = mNewValue; return true; }
+		bool	ExecuteUndo() override	{ *mValue = mOldValue; return true; }
 		bool	Unchanged() const		{ return (mOldValue == mNewValue); }
 	private:
 		T mOldValue;
@@ -70,8 +70,8 @@ namespace Dystopia
 
 		void	EndRecord()				{ mNewValue = *mpTarget; }
 		T*		GetPointer()			{ return mpTarget; }
-		void	ExecuteDo() override	{ *mpTarget = mNewValue; }
-		void	ExecuteUndo() override	{ *mpTarget = mOldValue; }
+		bool	ExecuteDo() override	{ *mpTarget = mNewValue; return true; }
+		bool	ExecuteUndo() override	{ *mpTarget = mOldValue; return true; }
 		bool	Unchanged() const		{ return (mOldValue == mNewValue); }
 
 	private:
@@ -83,9 +83,9 @@ namespace Dystopia
 	template<class Component, typename ... Params>
 	struct FunctionModWrapper
 	{
-		FunctionModWrapper(void(Component::*_fnptr)(Params ...), Params ... pack)
+		FunctionModWrapper(void(Component::*_fnptr)(Params ...), std::remove_reference_t<Params> ... pack)
 			: mfptr{ _fnptr }, 
-			mTupleVariables{ std::make_tuple<Params...>(pack...) }
+			mTupleVariables{ pack... }
 		{}
 
 		void Execute(Component * const _toMod) const
@@ -93,9 +93,15 @@ namespace Dystopia
 			(_toMod->*mfptr)(std::get<0>(mTupleVariables));
 		}
 
+		FunctionModWrapper& operator=(const FunctionModWrapper& _rhs)
+		{
+			mfptr = _rhs.mfptr;
+			mTupleVariables = _rhs.mTupleVariables;
+		}
+
 	private:
 		void(Component::*mfptr)(Params ...);
-		std::tuple<Params...> mTupleVariables;
+		std::tuple<std::remove_reference_t<Params>...> mTupleVariables;
 		static constexpr size_t size = sizeof...(Params);
 	};
 
@@ -103,7 +109,7 @@ namespace Dystopia
 	struct ComdModifyComponent;
 
 	template<class Component, typename ... P1s, typename ... P2s >
-	struct ComdModifyComponent<FunctionModWrapper<Component, P1s ...>, FunctionModWrapper<Component, P2s...>> : Commands
+	struct ComdModifyComponent<FunctionModWrapper<Component, P1s ...>, FunctionModWrapper<Component, P2s ...>> : Commands
 	{
 		ComdModifyComponent(const unsigned long& _objID, 
 							const FunctionModWrapper<Component, P1s ...>& _do, 
@@ -111,26 +117,28 @@ namespace Dystopia
 			: mID{ _objID }, mDoFunc{ _do }, mUnDoFunc{ _undo }
 		{}
 
-		void ExecuteDo() override
+		bool ExecuteDo() override
 		{
 			GameObject * pObj = Editor::GetInstance()->FindGameObject(mID);
-			if (!pObj) return; 
+			if (!pObj) return false;
 
 			Component * pCom = pObj->GetComponent<Component>();
-			if (!pCom) return;
+			if (!pCom) return false;
 
 			mDoFunc.Execute(pCom);
+			return true;
 		}
 
-		void ExecuteUndo() override
+		bool ExecuteUndo() override
 		{
 			GameObject * pObj = Editor::GetInstance()->FindGameObject(mID);
-			if (!pObj) return;
+			if (!pObj) return false;
 
 			Component * pCom = pObj->GetComponent<Component>();
-			if (!pCom) return;
+			if (!pCom) return false;
 
 			mUnDoFunc.Execute(pCom);
+			return true;
 		}
 
 		bool Unchanged() const
@@ -145,7 +153,7 @@ namespace Dystopia
 	};
 
 	template<typename ... P1s, typename ... P2s >
-	struct ComdModifyComponent<FunctionModWrapper<GameObject, P1s ...>, FunctionModWrapper<GameObject, P2s...>> : Commands
+	struct ComdModifyComponent<FunctionModWrapper<GameObject, P1s ...>, FunctionModWrapper<GameObject, P2s ...>> : Commands
 	{
 		ComdModifyComponent(const unsigned long& _objID,
 			const FunctionModWrapper<GameObject, P1s ...>& _do,
@@ -153,18 +161,20 @@ namespace Dystopia
 			: mID{ _objID }, mDoFunc{ _do }, mUnDoFunc{ _undo }
 		{}
 
-		void ExecuteDo() override
+		bool ExecuteDo() override
 		{
 			GameObject * pObj = Editor::GetInstance()->FindGameObject(mID);
-			if (!pObj) return;
+			if (!pObj) return false;
 			mDoFunc.Execute(pObj);
+			return true;
 		}
 
-		void ExecuteUndo() override
+		bool ExecuteUndo() override
 		{
 			GameObject * pObj = Editor::GetInstance()->FindGameObject(mID);
-			if (!pObj) return;
+			if (!pObj) return false;
 			mUnDoFunc.Execute(pObj);
+			return true;
 		}
 
 		bool Unchanged() const
