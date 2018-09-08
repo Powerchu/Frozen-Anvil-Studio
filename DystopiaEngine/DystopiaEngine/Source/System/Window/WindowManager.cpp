@@ -87,7 +87,7 @@ namespace Dystopia
 
 			freopen_s(&file, "CONOUT$", "wt", stdout);
 			freopen_s(&file, "CONOUT$", "wt", stderr);
-			//			freopen_s(&file, "CONOUT$", "wt", stdin);
+//			freopen_s(&file, "CONOUT$", "wt", stdin);
 
 			SetConsoleTitle(ENGINE_NAME);
 		}
@@ -159,7 +159,7 @@ namespace Dystopia
 #endif
 
 		mWindows.EmplaceBack(window);
-		mWindows[0].ShowCursor(EDITOR);
+//		mWindows[0].ShowCursor(EDITOR);
 
 		ShowWindow(window, SW_SHOW);
 //		UpdateWindow(window);

@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _PROFILER_SYS_H_
 
 #include "System\Base\Systems.h"
+#include "DataStructure\AutoArray.h"
 
 // Temporary std lib for fast prototyping
 #include <map>
@@ -23,6 +24,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	struct ProfileInfo
+	{
+		std::map<std::string, size_t> mTimes;
+	};
+
 	class Profiler : public Systems
 	{
 	public:
@@ -32,21 +38,30 @@ namespace Dystopia
 		void Update(float) override;
 		void Shutdown(void) override;
 
-//		const std::map<std::string, ProfileInfo>& GetInfo(void) const;
+		std::map<std::string, ProfileInfo>& GetInfo(void);
 
 		float GetCPUPercentageIdle(void) const;
 		float GetCPUPercentageBusy(void) const;
 		float GetCPUPercentageOS(void) const;
 		float GetCPUPercentageProcess(void) const;
 
+		size_t GetNumPageFaults(void) const noexcept;
+		size_t GetUsedMemory(void) const noexcept;
+		size_t GetUsedPhysicalMemory(void) const noexcept;
+		size_t GetAvailablePhysicalMemory(void) const noexcept;
+		float  GetSystemMemoryLoad(void) const noexcept;
+
 	private:
 
+		// CPU
+		float mfCPUTime;
 		uint64_t mnProcIdle, mnProcBusy, mnProcOS;
-		float mfCPU;
-//		std::map<std::string, ProfileInfo> mData;
 
-		size_t mnPageFaults, mnUsedMem, mnUsedRAM, mnAvailableMem;
+		// Memory
 		float mfMemLoad;
+		size_t mnPageFaults, mnUsedMem, mnUsedRAM, mnAvailableMem;
+
+		std::map<std::string, ProfileInfo> mData;
 
 		void CalculateCPUUsage(void) noexcept;
 		void CalculateMemoryUsage(void) noexcept;

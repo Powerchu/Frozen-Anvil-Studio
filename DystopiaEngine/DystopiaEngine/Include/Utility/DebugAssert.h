@@ -15,46 +15,56 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _DEBUG_ASSERT_H_
 #define _DEBUG_ASSERT_H_
 
-#include <cassert>
 #include <cstdio>
+#include <cassert>
 
-/*
-Uses fprintf to match usage syntax with asserts from AE
-*/
 #if defined(_DEBUG) | defined(DEBUG)
 
-#define DEBUG_PRINT(...)						\
-do {											\
-	fprintf(stderr, __VA_ARGS__);				\
+#define DEBUG_PRINT(...)				\
+do {									\
+	::fprintf(stderr, __VA_ARGS__);		\
 } while (false)
 
-#define DEBUG_ASSERT(x, ...)					\
-do {											\
-	if ((x))									\
-	{											\
-		DEBUG_PRINT(							\
-		"!ERROR IN %s Line %lu, \n"				\
-		, __FUNCTION__, __LINE__);				\
-		DEBUG_PRINT(__VA_ARGS__);				\
-		assert(x);								\
-	}											\
+#define DEBUG_ASSERT(x, ...)			\
+do {									\
+	if ((x))						    \
+	{									\
+		DEBUG_PRINT(					\
+		"!ERROR IN %s Line %lu, \n"		\
+		, __FUNCTION__, __LINE__);		\
+		DEBUG_PRINT(__VA_ARGS__);		\
+		assert(x);						\
+	}									\
 } while (false)
 
-#define DEBUG_LOG(x, ...)						\
-do {											\
-	if ((x))									\
-	{											\
-		DEBUG_PRINT(							\
-		"!IN %s Line %lu, \n"					\
-		, __FUNCTION__, __LINE__);				\
-		DEBUG_PRINT(__VA_ARGS__);				\
-	}											\
+#define DEBUG_BREAK(x, ...)			    \
+do {									\
+	if ((x))							\
+	{									\
+		DEBUG_PRINT(					\
+		"!ERROR IN %s Line %lu, \n"		\
+		, __FUNCTION__, __LINE__);		\
+		DEBUG_PRINT(__VA_ARGS__);		\
+		__debugbreak();					\
+	}									\
+} while (false)
+
+#define DEBUG_LOG(x, ...)				\
+do {									\
+	if ((x))							\
+	{									\
+		DEBUG_PRINT(					\
+		"!IN %s Line %lu, \n"			\
+		, __FUNCTION__, __LINE__);		\
+		DEBUG_PRINT(__VA_ARGS__);		\
+	}									\
 } while (false)
 
 #else
 
 #define DEBUG_PRINT(...)		
 #define DEBUG_ASSERT(x, ...)	(x)
+#define DEBUG_BREAK(x, ...)		(x)
 #define DEBUG_LOG(x, ...)		(x)
 
 #endif // DEBUG

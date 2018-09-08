@@ -313,8 +313,9 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	// TEMPORARY print to see what OpenGL version we got
 	// REPLACEMENT : LOGGER OUTPUT
-	std::fprintf(stdout, "Graphics System: Using OpenGL Version %d.%d!\n", mOpenGLMajor, mOpenGLMinor);
-	std::fprintf(stdout, "Graphics System: Using %s, %s!\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+	std::fprintf(stdout, "Graphics System: %s, %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+	std::fprintf(stdout, "Graphics System: Using OpenGL Version %d.%d\n", mOpenGLMajor, mOpenGLMinor);
+	std::fprintf(stdout, "Graphics System: %d bit colour, %d bits depth, %d bit stencil\n", pfd.cColorBits, pfd.cDepthBits, pfd.cStencilBits);
 
 #endif
 

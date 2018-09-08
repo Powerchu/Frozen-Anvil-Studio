@@ -1,28 +1,41 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	ScopedTimer.cpp
+\file	ProfilerAction.h
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Timer that counts the duration from when it was created till it is destroyed
+	For use with scoped timer
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Time\ScopedTimer.h"
-#include "System\Time\TimeDefs.h"
-#include "System\Time\TimeSystem.h"
-#include "System\Driver\Driver.h"
+#ifndef _PROFILER_ACTION_H_
+#define _PROFILER_ACTION_H_
 
-#include <iostream>
+#include <chrono>
+#include <string>
 
 
-void Dystopia::ScopedTimerDefaultAction::PostDuration(Precision_t _dur)
+namespace Dystopia
 {
-	_dur;
-	//std::cout << _dur.count() << std::endl;
+	class ProfilerAction
+	{
+	public:
+		using Precision_t = std::chrono::microseconds;
+
+		explicit ProfilerAction(const std::string& _strModuleName, const std::string& _strFunctionName);
+
+		void PostDuration(Precision_t);
+
+	private:
+
+		std::string strModule, strFunction;
+	};
 }
 
+
+
+#endif		// INCLUDE GUARD
 

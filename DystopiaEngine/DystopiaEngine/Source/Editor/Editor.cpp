@@ -94,7 +94,7 @@ struct TestVisitor
 	{
 		std::cout << "double " << x << "!\n";
 	}
-	void operator() (std::string x)
+	void operator() (std::string& x)
 	{
 		std::cout << "string " << x << "!\n";
 	}
@@ -134,11 +134,9 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	idk.Visit(TestVisitor{});
 
 	idk = Math::Vector4{};
-
 	idk.Visit(TestVisitor{});
 
 	idk = std::string{ "magical magical class" };
-
 	idk.Visit(TestVisitor{});
 
 	/* Start of Event System usage example */

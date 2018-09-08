@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility\Meta.h"
 #include "Utility\MetaAlgorithms.h"
+#include "Utility\DebugAssert.h"
 
 #include <cstring>
 #include <type_traits>
@@ -117,6 +118,13 @@ inline Variant<Ty...>::Variant(U&& _obj) noexcept(std::is_nothrow_move_construct
 template<typename ... Ty> template<typename U>
 inline auto Variant<Ty...>::As(void) noexcept -> VARIANT_ENABLE_IF_SFINAE(U, U&)
 {
+#if defined(_DEBUG)
+
+	DEBUG_BREAK(!(Utility::MetaFind_t<Utility::Decay_t<U>, AllTypes>::value == mType),
+		"Variant Error: Wrong type!\n");
+
+#endif
+
 	return *reinterpret_cast<U*>(&raw);
 }
 

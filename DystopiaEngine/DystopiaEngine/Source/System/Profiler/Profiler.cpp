@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System\Profiler\Profiler.h"
+#include "System\Time\\TimeDefs.h"
 #include "System\Time\Timer.h"
 
 #define WIN32_LEAN_AND_MEAN
@@ -26,7 +27,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	static constexpr size_t MEBIBYTE = 1024 * 1024;
+	inline static constexpr size_t ByteToMiB(size_t _bytes)
+	{
+		return _bytes >> 20;
+	}
 
 	uint64_t ConvertFiletime(FILETIME _t)
 	{
@@ -37,14 +41,16 @@ namespace
 }
 
 Dystopia::Profiler::Profiler(void) :
-	mnProcIdle{ 0 }, mnProcBusy{ 0 }, mnProcOS{ 0 }
+	mData{},
+	mfCPUTime{ 1.f }, mnProcIdle { 0 }, mnProcBusy{ 0 }, mnProcOS{ 0 },
+	mfMemLoad{ 100.f }, mnPageFaults{ 0 }, mnUsedMem{ 0 }, mnAvailableMem{ 0 }
 {
 }
 
-//const std::map<std::string, Dystopia::ProfileInfo>& Dystopia::Profiler::GetInfo(void) const
-//{
-//	return mData;
-//}
+std::map<std::string, Dystopia::ProfileInfo>& Dystopia::Profiler::GetInfo(void)
+{
+	return mData;
+}
 
 bool Dystopia::Profiler::Init(void)
 {
@@ -71,24 +77,25 @@ void Dystopia::Profiler::Shutdown(void)
 {
 }
 
+
 float Dystopia::Profiler::GetCPUPercentageIdle(void) const
 {
-	return mnProcIdle * mfCPU;
+	return mnProcIdle * mfCPUTime;
 }
 
 float Dystopia::Profiler::GetCPUPercentageBusy(void) const
 {
-	return (mnProcBusy + mnProcOS) * mfCPU;
+	return (mnProcBusy + mnProcOS) * mfCPUTime;
 }
 
 float Dystopia::Profiler::GetCPUPercentageOS(void) const
 {
-	return mnProcOS * mfCPU;
+	return mnProcOS * mfCPUTime;
 }
 
 float Dystopia::Profiler::GetCPUPercentageProcess(void) const
 {
-	return mnProcBusy * mfCPU;
+	return mnProcBusy * mfCPUTime;
 }
 
 void Dystopia::Profiler::CalculateCPUUsage(void) noexcept
@@ -111,8 +118,34 @@ void Dystopia::Profiler::CalculateCPUUsage(void) noexcept
 		mnProcIdle = prevIdle - mnProcIdle;
 		mnProcBusy = prevUser - mnProcBusy;
 
-		mfCPU = 100.f / (mnProcBusy + mnProcIdle + mnProcOS);
+		mfCPUTime = 100.f / (mnProcBusy + mnProcIdle + mnProcOS);
 	}
+}
+
+
+size_t Dystopia::Profiler::GetNumPageFaults(void) const noexcept
+{
+	return mnPageFaults;
+}
+
+size_t Dystopia::Profiler::GetUsedMemory(void) const noexcept
+{
+	return mnUsedMem;
+}
+
+size_t Dystopia::Profiler::GetUsedPhysicalMemory(void) const noexcept
+{
+	return mnUsedRAM;
+}
+
+size_t Dystopia::Profiler::GetAvailablePhysicalMemory(void) const noexcept
+{
+	return mnAvailableMem;
+}
+
+float Dystopia::Profiler::GetSystemMemoryLoad(void) const noexcept
+{
+	return mfMemLoad;
 }
 
 void Dystopia::Profiler::CalculateMemoryUsage(void) noexcept
@@ -124,9 +157,9 @@ void Dystopia::Profiler::CalculateMemoryUsage(void) noexcept
 	GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(memInfo));
 
 	mnPageFaults   = memInfo.PageFaultCount;
-	mnUsedRAM      = memInfo.WorkingSetSize / MEBIBYTE;
-	mnUsedMem      = memInfo.PagefileUsage  / MEBIBYTE;
-	mnAvailableMem = memState.ullAvailPhys  / MEBIBYTE;
+	mnUsedRAM      = ByteToMiB(memInfo.WorkingSetSize);
+	mnUsedMem      = ByteToMiB(memInfo.PagefileUsage );
+	mnAvailableMem = ByteToMiB(memState.ullAvailPhys );
 	mfMemLoad      = 100.f * (1.f - static_cast<float>(memState.ullAvailPhys) / static_cast<float>(memState.ullTotalPhys));
 }
 

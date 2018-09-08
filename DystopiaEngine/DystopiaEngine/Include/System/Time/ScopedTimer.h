@@ -21,9 +21,9 @@ namespace Dystopia
 {
 	struct ScopedTimerDefaultAction
 	{
-		using Dur_t = std::chrono::milliseconds;
+		using Precision_t = std::chrono::milliseconds;
 
-		static void PostDuration(Dur_t);
+		static void PostDuration(Precision_t);
 	};
 
 	template <typename Ty = ScopedTimerDefaultAction>
@@ -31,25 +31,46 @@ namespace Dystopia
 	{
 	public:
 
-		ScopedTimer(void) noexcept
-			: mMarker{ Clock::now() }
-		{
+		template <typename ... Ts>
+		explicit ScopedTimer(Ts&& ...);
 
-		}
-
-		~ScopedTimer(void) noexcept
-		{
-			Ty::PostDuration(
-				std::chrono::duration_cast<typename Ty::Dur_t>(
-					Clock::now() - mMarker
-			));
-		}
+		~ScopedTimer(void) noexcept;
 
 
 	private:
 
+		Ty ActionFunctor;
 		TimePoint_t mMarker;
+
+		ScopedTimer(ScopedTimer&&) = delete;
+		ScopedTimer(const ScopedTimer&) = delete;
+		ScopedTimer& operator = (ScopedTimer&&) = delete;
+		ScopedTimer& operator = (const ScopedTimer&&) = delete;
 	};
+}
+
+
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+template <typename Ty> template <typename ... Ts>
+inline Dystopia::ScopedTimer<Ty>::ScopedTimer(Ts&& ... Args)
+	: mMarker{ Clock::now() }, ActionFunctor{ Utility::Forward<Ts>(Args) ... }
+{
+
+}
+
+template<typename Ty>
+inline Dystopia::ScopedTimer<Ty>::~ScopedTimer(void) noexcept
+{
+	ActionFunctor.PostDuration(
+		std::chrono::duration_cast<typename Ty::Precision_t>(
+			Clock::now() - mMarker
+	));
 }
 
 

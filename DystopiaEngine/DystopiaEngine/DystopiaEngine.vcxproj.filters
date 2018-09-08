@@ -158,6 +158,9 @@
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Profiler\ProfilerAction.cpp">
+      <Filter>Game Engine\Systems\Profiler\ProfilerAction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -425,6 +428,9 @@
     <ClInclude Include="Include\DataStructure\Tuple.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Profiler\ProfilerAction.h">
+      <Filter>Game Engine\Systems\Profiler\ProfilerAction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -648,6 +654,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Profiler">
       <UniqueIdentifier>{c8dea79e-90fb-4f6f-ab66-dec8db735338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Profiler\ProfilerAction">
+      <UniqueIdentifier>{01e1ddfc-ec41-4f83-b121-0c29d96526ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

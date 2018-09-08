@@ -239,7 +239,7 @@ namespace Utility
 	struct ForceEval : Constant <T, value>
 	{};
 
-	// Warning: Crashes the compiler
+	// Warning: May crash the compiler
 	template <auto _Val>
 	auto ForceEval_v = ForceEval<decltype(_Val), _Val>::value;
 
