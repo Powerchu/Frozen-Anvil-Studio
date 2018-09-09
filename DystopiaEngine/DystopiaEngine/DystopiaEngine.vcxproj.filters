@@ -190,9 +190,6 @@
     <ClInclude Include="Include\Math\MathInternal.h">
       <Filter>Math\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Math\MathUtility.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Utility\MetaHelper.h">
       <Filter>Utility\Internals</Filter>
     </ClInclude>
@@ -319,9 +316,6 @@
     <ClInclude Include="Include\Utility\UtilityInternals.h">
       <Filter>Utility\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Math\Angles.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="Include\DataStructure\AutoArray.h">
       <Filter>DataStructures\Arrays</Filter>
     </ClInclude>
@@ -430,6 +424,15 @@
     </ClInclude>
     <ClInclude Include="Include\System\Profiler\ProfilerAction.h">
       <Filter>Game Engine\Systems\Profiler\ProfilerAction</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\MathLib.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\MathUtility.h">
+      <Filter>Math\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Angles.h">
+      <Filter>Math\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -657,6 +660,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Profiler\ProfilerAction">
       <UniqueIdentifier>{01e1ddfc-ec41-4f83-b121-0c29d96526ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Utility">
+      <UniqueIdentifier>{73e90723-3cda-42dc-8275-7c510b3d0dc7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\GraphicsSystem.h"	// File header
 #include "System\Graphics\GraphicsDefs.h"	// eGraphicSettings
 #include "System\Graphics\MeshSystem.h"
+#include "System\Graphics\Shader.h"
 #include "System\Window\WindowManager.h"	// Window Manager
 #include "System\Window\Window.h"			// Window
 #include "System\Scene\SceneSystem.h"
@@ -138,7 +139,11 @@ void Dystopia::GraphicsSystem::Update(float)
 				{
 					if (Renderer* r = Obj.GetComponent<Renderer>())
 					{
-						r->Draw();
+						if (Shader* s = r->GetShader())
+						{
+							s->UseShader();
+							r->Draw();
+						}
 					}
 				}
 			}
@@ -152,7 +157,7 @@ void Dystopia::GraphicsSystem::Update(float)
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
-#if !defined(EDITOR)
+#if !EDITOR
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 #else
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -161,7 +166,7 @@ void Dystopia::GraphicsSystem::StartFrame(void)
 
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
-#if !defined(EDITOR)
+#if !EDITOR
 	SwapBuffers(mCurrent->GetDeviceContext());
 #endif
 }

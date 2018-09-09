@@ -13,6 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System\Graphics\Shader.h"		// File Header
 
+#include "Math\Vector4.h"
+
 #include <GL\glew.h>
 #include <GL\GL.h>
 #include <fstream>		// ifstream
@@ -133,8 +135,61 @@ void Dystopia::Shader::LoadShader(unsigned _nProg, const std::string& _path)
 #endif		//  PRINT_ERRORS
 }
 
+int Dystopia::Shader::GetUniformLocation(const std::string& _strName)
+{
+	return glGetUniformLocation(mnShaderID, _strName.c_str());
+}
+
+
+void Dystopia::Shader::UploadUniform(const std::string& _strName, float _f)
+{
+	glUniform1f(GetUniformLocation(_strName), _f);
+}
+
+void Dystopia::Shader::UploadUniform(const std::string& _strName, float _f1, float _f2)
+{
+	glUniform2f(GetUniformLocation(_strName), _f1, _f2);
+}
+
+void Dystopia::Shader::UploadUniform(const std::string& _strName, float _f1, float _f2, float _f3)
+{
+	glUniform3f(GetUniformLocation(_strName), _f1, _f2, _f3);
+}
+
+void Dystopia::Shader::UploadUniform(const std::string& _strName, float _f1, float _f2, float _f3, float _f4)
+{
+	glUniform4f(GetUniformLocation(_strName), _f1, _f2, _f3, _f4);
+}
+
+void Dystopia::Shader::UploadUniform(const std::string& _strName, Math::Vector2& _v)
+{
+	glUniform2fv(GetUniformLocation(_strName), 1, reinterpret_cast<float*>(&_v));
+}
+
+void Dystopia::Shader::UploadUniform(const std::string& _strName, Math::Vector4& _v)
+{
+	glUniform4fv(GetUniformLocation(_strName), 1, reinterpret_cast<float*>(&_v));
+}
+
+void Dystopia::Shader::UploadUniform3(const std::string& _strName, Math::Vector4& _v)
+{
+	glUniform3fv(GetUniformLocation(_strName), 1, reinterpret_cast<float*>(&_v));
+}
+
+void Dystopia::Shader::UploadUniform(const std::string& _strName, Math::Matrix2& _m)
+{
+	glUniform4fv(GetUniformLocation(_strName), 1, reinterpret_cast<float*>(&_m));
+}
+
+void Dystopia::Shader::UploadUniform(const std::string& _strName, Math::Matrix4& _m)
+{
+	glUniformMatrix4fv(
+		GetUniformLocation(_strName), 1, GL_FALSE, reinterpret_cast<float*>(&_m)
+	);
+}
+
+
 
 // Remove our defines
 #undef PRINT_ERRORS
-
 
