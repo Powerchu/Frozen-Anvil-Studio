@@ -1,13 +1,13 @@
 #pragma once
 #ifndef TEST_CLASS_H
 #define TEST_CLASS_H
-
+#include <iostream>
 #define DllExport   __declspec( dllexport )
 
 struct TestClass
 {
-
-	int col = 5;
+	void Test();
+	int col = 100;
 };
 
 extern "C"

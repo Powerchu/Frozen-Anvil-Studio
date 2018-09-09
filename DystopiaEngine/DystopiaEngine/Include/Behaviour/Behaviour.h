@@ -28,7 +28,6 @@ namespace Dystopia
 		using TAG = BehaviourTag;
 		virtual unsigned GetComponentType(void) const { return unsigned(-2); };
 
-
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		Behaviour(void);

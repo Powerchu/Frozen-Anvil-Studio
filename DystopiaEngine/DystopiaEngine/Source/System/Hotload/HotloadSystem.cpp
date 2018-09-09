@@ -2,22 +2,34 @@
 
 #include <filesystem>
 
-
+#include "../TestClass.h"
 #define TESTING 1
 #define HOME_WORK 2
 #define SCHOOL_WORK 3
-#define CURRENT_WORK_PLACE HOME_WORK
+#define LAPTOP 4
+#define CURRENT_WORK_PLACE LAPTOP
 namespace Dystopia
 {
 	/*To Do: Change so that the absolute file path is not hard coded*/
 #if CURRENT_WORK_PLACE == SCHOOL_WORK
 	LPCSTR HotloadSystem::HEADER_DEFAULT_PATH = "\DystopiaEngine/Include/Behaviour";
 	LPCSTR HotloadSystem::SOURCE_DEFAULT_PATH = "C:\\Users\\keith.goh\\source\\repos\\Frozen-Anvil-Studio\\DystopiaEngine\\DystopiaEngine\\Source\\Behaviour\\"; /*Absolute file path must be in this format*/
-#else
+#elif CURRENT_WORK_PLACE == HOME_WORK
 	LPCSTR HotloadSystem::HEADER_DEFAULT_PATH = "C:/Users/Owner/Source/Repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include/Behaviour/";
 	LPCSTR HotloadSystem::SOURCE_DEFAULT_PATH = "C:/Users/Owner/Source/Repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour/";
+#elif CURRENT_WORK_PLACE == LAPTOP
+	LPCSTR HotloadSystem::HEADER_DEFAULT_PATH = "C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour/";
+	LPCSTR HotloadSystem::SOURCE_DEFAULT_PATH = "C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include/Behaviour/";
 #endif
 
+
+	HotloadSystem::HotloadSystem()
+	{
+		for (auto & elem : mFileHandles)
+			elem = INVALID_HANDLE_VALUE;
+		for (auto & elem : marrOverlapped)
+			elem.hEvent = INVALID_HANDLE_VALUE;
+	}
 
 	bool HotloadSystem::Init(void)
 	{
@@ -26,7 +38,7 @@ namespace Dystopia
 		and assign it to mDll_Folder_Name
 		Remember to ask jacky if he has the HWND
 		*/
-		HANDLE File_Hand_Source   = CreateFileA(SOURCE_DEFAULT_PATH,
+		HANDLE File_Hand_Source   = CreateFileA(mSource_Folder_Name.c_str(),
 			                                    FILE_LIST_DIRECTORY,
 			                                    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
 			                                    NULL,
@@ -34,7 +46,7 @@ namespace Dystopia
 			                                    FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
 			                                    NULL);
 
-		HANDLE File_Hand_Includes = CreateFileA(HEADER_DEFAULT_PATH,
+		HANDLE File_Hand_Includes = CreateFileA(mHeader_Folder_Name.c_str(),
 			                                    FILE_LIST_DIRECTORY | FILE_ALL_ACCESS,
 			                                    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
 			                                    NULL,
@@ -66,13 +78,14 @@ namespace Dystopia
 			return false;
 		}
 
-		marrOverlapped[eSource_Index].hEvent  = CreateEventA(NULL, true, false,  SOURCE_DEFAULT_PATH);
-		marrOverlapped[eInclude_Index].hEvent = CreateEventA(NULL, true, false,  HEADER_DEFAULT_PATH);
+		marrOverlapped[eSource_Index].hEvent  = CreateEventA(NULL, true, false,  mSource_Folder_Name.c_str());
+		marrOverlapped[eInclude_Index].hEvent = CreateEventA(NULL, true, false,  mHeader_Folder_Name.c_str());
 		marrOverlapped[eDll_Index].hEvent     = CreateEventA(NULL, true, false,  mDll_Folder_Name.c_str());
 
 		mFileHandles[eDll_Index]     = File_Hand_Dll;
 		mFileHandles[eInclude_Index] = File_Hand_Includes;
 		mFileHandles[eSource_Index]  = File_Hand_Source;
+
 
 		if (mFileHandles[eSource_Index]  == INVALID_HANDLE_VALUE||
 			mFileHandles[eInclude_Index] == INVALID_HANDLE_VALUE||
@@ -116,36 +129,41 @@ namespace Dystopia
 		/*Keep track of newly created/edited .h/.cpp files for behaviour*/
 		//static constexpr unsigned NumOfFileInfo = 256;
 		DWORD bytes_read;
-		if (GetOverlappedResult(mFileHandles[eSource_Index], &marrOverlapped[eSource_Index], &bytes_read, false))
+		if (mFileHandles[eSource_Index] != INVALID_HANDLE_VALUE && marrOverlapped[eSource_Index].hEvent != INVALID_HANDLE_VALUE)
 		{
-			ResetEvent(marrOverlapped[eSource_Index].hEvent);
-			Recompile(mFileHandles[eSource_Index], reinterpret_cast<FILE_NOTIFY_INFORMATION *>(&marrFileInfo[eSource_Index].front()));
-			
-			/*Not sure if this will cause resource leaks, but ResetEvent is not working for the mFileHandles*/
-			(ReadDirectoryChangesW(mFileHandles[eSource_Index],
-				                   &marrFileInfo[eSource_Index].front(),
-				                   marrFileInfo[eSource_Index].size(),
-				                   true,
-				                   FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
-				                   &bytes_read,
-				                   &marrOverlapped[eSource_Index],
-				                   NULL));
+			if (GetOverlappedResult(mFileHandles[eSource_Index], &marrOverlapped[eSource_Index], &bytes_read, false))
+			{
+				ResetEvent(marrOverlapped[eSource_Index].hEvent);
+				Recompile(mFileHandles[eSource_Index], reinterpret_cast<FILE_NOTIFY_INFORMATION *>(&marrFileInfo[eSource_Index].front()));
+
+				/*Not sure if this will cause resource leaks, but ResetEvent is not working for the mFileHandles*/
+				(ReadDirectoryChangesW(mFileHandles[eSource_Index],
+					&marrFileInfo[eSource_Index].front(),
+					marrFileInfo[eSource_Index].size(),
+					true,
+					FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+					&bytes_read,
+					&marrOverlapped[eSource_Index],
+					NULL));
+			}
 		}
 
-		if (GetOverlappedResult(mFileHandles[eInclude_Index], &marrOverlapped[eInclude_Index], &bytes_read, false))
+		if (mFileHandles[eInclude_Index] != INVALID_HANDLE_VALUE && marrOverlapped[eInclude_Index].hEvent != INVALID_HANDLE_VALUE)
 		{
-			Recompile(mFileHandles[eInclude_Index], reinterpret_cast<FILE_NOTIFY_INFORMATION *>(&marrFileInfo[eInclude_Index].front()));
-			ResetEvent(marrOverlapped[eInclude_Index].hEvent);
-			(ReadDirectoryChangesW(mFileHandles[eInclude_Index],
-								   &marrFileInfo[eInclude_Index].front(),
-				                   marrFileInfo[eInclude_Index].size(),
-				                   true,
-				                   FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
-				                   &bytes_read,
-				                   &marrOverlapped[eInclude_Index],
-				                   NULL));
+			if (GetOverlappedResult(mFileHandles[eInclude_Index], &marrOverlapped[eInclude_Index], &bytes_read, false))
+			{
+				Recompile(mFileHandles[eInclude_Index], reinterpret_cast<FILE_NOTIFY_INFORMATION *>(&marrFileInfo[eInclude_Index].front()));
+				ResetEvent(marrOverlapped[eInclude_Index].hEvent);
+				(ReadDirectoryChangesW(mFileHandles[eInclude_Index],
+					&marrFileInfo[eInclude_Index].front(),
+					marrFileInfo[eInclude_Index].size(),
+					true,
+					FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+					&bytes_read,
+					&marrOverlapped[eInclude_Index],
+					NULL));
+			}
 		}
-		isDllModified();
 	}
 
 	void Dystopia::HotloadSystem::Shutdown(void)
@@ -178,9 +196,10 @@ namespace Dystopia
 		FARPROC f = GetProcAddress(module_handle, _dllFuncName);
 		return f;
 	}
-	bool HotloadSystem::isDllModified(DLLWrapper * _pDLLWrapper, unsigned size)
+	bool HotloadSystem::isDllModified(DLLWrapper ** _pDLLWrapper, unsigned size)
 	{
 		DWORD bytes_read;
+		unsigned count = 0;
 
 		if (GetOverlappedResult(mFileHandles[eDll_Index], &marrOverlapped[eDll_Index], &bytes_read, false))
 		{
@@ -199,24 +218,31 @@ namespace Dystopia
 					HMODULE dllModule = LoadLibrary(DllDir.c_str());
 					if (dllModule != NULL)
 					{
-						mvDLL.Insert(DLLWrapper{DllName, dllModule});
+						auto pointer  = mvDLL.Emplace(DllDir, DllName, dllModule);
+
+						if(count < size)
+							*(_pDLLWrapper + count++) = pointer;
 					}
 				}
 				break;
+
 				case FILE_ACTION_MODIFIED:
 				{
 					std::wstring DllDir{ mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
 					std::wstring DllName{ pstart->FileName, pstart->FileName + (pstart->FileNameLength / sizeof(*(pstart->FileName))) };
 					DllDir += DllName;
-					/*
+					
 					if (mvDLL.IsEmpty())
 					{
 						HMODULE dllModule = LoadLibrary(DllDir.c_str());
 						if (dllModule != NULL)
-							mvDLL.Insert(DLLWrapper{ DllName, dllModule });
+						{
+							auto pDllWrapper = mvDLL.Emplace(DllDir,DllName, dllModule);
+							if (count < size)
+								*(_pDLLWrapper + count++) = pDllWrapper;
+						}
 					}
 					else
-					*/
 					{
 						for (auto & elem : mvDLL)
 						{
@@ -228,7 +254,11 @@ namespace Dystopia
 							{
 								HMODULE dllModule = LoadLibrary(DllDir.c_str());
 								if (dllModule != NULL)
-									mvDLL.Insert(DLLWrapper{ DllName, dllModule });
+								{
+									auto pDllWrapper = mvDLL.Emplace(DllDir, DllName, dllModule);
+									if (count < size)
+										*(_pDLLWrapper + count++) = pDllWrapper;
+								}
 							}
 						}
 					}
@@ -249,6 +279,7 @@ namespace Dystopia
 				}
 				break;
 				}
+
 				pstart = pstart->NextEntryOffset?reinterpret_cast<FILE_NOTIFY_INFORMATION*>(reinterpret_cast<char *>(pstart) + (pstart->NextEntryOffset)):nullptr;
 			}
 
@@ -261,9 +292,22 @@ namespace Dystopia
 				                   &marrOverlapped[eDll_Index],
 				                   NULL);
 
+			*(_pDLLWrapper + count) = nullptr;
 			return true;
 		}
 		return false;
+	}
+	void HotloadSystem::SetDllFolder(std::string _mDllFolderPath)
+	{
+		mDll_Folder_Name = _mDllFolderPath;
+	}
+	void HotloadSystem::SetHeaderFolder(std::string _mHeaderFolderPath)
+	{
+		mHeader_Folder_Name = _mHeaderFolderPath;
+	}
+	void HotloadSystem::SetCourceFolder(std::string _mSourceFolderPath)
+	{
+		mSource_Folder_Name = _mSourceFolderPath;
 	}
 	void HotloadSystem::Recompile(HANDLE const & _File_Handle, FILE_NOTIFY_INFORMATION * pFileInfo)
 	{
@@ -285,35 +329,51 @@ namespace Dystopia
 		LPCWSTR msvc_location = L"C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/cl.exe";
 		LPWSTR  command_line  = L"/WX /W4 /EHsc /DLL /nologo C:/Users/keith.goh/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Resource/Behaviours/Whatever.cpp";
 #else
-		LPCWSTR msvc_location = L"C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/cl.exe";
+	    
+		LPCWSTR msvc_location = L"C:/Program Files(x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx64/x64/cl.exe";
+			//L"C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/cl.exe";
 		LPWSTR  command_line = L"/WX /W4 /EHsc /DLL /nologo C:/Users/keith.goh/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Resource/Behaviours/Whatever.cpp";
 #endif
 								//"/Fe\"C:\\Users\\keith.goh\\source\\repos\\Frozen-Anvil-Studio\\DystopiaEngine\\Whatever.dll\"";
 		ZeroMemory(&si, sizeof(si));
 		ZeroMemory(&pi, sizeof(pi));
 
-		si.cb = sizeof(si);
-
-		if (!CreateProcess(msvc_location,
-			command_line,
-			NULL,
-			NULL,
-			FALSE,
-			CREATE_NEW_CONSOLE,
-			"SystemRoot=C:\\Windows",
-			NULL,
-			&si,
-			&pi)
-			)
+		std::filesystem::path p{ "C:/" };
+		std::error_code error;
+		std::filesystem::recursive_directory_iterator i{p,std::filesystem::directory_options::skip_permission_denied,error};
+		std::wstring name;
+		for (auto & elem : i)
 		{
-			/*No such file found*/
-			return;
+			name = (elem).path().filename().wstring();
+			if (name == L"cl.exe")
+			{
+				name = elem.path().wstring();
+				si.cb = sizeof(si);
+
+				if (!CreateProcess(name.c_str(),
+					NULL,
+					NULL,
+					NULL,
+					FALSE,
+					CREATE_NEW_CONSOLE,
+					"SystemRoot=C:/Windows",
+					NULL,
+					&si,
+					&pi)
+					)
+				{
+					/*No such file found*/
+					return;
+				}
+
+				WaitForSingleObject(pi.hProcess, INFINITE);
+
+				CloseHandle(pi.hProcess);
+				CloseHandle(pi.hThread);
+				break;
+			}
 		}
 
-		WaitForSingleObject(pi.hProcess, INFINITE);
-
-		CloseHandle(pi.hProcess);
-		CloseHandle(pi.hThread);
 	}
 
 

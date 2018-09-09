@@ -64,12 +64,21 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	Dystopia::Editor *editor	= Dystopia::Editor::GetInstance();
 	Dystopia::Timer *timer		= new Dystopia::Timer{};
+
+
+	editor->Init();
+
 	Dystopia::HotloadSystem test;
 	test.Init();
 
-	/*
-	LPCWSTR ct = L"TestClass.dll";
 	TestClass * c = new TestClass;
+	std::cout << c->col << std::endl;
+	c->Test();
+
+	/*
+
+	LPCWSTR ct = L"C:/Users/Keith/AppData/Roaming/Dystopia/DLL/TestClass.dll";;
+//	TestClass * c = new TestClass;
 	std::cout << c->col << std::endl;
 	auto f = test.GetDllFuncTest(ct, "Clone");
 	using fp = TestClass *(*)();
@@ -77,12 +86,28 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	fp fpp = (fp) f;
 	c = fpp();
 	std::cout << c->col << std::endl;
-	delete c;
 	*/
-	while(true)
+	Dystopia::DLLWrapper * pm = nullptr;
+	while (true)
+	{
 		test.Update(0.f);
+		if (test.isDllModified(&pm, 1))
+		{
+			if (pm != nullptr)
+			{
+				auto func = pm->GetDllFunc<TestClass *>("Clone");
+				if (func != nullptr)
+				{
+					c = func();
+					std::cout << c->col << std::endl;
+					c->Test();
+				}
+			}
 
-	editor->Init();
+		}
+	}
+	std::cout << c->col << std::endl;
+
 	while (!editor->IsClosing())
 	{
 		float dt = timer->Elapsed();
