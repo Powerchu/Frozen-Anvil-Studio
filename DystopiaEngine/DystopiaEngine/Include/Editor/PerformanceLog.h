@@ -27,6 +27,7 @@ namespace Dystopia
 		PLogData& operator=(const PLogData&);
 
 		void			UpdateLog(float);
+
 		int				mCurrentIndex;
 		float			mArrValues[maxValueLogged];
 		bool			mIsBigGraph;
