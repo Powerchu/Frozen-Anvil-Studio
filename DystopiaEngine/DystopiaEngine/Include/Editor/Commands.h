@@ -16,13 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _COMMANDS_H_
 #include "Editor\CommandList.h"
 #include <deque>
-#include <tuple>
 
 namespace Dystopia
 {
-	struct Commands;
-	struct RecordBase;
-
 	// Command handler to record all commands made in the editor. *Intended only for editor class to use*
 	class CommandHandler
 	{
@@ -86,6 +82,7 @@ namespace Dystopia
 		std::deque<Commands*>	mDeqUndo;
 		bool					mRecording;
 		void					PopFrontOfDeque(std::deque<Commands*>&);
+		void					RemoveStray(std::deque<Commands*>&);
 		size_t					mMaxSize;
 	};
 }

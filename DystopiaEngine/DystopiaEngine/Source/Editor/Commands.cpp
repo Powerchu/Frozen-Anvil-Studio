@@ -47,7 +47,10 @@ namespace Dystopia
 
 	void CommandHandler::InvokeCommand(Commands *_comd)
 	{
-		_comd->ExecuteDo();
+		if (!_comd->ExecuteDo())
+		{
+			return;
+		}
 
 		if (mDeqUndo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqUndo);
@@ -66,7 +69,11 @@ namespace Dystopia
 	{
 		if (!mDeqUndo.size()) return; 
 
-		mDeqUndo.back()->ExecuteUndo();
+		if (!mDeqUndo.back()->ExecuteUndo())
+		{
+			RemoveStray(mDeqUndo);
+			return;
+		}
 
 		if (mDeqRedo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqRedo);
@@ -79,7 +86,11 @@ namespace Dystopia
 	{
 		if (!mDeqRedo.size()) return;
 
-		mDeqRedo.back()->ExecuteDo();
+		if (!mDeqRedo.back()->ExecuteDo())
+		{
+			RemoveStray(mDeqRedo);
+			return;
+		}
 
 		if (mDeqUndo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqUndo);
@@ -92,6 +103,13 @@ namespace Dystopia
 	{
 		Commands *pTemp = _targetDeque.front();
 		_targetDeque.pop_front();
+		delete pTemp;
+	}
+
+	void CommandHandler::RemoveStray(std::deque<Commands*>& _targetDeque)
+	{
+		Commands *pTemp = _targetDeque.back();
+		_targetDeque.pop_back();
 		delete pTemp;
 	}
 

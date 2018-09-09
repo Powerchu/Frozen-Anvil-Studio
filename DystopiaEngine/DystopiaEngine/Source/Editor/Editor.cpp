@@ -44,6 +44,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ProjectResource.h"
 #include "Editor\SceneView.h"
 #include "Editor\ConsoleLog.h"
+#include "Editor\PerformanceLog.h"
 #include "Editor\EditorInputs.h"
 #include "Editor\EditorEvents.h"
 #include "Editor\Commands.h"
@@ -149,6 +150,7 @@ namespace Dystopia
 		mTabsArray.push_back(HierarchyView::GetInstance());
 		mTabsArray.push_back(SceneView::GetInstance());
 		mTabsArray.push_back(ConsoleLog::GetInstance());
+		mTabsArray.push_back(PerformanceLog::GetInstance());
 	}
 
 	void Editor::StartFrame(const float& _dt)
@@ -170,10 +172,6 @@ namespace Dystopia
 		for (unsigned int i = 0; i < mTabsArray.size(); ++i)
 		{
 			EGUI::PushID(i);
-			EditorTab *pTab = mTabsArray[i];
-			pTab->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
-			pTab->Update(_dt);
-
 			switch (i)
 			{
 			case 0: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
@@ -187,10 +185,13 @@ namespace Dystopia
 			default: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_NONE);
 			}
 
+			EditorTab *pTab = mTabsArray[i];
 			if (EGUI::StartTab(pTab->GetLabel().c_str(), pTab->GetOpenedBool()))
 			{
 				pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()));
 				pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
+				pTab->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
+				pTab->Update(_dt);
 				pTab->EditorUI();
 			}
 			EGUI::EndTab();

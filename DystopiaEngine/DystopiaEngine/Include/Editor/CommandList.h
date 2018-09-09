@@ -80,7 +80,6 @@ namespace Dystopia
 		T mNewValue;
 	};
 
-	
 
 	template<class Component, typename ... Params>
 	struct FunctionModWrapper
@@ -101,7 +100,7 @@ namespace Dystopia
 				(_toMod->*(parent.mfptr))(std::get<Ns>(parent.mTupleVariables) ...);
 			}
 
-			FunctionModWrapper<Component, Params...>& parent;
+			FunctionModWrapper<Component, Params...> &parent;
 		};
 
 		void(Component::*mfptr)(Params ...);
@@ -112,6 +111,12 @@ namespace Dystopia
 		FunctionModWrapper(void(Component::*_fnptr)(Params ...), std::remove_reference_t<Params> ... pack)
 			: mfptr{ _fnptr },
 			mTupleVariables{ pack... }, 
+			auxCaller{ *this }
+		{}
+
+		FunctionModWrapper(const FunctionModWrapper& _rhs)
+			: mfptr{ _rhs.mfptr },
+			mTupleVariables{ _rhs.mTupleVariables },
 			auxCaller{ *this }
 		{}
 
@@ -144,11 +149,9 @@ namespace Dystopia
 		{
 			GameObject * pObj = Editor::GetInstance()->FindGameObject(mID);
 			if (!pObj) return false;
-
 			Component * pCom = pObj->GetComponent<Component>();
 			if (!pCom) return false;
-
-			//mDoFunc.Execute(pCom, std::make_index_sequence<FMW1::size>);
+			mDoFunc.Execute(pCom);
 			return true;
 		}
 
@@ -156,11 +159,9 @@ namespace Dystopia
 		{
 			GameObject * pObj = Editor::GetInstance()->FindGameObject(mID);
 			if (!pObj) return false;
-
 			Component * pCom = pObj->GetComponent<Component>();
 			if (!pCom) return false;
-
-			//mUnDoFunc.Execute(pCom, std::make_index_sequence<FMW2::size>);
+			mUnDoFunc.Execute(pCom);
 			return true;
 		}
 

@@ -44,7 +44,7 @@ namespace Dystopia
 		void	RemoveFocus() override final;
 
 	private:
-		Inspector(void);
+		Inspector();
 
 		GameObject		*mpFocus;
 		std::string		mLabel;

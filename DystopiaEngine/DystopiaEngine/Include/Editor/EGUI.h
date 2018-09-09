@@ -62,6 +62,8 @@ namespace EGUI
 	void ChangeLabelSpacing();
 	void ChangeAlignmentYOffset(float _amount);
 	void ChangeAlignmentYOffset();
+	float GetAlignmentYOffset();
+	float GetLabelSpacing();
 
 	bool StartMainMenuBar();
 	bool StartMenuHeader(const std::string&);
@@ -434,6 +436,21 @@ namespace EGUI
 				EGUI::Display::Outline(your ui width, height);
 		======================================================================================================================= */
 		void Outline(float _x, float _y);
+		/* =======================================================================================================================
+		Brief:
+				Creates a labeled Graph
+		Usage:
+				static float arr[10] = {1,2,3,4,5,6,7,8,9,10};
+				EGUI::Display::LineGrap("MyGraph", arr, 10, 0, 11, Math::Vec2{100,20}, "hovering");
+		======================================================================================================================= */
+		template<size_t N>
+		void LineGraph(const std::string& _uniqueLabel, const float(&_array)[N], float _min = 0.f, 
+					  float _max = 1.f, const Math::Vec2& _size = Math::Vec2{100, 20}, const std::string& _overlapText = "")
+		{
+			EGUI::Display::Label(_uniqueLabel.c_str());
+			std::string intercerptName = "##" + _uniqueLabel;
+			ImGui::PlotLines(intercerptName.c_str(), _array, N, 0, _overlapText.c_str(), _min, _max, ImVec2{ _size.x, _size.y });
+		}
 	}
 }
 

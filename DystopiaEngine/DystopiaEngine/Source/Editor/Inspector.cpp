@@ -133,7 +133,6 @@ namespace Dystopia
 				auto f_New = mpComdHandler->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
 				mpComdHandler->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 
-
 				//using FMW = FunctionModWrapper<GameObject, const std::string&>;
 				//FMW f1{ &GameObject::SetName, oldName };
 				//FMW f2{ &GameObject::SetName, newName };

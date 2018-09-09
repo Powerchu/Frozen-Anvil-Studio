@@ -47,13 +47,13 @@
       <Filter>Game Engine\Components\Transform</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp">
-      <Filter>Editor\IMGUI</Filter>
+      <Filter>Editor\UI\IMGUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp">
-      <Filter>Editor\IMGUI</Filter>
+      <Filter>Editor\UI\IMGUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp">
-      <Filter>Editor\IMGUI</Filter>
+      <Filter>Editor\UI\IMGUI</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Window\Window.cpp">
       <Filter>Game Engine\Systems\Window\Window</Filter>
@@ -92,7 +92,7 @@
       <Filter>Editor\Commands</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\ConsoleLog.cpp">
-      <Filter>Editor\Console</Filter>
+      <Filter>Editor\Editor Tabs\Console</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Dock.cpp">
       <Filter>Editor\Docking</Filter>
@@ -104,16 +104,16 @@
       <Filter>Editor\UI</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\HierarchyView.cpp">
-      <Filter>Editor\Hierarchy View</Filter>
+      <Filter>Editor\Editor Tabs\Hierarchy View</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Inspector.cpp">
-      <Filter>Editor\Inspector</Filter>
+      <Filter>Editor\Editor Tabs\Inspector</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\ProjectResource.cpp">
-      <Filter>Editor\Project Resource</Filter>
+      <Filter>Editor\Editor Tabs\Project Resource</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\SceneView.cpp">
-      <Filter>Editor\Scene View</Filter>
+      <Filter>Editor\Editor Tabs\Scene View</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp">
       <Filter>Editor\Script Formatter</Filter>
@@ -162,7 +162,7 @@
       <Filter>Utility\GUID</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\PerformanceLog.cpp">
-      <Filter>Editor\Performance</Filter>
+      <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -269,13 +269,13 @@
       <Filter>Game Engine\Components\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h">
-      <Filter>Editor\IMGUI</Filter>
+      <Filter>Editor\UI\IMGUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependancies\ImGui\imgui.h">
-      <Filter>Editor\IMGUI</Filter>
+      <Filter>Editor\UI\IMGUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependancies\ImGui\imgui_internal.h">
-      <Filter>Editor\IMGUI</Filter>
+      <Filter>Editor\UI\IMGUI</Filter>
     </ClInclude>
     <ClInclude Include="Include\Object\ObjectFlags.h">
       <Filter>Game Engine\Objects</Filter>
@@ -352,9 +352,6 @@
     <ClInclude Include="Include\System\Camera\CameraSystem.h">
       <Filter>Game Engine\SubSystems\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\Editor.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\EditorTab.h">
       <Filter>Editor\Editor</Filter>
     </ClInclude>
@@ -365,7 +362,7 @@
       <Filter>Editor\Commands</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\ConsoleLog.h">
-      <Filter>Editor\Console</Filter>
+      <Filter>Editor\Editor Tabs\Console</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\Dock.h">
       <Filter>Editor\Docking</Filter>
@@ -374,16 +371,16 @@
       <Filter>Editor\UI</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\HierarchyView.h">
-      <Filter>Editor\Hierarchy View</Filter>
+      <Filter>Editor\Editor Tabs\Hierarchy View</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\Inspector.h">
-      <Filter>Editor\Inspector</Filter>
+      <Filter>Editor\Editor Tabs\Inspector</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\ProjectResource.h">
-      <Filter>Editor\Project Resource</Filter>
+      <Filter>Editor\Editor Tabs\Project Resource</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\SceneView.h">
-      <Filter>Editor\Scene View</Filter>
+      <Filter>Editor\Editor Tabs\Scene View</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\Payloads.h">
       <Filter>Editor\Payload</Filter>
@@ -432,7 +429,10 @@
       <Filter>Utility\GUID</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\PerformanceLog.h">
-      <Filter>Editor\Performance</Filter>
+      <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Editor.h">
+      <Filter>Editor\Editor Tabs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -520,9 +520,6 @@
     <Filter Include="Editor">
       <UniqueIdentifier>{9b48d693-6c4c-41cf-8adf-840c40362547}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\IMGUI">
-      <UniqueIdentifier>{adfd2fea-e1aa-4980-9366-739bf3f0446f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\Editor">
       <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
     </Filter>
@@ -604,29 +601,14 @@
     <Filter Include="Game Engine\SubSystems\Camera">
       <UniqueIdentifier>{c6d69b09-93e3-434e-a4bc-e25fb0c06c6d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Project Resource">
-      <UniqueIdentifier>{c5ac7258-cd5b-41a2-aa35-e58dbae20806}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Scene View">
-      <UniqueIdentifier>{71a85056-a560-4672-bf11-af0a4c971ad1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Inspector">
-      <UniqueIdentifier>{35530ff6-5930-4a89-b8db-49dcc15bfdda}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\Docking">
       <UniqueIdentifier>{06af060e-209f-4067-a5e6-2f4b596f578b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Commands">
       <UniqueIdentifier>{573a6f53-0ee9-4c6b-bda7-2e8af2e8b43c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Console">
-      <UniqueIdentifier>{24e718b4-19d5-461a-b934-7fa561a0580b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\UI">
       <UniqueIdentifier>{f31040be-52b0-48eb-96d0-207560e3376d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Hierarchy View">
-      <UniqueIdentifier>{a885b5ac-c2be-42de-9871-dadd13992aac}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Payload">
       <UniqueIdentifier>{618f59c4-4557-4253-8ca9-16e74a8be22a}</UniqueIdentifier>
@@ -658,8 +640,29 @@
     <Filter Include="Utility\GUID">
       <UniqueIdentifier>{e32cb155-6561-4a7a-9a47-96058953c24c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Performance">
+    <Filter Include="Editor\Editor Tabs">
+      <UniqueIdentifier>{c13e922e-c5d1-472d-af5f-95bb50e4100a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Inspector">
+      <UniqueIdentifier>{35530ff6-5930-4a89-b8db-49dcc15bfdda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Performance">
       <UniqueIdentifier>{c047ceb5-275e-45b0-90de-511a03bb9780}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Project Resource">
+      <UniqueIdentifier>{c5ac7258-cd5b-41a2-aa35-e58dbae20806}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Scene View">
+      <UniqueIdentifier>{71a85056-a560-4672-bf11-af0a4c971ad1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Hierarchy View">
+      <UniqueIdentifier>{a885b5ac-c2be-42de-9871-dadd13992aac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Console">
+      <UniqueIdentifier>{24e718b4-19d5-461a-b934-7fa561a0580b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\UI\IMGUI">
+      <UniqueIdentifier>{adfd2fea-e1aa-4980-9366-739bf3f0446f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
