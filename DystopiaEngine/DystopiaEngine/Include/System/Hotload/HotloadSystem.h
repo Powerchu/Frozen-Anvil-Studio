@@ -2,6 +2,8 @@
 #ifndef HOTLOADSYSTEM_H
 #define HOTLOADSYSTEM_H
 
+#define BIT32_ENV L"x86_amd64"
+#define BIT64_ENV L"amd64"
 
 #include "System/Base/Systems.h"
 #include "DataStructure/AutoArray.h"
@@ -132,9 +134,26 @@ namespace Dystopia
 		static LPCSTR HEADER_DEFAULT_PATH;
 		static LPCSTR SOURCE_DEFAULT_PATH;
 
-		std::string   mDll_Folder_Name     = "C:/Users/Keith/AppData/Roaming/Dystopia/DLL/";
+
+		std::string   mDll_Folder_Name     = "C:/Users/Owner/AppData/Roaming/Dystopia/DLL/";
 		std::string   mSource_Folder_Name  = SOURCE_DEFAULT_PATH;
 		std::string   mHeader_Folder_Name  = HEADER_DEFAULT_PATH;
+
+		std::wstring  mCmdPath;
+
+		std::wstring  mVcvarPath;
+		std::wstring  mVcvarName;
+		std::wstring  mVcvarBuildEnv;
+
+		std::wstring  mCompilerPath;
+		std::wstring  mMSVCPath;
+		std::wstring  mCompilerFlags = L"cl /W4 /EHsc /nologo /std:c++latest /DLL /Za /LD /IC:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include";
+									   /*
+			                           L" /I\"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\include\" "
+									   L" /I\"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\lib\" "
+			                           L" /Fe\"C:/Users/Owner/AppData/Roaming/Dystopia/DLL\" "
+			                           L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour/TestClass.cpp";
+									   */
 
 		MagicArray<DLLWrapper> mvDLL;
 
@@ -145,6 +164,7 @@ namespace Dystopia
 
 		void Recompile(HANDLE const & _File_Handle, FILE_NOTIFY_INFORMATION * pFileInfo = nullptr);
 		void CheckReloadDll();
+		bool LocateAndLoadCompiler();
 	};
 
 }

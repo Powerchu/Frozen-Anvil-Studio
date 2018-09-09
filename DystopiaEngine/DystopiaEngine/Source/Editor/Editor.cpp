@@ -48,7 +48,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\EditorEvents.h"
 #include "Editor\Commands.h"
 
-#include "../TestClass.h"
+#include "Behaviour/TestClass.h"
 
 /* library includes */
 #include <iostream>

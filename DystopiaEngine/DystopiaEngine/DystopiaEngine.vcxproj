@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Source\Behaviour\TestClass.cpp" />
     <ClCompile Include="Source\Component\Renderer.cpp" />
     <ClCompile Include="Source\System\Hotload\HotloadSystem.cpp" />
     <ClCompile Include="Source\Utility\GUID.cpp" />
@@ -81,9 +82,9 @@
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
     <ClCompile Include="Source\System\Window\Window.cpp" />
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
-    <ClCompile Include="TestClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\Behaviour\TestClass.h" />
     <ClInclude Include="Include\System\Hotload\HotloadSystem.h" />
     <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
@@ -172,7 +173,6 @@
     <ClInclude Include="Include\Math\Vector2.h" />
     <ClInclude Include="Include\Utility\UtilityInternals.h" />
     <ClInclude Include="Include\DataStructure\Pointer.h" />
-    <ClInclude Include="TestClass.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>

@@ -1,7 +1,7 @@
 #pragma once
 #ifndef TEST_CLASS_H
 #define TEST_CLASS_H
-#include <iostream>
+
 #define DllExport   __declspec( dllexport )
 
 struct TestClass

@@ -1,13 +1,14 @@
 #include "System/Hotload/HotloadSystem.h"
 
 #include <filesystem>
+#include <iostream>
 
-#include "../TestClass.h"
+
 #define TESTING 1
 #define HOME_WORK 2
 #define SCHOOL_WORK 3
 #define LAPTOP 4
-#define CURRENT_WORK_PLACE LAPTOP
+#define CURRENT_WORK_PLACE HOME_WORK
 namespace Dystopia
 {
 	/*To Do: Change so that the absolute file path is not hard coded*/
@@ -33,6 +34,7 @@ namespace Dystopia
 
 	bool HotloadSystem::Init(void)
 	{
+
 		/*
 		Use SHGetFolderPathA to get Path to %APPDATA%
 		and assign it to mDll_Folder_Name
@@ -120,6 +122,8 @@ namespace Dystopia
 			&bytes_read,
 			&marrOverlapped[eDll_Index],
 			NULL);
+
+		LocateAndLoadCompiler();
 
 		return true;
 	}
@@ -311,6 +315,9 @@ namespace Dystopia
 	}
 	void HotloadSystem::Recompile(HANDLE const & _File_Handle, FILE_NOTIFY_INFORMATION * pFileInfo)
 	{
+
+		if (mVcvarPath == L"" || mCmdPath == L"")
+			return;
 		/*
 		Checklist.
 		- Execute a process									   (DONE)
@@ -320,6 +327,9 @@ namespace Dystopia
 		*/
 		STARTUPINFO			si;
 		PROCESS_INFORMATION pi;
+
+		ZeroMemory(&si, sizeof(si));
+		ZeroMemory(&pi, sizeof(pi));
 
 		/*To Do: Change so that the absolute file path is not hard coded
 		         Locate msvc on computer and have it run cl.exe*/
@@ -335,44 +345,54 @@ namespace Dystopia
 		LPWSTR  command_line = L"/WX /W4 /EHsc /DLL /nologo C:/Users/keith.goh/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Resource/Behaviours/Whatever.cpp";
 #endif
 								//"/Fe\"C:\\Users\\keith.goh\\source\\repos\\Frozen-Anvil-Studio\\DystopiaEngine\\Whatever.dll\"";
-		ZeroMemory(&si, sizeof(si));
-		ZeroMemory(&pi, sizeof(pi));
+		
+		std::wstring wstrDll_Folder_Name{ mDll_Folder_Name.begin(),mDll_Folder_Name.end() };
 
-		std::filesystem::path p{ "C:/" };
-		std::error_code error;
-		std::filesystem::recursive_directory_iterator i{p,std::filesystem::directory_options::skip_permission_denied,error};
-		std::wstring name;
-		for (auto & elem : i)
+		std::wstring CmdArgument = L"/k cd ";
+
+		CmdArgument += mVcvarPath + L" && " + mVcvarName + L" " + L"x86_amd64" + L" && set && cd \"" + wstrDll_Folder_Name.c_str() + L'\" && ';
+
+		std::wstring Flags = mCompilerFlags;
+		std::wstring OutputCommand;
+		std::wstring FileName{ pFileInfo->FileName,pFileInfo->FileNameLength / sizeof(*pFileInfo->FileName) };
+
+
+		OutputCommand += std::wstring{ mSource_Folder_Name.begin(), mSource_Folder_Name.end() };
+		OutputCommand += FileName;
+
+		Flags += L" ";
+		Flags += OutputCommand;
+		Flags += L'\0';
+
+		std::wstring Final_Command = CmdArgument + Flags;
+
+		LPWSTR       pFlags = Flags == L""?NULL:const_cast<LPWSTR>((Final_Command).c_str());
+		
+		std::cout << pFlags << std::endl;
+
+		si.cb = sizeof(si);
+
+		if (!CreateProcess(mCmdPath.c_str(),
+			pFlags,
+			NULL,
+			NULL,
+			true,
+			CREATE_NEW_CONSOLE | CREATE_PRESERVE_CODE_AUTHZ_LEVEL,
+			"SystemRoot=C:/Windows",
+			NULL,
+			&si,
+			&pi)
+			)
 		{
-			name = (elem).path().filename().wstring();
-			if (name == L"cl.exe")
-			{
-				name = elem.path().wstring();
-				si.cb = sizeof(si);
-
-				if (!CreateProcess(name.c_str(),
-					NULL,
-					NULL,
-					NULL,
-					FALSE,
-					CREATE_NEW_CONSOLE,
-					"SystemRoot=C:/Windows",
-					NULL,
-					&si,
-					&pi)
-					)
-				{
-					/*No such file found*/
-					return;
-				}
-
-				WaitForSingleObject(pi.hProcess, INFINITE);
-
-				CloseHandle(pi.hProcess);
-				CloseHandle(pi.hThread);
-				break;
-			}
+			throw("CreateProcess failed");
+			return;
 		}
+
+		WaitForSingleObject(pi.hProcess, INFINITE);
+
+		CloseHandle(pi.hProcess);
+		CloseHandle(pi.hThread);
+
 
 	}
 
@@ -382,6 +402,67 @@ namespace Dystopia
 		/*Check for latest added or modified DLL in %APPDATA%*/
 		/*If the DLL is modified, update the current entry in mvDLL*/
 		/*If the DLL is newly created, add it to mvDLL*/
+	}
+	bool HotloadSystem::LocateAndLoadCompiler()
+	{
+		std::filesystem::path p{ "C:/" };
+		std::error_code error;
+		std::filesystem::recursive_directory_iterator i{ p,std::filesystem::directory_options::skip_permission_denied,error };
+		std::wstring name;
+
+		DWORD BinaryTypeStatus;
+		bool cl_status     = false;
+		bool cmd_status    = false;
+		bool vcvars_status = false;
+
+		for (auto & elem : i)
+		{
+			name = (elem).path().filename().wstring();
+
+			/*
+			if (name == L"cl.exe" && !cmd_status)
+			{
+				mCmdPath = elem.path().wstring();
+
+				if (GetBinaryTypeA(elem.path().string().c_str(), &BinaryTypeStatus))
+				{
+					if (BinaryTypeStatus == SCS_64BIT_BINARY)
+					{
+						mCompilerPath = elem.path().wstring();
+					}
+				}
+
+				cmd_status |= true;
+			}
+			*/
+			if( name == L"cmd.exe" && !cmd_status)
+			{
+				mCmdPath = elem.path().wstring();
+
+				if (GetBinaryTypeA(elem.path().string().c_str(), &BinaryTypeStatus))
+				{
+					if (BinaryTypeStatus == SCS_64BIT_BINARY)
+					{
+						mVcvarBuildEnv = BIT32_ENV;
+					}
+					else if (BinaryTypeStatus == SCS_32BIT_BINARY)
+					{
+						mVcvarBuildEnv = BIT32_ENV;
+					}
+				}
+
+				cmd_status |= true;
+			}
+			else if (name == L"vcvarsall.bat" && !vcvars_status)
+			{
+				mVcvarName = elem.path().filename().wstring();
+				mVcvarPath = L'\"' + elem.path().parent_path().wstring() + L'\"';
+
+				vcvars_status |= true;
+			}
+		}
+
+		return cl_status & cmd_status & vcvars_status;
 	}
 }
 
