@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Camera\CameraSystem.h"     // Camera System
 #include "System\Driver\Driver.h"			// EngineCore
 #include "System\Time\ScopedTimer.h"
+#include "System\Profiler\ProfilerAction.h"
 
 #include "IO\TextSerialiser.h"
 #include "IO\ImageParser.h"
@@ -110,6 +111,7 @@ void Dystopia::GraphicsSystem::PostInit(void)
 
 void Dystopia::GraphicsSystem::Update(float)
 {
+	ScopedTimer<ProfilerAction> timeKeeper{"Graphics System", "Update"};
 	StartFrame();
 
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();

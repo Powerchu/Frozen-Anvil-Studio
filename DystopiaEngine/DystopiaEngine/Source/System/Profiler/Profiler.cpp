@@ -16,7 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System\Profiler\Profiler.h"
-#include "System\Time\\TimeDefs.h"
+#include "System\Profiler\ProfileInfo.h"
+#include "System\Time\TimeDefs.h"
 #include "System\Time\Timer.h"
 
 #define WIN32_LEAN_AND_MEAN
@@ -38,6 +39,14 @@ namespace
 		// Use shifts instead of reinterpret cast
 		return (static_cast<uint64_t>(_t.dwHighDateTime) << 32) | _t.dwLowDateTime;
 	}
+}
+
+void Dystopia::ProfileInfo::Clear(void) noexcept
+{
+	for (auto& e : mTimes)
+		e.second = 0;
+
+	mTotal = 0;
 }
 
 Dystopia::Profiler::Profiler(void) :
@@ -71,6 +80,12 @@ void Dystopia::Profiler::Update(float)
 	CalculateMemoryUsage();
 
 #endif
+}
+
+void Dystopia::Profiler::PostUpdate(void)
+{
+	for (auto& e : mData)
+		e.second.Clear();
 }
 
 void Dystopia::Profiler::Shutdown(void)

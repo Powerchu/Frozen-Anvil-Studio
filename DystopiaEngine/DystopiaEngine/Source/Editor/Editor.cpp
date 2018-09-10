@@ -54,59 +54,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <bitset>
 
 /* Test Includes */
-#include "DataStructure\Variant.h"
-
-namespace Dystopia
-{
-	struct X
-	{
-		X(EventSystem* e)
-			:es{ e }
-		{
-			es->BindToEvent("EventTester1", &X::goo, this);
-			es->BindToEvent("EventTester2", &X::foo, this);
-			es->BindToEvent("EventTester3", &X::hoo, this);
-		}
-		~X()
-		{
-			es->UnBindFromEvent("EventTester1", this);
-			es->UnBindFromEvent("EventTester2", this);
-			es->UnBindFromEvent("EventTester3", this);
-		}
-		EventSystem* es;
-
-		void goo() { std::cout << "Member function goo" << std::endl; }
-		void hoo() { std::cout << "Member function hoo" << std::endl; }
-		void foo() { std::cout << "Member function foo" << std::endl; }
-	};
-	void goo() { std::cout << "Non member function goo" << std::endl; }
-	void hoo() { std::cout << "Non member function hoo" << std::endl; }
-	void foo() { std::cout << "Non member function foo" << std::endl; }
-}
-
-struct TestVisitor
-{
-	void operator() (float x)
-	{
-		std::cout << "float " << x << "!\n";
-	}
-	void operator() (double x)
-	{
-		std::cout << "double " << x << "!\n";
-	}
-	void operator() (std::string& x)
-	{
-		std::cout << "string " << x << "!\n";
-	}
-	void operator() (Math::Vector4)
-	{
-		std::cout << "Vector4!\n";
-	}
-	void operator() (char x)
-	{
-		std::cout << "char " << x << "!\n";
-	}
-};
 
 
 // Entry point for editor
@@ -128,33 +75,10 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 				 driver->GetSystem<Dystopia::GraphicsSystem>(),
 				 driver->GetSystem<Dystopia::InputManager>());
 
-	float y = 1.2345f;
-	Variant<float, char, double, std::string, Math::Vector4> idk{ y };
-
-	idk.Visit(TestVisitor{});
-
-	idk = Math::Vector4{};
-	idk.Visit(TestVisitor{});
-
-	idk = std::string{ "magical magical class" };
-	idk.Visit(TestVisitor{});
-
-	/* Start of Event System usage example */
-	Dystopia::EventSystem *es = driver->GetSystem<Dystopia::EventSystem>();
-	{
-		Dystopia::X x1{ es };
-		es->Fire("EventTester1");
-		es->Fire("EventTester2");
-		es->Fire("EventTester3");
-		es->FireAllPending();
-	}
-	/* End of Event System usage example */
-
 	while (!editor->IsClosing())
 	{
 		float dt = timer->Elapsed();
 		timer->Lap();
-		Dystopia::ScopedTimer<> selfDestruct;
 	
 		editor->StartFrame(dt);
 	

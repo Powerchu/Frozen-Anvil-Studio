@@ -26,7 +26,11 @@ void Dystopia::ProfilerAction::PostDuration(ProfilerAction::Precision_t _dur)
 {
 	auto& info = EngineCore::GetInstance()->GetSystem<Profiler>()->GetInfo();
 
-	info[strModule].mTimes[strFunction] = _dur.count();
+	size_t time = _dur.count();
+	auto& module = info[strModule];
+
+	module.mTotal += time;
+	module.mTimes[strFunction] = time;
 }
 
 

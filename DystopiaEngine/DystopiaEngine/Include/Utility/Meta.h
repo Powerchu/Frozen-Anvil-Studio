@@ -99,7 +99,13 @@ namespace Utility
 	template <typename T>
 	struct Decay
 	{
-		using type = RemoveConst_t<RemoveRef_t<T>>;
+		using type = RemoveConst_t<T>;
+	};
+
+	template <typename T>
+	struct Decay<T&>
+	{
+		using type = typename Decay<RemoveRef_t<T>>::type;
 	};
 
 	template <typename T, typename ... Ty>
@@ -231,18 +237,33 @@ namespace Utility
 	{};
 
 
-	// Force Evaulate	   Warning: Causes the compiler to crash
+	// Is Reference
+	// ============== ======================================================
+
+	template <typename T>
+	struct IsReference : Constant <bool, false>
+	{};
+
+	template <typename T>
+	struct IsReference<T&> : Constant <bool, true>
+	{};
+
+	template <typename T>
+	struct IsReference<T&&> : Constant <bool, true>
+	{};
+
+
+	// Force Evaulate	   Warning: May cause the compiler to crash
 	// ================ ====================================================
 
-	//// Warning: Crashes the compiler
-	//template <typename T, T value>
-	//struct ForceEval : Constant <T, value>
-	//{};
-	//
-	//// Warning: May crash the compiler
-	//template <auto _Val>
-	//auto ForceEval_v = ForceEval<decltype(_Val), _Val>::value;
-
+	// Warning: May crash the compiler
+	template <typename T, T value>
+	struct ForceEval : Constant <T, value>
+	{};
+	
+	// Warning: May crash the compiler
+	template <auto _Val>
+	auto ForceEval_v = ForceEval<decltype(_Val), _Val>::value;
 }
 
 

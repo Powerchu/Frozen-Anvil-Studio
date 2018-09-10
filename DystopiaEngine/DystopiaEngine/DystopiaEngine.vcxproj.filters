@@ -161,6 +161,9 @@
     <ClCompile Include="Source\System\Profiler\ProfilerAction.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerAction</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp">
+      <Filter>Game Engine\Systems\Profiler\ProfileInfo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -434,6 +437,9 @@
     <ClInclude Include="Include\Math\Angles.h">
       <Filter>Math\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Profiler\ProfileInfo.h">
+      <Filter>Game Engine\Systems\Profiler\ProfileInfo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -663,6 +669,9 @@
     </Filter>
     <Filter Include="Math\Utility">
       <UniqueIdentifier>{73e90723-3cda-42dc-8275-7c510b3d0dc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Profiler\ProfileInfo">
+      <UniqueIdentifier>{786f882b-e4f0-4e3c-b000-a421b1059b0b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
