@@ -501,13 +501,13 @@ namespace Dystopia
 	void GuiSystem::UpdateScroll(double _xOffset, double _yOffset)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.MouseWheelH += _xOffset;
-		io.MouseWheel += _yOffset;
+		io.MouseWheelH	+=	static_cast<float>(_xOffset);
+		io.MouseWheel	+=	static_cast<float>(_yOffset);
 	}
 
 	void GuiSystem::UpdateMouse(int _index, bool _state)
 	{
-		if (_index >= 0 < 3) mMouseJustPressed[_index] = _state;
+		if (_index >= 0  && _index < 3) mMouseJustPressed[_index] = _state;
 	}
 
 	void GuiSystem::UpdateKey(int _k, bool _down)

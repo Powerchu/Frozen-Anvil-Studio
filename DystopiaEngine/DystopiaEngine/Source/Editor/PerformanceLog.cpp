@@ -12,6 +12,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
+#include "Editor\ConsoleDebugger.h"
+#include "Editor\PerformanceLogger.h"
 #include "Editor\PerformanceLog.h"
 #include "Editor\EGUI.h"
 #include "Math\MathLib.h"
@@ -20,6 +22,24 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	static PerformanceLog* gpInstance = 0; // singleton
+
+	/* ===================================================== Performance Logger definitions ===================================================== */
+	void LogDataS(const std::string& _category, const std::string& _graphLabel, 
+				  const float& _val, float _min, float _max, bool _bigGraph)
+	{
+		DEBUG_ASSERT(!gpInstance, "No instance of Performance Log found!");
+		gpInstance->LogData(_category, _graphLabel, _val, _min, _max, _bigGraph);
+	}
+
+	void LogDataG(const std::string& _catMainGraph, const float& _val, float _min, 
+				  float _max, bool _bigGraph)
+	{
+		DEBUG_ASSERT(!gpInstance, "No instance of Performance Log found!");
+		gpInstance->LogData(_catMainGraph, _val, _min, _max, _bigGraph);
+	}
+
+	/* ===================================================== A single log's Data ===================================================== */
 	PLogData::PLogData(const std::string& _name, bool _big)
 		: mLabel{ _name }, mArrValues{ 0.f }, mCurrentIndex{ 0 }, mIsBigGraph{ _big }, mMin{}, mMax{}
 	{}
@@ -76,20 +96,23 @@ namespace Dystopia
 		else std::rotate(&mArrValues[0], &mArrValues[1], &mArrValues[maxLogs]);
 	}
 
+	/* ===================================================== A log's item for category ===================================================== */
 	PLogItem::PLogItem(const std::string& _cat)
-		: mLabel{ _cat }, mData{}, mGenericOverview{}
+		: mLabel{ _cat + " Details" }, mData{}, mGenericOverview{ _cat, true }, mShowGeneric{ false }
 	{}
 
 	PLogItem::PLogItem(const PLogItem& _rhs)
-		: mLabel{ _rhs.mLabel }, mData{ _rhs.mData }, mGenericOverview{ _rhs.mGenericOverview }
+		: mLabel{ _rhs.mLabel }, mData{ _rhs.mData }, mGenericOverview{ _rhs.mGenericOverview }, 
+		mShowGeneric{ _rhs.mShowGeneric }
 	{}
 	
 	PLogItem::PLogItem(PLogItem&& _rhs)
-		: mLabel{}, mData{}, mGenericOverview{}
+		: mLabel{}, mData{}, mGenericOverview{ "", true }, mShowGeneric{ false }
 	{
 		Utility::Swap(mLabel, _rhs.mLabel);
 		Utility::Swap(mData, _rhs.mData);
 		Utility::Swap(mGenericOverview, _rhs.mGenericOverview);
+		Utility::Swap(mShowGeneric, _rhs.mShowGeneric);
 	}
 
 	PLogItem::~PLogItem()
@@ -105,6 +128,13 @@ namespace Dystopia
 	void PLogItem::InsertLog(const PLogData& _graph)
 	{
 		mData.push_back(_graph);
+	}
+
+	void PLogItem::UpdateG(float _val, float _min, float _max, bool _bigGraph)
+	{
+		mShowGeneric = true;
+		mGenericOverview.mIsBigGraph = _bigGraph;
+		mGenericOverview.UpdateLog(_val, _min, _max);
 	}
 
 	void PLogItem::UpdateLog(const std::string& _graph, float _val, float _min, float _max, bool _bigGraph)
@@ -130,6 +160,7 @@ namespace Dystopia
 		mData.clear();
 		mData = _rhs.mData;
 		mGenericOverview = _rhs.mGenericOverview;
+		mShowGeneric = _rhs.mShowGeneric;
 		return *this;
 	}
 
@@ -138,10 +169,11 @@ namespace Dystopia
 		Utility::Swap(mLabel, _rhs.mLabel);
 		Utility::Swap(mData, _rhs.mData);
 		Utility::Swap(mGenericOverview, _rhs.mGenericOverview);
+		Utility::Swap(mShowGeneric, _rhs.mShowGeneric);
 		return *this;
 	}
 
-	static PerformanceLog* gpInstance = 0;
+	/* ===================================================== The Performance Logger for handling items/datas ===================================================== */
 	PerformanceLog* PerformanceLog::GetInstance()
 	{
 		if (gpInstance) return gpInstance;
@@ -166,37 +198,46 @@ namespace Dystopia
 
 	void PerformanceLog::Init()
 	{
-		LogData("Editor", "Func 1", 0, 0.f, 0.1f);
-		LogData("Editor", "Func 2", 0, 0.f, 0.5f);
-		LogData("Editor", "Func 3", 0, 0.f, 0.3f);
 	}
 
 	void PerformanceLog::Update(const float& _dt)
 	{
-		static constexpr float offset	= -50.f;
+		static constexpr float offset	= -60.f;
 		mGraphSize.x					= Math::Clamp(Size().x + offset, 50.f, Size().x);
 
-		LogData("Editor", "Func 1", _dt, 0.f, 0.1f);
-		LogData("Editor", "Func 2", _dt * 2.f, 0.f, 0.2f);
-		LogData("Editor", "Func 3", _dt * 2.f, 0.f, 0.1f);
+		LogDataG("Editor", _dt, 0.f, 0.1f);
+		LogDataS("Editor", "Breakdown 1",_dt, 0.f, 0.1f);
+		LogDataS("Editor", "Breakdown 2",_dt, 0.f, 0.1f);
 	}
 
 	void PerformanceLog::EditorUI()
 	{
 		for (const auto& item : mArrLoggedData)
 		{
-			if (EGUI::Display::StartTreeNode(item.mLabel))
+			if (item.mShowGeneric)
 			{
+				EGUI::Indent(10);
+				const PLogData& g = item.mGenericOverview;
+				mGraphSize.y = (g.mIsBigGraph) ? mGraphBigY : mGraphSmallY;
+				EGUI::Display::LineGraph(g.mLabel.c_str(), g.mArrValues, g.mMin, g.mMax, mGraphSize,
+					std::to_string(g.mArrValues[g.maxLogs - 1]));
+				EGUI::UnIndent(10);
+			}
+			if (item.mData.size() && EGUI::Display::StartTreeNode(item.mLabel))
+			{
+				mGraphSize.x = Math::Clamp(mGraphSize.x, 50.f, mGraphSize.x - 50.f);
+				EGUI::Indent(10);
 				for (unsigned int i = 0; i < item.mData.size(); ++i)
 				{
 					const PLogData& e = item.mData[i];
 					mGraphSize.y = (e.mIsBigGraph) ? mGraphBigY : mGraphSmallY;
 					EGUI::Display::LineGraph(e.mLabel.c_str(), e.mArrValues, e.mMin, e.mMax, mGraphSize,
 											 std::to_string(e.mArrValues[e.maxLogs - 1]));
-					EGUI::Display::HorizontalSeparator();
 				}
+				EGUI::UnIndent(10);
 				EGUI::Display::EndTreeNode();
 			}
+			EGUI::Display::HorizontalSeparator();
 		}
 	}
 
@@ -215,7 +256,7 @@ namespace Dystopia
 	{
 		for (auto& item : mArrLoggedData)
 		{
-			if (item.mLabel == _cat)
+			if (item.mGenericOverview.mLabel == _cat)
 			{
 				item.UpdateLog(_label, _val, _min, _max, _bigGraph);
 				return;		//early out to avoid adding new PLogData;
@@ -226,6 +267,22 @@ namespace Dystopia
 		newItem.UpdateLog(_label, _val, _min, _max, _bigGraph);
 		mArrLoggedData.push_back(newItem);
 		SortLogs();
+	}
+
+	void PerformanceLog::LogData(const std::string& _catMainGraph, const float& _val, 
+								 float _min, float _max, bool _bigGraph)
+	{
+		for (auto& item : mArrLoggedData)
+		{
+			if (item.mGenericOverview.mLabel == _catMainGraph)
+			{
+				item.UpdateG(_val, _min, _max, _bigGraph);
+				return;		//early out to avoid adding new PLogData;
+			}
+		}
+		PLogItem newItem{ _catMainGraph };
+		newItem.UpdateG(_val, _min, _max, _bigGraph);
+		mArrLoggedData.push_back(newItem);
 	}
 
 	void PerformanceLog::SortLogs()

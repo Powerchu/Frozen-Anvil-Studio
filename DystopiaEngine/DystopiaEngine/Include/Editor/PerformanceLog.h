@@ -50,10 +50,12 @@ namespace Dystopia
 		PLogItem& operator=(PLogItem&&);
 		~PLogItem();
 
+		void					UpdateG(float _val, float _min, float _max, bool);
 		void					UpdateLog(const std::string&, float _val, float _min, float _max, bool);
 		void					InsertLog(const PLogData&);
 		void					SortLogs();
 
+		bool					mShowGeneric;
 		PLogData				mGenericOverview;
 		AutoArray<PLogData>		mData;
 		std::string				mLabel;
@@ -81,6 +83,7 @@ namespace Dystopia
 		virtual std::string GetLabel() const override;
 
 		void LogData(const std::string& _category, const std::string& _graphLabel, const float& _val, float _min, float _max, bool _bigGraph = false);
+		void LogData(const std::string& _catMainGraph, const float& _val, float _min, float _max, bool _bigGraph = false);
 
 	private:
 		PerformanceLog();

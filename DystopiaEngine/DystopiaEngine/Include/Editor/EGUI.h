@@ -459,7 +459,10 @@ namespace EGUI
 			EGUI::Display::Label(_uniqueLabel.c_str());
 			std::string intercerptName = "##" + _uniqueLabel;
 
-			ImGui::PlotLines(intercerptName.c_str(), _array.begin(), _array.size(), 0, _overlapText.c_str(), _min, _max, ImVec2{ _size.x, _size.y });
+			EGUI::Indent(20);
+			ImGui::PlotLines(intercerptName.c_str(), _array.begin(), static_cast<int>(_array.size()), 0, 
+							 _overlapText.c_str(), _min, _max, ImVec2{ _size.x, _size.y });
+			EGUI::UnIndent(20);
 		}
 	}
 }
