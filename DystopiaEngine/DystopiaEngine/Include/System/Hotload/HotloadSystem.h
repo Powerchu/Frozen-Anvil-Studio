@@ -8,11 +8,13 @@
 #include "System/Base/Systems.h"
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
+
 #include <windows.h>
 #include <map>
 #include <functional>
 #include <utility>
 #include <array>
+#include <shlwapi.h>
 
 namespace Dystopia
 {
@@ -22,6 +24,15 @@ namespace Dystopia
 		eSource_Index,
 		eDll_Index,
 		eTotalFileHandles
+	};
+	enum eFileExtension
+	{
+		eCpp    = 0,
+		eHeader,
+		eDll,
+		eLib,
+		eNotValid
+
 	};
 	struct DLLWrapper
 	{
@@ -165,6 +176,8 @@ namespace Dystopia
 		void Recompile(HANDLE const & _File_Handle, FILE_NOTIFY_INFORMATION * pFileInfo = nullptr);
 		void CheckReloadDll();
 		bool LocateAndLoadCompiler();
+
+		eFileExtension CheckFileExtension(std::wstring const & _FileName);
 	};
 
 }

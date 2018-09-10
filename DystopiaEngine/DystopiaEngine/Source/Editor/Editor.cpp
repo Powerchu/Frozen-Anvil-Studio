@@ -48,8 +48,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\EditorEvents.h"
 #include "Editor\Commands.h"
 
-#include "Behaviour/TestClass.h"
-
 /* library includes */
 #include <iostream>
 #include <bitset>
@@ -71,10 +69,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	Dystopia::HotloadSystem test;
 	test.Init();
 
-	TestClass * c = new TestClass;
-	std::cout << c->col << std::endl;
-	c->Test();
-
 	/*
 
 	LPCWSTR ct = L"C:/Users/Keith/AppData/Roaming/Dystopia/DLL/TestClass.dll";;
@@ -95,18 +89,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 		{
 			if (pm != nullptr)
 			{
-				auto func = pm->GetDllFunc<TestClass *>("Clone");
-				if (func != nullptr)
-				{
-					c = func();
-					std::cout << c->col << std::endl;
-					c->Test();
-				}
+
 			}
 
 		}
 	}
-	std::cout << c->col << std::endl;
 
 	while (!editor->IsClosing())
 	{

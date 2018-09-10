@@ -7,5 +7,5 @@ DllExport TestClass * Clone()
 
 void TestClass::Test()
 	{
-		std::cout << "Before     Hotloading" << std::endl;
+		std::cout << "Before             Hotloading" << std::endl;
 	}

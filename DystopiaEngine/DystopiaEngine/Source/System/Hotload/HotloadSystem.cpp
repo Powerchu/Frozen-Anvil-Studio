@@ -16,8 +16,8 @@ namespace Dystopia
 	LPCSTR HotloadSystem::HEADER_DEFAULT_PATH = "\DystopiaEngine/Include/Behaviour";
 	LPCSTR HotloadSystem::SOURCE_DEFAULT_PATH = "C:\\Users\\keith.goh\\source\\repos\\Frozen-Anvil-Studio\\DystopiaEngine\\DystopiaEngine\\Source\\Behaviour\\"; /*Absolute file path must be in this format*/
 #elif CURRENT_WORK_PLACE == HOME_WORK
-	LPCSTR HotloadSystem::HEADER_DEFAULT_PATH = "C:/Users/Owner/Source/Repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include/Behaviour/";
-	LPCSTR HotloadSystem::SOURCE_DEFAULT_PATH = "C:/Users/Owner/Source/Repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour/";
+	LPCSTR HotloadSystem::HEADER_DEFAULT_PATH = "C:/Users/Owner/Source/Repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include/Behaviour";
+	LPCSTR HotloadSystem::SOURCE_DEFAULT_PATH = "C:/Users/Owner/Source/Repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour";
 #elif CURRENT_WORK_PLACE == LAPTOP
 	LPCSTR HotloadSystem::HEADER_DEFAULT_PATH = "C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour/";
 	LPCSTR HotloadSystem::SOURCE_DEFAULT_PATH = "C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include/Behaviour/";
@@ -210,14 +210,21 @@ namespace Dystopia
 			ResetEvent(marrOverlapped[eDll_Index].hEvent);
 
 			for (FILE_NOTIFY_INFORMATION * pstart = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(&marrFileInfo[eDll_Index].front());
-				pstart != nullptr; )
+				pstart != nullptr;
+				pstart = pstart->NextEntryOffset ? reinterpret_cast<FILE_NOTIFY_INFORMATION*>(reinterpret_cast<char *>(pstart) + (pstart->NextEntryOffset)) : nullptr)
 			{
+				
+				std::wstring DllDir { mDll_Folder_Name.begin(), mDll_Folder_Name.end()};
+				std::wstring DllName{ pstart->FileName, pstart->FileName + (pstart->FileNameLength / sizeof(*(pstart->FileName))) };
+
+				if (CheckFileExtension(DllName) != eDll)
+					continue;
+
+
 				switch (pstart->Action)
 				{
 				case FILE_ACTION_ADDED:
 				{
-					std::wstring DllDir{ mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
-					std::wstring DllName{ pstart->FileName, pstart->FileName + (pstart->FileNameLength/sizeof(*(pstart->FileName))) };
 					DllDir += DllName;
 					HMODULE dllModule = LoadLibrary(DllDir.c_str());
 					if (dllModule != NULL)
@@ -232,10 +239,7 @@ namespace Dystopia
 
 				case FILE_ACTION_MODIFIED:
 				{
-					std::wstring DllDir{ mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
-					std::wstring DllName{ pstart->FileName, pstart->FileName + (pstart->FileNameLength / sizeof(*(pstart->FileName))) };
 					DllDir += DllName;
-					
 					if (mvDLL.IsEmpty())
 					{
 						HMODULE dllModule = LoadLibrary(DllDir.c_str());
@@ -284,7 +288,6 @@ namespace Dystopia
 				break;
 				}
 
-				pstart = pstart->NextEntryOffset?reinterpret_cast<FILE_NOTIFY_INFORMATION*>(reinterpret_cast<char *>(pstart) + (pstart->NextEntryOffset)):nullptr;
 			}
 
 			ReadDirectoryChangesW(mFileHandles[eDll_Index],
@@ -315,8 +318,8 @@ namespace Dystopia
 	}
 	void HotloadSystem::Recompile(HANDLE const & _File_Handle, FILE_NOTIFY_INFORMATION * pFileInfo)
 	{
-
-		if (mVcvarPath == L"" || mCmdPath == L"")
+	
+		if (mVcvarPath == L"" || mCmdPath == L"" )
 			return;
 		/*
 		Checklist.
@@ -325,11 +328,11 @@ namespace Dystopia
 		- Make the compiler recompile the file that was edited (NOT DONE) 
 		- Generate the dll									   (NOT DONE)
 		*/
-		STARTUPINFO			si;
-		PROCESS_INFORMATION pi;
+		//STARTUPINFO			si;
+		//PROCESS_INFORMATION pi;
 
-		ZeroMemory(&si, sizeof(si));
-		ZeroMemory(&pi, sizeof(pi));
+		//ZeroMemory(&si, sizeof(si));
+		//ZeroMemory(&pi, sizeof(pi));
 
 		/*To Do: Change so that the absolute file path is not hard coded
 		         Locate msvc on computer and have it run cl.exe*/
@@ -344,56 +347,68 @@ namespace Dystopia
 			//L"C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/cl.exe";
 		LPWSTR  command_line = L"/WX /W4 /EHsc /DLL /nologo C:/Users/keith.goh/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Resource/Behaviours/Whatever.cpp";
 #endif
-								//"/Fe\"C:\\Users\\keith.goh\\source\\repos\\Frozen-Anvil-Studio\\DystopiaEngine\\Whatever.dll\"";
+
 		
-		std::wstring wstrDll_Folder_Name{ mDll_Folder_Name.begin(),mDll_Folder_Name.end() };
+		std::wstring wstrDll_Folder_Name   { mDll_Folder_Name.begin(),mDll_Folder_Name.end() };
+		std::wstring wstrSource_Folder_Name{ mSource_Folder_Name.begin(), mSource_Folder_Name.end() };
+		std::wstring FileName              { pFileInfo->FileName,pFileInfo->FileNameLength / sizeof(*pFileInfo->FileName) };
 
-		std::wstring CmdArgument = L"/k cd ";
-
-		CmdArgument += mVcvarPath + L" && " + mVcvarName + L" " + L"x86_amd64" + L" && set && cd \"" + wstrDll_Folder_Name.c_str() + L'\" && ';
-
-		std::wstring Flags = mCompilerFlags;
+		std::wstring CmdArgument           = L"/k cd ";
+		std::wstring Flags                 = mCompilerFlags;
 		std::wstring OutputCommand;
-		std::wstring FileName{ pFileInfo->FileName,pFileInfo->FileNameLength / sizeof(*pFileInfo->FileName) };
 
 
-		OutputCommand += std::wstring{ mSource_Folder_Name.begin(), mSource_Folder_Name.end() };
+		CmdArgument += mVcvarPath + L" && " + mVcvarName + L" " + mVcvarBuildEnv + L" && cd \"" + wstrDll_Folder_Name.c_str() + L"\" && ";
+
+		OutputCommand += wstrSource_Folder_Name + L"/";
 		OutputCommand += FileName;
 
-		Flags += L" ";
-		Flags += OutputCommand;
-		Flags += L'\0';
 
-		std::wstring Final_Command = CmdArgument + Flags;
+		std::wstring Final_Command = CmdArgument + Flags + L' ' + OutputCommand + L" && exit";
 
-		LPWSTR       pFlags = Flags == L""?NULL:const_cast<LPWSTR>((Final_Command).c_str());
-		
-		std::cout << pFlags << std::endl;
+		std::string cFinal_Command{ Final_Command.begin(),Final_Command.end() };
+		std::string cCmdPath{ mCmdPath.begin(), mCmdPath.end() };
 
-		si.cb = sizeof(si);
+		//si.cb = sizeof(si);
 
-		if (!CreateProcess(mCmdPath.c_str(),
-			pFlags,
-			NULL,
-			NULL,
-			true,
-			CREATE_NEW_CONSOLE | CREATE_PRESERVE_CODE_AUTHZ_LEVEL,
-			"SystemRoot=C:/Windows",
-			NULL,
-			&si,
-			&pi)
-			)
+		SHELLEXECUTEINFO ExecInfo{ 0 };
+		ExecInfo.cbSize       = sizeof(SHELLEXECUTEINFO);
+		ExecInfo.fMask        = SEE_MASK_NOCLOSEPROCESS;
+		ExecInfo.hwnd         = NULL;
+		ExecInfo.lpVerb       = NULL;
+		ExecInfo.lpFile       = mCmdPath.c_str();
+		ExecInfo.lpParameters = Final_Command.c_str();
+		ExecInfo.lpDirectory  = NULL;
+		ExecInfo.nShow        = SW_SHOW;
+		ExecInfo.hInstApp     = NULL;
+
+		if ( ShellExecuteEx(&ExecInfo) == false)
 		{
-			throw("CreateProcess failed");
-			return;
+			std::cout << "ShellExecuteA Failed" << std::endl;
 		}
 
-		WaitForSingleObject(pi.hProcess, INFINITE);
+		WaitForSingleObject(ExecInfo.hProcess, INFINITE);
 
-		CloseHandle(pi.hProcess);
-		CloseHandle(pi.hThread);
+		CloseHandle(ExecInfo.hProcess);
+		//CloseHandle(pi.hThread);
 
-
+		/*
+if (!CreateProcess(mCmdPath.c_str(),
+	pFlags,
+	NULL,
+	NULL,
+	true,
+	CREATE_NEW_CONSOLE | CREATE_PRESERVE_CODE_AUTHZ_LEVEL | INHERIT_PARENT_AFFINITY,
+	"SystemRoot=C:/Windows",
+	NULL,
+	&si,
+	&pi)
+	)
+{
+	throw("CreateProcess failed");
+	return;
+}
+*/
 	}
 
 
@@ -418,23 +433,6 @@ namespace Dystopia
 		for (auto & elem : i)
 		{
 			name = (elem).path().filename().wstring();
-
-			/*
-			if (name == L"cl.exe" && !cmd_status)
-			{
-				mCmdPath = elem.path().wstring();
-
-				if (GetBinaryTypeA(elem.path().string().c_str(), &BinaryTypeStatus))
-				{
-					if (BinaryTypeStatus == SCS_64BIT_BINARY)
-					{
-						mCompilerPath = elem.path().wstring();
-					}
-				}
-
-				cmd_status |= true;
-			}
-			*/
 			if( name == L"cmd.exe" && !cmd_status)
 			{
 				mCmdPath = elem.path().wstring();
@@ -460,9 +458,33 @@ namespace Dystopia
 
 				vcvars_status |= true;
 			}
+
+			if (cmd_status & vcvars_status)
+				return true;
 		}
 
 		return cl_status & cmd_status & vcvars_status;
+	}
+	eFileExtension HotloadSystem::CheckFileExtension(std::wstring const & _FileName)
+	{
+		using ExtensionTable = std::map<std::wstring, eFileExtension>;
+		
+		static ExtensionTable Table
+		{
+			std::make_pair(L".cpp", eCpp),
+			std::make_pair(L".h"  , eHeader),
+			std::make_pair(L".hpp", eHeader),
+			std::make_pair(L".dll", eDll),
+			std::make_pair(L".lib", eLib)
+		};
+		for (auto & elem : Table)
+		{
+			size_t pos = _FileName.find_last_of(elem.first);
+			if (pos != std::wstring::npos)
+				return elem.second;
+		}
+		
+		return eNotValid;
 	}
 }
 
