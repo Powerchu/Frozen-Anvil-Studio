@@ -18,11 +18,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <cstdio>
 #include <cassert>
 
-#if defined(_DEBUG) | defined(DEBUG)
+#if EDITOR
+#include "Editor\ConsoleDebugger.h"
 
 #define DEBUG_PRINT(...)				\
 do {									\
-	::fprintf(stderr, __VA_ARGS__);		\
+	ConsolePrint(__VA_ARGS__);			\
 } while (false)
 
 #define DEBUG_ASSERT(x, ...)			\

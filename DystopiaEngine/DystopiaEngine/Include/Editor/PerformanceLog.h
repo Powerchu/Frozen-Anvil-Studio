@@ -22,17 +22,41 @@ namespace Dystopia
 {
 	struct PLogData
 	{
-		static constexpr int maxValueLogged = 60;
+		static constexpr int maxLogs = 60;
+		PLogData() {}
 		PLogData(const std::string&, bool);
 		PLogData(const PLogData&);
+		PLogData(PLogData&&);
 		PLogData& operator=(const PLogData&);
+		PLogData& operator=(PLogData&&);
 
-		void			UpdateLog(float);
+		void					UpdateLog(float _val, float _min, float _max);
 
-		int				mCurrentIndex;
-		bool			mIsBigGraph;
-		float			mArrValues[maxValueLogged];
-		std::string		mLabel;
+		Array<float, maxLogs>	mArrValues;
+		std::string				mLabel;
+		int						mCurrentIndex;
+		bool					mIsBigGraph;
+		float					mMin;
+		float					mMax;
+	};
+
+	struct PLogItem
+	{
+		PLogItem() {}
+		PLogItem(const std::string&);
+		PLogItem(const PLogItem&);
+		PLogItem(PLogItem&&);
+		PLogItem& operator=(const PLogItem&);
+		PLogItem& operator=(PLogItem&&);
+		~PLogItem();
+
+		void					UpdateLog(const std::string&, float _val, float _min, float _max, bool);
+		void					InsertLog(const PLogData&);
+		void					SortLogs();
+
+		PLogData				mGenericOverview;
+		AutoArray<PLogData>		mData;
+		std::string				mLabel;
 	};
 
 	class PerformanceLog : public EditorTab
@@ -56,14 +80,14 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const override;
 
-		void LogData(const std::string& _label, const float& _val, bool _bigGraph = false);
+		void LogData(const std::string& _category, const std::string& _graphLabel, const float& _val, float _min, float _max, bool _bigGraph = false);
 
 	private:
 		PerformanceLog();
 
-		AutoArray<PLogData>		mArrLoggedData;
+		void					SortLogs();
+		AutoArray<PLogItem>		mArrLoggedData;
 		std::string				mLabel;
-		std::string				mDefaultLog;
 		Math::Vec2				mGraphSize;
 		float					mGraphBigY;
 		float					mGraphSmallY;

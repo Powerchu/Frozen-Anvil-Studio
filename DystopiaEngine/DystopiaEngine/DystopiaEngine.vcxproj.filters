@@ -170,6 +170,9 @@
     <ClCompile Include="Source\System\Profiler\ProfilerAction.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerAction</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\ConsoleDebugger.cpp">
+      <Filter>Editor\Editor Tabs\Console</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -454,6 +457,9 @@
     </ClInclude>
     <ClInclude Include="Include\Math\Angles.h">
       <Filter>Math\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\ConsoleDebugger.h">
+      <Filter>Editor\Editor Tabs\Console</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -28,17 +28,7 @@ namespace Dystopia
 		return gpInstance;
 	}
 
-	void format_impl(std::stringstream& _stream, const char * _format)
-	{
-		while (*_format)
-		{
-			if (*_format == '%' && *++_format != '%')
-				throw std::invalid_argument("not enough arguments!\n");
-			_stream << *_format++;
-		}
-	}
-
-	void ConsolePrint(const std::string& _text)
+	void PrintToConsoleLog(const std::string& _text)
 	{
 		DEBUG_ASSERT(!gpInstance, "No Instance of ConsoleLog found.");
 		gpInstance->Debug(_text);
@@ -59,10 +49,10 @@ namespace Dystopia
 	
 	void ConsoleLog::Init()
 	{
-		ConsolePrint("Testing Float %f", 3.6f);
-		ConsolePrint("Testing Integeral %d", -5);
-		ConsolePrint("Testing string %s", "stringy");
-		ConsolePrint(std::string{ "std string text" });
+		DEBUG_PRINT("Testing Float %f", 3.6f);
+		DEBUG_PRINT("Testing Integeral %d", -5);
+		DEBUG_PRINT("Testing string %s", "stringy");
+		DEBUG_PRINT(std::string{ "std string text" });
 	}
 
 	void ConsoleLog::Update(const float&)
