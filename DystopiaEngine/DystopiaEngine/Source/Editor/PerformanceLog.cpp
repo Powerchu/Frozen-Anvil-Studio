@@ -66,7 +66,9 @@ namespace Dystopia
 	{}
 
 	PerformanceLog::~PerformanceLog()
-	{}
+	{
+		gpInstance = nullptr;
+	}
 
 	void PerformanceLog::Init()
 	{

@@ -50,6 +50,7 @@ namespace Dystopia
 
 	HierarchyView::~HierarchyView()
 	{
+		gpInstance = nullptr;
 	}
 
 	void HierarchyView::Init()

@@ -48,18 +48,23 @@ namespace Dystopia
 		static Editor*	GetInstance();
 		~Editor();
 
+		/* General Looping Funcs */
 		void			Init();
 		void			LoadDefaults();
 		void			StartFrame(const float&);
 		void			UpdateFrame(const float&);
 		void			EndFrame();
 		void			Shutdown();
+
+		/* State change stuff */
 		void			ChangeState(eEditorState);
-		void			SetFocus(GameObject&);
-		GameObject*		FindGameObject(const unsigned long& _id) const;
-		void			RemoveFocus();
 		bool			IsClosing() const;
 		eEditorState	CurrentState() const;
+
+		/* Game Object stuff */
+		void			SetFocus(GameObject&);
+		void			RemoveFocus();
+		GameObject*		FindGameObject(const unsigned long& _id) const;
 
 	private:
 		Editor(void);

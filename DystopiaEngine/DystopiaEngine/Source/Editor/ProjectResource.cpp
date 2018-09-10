@@ -120,6 +120,7 @@ namespace Dystopia
 	ProjectResource::~ProjectResource()
 	{
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_LCLICK)->Unbind(this);
+		gpInstance = nullptr;
 	}
 
 	void ProjectResource::Init()

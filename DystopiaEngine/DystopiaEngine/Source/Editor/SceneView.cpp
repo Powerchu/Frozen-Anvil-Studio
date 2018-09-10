@@ -49,6 +49,7 @@ namespace Dystopia
 
 	void SceneView::Shutdown()
 	{
+		gpInstance = nullptr;
 	}
 
 	std::string SceneView::GetLabel() const

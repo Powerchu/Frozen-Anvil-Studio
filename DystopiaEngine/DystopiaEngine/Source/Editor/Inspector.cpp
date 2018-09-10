@@ -42,7 +42,7 @@ namespace Dystopia
 
 	Inspector::~Inspector()
 	{
-	
+		gpInstance = nullptr;
 	}
 
 	void Inspector::Init()

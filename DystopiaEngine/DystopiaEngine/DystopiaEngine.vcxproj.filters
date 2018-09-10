@@ -85,9 +85,6 @@
     <ClCompile Include="Source\System\Camera\CameraSystem.cpp">
       <Filter>Game Engine\SubSystems\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EditorTab.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\Commands.cpp">
       <Filter>Editor\Commands</Filter>
     </ClCompile>
@@ -163,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\PerformanceLog.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorTab.cpp">
+      <Filter>Editor\Editor Tabs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -352,9 +352,6 @@
     <ClInclude Include="Include\System\Camera\CameraSystem.h">
       <Filter>Game Engine\SubSystems\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\EditorTab.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\CommandList.h">
       <Filter>Editor\Commands</Filter>
     </ClInclude>
@@ -432,6 +429,9 @@
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\Editor.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorTab.h">
       <Filter>Editor\Editor Tabs</Filter>
     </ClInclude>
   </ItemGroup>
