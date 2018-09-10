@@ -25,12 +25,12 @@ Dystopia::Texture2D::Texture2D(void) noexcept : Texture{ GL_TEXTURE_2D }
 Dystopia::Texture2D::Texture2D(const std::string& _strPath, bool _bAlpha) : 
 	Texture{ GL_TEXTURE_2D }
 {
-	auto fileType = (_strPath.end() - 2);
+	auto fileType = (_strPath.end() - 3);
 	Image img;
 
 	if ('p' == *fileType || 'P' == *fileType)
 	{
-		img = ImageParser::LoadJPG(_strPath);
+		img = ImageParser::LoadPNG(_strPath);
 	}
 	else if ('b' == *fileType || 'B' == *fileType)
 	{

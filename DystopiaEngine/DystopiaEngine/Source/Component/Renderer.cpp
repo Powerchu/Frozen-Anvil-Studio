@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Renderer::Renderer(void) noexcept
-	: mnUnique { 0 }, mpMesh { nullptr }
+	: mnUnique{ 0 }, mpMesh{ nullptr }
 {
 }
 
@@ -62,6 +62,17 @@ void Dystopia::Renderer::SetShader(const std::string&) noexcept
 Dystopia::Shader* Dystopia::Renderer::GetShader(void) const noexcept
 {
 	return mpShader;
+}
+
+
+void Dystopia::Renderer::SetTexture(Texture* _pTexture) noexcept
+{
+	mpTexture = _pTexture;
+}
+
+Dystopia::Texture* Dystopia::Renderer::GetTexture(void) const noexcept
+{
+	return mpTexture;
 }
 
 

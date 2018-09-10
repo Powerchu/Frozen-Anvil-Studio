@@ -1,10 +1,10 @@
 #version 330 core
 
-// in vec3 vPosition;
+in vec3 vPosition;
 in vec2 vUV;
 // in vec3 vColor;
 
-out vec4 fragColor;
+layout(location = 0) out vec4 fragColor;
 
 uniform sampler2D texSampler;
 
@@ -12,5 +12,6 @@ uniform sampler2D texSampler;
 void main()
 {
   // Ignore colour blending for now
-  fragColor = texture(texSampler, vUV);
+  fragColor = vec4(1, 0, 1, 0); //texture(texSampler, vUV);
 }
+

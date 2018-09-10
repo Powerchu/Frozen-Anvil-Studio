@@ -49,11 +49,11 @@ namespace Dystopia
 		void UseShader(void) const;
 
 
-		void UploadUniform(const std::string&, Math::Vector2&);
-		void UploadUniform(const std::string&, Math::Vector4&);
-		void UploadUniform(const std::string&, Math::Matrix2&);
-		void UploadUniform(const std::string&, Math::Matrix4&);
-		void UploadUniform3(const std::string&, Math::Vector4&);
+		void UploadUniform(const std::string&, const Math::Vector2&);
+		void UploadUniform(const std::string&, const Math::Vector4&);
+		void UploadUniform(const std::string&, const Math::Matrix2&);
+		void UploadUniform(const std::string&, const Math::Matrix4&);
+		void UploadUniform3(const std::string&, const Math::Vector4&);
 
 		void UploadUniform(const std::string&, float);
 		void UploadUniform(const std::string&, float, float);

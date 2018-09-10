@@ -46,6 +46,7 @@ namespace Dystopia
 		void LoadDefaults(void);
 		void LoadSettings(TextSerialiser&);
 
+		void GetSplashDimensions(int& w, int& h);
 		void DestroySplash(void);
 
 		void ToggleFullscreen(bool _bFullscreen);

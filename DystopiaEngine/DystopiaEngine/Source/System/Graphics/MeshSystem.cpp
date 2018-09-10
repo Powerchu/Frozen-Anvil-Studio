@@ -119,8 +119,12 @@ void Dystopia::MeshSystem::ExportMeshes(void)
 
 }
 
-Dystopia::Mesh* Dystopia::MeshSystem::GetMesh(const std::string &) noexcept
+Dystopia::Mesh* Dystopia::MeshSystem::GetMesh(const std::string& _strName) noexcept
 {
+	for (auto& e : mpMeshes)
+		if (e.GetName() == _strName)
+			return &e;
+
 	return nullptr;
 }
 

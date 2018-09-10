@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\GraphicsDefs.h"	// eGraphicSettings
 #include "System\Graphics\MeshSystem.h"
 #include "System\Graphics\Shader.h"
+#include "System\Graphics\Texture2D.h"
 #include "System\Window\WindowManager.h"	// Window Manager
 #include "System\Window\Window.h"			// Window
 #include "System\Scene\SceneSystem.h"
@@ -95,6 +96,36 @@ void Dystopia::GraphicsSystem::PreInit(void)
 		pMeshSys->LoadMesh(MeshPath);
 	}
 	pMeshSys->EndMesh();
+
+	DrawSplash();
+}
+
+void Dystopia::GraphicsSystem::DrawSplash(void)
+{
+	MeshSystem* pMeshSys = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
+	Mesh* mesh = pMeshSys->GetMesh("Quad");
+	Shader* shader = shaderlist.begin()->second;
+	Texture2D* texture = new Texture2D{ "Resource/Editor/EditorStartup.png" };
+
+
+	int w, h;
+	EngineCore::GetInstance()->GetSystem<WindowManager>()->GetSplashDimensions(w, h);
+
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+	shader->UseShader();
+	shader->UploadUniform("ProjectViewMat", Math::Scale(1, 1));
+	shader->UploadUniform("ModelMat", Math::Scale(1, 1));
+
+	texture->BindTexture();
+	mesh->UseMesh(GL_TRIANGLES);
+	texture->UnbindTexture();
+
+	SwapBuffers(
+		EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetDeviceContext()
+	);
+
+	delete texture;
 }
 
 bool Dystopia::GraphicsSystem::Init(void)
@@ -143,8 +174,18 @@ void Dystopia::GraphicsSystem::Update(float)
 					{
 						if (Shader* s = r->GetShader())
 						{
-							s->UseShader();
-							r->Draw();
+							if (Texture2D* t = static_cast<Texture2D*>(r->GetTexture()))
+							{
+								s->UseShader();
+
+								t->BindTexture();
+								s->UploadUniform("ProjectViewMat", Cam.GetViewMatrix());
+								s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+
+								r->Draw();
+
+								t->UnbindTexture();
+							}
 						}
 					}
 				}
@@ -177,6 +218,14 @@ void Dystopia::GraphicsSystem::Shutdown(void)
 {
 	auto pCore = EngineCore::GetInstance();
 
+	for (auto& e : shaderlist)
+		delete e.second;
+	shaderlist.clear();
+
+	for (auto& e : texturelist)
+		delete static_cast<Texture2D*>(e.second);
+	texturelist.clear();
+
 	// We are responsible for this
 	pCore->GetSubSystem<MeshSystem>()->FreeMeshes();
 }
@@ -206,12 +255,10 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 	sys->EndMesh();
 }
 
-Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string&)
+Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _strName)
 {
-
-
-
-	return nullptr;
+	size_t first = _strName.rfind("/");
+	return texturelist[_strName.substr(first, _strName.find_first_of('.', first))] = new Texture2D{ _strName };
 }
 
 Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _filePath)
@@ -224,15 +271,15 @@ Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _fileP
 	file >> strVert;
 	file >> strFrag;
 
+	shaderlist[strName] = new Shader{};
 	if (file.EndOfInput())
 	{
-		// TODO
+		shaderlist[strName]->CreateShader(strVert, strFrag);
 	}
 	else
 	{
 		file >> strGeo;
-
-		// TODO
+		shaderlist[strName]->CreateShader(strVert, strFrag, strGeo);
 	}
 
 	return nullptr;
