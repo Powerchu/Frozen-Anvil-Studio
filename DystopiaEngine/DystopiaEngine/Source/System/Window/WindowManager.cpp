@@ -87,7 +87,7 @@ namespace Dystopia
 
 			freopen_s(&file, "CONOUT$", "wt", stdout);
 			freopen_s(&file, "CONOUT$", "wt", stderr);
-			//			freopen_s(&file, "CONOUT$", "wt", stdin);
+//			freopen_s(&file, "CONOUT$", "wt", stdin);
 
 			SetConsoleTitle(ENGINE_NAME);
 		}
@@ -159,7 +159,7 @@ namespace Dystopia
 #endif
 
 		mWindows.EmplaceBack(window);
-		mWindows[0].ShowCursor(EDITOR);
+//		mWindows[0].ShowCursor(EDITOR);
 
 		ShowWindow(window, SW_SHOW);
 //		UpdateWindow(window);
@@ -167,6 +167,13 @@ namespace Dystopia
 
 	bool WindowManager::Init(void)
 	{
+#if EDITOR
+
+		std::fprintf(stdout, "Window System: Screen Resolution %dx%d, Main window size %dx%d\n", 
+			GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), mWidth, mHeight);
+
+#endif
+
 		return true;
 	}
 

@@ -348,8 +348,8 @@ inline bool MagicArray<T, PP>::IsEmpty(void) const noexcept
 	{
 		if (blk.mpArray)
 		{
-			for (auto e : present)
-				if (~e & Range)
+			for (auto e : blk.present)
+				if (~e & blk.Range)
 					return false;
 		}
 		else

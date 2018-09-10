@@ -33,6 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Scene\SceneSystem.h"
 #include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
+#include "System\Profiler\Profiler.h"
 #include "IO\BinarySerializer.h"
 #include "Utility\GUID.h"
 
@@ -73,6 +74,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	
 		editor->UpdateFrame(dt);
 		
+		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::Profiler>()->Update(dt);
+
 		editor->EndFrame();
 	}
 	editor->Shutdown();

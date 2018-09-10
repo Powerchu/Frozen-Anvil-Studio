@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class Mesh;
+	class Shader;
 
 	class Renderer : public Component
 	{
@@ -48,6 +49,13 @@ namespace Dystopia
 		void SetMesh(Mesh*) noexcept;
 		void SetMesh(const std::string&) noexcept;
 
+		void SetShader(Shader*) noexcept;
+		void SetShader(const std::string&) noexcept;
+		Shader* GetShader(void) const noexcept;
+
+		bool HasTransparency(void) const noexcept;
+
+
 		Renderer* Duplicate(void) const;
 
 		void Serialise(TextSerialiser&) const;
@@ -58,6 +66,7 @@ namespace Dystopia
 		unsigned mnUnique;
 
 		Mesh* mpMesh;
+		Shader* mpShader;
 
 		Renderer(const Renderer&) = delete;
 	};

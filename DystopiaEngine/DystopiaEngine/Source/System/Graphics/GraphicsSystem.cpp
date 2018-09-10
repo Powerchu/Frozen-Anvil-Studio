@@ -19,18 +19,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\GraphicsSystem.h"	// File header
 #include "System\Graphics\GraphicsDefs.h"	// eGraphicSettings
 #include "System\Graphics\MeshSystem.h"
-#include "Component\Renderer.h"
+#include "System\Graphics\Shader.h"
 #include "System\Window\WindowManager.h"	// Window Manager
 #include "System\Window\Window.h"			// Window
-#include "System\Driver\Driver.h"			// EngineCore
 #include "System\Scene\SceneSystem.h"
 #include "System\Scene\Scene.h"
 #include "System\Camera\CameraSystem.h"     // Camera System
-#include "Component\Camera.h"				// Camera
-#include "Component\Transform.h"
+#include "System\Driver\Driver.h"			// EngineCore
+#include "System\Time\ScopedTimer.h"
+
+#include "IO\TextSerialiser.h"
+#include "IO\ImageParser.h"
 
 #include "Object\GameObject.h"              // GameObject
 #include "Object\ObjectFlags.h"
+#include "Component\Transform.h"
+#include "Component\Renderer.h"
+#include "Component\Camera.h"				// Camera
 
 #include "Utility\DebugAssert.h"			// DEBUG_ASSERT
 
@@ -68,13 +73,27 @@ Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 
 Dystopia::GraphicsSystem::~GraphicsSystem(void)
 {
-
+	delete EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
 }
 
 
 void Dystopia::GraphicsSystem::PreInit(void)
 {
 	InitOpenGL(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow());
+
+	LoadShader("Resource/Shader/DefaultShaderList.txt");
+	auto file = Serialiser::OpenFile<TextSerialiser>("Resource/Meshes/DefaultMeshList.txt", Serialiser::MODE_READ);
+	MeshSystem* pMeshSys = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
+
+	std::string MeshPath;
+
+	pMeshSys->StartMesh();
+	while (!file.EndOfInput())
+	{
+		file >> MeshPath;
+		pMeshSys->LoadMesh(MeshPath);
+	}
+	pMeshSys->EndMesh();
 }
 
 bool Dystopia::GraphicsSystem::Init(void)
@@ -120,7 +139,11 @@ void Dystopia::GraphicsSystem::Update(float)
 				{
 					if (Renderer* r = Obj.GetComponent<Renderer>())
 					{
-						r->Draw();
+						if (Shader* s = r->GetShader())
+						{
+							s->UseShader();
+							r->Draw();
+						}
 					}
 				}
 			}
@@ -134,7 +157,7 @@ void Dystopia::GraphicsSystem::Update(float)
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
-#if !defined(EDITOR)
+#if !EDITOR
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 #else
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -143,14 +166,17 @@ void Dystopia::GraphicsSystem::StartFrame(void)
 
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
-#if !defined(EDITOR)
+#if !EDITOR
 	SwapBuffers(mCurrent->GetDeviceContext());
 #endif
 }
 
 void Dystopia::GraphicsSystem::Shutdown(void)
 {
+	auto pCore = EngineCore::GetInstance();
 
+	// We are responsible for this
+	pCore->GetSubSystem<MeshSystem>()->FreeMeshes();
 }
 
 void Dystopia::GraphicsSystem::LoadDefaults(void)
@@ -160,13 +186,13 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 
 void Dystopia::GraphicsSystem::LoadSettings(TextSerialiser&)
 {
-
+	// TODO
 }
 
 
 void Dystopia::GraphicsSystem::LevelLoad(TextSerialiser&)
 {
-
+	// TODO
 }
 
 void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
@@ -180,14 +206,32 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string&)
 {
+
+
+
 	return nullptr;
 }
 
 Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _filePath)
 {
+	auto file = Serialiser::OpenFile<TextSerialiser>(_filePath, Serialiser::MODE_READ);
 	std::string strName, strVert, strGeo, strFrag;
 
-	_filePath; strName; strVert; strGeo; strFrag;
+	file.ConsumeStartBlock();
+	file >> strName;
+	file >> strVert;
+	file >> strFrag;
+
+	if (file.EndOfInput())
+	{
+		// TODO
+	}
+	else
+	{
+		file >> strGeo;
+
+		// TODO
+	}
 
 	return nullptr;
 }
@@ -265,6 +309,8 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	// Make our newly created context the active context
 	wglMakeCurrent(_window.GetDeviceContext(), static_cast<HGLRC>(mOpenGL));
 
+#if EDITOR
+
 	// Gets for the openGL version
 	int mOpenGLMajor, mOpenGLMinor;
 	glGetIntegerv(GL_MAJOR_VERSION, &mOpenGLMajor);
@@ -272,8 +318,11 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	// TEMPORARY print to see what OpenGL version we got
 	// REPLACEMENT : LOGGER OUTPUT
-	std::fprintf(stdout, "Graphics System: Using OpenGL Version %d.%d!\n", mOpenGLMajor, mOpenGLMinor);
-	std::fprintf(stdout, "Graphics System: Using %s, %s!\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+	std::fprintf(stdout, "Graphics System: %s, %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+	std::fprintf(stdout, "Graphics System: Using OpenGL Version %d.%d\n", mOpenGLMajor, mOpenGLMinor);
+	std::fprintf(stdout, "Graphics System: %d bit colour, %d bits depth, %d bit stencil\n", pfd.cColorBits, pfd.cDepthBits, pfd.cStencilBits);
+
+#endif
 
 	// Return true to indicate success
 	return true;

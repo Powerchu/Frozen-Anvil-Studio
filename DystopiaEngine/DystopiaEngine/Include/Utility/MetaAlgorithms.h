@@ -161,6 +161,26 @@ namespace Utility
 
 	template <typename ... Ty>
 	using MetaAutoIndexer_t = typename MetaAutoIndexer<Ty...>::result;
+
+
+	// ================================================= MAX ================================================== //
+
+
+	template <typename T, T _val, T ... R>
+	struct MetaMax
+	{
+	private:
+		static constexpr T rest = MetaMax<T, R...>::value;
+
+	public:
+		static constexpr T value = _val > rest ? _val : rest;
+	};
+
+	template <typename T, T _val>
+	struct MetaMax<T, _val>
+	{
+		static constexpr T value = _val;
+	};
 }
 
 
