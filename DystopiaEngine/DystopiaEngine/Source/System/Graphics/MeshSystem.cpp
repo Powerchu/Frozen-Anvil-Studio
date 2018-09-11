@@ -19,7 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\MathUtility.h"
 
 #include <GL\glew.h>
-#include <iostream>
 
 
 void Dystopia::MeshSystem::Init(void)
@@ -69,9 +68,6 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 		input >> vtxBuf;
 		input >> normBuf;
 		input >> uvBuf;
-
-		std::cout << "Vert: " << vtxBuf.x << ", " << vtxBuf.y << ", " << vtxBuf.z << '\n';
-		std::cout << "UV: " << uvBuf.u << ", " << uvBuf.v << '\n';
 
 		mVtx.EmplaceBack(vtxBuf);
 		mVtx.EmplaceBack(normBuf);

@@ -145,11 +145,11 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	mesh->UseMesh(GL_TRIANGLES);
 	texture->UnbindTexture();
 
+	pWinSys->GetMainWindow().Show();
+
 	SwapBuffers(
 		pWinSys->GetMainWindow().GetDeviceContext()
 	);
-
-	pWinSys->GetMainWindow().Show();
 
 	delete texture;
 }
