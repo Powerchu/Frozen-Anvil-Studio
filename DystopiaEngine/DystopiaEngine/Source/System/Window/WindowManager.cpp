@@ -161,7 +161,7 @@ namespace Dystopia
 		mWindows.EmplaceBack(window);
 //		mWindows[0].ShowCursor(EDITOR);
 
-		ShowWindow(window, SW_SHOW);
+//		ShowWindow(window, SW_SHOW);
 //		UpdateWindow(window);
 	}
 

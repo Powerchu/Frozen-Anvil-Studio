@@ -13,7 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System\Graphics\Shader.h"		// File Header
 
-#include "Math\Vector4.h"
+#include "Math\MathLib.h"
 
 #include <GL\glew.h>
 #include <GL\GL.h>
@@ -184,6 +184,8 @@ void Dystopia::Shader::UploadUniform(const std::string& _strName, const Math::Ma
 
 void Dystopia::Shader::UploadUniform(const std::string& _strName, const Math::Matrix4& _m)
 {
+	Math::Matrix4 m = Math::Transpose(_m);
+
 	glUniformMatrix4fv(
 		GetUniformLocation(_strName), 1, GL_FALSE, reinterpret_cast<float const*>(&_m)
 	);

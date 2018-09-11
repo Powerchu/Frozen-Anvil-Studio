@@ -68,7 +68,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }
+	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f }
 {
 
 }
@@ -79,9 +79,22 @@ Dystopia::GraphicsSystem::~GraphicsSystem(void)
 }
 
 
+void Dystopia::GraphicsSystem::SetGamma(float _fGamma) noexcept
+{
+	mfGamma = _fGamma;
+}
+
+float Dystopia::GraphicsSystem::GetGamma(void) noexcept
+{
+	return mfGamma;
+}
+
+
 void Dystopia::GraphicsSystem::PreInit(void)
 {
-	InitOpenGL(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow());
+	Window& window = EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow();
+	InitOpenGL(window);
+	BindOpenGL(window);
 
 	LoadShader("Resource/Shader/DefaultShaderList.txt");
 	auto file = Serialiser::OpenFile<TextSerialiser>("Resource/Meshes/DefaultMeshList.txt", Serialiser::MODE_READ);
@@ -89,6 +102,7 @@ void Dystopia::GraphicsSystem::PreInit(void)
 
 	std::string MeshPath;
 
+	pMeshSys->Init();
 	pMeshSys->StartMesh();
 	while (!file.EndOfInput())
 	{
@@ -102,30 +116,40 @@ void Dystopia::GraphicsSystem::PreInit(void)
 
 void Dystopia::GraphicsSystem::DrawSplash(void)
 {
-	MeshSystem* pMeshSys = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
-	Mesh* mesh = pMeshSys->GetMesh("Quad");
-	Shader* shader = shaderlist.begin()->second;
-	Texture2D* texture = new Texture2D{ "Resource/Editor/EditorStartup.png", false };
+	WindowManager* pWinSys = EngineCore::GetInstance()->GetSystem<WindowManager>();
+	MeshSystem* pMeshSys   = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
 
+	Mesh*   mesh = pMeshSys->GetMesh("Quad");
+	Shader* shader = shaderlist.begin()->second;
+	Texture2D* texture = new Texture2D{ "Resource/Editor/EditorStartup.png" };
 
 	int w, h;
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->GetSplashDimensions(w, h);
 
-	glClearColor(1.f, .3f, .7f, .0f);
+	Math::Matrix4 View = Math::Translate(.0f, .0f, .0f), Project{
+			2.f / w, .0f, .0f, .0f,
+			.0f, 2.f / h, .0f, .0f,
+			.0f, .0f, 2.f / 100.f, .0f,
+			.0f, .0f, .0f, 1.f
+	};
+
+	glClearColor(1.f, .3f, .7f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	glViewport(0, 0, w, h);
 
 	shader->UseShader();
 	texture->BindTexture();
-	shader->UploadUniform("ProjectViewMat", Math::Translate(0, 0, 0.5f) * Math::Scale(1, 1));
+	shader->UploadUniform("ProjectViewMat", Project * View);
 	shader->UploadUniform("ModelMat", Math::Scale(w * 1.f, h * 1.f));
+	shader->UploadUniform("Gamma", mfGamma);
 
 	mesh->UseMesh(GL_TRIANGLES);
 	texture->UnbindTexture();
 
 	SwapBuffers(
-		EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetDeviceContext()
+		pWinSys->GetMainWindow().GetDeviceContext()
 	);
+
+	pWinSys->GetMainWindow().Show();
 
 	delete texture;
 }
@@ -186,6 +210,7 @@ void Dystopia::GraphicsSystem::Update(float)
 								t->BindTexture();
 								s->UploadUniform("ProjectViewMat", Cam.GetViewMatrix());
 								s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+								s->UploadUniform("Gamma", mfGamma);
 
 								r->Draw();
 
@@ -233,6 +258,11 @@ void Dystopia::GraphicsSystem::Shutdown(void)
 
 	// We are responsible for this
 	pCore->GetSubSystem<MeshSystem>()->FreeMeshes();
+}
+
+Dystopia::Renderer* Dystopia::GraphicsSystem::RequestComponent(void)
+{
+	return mRenderers.Emplace();;
 }
 
 void Dystopia::GraphicsSystem::LoadDefaults(void)

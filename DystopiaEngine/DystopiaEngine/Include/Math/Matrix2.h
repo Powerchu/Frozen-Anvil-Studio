@@ -115,7 +115,7 @@ inline Math::Matrix2& _CALL Math::Matrix2::Inverse(void)
 	return *this;
 }
 
-inline Math::Matrix2& _CALL Math::Matrix2::Transpose(void)
+inline Math::Matrix2& _CALL Math::Matrix2::Transpose(void) noexcept
 {
 	mData = mData.xzyw;
 

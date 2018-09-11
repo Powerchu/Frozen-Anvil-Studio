@@ -26,17 +26,13 @@ void Dystopia::MeshSystem::Init(void)
 {
 	Mesh::LinkSystem(this);
 //	mpMeshes.reserve(10);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 }
 
 void Dystopia::MeshSystem::Shutdown(void) noexcept
 {
-	glDisableVertexAttribArray(2);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(0);
+	//glDisableVertexAttribArray(2);
+	//glDisableVertexAttribArray(1);
+	//glDisableVertexAttribArray(0);
 
 	FreeMeshes();
 }
@@ -44,6 +40,10 @@ void Dystopia::MeshSystem::Shutdown(void) noexcept
 void Dystopia::MeshSystem::StartMesh(void)
 {
 	mpRawMeshes.EmplaceBack();
+	if (auto err = glGetError())
+	{
+		__debugbreak();
+	}
 }
 
 void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
@@ -69,6 +69,9 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 		input >> vtxBuf;
 		input >> normBuf;
 		input >> uvBuf;
+
+		std::cout << "Vert: " << vtxBuf.x << ", " << vtxBuf.y << ", " << vtxBuf.z << '\n';
+		std::cout << "UV: " << uvBuf.u << ", " << uvBuf.v << '\n';
 
 		mVtx.EmplaceBack(vtxBuf);
 		mVtx.EmplaceBack(normBuf);
