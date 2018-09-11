@@ -47,8 +47,8 @@ void Dystopia::RawMesh::BuildMesh(AutoArray<Vertex>& _pVtx, AutoArray<UV>& _pUVs
 
 	glBindBuffer(GL_ARRAY_BUFFER, mVtxBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _pVtx.size(), &_pVtx[0], GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);						                    // Vertices
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(sizeof(Vertex)));	// Normals
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex) * 2, 0);						                    // Vertices
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex) * 2, static_cast<char*>(0) + sizeof(Vertex));	// Normals
 
 	glBindBuffer(GL_ARRAY_BUFFER, mUVBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(UV) * _pUVs.size(), &_pUVs[0], GL_STATIC_DRAW);

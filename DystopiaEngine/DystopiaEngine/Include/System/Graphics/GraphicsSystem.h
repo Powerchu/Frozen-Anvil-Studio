@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Base\Systems.h"	// System
 
 #include <string>
+#include <map>
 
 
 namespace Dystopia
@@ -66,10 +67,16 @@ namespace Dystopia
 		int mPixelFormat, mAvailable;
 		Window* mCurrent;
 
+		// Temporary
+		std::map<std::string, Shader*> shaderlist;
+		std::map<std::string, Texture*> texturelist;
+
 		static int DRAW_MODE;
 
 		void StartFrame(void);
 		void EndFrame(void);
+
+		void DrawSplash(void);
 
 		bool SelectOpenGLVersion(Window&) noexcept;
 	};

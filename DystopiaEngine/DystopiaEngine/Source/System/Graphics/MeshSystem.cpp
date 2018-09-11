@@ -54,8 +54,8 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 	unsigned short nVtxCount = 0;
 	input.Read(nVtxCount);
 
-	mUVs.reserve(nVtxCount);
-	mVtx.reserve(nVtxCount * 2);
+	mUVs.reserve(nVtxCount * 2);
+	mVtx.reserve(nVtxCount * 6);
 	mIndex.reserve(nVtxCount * 3);
 
 	input.ConsumeStartBlock();
@@ -119,8 +119,12 @@ void Dystopia::MeshSystem::ExportMeshes(void)
 
 }
 
-Dystopia::Mesh* Dystopia::MeshSystem::GetMesh(const std::string &) noexcept
+Dystopia::Mesh* Dystopia::MeshSystem::GetMesh(const std::string& _strName) noexcept
 {
+	for (auto& e : mpMeshes)
+		if (e.GetName() == _strName)
+			return &e;
+
 	return nullptr;
 }
 

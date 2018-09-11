@@ -181,6 +181,22 @@ namespace Utility
 	{
 		static constexpr T value = _val;
 	};
+
+
+	// ============================================= ConvertType ============================================== //
+
+
+	// TODO: SFINAE Friendly?
+	template <typename T, typename ... Ty>
+	struct ConvertType
+	{
+	private:
+		// incase declval is not included, use our own
+		static constexpr Utility::Decay_t<T> declval(void);
+
+	public:
+		using result = decltype(Helper::ConversionSelector<Ty...>{}(ConvertType::declval()));
+	};
 }
 
 

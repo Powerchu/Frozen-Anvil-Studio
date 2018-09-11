@@ -27,6 +27,7 @@ namespace Dystopia
 {
 	class Mesh;
 	class Shader;
+	class Texture;
 
 	class Renderer : public Component
 	{
@@ -53,6 +54,9 @@ namespace Dystopia
 		void SetShader(const std::string&) noexcept;
 		Shader* GetShader(void) const noexcept;
 
+		void SetTexture(Texture*) noexcept;
+		Texture* GetTexture(void) const noexcept;
+
 		bool HasTransparency(void) const noexcept;
 
 
@@ -67,6 +71,7 @@ namespace Dystopia
 
 		Mesh* mpMesh;
 		Shader* mpShader;
+		Texture* mpTexture;
 
 		Renderer(const Renderer&) = delete;
 	};

@@ -253,6 +253,12 @@ namespace Dystopia
 		return const_cast<Window&>(mWindows[0]);
 	}
 
+	void WindowManager::GetSplashDimensions(int & w, int & h)
+	{
+		w = LOGO_WIDTH;
+		h = LOGO_HEIGHT;
+	}
+
 	void WindowManager::DestroySplash(void)
 	{
 		mWindows[0].Hide();

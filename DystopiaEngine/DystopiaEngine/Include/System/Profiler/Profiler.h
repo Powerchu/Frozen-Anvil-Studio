@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _PROFILER_SYS_H_
 
 #include "System\Base\Systems.h"
+#include "System\Profiler\ProfileInfo.h"
 #include "DataStructure\AutoArray.h"
 
 // Temporary std lib for fast prototyping
@@ -24,11 +25,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	struct ProfileInfo
-	{
-		std::map<std::string, size_t> mTimes;
-	};
-
 	class Profiler : public Systems
 	{
 	public:
@@ -36,9 +32,12 @@ namespace Dystopia
 
 		bool Init(void) override;
 		void Update(float) override;
+		void PostUpdate(void) override;
 		void Shutdown(void) override;
 
 		std::map<std::string, ProfileInfo>& GetInfo(void);
+
+		bool Is64bitMachine(void) const;
 
 		float GetCPUPercentageIdle(void) const;
 		float GetCPUPercentageBusy(void) const;

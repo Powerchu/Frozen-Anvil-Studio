@@ -16,7 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System\Profiler\Profiler.h"
-#include "System\Time\\TimeDefs.h"
+#include "System\Profiler\ProfileInfo.h"
+#include "System\Time\TimeDefs.h"
 #include "System\Time\Timer.h"
 
 #define WIN32_LEAN_AND_MEAN
@@ -38,6 +39,14 @@ namespace
 		// Use shifts instead of reinterpret cast
 		return (static_cast<uint64_t>(_t.dwHighDateTime) << 32) | _t.dwLowDateTime;
 	}
+}
+
+void Dystopia::ProfileInfo::Clear(void) noexcept
+{
+	for (auto& e : mTimes)
+		e.second = 0;
+
+	mTotal = 0;
 }
 
 Dystopia::Profiler::Profiler(void) :
@@ -73,8 +82,34 @@ void Dystopia::Profiler::Update(float)
 #endif
 }
 
+void Dystopia::Profiler::PostUpdate(void)
+{
+	for (auto& e : mData)
+		e.second.Clear();
+}
+
 void Dystopia::Profiler::Shutdown(void)
 {
+}
+
+
+bool Dystopia::Profiler::Is64bitMachine(void) const
+{
+#if defined(_WIN64)
+	return true;
+#else
+	using IsWow64FuncPtr = int (WINAPI *) (HANDLE, PBOOL);
+
+	int result;
+	auto addr = reinterpret_cast<IsWow64FuncPtr>(GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process"));
+
+	if (addr && addr(GetCurrentProcess(), &result))
+	{
+		return result != 0;
+	}
+
+	return false;
+#endif
 }
 
 
