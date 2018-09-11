@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\Editor\PLogInfo.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
     <ClCompile Include="Source\Editor\ConsoleDebugger.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp" />
@@ -40,7 +41,6 @@
     <ClCompile Include="Source\Component\Colliders\Collider.cpp" />
     <ClCompile Include="Source\Component\Colliders\Convex.cpp" />
     <ClCompile Include="Source\Component\RigidBody.cpp" />
-    <ClCompile Include="Source\Editor\CallbackManager.cpp" />
     <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
     <ClCompile Include="Source\Editor\EditorEvents.cpp" />
     <ClCompile Include="Source\Editor\EditorInputs.cpp" />
@@ -97,7 +97,8 @@
     <ClInclude Include="Include\DataStructure\Tuple.h" />
     <ClInclude Include="Include\DataStructure\Variant.h" />
     <ClInclude Include="Include\Editor\ConsoleDebugger.h" />
-    <ClInclude Include="Include\Editor\PerformanceLogger.h" />
+    <ClInclude Include="Include\Editor\PLogger.h" />
+    <ClInclude Include="Include\Editor\PLogInfo.h" />
     <ClInclude Include="Include\Math\MathLib.h" />
     <ClInclude Include="Include\Editor\EditorEvents.h" />
     <ClInclude Include="Include\Editor\EditorInputs.h" />

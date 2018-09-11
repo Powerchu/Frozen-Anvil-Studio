@@ -179,6 +179,9 @@
     <ClCompile Include="Source\Editor\ConsoleDebugger.cpp">
       <Filter>Editor\Editor Tabs\Console</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\PLogInfo.cpp">
+      <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -473,7 +476,10 @@
     <ClInclude Include="Include\Editor\ConsoleDebugger.h">
       <Filter>Editor\Editor Tabs\Console</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\PerformanceLogger.h">
+    <ClInclude Include="Include\Editor\PLogInfo.h">
+      <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\PLogger.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
   </ItemGroup>

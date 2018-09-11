@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	PerformanceLog.cpp
+\file	PerformanceLog.h
 \author Digipen (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -15,52 +15,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _PERFORMANCE_LOG_H_
 #define _PERFORMANCE_LOG_H_
 #include "Editor/EditorTab.h"
-#include "DataStructure/AutoArray.h"
-#include "DataStructure/Array.h"
+#include "Editor/PLogInfo.h"
 
 namespace Dystopia
 {
-	struct PLogData
-	{
-		static constexpr int maxLogs = 60;
-		PLogData() {}
-		PLogData(const std::string&, bool);
-		PLogData(const PLogData&);
-		PLogData(PLogData&&);
-		PLogData& operator=(const PLogData&);
-		PLogData& operator=(PLogData&&);
-
-		void					UpdateLog(float _val, float _min, float _max);
-
-		Array<float, maxLogs>	mArrValues;
-		std::string				mLabel;
-		int						mCurrentIndex;
-		bool					mIsBigGraph;
-		float					mMin;
-		float					mMax;
-	};
-
-	struct PLogItem
-	{
-		PLogItem() {}
-		PLogItem(const std::string&);
-		PLogItem(const PLogItem&);
-		PLogItem(PLogItem&&);
-		PLogItem& operator=(const PLogItem&);
-		PLogItem& operator=(PLogItem&&);
-		~PLogItem();
-
-		void					UpdateG(float _val, float _min, float _max, bool);
-		void					UpdateLog(const std::string&, float _val, float _min, float _max, bool);
-		void					InsertLog(const PLogData&);
-		void					SortLogs();
-
-		bool					mShowGeneric;
-		PLogData				mGenericOverview;
-		AutoArray<PLogData>		mData;
-		std::string				mLabel;
-	};
-
 	class PerformanceLog : public EditorTab
 	{
 	public:
@@ -82,16 +40,19 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const override;
 
-		void LogData(const std::string& _category, const std::string& _graphLabel, const float& _val, float _min, float _max, bool _bigGraph = false);
-		void LogData(const std::string& _catMainGraph, const float& _val, float _min, float _max, bool _bigGraph = false);
+		void LogData(const std::string& _category, const std::string& _graphLabel, float _val, float _min, float _max, bool _bigGraph = false);
+		void LogData(const std::string& _catMainGraph, float _val, float _min, float _max, bool _bigGraph = false);
 
 	private:
 		PerformanceLog();
 
 		void					SortLogs();
+		void					ShowLog(const PLogData&, Math::Vec2);
+
 		AutoArray<PLogItem>		mArrLoggedData;
 		std::string				mLabel;
-		Math::Vec2				mGraphSize;
+		Math::Vec2				mGraphSizeB;
+		Math::Vec2				mGraphSizeS;
 		float					mGraphBigY;
 		float					mGraphSmallY;
 	};

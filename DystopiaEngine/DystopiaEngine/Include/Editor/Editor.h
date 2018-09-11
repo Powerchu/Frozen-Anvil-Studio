@@ -30,6 +30,7 @@ namespace Dystopia
 	class EditorEventHandler;
 	class SceneSystem;
 	class Timer;
+	class Profiler;
 	//class Scene;
 
 	enum eEditorState
@@ -77,6 +78,7 @@ namespace Dystopia
 		WindowManager			*mpWin;
 		GraphicsSystem			*mpGfx;
 		SceneSystem				*mpSceneSystem;
+		Profiler				*mpProfiler;
 
 		EditorEventHandler		*mpEditorEventSys;
 		EditorInput				*mpInput;
@@ -84,7 +86,7 @@ namespace Dystopia
 		GuiSystem				*mpGuiSystem;
 		Timer					*mpTimer;
 
-		AutoArray<EditorTab*>	mTabsArray;
+		AutoArray<EditorTab*>	mArrTabs;
 		eEditorState			mCurrentState;
 		eEditorState			mNextState;
 		float					mDeltaTime;
@@ -115,6 +117,9 @@ namespace Dystopia
 		void			UpdateHotkeys();
 		void			InstallHotkeys();
 		void			UnInstallHotkeys();
+
+		/* Misc functions */
+		void			LogTabPerformance();
 	};
 }
 

@@ -33,6 +33,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Scene\SceneSystem.h"
 #include "System\Driver\Driver.h"
 #include "System\Profiler\Profiler.h"
+#include "System\Profiler\ProfilerAction.h"
+#include "System\Time\ScopedTimer.h"
 #include "IO\BinarySerializer.h"
 #include "Utility\GUID.h"
 
@@ -47,7 +49,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ProjectResource.h"
 #include "Editor\SceneView.h"
 #include "Editor\ConsoleLog.h"
+#include "Editor\ConsoleDebugger.h"
 #include "Editor\PerformanceLog.h"
+#include "Editor\PLogger.h"
 
 /* library includes */
 #include <iostream>
@@ -94,6 +98,7 @@ namespace Dystopia
 		mpWin{ nullptr }, 
 		mpGfx{ nullptr },
 		mpSceneSystem{ nullptr },
+		mpProfiler{ nullptr },
 		mpInput{ new EditorInput{} },
 		mpEditorEventSys{ new EditorEventHandler{} },
 		mpComdHandler{ new CommandHandler{} },
@@ -115,13 +120,14 @@ namespace Dystopia
 		mpWin			= mpDriver->GetSystem<WindowManager>();		// driver init-ed
 		mpGfx			= mpDriver->GetSystem<GraphicsSystem>();	// driver init-ed
 		mpSceneSystem	= mpDriver->GetSystem<SceneSystem>();		// driver init-ed
+		mpProfiler		= mpDriver->GetSystem<Profiler>();			// driver init-ed
 
 		LoadDefaults();
 		mpInput->Init();
 		mpEditorEventSys->Init();
 		EGUI::SetContext(mpComdHandler);
 
-		for (auto& e : mTabsArray)
+		for (auto& e : mArrTabs)
 		{
 			e->SetComdContext(mpComdHandler);
 			e->SetEventContext(mpEditorEventSys);
@@ -138,12 +144,12 @@ namespace Dystopia
 
 	void Editor::LoadDefaults()
 	{
-		mTabsArray.push_back(Inspector::GetInstance());
-		mTabsArray.push_back(ProjectResource::GetInstance());
-		mTabsArray.push_back(HierarchyView::GetInstance());
-		mTabsArray.push_back(SceneView::GetInstance());
-		mTabsArray.push_back(ConsoleLog::GetInstance());
-		mTabsArray.push_back(PerformanceLog::GetInstance());
+		mArrTabs.push_back(Inspector::GetInstance());
+		mArrTabs.push_back(ProjectResource::GetInstance());
+		mArrTabs.push_back(HierarchyView::GetInstance());
+		mArrTabs.push_back(SceneView::GetInstance());
+		mArrTabs.push_back(ConsoleLog::GetInstance());
+		mArrTabs.push_back(PerformanceLog::GetInstance());
 	}
 
 	void Editor::StartFrame()
@@ -152,9 +158,7 @@ namespace Dystopia
 		mDeltaTime = mpTimer->Elapsed();
 		mpTimer->Lap();
 
-		Profiler& profiler = *mpDriver->GetSystem<Dystopia::Profiler>();
-		profiler.Update(mDeltaTime);
-
+		mpProfiler->Update(mDeltaTime);
 		mpWin->Update(mDeltaTime);
 		mpInput->Update(mDeltaTime);
 		mpGuiSystem->StartFrame(mDeltaTime);
@@ -168,8 +172,8 @@ namespace Dystopia
 
 	void Editor::UpdateFrame(const float& _dt)
 	{
-		mpGfx->Update(mDeltaTime); 
-		for (unsigned int i = 0; i < mTabsArray.size(); ++i)
+		//mpGfx->Update(mDeltaTime); 
+		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);
 			switch (i)
@@ -185,15 +189,24 @@ namespace Dystopia
 			default: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_NONE);
 			}
 
-			EditorTab *pTab = mTabsArray[i];
-			if (EGUI::StartTab(pTab->GetLabel().c_str(), pTab->GetOpenedBool()))
+			EditorTab *pTab = mArrTabs[i];
+			pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()));
+			pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
+			pTab->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
+
 			{
-				pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()));
-				pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
-				pTab->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
+				ScopedTimer<ProfilerAction> scopeT{ pTab->GetLabel(), "Update" };
 				pTab->Update(_dt);
-				pTab->EditorUI();
 			}
+
+			{
+				ScopedTimer<ProfilerAction> scopeT{ pTab->GetLabel(), "Editor UI" };
+				if (EGUI::StartTab(pTab->GetLabel().c_str(), pTab->GetOpenedBool()))
+				{
+					pTab->EditorUI();
+				}
+			}
+
 			EGUI::EndTab();
 			EGUI::PopID();
 		}
@@ -201,6 +214,8 @@ namespace Dystopia
 
 	void Editor::EndFrame()
 	{
+		LogTabPerformance();
+		mpProfiler->PostUpdate();
 		mpGuiSystem->EndFrame();
 
 		if (mCurrentState != mNextState) 
@@ -212,7 +227,7 @@ namespace Dystopia
 		UnInstallHotkeys();
 
 		EGUI::Docking::ShutdownTabs();
-		for (auto& e : mTabsArray)
+		for (auto& e : mArrTabs)
 		{
 			e->Shutdown();
 			delete e;
@@ -229,13 +244,14 @@ namespace Dystopia
 		delete mpGuiSystem;
 		delete mpTimer;
 
-		mpEditorEventSys = nullptr;
-		mpInput = nullptr;
-		mpComdHandler = nullptr;
-		mpGuiSystem = nullptr;
-		mpTimer = nullptr;
-		mpWin = nullptr;
-		mpGfx = nullptr;
+		mpEditorEventSys	= nullptr;
+		mpInput				= nullptr;
+		mpComdHandler		= nullptr;
+		mpGuiSystem			= nullptr;
+		mpTimer				= nullptr;
+		mpWin				= nullptr;
+		mpGfx				= nullptr;
+		mpProfiler			= nullptr;
 
 		mpDriver->Shutdown();
 		EGUI::RemoveContext();
@@ -364,7 +380,7 @@ namespace Dystopia
 		static constexpr float icon = 10.f;
 		if (EGUI::StartMenuHeader("View"))
 		{
-			for (auto& e : mTabsArray)
+			for (auto& e : mArrTabs)
 			{
 				if (*(e->GetOpenedBool())) 
 					EGUI::Display::IconTick(icon, icon);
@@ -513,19 +529,33 @@ namespace Dystopia
 
 	void Editor::SetFocus(GameObject& _rObj)
 	{
-		for (auto& e : mTabsArray)
+		for (auto& e : mArrTabs)
 			e->SetFocus(_rObj);
 	}
 	
 	void Editor::RemoveFocus()
 	{
-		for (auto& e : mTabsArray)
+		for (auto& e : mArrTabs)
 			e->RemoveFocus();
 	}
 
 	GameObject* Editor::FindGameObject(const unsigned long& _id) const
 	{
 		return mpSceneSystem->GetCurrentScene().FindGameObject(_id);
+	}
+
+	void Editor::LogTabPerformance()
+	{
+		auto data = mpProfiler->GetInfo();
+
+		for (const auto& d : data)
+		{
+			auto info = d.second.mTimes;
+			for (const auto& i : info)
+			{
+				Performance::LogDataS(d.first, i.first, static_cast<float>(info[i.first]), 0, 1000);
+			}
+		}
 	}
 }
 

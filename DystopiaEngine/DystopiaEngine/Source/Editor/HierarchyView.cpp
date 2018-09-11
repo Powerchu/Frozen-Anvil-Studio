@@ -80,8 +80,8 @@ namespace Dystopia
 		CreateButton();
 		EGUI::ChangeAlignmentYOffset(0);
 		EGUI::SameLine();
-		SearchBar();
 		EGUI::ChangeAlignmentYOffset();
+		SearchBar();
 
 		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
@@ -94,7 +94,7 @@ namespace Dystopia
 					{
 						if (!(obj.GetID() == i)) 
 							continue;
-
+				
 						GameObjectName(obj);
 						break;
 					}
@@ -176,9 +176,9 @@ namespace Dystopia
 
 	void HierarchyView::GameObjectName(GameObject& _obj)
 	{
-		if (EGUI::Display::SelectableTxt(_obj.GetName() + "##" +
-			std::to_string(_obj.GetID()),
-			mpFocus && (mpFocus->GetID() == _obj.GetID())))
+		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
+		bool highlighted = mpFocus && (mpFocus->GetID() == _obj.GetID());
+		if (EGUI::Display::SelectableTxt(uniqueifyName, highlighted))
 		{
 			GetMainEditor().RemoveFocus();
 			GetMainEditor().SetFocus(_obj);
