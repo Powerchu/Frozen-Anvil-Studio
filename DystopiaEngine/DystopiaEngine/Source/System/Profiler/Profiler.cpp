@@ -95,6 +95,9 @@ void Dystopia::Profiler::Shutdown(void)
 
 bool Dystopia::Profiler::Is64bitMachine(void) const
 {
+#if defined(_WIN64)
+	return true;
+#else
 	using IsWow64FuncPtr = int (WINAPI *) (HANDLE, PBOOL);
 
 	int result;
@@ -106,6 +109,7 @@ bool Dystopia::Profiler::Is64bitMachine(void) const
 	}
 
 	return false;
+#endif
 }
 
 
