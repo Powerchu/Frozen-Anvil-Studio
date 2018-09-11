@@ -15,10 +15,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _DEBUG_ASSERT_H_
 #define _DEBUG_ASSERT_H_
 
+#if !defined(DISABLE_ASSERTS)
+
 #include <cstdio>
 #include <cassert>
-
-#if defined(_DEBUG) | defined(DEBUG)
 
 #define DEBUG_PRINT(...)				\
 do {									\
@@ -33,10 +33,11 @@ do {									\
 		"!ERROR IN %s Line %lu, \n"		\
 		, __FUNCTION__, __LINE__);		\
 		DEBUG_PRINT(__VA_ARGS__);		\
-		assert(x);						\
+		assert(true);					\
 	}									\
 } while (false)
 
+#if defined(DEBUG) | defined(_DEBUG)
 #define DEBUG_BREAK(x, ...)			    \
 do {									\
 	if ((x))							\
@@ -48,6 +49,9 @@ do {									\
 		__debugbreak();					\
 	}									\
 } while (false)
+#else
+#define DEBUG_BREAK(x, ...) DEBUG_ASSERT(x, __VA_ARGS__)
+#endif
 
 #define DEBUG_LOG(x, ...)				\
 do {									\
@@ -67,7 +71,7 @@ do {									\
 #define DEBUG_BREAK(x, ...)		(x)
 #define DEBUG_LOG(x, ...)		(x)
 
-#endif // DEBUG
+#endif // DISABLE_ASSERTS
 
 
 
