@@ -1,4 +1,4 @@
-#include "Behaviour/TestClass.h"
+#include "TestClass.h"
 #include <iostream>
 
 DllExport TestClass * Clone()
@@ -8,5 +8,5 @@ DllExport TestClass * Clone()
 
 void TestClass::Test()
 	{
-		std::cout << "After     hshdshdshdh      Hotloading" << std::endl;
-	}
+		std::cout << "After v16 CHANGE            Hotloading" << std::endl;
+	}  

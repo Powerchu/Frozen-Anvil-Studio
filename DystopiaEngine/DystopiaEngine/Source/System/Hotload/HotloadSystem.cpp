@@ -7,7 +7,7 @@
 #define HOME_WORK 2
 #define SCHOOL_WORK 3
 #define LAPTOP 4
-#define CURRENT_WORK_PLACE LAPTOP
+#define CURRENT_WORK_PLACE HOME_WORK
 namespace Dystopia
 {
 	/*To Do: Change so that the absolute file path is not hard coded*/

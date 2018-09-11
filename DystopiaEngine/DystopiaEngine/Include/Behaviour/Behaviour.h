@@ -11,8 +11,20 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+
+
 #ifndef _BEHAVIOUR_H_
 #define _BEHAVIOUR_H_
+
+#if EDITOR
+#ifdef  BEHAVIOUR_EXPORT
+#define BEHAVIOUR_DllExport   __declspec( dllexport )
+#else 
+#define BEHAVIOUR_DllExport   __declspec( dllimport )
+#endif
+#else
+#define BEHAVIOUR_DllExport
+#endif
 
 #include "Component\ComponentList.h"	// eComponents
 #include "Component\Component.h"		// Component
@@ -21,7 +33,7 @@ namespace Dystopia
 {
 	class CollisionEvent;
 
-	class Behaviour : public Component
+	class BEHAVIOUR_DllExport Behaviour : public Component
 	{
 	public:
 

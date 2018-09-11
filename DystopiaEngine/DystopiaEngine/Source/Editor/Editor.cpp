@@ -69,18 +69,71 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	editor->Init();
 
-	Dystopia::HotloadSystem test;
-	test.Init();
-	TestClassBase * p = nullptr;
-	
+	Dystopia::Hotloader<1> test;
+	test.SetFileDirectoryPath<0>("C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Resource/Behaviours/");
 
+	
+	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour");
+	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Component");
+	//test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/bin/Temp/Debug");
+	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Editor");
+	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/IO");
+	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Math");
+	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Object");
+	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Utility");
+	//test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/System");
+	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/glew-2.1.0/lib/Release/x64");
+
+	//test.SetFileDirectoryPath<1>("C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour/");
+
+
+	test.SetDllFolderPath       ("C:/Users/Owner/AppData/Roaming/Dystopia/DLL/");
+	test.Init();
+	TestClassBase * p                        = nullptr;
+	Dystopia::DLLWrapper * pListOfDLLChanges[100];
+
+	auto const & ArrayDll = test.GetDlls();
+	for (auto const & elem : ArrayDll)
+	{
+		auto func = elem.GetDllFunc<TestClassBase *>("Clone");
+		if (func)
+		{
+			p = func();
+			p->Test();
+			delete p;
+			p = nullptr;
+		}
+
+	}
+	
+	while (true)
+	{
+		test.Update();
+
+		if (test.ChangesInDllFolder(100, pListOfDLLChanges))
+		{
+			Dystopia::DLLWrapper ** start = pListOfDLLChanges;
+			while (*start != nullptr)
+			{
+				auto func = (*start)->GetDllFunc<TestClassBase *>("Clone");
+				if (func)
+				{
+					p = func();
+					p->Test();
+					delete p;
+					p = nullptr;
+				}
+				start++;
+			}
+		}
+	}
+	/*
 	LPCWSTR ct = L"C:/Users/Keith/AppData/Roaming/Dystopia/DLL/TestClass.dll";;
-//	TestClass * c = new TestClass;
+
 	auto dll = LoadLibrary(ct);
 	if (dll)
 	{
 		FARPROC proc = GetProcAddress(dll, "Clone");
-		//auto f = test.GetDllFuncTest(ct, "Clone");
 		using fp = TestClassBase * (*)();
 		fp fpp = (fp)proc;
 		p = fpp();
@@ -104,7 +157,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 		}
 	}
-
+	*/
 	while (!editor->IsClosing())
 	{
 		float dt = timer->Elapsed();
