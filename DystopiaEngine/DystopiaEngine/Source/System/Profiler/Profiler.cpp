@@ -93,6 +93,22 @@ void Dystopia::Profiler::Shutdown(void)
 }
 
 
+bool Dystopia::Profiler::Is64bitMachine(void) const
+{
+	using IsWow64FuncPtr = int (WINAPI *) (HANDLE, PBOOL);
+
+	int result;
+	auto addr = reinterpret_cast<IsWow64FuncPtr>(GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process"));
+
+	if (addr && addr(GetCurrentProcess(), &result))
+	{
+		return result != 0;
+	}
+
+	return false;
+}
+
+
 float Dystopia::Profiler::GetCPUPercentageIdle(void) const
 {
 	return mnProcIdle * mfCPUTime;

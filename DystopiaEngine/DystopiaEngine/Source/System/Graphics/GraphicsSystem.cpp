@@ -105,19 +105,21 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	MeshSystem* pMeshSys = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
 	Mesh* mesh = pMeshSys->GetMesh("Quad");
 	Shader* shader = shaderlist.begin()->second;
-	Texture2D* texture = new Texture2D{ "Resource/Editor/EditorStartup.bmp" };
+	Texture2D* texture = new Texture2D{ "Resource/Editor/EditorStartup.png", false };
 
 
 	int w, h;
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->GetSplashDimensions(w, h);
 
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glClearColor(1.f, .3f, .7f, .0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glViewport(0, 0, w, h);
 
 	shader->UseShader();
-	shader->UploadUniform("ProjectViewMat", Math::Scale(1, 1));
-	shader->UploadUniform("ModelMat", Math::Scale(1, 1));
-
 	texture->BindTexture();
+	shader->UploadUniform("ProjectViewMat", Math::Translate(0, 0, 0.5f) * Math::Scale(1, 1));
+	shader->UploadUniform("ModelMat", Math::Scale(w * 1.f, h * 1.f));
+
 	mesh->UseMesh(GL_TRIANGLES);
 	texture->UnbindTexture();
 
@@ -130,7 +132,10 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 
 bool Dystopia::GraphicsSystem::Init(void)
 {
+	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	return true;
 }
@@ -331,7 +336,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	HGLRC dummyGL = wglCreateContext(_window.GetDeviceContext());
 	wglMakeCurrent(_window.GetDeviceContext(), dummyGL);
 
-	// attempt to init glew no that there is an active GL context
+	// attempt to init glew so that there is an active GL context
 	unsigned err = glewInit();
 
 	if (err != GLEW_OK)

@@ -37,6 +37,8 @@ namespace Dystopia
 
 		std::map<std::string, ProfileInfo>& GetInfo(void);
 
+		bool Is64bitMachine(void) const;
+
 		float GetCPUPercentageIdle(void) const;
 		float GetCPUPercentageBusy(void) const;
 		float GetCPUPercentageOS(void) const;

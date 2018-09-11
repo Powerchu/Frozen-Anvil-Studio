@@ -24,6 +24,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\Image.h"	// Image
 #include "Utility\DebugAssert.h"	// DEBUG_PRINT
 
+#include "..\..\Dependancies\lodepng\lodepng.h"
+
 #include <cmath>		// abs
 #include <string>		// string
 #include <fstream>		// ifstream
@@ -267,9 +269,22 @@ Image ImageParser::LoadBMP(const std::string& _path)
 	return fileData;
 }
 
-Image ImageParser::LoadPNG(const std::string&)
+Image ImageParser::LoadPNG(const std::string& _strName)
 {
-	return Image{};
+	Image fileData;
+	std::vector<unsigned char> buf;
+	lodepng::decode(buf, fileData.mnWidth, fileData.mnHeight, _strName.c_str());
+
+	fileData.mpImageData = new char[buf.size()];
+
+	auto b = buf.begin();
+	auto e = buf.end();
+	unsigned char* data = static_cast<unsigned char*>(fileData.mpImageData);
+
+	while (b != e)
+		*data++ = *b++;
+
+	return fileData;
 }
 
 Image ImageParser::LoadJPG(const std::string&)

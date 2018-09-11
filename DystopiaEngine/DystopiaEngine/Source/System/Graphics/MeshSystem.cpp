@@ -54,8 +54,8 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 	unsigned short nVtxCount = 0;
 	input.Read(nVtxCount);
 
-	mUVs.reserve(nVtxCount);
-	mVtx.reserve(nVtxCount * 2);
+	mUVs.reserve(nVtxCount * 2);
+	mVtx.reserve(nVtxCount * 6);
 	mIndex.reserve(nVtxCount * 3);
 
 	input.ConsumeStartBlock();

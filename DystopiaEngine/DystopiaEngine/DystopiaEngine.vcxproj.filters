@@ -164,6 +164,9 @@
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfileInfo</Filter>
     </ClCompile>
+    <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp">
+      <Filter>IO\TextSerialiser\lodepng</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -440,6 +443,9 @@
     <ClInclude Include="Include\System\Profiler\ProfileInfo.h">
       <Filter>Game Engine\Systems\Profiler\ProfileInfo</Filter>
     </ClInclude>
+    <ClInclude Include="..\Dependancies\lodepng\lodepng.h">
+      <Filter>IO\TextSerialiser\lodepng</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -672,6 +678,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Profiler\ProfileInfo">
       <UniqueIdentifier>{786f882b-e4f0-4e3c-b000-a421b1059b0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\TextSerialiser\lodepng">
+      <UniqueIdentifier>{447b179b-b152-4f92-9cc2-48eb8f301131}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
