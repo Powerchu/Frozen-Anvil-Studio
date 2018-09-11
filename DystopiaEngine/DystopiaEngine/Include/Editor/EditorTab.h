@@ -53,23 +53,28 @@ namespace Dystopia
 		void				SetSize(const float&, const float&);
 		void				SetPosition(const Math::Vec2&);
 		void				SetPosition(const float&, const float&);
+
+		/* Set the special editor systems for all editor tabs to access */
 		void				SetComdContext(CommandHandler * const);
-		void				SetEventSysContext(EditorEventHandler * const);
+		void				SetEventContext(EditorEventHandler * const);
 		void				SetSceneContext(Scene * const);
+
 		Math::Vec2			Size() const;
 		Math::Vec2			Position() const;
 		bool*				GetOpenedBool();
-		
-	private:
-		Math::Vec2			mSize;
-		Math::Vec2			mPos;
-		bool				mIsOpened;
 
 	protected:
-		Editor&				GetMainEditor() const;
+		Editor&				GetMainEditor()		const;
+		CommandHandler*		GetCommandHND()		const;
+		EditorEventHandler*	GetEditorEventHND() const;
+		Scene*				GetCurrentScene()	const;
 
+	private:
+		bool				mIsOpened;
+		Math::Vec2			mSize;
+		Math::Vec2			mPos;
 		CommandHandler		*mpComdHandler;
-		EditorEventHandler	*mpEditorEventSys;
+		EditorEventHandler	*mpEditorEventHandler;
 		Scene				*mpCurrentScene;
 	};
 }

@@ -29,6 +29,7 @@ namespace Dystopia
 	class EditorTab;
 	class EditorEventHandler;
 	class SceneSystem;
+	class Timer;
 	//class Scene;
 
 	enum eEditorState
@@ -51,10 +52,13 @@ namespace Dystopia
 		/* General Looping Funcs */
 		void			Init();
 		void			LoadDefaults();
-		void			StartFrame(const float&);
+		void			StartFrame();
 		void			UpdateFrame(const float&);
 		void			EndFrame();
 		void			Shutdown();
+
+		/* delta time */
+		float			GetDeltaTime() const;
 
 		/* State change stuff */
 		void			ChangeState(eEditorState);
@@ -72,15 +76,18 @@ namespace Dystopia
 		EngineCore				*mpDriver;
 		WindowManager			*mpWin;
 		GraphicsSystem			*mpGfx;
+		SceneSystem				*mpSceneSystem;
+
+		EditorEventHandler		*mpEditorEventSys;
 		EditorInput				*mpInput;
 		CommandHandler			*mpComdHandler;
 		GuiSystem				*mpGuiSystem;
-		EditorEventHandler		*mpEditorEventSys;
-		SceneSystem				*mpSceneSystem;
+		Timer					*mpTimer;
 
 		AutoArray<EditorTab*>	mTabsArray;
 		eEditorState			mCurrentState;
 		eEditorState			mNextState;
+		float					mDeltaTime;
 
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();

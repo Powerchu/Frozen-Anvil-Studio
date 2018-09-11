@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _PERFORMANCE_LOG_H_
 #include "Editor/EditorTab.h"
 #include "DataStructure/AutoArray.h"
-#include "DataStructure\Array.h"
+#include "DataStructure/Array.h"
 
 namespace Dystopia
 {

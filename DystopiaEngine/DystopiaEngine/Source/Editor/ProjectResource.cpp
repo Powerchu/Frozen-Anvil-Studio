@@ -15,7 +15,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ProjectResource.h"
 #include "Editor\EGUI.h"
 #include "Editor\EditorEvents.h"
-#include "Editor\Editor.h"
 #include <algorithm>
 #include <iostream>
 #include <Windows.h>
@@ -119,7 +118,7 @@ namespace Dystopia
 
 	ProjectResource::~ProjectResource()
 	{
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_LCLICK)->Unbind(this);
+		GetEditorEventHND()->GetEvent(eEditorEvents::EDITOR_LCLICK)->Unbind(this);
 		gpInstance = nullptr;
 	}
 
@@ -137,7 +136,7 @@ namespace Dystopia
 		GetAllFiles(mArrAllFiles, mpRootFolder);
 		SortAllFiles(mArrAllFiles);
 
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_LCLICK)->Bind(&ProjectResource::RemoveFocusOnFile, this);
+		GetEditorEventHND()->GetEvent(eEditorEvents::EDITOR_LCLICK)->Bind(&ProjectResource::RemoveFocusOnFile, this);
 
 		std::wstring wPath{ DEFAULT_PATH.begin(), DEFAULT_PATH.end() };
 		mChangeHandle[0] = FindFirstChangeNotification(wPath.c_str(), true, mWaitFlags);

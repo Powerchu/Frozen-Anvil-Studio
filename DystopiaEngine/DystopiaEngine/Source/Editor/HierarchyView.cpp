@@ -85,7 +85,7 @@ namespace Dystopia
 
 		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
-			auto& arrayOfGameObjects = mpCurrentScene->GetAllGameObjects();
+			auto& arrayOfGameObjects = GetCurrentScene()->GetAllGameObjects();
 			for (auto& obj : arrayOfGameObjects)
 			{
 				if (strlen(mSearchText))
@@ -133,7 +133,7 @@ namespace Dystopia
 		if (toBeSearched != std::string{ mSearchTextPrevFrame })
 		{
 			mArrSearchID.clear();
-			for (auto& e : mpCurrentScene->GetAllGameObjects())
+			for (auto& e : GetCurrentScene()->GetAllGameObjects())
 			{
 				std::string item{ e.GetName() };
 				auto it = std::search(item.begin(), item.end(),
@@ -159,14 +159,14 @@ namespace Dystopia
 			if (EGUI::Display::SelectableTxt("New GameObject"))
 			{
 				strcpy_s(mSearchTextPrevFrame, "");
-				GameObject *pObject = mpCurrentScene->InsertGameObject(GUIDGenerator::GetUniqueID());
+				GameObject *pObject = GetCurrentScene()->InsertGameObject(GUIDGenerator::GetUniqueID());
 				pObject->SetName("GameObject");
 			}
 
 			if (EGUI::Display::SelectableTxt("New Camera"))
 			{
 				strcpy_s(mSearchTextPrevFrame, "");
-				GameObject *pObject = mpCurrentScene->InsertGameObject(GUIDGenerator::GetUniqueID());
+				GameObject *pObject = GetCurrentScene()->InsertGameObject(GUIDGenerator::GetUniqueID());
 				pObject->SetName("Camera");
 				pObject->AddComponent(EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent(), typename Camera::TAG{});
 			}

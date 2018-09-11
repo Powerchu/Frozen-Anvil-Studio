@@ -14,11 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor\EGUI.h"
 #include "Editor\Inspector.h"
-#include "Editor\ProjectResource.h"
 #include "Editor\ScriptFormatter.h"
 #include "Editor\Commands.h"
 #include "Editor\EditorEvents.h"
-#include "Editor\Editor.h"
 #include "Utility\ComponentGUID.h"
 #include "Object\GameObject.h"
 #include <iostream>
@@ -129,14 +127,9 @@ namespace Dystopia
 			EGUI::SameLine();
 			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 350.f) && strlen(buffer))
 			{
-				auto f_Old = mpComdHandler->Make_FunctionModWrapper(&GameObject::SetName, mpFocus->GetName());
-				auto f_New = mpComdHandler->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
-				mpComdHandler->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
-
-				//using FMW = FunctionModWrapper<GameObject, const std::string&>;
-				//FMW f1{ &GameObject::SetName, oldName };
-				//FMW f2{ &GameObject::SetName, newName };
-				//mpComdHandler->InvokeCommand(new ComdModifyComponent<FMW, FMW>{ mpFocus->GetID(), f2, f1 });
+				auto f_Old = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, mpFocus->GetName());
+				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
+				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
 			EGUI::Display::DropDownSelection("Tag", i, arr, 100);
 			EGUI::SameLine();

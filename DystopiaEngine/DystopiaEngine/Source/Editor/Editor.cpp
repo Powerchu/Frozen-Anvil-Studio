@@ -31,24 +31,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\Window.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Scene\SceneSystem.h"
-#include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
 #include "System\Profiler\Profiler.h"
 #include "IO\BinarySerializer.h"
 #include "Utility\GUID.h"
 
 /* Editor includes */
-#include "Editor\Editor.h"
 #include "Editor\EGUI.h"
+#include "Editor\Editor.h"
+#include "Editor\EditorInputs.h"
+#include "Editor\EditorEvents.h"
+#include "Editor\Commands.h"
 #include "Editor\Inspector.h"
 #include "Editor\HierarchyView.h"
 #include "Editor\ProjectResource.h"
 #include "Editor\SceneView.h"
 #include "Editor\ConsoleLog.h"
 #include "Editor\PerformanceLog.h"
-#include "Editor\EditorInputs.h"
-#include "Editor\EditorEvents.h"
-#include "Editor\Commands.h"
 
 /* library includes */
 #include <iostream>
@@ -62,29 +61,18 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 #endif
 	hInstance;
 
-	Dystopia::Editor *editor	= Dystopia::Editor::GetInstance();
-	Dystopia::Timer *timer		= new Dystopia::Timer{};
+	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
 	while (!editor->IsClosing())
 	{
-		float dt = timer->Elapsed();
-		timer->Lap();
+		editor->StartFrame();
 	
-		editor->StartFrame(dt);
-	
-		editor->UpdateFrame(dt);
+		editor->UpdateFrame(editor->GetDeltaTime());
 		
-		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::Profiler>()->Update(dt);
-
 		editor->EndFrame();
 	}
 	editor->Shutdown();
-	delete timer;
 	delete editor;
-
-	// Automatically called by _CRTDBG_LEAK_CHECK_DF flag when proccess ends. 
-	// This will ensure static variables are not taken into account
-	//_CrtDumpMemoryLeaks(); 
 	return 0;
 }
 
@@ -109,7 +97,8 @@ namespace Dystopia
 		mpInput{ new EditorInput{} },
 		mpEditorEventSys{ new EditorEventHandler{} },
 		mpComdHandler{ new CommandHandler{} },
-		mpGuiSystem{ new GuiSystem{} }
+		mpGuiSystem{ new GuiSystem{} },
+		mpTimer{ new Timer{} }
 	{}
 
 	Editor::~Editor(void)
@@ -119,6 +108,7 @@ namespace Dystopia
 	void Editor::Init()
 	{
 		mpDriver		= Dystopia::EngineCore::GetInstance();
+
 		mpDriver->LoadSettings();
 		mpDriver->Init();
 
@@ -134,7 +124,7 @@ namespace Dystopia
 		for (auto& e : mTabsArray)
 		{
 			e->SetComdContext(mpComdHandler);
-			e->SetEventSysContext(mpEditorEventSys);
+			e->SetEventContext(mpEditorEventSys);
 			e->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			e->Init();
 			e->RemoveFocus();
@@ -156,11 +146,18 @@ namespace Dystopia
 		mTabsArray.push_back(PerformanceLog::GetInstance());
 	}
 
-	void Editor::StartFrame(const float& _dt)
+	void Editor::StartFrame()
 	{
-		mpWin->Update(_dt);
-		mpInput->Update(_dt);
-		mpGuiSystem->StartFrame(_dt);
+		/* Set delta time of frame */
+		mDeltaTime = mpTimer->Elapsed();
+		mpTimer->Lap();
+
+		Profiler& profiler = *mpDriver->GetSystem<Dystopia::Profiler>();
+		profiler.Update(mDeltaTime);
+
+		mpWin->Update(mDeltaTime);
+		mpInput->Update(mDeltaTime);
+		mpGuiSystem->StartFrame(mDeltaTime);
 
 		UpdateKeys();
 		UpdateHotkeys();
@@ -171,7 +168,7 @@ namespace Dystopia
 
 	void Editor::UpdateFrame(const float& _dt)
 	{
-		//mpGfx->Update(_dt); // causes double frame buffer swap per frame, need determine either editor gfx or driver gfx do
+		mpGfx->Update(mDeltaTime); 
 		for (unsigned int i = 0; i < mTabsArray.size(); ++i)
 		{
 			EGUI::PushID(i);
@@ -200,9 +197,6 @@ namespace Dystopia
 			EGUI::EndTab();
 			EGUI::PopID();
 		}
-
-		// if (mCurrentState == EDITOR_PLAY) call for update of current scene
-		if (mCurrentState == EDITOR_PAUSE) return;
 	}
 
 	void Editor::EndFrame()
@@ -222,31 +216,34 @@ namespace Dystopia
 		{
 			e->Shutdown();
 			delete e;
-			e = nullptr;
 		}
 
 		mpInput->Shutdown();
-		delete mpInput;
-		mpInput = nullptr;
-
 		mpEditorEventSys->Shutdown();
-		delete mpEditorEventSys;
-		mpEditorEventSys = nullptr;
-
 		mpComdHandler->Shutdown();
-		delete mpComdHandler;
-		mpComdHandler = nullptr;
-
 		mpGuiSystem->Shutdown();
+
+		delete mpInput;
+		delete mpEditorEventSys;
+		delete mpComdHandler;
 		delete mpGuiSystem;
+		delete mpTimer;
+
+		mpEditorEventSys = nullptr;
+		mpInput = nullptr;
+		mpComdHandler = nullptr;
 		mpGuiSystem = nullptr;
-
-		mpDriver->Shutdown();
-
+		mpTimer = nullptr;
 		mpWin = nullptr;
 		mpGfx = nullptr;
 
+		mpDriver->Shutdown();
 		EGUI::RemoveContext();
+	}
+
+	float Editor::GetDeltaTime() const
+	{
+		return mDeltaTime;
 	}
 
 	eEditorState Editor::CurrentState() const

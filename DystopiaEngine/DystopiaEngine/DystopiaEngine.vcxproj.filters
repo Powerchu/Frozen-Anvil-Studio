@@ -461,7 +461,9 @@
     <ClInclude Include="Include\Editor\ConsoleDebugger.h">
       <Filter>Editor\Editor Tabs\Console</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\PerformanceLogger.h" />
+    <ClInclude Include="Include\Editor\PerformanceLogger.h">
+      <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
