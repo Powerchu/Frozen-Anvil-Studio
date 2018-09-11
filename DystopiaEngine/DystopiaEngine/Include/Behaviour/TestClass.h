@@ -4,10 +4,12 @@
 
 #define DllExport   __declspec( dllexport )
 
-struct TestClass
+#include "Behaviour/TestClassBase.h"
+
+struct TestClass : TestClassBase
 {
 	void Test();
-	int col = 100;
+	int col = 5;
 };
 
 extern "C"

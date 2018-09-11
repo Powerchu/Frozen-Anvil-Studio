@@ -83,6 +83,7 @@
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\Behaviour\TestClassBase.h" />
     <ClInclude Include="Include\System\Hotload\HotloadSystem.h" />
     <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />

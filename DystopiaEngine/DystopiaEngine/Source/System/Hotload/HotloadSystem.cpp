@@ -1,14 +1,13 @@
 #include "System/Hotload/HotloadSystem.h"
 
-#include <filesystem>
-#include <iostream>
+
 
 
 #define TESTING 1
 #define HOME_WORK 2
 #define SCHOOL_WORK 3
 #define LAPTOP 4
-#define CURRENT_WORK_PLACE HOME_WORK
+#define CURRENT_WORK_PLACE LAPTOP
 namespace Dystopia
 {
 	/*To Do: Change so that the absolute file path is not hard coded*/
@@ -19,8 +18,8 @@ namespace Dystopia
 	LPCSTR HotloadSystem::HEADER_DEFAULT_PATH = "C:/Users/Owner/Source/Repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include/Behaviour";
 	LPCSTR HotloadSystem::SOURCE_DEFAULT_PATH = "C:/Users/Owner/Source/Repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour";
 #elif CURRENT_WORK_PLACE == LAPTOP
-	LPCSTR HotloadSystem::HEADER_DEFAULT_PATH = "C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour/";
-	LPCSTR HotloadSystem::SOURCE_DEFAULT_PATH = "C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include/Behaviour/";
+	LPCSTR HotloadSystem::HEADER_DEFAULT_PATH = "C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include/Behaviour";
+	LPCSTR HotloadSystem::SOURCE_DEFAULT_PATH = "C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour";
 #endif
 
 
@@ -217,8 +216,8 @@ namespace Dystopia
 				std::wstring DllDir { mDll_Folder_Name.begin(), mDll_Folder_Name.end()};
 				std::wstring DllName{ pstart->FileName, pstart->FileName + (pstart->FileNameLength / sizeof(*(pstart->FileName))) };
 
-				if (CheckFileExtension(DllName) != eDll)
-					continue;
+				//if (CheckFileExtension(DllName) != eDll)
+					//continue;
 
 
 				switch (pstart->Action)

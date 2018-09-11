@@ -48,6 +48,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\EditorEvents.h"
 #include "Editor\Commands.h"
 
+
+#include "Behaviour/TestClassBase.h"
+
 /* library includes */
 #include <iostream>
 #include <bitset>
@@ -68,19 +71,24 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	Dystopia::HotloadSystem test;
 	test.Init();
-
-	/*
+	TestClassBase * p = nullptr;
+	
 
 	LPCWSTR ct = L"C:/Users/Keith/AppData/Roaming/Dystopia/DLL/TestClass.dll";;
 //	TestClass * c = new TestClass;
-	std::cout << c->col << std::endl;
-	auto f = test.GetDllFuncTest(ct, "Clone");
-	using fp = TestClass *(*)();
-	delete c;
-	fp fpp = (fp) f;
-	c = fpp();
-	std::cout << c->col << std::endl;
-	*/
+	auto dll = LoadLibrary(ct);
+	if (dll)
+	{
+		FARPROC proc = GetProcAddress(dll, "Clone");
+		//auto f = test.GetDllFuncTest(ct, "Clone");
+		using fp = TestClassBase * (*)();
+		fp fpp = (fp)proc;
+		p = fpp();
+		p->Test();
+		FreeLibrary(dll);
+	}
+
+	
 	Dystopia::DLLWrapper * pm = nullptr;
 	while (true)
 	{
@@ -89,7 +97,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 		{
 			if (pm != nullptr)
 			{
-
+				auto pp = pm->GetDllFunc<TestClassBase *>("Clone");
+				p = pp();
+				p->Test();
 			}
 
 		}

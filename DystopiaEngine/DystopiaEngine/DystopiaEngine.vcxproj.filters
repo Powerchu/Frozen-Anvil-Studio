@@ -421,6 +421,7 @@
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\System\Hotload\HotloadSystem.h" />
+    <ClInclude Include="Include\Behaviour\TestClassBase.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
