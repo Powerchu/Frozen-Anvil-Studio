@@ -136,8 +136,7 @@ namespace Dystopia
 			for (auto& e : GetCurrentScene()->GetAllGameObjects())
 			{
 				std::string item{ e.GetName() };
-				auto it = std::search(item.begin(), item.end(),
-									  toBeSearched.begin(), toBeSearched.end(),
+				auto it = std::search(item.begin(), item.end(), toBeSearched.begin(), toBeSearched.end(),
 									  [](char c1, char c2) { return std::toupper(c1) == std::toupper(c2); });
 				if (it == item.begin())
 				{
