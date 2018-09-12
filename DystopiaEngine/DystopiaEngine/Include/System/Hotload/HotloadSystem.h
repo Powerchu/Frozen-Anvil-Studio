@@ -159,6 +159,31 @@ namespace Dystopia
 			mvPossibleDirectory.push_back(_DirectoryName);
 		}
 
+		std::vector<std::wstring> const & GetPossibleDirectories() const
+		{
+			return mvPossibleDirectory;
+		}
+
+		std::wstring GetFileName() const
+		{
+			return FileName;
+		}
+
+		void SetFound(bool _state)
+		{
+			found = _state;
+		}
+
+		ePurpose GetPurpose() const
+		{
+			return mFilePurpose;
+		}
+
+		std::wstring GetFullPath() const
+		{
+			return FullFilePath;
+		}
+
 	private:
 
 		bool         found;
@@ -494,7 +519,16 @@ namespace Dystopia
 				}
 			}
 
-			OutputCommand += L" C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/bin/DystopiaEngine_D.lib ";
+			for (auto const & elem : mvAddtionalFiles)
+			{
+				OutputCommand += L" \"" + elem + L"\"";
+			}
+
+			for (auto const & elem : mvFilesToCrawl)
+			{
+				if(elem.isFound() && elem.GetPurpose() == eCompile)
+				OutputCommand += L" \"" + elem.GetFullPath() + L"\"";
+			}
 			
 			std::wstring Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" && exit";
 
@@ -535,6 +569,12 @@ namespace Dystopia
 					{
 						std::cout << "Reading of Directory: " << marrFilePath[i] << " has failed \n";
 					}
+			}
+
+			for (auto & elem : mvFilesToCrawl)
+			{
+				if (!LocateInterestedFiles(elem))
+					std::cout << elem.GetFileName().c_str() << L" could not be found" << std::endl;
 			}
 			
 			for (unsigned i = 0; i < TOTAL_FILE_DIRECTORIES; ++i)
@@ -628,9 +668,29 @@ namespace Dystopia
 			mvAdditionalSourcePath.push_back(_Path);
 		}
 
-		void AddAdditionalFiles(std::wstring const & _File)
+		void AddFilesToCrawl(std::wstring const & _File, ePurpose _FilePurpose)
 		{
-			mvAddtionalFiles.push_back(_File);
+			mvFilesToCrawl.push_back(InterestedFiles{ _File,_FilePurpose });
+		}
+
+		void AddAdditionalFiles(std::wstring const & _FullPathFile)
+		{
+			mvAddtionalFiles.push_back(_FullPathFile);
+		}
+
+		void ReinitCrawl()
+		{
+			for (auto & elem : mvFilesToCrawl)
+			{
+				if (!elem.isFound())
+					if (!LocateInterestedFiles(elem))
+						std::cout << elem.GetFileName() << L" could not be found" << std::endl;
+			}
+		}
+
+		void SetCompilerFlags(std::wstring const & _Flags)
+		{
+			mCompilerFlags = _Flags;
 		}
 
 	private:
@@ -650,7 +710,7 @@ namespace Dystopia
 		std::wstring  mVcvarName;
 		std::wstring  mVcvarBuildEnv;
 
-		std::wstring  mCompilerFlags = L"cl /W3 /EHsc /nologo /std:c++latest /DLL /Za /LDd /IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include "
+		std::wstring  mCompilerFlags = L"cl /W3 /EHsc /nologo /std:c++latest /DLL /Za /LDd /IC:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include "
 			                            "/IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/glew-2.1.0/include "
 										"/IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/ImGui";
 
@@ -787,7 +847,36 @@ namespace Dystopia
 
 		bool LocateInterestedFiles(InterestedFiles & _File)
 		{
+			auto const & PossibleLocation = _File.GetPossibleDirectories();
+			for (auto const & elem : PossibleLocation)
+			{
+				std::filesystem::path p{ elem };
+				std::error_code err;
+				std::filesystem::recursive_directory_iterator iter { p,std::filesystem::directory_options::skip_permission_denied,err };
+				for(auto & file : iter)
+					if (file.path().filename().wstring() == _File.GetFileName())
+					{
+						_File.SetFullFilePath(file.path().wstring());
+						_File.SetFound(true);
 
+						return true;
+					}
+			}
+
+			std::filesystem::path p{ "C:/" };
+			std::error_code err;
+			std::filesystem::recursive_directory_iterator iter{ p,std::filesystem::directory_options::skip_permission_denied,err };
+			for (auto & file : iter)
+				if (file.path().filename().wstring() == _File.GetFileName())
+				{
+					_File.SetFullFilePath(file.path().wstring());
+					_File.SetFound(true);
+
+					return true;
+				}
+
+
+			return false;
 		}
 
 	};

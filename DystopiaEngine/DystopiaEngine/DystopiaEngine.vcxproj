@@ -27,7 +27,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="Source\Component\Renderer.cpp" />
     <ClCompile Include="Source\System\Hotload\HotloadSystem.cpp" />
     <ClCompile Include="Source\Utility\GUID.cpp" />
@@ -83,9 +82,7 @@
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\Behaviour\TestClassBase.h" />
     <ClInclude Include="Include\System\Hotload\HotloadSystem.h" />
-    <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Component\Collider.h" />
