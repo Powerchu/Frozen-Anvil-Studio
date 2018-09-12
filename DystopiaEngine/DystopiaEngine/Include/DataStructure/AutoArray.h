@@ -87,6 +87,9 @@ public:
 	// Ensures that there are the specified amount of unused slots
 	inline void reserve(Sz_t _nSize);
 
+	template <typename Condition = bool(*)(const T&, const T&)>
+	Itor_t Find(const T& _obj, Condition&& = [](const T& l, const T& r) -> bool { return l == r; });
+
 	// Inserts an element to the back of the array
 	void Insert(const T& _obj);
 
@@ -123,8 +126,8 @@ public:
 
 	// Sorts the array using Insertion Sort.
 	// Defaults to sorting in ascending order based on the '<' operator
-	template<typename Comparator>
-	void Sort(Comparator _pTest = [](T& lhs, T& rhs)->bool { return lhs < rhs; });
+	template<typename Condition = bool(*)(const T&, const T&)>
+	void Sort(Condition&& = [](const T& lhs, const T& rhs)->bool { return lhs < rhs; });
 
 
 	// ======================================== OPERATORS ======================================== // 
@@ -289,6 +292,18 @@ inline void AutoArray<T, A>::reserve(Sz_t _nSize)
 }
 
 
+template <class T, class A> template <typename Condition>
+typename AutoArray<T, A>::Itor_t AutoArray<T, A>::Find(const T& _obj, Condition&& _Test)
+{
+	auto b = begin(), e = end();
+
+	while ((b != e) && !_Test(_obj, *b))
+		++b;
+
+	return b;
+}
+
+
 // Inserts an element to the back of the array
 template <class T, class A>
 void AutoArray<T, A>::Insert(const T& _obj)
@@ -330,6 +345,7 @@ void AutoArray<T, A>::Insert(const T& _obj, const Sz_t _nIndex)
 	*at = _obj;
 }
 
+
 // In-place insert an element to the back of the array
 template <class T, class A> template<typename ...Args>
 void AutoArray<T, A>::EmplaceBack(Args &&...args)
@@ -347,8 +363,7 @@ template <class T, class A>
 inline void AutoArray<T, A>::Remove(void) noexcept
 {
 #if _DEBUG
-	DEBUG_LOG(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
-	if (mpArray == mpLast) __debugbreak();
+	DEBUG_BREAK(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
 #endif
 
 	--mpLast;
@@ -393,8 +408,7 @@ template<class T, class A>
 inline void AutoArray<T, A>::Remove(Itor_t _pObj)
 {
 #if _DEBUG
-	DEBUG_LOG(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
-	if (mpArray == mpLast) __debugbreak();
+	DEBUG_BREAK(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
 #endif
 
 	Itor_t nxt = _pObj + 1;
@@ -445,8 +459,8 @@ inline bool AutoArray<T, A>::IsEmpty(void) const noexcept
 
 // Sorts the array.
 // Defaults to sorting in ascending order based on the '<' operator
-template <class T, class A> template<typename Comparator>
-void AutoArray<T, A>::Sort(Comparator _pTest)
+template <class T, class A> template <typename Condition>
+void AutoArray<T, A>::Sort(Condition&& _Test)
 {
 	const Sz_t last = mpLast - mpArray;
 	T temp;
@@ -456,7 +470,7 @@ void AutoArray<T, A>::Sort(Comparator _pTest)
 		temp = Utility::Move(mpArray[n1]);
 
 		n2 = n1;
-		while (n2-- > 0 && _pTest(temp, mpArray[n2]))
+		while (n2-- > 0 && _Test(temp, mpArray[n2]))
 		{
 			mpArray[n2 + 1] = Utility::Move(mpArray[n2]);
 		}

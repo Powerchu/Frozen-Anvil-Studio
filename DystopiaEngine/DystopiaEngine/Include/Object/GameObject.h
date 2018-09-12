@@ -148,15 +148,19 @@ inline void Dystopia::GameObject::AddComponent(ComponentTag)
 	//	Utility::MetaFind_t<typename Ty::SYSTEM, EngineCore::AllSys>::value
 	//);
 
+	auto Comp = EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()->RequestComponent();
 	mComponents.Insert(
-		EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()->RequestComponent();
+		Comp;
 	);
+
+	Comp->SetOwner(this);
 }
 
 template <typename Ty>
 inline void Dystopia::GameObject::AddComponent(BehaviourTag)
 {
 	mBehaviours.push_back(new Ty{});
+	mBehaviours.back()->SetOwner(this);
 }
 
 template <typename T>
