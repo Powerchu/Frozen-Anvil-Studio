@@ -17,6 +17,11 @@ namespace Dystopia
 		{
 
 		}
+
+		~TestBehaviour()
+		{
+
+		}
 	};
 
 

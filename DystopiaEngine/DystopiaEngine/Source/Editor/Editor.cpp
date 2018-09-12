@@ -70,36 +70,38 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	editor->Init();
 
 	Dystopia::Hotloader<1> test;
-	test.SetFileDirectoryPath<0>("C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Resource/Behaviours/");
+	test.SetFileDirectoryPath<0>("C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Resource/Behaviours/");
 
-	
-	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour");
-	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Component");
+	/*
+	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour");
+	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Component");
 	//test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/bin/Temp/Debug");
-	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Editor");
-	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/IO");
-	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Math");
-	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Object");
-	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Utility");
+	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Editor");
+	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/IO");
+	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Math");
+	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Object");
+	//test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Utility");
 	//test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/System");
-	test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/glew-2.1.0/lib/Release/x64");
+	
 
 	//test.SetFileDirectoryPath<1>("C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour/");
+	*/
 
+	//test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/glew-2.1.0/lib/Release/x64");
 
-	test.SetDllFolderPath       ("C:/Users/Owner/AppData/Roaming/Dystopia/DLL/");
+	test.SetDllFolderPath       ("C:/Users/Keith/AppData/Roaming/Dystopia/DLL/");
 	test.Init();
-	TestClassBase * p                        = nullptr;
+	Dystopia::Behaviour * p                        = nullptr;
 	Dystopia::DLLWrapper * pListOfDLLChanges[100];
 
 	auto const & ArrayDll = test.GetDlls();
 	for (auto const & elem : ArrayDll)
 	{
-		auto func = elem.GetDllFunc<TestClassBase *>("Clone");
+		auto func = elem.GetDllFunc<Dystopia::Behaviour *>("Clone");
 		if (func)
 		{
 			p = func();
-			p->Test();
+			p->Update(0.f);
 			delete p;
 			p = nullptr;
 		}
@@ -115,11 +117,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 			Dystopia::DLLWrapper ** start = pListOfDLLChanges;
 			while (*start != nullptr)
 			{
-				auto func = (*start)->GetDllFunc<TestClassBase *>("Clone");
+				auto func = (*start)->GetDllFunc<Dystopia::Behaviour *>("Clone");
 				if (func)
 				{
 					p = func();
-					p->Test();
+					p->Update(0.f);
 					delete p;
 					p = nullptr;
 				}

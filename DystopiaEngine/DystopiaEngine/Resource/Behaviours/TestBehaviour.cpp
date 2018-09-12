@@ -5,7 +5,8 @@ namespace Dystopia
 {
 	void TestBehaviour::Update(const float _fDeltaTime)
 	{
-		std::cout << "Behaviour 1" << std::endl;
+        for(int i =0; i<5; ++i)
+		std::cout << "Behaviour HELLO WEI XIANG" << std::endl;
 	}
 
 }
