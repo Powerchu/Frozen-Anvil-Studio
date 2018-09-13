@@ -164,18 +164,19 @@ namespace Dystopia
 
 	void PerformanceLog::ShowTaskMgrBreakdown()
 	{
-		Math::Vec2 size{Size().x - 7.f, 200 };
+		static constexpr float sizeY = 170;
+		Math::Vec2 size{Size().x - 7.f, sizeY };
 		if (EGUI::StartChild("Task Manager Breakdown", size))
 		{
-			EGUI::Display::Label("CPU Idle	      : %f", mTaskMgrDetails.mCPUIdle);
-			EGUI::Display::Label("CPU Busy	      : %f", mTaskMgrDetails.mCPUBusy);
-			EGUI::Display::Label("CPU OS	      : %f", mTaskMgrDetails.mCPUOS);
-			EGUI::Display::Label("CPU Proc	      : %f", mTaskMgrDetails.mCPUProc);
-			EGUI::Display::Label("Page Faults     : %d", mTaskMgrDetails.mPageFaults);
-			EGUI::Display::Label("Memory Used     : %d", mTaskMgrDetails.mMemUsed);
-			EGUI::Display::Label("RAM Used        : %d", mTaskMgrDetails.mRamUsed);
-			EGUI::Display::Label("Memory Available: %d", mTaskMgrDetails.mMemAvail);
-			EGUI::Display::Label("Memory Load     : %f", mTaskMgrDetails.mMemLoad);
+			EGUI::Display::Label("CPU Idle         : %f", mTaskMgrDetails.mCPUIdle);
+			EGUI::Display::Label("CPU Busy         : %f", mTaskMgrDetails.mCPUBusy);
+			EGUI::Display::Label("CPU OS           : %f", mTaskMgrDetails.mCPUOS);
+			EGUI::Display::Label("CPU Proc         : %f", mTaskMgrDetails.mCPUProc);
+			EGUI::Display::Label("Page Faults      : %d", mTaskMgrDetails.mPageFaults);
+			EGUI::Display::Label("Memory Used      : %d", mTaskMgrDetails.mMemUsed);
+			EGUI::Display::Label("RAM Used         : %d", mTaskMgrDetails.mRamUsed);
+			EGUI::Display::Label("Memory Available : %d", mTaskMgrDetails.mMemAvail);
+			EGUI::Display::Label("Memory Load      : %f", mTaskMgrDetails.mMemLoad);
 		}
 		EGUI::EndChild();
 	}
