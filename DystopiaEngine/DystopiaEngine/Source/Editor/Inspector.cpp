@@ -93,7 +93,6 @@ namespace Dystopia
 		////{
 		////	ProjectResource::GetInstance()->FocusOnFile(mDemoName);
 		////}
-
 	}
 
 	void Inspector::Shutdown()

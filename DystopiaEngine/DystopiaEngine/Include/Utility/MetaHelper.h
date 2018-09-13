@@ -270,11 +270,17 @@ namespace Utility
 		{
 			Ty operator () (typename Utility::RemoveRef<Ty>::type);
 		};
-		
-		template <typename ... Ty>
-		struct ConversionSelector : public ConvertionOption<Ty> ...
+
+		template <>
+		struct ConvertionOption<NULL_TYPE>
 		{
 			NULL_TYPE operator () (...);
+		};
+		
+		template <typename ... Ty>
+		struct ConversionSelector : public ConvertionOption<NULL_TYPE>, public ConvertionOption<Ty> ...
+		{
+
 		};
 	}
 }

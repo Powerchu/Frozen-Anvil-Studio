@@ -28,10 +28,13 @@ namespace Dystopia
 	class Mesh;
 	class Shader;
 	class Texture;
+	class GraphicsSystem;
 
 	class Renderer : public Component
 	{
 	public:
+
+		using SYSTEM = GraphicsSystem;
 		unsigned GetComponentType(void) const
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value; 

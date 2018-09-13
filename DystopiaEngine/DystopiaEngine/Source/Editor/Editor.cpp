@@ -57,13 +57,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <iostream>
 #include <bitset>
 
+#include "DataStructure\Variant.h"
+#include <variant>
+
 // Entry point for editor
-int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
+int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-	hInstance;
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
@@ -172,7 +174,7 @@ namespace Dystopia
 
 	void Editor::UpdateFrame(const float& _dt)
 	{
-		//mpGfx->Update(mDeltaTime); 
+		mpGfx->Update(mDeltaTime); 
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);
