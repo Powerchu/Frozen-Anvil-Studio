@@ -14,8 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _CONSOLE_LOG_H_
 #define _CONSOLE_LOG_H_
+#include "Globals.h"
 #include "EditorTab.h"
 #include "DataStructure\Array.h"
+
 
 namespace Dystopia
 {

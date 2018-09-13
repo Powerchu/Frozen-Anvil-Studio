@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\DebugAssert.h"
 #endif // Debug only includes
 
+#include "Globals.h"
 #include "Utility\Utility.h"			// Move, CopyUninit
 #include "Math\MathUtility.h"			// phi
 #include "Utility\Meta.h"				// Decay, IsSame, EnableIf, IsIntegral
@@ -31,7 +32,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 template<class T, class Alloc = Dystopia::DefaultAllocator<T[]>>
-class AutoArray
+class _DLL_EXPORT AutoArray
 {
 public:
 	// ==================================== CONTAINER DEFINES ==================================== // 

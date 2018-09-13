@@ -31,7 +31,7 @@ namespace Math
 	\brief
 		Representing rotations
 	*/
-	union Quaternion
+	union _DLL_EXPORT Quaternion
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -214,6 +214,7 @@ inline Math::Quaternion _CALL Math::Cross(Quaternion _lhs, Quaternion _rhs)
 
 inline Math::Quaternion& _CALL Math::Quaternion::Project(const Quaternion _rhs)
 {
+	_rhs;
 	return *this;
 }
 

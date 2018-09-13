@@ -32,7 +32,7 @@ namespace Math
 	\brief
 		Generic Math 2 Dimensional Space Vector. 
 	*/
-	union Vector2
+	union _DLL_EXPORT Vector2
 	{
 		// ====================================== CONSTRUCTORS ======================================= // 
 
@@ -72,11 +72,11 @@ namespace Math
 	private:
 
 		template <unsigned ...Sz>
-		struct Swizzle : SwizzleMask
+		struct _DLL_EXPORT Swizzle : SwizzleMask
 		{		};
 
 		template <unsigned N>
-		struct Swizzle<N>
+		struct _DLL_EXPORT Swizzle<N>
 		{
 			inline Swizzle<N>& operator = (float);
 			inline Swizzle<N>& operator += (float);
@@ -125,7 +125,7 @@ namespace Math
 
 	public:
 
-		Swizzle<0> x;
+		Swizzle<0>  x;
 		Swizzle<1> y;
 		Swizzle<0, 0> xx;
 		Swizzle<0, 1> xy;

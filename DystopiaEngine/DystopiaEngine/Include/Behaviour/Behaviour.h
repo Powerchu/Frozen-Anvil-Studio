@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Behaviour.h
+\file	Behaviour.h      
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
@@ -11,9 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+
+
 #ifndef _BEHAVIOUR_H_
 #define _BEHAVIOUR_H_
 
+#include "Globals.h"
 #include "Component\ComponentList.h"	// eComponents
 #include "Component\Component.h"		// Component
 
@@ -21,13 +24,12 @@ namespace Dystopia
 {
 	class CollisionEvent;
 
-	class Behaviour : public Component
+	class _DLL_EXPORT Behaviour : public Component
 	{
 	public:
 
 		using TAG = BehaviourTag;
 		virtual unsigned GetComponentType(void) const { return unsigned(-2); };
-
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 

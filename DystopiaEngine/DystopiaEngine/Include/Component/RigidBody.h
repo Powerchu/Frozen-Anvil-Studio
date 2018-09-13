@@ -12,7 +12,7 @@ class Transform;
 
 namespace Dystopia
 {
-	class RigidBody : public Component
+	class _DLL_EXPORT RigidBody : public Component
 	{
 	public:
 		using TAG = ComponentTag;
