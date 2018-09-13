@@ -25,8 +25,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _COMMANDPROMPT	1
 #define ENGINE_NAME		L"Dystopia Engine"
 
-constexpr auto	DEFAULT_WINDOWSTYLE		= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-constexpr auto	DEFAULT_WINDOWSTYLE_EX	= WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+constexpr long	DEFAULT_WINDOWSTYLE		= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+constexpr long	DEFAULT_WINDOWSTYLE_EX	= WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
 
 constexpr bool	DEFAULT_FULLSCREEN		= false;
 constexpr int	DEFAULT_WIDTH			= 1600;
@@ -38,71 +38,62 @@ namespace Dystopia
 {
 	LRESULT WINAPI MessageProcessor(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		PAINTSTRUCT ps;
-		HDC hdc;
-
 		switch (message)
 		{
-		case WM_PAINT:
-			hdc = BeginPaint(hWnd, &ps);
-
-			EndPaint(hWnd, &ps);
+		case WM_SETFOCUS:
+			/*
+			if (mbFullscreen)
+			{
+				DEVMODE mode{};
+				mode.dmSize = sizeof(DEVMODE);
+				mode.dmPelsWidth = mWidth;
+				mode.dmPelsHeight = mHeight;
+				mode.dmBitsPerPel = 32;
+				mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
+				ChangeDisplaySettings(&mode, 0);
+			} */
+			break;
+		case WM_KILLFOCUS:
+			/*
+			if (mbFullscreen)
+			{
+				ChangeDisplaySettings(NULL, 0);
+			} */
 			break;
 		}
 
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
-	WindowManager::WindowManager(void)
-		: mbFullscreen{ DEFAULT_FULLSCREEN }, mHInstance { GetModuleHandle(nullptr) }
+	WindowManager::WindowManager(void) : 
+		mbFullscreen{ DEFAULT_FULLSCREEN }, mHInstance { GetModuleHandle(nullptr) },
+		mWindows{ 1 }
 	{
 
 	}
 
 	WindowManager::~WindowManager(void)
 	{
-
+		UnregisterClass(L"MainWindow", mHInstance);
 	}
 
-	bool WindowManager::Init(void)
+	void WindowManager::PreInit(void)
 	{
-	#if _COMMANDPROMPT
+#if _COMMANDPROMPT
+
 		if (AllocConsole())
 		{
 			FILE* file;
 
 			freopen_s(&file, "CONOUT$", "wt", stdout);
 			freopen_s(&file, "CONOUT$", "wt", stderr);
-//			freopen_s(&file, "CONOUT$", "wt", stdin);
+			//			freopen_s(&file, "CONOUT$", "wt", stdin);
 
 			SetConsoleTitle(ENGINE_NAME);
 		}
-	#endif
 
-	#if EDITOR
+#endif	// Show Command Prompt
 
-		WNDCLASSEX editorSplash
-		{
-			sizeof(WNDCLASSEX),
-			CS_CLASSDC,
-			MessageProcessor,
-			0, 0,
-			GetModuleHandle(NULL),
-			NULL,
-			LoadCursor(NULL, IDC_ARROW),
-			NULL, // Background
-			NULL,
-			L"SplashWindow",
-			NULL // Icon
-		};
-
-		if (!RegisterClassEx(&editorSplash))
-		{
-			throw;
-		}
-
-	#endif // EDITOR ONLY
-		
 		WNDCLASSEX mainWindow
 		{
 			sizeof(WNDCLASSEX),
@@ -122,15 +113,15 @@ namespace Dystopia
 		{
 			throw;
 		}
-		
-	#if EDITOR
+
+#if EDITOR
 
 		RECT WindowRect{ 0, 0, LOGO_WIDTH, LOGO_HEIGHT };
 		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
 
-		mWindow = CreateWindowEx(
+		HWND window = CreateWindowEx(
 			WS_EX_APPWINDOW,
-			L"SplashWindow",
+			L"MainWindow",
 			NULL,
 			WS_POPUP | WS_DLGFRAME,
 			CW_USEDEFAULT, CW_USEDEFAULT,
@@ -139,21 +130,17 @@ namespace Dystopia
 			NULL, NULL, mHInstance, NULL
 		);
 
-		//SetWindowLong(mWindow, GWL_STYLE,
-		//	GetWindowLong(mWindow, GWL_STYLE)
-		//);
-
 		long left = (GetSystemMetrics(SM_CXSCREEN) - LOGO_WIDTH) >> 1,
 			top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
 		// center the window
-		SetWindowPos(mWindow, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
+		SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
 
-	#else
+#else
 
 		RECT WindowRect{ 0, 0, mWidth, mHeight };
 		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
 
-		mWindow = CreateWindowEx(
+		HWND window = CreateWindowEx(
 			mWindowStyleEx,
 			L"MainWindow",
 			mTitle.c_str(),
@@ -167,42 +154,53 @@ namespace Dystopia
 		long left = (GetSystemMetrics(SM_CXSCREEN) - mWidth) >> 1,
 			top = (GetSystemMetrics(SM_CYSCREEN) - mHeight) >> 1;
 		// center the window
-		SetWindowPos(mWindow, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
+		SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
 
-	#endif
+#endif
 
-		::ShowCursor(EDITOR);
-		ShowWindow(mWindow, SW_SHOW);
-		UpdateWindow(mWindow);
+		mWindows.EmplaceBack(window);
+		mWindows[0].ShowCursor(EDITOR);
 
+		ShowWindow(window, SW_SHOW);
+//		UpdateWindow(window);
+	}
+
+	bool WindowManager::Init(void)
+	{
 		return true;
+	}
+
+	void WindowManager::PostInit(void)
+	{
+		this->DestroySplash();
 	}
 
 	void WindowManager::Update(float)
 	{
-		//if (GetActiveWindow() == mWindow)
-		//{
-		//	if (mbFullscreen)
-		//	{
-		//		DEVMODE mode{};
-		//		mode.dmSize = sizeof(DEVMODE);
-		//		mode.dmPelsWidth = mWidth;
-		//		mode.dmPelsHeight = mHeight;
-		//		mode.dmBitsPerPel = 32;
-		//		mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
-		//		ChangeDisplaySettings(&mode, 0);
-		//	}
-		//	else
-		//	{
-		//		ChangeDisplaySettings(NULL, 0);
-		//	}
-		//}
-
 		MSG msg;
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		for (Window& w : mWindows)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			auto& inputQueue = const_cast<Queue<eButton>&>(w.GetInputQueue());
+			inputQueue.clear();
+
+			while (!inputQueue.IsFull() && PeekMessage(&msg, w.GetWindowHandle(), 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+
+				switch (msg.message)
+				{
+				case WM_KEYDOWN:
+				case WM_SYSKEYDOWN:
+					inputQueue.Insert(static_cast<eButton>(msg.wParam));
+					break;
+				case WM_KEYUP:
+				case WM_SYSKEYUP:
+				default:
+					break;
+				}
+
+				DispatchMessage(&msg);
+			}
 		}
 	}
 
@@ -236,8 +234,45 @@ namespace Dystopia
 
 	void WindowManager::ShowCursor(bool _bShow) const
 	{
-		::ShowCursor(_bShow);
+		for (Window& w : mWindows)
+			w.ShowCursor(_bShow);
 	}
+
+	Window& WindowManager::GetMainWindow(void) const
+	{
+		return const_cast<Window&>(mWindows[0]);
+	}
+
+	void WindowManager::DestroySplash(void)
+	{
+		mWindows[0].SetStyle(mWindowStyle, mWindowStyleEx);
+
+		ReAdjustWindow(mWindows[0]);
+	}
+
+	void WindowManager::ReAdjustWindow(Window& _window)
+	{
+		ShowWindow(_window.GetWindowHandle(), SW_HIDE);
+
+		RECT WindowRect{ 0, 0, mWidth, mHeight };
+		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
+
+		mWidth = WindowRect.right - WindowRect.left;
+		mHeight = WindowRect.bottom - WindowRect.top;
+
+		long left = (GetSystemMetrics(SM_CXSCREEN) - mWidth) >> 1,
+			 top = (GetSystemMetrics(SM_CYSCREEN) - mHeight) >> 1;
+
+		// center the window
+		SetWindowPos(_window.GetWindowHandle(), NULL,
+			left, top, mWidth, mHeight,
+			SWP_NOZORDER | SWP_NOACTIVATE
+		);
+
+
+		ShowWindow(_window.GetWindowHandle(), SW_SHOW);
+	}
+
 }
 
 

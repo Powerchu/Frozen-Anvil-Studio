@@ -17,16 +17,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 // Update the enum whenever a new system is made
 // This ensures the count is correct
-enum eSYSTEMS
+// Update order is the same as the order within this enum
+enum eSYSTEMS : unsigned
 {
+	TIME_SYSTEM,
 	INPUT_SYSTEM,
 	WINDOW_SYSTEM,
-	SOUND_SYSTEM,
+	PHYSICS_SYSTEM,
+	COLLISION_SYSTEM,
+	SCENE_SYSTEM,
+//	SOUND_SYSTEM,
 	GRAPHIC_SYSTEM,
-
-	TOTAL_SYSTEMS
+	EVENT_SYSTEM
 };
-
 
 
 #endif		// INCLUDE GUARD

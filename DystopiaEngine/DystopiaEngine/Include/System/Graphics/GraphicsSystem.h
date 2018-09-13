@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <string>
 
+
 namespace Dystopia
 {
 	class Window;
@@ -37,34 +38,40 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
+		void PreInit(void);
 		bool Init(void);
-		void Update(float);
+		void PostInit(void);
+
+		void Update(float);		// Draws the currently bounded window
 		void Shutdown(void);
 
 		// Sets up Window for openGL rendering
-		bool InitOpenGL(void* _HWND);
-		bool BindOpenGL(void* _HWND) noexcept;
-		bool InitOpenGL(Window*);
-		bool BindOpenGL(Window*) noexcept;
+		bool InitOpenGL(Window&);
+		void BindOpenGL(Window&) noexcept;
 
 		void LoadDefaults(void);
 		void LoadSettings(TextSerialiser&);
 
-		void		LevelLoad(TextSerialiser&);
-		Mesh*		LoadMesh(const std::string&);
-		Texture*	LoadTexture(const std::string&);
-		Shader*		LoadShader(const std::string&);
+		void     LevelLoad(TextSerialiser&);
+		void     LoadMesh(const std::string&);
+		Texture* LoadTexture(const std::string&);
+		Shader*	 LoadShader(const std::string&);
+
+		static const int& GetDrawMode(void) noexcept;
+		static void SetDrawMode(int) noexcept;
 
 	private:
 
-		void StartFrame(Window&);
-		void EndFrame(Window&);
-
-		bool SelectOpenGLVersion(void*) noexcept;
-		bool SelectOpenGLVersion(Window*) noexcept;
-
 		void* mOpenGL;
 		int mPixelFormat, mAvailable;
+		Window* mCurrent;
+
+		static int DRAW_MODE;
+
+		void StartFrame(void);
+		void EndFrame(void);
+
+		bool SelectOpenGLVersion(Window&) noexcept;
 	};
 }
 

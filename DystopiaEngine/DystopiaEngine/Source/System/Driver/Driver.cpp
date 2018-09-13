@@ -1,0 +1,177 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	Driver.cpp
+\author Tan Jie Wei Jacky (100%)
+\par    email: t.jieweijacky\@digipen.edu
+\brief
+	Internal part of Game Engine that runs everything
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
+#include "System\Driver\Driver.h"
+
+#include "Globals.h"
+#include "DataStructure\Pointer.h"
+#include "Utility\MetaAlgorithms.h"
+#include "Utility\MetaDataStructures.h"
+
+#include "System\Time\TimeSystem.h"
+#include "System\Scene\SceneSystem.h"
+#include "System\Input\InputSystem.h"
+#include "System\Sound\SoundSystem.h"
+#include "System\Graphics\GraphicsSystem.h"
+#include "System\Window\WindowManager.h"
+#include "System/Collision/CollisionSystem.h"
+#include "System/Physics/PhysicsSystem.h"
+#include "System\Graphics\MeshSystem.h"
+#include "System\Camera\CameraSystem.h"
+#include "Component\Camera.h"
+#include "System\Events\EventSystem.h"
+
+namespace
+{
+	template <typename Ty, typename ... T>
+	AutoArray<Ty> MakeAutoArray(Utility::TypeList<T...>)
+	{
+		 return AutoArray<Ty>{ static_cast<Ty>(new T{})...};
+	}
+
+	template <typename T>
+	struct ErrorOnDuplicate;
+
+	template <
+		template <typename ...> class Set,
+		template <unsigned, typename> class Holder,
+		typename ... Tys, unsigned ... Ns,
+		typename Ty1, typename Ty2, unsigned N1, unsigned N2>
+	struct ErrorOnDuplicate <Set<Holder<N1, Ty1>, Holder<N2, Ty2>, Holder<Ns, Tys>...>>
+	{
+		static_assert(!(N1 == N2), "System Error: Systems cannot have the same index! (Same enum?).");
+
+		using eval = typename ErrorOnDuplicate<Set<Holder<N2, Ty2>, Holder<Ns, Tys>...>>::eval;
+	};
+
+	template <
+		template <typename ...> class Set,
+		template <unsigned, typename> class Holder,
+		typename Ty1, typename Ty2, unsigned N1, unsigned N2>
+	struct ErrorOnDuplicate <Set<Holder<N1, Ty1>, Holder<N2, Ty2>>>
+	{
+		static_assert(!(N1 == N2), "System Error: Systems cannot have the same index! (Same enum?).");
+
+		using eval = void;
+	};
+}
+
+
+Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
+{
+	static EngineCore oInstance{ };
+	return &oInstance;
+}
+
+Dystopia::EngineCore::EngineCore(void) :
+	mTime{}, mSystemList{ Utility::SizeofList<AllSys>::value },
+	mSystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) },
+	mSubSystems { MakeAutoArray<void*>(Utility::MakeTypeList_t<Utility::TypeList, SubSys>{}) }
+{
+	using SanityCheck = typename ErrorOnDuplicate<AllSys>::eval;
+}
+
+void Dystopia::EngineCore::LoadSettings(void)
+{
+	for (auto& e : mSystemTable)
+		e->LoadDefaults();
+}
+
+void Dystopia::EngineCore::Init(void)
+{
+	mTime.Lap();
+
+	for (auto& e : mSystemTable)
+		e->PreInit();
+
+	for (auto& e : mSystemTable)
+	{
+		if (e->Init())
+		{
+			mSystemList.EmplaceBack(e);
+		}
+		else
+		{
+			delete e;
+			e = nullptr;
+		}
+	}
+
+	for (auto& e : mSystemList)
+		e->PostInit();
+
+	mTime.Lap();
+}
+
+void Dystopia::EngineCore::FixedUpdate(void)
+{
+	static float dt = .0f;
+
+	while (dt > _FIXED_UPDATE_DT)
+	{
+		for (auto& e : mSystemList)
+		{
+			e->FixedUpdate(dt);
+		}
+
+		dt -= _FIXED_UPDATE_DT;
+	}
+}
+
+void Dystopia::EngineCore::Update(void)
+{
+	float dt = mTime.Elapsed();
+	mTime.Lap();
+
+	for (auto& e : mSystemList)
+	{
+		e->Update(dt);
+	}
+
+	for (auto& e : mSystemList)
+	{
+		e->PostUpdate();
+	}
+}
+
+void Dystopia::EngineCore::Shutdown(void)
+{
+	for (auto& e : mSystemList)
+		e->Shutdown();
+
+	for (auto& e : mSystemList)
+		delete e;
+
+	for (auto& e : mSubSystems)
+		delete e;
+
+	mSystemList.clear();
+	mSystemTable.clear();
+}
+
+#if !EDITOR
+
+int WinMain(HINSTANCE, HINSTANCE, char *, int)
+{
+	auto CORE = Dystopia::EngineCore::GetInstance();
+
+	/*
+	CORE->ExecuteGame();
+	*/
+
+	return 0;
+}
+
+#endif
+
+

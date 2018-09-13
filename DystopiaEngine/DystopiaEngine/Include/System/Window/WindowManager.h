@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _WINDOW_MANAGER_H_
 
 #include "System\Base\Systems.h"		// Base Class
+#include "DataStructure\AutoArray.h"	// AutoArray
 
 #include <string>
 
@@ -23,6 +24,8 @@ typedef struct HWND__* HWND;
 
 namespace Dystopia
 {
+	class Window;
+
 	class WindowManager : public Systems
 	{
 	public:
@@ -34,26 +37,27 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
+		void PreInit(void);
 		bool Init(void);
+		void PostInit(void);
+
 		void Update(float _dt);
 		void Shutdown(void);
 		void LoadDefaults(void);
 		void LoadSettings(TextSerialiser&);
 
+		void DestroySplash(void);
 
 		void ToggleFullscreen(bool _bFullscreen);
 		void ShowCursor(bool _bShow) const;
 
-		void* GetWindow(void)
-		{
-			return mWindow;
-		}
+		Window& GetMainWindow(void) const;
 
 	private:
 
 		std::wstring mTitle;
+		AutoArray<Window> mWindows;
 
-		HWND mWindow;
 		HINSTANCE mHInstance;
 
 		int mWidth, mHeight;
@@ -61,6 +65,8 @@ namespace Dystopia
 		unsigned long mWindowStyle;
 		unsigned long mWindowStyleEx;
 		bool mbFullscreen;
+
+		void ReAdjustWindow(Window&);
 	};
 }
 

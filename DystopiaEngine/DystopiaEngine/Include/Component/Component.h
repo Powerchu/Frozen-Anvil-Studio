@@ -16,18 +16,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component\ComponentList.h"	// eComponents
 
+#include <string>
+
+
 namespace Dystopia
 {
 	class GameObject;
+	class TextSerialiser;
 
 	class Component
 	{
 	public:
 
 		using TAG = ComponentTag;
-		static const eComponents TYPE = eComponents::BASE_COMPONENT;
-		virtual const eComponents GetComponentType(void) const { return TYPE; };
-
+		using SYSTEM = class NULL_SYSTEM;
+		virtual unsigned GetComponentType(void) const {	return unsigned(-1); };
+		virtual const std::string GetEditorName(void) const { return "Generic Component"; }
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
@@ -40,23 +44,22 @@ namespace Dystopia
 		bool IsActive(void) const;
 		void SetActive(const bool _bEnable);
 
-		virtual void Load(void);
-		virtual void Init(void);
+		void Load(void);
+		void Init(void);
 
-		virtual void Update(const float _fDeltaTime);
-		virtual void FixedUpdate(const float _fDeltaTime);
-		virtual void PostUpdate(void);
+		virtual void GameObjectDestroy(void);
+		void Unload(void);
 
-		virtual void OnDestroy(void);
-		virtual void Unload(void);
+		void DestroyComponent(void);
 
 		void SetOwner(GameObject*);
 		GameObject* GetOwner(void) const;
 
 		virtual Component* Duplicate() const;
 
-		virtual void Serialise() = 0;
-		virtual void Unserialise() = 0;
+		virtual void Serialise(TextSerialiser&) const = 0;
+		virtual void Unserialise(TextSerialiser&) = 0;
+		virtual void EditorUI(void) noexcept;
 
 	private:
 
@@ -64,7 +67,7 @@ namespace Dystopia
 
 	protected:
 
-		bool mbActive;
+		unsigned mnFlags;
 	};
 }
 

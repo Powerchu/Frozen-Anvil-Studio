@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	enum eGfxSettings
+	enum eGfxSettings : unsigned
 	{
 		GRAPHICS_MSAA				= 1 << 0,
 		GRAPHICS_FXAA				= 1 << 1,
@@ -27,6 +27,15 @@ namespace Dystopia
 
 		GRAPHICS_ALL				= 0xFFFFFFFF
 	};
+
+	namespace Gfx
+	{
+		struct Viewport
+		{
+			int mnX, mnY;
+			int mnWidth, mnHeight;
+		};
+	}
 }
 
 

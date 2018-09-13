@@ -18,18 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility\Meta.h"		// IsSame
 
-// Copied size_t out of microsoft header
-// Just in case it is not defined in any of the includes
-namespace std {
-#ifdef _WIN64
-	typedef unsigned __int64 size_t;
-#else
-	typedef unsigned int     size_t;
-#endif
-}
-
 #if defined(DEBUG) | defined(_DEBUG)
-#include "DebugAssert.h"
+#include "Utility\DebugAssert.h"
 
 #include <typeinfo>
 #endif // Debug only includes
@@ -38,65 +28,20 @@ template <class T>
 class SharedPtr
 {
 public:
-	constexpr SharedPtr(void) noexcept 
-		: mpObj{ nullptr }, mnRefCount{ nullptr }
-	{
+	// ====================================== CONSTRUCTORS ======================================= // 
 
-	}
-	SharedPtr(const SharedPtr& _pPointer) noexcept
-		: mpObj{ _pPointer.mpObj }, mnRefCount{ _pPointer.mnRefCount }
-	{
-		if (_pPointer.mpObj)
-			++*mnRefCount;
-	}
-	SharedPtr(SharedPtr&& _pPointer) noexcept
-		: mpObj{ _pPointer.mpObj }, mnRefCount{ _pPointer.mnRefCount }
-	{
-		_pPointer.mpObj = nullptr;
-		_pPointer.mnRefCount = nullptr;
-	}
+	constexpr SharedPtr(void) noexcept;
+	SharedPtr(const SharedPtr& _pPointer) noexcept;
+	SharedPtr(SharedPtr&& _pPointer) noexcept;
 
-	~SharedPtr(void)
-	{
-		RemoveReference();
-	}
+	~SharedPtr(void);
 
-	T* GetPtr(void) const
-	{
-		return mpObj;
-	}
 
-	SharedPtr& operator=(std::nullptr_t)
-	{
-		RemoveReference();
-		return *this;
-	}
-	SharedPtr& operator=(const SharedPtr<T>& _pPointer)
-	{
-		if (_pPointer.mpObj)
-			++*_pPointer.mnRefCount;
+	// ======================================== OPERATORS ======================================== // 
 
-		RemoveReference();
-
-		mpObj = _pPointer.mpObj;
-		mnRefCount = _pPointer.mnRefCount;
-
-		return *this;
-	}
-	SharedPtr& operator=(SharedPtr<T>&& _pPointer) noexcept
-	{
-		RemoveReference();
-
-		mpObj = _pPointer.mpObj;
-		mnRefCount = _pPointer.mnRefCount;
-
-		_pPointer.mpObj = nullptr;
-		_pPointer.mnRefCount = nullptr;
-
-		return *this;
-	}
-
-	// Overloaded Operators
+	SharedPtr& operator=(std::nullptr_t);
+	SharedPtr& operator=(const SharedPtr<T>& _pPointer);
+	SharedPtr& operator=(SharedPtr<T>&& _pPointer) noexcept;
 
 	T& operator*  (void) { return *mpObj; }
 	T* operator-> (void) { return  mpObj; }
@@ -105,32 +50,16 @@ public:
 
 	inline explicit operator bool(void) const { return !!mpObj; }
 
-	// Disallow pointers to SharedPtr
-	static void* operator new (std::size_t) = delete;
+	inline T* GetRaw(void) const;
 
 private:
-	SharedPtr(T* _pObj)
-		: mpObj(_pObj), mnRefCount(new unsigned{ 1 })
-	{
-	}
 
-	void RemoveReference(void)
-	{
-		if (mpObj)
-		{
-			if (0 == --*mnRefCount)
-			{
-			#if _DEBUG
-				DEBUG_LOG(mpObj, "SharedPtr freeing object \"%s\".\n", typeid(mpObj).name());
-			#endif
-				delete mpObj;
-				delete mnRefCount;
-			}
+	SharedPtr(T* _pObj);
 
-			mpObj = nullptr;
-			mnRefCount = nullptr;
-		}
-	}
+	void RemoveReference(void);
+
+	template <typename T, typename U>
+	friend SharedPtr<T> DynamicPtrCast(const SharedPtr<U>&);
 
 	template<typename Type>
 	friend SharedPtr<Type> CreateShared(Type*);
@@ -176,49 +105,170 @@ inline SharedPtr<Nest<Type>> CreateShared(Nest<Type>* _pObj)
 	return SharedPtr<Nest<Type>>(_pObj);
 }
 
+template <typename T, typename U>
+inline SharedPtr<T> DynamicPtrCast(const SharedPtr<U>& _pPtr)
+{
+	SharedPtr<T> ret{};
+
+	ret.mpObj = dynamic_cast<T>(_pPtr.GetRaw());
+
+	if (ret.mpObj)
+	{
+		ret.mnRefCount = _pPtr.mnRefCount;
+	}
+
+	return ret;
+}
+
+
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+template <class T>
+constexpr SharedPtr<T>::SharedPtr (void) noexcept
+	: mpObj{ nullptr }, mnRefCount{ nullptr }
+{
+
+}
+
+template <class T>
+SharedPtr<T>::SharedPtr(const SharedPtr& _pPointer) noexcept
+	: mpObj{ _pPointer.mpObj }, mnRefCount{ _pPointer.mnRefCount }
+{
+	if (_pPointer.mpObj)
+		++*mnRefCount;
+}
+
+template <class T>
+SharedPtr<T>::SharedPtr(SharedPtr&& _pPointer) noexcept
+	: mpObj{ _pPointer.mpObj }, mnRefCount{ _pPointer.mnRefCount }
+{
+	_pPointer.mpObj = nullptr;
+	_pPointer.mnRefCount = nullptr;
+}
+
+template <class T>
+SharedPtr<T>::SharedPtr(T* _pObj) :
+	mpObj(_pObj), mnRefCount(new unsigned{ 1 })
+{
+
+}
+
+template <class T>
+SharedPtr<T>::~SharedPtr(void)
+{
+	RemoveReference();
+}
+
+template <class T>
+inline T* SharedPtr<T>::GetRaw(void) const
+{
+	return mpObj;
+}
+
+template <class T>
+void SharedPtr<T>::RemoveReference(void)
+{
+	if (mpObj)
+	{
+		if (0 == --*mnRefCount)
+		{
+		#if _DEBUG
+			DEBUG_LOG(mpObj, "SharedPtr freeing object \"%s\".\n", typeid(mpObj).name());
+		#endif
+
+			delete mpObj;
+			delete mnRefCount;
+		}
+
+		mpObj = nullptr;
+		mnRefCount = nullptr;
+	}
+}
+
 
 
 // ============================================ OPERATOR OVERLOADING ============================================ // 
 
 
-template<typename Type>
+template <class T>
+SharedPtr<T>& SharedPtr<T>::operator = (std::nullptr_t)
+{
+	RemoveReference();
+	return *this;
+}
+
+template <class T>
+SharedPtr<T>& SharedPtr<T>::operator = (const SharedPtr<T>& _pPointer)
+{
+	if (_pPointer.mpObj)
+		++*_pPointer.mnRefCount;
+
+	RemoveReference();
+
+	mpObj = _pPointer.mpObj;
+	mnRefCount = _pPointer.mnRefCount;
+
+	return *this;
+}
+
+template <class T>
+SharedPtr<T>& SharedPtr<T>::operator = (SharedPtr<T>&& _pPointer) noexcept
+{
+	RemoveReference();
+
+	mpObj = _pPointer.mpObj;
+	mnRefCount = _pPointer.mnRefCount;
+
+	_pPointer.mpObj = nullptr;
+	_pPointer.mnRefCount = nullptr;
+
+	return *this;
+}
+
+template <typename Type>
 inline bool operator== (const SharedPtr<Type>& _p, std::nullptr_t)
 {
-	return nullptr == _p.GetPtr();
+	return nullptr == _p.GetRaw();
 }
-template<typename Type>
+
+template <typename Type>
 inline bool operator== (std::nullptr_t, const SharedPtr<Type>& _p)
 {
 	return _p == nullptr;
 }
 
-template<typename Type>
+template <typename Type>
 inline bool operator!= (const SharedPtr<Type>& _p, std::nullptr_t)
 {
-	return _p.GetPtr() != nullptr;
+	return _p.GetRaw() != nullptr;
 }
-template<typename Type>
+template <typename Type>
 inline bool operator!= (std::nullptr_t, const SharedPtr<Type>& _p)
 {
 	return _p != nullptr;
 }
 
-template<typename TypeA, typename TypeB>
+template <typename TypeA, typename TypeB>
 inline bool operator== (const SharedPtr<TypeA>& _pL, const SharedPtr<TypeB>& _pR)
 {
-	return _pL.GetPtr() == _pR.GetPtr();
+	return _pL.GetRaw() == _pR.GetRaw();
 }
 
-template<typename TypeA, typename TypeB>
+template <typename TypeA, typename TypeB>
 inline bool operator!= (const SharedPtr<TypeA>& _pL, const SharedPtr<TypeB>& _pR)
 {
-	return _pL.GetPtr() != _pR.GetPtr();
+	return _pL.GetRaw() != _pR.GetRaw();
 }
 
-template<typename Type>
+template <typename Type>
 inline bool operator! (const SharedPtr<Type>& _pL)
 {
-	return !_pL.GetPtr();
+	return !_pL.GetRaw();
 }
 
 

@@ -27,25 +27,72 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Source\Component\Renderer.cpp" />
+    <ClCompile Include="Source\Utility\GUID.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Source\Component\Colliders\AABB.cpp" />
+    <ClCompile Include="Source\Component\Colliders\Collider.cpp" />
+    <ClCompile Include="Source\Component\Colliders\Convex.cpp" />
+    <ClCompile Include="Source\Component\RigidBody.cpp" />
+    <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
+    <ClCompile Include="Source\Editor\EditorEvents.cpp" />
+    <ClCompile Include="Source\Editor\EditorInputs.cpp" />
+    <ClCompile Include="Source\Editor\ProjectResource.cpp" />
+    <ClCompile Include="Source\Editor\SceneView.cpp" />
+    <ClCompile Include="Source\Editor\ScriptFormatter.cpp" />
+    <ClCompile Include="Source\Math\Quaternion.cpp" />
+    <ClCompile Include="Source\System\Camera\CameraSystem.cpp" />
+    <ClCompile Include="Source\System\Collision\CollisionSystem.cpp" />
+    <ClCompile Include="Source\System\Driver\Driver.cpp" />
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
     <ClCompile Include="Source\Component\Component.cpp" />
+    <ClCompile Include="Source\Component\Transform.cpp" />
+    <ClCompile Include="Source\Editor\Commands.cpp" />
+    <ClCompile Include="Source\Editor\Dock.cpp" />
     <ClCompile Include="Source\Editor\Editor.cpp" />
+    <ClCompile Include="Source\Editor\EditorTab.cpp" />
+    <ClCompile Include="Source\Editor\EGUI.cpp" />
+    <ClCompile Include="Source\Editor\EGuiDisplay.cpp" />
+    <ClCompile Include="Source\Editor\HierarchyView.cpp" />
+    <ClCompile Include="Source\Editor\Inspector.cpp" />
+    <ClCompile Include="Source\IO\BinarySerializer.cpp" />
     <ClCompile Include="Source\IO\ImageParser.cpp" />
+    <ClCompile Include="Source\IO\TextSerialiser.cpp" />
     <ClCompile Include="Source\Math\Matrix4.cpp" />
     <ClCompile Include="Source\Object\GameObject.cpp" />
+    <ClCompile Include="Source\Component\Camera.cpp" />
+    <ClCompile Include="Source\System\Events\EventSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\GraphicsSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Mesh.cpp" />
+    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp" />
+    <ClCompile Include="Source\System\Graphics\RawMesh.cpp" />
     <ClCompile Include="Source\System\Graphics\Shader.cpp" />
     <ClCompile Include="Source\System\Graphics\Texture.cpp" />
+    <ClCompile Include="Source\System\Graphics\Texture2D.cpp" />
     <ClCompile Include="Source\System\Input\InputSystem.cpp" />
+    <ClCompile Include="Source\System\Physics\PhysicsSystem.cpp" />
+    <ClCompile Include="Source\System\Scene\Scene.cpp" />
+    <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
+    <ClCompile Include="Source\System\Window\Window.cpp" />
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Include\Utility\ComponentGUID.h" />
+    <ClInclude Include="Include\Utility\GUID.h" />
+    <ClInclude Include="Include\Component\Collider.h" />
+    <ClInclude Include="Include\Component\Renderer.h" />
+    <ClInclude Include="Include\Component\RigidBody.h" />
+    <ClInclude Include="Include\Editor\EditorEvents.h" />
+    <ClInclude Include="Include\Editor\EditorInputs.h" />
+    <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
+    <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
+    <ClInclude Include="Include\System\Events\EventSystem.h" />
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui_internal.h" />
@@ -53,28 +100,59 @@
     <ClInclude Include="Include\Component\Component.h" />
     <ClInclude Include="Include\Component\ComponentList.h" />
     <ClInclude Include="Include\Component\Transform.h" />
+    <ClInclude Include="Include\DataStructure\Array.h" />
     <ClInclude Include="Include\DataStructure\AutoArray.h" />
     <ClInclude Include="Include\DataStructure\Heap.h" />
+    <ClInclude Include="Include\DataStructure\MagicArray.h" />
     <ClInclude Include="Include\DataStructure\Queue.h" />
     <ClInclude Include="Include\DataStructure\SharedPtr.h" />
     <ClInclude Include="Include\DataStructure\Stack.h" />
+    <ClInclude Include="Include\Editor\CommandList.h" />
+    <ClInclude Include="Include\Editor\Commands.h" />
+    <ClInclude Include="Include\Editor\ConsoleLog.h" />
+    <ClInclude Include="Include\Editor\Dock.h" />
+    <ClInclude Include="Include\Editor\Editor.h" />
+    <ClInclude Include="Include\Editor\EditorTab.h" />
+    <ClInclude Include="Include\Editor\EGUI.h" />
+    <ClInclude Include="Include\Editor\HierarchyView.h" />
+    <ClInclude Include="Include\Editor\Inspector.h" />
+    <ClInclude Include="Include\Editor\Payloads.h" />
+    <ClInclude Include="Include\Editor\ProjectResource.h" />
+    <ClInclude Include="Include\Editor\SceneView.h" />
+    <ClInclude Include="Include\Editor\ScriptFormatter.h" />
+    <ClInclude Include="Include\Allocator\DefaultAlloc.h" />
     <ClInclude Include="Include\Globals.h" />
+    <ClInclude Include="Include\IO\BinarySerializer.h" />
     <ClInclude Include="Include\IO\ImageParser.h" />
+    <ClInclude Include="Include\IO\Serialiser.h" />
+    <ClInclude Include="Include\IO\TextSerialiser.h" />
+    <ClInclude Include="Include\Math\Angles.h" />
     <ClInclude Include="Include\Math\MathInternal.h" />
     <ClInclude Include="Include\Math\MathUtility.h" />
+    <ClInclude Include="Include\Math\Matrix2.h" />
     <ClInclude Include="Include\Math\Matrix4.h" />
     <ClInclude Include="Include\Math\Quaternion.h" />
     <ClInclude Include="Include\Math\Vector4.h" />
     <ClInclude Include="Include\Object\GameObject.h" />
+    <ClInclude Include="Include\Object\ObjectFlags.h" />
     <ClInclude Include="Include\System\Base\Systems.h" />
+    <ClInclude Include="Include\Component\Camera.h" />
+    <ClInclude Include="Include\System\Camera\CameraSystem.h" />
+    <ClInclude Include="Include\System\Driver\Driver.h" />
     <ClInclude Include="Include\System\Graphics\GraphicsDefs.h" />
     <ClInclude Include="Include\System\Graphics\GraphicsSystem.h" />
     <ClInclude Include="Include\System\Graphics\Image.h" />
     <ClInclude Include="Include\System\Graphics\Mesh.h" />
+    <ClInclude Include="Include\System\Graphics\MeshSystem.h" />
+    <ClInclude Include="Include\System\Graphics\RawMesh.h" />
     <ClInclude Include="Include\System\Graphics\Shader.h" />
     <ClInclude Include="Include\System\Graphics\Texture.h" />
+    <ClInclude Include="Include\System\Graphics\Texture2D.h" />
+    <ClInclude Include="Include\System\Graphics\VertexDefs.h" />
     <ClInclude Include="Include\System\Input\InputMap.h" />
     <ClInclude Include="Include\System\Input\InputSystem.h" />
+    <ClInclude Include="Include\System\Scene\Scene.h" />
+    <ClInclude Include="Include\System\Scene\SceneSystem.h" />
     <ClInclude Include="Include\System\Sound\SoundSystem.h" />
     <ClInclude Include="Include\System\Sound\SoundTypes.h" />
     <ClInclude Include="Include\System\SystemTypes.h" />
@@ -84,14 +162,19 @@
     <ClInclude Include="Include\System\Window\WindowManager.h" />
     <ClInclude Include="Include\Utility\DebugAssert.h" />
     <ClInclude Include="Include\Utility\Meta.h" />
+    <ClInclude Include="Include\Utility\MetaAlgorithms.h" />
+    <ClInclude Include="Include\Utility\MetaDataStructures.h" />
     <ClInclude Include="Include\Utility\MetaHelper.h" />
     <ClInclude Include="Include\Utility\Utility.h" />
+    <ClInclude Include="Include\Math\Vector2.h" />
+    <ClInclude Include="Include\Utility\UtilityInternals.h" />
+    <ClInclude Include="Include\DataStructure\Pointer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DystopiaEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -117,20 +200,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Game|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -202,7 +285,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/DEDITOR</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -220,13 +303,14 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/DEDITOR</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -240,7 +324,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/DEDITOR</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -262,7 +346,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/DEDITOR=0</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -285,7 +369,7 @@
       <SDLCheck>
       </SDLCheck>
       <AdditionalOptions>/DEDITOR</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -312,7 +396,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/DEDITOR=0</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -321,7 +405,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -14,25 +14,26 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GAMEOBJ_H_
 #define _GAMEOBJ_H_
 
+#include "System\Driver\Driver.h"
 #include "DataStructure\AutoArray.h"		// AutoArray
 #include "Component\Component.h"			// Component
+#include "Component\ComponentList.h"		// AllComponents
 #include "Behaviour\Behaviour.h"			// Behaviour
 #include "Component\Transform.h"			// Transform
-#include "Component\ComponentList.h"		// eComponents
+#include "Utility\MetaAlgorithms.h"			// MetaFind_t
 
 #include <string>
 
 namespace Dystopia
 {
 	class CollisionEvent;
-
 	class GameObject
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		explicit GameObject(bool _bActive = true);
-		GameObject(unsigned _ID, bool _bActive = true);
+		GameObject(void);
+		explicit GameObject(unsigned long long _ID);
 		GameObject(GameObject&&);
 
 		~GameObject(void);
@@ -53,62 +54,50 @@ namespace Dystopia
 		void Destroy(void);
 		void Unload(void);
 
-		void OnCollisionEnter(CollisionEvent&);
-		void OnCollisionStay (CollisionEvent&);
-		void OnCollisionExit (CollisionEvent&);
+		void OnCollisionEnter(const CollisionEvent&);
+		void OnCollisionStay (const CollisionEvent&);
+		void OnCollisionExit (const CollisionEvent&);
 
 		template <typename T>
-		void AddComponent(T*);
+		void AddComponent();
+		void AddComponent(Component*, ComponentTag);
+		void AddComponent(Behaviour*, BehaviourTag);
 		template <typename T>
-		void RemoveComponent(T*);
+		void RemoveComponent();
+		void RemoveComponent(Component*);
 
-		void PurgeComponents(void);
-
-		void Serialise();
-		void Unserialise();
+		void Serialise(TextSerialiser&) const;
+		void Unserialise(TextSerialiser&);
 
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
 
+		unsigned long long GetID(void) const;
+		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
 		void SetName(const std::string&);
 
 		template<class T>
-		T* GetComponent(void) const
-		{
-			for (Component * e : mComponents)
-			{
-				if (T::TYPE == e->GetComponentType())
-				{
-					return dynamic_cast<T*>(e);
-				}
-			}
-			return nullptr;
-		}
+		T* GetComponent(void) const;
 
+		// DOESNT WORK YET
 		template<class T>
-		AutoArray<T*> GetComponents(void) const
-		{
-			AutoArray<T*> temp{};
-			for (Component * e : mComponents)
-			{
-				if (T::TYPE == e->GetComponentType())
-				{
-					temp.Insert(dynamic_cast<T*>(e));
-				}
-			}
+		AutoArray<T*> GetComponents(void) const;
 
-			return temp;
-		}
+		inline AutoArray<Component*> GetAllComponents() const;
+		inline AutoArray<Behaviour*> GetAllBehaviours() const;
 
 
-	protected:
+		// ======================================== OPERATORS ======================================== // 
 
-		bool mbActive;
-		unsigned mnID;
-		std::string mName;
+		GameObject& operator = (GameObject&&);
+
 
 	private:
+
+		unsigned long long mnID;
+		unsigned mnFlags;
+		std::string mName;
 
 		Transform mTransform;
 		AutoArray<Component*> mComponents;
@@ -116,54 +105,159 @@ namespace Dystopia
 
 		GameObject(const GameObject&) = delete;
 
-		void AddComponent(Component*, ComponentTag);
-		void AddComponent(Component*, BehaviourTag);
-		void RemoveComponent(Component*, ComponentTag);
-		void RemoveComponent(Component*, BehaviourTag);
+		template <typename> inline void AddComponent(BehaviourTag);
+		template <typename> inline void AddComponent(ComponentTag);
+		template <typename> inline void RemoveComponent(BehaviourTag);
+		template <typename> inline void RemoveComponent(ComponentTag);
 
-		template<typename T, typename U, typename Ret, typename ...Params, typename ...Args>
-		inline void Ping(AutoArray<T*>& _arr, Ret(U::*_pfunc)(Params ...), Args&& ..._args);
+		template <typename T> T* GetComponent(ComponentTag) const;
+		template <typename T> T* GetComponent(BehaviourTag) const;
 
-		template<typename T, typename U, typename Ret, typename ...Params, typename ...Args>
-		inline void ForcePing(AutoArray<T*>& _arr, Ret(U::*_pfunc)(Params ...), Args&& ..._args);
+		void PurgeComponents(void);
 	};
+}
 
 
 
 
 
 
-	// ============================================ FUNCTION DEFINITIONS ============================================ // 
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
-	template <typename T>
-	inline void GameObject::AddComponent(T* _pComponent)
+
+inline unsigned Dystopia::GameObject::GetFlags(void) const
+{
+	return mnFlags;
+}
+
+template <typename T>
+inline void Dystopia::GameObject::AddComponent()
+{
+	AddComponent<T>(typename T::TAG{});
+}
+
+template <typename Ty>
+inline void Dystopia::GameObject::AddComponent(ComponentTag)
+{
+	//GUID_t get = EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()->RequestComponent();
+
+	//mComponents.EmplaceBack(get, 
+	//	Utility::MetaFind_t<Ty, AllComponents>::value, 
+	//	Utility::MetaFind_t<typename Ty::SYSTEM, EngineCore::AllSys>::value
+	//);
+
+	mComponents.Insert(
+		EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()->RequestComponent();
+	);
+}
+
+template <typename Ty>
+inline void Dystopia::GameObject::AddComponent(BehaviourTag)
+{
+	mBehaviours.push_back(new Ty{});
+}
+
+template <typename T>
+inline void Dystopia::GameObject::RemoveComponent()
+{
+	RemoveComponent<T>(typename T::TAG{});
+}
+
+template <typename T>
+T* Dystopia::GameObject::GetComponent(void) const
+{
+	return GetComponent<T>(typename T::TAG{});
+}
+
+template <>
+inline Dystopia::Transform* Dystopia::GameObject::GetComponent<Dystopia::Transform>(void) const
+{
+	return const_cast<Transform*>(&mTransform);
+}
+
+template <typename T>
+T* Dystopia::GameObject::GetComponent(ComponentTag) const
+{
+	for (auto& e : mComponents)
 	{
-		AddComponent(_pComponent, typename T::TAG{});
-	}
+		//if (Utility::MetaFind_t<T, AllComponents>::value == e.mComponent)
+		//{
+		//	return EngineCore::GetInstance()->GetSystem<typename T::SYSTEM>()->GetComponent(e.mID);
+		//}
 
-	template <typename T>
-	inline void GameObject::RemoveComponent(T* _pComponent)
-	{
-		RemoveComponent(_pComponent, typename T::TAG{});
-	}
-
-	template<typename T, typename U, typename Ret, typename ...Params, typename ...Args>
-	inline void GameObject::Ping(AutoArray<T*>& _arr, Ret(U::*_pfunc)(Params ...), Args&& ..._args)
-	{
-		for (T* e : _arr)
+		if (Utility::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
 		{
-			if (e->IsActive())
-				(e->*_pfunc)(static_cast<Args&&>(_args)...);
+			return static_cast<T*>(e);
 		}
 	}
 
-	template<typename T, typename U, typename Ret, typename ...Params, typename ...Args>
-	inline void GameObject::ForcePing(AutoArray<T*>& _arr, Ret(U::*_pfunc)(Params ...), Args&& ..._args)
+	return nullptr;
+}
+
+template <typename T>
+T* Dystopia::GameObject::GetComponent(BehaviourTag) const
+{
+	for (auto& e : mBehaviours)
 	{
-		for (T* e : _arr)
+		if (Utility::MetaFind_t<T, AllBehaviours>::value == e->GetComponentType())
 		{
-			(e->*_pfunc)(static_cast<Args&&>(args)...);
+			return static_cast<T*>(e);
+		}
+	}
+
+	return nullptr;
+}
+
+template <typename T>
+AutoArray<T*> Dystopia::GameObject::GetComponents(void) const
+{
+	/*AutoArray<T*> temp{};
+	for (Component * e : mComponents)
+	{
+		if (T::TYPE == e->GetComponentType())
+		{
+			temp.Insert(static_cast<T*>(e));
+		}
+	}
+
+	return temp;*/
+	return AutoArray<T*>{};
+}
+
+inline AutoArray<Dystopia::Component*> Dystopia::GameObject::GetAllComponents() const
+{
+	return mComponents;
+}
+
+inline AutoArray<Dystopia::Behaviour*> Dystopia::GameObject::GetAllBehaviours() const
+{
+	return mBehaviours;
+}
+
+
+template <typename Ty>
+inline void Dystopia::GameObject::RemoveComponent(ComponentTag)
+{
+	for (unsigned n = 0; n < mComponents.size(); ++n)
+	{
+		if (Utility::MetaFind_t<Ty, AllComponents>::value == mComponents[n]->GetComponentType())
+		{
+			mComponents.FastRemove(n);
+			break;
+		}
+	}
+}
+
+template <typename Ty>
+inline void Dystopia::GameObject::RemoveComponent(BehaviourTag)
+{
+	for (unsigned n = 0; n < mBehaviours.size(); ++n)
+	{
+		if (Utility::MetaFind_t<Ty, AllBehaviours>::value == mBehaviours[n]->GetComponentType())
+		{
+			mBehaviours.FastRemove(n);
+			break;
 		}
 	}
 }

@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _INPUTMAP_H_
 #define _INPUTMAP_H_
 
-enum eUserButton
+enum eUserButton : unsigned short
 {
 	BUTTON_UP, 
 	BUTTON_DOWN,
@@ -29,10 +29,14 @@ enum eUserButton
 	BUTTON_PAUSE,
 	BUTTON_CANCEL,
 
+	MOUSE_L,
+	MOUSE_R,
+	MOUSE_M,
+
 	TOTAL_USERBUTTONS
 };
 
-enum eButton
+enum eButton : unsigned short
 {
 	MOUSE_LEFT			= 0x01,
 	MOUSE_RIGHT,
@@ -105,6 +109,9 @@ enum eButton
 	KEYBOARD_BACKSPACE	= 0x08,
 	KEYBOARD_TAB,
 	KEYBOARD_ENTER		= 0x0D,
+	KEYBOARD_SHIFT		= 0x10,
+	KEYBOARD_CTRL,
+	KEYBOARD_ALT,
 	KEYBOARD_ESCAPE		= 0x1B,
 	KEYBOARD_LSHIFT		= 0xA0,
 	KEYBOARD_RSHIFT,
@@ -127,7 +134,96 @@ enum eButton
 	KEYBOARD_DOWN
 };
 
-
+enum eEditorButton : unsigned short
+{
+	KEY_LMOUSE		,
+	KEY_RMOUSE		,
+	KEY_MMOUSE		,
+	KEY_A			,
+	KEY_B			,
+	KEY_C			,
+	KEY_D			,
+	KEY_E			,
+	KEY_F			,
+	KEY_G			,
+	KEY_H			,
+	KEY_I			,
+	KEY_J			,
+	KEY_K			,
+	KEY_L			,
+	KEY_M			,
+	KEY_N			,
+	KEY_O			,
+	KEY_P			,
+	KEY_Q			,
+	KEY_R			,
+	KEY_S			,
+	KEY_T			,
+	KEY_U			,
+	KEY_V			,
+	KEY_W			,
+	KEY_X			,
+	KEY_Y			,
+	KEY_Z			,
+	KEY_F1			,
+	KEY_F2			,
+	KEY_F3			,
+	KEY_F4			,
+	KEY_F5			,
+	KEY_F6			,
+	KEY_F7			,
+	KEY_F8			,
+	KEY_F9			,
+	KEY_F10			,
+	KEY_F11			,
+	KEY_F12			,
+	KEY_0			,
+	KEY_1			,
+	KEY_2			,
+	KEY_3			,
+	KEY_4			,
+	KEY_5			,
+	KEY_6			,
+	KEY_7			,
+	KEY_8			,
+	KEY_9			,
+	KEY_NUMPAD_0	,
+	KEY_NUMPAD_1	,
+	KEY_NUMPAD_2	,
+	KEY_NUMPAD_3	,
+	KEY_NUMPAD_4	,
+	KEY_NUMPAD_5	,
+	KEY_NUMPAD_6	,
+	KEY_NUMPAD_7	,
+	KEY_NUMPAD_8	,
+	KEY_NUMPAD_9	,
+	KEY_BACKSPACE	,
+	KEY_TAB			,
+	KEY_ENTER		,
+	KEY_SHIFT		,
+	KEY_CTRL		,
+	KEY_ALT			,
+	KEY_ESCAPE		,
+	KEY_LSHIFT		,
+	KEY_RSHIFT		,
+	KEY_LCTRL		,
+	KEY_RCTRL		,
+	KEY_LALT		,
+	KEY_RALT		,
+	KEY_SPACEBAR	,
+	KEY_PAGEUP		,
+	KEY_PAGEDOWN	,
+	KEY_END			,
+	KEY_HOME		,
+	KEY_PRNTSRC		,
+	KEY_INSERT		,
+	KEY_DELETE		,
+	KEY_LEFT		,
+	KEY_UP			,
+	KEY_RIGHT		,
+	KEY_DOWN		,
+	TOTAL_EDITOR_BUTTONS
+};
 
 #endif		// INCLUDE GUARD
 

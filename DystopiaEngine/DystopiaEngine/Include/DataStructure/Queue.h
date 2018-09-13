@@ -26,6 +26,8 @@ public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
 	explicit Queue(unsigned _nSize);
+	Queue(Queue&&);
+	Queue(const Queue&) = delete;
 
 	~Queue(void);
 
@@ -47,6 +49,8 @@ public:
 	// Synonymous with Remove
 	inline void pop_front(void);
 
+	void clear(void);
+
 	// Gets the first element of the Queue
 	inline const T& First(void) const;
 
@@ -67,7 +71,7 @@ public:
 	// Returns false otherwise
 	inline bool IsEmpty(void) const;
 
-	struct QueueIterator : std::input_iterator_tag
+	struct QueueIterator
 	{
 		explicit QueueIterator(const T*, unsigned, unsigned) noexcept;
 
@@ -80,21 +84,23 @@ public:
 		bool operator == (const QueueIterator&) const noexcept;
 		bool operator != (const QueueIterator&) const noexcept;
 
+		using iterator_category = std::input_iterator_tag;
+
 	private:
 
 		const T* mpArray;
 		unsigned mnPos, mnLimit;
-
-
-		// ======================================== OPERATORS ======================================== // 
-
-		Queue& operator = (const Queue&) = delete;
 	};
 
 private:
 
 	T* mpArray;
 	unsigned mnFront, mnBack, mnSize, mnCap;
+
+
+	// ======================================== OPERATORS ======================================== // 
+
+	Queue& operator = (const Queue&) = delete;
 };
 
 
@@ -107,9 +113,16 @@ private:
 
 template <typename T>
 Queue<T>::Queue(unsigned _nSize) :
-	mpArray{ nullptr }, mnFront{ 0 }, mnBack{ 0 }, mnSize{ 0 }, mnCap{ _nSize }
+	mpArray{ new T[_nSize] }, mnFront{ 0 }, mnBack{ 0 }, mnSize{ 0 }, mnCap{ _nSize }
 {
-	mpArray = new T[_nSize];
+
+}
+
+template <typename T>
+Queue<T>::Queue(Queue<T>&& _o) :
+	mpArray{ _o.mpArray }, mnFront{ _o.mnFront }, mnBack{ _o.mnBack }, mnSize{ _o.mnSize }, mnCap{ _o.mnCap }
+{
+
 }
 
 template <typename T>
@@ -148,6 +161,12 @@ inline void Queue<T>::pop_front(void)
 	Remove();
 }
 
+template<typename T>
+inline void Queue<T>::clear(void)
+{
+	while (!IsEmpty()) Remove();
+}
+
 template <typename T>
 const T& Queue<T>::First(void) const
 {
@@ -157,8 +176,9 @@ const T& Queue<T>::First(void) const
 template <typename T>
 void Queue<T>::Insert(const T& _obj)
 {
+	++mnSize;
 	mpArray[mnBack] = _obj;
-	++mnBack;
+	mnBack = Utility::LoopIncrement(mnBack, mnCap);
 }
 
 template <typename T>
@@ -228,7 +248,7 @@ const T* Queue<T>::QueueIterator::operator->(void)
 template <typename T>
 bool Queue<T>::QueueIterator::operator == (const QueueIterator& _rhs) const noexcept
 {
-	return mnPos == _rhs.mnPos && mpArray == _rhs.mpArray;
+	return (mnPos == _rhs.mnPos) && (mpArray == _rhs.mpArray);
 }
 
 template <typename T>

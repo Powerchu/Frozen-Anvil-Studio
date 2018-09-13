@@ -18,12 +18,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _MATRIX_4_H_
 
 #if defined(DEBUG) | defined(_DEBUG)
-#include "MathUtility.h"
-#include "DebugAssert.h"
+#include "Utility\DebugAssert.h"
 #endif // Debug only includes
 
 #include "Math\Vector4.h"		// Vector4
-#include "Math\MathUtility.h"	// DegToRad
+#include "Math\Angles.h"		// Angle
 
 #include <new>					// nothrow_t
 #include <cmath>				// sqrtf
@@ -52,18 +51,20 @@ namespace Math
 		) noexcept;
 		inline explicit Matrix4(const Vector4(&)[4]) noexcept;
 		inline explicit Matrix4(const float (&)[16]) noexcept;
+		inline explicit Matrix4(const Vector4, const Vector4, const Vector4, const Vector4) noexcept;
 
 
 		// ==================================== MATRIX OPERATIONS ==================================== // 
 
 		float _CALL Determinant(void) const;
 
-		inline Matrix4& _CALL Identity(void);
+		inline Matrix4& _CALL Identity(void) noexcept;
+
 		// Not implemented!
-		Matrix4& _CALL       Inverse(void);
-		// Not implemented!
+		Matrix4& _CALL Inverse(void);
 		Matrix4& _CALL AffineInverse(void);
-		inline Matrix4& _CALL Transpose(void);
+
+		inline Matrix4& _CALL Transpose(void) noexcept;
 
 		inline Vector4 _CALL GetRow(const unsigned _nRow) const;
 		inline Vector4 _CALL GetColumn(const unsigned _nCol) const;
@@ -109,39 +110,28 @@ namespace Math
 		Vector4 mData[4];
 	};
 
-	inline Matrix4 _CALL Identity (void);
-
 	inline Matrix4 _CALL       Inverse(const Matrix4);
 	inline Matrix4 _CALL AffineInverse(const Matrix4);
 
-	inline Matrix4 _CALL Transpose(const Matrix4);
+	inline Matrix4 _CALL Transpose(const Matrix4) noexcept;
 
 
 	// ==================================== MATRIX GENERATORS ==================================== // 
 
 	inline Matrix4 _CALL Scale(const Vector4);
-	inline Matrix4 _CALL Scale(float _fScaleX, float _fScaleY, float _fScaleZ);
+	inline Matrix4 _CALL Scale(float _fScaleX, float _fScaleY, float _fScaleZ = 1);
 	inline Matrix4 _CALL Translate(const Vector4);
-	inline Matrix4 _CALL Translate(float _fTranslateX, float _fTranslateY, float _fTranslateZ);
-	inline Matrix4 _CALL RotateX(float _fRadians);
-	inline Matrix4 _CALL RotateY(float _fRadians);
-	inline Matrix4 _CALL RotateZ(float _fRadians);
-	inline Matrix4 _CALL RotateXDeg(float _fDegrees);
-	inline Matrix4 _CALL RotateYDeg(float _fDegrees);
-	inline Matrix4 _CALL RotateZDeg(float _fDegrees);
+	inline Matrix4 _CALL Translate(float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
+	inline Matrix4 _CALL RotateX(Angle _fAngle);
+	inline Matrix4 _CALL RotateY(Angle _fAngle);
+	inline Matrix4 _CALL RotateZ(Angle _fAngle);
 
-	inline Matrix4 _CALL RotYTrans(float _fRadians, Vector4);
-	inline Matrix4 _CALL RotYTrans(float _fRadians, float _fTranslateX, float _fTranslateY, float _fTranslateZ);
-	inline Matrix4 _CALL RotXTrans(float _fRadians, Vector4);
-	inline Matrix4 _CALL RotXTrans(float _fRadians, float _fTranslateX, float _fTranslateY, float _fTranslateZ);
-	inline Matrix4 _CALL RotZTrans(float _fRadians, Vector4);
-	inline Matrix4 _CALL RotZTrans(float _fRadians, float _fTranslateX, float _fTranslateY, float _fTranslateZ);
-	inline Matrix4 _CALL RotYTransDeg(float _fDegrees, Vector4);
-	inline Matrix4 _CALL RotYTransDeg(float _fDegrees, float _fTranslateX, float _fTranslateY, float _fTranslateZ);
-	inline Matrix4 _CALL RotXTransDeg(float _fDegrees, Vector4);
-	inline Matrix4 _CALL RotXTransDeg(float _fDegrees, float _fTranslateX, float _fTranslateY, float _fTranslateZ);
-	inline Matrix4 _CALL RotZTransDeg(float _fDegrees, Vector4);
-	inline Matrix4 _CALL RotZTransDeg(float _fDegrees, float _fTranslateX, float _fTranslateY, float _fTranslateZ);
+	inline Matrix4 _CALL RotYTrans(Angle _fAngle, Vector4);
+	inline Matrix4 _CALL RotYTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
+	inline Matrix4 _CALL RotXTrans(Angle _fAngle, Vector4);
+	inline Matrix4 _CALL RotXTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
+	inline Matrix4 _CALL RotZTrans(Angle _fAngle, Vector4);
+	inline Matrix4 _CALL RotZTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
 
 
 	// ======================================== OPERATORS ======================================== // 
@@ -172,16 +162,6 @@ inline Math::Matrix4::Matrix4(void) noexcept :
 
 }
 
-inline Math::Matrix4::Matrix4(
-	const float a, const float b, const float c, const float d,
-	const float e, const float f, const float g, const float h,
-	const float i, const float j, const float k, const float l,
-	const float m, const float n, const float o, const float p
-) noexcept : mData{ {a, b, c, d}, {e, f, g, h}, {i, j, k, l}, {m, n, o, p} }
-{
-
-}
-
 inline Math::Matrix4::Matrix4(const Vector4(&_arr)[4]) noexcept :
 	mData{ _arr[0], _arr[1], _arr[2], _arr[3] }
 {
@@ -199,12 +179,30 @@ inline Math::Matrix4::Matrix4(const float(&_arr)[16]) noexcept :
 
 }
 
-inline Math::Matrix4& _CALL Math::Matrix4::Identity(void)
+inline Math::Matrix4::Matrix4(
+	const float a, const float b, const float c, const float d,
+	const float e, const float f, const float g, const float h,
+	const float i, const float j, const float k, const float l,
+	const float m, const float n, const float o, const float p
+) noexcept : mData{ {a, b, c, d}, {e, f, g, h}, {i, j, k, l}, {m, n, o, p} }
+{
+
+}
+
+inline Math::Matrix4::Matrix4(
+	const Vector4 _v1, const Vector4 _v2,
+	const Vector4 _v3, const Vector4 _v4
+) noexcept : mData{ _v1, _v2, _v3, _v4 }
+{
+}
+
+
+inline Math::Matrix4& _CALL Math::Matrix4::Identity(void) noexcept
 {
 	return *this = Matrix4{};
 }
 
-inline Math::Matrix4& _CALL Math::Matrix4::Transpose(void)
+inline Math::Matrix4& _CALL Math::Matrix4::Transpose(void) noexcept
 {
 	// It's hard to tell what this is doing so here's a diagram
 	// 0 1 2 3  ->  0 4 1 5  ->  0 4 8 C
@@ -219,7 +217,7 @@ inline Math::Matrix4& _CALL Math::Matrix4::Transpose(void)
 	__m128 row3 = _mm_unpackhi_ps(mData[2].mData, mData[3].mData);
 
 	// movehl flips the order of assignment
-	// so we flip to get back the right order
+	// so we flip to get back the right order   // ie.
 	mData[0].mData = _mm_movelh_ps(row0, row1); // movelh : a1 a2 b1 b2
 	mData[1].mData = _mm_movehl_ps(row1, row0); // movehl : b3 b4 a3 a4
 	mData[2].mData = _mm_movelh_ps(row2, row3);
@@ -246,11 +244,6 @@ inline Math::Vector4 _CALL Math::Matrix4::GetColumn(const unsigned _nCol) const
 	return Math::Transpose(*this).mData[_nCol];
 }
 
-inline Math::Matrix4 _CALL Math::Identity(void)
-{
-	return Matrix4{};
-}
-
 inline Math::Matrix4 _CALL Math::Inverse(Matrix4 _mat)
 {
 	return _mat.Inverse();
@@ -261,7 +254,7 @@ inline Math::Matrix4 _CALL Math::AffineInverse(Matrix4 _mat)
 	return _mat.AffineInverse();
 }
 
-inline Math::Matrix4 _CALL Math::Transpose(Matrix4 _mat)
+inline Math::Matrix4 _CALL Math::Transpose(Matrix4 _mat) noexcept
 {
 	return _mat.Transpose();
 }
@@ -291,101 +284,56 @@ inline Math::Matrix4 _CALL Math::Translate(float _fTranslateX, float _fTranslate
 	return Matrix4{ 1.f, 0, 0, _fTranslateX, 0, 1.f, 0, _fTranslateY, 0, 0, 1.f, _fTranslateZ, 0, 0, 0, 1.f };
 }
 
-inline Math::Matrix4 _CALL Math::RotateX(float _fRadians)
+inline Math::Matrix4 _CALL Math::RotateX(Angle _fAngle)
 {
-	float s = sinf(_fRadians), c = cosf(_fRadians);
+	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
 	return Matrix4{ 1.f, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1 };
 }
 
-inline Math::Matrix4 _CALL Math::RotateY(float _fRadians)
+inline Math::Matrix4 _CALL Math::RotateY(Angle _fAngle)
 {
-	float s = sinf(_fRadians), c = cosf(_fRadians);
+	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
 	return Matrix4{ c, 0, s, 0, 0, 1.f, 0, 0, -s, 0, c, 0, 0, 0, 0, 1.f };
 }
 
-inline Math::Matrix4 _CALL Math::RotateZ(float _fRadians)
+inline Math::Matrix4 _CALL Math::RotateZ(Angle _fAngle)
 {
-	float s = sinf(_fRadians), c = cosf(_fRadians);
+	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
 	return Matrix4{ c, -s, 0, 0, s, c, 0, 0, 0, 0, 1.f, 0, 0, 0, 0, 1.f };
 }
 
-inline Math::Matrix4 _CALL Math::RotateXDeg(float _fDegrees)
+
+inline Math::Matrix4 _CALL Math::RotXTrans(Angle _fAngle, Vector4 _vTrans)
 {
-	return RotateX(DegToRad(_fDegrees));
+	return RotXTrans(_fAngle, _vTrans.x, _vTrans.y, _vTrans.z);
 }
 
-inline Math::Matrix4 _CALL Math::RotateYDeg(float _fDegrees)
+inline Math::Matrix4 _CALL Math::RotXTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
 {
-	return RotateY(DegToRad(_fDegrees));
-}
-
-inline Math::Matrix4 _CALL Math::RotateZDeg(float _fDegrees)
-{
-	return RotateZ(DegToRad(_fDegrees));
-}
-
-
-inline Math::Matrix4 _CALL Math::RotXTrans(float _fRadians, Vector4 _vTrans)
-{
-	return RotXTrans(_fRadians, _vTrans.x, _vTrans.y, _vTrans.z);
-}
-
-inline Math::Matrix4 _CALL Math::RotXTrans(float _fRadians, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
-{
-	float s = sinf(_fRadians), c = cosf(_fRadians);
+	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
 	return Matrix4{ 1.f, 0, 0, _fTranslateX, 0, c, -s, _fTranslateY, 0, s, c, _fTranslateZ, 0, 0, 0, 1 };
 }
 
-inline Math::Matrix4 _CALL Math::RotYTrans(float _fRadians, Vector4 _vTrans)
+inline Math::Matrix4 _CALL Math::RotYTrans(Angle _fAngle, Vector4 _vTrans)
 {
-	return RotYTrans(_fRadians, _vTrans.x, _vTrans.y, _vTrans.z);
+	return RotYTrans(_fAngle, _vTrans.x, _vTrans.y, _vTrans.z);
 }
 
-inline Math::Matrix4 _CALL Math::RotYTrans(float _fRadians, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
+inline Math::Matrix4 _CALL Math::RotYTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
 {
-	float s = sinf(_fRadians), c = cosf(_fRadians);
+	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
 	return Matrix4{ c, 0, s, _fTranslateX, 0, 1.f, 0, _fTranslateY, -s, 0, c, _fTranslateZ, 0, 0, 0, 1.f };
 }
 
-inline Math::Matrix4 _CALL Math::RotZTrans(float _fRadians, Vector4 _vTrans)
+inline Math::Matrix4 _CALL Math::RotZTrans(Angle _fAngle, Vector4 _vTrans)
 {
-	return RotZTrans(_fRadians, _vTrans.x, _vTrans.y, _vTrans.z);
+	return RotZTrans(_fAngle, _vTrans.x, _vTrans.y, _vTrans.z);
 }
 
-inline Math::Matrix4 _CALL Math::RotZTrans(float _fRadians, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
+inline Math::Matrix4 _CALL Math::RotZTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
 {
-	float s = sinf(_fRadians), c = cosf(_fRadians);
+	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
 	return Matrix4{ c, -s, 0, _fTranslateX, s, c, 0, _fTranslateY, 0, 0, 1.f, _fTranslateZ, 0, 0, 0, 1.f };
-}
-
-inline Math::Matrix4 _CALL Math::RotXTransDeg(float _fDegrees, Vector4 _vTrans)
-{
-	return RotXTrans(DegToRad(_fDegrees), _vTrans.x, _vTrans.y, _vTrans.z);
-}
-
-inline Math::Matrix4 _CALL Math::RotXTransDeg(float _fDegrees, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
-{
-	return RotXTrans(DegToRad(_fDegrees), _fTranslateX, _fTranslateY, _fTranslateZ);
-}
-
-inline Math::Matrix4 _CALL Math::RotYTransDeg(float _fDegrees, Vector4 _vTrans)
-{
-	return RotYTrans(DegToRad(_fDegrees), _vTrans.x, _vTrans.y, _vTrans.z);
-}
-
-inline Math::Matrix4 _CALL Math::RotYTransDeg(float _fDegrees, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
-{
-	return RotYTrans(DegToRad(_fDegrees), _fTranslateX, _fTranslateY, _fTranslateZ);
-}
-
-inline Math::Matrix4 _CALL Math::RotZTransDeg(float _fDegrees, Vector4 _vTrans)
-{
-	return RotZTrans(DegToRad(_fDegrees), _vTrans.x, _vTrans.y, _vTrans.z);
-}
-
-inline Math::Matrix4 _CALL Math::RotZTransDeg(float _fDegrees, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
-{
-	return RotZTrans(DegToRad(_fDegrees), _fTranslateX, _fTranslateY, _fTranslateZ);
 }
 
 
@@ -395,12 +343,12 @@ inline Math::Matrix4 _CALL Math::RotZTransDeg(float _fDegrees, float _fTranslate
 
 inline float& _CALL      Math::Matrix4::operator[] (const unsigned _nIndex)
 {
-	return mData[_nIndex >> 2][_nIndex % 4];
+	return mData[_nIndex >> 2][_nIndex & 3];
 }
 
 inline const float _CALL Math::Matrix4::operator[] (const unsigned _nIndex) const
 {
-	return mData[_nIndex >> 2][_nIndex % 4];
+	return mData[_nIndex >> 2][_nIndex & 3];
 }
 
 
@@ -420,7 +368,7 @@ inline Math::Matrix4& _CALL Math::Matrix4::operator-= (const Matrix4 _rhs)
 	return *this;
 }
 
-__forceinline Math::Matrix4& _CALL Math::Matrix4::operator*= (const Matrix4 _rhs)
+inline Math::Matrix4& _CALL Math::Matrix4::operator*= (const Matrix4 _rhs)
 {
 	for (unsigned n = 0; n < 4; ++n)
 	{
@@ -477,49 +425,47 @@ inline Math::Matrix4 _CALL Math::operator* (Matrix4 _lhs, const Matrix4 _rhs)
 inline Math::Vector4 _CALL Math::Matrix4::operator* (const Vector4 _rhs) const
 {
 	// No idea if any of these provides any speed up against the plain old version
-	__m128 dot1 = _mm_setzero_ps(), dot2 = _mm_setzero_ps(), 
-		dot3 = _mm_setzero_ps(), dot4 = _mm_setzero_ps();
+	Vector4 dot1, dot2, dot3, dot4;
 
 #if USE_DP & defined(_INCLUDED_SMM)	// SSE 4.1
 	
-	dot1 = _mm_dp_ps(mData[0].mData, _rhs.mData, 0xF1); // Store into 1st component
-	dot2 = _mm_dp_ps(mData[1].mData, _rhs.mData, 0xF2); // Store into 2nd ...
-	dot3 = _mm_dp_ps(mData[2].mData, _rhs.mData, 0xF4); // Store into 3rd ...
-	dot4 = _mm_dp_ps(mData[3].mData, _rhs.mData, 0xF8); // Store into 4th ...
+	dot1.mData = _mm_dp_ps(mData[0].GetRaw(), _rhs.GetRaw(), 0xF1); // Store into 1st component
+	dot2.mData = _mm_dp_ps(mData[1].GetRaw(), _rhs.GetRaw(), 0xF2); // Store into 2nd ...
+	dot3.mData = _mm_dp_ps(mData[2].GetRaw(), _rhs.GetRaw(), 0xF4); // Store into 3rd ...
+	dot4.mData = _mm_dp_ps(mData[3].GetRaw(), _rhs.GetRaw(), 0xF8); // Store into 4th ...
 
-	dot1 = _mm_add_ps(dot1, dot2);
-	dot3 = _mm_add_ps(dot3, dot4);
+	dot1 = dot1 + dot2;
+	dot3 = dot3 + dot4;
 
-	return Vector4{ _mm_add_ps(dot1, dot3) };
+	return dot1 + dot3;
 
 #elif defined(_INCLUDED_PMM)		// SSE 3
 
-	dot1 = _mm_mul_ps(mData[0].mData, _rhs.mData);
-	dot2 = _mm_mul_ps(mData[1].mData, _rhs.mData);
-	dot3 = _mm_mul_ps(mData[2].mData, _rhs.mData);
-	dot4 = _mm_mul_ps(mData[3].mData, _rhs.mData);
+	dot1 = mData[0] * _rhs;
+	dot2 = mData[1] * _rhs;
+	dot3 = mData[2] * _rhs;
+	dot4 = mData[3] * _rhs;
 
-	dot1 = _mm_hadd_ps(dot1, dot2);
-	dot3 = _mm_hadd_ps(dot3, dot4);
+	dot1.mData = _mm_hadd_ps(dot1.GetRaw(), dot2.GetRaw());
+	dot3.mData = _mm_hadd_ps(dot3.GetRaw(), dot4.GetRaw());
 
-	return Vector4{ _mm_hadd_ps(dot1, dot3) };
+	return Vector4{ _mm_hadd_ps(dot1.GetRaw(), dot3.GetRaw()) };
 
 #else								// Fallback (SSE 2)
-
-	dot1 = _mm_mul_ps(mData[0].mData, _rhs.mData);
-	dot2 = _mm_mul_ps(mData[1].mData, _rhs.mData);
-	dot3 = _mm_mul_ps(mData[2].mData, _rhs.mData);
-	dot4 = _mm_mul_ps(mData[3].mData, _rhs.mData);
+	
+	dot1 = mData[0] * _rhs;
+	dot2 = mData[1] * _rhs;
+	dot3 = mData[2] * _rhs;
+	dot4 = mData[3] * _rhs;
 
 	// Cause registers to flush to memory? - Apparently not
 	// Looks like the compiler changes it to shuffles for us
-	// And the resulting assembly looks like a disaster
 
 	return Vector4{
-		dot1.m128_f32[0] + dot1.m128_f32[1] + dot1.m128_f32[2] + dot1.m128_f32[3],
-		dot2.m128_f32[0] + dot2.m128_f32[1] + dot2.m128_f32[2] + dot2.m128_f32[3],
-		dot3.m128_f32[0] + dot3.m128_f32[1] + dot3.m128_f32[2] + dot3.m128_f32[3],
-		dot4.m128_f32[0] + dot4.m128_f32[1] + dot4.m128_f32[2] + dot4.m128_f32[3]
+		dot1.x + dot1.y + dot1.z + dot1.w,
+		dot2.x + dot2.y + dot2.z + dot2.w,
+		dot3.x + dot3.y + dot3.z + dot3.w,
+		dot4.x + dot4.y + dot4.z + dot4.w
 	};
 
 #endif

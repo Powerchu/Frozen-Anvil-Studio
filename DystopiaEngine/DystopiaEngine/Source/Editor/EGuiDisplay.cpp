@@ -1,0 +1,653 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	EGuiDisplay.cpp
+\author Shannon Tan (100%)
+\par    email: t.shannon\@digipen.edu
+\brief
+BRIEF HERE
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
+#if EDITOR
+#include "Editor\EGUI.h"
+#include "Editor\Commands.h"
+#include "Editor\CommandList.h"
+#include <stdlib.h>
+#include <iostream>
+
+static float DefaultAlighnmentOffsetY = 3.f;
+static float DefaultAlighnmentSpacing = 10.f;
+Dystopia::CommandHandler *gContextComdHND = nullptr;
+
+namespace EGUI
+{
+	void SetContext(Dystopia::CommandHandler *_pContext)
+	{
+		gContextComdHND = _pContext;
+	}
+
+	void RemoveContext()
+	{
+		gContextComdHND = nullptr;
+	}
+
+	void ChangeLabelSpacing(float _amount)
+	{
+		DefaultAlighnmentSpacing = _amount;
+	}
+
+	void ChangeLabelSpacing()
+	{
+		DefaultAlighnmentSpacing = 10.f;
+	}
+
+	void ChangeAlignmentYOffset(float _amount)
+	{
+		DefaultAlighnmentOffsetY = _amount;
+	}
+
+	void ChangeAlignmentYOffset()
+	{
+		DefaultAlighnmentOffsetY = 3.f;
+	}
+
+	bool StartTab(const std::string& _label, bool *_pOpen, ImGuiWindowFlags _flags)
+	{
+		return EGUI::Docking::BeginTabs(_label.c_str(), _pOpen, _flags);
+	}
+
+	void EndTab()
+	{
+		EGUI::Docking::EndTabs();
+	}
+
+	bool StartMainMenuBar()
+	{
+		return ImGui::BeginMainMenuBar();
+	}
+
+	bool StartMenuHeader(const std::string& _label)
+	{
+		return ImGui::BeginMenu(_label.c_str());
+	}
+
+	bool StartMenuBody(const std::string& _label, const std::string& _shortcut)
+	{
+		return ImGui::MenuItem(_label.c_str(), _shortcut.c_str());
+	}
+
+	void EndMainMenuBar()
+	{
+		ImGui::EndMainMenuBar();
+	}
+
+	void EndMenuHeader()
+	{
+		ImGui::EndMenu();
+	}
+
+	void Indent(float _spacing)
+	{
+		ImGui::Indent(_spacing);
+	}
+
+	void UnIndent(float _spacing)
+	{
+		ImGui::Unindent(_spacing);
+	}
+
+	bool StartChild(const std::string& _label, const Math::Vec2& _size, bool _showBorder, const Math::Vec4& _colour)
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 5, 5 });
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ _colour.x, _colour.y, _colour.z, _colour.w });
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0, 0, 0, 0 });
+		return ImGui::BeginChild(_label.c_str(), ImVec2{ _size.x, _size.y }, _showBorder);
+	}
+
+	bool StartChild(const std::string& _label, const float& _x, const float& _y, bool _showBorder, const Math::Vec4& _colour)
+	{
+		return StartChild(_label, Math::Vec2{ _x, _y }, _showBorder, _colour);
+	}
+
+	void EndChild()
+	{
+		ImGui::EndChild();
+		ImGui::PopStyleColor(2);
+		ImGui::PopStyleVar(2);
+	}
+
+	void SameLine(float _customOffset)
+	{
+		ImGui::SameLine(0, _customOffset);
+	}
+
+	void PushID(int id)
+	{
+		ImGui::PushID(id);
+	}
+
+	void PopID()
+	{
+		ImGui::PopID();
+	}
+
+	namespace Display
+	{
+		void HorizontalSeparator()
+		{
+			ImGui::Separator();
+		}
+
+		void Label(const char* _formatLabel, ...)
+		{
+			va_list args;
+			va_start(args, _formatLabel);
+			ImGui::TextV(_formatLabel, args);
+			va_end(args);
+		}
+
+		bool TextField(const std::string& _label, char* _outputbuffer, size_t _size, bool _showLabel, float _width)
+		{
+			ImGuiInputTextFlags flags = ImGuiInputTextFlags_AutoSelectAll | 
+										ImGuiInputTextFlags_EnterReturnsTrue;
+			ImGui::PushItemWidth(_width);
+			if (_showLabel)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label.c_str());
+				SameLine(DefaultAlighnmentSpacing);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+			bool b = ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags);
+			ImGui::PopItemWidth();
+			return b;
+		}
+
+		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside, bool _iteractive, bool _showLabel)
+		{
+			bool clicked = false;
+			ImVec4 greyColor = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
+			ImVec4 btnHoveredColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered);
+			ImVec4 btnActiveColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive);
+			bool show = _iteractive ? true : false;
+
+			if (_showLabel)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label.c_str());
+				SameLine(DefaultAlighnmentSpacing);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+
+			ImGui::PushItemWidth(_width);
+			ImGui::PushStyleColor(ImGuiCol_Button, greyColor);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, show ? btnHoveredColor : greyColor);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, show ? btnActiveColor : greyColor);
+			if (ImGui::Button((_anythingToShowInside + "###" + _label).c_str(),
+				ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize }))
+			{
+				if (show) clicked = true;
+			}
+			ImGui::PopStyleColor(3);
+			ImGui::PopItemWidth();
+			return clicked;
+		}
+
+		bool CheckBox(const std::string& _label, bool* _outputBool, bool _showLabel)
+		{
+			bool changed = false;
+			if (_showLabel)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label.c_str());
+				SameLine(DefaultAlighnmentSpacing);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+			if (ImGui::Checkbox(("###CheckBox" + _label).c_str(), _outputBool))
+			{
+				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
+				{
+					gContextComdHND->StartRecording(_outputBool);
+				}
+				changed = true;
+			}
+			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
+			{
+				gContextComdHND->EndRecording();
+			}
+			return changed;
+		}
+
+		bool DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max)
+		{
+			bool changed = false;
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label.c_str());
+			SameLine(DefaultAlighnmentSpacing);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			if (ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max))
+			{
+				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
+				{
+					gContextComdHND->StartRecording(_outputFloat);
+				}
+				changed = true;
+			}
+			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
+			{
+				gContextComdHND->EndRecording();
+			}
+			return changed;
+		}
+
+		bool DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max)
+		{
+			bool changed = false;
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label.c_str());
+			SameLine(DefaultAlighnmentSpacing);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			if (ImGui::DragInt(("###DragInt" + _label).c_str(), _outputInt, _dragSpeed, _min, _max))
+			{
+				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
+				{
+					gContextComdHND->StartRecording(_outputInt);
+				}
+				changed = true;
+			}
+			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
+			{
+				gContextComdHND->EndRecording();
+			}
+			return changed;
+		}
+
+		bool VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
+		{
+			bool changed = false;
+			std::string field1 = "##VecFieldX", field2 = "##VecFieldY", field3 = "##VecFieldZ";
+			float x, y, z;
+			x = _outputVec->x;
+			y = _outputVec->y;
+			z = _outputVec->z;
+			field1 += _label;
+			field2 += _label;
+			field3 += _label;
+
+			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label.c_str());
+			SameLine(DefaultAlighnmentSpacing);
+			Label("X:");
+			SameLine();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			if (ImGui::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max))
+			{
+				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
+				{
+					gContextComdHND->StartRecording(&_outputVec->x);
+				}
+				_outputVec->x = x;
+				changed = true;
+			}
+			SameLine();
+			Label("Y:");
+			SameLine();
+			if (ImGui::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max))
+			{
+				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
+				{
+					gContextComdHND->StartRecording(&_outputVec->y);
+				}
+				_outputVec->y = y;
+				changed = true;
+			}
+			SameLine();
+			Label("Z:");
+			SameLine();
+			if (ImGui::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max))
+			{
+				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
+				{
+					gContextComdHND->StartRecording(&_outputVec->z);
+				}
+				changed = true;
+				_outputVec->z = z;
+			}
+			ImGui::PopItemWidth();
+			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
+			{
+				gContextComdHND->EndRecording();
+			}
+
+			return changed;
+		}
+
+		bool CollapsingHeader(const std::string& _label)
+		{
+			return ImGui::CollapsingHeader(_label.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+		}
+
+		bool SelectableTxt(const std::string& _label, bool _highlight)
+		{
+			if (_highlight) ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
+			bool ret = ImGui::Selectable(_label.c_str(), _highlight);
+			if (_highlight) ImGui::PopStyleColor();
+			return ret;
+		}
+
+		bool SelectableTxt(const std::string& _label, bool* _outputBool)
+		{
+			return (ImGui::Selectable(_label.c_str(), _outputBool));
+		}
+
+		bool SelectableTxtDouble(const std::string& _label, bool _highlight)
+		{
+			return (ImGui::Selectable(_label.c_str(), _highlight, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0);
+		}
+
+		bool SelectableTxtDouble(const std::string& _label, bool* _outputBool)
+		{
+			if ((ImGui::Selectable(_label.c_str(), _outputBool, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0))
+				return true;
+			else
+				*_outputBool = false;
+			return false;
+		}
+
+		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow)
+		{
+			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			flags = _highlighted ? flags | ImGuiTreeNodeFlags_Selected : flags;
+			flags = _noArrow ? flags | ImGuiTreeNodeFlags_Leaf : flags;
+
+			if (_highlighted)
+				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
+
+			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, flags);
+
+			if (_highlighted)
+				ImGui::PopStyleColor();
+
+			return ret;
+		}
+
+		void OpenTreeNode(const std::string&_label, bool _open)
+		{
+			ImGuiStorage* pStorage = ImGui::GetStateStorage();
+			ImGuiID key = ImGui::GetID(_label.c_str());
+			if (!_open && pStorage->GetInt(key))
+				pStorage->SetInt(key, 0);
+			else if (_open && !pStorage->GetInt(key))
+				pStorage->SetInt(key, 1);
+		}
+
+		void OpenTreeNode(bool _open)
+		{
+			ImGui::SetNextTreeNodeOpen(_open);
+		}
+
+		void EndTreeNode()
+		{
+			ImGui::TreePop();
+		}
+
+		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const std::string& _toolTip)
+		{
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				ImGui::SetDragDropPayload(EGUI::ToString(_tagLoad), _pData, _dataSize);
+				ImGui::Text("%s", _toolTip.c_str());
+				return true;
+			}
+			return false;
+		}
+
+		void EndPayload()
+		{
+			ImGui::EndDragDropSource();
+		}
+
+		void EndPayloadReceiver()
+		{
+			ImGui::EndDragDropTarget();
+		}
+
+		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
+						   const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize)
+		{
+			const ImU32	col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
+			ImVec2 pos = ImGui::GetCursorScreenPos();
+			ImVec2 size{ _displaytSize.x, _displaytSize.y };
+			const float iconWidth = size.x / 2;
+			const float iconHeight = size.y / 2;
+			const float offsetX = iconWidth / 2;
+			const float offsetY = iconHeight / 4;
+			ImVec2 posIcon{ pos.x + offsetX, pos.y + offsetY };
+			ImVec2 posText{ pos.x + 1, pos.y + iconHeight + (2* offsetY) };
+
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
+			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), size);
+			ImGui::PopStyleColor();
+			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
+			if (payload) EndPayload();
+			ImGui::SetCursorScreenPos(posIcon);
+			IconFile(_uniqueId.c_str(), size.x, size.y);
+			ImGui::SetCursorScreenPos(posText);
+			ImGui::TextWrapped(_label.c_str());
+			return btn;
+		}
+
+		void OpenPopup(const std::string& _thePopupID, bool _toOpenAtMousePos)
+		{
+			ImGui::OpenPopup(_thePopupID.c_str());
+			if (!_toOpenAtMousePos)
+			{
+				ImGuiContext& g = *ImGui::GetCurrentContext();
+				ImGuiWindow* pGuiWin = g.CurrentWindow;
+				ImRect callerRect = pGuiWin->DC.LastItemRect;
+				ImGuiPopupRef& popup_ref = g.OpenPopupStack[g.CurrentPopupStack.Size];
+				popup_ref.OpenPopupPos = callerRect.GetBL();
+			}
+		}
+
+		bool StartPopup(const std::string& _uniqueID)
+		{
+			return ImGui::BeginPopup(_uniqueID.c_str());
+		}
+
+		void EndPopup()
+		{
+			ImGui::EndPopup();
+		}
+
+		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width)
+		{
+			AutoArray<const char*> arrCharPtr;
+			for (const auto &e : _arrOfItems)
+				arrCharPtr.push_back(e.c_str());
+
+			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label.c_str());
+			SameLine();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			bool ret = ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), static_cast<int>(arrCharPtr.size()));
+			ImGui::PopItemWidth();
+			return ret;
+		}
+
+		bool Button(const std::string& _label, const Math::Vec2& _size)
+		{
+			return ImGui::Button(_label.c_str(), ImVec2{ _size.x, _size.y });
+		}
+
+		void Dummy(float width, float height)
+		{
+			ImGui::Dummy(ImVec2{ width, height });
+		}
+
+		void IconTick(float width, float height, float _thickness, const Math::Vec4& _colour)
+		{
+			ImVec2 pos = ImGui::GetCursorScreenPos();
+			ImDrawList* pCanvas = ImGui::GetWindowDrawList();
+			const ImU32 col32 = static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
+
+			pCanvas->AddLine(ImVec2{ pos.x, pos.y + height * 0.5f },
+				ImVec2{ pos.x + width * 0.25f, pos.y + height }, col32, _thickness);
+			pCanvas->AddLine(ImVec2{ pos.x + width * 0.25f, pos.y + height },
+				ImVec2{ pos.x + width, pos.y }, col32, _thickness);
+
+			ImGui::Dummy(ImVec2{ width, height });
+		}
+
+		bool IconFolder(const std::string& _uniqueId, float width, float height, bool _open, const Math::Vec4& _colour)
+		{
+			ImDrawList*		pCanvas		= ImGui::GetWindowDrawList();
+			ImVec2			pos			= ImGui::GetCursorScreenPos();
+			const ImU32		col32		= static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
+			const ImU32		col32Dull	= static_cast<ImColor>(ImVec4{ _colour.x - 0.2f, _colour.y - 0.2f, _colour.z - 0.2f, _colour.w });
+			const float iconWidth = (width * 0.8f);
+			const float offset = (height * 0.2f);
+			ImVec2 topLeft{ pos.x, pos.y + offset };
+			ImVec2 botLeft{ pos.x, topLeft.y + height - 1 };
+			ImVec2 topRight{ pos.x + iconWidth, topLeft.y + (height / 6.f) };
+			ImVec2 botRight{ topRight.x, botLeft.y };
+			ImVec2 tabTop{ pos.x + (width * 0.3f), topLeft.y };
+			ImVec2 tabBot{ pos.x + (width * 0.4f), topRight.y };
+
+			if (!_open)
+			{
+				ImVec2 inside{ topLeft.x, topRight.y + (height * 0.1f) };
+				pCanvas->PathClear();
+				pCanvas->PathLineTo(topLeft);
+				pCanvas->PathLineTo(inside);
+				pCanvas->PathLineTo(ImVec2{ inside.x + iconWidth, inside.y });
+				pCanvas->PathLineTo(topRight);
+				pCanvas->PathLineTo(tabBot);
+				pCanvas->PathLineTo(tabTop);
+				pCanvas->PathStroke(col32, true);
+
+				pCanvas->PathClear();
+				pCanvas->PathLineTo(inside);
+				pCanvas->PathLineTo(botLeft);
+				pCanvas->PathLineTo(botRight);
+				pCanvas->PathLineTo(ImVec2{ inside.x + iconWidth, inside.y });
+				pCanvas->PathFillConvex(col32);
+			}
+			else
+			{
+				ImVec2 inside{ topLeft.x + (0.2f * width), topLeft.y + (height * 0.4f) };
+				pCanvas->PathClear();
+				pCanvas->PathLineTo(botLeft);
+				pCanvas->PathLineTo(topLeft);
+				pCanvas->PathLineTo(tabTop);
+				pCanvas->PathLineTo(tabBot);
+				pCanvas->PathLineTo(topRight);
+				pCanvas->PathLineTo(ImVec2{ topRight.x, topLeft.y + (height * 0.4f) });
+				pCanvas->PathStroke(col32, true);
+
+				pCanvas->PathClear();
+				pCanvas->PathLineTo(ImVec2{ inside.x + iconWidth, inside.y });
+				pCanvas->PathLineTo(ImVec2{ botRight.x, botRight.y + 1 });
+				pCanvas->PathLineTo(ImVec2{ botLeft.x, botLeft.y + 1 });
+				pCanvas->PathLineTo(inside);
+				pCanvas->PathFillConvex(col32);
+			}
+
+			//ImGui::Dummy(ImVec2{ width, height + offset });
+			return ImGui::InvisibleButton(("##iconCircle" + _uniqueId).c_str(), ImVec2{ width, height + offset });
+		}
+
+		bool IconCircle(const std::string& _uniqueId, float radius, float offsetX, float offsetY, const Math::Vec4& _colour)
+		{
+			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
+			ImVec2			pos		= ImGui::GetCursorScreenPos();
+			const ImU32		col32	= static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
+
+			ImVec2 centre{ pos.x + radius + offsetX, pos.y + radius + offsetY };
+			pCanvas->AddCircle(centre, radius, col32);
+			pCanvas->AddCircleFilled(centre, radius / 4, col32);
+			return ImGui::InvisibleButton(("##iconCircle" + _uniqueId).c_str(), 
+				   ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
+		}
+
+		bool IconGameObj(const std::string& _uniqueId, float _width, float _height)
+		{
+			const ImU32		col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
+			const ImU32		col32G = static_cast<ImColor>(ImVec4{ 0,1,0,1 });
+			const ImU32		col32B = static_cast<ImColor>(ImVec4{ 0,0,1,1 });
+			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
+			ImVec2			pos		= ImGui::GetCursorScreenPos();
+			ImVec2 midTop{ pos.x + (_width/2), pos.y };
+			ImVec2 mid{ midTop.x, midTop.y + (_width /3) };
+			ImVec2 midBot{ mid.x, midTop.y + (_height * 0.8f) };
+			ImVec2 midLeft{ pos.x + (_width * 0.1f), (midTop.y + mid.y) / 2 };
+			ImVec2 midRight{ pos.x + (_width * 0.9f), midLeft.y };
+			ImVec2 botLeft{ midLeft.x + (_width / 8), midTop.y + (3 * (_height /5))};
+			ImVec2 botRight{ midRight.x - (_width / 8), botLeft.y };
+
+			pCanvas->PathClear();
+			pCanvas->PathLineTo(midTop);
+			pCanvas->PathLineTo(midLeft);
+			pCanvas->PathLineTo(mid);
+			pCanvas->PathLineTo(midRight);
+			pCanvas->PathStroke(col32G, true);
+			pCanvas->PathClear();
+			pCanvas->PathLineTo(midLeft);
+			pCanvas->PathLineTo(botLeft);
+			pCanvas->PathLineTo(midBot);
+			pCanvas->PathStroke(col32B, false);
+			pCanvas->PathClear();
+			pCanvas->PathLineTo(mid);
+			pCanvas->PathLineTo(midBot);
+			pCanvas->PathLineTo(botRight);
+			pCanvas->PathLineTo(midRight);
+			pCanvas->PathStroke(col32R, false);
+
+			return ImGui::InvisibleButton(("##iconGameObj" + _uniqueId).c_str(), ImVec2{ _width, _height });
+		}
+
+		bool IconFile(const std::string& _uniqueId, float _width, float _height, const Math::Vec4& _colour)
+		{
+			const ImU32 col32 = static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w});
+			ImVec2 pos = ImGui::GetCursorScreenPos();
+			ImVec2 size{ _width, _height };
+			const float iconWidth = size.x / 2;
+			const float iconHeight = size.y / 2;
+			ImDrawList* pCanvas = ImGui::GetWindowDrawList();
+
+			pCanvas->PathClear();
+			pCanvas->PathLineTo(pos);
+			pCanvas->PathLineTo(ImVec2{ pos.x + (iconWidth * 0.7f), pos.y });
+			pCanvas->PathLineTo(ImVec2{ pos.x + iconWidth, pos.y + (iconWidth * 0.3f) });
+			pCanvas->PathLineTo(ImVec2{ pos.x + iconWidth, pos.y + iconHeight });
+			pCanvas->PathLineTo(ImVec2{ pos.x, pos.y + iconHeight });
+			pCanvas->PathStroke(col32, true);
+			ImGui::SetCursorScreenPos(pos);
+			return ImGui::InvisibleButton(("###IconFile" + _uniqueId).c_str(), size);;
+		}
+		
+		void Outline(float _x, float _y)
+		{
+			ImGuiContext& g = *GImGui;
+			ImGuiWindow* window = g.CurrentWindow;
+			ImVec2 pos = ImGui::GetCursorScreenPos();
+			ImRect r{ pos, ImVec2{ pos.x + _x, pos.y + _y } };
+
+			r.Expand(2.f);
+			bool push_clip_rect = !window->ClipRect.Contains(r);
+			if (push_clip_rect) window->DrawList->PushClipRectFullScreen();
+			window->DrawList->AddRect(r.Min, r.Max, ImGui::GetColorU32(ImGuiCol_DragDropTarget), 0.0f, ~0, 2.0f);
+			if (push_clip_rect) window->DrawList->PopClipRect();
+
+			ImGui::SetCursorScreenPos(pos);
+		}
+	}
+}	// NAMESPACE DYSTOPIA::EGUI::DISPLAY
+#endif // EDITOR
+
