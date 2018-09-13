@@ -3,44 +3,51 @@
 
 namespace Dystopia
 {
-	Dystopia::RigidBody::RigidBody(void)
+	RigidBody::RigidBody(void)
+		: mRigidBody(eRigidBodyType::RECTANGLE)
+	{
+
+	}
+
+	RigidBody::~RigidBody(void)
 	{
 	}
 
-	Dystopia::RigidBody::~RigidBody(void)
+	void RigidBody::Load(void)
 	{
 	}
 
-	void Dystopia::RigidBody::Load(void)
+	void RigidBody::Init(void)
 	{
 	}
 
-	void Dystopia::RigidBody::Init(void)
+	void RigidBody::OnDestroy(void)
 	{
 	}
 
-	void Dystopia::RigidBody::OnDestroy(void)
+	void RigidBody::Unload(void)
 	{
 	}
 
-	void Dystopia::RigidBody::Unload(void)
-	{
-	}
-
-	RigidBody * Dystopia::RigidBody::Duplicate() const
+	RigidBody * RigidBody::Duplicate() const
 	{
 		return new RigidBody{ *this };
 	}
 
-	void Dystopia::RigidBody::Serialise(TextSerialiser &) const
+	void RigidBody::Serialise(TextSerialiser &) const
 	{
 	}
 
-	void Dystopia::RigidBody::Unserialise(TextSerialiser &)
+	void RigidBody::Unserialise(TextSerialiser &)
 	{
 	}
 
-	void Dystopia::RigidBody::Update(float _dt)
+	void RigidBody::PrintRigidBodies()
+	{
+
+	}
+
+	void RigidBody::Update(float _dt)
 	{
 
 	}

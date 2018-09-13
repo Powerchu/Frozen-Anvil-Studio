@@ -1,38 +1,50 @@
-#include "System\Physics\PhysicsSystem.h"
+#include "System/Physics/PhysicsSystem.h"
+#include <System/Collision/CollisionSystem.h>
 
-Dystopia::PhysicsSystem::PhysicsSystem()
+namespace Dystopia
 {
-}
+	PhysicsSystem::PhysicsSystem()
+	{
 
-void Dystopia::PhysicsSystem::PreInit(void)
-{
-}
+	}
 
-bool Dystopia::PhysicsSystem::Init(void)
-{
-	return false;
-}
+	void PhysicsSystem::PreInit(void)
+	{
+	}
 
-void Dystopia::PhysicsSystem::PostInit(void)
-{
-}
+	bool PhysicsSystem::Init(void)
+	{
+		return false;
+	}
 
-void Dystopia::PhysicsSystem::FixedUpdate(float)
-{
-}
+	void PhysicsSystem::PostInit(void)
+	{
 
-void Dystopia::PhysicsSystem::Update(float)
-{
-}
+	}
 
-void Dystopia::PhysicsSystem::Shutdown(void)
-{
-}
+	void PhysicsSystem::FixedUpdate(float)
+	{
 
-void Dystopia::PhysicsSystem::LoadDefaults(void)
-{
-}
+	}
 
-void Dystopia::PhysicsSystem::LoadSettings(TextSerialiser &)
-{
+	void PhysicsSystem::Update(float)
+	{
+
+	}
+
+	void PhysicsSystem::Shutdown(void)
+	{
+
+	}
+
+	void PhysicsSystem::LoadDefaults(void)
+	{
+
+	}
+
+	void PhysicsSystem::LoadSettings(TextSerialiser& serial)
+	{
+
+	}
+
 }

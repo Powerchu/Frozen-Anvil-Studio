@@ -157,6 +157,13 @@
     <ClCompile Include="Source\Math\Quaternion.cpp">
       <Filter>Math\Quaternion</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Source\Component\Particle.cpp">
+      <Filter>Game Engine\Components\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Primitive.cpp">
+      <Filter>Game Engine\Components\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -416,6 +423,13 @@
     </ClInclude>
     <ClInclude Include="Include\Component\Renderer.h">
       <Filter>Game Engine\Components\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Include\Component\Particle.h">
+      <Filter>Game Engine\Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Primitive.h">
+      <Filter>Game Engine\Components\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

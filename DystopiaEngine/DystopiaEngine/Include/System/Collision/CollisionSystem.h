@@ -2,8 +2,8 @@
 #ifndef COLLISION_SYSTEM_H
 #define COLLISION_SYSTEM_H
 
-#include "DataStructure\AutoArray.h"
-#include "System\Base\Systems.h"
+#include <DataStructure/AutoArray.h>
+#include <System/Base/Systems.h>
 
 namespace Dystopia
 {
@@ -17,27 +17,27 @@ namespace Dystopia
 
 		CollisionSystem();
 
-		virtual void PreInit(void);
-		virtual bool Init(void);
-		virtual void PostInit(void);
+		virtual void PreInit(void) override;
+		virtual bool Init(void) override;
+		virtual void PostInit(void) override;
 
-		virtual void FixedUpdate(float);
-		virtual void Update(float);
-		virtual void Shutdown(void);
+		virtual void FixedUpdate(float) override;
+		virtual void Update(float) override;
+		virtual void Shutdown(void) override;
 
-		virtual void LoadDefaults(void) { };
-		virtual void LoadSettings(TextSerialiser&) { };
+		virtual void LoadDefaults(void) override { };
+		virtual void LoadSettings(TextSerialiser&) override { };
 
 		void InsertCollider(Collider * const & _Col);
 
-		bool AABBToAABBCollision(Collider const * const & _ColA,
-			                     Collider const * const & _ColB)const;
+		bool AABBvsAABB(Collider const * const & _ColA,
+			                     Collider const * const & _ColB) const;
 
-		bool ConvexToConvexCollision(Collider const * const & _ColA,
+		bool ConvexVsConvex(Collider const * const & _ColA,
 			                         Collider const * const & _ColB)const;
 	private:
 
-		AutoArray<Collider * > mArrOfCollider;
+		AutoArray<Collider*> mArrOfCollider;
 	};
 }
 

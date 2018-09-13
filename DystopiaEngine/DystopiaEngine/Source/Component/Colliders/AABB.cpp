@@ -71,10 +71,12 @@ namespace Dystopia
 	{
 
 	}
-	bool AABB::isColliding(const AABB & _ColB)
-	{
 
+	bool AABB::isColliding(const AABB & _ColB) const
+	{
 		/*Static AABB Collision Check*/
+		/*TODO: Simplify this*/
+
 		if (_ColB.mMin->mPosition.x > mMax->mPosition.x)
 			return false;
 		else if (_ColB.mMin->mPosition.y > mMax->mPosition.y)
@@ -87,7 +89,7 @@ namespace Dystopia
 		return true;
 	}
 
-	bool AABB::isColliding(const AABB * const & _ColB)
+	bool AABB::isColliding(const AABB * const & _ColB) const
 	{
 		return this->isColliding(*_ColB);
 	}

@@ -2,16 +2,29 @@
 #ifndef RIGID_BODY_H
 #define RIGID_BODY_H
 
-#include "Component\Component.h"
+#include "Component/Component.h"
 #include "ComponentList.h"
 
-#include "Math\Quaternion.h"
-#include "Math\Vector2.h"
+#include "Math/Quaternion.h"
+#include "Math/Angles.h"
+#include "Math/Vector2.h"
 
-class Transform;
+#include <Component/Primitive.h>
 
 namespace Dystopia
 {
+	class Transform;
+
+	enum class eRigidBodyType
+	{
+		TRIANGLE,
+		RECTANGLE,
+		CIRCLE,
+		POLYGON, 
+
+		TOTAL
+	};
+
 	class RigidBody : public Component
 	{
 	public:
@@ -37,9 +50,12 @@ namespace Dystopia
 		virtual void Serialise(TextSerialiser&) const    override;
 		virtual void Unserialise(TextSerialiser&)        override;
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
+		//TODO: Delete this once graphics is up
+		void PrintRigidBodies(); // FOR TESTING
 		void Update(float _dt);
 
 		void LateUpdate(float _dt);
+
 		/*Add a force at the origin of the body*/
 		void AddForce(Math::Vec3D const & _force);
 
@@ -72,9 +88,14 @@ namespace Dystopia
 
 	private:
 		Transform*        mOwnerTransform;    /*Used for accessing position and GameObject World orientation*/
-		Math::Vec3D       mVelocity;          /*Velocity of the RigidBody with respect to World Space*/
+		Math::Vec3D       mLinearVelocity;    /*Linear Velocity of the RigidBody with respect to World Space*/
+		eRigidBodyType	  mRigidBody;
+
+		Math::Vec3D		  mForce;
 		Math::Vec3D       mAngularVelocity;   /*Angular Velocity/Rotation with respect to World Space*/
 		Math::Vec3D       mCumulativeVector;  /*The sum of all the force acting on the body*/
+
+		float			  mMass;
 		float             mInverseMass;       /*The inverse of mass, (1/Mass)*/
 
 
