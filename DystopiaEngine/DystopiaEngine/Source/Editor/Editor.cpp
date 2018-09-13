@@ -165,8 +165,6 @@ namespace Dystopia
 		mpInput->Update(mDeltaTime);
 		mpGuiSystem->StartFrame(mDeltaTime);
 
-		throw;
-
 		UpdateKeys();
 		UpdateHotkeys();
 
