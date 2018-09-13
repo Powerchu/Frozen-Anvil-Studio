@@ -16,8 +16,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\PLogger.h"
 #include "Editor\ConsoleDebugger.h"
 #include "Editor\EGUI.h"
-#include "System\Profiler\ProfilerAction.h"
-#include "System\Profiler\Profiler.h"
 #include "Math\MathUtility.h"
 #include <algorithm>
 
@@ -28,18 +26,17 @@ namespace Dystopia
 	{
 		/* ===================================================== Performance Logger definitions ===================================================== */
 		void LogDataS(const std::string& _category, const std::string& _graphLabel,
-			float _val, float _min, float _max)
+			float _val)
 		{
 			DEBUG_ASSERT(!gpInstance, "No instance of Performance Log found!");
-			gpInstance->LogData(_category, _graphLabel, _val, _min, _max, false);
+			gpInstance->LogData(_category, _graphLabel, _val, false);
 		}
 
-		void LogDataG(const std::string& _catMainGraph, float _val, float _min, float _max)
+		void LogDataG(const std::string& _catMainGraph, float _val)
 		{
 			DEBUG_ASSERT(!gpInstance, "No instance of Performance Log found!");
-			gpInstance->LogData(_catMainGraph, _val, _min, _max, true);
+			gpInstance->LogData(_catMainGraph, _val, true);
 		}
-
 	}
 
 	/* ===================================================== The Performance Logger for handling items/datas ===================================================== */
@@ -57,8 +54,8 @@ namespace Dystopia
 		mGraphSizeB{ Math::Vec2{0,0} },
 		mGraphSizeS{ Math::Vec2{0,0} },
 		mArrLoggedData{},
-		mGraphBigY{ 100 },
-		mGraphSmallY{ 40 }
+		mGraphBigY{ 50 },
+		mGraphSmallY{ 20 }
 	{}
 
 	PerformanceLog::~PerformanceLog()
@@ -72,10 +69,10 @@ namespace Dystopia
 
 	void PerformanceLog::Update(const float& _dt)
 	{
-		static constexpr float offset	= -60.f;
+		static constexpr float offset	= -80.f;
 		mGraphSizeB.x					= Math::Clamp(Size().x + offset, 50.f, Size().x);
 		mGraphSizeS.x					= mGraphSizeB.x;
-		mGraphSizeS.x					= Math::Clamp(mGraphSizeS.x, 50.f, Size().x -110.f);
+		mGraphSizeS.x					= Math::Clamp(mGraphSizeS.x, 50.f, Size().x -140.f);
 	}
 
 	void PerformanceLog::EditorUI()
@@ -108,37 +105,35 @@ namespace Dystopia
 		return mLabel;
 	}
 
-	void PerformanceLog::LogData(const std::string& _cat, const std::string& _label, 
-								 float _val, float _min, float _max, bool _bigGraph)
+	void PerformanceLog::LogData(const std::string& _cat, const std::string& _label, float _val, bool _bigGraph)
 	{
 		for (auto& item : mArrLoggedData)
 		{
 			if (item.mGenericOverview.mLabel == _cat)
 			{
-				item.UpdateLog(_label, _val, _min, _max, _bigGraph);
+				item.UpdateLog(_label, _val, _bigGraph);
 				return;		//early out to avoid adding new PLogData;
 			}
 		}
 		// If never early out, means no log of that name is found
 		PLogItem newItem{ _cat };
-		newItem.UpdateLog(_label, _val, _min, _max, _bigGraph);
+		newItem.UpdateLog(_label, _val, _bigGraph);
 		mArrLoggedData.push_back(newItem);
 		SortLogs();
 	}
 
-	void PerformanceLog::LogData(const std::string& _catMainGraph, float _val,
-								 float _min, float _max, bool _bigGraph)
+	void PerformanceLog::LogData(const std::string& _catMainGraph, float _val, bool _bigGraph)
 	{
 		for (auto& item : mArrLoggedData)
 		{
 			if (item.mGenericOverview.mLabel == _catMainGraph)
 			{
-				item.UpdateG(_val, _min, _max, _bigGraph);
+				item.UpdateG(_val, _bigGraph);
 				return;		//early out to avoid adding new PLogData;
 			}
 		}
 		PLogItem newItem{ _catMainGraph };
-		newItem.UpdateG(_val, _min, _max, _bigGraph);
+		newItem.UpdateG(_val, _bigGraph);
 		mArrLoggedData.push_back(newItem);
 	}
 
@@ -149,11 +144,9 @@ namespace Dystopia
 
 	void PerformanceLog::ShowLog(const PLogData& _log, Math::Vec2 _size)
 	{
-		EGUI::Indent(10);
 		_size.y = (_log.mIsBigGraph) ? mGraphBigY : mGraphSmallY;
-		EGUI::Display::LineGraph(_log.mLabel.c_str(), _log.mArrValues, _log.mMin, _log.mMax, _size,
-			std::to_string(_log.mArrValues[_log.maxLogs - 1]));
-		EGUI::UnIndent(10);
+		EGUI::Display::LineGraph(_log.mLabel.c_str(), _log.mArrValues, 0, _log.mMax, _size,
+						std::to_string(static_cast<int>(_log.mArrValues[_log.maxLogs - 1])));
 	}
 }
 
