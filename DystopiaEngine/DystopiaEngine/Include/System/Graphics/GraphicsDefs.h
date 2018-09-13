@@ -32,6 +32,12 @@ namespace Dystopia
 	{
 		struct Viewport
 		{
+			float mnX, mnY;
+			float mnWidth, mnHeight;
+		};
+
+		struct AbsViewport
+		{
 			int mnX, mnY;
 			int mnWidth, mnHeight;
 		};

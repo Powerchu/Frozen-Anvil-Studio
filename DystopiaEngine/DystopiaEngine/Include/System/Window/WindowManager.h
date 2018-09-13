@@ -46,10 +46,14 @@ namespace Dystopia
 		void LoadDefaults(void);
 		void LoadSettings(TextSerialiser&);
 
+		void GetSplashDimensions(int& w, int& h);
 		void DestroySplash(void);
 
 		void ToggleFullscreen(bool _bFullscreen);
 		void ShowCursor(bool _bShow) const;
+
+		inline int GetScreenWidth(void) const noexcept;
+		inline int GetScreenHeight(void) const noexcept;
 
 		Window& GetMainWindow(void) const;
 
@@ -65,9 +69,25 @@ namespace Dystopia
 		unsigned long mWindowStyle;
 		unsigned long mWindowStyleEx;
 		bool mbFullscreen;
-
-		void ReAdjustWindow(Window&);
 	};
+}
+
+
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+inline int Dystopia::WindowManager::GetScreenWidth(void) const noexcept
+{
+	return mWidth;
+}
+
+inline int Dystopia::WindowManager::GetScreenHeight(void) const noexcept
+{
+	return mHeight;
 }
 
 

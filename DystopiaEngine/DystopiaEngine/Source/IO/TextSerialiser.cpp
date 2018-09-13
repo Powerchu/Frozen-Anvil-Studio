@@ -80,7 +80,7 @@ bool Dystopia::TextSerialiser::Validate(void)
 	if (mFile.peek() == ',')
 		mFile.ignore(1);
 
-	return mFile.peek() != '\n';
+	return mFile.peek() != '\n' && mFile.good();
 }
 
 Dystopia::TextSerialiser Dystopia::TextSerialiser::OpenFile(const std::string& _strFilename, int _nMode)

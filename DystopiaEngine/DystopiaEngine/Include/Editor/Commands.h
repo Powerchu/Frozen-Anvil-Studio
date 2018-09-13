@@ -16,13 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _COMMANDS_H_
 #include "Editor\CommandList.h"
 #include <deque>
-#include <tuple>
 
 namespace Dystopia
 {
-	struct Commands;
-	struct RecordBase;
-
 	// Command handler to record all commands made in the editor. *Intended only for editor class to use*
 	class CommandHandler
 	{
@@ -41,6 +37,22 @@ namespace Dystopia
 		void InvokeCommand(T * const _var, const T& _newVal)
 		{
 			InvokeCommand(new ComdModifyValue<T>{ _var, _newVal });
+		}
+
+		template<class C, typename ... Params>
+		void InvokeCommand(const unsigned long & _id, 
+						   const FunctionModWrapper<C, Params ...>& _old, 
+						   const FunctionModWrapper<C, Params ...>& _new)
+		{
+			using FMW = FunctionModWrapper<C, Params ...>;
+			InvokeCommand(new ComdModifyComponent<FMW, FMW>{ _id, _new, _old });
+		}
+
+		template<class C, typename ... Params>
+		auto Make_FunctionModWrapper(void(C::*_ptrFunc)(Params ...), const std::remove_reference_t<Params>& ... _vals)
+		{
+			using FMW = FunctionModWrapper<C, Params...>;
+			return FMW{ _ptrFunc, _vals... };
 		}
 
 		// Calls the ExecuteUndo function of latest command in the undo deque and puts it into the redo deque
@@ -70,6 +82,7 @@ namespace Dystopia
 		std::deque<Commands*>	mDeqUndo;
 		bool					mRecording;
 		void					PopFrontOfDeque(std::deque<Commands*>&);
+		void					RemoveStray(std::deque<Commands*>&);
 		size_t					mMaxSize;
 	};
 }

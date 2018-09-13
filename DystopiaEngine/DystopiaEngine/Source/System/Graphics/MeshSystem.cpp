@@ -19,26 +19,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\MathUtility.h"
 
 #include <GL\glew.h>
-#include <iostream>
 
 
 void Dystopia::MeshSystem::Init(void)
 {
 	Mesh::LinkSystem(this);
 //	mpMeshes.reserve(10);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 }
 
 void Dystopia::MeshSystem::Shutdown(void) noexcept
 {
-	glDisableVertexAttribArray(2);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(0);
-
-	mpMeshes.clear();
+	//glDisableVertexAttribArray(2);
+	//glDisableVertexAttribArray(1);
+	//glDisableVertexAttribArray(0);
 
 	FreeMeshes();
 }
@@ -56,8 +49,8 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 	unsigned short nVtxCount = 0;
 	input.Read(nVtxCount);
 
-	mUVs.reserve(nVtxCount);
-	mVtx.reserve(nVtxCount * 2);
+	mUVs.reserve(nVtxCount * 2);
+	mVtx.reserve(nVtxCount * 6);
 	mIndex.reserve(nVtxCount * 3);
 
 	input.ConsumeStartBlock();
@@ -79,23 +72,26 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 
 	input.ConsumeStartBlock();
 
-	unsigned nNumIndices = 0, nCurrOffset = static_cast<unsigned>(mIndex.size());
-	while (!input.EndOfInput())
+	do
 	{
-		mIndex.EmplaceBack();
-		input >> mIndex.back();
+		unsigned nNumIndices = 0, nCurrOffset = static_cast<unsigned>(mIndex.size());
+		while (!input.EndOfInput())
+		{
+			mIndex.EmplaceBack();
+			input >> mIndex.back();
 
-		++nNumIndices;
-	}
+			++nNumIndices;
+		}
 
-	auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, nNumIndices, nCurrOffset);
-	CurrentMesh.mVtxCount += nVtxCount;
+		auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, nNumIndices, nCurrOffset);
+		CurrentMesh.mVtxCount += nVtxCount;
 
-	input.ConsumeStartBlock();
+		input.ConsumeStartBlock();
 
-	input >> const_cast<std::string&>(pCurrMesh->GetName());
+		input >> const_cast<std::string&>(pCurrMesh->GetName());
 
-	input.ConsumeEndBlock();
+		input.ConsumeStartBlock();
+	} while (!input.EndOfInput());
 }
 
 void Dystopia::MeshSystem::EndMesh(void)
@@ -109,6 +105,7 @@ void Dystopia::MeshSystem::EndMesh(void)
 
 void Dystopia::MeshSystem::FreeMeshes(void)
 {
+	mpMeshes.clear();
 	mpRawMeshes.clear();
 }
 
@@ -117,8 +114,12 @@ void Dystopia::MeshSystem::ExportMeshes(void)
 
 }
 
-Dystopia::Mesh* Dystopia::MeshSystem::GetMesh(const std::string &) noexcept
+Dystopia::Mesh* Dystopia::MeshSystem::GetMesh(const std::string& _strName) noexcept
 {
+	for (auto& e : mpMeshes)
+		if (e.GetName() == _strName)
+			return &e;
+
 	return nullptr;
 }
 

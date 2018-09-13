@@ -52,6 +52,8 @@ namespace Dystopia
 		static BinarySerializer OpenFile(const std::string&, int = MODE_READ);
 		void ManualEndainOverride(eEndianess);
 
+		void Skip(size_t _numOfBytes);
+
 	private:
 
 		explicit BinarySerializer(void);

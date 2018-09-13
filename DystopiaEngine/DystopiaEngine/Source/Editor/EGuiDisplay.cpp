@@ -54,6 +54,16 @@ namespace EGUI
 		DefaultAlighnmentOffsetY = 3.f;
 	}
 
+	float GetAlignmentYOffset()
+	{
+		return DefaultAlighnmentOffsetY;
+	}
+
+	float GetLabelSpacing()
+	{
+		return DefaultAlighnmentSpacing;
+	}
+
 	bool StartTab(const std::string& _label, bool *_pOpen, ImGuiWindowFlags _flags)
 	{
 		return EGUI::Docking::BeginTabs(_label.c_str(), _pOpen, _flags);

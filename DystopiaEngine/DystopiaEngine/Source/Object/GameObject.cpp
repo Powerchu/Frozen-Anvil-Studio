@@ -12,7 +12,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Object\GameObject.h"		 // File Header
+#include "Component\Component.h"	 // Component
+#include "Behaviour\Behaviour.h"	 // Behaviour
 #include "Object\ObjectFlags.h"		 // eObjFlags
+#include "DataStructure\AutoArray.h" 
 #include "Utility\Utility.h"		 // Move
 #include "IO\TextSerialiser.h"
 
@@ -25,22 +28,23 @@ for (auto& e : _ARR)					\
 for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
 
-Dystopia::GameObject::GameObject(void) :
-	mComponents{}, mBehaviours{}, mnID{ ~0ull }, mnFlags{ FLAG_NONE }, mName{ "" }
+Dystopia::GameObject::GameObject(void) noexcept
+	: GameObject{ ~(size_t)0 }
 {
 
 }
 
-Dystopia::GameObject::GameObject(unsigned long long _ID) :
-	mComponents{}, mBehaviours{}, mnID{ _ID }, mnFlags{ FLAG_NONE }, mName{ "" }
+Dystopia::GameObject::GameObject(unsigned long _ID) noexcept
+	: mnID{ _ID }, mnFlags{ FLAG_NONE },
+	mTransform{ this }, mComponents{}, mBehaviours{}
 {
 
 }
 
-Dystopia::GameObject::GameObject(GameObject&& _obj) :
-	mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags },
+Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
+	: mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags },
 	mComponents{ Utility::Move(_obj.mComponents) },
-	mBehaviours{ Utility::Move(_obj.mBehaviours) }, mName{ "" }
+	mBehaviours{ Utility::Move(_obj.mBehaviours) }
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
@@ -211,7 +215,7 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 }
 
 
-unsigned long long Dystopia::GameObject::GetID(void) const
+unsigned long Dystopia::GameObject::GetID(void) const
 {
 	return mnID;
 }

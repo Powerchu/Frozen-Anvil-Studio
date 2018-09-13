@@ -31,24 +31,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\Window.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Scene\SceneSystem.h"
-#include "System\Time\Timer.h"
 #include "System\Driver\Driver.h"
-#include "System/Hotload/HotloadSystem.h"
+#include "System\Profiler\Profiler.h"
+#include "System\Profiler\ProfilerAction.h"
+#include "System\Time\ScopedTimer.h"
 #include "IO\BinarySerializer.h"
+#include "Utility\GUID.h"
 
 /* Editor includes */
-#include "Editor\Editor.h"
 #include "Editor\EGUI.h"
+#include "Editor\Editor.h"
+#include "Editor\EditorInputs.h"
+#include "Editor\EditorEvents.h"
+#include "Editor\Commands.h"
 #include "Editor\Inspector.h"
 #include "Editor\HierarchyView.h"
 #include "Editor\ProjectResource.h"
 #include "Editor\SceneView.h"
 #include "Editor\ConsoleLog.h"
-#include "Editor\EditorInputs.h"
-#include "Editor\EditorEvents.h"
-#include "Editor\Commands.h"
-
-
+#include "Editor\ConsoleDebugger.h"
+#include "Editor\PerformanceLog.h"
+#include "Editor\PLogger.h"
 
 /* library includes */
 #include <iostream>
@@ -62,121 +65,18 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 #endif
 	hInstance;
 
-	Dystopia::Editor *editor	= Dystopia::Editor::GetInstance();
-	Dystopia::Timer *timer		= new Dystopia::Timer{};
-
-
+	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
-
-	Dystopia::Hotloader<1> test;
-	test.SetFileDirectoryPath<0>("C:/Users/keith.goh/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Resource/Behaviours/BehaviourScripts");
-	test.AddFilesToCrawl(L"DystopiaEngine_D.lib", Dystopia::eCompile);
-	/*
-	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour");
-	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Component");
-	//test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/bin/Temp/Debug");
-	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Editor");
-	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/IO");
-	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Math");
-	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Object");
-	//test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Utility");
-	//test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/System");
-	
-
-	//test.SetFileDirectoryPath<1>("C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour/");
-	*/
-
-	//test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/glew-2.1.0/lib/Release/x64");
-
-	test.SetDllFolderPath       ("C:/Users/keith.goh/AppData/Roaming/Dystopia/DLL/");
-	test.Init();
-	Dystopia::Behaviour * p                        = nullptr;
-	Dystopia::DLLWrapper * pListOfDLLChanges[100];
-
-	auto const & ArrayDll = test.GetDlls();
-	for (auto const & elem : ArrayDll)
-	{
-		auto func = elem.GetDllFunc<Dystopia::Behaviour *>("Clone");
-		if (func)
-		{
-			p = func();
-			p->Update(0.f);
-			delete p;
-			p = nullptr;
-		}
-
-	}
-	
-	while (true)
-	{
-		test.Update();
-
-		if (test.ChangesInDllFolder(100, pListOfDLLChanges))
-		{
-			Dystopia::DLLWrapper ** start = pListOfDLLChanges;
-			while (*start != nullptr)
-			{
-				auto func = (*start)->GetDllFunc<Dystopia::Behaviour *>("Clone");
-				if (func)
-				{
-					p = func();
-					p->Update(0.f);
-					delete p;
-					p = nullptr;
-				}
-				start++;
-			}
-		}
-	}
-	/*
-	LPCWSTR ct = L"C:/Users/Keith/AppData/Roaming/Dystopia/DLL/TestClass.dll";;
-
-	auto dll = LoadLibrary(ct);
-	if (dll)
-	{
-		FARPROC proc = GetProcAddress(dll, "Clone");
-		using fp = TestClassBase * (*)();
-		fp fpp = (fp)proc;
-		p = fpp();
-		p->Test();
-		FreeLibrary(dll);
-	}
-
-	
-	Dystopia::DLLWrapper * pm = nullptr;
-	while (true)
-	{
-		test.Update(0.f);
-		if (test.isDllModified(&pm, 1))
-		{
-			if (pm != nullptr)
-			{
-				auto pp = pm->GetDllFunc<TestClassBase *>("Clone");
-				p = pp();
-				p->Test();
-			}
-
-		}
-	}
-	*/
 	while (!editor->IsClosing())
 	{
-		float dt = timer->Elapsed();
-		timer->Lap();
+		editor->StartFrame();
 	
-		editor->StartFrame(dt);
-	
-		editor->UpdateFrame(dt);
+		editor->UpdateFrame(editor->GetDeltaTime());
 		
 		editor->EndFrame();
 	}
 	editor->Shutdown();
-	delete timer;
 	delete editor;
-
-	// Automatically called by _CRTDBG_LEAK_CHECK_DF flag when proccess ends. 
-	// This will ensure static variables are not taken into account
-	//_CrtDumpMemoryLeaks(); 
 	return 0;
 }
 
@@ -198,10 +98,12 @@ namespace Dystopia
 		mpWin{ nullptr }, 
 		mpGfx{ nullptr },
 		mpSceneSystem{ nullptr },
+		mpProfiler{ nullptr },
 		mpInput{ new EditorInput{} },
 		mpEditorEventSys{ new EditorEventHandler{} },
 		mpComdHandler{ new CommandHandler{} },
-		mpGuiSystem{ new GuiSystem{} }
+		mpGuiSystem{ new GuiSystem{} },
+		mpTimer{ new Timer{} }
 	{}
 
 	Editor::~Editor(void)
@@ -211,22 +113,24 @@ namespace Dystopia
 	void Editor::Init()
 	{
 		mpDriver		= Dystopia::EngineCore::GetInstance();
+
 		mpDriver->LoadSettings();
 		mpDriver->Init();
 
 		mpWin			= mpDriver->GetSystem<WindowManager>();		// driver init-ed
 		mpGfx			= mpDriver->GetSystem<GraphicsSystem>();	// driver init-ed
 		mpSceneSystem	= mpDriver->GetSystem<SceneSystem>();		// driver init-ed
+		mpProfiler		= mpDriver->GetSystem<Profiler>();			// driver init-ed
 
 		LoadDefaults();
 		mpInput->Init();
 		mpEditorEventSys->Init();
 		EGUI::SetContext(mpComdHandler);
 
-		for (auto& e : mTabsArray)
+		for (auto& e : mArrTabs)
 		{
 			e->SetComdContext(mpComdHandler);
-			e->SetEventSysContext(mpEditorEventSys);
+			e->SetEventContext(mpEditorEventSys);
 			e->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			e->Init();
 			e->RemoveFocus();
@@ -240,18 +144,24 @@ namespace Dystopia
 
 	void Editor::LoadDefaults()
 	{
-		mTabsArray.push_back(Inspector::GetInstance());
-		mTabsArray.push_back(ProjectResource::GetInstance());
-		mTabsArray.push_back(HierarchyView::GetInstance());
-		mTabsArray.push_back(SceneView::GetInstance());
-		mTabsArray.push_back(ConsoleLog::GetInstance());
+		mArrTabs.push_back(Inspector::GetInstance());
+		mArrTabs.push_back(ProjectResource::GetInstance());
+		mArrTabs.push_back(HierarchyView::GetInstance());
+		mArrTabs.push_back(SceneView::GetInstance());
+		mArrTabs.push_back(ConsoleLog::GetInstance());
+		mArrTabs.push_back(PerformanceLog::GetInstance());
 	}
 
-	void Editor::StartFrame(const float& _dt)
+	void Editor::StartFrame()
 	{
-		mpWin->Update(_dt);
-		mpInput->Update(_dt);
-		mpGuiSystem->StartFrame(_dt);
+		/* Set delta time of frame */
+		mDeltaTime = mpTimer->Elapsed();
+		mpTimer->Lap();
+
+		mpProfiler->Update(mDeltaTime);
+		mpWin->Update(mDeltaTime);
+		mpInput->Update(mDeltaTime);
+		mpGuiSystem->StartFrame(mDeltaTime);
 
 		UpdateKeys();
 		UpdateHotkeys();
@@ -262,14 +172,10 @@ namespace Dystopia
 
 	void Editor::UpdateFrame(const float& _dt)
 	{
-		//mpGfx->Update(_dt); // causes double frame buffer swap per frame, need determine either editor gfx or driver gfx do
-		for (unsigned int i = 0; i < mTabsArray.size(); ++i)
+		//mpGfx->Update(mDeltaTime); 
+		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);
-			EditorTab *pTab = mTabsArray[i];
-			pTab->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
-			pTab->Update(_dt);
-
 			switch (i)
 			{
 			case 0: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
@@ -283,22 +189,33 @@ namespace Dystopia
 			default: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_NONE);
 			}
 
-			if (EGUI::StartTab(pTab->GetLabel().c_str(), pTab->GetOpenedBool()))
+			EditorTab *pTab = mArrTabs[i];
+			pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()));
+			pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
+			pTab->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
+
 			{
-				pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()));
-				pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
-				pTab->Window();
+				ScopedTimer<ProfilerAction> scopeT{ pTab->GetLabel(), "Update" };
+				pTab->Update(_dt);
 			}
+
+			{
+				ScopedTimer<ProfilerAction> scopeT{ pTab->GetLabel(), "Editor UI" };
+				if (EGUI::StartTab(pTab->GetLabel().c_str(), pTab->GetOpenedBool()))
+				{
+					pTab->EditorUI();
+				}
+			}
+
 			EGUI::EndTab();
 			EGUI::PopID();
 		}
-
-		// if (mCurrentState == EDITOR_PLAY) call for update of current scene
-		if (mCurrentState == EDITOR_PAUSE) return;
 	}
 
 	void Editor::EndFrame()
 	{
+		LogTabPerformance();
+		mpProfiler->PostUpdate();
 		mpGuiSystem->EndFrame();
 
 		if (mCurrentState != mNextState) 
@@ -310,35 +227,39 @@ namespace Dystopia
 		UnInstallHotkeys();
 
 		EGUI::Docking::ShutdownTabs();
-		for (auto& e : mTabsArray)
+		for (auto& e : mArrTabs)
 		{
 			e->Shutdown();
 			delete e;
-			e = nullptr;
 		}
 
 		mpInput->Shutdown();
-		delete mpInput;
-		mpInput = nullptr;
-
 		mpEditorEventSys->Shutdown();
-		delete mpEditorEventSys;
-		mpEditorEventSys = nullptr;
-
 		mpComdHandler->Shutdown();
-		delete mpComdHandler;
-		mpComdHandler = nullptr;
-
 		mpGuiSystem->Shutdown();
+
+		delete mpInput;
+		delete mpEditorEventSys;
+		delete mpComdHandler;
 		delete mpGuiSystem;
-		mpGuiSystem = nullptr;
+		delete mpTimer;
+
+		mpEditorEventSys	= nullptr;
+		mpInput				= nullptr;
+		mpComdHandler		= nullptr;
+		mpGuiSystem			= nullptr;
+		mpTimer				= nullptr;
+		mpWin				= nullptr;
+		mpGfx				= nullptr;
+		mpProfiler			= nullptr;
 
 		mpDriver->Shutdown();
-
-		mpWin = nullptr;
-		mpGfx = nullptr;
-
 		EGUI::RemoveContext();
+	}
+
+	float Editor::GetDeltaTime() const
+	{
+		return mDeltaTime;
 	}
 
 	eEditorState Editor::CurrentState() const
@@ -459,7 +380,7 @@ namespace Dystopia
 		static constexpr float icon = 10.f;
 		if (EGUI::StartMenuHeader("View"))
 		{
-			for (auto& e : mTabsArray)
+			for (auto& e : mArrTabs)
 			{
 				if (*(e->GetOpenedBool())) 
 					EGUI::Display::IconTick(icon, icon);
@@ -608,14 +529,33 @@ namespace Dystopia
 
 	void Editor::SetFocus(GameObject& _rObj)
 	{
-		for (auto& e : mTabsArray)
+		for (auto& e : mArrTabs)
 			e->SetFocus(_rObj);
 	}
 	
 	void Editor::RemoveFocus()
 	{
-		for (auto& e : mTabsArray)
+		for (auto& e : mArrTabs)
 			e->RemoveFocus();
+	}
+
+	GameObject* Editor::FindGameObject(const unsigned long& _id) const
+	{
+		return mpSceneSystem->GetCurrentScene().FindGameObject(_id);
+	}
+
+	void Editor::LogTabPerformance()
+	{
+		auto data = mpProfiler->GetInfo();
+
+		for (const auto& d : data)
+		{
+			auto info = d.second.mTimes;
+			for (const auto& i : info)
+			{
+				Performance::LogDataS(d.first, i.first, static_cast<float>(info[i.first]), 0, 1000);
+			}
+		}
 	}
 }
 

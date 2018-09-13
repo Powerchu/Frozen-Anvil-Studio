@@ -16,7 +16,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System\Base\Systems.h"	// System
 
+#include "Component\Renderer.h"
+#include "DataStructure\MagicArray.h"
+
 #include <string>
+#include <map>
 
 
 namespace Dystopia
@@ -45,6 +49,11 @@ namespace Dystopia
 		void Update(float);		// Draws the currently bounded window
 		void Shutdown(void);
 
+		Renderer* RequestComponent(void);
+
+		void SetGamma(float) noexcept;
+		float GetGamma(void) noexcept;
+
 		// Sets up Window for openGL rendering
 		bool InitOpenGL(Window&);
 		void BindOpenGL(Window&) noexcept;
@@ -62,14 +71,24 @@ namespace Dystopia
 
 	private:
 
+		float mfGamma;
+
 		void* mOpenGL;
 		int mPixelFormat, mAvailable;
 		Window* mCurrent;
+
+		MagicArray<Renderer> mRenderers;
+
+		// Temporary
+		std::map<std::string, Shader*> shaderlist;
+		std::map<std::string, Texture*> texturelist;
 
 		static int DRAW_MODE;
 
 		void StartFrame(void);
 		void EndFrame(void);
+
+		void DrawSplash(void);
 
 		bool SelectOpenGLVersion(Window&) noexcept;
 	};

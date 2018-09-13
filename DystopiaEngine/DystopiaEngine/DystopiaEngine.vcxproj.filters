@@ -47,13 +47,13 @@
       <Filter>Game Engine\Components\Transform</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp">
-      <Filter>Editor\IMGUI</Filter>
+      <Filter>Editor\UI\IMGUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp">
-      <Filter>Editor\IMGUI</Filter>
+      <Filter>Editor\UI\IMGUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp">
-      <Filter>Editor\IMGUI</Filter>
+      <Filter>Editor\UI\IMGUI</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Window\Window.cpp">
       <Filter>Game Engine\Systems\Window\Window</Filter>
@@ -85,14 +85,11 @@
     <ClCompile Include="Source\System\Camera\CameraSystem.cpp">
       <Filter>Game Engine\SubSystems\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EditorTab.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\Commands.cpp">
       <Filter>Editor\Commands</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\ConsoleLog.cpp">
-      <Filter>Editor\Console</Filter>
+      <Filter>Editor\Editor Tabs\Console</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Dock.cpp">
       <Filter>Editor\Docking</Filter>
@@ -104,16 +101,16 @@
       <Filter>Editor\UI</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\HierarchyView.cpp">
-      <Filter>Editor\Hierarchy View</Filter>
+      <Filter>Editor\Editor Tabs\Hierarchy View</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Inspector.cpp">
-      <Filter>Editor\Inspector</Filter>
+      <Filter>Editor\Editor Tabs\Inspector</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\ProjectResource.cpp">
-      <Filter>Editor\Project Resource</Filter>
+      <Filter>Editor\Editor Tabs\Project Resource</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\SceneView.cpp">
-      <Filter>Editor\Scene View</Filter>
+      <Filter>Editor\Editor Tabs\Scene View</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp">
       <Filter>Editor\Script Formatter</Filter>
@@ -124,6 +121,7 @@
     <ClCompile Include="Source\IO\BinarySerializer.cpp">
       <Filter>IO\BinarySerialiser</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="Source\Component\RigidBody.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
@@ -148,19 +146,42 @@
     <ClCompile Include="Source\Editor\EditorInputs.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Utility\GUID.cpp">
-      <Filter>Utility\GUID</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Component\Renderer.cpp">
       <Filter>Game Engine\Components\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\Math\Quaternion.cpp">
       <Filter>Math\Quaternion</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
+    <ClCompile Include="Source\System\Time\ScopedTimer.cpp">
+      <Filter>Game Engine\Systems\Time\ScopedTimer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utility\GUID.cpp">
+      <Filter>Utility\GUID</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\PerformanceLog.cpp">
+      <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorTab.cpp">
+      <Filter>Editor\Editor Tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Profiler\Profiler.cpp">
+      <Filter>Game Engine\Systems\Profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Profiler\ProfilerAction.cpp">
+      <Filter>Game Engine\Systems\Profiler\ProfilerAction</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp">
+      <Filter>Game Engine\Systems\Profiler\ProfileInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp">
+      <Filter>IO\TextSerialiser\lodepng</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\ConsoleDebugger.cpp">
+      <Filter>Editor\Editor Tabs\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\PLogInfo.cpp">
+      <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -189,9 +210,6 @@
     </ClInclude>
     <ClInclude Include="Include\Math\MathInternal.h">
       <Filter>Math\Internals</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Math\MathUtility.h">
-      <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="Include\Utility\MetaHelper.h">
       <Filter>Utility\Internals</Filter>
@@ -266,13 +284,13 @@
       <Filter>Game Engine\Components\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h">
-      <Filter>Editor\IMGUI</Filter>
+      <Filter>Editor\UI\IMGUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependancies\ImGui\imgui.h">
-      <Filter>Editor\IMGUI</Filter>
+      <Filter>Editor\UI\IMGUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependancies\ImGui\imgui_internal.h">
-      <Filter>Editor\IMGUI</Filter>
+      <Filter>Editor\UI\IMGUI</Filter>
     </ClInclude>
     <ClInclude Include="Include\Object\ObjectFlags.h">
       <Filter>Game Engine\Objects</Filter>
@@ -319,9 +337,6 @@
     <ClInclude Include="Include\Utility\UtilityInternals.h">
       <Filter>Utility\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Math\Angles.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="Include\DataStructure\AutoArray.h">
       <Filter>DataStructures\Arrays</Filter>
     </ClInclude>
@@ -349,12 +364,6 @@
     <ClInclude Include="Include\System\Camera\CameraSystem.h">
       <Filter>Game Engine\SubSystems\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\Editor.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EditorTab.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\CommandList.h">
       <Filter>Editor\Commands</Filter>
     </ClInclude>
@@ -362,7 +371,7 @@
       <Filter>Editor\Commands</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\ConsoleLog.h">
-      <Filter>Editor\Console</Filter>
+      <Filter>Editor\Editor Tabs\Console</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\Dock.h">
       <Filter>Editor\Docking</Filter>
@@ -371,16 +380,16 @@
       <Filter>Editor\UI</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\HierarchyView.h">
-      <Filter>Editor\Hierarchy View</Filter>
+      <Filter>Editor\Editor Tabs\Hierarchy View</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\Inspector.h">
-      <Filter>Editor\Inspector</Filter>
+      <Filter>Editor\Editor Tabs\Inspector</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\ProjectResource.h">
-      <Filter>Editor\Project Resource</Filter>
+      <Filter>Editor\Editor Tabs\Project Resource</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\SceneView.h">
-      <Filter>Editor\Scene View</Filter>
+      <Filter>Editor\Editor Tabs\Scene View</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\Payloads.h">
       <Filter>Editor\Payload</Filter>
@@ -394,6 +403,7 @@
     <ClInclude Include="Include\IO\BinarySerializer.h">
       <Filter>IO\BinarySerialiser</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\Component\Collider.h">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>
@@ -412,20 +422,66 @@
     <ClInclude Include="Include\Editor\EditorEvents.h">
       <Filter>Editor\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Utility\GUID.h">
-      <Filter>Utility\GUID</Filter>
+    <ClInclude Include="Include\Component\Renderer.h">
+      <Filter>Game Engine\Components\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Time\ScopedTimer.h">
+      <Filter>Game Engine\Systems\Time\ScopedTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Time\TimeDefs.h">
+      <Filter>Game Engine\Systems\Time</Filter>
     </ClInclude>
     <ClInclude Include="Include\Utility\ComponentGUID.h">
       <Filter>Utility\GUID</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\Renderer.h">
-      <Filter>Game Engine\Components\Renderer</Filter>
+    <ClInclude Include="Include\Utility\GUID.h">
+      <Filter>Utility\GUID</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Hotload\HotloadSystem.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
+    <ClInclude Include="Include\Editor\PerformanceLog.h">
+      <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Editor.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorTab.h">
+      <Filter>Editor\Editor Tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Variant.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Profiler\Profiler.h">
+      <Filter>Game Engine\Systems\Profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Tuple.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Profiler\ProfilerAction.h">
+      <Filter>Game Engine\Systems\Profiler\ProfilerAction</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\MathLib.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\MathUtility.h">
+      <Filter>Math\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Angles.h">
+      <Filter>Math\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Profiler\ProfileInfo.h">
+      <Filter>Game Engine\Systems\Profiler\ProfileInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\lodepng\lodepng.h">
+      <Filter>IO\TextSerialiser\lodepng</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\ConsoleDebugger.h">
+      <Filter>Editor\Editor Tabs\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\PLogInfo.h">
+      <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\PLogger.h">
+      <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -512,11 +568,11 @@
     <Filter Include="Editor">
       <UniqueIdentifier>{9b48d693-6c4c-41cf-8adf-840c40362547}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\IMGUI">
-      <UniqueIdentifier>{adfd2fea-e1aa-4980-9366-739bf3f0446f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\Editor">
       <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Mesh">
+      <UniqueIdentifier>{ca90d672-42da-4174-9947-7cdd5a3d812c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Shader">
       <UniqueIdentifier>{2df11722-19eb-493a-9952-074d5e70fcc7}</UniqueIdentifier>
@@ -593,29 +649,14 @@
     <Filter Include="Game Engine\SubSystems\Camera">
       <UniqueIdentifier>{c6d69b09-93e3-434e-a4bc-e25fb0c06c6d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Project Resource">
-      <UniqueIdentifier>{c5ac7258-cd5b-41a2-aa35-e58dbae20806}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Scene View">
-      <UniqueIdentifier>{71a85056-a560-4672-bf11-af0a4c971ad1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Inspector">
-      <UniqueIdentifier>{35530ff6-5930-4a89-b8db-49dcc15bfdda}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\Docking">
       <UniqueIdentifier>{06af060e-209f-4067-a5e6-2f4b596f578b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Commands">
       <UniqueIdentifier>{573a6f53-0ee9-4c6b-bda7-2e8af2e8b43c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Console">
-      <UniqueIdentifier>{24e718b4-19d5-461a-b934-7fa561a0580b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\UI">
       <UniqueIdentifier>{f31040be-52b0-48eb-96d0-207560e3376d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Hierarchy View">
-      <UniqueIdentifier>{a885b5ac-c2be-42de-9871-dadd13992aac}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Payload">
       <UniqueIdentifier>{618f59c4-4557-4253-8ca9-16e74a8be22a}</UniqueIdentifier>
@@ -641,8 +682,50 @@
     <Filter Include="Game Engine\Components\Renderer">
       <UniqueIdentifier>{91edfe0d-9cd2-43b8-a18f-715da13dcbf7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Engine\Systems\Time\ScopedTimer">
+      <UniqueIdentifier>{bd8e2eea-6f09-4a0f-901b-c420c874d331}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Utility\GUID">
-      <UniqueIdentifier>{f4948df4-57a5-44f2-a36b-60c01719cef6}</UniqueIdentifier>
+      <UniqueIdentifier>{e32cb155-6561-4a7a-9a47-96058953c24c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs">
+      <UniqueIdentifier>{c13e922e-c5d1-472d-af5f-95bb50e4100a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Inspector">
+      <UniqueIdentifier>{35530ff6-5930-4a89-b8db-49dcc15bfdda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Performance">
+      <UniqueIdentifier>{c047ceb5-275e-45b0-90de-511a03bb9780}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Project Resource">
+      <UniqueIdentifier>{c5ac7258-cd5b-41a2-aa35-e58dbae20806}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Scene View">
+      <UniqueIdentifier>{71a85056-a560-4672-bf11-af0a4c971ad1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Hierarchy View">
+      <UniqueIdentifier>{a885b5ac-c2be-42de-9871-dadd13992aac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Console">
+      <UniqueIdentifier>{24e718b4-19d5-461a-b934-7fa561a0580b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\UI\IMGUI">
+      <UniqueIdentifier>{adfd2fea-e1aa-4980-9366-739bf3f0446f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Profiler">
+      <UniqueIdentifier>{c8dea79e-90fb-4f6f-ab66-dec8db735338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Profiler\ProfilerAction">
+      <UniqueIdentifier>{01e1ddfc-ec41-4f83-b121-0c29d96526ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Utility">
+      <UniqueIdentifier>{73e90723-3cda-42dc-8275-7c510b3d0dc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Profiler\ProfileInfo">
+      <UniqueIdentifier>{786f882b-e4f0-4e3c-b000-a421b1059b0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\TextSerialiser\lodepng">
+      <UniqueIdentifier>{447b179b-b152-4f92-9cc2-48eb8f301131}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

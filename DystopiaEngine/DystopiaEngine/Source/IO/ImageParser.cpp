@@ -20,8 +20,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "IO\ImageParser.h"			// File header
+#include "IO\BinarySerializer.h"
 #include "System\Graphics\Image.h"	// Image
 #include "Utility\DebugAssert.h"	// DEBUG_PRINT
+
+#include "..\..\Dependancies\lodepng\lodepng.h"
 
 #include <cmath>		// abs
 #include <string>		// string
@@ -53,7 +56,6 @@ namespace
 		int32_t		mResolutionY;
 		uint32_t	mNumColors;
 		uint32_t	mImptColors;
-		uint8_t		mIgnore[24];	// 24 bytes in some...
 	};
 
 	struct HeaderPNG
@@ -86,7 +88,7 @@ namespace
 
 namespace BMP
 {
-	bool IsUnreadable(HeaderBMP _header, InfoBMP _info, std::string _path)
+	bool IsUnreadable(HeaderBMP _header, InfoBMP _info)
 	{
 		// Check if we know how to read the file type
 		if (_header.mType != 'MB')
@@ -106,21 +108,20 @@ namespace BMP
 		return false;
 	}
 
-	void ColorPalette(std::ifstream& _file, InfoBMP& _fileInfo, ColorRGBA(&_palette)[256])
+	void ColorPalette(Dystopia::BinarySerializer& _file, InfoBMP& _fileInfo, ColorRGBA(&_palette)[256])
 	{
 		for (unsigned n = 0; n < _fileInfo.mNumColors; ++n)
 		{
-			_file.read(reinterpret_cast<char*>(&_palette[n].sub.b), 1);
-			_file.read(reinterpret_cast<char*>(&_palette[n].sub.g), 1);
-			_file.read(reinterpret_cast<char*>(&_palette[n].sub.r), 1);
-			_file.read(reinterpret_cast<char*>(&_palette[n].sub.a), 1);
+			_file >> _palette[n].sub.b;
+			_file >> _palette[n].sub.g;
+			_file >> _palette[n].sub.r;
+			_file >> _palette[n].sub.a;
 		}
 	}
 
 	// 8 Bits using Color Palette
-	void* Palette_ColorBMP(std::ifstream& _in, InfoBMP _info, ColorRGBA(&_palette)[256])
+	void* Palette_ColorBMP(Dystopia::BinarySerializer& _in, InfoBMP& _info, ColorRGBA(&_palette)[256])
 	{
-		DEBUG_PRINT("Read image using color palette!\n");
 		ColorRGBA* data = new ColorRGBA[_info.mWidth * std::abs(_info.mHeight)];
 
 		for (int n = 0; n < std::abs(_info.mHeight); ++n)
@@ -128,13 +129,15 @@ namespace BMP
 			for (int m = 0; m < _info.mWidth; ++m)
 			{
 				uint8_t i;
-				_in.read(reinterpret_cast<char*>(&i), sizeof(uint8_t));
+				_in >> i;
 				data[_info.mWidth * n + m] = _palette[i];
 			}
 
 			if (_info.mWidth % 4)
 			{
-				_in.ignore(4 - _info.mWidth % 4);
+				__debugbreak();
+				// NEED FEATURE
+				//_in.ignore(4 - _info.mWidth % 4);
 			}
 		}
 
@@ -142,10 +145,8 @@ namespace BMP
 	}
 
 	// 24 Bits
-	void* RGB_ColorBMP(std::ifstream& _in, InfoBMP _info)
+	void* RGB_ColorBMP(Dystopia::BinarySerializer& _in, InfoBMP& _info)
 	{
-		DEBUG_PRINT("Read image as RGB color!\n");
-		
 		unsigned chunkLength = _info.mWidth * 3;
 		unsigned padding = ((chunkLength + 3) >> 2) * 4 - chunkLength; // pad widths to multiple of 4
 
@@ -155,8 +156,10 @@ namespace BMP
 
 		for (int n = 0; n < std::abs(_info.mHeight); ++n)
 		{
-			_in.read(reinterpret_cast<char*>(ptr), chunkLength);
-			_in.ignore(padding);
+			// NEED FEATURE
+			__debugbreak();
+			//_in.read(reinterpret_cast<char*>(ptr), chunkLength);
+			//_in.ignore(padding);
 
 			ptr += chunkLength;
 		}
@@ -165,23 +168,23 @@ namespace BMP
 	}
 
 	// 32 Bits
-	void* RGBA_ColorBMP(std::ifstream& _in, InfoBMP _info)
+	void* RGBA_ColorBMP(Dystopia::BinarySerializer& _in, InfoBMP& _info)
 	{
 		DEBUG_PRINT("Read image as RGBA color!\n");
 		ColorRGBA* data = new ColorRGBA[_info.mWidth * std::abs(_info.mHeight)];
 
 		for (int n = 0; n < _info.mWidth * std::abs(_info.mHeight); ++n)
 		{
-			_in.read(reinterpret_cast<char*>(&data[n].sub.b), 1);
-			_in.read(reinterpret_cast<char*>(&data[n].sub.g), 1);
-			_in.read(reinterpret_cast<char*>(&data[n].sub.r), 1);
-			_in.read(reinterpret_cast<char*>(&data[n].sub.a), 1);
+			_in >> data[n].sub.b;
+			_in >> data[n].sub.g;
+			_in >> data[n].sub.r;
+			_in >> data[n].sub.a;
 		}
 
 		return data;
 	}
 
-	Image ReadData(std::ifstream& _in, InfoBMP _info, ColorRGBA(&_palette)[256])
+	Image ReadData(Dystopia::BinarySerializer& _in, InfoBMP& _info, ColorRGBA(&_palette)[256])
 	{
 		Image data = { 
 			static_cast<unsigned>(_info.mWidth ), 
@@ -208,35 +211,45 @@ namespace BMP
 
 Image ImageParser::LoadBMP(const std::string& _path)
 {
-	std::ifstream file{ _path, std::ios::binary | std::ios::in };
+	auto file = Dystopia::Serialiser::OpenFile<Dystopia::BinarySerializer>(_path);
 
 	HeaderBMP fileHeader;
 	InfoBMP fileInfo{};
 
-	if (file.fail())
+	if (file.EndOfInput())
 	{
 		DEBUG_PRINT("ImageParser Warning: File \"%s\" not found!", _path.c_str());
-		file.close();
+		//file.close();
 		return { 0, 0, nullptr };
 	}
 
 	// Read the BMP and info Headers
-	file.read(reinterpret_cast<char*>(&fileHeader), sizeof(HeaderBMP));
-	file.read(reinterpret_cast<char*>(&fileInfo.mSize), sizeof(uint32_t));
+	file >> fileHeader.mType;
+	file >> fileHeader.mBytes;
+	file >> fileHeader.mReserved;
+	file >> fileHeader.mOffset;
+	file >> fileInfo.mSize;
+	file >> fileInfo.mWidth;
+	file >> fileInfo.mHeight;
+	file >> fileInfo.mPlanes;
+	file >> fileInfo.mBits;
+	file >> fileInfo.mCompression;
+	file >> fileInfo.mResolutionX;
+	file >> fileInfo.mResolutionY;
+	file >> fileInfo.mNumColors;
+	file >> fileInfo.mImptColors;
+
 	if (fileInfo.mSize > sizeof(InfoBMP))
 	{
-		file.read(reinterpret_cast<char*>(&fileInfo.mWidth), sizeof(InfoBMP) - sizeof(uint32_t));
-		file.seekg(fileInfo.mSize - sizeof(InfoBMP), std::ios::cur);
+	//	char dummy[fileInfo.mSize - sizeof(InfoBMP)];
+	//	file.read(reinterpret_cast<char*>(&fileInfo.mWidth), sizeof(InfoBMP) - sizeof(uint32_t));
+	//	file.seekg(fileInfo.mSize - sizeof(InfoBMP), std::ios::cur);
 	}
-	else
-	{
-		file.read(reinterpret_cast<char*>(&fileInfo.mWidth), fileInfo.mSize - sizeof(uint32_t));
-	}
-
+	
 	// Early bail checks before we do anything
-	if (BMP::IsUnreadable(fileHeader, fileInfo, _path))
+	if (BMP::IsUnreadable(fileHeader, fileInfo))
 	{
-		file.close();
+	//	file.close();
 		return { 0, 0, nullptr };
 	}
 
@@ -248,23 +261,30 @@ Image ImageParser::LoadBMP(const std::string& _path)
 	}
 
 	// Seek to start of image data, just in case
-	file.seekg(fileHeader.mOffset, std::ios::beg);
+	//file.seekg(fileHeader.mOffset, std::ios::beg);
 
 	Image fileData = BMP::ReadData(file, fileInfo, mPalette);
 
-	if (file.fail())
-	{
-		DEBUG_PRINT("ImageParser Error: Error reading file \"%s\"!", _path.c_str());
-		__debugbreak();
-	}
-
-	file.close();
+	//file.close();
 	return fileData;
 }
 
-Image ImageParser::LoadPNG(const std::string&)
+Image ImageParser::LoadPNG(const std::string& _strName)
 {
-	return Image{};
+	Image fileData;
+	std::vector<unsigned char> buf;
+	lodepng::decode(buf, fileData.mnWidth, fileData.mnHeight, _strName.c_str());
+
+	fileData.mpImageData = new char[buf.size()];
+
+	auto b = buf.begin();
+	auto e = buf.end();
+	unsigned char* data = static_cast<unsigned char*>(fileData.mpImageData);
+
+	while (b != e)
+		*data++ = *b++;
+
+	return fileData;
 }
 
 Image ImageParser::LoadJPG(const std::string&)

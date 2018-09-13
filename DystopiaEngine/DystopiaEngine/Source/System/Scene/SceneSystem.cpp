@@ -69,9 +69,9 @@ void Dystopia::SceneSystem::PostUpdate(void)
 
 void Dystopia::SceneSystem::Shutdown(void)
 {
-	delete mpCurrScene;
 	if (mpNextScene != mpCurrScene)
 		delete mpNextScene;
+	delete mpCurrScene;
 
 	mpNextScene = mpCurrScene = nullptr;
 }

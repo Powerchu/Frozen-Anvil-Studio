@@ -22,13 +22,13 @@ namespace Dystopia
 {
 	EditorTab::EditorTab(bool _defaultOpen)
 		: mSize{ Math::Vec2{ 0, 0 } }, mPos{ Math::Vec2{ 0, 0 } }, mIsOpened{ _defaultOpen }, 
-		mpComdHandler{ nullptr }, mpEditorEventSys{ nullptr }, mpCurrentScene{ nullptr }
+		mpComdHandler{ nullptr }, mpEditorEventHandler{ nullptr }, mpCurrentScene{ nullptr }
 	{}
 
 	EditorTab::~EditorTab()
 	{
 		mpComdHandler = nullptr;
-		mpEditorEventSys = nullptr;
+		mpEditorEventHandler = nullptr;
 		mpCurrentScene = nullptr;
 	}
 
@@ -82,9 +82,9 @@ namespace Dystopia
 		mpComdHandler = _ctx;
 	}
 
-	void EditorTab::SetEventSysContext(EditorEventHandler * const _ctx)
+	void EditorTab::SetEventContext(EditorEventHandler * const _ctx)
 	{
-		mpEditorEventSys = _ctx;
+		mpEditorEventHandler = _ctx;
 	}
 
 	void EditorTab::SetSceneContext(Scene * const _ctx)
@@ -96,5 +96,19 @@ namespace Dystopia
 	{
 		return *(Editor::GetInstance());
 	}
+	
+	CommandHandler* EditorTab::GetCommandHND() const
+	{
+		return mpComdHandler;
+	}
 
+	EditorEventHandler*	EditorTab::GetEditorEventHND() const
+	{	
+		return mpEditorEventHandler;
+	}
+
+	Scene* EditorTab::GetCurrentScene()	const
+	{
+		return mpCurrentScene;
+	}
 }

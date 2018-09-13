@@ -29,6 +29,8 @@ namespace Dystopia
 	class EditorTab;
 	class EditorEventHandler;
 	class SceneSystem;
+	class Timer;
+	class Profiler;
 	//class Scene;
 
 	enum eEditorState
@@ -48,17 +50,26 @@ namespace Dystopia
 		static Editor*	GetInstance();
 		~Editor();
 
+		/* General Looping Funcs */
 		void			Init();
 		void			LoadDefaults();
-		void			StartFrame(const float&);
+		void			StartFrame();
 		void			UpdateFrame(const float&);
 		void			EndFrame();
 		void			Shutdown();
+
+		/* delta time */
+		float			GetDeltaTime() const;
+
+		/* State change stuff */
 		void			ChangeState(eEditorState);
-		void			SetFocus(GameObject&);
-		void			RemoveFocus();
 		bool			IsClosing() const;
 		eEditorState	CurrentState() const;
+
+		/* Game Object stuff */
+		void			SetFocus(GameObject&);
+		void			RemoveFocus();
+		GameObject*		FindGameObject(const unsigned long& _id) const;
 
 	private:
 		Editor(void);
@@ -66,15 +77,19 @@ namespace Dystopia
 		EngineCore				*mpDriver;
 		WindowManager			*mpWin;
 		GraphicsSystem			*mpGfx;
+		SceneSystem				*mpSceneSystem;
+		Profiler				*mpProfiler;
+
+		EditorEventHandler		*mpEditorEventSys;
 		EditorInput				*mpInput;
 		CommandHandler			*mpComdHandler;
 		GuiSystem				*mpGuiSystem;
-		EditorEventHandler		*mpEditorEventSys;
-		SceneSystem				*mpSceneSystem;
+		Timer					*mpTimer;
 
-		AutoArray<EditorTab*>	mTabsArray;
+		AutoArray<EditorTab*>	mArrTabs;
 		eEditorState			mCurrentState;
 		eEditorState			mNextState;
+		float					mDeltaTime;
 
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
@@ -102,6 +117,9 @@ namespace Dystopia
 		void			UpdateHotkeys();
 		void			InstallHotkeys();
 		void			UnInstallHotkeys();
+
+		/* Misc functions */
+		void			LogTabPerformance();
 	};
 }
 
