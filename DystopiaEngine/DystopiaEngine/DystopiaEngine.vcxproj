@@ -106,6 +106,7 @@
     <ClInclude Include="Include\Editor\EditorInputs.h" />
     <ClInclude Include="Include\Editor\PerformanceLog.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
+    <ClInclude Include="Include\System\Base\ComponentDonor.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
     <ClInclude Include="Include\System\Profiler\ProfileInfo.h" />

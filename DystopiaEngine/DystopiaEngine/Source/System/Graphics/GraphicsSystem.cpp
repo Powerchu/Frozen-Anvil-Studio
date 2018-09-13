@@ -156,7 +156,6 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 
 bool Dystopia::GraphicsSystem::Init(void)
 {
-
 	return true;
 }
 
@@ -256,11 +255,6 @@ void Dystopia::GraphicsSystem::Shutdown(void)
 	pCore->GetSubSystem<MeshSystem>()->FreeMeshes();
 }
 
-Dystopia::Renderer* Dystopia::GraphicsSystem::RequestComponent(void)
-{
-	return mRenderers.Emplace();;
-}
-
 void Dystopia::GraphicsSystem::LoadDefaults(void)
 {
 	DRAW_MODE = GL_TRIANGLES;
@@ -314,6 +308,13 @@ Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _fileP
 	}
 
 	return nullptr;
+}
+
+void Dystopia::GraphicsSystem::SetMasterViewport(int _nX, int _nY, int _nWidth, int _nHeight) noexcept
+{
+	EngineCore::GetInstance()->GetSystem<CameraSystem>()->SetMasterViewport(
+		_nX, _nY, _nWidth, _nHeight
+	);
 }
 
 void Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept

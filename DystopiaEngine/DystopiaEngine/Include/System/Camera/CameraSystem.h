@@ -15,8 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _CAMERA_SYS_H_
 
 #include "System\Base\Systems.h"
+#include "System\Base\ComponentDonor.h"
 
-#include "DataStructure\MagicArray.h"
 #include "System\Graphics\GraphicsDefs.h"
 
 
@@ -24,13 +24,11 @@ namespace Dystopia
 {
 	class Camera;
 
-	class CameraSystem : public Systems
+	class CameraSystem : public Systems, public ComponentDonor<Camera>
 	{
 	public:
 
 		CameraSystem(void) noexcept;
-
-		Camera* RequestComponent(void);
 
 		bool Init(void);
 		void PostInit(void);
@@ -57,7 +55,6 @@ namespace Dystopia
 
 		Gfx::AbsViewport mMasterViewport;
 		Camera* mpMasterCam, *mpUICam;
-		Ctor::MagicArrayBuilder<Camera>::SetBlockSize<64>::type mCameras;
 	};
 }
 

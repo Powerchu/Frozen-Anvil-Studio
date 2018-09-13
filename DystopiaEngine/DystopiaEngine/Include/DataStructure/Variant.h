@@ -107,7 +107,7 @@ template< typename ... Ty> template <typename U, typename Actual_t>
 inline Variant<Ty...>::Variant(U&& _obj) noexcept(std::is_nothrow_constructible_v<Actual_t, U>) :
 	mType{ Utility::MetaFind_t<Actual_t, AllTypes>::value }
 {
-	::new (reinterpret_cast<void*>(&raw)) Actual_t { Utility::Move(_obj) };
+	::new (reinterpret_cast<void*>(&raw)) Actual_t ( Utility::Move(_obj) );
 }
 
 

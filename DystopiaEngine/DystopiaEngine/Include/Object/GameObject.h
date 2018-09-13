@@ -149,6 +149,7 @@ inline void Dystopia::GameObject::AddComponent(ComponentTag)
 	//);
 
 	auto Comp = EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()->RequestComponent();
+
 	mComponents.Insert(
 		Comp;
 	);
