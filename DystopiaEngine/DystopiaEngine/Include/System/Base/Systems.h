@@ -34,10 +34,6 @@ namespace Dystopia
 		virtual void LoadDefaults(void)				{ };
 		virtual void LoadSettings(TextSerialiser&)	{ };
 
-		// For systems that have components
-//		Component* GetComponent(GUID_t)
-//		GUID_t RequestComponent();
-
 //		virtual void ReceiveMessage(const Message&) = 0;
 
 		virtual ~Systems(void)						= default;
