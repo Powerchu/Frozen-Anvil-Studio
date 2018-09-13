@@ -55,7 +55,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 /* Test Includes */
 
-
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
@@ -85,7 +84,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 		editor->UpdateFrame(dt);
 		
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::Profiler>()->Update(dt);
-
+	
 		editor->EndFrame();
 	}
 

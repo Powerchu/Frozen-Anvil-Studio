@@ -123,17 +123,12 @@ namespace Dystopia
 			WS_EX_APPWINDOW,
 			L"MainWindow",
 			NULL,
-			WS_POPUP | WS_DLGFRAME,
+			WS_POPUP,
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			WindowRect.right - WindowRect.left,
 			WindowRect.bottom - WindowRect.top,
 			NULL, NULL, mHInstance, NULL
 		);
-
-		long left = (GetSystemMetrics(SM_CXSCREEN) - LOGO_WIDTH) >> 1,
-			top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
-		// center the window
-		SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
 
 #else
 
@@ -151,12 +146,12 @@ namespace Dystopia
 			NULL, NULL, mHInstance, NULL
 		);
 
-		long left = (GetSystemMetrics(SM_CXSCREEN) - mWidth) >> 1,
-			top = (GetSystemMetrics(SM_CYSCREEN) - mHeight) >> 1;
+#endif
+
+		long left = (GetSystemMetrics(SM_CXSCREEN) - LOGO_WIDTH) >> 1,
+			top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
 		// center the window
 		SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
-
-#endif
 
 		mWindows.EmplaceBack(window);
 //		mWindows[0].ShowCursor(EDITOR);

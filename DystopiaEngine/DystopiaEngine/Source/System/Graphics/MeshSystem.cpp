@@ -39,10 +39,6 @@ void Dystopia::MeshSystem::Shutdown(void) noexcept
 void Dystopia::MeshSystem::StartMesh(void)
 {
 	mpRawMeshes.EmplaceBack();
-	if (auto err = glGetError())
-	{
-		__debugbreak();
-	}
 }
 
 void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)

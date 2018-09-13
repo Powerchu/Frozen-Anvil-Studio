@@ -133,8 +133,8 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 			.0f, .0f, .0f, 1.f
 	};
 
-	glClearColor(1.f, .3f, .7f, 1.f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClearColor(.0f, .0f, .0f, .0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->UseShader();
 	texture->BindTexture();
@@ -156,10 +156,6 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 
 bool Dystopia::GraphicsSystem::Init(void)
 {
-	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	return true;
 }
@@ -407,6 +403,11 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	std::fprintf(stdout, "Graphics System: %d bit colour, %d bits depth, %d bit stencil\n", pfd.cColorBits, pfd.cDepthBits, pfd.cStencilBits);
 
 #endif
+
+	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Return true to indicate success
 	return true;

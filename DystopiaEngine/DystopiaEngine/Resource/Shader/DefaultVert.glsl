@@ -10,15 +10,15 @@ layout(location = 2) in vec2 vertexUV;
 
 out vec3 vPosition;
 out vec2 vUV;
-out vec3 vColor;
+//out vec3 vColor;
 
 void main()
 {
   vec4 temp = ModelMat * vec4(vertexPos, 1.f);
-	vPosition = temp.xyz;
-	vUV       = vertexUV;
+  vPosition = temp.xyz;
+  vUV       = vertexUV;
   //vColor    = vertexColor;
 
-	gl_Position = ProjectViewMat * temp;
+  gl_Position = ProjectViewMat * temp;
 }
 

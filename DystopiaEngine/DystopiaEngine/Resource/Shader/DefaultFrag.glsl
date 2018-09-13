@@ -14,8 +14,8 @@ void main()
 {
   // Ignore colour blending for now
   
-  vec4 tempColor = texture(texSampler, vUV);
-  vec3 gammaColor = pow(tempColor.rgb, vec3(1.f / Gamma));
-  fragColor = vec4(gammaColor.rgb, tempColor.a);
+  vec4 color = texture(texSampler, vUV);
+  color.rgb = pow(color.rgb, vec3(1.f / Gamma));
+  fragColor = color;
 }
 
