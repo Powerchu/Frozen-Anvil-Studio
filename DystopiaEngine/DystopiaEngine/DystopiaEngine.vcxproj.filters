@@ -182,6 +182,9 @@
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Logger\LoggerSystem.cpp">
+      <Filter>Game Engine\SubSystems\Logger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -485,6 +488,9 @@
     <ClInclude Include="Include\System\Profiler\Profiler.h">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Logger\LoggerSystem.h">
+      <Filter>Game Engine\SubSystems\Logger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -729,6 +735,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Profiler\ProfilerSystem">
       <UniqueIdentifier>{675debca-1599-4fda-9025-60f32632f189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Logger">
+      <UniqueIdentifier>{7c6d8c15-bbec-4123-aaf7-2edb432d219b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

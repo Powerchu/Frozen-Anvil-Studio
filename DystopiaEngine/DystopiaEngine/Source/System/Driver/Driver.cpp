@@ -35,6 +35,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 // SubSystems
 #include "System\Graphics\MeshSystem.h"
+#include "System\Logger\LoggerSystem.h"
 
 
 
