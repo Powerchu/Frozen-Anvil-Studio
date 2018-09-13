@@ -69,7 +69,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	editor->Init();
 
 	Dystopia::Hotloader<1> test;
-	test.SetFileDirectoryPath<0>("C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Resource/Behaviours/BehaviourScripts");
+	test.SetFileDirectoryPath<0>("C:/Users/keith.goh/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Resource/Behaviours/BehaviourScripts");
 	test.AddFilesToCrawl(L"DystopiaEngine_D.lib", Dystopia::eCompile);
 	/*
 	test.AddAdditionalSourcePath(L"C:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour");
@@ -88,7 +88,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	//test.AddAdditionalSourcePath(L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/glew-2.1.0/lib/Release/x64");
 
-	test.SetDllFolderPath       ("C:/Users/Owner/AppData/Roaming/Dystopia/DLL/");
+	test.SetDllFolderPath       ("C:/Users/keith.goh/AppData/Roaming/Dystopia/DLL/");
 	test.Init();
 	Dystopia::Behaviour * p                        = nullptr;
 	Dystopia::DLLWrapper * pListOfDLLChanges[100];

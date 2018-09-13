@@ -20,13 +20,7 @@
 
 namespace Dystopia
 {
-	enum eFileHandle
-	{
-		eInclude_Index = 0,
-		eSource_Index,
-		eDll_Index,
-		eTotalFileHandles
-	};
+
 	enum eFileExtension
 	{
 		eCpp = 0,
@@ -192,77 +186,6 @@ namespace Dystopia
 		std::vector<std::wstring> mvPossibleDirectory;
 		ePurpose     mFilePurpose;
 	};
-
-	struct HotloadSystem : public Systems
-	{
-		HotloadSystem();
-
-		virtual void PreInit(void) { };
-		virtual bool Init(void);
-		virtual void PostInit(void) { };
-
-		virtual void FixedUpdate(float) { };
-		virtual void Update(float);
-		virtual void PostUpdate(void) { };
-		virtual void Shutdown(void);
-
-		virtual void LoadDefaults(void) { };
-		virtual void LoadSettings(TextSerialiser&) { };
-
-		virtual ~HotloadSystem(void) = default;
-
-		//ReferenceFunc GetDllFunc(LPCWSTR _dllFileName, LPCSTR _dllFuncName);
-		FARPROC GetDllFuncTest(LPCWSTR _dllFileName, LPCSTR _dllFuncName);
-
-		bool isDllModified(DLLWrapper ** _pDLLWrapperBuffer = nullptr, unsigned size = 0);
-
-		void SetDllFolder(std::string _mDllFolderPath);
-		void SetHeaderFolder(std::string _mHeaderFolderPath);
-		void SetCourceFolder(std::string _mSourceFolderPath);
-
-	private:
-
-		static constexpr unsigned NumOfFileInfo = 256;
-		using  ArrayFileInfo = std::array<char, NumOfFileInfo * MAX_PATH * sizeof(WCHAR)>;
-
-		static LPCSTR HEADER_DEFAULT_PATH;
-		static LPCSTR SOURCE_DEFAULT_PATH;
-
-
-		std::string   mDll_Folder_Name = "C:/Users/Keith/AppData/Roaming/Dystopia/DLL/";//"C:/Users/Owner/AppData/Roaming/Dystopia/DLL/";
-		std::string   mSource_Folder_Name = SOURCE_DEFAULT_PATH;
-		std::string   mHeader_Folder_Name = HEADER_DEFAULT_PATH;
-
-		std::wstring  mCmdPath;
-
-		std::wstring  mVcvarPath;
-		std::wstring  mVcvarName;
-		std::wstring  mVcvarBuildEnv;
-
-		std::wstring  mCompilerPath;
-		std::wstring  mMSVCPath;
-		std::wstring  mCompilerFlags = L"cl /W4 /EHsc /nologo /std:c++latest /DLL /Za /LD /IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include";
-		/*
-		L" /I\"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\include\" "
-		L" /I\"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\lib\" "
-		L" /Fe\"C:/Users/Owner/AppData/Roaming/Dystopia/DLL\" "
-		L"C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Source/Behaviour/TestClass.cpp";
-		*/
-
-		MagicArray<DLLWrapper> mvDLL;
-
-		HANDLE        mFileHandles[eTotalFileHandles];
-		ArrayFileInfo marrFileInfo[eTotalFileHandles];
-		_OVERLAPPED   marrOverlapped[eTotalFileHandles];
-		std::string   marrFolderNames[eTotalFileHandles];
-
-		void Recompile(HANDLE const & _File_Handle, FILE_NOTIFY_INFORMATION * pFileInfo = nullptr);
-		void CheckReloadDll();
-		bool LocateAndLoadCompiler();
-
-		eFileExtension CheckFileExtension(std::wstring const & _FileName);
-	};
-
 
 
 	template <unsigned TOTAL_FILE_DIRECTORIES>
@@ -710,9 +633,9 @@ namespace Dystopia
 		std::wstring  mVcvarName;
 		std::wstring  mVcvarBuildEnv;
 
-		std::wstring  mCompilerFlags = L"cl /W3 /EHsc /nologo /std:c++latest /DLL /Za /LDd /IC:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include "
-			                            "/IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/glew-2.1.0/include "
-										"/IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/ImGui";
+		std::wstring  mCompilerFlags = L"cl /W3 /EHsc /nologo /std:c++latest /DLL /Za /LDd /IC:/Users/keith.goh/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include";
+			                            //"/IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/glew-2.1.0/include "
+										//"/IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/ImGui";
 
 
 
@@ -763,6 +686,9 @@ namespace Dystopia
 			std::filesystem::recursive_directory_iterator i{ p,std::filesystem::directory_options::skip_permission_denied,error };
 			std::wstring name;
 
+			std::filesystem::path vcPath{ "C:/Program Files (x86)/Microsoft Visual Studio" };
+			std::filesystem::recursive_directory_iterator vciter{ vcPath ,std::filesystem::directory_options::skip_permission_denied,error };
+
 			DWORD BinaryTypeStatus;
 			bool cl_status = false;
 			bool cmd_status = false;
@@ -789,7 +715,13 @@ namespace Dystopia
 
 					cmd_status |= true;
 				}
-				else if (name == L"vcvarsall.bat" && !vcvars_status)
+			}
+
+			for(auto & elem : vciter)
+			{
+
+				name = (elem).path().filename().wstring();
+				if (name == L"vcvarsall.bat" && !vcvars_status)
 				{
 					mVcvarName = elem.path().filename().wstring();
 					mVcvarPath = L'\"' + elem.path().parent_path().wstring() + L'\"';
