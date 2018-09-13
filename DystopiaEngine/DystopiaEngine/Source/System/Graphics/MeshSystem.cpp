@@ -19,24 +19,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\MathUtility.h"
 
 #include <GL\glew.h>
-#include <iostream>
 
 
 void Dystopia::MeshSystem::Init(void)
 {
 	Mesh::LinkSystem(this);
 //	mpMeshes.reserve(10);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 }
 
 void Dystopia::MeshSystem::Shutdown(void) noexcept
 {
-	glDisableVertexAttribArray(2);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(0);
+	//glDisableVertexAttribArray(2);
+	//glDisableVertexAttribArray(1);
+	//glDisableVertexAttribArray(0);
 
 	FreeMeshes();
 }

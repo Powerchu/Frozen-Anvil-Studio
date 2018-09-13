@@ -20,6 +20,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Utility
 {
+	struct NULL_TYPE;
+
+	// declval
+	// ========= ===========================================================
+
+	template <typename T>
+	T declval(void) noexcept;
+
+
 	// Constant
 	// ========= ===========================================================
 
@@ -264,6 +273,22 @@ namespace Utility
 	// Warning: May crash the compiler
 	template <auto _Val>
 	auto ForceEval_v = ForceEval<decltype(_Val), _Val>::value;
+
+
+	// Type	   
+	// ====== ==============================================================
+
+	template <typename Ty>
+	struct Type
+	{
+		using type = Ty;
+		using result = Ty;
+	};
+
+	template <>
+	struct Type<NULL_TYPE>
+	{
+	};
 }
 
 

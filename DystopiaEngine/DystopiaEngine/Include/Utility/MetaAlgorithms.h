@@ -188,14 +188,9 @@ namespace Utility
 
 	// TODO: SFINAE Friendly?
 	template <typename T, typename ... Ty>
-	struct ConvertType
+	struct ConvertType : public Type<decltype(Helper::ConversionSelector<Ty...>{}(declval<Utility::Decay_t<T>>()))>
 	{
-	private:
-		// incase declval is not included, use our own
-		static constexpr Utility::Decay_t<T> declval(void);
 
-	public:
-		using result = decltype(Helper::ConversionSelector<Ty...>{}(ConvertType::declval()));
 	};
 }
 

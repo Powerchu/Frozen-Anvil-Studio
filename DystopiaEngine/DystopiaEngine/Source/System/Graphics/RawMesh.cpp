@@ -27,6 +27,14 @@ Dystopia::RawMesh::RawMesh(void) noexcept
 
 Dystopia::RawMesh::~RawMesh(void)
 {
+	BindMesh();
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+
+	UnbindMesh();
+
 	glDeleteBuffers(3, &mVtxBuffer);
 	glDeleteVertexArrays(1, &mVAO);
 }
@@ -44,6 +52,10 @@ void Dystopia::RawMesh::UnbindMesh(void) const
 void Dystopia::RawMesh::BuildMesh(AutoArray<Vertex>& _pVtx, AutoArray<UV>& _pUVs, AutoArray<short>& _nIndices)
 {
 	BindMesh();
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, mVtxBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _pVtx.size(), &_pVtx[0], GL_STATIC_DRAW);

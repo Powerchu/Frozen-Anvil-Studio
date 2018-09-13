@@ -64,7 +64,9 @@ namespace Dystopia
 
 	private:
 
-		GameObject * mpOwner;
+		// TODO
+		// Temporary ID -- Will change back to pointer
+		size_t mnOwner;
 
 	protected:
 

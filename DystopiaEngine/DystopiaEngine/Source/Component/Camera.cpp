@@ -131,13 +131,12 @@ void Dystopia::Camera::SetCamera(void)
 	mView = mTransform->GetTransformMatrix();
 
 	mInvScreen =
-		mView * // to View space
 		Math::Mat4{
 			2.f / mViewport.mnWidth, .0f, -(1.f + 2.f * mViewport.mnX) / mViewport.mnWidth - 1.f, .0f,
 			.0f, -2.f / mViewport.mnHeight, 1.f + (1.f + 2.f * mViewport.mnY) / mViewport.mnHeight, .0f,
 			.0f, .0f, .0f, .0f,
 			.0f, .0f, .0f, 1.f
-		}; // Screen space -> Viewport space -> projection space
+		} * mView; // Screen space -> Viewport space -> projection space
 
 	mView.AffineInverse();
 }

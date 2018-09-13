@@ -274,7 +274,7 @@ namespace Utility
 		template <typename ... Ty>
 		struct ConversionSelector : public ConvertionOption<Ty> ...
 		{
-
+			NULL_TYPE operator () (...);
 		};
 	}
 }

@@ -48,13 +48,13 @@ Dystopia::Texture2D::Texture2D(const std::string& _strPath, bool _bAlpha) :
 	SetWidth(img.mnWidth);
 	SetHeight(img.mnHeight);
 
-	InitTexture(img, _bAlpha);
+	InitTexture(img.mpImageData, _bAlpha);
 }
 
 Dystopia::Texture2D::Texture2D(unsigned _nWidth, unsigned _nHeight, void* _pData, bool _bAlpha) :
 	Texture{ _nWidth, _nHeight, GL_TEXTURE_2D }
 {
-	InitTexture(Image{ _nWidth, _nHeight, _pData }, _bAlpha);
+	InitTexture(_pData, _bAlpha);
 }
 
 void Dystopia::Texture2D::GenerateMipmap(void) const
@@ -67,17 +67,22 @@ void Dystopia::Texture2D::GenerateMipmap(void) const
 	UnbindTexture();
 }
 
-void Dystopia::Texture2D::InitTexture(const Image& _img, bool _bAlpha)
+void Dystopia::Texture2D::InitTexture(void* _pData, bool _bAlpha)
 {
 	BindTexture();
 
 	if (_bAlpha)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, _img.mnWidth, _img.mnHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, _img.mpImageData);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, GetWidth(), GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, _pData);
 	}
 	else
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, _img.mnWidth, _img.mnHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, _img.mpImageData);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, GetWidth(), GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, _pData);
+	}
+
+	if (auto err = glGetError())
+	{
+		__debugbreak();
 	}
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

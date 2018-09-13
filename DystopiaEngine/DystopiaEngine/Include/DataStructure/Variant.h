@@ -62,7 +62,7 @@ public:
 	// ======================================== OPERATORS ======================================== // 
 
 	template <typename U>
-	inline auto operator = (U&&) -> VARIANT_ENABLE_IF_SFINAE(U, Variant&);
+	inline auto operator = (U&&) -> VARIANT_ENABLE_IF_SFINAE(VARIANT_TYPE_RESOLUTION(U), Variant&);
 
 	Variant& operator = (Variant&&);
 	Variant& operator = (const Variant&);
@@ -171,13 +171,13 @@ static inline void Variant<Ty...>::Destroy(U* _ptr) noexcept
 
 
 template <typename ... Ty> template <typename U>
-inline auto Variant<Ty...>::operator = (U&& _rhs) -> VARIANT_ENABLE_IF_SFINAE(U, Variant&)
+inline auto Variant<Ty...>::operator = (U&& _rhs) -> VARIANT_ENABLE_IF_SFINAE(VARIANT_TYPE_RESOLUTION(U), Variant&)
 {
 	using Actual_t = VARIANT_TYPE_RESOLUTION(U);
 
 	DestroyCurrent();
 	mType = Utility::MetaFind_t<Utility::Decay_t<Actual_t>, AllTypes>::value;
-	::new (reinterpret_cast<void*>(&raw)) Utility::Decay_t<Actual_t> { Utility::Move(_rhs) };
+	::new (reinterpret_cast<void*>(&raw)) Utility::Decay_t<Actual_t> ( Utility::Move(_rhs) );
 
 	return *this;
 }

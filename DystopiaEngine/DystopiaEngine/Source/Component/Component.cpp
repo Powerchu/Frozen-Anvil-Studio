@@ -13,15 +13,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Component\Component.h"		// File Header
 #include "Object\ObjectFlags.h"
+#include "Object\GameObject.h"
+#include "System\Driver\Driver.h"
+#include "System\Scene\SceneSystem.h"
+#include "Utility\Utility.h"
 
 Dystopia::Component::Component(void) noexcept
-	: mnFlags{ FLAG_NONE }, mpOwner{ nullptr }
+	: mnFlags{ FLAG_NONE }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }
 {
 
 }
 
 Dystopia::Component::Component(GameObject * _pOwner) noexcept
-	: mnFlags{ FLAG_NONE }, mpOwner{ _pOwner }
+	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }
 {
 }
 
@@ -70,12 +74,12 @@ void Dystopia::Component::DestroyComponent(void)
 
 void Dystopia::Component::SetOwner(GameObject* _pOwner)
 {
-	mpOwner = _pOwner;
+	mnOwner = _pOwner->GetID();
 }
 
 Dystopia::GameObject* Dystopia::Component::GetOwner(void) const
 {
-	return mpOwner;
+	return EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject(mnOwner);
 }
 
 

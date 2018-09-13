@@ -64,6 +64,7 @@ namespace Dystopia
 		Math::Point3D GetPosition(void) const;
 
 		void SetParent(Transform*);
+		void OnChildRemove(Transform*);
 		void OnParentRemove(Transform*);
 
 		Math::Matrix4 GetTransformMatrix(void);
@@ -86,6 +87,9 @@ namespace Dystopia
 		Math::Vec3D mScale;
 		Math::Point3D mPosition;
 		Math::Quaternion mRotation;
+
+		void RemoveChild(Transform*);
+		void RemoveParent(void);
 	};
 }
 
