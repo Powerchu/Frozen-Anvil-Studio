@@ -29,14 +29,13 @@ namespace Dystopia
 		PLogData& operator=(const PLogData&);
 		PLogData& operator=(PLogData&&);
 
-		void					UpdateLog(float _val, float _min, float _max);
+		void					UpdateLog(float _val);
 
 		Array<float, maxLogs>	mArrValues;
 		std::string				mLabel;
 		int						mCurrentIndex;
 		bool					mIsBigGraph;
-		float					mMin;
-		float					mMax;
+		int						mMax;
 	};
 
 	struct PLogItem
@@ -49,8 +48,8 @@ namespace Dystopia
 		PLogItem& operator=(PLogItem&&);
 		~PLogItem();
 
-		void					UpdateG(float _val, float _min, float _max, bool);
-		void					UpdateLog(const std::string&, float _val, float _min, float _max, bool);
+		void					UpdateG(float _val, bool);
+		void					UpdateLog(const std::string&, float _val, bool);
 		void					InsertLog(const PLogData&);
 		void					SortLogs();
 
