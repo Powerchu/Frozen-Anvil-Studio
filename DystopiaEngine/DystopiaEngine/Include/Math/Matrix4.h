@@ -38,7 +38,7 @@ namespace Math
 	#define ALLIGN	16
 	#define USE_DP	0
 
-	struct __declspec(align (ALLIGN)) Matrix4
+	struct __declspec(align (ALLIGN)) _DLL_EXPORT Matrix4
 	{
 		// ====================================== CONSTRUCTORS ======================================= // 
 

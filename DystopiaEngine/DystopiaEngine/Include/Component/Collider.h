@@ -52,7 +52,7 @@ namespace Dystopia
 
 
 
-	struct Vertice
+	struct _DLL_EXPORT Vertice
 	{
 		/*Position of the vectice*/
 		Math::Point3D mPosition;
@@ -76,7 +76,7 @@ namespace Dystopia
 		int SimplexIndex;
 	};
 
-	class Collider : public Dystopia::Component
+	class _DLL_EXPORT Collider : public Dystopia::Component
 	{
 	public:
 
@@ -118,7 +118,7 @@ namespace Dystopia
 		Math::Vec3D mv3Offset;
 	};
 
-	class Convex : public virtual Collider
+	class _DLL_EXPORT Convex : public virtual Collider
 	{
 	public:
 
@@ -182,7 +182,7 @@ namespace Dystopia
 	};
 
 
-	class AABB : public Convex
+	class _DLL_EXPORT AABB : public Convex
 	{
 	public:
 
@@ -222,6 +222,7 @@ namespace Dystopia
 		Vertice * mMax;
 		
 	};
+
 
 	class Triangle : public Convex
 	{

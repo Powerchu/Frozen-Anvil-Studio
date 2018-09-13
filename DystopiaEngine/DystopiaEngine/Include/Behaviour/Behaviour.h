@@ -16,16 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _BEHAVIOUR_H_
 #define _BEHAVIOUR_H_
 
-#if EDITOR
-#ifdef  BEHAVIOUR_EXPORT
-#define BEHAVIOUR_DllExport   __declspec( dllexport )
-#else 
-#define BEHAVIOUR_DllExport   __declspec( dllimport )
-#endif
-#else
-#define BEHAVIOUR_DllExport
-#endif
-
+#include "Globals.h"
 #include "Component\ComponentList.h"	// eComponents
 #include "Component\Component.h"		// Component
 
@@ -33,7 +24,7 @@ namespace Dystopia
 {
 	class CollisionEvent;
 
-	class BEHAVIOUR_DllExport Behaviour : public Component
+	class _DLL_EXPORT Behaviour : public Component
 	{
 	public:
 

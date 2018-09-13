@@ -29,7 +29,7 @@ namespace Dystopia
 	class Shader;
 	class Texture;
 
-	class Renderer : public Component
+	class _DLL_EXPORT Renderer : public Component
 	{
 	public:
 		unsigned GetComponentType(void) const

@@ -25,7 +25,7 @@ namespace Dystopia
 	class Transform;
 	class CameraSystem;
 
-	class Camera : public Component
+	class _DLL_EXPORT Camera : public Component
 	{
 	public:
 

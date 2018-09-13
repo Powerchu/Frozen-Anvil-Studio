@@ -14,12 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _COMPONENT_H_
 #define _COMPONENT_H_
 
-#ifdef  COMPONENT_EXPORT
-#define COMPONENT_DllExport   __declspec( dllexport )
-#else 
-#define COMPONENT_DllExport   __declspec( dllimport )
-#endif
-
+#include "Globals.h"
 #include "Component\ComponentList.h"	// eComponents
 
 #include <string>
@@ -30,7 +25,7 @@ namespace Dystopia
 	class GameObject;
 	class TextSerialiser;
 
-	class COMPONENT_DllExport Component
+	class _DLL_EXPORT Component
 	{
 	public:
 

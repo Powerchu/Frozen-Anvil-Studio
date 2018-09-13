@@ -14,22 +14,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TUPLE_H_
 #define _TUPLE_H_
 
+#include "Globals.h"
 #include <Utility\MetaAlgorithms.h>
 
 
 namespace
 {
 	template <typename T, typename U>
-	struct TupleBase;
+	struct _DLL_EXPORT TupleBase;
 
 	template <typename T>
-	struct TupleLeaf
+	struct _DLL_EXPORT TupleLeaf
 	{
 		T value;
 	};
 
 	template <template <unsigned ...> class R, unsigned ... Ns, template <typename ...> class T, typename ... Ty>
-	struct TupleBase <R<Ns...>, T<Ty...>> : public TupleLeaf<Ty> ...
+	struct _DLL_EXPORT TupleBase <R<Ns...>, T<Ty...>> : public TupleLeaf<Ty> ...
 	{};
 }
 

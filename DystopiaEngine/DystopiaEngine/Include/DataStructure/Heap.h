@@ -24,12 +24,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _HEAP_H_
 #define _HEAP_H_
 
+#include "Globals.h"
 #include "DataStructure\AutoArray.h"	// AutoArray
 
 #include <iterator>						// std::bidirectional_iterator_tag
 
 template<typename T, class Container = AutoArray<T>>
-class Heap
+class _DLL_EXPORT Heap
 {
 	Container mData;
 
@@ -64,7 +65,7 @@ public:
 	T& First(void) const;
 	
 	template <typename _T>
-	class HeapIterator
+	class _DLL_EXPORT HeapIterator
 	{
 	public:
 
@@ -94,7 +95,7 @@ private:
 	template <typename Comp>
 	void SiftDown(unsigned, Comp);
 
-	struct DefaultCompare
+	struct _DLL_EXPORT DefaultCompare
 	{
 		inline bool operator ()(const T&, const T&);
 	};
