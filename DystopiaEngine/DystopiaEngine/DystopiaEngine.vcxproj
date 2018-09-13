@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
+    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
     <ClCompile Include="Source\Editor\ConsoleDebugger.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp" />
@@ -104,6 +105,7 @@
     <ClInclude Include="Include\Editor\EditorEvents.h" />
     <ClInclude Include="Include\Editor\EditorInputs.h" />
     <ClInclude Include="Include\Editor\PerformanceLog.h" />
+    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
     <ClInclude Include="Include\System\Profiler\ProfileInfo.h" />

@@ -182,10 +182,9 @@
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
+    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -486,11 +485,10 @@
     <ClInclude Include="Include\Editor\PLogger.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
     <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
     <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
     <ClInclude Include="Include\Editor\HotLoader.h" />
+    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
