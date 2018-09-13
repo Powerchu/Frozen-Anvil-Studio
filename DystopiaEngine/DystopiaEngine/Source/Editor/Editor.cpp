@@ -562,6 +562,17 @@ namespace Dystopia
 					Performance::LogDataG(d.first, static_cast<float>(d.second.mTotal));
 				}
 			}
+			PLogTaskManager p;
+			p.mCPUIdle = mpProfiler->GetCPUPercentageIdle();
+			p.mCPUBusy = mpProfiler->GetCPUPercentageBusy();
+			p.mCPUOS = mpProfiler->GetCPUPercentageOS();
+			p.mCPUProc = mpProfiler->GetCPUPercentageProcess();
+			p.mPageFaults = mpProfiler->GetNumPageFaults();
+			p.mMemUsed = mpProfiler->GetUsedMemory();
+			p.mRamUsed = mpProfiler->GetUsedPhysicalMemory();
+			p.mMemAvail = mpProfiler->GetAvailablePhysicalMemory();
+			p.mMemLoad = mpProfiler->GetSystemMemoryLoad();
+			Performance::LogTaskMgr(p);
 		}
 	}
 }
