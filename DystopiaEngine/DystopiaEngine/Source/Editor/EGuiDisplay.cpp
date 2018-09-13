@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\EGUI.h"
 #include "Editor\Commands.h"
 #include "Editor\CommandList.h"
+#include "Editor\EditorInputs.h"
 #include <stdlib.h>
 #include <iostream>
 
@@ -276,7 +277,7 @@ namespace EGUI
 			return changed;
 		}
 
-		bool VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
+		bool VectorFields(const std::string& _label, const unsigned long& _id, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
 		{
 			bool changed = false;
 			std::string field1 = "##VecFieldX", field2 = "##VecFieldY", field3 = "##VecFieldZ";
@@ -329,7 +330,8 @@ namespace EGUI
 				_outputVec->z = z;
 			}
 			ImGui::PopItemWidth();
-			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
+			if ((gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0)) || 
+				(changed && ImGui::IsKeyDown(static_cast<int>(eButton::KEYBOARD_ENTER))))
 			{
 				gContextComdHND->EndRecording();
 			}

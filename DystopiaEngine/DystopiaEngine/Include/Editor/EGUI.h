@@ -185,8 +185,8 @@ namespace EGUI
 					// if the variable position is changed in any form. Do someting here:
 				}
 		======================================================================================================================= */
-		bool VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, float _min = 0.0f, 
-						  float _max = 1.0f, float = 50.f);
+		bool VectorFields(const std::string& _label, const unsigned long& , Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, 
+						  float _min = 0.0f, float _max = 1.0f, float _width= 50.f);
 		/* =======================================================================================================================
 		Brief:
 				Creats a check box for a boolean variable. Returns true when the check box is clicked, toggles the _pOutBool

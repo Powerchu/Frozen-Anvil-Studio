@@ -143,12 +143,25 @@ namespace Dystopia
 	void Inspector::GameObjectComponents()
 	{
 		EGUI::Display::HorizontalSeparator();
+
 		Transform& tempTransform = *mpFocus->GetComponent<Transform>();
-		if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName() + "##" + 
-										 std::to_string(mpFocus->GetID())))
+		if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName() + "##" +
+			std::to_string(mpFocus->GetID())))
 		{
 			tempTransform.EditorUI();
 			EGUI::Display::EndTreeNode();
+		}
+
+		auto arrComp = mpFocus->GetAllComponents();
+		for (const auto& c : arrComp)
+		{
+			EGUI::Display::HorizontalSeparator();
+			if (EGUI::Display::StartTreeNode(c->GetEditorName() + "##" +
+				std::to_string(mpFocus->GetID())))
+			{
+				c->EditorUI();
+				EGUI::Display::EndTreeNode();
+			}
 		}
 	}
 
@@ -169,30 +182,32 @@ namespace Dystopia
 
 	void Inspector::AddComponentButton()
 	{
-		EGUI::Display::HorizontalSeparator();
-		static const Math::Vec2 btnSize{250, 20};
+		static constexpr Math::Vec2 btnSize{ 250, 20 };
 		float mid = Size().x / 2;
 		float inde = mid - (btnSize.x / 2);
 		inde = (inde < 20) ? 20 : inde;
+
+		EGUI::Display::HorizontalSeparator();
 		EGUI::Indent(inde);
 		if (EGUI::Display::Button("Add Component", btnSize))
 		{
 			EGUI::Display::OpenPopup("Inspector Component List", false);
 		}
-		if (EGUI::Display::Button("Add Behaviour", btnSize))
-		{
-			if (GenerateScript("Whatever", "Tan Shannon", "t.shannon"))
-				std::cout << "Script Added to the visual studio project. Please arrange the filters and code in visual then come back to test it!\n";
-			else
-				std::cout << "Script already Exists! Aborted!\n";
-		}
+		//if (EGUI::Display::Button("Add Behaviour", btnSize))
+		//{
+		//	if (GenerateScript("Whatever", "Tan Shannon", "t.shannon"))
+		//		std::cout << "Script Added to the visual studio project. Please arrange the filters and code in visual then come back to test it!\n";
+		//	else
+		//		std::cout << "Script already Exists! Aborted!\n";
+		//}
 		EGUI::UnIndent(inde);
 		ComponentsDropDownList();
 	}
 
 	void Inspector::ComponentsDropDownList()
 	{
-		std::string components[5] = { "Com1", "Com2", "Com3", "Com4", "Com5" };
+		static const std::string components[5] = { "Com1", "Com2", "Com3", "Com4", "Com5" };
+
 		if (EGUI::Display::StartPopup("Inspector Component List"))
 		{
 			EGUI::Display::Dummy(235, 2);

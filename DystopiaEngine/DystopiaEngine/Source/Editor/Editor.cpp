@@ -171,8 +171,7 @@ namespace Dystopia
 	}
 
 	void Editor::UpdateFrame(const float& _dt)
-	{
-		//mpGfx->Update(mDeltaTime); 
+	{ 
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);

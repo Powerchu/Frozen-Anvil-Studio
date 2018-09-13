@@ -28,19 +28,16 @@ namespace Dystopia
 		void LogDataS(const std::string& _category, const std::string& _graphLabel,
 			float _val)
 		{
-			DEBUG_ASSERT(!gpInstance, "No instance of Performance Log found!");
 			gpInstance->LogData(_category, _graphLabel, _val, false);
 		}
 
 		void LogDataG(const std::string& _catMainGraph, float _val)
 		{
-			DEBUG_ASSERT(!gpInstance, "No instance of Performance Log found!");
 			gpInstance->LogData(_catMainGraph, _val, true);
 		}
 
 		void LogTaskMgr(const PLogTaskManager& _data)
 		{
-			DEBUG_ASSERT(!gpInstance, "No instance of Performance Log found!");
 			gpInstance->LogTaskMgr(_data);
 		}
 	}

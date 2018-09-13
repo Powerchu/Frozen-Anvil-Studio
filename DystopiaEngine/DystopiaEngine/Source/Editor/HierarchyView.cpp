@@ -160,6 +160,8 @@ namespace Dystopia
 				strcpy_s(mSearchTextPrevFrame, "");
 				GameObject *pObject = GetCurrentScene()->InsertGameObject(GUIDGenerator::GetUniqueID());
 				pObject->SetName("GameObject");
+				pObject->SetActive(true);
+				pObject->Init();
 			}
 
 			if (EGUI::Display::SelectableTxt("New Camera"))
@@ -167,7 +169,11 @@ namespace Dystopia
 				strcpy_s(mSearchTextPrevFrame, "");
 				GameObject *pObject = GetCurrentScene()->InsertGameObject(GUIDGenerator::GetUniqueID());
 				pObject->SetName("Camera");
-				pObject->AddComponent(EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent(), typename Camera::TAG{});
+				auto p = EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent();
+				p->SetOwner(pObject);
+				pObject->AddComponent(p, typename Camera::TAG{});
+				pObject->SetActive(true);
+				pObject->Init();
 			}
 			EGUI::Display::EndPopup();
 		}

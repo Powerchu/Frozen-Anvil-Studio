@@ -14,6 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor\SceneView.h"
 #include "Editor\Editor.h"
+#include "System\Camera\CameraSystem.h"
+#include "System\Driver\Driver.h"
+#include "System\Graphics\GraphicsSystem.h"
 
 namespace Dystopia
 {
@@ -28,19 +31,29 @@ namespace Dystopia
 
 	SceneView::SceneView()
 		: EditorTab{ true }, 
-		mLabel{ "Scene View" }
+		mLabel{ "Scene View" },
+		mpCameraSys{ nullptr },
+		mpGfxSys{ nullptr }
 	{}
 
 	SceneView::~SceneView()
-	{}
+	{
+		gpInstance = nullptr;
+	}
 
 	void SceneView::Init()
 	{
+		mpCameraSys = EngineCore::GetInstance()->GetSystem<CameraSystem>();
+		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
 	}
 
 	void SceneView::Update(const float& _dt)
 	{
-		_dt;
+		mpCameraSys->SetMasterViewport(static_cast<int>(Position().x),
+									   static_cast<int>(Position().y),
+									   static_cast<int>(Size().x),
+									   static_cast<int>(Size().y));
+		mpGfxSys->Update(_dt);
 	}
 
 	void SceneView::EditorUI()
@@ -49,7 +62,7 @@ namespace Dystopia
 
 	void SceneView::Shutdown()
 	{
-		gpInstance = nullptr;
+		mpCameraSys = nullptr;
 	}
 
 	std::string SceneView::GetLabel() const

@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object\GameObject.h"
 #include "Math\Matrix4.h"
 #include "Math\Vector4.h"
-
+#include "Editor\EGUI.h"
 
 Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
 	: mRotation{ .0f, .0f, .0f }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f }, 
@@ -231,4 +231,10 @@ void Dystopia::Transform::Unserialise(TextSerialiser&)
 
 }
 
-
+void Dystopia::Transform::EditorUI(void) noexcept
+{
+	if (EGUI::Display::VectorFields("Scale", GetOwner()->GetID(), &mScale, 0.5f, -FLT_MAX, FLT_MAX))
+	{
+		ConsolePrint("Changed");
+	}
+}

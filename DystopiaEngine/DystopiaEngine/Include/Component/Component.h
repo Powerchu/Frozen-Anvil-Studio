@@ -46,8 +46,8 @@ namespace Dystopia
 		bool IsActive(void) const;
 		void SetActive(const bool _bEnable);
 
-		void Load(void);
-		void Init(void);
+		virtual void Load(void);
+		virtual void Init(void);
 
 		virtual void GameObjectDestroy(void);
 		void Unload(void);
