@@ -164,9 +164,6 @@
     <ClCompile Include="Source\Editor\EditorTab.cpp">
       <Filter>Editor\Editor Tabs</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Profiler\Profiler.cpp">
-      <Filter>Game Engine\Systems\Profiler</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Profiler\ProfilerAction.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerAction</Filter>
     </ClCompile>
@@ -181,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Profiler\Profiler.cpp">
+      <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -449,9 +449,6 @@
     <ClInclude Include="Include\DataStructure\Variant.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Profiler\Profiler.h">
-      <Filter>Game Engine\Systems\Profiler</Filter>
-    </ClInclude>
     <ClInclude Include="Include\DataStructure\Tuple.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
@@ -484,6 +481,9 @@
     </ClInclude>
     <ClInclude Include="Include\System\Base\ComponentDonor.h">
       <Filter>Game Engine\Systems\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Profiler\Profiler.h">
+      <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -726,6 +726,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Camera">
       <UniqueIdentifier>{c6d69b09-93e3-434e-a4bc-e25fb0c06c6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Profiler\ProfilerSystem">
+      <UniqueIdentifier>{675debca-1599-4fda-9025-60f32632f189}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
