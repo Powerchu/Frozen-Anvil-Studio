@@ -20,9 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Utility
 {
 	template <typename T>
-	T declval(void) noexcept;
-
-	template <typename T>
 	constexpr inline typename RemoveRef<T>::type&& Move(T&& _obj) noexcept
 	{
 		return static_cast<Utility::RemoveRef_t<T>&&>(_obj);

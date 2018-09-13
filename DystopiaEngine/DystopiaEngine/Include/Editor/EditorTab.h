@@ -29,7 +29,7 @@ namespace Dystopia
 	class EditorTab
 	{
 	public:
-		EditorTab(bool _defaultOpen = true);
+		EditorTab(bool _defaultOpen = false);
 		virtual ~EditorTab();
 
 		/************************************************************************************************************/
@@ -39,7 +39,7 @@ namespace Dystopia
 		/* Update() is called before Window(), so alter most variables (frame based) here to be printed in Window() later */
 		virtual void		Update(const float&) = 0;
 		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
-		virtual void		Window() = 0;
+		virtual void		EditorUI() = 0;
 		/* Shutdown() is called right before deleting this object */
 		virtual void		Shutdown() = 0;
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
@@ -53,23 +53,28 @@ namespace Dystopia
 		void				SetSize(const float&, const float&);
 		void				SetPosition(const Math::Vec2&);
 		void				SetPosition(const float&, const float&);
+
+		/* Set the special editor systems for all editor tabs to access */
 		void				SetComdContext(CommandHandler * const);
-		void				SetEventSysContext(EditorEventHandler * const);
+		void				SetEventContext(EditorEventHandler * const);
 		void				SetSceneContext(Scene * const);
+
 		Math::Vec2			Size() const;
 		Math::Vec2			Position() const;
 		bool*				GetOpenedBool();
-		
-	private:
-		Math::Vec2			mSize;
-		Math::Vec2			mPos;
-		bool				mIsOpened;
 
 	protected:
-		Editor&				GetMainEditor() const;
+		Editor&				GetMainEditor()		const;
+		CommandHandler*		GetCommandHND()		const;
+		EditorEventHandler*	GetEditorEventHND() const;
+		Scene*				GetCurrentScene()	const;
 
+	private:
+		bool				mIsOpened;
+		Math::Vec2			mSize;
+		Math::Vec2			mPos;
 		CommandHandler		*mpComdHandler;
-		EditorEventHandler	*mpEditorEventSys;
+		EditorEventHandler	*mpEditorEventHandler;
 		Scene				*mpCurrentScene;
 	};
 }

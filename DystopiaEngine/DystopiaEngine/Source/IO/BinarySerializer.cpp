@@ -159,3 +159,8 @@ void Dystopia::BinarySerializer::ManualEndainOverride(eEndianess endian)
 	}
 }
 
+void Dystopia::BinarySerializer::Skip(size_t _numOfBytes)
+{
+	mFile.ignore(_numOfBytes);
+}
+

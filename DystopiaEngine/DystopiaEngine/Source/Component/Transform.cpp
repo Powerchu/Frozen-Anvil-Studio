@@ -17,9 +17,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\Vector4.h"
 
 
-Dystopia::Transform::Transform(void) :
-	mRotation{ .0f, .0f, .0f }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f },
-	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }
+Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
+	: mRotation{ .0f, .0f, .0f }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f }, 
+	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, Component { _pOwner }
 {
 
 }
@@ -35,7 +35,7 @@ Dystopia::Transform::Transform(const Transform& _oOther) :
 void Dystopia::Transform::SetParent(Transform* _pParent)
 {
 	if (mpParent)
-		OnParentRemove(mpParent);
+		RemoveParent();
 
 	mpParent = _pParent;
     if (mpParent)
@@ -52,17 +52,43 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
 
 void Dystopia::Transform::OnParentRemove(Transform* _pParent)
 {
-	if (_pParent && mpParent)
+	// Convert our data to world coordinates
+	Math::Mat4 InvTrans = _pParent->GetTransformMatrix();
+
+	mScale		= InvTrans * mScale;
+	mPosition	= InvTrans * mPosition;
+	mRotation  += _pParent->GetRotation();
+
+	mbChanged = true;
+}
+
+void Dystopia::Transform::RemoveParent(void)
+{
+	if (mpParent)
 	{
-		// Convert our data to world coordinates
-		Math::Mat4 InvTrans = mpParent->GetTransformMatrix();
+		Transform* parent = mpParent;
+		mpParent = nullptr;
 
-		mScale		= InvTrans * mScale;
-		mPosition	= InvTrans * mPosition;
-		mRotation  += mpParent->GetRotation();
+		OnParentRemove(parent);
+		parent->OnChildRemove(this);
+	}
+}
 
-		mpParent  = nullptr;
-		mbChanged = true;
+void Dystopia::Transform::OnChildRemove(Transform*)
+{
+	// Do nothing?
+}
+
+void Dystopia::Transform::RemoveChild(Transform* _pChild)
+{
+	auto pChild = mChildren.Find(_pChild);
+
+	if (pChild != mChildren.end())
+	{
+		auto child = *pChild;
+		mChildren.FastRemove(pChild);
+		OnChildRemove(child);
+		child->OnParentRemove(this);
 	}
 }
 

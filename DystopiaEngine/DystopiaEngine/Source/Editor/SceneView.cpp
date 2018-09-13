@@ -43,12 +43,13 @@ namespace Dystopia
 		_dt;
 	}
 
-	void SceneView::Window()
+	void SceneView::EditorUI()
 	{
 	}
 
 	void SceneView::Shutdown()
 	{
+		gpInstance = nullptr;
 	}
 
 	std::string SceneView::GetLabel() const

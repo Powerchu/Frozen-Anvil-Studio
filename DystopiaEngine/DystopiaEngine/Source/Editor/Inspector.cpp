@@ -14,11 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor\EGUI.h"
 #include "Editor\Inspector.h"
-#include "Editor\ProjectResource.h"
 #include "Editor\ScriptFormatter.h"
 #include "Editor\Commands.h"
 #include "Editor\EditorEvents.h"
-#include "Editor\Editor.h"
 #include "Utility\ComponentGUID.h"
 #include "Object\GameObject.h"
 #include <iostream>
@@ -42,7 +40,7 @@ namespace Dystopia
 
 	Inspector::~Inspector()
 	{
-	
+		gpInstance = nullptr;
 	}
 
 	void Inspector::Init()
@@ -55,12 +53,13 @@ namespace Dystopia
 		_dt;
 	}
 
-	void Inspector::Window()
+	void Inspector::EditorUI()
 	{
 		if (!mpFocus) return;
 
 		GameObjectDetails();
 		GameObjectComponents();
+		AddComponentButton();
 
 		////float x = mDemoVec.x;
 		////float y = mDemoVec.y;
@@ -95,7 +94,6 @@ namespace Dystopia
 		////	ProjectResource::GetInstance()->FocusOnFile(mDemoName);
 		////}
 
-		AddComponentButton();
 	}
 
 	void Inspector::Shutdown()
@@ -127,10 +125,11 @@ namespace Dystopia
 		{
 			EGUI::Display::CheckBox("GameObjActive", &checked, false);
 			EGUI::SameLine();
-			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 350.f))
+			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 350.f) && strlen(buffer))
 			{
-				std::string newName{ buffer };
-				mpFocus->SetName((newName == "") ? mpFocus->GetName() : newName);
+				auto f_Old = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, mpFocus->GetName());
+				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
+				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
 			EGUI::Display::DropDownSelection("Tag", i, arr, 100);
 			EGUI::SameLine();

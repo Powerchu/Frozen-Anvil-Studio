@@ -31,7 +31,6 @@ namespace Dystopia
 
 		void FlushQueue(void);
 
-
 	private:
 
 		struct QueueObject
@@ -58,9 +57,6 @@ namespace Dystopia
 		// Not Implemented!
 		template <typename T> friend void Invoke(float _fSeconds, T&& _pInvokable);
 		template <typename T> friend void InvokeRepeating(float _fSeconds, unsigned _nIterations, T&& _pInvokable);
-
-
-	public:
 
 		template <typename T>
 		void TestFunction(float _fSeconds, T&& _pInvokable)

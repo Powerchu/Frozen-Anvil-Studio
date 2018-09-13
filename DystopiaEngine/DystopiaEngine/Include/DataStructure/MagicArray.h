@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _MAGIC_ARRAY_H_
 #define _MAGIC_ARRAY_H_
 
+#include "Globals.h"
 #include "Utility\Meta.h"
 #include "Utility\Utility.h"
 #include "Math\MathUtility.h"
@@ -26,13 +27,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma intrinsic(_BitScanForward64)
 
 
+
 template <typename, typename>
-class MagicArray;
+class _DLL_EXPORT MagicArray;
 
 namespace Ctor
 {
 	template <typename T, unsigned BLOCK_SIZE = 64, unsigned MAX_BLOCKS = 16>
-	struct MagicArrayBuilder
+	struct _DLL_EXPORT MagicArrayBuilder
 	{
 		static_assert(Utility::IsPowerOf2(BLOCK_SIZE), "Block Size must be a power of 2");
 
@@ -60,7 +62,7 @@ namespace Ctor
 }
 
 template <typename T, typename Params = Ctor::MagicArrayBuilder<T>>
-class MagicArray
+class _DLL_EXPORT MagicArray
 {
 	struct Iterator;
 
@@ -122,7 +124,7 @@ public:
 	
 private:
 
-	struct Block
+	struct _DLL_EXPORT Block
 	{
 		static constexpr uint64_t Range = Params::blk_sz > 63 ? ~(0Ui64) : (Math::Power<Params::blk_sz>(2Ui64) - 1);
 
@@ -141,7 +143,7 @@ private:
 		Block(void) noexcept = default;
 	};
 
-	struct Iterator
+	struct _DLL_EXPORT Iterator
 	{
 		Block const * mpBlock;
 		Ptr_t mpAt;
@@ -348,8 +350,8 @@ inline bool MagicArray<T, PP>::IsEmpty(void) const noexcept
 	{
 		if (blk.mpArray)
 		{
-			for (auto e : present)
-				if (~e & Range)
+			for (auto e : blk.present)
+				if (~e & blk.Range)
 					return false;
 		}
 		else

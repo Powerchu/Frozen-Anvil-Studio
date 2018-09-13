@@ -28,6 +28,9 @@ namespace Utility
 	template <bool, typename>
 	struct EnableIf;
 
+	template <typename T>
+	struct RemoveRef;
+
 	namespace Helper
 	{
 		// If it has a member, we can instantiate type of member pointer
@@ -38,6 +41,7 @@ namespace Utility
 		// it will only be picked if substution for "true" overload fails
 		template <typename T>
 		constexpr int HasMember(...)		{ return 0; }
+
 
 
 	// =========================================== COMPILE TIME FIND =========================================== // 
@@ -78,6 +82,7 @@ namespace Utility
 		};
 
 
+
 	// ============================================ TYPE LIST MAKER ============================================ // 
 
 		template <template <typename...> typename Ret_t, typename ... Ty>
@@ -93,9 +98,8 @@ namespace Utility
 		};
 
 
+
 	// ========================================= COMPILE TIME PARTITION ======================================== // 
-
-
 
 		template <typename T, template <typename, T, T> typename Op, T, typename ... Ty>
 		struct MetaPartitionerValue;
@@ -134,6 +138,7 @@ namespace Utility
 				MetaConcat_t <typename IfElse <!Op<rest, pivot>::value, Set<rest>, Set<>>::type ...>
 			>;
 		};
+
 
 
 	// ============================================ COMPILE TIME SORT ========================================== // 
@@ -195,7 +200,8 @@ namespace Utility
 		};
 
 
-	// ============================================ COMPILE TIME SORT ========================================== // 
+
+	// ======================================= EXTRACT TYPE FROM TYPE LIST ===================================== // 
 
 		template <unsigned N, typename T>
 		struct MetaExtractor;
@@ -242,6 +248,9 @@ namespace Utility
 		};
 
 
+		
+	// ============================================== AUTO INDEXER ============================================= // 
+
 		template <typename Index, typename ... Ty>
 		struct MetaAutoIndexerMake;
 
@@ -249,6 +258,23 @@ namespace Utility
 		struct MetaAutoIndexerMake<Set<Ns...>, Ty...>
 		{
 			using result = Collection< Indexer<Ns, Ty>... > ;
+		};
+
+
+		
+	// =========================================== CONVERSION SELECTOR ========================================= //
+		
+		// TODO: SFINAE Friendly?
+		template <typename Ty>
+		struct ConvertionOption
+		{
+			Ty operator () (typename Utility::RemoveRef<Ty>::type);
+		};
+		
+		template <typename ... Ty>
+		struct ConversionSelector : public ConvertionOption<Ty> ...
+		{
+			NULL_TYPE operator () (...);
 		};
 	}
 }

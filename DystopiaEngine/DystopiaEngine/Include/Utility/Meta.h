@@ -17,8 +17,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility\MetaHelper.h"
 
+
 namespace Utility
 {
+	struct NULL_TYPE;
+
+	// declval
+	// ========= ===========================================================
+
+	template <typename T>
+	T declval(void) noexcept;
+
+
 	// Constant
 	// ========= ===========================================================
 
@@ -98,7 +108,13 @@ namespace Utility
 	template <typename T>
 	struct Decay
 	{
-		using type = RemoveConst_t<RemoveRef_t<T>>;
+		using type = RemoveConst_t<T>;
+	};
+
+	template <typename T>
+	struct Decay<T&>
+	{
+		using type = typename Decay<RemoveRef_t<T>>::type;
 	};
 
 	template <typename T, typename ... Ty>
@@ -228,6 +244,51 @@ namespace Utility
 	template <typename Ty>
 	struct IsPointer<Ty*> : Constant <bool, true>
 	{};
+
+
+	// Is Reference
+	// ============== ======================================================
+
+	template <typename T>
+	struct IsReference : Constant <bool, false>
+	{};
+
+	template <typename T>
+	struct IsReference<T&> : Constant <bool, true>
+	{};
+
+	template <typename T>
+	struct IsReference<T&&> : Constant <bool, true>
+	{};
+
+
+	// Force Evaulate	   Warning: May cause the compiler to crash
+	// ================ ====================================================
+
+	// Warning: May crash the compiler
+	template <typename T, T value>
+	struct ForceEval : Constant <T, value>
+	{};
+	
+	// Warning: May crash the compiler
+	template <auto _Val>
+	auto ForceEval_v = ForceEval<decltype(_Val), _Val>::value;
+
+
+	// Type	   
+	// ====== ==============================================================
+
+	template <typename Ty>
+	struct Type
+	{
+		using type = Ty;
+		using result = Ty;
+	};
+
+	template <>
+	struct Type<NULL_TYPE>
+	{
+	};
 }
 
 

@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _GENERICPOINTER_H_
 
 #include "Utility\Utility.h"
+#include "Utility\MetaAlgorithms.h"
 #include "Allocator\DefaultAlloc.h"	// DefaultAllocator
 
 template <class T, class Alloc = Dystopia::DefaultAllocator<T>>
@@ -26,9 +27,10 @@ class Pointer
 public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
-	Pointer(void);
+	template <typename ... Ps, typename 
+		= Utility::EnableIf_t<!Utility::MetaFind<Pointer, Utility::Decay_t<Ps>...>::value>>
+	Pointer(Ps&& ...);
 	constexpr explicit Pointer(T* const _pObj) noexcept;
-	Pointer(const Pointer&) = delete;
 	Pointer(Pointer&& _pPointer) noexcept;
 
 	~Pointer(void);
@@ -51,12 +53,11 @@ public:
 
 	inline T* GetRaw(void) const;
 
-	template <typename ... Param>
-	static inline Pointer CreatePointer(Param&&...);
-
 private:
 
 	T* mpObj;
+
+	Pointer(const Pointer&) = delete;
 };
 
 
@@ -71,9 +72,9 @@ private:
   \warning
     The default constructor allocates
 */
-template <class T, class A>
-Pointer<T, A>::Pointer(void)
-	: mpObj{ A::ConstructAlloc() }
+template <class T, class A> template <typename ... Ps, typename>
+Pointer<T, A>::Pointer(Ps&& ... _Args)
+	: mpObj{ A::ConstructAlloc(Utility::Forward<Ps>(_Args)...) }
 {
 
 }
@@ -184,12 +185,6 @@ template <typename Ty1, typename A1, typename Ty2, typename A2>
 inline auto operator - (const Pointer<Ty1, A1>& _lhs, const Pointer<Ty2, A2>& _rhs)
 {
 	return _lhs.GetRaw() - _rhs.GetRaw();
-}
-
-template<class T, class A> template<typename ...Param>
-inline Pointer<T, A> Pointer<T, A>::CreatePointer(Param&& ... Args)
-{
-	return Pointer{ new T { Utility::Forward<Param>(Args) ... } };
 }
 
 

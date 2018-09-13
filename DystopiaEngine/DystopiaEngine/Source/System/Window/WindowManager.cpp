@@ -87,7 +87,7 @@ namespace Dystopia
 
 			freopen_s(&file, "CONOUT$", "wt", stdout);
 			freopen_s(&file, "CONOUT$", "wt", stderr);
-			//			freopen_s(&file, "CONOUT$", "wt", stdin);
+//			freopen_s(&file, "CONOUT$", "wt", stdin);
 
 			SetConsoleTitle(ENGINE_NAME);
 		}
@@ -123,17 +123,12 @@ namespace Dystopia
 			WS_EX_APPWINDOW,
 			L"MainWindow",
 			NULL,
-			WS_POPUP | WS_DLGFRAME,
+			WS_POPUP,
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			WindowRect.right - WindowRect.left,
 			WindowRect.bottom - WindowRect.top,
 			NULL, NULL, mHInstance, NULL
 		);
-
-		long left = (GetSystemMetrics(SM_CXSCREEN) - LOGO_WIDTH) >> 1,
-			top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
-		// center the window
-		SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
 
 #else
 
@@ -151,28 +146,38 @@ namespace Dystopia
 			NULL, NULL, mHInstance, NULL
 		);
 
-		long left = (GetSystemMetrics(SM_CXSCREEN) - mWidth) >> 1,
-			top = (GetSystemMetrics(SM_CYSCREEN) - mHeight) >> 1;
+#endif
+
+		long left = (GetSystemMetrics(SM_CXSCREEN) - LOGO_WIDTH) >> 1,
+			top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
 		// center the window
 		SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
 
-#endif
-
 		mWindows.EmplaceBack(window);
-		mWindows[0].ShowCursor(EDITOR);
+//		mWindows[0].ShowCursor(EDITOR);
 
-		ShowWindow(window, SW_SHOW);
+//		ShowWindow(window, SW_SHOW);
 //		UpdateWindow(window);
 	}
 
 	bool WindowManager::Init(void)
 	{
+#if EDITOR
+
+		std::fprintf(stdout, "Window System: Screen Resolution %dx%d, Main window size %dx%d\n", 
+			GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), mWidth, mHeight);
+
+#endif
+
 		return true;
 	}
 
 	void WindowManager::PostInit(void)
 	{
 		this->DestroySplash();
+
+		mWidth  = GetSystemMetrics(SM_CXSCREEN);
+		mHeight = GetSystemMetrics(SM_CYSCREEN);
 	}
 
 	void WindowManager::Update(float)
@@ -210,7 +215,7 @@ namespace Dystopia
 		FreeConsole();
 	#endif
 
-		PostQuitMessage(0);
+		//PostQuitMessage(0);
 	}
 
 	void WindowManager::LoadDefaults(void)
@@ -243,34 +248,21 @@ namespace Dystopia
 		return const_cast<Window&>(mWindows[0]);
 	}
 
-	void WindowManager::DestroySplash(void)
+	void WindowManager::GetSplashDimensions(int & w, int & h)
 	{
-		mWindows[0].SetStyle(mWindowStyle, mWindowStyleEx);
-
-		ReAdjustWindow(mWindows[0]);
+		w = LOGO_WIDTH;
+		h = LOGO_HEIGHT;
 	}
 
-	void WindowManager::ReAdjustWindow(Window& _window)
+	void WindowManager::DestroySplash(void)
 	{
-		ShowWindow(_window.GetWindowHandle(), SW_HIDE);
+		mWindows[0].Hide();
 
-		RECT WindowRect{ 0, 0, mWidth, mHeight };
-		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
+		mWindows[0].SetStyle(mWindowStyle, mWindowStyleEx);
+		mWindows[0].SetSize(mWidth, mHeight);
+		mWindows[0].CenterWindow();
 
-		mWidth = WindowRect.right - WindowRect.left;
-		mHeight = WindowRect.bottom - WindowRect.top;
-
-		long left = (GetSystemMetrics(SM_CXSCREEN) - mWidth) >> 1,
-			 top = (GetSystemMetrics(SM_CYSCREEN) - mHeight) >> 1;
-
-		// center the window
-		SetWindowPos(_window.GetWindowHandle(), NULL,
-			left, top, mWidth, mHeight,
-			SWP_NOZORDER | SWP_NOACTIVATE
-		);
-
-
-		ShowWindow(_window.GetWindowHandle(), SW_SHOW);
+		mWindows[0].Show();
 	}
 
 }

@@ -14,12 +14,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _ARRAY_H_
 #define _ARRAY_H_
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
+#include "Globals.h"
 #include "Utility\Meta.h"
 #include "Utility\Utility.h"
 
 
 template <typename T, size_t SIZE>
-class Array
+class _DLL_EXPORT Array
 {
 public:
 	// ==================================== CONTAINER DEFINES ==================================== // 
@@ -175,5 +179,6 @@ auto Array<T, Sz>::operator= (const Array<U, Sz>& _other) -> Utility::EnableIf_t
 
 
 
+#pragma warning(pop)
 #endif		// INCLUDE GUARD
 

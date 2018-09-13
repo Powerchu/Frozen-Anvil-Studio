@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor\ConsoleLog.h"
 #include "Editor\EGUI.h"
+#include "Utility\DebugAssert.h"
+#include <algorithm>
 
 namespace Dystopia
 {
@@ -26,17 +28,31 @@ namespace Dystopia
 		return gpInstance;
 	}
 
+	void PrintToConsoleLog(const std::string& _text)
+	{
+		DEBUG_ASSERT(!gpInstance, "No Instance of ConsoleLog found.");
+		gpInstance->Debug(_text);
+	}
+
 	ConsoleLog::ConsoleLog()
 		: EditorTab{ false },
-		mLabel{ "Console" }
+		mLabel{ "Console" },
+		mArrDebugTexts{ "" },
+		mLoggingIndex{ 0 },
+		mRecordIndex{ 0 }
 	{}
 
 	ConsoleLog::~ConsoleLog()
-	{}
+	{
+		gpInstance = nullptr;
+	}
 	
 	void ConsoleLog::Init()
 	{
-	
+		DEBUG_PRINT("Testing Float %f", 3.6f);
+		DEBUG_PRINT("Testing Integeral %d", -5);
+		DEBUG_PRINT("Testing string %s", "stringy");
+		DEBUG_PRINT(std::string{ "std string text" });
 	}
 
 	void ConsoleLog::Update(const float&)
@@ -44,10 +60,13 @@ namespace Dystopia
 
 	}
 
-	void ConsoleLog::Window()
+	void ConsoleLog::EditorUI()
 	{
-		EGUI::Display::Button("Clear");
+		EGUI::Indent(5);
+		if (EGUI::Display::Button("Clear")) Clear();
+		EGUI::UnIndent(5);
 		EGUI::Display::HorizontalSeparator();
+		PrintLogs();
 	}
 
 	void ConsoleLog::Shutdown()
@@ -58,6 +77,38 @@ namespace Dystopia
 	std::string ConsoleLog::GetLabel() const
 	{
 		return mLabel;
+	}
+
+	void ConsoleLog::PrintLogs()
+	{
+		static constexpr float bottomOffset = -55.f;
+		Math::Vec2 size{ Size() };
+		size.y = (size.y > 100.f) ? size.y + bottomOffset : size.y;
+		if (EGUI::StartChild("PrintingArea", size))
+		{
+			for (unsigned int i = 0; i < mLoggingIndex; ++i)
+				EGUI::Display::Label(mArrDebugTexts[i].c_str());
+		}
+		EGUI::EndChild();
+	}
+
+	void ConsoleLog::Debug(const std::string& _text)
+	{
+		if (mLoggingIndex == maxLog)
+		{
+			std::rotate(mArrDebugTexts.begin(), mArrDebugTexts.begin() + 1, mArrDebugTexts.end());
+			mArrDebugTexts[maxLog] = _text;
+		}
+		else mArrDebugTexts[mLoggingIndex++] = _text;
+		mRecordIndex++;
+	}
+	
+	void ConsoleLog::Clear()
+	{
+		for (auto& e : mArrDebugTexts)
+			e.clear();
+		mLoggingIndex = 0;
+		mRecordIndex = 0;
 	}
 }
 

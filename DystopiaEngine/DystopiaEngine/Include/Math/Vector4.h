@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _VECTOR4_H_
 #define _VECTOR4_H_
+#include "Globals.h"
 
 #include "Utility/Meta.h"	            // EnableIf
 #include "Utility/MetaAlgorithms.h"     // MetaSortV
@@ -75,7 +76,7 @@ namespace Math
 	\brief
 		Generic Math 4 Dimensional Space Vector. 
 	*/
-	union __declspec(align (ALLIGN)) Vector4
+	union __declspec(align (ALLIGN)) _DLL_EXPORT Vector4
 	{
 		// ====================================== CONSTRUCTORS ======================================= // 
 
@@ -149,10 +150,10 @@ namespace Math
 		__m128 mData;
 
 		template <unsigned ... Vals>
-		struct SwizzleMask;
+		struct _DLL_EXPORT SwizzleMask;
 
 		template <unsigned N>
-		struct SwizzleMask<N>
+		struct _DLL_EXPORT SwizzleMask<N>
 		{
 			inline SwizzleMask<N>& _CALL operator= (float _rhs);
 			inline _CALL operator float(void) const;

@@ -15,12 +15,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _HIERARCHY_H_
 #define _HIERARCHY_H_
 #include "EditorTab.h"
+#include "DataStructure\AutoArray.h"
 
 namespace Dystopia
 {
 	class GameObject;
 	class Scene;
-
 	class HierarchyView : public EditorTab
 	{
 	public:
@@ -34,7 +34,7 @@ namespace Dystopia
 		virtual void Update(const float&) override;
 
 		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
-		virtual void Window() override;
+		virtual void EditorUI() override;
 
 		/* Shutdown() is called right before deleting this object */
 		virtual void Shutdown() override;
@@ -49,14 +49,18 @@ namespace Dystopia
 	private:
 		HierarchyView(void);
 
-		std::string		mLabel;
-		std::string		mPopupID;
-		GameObject		*mpFocus;
-		char			mSearchText[MAX_SEARCH];
+		GameObject					*mpFocus;
+		char						mSearchText[MAX_SEARCH];
+		char						mSearchTextPrevFrame[MAX_SEARCH];
+		std::string					mLabel;
+		std::string					mPopupID;
+		AutoArray<unsigned long>	mArrSearchID;
 
 		void			SearchBar();
+		void			UpdateSearch();
 		void			CreateButton();
 		void			CreatePopup();
+		void			GameObjectName(GameObject&);
 	};
 }
 

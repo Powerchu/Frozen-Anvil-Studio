@@ -14,29 +14,40 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _CONSOLE_LOG_H_
 #define _CONSOLE_LOG_H_
+#include "Globals.h"
 #include "EditorTab.h"
+#include "DataStructure\Array.h"
+
 
 namespace Dystopia
 {
+	void PrintToConsoleLog(const std::string& _text);
+
 	class ConsoleLog : public EditorTab
 	{
 	public:
 		static ConsoleLog* GetInstance();
 		~ConsoleLog();
 
-		virtual void Init() override;
-		virtual void Update(const float&) override;
-		virtual void Window() override;
-		virtual void Shutdown() override;
-		virtual std::string GetLabel() const override;
+		void			Init()						override;
+		void			Update(const float&)		override;
+		void			EditorUI()					override;
+		void			Shutdown()					override;
+		std::string		GetLabel() const			override;
 
+		void			Debug(const std::string&);
+		void			Clear();
 
 	private:
 		ConsoleLog(void);
-		
-		std::string mLabel;
-	
-	
+
+		void PrintLogs();
+
+		static constexpr unsigned int	maxLog = 50;
+		unsigned int					mLoggingIndex;
+		unsigned int					mRecordIndex;
+		std::string						mLabel;
+		Array<std::string, maxLog>		mArrDebugTexts;
 	};
 }
 

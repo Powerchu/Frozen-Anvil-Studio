@@ -27,14 +27,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class CollisionEvent;
+
 	class GameObject
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		GameObject(void);
-		explicit GameObject(unsigned long long _ID);
-		GameObject(GameObject&&);
+		GameObject(void) noexcept;
+		explicit GameObject(unsigned long _ID) noexcept;
+		GameObject(GameObject&&) noexcept;
 
 		~GameObject(void);
 
@@ -72,7 +73,7 @@ namespace Dystopia
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
 
-		unsigned long long GetID(void) const;
+		unsigned long GetID(void) const;
 		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
 		void SetName(const std::string&);
@@ -95,7 +96,7 @@ namespace Dystopia
 
 	private:
 
-		unsigned long long mnID;
+		unsigned long mnID;
 		unsigned mnFlags;
 		std::string mName;
 
@@ -147,15 +148,19 @@ inline void Dystopia::GameObject::AddComponent(ComponentTag)
 	//	Utility::MetaFind_t<typename Ty::SYSTEM, EngineCore::AllSys>::value
 	//);
 
+	auto Comp = EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()->RequestComponent();
 	mComponents.Insert(
-		EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()->RequestComponent();
+		Comp;
 	);
+
+	Comp->SetOwner(this);
 }
 
 template <typename Ty>
 inline void Dystopia::GameObject::AddComponent(BehaviourTag)
 {
 	mBehaviours.push_back(new Ty{});
+	mBehaviours.back()->SetOwner(this);
 }
 
 template <typename T>

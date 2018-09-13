@@ -38,7 +38,15 @@ void Dystopia::Mesh::LinkSystem(MeshSystem* _pSystem)
 void Dystopia::Mesh::UseMesh(int _nMode) const
 {
 	glBindVertexArray(mVAO);
+
 	glDrawElements(_nMode, mnVertices, GL_UNSIGNED_SHORT, mnOffset);
+	glBindVertexArray(0);
+}
+
+void Dystopia::Mesh::UseMesh(int _nMode, unsigned _nCount) const
+{
+	glBindVertexArray(mVAO);
+	glDrawElementsInstanced(_nMode, mnVertices, GL_UNSIGNED_SHORT, mnOffset, _nCount);
 	glBindVertexArray(0);
 }
 

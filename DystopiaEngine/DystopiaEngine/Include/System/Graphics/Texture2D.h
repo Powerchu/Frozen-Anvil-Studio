@@ -32,7 +32,7 @@ namespace Dystopia
 
 	private:
 
-		void InitTexture(const Image&, bool _bAlpha);
+		void InitTexture(void*, bool _bAlpha);
 	};
 }
 

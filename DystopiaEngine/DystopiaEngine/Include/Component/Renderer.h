@@ -26,8 +26,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class Mesh;
+	class Shader;
+	class Texture;
 
-	class Renderer : public Component
+	class _DLL_EXPORT Renderer : public Component
 	{
 	public:
 		unsigned GetComponentType(void) const
@@ -48,6 +50,16 @@ namespace Dystopia
 		void SetMesh(Mesh*) noexcept;
 		void SetMesh(const std::string&) noexcept;
 
+		void SetShader(Shader*) noexcept;
+		void SetShader(const std::string&) noexcept;
+		Shader* GetShader(void) const noexcept;
+
+		void SetTexture(Texture*) noexcept;
+		Texture* GetTexture(void) const noexcept;
+
+		bool HasTransparency(void) const noexcept;
+
+
 		Renderer* Duplicate(void) const;
 
 		void Serialise(TextSerialiser&) const;
@@ -58,6 +70,8 @@ namespace Dystopia
 		unsigned mnUnique;
 
 		Mesh* mpMesh;
+		Shader* mpShader;
+		Texture* mpTexture;
 
 		Renderer(const Renderer&) = delete;
 	};

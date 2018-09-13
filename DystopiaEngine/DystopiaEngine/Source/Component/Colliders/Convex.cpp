@@ -150,8 +150,8 @@ namespace Dystopia
 		{
 			unsigned j = (i + 1) == _Simplex.size() ? 0 : i + 1;
 			/*Get the vertice of the _Simplex*/
-			Vertice & const a = _Simplex[i];
-			Vertice & const b = _Simplex[j];
+			Vertice const &  a = _Simplex[i];
+			Vertice const &  b = _Simplex[j];
 			/*Get the vector of the edge*/
 			Math::Vec3D EdgeVec    = b.mPosition - a.mPosition;
 			Math::Vec3D EdgeNorm;
