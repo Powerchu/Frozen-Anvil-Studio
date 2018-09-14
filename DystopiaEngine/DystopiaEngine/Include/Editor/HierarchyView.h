@@ -60,6 +60,8 @@ namespace Dystopia
 		void			UpdateSearch();
 		void			CreateButton();
 		void			CreatePopup();
+		GameObject*		CreateGameObj(const std::string&);
+		GameObject*		CreateCamera(const std::string&);
 		void			GameObjectName(GameObject&);
 	};
 }

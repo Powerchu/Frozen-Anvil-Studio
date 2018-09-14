@@ -155,28 +155,36 @@ namespace Dystopia
 	{
 		if (EGUI::Display::StartPopup(mPopupID))
 		{
-			if (EGUI::Display::SelectableTxt("New GameObject"))
+			if (EGUI::Display::SelectableTxt("GameObject"))
 			{
-				strcpy_s(mSearchTextPrevFrame, "");
-				GameObject *pObject = GetCurrentScene()->InsertGameObject(GUIDGenerator::GetUniqueID());
-				pObject->SetName("GameObject");
-				pObject->SetActive(true);
-				pObject->Init();
+				CreateGameObj("GameObject");
 			}
 
-			if (EGUI::Display::SelectableTxt("New Camera"))
+			if (EGUI::Display::SelectableTxt("Camera"))
 			{
-				strcpy_s(mSearchTextPrevFrame, "");
-				GameObject *pObject = GetCurrentScene()->InsertGameObject(GUIDGenerator::GetUniqueID());
-				pObject->SetName("Camera");
-				auto p = EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent();
-				p->SetOwner(pObject);
-				pObject->AddComponent(p, typename Camera::TAG{});
-				pObject->SetActive(true);
-				pObject->Init();
+				CreateCamera("Camera");
 			}
 			EGUI::Display::EndPopup();
 		}
+	}
+
+	GameObject* HierarchyView::CreateGameObj(const std::string& _name)
+	{
+		strcpy_s(mSearchTextPrevFrame, "");
+		GameObject *pObject = GetCurrentScene()->InsertGameObject(GUIDGenerator::GetUniqueID());
+		pObject->SetName(_name);
+		pObject->SetActive(true);
+		return pObject;
+	}
+	
+	GameObject* HierarchyView::CreateCamera(const std::string& _name)
+	{
+		GameObject *pObject = CreateGameObj(_name);
+		auto p = EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent();
+		p->SetOwner(pObject);
+		p->Init();
+		pObject->AddComponent(p, typename Camera::TAG{});
+		return pObject;
 	}
 
 	void HierarchyView::GameObjectName(GameObject& _obj)
