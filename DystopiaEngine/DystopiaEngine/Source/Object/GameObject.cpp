@@ -146,11 +146,13 @@ void Dystopia::GameObject::PurgeComponents(void)
 void Dystopia::GameObject::AddComponent(Component* _p, ComponentTag)
 {
 	mComponents.Insert(_p);
+	_p->SetOwner(this);
 }
 
 void Dystopia::GameObject::AddComponent(Behaviour* _p, BehaviourTag)
 {
 	mBehaviours.Insert(_p);
+	_p->SetOwner(this);
 }
 
 void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)
@@ -215,7 +217,7 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 }
 
 
-unsigned long Dystopia::GameObject::GetID(void) const
+uint64_t Dystopia::GameObject::GetID(void) const
 {
 	return mnID;
 }

@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class TextSerialiser;
+	using DysSerialiser_t = class TextSerialiser;
 
 	class Systems
 	{
@@ -32,7 +32,8 @@ namespace Dystopia
 		virtual void Shutdown(void)					= 0;
 
 		virtual void LoadDefaults(void)				{ };
-		virtual void LoadSettings(TextSerialiser&)	{ };
+		virtual void LoadSettings(DysSerialiser_t&)	{ };
+		virtual void SaveSettings(DysSerialiser_t&) { };
 
 //		virtual void ReceiveMessage(const Message&) = 0;
 

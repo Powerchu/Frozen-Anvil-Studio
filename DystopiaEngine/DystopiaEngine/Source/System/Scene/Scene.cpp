@@ -24,7 +24,7 @@ Dystopia::Scene::~Scene(void)
 {
 }
 
-Dystopia::GameObject* Dystopia::Scene::FindGameObject(const size_t _id)
+Dystopia::GameObject* Dystopia::Scene::FindGameObject(const uint64_t _id)
 {
 	for (auto& e : mGameObjs)
 		if (_id == e.GetID())
