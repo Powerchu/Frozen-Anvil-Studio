@@ -26,7 +26,7 @@ Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
 
 Dystopia::Transform::Transform(const Transform& _oOther) :
 	mRotation{ _oOther.mRotation }, mScale{ _oOther.mScale }, mPosition{ _oOther.mPosition },
-	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }
+	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, Component{ _oOther }
 {
 
 }

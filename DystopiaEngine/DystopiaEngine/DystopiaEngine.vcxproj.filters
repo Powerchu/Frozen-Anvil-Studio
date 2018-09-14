@@ -83,7 +83,7 @@
       <Filter>Game Engine\SubSystems\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Camera\CameraSystem.cpp">
-      <Filter>Game Engine\SubSystems\Camera</Filter>
+      <Filter>Game Engine\Systems\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Commands.cpp">
       <Filter>Editor\Commands</Filter>
@@ -165,9 +165,6 @@
     <ClCompile Include="Source\Editor\EditorTab.cpp">
       <Filter>Editor\Editor Tabs</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Profiler\Profiler.cpp">
-      <Filter>Game Engine\Systems\Profiler</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Profiler\ProfilerAction.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerAction</Filter>
     </ClCompile>
@@ -182,6 +179,12 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Profiler\Profiler.cpp">
+      <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Logger\LoggerSystem.cpp">
+      <Filter>Game Engine\SubSystems\Logger</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
@@ -366,7 +369,7 @@
       <Filter>Game Engine\SubSystems\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Camera\CameraSystem.h">
-      <Filter>Game Engine\SubSystems\Camera</Filter>
+      <Filter>Game Engine\Systems\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\CommandList.h">
       <Filter>Editor\Commands</Filter>
@@ -454,9 +457,6 @@
     <ClInclude Include="Include\DataStructure\Variant.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Profiler\Profiler.h">
-      <Filter>Game Engine\Systems\Profiler</Filter>
-    </ClInclude>
     <ClInclude Include="Include\DataStructure\Tuple.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
@@ -486,6 +486,15 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\PLogger.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Base\ComponentDonor.h">
+      <Filter>Game Engine\Systems\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Profiler\Profiler.h">
+      <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Logger\LoggerSystem.h">
+      <Filter>Game Engine\SubSystems\Logger</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
     <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
@@ -579,9 +588,6 @@
     <Filter Include="Editor\Editor">
       <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Systems\Graphic\Mesh">
-      <UniqueIdentifier>{ca90d672-42da-4174-9947-7cdd5a3d812c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Shader">
       <UniqueIdentifier>{2df11722-19eb-493a-9952-074d5e70fcc7}</UniqueIdentifier>
     </Filter>
@@ -653,9 +659,6 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Mesh\Raw">
       <UniqueIdentifier>{466ff2cb-a158-4c05-a63f-87c44bb584ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\SubSystems\Camera">
-      <UniqueIdentifier>{c6d69b09-93e3-434e-a4bc-e25fb0c06c6d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Docking">
       <UniqueIdentifier>{06af060e-209f-4067-a5e6-2f4b596f578b}</UniqueIdentifier>
@@ -734,6 +737,15 @@
     </Filter>
     <Filter Include="IO\TextSerialiser\lodepng">
       <UniqueIdentifier>{447b179b-b152-4f92-9cc2-48eb8f301131}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Camera">
+      <UniqueIdentifier>{c6d69b09-93e3-434e-a4bc-e25fb0c06c6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Profiler\ProfilerSystem">
+      <UniqueIdentifier>{675debca-1599-4fda-9025-60f32632f189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Logger">
+      <UniqueIdentifier>{7c6d8c15-bbec-4123-aaf7-2edb432d219b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

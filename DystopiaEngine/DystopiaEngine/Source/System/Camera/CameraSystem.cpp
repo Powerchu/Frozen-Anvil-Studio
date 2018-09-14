@@ -24,16 +24,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::CameraSystem::CameraSystem(void) noexcept
-	: mpMasterCam{ nullptr }, mpUICam{ nullptr }, mCameras{}, mMasterViewport{}
+	: mpMasterCam{ nullptr }, mpUICam{ nullptr }, mMasterViewport{}
 {
 
 }
 
-
-Dystopia::Camera* Dystopia::CameraSystem::RequestComponent(void)
-{
-	return mCameras.Emplace();
-}
 
 bool Dystopia::CameraSystem::Init(void)
 {
@@ -54,7 +49,7 @@ void Dystopia::CameraSystem::Update(float)
 
 void Dystopia::CameraSystem::Shutdown(void)
 {
-	mCameras.clear();
+	mComponents.clear();
 }
 
 
@@ -70,7 +65,7 @@ Dystopia::Camera* Dystopia::CameraSystem::GetMasterCamera(void) const
 
 MagicArray<Dystopia::Camera>& Dystopia::CameraSystem::GetAllCameras(void)
 {
-	return mCameras;
+	return mComponents;
 }
 
 

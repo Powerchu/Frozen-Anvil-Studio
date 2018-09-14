@@ -40,7 +40,7 @@ namespace Dystopia
 		template <typename ... Ty>
 		GameObject* InsertGameObject(Ty&& ...);
 
-		GameObject* FindGameObject(const size_t _nID);
+		GameObject* FindGameObject(const uint64_t _nID);
 		GameObject* FindGameObject(const std::string& _strName);
 
 		inline AutoArray<GameObject>& GetAllGameObjects(void);

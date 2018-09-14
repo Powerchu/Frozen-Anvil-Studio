@@ -73,7 +73,7 @@ namespace Dystopia
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
 
-		unsigned long GetID(void) const;
+		uint64_t GetID(void) const;
 		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
 		void SetName(const std::string&);
@@ -96,7 +96,7 @@ namespace Dystopia
 
 	private:
 
-		unsigned long mnID;
+		uint64_t mnID;
 		unsigned mnFlags;
 		std::string mName;
 
@@ -149,11 +149,11 @@ inline void Dystopia::GameObject::AddComponent(ComponentTag)
 	//);
 
 	auto Comp = EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()->RequestComponent();
-	mComponents.Insert(
-		Comp;
-	);
+
+	mComponents.Insert(Comp);
 
 	Comp->SetOwner(this);
+	Comp->Init();
 }
 
 template <typename Ty>
@@ -161,6 +161,7 @@ inline void Dystopia::GameObject::AddComponent(BehaviourTag)
 {
 	mBehaviours.push_back(new Ty{});
 	mBehaviours.back()->SetOwner(this);
+	mBehaviours.back()->Init();
 }
 
 template <typename T>

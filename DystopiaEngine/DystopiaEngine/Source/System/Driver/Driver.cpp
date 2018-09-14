@@ -30,12 +30,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Collision\CollisionSystem.h"
 #include "System\Physics\PhysicsSystem.h"
 #include "System\Camera\CameraSystem.h"
-#include "Component\Camera.h"
 #include "System\Events\EventSystem.h"
+#include "System\Profiler\Profiler.h"
 
 // SubSystems
 #include "System\Graphics\MeshSystem.h"
-#include "System\Profiler\Profiler.h"
+#include "System\Logger\LoggerSystem.h"
 
 
 
@@ -45,6 +45,21 @@ namespace
 	AutoArray<Ty> MakeAutoArray(Utility::TypeList<T...>)
 	{
 		 return AutoArray<Ty>{ static_cast<Ty>(new T{})...};
+	}
+
+	template <typename ... T>
+	void DeleteSubSys(AutoArray<void*>& _SubSys, Utility::TypeList<T...>)
+	{
+		void(*deleters[])(void*) {
+			[](void* _p) { delete static_cast<T*>(_p);  }...
+		};
+
+		auto b = _SubSys.begin();
+		for (auto* deleter : deleters)
+		{
+			deleter(*b);
+			++b;
+		}
 	}
 
 	template <typename T>
@@ -162,6 +177,7 @@ void Dystopia::EngineCore::Shutdown(void)
 	for (auto& e : mSystemList)
 		delete e;
 
+	DeleteSubSys(mSubSystems, Utility::MakeTypeList_t<Utility::TypeList, SubSys>{});
 
 	mSystemList.clear();
 	mSystemTable.clear();
