@@ -84,6 +84,8 @@ namespace Dystopia
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
 		};
+		static const std::string GetCompileName(void) { return "Collider"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 		static const eColliderType ColliderType = eColliderType::BASE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }

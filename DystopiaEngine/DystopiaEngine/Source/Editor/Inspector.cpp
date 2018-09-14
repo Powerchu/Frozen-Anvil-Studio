@@ -17,14 +17,66 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ScriptFormatter.h"
 #include "Editor\Commands.h"
 #include "Editor\EditorEvents.h"
+
+#include "Component\Camera.h"
+#include "Component\Collider.h"
+#include "Component\Renderer.h"
+#include "Component\RigidBody.h"
+
 #include "Utility\ComponentGUID.h"
 #include "Object\GameObject.h"
 #include <iostream>
 
 namespace Dystopia
 {
-	static Inspector* gpInstance = 0;
 
+	template<typename A, typename B>
+	struct AuxIndexer;
+
+	template <class List, size_t ... Ns>
+	struct AuxIndexer<std::index_sequence<Ns ...>, List>
+	{
+		template<size_t N, typename T, typename ... Ts>
+		static inline void AuxEx(Array<std::string, sizeof...(Ns)>& arr, T&& t, Ts&& ... ts)
+		{
+			arr[N] = t;
+			if constexpr (N != sizeof...(Ns) - 1)
+				AuxEx<N + 1>(arr, ts...);
+		}
+
+		template<size_t Num>
+		static void Extract(Array<std::string, Num>& arr)
+		{
+			AuxEx<0>(arr, Utility::MetaExtract<Ns, List>::result::type::GetCompileName() ...);
+		}
+	};
+
+	template <typename C>
+	struct AuxGenFunction
+	{
+		C* operator()()
+		{
+			return EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>()->RequestComponent();
+		}
+	};
+
+	template <typename T>
+	struct GetType
+	{
+	};
+
+	struct GetComponentFunction
+	{
+		template <typename T>
+		GetComponentFunction()
+		{}
+
+
+	};
+
+
+
+	static Inspector* gpInstance = 0;
 	Inspector* Inspector::GetInstance()
 	{
 		if (gpInstance) return gpInstance;
@@ -203,50 +255,23 @@ namespace Dystopia
 		ComponentsDropDownList();
 	}
 
-	template<typename A, typename B>
-	struct AuxIndexer;
-
-	template <class List, size_t ... Ns>
-	struct AuxIndexer<std::index_sequence<Ns ...>, List>
-	{
-		template <unsigned N, typename T, typename ... Ts>
-		static void AuxPlace(N, Array<T, sizeof...(Ns)>& arr, T&& t, Ts&& ... ts)
-		{
-			arr[N] = t;
-			AuxPlace(N - 1, arr, ts ...);
-		}
-
-		template <>
-		static void AuxPlace(0, Array<T, sizeof...(Ns)>& arr, T&& t)
-		{
-			arr[N] = t;
-		}
-
-		template <typename ... Ts>
-		static void Aux(Array<std::string, sizeof...(Ns)>& arr, Ts&& ... ts)
-		{
-			AuxPlace(<sizeof...(Ns) - 1, arr, ts ...);
-		}
-
-		static void Extract(Array<std::string, sizeof...(Ns)>& arr)
-		{
-			Aux(arr, Utility::MetaExtract<Ns, List>::result::type::GetCompileName() ...);
-		}
-	};
-
 	void Inspector::ComponentsDropDownList()
 	{
 		static constexpr size_t numComponents = Utility::SizeofList<AllComponents>::value;
 		Array<std::string, numComponents> arr;
-		//AuxIndexer<std::make_index_sequence<numComponents>, AllComponents>
-
-		static const std::string components[numComponents] = { "Com1", "Com2", "Com3", "Com4", "Com5" };
+		AuxIndexer<std::make_index_sequence<numComponents>, AllComponents>::Extract(arr);
 
 		if (EGUI::Display::StartPopup("Inspector Component List"))
 		{
 			EGUI::Display::Dummy(235, 2);
-			for (const auto& e : components)
-				EGUI::Display::SelectableTxt(e, false);
+			for (unsigned int i = 0; i < numComponents; ++i)
+			{
+				const auto& e = arr[i];
+				if (EGUI::Display::SelectableTxt(e, false))
+				{
+
+				}
+			}
 
 			EGUI::Display::EndPopup();
 		}

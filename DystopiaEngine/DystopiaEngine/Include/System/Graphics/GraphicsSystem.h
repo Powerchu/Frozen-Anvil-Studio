@@ -68,6 +68,9 @@ namespace Dystopia
 		static const int& GetDrawMode(void) noexcept;
 		static void SetDrawMode(int) noexcept;
 
+		// Temporary
+		std::map<std::string, Shader*> shaderlist;
+		std::map<std::string, Texture*> texturelist;
 	private:
 
 		float mfGamma;
@@ -76,9 +79,6 @@ namespace Dystopia
 		int mPixelFormat, mAvailable;
 		Window* mCurrent;
 
-		// Temporary
-		std::map<std::string, Shader*> shaderlist;
-		std::map<std::string, Texture*> texturelist;
 
 		static int DRAW_MODE;
 

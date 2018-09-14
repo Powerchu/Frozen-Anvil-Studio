@@ -20,6 +20,8 @@ namespace Dystopia
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
 		};
+		static const std::string GetCompileName(void) { return "RigidBody"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 

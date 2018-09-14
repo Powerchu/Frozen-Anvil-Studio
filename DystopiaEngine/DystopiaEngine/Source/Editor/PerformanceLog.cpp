@@ -155,7 +155,7 @@ namespace Dystopia
 	void PerformanceLog::ShowLog(const PLogData& _log, Math::Vec2 _size)
 	{
 		_size.y = (_log.mIsBigGraph) ? mGraphBigY : mGraphSmallY;
-		EGUI::Display::LineGraph(_log.mLabel.c_str(), _log.mArrValues, 0, _log.mMax, _size,
+		EGUI::Display::LineGraph(_log.mLabel.c_str(), _log.mArrValues, 0, static_cast<float>(_log.mMax), _size,
 						std::to_string(static_cast<int>(_log.mArrValues[_log.mCurrentIndex])));
 	}
 
