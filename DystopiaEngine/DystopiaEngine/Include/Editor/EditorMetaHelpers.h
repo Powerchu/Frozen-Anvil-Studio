@@ -28,10 +28,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	template<typename A, typename B>
-	struct ComponentNamesFromList;
+	struct ListOfComponentsName;
 
 	template <class List, size_t ... Ns>
-	struct ComponentNamesFromList<std::index_sequence<Ns ...>, List>
+	struct ListOfComponentsName<std::index_sequence<Ns ...>, List>
 	{
 		template<size_t N, typename T, typename ... Ts>
 		static inline void AuxEx(Array<std::string, sizeof...(Ns)>& arr, T&& t, Ts&& ... ts)
@@ -57,7 +57,7 @@ namespace Dystopia
 		}
 	};
 
-	struct ComponentGetFromList
+	struct ListOfComponents
 	{
 		static constexpr size_t size = Utility::SizeofList<AllComponents>::value;
 
@@ -101,7 +101,7 @@ namespace Dystopia
 			struct Helper<std::index_sequence<Head, Rest ...>>
 			{
 				template <typename... Ts>
-				auto HelperFunction(unsigned int _i, std::tuple<Ts ...>& _data)
+				void* HelperFunction(unsigned int _i, std::tuple<Ts ...>& _data)
 				{
 					static BreakTuple<std::make_index_sequence<sizeof...(Ts)>> newData;
 					if (!_i)
@@ -114,12 +114,19 @@ namespace Dystopia
 			};
 
 
-			auto Get(unsigned int _i)
+			Component* Get(unsigned int _i)
 			{
 				Helper<std::make_index_sequence<size>> h;
-				return h.HelperFunction(_i, mData);
+				if (_i >= size || _i < 0)
+					return nullptr;
+				return static_cast<Component*>(h.HelperFunction(_i, mData));
 			}
 		};
+
+		Component* Get(unsigned int _i)
+		{
+			return mCollection.Get(_i);
+		}
 
 		GenerateCollection<std::make_index_sequence<size>> mCollection;
 	};

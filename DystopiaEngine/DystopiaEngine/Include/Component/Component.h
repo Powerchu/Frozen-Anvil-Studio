@@ -46,14 +46,14 @@ namespace Dystopia
 		void SetActive(const bool _bEnable);
 
 		void Load(void);
-		void Init(void);
+		virtual void Init(void);
 
 		virtual void GameObjectDestroy(void);
 		void Unload(void);
 
 		void DestroyComponent(void);
 
-		void SetOwner(GameObject*);
+		virtual void SetOwner(GameObject*);
 		GameObject* GetOwner(void) const;
 
 		virtual Component* Duplicate() const;

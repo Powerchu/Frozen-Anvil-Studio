@@ -44,9 +44,6 @@ namespace Dystopia
 
 	void Inspector::Init()
 	{
-		ComponentGetFromList a;
-		int i = 1;
-		a.mCollection.Get(i);
 	}
 
 	void Inspector::Update(const float& _dt)
@@ -208,7 +205,7 @@ namespace Dystopia
 	{
 		static constexpr size_t numComponents = Utility::SizeofList<AllComponents>::value;
 		Array<std::string, numComponents> arr;
-		ComponentNamesFromList<std::make_index_sequence<numComponents>, AllComponents>::Extract(arr);
+		ListOfComponentsName<std::make_index_sequence<numComponents>, AllComponents>::Extract(arr);
 
 		if (EGUI::Display::StartPopup("Inspector Component List"))
 		{
@@ -218,7 +215,10 @@ namespace Dystopia
 				const auto& e = arr[i];
 				if (EGUI::Display::SelectableTxt(e, false))
 				{
-
+					ListOfComponents a;
+					Component* pComp = a.Get(i);
+					pComp->Init();
+					mpFocus->AddComponent(pComp, typename Component::TAG{});
 				}
 			}
 
