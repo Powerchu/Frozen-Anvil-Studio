@@ -24,7 +24,7 @@ namespace Math
 {
 	#define _CALL	__vectorcall
 
-	struct Matrix2
+	struct _DLL_EXPORT Matrix2
 	{
 		// ====================================== CONSTRUCTORS ======================================= // 
 

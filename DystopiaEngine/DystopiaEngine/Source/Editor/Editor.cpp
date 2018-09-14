@@ -37,6 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\ScopedTimer.h"
 #include "IO\BinarySerializer.h"
 #include "Utility\GUID.h"
+#include "System/File/FileSystem.h"
 
 /* Editor includes */
 #include "Editor\EGUI.h"
@@ -69,6 +70,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
+
 	while (!editor->IsClosing())
 	{
 		editor->StartFrame();
@@ -548,14 +550,21 @@ namespace Dystopia
 
 	void Editor::LogTabPerformance()
 	{
-		auto data = mpProfiler->GetInfo();
-
-		for (const auto& d : data)
+		static constexpr float intervalS = 0.1f;
+		static float deltaAccu = 0.f;
+		deltaAccu += GetDeltaTime();
+		if (deltaAccu > intervalS)
 		{
-			auto info = d.second.mTimes;
-			for (const auto& i : info)
+			deltaAccu = 0;
+			auto data = mpProfiler->GetInfo();
+			for (const auto& d : data)
 			{
-				Performance::LogDataS(d.first, i.first, static_cast<float>(info[i.first]), 0, 1000);
+				auto info = d.second.mTimes;
+				for (const auto& i : info)
+				{
+					Performance::LogDataS(d.first, i.first, static_cast<float>(info[i.first]));
+					Performance::LogDataG(d.first, static_cast<float>(d.second.mTotal));
+				}
 			}
 		}
 	}

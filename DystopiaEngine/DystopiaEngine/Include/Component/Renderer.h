@@ -30,7 +30,7 @@ namespace Dystopia
 	class Texture;
 	class GraphicsSystem;
 
-	class Renderer : public Component
+	class _DLL_EXPORT Renderer : public Component
 	{
 	public:
 

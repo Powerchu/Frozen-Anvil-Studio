@@ -121,7 +121,7 @@
     <ClCompile Include="Source\IO\BinarySerializer.cpp">
       <Filter>IO\BinarySerialiser</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
     <ClCompile Include="Source\Component\RigidBody.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
@@ -179,6 +179,10 @@
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
+    <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
+    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
+    <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
@@ -406,7 +410,7 @@
     <ClInclude Include="Include\IO\BinarySerializer.h">
       <Filter>IO\BinarySerialiser</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
     <ClInclude Include="Include\Component\Collider.h">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>
@@ -482,8 +486,15 @@
     <ClInclude Include="Include\Editor\PLogger.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
+    <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
+    <ClInclude Include="Include\Editor\HotLoader.h" />
+    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h">
       <Filter>Game Engine\Systems\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\File\FileSystem.h">
+      <Filter>Game Engine\Systems\File</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Profiler\Profiler.h">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
@@ -738,6 +749,9 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Logger">
       <UniqueIdentifier>{7c6d8c15-bbec-4123-aaf7-2edb432d219b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\File">
+      <UniqueIdentifier>{845f6b31-e949-414f-88d7-9fec6ab7613f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

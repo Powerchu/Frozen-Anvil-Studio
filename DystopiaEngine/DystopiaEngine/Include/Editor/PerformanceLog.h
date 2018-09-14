@@ -40,8 +40,10 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const override;
 
-		void LogData(const std::string& _category, const std::string& _graphLabel, float _val, float _min, float _max, bool _bigGraph = false);
-		void LogData(const std::string& _catMainGraph, float _val, float _min, float _max, bool _bigGraph = false);
+		void LogData(const std::string& _category, const std::string& _graphLabel,
+			 		float _val, bool _bigGraph = false);
+		void LogData(const std::string& _catMainGraph, float _val,
+			 		bool _bigGraph = false);
 
 	private:
 		PerformanceLog();
