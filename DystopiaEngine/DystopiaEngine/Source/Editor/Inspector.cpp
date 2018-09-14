@@ -203,9 +203,44 @@ namespace Dystopia
 		ComponentsDropDownList();
 	}
 
+	template<typename A, typename B>
+	struct AuxIndexer;
+
+	template <class List, size_t ... Ns>
+	struct AuxIndexer<std::index_sequence<Ns ...>, List>
+	{
+		template <unsigned N, typename T, typename ... Ts>
+		static void AuxPlace(N, Array<T, sizeof...(Ns)>& arr, T&& t, Ts&& ... ts)
+		{
+			arr[N] = t;
+			AuxPlace(N - 1, arr, ts ...);
+		}
+
+		template <>
+		static void AuxPlace(0, Array<T, sizeof...(Ns)>& arr, T&& t)
+		{
+			arr[N] = t;
+		}
+
+		template <typename ... Ts>
+		static void Aux(Array<std::string, sizeof...(Ns)>& arr, Ts&& ... ts)
+		{
+			AuxPlace(<sizeof...(Ns) - 1, arr, ts ...);
+		}
+
+		static void Extract(Array<std::string, sizeof...(Ns)>& arr)
+		{
+			Aux(arr, Utility::MetaExtract<Ns, List>::result::type::GetCompileName() ...);
+		}
+	};
+
 	void Inspector::ComponentsDropDownList()
 	{
-		static const std::string components[5] = { "Com1", "Com2", "Com3", "Com4", "Com5" };
+		static constexpr size_t numComponents = Utility::SizeofList<AllComponents>::value;
+		Array<std::string, numComponents> arr;
+		//AuxIndexer<std::make_index_sequence<numComponents>, AllComponents>
+
+		static const std::string components[numComponents] = { "Com1", "Com2", "Com3", "Com4", "Com5" };
 
 		if (EGUI::Display::StartPopup("Inspector Component List"))
 		{

@@ -31,7 +31,8 @@ namespace Dystopia
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value; 
 		};
-		const std::string GetEditorName(void) const { return "Transform"; }
+		static const std::string GetCompileName(void) { return "Transform"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 

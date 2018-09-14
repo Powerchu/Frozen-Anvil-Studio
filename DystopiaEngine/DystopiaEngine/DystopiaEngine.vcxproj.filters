@@ -121,8 +121,6 @@
     <ClCompile Include="Source\IO\BinarySerializer.cpp">
       <Filter>IO\BinarySerialiser</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
     <ClCompile Include="Source\Component\RigidBody.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
@@ -188,7 +186,8 @@
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
-    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
+    <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -410,8 +409,6 @@
     <ClInclude Include="Include\IO\BinarySerializer.h">
       <Filter>IO\BinarySerialiser</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
     <ClInclude Include="Include\Component\Collider.h">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>
@@ -498,7 +495,8 @@
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
     <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
-    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
+    <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
