@@ -71,10 +71,6 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
 
-	Dystopia::FileSystem FileSys;
-
-	std::cout << FileSys.GetFullPath("Editor.cpp", Dystopia::eFileDirectories::eSource) << std::endl;
-
 	while (!editor->IsClosing())
 	{
 		editor->StartFrame();
@@ -173,7 +169,7 @@ namespace Dystopia
 
 		UpdateKeys();
 		UpdateHotkeys();
-		
+
 		mpEditorEventSys->FireAllPending();
 		MainMenuBar();
 	}
