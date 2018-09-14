@@ -20,10 +20,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	using AllComponents = Utility::MetaAutoIndexer <
-		class Transform,
+		//class Transform,
 		class Camera,
-		class Collider,
-		class RigidBody,
+		//class Collider,
+		//class RigidBody,
 		class Renderer
 	>::result;
 

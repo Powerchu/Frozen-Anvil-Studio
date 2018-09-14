@@ -186,8 +186,6 @@
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -495,8 +493,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
     <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
+    <ClInclude Include="Include\Editor\EditorMetaHelpers.h">
+      <Filter>Editor\AuxMetaHelpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -744,6 +743,9 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Logger">
       <UniqueIdentifier>{7c6d8c15-bbec-4123-aaf7-2edb432d219b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\AuxMetaHelpers">
+      <UniqueIdentifier>{c891734a-f64c-422c-9326-4d11d5d8b6f2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

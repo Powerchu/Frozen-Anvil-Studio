@@ -17,65 +17,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ScriptFormatter.h"
 #include "Editor\Commands.h"
 #include "Editor\EditorEvents.h"
-
-#include "Component\Camera.h"
-#include "Component\Collider.h"
-#include "Component\Renderer.h"
-#include "Component\RigidBody.h"
-
+#include "Editor\EditorMetaHelpers.h"
 #include "Utility\ComponentGUID.h"
-#include "Object\GameObject.h"
 #include <iostream>
 
 namespace Dystopia
 {
-
-	template<typename A, typename B>
-	struct AuxIndexer;
-
-	template <class List, size_t ... Ns>
-	struct AuxIndexer<std::index_sequence<Ns ...>, List>
-	{
-		template<size_t N, typename T, typename ... Ts>
-		static inline void AuxEx(Array<std::string, sizeof...(Ns)>& arr, T&& t, Ts&& ... ts)
-		{
-			arr[N] = t;
-			if constexpr (N != sizeof...(Ns) - 1)
-				AuxEx<N + 1>(arr, ts...);
-		}
-
-		template<size_t Num>
-		static void Extract(Array<std::string, Num>& arr)
-		{
-			AuxEx<0>(arr, Utility::MetaExtract<Ns, List>::result::type::GetCompileName() ...);
-		}
-	};
-
-	template <typename C>
-	struct AuxGenFunction
-	{
-		C* operator()()
-		{
-			return EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>()->RequestComponent();
-		}
-	};
-
-	template <typename T>
-	struct GetType
-	{
-	};
-
-	struct GetComponentFunction
-	{
-		template <typename T>
-		GetComponentFunction()
-		{}
-
-
-	};
-
-
-
 	static Inspector* gpInstance = 0;
 	Inspector* Inspector::GetInstance()
 	{
@@ -97,7 +44,9 @@ namespace Dystopia
 
 	void Inspector::Init()
 	{
-		
+		ComponentGetFromList a;
+		int i = 1;
+		a.mCollection.Get(i);
 	}
 
 	void Inspector::Update(const float& _dt)
@@ -259,7 +208,7 @@ namespace Dystopia
 	{
 		static constexpr size_t numComponents = Utility::SizeofList<AllComponents>::value;
 		Array<std::string, numComponents> arr;
-		AuxIndexer<std::make_index_sequence<numComponents>, AllComponents>::Extract(arr);
+		ComponentNamesFromList<std::make_index_sequence<numComponents>, AllComponents>::Extract(arr);
 
 		if (EGUI::Display::StartPopup("Inspector Component List"))
 		{

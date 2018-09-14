@@ -27,10 +27,10 @@ namespace Dystopia
 	class Transform : public Component
 	{
 	public:
-		unsigned GetComponentType(void) const
-		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value; 
-		};
+		//unsigned GetComponentType(void) const
+		//{
+		//	return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value; 
+		//};
 		static const std::string GetCompileName(void) { return "Transform"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 

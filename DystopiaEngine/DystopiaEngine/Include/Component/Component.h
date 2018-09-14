@@ -28,7 +28,6 @@ namespace Dystopia
 	class _DLL_EXPORT Component
 	{
 	public:
-
 		using TAG = ComponentTag;
 		using SYSTEM = class NULL_SYSTEM;
 		virtual unsigned GetComponentType(void) const {	return unsigned(-1); };

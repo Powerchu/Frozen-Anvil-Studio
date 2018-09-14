@@ -54,7 +54,7 @@ namespace Dystopia
 		char						mSearchTextPrevFrame[MAX_SEARCH];
 		std::string					mLabel;
 		std::string					mPopupID;
-		AutoArray<unsigned long>	mArrSearchID;
+		AutoArray<uint64_t>	mArrSearchID;
 
 		void			SearchBar();
 		void			UpdateSearch();

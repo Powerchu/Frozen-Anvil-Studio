@@ -18,8 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure\AutoArray.h"		// AutoArray
 #include "Component\Component.h"			// Component
 #include "Component\ComponentList.h"		// AllComponents
-#include "Behaviour\Behaviour.h"			// Behaviour
 #include "Component\Transform.h"			// Transform
+#include "Behaviour\Behaviour.h"			// Behaviour
 #include "Utility\MetaAlgorithms.h"			// MetaFind_t
 
 #include <string>

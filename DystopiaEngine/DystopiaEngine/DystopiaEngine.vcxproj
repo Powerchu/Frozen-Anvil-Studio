@@ -96,6 +96,7 @@
     <ClInclude Include="Include\Component\RigidBody.h" />
     <ClInclude Include="Include\DataStructure\Tuple.h" />
     <ClInclude Include="Include\DataStructure\Variant.h" />
+    <ClInclude Include="Include\Editor\EditorMetaHelpers.h" />
     <ClInclude Include="Include\Editor\ConsoleDebugger.h" />
     <ClInclude Include="Include\Editor\PLogger.h" />
     <ClInclude Include="Include\Editor\PLogInfo.h" />
