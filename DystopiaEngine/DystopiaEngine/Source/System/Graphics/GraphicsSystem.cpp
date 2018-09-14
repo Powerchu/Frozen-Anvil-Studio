@@ -260,7 +260,7 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 	DRAW_MODE = GL_TRIANGLES;
 }
 
-void Dystopia::GraphicsSystem::LoadSettings(TextSerialiser&)
+void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t&)
 {
 	// TODO
 }
