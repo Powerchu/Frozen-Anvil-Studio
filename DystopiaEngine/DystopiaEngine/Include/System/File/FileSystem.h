@@ -17,14 +17,20 @@ namespace Dystopia
 		eSource,
 		eResource,
 		eRoot,
+		eAppData,
 		eTotalFilePath
+
 	} eFileDir;
 
 	struct FileSystem
 	{
-	public: 
+	public:
+
+		FileSystem();
 
 		std::string GetFullPath(std::string const & _FileName, eFileDir _ParentDirectory);
+
+		bool CreateFiles(std::string const & _FileName, eFileDir _Directory);
 
 	private:
 
