@@ -32,10 +32,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Camera\CameraSystem.h"
 #include "Component\Camera.h"
 #include "System\Events\EventSystem.h"
+#include "System\Profiler\Profiler.h"
 
 // SubSystems
 #include "System\Graphics\MeshSystem.h"
-#include "System\Profiler\Profiler.h"
+#include "System/File/FileSystem.h"
 
 
 

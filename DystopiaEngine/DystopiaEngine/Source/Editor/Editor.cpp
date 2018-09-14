@@ -37,6 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\ScopedTimer.h"
 #include "IO\BinarySerializer.h"
 #include "Utility\GUID.h"
+#include "System/File/FileSystem.h"
 
 /* Editor includes */
 #include "Editor\EGUI.h"
@@ -69,6 +70,11 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
+
+	Dystopia::FileSystem FileSys;
+
+	std::cout << FileSys.GetFullPath("Editor.cpp", Dystopia::eFileDirectories::eSource) << std::endl;
+
 	while (!editor->IsClosing())
 	{
 		editor->StartFrame();
