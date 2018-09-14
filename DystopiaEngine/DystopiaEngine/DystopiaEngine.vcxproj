@@ -28,7 +28,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
+    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
     <ClCompile Include="Source\Editor\ConsoleDebugger.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp" />
@@ -91,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Renderer.h" />
     <ClInclude Include="Include\Component\RigidBody.h" />
@@ -104,6 +107,7 @@
     <ClInclude Include="Include\Editor\EditorEvents.h" />
     <ClInclude Include="Include\Editor\EditorInputs.h" />
     <ClInclude Include="Include\Editor\PerformanceLog.h" />
+    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />

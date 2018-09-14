@@ -45,7 +45,8 @@ namespace Dystopia
 		>>;
 
 		using SubSys = typename Utility::MetaAutoIndexer <
-			class MeshSystem
+			class MeshSystem,
+			class FileSystem
 		>::result;
 
 		static EngineCore* GetInstance(void) noexcept;
