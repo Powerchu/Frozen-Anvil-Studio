@@ -31,6 +31,11 @@ Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{
 //	CameraManager::RegisterCamera(this);
 }
 
+Dystopia::Camera::Camera(const Camera& _oOther) : Component{ _oOther }, 
+	mViewport{ _oOther.mViewport }, mView{ _oOther.mView },
+	mTransform{ nullptr }, mInvScreen{ _oOther.mInvScreen }
+{}
+
 Dystopia::Camera::~Camera(void)
 {
 //	CameraManager::DeregisterCamera(this);
@@ -39,7 +44,12 @@ Dystopia::Camera::~Camera(void)
 void Dystopia::Camera::Init(void)
 {
 	if (nullptr == mTransform)
-		mTransform = GetOwner()->GetComponent<Transform>();
+	{
+		if (GetOwner())
+		{
+			mTransform = GetOwner()->GetComponent<Transform>();
+		}
+	}
 
 	if (mnFlags & eObjFlag::FLAG_RESERVED)
 		mnFlags |= eObjFlag::FLAG_ACTIVE;

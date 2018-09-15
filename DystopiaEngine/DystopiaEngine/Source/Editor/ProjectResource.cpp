@@ -21,8 +21,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <stdlib.h>
 #include <tchar.h>
 
-static const std::string DEFAULT_PATH = "..\\DystopiaEngine";
-static const std::string DEFAULT_NAME = "DystopiaEngine";
+static const std::string DEFAULT_PATH = "..\\DystopiaEngine\\Resource";
+static const std::string DEFAULT_NAME = "Resource";
 static float delay = 5;
 
 namespace Dystopia

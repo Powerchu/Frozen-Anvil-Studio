@@ -14,7 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _COMMAND_LIST_H_
 #define _COMMAND_LIST_H_
-#include "Object/GameObject.h"
+
+#include "System\Scene\Scene.h"
 #include "Editor.h"
 #include <tuple>
 #include <utility>
@@ -33,6 +34,48 @@ namespace Dystopia
 	{
 		virtual bool EndRecord() = 0;
 		virtual ~RecordBase() {}
+	};
+
+	struct ComdInsertObject : Commands
+	{
+		ComdInsertObject(GameObject* _pObj, Scene * _pScene)
+			: mObjID{ _pObj->GetID() }, mpObj{ _pObj }, mpScene{ _pScene }
+		{}
+
+		~ComdInsertObject()
+		{
+			if (mpObj) delete mpObj;
+		}
+
+		bool ExecuteDo() override
+		{
+			GameObject* p = mpScene->FindGameObject(mObjID);
+			if (p) return false;
+
+			mpScene->GetAllGameObjects().EmplaceBack(Utility::Move(*mpObj));
+			delete mpObj;
+			mpObj = nullptr;
+			return true;
+		}
+
+		bool ExecuteUndo() override
+		{
+			GameObject* p = mpScene->FindGameObject(mObjID);
+			if (!p) return false;
+
+			if (Editor::GetInstance()->GetCurrentFocusGameObj() == p)
+				Editor::GetInstance()->RemoveFocus();
+
+			mpObj = p->Duplicate();
+			mpScene->GetAllGameObjects().FastRemove(p);
+			return true;
+		}
+
+		bool Unchanged() const { return false; }
+	private:
+		uint64_t mObjID;
+		GameObject *mpObj;
+		Scene *mpScene;
 	};
 
 	template <typename T, class Component>
@@ -57,7 +100,7 @@ namespace Dystopia
 			return true;
 		}
 
-		bool	Unchanged() const { return (mOldValue == mNewValue); }
+		bool Unchanged() const { return (mOldValue == mNewValue); }
 	private:
 		Component* FindComponent()
 		{
@@ -132,8 +175,8 @@ namespace Dystopia
 			return true; 
 		}
 
-		bool	Unchanged() const { return false; }//(mOldValue == mNewValue); }
-		T*		GetPointer() { return mpTarget; }
+		bool Unchanged() const { return false; }//(mOldValue == mNewValue); }
+		T* GetPointer() { return mpTarget; }
 	private:
 		Component* FindComponent()
 		{

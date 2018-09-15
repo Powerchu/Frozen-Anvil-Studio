@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Camera\CameraSystem.h"
+#include "Component\Camera.h"
 
 namespace Dystopia
 {
@@ -48,7 +49,10 @@ namespace Dystopia
 	void SceneView::Init()
 	{
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
-		mpSceneCamera = Factory::CreateCamera("SceneCamera", GetCurrentScene());
+		GameObject *p = Factory::CreateCamera("Scene Camera");
+		mpSceneCamera = GetCurrentScene()->InsertGameObject(Utility::Move(*p));
+		mpSceneCamera->GetComponent<Camera>()->Init();
+		delete p;
 	}
 
 	void SceneView::Update(const float& _dt)

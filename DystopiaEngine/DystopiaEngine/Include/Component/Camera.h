@@ -41,6 +41,7 @@ namespace Dystopia
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		Camera(const float _fWidth = 1.f, const float _fHeight = 1.f);
+		Camera(const Camera&);
 		~Camera(void);
 
 

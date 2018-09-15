@@ -99,6 +99,7 @@ namespace Dystopia
 		mpGfx{ nullptr },
 		mpSceneSystem{ nullptr },
 		mpProfiler{ nullptr },
+		mpFocusGameObj{ nullptr },
 		mpInput{ new EditorInput{} },
 		mpEditorEventSys{ new EditorEventHandler{} },
 		mpComdHandler{ new CommandHandler{} },
@@ -251,6 +252,7 @@ namespace Dystopia
 		mpWin				= nullptr;
 		mpGfx				= nullptr;
 		mpProfiler			= nullptr;
+		mpFocusGameObj		= nullptr;
 
 		mpDriver->Shutdown();
 		EGUI::RemoveContext();
@@ -530,12 +532,14 @@ namespace Dystopia
 	{
 		for (auto& e : mArrTabs)
 			e->SetFocus(_rObj);
+		mpFocusGameObj = &_rObj;
 	}
 	
 	void Editor::RemoveFocus()
 	{
 		for (auto& e : mArrTabs)
 			e->RemoveFocus();
+		mpFocusGameObj = nullptr;
 	}
 
 	GameObject* Editor::FindGameObject(const unsigned long& _id) const
@@ -573,6 +577,16 @@ namespace Dystopia
 			p.mMemLoad = mpProfiler->GetSystemMemoryLoad();
 			Performance::LogTaskMgr(p);
 		}
+	}
+
+	GameObject* Editor::GetCurrentFocusGameObj()
+	{
+		return mpFocusGameObj;
+	}
+
+	void Editor::SetLastPayloadFocus(ePayloadTags e)
+	{
+		mLatestPayloadFocus = e;
 	}
 }
 

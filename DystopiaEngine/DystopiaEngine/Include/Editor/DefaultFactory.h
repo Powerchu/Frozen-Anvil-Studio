@@ -22,9 +22,9 @@ namespace Dystopia
 	class Scene;
 	namespace Factory
 	{
-		GameObject* CreateGameObj(const std::string& _name, Scene *);
+		GameObject* CreateGameObj(const std::string& _name);
 
-		GameObject* CreateCamera(const std::string& _name, Scene *);
+		GameObject* CreateCamera(const std::string& _name);
 	}
 }
 #endif // _DEFAULT_FACTORY_H_

@@ -161,13 +161,15 @@ namespace Dystopia
 			if (EGUI::Display::SelectableTxt("GameObject"))
 			{
 				strcpy_s(mSearchTextPrevFrame, "");
-				Factory::CreateGameObj("GameObject", GetCurrentScene());
+				GameObject* p = Factory::CreateGameObj("GameObject");
+				GetCommandHND()->InvokeCommand(new ComdInsertObject{ p, GetCurrentScene() });
 			}
 
 			if (EGUI::Display::SelectableTxt("Camera"))
 			{
-				strcpy_s(mSearchTextPrevFrame, "");
-				Factory::CreateCamera("Camera", GetCurrentScene());
+				//strcpy_s(mSearchTextPrevFrame, "");
+				//GameObject* p = Factory::CreateCamera("Camera");
+				//GetCommandHND()->InvokeCommand(new ComdInsertObject{ p, GetCurrentScene() });
 			}
 			EGUI::Display::EndPopup();
 		}
@@ -181,10 +183,6 @@ namespace Dystopia
 		{
 			GetMainEditor().RemoveFocus();
 			GetMainEditor().SetFocus(_obj);
-		}
-		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAMEOBJECT, &_obj, sizeof(_obj), _obj.GetName()))
-		{
-			EGUI::Display::EndPayload();
 		}
 		GameObjectPopups(_obj);
 	}
@@ -204,6 +202,10 @@ namespace Dystopia
 
 			}
 			ImGui::EndPopup();
+		}
+		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAMEOBJECT, &_obj, sizeof(_obj), _obj.GetName()))
+		{
+			EGUI::Display::EndPayload();
 		}
 	}
 

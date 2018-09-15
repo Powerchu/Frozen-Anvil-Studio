@@ -22,7 +22,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Camera\CameraSystem.h"
-#include "System\Scene\SceneSystem.h"
 
 #include "Object\GameObject.h"
 #include "Utility\GUID.h"
@@ -31,17 +30,17 @@ namespace Dystopia
 {
 	namespace Factory
 	{
-		GameObject* CreateGameObj(const std::string& _name, Scene *_pScene)
+		GameObject* CreateGameObj(const std::string& _name)
 		{
-			GameObject *pObject = _pScene->InsertGameObject(GUIDGenerator::GetUniqueID());
+			GameObject *pObject = new GameObject{ GUIDGenerator::GetUniqueID() };
 			pObject->SetName(_name);
 			pObject->SetActive(true);
 			return pObject;
 		}
 
-		GameObject* CreateCamera(const std::string& _name, Scene *_pScene)
+		GameObject* CreateCamera(const std::string& _name)
 		{
-			GameObject *pObject = CreateGameObj(_name, _pScene);
+			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent();
 			p->SetOwner(pObject);
 			p->Init();
