@@ -40,13 +40,13 @@ namespace Dystopia
 		//}
 		
 		template<class Component, typename T>
-		void InvokeCommand(unsigned int _id, T* _var, const T& _oldVal)
+		void InvokeCommand(const uint64_t& _id, T* _var, const T& _oldVal)
 		{
 			InvokeCommand(new ComdModifyValue<T, Component>{ _id, _var, _oldVal });
 		}
 
 		template<class C, typename ... Params>
-		void InvokeCommand(const unsigned long & _id, 
+		void InvokeCommand(const uint64_t & _id,
 						   const FunctionModWrapper<C, Params ...>& _old, 
 						   const FunctionModWrapper<C, Params ...>& _new)
 		{
@@ -70,7 +70,7 @@ namespace Dystopia
 		// Only 1 pointer can be stored to recording at any given time. 
 		// DO NOT pass in any variable that you would be deleted without EndRecording being called.
 		template<class C, typename T>
-		void StartRecording(unsigned int _id, T* _target)
+		void StartRecording(const uint64_t& _id, T* _target)
 		{ 
 			if (mRecording) return;
 			mpRecorder = new ComdRecord<T, C>(_id, _target);
@@ -79,7 +79,6 @@ namespace Dystopia
 
 		// Call after done recording the data 
 		void EndRecording();
-
 		bool IsRecording() const;
 
 	private:

@@ -32,10 +32,10 @@ namespace Dystopia
 
 	struct TextureInfo
 	{
-		TextureInfo(unsigned int _id, float _x, float _y)
+		TextureInfo(const uint64_t&  _id, float _x, float _y)
 			: mID{ _id }, x{ _x }, y{ _y }
 		{}
-		unsigned int mID;
+		uint64_t mID;
 		float x;
 		float y;
 	};

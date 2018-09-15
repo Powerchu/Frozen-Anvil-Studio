@@ -22,17 +22,23 @@ namespace EGUI
 	enum ePayloadTags
 	{
 		FILE,
-		ePAY_LOAD_2,
+		PNG,
+		BMP,
+		GAMEOBJECT,
+		COMPONENT,
 
 		ePAY_LOAD_LAST
 	};
 
-	inline const char* ToString(ePayloadTags _tag)
+	inline const char* GetPayloadString(ePayloadTags _tag)
 	{
 		switch (_tag)
 		{
 			case FILE:			return "FILE";
-			case ePAY_LOAD_2:	return "ePAY_LOAD_2";
+			case PNG:			return "PNG";
+			case BMP:			return "BMP";
+			case GAMEOBJECT:	return "GAMEOBJECT";
+			case COMPONENT:		return "COMPONENT";
 			default:			return "ePAY_LOAD_LAST";
 		}
 	}

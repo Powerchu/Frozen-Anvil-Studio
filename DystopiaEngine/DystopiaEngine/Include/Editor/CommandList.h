@@ -38,7 +38,7 @@ namespace Dystopia
 	template <typename T, class Component>
 	struct ComdModifyValue : Commands
 	{
-		ComdModifyValue(unsigned int _objID, T* _pmData, const T& _oldV)
+		ComdModifyValue(const uint64_t& _objID, T* _pmData, const T& _oldV)
 			: mID{ _objID }, mpData{ _pmData }, 
 			mNewValue{*_pmData }, mOldValue{ _oldV }
 		{}
@@ -67,7 +67,7 @@ namespace Dystopia
 			if (!pCom) return nullptr;
 			return pCom;
 		}
-		unsigned int mID;
+		uint64_t mID;
 		T* mpData;
 		T mOldValue;
 		T mNewValue;
@@ -76,7 +76,7 @@ namespace Dystopia
 	template <typename T>
 	struct ComdModifyValue<T, GameObject> : Commands
 	{
-		ComdModifyValue(unsigned int _objID, T * _pmData, const T& _oldV)
+		ComdModifyValue(const uint64_t& _objID, T * _pmData, const T& _oldV)
 			: mID{ _objID }, mpData{ _pmData },
 			mNewValue{ *mpData }, mOldValue{ _oldV }
 		{}
@@ -97,7 +97,7 @@ namespace Dystopia
 
 		bool Unchanged() const { return (mOldValue == mNewValue); }
 	private:
-		unsigned int mID;
+		uint64_t mID;
 		T* mpData;
 		T mOldValue;
 		T mNewValue;
@@ -106,7 +106,7 @@ namespace Dystopia
 	template <typename T, class Component>
 	struct ComdRecord : RecordBase
 	{
-		ComdRecord(unsigned int _objID, T* rhs)
+		ComdRecord(const uint64_t& _objID, T* rhs)
 			: mpTarget{ rhs }, mOldValue{ *rhs }, 
 			mNewValue{ mOldValue }, mID{ _objID }
 		{}
@@ -132,7 +132,7 @@ namespace Dystopia
 			return true; 
 		}
 
-		bool	Unchanged() const { return (mOldValue == mNewValue); }
+		bool	Unchanged() const { return false; }//(mOldValue == mNewValue); }
 		T*		GetPointer() { return mpTarget; }
 	private:
 		Component* FindComponent()
@@ -143,7 +143,7 @@ namespace Dystopia
 			if (!pCom) return nullptr;
 			return pCom;
 		}
-		unsigned int mID;
+		uint64_t mID;
 		T* mpTarget;
 		T mOldValue;
 		T mNewValue;
@@ -152,7 +152,7 @@ namespace Dystopia
 	template <typename T>
 	struct ComdRecord<T, GameObject> : RecordBase
 	{
-		ComdRecord(unsigned int _objID, T* rhs)
+		ComdRecord(const uint64_t& _objID, T* rhs)
 			: mpTarget{ rhs }, mOldValue{ *rhs }, 
 			mNewValue{ mOldValue }, mID{ _objID }
 		{}
@@ -178,10 +178,10 @@ namespace Dystopia
 			return true;
 		}
 
-		bool	Unchanged() const { return (mOldValue == mNewValue); }
+		bool	Unchanged() const { return false; }//(mOldValue == mNewValue); }
 		T*		GetPointer() { return mpTarget; }
 	private:
-		unsigned int mID;
+		uint64_t mID;
 		T* mpTarget;
 		T mOldValue;
 		T mNewValue;
@@ -245,7 +245,7 @@ namespace Dystopia
 	template<class Component, typename ... P1s, typename ... P2s >
 	struct ComdModifyComponent<FunctionModWrapper<Component, P1s ...>, FunctionModWrapper<Component, P2s ...>> : Commands
 	{
-		ComdModifyComponent(const unsigned long& _objID, 
+		ComdModifyComponent(const uint64_t& _objID,
 							const FunctionModWrapper<Component, P1s ...>& _do, 
 							const FunctionModWrapper<Component, P2s ...>& _undo)
 			: mID{ _objID }, mDoFunc{ _do }, mUnDoFunc{ _undo }
@@ -281,13 +281,13 @@ namespace Dystopia
 		using FMW2 = FunctionModWrapper<Component, P2s ...>;
 		FMW1 mDoFunc;
 		FMW2 mUnDoFunc;
-		unsigned long mID;
+		uint64_t mID;
 	};
 
 	template<typename ... P1s, typename ... P2s >
 	struct ComdModifyComponent<FunctionModWrapper<GameObject, P1s ...>, FunctionModWrapper<GameObject, P2s ...>> : Commands
 	{
-		ComdModifyComponent(const unsigned long& _objID,
+		ComdModifyComponent(const uint64_t& _objID,
 			const FunctionModWrapper<GameObject, P1s ...>& _do,
 			const FunctionModWrapper<GameObject, P2s ...>& _undo)
 			: mID{ _objID }, mDoFunc{ _do }, mUnDoFunc{ _undo }
@@ -319,7 +319,7 @@ namespace Dystopia
 		using FMW2 = FunctionModWrapper<GameObject, P2s ...>;
 		FMW1 mDoFunc;
 		FMW2 mUnDoFunc;
-		unsigned long mID;
+		uint64_t mID;
 	};
 }
 
