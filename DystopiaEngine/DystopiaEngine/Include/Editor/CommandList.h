@@ -31,55 +31,161 @@ namespace Dystopia
 
 	struct RecordBase : Commands
 	{
-		virtual void EndRecord() = 0;
+		virtual bool EndRecord() = 0;
 		virtual ~RecordBase() {}
 	};
 
-	template <typename T>
+	template <typename T, class Component>
 	struct ComdModifyValue : Commands
 	{
-		ComdModifyValue(T* _value, const T& _newV)
-			: mValue{ _value }, mOldValue{ *_value }, mNewValue{ _newV }
+		ComdModifyValue(unsigned int _objID, T* _pmData, const T& _oldV)
+			: mID{ _objID }, mpData{ _pmData }, 
+			mNewValue{*_pmData }, mOldValue{ _oldV }
 		{}
 
-		~ComdModifyValue()
+		bool ExecuteDo() override 
 		{
-			mValue = nullptr;
+			if (!FindComponent()) return false;
+			*mpData = mNewValue;
+			return true; 
 		}
 
-		bool	ExecuteDo() override	{ *mValue = mNewValue; return true; }
-		bool	ExecuteUndo() override	{ *mValue = mOldValue; return true; }
-		bool	Unchanged() const		{ return (mOldValue == mNewValue); }
+		bool ExecuteUndo() override 
+		{
+			if (!FindComponent()) return false;
+			*mpData = mOldValue;
+			return true;
+		}
+
+		bool	Unchanged() const { return (mOldValue == mNewValue); }
 	private:
+		Component* FindComponent()
+		{
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			if (!pObj) return nullptr;
+			Component *pCom = pObj->GetComponent<Component>();
+			if (!pCom) return nullptr;
+			return pCom;
+		}
+		unsigned int mID;
+		T* mpData;
 		T mOldValue;
 		T mNewValue;
-		T* mValue;
 	};
 
 	template <typename T>
-	struct ComdRecord : RecordBase
+	struct ComdModifyValue<T, GameObject> : Commands
 	{
-		ComdRecord(T*& rhs)
-			: mpTarget{ rhs }, mOldValue{ *mpTarget }, mNewValue{ mOldValue }
+		ComdModifyValue(unsigned int _objID, T * _pmData, const T& _oldV)
+			: mID{ _objID }, mpData{ _pmData },
+			mNewValue{ *mpData }, mOldValue{ _oldV }
 		{}
 
-		~ComdRecord()
+		bool ExecuteDo() override
 		{
-			mpTarget = nullptr;
+			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
+			*mpData = mNewValue;
+			return true;
 		}
 
-		void	EndRecord()				{ mNewValue = *mpTarget; }
-		T*		GetPointer()			{ return mpTarget; }
-		bool	ExecuteDo() override	{ *mpTarget = mNewValue; return true; }
-		bool	ExecuteUndo() override	{ *mpTarget = mOldValue; return true; }
-		bool	Unchanged() const		{ return (mOldValue == mNewValue); }
+		bool ExecuteUndo() override
+		{
+			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
+			*mpData = mOldValue;
+			return true;
+		}
 
+		bool Unchanged() const { return (mOldValue == mNewValue); }
 	private:
+		unsigned int mID;
+		T* mpData;
+		T mOldValue;
+		T mNewValue;
+	};
+
+	template <typename T, class Component>
+	struct ComdRecord : RecordBase
+	{
+		ComdRecord(unsigned int _objID, T* rhs)
+			: mpTarget{ rhs }, mOldValue{ *rhs }, 
+			mNewValue{ mOldValue }, mID{ _objID }
+		{}
+
+		bool EndRecord()				
+		{ 
+			if (!FindComponent()) return false;
+			mNewValue = *mpTarget;
+			return true;
+		}
+
+		bool ExecuteDo() override	
+		{
+			if (!FindComponent()) return false;
+			*mpTarget = mNewValue; 
+			return true; 
+		}
+
+		bool ExecuteUndo() override	
+		{
+			if (!FindComponent()) return false;
+			*mpTarget = mOldValue; 
+			return true; 
+		}
+
+		bool	Unchanged() const { return (mOldValue == mNewValue); }
+		T*		GetPointer() { return mpTarget; }
+	private:
+		Component* FindComponent()
+		{
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			if (!pObj) return nullptr;
+			Component *pCom = pObj->GetComponent<Component>();
+			if (!pCom) return nullptr;
+			return pCom;
+		}
+		unsigned int mID;
 		T* mpTarget;
 		T mOldValue;
 		T mNewValue;
 	};
 
+	template <typename T>
+	struct ComdRecord<T, GameObject> : RecordBase
+	{
+		ComdRecord(unsigned int _objID, T* rhs)
+			: mpTarget{ rhs }, mOldValue{ *rhs }, 
+			mNewValue{ mOldValue }, mID{ _objID }
+		{}
+
+		bool EndRecord()
+		{
+			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
+			mNewValue = *mpTarget;
+			return true;
+		}
+
+		bool ExecuteDo() override
+		{
+			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
+			*mpTarget = mNewValue;
+			return true;
+		}
+
+		bool ExecuteUndo() override
+		{
+			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
+			*mpTarget = mOldValue;
+			return true;
+		}
+
+		bool	Unchanged() const { return (mOldValue == mNewValue); }
+		T*		GetPointer() { return mpTarget; }
+	private:
+		unsigned int mID;
+		T* mpTarget;
+		T mOldValue;
+		T mNewValue;
+	};
 
 	template<class Component, typename ... Params>
 	struct FunctionModWrapper

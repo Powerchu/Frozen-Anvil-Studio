@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class GraphicsSystem;
+	class GameObject;
 	class SceneView : public EditorTab
 	{
 	public:
@@ -46,6 +47,7 @@ namespace Dystopia
 		float			mDelta;
 		std::string		mLabel;
 		GraphicsSystem* mpGfxSys;
+		GameObject*		mpSceneCamera;
 	};
 
 }

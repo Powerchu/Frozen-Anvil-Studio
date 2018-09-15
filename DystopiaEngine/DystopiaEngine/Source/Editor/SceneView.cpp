@@ -15,8 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\SceneView.h"
 #include "Editor\Editor.h"
 #include "Editor\EGUI.h"
+#include "Editor\DefaultFactory.h"
+
 #include "System\Driver\Driver.h"
 #include "System\Graphics\GraphicsSystem.h"
+#include "System\Camera\CameraSystem.h"
 
 namespace Dystopia
 {
@@ -33,7 +36,8 @@ namespace Dystopia
 		: EditorTab{ true }, 
 		mLabel{ "Scene View" },
 		mpGfxSys{ nullptr },
-		mDelta{}
+		mDelta{},
+		mpSceneCamera{ nullptr }
 	{}
 
 	SceneView::~SceneView()
@@ -44,6 +48,7 @@ namespace Dystopia
 	void SceneView::Init()
 	{
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
+		mpSceneCamera = Factory::CreateCamera("SceneCamera", GetCurrentScene());
 	}
 
 	void SceneView::Update(const float& _dt)

@@ -33,10 +33,16 @@ namespace Dystopia
 		// Calls the ExecuteDo function of the param command and passes it into the undo deque, also empties the redo deque
 		void InvokeCommand(Commands *_comd);
 		
-		template<typename T>
-		void InvokeCommand(T * const _var, const T& _newVal)
+		//template<typename T>
+		//void InvokeCommand(T * const _var, const T& _newVal)
+		//{
+		//	  InvokeCommand(new ComdModifyValue<T>{ _var, _newVal });
+		//}
+		
+		template<class Component, typename T>
+		void InvokeCommand(unsigned int _id, T* _var, const T& _oldVal)
 		{
-			InvokeCommand(new ComdModifyValue<T>{ _var, _newVal });
+			InvokeCommand(new ComdModifyValue<T, Component>{ _id, _var, _oldVal });
 		}
 
 		template<class C, typename ... Params>
@@ -63,11 +69,11 @@ namespace Dystopia
 		// Takes in a pointer to the variable to be changed and keeps the initial first call as the value to revert back when undo is called.
 		// Only 1 pointer can be stored to recording at any given time. 
 		// DO NOT pass in any variable that you would be deleted without EndRecording being called.
-		template<typename T>
-		void StartRecording(T* _target)
+		template<class C, typename T>
+		void StartRecording(unsigned int _id, T* _target)
 		{ 
 			if (mRecording) return;
-			mpRecorder = new ComdRecord<T>(_target);
+			mpRecorder = new ComdRecord<T, C>(_id, _target);
 			mRecording = true;
 		}
 

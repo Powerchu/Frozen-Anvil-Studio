@@ -57,7 +57,16 @@ namespace Dystopia
 ======================================================================================================================= */
 namespace EGUI
 {
+	enum eDragStatus
+	{
+		eNO_CHANGE = 0,
+		eSTART_DRAG,
+		eEND_DRAG,
+		eDRAGGING
+	};
+
 	void SetContext(Dystopia::CommandHandler *_pContext);
+	Dystopia::CommandHandler* GetCommandHND();
 	void RemoveContext();
 	void ChangeLabelSpacing(float _amount);
 	void ChangeLabelSpacing();
@@ -208,7 +217,8 @@ namespace EGUI
 					// value of MeFloat has been changed. Do something here:
 				}
 		======================================================================================================================= */
-		bool DragFloat(const std::string& _label, float *_pOutFloat, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 1.0f);
+		eDragStatus DragFloat(const std::string& _label, float *_pOutFloat, 
+							  float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 1.0f);
 		/* =======================================================================================================================
 		Brief:
 				Creates a draggable int editable field. Returns if the value is changed
@@ -219,7 +229,7 @@ namespace EGUI
 					// value of MeInt has been changed. Do something here:
 				}
 		======================================================================================================================= */
-		bool DragInt(const std::string& _label, int *_pOutInt, float _dragSpeed = 1.0f, int _min = 0, int _max = 0);
+		eDragStatus DragInt(const std::string& _label, int *_pOutInt, float _dragSpeed = 1.0f, int _min = 0, int _max = 0);
 		/* =======================================================================================================================
 		Brief:
 				Creates a selectable text field. Returns if the text field is clicked is changed

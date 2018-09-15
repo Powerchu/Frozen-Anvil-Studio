@@ -233,8 +233,12 @@ void Dystopia::Transform::Unserialise(TextSerialiser&)
 
 void Dystopia::Transform::EditorUI(void) noexcept
 {
+#if EDITOR
 	if (EGUI::Display::VectorFields("Scale", GetOwner()->GetID(), &mScale, 0.5f, -FLT_MAX, FLT_MAX))
 	{
 		ConsolePrint("Changed");
 	}
+
+#endif 
 }
+

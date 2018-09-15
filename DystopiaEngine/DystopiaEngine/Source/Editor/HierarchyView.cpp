@@ -16,12 +16,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\HierarchyView.h"
 #include "Editor\EditorEvents.h"
 #include "Editor\Editor.h"
+#include "Editor\DefaultFactory.h"
+
 #include "Object\GameObject.h"
+#include "Component\Camera.h"
+
 #include "System\Scene\Scene.h"
 #include "System\Camera\CameraSystem.h"
 #include "System\Driver\Driver.h"
-#include "Utility\GUID.h"
-#include "Component\Camera.h"
+
 #include <algorithm>
 #include <cctype>
 #include <iostream>
@@ -157,34 +160,17 @@ namespace Dystopia
 		{
 			if (EGUI::Display::SelectableTxt("GameObject"))
 			{
-				CreateGameObj("GameObject");
+				strcpy_s(mSearchTextPrevFrame, "");
+				Factory::CreateGameObj("GameObject", GetCurrentScene());
 			}
 
 			if (EGUI::Display::SelectableTxt("Camera"))
 			{
-				CreateCamera("Camera");
+				strcpy_s(mSearchTextPrevFrame, "");
+				Factory::CreateCamera("Camera", GetCurrentScene());
 			}
 			EGUI::Display::EndPopup();
 		}
-	}
-
-	GameObject* HierarchyView::CreateGameObj(const std::string& _name)
-	{
-		strcpy_s(mSearchTextPrevFrame, "");
-		GameObject *pObject = GetCurrentScene()->InsertGameObject(GUIDGenerator::GetUniqueID());
-		pObject->SetName(_name);
-		pObject->SetActive(true);
-		return pObject;
-	}
-	
-	GameObject* HierarchyView::CreateCamera(const std::string& _name)
-	{
-		GameObject *pObject = CreateGameObj(_name);
-		auto p = EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent();
-		p->SetOwner(pObject);
-		p->Init();
-		pObject->AddComponent(p, typename Camera::TAG{});
-		return pObject;
 	}
 
 	void HierarchyView::GameObjectName(GameObject& _obj)
@@ -195,6 +181,26 @@ namespace Dystopia
 		{
 			GetMainEditor().RemoveFocus();
 			GetMainEditor().SetFocus(_obj);
+		}
+		else
+			GameObjectPopups(_obj);
+	}
+
+	void HierarchyView::GameObjectPopups(GameObject& _obj)
+	{
+		if (ImGui::BeginPopupContextItem())
+		{
+			GetMainEditor().RemoveFocus();
+			GetMainEditor().SetFocus(_obj);
+			if (EGUI::Display::SelectableTxt("Copy"))
+			{
+
+			}
+			if (EGUI::Display::SelectableTxt("Delete"))
+			{
+
+			}
+			ImGui::EndPopup();
 		}
 	}
 

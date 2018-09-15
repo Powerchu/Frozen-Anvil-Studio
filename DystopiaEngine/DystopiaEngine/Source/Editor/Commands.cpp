@@ -118,8 +118,13 @@ namespace Dystopia
 		if (!mRecording) return;
 		if (mpRecorder)
 		{
-			mpRecorder->EndRecord();
-			if (!mpRecorder->Unchanged()) InvokeCommand(mpRecorder);
+			if (mpRecorder->EndRecord())
+			{
+				if (!mpRecorder->Unchanged()) InvokeCommand(mpRecorder);
+				mpRecorder = nullptr;
+			}
+			else 
+				delete mpRecorder;
 			mpRecorder = nullptr;
 		}
 		mRecording = false;

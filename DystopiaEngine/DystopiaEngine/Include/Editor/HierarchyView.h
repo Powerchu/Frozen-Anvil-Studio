@@ -54,14 +54,13 @@ namespace Dystopia
 		char						mSearchTextPrevFrame[MAX_SEARCH];
 		std::string					mLabel;
 		std::string					mPopupID;
-		AutoArray<uint64_t>	mArrSearchID;
+		AutoArray<uint64_t>			mArrSearchID;
 
 		void			SearchBar();
 		void			UpdateSearch();
 		void			CreateButton();
 		void			CreatePopup();
-		GameObject*		CreateGameObj(const std::string&);
-		GameObject*		CreateCamera(const std::string&);
+		void			GameObjectPopups(GameObject&);
 		void			GameObjectName(GameObject&);
 	};
 }

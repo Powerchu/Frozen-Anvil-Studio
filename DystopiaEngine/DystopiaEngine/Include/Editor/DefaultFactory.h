@@ -14,17 +14,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _DEFAULT_FACTORY_H_
 #define _DEFAULT_FACTORY_H_
+#include <string>
 
 namespace Dystopia
 {
+	class GameObject;
+	class Scene;
 	namespace Factory
 	{
+		GameObject* CreateGameObj(const std::string& _name, Scene *);
 
-
-
-
-
-
+		GameObject* CreateCamera(const std::string& _name, Scene *);
 	}
 }
 #endif // _DEFAULT_FACTORY_H_
