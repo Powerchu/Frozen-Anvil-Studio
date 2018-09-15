@@ -28,17 +28,20 @@ namespace Dystopia
 		void LogDataS(const std::string& _category, const std::string& _graphLabel,
 			float _val)
 		{
-			gpInstance->LogData(_category, _graphLabel, _val, false);
+			if (gpInstance)
+				gpInstance->LogData(_category, _graphLabel, _val, false);
 		}
 
 		void LogDataG(const std::string& _catMainGraph, float _val)
 		{
-			gpInstance->LogData(_catMainGraph, _val, true);
+			if (gpInstance)
+				gpInstance->LogData(_catMainGraph, _val, true);
 		}
 
 		void LogTaskMgr(const PLogTaskManager& _data)
 		{
-			gpInstance->LogTaskMgr(_data);
+			if (gpInstance)
+				gpInstance->LogTaskMgr(_data);
 		}
 	}
 

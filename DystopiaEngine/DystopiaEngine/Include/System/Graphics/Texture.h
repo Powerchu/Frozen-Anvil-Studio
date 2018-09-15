@@ -42,7 +42,7 @@ namespace Dystopia
 
 		unsigned GetTexture(void) const noexcept;
 
-	private:
+	//private:
 
 		unsigned mnWidth, mnHeight, mnType, mnID;
 	};

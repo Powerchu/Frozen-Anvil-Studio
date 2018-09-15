@@ -50,6 +50,8 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
+		void Init(void) override;
+
 		void Draw(void) const noexcept;
 		
 		void SetMesh(Mesh*) noexcept;
@@ -63,7 +65,6 @@ namespace Dystopia
 		Texture* GetTexture(void) const noexcept;
 
 		bool HasTransparency(void) const noexcept;
-
 
 		Renderer* Duplicate(void) const;
 

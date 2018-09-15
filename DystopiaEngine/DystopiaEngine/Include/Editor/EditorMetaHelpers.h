@@ -113,7 +113,6 @@ namespace Dystopia
 				}
 			};
 
-
 			Component* Get(unsigned int _i)
 			{
 				Helper<std::make_index_sequence<size>> h;

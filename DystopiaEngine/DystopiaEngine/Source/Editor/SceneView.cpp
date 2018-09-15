@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor\SceneView.h"
 #include "Editor\Editor.h"
-#include "System\Camera\CameraSystem.h"
+#include "Editor\EGUI.h"
 #include "System\Driver\Driver.h"
 #include "System\Graphics\GraphicsSystem.h"
 
@@ -32,8 +32,8 @@ namespace Dystopia
 	SceneView::SceneView()
 		: EditorTab{ true }, 
 		mLabel{ "Scene View" },
-		mpCameraSys{ nullptr },
-		mpGfxSys{ nullptr }
+		mpGfxSys{ nullptr },
+		mDelta{}
 	{}
 
 	SceneView::~SceneView()
@@ -43,26 +43,34 @@ namespace Dystopia
 
 	void SceneView::Init()
 	{
-		mpCameraSys = EngineCore::GetInstance()->GetSystem<CameraSystem>();
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
 	}
 
 	void SceneView::Update(const float& _dt)
 	{
-		mpCameraSys->SetMasterViewport(static_cast<int>(Position().x),
-									   static_cast<int>(Position().y),
-									   static_cast<int>(Size().x),
-									   static_cast<int>(Size().y));
-		mpGfxSys->Update(_dt);
+		mDelta = _dt;
+		float px = Position().x;
+		float py = Position().y;
+		float sx = Size().x;
+		float sy = Size().y;
+		mpGfxSys->SetMasterViewport(static_cast<int>(px),
+									   static_cast<int>(py),
+									   static_cast<int>(sx),
+									   static_cast<int>(sy));
+		mpGfxSys->Update(mDelta);
 	}
 
 	void SceneView::EditorUI()
 	{
+		for (const auto& e : mpGfxSys->textureInfos)
+		{
+			ImGui::Image((void*)e.mID, ImVec2{ e.x, e.y });
+		}
 	}
 
 	void SceneView::Shutdown()
 	{
-		mpCameraSys = nullptr;
+		mpGfxSys = nullptr;
 	}
 
 	std::string SceneView::GetLabel() const

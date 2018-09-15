@@ -186,6 +186,9 @@
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
+    <ClCompile Include="Source\Editor\DefaultFactory.cpp">
+      <Filter>Editor\Factory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -496,6 +499,9 @@
     <ClInclude Include="Include\Editor\EditorMetaHelpers.h">
       <Filter>Editor\AuxMetaHelpers</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\DefaultFactory.h">
+      <Filter>Editor\Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -746,6 +752,9 @@
     </Filter>
     <Filter Include="Editor\AuxMetaHelpers">
       <UniqueIdentifier>{c891734a-f64c-422c-9326-4d11d5d8b6f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Factory">
+      <UniqueIdentifier>{3c1970b5-39ed-4b21-846a-39fb24566cc5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

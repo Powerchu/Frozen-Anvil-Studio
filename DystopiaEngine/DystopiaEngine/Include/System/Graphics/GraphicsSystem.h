@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <string>
 #include <map>
+#include "DataStructure\AutoArray.h"
 
 
 namespace Dystopia
@@ -28,6 +29,16 @@ namespace Dystopia
 	class Texture;
 	class Shader;
 	class Renderer;
+
+	struct TextureInfo
+	{
+		TextureInfo(unsigned int _id, float _x, float _y)
+			: mID{ _id }, x{ _x }, y{ _y }
+		{}
+		unsigned int mID;
+		float x;
+		float y;
+	};
 
 	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>
 	{
@@ -71,6 +82,9 @@ namespace Dystopia
 		// Temporary
 		std::map<std::string, Shader*> shaderlist;
 		std::map<std::string, Texture*> texturelist;
+
+		AutoArray<TextureInfo> textureInfos;
+
 	private:
 
 		float mfGamma;
