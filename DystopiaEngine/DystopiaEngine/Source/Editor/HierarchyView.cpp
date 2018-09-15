@@ -182,8 +182,11 @@ namespace Dystopia
 			GetMainEditor().RemoveFocus();
 			GetMainEditor().SetFocus(_obj);
 		}
-		else
-			GameObjectPopups(_obj);
+		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAMEOBJECT, &_obj, sizeof(_obj), _obj.GetName()))
+		{
+			EGUI::Display::EndPayload();
+		}
+		GameObjectPopups(_obj);
 	}
 
 	void HierarchyView::GameObjectPopups(GameObject& _obj)
