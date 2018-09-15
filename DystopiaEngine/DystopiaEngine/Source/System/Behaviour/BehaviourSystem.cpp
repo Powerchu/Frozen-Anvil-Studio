@@ -60,6 +60,16 @@ void Dystopia::BehaviourSystem::FixedUpdate(float)
 
 void Dystopia::BehaviourSystem::Update(float)
 {
+#if EDITOR
+	/*Update Hotloader*/
+	mHotloader.Update();
+	/*Check Hotloader for changes in the Dll file*/
+	if (mHotloader.ChangesInDllFolder())
+	{
+
+	}
+
+#endif
 }
 
 void Dystopia::BehaviourSystem::PostUpdate(void)

@@ -32,10 +32,10 @@ namespace Dystopia
 
 		std::string GetFullPath(std::string const & _FileName, eFileDir _ParentDirectory);
 
+		bool CreateFiles(std::string const & _FileName, eFileDir _Directory);
+
 		template<typename T, typename U = std::enable_if_t< std::is_same_v< T, std::string> || std::is_same_v<T, std::wstring>>>
 		T GetProjectFolders(eFileDir _ParentDirectory);
-
-		bool CreateFiles(std::string const & _FileName, eFileDir _Directory);
 
 		template<typename T, typename U = std::enable_if_t< std::is_same_v< T, std::string> || std::is_same_v<T, std::wstring>>>
 		T RemoveFileExtension(T const & _File);
