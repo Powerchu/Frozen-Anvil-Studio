@@ -13,6 +13,8 @@
 
 namespace Dystopia
 {
+	class Behaviour;
+
 	struct BehaviourSystem : Systems
 	{
 		virtual void PreInit(void);
@@ -29,8 +31,10 @@ namespace Dystopia
 
 	private:
 
+		MagicArray<Behaviour *> mvBehaviourReferences;
+
 #if EDITOR
-		Hotloader<2> mHotloader;
+		Hotloader<1> mHotloader;
 #endif
 	};
 

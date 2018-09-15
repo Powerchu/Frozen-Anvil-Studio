@@ -38,7 +38,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO\BinarySerializer.h"
 #include "Utility\GUID.h"
 #include "System/File/FileSystem.h"
-
+#include "System//Behaviour/BehaviourSystem.h"
 /* Editor includes */
 #include "Editor\EGUI.h"
 #include "Editor\Editor.h"
@@ -70,6 +70,10 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
+
+	Dystopia::BehaviourSystem bSys;
+	bSys.PreInit();
+	bSys.Init();
 
 	while (!editor->IsClosing())
 	{

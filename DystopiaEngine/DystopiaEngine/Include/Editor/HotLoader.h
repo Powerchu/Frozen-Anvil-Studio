@@ -86,6 +86,16 @@ namespace Dystopia
 			mDllModule = NULL;
 		}
 
+		std::wstring GetDllName() const
+		{
+			return mDllFileName;
+		}
+
+		std::wstring GetDllFullPath() const
+		{
+			return mDllPathName + L'/' + mDllFileName;
+		}
+
 		template<typename ReturnType, typename ... ParamType>
 		ReturnType(*GetDllFunc(std::string _FuncName) const) (ParamType ...)
 		{
@@ -94,6 +104,12 @@ namespace Dystopia
 				return (ReturnType(*) (ParamType...)) (dllFunc);
 
 			return nullptr;
+		}
+
+		template<typename ReturnType, typename ... ParamType>
+		ReturnType(*GetDllFunc(std::wstring _FuncName) const) (ParamType ...)
+		{
+			return GetDllFunc<ReturnType, ParamType...>(std::string{ _FuncName.begin(), _FuncName.end() });
 		}
 
 		template<typename ReturnType, typename ... ParamType>
@@ -704,7 +720,7 @@ namespace Dystopia
 					{
 						if (BinaryTypeStatus == SCS_64BIT_BINARY)
 						{
-							mVcvarBuildEnv = BIT32_ENV;
+							mVcvarBuildEnv = BIT64_ENV;
 						}
 						else if (BinaryTypeStatus == SCS_32BIT_BINARY)
 						{
