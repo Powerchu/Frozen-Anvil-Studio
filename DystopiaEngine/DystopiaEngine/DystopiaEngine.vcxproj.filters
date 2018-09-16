@@ -508,6 +508,9 @@
     <ClInclude Include="Include\System\Graphics\GraphicsDefs.h">
       <Filter>Game Engine\Systems\Graphic</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\SystemMessage.h">
+      <Filter>Game Engine\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

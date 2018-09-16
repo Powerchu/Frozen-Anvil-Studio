@@ -26,6 +26,9 @@ Dystopia::Framebuffer::Framebuffer(void) noexcept
 
 Dystopia::Framebuffer::~Framebuffer(void) noexcept
 {
+	glDeleteFramebuffers(1, &mnID);
+	glDeleteRenderbuffers(1, &mDepthBuffer);
+
 	delete mpTexture;
 }
 
@@ -43,7 +46,7 @@ void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight)
 
 	// Bind the texture and stencil buffer to the FBO
 	BindFramebuffer();
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mpTexture->GetTexture(), 0);
+	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mpTexture->GetID(), 0);
 	glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthBuffer);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);

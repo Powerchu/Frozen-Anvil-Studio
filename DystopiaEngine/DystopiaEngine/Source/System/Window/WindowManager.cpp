@@ -13,6 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System\Window\WindowManager.h"	// File Header
 #include "System\Window\Window.h"
+#include "System\SystemMessage.h"
+#include "System\Driver\Driver.h"
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
@@ -25,17 +27,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _COMMANDPROMPT	1
 #define ENGINE_NAME		L"Dystopia Engine"
 
-constexpr long	DEFAULT_WINDOWSTYLE		= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-constexpr long	DEFAULT_WINDOWSTYLE_EX	= WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-
-constexpr bool	DEFAULT_FULLSCREEN		= false;
-constexpr int	DEFAULT_WIDTH			= 1600;
-constexpr int	DEFAULT_HEIGHT			= 900;
-constexpr int	LOGO_WIDTH				= 600;
-constexpr int	LOGO_HEIGHT				= 400;
-
-namespace Dystopia
+namespace
 {
+	constexpr long	DEFAULT_WINDOWSTYLE		= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+	constexpr long	DEFAULT_WINDOWSTYLE_EX	= WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+
+	constexpr bool	DEFAULT_FULLSCREEN		= false;
+	constexpr int	DEFAULT_WIDTH			= 1600;
+	constexpr int	DEFAULT_HEIGHT			= 900;
+	constexpr int	LOGO_WIDTH				= 600;
+	constexpr int	LOGO_HEIGHT				= 400;
+
 	LRESULT WINAPI MessageProcessor(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		switch (message)
@@ -60,211 +62,218 @@ namespace Dystopia
 				ChangeDisplaySettings(NULL, 0);
 			} */
 			break;
+
+		case WM_CLOSE:
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::QUIT);
+			return 0;
+
+		default:
+			break;
 		}
 
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
+}
 
-	WindowManager::WindowManager(void) : 
-		mbFullscreen{ DEFAULT_FULLSCREEN }, mHInstance { GetModuleHandle(nullptr) },
-		mWindows{ 1 }
-	{
+Dystopia::WindowManager::WindowManager(void) : 
+	mbFullscreen{ DEFAULT_FULLSCREEN }, mHInstance { GetModuleHandle(nullptr) },
+	mWindows{ 1 }
+{
 
-	}
+}
 
-	WindowManager::~WindowManager(void)
-	{
-		UnregisterClass(L"MainWindow", mHInstance);
-	}
+Dystopia::WindowManager::~WindowManager(void)
+{
+	UnregisterClass(L"MainWindow", mHInstance);
+}
 
-	void WindowManager::PreInit(void)
-	{
+void Dystopia::WindowManager::PreInit(void)
+{
 #if _COMMANDPROMPT
 
-		if (AllocConsole())
-		{
-			FILE* file;
+	if (AllocConsole())
+	{
+		FILE* file;
 
-			freopen_s(&file, "CONOUT$", "wt", stdout);
-			freopen_s(&file, "CONOUT$", "wt", stderr);
+		freopen_s(&file, "CONOUT$", "wt", stdout);
+		freopen_s(&file, "CONOUT$", "wt", stderr);
 //			freopen_s(&file, "CONOUT$", "wt", stdin);
 
-			SetConsoleTitle(ENGINE_NAME);
-		}
+		SetConsoleTitle(ENGINE_NAME);
+	}
 
 #endif	// Show Command Prompt
 
-		WNDCLASSEX mainWindow
-		{
-			sizeof(WNDCLASSEX),
-			CS_CLASSDC,
-			MessageProcessor,
-			0, 0,
-			GetModuleHandle(NULL),
-			NULL,
-			LoadCursor(NULL, IDC_ARROW),
-			NULL, // Background
-			NULL,
-			L"MainWindow",
-			NULL // Icon
-		};
+	WNDCLASSEX mainWindow
+	{
+		sizeof(WNDCLASSEX),
+		CS_CLASSDC,
+		MessageProcessor,
+		0, 0,
+		GetModuleHandle(NULL),
+		NULL,
+		LoadCursor(NULL, IDC_ARROW),
+		NULL, // Background
+		NULL,
+		L"MainWindow",
+		NULL // Icon
+	};
 
-		if (!RegisterClassEx(&mainWindow))
-		{
-			throw;
-		}
+	if (!RegisterClassEx(&mainWindow))
+	{
+		throw;
+	}
 
 #if EDITOR
 
-		RECT WindowRect{ 0, 0, LOGO_WIDTH, LOGO_HEIGHT };
-		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
+	RECT WindowRect{ 0, 0, LOGO_WIDTH, LOGO_HEIGHT };
+	AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
 
-		HWND window = CreateWindowEx(
-			WS_EX_APPWINDOW,
-			L"MainWindow",
-			NULL,
-			WS_POPUP,
-			CW_USEDEFAULT, CW_USEDEFAULT,
-			WindowRect.right - WindowRect.left,
-			WindowRect.bottom - WindowRect.top,
-			NULL, NULL, mHInstance, NULL
-		);
+	HWND window = CreateWindowEx(
+		WS_EX_APPWINDOW,
+		L"MainWindow",
+		NULL,
+		WS_POPUP,
+		CW_USEDEFAULT, CW_USEDEFAULT,
+		WindowRect.right - WindowRect.left,
+		WindowRect.bottom - WindowRect.top,
+		NULL, NULL, mHInstance, NULL
+	);
 
 #else
 
-		RECT WindowRect{ 0, 0, mWidth, mHeight };
-		AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
+	RECT WindowRect{ 0, 0, mWidth, mHeight };
+	AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
 
-		HWND window = CreateWindowEx(
-			mWindowStyleEx,
-			L"MainWindow",
-			mTitle.c_str(),
-			mWindowStyle,
-			CW_USEDEFAULT, CW_USEDEFAULT,
-			WindowRect.right - WindowRect.left,
-			WindowRect.bottom - WindowRect.top,
-			NULL, NULL, mHInstance, NULL
-		);
+	HWND window = CreateWindowEx(
+		mWindowStyleEx,
+		L"MainWindow",
+		mTitle.c_str(),
+		mWindowStyle,
+		CW_USEDEFAULT, CW_USEDEFAULT,
+		WindowRect.right - WindowRect.left,
+		WindowRect.bottom - WindowRect.top,
+		NULL, NULL, mHInstance, NULL
+	);
 
 #endif
 
-		long left = (GetSystemMetrics(SM_CXSCREEN) - LOGO_WIDTH) >> 1,
-			top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
-		// center the window
-		SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
+	long left = (GetSystemMetrics(SM_CXSCREEN) - LOGO_WIDTH) >> 1,
+		top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
 
-		mWindows.EmplaceBack(window);
-//		mWindows[0].ShowCursor(EDITOR);
+	// center the window
+	SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
 
-//		ShowWindow(window, SW_SHOW);
-//		UpdateWindow(window);
-	}
+	mWindows.EmplaceBack(window);
+//	mWindows[0].ShowCursor(EDITOR);
 
-	bool WindowManager::Init(void)
-	{
+//	ShowWindow(window, SW_SHOW);
+//	UpdateWindow(window);
+}
+
+bool Dystopia::WindowManager::Init(void)
+{
 #if EDITOR
 
-		std::fprintf(stdout, "Window System: Screen Resolution %dx%d, Main window size %dx%d\n", 
-			GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), mWidth, mHeight);
+	std::fprintf(stdout, "Window System: Screen Resolution %dx%d, Main window size %dx%d\n", 
+		GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), mWidth, mHeight);
 
 #endif
 
-		return true;
-	}
+	return true;
+}
 
-	void WindowManager::PostInit(void)
+void Dystopia::WindowManager::PostInit(void)
+{
+	this->DestroySplash();
+
+	mWidth  = GetSystemMetrics(SM_CXSCREEN);
+	mHeight = GetSystemMetrics(SM_CYSCREEN);
+}
+
+void Dystopia::WindowManager::Update(float)
+{
+	MSG msg;
+	for (Window& w : mWindows)
 	{
-		this->DestroySplash();
+		auto& inputQueue = const_cast<Queue<eButton>&>(w.GetInputQueue());
+		inputQueue.clear();
 
-		mWidth  = GetSystemMetrics(SM_CXSCREEN);
-		mHeight = GetSystemMetrics(SM_CYSCREEN);
-	}
-
-	void WindowManager::Update(float)
-	{
-		MSG msg;
-		for (Window& w : mWindows)
+		while (!inputQueue.IsFull() && PeekMessage(&msg, w.GetWindowHandle(), 0, 0, PM_REMOVE))
 		{
-			auto& inputQueue = const_cast<Queue<eButton>&>(w.GetInputQueue());
-			inputQueue.clear();
+			TranslateMessage(&msg);
 
-			while (!inputQueue.IsFull() && PeekMessage(&msg, w.GetWindowHandle(), 0, 0, PM_REMOVE))
+			switch (msg.message)
 			{
-				TranslateMessage(&msg);
-
-				switch (msg.message)
-				{
-				case WM_KEYDOWN:
-				case WM_SYSKEYDOWN:
-					inputQueue.Insert(static_cast<eButton>(msg.wParam));
-					break;
-				case WM_KEYUP:
-				case WM_SYSKEYUP:
-				default:
-					break;
-				}
-
-				DispatchMessage(&msg);
+			case WM_KEYDOWN:
+			case WM_SYSKEYDOWN:
+				inputQueue.Insert(static_cast<eButton>(msg.wParam));
+				break;
+			case WM_KEYUP:
+			case WM_SYSKEYUP:
+			default:
+				break;
 			}
+
+			DispatchMessage(&msg);
 		}
 	}
+}
 
-	void WindowManager::Shutdown(void)
-	{
-	#if _COMMANDPROMPT
-		FreeConsole();
-	#endif
+void Dystopia::WindowManager::Shutdown(void)
+{
+#if _COMMANDPROMPT
+	FreeConsole();
+#endif
 
-		//PostQuitMessage(0);
-	}
+	//PostQuitMessage(0);
+}
 
-	void WindowManager::LoadDefaults(void)
-	{
-		mbFullscreen	= DEFAULT_FULLSCREEN;
-		mWindowStyle	= DEFAULT_WINDOWSTYLE;
-		mWindowStyleEx	= DEFAULT_WINDOWSTYLE_EX;
-		mWidth			= DEFAULT_WIDTH;
-		mHeight			= DEFAULT_HEIGHT;
-	}
+void Dystopia::WindowManager::LoadDefaults(void)
+{
+	mbFullscreen	= DEFAULT_FULLSCREEN;
+	mWindowStyle	= DEFAULT_WINDOWSTYLE;
+	mWindowStyleEx	= DEFAULT_WINDOWSTYLE_EX;
+	mWidth			= DEFAULT_WIDTH;
+	mHeight			= DEFAULT_HEIGHT;
+}
 
-	void WindowManager::LoadSettings(TextSerialiser&)
-	{
+void Dystopia::WindowManager::LoadSettings(TextSerialiser&)
+{
 
-	}
+}
 
-	void WindowManager::ToggleFullscreen(bool _bFullscreen)
-	{
-		mbFullscreen = _bFullscreen;
-	}
+void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
+{
+	mbFullscreen = _bFullscreen;
+}
 
-	void WindowManager::ShowCursor(bool _bShow) const
-	{
-		for (Window& w : mWindows)
-			w.ShowCursor(_bShow);
-	}
+void Dystopia::WindowManager::ShowCursor(bool _bShow) const
+{
+	for (Window& w : mWindows)
+		w.ShowCursor(_bShow);
+}
 
-	Window& WindowManager::GetMainWindow(void) const
-	{
-		return const_cast<Window&>(mWindows[0]);
-	}
+Dystopia::Window& Dystopia::WindowManager::GetMainWindow(void) const
+{
+	return const_cast<Window&>(mWindows[0]);
+}
 
-	void WindowManager::GetSplashDimensions(int & w, int & h)
-	{
-		w = LOGO_WIDTH;
-		h = LOGO_HEIGHT;
-	}
+void Dystopia::WindowManager::GetSplashDimensions(int & w, int & h)
+{
+	w = LOGO_WIDTH;
+	h = LOGO_HEIGHT;
+}
 
-	void WindowManager::DestroySplash(void)
-	{
-		mWindows[0].Hide();
+void Dystopia::WindowManager::DestroySplash(void)
+{
+	mWindows[0].Hide();
 
-		mWindows[0].SetStyle(mWindowStyle, mWindowStyleEx);
-		mWindows[0].SetSize(mWidth, mHeight);
-		mWindows[0].CenterWindow();
+	mWindows[0].SetStyle(mWindowStyle, mWindowStyleEx);
+	mWindows[0].SetSize(mWidth, mHeight);
+	mWindows[0].CenterWindow();
 
-		mWindows[0].Show();
-	}
-
+	mWindows[0].Show();
 }
 
 

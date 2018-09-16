@@ -40,7 +40,7 @@ namespace Dystopia
 		void SetHeight(unsigned) noexcept;
 		void SetType(unsigned) noexcept;
 
-		unsigned GetTexture(void) const noexcept;
+		unsigned GetID(void) const noexcept;
 
 	private:
 

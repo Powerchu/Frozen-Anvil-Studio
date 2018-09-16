@@ -118,6 +118,7 @@
     <ClInclude Include="Include\System\Profiler\ProfileInfo.h" />
     <ClInclude Include="Include\System\Profiler\Profiler.h" />
     <ClInclude Include="Include\System\Profiler\ProfilerAction.h" />
+    <ClInclude Include="Include\System\SystemMessage.h" />
     <ClInclude Include="Include\System\Time\ScopedTimer.h" />
     <ClInclude Include="Include\System\Time\TimeDefs.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
