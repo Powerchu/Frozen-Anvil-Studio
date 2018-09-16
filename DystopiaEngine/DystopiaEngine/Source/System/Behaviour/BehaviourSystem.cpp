@@ -42,8 +42,15 @@ bool Dystopia::BehaviourSystem::Init(void)
 		using fpClone = Behaviour * (*) ();
 		fpClone BehaviourClone = elem.GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>(elem.GetDllName()) + L"Clone");
 
-		if(BehaviourClone)
-			mvBehaviourReferences.Emplace(BehaviourClone());
+		if (BehaviourClone)
+		{
+			BehaviourWrap wrap;
+			std::wstring name = FileSys->RemoveFileExtension<std::wstring>(elem.GetDllName());
+			wrap.mName = std::string{ name.begin(), name.end() };
+			wrap.mpBehaviour = CreateShared<Behaviour>(BehaviourClone());
+			mvBehaviourReferences.Emplace(wrap);
+		}
+			//mvBehaviourReferences.Emplace(BehaviourClone());
 	}
 #endif
 	
@@ -63,10 +70,28 @@ void Dystopia::BehaviourSystem::Update(float)
 #if EDITOR
 	/*Update Hotloader*/
 	mHotloader.Update();
+	DLLWrapper* arr[100]{ nullptr };
 	/*Check Hotloader for changes in the Dll file*/
-	if (mHotloader.ChangesInDllFolder())
+	if (mHotloader.ChangesInDllFolder(100, arr))
 	{
-
+		FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
+		DLLWrapper** start = arr;
+		while (start != nullptr)
+		{
+			std::string DllName = std::string{ (*start)->GetDllName().begin(), (*start)->GetDllName().end() };
+			for (auto & elem : mvBehaviourReferences)
+			{
+				if (DllName == elem.mName)
+				{
+					using fpClone = Behaviour * (*) ();
+					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>((*start)->GetDllName()) + L"Clone");
+					if (BehaviourClone)
+						elem.mpBehaviour = CreateShared<Behaviour>(BehaviourClone());
+				}
+					
+			}
+			++start;
+		}
 	}
 
 #endif
@@ -78,8 +103,8 @@ void Dystopia::BehaviourSystem::PostUpdate(void)
 
 void Dystopia::BehaviourSystem::Shutdown(void)
 {
-	for (auto const & elem : mvBehaviourReferences)
-		delete elem;
+	//for (auto const & elem : mvBehaviourReferences)
+		//delete elem;
 }
 
 void Dystopia::BehaviourSystem::LoadDefaults(void)
