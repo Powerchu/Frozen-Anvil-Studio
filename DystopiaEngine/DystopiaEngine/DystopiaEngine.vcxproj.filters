@@ -184,10 +184,11 @@
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp">
       <Filter>Game Engine\SubSystems\Logger</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
     <ClCompile Include="Source\Editor\DefaultFactory.cpp">
       <Filter>Editor\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\CommandList.cpp">
+      <Filter>Editor\Commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -494,8 +495,6 @@
     <ClInclude Include="Include\System\Logger\LoggerSystem.h">
       <Filter>Game Engine\SubSystems\Logger</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
     <ClInclude Include="Include\Editor\EditorMetaHelpers.h">
       <Filter>Editor\AuxMetaHelpers</Filter>
     </ClInclude>

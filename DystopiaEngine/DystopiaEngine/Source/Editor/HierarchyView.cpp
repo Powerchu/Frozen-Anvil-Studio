@@ -162,7 +162,7 @@ namespace Dystopia
 			{
 				strcpy_s(mSearchTextPrevFrame, "");
 				GameObject* p = Factory::CreateGameObj("GameObject");
-				GetCommandHND()->InvokeCommand(new ComdInsertObject{ p, GetCurrentScene() });
+				GetCommandHND()->InvokeCommandInsert(*p, *GetCurrentScene());
 			}
 
 			if (EGUI::Display::SelectableTxt("Camera"))
@@ -199,7 +199,7 @@ namespace Dystopia
 			}
 			if (EGUI::Display::SelectableTxt("Delete"))
 			{
-
+				GetCommandHND()->InvokeCommandDelete(_obj, *GetCurrentScene());
 			}
 			ImGui::EndPopup();
 		}

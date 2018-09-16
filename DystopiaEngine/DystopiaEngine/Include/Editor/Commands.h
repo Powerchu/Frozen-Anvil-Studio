@@ -38,7 +38,9 @@ namespace Dystopia
 		//{
 		//	  InvokeCommand(new ComdModifyValue<T>{ _var, _newVal });
 		//}
-		
+		void InvokeCommandInsert(GameObject&, Scene&);
+		void InvokeCommandDelete(GameObject&, Scene&);
+
 		template<class Component, typename T>
 		void InvokeCommand(const uint64_t& _id, T* _var, const T& _oldVal)
 		{

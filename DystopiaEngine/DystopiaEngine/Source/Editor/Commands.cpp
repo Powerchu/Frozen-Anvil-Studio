@@ -12,6 +12,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Editor\Commands.h"
+
+#include "System\Scene\Scene.h"
+#include "Object\GameObject.h"
+
 #include "..\..\Dependancies\ImGui\imgui.h"
 #include <typeinfo>
 
@@ -133,6 +137,16 @@ namespace Dystopia
 	bool CommandHandler::IsRecording() const
 	{
 		return mRecording;
+	}
+
+	void CommandHandler::InvokeCommandInsert(GameObject& _pObj, Scene& _pScene)
+	{
+		InvokeCommand(new ComdInsertObject{&_pObj, &_pScene});
+	}
+
+	void CommandHandler::InvokeCommandDelete(GameObject& _pObj, Scene& _pScene) 
+	{
+		InvokeCommand(new ComdDeleteObject{ &_pObj, &_pScene });
 	}
 }
 

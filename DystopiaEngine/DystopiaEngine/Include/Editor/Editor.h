@@ -31,6 +31,7 @@ namespace Dystopia
 	class SceneSystem;
 	class Timer;
 	class Profiler;
+	class GameObject;
 	//class Scene;
 	enum ePayloadTags;
 

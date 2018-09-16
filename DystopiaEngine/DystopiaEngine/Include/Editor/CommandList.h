@@ -15,13 +15,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _COMMAND_LIST_H_
 #define _COMMAND_LIST_H_
 
-#include "System\Scene\Scene.h"
 #include "Editor.h"
 #include <tuple>
 #include <utility>
 
 namespace Dystopia
 {
+	class Scene;
+	class GameObject;
 	struct Commands
 	{
 		virtual bool ExecuteDo() = 0;
@@ -38,41 +39,29 @@ namespace Dystopia
 
 	struct ComdInsertObject : Commands
 	{
-		ComdInsertObject(GameObject* _pObj, Scene * _pScene)
-			: mObjID{ _pObj->GetID() }, mpObj{ _pObj }, mpScene{ _pScene }
-		{}
+		ComdInsertObject(GameObject* _pObj, Scene * _pScene);
+		~ComdInsertObject();
+		bool ExecuteDo() override;
+		bool ExecuteUndo() override;
+		bool Unchanged() const;
 
-		~ComdInsertObject()
-		{
-			if (mpObj) delete mpObj;
-		}
-
-		bool ExecuteDo() override
-		{
-			GameObject* p = mpScene->FindGameObject(mObjID);
-			if (p) return false;
-
-			mpScene->GetAllGameObjects().EmplaceBack(Utility::Move(*mpObj));
-			delete mpObj;
-			mpObj = nullptr;
-			return true;
-		}
-
-		bool ExecuteUndo() override
-		{
-			GameObject* p = mpScene->FindGameObject(mObjID);
-			if (!p) return false;
-
-			if (Editor::GetInstance()->GetCurrentFocusGameObj() == p)
-				Editor::GetInstance()->RemoveFocus();
-
-			mpObj = p->Duplicate();
-			mpScene->GetAllGameObjects().FastRemove(p);
-			return true;
-		}
-
-		bool Unchanged() const { return false; }
 	private:
+		bool mFocusBack;
+		uint64_t mObjID;
+		GameObject *mpObj;
+		Scene *mpScene;
+	};
+
+	struct ComdDeleteObject : Commands
+	{
+		ComdDeleteObject(GameObject* _pObj, Scene * _pScene);
+		~ComdDeleteObject();
+		bool ExecuteDo() override;
+		bool ExecuteUndo() override;
+		bool Unchanged() const;
+
+	private:
+		bool mFocusBack;
 		uint64_t mObjID;
 		GameObject *mpObj;
 		Scene *mpScene;

@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Camera\CameraSystem.h"
+#include "System\Scene\Scene.h"
 #include "Component\Camera.h"
 
 namespace Dystopia
