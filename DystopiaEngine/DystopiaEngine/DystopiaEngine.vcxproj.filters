@@ -511,6 +511,9 @@
     <ClInclude Include="Include\System\SystemMessage.h">
       <Filter>Game Engine\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Input\MouseData.h">
+      <Filter>Game Engine\Systems\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

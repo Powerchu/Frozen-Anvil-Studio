@@ -25,6 +25,7 @@ typedef struct HWND__* HWND;
 namespace Dystopia
 {
 	class Window;
+	struct MouseData;
 
 	class WindowManager : public Systems
 	{
@@ -56,6 +57,8 @@ namespace Dystopia
 		inline int GetScreenHeight(void) const noexcept;
 
 		Window& GetMainWindow(void) const;
+
+		void RegisterMouseData(MouseData*);
 
 	private:
 

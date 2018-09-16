@@ -113,6 +113,7 @@
     <ClInclude Include="Include\System\Base\ComponentDonor.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Graphics\Framebuffer.h" />
+    <ClInclude Include="Include\System\Input\MouseData.h" />
     <ClInclude Include="Include\System\Logger\LoggerSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
     <ClInclude Include="Include\System\Profiler\ProfileInfo.h" />

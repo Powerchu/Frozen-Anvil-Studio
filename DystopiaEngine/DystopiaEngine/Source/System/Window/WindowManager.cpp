@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\Window.h"
 #include "System\SystemMessage.h"
 #include "System\Driver\Driver.h"
+#include "System\Input\MouseData.h"
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
@@ -37,6 +38,8 @@ namespace
 	constexpr int	DEFAULT_HEIGHT			= 900;
 	constexpr int	LOGO_WIDTH				= 600;
 	constexpr int	LOGO_HEIGHT				= 400;
+
+	Dystopia::MouseData* pMouse = nullptr;
 
 	LRESULT WINAPI MessageProcessor(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
@@ -66,6 +69,10 @@ namespace
 		case WM_CLOSE:
 			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::QUIT);
 			return 0;
+
+		case WM_MOUSEWHEEL:
+			if (pMouse)
+				pMouse->mnWheel = GET_WHEEL_DELTA_WPARAM(wParam);
 
 		default:
 			break;
@@ -252,6 +259,11 @@ void Dystopia::WindowManager::ShowCursor(bool _bShow) const
 {
 	for (Window& w : mWindows)
 		w.ShowCursor(_bShow);
+}
+
+void Dystopia::WindowManager::RegisterMouseData(MouseData* _pMouse)
+{
+	pMouse = _pMouse;
 }
 
 Dystopia::Window& Dystopia::WindowManager::GetMainWindow(void) const

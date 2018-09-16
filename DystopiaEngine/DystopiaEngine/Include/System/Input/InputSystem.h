@@ -14,11 +14,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _INPUT_MANAGER_H_
 #define _INPUT_MANAGER_H_
 
-#include "System\Base\Systems.h"   // Base Class
-#include "DataStructure\Array.h"   // Array
-#include "Math\Vector2.h"          // Vector2
-#include "Math\Vector4.h"		   // Vector4
+#include "System\Base\Systems.h"    // Base Class
+#include "DataStructure\Array.h"    // Array
+#include "Math\Vector2.h"           // Vector2
+#include "Math\Vector4.h"		    // Vector4
 #include "System\Input\InputMap.h"
+#include "System\Input\MouseData.h"
 
 namespace Dystopia
 {
@@ -40,12 +41,14 @@ namespace Dystopia
 		
 		void MapUserButton(eUserButton, eButton);
 
-		bool IsKeyTriggered(eUserButton);
-		bool IsKeyPressed(eUserButton);
-		bool IsKeyReleased(eUserButton);
+		bool IsKeyTriggered(eUserButton) const noexcept;
+		bool IsKeyPressed(eUserButton) const noexcept;
+		bool IsKeyReleased(eUserButton) const noexcept;
 
-		Math::Vector2 GetMousePosition(void);
-		Math::Vector2 GetMousePosition(const Window&);
+		Math::Vector2 GetMousePosition(void) const;
+		Math::Vector2 GetMousePosition(const Window&) const;
+		Math::Vector2 GetMouseDelta(void) const noexcept;
+		float GetMouseWheel(void) const noexcept;
 
 	private:
 
@@ -60,6 +63,7 @@ namespace Dystopia
 			KeyBinding& operator = (eButton);
 		};
 
+		MouseData mMouseInput;
 		Array<KeyBinding, eUserButton::TOTAL_USERBUTTONS> mButtonMap;
 		
 		void LoadDefaultUserKeys(void);
