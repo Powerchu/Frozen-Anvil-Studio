@@ -189,6 +189,9 @@
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp">
       <Filter>Game Engine\SubSystems\Logger</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Graphics\Framebuffer.cpp">
+      <Filter>Game Engine\Systems\Graphic\Framebuffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -268,9 +271,6 @@
     </ClInclude>
     <ClInclude Include="Include\Math\Quaternion.h">
       <Filter>Math\Quaternion</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\GraphicsDefs.h">
-      <Filter>Game Engine\Systems\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\Shader.h">
       <Filter>Game Engine\Systems\Graphic\Shader</Filter>
@@ -501,6 +501,12 @@
     </ClInclude>
     <ClInclude Include="Include\System\Logger\LoggerSystem.h">
       <Filter>Game Engine\SubSystems\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\Framebuffer.h">
+      <Filter>Game Engine\Systems\Graphic\Framebuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\GraphicsDefs.h">
+      <Filter>Game Engine\Systems\Graphic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -752,6 +758,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\File">
       <UniqueIdentifier>{845f6b31-e949-414f-88d7-9fec6ab7613f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Framebuffer">
+      <UniqueIdentifier>{65da04fa-f08d-4a05-8517-ee74099485c3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

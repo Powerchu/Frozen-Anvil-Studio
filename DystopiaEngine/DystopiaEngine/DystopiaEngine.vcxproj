@@ -31,6 +31,7 @@
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
+    <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
     <ClCompile Include="Source\Editor\ConsoleDebugger.cpp" />
@@ -111,6 +112,7 @@
     <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
+    <ClInclude Include="Include\System\Graphics\Framebuffer.h" />
     <ClInclude Include="Include\System\Logger\LoggerSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
     <ClInclude Include="Include\System\Profiler\ProfileInfo.h" />
