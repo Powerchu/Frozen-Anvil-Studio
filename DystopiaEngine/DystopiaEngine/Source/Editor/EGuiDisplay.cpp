@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\EGUI.h"
 #include "Editor\Commands.h"
 #include "Editor\CommandList.h"
+#include "Editor\EditorInputs.h"
 #include <stdlib.h>
 #include <iostream>
 
@@ -27,6 +28,11 @@ namespace EGUI
 	void SetContext(Dystopia::CommandHandler *_pContext)
 	{
 		gContextComdHND = _pContext;
+	}
+
+	Dystopia::CommandHandler* GetCommandHND()
+	{
+		return gContextComdHND;
 	}
 
 	void RemoveContext()
@@ -209,7 +215,6 @@ namespace EGUI
 
 		bool CheckBox(const std::string& _label, bool* _outputBool, bool _showLabel)
 		{
-			bool changed = false;
 			if (_showLabel)
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
@@ -217,68 +222,46 @@ namespace EGUI
 				SameLine(DefaultAlighnmentSpacing);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
-			if (ImGui::Checkbox(("###CheckBox" + _label).c_str(), _outputBool))
-			{
-				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
-				{
-					gContextComdHND->StartRecording(_outputBool);
-				}
-				changed = true;
-			}
-			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
-			{
-				gContextComdHND->EndRecording();
-			}
-			return changed;
+			return ImGui::Checkbox(("##CheckBox" + _label).c_str(), _outputBool);
 		}
 
-		bool DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max)
+		eDragStatus DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText)
 		{
-			bool changed = false;
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
-			Label(_label.c_str());
-			SameLine(DefaultAlighnmentSpacing);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
-			if (ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max))
+			if (!_hideText)
 			{
-				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
-				{
-					gContextComdHND->StartRecording(_outputFloat);
-				}
-				changed = true;
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label.c_str());
+				SameLine(DefaultAlighnmentSpacing);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
-			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
-			{
-				gContextComdHND->EndRecording();
-			}
-			return changed;
+			bool changing = false;
+			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max);
+
+			if (ImGui::IsItemClicked()) return eDragStatus::eSTART_DRAG;
+			if (ImGui::IsItemDeactivatedAfterChange()) return eDragStatus::eEND_DRAG;
+			return (changing) ? eDragStatus::eDRAGGING : eDragStatus::eNO_CHANGE;
 		}
 
-		bool DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max)
+		eDragStatus DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max, bool _hideText)
 		{
-			bool changed = false;
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
-			Label(_label.c_str());
-			SameLine(DefaultAlighnmentSpacing);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
-			if (ImGui::DragInt(("###DragInt" + _label).c_str(), _outputInt, _dragSpeed, _min, _max))
+			if (!_hideText)
 			{
-				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
-				{
-					gContextComdHND->StartRecording(_outputInt);
-				}
-				changed = true;
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label.c_str());
+				SameLine(DefaultAlighnmentSpacing);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
-			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
-			{
-				gContextComdHND->EndRecording();
-			}
-			return changed;
+
+			bool changing = false;
+			changing = ImGui::DragInt(("###DragInt" + _label).c_str(), _outputInt, _dragSpeed, _min, _max);
+
+			if (ImGui::IsItemClicked()) return eDragStatus::eSTART_DRAG;
+			if (ImGui::IsItemDeactivatedAfterChange()) return eDragStatus::eEND_DRAG;
+			return (changing) ? eDragStatus::eDRAGGING : eDragStatus::eNO_CHANGE;
 		}
 
-		bool VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
+		eDragStatus VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
 		{
-			bool changed = false;
 			std::string field1 = "##VecFieldX", field2 = "##VecFieldY", field3 = "##VecFieldZ";
 			float x, y, z;
 			x = _outputVec->x;
@@ -292,49 +275,31 @@ namespace EGUI
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
 			SameLine(DefaultAlighnmentSpacing);
-			Label("X:");
-			SameLine();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
-			if (ImGui::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max))
-			{
-				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
-				{
-					gContextComdHND->StartRecording(&_outputVec->x);
-				}
-				_outputVec->x = x;
-				changed = true;
-			}
-			SameLine();
-			Label("Y:");
-			SameLine();
-			if (ImGui::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max))
-			{
-				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
-				{
-					gContextComdHND->StartRecording(&_outputVec->y);
-				}
-				_outputVec->y = y;
-				changed = true;
-			}
-			SameLine();
-			Label("Z:");
-			SameLine();
-			if (ImGui::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max))
-			{
-				if (gContextComdHND && !gContextComdHND->IsRecording() && ImGui::IsMouseDown(0))
-				{
-					gContextComdHND->StartRecording(&_outputVec->z);
-				}
-				changed = true;
-				_outputVec->z = z;
-			}
-			ImGui::PopItemWidth();
-			if (gContextComdHND && gContextComdHND->IsRecording() && !ImGui::IsMouseDown(0))
-			{
-				gContextComdHND->EndRecording();
-			}
 
-			return changed;
+			Label("X:"); SameLine();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true);
+			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = x;
+
+			SameLine(); Label("Y:"); SameLine();
+			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true);
+			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
+
+			SameLine(); Label("Z:"); SameLine();
+			eDragStatus statZ = EGUI::Display::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max, true);
+			if (statZ != eDragStatus::eNO_CHANGE) _outputVec->z = z;
+
+			ImGui::PopItemWidth();
+
+			return (statX == eSTART_DRAG) ? eSTART_DRAG :
+				   (statY == eSTART_DRAG) ? eSTART_DRAG :
+				   (statZ == eSTART_DRAG) ? eSTART_DRAG :
+				   (statX == eEND_DRAG) ? eEND_DRAG :
+				   (statY == eEND_DRAG) ? eEND_DRAG :
+				   (statZ == eEND_DRAG) ? eEND_DRAG :
+				   (statX == eDRAGGING) ? eDRAGGING :
+				   (statY == eDRAGGING) ? eDRAGGING :
+				   (statZ == eDRAGGING) ? eDRAGGING : eNO_CHANGE;
 		}
 
 		bool CollapsingHeader(const std::string& _label)
@@ -410,7 +375,7 @@ namespace EGUI
 		{
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 			{
-				ImGui::SetDragDropPayload(EGUI::ToString(_tagLoad), _pData, _dataSize);
+				ImGui::SetDragDropPayload(EGUI::GetPayloadString(_tagLoad), _pData, _dataSize);
 				ImGui::Text("%s", _toolTip.c_str());
 				return true;
 			}

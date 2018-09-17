@@ -17,14 +17,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ScriptFormatter.h"
 #include "Editor\Commands.h"
 #include "Editor\EditorEvents.h"
+#include "Editor\EditorMetaHelpers.h"
 #include "Utility\ComponentGUID.h"
-#include "Object\GameObject.h"
 #include <iostream>
 
 namespace Dystopia
 {
 	static Inspector* gpInstance = 0;
-
 	Inspector* Inspector::GetInstance()
 	{
 		if (gpInstance) return gpInstance;
@@ -34,7 +33,7 @@ namespace Dystopia
 	}
 
 	Inspector::Inspector()
-		: EditorTab{ true }, mpFocus{ nullptr }, mLabel{ "Inspector" }
+		: EditorTab{ true }, mpFocus{ nullptr }, mLabel{ "Inspector" }, mShowListOfComponents{ false }
 	{
 	}
 
@@ -45,7 +44,6 @@ namespace Dystopia
 
 	void Inspector::Init()
 	{
-		
 	}
 
 	void Inspector::Update(const float& _dt)
@@ -102,7 +100,6 @@ namespace Dystopia
 
 	void Inspector::GameObjectDetails()
 	{
-		static bool checked = true;
 		static int i = 0;
 		static int j = 0;
 		AutoArray<std::string> arr;
@@ -122,7 +119,11 @@ namespace Dystopia
 		EGUI::SameLine(10);
 		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 50 }, false, Math::Vec4{ 0,0,0,0 }))
 		{
-			EGUI::Display::CheckBox("GameObjActive", &checked, false);
+			bool prevV = mpFocus->mTestBool;
+			if (EGUI::Display::CheckBox("GameObjActive", &mpFocus->mTestBool, false))
+			{
+				GetCommandHND()->InvokeCommand<GameObject>(mpFocus->GetID(), &mpFocus->mTestBool, prevV);
+			}
 			EGUI::SameLine();
 			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 350.f) && strlen(buffer))
 			{
@@ -135,6 +136,26 @@ namespace Dystopia
 			EGUI::ChangeAlignmentYOffset(0);
 			EGUI::Display::DropDownSelection("Layer", j, arr2, 100);
 			EGUI::ChangeAlignmentYOffset();
+
+			switch (EGUI::Display::DragFloat("Test Float", &mpFocus->mTestFloat, 0.01f, -FLT_MAX, FLT_MAX))
+			{
+			case EGUI::eDragStatus::eSTART_DRAG: 
+				GetCommandHND()->StartRecording<GameObject>(mpFocus->GetID(), &mpFocus->mTestFloat);
+				break;
+			case EGUI::eDragStatus::eEND_DRAG: 
+				GetCommandHND()->EndRecording();
+				break;
+			}
+
+			switch (EGUI::Display::DragInt("Test Int", &mpFocus->mTestInt, 1.f, -INT_MAX, INT_MAX))
+			{
+			case EGUI::eDragStatus::eSTART_DRAG:
+				GetCommandHND()->StartRecording<GameObject>(mpFocus->GetID(), &mpFocus->mTestInt);
+				break;
+			case EGUI::eDragStatus::eEND_DRAG:
+				GetCommandHND()->EndRecording();
+				break;
+			}
 		}
 		EGUI::EndChild();
 	}
@@ -142,12 +163,25 @@ namespace Dystopia
 	void Inspector::GameObjectComponents()
 	{
 		EGUI::Display::HorizontalSeparator();
+
 		Transform& tempTransform = *mpFocus->GetComponent<Transform>();
-		if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName() + "##" + 
-										 std::to_string(mpFocus->GetID())))
+		if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName() + "##" +
+			std::to_string(mpFocus->GetID())))
 		{
 			tempTransform.EditorUI();
 			EGUI::Display::EndTreeNode();
+		}
+
+		auto arrComp = mpFocus->GetAllComponents();
+		for (const auto& c : arrComp)
+		{
+			EGUI::Display::HorizontalSeparator();
+			if (EGUI::Display::StartTreeNode(c->GetEditorName() + "##" +
+				std::to_string(mpFocus->GetID())))
+			{
+				c->EditorUI();
+				EGUI::Display::EndTreeNode();
+			}
 		}
 	}
 
@@ -168,35 +202,48 @@ namespace Dystopia
 
 	void Inspector::AddComponentButton()
 	{
-		EGUI::Display::HorizontalSeparator();
-		static const Math::Vec2 btnSize{250, 20};
+		static constexpr Math::Vec2 btnSize{ 250, 20 };
 		float mid = Size().x / 2;
 		float inde = mid - (btnSize.x / 2);
 		inde = (inde < 20) ? 20 : inde;
+
+		EGUI::Display::HorizontalSeparator();
 		EGUI::Indent(inde);
 		if (EGUI::Display::Button("Add Component", btnSize))
 		{
 			EGUI::Display::OpenPopup("Inspector Component List", false);
 		}
-		if (EGUI::Display::Button("Add Behaviour", btnSize))
-		{
-			if (GenerateScript("Whatever", "Tan Shannon", "t.shannon"))
-				std::cout << "Script Added to the visual studio project. Please arrange the filters and code in visual then come back to test it!\n";
-			else
-				std::cout << "Script already Exists! Aborted!\n";
-		}
+		//if (EGUI::Display::Button("Add Behaviour", btnSize))
+		//{
+		//	if (GenerateScript("Whatever", "Tan Shannon", "t.shannon"))
+		//		std::cout << "Script Added to the visual studio project. Please arrange the filters and code in visual then come back to test it!\n";
+		//	else
+		//		std::cout << "Script already Exists! Aborted!\n";
+		//}
 		EGUI::UnIndent(inde);
 		ComponentsDropDownList();
 	}
 
 	void Inspector::ComponentsDropDownList()
 	{
-		std::string components[5] = { "Com1", "Com2", "Com3", "Com4", "Com5" };
+		static constexpr size_t numComponents = Utility::SizeofList<AllComponents>::value;
+		Array<std::string, numComponents> arr;
+		ListOfComponentsName<std::make_index_sequence<numComponents>, AllComponents>::Extract(arr);
+
 		if (EGUI::Display::StartPopup("Inspector Component List"))
 		{
 			EGUI::Display::Dummy(235, 2);
-			for (const auto& e : components)
-				EGUI::Display::SelectableTxt(e, false);
+			for (unsigned int i = 0; i < numComponents; ++i)
+			{
+				const auto& e = arr[i];
+				if (EGUI::Display::SelectableTxt(e, false))
+				{
+					ListOfComponents a;
+					Component* pComp = a.Get(i);
+					pComp->Init();
+					mpFocus->AddComponent(pComp, typename Component::TAG{});
+				}
+			}
 
 			EGUI::Display::EndPopup();
 		}

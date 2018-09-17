@@ -36,7 +36,7 @@ namespace Dystopia
 		for (unsigned int i = 0; i < EDITOR_EVENT_LAST; ++i)
 		{
 			std::string eventName = name;
-			eventName += i;
+			eventName += std::to_string(i);
 			mEventsMap[i].mEventID = mpEventSystem->CreateEvent(eventName.c_str());
 			mEventsMap[i].mEventEnum = static_cast<eEditorEvents>(i);
 		}

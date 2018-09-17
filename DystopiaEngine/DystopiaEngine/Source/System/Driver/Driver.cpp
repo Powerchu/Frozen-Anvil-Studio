@@ -14,15 +14,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 
 #include "Globals.h"
-#include "System\Time\Timer.h"
 #include "IO\TextSerialiser.h"
 #include "Utility\MetaAlgorithms.h"
 #include "Utility\MetaDataStructures.h"
 #include "DataStructure\Array.h"
+#include "DataStructure\Queue.h"
+#include "DataStructure\AutoArray.h"
 
 // Systems
 #include "System\Time\TimeSystem.h"
-#include "System\Time\ScopedTimer.h"
 #include "System\Scene\SceneSystem.h"
 #include "System\Input\InputSystem.h"
 #include "System\Sound\SoundSystem.h"
@@ -36,8 +36,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 // SubSystems
 #include "System\Graphics\MeshSystem.h"
-#include "System/File/FileSystem.h"
+#include "System\File\FileSystem.h"
 #include "System\Logger\LoggerSystem.h"
+
+#include "System\Time\Timer.h"
+#include "System\Time\ScopedTimer.h"
+
+#define SETTINGS_FILE "settings.dyst"
 
 
 
@@ -99,18 +104,19 @@ Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mTime{}, mSystemList{ Utility::SizeofList<AllSys>::value },
+	mTime{}, mTimeFixed{}, mMessageQueue{60}, mSystemList{ Utility::SizeofList<AllSys>::value },
 	mSystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) },
 	mSubSystems { MakeAutoArray<void*>(Utility::MakeTypeList_t<Utility::TypeList, SubSys>{}) }
 {
 	using SanityCheck = typename ErrorOnDuplicate<AllSys>::eval;
 }
 
+
 void Dystopia::EngineCore::LoadSettings(void)
 {
 	if (false)
 	{
-
+		auto file = Serialiser::OpenFile<TextSerialiser>(SETTINGS_FILE);
 	}
 	else
 	{
@@ -118,6 +124,7 @@ void Dystopia::EngineCore::LoadSettings(void)
 			e->LoadDefaults();
 	}
 }
+
 
 void Dystopia::EngineCore::Init(void)
 {
@@ -196,6 +203,30 @@ void Dystopia::EngineCore::Shutdown(void)
 	mSystemList.clear();
 	mSystemTable.clear();
 }
+
+
+void Dystopia::EngineCore::BroadcastMessage(const eSysMessage& _Message)
+{
+	mMessageQueue.Insert(_Message);
+}
+
+void Dystopia::EngineCore::SendMessage(void)
+{
+	for (auto& m : mMessageQueue)
+	{
+		ParseMessage(m);
+
+		for (auto& e : mSystemList)
+			e->ReceiveMessage(m);
+	}
+
+	mMessageQueue.clear();
+}
+
+void Dystopia::EngineCore::ParseMessage(const eSysMessage&)
+{
+}
+
 
 #if !EDITOR
 

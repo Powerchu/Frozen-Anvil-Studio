@@ -14,11 +14,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GRAPHICS_SYS_H_
 #define _GRAPHICS_SYS_H_
 
-#include "System\Base\Systems.h"		// System
+#include "System\Base\Systems.h"		 // System
 #include "System\Base\ComponentDonor.h"
+#include "System\Graphics\Framebuffer.h"
 
 #include <string>
 #include <map>
+#include "DataStructure\AutoArray.h"
 
 
 namespace Dystopia
@@ -28,6 +30,16 @@ namespace Dystopia
 	class Texture;
 	class Shader;
 	class Renderer;
+
+	struct TextureInfo
+	{
+		TextureInfo(const uint64_t&  _id, float _x, float _y)
+			: mID{ _id }, x{ _x }, y{ _y }
+		{}
+		uint64_t mID;
+		float x;
+		float y;
+	};
 
 	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>
 	{
@@ -68,17 +80,20 @@ namespace Dystopia
 		static const int& GetDrawMode(void) noexcept;
 		static void SetDrawMode(int) noexcept;
 
+		// Temporary
+		std::map<std::string, Shader*> shaderlist;
+		std::map<std::string, Texture*> texturelist;
+
+		AutoArray<TextureInfo> textureInfos;
+
 	private:
 
 		float mfGamma;
 
 		void* mOpenGL;
 		int mPixelFormat, mAvailable;
-		Window* mCurrent;
+		Framebuffer mGameView, mUIView;
 
-		// Temporary
-		std::map<std::string, Shader*> shaderlist;
-		std::map<std::string, Texture*> texturelist;
 
 		static int DRAW_MODE;
 

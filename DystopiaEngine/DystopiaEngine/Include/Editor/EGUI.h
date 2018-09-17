@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\DebugAssert.h"
 #include "Editor\Dock.h"
 #include "Editor\Payloads.h"
+#include "Editor\Commands.h"
 #include "../../Dependancies/ImGui/imgui.h"
 #include "../../Dependancies/ImGui/imgui_internal.h"
 #include <string>
@@ -57,7 +58,16 @@ namespace Dystopia
 ======================================================================================================================= */
 namespace EGUI
 {
+	enum eDragStatus
+	{
+		eNO_CHANGE = 0,
+		eSTART_DRAG,
+		eEND_DRAG,
+		eDRAGGING
+	};
+
 	void SetContext(Dystopia::CommandHandler *_pContext);
+	Dystopia::CommandHandler* GetCommandHND();
 	void RemoveContext();
 	void ChangeLabelSpacing(float _amount);
 	void ChangeLabelSpacing();
@@ -179,14 +189,18 @@ namespace EGUI
 				The format is coded to be:
 					label of field [editable input] x [editable input] y [editable input] z
 		Usage:
-				Math::Vec4 position{0,0,0,0};
-				if (EGUI::Display::VectorFields("Position", &position, dragging speed, min float, max float, display size of [editable input]))
+				switch (EGUI::Display::VectorFields("Scale", &mScale, 0.5f, -FLT_MAX, FLT_MAX))
 				{
-					// if the variable position is changed in any form. Do someting here:
+				case EGUI::eDragStatus::eSTART_DRAG:
+					EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale);
+					break;
+				case EGUI::eDragStatus::eEND_DRAG:
+					EGUI::GetCommandHND()->EndRecording();
+					break;
 				}
 		======================================================================================================================= */
-		bool VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, float _min = 0.0f, 
-						  float _max = 1.0f, float = 50.f);
+		eDragStatus VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, 
+						  float _min = 0.0f, float _max = 1.0f, float _width= 50.f);
 		/* =======================================================================================================================
 		Brief:
 				Creats a check box for a boolean variable. Returns true when the check box is clicked, toggles the _pOutBool
@@ -202,24 +216,34 @@ namespace EGUI
 		Brief:
 				Creates a draggable float editable field. Returns if the value is changed
 		Usage:
-				float MeFloat = 0.f;
-				if (EGUI::Display::DragFloat("Drag this float", &MeFloat, drag speed, min float, max float))
+				switch (EGUI::Display::DragFloat("Test Float", &mpFocus->mTestFloat, 0.01f, -FLT_MAX, FLT_MAX))
 				{
-					// value of MeFloat has been changed. Do something here:
+				case EGUI::eDragStatus::eSTART_DRAG: 
+					GetCommandHND()->StartRecording<GameObject>(mpFocus->GetID(), &mpFocus->mTestFloat);
+					break;
+				case EGUI::eDragStatus::eEND_DRAG: 
+					GetCommandHND()->EndRecording();
+					break;
 				}
 		======================================================================================================================= */
-		bool DragFloat(const std::string& _label, float *_pOutFloat, float _dragSpeed = 1.0f, float _min = 0.0f, float _max = 1.0f);
+		eDragStatus DragFloat(const std::string& _label, float *_pOutFloat, float _dragSpeed = 1.0f, 
+								float _min = 0.0f, float _max = 1.0f, bool _hideText = false);
 		/* =======================================================================================================================
 		Brief:
 				Creates a draggable int editable field. Returns if the value is changed
 		Usage:
-				int MeInt = 0;
-				if (EGUI::Display::DragInt("Drag this integer", &MeInt, drag speed, min int, max int))
+				switch (EGUI::Display::DragInt("Test Int", &mpFocus->mTestInt, 1.f, -INT_MAX, INT_MAX))
 				{
-					// value of MeInt has been changed. Do something here:
+				case EGUI::eDragStatus::eSTART_DRAG:
+					GetCommandHND()->StartRecording<GameObject>(mpFocus->GetID(), &mpFocus->mTestInt);
+					break;
+				case EGUI::eDragStatus::eEND_DRAG:
+					GetCommandHND()->EndRecording();
+					break;
 				}
 		======================================================================================================================= */
-		bool DragInt(const std::string& _label, int *_pOutInt, float _dragSpeed = 1.0f, int _min = 0, int _max = 0);
+		eDragStatus DragInt(const std::string& _label, int *_pOutInt, float _dragSpeed = 1.0f, 
+								int _min = 0, int _max = 0, bool _hideText = false);
 		/* =======================================================================================================================
 		Brief:
 				Creates a selectable text field. Returns if the text field is clicked is changed

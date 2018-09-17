@@ -12,6 +12,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Editor\Commands.h"
+
+#include "System\Scene\Scene.h"
+#include "Object\GameObject.h"
+
 #include "..\..\Dependancies\ImGui\imgui.h"
 #include <typeinfo>
 
@@ -118,8 +122,13 @@ namespace Dystopia
 		if (!mRecording) return;
 		if (mpRecorder)
 		{
-			mpRecorder->EndRecord();
-			if (!mpRecorder->Unchanged()) InvokeCommand(mpRecorder);
+			if (mpRecorder->EndRecord() && !mpRecorder->Unchanged())
+			{
+				InvokeCommand(mpRecorder);
+			}
+			else 
+				delete mpRecorder;
+
 			mpRecorder = nullptr;
 		}
 		mRecording = false;
@@ -128,6 +137,16 @@ namespace Dystopia
 	bool CommandHandler::IsRecording() const
 	{
 		return mRecording;
+	}
+
+	void CommandHandler::InvokeCommandInsert(GameObject& _pObj, Scene& _pScene)
+	{
+		InvokeCommand(new ComdInsertObject{&_pObj, &_pScene});
+	}
+
+	void CommandHandler::InvokeCommandDelete(GameObject& _pObj, Scene& _pScene) 
+	{
+		InvokeCommand(new ComdDeleteObject{ &_pObj, &_pScene });
 	}
 }
 

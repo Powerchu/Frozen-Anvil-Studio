@@ -16,16 +16,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\Mesh.h"
 #include "System\Graphics\MeshSystem.h"
 #include "System\Graphics\Shader.h"
-
+#include "System\Graphics\Texture2D.h"
 #include "System\Driver\Driver.h"
 #include "Object\ObjectFlags.h"
 
 
 Dystopia::Renderer::Renderer(void) noexcept
-	: mnUnique{ 0 }, mpMesh{ nullptr }
+	: mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }
 {
+	SetMesh("Quad");
+	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist.begin()->second);
+	SetTexture(new Texture2D{ "Resource/Editor/EditorStartup.png" });
 }
 
+void Dystopia::Renderer::Init(void)
+{
+}
 
 void Dystopia::Renderer::Draw(void) const noexcept
 {

@@ -14,15 +14,16 @@ namespace Dystopia
 {
 	class Transform;
 
-	class RigidBody : public Component
+	class _DLL_EXPORT RigidBody : public Component
 	{
 	public:
 		using TAG = ComponentTag;
-
-		unsigned GetComponentType(void) const
-		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
-		};
+		//unsigned GetComponentType(void) const
+		//{
+		//	return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+		//};
+		static const std::string GetCompileName(void) { return "RigidBody"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 

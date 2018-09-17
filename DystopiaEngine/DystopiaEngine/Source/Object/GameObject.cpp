@@ -29,7 +29,7 @@ for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
 
 Dystopia::GameObject::GameObject(void) noexcept
-	: GameObject{ ~(size_t)0 }
+	: GameObject{ Utility::Constant<decltype(mnID), ~0>::value }
 {
 
 }
@@ -42,14 +42,15 @@ Dystopia::GameObject::GameObject(unsigned long _ID) noexcept
 }
 
 Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
-	: mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags },
+	: mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags }, mName{ _obj.mName },
 	mComponents{ Utility::Move(_obj.mComponents) },
-	mBehaviours{ Utility::Move(_obj.mBehaviours) }
+	mBehaviours{ Utility::Move(_obj.mBehaviours) },
+	mTransform{ _obj.mTransform }
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
 
-	_obj.mnID = 0xFFFFFFFF;
+	_obj.mnID = Utility::Constant<decltype(mnID), ~0>::value;
 	_obj.mnFlags = FLAG_REMOVE;
 }
 
@@ -213,7 +214,14 @@ void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 
 Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 {
-	return nullptr;
+	GameObject *p = new GameObject{};
+	p->mnID = mnID;
+	p->mnFlags = mnFlags;
+	p->mName = mName;
+	p->mComponents = mComponents;
+	p->mBehaviours = mBehaviours;
+	p->mTransform = mTransform;
+	return p;
 }
 
 
@@ -242,7 +250,7 @@ Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
 	Utility::Swap(mComponents, _rhs.mComponents);
 	Utility::Swap(mBehaviours, _rhs.mBehaviours);
 
-	_rhs.mnID = ~0ull;
+	_rhs.mnID = Utility::Constant<decltype(mnID), ~0>::value;
 
 	return *this;
 }
