@@ -807,7 +807,7 @@ bool DockSpace::TabBar(Tabs& _tab, bool _closeBtn)
 		ImDrawList *pCanvas = ImGui::GetWindowDrawList();
 		ImU32 textCol = ImGui::GetColorU32(ImGuiCol_Text);
 		float lineH = ImGui::GetTextLineHeightWithSpacing();
-		float tabBase;
+		float tabBase = 0.f;
 		DrawTabBarListBtn(_tab);
 
 		while (pDockTab)

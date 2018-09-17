@@ -14,11 +14,26 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _PLOG_INFO_H_
 #define _PLOG_INFO_H_
+#include <string>
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/Array.h"
 
 namespace Dystopia
 {
+	struct PLogTaskManager
+	{
+		float mCPUIdle;
+		float mCPUBusy;
+		float mCPUOS;
+		float mCPUProc;
+
+		size_t mPageFaults;
+		size_t mMemUsed;
+		size_t mRamUsed;
+		size_t mMemAvail;
+		float  mMemLoad;
+	};
+
 	struct PLogData
 	{
 		static constexpr int maxLogs = 60;

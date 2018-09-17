@@ -19,6 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	struct PLogTaskManager;
+
 	class PerformanceLog : public EditorTab
 	{
 	public:
@@ -44,13 +46,16 @@ namespace Dystopia
 			 		float _val, bool _bigGraph = false);
 		void LogData(const std::string& _catMainGraph, float _val,
 			 		bool _bigGraph = false);
+		void LogTaskMgr(const PLogTaskManager&);
 
 	private:
 		PerformanceLog();
 
 		void					SortLogs();
 		void					ShowLog(const PLogData&, Math::Vec2);
+		void					ShowTaskMgrBreakdown();
 
+		PLogTaskManager			mTaskMgrDetails;
 		AutoArray<PLogItem>		mArrLoggedData;
 		std::string				mLabel;
 		Math::Vec2				mGraphSizeB;

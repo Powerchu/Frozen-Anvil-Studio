@@ -16,12 +16,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\HierarchyView.h"
 #include "Editor\EditorEvents.h"
 #include "Editor\Editor.h"
+#include "Editor\DefaultFactory.h"
+
 #include "Object\GameObject.h"
+#include "Component\Camera.h"
+
 #include "System\Scene\Scene.h"
 #include "System\Camera\CameraSystem.h"
 #include "System\Driver\Driver.h"
-#include "Utility\GUID.h"
-#include "Component\Camera.h"
+
 #include <algorithm>
 #include <cctype>
 #include <iostream>
@@ -155,19 +158,18 @@ namespace Dystopia
 	{
 		if (EGUI::Display::StartPopup(mPopupID))
 		{
-			if (EGUI::Display::SelectableTxt("New GameObject"))
+			if (EGUI::Display::SelectableTxt("GameObject"))
 			{
 				strcpy_s(mSearchTextPrevFrame, "");
-				GameObject *pObject = GetCurrentScene()->InsertGameObject(GUIDGenerator::GetUniqueID());
-				pObject->SetName("GameObject");
+				GameObject* p = Factory::CreateGameObj("GameObject");
+				GetCommandHND()->InvokeCommandInsert(*p, *GetCurrentScene());
 			}
 
-			if (EGUI::Display::SelectableTxt("New Camera"))
+			if (EGUI::Display::SelectableTxt("Camera"))
 			{
-				strcpy_s(mSearchTextPrevFrame, "");
-				GameObject *pObject = GetCurrentScene()->InsertGameObject(GUIDGenerator::GetUniqueID());
-				pObject->SetName("Camera");
-				pObject->AddComponent(EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent(), typename Camera::TAG{});
+				//strcpy_s(mSearchTextPrevFrame, "");
+				//GameObject* p = Factory::CreateCamera("Camera");
+				//GetCommandHND()->InvokeCommand(new ComdInsertObject{ p, GetCurrentScene() });
 			}
 			EGUI::Display::EndPopup();
 		}
@@ -181,6 +183,29 @@ namespace Dystopia
 		{
 			GetMainEditor().RemoveFocus();
 			GetMainEditor().SetFocus(_obj);
+		}
+		GameObjectPopups(_obj);
+	}
+
+	void HierarchyView::GameObjectPopups(GameObject& _obj)
+	{
+		if (ImGui::BeginPopupContextItem())
+		{
+			GetMainEditor().RemoveFocus();
+			GetMainEditor().SetFocus(_obj);
+			if (EGUI::Display::SelectableTxt("Copy"))
+			{
+
+			}
+			if (EGUI::Display::SelectableTxt("Delete"))
+			{
+				GetCommandHND()->InvokeCommandDelete(_obj, *GetCurrentScene());
+			}
+			ImGui::EndPopup();
+		}
+		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAMEOBJECT, &_obj, sizeof(_obj), _obj.GetName()))
+		{
+			EGUI::Display::EndPayload();
 		}
 	}
 

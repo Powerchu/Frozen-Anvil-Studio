@@ -14,18 +14,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _P_LOGGER_H_
 #define _P_LOGGER_H_
-#include <string>
+#include "Editor\PLogInfo.h"
 
 namespace Dystopia
 {
 	namespace Performance
 	{
+
 		// use LogDataS for sub graphs
 		void LogDataS(const std::string& _category, const std::string& _graphLabel, float _val);
 
 		// use LogDataG for a general graph, the _catMainGraph is also the category. Meaning calling LogDataS with a _category same
 		// as this _catMainGraph, will result in them being a sub graph of this
 		void LogDataG(const std::string& _catMainGraph, float _val);
+
+		void LogTaskMgr(const PLogTaskManager&);
 	}
 }
 

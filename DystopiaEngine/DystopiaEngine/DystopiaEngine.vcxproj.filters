@@ -189,6 +189,12 @@
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp">
       <Filter>Game Engine\SubSystems\Logger</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\DefaultFactory.cpp">
+      <Filter>Editor\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\CommandList.cpp">
+      <Filter>Editor\Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -502,6 +508,12 @@
     <ClInclude Include="Include\System\Logger\LoggerSystem.h">
       <Filter>Game Engine\SubSystems\Logger</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\EditorMetaHelpers.h">
+      <Filter>Editor\AuxMetaHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\DefaultFactory.h">
+      <Filter>Editor\Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -749,6 +761,12 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Logger">
       <UniqueIdentifier>{7c6d8c15-bbec-4123-aaf7-2edb432d219b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\AuxMetaHelpers">
+      <UniqueIdentifier>{c891734a-f64c-422c-9326-4d11d5d8b6f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Factory">
+      <UniqueIdentifier>{3c1970b5-39ed-4b21-846a-39fb24566cc5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Systems\File">
       <UniqueIdentifier>{845f6b31-e949-414f-88d7-9fec6ab7613f}</UniqueIdentifier>

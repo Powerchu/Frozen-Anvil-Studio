@@ -30,7 +30,6 @@ namespace Dystopia
 
 	void PrintToConsoleLog(const std::string& _text)
 	{
-		DEBUG_ASSERT(!gpInstance, "No Instance of ConsoleLog found.");
 		gpInstance->Debug(_text);
 	}
 
@@ -49,10 +48,6 @@ namespace Dystopia
 	
 	void ConsoleLog::Init()
 	{
-		DEBUG_PRINT("Testing Float %f", 3.6f);
-		DEBUG_PRINT("Testing Integeral %d", -5);
-		DEBUG_PRINT("Testing string %s", "stringy");
-		DEBUG_PRINT(std::string{ "std string text" });
 	}
 
 	void ConsoleLog::Update(const float&)
@@ -97,7 +92,7 @@ namespace Dystopia
 		if (mLoggingIndex == maxLog)
 		{
 			std::rotate(mArrDebugTexts.begin(), mArrDebugTexts.begin() + 1, mArrDebugTexts.end());
-			mArrDebugTexts[maxLog] = _text;
+			mArrDebugTexts[maxLog - 1] = _text;
 		}
 		else mArrDebugTexts[mLoggingIndex++] = _text;
 		mRecordIndex++;
