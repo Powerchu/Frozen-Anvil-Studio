@@ -172,7 +172,7 @@ namespace Dystopia
 			EGUI::Display::EndTreeNode();
 		}
 
-		auto arrComp = mpFocus->GetAllComponents();
+		auto& arrComp = mpFocus->GetAllComponents();
 		for (const auto& c : arrComp)
 		{
 			EGUI::Display::HorizontalSeparator();

@@ -572,6 +572,7 @@ AutoArray<T, A>& AutoArray<T, A>::operator= (const AutoArray<T, A>& _other)
 		GrowArray(sz);
 
 	ArrayCopy(_other.mpArray, _other.mpLast, mpArray);
+	mpLast += sz;
 	return *this;
 }
 
