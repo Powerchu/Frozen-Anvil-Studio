@@ -177,6 +177,7 @@ namespace Dystopia
 
 	void HierarchyView::GameObjectName(GameObject& _obj)
 	{
+		//if (_obj.GetName() == "Scene Camera") return;
 		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
 		bool highlighted = mpFocus && (mpFocus->GetID() == _obj.GetID());
 		if (EGUI::Display::SelectableTxt(uniqueifyName, highlighted))

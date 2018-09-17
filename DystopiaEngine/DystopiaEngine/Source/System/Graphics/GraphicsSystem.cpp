@@ -68,7 +68,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f }, textureInfos{}
+	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f }
 {
 
 }
@@ -177,8 +177,6 @@ void Dystopia::GraphicsSystem::Update(float)
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
 
-	textureInfos.clear();
-
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
 	{
@@ -216,7 +214,6 @@ void Dystopia::GraphicsSystem::Update(float)
 								r->Draw();
 
 								t->UnbindTexture();
-								textureInfos.push_back(TextureInfo{ t->mnID, 100, 100 });
 							}
 						}
 					}
@@ -458,6 +455,11 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 	}
 
 	return false;
+}
+
+Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer()
+{
+	return mGameView;
 }
 
 
