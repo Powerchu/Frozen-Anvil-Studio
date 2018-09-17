@@ -14,8 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GRAPHICS_SYS_H_
 #define _GRAPHICS_SYS_H_
 
-#include "System\Base\Systems.h"		// System
+#include "System\Base\Systems.h"		 // System
 #include "System\Base\ComponentDonor.h"
+#include "System\Graphics\Framebuffer.h"
 
 #include <string>
 #include <map>
@@ -91,7 +92,7 @@ namespace Dystopia
 
 		void* mOpenGL;
 		int mPixelFormat, mAvailable;
-		Window* mCurrent;
+		Framebuffer mGameView, mUIView;
 
 
 		static int DRAW_MODE;

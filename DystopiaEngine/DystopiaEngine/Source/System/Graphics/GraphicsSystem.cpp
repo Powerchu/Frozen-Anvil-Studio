@@ -156,6 +156,9 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 
 bool Dystopia::GraphicsSystem::Init(void)
 {
+	mGameView.Init(2048, 2048);
+	mUIView.Init(1024, 1024);
+
 	return true;
 }
 
@@ -169,6 +172,8 @@ void Dystopia::GraphicsSystem::Update(float)
 	ScopedTimer<ProfilerAction> timeKeeper{"Graphics System", "Update"};
 	StartFrame();
 
+	mGameView.BindFramebuffer();
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
 
@@ -219,24 +224,23 @@ void Dystopia::GraphicsSystem::Update(float)
 			}
 		}
 	}
+	mGameView.UnbindFramebuffer();
 
-	// Final draw to combine layers & draw to screen
+	// TODO: Final draw to combine layers & draw to screen
 
 	EndFrame();
 }
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
-#if !EDITOR
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-#else
-	glClear(GL_DEPTH_BUFFER_BIT);
-#endif
+
 }
 
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
 #if !EDITOR
+	// TODO: Draw a fullscreen quad fusing the GameView and UIView
+
 	SwapBuffers(mCurrent->GetDeviceContext());
 #endif
 }
@@ -321,14 +325,11 @@ void Dystopia::GraphicsSystem::SetMasterViewport(int _nX, int _nY, int _nWidth, 
 
 void Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
 {
-	mCurrent = &_window;
 	wglMakeCurrent(_window.GetDeviceContext(), static_cast<HGLRC>(mOpenGL));
 }
 
 bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 {
-	mCurrent = &_window;
-
 	// Use to specify the color format we want and openGL support
 	PIXELFORMATDESCRIPTOR pfd{};
 

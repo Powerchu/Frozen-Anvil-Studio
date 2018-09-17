@@ -78,7 +78,7 @@ void Dystopia::Texture::SetType(unsigned _nType) noexcept
 }
 
 
-unsigned Dystopia::Texture::GetTexture(void) const noexcept
+unsigned Dystopia::Texture::GetID(void) const noexcept
 {
 	return mnID;
 }
