@@ -3,12 +3,11 @@
 #include "System/Base/Systems.h"
 #include "System/SystemTypes.h"
 #include "DataStructure/AutoArray.h"
-#include <vector>
 
 
 namespace Dystopia
 {
-	class Rigidbody;
+	class RigidBody;
 
 	class PhysicsSystem : public Systems
 	{
@@ -23,15 +22,15 @@ namespace Dystopia
 		void Update(float) override;
 		void Shutdown(void) override;
 
-		void Insert(Rigidbody * const rigid_body);
-		void Remove(Rigidbody * const rigid_body);
+		void Insert(RigidBody * const rigid_body);
+		void Remove(RigidBody * const rigid_body);
 
 		void LoadDefaults(void) override;
 		void LoadSettings(TextSerialiser&) override;
 
 		virtual ~PhysicsSystem(void) = default;
 	private:
-		AutoArray<Rigidbody*> m_rigidBodies_arr;
+		AutoArray<RigidBody*> m_rigidBodies_arr;
 	};
 }
 

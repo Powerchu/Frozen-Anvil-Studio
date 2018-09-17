@@ -16,10 +16,12 @@ namespace Dystopia
 	{
 	public:
 		using TAG = ComponentTag;
-		unsigned GetComponentType(void) const
-		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
-		};
+		//unsigned GetComponentType(void) const
+		//{
+		//	return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+		//};
+		static const std::string GetCompileName(void) { return "Particle"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 

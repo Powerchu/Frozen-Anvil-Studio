@@ -24,7 +24,7 @@ namespace Dystopia
 		class Camera,
 		//class Collider,
 		//class RigidBody,
-		class Renderer,
+		class Renderer
 		//class Particle
 	>::result;
 

@@ -38,8 +38,8 @@ namespace Dystopia
 		virtual void OnDestroy(void);
 		virtual void Unload(void);
 		virtual RigidBody* Duplicate() const;
-		virtual void Serialise(TextSerialiser&) const;
-		virtual void Unserialise(TextSerialiser&);
+		virtual void Serialise(TextSerialiser&) const override;
+		virtual void Unserialise(TextSerialiser&) override;
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		//TODO: Delete this once graphics is up
 		void PrintRigidBodies(); // FOR TESTING
