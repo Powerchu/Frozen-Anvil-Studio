@@ -17,27 +17,28 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	enum class eSysMessage;
 	using DysSerialiser_t = class TextSerialiser;
 
 	class Systems
 	{
 	public:
-		virtual void PreInit(void)					{ };
-		virtual bool Init(void)						= 0;
-		virtual void PostInit(void)					{ };
+		virtual void PreInit(void)					    { };
+		virtual bool Init(void)						    = 0;
+		virtual void PostInit(void)					    { };
+													    
+		virtual void FixedUpdate(float)				    { };
+		virtual void Update(float)					    = 0;
+		virtual void PostUpdate(void)				    { };
+		virtual void Shutdown(void)					    = 0;
+													    
+		virtual void LoadDefaults(void)				    { };
+		virtual void LoadSettings(DysSerialiser_t&)	    { };
+		virtual void SaveSettings(DysSerialiser_t&)     { };
 
-		virtual void FixedUpdate(float)				{ };
-		virtual void Update(float)					= 0;
-		virtual void PostUpdate(void)				{ };
-		virtual void Shutdown(void)					= 0;
+		virtual void ReceiveMessage(const eSysMessage&) { };
 
-		virtual void LoadDefaults(void)				{ };
-		virtual void LoadSettings(DysSerialiser_t&)	{ };
-		virtual void SaveSettings(DysSerialiser_t&) { };
-
-//		virtual void ReceiveMessage(const Message&) = 0;
-
-		virtual ~Systems(void)						= default;
+		virtual ~Systems(void)						    = default;
 
 	};
 }

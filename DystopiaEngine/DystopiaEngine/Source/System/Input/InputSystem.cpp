@@ -16,13 +16,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\WindowManager.h"
 #include "System\Window\Window.h"
 #include "System\Driver\Driver.h"
+
 #include "Math\Vector2.h"
 #include "Math\Vector4.h"
 
+#define NOMINMAX
 #define WIN32_LEAN_AND_MEAN			// Exclude rare stuff from Window's header
 #include <Windows.h>
 #undef  WIN32_LEAN_AND_MEAN			// Stop define from spilling into code
+#undef NOMINMAX
 
+
+namespace
+{
+	constexpr float MOUSEWHEEL_SCALE = 1.f / 120.f;
+}
 
 void Dystopia::InputManager::LoadDefaultUserKeys(void)
 {
@@ -54,6 +62,8 @@ Dystopia::InputManager::~InputManager(void)
 
 bool Dystopia::InputManager::Init(void)
 {
+	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
+
 	return true;
 }
 
@@ -88,22 +98,22 @@ void Dystopia::InputManager::MapUserButton(eUserButton _nBtn, eButton _nTo)
 	mButtonMap[_nBtn] = _nTo;
 }
 
-bool Dystopia::InputManager::IsKeyTriggered(eUserButton _nBtn)
+bool Dystopia::InputManager::IsKeyTriggered(eUserButton _nBtn) const noexcept
 {
 	return mButtonMap[_nBtn].mbTriggered;
 }
 
-bool Dystopia::InputManager::IsKeyPressed(eUserButton _nBtn)
+bool Dystopia::InputManager::IsKeyPressed(eUserButton _nBtn) const noexcept
 {
 	return mButtonMap[_nBtn].mbPressed;
 }
 
-bool Dystopia::InputManager::IsKeyReleased(eUserButton _nBtn)
+bool Dystopia::InputManager::IsKeyReleased(eUserButton _nBtn) const noexcept
 {
 	return mButtonMap[_nBtn].mbReleased;
 }
 
-Math::Vector2 Dystopia::InputManager::GetMousePosition(void)
+Math::Vector2 Dystopia::InputManager::GetMousePosition(void) const
 {
 	POINT pos;
 	GetCursorPos(&pos);
@@ -115,7 +125,7 @@ Math::Vector2 Dystopia::InputManager::GetMousePosition(void)
 	return Math::Vector2(pos.x * 1.f, pos.y * 1.f);
 }
 
-Math::Vector2 Dystopia::InputManager::GetMousePosition(const Dystopia::Window& _activeWindow)
+Math::Vector2 Dystopia::InputManager::GetMousePosition(const Dystopia::Window& _activeWindow) const
 {
 	POINT pos;
 	GetCursorPos(&pos);
@@ -123,6 +133,17 @@ Math::Vector2 Dystopia::InputManager::GetMousePosition(const Dystopia::Window& _
 
 	return Math::Vector2(pos.x * 1.f, pos.y * 1.f);
 }
+
+Math::Vector2 Dystopia::InputManager::GetMouseDelta(void) const noexcept
+{
+	return Math::Vector2{ mMouseInput.mfDeltaX, mMouseInput.mfDeltaY };
+}
+
+float Dystopia::InputManager::GetMouseWheel(void) const noexcept
+{
+	return mMouseInput.mnWheel * MOUSEWHEEL_SCALE;
+}
+
 
 Dystopia::InputManager::KeyBinding& Dystopia::InputManager::KeyBinding::operator = (eButton _nBtn)
 {
