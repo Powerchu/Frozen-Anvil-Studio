@@ -70,7 +70,7 @@ namespace Dystopia
 		mArrValues[mCurrentIndex] = _val;
 		mMax = (_val >= mMax) ? mMax * 2 : mMax;
 		mMax = (_val * 4 < mMax) ? mMax  / 2 : mMax ;
-		mMax = Math::Clamp(mMax, def_max, mMax);
+		mMax = mMax < def_max ? def_max : mMax;
 
 		if (mCurrentIndex != (maxLogs - 1)) mCurrentIndex++;
 		else

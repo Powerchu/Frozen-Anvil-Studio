@@ -58,15 +58,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <iostream>
 #include <bitset>
 
-#include "DataStructure\Variant.h"
-#include <variant>
-
 // Entry point for editor
-int WinMain(HINSTANCE, HINSTANCE, char *, int)
+int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
+	hInstance;
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
@@ -107,6 +105,7 @@ namespace Dystopia
 		mpGfx{ nullptr },
 		mpSceneSystem{ nullptr },
 		mpProfiler{ nullptr },
+		mpFocusGameObj{ nullptr },
 		mpInput{ new EditorInput{} },
 		mpEditorEventSys{ new EditorEventHandler{} },
 		mpComdHandler{ new CommandHandler{} },
@@ -173,14 +172,13 @@ namespace Dystopia
 
 		UpdateKeys();
 		UpdateHotkeys();
-
+		
 		mpEditorEventSys->FireAllPending();
 		MainMenuBar();
 	}
 
 	void Editor::UpdateFrame(const float& _dt)
-	{
-		mpGfx->Update(mDeltaTime); 
+	{ 
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);
@@ -260,6 +258,7 @@ namespace Dystopia
 		mpWin				= nullptr;
 		mpGfx				= nullptr;
 		mpProfiler			= nullptr;
+		mpFocusGameObj		= nullptr;
 
 		mpDriver->Shutdown();
 		EGUI::RemoveContext();
@@ -539,12 +538,14 @@ namespace Dystopia
 	{
 		for (auto& e : mArrTabs)
 			e->SetFocus(_rObj);
+		mpFocusGameObj = &_rObj;
 	}
 	
 	void Editor::RemoveFocus()
 	{
 		for (auto& e : mArrTabs)
 			e->RemoveFocus();
+		mpFocusGameObj = nullptr;
 	}
 
 	GameObject* Editor::FindGameObject(const unsigned long& _id) const
@@ -570,7 +571,28 @@ namespace Dystopia
 					Performance::LogDataG(d.first, static_cast<float>(d.second.mTotal));
 				}
 			}
+			PLogTaskManager p;
+			p.mCPUIdle = mpProfiler->GetCPUPercentageIdle();
+			p.mCPUBusy = mpProfiler->GetCPUPercentageBusy();
+			p.mCPUOS = mpProfiler->GetCPUPercentageOS();
+			p.mCPUProc = mpProfiler->GetCPUPercentageProcess();
+			p.mPageFaults = mpProfiler->GetNumPageFaults();
+			p.mMemUsed = mpProfiler->GetUsedMemory();
+			p.mRamUsed = mpProfiler->GetUsedPhysicalMemory();
+			p.mMemAvail = mpProfiler->GetAvailablePhysicalMemory();
+			p.mMemLoad = mpProfiler->GetSystemMemoryLoad();
+			Performance::LogTaskMgr(p);
 		}
+	}
+
+	GameObject* Editor::GetCurrentFocusGameObj()
+	{
+		return mpFocusGameObj;
+	}
+
+	void Editor::SetLastPayloadFocus(ePayloadTags e)
+	{
+		mLatestPayloadFocus = e;
 	}
 }
 

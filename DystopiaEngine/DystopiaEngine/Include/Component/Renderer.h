@@ -39,6 +39,8 @@ namespace Dystopia
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value; 
 		};
+		static const std::string GetCompileName(void) { return "Renderer"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -47,6 +49,8 @@ namespace Dystopia
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
+
+		void Init(void) override;
 
 		void Draw(void) const noexcept;
 		
@@ -61,7 +65,6 @@ namespace Dystopia
 		Texture* GetTexture(void) const noexcept;
 
 		bool HasTransparency(void) const noexcept;
-
 
 		Renderer* Duplicate(void) const;
 

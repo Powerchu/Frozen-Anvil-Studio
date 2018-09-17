@@ -27,11 +27,12 @@ namespace Dystopia
 	class _DLL_EXPORT Transform : public Component
 	{
 	public:
-		unsigned GetComponentType(void) const
-		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value; 
-		};
-		const std::string GetEditorName(void) const { return "Transform"; }
+		//unsigned GetComponentType(void) const
+		//{
+		//	return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value; 
+		//};
+		static const std::string GetCompileName(void) { return "Transform"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
@@ -74,6 +75,8 @@ namespace Dystopia
 
 		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
+
+		void EditorUI(void) noexcept override;
 
 	private:
 

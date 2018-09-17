@@ -31,7 +31,9 @@ namespace Dystopia
 	class SceneSystem;
 	class Timer;
 	class Profiler;
+	class GameObject;
 	//class Scene;
+	enum ePayloadTags;
 
 	enum eEditorState
 	{
@@ -67,9 +69,11 @@ namespace Dystopia
 		eEditorState	CurrentState() const;
 
 		/* Game Object stuff */
+		void			SetLastPayloadFocus(ePayloadTags);
 		void			SetFocus(GameObject&);
 		void			RemoveFocus();
 		GameObject*		FindGameObject(const unsigned long& _id) const;
+		GameObject*		GetCurrentFocusGameObj();
 
 	private:
 		Editor(void);
@@ -90,6 +94,8 @@ namespace Dystopia
 		eEditorState			mCurrentState;
 		eEditorState			mNextState;
 		float					mDeltaTime;
+		GameObject				*mpFocusGameObj;
+		ePayloadTags			mLatestPayloadFocus;
 
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();

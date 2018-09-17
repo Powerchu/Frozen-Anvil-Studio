@@ -42,9 +42,10 @@ Dystopia::GameObject::GameObject(unsigned long _ID) noexcept
 }
 
 Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
-	: mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags },
+	: mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags }, mName{ _obj.mName },
 	mComponents{ Utility::Move(_obj.mComponents) },
-	mBehaviours{ Utility::Move(_obj.mBehaviours) }
+	mBehaviours{ Utility::Move(_obj.mBehaviours) },
+	mTransform{ _obj.mTransform }
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
@@ -213,7 +214,14 @@ void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 
 Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 {
-	return nullptr;
+	GameObject *p = new GameObject{};
+	p->mnID = mnID;
+	p->mnFlags = mnFlags;
+	p->mName = mName;
+	p->mComponents = mComponents;
+	p->mBehaviours = mBehaviours;
+	p->mTransform = mTransform;
+	return p;
 }
 
 
