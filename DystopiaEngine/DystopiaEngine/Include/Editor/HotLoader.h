@@ -5,7 +5,6 @@
 #define BIT32_ENV L"x86_amd64"
 #define BIT64_ENV L"amd64"
 
-#include "System/Base/Systems.h"
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
 
@@ -59,7 +58,7 @@ namespace Dystopia
 		HMODULE ReloadDll()
 		{
 			FreeLibrary(mDllModule);
-			mDllModule = LoadLibrary((mDllPathName + L'/'+ mDllFileName).c_str());
+			mDllModule = LoadLibrary((mDllPathName + L'/' + mDllFileName).c_str());
 			return mDllModule;
 		}
 
@@ -123,12 +122,12 @@ namespace Dystopia
 
 	struct InterestedFiles
 	{
-	
+
 
 		InterestedFiles(std::wstring const & _FileName, ePurpose _purpose)
-			:FileName    { _FileName },
-			 found       {  false    },
-			 mFilePurpose{ _purpose  }
+			:FileName{ _FileName },
+			found{ false },
+			mFilePurpose{ _purpose }
 		{
 
 		}
@@ -192,8 +191,8 @@ namespace Dystopia
 	struct Hotloader
 	{
 		Hotloader()
-			:marraOverlapped{0},
-			marrFileHandles{INVALID_HANDLE_VALUE}
+			:marraOverlapped{ 0 },
+			marrFileHandles{ INVALID_HANDLE_VALUE }
 		{
 
 
@@ -222,7 +221,7 @@ namespace Dystopia
 
 			if (hand == INVALID_HANDLE_VALUE)
 				return false;
-			marrFileHandles[_Index]        = hand;
+			marrFileHandles[_Index] = hand;
 			marraOverlapped[_Index].hEvent = CreateEventA(NULL, true, false, marrFilePath[_Index].c_str());
 
 			if (marraOverlapped[_Index].hEvent == INVALID_HANDLE_VALUE)
@@ -236,17 +235,17 @@ namespace Dystopia
 			DWORD bytes_read;
 
 			/*Start Reading Directory*/
-				if (ReadDirectoryChangesW(marrFileHandles[_Index],
-					&marrFileInfo[_Index].front(),
-					marrFileInfo[_Index].size(),
-					false,
-					FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
-					&bytes_read,
-					&marraOverlapped[_Index],
-					NULL))
-				{
-					return true;
-				}
+			if (ReadDirectoryChangesW(marrFileHandles[_Index],
+				&marrFileInfo[_Index].front(),
+				marrFileInfo[_Index].size(),
+				false,
+				FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+				&bytes_read,
+				&marraOverlapped[_Index],
+				NULL))
+			{
+				return true;
+			}
 
 			if (GetLastError() == ERROR_NOTIFY_ENUM_DIR || bytes_read == 0)
 			{
@@ -288,7 +287,7 @@ namespace Dystopia
 			return false;
 		}
 
-		bool ChangesInDllFolder(unsigned size = 0 , DLLWrapper ** _pDLLWrapperBuffer = nullptr)
+		bool ChangesInDllFolder(unsigned size = 0, DLLWrapper ** _pDLLWrapperBuffer = nullptr)
 		{
 			DWORD bytes_read;
 			unsigned ChangeCount = 0;
@@ -300,8 +299,8 @@ namespace Dystopia
 					pstart != nullptr;
 					pstart = pstart->NextEntryOffset ? reinterpret_cast<FILE_NOTIFY_INFORMATION*>(reinterpret_cast<char *>(pstart) + (pstart->NextEntryOffset)) : nullptr)
 				{
-					std::wstring DllDir { mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
-					std::wstring DllName{ pstart->FileName, pstart->FileName + (pstart->FileNameLength / sizeof(*(pstart->FileName)))};
+					std::wstring DllDir{ mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
+					std::wstring DllName{ pstart->FileName, pstart->FileName + (pstart->FileNameLength / sizeof(*(pstart->FileName))) };
 
 					if (CheckFileExtension(DllName) != eDll)
 					{
@@ -378,7 +377,7 @@ namespace Dystopia
 					case FILE_ACTION_REMOVED:
 					{
 
-						}
+					}
 					break;
 					}
 				}
@@ -397,9 +396,9 @@ namespace Dystopia
 			SearchAndReplaceDll(GenerateDllName(_FileName));
 
 			std::wstring wstrDll_Folder_Name{ mDll_Folder_Name.begin()    ,mDll_Folder_Name.end() };
-			std::wstring wstrFolder_Name    { marrFilePath[_Index].begin(), marrFilePath[_Index].end() };
+			std::wstring wstrFolder_Name{ marrFilePath[_Index].begin(), marrFilePath[_Index].end() };
 
-			std::wstring FileName           { _FileName };
+			std::wstring FileName{ _FileName };
 
 			std::wstring CmdArgument{ L"/k cd " };
 
@@ -419,11 +418,11 @@ namespace Dystopia
 			std::filesystem::recursive_directory_iterator iter1{ pp,std::filesystem::directory_options::skip_permission_denied,error1 };
 			for (auto & elem : iter1)
 			{
-				if (CheckFileExtension(elem.path().filename().wstring()) == eLib && elem.path().filename().wstring() != FileName)
-				{
-					std::string a = elem.path().string();
-					OutputCommand += L" /LIBPATH\"" + elem.path().wstring() + L"\"";
-				}
+			if (CheckFileExtension(elem.path().filename().wstring()) == eLib && elem.path().filename().wstring() != FileName)
+			{
+			std::string a = elem.path().string();
+			OutputCommand += L" /LIBPATH\"" + elem.path().wstring() + L"\"";
+			}
 			}
 			*/
 			for (auto const & elem : mvAdditionalSourcePath)
@@ -449,10 +448,10 @@ namespace Dystopia
 
 			for (auto const & elem : mvFilesToCrawl)
 			{
-				if(elem.isFound() && elem.GetPurpose() == eCompile)
-				OutputCommand += L" \"" + elem.GetFullPath() + L"\"";
+				if (elem.isFound() && elem.GetPurpose() == eCompile)
+					OutputCommand += L" \"" + elem.GetFullPath() + L"\"";
 			}
-			
+
 			std::wstring Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" && exit";
 
 
@@ -487,7 +486,7 @@ namespace Dystopia
 
 			for (unsigned i = 0; i < TOTAL_FILE_DIRECTORIES; ++i)
 			{
-				if(InitFileDirectory(i))
+				if (InitFileDirectory(i))
 					if (!InitReadFileDirectory(i))
 					{
 						std::cout << "Reading of Directory: " << marrFilePath[i] << " has failed \n";
@@ -499,7 +498,7 @@ namespace Dystopia
 				if (!LocateInterestedFiles(elem))
 					std::cout << elem.GetFileName().c_str() << L" could not be found" << std::endl;
 			}
-			
+
 			for (unsigned i = 0; i < TOTAL_FILE_DIRECTORIES; ++i)
 			{
 				std::filesystem::path p{ marrFilePath[i] };
@@ -537,14 +536,14 @@ namespace Dystopia
 					{
 						//ResetEvent(marraOverlapped[i].hEvent);
 						auto pFileInfo = reinterpret_cast<FILE_NOTIFY_INFORMATION *>(&marrFileInfo[i].front());
-						for(auto pFileIterator = pFileInfo;
+						for (auto pFileIterator = pFileInfo;
 							pFileIterator != nullptr;
-							pFileIterator = 
+							pFileIterator =
 							reinterpret_cast<FILE_NOTIFY_INFORMATION *>(pFileIterator->NextEntryOffset ? reinterpret_cast<char *>(pFileIterator) + pFileIterator->NextEntryOffset : nullptr))
 						{
 							std::wstring wstrFileName{ pFileIterator->FileName, pFileIterator->FileNameLength / sizeof(*(pFileIterator->FileName)) };
 
-							if(CheckFileExtension(wstrFileName) == eCpp)
+							if (CheckFileExtension(wstrFileName) == eCpp)
 								CompileFiles(i, wstrFileName);
 						}
 						InitReadFileDirectory(i);
@@ -561,14 +560,14 @@ namespace Dystopia
 
 		bool InitDllDirectory()
 		{
-			
+
 			HANDLE hand = CreateFileA(mDll_Folder_Name.c_str(),
-				                      FILE_LIST_DIRECTORY,
-				                      FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-				                      NULL,
-				                      OPEN_EXISTING,
-				                      FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
-				                      NULL);
+				FILE_LIST_DIRECTORY,
+				FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+				NULL,
+				OPEN_EXISTING,
+				FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
+				NULL);
 
 			if (hand == INVALID_HANDLE_VALUE)
 				return false;
@@ -634,13 +633,13 @@ namespace Dystopia
 		std::wstring  mVcvarBuildEnv;
 
 		std::wstring  mCompilerFlags = L"cl /W3 /EHsc /nologo /std:c++latest /DLL /Za /LDd /IC:/Users/keith.goh/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include";
-			                            //"/IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/glew-2.1.0/include "
-										//"/IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/ImGui";
+		//"/IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/glew-2.1.0/include "
+		//"/IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/ImGui";
 
 
 
-		std::array<HANDLE,      TOTAL_FILE_DIRECTORIES>  marrFileHandles;
-		std::array<FileInfo,    TOTAL_FILE_DIRECTORIES>  marrFileInfo;
+		std::array<HANDLE, TOTAL_FILE_DIRECTORIES>  marrFileHandles;
+		std::array<FileInfo, TOTAL_FILE_DIRECTORIES>  marrFileInfo;
 		std::array<_OVERLAPPED, TOTAL_FILE_DIRECTORIES>  marraOverlapped;
 		std::array<std::string, TOTAL_FILE_DIRECTORIES>  marrFilePath;
 
@@ -674,9 +673,9 @@ namespace Dystopia
 		std::wstring GenerateDllName(std::wstring const & _FileName)
 		{
 			size_t pos = _FileName.find_last_of(L'.');
-			std::wstring DllName = _FileName.substr(0,pos);
+			std::wstring DllName = _FileName.substr(0, pos);
 			return DllName + L".dll";
-			
+
 		}
 
 		bool LocateAndLoadCompiler()
@@ -717,7 +716,7 @@ namespace Dystopia
 				}
 			}
 
-			for(auto & elem : vciter)
+			for (auto & elem : vciter)
 			{
 
 				name = (elem).path().filename().wstring();
@@ -784,8 +783,8 @@ namespace Dystopia
 			{
 				std::filesystem::path p{ elem };
 				std::error_code err;
-				std::filesystem::recursive_directory_iterator iter { p,std::filesystem::directory_options::skip_permission_denied,err };
-				for(auto & file : iter)
+				std::filesystem::recursive_directory_iterator iter{ p,std::filesystem::directory_options::skip_permission_denied,err };
+				for (auto & file : iter)
 					if (file.path().filename().wstring() == _File.GetFileName())
 					{
 						_File.SetFullFilePath(file.path().wstring());

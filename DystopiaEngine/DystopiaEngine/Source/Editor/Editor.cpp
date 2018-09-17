@@ -37,6 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\ScopedTimer.h"
 #include "IO\BinarySerializer.h"
 #include "Utility\GUID.h"
+#include "System/File/FileSystem.h"
 
 /* Editor includes */
 #include "Editor\EGUI.h"
@@ -57,16 +58,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <iostream>
 #include <bitset>
 
+#include "DataStructure\Variant.h"
+#include <variant>
+
 // Entry point for editor
-int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
+int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-	hInstance;
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
+
 	while (!editor->IsClosing())
 	{
 		editor->StartFrame();
@@ -165,14 +169,14 @@ namespace Dystopia
 
 		UpdateKeys();
 		UpdateHotkeys();
-		
+
 		mpEditorEventSys->FireAllPending();
 		MainMenuBar();
 	}
 
 	void Editor::UpdateFrame(const float& _dt)
 	{
-		//mpGfx->Update(mDeltaTime); 
+		mpGfx->Update(mDeltaTime); 
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);

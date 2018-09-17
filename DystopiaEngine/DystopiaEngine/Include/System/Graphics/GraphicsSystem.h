@@ -14,10 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GRAPHICS_SYS_H_
 #define _GRAPHICS_SYS_H_
 
-#include "System\Base\Systems.h"	// System
-
-#include "Component\Renderer.h"
-#include "DataStructure\MagicArray.h"
+#include "System\Base\Systems.h"		// System
+#include "System\Base\ComponentDonor.h"
 
 #include <string>
 #include <map>
@@ -29,8 +27,9 @@ namespace Dystopia
 	class Mesh;
 	class Texture;
 	class Shader;
+	class Renderer;
 
-	class GraphicsSystem : public Systems
+	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>
 	{
 	public :
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -49,8 +48,6 @@ namespace Dystopia
 		void Update(float);		// Draws the currently bounded window
 		void Shutdown(void);
 
-		Renderer* RequestComponent(void);
-
 		void SetGamma(float) noexcept;
 		float GetGamma(void) noexcept;
 
@@ -59,12 +56,14 @@ namespace Dystopia
 		void BindOpenGL(Window&) noexcept;
 
 		void LoadDefaults(void);
-		void LoadSettings(TextSerialiser&);
+		void LoadSettings(DysSerialiser_t&);
 
 		void     LevelLoad(TextSerialiser&);
 		void     LoadMesh(const std::string&);
 		Texture* LoadTexture(const std::string&);
 		Shader*	 LoadShader(const std::string&);
+
+		void SetMasterViewport(int _nX, int _nY, int _nWidth, int _nHeight) noexcept;
 
 		static const int& GetDrawMode(void) noexcept;
 		static void SetDrawMode(int) noexcept;
@@ -76,8 +75,6 @@ namespace Dystopia
 		void* mOpenGL;
 		int mPixelFormat, mAvailable;
 		Window* mCurrent;
-
-		MagicArray<Renderer> mRenderers;
 
 		// Temporary
 		std::map<std::string, Shader*> shaderlist;

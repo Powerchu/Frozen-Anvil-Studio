@@ -49,6 +49,7 @@ Dystopia::Texture2D::Texture2D(const std::string& _strPath, bool _bAlpha) :
 	SetHeight(img.mnHeight);
 
 	InitTexture(img.mpImageData, _bAlpha);
+	delete img.mpImageData;
 }
 
 Dystopia::Texture2D::Texture2D(unsigned _nWidth, unsigned _nHeight, void* _pData, bool _bAlpha) :

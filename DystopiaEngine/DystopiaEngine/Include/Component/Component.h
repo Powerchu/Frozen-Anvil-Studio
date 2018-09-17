@@ -67,7 +67,7 @@ namespace Dystopia
 
 		// TODO
 		// Temporary ID -- Will change back to pointer
-		size_t mnOwner;
+		uint64_t mnOwner;
 
 	protected:
 

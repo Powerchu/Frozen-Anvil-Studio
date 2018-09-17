@@ -14,13 +14,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 
 #include "Globals.h"
+#include "System\Time\Timer.h"
+#include "IO\TextSerialiser.h"
 #include "Utility\MetaAlgorithms.h"
 #include "Utility\MetaDataStructures.h"
 #include "DataStructure\Array.h"
 
 // Systems
 #include "System\Time\TimeSystem.h"
-#include "System\Time\Timer.h"
 #include "System\Time\ScopedTimer.h"
 #include "System\Scene\SceneSystem.h"
 #include "System\Input\InputSystem.h"
@@ -30,12 +31,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Collision\CollisionSystem.h"
 #include "System\Physics\PhysicsSystem.h"
 #include "System\Camera\CameraSystem.h"
-#include "Component\Camera.h"
 #include "System\Events\EventSystem.h"
+#include "System\Profiler\Profiler.h"
 
 // SubSystems
 #include "System\Graphics\MeshSystem.h"
-#include "System\Profiler\Profiler.h"
+#include "System/File/FileSystem.h"
+#include "System\Logger\LoggerSystem.h"
 
 
 
@@ -45,6 +47,21 @@ namespace
 	AutoArray<Ty> MakeAutoArray(Utility::TypeList<T...>)
 	{
 		 return AutoArray<Ty>{ static_cast<Ty>(new T{})...};
+	}
+
+	template <typename ... T>
+	void DeleteSubSys(AutoArray<void*>& _SubSys, Utility::TypeList<T...>)
+	{
+		void(*deleters[])(void*) {
+			[] (void* _p)  { delete static_cast<T*>(_p);  }...
+		};
+
+		auto b = _SubSys.begin();
+		for (auto* deleter : deleters)
+		{
+			deleter(*b);
+			++b;
+		}
 	}
 
 	template <typename T>
@@ -91,8 +108,15 @@ Dystopia::EngineCore::EngineCore(void) :
 
 void Dystopia::EngineCore::LoadSettings(void)
 {
-	for (auto& e : mSystemTable)
-		e->LoadDefaults();
+	if (false)
+	{
+
+	}
+	else
+	{
+		for (auto& e : mSystemTable)
+			e->LoadDefaults();
+	}
 }
 
 void Dystopia::EngineCore::Init(void)
@@ -156,12 +180,18 @@ void Dystopia::EngineCore::Update(void)
 
 void Dystopia::EngineCore::Shutdown(void)
 {
+	TextSerialiser s = Serialiser::OpenFile<TextSerialiser>("DystopiaSettings.ini", TextSerialiser::MODE_WRITE);
+
 	for (auto& e : mSystemList)
+	{
+		e->SaveSettings(s);
 		e->Shutdown();
+	}
 
 	for (auto& e : mSystemList)
 		delete e;
 
+	DeleteSubSys(mSubSystems, Utility::MakeTypeList_t<Utility::TypeList, SubSys>{});
 
 	mSystemList.clear();
 	mSystemTable.clear();

@@ -47,7 +47,7 @@ namespace Dystopia
 
 		inline Scene& GetCurrentScene(void) const;
 
-		inline GameObject* FindGameObject(size_t _nID);
+		inline GameObject* FindGameObject(uint64_t _nID);
 		inline GameObject* FindGameObject(const std::string& _strName);
 
 	private:
@@ -70,7 +70,7 @@ inline Dystopia::Scene& Dystopia::SceneSystem::GetCurrentScene(void) const
 	return *mpCurrScene;
 }
 
-inline Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject(size_t _nID)
+inline Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject(uint64_t _nID)
 {
 	return mpCurrScene->FindGameObject(_nID);
 }
