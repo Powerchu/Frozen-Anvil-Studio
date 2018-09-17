@@ -37,8 +37,8 @@ namespace
 	constexpr bool	DEFAULT_FULLSCREEN		= false;
 	constexpr int	DEFAULT_WIDTH			= 1600;
 	constexpr int	DEFAULT_HEIGHT			= 900;
-	constexpr int	LOGO_WIDTH				= 620;
-	constexpr int	LOGO_HEIGHT				= 300;
+	constexpr int	LOGO_WIDTH				= 992;
+	constexpr int	LOGO_HEIGHT				= 480;
 
 	Dystopia::MouseData* pMouse = nullptr;
 
