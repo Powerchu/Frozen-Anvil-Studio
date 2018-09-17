@@ -1,4 +1,3 @@
-#pragma once
 #ifndef RIGID_BODY_H
 #define RIGID_BODY_H
 
@@ -38,12 +37,14 @@ namespace Dystopia
 		virtual void OnDestroy(void);
 		virtual void Unload(void);
 		virtual RigidBody* Duplicate() const;
-		virtual void Serialise(TextSerialiser&) const    override;
-		virtual void Unserialise(TextSerialiser&)        override;
+		virtual void Serialise(TextSerialiser&) const;
+		virtual void Unserialise(TextSerialiser&);
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		//TODO: Delete this once graphics is up
 		void PrintRigidBodies(); // FOR TESTING
 
+		void Set_CustomGravityScale(const float scale);
+		bool ToggleGravity(); //returns gravity state
 
 		void Update(float _dt);
 		void LateUpdate(float _dt);
@@ -91,13 +92,16 @@ namespace Dystopia
 		Math::Vec3D			m_CumulativeVector;  /*The sum of all the force acting on the body*/
 		float				m_angle;
 		float				m_torque;
-		float				m_customGravity;
-
+		float				m_drag;
+		float				m_friction;
+		
+		float				m_custom_gravityScale;
+		float				m_gravity;
 		float				m_Mass;
-		float				momentOfInertia;
 		float				m_InverseMass;       /*The inverse of mass, (1/Mass)*/
 
 		bool				m_IsGrounded;
+		bool				m_HasGravity;
 
 
 		/*Quaternion if needed*/

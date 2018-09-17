@@ -1,11 +1,12 @@
 #include "System/Physics/PhysicsSystem.h"
+#include "Component/RigidBody.h"
 #include <System/Collision/CollisionSystem.h>
 
 namespace Dystopia
 {
+	
 	PhysicsSystem::PhysicsSystem()
 	{
-
 	}
 
 	void PhysicsSystem::PreInit(void)
@@ -27,14 +28,30 @@ namespace Dystopia
 
 	}
 
-	void PhysicsSystem::Update(float)
+	void PhysicsSystem::Update(float _dt)
 	{
-
+		for ( auto rigid_elem : m_rigidBodies_arr)
+		{
+			if (rigid_elem != nullptr && rigid_elem->GetOwner()->IsActive())
+			{
+				rigid_elem->Update(_dt);
+			}
+		}
 	}
 
 	void PhysicsSystem::Shutdown(void)
 	{
 
+	}
+
+	void PhysicsSystem::Insert(Rigidbody * const rigid_body)
+	{
+		m_rigidBodies_arr.Insert(rigid_body);
+	}
+
+	void PhysicsSystem::Remove(Rigidbody * const rigid_body)
+	{
+		m_rigidBodies_arr.Remove(rigid_body);
 	}
 
 	void PhysicsSystem::LoadDefaults(void)

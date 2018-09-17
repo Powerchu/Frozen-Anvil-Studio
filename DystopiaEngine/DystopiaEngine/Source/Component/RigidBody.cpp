@@ -2,19 +2,25 @@
 #include "Component/Transform.h"
 #include "Object/GameObject.h"
 
+#define GRAVITY_CONSTANT	-9.81F
+
 namespace Dystopia
 {
 	RigidBody::RigidBody(void)
 		: m_PrimitiveShape(new BoxShape())
 		, m_OwnerTransform(GetOwner()->GetComponent<Transform>())
-		, m_IsGrounded(false)
-		, m_angle(0)
-		, m_torque(0)
-		, m_customGravity(9.81F)
+		, m_angle(0.0F)
+		, m_torque(0.0F)
+		, m_drag(0.0F)
+		, m_friction(0.1F)
+		, m_custom_gravityScale(1.0F)
+		, m_gravity{GRAVITY_CONSTANT*m_custom_gravityScale}
 		, m_Mass(100.0F)
-		, m_InverseMass(1/m_Mass)
+		, m_InverseMass(1 / m_Mass)
+		, m_IsGrounded(false)
+		, m_HasGravity(true)
 	{
-
+		
 	}
 
 	RigidBody::~RigidBody(void)
@@ -28,7 +34,8 @@ namespace Dystopia
 
 	void RigidBody::Init(void)
 	{
-
+		m_custom_gravityScale = m_HasGravity ? m_custom_gravityScale : 0.0F;
+		m_gravity = GRAVITY_CONSTANT * m_custom_gravityScale;
 	}
 
 	void RigidBody::OnDestroy(void)
@@ -44,12 +51,14 @@ namespace Dystopia
 		return new RigidBody{ *this };
 	}
 
-	void RigidBody::Serialise(TextSerialiser &) const
+	void RigidBody::Serialise(TextSerialiser & _serial) const
 	{
+		_serial;
 	}
 
-	void RigidBody::Unserialise(TextSerialiser &)
+	void RigidBody::Unserialise(TextSerialiser & _serial)
 	{
+		_serial;
 	}
 
 	void RigidBody::PrintRigidBodies()
@@ -61,7 +70,8 @@ namespace Dystopia
 
 	void RigidBody::Update(float _dt)
 	{
-		const Math::Vec3D force_gravity = { 0, m_Mass*-m_customGravity, 0 }; // due to gravity
+		// Downward force due to gravity
+		const Math::Vec3D force_gravity = { 0, m_Mass*m_gravity, 0 }; // due to gravity
 		AddForce(force_gravity);
 		
 		const Math::Vec3D acceleration = { m_Force.x / m_Mass, m_Force.y / m_Mass, 0};
@@ -85,7 +95,7 @@ namespace Dystopia
 
 	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
 	{
-		//AddForce(_force, _point, mOwnerTransform->GetGlobalPosition());
+		AddForce(_force, _point, m_OwnerTransform->GetGlobalPosition());
 	}
 
 	/*
@@ -111,9 +121,9 @@ namespace Dystopia
 		/*Vector from origin/pivot of the object to the _point where the force is applied*/
 		Math::Vec3D && displacement_v = _point - _origin;
 		/*Generate the angular velocity as a result of the force being applied at _point*/
-		Math::Vector3D Angular = Cross(_force, displacement_v) / displacement_v.MagnitudeSqr();
+		const Math::Vector3D angularVel = Cross(_force, displacement_v) / displacement_v.MagnitudeSqr();
 		/*Add to the total Anuglar velocity of the object in this Update Frame*/
-		m_AngularVelocity  += Angular;
+		m_AngularVelocity  += angularVel;
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
 		m_CumulativeVector += _force;
 	}

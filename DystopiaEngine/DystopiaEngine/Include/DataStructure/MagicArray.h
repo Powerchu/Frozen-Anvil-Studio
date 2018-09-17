@@ -384,7 +384,7 @@ T& MagicArray<T, PP>::operator[] (Sz_t _nIndex) const noexcept
 {
 #if _DEBUG
 	/* Array index out of range */
-	auto blk = mDirectory[_nIndex >> PP::shift]
+	auto blk = mDirectory[_nIndex >> PP::shift];
 	if (nullptr == blk.mpArray)
 		__debugbreak();
 	if (0 == (0x1 & (blk.present[page.GetPresentIndex(_nIndex & PP::offset)] >> (_nIndex & 63))))
