@@ -209,6 +209,8 @@ namespace Dystopia
 				}
 			}
 
+			throw "asd";
+
 			EGUI::EndTab();
 			EGUI::PopID();
 		}
