@@ -70,19 +70,25 @@ void Dystopia::BehaviourSystem::Update(float)
 #if EDITOR
 	/*Update Hotloader*/
 	mHotloader.Update();
-	DLLWrapper* arr[100]{ nullptr };
+	static DLLWrapper * arr[100]{ nullptr };
+
 	/*Check Hotloader for changes in the Dll file*/
 	if (mHotloader.ChangesInDllFolder(100, arr))
 	{
 		FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
 		DLLWrapper** start = arr;
+		/*Loop through all the changes*/
 		while (start != nullptr)
 		{
-			std::string DllName = std::string{ (*start)->GetDllName().begin(), (*start)->GetDllName().end() };
+			/**/
+			std::string DllName = FileSys->RemoveFileExtension<std::string>(std::string{ (*start)->GetDllName().begin(), (*start)->GetDllName().end() });
+
 			for (auto & elem : mvBehaviourReferences)
 			{
+				/*If the name matches*/
 				if (DllName == elem.mName)
 				{
+					/*Get pointer to the clone function*/
 					using fpClone = Behaviour * (*) ();
 					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>((*start)->GetDllName()) + L"Clone");
 					if (BehaviourClone)

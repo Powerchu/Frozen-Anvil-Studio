@@ -7,18 +7,12 @@
 #include "DataStructure/MagicArray.h"
 #include "DataStructure/SharedPtr.h"
 #include "System/Base/ComponentDonor.h"
+
 #if EDITOR
 #include "Editor/HotLoader.h"
 #endif
 
 
-
-
-
-
-
-
-#endif
 
 namespace Dystopia
 {
@@ -32,9 +26,10 @@ namespace Dystopia
 			:mName{_name}, mpBehaviour{ _pointer }
 		{
 		}
-		std::string mName;
-		SharedPtr<Behaviour> mpBehaviour;
+		std::string mName;					/*Name of BehaviourScript*/
+		SharedPtr<Behaviour> mpBehaviour;   /*SharedPtr to Behaviour Component*/
 	};
+#endif
 
 	struct BehaviourSystem : Systems, public ComponentDonor<Behaviour>
 	{
@@ -51,12 +46,12 @@ namespace Dystopia
 		virtual void LoadSettings(TextSerialiser&);
 
 	private:
-
+		/*Array of Behaviours components*/
 		MagicArray< SharedPtr<Behaviour> > mBehaviours;
 
 #if EDITOR
-		
 		Hotloader<1> mHotloader;
+		/*A reference copy of all the available Behaviour Component created from a List of Dlls*/
 		MagicArray<BehaviourWrap> mvBehaviourReferences;
 #endif
 	};
