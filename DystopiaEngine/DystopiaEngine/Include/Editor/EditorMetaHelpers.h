@@ -67,7 +67,17 @@ namespace Dystopia
 		template<size_t ... Ns>
 		struct GenerateCollection<std::index_sequence<Ns ...>>
 		{
-			using tupleType = std::tuple<typename Utility::MetaExtract<Ns, AllComponents>::result::type* (&)(void) ...>;
+
+			template <typename T>
+			struct GetType
+			{
+				using type = T;
+			};
+
+			using tupleType = std::tuple
+			<
+				typename GetType<typename Utility::MetaExtract<Ns, AllComponents>::result::type * (&)(void) >::type ...    //::result::type * (&)(void)
+			>;
 			tupleType mData = { AuxGenFunction<typename Utility::MetaExtract<Ns, AllComponents>::result::type>::Extract ... };
 
 			struct ApplyFunction
@@ -84,7 +94,7 @@ namespace Dystopia
 			template<size_t Head, size_t ... Rest>
 			struct BreakTuple<std::index_sequence<Head, Rest ...>>
 			{
-				std::tuple<typename Utility::MetaExtract<Rest, AllComponents>::result::type* (&)(void) ...> mData
+				std::tuple< typename GetType<typename Utility::MetaExtract<Rest, AllComponents>::result::type* (&)(void)>::type ...> mData
 					= { AuxGenFunction<typename Utility::MetaExtract<Rest, AllComponents>::result::type>::Extract ... };
 			};
 			template<size_t Last>
