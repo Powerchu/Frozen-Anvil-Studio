@@ -696,7 +696,8 @@ namespace Dystopia
 
 		bool LocateAndLoadCompiler()
 		{
-			std::filesystem::path p{ "C:/" };
+
+			std::filesystem::path p{ "C:/windows/system32" };
 			std::error_code error;
 			std::filesystem::recursive_directory_iterator i{ p,std::filesystem::directory_options::skip_permission_denied,error };
 			std::wstring name;

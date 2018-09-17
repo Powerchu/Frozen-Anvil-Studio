@@ -41,7 +41,8 @@ namespace Dystopia
 			Utility::Indexer<eSYSTEMS::EVENT_SYSTEM    , class EventSystem    >,
 			Utility::Indexer<eSYSTEMS::COLLISION_SYSTEM, class CollisionSystem>,
 			Utility::Indexer<eSYSTEMS::PHYSICS_SYSTEM  , class PhysicsSystem  >,
-			Utility::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >
+			Utility::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >,
+			Utility::Indexer<eSYSTEMS::BEHAVIOUR_SYSTEM, class BehaviourSystem>
 		>>;
 
 		using SubSys = typename Utility::MetaAutoIndexer <

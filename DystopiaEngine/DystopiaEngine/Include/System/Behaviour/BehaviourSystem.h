@@ -45,6 +45,13 @@ namespace Dystopia
 		virtual void LoadDefaults(void);
 		virtual void LoadSettings(TextSerialiser&);
 
+#if EDITOR
+
+		MagicArray<BehaviourWrap *> GetDllChanges() const;
+		bool hasDllChanges() const;
+
+#endif
+
 	private:
 		/*Array of Behaviours components*/
 		//MagicArray< SharedPtr<Behaviour> > mBehaviours;
@@ -54,7 +61,7 @@ namespace Dystopia
 		Hotloader<1> mHotloader;
 		/*A reference copy of all the available Behaviour Component created from a List of Dlls*/
 		MagicArray<BehaviourWrap> mvBehaviourReferences;
-		MagicArray<BehaviourWrap> mvRecentChanges;
+		MagicArray<BehaviourWrap *> mvRecentChanges;
 
 #endif
 	};
