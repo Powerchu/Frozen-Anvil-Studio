@@ -14,19 +14,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SF_DefineScriptName_H_
 #define _SF_DefineScriptName_H_
 
+#define str(s) #s
+
 #include "Behaviour\Behaviour.h"
 
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
-	class DllExport _SF_ClassName_ : Behaviour
+	class _SF_ClassName_ : Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = _SF_ClassName_;
+		static constexpr const char * BehaviourName = str(_SF_ClassName_);
 #if !EDITOR
-
+		
 		using SYSTEM = BehaviourSystem;
 		unsigned GetBehaviourType(void) const
 		{
@@ -34,7 +36,8 @@ namespace Dystopia
 		};
 
 #endif
-		static unsigned constexpr m_SF_ClassName_ID = ;
+		//static unsigned constexpr m_SF_ClassName_ID = ;
+
 		_SF_ClassName_();
 		~_SF_ClassName_();
 		
@@ -47,14 +50,12 @@ namespace Dystopia
 
 		virtual void GameObjectDestroy(void) override;
 		virtual void Unload(void) override;
-		
-		virtual Component* Duplicate() const override;
 
 		virtual void Serialise(TextSerialiser&) const override;
 
 		virtual void Unserialise(TextSerialiser&) override;
 
-		virtual const char * const GetBehaviourName() const override;
+		virtual const char * const GetBehaviourName() const;
 
 		virtual _SF_ClassName_ * Duplicate() const;
 

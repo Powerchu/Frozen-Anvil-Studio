@@ -69,7 +69,7 @@ namespace Dystopia
 	}
 
 
-	virtual const char * const Whatever::GetBehaviourName() const
+	const char * const Whatever::GetBehaviourName() const
 	{
 		return Whatever::BehaviourName;
 	}

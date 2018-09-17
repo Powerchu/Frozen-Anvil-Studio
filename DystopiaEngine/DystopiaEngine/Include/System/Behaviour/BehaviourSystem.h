@@ -67,7 +67,7 @@ namespace Dystopia
 
 #if EDITOR
 
-		MagicArray<BehaviourWrap *> GetDllChanges() const;
+		MagicArray<BehaviourWrap *> const & GetDllChanges() const;
 		bool hasDllChanges() const;
 
 #endif

@@ -25,7 +25,7 @@ namespace Dystopia
 
 		mHotloader.SetFileDirectoryPath<0>(FileSys->GetFullPath("BehaviourScripts", eFileDir::eResource));
 
-		mHotloader.SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /std:c++latest " + IncludeFolderPath);
+		mHotloader.SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /std:c++latest " + IncludeFolderPath);
 
 #else
 
@@ -83,10 +83,11 @@ namespace Dystopia
 			FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
 			DLLWrapper** start = arr;
 			/*Loop through all the changes*/
-			while (start != nullptr)
+			while (*start != nullptr)
 			{
+				std::wstring wName{ (*start)->GetDllName() };
 				/**/
-				std::string DllName = FileSys->RemoveFileExtension<std::string>(std::string{ (*start)->GetDllName().begin(), (*start)->GetDllName().end() });
+				std::string DllName = FileSys->RemoveFileExtension<std::string>(std::string(wName.begin(),wName.end()));
 
 				bool found = false;
 
@@ -143,7 +144,7 @@ namespace Dystopia
 	{
 	}
 
-	MagicArray<BehaviourWrap*> Dystopia::BehaviourSystem::GetDllChanges() const
+	MagicArray<BehaviourWrap*> const & Dystopia::BehaviourSystem::GetDllChanges() const
 	{
 		return mvRecentChanges;
 	}

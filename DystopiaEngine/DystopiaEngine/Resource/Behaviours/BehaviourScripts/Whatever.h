@@ -13,19 +13,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _Whatever_H_
 #define _Whatever_H_
+
+#define str(s) #s
+
 #include "Behaviour\Behaviour.h"
 
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
-	class DllExport Whatever : Behaviour
+	class Whatever : Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = Whatever;
+		static constexpr const char * BehaviourName = str(Whatever);
 #if !EDITOR
-
+		
 		using SYSTEM = BehaviourSystem;
 		unsigned GetBehaviourType(void) const
 		{
@@ -33,7 +36,8 @@ namespace Dystopia
 		};
 
 #endif
-		static unsigned constexpr mWhateverID = ;
+		//static unsigned constexpr mWhateverID = ;
+
 		Whatever();
 		~Whatever();
 		
@@ -46,14 +50,12 @@ namespace Dystopia
 
 		virtual void GameObjectDestroy(void) override;
 		virtual void Unload(void) override;
-		
-		virtual Component* Duplicate() const override;
 
 		virtual void Serialise(TextSerialiser&) const override;
 
 		virtual void Unserialise(TextSerialiser&) override;
 
-		virtual const char * const GetBehaviourName() const override;
+		virtual const char * const GetBehaviourName() const;
 
 		virtual Whatever * Duplicate() const;
 

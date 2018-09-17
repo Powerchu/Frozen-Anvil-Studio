@@ -169,9 +169,18 @@ namespace Dystopia
 
 		if (mpDriver->GetSystem<BehaviourSystem>()->hasDllChanges())
 		{
-
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED);
 		}
+
+		/*
+				auto & arr = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
+		for (auto & gobj : arr)
+		{
+			auto & gobjBehaviours = gobj.GetAllBehaviours();
+			for (auto & behave : gobjBehaviours)
+				behave->Update(0.f);
+		}
+		*/
 
 
 		UpdateKeys();
@@ -606,16 +615,18 @@ namespace Dystopia
 	{
 		auto & arr = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
 		auto BehaviourSys = EngineCore::GetInstance()->GetSystem<BehaviourSystem>();
-		auto BehaviourArr = BehaviourSys->GetDllChanges();
+		auto const & BehaviourArr = BehaviourSys->GetDllChanges();
 
 		for (auto & elem : BehaviourArr)
 		{
 			for (auto & gobj : arr)
 			{
 				auto & gobjBehaviours = gobj.GetAllBehaviours();
+
 				for (auto & behave : gobjBehaviours)
 				{
 					std::string Name = behave->GetBehaviourName();
+
 					if (Name == elem->mName)
 					{
 						delete behave;

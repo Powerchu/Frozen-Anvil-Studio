@@ -69,7 +69,7 @@ namespace Dystopia
 	}
 
 
-	virtual const char * const _SF_ClassName_::GetBehaviourName() const
+	const char * const _SF_ClassName_::GetBehaviourName() const
 	{
 		return _SF_ClassName_::BehaviourName;
 	}

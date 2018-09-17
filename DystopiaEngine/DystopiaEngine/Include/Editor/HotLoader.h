@@ -91,6 +91,11 @@ namespace Dystopia
 			return mDllFileName;
 		}
 
+		std::wstring GetDllName()
+		{
+			return mDllFileName;
+		}
+
 		std::wstring GetDllFullPath() const
 		{
 			return mDllPathName + L'/' + mDllFileName;
