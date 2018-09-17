@@ -67,7 +67,7 @@ namespace Dystopia
 		void BindOpenGL(Window&) noexcept;
 
 		void LoadDefaults(void);
-		void LoadSettings(TextSerialiser&);
+		void LoadSettings(DysSerialiser_t&);
 
 		void     LevelLoad(TextSerialiser&);
 		void     LoadMesh(const std::string&);

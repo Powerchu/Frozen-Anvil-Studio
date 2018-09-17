@@ -37,6 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\ScopedTimer.h"
 #include "IO\BinarySerializer.h"
 #include "Utility\GUID.h"
+#include "System/File/FileSystem.h"
 
 /* Editor includes */
 #include "Editor\EGUI.h"
@@ -67,6 +68,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
+
 	while (!editor->IsClosing())
 	{
 		editor->StartFrame();

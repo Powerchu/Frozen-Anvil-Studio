@@ -178,6 +178,9 @@
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
+
+    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
+    <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
@@ -489,8 +492,14 @@
     <ClInclude Include="Include\Editor\PLogger.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
+
+    <ClInclude Include="Include\Editor\HotLoader.h" />
+    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h">
       <Filter>Game Engine\Systems\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\File\FileSystem.h">
+      <Filter>Game Engine\Systems\File</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Profiler\Profiler.h">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
@@ -763,6 +772,9 @@
     </Filter>
     <Filter Include="Editor\Clipboard">
       <UniqueIdentifier>{cf5b3310-da32-4143-84b9-30e7d09b1840}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\File">
+      <UniqueIdentifier>{845f6b31-e949-414f-88d7-9fec6ab7613f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -46,6 +46,7 @@ namespace Dystopia
 
 		using SubSys = typename Utility::MetaAutoIndexer <
 			class MeshSystem,
+			class FileSystem,
 			class LoggerSystem
 		>::result;
 
