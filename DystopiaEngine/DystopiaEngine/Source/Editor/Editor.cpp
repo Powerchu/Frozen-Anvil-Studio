@@ -209,8 +209,6 @@ namespace Dystopia
 				}
 			}
 
-			throw "asd";
-
 			EGUI::EndTab();
 			EGUI::PopID();
 		}
@@ -499,6 +497,8 @@ namespace Dystopia
 		}
 
 		mpGuiSystem->UpdateScroll(0, mpInput->GetMouseWheel());
+
+
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Z))
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_UNDO);

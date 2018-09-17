@@ -33,43 +33,40 @@ namespace
 {
 	[[noreturn]] void ProgramTerminate(void)
 	{
-		if (bAbnormalExit)
+		FILE* log;
+		if (0 == fopen_s(&log, "CrashReport.log", "w+"))
 		{
-			FILE* log;
-			if (0 == fopen_s(&log, "CrashReport.log", "w+"))
+			SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
+			if (SymInitialize(GetCurrentProcess(), NULL, TRUE))
 			{
-				SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
-				if (SymInitialize(GetCurrentProcess(), NULL, TRUE))
+				void* data[STACKFRAMES];
+				int nFrames = CaptureStackBackTrace(2, STACKFRAMES, data, NULL);
+				char strBuffer[1023 + sizeof(SYMBOL_INFO)]{};
+				SYMBOL_INFO* symbol = reinterpret_cast<SYMBOL_INFO*>(strBuffer);
+				DWORD64 disp;
+
+				symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+				symbol->MaxNameLen = 1024;
+
+				for (int n = 0; n < nFrames; ++n)
 				{
-					void* data[STACKFRAMES];
-					int nFrames = CaptureStackBackTrace(2, STACKFRAMES, data, NULL);
-					char strBuffer[1023 + sizeof(SYMBOL_INFO)]{};
-					SYMBOL_INFO* symbol = reinterpret_cast<SYMBOL_INFO*>(strBuffer);
-					DWORD64 disp;
+					int x = SymFromAddr(GetCurrentProcess(), reinterpret_cast<DWORD64>(data[n]), &disp, symbol);
 
-					symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-					symbol->MaxNameLen = 1024;
-
-					for (int n = 0; n < nFrames; ++n)
+					if (!x)
 					{
-						int x = SymFromAddr(GetCurrentProcess(), reinterpret_cast<DWORD64>(data[n]), &disp, symbol);
-
-						if (!x)
-						{
-							x = GetLastError();
-						}
-
-						if (symbol->NameLen)
-							fprintf(log, "%s\n", symbol->Name);
-						else
-							fprintf(log, "Function %p\n", data[n]);
+						x = GetLastError();
 					}
 
-					SymCleanup(GetCurrentProcess());
+					if (symbol->NameLen)
+						fprintf(log, "%s\n", symbol->Name);
+					else
+						fprintf(log, "Function %p\n", data[n]);
 				}
 
-				fclose(log);
+				SymCleanup(GetCurrentProcess());
 			}
+
+			fclose(log);
 		}
 
 		std::abort();

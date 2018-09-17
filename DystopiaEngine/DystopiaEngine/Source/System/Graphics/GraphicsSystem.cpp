@@ -145,6 +145,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	mesh->UseMesh(GL_TRIANGLES);
 	texture->UnbindTexture();
 
+	pWinSys->GetMainWindow().SetSize(texture->GetWidth(), texture->GetHeight());
 	pWinSys->GetMainWindow().Show();
 
 	SwapBuffers(
