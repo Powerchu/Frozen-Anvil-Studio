@@ -1,15 +1,16 @@
 #ifndef PHYSICS_SYSTEM_H
 #define PHYSICS_SYSTEM_H
 #include "System/Base/Systems.h"
+#include "System/Base/ComponentDonor.h"
 #include "System/SystemTypes.h"
-#include "DataStructure/AutoArray.h"
+#include "DataStructure/MagicArray.h"
 
 
 namespace Dystopia
 {
 	class RigidBody;
 
-	class PhysicsSystem : public Systems
+	class PhysicsSystem : public Systems, public ComponentDonor<RigidBody>
 	{
 	public:
 		PhysicsSystem();
@@ -22,15 +23,13 @@ namespace Dystopia
 		void Update(float) override;
 		void Shutdown(void) override;
 
-		void Insert(RigidBody * const rigid_body);
-		void Remove(RigidBody * const rigid_body);
-
 		void LoadDefaults(void) override;
 		void LoadSettings(TextSerialiser&) override;
 
+		void ResolveCollision(float);
+
 		virtual ~PhysicsSystem(void) = default;
 	private:
-		AutoArray<RigidBody*> m_rigidBodies_arr;
 	};
 }
 

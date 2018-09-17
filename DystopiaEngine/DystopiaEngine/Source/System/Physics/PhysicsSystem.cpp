@@ -5,7 +5,6 @@
 
 namespace Dystopia
 {
-	
 	PhysicsSystem::PhysicsSystem()
 	{
 	}
@@ -31,11 +30,11 @@ namespace Dystopia
 
 	void PhysicsSystem::Update(float _dt)
 	{
-		for ( auto & rigid_elem : m_rigidBodies_arr)
+		for ( auto rigid_elem : mComponents)
 		{
-			if (rigid_elem != nullptr && rigid_elem->GetOwner())
+			if (rigid_elem.GetOwner()->IsActive())
 			{
-				rigid_elem->Update(_dt);
+				rigid_elem.Update(_dt);
 			}
 		}
 	}
@@ -45,22 +44,17 @@ namespace Dystopia
 
 	}
 
-	void PhysicsSystem::Insert(RigidBody * const rigid_body)
-	{
-		m_rigidBodies_arr.Insert(rigid_body);
-	}
-
-	void PhysicsSystem::Remove(RigidBody * const rigid_body)
-	{
-		m_rigidBodies_arr.Remove(rigid_body);
-	}
-
 	void PhysicsSystem::LoadDefaults(void)
 	{
 
 	}
 
 	void PhysicsSystem::LoadSettings(TextSerialiser& serial)
+	{
+
+	}
+
+	void PhysicsSystem::ResolveCollision(float)
 	{
 
 	}
