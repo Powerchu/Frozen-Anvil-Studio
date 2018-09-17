@@ -34,12 +34,14 @@ bool Dystopia::BehaviourSystem::Init(void)
 {
 	/*Init Hotloader*/
 #if EDITOR
+
 	FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
 	mHotloader.Init();
 	auto const & ArrayDlls = mHotloader.GetDlls();
 	for (auto & elem : ArrayDlls)
 	{
 		using fpClone = Behaviour * (*) ();
+
 		fpClone BehaviourClone = elem.GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>(elem.GetDllName()) + L"Clone");
 
 		if (BehaviourClone)
@@ -48,10 +50,11 @@ bool Dystopia::BehaviourSystem::Init(void)
 			std::wstring name = FileSys->RemoveFileExtension<std::wstring>(elem.GetDllName());
 			wrap.mName = std::string{ name.begin(), name.end() };
 			wrap.mpBehaviour = CreateShared<Behaviour>(BehaviourClone());
-			mvBehaviourReferences.Emplace(wrap);
+			mvBehaviourReferences.Emplace(Utility::Move(wrap));
 		}
 			//mvBehaviourReferences.Emplace(BehaviourClone());
 	}
+
 #endif
 	
 	return false;
@@ -82,6 +85,8 @@ void Dystopia::BehaviourSystem::Update(float)
 		{
 			/**/
 			std::string DllName = FileSys->RemoveFileExtension<std::string>(std::string{ (*start)->GetDllName().begin(), (*start)->GetDllName().end() });
+			
+			bool found = false;
 
 			for (auto & elem : mvBehaviourReferences)
 			{
@@ -93,13 +98,24 @@ void Dystopia::BehaviourSystem::Update(float)
 					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>((*start)->GetDllName()) + L"Clone");
 					if (BehaviourClone)
 						elem.mpBehaviour = CreateShared<Behaviour>(BehaviourClone());
+					found = true;
 				}
-					
+				/*Insert New BehaviourScript*/
 			}
+
+			if(!found)
+			{
+				BehaviourWrap wrap;
+				using fpClone = Behaviour * (*) ();
+				fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>((*start)->GetDllName()) + L"Clone");
+				wrap.mName = DllName;
+				wrap.mpBehaviour = CreateShared<Behaviour>(BehaviourClone());
+				mvBehaviourReferences.Emplace(Utility::Move(wrap));
+			}
+			
 			++start;
 		}
 	}
-
 #endif
 }
 

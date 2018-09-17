@@ -47,12 +47,15 @@ namespace Dystopia
 
 	private:
 		/*Array of Behaviours components*/
-		MagicArray< SharedPtr<Behaviour> > mBehaviours;
+		//MagicArray< SharedPtr<Behaviour> > mBehaviours;
 
 #if EDITOR
+
 		Hotloader<1> mHotloader;
 		/*A reference copy of all the available Behaviour Component created from a List of Dlls*/
 		MagicArray<BehaviourWrap> mvBehaviourReferences;
+		MagicArray<BehaviourWrap> mvRecentChanges;
+
 #endif
 	};
 

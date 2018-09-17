@@ -20,6 +20,15 @@ namespace Dystopia
 	class _SF_ClassName_ : Behaviour
 	{
 	public:
+
+#if !EDITOR
+
+		using SYSTEM = BehaviourSystem;
+		unsigned GetComponentType(void) const
+		{
+			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllBehaviours>::value;
+		};
+#endif
 		_SF_ClassName_();
 		~_SF_ClassName_();
 		
