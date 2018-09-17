@@ -1,44 +1,56 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H
+#include "Math/MathUtility.h"
 
 
 namespace Dystopia
 {
-	struct PrimitiveShape
+	enum class eRigidBodyType
 	{
-		float m_mass;
-		float m_momentOfInertia;
+		TRIANGLE,
+		RECTANGLE,
+		CIRCLE,
+		POLYGON,
 
-		PrimitiveShape()
+		TOTAL
+	};
+
+	struct Primitive
+	{
+		Primitive()
 			: m_mass(0)
 			, m_momentOfInertia(0)
 		{
 			
 		}
 
-		PrimitiveShape(float m, float iner)
+		Primitive(float m)
 			: m_mass(m)
-			, m_momentOfInertia(iner)
+			, m_momentOfInertia(0)
 		{
 			
 		}
 
 		// Suppress warnings
 		// Unnecessary Copy Constructor
-		PrimitiveShape(const PrimitiveShape&) = delete;
+		Primitive(const Primitive&) = delete;
 		// Unnecessary move constructor
-		PrimitiveShape(PrimitiveShape&&) = delete;
+		Primitive(Primitive&&) = delete;
 		// Unnecessary Copy Operato
-		auto operator=(const PrimitiveShape&) = delete;
+		auto operator=(const Primitive&) = delete;
 		// Unnecessary move operator
-		auto operator=(PrimitiveShape&&) = delete;
+		auto operator=(Primitive&&) = delete;
 
-		virtual ~PrimitiveShape() = default;
+		virtual ~Primitive() = default;
 
-		virtual float CalculateInertia() = 0;
+		virtual float GetInertia() = 0;
+
+	protected:
+		float m_mass;
+		float m_momentOfInertia;
 	};
 
-	struct BoxShape : PrimitiveShape
+	struct BoxShape : Primitive
 	{
 		float m_width;
 		float m_height;
@@ -50,15 +62,19 @@ namespace Dystopia
 			
 		}
 
-		BoxShape(float mass, float inertia, float width, float height)
-			: PrimitiveShape{mass, inertia}
+		BoxShape(float mass, float width, float height)
+			: Primitive{mass}
 			, m_width(width)
 			, m_height(height)
 		{
-			
+			m_momentOfInertia = m_mass * (Math::Power<2, float>(m_width) +
+								Math::Power<2, float>(m_height)) / 12;
 		}
 
-		float CalculateInertia() override;
+		float GetInertia() override
+		{
+			return m_momentOfInertia;
+		}
 	};
 }
 

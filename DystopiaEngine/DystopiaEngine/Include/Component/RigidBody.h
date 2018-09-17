@@ -15,20 +15,11 @@ namespace Dystopia
 {
 	class Transform;
 
-	enum class eRigidBodyType
-	{
-		TRIANGLE,
-		RECTANGLE,
-		CIRCLE,
-		POLYGON, 
-
-		TOTAL
-	};
-
 	class RigidBody : public Component
 	{
 	public:
 		using TAG = ComponentTag;
+
 		unsigned GetComponentType(void) const
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
@@ -52,12 +43,16 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		//TODO: Delete this once graphics is up
 		void PrintRigidBodies(); // FOR TESTING
-		void Update(float _dt);
 
+
+		void Update(float _dt);
 		void LateUpdate(float _dt);
 
 		/*Add a force at the origin of the body*/
 		void AddForce(Math::Vec3D const & _force);
+
+		// Gettors
+
 
 		/*************************************************************************************************
 		\brief
@@ -87,16 +82,22 @@ namespace Dystopia
 		void ResetCumulative();
 
 	private:
-		Transform*        mOwnerTransform;    /*Used for accessing position and GameObject World orientation*/
-		Math::Vec3D       mLinearVelocity;    /*Linear Velocity of the RigidBody with respect to World Space*/
-		eRigidBodyType	  mRigidBody;
+		Primitive*			m_PrimitiveShape;    /*The underlying primitive of the RigidBody*/
+		Transform*			m_OwnerTransform;    /*Used for accessing position and GameObject World orientation*/
+		Math::Vec3D			m_LinearVelocity;    /*Linear Velocity of the RigidBody with respect to World Space*/
 
-		Math::Vec3D		  mForce;
-		Math::Vec3D       mAngularVelocity;   /*Angular Velocity/Rotation with respect to World Space*/
-		Math::Vec3D       mCumulativeVector;  /*The sum of all the force acting on the body*/
+		Math::Vec3D			m_Force;
+		Math::Vec3D			m_AngularVelocity;   /*Angular Velocity/Rotation with respect to World Space*/
+		Math::Vec3D			m_CumulativeVector;  /*The sum of all the force acting on the body*/
+		float				m_angle;
+		float				m_torque;
+		float				m_customGravity;
 
-		float			  mMass;
-		float             mInverseMass;       /*The inverse of mass, (1/Mass)*/
+		float				m_Mass;
+		float				momentOfInertia;
+		float				m_InverseMass;       /*The inverse of mass, (1/Mass)*/
+
+		bool				m_IsGrounded;
 
 
 		/*Quaternion if needed*/
