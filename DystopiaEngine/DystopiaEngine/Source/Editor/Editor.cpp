@@ -69,10 +69,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
 
-	Dystopia::BehaviourSystem bSys;
-	bSys.PreInit();
-	bSys.Init();
-
 	while (!editor->IsClosing())
 	{
 		editor->StartFrame();
@@ -168,7 +164,15 @@ namespace Dystopia
 		mpProfiler->Update(mDeltaTime);
 		mpWin->Update(mDeltaTime);
 		mpInput->Update(mDeltaTime);
+		mpDriver->GetSystem<BehaviourSystem>()->Update(mDeltaTime);
 		mpGuiSystem->StartFrame(mDeltaTime);
+
+		if (mpDriver->GetSystem<BehaviourSystem>()->hasDllChanges())
+		{
+
+			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED);
+		}
+
 
 		UpdateKeys();
 		UpdateHotkeys();
@@ -222,6 +226,7 @@ namespace Dystopia
 	{
 		LogTabPerformance();
 		mpProfiler->PostUpdate();
+		mpDriver->GetSystem<BehaviourSystem>()->PostUpdate();
 		mpGuiSystem->EndFrame();
 
 		if (mCurrentState != mNextState) 
@@ -518,6 +523,7 @@ namespace Dystopia
 	
 	void Editor::InstallHotkeys()
 	{
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED)->Bind(&Editor::ReloadDLL, this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_UNDO)->Bind(&Editor::EditorUndo, this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_REDO)->Bind(&Editor::EditorRedo, this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_COPY)->Bind(&Editor::EditorCopy, this);
@@ -527,6 +533,7 @@ namespace Dystopia
 
 	void Editor::UnInstallHotkeys()
 	{
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED)->Unbind(this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_UNDO)->Unbind(this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_REDO)->Unbind(this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_COPY)->Unbind(this);
@@ -594,6 +601,34 @@ namespace Dystopia
 	{
 		mLatestPayloadFocus = e;
 	}
+
+	void Editor::ReloadDLL()
+	{
+		auto & arr = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
+		auto BehaviourSys = EngineCore::GetInstance()->GetSystem<BehaviourSystem>();
+		auto BehaviourArr = BehaviourSys->GetDllChanges();
+
+		for (auto & elem : BehaviourArr)
+		{
+			for (auto & gobj : arr)
+			{
+				auto & gobjBehaviours = gobj.GetAllBehaviours();
+				for (auto & behave : gobjBehaviours)
+				{
+					std::string Name = behave->GetBehaviourName();
+					if (Name == elem->mName)
+					{
+						delete behave;
+						behave = nullptr;
+						Behaviour * temp = elem->mpBehaviour? nullptr : elem->mpBehaviour->Duplicate();
+						behave = temp;
+					}
+				}
+			}
+		}
+
+	}
+
 }
 
 #endif		// EDITOR ONLY

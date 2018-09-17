@@ -51,7 +51,7 @@ namespace Dystopia
 				BehaviourWrap wrap;
 				std::wstring name = FileSys->RemoveFileExtension<std::wstring>(elem.GetDllName());
 				wrap.mName = std::string{ name.begin(), name.end() };
-				wrap.mpBehaviour = CreateShared<Behaviour>(BehaviourClone());
+				wrap.mpBehaviour = (BehaviourClone());
 				mvBehaviourReferences.Emplace(Utility::Move(wrap));
 			}
 			//mvBehaviourReferences.Emplace(BehaviourClone());
@@ -59,7 +59,7 @@ namespace Dystopia
 
 #endif
 
-		return false;
+		return true;
 	}
 
 	void Dystopia::BehaviourSystem::PostInit(void)
@@ -99,7 +99,7 @@ namespace Dystopia
 						using fpClone = Behaviour * (*) ();
 						fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>((*start)->GetDllName()) + L"Clone");
 						if (BehaviourClone)
-							elem.mpBehaviour = CreateShared<Behaviour>(BehaviourClone());
+							elem.mpBehaviour = (BehaviourClone());
 						found = true;
 
 						mvRecentChanges.Insert(&elem);
@@ -113,7 +113,7 @@ namespace Dystopia
 					using fpClone = Behaviour * (*) ();
 					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>((*start)->GetDllName()) + L"Clone");
 					wrap.mName = DllName;
-					wrap.mpBehaviour = CreateShared<Behaviour>(BehaviourClone());
+					wrap.mpBehaviour = (BehaviourClone());
 					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Utility::Move(wrap)));
 				}
 
@@ -131,8 +131,8 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::Shutdown(void)
 	{
-		//for (auto const & elem : mvBehaviourReferences)
-		//delete elem;
+		for (auto const & elem : mvBehaviourReferences)
+		delete elem.mpBehaviour;
 	}
 
 	void Dystopia::BehaviourSystem::LoadDefaults(void)

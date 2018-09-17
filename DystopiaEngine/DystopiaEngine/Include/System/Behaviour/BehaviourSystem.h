@@ -7,32 +7,52 @@
 #include "DataStructure/MagicArray.h"
 #include "DataStructure/SharedPtr.h"
 #include "System/Base/ComponentDonor.h"
+#include "Component/BehaviourList.h"
+#include "Behaviour/Behaviour.h"
+
+#include <memory>
 
 #if EDITOR
 #include "Editor/HotLoader.h"
+#endif
+
+#if !EDITOR
+/*Include all the behaviour header files*/
+
 #endif
 
 
 
 namespace Dystopia
 {
-	class Behaviour;
 
 #if EDITOR
 	struct BehaviourWrap
 	{
 		BehaviourWrap(){}
-		BehaviourWrap(std::string const & _name, SharedPtr<Behaviour> _pointer)
+		BehaviourWrap(std::string const & _name, Behaviour *  _pointer)
 			:mName{_name}, mpBehaviour{ _pointer }
 		{
 		}
-		std::string mName;					/*Name of BehaviourScript*/
-		SharedPtr<Behaviour> mpBehaviour;   /*SharedPtr to Behaviour Component*/
+		std::string mName;					      /*Name of BehaviourScript*/
+		Behaviour * mpBehaviour;
+		//std::shared_ptr<Behaviour> mpBehaviour;   /*SharedPtr to Behaviour Component*/
 	};
+
+
 #endif
 
-	struct BehaviourSystem : Systems, public ComponentDonor<Behaviour>
+	class BehaviourSystem 
+	: public Systems
 	{
+	public :
+#if !EDITOR
+		using AllBehaviour = 
+			Utility::MetaSortT_t <Utility::MetaLessThan, Utility::Collection 
+			<
+
+			>>;
+#endif 
 		virtual void PreInit(void);
 		virtual bool Init(void);
 		virtual void PostInit(void);

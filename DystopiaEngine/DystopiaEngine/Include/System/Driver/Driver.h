@@ -31,18 +31,19 @@ namespace Dystopia
 	{
 	public:
 		using AllSys = Utility::MetaSortT_t <Utility::MetaLessThan, Utility::Collection <
+			Utility::Indexer<eSYSTEMS::BEHAVIOUR_SYSTEM, class BehaviourSystem>,
 			Utility::Indexer<eSYSTEMS::TIME_SYSTEM     , class TimeSystem     >,
 			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM    , class InputManager   >,
 			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM   , class WindowManager  >,
 //			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM    , class SoundSystem    >,
+
 			Utility::Indexer<eSYSTEMS::SCENE_SYSTEM    , class SceneSystem    >,
 			Utility::Indexer<eSYSTEMS::CAMERA_SYSTEM   , class CameraSystem   >,
 			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM  , class GraphicsSystem >,
 			Utility::Indexer<eSYSTEMS::EVENT_SYSTEM    , class EventSystem    >,
 			Utility::Indexer<eSYSTEMS::COLLISION_SYSTEM, class CollisionSystem>,
 			Utility::Indexer<eSYSTEMS::PHYSICS_SYSTEM  , class PhysicsSystem  >,
-			Utility::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >,
-			Utility::Indexer<eSYSTEMS::BEHAVIOUR_SYSTEM, class BehaviourSystem>
+			Utility::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >
 		>>;
 
 		using SubSys = typename Utility::MetaAutoIndexer <

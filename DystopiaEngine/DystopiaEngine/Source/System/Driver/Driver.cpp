@@ -33,7 +33,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Camera\CameraSystem.h"
 #include "System\Events\EventSystem.h"
 #include "System\Profiler\Profiler.h"
-#include "System/Behaviour/BehaviourSystem.h"
+#include "System\Behaviour\BehaviourSystem.h"
+
 // SubSystems
 #include "System\Graphics\MeshSystem.h"
 #include "System/File/FileSystem.h"

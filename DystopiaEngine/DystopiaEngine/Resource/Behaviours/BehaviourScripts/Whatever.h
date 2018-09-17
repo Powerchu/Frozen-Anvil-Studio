@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	_SF_ClassName_.h
-\author _SF_CreatorName_ (100%)
-\par    email: _SF_CreatorLogin_\@digipen.edu
+\file	Whatever.h
+\author Tan Shannon (100%)
+\par    email: t.shannon\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,20 +11,19 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _SF_DefineScriptName_H_
-#define _SF_DefineScriptName_H_
-
+#ifndef _Whatever_H_
+#define _Whatever_H_
 #include "Behaviour\Behaviour.h"
 
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
-	class DllExport _SF_ClassName_ : Behaviour
+	class DllExport Whatever : Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = _SF_ClassName_;
+		static constexpr const char * BehaviourName = Whatever;
 #if !EDITOR
 
 		using SYSTEM = BehaviourSystem;
@@ -34,9 +33,9 @@ namespace Dystopia
 		};
 
 #endif
-		static unsigned constexpr m_SF_ClassName_ID = ;
-		_SF_ClassName_();
-		~_SF_ClassName_();
+		static unsigned constexpr mWhateverID = ;
+		Whatever();
+		~Whatever();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -56,7 +55,7 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const override;
 
-		virtual _SF_ClassName_ * Duplicate() const;
+		virtual Whatever * Duplicate() const;
 
 	private:
 
@@ -68,13 +67,13 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport _SF_ClassName_ * _SF_ClassName_Clone()
+		DllExport Whatever * WhateverClone()
 		{
-			return new _SF_ClassName_;
+			return new Whatever;
 		}
 	}
 }
 
-#endif //_SF_DefineScriptName_H_
+#endif //_Whatever_H_
 
 

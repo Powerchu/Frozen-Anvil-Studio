@@ -23,6 +23,7 @@ void Dystopia::PhysicsSystem::FixedUpdate(float)
 
 void Dystopia::PhysicsSystem::Update(float)
 {
+
 }
 
 void Dystopia::PhysicsSystem::Shutdown(void)
