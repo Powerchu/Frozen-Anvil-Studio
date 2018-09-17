@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define NOMINMAX							// Disable window's min & max macros
 #include <windows.h>						// Windows Header
 #include <cstdio>							// FILE, freopen_s
+#include "../../../resource.h"
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
 #undef  NOMINMAX
@@ -36,8 +37,8 @@ namespace
 	constexpr bool	DEFAULT_FULLSCREEN		= false;
 	constexpr int	DEFAULT_WIDTH			= 1600;
 	constexpr int	DEFAULT_HEIGHT			= 900;
-	constexpr int	LOGO_WIDTH				= 600;
-	constexpr int	LOGO_HEIGHT				= 400;
+	constexpr int	LOGO_WIDTH				= 620;
+	constexpr int	LOGO_HEIGHT				= 300;
 
 	Dystopia::MouseData* pMouse = nullptr;
 
@@ -118,12 +119,12 @@ void Dystopia::WindowManager::PreInit(void)
 		MessageProcessor,
 		0, 0,
 		GetModuleHandle(NULL),
-		NULL,
+		LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1)),
 		LoadCursor(NULL, IDC_ARROW),
 		NULL, // Background
 		NULL,
 		L"MainWindow",
-		NULL // Icon
+		LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1))
 	};
 
 	if (!RegisterClassEx(&mainWindow))
@@ -139,7 +140,7 @@ void Dystopia::WindowManager::PreInit(void)
 	HWND window = CreateWindowEx(
 		WS_EX_APPWINDOW,
 		L"MainWindow",
-		NULL,
+		L"Dystopia 2018.01.1a",
 		WS_POPUP,
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		WindowRect.right - WindowRect.left,
