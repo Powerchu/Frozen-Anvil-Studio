@@ -190,9 +190,6 @@
     <ClCompile Include="Source\Editor\CommandList.cpp">
       <Filter>Editor\Commands</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\Clipboard.cpp">
-      <Filter>Editor\Clipboard</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -504,9 +501,6 @@
     <ClInclude Include="Include\Editor\DefaultFactory.h">
       <Filter>Editor\Factory</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\Clipboard.h">
-      <Filter>Editor\Clipboard</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -760,9 +754,6 @@
     </Filter>
     <Filter Include="Editor\Factory">
       <UniqueIdentifier>{3c1970b5-39ed-4b21-846a-39fb24566cc5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Clipboard">
-      <UniqueIdentifier>{cf5b3310-da32-4143-84b9-30e7d09b1840}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
