@@ -16,9 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _CONSOLE_DEBUGGER_H_
 #include <sstream>
 #include <string>
-#include <iostream>
+//#include <iostream> not used
 #include <type_traits>
-#include <exception>
+// #include <exception> not used
 
 void format_impl(std::stringstream&, const char *);
 
