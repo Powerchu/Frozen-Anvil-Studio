@@ -79,9 +79,9 @@ namespace Dystopia
 
 		Queue<eSysMessage> mMessageQueue;
 
+		AutoArray<void*>	mSubSystems;
 		AutoArray<Systems*> mSystemList;
 		AutoArray<Systems*> mSystemTable;
-		AutoArray<void*>	mSubSystems;
 
 		EngineCore(void);
 

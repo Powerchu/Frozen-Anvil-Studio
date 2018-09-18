@@ -25,7 +25,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
 #undef  NOMINMAX
 
-#define _COMMANDPROMPT	1
 #define ENGINE_NAME		L"Dystopia Engine"
 
 namespace
@@ -96,21 +95,6 @@ Dystopia::WindowManager::~WindowManager(void)
 
 void Dystopia::WindowManager::PreInit(void)
 {
-#if _COMMANDPROMPT
-
-	if (AllocConsole())
-	{
-		FILE* file;
-
-		freopen_s(&file, "CONOUT$", "wt", stdout);
-		freopen_s(&file, "CONOUT$", "wt", stderr);
-//			freopen_s(&file, "CONOUT$", "wt", stdin);
-
-		SetConsoleTitle(ENGINE_NAME);
-	}
-
-#endif	// Show Command Prompt
-
 	WNDCLASSEX mainWindow
 	{
 		sizeof(WNDCLASSEX),

@@ -42,7 +42,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\Timer.h"
 #include "System\Time\ScopedTimer.h"
 
-#define SETTINGS_FILE "settings.dyst"
+#define SETTINGS_FILE "settings.dyst" 
 
 
 
@@ -105,8 +105,8 @@ Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 
 Dystopia::EngineCore::EngineCore(void) :
 	mTime{}, mTimeFixed{}, mMessageQueue{60}, mSystemList{ Utility::SizeofList<AllSys>::value },
-	mSystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) },
-	mSubSystems { MakeAutoArray<void*>(Utility::MakeTypeList_t<Utility::TypeList, SubSys>{}) }
+	mSubSystems { MakeAutoArray<void*>(Utility::MakeTypeList_t<Utility::TypeList, SubSys>{}) },
+	mSystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) }
 {
 	using SanityCheck = typename ErrorOnDuplicate<AllSys>::eval;
 }
@@ -187,11 +187,11 @@ void Dystopia::EngineCore::Update(void)
 
 void Dystopia::EngineCore::Shutdown(void)
 {
-	TextSerialiser s = Serialiser::OpenFile<TextSerialiser>("DystopiaSettings.ini", TextSerialiser::MODE_WRITE);
+	//TextSerialiser s = Serialiser::OpenFile<TextSerialiser>(SETTINGS_FILE, TextSerialiser::MODE_WRITE);
 
 	for (auto& e : mSystemList)
 	{
-		e->SaveSettings(s);
+		//e->SaveSettings(s);
 		e->Shutdown();
 	}
 

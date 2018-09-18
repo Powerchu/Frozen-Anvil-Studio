@@ -554,11 +554,7 @@ template <class T, class A>
 const T& AutoArray<T, A>::operator[] (const Sz_t _nIndex) const
 {
 #if _DEBUG
-	if (!(mpArray + _nIndex < mpLast))
-	{
-		DEBUG_PRINT("AutoArray Error: Array index out of range!\n");
-		__debugbreak();
-	}
+	DEBUG_BREAK(!(mpArray + _nIndex < mpLast), "AutoArray Error: Array index out of range!\n");
 #endif
 
 	return *(mpArray + _nIndex);

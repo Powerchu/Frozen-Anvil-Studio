@@ -16,12 +16,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
-#include <windows.h>						// Windows Header
-#include <DbgHelp.h>
+#include <ctime>
 #include <cstdio>							// FILE, freopen_s
 #include <cstdlib>
-#include <iostream>
 #include <exception>
+#include <windows.h>						// Windows Header
+#include <DbgHelp.h>
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
 #undef  NOMINMAX
@@ -31,44 +31,45 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
+	void WriteCallStack(FILE* out, unsigned nNumSkip)
+	{
+		SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
+		if (SymInitialize(GetCurrentProcess(), NULL, TRUE))
+		{
+			void* data[STACKFRAMES];
+			int nFrames = CaptureStackBackTrace(nNumSkip, STACKFRAMES, data, NULL);
+			char strBuffer[1023 + sizeof(SYMBOL_INFO)]{};
+			SYMBOL_INFO* symbol = reinterpret_cast<SYMBOL_INFO*>(strBuffer);\
+
+			symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+			symbol->MaxNameLen = 1024;
+
+			for (int n = 0; n < nFrames; ++n)
+			{
+				SymFromAddr(GetCurrentProcess(), reinterpret_cast<DWORD64>(data[n]), NULL, symbol);
+
+				if (symbol->NameLen)
+					fprintf(out, "%s (%p)\n", symbol->Name, data[n]);
+				else
+					fprintf(out, "Function %p\n", data[n]);
+			}
+
+			SymCleanup(GetCurrentProcess());
+		}
+	}
+
 	[[noreturn]] void ProgramTerminate(void)
 	{
 		FILE* log;
 		if (0 == fopen_s(&log, "CrashReport.log", "w+"))
 		{
-			SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
-			if (SymInitialize(GetCurrentProcess(), NULL, TRUE))
-			{
-				void* data[STACKFRAMES];
-				int nFrames = CaptureStackBackTrace(2, STACKFRAMES, data, NULL);
-				char strBuffer[1023 + sizeof(SYMBOL_INFO)]{};
-				SYMBOL_INFO* symbol = reinterpret_cast<SYMBOL_INFO*>(strBuffer);
-				DWORD64 disp;
+			fprintf(log, "Crash Report %zu\n\nCall Stack:\n", time(0));
 
-				symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-				symbol->MaxNameLen = 1024;
-
-				for (int n = 0; n < nFrames; ++n)
-				{
-					int x = SymFromAddr(GetCurrentProcess(), reinterpret_cast<DWORD64>(data[n]), &disp, symbol);
-
-					if (!x)
-					{
-						x = GetLastError();
-					}
-
-					if (symbol->NameLen)
-						fprintf(log, "%s\n", symbol->Name);
-					else
-						fprintf(log, "Function %p\n", data[n]);
-				}
-
-				SymCleanup(GetCurrentProcess());
-			}
-
+			WriteCallStack(log, 3);
 			fclose(log);
 		}
 
+		// Let it crash
 		std::abort();
 	}
 }
@@ -77,11 +78,35 @@ namespace
 Dystopia::LoggerSystem::LoggerSystem(void) noexcept
 {
 	std::set_terminate(ProgramTerminate);
+
+#if !EDITOR && defined(COMMAND_PROMPT)
+
+	if (AllocConsole())
+	{
+		FILE* file;
+
+		freopen_s(&file, "CONOUT$", "wt", stdout);
+		freopen_s(&file, "CONOUT$", "wt", stderr);
+		//			freopen_s(&file, "CONOUT$", "wt", stdin);
+
+		SetConsoleTitle(ENGINE_NAME);
+	}
+
+#endif	// Show Command Prompt
 }
 
 Dystopia::LoggerSystem::~LoggerSystem(void) noexcept
 {
+	// Clean exit
+	std::set_terminate(nullptr);
+}
 
+void Dystopia::LoggerSystem::RedirectOutput()
+{
+}
+
+void Dystopia::LoggerSystem::RedirectInput()
+{
 }
 
 

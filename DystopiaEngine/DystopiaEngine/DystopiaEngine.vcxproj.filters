@@ -172,9 +172,6 @@
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp">
       <Filter>IO\TextSerialiser\lodepng</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\ConsoleDebugger.cpp">
-      <Filter>Editor\Editor Tabs\Console</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
@@ -482,9 +479,6 @@
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h">
       <Filter>IO\TextSerialiser\lodepng</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\ConsoleDebugger.h">
-      <Filter>Editor\Editor Tabs\Console</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\PLogInfo.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
@@ -525,6 +519,9 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\Clipboard.h">
       <Filter>Editor\Clipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Logger\LogPriority.h">
+      <Filter>Game Engine\SubSystems\Logger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
