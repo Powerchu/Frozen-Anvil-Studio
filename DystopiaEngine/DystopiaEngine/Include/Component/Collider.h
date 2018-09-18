@@ -106,12 +106,7 @@ namespace Dystopia
 		/*Duplicate the Component*/
 		virtual Collider* Duplicate() const;
 
-		// Gettors
 		Math::Vec3D GetOffSet() const;
-		bool Get_IsBouncy() const;
-
-		// Settors
-		bool Set_IsBouncy(const bool);
 
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const;
@@ -121,9 +116,6 @@ namespace Dystopia
 
 	private:
 		 //Status mStatus;
-
-		// Is Bouncy (whether to deflect in resolution)
-		bool m_IsBouncy;
 
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;

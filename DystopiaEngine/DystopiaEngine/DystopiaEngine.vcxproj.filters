@@ -181,7 +181,6 @@
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
@@ -207,7 +206,12 @@
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
-    <ClCompile Include="Circle.cpp">
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Source\System\Physics\CollisionResolution.cpp">
+      <Filter>Game Engine\Systems\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\Circle.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
   </ItemGroup>
@@ -506,7 +510,6 @@
     <ClInclude Include="Include\Editor\PLogger.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
     <ClInclude Include="Include\Editor\HotLoader.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h">
@@ -551,6 +554,13 @@
     <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Include\Utility\ComponentGUID.h" />
+    <ClInclude Include="Include\Utility\GUID.h" />
+    <ClInclude Include="Include\System\Physics\CollisionResolution.h">
+      <Filter>Game Engine\Systems\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

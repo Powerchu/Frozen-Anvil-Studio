@@ -1,31 +1,42 @@
 #include "Component/RigidBody.h"
 #include "Component/Transform.h"
 #include "Object/GameObject.h"
+#include <Editor/ConsoleDebugger.h>
 
-#define GRAVITY_CONSTANT	-9.81F
+#define GRAVITY_CONSTANT	-9.81F //TODO: change to physics systems
+#define TX					mOwnerTransform
 
 namespace Dystopia
-{
+{ 
 	RigidBody::RigidBody(void)
-		: m_PrimitiveShape(new BoxShape())
-		, m_OwnerTransform(GetOwner()->GetComponent<Transform>())
-		, m_angle(0.0F)
-		, m_torque(0.0F)
-		, m_drag(0.0F)
-		, m_friction(0.1F)
-		, m_custom_gravityScale(1.0F)
-		, m_gravity{GRAVITY_CONSTANT*m_custom_gravityScale}
-		, m_Mass(100.0F)
-		, m_InverseMass(1 / m_Mass)
-		, m_IsGrounded(false)
-		, m_HasGravity(true)
+		: mPrimitiveShape(nullptr)
+		, mOwnerTransform(nullptr)
+		, mPosition(Vec3D{})
+		, mPrevPosition(Vec3D{})
+		, mLinearVelocity(Vec3D{})
+		, mAngularVelocity(Vec3D{})
+		, mCumulativeForce(Vec3D{})
+		, mAcceleration(Vec3D{})
+		, mfAngle(0.0F)
+		, mfTorque(0.0F)
+		, mfDamping(0.9F)
+		, mfFriction(0.0F)
+		, mfCustom_GravityScale(1.0F)
+		, mfGravity{GRAVITY_CONSTANT*mfCustom_GravityScale}
+		, mfMass(100.0F)
+		, mfInvMass(0.0F)
+		, mfElasticCoeff(0.0F)
+		, mbIsGrounded(false)
+		, mbHasGravity(true)
+		, mbIsBouncy()
+		, mbIsStatic()
 	{
 		
 	}
 
 	RigidBody::~RigidBody(void)
 	{
-		delete m_PrimitiveShape;
+		delete mPrimitiveShape;
 	}
 
 	void RigidBody::Load(void)
@@ -34,8 +45,64 @@ namespace Dystopia
 
 	void RigidBody::Init(void)
 	{
-		m_custom_gravityScale = m_HasGravity ? m_custom_gravityScale : 0.0F;
-		m_gravity = GRAVITY_CONSTANT * m_custom_gravityScale;
+		// Get Owner's Transform Component as pointer
+		mOwnerTransform = GetOwner()->GetComponent<Transform>();
+		mPosition = TX->GetGlobalPosition();
+		mfCustom_GravityScale = mbHasGravity ? mfCustom_GravityScale : 0.0F;
+		mfGravity = GRAVITY_CONSTANT * mfCustom_GravityScale;
+
+		//If mass is zero object is interpreted
+		//to be static
+		if (mfMass > 0.0f)
+		{
+			mbIsStatic = false;
+			mfInvMass = 1.0f / mfMass;
+		}
+		else
+		{
+			mbIsStatic = true;
+			mfInvMass = 0.0f;
+		}
+	}
+
+	void RigidBody::Update(float _dt)
+	{
+		if (mbIsStatic) return;
+
+		//Store previous Position
+		mPrevPosition = mPosition;
+
+		// Update Position
+		mPosition += mLinearVelocity * _dt;
+
+		//TODO: Incorporate and move Gravity var to Physics System
+		// Calculate Acceleration
+		mAcceleration = Vec3D{0,mfGravity,0};
+		Vec3D newAccel = mCumulativeForce * mfInvMass + mAcceleration;
+
+		// Calculate Velocity
+		mLinearVelocity+= newAccel * _dt;
+
+		// Damping (Drag)
+		//mLinearVelocity *= Math::Power<static_cast<int>(_dt), float>(mfDamping); //TODO fix this, need Pow for double/floats
+
+		//TODO
+		/*
+		 * //Clamp to velocity max for numerical stability
+		if ( Dot(Velocity, Velocity) > PHYSICS->MaxVelocitySq )
+		{
+			Normalize(Velocity);
+			Velocity = Velocity * PHYSICS->MaxVelocity;
+		}
+		 */
+
+		TX->SetGlobalPosition(mPosition);
+	}
+
+	void RigidBody::LateUpdate(float _dt)
+	{
+		/*Reset Cumulative Force*/
+		ResetCumulative();
 	}
 
 	void RigidBody::OnDestroy(void)
@@ -63,39 +130,48 @@ namespace Dystopia
 
 	void RigidBody::PrintRigidBodies()
 	{
-		ConsolePrint("transform: x(" + std::to_string(m_OwnerTransform->GetGlobalPosition().x) + ')' +
-									"y(" + std::to_string(m_OwnerTransform->GetGlobalPosition().y) + ')'
-					+ "angle: " + std::to_string(m_angle));
+		ConsolePrint("transform: x(" + std::to_string(TX->GetGlobalPosition().x) + ')' +
+									"y(" + std::to_string(TX->GetGlobalPosition().y) + ')'
+					+ "angle: " + std::to_string(mfAngle));
 	}
 
-	void RigidBody::Update(float _dt)
+	void RigidBody::DebugDraw()
 	{
-		// Downward force due to gravity
-		const Math::Vec3D force_gravity = { 0, m_Mass*m_gravity, 0 }; // due to gravity
-		AddForce(force_gravity);
-		
-		const Math::Vec3D acceleration = { m_Force.x / m_Mass, m_Force.y / m_Mass, 0};
-		m_LinearVelocity += acceleration * _dt;
-		Math::Point3D position{};
-		position += m_LinearVelocity * _dt;
-
-		m_OwnerTransform->SetGlobalPosition(position);
+		//TODO: Jacky - some sort of debug renderer independent from graphics 
 	}
 
-	void RigidBody::LateUpdate(float _dt)
+	void RigidBody::Set_CustomGravityScale(float _scale)
 	{
-		/*Reset Cumulative Force*/
-		ResetCumulative();
+		if(mbHasGravity)
+		{		
+			mfCustom_GravityScale = _scale;
+		}
+		else
+		{
+			ConsolePrint("Rigidbody has no gravity enabled.");
+			mfCustom_GravityScale = 0;
+		}
 	}
 
-	void RigidBody::AddForce(Math::Vec3D const & _force)
+	bool RigidBody::Set_ToggleGravity()
 	{
-		m_CumulativeVector += _force;
+		return (mbHasGravity = mbHasGravity ? false : true);
 	}
 
-	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
+	void RigidBody::Set_ToggleGravity(bool _state)
 	{
-		AddForce(_force, _point, m_OwnerTransform->GetGlobalPosition());
+		mfGravity = _state;
+	}
+
+	void RigidBody::SetPosition(const Vec3D& _pos)
+	{
+		mPosition = _pos;
+		TX->SetGlobalPosition(mPosition);
+	}
+
+	void RigidBody::SetVelocity(const Vec3D& _vel)
+	{
+		mLinearVelocity = _vel;
 	}
 
 	/*
@@ -123,14 +199,24 @@ namespace Dystopia
 		/*Generate the angular velocity as a result of the force being applied at _point*/
 		const Math::Vector3D angularVel = Cross(_force, displacement_v) / displacement_v.MagnitudeSqr();
 		/*Add to the total Anuglar velocity of the object in this Update Frame*/
-		m_AngularVelocity  += angularVel;
+		mAngularVelocity  += angularVel;
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
-		m_CumulativeVector += _force;
+		mCumulativeForce += _force;
+	}
+
+	void RigidBody::AddForce(Math::Vec3D const & _force)
+	{
+		mCumulativeForce += _force;
+	}
+
+	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
+	{
+		AddForce(_force, _point, TX->GetGlobalPosition());
 	}
 
 	void RigidBody::ResetCumulative()
 	{
-		m_CumulativeVector = { 0,0,0,0 };
+		mCumulativeForce = { 0,0,0,0 };
 	}
 
 }

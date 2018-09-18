@@ -4,6 +4,7 @@
 #include "System/Base/ComponentDonor.h"
 #include "System/SystemTypes.h"
 #include "DataStructure/MagicArray.h"
+#include "Math/Vector4.h"
 
 
 namespace Dystopia
@@ -30,6 +31,16 @@ namespace Dystopia
 
 		virtual ~PhysicsSystem(void) = default;
 	private:
+
+	public:
+		Math::Vec3D mGravity;
+		float mMaxVelocityConstant;
+		float mMaxVelSquared;
+
+		// Position Correction Tolerance
+		float PenetrationEpsilon;
+		// Position Correction Resolution as Percentage;
+		float PenetrationResolutionPercentage;
 	};
 }
 
