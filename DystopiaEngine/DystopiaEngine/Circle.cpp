@@ -41,7 +41,8 @@ namespace Dystopia
 	/*Duplicate the Component*/
 	Circle* Circle::Duplicate() const
 	{
-		
+		//TODO: not correct
+		return new Circle{};
 	}
 
 	/*Serialise and Unserialise*/
@@ -54,6 +55,7 @@ namespace Dystopia
 		
 	}
 
+	//TODO: WIP (aaron)
 	/*Collision Check Functions*/
 	bool Circle::isColliding(const Circle & other_col) const
 	{

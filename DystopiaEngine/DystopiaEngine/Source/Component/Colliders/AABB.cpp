@@ -76,13 +76,14 @@ namespace Dystopia
 
 	}
 
-	float AABB::SweepingCheck(const AABB & other_col) const
+	//TODO: not yet
+	/*float AABB::SweepingCheck(const AABB & other_col) const
 	{
 		if (GetOwner()->GetComponent<RigidBody>() == nullptr)
 		{
 			DEBUG_PRINT()
 		}
-	}
+	}*/
 
 	bool AABB::isColliding(const AABB & _ColB) const
 	{

@@ -109,7 +109,6 @@ namespace Dystopia
 		// Gettors
 		Math::Vec3D GetOffSet() const;
 		bool Get_IsBouncy() const;
-		virtual bool Get_IsColliding() const;
 
 		// Settors
 		bool Set_IsBouncy(const bool);
