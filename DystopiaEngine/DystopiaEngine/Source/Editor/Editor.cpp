@@ -172,6 +172,9 @@ namespace Dystopia
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED);
 		}
 
+
+		/*This is for testing if Behvaiour Hotreloading works*/
+
 		/*
 				auto & arr = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
 		for (auto & gobj : arr)
