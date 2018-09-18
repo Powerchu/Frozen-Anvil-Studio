@@ -9,6 +9,10 @@
 
 namespace Dystopia
 {
+	BehaviourSystem::BehaviourSystem()
+		:mHotloader{CreateShared<Hotloader<1>>(new Hotloader<1>)}
+	{
+	}
 	void Dystopia::BehaviourSystem::PreInit(void)
 	{
 #if EDITOR
@@ -138,6 +142,8 @@ namespace Dystopia
 	{
 		for (auto const & elem : mvBehaviourReferences)
 		delete elem.mpBehaviour;
+
+
 	}
 
 	void Dystopia::BehaviourSystem::LoadDefaults(void)

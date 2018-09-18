@@ -39,7 +39,6 @@
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
     <ClCompile Include="Source\Editor\ConsoleDebugger.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp" />
-    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="Source\Component\Particle.cpp" />
     <ClCompile Include="Source\Component\Primitive.cpp" />
     <ClCompile Include="Source\Component\Renderer.cpp" />
@@ -104,9 +103,6 @@
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />
-    <ClInclude Include="Resource\Behaviours\*\*.h" />
-    <ClInclude Include="Include\Utility\ComponentGUID.h" />
-    <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Renderer.h" />
     <ClInclude Include="Include\Component\RigidBody.h" />
@@ -135,8 +131,6 @@
     <ClInclude Include="Include\System\SystemMessage.h" />
     <ClInclude Include="Include\System\Time\ScopedTimer.h" />
     <ClInclude Include="Include\System\Time\TimeDefs.h" />
-    <ClInclude Include="Include\Utility\ComponentGUID.h" />
-    <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\System\Events\EventSystem.h" />
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui.h" />
