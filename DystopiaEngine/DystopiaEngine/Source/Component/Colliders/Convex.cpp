@@ -4,6 +4,7 @@
 #include "Math\Vector4.h"
 
 #include "Object\GameObject.h"
+#include "Component/CollisionEvent.h"
 
 namespace Dystopia
 {
@@ -92,6 +93,7 @@ namespace Dystopia
 				/*Check if Simplex contains Origin*/
 				if (ContainOrigin(Simplex, vDir))
 				{
+					/*Use EPA to get collision information*/
 					/*Clear the simplex for the next function call*/
 					Simplex.clear();
 					/*Return true for collision*/
@@ -104,6 +106,7 @@ namespace Dystopia
 	Vertice Convex::GetFarthestPoint(const Math::Vec3D & _Dir) const
 	{
 		return Convex::GetFarthestPoint(*this, _Dir);
+
 	}
 
 	/*Support Function for getting the farthest point with relation to a Vector*/
@@ -165,10 +168,11 @@ namespace Dystopia
 			double distance = EdgeNorm.Dot(a.mPosition);
 			if (distance < ClosestDistance)
 			{
-				ClosestDistance = distance;
+				ClosestDistance    = distance;
 				ClosestEdge.mNorm3 = EdgeNorm;
 				ClosestEdge.mVec3  = EdgeVec;
 				ClosestEdge.mPos   = a.mPosition;
+				ClosestEdge.OrthogonalDistance = distance;
 				ClosestEdge.SimplexIndex = i;
 			}
 		}
@@ -185,9 +189,53 @@ namespace Dystopia
 
 		return Farthest_In_ColA.mPosition - Farthest_In_ColB.mPosition;
 	}
+	Math::Vec3D Convex::Support(const Convex & _ColA, const Convex & _ColB, const Math::Vec3D & _Dir, bool & hasPoint)
+	{
+		return Math::Vec3D();
+	}
 	Math::Vec3D Convex::Support(const Convex & _ColB, const Math::Vec3D & _Dir) const
 	{
 		return Convex::Support(*this, _ColB, _Dir);
+	}
+
+	CollisionEvent Convex::GetCollisionEvent(AutoArray<Vertice> & _Simplex, const Convex & _ColB)
+	{
+		static constexpr double EPSILON = 0.0001f;
+		CollisionEvent col_info (_ColB.GetOwner());
+
+		while (true)
+		{
+			/*Get the closest edge of our simplex(Made by the minkowski difference to the origin*/
+			Edge ClosestEdge = GetClosestEdge(_Simplex);
+			/*Search for a point in the Normal direction of the ClosestEdge*/
+			Vertice Point = Support(_ColB, ClosestEdge.mNorm3);
+
+			/*
+			If closest edge is already on the minkowski sum edge,
+			The projection distance from the point to the ClosestEdge normal will be
+			the same as the orthogonal distance from the origin to the ClosestEdge
+			*/
+			double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
+			double result = ProjectDis - ClosestEdge.OrthogonalDistance;
+
+			/*If fail the test, expand the simplex and run the test again*/
+			if (-EPSILON <= result && result <= EPSILON)
+			{
+				/*This Position belongs to either ColA or B*/
+				col_info.mCollisionPoint = ClosestEdge.mPos;
+				col_info.mEdgeVector     = ClosestEdge.mVec3;
+				col_info.mEdgeNormal     = ClosestEdge.mNorm3;
+				col_info.mPeneDepth      = ProjectDis;
+
+				return col_info;
+			}
+			else
+			{
+				_Simplex.Insert(Point, ClosestEdge.SimplexIndex);
+			}
+		}
+		return col_info;
+
 	}
 
 	bool Convex::ContainOrigin(AutoArray<Vertice> & _Simplex,
@@ -207,7 +255,8 @@ namespace Dystopia
 			/*Triangle Case: There is enough vertices to form a shape that may
 			                 contain the origin.
 							 Check if the vector from Last to origin is within 
-				             LastToFirst & LastToSecond*/
+				             LastToFirst & LastToSecond
+			*/
 			case TriangleCase:
 			{
 				static Math::Vec3D LastToFirst;
@@ -263,7 +312,7 @@ namespace Dystopia
 			/*Line Case: There is not enough vertices to form a convex shape,
 			             so we will modify _v3Dir to search the Simplex for a
 						 vertex in a new direction.
-						 */
+			*/
 			default:
 			{
 				/*Line Case*/

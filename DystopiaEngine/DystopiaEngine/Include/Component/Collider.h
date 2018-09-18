@@ -37,6 +37,8 @@ namespace Dystopia
 {
 	typedef char Status;
 
+	class CollisionEvent;
+
 	enum class eColliderType
 	{
 		BASE,
@@ -56,6 +58,7 @@ namespace Dystopia
 	{
 		/*Position of the vectice*/
 		Math::Point3D mPosition;
+		
 		Vertice(Math::Point3D const & p)
 			:mPosition{p}
 		{
@@ -70,10 +73,11 @@ namespace Dystopia
 
 	struct Edge
 	{
-		Math::Point3D mPos;
-		Math::Vec3D   mVec3;
-		Math::Vec3D   mNorm3;
-		int SimplexIndex;
+		Math::Point3D  mPos;
+		Math::Vec3D    mVec3;
+		Math::Vec3D    mNorm3;
+		double         OrthogonalDistance;
+		int            SimplexIndex;
 	};
 
 	class _DLL_EXPORT Collider : public Dystopia::Component
@@ -172,24 +176,39 @@ namespace Dystopia
 		bool isColliding(const Convex * const & _pColB) const;
 		bool isColliding(const Convex & _pColB, const Math::Vec3D & _v3Dir) const;
 
+		CollisionEvent GetCollisionEvent(AutoArray<Vertice> & _Simplex, const Convex & _ColB) const;
+
 		/*Static Member Functions*/
 
 		/*Support Function for getting the farthest point with relation to a Vector*/
 		static Vertice GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir);
+
 		static Edge	   GetClosestEdge(AutoArray<Vertice> & _Simplex);
 
 		static Math::Vec3D Support(const Convex & _ColA,
 			                       const Convex & _ColB,
 			                       const Math::Vec3D & _Dir);
 
+		static Math::Vec3D Support(const Convex & _ColA,
+			                       const Convex & _ColB,
+			                       const Math::Vec3D & _Dir,
+			                       bool & hasPoint);
+
+		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
+
 		Math::Vec3D Support(const Convex & _ColB,
 			                const Math::Vec3D & _Dir)const;
 		
-		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
+
 
 	protected:
+
+		CollisionEvent GetCollisionEvent(AutoArray<Vertice> & _Simplex,
+			                             const Convex & _ColB);
+
 		/*The vertices of the collider in the Collider Local Coordinate System*/
-		AutoArray<Vertice> mVertices;
+		AutoArray<Vertice>         mVertices;
+		//AutoArray<CollisionEvent>  mCollisionEvent;
 	};
 
 

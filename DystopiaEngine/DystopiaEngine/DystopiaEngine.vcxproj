@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Source\Component\CollisionEvent.cpp" />
     <ClCompile Include="Source\Editor\CommandList.cpp" />
     <ClCompile Include="Source\Editor\DefaultFactory.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
@@ -100,6 +101,7 @@
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
     <ClInclude Include="Include\Component\BehaviourList.h" />
+    <ClInclude Include="Include\Component\CollisionEvent.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />
@@ -199,7 +201,9 @@
     <ClInclude Include="Include\System\Time\TimeSystem.h" />
     <ClInclude Include="Include\System\Window\Window.h" />
     <ClInclude Include="Include\System\Window\WindowManager.h" />
+    <ClInclude Include="Include\Utility\ComponentGUID.h" />
     <ClInclude Include="Include\Utility\DebugAssert.h" />
+    <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Utility\Meta.h" />
     <ClInclude Include="Include\Utility\MetaAlgorithms.h" />
     <ClInclude Include="Include\Utility\MetaDataStructures.h" />
