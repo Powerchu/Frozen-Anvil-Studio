@@ -20,7 +20,7 @@ namespace Dystopia
 		eTotalFilePath
 	} eFileDir;
 
-	struct FileSystem
+	class FileSystem
 	{
 	public: 
 

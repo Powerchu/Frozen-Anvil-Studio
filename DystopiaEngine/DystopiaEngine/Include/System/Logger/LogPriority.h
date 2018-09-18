@@ -18,7 +18,7 @@ enum class eLog
 {
 	ERROR,
 	WARNING,
-	MESSAGE,
+	MESSAGE
 };
 
 

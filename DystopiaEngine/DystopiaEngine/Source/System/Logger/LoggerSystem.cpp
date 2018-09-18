@@ -12,11 +12,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System\Logger\LoggerSystem.h"
-
+#include "System\Driver\Driver.h"
+#include "Editor\ConsoleLog.h"
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
 #include <ctime>
+#include <string>
 #include <cstdio>							// FILE, freopen_s
 #include <cstdlib>
 #include <exception>
@@ -25,8 +27,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
 #undef  NOMINMAX
-#pragma warning(push)
-#pragma warning(disable : 4996)
 #define STACKFRAMES 32
 
 namespace
@@ -101,15 +101,24 @@ Dystopia::LoggerSystem::~LoggerSystem(void) noexcept
 	std::set_terminate(nullptr);
 }
 
-void Dystopia::LoggerSystem::RedirectOutput()
+Dystopia::LoggerSystem* Dystopia::LoggerSystem::GetInstance(void) noexcept
+{
+	return EngineCore::GetInstance()->GetSubSystem<LoggerSystem>();
+}
+
+void Dystopia::LoggerSystem::RedirectOutput(void(*_pOut)(const std::string&))
+{
+	mpOut = _pOut;
+}
+
+void Dystopia::LoggerSystem::RedirectInput(std::string(*_pIn)(void))
+{
+	mpIn = _pIn;
+}
+
+void Dystopia::LoggerSystem::SendOutput(const std::string& _strOutput)
 {
 }
 
-void Dystopia::LoggerSystem::RedirectInput()
-{
-}
 
-
-
-#pragma warning(pop)
 

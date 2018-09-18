@@ -14,7 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _LOGGERSYS_H_
 #define _LOGGERSYS_H_
 
-#include "System\Driver\Driver.h"
 #include "System\Logger\LogPriority.h"
 
 #include <cstdio>
@@ -29,8 +28,10 @@ namespace Dystopia
 		LoggerSystem(void) noexcept;
 		~LoggerSystem(void) noexcept;
 
-		void RedirectOutput();
-		void RedirectInput();
+		static LoggerSystem* GetInstance(void) noexcept;
+
+		void RedirectOutput(void(*)(const std::string&));
+		void RedirectInput(std::string(*)(void));
 
 		template <typename ... Ty>
 		static void ConsoleLog(eLog, const char* _strFormat, Ty&& ...);
@@ -38,6 +39,8 @@ namespace Dystopia
 	private:
 
 		eLog mActiveFlags;
+		void(*mpOut)(const std::string&);
+		std::string(*mpIn)(void);
 
 		template <typename ... Ty>
 		void Write(const char*, Ty&&...);
@@ -57,7 +60,7 @@ namespace Dystopia
 template <typename ... Ty>
 void Dystopia::LoggerSystem::ConsoleLog(eLog _Mode, const char *_strFormat, Ty&& ...Args)
 {
-	LoggerSystem* self = EngineCore::GetInstance()->GetSubSystem<LoggerSystem>();
+	LoggerSystem* self = LoggerSystem::GetInstance();
 	if (nullptr == self)
 	{
 		std::terminate();
@@ -65,15 +68,16 @@ void Dystopia::LoggerSystem::ConsoleLog(eLog _Mode, const char *_strFormat, Ty&&
 
 	if (static_cast<unsigned>(self->mActiveFlags) & static_cast<unsigned>(_Mode))
 	{
-		self->Write(_strFormat, Utility::Forward<Ty>(Args)...);
+		self->Write(_strFormat, static_cast<Ty>(Args)...);
 	}
 }
 
 template <typename ... Ty>
 void Dystopia::LoggerSystem::Write(const char *_strFormat, Ty&& ...Args)
 {
-	char buf[4096];
-	std::snprintf(buf, sizeof(buf), _strFormat, Utility::Forward<Ty>(Args)...);
+	std::string buf;
+	buf.reserve(2048);
+	std::snprintf(&buf[0], sizeof(2048), _strFormat, static_cast<Ty>(Args)...);
 	SendOutput(buf);
 }
 

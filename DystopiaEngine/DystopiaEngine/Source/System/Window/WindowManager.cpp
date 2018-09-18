@@ -19,8 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
-#include <windows.h>						// Windows Header
 #include <cstdio>							// FILE, freopen_s
+#include <windows.h>						// Windows Header
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
 #undef  NOMINMAX

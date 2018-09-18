@@ -53,6 +53,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #undef WIN32_LEAN_AND_MEAN		// Stop defines from spilling into code
 #undef NOMINMAX
+#undef ERROR
 
 
 int Dystopia::GraphicsSystem::DRAW_MODE = GL_TRIANGLES;
@@ -346,7 +347,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	if (0 == nPxFormat) // Check if we got something back
 	{
-		DEBUG_PRINT("Graphics System Error: ChoosePixelFormat fail! \n");
+		DEBUG_PRINT(eLog::ERROR, "Graphics System Error: ChoosePixelFormat fail! \n");
 
 		return false;
 	}
@@ -356,7 +357,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	if (!bResult) // This shouldn't happen
 	{
-		DEBUG_PRINT("Graphics System Error: SetPixelFormat fail! \n");
+		DEBUG_PRINT(eLog::ERROR, "Graphics System Error: SetPixelFormat fail! \n");
 
 		return false;
 	}
@@ -370,7 +371,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	if (err != GLEW_OK)
 	{
-		DEBUG_PRINT("Graphics System Error: GLEW init fail! \n");
+		DEBUG_PRINT(eLog::ERROR, "Graphics System Error: GLEW init fail! \n");
 
 		return false;
 	}
@@ -378,7 +379,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	// Check if gl 3.1 and above context is supported
 	if (wglewIsSupported("WGL_ARB_create_context") == 1 && !SelectOpenGLVersion(_window))
 	{
-		DEBUG_PRINT("Graphics System Error: OpenGL 3.1 and above not supported! \n");
+		DEBUG_PRINT(eLog::ERROR, "Graphics System Error: OpenGL 3.1 and above not supported! \n");
 
 		return false;
 	}

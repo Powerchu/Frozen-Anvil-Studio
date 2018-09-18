@@ -12,9 +12,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
+#include "Utility\DebugAssert.h"
 #include "Editor\ConsoleLog.h"
 #include "Editor\EGUI.h"
-#include "Utility\DebugAssert.h"
+#include "System\Driver\Driver.h"
+#include "System\Logger\LoggerSystem.h"
 #include <algorithm>
 
 namespace Dystopia
@@ -48,6 +50,7 @@ namespace Dystopia
 	
 	void ConsoleLog::Init()
 	{
+		EngineCore::GetInstance()->GetSubSystem<LoggerSystem>()->RedirectOutput(PrintToConsoleLog);
 	}
 
 	void ConsoleLog::Update(const float&)

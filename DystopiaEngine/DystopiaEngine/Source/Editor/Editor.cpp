@@ -50,7 +50,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ProjectResource.h"
 #include "Editor\SceneView.h"
 #include "Editor\ConsoleLog.h"
-#include "Editor\ConsoleDebugger.h"
 #include "Editor\PerformanceLog.h"
 #include "Editor\PLogger.h"
 
