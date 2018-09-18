@@ -184,10 +184,8 @@ void Dystopia::Shader::UploadUniform(const std::string& _strName, const Math::Ma
 
 void Dystopia::Shader::UploadUniform(const std::string& _strName, const Math::Matrix4& _m)
 {
-	Math::Matrix4 m = Math::Transpose(_m);
-
 	glUniformMatrix4fv(
-		GetUniformLocation(_strName), 1, GL_FALSE, reinterpret_cast<float const*>(&_m)
+		GetUniformLocation(_strName), 1, GL_TRUE, reinterpret_cast<float const*>(&_m)
 	);
 }
 

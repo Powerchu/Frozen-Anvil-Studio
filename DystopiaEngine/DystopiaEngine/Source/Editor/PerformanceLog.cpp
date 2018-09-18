@@ -14,7 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor\PLogger.h"
 #include "Editor\PerformanceLog.h"
-#include "Editor\ConsoleDebugger.h"
 #include "Editor\EGUI.h"
 #include "Math\MathUtility.h"
 #include <algorithm>

@@ -24,7 +24,7 @@ namespace Dystopia
 
 	} eFileDir;
 
-	struct FileSystem
+	class FileSystem
 	{
 	public:
 

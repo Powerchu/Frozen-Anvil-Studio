@@ -287,3 +287,4 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 /DystopiaEngine/DystopiaEngine/DEPRECATED
+/DystopiaEngine/DystopiaEngine/imgui.ini

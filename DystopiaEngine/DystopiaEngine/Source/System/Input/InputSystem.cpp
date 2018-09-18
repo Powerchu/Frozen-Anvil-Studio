@@ -62,13 +62,15 @@ Dystopia::InputManager::~InputManager(void)
 
 bool Dystopia::InputManager::Init(void)
 {
+#if !EDITOR
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
-
+#endif 
 	return true;
 }
 
 void Dystopia::InputManager::Update(float)
 {
+	mMouseInput.mnWheel = 0;
 	for (unsigned n = 0; n < eUserButton::TOTAL_USERBUTTONS; ++n)
 	{
 		bool bState = (GetAsyncKeyState(mButtonMap[n].mnKey) & 0x8000) != 0;

@@ -19,7 +19,7 @@ namespace Dystopia
 {
 	enum class eSysMessage
 	{
-		QUIT,
+		QUIT
 	};
 }
 

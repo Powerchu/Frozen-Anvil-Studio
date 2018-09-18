@@ -170,7 +170,7 @@ namespace BMP
 	// 32 Bits
 	void* RGBA_ColorBMP(Dystopia::BinarySerializer& _in, InfoBMP& _info)
 	{
-		DEBUG_PRINT("Read image as RGBA color!\n");
+		DEBUG_PRINT(eLog::MESSAGE, "ImageParser: Read image as RGBA color!\n");
 		ColorRGBA* data = new ColorRGBA[_info.mWidth * std::abs(_info.mHeight)];
 
 		for (int n = 0; n < _info.mWidth * std::abs(_info.mHeight); ++n)
@@ -218,7 +218,7 @@ Image ImageParser::LoadBMP(const std::string& _path)
 
 	if (file.EndOfInput())
 	{
-		DEBUG_PRINT("ImageParser Warning: File \"%s\" not found!", _path.c_str());
+		DEBUG_PRINT(eLog::WARNING, "ImageParser Warning: File \"%s\" not found!", _path.c_str());
 		//file.close();
 		return { 0, 0, nullptr };
 	}
