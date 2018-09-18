@@ -380,6 +380,8 @@ namespace EGUI
 		void OpenPopup(const std::string& _thePopupID, bool _toOpenAtMousePos = true);
 		// Creates a popup window that is tied to the _uniqueID. Call OpenPopup with its ID to open it
 		bool StartPopup(const std::string& _uniqueID);
+		bool StartPopupModal(const std::string& _uniqueID, const std::string& _label);
+		void CloseCurrentPopup();
 		// call this at the end of the StartPopup function when it is true. Determines the end of the popup
 		void EndPopup();
 		/* =======================================================================================================================

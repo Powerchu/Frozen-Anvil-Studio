@@ -115,7 +115,6 @@ namespace Dystopia
 	void Editor::Init()
 	{
 		mpDriver		= Dystopia::EngineCore::GetInstance();
-
 		mpDriver->LoadSettings();
 		mpDriver->Init();
 
@@ -127,7 +126,8 @@ namespace Dystopia
 		LoadDefaults();
 		mpInput->Init();
 		mpEditorEventSys->Init();
-		EGUI::SetContext(mpComdHandler);
+
+		InstallHotkeys();
 
 		for (auto& e : mArrTabs)
 		{
@@ -138,8 +138,7 @@ namespace Dystopia
 			e->RemoveFocus();
 		}
 
-		InstallHotkeys();
-
+		EGUI::SetContext(mpComdHandler);
 		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
 			mCurrentState = EDITOR_EXIT;
 	}

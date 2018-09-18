@@ -235,26 +235,30 @@ void Dystopia::Transform::Unserialise(TextSerialiser&)
 void Dystopia::Transform::EditorUI(void) noexcept
 {
 #if EDITOR
-	switch (EGUI::Display::VectorFields("Position", &mPosition, 0.1f, -FLT_MAX, FLT_MAX))
+	switch (EGUI::Display::VectorFields("Position", &mPosition, 0.01f, -FLT_MAX, FLT_MAX))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
 		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mPosition);
+		mbChanged = true;
 		break;
 	case EGUI::eDragStatus::eEND_DRAG:
 		EGUI::GetCommandHND()->EndRecording();
+		mbChanged = true;
 		break;
 	case EGUI::eDragStatus::eDRAGGING:
 		mbChanged = true;
 		break;
 	}
 
-	switch (EGUI::Display::VectorFields("Scale", &mScale, 0.1f, -FLT_MAX, FLT_MAX))
+	switch (EGUI::Display::VectorFields("Scale", &mScale, 0.01f, -FLT_MAX, FLT_MAX))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
 		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale);
+		mbChanged = true;
 		break;
 	case EGUI::eDragStatus::eEND_DRAG:
 		EGUI::GetCommandHND()->EndRecording();
+		mbChanged = true;
 		break;
 	case EGUI::eDragStatus::eDRAGGING:
 		mbChanged = true;

@@ -18,8 +18,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\Commands.h"
 #include "Editor\EditorEvents.h"
 #include "Editor\EditorMetaHelpers.h"
+#include "System\Behaviour\BehaviourSystem.h"
 #include "Utility\ComponentGUID.h"
+
 #include <iostream>
+
+
+static const std::string g_bPopup = "Behaviour List";
+static const std::string g_cPopup = "Component List";
+static const std::string g_nPopup = "New Behaviour Name";
 
 namespace Dystopia
 {
@@ -33,7 +40,10 @@ namespace Dystopia
 	}
 
 	Inspector::Inspector()
-		: EditorTab{ true }, mpFocus{ nullptr }, mLabel{ "Inspector" }, mShowListOfComponents{ false }
+		: EditorTab{ true }, 
+		mpFocus{ nullptr }, mLabel{ "Inspector" }, mShowListOfComponents{ false },
+		mpBehaviourSys{ nullptr }, mPromptNewBehaviour{ false }, mPromptCreateBehaviour{ false },
+		mBufferInput{}, mBufferCreator{}, mBufferLogin{}
 	{
 	}
 
@@ -44,6 +54,7 @@ namespace Dystopia
 
 	void Inspector::Init()
 	{
+		mpBehaviourSys = EngineCore::GetInstance()->GetSystem<BehaviourSystem>();
 	}
 
 	void Inspector::Update(const float& _dt)
@@ -55,9 +66,18 @@ namespace Dystopia
 	{
 		if (!mpFocus) return;
 
+		static constexpr Math::Vec2 btnSize{ 250, 20 };
+		float mid = Size().x / 2;
+		float inde = mid - (btnSize.x / 2);
+		inde = (inde < 20) ? 20 : inde;
+
 		GameObjectDetails();
 		GameObjectComponents();
-		AddComponentButton();
+		EGUI::Display::HorizontalSeparator();
+		EGUI::Indent(inde);
+		AddComponentButton(btnSize);
+		AddBehaviourButton(btnSize);
+		EGUI::UnIndent(inde);
 
 		////float x = mDemoVec.x;
 		////float y = mDemoVec.y;
@@ -200,27 +220,12 @@ namespace Dystopia
 		mpFocus = nullptr;
 	}
 
-	void Inspector::AddComponentButton()
+	void Inspector::AddComponentButton(const Math::Vec2& _btnSize)
 	{
-		static constexpr Math::Vec2 btnSize{ 250, 20 };
-		float mid = Size().x / 2;
-		float inde = mid - (btnSize.x / 2);
-		inde = (inde < 20) ? 20 : inde;
-
-		EGUI::Display::HorizontalSeparator();
-		EGUI::Indent(inde);
-		if (EGUI::Display::Button("Add Component", btnSize))
+		if (EGUI::Display::Button("Add Component", _btnSize))
 		{
-			EGUI::Display::OpenPopup("Inspector Component List", false);
+			EGUI::Display::OpenPopup(g_cPopup, false);
 		}
-		if (EGUI::Display::Button("Add Behaviour", btnSize))
-		{
-			if (GenerateScript("Whatever", "Tan Shannon", "t.shannon"))
-				std::cout << "Script Added to the visual studio project. Please arrange the filters and code in visual then come back to test it!\n";
-			else
-				std::cout << "Script already Exists! Aborted!\n";
-		}
-		EGUI::UnIndent(inde);
 		ComponentsDropDownList();
 	}
 
@@ -231,7 +236,7 @@ namespace Dystopia
 		Array<std::string, numComponents> arr;
 		ListOfComponentsName<std::make_index_sequence<numComponents>, UsableComponents>::Extract(arr);
 
-		if (EGUI::Display::StartPopup("Inspector Component List"))
+		if (EGUI::Display::StartPopup(g_cPopup))
 		{
 			EGUI::Display::Dummy(235, 2);
 			for (unsigned int i = 0; i < numComponents; ++i)
@@ -248,6 +253,78 @@ namespace Dystopia
 			EGUI::Display::EndPopup();
 		}
 	}
+	
+	void Inspector::AddBehaviourButton(const Math::Vec2& _btnSize)
+	{
+		if (EGUI::Display::Button("Add Behaviour", _btnSize))
+		{
+			EGUI::Display::OpenPopup(g_bPopup, false);
+		}
+		BehaviourDropDownList();
+	}
+
+	void Inspector::BehaviourDropDownList()
+	{
+		if (EGUI::Display::StartPopup(g_bPopup))
+		{
+			EGUI::Display::Dummy(235, 2);
+			if (EGUI::Display::SelectableTxt("New Behaviour"))
+			{
+				mPromptNewBehaviour = true;
+			}
+			EGUI::Display::EndPopup();
+		}
+		PromptCreateBehaviour();
+	}
+
+	void Inspector::PromptCreateBehaviour()
+	{
+		if (mPromptNewBehaviour)
+		{
+			EGUI::Display::OpenPopup(g_nPopup);
+			mPromptNewBehaviour = false;
+		}
+		if (EGUI::Display::StartPopupModal(g_nPopup.c_str(), "Creating New Behaviour"))
+		{
+			EGUI::Display::TextField("File Name :", mBufferInput, MAX_BUFFER_SIZE);
+			EGUI::Display::TextField("Creator   :", mBufferCreator, MAX_BUFFER_SIZE);
+			EGUI::Display::TextField("Login ID  :", mBufferLogin, MAX_BUFFER_SIZE);
+
+			mPromptCreateBehaviour = ((mBufferInput[0] != '\0') && 
+									  (mBufferCreator[0] != '\0') && 
+									  (mBufferLogin[0] != '\0')) ? true : false;
+
+			if (EGUI::Display::Button("Close"))
+			{
+				EGUI::Display::CloseCurrentPopup();
+				ResetBehaviourCreation();
+			}
+
+			if (mPromptCreateBehaviour) ConfirmCreateBehaviour();
+
+			EGUI::Display::EndPopup();
+		}
+	}
+
+	void Inspector::ConfirmCreateBehaviour()
+	{
+		EGUI::SameLine(230);
+		if (EGUI::Display::Button("Create"))
+		{
+			EGUI::Display::CloseCurrentPopup();
+			GenerateScript(std::string{ mBufferInput }, 
+						   std::string{ mBufferCreator }, 
+						   std::string{ mBufferLogin });
+			ResetBehaviourCreation();
+		}
+	}
+
+	void Inspector::ResetBehaviourCreation()
+	{
+		mPromptCreateBehaviour = false;
+		mBufferInput[0] = mBufferCreator[0] = mBufferLogin[0] = '\0';
+	}
+
 }
 
 #endif // EDITOR 
