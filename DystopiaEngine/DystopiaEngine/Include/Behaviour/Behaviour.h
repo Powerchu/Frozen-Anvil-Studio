@@ -48,9 +48,13 @@ namespace Dystopia
 		virtual void GameObjectDestroy(void);
 		virtual void Unload(void);
 
+		virtual const char * const GetBehaviourName() const { return nullptr; }
+
 		void OnCollisionEnter(const CollisionEvent&);
 		void OnCollisionStay (const CollisionEvent&);
 		void OnCollisionExit (const CollisionEvent&);
+
+		virtual Behaviour * Duplicate() const;
 	};
 }
 

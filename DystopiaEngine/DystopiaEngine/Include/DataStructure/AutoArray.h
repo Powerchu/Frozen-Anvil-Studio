@@ -32,7 +32,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 template<class T, class Alloc = Dystopia::DefaultAllocator<T[]>>
-class _DLL_EXPORT AutoArray
+class _DLL_EXPORT_ONLY AutoArray
 {
 public:
 	// ==================================== CONTAINER DEFINES ==================================== // 

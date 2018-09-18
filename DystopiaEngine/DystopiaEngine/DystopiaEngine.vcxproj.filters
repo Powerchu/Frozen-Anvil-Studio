@@ -539,6 +539,7 @@
     <ClInclude Include="Include\Editor\DefaultFactory.h">
       <Filter>Editor\Factory</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\BehaviourList.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Include\Component\Particle.h">
       <Filter>Game Engine\Components\Physics</Filter>

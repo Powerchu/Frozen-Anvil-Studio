@@ -213,13 +213,13 @@ namespace Dystopia
 		{
 			EGUI::Display::OpenPopup("Inspector Component List", false);
 		}
-		//if (EGUI::Display::Button("Add Behaviour", btnSize))
-		//{
-		//	if (GenerateScript("Whatever", "Tan Shannon", "t.shannon"))
-		//		std::cout << "Script Added to the visual studio project. Please arrange the filters and code in visual then come back to test it!\n";
-		//	else
-		//		std::cout << "Script already Exists! Aborted!\n";
-		//}
+		if (EGUI::Display::Button("Add Behaviour", btnSize))
+		{
+			if (GenerateScript("Whatever", "Tan Shannon", "t.shannon"))
+				std::cout << "Script Added to the visual studio project. Please arrange the filters and code in visual then come back to test it!\n";
+			else
+				std::cout << "Script already Exists! Aborted!\n";
+		}
 		EGUI::UnIndent(inde);
 		ComponentsDropDownList();
 	}

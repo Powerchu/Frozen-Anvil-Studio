@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 template <typename T, size_t SIZE>
-class _DLL_EXPORT Array
+class _DLL_EXPORT_ONLY Array
 {
 public:
 	// ==================================== CONTAINER DEFINES ==================================== // 

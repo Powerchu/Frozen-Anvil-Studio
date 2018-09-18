@@ -29,12 +29,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 template <typename, typename>
-class _DLL_EXPORT MagicArray;
+class _DLL_EXPORT_ONLY MagicArray;
 
 namespace Ctor
 {
 	template <typename T, unsigned BLOCK_SIZE = 64, unsigned MAX_BLOCKS = 16>
-	struct _DLL_EXPORT MagicArrayBuilder
+	struct _DLL_EXPORT_ONLY MagicArrayBuilder
 	{
 		static_assert(Utility::IsPowerOf2(BLOCK_SIZE), "Block Size must be a power of 2");
 
@@ -62,7 +62,7 @@ namespace Ctor
 }
 
 template <typename T, typename Params = Ctor::MagicArrayBuilder<T>>
-class _DLL_EXPORT MagicArray
+class _DLL_EXPORT_ONLY MagicArray
 {
 	struct Iterator;
 
@@ -124,7 +124,7 @@ public:
 	
 private:
 
-	struct _DLL_EXPORT Block
+	struct _DLL_EXPORT_ONLY Block
 	{
 		static constexpr uint64_t Range = Params::blk_sz > 63 ? ~(0Ui64) : (Math::Power<Params::blk_sz>(2Ui64) - 1);
 
@@ -143,7 +143,7 @@ private:
 		Block(void) noexcept = default;
 	};
 
-	struct _DLL_EXPORT Iterator
+	struct _DLL_EXPORT_ONLY Iterator
 	{
 		Block const * mpBlock;
 		Ptr_t mpAt;
