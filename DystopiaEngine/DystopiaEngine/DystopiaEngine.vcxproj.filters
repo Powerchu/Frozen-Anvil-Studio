@@ -179,9 +179,6 @@
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
-    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
-    <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
@@ -193,6 +190,12 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\CommandList.cpp">
       <Filter>Editor\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
+      <Filter>Game Engine\Systems\Behaviour</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\File\FileSystem.cpp">
+      <Filter>Game Engine\SubSystems\File</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -491,14 +494,8 @@
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
-    <ClInclude Include="Include\Editor\HotLoader.h" />
-    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h">
       <Filter>Game Engine\Systems\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\File\FileSystem.h">
-      <Filter>Game Engine\Systems\File</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Profiler\Profiler.h">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
@@ -512,7 +509,18 @@
     <ClInclude Include="Include\Editor\DefaultFactory.h">
       <Filter>Editor\Factory</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\BehaviourList.h" />
+    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h">
+      <Filter>Game Engine\Systems\Behaviour</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\BehaviourList.h">
+      <Filter>Game Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\File\FileSystem.h">
+      <Filter>Game Engine\SubSystems\File</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\HotLoader.h">
+      <Filter>Editor\Hotloader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -769,6 +777,15 @@
     </Filter>
     <Filter Include="Game Engine\Systems\File">
       <UniqueIdentifier>{845f6b31-e949-414f-88d7-9fec6ab7613f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Behaviour">
+      <UniqueIdentifier>{70604eb9-04d7-47f1-ae52-a0987f5cc1e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\File">
+      <UniqueIdentifier>{931ccbac-727f-4a0b-809a-93a56b103a17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Hotloader">
+      <UniqueIdentifier>{4972a4d0-a0a9-4955-8f8a-c87801d1cee0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

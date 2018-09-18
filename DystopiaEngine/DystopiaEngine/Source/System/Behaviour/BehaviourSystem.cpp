@@ -3,6 +3,10 @@
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Driver/Driver.h"
 
+#if EDITOR
+#include "Editor/HotLoader.h"
+#endif
+
 namespace Dystopia
 {
 	void Dystopia::BehaviourSystem::PreInit(void)
@@ -16,16 +20,16 @@ namespace Dystopia
 		FileSys->CreateFiles("Dystopia/BehaviourDLL", eFileDir::eAppData);
 
 #if _DEBUG
-		mHotloader.AddFilesToCrawl(L"DystopiaEngine_D.lib", eCompile);
+		mHotloader->AddFilesToCrawl(L"DystopiaEngine_D.lib", eCompile);
 #else
-		mHotloader.AddFilesToCrawl(L"DystopiaEngine.lib", eCompile);
+		mHotloader->AddFilesToCrawl(L"DystopiaEngine.lib", eCompile);
 #endif
 
-		mHotloader.SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL", eFileDir::eAppData));
+		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL", eFileDir::eAppData));
 
-		mHotloader.SetFileDirectoryPath<0>(FileSys->GetFullPath("BehaviourScripts", eFileDir::eResource));
+		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehaviourScripts", eFileDir::eResource));
 
-		mHotloader.SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /std:c++latest " + IncludeFolderPath);
+		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /std:c++latest " + IncludeFolderPath);
 
 #else
 
@@ -38,8 +42,8 @@ namespace Dystopia
 #if EDITOR
 
 		FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
-		mHotloader.Init();
-		auto const & ArrayDlls = mHotloader.GetDlls();
+		mHotloader->Init();
+		auto const & ArrayDlls = mHotloader->GetDlls();
 		for (auto & elem : ArrayDlls)
 		{
 			using fpClone = Behaviour * (*) ();
@@ -74,11 +78,11 @@ namespace Dystopia
 	{
 #if EDITOR
 		/*Update Hotloader*/
-		mHotloader.Update();
+		mHotloader->Update();
 		static DLLWrapper * arr[100]{ nullptr };
 
 		/*Check Hotloader for changes in the Dll file*/
-		if (mHotloader.ChangesInDllFolder(100, arr))
+		if (mHotloader->ChangesInDllFolder(100, arr))
 		{
 			FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
 			DLLWrapper** start = arr;
