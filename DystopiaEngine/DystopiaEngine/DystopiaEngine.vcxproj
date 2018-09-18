@@ -28,15 +28,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Source\Editor\CommandList.cpp" />
     <ClCompile Include="Source\Editor\DefaultFactory.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
+    <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
     <ClCompile Include="Source\Editor\ConsoleDebugger.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp" />
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Source\Component\Particle.cpp" />
+    <ClCompile Include="Source\Component\Primitive.cpp" />
     <ClCompile Include="Source\Component\Renderer.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
@@ -97,6 +102,11 @@
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
     <ClInclude Include="Include\Component\BehaviourList.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
+    <ClInclude Include="Include\Component\Particle.h" />
+    <ClInclude Include="Include\Component\Primitive.h" />
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Include\Utility\ComponentGUID.h" />
+    <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Renderer.h" />
     <ClInclude Include="Include\Component\RigidBody.h" />
@@ -115,11 +125,14 @@
     <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
+    <ClInclude Include="Include\System\Graphics\Framebuffer.h" />
+    <ClInclude Include="Include\System\Input\MouseData.h" />
     <ClInclude Include="Include\System\Logger\LoggerSystem.h" />
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h" />
     <ClInclude Include="Include\System\Profiler\ProfileInfo.h" />
     <ClInclude Include="Include\System\Profiler\Profiler.h" />
     <ClInclude Include="Include\System\Profiler\ProfilerAction.h" />
+    <ClInclude Include="Include\System\SystemMessage.h" />
     <ClInclude Include="Include\System\Time\ScopedTimer.h" />
     <ClInclude Include="Include\System\Time\TimeDefs.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
@@ -201,6 +214,13 @@
     <ClInclude Include="Include\Math\Vector2.h" />
     <ClInclude Include="Include\Utility\UtilityInternals.h" />
     <ClInclude Include="Include\DataStructure\Pointer.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DystopiaEngine1.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="dystopia_x86_64.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>

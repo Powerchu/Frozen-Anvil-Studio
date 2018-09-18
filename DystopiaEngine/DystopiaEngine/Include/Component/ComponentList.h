@@ -25,6 +25,7 @@ namespace Dystopia
 		//class Collider,
 		//class RigidBody,
 		class Renderer
+		//class Particle
 	>::result;
 
 	// Generic Tag for Components

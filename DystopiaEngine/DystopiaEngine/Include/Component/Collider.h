@@ -1,4 +1,3 @@
-#pragma once
 #ifndef COLLIDER_H
 #define COLLIDER_H
 
@@ -41,13 +40,14 @@ namespace Dystopia
 	enum class eColliderType
 	{
 		BASE,
-		AABB,           /*Status : Not Done*/
+		AABB,
+		CIRCLE,			/*Status : Not Done*/
 		TRIANGLE,       /*Status : Not Done*/
 		CONVEX,         /*Status : Not Done*/
 
 		CONCAVE,		/*This is a dream*/
 
-		TOTAL,
+		TOTAL
 	};
 
 
@@ -56,8 +56,8 @@ namespace Dystopia
 	{
 		/*Position of the vectice*/
 		Math::Point3D mPosition;
-		Vertice(Math::Point3D const & _p)
-			:mPosition{_p}
+		Vertice(Math::Point3D const & p)
+			:mPosition{p}
 		{
 
 		}
@@ -88,7 +88,7 @@ namespace Dystopia
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 		static const eColliderType ColliderType = eColliderType::BASE;
-		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
+		virtual const eColliderType GetColliderType(void) const { return ColliderType; } // returns const
 		/*Constructors*/
 
 		/*Default - (Box Collider)*/
@@ -106,7 +106,13 @@ namespace Dystopia
 		/*Duplicate the Component*/
 		virtual Collider* Duplicate() const;
 
+		// Gettors
 		Math::Vec3D GetOffSet() const;
+		bool Get_IsBouncy() const;
+
+		// Settors
+		bool Set_IsBouncy(const bool);
+
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const;
 		virtual void Unserialise(TextSerialiser&);
@@ -115,6 +121,9 @@ namespace Dystopia
 
 	private:
 		 //Status mStatus;
+
+		// Is Bouncy (whether to deflect in resolution)
+		bool m_IsBouncy;
 
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
@@ -125,7 +134,8 @@ namespace Dystopia
 	public:
 
 		static const eColliderType ColliderType = eColliderType::CONVEX;
-		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
+		virtual const eColliderType GetColliderType(void) const override { return ColliderType; }
+		
 		/*Constructors*/
 
 		/*Convex Default Constructor*/
@@ -161,6 +171,7 @@ namespace Dystopia
 		bool isColliding(const Convex & _ColB) const;
 		bool isColliding(const Convex * const & _pColB) const;
 		bool isColliding(const Convex & _pColB, const Math::Vec3D & _v3Dir) const;
+
 		/*Static Member Functions*/
 
 		/*Support Function for getting the farthest point with relation to a Vector*/
@@ -177,8 +188,6 @@ namespace Dystopia
 		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
 
 	protected:
-
-
 		/*The vertices of the collider in the Collider Local Coordinate System*/
 		AutoArray<Vertice> mVertices;
 	};
@@ -213,8 +222,11 @@ namespace Dystopia
 		virtual void Unserialise(TextSerialiser&);
 
 		/*Collision Check Functions*/
-		bool isColliding(const AABB & _ColB);
-		bool isColliding(const AABB * const & _ColB);
+		bool isColliding(const AABB & other_col) const;
+		bool isColliding(const AABB * const & other_col) const;
+
+		/*Sweeping Collision Check*/
+		float SweepingCheck(const AABB & other_col) const;
 
 	private:
 		float mfWidth;
@@ -222,7 +234,44 @@ namespace Dystopia
 
 		Vertice * mMin;
 		Vertice * mMax;
-		
+	};
+
+	class _DLL_EXPORT Circle : public Collider
+	{
+	public:
+
+		static const eColliderType ColliderType = eColliderType::CIRCLE;
+		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
+		/*Constructors*/
+
+		/*Default - (Box Collider)*/
+		Circle();
+		/*Constructor*/
+		Circle(float const & _radius, Math::Vec3D const & _v3Offset = { 0,0,0,0 });
+
+		/*Load the Component*/
+		virtual void Load(void);
+		/*Initialise the Component*/
+		virtual void Init(void);
+		/*OnDestroy*/
+		virtual void OnDestroy(void);
+		/*Unload the Component*/
+		virtual void Unload(void);
+		/*Duplicate the Component*/
+		virtual Circle* Duplicate() const;
+
+		/*Serialise and Unserialise*/
+		virtual void Serialise(TextSerialiser&) const;
+		virtual void Unserialise(TextSerialiser&);
+
+		/*Collision Check Functions*/
+		bool isColliding(const Circle & other_col) const;
+		bool isColliding(const Circle * const & other_col) const;
+
+	private:
+		float m_radius;
+		Math::Vec3D m_originCentre; // GLOBAL COORDINATES
+
 	};
 
 
