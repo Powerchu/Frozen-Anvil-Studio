@@ -12,9 +12,6 @@
 
 #include <memory>
 
-#if EDITOR
-#include "Editor/HotLoader.h"
-#endif
 
 #if !EDITOR
 /*Include all the behaviour header files*/
@@ -27,6 +24,8 @@ namespace Dystopia
 {
 
 #if EDITOR
+	template <unsigned TOTAL_FILE_DIRECTORIES>
+	struct Hotloader;
 
 	struct BehaviourWrap
 	{
@@ -54,6 +53,8 @@ namespace Dystopia
 
 			>>;
 #endif 
+		BehaviourSystem();
+
 		virtual void PreInit(void);
 		virtual bool Init(void);
 		virtual void PostInit(void);
@@ -79,7 +80,8 @@ namespace Dystopia
 
 #if EDITOR
 
-		Hotloader<1> mHotloader;
+		SharedPtr< Hotloader<1> > mHotloader;
+		
 		/*A reference copy of all the available Behaviour Component created from a List of Dlls*/
 		MagicArray<BehaviourWrap> mvBehaviourReferences;
 		MagicArray<BehaviourWrap *> mvRecentChanges;
