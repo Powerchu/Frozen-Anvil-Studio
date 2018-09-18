@@ -117,7 +117,7 @@ void Dystopia::GraphicsSystem::PreInit(void)
 void Dystopia::GraphicsSystem::DrawSplash(void)
 {
 	WindowManager* pWinSys = EngineCore::GetInstance()->GetSystem<WindowManager>();
-	MeshSystem* pMeshSys   = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
+	MeshSystem* pMeshSys = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
 
 	Mesh*   mesh = pMeshSys->GetMesh("Quad");
 	Shader* shader = shaderlist.begin()->second;
@@ -126,7 +126,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	int w, h;
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->GetSplashDimensions(w, h);
 
-	Math::Matrix4 View = Math::Translate(.0f, .0f, .0f), Project{
+	Math::Matrix4 View{}, Project{
 			2.f / w, .0f, .0f, .0f,
 			.0f, 2.f / h, .0f, .0f,
 			.0f, .0f, 2.f / 100.f, .0f,
@@ -182,6 +182,7 @@ void Dystopia::GraphicsSystem::Update(float)
 	for (auto& Cam : AllCam)
 	{
 		auto ActiveFlags = Cam.GetOwner()->GetFlags();
+		Math::Matrix4 ProjView = Cam.GetProjectionMatrix() * Cam.GetViewMatrix();
 
 		// If the camera is inactive, skip
 		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
@@ -208,7 +209,7 @@ void Dystopia::GraphicsSystem::Update(float)
 								s->UseShader();
 
 								t->BindTexture();
-								s->UploadUniform("ProjectViewMat", Cam.GetViewMatrix());
+								s->UploadUniform("ProjectViewMat", ProjView);
 								s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
 								s->UploadUniform("Gamma", mfGamma);
 

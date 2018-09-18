@@ -91,6 +91,7 @@ namespace Dystopia
 
 		const Gfx::Viewport& GetViewport(void) const;
 		const Math::Matrix4& GetViewMatrix(void);
+		const Math::Matrix4& GetProjectionMatrix(void);
 
 		Camera* Duplicate(void) const;
 		void Serialise(TextSerialiser&) const;
@@ -100,16 +101,17 @@ namespace Dystopia
 		// and calculates the camera matrices
 		void SetCamera(void);
 
+		void EditorUI(void) noexcept;
 
 	private:
 
-		unsigned mLayer;
 		Gfx::Viewport mViewport;
 
 		Transform* mTransform;
 
 		Math::Mat4 mView;
 		Math::Mat4 mInvScreen;
+		Math::Mat4 mProjection;
 	};
 }
 
