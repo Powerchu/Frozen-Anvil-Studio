@@ -124,6 +124,11 @@ void Dystopia::EditorInput::Init(void)
 	mButtonMap[eEditorButton::KEY_RIGHT]		= eButton::KEYBOARD_RIGHT;
 	mButtonMap[eEditorButton::KEY_DOWN]			= eButton::KEYBOARD_DOWN;
 
+	mButtonMap[eEditorButton::KEY_MISC_1]		= eButton::KEYBOARD_OEM_1;
+	mButtonMap[eEditorButton::KEY_MISC_PLUS]	= eButton::KEYBOARD_OEM_PLUS;
+	mButtonMap[eEditorButton::KEY_MISC_COMMA]	= eButton::KEYBOARD_OEM_COMMA;
+	mButtonMap[eEditorButton::KEY_MISC_MINUS]	= eButton::KEYBOARD_OEM_MINUS;
+	mButtonMap[eEditorButton::KEY_MISC_PERIOD]	= eButton::KEYBOARD_OEM_PERIOD;
 
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
 }

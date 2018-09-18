@@ -38,13 +38,13 @@ enum eUserButton : unsigned short
 
 enum eButton : unsigned short
 {
-	MOUSE_LEFT			= 0x01,
+	MOUSE_LEFT = 0x01,
 	MOUSE_RIGHT,
-	MOUSE_MIDDLE		= 0x04,
+	MOUSE_MIDDLE = 0x04,
 	MOUSE_X1,			// These exist but god knows what they bind to
 	MOUSE_X2,
 
-	KEYBOARD_A			= 0x41,
+	KEYBOARD_A = 0x41,
 	KEYBOARD_B,
 	KEYBOARD_C,
 	KEYBOARD_D,
@@ -71,7 +71,7 @@ enum eButton : unsigned short
 	KEYBOARD_Y,
 	KEYBOARD_Z,
 
-	KEYBOARD_F1			= 0x70,
+	KEYBOARD_F1 = 0x70,
 	KEYBOARD_F2,
 	KEYBOARD_F3,
 	KEYBOARD_F4,
@@ -84,7 +84,7 @@ enum eButton : unsigned short
 	KEYBOARD_F11,
 	KEYBOARD_F12,
 
-	KEYBOARD_0			= 0x30,
+	KEYBOARD_0 = 0x30,
 	KEYBOARD_1,
 	KEYBOARD_2,
 	KEYBOARD_3,
@@ -95,7 +95,7 @@ enum eButton : unsigned short
 	KEYBOARD_8,
 	KEYBOARD_9,
 
-	KEYBOARD_NUMPAD_0	= 0x60,
+	KEYBOARD_NUMPAD_0 = 0x60,
 	KEYBOARD_NUMPAD_1,
 	KEYBOARD_NUMPAD_2,
 	KEYBOARD_NUMPAD_3,
@@ -105,6 +105,12 @@ enum eButton : unsigned short
 	KEYBOARD_NUMPAD_7,
 	KEYBOARD_NUMPAD_8,
 	KEYBOARD_NUMPAD_9,
+
+	KEYBOARD_OEM_1		= 0xBA,
+	KEYBOARD_OEM_PLUS,
+	KEYBOARD_OEM_COMMA,
+	KEYBOARD_OEM_MINUS,
+	KEYBOARD_OEM_PERIOD,
 
 	KEYBOARD_BACKSPACE	= 0x08,
 	KEYBOARD_TAB,
@@ -222,6 +228,13 @@ enum eEditorButton : unsigned short
 	KEY_UP			,
 	KEY_RIGHT		,
 	KEY_DOWN		,
+	KEY_MISC_1		,
+	KEY_MISC_PLUS	,
+	KEY_MISC_COMMA	,
+	KEY_MISC_MINUS	,
+	KEY_MISC_PERIOD	,
+
+
 	TOTAL_EDITOR_BUTTONS
 };
 
