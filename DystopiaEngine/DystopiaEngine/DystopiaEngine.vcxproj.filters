@@ -182,7 +182,6 @@
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\Whatever.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
@@ -508,7 +507,6 @@
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\Whatever.h" />
     <ClInclude Include="Include\Editor\HotLoader.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h">
@@ -541,6 +539,7 @@
     <ClInclude Include="Include\Editor\DefaultFactory.h">
       <Filter>Editor\Factory</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Include\Component\Particle.h">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClInclude>
@@ -811,5 +810,13 @@
     <Filter Include="Game Engine\Systems\Graphic\Framebuffer">
       <UniqueIdentifier>{65da04fa-f08d-4a05-8517-ee74099485c3}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DystopiaEngine1.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="dystopia_x86_64.ico">
+      <Filter>Game Engine</Filter>
+    </Image>
   </ItemGroup>
 </Project>

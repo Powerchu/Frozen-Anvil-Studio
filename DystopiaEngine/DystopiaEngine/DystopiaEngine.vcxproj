@@ -213,6 +213,13 @@
     <ClInclude Include="Include\Math\Vector2.h" />
     <ClInclude Include="Include\Utility\UtilityInternals.h" />
     <ClInclude Include="Include\DataStructure\Pointer.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DystopiaEngine1.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="dystopia_x86_64.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>
