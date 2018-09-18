@@ -1,4 +1,8 @@
 
+#if EDITOR
+#include "Editor/HotLoader.h"
+#endif
+
 #include "System/File/FileSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Driver/Driver.h"

@@ -27,6 +27,7 @@ namespace Dystopia
 {
 
 #if EDITOR
+
 	struct BehaviourWrap
 	{
 		BehaviourWrap(){}
