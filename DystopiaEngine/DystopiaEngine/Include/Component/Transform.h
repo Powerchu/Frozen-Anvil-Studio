@@ -24,7 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Transform : public Component
+	class _DLL_EXPORT Transform : public Component
 	{
 	public:
 		//unsigned GetComponentType(void) const

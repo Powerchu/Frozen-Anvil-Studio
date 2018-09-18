@@ -30,6 +30,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif
 
 
+#define _DLL_EXPORT_ONLY  __declspec( dllexport )
+
+
 #else
 
 #define _EDITOR_START_TRY	

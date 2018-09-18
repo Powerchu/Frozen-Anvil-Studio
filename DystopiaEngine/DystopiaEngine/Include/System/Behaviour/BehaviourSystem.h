@@ -5,16 +5,54 @@
 
 #include "System/Base/Systems.h"
 #include "DataStructure/MagicArray.h"
+#include "DataStructure/SharedPtr.h"
+#include "System/Base/ComponentDonor.h"
+#include "Component/BehaviourList.h"
+#include "Behaviour/Behaviour.h"
+
+#include <memory>
 
 #if EDITOR
 #include "Editor/HotLoader.h"
 #endif
 
+#if !EDITOR
+/*Include all the behaviour header files*/
+
+#endif
+
+
 
 namespace Dystopia
 {
-	struct BehaviourSystem : Systems
+
+#if EDITOR
+	struct BehaviourWrap
 	{
+		BehaviourWrap(){}
+		BehaviourWrap(std::string const & _name, Behaviour *  _pointer)
+			:mName{_name}, mpBehaviour{ _pointer }
+		{
+		}
+		std::string mName;					      /*Name of BehaviourScript*/
+		Behaviour * mpBehaviour;
+		//std::shared_ptr<Behaviour> mpBehaviour;   /*SharedPtr to Behaviour Component*/
+	};
+
+
+#endif
+
+	class BehaviourSystem 
+	: public Systems
+	{
+	public :
+#if !EDITOR
+		using AllBehaviour = 
+			Utility::MetaSortT_t <Utility::MetaLessThan, Utility::Collection 
+			<
+
+			>>;
+#endif 
 		virtual void PreInit(void);
 		virtual bool Init(void);
 		virtual void PostInit(void);
@@ -27,10 +65,24 @@ namespace Dystopia
 		virtual void LoadDefaults(void);
 		virtual void LoadSettings(TextSerialiser&);
 
+#if EDITOR
+
+		MagicArray<BehaviourWrap *> const & GetDllChanges() const;
+		bool hasDllChanges() const;
+
+#endif
+
 	private:
+		/*Array of Behaviours components*/
+		//MagicArray< SharedPtr<Behaviour> > mBehaviours;
 
 #if EDITOR
-		Hotloader<2> mHotloader;
+
+		Hotloader<1> mHotloader;
+		/*A reference copy of all the available Behaviour Component created from a List of Dlls*/
+		MagicArray<BehaviourWrap> mvBehaviourReferences;
+		MagicArray<BehaviourWrap *> mvRecentChanges;
+
 #endif
 	};
 

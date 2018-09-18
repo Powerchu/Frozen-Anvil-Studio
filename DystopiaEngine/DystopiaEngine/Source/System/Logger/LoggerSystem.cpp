@@ -21,13 +21,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
+	static bool bAbnormalExit = true;
+
 	[[noreturn]] void ProgramTerminate(void)
 	{
-		FILE* log = fopen("CrashReport.log", "w+");
+		if (bAbnormalExit)
+		{
+			FILE* log = fopen("CrashReport.log", "w+");
 
-		fprintf(log, "lolwhat2\n");
+			fprintf(log, "lolwhat2\n");
 
-		fclose(log);
+			fclose(log);
+		}
 
 		std::abort();
 	}
@@ -41,7 +46,7 @@ Dystopia::LoggerSystem::LoggerSystem(void) noexcept
 
 Dystopia::LoggerSystem::~LoggerSystem(void) noexcept
 {
-
+	bAbnormalExit = false;
 }
 
 

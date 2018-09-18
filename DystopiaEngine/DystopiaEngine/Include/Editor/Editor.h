@@ -123,6 +123,7 @@ namespace Dystopia
 		void			UpdateHotkeys();
 		void			InstallHotkeys();
 		void			UnInstallHotkeys();
+		void			ReloadDLL();
 
 		/* Misc functions */
 		void			LogTabPerformance();

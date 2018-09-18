@@ -30,7 +30,7 @@ namespace Dystopia
 
 	void PrintToConsoleLog(const std::string& _text)
 	{
-		gpInstance->Debug(_text);
+		ConsoleLog::GetInstance()->Debug(_text);
 	}
 
 	ConsoleLog::ConsoleLog()
