@@ -15,12 +15,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_META_HELPER_H_
 #define _EDITOR_META_HELPER_H_
 
-#include "Component\Camera.h"
-#include "Component\Collider.h"
-#include "Component\Renderer.h"
-#include "Component\RigidBody.h"
-#include "System\Graphics\GraphicsSystem.h"
-#include "System\Camera\CameraSystem.h"
 #include "Object\GameObject.h"
 #include <tuple>
 #include <utility>

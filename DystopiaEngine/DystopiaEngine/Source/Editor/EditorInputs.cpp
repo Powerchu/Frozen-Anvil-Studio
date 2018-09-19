@@ -11,10 +11,10 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Editor\EditorInputs.h"
 #include "System\Window\WindowManager.h"
 #include "System\Window\Window.h"
 #include "System\Driver\Driver.h"
+#include "Editor\EditorInputs.h"
 
 #define WIN32_LEAN_AND_MEAN			// Exclude rare stuff from Window's header
 #include <Windows.h>
@@ -27,7 +27,7 @@ namespace
 }
 
 Dystopia::EditorInput::EditorInput(void) :
-	mButtonMap{ static_cast<unsigned>(eEditorButton::TOTAL_EDITOR_BUTTONS) }
+	mButtonMap{ static_cast<unsigned>(eEditorButton::TOTAL_EDITOR_BUTTONS) }, mMouseInput{}
 {
 }
 

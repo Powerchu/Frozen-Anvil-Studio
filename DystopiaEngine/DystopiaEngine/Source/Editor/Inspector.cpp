@@ -18,7 +18,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\Commands.h"
 #include "Editor\EditorEvents.h"
 #include "Editor\EditorMetaHelpers.h"
+
+#include "Component\Camera.h"
+#include "Component\Collider.h"
+#include "Component\Renderer.h"
+#include "Component\RigidBody.h"
+
+#include "System\Graphics\GraphicsSystem.h"
+#include "System\Camera\CameraSystem.h"
 #include "System\Behaviour\BehaviourSystem.h"
+
 #include "Utility\ComponentGUID.h"
 
 #include <iostream>
