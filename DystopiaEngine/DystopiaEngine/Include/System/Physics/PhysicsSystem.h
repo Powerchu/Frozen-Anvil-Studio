@@ -20,27 +20,41 @@ namespace Dystopia
 		bool Init(void) override;
 		void PostInit(void) override;
 
+
+
+		void Step(float _dt);
 		void FixedUpdate(float) override;
 		void Update(float) override;
+		
 		void Shutdown(void) override;
 
 		void LoadDefaults(void) override;
 		void LoadSettings(TextSerialiser&) override;
 
-		void ResolveCollision(float);
 
 		virtual ~PhysicsSystem(void) = default;
 	private:
+		void IntegrateRigidBodies(float _dt);
+		void ResolveCollision(float);
+		void PostResults();
+		void DebugPrint();
+		void DebugDraw();
+
+		bool  mbIsDebugActive;
+		float mTimeAccumulator;
+
+		//CollisionMap		CollisionMap;
+		//CollisionEvents	Contacts;
 
 	public:
-		Math::Vec3D mGravity;
+		float mGravity;
 		float mMaxVelocityConstant;
 		float mMaxVelSquared;
 
 		// Position Correction Tolerance
-		float PenetrationEpsilon;
+		float mPenetrationEpsilon;
 		// Position Correction Resolution as Percentage;
-		float PenetrationResolutionPercentage;
+		float mPenetrationResolutionPercentage;
 	};
 }
 

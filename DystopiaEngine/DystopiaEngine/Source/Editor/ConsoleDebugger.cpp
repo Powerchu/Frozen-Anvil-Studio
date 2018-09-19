@@ -12,8 +12,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\ConsoleDebugger.h"
-#include "Editor\ConsoleLog.h"
+#include <Editor/ConsoleDebugger.h>
+#include <Editor/ConsoleLog.h>
 namespace Dystopia
 {
 	void format_impl(std::stringstream& _stream, const char * _format)

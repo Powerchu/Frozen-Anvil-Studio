@@ -214,6 +214,9 @@
     <ClCompile Include="Source\Component\Colliders\Circle.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehaviourScripts\Whatever.cpp" />
+    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -561,6 +564,11 @@
     <ClInclude Include="Include\System\Physics\CollisionResolution.h">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehaviourScripts\Whatever.h" />
+    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Include\Utility\ComponentGUID.h" />
+    <ClInclude Include="Include\Utility\GUID.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

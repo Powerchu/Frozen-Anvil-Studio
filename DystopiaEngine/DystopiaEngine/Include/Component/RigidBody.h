@@ -38,29 +38,20 @@ namespace Dystopia
 		virtual void OnDestroy(void);
 		virtual void Unload(void);
 		virtual RigidBody* Duplicate() const;
-		virtual void Serialise(TextSerialiser&) const override;
-		virtual void Unserialise(TextSerialiser&) override;
+		void Serialise(TextSerialiser&) const override;
+		void Unserialise(TextSerialiser&) override;
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
+		void Integrate(float _dt);
+		void PostResult();
+
 		void Update(float _dt);
 		void LateUpdate(float _dt);
 
 		//TODO: Delete this once graphics is up
-		void PrintRigidBodies(); // FOR TESTING
+		void DebugPrint(); // FOR TESTING
 
 		//TODO: Draw using renderer (lines)
 		void DebugDraw();
-
-		void Set_CustomGravityScale(float);
-		bool Set_ToggleGravity(); // toggles 
-		void Set_ToggleGravity(bool);
-		void SetPosition(const Vec3D&);
-		void SetVelocity(const Vec3D&);
-		
-		/*Add a force at the origin of the body*/
-		void AddForce(Math::Vec3D const & _force);
-
-		// Gettors
-
 
 		/*************************************************************************************************
 		\brief
@@ -83,11 +74,40 @@ namespace Dystopia
 			          Math::Point3D const & _point, 
 			          Math::Point3D const & _origin);
 
+		/*Add a force at the origin of the body*/
+		void AddForce(Math::Vec3D const & _force);
+
 		/**************************************************************************************************
 		\brief
 		Resets the Cumulative Force for the current RigidBody
 		**************************************************************************************************/
 		void ResetCumulative();
+
+		// Settors
+		void Set_CustomGravityScale(float);
+		bool Set_ToggleGravity(); // toggles 
+		void Set_ToggleGravity(bool);
+		void SetPosition(const Vec3D&);
+		void SetVelocity(const Vec3D&);
+
+		// Gettors
+		Vec3D GetPosition();
+		Vec3D GetPrevPosition();
+
+		Vec3D GetLinearVelocity();
+		Vec3D GetAngularVelocity();
+		Vec3D GetAcceleration();
+		
+		float GetAngle();
+		float GetFrictionForce();
+
+		float GetGravityScalar();
+		float GetMass();
+		float GetInverseMass();
+
+		bool Get_IsGroundedState();
+		bool Get_HasGravityState();
+		bool Get_IsStaticState();
 
 	private:
 		Primitive*			mPrimitiveShape;    /*The underlying primitive of the RigidBody*/
@@ -103,18 +123,21 @@ namespace Dystopia
 				
 		float				mfAngle;
 		float				mfTorque;
-		float				mfDamping;
+		float				mfLinearDamping;
 		float				mfFriction;
 		
 		float				mfCustom_GravityScale;
 		float				mfGravity;
 		float				mfMass;
-		float				mfInvMass;       /*The inverse of mass, (1/Mass)*/
-		float				mfElasticCoeff; /*Restitution*/
+
+		/*The inverse of mass, 1/Mass)*/
+		float				mfInvMass;       
+
+		/*Elasticity Coefficient: 'Bounciness' of the body*/
+		float				mfRestitution; 
 
 		bool				mbIsGrounded;
 		bool				mbHasGravity;
-		bool				mbIsBouncy;
 		bool				mbIsStatic;
 
 
