@@ -84,11 +84,11 @@ namespace Dystopia
 			template<size_t Head, size_t ... Rest, typename List>
 			struct BreakTuple<std::index_sequence<Head, Rest ...>, List>
 			{
-				std::tuple<typename Utility::MetaExtract<Rest, UsableComponents>::result::type* (&)(void) ...> mData
-					= { AuxGenFunction<typename Utility::MetaExtract<Rest, UsableComponents>::result::type>::Extract ... };
+				std::tuple<typename GetType<typename Utility::MetaExtract<Rest, List>::result::type* (&)(void)>::type ...> mData
+					= { AuxGenFunction<typename GetType<typename Utility::MetaExtract<Rest, List>::result::type>::type>::Extract ... };
 			};
-			template<typename List>
-			struct BreakTuple<std::index_sequence<0>, List>
+			template<template<typename ... T> typename List>
+			struct BreakTuple<std::index_sequence<0>, List<>>
 			{
 				std::tuple<typename Utility::MetaExtract<size - 1, UsableComponents>::result::type* (&)(void)> mData
 					= { AuxGenFunction<typename Utility::MetaExtract<size - 1, UsableComponents>::result::type>::Extract };
@@ -107,8 +107,9 @@ namespace Dystopia
 						ApplyFunction a;
 						return a(std::get<0>(_data));
 					}
-					BreakTuple<std::make_index_sequence<sizeof...(Ts)>, typename Utility::MetaPopFront<List>::type> newData;
-					return HelperFunction<typename Utility::MetaPopFront<List>::type>(_i - 1, newData.mData);
+					BreakTuple<std::make_index_sequence<sizeof...(Ts)>, typename Utility::MetaPopFront<UsableComponents>::type> newData;
+					//BreakTuple<std::make_index_sequence<sizeof...(Ts)>, typename Utility::MetaPopFront<List>::type> newData;
+					//return HelperFunction<typename Utility::MetaPopFront<List>::type>(_i - 1, newData.mData);
 				}
 			};
 
