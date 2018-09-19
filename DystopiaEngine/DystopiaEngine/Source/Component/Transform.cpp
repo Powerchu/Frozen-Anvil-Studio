@@ -238,12 +238,10 @@ void Dystopia::Transform::EditorUI(void) noexcept
 	switch (EGUI::Display::VectorFields("Position", &mPosition, 0.01f, -FLT_MAX, FLT_MAX))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mPosition);
-		mbChanged = true;
+		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mPosition, &mbChanged);
 		break;
 	case EGUI::eDragStatus::eEND_DRAG:
 		EGUI::GetCommandHND()->EndRecording();
-		mbChanged = true;
 		break;
 	case EGUI::eDragStatus::eDRAGGING:
 		mbChanged = true;
@@ -253,12 +251,10 @@ void Dystopia::Transform::EditorUI(void) noexcept
 	switch (EGUI::Display::VectorFields("Scale", &mScale, 0.01f, -FLT_MAX, FLT_MAX))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale);
-		mbChanged = true;
+		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale, &mbChanged);
 		break;
 	case EGUI::eDragStatus::eEND_DRAG:
 		EGUI::GetCommandHND()->EndRecording();
-		mbChanged = true;
 		break;
 	case EGUI::eDragStatus::eDRAGGING:
 		mbChanged = true;
