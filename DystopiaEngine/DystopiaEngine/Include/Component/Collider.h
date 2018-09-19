@@ -5,8 +5,8 @@
 #include "Component\ComponentList.h"           /*Component List*/
 #include "Math\Vector4.h"                      /*Vector*/
 #include "DataStructure\AutoArray.h"	       /*AutoArray Data Structure*/
-#include "System\Collision\CollisionSystem.h"            /*Collision System*/
 #include "Utility\MetaAlgorithms.h"		// MetaFind
+#include "Component/CollisionEvent.h"
 
 #define CLOCKWISE 1
 /*
@@ -38,6 +38,8 @@ namespace Dystopia
 	typedef char Status;
 
 	class CollisionEvent;
+
+	class CollisionSystem;
 
 	enum class eColliderType
 	{
@@ -84,14 +86,20 @@ namespace Dystopia
 	{
 	public:
 
-		//unsigned GetComponentType(void) const
-		//{
-		//	return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
-		//};
+		using SYSTEM = CollisionSystem;
+
+		/*
+		unsigned GetComponentType(void) const
+		{
+			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+		};
+		*/
+#if EDITOR
 		static const std::string GetCompileName(void) { return "Collider"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
+#endif
 
-		static const eColliderType ColliderType = eColliderType::BASE;
+		static  const eColliderType ColliderType = eColliderType::BASE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; } // returns const
 		/*Constructors*/
 
@@ -109,11 +117,14 @@ namespace Dystopia
 		virtual void Unload(void);
 		/*Duplicate the Component*/
 		virtual Collider* Duplicate() const;
+		/*Get Array of collision event*/
+		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
+
+
 
 		// Gettors
-		Math::Vec3D GetOffSet() const;
-		bool Get_IsBouncy() const;
-
+		Math::Vec3D GetOffSet()   const;
+		bool       Get_IsBouncy() const;
 		// Settors
 		bool Set_IsBouncy(const bool);
 
@@ -122,6 +133,11 @@ namespace Dystopia
 		virtual void Unserialise(TextSerialiser&);
 
 		virtual ~Collider();
+
+	protected:
+
+		/*AutoArray of collision event*/
+		AutoArray<CollisionEvent>  mCollisionEvent;
 
 	private:
 		 //Status mStatus;
@@ -136,6 +152,8 @@ namespace Dystopia
 	class _DLL_EXPORT Convex : public virtual Collider
 	{
 	public:
+
+		using SYSTEM = Collider::SYSTEM;
 
 		static const eColliderType ColliderType = eColliderType::CONVEX;
 		virtual const eColliderType GetColliderType(void) const override { return ColliderType; }
@@ -172,9 +190,9 @@ namespace Dystopia
 
 		Vertice GetFarthestPoint(const Math::Vec3D & _Dir)const;
 
-		bool isColliding(const Convex & _ColB) const;
-		bool isColliding(const Convex * const & _pColB) const;
-		bool isColliding(const Convex & _pColB, const Math::Vec3D & _v3Dir) const;
+		bool isColliding(Convex & _ColB);
+		bool isColliding(Convex * const & _pColB);
+		bool isColliding(Convex & _pColB, const Math::Vec3D & _v3Dir);
 
 		CollisionEvent GetCollisionEvent(AutoArray<Vertice> & _Simplex, const Convex & _ColB) const;
 
@@ -208,13 +226,14 @@ namespace Dystopia
 
 		/*The vertices of the collider in the Collider Local Coordinate System*/
 		AutoArray<Vertice>         mVertices;
-		//AutoArray<CollisionEvent>  mCollisionEvent;
 	};
 
 
 	class _DLL_EXPORT AABB : public Convex
 	{
 	public:
+
+		using SYSTEM = Collider::SYSTEM;
 
 		static const eColliderType ColliderType = eColliderType::AABB;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
@@ -259,6 +278,8 @@ namespace Dystopia
 	{
 	public:
 
+		using SYSTEM = Collider::SYSTEM;
+
 		static const eColliderType ColliderType = eColliderType::CIRCLE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
 		/*Constructors*/
@@ -297,6 +318,8 @@ namespace Dystopia
 	class Triangle : public Convex
 	{
 	public:
+
+		using SYSTEM = Collider::SYSTEM;
 
 		static const eColliderType ColliderType = eColliderType::TRIANGLE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }

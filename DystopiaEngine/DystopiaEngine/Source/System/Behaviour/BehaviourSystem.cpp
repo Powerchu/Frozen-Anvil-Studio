@@ -154,10 +154,17 @@ namespace Dystopia
 	{
 	}
 
+	MagicArray<BehaviourWrap> const & BehaviourSystem::GetBehaviourList() const
+	{
+		return mvBehaviourReferences;
+		// TODO: insert return statement here
+	}
+
 	MagicArray<BehaviourWrap*> const & Dystopia::BehaviourSystem::GetDllChanges() const
 	{
 		return mvRecentChanges;
 	}
+
 	bool BehaviourSystem::hasDllChanges() const
 	{
 		return !mvRecentChanges.IsEmpty();

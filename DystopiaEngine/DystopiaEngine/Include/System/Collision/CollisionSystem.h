@@ -4,14 +4,27 @@
 
 #include <DataStructure/AutoArray.h>
 #include <System/Base/Systems.h>
+#include "System/Base/ComponentDonor.h"
 
+#include "Component/Collider.h"
 namespace Dystopia
 {
-	class Collider;
 
-	class CollisionSystem : public Systems
+	class CollisionSystem : 
+	public Systems
+	/*, 
+	public ComponentDonor<Collider>,
+	public ComponentDonor<Convex>,
+	public ComponentDonor<AABB>,
+	public ComponentDonor<Triangle>,
+	public ComponentDonor<Circle>
+	*/
 	{
 	public:
+
+
+
+
 
 		~CollisionSystem();
 
@@ -30,15 +43,19 @@ namespace Dystopia
 
 		void InsertCollider(Collider * const & _Col);
 
-		bool AABBvsAABB(Collider const * const & _ColA,
-			                     Collider const * const & _ColB) const;
+		bool AABBvsAABB(Collider  * const & _ColA,
+			            Collider  * const & _ColB) const;
 
-		bool ConvexVsConvex(Collider const * const & _ColA,
-			                         Collider const * const & _ColB)const;
+		bool ConvexVsConvex(Collider  * const & _ColA,
+			                Collider  * const & _ColB) const;
+
 	private:
 
 		AutoArray<Collider*> mArrOfCollider;
 	};
+
+
+
 }
 
 

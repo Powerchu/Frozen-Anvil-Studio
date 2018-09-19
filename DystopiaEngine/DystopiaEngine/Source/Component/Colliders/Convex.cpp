@@ -52,19 +52,19 @@ namespace Dystopia
 
 	}
 
-	bool Convex::isColliding(const Convex & _ColB) const
+	bool Convex::isColliding(Convex & _ColB)
 	{
 		static Math::Vec3D InitialSearchDir{ 1,0,0,0 };
 		return isColliding(_ColB, InitialSearchDir);
 	}
 
-	bool Convex::isColliding(const Convex * const & _pColB) const
+	bool Convex::isColliding(Convex * const & _pColB)
 	{
 		return isColliding(*_pColB);
 	}
 
 
-	bool Convex::isColliding(const Convex & _pColB, const Math::Vec3D & _v3Dir) const
+	bool Convex::isColliding(Convex & _pColB, const Math::Vec3D & _v3Dir)
 	{
 		/*Only need one simplex to check*/
 		static AutoArray<Vertice> Simplex{ 3 };
@@ -94,6 +94,7 @@ namespace Dystopia
 				if (ContainOrigin(Simplex, vDir))
 				{
 					/*Use EPA to get collision information*/
+					mCollisionEvent.Insert(GetCollisionEvent(Simplex, _pColB));
 					/*Clear the simplex for the next function call*/
 					Simplex.clear();
 					/*Return true for collision*/

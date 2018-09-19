@@ -11,13 +11,13 @@ namespace Dystopia
 		: mv3Offset{0,0,0,0}
 		, m_IsBouncy(false)
 	{
-		EngineCore::GetInstance()->GetSystem<CollisionSystem>()->InsertCollider(this);
+		//EngineCore::GetInstance()->GetSystem<CollisionSystem>()->InsertCollider(this);
 	}
 	Collider::Collider(const Math::Point3D & _offset)
 		: mv3Offset{ _offset }
 		, m_IsBouncy(false)
 	{
-		EngineCore::GetInstance()->GetSystem<CollisionSystem>()->InsertCollider(this);
+		//EngineCore::GetInstance()->GetSystem<CollisionSystem>()->InsertCollider(this);
 	}
 	void Collider::Load(void)
 	{
@@ -35,6 +35,11 @@ namespace Dystopia
 	Collider * Collider::Duplicate() const
 	{
 		return nullptr;
+	}
+	AutoArray<CollisionEvent> const & Collider::GetCollisionEvents() const
+	{
+		// TODO: insert return statement here
+		return mCollisionEvent;
 	}
 	Math::Vec3D Collider::GetOffSet() const
 	{
