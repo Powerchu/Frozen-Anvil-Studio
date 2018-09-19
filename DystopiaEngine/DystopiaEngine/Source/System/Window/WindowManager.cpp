@@ -161,7 +161,7 @@ bool Dystopia::WindowManager::Init(void)
 {
 #if EDITOR
 
-	std::fprintf(stdout, "Window System: Screen Resolution %dx%d, Main window size %dx%d\n", 
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Window System: Screen Resolution %dx%d, Main window size %dx%d\n",
 		GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), mWidth, mHeight);
 
 #endif

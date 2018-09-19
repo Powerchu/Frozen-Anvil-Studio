@@ -5,6 +5,7 @@
 \par    email: t.jieweijacky\@digipen.edu
 \brief
 	Profiler System
+	Define DISABLE_PROFILER in the compiler flags to disable
 
 	References:
 	https://docs.microsoft.com/en-us/windows/desktop/api/processthreadsapi/
@@ -72,7 +73,7 @@ void Dystopia::Profiler::Update(float)
 	static Timer timekeep;
 
 	// Don't update every frame
-	if (timekeep.Elapsed() < .05f)
+	if (timekeep.Elapsed() < .0625f)
 		return;
 	timekeep.Lap();
 

@@ -76,7 +76,7 @@ namespace
 
 
 Dystopia::LoggerSystem::LoggerSystem(void) noexcept
-	: mpOut{ PrintToConsoleLog }
+	: mpOut{ PrintToConsoleLog }, mActiveFlags{ eLog::DEFAULT }
 {
 	std::set_terminate(ProgramTerminate);
 
@@ -101,6 +101,9 @@ Dystopia::LoggerSystem::~LoggerSystem(void) noexcept
 	// Clean exit
 	//std::set_terminate(nullptr);
 
+	mpOut = nullptr;
+	mActiveFlags = eLog::NONE;
+
 #if !EDITOR && defined(COMMAND_PROMPT)
 	FreeConsole();
 #endif
@@ -115,6 +118,7 @@ Dystopia::LoggerSystem* Dystopia::LoggerSystem::GetInstance(void) noexcept
 void Dystopia::LoggerSystem::RedirectOutput(void(*_pOut)(const std::string&))
 {
 	mpOut = _pOut;
+	mActiveFlags = mpOut ? mActiveFlags : eLog::NONE;
 }
 
 void Dystopia::LoggerSystem::ParseInput(const std::string&)

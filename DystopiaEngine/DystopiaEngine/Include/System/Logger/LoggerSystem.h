@@ -67,7 +67,7 @@ void Dystopia::LoggerSystem::ConsoleLog(eLog _Mode, const char *_strFormat, Ty&&
 
 	if (static_cast<unsigned>(self->mActiveFlags) & static_cast<unsigned>(_Mode))
 	{
-		self->Write(_strFormat, static_cast<Ty>(Args)...);
+		self->Write(_strFormat, (Args)...);
 	}
 }
 
@@ -76,7 +76,7 @@ void Dystopia::LoggerSystem::Write(const char *_strFormat, Ty&& ...Args)
 {
 	std::string buf;
 	buf.reserve(2048);
-	std::snprintf(&buf[0], sizeof(2048), _strFormat, static_cast<Ty>(Args)...);
+	std::snprintf(&buf[0], 2048, _strFormat, Args...);
 	SendOutput(buf);
 }
 

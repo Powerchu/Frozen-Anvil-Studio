@@ -16,9 +16,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 enum class eLog
 {
-	ERROR,
-	WARNING,
-	MESSAGE
+	NONE       = 0,
+	ERROR      = 1 << 0,
+	WARNING    = 1 << 1,
+	MESSAGE    = 1 << 2,
+	SYSINFO    = 1 << 3,
+
+	DEFAULT    = ERROR | WARNING | MESSAGE | SYSINFO
 };
 
 
