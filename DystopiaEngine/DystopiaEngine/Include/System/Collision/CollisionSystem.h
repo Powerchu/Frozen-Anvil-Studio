@@ -22,10 +22,6 @@ namespace Dystopia
 	{
 	public:
 
-
-
-
-
 		~CollisionSystem();
 
 		CollisionSystem();
@@ -49,12 +45,13 @@ namespace Dystopia
 		bool ConvexVsConvex(Collider  * const & _ColA,
 			                Collider  * const & _ColB) const;
 
+
+
+
 	private:
 
 		AutoArray<Collider*> mArrOfCollider;
 	};
-
-
 
 }
 
