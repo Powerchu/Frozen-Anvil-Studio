@@ -16,8 +16,9 @@ namespace Dystopia
 
 	class CollisionSystem : 
 	public Systems
-	/*, 
-	public ComponentDonor<Collider>,
+	, 
+	public ComponentDonor<Collider>
+	/*
 	public ComponentDonor<Convex>,
 	public ComponentDonor<AABB>,
 	public ComponentDonor<Triangle>,

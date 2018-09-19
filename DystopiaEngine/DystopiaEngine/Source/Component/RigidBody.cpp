@@ -63,9 +63,12 @@ namespace Dystopia
 
 	void RigidBody::PrintRigidBodies()
 	{
-		ConsolePrint("transform: x(" + std::to_string(m_OwnerTransform->GetGlobalPosition().x) + ')' +
+		/*
+				ConsolePrint("transform: x(" + std::to_string(m_OwnerTransform->GetGlobalPosition().x) + ')' +
 									"y(" + std::to_string(m_OwnerTransform->GetGlobalPosition().y) + ')'
 					+ "angle: " + std::to_string(m_angle));
+		*/
+
 	}
 
 	void RigidBody::Update(float _dt)

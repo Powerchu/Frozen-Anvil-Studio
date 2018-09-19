@@ -83,7 +83,7 @@ namespace Dystopia
 		int            SimplexIndex;
 	};
 
-	class _DLL_EXPORT Collider : public Dystopia::Component
+	class _DLL_EXPORT Collider : public Component
 	{
 	public:
 
@@ -150,11 +150,19 @@ namespace Dystopia
 		Math::Vec3D mv3Offset;
 	};
 
-	class _DLL_EXPORT Convex : public virtual Collider
+	class _DLL_EXPORT Convex : public Collider
 	{
 	public:
 
-		using SYSTEM = Collider::SYSTEM;
+		using SYSTEM = CollisionSystem;
+
+		unsigned GetComponentType(void) const
+		{
+			return Utility::MetaFind_t<Utility::Decay_t<Collider>, AllComponents>::value;
+		};
+
+		static const std::string GetCompileName(void) { return "Convex"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 		static const eColliderType ColliderType = eColliderType::CONVEX;
 		virtual const eColliderType GetColliderType(void) const override { return ColliderType; }

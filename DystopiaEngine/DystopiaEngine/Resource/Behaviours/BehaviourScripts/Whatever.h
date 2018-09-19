@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _Whatever_H_
 #define _Whatever_H_
 
-#define _STRINGIFY(s) #s
+#define str(s) #s
 
 #include "Behaviour\Behaviour.h"
 
@@ -26,7 +26,7 @@ namespace Dystopia
 	{
 	public:
 
-		static constexpr const char * BehaviourName = _STRINGIFY(Whatever);
+		static constexpr const char * BehaviourName = str(Whatever);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
