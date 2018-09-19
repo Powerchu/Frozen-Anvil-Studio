@@ -172,7 +172,7 @@ namespace Dystopia
 			EGUI::Display::EndTreeNode();
 		}
 
-		auto arrComp = mpFocus->GetAllComponents();
+		auto& arrComp = mpFocus->GetAllComponents();
 		for (const auto& c : arrComp)
 		{
 			EGUI::Display::HorizontalSeparator();
@@ -226,9 +226,10 @@ namespace Dystopia
 
 	void Inspector::ComponentsDropDownList()
 	{
-		static constexpr size_t numComponents = Utility::SizeofList<AllComponents>::value;
+		static ListOfComponents availableComp;
+		static constexpr size_t numComponents = Utility::SizeofList<UsableComponents>::value;
 		Array<std::string, numComponents> arr;
-		ListOfComponentsName<std::make_index_sequence<numComponents>, AllComponents>::Extract(arr);
+		ListOfComponentsName<std::make_index_sequence<numComponents>, UsableComponents>::Extract(arr);
 
 		if (EGUI::Display::StartPopup("Inspector Component List"))
 		{
@@ -238,8 +239,7 @@ namespace Dystopia
 				const auto& e = arr[i];
 				if (EGUI::Display::SelectableTxt(e, false))
 				{
-					ListOfComponents a;
-					Component* pComp = a.Get(i);
+					Component* pComp = availableComp.Get(i);
 					pComp->Init();
 					mpFocus->AddComponent(pComp, typename Component::TAG{});
 				}

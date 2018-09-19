@@ -31,16 +31,6 @@ namespace Dystopia
 	class Shader;
 	class Renderer;
 
-	struct TextureInfo
-	{
-		TextureInfo(const uint64_t&  _id, float _x, float _y)
-			: mID{ _id }, x{ _x }, y{ _y }
-		{}
-		uint64_t mID;
-		float x;
-		float y;
-	};
-
 	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>
 	{
 	public :
@@ -84,7 +74,7 @@ namespace Dystopia
 		std::map<std::string, Shader*> shaderlist;
 		std::map<std::string, Texture*> texturelist;
 
-		AutoArray<TextureInfo> textureInfos;
+		Framebuffer& GetFrameBuffer();
 
 	private:
 

@@ -198,6 +198,9 @@
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp">
       <Filter>Game Engine\Systems\Graphic\Framebuffer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\Clipboard.cpp">
+      <Filter>Editor\Clipboard</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Component\Particle.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
@@ -504,9 +507,6 @@
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h">
       <Filter>IO\TextSerialiser\lodepng</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\ConsoleDebugger.h">
-      <Filter>Editor\Editor Tabs\Console</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\PLogInfo.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
@@ -544,6 +544,12 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\DefaultFactory.h">
       <Filter>Editor\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Clipboard.h">
+      <Filter>Editor\Clipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Logger\LogPriority.h">
+      <Filter>Game Engine\SubSystems\Logger</Filter>
     </ClInclude>
     <ClInclude Include="Include\Component\BehaviourList.h" />
     <ClInclude Include="resource.h" />
@@ -822,6 +828,9 @@
     </Filter>
     <Filter Include="Editor\Factory">
       <UniqueIdentifier>{3c1970b5-39ed-4b21-846a-39fb24566cc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Clipboard">
+      <UniqueIdentifier>{cf5b3310-da32-4143-84b9-30e7d09b1840}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Systems\File">
       <UniqueIdentifier>{845f6b31-e949-414f-88d7-9fec6ab7613f}</UniqueIdentifier>

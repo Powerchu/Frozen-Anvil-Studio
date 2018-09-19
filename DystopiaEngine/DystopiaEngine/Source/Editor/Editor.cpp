@@ -50,7 +50,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\ProjectResource.h"
 #include "Editor\SceneView.h"
 #include "Editor\ConsoleLog.h"
-#include "Editor\ConsoleDebugger.h"
 #include "Editor\PerformanceLog.h"
 #include "Editor\PLogger.h"
 
@@ -162,8 +161,8 @@ namespace Dystopia
 		mpTimer->Lap();
 
 		mpProfiler->Update(mDeltaTime);
-		mpWin->Update(mDeltaTime);
 		mpInput->Update(mDeltaTime);
+		mpWin->Update(mDeltaTime);
 		mpDriver->GetSystem<BehaviourSystem>()->Update(mDeltaTime);
 		mpGuiSystem->StartFrame(mDeltaTime);
 
@@ -516,6 +515,10 @@ namespace Dystopia
 			mpGuiSystem->UpdateMouse(KEY_RMOUSE, true);
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_RCLICK);
 		}
+
+		mpGuiSystem->UpdateScroll(0, mpInput->GetMouseWheel());
+
+
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Z))
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_UNDO);

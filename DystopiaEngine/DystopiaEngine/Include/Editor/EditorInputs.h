@@ -14,9 +14,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _EDITOR_INPUT_H_
 #define _EDITOR_INPUT_H_
-#include "DataStructure\Array.h"   // Array
-#include "Math\Vector2.h"          // Vector2
+#include "System\Base\Systems.h"    // Base Class
+#include "DataStructure\Array.h"    // Array
+#include "Math\Vector2.h"           // Vector2
+#include "Math\Vector4.h"		    // Vector4
 #include "System\Input\InputMap.h"
+#include "System\Input\MouseData.h"
 
 namespace Dystopia
 {
@@ -37,6 +40,8 @@ namespace Dystopia
 
 		Math::Vector2 GetMousePosition(void);
 		Math::Vector2 GetMousePosition(const Window&);
+		Math::Vector2 GetMouseDelta(void) const noexcept;
+		float GetMouseWheel(void) const noexcept;
 
 	private:
 
@@ -51,6 +56,7 @@ namespace Dystopia
 			KeyBinding& operator = (eButton);
 		};
 
+		MouseData mMouseInput;
 		Array<KeyBinding, eEditorButton::TOTAL_EDITOR_BUTTONS> mButtonMap;
 	};
 }

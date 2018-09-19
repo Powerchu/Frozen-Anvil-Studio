@@ -23,16 +23,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object\GameObject.h"
 #include "Object\ObjectFlags.h"
 
+#if EDITOR
+#include "Editor\EGUI.h"
+#endif
+
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
-	mViewport{0, 0, _fWidth, _fHeight}, mView{},
+	mViewport{0, 0, _fWidth, _fHeight}, mView{}, mProjection{},
 	mTransform{ nullptr }, mInvScreen {}
 {
 //	CameraManager::RegisterCamera(this);
 }
 
 Dystopia::Camera::Camera(const Camera& _oOther) : Component{ _oOther }, 
-	mViewport{ _oOther.mViewport }, mView{ _oOther.mView },
+	mViewport{ _oOther.mViewport }, mView{ _oOther.mView }, mProjection{},
 	mTransform{ nullptr }, mInvScreen{ _oOther.mInvScreen }
 {}
 
@@ -53,6 +57,14 @@ void Dystopia::Camera::Init(void)
 
 	if (mnFlags & eObjFlag::FLAG_RESERVED)
 		mnFlags |= eObjFlag::FLAG_ACTIVE;
+
+
+	mProjection = Math::Matrix4{
+		2.f / 800.f, .0f, .0f, .0f,
+		.0f, -2.f / 500.f, .0f, .0f,
+		.0f, .0f, 2.f / 1000.f, .0f,
+		.0f, .0f, .0f, 1.f
+	};
 }
 /*
 void Dystopia::Camera::Update(const float)
@@ -198,6 +210,11 @@ const Math::Mat4& Dystopia::Camera::GetViewMatrix(void)
 	return mView;
 }
 
+const Math::Matrix4 & Dystopia::Camera::GetProjectionMatrix(void)
+{
+	return mProjection;
+}
+
 
 Dystopia::Camera* Dystopia::Camera::Duplicate(void) const
 {
@@ -212,6 +229,35 @@ void Dystopia::Camera::Serialise(TextSerialiser&) const
 void Dystopia::Camera::Unserialise(TextSerialiser&)
 {
 
+}
+
+void Dystopia::Camera::EditorUI(void) noexcept
+{
+#if EDITOR
+	Math::Vec2 viewport_xy { mViewport.mnX, mViewport.mnY };
+	Math::Vec2 viewport_wh { mViewport.mnWidth, mViewport.mnHeight };
+
+	//switch (EGUI::Display::VectorFields("Viewport", &viewport_wh, 0.01f, 0, 1.f))
+	//{
+	//case EGUI::eDragStatus::eSTART_DRAG:
+	//	EGUI::GetCommandHND()->StartRecording<Camera>(GetOwner()->GetID(), &viewport_wh);
+	//	break;
+	//case EGUI::eDragStatus::eEND_DRAG:
+	//	EGUI::GetCommandHND()->EndRecording();
+	//	break;
+	//}
+	//
+	//switch (EGUI::Display::VectorFields("Viewport Offset", &viewport_xy, 0.01f, 0, 1.f))
+	//{
+	//case EGUI::eDragStatus::eSTART_DRAG:
+	//	EGUI::GetCommandHND()->StartRecording<Camera>(GetOwner()->GetID(), &viewport_wh);
+	//	break;
+	//case EGUI::eDragStatus::eEND_DRAG:
+	//	EGUI::GetCommandHND()->EndRecording();
+	//	break;
+	//}
+
+#endif 
 }
 
 

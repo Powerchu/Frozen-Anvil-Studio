@@ -513,7 +513,7 @@ namespace Dystopia
 		void			Shutdown();
 
 		void			UpdateChar(unsigned short);
-		void			UpdateScroll(double _x, double _y);
+		void			UpdateScroll(float _x, float _y);
 		void			UpdateMouse(int, bool);
 		void			UpdateKey(int _k, bool _down);
 

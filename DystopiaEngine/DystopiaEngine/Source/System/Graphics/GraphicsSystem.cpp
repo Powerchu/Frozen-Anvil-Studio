@@ -53,6 +53,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #undef WIN32_LEAN_AND_MEAN		// Stop defines from spilling into code
 #undef NOMINMAX
+#undef ERROR
 
 
 int Dystopia::GraphicsSystem::DRAW_MODE = GL_TRIANGLES;
@@ -68,7 +69,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f }, textureInfos{}
+	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f }
 {
 
 }
@@ -117,7 +118,7 @@ void Dystopia::GraphicsSystem::PreInit(void)
 void Dystopia::GraphicsSystem::DrawSplash(void)
 {
 	WindowManager* pWinSys = EngineCore::GetInstance()->GetSystem<WindowManager>();
-	MeshSystem* pMeshSys   = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
+	MeshSystem* pMeshSys = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
 
 	Mesh*   mesh = pMeshSys->GetMesh("Quad");
 	Shader* shader = shaderlist.begin()->second;
@@ -126,7 +127,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	int w, h;
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->GetSplashDimensions(w, h);
 
-	Math::Matrix4 View = Math::Translate(.0f, .0f, .0f), Project{
+	Math::Matrix4 View{}, Project{
 			2.f / w, .0f, .0f, .0f,
 			.0f, 2.f / h, .0f, .0f,
 			.0f, .0f, 2.f / 100.f, .0f,
@@ -145,6 +146,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	mesh->UseMesh(GL_TRIANGLES);
 	texture->UnbindTexture();
 
+	pWinSys->GetMainWindow().SetSize(texture->GetWidth(), texture->GetHeight());
 	pWinSys->GetMainWindow().Show();
 
 	SwapBuffers(
@@ -177,12 +179,11 @@ void Dystopia::GraphicsSystem::Update(float)
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
 
-	textureInfos.clear();
-
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
 	{
 		auto ActiveFlags = Cam.GetOwner()->GetFlags();
+		Math::Matrix4 ProjView = Cam.GetProjectionMatrix() * Cam.GetViewMatrix();
 
 		// If the camera is inactive, skip
 		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
@@ -209,14 +210,13 @@ void Dystopia::GraphicsSystem::Update(float)
 								s->UseShader();
 
 								t->BindTexture();
-								s->UploadUniform("ProjectViewMat", Cam.GetViewMatrix());
+								s->UploadUniform("ProjectViewMat", ProjView);
 								s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
 								s->UploadUniform("Gamma", mfGamma);
 
 								r->Draw();
 
 								t->UnbindTexture();
-								textureInfos.push_back(TextureInfo{ t->mnID, 100, 100 });
 							}
 						}
 					}
@@ -347,7 +347,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	if (0 == nPxFormat) // Check if we got something back
 	{
-		DEBUG_PRINT("Graphics System Error: ChoosePixelFormat fail! \n");
+		DEBUG_PRINT(eLog::ERROR, "Graphics System Error: ChoosePixelFormat fail! \n");
 
 		return false;
 	}
@@ -357,7 +357,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	if (!bResult) // This shouldn't happen
 	{
-		DEBUG_PRINT("Graphics System Error: SetPixelFormat fail! \n");
+		DEBUG_PRINT(eLog::ERROR, "Graphics System Error: SetPixelFormat fail! \n");
 
 		return false;
 	}
@@ -371,7 +371,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	if (err != GLEW_OK)
 	{
-		DEBUG_PRINT("Graphics System Error: GLEW init fail! \n");
+		DEBUG_PRINT(eLog::ERROR, "Graphics System Error: GLEW init fail! \n");
 
 		return false;
 	}
@@ -379,7 +379,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	// Check if gl 3.1 and above context is supported
 	if (wglewIsSupported("WGL_ARB_create_context") == 1 && !SelectOpenGLVersion(_window))
 	{
-		DEBUG_PRINT("Graphics System Error: OpenGL 3.1 and above not supported! \n");
+		DEBUG_PRINT(eLog::ERROR, "Graphics System Error: OpenGL 3.1 and above not supported! \n");
 
 		return false;
 	}
@@ -458,6 +458,11 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 	}
 
 	return false;
+}
+
+Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer()
+{
+	return mGameView;
 }
 
 
