@@ -5,8 +5,9 @@
 #include "Component\ComponentList.h"           /*Component List*/
 #include "Math\Vector4.h"                      /*Vector*/
 #include "DataStructure\AutoArray.h"	       /*AutoArray Data Structure*/
-#include "Utility\MetaAlgorithms.h"		// MetaFind
+#include "Utility\MetaAlgorithms.h"		       // MetaFind
 #include "Component/CollisionEvent.h"
+
 
 #define CLOCKWISE 1
 /*

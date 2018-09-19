@@ -6,9 +6,13 @@
 #include <System/Base/Systems.h>
 #include "System/Base/ComponentDonor.h"
 
-#include "Component/Collider.h"
+
+
+
 namespace Dystopia
 {
+
+	class Collider;
 
 	class CollisionSystem : 
 	public Systems

@@ -1,9 +1,6 @@
 #include "Component\Collider.h"
 
 #include "Object\GameObject.h"
-#include "Behaviour\Behaviour.h"
-#include "System\Driver\Driver.h"
-#include "System\Collision\CollisionSystem.h"
 
 namespace Dystopia
 {
