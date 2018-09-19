@@ -636,6 +636,17 @@ namespace Dystopia
 			mCompilerFlags = _Flags;
 		}
 
+		~Hotloader()
+		{
+			CloseHandle(mDll_Handle);
+			CloseHandle(mDll_Overlap.hEvent);
+
+			for (auto & elem : marrFileHandles)
+				CloseHandle(elem);
+			for (auto & elem : marraOverlapped)
+				CloseHandle(elem.hEvent);
+		}
+
 	private:
 
 		static constexpr unsigned NumOfFileInfo = 256;
