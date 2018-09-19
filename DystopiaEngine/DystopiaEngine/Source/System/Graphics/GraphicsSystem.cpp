@@ -124,8 +124,10 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	Shader* shader = shaderlist.begin()->second;
 	Texture2D* texture = new Texture2D{ "Resource/Editor/EditorStartup.png" };
 
-	int w, h;
-	EngineCore::GetInstance()->GetSystem<WindowManager>()->GetSplashDimensions(w, h);
+	unsigned w = texture->GetWidth(), h = texture->GetHeight();
+
+	pWinSys->GetMainWindow().SetSize(w, h);
+	pWinSys->GetMainWindow().CenterWindow();
 
 	Math::Matrix4 View{}, Project{
 			2.f / w, .0f, .0f, .0f,
@@ -134,25 +136,25 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 			.0f, .0f, .0f, 1.f
 	};
 
+	glViewport(0, 0, w, h);
 	glClearColor(.0f, .0f, .0f, .0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->UseShader();
 	texture->BindTexture();
+
 	shader->UploadUniform("ProjectViewMat", Project * View);
 	shader->UploadUniform("ModelMat", Math::Scale(w * 1.f, h * 1.f));
 	shader->UploadUniform("Gamma", mfGamma);
 
 	mesh->UseMesh(GL_TRIANGLES);
-	texture->UnbindTexture();
 
-	pWinSys->GetMainWindow().SetSize(texture->GetWidth(), texture->GetHeight());
 	pWinSys->GetMainWindow().Show();
-
 	SwapBuffers(
 		pWinSys->GetMainWindow().GetDeviceContext()
 	);
 
+	texture->UnbindTexture();
 	delete texture;
 }
 

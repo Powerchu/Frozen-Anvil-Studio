@@ -76,6 +76,7 @@ namespace
 
 
 Dystopia::LoggerSystem::LoggerSystem(void) noexcept
+	: mpOut{ PrintToConsoleLog }
 {
 	std::set_terminate(ProgramTerminate);
 
@@ -98,7 +99,11 @@ Dystopia::LoggerSystem::LoggerSystem(void) noexcept
 Dystopia::LoggerSystem::~LoggerSystem(void) noexcept
 {
 	// Clean exit
-	std::set_terminate(nullptr);
+	//std::set_terminate(nullptr);
+
+#if !EDITOR && defined(COMMAND_PROMPT)
+	FreeConsole();
+#endif
 }
 
 Dystopia::LoggerSystem* Dystopia::LoggerSystem::GetInstance(void) noexcept
@@ -106,18 +111,19 @@ Dystopia::LoggerSystem* Dystopia::LoggerSystem::GetInstance(void) noexcept
 	return EngineCore::GetInstance()->GetSubSystem<LoggerSystem>();
 }
 
+
 void Dystopia::LoggerSystem::RedirectOutput(void(*_pOut)(const std::string&))
 {
 	mpOut = _pOut;
 }
 
-void Dystopia::LoggerSystem::RedirectInput(std::string(*_pIn)(void))
+void Dystopia::LoggerSystem::ParseInput(const std::string&)
 {
-	mpIn = _pIn;
 }
 
 void Dystopia::LoggerSystem::SendOutput(const std::string& _strOutput)
 {
+	mpOut(_strOutput);
 }
 
 

@@ -36,8 +36,6 @@ namespace
 	constexpr bool	DEFAULT_FULLSCREEN		= false;
 	constexpr int	DEFAULT_WIDTH			= 1600;
 	constexpr int	DEFAULT_HEIGHT			= 900;
-	constexpr int	LOGO_WIDTH				= 980;
-	constexpr int	LOGO_HEIGHT				= 460;
 
 	Dystopia::MouseData* pMouse = nullptr;
 
@@ -118,17 +116,13 @@ void Dystopia::WindowManager::PreInit(void)
 
 #if EDITOR
 
-	RECT WindowRect{ 0, 0, LOGO_WIDTH, LOGO_HEIGHT };
-	AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
-
 	HWND window = CreateWindowEx(
 		WS_EX_APPWINDOW,
 		L"MainWindow",
 		L"Dystopia 2018.01.1a",
 		WS_POPUP,
 		CW_USEDEFAULT, CW_USEDEFAULT,
-		WindowRect.right - WindowRect.left,
-		WindowRect.bottom - WindowRect.top,
+		100, 100,
 		NULL, NULL, mHInstance, NULL
 	);
 
@@ -148,13 +142,13 @@ void Dystopia::WindowManager::PreInit(void)
 		NULL, NULL, mHInstance, NULL
 	);
 
-#endif
-
-	long left = (GetSystemMetrics(SM_CXSCREEN) - LOGO_WIDTH) >> 1,
-		top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
+	long left = (GetSystemMetrics(SM_CXSCREEN) - mWidth) >> 1,
+		top = (GetSystemMetrics(SM_CYSCREEN) - mHeight) >> 1;
 
 	// center the window
 	SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
+
+#endif
 
 	mWindows.EmplaceBack(window);
 //	mWindows[0].ShowCursor(EDITOR);
@@ -214,10 +208,6 @@ void Dystopia::WindowManager::Update(float)
 
 void Dystopia::WindowManager::Shutdown(void)
 {
-#if _COMMANDPROMPT
-	FreeConsole();
-#endif
-
 	//PostQuitMessage(0);
 }
 
@@ -254,12 +244,6 @@ void Dystopia::WindowManager::RegisterMouseData(MouseData* _pMouse)
 Dystopia::Window& Dystopia::WindowManager::GetMainWindow(void) const
 {
 	return const_cast<Window&>(mWindows[0]);
-}
-
-void Dystopia::WindowManager::GetSplashDimensions(int & w, int & h)
-{
-	w = LOGO_WIDTH;
-	h = LOGO_HEIGHT;
 }
 
 void Dystopia::WindowManager::DestroySplash(void)
