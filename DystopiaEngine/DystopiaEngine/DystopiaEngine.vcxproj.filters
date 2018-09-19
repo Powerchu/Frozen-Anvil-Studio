@@ -172,9 +172,6 @@
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp">
       <Filter>IO\TextSerialiser\lodepng</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\ConsoleDebugger.cpp">
-      <Filter>Editor\Editor Tabs\Console</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
@@ -527,7 +524,9 @@
       <Filter>Game Engine\SubSystems\Logger</Filter>
     </ClInclude>
     <ClInclude Include="Include\Component\BehaviourList.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -791,13 +790,16 @@
     <Filter Include="Game Engine\Systems\Graphic\Framebuffer">
       <UniqueIdentifier>{65da04fa-f08d-4a05-8517-ee74099485c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{eef3a09b-6a1f-40e7-8621-b7c7429287cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="dystopia_x86_64.ico">
-      <Filter>Game Engine</Filter>
+      <Filter>Resource</Filter>
     </Image>
   </ItemGroup>
 </Project>

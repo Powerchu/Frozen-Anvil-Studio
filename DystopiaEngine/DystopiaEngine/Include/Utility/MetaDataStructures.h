@@ -16,8 +16,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _META_DATASTRUCTS_H_
 
 
-template <typename ... Ty>
-class Tuple;
 
 namespace Utility
 {
@@ -214,7 +212,7 @@ namespace Utility
 	// To Tuple
 	// ========== ================================
 
-	template <typename Ty>
+	template <template <typename...> class Tuple, typename Ty>
 	struct MetaToTuple;
 
 	//template <template <typename ...> class Set, typename ... Tys>
@@ -223,11 +221,39 @@ namespace Utility
 	//	using type = Tuple<Tys...>;
 	//};
 
-	template <template <typename ...> class Set, unsigned ... Ns, typename ... Tys>
-	struct MetaToTuple<Set<Indexer<Ns, Tys>...>>
+	template <template <typename...> class Tuple, template <typename ...> class Set, unsigned ... Ns, typename ... Tys>
+	struct MetaToTuple<Tuple, Set<Indexer<Ns, Tys>...>>
 	{
-		using type = Tuple <Tys...>;
+		using type = Tuple<Tys...>;
 	};
+
+
+	// Pop
+	// ========== ================================
+
+	template <typename T>
+	struct MetaPopFront;
+
+	template <template <typename ...> class Set, typename F, typename ... Ty>
+	struct MetaPopFront<Set<F, Ty...>>
+	{
+		using type = Set<Ty...>;
+	};
+
+	template <typename T>
+	struct MetaPopBack;
+
+	template <template <typename ...> class Set, typename B, typename ... Ty>
+	struct MetaPopBack<Set<Ty..., B>>
+	{
+		using type = Set<Ty...>;
+	};
+
+	template <typename T>
+	using MetaPopBack_t = typename MetaPopBack<T>::type;
+
+	template <typename T>
+	using MetaPopFront_t = typename MetaPopFront<T>::type;
 }
 
 

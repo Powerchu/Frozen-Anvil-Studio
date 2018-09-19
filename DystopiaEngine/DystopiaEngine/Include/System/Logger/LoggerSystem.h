@@ -31,7 +31,7 @@ namespace Dystopia
 		static LoggerSystem* GetInstance(void) noexcept;
 
 		void RedirectOutput(void(*)(const std::string&));
-		void RedirectInput(std::string(*)(void));
+		void ParseInput(const std::string&);
 
 		template <typename ... Ty>
 		static void ConsoleLog(eLog, const char* _strFormat, Ty&& ...);
@@ -40,7 +40,6 @@ namespace Dystopia
 
 		eLog mActiveFlags;
 		void(*mpOut)(const std::string&);
-		std::string(*mpIn)(void);
 
 		template <typename ... Ty>
 		void Write(const char*, Ty&&...);
