@@ -181,6 +181,8 @@
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
+    <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
@@ -224,6 +226,9 @@
       <Filter>Game Engine\SubSystems\File</Filter>
     </ClCompile>
     <ClCompile Include="Source\Component\CollisionEvent.cpp" />
+    <ClCompile Include="Source\Editor\Clipboard.cpp">
+      <Filter>Editor\Clipboard</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -505,15 +510,14 @@
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h">
       <Filter>IO\TextSerialiser\lodepng</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\ConsoleDebugger.h">
-      <Filter>Editor\Editor Tabs\Console</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\PLogInfo.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\PLogger.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\HotLoader.h" />
+    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h">
       <Filter>Game Engine\Systems\Base</Filter>
     </ClInclude>
@@ -541,6 +545,13 @@
     <ClInclude Include="Include\Editor\DefaultFactory.h">
       <Filter>Editor\Factory</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\Clipboard.h">
+      <Filter>Editor\Clipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Logger\LogPriority.h">
+      <Filter>Game Engine\SubSystems\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\BehaviourList.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Include\Component\Particle.h">
       <Filter>Game Engine\Components\Physics</Filter>
@@ -832,6 +843,9 @@
     </Filter>
     <Filter Include="Editor\Factory">
       <UniqueIdentifier>{3c1970b5-39ed-4b21-846a-39fb24566cc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Clipboard">
+      <UniqueIdentifier>{cf5b3310-da32-4143-84b9-30e7d09b1840}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Systems\File">
       <UniqueIdentifier>{845f6b31-e949-414f-88d7-9fec6ab7613f}</UniqueIdentifier>

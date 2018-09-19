@@ -1,18 +1,21 @@
 
-#include "System/File/FileSystem.h"
-#include "System/Behaviour/BehaviourSystem.h"
-#include "System/Driver/Driver.h"
-
 #if EDITOR
 #include "Editor/HotLoader.h"
 #endif
 
+#include "System/File/FileSystem.h"
+#include "System/Behaviour/BehaviourSystem.h"
+#include "System/Driver/Driver.h"
+
 namespace Dystopia
 {
 	BehaviourSystem::BehaviourSystem()
-		:mHotloader{CreateShared<Hotloader<1>>(new Hotloader<1>)}
+		:mHotloader{ CreateShared<Hotloader<1>>(new Hotloader<1>) }
 	{
+
 	}
+
+
 	void Dystopia::BehaviourSystem::PreInit(void)
 	{
 #if EDITOR
@@ -142,8 +145,6 @@ namespace Dystopia
 	{
 		for (auto const & elem : mvBehaviourReferences)
 		delete elem.mpBehaviour;
-
-
 	}
 
 	void Dystopia::BehaviourSystem::LoadDefaults(void)
@@ -154,17 +155,10 @@ namespace Dystopia
 	{
 	}
 
-	MagicArray<BehaviourWrap> const & BehaviourSystem::GetBehaviourList() const
-	{
-		return mvBehaviourReferences;
-		// TODO: insert return statement here
-	}
-
 	MagicArray<BehaviourWrap*> const & Dystopia::BehaviourSystem::GetDllChanges() const
 	{
 		return mvRecentChanges;
 	}
-
 	bool BehaviourSystem::hasDllChanges() const
 	{
 		return !mvRecentChanges.IsEmpty();

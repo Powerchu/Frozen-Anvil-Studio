@@ -85,8 +85,8 @@ namespace Dystopia
 		template<class T>
 		AutoArray<T*> GetComponents(void) const;
 
-		inline AutoArray<Component*> GetAllComponents() const;
-		inline AutoArray<Behaviour*> GetAllBehaviours() const;
+		inline const AutoArray<Component*>& GetAllComponents() const;
+		inline const AutoArray<Behaviour*>& GetAllBehaviours() const;
 
 
 		// ======================================== OPERATORS ======================================== // 
@@ -233,12 +233,12 @@ AutoArray<T*> Dystopia::GameObject::GetComponents(void) const
 	return AutoArray<T*>{};
 }
 
-inline AutoArray<Dystopia::Component*> Dystopia::GameObject::GetAllComponents() const
+inline const AutoArray<Dystopia::Component*>& Dystopia::GameObject::GetAllComponents() const
 {
 	return mComponents;
 }
 
-inline AutoArray<Dystopia::Behaviour*> Dystopia::GameObject::GetAllBehaviours() const
+inline const AutoArray<Dystopia::Behaviour*>& Dystopia::GameObject::GetAllBehaviours() const
 {
 	return mBehaviours;
 }

@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _DYNAMIC_ARRAY_
 #define _DYNAMIC_ARRAY_
 
-#if defined(DEBUG) | defined(_DEBUG)
+#if defined(DEBUG) || defined(_DEBUG)
 #include "Utility\DebugAssert.h"
 #endif // Debug only includes
 
@@ -435,13 +435,11 @@ template<class T, class A>
 inline void AutoArray<T, A>::FastRemove(const Itor_t& _pObj)
 {
 #if _DEBUG
-	DEBUG_LOG(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
-	if (mpArray == mpLast) return __debugbreak();
-
+	DEBUG_BREAK(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
 
 	if (!(_pObj < mpLast))
 	{
-		DEBUG_PRINT("AutoArray Error: Invalid Remove Index!\n");
+		DEBUG_PRINT(eLog::ERROR, "AutoArray Error: Invalid Remove Index!\n");
 		return;
 	}
 #endif
@@ -554,11 +552,9 @@ template <class T, class A>
 const T& AutoArray<T, A>::operator[] (const Sz_t _nIndex) const
 {
 #if _DEBUG
-	if (!(mpArray + _nIndex < mpLast))
-	{
-		DEBUG_PRINT("AutoArray Error: Array index out of range!\n");
-		__debugbreak();
-	}
+
+	DEBUG_BREAK((!(mpArray + _nIndex < mpLast)), "AutoArray Error: Array index out of range!\n");
+
 #endif
 
 	return *(mpArray + _nIndex);
@@ -572,6 +568,7 @@ AutoArray<T, A>& AutoArray<T, A>::operator= (const AutoArray<T, A>& _other)
 		GrowArray(sz);
 
 	ArrayCopy(_other.mpArray, _other.mpLast, mpArray);
+	mpLast += sz;
 	return *this;
 }
 

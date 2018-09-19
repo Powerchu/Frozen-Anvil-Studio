@@ -19,14 +19,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
-#include <windows.h>						// Windows Header
 #include <cstdio>							// FILE, freopen_s
+#include <windows.h>						// Windows Header
 #include "../../../resource.h"
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
 #undef  NOMINMAX
 
-#define _COMMANDPROMPT	1
 #define ENGINE_NAME		L"Dystopia Engine"
 
 namespace
@@ -37,8 +36,8 @@ namespace
 	constexpr bool	DEFAULT_FULLSCREEN		= false;
 	constexpr int	DEFAULT_WIDTH			= 1600;
 	constexpr int	DEFAULT_HEIGHT			= 900;
-	constexpr int	LOGO_WIDTH				= 992;
-	constexpr int	LOGO_HEIGHT				= 480;
+	constexpr int	LOGO_WIDTH				= 980;
+	constexpr int	LOGO_HEIGHT				= 460;
 
 	Dystopia::MouseData* pMouse = nullptr;
 
@@ -97,21 +96,6 @@ Dystopia::WindowManager::~WindowManager(void)
 
 void Dystopia::WindowManager::PreInit(void)
 {
-#if _COMMANDPROMPT
-
-	if (AllocConsole())
-	{
-		FILE* file;
-
-		freopen_s(&file, "CONOUT$", "wt", stdout);
-		freopen_s(&file, "CONOUT$", "wt", stderr);
-//			freopen_s(&file, "CONOUT$", "wt", stdin);
-
-		SetConsoleTitle(ENGINE_NAME);
-	}
-
-#endif	// Show Command Prompt
-
 	WNDCLASSEX mainWindow
 	{
 		sizeof(WNDCLASSEX),
