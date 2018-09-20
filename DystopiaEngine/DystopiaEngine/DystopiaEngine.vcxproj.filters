@@ -178,6 +178,7 @@
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
@@ -470,6 +471,12 @@
     <ClInclude Include="Include\System\Time\TimeDefs.h">
       <Filter>Game Engine\Systems\Time</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Utility\ComponentGUID.h">
+      <Filter>Utility\GUID</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\GUID.h">
+      <Filter>Utility\GUID</Filter>
+    </ClInclude>
     <ClInclude Include="Include\Editor\PerformanceLog.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
@@ -481,9 +488,6 @@
     </ClInclude>
     <ClInclude Include="Include\DataStructure\Variant.h">
       <Filter>DataStructures</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Profiler\Profiler.h">
-      <Filter>Game Engine\Systems\Profiler</Filter>
     </ClInclude>
     <ClInclude Include="Include\DataStructure\Tuple.h">
       <Filter>DataStructures</Filter>
@@ -512,8 +516,13 @@
     <ClInclude Include="Include\Editor\PLogger.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\HotLoader.h" />
+    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h">
       <Filter>Game Engine\Systems\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\File\FileSystem.h">
+      <Filter>Game Engine\SubSystems\File</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Profiler\Profiler.h">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
@@ -545,9 +554,9 @@
     <ClInclude Include="Include\System\Logger\LogPriority.h">
       <Filter>Game Engine\SubSystems\Logger</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Include\Component\Particle.h">
-      <Filter>Game Engine\Components\Physics</Filter>
+    <ClInclude Include="Include\Component\BehaviourList.h" />
+    <ClInclude Include="resource.h">
+      <Filter>Resource</Filter>
     </ClInclude>
     <ClInclude Include="Include\Component\Primitive.h">
       <Filter>Game Engine\Components\Physics</Filter>
@@ -849,20 +858,20 @@
     <Filter Include="Editor\Clipboard">
       <UniqueIdentifier>{cf5b3310-da32-4143-84b9-30e7d09b1840}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Systems\File">
-      <UniqueIdentifier>{845f6b31-e949-414f-88d7-9fec6ab7613f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Framebuffer">
       <UniqueIdentifier>{65da04fa-f08d-4a05-8517-ee74099485c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Systems\Behaviour">
-      <UniqueIdentifier>{20824a1a-6235-45d4-8c72-c3f345f0689c}</UniqueIdentifier>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{eef3a09b-6a1f-40e7-8621-b7c7429287cb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Hotloader">
-      <UniqueIdentifier>{04cb6d66-4267-4700-b9a6-d6b91e99d7c5}</UniqueIdentifier>
+    <Filter Include="Game Engine\SubSystems\Shader">
+      <UniqueIdentifier>{d826b974-494a-4e22-b5fa-de3f52202e3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Texture">
+      <UniqueIdentifier>{0360ec6f-e4ea-430d-9619-f3c845e07bce}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\SubSystems\File">
-      <UniqueIdentifier>{567e6004-ed93-4ef7-80fd-7c51f37106b2}</UniqueIdentifier>
+      <UniqueIdentifier>{845f6b31-e949-414f-88d7-9fec6ab7613f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -870,7 +879,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="dystopia_x86_64.ico">
-      <Filter>Game Engine</Filter>
+      <Filter>Resource</Filter>
     </Image>
   </ItemGroup>
 </Project>

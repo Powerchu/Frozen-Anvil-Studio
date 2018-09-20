@@ -15,6 +15,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object\GameObject.h"
 #include "Math\Matrix4.h"
 #include "Math\Vector4.h"
+#include "System\Scene\Scene.h"
+#include "System\Scene\SceneSystem.h"
+#include "IO\TextSerialiser.h"
 
 #include "Editor\EGUI.h"
 
@@ -222,23 +225,37 @@ Dystopia::Transform* Dystopia::Transform::Duplicate(void) const
 	return nullptr;
 }
 
-void Dystopia::Transform::Serialise(TextSerialiser&) const
+void Dystopia::Transform::Serialise(TextSerialiser& _out) const
 {
-
+	_out.InsertStartBlock("Transform");
+	_out << static_cast<float>(mScale.x);
+	_out << static_cast<float>(mScale.y);
+	_out << static_cast<float>(mScale.z);
+	_out << static_cast<float>(mPosition.x);
+	_out << static_cast<float>(mPosition.y);
+	_out << static_cast<float>(mPosition.z);
+	_out.InsertEndBlock("Transform");
 }
 
-void Dystopia::Transform::Unserialise(TextSerialiser&)
+void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 {
-
+	_in.ConsumeStartBlock();
+	_in >> mScale[0];
+	_in >> mScale[1];
+	_in >> mScale[2];
+	_in >> mPosition[0];
+	_in >> mPosition[1];
+	_in >> mPosition[2];
+	_in.ConsumeEndBlock();
 }
 
 void Dystopia::Transform::EditorUI(void) noexcept
 {
 #if EDITOR
-	switch (EGUI::Display::VectorFields("Position", &mPosition, 0.1f, -FLT_MAX, FLT_MAX))
+	switch (EGUI::Display::VectorFields("Position", &mPosition, 0.01f, -FLT_MAX, FLT_MAX))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mPosition);
+		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mPosition, &mbChanged);
 		break;
 	case EGUI::eDragStatus::eEND_DRAG:
 		EGUI::GetCommandHND()->EndRecording();
@@ -248,10 +265,10 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		break;
 	}
 
-	switch (EGUI::Display::VectorFields("Scale", &mScale, 0.1f, -FLT_MAX, FLT_MAX))
+	switch (EGUI::Display::VectorFields("Scale", &mScale, 0.01f, -FLT_MAX, FLT_MAX))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale);
+		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale, &mbChanged);
 		break;
 	case EGUI::eDragStatus::eEND_DRAG:
 		EGUI::GetCommandHND()->EndRecording();

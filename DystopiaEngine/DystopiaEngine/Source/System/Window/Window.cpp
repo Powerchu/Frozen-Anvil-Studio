@@ -79,6 +79,14 @@ void Dystopia::Window::SetSize(int _nWidth, int _nHeight)
 	mnHeight = WindowRect.bottom - WindowRect.top;
 }
 
+void Dystopia::Window::SetSizeNoAdjust(int _nWidth, int _nHeight)
+{
+	RECT WindowRect{ 0, 0, _nWidth, _nHeight };
+
+	mnWidth = WindowRect.right - WindowRect.left;
+	mnHeight = WindowRect.bottom - WindowRect.top;
+}
+
 void Dystopia::Window::CenterWindow(void) noexcept
 {
 	int left = (GetSystemMetrics(SM_CXSCREEN) - mnWidth) >> 1,

@@ -17,15 +17,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <System/Driver/Driver.h>
 #include <System/Scene/SceneSystem.h>
 #include <Utility/Utility.h>
+#include "Utility/GUID.h"
 
 Dystopia::Component::Component(void) noexcept
-	: mnFlags{ FLAG_NONE }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }
+	: mnFlags{ FLAG_NONE }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }, mID{ GUIDGenerator::GetUniqueID() }
 {
 
 }
 
 Dystopia::Component::Component(GameObject * _pOwner) noexcept
-	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }
+	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }, mID{ GUIDGenerator::GetUniqueID() }
 {
 }
 
@@ -90,5 +91,10 @@ Dystopia::Component* Dystopia::Component::Duplicate(void) const
 
 void Dystopia::Component::EditorUI(void) noexcept
 {
+}
+
+uint64_t Dystopia::Component::GetID() const
+{
+	return mID;
 }
 

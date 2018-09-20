@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <cstdio>							// FILE, freopen_s
 #include <cstdlib>
 #include <exception>
-#include <Windows.h>						// Windows Header
+#include <windows.h>						// Windows Header
 #include <DbgHelp.h>
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
@@ -76,6 +76,7 @@ namespace
 
 
 Dystopia::LoggerSystem::LoggerSystem(void) noexcept
+	: mpOut{ PrintToConsoleLog }, mActiveFlags{ eLog::DEFAULT }
 {
 	std::set_terminate(ProgramTerminate);
 
@@ -98,7 +99,14 @@ Dystopia::LoggerSystem::LoggerSystem(void) noexcept
 Dystopia::LoggerSystem::~LoggerSystem(void) noexcept
 {
 	// Clean exit
-	std::set_terminate(nullptr);
+	//std::set_terminate(nullptr);
+
+	mpOut = nullptr;
+	mActiveFlags = eLog::NONE;
+
+#if !EDITOR && defined(COMMAND_PROMPT)
+	FreeConsole();
+#endif
 }
 
 Dystopia::LoggerSystem* Dystopia::LoggerSystem::GetInstance(void) noexcept
@@ -106,19 +114,20 @@ Dystopia::LoggerSystem* Dystopia::LoggerSystem::GetInstance(void) noexcept
 	return EngineCore::GetInstance()->GetSubSystem<LoggerSystem>();
 }
 
+
 void Dystopia::LoggerSystem::RedirectOutput(void(*_pOut)(const std::string&))
 {
 	mpOut = _pOut;
+	mActiveFlags = mpOut ? mActiveFlags : eLog::NONE;
 }
 
-void Dystopia::LoggerSystem::RedirectInput(std::string(*_pIn)(void))
+void Dystopia::LoggerSystem::ParseInput(const std::string&)
 {
-	mpIn = _pIn;
 }
 
 void Dystopia::LoggerSystem::SendOutput(const std::string& _strOutput)
 {
-	UNUSED_PARAMETER(_strOutput);
+	mpOut(_strOutput);
 }
 
 

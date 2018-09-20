@@ -92,10 +92,6 @@ namespace Dystopia
 		// ======================================== OPERATORS ======================================== // 
 
 		GameObject& operator = (GameObject&&);
-
-		bool mTestBool = false;
-		float mTestFloat = 0.f;
-		int mTestInt = 0;
 	private:
 
 		uint64_t mnID;
@@ -150,8 +146,8 @@ inline void Dystopia::GameObject::AddComponent(ComponentTag)
 	//	Utility::MetaFind_t<typename Ty::SYSTEM, EngineCore::AllSys>::value
 	//);
 
-	auto Comp = static_cast<ComponentDonor<Ty>*>
-		(EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()
+	auto Comp = static_cast<ComponentDonor<Ty>*>(
+		EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()
 		)->RequestComponent();
 
 	mComponents.Insert(Comp);

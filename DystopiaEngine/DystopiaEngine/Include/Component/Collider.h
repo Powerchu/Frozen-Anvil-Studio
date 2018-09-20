@@ -40,7 +40,7 @@ namespace Dystopia
 
 	struct CollisionEvent;
 
-	struct CollisionSystem;
+	class CollisionSystem;
 
 	enum class eColliderType
 	{
@@ -54,7 +54,6 @@ namespace Dystopia
 
 		TOTAL
 	};
-
 
 
 	struct _DLL_EXPORT Vertice
