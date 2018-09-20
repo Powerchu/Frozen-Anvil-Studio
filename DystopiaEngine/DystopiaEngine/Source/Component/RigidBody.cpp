@@ -12,6 +12,7 @@ namespace Dystopia
 	RigidBody::RigidBody(void)
 		: mpPrimitiveShape(nullptr)
 		, mpOwnerTransform(nullptr)
+		, mOwnerIsActive(true)
 		, mPosition(Vec3D{})
 		, mPrevPosition(Vec3D{})
 		, mLinearVelocity(Vec3D{})
@@ -52,6 +53,8 @@ namespace Dystopia
 			{
 				mpOwnerTransform = GetOwner()->GetComponent<Transform>();
 				mPosition = TX->GetGlobalPosition();
+
+				mOwnerIsActive = GetOwner()->IsActive();
 			}
 		}
 		mfCustom_GravityScale = mbHasGravity ? mfCustom_GravityScale : 0.0F;
@@ -78,7 +81,7 @@ namespace Dystopia
 
 	void RigidBody::Integrate(float _dt)
 	{
-		if (!GetOwner()->IsActive() || mbIsStatic)
+		if (!GetOwner()->IsActive() || mbIsStatic) // when editor / play is separated, change GetOwner to own bool
 		{
 			return;
 		}
@@ -91,7 +94,7 @@ namespace Dystopia
 
 		//TODO: Incorporate and move Gravity var to Physics System
 		// Calculate Acceleration
-		mAcceleration = Vec3D{ 0,mfGravity*400,0 };
+		mAcceleration = Vec3D{ 0,mfGravity*40,0 };
 		const Vec3D newAccel = mCumulativeForce * mfInvMass + mAcceleration;
 
 		// Calculate Velocity

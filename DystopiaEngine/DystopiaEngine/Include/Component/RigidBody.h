@@ -111,8 +111,9 @@ namespace Dystopia
 
 	private:
 		Primitive*			mpPrimitiveShape;    /*The underlying primitive of the RigidBody*/
-
 		Transform*			mpOwnerTransform;    /*Used for accessing position and GameObject World orientation*/
+		bool				mOwnerIsActive;	 /* check if owner is active*/
+
 		Vec3D				mPosition;
 		Vec3D				mPrevPosition;
 

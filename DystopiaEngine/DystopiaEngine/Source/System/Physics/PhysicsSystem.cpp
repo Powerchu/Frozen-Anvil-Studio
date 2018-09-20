@@ -2,6 +2,8 @@
 #include "Component/RigidBody.h"
 //#include "Object/GameObject.h"
 #include <System/Collision/CollisionSystem.h>
+#include <System/Time/ScopedTimer.h>
+#include "System/Profiler/ProfilerAction.h"
 
 namespace Dystopia
 {
@@ -32,7 +34,7 @@ namespace Dystopia
 
 	void PhysicsSystem::IntegrateRigidBodies(float _dt)
 	{
-		for (auto rigid_elem : mComponents)
+		for (auto& rigid_elem : mComponents)
 		{
 			rigid_elem.Integrate(_dt);
 		}
@@ -45,7 +47,7 @@ namespace Dystopia
 
 	void PhysicsSystem::PostResults()
 	{
-		for (auto rigid_elem : mComponents)
+		for (auto& rigid_elem : mComponents)
 		{
 			rigid_elem.PostResult();
 		}
@@ -55,7 +57,7 @@ namespace Dystopia
 
 	void PhysicsSystem::DebugPrint()
 	{
-		for (auto rigid_elem : mComponents)
+		for (auto& rigid_elem : mComponents)
 		{
 			rigid_elem.DebugPrint();
 		}
@@ -101,6 +103,7 @@ namespace Dystopia
 
 	void PhysicsSystem::Update(float _dt)
 	{
+		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
 		const float TimeStep = 1.0f / 60.0f;
 
 

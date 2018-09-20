@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _DYNAMIC_ARRAY_
 
 #if defined(DEBUG) || defined(_DEBUG)
-#include "Utility\DebugAssert.h"
+#include "Utility/DebugAssert.h"
 #endif // Debug only includes
 
 #include "Globals.h"
@@ -325,7 +325,7 @@ void AutoArray<T, A>::Insert(const T& _obj, const Sz_t _nIndex)
 #if _DEBUG
 	if (!(_nIndex < size()))
 	{
-		DEBUG_PRINT("DynamicArray Error: Array index out of range!\n");
+		//DEBUG_PRINT("DynamicArray Error: Array index out of range!\n");
 		__debugbreak();
 	}
 #endif
