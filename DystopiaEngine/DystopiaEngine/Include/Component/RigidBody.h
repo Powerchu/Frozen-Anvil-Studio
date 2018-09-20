@@ -1,19 +1,21 @@
 #ifndef RIGID_BODY_H
 #define RIGID_BODY_H
 
-#include "Component/Component.h"
-#include "ComponentList.h"
-
-#include "Math/Quaternion.h"
-#include "Math/Angles.h"
-#include "Math/Vector2.h"
-
 #include <Component/Primitive.h>
+#include <Component/Component.h>
+#include <Component/ComponentList.h>
+#include <Math/Vector4.h>
+
+//#include "Math/Quaternion.h"
+//#include "Math/Angles.h"
 
 namespace Dystopia
 {
-	class Transform;
 	using Math::Vec3D;
+	using Math::Point3D;
+
+	class Transform;
+
 	class _DLL_EXPORT RigidBody : public Component
 	{
 	public:
@@ -27,10 +29,8 @@ namespace Dystopia
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 
-
 		RigidBody(void);
 		virtual ~RigidBody(void);
-
 
 		// ================================VIRTUAL MEMBER FUNCTIONS ================================== // 
 		virtual void Load(void);
@@ -40,12 +40,13 @@ namespace Dystopia
 		virtual RigidBody* Duplicate() const;
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;
+
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		void Integrate(float _dt);
 		void PostResult();
 
-		void Update(float _dt);
-		void LateUpdate(float _dt);
+		// void Update(float _dt);
+		// void LateUpdate(float _dt);
 
 		//TODO: Delete this once graphics is up
 		void DebugPrint(); // FOR TESTING
@@ -61,7 +62,7 @@ namespace Dystopia
 		Make sure _point is in global coordinates
 
 		**************************************************************************************************/
-		void AddForce(Math::Vec3D const & _force, Math::Point3D const & _point);
+		void AddForce(Vec3D const & _force, Point3D const & _point);
 
 		/**************************************************************************************************
 		\brief
@@ -70,12 +71,12 @@ namespace Dystopia
 
 		Make sure _point & _origin is in global coordinates
 		**************************************************************************************************/
-		void AddForce(Math::Vec3D   const & _force,
-			          Math::Point3D const & _point, 
-			          Math::Point3D const & _origin);
+		void AddForce(Vec3D   const & _force,
+			          Point3D const & _point, 
+			          Point3D const & _origin);
 
 		/*Add a force at the origin of the body*/
-		void AddForce(Math::Vec3D const & _force);
+		void AddForce(Vec3D const & _force);
 
 		/**************************************************************************************************
 		\brief
@@ -110,9 +111,9 @@ namespace Dystopia
 		bool Get_IsStaticState();
 
 	private:
-		Primitive*			mPrimitiveShape;    /*The underlying primitive of the RigidBody*/
+		Primitive*			mpPrimitiveShape;    /*The underlying primitive of the RigidBody*/
 
-		Transform*			mOwnerTransform;    /*Used for accessing position and GameObject World orientation*/
+		Transform*			mpOwnerTransform;    /*Used for accessing position and GameObject World orientation*/
 		Vec3D				mPosition;
 		Vec3D				mPrevPosition;
 

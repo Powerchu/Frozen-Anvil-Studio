@@ -42,10 +42,11 @@ namespace Dystopia
 
 	void Particle::Update(float _dt)
 	{
-
+		UNUSED_PARAMETER(_dt);
 	}
 	void Particle::LateUpdate(float _dt)
 	{
+		UNUSED_PARAMETER(_dt);
 
 		/*Reset Cumulative Force*/
 		ResetCumulative();
@@ -58,7 +59,9 @@ namespace Dystopia
 
 	void Particle::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
 	{
-		//AddForce(_force, _point, mOwnerTransform->GetGlobalPosition());
+		UNUSED_PARAMETER(_force);
+		UNUSED_PARAMETER(_point);
+		//AddForce(_force, _point, mpOwnerTransform->GetGlobalPosition());
 	}
 
 	/*

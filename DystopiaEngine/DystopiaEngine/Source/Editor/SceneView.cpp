@@ -54,7 +54,7 @@ namespace Dystopia
 		GameObject *p = Factory::CreateCamera("Scene Camera");
 		mpSceneCamera = GetCurrentScene()->InsertGameObject(Utility::Move(*p));
 		mpSceneCamera->GetComponent<Camera>()->Init();
-		mpSceneCamera->GetComponent<Transform>()->SetScale(Math::Vec4{ 1.f, -1.f, 1.f });
+		mpSceneCamera->GetComponent<Transform>()->SetScale(Math::Vec4{ 1.f, 1.f, 1.f });
 		delete p;
 	}
 
@@ -67,7 +67,7 @@ namespace Dystopia
 	void SceneView::EditorUI()
 	{
 		unsigned id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
-		ImGui::Image((void*)id, ImVec2{ Size().x - 6.f,  Size().y - 27.f });
+		ImGui::Image(reinterpret_cast<void*>(id), ImVec2{ Size().x - 6.0F,  Size().y - 27.0F });
 	}
 
 	void SceneView::Shutdown()

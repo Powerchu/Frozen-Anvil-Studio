@@ -175,9 +175,6 @@
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp">
       <Filter>IO\TextSerialiser\lodepng</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\ConsoleDebugger.cpp">
-      <Filter>Editor\Editor Tabs\Console</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
@@ -207,7 +204,8 @@
     <ClCompile Include="Source\Component\Primitive.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehaviourScripts\Whatever.cpp" />
+    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
@@ -217,9 +215,9 @@
     <ClCompile Include="Source\Component\Colliders\Circle.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\BehaviourScripts\Whatever.cpp" />
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehaviourScripts\TestBehaviour.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -559,7 +557,8 @@
     <ClInclude Include="Include\Component\Primitive.h">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Resource\Behaviours\BehaviourScripts\Whatever.h" />
+    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
     <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
@@ -570,9 +569,11 @@
     <ClInclude Include="Include\System\Physics\CollisionResolution.h">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\BehaviourScripts\Whatever.h" />
     <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
     <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Include\Utility\ComponentGUID.h" />
+    <ClInclude Include="Include\Utility\GUID.h" />
+    <ClInclude Include="Resource\Behaviours\BehaviourScripts\TestBehaviour.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
   </ItemGroup>

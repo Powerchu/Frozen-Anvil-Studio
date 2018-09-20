@@ -11,12 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Component\Component.h"		// File Header
-#include "Object\ObjectFlags.h"
-#include "Object\GameObject.h"
-#include "System\Driver\Driver.h"
-#include "System\Scene\SceneSystem.h"
-#include "Utility\Utility.h"
+#include <Component/Component.h>		// File Header
+#include <Object/ObjectFlags.h>
+#include <Object/GameObject.h>
+#include <System/Driver/Driver.h>
+#include <System/Scene/SceneSystem.h>
+#include <Utility/Utility.h>
 
 Dystopia::Component::Component(void) noexcept
 	: mnFlags{ FLAG_NONE }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }

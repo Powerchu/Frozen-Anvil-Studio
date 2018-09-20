@@ -1,17 +1,17 @@
 #include "Component/RigidBody.h"
 #include "Component/Transform.h"
 #include "Object/GameObject.h"
-#include <Editor/ConsoleDebugger.h>
+#include <System/Logger/LoggerSystem.h>
 
 //TODO: change to physics systems
 #define GRAVITY_CONSTANT	-9.81F 
-#define TX					mOwnerTransform
+#define TX					mpOwnerTransform
 
 namespace Dystopia
 { 
 	RigidBody::RigidBody(void)
-		: mPrimitiveShape(nullptr)
-		, mOwnerTransform(nullptr)
+		: mpPrimitiveShape(nullptr)
+		, mpOwnerTransform(nullptr)
 		, mPosition(Vec3D{})
 		, mPrevPosition(Vec3D{})
 		, mLinearVelocity(Vec3D{})
@@ -36,7 +36,7 @@ namespace Dystopia
 
 	RigidBody::~RigidBody(void)
 	{
-		//delete mPrimitiveShape;
+		//delete mpPrimitiveShape;
 	}
 
 	void RigidBody::Load(void)
@@ -46,22 +46,22 @@ namespace Dystopia
 	void RigidBody::Init(void)
 	{
 		// Get Owner's Transform Component as pointer
-		mOwnerTransform = GetOwner()->GetComponent<Transform>();
+		mpOwnerTransform = GetOwner()->GetComponent<Transform>();
 		mPosition = TX->GetGlobalPosition();
 		mfCustom_GravityScale = mbHasGravity ? mfCustom_GravityScale : 0.0F;
 		mfGravity = GRAVITY_CONSTANT * mfCustom_GravityScale;
 
 		//If mass is zero object is interpreted
 		//to be static
-		if (mfMass > 0.0f)
+		if (mfMass > 0.0F)
 		{
 			mbIsStatic = false;
-			mfInvMass = 1.0f / mfMass;
+			mfInvMass = 1.0F / mfMass;
 		}
 		else
 		{
 			mbIsStatic = true;
-			mfInvMass = 0.0f;
+			mfInvMass = 0.0F;
 		}
 
 		if (!mbHasGravity)
@@ -113,22 +113,24 @@ namespace Dystopia
 		TX->SetGlobalPosition(mPosition);
 	}
 
-	void RigidBody::Update(float _dt)
+	/*void RigidBody::Update(float _dt)
 	{
 		
-	}
+	}*/
 
-	void RigidBody::LateUpdate(float _dt)
+	/*void RigidBody::LateUpdate(float _dt)
 	{
 		
-	}
+	}*/
 
 	void RigidBody::OnDestroy(void)
 	{
+		// stuff happens on component destroy
 	}
 
 	void RigidBody::Unload(void)
 	{
+
 	}
 
 	RigidBody * RigidBody::Duplicate() const
@@ -148,9 +150,8 @@ namespace Dystopia
 
 	void RigidBody::DebugPrint()
 	{
-		ConsolePrint("transform: x(" + std::to_string(TX->GetGlobalPosition().x) + ')' +
-									"y(" + std::to_string(TX->GetGlobalPosition().y) + ')'
-					+ "angle: " + std::to_string(mfAngle));
+		printf("Transform: (%f, %f) \n Angle: %f", float(mPosition.x), float(mPosition.y), mfAngle);
+		//LoggerSystem::ConsoleLog(eLog::MESSAGE, "transform: (%f,%f) \n angle: %f", TX->GetGlobalPosition().x, (TX->GetGlobalPosition().y), mfAngle);
 	}
 
 	void RigidBody::DebugDraw()
@@ -214,7 +215,7 @@ namespace Dystopia
 		}
 		else
 		{
-			ConsolePrint("Rigidbody has no gravity enabled.");
+			LoggerSystem::ConsoleLog(eLog::WARNING, "Rigidbody has no gravity enabled.");
 			mfCustom_GravityScale = 0;
 		}
 	}

@@ -2,10 +2,6 @@
 #define PHYSICS_SYSTEM_H
 #include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
-#include "System/SystemTypes.h"
-#include "DataStructure/MagicArray.h"
-#include "Math/Vector4.h"
-
 
 namespace Dystopia
 {
@@ -20,9 +16,6 @@ namespace Dystopia
 		bool Init(void) override;
 		void PostInit(void) override;
 
-
-
-		void Step(float _dt);
 		void FixedUpdate(float) override;
 		void Update(float) override;
 		
@@ -31,9 +24,8 @@ namespace Dystopia
 		void LoadDefaults(void) override;
 		void LoadSettings(TextSerialiser&) override;
 
-
-		virtual ~PhysicsSystem(void) = default;
 	private:
+		void Step(float _dt);
 		void IntegrateRigidBodies(float _dt);
 		void ResolveCollision(float);
 		void PostResults();
@@ -45,6 +37,8 @@ namespace Dystopia
 
 		//CollisionMap		CollisionMap;
 		//CollisionEvents	Contacts;
+
+		virtual ~PhysicsSystem(void) = default;
 
 	public:
 		float mGravity;

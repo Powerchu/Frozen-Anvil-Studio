@@ -29,6 +29,7 @@ namespace Dystopia
 	class EditorTab;
 	class EditorEventHandler;
 	class SceneSystem;
+	class PhysicsSystem;
 	class Timer;
 	class Profiler;
 	class GameObject;
@@ -72,7 +73,7 @@ namespace Dystopia
 		void			SetLastPayloadFocus(ePayloadTags);
 		void			SetFocus(GameObject&);
 		void			RemoveFocus();
-		GameObject*		FindGameObject(const unsigned long& _id) const;
+		GameObject*		FindGameObject(const uint64_t& _id) const;
 		GameObject*		GetCurrentFocusGameObj();
 
 	private:
@@ -82,6 +83,7 @@ namespace Dystopia
 		WindowManager			*mpWin;
 		GraphicsSystem			*mpGfx;
 		SceneSystem				*mpSceneSystem;
+		PhysicsSystem			*mpPhysicsSystem;
 		Profiler				*mpProfiler;
 
 		EditorEventHandler		*mpEditorEventSys;

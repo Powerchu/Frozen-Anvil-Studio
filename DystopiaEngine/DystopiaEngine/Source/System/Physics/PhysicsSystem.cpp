@@ -1,6 +1,6 @@
 #include "System/Physics/PhysicsSystem.h"
 #include "Component/RigidBody.h"
-#include "Object/GameObject.h"
+//#include "Object/GameObject.h"
 #include <System/Collision/CollisionSystem.h>
 
 namespace Dystopia
@@ -22,7 +22,7 @@ namespace Dystopia
 
 	bool PhysicsSystem::Init(void)
 	{
-		return false;
+		return true;
 	}
 
 	void PhysicsSystem::PostInit(void)
@@ -40,7 +40,7 @@ namespace Dystopia
 
 	void PhysicsSystem::ResolveCollision(float _dt)
 	{
-
+		UNUSED_PARAMETER(_dt);
 	}
 
 	void PhysicsSystem::PostResults()
@@ -51,6 +51,18 @@ namespace Dystopia
 		}
 
 		// If Event System is running: this is where to Broadcast Collision Messages
+	}
+
+	void PhysicsSystem::DebugPrint()
+	{
+		for (auto rigid_elem : mComponents)
+		{
+			rigid_elem.DebugPrint();
+		}
+	}
+
+	void PhysicsSystem::DebugDraw()
+	{
 	}
 
 	void PhysicsSystem::Step(float _dt)
@@ -75,6 +87,11 @@ namespace Dystopia
 		 * Updating the position
 		 */
 		PostResults();
+
+		/*
+		 * Debug the positions
+		 */
+		DebugPrint();
 	}
 
 	void PhysicsSystem::FixedUpdate(float)
@@ -114,7 +131,7 @@ namespace Dystopia
 
 	void PhysicsSystem::LoadSettings(TextSerialiser& serial)
 	{
-
+		UNUSED_PARAMETER(serial);
 	}
 
 	
