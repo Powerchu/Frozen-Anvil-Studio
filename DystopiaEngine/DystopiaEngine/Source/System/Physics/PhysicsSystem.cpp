@@ -2,6 +2,8 @@
 #include "Component/RigidBody.h"
 //#include "Object/GameObject.h"
 #include <System/Collision/CollisionSystem.h>
+#include <System/Time/ScopedTimer.h>
+#include "System/Profiler/ProfilerAction.h"
 
 namespace Dystopia
 {
@@ -101,6 +103,7 @@ namespace Dystopia
 
 	void PhysicsSystem::Update(float _dt)
 	{
+		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
 		const float TimeStep = 1.0f / 60.0f;
 
 
