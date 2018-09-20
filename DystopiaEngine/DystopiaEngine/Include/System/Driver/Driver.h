@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _ENGINE_DRIVER_H_
 
 #include "DataStructure\AutoArray.h"
+#include "DataStructure\Queue.h"
 
 #include "System\SystemTypes.h"
 #include "System\Base\Systems.h"
@@ -65,6 +66,8 @@ namespace Dystopia
 		template <class T>
 		T* const GetSubSystem(void) const;
 
+		void BroadcastMessage(const eSysMessage&);
+
 		void LoadSettings(void);
 		void Init(void);
 		void FixedUpdate(void);
@@ -75,11 +78,17 @@ namespace Dystopia
 
 		Timer mTime;
 		Timer mTimeFixed;
+
+		Queue<eSysMessage> mMessageQueue;
+
+		AutoArray<void*>	mSubSystems;
 		AutoArray<Systems*> mSystemList;
 		AutoArray<Systems*> mSystemTable;
-		AutoArray<void*>	mSubSystems;
 
 		EngineCore(void);
+
+		void SendMessage(void);
+		void ParseMessage(const eSysMessage&);
 	};
 
 }

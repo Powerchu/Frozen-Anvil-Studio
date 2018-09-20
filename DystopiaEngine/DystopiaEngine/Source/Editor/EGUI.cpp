@@ -498,11 +498,11 @@ namespace Dystopia
 		io.AddInputCharacter(_c);
 	}
 
-	void GuiSystem::UpdateScroll(double _xOffset, double _yOffset)
+	void GuiSystem::UpdateScroll(float _xOffset, float _yOffset)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.MouseWheelH	+=	static_cast<float>(_xOffset);
-		io.MouseWheel	+=	static_cast<float>(_yOffset);
+		io.MouseWheelH	+=	_xOffset;
+		io.MouseWheel	+=	_yOffset;
 	}
 
 	void GuiSystem::UpdateMouse(int _index, bool _state)

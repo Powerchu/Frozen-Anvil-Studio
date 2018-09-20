@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component\RigidBody.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Camera\CameraSystem.h"
+#include "System/Collision/CollisionSystem.h"
 #include "Object\GameObject.h"
 #include <tuple>
 #include <utility>
@@ -53,13 +54,13 @@ namespace Dystopia
 	{
 		static C* Extract(void) 
 		{
-			return EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>()->RequestComponent();
+			return reinterpret_cast<C*>(EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>()->RequestComponent());
 		}
 	};
 
 	struct ListOfComponents
 	{
-		static constexpr size_t size = Utility::SizeofList<AllComponents>::value;
+		static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
 
 		template<typename A>
 		struct GenerateCollection;
@@ -76,9 +77,9 @@ namespace Dystopia
 
 			using tupleType = std::tuple
 			<
-				typename GetType<typename Utility::MetaExtract<Ns, AllComponents>::result::type * (&)(void) >::type ...    //::result::type * (&)(void)
+				typename GetType<typename Utility::MetaExtract<Ns, UsableComponents>::result::type * (&)(void) >::type ...    //::result::type * (&)(void)
 			>;
-			tupleType mData = { AuxGenFunction<typename Utility::MetaExtract<Ns, AllComponents>::result::type>::Extract ... };
+			tupleType mData = { AuxGenFunction<typename Utility::MetaExtract<Ns, UsableComponents>::result::type>::Extract ... };
 
 			struct ApplyFunction
 			{
@@ -94,14 +95,14 @@ namespace Dystopia
 			template<size_t Head, size_t ... Rest>
 			struct BreakTuple<std::index_sequence<Head, Rest ...>>
 			{
-				std::tuple< typename GetType<typename Utility::MetaExtract<Rest, AllComponents>::result::type* (&)(void)>::type ...> mData
-					= { AuxGenFunction<typename Utility::MetaExtract<Rest, AllComponents>::result::type>::Extract ... };
+				std::tuple< typename GetType<typename Utility::MetaExtract<Rest, UsableComponents>::result::type* (&)(void)>::type ...> mData
+					= { AuxGenFunction<typename Utility::MetaExtract<Rest, UsableComponents>::result::type>::Extract ... };
 			};
 			template<size_t Last>
 			struct BreakTuple<std::index_sequence<Last>>
 			{
-				std::tuple<typename Utility::MetaExtract<size - 1, AllComponents>::result::type* (&)(void)> mData
-					= { AuxGenFunction<typename Utility::MetaExtract<size - 1, AllComponents>::result::type>::Extract  };
+				std::tuple<typename Utility::MetaExtract<size - 1, UsableComponents>::result::type* (&)(void)> mData
+					= { AuxGenFunction<typename Utility::MetaExtract<size - 1, UsableComponents>::result::type>::Extract  };
 			};
 
 

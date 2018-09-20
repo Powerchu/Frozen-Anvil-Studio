@@ -1,39 +1,62 @@
-#include "System\Physics\PhysicsSystem.h"
+#include "System/Physics/PhysicsSystem.h"
+#include "Component/RigidBody.h"
+#include "Object/GameObject.h"
+#include <System/Collision/CollisionSystem.h>
 
-Dystopia::PhysicsSystem::PhysicsSystem()
+namespace Dystopia
 {
-}
+	PhysicsSystem::PhysicsSystem()
+	{
+	}
 
-void Dystopia::PhysicsSystem::PreInit(void)
-{
-}
+	void PhysicsSystem::PreInit(void)
+	{
+	}
 
-bool Dystopia::PhysicsSystem::Init(void)
-{
-	return false;
-}
+	bool PhysicsSystem::Init(void)
+	{
+		return false;
+	}
 
-void Dystopia::PhysicsSystem::PostInit(void)
-{
-}
+	void PhysicsSystem::PostInit(void)
+	{
 
-void Dystopia::PhysicsSystem::FixedUpdate(float)
-{
-}
+	}
 
-void Dystopia::PhysicsSystem::Update(float)
-{
+	void PhysicsSystem::FixedUpdate(float)
+	{
 
-}
+	}
 
-void Dystopia::PhysicsSystem::Shutdown(void)
-{
-}
+	void PhysicsSystem::Update(float _dt)
+	{
+		for ( auto rigid_elem : mComponents)
+		{
+			if (rigid_elem.GetOwner()->IsActive())
+			{
+				rigid_elem.Update(_dt);
+			}
+		}
+	}
 
-void Dystopia::PhysicsSystem::LoadDefaults(void)
-{
-}
+	void PhysicsSystem::Shutdown(void)
+	{
 
-void Dystopia::PhysicsSystem::LoadSettings(TextSerialiser &)
-{
+	}
+
+	void PhysicsSystem::LoadDefaults(void)
+	{
+
+	}
+
+	void PhysicsSystem::LoadSettings(TextSerialiser& serial)
+	{
+
+	}
+
+	void PhysicsSystem::ResolveCollision(float)
+	{
+
+	}
+
 }

@@ -21,6 +21,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #undef  WIN32_LEAN_AND_MEAN			// Stop define from spilling into code
 
 
+namespace
+{
+	constexpr float MOUSEWHEEL_SCALE = 1.f / 120.f;
+}
+
 Dystopia::EditorInput::EditorInput(void) :
 	mButtonMap{ static_cast<unsigned>(eEditorButton::TOTAL_EDITOR_BUTTONS) }
 {
@@ -118,10 +123,14 @@ void Dystopia::EditorInput::Init(void)
 	mButtonMap[eEditorButton::KEY_UP]			= eButton::KEYBOARD_UP;
 	mButtonMap[eEditorButton::KEY_RIGHT]		= eButton::KEYBOARD_RIGHT;
 	mButtonMap[eEditorButton::KEY_DOWN]			= eButton::KEYBOARD_DOWN;
+
+
+	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
 }
 
 void Dystopia::EditorInput::Update(float)
 {
+	mMouseInput.mnWheel = 0;
 	for (unsigned n = 0; n < eEditorButton::TOTAL_EDITOR_BUTTONS; ++n)
 	{
 		bool bState = (GetAsyncKeyState(mButtonMap[n].mnKey) & 0x8000) != 0;
@@ -179,5 +188,17 @@ Dystopia::EditorInput::KeyBinding& Dystopia::EditorInput::KeyBinding::operator =
 	mnKey = _nBtn;
 	return *this;
 }
+
+Math::Vector2 Dystopia::EditorInput::GetMouseDelta(void) const noexcept
+{
+	return Math::Vector2{ mMouseInput.mfDeltaX, mMouseInput.mfDeltaY };
+}
+
+float Dystopia::EditorInput::GetMouseWheel(void) const noexcept
+{
+	return mMouseInput.mnWheel * MOUSEWHEEL_SCALE;
+}
+
+
 
 

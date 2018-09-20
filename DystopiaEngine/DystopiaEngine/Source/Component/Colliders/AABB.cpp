@@ -1,5 +1,7 @@
 #include "Component\Collider.h"
 #include "Object\GameObject.h"
+#include "Component/RigidBody.h"
+
 namespace Dystopia
 {
 	
@@ -14,6 +16,8 @@ namespace Dystopia
 			Math::Point3D{-0.5f, -0.5f, 1, 0 },
 			Math::Point3D{-0.5f, 0.5f, 1, 0 }
 		};
+
+		//TODO
 		/*Remember to write own copy assignment so that you can reduce the number of constuct here*/
 		Convex::operator=(AABB::Convex{ ArrPoints });
 		mMin = &this->mVertices[2];
@@ -71,23 +75,26 @@ namespace Dystopia
 	{
 
 	}
-	bool AABB::isColliding(const AABB & _ColB)
+
+	//TODO: not yet
+	/*float AABB::SweepingCheck(const AABB & other_col) const
 	{
+		if (GetOwner()->GetComponent<RigidBody>() == nullptr)
+		{
+			DEBUG_PRINT()
+		}
+	}*/
 
-		/*Static AABB Collision Check*/
-		if (_ColB.mMin->mPosition.x > mMax->mPosition.x)
-			return false;
-		else if (_ColB.mMin->mPosition.y > mMax->mPosition.y)
-			return false;
-		else if (_ColB.mMax->mPosition.x < mMin->mPosition.x)
-			return false;
-		else if (_ColB.mMax->mPosition.y < mMin->mPosition.y)
-			return false;
-
-		return true;
+	bool AABB::isColliding(const AABB & _ColB) const
+	{
+		/*Static vs. Dynamic AABB Collision Check*/
+		return (this->mMin->mPosition.x <= _ColB.mMax->mPosition.x 
+			    && this->mMax->mPosition.x >= _ColB.mMin->mPosition.x
+			    && this->mMax->mPosition.y <= _ColB.mMin->mPosition.y
+				&& this->mMin->mPosition.y >= _ColB.mMax->mPosition.y);
 	}
 
-	bool AABB::isColliding(const AABB * const & _ColB)
+	bool AABB::isColliding(const AABB * const & _ColB) const
 	{
 		return this->isColliding(*_ColB);
 	}

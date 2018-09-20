@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Camera\CameraSystem.h"
 #include "System\Scene\Scene.h"
+#include "System\Graphics\Texture2D.h"
 #include "Component\Camera.h"
 
 namespace Dystopia
@@ -53,29 +54,20 @@ namespace Dystopia
 		GameObject *p = Factory::CreateCamera("Scene Camera");
 		mpSceneCamera = GetCurrentScene()->InsertGameObject(Utility::Move(*p));
 		mpSceneCamera->GetComponent<Camera>()->Init();
+		mpSceneCamera->GetComponent<Transform>()->SetScale(Math::Vec4{ 1.f, -1.f, 1.f });
 		delete p;
 	}
 
 	void SceneView::Update(const float& _dt)
 	{
 		mDelta = _dt;
-		float px = Position().x;
-		float py = Position().y;
-		float sx = Size().x;
-		float sy = Size().y;
-		mpGfxSys->SetMasterViewport(static_cast<int>(px),
-									   static_cast<int>(py),
-									   static_cast<int>(sx),
-									   static_cast<int>(sy));
 		mpGfxSys->Update(mDelta);
 	}
 
 	void SceneView::EditorUI()
 	{
-		for (const auto& e : mpGfxSys->textureInfos)
-		{
-			ImGui::Image((void*)e.mID, ImVec2{ e.x, e.y });
-		}
+		unsigned id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
+		ImGui::Image((void*)id, ImVec2{ Size().x - 6.f,  Size().y - 27.f });
 	}
 
 	void SceneView::Shutdown()

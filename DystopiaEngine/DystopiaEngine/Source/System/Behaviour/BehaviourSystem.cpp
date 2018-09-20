@@ -1,14 +1,21 @@
 
-#include "System/File/FileSystem.h"
-#include "System/Behaviour/BehaviourSystem.h"
-#include "System/Driver/Driver.h"
-
 #if EDITOR
 #include "Editor/HotLoader.h"
 #endif
 
+#include "System/File/FileSystem.h"
+#include "System/Behaviour/BehaviourSystem.h"
+#include "System/Driver/Driver.h"
+
 namespace Dystopia
 {
+	BehaviourSystem::BehaviourSystem()
+		:mHotloader{ CreateShared<Hotloader<1>>(new Hotloader<1>) }
+	{
+
+	}
+
+
 	void Dystopia::BehaviourSystem::PreInit(void)
 	{
 #if EDITOR
