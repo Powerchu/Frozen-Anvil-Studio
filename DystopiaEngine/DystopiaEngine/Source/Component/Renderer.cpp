@@ -19,6 +19,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\Texture2D.h"
 #include "System\Driver\Driver.h"
 #include "Object\ObjectFlags.h"
+#include "Object\GameObject.h"
+#if EDITOR
+#include "Editor\ProjectResource.h"
+#include "Editor\EGUI.h"
+#endif 
 
 
 Dystopia::Renderer::Renderer(void) noexcept
@@ -26,7 +31,6 @@ Dystopia::Renderer::Renderer(void) noexcept
 {
 	SetMesh("Quad");
 	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist.begin()->second);
-	SetTexture(new Texture2D{ "Resource/Editor/EditorStartup.png" });
 }
 
 void Dystopia::Renderer::Init(void)
@@ -106,4 +110,20 @@ void Dystopia::Renderer::Unserialise(TextSerialiser&)
 
 }
 
+void Dystopia::Renderer::EditorUI(void) noexcept
+{
+#if EDITOR
+	if (EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? std::to_string(mpTexture->GetID()) : "" , true))
+	{
 
+	}
+	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
+	{
+		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
+		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
+		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pTex);
+		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+		EGUI::Display::EndPayloadReceiver();
+	}
+#endif
+}

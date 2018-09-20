@@ -222,6 +222,16 @@ void Dystopia::GraphicsSystem::Update(float)
 
 								t->UnbindTexture();
 							}
+							else
+							{
+								glUseProgram(0);
+								r->Draw();
+							}
+						}
+						else
+						{
+							glUseProgram(0);
+							r->Draw();
 						}
 					}
 				}
@@ -293,6 +303,11 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _strName)
 {
 	size_t first = _strName.rfind("/");
+	if (first == std::string::npos)
+	{
+		first = _strName.rfind("\\");
+	}
+
 	return texturelist[_strName.substr(first, _strName.find_first_of('.', first))] = new Texture2D{ _strName };
 }
 

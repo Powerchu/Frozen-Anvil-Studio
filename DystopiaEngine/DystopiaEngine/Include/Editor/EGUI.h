@@ -349,7 +349,7 @@ namespace EGUI
 		{
 			if (ImGui::BeginDragDropTarget())
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EGUI::ToString(_tagLoad)))
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EGUI::GetPayloadString(_tagLoad)))
 				{
 					DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
 					return static_cast<Specified*>(payload->Data);

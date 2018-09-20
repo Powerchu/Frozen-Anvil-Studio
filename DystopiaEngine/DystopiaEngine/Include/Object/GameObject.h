@@ -92,10 +92,6 @@ namespace Dystopia
 		// ======================================== OPERATORS ======================================== // 
 
 		GameObject& operator = (GameObject&&);
-
-		bool mTestBool = false;
-		float mTestFloat = 0.f;
-		int mTestInt = 0;
 	private:
 
 		uint64_t mnID;

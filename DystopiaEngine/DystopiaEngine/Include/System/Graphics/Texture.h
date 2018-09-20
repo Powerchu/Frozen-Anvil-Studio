@@ -42,7 +42,7 @@ namespace Dystopia
 
 		unsigned GetID(void) const noexcept;
 
-	//private:
+	private:
 
 		unsigned mnWidth, mnHeight, mnType, mnID;
 	};

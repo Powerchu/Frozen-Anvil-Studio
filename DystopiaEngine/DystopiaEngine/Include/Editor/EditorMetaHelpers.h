@@ -51,9 +51,10 @@ namespace Dystopia
 	template <typename C, typename SFINAE = std::enable_if_t<!std::is_same_v<std::decay_t<C>, Component>, C>>
 	struct AuxGenFunction
 	{
-		static Component* Extract(void) 
+		static Component* Extract(GameObject *_owner)
 		{
 			C* comp = EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>()->RequestComponent();
+			comp->SetOwner(_owner);
 			comp->Init();
 			return comp;
 		}
@@ -70,6 +71,7 @@ namespace Dystopia
 		struct GenerateCollection<std::index_sequence<Ns ...>>
 		{
 
+			/*
 			template <typename T>
 			struct GetType
 			{
@@ -114,7 +116,6 @@ namespace Dystopia
 				template <typename List, typename... Ts>
 				void* HelperFunction(unsigned int _i, std::tuple<Ts ...>& _data)
 				{
-					/*
 					BreakTuple<Utility::MetaPopFront_t<List>> newData;
 					if (!_i)
 					{
@@ -122,13 +123,13 @@ namespace Dystopia
 						return a(std::get<0>(_data));
 					}
 					return HelperFunction<Utility::MetaPopFront_t<List>>(_i - 1, newData.mData);
-					*/
 				}
 			};
+			*/
 
-			Component* Get(unsigned int _i)
+			Component* Get(unsigned int _i, GameObject *_owner)
 			{
-				static auto mData = Ctor::MakeArray<Component*(*)(void)>(AuxGenFunction<typename Utility::MetaExtract<Ns, UsableComponents>::result::type>::Extract 
+				static auto mData = Ctor::MakeArray<Component*(*)(GameObject *)>(AuxGenFunction<typename Utility::MetaExtract<Ns, UsableComponents>::result::type>::Extract
 					...
 				);
 				/*
@@ -139,14 +140,14 @@ namespace Dystopia
 				*/
 
 				if (_i < size || _i >= 0)
-					return mData[_i]();
+					return mData[_i](_owner);
 				return nullptr;
 			}
 		};
 
-		Component* Get(unsigned int _i)
+		Component* Get(unsigned int _i, GameObject *_owner)
 		{
-			return mCollection.Get(_i);
+			return mCollection.Get(_i, _owner);
 		}
 
 		GenerateCollection<std::make_index_sequence<size>> mCollection;

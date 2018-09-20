@@ -148,11 +148,6 @@ namespace Dystopia
 		EGUI::SameLine(10);
 		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 50 }, false, Math::Vec4{ 0,0,0,0 }))
 		{
-			bool prevV = mpFocus->mTestBool;
-			if (EGUI::Display::CheckBox("GameObjActive", &mpFocus->mTestBool, false))
-			{
-				GetCommandHND()->InvokeCommand<GameObject>(mpFocus->GetID(), &mpFocus->mTestBool, prevV);
-			}
 			EGUI::SameLine();
 			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 350.f) && strlen(buffer))
 			{
@@ -166,25 +161,6 @@ namespace Dystopia
 			EGUI::Display::DropDownSelection("Layer", j, arr2, 100);
 			EGUI::ChangeAlignmentYOffset();
 
-			switch (EGUI::Display::DragFloat("Test Float", &mpFocus->mTestFloat, 0.01f, -FLT_MAX, FLT_MAX))
-			{
-			case EGUI::eDragStatus::eSTART_DRAG: 
-				GetCommandHND()->StartRecording<GameObject>(mpFocus->GetID(), &mpFocus->mTestFloat);
-				break;
-			case EGUI::eDragStatus::eEND_DRAG: 
-				GetCommandHND()->EndRecording();
-				break;
-			}
-
-			switch (EGUI::Display::DragInt("Test Int", &mpFocus->mTestInt, 1.f, -INT_MAX, INT_MAX))
-			{
-			case EGUI::eDragStatus::eSTART_DRAG:
-				GetCommandHND()->StartRecording<GameObject>(mpFocus->GetID(), &mpFocus->mTestInt);
-				break;
-			case EGUI::eDragStatus::eEND_DRAG:
-				GetCommandHND()->EndRecording();
-				break;
-			}
 		}
 		EGUI::EndChild();
 	}
@@ -253,7 +229,7 @@ namespace Dystopia
 				const auto& e = arr[i];
 				if (EGUI::Display::SelectableTxt(e, false))
 				{
-					Component* pComp = availableComp.Get(i);
+					Component* pComp = availableComp.Get(i, mpFocus);
 					mpFocus->AddComponent(pComp, typename Component::TAG{});
 				}
 			}
