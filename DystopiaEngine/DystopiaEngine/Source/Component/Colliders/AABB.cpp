@@ -8,15 +8,15 @@ namespace Dystopia
 	/*Default Constructor*/
 	AABB::AABB()
 		:Convex{}
-		, mfWidth{ 1 }
-		, mfHeight{ 1 }
+		, mfWidth{ 1000 }
+		, mfHeight{ 1000 }
 	{
-		static Math::Point3D ArrPoints[]
+		Math::Point3D ArrPoints[]
 		{
-			Math::Point3D{0.5f, 0.5f, 1, 0},
-			Math::Point3D{0.5f, -0.5f, 1, 0 },
-			Math::Point3D{-0.5f, -0.5f, 1, 0 },
-			Math::Point3D{-0.5f, 0.5f, 1, 0 }
+			Math::Point3D{ mfWidth / 2, mfHeight / 2, 1, 0 }  ,
+			Math::Point3D{ mfWidth / 2,-mfHeight / 2, 1, 0 }  ,
+			Math::Point3D{ -mfWidth / 2,-mfHeight / 2, 1, 0 } ,
+			Math::Point3D{ -mfWidth / 2, mfHeight / 2, 1, 0 } 
 		};
 
 		//TODO
@@ -92,10 +92,16 @@ namespace Dystopia
 	bool AABB::isColliding(const AABB & _ColB) const
 	{
 		/*Static vs. Dynamic AABB Collision Check*/
-		return (this->mMin->mPosition.x <= _ColB.mMax->mPosition.x 
-			    && this->mMax->mPosition.x >= _ColB.mMin->mPosition.x
-			    && this->mMax->mPosition.y <= _ColB.mMin->mPosition.y
-				&& this->mMin->mPosition.y >= _ColB.mMax->mPosition.y);
+		auto TransformA = GetOwner()->GetComponent<Transform>();
+		auto TransformB = _ColB.GetOwner()->GetComponent<Transform>();
+		if (TransformA->GetGlobalPosition().x + this->mMin->mPosition.x <= TransformB->GetGlobalPosition().x + _ColB.mMax->mPosition.x
+			&& TransformA->GetGlobalPosition().x + this->mMax->mPosition.x >= TransformB->GetGlobalPosition().x + _ColB.mMin->mPosition.x
+			&& TransformA->GetGlobalPosition().y + this->mMax->mPosition.y >= TransformB->GetGlobalPosition().y + _ColB.mMin->mPosition.y
+			&& TransformA->GetGlobalPosition().y + this->mMin->mPosition.y <= TransformB->GetGlobalPosition().y + _ColB.mMax->mPosition.y)
+		{
+			return true;
+		}
+		return false;
 	}
 
 	bool AABB::isColliding(const AABB * const & _ColB) const

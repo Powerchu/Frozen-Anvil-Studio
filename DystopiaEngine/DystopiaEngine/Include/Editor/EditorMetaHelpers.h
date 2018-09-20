@@ -54,7 +54,7 @@ namespace Dystopia
 	{
 		static C* Extract(void) 
 		{
-			return reinterpret_cast<C*>(EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>()->RequestComponent());
+			return static_cast<ComponentDonor<C> *>((EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>()))->RequestComponent();
 		}
 	};
 

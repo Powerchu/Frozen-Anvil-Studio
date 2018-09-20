@@ -30,6 +30,7 @@ namespace Dystopia
 	using UsableComponents = Utility::MetaAutoIndexer <
 		class Camera,
 		class Renderer,
+		class AABB,
 		class Convex
 		//class Particle
 	>::result;

@@ -25,6 +25,7 @@ namespace Dystopia
 
 
 		Math::Point3D  mCollisionPoint;
+
 		Math::Vector3D mEdgeVector;
 		Math::Vector3D mEdgeNormal;
 		double         mPeneDepth;

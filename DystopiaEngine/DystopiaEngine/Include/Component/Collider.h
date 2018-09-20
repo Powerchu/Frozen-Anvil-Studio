@@ -89,12 +89,13 @@ namespace Dystopia
 
 		using SYSTEM = CollisionSystem;
 
-		/*
+		
 		unsigned GetComponentType(void) const
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
 		};
-		*/
+		
+
 #if EDITOR
 		static const std::string GetCompileName(void) { return "Collider"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
@@ -121,13 +122,12 @@ namespace Dystopia
 		/*Get Array of collision event*/
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
 
+		bool hasCollision() const;
 
+		void SetColliding(bool _b);
 
 		// Gettors
 		Math::Vec3D GetOffSet()   const;
-		bool       Get_IsBouncy() const;
-		// Settors
-		bool Set_IsBouncy(const bool);
 
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const;
@@ -140,14 +140,18 @@ namespace Dystopia
 		/*AutoArray of collision event*/
 		AutoArray<CollisionEvent>  mCollisionEvent;
 
+		bool Colliding = false;
+		
+
+
+
 	private:
 		 //Status mStatus;
 
-		// Is Bouncy (whether to deflect in resolution)
-		bool m_IsBouncy;
-
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
+
+
 	};
 
 	class _DLL_EXPORT Convex : public Collider

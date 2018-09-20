@@ -30,7 +30,7 @@ namespace Dystopia
 		, mfRestitution(0.0F)
 		, mbIsGrounded(false)
 		, mbHasGravity(true)
-		, mbIsStatic()
+		, mbIsStatic(false)
 	{
 		
 	}
@@ -69,7 +69,10 @@ namespace Dystopia
 		}
 		else
 		{
-			mbIsStatic = true;
+			if (!mbIsStatic)
+			{
+				mbIsStatic = true;
+			}
 			mfInvMass = 0.0F;
 		}
 
@@ -94,7 +97,7 @@ namespace Dystopia
 
 		//TODO: Incorporate and move Gravity var to Physics System
 		// Calculate Acceleration
-		mAcceleration = Vec3D{ 0,mfGravity*40,0 };
+		mAcceleration = Vec3D{ 0,mfGravity*40*mfCustom_GravityScale,0 };
 		const Vec3D newAccel = mCumulativeForce * mfInvMass + mAcceleration;
 
 		// Calculate Velocity
@@ -119,7 +122,10 @@ namespace Dystopia
 
 	void RigidBody::PostResult()
 	{
-		TX->SetGlobalPosition(mPosition);
+		if (!mbIsStatic)
+		{
+			TX->SetGlobalPosition(mPosition);
+		}
 	}
 
 	/*void RigidBody::Update(float _dt)
@@ -248,6 +254,11 @@ namespace Dystopia
 	void RigidBody::SetVelocity(const Vec3D& _vel)
 	{
 		mLinearVelocity = _vel;
+	}
+
+	void RigidBody::Set_IsStatic(bool _state)
+	{
+		mbIsStatic = _state;
 	}
 
 

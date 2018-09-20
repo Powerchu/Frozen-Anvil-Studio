@@ -150,7 +150,9 @@ inline void Dystopia::GameObject::AddComponent(ComponentTag)
 	//	Utility::MetaFind_t<typename Ty::SYSTEM, EngineCore::AllSys>::value
 	//);
 
-	auto Comp = EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()->RequestComponent();
+	auto Comp = static_cast<ComponentDonor<Ty>*>
+		(EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()
+		)->RequestComponent();
 
 	mComponents.Insert(Comp);
 

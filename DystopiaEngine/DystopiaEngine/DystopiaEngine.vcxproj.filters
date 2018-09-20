@@ -205,7 +205,6 @@
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Resource\Behaviours\BehaviourScripts\Whatever.cpp" />
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="Source\System\Physics\CollisionResolution.cpp">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClCompile>
@@ -214,7 +213,6 @@
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Resource\Behaviours\*\*.cpp" />
-    <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClCompile>
@@ -223,6 +221,9 @@
     </ClCompile>
     <ClCompile Include="Source\System\File\FileSystem.cpp">
       <Filter>Game Engine\SubSystems\File</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterController.cpp">
+      <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -552,11 +553,8 @@
       <Filter>Game Engine\Components\Physics</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Include\Utility\ComponentGUID.h" />
-    <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Resource\Behaviours\BehaviourScripts\Whatever.h" />
     <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Resource\Behaviours\*\*.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h">
@@ -570,7 +568,6 @@
     <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
-    <ClInclude Include="CharacterController.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClInclude>
@@ -591,6 +588,9 @@
     </ClInclude>
     <ClInclude Include="Include\System\File\FileSystem.h">
       <Filter>Game Engine\SubSystems\File</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterController.h">
+      <Filter>Game Engine\Components\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

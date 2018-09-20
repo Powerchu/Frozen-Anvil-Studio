@@ -1,9 +1,12 @@
 #include "System/Physics/PhysicsSystem.h"
 #include "Component/RigidBody.h"
-//#include "Object/GameObject.h"
+#include "Object/GameObject.h"
 #include <System/Collision/CollisionSystem.h>
 #include <System/Time/ScopedTimer.h>
 #include "System/Profiler/ProfilerAction.h"
+
+#include "Component/Collider.h"
+
 
 namespace Dystopia
 {
@@ -42,7 +45,20 @@ namespace Dystopia
 
 	void PhysicsSystem::ResolveCollision(float _dt)
 	{
-		UNUSED_PARAMETER(_dt);
+		for (auto& rigid_elem : mComponents)
+		{
+			auto ptr = rigid_elem.GetOwner()->GetComponent<Collider>();
+			if (ptr)
+			{
+				if (ptr->hasCollision())
+				{
+					rigid_elem.Set_CustomGravityScale(0.0f);
+					rigid_elem.SetVelocity(Vec3D{});
+					ptr->GetCollisionEvents();
+				}
+			}
+			
+		}
 	}
 
 	void PhysicsSystem::PostResults()
@@ -77,6 +93,7 @@ namespace Dystopia
 		/*
 		 * Collision System Detection
 		 */
+		
 		// Contacts.Reset();
 		// DetectContacts(dt);
 
@@ -96,12 +113,7 @@ namespace Dystopia
 		DebugPrint();
 	}
 
-	void PhysicsSystem::FixedUpdate(float)
-	{
-
-	}
-
-	void PhysicsSystem::Update(float _dt)
+	void PhysicsSystem::FixedUpdate(float _dt)
 	{
 		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
 		const float TimeStep = 1.0f / 60.0f;
@@ -109,7 +121,7 @@ namespace Dystopia
 
 		mTimeAccumulator += _dt;
 		mTimeAccumulator = Math::Min(mTimeAccumulator, TimeStep * 5);
-		
+
 		if (mTimeAccumulator > TimeStep)
 		{
 			mTimeAccumulator -= TimeStep;
@@ -120,6 +132,11 @@ namespace Dystopia
 		{
 			DebugDraw();
 		}
+	}
+
+	void PhysicsSystem::Update(float)
+	{
+		
 	}
 
 	void PhysicsSystem::Shutdown(void)
@@ -137,7 +154,5 @@ namespace Dystopia
 		UNUSED_PARAMETER(serial);
 	}
 
-	
-
-	
+		
 }

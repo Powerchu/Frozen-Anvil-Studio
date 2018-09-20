@@ -26,6 +26,8 @@ namespace Dystopia
 
 		GameObject* CreateCamera(const std::string& _name);
 
+		// TODO: DELETE
+		GameObject* CreateStaticBox(const std::string& _name);
 		GameObject* CreateBox(const std::string& _name);
 	}
 }

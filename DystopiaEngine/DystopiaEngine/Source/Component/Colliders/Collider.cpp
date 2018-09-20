@@ -36,6 +36,14 @@ namespace Dystopia
 		// TODO: insert return statement here
 		return mCollisionEvent;
 	}
+	bool Collider::hasCollision() const
+	{
+		return Colliding;
+	}
+	void Collider::SetColliding(bool _b)
+	{
+		Colliding = _b;
+	}
 	Math::Vec3D Collider::GetOffSet() const
 	{
 		return this->mv3Offset;

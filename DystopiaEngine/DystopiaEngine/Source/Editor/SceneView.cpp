@@ -21,6 +21,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Camera\CameraSystem.h"
 #include <System/Physics/PhysicsSystem.h>
+#include "System/Collision/CollisionSystem.h"
+
 #include "System\Scene\Scene.h"
 #include "System\Graphics\Texture2D.h"
 #include "Component\Camera.h"
@@ -44,7 +46,8 @@ namespace Dystopia
 		mpGfxSys{ nullptr },
 		mDelta{},
 		mpSceneCamera{ nullptr },
-		mpPhysSys{nullptr}
+		mpPhysSys{nullptr},
+		mpColSys{ nullptr }
 	{}
 
 	SceneView::~SceneView()
@@ -56,6 +59,7 @@ namespace Dystopia
 	{
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
 		mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
+		mpColSys = EngineCore::GetInstance()->GetSystem<CollisionSystem>();
 
 		// Scene Camera
 		GameObject *p = Factory::CreateCamera("Scene Camera");
@@ -68,15 +72,25 @@ namespace Dystopia
 		GameObject *b = Factory::CreateBox("Box Object");
 		mpBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*b));
 		mpBoxObject->GetComponent<RigidBody>()->Init();
-		mpBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 128.f, 128.f, 128.f });
+		mpBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 128.f, 128.f, 1.f });
 		delete b;
+
+		// Sample Static Object
+		GameObject *s = Factory::CreateStaticBox("Static Box");
+		mpStaticBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*s));
+		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
+		mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
+		//mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition ({ 0, -185.f, 0 });
+		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 512.f, 64.f, 1.f });
+		delete s;
 	}
 
 	void SceneView::Update(const float& _dt)
 	{
 		mDelta = _dt;
 		mpGfxSys->Update(mDelta);
-		mpPhysSys->Update(mDelta);
+		mpPhysSys->FixedUpdate(mDelta);
+		mpColSys->Update(mDelta);
 	}
 
 	void SceneView::EditorUI()

@@ -9,7 +9,8 @@
 namespace Dystopia
 {
 	Convex::Convex(Math::Point3D const & _v3Offset)
-		:Collider{ _v3Offset }
+		:Collider{ _v3Offset },
+		mVertices{Vertice{1,1}, Vertice{ -1,1 }, Vertice{ -1,-1 }, Vertice{1,1} }
 	{
 		
 	}
@@ -93,8 +94,9 @@ namespace Dystopia
 				/*Check if Simplex contains Origin*/
 				if (ContainOrigin(Simplex, vDir))
 				{
+					Colliding = true;
 					/*Use EPA to get collision information*/
-					mCollisionEvent.Insert(GetCollisionEvent(Simplex, _pColB));
+					//mCollisionEvent.Insert(GetCollisionEvent(Simplex, _pColB));
 					/*Clear the simplex for the next function call*/
 					Simplex.clear();
 					/*Return true for collision*/
@@ -232,7 +234,7 @@ namespace Dystopia
 			}
 			else
 			{
-				_Simplex.Insert(Point, ClosestEdge.SimplexIndex);
+				//_Simplex.Insert(Point, ClosestEdge.SimplexIndex);
 			}
 		}
 		return col_info;
