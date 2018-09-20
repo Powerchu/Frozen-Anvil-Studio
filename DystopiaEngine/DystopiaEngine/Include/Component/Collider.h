@@ -38,9 +38,9 @@ namespace Dystopia
 {
 	typedef char Status;
 
-	class CollisionEvent;
+	struct CollisionEvent;
 
-	class CollisionSystem;
+	struct CollisionSystem;
 
 	enum class eColliderType
 	{

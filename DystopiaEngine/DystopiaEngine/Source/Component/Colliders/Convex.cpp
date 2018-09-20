@@ -190,7 +190,7 @@ namespace Dystopia
 
 		return Farthest_In_ColA.mPosition - Farthest_In_ColB.mPosition;
 	}
-	Math::Vec3D Convex::Support(const Convex & _ColA, const Convex & _ColB, const Math::Vec3D & _Dir, bool & hasPoint)
+	Math::Vec3D Convex::Support(const Convex &, const Convex &, const Math::Vec3D &, bool &)
 	{
 		return Math::Vec3D();
 	}
