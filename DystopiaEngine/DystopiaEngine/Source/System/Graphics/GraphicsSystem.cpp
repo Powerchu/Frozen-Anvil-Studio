@@ -29,6 +29,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"			// EngineCore
 #include "System\Time\ScopedTimer.h"
 #include "System\Profiler\ProfilerAction.h"
+#include "System\Logger\LogPriority.h"
+#include "System\Logger\LoggerSystem.h"
 
 #include "IO\TextSerialiser.h"
 #include "IO\ImageParser.h"
@@ -126,7 +128,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 
 	unsigned w = texture->GetWidth(), h = texture->GetHeight();
 
-	pWinSys->GetMainWindow().SetSize(w, h);
+	pWinSys->GetMainWindow().SetSizeNoAdjust(w, h);
 	pWinSys->GetMainWindow().CenterWindow();
 
 	Math::Matrix4 View{}, Project{
@@ -148,13 +150,13 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	shader->UploadUniform("Gamma", mfGamma);
 
 	mesh->UseMesh(GL_TRIANGLES);
+	texture->UnbindTexture();
 
 	pWinSys->GetMainWindow().Show();
 	SwapBuffers(
 		pWinSys->GetMainWindow().GetDeviceContext()
 	);
 
-	texture->UnbindTexture();
 	delete texture;
 }
 
@@ -402,11 +404,9 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	glGetIntegerv(GL_MAJOR_VERSION, &mOpenGLMajor);
 	glGetIntegerv(GL_MINOR_VERSION, &mOpenGLMinor);
 
-	// TEMPORARY print to see what OpenGL version we got
-	// REPLACEMENT : LOGGER OUTPUT
-	std::fprintf(stdout, "Graphics System: %s, %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
-	std::fprintf(stdout, "Graphics System: Using OpenGL Version %d.%d\n", mOpenGLMajor, mOpenGLMinor);
-	std::fprintf(stdout, "Graphics System: %d bit colour, %d bits depth, %d bit stencil\n", pfd.cColorBits, pfd.cDepthBits, pfd.cStencilBits);
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: %s, %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: Using OpenGL Version %d.%d\n", mOpenGLMajor, mOpenGLMinor);
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: %d bit colour, %d bits depth, %d bit stencil\n", pfd.cColorBits, pfd.cDepthBits, pfd.cStencilBits);
 
 #endif
 

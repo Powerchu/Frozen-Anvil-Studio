@@ -247,6 +247,7 @@ namespace Dystopia
 	{
 		UnInstallHotkeys();
 
+		mpDriver->GetSubSystem<LoggerSystem>()->RedirectOutput(nullptr);
 		EGUI::Docking::ShutdownTabs();
 		for (auto& e : mArrTabs)
 		{

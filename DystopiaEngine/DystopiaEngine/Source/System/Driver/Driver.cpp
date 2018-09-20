@@ -118,6 +118,13 @@ void Dystopia::EngineCore::LoadSettings(void)
 	if (false)
 	{
 		auto file = Serialiser::OpenFile<TextSerialiser>(SETTINGS_FILE);
+
+		for (auto& e : mSystemTable)
+		{
+			file.ConsumeStartBlock();
+			e->LoadSettings(file);
+			file.ConsumeEndBlock();
+		}
 	}
 	else
 	{
@@ -192,7 +199,9 @@ void Dystopia::EngineCore::Shutdown(void)
 
 	for (auto& e : mSystemList)
 	{
+		//s.InsertStartBlock(e->GetEditorName());
 		//e->SaveSettings(s);
+		//s.InsertEndBlock(e->GetEditorName());
 		e->Shutdown();
 	}
 

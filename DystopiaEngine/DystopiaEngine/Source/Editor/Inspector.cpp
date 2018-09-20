@@ -254,7 +254,6 @@ namespace Dystopia
 				if (EGUI::Display::SelectableTxt(e, false))
 				{
 					Component* pComp = availableComp.Get(i);
-					pComp->Init();
 					mpFocus->AddComponent(pComp, typename Component::TAG{});
 				}
 			}
