@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\SystemMessage.h"
 #include "System\Driver\Driver.h"
 #include "System\Input\MouseData.h"
+#include "IO\TextSerialiser.h"
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
@@ -220,9 +221,22 @@ void Dystopia::WindowManager::LoadDefaults(void)
 	mHeight			= DEFAULT_HEIGHT;
 }
 
-void Dystopia::WindowManager::LoadSettings(TextSerialiser&)
+void Dystopia::WindowManager::LoadSettings(DysSerialiser_t& _out)
 {
+	_out >> mbFullscreen;
+	_out >> mWindowStyle;
+	_out >> mWindowStyleEx;
+	_out >> mWidth;
+	_out >> mHeight;
+}
 
+void Dystopia::WindowManager::SaveSettings(DysSerialiser_t& _in)
+{
+	_in << mbFullscreen;
+	_in << mWindowStyle;
+	_in << mWindowStyleEx;
+	_in << mWindows[0].GetWidth();
+	_in << mWindows[0].GetHeight();
 }
 
 void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)

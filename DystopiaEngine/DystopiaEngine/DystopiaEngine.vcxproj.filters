@@ -558,6 +558,12 @@
     <ClInclude Include="resource.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Graphics\TextureSystem.h">
+      <Filter>Game Engine\SubSystems\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\ShaderSystem.h">
+      <Filter>Game Engine\SubSystems\Shader</Filter>
+    </ClInclude>
     <ClInclude Include="Include\Component\Primitive.h">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClInclude>

@@ -43,7 +43,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\Timer.h"
 #include "System\Time\ScopedTimer.h"
 
-#define SETTINGS_FILE "settings.dyst" 
+#define SETTINGS_FILE "Settings.dyst" 
 
 
 
@@ -195,13 +195,14 @@ void Dystopia::EngineCore::Update(void)
 
 void Dystopia::EngineCore::Shutdown(void)
 {
-	//TextSerialiser s = Serialiser::OpenFile<TextSerialiser>(SETTINGS_FILE, TextSerialiser::MODE_WRITE);
+	GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, eFileDir::eRoot);
+	DysSerialiser_t s = Serialiser::OpenFile<DysSerialiser_t>(SETTINGS_FILE, DysSerialiser_t::MODE_WRITE);
 
 	for (auto& e : mSystemList)
 	{
-		//s.InsertStartBlock(e->GetEditorName());
-		//e->SaveSettings(s);
-		//s.InsertEndBlock(e->GetEditorName());
+		s.InsertStartBlock("SYSTEM");
+		e->SaveSettings(s);
+		s.InsertEndBlock("SYSTEM");
 		e->Shutdown();
 	}
 
