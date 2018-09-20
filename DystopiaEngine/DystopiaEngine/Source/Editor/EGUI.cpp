@@ -206,6 +206,7 @@ namespace Dystopia
 		// glfwGetFramebufferSize(mpWin, &display_w, &display_h);
 		w = display_w = mpWin->GetMainWindow().GetWidth();
 		h = display_h = mpWin->GetMainWindow().GetHeight() - 40;
+
 		io.DisplaySize = ImVec2{ static_cast<float>(w), static_cast<float>(h) };
 		io.DisplayFramebufferScale = ImVec2{ w > 0 ? static_cast<float>(display_w / w) : 0, 
 											 h > 0 ? static_cast<float>(display_h / h) : 0 };
