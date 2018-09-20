@@ -234,7 +234,7 @@ namespace Dystopia
 			}
 			else
 			{
-				//_Simplex.Insert(Point, ClosestEdge.SimplexIndex);
+				_Simplex.Insert(Point, ClosestEdge.SimplexIndex);
 			}
 		}
 		return col_info;

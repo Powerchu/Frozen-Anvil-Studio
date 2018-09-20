@@ -334,16 +334,17 @@ void AutoArray<T, A>::Insert(const T& _obj, const Sz_t _nIndex)
 		GrowArray();
 
 	Itor_t at = mpArray + _nIndex;
-	Itor_t j = mpLast;
-	Itor_t i = ++mpLast;
+	Itor_t j = mpLast - 1;
+	Itor_t i = mpLast;
 
-	while (i != at)
+	while (j != at)
 	{
 		*i = Utility::Move(*j);
 		--i; --j;
 	}
 
 	*at = _obj;
+	++mpLast;
 }
 
 
