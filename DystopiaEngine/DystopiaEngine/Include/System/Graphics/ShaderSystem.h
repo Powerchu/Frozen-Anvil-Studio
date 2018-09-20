@@ -14,14 +14,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SHADERSYS_H_
 #define _SHADERSYS_H_
 
+#include "DataStructure\MagicArray.h"
+
 
 namespace Dystopia
 {
+	class Shader;
+
 	class ShaderSystem
 	{
 	public:
 
+		void Shutdown(void) noexcept;
+
+
 	private:
+
+		MagicArray<Shader> mPrograms;
 	};
 }
 
