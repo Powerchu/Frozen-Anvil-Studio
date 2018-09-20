@@ -91,7 +91,7 @@ namespace Dystopia
 
 		//TODO: Incorporate and move Gravity var to Physics System
 		// Calculate Acceleration
-		mAcceleration = Vec3D{ 0,mfGravity*400,0 };
+		mAcceleration = Vec3D{ 0,mfGravity*40,0 };
 		const Vec3D newAccel = mCumulativeForce * mfInvMass + mAcceleration;
 
 		// Calculate Velocity

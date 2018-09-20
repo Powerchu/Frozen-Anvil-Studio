@@ -32,7 +32,7 @@ namespace Dystopia
 
 	void PhysicsSystem::IntegrateRigidBodies(float _dt)
 	{
-		for (auto rigid_elem : mComponents)
+		for (auto& rigid_elem : mComponents)
 		{
 			rigid_elem.Integrate(_dt);
 		}
@@ -45,7 +45,7 @@ namespace Dystopia
 
 	void PhysicsSystem::PostResults()
 	{
-		for (auto rigid_elem : mComponents)
+		for (auto& rigid_elem : mComponents)
 		{
 			rigid_elem.PostResult();
 		}
@@ -55,7 +55,7 @@ namespace Dystopia
 
 	void PhysicsSystem::DebugPrint()
 	{
-		for (auto rigid_elem : mComponents)
+		for (auto& rigid_elem : mComponents)
 		{
 			rigid_elem.DebugPrint();
 		}
