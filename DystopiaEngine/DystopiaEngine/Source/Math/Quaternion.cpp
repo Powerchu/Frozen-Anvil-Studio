@@ -19,7 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Math::Matrix4 __vectorcall Math::Quaternion::Matrix(void) const noexcept
 {
-	float scale = 2.f / mData.MagnitudeSqr();
+	// TODO:
+	float scale = 2.0F / mData.MagnitudeSqr();
 
 	Vec4 t3 = mData.ywyw;
 	Vec4 t1 = mData.xxyy * mData.xywz; // xx, xy, yw, yz
@@ -36,6 +37,7 @@ Math::Matrix4 __vectorcall Math::Quaternion::Matrix(void) const noexcept
 	//    2 (xz - cw)   ,    2 (yz + xw)   , ww - xx - yy + zz, 0
 	//          0       ,          0       ,          0       , 1
 
+	UNUSED_PARAMETER(scale);
 
 	return Matrix4{};
 }

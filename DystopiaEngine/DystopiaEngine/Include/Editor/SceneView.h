@@ -11,6 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#include "System/Physics/PhysicsSystem.h"
 #if EDITOR
 #ifndef _SCENE_VIEW_H_
 #define _SCENE_VIEW_H_
@@ -20,6 +21,7 @@ namespace Dystopia
 {
 	class GraphicsSystem;
 	class GameObject;
+	class PhysicsSystem;
 	class SceneView : public EditorTab
 	{
 	public:
@@ -46,8 +48,12 @@ namespace Dystopia
 
 		float			mDelta;
 		std::string		mLabel;
-		GraphicsSystem* mpGfxSys;
+		GraphicsSystem *mpGfxSys;
+		PhysicsSystem  *mpPhysSys;
 		GameObject*		mpSceneCamera;
+
+		// TODO: remove this
+		GameObject*		mpBoxObject;
 	};
 
 }

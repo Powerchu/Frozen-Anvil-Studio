@@ -452,12 +452,12 @@ namespace Dystopia
 				std::error_code error;
 
 				std::filesystem::recursive_directory_iterator iter{ p,std::filesystem::directory_options::skip_permission_denied,error };
-				for (auto & elem : iter)
+				for (auto & i : iter)
 				{
-					if (CheckFileExtension(elem.path().filename().wstring()) == eCpp && elem.path().filename().wstring() != FileName)
+					if (CheckFileExtension(i.path().filename().wstring()) == eCpp && i.path().filename().wstring() != FileName)
 					{
-						std::string a = elem.path().string();
-						OutputCommand += L" \"" + elem.path().wstring() + L"\"";
+						std::string a = i.path().string();
+						OutputCommand += L" \"" + i.path().wstring() + L"\"";
 					}
 				}
 			}
@@ -803,7 +803,9 @@ namespace Dystopia
 					HMODULE dllModule = LoadLibrary(elem.path().wstring().c_str());
 					if (dllModule != NULL)
 					{
+						// TODO: What is this for?
 						auto pointer = mvDLL.Emplace(elem.path().parent_path().wstring(), elem.path().filename().wstring(), dllModule);
+						UNREFERENCED_PARAMETER(pointer);
 					}
 				}
 			}

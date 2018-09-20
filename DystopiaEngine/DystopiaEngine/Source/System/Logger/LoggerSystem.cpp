@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <cstdio>							// FILE, freopen_s
 #include <cstdlib>
 #include <exception>
-#include <windows.h>						// Windows Header
+#include <Windows.h>						// Windows Header
 #include <DbgHelp.h>
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
@@ -118,6 +118,7 @@ void Dystopia::LoggerSystem::RedirectInput(std::string(*_pIn)(void))
 
 void Dystopia::LoggerSystem::SendOutput(const std::string& _strOutput)
 {
+	UNUSED_PARAMETER(_strOutput);
 }
 
 

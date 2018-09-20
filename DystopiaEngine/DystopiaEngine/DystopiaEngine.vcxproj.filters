@@ -175,9 +175,6 @@
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp">
       <Filter>IO\TextSerialiser\lodepng</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\ConsoleDebugger.cpp">
-      <Filter>Editor\Editor Tabs\Console</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
@@ -198,37 +195,28 @@
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp">
       <Filter>Game Engine\Systems\Graphic\Framebuffer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\Clipboard.cpp">
+      <Filter>Editor\Clipboard</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Component\Particle.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Component\Primitive.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\BehaviourScripts\Whatever.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
     <ClCompile Include="Circle.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
-      <Filter>Game Engine\Systems\Behaviour</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\File\FileSystem.cpp">
-      <Filter>Game Engine\SubSystems\File</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Behaviours\BehaviourScripts\Whatever.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehaviourScripts\Whatever.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
-      <Filter>Game Engine\Systems\Behaviour</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\File\FileSystem.cpp">
-      <Filter>Game Engine\SubSystems\File</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Component\CollisionEvent.cpp" />
+=========
     <ClCompile Include="Source\Editor\Clipboard.cpp">
       <Filter>Editor\Clipboard</Filter>
+>>>>>>>>> Temporary merge branch 2
     </ClCompile>
+    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
+    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehaviourScripts\TestBehaviour.cpp" />
+    <ClCompile Include="CharacterController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -559,37 +547,10 @@
     <ClInclude Include="Include\Component\Primitive.h">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\BehaviourScripts\Whatever.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h">
-      <Filter>Game Engine\Systems\Behaviour</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Component\BehaviourList.h">
-      <Filter>Game Engine\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\File\FileSystem.h">
-      <Filter>Game Engine\SubSystems\File</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\HotLoader.h">
-      <Filter>Editor\Hotloader</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Behaviours\BehaviourScripts\Whatever.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Resource\Behaviours\BehaviourScripts\Whatever.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h">
-      <Filter>Game Engine\Systems\Behaviour</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\HotLoader.h">
-      <Filter>Utility\GUID</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\GUID.h">
-      <Filter>Utility\GUID</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\ComponentGUID.h">
-      <Filter>Utility\GUID</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Component\CollisionEvent.h" />
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Include\Utility\ComponentGUID.h" />
+    <ClInclude Include="Include\Utility\GUID.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

@@ -12,19 +12,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\DefaultFactory.h"
+#include <Editor/DefaultFactory.h>
 
-#include "Component\Camera.h"
-#include "Component\Collider.h"
-#include "Component\Renderer.h"
-#include "Component\RigidBody.h"
+#include <Component/Camera.h>
+#include <Component/Collider.h>
+#include <Component/Renderer.h>
+#include <Component/RigidBody.h>
 
-#include "System\Driver\Driver.h"
-#include "System\Graphics\GraphicsSystem.h"
-#include "System\Camera\CameraSystem.h"
+#include <System/Driver/Driver.h>
+#include <System/Graphics/GraphicsSystem.h>
+#include <System/Camera/CameraSystem.h>
+#include <System/Physics/PhysicsSystem.h>
 
-#include "Object\GameObject.h"
-#include "Utility\GUID.h"
+#include <Object/GameObject.h>
+#include <Utility/GUID.h>
 
 namespace Dystopia
 {
@@ -45,6 +46,21 @@ namespace Dystopia
 			p->SetOwner(pObject);
 			p->Init();
 			pObject->AddComponent(p, typename Camera::TAG{});
+			return pObject;
+		}
+
+		GameObject* CreateBox(const std::string& _name)
+		{
+			GameObject *pObject = CreateGameObj(_name);
+			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
+			p->SetOwner(pObject);
+			p->Init();
+			pObject->AddComponent(p, typename RigidBody::TAG{});
+
+			auto g = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			g->SetOwner(pObject);
+			pObject->AddComponent(g, typename Renderer::TAG{});
+
 			return pObject;
 		}
 	}

@@ -12,22 +12,25 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\ConsoleDebugger.h"
-#include "Editor\ConsoleLog.h"
-
-void format_impl(std::stringstream& _stream, const char * _format)
+#include <Editor/ConsoleDebugger.h>
+#include <Editor/ConsoleLog.h>
+namespace Dystopia
 {
-	while (*_format)
+	void format_impl(std::stringstream& _stream, const char * _format)
 	{
-		if (*_format == '%' && *++_format != '%')
-			throw std::invalid_argument("not enough arguments!\n");
-		_stream << *_format++;
+		while (*_format)
+		{
+			if (*_format == '%' && *++_format != '%')
+				throw std::invalid_argument("not enough arguments!\n");
+			_stream << *_format++;
+		}
 	}
-}
 
-void ConsolePrint(const std::string& _text)
-{
-	Dystopia::PrintToConsoleLog(_text);
+	void ConsolePrint(const std::string& _text)
+	{
+		Dystopia::PrintToConsoleLog(_text);
+	}
+
 }
 
 

@@ -59,11 +59,13 @@ namespace Dystopia
 	/*Collision Check Functions*/
 	bool Circle::isColliding(const Circle & other_col) const
 	{
+		UNUSED_PARAMETER(other_col);
 		return false;
 	}
 
 	bool Circle::isColliding(const Circle * const & other_col) const
 	{
+		UNUSED_PARAMETER(other_col);
 		return false;
 	}
 }

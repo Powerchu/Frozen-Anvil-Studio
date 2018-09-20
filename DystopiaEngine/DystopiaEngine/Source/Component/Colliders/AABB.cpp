@@ -7,7 +7,9 @@ namespace Dystopia
 	
 	/*Default Constructor*/
 	AABB::AABB()
-		:Convex{}, mfWidth{ 1 }, mfHeight{ 1 }
+		:Convex{}
+		, mfWidth{ 1 }
+		, mfHeight{ 1 }
 	{
 		static Math::Point3D ArrPoints[]
 		{
@@ -26,7 +28,9 @@ namespace Dystopia
 	
 
 	AABB::AABB(float const & _width, float const & _height, Math::Vec3D const & _v3Offset)
-		:Convex{ _v3Offset },mfWidth{ _width }, mfHeight{_height}
+		: Convex{ _v3Offset }
+		, mfWidth{ _width }
+		, mfHeight{_height}
 	{
 		Math::Point3D ArrPoints[]
 		{
