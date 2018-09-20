@@ -81,6 +81,10 @@ namespace Dystopia
 		Texture* mpTexture;
 
 		Renderer(const Renderer&) = delete;
+
+		void TextureField();
+		void MeshField();
+		void ShaderField();
 	};
 }
 
