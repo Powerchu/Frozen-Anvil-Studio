@@ -179,23 +179,54 @@ void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)
 
 void Dystopia::GameObject::Serialise(TextSerialiser& _out) const
 {
+	_out.InsertStartBlock("START_GO_DATA");
 	_out << mnID << mnFlags << mName;
-	_out.InsertEndBlock("GO_DATA");
+	_out.InsertEndBlock("END_GO_DATA");
+
+	_out.InsertStartBlock("START_GO_TRANSFORM");
+	mTransform.Serialise(_out);
+	_out.InsertEndBlock("END_GO_TRANSFORM");
 
 //	ForcePing(mComponents, Serialise, _in);
 	// _out << e.mID << e.mComponent << e.mSystem;
+/*
+	_out.InsertStartBlock("START_COMPONENT_TRANSFORM");
+	_out << mComponents.size();
+	for (auto& e : mComponents)
+	{
+		_out << e->GetComponentType();
+		_out << e->GetID();
+	}
+	_out.InsertEndBlock("END_COMPONENT_LIST");*/
 
-//	for (auto& e : mComponents)
-//		_out << e->GetID();
-	_out.InsertEndBlock("COMPONENT_LIST");
-	ForcePing(mBehaviours, Serialise, _out);
-	_out.InsertEndBlock("BEHAVIOUR_LIST");
+	//_out.InsertStartBlock("START_BEHAVIOUR_LIST");
+	//ForcePing(mBehaviours, Serialise, _out);
+	//_out.InsertEndBlock("END_BEHAVIOUR_LIST");
 }
 
 void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 {
+	_in.ConsumeStartBlock();
 	_in >> mnID >> mnFlags >> mName;
 	_in.ConsumeEndBlock();
+
+	_in.ConsumeStartBlock();
+	mTransform.Unserialise(_in);
+	mTransform.SetOwner(this);
+	_in.ConsumeEndBlock();
+/*
+	unsigned int maxCount;
+	unsigned typeID;
+	uint16_t compID;
+	_in.ConsumeStartBlock();
+	_in >> maxCount;
+	for (unsigned int i = 0; i < maxCount; ++i)
+	{
+		_in >> typeID;
+		_in >> compID;
+	}
+	_in.ConsumeEndBlock();*/
+	
 
 //	ForcePing(mComponents, Unserialise, _out);
 	//while (!_in.EndOfInput())
@@ -207,9 +238,10 @@ void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 	//	_in >> id >> comp >> sys;
 	//	mComponents.EmplaceBack(id, comp, sys);
 	//}
-	_in.ConsumeEndBlock();
-	ForcePing(mBehaviours, Unserialise, _in);
-	_in.ConsumeEndBlock();
+
+	//_in.ConsumeEndBlock();
+	//ForcePing(mBehaviours, Unserialise, _in);
+	//_in.ConsumeEndBlock();
 }
 
 Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const

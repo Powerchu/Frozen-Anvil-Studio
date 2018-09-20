@@ -40,7 +40,7 @@ namespace Dystopia
 			return i;
 		}();
 
-
+		/*
 		for (Collider * const & elem : mArrOfCollider)
 		{
 			for (Collider * const * i = &elem+1; i <= &mArrOfCollider.back(); i++)
@@ -58,6 +58,7 @@ namespace Dystopia
 				}
 			}
 		}
+		*/
 	}
 
 	void CollisionSystem::FixedUpdate(float _dt)
@@ -67,15 +68,11 @@ namespace Dystopia
 
 	void CollisionSystem::Shutdown()
 	{
-		for (Collider * const & elem : mArrOfCollider)
-		{
-			delete elem;
-		}
 	}
 
 	void CollisionSystem::InsertCollider(Collider * const & _Col)
 	{
-		this->mArrOfCollider.push_back(_Col);
+		//this->mArrOfCollider.push_back(_Col);
 	}
 
 	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const

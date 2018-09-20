@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Camera\CameraSystem.h"
 #include "System\Behaviour\BehaviourSystem.h"
+#include "System\Collision\CollisionSystem.h"
 
 #include "Utility\ComponentGUID.h"
 

@@ -15,6 +15,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object\GameObject.h"
 #include "Math\Matrix4.h"
 #include "Math\Vector4.h"
+#include "IO\TextSerialiser.h"
+#include "System\Scene\Scene.h"
+#include "System\Scene\SceneSystem.h"
 
 #include "Editor\EGUI.h"
 
@@ -222,14 +225,29 @@ Dystopia::Transform* Dystopia::Transform::Duplicate(void) const
 	return nullptr;
 }
 
-void Dystopia::Transform::Serialise(TextSerialiser&) const
+void Dystopia::Transform::Serialise(TextSerialiser& _out) const
 {
-
+	_out.InsertStartBlock("Transform");
+	_out << static_cast<float>(mScale.x);
+	_out << static_cast<float>(mScale.y);
+	_out << static_cast<float>(mScale.z);
+	_out << static_cast<float>(mPosition.x);
+	_out << static_cast<float>(mPosition.y);
+	_out << static_cast<float>(mPosition.z);
+	_out.InsertEndBlock("Transform");
 }
 
-void Dystopia::Transform::Unserialise(TextSerialiser&)
+void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 {
-
+	_in.ConsumeStartBlock();
+	_in >> static_cast<float>(mScale.x);
+	_in >> static_cast<float>(mScale.x);
+	_in >> static_cast<float>(mScale.y);
+	_in >> static_cast<float>(mScale.z);
+	_in >> static_cast<float>(mPosition.x);
+	_in >> static_cast<float>(mPosition.y);
+	_in >> static_cast<float>(mPosition.z);
+	_in.ConsumeEndBlock();
 }
 
 void Dystopia::Transform::EditorUI(void) noexcept

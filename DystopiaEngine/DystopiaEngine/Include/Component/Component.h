@@ -62,6 +62,8 @@ namespace Dystopia
 		virtual void Unserialise(TextSerialiser&) = 0;
 		virtual void EditorUI(void) noexcept;
 
+		uint64_t GetID() const;
+
 	private:
 
 		// TODO
@@ -69,7 +71,7 @@ namespace Dystopia
 		uint64_t mnOwner;
 
 	protected:
-
+		uint64_t mID;
 		unsigned mnFlags;
 	};
 }

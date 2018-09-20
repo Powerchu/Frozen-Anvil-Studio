@@ -18,8 +18,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\Shader.h"
 #include "System\Graphics\Texture2D.h"
 #include "System\Driver\Driver.h"
+#include "System\Scene\SceneSystem.h"
+#include "System\Scene\Scene.h"
 #include "Object\ObjectFlags.h"
 #include "Object\GameObject.h"
+#include "IO\TextSerialiser.h"
 #if EDITOR
 #include "Editor\ProjectResource.h"
 #include "Editor\EGUI.h"
@@ -100,14 +103,23 @@ Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 	return pThis;
 }
 
-void Dystopia::Renderer::Serialise(TextSerialiser&) const
+void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
-
+	_out.InsertStartBlock("Renderer");
+	_out << GetOwner()->GetID();
+	_out.InsertEndBlock("Renderer");
 }
 
-void Dystopia::Renderer::Unserialise(TextSerialiser&)
+void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 {
+	uint64_t ownerID;
 
+	_in.ConsumeStartBlock();
+	_in >> ownerID;
+	_in.ConsumeEndBlock();
+
+	GameObject* owner = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(ownerID);
+	owner->AddComponent(this, Renderer::TAG{});
 }
 
 void Dystopia::Renderer::EditorUI(void) noexcept
