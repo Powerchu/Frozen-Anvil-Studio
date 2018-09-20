@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\Component\CollisionEvent.cpp" />
     <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="Source\Editor\Clipboard.cpp" />
     <ClCompile Include="Source\Component\Colliders\Circle.cpp" />
@@ -41,8 +42,6 @@
     <ClCompile Include="Source\System\Physics\CollisionResolution.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehaviourScripts\TestBehaviour.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Source\Component\Particle.cpp" />
     <ClCompile Include="Source\Component\Primitive.cpp" />
     <ClCompile Include="Source\Component\Renderer.cpp" />
@@ -105,15 +104,12 @@
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
     <ClInclude Include="CharacterController.h" />
     <ClInclude Include="Include\Component\BehaviourList.h" />
+    <ClInclude Include="Include\Component\CollisionEvent.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
-    <ClInclude Include="Resource\Behaviours\BehaviourScripts\TestBehaviour.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Include\Utility\ComponentGUID.h" />
-    <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Renderer.h" />
     <ClInclude Include="Include\Component\RigidBody.h" />
@@ -142,8 +138,6 @@
     <ClInclude Include="Include\System\SystemMessage.h" />
     <ClInclude Include="Include\System\Time\ScopedTimer.h" />
     <ClInclude Include="Include\System\Time\TimeDefs.h" />
-    <ClInclude Include="Include\Utility\ComponentGUID.h" />
-    <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\System\Events\EventSystem.h" />
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui.h" />

@@ -258,7 +258,7 @@ namespace Dystopia
 			/*Start Reading Directory*/
 			if (ReadDirectoryChangesW(marrFileHandles[_Index],
 				&marrFileInfo[_Index].front(),
-				marrFileInfo[_Index].size(),
+				static_cast<DWORD>(marrFileInfo[_Index].size()),
 				false,
 				FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
 				&bytes_read,
@@ -285,7 +285,7 @@ namespace Dystopia
 
 			if (ReadDirectoryChangesW(mDll_Handle,
 				&mDll_FileInfo.front(),
-				mDll_FileInfo.size(),
+				static_cast<DWORD>(mDll_FileInfo.size()),
 				false,
 				FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
 				&bytes_read,
@@ -634,6 +634,17 @@ namespace Dystopia
 		void SetCompilerFlags(std::wstring const & _Flags)
 		{
 			mCompilerFlags = _Flags;
+		}
+
+		~Hotloader()
+		{
+			CloseHandle(mDll_Handle);
+			CloseHandle(mDll_Overlap.hEvent);
+
+			for (auto & elem : marrFileHandles)
+				CloseHandle(elem);
+			for (auto & elem : marraOverlapped)
+				CloseHandle(elem.hEvent);
 		}
 
 	private:

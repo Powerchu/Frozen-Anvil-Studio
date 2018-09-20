@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component\RigidBody.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Camera\CameraSystem.h"
+#include "System/Collision/CollisionSystem.h"
 #include "Object\GameObject.h"
 #include <tuple>
 #include <utility>
@@ -53,7 +54,7 @@ namespace Dystopia
 	{
 		static C* Extract(void) 
 		{
-			return EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>()->RequestComponent();
+			return reinterpret_cast<C*>(EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>()->RequestComponent());
 		}
 	};
 

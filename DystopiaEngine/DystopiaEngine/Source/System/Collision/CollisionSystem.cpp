@@ -1,5 +1,6 @@
 #include "System\Collision\CollisionSystem.h"
 #include "Component\Collider.h"
+
 #include <map>
 #include <utility>
 
@@ -22,7 +23,7 @@ namespace Dystopia
 	{
 		_dt;
 		using CollisionTable = std::pair<eColliderType, eColliderType>;
-		using fpCollisionResolution = bool(CollisionSystem::*)(Collider const * const &, Collider const * const &)const;
+		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
 		using CollisionTableMap = std::map < CollisionTable, fpCollisionResolution>;
 
 		bool isColliding;
@@ -77,7 +78,7 @@ namespace Dystopia
 		this->mArrOfCollider.push_back(_Col);
 	}
 
-	bool CollisionSystem::AABBvsAABB(Collider const * const & _ColA, Collider const * const & _ColB) const
+	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const
 	{
 		const auto col_a = dynamic_cast<const AABB * const>(_ColA);
 		const auto col_b = dynamic_cast<const AABB * const>(_ColB);
@@ -85,10 +86,10 @@ namespace Dystopia
 		return col_a->isColliding(col_b);
 	}
 
-	bool CollisionSystem::ConvexVsConvex(Collider const * const & _ColA, Collider const * const & _ColB) const
+	bool CollisionSystem::ConvexVsConvex(Collider * const & _ColA, Collider * const & _ColB) const
 	{
-		const auto col_a = dynamic_cast<const Convex * const>(_ColA);
-		const auto col_b = dynamic_cast<const Convex * const>(_ColB);
+		const auto col_a = dynamic_cast<Convex * const>(_ColA);
+		const auto col_b = dynamic_cast<Convex * const>(_ColB);
 		
 		return col_a->isColliding(col_b);
 	}

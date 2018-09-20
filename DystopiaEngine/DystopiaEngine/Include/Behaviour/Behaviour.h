@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class CollisionEvent;
+	struct CollisionEvent;
 
 	class _DLL_EXPORT Behaviour : public Component
 	{
