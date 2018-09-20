@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/Array.h"
 #include "IO/TextSerialiser.h"
 
+#include "System/Base/ComponentDonor.h"
 #include "System\Collision\CollisionSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Physics/PhysicsSystem.h"
@@ -42,16 +43,16 @@ namespace Dystopia
 			template<typename C>
 			struct SystemFunctionHelper
 			{
-				static void Serialise()
+				static void Serialise(TextSerialiser & _Serialiser)
 				{
 					using System = typename C::SYSTEM;
-					(EngineCore::GetInstance()->GetSystem<System>())->Serialise();
+					static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->GetSystem<System>())->Serialise(_Serialiser);
 				}
 
-				static void Unserialise()
+				static void Unserialise(TextSerialiser & _Serialiser)
 				{
 					using System = typename C::SYSTEM;
-					(EngineCore::GetInstance()->GetSystem<System>())->Unserialise();
+					static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->GetSystem<System>())->Unserialise(_Serialiser);
 				}
 			};
 
@@ -91,32 +92,32 @@ namespace Dystopia
 				static constexpr unsigned Size = 1;
 			};
 
-			static void SystemSerialise()
+			static void SystemSerialise(TextSerialiser & _Serialiser)
 			{
-				using pLoadFunc = void(*)();
-				using NonRepeatUsable = typename RemoveRepeat<typename Utility::MetaExtract<Seq, UsableComponents>::result::type...>::type;
+				using pLoadFunc = void(*)(TextSerialiser &);
+				//using NonRepeatUsable = typename RemoveRepeat<typename Utility::MetaExtract<Seq, UsableComponents>::result::type...>::type;
 
 				static auto SysArray = Ctor::MakeArray<pLoadFunc>
 				(
-					static_cast<pLoadFunc>(&SystemFunctionHelper<typename Utility::MetaExtract<NonRepeatUsable::Size, NonRepeatUsable>::result::type>::Serialise) ...
+					static_cast<pLoadFunc>(&SystemFunctionHelper<typename Utility::MetaExtract<Seq, UsableComponents>::result::type>::Serialise) ...
 				);
 
 				for (unsigned i = 0; i < sizeof...(Seq); ++i)
 				{
-					SysArray[i]();
+					SysArray[i](_Serialiser);
 				}
 			}
 
-			static void SystemUnserialise()
+			static void SystemUnserialise(TextSerialiser & _Serialiser)
 			{
-				using pLoadFunc = void(*)();
+				using pLoadFunc = void(*)(TextSerialiser &);
 				static auto SysArray = Ctor::MakeArray<pLoadFunc>
 					(
 						static_cast<pLoadFunc>(&SystemFunctionHelper<typename Utility::MetaExtract<Seq, UsableComponents>::result::type>::Unserialise) ...
 					);
 				for (unsigned i = 0; i < sizeof...(Seq); ++i)
 				{
-					SysArray[i]();
+					SysArray[i](_Serialiser);
 				}
 			}
 
@@ -213,7 +214,7 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 	/*Get Next Scene to Unserialise*/
 	mpNextScene->Unserialise(SerialObj);
 	/*Get all System who are ComponentDonor to unserialise*/
-	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise();
+	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
 	/*Consume End Block*/
 	SerialObj.ConsumeEndBlock();
 }

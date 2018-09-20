@@ -29,11 +29,16 @@ namespace Dystopia
 		template <typename ... U>
 		Ty* RequestComponent(U&& ...);
 
+		void Serialise(TextSerialiser &) const;
+
+		void Unserialise(TextSerialiser &);
+
 
 	protected:
 
 		typename Settings::type mComponents;
 	};
+
 }
 
 
@@ -50,6 +55,16 @@ inline Ty* Dystopia::ComponentDonor<Ty, S>::RequestComponent(U&& ... _Args)
 	return mComponents.Emplace(Utility::Forward<U>(_Args)...);
 }
 
+
+template<typename Ty, typename Settings>
+inline void Dystopia::ComponentDonor<Ty, Settings>::Serialise(TextSerialiser &) const
+{
+}
+
+template<typename Ty, typename Settings>
+inline void Dystopia::ComponentDonor<Ty, Settings>::Unserialise(TextSerialiser &)
+{
+}
 
 
 #endif		// INCLUDE GUARD
