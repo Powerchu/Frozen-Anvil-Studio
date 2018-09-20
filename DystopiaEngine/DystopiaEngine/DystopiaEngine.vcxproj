@@ -28,7 +28,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\Component\CollisionEvent.cpp" />
+    <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="Source\Editor\Clipboard.cpp" />
+    <ClCompile Include="Source\Component\Colliders\Circle.cpp" />
     <ClCompile Include="Source\Editor\CommandList.cpp" />
     <ClCompile Include="Source\Editor\DefaultFactory.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
@@ -36,8 +39,11 @@
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp" />
+    <ClCompile Include="Source\System\Physics\CollisionResolution.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp" />
+    <ClCompile Include="Source\Component\Particle.cpp" />
+    <ClCompile Include="Source\Component\Primitive.cpp" />
     <ClCompile Include="Source\Component\Renderer.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp" />
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp" />
@@ -96,9 +102,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="CharacterController.h" />
     <ClInclude Include="Include\Component\BehaviourList.h" />
+    <ClInclude Include="Include\Component\CollisionEvent.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
+    <ClInclude Include="Include\Component\Particle.h" />
+    <ClInclude Include="Include\Component\Primitive.h" />
+    <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Renderer.h" />
     <ClInclude Include="Include\Component\RigidBody.h" />
@@ -127,8 +138,6 @@
     <ClInclude Include="Include\System\SystemMessage.h" />
     <ClInclude Include="Include\System\Time\ScopedTimer.h" />
     <ClInclude Include="Include\System\Time\TimeDefs.h" />
-    <ClInclude Include="Include\Utility\ComponentGUID.h" />
-    <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\System\Events\EventSystem.h" />
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h" />
     <ClInclude Include="..\Dependancies\ImGui\imgui.h" />

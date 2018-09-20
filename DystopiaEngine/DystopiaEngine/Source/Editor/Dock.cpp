@@ -1496,12 +1496,3 @@ void InitTabs()
 
 #endif //EDITOR
 
-
-
-
-
-
-
-
-
-

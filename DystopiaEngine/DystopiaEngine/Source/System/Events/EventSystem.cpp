@@ -145,7 +145,9 @@ namespace Dystopia
 	{}
 
 	void EventSystem::LoadSettings(TextSerialiser& _ser)
-	{}
+	{
+		UNUSED_PARAMETER(_ser);
+	}
 
 	EventID	EventSystem::CreateEvent(const char* _eventName)
 	{

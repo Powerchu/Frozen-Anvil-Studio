@@ -29,7 +29,9 @@ namespace Dystopia
 
 	using UsableComponents = Utility::MetaAutoIndexer <
 		class Camera,
-		class Renderer
+		class Renderer,
+		class Convex
+		//class Particle
 	>::result;
 
 	// Generic Tag for Components

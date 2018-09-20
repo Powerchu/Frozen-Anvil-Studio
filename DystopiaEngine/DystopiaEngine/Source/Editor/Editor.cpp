@@ -39,6 +39,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\GUID.h"
 #include "System/File/FileSystem.h"
 #include "System//Behaviour/BehaviourSystem.h"
+#include <System/Physics/PhysicsSystem.h>
 /* Editor includes */
 #include "Editor\EGUI.h"
 #include "Editor\Editor.h"
@@ -99,13 +100,15 @@ namespace Dystopia
 		mpWin{ nullptr }, 
 		mpGfx{ nullptr },
 		mpSceneSystem{ nullptr },
+		mpPhysicsSystem{nullptr},
 		mpProfiler{ nullptr },
-		mpFocusGameObj{ nullptr },
-		mpInput{ new EditorInput{} },
 		mpEditorEventSys{ new EditorEventHandler{} },
+		mpInput{ new EditorInput{} },
 		mpComdHandler{ new CommandHandler{} },
 		mpGuiSystem{ new GuiSystem{} },
-		mpTimer{ new Timer{} }
+		mpTimer{ new Timer{} },
+		mpFocusGameObj{ nullptr }
+
 	{}
 
 	Editor::~Editor(void)
@@ -122,6 +125,7 @@ namespace Dystopia
 		mpGfx			= mpDriver->GetSystem<GraphicsSystem>();	// driver init-ed
 		mpSceneSystem	= mpDriver->GetSystem<SceneSystem>();		// driver init-ed
 		mpProfiler		= mpDriver->GetSystem<Profiler>();			// driver init-ed
+		mpPhysicsSystem = mpDriver->GetSystem<PhysicsSystem>();		// driver init-ed
 
 		LoadDefaults();
 		mpInput->Init();
@@ -319,6 +323,8 @@ namespace Dystopia
 			break;
 		case EDITOR_LOAD:
 			Load();
+			break;
+		default:
 			break;
 		}
 		mCurrentState = mNextState;
@@ -569,7 +575,7 @@ namespace Dystopia
 		mpFocusGameObj = nullptr;
 	}
 
-	GameObject* Editor::FindGameObject(const unsigned long& _id) const
+	GameObject* Editor::FindGameObject(const uint64_t& _id) const
 	{
 		return mpSceneSystem->GetCurrentScene().FindGameObject(_id);
 	}

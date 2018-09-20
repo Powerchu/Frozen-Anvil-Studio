@@ -88,7 +88,7 @@ void Dystopia::SceneSystem::LoadSettings(TextSerialiser&)
 
 void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 {
-
+	UNUSED_PARAMETER(_strFile);
 }
 
 

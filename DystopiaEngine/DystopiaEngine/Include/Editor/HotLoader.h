@@ -258,7 +258,7 @@ namespace Dystopia
 			/*Start Reading Directory*/
 			if (ReadDirectoryChangesW(marrFileHandles[_Index],
 				&marrFileInfo[_Index].front(),
-				marrFileInfo[_Index].size(),
+				static_cast<DWORD>(marrFileInfo[_Index].size()),
 				false,
 				FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
 				&bytes_read,
@@ -285,7 +285,7 @@ namespace Dystopia
 
 			if (ReadDirectoryChangesW(mDll_Handle,
 				&mDll_FileInfo.front(),
-				mDll_FileInfo.size(),
+				static_cast<DWORD>(mDll_FileInfo.size()),
 				false,
 				FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
 				&bytes_read,
@@ -452,12 +452,12 @@ namespace Dystopia
 				std::error_code error;
 
 				std::filesystem::recursive_directory_iterator iter{ p,std::filesystem::directory_options::skip_permission_denied,error };
-				for (auto & elem : iter)
+				for (auto & i : iter)
 				{
-					if (CheckFileExtension(elem.path().filename().wstring()) == eCpp && elem.path().filename().wstring() != FileName)
+					if (CheckFileExtension(i.path().filename().wstring()) == eCpp && i.path().filename().wstring() != FileName)
 					{
-						std::string a = elem.path().string();
-						OutputCommand += L" \"" + elem.path().wstring() + L"\"";
+						std::string a = i.path().string();
+						OutputCommand += L" \"" + i.path().wstring() + L"\"";
 					}
 				}
 			}
@@ -636,6 +636,17 @@ namespace Dystopia
 			mCompilerFlags = _Flags;
 		}
 
+		~Hotloader()
+		{
+			CloseHandle(mDll_Handle);
+			CloseHandle(mDll_Overlap.hEvent);
+
+			for (auto & elem : marrFileHandles)
+				CloseHandle(elem);
+			for (auto & elem : marraOverlapped)
+				CloseHandle(elem.hEvent);
+		}
+
 	private:
 
 		static constexpr unsigned NumOfFileInfo = 256;
@@ -792,7 +803,9 @@ namespace Dystopia
 					HMODULE dllModule = LoadLibrary(elem.path().wstring().c_str());
 					if (dllModule != NULL)
 					{
+						// TODO: What is this for?
 						auto pointer = mvDLL.Emplace(elem.path().parent_path().wstring(), elem.path().filename().wstring(), dllModule);
+						UNREFERENCED_PARAMETER(pointer);
 					}
 				}
 			}

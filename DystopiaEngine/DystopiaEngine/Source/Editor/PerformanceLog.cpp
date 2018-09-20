@@ -75,6 +75,7 @@ namespace Dystopia
 
 	void PerformanceLog::Update(const float& _dt)
 	{
+		UNUSED_PARAMETER(_dt);
 		static constexpr float offset	= -80.f;
 		mGraphSizeB.x					= Math::Clamp(Size().x + offset, 50.f, Size().x);
 		mGraphSizeS.x					= mGraphSizeB.x;

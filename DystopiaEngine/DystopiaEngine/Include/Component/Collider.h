@@ -1,4 +1,3 @@
-#pragma once
 #ifndef COLLIDER_H
 #define COLLIDER_H
 
@@ -6,8 +5,9 @@
 #include "Component\ComponentList.h"           /*Component List*/
 #include "Math\Vector4.h"                      /*Vector*/
 #include "DataStructure\AutoArray.h"	       /*AutoArray Data Structure*/
-#include "System\Collision\CollisionSystem.h"            /*Collision System*/
-#include "Utility\MetaAlgorithms.h"		// MetaFind
+#include "Utility\MetaAlgorithms.h"		       // MetaFind
+#include "Component/CollisionEvent.h"
+
 
 #define CLOCKWISE 1
 /*
@@ -38,16 +38,21 @@ namespace Dystopia
 {
 	typedef char Status;
 
+	struct CollisionEvent;
+
+	struct CollisionSystem;
+
 	enum class eColliderType
 	{
 		BASE,
-		AABB,           /*Status : Not Done*/
+		AABB,
+		CIRCLE,			/*Status : Not Done*/
 		TRIANGLE,       /*Status : Not Done*/
 		CONVEX,         /*Status : Not Done*/
 
 		CONCAVE,		/*This is a dream*/
 
-		TOTAL,
+		TOTAL
 	};
 
 
@@ -56,8 +61,9 @@ namespace Dystopia
 	{
 		/*Position of the vectice*/
 		Math::Point3D mPosition;
-		Vertice(Math::Point3D const & _p)
-			:mPosition{_p}
+		
+		Vertice(Math::Point3D const & p)
+			:mPosition{p}
 		{
 
 		}
@@ -70,25 +76,32 @@ namespace Dystopia
 
 	struct Edge
 	{
-		Math::Point3D mPos;
-		Math::Vec3D   mVec3;
-		Math::Vec3D   mNorm3;
-		int SimplexIndex;
+		Math::Point3D  mPos;
+		Math::Vec3D    mVec3;
+		Math::Vec3D    mNorm3;
+		double         OrthogonalDistance;
+		int            SimplexIndex;
 	};
 
-	class _DLL_EXPORT Collider : public Dystopia::Component
+	class _DLL_EXPORT Collider : public Component
 	{
 	public:
 
-		//unsigned GetComponentType(void) const
-		//{
-		//	return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
-		//};
+		using SYSTEM = CollisionSystem;
+
+		/*
+		unsigned GetComponentType(void) const
+		{
+			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+		};
+		*/
+#if EDITOR
 		static const std::string GetCompileName(void) { return "Collider"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
+#endif
 
-		static const eColliderType ColliderType = eColliderType::BASE;
-		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
+		static  const eColliderType ColliderType = eColliderType::BASE;
+		virtual const eColliderType GetColliderType(void) const { return ColliderType; } // returns const
 		/*Constructors*/
 
 		/*Default - (Box Collider)*/
@@ -105,27 +118,55 @@ namespace Dystopia
 		virtual void Unload(void);
 		/*Duplicate the Component*/
 		virtual Collider* Duplicate() const;
+		/*Get Array of collision event*/
+		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
 
-		Math::Vec3D GetOffSet() const;
+
+
+		// Gettors
+		Math::Vec3D GetOffSet()   const;
+		bool       Get_IsBouncy() const;
+		// Settors
+		bool Set_IsBouncy(const bool);
+
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const;
 		virtual void Unserialise(TextSerialiser&);
 
 		virtual ~Collider();
 
+	protected:
+
+		/*AutoArray of collision event*/
+		AutoArray<CollisionEvent>  mCollisionEvent;
+
 	private:
 		 //Status mStatus;
+
+		// Is Bouncy (whether to deflect in resolution)
+		bool m_IsBouncy;
 
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
 	};
 
-	class _DLL_EXPORT Convex : public virtual Collider
+	class _DLL_EXPORT Convex : public Collider
 	{
 	public:
 
+		using SYSTEM = CollisionSystem;
+
+		unsigned GetComponentType(void) const
+		{
+			return Utility::MetaFind_t<Utility::Decay_t<Collider>, AllComponents>::value;
+		};
+
+		static const std::string GetCompileName(void) { return "Convex"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
+
 		static const eColliderType ColliderType = eColliderType::CONVEX;
-		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
+		virtual const eColliderType GetColliderType(void) const override { return ColliderType; }
+		
 		/*Constructors*/
 
 		/*Convex Default Constructor*/
@@ -158,35 +199,50 @@ namespace Dystopia
 
 		Vertice GetFarthestPoint(const Math::Vec3D & _Dir)const;
 
-		bool isColliding(const Convex & _ColB) const;
-		bool isColliding(const Convex * const & _pColB) const;
-		bool isColliding(const Convex & _pColB, const Math::Vec3D & _v3Dir) const;
+		bool isColliding(Convex & _ColB);
+		bool isColliding(Convex * const & _pColB);
+		bool isColliding(Convex & _pColB, const Math::Vec3D & _v3Dir);
+
+		CollisionEvent GetCollisionEvent(AutoArray<Vertice> & _Simplex, const Convex & _ColB) const;
+
 		/*Static Member Functions*/
 
 		/*Support Function for getting the farthest point with relation to a Vector*/
 		static Vertice GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir);
+
 		static Edge	   GetClosestEdge(AutoArray<Vertice> & _Simplex);
 
 		static Math::Vec3D Support(const Convex & _ColA,
 			                       const Convex & _ColB,
 			                       const Math::Vec3D & _Dir);
 
+		static Math::Vec3D Support(const Convex & _ColA,
+			                       const Convex & _ColB,
+			                       const Math::Vec3D & _Dir,
+			                       bool & hasPoint);
+
+		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
+
 		Math::Vec3D Support(const Convex & _ColB,
 			                const Math::Vec3D & _Dir)const;
 		
-		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
+
 
 	protected:
 
+		CollisionEvent GetCollisionEvent(AutoArray<Vertice> & _Simplex,
+			                             const Convex & _ColB);
 
 		/*The vertices of the collider in the Collider Local Coordinate System*/
-		AutoArray<Vertice> mVertices;
+		AutoArray<Vertice>         mVertices;
 	};
 
 
 	class _DLL_EXPORT AABB : public Convex
 	{
 	public:
+
+		using SYSTEM = Collider::SYSTEM;
 
 		static const eColliderType ColliderType = eColliderType::AABB;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
@@ -213,8 +269,11 @@ namespace Dystopia
 		virtual void Unserialise(TextSerialiser&);
 
 		/*Collision Check Functions*/
-		bool isColliding(const AABB & _ColB);
-		bool isColliding(const AABB * const & _ColB);
+		bool isColliding(const AABB & other_col) const;
+		bool isColliding(const AABB * const & other_col) const;
+
+		/*Sweeping Collision Check*/
+		float SweepingCheck(const AABB & other_col) const;
 
 	private:
 		float mfWidth;
@@ -222,13 +281,54 @@ namespace Dystopia
 
 		Vertice * mMin;
 		Vertice * mMax;
-		
+	};
+
+	class _DLL_EXPORT Circle : public Collider
+	{
+	public:
+
+		using SYSTEM = Collider::SYSTEM;
+
+		static const eColliderType ColliderType = eColliderType::CIRCLE;
+		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
+		/*Constructors*/
+
+		/*Default - (Box Collider)*/
+		Circle();
+		/*Constructor*/
+		Circle(float const & _radius, Math::Vec3D const & _v3Offset = { 0,0,0,0 });
+
+		/*Load the Component*/
+		virtual void Load(void);
+		/*Initialise the Component*/
+		virtual void Init(void);
+		/*OnDestroy*/
+		virtual void OnDestroy(void);
+		/*Unload the Component*/
+		virtual void Unload(void);
+		/*Duplicate the Component*/
+		virtual Circle* Duplicate() const;
+
+		/*Serialise and Unserialise*/
+		virtual void Serialise(TextSerialiser&) const;
+		virtual void Unserialise(TextSerialiser&);
+
+		/*Collision Check Functions*/
+		bool isColliding(const Circle & other_col) const;
+		bool isColliding(const Circle * const & other_col) const;
+
+	private:
+		float m_radius;
+		Math::Vec3D m_originCentre; // GLOBAL COORDINATES
+
 	};
 
 
 	class Triangle : public Convex
 	{
 	public:
+
+		using SYSTEM = Collider::SYSTEM;
 
 		static const eColliderType ColliderType = eColliderType::TRIANGLE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }

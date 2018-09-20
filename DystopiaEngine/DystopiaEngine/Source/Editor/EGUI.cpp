@@ -18,7 +18,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Window\Window.h"
 #include "System\Window\WindowManager.h"
 #include "System\Graphics\GraphicsSystem.h"
-#include "Math\Vector4.h"
 #include "Math\Vector2.h"
 #include "GL\glew.h"
 #include <iostream>
