@@ -51,9 +51,11 @@ namespace Dystopia
 	template <typename C, typename SFINAE = std::enable_if_t<!std::is_same_v<std::decay_t<C>, Component>, C>>
 	struct AuxGenFunction
 	{
-		static C* Extract(void) 
+		static Component* Extract(void) 
 		{
-			return EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>()->RequestComponent();
+			C* comp = EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>()->RequestComponent();
+			comp->Init();
+			return comp;
 		}
 	};
 
@@ -78,7 +80,6 @@ namespace Dystopia
 			<
 				typename GetType<typename Utility::MetaExtract<Ns, UsableComponents>::result::type * (&)(void) >::type ...    //::result::type * (&)(void)
 			>;
-			tupleType mData = { AuxGenFunction<typename Utility::MetaExtract<Ns, UsableComponents>::result::type>::Extract ... };
 
 			struct ApplyFunction
 			{
@@ -89,16 +90,16 @@ namespace Dystopia
 				}
 			};
 
-			template<typename A>
+			template<typename A, typename List>
 			struct BreakTuple;
-			template<size_t Head, size_t ... Rest>
-			struct BreakTuple<std::index_sequence<Head, Rest ...>>
+			template<typename List, size_t Head, size_t ... Rest>
+			struct BreakTuple<std::index_sequence<Head, Rest ...>, List>
 			{
-				std::tuple< typename GetType<typename Utility::MetaExtract<Rest, UsableComponents>::result::type* (&)(void)>::type ...> mData
-					= { AuxGenFunction<typename Utility::MetaExtract<Rest, UsableComponents>::result::type>::Extract ... };
+				std::tuple< typename GetType<typename Utility::MetaExtract_t<Rest, List>::type* (&)(void)>::type ...> mData
+					= { AuxGenFunction<typename Utility::MetaExtract_t<Rest, List>::type>::Extract ... };
 			};
-			template<size_t Last>
-			struct BreakTuple<std::index_sequence<Last>>
+			template<typename List>
+			struct BreakTuple<std::index_sequence<0>, List>
 			{
 				std::tuple<typename Utility::MetaExtract<size - 1, UsableComponents>::result::type* (&)(void)> mData
 					= { AuxGenFunction<typename Utility::MetaExtract<size - 1, UsableComponents>::result::type>::Extract  };
@@ -110,25 +111,36 @@ namespace Dystopia
 			template<size_t Head, size_t ... Rest>
 			struct Helper<std::index_sequence<Head, Rest ...>>
 			{
-				template <typename... Ts>
+				template <typename List, typename... Ts>
 				void* HelperFunction(unsigned int _i, std::tuple<Ts ...>& _data)
 				{
-					static BreakTuple<std::make_index_sequence<sizeof...(Ts)>> newData;
+					/*
+					BreakTuple<Utility::MetaPopFront_t<List>> newData;
 					if (!_i)
 					{
 						ApplyFunction a;
 						return a(std::get<0>(_data));
 					}
-					return HelperFunction(_i - 1, newData.mData);
+					return HelperFunction<Utility::MetaPopFront_t<List>>(_i - 1, newData.mData);
+					*/
 				}
 			};
 
 			Component* Get(unsigned int _i)
 			{
+				static auto mData = Ctor::MakeArray<Component*(*)(void)>(AuxGenFunction<typename Utility::MetaExtract<Ns, UsableComponents>::result::type>::Extract 
+					...
+				);
+				/*
 				Helper<std::make_index_sequence<size>> h;
 				if (_i >= size || _i < 0)
 					return nullptr;
-				return static_cast<Component*>(h.HelperFunction(_i, mData));
+				return static_cast<Component*>(h.HelperFunction<UsableComponents>(_i, mData));
+				*/
+
+				if (_i < size || _i >= 0)
+					return mData[_i]();
+				return nullptr;
 			}
 		};
 

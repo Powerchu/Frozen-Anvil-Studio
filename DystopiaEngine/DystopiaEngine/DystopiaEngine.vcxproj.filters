@@ -176,7 +176,6 @@
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
-    <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
@@ -194,6 +193,9 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\Clipboard.cpp">
       <Filter>Editor\Clipboard</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\File\FileSystem.cpp">
+      <Filter>Game Engine\SubSystems\File</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -491,7 +493,7 @@
       <Filter>Game Engine\Systems\Base</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\File\FileSystem.h">
-      <Filter>Game Engine\Systems\File</Filter>
+      <Filter>Game Engine\SubSystems\File</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Profiler\Profiler.h">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
@@ -784,14 +786,20 @@
     <Filter Include="Editor\Clipboard">
       <UniqueIdentifier>{cf5b3310-da32-4143-84b9-30e7d09b1840}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Systems\File">
-      <UniqueIdentifier>{845f6b31-e949-414f-88d7-9fec6ab7613f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Framebuffer">
       <UniqueIdentifier>{65da04fa-f08d-4a05-8517-ee74099485c3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource">
       <UniqueIdentifier>{eef3a09b-6a1f-40e7-8621-b7c7429287cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Shader">
+      <UniqueIdentifier>{d826b974-494a-4e22-b5fa-de3f52202e3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Texture">
+      <UniqueIdentifier>{0360ec6f-e4ea-430d-9619-f3c845e07bce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\File">
+      <UniqueIdentifier>{845f6b31-e949-414f-88d7-9fec6ab7613f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
