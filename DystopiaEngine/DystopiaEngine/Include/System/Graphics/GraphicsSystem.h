@@ -18,9 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Base\ComponentDonor.h"
 #include "System\Graphics\Framebuffer.h"
 
-#include <string>
 #include <map>
-#include "DataStructure\AutoArray.h"
+#include <string>
 
 
 namespace Dystopia
@@ -57,8 +56,9 @@ namespace Dystopia
 		bool InitOpenGL(Window&);
 		void BindOpenGL(Window&) noexcept;
 
-		void LoadDefaults(void);
-		void LoadSettings(DysSerialiser_t&);
+		void LoadDefaults(void) override;
+		void LoadSettings(DysSerialiser_t&) override;
+		void SaveSettings(DysSerialiser_t&) override;
 
 		void     LevelLoad(TextSerialiser&);
 		void     LoadMesh(const std::string&);

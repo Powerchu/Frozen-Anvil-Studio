@@ -128,6 +128,8 @@
     <ClInclude Include="Include\System\Base\ComponentDonor.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Graphics\Framebuffer.h" />
+    <ClInclude Include="Include\System\Graphics\ShaderSystem.h" />
+    <ClInclude Include="Include\System\Graphics\TextureSystem.h" />
     <ClInclude Include="Include\System\Input\MouseData.h" />
     <ClInclude Include="Include\System\Logger\LoggerSystem.h" />
     <ClInclude Include="Include\System\Logger\LogPriority.h" />

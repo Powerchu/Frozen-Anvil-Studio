@@ -280,9 +280,14 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 	DRAW_MODE = GL_TRIANGLES;
 }
 
-void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t&)
+void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 {
-	// TODO
+	_in >> DRAW_MODE;
+}
+
+void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
+{
+	_out << DRAW_MODE;
 }
 
 
@@ -302,6 +307,9 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _strName)
 {
+	if (texturelist.find(_strName) != texturelist.end())
+		return texturelist[_strName];
+
 	size_t first = _strName.rfind("/");
 	if (first == std::string::npos)
 	{

@@ -45,7 +45,8 @@ namespace Dystopia
 		void Update(float _dt);
 		void Shutdown(void);
 		void LoadDefaults(void);
-		void LoadSettings(TextSerialiser&);
+		void LoadSettings(DysSerialiser_t&) override;
+		void SaveSettings(DysSerialiser_t&) override;
 
 		void ToggleFullscreen(bool _bFullscreen);
 		void ShowCursor(bool _bShow) const;
