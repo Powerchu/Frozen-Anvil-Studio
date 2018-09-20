@@ -70,6 +70,7 @@ namespace Dystopia
 
 		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
+		void EditorUI(void) noexcept override;
 
 	private:
 
@@ -80,6 +81,10 @@ namespace Dystopia
 		Texture* mpTexture;
 
 		Renderer(const Renderer&) = delete;
+
+		void TextureField();
+		void MeshField();
+		void ShaderField();
 	};
 }
 

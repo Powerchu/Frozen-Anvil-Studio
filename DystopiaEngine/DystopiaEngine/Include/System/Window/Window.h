@@ -42,6 +42,7 @@ namespace Dystopia
 		void SetTitle(const std::wstring&);
 		void SetStyle(long _nStyle, long _nStyleEx);
 		void SetSize(int _nWidth, int _nHeight);
+		void SetSizeNoAdjust(int _nWidth, int _nHeight);
 
 		void CenterWindow(void) noexcept;
 

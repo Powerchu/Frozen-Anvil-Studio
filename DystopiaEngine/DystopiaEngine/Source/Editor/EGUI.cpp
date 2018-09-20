@@ -204,8 +204,8 @@ namespace Dystopia
 		int w, h, display_w, display_h;
 		// glfwGetWindowSize(mpWin, &w, &h);
 		// glfwGetFramebufferSize(mpWin, &display_w, &display_h);
-		w = display_w = 1600;
-		h = display_h = 900;
+		w = display_w = mpWin->GetMainWindow().GetWidth();
+		h = display_h = mpWin->GetMainWindow().GetHeight();
 		io.DisplaySize = ImVec2{ static_cast<float>(w), static_cast<float>(h) };
 		io.DisplayFramebufferScale = ImVec2{ w > 0 ? static_cast<float>(display_w / w) : 0, 
 											 h > 0 ? static_cast<float>(display_h / h) : 0 };
@@ -240,7 +240,7 @@ namespace Dystopia
 		// Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
 		ImGui::NewFrame();
 		StartFullDockableSpace();
-		glViewport(0, 0, 1600, 900);
+		glViewport(0, 0, display_w, display_h);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}

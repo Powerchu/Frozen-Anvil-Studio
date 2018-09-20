@@ -118,7 +118,6 @@ namespace Dystopia
 	void Editor::Init()
 	{
 		mpDriver		= Dystopia::EngineCore::GetInstance();
-
 		mpDriver->LoadSettings();
 		mpDriver->Init();
 
@@ -131,7 +130,8 @@ namespace Dystopia
 		LoadDefaults();
 		mpInput->Init();
 		mpEditorEventSys->Init();
-		EGUI::SetContext(mpComdHandler);
+
+		InstallHotkeys();
 
 		for (auto& e : mArrTabs)
 		{
@@ -142,8 +142,7 @@ namespace Dystopia
 			e->RemoveFocus();
 		}
 
-		InstallHotkeys();
-
+		EGUI::SetContext(mpComdHandler);
 		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
 			mCurrentState = EDITOR_EXIT;
 	}
@@ -252,6 +251,7 @@ namespace Dystopia
 	{
 		UnInstallHotkeys();
 
+		mpDriver->GetSubSystem<LoggerSystem>()->RedirectOutput(nullptr);
 		EGUI::Docking::ShutdownTabs();
 		for (auto& e : mArrTabs)
 		{
@@ -475,8 +475,6 @@ namespace Dystopia
 
 	void Editor::UpdateKeys()
 	{
-		const auto& queue = mpWin->GetMainWindow().GetInputQueue();
-
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ENTER, false);
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ESCAPE, false);
 
@@ -490,7 +488,7 @@ namespace Dystopia
 			mpGuiSystem->UpdateKey(i, false);
 
 		bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
-
+		const auto& queue = mpWin->GetMainWindow().GetInputQueue();
 		for (const auto& k : queue)
 		{
 			// 0 to 9
@@ -501,7 +499,10 @@ namespace Dystopia
 				mpGuiSystem->UpdateChar(caps ? k : k + 32);
 			// numpad 0 to 9
 			else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
-				mpGuiSystem->UpdateChar(k - 49);
+				mpGuiSystem->UpdateChar(k - 48);
+			// arithmetics
+			else if (k >= eButton::KEYBOARD_OEM_1 && k <= eButton::KEYBOARD_OEM_PERIOD)
+				mpGuiSystem->UpdateChar(k);
 			// misc keys like ctrl, del, back etc
 			else
 				mpGuiSystem->UpdateKey(k, true);
@@ -523,8 +524,6 @@ namespace Dystopia
 		}
 
 		mpGuiSystem->UpdateScroll(0, mpInput->GetMouseWheel());
-
-
 
 		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Z))
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_UNDO);

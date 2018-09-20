@@ -11,13 +11,14 @@
 
 namespace Dystopia
 {
-
+	class AABB;
+	class Convex;
 	class Collider;
 
 	class CollisionSystem : 
 	public Systems, 
-	public ComponentDonor<Collider>
-
+	public ComponentDonor<AABB>,
+	public ComponentDonor<Convex>
 	{
 	public:
 
@@ -49,7 +50,7 @@ namespace Dystopia
 
 	private:
 
-		AutoArray<Collider*> mArrOfCollider;
+		//AutoArray<Collider*> mArrOfCollider;
 	};
 
 }

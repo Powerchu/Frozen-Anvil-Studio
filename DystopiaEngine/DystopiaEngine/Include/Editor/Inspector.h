@@ -19,6 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class GameObject;
+	class BehaviourSystem;
+	static constexpr size_t MAX_BUFFER_SIZE = 128;
 	class Inspector : public EditorTab
 	{
 	public:
@@ -46,15 +48,25 @@ namespace Dystopia
 	private:
 		Inspector();
 
+		BehaviourSystem	*mpBehaviourSys;
 		GameObject		*mpFocus;
 		std::string		mLabel;
 		bool			mShowListOfComponents;
-		
+		bool			mPromptNewBehaviour;
+		bool			mPromptCreateBehaviour;
+		char			mBufferInput[MAX_BUFFER_SIZE];
+		char			mBufferCreator[MAX_BUFFER_SIZE];
+		char			mBufferLogin[MAX_BUFFER_SIZE];
 
 		void			GameObjectDetails();
 		void			GameObjectComponents();
-		void			AddComponentButton();
+		void			AddComponentButton(const Math::Vec2&);
 		void			ComponentsDropDownList();
+		void			AddBehaviourButton(const Math::Vec2&);
+		void			BehaviourDropDownList();
+		void			PromptCreateBehaviour();
+		void			ConfirmCreateBehaviour();
+		void			ResetBehaviourCreation();
 	};
 }
 
