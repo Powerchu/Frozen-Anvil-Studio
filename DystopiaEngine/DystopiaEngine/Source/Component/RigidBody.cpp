@@ -46,8 +46,14 @@ namespace Dystopia
 	void RigidBody::Init(void)
 	{
 		// Get Owner's Transform Component as pointer
-		mpOwnerTransform = GetOwner()->GetComponent<Transform>();
-		mPosition = TX->GetGlobalPosition();
+		if (nullptr == mpOwnerTransform)
+		{
+			if (GetOwner())
+			{
+				mpOwnerTransform = GetOwner()->GetComponent<Transform>();
+				mPosition = TX->GetGlobalPosition();
+			}
+		}
 		mfCustom_GravityScale = mbHasGravity ? mfCustom_GravityScale : 0.0F;
 		mfGravity = GRAVITY_CONSTANT * mfCustom_GravityScale;
 
@@ -85,7 +91,7 @@ namespace Dystopia
 
 		//TODO: Incorporate and move Gravity var to Physics System
 		// Calculate Acceleration
-		mAcceleration = Vec3D{ 0,mfGravity,0 };
+		mAcceleration = Vec3D{ 0,mfGravity*400,0 };
 		const Vec3D newAccel = mCumulativeForce * mfInvMass + mAcceleration;
 
 		// Calculate Velocity
