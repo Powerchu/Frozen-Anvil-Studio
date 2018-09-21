@@ -199,7 +199,6 @@
     <ClCompile Include="Source\Component\Primitive.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Source\System\Physics\CollisionResolution.cpp">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClCompile>
@@ -207,20 +206,12 @@
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehaviourScripts\TestBehaviour.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehaviourScripts\Whatever.cpp" />
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Component\CollisionEvent.cpp">
-      <Filter>Game Engine\Components\Colliders</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\File\FileSystem.cpp">
       <Filter>Game Engine\SubSystems\File</Filter>
-    </ClCompile>
-    <ClCompile Include="CharacterController.cpp">
-      <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
       <Filter>Game Engine\Systems\Behaviour</Filter>
@@ -233,6 +224,12 @@
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp">
       <Filter>Game Engine\SubSystems\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\CollisionEvent.cpp">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\CharacterController.cpp">
+      <Filter>Game Engine\Components\Physics\Character Controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -560,13 +557,18 @@
     <ClInclude Include="Include\System\Graphics\ShaderSystem.h">
       <Filter>Game Engine\SubSystems\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterController.h" />
-		<Filter>Game Engine\SubSystems\Shader\Shader</Filter>
+    <ClInclude Include="Include\Component\CollisionEvent.h">
+      <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\CollisionEvent.h" />
-    <ClInclude Include="Include\Component\Particle.h" />
-    <ClInclude Include="Include\Component\Primitive.h" />
-    <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
+    <ClInclude Include="Include\Component\Particle.h">
+      <Filter>Game Engine\Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Primitive.h">
+      <Filter>Game Engine\Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Physics\CollisionResolution.h">
+      <Filter>Game Engine\Systems\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="Include\System\Graphics\Shader.h">
       <Filter>Game Engine\SubSystems\Shader\Shader</Filter>
     </ClInclude>
@@ -576,9 +578,6 @@
     <ClInclude Include="Include\Component\Primitive.h">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Include\Utility\ComponentGUID.h" />
-    <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClInclude>
@@ -589,13 +588,7 @@
       <Filter>Game Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="Include\Component\CollisionEvent.h">
-      <Filter>Game Engine\Components\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\ComponentGUID.h">
-      <Filter>Utility\GUID</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\GUID.h">
-      <Filter>Utility\GUID</Filter>
+      <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\HotLoader.h">
       <Filter>Editor\Hotloader</Filter>
@@ -606,7 +599,6 @@
     <ClInclude Include="CharacterController.h">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClInclude>
@@ -618,6 +610,9 @@
     </ClInclude>
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h">
       <Filter>Game Engine\Systems\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\CharacterController.h">
+      <Filter>Game Engine\Components\Physics\Character Controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -882,6 +877,9 @@
     <Filter Include="Editor\Hotloader">
       <UniqueIdentifier>{83587c6d-76b1-44d6-8760-588fd1e7509b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Engine\Components\Physics\Character Controller">
+      <UniqueIdentifier>{dc0c52cd-8f25-4932-a9fd-7d1916f1378d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Game Engine\SubSystems\Shader\Shader">
@@ -901,13 +899,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="dystopia_x86_64.ico">
-      <Filter>Resource</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc">
       <Filter>Resource</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\Editor\icons\dystopia_x86_64.ico">
+      <Filter>Resource</Filter>
+    </Image>
   </ItemGroup>
 </Project>

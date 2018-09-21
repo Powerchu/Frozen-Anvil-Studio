@@ -1,10 +1,10 @@
 #ifndef RIGID_BODY_H
 #define RIGID_BODY_H
 
-#include <Component/Primitive.h>
-#include <Component/Component.h>
-#include <Component/ComponentList.h>
-#include <Math/Vector4.h>
+#include "Component/Primitive.h"
+#include "Component/Component.h"
+#include "Component/ComponentList.h"
+#include "Math/Vector4.h"
 
 //#include "Math/Quaternion.h"
 //#include "Math/Angles.h"

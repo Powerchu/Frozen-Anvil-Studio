@@ -123,7 +123,7 @@ namespace Dystopia
 
 	}
 
-	void CollisionSystem::InsertCollider(Collider * const & _Col)
+	void CollisionSystem::InsertCollider(Collider * const &)
 	{
 		//this->mArrOfCollider.push_back(_Col);
 	}

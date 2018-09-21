@@ -1,6 +1,4 @@
-#include "CharacterController.h"
-
-
+#include "Component/CharacterController.h"
 
 CharacterController::CharacterController()
 {

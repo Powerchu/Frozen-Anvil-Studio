@@ -64,7 +64,10 @@ inline void Dystopia::ComponentDonor<Ty, Settings>::Serialise(TextSerialiser & _
 	_Serialiser.InsertStartBlock("ComponentDonor");
 
 	for (auto & elem : mComponents)
+	{
+		UNUSED_PARAMETER(elem);
 		++Size;
+	}
 	_Serialiser << Size;
 
 	for (auto & elem : mComponents)

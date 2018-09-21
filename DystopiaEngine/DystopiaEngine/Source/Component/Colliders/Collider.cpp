@@ -97,9 +97,9 @@ namespace Dystopia
 		auto  third   = second+1;
 		do
 		{
-		  mIndexBuffer.push_back(first  - start);
-		  mIndexBuffer.push_back(second - start);
-		  mIndexBuffer.push_back(third - start);
+		  mIndexBuffer.push_back(static_cast<const short>(first  - start));
+		  mIndexBuffer.push_back(static_cast<const short>(second - start));
+		  mIndexBuffer.push_back(static_cast<const short>(third - start));
 
 		  auto copy = third++;
 		  second    = copy;

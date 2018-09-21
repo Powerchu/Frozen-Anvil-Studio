@@ -1,7 +1,7 @@
 #include "Component/RigidBody.h"
 #include "Component/Transform.h"
 #include "Object/GameObject.h"
-#include <System/Logger/LoggerSystem.h>
+#include "System/Logger/LoggerSystem.h"
 
 //TODO: change to physics systems
 #define GRAVITY_CONSTANT	-9.81F 

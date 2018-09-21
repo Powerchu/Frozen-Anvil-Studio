@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _TUPLE_H_
 
 #include "Globals.h"
-#include <Utility\MetaAlgorithms.h>
+#include "Utility\MetaAlgorithms.h"
 
 
 namespace

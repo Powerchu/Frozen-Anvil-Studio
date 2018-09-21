@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Camera\CameraSystem.h"
 #include "System/Input/InputSystem.h"
-#include <System/Physics/PhysicsSystem.h>
+#include "System/Physics/PhysicsSystem.h"
 #include "System/Collision/CollisionSystem.h"
 
 
@@ -29,7 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\Texture2D.h"
 #include "Component\Camera.h"
 
-#include <Component/RigidBody.h>
+#include "Component/RigidBody.h"
 
 namespace Dystopia
 {

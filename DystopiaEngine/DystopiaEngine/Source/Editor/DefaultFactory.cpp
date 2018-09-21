@@ -12,23 +12,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include <Editor/DefaultFactory.h>
+#include "Editor/DefaultFactory.h"
 
-#include <Component/Camera.h>
-#include <Component/Collider.h>
-#include <Component/Renderer.h>
-#include <Component/RigidBody.h>
+#include "Component/Camera.h"
+#include "Component/Collider.h"
+#include "Component/Renderer.h"
+#include "Component/RigidBody.h"
 
-#include <System/Driver/Driver.h>
-#include <System/Graphics/GraphicsSystem.h>
-#include <System/Camera/CameraSystem.h>
+#include "System/Driver/Driver.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Camera/CameraSystem.h"
 
 // TODO: DELETE
-#include <System/Physics/PhysicsSystem.h>
-#include <System/Collision/CollisionSystem.h>
+#include "System/Physics/PhysicsSystem.h"
+#include "System/Collision/CollisionSystem.h"
 
-#include <Object/GameObject.h>
-#include <Utility/GUID.h>
+#include "Object/GameObject.h"
+#include "Utility/GUID.h"
 
 namespace Dystopia
 {

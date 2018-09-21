@@ -29,7 +29,7 @@ for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
 
 Dystopia::GameObject::GameObject(void) noexcept
-	: GameObject{ Utility::Constant<decltype(mnID), ~0>::value }
+	: GameObject{ Utility::Constant<decltype(mnID), ~0ULL>::value }
 {
 
 }
@@ -50,7 +50,7 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
 
-	_obj.mnID = Utility::Constant<decltype(mnID), ~0>::value;
+	_obj.mnID = Utility::Constant<decltype(mnID), ~0ULL>::value;
 	_obj.mnFlags = FLAG_REMOVE;
 }
 
