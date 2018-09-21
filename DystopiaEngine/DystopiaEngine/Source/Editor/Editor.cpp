@@ -435,6 +435,19 @@ namespace Dystopia
 	{
 	}
 
+	CHAR* convert_from_wstring(const WCHAR* wstr)
+	{
+		int wstr_len = (int)wcslen(wstr);
+		int num_chars = WideCharToMultiByte(CP_UTF8, 0, wstr, wstr_len, NULL, 0, NULL, NULL);
+		CHAR* strTo = (CHAR*)malloc((num_chars + 1) * sizeof(CHAR));
+		if (strTo)
+		{
+			WideCharToMultiByte(CP_UTF8, 0, wstr, wstr_len, strTo, num_chars, NULL, NULL);
+			strTo[num_chars] = '\0';
+		}
+		return strTo;
+	}
+
 	void Editor::SaveAsProc()
 	{
 		HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -452,13 +465,16 @@ namespace Dystopia
 					IShellItem *pItem;
 					if (SUCCEEDED(pFileSave->GetResult(&pItem)))
 					{
-						PWSTR pszFilePath;
-						LPWSTR fileName[MAX_PATH];
-						if (SUCCEEDED(pItem->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &pszFilePath)) && 
-							SUCCEEDED(pFileSave->GetFileName(fileName)))
+						PWSTR pszFilePath, pszFileName;
+						if (SUCCEEDED(pItem->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &pszFilePath)) &&
+							SUCCEEDED(pItem->GetDisplayName(SIGDN_NORMALDISPLAY, &pszFileName)))
 						{
 							std::wstring path{ pszFilePath };
-							mpSceneSystem->SaveScene("SomeName", std::string{ path.begin(), path.end() });
+							std::wstring name{ pszFileName };
+							auto pos = name.find('.');
+							if (pos != std::string::npos) name.erase(pos);
+							mpSceneSystem->SaveScene(std::string{ name.begin(), name.end() }, 
+													 std::string{ path.begin(), path.end() });
 							CoTaskMemFree(pszFilePath);
 						}
 						pItem->Release();
