@@ -62,27 +62,27 @@ namespace Dystopia
 		mpColSys = EngineCore::GetInstance()->GetSystem<CollisionSystem>();
 
 		// Scene Camera
-		GameObject *p = Factory::CreateCamera("Scene Camera");
-		mpSceneCamera = GetCurrentScene()->InsertGameObject(Utility::Move(*p));
-		mpSceneCamera->GetComponent<Camera>()->Init();
-		mpSceneCamera->GetComponent<Transform>()->SetScale(Math::Vec4{ 1.f, 1.f, 1.f });
-		delete p;
+		//GameObject *p = Factory::CreateCamera("Scene Camera");
+		//mpSceneCamera = GetCurrentScene()->InsertGameObject(Utility::Move(*p));
+		//mpSceneCamera->GetComponent<Camera>()->Init();
+		//mpSceneCamera->GetComponent<Transform>()->SetScale(Math::Vec4{ 1.f, 1.f, 1.f });
+		//delete p;
 
-		// Sample Box Object
-		GameObject *b = Factory::CreateBox("Box Object");
-		mpBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*b));
-		mpBoxObject->GetComponent<RigidBody>()->Init();
-		mpBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 128.f, 128.f, 1.f });
-		delete b;
-
-		// Sample Static Object
-		GameObject *s = Factory::CreateStaticBox("Static Box");
-		mpStaticBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*s));
-		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
-		mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
-		//mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition ({ 0, -185.f, 0 });
-		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 512.f, 64.f, 1.f });
-		delete s;
+		//// Sample Box Object
+		//GameObject *b = Factory::CreateBox("Box Object");
+		//mpBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*b));
+		//mpBoxObject->GetComponent<RigidBody>()->Init();
+		//mpBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 128.f, 128.f, 1.f });
+		//delete b;
+		//
+		//// Sample Static Object
+		//GameObject *s = Factory::CreateStaticBox("Static Box");
+		//mpStaticBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*s));
+		//mpStaticBoxObject->GetComponent<RigidBody>()->Init();
+		//mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
+		////mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition ({ 0, -185.f, 0 });
+		//mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 512.f, 64.f, 1.f });
+		//delete s;
 	}
 
 	void SceneView::Update(const float& _dt)
@@ -95,7 +95,7 @@ namespace Dystopia
 
 	void SceneView::EditorUI()
 	{
-		unsigned id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
+		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
 		ImGui::Image(reinterpret_cast<void*>(id), ImVec2{ Size().x - 6.0F,  Size().y - 27.0F });
 	}
 

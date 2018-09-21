@@ -120,6 +120,8 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 
 	GameObject* owner = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(ownerID);
 	owner->AddComponent(this, Renderer::TAG{});
+
+	Init();
 }
 
 void Dystopia::Renderer::EditorUI(void) noexcept

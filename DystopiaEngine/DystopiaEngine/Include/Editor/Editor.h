@@ -42,10 +42,7 @@ namespace Dystopia
 		EDITOR_EXIT = 0,
 		EDITOR_MAIN,
 		EDITOR_PLAY,
-		EDITOR_PAUSE,
-		EDITOR_SAVE,
-		EDITOR_SAVE_AS,
-		EDITOR_LOAD
+		EDITOR_PAUSE
 	};
 
 	class Editor
@@ -104,9 +101,9 @@ namespace Dystopia
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
 		void			Play();
-		void			SaveUI();
-		void			SaveAsUI();
-		void			LoadUI();
+		void			SaveProc();
+		void			SaveAsProc();
+		void			LoadProc();
 		void			TempSave();
 		void			TempLoad();
 

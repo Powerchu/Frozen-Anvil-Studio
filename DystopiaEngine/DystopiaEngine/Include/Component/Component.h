@@ -64,15 +64,15 @@ namespace Dystopia
 
 		uint64_t GetID() const;
 
+	protected:
+		uint64_t mID;
+		unsigned mnFlags;
+
 	private:
 
 		// TODO
 		// Temporary ID -- Will change back to pointer
 		uint64_t mnOwner;
-
-	protected:
-		uint64_t mID;
-		unsigned mnFlags;
 	};
 }
 

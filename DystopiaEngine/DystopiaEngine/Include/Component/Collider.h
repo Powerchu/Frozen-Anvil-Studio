@@ -270,6 +270,8 @@ namespace Dystopia
 
 		static const eColliderType ColliderType = eColliderType::AABB;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
+		static const std::string GetCompileName(void) { return "AABB"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
 		/*Constructors*/
 
 		/*Default - (Box Collider)*/
@@ -315,6 +317,8 @@ namespace Dystopia
 
 		static const eColliderType ColliderType = eColliderType::CIRCLE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
+		static const std::string GetCompileName(void) { return "Circle"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
 		/*Constructors*/
 
 		/*Default - (Box Collider)*/

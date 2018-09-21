@@ -56,9 +56,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 /* library includes */
 #include <iostream>
-#include <Windows.h>
+#include <windows.h>
 #include <bitset>
 #include <ShlObj_core.h>
+#include <tchar.h>
+#include <objbase.h>
+
+static const std::string DYSTOPIA_SCENE_LOAD = "../Resource/Scene/";
+static const std::wstring DYSTOPIA_SCENE_EXTENSION = L"dscene";
+static constexpr COMDLG_FILTERSPEC DYSTOPIA_SCENE_FILTER_EXTENSION[1] =
+{
+	{ L"DystopiaScene", L"*.dscene" }
+};
 
 // Entry point for editor
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
@@ -67,10 +76,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 	hInstance;
-
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
-
+	
 	while (!editor->IsClosing())
 	{
 		editor->StartFrame();
@@ -87,7 +95,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 /*///////////////////////////////////////////////////////////////////// EDITOR CLASS ////////////////////////////////////////////////////////////////////////////////*/
 
-static const std::string DEFAULT_LOAD_SCENE_PATH = "../Resource/Scene/";
 namespace Dystopia
 {
 	static Editor* gpInstance = 0;
@@ -157,7 +164,7 @@ namespace Dystopia
 		EGUI::SetContext(mpComdHandler);
 		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
 			mCurrentState = EDITOR_EXIT;
-		LoadUI();
+		PrintToConsoleLog("Ho");
 	}
 
 	void Editor::StartFrame()
@@ -200,12 +207,6 @@ namespace Dystopia
 		{
 		case EDITOR_PLAY:		mpDriver->FixedUpdate();
 								mpDriver->Update();			
-								break;
-		case EDITOR_SAVE:		SaveUI();	
-								break;
-		case EDITOR_SAVE_AS:	SaveAsUI();	
-								break;
-		case EDITOR_LOAD:		LoadUI();	
 								break;
 		}
 
@@ -322,12 +323,6 @@ namespace Dystopia
 			break;
 		case EDITOR_PAUSE:
 			break;
-		case EDITOR_SAVE:
-			break;
-		case EDITOR_SAVE_AS:
-			break;
-		case EDITOR_LOAD:
-			break;
 		case EDITOR_EXIT:
 			break;
 		}
@@ -354,10 +349,7 @@ namespace Dystopia
 			{
 				// TODO: Some actual function
 			}
-			if (EGUI::StartMenuBody("Open"))
-			{
-				// TODO: Some actual function
-			}
+			if (EGUI::StartMenuBody("Open")) LoadProc();
 			if (EGUI::StartMenuHeader("Open Recent"))
 			{
 				if (EGUI::StartMenuBody("some_recent_crap.cpp"))
@@ -375,8 +367,8 @@ namespace Dystopia
 				}
 				EGUI::EndMenuHeader();
 			}
-			if (EGUI::StartMenuBody("Save"))		ChangeState(EDITOR_SAVE);
-			if (EGUI::StartMenuBody("Save As.."))	ChangeState(EDITOR_SAVE_AS);
+			if (EGUI::StartMenuBody("Save"))		SaveProc();
+			if (EGUI::StartMenuBody("Save As.."))	SaveAsProc();
 			if (EGUI::StartMenuBody("Quit"))		ChangeState(EDITOR_EXIT);
 			EGUI::EndMenuHeader();
 		}
@@ -439,24 +431,74 @@ namespace Dystopia
 
 	}
 
-	void Editor::SaveUI()
+	void Editor::SaveProc()
 	{
-
 	}
 
-	void Editor::SaveAsUI()
+	void Editor::SaveAsProc()
 	{
-
-	}
-
-	void Editor::LoadUI()
-	{
-		ITEMIDLIST *pid1 = ILCreateFromPath(std::wstring{ DEFAULT_LOAD_SCENE_PATH.begin(), 
-										   DEFAULT_LOAD_SCENE_PATH.end() }.c_str());
-		if (pid1)
+		HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+		if (SUCCEEDED(hr))
 		{
-			SHOpenFolderAndSelectItems(pid1, 0, 0, 0);
-			ILFree(pid1);
+			IFileSaveDialog *pFileSave;
+			hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL,
+				IID_IFileSaveDialog, reinterpret_cast<void**>(&pFileSave));
+			if (SUCCEEDED(hr))
+			{
+				pFileSave->SetDefaultExtension(DYSTOPIA_SCENE_EXTENSION.c_str());
+				pFileSave->SetFileTypes(1, DYSTOPIA_SCENE_FILTER_EXTENSION);
+				if (SUCCEEDED(pFileSave->Show(mpWin->GetMainWindow().GetWindowHandle())))
+				{
+					IShellItem *pItem;
+					if (SUCCEEDED(pFileSave->GetResult(&pItem)))
+					{
+						PWSTR pszFilePath;
+						hr = pItem->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &pszFilePath);
+						if (SUCCEEDED(hr))
+						{
+							std::wstring path{ pszFilePath };
+							mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() });
+							CoTaskMemFree(pszFilePath);
+						}
+						pItem->Release();
+					}
+				}
+				pFileSave->Release();
+			}
+			CoUninitialize();
+		}
+	}
+
+	void Editor::LoadProc()
+	{
+		HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+		if (SUCCEEDED(hr))
+		{
+			IFileOpenDialog *pFileOpen;
+			hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, 
+				IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+			if (SUCCEEDED(hr))
+			{
+				pFileOpen->SetFileTypes(1, DYSTOPIA_SCENE_FILTER_EXTENSION);
+				if (SUCCEEDED(pFileOpen->Show(NULL)))
+				{
+					IShellItem *pItem;					
+					if (SUCCEEDED(pFileOpen->GetResult(&pItem)))
+					{
+						PWSTR pszFilePath;
+						hr = pItem->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &pszFilePath);
+						if (SUCCEEDED(hr))
+						{
+							std::wstring path{ pszFilePath };
+							mpSceneSystem->LoadScene(std::string{ path.begin(), path.end() });
+							CoTaskMemFree(pszFilePath);
+						}
+						pItem->Release();
+					}
+				}
+				pFileOpen->Release();
+			}
+			CoUninitialize();
 		}
 	}
 
