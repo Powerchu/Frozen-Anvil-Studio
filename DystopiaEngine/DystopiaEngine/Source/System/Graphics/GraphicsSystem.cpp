@@ -71,7 +71,8 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f }
+	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f },
+	mvDebugColour { 1.f, .58f, .278f, .0f }
 {
 
 }
@@ -90,6 +91,11 @@ void Dystopia::GraphicsSystem::SetGamma(float _fGamma) noexcept
 float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 {
 	return mfGamma;
+}
+
+void Dystopia::GraphicsSystem::SetDebugDraw(bool _bDraw)
+{
+	mbDebugDraw = _bDraw;
 }
 
 
@@ -160,6 +166,95 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	delete texture;
 }
 
+void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
+{
+	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
+	auto ActiveFlags = _cam.GetOwner()->GetFlags();
+	Math::Matrix4 ProjView = _cam.GetProjectionMatrix() * _cam.GetViewMatrix();
+
+	// Get Camera's layer, we only want to draw inclusive stuff
+	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
+
+	AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
+		return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
+	});
+
+	// Draw the game objects to screen based on the camera
+	for (auto& Obj : AllObj)
+	{
+		if (Obj.GetFlags() & ActiveFlags)
+		{
+			if (Renderer* r = Obj.GetComponent<Renderer>())
+			{
+				if (Shader* s = r->GetShader())
+				{
+					if (Texture2D* t = static_cast<Texture2D*>(r->GetTexture()))
+					{
+						s->UseShader();
+
+						t->BindTexture();
+						s->UploadUniform("ProjectViewMat", ProjView);
+						s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+						s->UploadUniform("Gamma", mfGamma);
+
+						r->Draw();
+
+						t->UnbindTexture();
+					}
+					else
+					{
+						glUseProgram(0);
+						r->Draw();
+					}
+				}
+				else
+				{
+					glUseProgram(0);
+					r->Draw();
+				}
+			}
+		}
+	}
+}
+
+void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
+{
+	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
+	auto ActiveFlags = _cam.GetOwner()->GetFlags();
+	Math::Matrix4 ProjView = _cam.GetProjectionMatrix() * _cam.GetViewMatrix();
+
+	// Get Camera's layer, we only want to draw inclusive stuff
+	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
+
+	AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
+		return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
+	});
+
+	//Shader* s;
+	//
+	//s->UseShader();
+	//s->UploadUniform("Colour", mvDebugColour);
+
+	// Draw the game objects to screen based on the camera
+	for (auto& Obj : AllObj)
+	{
+		if (Obj.GetFlags() & ActiveFlags)
+		{
+			//if (Collider* r = Obj.GetComponent<Collider>())
+			//{
+			//	s->UseShader();
+			//
+			//	s->UploadUniform("ProjectViewMat", ProjView);
+			//	s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+			//
+			//	r->Draw();
+			//
+			//	t->UnbindTexture();
+			//}
+		}
+	}
+}
+
 bool Dystopia::GraphicsSystem::Init(void)
 {
 	mGameView.Init(2048, 2048);
@@ -181,61 +276,19 @@ void Dystopia::GraphicsSystem::Update(float)
 	mGameView.BindFramebuffer();
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
-	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
 
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
 	{
-		auto ActiveFlags = Cam.GetOwner()->GetFlags();
-		Math::Matrix4 ProjView = Cam.GetProjectionMatrix() * Cam.GetViewMatrix();
-
 		// If the camera is inactive, skip
 		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
 			Cam.SetCamera();
 
-			// Get Camera's layer, we only want to draw inclusive stuff
-			ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
-
-			AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
-				return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
-			});
-			// Draw the game objects to screen based on the camera
-			for (auto& Obj : AllObj)
-			{
-				if (Obj.GetFlags() & ActiveFlags)
-				{
-					if (Renderer* r = Obj.GetComponent<Renderer>())
-					{
-						if (Shader* s = r->GetShader())
-						{
-							if (Texture2D* t = static_cast<Texture2D*>(r->GetTexture()))
-							{
-								s->UseShader();
-
-								t->BindTexture();
-								s->UploadUniform("ProjectViewMat", ProjView);
-								s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-								s->UploadUniform("Gamma", mfGamma);
-
-								r->Draw();
-
-								t->UnbindTexture();
-							}
-							else
-							{
-								glUseProgram(0);
-								r->Draw();
-							}
-						}
-						else
-						{
-							glUseProgram(0);
-							r->Draw();
-						}
-					}
-				}
-			}
+			DrawScene(Cam);
+			
+			if (mbDebugDraw)
+				DrawDebug(Cam);
 		}
 	}
 	mGameView.UnbindFramebuffer();
@@ -280,9 +333,14 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 	DRAW_MODE = GL_TRIANGLES;
 }
 
-void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t&)
+void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 {
-	// TODO
+	_in >> DRAW_MODE;
+}
+
+void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
+{
+	_out << DRAW_MODE;
 }
 
 
@@ -302,6 +360,9 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _strName)
 {
+	if (texturelist.find(_strName) != texturelist.end())
+		return texturelist[_strName];
+
 	size_t first = _strName.rfind("/");
 	if (first == std::string::npos)
 	{

@@ -74,7 +74,7 @@ void Dystopia::Texture2D::InitTexture(void* _pData, bool _bAlpha)
 
 	if (_bAlpha)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, GetWidth(), GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, _pData);
+		glTexImage2D(mnType, 0, GL_SRGB_ALPHA, GetWidth(), GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, _pData);
 	}
 	else
 	{

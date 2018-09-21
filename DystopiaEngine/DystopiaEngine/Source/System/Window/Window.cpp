@@ -52,6 +52,16 @@ int Dystopia::Window::GetHeight(void) const noexcept
 	return mnHeight;
 }
 
+int Dystopia::Window::GetFullWidth(void) const noexcept
+{
+	return mnFWidth;
+}
+
+int Dystopia::Window::GetFullHeight(void) const noexcept
+{
+	return mnFHeight;
+}
+
 const Queue<eButton>& Dystopia::Window::GetInputQueue(void) const noexcept
 {
 	return mInputQueue;
@@ -72,19 +82,20 @@ void Dystopia::Window::SetStyle(long _nStyle, long _nStyleEx)
 
 void Dystopia::Window::SetSize(int _nWidth, int _nHeight)
 {
+	mnWidth = _nWidth;
+	mnHeight = _nHeight;
+
 	RECT WindowRect{ 0, 0, _nWidth, _nHeight };
 	AdjustWindowRect(&WindowRect, mStyle, FALSE);
 
-	mnWidth  = WindowRect.right - WindowRect.left;
-	mnHeight = WindowRect.bottom - WindowRect.top;
+	mnFWidth  = WindowRect.right - WindowRect.left;
+	mnFHeight = WindowRect.bottom - WindowRect.top;
 }
 
 void Dystopia::Window::SetSizeNoAdjust(int _nWidth, int _nHeight)
 {
-	RECT WindowRect{ 0, 0, _nWidth, _nHeight };
-
-	mnWidth = WindowRect.right - WindowRect.left;
-	mnHeight = WindowRect.bottom - WindowRect.top;
+	mnFWidth = mnWidth = _nWidth;
+	mnFHeight = mnHeight = _nHeight;
 }
 
 void Dystopia::Window::CenterWindow(void) noexcept
