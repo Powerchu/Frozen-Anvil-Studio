@@ -9,7 +9,7 @@
 #include "Component/CollisionEvent.h"
 
 
-#define CLOCKWISE 1
+#define CLOCKWISE 0
 /*
                                  -----------AABB
  Collider[BASE]<--- CONVEX <-----|
@@ -67,7 +67,7 @@ namespace Dystopia
 
 		}
 		Vertice(float const & x, float const & y)
-			:mPosition{x,y,1,0}
+			:mPosition{x,y,1,1}
 		{
 
 		}
@@ -173,7 +173,7 @@ namespace Dystopia
 		/*Constructors*/
 
 		/*Convex Default Constructor*/
-		Convex(Math::Point3D const & _v3Offset = { 0,0,0,0 });
+		Convex(Math::Point3D const & _v3Offset = { 0,0,0,1 });
 
 		/*Convex Constructor. Takes in a Container of Vertice*/
 		template<typename Container = AutoArray<Vertice>>
@@ -272,8 +272,8 @@ namespace Dystopia
 		virtual void Unserialise(TextSerialiser&);
 
 		/*Collision Check Functions*/
-		bool isColliding(const AABB & other_col) const;
-		bool isColliding(const AABB * const & other_col) const;
+		bool isColliding(AABB & other_col);
+		bool isColliding(AABB * const & other_col);
 
 		/*Sweeping Collision Check*/
 		float SweepingCheck(const AABB & other_col) const;

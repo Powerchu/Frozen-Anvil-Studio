@@ -10,7 +10,7 @@ namespace Dystopia
 {
 	Convex::Convex(Math::Point3D const & _v3Offset)
 		:Collider{ _v3Offset },
-		mVertices{Vertice{1,1}, Vertice{ -1,1 }, Vertice{ -1,-1 }, Vertice{1,1} }
+		mVertices{Vertice{25,25}, Vertice{ -25,25 }, Vertice{ -25,-25 }, Vertice{25,-25} }
 	{
 		
 	}
@@ -55,7 +55,7 @@ namespace Dystopia
 
 	bool Convex::isColliding(Convex & _ColB)
 	{
-		static Math::Vec3D InitialSearchDir{ 1,0,0,0 };
+		static Math::Vec3D InitialSearchDir{ 1,0,0,1 };
 		return isColliding(_ColB, InitialSearchDir);
 	}
 
@@ -96,7 +96,7 @@ namespace Dystopia
 				{
 					Colliding = true;
 					/*Use EPA to get collision information*/
-					//mCollisionEvent.Insert(GetCollisionEvent(Simplex, _pColB));
+					mCollisionEvent.Insert(GetCollisionEvent(Simplex, _pColB));
 					/*Clear the simplex for the next function call*/
 					Simplex.clear();
 					/*Return true for collision*/
@@ -122,7 +122,7 @@ namespace Dystopia
 		Math::Vec3D const & OffSet = _ColA.GetOffSet();
 
 		/*Construct the Matrix for Global Coordinate Conversion*/
-		Math::Matrix3D WorldSpace = Math::Translate(_ColATrans.GetPosition().x + OffSet.x, _ColATrans.GetPosition().y + OffSet.y, 0);
+		Math::Matrix3D WorldSpace = Math::Translate(_ColATrans.GetGlobalPosition().x + OffSet.x, _ColATrans.GetGlobalPosition().y + OffSet.y, 0);
 
 		Vertice * pFirst = _ColA.mVertices.begin();
 		Vertice FarthestPoint = *pFirst;
@@ -167,9 +167,11 @@ namespace Dystopia
 #else
 			EdgeNorm.Negate<Math::NegateFlag::X>();
 #endif
-			EdgeNorm.Normalise();
+			if(EdgeNorm.MagnitudeSqr())
+				EdgeNorm.Normalise();
+
 			double distance = EdgeNorm.Dot(a.mPosition);
-			if (distance < ClosestDistance)
+			if (Math::Abs(distance) < Math::Abs(ClosestDistance))
 			{
 				ClosestDistance    = distance;
 				ClosestEdge.mNorm3 = EdgeNorm;
@@ -219,7 +221,7 @@ namespace Dystopia
 			the same as the orthogonal distance from the origin to the ClosestEdge
 			*/
 			double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
-			double result = ProjectDis - ClosestEdge.OrthogonalDistance;
+			double result     = ProjectDis - ClosestEdge.OrthogonalDistance;
 
 			/*If fail the test, expand the simplex and run the test again*/
 			if (-EPSILON <= result && result <= EPSILON)
@@ -237,7 +239,7 @@ namespace Dystopia
 				_Simplex.Insert(Point, ClosestEdge.SimplexIndex);
 			}
 		}
-		return col_info;
+		//return col_info;
 
 	}
 

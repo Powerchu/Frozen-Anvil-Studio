@@ -6,7 +6,8 @@
 #include "System/Profiler/ProfilerAction.h"
 
 #include "Component/Collider.h"
-
+#include "Editor/EditorInputs.h"
+#include "Editor/Editor.h"
 
 namespace Dystopia
 {
@@ -52,8 +53,7 @@ namespace Dystopia
 			{
 				if (ptr->hasCollision())
 				{
-					rigid_elem.Set_CustomGravityScale(0.0f);
-					rigid_elem.SetVelocity(Vec3D{});
+					rigid_elem.DebugPrint();
 					ptr->GetCollisionEvents();
 				}
 			}
@@ -110,14 +110,13 @@ namespace Dystopia
 		/*
 		 * Debug the positions
 		 */
-		DebugPrint();
+		//DebugPrint();
 	}
 
 	void PhysicsSystem::FixedUpdate(float _dt)
 	{
 		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
 		const float TimeStep = 1.0f / 60.0f;
-
 
 		mTimeAccumulator += _dt;
 		mTimeAccumulator = Math::Min(mTimeAccumulator, TimeStep * 5);

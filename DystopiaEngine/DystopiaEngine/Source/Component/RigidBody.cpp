@@ -165,8 +165,7 @@ namespace Dystopia
 
 	void RigidBody::DebugPrint()
 	{
-		printf("Transform: (%f, %f) \n Angle: %f", float(mPosition.x), float(mPosition.y), mfAngle);
-		//LoggerSystem::ConsoleLog(eLog::MESSAGE, "transform: (%f,%f) \n angle: %f", TX->GetGlobalPosition().x, (TX->GetGlobalPosition().y), mfAngle);
+		LoggerSystem::ConsoleLog(eLog::MESSAGE, "transform: (%f,%f) \n angle: %f", mPosition.x, mPosition.y, mfAngle);
 	}
 
 	void RigidBody::DebugDraw()

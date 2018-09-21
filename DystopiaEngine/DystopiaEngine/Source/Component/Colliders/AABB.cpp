@@ -8,8 +8,8 @@ namespace Dystopia
 	/*Default Constructor*/
 	AABB::AABB()
 		:Convex{}
-		, mfWidth{ 1000 }
-		, mfHeight{ 1000 }
+		, mfWidth{ 50 }
+		, mfHeight{ 50 }
 	{
 		Math::Point3D ArrPoints[]
 		{
@@ -89,22 +89,26 @@ namespace Dystopia
 		}
 	}*/
 
-	bool AABB::isColliding(const AABB & _ColB) const
+	bool AABB::isColliding(AABB & _ColB)
 	{
 		/*Static vs. Dynamic AABB Collision Check*/
 		auto TransformA = GetOwner()->GetComponent<Transform>();
 		auto TransformB = _ColB.GetOwner()->GetComponent<Transform>();
-		if (TransformA->GetGlobalPosition().x + this->mMin->mPosition.x <= TransformB->GetGlobalPosition().x + _ColB.mMax->mPosition.x
+
+		if (   TransformA->GetGlobalPosition().x + this->mMin->mPosition.x <= TransformB->GetGlobalPosition().x + _ColB.mMax->mPosition.x
 			&& TransformA->GetGlobalPosition().x + this->mMax->mPosition.x >= TransformB->GetGlobalPosition().x + _ColB.mMin->mPosition.x
 			&& TransformA->GetGlobalPosition().y + this->mMax->mPosition.y >= TransformB->GetGlobalPosition().y + _ColB.mMin->mPosition.y
 			&& TransformA->GetGlobalPosition().y + this->mMin->mPosition.y <= TransformB->GetGlobalPosition().y + _ColB.mMax->mPosition.y)
 		{
-			return true;
+			Colliding = true;
+			return Colliding;
 		}
+
+		Colliding |= false;
 		return false;
 	}
 
-	bool AABB::isColliding(const AABB * const & _ColB) const
+	bool AABB::isColliding(AABB * const & _ColB)
 	{
 		return this->isColliding(*_ColB);
 	}

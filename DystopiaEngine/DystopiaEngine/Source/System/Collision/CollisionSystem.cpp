@@ -1,6 +1,6 @@
 #include "System\Collision\CollisionSystem.h"
 #include "Component\Collider.h"
-
+#include "Object/GameObject.h"
 #include <map>
 #include <utility>
 
@@ -8,7 +8,7 @@ namespace Dystopia
 {
 	void CollisionSystem::PreInit(void)
 	{
-
+		
 	}
 	bool CollisionSystem::Init()
 	{
@@ -26,7 +26,7 @@ namespace Dystopia
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
 		using CollisionTableMap = std::map < CollisionTable, fpCollisionResolution>;
 
-		bool Colliding;
+	
 		
 		static CollisionTableMap CollisionFuncTable = []()->CollisionTableMap
 		{
@@ -44,10 +44,12 @@ namespace Dystopia
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
+			elem.SetColliding((false));
 			mColliders.push_back(&elem);
 		}
 		for (auto & elem : ComponentDonor<AABB>::mComponents)
 		{
+			elem.SetColliding((false));
 			mColliders.push_back(&elem);
 		}
 
@@ -55,17 +57,20 @@ namespace Dystopia
 		{
 			for(auto & i : mColliders)
 			{
-				if (elem == i) continue;
-
+				if (static_cast<Collider *>(elem) == static_cast<Collider *>(i)) 
+					continue;
 
 				const auto pair_key = std::make_pair(elem->GetColliderType(), (i)->GetColliderType());
 				for (auto & key : CollisionFuncTable)
 				{
 					if (key.first == pair_key)
 					{
-						Colliding = (this->*key.second)(elem, i);
-						i->SetColliding(i->Collider::hasCollision() | Colliding);
-						elem->SetColliding(elem->Collider::hasCollision() | Colliding);
+						(this->*key.second)(elem, i);
+						i->SetColliding(i->Collider::hasCollision());
+						elem->SetColliding(elem->Collider::hasCollision());
+
+						i->GetOwner()->GetID();
+						elem->GetOwner()->GetID();
 						break;
 					}
 				}
@@ -96,8 +101,8 @@ namespace Dystopia
 
 	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const
 	{
-		const auto col_a = dynamic_cast<const AABB * const>(_ColA);
-		const auto col_b = dynamic_cast<const AABB * const>(_ColB);
+		const auto col_a = dynamic_cast<AABB * const>(_ColA);
+		const auto col_b = dynamic_cast<AABB * const>(_ColB);
 
 		return col_a->isColliding(col_b);
 	}

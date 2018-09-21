@@ -49,7 +49,7 @@ namespace Dystopia
 #if EDITOR
 
 		FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
-		mHotloader->Init();
+		// TODO: mHotloader->Init();
 		auto const & ArrayDlls = mHotloader->GetDlls();
 		for (auto & elem : ArrayDlls)
 		{
@@ -83,6 +83,7 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::Update(float)
 	{
+		return;
 #if EDITOR
 		/*Update Hotloader*/
 		mHotloader->Update();
