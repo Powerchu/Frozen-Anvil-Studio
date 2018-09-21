@@ -234,30 +234,27 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 	{
 		if (Obj.GetFlags() & ActiveFlags)
 		{
-			if (Renderer* r = Obj.GetComponent<Renderer>())
-			{
-				Shader* s = r->GetShader();
-				Texture* t = r->GetTexture();
-
-				if (s && t)
-				{
-					s->UseShader();
-
-					t->BindTexture();
-					s->UploadUniform("ProjectViewMat", ProjView);
-					s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-					s->UploadUniform("Gamma", mfGamma);
-
-					r->Draw();
-
-					t->UnbindTexture();
-				}
-				else
-				{
-					//glUseProgram(0);
-					//r->Draw();
-				}
-			}
+			//if (Collider* r = Obj.GetComponent<Collider>())
+			//{
+			//	Shader* s = r->GetShader();
+			//
+			//	if (s)
+			//	{
+			//		s->UseShader();
+			//
+			//		s->UploadUniform("ProjectViewMat", ProjView);
+			//		s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+			//
+			//		r->Draw();
+			//
+			//		t->UnbindTexture();
+			//	}
+			//	else
+			//	{
+			//		//glUseProgram(0);
+			//		//r->Draw();
+			//	}
+			//}
 		}
 	}
 }
