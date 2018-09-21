@@ -67,7 +67,7 @@ namespace Dystopia
 
 		}
 		Vertice(float const & x, float const & y)
-			:mPosition{x,y,1,0}
+			:mPosition{x,y,1,1}
 		{
 
 		}
@@ -122,8 +122,10 @@ namespace Dystopia
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
 
 		bool hasCollision() const;
-
 		void SetColliding(bool _b);
+
+		void SetPosition(Math::Point3D const & _point);
+		Math::Point3D GetPosition() const;
 
 		// Gettors
 		Math::Vec3D GetOffSet()   const;
@@ -140,6 +142,8 @@ namespace Dystopia
 		AutoArray<CollisionEvent>  mCollisionEvent;
 
 		bool Colliding = false;
+
+		Math::Point3D mPosition;
 		
 
 
@@ -215,19 +219,19 @@ namespace Dystopia
 
 		static Edge	   GetClosestEdge(AutoArray<Vertice> & _Simplex);
 
-		static Math::Vec3D Support(const Convex & _ColA,
+		static Math::Point3D Support(const Convex & _ColA,
 			                       const Convex & _ColB,
 			                       const Math::Vec3D & _Dir);
 
-		static Math::Vec3D Support(const Convex & _ColA,
+		static Math::Point3D Support(const Convex & _ColA,
 			                       const Convex & _ColB,
 			                       const Math::Vec3D & _Dir,
 			                       bool & hasPoint);
 
 		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
 
-		Math::Vec3D Support(const Convex & _ColB,
-			                const Math::Vec3D & _Dir)const;
+		Math::Point3D Support(const Convex & _ColB,
+			                  const Math::Vec3D & _Dir)const;
 		
 
 
@@ -272,8 +276,8 @@ namespace Dystopia
 		virtual void Unserialise(TextSerialiser&);
 
 		/*Collision Check Functions*/
-		bool isColliding(const AABB & other_col) const;
-		bool isColliding(const AABB * const & other_col) const;
+		bool isColliding(AABB & other_col);
+		bool isColliding(AABB * const & other_col);
 
 		/*Sweeping Collision Check*/
 		float SweepingCheck(const AABB & other_col) const;
