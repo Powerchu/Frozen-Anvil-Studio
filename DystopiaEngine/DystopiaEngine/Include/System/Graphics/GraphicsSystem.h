@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Base\Systems.h"		 // System
 #include "System\Base\ComponentDonor.h"
 #include "System\Graphics\Framebuffer.h"
+#include "Math\Vector4.h"
 
 #include <map>
 #include <string>
@@ -24,10 +25,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Window;
 	class Mesh;
-	class Texture;
 	class Shader;
+	class Camera;
+	class Window;
+	class Texture;
 	class Renderer;
 
 	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>
@@ -51,6 +53,8 @@ namespace Dystopia
 
 		void SetGamma(float) noexcept;
 		float GetGamma(void) noexcept;
+
+		void SetDebugDraw(bool _bDraw);
 
 		// Sets up Window for openGL rendering
 		bool InitOpenGL(Window&);
@@ -78,12 +82,14 @@ namespace Dystopia
 
 	private:
 
+		Math::Vector4 mvDebugColour;
 		float mfGamma;
 
 		void* mOpenGL;
 		int mPixelFormat, mAvailable;
 		Framebuffer mGameView, mUIView;
 
+		bool mbDebugDraw;
 
 		static int DRAW_MODE;
 
@@ -91,6 +97,8 @@ namespace Dystopia
 		void EndFrame(void);
 
 		void DrawSplash(void);
+		void DrawScene(Camera&);
+		void DrawDebug(Camera&);
 
 		bool SelectOpenGLVersion(Window&) noexcept;
 	};

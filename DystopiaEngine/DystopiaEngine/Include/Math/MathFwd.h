@@ -1,39 +1,31 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	ShaderSystem.h
+\file	MathFwd.h
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Manages Shaders
+	The "I only want the forward declarations for everything" convenience header!
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _SHADERSYS_H_
-#define _SHADERSYS_H_
+#ifndef _MATHFWD_H_
+#define _MATHFWD_H_
 
-#include "DataStructure\MagicArray.h"
-
-
-namespace Dystopia
+namespace Math
 {
-	class Shader;
+	union Vector2;
+	union __declspec(align(16)) Vector4;
+	union __declspec(align(alignof(Vector4))) Quaternion;
 
-	class ShaderSystem
-	{
-	public:
+	struct __declspec(align(alignof(Vector4))) Matrix2;
+	struct __declspec(align(alignof(Vector4))) Matrix4;
 
-		void Shutdown(void) noexcept;
-
-
-	private:
-
-		MagicArray<Shader> mPrograms;
-	};
+	class Radians;
+	class Degrees;
 }
-
 
 
 #endif		// INCLUDE GUARD

@@ -45,6 +45,10 @@ namespace Dystopia
 
 		inline AutoArray<GameObject>& GetAllGameObjects(void);
 
+		void Serialise(TextSerialiser &) const;
+
+		void Unserialise(TextSerialiser &);
+
 	private:
 
 		AutoArray<GameObject> mGameObjs;
@@ -75,6 +79,7 @@ inline AutoArray<Dystopia::GameObject>& Dystopia::Scene::GetAllGameObjects(void)
 {
 	return mGameObjs;
 }
+
 
 
 

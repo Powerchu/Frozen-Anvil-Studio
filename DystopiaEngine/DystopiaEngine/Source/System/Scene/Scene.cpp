@@ -13,6 +13,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System\Scene\Scene.h"
 #include "Object\ObjectFlags.h"
+#include "IO/TextSerialiser.h"
+
+#include "Component/ComponentList.h"
+#include "System/Driver/Driver.h"
+
+#include <string>
+#include <utility>
 
 
 Dystopia::Scene::Scene(void) :
@@ -85,6 +92,39 @@ void Dystopia::Scene::PostUpdate(void)
 void Dystopia::Scene::Shutdown(void)
 {
 	mGameObjs.clear();
+}
+
+
+void Dystopia::Scene::Serialise(TextSerialiser & _TextSerialiser) const
+{
+	_TextSerialiser.Write(std::to_string(mGameObjs.size()));
+
+	for (auto & elem : mGameObjs)
+	{
+		_TextSerialiser.Write(elem.GetID());
+		_TextSerialiser.Write(elem.GetName());
+	}
+}
+
+void Dystopia::Scene::Unserialise(TextSerialiser & _TextUnserialiser)
+{
+	size_t Size;
+	_TextUnserialiser.Read(Size);
+	for (int i = 0; i < Size; ++i)
+	{
+		unsigned long ID;
+		std::string name;
+
+		_TextUnserialiser.Read(ID);
+		_TextUnserialiser.Read(name);
+
+		mGameObjs.EmplaceBack(ID);
+
+		auto & pGameObject = mGameObjs.back();
+		
+		pGameObject.SetName(name);
+	}
+
 }
 
 

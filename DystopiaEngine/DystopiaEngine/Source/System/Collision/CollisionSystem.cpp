@@ -1,6 +1,12 @@
 #include "System\Collision\CollisionSystem.h"
+#include "System/Graphics/MeshSystem.h"
+
+
 #include "Component\Collider.h"
+
 #include "Object/GameObject.h"
+#include "Component/Transform.h"
+
 #include <map>
 #include <utility>
 
@@ -12,7 +18,33 @@ namespace Dystopia
 	}
 	bool CollisionSystem::Init()
 	{
+		auto * pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
+		if (pMeshSys)
+		{
+			for (auto & elem : ComponentDonor<Convex>::mComponents)
+			{
+				pMeshSys->StartMesh();
+
+				auto const & arr = elem.GetVertexBuffer();
+				for (auto i : arr)
+					pMeshSys->AddVertex(i.x, i.y, i.z);
+
+				elem.SetMesh(pMeshSys->AddIndices("Collider Mesh", elem.GetIndexBuffer()));
+
+				pMeshSys->EndMesh();
+
+				
+			}
+
+			for (auto & elem : ComponentDonor<AABB>::mComponents)
+			{
+
+			}
+		}
+
+
 		return true;
+
 	}
 
 	void CollisionSystem::PostInit(void)
@@ -25,8 +57,6 @@ namespace Dystopia
 		using CollisionTable = std::pair<eColliderType, eColliderType>;
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
 		using CollisionTableMap = std::map < CollisionTable, fpCollisionResolution>;
-
-	
 		
 		static CollisionTableMap CollisionFuncTable = []()->CollisionTableMap
 		{
@@ -44,11 +74,13 @@ namespace Dystopia
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
+			elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
 			elem.SetColliding((false));
 			mColliders.push_back(&elem);
 		}
 		for (auto & elem : ComponentDonor<AABB>::mComponents)
 		{
+			elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
 			elem.SetColliding((false));
 			mColliders.push_back(&elem);
 		}
@@ -68,9 +100,6 @@ namespace Dystopia
 						(this->*key.second)(elem, i);
 						i->SetColliding(i->Collider::hasCollision());
 						elem->SetColliding(elem->Collider::hasCollision());
-
-						i->GetOwner()->GetID();
-						elem->GetOwner()->GetID();
 						break;
 					}
 				}

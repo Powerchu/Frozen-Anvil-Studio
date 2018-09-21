@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	ShaderSystem.h
+\file	ShaderSystem.cpp
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
@@ -11,30 +11,6 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _SHADERSYS_H_
-#define _SHADERSYS_H_
+#include "System\Graphics\ShaderSystem.h"
 
-#include "DataStructure\MagicArray.h"
-
-
-namespace Dystopia
-{
-	class Shader;
-
-	class ShaderSystem
-	{
-	public:
-
-		void Shutdown(void) noexcept;
-
-
-	private:
-
-		MagicArray<Shader> mPrograms;
-	};
-}
-
-
-
-#endif		// INCLUDE GUARD
 

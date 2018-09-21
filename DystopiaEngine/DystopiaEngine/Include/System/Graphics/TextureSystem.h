@@ -14,14 +14,28 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TEXTURESYS_H_
 #define _TEXTURESYS_H_
 
+#include "DataStructure\MagicArray.h"
+
+#include <string>
+
 
 namespace Dystopia
 {
+	class Texture;
+
 	class TextureSystem
 	{
 	public:
 
+		void Shutdown(void) noexcept;
+
+		template <typename Ty>
+		Ty* GetTexture(std::string&);
+
+
 	private:
+
+		MagicArray<Texture> mTextures;
 	};
 }
 

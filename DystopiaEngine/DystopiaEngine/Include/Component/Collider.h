@@ -8,6 +8,9 @@
 #include "Utility\MetaAlgorithms.h"		       // MetaFind
 #include "Component/CollisionEvent.h"
 
+#include "System/Graphics/VertexDefs.h"
+
+
 
 #define CLOCKWISE 0
 /*
@@ -41,6 +44,8 @@ namespace Dystopia
 	struct CollisionEvent;
 
 	class CollisionSystem;
+
+	class Mesh;
 
 	enum class eColliderType
 	{
@@ -122,11 +127,19 @@ namespace Dystopia
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
 
 		bool hasCollision() const;
-
 		void SetColliding(bool _b);
+
+		void SetPosition(Math::Point3D const & _point);
+		Math::Point3D GetPosition() const;
 
 		// Gettors
 		Math::Vec3D GetOffSet()   const;
+
+		AutoArray<Vertex> GetVertexBuffer() const;
+		AutoArray<short>  GetIndexBuffer()  const;
+
+		void  SetMesh(Mesh * _ptr);
+		Mesh* GetMesh() const;
 
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const;
@@ -140,15 +153,23 @@ namespace Dystopia
 		AutoArray<CollisionEvent>  mCollisionEvent;
 
 		bool Colliding = false;
-		
 
+		Math::Point3D mPosition;
+		
+		AutoArray<Vertex> mDebugVertices;
+		AutoArray<short>  mIndexBuffer;
+
+		void Triangulate();
 
 
 	private:
+
 		 //Status mStatus;
 
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
+
+		Mesh * mpMesh;
 
 
 	};
@@ -215,19 +236,19 @@ namespace Dystopia
 
 		static Edge	   GetClosestEdge(AutoArray<Vertice> & _Simplex);
 
-		static Math::Vec3D Support(const Convex & _ColA,
+		static Math::Point3D Support(const Convex & _ColA,
 			                       const Convex & _ColB,
 			                       const Math::Vec3D & _Dir);
 
-		static Math::Vec3D Support(const Convex & _ColA,
+		static Math::Point3D Support(const Convex & _ColA,
 			                       const Convex & _ColB,
 			                       const Math::Vec3D & _Dir,
 			                       bool & hasPoint);
 
 		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
 
-		Math::Vec3D Support(const Convex & _ColB,
-			                const Math::Vec3D & _Dir)const;
+		Math::Point3D Support(const Convex & _ColB,
+			                  const Math::Vec3D & _Dir)const;
 		
 
 

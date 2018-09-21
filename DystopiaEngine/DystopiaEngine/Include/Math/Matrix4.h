@@ -35,10 +35,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Math
 {
 	#define _CALL	__vectorcall
-	#define ALLIGN	16
 	#define USE_DP	0
 
-	struct __declspec(align (ALLIGN)) _DLL_EXPORT Matrix4
+	struct __declspec(align (alignof(Vector4))) _DLL_EXPORT Matrix4
 	{
 		// ====================================== CONSTRUCTORS ======================================= // 
 
@@ -561,9 +560,6 @@ inline Math::Matrix4 _CALL Math::operator/ (Matrix4 _lhs, const float _rhs)
 // Remove all our defines
 #ifdef USE_DP
 #undef USE_DP
-#endif
-#ifdef ALLIGN
-#undef ALLIGN
 #endif
 #ifdef _CALL
 #undef _CALL

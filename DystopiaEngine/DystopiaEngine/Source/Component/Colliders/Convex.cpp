@@ -10,9 +10,14 @@ namespace Dystopia
 {
 	Convex::Convex(Math::Point3D const & _v3Offset)
 		:Collider{ _v3Offset },
-		mVertices{Vertice{25,25}, Vertice{ -25,25 }, Vertice{ -25,-25 }, Vertice{25,-25} }
+		mVertices{Vertice{Math::MakePoint3D(1,1,0)}, Vertice{  Math::MakePoint3D(-1,1,0) }, Vertice{ Math::MakePoint3D(-1,-1,0) }, Vertice{ Math::MakePoint3D(1,-1,0) } }
 	{
-		
+		for (auto & elem : mVertices)
+		{
+			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x, elem.mPosition.y , elem.mPosition.z });
+		}
+
+		Collider::Triangulate();
 	}
 
 	void Convex::Load()
@@ -55,7 +60,7 @@ namespace Dystopia
 
 	bool Convex::isColliding(Convex & _ColB)
 	{
-		static Math::Vec3D InitialSearchDir{ 1,0,0,1 };
+		static Math::Vec3D InitialSearchDir{ 1,0,0,0 };
 		return isColliding(_ColB, InitialSearchDir);
 	}
 
@@ -94,7 +99,8 @@ namespace Dystopia
 				/*Check if Simplex contains Origin*/
 				if (ContainOrigin(Simplex, vDir))
 				{
-					Colliding = true;
+					Colliding             = true;
+					_pColB.Colliding      = true;
 					/*Use EPA to get collision information*/
 					mCollisionEvent.Insert(GetCollisionEvent(Simplex, _pColB));
 					/*Clear the simplex for the next function call*/
@@ -116,18 +122,18 @@ namespace Dystopia
 	Vertice Convex::GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir)
 	{
 		/*Convert the points to global*/
-		/*Global position of Object*/
-		Transform & _ColATrans = *(_ColA.GetOwner()->GetComponent<Transform>());
 		/*Offset of the collider from Object Local Coordinate System*/
 		Math::Vec3D const & OffSet = _ColA.GetOffSet();
 
 		/*Construct the Matrix for Global Coordinate Conversion*/
-		Math::Matrix3D WorldSpace = Math::Translate(_ColATrans.GetGlobalPosition().x + OffSet.x, _ColATrans.GetGlobalPosition().y + OffSet.y, 0);
+		Math::Matrix3D WorldSpace = Math::Translate(_ColA.mPosition.x + OffSet.x, _ColA.mPosition.y + OffSet.y, _ColA.mPosition.z + OffSet.z);
 
 		Vertice * pFirst = _ColA.mVertices.begin();
 		Vertice FarthestPoint = *pFirst;
+		FarthestPoint.mPosition = (WorldSpace * pFirst->mPosition);
 		/*Get the dot product of first Vertice's position for comparision*/
-		float FarthestVal = pFirst->mPosition.Dot(_Dir);
+		auto p = WorldSpace * (pFirst->mPosition);
+		float FarthestVal = (p).Dot(_Dir);
 		/*Loop through the array of Vertices*/
 		for (Vertice const & elem : _ColA.mVertices)
 		{
@@ -185,20 +191,21 @@ namespace Dystopia
 	}
 
 	/*Support Function for getting the Minkowski Difference*/
-	Math::Vec3D Convex::Support(const Convex & _ColA,
+	Math::Point3D Convex::Support(const Convex & _ColA,
 		                        const Convex & _ColB,
 		                        const Math::Vec3D & _Dir)
 	{
 		Vertice Farthest_In_ColA = _ColA.GetFarthestPoint(_Dir);
 		Vertice Farthest_In_ColB = _ColB.GetFarthestPoint(_Dir * -1);
 
-		return Farthest_In_ColA.mPosition - Farthest_In_ColB.mPosition;
+		auto MikwoskiPoint = Farthest_In_ColA.mPosition - Farthest_In_ColB.mPosition;
+		return Math::MakePoint3D(MikwoskiPoint.x, MikwoskiPoint.y, MikwoskiPoint.z);
 	}
-	Math::Vec3D Convex::Support(const Convex &, const Convex &, const Math::Vec3D &, bool &)
+	Math::Point3D Convex::Support(const Convex &, const Convex &, const Math::Vec3D &, bool &)
 	{
-		return Math::Vec3D();
+		return Math::Point3D();
 	}
-	Math::Vec3D Convex::Support(const Convex & _ColB, const Math::Vec3D & _Dir) const
+	Math::Point3D Convex::Support(const Convex & _ColB, const Math::Vec3D & _Dir) const
 	{
 		return Convex::Support(*this, _ColB, _Dir);
 	}
@@ -322,9 +329,8 @@ namespace Dystopia
 			{
 				/*Line Case*/
 				/*Point of the first vertex of the Simplex*/
-				static Math::Point3D vFirst;
+				Math::Point3D vFirst;
 				/*Vector from last vertex to first Vertex*/
-				static Math::Vec3D FirstToLast;
 				
 				vFirst = _Simplex.begin()->mPosition;
 				/*Get the Left-Hand Normal of First to Last*/

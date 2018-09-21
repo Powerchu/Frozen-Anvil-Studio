@@ -23,7 +23,7 @@ namespace Dystopia
 		, mfTorque(0.0F)
 		, mfLinearDamping(0.9F)
 		, mfFriction(0.0F)
-		, mfCustom_GravityScale(1.0F)
+		, mfCustom_GravityScale(0.25F)
 		, mfGravity{GRAVITY_CONSTANT*mfCustom_GravityScale}
 		, mfMass(100.0F)
 		, mfInvMass(0.0F)
