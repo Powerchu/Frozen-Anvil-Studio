@@ -165,6 +165,103 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	delete texture;
 }
 
+void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
+{
+	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
+	auto ActiveFlags = _cam.GetOwner()->GetFlags();
+	Math::Matrix4 ProjView = _cam.GetProjectionMatrix() * _cam.GetViewMatrix();
+
+	// Get Camera's layer, we only want to draw inclusive stuff
+	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
+
+	AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
+		return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
+	});
+
+	// Draw the game objects to screen based on the camera
+	for (auto& Obj : AllObj)
+	{
+		if (Obj.GetFlags() & ActiveFlags)
+		{
+			if (Renderer* r = Obj.GetComponent<Renderer>())
+			{
+				if (Shader* s = r->GetShader())
+				{
+					if (Texture2D* t = static_cast<Texture2D*>(r->GetTexture()))
+					{
+						s->UseShader();
+
+						t->BindTexture();
+						s->UploadUniform("ProjectViewMat", ProjView);
+						s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+						s->UploadUniform("Gamma", mfGamma);
+
+						r->Draw();
+
+						t->UnbindTexture();
+					}
+					else
+					{
+						glUseProgram(0);
+						r->Draw();
+					}
+				}
+				else
+				{
+					glUseProgram(0);
+					r->Draw();
+				}
+			}
+		}
+	}
+}
+
+void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
+{
+	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
+	auto ActiveFlags = _cam.GetOwner()->GetFlags();
+	Math::Matrix4 ProjView = _cam.GetProjectionMatrix() * _cam.GetViewMatrix();
+
+	// Get Camera's layer, we only want to draw inclusive stuff
+	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
+
+	AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
+		return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
+	});
+
+	// Draw the game objects to screen based on the camera
+	for (auto& Obj : AllObj)
+	{
+		if (Obj.GetFlags() & ActiveFlags)
+		{
+			if (Renderer* r = Obj.GetComponent<Renderer>())
+			{
+				Shader* s = r->GetShader();
+				Texture* t = r->GetTexture();
+
+				if (s && t)
+				{
+					s->UseShader();
+
+					t->BindTexture();
+					s->UploadUniform("ProjectViewMat", ProjView);
+					s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+					s->UploadUniform("Gamma", mfGamma);
+
+					r->Draw();
+
+					t->UnbindTexture();
+				}
+				else
+				{
+					//glUseProgram(0);
+					//r->Draw();
+				}
+			}
+		}
+	}
+}
+
 bool Dystopia::GraphicsSystem::Init(void)
 {
 	mGameView.Init(2048, 2048);
@@ -186,61 +283,19 @@ void Dystopia::GraphicsSystem::Update(float)
 	mGameView.BindFramebuffer();
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
-	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
 
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
 	{
-		auto ActiveFlags = Cam.GetOwner()->GetFlags();
-		Math::Matrix4 ProjView = Cam.GetProjectionMatrix() * Cam.GetViewMatrix();
-
 		// If the camera is inactive, skip
 		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
 			Cam.SetCamera();
 
-			// Get Camera's layer, we only want to draw inclusive stuff
-			ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
-
-			AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
-				return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
-			});
-			// Draw the game objects to screen based on the camera
-			for (auto& Obj : AllObj)
-			{
-				if (Obj.GetFlags() & ActiveFlags)
-				{
-					if (Renderer* r = Obj.GetComponent<Renderer>())
-					{
-						if (Shader* s = r->GetShader())
-						{
-							if (Texture2D* t = static_cast<Texture2D*>(r->GetTexture()))
-							{
-								s->UseShader();
-
-								t->BindTexture();
-								s->UploadUniform("ProjectViewMat", ProjView);
-								s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-								s->UploadUniform("Gamma", mfGamma);
-
-								r->Draw();
-
-								t->UnbindTexture();
-							}
-							else
-							{
-								glUseProgram(0);
-								r->Draw();
-							}
-						}
-						else
-						{
-							glUseProgram(0);
-							r->Draw();
-						}
-					}
-				}
-			}
+			DrawScene(Cam);
+			
+			if (mbDebugDraw)
+				DrawDebug(Cam);
 		}
 	}
 	mGameView.UnbindFramebuffer();

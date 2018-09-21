@@ -24,10 +24,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Window;
 	class Mesh;
-	class Texture;
 	class Shader;
+	class Camera;
+	class Window;
+	class Texture;
 	class Renderer;
 
 	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>
@@ -94,6 +95,8 @@ namespace Dystopia
 		void EndFrame(void);
 
 		void DrawSplash(void);
+		void DrawScene(Camera&);
+		void DrawDebug(Camera&);
 
 		bool SelectOpenGLVersion(Window&) noexcept;
 	};

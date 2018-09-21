@@ -101,7 +101,7 @@ void Dystopia::MeshSystem::AddVertex(float x, float y, float z, float u, float v
 	++(mpRawMeshes.back().mVtxCount);
 }
 
-void Dystopia::MeshSystem::AddIndices(const std::string& _strName, const AutoArray<short>& _indices)
+Dystopia::Mesh* Dystopia::MeshSystem::AddIndices(const std::string& _strName, const AutoArray<short>& _indices)
 {
 	RawMesh& CurrentMesh = mpRawMeshes.back();
 	size_t nCurrOffset = mIndex.size();
@@ -111,6 +111,8 @@ void Dystopia::MeshSystem::AddIndices(const std::string& _strName, const AutoArr
 
 	auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, static_cast<unsigned>(_indices.size()), nCurrOffset);
 	pCurrMesh->SetName(_strName);
+
+	return pCurrMesh;
 }
 
 void Dystopia::MeshSystem::EndMesh(void)

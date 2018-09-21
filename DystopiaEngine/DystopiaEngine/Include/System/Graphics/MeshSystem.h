@@ -35,7 +35,7 @@ namespace Dystopia
 		void StartMesh(void);
 		void LoadMesh(const std::string&);
 		void AddVertex(float x, float y, float z, float u = 0, float v = 0);
-		void AddIndices(const std::string&, const AutoArray<short>&);
+		Mesh* AddIndices(const std::string& _strName, const AutoArray<short>&);
 		void EndMesh(void);
 
 		void FreeMeshes(void);
