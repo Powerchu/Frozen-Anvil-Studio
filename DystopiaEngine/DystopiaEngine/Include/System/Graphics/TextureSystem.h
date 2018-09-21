@@ -1,47 +1,41 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Framebuffer.h
+\file	TextureSystem.h
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Framebuffer
+	Manages Textures
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _FRAMEBUFFER_H_
-#define _FRAMEBUFFER_H_
+#ifndef _TEXTURESYS_H_
+#define _TEXTURESYS_H_
+
+#include "DataStructure\MagicArray.h"
+
+#include <string>
 
 
 namespace Dystopia
 {
 	class Texture;
 
-	class Framebuffer
+	class TextureSystem
 	{
 	public:
-		// ====================================== CONSTRUCTORS ======================================= // 
 
-		Framebuffer(void) noexcept;
+		void Shutdown(void) noexcept;
 
-		~Framebuffer(void) noexcept;
+		template <typename Ty>
+		Ty* GetTexture(std::string&);
 
-
-		// ===================================== MEMBER FUNCTIONS ==================================== // 
-
-		void Init(unsigned _nWidth, unsigned _nHeight);
-
-		void BindFramebuffer(void) const noexcept;
-		void UnbindFramebuffer(void) const noexcept;
-
-		Texture* AsTexture(void) const noexcept;
 
 	private:
 
-		unsigned mnID, mDepthBuffer;
-		Texture* mpTexture;
+		MagicArray<Texture> mTextures;
 	};
 }
 

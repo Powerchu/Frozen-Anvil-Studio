@@ -87,6 +87,7 @@ namespace Dystopia
 		void Set_CustomGravityScale(float);
 		bool Set_ToggleGravity(); // toggles 
 		void Set_ToggleGravity(bool);
+		void Set_IsStatic(bool);
 		void SetPosition(const Vec3D&);
 		void SetVelocity(const Vec3D&);
 

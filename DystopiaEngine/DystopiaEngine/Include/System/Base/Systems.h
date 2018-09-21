@@ -36,6 +36,9 @@ namespace Dystopia
 		virtual void LoadSettings(DysSerialiser_t&)	    { };
 		virtual void SaveSettings(DysSerialiser_t&)     { };
 
+		virtual void Serialise() const                  { };
+		virtual void Unserialise()                      { };
+
 		virtual void ReceiveMessage(const eSysMessage&) { };
 
 		virtual ~Systems(void)						    = default;

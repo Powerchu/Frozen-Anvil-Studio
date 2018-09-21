@@ -20,9 +20,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Camera\CameraSystem.h"
+#include <System/Physics/PhysicsSystem.h>
+#include "System/Collision/CollisionSystem.h"
+
 #include "System\Scene\Scene.h"
 #include "System\Graphics\Texture2D.h"
 #include "Component\Camera.h"
+
+#include <Component/RigidBody.h>
 
 namespace Dystopia
 {
@@ -36,11 +41,13 @@ namespace Dystopia
 	}
 
 	SceneView::SceneView()
-		: EditorTab{ true }, 
+		: EditorTab{ true },
 		mLabel{ "Scene View" },
 		mpGfxSys{ nullptr },
 		mDelta{},
-		mpSceneCamera{ nullptr }
+		mpSceneCamera{ nullptr },
+		mpPhysSys{ nullptr },
+		mpColSys{ nullptr }
 	{}
 
 	SceneView::~SceneView()
@@ -51,27 +58,51 @@ namespace Dystopia
 	void SceneView::Init()
 	{
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
+		mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
+		mpColSys = EngineCore::GetInstance()->GetSystem<CollisionSystem>();
+
+		// Scene Camera
 		GameObject *p = Factory::CreateCamera("Scene Camera");
 		mpSceneCamera = GetCurrentScene()->InsertGameObject(Utility::Move(*p));
 		mpSceneCamera->GetComponent<Camera>()->Init();
+		mpSceneCamera->GetComponent<Transform>()->SetScale(Math::Vec4{ 1.f, 1.f, 1.f });
 		delete p;
+
+		// Sample Box Object
+		GameObject *b = Factory::CreateBox("Box Object");
+		mpBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*b));
+		mpBoxObject->GetComponent<RigidBody>()->Init();
+		mpBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 128.f, 128.f, 1.f });
+		delete b;
+
+		// Sample Static Object
+		GameObject *s = Factory::CreateStaticBox("Static Box");
+		mpStaticBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*s));
+		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
+		mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
+		//mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition ({ 0, -185.f, 0 });
+		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 512.f, 64.f, 1.f });
+		delete s;
 	}
 
 	void SceneView::Update(const float& _dt)
 	{
 		mDelta = _dt;
-		if (GetMainEditor().CurrentState() != EDITOR_PLAY) mpGfxSys->Update(mDelta);
+		mpGfxSys->Update(mDelta);
+		mpPhysSys->FixedUpdate(mDelta);
+		mpColSys->Update(mDelta);
 	}
 
 	void SceneView::EditorUI()
 	{
-		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
-		ImGui::Image(reinterpret_cast<void*>(id), ImVec2{ Size().x - 6.f,  Size().y - 27.f });
+		unsigned id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
+		ImGui::Image(reinterpret_cast<void*>(id), ImVec2{ Size().x - 6.0F,  Size().y - 27.0F });
 	}
 
 	void SceneView::Shutdown()
 	{
 		mpGfxSys = nullptr;
+		mpPhysSys = nullptr;
 	}
 
 	std::string SceneView::GetLabel() const
