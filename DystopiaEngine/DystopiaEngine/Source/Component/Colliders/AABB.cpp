@@ -8,15 +8,15 @@ namespace Dystopia
 	/*Default Constructor*/
 	AABB::AABB()
 		:Convex{}
-		, mfWidth{ 1 }
-		, mfHeight{ 1 }
+		, mfWidth{ 50 }
+		, mfHeight{ 50 }
 	{
-		static Math::Point3D ArrPoints[]
+		Math::Point3D ArrPoints[]
 		{
-			Math::Point3D{0.5f, 0.5f, 1, 0},
-			Math::Point3D{0.5f, -0.5f, 1, 0 },
-			Math::Point3D{-0.5f, -0.5f, 1, 0 },
-			Math::Point3D{-0.5f, 0.5f, 1, 0 }
+			Math::Point3D{ mfWidth / 2, mfHeight / 2, 1, 0 }  ,
+			Math::Point3D{ mfWidth / 2,-mfHeight / 2, 1, 0 }  ,
+			Math::Point3D{ -mfWidth / 2,-mfHeight / 2, 1, 0 } ,
+			Math::Point3D{ -mfWidth / 2, mfHeight / 2, 1, 0 } 
 		};
 
 		//TODO
@@ -89,16 +89,22 @@ namespace Dystopia
 		}
 	}*/
 
-	bool AABB::isColliding(const AABB & _ColB) const
+	bool AABB::isColliding(AABB & _ColB)
 	{
 		/*Static vs. Dynamic AABB Collision Check*/
-		return (this->mMin->mPosition.x <= _ColB.mMax->mPosition.x 
-			    && this->mMax->mPosition.x >= _ColB.mMin->mPosition.x
-			    && this->mMax->mPosition.y <= _ColB.mMin->mPosition.y
-				&& this->mMin->mPosition.y >= _ColB.mMax->mPosition.y);
+
+		if (   mPosition.x + this->mMin->mPosition.x <= _ColB.mPosition.x + _ColB.mMax->mPosition.x
+			&& mPosition.x + this->mMax->mPosition.x >= _ColB.mPosition.x + _ColB.mMin->mPosition.x
+			&& mPosition.y + this->mMax->mPosition.y >= _ColB.mPosition.y + _ColB.mMin->mPosition.y
+			&& mPosition.y + this->mMin->mPosition.y <= _ColB.mPosition.y + _ColB.mMax->mPosition.y)
+		{
+			Colliding = _ColB.Colliding = true;
+			return true;
+		}
+		return false;
 	}
 
-	bool AABB::isColliding(const AABB * const & _ColB) const
+	bool AABB::isColliding(AABB * const & _ColB)
 	{
 		return this->isColliding(*_ColB);
 	}

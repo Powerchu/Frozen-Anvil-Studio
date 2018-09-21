@@ -1,6 +1,9 @@
 #include "System\Collision\CollisionSystem.h"
 #include "Component\Collider.h"
 
+#include "Object/GameObject.h"
+#include "Component/Transform.h"
+
 #include <map>
 #include <utility>
 
@@ -26,7 +29,7 @@ namespace Dystopia
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
 		using CollisionTableMap = std::map < CollisionTable, fpCollisionResolution>;
 
-		bool isColliding;
+		bool Colliding;
 		
 		static CollisionTableMap CollisionFuncTable = []()->CollisionTableMap
 		{
@@ -40,25 +43,39 @@ namespace Dystopia
 			return i;
 		}();
 
-		/*
-		for (Collider * const & elem : mArrOfCollider)
-		{
-			for (Collider * const * i = &elem+1; i <= &mArrOfCollider.back(); i++)
-			{
-				elem->GetColliderType();
+		AutoArray<Collider *> mColliders;
 
-				const auto pair_key = std::make_pair(elem->GetColliderType(), (*i)->GetColliderType());
+		for (auto & elem : ComponentDonor<Convex>::mComponents)
+		{
+			elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+			mColliders.push_back(&elem);
+		}
+		for (auto & elem : ComponentDonor<AABB>::mComponents)
+		{
+			elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+			mColliders.push_back(&elem);
+		}
+
+		for (auto & elem : mColliders)
+		{
+			for(auto & i : mColliders)
+			{
+				if (elem == i) continue;
+
+
+				const auto pair_key = std::make_pair(elem->GetColliderType(), (i)->GetColliderType());
 				for (auto & key : CollisionFuncTable)
 				{
 					if (key.first == pair_key)
 					{
-						isColliding = (this->*key.second)(elem, *i);
+						Colliding = (this->*key.second)(elem, i);
+						i->SetColliding(i->Collider::hasCollision() | Colliding);
+						elem->SetColliding(elem->Collider::hasCollision() | Colliding);
 						break;
 					}
 				}
 			}
 		}
-		*/
 	}
 
 	void CollisionSystem::FixedUpdate(float _dt)
@@ -68,6 +85,13 @@ namespace Dystopia
 
 	void CollisionSystem::Shutdown()
 	{
+		/*
+		for (Collider * const & elem : mArrOfCollider)
+		{
+		delete elem;
+		}
+		*/
+
 	}
 
 	void CollisionSystem::InsertCollider(Collider * const & _Col)
@@ -77,8 +101,8 @@ namespace Dystopia
 
 	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const
 	{
-		const auto col_a = dynamic_cast<const AABB * const>(_ColA);
-		const auto col_b = dynamic_cast<const AABB * const>(_ColB);
+		const auto col_a = dynamic_cast<AABB * const>(_ColA);
+		const auto col_b = dynamic_cast<AABB * const>(_ColB);
 
 		return col_a->isColliding(col_b);
 	}

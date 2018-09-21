@@ -22,7 +22,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <System/Driver/Driver.h>
 #include <System/Graphics/GraphicsSystem.h>
 #include <System/Camera/CameraSystem.h>
+
+// TODO: DELETE
 #include <System/Physics/PhysicsSystem.h>
+#include <System/Collision/CollisionSystem.h>
 
 #include <Object/GameObject.h>
 #include <Utility/GUID.h>
@@ -49,6 +52,25 @@ namespace Dystopia
 			return pObject;
 		}
 
+		GameObject* CreateStaticBox(const std::string& _name)
+		{
+			GameObject *pObject = CreateGameObj(_name);
+			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
+			p->SetOwner(pObject);
+			p->Init();
+			p->Set_IsStatic(true);
+			pObject->AddComponent(p, typename RigidBody::TAG{});
+
+			auto g = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			g->SetOwner(pObject);
+			pObject->AddComponent(g, typename Renderer::TAG{});
+
+			pObject->AddComponent<Convex>();
+			pObject->GetComponent<Transform>()->SetGlobalPosition(0, -185, 0);
+
+			return pObject;
+		}
+
 		GameObject* CreateBox(const std::string& _name)
 		{
 			GameObject *pObject = CreateGameObj(_name);
@@ -61,6 +83,7 @@ namespace Dystopia
 			g->SetOwner(pObject);
 			pObject->AddComponent(g, typename Renderer::TAG{});
 
+			pObject->AddComponent<Convex>();
 			return pObject;
 		}
 	}

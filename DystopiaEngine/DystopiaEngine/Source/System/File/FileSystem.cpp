@@ -72,5 +72,20 @@ namespace Dystopia
 		return std::filesystem::create_directories(_FilePath);
 	}
 
+	bool FileSystem::CheckFileExist(std::string const & _FileName, eFileDir _Directory)
+	{
+		std::filesystem::path DirPath{ mPathTable[_Directory] };
+		std::error_code error;
+		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
+
+		for (auto const & elem : DirIter)
+		{
+			if (elem.path().filename().string() == _FileName)
+				return true;
+		}
+
+		return false;
+	}
+
 }
 

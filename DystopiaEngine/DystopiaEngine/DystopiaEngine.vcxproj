@@ -221,6 +221,7 @@
     <ClInclude Include="Include\DataStructure\Pointer.h" />
     <ClInclude Include="Include\Math\MathFwd.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />
