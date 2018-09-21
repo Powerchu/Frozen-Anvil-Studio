@@ -38,6 +38,8 @@
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
+    <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp" />
+    <ClCompile Include="Source\System\Graphics\TextureSystem.cpp" />
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp" />
     <ClCompile Include="Source\System\Physics\CollisionResolution.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
@@ -217,6 +219,7 @@
     <ClInclude Include="Include\Math\Vector2.h" />
     <ClInclude Include="Include\Utility\UtilityInternals.h" />
     <ClInclude Include="Include\DataStructure\Pointer.h" />
+    <ClInclude Include="Include\Math\MathFwd.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h" />
   </ItemGroup>

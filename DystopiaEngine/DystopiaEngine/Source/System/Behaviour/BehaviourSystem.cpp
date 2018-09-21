@@ -86,7 +86,9 @@ namespace Dystopia
 	void Dystopia::BehaviourSystem::Update(float)
 	{
 #if EDITOR
+
 		return;
+
 		/*Update Hotloader*/
 		mHotloader->Update();
 		static DLLWrapper * arr[100]{ nullptr };

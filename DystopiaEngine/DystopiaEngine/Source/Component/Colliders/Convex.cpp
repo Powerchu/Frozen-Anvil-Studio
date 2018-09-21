@@ -12,7 +12,12 @@ namespace Dystopia
 		:Collider{ _v3Offset },
 		mVertices{Vertice{Math::MakePoint3D(1,1,0)}, Vertice{  Math::MakePoint3D(-1,1,0) }, Vertice{ Math::MakePoint3D(-1,-1,0) }, Vertice{ Math::MakePoint3D(1,-1,0) } }
 	{
-		
+		for (auto & elem : mVertices)
+		{
+			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x, elem.mPosition.y , elem.mPosition.z });
+		}
+
+		Collider::Triangulate();
 	}
 
 	void Convex::Load()
@@ -94,7 +99,8 @@ namespace Dystopia
 				/*Check if Simplex contains Origin*/
 				if (ContainOrigin(Simplex, vDir))
 				{
-					Colliding = true;
+					Colliding             = true;
+					_pColB.Colliding      = true;
 					/*Use EPA to get collision information*/
 					//mCollisionEvent.Insert(GetCollisionEvent(Simplex, _pColB));
 					/*Clear the simplex for the next function call*/
@@ -116,8 +122,6 @@ namespace Dystopia
 	Vertice Convex::GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir)
 	{
 		/*Convert the points to global*/
-		/*Global position of Object*/
-		Transform & _ColATrans = *(_ColA.GetOwner()->GetComponent<Transform>());
 		/*Offset of the collider from Object Local Coordinate System*/
 		Math::Vec3D const & OffSet = _ColA.GetOffSet();
 
@@ -126,8 +130,10 @@ namespace Dystopia
 
 		Vertice * pFirst = _ColA.mVertices.begin();
 		Vertice FarthestPoint = *pFirst;
+		FarthestPoint.mPosition = (WorldSpace * pFirst->mPosition);
 		/*Get the dot product of first Vertice's position for comparision*/
-		float FarthestVal = pFirst->mPosition.Dot(_Dir);
+		auto p = WorldSpace * (pFirst->mPosition);
+		float FarthestVal = (p).Dot(_Dir);
 		/*Loop through the array of Vertices*/
 		for (Vertice const & elem : _ColA.mVertices)
 		{

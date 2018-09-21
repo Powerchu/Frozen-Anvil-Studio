@@ -65,7 +65,7 @@ void Dystopia::Framebuffer::UnbindFramebuffer(void) const noexcept
 }
 
 
-Dystopia::Texture2D* Dystopia::Framebuffer::AsTexture(void) const noexcept
+Dystopia::Texture* Dystopia::Framebuffer::AsTexture(void) const noexcept
 {
 	return mpTexture;
 }

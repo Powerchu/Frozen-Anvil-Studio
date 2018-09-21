@@ -8,6 +8,9 @@
 #include "Utility\MetaAlgorithms.h"		       // MetaFind
 #include "Component/CollisionEvent.h"
 
+#include "System/Graphics/VertexDefs.h"
+
+
 
 #define CLOCKWISE 1
 /*
@@ -41,6 +44,8 @@ namespace Dystopia
 	struct CollisionEvent;
 
 	class CollisionSystem;
+
+	class Mesh;
 
 	enum class eColliderType
 	{
@@ -130,6 +135,12 @@ namespace Dystopia
 		// Gettors
 		Math::Vec3D GetOffSet()   const;
 
+		AutoArray<Vertex> GetVertexBuffer() const;
+		AutoArray<short>  GetIndexBuffer()  const;
+
+		void  SetMesh(Mesh * _ptr);
+		Mesh* GetMesh() const;
+
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const;
 		virtual void Unserialise(TextSerialiser&);
@@ -145,14 +156,20 @@ namespace Dystopia
 
 		Math::Point3D mPosition;
 		
+		AutoArray<Vertex> mDebugVertices;
+		AutoArray<short>  mIndexBuffer;
 
+		void Triangulate();
 
 
 	private:
+
 		 //Status mStatus;
 
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
+
+		Mesh * mpMesh;
 
 
 	};
