@@ -4,7 +4,7 @@
 #include "Math\Vector4.h"
 
 #include "Object\GameObject.h"
-#include "Component/CollisionEvent.h"
+#include "System\Collision\CollisionEvent.h"
 
 namespace Dystopia
 {

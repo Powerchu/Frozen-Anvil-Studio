@@ -106,7 +106,7 @@
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
     <ClInclude Include="CharacterController.h" />
     <ClInclude Include="Include\Component\BehaviourList.h" />
-    <ClInclude Include="Include\Component\CollisionEvent.h" />
+    <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
