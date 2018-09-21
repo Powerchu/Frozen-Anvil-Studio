@@ -453,11 +453,12 @@ namespace Dystopia
 					if (SUCCEEDED(pFileSave->GetResult(&pItem)))
 					{
 						PWSTR pszFilePath;
-						hr = pItem->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &pszFilePath);
-						if (SUCCEEDED(hr))
+						LPWSTR fileName[MAX_PATH];
+						if (SUCCEEDED(pItem->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &pszFilePath)) && 
+							SUCCEEDED(pFileSave->GetFileName(fileName)))
 						{
 							std::wstring path{ pszFilePath };
-							mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() });
+							mpSceneSystem->SaveScene("SomeName", std::string{ path.begin(), path.end() });
 							CoTaskMemFree(pszFilePath);
 						}
 						pItem->Release();

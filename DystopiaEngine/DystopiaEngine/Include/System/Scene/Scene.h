@@ -49,8 +49,10 @@ namespace Dystopia
 
 		void Unserialise(TextSerialiser &);
 
-	private:
+		void SetSceneName(const std::string& _name);
 
+	private:
+		std::string mName;
 		AutoArray<GameObject> mGameObjs;
 		//Ctor::MagicArrayBuilder<GameObject>::SetBlockLimit<16>::SetBlockSize<256>::type mGameObjs;
 	};
