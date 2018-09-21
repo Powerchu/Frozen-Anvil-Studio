@@ -1,2 +1,6 @@
 [START_SHADER]
 Default Shader,Resource/Shader/DefaultVert.glsl,Resource/Shader/DefaultFrag.glsl,
+[START_SHADER]
+No Texture,Resource/Shader/DefaultVert.glsl,Resource/Shader/NoTextureFrag.glsl,
+[START_SHADER]
+Colour Shader,Resource/Shader/DefaultVert.glsl,Resource/Shader/ColourFrag.glsl,

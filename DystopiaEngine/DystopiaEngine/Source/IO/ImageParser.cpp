@@ -154,8 +154,6 @@ namespace BMP
 		unsigned chunkLength = _info.mWidth * 3;
 		unsigned padding = ((chunkLength + 3) >> 2) * 4 - chunkLength; // pad widths to multiple of 4
 
-		unsigned size = chunkLength * std::abs(_info.mHeight);
-
 		ColorRGBA* data = new ColorRGBA[_info.mWidth * std::abs(_info.mHeight)];
 		ColorRGBA* ptr = data + _info.mWidth * std::abs(_info.mHeight);
 

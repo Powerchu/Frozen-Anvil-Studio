@@ -43,6 +43,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\Timer.h"
 #include "System\Time\ScopedTimer.h"
 
+// STL Includes
+#include <string>
+#include <filesystem>
+
+
+#define SETTINGS_DIR  eFileDir::eRoot
 #define SETTINGS_FILE "Settings.dyst" 
 
 
@@ -115,9 +121,12 @@ Dystopia::EngineCore::EngineCore(void) :
 
 void Dystopia::EngineCore::LoadSettings(void)
 {
-	if (false)
+	if (GetSubSystem<FileSystem>()->CheckFileExist(SETTINGS_FILE))
 	{
-		auto file = Serialiser::OpenFile<TextSerialiser>(SETTINGS_FILE);
+		auto file = Serialiser::OpenFile<TextSerialiser>(
+			GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
+			SETTINGS_FILE
+		);
 
 		for (auto& e : mSystemTable)
 		{
@@ -195,8 +204,12 @@ void Dystopia::EngineCore::Update(void)
 
 void Dystopia::EngineCore::Shutdown(void)
 {
-	GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, eFileDir::eRoot);
-	DysSerialiser_t s = Serialiser::OpenFile<DysSerialiser_t>(SETTINGS_FILE, DysSerialiser_t::MODE_WRITE);
+	GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
+	auto s = Serialiser::OpenFile<DysSerialiser_t>(
+		GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
+		SETTINGS_FILE,
+		DysSerialiser_t::MODE_WRITE
+	);
 
 	for (auto& e : mSystemList)
 	{

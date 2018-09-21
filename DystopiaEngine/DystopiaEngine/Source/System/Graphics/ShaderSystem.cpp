@@ -14,3 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\ShaderSystem.h"
 
 
+Dystopia::ShaderSystem::~ShaderSystem(void) noexcept
+{
+}
+
+

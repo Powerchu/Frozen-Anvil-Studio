@@ -186,30 +186,30 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
 		{
 			if (Renderer* r = Obj.GetComponent<Renderer>())
 			{
-				if (Shader* s = r->GetShader())
+				Shader* s = r->GetShader();
+				Texture* t = r->GetTexture();
+
+				if (s && t)
 				{
-					if (Texture2D* t = static_cast<Texture2D*>(r->GetTexture()))
-					{
-						s->UseShader();
+					s->UseShader();
 
-						t->BindTexture();
-						s->UploadUniform("ProjectViewMat", ProjView);
-						s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-						s->UploadUniform("Gamma", mfGamma);
+					t->BindTexture();
+					s->UploadUniform("ProjectViewMat", ProjView);
+					s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+					s->UploadUniform("Gamma", mfGamma);
 
-						r->Draw();
+					r->Draw();
 
-						t->UnbindTexture();
-					}
-					else
-					{
-						glUseProgram(0);
-						r->Draw();
-					}
+					t->UnbindTexture();
 				}
 				else
 				{
-					glUseProgram(0);
+					s = shaderlist["No Texture"];
+
+					s->UseShader();
+					s->UploadUniform("ProjectViewMat", ProjView);
+					s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+
 					r->Draw();
 				}
 			}
@@ -378,19 +378,23 @@ Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _fileP
 	std::string strName, strVert, strGeo, strFrag;
 
 	file.ConsumeStartBlock();
-	file >> strName;
-	file >> strVert;
-	file >> strFrag;
+	while (!file.EndOfInput())
+	{
+		file >> strName;
+		file >> strVert;
+		file >> strFrag;
 
-	shaderlist[strName] = new Shader{};
-	if (file.EndOfInput())
-	{
-		shaderlist[strName]->CreateShader(strVert, strFrag);
-	}
-	else
-	{
-		file >> strGeo;
-		shaderlist[strName]->CreateShader(strVert, strFrag, strGeo);
+		shaderlist[strName] = new Shader{};
+		if (file.EndOfInput())
+		{
+			shaderlist[strName]->CreateShader(strVert, strFrag);
+		}
+		else
+		{
+			file >> strGeo;
+			shaderlist[strName]->CreateShader(strVert, strFrag, strGeo);
+		}
+		file.ConsumeStartBlock();
 	}
 
 	return nullptr;

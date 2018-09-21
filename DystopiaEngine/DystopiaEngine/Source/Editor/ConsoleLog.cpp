@@ -95,9 +95,9 @@ namespace Dystopia
 		if (mLoggingIndex == maxLog)
 		{
 			std::rotate(mArrDebugTexts.begin(), mArrDebugTexts.begin() + 1, mArrDebugTexts.end());
-			mArrDebugTexts[maxLog - 1] = _text;
+			mArrDebugTexts[maxLog - 1] = _text.c_str();
 		}
-		else mArrDebugTexts[mLoggingIndex++] = _text;
+		else mArrDebugTexts[mLoggingIndex++] = _text.c_str();
 		mRecordIndex++;
 	}
 	
