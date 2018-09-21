@@ -56,7 +56,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 /* library includes */
 #include <iostream>
+#include <Windows.h>
 #include <bitset>
+#include <ShlObj_core.h>
 
 // Entry point for editor
 int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
@@ -84,6 +86,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 
 
 /*///////////////////////////////////////////////////////////////////// EDITOR CLASS ////////////////////////////////////////////////////////////////////////////////*/
+
+static const std::string DEFAULT_LOAD_SCENE_PATH = "../Resource/Scene/";
 namespace Dystopia
 {
 	static Editor* gpInstance = 0;
@@ -115,6 +119,16 @@ namespace Dystopia
 	{
 	}
 
+	void Editor::LoadDefaults()
+	{
+		mArrTabs.push_back(Inspector::GetInstance());
+		mArrTabs.push_back(ProjectResource::GetInstance());
+		mArrTabs.push_back(HierarchyView::GetInstance());
+		mArrTabs.push_back(SceneView::GetInstance());
+		mArrTabs.push_back(ConsoleLog::GetInstance());
+		mArrTabs.push_back(PerformanceLog::GetInstance());
+	}
+
 	void Editor::Init()
 	{
 		mpDriver		= Dystopia::EngineCore::GetInstance();
@@ -126,13 +140,12 @@ namespace Dystopia
 		mpSceneSystem	= mpDriver->GetSystem<SceneSystem>();		// driver init-ed
 		mpProfiler		= mpDriver->GetSystem<Profiler>();			// driver init-ed
 		mpPhysicsSystem = mpDriver->GetSystem<PhysicsSystem>();		// driver init-ed
+		mpBehaviourSys	= mpDriver->GetSystem<BehaviourSystem>();	// driver init-ed
 
 		LoadDefaults();
 		mpInput->Init();
 		mpEditorEventSys->Init();
-
 		InstallHotkeys();
-
 		for (auto& e : mArrTabs)
 		{
 			e->SetComdContext(mpComdHandler);
@@ -141,35 +154,23 @@ namespace Dystopia
 			e->Init();
 			e->RemoveFocus();
 		}
-
 		EGUI::SetContext(mpComdHandler);
 		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
 			mCurrentState = EDITOR_EXIT;
-	}
-
-	void Editor::LoadDefaults()
-	{
-		mArrTabs.push_back(Inspector::GetInstance());
-		mArrTabs.push_back(ProjectResource::GetInstance());
-		mArrTabs.push_back(HierarchyView::GetInstance());
-		mArrTabs.push_back(SceneView::GetInstance());
-		mArrTabs.push_back(ConsoleLog::GetInstance());
-		mArrTabs.push_back(PerformanceLog::GetInstance());
+		LoadUI();
 	}
 
 	void Editor::StartFrame()
 	{
-		/* Set delta time of frame */
 		mDeltaTime = mpTimer->Elapsed();
 		mpTimer->Lap();
-
 		mpProfiler->Update(mDeltaTime);
 		mpInput->Update(mDeltaTime);
 		mpWin->Update(mDeltaTime);
-		mpDriver->GetSystem<BehaviourSystem>()->Update(mDeltaTime);
+		mpBehaviourSys->Update(mDeltaTime);
 		mpGuiSystem->StartFrame(mDeltaTime);
 
-		if (mpDriver->GetSystem<BehaviourSystem>()->hasDllChanges())
+		if (mpBehaviourSys->hasDllChanges())
 		{
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED);
 		}
@@ -187,42 +188,56 @@ namespace Dystopia
 		}
 		*/
 
-
 		UpdateKeys();
 		UpdateHotkeys();
-		
 		mpEditorEventSys->FireAllPending();
 		MainMenuBar();
 	}
 
 	void Editor::UpdateFrame(const float& _dt)
 	{ 
+		switch (mCurrentState)
+		{
+		case EDITOR_PLAY:		mpDriver->FixedUpdate();
+								mpDriver->Update();			
+								break;
+		case EDITOR_SAVE:		SaveUI();	
+								break;
+		case EDITOR_SAVE_AS:	SaveAsUI();	
+								break;
+		case EDITOR_LOAD:		LoadUI();	
+								break;
+		}
+
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);
 			switch (i)
 			{
-			case 0: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
+			case 0: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(),
+											   EGUI::Docking::eDOCK_SLOT_RIGHT);
 				break;
-			case 1: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_LEFT);
+			case 1: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), 
+											   EGUI::Docking::eDOCK_SLOT_LEFT);
 				break;
-			case 2: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_TOP);
+			case 2: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), 
+											   EGUI::Docking::eDOCK_SLOT_TOP);
 				break;
-			case 3: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_RIGHT);
+			case 3: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), 
+											   EGUI::Docking::eDOCK_SLOT_RIGHT);
 				break;
-			default: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), EGUI::Docking::eDOCK_SLOT_NONE);
+			default: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), 
+												EGUI::Docking::eDOCK_SLOT_NONE);
 			}
 
 			EditorTab *pTab = mArrTabs[i];
 			pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()));
 			pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
 			pTab->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
-
 			{
 				ScopedTimer<ProfilerAction> scopeT{ pTab->GetLabel(), "Update" };
 				pTab->Update(_dt);
 			}
-
 			{
 				ScopedTimer<ProfilerAction> scopeT{ pTab->GetLabel(), "Editor UI" };
 				if (EGUI::StartTab(pTab->GetLabel().c_str(), pTab->GetOpenedBool()))
@@ -230,7 +245,6 @@ namespace Dystopia
 					pTab->EditorUI();
 				}
 			}
-
 			EGUI::EndTab();
 			EGUI::PopID();
 		}
@@ -241,16 +255,13 @@ namespace Dystopia
 		LogTabPerformance();
 		mpProfiler->PostUpdate();
 		mpDriver->GetSystem<BehaviourSystem>()->PostUpdate();
-		mpGuiSystem->EndFrame();
-
-		if (mCurrentState != mNextState) 
-			UpdateState();
+		mpGuiSystem->EndFrame(); 
+		if (mCurrentState != mNextState)  UpdateState();
 	}
 
 	void Editor::Shutdown()
 	{
 		UnInstallHotkeys();
-
 		mpDriver->GetSubSystem<LoggerSystem>()->RedirectOutput(nullptr);
 		EGUI::Docking::ShutdownTabs();
 		for (auto& e : mArrTabs)
@@ -258,18 +269,15 @@ namespace Dystopia
 			e->Shutdown();
 			delete e;
 		}
-
 		mpInput->Shutdown();
 		mpEditorEventSys->Shutdown();
 		mpComdHandler->Shutdown();
 		mpGuiSystem->Shutdown();
-
 		delete mpInput;
 		delete mpEditorEventSys;
 		delete mpComdHandler;
 		delete mpGuiSystem;
 		delete mpTimer;
-
 		mpEditorEventSys	= nullptr;
 		mpInput				= nullptr;
 		mpComdHandler		= nullptr;
@@ -279,7 +287,7 @@ namespace Dystopia
 		mpGfx				= nullptr;
 		mpProfiler			= nullptr;
 		mpFocusGameObj		= nullptr;
-
+		mpBehaviourSys		= nullptr;
 		mpDriver->Shutdown();
 		EGUI::RemoveContext();
 	}
@@ -309,22 +317,18 @@ namespace Dystopia
 		switch (mNextState)
 		{
 		case EDITOR_MAIN:
-			if (mCurrentState == EDITOR_PLAY || mCurrentState == EDITOR_PAUSE)
-				TempLoad(); 
 			break;
 		case EDITOR_PLAY:
-			TempSave();
-			Play();
 			break;
 		case EDITOR_PAUSE:
 			break;
 		case EDITOR_SAVE:
-			Save();
+			break;
+		case EDITOR_SAVE_AS:
 			break;
 		case EDITOR_LOAD:
-			Load();
 			break;
-		default:
+		case EDITOR_EXIT:
 			break;
 		}
 		mCurrentState = mNextState;
@@ -371,27 +375,15 @@ namespace Dystopia
 				}
 				EGUI::EndMenuHeader();
 			}
-			if (EGUI::StartMenuBody("Save"))
-			{
-				// TODO: Some actual function
-			}
-			if (EGUI::StartMenuBody("Save As.."))
-			{
-				// TODO: Some actual function
-			}
-			if (EGUI::StartMenuBody("Quit"))
-			{
-				// TODO: Some actual function
-				Save();
-				ChangeState(Dystopia::EDITOR_EXIT);
-			}
+			if (EGUI::StartMenuBody("Save"))		ChangeState(EDITOR_SAVE);
+			if (EGUI::StartMenuBody("Save As.."))	ChangeState(EDITOR_SAVE_AS);
+			if (EGUI::StartMenuBody("Quit"))		ChangeState(EDITOR_EXIT);
 			EGUI::EndMenuHeader();
 		}
 	}
 
 	void Editor::MMEdit()
 	{
-		// TODO: Some actual function for all the bottom
 		if (EGUI::StartMenuHeader("Edit"))
 		{
 			if (EGUI::StartMenuBody("Undo ", "Ctrl + Z"))	EditorUndo();
@@ -399,7 +391,6 @@ namespace Dystopia
 			if (EGUI::StartMenuBody("Cut ", "Ctrl + X"))	EditorCut();
 			if (EGUI::StartMenuBody("Copy ", "Ctrl + C"))	EditorCopy();
 			if (EGUI::StartMenuBody("Paste ", "Ctrl + V"))	EditorPaste();
-
 			EGUI::EndMenuHeader();
 		}
 	}
@@ -411,10 +402,8 @@ namespace Dystopia
 		{
 			for (auto& e : mArrTabs)
 			{
-				if (*(e->GetOpenedBool())) 
-					EGUI::Display::IconTick(icon, icon);
-				else 
-					EGUI::Display::Dummy(icon, icon);
+				if (*(e->GetOpenedBool()))  EGUI::Display::IconTick(icon, icon);
+				else						EGUI::Display::Dummy(icon, icon);
 				EGUI::SameLine();
 				if (EGUI::StartMenuBody(e->GetLabel()))
 					*(e->GetOpenedBool()) = !*(e->GetOpenedBool());
@@ -447,20 +436,28 @@ namespace Dystopia
 
 	void Editor::Play()
 	{
-		// call for Init of the current scene. Assuming scene manager knows which is the current scene 
-		// something like , mpSceneMgr->CurrentScene()->Init() using the temp file
-	}
-
-	void Editor::Save()
-	{
-		// call for serialization of all in current scene
-		//BinarySerializer serial = BinarySerializer::OpenFile("SaveSettingsFile", std::ios::out);
 
 	}
 
-	void Editor::Load()
+	void Editor::SaveUI()
 	{
-		// call for deserilization of all in current scene
+
+	}
+
+	void Editor::SaveAsUI()
+	{
+
+	}
+
+	void Editor::LoadUI()
+	{
+		ITEMIDLIST *pid1 = ILCreateFromPath(std::wstring{ DEFAULT_LOAD_SCENE_PATH.begin(), 
+										   DEFAULT_LOAD_SCENE_PATH.end() }.c_str());
+		if (pid1)
+		{
+			SHOpenFolderAndSelectItems(pid1, 0, 0, 0);
+			ILFree(pid1);
+		}
 	}
 
 	void Editor::TempSave()
@@ -477,7 +474,6 @@ namespace Dystopia
 	{
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ENTER, false);
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ESCAPE, false);
-
 		for (int i = eButton::KEYBOARD_BACKSPACE; i <= eButton::KEYBOARD_TAB; ++i)
 			mpGuiSystem->UpdateKey(i, false);
 		for (int i = eButton::KEYBOARD_SPACEBAR; i <= eButton::KEYBOARD_HOME; ++i)
@@ -486,7 +482,6 @@ namespace Dystopia
 			mpGuiSystem->UpdateKey(i, false);
 		for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
 			mpGuiSystem->UpdateKey(i, false);
-
 		bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
 		const auto& queue = mpWin->GetMainWindow().GetInputQueue();
 		for (const auto& k : queue)
@@ -516,29 +511,20 @@ namespace Dystopia
 			mpGuiSystem->UpdateMouse(KEY_LMOUSE, true);
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_LCLICK);
 		}
-
 		if (mpInput->IsKeyTriggered(KEY_RMOUSE))
 		{
 			mpGuiSystem->UpdateMouse(KEY_RMOUSE, true);
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_RCLICK);
 		}
-
 		mpGuiSystem->UpdateScroll(0, mpInput->GetMouseWheel());
-
-		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Z))
-			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_UNDO);
-
-		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_Y))
-			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_REDO);
-
-		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_C))
-			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_COPY);
-
-		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_X))
-			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_CUT);
-
-		if (mpInput->IsKeyPressed(KEY_CTRL) && mpInput->IsKeyTriggered(KEY_V))
-			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_PASTE);
+		if (mpInput->IsKeyPressed(KEY_CTRL))
+		{
+			if (mpInput->IsKeyTriggered(KEY_Z))			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_UNDO);
+			else if (mpInput->IsKeyTriggered(KEY_Y))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_REDO);
+			else if (mpInput->IsKeyTriggered(KEY_C))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_COPY);
+			else if (mpInput->IsKeyTriggered(KEY_X))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_CUT);
+			else if (mpInput->IsKeyTriggered(KEY_V))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_PASTE);
+		}
 	}
 	
 	void Editor::InstallHotkeys()
@@ -599,15 +585,15 @@ namespace Dystopia
 				}
 			}
 			PLogTaskManager p;
-			p.mCPUIdle = mpProfiler->GetCPUPercentageIdle();
-			p.mCPUBusy = mpProfiler->GetCPUPercentageBusy();
-			p.mCPUOS = mpProfiler->GetCPUPercentageOS();
-			p.mCPUProc = mpProfiler->GetCPUPercentageProcess();
-			p.mPageFaults = mpProfiler->GetNumPageFaults();
-			p.mMemUsed = mpProfiler->GetUsedMemory();
-			p.mRamUsed = mpProfiler->GetUsedPhysicalMemory();
-			p.mMemAvail = mpProfiler->GetAvailablePhysicalMemory();
-			p.mMemLoad = mpProfiler->GetSystemMemoryLoad();
+			p.mCPUIdle		= mpProfiler->GetCPUPercentageIdle();
+			p.mCPUBusy		= mpProfiler->GetCPUPercentageBusy();
+			p.mCPUOS		= mpProfiler->GetCPUPercentageOS();
+			p.mCPUProc		= mpProfiler->GetCPUPercentageProcess();
+			p.mPageFaults	= mpProfiler->GetNumPageFaults();
+			p.mMemUsed		= mpProfiler->GetUsedMemory();
+			p.mRamUsed		= mpProfiler->GetUsedPhysicalMemory();
+			p.mMemAvail		= mpProfiler->GetAvailablePhysicalMemory();
+			p.mMemLoad		= mpProfiler->GetSystemMemoryLoad();
 			Performance::LogTaskMgr(p);
 		}
 	}
@@ -627,17 +613,14 @@ namespace Dystopia
 		auto & arr = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
 		auto BehaviourSys = EngineCore::GetInstance()->GetSystem<BehaviourSystem>();
 		auto const & BehaviourArr = BehaviourSys->GetDllChanges();
-
 		for (auto & elem : BehaviourArr)
 		{
 			for (auto & gobj : arr)
 			{
 				auto & gobjBehaviours = gobj.GetAllBehaviours();
-
 				for (auto & behave : gobjBehaviours)
 				{
 					std::string Name = behave->GetBehaviourName();
-
 					if (Name == elem->mName)
 					{
 						delete behave;
@@ -648,9 +631,7 @@ namespace Dystopia
 				}
 			}
 		}
-
 	}
-
 }
 
 #endif		// EDITOR ONLY

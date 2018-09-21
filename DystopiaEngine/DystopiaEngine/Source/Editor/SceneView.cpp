@@ -60,13 +60,13 @@ namespace Dystopia
 	void SceneView::Update(const float& _dt)
 	{
 		mDelta = _dt;
-		mpGfxSys->Update(mDelta);
+		if (GetMainEditor().CurrentState() != EDITOR_PLAY) mpGfxSys->Update(mDelta);
 	}
 
 	void SceneView::EditorUI()
 	{
-		unsigned id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
-		ImGui::Image((void*)id, ImVec2{ Size().x - 6.f,  Size().y - 27.f });
+		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
+		ImGui::Image(reinterpret_cast<void*>(id), ImVec2{ Size().x - 6.f,  Size().y - 27.f });
 	}
 
 	void SceneView::Shutdown()

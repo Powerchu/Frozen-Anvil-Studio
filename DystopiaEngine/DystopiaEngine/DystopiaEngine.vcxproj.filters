@@ -197,6 +197,12 @@
     <ClCompile Include="Source\System\File\FileSystem.cpp">
       <Filter>Game Engine\SubSystems\File</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\CollisionEvent.cpp" />
+    <ClCompile Include="CharacterController.cpp" />
+    <ClCompile Include="Source\Component\Colliders\Circle.cpp" />
+    <ClCompile Include="Source\System\Physics\CollisionResolution.cpp" />
+    <ClCompile Include="Source\Component\Particle.cpp" />
+    <ClCompile Include="Source\Component\Primitive.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -442,12 +448,6 @@
     <ClInclude Include="Include\System\Time\TimeDefs.h">
       <Filter>Game Engine\Systems\Time</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Utility\ComponentGUID.h">
-      <Filter>Utility\GUID</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\GUID.h">
-      <Filter>Utility\GUID</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\PerformanceLog.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
@@ -529,6 +529,11 @@
     <ClInclude Include="resource.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="CharacterController.h" />
+    <ClInclude Include="Include\Component\CollisionEvent.h" />
+    <ClInclude Include="Include\Component\Particle.h" />
+    <ClInclude Include="Include\Component\Primitive.h" />
+    <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
