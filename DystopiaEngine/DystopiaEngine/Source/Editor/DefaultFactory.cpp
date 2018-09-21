@@ -66,6 +66,7 @@ namespace Dystopia
 			pObject->AddComponent(g, typename Renderer::TAG{});
 
 			pObject->AddComponent<Convex>();
+			pObject->GetComponent<Transform>()->SetGlobalPosition(0, -185, 0);
 
 			return pObject;
 		}

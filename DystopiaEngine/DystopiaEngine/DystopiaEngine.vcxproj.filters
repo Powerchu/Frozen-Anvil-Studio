@@ -178,7 +178,6 @@
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
@@ -204,8 +203,6 @@
       <Filter>Game Engine\Components\Physics</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehaviourScripts\Whatever.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Source\System\Physics\CollisionResolution.cpp">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClCompile>
@@ -213,7 +210,9 @@
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Resource\Behaviours\*\*.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehaviourScripts\TestBehaviour.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehaviourScripts\Whatever.cpp" />
+    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClCompile>
@@ -225,6 +224,9 @@
     </ClCompile>
     <ClCompile Include="CharacterController.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
+      <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -471,12 +473,6 @@
     <ClInclude Include="Include\System\Time\TimeDefs.h">
       <Filter>Game Engine\Systems\Time</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Utility\ComponentGUID.h">
-      <Filter>Utility\GUID</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\GUID.h">
-      <Filter>Utility\GUID</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\PerformanceLog.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
@@ -516,8 +512,6 @@
     <ClInclude Include="Include\Editor\PLogger.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\HotLoader.h" />
-    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h">
       <Filter>Game Engine\Systems\Base</Filter>
     </ClInclude>
@@ -554,7 +548,6 @@
     <ClInclude Include="Include\System\Logger\LogPriority.h">
       <Filter>Game Engine\SubSystems\Logger</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\BehaviourList.h" />
     <ClInclude Include="resource.h">
       <Filter>Resource</Filter>
     </ClInclude>
@@ -568,15 +561,15 @@
       <Filter>Game Engine\Components\Physics</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Resource\Behaviours\BehaviourScripts\Whatever.h" />
-    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
-    <ClInclude Include="Resource\Behaviours\*\*.h" />
+    <ClInclude Include="Resource\Behaviours\BehaviourScripts\TestBehaviour.h" />
+    <ClInclude Include="Resource\Behaviours\BehaviourScripts\Whatever.h" />
+    <ClInclude Include="Resource\Behaviours\Whatever\TestClass.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Utility\ComponentGUID.h" />
@@ -606,6 +599,19 @@
     </ClInclude>
     <ClInclude Include="CharacterController.h">
       <Filter>Game Engine\Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Particle.h" />
+    <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h">
+      <Filter>Game Engine\Systems\Behaviour</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\BehaviourList.h">
+      <Filter>Game Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\HotLoader.h">
+      <Filter>Editor\Hotloader</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h">
+      <Filter>Game Engine\Systems\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -878,6 +884,12 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\File">
       <UniqueIdentifier>{845f6b31-e949-414f-88d7-9fec6ab7613f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Behaviour">
+      <UniqueIdentifier>{2fd1f4b4-2bdd-4662-b693-dc7eb48bc137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Hotloader">
+      <UniqueIdentifier>{83587c6d-76b1-44d6-8760-588fd1e7509b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

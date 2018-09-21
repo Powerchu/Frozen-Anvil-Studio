@@ -44,6 +44,14 @@ namespace Dystopia
 	{
 		Colliding = _b;
 	}
+	void Collider::SetPosition(Math::Point3D const & _point)
+	{
+		mPosition = _point;
+	}
+	Math::Point3D Collider::GetPosition() const
+	{
+		return mPosition;
+	}
 	Math::Vec3D Collider::GetOffSet() const
 	{
 		return this->mv3Offset;

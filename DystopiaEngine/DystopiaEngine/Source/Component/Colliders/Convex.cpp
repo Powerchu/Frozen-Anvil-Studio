@@ -10,7 +10,7 @@ namespace Dystopia
 {
 	Convex::Convex(Math::Point3D const & _v3Offset)
 		:Collider{ _v3Offset },
-		mVertices{Vertice{1,1}, Vertice{ -1,1 }, Vertice{ -1,-1 }, Vertice{1,1} }
+		mVertices{Vertice{Math::MakePoint3D(1,1,0)}, Vertice{  Math::MakePoint3D(-1,1,0) }, Vertice{ Math::MakePoint3D(-1,-1,0) }, Vertice{ Math::MakePoint3D(1,-1,0) } }
 	{
 		
 	}
@@ -122,7 +122,7 @@ namespace Dystopia
 		Math::Vec3D const & OffSet = _ColA.GetOffSet();
 
 		/*Construct the Matrix for Global Coordinate Conversion*/
-		Math::Matrix3D WorldSpace = Math::Translate(_ColATrans.GetPosition().x + OffSet.x, _ColATrans.GetPosition().y + OffSet.y, 0);
+		Math::Matrix3D WorldSpace = Math::Translate(_ColA.mPosition.x + OffSet.x, _ColA.mPosition.y + OffSet.y, _ColA.mPosition.z + OffSet.z);
 
 		Vertice * pFirst = _ColA.mVertices.begin();
 		Vertice FarthestPoint = *pFirst;
@@ -183,20 +183,21 @@ namespace Dystopia
 	}
 
 	/*Support Function for getting the Minkowski Difference*/
-	Math::Vec3D Convex::Support(const Convex & _ColA,
+	Math::Point3D Convex::Support(const Convex & _ColA,
 		                        const Convex & _ColB,
 		                        const Math::Vec3D & _Dir)
 	{
 		Vertice Farthest_In_ColA = _ColA.GetFarthestPoint(_Dir);
 		Vertice Farthest_In_ColB = _ColB.GetFarthestPoint(_Dir * -1);
 
-		return Farthest_In_ColA.mPosition - Farthest_In_ColB.mPosition;
+		auto MikwoskiPoint = Farthest_In_ColA.mPosition - Farthest_In_ColB.mPosition;
+		return Math::MakePoint3D(MikwoskiPoint.x, MikwoskiPoint.y, MikwoskiPoint.z);
 	}
-	Math::Vec3D Convex::Support(const Convex &, const Convex &, const Math::Vec3D &, bool &)
+	Math::Point3D Convex::Support(const Convex &, const Convex &, const Math::Vec3D &, bool &)
 	{
-		return Math::Vec3D();
+		return Math::Point3D();
 	}
-	Math::Vec3D Convex::Support(const Convex & _ColB, const Math::Vec3D & _Dir) const
+	Math::Point3D Convex::Support(const Convex & _ColB, const Math::Vec3D & _Dir) const
 	{
 		return Convex::Support(*this, _ColB, _Dir);
 	}
@@ -320,9 +321,8 @@ namespace Dystopia
 			{
 				/*Line Case*/
 				/*Point of the first vertex of the Simplex*/
-				static Math::Point3D vFirst;
+				Math::Point3D vFirst;
 				/*Vector from last vertex to first Vertex*/
-				static Math::Vec3D FirstToLast;
 				
 				vFirst = _Simplex.begin()->mPosition;
 				/*Get the Left-Hand Normal of First to Last*/

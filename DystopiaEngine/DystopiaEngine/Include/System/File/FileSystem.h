@@ -40,6 +40,8 @@ namespace Dystopia
 		template<typename T, typename U = std::enable_if_t< std::is_same_v< T, std::string> || std::is_same_v<T, std::wstring>>>
 		T RemoveFileExtension(T const & _File);
 
+		bool CheckFileExist(std::string const & _FileName, eFileDir _Directory = eFileDir::eRoot);
+
 	private:
 
 		using PathTable = std::map<eFileDir, std::string>;

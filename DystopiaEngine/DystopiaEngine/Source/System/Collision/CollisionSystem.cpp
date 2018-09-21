@@ -1,6 +1,9 @@
 #include "System\Collision\CollisionSystem.h"
 #include "Component\Collider.h"
 
+#include "Object/GameObject.h"
+#include "Component/Transform.h"
+
 #include <map>
 #include <utility>
 
@@ -44,10 +47,12 @@ namespace Dystopia
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
+			elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
 			mColliders.push_back(&elem);
 		}
 		for (auto & elem : ComponentDonor<AABB>::mComponents)
 		{
+			elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
 			mColliders.push_back(&elem);
 		}
 
@@ -96,8 +101,8 @@ namespace Dystopia
 
 	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const
 	{
-		const auto col_a = dynamic_cast<const AABB * const>(_ColA);
-		const auto col_b = dynamic_cast<const AABB * const>(_ColB);
+		const auto col_a = dynamic_cast<AABB * const>(_ColA);
+		const auto col_b = dynamic_cast<AABB * const>(_ColB);
 
 		return col_a->isColliding(col_b);
 	}
