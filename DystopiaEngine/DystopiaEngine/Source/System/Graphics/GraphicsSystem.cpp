@@ -71,7 +71,8 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f }
+	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f },
+	mvDebugColour { 1.f, .58f, .278f, .0f }
 {
 
 }
@@ -229,6 +230,11 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 		return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 
+	//Shader* s;
+	//
+	//s->UseShader();
+	//s->UploadUniform("Colour", mvDebugColour);
+
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
 	{
@@ -236,24 +242,14 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 		{
 			//if (Collider* r = Obj.GetComponent<Collider>())
 			//{
-			//	Shader* s = r->GetShader();
+			//	s->UseShader();
 			//
-			//	if (s)
-			//	{
-			//		s->UseShader();
+			//	s->UploadUniform("ProjectViewMat", ProjView);
+			//	s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
 			//
-			//		s->UploadUniform("ProjectViewMat", ProjView);
-			//		s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+			//	r->Draw();
 			//
-			//		r->Draw();
-			//
-			//		t->UnbindTexture();
-			//	}
-			//	else
-			//	{
-			//		//glUseProgram(0);
-			//		//r->Draw();
-			//	}
+			//	t->UnbindTexture();
 			//}
 		}
 	}

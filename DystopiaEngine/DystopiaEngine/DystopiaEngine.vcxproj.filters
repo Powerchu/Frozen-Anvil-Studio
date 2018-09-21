@@ -546,6 +546,9 @@
     <ClInclude Include="Include\System\Graphics\Shader.h">
       <Filter>Game Engine\SubSystems\Shader\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Math\MathFwd.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -820,11 +823,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="DystopiaEngine1.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="dystopia_x86_64.ico">
       <Filter>Resource</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DystopiaEngine1.rc">
+      <Filter>Resource</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
