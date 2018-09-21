@@ -70,6 +70,7 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 		mUVs.EmplaceBack(uvBuf);
 	}
 
+	CurrentMesh.mVtxCount += nVtxCount;
 	input.ConsumeStartBlock();
 
 	do
@@ -84,7 +85,6 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 		}
 
 		auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, nNumIndices, nCurrOffset);
-		CurrentMesh.mVtxCount += nVtxCount;
 
 		input.ConsumeStartBlock();
 
@@ -92,6 +92,25 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 
 		input.ConsumeStartBlock();
 	} while (!input.EndOfInput());
+}
+
+void Dystopia::MeshSystem::AddVertex(float x, float y, float z, float u, float v)
+{
+	mVtx.EmplaceBack(x, y, z);
+	mUVs.EmplaceBack(u, v);
+	++(mpRawMeshes.back().mVtxCount);
+}
+
+void Dystopia::MeshSystem::AddIndices(const std::string& _strName, const AutoArray<short>& _indices)
+{
+	RawMesh& CurrentMesh = mpRawMeshes.back();
+	size_t nCurrOffset = mIndex.size();
+
+	for (auto& e : _indices)
+		mIndex.push_back(e);
+
+	auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, static_cast<unsigned>(_indices.size()), nCurrOffset);
+	pCurrMesh->SetName(_strName);
 }
 
 void Dystopia::MeshSystem::EndMesh(void)

@@ -92,6 +92,11 @@ float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 	return mfGamma;
 }
 
+void Dystopia::GraphicsSystem::SetDebugDraw(bool _bDraw)
+{
+	mbDebugDraw = _bDraw;
+}
+
 
 void Dystopia::GraphicsSystem::PreInit(void)
 {

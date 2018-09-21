@@ -52,6 +52,8 @@ namespace Dystopia
 		void SetGamma(float) noexcept;
 		float GetGamma(void) noexcept;
 
+		void SetDebugDraw(bool _bDraw);
+
 		// Sets up Window for openGL rendering
 		bool InitOpenGL(Window&);
 		void BindOpenGL(Window&) noexcept;
@@ -78,6 +80,7 @@ namespace Dystopia
 
 	private:
 
+		bool mbDebugDraw;
 		float mfGamma;
 
 		void* mOpenGL;

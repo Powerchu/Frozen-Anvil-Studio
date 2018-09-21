@@ -323,11 +323,7 @@ template <class T, class A>
 void AutoArray<T, A>::Insert(const T& _obj, const Sz_t _nIndex)
 {
 #if _DEBUG
-	if (!(_nIndex < size()))
-	{
-		//DEBUG_PRINT("DynamicArray Error: Array index out of range!\n");
-		__debugbreak();
-	}
+	DEBUG_BREAK(!(_nIndex < size()), "DynamicArray Error: Array index out of range!\n");
 #endif
 
 	if (mpLast == mpEnd)
