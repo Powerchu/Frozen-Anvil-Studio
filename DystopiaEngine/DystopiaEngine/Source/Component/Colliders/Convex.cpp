@@ -1,9 +1,9 @@
-#include "Component\Collider.h"
+#include "Component/Collider.h"
 #include <algorithm>
 #include <limits>
-#include "Math\Vector4.h"
+#include "Math/Vector4.h"
 
-#include "Object\GameObject.h"
+#include "Object/GameObject.h"
 #include "Component/CollisionEvent.h"
 
 namespace Dystopia

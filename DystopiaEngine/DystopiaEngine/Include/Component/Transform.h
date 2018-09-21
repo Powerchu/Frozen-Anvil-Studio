@@ -14,13 +14,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TRANSFORM_H_
 #define _TRANSFORM_H_
 
-#include "Component\Component.h"		// Base Class
-#include "Component\ComponentList.h"	// TRANSFORM
-#include "Math\Vector4.h"				// Vector4
-#include "Math\Quaternion.h"			// Quaternion
-#include "Math\Matrix4.h"				// Matrix4
-#include "DataStructure\AutoArray.h"	// AutoArray
-#include "Utility\MetaAlgorithms.h"		// MetaFind
+#include "Component/Component.h"		// Base Class
+#include "Component/ComponentList.h"	// TRANSFORM
+#include "Math/Vector4.h"				// Vector4
+#include "Math/Quaternion.h"			// Quaternion
+#include "Math/Matrix4.h"				// Matrix4
+#include "DataStructure/AutoArray.h"	// AutoArray
+#include "Utility/MetaAlgorithms.h"		// MetaFind
 
 namespace Dystopia
 {

@@ -11,10 +11,10 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Time\ScopedTimer.h"
-#include "System\Time\TimeDefs.h"
-#include "System\Time\TimeSystem.h"
-#include "System\Driver\Driver.h"
+#include "System/Time/ScopedTimer.h"
+#include "System/Time/TimeDefs.h"
+#include "System/Time/TimeSystem.h"
+#include "System/Driver/Driver.h"
 
 #include <iostream>
 

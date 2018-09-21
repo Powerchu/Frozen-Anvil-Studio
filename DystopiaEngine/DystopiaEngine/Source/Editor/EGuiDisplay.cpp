@@ -12,10 +12,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\EGUI.h"
-#include "Editor\Commands.h"
-#include "Editor\CommandList.h"
-#include "Editor\EditorInputs.h"
+#include "Editor/EGUI.h"
+#include "Editor/Commands.h"
+#include "Editor/CommandList.h"
+#include "Editor/EditorInputs.h"
 #include <stdlib.h>
 #include <iostream>
 

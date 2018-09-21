@@ -16,10 +16,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SHAREDPTR_H_
 #define _SHAREDPTR_H_
 
-#include "Utility\Meta.h"		// IsSame
+#include "Utility/Meta.h"		// IsSame
 
 #if defined(DEBUG) | defined(_DEBUG)
-#include "Utility\DebugAssert.h"
+#include "Utility/DebugAssert.h"
 
 #include <typeinfo>
 #endif // Debug only includes

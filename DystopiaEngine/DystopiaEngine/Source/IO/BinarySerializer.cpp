@@ -11,9 +11,9 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "IO\BinarySerializer.h"
-#include "DataStructure\Stack.h"
-#include "Utility\Utility.h"
+#include "IO/BinarySerializer.h"
+#include "DataStructure/Stack.h"
+#include "Utility/Utility.h"
 #include <iostream>
 
 #include <limits>		// numeric_limit

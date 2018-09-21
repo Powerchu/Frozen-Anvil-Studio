@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _P_LOGGER_H_
 #define _P_LOGGER_H_
-#include "Editor\PLogInfo.h"
+#include "Editor/PLogInfo.h"
 
 namespace Dystopia
 {

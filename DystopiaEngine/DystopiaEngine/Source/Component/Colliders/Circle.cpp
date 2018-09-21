@@ -1,5 +1,5 @@
-#include "Component\Collider.h"
-#include "Object\GameObject.h"
+#include "Component/Collider.h"
+#include "Object/GameObject.h"
 namespace Dystopia
 {
 	Circle::Circle()

@@ -12,9 +12,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\CommandList.h"
-#include "System\Scene\Scene.h"
-#include "Object\GameObject.h"
+#include "Editor/CommandList.h"
+#include "System/Scene/Scene.h"
+#include "Object/GameObject.h"
 
 /* Insert Game Object Command  ****************************************************************************/
 

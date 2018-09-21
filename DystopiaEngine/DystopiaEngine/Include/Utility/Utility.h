@@ -14,8 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _UTILITY_H_
 #define _UTILITY_H_
 
-#include "Utility\Meta.h"
-#include "Utility\UtilityInternals.h"
+#include "Utility/Meta.h"
+#include "Utility/UtilityInternals.h"
 
 namespace Utility
 {

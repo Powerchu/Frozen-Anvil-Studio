@@ -14,10 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SOUND_SYSTEM_H_
 #define _SOUND_SYSTEM_H_
 
-#include "System\Base\Systems.h"
-#include "System\Sound\SoundTypes.h"
-#include "DataStructure\AutoArray.h"
-#include "DataStructure\SharedPtr.h"
+#include "System/Base/Systems.h"
+#include "System/Sound/SoundTypes.h"
+#include "DataStructure/AutoArray.h"
+#include "DataStructure/SharedPtr.h"
 
 #include <string>
 

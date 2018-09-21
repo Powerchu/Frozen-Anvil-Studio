@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Scene\SceneSystem.h"              // File Header
+#include "System/Scene/SceneSystem.h"              // File Header
 #include "System/Scene/SceneSysMetaHelper.h"
 #include "DataStructure/Array.h"
 #include "IO/TextSerialiser.h"

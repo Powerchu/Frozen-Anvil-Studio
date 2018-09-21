@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SHADERSYS_H_
 #define _SHADERSYS_H_
 
-#include "DataStructure\MagicArray.h"
+#include "DataStructure/MagicArray.h"
 
 
 namespace Dystopia

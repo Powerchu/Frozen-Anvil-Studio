@@ -11,11 +11,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\Dock.h"
-#include "../../DepEndancies/ImGui/imgui.h"
-#include "../../DepEndancies/ImGui/imgui_internal.h"
-#include "DataStructure\Stack.h"
-#include <iostream>
+#include "Editor/Dock.h"
+#include "../../Dependancies/ImGui/imgui.h"
+#include "../../Dependancies/ImGui/imgui_internal.h"
+#include "DataStructure/Stack.h"
+//#include <iostream>
 #include <map>
 #include <string>
 

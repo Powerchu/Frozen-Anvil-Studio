@@ -14,9 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GAME_SCENE_H_
 #define _GAME_SCENE_H_
 
-#include "Utility\Utility.h"
-#include "Object\GameObject.h"
-#include "DataStructure\AutoArray.h"
+#include "Utility/Utility.h"
+#include "Object/GameObject.h"
+#include "DataStructure/AutoArray.h"
 
 #include <string>
 

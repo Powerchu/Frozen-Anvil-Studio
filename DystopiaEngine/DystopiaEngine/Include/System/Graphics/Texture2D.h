@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TEXTURE2D_H_
 #define _TEXTURE2D_H_
 
-#include "System\Graphics\Texture.h"
+#include "System/Graphics/Texture.h"
 
 #include <string>
 

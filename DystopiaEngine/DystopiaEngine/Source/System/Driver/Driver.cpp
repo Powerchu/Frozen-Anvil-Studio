@@ -11,37 +11,37 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Driver\Driver.h"
+#include "System/Driver/Driver.h"
 
 #include "Globals.h"
-#include "IO\TextSerialiser.h"
-#include "Utility\MetaAlgorithms.h"
-#include "Utility\MetaDataStructures.h"
-#include "DataStructure\Array.h"
-#include "DataStructure\Queue.h"
-#include "DataStructure\AutoArray.h"
+#include "IO/TextSerialiser.h"
+#include "Utility/MetaAlgorithms.h"
+#include "Utility/MetaDataStructures.h"
+#include "DataStructure/Array.h"
+#include "DataStructure/Queue.h"
+#include "DataStructure/AutoArray.h"
 
 // Systems
-#include "System\Time\TimeSystem.h"
-#include "System\Scene\SceneSystem.h"
-#include "System\Input\InputSystem.h"
-#include "System\Sound\SoundSystem.h"
-#include "System\Graphics\GraphicsSystem.h"
-#include "System\Window\WindowManager.h"
-#include "System\Collision\CollisionSystem.h"
-#include "System\Physics\PhysicsSystem.h"
-#include "System\Camera\CameraSystem.h"
-#include "System\Events\EventSystem.h"
-#include "System\Profiler\Profiler.h"
-#include "System\Behaviour\BehaviourSystem.h"
+#include "System/Time/TimeSystem.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Input/InputSystem.h"
+#include "System/Sound/SoundSystem.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Window/WindowManager.h"
+#include "System/Collision/CollisionSystem.h"
+#include "System/Physics/PhysicsSystem.h"
+#include "System/Camera/CameraSystem.h"
+#include "System/Events/EventSystem.h"
+#include "System/Profiler/Profiler.h"
+#include "System/Behaviour/BehaviourSystem.h"
 
 // SubSystems
-#include "System\Graphics\MeshSystem.h"
-#include "System\File\FileSystem.h"
-#include "System\Logger\LoggerSystem.h"
+#include "System/Graphics/MeshSystem.h"
+#include "System/File/FileSystem.h"
+#include "System/Logger/LoggerSystem.h"
 
-#include "System\Time\Timer.h"
-#include "System\Time\ScopedTimer.h"
+#include "System/Time/Timer.h"
+#include "System/Time/ScopedTimer.h"
 
 #define SETTINGS_FILE "Settings.dyst" 
 

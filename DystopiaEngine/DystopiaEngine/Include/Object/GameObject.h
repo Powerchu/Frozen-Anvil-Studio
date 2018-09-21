@@ -14,13 +14,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GAMEOBJ_H_
 #define _GAMEOBJ_H_
 
-#include "System\Driver\Driver.h"
-#include "DataStructure\AutoArray.h"		// AutoArray
-#include "Component\Component.h"			// Component
-#include "Component\ComponentList.h"		// AllComponents
-#include "Component\Transform.h"			// Transform
-#include "Behaviour\Behaviour.h"			// Behaviour
-#include "Utility\MetaAlgorithms.h"			// MetaFind_t
+#include "System/Driver/Driver.h"
+#include "DataStructure/AutoArray.h"		// AutoArray
+#include "Component/Component.h"			// Component
+#include "Component/ComponentList.h"		// AllComponents
+#include "Component/Transform.h"			// Transform
+#include "Behaviour/Behaviour.h"			// Behaviour
+#include "Utility/MetaAlgorithms.h"			// MetaFind_t
 
 #include <string>
 

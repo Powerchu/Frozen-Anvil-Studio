@@ -14,9 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _VARIANT_H_
 #define _VARIANT_H_
 
-#include "Utility\Meta.h"
-#include "Utility\MetaAlgorithms.h"
-#include "Utility\DebugAssert.h"
+#include "Utility/Meta.h"
+#include "Utility/MetaAlgorithms.h"
+#include "Utility/DebugAssert.h"
 
 #include <cstring>
 #include <type_traits>

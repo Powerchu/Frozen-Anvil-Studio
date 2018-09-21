@@ -14,10 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TIME_SYSTEM_H_
 #define _TIME_SYSTEM_H_
 
-#include "System\Base\Systems.h"	// Base class
-#include "System\Time\Timer.h"		// Timer
-#include "DataStructure\Heap.h"		// Heap
-#include "Utility\Utility.h"		// Forward
+#include "System/Base/Systems.h"	// Base class
+#include "System/Time/Timer.h"		// Timer
+#include "DataStructure/Heap.h"		// Heap
+#include "Utility/Utility.h"		// Forward
 
 namespace Dystopia
 {

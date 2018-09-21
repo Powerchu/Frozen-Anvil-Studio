@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _COMPONENT_H_
 
 #include "Globals.h"
-#include "Component\ComponentList.h"	// eComponents
+#include "Component/ComponentList.h"	// eComponents
 
 #include <string>
 

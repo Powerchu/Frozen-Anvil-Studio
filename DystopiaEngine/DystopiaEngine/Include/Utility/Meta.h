@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _META_H_
 #define _META_H_
 
-#include "Utility\MetaHelper.h"
+#include "Utility/MetaHelper.h"
 
 
 namespace Utility

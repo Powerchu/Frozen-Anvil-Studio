@@ -12,13 +12,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\ProjectResource.h"
-#include "Editor\EGUI.h"
-#include "Editor\EditorEvents.h"
+#include "Editor/ProjectResource.h"
+#include "Editor/EGUI.h"
+#include "Editor/EditorEvents.h"
 #include <algorithm>
 #include <iostream>
 #include <Windows.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <tchar.h>
 
 static const std::string DEFAULT_PATH = "..\\DystopiaEngine\\Resource";

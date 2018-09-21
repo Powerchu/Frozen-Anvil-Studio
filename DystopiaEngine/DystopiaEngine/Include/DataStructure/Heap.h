@@ -25,7 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _HEAP_H_
 
 #include "Globals.h"
-#include "DataStructure\AutoArray.h"	// AutoArray
+#include "DataStructure/AutoArray.h"	// AutoArray
 
 template<typename T, class Container = AutoArray<T>>
 class _DLL_EXPORT Heap

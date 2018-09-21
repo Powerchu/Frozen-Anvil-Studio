@@ -1,6 +1,6 @@
-#include "Component\Collider.h"
+#include "Component/Collider.h"
 
-#include "Object\GameObject.h"
+#include "Object/GameObject.h"
 #include "System/Graphics/VertexDefs.h"
 namespace Dystopia
 {

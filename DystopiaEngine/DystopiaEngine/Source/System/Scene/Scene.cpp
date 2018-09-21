@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Scene\Scene.h"
-#include "Object\ObjectFlags.h"
+#include "System/Scene/Scene.h"
+#include "Object/ObjectFlags.h"
 #include "IO/TextSerialiser.h"
 
 #include "Component/ComponentList.h"

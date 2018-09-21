@@ -14,8 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _EDITOR_EVENTS_H_
 #define _EDITOR_EVENTS_H_
-#include "DataStructure\Array.h"
-#include "System\Events\EventSystem.h"
+#include "DataStructure/Array.h"
+#include "System/Events/EventSystem.h"
 
 namespace Dystopia
 {

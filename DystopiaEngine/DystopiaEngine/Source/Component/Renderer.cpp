@@ -11,21 +11,21 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Component\Renderer.h"
-#include "System\Graphics\GraphicsSystem.h"
-#include "System\Graphics\Mesh.h"
-#include "System\Graphics\MeshSystem.h"
-#include "System\Graphics\Shader.h"
-#include "System\Graphics\Texture2D.h"
-#include "System\Driver\Driver.h"
-#include "System\Scene\SceneSystem.h"
-#include "System\Scene\Scene.h"
-#include "Object\ObjectFlags.h"
-#include "Object\GameObject.h"
-#include "IO\TextSerialiser.h"
+#include "Component/Renderer.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Graphics/Mesh.h"
+#include "System/Graphics/MeshSystem.h"
+#include "System/Graphics/Shader.h"
+#include "System/Graphics/Texture2D.h"
+#include "System/Driver/Driver.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
+#include "Object/ObjectFlags.h"
+#include "Object/GameObject.h"
+#include "IO/TextSerialiser.h"
 #if EDITOR
-#include "Editor\ProjectResource.h"
-#include "Editor\EGUI.h"
+#include "Editor/ProjectResource.h"
+#include "Editor/EGUI.h"
 #endif 
 
 

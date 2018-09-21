@@ -26,8 +26,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaDataStructures.h" // IntegralList
 
 #if defined(DEBUG) | defined(_DEBUG)
-#include "Math\MathUtility.h"
-#include "Utility\DebugAssert.h"
+#include "Math/MathUtility.h"
+#include "Utility/DebugAssert.h"
 #endif // Debug only includes
 
 #if !defined(_WIN64)	// We need these for win32 - pending fix in auto array

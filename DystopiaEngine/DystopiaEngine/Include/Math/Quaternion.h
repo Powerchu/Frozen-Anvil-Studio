@@ -16,8 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _QUARTERNION_H_
 #define _QUARTERNION_H_
 
-#include "Math\Vector4.h"	// Vector4
-#include "Math\Matrix4.h"	// Matrix4
+#include "Math/Vector4.h"	// Vector4
+#include "Math/Matrix4.h"	// Matrix4
 
 #include <cmath>			// sin, cos, asin, acos
 

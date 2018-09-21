@@ -11,12 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Editor\EditorTab.h"
-#include "Editor\Editor.h"
-#include "Editor\EditorEvents.h"
-#include "Editor\Commands.h"
-#include "System\Scene\Scene.h"
-#include "Object\GameObject.h"
+#include "Editor/EditorTab.h"
+#include "Editor/Editor.h"
+#include "Editor/EditorEvents.h"
+#include "Editor/Commands.h"
+#include "System/Scene/Scene.h"
+#include "Object/GameObject.h"
 
 namespace Dystopia
 {

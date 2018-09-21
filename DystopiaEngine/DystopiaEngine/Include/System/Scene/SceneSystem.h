@@ -14,9 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SCENE_SYSTEM_H_
 #define _SCENE_SYSTEM_H_
 
-#include "System\Base\Systems.h"
-#include "System\Scene\Scene.h"
-#include "DataStructure\Stack.h"
+#include "System/Base/Systems.h"
+#include "System/Scene/Scene.h"
+#include "DataStructure/Stack.h"
 
 #include <string>
 

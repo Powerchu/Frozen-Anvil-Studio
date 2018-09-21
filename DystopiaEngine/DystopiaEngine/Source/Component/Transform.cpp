@@ -11,15 +11,15 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Component\Transform.h"
-#include "Object\GameObject.h"
-#include "Math\Matrix4.h"
-#include "Math\Vector4.h"
-#include "System\Scene\Scene.h"
-#include "System\Scene\SceneSystem.h"
-#include "IO\TextSerialiser.h"
+#include "Component/Transform.h"
+#include "Object/GameObject.h"
+#include "Math/Matrix4.h"
+#include "Math/Vector4.h"
+#include "System/Scene/Scene.h"
+#include "System/Scene/SceneSystem.h"
+#include "IO/TextSerialiser.h"
 
-#include "Editor\EGUI.h"
+#include "Editor/EGUI.h"
 
 Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
 	: mRotation{ .0f, .0f, .0f }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f }, 

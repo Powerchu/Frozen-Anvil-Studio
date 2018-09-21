@@ -1,11 +1,11 @@
 #ifndef COLLIDER_H
 #define COLLIDER_H
 
-#include "Component\Component.h"		       /*Component Base Class*/
-#include "Component\ComponentList.h"           /*Component List*/
-#include "Math\Vector4.h"                      /*Vector*/
-#include "DataStructure\AutoArray.h"	       /*AutoArray Data Structure*/
-#include "Utility\MetaAlgorithms.h"		       // MetaFind
+#include "Component/Component.h"		       /*Component Base Class*/
+#include "Component/ComponentList.h"           /*Component List*/
+#include "Math/Vector4.h"                      /*Vector*/
+#include "DataStructure/AutoArray.h"	       /*AutoArray Data Structure*/
+#include "Utility/MetaAlgorithms.h"		       // MetaFind
 #include "Component/CollisionEvent.h"
 
 #include "System/Graphics/VertexDefs.h"

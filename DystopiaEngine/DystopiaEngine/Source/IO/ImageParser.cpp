@@ -19,12 +19,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "IO\ImageParser.h"			// File header
-#include "IO\BinarySerializer.h"
-#include "System\Graphics\Image.h"	// Image
-#include "Utility\DebugAssert.h"	// DEBUG_PRINT
+#include "IO/ImageParser.h"			// File header
+#include "IO/BinarySerializer.h"
+#include "System/Graphics/Image.h"	// Image
+#include "Utility/DebugAssert.h"	// DEBUG_PRINT
 
-#include "..\..\Dependancies\lodepng\lodepng.h"
+#include "../../Dependancies/lodepng/lodepng.h"
 
 #include <cmath>		// abs
 #include <string>		// string

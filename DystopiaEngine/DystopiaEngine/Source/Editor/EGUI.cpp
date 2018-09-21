@@ -13,13 +13,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 
-#include "Editor\EGUI.h"
-#include "Editor\EditorInputs.h"
-#include "System\Window\Window.h"
-#include "System\Window\WindowManager.h"
-#include "System\Graphics\GraphicsSystem.h"
-#include "Math\Vector2.h"
-#include "GL\glew.h"
+#include "Editor/EGUI.h"
+#include "Editor/EditorInputs.h"
+#include "System/Window/Window.h"
+#include "System/Window/WindowManager.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "Math/Vector2.h"
+#include "GL/glew.h"
 #include <iostream>
 #include <Windows.h>
 #include <windef.h>

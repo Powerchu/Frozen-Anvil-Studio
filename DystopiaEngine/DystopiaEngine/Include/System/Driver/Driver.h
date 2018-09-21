@@ -14,15 +14,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _ENGINE_DRIVER_H_
 #define _ENGINE_DRIVER_H_
 
-#include "DataStructure\AutoArray.h"
-#include "DataStructure\Queue.h"
+#include "DataStructure/AutoArray.h"
+#include "DataStructure/Queue.h"
 
-#include "System\SystemTypes.h"
-#include "System\Base\Systems.h"
-#include "System\Time\Timer.h"
+#include "System/SystemTypes.h"
+#include "System/Base/Systems.h"
+#include "System/Time/Timer.h"
 
-#include "Utility\Meta.h"
-#include "Utility\MetaAlgorithms.h"
+#include "Utility/Meta.h"
+#include "Utility/MetaAlgorithms.h"
 
 
 

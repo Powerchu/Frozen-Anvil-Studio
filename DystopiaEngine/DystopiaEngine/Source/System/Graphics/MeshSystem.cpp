@@ -11,14 +11,14 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Graphics\MeshSystem.h"		// File Header
-#include "System\Graphics\Mesh.h"
-#include "System\Graphics\RawMesh.h"
-#include "System\Graphics\VertexDefs.h"
-#include "IO\TextSerialiser.h"
-#include "Math\MathUtility.h"
+#include "System/Graphics/MeshSystem.h"		// File Header
+#include "System/Graphics/Mesh.h"
+#include "System/Graphics/RawMesh.h"
+#include "System/Graphics/VertexDefs.h"
+#include "IO/TextSerialiser.h"
+#include "Math/MathUtility.h"
 
-#include <GL\glew.h>
+#include <GL/glew.h>
 
 
 void Dystopia::MeshSystem::Init(void)

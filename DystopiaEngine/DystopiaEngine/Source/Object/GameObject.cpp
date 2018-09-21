@@ -11,13 +11,13 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Object\GameObject.h"		 // File Header
-#include "Component\Component.h"	 // Component
-#include "Behaviour\Behaviour.h"	 // Behaviour
-#include "Object\ObjectFlags.h"		 // eObjFlags
-#include "DataStructure\AutoArray.h" 
-#include "Utility\Utility.h"		 // Move
-#include "IO\TextSerialiser.h"
+#include "Object/GameObject.h"		 // File Header
+#include "Component/Component.h"	 // Component
+#include "Behaviour/Behaviour.h"	 // Behaviour
+#include "Object/ObjectFlags.h"		 // eObjFlags
+#include "DataStructure/AutoArray.h" 
+#include "Utility/Utility.h"		 // Move
+#include "IO/TextSerialiser.h"
 
 #define Ping(_ARR, _FUNC, ...)			\
 for (auto& e : _ARR)					\

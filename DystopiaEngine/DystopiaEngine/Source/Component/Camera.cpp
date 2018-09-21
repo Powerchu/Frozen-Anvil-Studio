@@ -12,19 +12,19 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Component\Camera.h"		// File header
-#include "Component\Transform.h"
-#include "Math\Matrix4.h"
-#include "Math\MathUtility.h"
+#include "Component/Camera.h"		// File header
+#include "Component/Transform.h"
+#include "Math/Matrix4.h"
+#include "Math/MathUtility.h"
 
-#include "System\Camera\CameraSystem.h"
-#include "System\Driver\Driver.h"
+#include "System/Camera/CameraSystem.h"
+#include "System/Driver/Driver.h"
 
-#include "Object\GameObject.h"
-#include "Object\ObjectFlags.h"
+#include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 
 #if EDITOR
-#include "Editor\EGUI.h"
+#include "Editor/EGUI.h"
 #endif
 
 

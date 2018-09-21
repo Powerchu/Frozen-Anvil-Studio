@@ -16,40 +16,40 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Graphics\GraphicsSystem.h"	// File header
-#include "System\Graphics\GraphicsDefs.h"	// eGraphicSettings
-#include "System\Graphics\MeshSystem.h"
-#include "System\Graphics\Shader.h"
-#include "System\Graphics\Texture2D.h"
-#include "System\Window\WindowManager.h"	// Window Manager
-#include "System\Window\Window.h"			// Window
-#include "System\Scene\SceneSystem.h"
-#include "System\Scene\Scene.h"
-#include "System\Camera\CameraSystem.h"     // Camera System
-#include "System\Driver\Driver.h"			// EngineCore
-#include "System\Time\ScopedTimer.h"
-#include "System\Profiler\ProfilerAction.h"
-#include "System\Logger\LogPriority.h"
-#include "System\Logger\LoggerSystem.h"
+#include "System/Graphics/GraphicsSystem.h"	// File header
+#include "System/Graphics/GraphicsDefs.h"	// eGraphicSettings
+#include "System/Graphics/MeshSystem.h"
+#include "System/Graphics/Shader.h"
+#include "System/Graphics/Texture2D.h"
+#include "System/Window/WindowManager.h"	// Window Manager
+#include "System/Window/Window.h"			// Window
+#include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
+#include "System/Camera/CameraSystem.h"     // Camera System
+#include "System/Driver/Driver.h"			// EngineCore
+#include "System/Time/ScopedTimer.h"
+#include "System/Profiler/ProfilerAction.h"
+#include "System/Logger/LogPriority.h"
+#include "System/Logger/LoggerSystem.h"
 
-#include "IO\TextSerialiser.h"
-#include "IO\ImageParser.h"
+#include "IO/TextSerialiser.h"
+#include "IO/ImageParser.h"
 
-#include "Object\GameObject.h"              // GameObject
-#include "Object\ObjectFlags.h"
-#include "Component\Transform.h"
-#include "Component\Renderer.h"
-#include "Component\Camera.h"				// Camera
+#include "Object/GameObject.h"              // GameObject
+#include "Object/ObjectFlags.h"
+#include "Component/Transform.h"
+#include "Component/Renderer.h"
+#include "Component/Camera.h"				// Camera
 
-#include "Utility\DebugAssert.h"			// DEBUG_ASSERT
+#include "Utility/DebugAssert.h"			// DEBUG_ASSERT
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable Window header min & max macros
 
 #include <windows.h>			// WinAPI
-#include <GL\glew.h>
-#include <GL\wglew.h>			// glew Windows ext
-#include <GL\GL.h>
+#include <GL/glew.h>
+#include <GL/wglew.h>			// glew Windows ext
+#include <GL/GL.h>
 #include <cstdio>
 #include <string>
 

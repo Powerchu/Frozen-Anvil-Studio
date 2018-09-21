@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _STACK_H_
 
 #if defined(DEBUG) | defined(_DEBUG)
-#include "Utility\DebugAssert.h"
+#include "Utility/DebugAssert.h"
 #endif // Debug only includes
 
 template <typename T>

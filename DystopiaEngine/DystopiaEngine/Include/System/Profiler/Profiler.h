@@ -14,9 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _PROFILER_SYS_H_
 #define _PROFILER_SYS_H_
 
-#include "System\Base\Systems.h"
-#include "System\Profiler\ProfileInfo.h"
-#include "DataStructure\AutoArray.h"
+#include "System/Base/Systems.h"
+#include "System/Profiler/ProfileInfo.h"
+#include "DataStructure/AutoArray.h"
 
 // Temporary std lib for fast prototyping
 #include <map>

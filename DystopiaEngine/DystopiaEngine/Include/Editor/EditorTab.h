@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _EDITOR_TAB_H_
 #define _EDITOR_TAB_H_
-#include "Math\Vector2.h"
+#include "Math/Vector2.h"
 #include <string>
 
 namespace Dystopia

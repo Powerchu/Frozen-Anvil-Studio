@@ -14,7 +14,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Math\Quaternion.h"
+#include "Math/Quaternion.h"
 
 
 Math::Matrix4 __vectorcall Math::Quaternion::Matrix(void) const noexcept

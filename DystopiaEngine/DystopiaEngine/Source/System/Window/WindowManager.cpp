@@ -11,12 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Window\WindowManager.h"	// File Header
-#include "System\Window\Window.h"
-#include "System\SystemMessage.h"
-#include "System\Driver\Driver.h"
-#include "System\Input\MouseData.h"
-#include "IO\TextSerialiser.h"
+#include "System/Window/WindowManager.h"	// File Header
+#include "System/Window/Window.h"
+#include "System/SystemMessage.h"
+#include "System/Driver/Driver.h"
+#include "System/Input/MouseData.h"
+#include "IO/TextSerialiser.h"
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
