@@ -102,7 +102,7 @@ void Dystopia::Scene::Serialise(TextSerialiser & _TextSerialiser) const
 	for (auto & elem : mGameObjs)
 	{
 		_TextSerialiser.Write(elem.GetID());
-		//_TextSerialiser.Write(elem.GetName());
+		_TextSerialiser.Write(elem.GetName());
 	}
 }
 
@@ -113,11 +113,16 @@ void Dystopia::Scene::Unserialise(TextSerialiser & _TextUnserialiser)
 	for (int i = 0; i < Size; ++i)
 	{
 		unsigned long ID;
+		std::string name;
+
 		_TextUnserialiser.Read(ID);
+		_TextUnserialiser.Read(name);
+
 		mGameObjs.EmplaceBack(ID);
 
 		auto & pGameObject = mGameObjs.back();
-		pGameObject.Init();
+		
+		pGameObject.SetName(name);
 	}
 
 }

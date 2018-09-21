@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility\Utility.h"
 #include "DataStructure\MagicArray.h"
+#include "IO/TextSerialiser.h"
 
 
 namespace Dystopia
@@ -57,13 +58,50 @@ inline Ty* Dystopia::ComponentDonor<Ty, S>::RequestComponent(U&& ... _Args)
 
 
 template<typename Ty, typename Settings>
-inline void Dystopia::ComponentDonor<Ty, Settings>::Serialise(TextSerialiser &) const
+inline void Dystopia::ComponentDonor<Ty, Settings>::Serialise(TextSerialiser & _Serialiser) const
 {
+	size_t Size = 0;
+	_Serialiser.InsertStartBlock("ComponentDonor");
+
+	for (auto & elem : mComponents)
+		++Size;
+	_Serialiser << Size;
+
+	for (auto & elem : mComponents)
+	{
+		
+		_Serialiser.InsertStartBlock("Component");
+		elem.Serialise(_Serialiser);
+		_Serialiser.InsertEndBlock("Component End");
+	}
+	_Serialiser.InsertEndBlock("ComponentDonor End");
+
 }
 
 template<typename Ty, typename Settings>
-inline void Dystopia::ComponentDonor<Ty, Settings>::Unserialise(TextSerialiser &)
+inline void Dystopia::ComponentDonor<Ty, Settings>::Unserialise(TextSerialiser & _Serialiser)
 {
+	/*Clear Current Components*/
+	unsigned Size = 0;
+
+	mComponents.clear();
+
+	_Serialiser.ConsumeStartBlock();
+
+	_Serialiser.Read(Size);
+
+	
+	for (unsigned i = 0; i < Size; ++i)
+	{
+		_Serialiser.ConsumeStartBlock();
+
+		Ty * pComp = RequestComponent();
+		pComp->Unserialise(_Serialiser);
+
+		_Serialiser.ConsumeEndBlock();
+	}
+
+	_Serialiser.ConsumeEndBlock();
 }
 
 
