@@ -33,6 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Camera\CameraSystem.h"
 #include "System\Events\EventSystem.h"
 #include "System\Profiler\Profiler.h"
+#include "System\Behaviour\BehaviourSystem.h"
 
 // SubSystems
 #include "System\Graphics\MeshSystem.h"
@@ -42,7 +43,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\Timer.h"
 #include "System\Time\ScopedTimer.h"
 
-#define SETTINGS_FILE "settings.dyst"
+#define SETTINGS_FILE "Settings.dyst" 
 
 
 
@@ -105,8 +106,8 @@ Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 
 Dystopia::EngineCore::EngineCore(void) :
 	mTime{}, mTimeFixed{}, mMessageQueue{60}, mSystemList{ Utility::SizeofList<AllSys>::value },
-	mSystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) },
-	mSubSystems { MakeAutoArray<void*>(Utility::MakeTypeList_t<Utility::TypeList, SubSys>{}) }
+	mSubSystems { MakeAutoArray<void*>(Utility::MakeTypeList_t<Utility::TypeList, SubSys>{}) },
+	mSystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) }
 {
 	using SanityCheck = typename ErrorOnDuplicate<AllSys>::eval;
 }
@@ -117,6 +118,13 @@ void Dystopia::EngineCore::LoadSettings(void)
 	if (false)
 	{
 		auto file = Serialiser::OpenFile<TextSerialiser>(SETTINGS_FILE);
+
+		for (auto& e : mSystemTable)
+		{
+			file.ConsumeStartBlock();
+			e->LoadSettings(file);
+			file.ConsumeEndBlock();
+		}
 	}
 	else
 	{
@@ -187,11 +195,14 @@ void Dystopia::EngineCore::Update(void)
 
 void Dystopia::EngineCore::Shutdown(void)
 {
-	TextSerialiser s = Serialiser::OpenFile<TextSerialiser>("DystopiaSettings.ini", TextSerialiser::MODE_WRITE);
+	GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, eFileDir::eRoot);
+	DysSerialiser_t s = Serialiser::OpenFile<DysSerialiser_t>(SETTINGS_FILE, DysSerialiser_t::MODE_WRITE);
 
 	for (auto& e : mSystemList)
 	{
+		s.InsertStartBlock("SYSTEM");
 		e->SaveSettings(s);
+		s.InsertEndBlock("SYSTEM");
 		e->Shutdown();
 	}
 

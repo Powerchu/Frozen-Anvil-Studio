@@ -15,8 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _DYNAMIC_ARRAY_
 #define _DYNAMIC_ARRAY_
 
-#if defined(DEBUG) | defined(_DEBUG)
-#include "Utility\DebugAssert.h"
+#if defined(DEBUG) || defined(_DEBUG)
+#include "Utility/DebugAssert.h"
 #endif // Debug only includes
 
 #include "Globals.h"
@@ -32,7 +32,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 template<class T, class Alloc = Dystopia::DefaultAllocator<T[]>>
-class _DLL_EXPORT AutoArray
+class _DLL_EXPORT_ONLY AutoArray
 {
 public:
 	// ==================================== CONTAINER DEFINES ==================================== // 
@@ -323,27 +323,24 @@ template <class T, class A>
 void AutoArray<T, A>::Insert(const T& _obj, const Sz_t _nIndex)
 {
 #if _DEBUG
-	if (!(_nIndex < size()))
-	{
-		DEBUG_PRINT("DynamicArray Error: Array index out of range!\n");
-		__debugbreak();
-	}
+	DEBUG_BREAK(!(_nIndex < size()), "DynamicArray Error: Array index out of range!\n");
 #endif
 
 	if (mpLast == mpEnd)
 		GrowArray();
 
 	Itor_t at = mpArray + _nIndex;
-	Itor_t j = mpLast;
-	Itor_t i = ++mpLast;
+	Itor_t j = mpLast - 1;
+	Itor_t i = mpLast;
 
-	while (i != at)
+	while (j != at)
 	{
 		*i = Utility::Move(*j);
 		--i; --j;
 	}
 
 	*at = _obj;
+	++mpLast;
 }
 
 
@@ -435,13 +432,11 @@ template<class T, class A>
 inline void AutoArray<T, A>::FastRemove(const Itor_t& _pObj)
 {
 #if _DEBUG
-	DEBUG_LOG(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
-	if (mpArray == mpLast) return __debugbreak();
-
+	DEBUG_BREAK(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
 
 	if (!(_pObj < mpLast))
 	{
-		DEBUG_PRINT("AutoArray Error: Invalid Remove Index!\n");
+		DEBUG_PRINT(eLog::ERROR, "AutoArray Error: Invalid Remove Index!\n");
 		return;
 	}
 #endif
@@ -554,11 +549,9 @@ template <class T, class A>
 const T& AutoArray<T, A>::operator[] (const Sz_t _nIndex) const
 {
 #if _DEBUG
-	if (!(mpArray + _nIndex < mpLast))
-	{
-		DEBUG_PRINT("AutoArray Error: Array index out of range!\n");
-		__debugbreak();
-	}
+
+	DEBUG_BREAK((!(mpArray + _nIndex < mpLast)), "AutoArray Error: Array index out of range!\n");
+
 #endif
 
 	return *(mpArray + _nIndex);

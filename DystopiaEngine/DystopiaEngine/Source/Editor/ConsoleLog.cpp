@@ -12,25 +12,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
+#include "Utility\DebugAssert.h"
 #include "Editor\ConsoleLog.h"
 #include "Editor\EGUI.h"
-#include "Utility\DebugAssert.h"
+#include "System\Driver\Driver.h"
+#include "System\Logger\LoggerSystem.h"
 #include <algorithm>
 
 namespace Dystopia
 {
-	static ConsoleLog* gpInstance = 0;
+	static ConsoleLog* gpConsoleInst = 0;
 	ConsoleLog* ConsoleLog::GetInstance()
 	{
-		if (gpInstance) return gpInstance;
+		if (gpConsoleInst) return gpConsoleInst;
 
-		gpInstance = new ConsoleLog{};
-		return gpInstance;
+		gpConsoleInst = new ConsoleLog{};
+		return gpConsoleInst;
 	}
 
 	void PrintToConsoleLog(const std::string& _text)
 	{
-		gpInstance->Debug(_text);
+		ConsoleLog::GetInstance()->Debug(_text);
 	}
 
 	ConsoleLog::ConsoleLog()
@@ -43,11 +45,12 @@ namespace Dystopia
 
 	ConsoleLog::~ConsoleLog()
 	{
-		gpInstance = nullptr;
+		gpConsoleInst = nullptr;
 	}
 	
 	void ConsoleLog::Init()
 	{
+		EngineCore::GetInstance()->GetSubSystem<LoggerSystem>()->RedirectOutput(PrintToConsoleLog);
 	}
 
 	void ConsoleLog::Update(const float&)
@@ -92,9 +95,9 @@ namespace Dystopia
 		if (mLoggingIndex == maxLog)
 		{
 			std::rotate(mArrDebugTexts.begin(), mArrDebugTexts.begin() + 1, mArrDebugTexts.end());
-			mArrDebugTexts[maxLog - 1] = _text;
+			mArrDebugTexts[maxLog - 1] = _text.c_str();
 		}
-		else mArrDebugTexts[mLoggingIndex++] = _text;
+		else mArrDebugTexts[mLoggingIndex++] = _text.c_str();
 		mRecordIndex++;
 	}
 	

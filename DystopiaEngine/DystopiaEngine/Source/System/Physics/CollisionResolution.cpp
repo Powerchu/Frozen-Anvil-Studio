@@ -1,10 +1,14 @@
-#include "System/Physics/CollisionResolution.h"
+#include <System/Physics/CollisionResolution.h>
 
-CollisionResolution::CollisionResolution()
+namespace Dystopia
 {
-}
+	CollisionResolution::CollisionResolution()
+	{
+		
+	}
 
-
-CollisionResolution::~CollisionResolution()
-{
+	CollisionResolution::~CollisionResolution()
+	{
+		
+	}
 }

@@ -31,7 +31,7 @@ namespace Math
 	\brief
 		Representing rotations
 	*/
-	union _DLL_EXPORT Quaternion
+	union __declspec(align (alignof(Vector4))) _DLL_EXPORT Quaternion
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -194,6 +194,8 @@ inline Math::Quaternion _CALL Math::Conjugate(Quaternion _Q)
 
 inline float _CALL Math::Quaternion::Dot(const Quaternion _rhs) const
 {
+	// TODO:
+	UNUSED_PARAMETER(_rhs);
 	return .0f;
 }
 
@@ -204,6 +206,8 @@ inline float _CALL Math::Dot(const Quaternion _lhs, const Quaternion _rhs)
 
 inline Math::Quaternion& _CALL Math::Quaternion::Cross(const Quaternion _rhs)
 {
+	// TODO:
+	UNUSED_PARAMETER(_rhs);
 	return *this;
 }
 
@@ -260,6 +264,8 @@ inline Math::Quaternion& _CALL Math::Quaternion::operator*=(const float _fScalar
 
 inline Math::Quaternion&_CALL Math::Quaternion::operator*=(const Quaternion _rhs)
 {
+	// TODO:
+	UNUSED_PARAMETER(_rhs);
 	return *this;
 }
 

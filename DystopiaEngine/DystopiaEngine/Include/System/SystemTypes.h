@@ -15,27 +15,25 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SYSTEM_TYPES_H_
 #define _SYSTEM_TYPES_H_
 
-namespace Dystopia
+// Update the enum whenever a new system is made
+// This ensures the count is correct
+// Update order is the same as the order within this enum
+enum eSYSTEMS : unsigned
 {
-	// Update the enum whenever a new system is made
-	// This ensures the count is correct
-	// Update order is the same as the order within this enum
-	enum eSYSTEMS : unsigned
-	{
-		TIME_SYSTEM,
-		INPUT_SYSTEM,
-		WINDOW_SYSTEM,
-		PHYSICS_SYSTEM,
-		COLLISION_SYSTEM,
-		SCENE_SYSTEM,
-//		SOUND_SYSTEM,
-		CAMERA_SYSTEM,
-		GRAPHIC_SYSTEM,
-		EVENT_SYSTEM,
-		PROFILER_SYSTEM,
-		FILE_SYSTEM,
-	};
-}
+	TIME_SYSTEM,
+	INPUT_SYSTEM,
+	WINDOW_SYSTEM,
+	PHYSICS_SYSTEM,
+	COLLISION_SYSTEM,
+	SCENE_SYSTEM,
+//	SOUND_SYSTEM,
+	CAMERA_SYSTEM,
+	GRAPHIC_SYSTEM,
+	EVENT_SYSTEM,
+	PROFILER_SYSTEM,
+	BEHAVIOUR_SYSTEM,
+};
+
 
 #endif		// INCLUDE GUARD
 

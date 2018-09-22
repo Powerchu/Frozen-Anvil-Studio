@@ -19,7 +19,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport TestBehaviour * Clone()
+		DllExport TestBehaviour * TestBehaviourClone()
 		{
 			return new TestBehaviour;
 		}

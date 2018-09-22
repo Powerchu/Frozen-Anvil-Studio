@@ -1,10 +1,15 @@
-#ifndef _RESOLUTION_H_
-#define _RESOLUTION_H_
-class CollisionResolution
-{
-public:
-	CollisionResolution();
-	~CollisionResolution();
-};
+#ifndef RESOLUTION_H	
+#define RESOLUTION_H
 
-#endif
+#include <System/Collision/CollisionSystem.h>
+
+namespace Dystopia
+{
+	class CollisionResolution
+	{
+		CollisionResolution();
+		~CollisionResolution();
+	};
+}
+
+#endif // end of collisionresolution.h

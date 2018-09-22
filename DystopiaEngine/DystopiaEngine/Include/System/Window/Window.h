@@ -38,10 +38,13 @@ namespace Dystopia
 
 		int GetWidth(void) const noexcept;
 		int GetHeight(void) const noexcept;
+		int GetFullWidth(void) const noexcept;
+		int GetFullHeight(void) const noexcept;
 
 		void SetTitle(const std::wstring&);
 		void SetStyle(long _nStyle, long _nStyleEx);
 		void SetSize(int _nWidth, int _nHeight);
+		void SetSizeNoAdjust(int _nWidth, int _nHeight);
 
 		void CenterWindow(void) noexcept;
 
@@ -58,6 +61,7 @@ namespace Dystopia
 		HDC mDeviceContext;
 
 		int mnWidth, mnHeight;
+		int mnFWidth, mnFHeight;
 		unsigned long mStyle, mStyleEx;
 
 		Queue<eButton> mInputQueue;

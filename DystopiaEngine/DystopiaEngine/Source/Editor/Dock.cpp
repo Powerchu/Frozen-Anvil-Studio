@@ -1253,7 +1253,7 @@ void EndTabs()
 	}
 }
 
-void PushTabSize(const Math::Vec4& _size)
+void PushTabSize(const Math::Vec2& _size)
 {
 	gSizeStack.Push(ImVec2{_size.x, _size.y});
 }
@@ -1495,13 +1495,4 @@ void InitTabs()
 }} // namespace EGUI::Docking
 
 #endif //EDITOR
-
-
-
-
-
-
-
-
-
 

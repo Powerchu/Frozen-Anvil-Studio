@@ -363,7 +363,7 @@ namespace EGUI
 
 		void OpenTreeNode(bool _open)
 		{
-			ImGui::SetNextTreeNodeOpen(_open);
+			ImGui::SetNextTreeNodeOpen(_open, ImGuiCond_FirstUseEver);
 		}
 
 		void EndTreeNode()
@@ -433,6 +433,25 @@ namespace EGUI
 		bool StartPopup(const std::string& _uniqueID)
 		{
 			return ImGui::BeginPopup(_uniqueID.c_str());
+		}
+
+		bool StartPopupModal(const std::string& _uniqueID, const std::string& _label)
+		{
+			ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize |
+									 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+
+			bool ret = ImGui::BeginPopupModal(_uniqueID.c_str(), NULL, flags);
+			if (ret)
+			{
+				EGUI::Display::Label(_label.c_str());
+				EGUI::Display::HorizontalSeparator();
+			}
+			return ret;
+		}
+
+		void CloseCurrentPopup()
+		{
+			ImGui::CloseCurrentPopup();
 		}
 
 		void EndPopup()

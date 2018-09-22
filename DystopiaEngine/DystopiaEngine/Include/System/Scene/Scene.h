@@ -45,8 +45,14 @@ namespace Dystopia
 
 		inline AutoArray<GameObject>& GetAllGameObjects(void);
 
-	private:
+		void Serialise(TextSerialiser &) const;
 
+		void Unserialise(TextSerialiser &);
+
+		void SetSceneName(const std::string& _name);
+
+	private:
+		std::string mName;
 		AutoArray<GameObject> mGameObjs;
 		//Ctor::MagicArrayBuilder<GameObject>::SetBlockLimit<16>::SetBlockSize<256>::type mGameObjs;
 	};
@@ -75,6 +81,7 @@ inline AutoArray<Dystopia::GameObject>& Dystopia::Scene::GetAllGameObjects(void)
 {
 	return mGameObjs;
 }
+
 
 
 

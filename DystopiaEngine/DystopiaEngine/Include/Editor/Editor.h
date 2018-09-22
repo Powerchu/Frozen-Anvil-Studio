@@ -29,10 +29,11 @@ namespace Dystopia
 	class EditorTab;
 	class EditorEventHandler;
 	class SceneSystem;
+	class PhysicsSystem;
 	class Timer;
 	class Profiler;
 	class GameObject;
-	//class Scene;
+	class BehaviourSystem;
 	enum ePayloadTags;
 
 	enum eEditorState
@@ -41,9 +42,7 @@ namespace Dystopia
 		EDITOR_EXIT = 0,
 		EDITOR_MAIN,
 		EDITOR_PLAY,
-		EDITOR_PAUSE,
-		EDITOR_SAVE,
-		EDITOR_LOAD
+		EDITOR_PAUSE
 	};
 
 	class Editor
@@ -72,7 +71,7 @@ namespace Dystopia
 		void			SetLastPayloadFocus(ePayloadTags);
 		void			SetFocus(GameObject&);
 		void			RemoveFocus();
-		GameObject*		FindGameObject(const unsigned long& _id) const;
+		GameObject*		FindGameObject(const uint64_t& _id) const;
 		GameObject*		GetCurrentFocusGameObj();
 
 	private:
@@ -82,7 +81,9 @@ namespace Dystopia
 		WindowManager			*mpWin;
 		GraphicsSystem			*mpGfx;
 		SceneSystem				*mpSceneSystem;
+		PhysicsSystem			*mpPhysicsSystem;
 		Profiler				*mpProfiler;
+		BehaviourSystem			*mpBehaviourSys;
 
 		EditorEventHandler		*mpEditorEventSys;
 		EditorInput				*mpInput;
@@ -100,8 +101,9 @@ namespace Dystopia
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
 		void			Play();
-		void			Save();
-		void			Load();
+		void			SaveProc();
+		void			SaveAsProc();
+		void			LoadProc();
 		void			TempSave();
 		void			TempLoad();
 
@@ -123,6 +125,7 @@ namespace Dystopia
 		void			UpdateHotkeys();
 		void			InstallHotkeys();
 		void			UnInstallHotkeys();
+		void			ReloadDLL();
 
 		/* Misc functions */
 		void			LogTabPerformance();

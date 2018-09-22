@@ -37,7 +37,6 @@ bool Dystopia::CameraSystem::Init(void)
 
 void Dystopia::CameraSystem::PostInit(void)
 {
-	Window& w = EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow();
 	mMasterViewport.mnWidth  = 2048;
 	mMasterViewport.mnHeight = 2048;
 }

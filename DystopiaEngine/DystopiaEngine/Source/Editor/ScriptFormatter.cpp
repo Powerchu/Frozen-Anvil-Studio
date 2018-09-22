@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 static const std::string ProjectFolder = "..\\DystopiaEngine";
 static const std::string ResourceFolder = "Resource";
-static const std::string BehavioursFolder = "Behaviours";
+static const std::string BehavioursFolder = "Behaviours\\BehaviourScripts";
 static const std::string Default_Creation_Folder = ProjectFolder + "\\" + ResourceFolder + "\\" + BehavioursFolder;
 static const std::string TemplateBodyPath = ProjectFolder + "\\" + ResourceFolder + "\\BehaviourFormat\\BehaviourScript.cpp";
 static const std::string TemplateHeaderPath = ProjectFolder + "\\" + ResourceFolder + "\\BehaviourFormat\\BehaviourScript.h";
@@ -80,10 +80,10 @@ namespace Dystopia
 
 	bool GenerateScript(const std::string& _className, const std::string& _creatorName, const std::string& _creatorLogin)
 	{
-		std::string newFolderPath = Default_Creation_Folder + "\\" + _className;
-		std::wstring folder = std::wstring{ newFolderPath.begin(), newFolderPath.end() };
+		std::string newFolderPath = Default_Creation_Folder;// + "\\" + _className;
+		//std::wstring folder = std::wstring{ newFolderPath.begin(), newFolderPath.end() };
 
-		if (!MakeFolder(folder))  return false;	//Early out for already existing
+		//if (!MakeFolder(folder))  return false;	//Early out for already existing
 
 		std::string filePath = newFolderPath + "\\" + _className;
 		std::ofstream osFileC = MakeFile(filePath + ".cpp");

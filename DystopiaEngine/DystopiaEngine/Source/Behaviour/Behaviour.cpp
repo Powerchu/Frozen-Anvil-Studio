@@ -65,3 +65,8 @@ void Dystopia::Behaviour::OnCollisionExit(const CollisionEvent&)
 
 }
 
+Dystopia::Behaviour * Dystopia::Behaviour::Duplicate() const
+{
+	return nullptr;
+}
+

@@ -32,6 +32,7 @@ namespace Dystopia
 	{
 	public:
 		using AllSys = Utility::MetaSortT_t <Utility::MetaLessThan, Utility::Collection <
+			Utility::Indexer<eSYSTEMS::BEHAVIOUR_SYSTEM, class BehaviourSystem>,
 			Utility::Indexer<eSYSTEMS::TIME_SYSTEM     , class TimeSystem     >,
 			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM    , class InputManager   >,
 			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM   , class WindowManager  >,
@@ -54,6 +55,9 @@ namespace Dystopia
 		static EngineCore* GetInstance(void) noexcept;
 
 		~EngineCore(void) = default;
+
+		template <class T>
+		T* const Get(void) const;
 
 		template <class T>
 		T* const GetSystem(void) const;
@@ -79,9 +83,9 @@ namespace Dystopia
 
 		Queue<eSysMessage> mMessageQueue;
 
+		AutoArray<void*>	mSubSystems;
 		AutoArray<Systems*> mSystemList;
 		AutoArray<Systems*> mSystemTable;
-		AutoArray<void*>	mSubSystems;
 
 		EngineCore(void);
 
@@ -99,7 +103,20 @@ namespace Dystopia
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
-template<class T>
+template <class T>
+inline T* const Dystopia::EngineCore::Get(void) const
+{
+	if constexpr (Utility::MetaFind<T, AllSys>::value)
+	{
+		return GetSystem<T>();
+	}
+	else
+	{
+		return GetSubSystem<T>();
+	}
+}
+
+template <class T>
 inline T* const Dystopia::EngineCore::GetSystem(void) const
 {
 	using type = Utility::MetaFind<T, AllSys>;
@@ -108,13 +125,13 @@ inline T* const Dystopia::EngineCore::GetSystem(void) const
 	return static_cast<T*>(mSystemTable[type::result::value]);
 }
 
-template<unsigned _N, class T>
+template <unsigned _N, class T>
 inline T* const Dystopia::EngineCore::GetSystem(void) const
 {
 	return static_cast<T*>(mSystemTable[_N]);
 }
 
-template<class T>
+template <class T>
 inline T* const Dystopia::EngineCore::GetSubSystem(void) const
 {
 	using type = Utility::MetaFind<T, SubSys>;

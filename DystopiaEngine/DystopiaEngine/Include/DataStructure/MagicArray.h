@@ -29,12 +29,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 template <typename, typename>
-class _DLL_EXPORT MagicArray;
+class _DLL_EXPORT_ONLY MagicArray;
 
 namespace Ctor
 {
 	template <typename T, unsigned BLOCK_SIZE = 64, unsigned MAX_BLOCKS = 16>
-	struct _DLL_EXPORT MagicArrayBuilder
+	struct _DLL_EXPORT_ONLY MagicArrayBuilder
 	{
 		static_assert(Utility::IsPowerOf2(BLOCK_SIZE), "Block Size must be a power of 2");
 
@@ -62,7 +62,7 @@ namespace Ctor
 }
 
 template <typename T, typename Params = Ctor::MagicArrayBuilder<T>>
-class _DLL_EXPORT MagicArray
+class _DLL_EXPORT_ONLY MagicArray
 {
 	struct Iterator;
 
@@ -90,7 +90,7 @@ public:
 	inline Itor_t begin(void) const noexcept; 
 	inline Itor_t end(void) const noexcept;
 
-//	inline Sz_t size(void) const noexcept;
+	inline Sz_t size(void) const noexcept;
 	constexpr inline Sz_t Cap(void) const noexcept;
 
 	void clear(void) noexcept;
@@ -107,7 +107,7 @@ public:
 	//inline void Remove(void) noexcept;
 	//inline void Remove(const T&) noexcept;
 	inline void Remove(const Sz_t _nIndex);
-	void Remove(const Ptr_t _pObj);
+	void Remove(const T* _pObj);
 //	void Remove(const Itor_t _pObj);
 
 	inline bool IsEmpty(void) const noexcept;
@@ -124,7 +124,7 @@ public:
 	
 private:
 
-	struct _DLL_EXPORT Block
+	struct _DLL_EXPORT_ONLY Block
 	{
 		static constexpr uint64_t Range = Params::blk_sz > 63 ? ~(0Ui64) : (Math::Power<Params::blk_sz>(2Ui64) - 1);
 
@@ -143,7 +143,7 @@ private:
 		Block(void) noexcept = default;
 	};
 
-	struct _DLL_EXPORT Iterator
+	struct _DLL_EXPORT_ONLY Iterator
 	{
 		Block const * mpBlock;
 		Ptr_t mpAt;
@@ -210,19 +210,37 @@ MagicArray<T, PP>::~MagicArray(void)
 	}
 }
 
-template<typename T, typename PP>
+template <typename T, typename PP>
 inline typename MagicArray<T, PP>::Itor_t MagicArray<T, PP>::begin(void) const noexcept
 {
 	return Itor_t{ &mDirectory[0], mDirectory[0].mpArray, 0 };
 }
 
-template<typename T, typename PP>
+template <typename T, typename PP>
 inline typename MagicArray<T, PP>::Itor_t MagicArray<T, PP>::end(void) const noexcept
 {
 	return MagicArray<T, PP>::Itor_t{ nullptr, nullptr, 0 };
 }
 
-template<typename T, typename PP>
+template <typename T, typename PP>
+inline typename MagicArray<T, PP>::Sz_t MagicArray<T, PP>::size(void) const noexcept
+{
+	Sz_t size = 0;
+	for (auto& blk : mDirectory)
+	{
+		for (auto e : blk.present)
+		{
+			e &= blk.Range;
+			e = e - (e >> 1 & 0x5555555555555555);
+			e = (e & 0x3333333333333333) + (e >> 2 & 0x3333333333333333);
+			size += (((e >> 4) + e) & 0x0F0F0F0F0F0F0F0F) * 0x0101010101010101 >> 56;
+		}
+	}
+
+	return size;
+}
+
+template <typename T, typename PP>
 constexpr inline typename MagicArray<T, PP>::Sz_t MagicArray<T, PP>::Cap(void) const noexcept
 {
 	return PP::blk_sz * PP::blk_max;
@@ -328,7 +346,7 @@ inline void MagicArray<T, PP>::Remove(const Sz_t _nIndex)
 }
 
 template<typename T, typename PP>
-void MagicArray<T, PP>::Remove(const Ptr_t _pObj)
+void MagicArray<T, PP>::Remove(const T* _pObj)
 {
 	for (auto& blk : mDirectory)
 	{
@@ -384,7 +402,7 @@ T& MagicArray<T, PP>::operator[] (Sz_t _nIndex) const noexcept
 {
 #if _DEBUG
 	/* Array index out of range */
-	auto blk = mDirectory[_nIndex >> PP::shift]
+	auto blk = mDirectory[_nIndex >> PP::shift];
 	if (nullptr == blk.mpArray)
 		__debugbreak();
 	if (0 == (0x1 & (blk.present[page.GetPresentIndex(_nIndex & PP::offset)] >> (_nIndex & 63))))

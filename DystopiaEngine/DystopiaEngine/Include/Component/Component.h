@@ -45,11 +45,11 @@ namespace Dystopia
 		bool IsActive(void) const;
 		void SetActive(const bool _bEnable);
 
-		void Load(void);
+		virtual void Load(void);
 		virtual void Init(void);
 
 		virtual void GameObjectDestroy(void);
-		void Unload(void);
+		virtual void Unload(void);
 
 		void DestroyComponent(void);
 
@@ -62,15 +62,17 @@ namespace Dystopia
 		virtual void Unserialise(TextSerialiser&) = 0;
 		virtual void EditorUI(void) noexcept;
 
+		uint64_t GetID() const;
+
+	protected:
+		uint64_t mID;
+		unsigned mnFlags;
+
 	private:
 
 		// TODO
 		// Temporary ID -- Will change back to pointer
 		uint64_t mnOwner;
-
-	protected:
-
-		unsigned mnFlags;
 	};
 }
 

@@ -84,7 +84,7 @@ namespace Dystopia
 	}
 
 	File::File(const std::string& _name, const std::string& _path, Folder * const _parent)
-		: CrawlItem{ _name, _path }, mpParentFolder{ _parent }
+		: CrawlItem{ _name, _path }, mpParentFolder{ _parent }, mTag{ DetermineTag(_name) }
 	{}
 
 	File::~File()
@@ -95,6 +95,18 @@ namespace Dystopia
 	bool File::operator<(const File& rhs)
 	{
 		 return mName.compare(rhs.mName) <= 0;
+	}
+	
+	EGUI::ePayloadTags File::DetermineTag(const std::string& _name)
+	{
+		if (_name.find(".png") == _name.length() - 4)
+			return EGUI::ePayloadTags::PNG;
+		else if (_name.find(".bmp") == _name.length() - 4)
+			return EGUI::ePayloadTags::BMP;
+		else if (_name.find(".cpp") == _name.length() - 4)
+			return EGUI::ePayloadTags::FILE;
+
+		return EGUI::ePayloadTags::UNKNOWN;
 	}
 
 	/****************************************************************** PROJECT RESOURCE ********************************************************************/
@@ -170,6 +182,7 @@ namespace Dystopia
 	{
 		Math::Vec2 fileWindowSize = Math::Vec2{ Size().x - 210, Size().y - 55 };
 		SearchWindow();
+		EGUI::Display::OpenTreeNode();
 		FolderWindow();
 		EGUI::SameLine(2);
 		EGUI::StartChild("FileWindow", fileWindowSize);
@@ -422,19 +435,10 @@ namespace Dystopia
 		if (_file == mFocusedFile) EGUI::Display::Outline(mPayloadRect.x, mPayloadRect.y);
 
 		if (EGUI::Display::CustomPayload(("###ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
-			_file->mName.c_str(), mPayloadRect, EGUI::FILE, &(*_file), sizeof(File)))
+			_file->mName.c_str(), mPayloadRect, _file->mTag, &(*_file), sizeof(File)))
 		{
 			mFocusedFile = _file;
 		}
-		//if (EGUI::Display::Button(_file->mName.c_str(), mPayloadRect))
-		//{
-		//	mFocusedFile = nullptr;
-		//}
-		//if (EGUI::Display::StartPayload(EGUI::FILE, &(*_file), sizeof(File), _file->mName.c_str()))
-		//{
-		//	mFocusedFile = nullptr;
-		//	EGUI::Display::EndPayload();
-		//}
 	}
 
 	void ProjectResource::FullCrawl(Folder* _folder)

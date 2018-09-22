@@ -55,7 +55,7 @@ namespace Dystopia
 	{
 	}
 
-	Component* _SF_ClassName_::Duplicate() const
+	_SF_ClassName_ * _SF_ClassName_::Duplicate() const
 	{
 		return nullptr;
 	}
@@ -67,6 +67,15 @@ namespace Dystopia
 	void _SF_ClassName_::Unserialise(TextSerialiser& _ser)
 	{
 	}
+
+
+	const char * const _SF_ClassName_::GetBehaviourName() const
+	{
+		return _SF_ClassName_::BehaviourName;
+	}
+
+	
+
 }
 
 
