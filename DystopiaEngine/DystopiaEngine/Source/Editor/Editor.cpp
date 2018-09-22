@@ -507,6 +507,7 @@ namespace Dystopia
 						if (SUCCEEDED(hr))
 						{
 							std::wstring path{ pszFilePath };
+							RemoveFocus();
 							mpSceneSystem->LoadScene(std::string{ path.begin(), path.end() });
 							CoTaskMemFree(pszFilePath);
 						}

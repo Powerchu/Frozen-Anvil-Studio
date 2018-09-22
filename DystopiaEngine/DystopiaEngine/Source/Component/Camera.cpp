@@ -226,22 +226,22 @@ Dystopia::Camera* Dystopia::Camera::Duplicate(void) const
 void Dystopia::Camera::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Camera");
-	_out << GetOwner()->GetID();
+	_out << mID;
 	_out.InsertEndBlock("Camera");
 }
 
 void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 {
-	uint64_t ownerID;
-
 	_in.ConsumeStartBlock();
-	_in >> ownerID;
+	_in >> mID;
 	_in.ConsumeEndBlock();
 
-	GameObject* owner = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(ownerID);
-	owner->AddComponent(this, Camera::TAG{});
-
-	Init();
+	if (GameObject* owner =
+		EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
+	{
+		owner->AddComponent(this, Camera::TAG{});
+		Init();
+	}
 }
 
 void Dystopia::Camera::EditorUI(void) noexcept

@@ -61,7 +61,6 @@ void Dystopia::SceneSystem::Update(float _dt)
 	}
 	else
 	{
-		
 	}
 }
 
@@ -96,9 +95,9 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 {
 	UNUSED_PARAMETER(_strFile);
 	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
-
-	if(!mpNextScene)
-		return;
+	
+	delete mpCurrScene;
+	mpNextScene = mpCurrScene = new Scene{};
 
 	/*Open File*/
 	auto & SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_READ);

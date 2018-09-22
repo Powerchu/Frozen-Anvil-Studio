@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Scene::Scene(void) :
-	mGameObjs{ 100 }, mName{}
+	mGameObjs{ 100 }, mName{"Default scene name"}
 {
 }
 
