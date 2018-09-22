@@ -175,7 +175,6 @@ namespace Dystopia
 		mpInput->Update(mDeltaTime);
 		mpWin->Update(mDeltaTime);
 		mpBehaviourSys->Update(mDeltaTime);
-		mpGuiSystem->StartFrame(mDeltaTime);
 
 		if (mpBehaviourSys->hasDllChanges())
 		{
@@ -198,6 +197,7 @@ namespace Dystopia
 		UpdateKeys();
 		UpdateHotkeys();
 		mpEditorEventSys->FireAllPending();
+		mpGuiSystem->StartFrame(mDeltaTime);
 		MainMenuBar();
 	}
 
@@ -209,7 +209,27 @@ namespace Dystopia
 								mpDriver->Update();			
 								break;
 		}
-
+		if (ImGui::Begin("Scroll Test"))
+		{
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+			ImGui::Text("Gi");
+		}
+		ImGui::End();
+		return;
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);

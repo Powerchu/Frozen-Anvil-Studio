@@ -240,7 +240,7 @@ namespace Dystopia
 
 		// Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
 		ImGui::NewFrame();
-		StartFullDockableSpace();
+		//StartFullDockableSpace();
 		glViewport(0, 0, display_w, display_h);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -249,7 +249,7 @@ namespace Dystopia
 	void GuiSystem::EndFrame()
 	{
 		ImGui::SetCurrentContext(mpCtx);
-		EndFullDockableSpace();
+		//EndFullDockableSpace();
 		ImGui::Render();
 		mpDrawData = ImGui::GetDrawData();
 

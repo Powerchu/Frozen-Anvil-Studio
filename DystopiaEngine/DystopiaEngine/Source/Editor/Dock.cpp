@@ -1205,7 +1205,7 @@ bool BeginDockableSpace()
 	IM_ASSERT(curPanel);
 
 	if (!curPanel)	return false;
-	ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar;
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollbar;
 	char bufferLabel[1024];
 	sprintf_s(bufferLabel, "##%s", curPanel);
 	bool result = ImGui::BeginChild(bufferLabel, ImVec2{ 0, 0 }, false, flags);
