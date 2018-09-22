@@ -15,6 +15,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
 
+#ifndef EDITOR
+#define EDITOR 0
+#endif
+
 #if EDITOR
 
 #define _EDITOR_START_TRY			try {
@@ -22,7 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_END_TRY				}
 #define _EDITOR_THROW(_X_)			throw _X_
 #define _GAME_NOEXCEPT
-#define UNUSED_PARAMETER(x)   (void)x
+#define UNUSED_PARAMETER(_X_)       static_cast<void>(_X_);
 
 #ifdef  EXPORT
 	#define _DLL_EXPORT   __declspec( dllexport )
@@ -46,8 +50,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif
 
 #define _SAVE_VERSION			1
-
 #define _FIXED_UPDATE_DT		.02f
 
-#endif
+
+#endif		// INCLUDE GUARD
 

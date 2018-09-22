@@ -58,7 +58,7 @@ void Dystopia::Component::Init(void)
 
 void Dystopia::Component::GameObjectDestroy(void)
 {
-
+	DestroyComponent();
 }
 
 void Dystopia::Component::Unload(void)

@@ -50,7 +50,7 @@ namespace Ctor
 	private:
 		static constexpr unsigned blk_sz  = BLOCK_SIZE;
 		static constexpr unsigned blk_max = MAX_BLOCKS;
-		static constexpr unsigned shift   = Math::Log2<BLOCK_SIZE>::value;
+		static constexpr unsigned shift   = Math::Log<BLOCK_SIZE>::value;
 		static constexpr unsigned offset  = BLOCK_SIZE - 1;
 
 		friend class MagicArray<T, MagicArrayBuilder>;

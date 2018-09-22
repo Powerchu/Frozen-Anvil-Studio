@@ -27,16 +27,15 @@ namespace Utility
 
 
 	template <typename T>
-	constexpr inline T&& Forward(typename RemoveRef<T>::type& _obj) noexcept
+	constexpr inline T&& Forward(RemoveRef_t<T>& _obj) noexcept
 	{
 		return static_cast<T&&>(_obj);
 	}
 
 	template <typename T>
-	constexpr inline T&& Forward(typename RemoveRef<T>::type&& _obj) noexcept
+	constexpr inline T&& Forward(RemoveRef_t<T>&& _obj) noexcept
 	{
-		static_assert(NotLvalueRef<T>::value, "%s (%d): Invalid forwarding call.", __FILE__, __LINE__ );
-		
+		static_assert(NotLvalueRef<T>::value, "Invalid forwarding call.");
 		return static_cast<T&&>(_obj);
 	}
 
@@ -62,23 +61,23 @@ namespace Utility
 	
 	// Sorts a given array using insertion sort. 
 	// Defaults to sorting the array in ascending order
-	template<class Itor, typename Comparator, class Obj = typename RemoveRef<decltype(*Itor{})>::type >
-	void Sort(Itor _begin, Itor _end, Comparator _pTest = [](Obj& lhs, Obj& rhs)->bool { return lhs < rhs; })
+	template<class Itor, class Obj = typename RemoveRef<decltype(*declval<Itor>())>::type, 
+		typename Comparator = bool(*)(const Obj&, const Obj&)>
+	void Sort(Itor _begin, Itor _end, Comparator _pTest = [](const Obj& _lhs, const Obj& _rhs)->bool { return _lhs < _rhs; })
 	{
-		std::sort(_begin, _end);
 		Obj temp;
 
 		Itor pStart = _begin;
-		while (_begin != _end)
+		while (++pStart != _end)
 		{
-			temp = Move(*++pStart);
+			temp = Move(*pStart);
 			Itor pIndex = pStart;
 			Itor pPrev = pIndex;
 
-			while (pIndex != _begin && _pTest(temp, *pIndex))
+			while (pIndex != _begin && _pTest(temp, *--pIndex))
 			{
-				pPrev = pIndex;
-				*pPrev = Move(*--_pIndex);
+				*pPrev = Move(*pIndex);
+				--pPrev;
 			}
 
 			*pPrev = Move(temp);
@@ -113,19 +112,19 @@ namespace Utility
 
 	// Swaps lhs with rhs
 	template<typename T>
-	inline void Swap(T& lhs, T& rhs)
+	inline void Swap(T& _lhs, T& _rhs)
 	{
-		T tmp{ Utility::Move(lhs) };
+		T tmp{ Utility::Move(_lhs) };
 
-		lhs = Utility::Move(rhs);
-		rhs = Utility::Move(tmp);
+		_lhs = Utility::Move(_rhs);
+		_rhs = Utility::Move(tmp);
 	}
 
 
 	template <typename T>
-	Interns::RangeMaker<T> Range(T&& begin, T&& end)
+	Interns::RangeMaker<T> Range(T&& _begin, T&& _end)
 	{
-		return Interns::RangeMaker<T>{ Forward<T>(begin), Forward<T>(end) };
+		return Interns::RangeMaker<T>{ Forward<T>(_begin), Forward<T>(_end) };
 	}
 
 
@@ -181,14 +180,14 @@ namespace Utility
 			return mItor;
 		}
 
-		auto operator== (const ReverseItor& rhs) const
+		auto operator== (const ReverseItor& _rhs) const
 		{
-			return mItor == rhs.mItor;
+			return mItor == _rhs.mItor;
 		}
 
-		auto operator!= (const ReverseItor& rhs) const
+		auto operator!= (const ReverseItor& _rhs) const
 		{
-			return mItor != rhs.mItor;
+			return mItor != _rhs.mItor;
 		}
 	};
 }

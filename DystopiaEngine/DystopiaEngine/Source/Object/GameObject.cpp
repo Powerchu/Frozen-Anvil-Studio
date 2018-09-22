@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure\AutoArray.h" 
 #include "Utility\Utility.h"		 // Move
 #include "IO\TextSerialiser.h"
+#include "Utility\GUID.h"
 
 #define Ping(_ARR, _FUNC, ...)			\
 for (auto& e : _ARR)					\
@@ -29,12 +30,12 @@ for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
 
 Dystopia::GameObject::GameObject(void) noexcept
-	: GameObject{ Utility::Constant<decltype(mnID), ~0>::value }
+	: GameObject{ GUIDGenerator::INVALID }
 {
 
 }
 
-Dystopia::GameObject::GameObject(unsigned long _ID) noexcept
+Dystopia::GameObject::GameObject(uint64_t _ID) noexcept
 	: mnID{ _ID }, mnFlags{ FLAG_NONE },
 	mTransform{ this }, mComponents{}, mBehaviours{}
 {
@@ -50,7 +51,7 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
 
-	_obj.mnID = Utility::Constant<decltype(mnID), ~0>::value;
+	_obj.mnID = GUIDGenerator::INVALID;
 	_obj.mnFlags = FLAG_REMOVE;
 }
 
@@ -282,7 +283,7 @@ Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
 	Utility::Swap(mComponents, _rhs.mComponents);
 	Utility::Swap(mBehaviours, _rhs.mBehaviours);
 
-	_rhs.mnID = Utility::Constant<decltype(mnID), ~0>::value;
+	_rhs.mnID = GUIDGenerator::INVALID;
 
 	return *this;
 }

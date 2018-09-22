@@ -9,7 +9,7 @@ namespace Dystopia
 	struct ComponentGUIDGenerator : GUIDGenerator
 	{
 		template <class Component>
-		static ulong GetUniqueID(void)
+		static GUID_t GetUniqueID(void)
 		{
 			auto   BaseID = GUIDGenerator::GetUniqueID();
 			return BaseID + Utility::MetaFind_t<Component, AllComponents>::value;

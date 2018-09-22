@@ -227,8 +227,7 @@ template <class T, class A>
 inline T& AutoArray<T, A>::back(void) const noexcept
 {
 #if _DEBUG
-	DEBUG_LOG(mpArray == mpLast, "DynamicArray Error: Array is empty!\n");
-	if (mpArray == mpLast) __debugbreak();
+	DEBUG_BREAK(mpArray == mpLast, "DynamicArray Error: Array is empty!\n");
 #endif
 
 	return *(mpLast - 1);
@@ -433,12 +432,7 @@ inline void AutoArray<T, A>::FastRemove(const Itor_t& _pObj)
 {
 #if _DEBUG
 	DEBUG_BREAK(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
-
-	if (!(_pObj < mpLast))
-	{
-		DEBUG_PRINT(eLog::ERROR, "AutoArray Error: Invalid Remove Index!\n");
-		return;
-	}
+	DEBUG_BREAK(!(_pObj < mpLast), "AutoArray Error: Invalid Remove Index!\n");
 #endif
 
 	--mpLast;
@@ -458,7 +452,7 @@ inline bool AutoArray<T, A>::IsEmpty(void) const noexcept
 template <class T, class A> template <typename Condition>
 void AutoArray<T, A>::Sort(Condition&& _Test)
 {
-	const Sz_t last = mpLast - mpArray;
+	const Sz_t last = size();
 	T temp;
 
 	for (Sz_t n2, n1 = 1; n1 < last; ++n1)

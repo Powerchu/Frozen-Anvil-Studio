@@ -60,16 +60,11 @@ inline Ty* Dystopia::ComponentDonor<Ty, S>::RequestComponent(U&& ... _Args)
 template<typename Ty, typename Settings>
 inline void Dystopia::ComponentDonor<Ty, Settings>::Serialise(TextSerialiser & _Serialiser) const
 {
-	size_t Size = 0;
 	_Serialiser.InsertStartBlock("ComponentDonor");
-
-	for (auto & elem : mComponents)
-		++Size;
-	_Serialiser << Size;
+	_Serialiser << mComponents.size();
 
 	for (auto & elem : mComponents)
 	{
-		
 		_Serialiser.InsertStartBlock("Component");
 		elem.Serialise(_Serialiser);
 		_Serialiser.InsertEndBlock("Component End");

@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System\Graphics\ShaderSystem.h"
+#include "System\Graphics\Shader.h"
 
 
 Dystopia::ShaderSystem::~ShaderSystem(void) noexcept

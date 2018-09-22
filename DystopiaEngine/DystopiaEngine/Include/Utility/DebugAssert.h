@@ -43,27 +43,27 @@ do {								                      \
 	}								                      \
 } while (false)
  
-#define DEBUG_LOG(_X_, ...)			                     \
-do {								                     \
-	if ((_X_))						                     \
-	{								                     \
-		DEBUG_PRINT(eLog::WARNING, 	                     \
-		"!IN %s Line %lu, \n",                           \
-		__FUNCSIG__, __LINE__);                          \
-		DEBUG_PRINT(eLog::WARNING, __VA_ARGS__);         \
-	}                                                    \
+#define DEBUG_LOG(_X_, ...)			                      \
+do {								                      \
+	if ((_X_))						                      \
+	{								                      \
+		DEBUG_PRINT(eLog::WARNING, 	                      \
+		"!IN %s Line %lu, \n",                            \
+		__FUNCSIG__, __LINE__);                           \
+		DEBUG_PRINT(eLog::WARNING, __VA_ARGS__);          \
+	}                                                     \
 } while (false)
-#define DEBUG_BREAK(_X_, ...)                          \
-do {                                                   \
-  if ((_X_))						                   \
-  {                                                    \
-    DEBUG_PRINT(                                       \
-    eLog::ERROR,	                                   \
-    "!ERROR IN %s Line %lu, \n",                       \
-    __FUNCSIG__, __LINE__);                            \
-    DEBUG_PRINT(eLog::ERROR, __VA_ARGS__);             \
-    __debugbreak();				                       \
-  }								                       \
+#define DEBUG_BREAK(_X_, ...)                             \
+do {                                                      \
+  if ((_X_))						                      \
+  {                                                       \
+    DEBUG_PRINT(                                          \
+    eLog::ERROR,	                                      \
+    "!ERROR IN %s Line %lu, \n",                          \
+    __FUNCSIG__, __LINE__);                               \
+    DEBUG_PRINT(eLog::ERROR, __VA_ARGS__);                \
+    __debugbreak();				                          \
+  }								                          \
 } while (false)
 
 #else

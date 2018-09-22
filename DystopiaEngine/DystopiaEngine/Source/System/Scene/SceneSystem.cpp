@@ -101,7 +101,7 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 		return;
 
 	/*Open File*/
-	auto & SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_READ);
+	auto SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_READ);
 	/*Consume Start Block*/
 	SerialObj.ConsumeStartBlock();
 	/*Get Next Scene to Unserialise*/
@@ -117,7 +117,7 @@ void Dystopia::SceneSystem::SaveScene(const std::string & _strFile)
 	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
 
 	/*Open File*/
-	auto & SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_WRITE);
+	auto SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_WRITE);
 	/*Consume Start Block*/
 	SerialObj.InsertStartBlock("Scene");
 	/*Get Next Scene to Unserialise*/
