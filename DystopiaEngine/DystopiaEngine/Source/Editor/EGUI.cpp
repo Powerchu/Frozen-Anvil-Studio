@@ -166,13 +166,6 @@ namespace Dystopia
 		io.KeyMap[ImGuiKey_Insert]		= static_cast<int>(eButton::KEYBOARD_INSERT);
 		io.KeyMap[ImGuiKey_Delete]		= static_cast<int>(eButton::KEYBOARD_DELETE);
 
-		//io.KeyMap[ImGuiKey_A]			= static_cast<int>(eButton::KEYBOARD_A);
-		//io.KeyMap[ImGuiKey_C]			= static_cast<int>(eButton::KEYBOARD_C);
-		//io.KeyMap[ImGuiKey_V]			= static_cast<int>(eButton::KEYBOARD_V);
-		//io.KeyMap[ImGuiKey_X]			= static_cast<int>(eButton::KEYBOARD_X);
-		//io.KeyMap[ImGuiKey_Y]			= static_cast<int>(eButton::KEYBOARD_Y);
-		//io.KeyMap[ImGuiKey_Z]			= static_cast<int>(eButton::KEYBOARD_Z);
-
 		io.SetClipboardTextFn = SetClipBoardText;
 		io.GetClipboardTextFn = GetClipBoardText;
 		io.ClipboardUserData = mpWin->GetMainWindow().GetDeviceContext(); // pointer to both a windows and context
@@ -202,8 +195,6 @@ namespace Dystopia
 
 		// Setup display size (every frame to accommodate for window resizing)
 		int w, h, display_w, display_h;
-		// glfwGetWindowSize(mpWin, &w, &h);
-		// glfwGetFramebufferSize(mpWin, &display_w, &display_h);
 		w = display_w = mpWin->GetMainWindow().GetWidth();
 		h = display_h = mpWin->GetMainWindow().GetHeight() - 40;
 
@@ -214,7 +205,7 @@ namespace Dystopia
 		io.DeltaTime = _dt;
 
 		// Setup inputs
-		if (mpWin) // should check if this window is the focused window
+		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow()) // should check if this window is the focused window
 		{
 			float x, y;
 			x = mpInput->GetMousePosition().x;
@@ -240,7 +231,7 @@ namespace Dystopia
 
 		// Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
 		ImGui::NewFrame();
-		//StartFullDockableSpace();
+		StartFullDockableSpace();
 		glViewport(0, 0, display_w, display_h);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -249,7 +240,7 @@ namespace Dystopia
 	void GuiSystem::EndFrame()
 	{
 		ImGui::SetCurrentContext(mpCtx);
-		//EndFullDockableSpace();
+		EndFullDockableSpace();
 		ImGui::Render();
 		mpDrawData = ImGui::GetDrawData();
 

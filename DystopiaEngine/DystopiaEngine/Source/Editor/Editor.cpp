@@ -111,7 +111,6 @@ namespace Dystopia
 		mpWin{ nullptr }, 
 		mpGfx{ nullptr },
 		mpSceneSystem{ nullptr },
-		mpPhysicsSystem{nullptr},
 		mpProfiler{ nullptr },
 		mpEditorEventSys{ new EditorEventHandler{} },
 		mpInput{ new EditorInput{} },
@@ -146,7 +145,6 @@ namespace Dystopia
 		mpGfx			= mpDriver->GetSystem<GraphicsSystem>();	// driver init-ed
 		mpSceneSystem	= mpDriver->GetSystem<SceneSystem>();		// driver init-ed
 		mpProfiler		= mpDriver->GetSystem<Profiler>();			// driver init-ed
-		mpPhysicsSystem = mpDriver->GetSystem<PhysicsSystem>();		// driver init-ed
 		mpBehaviourSys	= mpDriver->GetSystem<BehaviourSystem>();	// driver init-ed
 
 		LoadDefaults();
@@ -171,32 +169,25 @@ namespace Dystopia
 	{
 		mDeltaTime = mpTimer->Elapsed();
 		mpTimer->Lap();
-		mpProfiler->Update(mDeltaTime);
-		mpInput->Update(mDeltaTime);
-		mpWin->Update(mDeltaTime);
-		mpBehaviourSys->Update(mDeltaTime);
-
-		if (mpBehaviourSys->hasDllChanges())
+		switch (mCurrentState)
 		{
-			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED);
+		case EDITOR_MAIN:
+			mpProfiler->Update(mDeltaTime);
+			mpWin->Update(mDeltaTime);
+			mpBehaviourSys->Update(mDeltaTime);
+			if (mpBehaviourSys->hasDllChanges())
+			{
+				mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED);
+			}
+			if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow())
+			{
+				mpInput->Update(mDeltaTime);
+			}
+			UpdateKeys();
+			UpdateHotkeys();
+			mpEditorEventSys->FireAllPending();
+			break;
 		}
-
-
-		/*This is for testing if Behvaiour Hotreloading works*/
-
-		/*
-				auto & arr = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
-		for (auto & gobj : arr)
-		{
-			auto & gobjBehaviours = gobj.GetAllBehaviours();
-			for (auto & behave : gobjBehaviours)
-				behave->Update(0.f);
-		}
-		*/
-
-		UpdateKeys();
-		UpdateHotkeys();
-		mpEditorEventSys->FireAllPending();
 		mpGuiSystem->StartFrame(mDeltaTime);
 		MainMenuBar();
 	}
@@ -205,31 +196,9 @@ namespace Dystopia
 	{ 
 		switch (mCurrentState)
 		{
-		case EDITOR_PLAY:		mpDriver->FixedUpdate();
-								mpDriver->Update();			
-								break;
+		case EDITOR_PLAY:	mpDriver->Update();			
+							break;
 		}
-		if (ImGui::Begin("Scroll Test"))
-		{
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-			ImGui::Text("Gi");
-		}
-		ImGui::End();
-		return;
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);
@@ -274,8 +243,13 @@ namespace Dystopia
 	void Editor::EndFrame()
 	{
 		LogTabPerformance();
-		mpProfiler->PostUpdate();
-		mpDriver->GetSystem<BehaviourSystem>()->PostUpdate();
+		switch (mCurrentState)
+		{
+		case EDITOR_MAIN:
+			mpProfiler->PostUpdate();
+			mpDriver->GetSystem<BehaviourSystem>()->PostUpdate();
+			break;
+		}
 		mpGuiSystem->EndFrame(); 
 		if (mCurrentState != mNextState)  UpdateState();
 	}
@@ -365,8 +339,8 @@ namespace Dystopia
 	{
 		if (EGUI::StartMenuHeader("File"))
 		{
-			if (EGUI::StartMenuBody("New")) NewScene();
-			if (EGUI::StartMenuBody("Open")) LoadProc();
+			if (EGUI::StartMenuBody("New"))		NewScene();
+			if (EGUI::StartMenuBody("Open"))	LoadProc();
 			// if (EGUI::StartMenuHeader("Open Recent"))
 			// {
 			// 	if (EGUI::StartMenuBody("some_recent_crap.cpp"))
