@@ -598,6 +598,12 @@ namespace Dystopia
 			else if (mpInput->IsKeyTriggered(KEY_C))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_COPY);
 			else if (mpInput->IsKeyTriggered(KEY_X))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_CUT);
 			else if (mpInput->IsKeyTriggered(KEY_V))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_PASTE);
+			else if (mpInput->IsKeyTriggered(KEY_S))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_SAVE);
+			
+			if (mpInput->IsKeyTriggered(KEY_SHIFT))
+			{
+				if (mpInput->IsKeyTriggered(KEY_S))		mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_SAVEAS);
+			}
 		}
 		else if (mpInput->IsKeyTriggered(KEY_DELETE))	
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_DELETE);
@@ -612,6 +618,8 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_CUT)->Bind(&Editor::EditorCut, this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PASTE)->Bind(&Editor::EditorPaste, this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_DELETE)->Bind(&Editor::EditorDeleteFocus, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_SAVE)->Bind(&Editor::SaveProc, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_SAVEAS)->Bind(&Editor::SaveAsProc, this);
 	}
 
 	void Editor::UnInstallHotkeys()
@@ -623,6 +631,8 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_CUT)->Unbind(this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PASTE)->Unbind(this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_DELETE)->Unbind(this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_SAVE)->Unbind(this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_SAVEAS)->Unbind(this);
 	}
 
 	void Editor::SetFocus(GameObject& _rObj)
