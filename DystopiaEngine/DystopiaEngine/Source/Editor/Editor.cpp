@@ -35,11 +35,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Profiler\Profiler.h"
 #include "System\Profiler\ProfilerAction.h"
 #include "System\Time\ScopedTimer.h"
-#include "IO\BinarySerializer.h"
-#include "Utility\GUID.h"
 #include "System/File/FileSystem.h"
 #include "System//Behaviour/BehaviourSystem.h"
-#include <System/Physics/PhysicsSystem.h>
+#include "System/Physics/PhysicsSystem.h""
+#include "IO\BinarySerializer.h"
+#include "Utility\GUID.h"
+
 /* Editor includes */
 #include "Editor\EGUI.h"
 #include "Editor\Editor.h"
@@ -63,6 +64,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <objbase.h>
 
 static const std::string DYSTOPIA_SCENE_LOAD = "Resource/Scene/";
+static const std::string DYSTOPIA_SCENE_TEMP = "Resource/Temp/";
 static const std::wstring DYSTOPIA_SCENE_EXTENSION = L"dscene";
 static constexpr COMDLG_FILTERSPEC DYSTOPIA_SCENE_FILTER_EXTENSION[1] =
 {
@@ -108,17 +110,15 @@ namespace Dystopia
 
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, 
-		mpWin{ nullptr }, 
-		mpGfx{ nullptr },
-		mpSceneSystem{ nullptr },
-		mpProfiler{ nullptr },
+		mpWin{ nullptr }, mpGfx{ nullptr },
+		mpSceneSystem{ nullptr }, mpProfiler{ nullptr },
 		mpEditorEventSys{ new EditorEventHandler{} },
 		mpInput{ new EditorInput{} },
 		mpComdHandler{ new CommandHandler{} },
 		mpGuiSystem{ new GuiSystem{} },
 		mpTimer{ new Timer{} },
-		mpFocusGameObj{ nullptr }
-
+		mpFocusGameObj{ nullptr },
+		mTempSaveFile{}
 	{}
 
 	Editor::~Editor(void)
@@ -162,7 +162,6 @@ namespace Dystopia
 		EGUI::SetContext(mpComdHandler);
 		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
 			mCurrentState = EDITOR_EXIT;
-		PrintToConsoleLog("Ho");
 	}
 
 	void Editor::StartFrame()
@@ -312,12 +311,17 @@ namespace Dystopia
 		switch (mNextState)
 		{
 		case EDITOR_MAIN:
+			if (mCurrentState == EDITOR_PLAY || 
+				mCurrentState == EDITOR_PAUSE)
+				TempLoad();
 			break;
 		case EDITOR_PLAY:
+			TempSave();
 			break;
 		case EDITOR_PAUSE:
 			break;
 		case EDITOR_EXIT:
+			if (mTempSaveFile.length()) remove(mTempSaveFile.c_str());
 			break;
 		}
 		mCurrentState = mNextState;
@@ -339,25 +343,8 @@ namespace Dystopia
 	{
 		if (EGUI::StartMenuHeader("File"))
 		{
-			if (EGUI::StartMenuBody("New"))		NewScene();
-			if (EGUI::StartMenuBody("Open"))	LoadProc();
-			// if (EGUI::StartMenuHeader("Open Recent"))
-			// {
-			// 	if (EGUI::StartMenuBody("some_recent_crap.cpp"))
-			// 	{
-			// 		// TODO: Some actual function
-			// 	}
-			// 	if (EGUI::StartMenuBody("some_recent_crap.h"))
-			// 	{
-			// 		// TODO: Some actual function
-			// 	}
-			// 	if (EGUI::StartMenuHeader("More.."))
-			// 	{
-			// 		EGUI::StartMenuBody("surprise_theres_more_crap.h");
-			// 		EGUI::EndMenuHeader();
-			// 	}
-			// 	EGUI::EndMenuHeader();
-			// }
+			if (EGUI::StartMenuBody("New"))			NewScene();
+			if (EGUI::StartMenuBody("Open"))		LoadProc();
 			if (EGUI::StartMenuBody("Save"))		SaveProc();
 			if (EGUI::StartMenuBody("Save As.."))	SaveAsProc();
 			if (EGUI::StartMenuBody("Quit"))		ChangeState(EDITOR_EXIT);
@@ -427,12 +414,10 @@ namespace Dystopia
 
 	void Editor::NewScene()
 	{
-		
 	}
 
 	void Editor::Play()
 	{
-
 	}
 
 	void Editor::SaveProc()
@@ -530,12 +515,22 @@ namespace Dystopia
 
 	void Editor::TempSave()
 	{
-		// save all current values to a temp file or something to be reloaded after editor_play ends
+		RemoveFocus();
+		std::string ext{ DYSTOPIA_SCENE_EXTENSION.begin(), DYSTOPIA_SCENE_EXTENSION.end() };
+		std::string file{ DYSTOPIA_SCENE_TEMP + std::to_string(GUIDGenerator::GetUniqueID()) + "." + ext };
+		mpSceneSystem->SaveScene(file, mpSceneSystem->GetCurrentScene().GetSceneName());
+		mTempSaveFile = file;
 	}
 
 	void Editor::TempLoad()
 	{
-		// reset all current values to temp file values
+		if (!mTempSaveFile.length()) 
+			__debugbreak;
+
+		RemoveFocus();
+		mpSceneSystem->LoadScene(mTempSaveFile);
+		remove(mTempSaveFile.c_str());
+		mTempSaveFile.clear();
 	}
 
 	void Editor::UpdateKeys()

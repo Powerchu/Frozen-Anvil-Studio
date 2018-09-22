@@ -95,6 +95,7 @@ namespace Dystopia
 		eEditorState			mCurrentState;
 		eEditorState			mNextState;
 		float					mDeltaTime;
+		std::string				mTempSaveFile;
 		GameObject				*mpFocusGameObj;
 		ePayloadTags			mLatestPayloadFocus;
 
