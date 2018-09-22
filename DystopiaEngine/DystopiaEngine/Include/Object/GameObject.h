@@ -94,11 +94,11 @@ namespace Dystopia
 		GameObject& operator = (GameObject&&);
 	private:
 
-		Transform mTransform;
-
 		uint64_t mnID;
-		unsigned mnFlags;
 		std::string mName;
+
+		Transform mTransform;
+		unsigned mnFlags;
 
 		AutoArray<Component*> mComponents;
 		AutoArray<Behaviour*> mBehaviours;
