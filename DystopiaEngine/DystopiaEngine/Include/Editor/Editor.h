@@ -101,6 +101,7 @@ namespace Dystopia
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
 		void			Play();
+		void			NewScene();
 		void			SaveProc();
 		void			SaveAsProc();
 		void			LoadProc();
@@ -119,6 +120,7 @@ namespace Dystopia
 		void			EditorCopy();
 		void			EditorCut();
 		void			EditorPaste();
+		void			EditorDeleteFocus();
 
 		/* EditorEvents */
 		void			UpdateKeys();

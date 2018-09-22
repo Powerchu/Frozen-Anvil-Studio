@@ -111,7 +111,7 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 	SerialObj.ConsumeEndBlock();
 }
 
-void Dystopia::SceneSystem::SaveScene(const std::string & _sceneName,const std::string & _strFile)
+void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::string & _sceneName)
 {
 	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
 
@@ -127,5 +127,3 @@ void Dystopia::SceneSystem::SaveScene(const std::string & _sceneName,const std::
 	/*Consume End Block*/
 	SerialObj.InsertEndBlock("Scene");
 }
-
-
