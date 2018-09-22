@@ -33,7 +33,7 @@ namespace Dystopia
 	class Timer;
 	class Profiler;
 	class GameObject;
-	//class Scene;
+	class BehaviourSystem;
 	enum ePayloadTags;
 
 	enum eEditorState
@@ -42,9 +42,7 @@ namespace Dystopia
 		EDITOR_EXIT = 0,
 		EDITOR_MAIN,
 		EDITOR_PLAY,
-		EDITOR_PAUSE,
-		EDITOR_SAVE,
-		EDITOR_LOAD
+		EDITOR_PAUSE
 	};
 
 	class Editor
@@ -85,6 +83,7 @@ namespace Dystopia
 		SceneSystem				*mpSceneSystem;
 		PhysicsSystem			*mpPhysicsSystem;
 		Profiler				*mpProfiler;
+		BehaviourSystem			*mpBehaviourSys;
 
 		EditorEventHandler		*mpEditorEventSys;
 		EditorInput				*mpInput;
@@ -102,8 +101,9 @@ namespace Dystopia
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
 		void			Play();
-		void			Save();
-		void			Load();
+		void			SaveProc();
+		void			SaveAsProc();
+		void			LoadProc();
 		void			TempSave();
 		void			TempLoad();
 

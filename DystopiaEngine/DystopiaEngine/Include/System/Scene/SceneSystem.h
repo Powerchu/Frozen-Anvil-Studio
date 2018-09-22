@@ -44,7 +44,7 @@ namespace Dystopia
 //		void ReceiveMessage(const Message&);
 		
 		void LoadScene(const std::string& _strName);
-		void SaveScene(const std::string& _strName);
+		void SaveScene(const std::string & _sceneName, const std::string& _strName);
 
 		inline Scene& GetCurrentScene(void) const;
 

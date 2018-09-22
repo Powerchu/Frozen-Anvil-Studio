@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Scene::Scene(void) :
-	mGameObjs{ 100 }
+	mGameObjs{ 100 }, mName{}
 {
 }
 
@@ -98,34 +98,26 @@ void Dystopia::Scene::Shutdown(void)
 void Dystopia::Scene::Serialise(TextSerialiser & _TextSerialiser) const
 {
 	_TextSerialiser.Write(std::to_string(mGameObjs.size()));
+	_TextSerialiser << mName;
 
 	for (auto & elem : mGameObjs)
-	{
-		_TextSerialiser.Write(elem.GetID());
-		_TextSerialiser.Write(elem.GetName());
-	}
+		elem.Serialise(_TextSerialiser);
 }
 
 void Dystopia::Scene::Unserialise(TextSerialiser & _TextUnserialiser)
 {
 	size_t Size;
 	_TextUnserialiser.Read(Size);
+	_TextUnserialiser >> mName;
 	for (int i = 0; i < Size; ++i)
 	{
-		unsigned long ID;
-		std::string name;
-
-		_TextUnserialiser.Read(ID);
-		_TextUnserialiser.Read(name);
-
-		mGameObjs.EmplaceBack(ID);
-
-		auto & pGameObject = mGameObjs.back();
-		
-		pGameObject.SetName(name);
+		auto pGameObj = InsertGameObject();
+		pGameObj->Unserialise(_TextUnserialiser);
 	}
-
 }
 
-
+void Dystopia::Scene::SetSceneName(const std::string& _name)
+{
+	mName = _name;
+}
 

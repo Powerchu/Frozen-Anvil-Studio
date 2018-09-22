@@ -363,7 +363,7 @@ namespace EGUI
 
 		void OpenTreeNode(bool _open)
 		{
-			ImGui::SetNextTreeNodeOpen(_open);
+			ImGui::SetNextTreeNodeOpen(_open, ImGuiCond_FirstUseEver);
 		}
 
 		void EndTreeNode()

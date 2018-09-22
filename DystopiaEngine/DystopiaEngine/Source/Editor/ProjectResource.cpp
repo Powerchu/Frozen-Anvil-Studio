@@ -182,6 +182,7 @@ namespace Dystopia
 	{
 		Math::Vec2 fileWindowSize = Math::Vec2{ Size().x - 210, Size().y - 55 };
 		SearchWindow();
+		EGUI::Display::OpenTreeNode();
 		FolderWindow();
 		EGUI::SameLine(2);
 		EGUI::StartChild("FileWindow", fileWindowSize);

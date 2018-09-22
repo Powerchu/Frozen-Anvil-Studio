@@ -17,6 +17,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Matrix4.h"
 #include "Math/MathUtility.h"
 
+#include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
 #include "System/Camera/CameraSystem.h"
 #include "System/Driver/Driver.h"
 
@@ -221,14 +223,25 @@ Dystopia::Camera* Dystopia::Camera::Duplicate(void) const
 	return nullptr;
 }
 
-void Dystopia::Camera::Serialise(TextSerialiser&) const
+void Dystopia::Camera::Serialise(TextSerialiser& _out) const
 {
-
+	_out.InsertStartBlock("Camera");
+	_out << GetOwner()->GetID();
+	_out.InsertEndBlock("Camera");
 }
 
-void Dystopia::Camera::Unserialise(TextSerialiser&)
+void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 {
+	uint64_t ownerID;
 
+	_in.ConsumeStartBlock();
+	_in >> ownerID;
+	_in.ConsumeEndBlock();
+
+	GameObject* owner = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(ownerID);
+	owner->AddComponent(this, Camera::TAG{});
+
+	Init();
 }
 
 void Dystopia::Camera::EditorUI(void) noexcept
