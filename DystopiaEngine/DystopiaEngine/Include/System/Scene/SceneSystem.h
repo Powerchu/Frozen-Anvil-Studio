@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Base/Systems.h"
 #include "System/Scene/Scene.h"
-#include "DataStructure/Stack.h"
+//#include "DataStructure/Stack.h"
 
 #include <string>
 
@@ -56,33 +56,23 @@ namespace Dystopia
 		Scene *mpNextScene;
 		Scene *mpCurrScene;
 	};
+
+	// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+	inline Scene& Dystopia::SceneSystem::GetCurrentScene(void) const
+	{
+		return *mpCurrScene;
+	}
+
+	inline GameObject* Dystopia::SceneSystem::FindGameObject(uint64_t _nID)
+	{
+		return mpCurrScene->FindGameObject(_nID);
+	}
+
+	inline GameObject* Dystopia::SceneSystem::FindGameObject(const std::string& _strName)
+	{
+		return mpCurrScene->FindGameObject(_strName);
+	}
 }
-
-
-
-
-
-
-// ============================================ FUNCTION DEFINITIONS ============================================ // 
-
-
-inline Dystopia::Scene& Dystopia::SceneSystem::GetCurrentScene(void) const
-{
-	return *mpCurrScene;
-}
-
-inline Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject(uint64_t _nID)
-{
-	return mpCurrScene->FindGameObject(_nID);
-}
-
-inline Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject(const std::string& _strName)
-{
-	return mpCurrScene->FindGameObject(_strName);
-}
-
-
-
 #endif
-
-
