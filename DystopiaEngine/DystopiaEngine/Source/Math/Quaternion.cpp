@@ -19,27 +19,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Math::Matrix4 __vectorcall Math::Quaternion::Matrix(void) const noexcept
 {
-	// TODO:
-	float scale = 2.0F / mData.MagnitudeSqr();
+	Math::Matrix4 m1{
+		 mData[3],  mData[2], -mData[1], mData[0],
+		-mData[2],  mData[3],  mData[0], mData[1],
+		 mData[1], -mData[0],  mData[3], mData[2],
+		-mData[0], -mData[1], -mData[2], mData[3]
+	},
+	m2{
+		 mData[3],  mData[2], -mData[1], -mData[0],
+		-mData[2],  mData[3],  mData[0], -mData[1],
+		 mData[1], -mData[0],  mData[3], -mData[2],
+		 mData[0],  mData[1],  mData[2],  mData[3]
+	};
 
-	Vec4 t3 = mData.ywyw;
-	Vec4 t1 = mData.xxyy * mData.xywz; // xx, xy, yw, yz
-	Vec4 t2 = mData.zzzw * mData.zwxy; // zz, zw, xz, yw
-	t3 *= t3;						   // yy, ww, yy, ww
-
-	Vec4 t4 = AddSub(t2, t1);			// Add-Sub -> xx + zz, xy - zw, yw + xz, yz - xw
-	t1 = AddSub(t1.yxwz, t2.yxwz);      // Add-Sub -> xy + zw, xx - zz, yz + xw, yw - xz
-
-
-	// Goal :
-	// ww + xx - yy - zz,    2 (xy - zw)   ,    2 (xz + cw)   , 0
-	//    2 (xy + zw)   , ww - xx + yy - zz,    2 (yz - xw)   , 0
-	//    2 (xz - cw)   ,    2 (yz + xw)   , ww - xx - yy + zz, 0
-	//          0       ,          0       ,          0       , 1
-
-	UNUSED_PARAMETER(scale);
-
-	return Matrix4{};
+	return m1 * m2;
 }
 
 
