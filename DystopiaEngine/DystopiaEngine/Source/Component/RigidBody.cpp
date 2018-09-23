@@ -23,7 +23,7 @@ namespace Dystopia
 		, mfTorque(0.0F)
 		, mfLinearDamping(0.9F)
 		, mfFriction(0.0F)
-		, mfCustom_GravityScale(0.25F)
+		, mfCustom_GravityScale(1.0F)
 		, mfGravity{GRAVITY_CONSTANT*mfCustom_GravityScale}
 		, mfMass(100.0F)
 		, mfInvMass(0.0F)
@@ -90,7 +90,7 @@ namespace Dystopia
 		}
 
 		//Store previous Position
-		mPrevPosition = mPosition;
+		mPrevPosition = mPosition = mpOwnerTransform->GetGlobalPosition();
 
 		// Update Position
 		mPosition += mLinearVelocity * _dt;

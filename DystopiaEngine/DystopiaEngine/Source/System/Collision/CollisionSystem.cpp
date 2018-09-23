@@ -51,9 +51,8 @@ namespace Dystopia
 	{
 	}
 
-	void CollisionSystem::Update(float _dt)
+	void CollisionSystem::Update(float)
 	{
-		_dt;
 		using CollisionTable = std::pair<eColliderType, eColliderType>;
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
 		using CollisionTableMap = std::map < CollisionTable, fpCollisionResolution>;

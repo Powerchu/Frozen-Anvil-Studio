@@ -76,22 +76,22 @@ namespace Dystopia
 
 		// Sample Box Object
 		GameObject *b = Factory::CreateBox("Box Object");
-		//Texture2D* _bt = new Texture2D{ "Resource/Editor/red_box.png" };
+		Texture2D* _bt = new Texture2D{ "Resource/Editor/red_box.png" };
 		mpBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*b));
 		mpBoxObject->GetComponent<RigidBody>()->Init();
 		mpBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 64.f, 64.f, 1.f });
-		//mpBoxObject->GetComponent<Renderer>()->SetTexture(_bt);
+		mpBoxObject->GetComponent<Renderer>()->SetTexture(_bt);
 		delete b;
 
 		// Sample Static Object
 		GameObject *s = Factory::CreateStaticBox("Static Box");
-		//Texture2D* _st = new Texture2D{ "Resource/Editor/white_box.png" };
+		Texture2D* _st = new Texture2D{ "Resource/Editor/white_box.png" };
 		mpStaticBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*s));
 		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
 		mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
 		mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition ({ 0, -185.f, 0 });
 		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 512.f, 32.f, 1.f });
-		//mpBoxObject->GetComponent<Renderer>()->SetTexture(_st);
+		mpStaticBoxObject->GetComponent<Renderer>()->SetTexture(_st);
 		delete s;
 	}
 
@@ -100,10 +100,12 @@ namespace Dystopia
 		mDelta = _dt;
 		mpGfxSys->Update(mDelta);
 		mpInputSys->Update(mDelta);
-		if (mpInputSys->IsKeyPressed(eUserButton::BUTTON_SPACEBAR))
+		mpColSys->Update(mDelta);
+		mpPhysSys->FixedUpdate(mDelta);
+
+		if (mpInputSys->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
 		{
-			mpColSys->Update(mDelta);
-			mpPhysSys->FixedUpdate(mDelta);
+			mpBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0 });
 		}
 	}
 
