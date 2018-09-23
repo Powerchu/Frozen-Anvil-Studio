@@ -15,6 +15,7 @@ namespace Dystopia
 	using Math::Point3D;
 
 	class Transform;
+	class PhysicsSystem;
 
 	class _DLL_EXPORT RigidBody : public Component
 	{
@@ -32,17 +33,17 @@ namespace Dystopia
 		virtual ~RigidBody(void);
 
 		// ================================VIRTUAL MEMBER FUNCTIONS ================================== // 
-		virtual void Load(void);
-		virtual void Init(void);
+		void Load(void) override;
+		void Init(void) override;
 		virtual void OnDestroy(void);
-		virtual void Unload(void);
-		virtual RigidBody* Duplicate() const;
+		void Unload(void) override;
+		RigidBody* Duplicate() const override;
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		void Integrate(float _dt);
-		void PostResult();
+		void PostResult() const;
 
 		// void Update(float _dt);
 		// void LateUpdate(float _dt);
@@ -113,6 +114,8 @@ namespace Dystopia
 	private:
 		Primitive*			mpPrimitiveShape;    /*The underlying primitive of the RigidBody*/
 		Transform*			mpOwnerTransform;    /*Used for accessing position and GameObject World orientation*/
+		PhysicsSystem*		mpPhysSys;
+
 		bool				mOwnerIsActive;	 /* check if owner is active*/
 
 		Vec3D				mPosition;
@@ -129,7 +132,6 @@ namespace Dystopia
 		float				mfFriction;
 		
 		float				mfCustom_GravityScale;
-		float				mfGravity;
 		float				mfMass;
 
 		/*The inverse of mass, 1/Mass)*/

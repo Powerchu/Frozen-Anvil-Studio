@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputSystem.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Collision/CollisionSystem.h"
+#include "Component/Collider.h"
 
 
 #include "System/Scene/Scene.h"
@@ -105,7 +106,8 @@ namespace Dystopia
 
 		if (mpInputSys->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
 		{
-			mpBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0 });
+			mpBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
+			mpBoxObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
 		}
 	}
 

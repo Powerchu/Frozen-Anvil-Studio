@@ -9,12 +9,14 @@
 #include "Editor/EditorInputs.h"
 #include "Editor/Editor.h"
 
+#define G_CONSTANT 9.80665F
+
 namespace Dystopia
 {
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(false)
 		, mTimeAccumulator(0.0F)
-		, mGravity(-9.81F)
+		, mGravity(-G_CONSTANT)
 		, mMaxVelocityConstant(1000)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.2F)
@@ -51,8 +53,9 @@ namespace Dystopia
 			auto ptr = rigid_elem.GetOwner()->GetComponent<Collider>();
 			if (ptr)
 			{
-				if (ptr->hasCollision())
+				if (ptr->hasCollision() && !rigid_elem.Get_IsStaticState())
 				{
+					rigid_elem.Set_ToggleGravity();
 					rigid_elem.DebugPrint();
 					ptr->GetCollisionEvents();
 				}

@@ -227,8 +227,6 @@ namespace Dystopia
 		bool isColliding(Convex * const & _pColB);
 		bool isColliding(Convex & _pColB, const Math::Vec3D & _v3Dir);
 
-		CollisionEvent GetCollisionEvent(AutoArray<Vertice> & _Simplex, const Convex & _ColB) const;
-
 		/*Static Member Functions*/
 
 		/*Support Function for getting the farthest point with relation to a Vector*/

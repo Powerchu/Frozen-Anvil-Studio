@@ -1,10 +1,9 @@
 #include "Component/RigidBody.h"
-#include "Component/Transform.h"
+#include <cmath>
+#include "System/Physics/PhysicsSystem.h"
 #include "Object/GameObject.h"
 #include "System/Logger/LoggerSystem.h"
 
-//TODO: change to physics systems
-#define GRAVITY_CONSTANT	-9.81F 
 #define TX					mpOwnerTransform
 
 namespace Dystopia
@@ -12,6 +11,7 @@ namespace Dystopia
 	RigidBody::RigidBody(void)
 		: mpPrimitiveShape(nullptr)
 		, mpOwnerTransform(nullptr)
+		, mpPhysSys(nullptr)
 		, mOwnerIsActive(true)
 		, mPosition(Vec3D{})
 		, mPrevPosition(Vec3D{})
@@ -23,10 +23,9 @@ namespace Dystopia
 		, mfTorque(0.0F)
 		, mfLinearDamping(0.9F)
 		, mfFriction(0.0F)
-		, mfCustom_GravityScale(1.0F)
-		, mfGravity{GRAVITY_CONSTANT*mfCustom_GravityScale}
+		, mfCustom_GravityScale(100.0F)
 		, mfMass(100.0F)
-		, mfInvMass(0.0F)
+		, mfInvMass(0.01F)
 		, mfRestitution(0.0F)
 		, mbIsGrounded(false)
 		, mbHasGravity(true)
@@ -47,18 +46,14 @@ namespace Dystopia
 	void RigidBody::Init(void)
 	{
 		// Get Owner's Transform Component as pointer
-		if (nullptr == mpOwnerTransform)
+		if (nullptr == mpOwnerTransform && GetOwner())
 		{
-			if (GetOwner())
-			{
-				mpOwnerTransform = GetOwner()->GetComponent<Transform>();
-				mPosition = TX->GetGlobalPosition();
-
-				mOwnerIsActive = GetOwner()->IsActive();
-			}
+			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
+			mOwnerIsActive = GetOwner()->IsActive();
+			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
+			mPosition = TX->GetGlobalPosition();
 		}
 		mfCustom_GravityScale = mbHasGravity ? mfCustom_GravityScale : 0.0F;
-		mfGravity = GRAVITY_CONSTANT * mfCustom_GravityScale;
 
 		//If mass is zero object is interpreted
 		//to be static
@@ -89,38 +84,55 @@ namespace Dystopia
 			return;
 		}
 
+		/* Physics 1.0
+			Update Position
+				mPosition += mLinearVelocity * _dt;
+
+			Calculate Acceleration
+				mAcceleration = Vec3D{ 0, mpPhysSys->mGravity*mfCustom_GravityScale,0 };
+				const Vec3D newAccel = mCumulativeForce * mfInvMass + mAcceleration;
+
+			Calculate Velocity
+				mLinearVelocity += newAccel * _dt;
+		*/
+
+		
+
+		/*
+		 *  Physics 2.0
+		 *  Verlet/Leapfrog method, 2nd order integration
+		 */
+
 		//Store previous Position
 		mPrevPosition = mPosition = mpOwnerTransform->GetGlobalPosition();
 
 		// Update Position
-		mPosition += mLinearVelocity * _dt;
-
-		//TODO: Incorporate and move Gravity var to Physics System
-		// Calculate Acceleration
-		mAcceleration = Vec3D{ 0,mfGravity*40*mfCustom_GravityScale,0 };
-		const Vec3D newAccel = mCumulativeForce * mfInvMass + mAcceleration;
-
-		// Calculate Velocity
-		mLinearVelocity += newAccel * _dt;
-
-		// Damping (Drag)
-		//mLinearVelocity *= Math::Power<_dt, float>(mfLinearDamping); //TODO fix this, need Pow for double/floats
-
-		//TODO
-		/*
-		 * //Clamp to velocity max for numerical stability
-		if ( Dot(Velocity, Velocity) > PHYSICS->MaxVelocitySq )
+		mAcceleration = mCumulativeForce * mfInvMass;
+		if (mbHasGravity)
 		{
-			Normalize(Velocity);
-			Velocity = Velocity * PHYSICS->MaxVelocity;
+			mAcceleration += Vec3D{ 0, mpPhysSys->mGravity*mfCustom_GravityScale,0 };
 		}
-		 */
+		mPosition += (mLinearVelocity + mAcceleration * _dt*0.5F) * _dt;
+		mLinearVelocity += mAcceleration * _dt;
+		const Vec3D newAccel = mCumulativeForce * mfInvMass;
+		mLinearVelocity += (newAccel - mAcceleration) * 0.5f * _dt;
+
+		// Linear Damping (Drag)
+		mLinearVelocity *= std::pow(mfLinearDamping, _dt);
+
+		//Clamp to velocity max for numerical stability
+		if (Dot(mLinearVelocity, mLinearVelocity) > mpPhysSys->mMaxVelSquared)
+		{
+			mLinearVelocity = Math::Normalise(mLinearVelocity);
+			mLinearVelocity *= mpPhysSys->mMaxVelocityConstant;
+		}
+		
 
 		 //*Reset Cumulative Force*/
 		ResetCumulative();
 	}
 
-	void RigidBody::PostResult()
+	void RigidBody::PostResult() const
 	{
 		if (!mbIsStatic)
 		{
@@ -241,7 +253,7 @@ namespace Dystopia
 
 	void RigidBody::Set_ToggleGravity(bool _state)
 	{
-		mfGravity = _state;
+		mbHasGravity = _state;
 	}
 
 	void RigidBody::SetPosition(const Vec3D& _pos)
