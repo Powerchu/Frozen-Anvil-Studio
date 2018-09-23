@@ -62,13 +62,19 @@ namespace Dystopia
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;
 
-	private:
+	protected:
+		enum PhysicsType
+		{
+			discrete,		// fixed timestep frame checking for collision
+			continuous,		// continuous checking for collision
+			kinematic		// dynamic objects that will not be pushed around
+		};
 		//~RigidBody(void);
 
 	public:
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		void Integrate(float _dt);
-		void UpdateResult() const;
+		void UpdateResult(double alpha) const;
 
 		// void Update(float _dt);
 		// void LateUpdate(float _dt);
@@ -113,7 +119,7 @@ namespace Dystopia
 		void ResetCumulative();
 
 		// Settors
-		void Set_CustomGravityScale(float);
+		void SetGravityScale(float);
 		bool Set_ToggleGravity(); // toggles 
 		void Set_ToggleGravity(bool);
 		void Set_IsStatic(bool);
@@ -127,6 +133,7 @@ namespace Dystopia
 		Vec3D GetLinearVelocity() const;
 		Vec3D GetAngularVelocity() const;
 		Vec3D GetAcceleration() const;
+		Transform* GetOwnerTransform() const;
 		float GetAngle() const;
 		float GetFrictionForce() const;
 		float GetGravityScalar() const;
@@ -172,6 +179,7 @@ namespace Dystopia
 		bool			mOwnerIsActive;				/* Check if owner is active*/
 		bool			mbHasGravity;				/* If it has no gravity, do not provide acceleration due to gravity*/
 		bool			mbIsStatic;					/* Static bodies do not need to be integrated/updated*/
+		PhysicsType		mPhysicsType;
 
 
 		/*Quaternion if needed*/

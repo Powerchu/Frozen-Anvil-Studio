@@ -138,8 +138,15 @@ namespace Dystopia
 		virtual void Unload(void);
 		/*Duplicate the Component*/
 		virtual Collider* Duplicate() const;
-		/*Get Array of collision event*/
+		
+
+		/************************************************************************
+		 * Member Functions
+		 ***********************************************************************/
+		 /*Get Array of collision event*/
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
+
+		void ClearCollisionEvent();
 
 		bool hasCollision() const;
 		void SetColliding(bool _b);

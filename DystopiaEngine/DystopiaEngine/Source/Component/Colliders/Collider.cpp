@@ -48,9 +48,14 @@ namespace Dystopia
 	}
 	AutoArray<CollisionEvent> const & Collider::GetCollisionEvents() const
 	{
-		// TODO: insert return statement here
 		return mCollisionEvent;
 	}
+
+	void Collider::ClearCollisionEvent()
+	{
+		mCollisionEvent.clear();
+	}
+
 	bool Collider::hasCollision() const
 	{
 		return Colliding;

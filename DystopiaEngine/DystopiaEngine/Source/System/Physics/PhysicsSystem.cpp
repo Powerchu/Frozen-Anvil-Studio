@@ -6,8 +6,7 @@
 #include "System/Profiler/ProfilerAction.h"
 
 #include "Component/Collider.h"
-#include "Editor/EditorInputs.h"
-#include "Editor/Editor.h"
+#include <chrono>
 
 #define G_CONSTANT 9.80665F
 
@@ -16,8 +15,9 @@ namespace Dystopia
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(true)
 		, mTimeAccumulator(0.0F)
+		, mInterpolation_mode(none)
 		, mGravity(-G_CONSTANT)
-		, mMaxVelocityConstant(1000)
+		, mMaxVelocityConstant(2048.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.2F)
 		, mPenetrationResolutionPercentage(0.8F)
@@ -40,9 +40,9 @@ namespace Dystopia
 
 	void PhysicsSystem::IntegrateRigidBodies(float _dt)
 	{
-		for (auto& rigid_elem : mComponents)
+		for (auto& bodies : mComponents)
 		{
-			rigid_elem.Integrate(_dt);
+			bodies.Integrate(_dt);
 		}
 	}
 
@@ -65,11 +65,25 @@ namespace Dystopia
 		}
 	}
 
-	void PhysicsSystem::PostResults()
+	void PhysicsSystem::UpdateResults(float _dt)
 	{
-		for (auto& rigid_elem : mComponents)
+		const double alpha = mTimeAccumulator / _dt;
+
+		for (auto& body : mComponents)
 		{
-			rigid_elem.UpdateResult();
+			switch (mInterpolation_mode)
+			{
+			case none:
+				body.UpdateResult(1.0f);
+				break;
+			case interpolate:
+				body.UpdateResult(alpha);
+				break;
+			case extrapolate: // define extrapolate
+				break;
+			default:
+				break;
+			}
 		}
 
 		// If Event System is running: this is where to Broadcast Collision Messages
@@ -89,46 +103,32 @@ namespace Dystopia
 
 	void PhysicsSystem::Step(float _dt)
 	{
-		/*
-		 * Physics Logic
-		 */
-		IntegrateRigidBodies(_dt);
 
-		/*
-		 * Collision System Detection
-		 */
-		
-		// Contacts.Reset();
-		// DetectContacts(dt);
+		/* Collision Detection*/
 
-		/*
-		 * Resolution
-		 */
+		/* Collision Resolution (Response) Logic */
 		ResolveCollision(_dt);
 
-		/*
-		 * Updating the position
-		 */
-		PostResults();
+		// Integrate Rigidbodies
+		IntegrateRigidBodies(_dt);
 
-		/*
-		 * Debug the positions
-		 */
-		//DebugPrint();
+		/*Update positions and rotation as result*/
+		UpdateResults(_dt);
 	}
 
 	void PhysicsSystem::FixedUpdate(float _dt)
 	{
+		using namespace std::chrono;
 		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
-		const float TimeStep = 1.0f / 60.0f;
+
+		const float timeStep = 1.0f / 60.0f;
 
 		mTimeAccumulator += _dt;
-		mTimeAccumulator = Math::Min(mTimeAccumulator, TimeStep * 5);
-
-		if (mTimeAccumulator > TimeStep)
+		mTimeAccumulator = Math::Min(mTimeAccumulator, timeStep * 5);
+		if (mTimeAccumulator > timeStep)
 		{
-			mTimeAccumulator -= TimeStep;
-			Step(TimeStep);
+			mTimeAccumulator -= timeStep;
+			Step(_dt);
 		}
 
 		if (mbIsDebugActive)

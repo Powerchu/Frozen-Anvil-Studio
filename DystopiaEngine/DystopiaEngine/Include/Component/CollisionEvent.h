@@ -21,7 +21,6 @@ namespace Dystopia
 
 		CollisionEvent(GameObject * _Target);
 
-
 		Math::Point3D		mCollisionPoint;
 
 		Math::Vector3D		mEdgeVector;

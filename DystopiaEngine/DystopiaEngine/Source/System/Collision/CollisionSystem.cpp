@@ -2,7 +2,7 @@
 #include "System/Graphics/MeshSystem.h"
 
 #include "Component/Collider.h"
-
+#include "Component/RigidBody.h"
 #include "Object/GameObject.h"
 #include "Component/Transform.h"
 
@@ -62,7 +62,7 @@ namespace Dystopia
 		{
 			CollisionTableMap i
 			{
-				{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }     ,&CollisionSystem::AABBvsAABB },
+			{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }    ,&CollisionSystem::AABBvsAABB },
 			{ CollisionTable{ eColliderType::AABB    ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::AABB }    ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
@@ -71,6 +71,12 @@ namespace Dystopia
 		}();
 
 		AutoArray<Collider *> mColliders;
+
+		for (auto & elem : ComponentDonor<Convex>::mComponents)
+		{
+			elem.ClearCollisionEvent(); //clear collision table
+			break;
+		}
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
@@ -85,24 +91,26 @@ namespace Dystopia
 			mColliders.push_back(&elem);
 		}
 
-		for (auto & elem : mColliders)
-		{
-			for (auto & i : mColliders)
+		for (auto & bodyA : mColliders)
+		{	
+			for (auto & bodyB : mColliders)
 			{
-				if (static_cast<Collider *>(elem) == static_cast<Collider *>(i))
-					continue;
-
-				const auto pair_key = std::make_pair(elem->GetColliderType(), (i)->GetColliderType());
-				for (auto & key : CollisionFuncTable)
+				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB) &&
+					(!bodyA->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState() ||
+					!bodyB->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState()))
 				{
-					if (key.first == pair_key)
+					const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+					for (auto & key : CollisionFuncTable)
 					{
-						(this->*key.second)(elem, i);
-						i->SetColliding(i->Collider::hasCollision());
-						elem->SetColliding(elem->Collider::hasCollision());
-						break;
+						if (key.first == pair_key)
+						{
+							(this->*key.second)(bodyA, bodyB);
+							bodyB->SetColliding(bodyB->Collider::hasCollision());
+							bodyA->SetColliding(bodyA->Collider::hasCollision());
+							break;
+						}
 					}
-				}
+				}				
 			}
 		}
 	}
