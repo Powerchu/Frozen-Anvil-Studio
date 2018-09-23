@@ -125,7 +125,6 @@ namespace Dystopia
 	bool GuiSystem::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, EditorInput *_pInput, const char *_pMainDockspaceName)
 	{
 		if (!_pWin || !_pGfx || !_pInput) return false;
-
 		mpWin = _pWin;
 		mpGfx = _pGfx;
 		mpInput = _pInput;
@@ -183,6 +182,7 @@ namespace Dystopia
 		gCursorTypes[ImGuiMouseCursor_Hand]			= LoadCursor(NULL, IDC_HAND);
 
 		DefaultColorSettings();
+		EGUI::Docking::InitTabs();
 		return true;
 	}
 
@@ -358,7 +358,6 @@ namespace Dystopia
 
 		// Look for DefaultColorSetting() function and MATCH the integer with the same amount of PushStyleColor
 		ImGui::PopStyleColor(9);
-
 		ImGui::DestroyContext(mpCtx);
 	}
 
@@ -453,11 +452,11 @@ namespace Dystopia
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | 
 								 ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoCollapse |	
 								 ImGuiWindowFlags_NoInputs;
-
+		static constexpr float offsetH = 18;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		ImGui::SetNextWindowPos(ImVec2{ 0, 18 });
-		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - 18 });
+		ImGui::SetNextWindowPos(ImVec2{ 0, offsetH });
+		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - offsetH });
 		ImGui::SetNextWindowBgAlpha(1.f);
 		ImGui::Begin(mpMainDockspace, nullptr, flags);
 		EGUI::Docking::BeginDockableSpace();

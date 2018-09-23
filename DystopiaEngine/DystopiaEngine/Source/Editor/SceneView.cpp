@@ -20,8 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"
 #include "System\Graphics\GraphicsSystem.h"
 #include "System\Camera\CameraSystem.h"
-#include <System/Physics/PhysicsSystem.h>
-#include "System/Collision/CollisionSystem.h"
 
 #include "System\Scene\Scene.h"
 #include "System\Graphics\Texture2D.h"

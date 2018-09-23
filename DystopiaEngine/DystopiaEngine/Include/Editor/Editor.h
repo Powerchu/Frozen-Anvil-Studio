@@ -54,6 +54,8 @@ namespace Dystopia
 		/* General Looping Funcs */
 		void			Init();
 		void			LoadDefaults();
+		void			LoadSettings();
+		void			LoadTabs();
 		void			StartFrame();
 		void			UpdateFrame(const float&);
 		void			EndFrame();
