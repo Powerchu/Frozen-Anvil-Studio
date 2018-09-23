@@ -37,7 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Time\ScopedTimer.h"
 #include "System/File/FileSystem.h"
 #include "System//Behaviour/BehaviourSystem.h"
-#include "System/Physics/PhysicsSystem.h""
+#include "System/Physics/PhysicsSystem.h"
 #include "IO\BinarySerializer.h"
 #include "Utility\GUID.h"
 
@@ -182,6 +182,10 @@ namespace Dystopia
 	{
 		mDeltaTime = mpTimer->Elapsed();
 		mpTimer->Lap();
+		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow())
+		{
+			mpInput->Update(mDeltaTime);
+		}
 		switch (mCurrentState)
 		{
 		case EDITOR_MAIN:
@@ -192,26 +196,25 @@ namespace Dystopia
 			{
 				mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED);
 			}
-			if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow())
-			{
-				mpInput->Update(mDeltaTime);
-			}
 			UpdateKeys();
 			UpdateHotkeys();
-			mpEditorEventSys->FireAllPending();
+			break;
+		case EDITOR_PLAY:
+			UpdateGameModeKeys();
 			break;
 		}
+		mpEditorEventSys->FireAllPending();
 		mpGuiSystem->StartFrame(mDeltaTime);
 		MainMenuBar();
 	}
 
 	void Editor::UpdateFrame(const float& _dt)
 	{ 
-		switch (mCurrentState)
-		{
-		case EDITOR_PLAY:	mpDriver->Update();			
-							break;
+		if (mCurrentState == EDITOR_PLAY)
+		{	
+			mpDriver->Update();			
 		}
+
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);
@@ -271,7 +274,6 @@ namespace Dystopia
 	{
 		UnInstallHotkeys();
 		mpDriver->GetSubSystem<LoggerSystem>()->RedirectOutput(nullptr);
-		struct stat buffer;
 		auto serial = BinarySerializer::OpenFile(DYSTOPIA_EDITOR_SETTINGS, BinarySerializer::MODE_WRITE);
 		for (auto& e : mArrTabs)
 		{
@@ -351,6 +353,7 @@ namespace Dystopia
 			MMFile();
 			MMEdit();
 			MMView();
+			MMGame();
 
 			EGUI::EndMainMenuBar();
 		}
@@ -398,6 +401,22 @@ namespace Dystopia
 			EGUI::EndMenuHeader();
 		}
 	}
+	
+	void Editor::MMGame()
+	{
+		if (EGUI::StartMenuHeader("GAME"))
+		{
+			if (EGUI::StartMenuBody("Play", "Ctrl + P", mCurrentState == EDITOR_MAIN))
+			{
+				GamePlay();
+			}
+			if (EGUI::StartMenuBody("Stop", "Ctrl + P", mCurrentState == EDITOR_PLAY))
+			{
+				GameStop();
+			}
+			EGUI::EndMenuHeader();
+		}
+	}
 
 	void Editor::EditorUndo()
 	{
@@ -433,8 +452,14 @@ namespace Dystopia
 	{
 	}
 
-	void Editor::Play()
+	void Editor::GamePlay()
 	{
+		ChangeState(EDITOR_PLAY);
+	}
+
+	void Editor::GameStop()
+	{
+		ChangeState(EDITOR_MAIN);
 	}
 
 	void Editor::SaveProc()
@@ -599,20 +624,27 @@ namespace Dystopia
 		mpGuiSystem->UpdateScroll(0, mpInput->GetMouseWheel());
 		if (mpInput->IsKeyPressed(KEY_CTRL))
 		{
-			if (mpInput->IsKeyTriggered(KEY_Z))			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_UNDO);
-			else if (mpInput->IsKeyTriggered(KEY_Y))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_REDO);
-			else if (mpInput->IsKeyTriggered(KEY_C))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_COPY);
-			else if (mpInput->IsKeyTriggered(KEY_X))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_CUT);
-			else if (mpInput->IsKeyTriggered(KEY_V))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_PASTE);
-			else if (mpInput->IsKeyTriggered(KEY_S))	mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_SAVE);
-			
-			if (mpInput->IsKeyTriggered(KEY_SHIFT))
+			if (mpInput->IsKeyTriggered(KEY_Z))			mpEditorEventSys->Fire(EDITOR_HOTKEY_UNDO);
+			else if (mpInput->IsKeyTriggered(KEY_Y))	mpEditorEventSys->Fire(EDITOR_HOTKEY_REDO);
+			else if (mpInput->IsKeyTriggered(KEY_C))	mpEditorEventSys->Fire(EDITOR_HOTKEY_COPY);
+			else if (mpInput->IsKeyTriggered(KEY_X))	mpEditorEventSys->Fire(EDITOR_HOTKEY_CUT);
+			else if (mpInput->IsKeyTriggered(KEY_V))	mpEditorEventSys->Fire(EDITOR_HOTKEY_PASTE);
+			else if (mpInput->IsKeyTriggered(KEY_S))	mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVE);
+			else if (mpInput->IsKeyTriggered(KEY_SHIFT))
 			{
-				if (mpInput->IsKeyTriggered(KEY_S))		mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_SAVEAS);
+				if (mpInput->IsKeyTriggered(KEY_S))		mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVEAS);
 			}
+			else if (mpInput->IsKeyTriggered(KEY_P))	mpEditorEventSys->Fire(EDITOR_HOTKEY_PLAY);
 		}
 		else if (mpInput->IsKeyTriggered(KEY_DELETE))	
 			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_DELETE);
+	}
+
+	void Editor::UpdateGameModeKeys()
+	{
+		if (mpInput->IsKeyPressed(KEY_CTRL) && 
+			mpInput->IsKeyTriggered(KEY_P))	
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_STOP);
 	}
 	
 	void Editor::InstallHotkeys()
@@ -626,6 +658,8 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_DELETE)->Bind(&Editor::EditorDeleteFocus, this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_SAVE)->Bind(&Editor::SaveProc, this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_SAVEAS)->Bind(&Editor::SaveAsProc, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PLAY)->Bind(&Editor::GamePlay, this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_STOP)->Bind(&Editor::GameStop, this);
 	}
 
 	void Editor::UnInstallHotkeys()
@@ -639,6 +673,8 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_DELETE)->Unbind(this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_SAVE)->Unbind(this);
 		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_SAVEAS)->Unbind(this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PLAY)->Unbind(this);
+		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_STOP)->Unbind(this);
 	}
 
 	void Editor::SetFocus(GameObject& _rObj)

@@ -93,7 +93,7 @@ namespace Dystopia
 			return true;
 		}
 
-		bool Unchanged() const { return (mOldValue == mNewValue); }
+		bool Unchanged() const { return false; }
 	private:
 		Component* FindComponent()
 		{
@@ -174,7 +174,7 @@ namespace Dystopia
 			return true; 
 		}
 
-		bool Unchanged() const { return false; }
+		bool Unchanged() const { return *mpTarget != mOldValue; }
 		T* GetPointer() { return mpTarget; }
 	private:
 		Component* FindComponent()
@@ -223,7 +223,7 @@ namespace Dystopia
 			return true;
 		}
 
-		bool	Unchanged() const { return false; }
+		bool	Unchanged() const { return *mpTarget != mOldValue; }
 		T*		GetPointer() { return mpTarget; }
 	private:
 		bool *mpNotify;

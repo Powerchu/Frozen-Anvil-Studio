@@ -103,7 +103,8 @@ namespace Dystopia
 
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
-		void			Play();
+		void			GamePlay();
+		void			GameStop();
 		void			NewScene();
 		void			SaveProc();
 		void			SaveAsProc();
@@ -116,6 +117,7 @@ namespace Dystopia
 		void			MMFile();
 		void			MMEdit();
 		void			MMView();
+		void			MMGame();
 
 		/* The edit functions */
 		void			EditorUndo();
@@ -128,6 +130,7 @@ namespace Dystopia
 		/* EditorEvents */
 		void			UpdateKeys();
 		void			UpdateHotkeys();
+		void			UpdateGameModeKeys();
 		void			InstallHotkeys();
 		void			UnInstallHotkeys();
 		void			ReloadDLL();

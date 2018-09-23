@@ -56,6 +56,12 @@ namespace Dystopia
 			return;
 		}
 
+		if (Editor::GetInstance()->CurrentState() == EDITOR_PLAY)
+		{
+			delete _comd;
+			return;
+		}
+
 		if (mDeqUndo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqUndo);
 

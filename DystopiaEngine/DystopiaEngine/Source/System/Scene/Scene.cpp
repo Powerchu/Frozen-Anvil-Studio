@@ -74,7 +74,7 @@ void Dystopia::Scene::PostUpdate(void)
 
 	while (b != e)
 	{
-		auto flag = e->GetFlags();
+		auto flag = b->GetFlags();
 
 		if (flag & eObjFlag::FLAG_REMOVE)
 		{
