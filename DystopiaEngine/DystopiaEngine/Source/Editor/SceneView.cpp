@@ -85,6 +85,7 @@ namespace Dystopia
 		mpBoxObject->GetComponent<RigidBody>()->Init();
 		mpBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 64.f, 64.f, 1.f });
 		mpBoxObject->GetComponent<Renderer>()->SetTexture(_bt);
+		mpBoxObject->GetComponent<Collider>()->Init();
 		delete b;
 
 		// Sample Static Object
@@ -95,6 +96,7 @@ namespace Dystopia
 		mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
 		mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition ({ 0, -185.f, 0 });
 		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 512.f, 32.f, 1.f });
+		mpStaticBoxObject->GetComponent<Collider>()->Init();
 		mpStaticBoxObject->GetComponent<Renderer>()->SetTexture(_st);
 		delete s;
 	}
@@ -106,7 +108,7 @@ namespace Dystopia
 		{
 			mpGfxSys->Update(mDelta);
 			mpInputSys->Update(mDelta);
-			mpColSys->Update(mDelta);
+			mpColSys->FixedUpdate(mDelta);
 			mpPhysSys->FixedUpdate(mDelta);
 			if (mpInputSys->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
 			{
@@ -125,6 +127,9 @@ namespace Dystopia
 	void SceneView::Shutdown()
 	{
 		mpGfxSys = nullptr;
+		mpInputSys = nullptr;
+		mpColSys = nullptr;
+		mpPhysSys = nullptr;
 	}
 
 	std::string SceneView::GetLabel() const

@@ -34,8 +34,8 @@ namespace Dystopia
 
 			for (auto & elem : mVertices)
 			{
-				elem.mPosition.x * Math::Abs(_xScale);
-				elem.mPosition.y * Math::Abs(_yScale);
+				elem.mPosition.x = elem.mPosition.x * Math::Abs(_xScale/2);
+				elem.mPosition.y = elem.mPosition.y * Math::Abs(_yScale/2);
 			}
 		}
 		

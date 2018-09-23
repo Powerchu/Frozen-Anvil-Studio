@@ -14,7 +14,7 @@
 namespace Dystopia
 {
 	PhysicsSystem::PhysicsSystem()
-		: mbIsDebugActive(false)
+		: mbIsDebugActive(true)
 		, mTimeAccumulator(0.0F)
 		, mGravity(-G_CONSTANT)
 		, mMaxVelocityConstant(1000)
@@ -48,6 +48,7 @@ namespace Dystopia
 
 	void PhysicsSystem::ResolveCollision(float _dt)
 	{
+		UNUSED_PARAMETER(_dt);
 		for (auto& rigid_elem : mComponents)
 		{
 			auto ptr = rigid_elem.GetOwner()->GetComponent<Collider>();
@@ -55,8 +56,8 @@ namespace Dystopia
 			{
 				if (ptr->hasCollision() && !rigid_elem.Get_IsStaticState())
 				{
-					rigid_elem.Set_ToggleGravity();
-					rigid_elem.DebugPrint();
+					LoggerSystem::ConsoleLog(eLog::MESSAGE, "Collided!");
+					rigid_elem.SetVelocity({0,0,0});
 					ptr->GetCollisionEvents();
 				}
 			}
@@ -68,7 +69,7 @@ namespace Dystopia
 	{
 		for (auto& rigid_elem : mComponents)
 		{
-			rigid_elem.PostResult();
+			rigid_elem.UpdateResult();
 		}
 
 		// If Event System is running: this is where to Broadcast Collision Messages
@@ -132,6 +133,7 @@ namespace Dystopia
 
 		if (mbIsDebugActive)
 		{
+			//DebugPrint();
 			DebugDraw();
 		}
 	}

@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Matrix4.h"				// Matrix4
 #include "DataStructure/AutoArray.h"	// AutoArray
 #include "Utility/MetaAlgorithms.h"		// MetaFind
+#include "System/Graphics/Shader.h"
 
 namespace Dystopia
 {

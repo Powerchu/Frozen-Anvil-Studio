@@ -112,4 +112,24 @@ namespace Dystopia
 	{
 		return this->isColliding(*_ColB);
 	}
+
+	float AABB::GetWidth() const
+	{
+		return mfWidth;
+	}
+
+	float AABB::GetHeight() const
+	{
+		return mfHeight;
+	}
+
+	float AABB::GetHalfWidth() const
+	{
+		return mfWidth / 2;
+	}
+
+	float AABB::GetHalfHeight() const
+	{
+		return mfHeight / 2;
+	}
 }

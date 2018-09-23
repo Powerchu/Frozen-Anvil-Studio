@@ -1,3 +1,18 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	Collider.h
+\author Keith (70%)
+		Aaron (30%)
+\par    email: keith.goh\@digipen.edu
+		email: m.chu\@digipen.edu
+\brief
+Collider2D for 2D Sprites.
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
 #ifndef COLLIDER_H
 #define COLLIDER_H
 
@@ -296,8 +311,11 @@ namespace Dystopia
 		bool isColliding(AABB & other_col);
 		bool isColliding(AABB * const & other_col);
 
-		/*Sweeping Collision Check*/
-		float SweepingCheck(const AABB & other_col) const;
+		/* Gettors */
+		float GetWidth() const;
+		float GetHeight() const;
+		float GetHalfWidth() const;
+		float GetHalfHeight() const;
 
 	private:
 		float mfWidth;
