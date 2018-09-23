@@ -89,13 +89,13 @@ namespace Dystopia
 
 	}
 
-	void SceneSystem::LoadScene(const std::string& _strFile)
-	{
-		UNUSED_PARAMETER(_strFile);
-		static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
-
-		if (!mpNextScene)
-			return;
+void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
+{
+	UNUSED_PARAMETER(_strFile);
+	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
+	
+	delete mpCurrScene;
+	mpNextScene = mpCurrScene = new Scene{};
 
 		/*Open File*/
 		auto & SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_READ);
@@ -109,23 +109,19 @@ namespace Dystopia
 		SerialObj.ConsumeEndBlock();
 	}
 
-	void SceneSystem::SaveScene(const std::string & _sceneName, const std::string & _strFile)
-	{
-		static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
+void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::string & _sceneName)
+{
+	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
 
-		/*Open File*/
-		auto & SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_WRITE);
-		/*Consume Start Block*/
-		SerialObj.InsertStartBlock("Scene");
-		/*Get Next Scene to Unserialise*/
-		mpNextScene->SetSceneName(_sceneName);
-		mpNextScene->Serialise(SerialObj);
-		/*Get all System who are ComponentDonor to unserialise*/
-		SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemSerialise(SerialObj);
-		/*Consume End Block*/
-		SerialObj.InsertEndBlock("Scene");
-	}
+	/*Open File*/
+	auto & SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_WRITE);
+	/*Consume Start Block*/
+	SerialObj.InsertStartBlock("Scene");
+	/*Get Next Scene to Unserialise*/
+	mpNextScene->SetSceneName(_sceneName);
+	mpNextScene->Serialise(SerialObj);
+	/*Get all System who are ComponentDonor to unserialise*/
+	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemSerialise(SerialObj);
+	/*Consume End Block*/
+	SerialObj.InsertEndBlock("Scene");
 }
-
-
-

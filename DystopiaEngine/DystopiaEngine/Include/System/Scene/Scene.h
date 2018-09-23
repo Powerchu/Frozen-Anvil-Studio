@@ -51,6 +51,8 @@ namespace Dystopia
 
 		void SetSceneName(const std::string& _name);
 
+		std::string GetSceneName() const;
+
 	private:
 		std::string mName;
 		AutoArray<GameObject> mGameObjs;

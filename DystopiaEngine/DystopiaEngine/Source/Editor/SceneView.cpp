@@ -26,6 +26,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Collision/CollisionSystem.h"
 #include "Component/Collider.h"
 
+#include "System\Scene\Scene.h"
+#include "System\Graphics\Texture2D.h"
+#include "Component\Camera.h"
 
 #include "System/Scene/Scene.h"
 #include "System/Graphics/Texture2D.h"
@@ -99,15 +102,17 @@ namespace Dystopia
 	void SceneView::Update(const float& _dt)
 	{
 		mDelta = _dt;
-		mpGfxSys->Update(mDelta);
-		mpInputSys->Update(mDelta);
-		mpColSys->Update(mDelta);
-		mpPhysSys->FixedUpdate(mDelta);
-
-		if (mpInputSys->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
+		if (GetMainEditor().CurrentState() != EDITOR_PLAY)
 		{
-			mpBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
-			mpBoxObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
+			mpGfxSys->Update(mDelta);
+			mpInputSys->Update(mDelta);
+			mpColSys->Update(mDelta);
+			mpPhysSys->FixedUpdate(mDelta);
+			if (mpInputSys->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
+			{
+				mpBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
+				mpBoxObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
+			}
 		}
 	}
 
@@ -120,7 +125,6 @@ namespace Dystopia
 	void SceneView::Shutdown()
 	{
 		mpGfxSys = nullptr;
-		mpPhysSys = nullptr;
 	}
 
 	std::string SceneView::GetLabel() const

@@ -26,7 +26,7 @@ Dystopia::Component::Component(void) noexcept
 }
 
 Dystopia::Component::Component(GameObject * _pOwner) noexcept
-	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }, mID{ GUIDGenerator::GetUniqueID() }
+	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }, mID{ _pOwner->GetID() }
 {
 }
 
@@ -76,6 +76,7 @@ void Dystopia::Component::DestroyComponent(void)
 void Dystopia::Component::SetOwner(GameObject* _pOwner)
 {
 	mnOwner = _pOwner->GetID();
+	mID = _pOwner->GetID();
 }
 
 Dystopia::GameObject* Dystopia::Component::GetOwner(void) const

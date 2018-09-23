@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Scene::Scene(void) :
-	mGameObjs{ 100 }, mName{}
+	mGameObjs{ 100 }, mName{ "Untitled" }
 {
 }
 
@@ -119,5 +119,10 @@ void Dystopia::Scene::Unserialise(TextSerialiser & _TextUnserialiser)
 void Dystopia::Scene::SetSceneName(const std::string& _name)
 {
 	mName = _name;
+}
+
+std::string Dystopia::Scene::GetSceneName() const
+{
+	return mName;
 }
 

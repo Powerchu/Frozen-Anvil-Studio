@@ -1205,7 +1205,7 @@ bool BeginDockableSpace()
 	IM_ASSERT(curPanel);
 
 	if (!curPanel)	return false;
-	ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar;
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollbar;
 	char bufferLabel[1024];
 	sprintf_s(bufferLabel, "##%s", curPanel);
 	bool result = ImGui::BeginChild(bufferLabel, ImVec2{ 0, 0 }, false, flags);
@@ -1374,7 +1374,7 @@ static void readLine(ImGuiContext* /*ctx*/, ImGuiSettingsHandler* /*handler*/, v
 		int prev, next, child0, child1, mpParentTab;
 		char label[64], mLocation[64];
 
-		if (sscanf_s(line_start, "label=%[^\n^\r]", label) == 1)
+		if (sscanf_s(line_start, "label=%[^\n^\r]", label, _countof(label)) == 1)
 		{
 			userdata->dock->mpLabel = ImStrdup(label);
 			userdata->dock->mId = ImHash(userdata->dock->mpLabel, 0);
@@ -1403,7 +1403,7 @@ static void readLine(ImGuiContext* /*ctx*/, ImGuiSettingsHandler* /*handler*/, v
 		{
 			userdata->dock->mOpened = (opened) ? true : false ;
 		}
-		else if (sscanf_s(line_start, "mLocation=%[^\n^\r]", mLocation) == 1)
+		else if (sscanf_s(line_start, "mLocation=%[^\n^\r]", mLocation, _countof(mLocation)) == 1)
 		{
 			strcpy_s(userdata->dock->mLocation, mLocation);
 		}

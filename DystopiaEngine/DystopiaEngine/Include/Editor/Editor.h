@@ -54,6 +54,8 @@ namespace Dystopia
 		/* General Looping Funcs */
 		void			Init();
 		void			LoadDefaults();
+		void			LoadSettings();
+		void			LoadTabs();
 		void			StartFrame();
 		void			UpdateFrame(const float&);
 		void			EndFrame();
@@ -95,12 +97,14 @@ namespace Dystopia
 		eEditorState			mCurrentState;
 		eEditorState			mNextState;
 		float					mDeltaTime;
+		std::string				mTempSaveFile;
 		GameObject				*mpFocusGameObj;
 		ePayloadTags			mLatestPayloadFocus;
 
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
 		void			Play();
+		void			NewScene();
 		void			SaveProc();
 		void			SaveAsProc();
 		void			LoadProc();
@@ -119,6 +123,7 @@ namespace Dystopia
 		void			EditorCopy();
 		void			EditorCut();
 		void			EditorPaste();
+		void			EditorDeleteFocus();
 
 		/* EditorEvents */
 		void			UpdateKeys();
