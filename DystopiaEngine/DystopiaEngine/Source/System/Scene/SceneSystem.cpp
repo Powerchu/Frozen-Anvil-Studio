@@ -111,7 +111,7 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 	SerialObj.ConsumeEndBlock();
 }
 
-void Dystopia::SceneSystem::SaveScene(const std::string & _strFile)
+void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::string& _strSceneName)
 {
 	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
 
@@ -120,7 +120,8 @@ void Dystopia::SceneSystem::SaveScene(const std::string & _strFile)
 	/*Consume Start Block*/
 	SerialObj.InsertStartBlock("Scene");
 	/*Get Next Scene to Unserialise*/
-	mpNextScene->Unserialise(SerialObj);
+	mpNextScene->SetSceneName(_strSceneName);
+	mpNextScene->Serialise(SerialObj);
 	/*Get all System who are ComponentDonor to unserialise*/
 	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemSerialise(SerialObj);
 	/*Consume End Block*/

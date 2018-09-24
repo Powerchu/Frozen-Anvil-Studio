@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vector4.h"                      /*Vector*/
 #include "DataStructure/AutoArray.h"	       /*AutoArray Data Structure*/
 #include "Utility/MetaAlgorithms.h"		       // MetaFind
-#include "Component/CollisionEvent.h"
+#include "System/Collision/CollisionEvent.h"
 
 #include "System/Graphics/VertexDefs.h"
 
