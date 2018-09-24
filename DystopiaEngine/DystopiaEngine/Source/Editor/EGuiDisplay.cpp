@@ -235,7 +235,7 @@ namespace EGUI
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool changing = false;
-			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max);
+			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max, "%.2f");
 
 			if (ImGui::IsItemClicked()) return eSTART_DRAG;
 			if (changing) return eDRAGGING;

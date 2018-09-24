@@ -601,8 +601,10 @@ namespace Dystopia
 			else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
 				mpGuiSystem->UpdateChar(k - 48);
 			// arithmetics
-			else if (k >= eButton::KEYBOARD_OEM_1 && k <= eButton::KEYBOARD_OEM_PERIOD)
-				mpGuiSystem->UpdateChar(k);
+			//else if (k >= eButton::KEYBOARD_OEM_1 && k <= eButton::KEYBOARD_OEM_PERIOD)
+			//	mpGuiSystem->UpdateChar(k);
+			else if (k == eButton::KEYBOARD_OEM_PERIOD)
+				mpGuiSystem->UpdateChar(46);
 			// misc keys like ctrl, del, back etc
 			else
 				mpGuiSystem->UpdateKey(k, true);
