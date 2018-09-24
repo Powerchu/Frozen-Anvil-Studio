@@ -122,7 +122,7 @@ Dystopia::EngineCore::EngineCore(void) :
 void Dystopia::EngineCore::LoadSettings(void)
 {
 
-		if (GetSubSystem<FileSystem>()->CheckFileExist(SETTINGS_FILE))
+		if (GetSubSystem<FileSystem>()->CheckFileExist(SETTINGS_FILE, SETTINGS_DIR))
 		{
 			auto file = Serialiser::OpenFile<TextSerialiser>(
 				GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +

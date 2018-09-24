@@ -17,15 +17,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Object/GameObject.h"
 #include "System/Graphics/VertexDefs.h"
+
+#include "System/Graphics/MeshSystem.h"
 namespace Dystopia
 {
 	Collider::Collider()
-		: mv3Offset{0,0,0,0}
+		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, Colliding{false}
 	{
 		//EngineCore::GetInstance()->GetSystem<CollisionSystem>()->InsertCollider(this);
 	}
 	Collider::Collider(const Math::Point3D & _offset)
-		: mv3Offset{ _offset }
+		: mv3Offset{ _offset }, mpMesh{ nullptr }, Colliding{ false }
 	{
 		//EngineCore::GetInstance()->GetSystem<CollisionSystem>()->InsertCollider(this);
 	}
@@ -34,7 +36,21 @@ namespace Dystopia
 	}
 	void Collider::Init(void)
 	{
+		if (mpMesh != nullptr || this->mDebugVertices.size() == 0 || this->mIndexBuffer.size() == 0)
+			return;
 
+		auto * pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
+		/*Create Mesh*/
+		pMeshSys->StartMesh();
+
+		auto const & arr = GetVertexBuffer();
+		for (auto i : arr)
+		{
+			pMeshSys->AddVertex(i.x, i.y, i.z);
+		}
+
+		SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
+		pMeshSys->EndMesh();
 	}
 	void Collider::OnDestroy(void)
 	{
@@ -102,14 +118,15 @@ namespace Dystopia
 	}
 	Collider::~Collider()
 	{
-
+		mpMesh = nullptr;
 	}
 	void Collider::Triangulate()
 	{
 		if (mDebugVertices.size() < 3)
 			return;
 		
-		
+		mIndexBuffer.clear();
+
 		auto const start = mDebugVertices.begin();
 
 		auto  first   = mDebugVertices.begin();
@@ -117,6 +134,7 @@ namespace Dystopia
 		auto  third   = second+1;
 		do
 		{
+		
 		  mIndexBuffer.push_back(static_cast<const short>(first  - start));
 		  mIndexBuffer.push_back(static_cast<const short>(second - start));
 		  mIndexBuffer.push_back(static_cast<const short>(third - start));

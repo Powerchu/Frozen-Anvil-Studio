@@ -10,15 +10,14 @@ namespace Dystopia
 {
 	Convex::Convex(Math::Point3D const & _v3Offset)
 		:Collider{ _v3Offset },
-		mVertices{Vertice{Math::MakePoint3D(1,1,0)}, Vertice{  Math::MakePoint3D(-1,1,0) }, Vertice{ Math::MakePoint3D(-1,-1,0) }, Vertice{ Math::MakePoint3D(1,-1,0) } }
+		mVertices{
+		Vertice{ Math::MakePoint3D(.5f,.5f,0) },
+		Vertice{ Math::MakePoint3D(-.5f,.5f,0) }, 
+		Vertice{ Math::MakePoint3D(-.5f,-.5f,0) }, 
+		Vertice{ Math::MakePoint3D(.5f,-.5f,0) }
+	}
 	{
-		for (auto & elem : mVertices)
-		{
-			auto Offest = GetOffSet();
-			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x + Offest.x, elem.mPosition.y + Offest.y , elem.mPosition.z + Offest.z});
-		}
 
-		Collider::Triangulate();
 	}
 
 	void Convex::Load()
@@ -39,6 +38,16 @@ namespace Dystopia
 				elem.mPosition.y = elem.mPosition.y * Math::Abs(_yScale/2);
 			}
 		}
+
+		for (auto & elem : mVertices)
+		{
+			auto Offest = GetOffSet();
+			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x + Offest.x, elem.mPosition.y + Offest.y , elem.mPosition.z + Offest.z });
+		}
+
+		Collider::Triangulate();
+
+		Collider::Init();
 		
 	}
 

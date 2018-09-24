@@ -24,6 +24,10 @@ namespace Dystopia
 		{
 			for (auto & elem : ComponentDonor<Convex>::mComponents)
 			{
+				/*If Collider already has a mesh, do not make a new one*/
+				if (elem.GetMesh() == nullptr)
+					continue;
+
 				pMeshSys->StartMesh();
 
 				auto const & arr = elem.GetVertexBuffer();
@@ -35,11 +39,6 @@ namespace Dystopia
 				elem.SetMesh(pMeshSys->AddIndices("Collider Mesh", elem.GetIndexBuffer()));
 				pMeshSys->EndMesh();
 			}
-
-			/*for (auto & elem : ComponentDonor<AABB>::mComponents)
-			{
-
-			}*/
 		}
 		return true;
 	}
