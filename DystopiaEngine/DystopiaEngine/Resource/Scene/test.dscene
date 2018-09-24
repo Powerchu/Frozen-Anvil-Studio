@@ -1,0 +1,30 @@
+[START_Scene]
+1,test,[START_START_GO_DATA]
+3795845120,1,Scene Camera,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,[START_Component]
+[START_Camera]
+3795845120,
+[END_Camera]
+
+[END_Component End]
+
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+
+[END_Scene]

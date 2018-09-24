@@ -90,9 +90,9 @@ namespace EGUI
 		return ImGui::BeginMenu(_label.c_str());
 	}
 
-	bool StartMenuBody(const std::string& _label, const std::string& _shortcut)
+	bool StartMenuBody(const std::string& _label, const std::string& _shortcut, bool _enabled)
 	{
-		return ImGui::MenuItem(_label.c_str(), _shortcut.c_str());
+		return ImGui::MenuItem(_label.c_str(), _shortcut.c_str(), false, _enabled);
 	}
 
 	void EndMainMenuBar()
@@ -237,9 +237,14 @@ namespace EGUI
 			bool changing = false;
 			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max);
 
-			if (ImGui::IsItemClicked()) return eDragStatus::eSTART_DRAG;
-			if (ImGui::IsItemDeactivatedAfterChange()) return eDragStatus::eEND_DRAG;
-			return (changing) ? eDragStatus::eDRAGGING : eDragStatus::eNO_CHANGE;
+			if (ImGui::IsItemClicked()) return eSTART_DRAG;
+			if (changing) return eDRAGGING;
+			if (ImGui::IsItemDeactivatedAfterChange())
+			{
+				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
+			}
+			if (ImGui::IsItemDeactivated()) return eDEACTIVATED;
+			return eNO_CHANGE;
 		}
 
 		eDragStatus DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max, bool _hideText)
@@ -251,13 +256,17 @@ namespace EGUI
 				SameLine(DefaultAlighnmentSpacing);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
-
 			bool changing = false;
 			changing = ImGui::DragInt(("###DragInt" + _label).c_str(), _outputInt, _dragSpeed, _min, _max);
 
-			if (ImGui::IsItemClicked()) return eDragStatus::eSTART_DRAG;
-			if (ImGui::IsItemDeactivatedAfterChange()) return eDragStatus::eEND_DRAG;
-			return (changing) ? eDragStatus::eDRAGGING : eDragStatus::eNO_CHANGE;
+			if (ImGui::IsItemClicked()) return eSTART_DRAG;
+			if (changing) return eDRAGGING;
+			if (ImGui::IsItemDeactivatedAfterChange())
+			{
+				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
+			}
+			if (ImGui::IsItemDeactivated()) return eDEACTIVATED;
+			return eNO_CHANGE;
 		}
 
 		eDragStatus VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
@@ -291,15 +300,21 @@ namespace EGUI
 
 			ImGui::PopItemWidth();
 
-			return (statX == eSTART_DRAG) ? eSTART_DRAG :
+			return (statX == eDRAGGING) ? eDRAGGING :
+				   (statY == eDRAGGING) ? eDRAGGING :
+				   (statZ == eDRAGGING) ? eDRAGGING : 
+				   (statX == eSTART_DRAG) ? eSTART_DRAG :
 				   (statY == eSTART_DRAG) ? eSTART_DRAG :
 				   (statZ == eSTART_DRAG) ? eSTART_DRAG :
 				   (statX == eEND_DRAG) ? eEND_DRAG :
 				   (statY == eEND_DRAG) ? eEND_DRAG :
 				   (statZ == eEND_DRAG) ? eEND_DRAG :
-				   (statX == eDRAGGING) ? eDRAGGING :
-				   (statY == eDRAGGING) ? eDRAGGING :
-				   (statZ == eDRAGGING) ? eDRAGGING : eNO_CHANGE;
+				   (statX == eENTER) ? eENTER :
+				   (statY == eENTER) ? eENTER :
+				   (statZ == eENTER) ? eENTER :
+				   (statX == eDEACTIVATED) ? eDEACTIVATED :
+				   (statY == eDEACTIVATED) ? eDEACTIVATED :
+				   (statZ == eDEACTIVATED) ? eDEACTIVATED : eNO_CHANGE;
 		}
 
 		bool CollapsingHeader(const std::string& _label)
@@ -363,7 +378,7 @@ namespace EGUI
 
 		void OpenTreeNode(bool _open)
 		{
-			ImGui::SetNextTreeNodeOpen(_open);
+			ImGui::SetNextTreeNodeOpen(_open, ImGuiCond_FirstUseEver);
 		}
 
 		void EndTreeNode()

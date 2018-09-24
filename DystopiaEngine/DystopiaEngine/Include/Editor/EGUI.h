@@ -61,8 +61,11 @@ namespace EGUI
 	enum eDragStatus
 	{
 		eNO_CHANGE = 0,
-		eSTART_DRAG,
 		eEND_DRAG,
+		eENTER,
+		eTABBED,
+		eSTART_DRAG,
+		eDEACTIVATED,
 		eDRAGGING
 	};
 
@@ -78,7 +81,7 @@ namespace EGUI
 
 	bool StartMainMenuBar();
 	bool StartMenuHeader(const std::string&);
-	bool StartMenuBody(const std::string&, const std::string& _shortcut="");
+	bool StartMenuBody(const std::string&, const std::string& _shortcut="", bool _enabled = true);
 	void EndMainMenuBar();
 	void EndMenuHeader();
 	void Indent(float _spacing = 20.f);

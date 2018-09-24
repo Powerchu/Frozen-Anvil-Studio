@@ -125,7 +125,6 @@ namespace Dystopia
 	bool GuiSystem::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, EditorInput *_pInput, const char *_pMainDockspaceName)
 	{
 		if (!_pWin || !_pGfx || !_pInput) return false;
-
 		mpWin = _pWin;
 		mpGfx = _pGfx;
 		mpInput = _pInput;
@@ -166,13 +165,6 @@ namespace Dystopia
 		io.KeyMap[ImGuiKey_Insert]		= static_cast<int>(eButton::KEYBOARD_INSERT);
 		io.KeyMap[ImGuiKey_Delete]		= static_cast<int>(eButton::KEYBOARD_DELETE);
 
-		//io.KeyMap[ImGuiKey_A]			= static_cast<int>(eButton::KEYBOARD_A);
-		//io.KeyMap[ImGuiKey_C]			= static_cast<int>(eButton::KEYBOARD_C);
-		//io.KeyMap[ImGuiKey_V]			= static_cast<int>(eButton::KEYBOARD_V);
-		//io.KeyMap[ImGuiKey_X]			= static_cast<int>(eButton::KEYBOARD_X);
-		//io.KeyMap[ImGuiKey_Y]			= static_cast<int>(eButton::KEYBOARD_Y);
-		//io.KeyMap[ImGuiKey_Z]			= static_cast<int>(eButton::KEYBOARD_Z);
-
 		io.SetClipboardTextFn = SetClipBoardText;
 		io.GetClipboardTextFn = GetClipBoardText;
 		io.ClipboardUserData = mpWin->GetMainWindow().GetDeviceContext(); // pointer to both a windows and context
@@ -190,6 +182,7 @@ namespace Dystopia
 		gCursorTypes[ImGuiMouseCursor_Hand]			= LoadCursor(NULL, IDC_HAND);
 
 		DefaultColorSettings();
+		EGUI::Docking::InitTabs();
 		return true;
 	}
 
@@ -202,8 +195,6 @@ namespace Dystopia
 
 		// Setup display size (every frame to accommodate for window resizing)
 		int w, h, display_w, display_h;
-		// glfwGetWindowSize(mpWin, &w, &h);
-		// glfwGetFramebufferSize(mpWin, &display_w, &display_h);
 		w = display_w = mpWin->GetMainWindow().GetWidth();
 		h = display_h = mpWin->GetMainWindow().GetHeight() - 40;
 
@@ -214,7 +205,7 @@ namespace Dystopia
 		io.DeltaTime = _dt;
 
 		// Setup inputs
-		if (mpWin) // should check if this window is the focused window
+		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow()) // should check if this window is the focused window
 		{
 			float x, y;
 			x = mpInput->GetMousePosition().x;
@@ -367,7 +358,6 @@ namespace Dystopia
 
 		// Look for DefaultColorSetting() function and MATCH the integer with the same amount of PushStyleColor
 		ImGui::PopStyleColor(9);
-
 		ImGui::DestroyContext(mpCtx);
 	}
 
@@ -462,11 +452,11 @@ namespace Dystopia
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | 
 								 ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoCollapse |	
 								 ImGuiWindowFlags_NoInputs;
-
+		static constexpr float offsetH = 18;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		ImGui::SetNextWindowPos(ImVec2{ 0, 18 });
-		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - 18 });
+		ImGui::SetNextWindowPos(ImVec2{ 0, offsetH });
+		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - offsetH });
 		ImGui::SetNextWindowBgAlpha(1.f);
 		ImGui::Begin(mpMainDockspace, nullptr, flags);
 		EGUI::Docking::BeginDockableSpace();

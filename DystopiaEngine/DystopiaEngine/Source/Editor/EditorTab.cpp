@@ -18,6 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/Scene.h"
 #include "Object/GameObject.h"
 
+#include "IO/BinarySerializer.h"
+
 namespace Dystopia
 {
 	EditorTab::EditorTab(bool _defaultOpen)
@@ -110,5 +112,19 @@ namespace Dystopia
 	Scene* EditorTab::GetCurrentScene()	const
 	{
 		return mpCurrentScene;
+	}
+
+	void EditorTab::SaveSettings(BinarySerializer& _out) const
+	{
+		_out.InsertStartBlock("Tab_Start");
+		_out << mIsOpened;
+		_out.InsertEndBlock("Tab_End");
+	}
+
+	void EditorTab::LoadSettings(BinarySerializer& _in)
+	{
+		_in.ConsumeStartBlock();
+		_in >> mIsOpened;
+		_in.ConsumeEndBlock();
 	}
 }
