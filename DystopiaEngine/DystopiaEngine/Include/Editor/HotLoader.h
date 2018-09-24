@@ -143,8 +143,6 @@ namespace Dystopia
 
 	struct InterestedFiles
 	{
-
-
 		InterestedFiles(std::wstring const & _FileName, ePurpose _purpose)
 			:FileName{ _FileName },
 			found{ false },

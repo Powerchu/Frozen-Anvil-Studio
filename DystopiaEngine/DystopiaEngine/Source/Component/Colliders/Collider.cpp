@@ -1,3 +1,18 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	Collider.cpp
+\author Keith (70%)
+		Aaron (30%)
+\par    email: keith.goh\@digipen.edu
+		email: m.chu\@digipen.edu
+\brief
+Collider2D for 2D Sprites.
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
 #include "Component/Collider.h"
 
 #include "Object/GameObject.h"
@@ -33,9 +48,14 @@ namespace Dystopia
 	}
 	AutoArray<CollisionEvent> const & Collider::GetCollisionEvents() const
 	{
-		// TODO: insert return statement here
 		return mCollisionEvent;
 	}
+
+	void Collider::ClearCollisionEvent()
+	{
+		mCollisionEvent.clear();
+	}
+
 	bool Collider::hasCollision() const
 	{
 		return Colliding;

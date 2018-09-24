@@ -1,3 +1,18 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	Collider.h
+\author Keith (70%)
+		Aaron (30%)
+\par    email: keith.goh\@digipen.edu
+		email: m.chu\@digipen.edu
+\brief
+Collider2D for 2D Sprites.
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
 #ifndef COLLIDER_H
 #define COLLIDER_H
 
@@ -123,8 +138,15 @@ namespace Dystopia
 		virtual void Unload(void);
 		/*Duplicate the Component*/
 		virtual Collider* Duplicate() const;
-		/*Get Array of collision event*/
+		
+
+		/************************************************************************
+		 * Member Functions
+		 ***********************************************************************/
+		 /*Get Array of collision event*/
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
+
+		void ClearCollisionEvent();
 
 		bool hasCollision() const;
 		void SetColliding(bool _b);
@@ -227,8 +249,6 @@ namespace Dystopia
 		bool isColliding(Convex * const & _pColB);
 		bool isColliding(Convex & _pColB, const Math::Vec3D & _v3Dir);
 
-		CollisionEvent GetCollisionEvent(AutoArray<Vertice> & _Simplex, const Convex & _ColB) const;
-
 		/*Static Member Functions*/
 
 		/*Support Function for getting the farthest point with relation to a Vector*/
@@ -298,8 +318,11 @@ namespace Dystopia
 		bool isColliding(AABB & other_col);
 		bool isColliding(AABB * const & other_col);
 
-		/*Sweeping Collision Check*/
-		float SweepingCheck(const AABB & other_col) const;
+		/* Gettors */
+		float GetWidth() const;
+		float GetHeight() const;
+		float GetHalfWidth() const;
+		float GetHalfHeight() const;
 
 	private:
 		float mfWidth;

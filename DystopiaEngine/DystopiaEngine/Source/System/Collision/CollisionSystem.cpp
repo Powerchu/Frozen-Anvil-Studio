@@ -1,20 +1,21 @@
 #include "System/Collision/CollisionSystem.h"
 #include "System/Graphics/MeshSystem.h"
 
-
 #include "Component/Collider.h"
-
+#include "Component/RigidBody.h"
 #include "Object/GameObject.h"
 #include "Component/Transform.h"
 
 #include <map>
 #include <utility>
+#include "System/Profiler/ProfilerAction.h"
+#include "System/Time/ScopedTimer.h"
 
 namespace Dystopia
 {
 	void CollisionSystem::PreInit(void)
 	{
-		
+		// empty
 	}
 	bool CollisionSystem::Init()
 	{
@@ -27,50 +28,59 @@ namespace Dystopia
 
 				auto const & arr = elem.GetVertexBuffer();
 				for (auto i : arr)
+				{
 					pMeshSys->AddVertex(i.x, i.y, i.z);
+				}
 
 				elem.SetMesh(pMeshSys->AddIndices("Collider Mesh", elem.GetIndexBuffer()));
-
 				pMeshSys->EndMesh();
-
-				
 			}
 
-			for (auto & elem : ComponentDonor<AABB>::mComponents)
+			/*for (auto & elem : ComponentDonor<AABB>::mComponents)
 			{
 
-			}
+			}*/
 		}
-
-
 		return true;
-
 	}
 
 	void CollisionSystem::PostInit(void)
 	{
+		//empty
 	}
 
-	void CollisionSystem::Update(float _dt)
+	void CollisionSystem::Update(float)
 	{
-		_dt;
+		// empty
+	}
+
+	void CollisionSystem::FixedUpdate(float)
+	{
+		ScopedTimer<ProfilerAction> timeKeeper{ "Collsion System", "Update" };
+
 		using CollisionTable = std::pair<eColliderType, eColliderType>;
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
 		using CollisionTableMap = std::map < CollisionTable, fpCollisionResolution>;
-		
+
 		static CollisionTableMap CollisionFuncTable = []()->CollisionTableMap
 		{
 			CollisionTableMap i
 			{
-				{CollisionTable{eColliderType::AABB    ,eColliderType::AABB}     ,&CollisionSystem::AABBvsAABB},
-				{CollisionTable{eColliderType::AABB    ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
-				{CollisionTable{eColliderType::CONVEX  ,eColliderType::AABB }    ,&CollisionSystem::ConvexVsConvex },
-				{CollisionTable{eColliderType::CONVEX  ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
+			{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }    ,&CollisionSystem::AABBvsAABB },
+			{ CollisionTable{ eColliderType::AABB    ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
+			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::AABB }    ,&CollisionSystem::ConvexVsConvex },
+			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
 			};
 			return i;
 		}();
 
 		AutoArray<Collider *> mColliders;
+
+		for (auto & elem : ComponentDonor<Convex>::mComponents)
+		{
+			elem.ClearCollisionEvent(); //clear collision table
+			break;
+		}
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
@@ -85,31 +95,28 @@ namespace Dystopia
 			mColliders.push_back(&elem);
 		}
 
-		for (auto & elem : mColliders)
-		{
-			for(auto & i : mColliders)
+		for (auto & bodyA : mColliders)
+		{	
+			for (auto & bodyB : mColliders)
 			{
-				if (static_cast<Collider *>(elem) == static_cast<Collider *>(i)) 
-					continue;
-
-				const auto pair_key = std::make_pair(elem->GetColliderType(), (i)->GetColliderType());
-				for (auto & key : CollisionFuncTable)
+				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB) &&
+					(!bodyA->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState() ||
+					!bodyB->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState()))
 				{
-					if (key.first == pair_key)
+					const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+					for (auto & key : CollisionFuncTable)
 					{
-						(this->*key.second)(elem, i);
-						i->SetColliding(i->Collider::hasCollision());
-						elem->SetColliding(elem->Collider::hasCollision());
-						break;
+						if (key.first == pair_key)
+						{
+							(this->*key.second)(bodyA, bodyB);
+							bodyB->SetColliding(bodyB->Collider::hasCollision());
+							bodyA->SetColliding(bodyA->Collider::hasCollision());
+							break;
+						}
 					}
-				}
+				}				
 			}
 		}
-	}
-
-	void CollisionSystem::FixedUpdate(float _dt)
-	{
-		_dt;
 	}
 
 	void CollisionSystem::Shutdown()

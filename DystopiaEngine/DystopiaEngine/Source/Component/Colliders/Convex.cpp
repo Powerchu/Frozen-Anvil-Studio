@@ -27,7 +27,18 @@ namespace Dystopia
 
 	void Convex::Init()
 	{
+		if (nullptr != GetOwner())
+		{
+			float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
+			float _yScale = GetOwner()->GetComponent<Transform>()->GetScale().y;
 
+			for (auto & elem : mVertices)
+			{
+				elem.mPosition.x = elem.mPosition.x * Math::Abs(_xScale/2);
+				elem.mPosition.y = elem.mPosition.y * Math::Abs(_yScale/2);
+			}
+		}
+		
 	}
 
 	void Convex::OnDestroy()
@@ -237,7 +248,7 @@ namespace Dystopia
 				col_info.mCollisionPoint = ClosestEdge.mPos;
 				col_info.mEdgeVector     = ClosestEdge.mVec3;
 				col_info.mEdgeNormal     = ClosestEdge.mNorm3;
-				col_info.mPeneDepth      = ProjectDis;
+				col_info.mdPeneDepth      = ProjectDis;
 
 				return col_info;
 			}

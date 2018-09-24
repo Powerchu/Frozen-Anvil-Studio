@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Editor.h"
 #include "Editor/EditorEvents.h"
 #include "Editor/Commands.h"
+
 #include "System/Scene/Scene.h"
 #include "Object/GameObject.h"
 
