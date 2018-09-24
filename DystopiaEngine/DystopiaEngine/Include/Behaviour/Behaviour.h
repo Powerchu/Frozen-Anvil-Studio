@@ -17,8 +17,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _BEHAVIOUR_H_
 
 #include "Globals.h"
-#include "Component\ComponentList.h"	// eComponents
-#include "Component\Component.h"		// Component
+#include "Component/ComponentList.h"	// eComponents
+#include "Component/Component.h"		// Component
 
 namespace Dystopia
 {

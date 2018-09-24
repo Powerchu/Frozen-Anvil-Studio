@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _COMMANDS_H_
 #define _COMMANDS_H_
-#include "Editor\CommandList.h"
+#include "Editor/CommandList.h"
 #include <deque>
 
 namespace Dystopia

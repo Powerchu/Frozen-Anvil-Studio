@@ -1,7 +1,22 @@
-#include "Component\Collider.h"
+/* HEADER *********************************************************************************/
+/*!
+\file	Collider.cpp
+\author Keith (70%)
+		Aaron (30%)
+\par    email: keith.goh\@digipen.edu
+		email: m.chu\@digipen.edu
+\brief
+Collider2D for 2D Sprites.
 
-#include "Object\GameObject.h"
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
+#include "Component/Collider.h"
 
+#include "Object/GameObject.h"
+#include "System/Graphics/VertexDefs.h"
 namespace Dystopia
 {
 	Collider::Collider()
@@ -33,9 +48,14 @@ namespace Dystopia
 	}
 	AutoArray<CollisionEvent> const & Collider::GetCollisionEvents() const
 	{
-		// TODO: insert return statement here
 		return mCollisionEvent;
 	}
+
+	void Collider::ClearCollisionEvent()
+	{
+		mCollisionEvent.clear();
+	}
+
 	bool Collider::hasCollision() const
 	{
 		return Colliding;
@@ -56,6 +76,22 @@ namespace Dystopia
 	{
 		return this->mv3Offset;
 	}
+	AutoArray<Vertex> Collider::GetVertexBuffer() const
+	{
+		return mDebugVertices;
+	}
+	AutoArray<short> Collider::GetIndexBuffer() const
+	{
+		return mIndexBuffer;
+	}
+	void Collider::SetMesh(Mesh * _ptr)
+	{
+		mpMesh = _ptr;
+	}
+	Mesh * Collider::GetMesh() const
+	{
+		return mpMesh;
+	}
 	void Collider::Serialise(TextSerialiser&) const
 	{
 
@@ -66,6 +102,30 @@ namespace Dystopia
 	}
 	Collider::~Collider()
 	{
+
+	}
+	void Collider::Triangulate()
+	{
+		if (mDebugVertices.size() < 3)
+			return;
+		
+		
+		auto const start = mDebugVertices.begin();
+
+		auto  first   = mDebugVertices.begin();
+		auto  second  = first+1;
+		auto  third   = second+1;
+		do
+		{
+		  mIndexBuffer.push_back(static_cast<const short>(first  - start));
+		  mIndexBuffer.push_back(static_cast<const short>(second - start));
+		  mIndexBuffer.push_back(static_cast<const short>(third - start));
+
+		  auto copy = third++;
+		  second    = copy;
+
+		} while (third != mDebugVertices.end());
+
 
 	}
 }

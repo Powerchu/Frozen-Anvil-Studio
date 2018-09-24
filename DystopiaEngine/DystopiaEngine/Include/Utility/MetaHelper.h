@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _META_HELPER_H_
 #define _META_HELPER_H_
 
-#include "Utility\MetaDataStructures.h"
+#include "Utility/MetaDataStructures.h"
 
 namespace Utility
 {

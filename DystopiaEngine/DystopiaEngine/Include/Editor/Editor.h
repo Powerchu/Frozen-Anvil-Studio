@@ -15,8 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_H_
 #define _EDITOR_H_
 #include "DataStructure\AutoArray.h"
-#include "DataStructure\SharedPtr.h"
-#include <chrono>
+#include <string>
 
 namespace Dystopia
 {
@@ -33,7 +32,7 @@ namespace Dystopia
 	class Timer;
 	class Profiler;
 	class GameObject;
-	//class Scene;
+	class BehaviourSystem;
 	enum ePayloadTags;
 
 	enum eEditorState
@@ -42,9 +41,7 @@ namespace Dystopia
 		EDITOR_EXIT = 0,
 		EDITOR_MAIN,
 		EDITOR_PLAY,
-		EDITOR_PAUSE,
-		EDITOR_SAVE,
-		EDITOR_LOAD
+		EDITOR_PAUSE
 	};
 
 	class Editor
@@ -56,6 +53,8 @@ namespace Dystopia
 		/* General Looping Funcs */
 		void			Init();
 		void			LoadDefaults();
+		void			LoadSettings();
+		void			LoadTabs();
 		void			StartFrame();
 		void			UpdateFrame(const float&);
 		void			EndFrame();
@@ -85,6 +84,7 @@ namespace Dystopia
 		SceneSystem				*mpSceneSystem;
 		PhysicsSystem			*mpPhysicsSystem;
 		Profiler				*mpProfiler;
+		BehaviourSystem			*mpBehaviourSys;
 
 		EditorEventHandler		*mpEditorEventSys;
 		EditorInput				*mpInput;
@@ -96,14 +96,18 @@ namespace Dystopia
 		eEditorState			mCurrentState;
 		eEditorState			mNextState;
 		float					mDeltaTime;
+		std::string				mTempSaveFile;
 		GameObject				*mpFocusGameObj;
 		ePayloadTags			mLatestPayloadFocus;
 
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
-		void			Play();
-		void			Save();
-		void			Load();
+		void			GamePlay();
+		void			GameStop();
+		void			NewScene();
+		void			SaveProc();
+		void			SaveAsProc();
+		void			LoadProc();
 		void			TempSave();
 		void			TempLoad();
 
@@ -112,6 +116,7 @@ namespace Dystopia
 		void			MMFile();
 		void			MMEdit();
 		void			MMView();
+		void			MMGame();
 
 		/* The edit functions */
 		void			EditorUndo();
@@ -119,10 +124,12 @@ namespace Dystopia
 		void			EditorCopy();
 		void			EditorCut();
 		void			EditorPaste();
+		void			EditorDeleteFocus();
 
 		/* EditorEvents */
 		void			UpdateKeys();
 		void			UpdateHotkeys();
+		void			UpdateGameModeKeys();
 		void			InstallHotkeys();
 		void			UnInstallHotkeys();
 		void			ReloadDLL();

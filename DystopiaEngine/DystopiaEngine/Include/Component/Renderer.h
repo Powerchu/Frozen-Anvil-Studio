@@ -14,10 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _BASICRENDERER_H_
 #define _BASICRENDERER_H_
 
-#include "Component\Component.h"		// Base Class
-#include "Component\ComponentList.h"	// TRANSFORM
-#include "DataStructure\AutoArray.h"	// AutoArray
-#include "Utility\MetaAlgorithms.h"		// MetaFind
+#include "Component/Component.h"		// Base Class
+#include "Component/ComponentList.h"	// TRANSFORM
+#include "DataStructure/AutoArray.h"	// AutoArray
+#include "Utility/MetaAlgorithms.h"		// MetaFind
 
 
 #include <string>

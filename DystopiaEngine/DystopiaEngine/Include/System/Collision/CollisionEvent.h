@@ -17,19 +17,18 @@ namespace Dystopia
 
 	struct CollisionEvent
 	{
-
-
 		using mpcGobj = GameObject const * const;
 
 		CollisionEvent(GameObject * _Target);
 
+		Math::Point3D		mCollisionPoint;
 
-		Math::Point3D  mCollisionPoint;
-
-		Math::Vector3D mEdgeVector;
-		Math::Vector3D mEdgeNormal;
-		double         mPeneDepth;
-		mpcGobj		   mCollidedWith;
+		Math::Vector3D		mEdgeVector;
+		Math::Vector3D		mEdgeNormal;
+		double				mdPeneDepth;
+		mpcGobj				mCollidedWith;
+		float				mfRestitution;
+		float				mfFrictionCof;
 
 	};
 }

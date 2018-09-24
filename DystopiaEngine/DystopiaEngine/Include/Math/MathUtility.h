@@ -15,8 +15,8 @@
 #ifndef _MATH_UTILS_H_
 #define _MATH_UTILS_H_
 
-#include "Utility\Meta.h"		// EnableIf, IsNumeric
-#include "Math\MathInternal.h"
+#include "Utility/Meta.h"		// EnableIf, IsNumeric
+#include "Math/MathInternal.h"
 
 namespace Math
 {

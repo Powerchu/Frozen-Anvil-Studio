@@ -2,8 +2,8 @@
 #ifndef COLLISION_SYSTEM_H
 #define COLLISION_SYSTEM_H
 
-#include <DataStructure/AutoArray.h>
-#include <System/Base/Systems.h>
+#include "DataStructure/AutoArray.h"
+#include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
 
 namespace Dystopia
@@ -43,11 +43,8 @@ namespace Dystopia
 		bool ConvexVsConvex(Collider  * const & _ColA,
 			                Collider  * const & _ColB) const;
 
-	private:
-		//AutoArray<Collider*> mArrOfCollider;
+		AutoArray<Collider *> GetAllColliders() const;
 	};
-
 }
-
 
 #endif

@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Globals.h"
 #include "EditorTab.h"
-#include "DataStructure\Array.h"
+#include "DataStructure/Array.h"
 
 
 namespace Dystopia

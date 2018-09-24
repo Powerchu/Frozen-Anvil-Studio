@@ -1,7 +1,7 @@
-#include "Component\Collider.h"
+#include "Component/Collider.h"
 #include <algorithm>
 #include <limits>
-#include "Math\Vector4.h"
+#include "Math/Vector4.h"
 
 #include "Object\GameObject.h"
 #include "System\Collision\CollisionEvent.h"
@@ -12,7 +12,13 @@ namespace Dystopia
 		:Collider{ _v3Offset },
 		mVertices{Vertice{Math::MakePoint3D(1,1,0)}, Vertice{  Math::MakePoint3D(-1,1,0) }, Vertice{ Math::MakePoint3D(-1,-1,0) }, Vertice{ Math::MakePoint3D(1,-1,0) } }
 	{
-		
+		for (auto & elem : mVertices)
+		{
+			auto Offest = GetOffSet();
+			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x + Offest.x, elem.mPosition.y + Offest.y , elem.mPosition.z + Offest.z});
+		}
+
+		Collider::Triangulate();
 	}
 
 	void Convex::Load()
@@ -22,7 +28,18 @@ namespace Dystopia
 
 	void Convex::Init()
 	{
+		if (nullptr != GetOwner())
+		{
+			float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
+			float _yScale = GetOwner()->GetComponent<Transform>()->GetScale().y;
 
+			for (auto & elem : mVertices)
+			{
+				elem.mPosition.x = elem.mPosition.x * Math::Abs(_xScale/2);
+				elem.mPosition.y = elem.mPosition.y * Math::Abs(_yScale/2);
+			}
+		}
+		
 	}
 
 	void Convex::OnDestroy()
@@ -94,9 +111,10 @@ namespace Dystopia
 				/*Check if Simplex contains Origin*/
 				if (ContainOrigin(Simplex, vDir))
 				{
-					Colliding = true;
+					Colliding             = true;
+					_pColB.Colliding      = true;
 					/*Use EPA to get collision information*/
-					//mCollisionEvent.Insert(GetCollisionEvent(Simplex, _pColB));
+					mCollisionEvent.Insert(GetCollisionEvent(Simplex, _pColB));
 					/*Clear the simplex for the next function call*/
 					Simplex.clear();
 					/*Return true for collision*/
@@ -116,8 +134,6 @@ namespace Dystopia
 	Vertice Convex::GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir)
 	{
 		/*Convert the points to global*/
-		/*Global position of Object*/
-		Transform & _ColATrans = *(_ColA.GetOwner()->GetComponent<Transform>());
 		/*Offset of the collider from Object Local Coordinate System*/
 		Math::Vec3D const & OffSet = _ColA.GetOffSet();
 
@@ -126,8 +142,10 @@ namespace Dystopia
 
 		Vertice * pFirst = _ColA.mVertices.begin();
 		Vertice FarthestPoint = *pFirst;
+		FarthestPoint.mPosition = (WorldSpace * pFirst->mPosition);
 		/*Get the dot product of first Vertice's position for comparision*/
-		float FarthestVal = pFirst->mPosition.Dot(_Dir);
+		auto p = WorldSpace * (pFirst->mPosition);
+		float FarthestVal = (p).Dot(_Dir);
 		/*Loop through the array of Vertices*/
 		for (Vertice const & elem : _ColA.mVertices)
 		{
@@ -167,9 +185,11 @@ namespace Dystopia
 #else
 			EdgeNorm.Negate<Math::NegateFlag::X>();
 #endif
-			EdgeNorm.Normalise();
+			if(EdgeNorm.MagnitudeSqr())
+				EdgeNorm.Normalise();
+
 			double distance = EdgeNorm.Dot(a.mPosition);
-			if (distance < ClosestDistance)
+			if (Math::Abs(distance) < Math::Abs(ClosestDistance))
 			{
 				ClosestDistance    = distance;
 				ClosestEdge.mNorm3 = EdgeNorm;
@@ -220,7 +240,7 @@ namespace Dystopia
 			the same as the orthogonal distance from the origin to the ClosestEdge
 			*/
 			double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
-			double result = ProjectDis - ClosestEdge.OrthogonalDistance;
+			double result     = ProjectDis - ClosestEdge.OrthogonalDistance;
 
 			/*If fail the test, expand the simplex and run the test again*/
 			if (-EPSILON <= result && result <= EPSILON)
@@ -229,7 +249,7 @@ namespace Dystopia
 				col_info.mCollisionPoint = ClosestEdge.mPos;
 				col_info.mEdgeVector     = ClosestEdge.mVec3;
 				col_info.mEdgeNormal     = ClosestEdge.mNorm3;
-				col_info.mPeneDepth      = ProjectDis;
+				col_info.mdPeneDepth      = ProjectDis;
 
 				return col_info;
 			}
@@ -238,7 +258,7 @@ namespace Dystopia
 				_Simplex.Insert(Point, ClosestEdge.SimplexIndex);
 			}
 		}
-		return col_info;
+		//return col_info;
 
 	}
 

@@ -12,22 +12,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Utility\DebugAssert.h"
-#include "Editor\ConsoleLog.h"
-#include "Editor\EGUI.h"
-#include "System\Driver\Driver.h"
-#include "System\Logger\LoggerSystem.h"
+#include "Utility/DebugAssert.h"
+#include "Editor/ConsoleLog.h"
+#include "Editor/EGUI.h"
+#include "System/Driver/Driver.h"
+#include "System/Logger/LoggerSystem.h"
 #include <algorithm>
 
 namespace Dystopia
 {
-	static ConsoleLog* gpInstance = 0;
+	static ConsoleLog* gpConsoleInst = 0;
 	ConsoleLog* ConsoleLog::GetInstance()
 	{
-		if (gpInstance) return gpInstance;
+		if (gpConsoleInst) return gpConsoleInst;
 
-		gpInstance = new ConsoleLog{};
-		return gpInstance;
+		gpConsoleInst = new ConsoleLog{};
+		return gpConsoleInst;
 	}
 
 	void PrintToConsoleLog(const std::string& _text)
@@ -45,7 +45,7 @@ namespace Dystopia
 
 	ConsoleLog::~ConsoleLog()
 	{
-		gpInstance = nullptr;
+		gpConsoleInst = nullptr;
 	}
 	
 	void ConsoleLog::Init()

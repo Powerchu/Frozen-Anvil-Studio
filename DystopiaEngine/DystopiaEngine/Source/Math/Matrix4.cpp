@@ -16,7 +16,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Math\Matrix4.h"		// File Header
+#include "Math/Matrix4.h"		// File Header
 
 #include <xmmintrin.h>			// SSE
 #include <emmintrin.h>			// SSE 2

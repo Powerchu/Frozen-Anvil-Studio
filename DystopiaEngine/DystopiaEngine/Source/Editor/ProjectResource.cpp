@@ -12,13 +12,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\ProjectResource.h"
-#include "Editor\EGUI.h"
-#include "Editor\EditorEvents.h"
+#include "Editor/ProjectResource.h"
+#include "Editor/EGUI.h"
+#include "Editor/EditorEvents.h"
 #include <algorithm>
 #include <iostream>
 #include <Windows.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <tchar.h>
 
 static const std::string DEFAULT_PATH = "..\\DystopiaEngine\\Resource";
@@ -182,6 +182,7 @@ namespace Dystopia
 	{
 		Math::Vec2 fileWindowSize = Math::Vec2{ Size().x - 210, Size().y - 55 };
 		SearchWindow();
+		EGUI::Display::OpenTreeNode();
 		FolderWindow();
 		EGUI::SameLine(2);
 		EGUI::StartChild("FileWindow", fileWindowSize);

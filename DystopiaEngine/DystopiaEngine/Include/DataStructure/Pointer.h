@@ -17,9 +17,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GENERICPOINTER_H_
 #define _GENERICPOINTER_H_
 
-#include "Utility\Utility.h"
-#include "Utility\MetaAlgorithms.h"
-#include "Allocator\DefaultAlloc.h"	// DefaultAllocator
+#include "Utility/Utility.h"
+#include "Utility/MetaAlgorithms.h"
+#include "Allocator/DefaultAlloc.h"	// DefaultAllocator
 
 template <class T, class Alloc = Dystopia::DefaultAllocator<T>>
 class Pointer

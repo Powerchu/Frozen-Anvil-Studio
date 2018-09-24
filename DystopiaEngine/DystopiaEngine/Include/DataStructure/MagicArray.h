@@ -15,11 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _MAGIC_ARRAY_H_
 
 #include "Globals.h"
-#include "Utility\Meta.h"
-#include "Utility\Utility.h"
-#include "Math\MathUtility.h"
+#include "Utility/Meta.h"
+#include "Utility/Utility.h"
+#include "Math/MathUtility.h"
 
-#include "DataStructure\Array.h"
+#include "DataStructure/Array.h"
 
 #include <intrin.h>			// _BitScanForward64
 #include <initializer_list> // init-list

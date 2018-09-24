@@ -14,9 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GAME_SCENE_H_
 #define _GAME_SCENE_H_
 
-#include "Utility\Utility.h"
-#include "Object\GameObject.h"
-#include "DataStructure\AutoArray.h"
+#include "Utility/Utility.h"
+#include "Object/GameObject.h"
+#include "DataStructure/AutoArray.h"
 
 #include <string>
 
@@ -49,8 +49,12 @@ namespace Dystopia
 
 		void Unserialise(TextSerialiser &);
 
-	private:
+		void SetSceneName(const std::string& _name);
 
+		std::string GetSceneName() const;
+
+	private:
+		std::string mName;
 		AutoArray<GameObject> mGameObjs;
 		//Ctor::MagicArrayBuilder<GameObject>::SetBlockLimit<16>::SetBlockSize<256>::type mGameObjs;
 	};

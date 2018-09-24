@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _LOGGERSYS_H_
 #define _LOGGERSYS_H_
 
-#include "System\Logger\LogPriority.h"
+#include "System/Logger/LogPriority.h"
 
 #include <cstdio>
 #include <string>

@@ -7,6 +7,15 @@ namespace Dystopia
 {
 	class RigidBody;
 
+	enum InterpolationMode
+	{
+		none = 0,
+		interpolate,
+		extrapolate,
+
+		total
+	};
+
 	class PhysicsSystem : public Systems, public ComponentDonor<RigidBody>
 	{
 	public:
@@ -28,12 +37,13 @@ namespace Dystopia
 		void Step(float _dt);
 		void IntegrateRigidBodies(float _dt);
 		void ResolveCollision(float);
-		void PostResults();
+		void UpdateResults(float _delta);
 		void DebugPrint();
 		void DebugDraw();
 
 		bool  mbIsDebugActive;
 		float mTimeAccumulator;
+		InterpolationMode mInterpolation_mode;
 
 		//CollisionMap		CollisionMap;
 		//CollisionEvents	Contacts;

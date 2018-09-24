@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _HIERARCHY_H_
 #define _HIERARCHY_H_
 #include "EditorTab.h"
-#include "DataStructure\AutoArray.h"
+#include "DataStructure/AutoArray.h"
 
 namespace Dystopia
 {

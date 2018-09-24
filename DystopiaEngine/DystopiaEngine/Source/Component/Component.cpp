@@ -11,12 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include <Component/Component.h>		// File Header
-#include <Object/ObjectFlags.h>
-#include <Object/GameObject.h>
-#include <System/Driver/Driver.h>
-#include <System/Scene/SceneSystem.h>
-#include <Utility/Utility.h>
+#include "Component/Component.h"		// File Header
+#include "Object/ObjectFlags.h"
+#include "Object/GameObject.h"
+#include "System/Driver/Driver.h"
+#include "System/Scene/SceneSystem.h"
+#include "Utility/Utility.h"
 #include "Utility/GUID.h"
 
 Dystopia::Component::Component(void) noexcept
@@ -26,7 +26,7 @@ Dystopia::Component::Component(void) noexcept
 }
 
 Dystopia::Component::Component(GameObject * _pOwner) noexcept
-	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }, mID{ GUIDGenerator::GetUniqueID() }
+	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }, mID{ _pOwner->GetID() }
 {
 }
 
@@ -76,6 +76,7 @@ void Dystopia::Component::DestroyComponent(void)
 void Dystopia::Component::SetOwner(GameObject* _pOwner)
 {
 	mnOwner = _pOwner->GetID();
+	mID = _pOwner->GetID();
 }
 
 Dystopia::GameObject* Dystopia::Component::GetOwner(void) const

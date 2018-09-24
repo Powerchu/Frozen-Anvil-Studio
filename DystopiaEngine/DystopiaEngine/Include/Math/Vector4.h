@@ -24,10 +24,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Meta.h"	            // EnableIf
 #include "Utility/MetaAlgorithms.h"     // MetaSortV
 #include "Utility/MetaDataStructures.h" // IntegralList
+#include "Math/MathUtility.h"
 
 #if defined(DEBUG) | defined(_DEBUG)
-#include "Math\MathUtility.h"
-#include "Utility\DebugAssert.h"
+#include "Utility/DebugAssert.h"
 #endif // Debug only includes
 
 #if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
@@ -121,6 +121,9 @@ namespace Math
 		inline Vector4& _CALL operator/=(const float);
 		inline Vector4& _CALL operator+=(const Vector4);
 		inline Vector4& _CALL operator-=(const Vector4);
+
+		inline bool _CALL operator==(const Vector4&) const;
+		inline bool _CALL operator!=(const Vector4& _rhs) const;
 
 		// Alternate + and -
 		// x + x , y - y , z + z , w - w
@@ -777,6 +780,16 @@ inline Math::Vector4& _CALL Math::Vector4::operator-=(const Vector4 _rhs)
 {
 	mData = _mm_sub_ps(mData, _rhs.mData);
 	return *this;
+}
+
+inline bool _CALL Math::Vector4::operator==(const Math::Vector4& _rhs) const
+{
+	return ApproxEq(x, _rhs.x) & ApproxEq(y, _rhs.y) & ApproxEq(z, _rhs.z) & ApproxEq(w, _rhs.w);
+}
+
+inline bool _CALL Math::Vector4::operator!=(const Math::Vector4& _rhs) const
+{
+	return !(*this == _rhs);
 }
 
 inline Math::Vector4& _CALL Math::Vector4::AddSub(const Vector4 _rhs)

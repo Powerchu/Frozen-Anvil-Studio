@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _COMMAND_LIST_H_
 
 #include "Editor.h"
+#include "Math/Vector4.h"
 #include <tuple>
 #include <utility>
 
@@ -93,7 +94,7 @@ namespace Dystopia
 			return true;
 		}
 
-		bool Unchanged() const { return (mOldValue == mNewValue); }
+		bool Unchanged() const { return false; }
 	private:
 		Component* FindComponent()
 		{
@@ -174,7 +175,7 @@ namespace Dystopia
 			return true; 
 		}
 
-		bool Unchanged() const { return false; }
+		bool Unchanged() const { return *mpTarget == mOldValue; }
 		T* GetPointer() { return mpTarget; }
 	private:
 		Component* FindComponent()
@@ -223,7 +224,7 @@ namespace Dystopia
 			return true;
 		}
 
-		bool	Unchanged() const { return false; }
+		bool	Unchanged() const { return *mpTarget == mOldValue; }
 		T*		GetPointer() { return mpTarget; }
 	private:
 		bool *mpNotify;

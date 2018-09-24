@@ -1,15 +1,33 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	Collider.h
+\author Keith (70%)
+		Aaron (30%)
+\par    email: keith.goh\@digipen.edu
+		email: m.chu\@digipen.edu
+\brief
+Collider2D for 2D Sprites.
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
 #ifndef COLLIDER_H
 #define COLLIDER_H
 
-#include "Component\Component.h"		       /*Component Base Class*/
-#include "Component\ComponentList.h"           /*Component List*/
-#include "Math\Vector4.h"                      /*Vector*/
-#include "DataStructure\AutoArray.h"	       /*AutoArray Data Structure*/
-#include "Utility\MetaAlgorithms.h"		       // MetaFind
-#include "System\Collision\CollisionEvent.h"
+#include "Component/Component.h"		       /*Component Base Class*/
+#include "Component/ComponentList.h"           /*Component List*/
+#include "Math/Vector4.h"                      /*Vector*/
+#include "DataStructure/AutoArray.h"	       /*AutoArray Data Structure*/
+#include "Utility/MetaAlgorithms.h"		       // MetaFind
+#include "Component/CollisionEvent.h"
+
+#include "System/Graphics/VertexDefs.h"
 
 
-#define CLOCKWISE 1
+
+#define CLOCKWISE 0
 /*
                                  -----------AABB
  Collider[BASE]<--- CONVEX <-----|
@@ -41,6 +59,8 @@ namespace Dystopia
 	struct CollisionEvent;
 
 	class CollisionSystem;
+
+	class Mesh;
 
 	enum class eColliderType
 	{
@@ -118,8 +138,15 @@ namespace Dystopia
 		virtual void Unload(void);
 		/*Duplicate the Component*/
 		virtual Collider* Duplicate() const;
-		/*Get Array of collision event*/
+		
+
+		/************************************************************************
+		 * Member Functions
+		 ***********************************************************************/
+		 /*Get Array of collision event*/
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
+
+		void ClearCollisionEvent();
 
 		bool hasCollision() const;
 		void SetColliding(bool _b);
@@ -129,6 +156,12 @@ namespace Dystopia
 
 		// Gettors
 		Math::Vec3D GetOffSet()   const;
+
+		AutoArray<Vertex> GetVertexBuffer() const;
+		AutoArray<short>  GetIndexBuffer()  const;
+
+		void  SetMesh(Mesh * _ptr);
+		Mesh* GetMesh() const;
 
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const;
@@ -145,14 +178,20 @@ namespace Dystopia
 
 		Math::Point3D mPosition;
 		
+		AutoArray<Vertex> mDebugVertices;
+		AutoArray<short>  mIndexBuffer;
 
+		void Triangulate();
 
 
 	private:
+
 		 //Status mStatus;
 
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
+
+		Mesh * mpMesh;
 
 
 	};
@@ -177,7 +216,7 @@ namespace Dystopia
 		/*Constructors*/
 
 		/*Convex Default Constructor*/
-		Convex(Math::Point3D const & _v3Offset = { 0,0,0,0 });
+		Convex(Math::Point3D const & _v3Offset = { 0,0,0,1 });
 
 		/*Convex Constructor. Takes in a Container of Vertice*/
 		template<typename Container = AutoArray<Vertice>>
@@ -209,8 +248,6 @@ namespace Dystopia
 		bool isColliding(Convex & _ColB);
 		bool isColliding(Convex * const & _pColB);
 		bool isColliding(Convex & _pColB, const Math::Vec3D & _v3Dir);
-
-		CollisionEvent GetCollisionEvent(AutoArray<Vertice> & _Simplex, const Convex & _ColB) const;
 
 		/*Static Member Functions*/
 
@@ -253,6 +290,8 @@ namespace Dystopia
 
 		static const eColliderType ColliderType = eColliderType::AABB;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
+		static const std::string GetCompileName(void) { return "AABB"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
 		/*Constructors*/
 
 		/*Default - (Box Collider)*/
@@ -279,8 +318,11 @@ namespace Dystopia
 		bool isColliding(AABB & other_col);
 		bool isColliding(AABB * const & other_col);
 
-		/*Sweeping Collision Check*/
-		float SweepingCheck(const AABB & other_col) const;
+		/* Gettors */
+		float GetWidth() const;
+		float GetHeight() const;
+		float GetHalfWidth() const;
+		float GetHalfHeight() const;
 
 	private:
 		float mfWidth;
@@ -298,6 +340,8 @@ namespace Dystopia
 
 		static const eColliderType ColliderType = eColliderType::CIRCLE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
+		static const std::string GetCompileName(void) { return "Circle"; }
+		const std::string GetEditorName(void) const { return GetCompileName(); }
 		/*Constructors*/
 
 		/*Default - (Box Collider)*/

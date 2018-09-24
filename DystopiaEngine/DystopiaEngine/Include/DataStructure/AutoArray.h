@@ -20,11 +20,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif // Debug only includes
 
 #include "Globals.h"
-#include "Utility\Utility.h"			// Move, CopyUninit
-#include "Math\MathUtility.h"			// phi
-#include "Utility\Meta.h"				// Decay, IsSame, EnableIf, IsIntegral
-#include "Utility\MetaDataStructures.h" // TypeList
-#include "Allocator\DefaultAlloc.h"		// DefaultAllocator
+#include "Utility/Utility.h"			// Move, CopyUninit
+#include "Math/MathUtility.h"			// phi
+#include "Utility/Meta.h"				// Decay, IsSame, EnableIf, IsIntegral
+#include "Utility/MetaDataStructures.h" // TypeList
+#include "Allocator/DefaultAlloc.h"		// DefaultAllocator
 
 #include <new>				// operator new
 #include <cstring>			// memcpy

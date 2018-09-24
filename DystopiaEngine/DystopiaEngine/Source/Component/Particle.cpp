@@ -1,5 +1,5 @@
-#include "Component\Particle.h"
-#include "Component\Transform.h"
+#include "Component/Particle.h"
+#include "Component/Transform.h"
 
 namespace Dystopia
 {

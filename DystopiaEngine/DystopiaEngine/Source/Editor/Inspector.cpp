@@ -12,24 +12,24 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\EGUI.h"
-#include "Editor\Inspector.h"
-#include "Editor\ScriptFormatter.h"
-#include "Editor\Commands.h"
-#include "Editor\EditorEvents.h"
-#include "Editor\EditorMetaHelpers.h"
+#include "Editor/EGUI.h"
+#include "Editor/Inspector.h"
+#include "Editor/ScriptFormatter.h"
+#include "Editor/Commands.h"
+#include "Editor/EditorEvents.h"
+#include "Editor/EditorMetaHelpers.h"
 
-#include "Component\Camera.h"
-#include "Component\Collider.h"
-#include "Component\Renderer.h"
-#include "Component\RigidBody.h"
+#include "Component/Camera.h"
+#include "Component/Collider.h"
+#include "Component/Renderer.h"
+#include "Component/RigidBody.h"
 
-#include "System\Graphics\GraphicsSystem.h"
-#include "System\Camera\CameraSystem.h"
-#include "System\Behaviour\BehaviourSystem.h"
-#include "System\Collision\CollisionSystem.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Camera/CameraSystem.h"
+#include "System/Behaviour/BehaviourSystem.h"
+#include "System/Collision/CollisionSystem.h"
 
-#include "Utility\ComponentGUID.h"
+#include "Utility/ComponentGUID.h"
 
 #include <iostream>
 

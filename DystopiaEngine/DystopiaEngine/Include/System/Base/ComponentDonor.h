@@ -14,8 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _COMPONENTDONOR_H_
 #define _COMPONENTDONOR_H_
 
-#include "Utility\Utility.h"
-#include "DataStructure\MagicArray.h"
+#include "Utility/Utility.h"
+#include "DataStructure/MagicArray.h"
 #include "IO/TextSerialiser.h"
 
 

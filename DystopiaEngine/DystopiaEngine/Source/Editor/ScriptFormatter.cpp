@@ -12,8 +12,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "DataStructure\AutoArray.h"
-#include "Editor\ScriptFormatter.h"
+#include "DataStructure/AutoArray.h"
+#include "Editor/ScriptFormatter.h"
 #include <algorithm>
 #include <fstream>
 #include <Windows.h>

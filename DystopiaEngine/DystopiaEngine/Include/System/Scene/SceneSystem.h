@@ -14,9 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SCENE_SYSTEM_H_
 #define _SCENE_SYSTEM_H_
 
-#include "System\Base\Systems.h"
-#include "System\Scene\Scene.h"
-#include "DataStructure\Stack.h"
+#include "System/Base/Systems.h"
+#include "System/Scene/Scene.h"
+//#include "DataStructure/Stack.h"
 
 #include <string>
 
@@ -44,7 +44,7 @@ namespace Dystopia
 //		void ReceiveMessage(const Message&);
 		
 		void LoadScene(const std::string& _strName);
-		void SaveScene(const std::string& _strName);
+		void SaveScene(const std::string & _strName, const std::string& _sceneName = "defaultSceneName");
 
 		inline Scene& GetCurrentScene(void) const;
 
@@ -56,33 +56,23 @@ namespace Dystopia
 		Scene *mpNextScene;
 		Scene *mpCurrScene;
 	};
+
+	// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+	inline Scene& Dystopia::SceneSystem::GetCurrentScene(void) const
+	{
+		return *mpCurrScene;
+	}
+
+	inline GameObject* Dystopia::SceneSystem::FindGameObject(uint64_t _nID)
+	{
+		return mpCurrScene->FindGameObject(_nID);
+	}
+
+	inline GameObject* Dystopia::SceneSystem::FindGameObject(const std::string& _strName)
+	{
+		return mpCurrScene->FindGameObject(_strName);
+	}
 }
-
-
-
-
-
-
-// ============================================ FUNCTION DEFINITIONS ============================================ // 
-
-
-inline Dystopia::Scene& Dystopia::SceneSystem::GetCurrentScene(void) const
-{
-	return *mpCurrScene;
-}
-
-inline Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject(uint64_t _nID)
-{
-	return mpCurrScene->FindGameObject(_nID);
-}
-
-inline Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject(const std::string& _strName)
-{
-	return mpCurrScene->FindGameObject(_strName);
-}
-
-
-
 #endif
-
-

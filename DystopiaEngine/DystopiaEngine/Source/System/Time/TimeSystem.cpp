@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Time\TimeSystem.h"		// File Header
+#include "System/Time/TimeSystem.h"		// File Header
 
 bool Dystopia::TimeSystem::Init(void)
 {

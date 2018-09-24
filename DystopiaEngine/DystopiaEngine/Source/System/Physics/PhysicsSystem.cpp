@@ -1,20 +1,23 @@
 #include "System/Physics/PhysicsSystem.h"
-#include "Component/RigidBody.h"
-#include "Object/GameObject.h"
-#include <System/Collision/CollisionSystem.h>
-#include <System/Time/ScopedTimer.h>
+#include "System/Collision/CollisionSystem.h"
+#include "System/Logger/LoggerSystem.h"
 #include "System/Profiler/ProfilerAction.h"
+#include "System/Time/ScopedTimer.h"
 
+#include "Object/GameObject.h"
+#include "Component/RigidBody.h"
 #include "Component/Collider.h"
 
+#define G_CONSTANT 9.80665F
 
 namespace Dystopia
 {
 	PhysicsSystem::PhysicsSystem()
-		: mbIsDebugActive(false)
+		: mbIsDebugActive(true)
 		, mTimeAccumulator(0.0F)
-		, mGravity(-9.81F)
-		, mMaxVelocityConstant(1000)
+		, mInterpolation_mode(none)
+		, mGravity(-G_CONSTANT)
+		, mMaxVelocityConstant(2048.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.2F)
 		, mPenetrationResolutionPercentage(0.8F)
@@ -37,23 +40,24 @@ namespace Dystopia
 
 	void PhysicsSystem::IntegrateRigidBodies(float _dt)
 	{
-		for (auto& rigid_elem : mComponents)
+		for (auto& bodies : mComponents)
 		{
-			rigid_elem.Integrate(_dt);
+			bodies.Integrate(_dt);
 		}
 	}
 
 	void PhysicsSystem::ResolveCollision(float _dt)
 	{
+		UNUSED_PARAMETER(_dt);
 		for (auto& rigid_elem : mComponents)
 		{
 			auto ptr = rigid_elem.GetOwner()->GetComponent<Collider>();
 			if (ptr)
 			{
-				if (ptr->hasCollision())
+				if (ptr->hasCollision() && !rigid_elem.Get_IsStaticState())
 				{
-					rigid_elem.Set_CustomGravityScale(0.0f);
-					rigid_elem.SetVelocity(Vec3D{});
+					LoggerSystem::ConsoleLog(eLog::MESSAGE, "Collided!");
+					rigid_elem.SetVelocity({0,0,0});
 					ptr->GetCollisionEvents();
 				}
 			}
@@ -61,11 +65,11 @@ namespace Dystopia
 		}
 	}
 
-	void PhysicsSystem::PostResults()
+	void PhysicsSystem::UpdateResults(float _dt)
 	{
-		for (auto& rigid_elem : mComponents)
+		for (auto& body : mComponents)
 		{
-			rigid_elem.PostResult();
+			body.UpdateResult();
 		}
 
 		// If Event System is running: this is where to Broadcast Collision Messages
@@ -85,51 +89,28 @@ namespace Dystopia
 
 	void PhysicsSystem::Step(float _dt)
 	{
-		/*
-		 * Physics Logic
-		 */
-		IntegrateRigidBodies(_dt);
 
-		/*
-		 * Collision System Detection
-		 */
-		
-		// Contacts.Reset();
-		// DetectContacts(dt);
+		/* Collision Detection*/
 
-		/*
-		 * Resolution
-		 */
+		/* Collision Resolution (Response) Logic */
 		ResolveCollision(_dt);
 
-		/*
-		 * Updating the position
-		 */
-		PostResults();
+		// Integrate Rigidbodies
+		IntegrateRigidBodies(_dt);
 
-		/*
-		 * Debug the positions
-		 */
-		DebugPrint();
+		/*Update positions and rotation as result*/
+		UpdateResults(_dt);
 	}
 
 	void PhysicsSystem::FixedUpdate(float _dt)
 	{
 		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
-		const float TimeStep = 1.0f / 60.0f;
 
-
-		mTimeAccumulator += _dt;
-		mTimeAccumulator = Math::Min(mTimeAccumulator, TimeStep * 5);
-
-		if (mTimeAccumulator > TimeStep)
-		{
-			mTimeAccumulator -= TimeStep;
-			Step(TimeStep);
-		}
+		Step(_dt);
 
 		if (mbIsDebugActive)
 		{
+			//DebugPrint();
 			DebugDraw();
 		}
 	}

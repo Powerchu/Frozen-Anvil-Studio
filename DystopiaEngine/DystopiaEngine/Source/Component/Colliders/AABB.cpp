@@ -1,5 +1,5 @@
-#include "Component\Collider.h"
-#include "Object\GameObject.h"
+#include "Component/Collider.h"
+#include "Object/GameObject.h"
 #include "Component/RigidBody.h"
 
 namespace Dystopia
@@ -92,20 +92,44 @@ namespace Dystopia
 	bool AABB::isColliding(AABB & _ColB)
 	{
 		/*Static vs. Dynamic AABB Collision Check*/
+		auto TransformA = GetOwner()->GetComponent<Transform>();
+		auto TransformB = _ColB.GetOwner()->GetComponent<Transform>();
 
-		if (   mPosition.x + this->mMin->mPosition.x <= _ColB.mPosition.x + _ColB.mMax->mPosition.x
-			&& mPosition.x + this->mMax->mPosition.x >= _ColB.mPosition.x + _ColB.mMin->mPosition.x
-			&& mPosition.y + this->mMax->mPosition.y >= _ColB.mPosition.y + _ColB.mMin->mPosition.y
-			&& mPosition.y + this->mMin->mPosition.y <= _ColB.mPosition.y + _ColB.mMax->mPosition.y)
+		if (   TransformA->GetGlobalPosition().x + this->mMin->mPosition.x <= TransformB->GetGlobalPosition().x + _ColB.mMax->mPosition.x
+			&& TransformA->GetGlobalPosition().x + this->mMax->mPosition.x >= TransformB->GetGlobalPosition().x + _ColB.mMin->mPosition.x
+			&& TransformA->GetGlobalPosition().y + this->mMax->mPosition.y >= TransformB->GetGlobalPosition().y + _ColB.mMin->mPosition.y
+			&& TransformA->GetGlobalPosition().y + this->mMin->mPosition.y <= TransformB->GetGlobalPosition().y + _ColB.mMax->mPosition.y)
 		{
-			Colliding = _ColB.Colliding = true;
-			return true;
+			Colliding = true;
+			return Colliding;
 		}
+
+		Colliding |= false;
 		return false;
 	}
 
 	bool AABB::isColliding(AABB * const & _ColB)
 	{
 		return this->isColliding(*_ColB);
+	}
+
+	float AABB::GetWidth() const
+	{
+		return mfWidth;
+	}
+
+	float AABB::GetHeight() const
+	{
+		return mfHeight;
+	}
+
+	float AABB::GetHalfWidth() const
+	{
+		return mfWidth / 2;
+	}
+
+	float AABB::GetHalfHeight() const
+	{
+		return mfHeight / 2;
 	}
 }

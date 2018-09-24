@@ -23,6 +23,7 @@ namespace Dystopia
 	class GameObject;
 	class PhysicsSystem;
 	class CollisionSystem;
+	class InputManager;
 
 	class SceneView : public EditorTab
 	{
@@ -48,17 +49,18 @@ namespace Dystopia
 	private:
 		SceneView(void);
 
-		float			mDelta;
-		std::string		mLabel;
-		GraphicsSystem *mpGfxSys;
-		PhysicsSystem  *mpPhysSys;
-		CollisionSystem *mpColSys;
+		float				mDelta;
+		std::string			mLabel;
+		GraphicsSystem*		mpGfxSys;
+		PhysicsSystem*		mpPhysSys;
+		CollisionSystem*	mpColSys;
+		InputManager*		mpInputSys;
 		
-		GameObject*		mpSceneCamera;
+		GameObject*			mpSceneCamera;
 
 		// TODO: remove this
-		GameObject*		mpBoxObject;
-		GameObject*		mpStaticBoxObject;
+		GameObject*			mpBoxObject;
+		GameObject*			mpStaticBoxObject;
 	};
 
 }

@@ -19,12 +19,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _EDITOR_GUI_H_
 #define _EDITOR_GUI_H_
-#include "DataStructure\AutoArray.h"
-#include "DataStructure\Array.h"
-#include "Utility\DebugAssert.h"
-#include "Editor\Dock.h"
-#include "Editor\Payloads.h"
-#include "Editor\Commands.h"
+#include "DataStructure/AutoArray.h"
+#include "DataStructure/Array.h"
+#include "Utility/DebugAssert.h"
+#include "Editor/Dock.h"
+#include "Editor/Payloads.h"
+#include "Editor/Commands.h"
 #include "../../Dependancies/ImGui/imgui.h"
 #include "../../Dependancies/ImGui/imgui_internal.h"
 #include <string>
@@ -61,8 +61,11 @@ namespace EGUI
 	enum eDragStatus
 	{
 		eNO_CHANGE = 0,
-		eSTART_DRAG,
 		eEND_DRAG,
+		eENTER,
+		eTABBED,
+		eSTART_DRAG,
+		eDEACTIVATED,
 		eDRAGGING
 	};
 
@@ -78,7 +81,7 @@ namespace EGUI
 
 	bool StartMainMenuBar();
 	bool StartMenuHeader(const std::string&);
-	bool StartMenuBody(const std::string&, const std::string& _shortcut="");
+	bool StartMenuBody(const std::string&, const std::string& _shortcut="", bool _enabled = true);
 	void EndMainMenuBar();
 	void EndMenuHeader();
 	void Indent(float _spacing = 20.f);

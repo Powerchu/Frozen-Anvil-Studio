@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _COMPONENT_H_
 
 #include "Globals.h"
-#include "Component\ComponentList.h"	// eComponents
+#include "Component/ComponentList.h"	// eComponents
 
 #include <string>
 
@@ -64,15 +64,15 @@ namespace Dystopia
 
 		uint64_t GetID() const;
 
+	protected:
+		uint64_t mID;
+		unsigned mnFlags;
+
 	private:
 
 		// TODO
 		// Temporary ID -- Will change back to pointer
 		uint64_t mnOwner;
-
-	protected:
-		uint64_t mID;
-		unsigned mnFlags;
 	};
 }
 

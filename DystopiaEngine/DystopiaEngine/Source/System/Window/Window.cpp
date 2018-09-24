@@ -11,9 +11,9 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Window\Window.h"		// File Header
-#include "DataStructure\Queue.h"		// Queue
-#include "System\Input\InputMap.h"		// eButton
+#include "System/Window/Window.h"		// File Header
+#include "DataStructure/Queue.h"		// Queue
+#include "System/Input/InputMap.h"		// eButton
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros

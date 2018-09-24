@@ -12,10 +12,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\PLogger.h"
-#include "Editor\PerformanceLog.h"
-#include "Editor\EGUI.h"
-#include "Math\MathUtility.h"
+#include "Editor/PLogger.h"
+#include "Editor/PerformanceLog.h"
+#include "Editor/EGUI.h"
+#include "Math/MathUtility.h"
 #include <algorithm>
 
 namespace Dystopia

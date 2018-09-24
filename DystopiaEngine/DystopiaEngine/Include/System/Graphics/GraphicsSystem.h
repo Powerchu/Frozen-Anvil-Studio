@@ -14,10 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GRAPHICS_SYS_H_
 #define _GRAPHICS_SYS_H_
 
-#include "System\Base\Systems.h"		 // System
-#include "System\Base\ComponentDonor.h"
-#include "System\Graphics\Framebuffer.h"
-#include "Math\Vector4.h"
+#include "System/Base/Systems.h"		 // System
+#include "System/Base/ComponentDonor.h"
+#include "System/Graphics/Framebuffer.h"
+#include "Math/Vector4.h"
 
 #include <map>
 #include <string>

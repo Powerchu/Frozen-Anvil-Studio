@@ -11,21 +11,21 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Component\Renderer.h"
-#include "System\Graphics\GraphicsSystem.h"
-#include "System\Graphics\Mesh.h"
-#include "System\Graphics\MeshSystem.h"
-#include "System\Graphics\Shader.h"
-#include "System\Graphics\Texture2D.h"
-#include "System\Driver\Driver.h"
-#include "System\Scene\SceneSystem.h"
-#include "System\Scene\Scene.h"
-#include "Object\ObjectFlags.h"
-#include "Object\GameObject.h"
-#include "IO\TextSerialiser.h"
+#include "Component/Renderer.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Graphics/Mesh.h"
+#include "System/Graphics/MeshSystem.h"
+#include "System/Graphics/Shader.h"
+#include "System/Graphics/Texture2D.h"
+#include "System/Driver/Driver.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
+#include "Object/ObjectFlags.h"
+#include "Object/GameObject.h"
+#include "IO/TextSerialiser.h"
 #if EDITOR
-#include "Editor\ProjectResource.h"
-#include "Editor\EGUI.h"
+#include "Editor/ProjectResource.h"
+#include "Editor/EGUI.h"
 #endif 
 
 
@@ -106,20 +106,22 @@ Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Renderer");
-	_out << GetOwner()->GetID();
+	_out << mID;
 	_out.InsertEndBlock("Renderer");
 }
 
 void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 {
-	uint64_t ownerID;
-
 	_in.ConsumeStartBlock();
-	_in >> ownerID;
+	_in >> mID;
 	_in.ConsumeEndBlock();
-
-	GameObject* owner = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(ownerID);
-	owner->AddComponent(this, Renderer::TAG{});
+	
+	if (GameObject* owner = 
+		EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
+	{
+		owner->AddComponent(this, Renderer::TAG{});
+		Init();
+	}
 }
 
 void Dystopia::Renderer::EditorUI(void) noexcept

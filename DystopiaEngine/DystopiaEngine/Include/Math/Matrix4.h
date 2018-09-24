@@ -18,11 +18,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _MATRIX_4_H_
 
 #if defined(DEBUG) | defined(_DEBUG)
-#include "Utility\DebugAssert.h"
+#include "Utility/DebugAssert.h"
 #endif // Debug only includes
 
-#include "Math\Vector4.h"		// Vector4
-#include "Math\Angles.h"		// Angle
+#include "Math/Vector4.h"		// Vector4
+#include "Math/Angles.h"		// Angle
 
 #include <new>					// nothrow_t
 #include <cmath>				// sqrtf

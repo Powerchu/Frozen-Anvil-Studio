@@ -11,11 +11,11 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Graphics\Texture2D.h"
-#include "System\Graphics\Image.h"
-#include "IO\ImageParser.h"
+#include "System/Graphics/Texture2D.h"
+#include "System/Graphics/Image.h"
+#include "IO/ImageParser.h"
 
-#include <GL\glew.h>
+#include <GL/glew.h>
 
 Dystopia::Texture2D::Texture2D(void) noexcept : Texture{ GL_TEXTURE_2D }
 {

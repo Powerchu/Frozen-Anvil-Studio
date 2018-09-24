@@ -14,10 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _CAMERA_SYS_H_
 #define _CAMERA_SYS_H_
 
-#include "System\Base\Systems.h"
-#include "System\Base\ComponentDonor.h"
+#include "System/Base/Systems.h"
+#include "System/Base/ComponentDonor.h"
 
-#include "System\Graphics\GraphicsDefs.h"
+#include "System/Graphics/GraphicsDefs.h"
 
 
 namespace Dystopia

@@ -14,8 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _WINDOW_H_
 #define _WINDOW_H_
 
-#include "DataStructure\Queue.h"
-#include "System\Input\InputMap.h"
+#include "DataStructure/Queue.h"
+#include "System/Input/InputMap.h"
 
 #include <string>
 

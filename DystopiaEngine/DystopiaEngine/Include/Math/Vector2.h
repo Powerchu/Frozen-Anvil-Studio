@@ -15,11 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _VECTOR2_H_
 
 #if defined(DEBUG) | defined(_DEBUG)
-#include "Utility\DebugAssert.h"
+#include "Utility/DebugAssert.h"
 #endif // Debug only includes
 
-#include "Math\MathUtility.h"
-#include "Math\Vector4.h"
+#include "Math/MathUtility.h"
+#include "Math/Vector4.h"
 
 #include <cmath>
 

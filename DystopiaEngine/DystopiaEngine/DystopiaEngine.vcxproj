@@ -28,8 +28,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\Component\CharacterController.cpp" />
     <ClCompile Include="Source\Component\CollisionEvent.cpp" />
-    <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="Source\Editor\Clipboard.cpp" />
     <ClCompile Include="Source\Component\Colliders\Circle.cpp" />
     <ClCompile Include="Source\Editor\CommandList.cpp" />
@@ -104,9 +104,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
-    <ClInclude Include="CharacterController.h" />
     <ClInclude Include="Include\Component\BehaviourList.h" />
-    <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
+    <ClInclude Include="Include\Component\CharacterController.h" />
+    <ClInclude Include="Include\Component\CollisionEvent.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
@@ -228,7 +228,7 @@
     <ResourceCompile Include="DystopiaEngine1.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="dystopia_x86_64.ico" />
+    <Image Include="Resource\Editor\icons\dystopia_x86_64.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>
@@ -429,7 +429,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -440,7 +440,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>

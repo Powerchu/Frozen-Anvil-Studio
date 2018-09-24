@@ -143,8 +143,6 @@ namespace Dystopia
 
 	struct InterestedFiles
 	{
-
-
 		InterestedFiles(std::wstring const & _FileName, ePurpose _purpose)
 			:FileName{ _FileName },
 			found{ false },
@@ -638,6 +636,7 @@ namespace Dystopia
 
 		~Hotloader()
 		{
+			return;
 			CloseHandle(mDll_Handle);
 			CloseHandle(mDll_Overlap.hEvent);
 

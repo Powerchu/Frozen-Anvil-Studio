@@ -33,6 +33,8 @@ enum eUserButton : unsigned short
 	MOUSE_R,
 	MOUSE_M,
 
+	BUTTON_SPACEBAR,
+
 	TOTAL_USERBUTTONS
 };
 

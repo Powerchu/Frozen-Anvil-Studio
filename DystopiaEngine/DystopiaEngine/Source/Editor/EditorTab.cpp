@@ -11,12 +11,15 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Editor\EditorTab.h"
-#include "Editor\Editor.h"
-#include "Editor\EditorEvents.h"
-#include "Editor\Commands.h"
-#include "System\Scene\Scene.h"
-#include "Object\GameObject.h"
+#include "Editor/EditorTab.h"
+#include "Editor/Editor.h"
+#include "Editor/EditorEvents.h"
+#include "Editor/Commands.h"
+
+#include "System/Scene/Scene.h"
+#include "Object/GameObject.h"
+
+#include "IO/BinarySerializer.h"
 
 namespace Dystopia
 {
@@ -110,5 +113,19 @@ namespace Dystopia
 	Scene* EditorTab::GetCurrentScene()	const
 	{
 		return mpCurrentScene;
+	}
+
+	void EditorTab::SaveSettings(BinarySerializer& _out) const
+	{
+		_out.InsertStartBlock("Tab_Start");
+		_out << mIsOpened;
+		_out.InsertEndBlock("Tab_End");
+	}
+
+	void EditorTab::LoadSettings(BinarySerializer& _in)
+	{
+		_in.ConsumeStartBlock();
+		_in >> mIsOpened;
+		_in.ConsumeEndBlock();
 	}
 }

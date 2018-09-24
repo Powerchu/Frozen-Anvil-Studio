@@ -14,8 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _WINDOW_MANAGER_H_
 #define _WINDOW_MANAGER_H_
 
-#include "System\Base\Systems.h"		// Base Class
-#include "DataStructure\AutoArray.h"	// AutoArray
+#include "System/Base/Systems.h"		// Base Class
+#include "DataStructure/AutoArray.h"	// AutoArray
 
 #include <string>
 

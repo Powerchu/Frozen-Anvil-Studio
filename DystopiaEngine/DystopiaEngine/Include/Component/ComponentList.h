@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _COMPONENTLIST_H_
 #define _COMPONENTLIST_H_
 
-#include "Utility\MetaAlgorithms.h"
+#include "Utility/MetaAlgorithms.h"
 
 namespace Dystopia
 {

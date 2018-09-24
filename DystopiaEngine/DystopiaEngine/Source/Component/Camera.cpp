@@ -12,19 +12,21 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Component\Camera.h"		// File header
-#include "Component\Transform.h"
-#include "Math\Matrix4.h"
-#include "Math\MathUtility.h"
+#include "Component/Camera.h"		// File header
+#include "Component/Transform.h"
+#include "Math/Matrix4.h"
+#include "Math/MathUtility.h"
 
-#include "System\Camera\CameraSystem.h"
-#include "System\Driver\Driver.h"
+#include "System/Camera/CameraSystem.h"
+#include "System/Driver/Driver.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
 
-#include "Object\GameObject.h"
-#include "Object\ObjectFlags.h"
+#include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 
 #if EDITOR
-#include "Editor\EGUI.h"
+#include "Editor/EGUI.h"
 #endif
 
 
@@ -221,14 +223,25 @@ Dystopia::Camera* Dystopia::Camera::Duplicate(void) const
 	return nullptr;
 }
 
-void Dystopia::Camera::Serialise(TextSerialiser&) const
+void Dystopia::Camera::Serialise(TextSerialiser& _out) const
 {
-
+	_out.InsertStartBlock("Camera");
+	_out << mID;
+	_out.InsertEndBlock("Camera");
 }
 
-void Dystopia::Camera::Unserialise(TextSerialiser&)
+void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 {
+	_in.ConsumeStartBlock();
+	_in >> mID;
+	_in.ConsumeEndBlock();
 
+	if (GameObject* owner =
+		EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
+	{
+		owner->AddComponent(this, Camera::TAG{});
+		Init();
+	}
 }
 
 void Dystopia::Camera::EditorUI(void) noexcept

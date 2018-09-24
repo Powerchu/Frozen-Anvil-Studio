@@ -20,8 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #if EDITOR
 
-#include "System\Logger\LogPriority.h"
-#include "System\Logger\LoggerSystem.h"
+#include "System/Logger/LogPriority.h"
+#include "System/Logger/LoggerSystem.h"
 
 #include <cstdio>
 

@@ -12,9 +12,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\CommandList.h"
-#include "System\Scene\Scene.h"
-#include "Object\GameObject.h"
+#include "Editor/CommandList.h"
+#include "System/Scene/Scene.h"
+#include "Object/GameObject.h"
 
 /* Insert Game Object Command  ****************************************************************************/
 
@@ -62,6 +62,7 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
+	p->Destroy();
 	mpScene->GetAllGameObjects().FastRemove(p);
 	return true;
 }
@@ -97,6 +98,7 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
+	p->Destroy();
 	mpScene->GetAllGameObjects().FastRemove(p);
 	return true;
 }

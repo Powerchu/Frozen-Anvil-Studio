@@ -14,17 +14,17 @@
 #ifndef _MATH_LIB_H__
 #define _MATH_LIB_H__
 
-#include "Math\MathUtility.h"
+#include "Math/MathUtility.h"
 
-#include "Math\Angles.h"
-#include "Math\Vector2.h"
+#include "Math/Angles.h"
+#include "Math/Vector2.h"
 
 #if _WIN64
 
-#include "Math\Vector4.h"
-#include "Math\Quaternion.h"
-#include "Math\Matrix2.h"
-#include "Math\Matrix4.h"
+#include "Math/Vector4.h"
+#include "Math/Quaternion.h"
+#include "Math/Matrix2.h"
+#include "Math/Matrix4.h"
 
 #else		// Fallback for x86 Mode
 

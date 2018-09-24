@@ -11,12 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Editor\Commands.h"
+#include "Editor/Commands.h"
 
-#include "System\Scene\Scene.h"
-#include "Object\GameObject.h"
+#include "System/Scene/Scene.h"
+#include "Object/GameObject.h"
 
-#include "..\..\Dependancies\ImGui\imgui.h"
+#include "../../Dependancies/ImGui/imgui.h"
 #include <typeinfo>
 
 namespace Dystopia
@@ -53,6 +53,12 @@ namespace Dystopia
 	{
 		if (!_comd->ExecuteDo())
 		{
+			return;
+		}
+
+		if (Editor::GetInstance()->CurrentState() == EDITOR_PLAY)
+		{
+			delete _comd;
 			return;
 		}
 

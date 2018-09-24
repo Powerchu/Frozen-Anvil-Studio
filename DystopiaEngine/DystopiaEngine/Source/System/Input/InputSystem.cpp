@@ -11,14 +11,14 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Input\InputSystem.h"
-#include "System\Input\InputMap.h"
-#include "System\Window\WindowManager.h"
-#include "System\Window\Window.h"
-#include "System\Driver\Driver.h"
+#include "System/Input/InputSystem.h"
+#include "System/Input/InputMap.h"
+#include "System/Window/WindowManager.h"
+#include "System/Window/Window.h"
+#include "System/Driver/Driver.h"
 
-#include "Math\Vector2.h"
-#include "Math\Vector4.h"
+#include "Math/Vector2.h"
+#include "Math/Vector4.h"
 
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN			// Exclude rare stuff from Window's header
@@ -39,12 +39,14 @@ void Dystopia::InputManager::LoadDefaultUserKeys(void)
 	mButtonMap[eUserButton::BUTTON_LEFT  ] = eButton::KEYBOARD_LEFT;
 	mButtonMap[eUserButton::BUTTON_RIGHT ] = eButton::KEYBOARD_RIGHT;
 
+	mButtonMap[eUserButton::BUTTON_PAUSE] = eButton::KEYBOARD_P;
+	mButtonMap[eUserButton::BUTTON_CANCEL] = eButton::KEYBOARD_ESCAPE;
+
 	mButtonMap[eUserButton::MOUSE_L] = eButton::MOUSE_LEFT;
 	mButtonMap[eUserButton::MOUSE_R] = eButton::MOUSE_RIGHT;
 	mButtonMap[eUserButton::MOUSE_M] = eButton::MOUSE_MIDDLE;
 
-	mButtonMap[eUserButton::BUTTON_PAUSE ] = eButton::KEYBOARD_P;
-	mButtonMap[eUserButton::BUTTON_CANCEL] = eButton::KEYBOARD_ESCAPE;
+	mButtonMap[eUserButton::BUTTON_SPACEBAR] = eButton::KEYBOARD_SPACEBAR;
 }
 
 

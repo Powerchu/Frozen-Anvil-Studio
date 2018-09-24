@@ -1,7 +1,7 @@
 #ifndef RESOLUTION_H	
 #define RESOLUTION_H
 
-#include <System/Collision/CollisionSystem.h>
+#include "System/Collision/CollisionSystem.h"
 
 namespace Dystopia
 {

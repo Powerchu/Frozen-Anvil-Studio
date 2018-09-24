@@ -14,8 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _RAWMESH_H_
 #define _RAWMESH_H_
 
-#include "System\Graphics\VertexDefs.h"
-#include "DataStructure\AutoArray.h"
+#include "System/Graphics/VertexDefs.h"
+#include "DataStructure/AutoArray.h"
 
 namespace Dystopia
 {

@@ -12,22 +12,29 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\SceneView.h"
-#include "Editor\Editor.h"
-#include "Editor\EGUI.h"
-#include "Editor\DefaultFactory.h"
+#include "Editor/SceneView.h"
+#include "Editor/Editor.h"
+#include "Editor/EGUI.h"
+#include "Editor/DefaultFactory.h"
 
-#include "System\Driver\Driver.h"
-#include "System\Graphics\GraphicsSystem.h"
-#include "System\Camera\CameraSystem.h"
-#include <System/Physics/PhysicsSystem.h>
+#include "System/Driver/Driver.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "Component/Renderer.h"
+#include "System/Input/InputSystem.h"
+#include "System/Physics/PhysicsSystem.h"
 #include "System/Collision/CollisionSystem.h"
+#include "Component/Collider.h"
 
 #include "System\Scene\Scene.h"
 #include "System\Graphics\Texture2D.h"
 #include "Component\Camera.h"
 
-#include <Component/RigidBody.h>
+// #include "System/Scene/Scene.h"
+// #include "System/Graphics/Texture2D.h"
+// #include "Component/Camera.h"
+// #include "System/Camera/CameraSystem.h" 
+
+#include "Component/RigidBody.h"
 
 namespace Dystopia
 {
@@ -43,11 +50,12 @@ namespace Dystopia
 	SceneView::SceneView()
 		: EditorTab{ true },
 		mLabel{ "Scene View" },
-		mpGfxSys{ nullptr },
 		mDelta{},
-		mpSceneCamera{ nullptr },
+		mpGfxSys{ nullptr },
 		mpPhysSys{ nullptr },
-		mpColSys{ nullptr }
+		mpColSys{ nullptr },
+		mpSceneCamera{ nullptr }
+
 	{}
 
 	SceneView::~SceneView()
@@ -60,6 +68,8 @@ namespace Dystopia
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
 		mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 		mpColSys = EngineCore::GetInstance()->GetSystem<CollisionSystem>();
+		mpInputSys = EngineCore::GetInstance()->GetSystem<InputManager>();
+
 
 		// Scene Camera
 		GameObject *p = Factory::CreateCamera("Scene Camera");
@@ -70,27 +80,42 @@ namespace Dystopia
 
 		// Sample Box Object
 		GameObject *b = Factory::CreateBox("Box Object");
+		Texture2D* _bt = new Texture2D{ "Resource/Editor/red_box.png" };
 		mpBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*b));
 		mpBoxObject->GetComponent<RigidBody>()->Init();
-		mpBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 128.f, 128.f, 1.f });
+		mpBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 64.f, 64.f, 1.f });
+		mpBoxObject->GetComponent<Renderer>()->SetTexture(_bt);
+		mpBoxObject->GetComponent<Collider>()->Init();
 		delete b;
 
 		// Sample Static Object
 		GameObject *s = Factory::CreateStaticBox("Static Box");
+		Texture2D* _st = new Texture2D{ "Resource/Editor/white_box.png" };
 		mpStaticBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*s));
 		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
 		mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
-		//mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition ({ 0, -185.f, 0 });
-		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 512.f, 64.f, 1.f });
+		mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition ({ 0, -185.f, 0 });
+		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 512.f, 32.f, 1.f });
+		mpStaticBoxObject->GetComponent<Collider>()->Init();
+		mpStaticBoxObject->GetComponent<Renderer>()->SetTexture(_st);
 		delete s;
 	}
 
 	void SceneView::Update(const float& _dt)
 	{
 		mDelta = _dt;
-		mpGfxSys->Update(mDelta);
-		mpPhysSys->FixedUpdate(mDelta);
-		mpColSys->Update(mDelta);
+		if (GetMainEditor().CurrentState() != EDITOR_PLAY)
+		{
+			mpGfxSys->Update(mDelta);
+			mpInputSys->Update(mDelta);
+			mpColSys->FixedUpdate(mDelta);
+			mpPhysSys->FixedUpdate(mDelta);
+			if (mpInputSys->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
+			{
+				mpBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
+				mpBoxObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
+			}
+		}
 	}
 
 	void SceneView::EditorUI()
@@ -102,6 +127,8 @@ namespace Dystopia
 	void SceneView::Shutdown()
 	{
 		mpGfxSys = nullptr;
+		mpInputSys = nullptr;
+		mpColSys = nullptr;
 		mpPhysSys = nullptr;
 	}
 

@@ -46,8 +46,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _EVENTSYSTEM_H_
 #define _EVENTSYSTEM_H_
-#include "DataStructure\AutoArray.h"
-#include "System\Base\Systems.h"
+#include "DataStructure/AutoArray.h"
+#include "System/Base/Systems.h"
 
 namespace Dystopia
 {
