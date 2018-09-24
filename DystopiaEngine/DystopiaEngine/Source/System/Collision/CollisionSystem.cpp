@@ -8,6 +8,8 @@
 
 #include <map>
 #include <utility>
+#include "System/Profiler/ProfilerAction.h"
+#include "System/Time/ScopedTimer.h"
 
 namespace Dystopia
 {
@@ -54,6 +56,8 @@ namespace Dystopia
 
 	void CollisionSystem::FixedUpdate(float)
 	{
+		ScopedTimer<ProfilerAction> timeKeeper{ "Collsion System", "Update" };
+
 		using CollisionTable = std::pair<eColliderType, eColliderType>;
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
 		using CollisionTableMap = std::map < CollisionTable, fpCollisionResolution>;
