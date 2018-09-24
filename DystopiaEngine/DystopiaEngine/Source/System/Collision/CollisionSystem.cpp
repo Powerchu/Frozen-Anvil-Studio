@@ -151,6 +151,21 @@ namespace Dystopia
 		return col_a->isColliding(col_b);
 	}
 
+	AutoArray<Collider*> CollisionSystem::GetAllColliders() const
+	{
+		AutoArray<Collider*> ToRet;
+		for (auto & elem : ComponentDonor<Convex>::mComponents)
+		{
+			ToRet.push_back(&elem);
+		}
+		for (auto & elem : ComponentDonor<AABB>::mComponents)
+		{
+			ToRet.push_back(&elem);
+		}
+
+		return Utility::Move(ToRet);
+	}
+
 	CollisionSystem::CollisionSystem()
 	{
 
