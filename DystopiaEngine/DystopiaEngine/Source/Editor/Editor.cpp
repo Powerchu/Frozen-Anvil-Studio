@@ -63,7 +63,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <tchar.h>
 #include <objbase.h>
 
-static const std::string DYSTOPIA_EDITOR_SETTINGS = "EditorSettings.Dyset";
+static const std::string DYSTOPIA_EDITOR_SETTINGS = "EditorSettings.dyst";
 static const std::string DYSTOPIA_SCENE_LOAD = "Resource/Scene/";
 static const std::string DYSTOPIA_SCENE_TEMP = "Resource/Temp/";
 static const std::wstring DYSTOPIA_SCENE_EXTENSION = L"dscene";
@@ -137,14 +137,14 @@ namespace Dystopia
 
 	void Editor::LoadSettings()
 	{
-		struct stat buffer;
-		if (stat(DYSTOPIA_EDITOR_SETTINGS.c_str(), &buffer) == 0)
-		{
-			auto serial = BinarySerializer::OpenFile(DYSTOPIA_EDITOR_SETTINGS, BinarySerializer::MODE_READ);
-			for (auto& e : mArrTabs)
-				e->LoadSettings(serial);
-		}
-		else std::ofstream o{ DYSTOPIA_EDITOR_SETTINGS.c_str() };
+		//struct stat buffer;
+		//if (stat(DYSTOPIA_EDITOR_SETTINGS.c_str(), &buffer) == 0)
+		//{
+		//	auto serial = BinarySerializer::OpenFile(DYSTOPIA_EDITOR_SETTINGS, BinarySerializer::MODE_READ);
+		//	for (auto& e : mArrTabs)
+		//		e->LoadSettings(serial);
+		//}
+		//else std::ofstream o{ DYSTOPIA_EDITOR_SETTINGS.c_str() };
 	}
 
 	void Editor::Init()
@@ -274,10 +274,10 @@ namespace Dystopia
 	{
 		UnInstallHotkeys();
 		mpDriver->GetSubSystem<LoggerSystem>()->RedirectOutput(nullptr);
-		auto serial = BinarySerializer::OpenFile(DYSTOPIA_EDITOR_SETTINGS, BinarySerializer::MODE_WRITE);
+		//auto serial = BinarySerializer::OpenFile(DYSTOPIA_EDITOR_SETTINGS, BinarySerializer::MODE_WRITE);
 		for (auto& e : mArrTabs)
 		{
-			e->SaveSettings(serial);
+			//e->SaveSettings(serial);
 			e->Shutdown();
 			delete e;
 		}
