@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Window/Window.h"			// Window
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
+#include "System/Collision/CollisionSystem.h"
 #include "System/Camera/CameraSystem.h"     // Camera System
 #include "System/Driver/Driver.h"			// EngineCore
 #include "System/Time/ScopedTimer.h"
@@ -40,18 +41,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Transform.h"
 #include "Component/Renderer.h"
 #include "Component/Camera.h"				// Camera
+#include "Component/Collider.h"
 
 #include "Utility/DebugAssert.h"			// DEBUG_ASSERT
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable Window header min & max macros
 
+#include <string>
+#include <cstdio>
 #include <windows.h>			// WinAPI
 #include <GL/glew.h>
 #include <GL/wglew.h>			// glew Windows ext
 #include <GL/GL.h>
-#include <cstdio>
-#include <string>
 
 #undef WIN32_LEAN_AND_MEAN		// Stop defines from spilling into code
 #undef NOMINMAX
@@ -72,7 +74,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f },
-	mvDebugColour { 1.f, .58f, .278f, .0f }
+	mvDebugColour{ 1.f, .58f, .278f, .0f }, mbDebugDraw{ true }
 {
 
 }
@@ -219,38 +221,26 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
 
 void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 {
-	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
+	auto AllObj = EngineCore::GetInstance()->GetSystem<CollisionSystem>()->GetAllColliders();
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();
 	Math::Matrix4 ProjView = _cam.GetProjectionMatrix() * _cam.GetViewMatrix();
 
 	// Get Camera's layer, we only want to draw inclusive stuff
 	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
 
-	AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
-		return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
-	});
-
-	//Shader* s;
-	//
-	//s->UseShader();
-	//s->UploadUniform("Colour", mvDebugColour);
+	Shader* s = shaderlist["Colour Shader"];
+	
+	s->UseShader();
+	s->UploadUniform("Colour", mvDebugColour);
+	s->UploadUniform("ProjectViewMat", ProjView);
 
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
 	{
-		if (Obj.GetFlags() & ActiveFlags)
+		if (Obj->GetOwner()->GetFlags() & ActiveFlags)
 		{
-			//if (Collider* r = Obj.GetComponent<Collider>())
-			//{
-			//	s->UseShader();
-			//
-			//	s->UploadUniform("ProjectViewMat", ProjView);
-			//	s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-			//
-			//	r->Draw();
-			//
-			//	t->UnbindTexture();
-			//}
+			s->UploadUniform("ModelMat", Obj->GetOwner()->GetComponent<Transform>()->GetTransformMatrix());
+			Obj->GetMesh()->UseMesh(GetDrawMode());
 		}
 	}
 }

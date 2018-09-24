@@ -48,7 +48,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <filesystem>
 
 
-#define SETTINGS_DIR  eFileDir::eRoot
+#define SETTINGS_DIR  eFileDir::eCurrent
 #define SETTINGS_FILE "Settings.dyst" 
 
 
