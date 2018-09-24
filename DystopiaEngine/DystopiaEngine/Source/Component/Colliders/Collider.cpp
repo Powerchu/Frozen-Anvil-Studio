@@ -22,12 +22,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	Collider::Collider()
-		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, Colliding{false}
+		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}
 	{
 		
 	}
 	Collider::Collider(const Math::Point3D & _offset)
-		: mv3Offset{ _offset }, mpMesh{ nullptr }, Colliding{ false }
+		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }
 	{
 
 	}
@@ -80,7 +80,7 @@ namespace Dystopia
 	float Collider::DetermineFriction(RigidBody const & b) const
 	{
 		const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetFrictionForce();
-		return 0; // TODO
+		return sqrt(a_fric*b.GetFrictionForce());
 	}
 	AutoArray<CollisionEvent> const & Collider::GetCollisionEvents() const
 	{

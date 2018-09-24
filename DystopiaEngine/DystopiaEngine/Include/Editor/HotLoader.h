@@ -636,7 +636,7 @@ namespace Dystopia
 
 		~Hotloader()
 		{
-			return;
+			//return;
 			CloseHandle(mDll_Handle);
 			CloseHandle(mDll_Overlap.hEvent);
 

@@ -51,7 +51,7 @@ namespace Dystopia
 		//return true;
 
 		FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
-		// TODO: mHotloader->Init();
+		mHotloader->Init();
 		auto const & ArrayDlls = mHotloader->GetDlls();
 		for (auto & elem : ArrayDlls)
 		{
@@ -85,11 +85,8 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::Update(float)
 	{
-		return;
+
 #if EDITOR
-
-		return;
-
 		/*Update Hotloader*/
 		mHotloader->Update();
 		static DLLWrapper * arr[100]{ nullptr };
@@ -134,7 +131,6 @@ namespace Dystopia
 					wrap.mpBehaviour = (BehaviourClone());
 					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Utility::Move(wrap)));
 				}
-
 				++start;
 			}
 		}

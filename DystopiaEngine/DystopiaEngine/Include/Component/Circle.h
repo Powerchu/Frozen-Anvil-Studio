@@ -61,20 +61,23 @@ namespace Dystopia
 		virtual void Unserialise(TextSerialiser&);
 
 		/*Collision Check Functions*/
-		bool isColliding(const Circle & other_col) const;
-		bool isColliding(const Circle * const & other_col) const;
+		bool isColliding(Circle & other_col, Math::Vec3D other_pos);
+		bool isColliding(Circle * const & other_col);
 
 		/*Collision Check Functions*/
-		bool isColliding(const AABB & other_col) const;
-		bool isColliding(const AABB * const & other_col) const;
+		bool isColliding(const AABB & other_col);
+		bool isColliding(const AABB * const & other_col);
 
 		/*Collision Check Functions*/
-		bool isColliding(const Convex & other_col) const;
-		bool isColliding(const Convex * const & other_col) const;
+		bool isColliding(const Convex & other_col);
+		bool isColliding(const Convex * const & other_col);
 
 	private:
 		float m_radius;
 		Math::Vec3D m_originCentre; // GLOBAL COORDINATES
+
+	protected:
+		//CollisionEvent GetCollisionEvent(const Circle & other_col);
 	};
 }
 

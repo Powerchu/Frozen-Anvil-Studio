@@ -81,22 +81,31 @@ namespace Dystopia
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
-			elem.ClearCollisionEvent(); //clear collision table
-		}
-
-		for (auto & elem : ComponentDonor<Convex>::mComponents)
-		{
 			if (elem.GetOwner())
 			{
+				elem.ClearCollisionEvent(); //clear collision table
 				elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
 			}
 		}
+
 		for (auto & elem : ComponentDonor<AABB>::mComponents)
 		{
 			if (elem.GetOwner())
 			{
+				elem.ClearCollisionEvent(); //clear collision table
+				elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+				elem.SetColliding((false));
+				mColliders.push_back(&elem);
+			}
+		}
+
+		for (auto & elem : ComponentDonor<Circle>::mComponents)
+		{
+			if (elem.GetOwner())
+			{
+				elem.ClearCollisionEvent(); //clear collision table
 				elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
@@ -154,24 +163,12 @@ namespace Dystopia
 		return col_a->isColliding(col_b);
 	}
 
-	AutoArray<Collider*> CollisionSystem::GetAllColliders() const
+	bool CollisionSystem::CircleVsCircle(Collider* const& _ColA, Collider* const& _ColB) const
 	{
-		AutoArray<Collider*> ToRet;
-		for (auto & elem : ComponentDonor<Convex>::mComponents)
-		{
-			ToRet.push_back(&elem);
-		}
-		for (auto & elem : ComponentDonor<AABB>::mComponents)
-		{
-			ToRet.push_back(&elem);
-		}
+		const auto col_a = dynamic_cast<Circle * const>(_ColA);
+		const auto col_b = dynamic_cast<Circle * const>(_ColB);
 
-		return Utility::Move(ToRet);
-	}
-
-	bool CollisionSystem::CircleVsCircle(Collider* const& _ColA, Collider* const& _Colb) const
-	{
-		return false;
+		return col_a->isColliding(col_b);
 	}
 
 	bool CollisionSystem::CircleVsAABB(Collider * const & _ColA, Collider * const & _ColB) const
@@ -187,6 +184,21 @@ namespace Dystopia
 	bool CollisionSystem::CircleVsConvex(Collider * const & _ColA, Collider * const & _ColB) const
 	{
 		return false;
+	}
+
+	AutoArray<Collider*> CollisionSystem::GetAllColliders() const
+	{
+		AutoArray<Collider*> ToRet;
+		for (auto & elem : ComponentDonor<Convex>::mComponents)
+		{
+			ToRet.push_back(&elem);
+		}
+		for (auto & elem : ComponentDonor<AABB>::mComponents)
+		{
+			ToRet.push_back(&elem);
+		}
+
+		return Utility::Move(ToRet);
 	}
 
 	CollisionSystem::CollisionSystem()

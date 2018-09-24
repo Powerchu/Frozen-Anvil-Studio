@@ -1,8 +1,8 @@
-#include "Component/Convex.h"
+#include "System/Collision/CollisionEvent.h"
 #include "System/Collision/CollisionSystem.h"
+#include "Component/Convex.h"
 
-#include "Object\GameObject.h"
-#include "System\Collision\CollisionEvent.h"
+#include "Object/GameObject.h"
 
 namespace Dystopia
 {
@@ -27,13 +27,13 @@ namespace Dystopia
 	{
 		if (nullptr != GetOwner())
 		{
-			float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
-			float _yScale = GetOwner()->GetComponent<Transform>()->GetScale().y;
+			const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
+			const float _yScale = GetOwner()->GetComponent<Transform>()->GetScale().y;
 
 			for (auto & elem : mVertices)
 			{
-				elem.mPosition.x = elem.mPosition.x * Math::Abs(_xScale/2);
-				elem.mPosition.y = elem.mPosition.y * Math::Abs(_yScale/2);
+				elem.mPosition.x = elem.mPosition.x * Math::Abs(_xScale);
+				elem.mPosition.y = elem.mPosition.y * Math::Abs(_yScale);
 			}
 		}
 
