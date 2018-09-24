@@ -197,7 +197,10 @@ namespace Dystopia
 		{
 			ToRet.push_back(&elem);
 		}
-
+		for (auto & elem : ComponentDonor<Circle>::mComponents)
+		{
+			ToRet.push_back(&elem);
+		}
 		return Utility::Move(ToRet);
 	}
 
