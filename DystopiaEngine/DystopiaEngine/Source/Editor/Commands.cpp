@@ -77,6 +77,7 @@ namespace Dystopia
 
 	void CommandHandler::UndoCommand()
 	{
+		EndRecording();
 		if (!mDeqUndo.size()) return; 
 
 		if (!mDeqUndo.back()->ExecuteUndo())
@@ -94,6 +95,7 @@ namespace Dystopia
 
 	void CommandHandler::RedoCommand()
 	{
+		EndRecording();
 		if (!mDeqRedo.size()) return;
 
 		if (!mDeqRedo.back()->ExecuteDo())

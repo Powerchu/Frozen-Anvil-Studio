@@ -25,6 +25,13 @@ Dystopia::CommandHandler *gContextComdHND = nullptr;
 
 namespace EGUI
 {
+	static bool IsItemActiveLastFrame()
+	{
+		ImGuiContext g = *GImGui;
+		if (g.ActiveIdPreviousFrame) return g.ActiveIdPreviousFrame == g.CurrentWindow->DC.LastItemId;
+		return false;
+	}
+
 	void SetContext(Dystopia::CommandHandler *_pContext)
 	{
 		gContextComdHND = _pContext;
@@ -237,13 +244,13 @@ namespace EGUI
 			bool changing = false;
 			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max, "%.2f");
 
-			if (ImGui::IsItemClicked()) return eSTART_DRAG;
+			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
 			if (changing) return eDRAGGING;
 			if (ImGui::IsItemDeactivatedAfterChange())
 			{
 				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
 			}
-			if (ImGui::IsItemDeactivated()) return eDEACTIVATED;
+			if (ImGui::IsItemDeactivated())  return eDEACTIVATED;
 			return eNO_CHANGE;
 		}
 
@@ -259,7 +266,7 @@ namespace EGUI
 			bool changing = false;
 			changing = ImGui::DragInt(("###DragInt" + _label).c_str(), _outputInt, _dragSpeed, _min, _max);
 
-			if (ImGui::IsItemClicked()) return eSTART_DRAG;
+			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
 			if (changing) return eDRAGGING;
 			if (ImGui::IsItemDeactivatedAfterChange())
 			{
@@ -269,7 +276,7 @@ namespace EGUI
 			return eNO_CHANGE;
 		}
 
-		eDragStatus VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
+		Array<eDragStatus, 3> VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
 		{
 			std::string field1 = "##VecFieldX", field2 = "##VecFieldY", field3 = "##VecFieldZ";
 			float x, y, z;
@@ -300,21 +307,7 @@ namespace EGUI
 
 			ImGui::PopItemWidth();
 
-			return (statX == eDRAGGING) ? eDRAGGING :
-				   (statY == eDRAGGING) ? eDRAGGING :
-				   (statZ == eDRAGGING) ? eDRAGGING : 
-				   (statX == eSTART_DRAG) ? eSTART_DRAG :
-				   (statY == eSTART_DRAG) ? eSTART_DRAG :
-				   (statZ == eSTART_DRAG) ? eSTART_DRAG :
-				   (statX == eEND_DRAG) ? eEND_DRAG :
-				   (statY == eEND_DRAG) ? eEND_DRAG :
-				   (statZ == eEND_DRAG) ? eEND_DRAG :
-				   (statX == eENTER) ? eENTER :
-				   (statY == eENTER) ? eENTER :
-				   (statZ == eENTER) ? eENTER :
-				   (statX == eDEACTIVATED) ? eDEACTIVATED :
-				   (statY == eDEACTIVATED) ? eDEACTIVATED :
-				   (statZ == eDEACTIVATED) ? eDEACTIVATED : eNO_CHANGE;
+			return Array<eDragStatus, 3>{statX, statY, statZ};
 		}
 
 		bool CollapsingHeader(const std::string& _label)

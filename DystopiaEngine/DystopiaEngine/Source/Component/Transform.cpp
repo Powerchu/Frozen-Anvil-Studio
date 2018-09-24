@@ -255,42 +255,55 @@ void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 void Dystopia::Transform::EditorUI(void) noexcept
 {
 #if EDITOR
-	switch (EGUI::Display::VectorFields("Position", &mPosition, 0.01f, -FLT_MAX, FLT_MAX))
+	auto arrResult = EGUI::Display::VectorFields("Position", &mPosition, 0.01f, -FLT_MAX, FLT_MAX);
+	for (auto &e : arrResult)
 	{
-	case EGUI::eDragStatus::eEND_DRAG:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
-	case EGUI::eDragStatus::eENTER:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
-	case EGUI::eDragStatus::eDRAGGING:
-		mbChanged = true;
-		break;
-	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mPosition, &mbChanged);
-		break;
-	case EGUI::eDragStatus::eDEACTIVATED:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
+		switch (e)
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eDRAGGING:
+			mbChanged = true;
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mPosition, &mbChanged);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		}
 	}
 
-	switch (EGUI::Display::VectorFields("Scale", &mScale, 0.01f, -FLT_MAX, FLT_MAX))
+	arrResult = EGUI::Display::VectorFields("Scale", &mScale, 0.01f, -FLT_MAX, FLT_MAX);
+	for (auto &e : arrResult)
 	{
-	case EGUI::eDragStatus::eEND_DRAG:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
-	case EGUI::eDragStatus::eENTER:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
-	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale, &mbChanged);
-		break;
-	case EGUI::eDragStatus::eDRAGGING:
-		mbChanged = true;
-		break;
-	case EGUI::eDragStatus::eDEACTIVATED:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
+		switch (e)
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			PrintToConsoleLog("End Drag");
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			PrintToConsoleLog("Enter");
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale, &mbChanged);
+			PrintToConsoleLog("Start Drag");
+			break;
+		case EGUI::eDragStatus::eDRAGGING:
+			mbChanged = true;
+			PrintToConsoleLog("Dragging");
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			PrintToConsoleLog("Deactivated");
+			break;
+		}
 	}
 
 #endif 

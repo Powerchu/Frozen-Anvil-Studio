@@ -9,7 +9,10 @@
 	If none exist, either I forgot, or I didnt intend for you to use those. 
 	
 	If you need anything specificly, lemme know and I will create a user-friendly one for you. 
-	Else, just hack it - include imgui.h and use more functions available at your own risk.
+	Else, just hack it - include imgui.h and use more functions.
+
+	NOTE: Not updated usage examples for some of the functions. Check components that already
+		  implemented it. Will update when have spare time.
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -202,8 +205,8 @@ namespace EGUI
 					break;
 				}
 		======================================================================================================================= */
-		eDragStatus VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, 
-						  float _min = 0.0f, float _max = 1.0f, float _width= 50.f);
+		Array<eDragStatus,3> VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, 
+							float _min = 0.0f, float _max = 1.0f, float _width= 50.f);
 		/* =======================================================================================================================
 		Brief:
 				Creats a check box for a boolean variable. Returns true when the check box is clicked, toggles the _pOutBool

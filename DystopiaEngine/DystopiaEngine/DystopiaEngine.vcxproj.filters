@@ -206,7 +206,6 @@
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClCompile>
@@ -230,6 +229,9 @@
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp">
       <Filter>Game Engine\SubSystems\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\Gizmo.cpp">
+      <Filter>Editor\Gizmo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -583,12 +585,6 @@
     <ClInclude Include="Include\Component\CollisionEvent.h">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Utility\ComponentGUID.h">
-      <Filter>Utility\GUID</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\GUID.h">
-      <Filter>Utility\GUID</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\HotLoader.h">
       <Filter>Editor\Hotloader</Filter>
     </ClInclude>
@@ -610,6 +606,9 @@
     </ClInclude>
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h">
       <Filter>Game Engine\Systems\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\Gizmo.h">
+      <Filter>Editor\Gizmo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -873,6 +872,9 @@
     </Filter>
     <Filter Include="Editor\Hotloader">
       <UniqueIdentifier>{83587c6d-76b1-44d6-8760-588fd1e7509b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Gizmo">
+      <UniqueIdentifier>{c678684a-2024-498c-b278-53911ea1ab17}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -539,6 +539,9 @@ namespace Dystopia
 
 							RemoveFocus();
 							mpSceneSystem->LoadScene(std::string{ path.begin(), path.end() });
+							for (auto& e : mArrTabs)
+								e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
+							mpEditorEventSys->Fire(EDITOR_SCENE_CHANGED);
 							if (pos != std::string::npos)
 							{
 								name.erase(pos);
@@ -616,14 +619,22 @@ namespace Dystopia
 		if (mpInput->IsKeyTriggered(KEY_LMOUSE))
 		{
 			mpGuiSystem->UpdateMouse(KEY_LMOUSE, true);
-			mpEditorEventSys->Fire(eEditorEvents::EDITOR_LCLICK);
+			mpEditorEventSys->Fire(EDITOR_LCLICK);
 		}
 		if (mpInput->IsKeyTriggered(KEY_RMOUSE))
 		{
 			mpGuiSystem->UpdateMouse(KEY_RMOUSE, true);
-			mpEditorEventSys->Fire(eEditorEvents::EDITOR_RCLICK);
+			mpEditorEventSys->Fire(EDITOR_RCLICK);
 		}
-		mpGuiSystem->UpdateScroll(0, mpInput->GetMouseWheel());
+		float scrollV = mpInput->GetMouseWheel();
+		if (scrollV)
+		{
+			mpGuiSystem->UpdateScroll(0, scrollV);
+			mpEditorEventSys->Fire(scrollV > 0 ? EDITOR_SCROLL_UP : EDITOR_SCROLL_DOWN);
+		}
+
+
+
 		if (mpInput->IsKeyPressed(KEY_CTRL))
 		{
 			if (mpInput->IsKeyTriggered(KEY_Z))			mpEditorEventSys->Fire(EDITOR_HOTKEY_UNDO);
@@ -639,7 +650,7 @@ namespace Dystopia
 			else if (mpInput->IsKeyTriggered(KEY_P))	mpEditorEventSys->Fire(EDITOR_HOTKEY_PLAY);
 		}
 		else if (mpInput->IsKeyTriggered(KEY_DELETE))	
-			mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_DELETE);
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_DELETE);
 	}
 
 	void Editor::UpdateGameModeKeys()
@@ -651,32 +662,32 @@ namespace Dystopia
 	
 	void Editor::InstallHotkeys()
 	{
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED)->Bind(&Editor::ReloadDLL, this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_UNDO)->Bind(&Editor::EditorUndo, this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_REDO)->Bind(&Editor::EditorRedo, this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_COPY)->Bind(&Editor::EditorCopy, this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_CUT)->Bind(&Editor::EditorCut, this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PASTE)->Bind(&Editor::EditorPaste, this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_DELETE)->Bind(&Editor::EditorDeleteFocus, this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_SAVE)->Bind(&Editor::SaveProc, this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_SAVEAS)->Bind(&Editor::SaveAsProc, this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PLAY)->Bind(&Editor::GamePlay, this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_STOP)->Bind(&Editor::GameStop, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DLL_CHANGED)->Bind(&Editor::ReloadDLL, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_UNDO)->Bind(&Editor::EditorUndo, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_REDO)->Bind(&Editor::EditorRedo, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_COPY)->Bind(&Editor::EditorCopy, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_CUT)->Bind(&Editor::EditorCut, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PASTE)->Bind(&Editor::EditorPaste, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DELETE)->Bind(&Editor::EditorDeleteFocus, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVE)->Bind(&Editor::SaveProc, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVEAS)->Bind(&Editor::SaveAsProc, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PLAY)->Bind(&Editor::GamePlay, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_STOP)->Bind(&Editor::GameStop, this);
 	}
 
 	void Editor::UnInstallHotkeys()
 	{
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED)->Unbind(this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_UNDO)->Unbind(this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_REDO)->Unbind(this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_COPY)->Unbind(this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_CUT)->Unbind(this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PASTE)->Unbind(this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_DELETE)->Unbind(this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_SAVE)->Unbind(this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_SAVEAS)->Unbind(this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_PLAY)->Unbind(this);
-		mpEditorEventSys->GetEvent(eEditorEvents::EDITOR_HOTKEY_STOP)->Unbind(this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DLL_CHANGED)->Unbind(this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_UNDO)->Unbind(this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_REDO)->Unbind(this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_COPY)->Unbind(this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_CUT)->Unbind(this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PASTE)->Unbind(this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DELETE)->Unbind(this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVE)->Unbind(this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVEAS)->Unbind(this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PLAY)->Unbind(this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_STOP)->Unbind(this);
 	}
 
 	void Editor::SetFocus(GameObject& _rObj)
