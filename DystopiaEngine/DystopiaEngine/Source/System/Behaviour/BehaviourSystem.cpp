@@ -48,10 +48,10 @@ namespace Dystopia
 		/*Init Hotloader*/
 #if EDITOR
 
-		//return true;
+		return true;
 
 		FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
-		mHotloader->Init();
+		//mHotloader->Init();
 		auto const & ArrayDlls = mHotloader->GetDlls();
 		for (auto & elem : ArrayDlls)
 		{
@@ -85,8 +85,10 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::Update(float)
 	{
-
+		return;
 #if EDITOR
+		return;
+
 		/*Update Hotloader*/
 		mHotloader->Update();
 		static DLLWrapper * arr[100]{ nullptr };

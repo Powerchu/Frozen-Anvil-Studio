@@ -16,11 +16,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/Array.h"
 #include "IO/TextSerialiser.h"
 
-
-
-
-
-
 Dystopia::SceneSystem::SceneSystem(void) :
 	mpCurrScene{ nullptr }, mpNextScene{ nullptr }
 {

@@ -108,8 +108,8 @@ namespace Dystopia
 		{
 			mpGfxSys->Update(mDelta);
 			mpInputSys->Update(mDelta);
-			mpColSys->FixedUpdate(mDelta);
 			mpPhysSys->FixedUpdate(mDelta);
+			mpColSys->FixedUpdate(mDelta);
 			mpSceneCamera->GetComponent<Transform>()->SetGlobalPosition(mpBoxObject->GetComponent<Transform>()->GetGlobalPosition());
 			if (mpInputSys->IsKeyPressed(eUserButton::BUTTON_SPACEBAR))
 			{
