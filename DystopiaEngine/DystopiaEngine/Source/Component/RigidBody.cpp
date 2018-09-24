@@ -397,6 +397,11 @@ namespace Dystopia
 		return mfFriction;
 	}
 
+	float RigidBody::GetRestitution() const
+	{
+		return mfRestitution;
+	}
+
 	float RigidBody::GetGravityScalar() const
 	{
 		return mfGravityScale;

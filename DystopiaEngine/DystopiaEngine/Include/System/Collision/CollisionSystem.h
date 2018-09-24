@@ -35,8 +35,6 @@ namespace Dystopia
 		virtual void LoadDefaults(void) override { };
 		virtual void LoadSettings(TextSerialiser&) override { };
 
-		void InsertCollider(Collider * const & _Col);
-
 		bool AABBvsAABB(Collider  * const & _ColA,
 			            Collider  * const & _ColB) const;
 
@@ -47,6 +45,9 @@ namespace Dystopia
 							Collider * const & _Colb) const;
 
 		bool CircleVsAABB(Collider * const & _ColA,
+							Collider * const & _ColB) const;
+
+		bool AABBvsCircle(Collider * const & _ColA,
 							Collider * const & _ColB) const;
 
 		bool CircleVsConvex(Collider * const & _ColA,

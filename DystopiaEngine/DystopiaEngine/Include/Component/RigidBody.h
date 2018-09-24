@@ -141,6 +141,7 @@ namespace Dystopia
 		Transform* GetOwnerTransform() const;
 		float GetAngle() const;
 		float GetFrictionForce() const;
+		float GetRestitution() const;
 		float GetGravityScalar() const;
 		float GetMass() const;
 		float GetInverseMass() const;

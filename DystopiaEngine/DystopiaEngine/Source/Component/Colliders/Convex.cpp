@@ -1,5 +1,5 @@
 #include "Component/Convex.h"
-#include "Component/CollisionEvent.h"
+#include "System/Collision/CollisionSystem.h"
 
 #include "Math/Vector4.h"
 #include "Object/GameObject.h"
@@ -251,7 +251,7 @@ namespace Dystopia
 				col_info.mCollisionPoint = ClosestEdge.mPos;
 				col_info.mEdgeVector     = ClosestEdge.mVec3;
 				col_info.mEdgeNormal     = ClosestEdge.mNorm3;
-				col_info.mdPeneDepth      = ProjectDis;
+				col_info.mdPeneDepth     = ProjectDis;
 
 				return col_info;
 			}

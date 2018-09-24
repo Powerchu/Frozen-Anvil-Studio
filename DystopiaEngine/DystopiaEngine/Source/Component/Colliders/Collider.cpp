@@ -14,9 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Component/Collider.h"
-
+#include "Component/RigidBody.h"
 #include "Object/GameObject.h"
 #include "System/Graphics/VertexDefs.h"
+
 namespace Dystopia
 {
 	Collider::Collider()
@@ -29,25 +30,42 @@ namespace Dystopia
 	{
 
 	}
+
 	void Collider::Load(void)
 	{
 
 	}
+
 	void Collider::Init(void)
 	{
 
 	}
+
 	void Collider::OnDestroy(void)
 	{
 
 	}
+
 	void Collider::Unload(void)
 	{
 
 	}
+
 	Collider * Collider::Duplicate() const
 	{
 		return nullptr;
+	}
+
+	float Collider::DetermineRestitution(RigidBody const & b) const
+	{
+		const float a_rest = GetOwner()->GetComponent<RigidBody>()->GetRestitution();
+		return Math::Min(a_rest, b.GetRestitution());
+	}
+
+	float Collider::DetermineFriction(RigidBody const & b) const
+	{
+		const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetFrictionForce();
+		return 0; // TODO
 	}
 	AutoArray<CollisionEvent> const & Collider::GetCollisionEvents() const
 	{
@@ -63,46 +81,57 @@ namespace Dystopia
 	{
 		return mbColliding;
 	}
+
 	void Collider::SetColliding(bool _b)
 	{
 		mbColliding = _b;
 	}
+
 	void Collider::SetPosition(Math::Point3D const & _point)
 	{
 		mPosition = _point;
 	}
+
 	Math::Point3D Collider::GetPosition() const
 	{
 		return mPosition;
 	}
+
 	Math::Vec3D Collider::GetOffSet() const
 	{
 		return this->mv3Offset;
 	}
+
 	AutoArray<Vertex> Collider::GetVertexBuffer() const
 	{
 		return mDebugVertices;
 	}
+
 	AutoArray<short> Collider::GetIndexBuffer() const
 	{
 		return mIndexBuffer;
 	}
+
 	void Collider::SetMesh(Mesh * _ptr)
 	{
 		mpMesh = _ptr;
 	}
+
 	Mesh * Collider::GetMesh() const
 	{
 		return mpMesh;
 	}
+
 	void Collider::Serialise(TextSerialiser&) const
 	{
 
 	}
+
 	void Collider::Unserialise(TextSerialiser&)
 	{
 
 	}
+
 	Collider::~Collider()
 	{
 
@@ -128,7 +157,5 @@ namespace Dystopia
 		  second    = copy;
 
 		} while (third != mDebugVertices.end());
-
-
 	}
 }

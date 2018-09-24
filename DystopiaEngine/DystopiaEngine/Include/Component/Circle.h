@@ -64,6 +64,14 @@ namespace Dystopia
 		bool isColliding(const Circle & other_col) const;
 		bool isColliding(const Circle * const & other_col) const;
 
+		/*Collision Check Functions*/
+		bool isColliding(const AABB & other_col) const;
+		bool isColliding(const AABB * const & other_col) const;
+
+		/*Collision Check Functions*/
+		bool isColliding(const Convex & other_col) const;
+		bool isColliding(const Convex * const & other_col) const;
+
 	private:
 		float m_radius;
 		Math::Vec3D m_originCentre; // GLOBAL COORDINATES

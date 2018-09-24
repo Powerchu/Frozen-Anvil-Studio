@@ -70,6 +70,10 @@ namespace Dystopia
 			{ CollisionTable{ eColliderType::AABB    ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::AABB }    ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
+			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::CIRCLE}    ,&CollisionSystem::CircleVsCircle },
+			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::AABB}      ,&CollisionSystem::CircleVsAABB   },
+			{ CollisionTable{ eColliderType::AABB, eColliderType::CIRCLE}      ,&CollisionSystem::AABBvsCircle   },
+			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::CONVEX}    ,&CollisionSystem::CircleVsConvex}
 			};
 			return i;
 		}();
@@ -135,11 +139,6 @@ namespace Dystopia
 
 	}
 
-	void CollisionSystem::InsertCollider(Collider * const &)
-	{
-		//this->mArrOfCollider.push_back(_Col);
-	}
-
 	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const
 	{
 		const auto col_a = dynamic_cast<AABB * const>(_ColA);
@@ -177,6 +176,11 @@ namespace Dystopia
 	}
 
 	bool CollisionSystem::CircleVsAABB(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		return false;
+	}
+
+	bool CollisionSystem::AABBvsCircle(Collider * const & _ColA, Collider * const & _ColB) const
 	{
 		return false;
 	}

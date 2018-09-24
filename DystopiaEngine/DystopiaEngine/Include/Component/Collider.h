@@ -140,6 +140,11 @@ namespace Dystopia
 		/************************************************************************
 		 * Member Functions
 		 ***********************************************************************/
+
+		float DetermineRestitution(RigidBody const & b) const;
+
+		float DetermineFriction(RigidBody const & b) const;
+
 		 /*Get Array of collision event*/
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
 

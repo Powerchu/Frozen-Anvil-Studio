@@ -143,6 +143,4 @@ namespace Dystopia
 	{
 		UNUSED_PARAMETER(serial);
 	}
-
-		
 }
