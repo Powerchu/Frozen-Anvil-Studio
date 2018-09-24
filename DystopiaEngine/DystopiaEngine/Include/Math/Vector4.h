@@ -27,7 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/MathUtility.h"
 
 #if defined(DEBUG) | defined(_DEBUG)
-#include "Utility\DebugAssert.h"
+#include "Utility/DebugAssert.h"
 #endif // Debug only includes
 
 #if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
