@@ -19,13 +19,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vector4.h"	// Vector4
 #include "Math/Matrix4.h"	// Matrix4
 
-#include <cmath>			// sin, cos, asin, acos
-
 
 namespace Math
 {
 	#define _CALL	__vectorcall
 	
+	class Angle;
+
 	/*!
 	\struct Quaternion
 	\brief
@@ -38,7 +38,7 @@ namespace Math
 
 		inline Quaternion(void) noexcept;
 		inline Quaternion(const Quaternion&) noexcept;
-		inline Quaternion(float x, float y = 0, float z = 0, float w = 0) noexcept;
+		inline explicit Quaternion(float x, float y = 0, float z = 0, float w = 0) noexcept;
 		inline explicit Quaternion(__m128) noexcept;
 
 
@@ -49,18 +49,6 @@ namespace Math
 
 		inline Quaternion& _CALL Identity(void);
 
-		// TODO
-		// Computes the dot product of this Quaternion and a given Quaternion
-		inline float _CALL Dot(const Quaternion) const;
-
-		// TODO
-		// Computes the cross product of this Quaternion and a given Quaternion 
-		inline Quaternion& _CALL Cross(const Quaternion);
-
-		// TODO
-		// Projects the Quaternion onto the given Quaternion
-		inline Quaternion& _CALL Project(const Quaternion);
-
 		inline float _CALL Magnitude(void) const;
 		inline float _CALL MagnitudeSqr(void) const;
 
@@ -68,6 +56,8 @@ namespace Math
 
 		template <NegateFlag FLAGS>
 		inline Quaternion& _CALL Negate(void) noexcept;
+
+		Vector4 _CALL Rotate(Vector4) const noexcept;
 
 		Matrix4 _CALL Matrix(void) const noexcept;
 
@@ -79,6 +69,7 @@ namespace Math
 		//inline const float _CALL operator[](const unsigned _nIndex) const;
 
 		inline Quaternion  _CALL operator-(void) const;
+		inline Quaternion  _CALL operator* (const Quaternion);
 		inline Quaternion& _CALL operator*=(const float);
 		inline Quaternion& _CALL operator*=(const Quaternion);
 		inline Quaternion& _CALL operator/=(const float);
@@ -88,8 +79,7 @@ namespace Math
 		
 		// ================================= QUATERNION GENERATORS ================================= // 
 
-		static inline Quaternion _CALL FromEuler   (float _x, float _y, float _z);
-		static inline Quaternion _CALL FromEulerDeg(float _x, float _y, float _z);
+		static Quaternion _CALL FromEuler(Angle _x, Angle _y, Angle _z);
 
 
 	private:
@@ -120,7 +110,6 @@ namespace Math
 
 	inline Quaternion _CALL operator-(const Quaternion, const Quaternion);
 	inline Quaternion _CALL operator+(const Quaternion, const Quaternion);
-	inline Quaternion _CALL operator*(const Quaternion, const Quaternion);
 	inline Quaternion _CALL operator*(const float, const Quaternion);
 	inline Quaternion _CALL operator*(const Quaternion, const float);
 	inline Quaternion _CALL operator/(const Quaternion, const float);
@@ -257,8 +246,7 @@ inline Math::Quaternion& _CALL Math::Quaternion::operator*=(const float _fScalar
 
 inline Math::Quaternion&_CALL Math::Quaternion::operator*=(const Quaternion _rhs)
 {
-	*this = *this * _rhs;
-	return *this;
+	return *this = *this * _rhs;
 }
 
 inline Math::Quaternion& _CALL Math::Quaternion::operator/=(const float _fScalar)
@@ -291,11 +279,6 @@ inline Math::Quaternion _CALL Math::operator-(Quaternion _lhs, const Quaternion 
 inline Math::Quaternion _CALL Math::operator+(Quaternion _lhs, const Quaternion _rhs)
 {
 	return _lhs += _rhs;
-}
-
-inline Math::Quaternion _CALL Math::operator*(Quaternion _lhs, const Quaternion _rhs)
-{
-	return _lhs *= _rhs;
 }
 
 inline Math::Quaternion _CALL Math::operator*(const float _lhs, Quaternion _rhs)

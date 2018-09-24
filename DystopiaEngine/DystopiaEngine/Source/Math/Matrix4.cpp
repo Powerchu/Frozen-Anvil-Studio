@@ -18,17 +18,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Math/Matrix4.h"		// File Header
 
+#include <cmath>				// sinf, cosf
 #include <xmmintrin.h>			// SSE
 #include <emmintrin.h>			// SSE 2
 #include <tmmintrin.h>			// SSE 3
 #include <smmintrin.h>			// SSE 4.1
 
-float _vectorcall Math::Matrix4::Determinant(void) const
+#define _CALL __vectorcall
+
+
+float _CALL Math::Matrix4::Determinant(void) const
 {
 	return .0f;
 }
 
-Math::Matrix4& _vectorcall Math::Matrix4::Inverse(void)
+Math::Matrix4& _CALL Math::Matrix4::Inverse(void)
 {
 	/* Block matrix method
 
@@ -56,7 +60,7 @@ Math::Matrix4& _vectorcall Math::Matrix4::Inverse(void)
 	return *this;
 }
 
-Math::Matrix4& _vectorcall Math::Matrix4::AffineInverse(void)
+Math::Matrix4& _CALL Math::Matrix4::AffineInverse(void)
 {
 	Vector4 mag{ .0f, .0f, .0f, 1.f };
 	mag += mData[0] * mData[0];
@@ -78,4 +82,61 @@ Math::Matrix4& _vectorcall Math::Matrix4::AffineInverse(void)
 
 	return *this = inverse.Transpose();
 }
+
+
+Math::Matrix4 _CALL Math::RotateX(Angle _fAngle)
+{
+	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
+	return Matrix4{ 1.f, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1 };
+}
+
+Math::Matrix4 _CALL Math::RotateY(Angle _fAngle)
+{
+	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
+	return Matrix4{ c, 0, s, 0, 0, 1.f, 0, 0, -s, 0, c, 0, 0, 0, 0, 1.f };
+}
+
+Math::Matrix4 _CALL Math::RotateZ(Angle _fAngle)
+{
+	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
+	return Matrix4{ c, -s, 0, 0, s, c, 0, 0, 0, 0, 1.f, 0, 0, 0, 0, 1.f };
+}
+
+
+Math::Matrix4 _CALL Math::RotXTrans(Angle _fAngle, Vector4 _vTrans)
+{
+	return RotXTrans(_fAngle, _vTrans.x, _vTrans.y, _vTrans.z);
+}
+
+Math::Matrix4 _CALL Math::RotXTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
+{
+	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
+	return Matrix4{ 1.f, 0, 0, _fTranslateX, 0, c, -s, _fTranslateY, 0, s, c, _fTranslateZ, 0, 0, 0, 1 };
+}
+
+Math::Matrix4 _CALL Math::RotYTrans(Angle _fAngle, Vector4 _vTrans)
+{
+	return RotYTrans(_fAngle, _vTrans.x, _vTrans.y, _vTrans.z);
+}
+
+Math::Matrix4 _CALL Math::RotYTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
+{
+	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
+	return Matrix4{ c, 0, s, _fTranslateX, 0, 1.f, 0, _fTranslateY, -s, 0, c, _fTranslateZ, 0, 0, 0, 1.f };
+}
+
+Math::Matrix4 _CALL Math::RotZTrans(Angle _fAngle, Vector4 _vTrans)
+{
+	return RotZTrans(_fAngle, _vTrans.x, _vTrans.y, _vTrans.z);
+}
+
+Math::Matrix4 _CALL Math::RotZTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
+{
+	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
+	return Matrix4{ c, -s, 0, _fTranslateX, s, c, 0, _fTranslateY, 0, 0, 1.f, _fTranslateZ, 0, 0, 0, 1.f };
+}
+
+
+#undef _CALL
+
 

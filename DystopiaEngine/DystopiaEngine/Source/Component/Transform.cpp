@@ -155,22 +155,20 @@ void Dystopia::Transform::SetGlobalPosition(const float _x, const float _y, cons
 }
 
 
+void Dystopia::Transform::SetRotation(const Math::Angle _x, const Math::Angle _y, const Math::Angle _z)
+{
+	mRotation = mRotation.FromEuler(_x, _y, _z);
+}
+
 Math::Quaternion Dystopia::Transform::GetGlobalRotation(void) const
 {
 	if (mpParent)
-		return mpParent->GetGlobalRotation() + GetRotation();
+		return mpParent->GetGlobalRotation() * GetRotation();
 	
 	return GetRotation();
 }
-/*
-Math::Vec4 Dystopia::Transform::GetGlobalRotationDeg(void) const
-{
-	if (mpParent)
-		return mpParent->GetGlobalRotationDeg() + GetRotationDeg();
-	
-	return GetRotationDeg();
-}
-*/
+
+
 Math::Vec3D Dystopia::Transform::GetGlobalScale(void) const
 {
 	if (mpParent)

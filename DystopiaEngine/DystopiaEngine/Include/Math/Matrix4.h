@@ -24,14 +24,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vector4.h"		// Vector4
 #include "Math/Angles.h"		// Angle
 
-#include <new>					// nothrow_t
-#include <cmath>				// sqrtf
-#include <exception>			// bad_alloc
-#include <xmmintrin.h>			// SSE
-#include <emmintrin.h>			// SSE 2
-#include <tmmintrin.h>			// SSE 3
-#include <smmintrin.h>			// SSE 4.1
-
 namespace Math
 {
 	#define _CALL	__vectorcall
@@ -121,16 +113,16 @@ namespace Math
 	inline Matrix4 _CALL Scale(float _fScaleX, float _fScaleY, float _fScaleZ = 1);
 	inline Matrix4 _CALL Translate(const Vector4);
 	inline Matrix4 _CALL Translate(float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
-	inline Matrix4 _CALL RotateX(Angle _fAngle);
-	inline Matrix4 _CALL RotateY(Angle _fAngle);
-	inline Matrix4 _CALL RotateZ(Angle _fAngle);
 
-	inline Matrix4 _CALL RotYTrans(Angle _fAngle, Vector4);
-	inline Matrix4 _CALL RotYTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
-	inline Matrix4 _CALL RotXTrans(Angle _fAngle, Vector4);
-	inline Matrix4 _CALL RotXTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
-	inline Matrix4 _CALL RotZTrans(Angle _fAngle, Vector4);
-	inline Matrix4 _CALL RotZTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
+	Matrix4 _CALL RotateX(Angle _fAngle);
+	Matrix4 _CALL RotateY(Angle _fAngle);
+	Matrix4 _CALL RotateZ(Angle _fAngle);
+	Matrix4 _CALL RotYTrans(Angle _fAngle, Vector4);
+	Matrix4 _CALL RotYTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
+	Matrix4 _CALL RotXTrans(Angle _fAngle, Vector4);
+	Matrix4 _CALL RotXTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
+	Matrix4 _CALL RotZTrans(Angle _fAngle, Vector4);
+	Matrix4 _CALL RotZTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
 
 
 	// ======================================== OPERATORS ======================================== // 
@@ -283,58 +275,6 @@ inline Math::Matrix4 _CALL Math::Translate(float _fTranslateX, float _fTranslate
 	return Matrix4{ 1.f, 0, 0, _fTranslateX, 0, 1.f, 0, _fTranslateY, 0, 0, 1.f, _fTranslateZ, 0, 0, 0, 1.f };
 }
 
-inline Math::Matrix4 _CALL Math::RotateX(Angle _fAngle)
-{
-	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
-	return Matrix4{ 1.f, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1 };
-}
-
-inline Math::Matrix4 _CALL Math::RotateY(Angle _fAngle)
-{
-	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
-	return Matrix4{ c, 0, s, 0, 0, 1.f, 0, 0, -s, 0, c, 0, 0, 0, 0, 1.f };
-}
-
-inline Math::Matrix4 _CALL Math::RotateZ(Angle _fAngle)
-{
-	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
-	return Matrix4{ c, -s, 0, 0, s, c, 0, 0, 0, 0, 1.f, 0, 0, 0, 0, 1.f };
-}
-
-
-inline Math::Matrix4 _CALL Math::RotXTrans(Angle _fAngle, Vector4 _vTrans)
-{
-	return RotXTrans(_fAngle, _vTrans.x, _vTrans.y, _vTrans.z);
-}
-
-inline Math::Matrix4 _CALL Math::RotXTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
-{
-	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
-	return Matrix4{ 1.f, 0, 0, _fTranslateX, 0, c, -s, _fTranslateY, 0, s, c, _fTranslateZ, 0, 0, 0, 1 };
-}
-
-inline Math::Matrix4 _CALL Math::RotYTrans(Angle _fAngle, Vector4 _vTrans)
-{
-	return RotYTrans(_fAngle, _vTrans.x, _vTrans.y, _vTrans.z);
-}
-
-inline Math::Matrix4 _CALL Math::RotYTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
-{
-	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
-	return Matrix4{ c, 0, s, _fTranslateX, 0, 1.f, 0, _fTranslateY, -s, 0, c, _fTranslateZ, 0, 0, 0, 1.f };
-}
-
-inline Math::Matrix4 _CALL Math::RotZTrans(Angle _fAngle, Vector4 _vTrans)
-{
-	return RotZTrans(_fAngle, _vTrans.x, _vTrans.y, _vTrans.z);
-}
-
-inline Math::Matrix4 _CALL Math::RotZTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ)
-{
-	float s = sinf(_fAngle.Radians()), c = cosf(_fAngle.Radians());
-	return Matrix4{ c, -s, 0, _fTranslateX, s, c, 0, _fTranslateY, 0, 0, 1.f, _fTranslateZ, 0, 0, 0, 1.f };
-}
-
 
 
 // ============================================ OPERATOR OVERLOADING ============================================ // 
@@ -445,10 +385,10 @@ inline Math::Vector4 _CALL Math::Matrix4::operator* (const Vector4 _rhs) const
 	dot3 = mData[2] * _rhs;
 	dot4 = mData[3] * _rhs;
 
-	dot1.mData = _mm_hadd_ps(dot1.GetRaw(), dot2.GetRaw());
-	dot3.mData = _mm_hadd_ps(dot3.GetRaw(), dot4.GetRaw());
+	dot1.HorizontalAdd(dot2);
+	dot3.HorizontalAdd(dot4);
 
-	return Vector4{ _mm_hadd_ps(dot1.GetRaw(), dot3.GetRaw()) };
+	return dot1.HorizontalAdd(dot3);
 
 #else								// Fallback (SSE 2)
 	

@@ -205,7 +205,6 @@
     <ClCompile Include="Source\Component\Colliders\Circle.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClCompile>
@@ -229,6 +228,9 @@
     </ClCompile>
     <ClCompile Include="Source\Component\CharacterController.cpp">
       <Filter>Game Engine\Components\Physics\Character Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Vector4.cpp">
+      <Filter>Math\Vector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
