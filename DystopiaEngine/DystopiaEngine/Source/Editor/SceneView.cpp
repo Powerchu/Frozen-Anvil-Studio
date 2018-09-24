@@ -75,7 +75,7 @@ namespace Dystopia
 		GameObject *p = Factory::CreateCamera("Scene Camera");
 		mpSceneCamera = GetCurrentScene()->InsertGameObject(Utility::Move(*p));
 		mpSceneCamera->GetComponent<Camera>()->Init();
-		mpSceneCamera->GetComponent<Transform>()->SetScale(Math::Vec4{ 1.f, 1.f, 1.f });
+		mpSceneCamera->GetComponent<Transform>()->SetScale(Math::Vec3D{ 1.f, 1.f, 1.f });
 		delete p;
 
 		// Sample Box Object
@@ -88,6 +88,17 @@ namespace Dystopia
 		mpBoxObject->GetComponent<Collider>()->Init();
 		delete b;
 
+		// Sample Circle Object
+		GameObject *c = Factory::CreateCircle("Circle Object");
+		Texture2D* _ct = new Texture2D{ "Resource/Editor/red_circle.png" };
+		mpCircleObject = GetCurrentScene()->InsertGameObject(Utility::Move(*c));
+		mpCircleObject->GetComponent<RigidBody>()->Init();
+		mpCircleObject->GetComponent<RigidBody>()->Set_IsStatic(true);
+		mpCircleObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 64.f, 64.f, 1.f });
+		mpCircleObject->GetComponent<Renderer>()->SetTexture(_ct);
+		mpCircleObject->GetComponent<Collider>()->Init();
+		delete c;
+
 		// Sample Static Object
 		GameObject *s = Factory::CreateStaticBox("Static Box");
 		Texture2D* _st = new Texture2D{ "Resource/Editor/white_box.png" };
@@ -95,7 +106,7 @@ namespace Dystopia
 		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
 		mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
 		mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition ({ 0, -185.f, 0 });
-		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 2048.f, 32.f, 1.f });
+		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 2048.f, 32.f, 1.f });
 		mpStaticBoxObject->GetComponent<Collider>()->Init();
 		mpStaticBoxObject->GetComponent<Renderer>()->SetTexture(_st);
 		delete s;
@@ -110,14 +121,14 @@ namespace Dystopia
 			mpInputSys->Update(mDelta);
 			mpPhysSys->FixedUpdate(mDelta);
 			mpColSys->FixedUpdate(mDelta);
-			mpSceneCamera->GetComponent<Transform>()->SetGlobalPosition(mpBoxObject->GetComponent<Transform>()->GetGlobalPosition());
+			//mpSceneCamera->GetComponent<Transform>()->SetGlobalPosition(mpBoxObject->GetComponent<Transform>()->GetGlobalPosition());
 			if (mpInputSys->IsKeyPressed(eUserButton::BUTTON_SPACEBAR))
 			{
 				mpBoxObject->GetComponent<RigidBody>()->AddForce({5.0f,20.0F,0});
 				/*
 
-				mpBoxObject2->GetComponent<Transform>()->SetGlobalPosition({ 0,185.0F,0,0 });
-				mpBoxObject2->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });*/
+				mpCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 0,185.0F,0,0 });
+				mpCircleObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });*/
 			}
 			if (mpInputSys->IsKeyTriggered(eUserButton::MOUSE_M))
 			{

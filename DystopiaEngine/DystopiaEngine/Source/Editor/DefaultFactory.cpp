@@ -86,6 +86,22 @@ namespace Dystopia
 			pObject->AddComponent<Convex>();
 			return pObject;
 		}
+
+		GameObject * CreateCircle(const std::string & _name)
+		{
+			GameObject *pObject = CreateGameObj(_name);
+			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
+			p->SetOwner(pObject);
+			p->Init();
+			pObject->AddComponent(p, typename RigidBody::TAG{});
+
+			auto g = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			g->SetOwner(pObject);
+			pObject->AddComponent(g, typename Renderer::TAG{});
+
+			pObject->AddComponent<Circle>();
+			return pObject;
+		}
 	}
 }
 #endif //EDITOR

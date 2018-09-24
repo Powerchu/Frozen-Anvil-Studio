@@ -39,8 +39,8 @@ namespace Dystopia
 
 		for (auto & elem : mVertices)
 		{
-			auto Offest = GetOffSet();
-			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x + Offest.x, elem.mPosition.y + Offest.y , elem.mPosition.z + Offest.z });
+			auto offest = GetOffSet();
+			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x + offest.x, elem.mPosition.y + offest.y , elem.mPosition.z + offest.z });
 		}
 
 		Collider::Triangulate();

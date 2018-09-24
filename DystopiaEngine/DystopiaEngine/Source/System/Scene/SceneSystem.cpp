@@ -23,6 +23,7 @@ Dystopia::SceneSystem::SceneSystem(void) :
 
 Dystopia::SceneSystem::~SceneSystem(void)
 {
+
 }
 
 void Dystopia::SceneSystem::PreInit(void)

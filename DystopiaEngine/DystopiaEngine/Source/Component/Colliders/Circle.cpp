@@ -9,7 +9,7 @@ namespace Dystopia
 {
 	using Math::Vec3D;
 	Circle::Circle()
-		: m_radius(1.0F)
+		: m_radius(0.5F)
 		, m_originCentre{Vec3D{0,0,0} }
 	{
 
@@ -30,7 +30,30 @@ namespace Dystopia
 	/*Initialise the Component*/
 	void Circle::Init(void)
 	{
-		m_originCentre += GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+		if (mDebugVertices.size() == 0)
+		{
+			const unsigned numberOfSegments = 16;
+			const float increment = 2.0f * Math::pi / float(numberOfSegments);
+
+			const float theta = 0.0f;
+
+			for (unsigned i = 0; i < numberOfSegments; ++i)
+			{
+				Vec3D vertex = 0.5F * Vec3D{ cosf(increment*i), sinf(increment*i), 0 };
+				Collider::mDebugVertices.push_back(Vertex{ vertex.x, vertex.y, 0 });
+			}
+
+			Collider::Triangulate();
+			Collider::Init();
+		}
+
+		if (nullptr != GetOwner())
+		{
+			m_originCentre += GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+			const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
+			m_radius *= _xScale * 0.5f;
+		}
+		
 	}
 
 	/*OnDestroy*/

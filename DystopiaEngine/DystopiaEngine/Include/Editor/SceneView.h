@@ -59,7 +59,7 @@ namespace Dystopia
 		GameObject*			mpSceneCamera;
 
 		// TODO: remove this
-		GameObject*			mpBoxObject2;
+		GameObject*			mpCircleObject;
 		GameObject*			mpBoxObject;
 		GameObject*			mpStaticBoxObject;
 	};
