@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <chrono>
 namespace Dystopia
 {
-	ulong GUIDGenerator::GetUniqueID()
+	GUID_t GUIDGenerator::GetUniqueID()
 	{
 		using TimeUnit = std::chrono::milliseconds;
 		/*The number of times this function is called within 1 ms*/
@@ -34,16 +34,16 @@ namespace Dystopia
 		if ( !std::chrono::duration_cast<TimeUnit>(currTime - start).count() )
 		{
 			/*Shift the ID by 45 bits*/
-			long ID = static_cast<long>(std::chrono::duration_cast<TimeUnit>(currTime).count()) << (NUM_EMPTY_BITS + NUM_MSCOUNT_BITS);
+			GUID_t ID = static_cast<long>(std::chrono::duration_cast<TimeUnit>(currTime).count()) << (NUM_EMPTY_BITS + NUM_MSCOUNT_BITS);
 			/*Make the next 10 bits the number of time this function has been called.
 			  Append the the 2 numbers together and return it as ID*/
-			return static_cast<long>(ID | (count++ << NUM_EMPTY_BITS));
+			return static_cast<GUID_t>(ID | (count++ << NUM_EMPTY_BITS));
 		}
 		/*Reset the count*/
 		count = 0;
 		/*Update the time of last function call*/
 		start = std::chrono::duration_cast<TimeUnit>(currTime);
 		/*Return the ID*/
-		return static_cast<long>(std::chrono::duration_cast<TimeUnit>(currTime).count()) << (NUM_EMPTY_BITS + NUM_MSCOUNT_BITS);
+		return static_cast<GUID_t>(std::chrono::duration_cast<TimeUnit>(currTime).count()) << (NUM_EMPTY_BITS + NUM_MSCOUNT_BITS);
 	}
 }

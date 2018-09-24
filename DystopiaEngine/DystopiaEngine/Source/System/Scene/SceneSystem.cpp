@@ -16,113 +16,116 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/Array.h"
 #include "IO/TextSerialiser.h"
 
-namespace Dystopia
+
+
+
+
+
+Dystopia::SceneSystem::SceneSystem(void) :
+	mpCurrScene{ nullptr }, mpNextScene{ nullptr }
 {
-	SceneSystem::SceneSystem(void) :
-		mpCurrScene{ nullptr }, mpNextScene{ nullptr }
+}
+
+Dystopia::SceneSystem::~SceneSystem(void)
+{
+}
+
+void Dystopia::SceneSystem::PreInit(void)
+{
+	mpCurrScene = new Scene{};
+}
+
+bool Dystopia::SceneSystem::Init(void)
+{
+	return true;
+}
+
+void Dystopia::SceneSystem::PostInit(void)
+{
+	mpNextScene = mpCurrScene;
+}
+
+void Dystopia::SceneSystem::FixedUpdate(float _dt)
+{
+	if (mpNextScene == mpCurrScene)
 	{
-	}
-
-	SceneSystem::~SceneSystem(void)
-	{
-	}
-
-	void SceneSystem::PreInit(void)
-	{
-		mpCurrScene = new Scene{};
-	}
-
-	bool SceneSystem::Init(void)
-	{
-		return true;
-	}
-
-	void SceneSystem::PostInit(void)
-	{
-		mpNextScene = mpCurrScene;
-	}
-
-	void SceneSystem::FixedUpdate(float _dt)
-	{
-		if (mpNextScene == mpCurrScene)
-		{
-			mpCurrScene->FixedUpdate(_dt);
-		}
-	}
-
-	void SceneSystem::Update(float _dt)
-	{
-		if (mpNextScene == mpCurrScene)
-		{
-			mpCurrScene->Update(_dt);
-		}
-		else
-		{
-
-		}
-	}
-
-	void SceneSystem::PostUpdate(void)
-	{
-		if (mpNextScene == mpCurrScene)
-		{
-			mpCurrScene->PostUpdate();
-		}
-	}
-
-	void SceneSystem::Shutdown(void)
-	{
-		if (mpNextScene != mpCurrScene)
-			delete mpNextScene;
-		delete mpCurrScene;
-
-		mpNextScene = mpCurrScene = nullptr;
-	}
-
-	void SceneSystem::LoadDefaults(void)
-	{
-
-	}
-
-	void SceneSystem::LoadSettings(TextSerialiser&)
-	{
-
-	}
-
-	void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
-	{
-		UNUSED_PARAMETER(_strFile);
-		static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
-
-		delete mpCurrScene;
-		mpNextScene = mpCurrScene = new Scene{};
-
-		/*Open File*/
-		auto & SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_READ);
-		/*Consume Start Block*/
-		SerialObj.ConsumeStartBlock();
-		/*Get Next Scene to Unserialise*/
-		mpNextScene->Unserialise(SerialObj);
-		/*Get all System who are ComponentDonor to unserialise*/
-		SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
-		/*Consume End Block*/
-		SerialObj.ConsumeEndBlock();
-	}
-
-	void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::string & _sceneName)
-	{
-		static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
-
-		/*Open File*/
-		auto & SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_WRITE);
-		/*Consume Start Block*/
-		SerialObj.InsertStartBlock("Scene");
-		/*Get Next Scene to Unserialise*/
-		mpNextScene->SetSceneName(_sceneName);
-		mpNextScene->Serialise(SerialObj);
-		/*Get all System who are ComponentDonor to unserialise*/
-		SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemSerialise(SerialObj);
-		/*Consume End Block*/
-		SerialObj.InsertEndBlock("Scene");
+		mpCurrScene->FixedUpdate(_dt);
 	}
 }
+
+void Dystopia::SceneSystem::Update(float _dt)
+{
+	if (mpNextScene == mpCurrScene)
+	{
+		mpCurrScene->Update(_dt);
+	}
+	else
+	{
+		
+	}
+}
+
+void Dystopia::SceneSystem::PostUpdate(void)
+{
+	if (mpNextScene == mpCurrScene)
+	{
+		mpCurrScene->PostUpdate();
+	}
+}
+
+void Dystopia::SceneSystem::Shutdown(void)
+{
+	if (mpNextScene != mpCurrScene)
+		delete mpNextScene;
+	delete mpCurrScene;
+
+	mpNextScene = mpCurrScene = nullptr;
+}
+
+void Dystopia::SceneSystem::LoadDefaults(void)
+{
+
+}
+
+void Dystopia::SceneSystem::LoadSettings(TextSerialiser&)
+{
+
+}
+
+void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
+{
+	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
+
+	delete mpCurrScene;
+	mpNextScene = mpCurrScene = new Scene{};
+
+	/*Open File*/
+	auto SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_READ);
+	/*Consume Start Block*/
+	SerialObj.ConsumeStartBlock();
+	/*Get Next Scene to Unserialise*/
+	mpNextScene->Unserialise(SerialObj);
+	/*Get all System who are ComponentDonor to unserialise*/
+	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
+	/*Consume End Block*/
+	SerialObj.ConsumeEndBlock();
+}
+
+void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::string& _strSceneName)
+{
+	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
+
+	/*Open File*/
+	auto SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_WRITE);
+	/*Consume Start Block*/
+	SerialObj.InsertStartBlock("Scene");
+	/*Get Next Scene to Unserialise*/
+	mpNextScene->SetSceneName(_strSceneName);
+	mpNextScene->Serialise(SerialObj);
+	/*Get all System who are ComponentDonor to unserialise*/
+	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemSerialise(SerialObj);
+	/*Consume End Block*/
+	SerialObj.InsertEndBlock("Scene");
+}
+
+

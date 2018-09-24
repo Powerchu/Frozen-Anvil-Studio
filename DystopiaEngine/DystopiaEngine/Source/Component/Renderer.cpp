@@ -33,7 +33,7 @@ Dystopia::Renderer::Renderer(void) noexcept
 	: mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }
 {
 	SetMesh("Quad");
-	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist.begin()->second);
+	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
 }
 
 void Dystopia::Renderer::Init(void)

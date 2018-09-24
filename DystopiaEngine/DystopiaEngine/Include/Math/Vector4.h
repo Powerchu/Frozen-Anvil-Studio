@@ -231,6 +231,7 @@ namespace Math
 		SwizzleMask<0, 2, 1, 3> xzyw;
 		SwizzleMask<0, 3, 0, 3> xwxw;
 		SwizzleMask<0, 3, 2, 3> xwzw;
+		SwizzleMask<1, 0, 1, 0> yxyx;
 		SwizzleMask<1, 0, 2, 3> yxzw;
 		SwizzleMask<1, 0, 3, 2> yxwz;
 		SwizzleMask<1, 1, 1, 1> yyyy;

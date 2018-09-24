@@ -13,17 +13,17 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#pragma once
 #ifndef GUID_H
 #define GUID_H
 #define NUM_EMPTY_BITS 9
 #define NUM_MSCOUNT_BITS 10
 #define NUM_ID_BITS 45
-#include "Component/ComponentList.h"
+#include "Utility\Meta.h"
+#include "Component\ComponentList.h"
 
 namespace Dystopia
 {
-	using ulong = unsigned long;
+	using GUID_t = unsigned long long;
 
 /********************************************************************************************
 First 55 Bits are just ID  Numbers
@@ -34,13 +34,15 @@ unsigned long has 64 bits.
 
 Inside the first 55 Bits,
 The left most 45 bits are timestamp in milliseconds
-The remainding 10 bits are the number of times this function is called within 1 millisecond
+The remaining 10 bits are the number of times this function is called within 1 millisecond
 
 Next 9 Bits can be used for anything you want
 ********************************************************************************************/
 	struct GUIDGenerator
 	{
-		static ulong GetUniqueID(void);
+		static GUID_t GetUniqueID(void);
+
+		static constexpr GUID_t INVALID = Utility::Constant<GUID_t, ~0>::value;
 	};
 }
 

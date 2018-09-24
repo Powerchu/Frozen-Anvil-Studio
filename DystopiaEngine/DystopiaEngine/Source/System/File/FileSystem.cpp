@@ -12,7 +12,8 @@ namespace Dystopia
 		std::make_pair(eFileDir::eSource,    "Source"),
 		std::make_pair(eFileDir::eResource,  "Resource"),
 		std::make_pair(eFileDir::eRoot    ,  "C:/"),
-		std::make_pair(eFileDir::eAppData ,  "")
+		std::make_pair(eFileDir::eAppData ,  ""),
+		std::make_pair(eFileDir::eCurrent ,  "")
 	};
 
 
@@ -77,10 +78,11 @@ namespace Dystopia
 		std::filesystem::path DirPath{ mPathTable[_Directory] };
 		std::error_code error;
 		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
-
+		std::wstring wstrFileName{ _FileName.begin(), _FileName.end() };
 		for (auto const & elem : DirIter)
 		{
-			if (elem.path().filename().string() == _FileName)
+			std::wstring filename = elem.path().filename().wstring();
+			if (filename == wstrFileName)
 				return true;
 		}
 

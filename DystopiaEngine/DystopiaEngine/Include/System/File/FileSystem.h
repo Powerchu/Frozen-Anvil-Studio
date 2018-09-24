@@ -17,7 +17,7 @@ namespace Dystopia
 		eHeader,
 		eSource,
 		eResource,
-		
+		eCurrent,
 		eRoot,
 		eAppData,
 		eTotalFilePath

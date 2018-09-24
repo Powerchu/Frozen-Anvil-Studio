@@ -610,6 +610,9 @@
     <ClInclude Include="Include\Component\CharacterController.h">
       <Filter>Game Engine\Components\Physics\Character Controller</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Utility\GUID.h">
+      <Filter>Utility\GUID</Filter>
+    </ClInclude>
     <ClInclude Include="Include\Component\Convex.h">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>

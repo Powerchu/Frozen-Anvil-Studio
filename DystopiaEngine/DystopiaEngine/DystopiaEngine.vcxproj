@@ -216,6 +216,7 @@
     <ClInclude Include="Include\System\Window\Window.h" />
     <ClInclude Include="Include\System\Window\WindowManager.h" />
     <ClInclude Include="Include\Utility\DebugAssert.h" />
+    <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Utility\Meta.h" />
     <ClInclude Include="Include\Utility\MetaAlgorithms.h" />
     <ClInclude Include="Include\Utility\MetaDataStructures.h" />

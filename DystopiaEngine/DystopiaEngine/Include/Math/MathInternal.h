@@ -24,7 +24,7 @@ namespace Math
 	{
 		namespace
 		{
-			union VectorConverter
+			union __declspec(align(alignof(__m128i))) VectorConverter
 			{
 				int32_t _val[4];
 				__m128i vec;

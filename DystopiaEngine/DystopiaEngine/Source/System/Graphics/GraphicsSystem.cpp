@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Window/Window.h"			// Window
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
+#include "System/Collision/CollisionSystem.h"
 #include "System/Camera/CameraSystem.h"     // Camera System
 #include "System/Driver/Driver.h"			// EngineCore
 #include "System/Time/ScopedTimer.h"
@@ -40,18 +41,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Transform.h"
 #include "Component/Renderer.h"
 #include "Component/Camera.h"				// Camera
+#include "Component/Collider.h"
 
 #include "Utility/DebugAssert.h"			// DEBUG_ASSERT
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable Window header min & max macros
 
+#include <string>
+#include <cstdio>
 #include <windows.h>			// WinAPI
 #include <GL/glew.h>
 #include <GL/wglew.h>			// glew Windows ext
 #include <GL/GL.h>
-#include <cstdio>
-#include <string>
 
 #undef WIN32_LEAN_AND_MEAN		// Stop defines from spilling into code
 #undef NOMINMAX
@@ -72,9 +74,8 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f },
-	mvDebugColour { 1.f, .58f, .278f, .0f }
+	mvDebugColour{ .78f, 1.f, .278f, .75f }, mbDebugDraw{ false }
 {
-
 }
 
 Dystopia::GraphicsSystem::~GraphicsSystem(void)
@@ -93,9 +94,9 @@ float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 	return mfGamma;
 }
 
-void Dystopia::GraphicsSystem::SetDebugDraw(bool _bDraw)
+void Dystopia::GraphicsSystem::ToggleDebugDraw(void)
 {
-	mbDebugDraw = _bDraw;
+	mbDebugDraw = !mbDebugDraw;
 }
 
 
@@ -122,6 +123,22 @@ void Dystopia::GraphicsSystem::PreInit(void)
 
 	DrawSplash();
 }
+
+bool Dystopia::GraphicsSystem::Init(void)
+{
+	mGameView.Init(2048, 2048);
+	mUIView.Init(1024, 1024);
+
+	glLineWidth(10.f);
+
+	return true;
+}
+
+void Dystopia::GraphicsSystem::PostInit(void)
+{
+
+}
+
 
 void Dystopia::GraphicsSystem::DrawSplash(void)
 {
@@ -166,11 +183,10 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	delete texture;
 }
 
-void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
+void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 {
 	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();
-	Math::Matrix4 ProjView = _cam.GetProjectionMatrix() * _cam.GetViewMatrix();
 
 	// Get Camera's layer, we only want to draw inclusive stuff
 	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
@@ -186,30 +202,30 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
 		{
 			if (Renderer* r = Obj.GetComponent<Renderer>())
 			{
-				if (Shader* s = r->GetShader())
+				Shader* s = r->GetShader();
+				Texture* t = r->GetTexture();
+
+				if (s && t)
 				{
-					if (Texture2D* t = static_cast<Texture2D*>(r->GetTexture()))
-					{
-						s->UseShader();
+					s->UseShader();
 
-						t->BindTexture();
-						s->UploadUniform("ProjectViewMat", ProjView);
-						s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-						s->UploadUniform("Gamma", mfGamma);
+					t->BindTexture();
+					s->UploadUniform("ProjectViewMat", _ProjView);
+					s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+					s->UploadUniform("Gamma", mfGamma);
 
-						r->Draw();
+					r->Draw();
 
-						t->UnbindTexture();
-					}
-					else
-					{
-						glUseProgram(0);
-						r->Draw();
-					}
+					t->UnbindTexture();
 				}
 				else
 				{
-					glUseProgram(0);
+					s = shaderlist["No Texture"];
+
+					s->UseShader();
+					s->UploadUniform("ProjectViewMat", _ProjView);
+					s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+
 					r->Draw();
 				}
 			}
@@ -217,55 +233,46 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
 	}
 }
 
-void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
+void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 {
-	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
+	auto AllObj = EngineCore::GetInstance()->GetSystem<CollisionSystem>()->GetAllColliders();
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();
-	Math::Matrix4 ProjView = _cam.GetProjectionMatrix() * _cam.GetViewMatrix();
 
 	// Get Camera's layer, we only want to draw inclusive stuff
 	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
 
-	AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
-		return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
-	});
+	glClear(GL_DEPTH_BUFFER_BIT);
+	Shader* s = shaderlist["Colour Shader"];
+	
+	s->UseShader();
+	s->UploadUniform("vColor", mvDebugColour);
+	s->UploadUniform("ProjectViewMat", _ProjView);
 
-	//Shader* s;
-	//
-	//s->UseShader();
-	//s->UploadUniform("Colour", mvDebugColour);
+	Math::Vec4 no_alpha{ mvDebugColour };
+	no_alpha.w = 1.f;
 
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
 	{
-		if (Obj.GetFlags() & ActiveFlags)
+		GameObject* pOwner = Obj->GetOwner();
+		if (pOwner->GetFlags() & ActiveFlags)
 		{
-			//if (Collider* r = Obj.GetComponent<Collider>())
-			//{
-			//	s->UseShader();
-			//
-			//	s->UploadUniform("ProjectViewMat", ProjView);
-			//	s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-			//
-			//	r->Draw();
-			//
-			//	t->UnbindTexture();
-			//}
+			s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix());
+			
+			if (Mesh* pObjMesh = Obj->GetMesh())
+			{
+				s->UploadUniform("vColor", mvDebugColour);
+				pObjMesh->UseMesh(GetDrawMode());
+				s->UploadUniform("vColor", no_alpha);
+				pObjMesh->UseMesh(GL_LINE_LOOP);
+			}
 		}
 	}
-}
 
-bool Dystopia::GraphicsSystem::Init(void)
-{
-	mGameView.Init(2048, 2048);
-	mUIView.Init(1024, 1024);
-
-	return true;
-}
-
-void Dystopia::GraphicsSystem::PostInit(void)
-{
-
+	if (glGetError() != GL_NO_ERROR)
+	{
+		__debugbreak();
+	}
 }
 
 void Dystopia::GraphicsSystem::Update(float)
@@ -284,11 +291,12 @@ void Dystopia::GraphicsSystem::Update(float)
 		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
 			Cam.SetCamera();
+			Math::Matrix4 ProjView = Cam.GetProjectionMatrix() * Cam.GetViewMatrix();
 
-			DrawScene(Cam);
+			DrawScene(Cam, ProjView);
 			
 			if (mbDebugDraw)
-				DrawDebug(Cam);
+				DrawDebug(Cam, ProjView);
 		}
 	}
 	mGameView.UnbindFramebuffer();
@@ -378,19 +386,23 @@ Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _fileP
 	std::string strName, strVert, strGeo, strFrag;
 
 	file.ConsumeStartBlock();
-	file >> strName;
-	file >> strVert;
-	file >> strFrag;
+	while (!file.EndOfInput())
+	{
+		file >> strName;
+		file >> strVert;
+		file >> strFrag;
 
-	shaderlist[strName] = new Shader{};
-	if (file.EndOfInput())
-	{
-		shaderlist[strName]->CreateShader(strVert, strFrag);
-	}
-	else
-	{
-		file >> strGeo;
-		shaderlist[strName]->CreateShader(strVert, strFrag, strGeo);
+		shaderlist[strName] = new Shader{};
+		if (file.EndOfInput())
+		{
+			shaderlist[strName]->CreateShader(strVert, strFrag);
+		}
+		else
+		{
+			file >> strGeo;
+			shaderlist[strName]->CreateShader(strVert, strFrag, strGeo);
+		}
+		file.ConsumeStartBlock();
 	}
 
 	return nullptr;
@@ -488,6 +500,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LINE_SMOOTH);
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

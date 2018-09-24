@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Base/Systems.h"		 // System
 #include "System/Base/ComponentDonor.h"
 #include "System/Graphics/Framebuffer.h"
+#include "Math/MathFwd.h"
 #include "Math/Vector4.h"
 
 #include <map>
@@ -54,7 +55,7 @@ namespace Dystopia
 		void SetGamma(float) noexcept;
 		float GetGamma(void) noexcept;
 
-		void SetDebugDraw(bool _bDraw);
+		void ToggleDebugDraw(void);
 
 		// Sets up Window for openGL rendering
 		bool InitOpenGL(Window&);
@@ -97,8 +98,8 @@ namespace Dystopia
 		void EndFrame(void);
 
 		void DrawSplash(void);
-		void DrawScene(Camera&);
-		void DrawDebug(Camera&);
+		void DrawScene(Camera&, Math::Matrix4&);
+		void DrawDebug(Camera&, Math::Matrix4&);
 
 		bool SelectOpenGLVersion(Window&) noexcept;
 	};

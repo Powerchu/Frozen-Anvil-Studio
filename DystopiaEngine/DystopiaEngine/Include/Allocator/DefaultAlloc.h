@@ -21,7 +21,7 @@ namespace Dystopia
 	{
 		using Base = DefaultAllocator<void>;
 
-		static inline Ty* Alloc(void)
+		[[nodiscard]] static inline Ty* Alloc(void)
 		{
 			return static_cast<Ty*>(Base::Alloc(sizeof(Ty)));
 		}
@@ -32,7 +32,7 @@ namespace Dystopia
 		}
 
 		template <typename ... Ps>
-		static inline Ty* ConstructAlloc(Ps&& ... _Args)
+		[[nodiscard]] static inline Ty* ConstructAlloc(Ps&& ... _Args)
 		{
 			// Use static cast to avoid includes
 			return new Ty{ static_cast<Ps&&>(_Args) ... };
@@ -47,7 +47,7 @@ namespace Dystopia
 	template <>
 	struct DefaultAllocator<void>
 	{
-		static inline void* Alloc(size_t sz)
+		[[nodiscard]] static inline void* Alloc(size_t sz)
 		{
 			return ::operator new (sz);
 		}
@@ -61,7 +61,7 @@ namespace Dystopia
 	template <typename Ty>
 	struct DefaultAllocator<Ty[]>
 	{
-		static inline Ty* Alloc(size_t sz)
+		[[nodiscard]] static inline Ty* Alloc(size_t sz)
 		{
 			return static_cast<Ty*>(::operator new[](sz * sizeof(Ty)));
 		}

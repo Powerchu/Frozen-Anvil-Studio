@@ -18,10 +18,10 @@ namespace Math
 {
 	union Vector2;
 	union __declspec(align(16)) Vector4;
-	union __declspec(align(alignof(Vector4))) Quaternion;
+	union __declspec(align(16)) Quaternion;
 
-	struct __declspec(align(alignof(Vector4))) Matrix2;
-	struct __declspec(align(alignof(Vector4))) Matrix4;
+	struct __declspec(align(16)) Matrix2;
+	struct __declspec(align(16)) Matrix4;
 
 	class Radians;
 	class Degrees;

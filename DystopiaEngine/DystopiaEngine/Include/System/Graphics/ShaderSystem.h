@@ -25,7 +25,7 @@ namespace Dystopia
 	{
 	public:
 
-		void Shutdown(void) noexcept;
+		~ShaderSystem(void) noexcept;
 
 
 	private:

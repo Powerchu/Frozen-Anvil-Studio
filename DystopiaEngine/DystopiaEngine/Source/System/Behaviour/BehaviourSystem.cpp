@@ -48,7 +48,7 @@ namespace Dystopia
 		/*Init Hotloader*/
 #if EDITOR
 
-		return true;
+		//return true;
 
 		FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
 		// TODO: mHotloader->Init();

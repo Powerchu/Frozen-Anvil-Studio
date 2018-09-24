@@ -97,6 +97,7 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 void Dystopia::MeshSystem::AddVertex(float x, float y, float z, float u, float v)
 {
 	mVtx.EmplaceBack(x, y, z);
+	mVtx.EmplaceBack(.0f, .0f, .1f);
 	mUVs.EmplaceBack(u, v);
 	++(mpRawMeshes.back().mVtxCount);
 }

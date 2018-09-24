@@ -124,6 +124,10 @@ namespace Dystopia
 				mpBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
 				mpBoxObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
 			}
+			if (mpInputSys->IsKeyTriggered(eUserButton::MOUSE_M))
+			{
+				mpGfxSys->ToggleDebugDraw();
+			}
 		}
 	}
 

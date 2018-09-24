@@ -69,7 +69,6 @@ namespace Math
 		template <NegateFlag FLAGS>
 		inline Quaternion& _CALL Negate(void) noexcept;
 
-		// TODO
 		Matrix4 _CALL Matrix(void) const noexcept;
 
 
@@ -112,15 +111,9 @@ namespace Math
 
 	inline Quaternion _CALL Conjugate(const Quaternion);
 
+	inline Vector4 _CALL Reflect(const Vector4, const Quaternion);
+
 	inline Matrix4 _CALL Matrix(const Quaternion) noexcept;
-
-	// ====================================== MATH UTILITY ======================================= // 
-	// Manually overload the math utility functions which cannot be called for type Quaternion
-
-	//inline Quaternion _CALL Abs(const Quaternion);
-
-	//inline Quaternion _CALL Min(const Quaternion, const Quaternion);
-	//inline Quaternion _CALL Max(const Quaternion, const Quaternion);
 
 
 	// ======================================== OPERATORS ======================================== // 
@@ -264,8 +257,7 @@ inline Math::Quaternion& _CALL Math::Quaternion::operator*=(const float _fScalar
 
 inline Math::Quaternion&_CALL Math::Quaternion::operator*=(const Quaternion _rhs)
 {
-	// TODO:
-	UNUSED_PARAMETER(_rhs);
+	*this = *this * _rhs;
 	return *this;
 }
 
