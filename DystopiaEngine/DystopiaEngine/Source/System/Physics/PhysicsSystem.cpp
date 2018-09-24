@@ -67,23 +67,9 @@ namespace Dystopia
 
 	void PhysicsSystem::UpdateResults(float _dt)
 	{
-		const float alpha = mTimeAccumulator / _dt;
-
 		for (auto& body : mComponents)
 		{
-			switch (mInterpolation_mode)
-			{
-			case none:
-				body.UpdateResult(1.0f);
-				break;
-			case interpolate:
-				body.UpdateResult(alpha);
-				break;
-			case extrapolate: // define extrapolate
-				break;
-			default:
-				break;
-			}
+			body.UpdateResult();
 		}
 
 		// If Event System is running: this is where to Broadcast Collision Messages
@@ -120,15 +106,7 @@ namespace Dystopia
 	{
 		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
 
-		const float timeStep = 1.0f / 60.0f;
-
-		mTimeAccumulator += _dt;
-		mTimeAccumulator = Math::Min(mTimeAccumulator, timeStep * 5);
-		if (mTimeAccumulator > timeStep)
-		{
-			mTimeAccumulator -= timeStep;
-			Step(_dt);
-		}
+		Step(_dt);
 
 		if (mbIsDebugActive)
 		{

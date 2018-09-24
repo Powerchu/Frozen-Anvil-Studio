@@ -74,7 +74,7 @@ namespace Dystopia
 	public:
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		void Integrate(float _dt);
-		void UpdateResult(float alpha) const;
+		void UpdateResult() const;
 
 		// void Update(float _dt);
 		// void LateUpdate(float _dt);

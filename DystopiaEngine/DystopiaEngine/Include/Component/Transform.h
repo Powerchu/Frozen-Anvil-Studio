@@ -19,10 +19,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/AutoArray.h"	// AutoArray
 #include "System/Graphics/Shader.h"
 
-// #include "Component/ComponentList.h"	// TRANSFORM
-// #include "Utility/MetaAlgorithms.h"		// MetaFind
-// #include "Math/Matrix4.h"				// Matrix4
-// #include "Math/Quaternion.h"			// Quaternion
+#include "Component/ComponentList.h"	// TRANSFORM
+#include "Utility/MetaAlgorithms.h"		// MetaFind
+#include "Math/Matrix4.h"				// Matrix4
+#include "Math/Quaternion.h"			// Quaternion
 
 namespace Dystopia
 {

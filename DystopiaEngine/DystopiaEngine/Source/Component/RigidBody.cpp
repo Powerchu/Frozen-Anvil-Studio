@@ -179,17 +179,15 @@ namespace Dystopia
 			mLinearVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
-
-
 		 //*Reset Cumulative Force*/
 		ResetCumulative();
 	}
 
-	void RigidBody::UpdateResult(float alpha) const
+	void RigidBody::UpdateResult() const
 	{
 		if (!mbIsStatic) // only update when body is not static
 		{
-			P_TX->SetGlobalPosition(GetPosition() * alpha + GetPrevPosition() * (1.0 - alpha));
+			P_TX->SetGlobalPosition(mPosition);
 		}
 	}
 
