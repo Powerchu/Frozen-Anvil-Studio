@@ -206,7 +206,6 @@
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClCompile>
@@ -596,9 +595,6 @@
     <ClInclude Include="Include\System\File\FileSystem.h">
       <Filter>Game Engine\SubSystems\File</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterController.h">
-      <Filter>Game Engine\Components\Physics</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClInclude>
@@ -613,6 +609,21 @@
     </ClInclude>
     <ClInclude Include="Include\Component\CharacterController.h">
       <Filter>Game Engine\Components\Physics\Character Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Convex.h">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\AABB.h">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Triangle.h">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Circle.h">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\ColliderList.h">
+      <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

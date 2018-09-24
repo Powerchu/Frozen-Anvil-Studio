@@ -1,10 +1,9 @@
-#include "Component/Collider.h"
-#include <algorithm>
-#include <limits>
-#include "Math/Vector4.h"
-
-#include "Object/GameObject.h"
+#include "Component/Convex.h"
 #include "Component/CollisionEvent.h"
+
+#include "Math/Vector4.h"
+#include "Object/GameObject.h"
+#include <limits>
 
 namespace Dystopia
 {
@@ -110,8 +109,8 @@ namespace Dystopia
 				/*Check if Simplex contains Origin*/
 				if (ContainOrigin(Simplex, vDir))
 				{
-					Colliding             = true;
-					_pColB.Colliding      = true;
+					mbColliding             = true;
+					_pColB.mbColliding      = true;
 					/*Use EPA to get collision information*/
 					mCollisionEvent.Insert(GetCollisionEvent(Simplex, _pColB));
 					/*Clear the simplex for the next function call*/
@@ -179,23 +178,26 @@ namespace Dystopia
 			Math::Vec3D EdgeVec    = b.mPosition - a.mPosition;
 			Math::Vec3D EdgeNorm;
 			EdgeNorm.xyzw = EdgeVec.yxzw;
+
 #ifdef CLOCKWISE
 			EdgeNorm.Negate<Math::NegateFlag::Y>();
 #else
 			EdgeNorm.Negate<Math::NegateFlag::X>();
 #endif
 			if(EdgeNorm.MagnitudeSqr())
+			{
 				EdgeNorm.Normalise();
+			}
 
-			double distance = EdgeNorm.Dot(a.mPosition);
+			const double distance = EdgeNorm.Dot(a.mPosition);
 			if (Math::Abs(distance) < Math::Abs(ClosestDistance))
 			{
 				ClosestDistance    = distance;
 				ClosestEdge.mNorm3 = EdgeNorm;
 				ClosestEdge.mVec3  = EdgeVec;
 				ClosestEdge.mPos   = a.mPosition;
-				ClosestEdge.OrthogonalDistance = distance;
-				ClosestEdge.SimplexIndex = i;
+				ClosestEdge.mOrthogonalDistance = distance;
+				ClosestEdge.mSimplexIndex = i;
 			}
 		}
 		return ClosestEdge;
@@ -239,7 +241,7 @@ namespace Dystopia
 			the same as the orthogonal distance from the origin to the ClosestEdge
 			*/
 			double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
-			double result     = ProjectDis - ClosestEdge.OrthogonalDistance;
+			double result     = ProjectDis - ClosestEdge.mOrthogonalDistance;
 
 			/*If fail the test, expand the simplex and run the test again*/
 			if (-EPSILON <= result && result <= EPSILON)
@@ -254,7 +256,7 @@ namespace Dystopia
 			}
 			else
 			{
-				_Simplex.Insert(Point, ClosestEdge.SimplexIndex);
+				_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
 			}
 		}
 		//return col_info;

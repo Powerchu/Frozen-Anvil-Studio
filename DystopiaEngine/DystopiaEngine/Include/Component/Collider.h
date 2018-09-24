@@ -64,17 +64,15 @@ namespace Dystopia
 
 	enum class eColliderType
 	{
-		BASE,
+		BASE = 0,
 		AABB,
 		CIRCLE,			/*Status : Not Done*/
 		TRIANGLE,       /*Status : Not Done*/
-		CONVEX,         /*Status : Not Done*/
-
+		CONVEX,
 		CONCAVE,		/*This is a dream*/
 
 		TOTAL
 	};
-
 
 	struct _DLL_EXPORT Vertice
 	{
@@ -93,13 +91,13 @@ namespace Dystopia
 		}
 	};
 
-	struct Edge
+	struct _DLL_EXPORT Edge
 	{
 		Math::Point3D  mPos;
 		Math::Vec3D    mVec3;
 		Math::Vec3D    mNorm3;
-		double         OrthogonalDistance;
-		int            SimplexIndex;
+		double         mOrthogonalDistance;
+		int            mSimplexIndex;
 	};
 
 	class _DLL_EXPORT Collider : public Component
@@ -126,7 +124,7 @@ namespace Dystopia
 
 		/*Default - (Box Collider)*/
 		Collider();
-		Collider(const Math::Point3D & _offset);
+		explicit Collider(const Math::Point3D & _offset);
 		
 		/*Load the Component*/
 		virtual void Load(void);
@@ -139,23 +137,21 @@ namespace Dystopia
 		/*Duplicate the Component*/
 		virtual Collider* Duplicate() const;
 		
-
 		/************************************************************************
 		 * Member Functions
 		 ***********************************************************************/
 		 /*Get Array of collision event*/
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
 
+		// Settors
+		void SetColliding(bool _b);
+		void SetPosition(Math::Point3D const & _point);
 		void ClearCollisionEvent();
 
-		bool hasCollision() const;
-		void SetColliding(bool _b);
-
-		void SetPosition(Math::Point3D const & _point);
-		Math::Point3D GetPosition() const;
-
 		// Gettors
+		Math::Point3D GetPosition() const;
 		Math::Vec3D GetOffSet()   const;
+		bool hasCollision() const;
 
 		AutoArray<Vertex> GetVertexBuffer() const;
 		AutoArray<short>  GetIndexBuffer()  const;
@@ -174,7 +170,7 @@ namespace Dystopia
 		/*AutoArray of collision event*/
 		AutoArray<CollisionEvent>  mCollisionEvent;
 
-		bool Colliding = false;
+		bool mbColliding = false;
 
 		Math::Point3D mPosition;
 		
@@ -185,225 +181,15 @@ namespace Dystopia
 
 
 	private:
-
 		 //Status mStatus;
 
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
 
+		// Collider Mesh for debug drawing
 		Mesh * mpMesh;
 
 
-	};
-
-	class _DLL_EXPORT Convex : public Collider
-	{
-	public:
-
-		using SYSTEM = CollisionSystem;
-
-		unsigned GetComponentType(void) const
-		{
-			return Utility::MetaFind_t<Utility::Decay_t<Collider>, AllComponents>::value;
-		};
-
-		static const std::string GetCompileName(void) { return "Convex"; }
-		const std::string GetEditorName(void) const { return GetCompileName(); }
-
-		static const eColliderType ColliderType = eColliderType::CONVEX;
-		virtual const eColliderType GetColliderType(void) const override { return ColliderType; }
-		
-		/*Constructors*/
-
-		/*Convex Default Constructor*/
-		Convex(Math::Point3D const & _v3Offset = { 0,0,0,1 });
-
-		/*Convex Constructor. Takes in a Container of Vertice*/
-		template<typename Container = AutoArray<Vertice>>
-		Convex(Container & _Container)
-		{
-			for (Vertice const & elem : _Container)
-				mVertices.push_back(elem);
-		}
-
-		/*Load the Component*/
-		virtual void Load(void);
-		/*Initialise the Component*/
-		virtual void Init(void);
-		/*OnDestroy*/
-		virtual void OnDestroy(void);
-		/*Unload the Component*/
-		virtual void Unload(void);
-		/*Duplicate the Component*/
-		virtual Convex* Duplicate() const;
-
-		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&) const;
-		virtual void Unserialise(TextSerialiser&);
-
-		virtual ~Convex();
-
-		Vertice GetFarthestPoint(const Math::Vec3D & _Dir)const;
-
-		bool isColliding(Convex & _ColB);
-		bool isColliding(Convex * const & _pColB);
-		bool isColliding(Convex & _pColB, const Math::Vec3D & _v3Dir);
-
-		/*Static Member Functions*/
-
-		/*Support Function for getting the farthest point with relation to a Vector*/
-		static Vertice GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir);
-
-		static Edge	   GetClosestEdge(AutoArray<Vertice> & _Simplex);
-
-		static Math::Point3D Support(const Convex & _ColA,
-			                       const Convex & _ColB,
-			                       const Math::Vec3D & _Dir);
-
-		static Math::Point3D Support(const Convex & _ColA,
-			                       const Convex & _ColB,
-			                       const Math::Vec3D & _Dir,
-			                       bool & hasPoint);
-
-		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
-
-		Math::Point3D Support(const Convex & _ColB,
-			                  const Math::Vec3D & _Dir)const;
-		
-
-
-	protected:
-
-		CollisionEvent GetCollisionEvent(AutoArray<Vertice> & _Simplex,
-			                             const Convex & _ColB);
-
-		/*The vertices of the collider in the Collider Local Coordinate System*/
-		AutoArray<Vertice>         mVertices;
-	};
-
-
-	class _DLL_EXPORT AABB : public Convex
-	{
-	public:
-
-		using SYSTEM = Collider::SYSTEM;
-
-		static const eColliderType ColliderType = eColliderType::AABB;
-		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
-		static const std::string GetCompileName(void) { return "AABB"; }
-		const std::string GetEditorName(void) const { return GetCompileName(); }
-		/*Constructors*/
-
-		/*Default - (Box Collider)*/
-		AABB();
-		/*Constructor*/
-		AABB(float const & _width, float const & _height, Math::Vec3D const & _v3Offset = { 0,0,0,0 });
-
-		/*Load the Component*/
-		virtual void Load(void);
-		/*Initialise the Component*/
-		virtual void Init(void);
-		/*OnDestroy*/
-		virtual void OnDestroy(void);
-		/*Unload the Component*/
-		virtual void Unload(void);
-		/*Duplicate the Component*/
-		virtual AABB* Duplicate() const;
-
-		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&) const;
-		virtual void Unserialise(TextSerialiser&);
-
-		/*Collision Check Functions*/
-		bool isColliding(AABB & other_col);
-		bool isColliding(AABB * const & other_col);
-
-		/* Gettors */
-		float GetWidth() const;
-		float GetHeight() const;
-		float GetHalfWidth() const;
-		float GetHalfHeight() const;
-
-	private:
-		float mfWidth;
-		float mfHeight;
-
-		Vertice * mMin;
-		Vertice * mMax;
-	};
-
-	class _DLL_EXPORT Circle : public Collider
-	{
-	public:
-
-		using SYSTEM = Collider::SYSTEM;
-
-		static const eColliderType ColliderType = eColliderType::CIRCLE;
-		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
-		static const std::string GetCompileName(void) { return "Circle"; }
-		const std::string GetEditorName(void) const { return GetCompileName(); }
-		/*Constructors*/
-
-		/*Default - (Box Collider)*/
-		Circle();
-		/*Constructor*/
-		Circle(float const & _radius, Math::Vec3D const & _v3Offset = { 0,0,0,0 });
-
-		/*Load the Component*/
-		virtual void Load(void);
-		/*Initialise the Component*/
-		virtual void Init(void);
-		/*OnDestroy*/
-		virtual void OnDestroy(void);
-		/*Unload the Component*/
-		virtual void Unload(void);
-		/*Duplicate the Component*/
-		virtual Circle* Duplicate() const;
-
-		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&) const;
-		virtual void Unserialise(TextSerialiser&);
-
-		/*Collision Check Functions*/
-		bool isColliding(const Circle & other_col) const;
-		bool isColliding(const Circle * const & other_col) const;
-
-	private:
-		float m_radius;
-		Math::Vec3D m_originCentre; // GLOBAL COORDINATES
-
-	};
-
-
-	class Triangle : public Convex
-	{
-	public:
-
-		using SYSTEM = Collider::SYSTEM;
-
-		static const eColliderType ColliderType = eColliderType::TRIANGLE;
-		virtual const eColliderType GetColliderType(void) const { return ColliderType; }
-		/*Constructors*/
-
-		/*Default - (Box Collider)*/
-		Triangle();
-		/**/
-
-		/*Load the Component*/
-		virtual void Load(void);
-		/*Initialise the Component*/
-		virtual void Init(void);
-		/*OnDestroy*/
-		virtual void OnDestroy(void);
-		/*Unload the Component*/
-		virtual void Unload(void);
-		/*Duplicate the Component*/
-		virtual Triangle* Duplicate() const;
-
-		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&) const;
-		virtual void Unserialise(TextSerialiser&);
-	private:
 	};
 }
 #endif /*COLLIDER_H*/

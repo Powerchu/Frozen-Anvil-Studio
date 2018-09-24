@@ -37,12 +37,11 @@ namespace Dystopia
 		void Step(float _dt);
 		void IntegrateRigidBodies(float _dt);
 		void ResolveCollision(float);
-		void UpdateResults(float _delta);
+		void UpdateResults();
 		void DebugPrint();
 		void DebugDraw();
 
 		bool  mbIsDebugActive;
-		float mTimeAccumulator;
 		InterpolationMode mInterpolation_mode;
 
 		//CollisionMap		CollisionMap;

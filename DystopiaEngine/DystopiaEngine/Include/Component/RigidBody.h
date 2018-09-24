@@ -88,6 +88,11 @@ namespace Dystopia
 		void GlobalCentroidFromPosition(void);
 		void PositionFromGlobalCentroid(void);
 
+		Vec3D LocalToGlobal(const Vec3D & p) const;
+		Vec3D GlobalToLocal(const Vec3D & p) const;
+		Vec3D LocalToGlobalVec(const Vec3D & v) const;
+		Vec3D GlobalToLocalVec(const Vec3D & v) const;
+
 		/*************************************************************************************************
 		\brief
 		Add a force at a point. If point is not origin, this will generate a
@@ -139,8 +144,8 @@ namespace Dystopia
 		float GetGravityScalar() const;
 		float GetMass() const;
 		float GetInverseMass() const;
-		bool Get_HasGravityState() const;
-		bool Get_IsStaticState() const;
+		bool  Get_HasGravityState() const;
+		bool  Get_IsStaticState() const;
 
 	private:
 		Primitive*		mpPrimitiveShape;			/* The underlying primitive of the RigidBody*/
@@ -148,6 +153,7 @@ namespace Dystopia
 		PhysicsSystem*	mpPhysSys;					/* A pointer to Physics System to get global constants (i.e. Gravity)*/
 
 		Mat3D			mOrientation;				/* The orientation in local transformation space*/
+		Mat3D			mInverseOrientation;
 		Vec3D			mPosition;					/* For Calculation purposes, set by Gameobject's Transform.GetGlobalPosition()*/
 		Vec3D			mPrevPosition;				/* For Collision purposes - the position in the last frame*/
 
@@ -171,7 +177,7 @@ namespace Dystopia
 		float			mfFriction;					/* Like LinearDamping, but only drag the forces when 2 or more objects are colliding*/
 		float			mfRestitution;				/* Elasticity Coefficient: 'Bounciness' of the body*/
 
-		float			mfCustom_GravityScale;		/* A scalar multiple (in float) of the Physics Engine's gravity*/
+		float			mfGravityScale;		/* A scalar multiple (in float) of the Physics Engine's gravity*/
 	
 		float			mfMass;						/* Defines how difficult it is to move an object*/
 		float			mfInvMass;					/* For calculation purposes, since integration uses mass inverse*/

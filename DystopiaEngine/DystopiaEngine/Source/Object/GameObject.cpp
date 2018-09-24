@@ -36,7 +36,8 @@ Dystopia::GameObject::GameObject(void) noexcept
 
 Dystopia::GameObject::GameObject(unsigned long _ID) noexcept
 	: mnID{ _ID }, mnFlags{ FLAG_NONE },
-	mTransform{ this }, mComponents{}, mBehaviours{}
+	mTransform{ this }, mComponents{}, mBehaviours{},
+	mbIsStatic{false}
 {
 
 }
@@ -45,7 +46,7 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	: mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags }, mName{ _obj.mName },
 	mComponents{ Utility::Move(_obj.mComponents) },
 	mBehaviours{ Utility::Move(_obj.mBehaviours) },
-	mTransform{ _obj.mTransform }
+	mTransform{ _obj.mTransform }, mbIsStatic{false}
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
@@ -71,6 +72,11 @@ void Dystopia::GameObject::SetActive(const bool _bEnable)
 		return;
 
 	mnFlags = _bEnable ? mnFlags | FLAG_ACTIVE : mnFlags & ~FLAG_ACTIVE;
+}
+
+bool Dystopia::GameObject::IsStatic() const
+{
+	return false;
 }
 
 

@@ -14,7 +14,7 @@
 
 #include "Component/ComponentList.h"
 #include "Component/Component.h"
-#include "Component/Collider.h"
+#include "Component/ColliderList.h"
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
 #include "Component/Camera.h"

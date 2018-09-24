@@ -31,7 +31,8 @@ namespace Dystopia
 		class Camera,
 		class Renderer,
 		class AABB,
-		class Convex
+		class Convex,
+		class Circle
 		//class Particle
 	>::result;
 

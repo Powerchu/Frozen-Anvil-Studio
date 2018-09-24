@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/DefaultFactory.h"
 
 #include "Component/Camera.h"
-#include "Component/Collider.h"
+#include "Component/ColliderList.h"
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
 

@@ -44,6 +44,8 @@ namespace Dystopia
 
 		bool IsActive(void) const;
 		void SetActive(const bool _bEnable);
+		bool IsStatic() const;
+		void SetStatic(bool _bEnable);
 
 		void Load(void);
 		void Init(void);
@@ -93,6 +95,7 @@ namespace Dystopia
 
 		GameObject& operator = (GameObject&&);
 	private:
+		bool mbIsStatic;					/* Static bodies do not need to be integrated/updated*/
 
 		uint64_t mnID;
 		std::string mName;

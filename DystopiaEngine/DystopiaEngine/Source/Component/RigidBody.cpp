@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Physics/PhysicsSystem.h"
 #include "Object/GameObject.h"
 #include "System/Logger/LoggerSystem.h"
+#include "Math/Matrix4.h"
 
 #include <cmath>
 
@@ -27,11 +28,11 @@ namespace Dystopia
 		, mpOwnerTransform(nullptr)
 		, mpPhysSys(nullptr)
 		, mfAngleDeg(0.0F)
-		, mfLinearDamping(0.9F)
-		, mfAngularDrag(0.9F)
+		, mfLinearDamping(0.6F)
+		, mfAngularDrag(0.6F)
 		, mfFriction(0.5F)
 		, mfRestitution(0.5F)
-		, mfCustom_GravityScale(1000.0F)
+		, mfGravityScale(1.0F)
 		, mfMass(100.0F)
 		, mfInvMass(0.01F)
 		, mOwnerIsActive(true)
@@ -54,7 +55,7 @@ namespace Dystopia
 		, mfAngularDrag(_angularDrag)
 		, mfFriction(_friction)
 		, mfRestitution(_elasticity)
-		, mfCustom_GravityScale(_gravityScale)
+		, mfGravityScale(_gravityScale)
 		, mfMass(_mass)
 		, mfInvMass(1/_mass)
 		, mOwnerIsActive(true)
@@ -63,11 +64,6 @@ namespace Dystopia
 	{
 
 	}
-
-	//RigidBody::~RigidBody(void)
-	//{
-	//	//delete mpPrimitiveShape;
-	//}
 
 	void RigidBody::Load(void)
 	{
@@ -78,10 +74,12 @@ namespace Dystopia
 		// Get Owner's Transform Component as pointer
 		if (nullptr == mpOwnerTransform && GetOwner())
 		{
+			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
 			mOwnerIsActive = GetOwner()->IsActive();
-			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mPosition = P_TX->GetGlobalPosition();
+
+			mInverseOrientation = Math::Inverse(mOrientation);
 		}
 
 		// If mass is zero, object is interpreted to be static
@@ -136,7 +134,7 @@ namespace Dystopia
 				mPosition += mLinearVelocity * _dt;
 
 			Calculate Acceleration
-				mAcceleration = Vec3D{ 0, mpPhysSys->mGravity*mfCustom_GravityScale,0 };
+				mAcceleration = Vec3D{ 0, mpPhysSys->mGravity*mfGravityScale,0 };
 				const Vec3D newAccel = mCumulativeForce * mfInvMass + mAcceleration;
 
 			Calculate Velocity
@@ -156,7 +154,7 @@ namespace Dystopia
 
 		if (mbHasGravity)
 		{
-			mAcceleration += Vec3D{0, mpPhysSys->mGravity*mfCustom_GravityScale,0};
+			mAcceleration += Vec3D{0, mpPhysSys->mGravity*mfGravityScale,0};
 		}
 
 		// Update Position
@@ -164,7 +162,7 @@ namespace Dystopia
 
 		//Integrate the velocity
 		mLinearVelocity += mAcceleration * _dt;
-		const Vec3D new_accel = mCumulativeForce * mfInvMass;
+		const Vec3D new_accel = mCumulativeForce * mfInvMass + mAcceleration;
 
 		//Integrate the velocity
 		mLinearVelocity += (new_accel - mAcceleration) * 0.5f * _dt;
@@ -239,12 +237,32 @@ namespace Dystopia
 
 	void RigidBody::GlobalCentroidFromPosition(void)
 	{
-		mGlobalCentroid = mOrientation * mLocalCentroid + mPosition;
+		mGlobalCentroid = (mOrientation * mLocalCentroid) + mPosition;
 	}
 
 	void RigidBody::PositionFromGlobalCentroid(void)
 	{
-		mPosition = mOrientation * -mLocalCentroid + mGlobalCentroid;
+		mPosition = (mOrientation * -mLocalCentroid) + mGlobalCentroid;
+	}
+
+	Vec3D RigidBody::LocalToGlobal(const Vec3D &p) const
+	{
+		return mOrientation * p + mPosition;
+	}
+
+	Vec3D RigidBody::GlobalToLocal(const Vec3D &p) const
+	{
+		return mInverseOrientation * (p - mPosition);
+	}
+
+	Vec3D RigidBody::LocalToGlobalVec(const Vec3D &v) const
+	{
+		return mOrientation * v;
+	}
+
+	Vec3D RigidBody::GlobalToLocalVec(const Vec3D &v) const
+	{
+		return mInverseOrientation * v;
 	}
 
 	/*
@@ -274,12 +292,12 @@ namespace Dystopia
 		/*Add to the total Angular velocity of the object in this Update Frame*/
 		mAngularVelocity += angularVel;
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
-		mCumulativeForce += _force;
+		mCumulativeForce += _force * 10000.0F;
 	}
 
 	void RigidBody::AddForce(Math::Vec3D const & _force)
 	{
-		mCumulativeForce += _force;
+		mCumulativeForce += _force * 10000.0F;
 	}
 
 	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
@@ -302,7 +320,7 @@ namespace Dystopia
 		{		
 			LoggerSystem::ConsoleLog(eLog::MESSAGE, "Note: Rigidbody has no gravity enabled.");
 		}
-		mfCustom_GravityScale = _scale;
+		mfGravityScale = _scale;
 	}
 
 	bool RigidBody::Set_ToggleGravity()
@@ -381,7 +399,7 @@ namespace Dystopia
 
 	float RigidBody::GetGravityScalar() const
 	{
-		return mfCustom_GravityScale;
+		return mfGravityScale;
 	}
 	float RigidBody::GetMass() const
 	{

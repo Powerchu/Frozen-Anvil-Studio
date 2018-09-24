@@ -1,15 +1,15 @@
 #include "System/Collision/CollisionSystem.h"
 #include "System/Graphics/MeshSystem.h"
-
-#include "Component/Collider.h"
-#include "Component/RigidBody.h"
-#include "Object/GameObject.h"
-#include "Component/Transform.h"
-
-#include <map>
-#include <utility>
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
+
+#include "Component/ColliderList.h"
+#include "Component/RigidBody.h"
+#include "Component/Transform.h"
+#include "Object/GameObject.h"
+
+#include <utility>
+#include <map>
 
 namespace Dystopia
 {
@@ -79,20 +79,25 @@ namespace Dystopia
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
 			elem.ClearCollisionEvent(); //clear collision table
-			break;
 		}
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
-			elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
-			elem.SetColliding((false));
-			mColliders.push_back(&elem);
+			if (elem.GetOwner())
+			{
+				elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+				elem.SetColliding((false));
+				mColliders.push_back(&elem);
+			}
 		}
 		for (auto & elem : ComponentDonor<AABB>::mComponents)
 		{
-			elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
-			elem.SetColliding((false));
-			mColliders.push_back(&elem);
+			if (elem.GetOwner())
+			{
+				elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+				elem.SetColliding((false));
+				mColliders.push_back(&elem);
+			}
 		}
 
 		for (auto & bodyA : mColliders)
@@ -149,6 +154,21 @@ namespace Dystopia
 		const auto col_b = dynamic_cast<Convex * const>(_ColB);
 		
 		return col_a->isColliding(col_b);
+	}
+
+	bool CollisionSystem::CircleVsCircle(Collider* const& _ColA, Collider* const& _Colb) const
+	{
+		return false;
+	}
+
+	bool CollisionSystem::CircleVsAABB(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		return false;
+	}
+
+	bool CollisionSystem::CircleVsConvex(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		return false;
 	}
 
 	CollisionSystem::CollisionSystem()

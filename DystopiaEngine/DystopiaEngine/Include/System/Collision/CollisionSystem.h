@@ -12,17 +12,17 @@ namespace Dystopia
 	class Collider;
 	class AABB;
 	class Convex;
+	class Circle;
 
-	class CollisionSystem : 
-	public Systems, 
-	public ComponentDonor<AABB>,
-	public ComponentDonor<Convex>
+	class CollisionSystem : public Systems, public ComponentDonor<AABB>,
+											public ComponentDonor<Convex>,	  
+											public ComponentDonor<Circle>
 	{
 	public:
 
+		CollisionSystem();
 		~CollisionSystem();
 
-		CollisionSystem();
 
 		virtual void PreInit(void) override;
 		virtual bool Init(void) override;
@@ -42,6 +42,15 @@ namespace Dystopia
 
 		bool ConvexVsConvex(Collider  * const & _ColA,
 			                Collider  * const & _ColB) const;
+
+		bool CircleVsCircle(Collider * const & _ColA,
+							Collider * const & _Colb) const;
+
+		bool CircleVsAABB(Collider * const & _ColA,
+							Collider * const & _ColB) const;
+
+		bool CircleVsConvex(Collider * const & _ColA,
+							Collider * const & _ColB) const;
 	};
 }
 

@@ -8,15 +8,12 @@
 #include "Component/RigidBody.h"
 #include "Component/Collider.h"
 
-#define G_CONSTANT 9.80665F
-
 namespace Dystopia
 {
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(true)
-		, mTimeAccumulator(0.0F)
 		, mInterpolation_mode(none)
-		, mGravity(-G_CONSTANT)
+		, mGravity(-920.665F)
 		, mMaxVelocityConstant(2048.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.2F)
@@ -42,34 +39,43 @@ namespace Dystopia
 	{
 		for (auto& bodies : mComponents)
 		{
-			bodies.Integrate(_dt);
+			if (bodies.GetOwner())
+			{
+				bodies.Integrate(_dt);
+			}
 		}
 	}
 
 	void PhysicsSystem::ResolveCollision(float _dt)
 	{
 		UNUSED_PARAMETER(_dt);
-		for (auto& rigid_elem : mComponents)
+		for (auto& body : mComponents)
 		{
-			auto ptr = rigid_elem.GetOwner()->GetComponent<Collider>();
-			if (ptr)
+			if (body.GetOwner())
 			{
-				if (ptr->hasCollision() && !rigid_elem.Get_IsStaticState())
+				auto ptr = body.GetOwner()->GetComponent<Collider>();
+				if (ptr)
 				{
-					LoggerSystem::ConsoleLog(eLog::MESSAGE, "Collided!");
-					rigid_elem.SetVelocity({0,0,0});
-					ptr->GetCollisionEvents();
+					if (ptr->hasCollision() && !body.Get_IsStaticState())
+					{
+						LoggerSystem::ConsoleLog(eLog::MESSAGE, "Collided!");
+						body.SetVelocity({ 0,0,0 });
+						ptr->GetCollisionEvents();
+					}
 				}
 			}
 			
 		}
 	}
 
-	void PhysicsSystem::UpdateResults(float _dt)
+	void PhysicsSystem::UpdateResults()
 	{
 		for (auto& body : mComponents)
 		{
-			body.UpdateResult();
+			if (body.GetOwner())
+			{
+				body.UpdateResult();
+			}
 		}
 
 		// If Event System is running: this is where to Broadcast Collision Messages
@@ -77,9 +83,12 @@ namespace Dystopia
 
 	void PhysicsSystem::DebugPrint()
 	{
-		for (auto& rigid_elem : mComponents)
+		for (auto& body : mComponents)
 		{
-			rigid_elem.DebugPrint();
+			if (body.GetOwner())
+			{
+				body.DebugPrint();
+			}
 		}
 	}
 
@@ -99,7 +108,7 @@ namespace Dystopia
 		IntegrateRigidBodies(_dt);
 
 		/*Update positions and rotation as result*/
-		UpdateResults(_dt);
+		UpdateResults();
 	}
 
 	void PhysicsSystem::FixedUpdate(float _dt)

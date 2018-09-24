@@ -22,15 +22,16 @@ namespace Dystopia
 	Collider::Collider()
 		: mv3Offset{0,0,0,0}
 	{
-		//EngineCore::GetInstance()->GetSystem<CollisionSystem>()->InsertCollider(this);
+		
 	}
 	Collider::Collider(const Math::Point3D & _offset)
 		: mv3Offset{ _offset }
 	{
-		//EngineCore::GetInstance()->GetSystem<CollisionSystem>()->InsertCollider(this);
+
 	}
 	void Collider::Load(void)
 	{
+
 	}
 	void Collider::Init(void)
 	{
@@ -38,9 +39,11 @@ namespace Dystopia
 	}
 	void Collider::OnDestroy(void)
 	{
+
 	}
 	void Collider::Unload(void)
 	{
+
 	}
 	Collider * Collider::Duplicate() const
 	{
@@ -58,11 +61,11 @@ namespace Dystopia
 
 	bool Collider::hasCollision() const
 	{
-		return Colliding;
+		return mbColliding;
 	}
 	void Collider::SetColliding(bool _b)
 	{
-		Colliding = _b;
+		mbColliding = _b;
 	}
 	void Collider::SetPosition(Math::Point3D const & _point)
 	{
@@ -104,15 +107,15 @@ namespace Dystopia
 	{
 
 	}
+
 	void Collider::Triangulate()
 	{
 		if (mDebugVertices.size() < 3)
 			return;
 		
-		
 		auto const start = mDebugVertices.begin();
 
-		auto  first   = mDebugVertices.begin();
+		const auto  first   = mDebugVertices.begin();
 		auto  second  = first+1;
 		auto  third   = second+1;
 		do
@@ -121,7 +124,7 @@ namespace Dystopia
 		  mIndexBuffer.push_back(static_cast<const short>(second - start));
 		  mIndexBuffer.push_back(static_cast<const short>(third - start));
 
-		  auto copy = third++;
+		  const auto copy = third++;
 		  second    = copy;
 
 		} while (third != mDebugVertices.end());

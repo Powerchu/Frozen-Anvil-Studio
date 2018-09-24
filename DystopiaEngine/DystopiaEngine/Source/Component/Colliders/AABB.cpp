@@ -1,10 +1,9 @@
-#include "Component/Collider.h"
+#include "Component/AABB.h"
 #include "Object/GameObject.h"
 #include "Component/RigidBody.h"
 
 namespace Dystopia
 {
-	
 	/*Default Constructor*/
 	AABB::AABB()
 		:Convex{}
@@ -100,11 +99,11 @@ namespace Dystopia
 			&& TransformA->GetGlobalPosition().y + this->mMax->mPosition.y >= TransformB->GetGlobalPosition().y + _ColB.mMin->mPosition.y
 			&& TransformA->GetGlobalPosition().y + this->mMin->mPosition.y <= TransformB->GetGlobalPosition().y + _ColB.mMax->mPosition.y)
 		{
-			Colliding = true;
-			return Colliding;
+			mbColliding = true;
+			return mbColliding;
 		}
 
-		Colliding |= false;
+		mbColliding |= false;
 		return false;
 	}
 

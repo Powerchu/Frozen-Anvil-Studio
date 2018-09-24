@@ -95,7 +95,7 @@ namespace Dystopia
 		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
 		mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
 		mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition ({ 0, -185.f, 0 });
-		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 512.f, 32.f, 1.f });
+		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 2048.f, 32.f, 1.f });
 		mpStaticBoxObject->GetComponent<Collider>()->Init();
 		mpStaticBoxObject->GetComponent<Renderer>()->SetTexture(_st);
 		delete s;
@@ -110,7 +110,16 @@ namespace Dystopia
 			mpInputSys->Update(mDelta);
 			mpColSys->FixedUpdate(mDelta);
 			mpPhysSys->FixedUpdate(mDelta);
-			if (mpInputSys->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
+			mpSceneCamera->GetComponent<Transform>()->SetGlobalPosition(mpBoxObject->GetComponent<Transform>()->GetGlobalPosition());
+			if (mpInputSys->IsKeyPressed(eUserButton::BUTTON_SPACEBAR))
+			{
+				mpBoxObject->GetComponent<RigidBody>()->AddForce({5.0f,20.0F,0});
+				/*
+
+				mpBoxObject2->GetComponent<Transform>()->SetGlobalPosition({ 0,185.0F,0,0 });
+				mpBoxObject2->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });*/
+			}
+			if (mpInputSys->IsKeyTriggered(eUserButton::MOUSE_M))
 			{
 				mpBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
 				mpBoxObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
