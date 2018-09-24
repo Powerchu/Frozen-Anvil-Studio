@@ -15,8 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_H_
 #define _EDITOR_H_
 #include "DataStructure\AutoArray.h"
-#include "DataStructure\SharedPtr.h"
-#include <chrono>
+#include <string>
 
 namespace Dystopia
 {
