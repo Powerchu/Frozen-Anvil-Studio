@@ -51,6 +51,8 @@ namespace Dystopia
 
 		bool CircleVsConvex(Collider * const & _ColA,
 							Collider * const & _ColB) const;
+
+		AutoArray<Collider *> GetAllColliders() const;
 	};
 }
 
