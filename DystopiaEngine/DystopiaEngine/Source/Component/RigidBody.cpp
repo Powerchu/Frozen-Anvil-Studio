@@ -185,7 +185,7 @@ namespace Dystopia
 		ResetCumulative();
 	}
 
-	void RigidBody::UpdateResult(double alpha) const
+	void RigidBody::UpdateResult(float alpha) const
 	{
 		if (!mbIsStatic) // only update when body is not static
 		{

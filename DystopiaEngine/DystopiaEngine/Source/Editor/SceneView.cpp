@@ -20,7 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "Component/Renderer.h"
-#include "System/Camera/CameraSystem.h"
 #include "System/Input/InputSystem.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Collision/CollisionSystem.h"
@@ -30,9 +29,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Graphics\Texture2D.h"
 #include "Component\Camera.h"
 
-#include "System/Scene/Scene.h"
-#include "System/Graphics/Texture2D.h"
-#include "Component/Camera.h"
+// #include "System/Scene/Scene.h"
+// #include "System/Graphics/Texture2D.h"
+// #include "Component/Camera.h"
+// #include "System/Camera/CameraSystem.h" 
 
 #include "Component/RigidBody.h"
 

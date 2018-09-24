@@ -14,9 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _PLOG_INFO_H_
 #define _PLOG_INFO_H_
-#include <string>
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/Array.h"
+
+#include <string>
 
 namespace Dystopia
 {

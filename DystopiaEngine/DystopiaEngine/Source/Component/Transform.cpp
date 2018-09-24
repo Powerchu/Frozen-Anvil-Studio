@@ -15,13 +15,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/GameObject.h"
 #include "Math/Matrix4.h"
 #include "Math/Vector4.h"
-#include "System/Scene/Scene.h"
-#include "System/Scene/SceneSystem.h"
 #include "IO/TextSerialiser.h"
 
+//#include "System/Scene/SceneSystem.h"
+//#include "System/Scene/Scene.h"
+
 #if EDITOR
-#include "Edito/EGUI.h"
-#include "Editor/ConsoleLog.h" 
+#include "Editor/EGUI.h"
+// #include "System/Logger/LoggerSystem.h"
 #endif 
 
 Dystopia::Transform::Transform(GameObject* _pOwner) noexcept

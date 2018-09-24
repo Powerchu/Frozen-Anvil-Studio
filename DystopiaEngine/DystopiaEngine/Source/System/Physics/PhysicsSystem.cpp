@@ -1,12 +1,12 @@
 #include "System/Physics/PhysicsSystem.h"
-#include "Component/RigidBody.h"
-#include "Object/GameObject.h"
 #include "System/Collision/CollisionSystem.h"
-#include "System/Time/ScopedTimer.h"
+#include "System/Logger/LoggerSystem.h"
 #include "System/Profiler/ProfilerAction.h"
+#include "System/Time/ScopedTimer.h"
 
+#include "Object/GameObject.h"
+#include "Component/RigidBody.h"
 #include "Component/Collider.h"
-#include <chrono>
 
 #define G_CONSTANT 9.80665F
 
@@ -67,7 +67,7 @@ namespace Dystopia
 
 	void PhysicsSystem::UpdateResults(float _dt)
 	{
-		const double alpha = mTimeAccumulator / _dt;
+		const float alpha = mTimeAccumulator / _dt;
 
 		for (auto& body : mComponents)
 		{
@@ -118,7 +118,6 @@ namespace Dystopia
 
 	void PhysicsSystem::FixedUpdate(float _dt)
 	{
-		using namespace std::chrono;
 		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
 
 		const float timeStep = 1.0f / 60.0f;
