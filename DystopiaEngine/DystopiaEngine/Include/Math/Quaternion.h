@@ -174,42 +174,6 @@ inline Math::Quaternion _CALL Math::Conjugate(Quaternion _Q)
 	return _Q.Conjugate();
 }
 
-inline float _CALL Math::Quaternion::Dot(const Quaternion _rhs) const
-{
-	// TODO:
-	UNUSED_PARAMETER(_rhs);
-	return .0f;
-}
-
-inline float _CALL Math::Dot(const Quaternion _lhs, const Quaternion _rhs)
-{
-	return _lhs.Dot(_rhs);
-}
-
-inline Math::Quaternion& _CALL Math::Quaternion::Cross(const Quaternion _rhs)
-{
-	// TODO:
-	UNUSED_PARAMETER(_rhs);
-	return *this;
-}
-
-inline Math::Quaternion _CALL Math::Cross(Quaternion _lhs, Quaternion _rhs)
-{
-	return _lhs.Cross(_rhs);
-}
-
-inline Math::Quaternion& _CALL Math::Quaternion::Project(const Quaternion _rhs)
-{
-	_rhs;
-	return *this;
-}
-
-// Projects lhs onto rhs
-inline Math::Quaternion _CALL Math::Project(Quaternion _lhs, Quaternion _rhs)
-{
-	return _lhs.Project(_rhs);
-}
-
 
 inline float _CALL Math::Quaternion::Magnitude(void) const
 {

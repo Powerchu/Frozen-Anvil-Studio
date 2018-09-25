@@ -146,7 +146,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	MeshSystem* pMeshSys = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
 
 	Mesh*   mesh = pMeshSys->GetMesh("Quad");
-	Shader* shader = shaderlist.begin()->second;
+	Shader* shader = shaderlist["Default Shader"];
 	Texture2D* texture = new Texture2D{ "Resource/Editor/EditorStartup.png" };
 
 	unsigned w = texture->GetWidth(), h = texture->GetHeight();

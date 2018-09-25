@@ -26,7 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _CALL __vectorcall
 
 
-static Math::Quaternion _CALL Math::Quaternion::FromEuler(Math::Angle _x, Math::Angle _y, Math::Angle _z)
+Math::Quaternion _CALL Math::Quaternion::FromEuler(Math::Angle _x, Math::Angle _y, Math::Angle _z)
 {
 	float sx = sinf(_x.Radians()),
 		cx = cosf(_x.Radians()),
