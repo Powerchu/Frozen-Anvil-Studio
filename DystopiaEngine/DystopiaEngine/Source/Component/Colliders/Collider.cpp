@@ -77,11 +77,18 @@ namespace Dystopia
 		return Math::Min(a_rest, b.GetRestitution());
 	}
 
-	float Collider::DetermineFriction(RigidBody const & b) const
+	float Collider::DetermineStaticFriction(RigidBody const & b) const
 	{
-		const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetFrictionForce();
-		return sqrt(a_fric*b.GetFrictionForce());
+		const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetStaticFriction();
+		return sqrt(a_fric*b.GetStaticFriction());
 	}
+
+	float Collider::DetermineKineticFriction(RigidBody const & b) const
+	{
+		const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetKineticFriction();
+		return sqrt(a_fric*b.GetKineticFriction());
+	}
+
 	AutoArray<CollisionEvent> const & Collider::GetCollisionEvents() const
 	{
 		return mCollisionEvent;

@@ -60,8 +60,10 @@ namespace Dystopia
 
 		// TODO: remove this
 		GameObject*			mpCircleObject;
+		GameObject*			mpBoxObject2;
 		GameObject*			mpBoxObject;
 		GameObject*			mpStaticBoxObject;
+		GameObject*			mpStaticCircleObject;
 	};
 
 }

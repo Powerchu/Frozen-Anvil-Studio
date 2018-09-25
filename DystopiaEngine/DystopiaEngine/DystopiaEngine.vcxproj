@@ -109,10 +109,10 @@
     <ClInclude Include="Include\Component\CharacterController.h" />
     <ClInclude Include="Include\Component\Circle.h" />
     <ClInclude Include="Include\Component\ColliderList.h" />
-    <ClInclude Include="Include\Component\CollisionEvent.h" />
     <ClInclude Include="Include\Component\Convex.h" />
     <ClInclude Include="Include\Component\Triangle.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />
+    <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />

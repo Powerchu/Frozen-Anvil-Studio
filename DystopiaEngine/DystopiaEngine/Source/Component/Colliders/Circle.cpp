@@ -51,7 +51,7 @@ namespace Dystopia
 		{
 			m_originCentre += GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 			const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
-			m_radius *= _xScale * 0.5f;
+			m_radius *= _xScale;
 		}
 		
 	}
@@ -94,11 +94,13 @@ namespace Dystopia
 	/*Collision Check Functions*/
 	bool Circle::isColliding(Circle & other_col, Vec3D other_pos)
 	{
+		const auto this_body = *GetOwner()->GetComponent<RigidBody>();
 		const auto other_body = *other_col.GetOwner()->GetComponent<RigidBody>();
 		const auto this_pos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 		const auto positionDelta = this_pos - other_pos;
 		const auto disSquared = positionDelta.Dot(positionDelta);
 		const float combinedRadius = this->m_radius + other_col.m_radius;
+		
 
 		// If the position delta is < combined radius, it is colliding
 		if (disSquared < combinedRadius*combinedRadius) // collided, getCollisionEvent
@@ -106,33 +108,52 @@ namespace Dystopia
 			Vec3D contactPoint;
 			Vec3D normal;
 			float penetration;
-			if (disSquared < FLT_EPSILON || disSquared > FLT_EPSILON)
+			const float dis = positionDelta.Magnitude();
+
+			if (dis > FLT_EPSILON) // dis != 0
+			{
+				penetration = combinedRadius - dis;
+				contactPoint = (m_originCentre * other_col.m_radius) + (other_col.m_originCentre * m_radius) / combinedRadius;
+				const auto normalVec = other_col.m_originCentre - contactPoint;
+				if (normalVec.MagnitudeSqr() > FLT_EPSILON)
+				{
+					normal = Normalise(normalVec);
+				}
+				const auto rv = this_body.GetLinearVelocity() - other_body.GetLinearVelocity();
+				Vec3D tangent = { normal.y, -normal.x,0 };
+				float length = rv.Dot(tangent);
+				const auto velCompOnTangent = tangent * length;
+				const auto reflectedVec = rv - velCompOnTangent;
+
+				if (reflectedVec.MagnitudeSqr() > FLT_EPSILON)
+				{
+					normal = Normalise(reflectedVec);
+				}
+
+				/*contactPoint = (m_originCentre * other_col.m_radius) + (other_col.m_originCentre * m_radius) / combinedRadius;
+				normal = Math::Normalise(other_col.m_originCentre - contactPoint);*/
+				
+			}
+			else //dis == 0
 			{
 				//Right on top of each other
 				penetration = this->m_radius;
-				normal = Vec3D{ 1,0,1,1 };
+				normal = Vec3D{ 0,1,0 };
 				contactPoint = this->m_originCentre;
-			}
-			else
-			{
-				const Vec3D norm_delta = Math::Normalise(positionDelta);
-				float dis = norm_delta.Magnitude();
-				penetration = combinedRadius - dis;
-				normal = norm_delta;
-
-				contactPoint = (m_originCentre * other_col.m_radius) + (other_col.m_originCentre * m_radius) / combinedRadius;
 			}
 
 			// Add to Collision Events
 			mbColliding = true;
 			other_col.mbColliding = true;
 
-			CollisionEvent col_info(other_col.GetOwner());
+			CollisionEvent col_info(GetOwner(), other_col.GetOwner());
 			col_info.mEdgeNormal = normal;
+			//col_info.mEdgeVector = Math::Normalise(positionDelta);
 			col_info.mCollisionPoint = contactPoint;
 			col_info.mdPeneDepth = static_cast<double>(penetration);
 			col_info.mfRestitution = DetermineRestitution(other_body);
-			col_info.mfFrictionCof = DetermineFriction(other_body);
+			col_info.mfStaticFrictionCof = DetermineStaticFriction(other_body);
+			col_info.mfDynamicFrictionCof = DetermineKineticFriction(other_body);
 
 			mCollisionEvent.Insert(col_info);
 	

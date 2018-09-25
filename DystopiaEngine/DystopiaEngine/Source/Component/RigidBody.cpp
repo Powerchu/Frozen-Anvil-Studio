@@ -30,7 +30,8 @@ namespace Dystopia
 		, mfAngleDeg(0.0F)
 		, mfLinearDamping(0.6F)
 		, mfAngularDrag(0.6F)
-		, mfFriction(0.5F)
+		, mfStaticFriction(0.5F)
+		, mfDynamicFriction(0.7F)
 		, mfRestitution(0.5F)
 		, mfGravityScale(1.0F)
 		, mfMass(100.0F)
@@ -53,7 +54,7 @@ namespace Dystopia
 		, mfAngleDeg(0.0F)
 		, mfLinearDamping(_linearDrag)
 		, mfAngularDrag(_angularDrag)
-		, mfFriction(_friction)
+		, mfStaticFriction(_friction)
 		, mfRestitution(_elasticity)
 		, mfGravityScale(_gravityScale)
 		, mfMass(_mass)
@@ -157,15 +158,15 @@ namespace Dystopia
 			mAcceleration += Vec3D{0, mpPhysSys->mGravity*mfGravityScale,0};
 		}
 
-		// Update Position
-		mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
-
 		//Integrate the velocity
 		mLinearVelocity += mAcceleration * _dt;
 		const Vec3D new_accel = mCumulativeForce * mfInvMass + mAcceleration;
 
 		//Integrate the velocity
 		mLinearVelocity += (new_accel - mAcceleration) * 0.5f * _dt;
+
+		// Update Position
+		mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
 
 		// Linear Damping (Drag)
 		mLinearVelocity *= std::pow(mfLinearDamping, _dt);
@@ -183,7 +184,8 @@ namespace Dystopia
 
 	void RigidBody::UpdateResult() const
 	{
-		if (!mbIsStatic) // only update when body is not static
+		const auto diff = (mPosition - mPrevPosition).MagnitudeSqr();
+		if (!mbIsStatic && diff > 0.01F) // only update when body is not static
 		{
 			P_TX->SetGlobalPosition(mPosition);
 		}
@@ -350,6 +352,23 @@ namespace Dystopia
 		mfInvMass = 1 / mfInvMass;
 	}
 
+	void RigidBody::SetStaticFriction(const float _f)
+	{
+		mfStaticFriction = _f;
+	}
+
+	void RigidBody::SetKineticFriction(const float _f)
+	{
+		mfDynamicFriction = _f;
+	}
+
+	void RigidBody::SetRestitution(const float _f)
+	{
+		if (_f > 1.0F) mfRestitution = 1.0F;
+		else if (_f < 0.0) mfRestitution = 0.0F;
+		else mfRestitution = _f;
+	}
+
 	void RigidBody::Set_IsStatic(bool _state)
 	{
 		mbIsStatic = _state;
@@ -392,9 +411,14 @@ namespace Dystopia
 	{
 		return mfAngleDeg;
 	}
-	float RigidBody::GetFrictionForce() const
+	float RigidBody::GetStaticFriction() const
 	{
-		return mfFriction;
+		return mfStaticFriction;
+	}
+
+	float RigidBody::GetKineticFriction() const
+	{
+		return mfDynamicFriction;
 	}
 
 	float RigidBody::GetRestitution() const

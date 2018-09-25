@@ -143,7 +143,8 @@ namespace Dystopia
 
 		float DetermineRestitution(RigidBody const & b) const;
 
-		float DetermineFriction(RigidBody const & b) const;
+		float DetermineStaticFriction(RigidBody const & b) const;
+		float DetermineKineticFriction(RigidBody const & b) const;
 
 		 /*Get Array of collision event*/
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;

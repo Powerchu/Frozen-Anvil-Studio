@@ -49,22 +49,26 @@ namespace Dystopia
 	void PhysicsSystem::ResolveCollision(float _dt)
 	{
 		UNUSED_PARAMETER(_dt);
+		const GameObject* owner;
 		for (auto& body : mComponents)
 		{
-			if (body.GetOwner())
+			owner = body.GetOwner();
+			if (nullptr != owner && !body.Get_IsStaticState())
 			{
-				auto ptr = body.GetOwner()->GetComponent<Collider>();
-				if (ptr)
+				const auto col = owner->GetComponent<Collider>();
+				if (nullptr != col)
 				{
-					if (ptr->hasCollision() && !body.Get_IsStaticState())
+					if (true == col->hasCollision())
 					{
-						LoggerSystem::ConsoleLog(eLog::MESSAGE, "Collided!");
-						body.SetVelocity({ 0,0,0 });
-						ptr->GetCollisionEvents();
+						//LoggerSystem::ConsoleLog(eLog::MESSAGE, "Collided!");
+						for (auto& manifold : col->GetCollisionEvents())
+						{
+							manifold.ApplyImpulse();
+							manifold.ApplyPenetrationCorrection();
+						};
 					}
 				}
 			}
-			
 		}
 	}
 
@@ -98,14 +102,15 @@ namespace Dystopia
 
 	void PhysicsSystem::Step(float _dt)
 	{
+		// Integrate Rigidbodies
+		IntegrateRigidBodies(_dt);
 
 		/* Collision Detection*/
 
 		/* Collision Resolution (Response) Logic */
 		ResolveCollision(_dt);
 
-		// Integrate Rigidbodies
-		IntegrateRigidBodies(_dt);
+		
 
 		/*Update positions and rotation as result*/
 		UpdateResults();

@@ -131,6 +131,10 @@ namespace Dystopia
 		void SetPosition(const Vec3D&);
 		void SetVelocity(const Vec3D&);
 		void SetMass(const float);
+		void SetStaticFriction(const float);
+		void SetKineticFriction(const float);
+		void SetRestitution(const float);
+
 
 		// Gettors
 		Vec3D GetPosition() const;
@@ -140,7 +144,8 @@ namespace Dystopia
 		Vec3D GetAcceleration() const;
 		Transform* GetOwnerTransform() const;
 		float GetAngle() const;
-		float GetFrictionForce() const;
+		float GetStaticFriction() const;
+		float GetKineticFriction() const;
 		float GetRestitution() const;
 		float GetGravityScalar() const;
 		float GetMass() const;
@@ -175,7 +180,8 @@ namespace Dystopia
 		float			mfLinearDamping;			/* Linear Drag, slows down motion dynamics over time*/
 
 		float			mfAngularDrag;				/* Coefficient of angular drag. */
-		float			mfFriction;					/* Like LinearDamping, but only drag the forces when 2 or more objects are colliding*/
+		float			mfStaticFriction;			/* Like LinearDamping, but only drag the forces when 2 or more objects are colliding*/
+		float			mfDynamicFriction;
 		float			mfRestitution;				/* Elasticity Coefficient: 'Bounciness' of the body*/
 
 		float			mfGravityScale;		/* A scalar multiple (in float) of the Physics Engine's gravity*/

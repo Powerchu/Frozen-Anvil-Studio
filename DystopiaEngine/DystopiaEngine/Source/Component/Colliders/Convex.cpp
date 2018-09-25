@@ -1,6 +1,7 @@
 #include "System/Collision/CollisionEvent.h"
 #include "System/Collision/CollisionSystem.h"
 #include "Component/Convex.h"
+#include "Component/RigidBody.h"
 
 #include "Object/GameObject.h"
 
@@ -235,7 +236,8 @@ namespace Dystopia
 	CollisionEvent Convex::GetCollisionEvent(AutoArray<Vertice> & _Simplex, const Convex & _ColB)
 	{
 		static constexpr double EPSILON = 0.0001f;
-		CollisionEvent col_info (_ColB.GetOwner());
+		const auto other_body = *_ColB.GetOwner()->GetComponent<RigidBody>();
+		CollisionEvent col_info (GetOwner(), _ColB.GetOwner());
 
 		while (true)
 		{
@@ -256,10 +258,13 @@ namespace Dystopia
 			if (-EPSILON <= result && result <= EPSILON)
 			{
 				/*This Position belongs to either ColA or B*/
-				col_info.mCollisionPoint = ClosestEdge.mPos;
-				col_info.mEdgeVector     = ClosestEdge.mVec3;
-				col_info.mEdgeNormal     = ClosestEdge.mNorm3;
-				col_info.mdPeneDepth     = ProjectDis;
+				col_info.mCollisionPoint		= ClosestEdge.mPos;
+				col_info.mEdgeVector			= ClosestEdge.mVec3;
+				col_info.mEdgeNormal			= ClosestEdge.mNorm3;
+				col_info.mdPeneDepth			= ProjectDis;
+				col_info.mfRestitution			= DetermineRestitution(other_body);
+				col_info.mfDynamicFrictionCof	= DetermineKineticFriction(other_body);
+				col_info.mfStaticFrictionCof	= DetermineStaticFriction(other_body);
 
 				return col_info;
 			}

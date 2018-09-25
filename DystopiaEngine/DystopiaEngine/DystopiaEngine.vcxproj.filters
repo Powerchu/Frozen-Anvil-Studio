@@ -205,7 +205,6 @@
     <ClCompile Include="Source\Component\Colliders\Circle.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClCompile>
@@ -556,9 +555,6 @@
     <ClInclude Include="Include\System\Graphics\ShaderSystem.h">
       <Filter>Game Engine\SubSystems\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\CollisionEvent.h">
-      <Filter>Game Engine\Systems\Collision</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Component\Particle.h">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClInclude>
@@ -627,6 +623,9 @@
     </ClInclude>
     <ClInclude Include="Include\Component\ColliderList.h">
       <Filter>Game Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Collision\CollisionEvent.h">
+      <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
