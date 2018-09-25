@@ -62,8 +62,8 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
+	mpObj->SetID(p->GetID());
 	p->Destroy();
-	mpScene->GetAllGameObjects().FastRemove(p);
 	return true;
 }
 
@@ -98,8 +98,8 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
+	mpObj->SetID(p->GetID());
 	p->Destroy();
-	mpScene->GetAllGameObjects().FastRemove(p);
 	return true;
 }
 

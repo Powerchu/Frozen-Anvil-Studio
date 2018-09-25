@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure\AutoArray.h" 
 #include "Utility\Utility.h"		 // Move
 #include "IO\TextSerialiser.h"
+#include "Utility\GUID.h"			// Global UniqueID
 
 #define Ping(_ARR, _FUNC, ...)			\
 for (auto& e : _ARR)					\
@@ -106,7 +107,7 @@ void Dystopia::GameObject::PostUpdate(void)
 
 void Dystopia::GameObject::Destroy(void)
 {
-	Ping(mComponents, GameObjectDestroy);
+//	Ping(mComponents, GameObjectDestroy);
 	Ping(mBehaviours, GameObjectDestroy);
 
 	mnFlags = FLAG_REMOVE;
@@ -247,7 +248,7 @@ void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 {
 	GameObject *p = new GameObject{};
-	p->mnID = mnID;
+	p->mnID = GUIDGenerator::GetUniqueID();
 	p->mnFlags = mnFlags;
 	p->mName = mName;
 	p->mComponents = mComponents;
@@ -256,6 +257,10 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	return p;
 }
 
+void Dystopia::GameObject::SetID(const uint64_t& _id)
+{
+	mnID = _id;
+}
 
 uint64_t Dystopia::GameObject::GetID(void) const
 {

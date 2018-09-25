@@ -47,7 +47,7 @@ namespace Dystopia
 		mpGfxSys{ nullptr },
 		mDelta{},
 		mpSceneCamera{ nullptr },
-		mSensitivity{ 1.f }
+		mSensitivity{ 0.1f }
 	{}
 
 	SceneView::~SceneView()
@@ -89,9 +89,12 @@ namespace Dystopia
 		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
 		ImVec2 size{ Size().x - imageOffsetX,  Size().y - imageOffsetY };
 		ImGui::Image(reinterpret_cast<void*>(id), size);
-		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
+		if (ImGui::IsItemHovered())
 		{
-			FindMouseObject(Math::Vec2{ size.x, size.y });
+			if (mToZoom != eZOOM_NONE) 
+				Zoom(eZOOM_IN == mToZoom);
+			if (ImGui::IsMouseClicked(0))
+				FindMouseObject(Math::Vec2{ size.x, size.y });
 		}
 	}
 
@@ -127,39 +130,35 @@ namespace Dystopia
 		Math::Pt3D worldPos = pCam->ScreenToWorld(Math::Vec3D{ xNew, yNew, 0.f });
 		PrintToConsoleLog("World Pos From Scene View : " + std::to_string(worldPos.x) +" / " + std::to_string(worldPos.y));
 	}
-	
-	void SceneView::ScrollIn()
+
+	void SceneView::Zoom(bool _in)
 	{
+		mToZoom = eZOOM_NONE;
 		if (!mpSceneCamera)
 		{
-			PrintToConsoleLog("Camera GameObject is NULL in SceneView::ScrollIn()");
+			PrintToConsoleLog("Camera GameObject is NULL in SceneView::Zoom");
 			return;
 		}
 		Transform *pObjTransform = mpSceneCamera->GetComponent<Transform>();
 		if (!pObjTransform)
 		{
-			PrintToConsoleLog("Camera Transform is NULL in SceneView::ScrollIn()");
+			PrintToConsoleLog("Camera Transform is NULL in SceneView::Zoom");
 			return;
 		}
-		pObjTransform->SetScale( pObjTransform->GetScale() - 
-								Math::Vec4{ mSensitivity, mSensitivity, 0.f });
+
+		Math::Vec4 movement{ mSensitivity, mSensitivity, 0.f };
+		movement = _in ? movement * -1.f : movement;
+		pObjTransform->SetScale(pObjTransform->GetScale() + movement);
+	}
+	
+	void SceneView::ScrollIn()
+	{
+		mToZoom = eZOOM_IN;
 	}
 
 	void SceneView::ScrollOut()
 	{
-		if (!mpSceneCamera)
-		{
-			PrintToConsoleLog("Camera GameObject is NULL in SceneView::ScrollOut()");
-			return;
-		}
-		Transform *pObjTransform = mpSceneCamera->GetComponent<Transform>();
-		if (!pObjTransform)
-		{
-			PrintToConsoleLog("Camera Transform is NULL in SceneView::ScrollOut()");
-			return;
-		}
-		pObjTransform->SetScale(pObjTransform->GetScale() +
-								Math::Vec4{ mSensitivity, mSensitivity, 0.f });
+		mToZoom = eZOOM_OUT;
 	}
 
 	void SceneView::SetSensitivity(float _amt)

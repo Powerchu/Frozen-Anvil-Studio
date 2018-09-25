@@ -262,8 +262,9 @@ namespace Dystopia
 		switch (mCurrentState)
 		{
 		case EDITOR_MAIN:
+			mpSceneSystem->PostUpdate();
 			mpProfiler->PostUpdate();
-			mpDriver->GetSystem<BehaviourSystem>()->PostUpdate();
+			mpBehaviourSys->PostUpdate();
 			break;
 		}
 		mpGuiSystem->EndFrame(); 

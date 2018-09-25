@@ -72,7 +72,8 @@ namespace Dystopia
 
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
-
+		
+		void SetID(const uint64_t&); //explicit purposes only
 		uint64_t GetID(void) const;
 		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;

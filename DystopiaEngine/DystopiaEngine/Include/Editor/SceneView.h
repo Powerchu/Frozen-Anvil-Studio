@@ -50,8 +50,16 @@ namespace Dystopia
 	private:
 		SceneView(void);
 
+		enum eZoom 
+		{
+			eZOOM_IN,
+			eZOOM_OUT,
+			eZOOM_NONE
+		};
+
 		float			mDelta;
 		float			mSensitivity;
+		eZoom			mToZoom;
 		std::string		mLabel;
 		GraphicsSystem	*mpGfxSys;
 		GameObject		*mpSceneCamera;
@@ -60,6 +68,7 @@ namespace Dystopia
 		void			ScrollOut();
 		void			FindMouseObject(const Math::Vec2& _imgSize);
 		void			SceneChanged();
+		void			Zoom(bool);
 	};
 
 }

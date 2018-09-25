@@ -100,7 +100,7 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 	mpNextScene = mpCurrScene = new Scene{};
 
 	/*Open File*/
-	auto & SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_READ);
+	auto SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_READ);
 	/*Consume Start Block*/
 	SerialObj.ConsumeStartBlock();
 	/*Get Next Scene to Unserialise*/
