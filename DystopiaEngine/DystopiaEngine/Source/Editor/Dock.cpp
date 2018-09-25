@@ -794,11 +794,11 @@ bool DockSpace::TabBar(Tabs& _tab, bool _closeBtn)
 	char buffer[20];
 
 	//ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{1,1, 1, 1});
-	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0,0,0,-1});
-	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4{ 0.5f, 0.5f, 0.5f, 0.5f });
-	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4{ 0.7f, 0.7f, 0.7f, 0.8f });
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.9f, 0.9f, 0.9f, 1.f });
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.4f, 0.4f, 0.4f, 0.3f });
+	//ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0,0,0,-1});
+	//ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4{ 0.5f, 0.5f, 0.5f, 0.5f });
+	//ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4{ 0.7f, 0.7f, 0.7f, 0.8f });
+	//ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.9f, 0.9f, 0.9f, 1.f });
+	//ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.4f, 0.4f, 0.4f, 0.3f });
 	ImGui::SetCursorScreenPos(_tab.mPos + ImVec2{ 2, 6 });
 	ImFormatString(buffer, IM_ARRAYSIZE(buffer), "tabs%d", static_cast<int>(_tab.mId));
 	if (ImGui::BeginChild(buffer, size, true, ImGuiWindowFlags_NoScrollbar))
@@ -849,12 +849,7 @@ bool DockSpace::TabBar(Tabs& _tab, bool _closeBtn)
 		pCanvas->AddLine(cp, cp + ImVec2{ _tab.mSize.x, 0 }, ImGui::GetColorU32(ImGuiCol_FrameBgActive), 3);
 	}
 	ImGui::EndChild();
-	//ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
+	//ImGui::PopStyleColor(6);
 	return tabClosed;
 }
 
@@ -1105,8 +1100,8 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 
 	if (!_tab.mActive && _tab.mStatus != eSTATUS_DRAGGED) return false;
 	mEndAction = eEND_ACTION_END_CHILD;
-	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 1));
-	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.5f, 0.5f, 0.5f, 0.5f });
+	//ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 1));
+	//ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.5f, 0.5f, 0.5f, 0.5f });
 	ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0);
 	SplitTabs();
 	float tabH = ImGui::GetTextLineHeightWithSpacing();
@@ -1129,10 +1124,8 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 1,1 });
 	bool ret = ImGui::BeginChild(_pLabel, size, true, flags);
-	ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
-	ImGui::PopStyleVar();
-	ImGui::PopStyleVar();
+	//ImGui::PopStyleColor(2);
+	ImGui::PopStyleVar(2);
 	return ret;
 }
 
@@ -1145,9 +1138,9 @@ void DockSpace::End()
 			ImGui::End();
 		else if (mEndAction == eEND_ACTION_END_CHILD)
 		{
-			ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 1));
+			//ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 1));
 			ImGui::EndChild();
-			ImGui::PopStyleColor();
+			//ImGui::PopStyleColor();
 		}
 	}
 }

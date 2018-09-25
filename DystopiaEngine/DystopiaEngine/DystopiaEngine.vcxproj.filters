@@ -205,7 +205,6 @@
     <ClCompile Include="Source\Component\Colliders\Circle.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\Whatever\TestClass.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClCompile>
@@ -232,6 +231,9 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\Gizmo.cpp">
       <Filter>Editor\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\ColorScheme.cpp">
+      <Filter>Editor\Editor Tabs\ColorScheme</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -610,6 +612,9 @@
     <ClInclude Include="Include\Editor\Gizmo.h">
       <Filter>Editor\Gizmo</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\ColorScheme.h">
+      <Filter>Editor\Editor Tabs\ColorScheme</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -875,6 +880,9 @@
     </Filter>
     <Filter Include="Editor\Gizmo">
       <UniqueIdentifier>{c678684a-2024-498c-b278-53911ea1ab17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\ColorScheme">
+      <UniqueIdentifier>{505d9276-8eac-401b-a286-9d084f3f8461}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

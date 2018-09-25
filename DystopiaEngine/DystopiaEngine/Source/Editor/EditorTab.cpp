@@ -117,9 +117,9 @@ namespace Dystopia
 
 	void EditorTab::SaveSettings(BinarySerializer& _out) const
 	{
-		_out.InsertStartBlock("Tab_Start");
+		_out.InsertStartBlock();
 		_out << mIsOpened;
-		_out.InsertEndBlock("Tab_End");
+		_out.InsertEndBlock();
 	}
 
 	void EditorTab::LoadSettings(BinarySerializer& _in)

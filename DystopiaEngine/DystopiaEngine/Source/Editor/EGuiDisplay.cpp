@@ -351,7 +351,7 @@ namespace EGUI
 			if (_highlighted)
 				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
 
-			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, flags);
+			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, ImGuiTreeNodeFlags_DefaultOpen | flags);
 
 			if (_highlighted)
 				ImGui::PopStyleColor();

@@ -27,33 +27,34 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif
 
 /* System includes */
-#include "System\Window\WindowManager.h"
-#include "System\Window\Window.h"
-#include "System\Graphics\GraphicsSystem.h"
-#include "System\Scene\SceneSystem.h"
-#include "System\Driver\Driver.h"
-#include "System\Profiler\Profiler.h"
-#include "System\Profiler\ProfilerAction.h"
-#include "System\Time\ScopedTimer.h"
+#include "System/Window/WindowManager.h"
+#include "System/Window/Window.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Driver/Driver.h"
+#include "System/Profiler/Profiler.h"
+#include "System/Profiler/ProfilerAction.h"
+#include "System/Time/ScopedTimer.h"
 #include "System/File/FileSystem.h"
 #include "System//Behaviour/BehaviourSystem.h"
 #include "System/Physics/PhysicsSystem.h"
-#include "IO\BinarySerializer.h"
-#include "Utility\GUID.h"
+#include "IO/BinarySerializer.h"
+#include "Utility/GUID.h"
 
 /* Editor includes */
-#include "Editor\EGUI.h"
-#include "Editor\Editor.h"
-#include "Editor\EditorInputs.h"
-#include "Editor\EditorEvents.h"
-#include "Editor\Commands.h"
-#include "Editor\Inspector.h"
-#include "Editor\HierarchyView.h"
-#include "Editor\ProjectResource.h"
-#include "Editor\SceneView.h"
-#include "Editor\ConsoleLog.h"
-#include "Editor\PerformanceLog.h"
-#include "Editor\PLogger.h"
+#include "Editor/EGUI.h"
+#include "Editor/Editor.h"
+#include "Editor/EditorInputs.h"
+#include "Editor/EditorEvents.h"
+#include "Editor/Commands.h"
+#include "Editor/Inspector.h"
+#include "Editor/HierarchyView.h"
+#include "Editor/ProjectResource.h"
+#include "Editor/SceneView.h"
+#include "Editor/ConsoleLog.h"
+#include "Editor/PerformanceLog.h"
+#include "Editor/PLogger.h"
+#include "Editor/ColorScheme.h"
 
 /* library includes */
 #include <iostream>
@@ -127,6 +128,7 @@ namespace Dystopia
 		mArrTabs.push_back(SceneView::GetInstance());
 		mArrTabs.push_back(ConsoleLog::GetInstance());
 		mArrTabs.push_back(PerformanceLog::GetInstance());
+		mArrTabs.push_back(ColorScheme::GetInstance());
 	}
 
 	void Editor::LoadDefaults()
@@ -137,14 +139,14 @@ namespace Dystopia
 
 	void Editor::LoadSettings()
 	{
-		//struct stat buffer;
-		//if (stat(DYSTOPIA_EDITOR_SETTINGS.c_str(), &buffer) == 0)
-		//{
-		//	auto serial = BinarySerializer::OpenFile(DYSTOPIA_EDITOR_SETTINGS, BinarySerializer::MODE_READ);
-		//	for (auto& e : mArrTabs)
-		//		e->LoadSettings(serial);
-		//}
-		//else std::ofstream o{ DYSTOPIA_EDITOR_SETTINGS.c_str() };
+		struct stat buffer;
+		if (stat(DYSTOPIA_EDITOR_SETTINGS.c_str(), &buffer) == 0)
+		{
+			auto serial = BinarySerializer::OpenFile(DYSTOPIA_EDITOR_SETTINGS, BinarySerializer::MODE_READ);
+			for (auto& e : mArrTabs)
+				e->LoadSettings(serial);
+		}
+		else std::ofstream o{ DYSTOPIA_EDITOR_SETTINGS.c_str() };
 	}
 
 	void Editor::Init()
@@ -159,6 +161,12 @@ namespace Dystopia
 		mpProfiler		= mpDriver->GetSystem<Profiler>();			// driver init-ed
 		mpBehaviourSys	= mpDriver->GetSystem<BehaviourSystem>();	// driver init-ed
 
+		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
+		{
+			mCurrentState = EDITOR_EXIT;
+			return;
+		}
+
 		LoadTabs();
 		LoadDefaults();
 		mpInput->Init();
@@ -172,10 +180,8 @@ namespace Dystopia
 			e->Init();
 			e->RemoveFocus();
 		}
-		LoadSettings();
+		//LoadSettings();
 		EGUI::SetContext(mpComdHandler);
-		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
-			mCurrentState = EDITOR_EXIT;
 	}
 
 	void Editor::StartFrame()
@@ -275,10 +281,10 @@ namespace Dystopia
 	{
 		UnInstallHotkeys();
 		mpDriver->GetSubSystem<LoggerSystem>()->RedirectOutput(nullptr);
-		//auto serial = BinarySerializer::OpenFile(DYSTOPIA_EDITOR_SETTINGS, BinarySerializer::MODE_WRITE);
+		auto serial = BinarySerializer::OpenFile(DYSTOPIA_EDITOR_SETTINGS, BinarySerializer::MODE_WRITE);
 		for (auto& e : mArrTabs)
 		{
-			//e->SaveSettings(serial);
+			e->SaveSettings(serial);
 			e->Shutdown();
 			delete e;
 		}
@@ -471,6 +477,14 @@ namespace Dystopia
 			std::string ext{ DYSTOPIA_SCENE_EXTENSION.begin(), DYSTOPIA_SCENE_EXTENSION.end() };
 			std::string file{ DYSTOPIA_SCENE_LOAD + sceneName + "." + ext };
 			mpSceneSystem->SaveScene(file, sceneName);
+
+			std::wstring name{ sceneName.begin(), sceneName.end() };
+			auto pos = name.find('.');
+			if (pos != std::string::npos)
+			{
+				name.erase(pos);
+				mpWin->GetMainWindow().SetTitle(name.c_str());
+			}
 		}
 		else SaveAsProc();
 	}
@@ -499,7 +513,11 @@ namespace Dystopia
 							std::wstring path{ pszFilePath };
 							std::wstring name{ pszFileName };
 							auto pos = name.find('.');
-							if (pos != std::string::npos) name.erase(pos);
+							if (pos != std::string::npos)
+							{
+								name.erase(pos);
+								mpWin->GetMainWindow().SetTitle(name.c_str());
+							}
 							mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() }, 
 													 std::string{ name.begin(), name.end() });
 							CoTaskMemFree(pszFilePath);

@@ -30,11 +30,15 @@ void EGUI::Gizmo2D::SetReferenceAxis(const Math::Vec2& _xAxis, const Math::Vec2&
 
 bool EGUI::Gizmo2D::Translate(Math::Vec4& _outputVec, int _size)
 {
+	_outputVec;
+	_size;
 	return false;
 }
 
 bool EGUI::Gizmo2D::Scale(Math::Vec4& _outputVec, int _size)
 {
+	_outputVec;
+	_size;
 	return false;
 }
 
