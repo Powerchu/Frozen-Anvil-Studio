@@ -45,9 +45,7 @@ namespace Dystopia
 
 	private:
 		ColorScheme();
-		std::string mLabel;
-
-		enum ColorTypes : unsigned int
+		enum eColorData : unsigned int
 		{
 			eCOLOR_DATA_Text = 0,
 			eCOLOR_DATA_TextDisabled,
@@ -90,7 +88,12 @@ namespace Dystopia
 			eCOLOR_DATA_Last
 		};
 
+		int									mBarSize;
+		int									mAlignment;
+		std::string							mLabel;
 		Array<Math::Vec4, eCOLOR_DATA_Last> mArrColors;
+
+		std::string ToName(eColorData);
 	};
 }
 
