@@ -18,6 +18,7 @@ namespace Dystopia
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.2F)
 		, mPenetrationResolutionPercentage(0.8F)
+		, mpColSys{nullptr}
 	{
 	}
 
@@ -27,12 +28,24 @@ namespace Dystopia
 
 	bool PhysicsSystem::Init(void)
 	{
+		mpColSys = EngineCore::GetInstance()->GetSystem<CollisionSystem>();
 		return true;
 	}
 
 	void PhysicsSystem::PostInit(void)
 	{
 
+	}
+
+	void PhysicsSystem::CheckSleepingBodies(float _dt)
+	{
+		for (auto& bodies : mComponents)
+		{
+			if (bodies.GetOwner())
+			{
+				bodies.CheckSleeping(_dt);
+			}
+		}
 	}
 
 	void PhysicsSystem::IntegrateRigidBodies(float _dt)
@@ -61,6 +74,7 @@ namespace Dystopia
 					if (true == col->hasCollision())
 					{
 						//LoggerSystem::ConsoleLog(eLog::MESSAGE, "Collided!");
+						
 						for (auto& manifold : col->GetCollisionEvents())
 						{
 							manifold.ApplyImpulse();
@@ -106,15 +120,22 @@ namespace Dystopia
 		IntegrateRigidBodies(_dt);
 
 		/* Collision Detection*/
-
+		mpColSys->FixedUpdate(_dt);
+		
 		/* Collision Resolution (Response) Logic */
 		ResolveCollision(_dt);
 
-		
-
 		/*Update positions and rotation as result*/
 		UpdateResults();
+
+		// Set all objects at rest to sleeping
+		CheckSleepingBodies(_dt);
+
+		/* Debug Velocity*/
+		DebugPrint();
 	}
+
+	
 
 	void PhysicsSystem::FixedUpdate(float _dt)
 	{

@@ -2,6 +2,7 @@
 #define PHYSICS_SYSTEM_H
 #include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
+#include "System/Collision/CollisionSystem.h"
 
 namespace Dystopia
 {
@@ -35,6 +36,7 @@ namespace Dystopia
 
 	private:
 		void Step(float _dt);
+		void CheckSleepingBodies(float _dt);
 		void IntegrateRigidBodies(float _dt);
 		void ResolveCollision(float);
 		void UpdateResults();
@@ -44,8 +46,7 @@ namespace Dystopia
 		bool  mbIsDebugActive;
 		InterpolationMode mInterpolation_mode;
 
-		//CollisionMap		CollisionMap;
-		//CollisionEvents	Contacts;
+		CollisionSystem* mpColSys;
 
 		virtual ~PhysicsSystem(void) = default;
 

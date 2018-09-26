@@ -74,6 +74,7 @@ namespace Dystopia
 	public:
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		void Integrate(float _dt);
+		void CheckSleeping(float _dt);
 		void UpdateResult() const;
 
 		// void Update(float _dt);
@@ -134,6 +135,7 @@ namespace Dystopia
 		void SetStaticFriction(const float);
 		void SetKineticFriction(const float);
 		void SetRestitution(const float);
+		void SetSleeping(const bool);
 
 
 		// Gettors
@@ -152,6 +154,7 @@ namespace Dystopia
 		float GetInverseMass() const;
 		bool  Get_HasGravityState() const;
 		bool  Get_IsStaticState() const;
+		bool GetIsAwake() const;
 
 	private:
 		Primitive*		mpPrimitiveShape;			/* The underlying primitive of the RigidBody*/
@@ -189,9 +192,15 @@ namespace Dystopia
 		float			mfMass;						/* Defines how difficult it is to move an object*/
 		float			mfInvMass;					/* For calculation purposes, since integration uses mass inverse*/
 
+		float			mfWeightedMotion;
+
 		bool			mOwnerIsActive;				/* Check if owner is active*/
 		bool			mbHasGravity;				/* If it has no gravity, do not provide acceleration due to gravity*/
 		bool			mbIsStatic;					/* Static bodies do not need to be integrated/updated*/
+
+		bool			mbIsAwake;
+		bool			mbCanSleep;
+
 		PhysicsType		mPhysicsType;
 
 

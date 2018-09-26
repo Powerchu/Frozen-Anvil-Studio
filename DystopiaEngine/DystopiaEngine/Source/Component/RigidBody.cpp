@@ -36,9 +36,11 @@ namespace Dystopia
 		, mfGravityScale(1.0F)
 		, mfMass(100.0F)
 		, mfInvMass(0.01F)
+		, mfWeightedMotion(0.0F)
 		, mOwnerIsActive(true)
 		, mbHasGravity(true)
 		, mbIsStatic(false)
+		, mbIsAwake(true)
 		, mPhysicsType(discrete)
 	{
 		
@@ -59,9 +61,12 @@ namespace Dystopia
 		, mfGravityScale(_gravityScale)
 		, mfMass(_mass)
 		, mfInvMass(1/_mass)
+		, mfWeightedMotion(0.0F)
 		, mOwnerIsActive(true)
 		, mbHasGravity(_gravityState)
 		, mbIsStatic(_staticState)
+		, mbIsAwake(true)
+		, mPhysicsType(discrete)
 	{
 
 	}
@@ -101,6 +106,9 @@ namespace Dystopia
 		// compute final local centroid
 		mLocalCentroid *= mfInvMass;
 
+		// If Static, then is Sleeping
+		if (mbIsStatic) mbIsAwake = true;
+
 		//// compute local inertia tensor
 		//Mat3D localInertiaTensor{ { 1, 0, 0, 0 },{ 0, 1, 0, 0 },{ 0, 0, 1, 0 },{ 0, 0, 0, 1 } };
 
@@ -125,7 +133,9 @@ namespace Dystopia
 
 	void RigidBody::Integrate(float _dt)
 	{
-		if (!GetOwner()->IsActive() || mbIsStatic)
+		constexpr const auto VEL_EPSILON = 0.0001F;
+
+		if (!GetOwner()->IsActive() || mbIsStatic || !mbIsAwake)
 		{
 			return; // don't integrate when body is static
 		}
@@ -171,6 +181,17 @@ namespace Dystopia
 		// Linear Damping (Drag)
 		mLinearVelocity *= std::pow(mfLinearDamping, _dt);
 
+		// Clamp to zero
+		if (std::abs(mLinearVelocity.x) < VEL_EPSILON)
+		{
+			mLinearVelocity.x = 0;
+		}
+
+		if (std::abs(mLinearVelocity.y) < VEL_EPSILON)
+		{
+			mLinearVelocity.y = 0;
+		}
+
 		//Clamp to velocity max for numerical stability
 		if (Dot(mLinearVelocity, mLinearVelocity) > mpPhysSys->mMaxVelSquared)
 		{
@@ -182,10 +203,25 @@ namespace Dystopia
 		ResetCumulative();
 	}
 
+	void RigidBody::CheckSleeping(float _dt)
+	{
+		constexpr const auto SLEEP_EPSILON = 0.001F;
+		if (mbIsStatic) return;
+		const float bias = std::pow(0.5F, _dt);
+		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
+		mfWeightedMotion = bias * mfWeightedMotion + (1 - bias)*currentMotion;
+
+		// TODO change to global sleep epsilon
+		if (mfWeightedMotion > 10 * SLEEP_EPSILON) mfWeightedMotion = 10 * SLEEP_EPSILON;
+		if (mfWeightedMotion < SLEEP_EPSILON)
+		{
+			mbIsAwake = false;
+		}
+	}
+
 	void RigidBody::UpdateResult() const
 	{
-		const auto diff = (mPosition - mPrevPosition).MagnitudeSqr();
-		if (!mbIsStatic && diff > 0.01F) // only update when body is not static
+		if (!mbIsStatic) // only update when body is not static
 		{
 			P_TX->SetGlobalPosition(mPosition);
 		}
@@ -229,7 +265,7 @@ namespace Dystopia
 	void RigidBody::DebugPrint()
 	{
 		if (!mbIsStatic)
-			LoggerSystem::ConsoleLog(eLog::MESSAGE, "transform: (%f,%f) \n angle: %f", float(mPosition.x), float(mPosition.y), mfAngleDeg);
+			LoggerSystem::ConsoleLog(eLog::MESSAGE, "transform: (%f,%f) \n X vel: %f, Y vel: %f \n Awake: %i", float(mPosition.x), float(mPosition.y), float(mLinearVelocity.x), float(mLinearVelocity.y), mbIsAwake);
 	}
 
 	void RigidBody::DebugDraw()
@@ -295,11 +331,13 @@ namespace Dystopia
 		mAngularVelocity += angularVel;
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
 		mCumulativeForce += _force * 10000.0F;
+		mbIsAwake = true;
 	}
 
 	void RigidBody::AddForce(Math::Vec3D const & _force)
 	{
 		mCumulativeForce += _force * 10000.0F;
+		mbIsAwake = true;
 	}
 
 	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
@@ -367,6 +405,11 @@ namespace Dystopia
 		if (_f > 1.0F) mfRestitution = 1.0F;
 		else if (_f < 0.0) mfRestitution = 0.0F;
 		else mfRestitution = _f;
+	}
+
+	void RigidBody::SetSleeping(const bool _b)
+	{
+		mbIsAwake = !_b;
 	}
 
 	void RigidBody::Set_IsStatic(bool _state)
@@ -448,4 +491,9 @@ namespace Dystopia
 	{
 		return mbIsStatic;
 	}
+	bool RigidBody::GetIsAwake() const
+	{
+		return mbIsAwake;
+	}
+
 }

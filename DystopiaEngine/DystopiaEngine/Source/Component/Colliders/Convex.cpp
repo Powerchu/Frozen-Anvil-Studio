@@ -194,7 +194,7 @@ namespace Dystopia
 #else
 			EdgeNorm.Negate<Math::NegateFlag::X>();
 #endif
-			if(EdgeNorm.MagnitudeSqr())
+			if(EdgeNorm.MagnitudeSqr() > FLT_EPSILON)
 			{
 				EdgeNorm.Normalise();
 			}
@@ -235,7 +235,6 @@ namespace Dystopia
 
 	CollisionEvent Convex::GetCollisionEvent(AutoArray<Vertice> & _Simplex, const Convex & _ColB)
 	{
-		static constexpr double EPSILON = 0.0001f;
 		const auto other_body = *_ColB.GetOwner()->GetComponent<RigidBody>();
 		CollisionEvent col_info (GetOwner(), _ColB.GetOwner());
 
@@ -251,11 +250,11 @@ namespace Dystopia
 			The projection distance from the point to the ClosestEdge normal will be
 			the same as the orthogonal distance from the origin to the ClosestEdge
 			*/
-			double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
-			double result     = ProjectDis - ClosestEdge.mOrthogonalDistance;
+			const double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
+			const double result     = ProjectDis - ClosestEdge.mOrthogonalDistance;
 
 			/*If fail the test, expand the simplex and run the test again*/
-			if (-EPSILON <= result && result <= EPSILON)
+			if (-FLT_EPSILON <= result && result <= FLT_EPSILON)
 			{
 				/*This Position belongs to either ColA or B*/
 				col_info.mCollisionPoint		= ClosestEdge.mPos;
