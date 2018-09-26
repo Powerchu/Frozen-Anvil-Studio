@@ -174,7 +174,7 @@ namespace Dystopia
 	protected:
 
 		/*AutoArray of collision event*/
-		AutoArray<CollisionEvent>  mCollisionEvent;
+		AutoArray<CollisionEvent>  marr_ContactSets;
 
 		bool mbColliding = false;
 

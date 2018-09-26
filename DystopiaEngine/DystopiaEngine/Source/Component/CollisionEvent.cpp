@@ -35,7 +35,7 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 	// Do not resolve if velocities do not meet up
 	if (contactVel > 0) return;
 
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 16; ++i)
 	{
 		// Calculate Impulse Scalar
 		float tmpJ = -(2.0F + mfRestitution) * contactVel;

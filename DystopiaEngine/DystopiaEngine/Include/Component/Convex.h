@@ -85,11 +85,6 @@ namespace Dystopia
 			const Convex & _ColB,
 			const Math::Vec3D & _Dir);
 
-		static Math::Point3D Support(const Convex & _ColA,
-			const Convex & _ColB,
-			const Math::Vec3D & _Dir,
-			bool & hasPoint);
-
 		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
 
 		Math::Point3D Support(const Convex & _ColB,

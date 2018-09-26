@@ -155,7 +155,7 @@ namespace Dystopia
 			col_info.mfStaticFrictionCof = DetermineStaticFriction(other_body);
 			col_info.mfDynamicFrictionCof = DetermineKineticFriction(other_body);
 
-			mCollisionEvent.Insert(col_info);
+			marr_ContactSets.Insert(col_info);
 	
 			/*Return true for collision*/
 			return true;

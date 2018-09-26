@@ -122,7 +122,7 @@ namespace Dystopia
 					mbColliding             = true;
 					_pColB.mbColliding      = true;
 					/*Use EPA to get collision information*/
-					mCollisionEvent.Insert(GetCollisionEvent(Simplex, _pColB));
+					marr_ContactSets.Insert(GetCollisionEvent(Simplex, _pColB));
 					/*Clear the simplex for the next function call*/
 					Simplex.clear();
 					/*Return true for collision*/
@@ -157,7 +157,7 @@ namespace Dystopia
 		/*Loop through the array of Vertices*/
 		for (Vertice const & elem : _ColA.mVertices)
 		{
-			float val = (WorldSpace * elem.mPosition).Dot(_Dir);
+			const float val = (WorldSpace * elem.mPosition).Dot(_Dir);
 			/*
 			  If the Dot product is more than the current max
 			  The current vertice take over as the FarthestVertice	  
@@ -180,7 +180,8 @@ namespace Dystopia
 
 		for (unsigned i = 0; i < _Simplex.size(); ++i)
 		{
-			unsigned j = (i + 1) == _Simplex.size() ? 0 : i + 1;
+			unsigned j = (i + 1) >= _Simplex.size() ? 0 : i + 1;
+
 			/*Get the vertice of the _Simplex*/
 			Vertice const &  a = _Simplex[i];
 			Vertice const &  b = _Simplex[j];
@@ -197,6 +198,10 @@ namespace Dystopia
 			if(EdgeNorm.MagnitudeSqr() > FLT_EPSILON)
 			{
 				EdgeNorm.Normalise();
+			}
+			else
+			{
+				//__debugbreak();
 			}
 
 			const double distance = EdgeNorm.Dot(a.mPosition);
@@ -218,16 +223,13 @@ namespace Dystopia
 		                        const Convex & _ColB,
 		                        const Math::Vec3D & _Dir)
 	{
-		Vertice Farthest_In_ColA = _ColA.GetFarthestPoint(_Dir);
-		Vertice Farthest_In_ColB = _ColB.GetFarthestPoint(_Dir * -1);
+		const Vertice Farthest_In_ColA = _ColA.GetFarthestPoint(_Dir);
+		const Vertice Farthest_In_ColB = _ColB.GetFarthestPoint(_Dir * -1);
 
-		auto MikwoskiPoint = Farthest_In_ColA.mPosition - Farthest_In_ColB.mPosition;
+		const auto MikwoskiPoint = Farthest_In_ColA.mPosition - Farthest_In_ColB.mPosition;
 		return Math::MakePoint3D(MikwoskiPoint.x, MikwoskiPoint.y, MikwoskiPoint.z);
 	}
-	Math::Point3D Convex::Support(const Convex &, const Convex &, const Math::Vec3D &, bool &)
-	{
-		return Math::Point3D();
-	}
+
 	Math::Point3D Convex::Support(const Convex & _ColB, const Math::Vec3D & _Dir) const
 	{
 		return Convex::Support(*this, _ColB, _Dir);

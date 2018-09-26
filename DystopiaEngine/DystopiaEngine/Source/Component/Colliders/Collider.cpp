@@ -91,12 +91,12 @@ namespace Dystopia
 
 	AutoArray<CollisionEvent> const & Collider::GetCollisionEvents() const
 	{
-		return mCollisionEvent;
+		return marr_ContactSets;
 	}
 
 	void Collider::ClearCollisionEvent()
 	{
-		mCollisionEvent.clear();
+		marr_ContactSets.clear();
 	}
 
 	bool Collider::hasCollision() const

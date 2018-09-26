@@ -104,32 +104,32 @@ namespace Dystopia
 		//mpBoxObject2->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
 		//delete bb;
 
-		//// Sample Circle Object
-		//GameObject *c = Factory::CreateCircle("Circle Object");
-		//Texture2D* _ct = new Texture2D{ "Resource/Editor/red_circle.png" };
-		//mpCircleObject = GetCurrentScene()->InsertGameObject(Utility::Move(*c));
-		//mpCircleObject->GetComponent<RigidBody>()->Init();
-		//mpCircleObject->GetComponent<RigidBody>()->SetRestitution(1.0F);
-		//mpCircleObject->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
-		//mpCircleObject->GetComponent<RigidBody>()->SetKineticFriction(0.3F);
-		//mpCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 0.0F, 150.0f, 0});
-		//mpCircleObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 100, 100.f, 1.f });
-		//mpCircleObject->GetComponent<Renderer>()->SetTexture(_ct);
-		//mpCircleObject->GetComponent<Collider>()->Init();
-		//delete c;
+		// Sample Circle Object
+		GameObject *c = Factory::CreateCircle("Circle Object");
+		Texture2D* _ct = new Texture2D{ "Resource/Editor/red_circle.png" };
+		mpCircleObject = GetCurrentScene()->InsertGameObject(Utility::Move(*c));
+		mpCircleObject->GetComponent<RigidBody>()->Init();
+		mpCircleObject->GetComponent<RigidBody>()->SetRestitution(1.0F);
+		mpCircleObject->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
+		mpCircleObject->GetComponent<RigidBody>()->SetKineticFriction(0.3F);
+		mpCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 0.0F, 150.0f, 0});
+		mpCircleObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 100, 100.f, 1.f });
+		mpCircleObject->GetComponent<Renderer>()->SetTexture(_ct);
+		mpCircleObject->GetComponent<Collider>()->Init();
+		delete c;
 
-		//GameObject *cc = Factory::CreateCircle("Static Circle");
-		//mpStaticCircleObject = GetCurrentScene()->InsertGameObject(Utility::Move(*cc));
-		//mpStaticCircleObject->GetComponent<RigidBody>()->Init();
-		//mpStaticCircleObject->GetComponent<RigidBody>()->Set_IsStatic(true);
-		//mpStaticCircleObject->GetComponent<RigidBody>()->SetRestitution(1.0F);
-		//mpStaticCircleObject->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
-		//mpStaticCircleObject->GetComponent<RigidBody>()->SetKineticFriction(0.3F);
-		//mpStaticCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 0.0f, -185.f, 0});
-		//mpStaticCircleObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 100.f, 100.f, 1.f });
-		//mpStaticCircleObject->GetComponent<Renderer>()->SetTexture(_ct);
-		//mpStaticCircleObject->GetComponent<Collider>()->Init();
-		//delete cc;
+		GameObject *cc = Factory::CreateCircle("Static Circle");
+		mpStaticCircleObject = GetCurrentScene()->InsertGameObject(Utility::Move(*cc));
+		mpStaticCircleObject->GetComponent<RigidBody>()->Init();
+		mpStaticCircleObject->GetComponent<RigidBody>()->Set_IsStatic(true);
+		mpStaticCircleObject->GetComponent<RigidBody>()->SetRestitution(1.0F);
+		mpStaticCircleObject->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
+		mpStaticCircleObject->GetComponent<RigidBody>()->SetKineticFriction(0.3F);
+		mpStaticCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 0.0f, -185.f, 0});
+		mpStaticCircleObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 100.f, 100.f, 1.f });
+		mpStaticCircleObject->GetComponent<Renderer>()->SetTexture(_ct);
+		mpStaticCircleObject->GetComponent<Collider>()->Init();
+		delete cc;
 
 		// Sample Static Object
 		GameObject *s = Factory::CreateStaticBox("Static Box");
@@ -206,8 +206,8 @@ namespace Dystopia
 
 			if (mpInputSys->IsKeyTriggered(eUserButton::MOUSE_R))
 			{
-				mpBoxObject2->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
-				mpBoxObject2->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
+				mpCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
+				mpCircleObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
 			}
 
 			if (mpInputSys->IsKeyTriggered(eUserButton::BUTTON_PAUSE))

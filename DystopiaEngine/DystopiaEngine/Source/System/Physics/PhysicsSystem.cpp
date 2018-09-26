@@ -16,7 +16,7 @@ namespace Dystopia
 		, mGravity(-920.665F)
 		, mMaxVelocityConstant(2048.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.2F)
+		, mPenetrationEpsilon(0.1F)
 		, mPenetrationResolutionPercentage(0.8F)
 		, mpColSys{nullptr}
 	{
@@ -74,11 +74,18 @@ namespace Dystopia
 					if (true == col->hasCollision())
 					{
 						//LoggerSystem::ConsoleLog(eLog::MESSAGE, "Collided!");
-						
+						CollisionEvent* worstContact = nullptr;
+						double worstPene = mPenetrationEpsilon;
 						for (auto& manifold : col->GetCollisionEvents())
 						{
 							manifold.ApplyImpulse();
-							manifold.ApplyPenetrationCorrection();
+							if (manifold.mdPeneDepth > worstPene)
+							{
+								worstContact = &manifold;
+								worstPene = manifold.mdPeneDepth;
+							}
+							if (nullptr != worstContact)
+								worstContact->ApplyPenetrationCorrection();
 						};
 					}
 				}
