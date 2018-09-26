@@ -19,8 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _VECTOR4_H_
 #define _VECTOR4_H_
-#include "Globals.h"
 
+#include "Globals.h"
 #include "Utility/Meta.h"	            // EnableIf
 #include "Utility/MetaAlgorithms.h"     // MetaSortV
 #include "Utility/MetaDataStructures.h" // IntegralList
@@ -35,7 +35,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <exception>		// bad_alloc
 #endif
 
-#include <cmath>			// sqrtf
 #include <xmmintrin.h>		// SSE
 #include <emmintrin.h>		// SSE 2
 #include <tmmintrin.h>		// SSE 3
@@ -94,6 +93,9 @@ namespace Math
 		// Computes the dot product of this vector and a given vector
 		inline float _CALL Dot(const Vector4) const;
 
+		// Computes the outer product of two vectors
+		Matrix4 _CALL Outer(const Vector4) const;
+
 		// Computes the cross product of this vector and a given vector 
 		inline Vector4& _CALL Cross(const Vector4);
 
@@ -128,6 +130,9 @@ namespace Math
 		// Alternate + and -
 		// x + x , y - y , z + z , w - w
 		inline Vector4& _CALL AddSub(const Vector4);
+
+		inline Vector4& _CALL HorizontalAdd(const Vector4);
+		inline Vector4& _CALL HorizontalSub(const Vector4);
 
 #if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
 
@@ -230,6 +235,7 @@ namespace Math
 		SwizzleMask<0, 2, 1, 1> xzyy;
 		SwizzleMask<0, 2, 1, 3> xzyw;
 		SwizzleMask<0, 3, 0, 3> xwxw;
+		SwizzleMask<0, 3, 1, 2> xwyz;
 		SwizzleMask<0, 3, 2, 3> xwzw;
 		SwizzleMask<1, 0, 1, 0> yxyx;
 		SwizzleMask<1, 0, 2, 3> yxzw;
@@ -248,6 +254,8 @@ namespace Math
 		SwizzleMask<2, 3, 3, 2> zwwz;
 		SwizzleMask<3, 1, 2, 0> wyzx;
 		SwizzleMask<3, 2, 0, 1> wzxy;
+		SwizzleMask<3, 2, 1, 0> wzyx;
+		SwizzleMask<3, 2, 3, 2> wzwz;
 		SwizzleMask<3, 3, 3, 3> wwww;
 
 		inline __m128 _CALL GetRaw(void) const noexcept;
@@ -258,6 +266,9 @@ namespace Math
 
 	// Computes the dot product of two vectors
 	inline float _CALL Dot(const Vector4, const Vector4);
+
+	// Computes the outer product of two vectors
+	Matrix4 _CALL Outer(const Vector4, const Vector4);
 
 	// Computes the cross product of two vectors
 	inline Vector4 _CALL Cross(const Vector4, const Vector4);
@@ -298,6 +309,10 @@ namespace Math
 	// Alternate + and -
 	// x + x , y - y , z + z , w - w
 	inline Vector4 _CALL AddSub(const Vector4, const Vector4);
+
+	inline Vector4 _CALL HorizontalAdd(const Vector4, const Vector4);
+	inline Vector4 _CALL HorizontalSub(const Vector4, const Vector4);
+
 
 	using Vec4		= Vector4;
 	using Vector3D	= Vector4;
@@ -415,7 +430,7 @@ inline Math::Vector4& _CALL Math::Vector4::Cross(const Vector4 _rhs)
 	// z = (a.x * b.y) - (a.y * b.x)
 	// w = (a.w * b.w) - (a.w * b.w)
 
-	return *this = ((*this * _rhs.zxyw) - (zxyw * _rhs)).zxyw;
+	return *this = ((zxyw * _rhs) - (*this * _rhs.zxyw)).zxyw;
 }
 
 inline Math::Vector4 _CALL Math::Cross(Vector4 _lhs, Vector4 _rhs)
@@ -441,11 +456,6 @@ inline Math::Vector4 _CALL Math::Project(Vector4 _lhs, Vector4 _rhs)
 	return _lhs.Project(_rhs);
 }
 
-
-inline float _CALL Math::Vector4::Magnitude(void) const
-{
-	return std::sqrtf(MagnitudeSqr());
-}
 
 inline float _CALL Math::Vector4::MagnitudeSqr(void) const
 {
@@ -752,6 +762,41 @@ inline const float _CALL Math::Vector4::operator[] (const unsigned _nIndex) cons
 	return mData.m128_f32[_nIndex];
 }
 
+
+inline Math::Vector4& _CALL Math::Vector4::AddSub(const Vector4 _rhs)
+{
+	mData = _mm_addsub_ps(mData, _rhs.mData);
+	return *this;
+}
+
+inline Math::Vector4 _CALL Math::AddSub(Vector4 _lhs, const Vector4 _rhs)
+{
+	return _lhs.AddSub(_rhs);
+}
+
+inline Math::Vector4& _CALL Math::Vector4::HorizontalAdd(const Vector4 _rhs)
+{
+	mData = _mm_hadd_ps(mData, _rhs.mData);
+	return *this;
+}
+
+inline Math::Vector4 _CALL Math::HorizontalAdd(Vector4 _lhs, const Vector4 _rhs)
+{
+	return _lhs.HorizontalAdd(_rhs);
+}
+
+inline Math::Vector4&_CALL Math::Vector4::HorizontalSub(const Vector4 _rhs)
+{
+	mData = _mm_hsub_ps(mData, _rhs.mData);
+	return *this;
+}
+
+inline Math::Vector4 _CALL Math::HorizontalSub(Vector4 _lhs, const Vector4 _rhs)
+{
+	return _lhs.HorizontalSub(_rhs);
+}
+
+
 inline Math::Vector4& _CALL Math::Vector4::operator*=(const float _fScalar)
 {
 	mData = _mm_mul_ps(mData, _mm_set_ps1(_fScalar));
@@ -782,21 +827,6 @@ inline Math::Vector4& _CALL Math::Vector4::operator-=(const Vector4 _rhs)
 	return *this;
 }
 
-inline bool _CALL Math::Vector4::operator==(const Math::Vector4& _rhs) const
-{
-	return ApproxEq(x, _rhs.x) & ApproxEq(y, _rhs.y) & ApproxEq(z, _rhs.z) & ApproxEq(w, _rhs.w);
-}
-
-inline bool _CALL Math::Vector4::operator!=(const Math::Vector4& _rhs) const
-{
-	return !(*this == _rhs);
-}
-
-inline Math::Vector4& _CALL Math::Vector4::AddSub(const Vector4 _rhs)
-{
-	mData = _mm_addsub_ps(mData, _rhs.mData);
-	return *this;
-}
 
 inline Math::Vector4 _CALL Math::Vector4::operator-(void) const
 {
@@ -814,11 +844,6 @@ inline Math::Vector4 _CALL Math::operator-(Vector4 _lhs, const Vector4 _rhs)
 inline Math::Vector4 _CALL Math::operator+(Vector4 _lhs, const Vector4 _rhs)
 {
 	return _lhs += _rhs;
-}
-
-inline Math::Vector4 _CALL Math::AddSub(Vector4 _lhs, const Vector4 _rhs)
-{
-	return _lhs.AddSub(_rhs);
 }
 
 inline Math::Vector4 _CALL Math::operator*(Vector4 _lhs, const Vector4 _rhs)
@@ -839,6 +864,20 @@ inline Math::Vector4 _CALL Math::operator*(Vector4 _lhs, const float _rhs)
 inline Math::Vector4 _CALL Math::operator/(Vector4 _lhs, const float _rhs)
 {
 	return _lhs /= _rhs;
+}
+
+inline bool _CALL Math::Vector4::operator==(const Math::Vector4& _rhs) const
+{
+	return
+		ApproxEq((*this)[0], _rhs[0]) &&
+		ApproxEq((*this)[1], _rhs[1]) &&
+		ApproxEq((*this)[2], _rhs[2]) &&
+		ApproxEq((*this)[3], _rhs[3]);
+}
+
+inline bool _CALL Math::Vector4::operator!=(const Math::Vector4& _rhs) const
+{
+	return !(*this == _rhs);
 }
 
 //inline void* Math::Vector4::operator new (std::size_t _sz)

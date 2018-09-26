@@ -229,6 +229,9 @@
     <ClCompile Include="Source\Component\CharacterController.cpp">
       <Filter>Game Engine\Components\Physics\Character Controller</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Math\Vector4.cpp">
+      <Filter>Math\Vector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
