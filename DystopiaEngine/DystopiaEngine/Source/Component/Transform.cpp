@@ -26,7 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif 
 
 Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
-	: mRotation{ .0f, .0f, .0f }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f }, 
+	: mRotation{ }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f }, 
 	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, Component { _pOwner }
 {
 
@@ -205,7 +205,7 @@ const Math::Mat4& Dystopia::Transform::GetLocalTransformMatrix(void)
 	if (mbChanged)
 	{
 		mbChanged = false;
-		mMatrix = Math::Translate(mPosition) * Math::Scale(mScale);
+		mMatrix = Math::Translate(mPosition) * mRotation.Matrix() * Math::Scale(mScale);
 	}
 
 	return mMatrix;
@@ -286,6 +286,31 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		break;
 	case EGUI::eDragStatus::eDRAGGING:
 		mbChanged = true;
+		break;
+	case EGUI::eDragStatus::eDEACTIVATED:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	}
+
+	Math::Vector4 eulerAngle = mRotation.ToEuler();
+	switch (EGUI::Display::VectorFields("Rotation", &eulerAngle, 0.01f, -FLT_MAX, FLT_MAX))
+	{
+	case EGUI::eDragStatus::eEND_DRAG:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	case EGUI::eDragStatus::eENTER:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	case EGUI::eDragStatus::eSTART_DRAG:
+		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale, &mbChanged);
+		break;
+	case EGUI::eDragStatus::eDRAGGING:
+		mbChanged = true;
+		mRotation = mRotation.FromEuler(
+			Math::Degrees(eulerAngle[0]),
+			Math::Degrees(eulerAngle[1]),
+			Math::Degrees(eulerAngle[2])
+		);
 		break;
 	case EGUI::eDragStatus::eDEACTIVATED:
 		EGUI::GetCommandHND()->EndRecording();

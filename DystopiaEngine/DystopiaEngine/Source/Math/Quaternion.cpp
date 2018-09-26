@@ -28,18 +28,37 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Math::Quaternion _CALL Math::Quaternion::FromEuler(Math::Angle _x, Math::Angle _y, Math::Angle _z)
 {
-	float sx = sinf(_x.Radians()),
-		cx = cosf(_x.Radians()),
-		sy = sinf(_y.Radians()),
-		cy = cosf(_y.Radians()),
-		sz = sinf(_z.Radians()),
-		cz = cosf(_z.Radians());
+	float sx = std::sinf(_x.Radians() * 0.5f),
+		  cx = std::cosf(_x.Radians() * 0.5f),
+		  sy = std::sinf(_y.Radians() * 0.5f),
+		  cy = std::cosf(_y.Radians() * 0.5f),
+		  sz = std::sinf(_z.Radians() * 0.5f),
+		  cz = std::cosf(_z.Radians() * 0.5f);
 
 	return Math::Quaternion{
+		sx * cy * cz - cx * sy * sz,
+		cx * sy * cz + sx * cy * sz,
 		cx * cy * sz - sx * sy * cz,
-		sx * cy * cz + cx * sy * sz,
-		cx * sy * cz - sx * cy * sz,
 		cx * cy * cz + sx * sy * sz
+	};
+}
+
+Math::Vector4 _CALL Math::Quaternion::ToEuler(void) const
+{
+	float ySq = mData[1] * mData[1];
+	float t0 = -2.0f * (ySq + mData[2] * mData[2]) + 1.0f;
+	float t1 =  2.0f * (mData[0] * mData[1] - mData[3] * mData[2]);
+	float t2 = -2.0f * (mData[0] * mData[2] + mData[3] * mData[1]);
+	float t3 =  2.0f * (mData[1] * mData[2] - mData[3] * mData[0]);
+	float t4 = -2.0f * (mData[0] * mData[0] + ySq) + 1.0f;
+
+	t2 = Math::Clamp(t2, -1.f, 1.f);
+
+	return Vector4{ 
+		Math::Radians{std::atan2(t3, t4)}.Degrees(), 
+		Math::Radians{std::asin(t2)     }.Degrees(),
+		Math::Radians{std::atan2(t1, t0)}.Degrees(), 
+		0
 	};
 }
 
