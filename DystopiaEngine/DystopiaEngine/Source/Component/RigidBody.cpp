@@ -239,7 +239,7 @@ namespace Dystopia
 
 	void RigidBody::OnDestroy(void)
 	{
-		// stuff happens on component destroy
+		//EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RemoveBodyFromArray(this);
 	}
 
 	void RigidBody::Unload(void)
@@ -252,14 +252,44 @@ namespace Dystopia
 		return new RigidBody{ *this };
 	}
 
-	void RigidBody::Serialise(TextSerialiser & _serial) const
+	void RigidBody::Serialise(TextSerialiser & _out) const
 	{
-		_serial;
+		_out.InsertStartBlock("RigidBody");
+		_out << mfAngleDeg;				// Angle in degrees
+		_out << mfLinearDamping;		// Linear Drag
+		_out << mfAngularDrag;			// Angular Drag
+		_out << mfStaticFriction;
+		_out << mfDynamicFriction;
+		_out << mfRestitution;
+		_out << mfGravityScale;
+		_out << mfMass;
+		//   << mfInvMass;
+		_out << mbHasGravity;			// Gravity State
+		_out << mbIsStatic;				// Static State
+		_out << mbIsAwake;				// Awake State
+		_out << mbCanSleep;				// Can Sleep Boolean
+		_out << int(mPhysicsType);		// enum for physicstype
+		_out.InsertEndBlock("RigidBody");
 	}
 
-	void RigidBody::Unserialise(TextSerialiser & _serial)
+	void RigidBody::Unserialise(TextSerialiser & _in)
 	{
-		_serial;
+		//_in.ConsumeStartBlock();
+		//_in >> mfAngleDeg;				// Angle in degrees
+		//_in >> mfLinearDamping;		// Linear Drag
+		//_in >> mfAngularDrag;			// Angular Drag
+		//_in >> mfStaticFriction;
+		//_in >> mfDynamicFriction;
+		//_in >> mfRestitution;
+		//_in >> mfGravityScale;
+		//_in >> mfMass;
+		////  >> mfInvMass;
+		//_in >> mbHasGravity;			// Gravity State
+		//_in >> mbIsStatic;				// Static State
+		//_in >> mbIsAwake;				// Awake State
+		//_in >> mbCanSleep;				// Can Sleep Boolean
+		//_in >> PhysicsType(mPhysicsType);		// enum for physicstype
+		//_in.ConsumeEndBlock();
 	}
 
 	void RigidBody::DebugPrint()

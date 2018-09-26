@@ -28,6 +28,8 @@ namespace Dystopia
 
 		void FixedUpdate(float) override;
 		void Update(float) override;
+
+		void RemoveBodyFromArray(RigidBody *);
 		
 		void Shutdown(void) override;
 

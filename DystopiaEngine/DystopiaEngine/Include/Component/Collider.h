@@ -140,9 +140,7 @@ namespace Dystopia
 		/************************************************************************
 		 * Member Functions
 		 ***********************************************************************/
-
 		float DetermineRestitution(RigidBody const & b) const;
-
 		float DetermineStaticFriction(RigidBody const & b) const;
 		float DetermineKineticFriction(RigidBody const & b) const;
 
@@ -172,11 +170,10 @@ namespace Dystopia
 		virtual ~Collider();
 
 	protected:
-
 		/*AutoArray of collision event*/
 		AutoArray<CollisionEvent>  marr_ContactSets;
 
-		bool mbColliding = false;
+		bool mbColliding;
 
 		Math::Point3D mPosition;
 		
@@ -185,17 +182,11 @@ namespace Dystopia
 
 		void Triangulate();
 
-
-	private:
-		 //Status mStatus;
-
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
-
+	private:
 		// Collider Mesh for debug drawing
 		Mesh * mpMesh;
-
-
 	};
 }
 #endif /*COLLIDER_H*/

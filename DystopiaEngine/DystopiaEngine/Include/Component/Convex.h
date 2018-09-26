@@ -93,9 +93,7 @@ namespace Dystopia
 
 
 	protected:
-
-		CollisionEvent GetCollisionEvent(AutoArray<Vertice> & _Simplex,
-			const Convex & _ColB);
+		CollisionEvent GetCollisionEvent(AutoArray<Vertice> _Simplex,	const Convex & _ColB);
 
 		/*The vertices of the collider in the Collider Local Coordinate System*/
 		AutoArray<Vertice>         mVertices;

@@ -76,6 +76,7 @@ namespace Dystopia
 						//LoggerSystem::ConsoleLog(eLog::MESSAGE, "Collided!");
 						CollisionEvent* worstContact = nullptr;
 						double worstPene = mPenetrationEpsilon;
+
 						for (auto& manifold : col->GetCollisionEvents())
 						{
 							manifold.ApplyImpulse();
@@ -160,6 +161,11 @@ namespace Dystopia
 	void PhysicsSystem::Update(float)
 	{
 		
+	}
+
+	void PhysicsSystem::RemoveBodyFromArray(RigidBody* _pBody)
+	{
+		//mComponents.Remove(_pBody);
 	}
 
 	void PhysicsSystem::Shutdown(void)

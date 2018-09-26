@@ -31,6 +31,16 @@ namespace Dystopia
 			const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
 			const float _yScale = GetOwner()->GetComponent<Transform>()->GetScale().y;
 
+			if (mVertices.IsEmpty())
+			{
+				mVertices = {
+					Vertice{ Math::MakePoint3D(.5f,.5f,0) },
+					Vertice{ Math::MakePoint3D(-.5f,.5f,0) },
+					Vertice{ Math::MakePoint3D(-.5f,-.5f,0) },
+					Vertice{ Math::MakePoint3D(.5f,-.5f,0) }
+				};
+			}
+
 			for (auto & elem : mVertices)
 			{
 				elem.mPosition.x = elem.mPosition.x * Math::Abs(_xScale);
@@ -60,12 +70,27 @@ namespace Dystopia
 
 	}
 
-	void Convex::Serialise(TextSerialiser&) const
+	void Convex::Serialise(TextSerialiser& _out) const
 	{
+		_out.InsertStartBlock("Convex Collider");
+		_out << float(mv3Offset.x);
+		_out << float(mv3Offset.y);
+		_out << float(mv3Offset.z);
+
+		for (const auto vertex : mVertices)
+		{
+			_out << float(vertex.mPosition.x);
+			_out << float(vertex.mPosition.y);
+			_out << float(vertex.mPosition.z);
+		}
+
+		_out.InsertEndBlock("Convex Collider");
 	}
 
-	void Convex::Unserialise(TextSerialiser&)
+	void Convex::Unserialise(TextSerialiser& _in)
 	{
+		
+
 	}
 
 	Convex * Convex::Duplicate() const
@@ -119,7 +144,7 @@ namespace Dystopia
 				/*Check if Simplex contains Origin*/
 				if (ContainOrigin(Simplex, vDir))
 				{
-					mbColliding             = true;
+   					mbColliding             = true;
 					_pColB.mbColliding      = true;
 					/*Use EPA to get collision information*/
 					marr_ContactSets.Insert(GetCollisionEvent(Simplex, _pColB));
@@ -187,10 +212,20 @@ namespace Dystopia
 			Vertice const &  b = _Simplex[j];
 			/*Get the vector of the edge*/
 			Math::Vec3D EdgeVec    = b.mPosition - a.mPosition;
+			
+#if CLOCKWISE
+			Math::Vec3D Check = { EdgeVec.y, -EdgeVec.x,EdgeVec.z};
+			if (Check.Dot(a.mPosition) < 0)
+				EdgeVec = -EdgeVec;
+#else
+			Math::Vec3D Check = { -EdgeVec.y, EdgeVec.x,EdgeVec.z };
+			if (Check.Dot(a.mPosition) < 0)
+				EdgeVec = -EdgeVec;
+#endif
 			Math::Vec3D EdgeNorm;
 			EdgeNorm.xyzw = EdgeVec.yxzw;
 
-#ifdef CLOCKWISE
+#if CLOCKWISE
 			EdgeNorm.Negate<Math::NegateFlag::Y>();
 #else
 			EdgeNorm.Negate<Math::NegateFlag::X>();
@@ -199,20 +234,17 @@ namespace Dystopia
 			{
 				EdgeNorm.Normalise();
 			}
-			else
-			{
-				//__debugbreak();
-			}
+
 
 			const double distance = EdgeNorm.Dot(a.mPosition);
 			if (Math::Abs(distance) < Math::Abs(ClosestDistance))
 			{
-				ClosestDistance    = distance;
+				ClosestDistance    = Math::Abs(distance);
 				ClosestEdge.mNorm3 = EdgeNorm;
 				ClosestEdge.mVec3  = EdgeVec;
 				ClosestEdge.mPos   = a.mPosition;
 				ClosestEdge.mOrthogonalDistance = distance;
-				ClosestEdge.mSimplexIndex = i;
+ 				ClosestEdge.mSimplexIndex = j;
 			}
 		}
 		return ClosestEdge;
@@ -235,18 +267,29 @@ namespace Dystopia
 		return Convex::Support(*this, _ColB, _Dir);
 	}
 
-	CollisionEvent Convex::GetCollisionEvent(AutoArray<Vertice> & _Simplex, const Convex & _ColB)
+	CollisionEvent Convex::GetCollisionEvent(AutoArray<Vertice> _Simplex, const Convex & _ColB)
 	{
 		const auto other_body = *_ColB.GetOwner()->GetComponent<RigidBody>();
 		CollisionEvent col_info (GetOwner(), _ColB.GetOwner());
-
+		Vec3D prevSearchDir{0,0,0,0};
 		while (true)
 		{
 			/*Get the closest edge of our simplex(Made by the minkowski difference to the origin*/
 			Edge ClosestEdge = GetClosestEdge(_Simplex);
+			Vertice Point{ 0,0 };
 			/*Search for a point in the Normal direction of the ClosestEdge*/
-			Vertice Point = Support(_ColB, ClosestEdge.mNorm3);
-
+			if ((ClosestEdge.mNorm3 - prevSearchDir).MagnitudeSqr() != 0)
+			{
+				Point = Support(_ColB, ClosestEdge.mNorm3);
+				prevSearchDir = ClosestEdge.mNorm3;
+			}
+			else
+			{
+				Point = Support(_ColB, -ClosestEdge.mNorm3);
+				prevSearchDir = - ClosestEdge.mNorm3;
+			}
+				
+			
 			/*
 			If closest edge is already on the minkowski sum edge,
 			The projection distance from the point to the ClosestEdge normal will be
@@ -256,7 +299,7 @@ namespace Dystopia
 			const double result     = ProjectDis - ClosestEdge.mOrthogonalDistance;
 
 			/*If fail the test, expand the simplex and run the test again*/
-			if (-FLT_EPSILON <= result && result <= FLT_EPSILON)
+			if (Math::Abs(result) <= FLT_EPSILON * 10000)
 			{
 				/*This Position belongs to either ColA or B*/
 				col_info.mCollisionPoint		= ClosestEdge.mPos;
@@ -308,8 +351,11 @@ namespace Dystopia
 				/*Check against LastToFirst*/
 
 				/*Get the Left Hand Normal of LastToFirst*/
+#if CLOCKWISE
+				_v3Dir = Math::Vec3D{ LastToFirst.y, -LastToFirst.x,0,0 };
+#else
 				_v3Dir = Math::Vec3D{ -LastToFirst.y, LastToFirst.x,0,0 };
-
+#endif
 				/*Ensure that the normal is pointing away from the inside
 				  of the triangle. If it is not, inverse it*/
 				_v3Dir = Dot(_v3Dir, _Simplex[1].mPosition) > 0 ? -_v3Dir : _v3Dir;
@@ -329,7 +375,11 @@ namespace Dystopia
 				/*Check against LastToSecond*/
 
 				/*Get the Left Hand Normal of LastToFirst*/
-				_v3Dir = Math::Vec3D{ -LastToSecond.y, LastToSecond.x,0,0 };
+#if CLOCKWISE
+				_v3Dir = Math::Vec3D{ LastToSecond.y, -LastToSecond.x,0,0 };
+#else
+				_v3Dir = Math::Vec3D{ -LastToSecond.y,  LastToSecond.x,0,0 };
+#endif
 				/*Ensure that the normal is pointing away from the inside
 				of the triangle. If it is not, inverse it*/
 				_v3Dir = Dot(_v3Dir, _Simplex[0].mPosition) > 0 ? -_v3Dir : _v3Dir;
