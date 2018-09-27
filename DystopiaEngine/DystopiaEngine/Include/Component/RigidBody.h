@@ -56,7 +56,6 @@ namespace Dystopia
 		// ================================VIRTUAL MEMBER FUNCTIONS ================================== // 
 		void Load(void) override;
 		void Init(void) override;
-		virtual void OnDestroy(void);
 		void Unload(void) override;
 		RigidBody* Duplicate() const override;
 		void Serialise(TextSerialiser&) const override;

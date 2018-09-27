@@ -92,17 +92,19 @@ namespace Dystopia
 		mpBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
 		delete b;
 
-		//// Sample Box Object
-		//GameObject *bb = Factory::CreateBox("Another box");
-		//Texture2D* _bbt = new Texture2D{ "Resource/Editor/red_box.png" };
-		//mpBoxObject2 = GetCurrentScene()->InsertGameObject(Utility::Move(*bb));
-		//mpBoxObject2->GetComponent<RigidBody>()->Init();
-		//mpBoxObject2->GetComponent<Transform>()->SetScale(Math::Vec4{ 64.f, 64.f, 1.f });
-		//mpBoxObject2->GetComponent<Transform>()->SetGlobalPosition({ 0.0F, 200.0f, 1 });
-		//mpBoxObject2->GetComponent<Renderer>()->SetTexture(_bbt);
-		//mpBoxObject2->GetComponent<Collider>()->Init();
-		//mpBoxObject2->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
-		//delete bb;
+		// Sample Box Object
+		GameObject *bb = Factory::CreateBox("Another box");
+		Texture2D* _bbt = new Texture2D{ "Resource/Editor/red_box.png" };
+		mpBoxObject2 = GetCurrentScene()->InsertGameObject(Utility::Move(*bb));
+		mpBoxObject2->GetComponent<RigidBody>()->Init();
+		mpBoxObject2->GetComponent<Transform>()->SetScale(Math::Vec4{ 64.f, 64.f, 1.f });
+		mpBoxObject2->GetComponent<Transform>()->SetGlobalPosition({ 0.0F, 200.0f, 1 });
+		mpBoxObject2->GetComponent<Renderer>()->SetTexture(_bbt);
+		mpBoxObject2->GetComponent<Collider>()->Init();
+		mpBoxObject2->GetComponent<RigidBody>()->SetRestitution(1.0F);
+		mpBoxObject2->GetComponent<RigidBody>()->SetStaticFriction(0.9F);
+		mpBoxObject2->GetComponent<RigidBody>()->SetKineticFriction(0.1F);
+		delete bb;
 
 		//// Sample Circle Object
 		//GameObject *c = Factory::CreateCircle("Circle Object");
@@ -219,8 +221,8 @@ namespace Dystopia
 
 			if (mpInputSys->IsKeyTriggered(eUserButton::MOUSE_R))
 			{
-				mpCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
-				mpCircleObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
+				mpBoxObject2->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
+				mpBoxObject2->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
 			}
 
 			if (mpInputSys->IsKeyTriggered(eUserButton::BUTTON_PAUSE))
@@ -232,7 +234,7 @@ namespace Dystopia
 
 	void SceneView::EditorUI()
 	{
-		unsigned id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
+		const uint64_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
 		ImGui::Image(reinterpret_cast<void*>(id), ImVec2{ Size().x - 6.0F,  Size().y - 27.0F });
 	}
 

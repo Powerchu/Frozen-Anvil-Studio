@@ -140,18 +140,6 @@ namespace Dystopia
 			return; // don't integrate when body is static
 		}
 
-		/* Physics 1.0 - Euler Integration
-			Update Position
-				mPosition += mLinearVelocity * _dt;
-
-			Calculate Acceleration
-				mAcceleration = Vec3D{ 0, mpPhysSys->mGravity*mfGravityScale,0 };
-				const Vec3D newAccel = mCumulativeForce * mfInvMass + mAcceleration;
-
-			Calculate Velocity
-				mLinearVelocity += newAccel * _dt;
-		*/
-
 		/*********************************************************************
 		 *  Physics 2.0
 		 *  Verlet/Leapfrog method, 2nd order integration
@@ -175,9 +163,6 @@ namespace Dystopia
 		//Integrate the velocity
 		mLinearVelocity += (new_accel - mAcceleration) * 0.5f * _dt;
 
-		// Update Position
-		mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
-
 		// Linear Damping (Drag)
 		mLinearVelocity *= std::pow(mfLinearDamping, _dt);
 
@@ -198,6 +183,9 @@ namespace Dystopia
 			mLinearVelocity = Math::Normalise(mLinearVelocity);
 			mLinearVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
+
+		// Update Position
+		mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
 
 		 //*Reset Cumulative Force*/
 		ResetCumulative();
@@ -236,11 +224,6 @@ namespace Dystopia
 	{
 		
 	}*/
-
-	void RigidBody::OnDestroy(void)
-	{
-		//EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RemoveBodyFromArray(this);
-	}
 
 	void RigidBody::Unload(void)
 	{

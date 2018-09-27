@@ -28,12 +28,16 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 	bodyA->SetSleeping(false);
 	bodyB->SetSleeping(false);
 
+	//Debug
+	LoggerSystem::ConsoleLog(eLog::MESSAGE, "%s Collided with %s", mThisCollider->GetName().c_str(), mCollidedWith->GetName().c_str());
+
+
 	Math::Vec3D rv = b_oldVel - a_oldVel;
 					 
 	const float contactVel = rv.Dot(mEdgeNormal);
 
 	// Do not resolve if velocities do not meet up
-	if (contactVel > 0) return;
+	if (contactVel >= 0) return;
 
 	for (int i = 0; i < 16; ++i)
 	{
@@ -42,7 +46,7 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 		tmpJ /= a_invmass + b_invmass;
 
 		// Apply Impulse
-		Vec3D impulse = tmpJ * mEdgeNormal;
+		const Vec3D impulse = tmpJ * mEdgeNormal;
 
 		auto a_newVel = a_oldVel - impulse * a_invmass;
 		auto b_newVel = b_oldVel + impulse * b_invmass;
@@ -98,7 +102,7 @@ void Dystopia::CollisionEvent::ApplyPenetrationCorrection()
 	const auto a_invmass = bodyA->GetInverseMass();
 	const auto b_invmass = bodyB->GetInverseMass();
 
-	const float perc = 0.3F;
+	const float perc = 0.25F;
 	const float slop = 0.01F;
 
 	for (int i = 0; i < 4; ++i)

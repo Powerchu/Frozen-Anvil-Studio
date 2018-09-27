@@ -14,7 +14,7 @@ namespace Dystopia
 		: mbIsDebugActive(true)
 		, mInterpolation_mode(none)
 		, mGravity(-920.665F)
-		, mMaxVelocityConstant(2048.0F)
+		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.1F)
 		, mPenetrationResolutionPercentage(0.8F)
@@ -71,9 +71,8 @@ namespace Dystopia
 				const auto col = owner->GetComponent<Collider>();
 				if (nullptr != col)
 				{
-					if (true == col->hasCollision())
+					if (col->hasCollision())
 					{
-						//LoggerSystem::ConsoleLog(eLog::MESSAGE, "Collided!");
 						CollisionEvent* worstContact = nullptr;
 						double worstPene = mPenetrationEpsilon;
 
@@ -124,14 +123,15 @@ namespace Dystopia
 
 	void PhysicsSystem::Step(float _dt)
 	{
-		// Integrate Rigidbodies
-		IntegrateRigidBodies(_dt);
 
 		/* Collision Detection*/
 		mpColSys->FixedUpdate(_dt);
 		
 		/* Collision Resolution (Response) Logic */
 		ResolveCollision(_dt);
+
+		// Integrate Rigidbodies
+		IntegrateRigidBodies(_dt);
 
 		/*Update positions and rotation as result*/
 		UpdateResults();
@@ -140,7 +140,7 @@ namespace Dystopia
 		CheckSleepingBodies(_dt);
 
 		/* Debug Velocity*/
-		DebugPrint();
+		//DebugPrint();
 	}
 
 	
@@ -163,9 +163,13 @@ namespace Dystopia
 		
 	}
 
-	void PhysicsSystem::RemoveBodyFromArray(RigidBody* _pBody)
+	void PhysicsSystem::PostUpdate()
 	{
-		//mComponents.Remove(_pBody);
+		for (auto& body : mComponents)
+		{
+			return;
+
+		}
 	}
 
 	void PhysicsSystem::Shutdown(void)

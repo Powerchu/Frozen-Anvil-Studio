@@ -55,7 +55,7 @@ namespace Dystopia
 
 	void CollisionSystem::FixedUpdate(float)
 	{
-		ScopedTimer<ProfilerAction> timeKeeper{ "Collsion System", "Update" };
+		ScopedTimer<ProfilerAction> timeKeeper{ "Collision System", "Update" };
 
 		using CollisionTable = std::pair<eColliderType, eColliderType>;
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
