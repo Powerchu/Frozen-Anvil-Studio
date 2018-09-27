@@ -353,6 +353,18 @@ namespace Dystopia
 		mbIsAwake = true;
 	}
 
+	void RigidBody::AddImpulse(Vec3D const& _impul)
+	{
+	}
+
+	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point)
+	{
+	}
+
+	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const & _org)
+	{
+	}
+
 	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
 	{
 		AddForce(_force, _point, P_TX->GetGlobalPosition());

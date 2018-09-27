@@ -28,6 +28,12 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 	bodyA->SetSleeping(false);
 	bodyB->SetSleeping(false);
 
+	//if (mThisCollider->GetName() == "Another box" && mCollidedWith->GetName() == "Box Object")
+	//{
+	//	if (mEdgeNormal.MagnitudeSqr() == 0)
+	//		__debugbreak();
+	//}
+
 	//Debug
 	LoggerSystem::ConsoleLog(eLog::MESSAGE, "%s Collided with %s", mThisCollider->GetName().c_str(), mCollidedWith->GetName().c_str());
 
@@ -102,16 +108,13 @@ void Dystopia::CollisionEvent::ApplyPenetrationCorrection()
 	const auto a_invmass = bodyA->GetInverseMass();
 	const auto b_invmass = bodyB->GetInverseMass();
 
-	const float perc = 0.25F;
+	const float perc = 0.40F;
 	const float slop = 0.01F;
+	
+	const Vec3D correction = std::max(float(mdPeneDepth) - slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 
-	for (int i = 0; i < 4; ++i)
-	{
-		const Vec3D correction = std::max(float(mdPeneDepth) - slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
-
-		if (!bodyA->Get_IsStaticState())
-			bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
-		if (!bodyB->Get_IsStaticState())
-			bodyB->SetPosition(bodyA->GetPosition() + correction * b_invmass);
-	}
+	if (!bodyA->Get_IsStaticState())
+		bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
+	if (!bodyB->Get_IsStaticState())
+		bodyB->SetPosition(bodyA->GetPosition() + correction * b_invmass);
 }

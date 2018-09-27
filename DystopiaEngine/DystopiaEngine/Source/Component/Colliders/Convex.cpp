@@ -157,6 +157,21 @@ namespace Dystopia
 		}
 	}
 
+	bool Convex::isColliding(Circle & _ColB)
+	{
+		return false;
+	}
+
+	bool Convex::isColliding(Circle * const & _pColB)
+	{
+		return false;
+	}
+
+	bool Convex::isColliding(Circle & _pColB, const Math::Vec3D & _v3Dir)
+	{
+		return false;
+	}
+
 	Vertice Convex::GetFarthestPoint(const Math::Vec3D & _Dir) const
 	{
 		return Convex::GetFarthestPoint(*this, _Dir);

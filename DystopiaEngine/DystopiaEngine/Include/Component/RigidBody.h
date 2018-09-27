@@ -117,6 +117,14 @@ namespace Dystopia
 		/*Add a force at the origin of the body*/
 		void AddForce(Vec3D const & _force);
 
+
+
+		// ADD IMPULSE
+		void AddImpulse(Vec3D const & _impul);
+		void AddImpulse(Vec3D const & _impul, Point3D const & _point);
+		void AddImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const & _org);
+
+
 		/**************************************************************************************************
 		\brief
 		Resets the Cumulative Force for the current RigidBody

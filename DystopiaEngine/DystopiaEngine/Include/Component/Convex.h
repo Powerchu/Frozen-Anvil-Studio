@@ -70,9 +70,17 @@ namespace Dystopia
 
 		Vertice GetFarthestPoint(const Math::Vec3D & _Dir)const;
 
+
+		// Convex-Convex Collision Detection
 		bool isColliding(Convex & _ColB);
 		bool isColliding(Convex * const & _pColB);
 		bool isColliding(Convex & _pColB, const Math::Vec3D & _v3Dir);
+
+		// Convex-Circle Collision Detection
+		bool isColliding(Circle & _ColB);
+		bool isColliding(Circle * const & _pColB);
+		bool isColliding(Circle & _pColB, const Math::Vec3D & _v3Dir);
+
 
 		/*Static Member Functions*/
 
