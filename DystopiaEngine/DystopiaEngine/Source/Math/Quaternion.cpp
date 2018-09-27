@@ -6,8 +6,8 @@
 \brief
 	Implementation of Quaternion Rotations
 
-	TODO:
-	 Convert to matrix
+	References:
+	Wikipedia
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -28,12 +28,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Math::Quaternion _CALL Math::Quaternion::FromEuler(Math::Angle _x, Math::Angle _y, Math::Angle _z)
 {
-	float sx = std::sinf(_x.Radians() * 0.5f),
-		  cx = std::cosf(_x.Radians() * 0.5f),
-		  sy = std::sinf(_y.Radians() * 0.5f),
-		  cy = std::cosf(_y.Radians() * 0.5f),
-		  sz = std::sinf(_z.Radians() * 0.5f),
-		  cz = std::cosf(_z.Radians() * 0.5f);
+	const float sx = std::sinf(_x.Radians() * 0.5f);
+	const float cx = std::cosf(_x.Radians() * 0.5f);
+	const float sy = std::sinf(_y.Radians() * 0.5f);
+	const float cy = std::cosf(_y.Radians() * 0.5f);
+	const float sz = std::sinf(_z.Radians() * 0.5f);
+	const float cz = std::cosf(_z.Radians() * 0.5f);
 
 	// pitch = y
 	// roll = x
@@ -101,8 +101,8 @@ Math::Quaternion _CALL Math::Quaternion::operator*(Math::Quaternion _rhs)
 	Vec4 t2 = _rhs.mData.yxyx * t1;
 	Vec4 t3 = _rhs.mData.wzwz * t1;
 
-	// No blending function exists... 
 	t1 = AddSub(
+		// No blending function exists... 
 		Vec4{ _mm_shuffle_ps(t3.GetRaw(), t2.GetRaw(), _MM_SHUFFLE(3,2,1,0)) },
 		Vec4{ _mm_shuffle_ps(t2.GetRaw(), t3.GetRaw(), _MM_SHUFFLE(2,3,0,1)) }
 	);

@@ -232,6 +232,9 @@
     <ClCompile Include="Source\Math\Vector4.cpp">
       <Filter>Math\Vector</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Allocator\DefaultAlloc.cpp">
+      <Filter>Allocator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -585,9 +588,6 @@
     <ClInclude Include="Include\Component\BehaviourList.h">
       <Filter>Game Engine\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\CollisionEvent.h">
-      <Filter>Game Engine\Systems\Collision</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\HotLoader.h">
       <Filter>Editor\Hotloader</Filter>
     </ClInclude>
@@ -629,6 +629,9 @@
     </ClInclude>
     <ClInclude Include="Include\System\Collision\CollisionEvent.h">
       <Filter>Game Engine\Systems\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\DefaultAllocImpl.h">
+      <Filter>Allocator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

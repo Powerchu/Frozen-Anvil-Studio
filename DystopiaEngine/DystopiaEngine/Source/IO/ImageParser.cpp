@@ -12,7 +12,7 @@
 		-PNG : 
 		-JPG : 
 
-	TODO: Endianess, Compressed file formats
+	TODO: Compressed file formats
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO/BinarySerializer.h"
 #include "System/Graphics/Image.h"	// Image
 #include "Utility/DebugAssert.h"	// DEBUG_PRINT
+#include "Allocator/DefaultAlloc.h"
 
 #include "../../Dependancies/lodepng/lodepng.h"
 
@@ -128,7 +129,7 @@ namespace BMP
 	// 8 Bits using Color Palette
 	void* Palette_ColorBMP(Dystopia::BinarySerializer& _in, InfoBMP& _info, ColorRGBA(&_palette)[256])
 	{
-		ColorRGBA* data = new ColorRGBA[_info.mWidth * std::abs(_info.mHeight)];
+		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * std::abs(_info.mHeight));
 
 		for (int n = 0; n < std::abs(_info.mHeight); ++n)
 		{
@@ -154,7 +155,7 @@ namespace BMP
 		unsigned chunkLength = _info.mWidth * 3;
 		unsigned padding = ((chunkLength + 3) >> 2) * 4 - chunkLength; // pad widths to multiple of 4
 
-		ColorRGBA* data = new ColorRGBA[_info.mWidth * std::abs(_info.mHeight)];
+		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * std::abs(_info.mHeight));
 		ColorRGBA* ptr = data + _info.mWidth * std::abs(_info.mHeight);
 
 		for (int n = 0; n < std::abs(_info.mHeight); ++n)
@@ -182,7 +183,7 @@ namespace BMP
 	void* RGBA_ColorBMP(Dystopia::BinarySerializer& _in, InfoBMP& _info)
 	{
 		DEBUG_PRINT(eLog::MESSAGE, "ImageParser: Read image as RGBA color!\n");
-		ColorRGBA* data = new ColorRGBA[_info.mWidth * std::abs(_info.mHeight)];
+		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * std::abs(_info.mHeight));
 
 		for (int n = 0; n < _info.mWidth * std::abs(_info.mHeight); ++n)
 		{
@@ -285,14 +286,8 @@ Image ImageParser::LoadPNG(const std::string& _strName)
 	std::vector<unsigned char> buf;
 	lodepng::decode(buf, fileData.mnWidth, fileData.mnHeight, _strName.c_str());
 
-	fileData.mpImageData = new char[buf.size()];
-
-	auto b = buf.begin();
-	auto e = buf.end();
-	unsigned char* data = static_cast<unsigned char*>(fileData.mpImageData);
-
-	while (b != e)
-		*data++ = *b++;
+	fileData.mpImageData = Dystopia::DefaultAllocator<void>::Alloc(buf.size());
+	std::memcpy(fileData.mpImageData, &buf[0], buf.size());
 
 	return fileData;
 }
