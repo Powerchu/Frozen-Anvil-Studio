@@ -188,7 +188,6 @@ void Dystopia::ColorScheme::LoadSettings(Dystopia::BinarySerializer& _in)
 	_in.ConsumeEndBlock();
 }
 
-
 std::string Dystopia::ColorScheme::ToName(eColorData _i)
 {
 	switch (_i)
