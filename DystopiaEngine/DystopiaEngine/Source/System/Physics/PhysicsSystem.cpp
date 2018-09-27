@@ -71,7 +71,7 @@ namespace Dystopia
 				const auto col = owner->GetComponent<Collider>();
 				if (nullptr != col)
 				{
-					if (col->hasCollision())
+					if (col->HasCollision())
 					{
 						CollisionEvent* worstContact = nullptr;
 						double worstPene = mPenetrationEpsilon;

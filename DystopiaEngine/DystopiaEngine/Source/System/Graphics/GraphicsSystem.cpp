@@ -277,6 +277,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	{
 		__debugbreak();
 	}
+
 }
 
 void Dystopia::GraphicsSystem::Update(float)

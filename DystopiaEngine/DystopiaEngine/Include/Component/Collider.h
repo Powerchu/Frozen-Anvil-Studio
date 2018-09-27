@@ -155,7 +155,7 @@ namespace Dystopia
 		// Gettors
 		Math::Point3D GetPosition() const;
 		Math::Vec3D GetOffSet()   const;
-		bool hasCollision() const;
+		bool HasCollision() const;
 
 		AutoArray<Vertex> GetVertexBuffer() const;
 		AutoArray<short>  GetIndexBuffer()  const;

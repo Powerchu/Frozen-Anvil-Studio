@@ -35,29 +35,32 @@ Math::Quaternion _CALL Math::Quaternion::FromEuler(Math::Angle _x, Math::Angle _
 		  sz = std::sinf(_z.Radians() * 0.5f),
 		  cz = std::cosf(_z.Radians() * 0.5f);
 
+	// pitch = y
+	// roll = x
+	// yaw = z
 	return Math::Quaternion{
-		sx * cy * cz - cx * sy * sz,
-		cx * sy * cz + sx * cy * sz,
-		cx * cy * sz - sx * sy * cz,
-		cx * cy * cz + sx * sy * sz
+		sx * cy * cz - cx * sy * sz, //x
+		cx * sy * cz + sx * cy * sz, //y 
+		cx * cy * sz - sx * sy * cz, //z 
+		cx * cy * cz + sx * sy * sz  //w
 	};
 }
 
 Math::Vector4 _CALL Math::Quaternion::ToEuler(void) const
 {
-	float ySq = mData[1] * mData[1];
-	float t0 = -2.0f * (ySq + mData[2] * mData[2]) + 1.0f;
-	float t1 =  2.0f * (mData[0] * mData[1] - mData[3] * mData[2]);
-	float t2 = -2.0f * (mData[0] * mData[2] + mData[3] * mData[1]);
-	float t3 =  2.0f * (mData[1] * mData[2] - mData[3] * mData[0]);
-	float t4 = -2.0f * (mData[0] * mData[0] + ySq) + 1.0f;
+	const float ySq = mData[1] * mData[1];
+	const float t0 = 1.f - 2.0f * (ySq + mData[0] * mData[0]);
+	const float t1 = 1.f - 2.0f * (ySq + mData[2] * mData[2]);
+	const float t2 = 2.0f * (mData[0] * mData[3] + mData[1] * mData[2]);
+	const float t3 = 2.0f * (mData[0] * mData[1] + mData[2] * mData[3]);
+	      float t4 = 2.0f * (mData[1] * mData[3] - mData[0] * mData[2]);
 
-	t2 = Math::Clamp(t2, -1.f, 1.f);
+	t4 = Math::Clamp(t4, -1.f, 1.f);
 
-	return Vector4{ 
-		Math::Radians{std::atan2(t3, t4)}.Degrees(), 
-		Math::Radians{std::asin(t2)     }.Degrees(),
-		Math::Radians{std::atan2(t1, t0)}.Degrees(), 
+	return Math::Vector4{ 
+		Math::Radians{std::atan2(t2, t0)}.Degrees(),  
+		Math::Radians{std::asin(t4)     }.Degrees(),
+		Math::Radians{std::atan2(t3, t1)}.Degrees(), 
 		0
 	};
 }
@@ -72,15 +75,15 @@ Math::Vector4 _CALL Math::Quaternion::Rotate(Vector4 _v) const noexcept
 Math::Matrix4 __vectorcall Math::Quaternion::Matrix(void) const noexcept
 {
 	Math::Matrix4 m1{
-		 mData[3],  mData[2], -mData[1], mData[0],
-		-mData[2],  mData[3],  mData[0], mData[1],
-		 mData[1], -mData[0],  mData[3], mData[2],
-		-mData[0], -mData[1], -mData[2], mData[3]
+		 mData[3], -mData[2], -mData[1], mData[0],
+		 mData[2],  mData[3],  mData[0], mData[1],
+		-mData[1],  mData[0], -mData[3], mData[2],
+		-mData[0], -mData[1],  mData[2], mData[3]
 	},
 	m2{
-		 mData[3],  mData[2], -mData[1], -mData[0],
-		-mData[2],  mData[3],  mData[0], -mData[1],
-		 mData[1], -mData[0],  mData[3], -mData[2],
+		 mData[3], -mData[2],  mData[1], -mData[0],
+		 mData[2],  mData[3], -mData[0], -mData[1],
+		 mData[1], -mData[0], -mData[3],  mData[2],
 		 mData[0],  mData[1],  mData[2],  mData[3]
 	};
 

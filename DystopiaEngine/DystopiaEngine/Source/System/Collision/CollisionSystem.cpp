@@ -126,8 +126,8 @@ namespace Dystopia
 						if (key.first == pair_key)
 						{
 							(this->*key.second)(bodyA, bodyB);
-							bodyB->SetColliding(bodyB->Collider::hasCollision());
-							bodyA->SetColliding(bodyA->Collider::hasCollision());
+							bodyB->SetColliding(bodyB->Collider::HasCollision());
+							bodyA->SetColliding(bodyA->Collider::HasCollision());
 							break;
 						}
 					}

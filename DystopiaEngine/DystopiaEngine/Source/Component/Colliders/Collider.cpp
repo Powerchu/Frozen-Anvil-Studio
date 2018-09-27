@@ -99,7 +99,7 @@ namespace Dystopia
 		marr_ContactSets.clear();
 	}
 
-	bool Collider::hasCollision() const
+	bool Collider::HasCollision() const
 	{
 		return mbColliding;
 	}
