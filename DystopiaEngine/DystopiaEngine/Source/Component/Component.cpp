@@ -99,3 +99,8 @@ uint64_t Dystopia::Component::GetID() const
 	return mID;
 }
 
+unsigned Dystopia::Component::GetFlags(void) const
+{
+	return mnFlags;
+}
+
