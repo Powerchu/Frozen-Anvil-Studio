@@ -38,7 +38,7 @@ namespace Math
 
 		inline Quaternion(void) noexcept;
 		inline Quaternion(const Quaternion&) noexcept;
-		inline explicit Quaternion(float x, float y = 0, float z = 0, float w = 0) noexcept;
+		inline explicit Quaternion(float x, float y, float z, float w) noexcept;
 		inline explicit Quaternion(__m128) noexcept;
 
 
@@ -60,6 +60,8 @@ namespace Math
 		Vector4 _CALL Rotate(Vector4) const noexcept;
 
 		Matrix4 _CALL Matrix(void) const noexcept;
+
+		Vector4 _CALL ToEuler(void) const;
 
 
 
