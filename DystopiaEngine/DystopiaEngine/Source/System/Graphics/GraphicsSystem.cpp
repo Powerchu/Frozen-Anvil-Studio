@@ -249,7 +249,8 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	s->UploadUniform("ProjectViewMat", _ProjView);
 
 	Math::Vec4 no_alpha{ mvDebugColour };
-	no_alpha.w = 1.f;
+
+	Math::Vector4 activeColor, CollidingColor{1.f, 0, 0, .75f}, inactiveColor;
 
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
@@ -259,11 +260,14 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 		{
 			s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix());
 			
+			activeColor = Obj->HasCollision() ? CollidingColor : mvDebugColour;
+
 			if (Mesh* pObjMesh = Obj->GetMesh())
 			{
-				s->UploadUniform("vColor", mvDebugColour);
+				s->UploadUniform("vColor", activeColor);
 				pObjMesh->UseMesh(GetDrawMode());
-				s->UploadUniform("vColor", no_alpha);
+				activeColor.w = 1.f;
+				s->UploadUniform("vColor", activeColor);
 				pObjMesh->UseMesh(GL_LINE_LOOP);
 			}
 		}
@@ -304,6 +308,15 @@ void Dystopia::GraphicsSystem::Update(float)
 	// TODO: Final draw to combine layers & draw to screen
 
 	EndFrame();
+}
+
+void Dystopia::GraphicsSystem::PostUpdate(void)
+{
+	for (auto& e : mComponents)
+	{
+		if (eObjFlag::FLAG_REMOVE & e.GetFlags())
+			mComponents.Remove(&e);
+	}
 }
 
 void Dystopia::GraphicsSystem::StartFrame(void)

@@ -107,7 +107,7 @@ public:
 	//inline void Remove(void) noexcept;
 	//inline void Remove(const T&) noexcept;
 	inline void Remove(const Sz_t _nIndex);
-	void Remove(const T* _pObj);
+	void Remove(T* _pObj);
 //	void Remove(const Itor_t _pObj);
 
 	inline bool IsEmpty(void) const noexcept;
@@ -346,7 +346,7 @@ inline void MagicArray<T, PP>::Remove(const Sz_t _nIndex)
 }
 
 template<typename T, typename PP>
-void MagicArray<T, PP>::Remove(const T* _pObj)
+void MagicArray<T, PP>::Remove(T* _pObj)
 {
 	for (auto& blk : mDirectory)
 	{

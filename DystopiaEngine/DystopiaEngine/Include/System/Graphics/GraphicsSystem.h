@@ -49,7 +49,8 @@ namespace Dystopia
 		bool Init(void);
 		void PostInit(void);
 
-		void Update(float);		// Draws the currently bounded window
+		void Update(float) override;		// Draws the currently bounded window
+		void PostUpdate(void) override;
 		void Shutdown(void);
 
 		void SetGamma(float) noexcept;

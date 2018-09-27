@@ -62,7 +62,8 @@ namespace Dystopia
 		virtual void Unserialise(TextSerialiser&) = 0;
 		virtual void EditorUI(void) noexcept;
 
-		uint64_t GetID() const;
+		uint64_t GetID(void) const;
+		unsigned GetFlags(void) const;
 
 	protected:
 		uint64_t mID;
