@@ -207,6 +207,8 @@ namespace EGUI
 		======================================================================================================================= */
 		Array<eDragStatus,3> VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, 
 							float _min = 0.0f, float _max = 1.0f, float _width= 50.f);
+		Array<eDragStatus, 2> VectorFields(const std::string& _label, Math::Vector2 *_outputVec, float _dragSpeed = 1.0f,
+							float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
 		/* =======================================================================================================================
 		Brief:
 				Creats a check box for a boolean variable. Returns true when the check box is clicked, toggles the _pOutBool

@@ -71,6 +71,7 @@ namespace Dystopia
 
 		MagicArray<BehaviourWrap *> const & GetDllChanges() const;
 		bool hasDllChanges() const;
+		MagicArray<BehaviourWrap> & GetAllBehaviour();
 
 #endif
 

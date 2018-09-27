@@ -220,6 +220,24 @@ namespace Dystopia
 		if (EGUI::Display::StartPopup(g_bPopup))
 		{
 			EGUI::Display::Dummy(235, 2);
+
+			auto& list = mpBehaviourSys->GetAllBehaviour();
+			for (auto& elem : list)
+			{
+				if (EGUI::Display::SelectableTxt(elem.mName))
+				{
+					Behaviour *p = elem.mpBehaviour->Duplicate();
+					//Behaviour * copy = (Behaviour *)operator new(sizeof(*p));
+					//for (unsigned i = 0; i < sizeof(*p); ++i)
+						//new (reinterpret_cast<char*>(copy) + i) char(*reinterpret_cast<char*>(p));
+
+
+					//reinterpret_cast<Behaviour*>(copy)->SetActive(true);
+					mpFocus->AddComponent(p, BehaviourTag{});
+					(p)->Update(0.16f);
+				}
+			}
+
 			if (EGUI::Display::SelectableTxt("New Behaviour"))
 			{
 				mPromptNewBehaviour = true;

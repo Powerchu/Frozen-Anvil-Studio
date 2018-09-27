@@ -30,7 +30,12 @@ namespace Dystopia
 		return gpConsoleInst;
 	}
 
-	void PrintToConsoleLog(const std::string& _text)
+	void _DLL_EXPORT PrintToConsoleLog(const std::string& _text)
+	{
+		ConsoleLog::GetInstance()->Debug(_text);
+	}
+
+	void _DLL_EXPORT PrintToConsoleLog(const char* _text)
 	{
 		ConsoleLog::GetInstance()->Debug(_text);
 	}

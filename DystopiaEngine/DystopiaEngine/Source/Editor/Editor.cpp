@@ -55,6 +55,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/PerformanceLog.h"
 #include "Editor/PLogger.h"
 #include "Editor/ColorScheme.h"
+#include "Editor/StyleScheme.h"
 
 /* library includes */
 #include <iostream>
@@ -129,6 +130,7 @@ namespace Dystopia
 		mArrTabs.push_back(ConsoleLog::GetInstance());
 		mArrTabs.push_back(PerformanceLog::GetInstance());
 		mArrTabs.push_back(ColorScheme::GetInstance());
+		mArrTabs.push_back(StyleScheme::GetInstance());
 	}
 
 	void Editor::LoadDefaults()
@@ -201,6 +203,7 @@ namespace Dystopia
 			if (mpBehaviourSys->hasDllChanges())
 			{
 				mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED);
+				mpBehaviourSys->hasDllChanges();
 			}
 			UpdateKeys();
 			UpdateHotkeys();
@@ -787,8 +790,9 @@ namespace Dystopia
 					{
 						delete behave;
 						behave = nullptr;
-						Behaviour * temp = elem->mpBehaviour? nullptr : elem->mpBehaviour->Duplicate();
-						behave = temp;
+						behave = elem->mpBehaviour ? elem->mpBehaviour->Duplicate() : nullptr;
+						behave->Update(0.16f);
+						break;
 					}
 				}
 			}

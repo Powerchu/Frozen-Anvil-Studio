@@ -1102,7 +1102,7 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	mEndAction = eEND_ACTION_END_CHILD;
 	//ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 1));
 	//ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.5f, 0.5f, 0.5f, 0.5f });
-	ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0);
+	//ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0);
 	SplitTabs();
 	float tabH = ImGui::GetTextLineHeightWithSpacing();
 	if (TabBar(_tab.GetFirstTab(), _pOpened != nullptr))
@@ -1122,10 +1122,10 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 							 ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBringToFrontOnFocus |
 							 ImGuiWindowFlags_AlwaysUseWindowPadding | _flags;
 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 1,1 });
+	//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 1,1 });
 	bool ret = ImGui::BeginChild(_pLabel, size, true, flags);
 	//ImGui::PopStyleColor(2);
-	ImGui::PopStyleVar(2);
+	//ImGui::PopStyleVar(2);
 	return ret;
 }
 

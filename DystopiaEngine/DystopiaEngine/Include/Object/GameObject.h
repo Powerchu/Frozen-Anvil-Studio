@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component\Transform.h"			// Transform
 #include "Behaviour\Behaviour.h"			// Behaviour
 #include "Utility\MetaAlgorithms.h"			// MetaFind_t
+#include "Globals.h"
 
 #include <string>
 
@@ -28,7 +29,7 @@ namespace Dystopia
 {
 	struct CollisionEvent;
 
-	class GameObject
+	class _DLL_EXPORT GameObject
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -95,10 +96,10 @@ namespace Dystopia
 		GameObject& operator = (GameObject&&);
 	private:
 		uint64_t mnID;
+		Transform mTransform;
+
 		unsigned mnFlags;
 		std::string mName;
-
-		Transform mTransform;
 
 		AutoArray<Component*> mComponents;
 		AutoArray<Behaviour*> mBehaviours;

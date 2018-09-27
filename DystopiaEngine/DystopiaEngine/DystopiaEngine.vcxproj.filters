@@ -233,7 +233,10 @@
       <Filter>Editor\Gizmo</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\ColorScheme.cpp">
-      <Filter>Editor\Editor Tabs\ColorScheme</Filter>
+      <Filter>Editor\Editor Tabs\SchemeColor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\StyleScheme.cpp">
+      <Filter>Editor\Editor Tabs\SchemeStyle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -613,7 +616,10 @@
       <Filter>Editor\Gizmo</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\ColorScheme.h">
-      <Filter>Editor\Editor Tabs\ColorScheme</Filter>
+      <Filter>Editor\Editor Tabs\SchemeColor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\StyleScheme.h">
+      <Filter>Editor\Editor Tabs\SchemeStyle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -881,8 +887,11 @@
     <Filter Include="Editor\Gizmo">
       <UniqueIdentifier>{c678684a-2024-498c-b278-53911ea1ab17}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor Tabs\ColorScheme">
+    <Filter Include="Editor\Editor Tabs\SchemeColor">
       <UniqueIdentifier>{505d9276-8eac-401b-a286-9d084f3f8461}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\SchemeStyle">
+      <UniqueIdentifier>{e2a99798-5b6a-4bf2-a471-a415c2452e05}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

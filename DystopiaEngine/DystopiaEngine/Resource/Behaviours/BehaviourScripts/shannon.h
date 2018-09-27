@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	creating.h
-\author shannon (100%)
-\par    email: tshannon\@digipen.edu
+\file	shannon.h
+\author s (100%)
+\par    email: s\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _creating_H_
-#define _creating_H_
+#ifndef _shannon_H_
+#define _shannon_H_
 
 #define str(s) #s
 
@@ -22,11 +22,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class creating : Behaviour
+	class shannon : Behaviour
 	{
 	public:
-
-		static constexpr const char * BehaviourName = str(creating);
+		static constexpr const char * BehaviourName = str(shannon);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -36,10 +35,10 @@ namespace Dystopia
 		};
 
 #endif
-		//static unsigned constexpr mcreatingID = ;
+		static uint64_t constexpr mshannonID = 632291328;
 
-		creating();
-		~creating();
+		shannon();
+		~shannon();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -57,11 +56,11 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const;
 
-		virtual creating * Duplicate() const;
+		virtual shannon * Duplicate() const;
 
 	private:
-
-
+	
+	int i;
 
 	};
 
@@ -69,13 +68,13 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport creating * creatingClone()
+		DllExport shannon * shannonClone()
 		{
-			return new creating;
+			return new shannon;
 		}
 	}
 }
 
-#endif //_creating_H_
+#endif //_shannon_H_
 
 

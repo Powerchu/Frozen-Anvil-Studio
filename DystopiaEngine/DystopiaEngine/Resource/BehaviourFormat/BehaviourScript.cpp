@@ -57,7 +57,7 @@ namespace Dystopia
 
 	_SF_ClassName_ * _SF_ClassName_::Duplicate() const
 	{
-		return nullptr;
+		return new _SF_ClassName_{};
 	}
 
 	void _SF_ClassName_::Serialise(TextSerialiser& _ser) const

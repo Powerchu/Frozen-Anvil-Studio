@@ -454,14 +454,14 @@ namespace Dystopia
 								 ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoCollapse |	
 								 ImGuiWindowFlags_NoInputs;
 		static constexpr float offsetH = 18;
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+		//ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+		//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::SetNextWindowPos(ImVec2{ 0, offsetH });
 		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - offsetH });
 		ImGui::SetNextWindowBgAlpha(1.f);
 		ImGui::Begin(mpMainDockspace, nullptr, flags);
 		EGUI::Docking::BeginDockableSpace();
-		ImGui::PopStyleVar(2);
+		//ImGui::PopStyleVar(2);
 	}
 
 	void GuiSystem::EndFullDockableSpace()
