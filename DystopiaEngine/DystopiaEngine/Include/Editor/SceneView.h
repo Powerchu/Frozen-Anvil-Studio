@@ -20,10 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class GraphicsSystem;
-	class GameObject;
-	class PhysicsSystem;
-	class CollisionSystem;
-	class InputManager;
 
 	class SceneView : public EditorTab
 	{
@@ -52,18 +48,9 @@ namespace Dystopia
 		float				mDelta;
 		std::string			mLabel;
 		GraphicsSystem*		mpGfxSys;
-		PhysicsSystem*		mpPhysSys;
-		CollisionSystem*	mpColSys;
-		InputManager*		mpInputSys;
 		
 		GameObject*			mpSceneCamera;
 
-		// TODO: remove this
-		GameObject*			mpCircleObject;
-		GameObject*			mpBoxObject2;
-		GameObject*			mpBoxObject;
-		GameObject*			mpStaticBoxObject;
-		GameObject*			mpStaticCircleObject;
 	};
 
 }
