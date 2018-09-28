@@ -239,7 +239,10 @@ namespace Dystopia
 				ScopedTimer<ProfilerAction> scopeT{ pTab->GetLabel(), "Editor UI" };
 				if (EGUI::StartTab(pTab->GetLabel().c_str(), pTab->GetOpenedBool()))
 				{
+					EGUI::Indent(4);
+					*pTab->GetOpenedBool() = true;
 					pTab->EditorUI();
+					EGUI::UnIndent(4);
 				}
 			}
 			EGUI::EndTab();

@@ -774,8 +774,9 @@ bool DockSpace::TabBar(Tabs& _tab, bool _closeBtn)
 	bool tabClosed = false;
 	char buffer[20];
 
-	ImGui::SetCursorScreenPos(_tab.mPos + ImVec2{ 2, 6 });
+	ImGui::SetCursorScreenPos(_tab.mPos + ImVec2{ 2, 3 });
 	ImFormatString(buffer, IM_ARRAYSIZE(buffer), "tabs%d", static_cast<int>(_tab.mId));
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{0,0,0,0});
 	if (ImGui::BeginChild(buffer, size, true, ImGuiWindowFlags_NoScrollbar))
 	{
 		Tabs *pDockTab = &_tab;
@@ -809,7 +810,7 @@ bool DockSpace::TabBar(Tabs& _tab, bool _closeBtn)
 			{
 				size.x += 16 + ImGui::GetStyle().ItemSpacing.x;
 				ImGui::SameLine();
-				tabClosed = ImGui::Button("close", ImVec2{ 16,16 });
+				tabClosed = ImGui::InvisibleButton("close", ImVec2{ 16,16 });
 				ImVec2 center = (ImGui::GetItemRectMin() + ImGui::GetItemRectMax()) * 0.5f;
 				pCanvas->AddLine(
 					center + ImVec2{ -3.5f, -3.5f }, center + ImVec2{ 3.5f, 3.5f }, textCol);
@@ -824,6 +825,7 @@ bool DockSpace::TabBar(Tabs& _tab, bool _closeBtn)
 		pCanvas->AddLine(cp, cp + ImVec2{ _tab.mSize.x, 0 }, ImGui::GetColorU32(ImGuiCol_FrameBgActive), 3);
 	}
 	ImGui::EndChild();
+	ImGui::PopStyleColor();
 	return tabClosed;
 }
 
@@ -1045,7 +1047,9 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	{
 		Tabs* root = mpNextParentTab ? mpNextParentTab : GetMainRootTab();
 		if (root && (&_tab != root) && !_tab.mpParentTab)
+		{
 			DockTab(_tab, root, nextSlot);
+		}
 		mpNextParentTab = &_tab;
 	}
 	mCurrentTab = &_tab;
@@ -1054,8 +1058,9 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	if (_tab.mStatus == eSTATUS_FLOATING)
 	{
 		ImGui::SetNextWindowPos(first ? ImVec2{ 100, 100 } : _tab.mPos);
-		ImGui::SetNextWindowBgAlpha(.9f);
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{0.2f,0.2f,0.2f, 0.8f});
 		bool ret = ImGui::Begin(_pLabel, _pOpened, ImGuiWindowFlags_NoCollapse | _flags);
+		ImGui::PopStyleColor();
 		mEndAction = eEND_ACTION_END;
 		_tab.mPos = ImGui::GetWindowPos();
 		_tab.mSize = gSizeStack.IsEmpty() ? ImGui::GetWindowSize() - ImGui::GetStyle().WindowPadding : gSizeStack.Peek();
@@ -1074,22 +1079,20 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	if (!_tab.mActive && _tab.mStatus != eSTATUS_DRAGGED) return false;
 	mEndAction = eEND_ACTION_END_CHILD;
 	SplitTabs();
-	float tabH = ImGui::GetTextLineHeightWithSpacing();
-	if (TabBar(_tab.GetFirstTab(), _pOpened != nullptr))
+	float tabH = 1.3f *  ImGui::GetTextLineHeightWithSpacing();
+	if (TabBar(_tab.GetFirstTab(), _pOpened))
 	{
 		FillTabLocation(_tab);
 		*_pOpened = false;
 	}
-	ImVec2 pos = _tab.mPos;
-	ImVec2 size = _tab.mSize;
-	pos.y += tabH + ImGui::GetStyle().WindowPadding.y;
-	size.y -= (tabH + ImGui::GetStyle().WindowPadding.y);
+	ImVec2 pos = _tab.mPos + ImVec2{ 2, tabH };
+	ImVec2 size = _tab.mSize - ImVec2{ 4, tabH };
 	ImGui::SetCursorScreenPos(pos);
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
 							 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 							 _flags;
-
 	bool ret = ImGui::BeginChild(_pLabel, size, true, flags);
+	ImGui::SetCursorScreenPos(ImVec2{ pos.x, pos.y + 4.f });
 	return ret;
 }
 
@@ -1163,11 +1166,12 @@ bool BeginDockableSpace()
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollbar;
 	char bufferLabel[1024];
 	sprintf_s(bufferLabel, "##%s", curPanel);
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0,0,0,0.f });
 	bool result = ImGui::BeginChild(bufferLabel, ImVec2{ 0, 0 }, false, flags);
-
+	ImGui::PopStyleColor();
 	DockSpace& space = gDockable[curPanel];
 	space.mPanelPos = ImGui::GetWindowPos();
-	space.mPanelSize = ImGui::GetWindowSize() - ImGui::GetStyle().WindowPadding;
+	space.mPanelSize = ImGui::GetWindowSize();
 
 	return result;
 }
