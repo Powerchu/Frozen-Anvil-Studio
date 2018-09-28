@@ -4,7 +4,7 @@
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Base class for all components
+Base class for all components
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -30,7 +30,7 @@ namespace Dystopia
 	public:
 		using TAG = ComponentTag;
 		using SYSTEM = class NULL_SYSTEM;
-		virtual unsigned GetComponentType(void) const {	return unsigned(-1); };
+		virtual unsigned GetComponentType(void) const { return unsigned(-1); };
 		virtual const std::string GetEditorName(void) const { return "Generic Component"; }
 
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -66,6 +66,7 @@ namespace Dystopia
 		unsigned GetFlags(void) const;
 
 	protected:
+		uint64_t mID;
 		unsigned mnFlags;
 
 	private:
