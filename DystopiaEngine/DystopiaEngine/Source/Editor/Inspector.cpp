@@ -50,7 +50,7 @@ namespace Dystopia
 	}
 
 	Inspector::Inspector()
-		: EditorTab{ true }, 
+		: EditorTab{ false },
 		mpFocus{ nullptr }, mLabel{ "Inspector" }, mShowListOfComponents{ false },
 		mpBehaviourSys{ nullptr }, mPromptNewBehaviour{ false }, mPromptCreateBehaviour{ false },
 		mBufferInput{}, mBufferCreator{}, mBufferLogin{}
@@ -88,39 +88,6 @@ namespace Dystopia
 		AddComponentButton(btnSize);
 		AddBehaviourButton(btnSize);
 		EGUI::UnIndent(inde);
-
-		////float x = mDemoVec.x;
-		////float y = mDemoVec.y;
-		////float z = mDemoVec.z;
-		////EGUI::Display::HorizontalSeparator();
-		////if (EGUI::Display::StartTreeNode("Temporary Transform"))	// replace with for loop of all components name
-		////{
-		////	EGUI::Display::TextField("mDemoText", mDemoText, 32);
-
-		////	if (EGUI::Display::VectorFields("Demo Vec", &mDemoVec, 0.1f, 0.f, 10.f))
-		////	{
-		////		x = mDemoVec.x;
-		////		y = mDemoVec.y;
-		////		z = mDemoVec.z;
-		////	}
-		////	EGUI::Display::Label("Variable mDemoVec x : [%.3f] y: [%.3f] z:[%.3f]", x, y, z);
-		////	EGUI::Display::EndTreeNode();
-		////}
-		////EGUI::Display::HorizontalSeparator();
-		////if (EGUI::Display::EmptyBox("Payload", 150, mDemoName, true) && mDemoName.length())
-		////{
-		////	ProjectResource::GetInstance()->FocusOnFile(mDemoName);
-		////}
-		////if (File *t = EGUI::Display::StartPayloadReceiver<File>(EGUI::FILE))
-		////{
-		////	mpComdHandler->InvokeCommand(&mDemoName, (*t).mName);
-		////	EGUI::Display::EndPayloadReceiver();
-		////}
-		////EGUI::SameLine(); 
-		////if (EGUI::Display::IconCircle("payload1box", 6, 0, 3) && mDemoName.length())
-		////{
-		////	ProjectResource::GetInstance()->FocusOnFile(mDemoName);
-		////}
 	}
 
 	void Inspector::Shutdown()
@@ -253,6 +220,18 @@ namespace Dystopia
 		if (EGUI::Display::StartPopup(g_bPopup))
 		{
 			EGUI::Display::Dummy(235, 2);
+
+			auto& list = mpBehaviourSys->GetAllBehaviour();
+			for (auto& elem : list)
+			{
+				if (EGUI::Display::SelectableTxt(elem.mName))
+				{
+					Behaviour *p = elem.mpBehaviour->Duplicate();
+					mpFocus->AddComponent(p, BehaviourTag{});
+					(p)->Update(0.16f);
+				}
+			}
+
 			if (EGUI::Display::SelectableTxt("New Behaviour"))
 			{
 				mPromptNewBehaviour = true;

@@ -41,7 +41,16 @@ namespace Dystopia
 		DLLWrapper(std::wstring _DllPathName, std::wstring _DllFileName, HMODULE _DllModule)
 			:mDllPathName{ _DllPathName },
 			mDllFileName{ _DllFileName },
-			mDllModule{ _DllModule }
+			mDllModule{ _DllModule },
+			mDllFullPath{ _DllPathName + L"/" + _DllFileName }
+		{
+
+		}
+		DLLWrapper(std::wstring _DllPathName, std::wstring _DllFileName,std::wstring _DLLFullPath, HMODULE _DllModule)
+			:mDllPathName{ _DllPathName },
+			mDllFileName{ _DllFileName },
+			mDllModule{ _DllModule },
+			mDllFullPath{ _DLLFullPath }
 		{
 
 		}
@@ -58,7 +67,7 @@ namespace Dystopia
 		HMODULE ReloadDll()
 		{
 			FreeLibrary(mDllModule);
-			mDllModule = LoadLibrary((mDllPathName + L'/' + mDllFileName).c_str());
+			mDllModule = LoadLibrary((mDllFullPath).c_str());
 			return mDllModule;
 		}
 
@@ -98,7 +107,7 @@ namespace Dystopia
 
 		std::wstring GetDllFullPath() const
 		{
-			return mDllPathName + L'/' + mDllFileName;
+			return mDllFullPath;
 		}
 
 		template<typename ReturnType, typename ... ParamType>
@@ -137,7 +146,8 @@ namespace Dystopia
 
 		std::wstring mDllPathName;
 		std::wstring mDllFileName;
-		HMODULE		 mDllModule;
+		std::wstring mDllFullPath;
+		HMODULE	     mDllModule;
 
 	};
 
@@ -330,12 +340,13 @@ namespace Dystopia
 					{
 					case FILE_ACTION_ADDED:
 					{
-						DllDir += DllName;
-						HMODULE dllModule = LoadLibrary(DllDir.c_str());
+						std::wstring Fullpath = DllDir + L"/" + DllName;
+						
+						HMODULE dllModule = LoadLibrary(Fullpath.c_str());
 
 						if (dllModule != NULL)
 						{
-							auto pointer = mvDLL.Emplace(DllDir, DllName, dllModule);
+							auto pointer = mvDLL.Emplace(DllDir, DllName, Fullpath, std::move(dllModule));
 
 							if (_pDLLWrapperBuffer && ChangeCount < size)
 								*(_pDLLWrapperBuffer + ChangeCount++) = pointer;
@@ -347,13 +358,14 @@ namespace Dystopia
 
 					case FILE_ACTION_MODIFIED:
 					{
-						DllDir += DllName;
+						std::wstring Fullpath = DllDir + L"/" + DllName;
+
 						if (mvDLL.IsEmpty())
 						{
-							HMODULE dllModule = LoadLibrary(DllDir.c_str());
+							HMODULE dllModule = LoadLibrary(Fullpath.c_str());
 							if (dllModule != NULL)
 							{
-								auto pDllWrapper = mvDLL.Emplace(DllDir, DllName, dllModule);
+								auto pDllWrapper = mvDLL.Emplace(DllDir, DllName, Fullpath, dllModule);
 
 								if (_pDLLWrapperBuffer && ChangeCount < size)
 									*(_pDLLWrapperBuffer + ChangeCount++) = pDllWrapper;

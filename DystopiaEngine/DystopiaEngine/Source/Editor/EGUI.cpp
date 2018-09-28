@@ -183,6 +183,7 @@ namespace Dystopia
 
 		DefaultColorSettings();
 		EGUI::Docking::InitTabs();
+		ImGui::SetCurrentContext(mpCtx);
 		return true;
 	}
 
@@ -195,7 +196,7 @@ namespace Dystopia
 
 		// Setup display size (every frame to accommodate for window resizing)
 		int w, h, display_w, display_h;
-		w = display_w = mpWin->GetMainWindow().GetWidth();
+		w = display_w = mpWin->GetMainWindow().GetWidth() - 16;
 		h = display_h = mpWin->GetMainWindow().GetHeight() - 40;
 
 		io.DisplaySize = ImVec2{ static_cast<float>(w), static_cast<float>(h) };
@@ -357,7 +358,7 @@ namespace Dystopia
 		delete mpGLState;
 
 		// Look for DefaultColorSetting() function and MATCH the integer with the same amount of PushStyleColor
-		ImGui::PopStyleColor(9);
+		//ImGui::PopStyleColor(9);
 		ImGui::DestroyContext(mpCtx);
 	}
 
@@ -453,14 +454,14 @@ namespace Dystopia
 								 ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoCollapse |	
 								 ImGuiWindowFlags_NoInputs;
 		static constexpr float offsetH = 18;
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+		//ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+		//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::SetNextWindowPos(ImVec2{ 0, offsetH });
 		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - offsetH });
 		ImGui::SetNextWindowBgAlpha(1.f);
 		ImGui::Begin(mpMainDockspace, nullptr, flags);
 		EGUI::Docking::BeginDockableSpace();
-		ImGui::PopStyleVar(2);
+		//ImGui::PopStyleVar(2);
 	}
 
 	void GuiSystem::EndFullDockableSpace()
@@ -471,15 +472,15 @@ namespace Dystopia
 
 	void GuiSystem::DefaultColorSettings()
 	{
-		ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 1
-		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 2
-		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4{ 0.5f, 0.5f, 0.5f, 0.6f });				// 3
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 4
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 5
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.5f, 0.5f, 0.5f, 0.6f });				// 6
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 7
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 8
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.6f, 0.9f, 0.5f });				// 9
+		//ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 1
+		//ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 2
+		//ImGui::PushStyleColor(ImGuiCol_Header, ImVec4{ 0.5f, 0.5f, 0.5f, 0.6f });				// 3
+		//ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 4
+		//ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 5
+		//ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.5f, 0.5f, 0.5f, 0.6f });				// 6
+		//ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 7
+		//ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 8
+		//ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.6f, 0.9f, 0.5f });				// 9
 	}
 
 	void GuiSystem::UpdateChar(unsigned short _c)

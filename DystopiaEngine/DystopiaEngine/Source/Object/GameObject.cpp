@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure\AutoArray.h" 
 #include "Utility\Utility.h"		 // Move
 #include "IO\TextSerialiser.h"
-#include "Utility\GUID.h"
+#include "Utility\GUID.h"			// Global UniqueID
 
 #define Ping(_ARR, _FUNC, ...)			\
 for (auto& e : _ARR)					\
@@ -30,15 +30,14 @@ for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
 
 Dystopia::GameObject::GameObject(void) noexcept
-	: GameObject{ GUIDGenerator::INVALID }
+	: GameObject{ Utility::Constant<decltype(mnID), ~0>::value }
 {
 
 }
 
-Dystopia::GameObject::GameObject(uint64_t _ID) noexcept
+Dystopia::GameObject::GameObject(unsigned long _ID) noexcept
 	: mnID{ _ID }, mnFlags{ FLAG_NONE },
-	mTransform{ this }, mComponents{}, mBehaviours{},
-	mbIsStatic{false}
+	mTransform{ this }, mComponents{}, mBehaviours{}
 {
 
 }
@@ -47,12 +46,12 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	: mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags }, mName{ _obj.mName },
 	mComponents{ Utility::Move(_obj.mComponents) },
 	mBehaviours{ Utility::Move(_obj.mBehaviours) },
-	mTransform{ _obj.mTransform }, mbIsStatic{false}
+	mTransform{ _obj.mTransform }
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
 
-	_obj.mnID = GUIDGenerator::INVALID;
+	_obj.mnID = Utility::Constant<decltype(mnID), ~0>::value;
 	_obj.mnFlags = FLAG_REMOVE;
 }
 
@@ -73,11 +72,6 @@ void Dystopia::GameObject::SetActive(const bool _bEnable)
 		return;
 
 	mnFlags = _bEnable ? mnFlags | FLAG_ACTIVE : mnFlags & ~FLAG_ACTIVE;
-}
-
-bool Dystopia::GameObject::IsStatic() const
-{
-	return false;
 }
 
 
@@ -113,7 +107,7 @@ void Dystopia::GameObject::PostUpdate(void)
 
 void Dystopia::GameObject::Destroy(void)
 {
-	Ping(mComponents, GameObjectDestroy);
+//	Ping(mComponents, GameObjectDestroy);
 	Ping(mBehaviours, GameObjectDestroy);
 
 	mnFlags = FLAG_REMOVE;
@@ -254,7 +248,7 @@ void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 {
 	GameObject *p = new GameObject{};
-	p->mnID = mnID;
+	p->mnID = GUIDGenerator::GetUniqueID();
 	p->mnFlags = mnFlags;
 	p->mName = mName;
 	p->mComponents = mComponents;
@@ -263,6 +257,10 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	return p;
 }
 
+void Dystopia::GameObject::SetID(const uint64_t& _id)
+{
+	mnID = _id;
+}
 
 uint64_t Dystopia::GameObject::GetID(void) const
 {
@@ -289,7 +287,7 @@ Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
 	Utility::Swap(mComponents, _rhs.mComponents);
 	Utility::Swap(mBehaviours, _rhs.mBehaviours);
 
-	_rhs.mnID = GUIDGenerator::INVALID;
+	_rhs.mnID = Utility::Constant<decltype(mnID), ~0>::value;
 
 	return *this;
 }

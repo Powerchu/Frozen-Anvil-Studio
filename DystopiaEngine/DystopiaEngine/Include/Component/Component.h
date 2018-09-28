@@ -66,7 +66,6 @@ namespace Dystopia
 		unsigned GetFlags(void) const;
 
 	protected:
-		uint64_t mID;
 		unsigned mnFlags;
 
 	private:

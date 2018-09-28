@@ -122,7 +122,7 @@ namespace Dystopia
 	}
 
 	ProjectResource::ProjectResource()
-		: EditorTab{ true },
+		: EditorTab{ false },
 		mLabel{ "Project" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
 		mpCurrentFolder{ nullptr }, mArrAllFiles{}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
 		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 90 }
@@ -185,12 +185,14 @@ namespace Dystopia
 		EGUI::Display::OpenTreeNode();
 		FolderWindow();
 		EGUI::SameLine(2);
+		ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4{ 0,0,0,0 });
 		EGUI::StartChild("FileWindow", fileWindowSize);
 		if (!strlen(mSearchText))
 			FileWindow(fileWindowSize);
 		else
 			SearchResultWindow(fileWindowSize);
 		EGUI::EndChild();
+		ImGui::PopStyleColor();
 	}
 
 	void ProjectResource::Shutdown()
@@ -233,11 +235,11 @@ namespace Dystopia
 
 	void ProjectResource::SearchWindow()
 	{
-		float width = Size().x - 70;
+		float width = Size().x - 50;
 		width = (width < 20) ? 20 : width;
 		EGUI::Indent(5);
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, true, width);
+		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, false, width);
 		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(5);
 		EGUI::Display::HorizontalSeparator();

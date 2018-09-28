@@ -32,8 +32,11 @@
     <ClCompile Include="Source\Component\CollisionEvent.cpp" />
     <ClCompile Include="Source\Editor\Clipboard.cpp" />
     <ClCompile Include="Source\Component\Colliders\Circle.cpp" />
+    <ClCompile Include="Source\Editor\ColorScheme.cpp" />
     <ClCompile Include="Source\Editor\CommandList.cpp" />
     <ClCompile Include="Source\Editor\DefaultFactory.cpp" />
+    <ClCompile Include="Source\Editor\Gizmo.cpp" />
+    <ClCompile Include="Source\Editor\StyleScheme.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
@@ -113,6 +116,9 @@
     <ClInclude Include="Include\Component\Convex.h" />
     <ClInclude Include="Include\Component\Triangle.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />
+    <ClInclude Include="Include\Editor\ColorScheme.h" />
+    <ClInclude Include="Include\Editor\Gizmo.h" />
+    <ClInclude Include="Include\Editor\StyleScheme.h" />
     <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />

@@ -36,7 +36,7 @@ namespace Dystopia
 
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehaviourScripts", eFileDir::eResource));
 
-		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /std:c++latest " + IncludeFolderPath);
+		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
 
 #else
 
@@ -48,10 +48,8 @@ namespace Dystopia
 		/*Init Hotloader*/
 #if EDITOR
 
-		return true;
-
 		FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
-		//mHotloader->Init();
+		mHotloader->Init();
 		auto const & ArrayDlls = mHotloader->GetDlls();
 		for (auto & elem : ArrayDlls)
 		{
@@ -85,13 +83,12 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::Update(float)
 	{
-		return;
 #if EDITOR
-		return;
+
 
 		/*Update Hotloader*/
 		mHotloader->Update();
-		static DLLWrapper * arr[100]{ nullptr };
+		DLLWrapper * arr[100]{ nullptr };
 
 		/*Check Hotloader for changes in the Dll file*/
 		if (mHotloader->ChangesInDllFolder(100, arr))
@@ -114,25 +111,25 @@ namespace Dystopia
 					{
 						/*Get pointer to the clone function*/
 						using fpClone = Behaviour * (*) ();
-						fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>((*start)->GetDllName()) + L"Clone");
+						fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
 						if (BehaviourClone)
 							elem.mpBehaviour = (BehaviourClone());
 						found = true;
 
 						mvRecentChanges.Insert(&elem);
 					}
-					/*Insert New BehaviourScript*/
 				}
 
 				if (!found)
 				{
 					BehaviourWrap wrap;
 					using fpClone = Behaviour * (*) ();
-					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>((*start)->GetDllName()) + L"Clone");
+					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
 					wrap.mName = DllName;
 					wrap.mpBehaviour = (BehaviourClone());
 					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Utility::Move(wrap)));
 				}
+
 				++start;
 			}
 		}
@@ -166,6 +163,10 @@ namespace Dystopia
 	bool BehaviourSystem::hasDllChanges() const
 	{
 		return !mvRecentChanges.IsEmpty();
+	}
+	MagicArray<BehaviourWrap> & BehaviourSystem::GetAllBehaviour()
+	{
+		return mvBehaviourReferences;
 	}
 }
 

@@ -125,9 +125,10 @@ void Dystopia::LoggerSystem::ParseInput(const std::string&)
 {
 }
 
-void Dystopia::LoggerSystem::SendOutput(const std::string& _strOutput)
+void Dystopia::LoggerSystem::SendOutput(const char* _strOutput)
 {
-	mpOut(_strOutput);
+	std::string output = _strOutput;
+	mpOut(output);
 }
 
 

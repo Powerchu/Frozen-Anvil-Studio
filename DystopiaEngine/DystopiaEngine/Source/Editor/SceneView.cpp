@@ -16,24 +16,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Editor.h"
 #include "Editor/EGUI.h"
 #include "Editor/DefaultFactory.h"
+#include "Editor/EditorEvents.h"
+#include "Editor/ConsoleLog.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Graphics/GraphicsSystem.h"
-#include "Component/Renderer.h"
-#include "System/Input/InputSystem.h"
+#include "System/Scene/Scene.h"
+#include "System/Graphics/Texture2D.h"
 
-#include "System\Scene\Scene.h"
-#include "System\Graphics\Texture2D.h"
-#include "Component\Camera.h"
-
-// #include "System/Scene/Scene.h"
-// #include "System/Graphics/Texture2D.h"
-// #include "Component/Camera.h"
-// #include "System/Camera/CameraSystem.h" 
-
+#include "Component/Transform.h"
+#include "Component/Camera.h"
 
 namespace Dystopia
 {
+	static constexpr float imageOffsetX = 3.f;
+	static constexpr float imageOffsetY = 27.f;
+
 	static SceneView* gpInstance = 0;
 	SceneView* SceneView::GetInstance()
 	{
@@ -44,75 +42,60 @@ namespace Dystopia
 	}
 
 	SceneView::SceneView()
-		: EditorTab{ true },
+		: EditorTab{ false },
 		mLabel{ "Scene View" },
-		mDelta{},
 		mpGfxSys{ nullptr },
-		mpSceneCamera{ nullptr }
-
+		mDelta{},
+		mpSceneCamera{ nullptr },
+		mSensitivity{ 0.1f }
 	{}
 
 	SceneView::~SceneView()
 	{
+		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Unbind(this);
+		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Unbind(this);
+		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Unbind(this);
 		gpInstance = nullptr;
 	}
 
 	void SceneView::Init()
 	{
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
+		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Bind(&SceneView::SceneChanged, this);
+		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);
+		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Bind(&SceneView::ScrollOut, this);
 
 		// Scene Camera
-		GameObject *p = Factory::CreateCamera("Scene Camera");
-		mpSceneCamera = GetCurrentScene()->InsertGameObject(Utility::Move(*p));
-		mpSceneCamera->GetComponent<Camera>()->Init();
-		mpSceneCamera->GetComponent<Transform>()->SetScale(Math::Vec3D{ 1.f, 1.f, 1.f });
-		delete p;
+		//GameObject *p = Factory::CreateCamera("Scene Camera");
+		//mpSceneCamera = GetCurrentScene()->InsertGameObject(Utility::Move(*p));
+		//mpSceneCamera->GetComponent<Camera>()->Init();
+		//mpSceneCamera->GetComponent<Transform>()->SetScale(Math::Vec4{ 1.f, 1.f, 1.f });
+		//delete p;
+
+		SceneChanged();
 	}
 
 	void SceneView::Update(const float& _dt)
 	{
 		mDelta = _dt;
-		if (GetMainEditor().CurrentState() != EDITOR_PLAY)
+		if (GetMainEditor().CurrentState() == EDITOR_MAIN)
 		{
 			mpGfxSys->Update(mDelta);
-			//if (mpInputSys->IsKeyPressed(eUserButton::BUTTON_SPACEBAR))
-			//{
-			//	mpBoxObject->GetComponent<RigidBody>()->AddForce({0.0f,20.0F,0});
-			//}
-			//if (mpInputSys->IsKeyPressed(eUserButton::BUTTON_LEFT))
-			//{
-			//	mpBoxObject->GetComponent<RigidBody>()->AddForce({ -10.0f,0.0F,0 });
-			//}
-			//if (mpInputSys->IsKeyPressed(eUserButton::BUTTON_RIGHT))
-			//{
-			//	mpBoxObject->GetComponent<RigidBody>()->AddForce({ 10.0f,0.0F,0 });
-			//}
-
-			//if (mpInputSys->IsKeyTriggered(eUserButton::MOUSE_M))
-			//{
-			//	//mpCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
-			//	//mpCircleObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
-			//	mpBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
-			//	mpBoxObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
-			//}
-
-			//if (mpInputSys->IsKeyTriggered(eUserButton::MOUSE_R))
-			//{
-			//	mpBoxObject2->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
-			//	mpBoxObject2->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
-			//}
-
-			//if (mpInputSys->IsKeyTriggered(eUserButton::BUTTON_PAUSE))
-			//{
-			//	mpGfxSys->ToggleDebugDraw();
-			//}
 		}
 	}
 
 	void SceneView::EditorUI()
 	{
-		const uint64_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
-		ImGui::Image(reinterpret_cast<void*>(id), ImVec2{ Size().x - 6.0F,  Size().y - 27.0F });
+		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
+		ImVec2 size{ Size().x - imageOffsetX,  Size().y - imageOffsetY };
+		ImGui::Image(reinterpret_cast<void*>(id), size);
+		if (ImGui::IsItemHovered())
+		{
+			if (mToZoom != eZOOM_NONE) 
+				Zoom(eZOOM_IN == mToZoom);
+			if (ImGui::IsMouseClicked(0))
+				FindMouseObject(Math::Vec2{ size.x, size.y });
+		}
 	}
 
 	void SceneView::Shutdown()
@@ -123,6 +106,74 @@ namespace Dystopia
 	std::string SceneView::GetLabel() const
 	{
 		return mLabel;
+	}
+
+	void SceneView::FindMouseObject(const Math::Vec2& _imgSize)
+	{
+		if (!mpSceneCamera)
+		{
+			PrintToConsoleLog("Camera GameObject is NULL in SceneView::FindMouseObject()");
+			return;
+		}
+		Camera* pCam = mpSceneCamera->GetComponent<Camera>();
+		if (!pCam)
+		{
+			PrintToConsoleLog("Camera is NULL in SceneView::FindMouseObject()");
+			return;
+		}
+
+		Math::Vec2 relPosToWindow{ ImGui::GetCursorPos().x, ImGui::GetCursorPos().y };
+		float xRatio = relPosToWindow.x / _imgSize.x;
+		float yRatio = relPosToWindow.y / _imgSize.y;
+		float xNew = pCam->GetViewport().mnWidth * xRatio;
+		float yNew = pCam->GetViewport().mnWidth * yRatio;
+		Math::Pt3D worldPos = pCam->ScreenToWorld(Math::Vec3D{ xNew, yNew, 0.f });
+		PrintToConsoleLog("World Pos From Scene View : " + std::to_string(worldPos.x) +" / " + std::to_string(worldPos.y));
+	}
+
+	void SceneView::Zoom(bool _in)
+	{
+		mToZoom = eZOOM_NONE;
+		if (!mpSceneCamera)
+		{
+			PrintToConsoleLog("Camera GameObject is NULL in SceneView::Zoom");
+			return;
+		}
+		Transform *pObjTransform = mpSceneCamera->GetComponent<Transform>();
+		if (!pObjTransform)
+		{
+			PrintToConsoleLog("Camera Transform is NULL in SceneView::Zoom");
+			return;
+		}
+
+		Math::Vec4 movement{ mSensitivity, mSensitivity, 0.f };
+		movement = _in ? movement * -1.f : movement;
+		pObjTransform->SetScale(pObjTransform->GetScale() + movement);
+	}
+	
+	void SceneView::ScrollIn()
+	{
+		mToZoom = eZOOM_IN;
+	}
+
+	void SceneView::ScrollOut()
+	{
+		mToZoom = eZOOM_OUT;
+	}
+
+	void SceneView::SetSensitivity(float _amt)
+	{
+		mSensitivity = _amt;
+	}
+
+	float SceneView::GetSensitivity() const
+	{
+		return mSensitivity;
+	}
+
+	void SceneView::SceneChanged()
+	{
+		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
 	}
 
 }

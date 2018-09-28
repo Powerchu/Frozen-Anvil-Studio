@@ -12,8 +12,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "DataStructure/AutoArray.h"
-#include "Editor/ScriptFormatter.h"
+#include "DataStructure\AutoArray.h"
+#include "Editor\ScriptFormatter.h"
+#include "Utility/GUID.h"
 #include <algorithm>
 #include <fstream>
 #include <Windows.h>
@@ -25,13 +26,14 @@ static const std::string BehavioursFolder = "Behaviours\\BehaviourScripts";
 static const std::string Default_Creation_Folder = ProjectFolder + "\\" + ResourceFolder + "\\" + BehavioursFolder;
 static const std::string TemplateBodyPath = ProjectFolder + "\\" + ResourceFolder + "\\BehaviourFormat\\BehaviourScript.cpp";
 static const std::string TemplateHeaderPath = ProjectFolder + "\\" + ResourceFolder + "\\BehaviourFormat\\BehaviourScript.h";
-static constexpr int tokenCount = 4;
+static constexpr int tokenCount = 5;
 static const std::string TokensToReplace[tokenCount] =
 {
 	"_SF_ClassName_",
 	"SF_DefineScriptName",
 	"_SF_CreatorName_",
-	"_SF_CreatorLogin_"
+	"_SF_CreatorLogin_",
+	"_SF_UID_"
 };
 
 namespace Dystopia
@@ -92,7 +94,8 @@ namespace Dystopia
 		const std::string replacers[tokenCount] = { _className, 
 													_className,
 													_creatorName, 
-													_creatorLogin};
+													_creatorLogin,
+													std::to_string(GUIDGenerator::GetUniqueID())};
 
 		ChangeStringInPath(TemplateBodyPath, TokensToReplace, replacers, osFileC);
 		ChangeStringInPath(TemplateHeaderPath, TokensToReplace, replacers, osFileH);

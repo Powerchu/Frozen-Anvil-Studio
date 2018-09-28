@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component\ComponentList.h"		// AllComponents
 #include "Component\Transform.h"			// Transform
 #include "Utility\MetaAlgorithms.h"			// MetaFind_t
+#include "Globals.h"
 
 #include <string>
 
@@ -28,7 +29,7 @@ namespace Dystopia
 	class Behaviour;
 	struct CollisionEvent;
 
-	class GameObject
+	class _DLL_EXPORT GameObject
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -74,7 +75,8 @@ namespace Dystopia
 
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
-
+		
+		void SetID(const uint64_t&); //explicit purposes only
 		uint64_t GetID(void) const;
 		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
@@ -97,6 +99,7 @@ namespace Dystopia
 		bool mbIsStatic;					/* Static bodies do not need to be integrated/updated*/
 
 		uint64_t mnID;
+		unsigned mnFlags;
 		std::string mName;
 
 		Transform mTransform;

@@ -106,18 +106,19 @@ Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Renderer");
-	_out << mID;
+	_out << GetOwner()->GetID();
 	_out.InsertEndBlock("Renderer");
 }
 
 void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 {
+	uint64_t id;
 	_in.ConsumeStartBlock();
-	_in >> mID;
+	_in >> id;
 	_in.ConsumeEndBlock();
 	
 	if (GameObject* owner = 
-		EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
+		EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(id))
 	{
 		owner->AddComponent(this, Renderer::TAG{});
 		Init();

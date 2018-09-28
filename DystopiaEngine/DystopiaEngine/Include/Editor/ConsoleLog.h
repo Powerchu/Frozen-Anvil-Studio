@@ -22,7 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	void PrintToConsoleLog(const std::string& _text);
+	void _DLL_EXPORT PrintToConsoleLog(const std::string& _text);
+	void _DLL_EXPORT PrintToConsoleLog(const char* _text);
 
 	class ConsoleLog : public EditorTab
 	{

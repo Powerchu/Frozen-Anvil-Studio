@@ -20,13 +20,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/GUID.h"
 
 Dystopia::Component::Component(void) noexcept
-	: mnFlags{ FLAG_NONE }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }, mID{ GUIDGenerator::GetUniqueID() }
+	: mnFlags{ FLAG_NONE }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }
 {
 
 }
 
 Dystopia::Component::Component(GameObject * _pOwner) noexcept
-	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }, mID{ _pOwner->GetID() }
+	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }
 {
 }
 
@@ -76,7 +76,6 @@ void Dystopia::Component::DestroyComponent(void)
 void Dystopia::Component::SetOwner(GameObject* _pOwner)
 {
 	mnOwner = _pOwner->GetID();
-	mID = _pOwner->GetID();
 }
 
 Dystopia::GameObject* Dystopia::Component::GetOwner(void) const
@@ -95,10 +94,6 @@ void Dystopia::Component::EditorUI(void) noexcept
 
 }
 
-uint64_t Dystopia::Component::GetID() const
-{
-	return mID;
-}
 
 unsigned Dystopia::Component::GetFlags(void) const
 {

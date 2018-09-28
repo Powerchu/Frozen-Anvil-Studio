@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _LOGPRIORITY_H_
 #define _LOGPRIORITY_H_
 
+#include "Globals.h"
+
 enum class eLog
 {
 	NONE       = 0,

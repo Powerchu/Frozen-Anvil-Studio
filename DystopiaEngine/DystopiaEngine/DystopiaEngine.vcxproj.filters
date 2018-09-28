@@ -223,6 +223,15 @@
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp">
       <Filter>Game Engine\SubSystems\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\Gizmo.cpp">
+      <Filter>Editor\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\ColorScheme.cpp">
+      <Filter>Editor\Editor Tabs\SchemeColor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\StyleScheme.cpp">
+      <Filter>Editor\Editor Tabs\SchemeStyle</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Component\CollisionEvent.cpp">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClCompile>
@@ -606,6 +615,15 @@
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h">
       <Filter>Game Engine\Systems\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\Gizmo.h">
+      <Filter>Editor\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\ColorScheme.h">
+      <Filter>Editor\Editor Tabs\SchemeColor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\StyleScheme.h">
+      <Filter>Editor\Editor Tabs\SchemeStyle</Filter>
+    </ClInclude>
     <ClInclude Include="Include\Component\CharacterController.h">
       <Filter>Game Engine\Components\Physics\Character Controller</Filter>
     </ClInclude>
@@ -892,6 +910,15 @@
     </Filter>
     <Filter Include="Editor\Hotloader">
       <UniqueIdentifier>{83587c6d-76b1-44d6-8760-588fd1e7509b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Gizmo">
+      <UniqueIdentifier>{c678684a-2024-498c-b278-53911ea1ab17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\SchemeColor">
+      <UniqueIdentifier>{505d9276-8eac-401b-a286-9d084f3f8461}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\SchemeStyle">
+      <UniqueIdentifier>{e2a99798-5b6a-4bf2-a471-a415c2452e05}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Components\Physics\Character Controller">
       <UniqueIdentifier>{dc0c52cd-8f25-4932-a9fd-7d1916f1378d}</UniqueIdentifier>
