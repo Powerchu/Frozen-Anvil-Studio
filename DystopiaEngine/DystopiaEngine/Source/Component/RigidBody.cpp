@@ -264,6 +264,7 @@ namespace Dystopia
 
 	void RigidBody::Unserialise(TextSerialiser & _in)
 	{
+		int physicsType;
 		_in.ConsumeStartBlock();
 		_in >> mID;					// gObjID
 		_in >> mfAngleDeg;				// Angle in degrees
@@ -279,8 +280,10 @@ namespace Dystopia
 		_in >> mbIsStatic;				// Static State
 		_in >> mbIsAwake;				// Awake State
 		_in >> mbCanSleep;				// Can Sleep Boolean
-		_in >> mPhysicsType;		// enum for physicstype
+		_in >> physicsType;		// enum for physicstype
 		_in.ConsumeEndBlock();
+
+		mPhysicsType = static_cast<PhysicsType>(physicsType);
 
 		if (GameObject* owner =
 			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))

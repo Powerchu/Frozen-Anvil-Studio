@@ -51,8 +51,8 @@ namespace Dystopia
 
 		for (auto & elem : mVertices)
 		{
-			auto offest = GetOffSet();
-			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x + offest.x, elem.mPosition.y + offest.y , elem.mPosition.z + offest.z });
+			auto offset = GetOffSet();
+			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x + offset.x, elem.mPosition.y + offset.y , elem.mPosition.z + offset.z });
 		}
 
 		Collider::Triangulate();
@@ -74,17 +74,17 @@ namespace Dystopia
 	{
 		_out.InsertStartBlock("Convex Collider");
 		_out << mID;					// gObj ID
-		_out << float(mv3Offset.x);		// offset for colliders
-		_out << float(mv3Offset.y);
-		_out << float(mv3Offset.z);
+		_out << float(mv3Offset[0]);		// offset for colliders
+		_out << float(mv3Offset[1]);
+		_out << float(mv3Offset[2]);
 
 		_out << int(mVertices.size());
 
 		for (const auto vertex : mVertices)
 		{
-			_out << float(vertex.mPosition.x);
-			_out << float(vertex.mPosition.y);
-			_out << float(vertex.mPosition.z);
+			_out << float(vertex.mPosition[0]);
+			_out << float(vertex.mPosition[1]);
+			_out << float(vertex.mPosition[2]);
 		}
 
 		_out.InsertEndBlock("Convex Collider");

@@ -133,8 +133,11 @@ namespace Dystopia
 
 		for (auto & bodyA : mColliders)
 		{	
+			if (nullptr == bodyA->GetOwner()) continue;
 			for (auto & bodyB : mColliders)
 			{
+				if (nullptr == bodyB->GetOwner()) continue;
+
 				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB) &&
 					(!bodyA->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState() ||
 					 !bodyB->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState()))

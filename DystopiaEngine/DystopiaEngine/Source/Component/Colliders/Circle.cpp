@@ -85,9 +85,9 @@ namespace Dystopia
 	{
 		_out.InsertStartBlock("Circle Collider2D");
 		_out << mID;					// gObj ID
-		_out << float(mv3Offset.x);		// offset for colliders
-		_out << float(mv3Offset.y);
-		_out << float(mv3Offset.z);
+		_out << float(mv3Offset[0]);		// offset for colliders
+		_out << float(mv3Offset[1]);
+		_out << float(mv3Offset[2]);
 
 		_out << float(m_radius);
 		
@@ -96,10 +96,9 @@ namespace Dystopia
 	void Circle::Unserialise(TextSerialiser& _in)
 	{
 		_in >> mID;					// gObj ID
-		_in >> mv3Offset.x;
-		_in >> mv3Offset.y;
-		_in >> mv3Offset.z;
-
+		_in >> mv3Offset[0];
+		_in >> mv3Offset[1];
+		_in >> mv3Offset[2];
 		_in >> m_radius;
 
 		if (GameObject* owner =

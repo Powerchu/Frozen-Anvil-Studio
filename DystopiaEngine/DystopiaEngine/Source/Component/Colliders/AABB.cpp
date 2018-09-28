@@ -90,13 +90,11 @@ namespace Dystopia
 	{
 		_out.InsertStartBlock("Box Collider2D");
 		_out << mID;					// gObj ID
-		_out << mv3Offset.x;
-		_out << mv3Offset.y;
-		_out << mv3Offset.z;
-
+		_out << mv3Offset[0];
+		_out << mv3Offset[1];
+		_out << mv3Offset[2];
 		_out << mfHeight;
 		_out << mfWidth;
-
 		_out.InsertEndBlock("Box Collider2D");
 
 	}
@@ -104,10 +102,9 @@ namespace Dystopia
 	{
 		_in.ConsumeStartBlock();
 		_in >> mID;
-		_in >> mv3Offset.x;
-		_in >> mv3Offset.y;
-		_in >> mv3Offset.z;
-
+		_in >> mv3Offset[0];
+		_in >> mv3Offset[1];
+		_in >> mv3Offset[2];
 		_in >> mfHeight;
 		_in >> mfWidth;
 		_in.ConsumeEndBlock();
