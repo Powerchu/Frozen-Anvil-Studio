@@ -25,6 +25,7 @@ namespace Dystopia
 		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
 
 		FileSys->CreateFiles("Dystopia/BehaviourDLL", eFileDir::eAppData);
+		FileSys->CreateFiles("Dystopia/Temp", eFileDir::eAppData);
 
 #if _DEBUG
 
@@ -38,7 +39,7 @@ namespace Dystopia
 #endif
 
 		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL", eFileDir::eAppData));
-
+		mHotloader->SetTempFolder(FileSys->GetFullPath("BehaviourDLL", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehaviourScripts", eFileDir::eResource));
 
 		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);

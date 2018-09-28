@@ -345,6 +345,35 @@ namespace Dystopia
 			return false;
 		}
 
+		bool InitReadTempDllDirectory()
+		{
+			DWORD bytes_read;
+
+			if (ReadDirectoryChangesW(mTempDll_Handle,
+				&mTempDll_FileInfo.front(),
+				static_cast<DWORD>(mTempDll_FileInfo.size()),
+				false,
+				FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+				&bytes_read,
+				&mTempDll_Overlap,
+				NULL))
+
+			{
+				return true;
+			}
+
+			if (GetLastError() == ERROR_NOTIFY_ENUM_DIR || bytes_read == 0)
+			{
+				CloseHandle(mTempDll_Handle);
+				CloseHandle(mTempDll_Overlap.hEvent);
+				mTempDll_Overlap.hEvent = mTempDll_Handle = INVALID_HANDLE_VALUE;
+				InitTempDllDirectory();
+				InitReadTempDllDirectory();
+			}
+
+			return false;
+		}
+
 
 
 		bool ChangesInDllFolder(unsigned size = 0, DLLWrapper ** _pDLLWrapperBuffer = nullptr)
@@ -677,6 +706,28 @@ namespace Dystopia
 			return true;
 		}
 
+		bool InitTempDllDirectory()
+		{
+
+			HANDLE hand = CreateFileA(mTempDll_Folder_Name.c_str(),
+				                      FILE_LIST_DIRECTORY,
+				                      FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+				                      NULL,
+				                      OPEN_EXISTING,
+				                      FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
+				                      NULL);
+
+			if (hand == INVALID_HANDLE_VALUE)
+				return false;
+			mTempDll_Handle = hand;
+			mTempDll_Overlap.hEvent = CreateEventA(NULL, true, false, mTempDll_Folder_Name.c_str());
+
+			if (mTempDll_Handle == INVALID_HANDLE_VALUE)
+				return false;
+
+			return true;
+		}
+
 		MagicArray<DLLWrapper> const & GetDlls()
 		{
 			return mvDLL;
@@ -719,11 +770,28 @@ namespace Dystopia
 			mCompilerFlags = _Flags;
 		}
 
+		void SetTempFolder(std::wstring const & _TempFolder)
+		{
+			mTempDllFile = _Flags;
+		}
+		void SetTempFolder(std::string const & _TempFolder)
+		{
+			std::wstring Temp{ _TempFolder.begin(), _TempFolder.end() };
+			mTempDllFile = Temp;
+		}
+
 		~Hotloader()
 		{
 
+			if(mDll_Handle != INVALID_HANDLE_VALUE)
 			CloseHandle(mDll_Handle);
+			if (mDll_Overlap.hEvent != INVALID_HANDLE_VALUE)
 			CloseHandle(mDll_Overlap.hEvent);
+
+			if (mTempDll_Handle != INVALID_HANDLE_VALUE)
+				CloseHandle(mTempDll_Handle);
+			if (mTempDll_Overlap.hEvent != INVALID_HANDLE_VALUE)
+				CloseHandle(mTempDll_Overlap.hEvent);
 
 			for (auto & elem : marrFileHandles)
 				CloseHandle(elem);
@@ -742,16 +810,18 @@ namespace Dystopia
 		FileInfo	  mDll_FileInfo;
 		_OVERLAPPED   mDll_Overlap;
 
+		std::wstring  mTempDllFile;
+		HANDLE        mTempDll_Handle;
+		FileInfo      mTempDll_FileInfo;
+		_OVERLAPPED   mTempDll_Overlap;
+
 		std::wstring  mCmdPath;
 
 		std::wstring  mVcvarPath;
 		std::wstring  mVcvarName;
 		std::wstring  mVcvarBuildEnv;
 
-		std::wstring  mCompilerFlags = L"cl /W3 /EHsc /nologo /std:c++latest /DLL /Za /LDd /IC:/Users/keith.goh/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Include";
-		//"/IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/glew-2.1.0/include "
-		//"/IC:/Users/Keith/source/repos/Frozen-Anvil-Studio/DystopiaEngine/Dependancies/ImGui";
-
+		std::wstring  mCompilerFlags;
 
 
 		std::array<HANDLE,      TOTAL_FILE_DIRECTORIES>  marrFileHandles;
