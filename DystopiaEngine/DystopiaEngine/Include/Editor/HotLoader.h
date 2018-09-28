@@ -374,6 +374,46 @@ namespace Dystopia
 			return false;
 		}
 
+		bool ChangesInTempFolder(std::vector<std::wstring> & _vec)
+		{
+			DWORD byte_read;
+			bool Status = false;
+			if (GetOverlappedResult(mTempDll_Handle, &mTempDll_Overlap, &bytes_read, false))
+			{
+				for (FILE_NOTIFY_INFORMATION * pstart = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(&mTempDll_FileInfo.front());
+					pstart != nullptr;
+					pstart = pstart->NextEntryOffset ? reinterpret_cast<FILE_NOTIFY_INFORMATION*>(reinterpret_cast<char *>(pstart) + (pstart->NextEntryOffset)) : nullptr)
+				{
+					std::wstring DllName{ pstart->FileName, pstart->FileName + (pstart->FileNameLength / sizeof(*(pstart->FileName))) };
+					if (CheckFileExtension(DllName) != eDll)
+					{
+						continue;
+					}
+					switch (pstart->Action)
+					{
+					case FILE_ACTION_ADDED:
+					case FILE_ACTION_MODIFIED:
+					{
+						_vec.push_back(DllName);
+						mvTempFilesName.push_back(DllName);
+						Status = true;
+					}
+					break;
+					}
+				}
+			}
+			return Status;
+		}
+
+		void InitialiseTransfer()
+		{
+			for (auto const & elem: mvTempFilesName)
+			{
+				SearchAndReplaceDll(GenerateDllName(elem));
+				std::filesystem::copy_file(mTempDllFile + L'/' + elem, mDll_Folder_Name, std::filesystem::copy_options::overwrite_existing);
+			}
+
+		}
 
 
 		bool ChangesInDllFolder(unsigned size = 0, DLLWrapper ** _pDLLWrapperBuffer = nullptr)
@@ -381,6 +421,8 @@ namespace Dystopia
 			DWORD bytes_read;
 			unsigned ChangeCount = 0;
 			bool status = false;
+
+			InitialiseTransfer();
 
 			if (GetOverlappedResult(mDll_Handle, &mDll_Overlap, &bytes_read, false))
 			{
@@ -486,10 +528,11 @@ namespace Dystopia
 		void CompileFiles(unsigned _Index, std::wstring const & _FileName)
 		{
 			/*Search for exisiting opened DLL and close them to allow cl.exe to override*/
-			SearchAndReplaceDll(GenerateDllName(_FileName));
+			//SearchAndReplaceDll(GenerateDllName(_FileName));
 
 			std::wstring wstrDll_Folder_Name{ mDll_Folder_Name.begin()    ,mDll_Folder_Name.end() };
-			std::wstring wstrFolder_Name{ marrFilePath[_Index].begin(), marrFilePath[_Index].end() };
+			//std::wstring wstrDll_Folder_Name{ mTempDllFile };
+			std::wstring wstrFolder_Name{ marrFilePath[_Index].begin(),    marrFilePath[_Index].end() };
 
 			std::wstring FileName{ _FileName };
 
@@ -668,8 +711,6 @@ namespace Dystopia
 								ModifiedFileInfo FileInfo{ wstrFileName , GenerateDllName(wstrFileName) , i };
 								ToRet.push_back(FileInfo);
 							}
-								
-								
 						}
 						InitReadFileDirectory(i);
 					}
@@ -833,6 +874,7 @@ namespace Dystopia
 		std::vector<std::wstring>                        mvAdditionalSourcePath;
 		std::vector<std::wstring>                        mvAddtionalFiles;
 		std::vector<InterestedFiles>                     mvFilesToCrawl;
+		std::vector<std::wstring>                        mvTempFilesName;
 		MagicArray<DLLWrapper>                           mvDLL;
 
 
