@@ -38,6 +38,7 @@ Dystopia::Renderer::Renderer(void) noexcept
 
 void Dystopia::Renderer::Init(void)
 {
+
 }
 
 void Dystopia::Renderer::Draw(void) const noexcept

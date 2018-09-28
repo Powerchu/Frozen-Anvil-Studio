@@ -38,6 +38,7 @@ namespace Dystopia
 	class _DLL_EXPORT RigidBody : public Component
 	{
 	public:
+		using SYSTEM = PhysicsSystem;
 		unsigned GetComponentType(void) const
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;

@@ -83,7 +83,6 @@ Dystopia::GraphicsSystem::~GraphicsSystem(void)
 
 }
 
-
 void Dystopia::GraphicsSystem::SetGamma(float _fGamma) noexcept
 {
 	mfGamma = _fGamma;
@@ -313,12 +312,13 @@ void Dystopia::GraphicsSystem::Update(float)
 
 void Dystopia::GraphicsSystem::PostUpdate(void)
 {
-	for (auto& e : mComponents)
+	for (auto& render : mComponents)
 	{
-		if (eObjFlag::FLAG_REMOVE & e.GetFlags())
-			mComponents.Remove(&e);
+		if (eObjFlag::FLAG_REMOVE & render.GetFlags())
+			mComponents.Remove(&render);
 	}
 }
+
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {

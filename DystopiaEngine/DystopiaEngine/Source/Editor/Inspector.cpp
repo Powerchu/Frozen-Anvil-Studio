@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
 
+#include "System/Physics/PhysicsSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Camera/CameraSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"

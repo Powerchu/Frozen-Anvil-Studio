@@ -199,6 +199,10 @@ void Dystopia::EngineCore::Update(void)
 		e->Update(dt);
 	}
 
+}
+
+void Dystopia::EngineCore::PostUpdate(void)
+{
 	for (auto& e : mSystemList)
 	{
 		e->PostUpdate();

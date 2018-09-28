@@ -76,6 +76,8 @@ namespace Dystopia
 		void Update(void);
 		void Shutdown(void);
 
+		void PostUpdate(void);
+
 	private:
 
 		Timer mTime;

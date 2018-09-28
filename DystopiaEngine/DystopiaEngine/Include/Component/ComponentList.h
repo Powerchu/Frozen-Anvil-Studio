@@ -22,14 +22,15 @@ namespace Dystopia
 	using AllComponents = Utility::MetaAutoIndexer <
 		class Transform,
 		class Camera,
-		class Collider,
+		class Renderer,
 		class RigidBody,
-		class Renderer
+		class Collider
 	>::result;
 
 	using UsableComponents = Utility::MetaAutoIndexer <
 		class Camera,
 		class Renderer,
+		class RigidBody,
 		class AABB,
 		class Convex,
 		class Circle

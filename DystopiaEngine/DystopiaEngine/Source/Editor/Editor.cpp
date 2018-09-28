@@ -228,7 +228,8 @@ namespace Dystopia
 	{ 
 		if (mCurrentState == EDITOR_PLAY)
 		{	
-			mpDriver->Update();			
+			mpDriver->FixedUpdate();
+			mpDriver->Update();	
 		}
 
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
@@ -260,8 +261,7 @@ namespace Dystopia
 		switch (mCurrentState)
 		{
 		case EDITOR_MAIN:
-			mpSceneSystem->PostUpdate();
-			mpProfiler->PostUpdate();
+			EngineCore::GetInstance()->PostUpdate();
 			mpBehaviourSys->PostUpdate();
 			break;
 		}

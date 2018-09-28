@@ -35,9 +35,10 @@ Dystopia::GameObject::GameObject(void) noexcept
 
 }
 
-Dystopia::GameObject::GameObject(unsigned long _ID) noexcept
+Dystopia::GameObject::GameObject(uint64_t _ID) noexcept
 	: mnID{ _ID }, mnFlags{ FLAG_NONE },
 	mTransform{ this }, mComponents{}, mBehaviours{}
+	,mbIsStatic(false)
 {
 
 }
@@ -47,6 +48,7 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	mComponents{ Utility::Move(_obj.mComponents) },
 	mBehaviours{ Utility::Move(_obj.mBehaviours) },
 	mTransform{ _obj.mTransform }
+	, mbIsStatic(false)
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
@@ -111,6 +113,11 @@ void Dystopia::GameObject::Destroy(void)
 	Ping(mBehaviours, GameObjectDestroy);
 
 	mnFlags = FLAG_REMOVE;
+
+	for (auto & e : mComponents)
+	{
+		e->GameObjectDestroy();
+	}
 }
 
 void Dystopia::GameObject::Unload(void)
@@ -251,8 +258,14 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	p->mnID = GUIDGenerator::GetUniqueID();
 	p->mnFlags = mnFlags;
 	p->mName = mName;
-	p->mComponents = mComponents;
-	p->mBehaviours = mBehaviours;
+	for (auto& e : mComponents)
+	{
+		p->mComponents.Insert(e->Duplicate());
+	}
+	for (auto& e : mBehaviours)
+	{
+		p->mBehaviours.Insert(e->Duplicate());
+	}
 	p->mTransform = mTransform;
 	return p;
 }
