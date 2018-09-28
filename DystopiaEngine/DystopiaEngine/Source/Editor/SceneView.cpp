@@ -29,7 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	static constexpr float imageOffsetX = 6.f;
+	static constexpr float imageOffsetX = 3.f;
 	static constexpr float imageOffsetY = 27.f;
 
 	static SceneView* gpInstance = 0;
