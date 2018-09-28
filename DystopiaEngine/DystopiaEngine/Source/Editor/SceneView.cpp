@@ -42,7 +42,7 @@ namespace Dystopia
 	}
 
 	SceneView::SceneView()
-		: EditorTab{ true },
+		: EditorTab{ false },
 		mLabel{ "Scene View" },
 		mpGfxSys{ nullptr },
 		mDelta{},

@@ -50,7 +50,7 @@ namespace Dystopia
 	}
 
 	Inspector::Inspector()
-		: EditorTab{ true }, 
+		: EditorTab{ false },
 		mpFocus{ nullptr }, mLabel{ "Inspector" }, mShowListOfComponents{ false },
 		mpBehaviourSys{ nullptr }, mPromptNewBehaviour{ false }, mPromptCreateBehaviour{ false },
 		mBufferInput{}, mBufferCreator{}, mBufferLogin{}

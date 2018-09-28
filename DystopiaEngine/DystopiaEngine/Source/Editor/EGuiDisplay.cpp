@@ -124,10 +124,6 @@ namespace EGUI
 
 	bool StartChild(const std::string& _label, const Math::Vec2& _size, bool _showBorder, const Math::Vec4& _colour)
 	{
-		//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 5, 5 });
-		//ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1);
-		//ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ _colour.x, _colour.y, _colour.z, _colour.w });
-		//ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0, 0, 0, 0 });
 		return ImGui::BeginChild(_label.c_str(), ImVec2{ _size.x, _size.y }, _showBorder);
 	}
 
@@ -139,8 +135,6 @@ namespace EGUI
 	void EndChild()
 	{
 		ImGui::EndChild();
-		//ImGui::PopStyleColor(2);
-		//ImGui::PopStyleVar(2);
 	}
 
 	void SameLine(float _customOffset)
@@ -193,9 +187,6 @@ namespace EGUI
 		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside, bool _iteractive, bool _showLabel)
 		{
 			bool clicked = false;
-			//ImVec4 greyColor = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
-			//ImVec4 btnHoveredColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered);
-			//ImVec4 btnActiveColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive);
 			bool show = _iteractive ? true : false;
 
 			if (_showLabel)
@@ -207,9 +198,6 @@ namespace EGUI
 			}
 
 			ImGui::PushItemWidth(_width);
-			//ImGui::PushStyleColor(ImGuiCol_Button, greyColor);
-			//ImGui::PushStyleColor(ImGuiCol_ButtonHovered, show ? btnHoveredColor : greyColor);
-			//ImGui::PushStyleColor(ImGuiCol_ButtonActive, show ? btnActiveColor : greyColor);
 			if (ImGui::Button((_anythingToShowInside + "###" + _label).c_str(),
 				ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize }))
 			{
@@ -441,9 +429,7 @@ namespace EGUI
 			ImVec2 posIcon{ pos.x + offsetX, pos.y + offsetY };
 			ImVec2 posText{ pos.x + 1, pos.y + iconHeight + (2* offsetY) };
 
-			//ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), size);
-			//ImGui::PopStyleColor();
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
 			if (payload) EndPayload();
 			ImGui::SetCursorScreenPos(posIcon);

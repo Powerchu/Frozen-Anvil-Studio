@@ -44,7 +44,7 @@ void Dystopia::StyleScheme::Init()
 {
 	auto& style = ImGui::GetStyle();
 
-	mArrVecData[eWINDOW_PADDING]		 = Dystopia::StyleScheme::StyleVarsV{style.WindowPadding, 0.1f, gGenericMax};
+	mArrVecData[eWINDOW_PADDING]		 = Dystopia::StyleScheme::StyleVarsV{ ImVec2{ 8, 10 }, 0.1f, gGenericMax };
 	mArrVecData[eWINDOW_MIN_SIZE]		 = Dystopia::StyleScheme::StyleVarsV{ style.WindowMinSize, 0.1f, gGenericMax };
 	mArrVecData[eWINDOW_TITLE_ALIGNMENT] = Dystopia::StyleScheme::StyleVarsV{ style.WindowTitleAlign, 0.1f, gGenericMax };
 	mArrVecData[eFRAME_PADDING]			 = Dystopia::StyleScheme::StyleVarsV{ style.FramePadding, 0.1f, gGenericMax };
