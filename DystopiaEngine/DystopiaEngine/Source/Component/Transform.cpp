@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Matrix4.h"
 #include "Math/Vector4.h"
 #include "IO/TextSerialiser.h"
-
+#include "Editor/ConsoleLog.h"
 //#include "System/Scene/SceneSystem.h"
 //#include "System/Scene/Scene.h"
 
@@ -289,6 +289,8 @@ void Dystopia::Transform::EditorUI(void) noexcept
 			EGUI::GetCommandHND()->EndRecording();
 			PrintToConsoleLog("Deactivated");
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -314,6 +316,8 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		break;
 	case EGUI::eDragStatus::eDEACTIVATED:
 		EGUI::GetCommandHND()->EndRecording();
+		break;
+	default:
 		break;
 	}
 
