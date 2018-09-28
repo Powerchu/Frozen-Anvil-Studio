@@ -20,14 +20,19 @@ namespace Dystopia
 	{
 #if EDITOR
 
-		FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
+		FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
 
 		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
 
 		FileSys->CreateFiles("Dystopia/BehaviourDLL", eFileDir::eAppData);
 
 #if _DEBUG
+
+		
+		//std::string strDystopia_Lib{ FileSys->GetFullPath("DystopiaEngine_D.lib",eFileDir::eCurrent) };
+		//InterestedFiles Dystopia_Lib{  ,eCompile };
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine_D.lib", eCompile);
+		//mHotloader->AddAdditionalSourcePath(std::wstring{ strDystopia_Lib.begin(),strDystopia_Lib.end() });
 #else
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine.lib", eCompile);
 #endif
@@ -48,7 +53,6 @@ namespace Dystopia
 		/*Init Hotloader*/
 #if EDITOR
 
-		FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
 		mHotloader->Init();
 		auto const & ArrayDlls = mHotloader->GetDlls();
 		for (auto & elem : ArrayDlls)
@@ -87,13 +91,27 @@ namespace Dystopia
 
 
 		/*Update Hotloader*/
-		mHotloader->Update();
+		auto & vFileChanges = mHotloader->GetFileChanges();
+		for (auto & elem : vFileChanges)
+		{
+			for (auto & i : mvBehaviourReferences)
+			{
+				std::wstring name{ i.mName.begin() , i.mName.end() };
+				if (FileSys->RemoveFileExtension(elem.mDllFileName) == name)
+				{
+					delete i.mpBehaviour;
+					i.mpBehaviour = nullptr;
+					break;
+				}
+			}
+			mHotloader->CompileFiles(elem.mDirectoryIndex, elem.mFileName);
+		}
+
 		DLLWrapper * arr[100]{ nullptr };
 
 		/*Check Hotloader for changes in the Dll file*/
 		if (mHotloader->ChangesInDllFolder(100, arr))
 		{
-			FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
 			DLLWrapper** start = arr;
 			/*Loop through all the changes*/
 			while (*start != nullptr)
@@ -109,14 +127,21 @@ namespace Dystopia
 					/*If the name matches*/
 					if (DllName == elem.mName)
 					{
+						delete elem.mpBehaviour;
+						elem.mpBehaviour = nullptr;
+						/*Reload the Dll*/
+						mHotloader->ReloadModifiedDll(*start);
 						/*Get pointer to the clone function*/
 						using fpClone = Behaviour * (*) ();
 						fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
-						if (BehaviourClone)
-							elem.mpBehaviour = (BehaviourClone());
-						found = true;
 
-						mvRecentChanges.Insert(&elem);
+						/*If Clone is valid, Means Dll Reload did not fail*/
+						if (BehaviourClone)
+						{
+							elem.mpBehaviour = BehaviourClone();
+							found = true;
+							mvRecentChanges.Insert(&elem);
+						}
 					}
 				}
 
