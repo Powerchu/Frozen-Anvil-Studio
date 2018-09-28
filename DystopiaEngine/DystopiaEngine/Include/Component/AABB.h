@@ -32,7 +32,7 @@ namespace Dystopia
 		};
 
 #if EDITOR
-		static const std::string GetCompileName(void) { return "AABB"; }
+		static const std::string GetCompileName(void) { return "Box Collider2D"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 #endif
 
@@ -58,8 +58,8 @@ namespace Dystopia
 		virtual AABB* Duplicate() const;
 
 		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&) const;
-		virtual void Unserialise(TextSerialiser&);
+		void Serialise(TextSerialiser&) const override;
+		void Unserialise(TextSerialiser& override);
 
 		/*Collision Check Functions*/
 		bool isColliding(AABB & other_col);

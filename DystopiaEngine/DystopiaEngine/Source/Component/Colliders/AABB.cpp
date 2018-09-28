@@ -1,6 +1,10 @@
 #include "Component/AABB.h"
-#include "Object/GameObject.h"
 #include "Component/RigidBody.h"
+#include "System/Collision/CollisionSystem.h"
+#include "System/Collision/CollisionEvent.h"
+#include "System/Scene/SceneSystem.h"
+#include "Object/GameObject.h"
+#include "IO/TextSerialiser.h"
 
 namespace Dystopia
 {
@@ -51,7 +55,19 @@ namespace Dystopia
 	/*Initialise the Component*/
 	void AABB::Init(void)
 	{
-
+		if (0 == this->mVertices.size())
+		{
+			Math::Point3D ArrPoints[]
+			{
+				Math::Point3D{ mfWidth / 2, mfHeight / 2, 1, 0 }  +mv3Offset,
+				Math::Point3D{ mfWidth / 2,-mfHeight / 2, 1, 0 }  +mv3Offset,
+				Math::Point3D{ -mfWidth / 2,-mfHeight / 2, 1, 0 } +mv3Offset,
+				Math::Point3D{ -mfWidth / 2, mfHeight / 2, 1, 0 } +mv3Offset
+			};
+			Convex::operator=(AABB::Convex{ ArrPoints });
+			mMin = &this->mVertices[2];
+			mMax = &this->mVertices[0];
+		}
 	}
 	/*OnDestroy*/
 	void AABB::OnDestroy(void)
@@ -70,13 +86,38 @@ namespace Dystopia
 	}
 
 	/*Serialise and Unserialise*/
-	void  AABB::Serialise(TextSerialiser&) const
+	void  AABB::Serialise(TextSerialiser& _out) const
 	{
+		_out.InsertStartBlock("Box Collider2D");
+		_out << mID;					// gObj ID
+		_out << mv3Offset.x;
+		_out << mv3Offset.y;
+		_out << mv3Offset.z;
+
+		_out << mfHeight;
+		_out << mfWidth;
+
+		_out.InsertEndBlock("Box Collider2D");
 
 	}
-	void  AABB::Unserialise(TextSerialiser&)
+	void  AABB::Unserialise(TextSerialiser& _in)
 	{
+		_in.ConsumeStartBlock();
+		_in >> mID;
+		_in >> mv3Offset.x;
+		_in >> mv3Offset.y;
+		_in >> mv3Offset.z;
 
+		_in >> mfHeight;
+		_in >> mfWidth;
+		_in.ConsumeEndBlock();
+
+		if (GameObject* owner =
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
+		{
+			owner->AddComponent(this, AABB::TAG{});
+			Init();
+		}
 	}
 
 	//TODO: not yet

@@ -31,7 +31,7 @@ namespace Dystopia
 		};
 
 #if EDITOR
-		static const std::string GetCompileName(void) { return "Circle"; }
+		static const std::string GetCompileName(void) { return "Circle Collider2D"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 #endif
 
@@ -75,9 +75,6 @@ namespace Dystopia
 	private:
 		float m_radius;
 		Math::Vec3D m_originCentre; // GLOBAL COORDINATES
-
-	protected:
-		//CollisionEvent GetCollisionEvent(const Circle & other_col);
 	};
 }
 

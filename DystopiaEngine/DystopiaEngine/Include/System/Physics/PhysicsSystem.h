@@ -42,9 +42,9 @@ namespace Dystopia
 		void ResolveCollision(float);
 		void UpdateResults();
 		void DebugPrint();
-		void DebugDraw();
 
 		bool  mbIsDebugActive;
+		
 		InterpolationMode mInterpolation_mode;
 
 		virtual ~PhysicsSystem(void) = default;

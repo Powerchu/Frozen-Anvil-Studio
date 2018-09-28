@@ -32,7 +32,7 @@ namespace Dystopia
 		};
 
 #if EDITOR
-		static const std::string GetCompileName(void) { return "Convex"; }
+		static const std::string GetCompileName(void) { return "Convex Collider"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 #endif
 		static const eColliderType ColliderType = eColliderType::CONVEX;
@@ -52,19 +52,19 @@ namespace Dystopia
 		}
 
 		/*Load the Component*/
-		virtual void Load(void);
+		void Load(void) override;
 		/*Initialise the Component*/
-		virtual void Init(void);
+		void Init(void) override;
 		/*OnDestroy*/
-		virtual void OnDestroy(void);
+		void OnDestroy(void) override;
 		/*Unload the Component*/
-		virtual void Unload(void);
+		void Unload(void) override;
 		/*Duplicate the Component*/
-		virtual Convex* Duplicate() const;
+		Convex* Duplicate() const override;
 
 		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&) const;
-		virtual void Unserialise(TextSerialiser&);
+		void Serialise(TextSerialiser&) const override;
+		void Unserialise(TextSerialiser&) override;
 
 		virtual ~Convex();
 

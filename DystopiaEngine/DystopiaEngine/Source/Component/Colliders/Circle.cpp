@@ -1,9 +1,11 @@
 #include "System/Collision/CollisionSystem.h"
 #include "System/Collision/CollisionEvent.h"
-#include "Component/Circle.h"
+#include "System/Scene/SceneSystem.h"
 #include "Object/GameObject.h"
 #include "Math/Vector4.h"
 #include "Component/RigidBody.h"
+#include "Component/Circle.h"
+#include "IO/TextSerialiser.h"
 
 namespace Dystopia
 {
@@ -30,6 +32,11 @@ namespace Dystopia
 	/*Initialise the Component*/
 	void Circle::Init(void)
 	{
+		if (mv3Offset != Vec3D{0,0,0,0})
+		{
+			m_originCentre = mv3Offset;
+		}
+
 		if (mDebugVertices.size() == 0)
 		{
 			const unsigned numberOfSegments = 16;
@@ -74,22 +81,34 @@ namespace Dystopia
 	}
 
 	/*Serialise and Unserialise*/
-	void Circle::Serialise(TextSerialiser&) const
+	void Circle::Serialise(TextSerialiser& _out) const
 	{
+		_out.InsertStartBlock("Circle Collider2D");
+		_out << mID;					// gObj ID
+		_out << float(mv3Offset.x);		// offset for colliders
+		_out << float(mv3Offset.y);
+		_out << float(mv3Offset.z);
+
+		_out << float(m_radius);
 		
+		_out.InsertEndBlock("Circle Collider2D");
 	}
-	void Circle::Unserialise(TextSerialiser&)
+	void Circle::Unserialise(TextSerialiser& _in)
 	{
-		
+		_in >> mID;					// gObj ID
+		_in >> mv3Offset.x;
+		_in >> mv3Offset.y;
+		_in >> mv3Offset.z;
+
+		_in >> m_radius;
+
+		if (GameObject* owner =
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
+		{
+			owner->AddComponent(this, Circle::TAG{});
+			Init();
+		}
 	}
-
-	//CollisionEvent Circle::GetCollisionEvent(const Circle & other_col)
-	//{
-	//	static constexpr double EPSILON = 0.0001f;
-	//	
-
-	//	return col_info;
-	//}
 
 	/*Collision Check Functions*/
 	bool Circle::isColliding(Circle & other_col, Vec3D other_pos)

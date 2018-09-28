@@ -1,9 +1,10 @@
 #include "System/Collision/CollisionEvent.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Scene/SceneSystem.h"
 #include "Component/Convex.h"
 #include "Component/RigidBody.h"
-
 #include "Object/GameObject.h"
+#include "IO/TextSerialiser.h"
 
 namespace Dystopia
 {
@@ -55,7 +56,6 @@ namespace Dystopia
 		}
 
 		Collider::Triangulate();
-
 		Collider::Init();
 		
 	}
@@ -73,9 +73,12 @@ namespace Dystopia
 	void Convex::Serialise(TextSerialiser& _out) const
 	{
 		_out.InsertStartBlock("Convex Collider");
-		_out << float(mv3Offset.x);
+		_out << mID;					// gObj ID
+		_out << float(mv3Offset.x);		// offset for colliders
 		_out << float(mv3Offset.y);
 		_out << float(mv3Offset.z);
+
+		_out << int(mVertices.size());
 
 		for (const auto vertex : mVertices)
 		{
@@ -89,8 +92,31 @@ namespace Dystopia
 
 	void Convex::Unserialise(TextSerialiser& _in)
 	{
+		int arr_vert_size;
+		float tmp_x, tmp_y, tmp_z;
 		
+		_in.ConsumeStartBlock();
+		_in >> mID;				// gObj ID
+		_in >> mv3Offset[0];		// offset for colliders
+		_in >> mv3Offset[1];
+		_in >> mv3Offset[2];
+		_in >> arr_vert_size;
 
+		for (int i=0; i< arr_vert_size; ++i)
+		{
+			_in >> tmp_x;
+			_in >> tmp_y;
+			_in >> tmp_z;
+			mVertices.Insert(Vertice{ Math::MakePoint3D(tmp_x,tmp_y,tmp_z) });
+		}
+		_in.ConsumeEndBlock();
+
+		if (GameObject* owner =
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
+		{
+			owner->AddComponent(this, Convex::TAG{});
+			Init();
+		}
 	}
 
 	Convex * Convex::Duplicate() const

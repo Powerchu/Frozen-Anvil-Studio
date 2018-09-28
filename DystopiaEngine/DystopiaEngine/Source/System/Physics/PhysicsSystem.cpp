@@ -1,17 +1,16 @@
+#include "Component/Collider.h"
+#include "Component/RigidBody.h"
 #include "System/Physics/PhysicsSystem.h"
-#include "System/Collision/CollisionSystem.h"
 #include "System/Logger/LoggerSystem.h"
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
-
 #include "Object/GameObject.h"
-#include "Component/RigidBody.h"
-#include "Component/Collider.h"
+#include "Object/ObjectFlags.h"
 
 namespace Dystopia
 {
 	PhysicsSystem::PhysicsSystem()
-		: mbIsDebugActive(true)
+		: mbIsDebugActive(false)
 		, mInterpolation_mode(none)
 		, mGravity(-910.665F)
 		, mMaxVelocityConstant(1024.0F)
@@ -115,10 +114,6 @@ namespace Dystopia
 		}
 	}
 
-	void PhysicsSystem::DebugDraw()
-	{
-	}
-
 	void PhysicsSystem::Step(float _dt)
 	{
 		/* Broad Phase Collision Detection*/
@@ -151,8 +146,7 @@ namespace Dystopia
 
 		if (mbIsDebugActive)
 		{
-			//DebugPrint();
-			DebugDraw();
+			DebugPrint();
 		}
 	}
 
@@ -165,8 +159,10 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
-			return;
-
+			if (body.GetFlags() & FLAG_REMOVE)
+			{
+				mComponents.Remove(&body);
+			}
 		}
 	}
 

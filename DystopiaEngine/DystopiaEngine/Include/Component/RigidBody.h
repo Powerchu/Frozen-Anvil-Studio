@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vector4.h"
 #include "Math/Matrix4.h"
 
+
 //#include "Math/Quaternion.h"
 //#include "Math/Angles.h"
 
@@ -80,10 +81,10 @@ namespace Dystopia
 		// void LateUpdate(float _dt);
 
 		// To print out properties of the Rigidbodies
-		void DebugPrint(); 
+		void DebugPrint();
 
-		//TODO: Draw using renderer (lines)
-		void DebugDraw();
+		// Editor UI
+		void EditorUI(void) noexcept override;
 
 		void GlobalCentroidFromPosition(void);
 		void PositionFromGlobalCentroid(void);

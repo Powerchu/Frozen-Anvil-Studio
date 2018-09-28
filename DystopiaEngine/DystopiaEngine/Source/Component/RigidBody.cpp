@@ -15,7 +15,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Physics/PhysicsSystem.h"
 #include "Object/GameObject.h"
 #include "System/Logger/LoggerSystem.h"
-#include "Math/Matrix4.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
+#if EDITOR
+#include "IO/TextSerialiser.h"
+#include "Editor/ProjectResource.h"
+#include "Editor/EGUI.h"
+#endif 
 
 #include <cmath>
 
@@ -78,7 +84,7 @@ namespace Dystopia
 	void RigidBody::Init(void)
 	{
 		// Get Owner's Transform Component as pointer
-		if (nullptr == mpOwnerTransform && GetOwner())
+		if (nullptr == mpOwnerTransform && nullptr != GetOwner())
 		{
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
@@ -107,7 +113,7 @@ namespace Dystopia
 		mLocalCentroid *= mfInvMass;
 
 		// If Static, then is Sleeping
-		if (mbIsStatic) mbIsAwake = true;
+		if (mbIsStatic) mbIsAwake = false;
 
 		//// compute local inertia tensor
 		//Mat3D localInertiaTensor{ { 1, 0, 0, 0 },{ 0, 1, 0, 0 },{ 0, 0, 1, 0 },{ 0, 0, 0, 1 } };
@@ -238,6 +244,7 @@ namespace Dystopia
 	void RigidBody::Serialise(TextSerialiser & _out) const
 	{
 		_out.InsertStartBlock("RigidBody");
+		_out << mID;					// gObjID
 		_out << mfAngleDeg;				// Angle in degrees
 		_out << mfLinearDamping;		// Linear Drag
 		_out << mfAngularDrag;			// Angular Drag
@@ -257,22 +264,30 @@ namespace Dystopia
 
 	void RigidBody::Unserialise(TextSerialiser & _in)
 	{
-		//_in.ConsumeStartBlock();
-		//_in >> mfAngleDeg;				// Angle in degrees
-		//_in >> mfLinearDamping;		// Linear Drag
-		//_in >> mfAngularDrag;			// Angular Drag
-		//_in >> mfStaticFriction;
-		//_in >> mfDynamicFriction;
-		//_in >> mfRestitution;
-		//_in >> mfGravityScale;
-		//_in >> mfMass;
-		////  >> mfInvMass;
-		//_in >> mbHasGravity;			// Gravity State
-		//_in >> mbIsStatic;				// Static State
-		//_in >> mbIsAwake;				// Awake State
-		//_in >> mbCanSleep;				// Can Sleep Boolean
-		//_in >> PhysicsType(mPhysicsType);		// enum for physicstype
-		//_in.ConsumeEndBlock();
+		_in.ConsumeStartBlock();
+		_in >> mID;					// gObjID
+		_in >> mfAngleDeg;				// Angle in degrees
+		_in >> mfLinearDamping;			// Linear Drag
+		_in >> mfAngularDrag;			// Angular Drag
+		_in >> mfStaticFriction;
+		_in >> mfDynamicFriction;
+		_in >> mfRestitution;
+		_in >> mfGravityScale;
+		_in >> mfMass;
+		//  >> mfInvMass;
+		_in >> mbHasGravity;			// Gravity State
+		_in >> mbIsStatic;				// Static State
+		_in >> mbIsAwake;				// Awake State
+		_in >> mbCanSleep;				// Can Sleep Boolean
+		_in >> mPhysicsType;		// enum for physicstype
+		_in.ConsumeEndBlock();
+
+		if (GameObject* owner =
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
+		{
+			owner->AddComponent(this, RigidBody::TAG{});
+			Init();
+		}
 	}
 
 	void RigidBody::DebugPrint()
@@ -281,9 +296,9 @@ namespace Dystopia
 			LoggerSystem::ConsoleLog(eLog::MESSAGE, "transform: (%f,%f) \n X vel: %f, Y vel: %f \n Awake: %i", float(mPosition.x), float(mPosition.y), float(mLinearVelocity.x), float(mLinearVelocity.y), mbIsAwake);
 	}
 
-	void RigidBody::DebugDraw()
+	void RigidBody::EditorUI() noexcept
 	{
-		//TODO: Jacky - some sort of debug renderer independent from graphics 
+		// Rigidbody editor UI will be here
 	}
 
 	void RigidBody::GlobalCentroidFromPosition(void)

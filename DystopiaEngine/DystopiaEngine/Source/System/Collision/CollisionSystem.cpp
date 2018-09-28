@@ -1,12 +1,12 @@
+#include "Component/ColliderList.h"
+#include "Component/RigidBody.h"
+#include "Component/Transform.h"
 #include "System/Collision/CollisionSystem.h"
 #include "System/Graphics/MeshSystem.h"
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
-
-#include "Component/ColliderList.h"
-#include "Component/RigidBody.h"
-#include "Component/Transform.h"
 #include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 
 #include <utility>
 #include <map>
@@ -51,6 +51,25 @@ namespace Dystopia
 	void CollisionSystem::Update(float)
 	{
 		// empty
+	}
+
+	void CollisionSystem::PostUpdate()
+	{
+		for (auto & col : ComponentDonor<Convex>::mComponents)
+		{
+			if (col.GetFlags() & FLAG_REMOVE)
+				ComponentDonor<Convex>::mComponents.Remove(&col);
+		}
+		for (auto & col : ComponentDonor<AABB>::mComponents)
+		{
+			if (col.GetFlags() & FLAG_REMOVE)
+				ComponentDonor<AABB>::mComponents.Remove(&col);
+		}
+		for (auto & col : ComponentDonor<Circle>::mComponents)
+		{
+			if (col.GetFlags() & FLAG_REMOVE)
+				ComponentDonor<Circle>::mComponents.Remove(&col);
+		}
 	}
 
 	void CollisionSystem::FixedUpdate(float)

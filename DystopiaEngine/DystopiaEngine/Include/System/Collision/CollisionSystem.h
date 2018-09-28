@@ -30,6 +30,9 @@ namespace Dystopia
 
 		virtual void FixedUpdate(float) override;
 		virtual void Update(float) override;
+
+		virtual void PostUpdate() override;
+
 		virtual void Shutdown(void) override;
 
 		virtual void LoadDefaults(void) override { };

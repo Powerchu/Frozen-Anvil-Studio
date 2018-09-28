@@ -89,7 +89,7 @@ void Dystopia::Transform::OnChildRemove(Transform*)
 
 void Dystopia::Transform::RemoveChild(Transform* _pChild)
 {
-	auto pChild = mChildren.Find(_pChild);
+	auto const pChild = mChildren.Find(_pChild);
 
 	if (pChild != mChildren.end())
 	{
@@ -100,19 +100,6 @@ void Dystopia::Transform::RemoveChild(Transform* _pChild)
 	}
 }
 
-/*
-void Dystopia::Transform::SetRotation(const float _fRadians)
-{
-	mbChanged = true;
-	mRotation = _fRadians;
-}
-
-void Dystopia::Transform::SetRotationDeg(const float _fDegrees)
-{
-	mbChanged = true;
-	SetRotation(Math::DegreeToRadian(_fDegrees));
-}
-*/
 void Dystopia::Transform::SetScale(const Math::Vec4& _vScale)
 {
 	mbChanged = true;
