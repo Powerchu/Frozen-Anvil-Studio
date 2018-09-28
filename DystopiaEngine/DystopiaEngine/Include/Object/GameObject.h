@@ -14,11 +14,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GAMEOBJ_H_
 #define _GAMEOBJ_H_
 
-#include "System\Driver\Driver.h"
-#include "DataStructure\AutoArray.h"		// AutoArray
-#include "Component\ComponentList.h"		// AllComponents
-#include "Component\Transform.h"			// Transform
-#include "Utility\MetaAlgorithms.h"			// MetaFind_t
+#include "System/Driver/Driver.h"
+#include "DataStructure/AutoArray.h"		// AutoArray
+#include "Component/ComponentList.h"		// AllComponents
+#include "Component/Transform.h"			// Transform
+#include "Utility/MetaAlgorithms.h"			// MetaFind_t
+#include "IO/TextSerialiser.h"
 #include "Globals.h"
 
 #include <string>
@@ -103,7 +104,6 @@ namespace Dystopia
 		std::string mName;
 
 		Transform mTransform;
-		unsigned mnFlags;
 
 		AutoArray<Component*> mComponents;
 		AutoArray<Behaviour*> mBehaviours;
