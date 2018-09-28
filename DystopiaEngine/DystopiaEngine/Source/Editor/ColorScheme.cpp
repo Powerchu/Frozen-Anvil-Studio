@@ -13,7 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/EGUI.h"
 #include "Editor/ColorScheme.h"
-#include "IO/BinarySerializer.h"
+#include "IO/TextSerialiser.h"
 #include "../../Dependancies/ImGui/imgui.h"
 
 static constexpr unsigned int dimensions = 4;
@@ -33,7 +33,7 @@ namespace Dystopia
 Dystopia::ColorScheme::ColorScheme()
 	: EditorTab{ false },
 	mLabel{ "Color Scheme" },
-	mArrColors{}, mAlignment{ 150 }, mBarSize{ 500 }
+	mArrColors{ Math::Vec4{0,0,0,0} }, mAlignment{ 150 }, mBarSize{ 500 }
 {}
 
 Dystopia::ColorScheme::~ColorScheme()
@@ -162,9 +162,10 @@ void Dystopia::ColorScheme::Remove() const
 	ImGui::StyleColorsDark();
 }
 
-void Dystopia::ColorScheme::SaveSettings(Dystopia::BinarySerializer& _out) const
+void Dystopia::ColorScheme::SaveSettings(Dystopia::TextSerialiser& _out) const
 {
-	_out.InsertStartBlock();
+	_out.InsertStartBlock("Color");
+	_out << mArrColors.size();
 	for (auto& e : mArrColors)
 	{
 		for (unsigned int i = 0; i < dimensions; ++i)
@@ -172,20 +173,23 @@ void Dystopia::ColorScheme::SaveSettings(Dystopia::BinarySerializer& _out) const
 			_out << e[i];
 		}
 	}
-	_out.InsertEndBlock();
+	_out.InsertEndBlock("Color");
 }
 
-void Dystopia::ColorScheme::LoadSettings(Dystopia::BinarySerializer& _in)
+void Dystopia::ColorScheme::LoadSettings(Dystopia::TextSerialiser& _in)
 {
+	size_t size;
 	_in.ConsumeStartBlock();
-	for (auto& e : mArrColors)
+	_in >> size;
+	for (unsigned int k = 0; k < size; k ++)
 	{
 		for (unsigned int i = 0; i < dimensions; ++i)
 		{
-			_in >> e[i];
+			_in >> mArrColors[k][i];
 		}
 	}
 	_in.ConsumeEndBlock();
+	Apply();
 }
 
 std::string Dystopia::ColorScheme::ToName(eColorData _i)

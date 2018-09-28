@@ -44,12 +44,12 @@ namespace Dystopia
 
 	void shannon::Update(const float _fDeltaTime)
 	{
-		char ch[] = "1231";
-		PrintToConsoleLog(std::string{ch});
-		auto x = this->GetOwner();
-		auto y = x->GetComponent<Transform>();
-		
-		DEBUG_PRINT(eLog::ERROR, "%p, %p, %d\n", x, y, sizeof(std::string));
+		//char ch[] = "SHANNON";
+		//PrintToConsoleLog(std::string{ch});
+		//auto x = this->GetOwner();
+		//auto y = x->GetComponent<Transform>();
+		//
+		//DEBUG_PRINT(eLog::ERROR, "%p, %p, %d\n", x, y, sizeof(std::string));
 		
 		//this->GetOwner()->GetComponent<Transform>()->SetScale(Math::Vector4{50,50,0,1});
 		//this->GetOwner()->GetComponent<Transform>()->SetPosition(Math::Vector4{150,150,0,1});

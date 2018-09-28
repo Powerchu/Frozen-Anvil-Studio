@@ -123,14 +123,14 @@ namespace Dystopia
 
 	void Editor::LoadTabs()
 	{
-		mArrTabs.push_back(Inspector::GetInstance());
-		mArrTabs.push_back(ProjectResource::GetInstance());
-		mArrTabs.push_back(HierarchyView::GetInstance());
-		mArrTabs.push_back(SceneView::GetInstance());
 		mArrTabs.push_back(ConsoleLog::GetInstance());
 		mArrTabs.push_back(PerformanceLog::GetInstance());
 		mArrTabs.push_back(ColorScheme::GetInstance());
 		mArrTabs.push_back(StyleScheme::GetInstance());
+		mArrTabs.push_back(Inspector::GetInstance());
+		mArrTabs.push_back(ProjectResource::GetInstance());
+		mArrTabs.push_back(HierarchyView::GetInstance());
+		mArrTabs.push_back(SceneView::GetInstance());
 	}
 
 	void Editor::LoadDefaults()
@@ -144,7 +144,7 @@ namespace Dystopia
 		struct stat buffer;
 		if (stat(DYSTOPIA_EDITOR_SETTINGS.c_str(), &buffer) == 0)
 		{
-			auto serial = BinarySerializer::OpenFile(DYSTOPIA_EDITOR_SETTINGS, BinarySerializer::MODE_READ);
+			auto serial = TextSerialiser::OpenFile(DYSTOPIA_EDITOR_SETTINGS, TextSerialiser::MODE_READ);
 			for (auto& e : mArrTabs)
 				e->LoadSettings(serial);
 		}
@@ -182,7 +182,7 @@ namespace Dystopia
 			e->Init();
 			e->RemoveFocus();
 		}
-		//LoadSettings();
+		LoadSettings();
 		EGUI::SetContext(mpComdHandler);
 	}
 
@@ -227,24 +227,6 @@ namespace Dystopia
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);
-			switch (i)
-			{
-			case 0: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(),
-											   EGUI::Docking::eDOCK_SLOT_RIGHT);
-				break;
-			case 1: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), 
-											   EGUI::Docking::eDOCK_SLOT_LEFT);
-				break;
-			case 2: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), 
-											   EGUI::Docking::eDOCK_SLOT_TOP);
-				break;
-			case 3: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), 
-											   EGUI::Docking::eDOCK_SLOT_RIGHT);
-				break;
-			default: EGUI::Docking::SetNextTabs(mpGuiSystem->GetMainDockspaceName(), 
-												EGUI::Docking::eDOCK_SLOT_NONE);
-			}
-
 			EditorTab *pTab = mArrTabs[i];
 			pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()));
 			pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
@@ -284,7 +266,7 @@ namespace Dystopia
 	{
 		UnInstallHotkeys();
 		mpDriver->GetSubSystem<LoggerSystem>()->RedirectOutput(nullptr);
-		auto serial = BinarySerializer::OpenFile(DYSTOPIA_EDITOR_SETTINGS, BinarySerializer::MODE_WRITE);
+		auto serial = TextSerialiser::OpenFile(DYSTOPIA_EDITOR_SETTINGS, TextSerialiser::MODE_WRITE);
 		for (auto& e : mArrTabs)
 		{
 			e->SaveSettings(serial);
@@ -792,6 +774,7 @@ namespace Dystopia
 						behave = nullptr;
 						behave = elem->mpBehaviour ? elem->mpBehaviour->Duplicate() : nullptr;
 						behave->Update(0.16f);
+						behave->SetOwner(&gobj);
 						break;
 					}
 				}

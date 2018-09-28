@@ -122,10 +122,10 @@ namespace Dystopia
 
 	void HierarchyView::SearchBar()
 	{
-		float width = Size().x - 70 - 55;
+		float width = Size().x - 50;
 		width = (width < 20) ? 20 : width;
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, true, width);
+		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, false, width);
 		EGUI::ChangeLabelSpacing();
 		EGUI::Display::HorizontalSeparator();
 	}

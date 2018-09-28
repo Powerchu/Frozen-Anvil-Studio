@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class BinarySerializer;
+	class TextSerialiser;
 	class StyleScheme : public EditorTab
 	{
 	public:
@@ -36,8 +36,8 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		std::string GetLabel() const;
 
-		void SaveSettings(BinarySerializer& _out) const;
-		void LoadSettings(BinarySerializer& _in);
+		void SaveSettings(TextSerialiser& _out) const;
+		void LoadSettings(TextSerialiser& _in);
 
 		void Apply() const;
 		void Remove() const;

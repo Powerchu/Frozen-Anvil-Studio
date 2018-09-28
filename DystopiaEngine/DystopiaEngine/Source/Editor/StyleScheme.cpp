@@ -13,7 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/EGUI.h"
 #include "Editor/StyleScheme.h"
-#include "IO/BinarySerializer.h"
+#include "IO/TextSerialiser.h"
 #include "../../Dependancies/ImGui/imgui.h"
 
 namespace Dystopia
@@ -145,9 +145,9 @@ void Dystopia::StyleScheme::Remove() const
 {
 }
 
-void Dystopia::StyleScheme::SaveSettings(Dystopia::BinarySerializer& _out) const
+void Dystopia::StyleScheme::SaveSettings(Dystopia::TextSerialiser& _out) const
 {
-	_out.InsertStartBlock();
+	_out.InsertStartBlock("Style");
 	_out << mArrFData.size();
 	_out << mArrVecData.size();
 	for (auto& e : mArrFData)
@@ -161,10 +161,10 @@ void Dystopia::StyleScheme::SaveSettings(Dystopia::BinarySerializer& _out) const
 			_out << e.mValue[i];
 		}
 	}
-	_out.InsertEndBlock();
+	_out.InsertEndBlock("Style");
 }
 
-void Dystopia::StyleScheme::LoadSettings(Dystopia::BinarySerializer& _in)
+void Dystopia::StyleScheme::LoadSettings(Dystopia::TextSerialiser& _in)
 {
 	_in.ConsumeStartBlock();
 	size_t size1;
@@ -183,6 +183,7 @@ void Dystopia::StyleScheme::LoadSettings(Dystopia::BinarySerializer& _in)
 		}
 	}
 	_in.ConsumeEndBlock();
+	Apply();
 }
 
 std::string Dystopia::StyleScheme::ToName(eStyleDataVectors _i)
