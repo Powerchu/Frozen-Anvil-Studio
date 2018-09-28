@@ -122,7 +122,7 @@ namespace Dystopia
 	}
 
 	ProjectResource::ProjectResource()
-		: EditorTab{ true },
+		: EditorTab{ false },
 		mLabel{ "Project" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
 		mpCurrentFolder{ nullptr }, mArrAllFiles{}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
 		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 90 }
@@ -185,12 +185,14 @@ namespace Dystopia
 		EGUI::Display::OpenTreeNode();
 		FolderWindow();
 		EGUI::SameLine(2);
+		ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4{ 0,0,0,0 });
 		EGUI::StartChild("FileWindow", fileWindowSize);
 		if (!strlen(mSearchText))
 			FileWindow(fileWindowSize);
 		else
 			SearchResultWindow(fileWindowSize);
 		EGUI::EndChild();
+		ImGui::PopStyleColor();
 	}
 
 	void ProjectResource::Shutdown()

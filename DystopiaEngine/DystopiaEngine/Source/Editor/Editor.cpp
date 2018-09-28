@@ -612,6 +612,8 @@ namespace Dystopia
 			//	mpGuiSystem->UpdateChar(k);
 			else if (k == eButton::KEYBOARD_OEM_PERIOD)
 				mpGuiSystem->UpdateChar(46);
+			else if (k == eButton::KEYBOARD_OEM_MINUS)
+				mpGuiSystem->UpdateChar(45);
 			// misc keys like ctrl, del, back etc
 			else
 				mpGuiSystem->UpdateKey(k, true);
@@ -770,8 +772,7 @@ namespace Dystopia
 					std::string Name = behave->GetBehaviourName();
 					if (Name == elem->mName)
 					{
-						//delete behave;
-						behave = nullptr;
+						delete behave;
 						behave = elem->mpBehaviour ? elem->mpBehaviour->Duplicate() : nullptr;
 						behave->Update(0.16f);
 						behave->SetOwner(&gobj);
