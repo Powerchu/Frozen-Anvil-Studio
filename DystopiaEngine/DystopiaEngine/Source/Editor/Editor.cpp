@@ -228,7 +228,7 @@ namespace Dystopia
 		{
 			EGUI::PushID(i);
 			EditorTab *pTab = mArrTabs[i];
-			pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()));
+			pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()) - Math::Vec2{ 4, 4 });
 			pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
 			pTab->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			{
@@ -240,8 +240,9 @@ namespace Dystopia
 				if (EGUI::StartTab(pTab->GetLabel().c_str(), pTab->GetOpenedBool()))
 				{
 					EGUI::Indent(4);
-					*pTab->GetOpenedBool() = true;
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 					pTab->EditorUI();
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 4);
 					EGUI::UnIndent(4);
 				}
 			}

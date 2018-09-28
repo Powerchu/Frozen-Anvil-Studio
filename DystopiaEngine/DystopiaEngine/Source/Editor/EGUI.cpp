@@ -453,11 +453,11 @@ namespace Dystopia
 		static constexpr float offsetH = 18;
 		ImGui::SetNextWindowPos(ImVec2{ 0, offsetH });
 		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - offsetH });
-		ImGui::SetNextWindowBgAlpha(1.f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.f , 0.f });
-		ImGui::Begin(mpMainDockspace, nullptr, flags); 
-		EGUI::Docking::BeginDockableSpace();
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 2,2 });
+		ImGui::Begin(mpMainDockspace, nullptr, flags);
 		ImGui::PopStyleVar();
+		ImGui::SetNextWindowBgAlpha(0.f);
+		EGUI::Docking::BeginDockableSpace();
 	}
 
 	void GuiSystem::EndFullDockableSpace()
