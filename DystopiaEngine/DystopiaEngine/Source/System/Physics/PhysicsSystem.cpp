@@ -13,11 +13,10 @@ namespace Dystopia
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(true)
 		, mInterpolation_mode(none)
-		, mpColSys{ nullptr }
-		, mGravity(-920.665F)
+		, mGravity(-910.665F)
 		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.2F)
+		, mPenetrationEpsilon(0.1F)
 		, mPenetrationResolutionPercentage(0.8F)
 	{
 	}
@@ -28,7 +27,6 @@ namespace Dystopia
 
 	bool PhysicsSystem::Init(void)
 	{
-		mpColSys = EngineCore::GetInstance()->GetSystem<CollisionSystem>();
 		return true;
 	}
 
@@ -123,14 +121,14 @@ namespace Dystopia
 
 	void PhysicsSystem::Step(float _dt)
 	{
+		/* Broad Phase Collision Detection*/
 
-		/* Collision Detection*/
-		mpColSys->FixedUpdate(_dt);
+		/* Narrow Phase Collision Detection*/
 		
 		/* Collision Resolution (Response) Logic */
 		ResolveCollision(_dt);
 
-		// Integrate Rigidbodies
+		// Integrate RigidBodies
 		IntegrateRigidBodies(_dt);
 
 		/*Update positions and rotation as result*/

@@ -67,7 +67,7 @@ namespace Dystopia
 	{
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
 		mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
-		//mpColSys = EngineCore::GetInstance()->GetSystem<CollisionSystem>();
+		mpColSys = EngineCore::GetInstance()->GetSystem<CollisionSystem>();
 		mpInputSys = EngineCore::GetInstance()->GetSystem<InputManager>();
 
 
@@ -195,8 +195,8 @@ namespace Dystopia
 		{
 			mpGfxSys->Update(mDelta);
 			mpInputSys->Update(mDelta);
+			mpColSys->FixedUpdate(mDelta);
 			mpPhysSys->FixedUpdate(mDelta);
-			//mpColSys->FixedUpdate(mDelta);
 
 			if (mpInputSys->IsKeyPressed(eUserButton::BUTTON_SPACEBAR))
 			{

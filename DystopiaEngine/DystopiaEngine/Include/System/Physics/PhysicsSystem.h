@@ -47,8 +47,6 @@ namespace Dystopia
 		bool  mbIsDebugActive;
 		InterpolationMode mInterpolation_mode;
 
-		CollisionSystem* mpColSys;
-
 		virtual ~PhysicsSystem(void) = default;
 
 	public:
