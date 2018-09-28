@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/Array.h"
 #include "DataStructure/Queue.h"
 #include "DataStructure/AutoArray.h"
+#include "Allocator/DefaultAlloc.h"
 
 // Systems
 #include "System/Time/TimeSystem.h"
@@ -58,14 +59,14 @@ namespace
 	template <typename Ty, typename ... T>
 	AutoArray<Ty> MakeAutoArray(Utility::TypeList<T...>)
 	{
-		 return AutoArray<Ty>{ static_cast<Ty>(new T{})...};
+		 return AutoArray<Ty>{ static_cast<Ty>(Dystopia::DefaultAllocator<T>::ConstructAlloc())...};
 	}
 
 	template <typename ... T>
 	void DeleteSubSys(AutoArray<void*>& _SubSys, Utility::TypeList<T...>)
 	{
 		void(*deleters[])(void*) {
-			[] (void* _p)  { delete static_cast<T*>(_p);  }...
+			[] (void* _p)  { Dystopia::DefaultAllocator<T>::DestructFree(static_cast<T*>(_p));  }...
 		};
 
 		auto b = _SubSys.begin();

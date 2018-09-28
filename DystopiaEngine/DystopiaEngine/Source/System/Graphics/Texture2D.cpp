@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Texture2D.h"
 #include "System/Graphics/Image.h"
 #include "IO/ImageParser.h"
+#include "Allocator/DefaultAlloc.h"
 
 #include <GL/glew.h>
 
@@ -49,7 +50,7 @@ Dystopia::Texture2D::Texture2D(const std::string& _strPath, bool _bAlpha) :
 	SetHeight(img.mnHeight);
 
 	InitTexture(img.mpImageData, _bAlpha);
-	delete img.mpImageData;
+	DefaultAllocator<void>::Free(img.mpImageData);
 }
 
 Dystopia::Texture2D::Texture2D(unsigned _nWidth, unsigned _nHeight, void* _pData, bool _bAlpha) :
