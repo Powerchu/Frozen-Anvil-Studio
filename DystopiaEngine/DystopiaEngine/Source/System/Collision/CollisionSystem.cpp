@@ -1,5 +1,11 @@
 #include "System\Collision\CollisionSystem.h"
+#include "System/Graphics/MeshSystem.h"
+
+
 #include "Component\Collider.h"
+
+#include "Object/GameObject.h"
+#include "Component/Transform.h"
 
 #include <map>
 #include <utility>
@@ -12,7 +18,33 @@ namespace Dystopia
 	}
 	bool CollisionSystem::Init()
 	{
+		auto * pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
+		if (pMeshSys)
+		{
+			for (auto & elem : ComponentDonor<Convex>::mComponents)
+			{
+				pMeshSys->StartMesh();
+
+				auto const & arr = elem.GetVertexBuffer();
+				for (auto i : arr)
+					pMeshSys->AddVertex(i.x, i.y, i.z);
+
+				elem.SetMesh(pMeshSys->AddIndices("Collider Mesh", elem.GetIndexBuffer()));
+
+				pMeshSys->EndMesh();
+
+				
+			}
+
+			for (auto & elem : ComponentDonor<AABB>::mComponents)
+			{
+
+			}
+		}
+
+
 		return true;
+
 	}
 
 	void CollisionSystem::PostInit(void)
@@ -25,8 +57,6 @@ namespace Dystopia
 		using CollisionTable = std::pair<eColliderType, eColliderType>;
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
 		using CollisionTableMap = std::map < CollisionTable, fpCollisionResolution>;
-
-		bool isColliding;
 		
 		static CollisionTableMap CollisionFuncTable = []()->CollisionTableMap
 		{
@@ -40,19 +70,34 @@ namespace Dystopia
 			return i;
 		}();
 
+		AutoArray<Collider *> mColliders;
 
-		for (Collider * const & elem : mArrOfCollider)
+		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
-			for (Collider * const * i = &elem+1; i <= &mArrOfCollider.back(); i++)
-			{
-				elem->GetColliderType();
+			elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+			mColliders.push_back(&elem);
+		}
+		for (auto & elem : ComponentDonor<AABB>::mComponents)
+		{
+			elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+			mColliders.push_back(&elem);
+		}
 
-				const auto pair_key = std::make_pair(elem->GetColliderType(), (*i)->GetColliderType());
+		for (auto & elem : mColliders)
+		{
+			for(auto & i : mColliders)
+			{
+				if (elem == i) continue;
+
+
+				const auto pair_key = std::make_pair(elem->GetColliderType(), (i)->GetColliderType());
 				for (auto & key : CollisionFuncTable)
 				{
 					if (key.first == pair_key)
 					{
-						isColliding = (this->*key.second)(elem, *i);
+						(this->*key.second)(elem, i);
+						i->SetColliding(i->Collider::hasCollision());
+						elem->SetColliding(elem->Collider::hasCollision());
 						break;
 					}
 				}
@@ -67,21 +112,24 @@ namespace Dystopia
 
 	void CollisionSystem::Shutdown()
 	{
+		/*
 		for (Collider * const & elem : mArrOfCollider)
 		{
-			delete elem;
+		delete elem;
 		}
+		*/
+
 	}
 
 	void CollisionSystem::InsertCollider(Collider * const & _Col)
 	{
-		this->mArrOfCollider.push_back(_Col);
+		//this->mArrOfCollider.push_back(_Col);
 	}
 
 	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const
 	{
-		const auto col_a = dynamic_cast<const AABB * const>(_ColA);
-		const auto col_b = dynamic_cast<const AABB * const>(_ColB);
+		const auto col_a = dynamic_cast<AABB * const>(_ColA);
+		const auto col_b = dynamic_cast<AABB * const>(_ColB);
 
 		return col_a->isColliding(col_b);
 	}

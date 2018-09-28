@@ -21,6 +21,7 @@ namespace EGUI
 {
 	enum ePayloadTags
 	{
+		UNKNOWN,
 		FILE,
 		PNG,
 		BMP,

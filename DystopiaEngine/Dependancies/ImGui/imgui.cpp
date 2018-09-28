@@ -10819,12 +10819,18 @@ bool ImGui::InputTextEx(const char* label, char* buf, int buf_size, const ImVec2
                     edit_state.OnKeyPressed((int)c);
             }
         }
-        else if ((flags & ImGuiInputTextFlags_AllowTabInput) && IsKeyPressedMap(ImGuiKey_Tab) && !io.KeyCtrl && !io.KeyShift && !io.KeyAlt && is_editable)
-        {
-            unsigned int c = '\t'; // Insert TAB
-            if (InputTextFilterCharacter(&c, flags, callback, user_data))
-                edit_state.OnKeyPressed((int)c);
-        }
+		else if (IsKeyPressedMap(ImGuiKey_Tab))
+		{
+			if (window->FocusIdxTabRequestNext != INT_MAX)
+				clear_active_id = true;
+
+			if ((flags & ImGuiInputTextFlags_AllowTabInput) && !io.KeyCtrl && !io.KeyShift && !io.KeyAlt && is_editable)
+			{
+				unsigned int c = '\t'; // Insert TAB
+				if (InputTextFilterCharacter(&c, flags, callback, user_data))
+					edit_state.OnKeyPressed((int)c);
+			}
+		}
         else if (IsKeyPressedMap(ImGuiKey_Escape))
         {
             clear_active_id = cancel_edit = true;

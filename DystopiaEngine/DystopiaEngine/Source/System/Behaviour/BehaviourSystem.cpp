@@ -20,14 +20,19 @@ namespace Dystopia
 	{
 #if EDITOR
 
-		FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
+		FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
 
 		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
 
 		FileSys->CreateFiles("Dystopia/BehaviourDLL", eFileDir::eAppData);
 
 #if _DEBUG
+
+		
+		//std::string strDystopia_Lib{ FileSys->GetFullPath("DystopiaEngine_D.lib",eFileDir::eCurrent) };
+		//InterestedFiles Dystopia_Lib{  ,eCompile };
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine_D.lib", eCompile);
+		//mHotloader->AddAdditionalSourcePath(std::wstring{ strDystopia_Lib.begin(),strDystopia_Lib.end() });
 #else
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine.lib", eCompile);
 #endif
@@ -36,7 +41,7 @@ namespace Dystopia
 
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehaviourScripts", eFileDir::eResource));
 
-		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /std:c++latest " + IncludeFolderPath);
+		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
 
 #else
 
@@ -48,7 +53,6 @@ namespace Dystopia
 		/*Init Hotloader*/
 #if EDITOR
 
-		FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
 		mHotloader->Init();
 		auto const & ArrayDlls = mHotloader->GetDlls();
 		for (auto & elem : ArrayDlls)
@@ -84,14 +88,30 @@ namespace Dystopia
 	void Dystopia::BehaviourSystem::Update(float)
 	{
 #if EDITOR
+
+
 		/*Update Hotloader*/
-		mHotloader->Update();
-		static DLLWrapper * arr[100]{ nullptr };
+		auto & vFileChanges = mHotloader->GetFileChanges();
+		for (auto & elem : vFileChanges)
+		{
+			for (auto & i : mvBehaviourReferences)
+			{
+				std::wstring name{ i.mName.begin() , i.mName.end() };
+				if (FileSys->RemoveFileExtension(elem.mDllFileName) == name)
+				{
+					delete i.mpBehaviour;
+					i.mpBehaviour = nullptr;
+					break;
+				}
+			}
+			mHotloader->CompileFiles(elem.mDirectoryIndex, elem.mFileName);
+		}
+
+		DLLWrapper * arr[100]{ nullptr };
 
 		/*Check Hotloader for changes in the Dll file*/
 		if (mHotloader->ChangesInDllFolder(100, arr))
 		{
-			FileSystem * FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
 			DLLWrapper** start = arr;
 			/*Loop through all the changes*/
 			while (*start != nullptr)
@@ -107,23 +127,29 @@ namespace Dystopia
 					/*If the name matches*/
 					if (DllName == elem.mName)
 					{
+						delete elem.mpBehaviour;
+						elem.mpBehaviour = nullptr;
+						/*Reload the Dll*/
+						mHotloader->ReloadModifiedDll(*start);
 						/*Get pointer to the clone function*/
 						using fpClone = Behaviour * (*) ();
-						fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>((*start)->GetDllName()) + L"Clone");
-						if (BehaviourClone)
-							elem.mpBehaviour = (BehaviourClone());
-						found = true;
+						fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
 
-						mvRecentChanges.Insert(&elem);
+						/*If Clone is valid, Means Dll Reload did not fail*/
+						if (BehaviourClone)
+						{
+							elem.mpBehaviour = BehaviourClone();
+							found = true;
+							mvRecentChanges.Insert(&elem);
+						}
 					}
-					/*Insert New BehaviourScript*/
 				}
 
 				if (!found)
 				{
 					BehaviourWrap wrap;
 					using fpClone = Behaviour * (*) ();
-					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>((*start)->GetDllName()) + L"Clone");
+					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
 					wrap.mName = DllName;
 					wrap.mpBehaviour = (BehaviourClone());
 					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Utility::Move(wrap)));
@@ -162,6 +188,10 @@ namespace Dystopia
 	bool BehaviourSystem::hasDllChanges() const
 	{
 		return !mvRecentChanges.IsEmpty();
+	}
+	MagicArray<BehaviourWrap> & BehaviourSystem::GetAllBehaviour()
+	{
+		return mvBehaviourReferences;
 	}
 }
 

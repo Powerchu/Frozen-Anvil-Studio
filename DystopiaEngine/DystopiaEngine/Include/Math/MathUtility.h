@@ -81,7 +81,7 @@ namespace Math
 		_rhs = Abs(_rhs);
 
 		float scale = Max(_lhs, _rhs);
-		return diff < (scale * epsilon);
+		return diff <= (scale * epsilon);
 	}
 
 	inline constexpr float Clamp(float _fInput, float _fMin, float _fMax)

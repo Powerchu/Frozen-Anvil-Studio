@@ -13,10 +13,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System\Scene\Scene.h"
 #include "Object\ObjectFlags.h"
+#include "IO/TextSerialiser.h"
+
+#include "Component/ComponentList.h"
+#include "System/Driver/Driver.h"
+
+#include <string>
+#include <utility>
 
 
 Dystopia::Scene::Scene(void) :
-	mGameObjs{ 100 }
+	mGameObjs{ 100 }, mName{ "Untitled" }
 {
 }
 
@@ -67,7 +74,7 @@ void Dystopia::Scene::PostUpdate(void)
 
 	while (b != e)
 	{
-		auto flag = e->GetFlags();
+		auto flag = b->GetFlags();
 
 		if (flag & eObjFlag::FLAG_REMOVE)
 		{
@@ -88,4 +95,34 @@ void Dystopia::Scene::Shutdown(void)
 }
 
 
+void Dystopia::Scene::Serialise(TextSerialiser & _TextSerialiser) const
+{
+	_TextSerialiser.Write(std::to_string(mGameObjs.size()));
+	_TextSerialiser << mName;
+
+	for (auto & elem : mGameObjs)
+		elem.Serialise(_TextSerialiser);
+}
+
+void Dystopia::Scene::Unserialise(TextSerialiser & _TextUnserialiser)
+{
+	size_t Size;
+	_TextUnserialiser.Read(Size);
+	_TextUnserialiser >> mName;
+	for (int i = 0; i < Size; ++i)
+	{
+		auto pGameObj = InsertGameObject();
+		pGameObj->Unserialise(_TextUnserialiser);
+	}
+}
+
+void Dystopia::Scene::SetSceneName(const std::string& _name)
+{
+	mName = _name;
+}
+
+std::string Dystopia::Scene::GetSceneName() const
+{
+	return mName;
+}
 

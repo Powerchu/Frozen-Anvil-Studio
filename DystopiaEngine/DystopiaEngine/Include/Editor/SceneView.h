@@ -21,7 +21,8 @@ namespace Dystopia
 {
 	class GraphicsSystem;
 	class GameObject;
-	class PhysicsSystem;
+	class Camera;
+
 	class SceneView : public EditorTab
 	{
 	public:
@@ -43,17 +44,31 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const;
 
+		void SetSensitivity(float);
+		float GetSensitivity() const;
+
 	private:
 		SceneView(void);
 
-		float			mDelta;
-		std::string		mLabel;
-		GraphicsSystem *mpGfxSys;
-		PhysicsSystem  *mpPhysSys;
-		GameObject*		mpSceneCamera;
+		enum eZoom 
+		{
+			eZOOM_IN,
+			eZOOM_OUT,
+			eZOOM_NONE
+		};
 
-		// TODO: remove this
-		GameObject*		mpBoxObject;
+		float			mDelta;
+		float			mSensitivity;
+		eZoom			mToZoom;
+		std::string		mLabel;
+		GraphicsSystem	*mpGfxSys;
+		GameObject		*mpSceneCamera;
+		
+		void			ScrollIn();
+		void			ScrollOut();
+		void			FindMouseObject(const Math::Vec2& _imgSize);
+		void			SceneChanged();
+		void			Zoom(bool);
 	};
 
 }

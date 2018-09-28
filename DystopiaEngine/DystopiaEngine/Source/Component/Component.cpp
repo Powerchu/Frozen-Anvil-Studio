@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <System/Driver/Driver.h>
 #include <System/Scene/SceneSystem.h>
 #include <Utility/Utility.h>
+#include "Utility/GUID.h"
 
 Dystopia::Component::Component(void) noexcept
 	: mnFlags{ FLAG_NONE }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }
@@ -91,4 +92,5 @@ Dystopia::Component* Dystopia::Component::Duplicate(void) const
 void Dystopia::Component::EditorUI(void) noexcept
 {
 }
+
 

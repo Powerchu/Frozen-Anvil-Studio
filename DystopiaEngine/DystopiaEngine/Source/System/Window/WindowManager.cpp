@@ -16,6 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\SystemMessage.h"
 #include "System\Driver\Driver.h"
 #include "System\Input\MouseData.h"
+#include "IO\TextSerialiser.h"
+#include "System/Logger/LoggerSystem.h"
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
@@ -36,8 +38,6 @@ namespace
 	constexpr bool	DEFAULT_FULLSCREEN		= false;
 	constexpr int	DEFAULT_WIDTH			= 1600;
 	constexpr int	DEFAULT_HEIGHT			= 900;
-	constexpr int	LOGO_WIDTH				= 980;
-	constexpr int	LOGO_HEIGHT				= 460;
 
 	Dystopia::MouseData* pMouse = nullptr;
 
@@ -118,17 +118,13 @@ void Dystopia::WindowManager::PreInit(void)
 
 #if EDITOR
 
-	RECT WindowRect{ 0, 0, LOGO_WIDTH, LOGO_HEIGHT };
-	AdjustWindowRect(&WindowRect, mWindowStyle, FALSE);
-
 	HWND window = CreateWindowEx(
 		WS_EX_APPWINDOW,
 		L"MainWindow",
 		L"Dystopia 2018.01.1a",
 		WS_POPUP,
 		CW_USEDEFAULT, CW_USEDEFAULT,
-		WindowRect.right - WindowRect.left,
-		WindowRect.bottom - WindowRect.top,
+		100, 100,
 		NULL, NULL, mHInstance, NULL
 	);
 
@@ -148,13 +144,13 @@ void Dystopia::WindowManager::PreInit(void)
 		NULL, NULL, mHInstance, NULL
 	);
 
-#endif
-
-	long left = (GetSystemMetrics(SM_CXSCREEN) - LOGO_WIDTH) >> 1,
-		top = (GetSystemMetrics(SM_CYSCREEN) - LOGO_HEIGHT) >> 1;
+	long left = (GetSystemMetrics(SM_CXSCREEN) - mWidth) >> 1,
+		top = (GetSystemMetrics(SM_CYSCREEN) - mHeight) >> 1;
 
 	// center the window
 	SetWindowPos(window, NULL, left, top, 0, 0, SWP_NOZORDER | SWP_NOREDRAW | SWP_NOSIZE | SWP_NOACTIVATE);
+
+#endif
 
 	mWindows.EmplaceBack(window);
 //	mWindows[0].ShowCursor(EDITOR);
@@ -167,7 +163,7 @@ bool Dystopia::WindowManager::Init(void)
 {
 #if EDITOR
 
-	std::fprintf(stdout, "Window System: Screen Resolution %dx%d, Main window size %dx%d\n", 
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Window System: Screen Resolution %dx%d, Main window size %dx%d\n",
 		GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), mWidth, mHeight);
 
 #endif
@@ -214,10 +210,6 @@ void Dystopia::WindowManager::Update(float)
 
 void Dystopia::WindowManager::Shutdown(void)
 {
-#if _COMMANDPROMPT
-	FreeConsole();
-#endif
-
 	//PostQuitMessage(0);
 }
 
@@ -230,9 +222,22 @@ void Dystopia::WindowManager::LoadDefaults(void)
 	mHeight			= DEFAULT_HEIGHT;
 }
 
-void Dystopia::WindowManager::LoadSettings(TextSerialiser&)
+void Dystopia::WindowManager::LoadSettings(DysSerialiser_t& _out)
 {
+	_out >> mbFullscreen;
+	_out >> mWindowStyle;
+	_out >> mWindowStyleEx;
+	_out >> mWidth;
+	_out >> mHeight;
+}
 
+void Dystopia::WindowManager::SaveSettings(DysSerialiser_t& _in)
+{
+	_in << mbFullscreen;
+	_in << mWindowStyle;
+	_in << mWindowStyleEx;
+	_in << mWindows[0].GetWidth();
+	_in << mWindows[0].GetHeight();
 }
 
 void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
@@ -254,12 +259,6 @@ void Dystopia::WindowManager::RegisterMouseData(MouseData* _pMouse)
 Dystopia::Window& Dystopia::WindowManager::GetMainWindow(void) const
 {
 	return const_cast<Window&>(mWindows[0]);
-}
-
-void Dystopia::WindowManager::GetSplashDimensions(int & w, int & h)
-{
-	w = LOGO_WIDTH;
-	h = LOGO_HEIGHT;
 }
 
 void Dystopia::WindowManager::DestroySplash(void)

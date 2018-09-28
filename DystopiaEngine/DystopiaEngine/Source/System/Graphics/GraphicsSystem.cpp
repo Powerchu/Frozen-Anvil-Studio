@@ -29,6 +29,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System\Driver\Driver.h"			// EngineCore
 #include "System\Time\ScopedTimer.h"
 #include "System\Profiler\ProfilerAction.h"
+#include "System\Logger\LogPriority.h"
+#include "System\Logger\LoggerSystem.h"
 
 #include "IO\TextSerialiser.h"
 #include "IO\ImageParser.h"
@@ -69,7 +71,8 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f }
+	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f },
+	mvDebugColour { 1.f, .58f, .278f, .0f }
 {
 
 }
@@ -88,6 +91,11 @@ void Dystopia::GraphicsSystem::SetGamma(float _fGamma) noexcept
 float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 {
 	return mfGamma;
+}
+
+void Dystopia::GraphicsSystem::SetDebugDraw(bool _bDraw)
+{
+	mbDebugDraw = _bDraw;
 }
 
 
@@ -124,8 +132,10 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	Shader* shader = shaderlist.begin()->second;
 	Texture2D* texture = new Texture2D{ "Resource/Editor/EditorStartup.png" };
 
-	int w, h;
-	EngineCore::GetInstance()->GetSystem<WindowManager>()->GetSplashDimensions(w, h);
+	unsigned w = texture->GetWidth(), h = texture->GetHeight();
+
+	pWinSys->GetMainWindow().SetSizeNoAdjust(w, h);
+	pWinSys->GetMainWindow().CenterWindow();
 
 	Math::Matrix4 View{}, Project{
 			2.f / w, .0f, .0f, .0f,
@@ -134,11 +144,13 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 			.0f, .0f, .0f, 1.f
 	};
 
+	glViewport(0, 0, w, h);
 	glClearColor(.0f, .0f, .0f, .0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->UseShader();
 	texture->BindTexture();
+
 	shader->UploadUniform("ProjectViewMat", Project * View);
 	shader->UploadUniform("ModelMat", Math::Scale(w * 1.f, h * 1.f));
 	shader->UploadUniform("Gamma", mfGamma);
@@ -146,14 +158,101 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	mesh->UseMesh(GL_TRIANGLES);
 	texture->UnbindTexture();
 
-	pWinSys->GetMainWindow().SetSize(texture->GetWidth(), texture->GetHeight());
 	pWinSys->GetMainWindow().Show();
-
 	SwapBuffers(
 		pWinSys->GetMainWindow().GetDeviceContext()
 	);
 
 	delete texture;
+}
+
+void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
+{
+	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
+	auto ActiveFlags = _cam.GetOwner()->GetFlags();
+	Math::Matrix4 ProjView = _cam.GetProjectionMatrix() * _cam.GetViewMatrix();
+
+	// Get Camera's layer, we only want to draw inclusive stuff
+	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
+
+	AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
+		return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
+	});
+
+	// Draw the game objects to screen based on the camera
+	for (auto& Obj : AllObj)
+	{
+		if (Obj.GetFlags() & ActiveFlags)
+		{
+			if (Renderer* r = Obj.GetComponent<Renderer>())
+			{
+				if (Shader* s = r->GetShader())
+				{
+					if (Texture2D* t = static_cast<Texture2D*>(r->GetTexture()))
+					{
+						s->UseShader();
+
+						t->BindTexture();
+						s->UploadUniform("ProjectViewMat", ProjView);
+						s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+						s->UploadUniform("Gamma", mfGamma);
+
+						r->Draw();
+
+						t->UnbindTexture();
+					}
+					else
+					{
+						glUseProgram(0);
+						r->Draw();
+					}
+				}
+				else
+				{
+					glUseProgram(0);
+					r->Draw();
+				}
+			}
+		}
+	}
+}
+
+void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
+{
+	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
+	auto ActiveFlags = _cam.GetOwner()->GetFlags();
+	Math::Matrix4 ProjView = _cam.GetProjectionMatrix() * _cam.GetViewMatrix();
+
+	// Get Camera's layer, we only want to draw inclusive stuff
+	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
+
+	AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
+		return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
+	});
+
+	//Shader* s;
+	//
+	//s->UseShader();
+	//s->UploadUniform("Colour", mvDebugColour);
+
+	// Draw the game objects to screen based on the camera
+	for (auto& Obj : AllObj)
+	{
+		if (Obj.GetFlags() & ActiveFlags)
+		{
+			//if (Collider* r = Obj.GetComponent<Collider>())
+			//{
+			//	s->UseShader();
+			//
+			//	s->UploadUniform("ProjectViewMat", ProjView);
+			//	s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+			//
+			//	r->Draw();
+			//
+			//	t->UnbindTexture();
+			//}
+		}
+	}
 }
 
 bool Dystopia::GraphicsSystem::Init(void)
@@ -177,51 +276,19 @@ void Dystopia::GraphicsSystem::Update(float)
 	mGameView.BindFramebuffer();
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
-	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
 
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
 	{
-		auto ActiveFlags = Cam.GetOwner()->GetFlags();
-		Math::Matrix4 ProjView = Cam.GetProjectionMatrix() * Cam.GetViewMatrix();
-
 		// If the camera is inactive, skip
 		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
 			Cam.SetCamera();
 
-			// Get Camera's layer, we only want to draw inclusive stuff
-			ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
-
-			AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
-				return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
-			});
-			// Draw the game objects to screen based on the camera
-			for (auto& Obj : AllObj)
-			{
-				if (Obj.GetFlags() & ActiveFlags)
-				{
-					if (Renderer* r = Obj.GetComponent<Renderer>())
-					{
-						if (Shader* s = r->GetShader())
-						{
-							if (Texture2D* t = static_cast<Texture2D*>(r->GetTexture()))
-							{
-								s->UseShader();
-
-								t->BindTexture();
-								s->UploadUniform("ProjectViewMat", ProjView);
-								s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-								s->UploadUniform("Gamma", mfGamma);
-
-								r->Draw();
-
-								t->UnbindTexture();
-							}
-						}
-					}
-				}
-			}
+			DrawScene(Cam);
+			
+			if (mbDebugDraw)
+				DrawDebug(Cam);
 		}
 	}
 	mGameView.UnbindFramebuffer();
@@ -266,9 +333,14 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 	DRAW_MODE = GL_TRIANGLES;
 }
 
-void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t&)
+void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 {
-	// TODO
+	_in >> DRAW_MODE;
+}
+
+void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
+{
+	_out << DRAW_MODE;
 }
 
 
@@ -288,7 +360,15 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _strName)
 {
+	if (texturelist.find(_strName) != texturelist.end())
+		return texturelist[_strName];
+
 	size_t first = _strName.rfind("/");
+	if (first == std::string::npos)
+	{
+		first = _strName.rfind("\\");
+	}
+
 	return texturelist[_strName.substr(first, _strName.find_first_of('.', first))] = new Texture2D{ _strName };
 }
 
@@ -400,11 +480,9 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	glGetIntegerv(GL_MAJOR_VERSION, &mOpenGLMajor);
 	glGetIntegerv(GL_MINOR_VERSION, &mOpenGLMinor);
 
-	// TEMPORARY print to see what OpenGL version we got
-	// REPLACEMENT : LOGGER OUTPUT
-	std::fprintf(stdout, "Graphics System: %s, %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
-	std::fprintf(stdout, "Graphics System: Using OpenGL Version %d.%d\n", mOpenGLMajor, mOpenGLMinor);
-	std::fprintf(stdout, "Graphics System: %d bit colour, %d bits depth, %d bit stencil\n", pfd.cColorBits, pfd.cDepthBits, pfd.cStencilBits);
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: %s, %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: Using OpenGL Version %d.%d\n", mOpenGLMajor, mOpenGLMinor);
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: %d bit colour, %d bits depth, %d bit stencil\n", pfd.cColorBits, pfd.cDepthBits, pfd.cStencilBits);
 
 #endif
 

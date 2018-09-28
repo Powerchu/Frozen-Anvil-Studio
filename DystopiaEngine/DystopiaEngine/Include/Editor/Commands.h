@@ -38,13 +38,13 @@ namespace Dystopia
 		//{
 		//	  InvokeCommand(new ComdModifyValue<T>{ _var, _newVal });
 		//}
-		void InvokeCommandInsert(GameObject&, Scene&);
-		void InvokeCommandDelete(GameObject&, Scene&);
+		void InvokeCommandInsert(GameObject&, Scene&, bool *_notify = nullptr);
+		void InvokeCommandDelete(GameObject&, Scene&, bool *_notify = nullptr);
 
 		template<class Component, typename T>
-		void InvokeCommand(const uint64_t& _id, T* _var, const T& _oldVal)
+		void InvokeCommand(const uint64_t& _id, T* _var, const T& _oldVal, bool *_notify = nullptr)
 		{
-			InvokeCommand(new ComdModifyValue<T, Component>{ _id, _var, _oldVal });
+			InvokeCommand(new ComdModifyValue<T, Component>{ _id, _var, _oldVal, _notify });
 		}
 
 		template<class C, typename ... Params>
@@ -72,10 +72,10 @@ namespace Dystopia
 		// Only 1 pointer can be stored to recording at any given time. 
 		// DO NOT pass in any variable that you would be deleted without EndRecording being called.
 		template<class C, typename T>
-		void StartRecording(const uint64_t& _id, T* _target)
+		void StartRecording(const uint64_t& _id, T* _target, bool *_notify = nullptr)
 		{ 
 			if (mRecording) return;
-			mpRecorder = new ComdRecord<T, C>(_id, _target);
+			mpRecorder = new ComdRecord<T, C>(_id, _target, _notify);
 			mRecording = true;
 		}
 

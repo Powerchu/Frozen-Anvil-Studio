@@ -15,8 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor\Editor.h"
 #include "Editor\EditorEvents.h"
 #include "Editor\Commands.h"
+
 #include "System\Scene\Scene.h"
 #include "Object\GameObject.h"
+
+#include "IO\BinarySerializer.h"
 
 namespace Dystopia
 {
@@ -110,5 +113,13 @@ namespace Dystopia
 	Scene* EditorTab::GetCurrentScene()	const
 	{
 		return mpCurrentScene;
+	}
+
+	void EditorTab::SaveSettings(TextSerialiser& _out) const
+	{
+	}
+
+	void EditorTab::LoadSettings(TextSerialiser& _in)
+	{
 	}
 }

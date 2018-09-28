@@ -6,18 +6,17 @@
 #include <System/Base/Systems.h>
 #include "System/Base/ComponentDonor.h"
 
-
-
-
 namespace Dystopia
 {
 
 	class Collider;
+	class AABB;
+	class Convex;
 
 	class CollisionSystem : 
 	public Systems, 
-	public ComponentDonor<Collider>
-
+	public ComponentDonor<AABB>,
+	public ComponentDonor<Convex>
 	{
 	public:
 
@@ -44,12 +43,8 @@ namespace Dystopia
 		bool ConvexVsConvex(Collider  * const & _ColA,
 			                Collider  * const & _ColB) const;
 
-
-
-
 	private:
-
-		AutoArray<Collider*> mArrOfCollider;
+		//AutoArray<Collider*> mArrOfCollider;
 	};
 
 }

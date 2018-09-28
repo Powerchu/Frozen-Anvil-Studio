@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _PROJECT_RESOURCE_H_
 #include "EditorTab.h"
 #include "DataStructure\AutoArray.h"
+#include "Editor\Payloads.h"
 
 typedef void *HANDLE;
 typedef unsigned long DWORD;
@@ -24,13 +25,23 @@ namespace Dystopia
 {
 	/********************************************************************* FILE & FOLDER *********************************************************************/
 
-	struct File;
 	struct CrawlItem
 	{
 		CrawlItem(const std::string& _name, const std::string& _path);
 		std::string mName;
 		std::string mPath;
 		std::string mLowerCaseName;
+	};
+
+	struct Folder;
+	struct File : CrawlItem
+	{
+		File(const std::string& _name, const std::string& _path, Folder * const _parent);
+		~File();
+		bool operator<(const File&);
+		static EGUI::ePayloadTags DetermineTag(const std::string& _name);
+		EGUI::ePayloadTags mTag;
+		Folder*	mpParentFolder;
 	};
 
 	struct Folder : CrawlItem
@@ -45,15 +56,6 @@ namespace Dystopia
 		AutoArray<File*>	mArrPtrFiles;
 		AutoArray<Folder*>	mArrPtrFolders;
 		bool				mToggle;
-	};
-
-	struct File : CrawlItem
-	{
-		File(const std::string& _name, const std::string& _path, Folder * const _parent);
-		~File();
-		bool operator<(const File&);
-
-		Folder*	mpParentFolder;
 	};
 
 	/****************************************************************** PROJECT RESOURCE ********************************************************************/

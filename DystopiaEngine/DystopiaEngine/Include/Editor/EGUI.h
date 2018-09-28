@@ -9,7 +9,10 @@
 	If none exist, either I forgot, or I didnt intend for you to use those. 
 	
 	If you need anything specificly, lemme know and I will create a user-friendly one for you. 
-	Else, just hack it - include imgui.h and use more functions available at your own risk.
+	Else, just hack it - include imgui.h and use more functions.
+
+	NOTE: Not updated usage examples for some of the functions. Check components that already
+		  implemented it. Will update when have spare time.
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -61,8 +64,11 @@ namespace EGUI
 	enum eDragStatus
 	{
 		eNO_CHANGE = 0,
-		eSTART_DRAG,
 		eEND_DRAG,
+		eENTER,
+		eTABBED,
+		eSTART_DRAG,
+		eDEACTIVATED,
 		eDRAGGING
 	};
 
@@ -78,7 +84,7 @@ namespace EGUI
 
 	bool StartMainMenuBar();
 	bool StartMenuHeader(const std::string&);
-	bool StartMenuBody(const std::string&, const std::string& _shortcut="");
+	bool StartMenuBody(const std::string&, const std::string& _shortcut="", bool _enabled = true);
 	void EndMainMenuBar();
 	void EndMenuHeader();
 	void Indent(float _spacing = 20.f);
@@ -199,8 +205,10 @@ namespace EGUI
 					break;
 				}
 		======================================================================================================================= */
-		eDragStatus VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, 
-						  float _min = 0.0f, float _max = 1.0f, float _width= 50.f);
+		Array<eDragStatus,3> VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, 
+							float _min = 0.0f, float _max = 1.0f, float _width= 50.f);
+		Array<eDragStatus, 2> VectorFields(const std::string& _label, Math::Vector2 *_outputVec, float _dragSpeed = 1.0f,
+							float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
 		/* =======================================================================================================================
 		Brief:
 				Creats a check box for a boolean variable. Returns true when the check box is clicked, toggles the _pOutBool
@@ -349,7 +357,7 @@ namespace EGUI
 		{
 			if (ImGui::BeginDragDropTarget())
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EGUI::ToString(_tagLoad)))
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EGUI::GetPayloadString(_tagLoad)))
 				{
 					DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
 					return static_cast<Specified*>(payload->Data);
@@ -380,6 +388,8 @@ namespace EGUI
 		void OpenPopup(const std::string& _thePopupID, bool _toOpenAtMousePos = true);
 		// Creates a popup window that is tied to the _uniqueID. Call OpenPopup with its ID to open it
 		bool StartPopup(const std::string& _uniqueID);
+		bool StartPopupModal(const std::string& _uniqueID, const std::string& _label);
+		void CloseCurrentPopup();
 		// call this at the end of the StartPopup function when it is true. Determines the end of the popup
 		void EndPopup();
 		/* =======================================================================================================================

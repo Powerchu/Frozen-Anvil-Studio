@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _LOGGERSYS_H_
 #define _LOGGERSYS_H_
 
+#include "Globals.h"
 #include "System\Logger\LogPriority.h"
 
 #include <cstdio>
@@ -28,10 +29,10 @@ namespace Dystopia
 		LoggerSystem(void) noexcept;
 		~LoggerSystem(void) noexcept;
 
-		static LoggerSystem* GetInstance(void) noexcept;
+		static _DLL_EXPORT LoggerSystem* GetInstance(void) noexcept;
 
 		void RedirectOutput(void(*)(const std::string&));
-		void RedirectInput(std::string(*)(void));
+		void ParseInput(const std::string&);
 
 		template <typename ... Ty>
 		static void ConsoleLog(eLog, const char* _strFormat, Ty&& ...);
@@ -40,12 +41,11 @@ namespace Dystopia
 
 		eLog mActiveFlags;
 		void(*mpOut)(const std::string&);
-		std::string(*mpIn)(void);
 
 		template <typename ... Ty>
 		void Write(const char*, Ty&&...);
 
-		void SendOutput(const std::string&);
+		void _DLL_EXPORT SendOutput(const char*);
 	};
 }
 
@@ -68,16 +68,16 @@ void Dystopia::LoggerSystem::ConsoleLog(eLog _Mode, const char *_strFormat, Ty&&
 
 	if (static_cast<unsigned>(self->mActiveFlags) & static_cast<unsigned>(_Mode))
 	{
-		self->Write(_strFormat, static_cast<Ty>(Args)...);
+		self->Write(_strFormat, (Args)...);
 	}
 }
 
 template <typename ... Ty>
 void Dystopia::LoggerSystem::Write(const char *_strFormat, Ty&& ...Args)
 {
-	std::string buf;
-	buf.reserve(2048);
-	std::snprintf(&buf[0], sizeof(2048), _strFormat, static_cast<Ty>(Args)...);
+	char buf[2048];
+	//buf.reserve(2048);
+	std::snprintf(&buf[0], 2048, _strFormat, Args...);
 	SendOutput(buf);
 }
 

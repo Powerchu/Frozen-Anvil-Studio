@@ -21,16 +21,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	static ConsoleLog* gpInstance = 0;
+	static ConsoleLog* gpConsoleInst = 0;
 	ConsoleLog* ConsoleLog::GetInstance()
 	{
-		if (gpInstance) return gpInstance;
+		if (gpConsoleInst) return gpConsoleInst;
 
-		gpInstance = new ConsoleLog{};
-		return gpInstance;
+		gpConsoleInst = new ConsoleLog{};
+		return gpConsoleInst;
 	}
 
-	void PrintToConsoleLog(const std::string& _text)
+	void _DLL_EXPORT PrintToConsoleLog(const std::string& _text)
+	{
+		ConsoleLog::GetInstance()->Debug(_text);
+	}
+
+	void _DLL_EXPORT PrintToConsoleLog(const char* _text)
 	{
 		ConsoleLog::GetInstance()->Debug(_text);
 	}
@@ -45,7 +50,7 @@ namespace Dystopia
 
 	ConsoleLog::~ConsoleLog()
 	{
-		gpInstance = nullptr;
+		gpConsoleInst = nullptr;
 	}
 	
 	void ConsoleLog::Init()
@@ -95,9 +100,9 @@ namespace Dystopia
 		if (mLoggingIndex == maxLog)
 		{
 			std::rotate(mArrDebugTexts.begin(), mArrDebugTexts.begin() + 1, mArrDebugTexts.end());
-			mArrDebugTexts[maxLog - 1] = _text;
+			mArrDebugTexts[maxLog - 1] = _text.c_str();
 		}
-		else mArrDebugTexts[mLoggingIndex++] = _text;
+		else mArrDebugTexts[mLoggingIndex++] = _text.c_str();
 		mRecordIndex++;
 	}
 	

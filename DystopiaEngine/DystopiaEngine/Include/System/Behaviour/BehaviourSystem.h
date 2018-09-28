@@ -71,13 +71,14 @@ namespace Dystopia
 
 		MagicArray<BehaviourWrap *> const & GetDllChanges() const;
 		bool hasDllChanges() const;
+		MagicArray<BehaviourWrap> & GetAllBehaviour();
 
 #endif
 
 	private:
 		/*Array of Behaviours components*/
 		//MagicArray< SharedPtr<Behaviour> > mBehaviours;
-
+		FileSystem * FileSys;
 #if EDITOR
 
 		SharedPtr< Hotloader<1> > mHotloader;

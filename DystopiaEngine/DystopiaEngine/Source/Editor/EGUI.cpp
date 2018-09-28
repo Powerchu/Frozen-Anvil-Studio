@@ -125,7 +125,6 @@ namespace Dystopia
 	bool GuiSystem::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, EditorInput *_pInput, const char *_pMainDockspaceName)
 	{
 		if (!_pWin || !_pGfx || !_pInput) return false;
-
 		mpWin = _pWin;
 		mpGfx = _pGfx;
 		mpInput = _pInput;
@@ -166,13 +165,6 @@ namespace Dystopia
 		io.KeyMap[ImGuiKey_Insert]		= static_cast<int>(eButton::KEYBOARD_INSERT);
 		io.KeyMap[ImGuiKey_Delete]		= static_cast<int>(eButton::KEYBOARD_DELETE);
 
-		//io.KeyMap[ImGuiKey_A]			= static_cast<int>(eButton::KEYBOARD_A);
-		//io.KeyMap[ImGuiKey_C]			= static_cast<int>(eButton::KEYBOARD_C);
-		//io.KeyMap[ImGuiKey_V]			= static_cast<int>(eButton::KEYBOARD_V);
-		//io.KeyMap[ImGuiKey_X]			= static_cast<int>(eButton::KEYBOARD_X);
-		//io.KeyMap[ImGuiKey_Y]			= static_cast<int>(eButton::KEYBOARD_Y);
-		//io.KeyMap[ImGuiKey_Z]			= static_cast<int>(eButton::KEYBOARD_Z);
-
 		io.SetClipboardTextFn = SetClipBoardText;
 		io.GetClipboardTextFn = GetClipBoardText;
 		io.ClipboardUserData = mpWin->GetMainWindow().GetDeviceContext(); // pointer to both a windows and context
@@ -190,6 +182,8 @@ namespace Dystopia
 		gCursorTypes[ImGuiMouseCursor_Hand]			= LoadCursor(NULL, IDC_HAND);
 
 		DefaultColorSettings();
+		EGUI::Docking::InitTabs();
+		ImGui::SetCurrentContext(mpCtx);
 		return true;
 	}
 
@@ -202,10 +196,9 @@ namespace Dystopia
 
 		// Setup display size (every frame to accommodate for window resizing)
 		int w, h, display_w, display_h;
-		// glfwGetWindowSize(mpWin, &w, &h);
-		// glfwGetFramebufferSize(mpWin, &display_w, &display_h);
-		w = display_w = 1600;
-		h = display_h = 900;
+		w = display_w = mpWin->GetMainWindow().GetWidth() - 16;
+		h = display_h = mpWin->GetMainWindow().GetHeight() - 40;
+
 		io.DisplaySize = ImVec2{ static_cast<float>(w), static_cast<float>(h) };
 		io.DisplayFramebufferScale = ImVec2{ w > 0 ? static_cast<float>(display_w / w) : 0, 
 											 h > 0 ? static_cast<float>(display_h / h) : 0 };
@@ -213,7 +206,7 @@ namespace Dystopia
 		io.DeltaTime = _dt;
 
 		// Setup inputs
-		if (mpWin) // should check if this window is the focused window
+		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow()) // should check if this window is the focused window
 		{
 			float x, y;
 			x = mpInput->GetMousePosition().x;
@@ -240,7 +233,7 @@ namespace Dystopia
 		// Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
 		ImGui::NewFrame();
 		StartFullDockableSpace();
-		glViewport(0, 0, 1600, 900);
+		glViewport(0, 0, display_w, display_h);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
@@ -363,10 +356,6 @@ namespace Dystopia
 		}
 
 		delete mpGLState;
-
-		// Look for DefaultColorSetting() function and MATCH the integer with the same amount of PushStyleColor
-		ImGui::PopStyleColor(9);
-
 		ImGui::DestroyContext(mpCtx);
 	}
 
@@ -461,15 +450,14 @@ namespace Dystopia
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | 
 								 ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoCollapse |	
 								 ImGuiWindowFlags_NoInputs;
-
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		ImGui::SetNextWindowPos(ImVec2{ 0, 18 });
-		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - 18 });
+		static constexpr float offsetH = 18;
+		ImGui::SetNextWindowPos(ImVec2{ 0, offsetH });
+		ImGui::SetNextWindowSize(ImVec2{ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - offsetH });
 		ImGui::SetNextWindowBgAlpha(1.f);
-		ImGui::Begin(mpMainDockspace, nullptr, flags);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.f , 0.f });
+		ImGui::Begin(mpMainDockspace, nullptr, flags); 
 		EGUI::Docking::BeginDockableSpace();
-		ImGui::PopStyleVar(2);
+		ImGui::PopStyleVar();
 	}
 
 	void GuiSystem::EndFullDockableSpace()
@@ -480,15 +468,6 @@ namespace Dystopia
 
 	void GuiSystem::DefaultColorSettings()
 	{
-		ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 1
-		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 2
-		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4{ 0.5f, 0.5f, 0.5f, 0.6f });				// 3
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 4
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 5
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.5f, 0.5f, 0.5f, 0.6f });				// 6
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.7f, 1.f, 0.9f });			// 7
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.0f, 0.6f, 0.9f, 0.8f });		// 8
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.6f, 0.9f, 0.5f });				// 9
 	}
 
 	void GuiSystem::UpdateChar(unsigned short _c)

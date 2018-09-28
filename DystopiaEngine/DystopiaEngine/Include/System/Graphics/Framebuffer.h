@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Texture2D;
+	class Texture;
 
 	class Framebuffer
 	{
@@ -36,12 +36,12 @@ namespace Dystopia
 		void BindFramebuffer(void) const noexcept;
 		void UnbindFramebuffer(void) const noexcept;
 
-		Texture2D* AsTexture(void) const noexcept;
+		Texture* AsTexture(void) const noexcept;
 
 	private:
 
 		unsigned mnID, mDepthBuffer;
-		Texture2D* mpTexture;
+		Texture* mpTexture;
 	};
 }
 

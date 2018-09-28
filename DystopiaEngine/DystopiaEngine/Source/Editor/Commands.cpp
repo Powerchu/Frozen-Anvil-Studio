@@ -56,6 +56,12 @@ namespace Dystopia
 			return;
 		}
 
+		if (Editor::GetInstance()->CurrentState() == EDITOR_PLAY)
+		{
+			delete _comd;
+			return;
+		}
+
 		if (mDeqUndo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqUndo);
 
@@ -71,6 +77,7 @@ namespace Dystopia
 
 	void CommandHandler::UndoCommand()
 	{
+		EndRecording();
 		if (!mDeqUndo.size()) return; 
 
 		if (!mDeqUndo.back()->ExecuteUndo())
@@ -88,6 +95,7 @@ namespace Dystopia
 
 	void CommandHandler::RedoCommand()
 	{
+		EndRecording();
 		if (!mDeqRedo.size()) return;
 
 		if (!mDeqRedo.back()->ExecuteDo())
@@ -139,14 +147,14 @@ namespace Dystopia
 		return mRecording;
 	}
 
-	void CommandHandler::InvokeCommandInsert(GameObject& _pObj, Scene& _pScene)
+	void CommandHandler::InvokeCommandInsert(GameObject& _pObj, Scene& _pScene, bool * _notify)
 	{
-		InvokeCommand(new ComdInsertObject{&_pObj, &_pScene});
+		InvokeCommand(new ComdInsertObject{&_pObj, &_pScene, _notify });
 	}
 
-	void CommandHandler::InvokeCommandDelete(GameObject& _pObj, Scene& _pScene) 
+	void CommandHandler::InvokeCommandDelete(GameObject& _pObj, Scene& _pScene, bool * _notify)
 	{
-		InvokeCommand(new ComdDeleteObject{ &_pObj, &_pScene });
+		InvokeCommand(new ComdDeleteObject{ &_pObj, &_pScene, _notify });
 	}
 }
 

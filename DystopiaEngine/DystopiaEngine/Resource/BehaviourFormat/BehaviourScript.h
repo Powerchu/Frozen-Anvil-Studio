@@ -36,7 +36,7 @@ namespace Dystopia
 		};
 
 #endif
-		//static unsigned constexpr m_SF_ClassName_ID = ;
+		static uint64_t constexpr m_SF_ClassName_ID = _SF_UID_;
 
 		_SF_ClassName_();
 		~_SF_ClassName_();

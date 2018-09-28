@@ -62,15 +62,14 @@ namespace Dystopia
 		virtual void Unserialise(TextSerialiser&) = 0;
 		virtual void EditorUI(void) noexcept;
 
+	protected:
+		unsigned mnFlags;
+
 	private:
 
 		// TODO
 		// Temporary ID -- Will change back to pointer
 		uint64_t mnOwner;
-
-	protected:
-
-		unsigned mnFlags;
 	};
 }
 

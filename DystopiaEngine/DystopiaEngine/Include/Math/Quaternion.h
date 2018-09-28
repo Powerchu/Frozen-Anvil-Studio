@@ -31,7 +31,7 @@ namespace Math
 	\brief
 		Representing rotations
 	*/
-	union _DLL_EXPORT Quaternion
+	union __declspec(align (alignof(Vector4))) _DLL_EXPORT Quaternion
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 

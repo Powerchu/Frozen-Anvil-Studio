@@ -26,8 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Globals.h"
 #include "DataStructure\AutoArray.h"	// AutoArray
-
-#include <iterator>						// std::bidirectional_iterator_tag
+#include <iterator>
 
 template<typename T, class Container = AutoArray<T>>
 class _DLL_EXPORT Heap

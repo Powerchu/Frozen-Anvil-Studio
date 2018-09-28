@@ -25,6 +25,13 @@ Dystopia::CommandHandler *gContextComdHND = nullptr;
 
 namespace EGUI
 {
+	static bool IsItemActiveLastFrame()
+	{
+		ImGuiContext g = *GImGui;
+		if (g.ActiveIdPreviousFrame) return g.ActiveIdPreviousFrame == g.CurrentWindow->DC.LastItemId;
+		return false;
+	}
+
 	void SetContext(Dystopia::CommandHandler *_pContext)
 	{
 		gContextComdHND = _pContext;
@@ -90,9 +97,9 @@ namespace EGUI
 		return ImGui::BeginMenu(_label.c_str());
 	}
 
-	bool StartMenuBody(const std::string& _label, const std::string& _shortcut)
+	bool StartMenuBody(const std::string& _label, const std::string& _shortcut, bool _enabled)
 	{
-		return ImGui::MenuItem(_label.c_str(), _shortcut.c_str());
+		return ImGui::MenuItem(_label.c_str(), _shortcut.c_str(), false, _enabled);
 	}
 
 	void EndMainMenuBar()
@@ -117,10 +124,6 @@ namespace EGUI
 
 	bool StartChild(const std::string& _label, const Math::Vec2& _size, bool _showBorder, const Math::Vec4& _colour)
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 5, 5 });
-		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1);
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ _colour.x, _colour.y, _colour.z, _colour.w });
-		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0, 0, 0, 0 });
 		return ImGui::BeginChild(_label.c_str(), ImVec2{ _size.x, _size.y }, _showBorder);
 	}
 
@@ -132,8 +135,6 @@ namespace EGUI
 	void EndChild()
 	{
 		ImGui::EndChild();
-		ImGui::PopStyleColor(2);
-		ImGui::PopStyleVar(2);
 	}
 
 	void SameLine(float _customOffset)
@@ -186,9 +187,6 @@ namespace EGUI
 		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside, bool _iteractive, bool _showLabel)
 		{
 			bool clicked = false;
-			ImVec4 greyColor = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
-			ImVec4 btnHoveredColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered);
-			ImVec4 btnActiveColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive);
 			bool show = _iteractive ? true : false;
 
 			if (_showLabel)
@@ -200,15 +198,12 @@ namespace EGUI
 			}
 
 			ImGui::PushItemWidth(_width);
-			ImGui::PushStyleColor(ImGuiCol_Button, greyColor);
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, show ? btnHoveredColor : greyColor);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, show ? btnActiveColor : greyColor);
 			if (ImGui::Button((_anythingToShowInside + "###" + _label).c_str(),
 				ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize }))
 			{
 				if (show) clicked = true;
 			}
-			ImGui::PopStyleColor(3);
+			//ImGui::PopStyleColor(3);
 			ImGui::PopItemWidth();
 			return clicked;
 		}
@@ -235,11 +230,16 @@ namespace EGUI
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool changing = false;
-			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max);
+			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max, "%.2f");
 
-			if (ImGui::IsItemClicked()) return eDragStatus::eSTART_DRAG;
-			if (ImGui::IsItemDeactivatedAfterChange()) return eDragStatus::eEND_DRAG;
-			return (changing) ? eDragStatus::eDRAGGING : eDragStatus::eNO_CHANGE;
+			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
+			if (changing) return eDRAGGING;
+			if (ImGui::IsItemDeactivatedAfterChange())
+			{
+				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
+			}
+			if (ImGui::IsItemDeactivated())  return eDEACTIVATED;
+			return eNO_CHANGE;
 		}
 
 		eDragStatus DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max, bool _hideText)
@@ -251,16 +251,20 @@ namespace EGUI
 				SameLine(DefaultAlighnmentSpacing);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
-
 			bool changing = false;
 			changing = ImGui::DragInt(("###DragInt" + _label).c_str(), _outputInt, _dragSpeed, _min, _max);
 
-			if (ImGui::IsItemClicked()) return eDragStatus::eSTART_DRAG;
-			if (ImGui::IsItemDeactivatedAfterChange()) return eDragStatus::eEND_DRAG;
-			return (changing) ? eDragStatus::eDRAGGING : eDragStatus::eNO_CHANGE;
+			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
+			if (changing) return eDRAGGING;
+			if (ImGui::IsItemDeactivatedAfterChange())
+			{
+				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
+			}
+			if (ImGui::IsItemDeactivated()) return eDEACTIVATED;
+			return eNO_CHANGE;
 		}
 
-		eDragStatus VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
+		Array<eDragStatus, 3> VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
 		{
 			std::string field1 = "##VecFieldX", field2 = "##VecFieldY", field3 = "##VecFieldZ";
 			float x, y, z;
@@ -291,15 +295,35 @@ namespace EGUI
 
 			ImGui::PopItemWidth();
 
-			return (statX == eSTART_DRAG) ? eSTART_DRAG :
-				   (statY == eSTART_DRAG) ? eSTART_DRAG :
-				   (statZ == eSTART_DRAG) ? eSTART_DRAG :
-				   (statX == eEND_DRAG) ? eEND_DRAG :
-				   (statY == eEND_DRAG) ? eEND_DRAG :
-				   (statZ == eEND_DRAG) ? eEND_DRAG :
-				   (statX == eDRAGGING) ? eDRAGGING :
-				   (statY == eDRAGGING) ? eDRAGGING :
-				   (statZ == eDRAGGING) ? eDRAGGING : eNO_CHANGE;
+			return Array<eDragStatus, 3>{statX, statY, statZ};
+		}
+	
+		Array<eDragStatus, 2> VectorFields(const std::string& _label, Math::Vector2 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
+		{
+			std::string field1 = "##VecFieldX", field2 = "##VecFieldY";
+			float x, y, z;
+			x = _outputVec->x;
+			y = _outputVec->y;
+			field1 += _label;
+			field2 += _label;
+
+			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label.c_str());
+			SameLine(DefaultAlighnmentSpacing);
+
+			Label("X:"); SameLine();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true);
+			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = x;
+
+			SameLine(); Label("Y:"); SameLine();
+			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true);
+			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
+
+			ImGui::PopItemWidth();
+
+			return Array<eDragStatus, 2>{statX, statY};
 		}
 
 		bool CollapsingHeader(const std::string& _label)
@@ -343,7 +367,7 @@ namespace EGUI
 			if (_highlighted)
 				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
 
-			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, flags);
+			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, ImGuiTreeNodeFlags_DefaultOpen | flags);
 
 			if (_highlighted)
 				ImGui::PopStyleColor();
@@ -363,7 +387,7 @@ namespace EGUI
 
 		void OpenTreeNode(bool _open)
 		{
-			ImGui::SetNextTreeNodeOpen(_open);
+			ImGui::SetNextTreeNodeOpen(_open, ImGuiCond_FirstUseEver);
 		}
 
 		void EndTreeNode()
@@ -405,9 +429,7 @@ namespace EGUI
 			ImVec2 posIcon{ pos.x + offsetX, pos.y + offsetY };
 			ImVec2 posText{ pos.x + 1, pos.y + iconHeight + (2* offsetY) };
 
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), size);
-			ImGui::PopStyleColor();
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
 			if (payload) EndPayload();
 			ImGui::SetCursorScreenPos(posIcon);
@@ -433,6 +455,25 @@ namespace EGUI
 		bool StartPopup(const std::string& _uniqueID)
 		{
 			return ImGui::BeginPopup(_uniqueID.c_str());
+		}
+
+		bool StartPopupModal(const std::string& _uniqueID, const std::string& _label)
+		{
+			ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize |
+									 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+
+			bool ret = ImGui::BeginPopupModal(_uniqueID.c_str(), NULL, flags);
+			if (ret)
+			{
+				EGUI::Display::Label(_label.c_str());
+				EGUI::Display::HorizontalSeparator();
+			}
+			return ret;
+		}
+
+		void CloseCurrentPopup()
+		{
+			ImGui::CloseCurrentPopup();
 		}
 
 		void EndPopup()

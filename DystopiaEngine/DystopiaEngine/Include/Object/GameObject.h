@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component\Transform.h"			// Transform
 #include "Behaviour\Behaviour.h"			// Behaviour
 #include "Utility\MetaAlgorithms.h"			// MetaFind_t
+#include "Globals.h"
 
 #include <string>
 
@@ -28,7 +29,7 @@ namespace Dystopia
 {
 	struct CollisionEvent;
 
-	class GameObject
+	class _DLL_EXPORT GameObject
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -72,7 +73,8 @@ namespace Dystopia
 
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
-
+		
+		void SetID(const uint64_t&); //explicit purposes only
 		uint64_t GetID(void) const;
 		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
@@ -92,17 +94,13 @@ namespace Dystopia
 		// ======================================== OPERATORS ======================================== // 
 
 		GameObject& operator = (GameObject&&);
-
-		bool mTestBool = false;
-		float mTestFloat = 0.f;
-		int mTestInt = 0;
 	private:
-
 		uint64_t mnID;
+		Transform mTransform;
+
 		unsigned mnFlags;
 		std::string mName;
 
-		Transform mTransform;
 		AutoArray<Component*> mComponents;
 		AutoArray<Behaviour*> mBehaviours;
 
@@ -150,7 +148,9 @@ inline void Dystopia::GameObject::AddComponent(ComponentTag)
 	//	Utility::MetaFind_t<typename Ty::SYSTEM, EngineCore::AllSys>::value
 	//);
 
-	auto Comp = EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()->RequestComponent();
+	auto Comp = static_cast<ComponentDonor<Ty>*>(
+		EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()
+		)->RequestComponent();
 
 	mComponents.Insert(Comp);
 

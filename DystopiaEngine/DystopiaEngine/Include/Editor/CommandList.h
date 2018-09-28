@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _COMMAND_LIST_H_
 
 #include "Editor.h"
+#include "Math/Vector4.h"
 #include <tuple>
 #include <utility>
 
@@ -39,13 +40,14 @@ namespace Dystopia
 
 	struct ComdInsertObject : Commands
 	{
-		ComdInsertObject(GameObject* _pObj, Scene * _pScene);
+		ComdInsertObject(GameObject* _pObj, Scene * _pScene, bool * _notify = nullptr);
 		~ComdInsertObject();
 		bool ExecuteDo() override;
 		bool ExecuteUndo() override;
 		bool Unchanged() const;
 
 	private:
+		bool *mpNotify;
 		bool mFocusBack;
 		uint64_t mObjID;
 		GameObject *mpObj;
@@ -54,13 +56,14 @@ namespace Dystopia
 
 	struct ComdDeleteObject : Commands
 	{
-		ComdDeleteObject(GameObject* _pObj, Scene * _pScene);
+		ComdDeleteObject(GameObject* _pObj, Scene * _pScene, bool * _notify = nullptr);
 		~ComdDeleteObject();
 		bool ExecuteDo() override;
 		bool ExecuteUndo() override;
 		bool Unchanged() const;
 
 	private:
+		bool *mpNotify;
 		bool mFocusBack;
 		uint64_t mObjID;
 		GameObject *mpObj;
@@ -70,14 +73,15 @@ namespace Dystopia
 	template <typename T, class Component>
 	struct ComdModifyValue : Commands
 	{
-		ComdModifyValue(const uint64_t& _objID, T* _pmData, const T& _oldV)
+		ComdModifyValue(const uint64_t& _objID, T* _pmData, const T& _oldV, bool * _notify = nullptr)
 			: mID{ _objID }, mpData{ _pmData }, 
-			mNewValue{*_pmData }, mOldValue{ _oldV }
+			mNewValue{*_pmData }, mOldValue{ _oldV }, mpNotify{ _notify }
 		{}
 
 		bool ExecuteDo() override 
 		{
 			if (!FindComponent()) return false;
+			if (mpNotify) *mpNotify = true;
 			*mpData = mNewValue;
 			return true; 
 		}
@@ -85,11 +89,12 @@ namespace Dystopia
 		bool ExecuteUndo() override 
 		{
 			if (!FindComponent()) return false;
+			if (mpNotify) *mpNotify = true;
 			*mpData = mOldValue;
 			return true;
 		}
 
-		bool Unchanged() const { return (mOldValue == mNewValue); }
+		bool Unchanged() const { return false; }
 	private:
 		Component* FindComponent()
 		{
@@ -99,6 +104,7 @@ namespace Dystopia
 			if (!pCom) return nullptr;
 			return pCom;
 		}
+		bool *mpNotify;
 		uint64_t mID;
 		T* mpData;
 		T mOldValue;
@@ -108,14 +114,15 @@ namespace Dystopia
 	template <typename T>
 	struct ComdModifyValue<T, GameObject> : Commands
 	{
-		ComdModifyValue(const uint64_t& _objID, T * _pmData, const T& _oldV)
+		ComdModifyValue(const uint64_t& _objID, T * _pmData, const T& _oldV, bool * _notify = nullptr)
 			: mID{ _objID }, mpData{ _pmData },
-			mNewValue{ *mpData }, mOldValue{ _oldV }
+			mNewValue{ *mpData }, mOldValue{ _oldV }, mpNotify{ _notify }
 		{}
 
 		bool ExecuteDo() override
 		{
 			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
+			if (mpNotify) *mpNotify = true;
 			*mpData = mNewValue;
 			return true;
 		}
@@ -123,12 +130,14 @@ namespace Dystopia
 		bool ExecuteUndo() override
 		{
 			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
+			if (mpNotify) *mpNotify = true;
 			*mpData = mOldValue;
 			return true;
 		}
 
 		bool Unchanged() const { return (mOldValue == mNewValue); }
 	private:
+		bool *mpNotify;
 		uint64_t mID;
 		T* mpData;
 		T mOldValue;
@@ -138,9 +147,9 @@ namespace Dystopia
 	template <typename T, class Component>
 	struct ComdRecord : RecordBase
 	{
-		ComdRecord(const uint64_t& _objID, T* rhs)
+		ComdRecord(const uint64_t& _objID, T* rhs, bool * _notify = nullptr)
 			: mpTarget{ rhs }, mOldValue{ *rhs }, 
-			mNewValue{ mOldValue }, mID{ _objID }
+			mNewValue{ mOldValue }, mID{ _objID }, mpNotify{ _notify }
 		{}
 
 		bool EndRecord()				
@@ -153,6 +162,7 @@ namespace Dystopia
 		bool ExecuteDo() override	
 		{
 			if (!FindComponent()) return false;
+			if (mpNotify) *mpNotify = true;
 			*mpTarget = mNewValue; 
 			return true; 
 		}
@@ -160,11 +170,12 @@ namespace Dystopia
 		bool ExecuteUndo() override	
 		{
 			if (!FindComponent()) return false;
+			if (mpNotify) *mpNotify = true;
 			*mpTarget = mOldValue; 
 			return true; 
 		}
 
-		bool Unchanged() const { return false; }//(mOldValue == mNewValue); }
+		bool Unchanged() const { return *mpTarget == mOldValue; }
 		T* GetPointer() { return mpTarget; }
 	private:
 		Component* FindComponent()
@@ -175,6 +186,7 @@ namespace Dystopia
 			if (!pCom) return nullptr;
 			return pCom;
 		}
+		bool *mpNotify;
 		uint64_t mID;
 		T* mpTarget;
 		T mOldValue;
@@ -184,9 +196,9 @@ namespace Dystopia
 	template <typename T>
 	struct ComdRecord<T, GameObject> : RecordBase
 	{
-		ComdRecord(const uint64_t& _objID, T* rhs)
+		ComdRecord(const uint64_t& _objID, T* rhs, bool * _notify = nullptr)
 			: mpTarget{ rhs }, mOldValue{ *rhs }, 
-			mNewValue{ mOldValue }, mID{ _objID }
+			mNewValue{ mOldValue }, mID{ _objID }, mpNotify{ _notify }
 		{}
 
 		bool EndRecord()
@@ -199,6 +211,7 @@ namespace Dystopia
 		bool ExecuteDo() override
 		{
 			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
+			if (mpNotify) *mpNotify = true;
 			*mpTarget = mNewValue;
 			return true;
 		}
@@ -206,13 +219,15 @@ namespace Dystopia
 		bool ExecuteUndo() override
 		{
 			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
+			if (mpNotify) *mpNotify = true;
 			*mpTarget = mOldValue;
 			return true;
 		}
 
-		bool	Unchanged() const { return false; }//(mOldValue == mNewValue); }
+		bool	Unchanged() const { return *mpTarget == mOldValue; }
 		T*		GetPointer() { return mpTarget; }
 	private:
+		bool *mpNotify;
 		uint64_t mID;
 		T* mpTarget;
 		T mOldValue;
