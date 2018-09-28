@@ -76,6 +76,9 @@ namespace Dystopia
 		void Update(void);
 		void Shutdown(void);
 
+		void Interrupt(void);
+		void InterruptContinue(void);
+
 		void PostUpdate(void);
 
 	private:
@@ -88,6 +91,8 @@ namespace Dystopia
 		AutoArray<void*>	mSubSystems;
 		AutoArray<Systems*> mSystemList;
 		AutoArray<Systems*> mSystemTable;
+
+		float mfAccumulatedTime;
 
 		EngineCore(void);
 

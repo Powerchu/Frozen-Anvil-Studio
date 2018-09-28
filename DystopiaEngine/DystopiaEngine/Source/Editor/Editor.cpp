@@ -454,6 +454,7 @@ namespace Dystopia
 	void Editor::GamePlay()
 	{
 		ChangeState(EDITOR_PLAY);
+		mpDriver->InterruptContinue();
 	}
 
 	void Editor::GameStop()

@@ -112,7 +112,7 @@ Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mTime{}, mTimeFixed{}, mMessageQueue{60}, mSystemList{ Utility::SizeofList<AllSys>::value },
+	mTime{}, mTimeFixed{}, mfAccumulatedTime{ 0 }, mMessageQueue{ 60 }, mSystemList{ Utility::SizeofList<AllSys>::value },
 	mSubSystems { MakeAutoArray<void*>(Utility::MakeTypeList_t<Utility::TypeList, SubSys>{}) },
 	mSystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) }
 {
@@ -171,21 +171,32 @@ void Dystopia::EngineCore::Init(void)
 
 	mTime.Lap();
 	mTimeFixed.Lap();
+	mfAccumulatedTime = 0;
+}
+
+void Dystopia::EngineCore::Interrupt(void)
+{
+	mfAccumulatedTime += mTimeFixed.Elapsed();
+}
+
+void Dystopia::EngineCore::InterruptContinue(void)
+{
+	mTimeFixed.Lap();
 }
 
 void Dystopia::EngineCore::FixedUpdate(void)
 {
-	static float dt = mTimeFixed.Elapsed();
+	mfAccumulatedTime += mTimeFixed.Elapsed();
 	mTimeFixed.Lap();
 
-	while (dt > _FIXED_UPDATE_DT)
+	while (mfAccumulatedTime > _FIXED_UPDATE_DT)
 	{
 		for (auto& e : mSystemList)
 		{
-			e->FixedUpdate(dt);
+			e->FixedUpdate(_FIXED_UPDATE_DT);
 		}
 
-		dt -= _FIXED_UPDATE_DT;
+		mfAccumulatedTime -= _FIXED_UPDATE_DT;
 	}
 }
 
