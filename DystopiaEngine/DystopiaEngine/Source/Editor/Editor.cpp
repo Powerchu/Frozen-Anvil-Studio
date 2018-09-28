@@ -770,7 +770,7 @@ namespace Dystopia
 					std::string Name = behave->GetBehaviourName();
 					if (Name == elem->mName)
 					{
-						delete behave;
+						//delete behave;
 						behave = nullptr;
 						behave = elem->mpBehaviour ? elem->mpBehaviour->Duplicate() : nullptr;
 						behave->Update(0.16f);

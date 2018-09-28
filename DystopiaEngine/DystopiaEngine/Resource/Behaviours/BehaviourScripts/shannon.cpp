@@ -44,6 +44,7 @@ namespace Dystopia
 
 	void shannon::Update(const float _fDeltaTime)
 	{
+		//Test
 		//char ch[] = "SHANNON";
 		//PrintToConsoleLog(std::string{ch});
 		//auto x = this->GetOwner();
