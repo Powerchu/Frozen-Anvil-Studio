@@ -36,6 +36,19 @@ namespace Dystopia
 		eLink,
 		eExecute,
 	};
+	struct ModifiedFileInfo
+	{
+		ModifiedFileInfo() {};
+		ModifiedFileInfo(std::wstring const & _FileName, std::wstring const & _PossibleDllName, unsigned const & _DirectoryIndex)
+			:mFileName{ _FileName }, mDllFileName{ _PossibleDllName }, mDirectoryIndex{ _DirectoryIndex }
+		{
+
+		}
+
+		std::wstring mFileName;
+		std::wstring mDllFileName;
+		unsigned    mDirectoryIndex = 0;
+	};
 	struct DLLWrapper
 	{
 		DLLWrapper(std::wstring _DllPathName, std::wstring _DllFileName, HMODULE _DllModule)
@@ -206,6 +219,8 @@ namespace Dystopia
 			return FullFilePath;
 		}
 
+
+
 	private:
 
 		bool         found;
@@ -236,6 +251,17 @@ namespace Dystopia
 		void SetFileDirectoryPath(unsigned Index, std::string const & _FileName)
 		{
 			marrFilePath[Index] = _FileName;
+		}
+
+		void ReloadModifiedDll()
+		{
+			for (auto & elem : mvModifiedDll)
+				elem->ReloadDll();
+		}
+
+		void ReloadModifiedDll(DLLWrapper * _DllToReload)
+		{
+			_DllToReload->ReloadDll();
 		}
 
 		bool InitFileDirectory(unsigned _Index)
@@ -316,6 +342,8 @@ namespace Dystopia
 			return false;
 		}
 
+
+
 		bool ChangesInDllFolder(unsigned size = 0, DLLWrapper ** _pDLLWrapperBuffer = nullptr)
 		{
 			DWORD bytes_read;
@@ -379,7 +407,9 @@ namespace Dystopia
 							{
 								if (elem == DllName)
 								{
-									elem.ReloadDll();
+									this->mvModifiedDll.push_back(&elem);
+
+									//elem.ReloadDll();
 									if (_pDLLWrapperBuffer)
 									{
 										bool found = false;
@@ -440,22 +470,6 @@ namespace Dystopia
 
 			OutputCommand += L'\"' + wstrFolder_Name + L"/";
 			OutputCommand += FileName + L'\"';
-
-			/*
-			OutputCommand += L" /link ";
-			std::filesystem::path pp{ "C:/Users/Owner/source/repos/Frozen-Anvil-Studio/DystopiaEngine/bin" };
-			std::error_code error1;
-
-			std::filesystem::recursive_directory_iterator iter1{ pp,std::filesystem::directory_options::skip_permission_denied,error1 };
-			for (auto & elem : iter1)
-			{
-			if (CheckFileExtension(elem.path().filename().wstring()) == eLib && elem.path().filename().wstring() != FileName)
-			{
-			std::string a = elem.path().string();
-			OutputCommand += L" /LIBPATH\"" + elem.path().wstring() + L"\"";
-			}
-			}
-			*/
 			for (auto const & elem : mvAdditionalSourcePath)
 			{
 				std::filesystem::path p{ elem };
@@ -464,7 +478,7 @@ namespace Dystopia
 				std::filesystem::recursive_directory_iterator iter{ p,std::filesystem::directory_options::skip_permission_denied,error };
 				for (auto & i : iter)
 				{
-					if (CheckFileExtension(i.path().filename().wstring()) == eCpp && i.path().filename().wstring() != FileName)
+					if ((CheckFileExtension(i.path().filename().wstring()) == eCpp || CheckFileExtension(i.path().filename().wstring()) == eLib) && i.path().filename().wstring() != FileName)
 					{
 						std::string a = i.path().string();
 						OutputCommand += L" \"" + i.path().wstring() + L"\"";
@@ -483,13 +497,14 @@ namespace Dystopia
 					OutputCommand += L" \"" + elem.GetFullPath() + L"\"";
 			}
 
-			std::wstring Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" && exit";
+			std::wstring Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" && exit 99";
 
 
 
 			std::string cFinal_Command{ Final_Command.begin(),Final_Command.end() };
 			std::string cCmdPath{ mCmdPath.begin(), mCmdPath.end() };
 
+			LPDWORD lpExitCode = new DWORD;
 			SHELLEXECUTEINFO ExecInfo{ 0 };
 			ExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
 			ExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
@@ -508,7 +523,20 @@ namespace Dystopia
 
 			WaitForSingleObject(ExecInfo.hProcess, INFINITE);
 
+			if (GetExitCodeProcess(ExecInfo.hProcess, lpExitCode))
+			{
+				if (*lpExitCode == 99)
+				{
+
+				}
+				else
+				{
+
+				}
+			}
+
 			CloseHandle(ExecInfo.hProcess);
+			delete lpExitCode;
 		}
 
 		bool Init()
@@ -584,6 +612,41 @@ namespace Dystopia
 
 		}
 
+		std::vector<ModifiedFileInfo> GetFileChanges()
+		{
+			std::vector<ModifiedFileInfo> ToRet;
+			DWORD bytes_read;
+			for (unsigned i = 0; i < TOTAL_FILE_DIRECTORIES; ++i)
+			{
+				if (marrFileHandles[i] != INVALID_HANDLE_VALUE && marraOverlapped[i].hEvent != INVALID_HANDLE_VALUE)
+				{
+					if (GetOverlappedResult(marrFileHandles[i], &marraOverlapped[i], &bytes_read, false))
+					{
+						//ResetEvent(marraOverlapped[i].hEvent);
+						auto pFileInfo = reinterpret_cast<FILE_NOTIFY_INFORMATION *>(&marrFileInfo[i].front());
+						for (auto pFileIterator = pFileInfo;
+							pFileIterator != nullptr;
+							pFileIterator =
+							reinterpret_cast<FILE_NOTIFY_INFORMATION *>(pFileIterator->NextEntryOffset ? reinterpret_cast<char *>(pFileIterator) + pFileIterator->NextEntryOffset : nullptr))
+						{
+							std::wstring wstrFileName{ pFileIterator->FileName, pFileIterator->FileNameLength / sizeof(*(pFileIterator->FileName)) };
+
+							if (CheckFileExtension(wstrFileName) == eCpp)
+							{
+								ModifiedFileInfo FileInfo{ wstrFileName , GenerateDllName(wstrFileName) , i };
+								ToRet.push_back(FileInfo);
+							}
+								
+								
+						}
+						InitReadFileDirectory(i);
+					}
+				}
+			}
+			return ToRet;
+		}
+
+
 		void SetDllFolderPath(std::string _PathName)
 		{
 			mDll_Folder_Name = _PathName;
@@ -621,9 +684,16 @@ namespace Dystopia
 			mvAdditionalSourcePath.push_back(_Path);
 		}
 
+
 		void AddFilesToCrawl(std::wstring const & _File, ePurpose _FilePurpose)
 		{
-			mvFilesToCrawl.push_back(InterestedFiles{ _File,_FilePurpose });
+
+			mvFilesToCrawl.push_back(InterestedFiles{ _File,_FilePurpose});
+		}
+		void AddFilesToCrawl(InterestedFiles const & _File)
+		{
+
+			mvFilesToCrawl.push_back(_File);
 		}
 
 		void AddAdditionalFiles(std::wstring const & _FullPathFile)
@@ -648,7 +718,7 @@ namespace Dystopia
 
 		~Hotloader()
 		{
-			return;
+
 			CloseHandle(mDll_Handle);
 			CloseHandle(mDll_Overlap.hEvent);
 
@@ -681,11 +751,12 @@ namespace Dystopia
 
 
 
-		std::array<HANDLE, TOTAL_FILE_DIRECTORIES>  marrFileHandles;
-		std::array<FileInfo, TOTAL_FILE_DIRECTORIES>  marrFileInfo;
+		std::array<HANDLE,      TOTAL_FILE_DIRECTORIES>  marrFileHandles;
+		std::array<FileInfo,    TOTAL_FILE_DIRECTORIES>  marrFileInfo;
 		std::array<_OVERLAPPED, TOTAL_FILE_DIRECTORIES>  marraOverlapped;
 		std::array<std::string, TOTAL_FILE_DIRECTORIES>  marrFilePath;
 
+		std::vector<DLLWrapper *>                        mvModifiedDll;
 		std::vector<std::wstring>                        mvAdditionalSourcePath;
 		std::vector<std::wstring>                        mvAddtionalFiles;
 		std::vector<InterestedFiles>                     mvFilesToCrawl;
@@ -834,7 +905,6 @@ namespace Dystopia
 					if (file.path().filename().wstring() == _File.GetFileName())
 					{
 						_File.SetFullFilePath(file.path().wstring());
-						_File.SetFound(true);
 
 						return true;
 					}

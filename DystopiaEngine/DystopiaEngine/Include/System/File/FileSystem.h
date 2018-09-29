@@ -76,7 +76,14 @@ namespace Dystopia
 				retString = std::filesystem::current_path().wstring() + L'/' + std::wstring{ mPathTable[_ParentDirectory].begin(), mPathTable[_ParentDirectory].end() };
 		}
 			break;
-
+		case eFileDir::eCurrent:
+		{
+			if constexpr (std::is_same_v<T, std::string>)
+				retString = std::filesystem::current_path().string();
+			else
+			if constexpr (std::is_same_v<T, std::wstring>)
+				retString = std::filesystem::current_path().wstring();
+		}
 		default:
 		{
 			if constexpr (std::is_same_v<T, std::string>)
