@@ -13,23 +13,26 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/SceneView.h"
-#include "Editor/Editor.h"
 #include "Editor/EGUI.h"
-#include "Editor/DefaultFactory.h"
+#include "Editor/Editor.h"
 #include "Editor/EditorEvents.h"
 #include "Editor/ConsoleLog.h"
+#include "Editor/DefaultFactory.h"
 
 #include "System/Driver/Driver.h"
-#include "System/Graphics/GraphicsSystem.h"
 #include "System/Scene/Scene.h"
 #include "System/Graphics/Texture2D.h"
+#include "System/Camera/CameraSystem.h"
+#include "System/Graphics/GraphicsSystem.h"
 
+#include "Object/GameObject.h"
 #include "Component/Transform.h"
 #include "Component/Camera.h"
 
+#include "Math/MathUtility.h"
+
 namespace Dystopia
 {
-	static constexpr float imageOffsetX = 4.f;
 	static constexpr float imageOffsetY = 27.f;
 
 	static SceneView* gpInstance = 0;
@@ -87,16 +90,14 @@ namespace Dystopia
 	void SceneView::EditorUI()
 	{
 		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
-		ImVec2 size{ Size().x - imageOffsetX,  Size().y - imageOffsetY };
+		ImVec2 size{ Size().x,  Size().y - imageOffsetY };
 		EGUI::UnIndent(2);
 		ImGui::Image(reinterpret_cast<void*>(id), size);
 		EGUI::Indent(2);
 		if (ImGui::IsItemHovered())
 		{
-			if (mToZoom != eZOOM_NONE) 
-				Zoom(eZOOM_IN == mToZoom);
-			if (ImGui::IsMouseClicked(0))
-				FindMouseObject(Math::Vec2{ size.x, size.y });
+			if (mToZoom != eZOOM_NONE)		Zoom(eZOOM_IN == mToZoom);
+			if (ImGui::IsMouseClicked(0))	FindMouseObject(size);
 		}
 	}
 
@@ -117,6 +118,7 @@ namespace Dystopia
 			PrintToConsoleLog("Camera GameObject is NULL in SceneView::FindMouseObject()");
 			return;
 		}
+
 		Camera* pCam = mpSceneCamera->GetComponent<Camera>();
 		if (!pCam)
 		{
@@ -124,13 +126,39 @@ namespace Dystopia
 			return;
 		}
 
-		Math::Vec2 relPosToWindow{ ImGui::GetCursorPos().x, ImGui::GetCursorPos().y };
-		float xRatio = relPosToWindow.x / _imgSize.x;
-		float yRatio = relPosToWindow.y / _imgSize.y;
-		float xNew = pCam->GetViewport().mnWidth * xRatio;
-		float yNew = pCam->GetViewport().mnWidth * yRatio;
-		Math::Pt3D worldPos = pCam->ScreenToWorld(Math::Vec3D{ xNew, yNew, 0.f });
-		PrintToConsoleLog("World Pos From Scene View : " + std::to_string(worldPos.x) +" / " + std::to_string(worldPos.y));
+		Math::Pt3D worldClickPos = GetWorldClickPos(pCam, _imgSize);
+		PrintToConsoleLog("HitPoint (Screen To world) : [" + std::to_string(worldClickPos.x) + "] / [" + std::to_string(worldClickPos.y) + "]");
+
+		const GameObject* pTarget = nullptr;
+		float vLength = FLT_MAX;
+		for (const auto& obj : GetCurrentScene()->GetAllGameObjects())
+		{
+			if (&obj == mpSceneCamera) continue;
+
+			Math::Pt3D objPos	= obj.GetComponent<Transform>()->GetGlobalPosition();
+			Math::Vec4 distV	= objPos - worldClickPos;
+			Math::Vec2 flatVec	= { distV.x, distV.y };
+			float lSquared = flatVec.MagnitudeSqr();
+			if (lSquared < vLength)
+			{
+				vLength = lSquared;
+				pTarget = &obj;
+			}
+		}
+
+		if (pTarget)
+		{
+			const auto& trans	= pTarget->GetComponent<Transform>();
+			Math::Vec4 scale	= trans->GetGlobalScale();
+			Math::Pt3D pos		= trans->GetGlobalPosition();
+			if (worldClickPos.x >= (pos.x - (scale.x / 2)) &&
+				worldClickPos.x <= (pos.x + (scale.x / 2)) &&
+				worldClickPos.y >= (pos.y - (scale.y / 2)) &&
+				worldClickPos.y <= (pos.y + (scale.y / 2)))
+			{
+				PrintToConsoleLog("Cicked on a GameObject from scene view!");
+			}
+		}
 	}
 
 	void SceneView::Zoom(bool _in)
@@ -141,6 +169,7 @@ namespace Dystopia
 			PrintToConsoleLog("Camera GameObject is NULL in SceneView::Zoom");
 			return;
 		}
+
 		Transform *pObjTransform = mpSceneCamera->GetComponent<Transform>();
 		if (!pObjTransform)
 		{
@@ -149,7 +178,7 @@ namespace Dystopia
 		}
 
 		Math::Vec4 movement{ mSensitivity, mSensitivity, 0.f };
-		movement = _in ? movement * -1.f : movement;
+		movement = _in ? movement * -1 : movement;
 		pObjTransform->SetScale(pObjTransform->GetScale() + movement);
 	}
 	
@@ -176,6 +205,19 @@ namespace Dystopia
 	void SceneView::SceneChanged()
 	{
 		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
+	}
+
+	Math::Pt3D SceneView::GetWorldClickPos(const Camera * const _cam, const Math::Vec2& _imgSize) const
+	{
+		Math::Vec2 mousePos = ImGui::GetMousePos();
+		Math::Vec2 relPos = mousePos - ImGui::GetItemRectMin();
+		auto viewport = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
+		Math::Vec2 hitPoint{ (relPos.x / _imgSize.x) * viewport.mnWidth,
+							 (relPos.y / _imgSize.y) * viewport.mnHeight };
+		auto worldPos = _cam->ScreenToWorld(Math::Vec3D{ hitPoint.x - (viewport.mnWidth / 2),
+													     hitPoint.y - (viewport.mnHeight / 2), 
+														 0.f });
+		return worldPos;
 	}
 
 }

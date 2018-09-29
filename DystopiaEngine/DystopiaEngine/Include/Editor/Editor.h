@@ -87,10 +87,10 @@ namespace Dystopia
 		BehaviourSystem			*mpBehaviourSys;
 
 		EditorEventHandler		*mpEditorEventSys;
-		EditorInput				*mpInput;
 		CommandHandler			*mpComdHandler;
 		GuiSystem				*mpGuiSystem;
 		Timer					*mpTimer;
+		EditorInput				*mpInput;
 
 		AutoArray<EditorTab*>	mArrTabs;
 		eEditorState			mCurrentState;

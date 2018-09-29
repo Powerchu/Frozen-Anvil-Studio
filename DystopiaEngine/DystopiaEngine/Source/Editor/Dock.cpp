@@ -1069,7 +1069,7 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	{
 		ImGui::SetNextWindowPos(first ? ImVec2{ 100, 100 } : _tab.mPos);
 		ImGui::SetNextWindowSize(_tab.mSize, ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowBgAlpha(.9f);
+		ImGui::SetNextWindowBgAlpha(.8f);
 		bool ret = ImGui::Begin(_pLabel, _pOpened, ImGuiWindowFlags_NoCollapse | _flags);
 		mEndAction = eEND_ACTION_END;
 		_tab.mPos = ImGui::GetWindowPos();
@@ -1100,7 +1100,7 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	pos.y += (tabH + 8.f);
 	size.y -= (tabH + 8.f);
 	pos.x += 2;
-	size.x -= 8;
+	size.x -= 4;
 	ImGui::SetCursorScreenPos(pos);
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
 							 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |

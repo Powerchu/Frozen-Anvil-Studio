@@ -84,15 +84,8 @@ namespace Dystopia
 
 	void ConsoleLog::PrintLogs()
 	{
-		static constexpr float bottomOffset = -55.f;
-		Math::Vec2 size{ Size() };
-		size.y = (size.y > 100.f) ? size.y + bottomOffset : size.y;
-		if (EGUI::StartChild("PrintingArea", size))
-		{
-			for (unsigned int i = 0; i < mLoggingIndex; ++i)
-				EGUI::Display::Label(mArrDebugTexts[i].c_str());
-		}
-		EGUI::EndChild();
+		for (unsigned int i = 0; i < mLoggingIndex; ++i)
+			EGUI::Display::Label(mArrDebugTexts[i].c_str());
 	}
 
 	void ConsoleLog::Debug(const std::string& _text)

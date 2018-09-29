@@ -64,11 +64,12 @@ namespace Dystopia
 		GraphicsSystem	*mpGfxSys;
 		GameObject		*mpSceneCamera;
 		
-		void			ScrollIn();
-		void			ScrollOut();
-		void			FindMouseObject(const Math::Vec2& _imgSize);
-		void			SceneChanged();
-		void			Zoom(bool);
+		void		ScrollIn();
+		void		ScrollOut();
+		void		SceneChanged();
+		void		Zoom(bool);
+		void		FindMouseObject(const Math::Vec2& _imgSize);
+		Math::Pt3D	GetWorldClickPos(const Camera * const _cam, const Math::Vec2& _imgSize)  const;
 	};
 
 }
