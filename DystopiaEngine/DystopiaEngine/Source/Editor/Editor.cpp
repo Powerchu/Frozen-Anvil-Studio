@@ -762,6 +762,8 @@ namespace Dystopia
 
 	void Editor::ReloadDLL()
 	{
+		return;
+
 		auto & arr = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
 		auto BehaviourSys = EngineCore::GetInstance()->GetSystem<BehaviourSystem>();
 		auto const & BehaviourArr = BehaviourSys->GetDllChanges();

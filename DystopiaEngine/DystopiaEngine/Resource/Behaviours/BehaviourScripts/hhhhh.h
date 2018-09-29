@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Tessst.h
-\author t (100%)
-\par    email: t\@digipen.edu
+\file	hhhhh.h
+\author h (100%)
+\par    email: ggh\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _Tessst_H_
-#define _Tessst_H_
+#ifndef _hhhhh_H_
+#define _hhhhh_H_
 
 #define str(s) #s
 
@@ -22,11 +22,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Tessst : Behaviour
+	class hhhhh : Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = str(Tessst);
+		static constexpr const char * BehaviourName = str(hhhhh);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -36,10 +36,10 @@ namespace Dystopia
 		};
 
 #endif
-		static uint64_t constexpr mTessstID = 652214272;
+		static uint64_t constexpr mhhhhhID = 1871708160;
 
-		Tessst();
-		~Tessst();
+		hhhhh();
+		~hhhhh();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -57,7 +57,7 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const;
 
-		virtual Tessst * Duplicate() const;
+		virtual hhhhh * Duplicate() const;
 
 	private:
 
@@ -69,13 +69,13 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport Tessst * TessstClone()
+		DllExport hhhhh * hhhhhClone()
 		{
-			return new Tessst;
+			return new hhhhh;
 		}
 	}
 }
 
-#endif //_Tessst_H_
+#endif //_hhhhh_H_
 
 

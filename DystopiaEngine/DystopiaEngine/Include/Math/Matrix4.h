@@ -228,7 +228,7 @@ inline Math::Matrix4& _CALL Math::Matrix4::Transpose(void) noexcept
 inline Math::Vector4 _CALL Math::Matrix4::GetRow(const unsigned _nRow) const
 {
 #if defined(DEBUG) | (_DEBUG)
-	DEBUG_ASSERT(_nRow > 3, "Matrix4 Error: GetRow row index out of bounds.");
+	//DEBUG_ASSERT(_nRow > 3, "Matrix4 Error: GetRow row index out of bounds.");
 #endif
 
 	return mData[_nRow];
@@ -237,7 +237,7 @@ inline Math::Vector4 _CALL Math::Matrix4::GetRow(const unsigned _nRow) const
 inline Math::Vector4 _CALL Math::Matrix4::GetColumn(const unsigned _nCol) const
 {
 #if defined(DEBUG) | (_DEBUG)
-	DEBUG_ASSERT(_nCol > 3, "Matrix4 Error: GetColumn column index out of bounds.");
+	//DEBUG_ASSERT(_nCol > 3, "Matrix4 Error: GetColumn column index out of bounds.");
 #endif
 
 	return Math::Transpose(*this).mData[_nCol];

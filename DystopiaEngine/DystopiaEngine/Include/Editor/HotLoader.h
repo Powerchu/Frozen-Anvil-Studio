@@ -378,7 +378,7 @@ namespace Dystopia
 		{
 			DWORD byte_read;
 			bool Status = false;
-			if (GetOverlappedResult(mTempDll_Handle, &mTempDll_Overlap, &bytes_read, false))
+			if (GetOverlappedResult(mTempDll_Handle, &mTempDll_Overlap, &byte_read, false))
 			{
 				for (FILE_NOTIFY_INFORMATION * pstart = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(&mTempDll_FileInfo.front());
 					pstart != nullptr;
@@ -395,12 +395,19 @@ namespace Dystopia
 					case FILE_ACTION_MODIFIED:
 					{
 						_vec.push_back(DllName);
+						auto iterator = std::find(mvTempFilesName.begin(), mvTempFilesName.end(), DllName);
+
+						if (iterator != mvTempFilesName.end())
+							mvTempFilesName.erase(iterator);
+
 						mvTempFilesName.push_back(DllName);
 						Status = true;
 					}
 					break;
 					}
 				}
+
+				InitReadTempDllDirectory();
 			}
 			return Status;
 		}
@@ -410,9 +417,12 @@ namespace Dystopia
 			for (auto const & elem: mvTempFilesName)
 			{
 				SearchAndReplaceDll(GenerateDllName(elem));
-				std::filesystem::copy_file(mTempDllFile + L'/' + elem, mDll_Folder_Name, std::filesystem::copy_options::overwrite_existing);
+				
+				std::wstring wstrFolderName{ mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
+				std::filesystem::copy(mTempDllFile + L'/' + elem, wstrFolderName, std::filesystem::copy_options::overwrite_existing);
+				
 			}
-
+			mvTempFilesName.clear();
 		}
 
 
@@ -525,13 +535,18 @@ namespace Dystopia
 			return status;
 		}
 
-		void CompileFiles(unsigned _Index, std::wstring const & _FileName)
+		void CompileFiles(unsigned _Index, std::wstring const & _FileName, bool _totemp = false)
 		{
 			/*Search for exisiting opened DLL and close them to allow cl.exe to override*/
 			//SearchAndReplaceDll(GenerateDllName(_FileName));
 
-			std::wstring wstrDll_Folder_Name{ mDll_Folder_Name.begin()    ,mDll_Folder_Name.end() };
-			//std::wstring wstrDll_Folder_Name{ mTempDllFile };
+			//std::wstring wstrDll_Folder_Name{ mDll_Folder_Name.begin()    ,mDll_Folder_Name.end() };
+			std::wstring wstrDll_Folder_Name;
+			if(_totemp)
+				wstrDll_Folder_Name =  mTempDllFile ;
+			else
+				wstrDll_Folder_Name = std::wstring { mDll_Folder_Name.begin() ,mDll_Folder_Name.end() };
+
 			std::wstring wstrFolder_Name{ marrFilePath[_Index].begin(),    marrFilePath[_Index].end() };
 
 			std::wstring FileName{ _FileName };
@@ -651,7 +666,14 @@ namespace Dystopia
 			{
 				if (InitReadDllDirectory())
 				{
-					std::cout << "Reading of DLL Directory: " << mDll_Folder_Name << " has failed \n";
+					
+				}
+			}
+			if (InitTempDllDirectory())
+			{
+				if (InitReadTempDllDirectory())
+				{
+					
 				}
 			}
 
@@ -678,7 +700,7 @@ namespace Dystopia
 							std::wstring wstrFileName{ pFileIterator->FileName, pFileIterator->FileNameLength / sizeof(*(pFileIterator->FileName)) };
 
 							if (CheckFileExtension(wstrFileName) == eCpp)
-								CompileFiles(i, wstrFileName);
+								CompileFiles(i, wstrFileName, true);
 						}
 						InitReadFileDirectory(i);
 					}
@@ -749,8 +771,8 @@ namespace Dystopia
 
 		bool InitTempDllDirectory()
 		{
-
-			HANDLE hand = CreateFileA(mTempDll_Folder_Name.c_str(),
+			std::string cstrTempDllFile{ mTempDllFile.begin(), mTempDllFile.end() };
+			HANDLE hand = CreateFileA(cstrTempDllFile.c_str(),
 				                      FILE_LIST_DIRECTORY,
 				                      FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
 				                      NULL,
@@ -761,7 +783,7 @@ namespace Dystopia
 			if (hand == INVALID_HANDLE_VALUE)
 				return false;
 			mTempDll_Handle = hand;
-			mTempDll_Overlap.hEvent = CreateEventA(NULL, true, false, mTempDll_Folder_Name.c_str());
+			mTempDll_Overlap.hEvent = CreateEventA(NULL, true, false, cstrTempDllFile.c_str());
 
 			if (mTempDll_Handle == INVALID_HANDLE_VALUE)
 				return false;

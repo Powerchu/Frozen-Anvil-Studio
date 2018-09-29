@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	fff.h
-\author f (100%)
-\par    email: f\@digipen.edu
+\file	vvv.h
+\author v (100%)
+\par    email: v\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _fff_H_
-#define _fff_H_
+#ifndef _vvv_H_
+#define _vvv_H_
 
 #define str(s) #s
 
@@ -22,11 +22,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class fff : Behaviour
+	class vvv : Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = str(fff);
+		static constexpr const char * BehaviourName = str(vvv);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -36,10 +36,10 @@ namespace Dystopia
 		};
 
 #endif
-		//static unsigned constexpr mfffID = ;
+		static uint64_t constexpr mvvvID = 46137344;
 
-		fff();
-		~fff();
+		vvv();
+		~vvv();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -57,7 +57,7 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const;
 
-		virtual fff * Duplicate() const;
+		virtual vvv * Duplicate() const;
 
 	private:
 
@@ -69,13 +69,13 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport fff * fffClone()
+		DllExport vvv * vvvClone()
 		{
-			return new fff;
+			return new vvv;
 		}
 	}
 }
 
-#endif //_fff_H_
+#endif //_vvv_H_
 
 

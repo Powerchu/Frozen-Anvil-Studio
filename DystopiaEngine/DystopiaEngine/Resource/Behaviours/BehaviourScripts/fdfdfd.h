@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Hi.h
-\author Keith (100%)
-\par    email: keith.goh\@digipen.edu
+\file	fdfdfd.h
+\author fdf (100%)
+\par    email: df\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _Hi_H_
-#define _Hi_H_
+#ifndef _fdfdfd_H_
+#define _fdfdfd_H_
 
 #define str(s) #s
 
@@ -22,11 +22,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Hi : Behaviour
+	class fdfdfd : Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = str(Hi);
+		static constexpr const char * BehaviourName = str(fdfdfd);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -36,10 +36,10 @@ namespace Dystopia
 		};
 
 #endif
-		static uint64_t constexpr mHiID = 3533176832;
+		static uint64_t constexpr mfdfdfdID = 40894464;
 
-		Hi();
-		~Hi();
+		fdfdfd();
+		~fdfdfd();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -57,7 +57,7 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const;
 
-		virtual Hi * Duplicate() const;
+		virtual fdfdfd * Duplicate() const;
 
 	private:
 
@@ -69,13 +69,13 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport Hi * HiClone()
+		DllExport fdfdfd * fdfdfdClone()
 		{
-			return new Hi;
+			return new fdfdfd;
 		}
 	}
 }
 
-#endif //_Hi_H_
+#endif //_fdfdfd_H_
 
 

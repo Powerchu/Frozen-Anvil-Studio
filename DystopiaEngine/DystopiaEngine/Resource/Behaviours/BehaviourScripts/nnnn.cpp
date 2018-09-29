@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	fff.cpp
-\author f (100%)
-\par    email: f\@digipen.edu
+\file	nnnn.cpp
+\author n (100%)
+\par    email: n\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "fff.h"
+#include "nnnn.h"
 #include "Math\Vector2.h"
 #include "System\Input\InputSystem.h"
 #include "System\Input\InputMap.h"
@@ -19,59 +19,59 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	fff::fff()
+	nnnn::nnnn()
 	{
 	}
 
-	fff::~fff()
+	nnnn::~nnnn()
 	{
 	}
 
-	void fff::Load()
+	void nnnn::Load()
 	{
 	}
 
-	void fff::Init()
+	void nnnn::Init()
 	{
 	}
 
-	void fff::Update(const float _fDeltaTime)
+	void nnnn::Update(const float _fDeltaTime)
 	{
 	}
 
-	void fff::FixedUpdate(const float _fDeltaTime)
+	void nnnn::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
-	void fff::PostUpdate(void)
+	void nnnn::PostUpdate(void)
 	{
 	}
 
-	void fff::GameObjectDestroy(void)
+	void nnnn::GameObjectDestroy(void)
 	{
 	}
 
-	void fff::Unload(void)
+	void nnnn::Unload(void)
 	{
 	}
 
-	fff * fff::Duplicate() const
+	nnnn * nnnn::Duplicate() const
 	{
-		return nullptr;
+		return new nnnn{};
 	}
 
-	void fff::Serialise(TextSerialiser& _ser) const
-	{
-	}
-
-	void fff::Unserialise(TextSerialiser& _ser)
+	void nnnn::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-
-	const char * const fff::GetBehaviourName() const
+	void nnnn::Unserialise(TextSerialiser& _ser)
 	{
-		return fff::BehaviourName;
+	}
+
+
+	const char * const nnnn::GetBehaviourName() const
+	{
+		return nnnn::BehaviourName;
 	}
 
 	

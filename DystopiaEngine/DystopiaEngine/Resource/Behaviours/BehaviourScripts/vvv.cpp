@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Tessst.cpp
-\author t (100%)
-\par    email: t\@digipen.edu
+\file	vvv.cpp
+\author v (100%)
+\par    email: v\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,69 +11,70 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Tessst.h"
+#include "vvv.h"
 #include "Math\Vector2.h"
 #include "System\Input\InputSystem.h"
 #include "System\Input\InputMap.h"
 #include "System\Driver\Driver.h"
 #include "Editor\ConsoleLog.h"
-
+#include "Object\GameObject.h"
+#include "Component\Transform.h"
 namespace Dystopia
 {
-	Tessst::Tessst()
+	vvv::vvv()
+	{                    
+	}     
+
+	vvv::~vvv()
 	{
 	}
 
-	Tessst::~Tessst()
+	void vvv::Load()
+	{   
+	}
+
+	void vvv::Init()
 	{
 	}
 
-	void Tessst::Load()
+	void vvv::Update(const float _fDeltaTime)
 	{
+        this->GetOwner()->GetComponent<Transform>()->SetPosition(1000,50,0);
 	}
 
-	void Tessst::Init()
-	{
-	}
-
-	void Tessst::Update(const float _fDeltaTime)
-	{
-		                           d;
-	}
-
-	void Tessst::FixedUpdate(const float _fDeltaTime)
+	void vvv::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
-	void Tessst::PostUpdate(void)
+	void vvv::PostUpdate(void)
 	{
 	}
 
-	void Tessst::GameObjectDestroy(void)
+	void vvv::GameObjectDestroy(void)
 	{
 	}
 
-	void Tessst::Unload(void)
+	void vvv::Unload(void)
 	{
 	}
 
-	Tessst * Tessst::Duplicate() const
+	vvv * vvv::Duplicate() const
 	{
-		return new Tessst{};
+		return new vvv{};
 	}
 
-	void Tessst::Serialise(TextSerialiser& _ser) const
-	{
-	}
-
-	void Tessst::Unserialise(TextSerialiser& _ser)
+	void vvv::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-
-	const char * const Tessst::GetBehaviourName() const
+	void vvv::Unserialise(TextSerialiser& _ser)
 	{
-		return Tessst::BehaviourName;
+	}
+
+
+	const char * const vvv::GetBehaviourName() const
+	{
+		return vvv::BehaviourName;
 	}
 
 	

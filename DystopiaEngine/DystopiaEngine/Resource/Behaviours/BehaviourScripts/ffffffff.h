@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	shannon.h
-\author s (100%)
-\par    email: s\@digipen.edu
+\file	ffffffff.h
+\author f (100%)
+\par    email: f\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _shannon_H_
-#define _shannon_H_
+#ifndef _ffffffff_H_
+#define _ffffffff_H_
 
 #define str(s) #s
 
@@ -22,10 +22,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class shannon : Behaviour
+	class ffffffff : Behaviour
 	{
 	public:
-		static constexpr const char * BehaviourName = str(shannon);
+
+		static constexpr const char * BehaviourName = str(ffffffff);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -35,10 +36,10 @@ namespace Dystopia
 		};
 
 #endif
-		static uint64_t constexpr mshannonID = 632291328;
+		static uint64_t constexpr mffffffffID = 3511681024;
 
-		shannon();
-		~shannon();
+		ffffffff();
+		~ffffffff();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -56,11 +57,11 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const;
 
-		virtual shannon * Duplicate() const;
+		virtual ffffffff * Duplicate() const;
 
 	private:
-	
-	int i;
+
+
 
 	};
 
@@ -68,13 +69,13 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport shannon * shannonClone()
+		DllExport ffffffff * ffffffffClone()
 		{
-			return new shannon;
+			return new ffffffff;
 		}
 	}
 }
 
-#endif //_shannon_H_
+#endif //_ffffffff_H_
 
 
