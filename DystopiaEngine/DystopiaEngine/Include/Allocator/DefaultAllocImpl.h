@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _DEFAULTALLOCIMPL_H_
 #define _DEFAULTALLOCIMPL_H_
 
+#include <cstddef>
 #include <cstdint>
 
 
@@ -32,10 +33,11 @@ namespace Dystopia
 		void Deallocate(void*);
 
 	private:
-		void* mpBlock;
-		void* mpFree;
+		std::byte* mpBlock;
+		std::byte* mpFree;
 
-		static constexpr auto MIN_SIZE  = sizeof(MetaData_t) * 2;
+		static constexpr auto MIN_ALIGN = alignof(MetaData_t);
+		static constexpr auto MIN_SIZE  = sizeof(MetaData_t) * 2 - MIN_ALIGN;
 
 		MetaData_t GetBlockSize(void*);
 		MetaData_t GetNextOffset(void*);

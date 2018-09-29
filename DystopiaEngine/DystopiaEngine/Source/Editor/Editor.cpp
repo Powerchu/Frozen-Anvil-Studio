@@ -57,6 +57,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/ColorScheme.h"
 #include "Editor/StyleScheme.h"
 
+#include "Allocator/DefaultAlloc.h"
+
 /* library includes */
 #include <iostream>
 #include <windows.h>
@@ -75,19 +77,11 @@ static constexpr COMDLG_FILTERSPEC DYSTOPIA_SCENE_FILTER_EXTENSION[1] =
 };
 
 // Entry point for editor
-int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
+int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-	hInstance;
-
-	Math::Quaternion a{ 1.f * (rand() % 10), 1.f * (rand() % 10), 1.f * (rand() % 10), 1.f * (rand() % 10) }, 
-		b{ 1.f * (rand() % 10),1.f * (rand() % 10),1.f * (rand() % 10),1.f * (rand() % 10) };
-
-	a = a*b;
-
-	std::cout << a.MagnitudeSqr();
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
