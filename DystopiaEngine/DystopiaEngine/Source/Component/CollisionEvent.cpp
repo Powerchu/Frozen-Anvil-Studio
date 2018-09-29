@@ -1,7 +1,7 @@
 #include "System/Collision/CollisionEvent.h"
+#include "System/Logger/LoggerSystem.h"
 #include "Object/GameObject.h"
 #include "Component/RigidBody.h"
-#include "System/Logger/LoggerSystem.h"
 #include <algorithm>
 
 Dystopia::CollisionEvent::CollisionEvent(GameObject* _Self, GameObject * _Target)
