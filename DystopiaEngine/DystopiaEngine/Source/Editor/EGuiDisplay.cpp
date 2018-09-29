@@ -122,7 +122,7 @@ namespace EGUI
 		ImGui::Unindent(_spacing);
 	}
 
-	bool StartChild(const std::string& _label, const Math::Vec2& _size, bool _showBorder, const Math::Vec4& _colour)
+	bool StartChild(const std::string& _label, const Math::Vec2& _size, bool _showBorder, const Math::Vec4& /*_colour*/)
 	{
 		return ImGui::BeginChild(_label.c_str(), ImVec2{ _size.x, _size.y }, _showBorder);
 	}
@@ -301,7 +301,7 @@ namespace EGUI
 		Array<eDragStatus, 2> VectorFields(const std::string& _label, Math::Vector2 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
 		{
 			std::string field1 = "##VecFieldX", field2 = "##VecFieldY";
-			float x, y, z;
+			float x, y;
 			x = _outputVec->x;
 			y = _outputVec->y;
 			field1 += _label;
@@ -358,7 +358,7 @@ namespace EGUI
 			return false;
 		}
 
-		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow)
+		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow, bool _defaultOpen)
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 			flags = _highlighted ? flags | ImGuiTreeNodeFlags_Selected : flags;
@@ -366,8 +366,9 @@ namespace EGUI
 
 			if (_highlighted)
 				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
-
-			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, ImGuiTreeNodeFlags_DefaultOpen | flags);
+			if (_defaultOpen)
+				flags |= ImGuiTreeNodeFlags_DefaultOpen;
+			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, flags);
 
 			if (_highlighted)
 				ImGui::PopStyleColor();
@@ -419,7 +420,6 @@ namespace EGUI
 		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
 						   const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize)
 		{
-			const ImU32	col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
 			ImVec2 pos = ImGui::GetCursorScreenPos();
 			ImVec2 size{ _displaytSize.x, _displaytSize.y };
 			const float iconWidth = size.x / 2;
@@ -429,8 +429,10 @@ namespace EGUI
 			ImVec2 posIcon{ pos.x + offsetX, pos.y + offsetY };
 			ImVec2 posText{ pos.x + 1, pos.y + iconHeight + (2* offsetY) };
 
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), size);
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
+			ImGui::PopStyleColor();
 			if (payload) EndPayload();
 			ImGui::SetCursorScreenPos(posIcon);
 			IconFile(_uniqueId.c_str(), size.x, size.y);

@@ -87,16 +87,19 @@ namespace Dystopia
 		ShowTaskMgrBreakdown();
 		for (const auto& item : mArrLoggedData)
 		{
-			if (item.mShowGeneric)
+			if (item.mShowGeneric && EGUI::Display::StartTreeNode(item.mGenericOverview.mLabel))
 			{
+				EGUI::Indent(10);
 				ShowLog(item.mGenericOverview, mGraphSizeB);
-			}
-			if (item.mData.size() && EGUI::Display::StartTreeNode(item.mLabel))
-			{
-				for (unsigned int i = 0; i < item.mData.size(); ++i)
+				if (item.mData.size() && EGUI::Display::StartTreeNode(item.mLabel, nullptr, false, false, false))
 				{
-					ShowLog(item.mData[i], mGraphSizeS);
+					for (unsigned int i = 0; i < item.mData.size(); ++i)
+					{
+						ShowLog(item.mData[i], mGraphSizeS);
+					}
+					EGUI::Display::EndTreeNode();
 				}
+				EGUI::UnIndent(10);
 				EGUI::Display::EndTreeNode();
 			}
 			EGUI::Display::HorizontalSeparator();
@@ -159,7 +162,7 @@ namespace Dystopia
 	{
 		_size.y = (_log.mIsBigGraph) ? mGraphBigY : mGraphSmallY;
 		EGUI::Display::LineGraph(_log.mLabel.c_str(), _log.mArrValues, 0, static_cast<float>(_log.mMax), _size,
-						std::to_string(static_cast<int>(_log.mArrValues[_log.mCurrentIndex])));
+								 std::to_string(static_cast<int>(_log.mArrValues[_log.mCurrentIndex])));
 	}
 
 	void PerformanceLog::ShowTaskMgrBreakdown()
