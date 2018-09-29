@@ -228,7 +228,7 @@ namespace Dystopia
 		{
 			EGUI::PushID(i);
 			EditorTab *pTab = mArrTabs[i];
-			pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()) - Math::Vec2{ 4, 4 });
+			pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()) - Math::Vec2{ 16, 4 });
 			pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
 			pTab->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			{

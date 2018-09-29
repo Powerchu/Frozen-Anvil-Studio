@@ -108,7 +108,8 @@ struct Tabs
 	ImVec2	mPos;
 	ImVec2	mSize;
 	eStatus mStatus;
-
+	ImGuiWindow* mpImWindow = nullptr;
+	ImGuiWindow* mpImTabHead = nullptr;
 };
 
 struct DockSpace
@@ -468,7 +469,7 @@ void DockSpace::SplitTabs()
 		if (ImGui::IsItemHovered())
 		{
 			ImGui::SetMouseCursor(cursor);
-			if (ImGui::IsMouseClicked(0))
+			if (ImGui::IsMouseClicked(0))				
 				pTab->mStatus = eSTATUS_DRAGGED;
 		}
 
@@ -758,10 +759,7 @@ void DockSpace::DrawTabBarListBtn(Tabs& _tab)
 	ImVec2 min = ImGui::GetItemRectMin();
 	ImVec2 max = ImGui::GetItemRectMax();
 	ImVec2 center = (min + max) * 0.5f;
-	pCanvas->AddRectFilled(ImVec2{ center.x - 4, min.y + 3 }, ImVec2{ center.x + 4, min.y + 5 },
-						   ImGui::IsItemHovered() ? ImGui::GetColorU32(ImGuiCol_FrameBgActive) : ImGui::GetColorU32(ImGuiCol_Text));
-
-	pCanvas->AddTriangleFilled(ImVec2{ center.x - 4, min.y + 7 }, ImVec2{ center.x + 4, min.y + 7 }, ImVec2{ center.x, min.y + 12 },
+	pCanvas->AddTriangleFilled(ImVec2{ center.x - 4, min.y + 4 }, ImVec2{ center.x + 4, min.y + 4 }, ImVec2{ center.x, min.y + 12 },
 							   ImGui::IsItemHovered() ? ImGui::GetColorU32(ImGuiCol_FrameBgActive) : ImGui::GetColorU32(ImGuiCol_Text));
 }
 
@@ -772,7 +770,6 @@ void DockSpace::TabBarDesign(Tabs *_pDockTab, ImDrawList *_pCanvas, const ImVec2
 	_pCanvas->PathLineTo(_pos + ImVec2{ -7, 0 });
 	_pCanvas->PathLineTo(_pos + ImVec2{ _size.x + 7, 0 });
 	_pCanvas->PathLineTo(_pos + ImVec2{ _size.x + 7, _size.y - 1});
-
 	_pCanvas->PathFillConvex(ImGui::IsItemHovered() ? ImGui::GetColorU32(ImGuiCol_FrameBgHovered) 
 												    : (_pDockTab->mActive ? ImGui::GetColorU32(ImGuiCol_FrameBgActive)
 																		  : ImGui::GetColorU32(ImGuiCol_FrameBg)));
@@ -835,6 +832,7 @@ bool DockSpace::TabBar(Tabs& _tab, bool _closeBtn)
 		}		
 		ImVec2 cp(_tab.mPos.x, tabBase + lineH);
 		pCanvas->AddLine(cp, cp + ImVec2{ _tab.mSize.x, 0 }, ImGui::GetColorU32(ImGuiCol_FrameBgActive), 3);
+		_tab.mpImTabHead = ImGui::GetCurrentWindow();
 	}
 	ImGui::EndChild();
 	return tabClosed;
@@ -849,6 +847,7 @@ void DockSpace::SetTabPosSize(Tabs& _destTab, Tabs& _tab, eDockSlot _slot, Tabs&
 	switch (_slot)
 	{
 	case eDOCK_SLOT_BOTTOM:
+		_destTab.mSize.y *= 0.5f;
 		_destTab.mSize.y *= 0.5f;
 		_tab.mSize.y *= 0.5f;
 		_tab.mPos.y += _destTab.mSize.y;
@@ -1023,6 +1022,8 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	eDockSlot nextSlot = mNextSlot;
 	mNextSlot = eDOCK_SLOT_TAB;
 	Tabs& _tab = GetTab(_pLabel, !_pOpened || *_pOpened);
+	_tab.mpImWindow = nullptr;
+	_tab.mpImTabHead = nullptr;
 	if (!_tab.mOpened && (!_pOpened || *_pOpened)) 
 		TryDockTabToStoredLocation(_tab);
 
@@ -1069,7 +1070,7 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 		ImGui::SetNextWindowPos(first ? ImVec2{ 100, 100 } : _tab.mPos);
 		ImGui::SetNextWindowSize(_tab.mSize, ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowBgAlpha(.9f);
-		bool ret = ImGui::Begin(_pLabel, _pOpened, ImGuiWindowFlags_NoCollapse | _flags); 
+		bool ret = ImGui::Begin(_pLabel, _pOpened, ImGuiWindowFlags_NoCollapse | _flags);
 		mEndAction = eEND_ACTION_END;
 		_tab.mPos = ImGui::GetWindowPos();
 		_tab.mSize = gSizeStack.IsEmpty() ? ImGui::GetWindowSize() : gSizeStack.Peek();
@@ -1099,13 +1100,16 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	pos.y += (tabH + 8.f);
 	size.y -= (tabH + 8.f);
 	pos.x += 2;
-	size.x -= 4;
+	size.x -= 8;
 	ImGui::SetCursorScreenPos(pos);
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoSavedSettings | _flags;
-
+							 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+							 ImGuiWindowFlags_NoSavedSettings | _flags;
 	bool ret = ImGui::BeginChild(_pLabel, size, true, flags);
+	if (_tab.mStatus == eSTATUS_DRAGGED)
+	{
+		_tab.mpImWindow = ImGui::GetCurrentWindow();
+	}
 	return ret;
 }
 
@@ -1184,12 +1188,23 @@ bool BeginDockableSpace()
 	DockSpace& space = gDockable[curPanel];
 	space.mPanelPos = ImGui::GetWindowPos();
 	space.mPanelSize = ImGui::GetWindowSize();
-
 	return result;
 }
 
 void EndDockableSpace()
 {
+	for (auto& e : gDockable)
+	{
+		auto& elem = e.second;
+		for (auto& tab : elem.mArrTabs)
+		{
+			if (tab->mStatus == eSTATUS_DRAGGED && tab->mpImWindow && tab->mpImTabHead)
+			{
+				tab->mpImTabHead->Flags |= ImGuiWindowFlags_BringFoward;
+				tab->mpImWindow->Flags |= ImGuiWindowFlags_BringFoward;
+			}
+		}
+	}
 	ImGui::EndChild();
 	curPanel = nullptr;
 }
