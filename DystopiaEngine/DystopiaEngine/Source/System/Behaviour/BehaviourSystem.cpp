@@ -5,7 +5,11 @@
 
 #include "System/File/FileSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
+#include "System/Scene/SceneSystem.h"
 #include "System/Driver/Driver.h"
+#include "Object/GameObject.h"
+
+#include <utility>
 
 namespace Dystopia
 {
@@ -25,6 +29,7 @@ namespace Dystopia
 		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
 
 		FileSys->CreateFiles("Dystopia/BehaviourDLL", eFileDir::eAppData);
+		FileSys->CreateFiles("Dystopia/Temp", eFileDir::eAppData);
 
 #if _DEBUG
 
@@ -38,7 +43,7 @@ namespace Dystopia
 #endif
 
 		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL", eFileDir::eAppData));
-
+		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehaviourScripts", eFileDir::eResource));
 
 		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
@@ -68,6 +73,7 @@ namespace Dystopia
 				wrap.mName = std::string{ name.begin(), name.end() };
 				wrap.mpBehaviour = (BehaviourClone());
 				mvBehaviourReferences.Emplace(Utility::Move(wrap));
+				mvBehaviours.push_back(std::make_pair(name, AutoArray<BehaviourPair>{}));
 			}
 			//mvBehaviourReferences.Emplace(BehaviourClone());
 		}
@@ -91,21 +97,41 @@ namespace Dystopia
 
 
 		/*Update Hotloader*/
-		auto && vFileChanges = mHotloader->GetFileChanges();
-		for (auto & elem : vFileChanges)
+		static std::vector<std::wstring> vTempFileName;
+		mHotloader->Update();
+		mHotloader->ChangesInTempFolder(vTempFileName);
+		bool hasChange = false;
+		for (auto const & elem : vTempFileName)
 		{
 			for (auto & i : mvBehaviourReferences)
 			{
 				std::wstring name{ i.mName.begin() , i.mName.end() };
-				if (FileSys->RemoveFileExtension(elem.mDllFileName) == name)
+				if (FileSys->RemoveFileExtension(elem) == name)
 				{
 					delete i.mpBehaviour;
 					i.mpBehaviour = nullptr;
-					break;
 				}
 			}
-			mHotloader->CompileFiles(elem.mDirectoryIndex, elem.mFileName);
+			for (auto & i : mvBehaviours)
+			{
+				if (i.first == FileSys->RemoveFileExtension(elem))
+				{
+					for (auto & iter : i.second)
+					{
+						if (iter.second)
+						{
+							iter.first = iter.second->GetOwner()->GetID();
+							iter.second->GetOwner()->RemoveComponent(iter.second);
+							iter.second = nullptr;
+						}
+					}
+				}
+			}
+			hasChange = true;
 		}
+
+		if(hasChange)
+			mHotloader->InitialiseTransfer();
 
 		DLLWrapper * arr[100]{ nullptr };
 
@@ -153,11 +179,42 @@ namespace Dystopia
 					wrap.mName = DllName;
 					wrap.mpBehaviour = (BehaviourClone());
 					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Utility::Move(wrap)));
+					AutoArray< BehaviourPair> temp;
+					
+					mvBehaviours.push_back(std::make_pair(std::wstring{ DllName.begin(), DllName.end() }, temp));
 				}
+				
 
 				++start;
 			}
 		}
+		for (auto & elem : mvRecentChanges)
+		{
+			std::wstring strName{ elem->mName.begin(), elem->mName.end() };
+			for (auto & i : mvBehaviours)
+			{
+				if (i.first == strName)
+				{
+					for (auto & iter : i.second)
+					{
+						auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+						auto ptr = elem->mpBehaviour->Duplicate();
+						SceneSys->FindGameObject(iter.first)->AddComponent(ptr, BehaviourTag{});
+						iter.second = ptr;
+					}
+				}
+			}
+		}
+
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				iter.second->Update(0.f);
+			}
+			
+		}
+		vTempFileName.clear();
 #endif
 	}
 
@@ -181,6 +238,8 @@ namespace Dystopia
 	{
 	}
 
+#if EDITOR
+
 	MagicArray<BehaviourWrap*> const & Dystopia::BehaviourSystem::GetDllChanges() const
 	{
 		return mvRecentChanges;
@@ -193,5 +252,26 @@ namespace Dystopia
 	{
 		return mvBehaviourReferences;
 	}
+	Behaviour * BehaviourSystem::RequestBehaviour(uint64_t const & _ID, std::string const & _name)
+	{
+		for (auto & elem : mvBehaviourReferences)
+		{
+			if (elem.mName == _name)
+			{
+				for (auto & i : mvBehaviours)
+				{
+					if (i.first == std::wstring{ _name.begin(), _name.end() })
+					{
+						auto * ptr = elem.mpBehaviour->Duplicate();
+						i.second.push_back(std::make_pair(_ID, ptr));
+						return ptr;
+					}
+				}
+			}
+		}
+		return nullptr;
+	}
+
+#endif
 }
 

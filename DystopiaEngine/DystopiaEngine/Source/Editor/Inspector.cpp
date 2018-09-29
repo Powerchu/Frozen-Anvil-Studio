@@ -227,9 +227,14 @@ namespace Dystopia
 			{
 				if (EGUI::Display::SelectableTxt(elem.mName))
 				{
-					Behaviour *p = elem.mpBehaviour->Duplicate();
-					mpFocus->AddComponent(p, BehaviourTag{});
-					(p)->Update(0.16f);
+					auto ptr = mpBehaviourSys->RequestBehaviour(mpFocus->GetID(), elem.mName);
+					if (ptr)
+					{
+						mpFocus->AddComponent(ptr, BehaviourTag{});
+						//ptr->
+					}
+						
+					//(p)->Update(0.16f);
 				}
 			}
 

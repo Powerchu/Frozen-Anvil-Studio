@@ -362,7 +362,7 @@ inline __m128 _CALL Math::Vector4::GetRaw(void) const noexcept
 inline Math::Vector4& _CALL Math::Vector4::Normalise(void)
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	DEBUG_ASSERT(IsZero(Dot(*this)), "Vector4 Error: Normalising a zero vector.\n");
+	//DEBUG_ASSERT(IsZero(Dot(*this)), "Vector4 Error: Normalising a zero vector.\n");
 #endif
 
 	__m128 invSqrt = InvSqrt(Dot(mData, mData));
@@ -441,7 +441,7 @@ inline Math::Vector4 _CALL Math::Cross(Vector4 _lhs, Vector4 _rhs)
 inline Math::Vector4& _CALL Math::Vector4::Project(const Vector4 _rhs)
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	DEBUG_ASSERT(IsZero(_rhs.Dot(_rhs)), "Vector4 Error: Projection onto zero vector.\n");
+	//DEBUG_ASSERT(IsZero(_rhs.Dot(_rhs)), "Vector4 Error: Projection onto zero vector.\n");
 #endif
 
 	Vector4 dotB{ Dot(_rhs.mData, _rhs.mData) };
@@ -745,7 +745,7 @@ inline __m128 _CALL Math::Vector4::SwizzleMask<1, 1, 3, 3>::GetRaw(void) const n
 inline float& _CALL Math::Vector4::operator[] (const unsigned _nIndex)
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	DEBUG_ASSERT(_nIndex > 3, "Vector4 Error: Array index out of range.");
+	//DEBUG_ASSERT(_nIndex > 3, "Vector4 Error: Array index out of range.");
 #endif
 
 	// Visual Studio compiler only?
@@ -755,7 +755,7 @@ inline float& _CALL Math::Vector4::operator[] (const unsigned _nIndex)
 inline const float _CALL Math::Vector4::operator[] (const unsigned _nIndex) const
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	DEBUG_ASSERT(_nIndex > 3, "Vector4 Error: Array index out of range.");
+	//DEBUG_ASSERT(_nIndex > 3, "Vector4 Error: Array index out of range.");
 #endif
 
 	// Visual Studio compiler only?
