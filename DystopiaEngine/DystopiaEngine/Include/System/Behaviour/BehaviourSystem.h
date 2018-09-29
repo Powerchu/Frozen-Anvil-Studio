@@ -78,7 +78,7 @@ namespace Dystopia
 	private:
 		/*Array of Behaviours components*/
 		//MagicArray< SharedPtr<Behaviour> > mBehaviours;
-
+		FileSystem * FileSys;
 #if EDITOR
 
 		SharedPtr< Hotloader<1> > mHotloader;

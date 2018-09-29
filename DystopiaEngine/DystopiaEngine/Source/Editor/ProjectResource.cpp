@@ -235,13 +235,13 @@ namespace Dystopia
 
 	void ProjectResource::SearchWindow()
 	{
-		float width = Size().x - 50;
+		float width = Size().x - 20;
 		width = (width < 20) ? 20 : width;
-		EGUI::Indent(5);
+		EGUI::Indent(4);
 		EGUI::ChangeLabelSpacing(10);
 		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, false, width);
 		EGUI::ChangeLabelSpacing();
-		EGUI::UnIndent(5);
+		EGUI::UnIndent(4);
 		EGUI::Display::HorizontalSeparator();
 	}
 

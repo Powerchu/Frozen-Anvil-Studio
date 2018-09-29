@@ -4251,6 +4251,8 @@ static int IMGUI_CDECL ChildWindowComparer(const void* lhs, const void* rhs)
         return d;
     if (int d = (a->Flags & ImGuiWindowFlags_Tooltip) - (b->Flags & ImGuiWindowFlags_Tooltip))
         return d;
+	if (int d = (a->Flags & ImGuiWindowFlags_BringFoward) - (b->Flags & ImGuiWindowFlags_BringFoward))
+		return d;
     return (a->BeginOrderWithinParent - b->BeginOrderWithinParent);
 }
 

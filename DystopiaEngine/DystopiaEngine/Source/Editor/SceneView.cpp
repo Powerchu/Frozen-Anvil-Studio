@@ -29,7 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	static constexpr float imageOffsetX = 3.f;
+	static constexpr float imageOffsetX = 4.f;
 	static constexpr float imageOffsetY = 27.f;
 
 	static SceneView* gpInstance = 0;
@@ -88,7 +88,9 @@ namespace Dystopia
 	{
 		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
 		ImVec2 size{ Size().x - imageOffsetX,  Size().y - imageOffsetY };
+		EGUI::UnIndent(2);
 		ImGui::Image(reinterpret_cast<void*>(id), size);
+		EGUI::Indent(2);
 		if (ImGui::IsItemHovered())
 		{
 			if (mToZoom != eZOOM_NONE) 
