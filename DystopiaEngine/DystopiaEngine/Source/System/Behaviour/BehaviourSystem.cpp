@@ -91,7 +91,7 @@ namespace Dystopia
 
 
 		/*Update Hotloader*/
-		auto & vFileChanges = mHotloader->GetFileChanges();
+		auto && vFileChanges = mHotloader->GetFileChanges();
 		for (auto & elem : vFileChanges)
 		{
 			for (auto & i : mvBehaviourReferences)
