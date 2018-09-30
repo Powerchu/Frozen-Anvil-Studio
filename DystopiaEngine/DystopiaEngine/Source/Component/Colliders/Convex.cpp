@@ -74,18 +74,21 @@ namespace Dystopia
 
 	void Convex::Serialise(TextSerialiser& _out) const
 	{
+		const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
+		const float _yScale = GetOwner()->GetComponent<Transform>()->GetScale().y;
+
 		_out.InsertStartBlock("Convex Collider");
-		_out << mID;					// gObj ID
+		_out << mID;						// gObj ID
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);
 
 		_out << int(mVertices.size());
 
-		for (const auto vertex : mVertices)
+		for (const auto& vertex : mVertices)
 		{
-			_out << float(vertex.mPosition[0]);
-			_out << float(vertex.mPosition[1]);
+			_out << float(vertex.mPosition[0]) / _xScale;
+			_out << float(vertex.mPosition[1]) / _yScale;
 			_out << float(vertex.mPosition[2]);
 		}
 
@@ -94,8 +97,11 @@ namespace Dystopia
 
 	void Convex::Unserialise(TextSerialiser& _in)
 	{
-		int arr_vert_size;
-		float tmp_x, tmp_y, tmp_z;
+		int arr_vert_size = 0;
+		float tmp_x{ 0.0F }, tmp_y{ 0.0F }, tmp_z{ 0.0F };
+
+		mVertices.clear();
+		mDebugVertices.clear();
 
 		_in.ConsumeStartBlock();
 		_in >> mID;				// gObj ID

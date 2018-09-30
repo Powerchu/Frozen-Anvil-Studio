@@ -164,8 +164,8 @@ namespace Dystopia
 		Mesh* GetMesh() const;
 
 		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&) const;
-		virtual void Unserialise(TextSerialiser&);
+		virtual void Serialise(TextSerialiser&) const = 0;
+		virtual void Unserialise(TextSerialiser&) = 0;
 
 		virtual ~Collider();
 
