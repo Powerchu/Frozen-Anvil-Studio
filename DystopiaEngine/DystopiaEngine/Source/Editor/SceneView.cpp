@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/Editor.h"
 #include "Editor/EditorEvents.h"
+#include "Editor/EditorInputs.h"
 #include "Editor/ConsoleLog.h"
 #include "Editor/DefaultFactory.h"
 
@@ -54,7 +55,10 @@ namespace Dystopia
 		mpGfxSys{ nullptr },
 		mDelta{},
 		mpSceneCamera{ nullptr },
-		mSensitivity{ 0.1f }
+		mSensitivity{ 0.1f },
+		mpEditorInput{ nullptr },
+		mAmFocused{ false },
+		mMoveSens{ 1 }
 	{}
 
 	SceneView::~SceneView()
@@ -67,6 +71,7 @@ namespace Dystopia
 
 	void SceneView::Init()
 	{
+		mpEditorInput = GetMainEditor().GetEditorInput();
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
 		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Bind(&SceneView::SceneChanged, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);
@@ -210,16 +215,35 @@ namespace Dystopia
 
 	void SceneView::EditorUI()
 	{
+		if (ImGui::IsMouseClicked(0))
+			mAmFocused = false;
+
+		EGUI::UnIndent(2);
 		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
 		ImVec2 size{ Size().x,  Size().y - imageOffsetY };
-		EGUI::UnIndent(2);
-		ImGui::Image(reinterpret_cast<void*>(id), size);
-		EGUI::Indent(2);
+
+		if (GetMainEditor().CurrentState() == EDITOR_PLAY)
+			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
+
+		if (ImGui::ImageButton(reinterpret_cast<void*>(id), size, ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0))
+			mAmFocused = true;
+
+		if (GetMainEditor().CurrentState() == EDITOR_PLAY)
+			ImGui::PopStyleVar();
+
 		if (ImGui::IsItemHovered())
 		{
-			if (mToZoom != eZOOM_NONE)		Zoom(eZOOM_IN == mToZoom);
-			if (ImGui::IsMouseClicked(0))	FindMouseObject(size);
+			if (ImGui::IsMouseClicked(0))	
+				FindMouseObject(size);
 		}
+		if (mAmFocused)
+		{
+			Move();
+			if (mToZoom != eZOOM_NONE) Zoom(eZOOM_IN == mToZoom);
+		}
+
+		EGUI::Indent(2);
+		mToZoom = eZOOM_NONE;
 	}
 
 	void SceneView::Shutdown()
@@ -230,6 +254,31 @@ namespace Dystopia
 	std::string SceneView::GetLabel() const
 	{
 		return mLabel;
+	}
+
+	void SceneView::Move()
+	{
+		if (mpSceneCamera && !mpEditorInput->IsKeyPressed(KEY_CTRL))
+		{
+			Math::Point3D newPos = mpSceneCamera->GetComponent<Transform>()->GetPosition();
+			if (mpEditorInput->IsKeyPressed(KEY_W))
+			{
+				newPos.y = newPos.y + mMoveSens;
+			}
+			if (mpEditorInput->IsKeyPressed(KEY_A))
+			{
+				newPos.x = newPos.x - mMoveSens;
+				}
+			if (mpEditorInput->IsKeyPressed(KEY_S))
+			{
+				newPos.y = newPos.y - mMoveSens;
+			}
+			if (mpEditorInput->IsKeyPressed(KEY_D))
+			{
+				newPos.x = newPos.x + mMoveSens;
+			}
+			mpSceneCamera->GetComponent<Transform>()->SetPosition(newPos);
+		}
 	}
 
 	void SceneView::FindMouseObject(const Math::Vec2& _imgSize)
@@ -277,7 +326,7 @@ namespace Dystopia
 				worldClickPos.y >= (pos.y - (scale.y / 2)) &&
 				worldClickPos.y <= (pos.y + (scale.y / 2)))
 			{
-				PrintToConsoleLog("Cicked on a GameObject from scene view!");
+				PrintToConsoleLog("Clicked on a GameObject from scene view!");
 			}
 		}
 	}

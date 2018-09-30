@@ -28,8 +28,13 @@ namespace Dystopia
 
 		// Destructor
 		~CommandHandler();
+
+		// has unsaved changes
+		bool HasUnsavedChanges() const;
+
 		// shutdown
 		void Shutdown();
+
 		// Calls the ExecuteDo function of the param command and passes it into the undo deque, also empties the redo deque
 		void InvokeCommand(Commands *_comd);
 		
@@ -83,11 +88,15 @@ namespace Dystopia
 		void EndRecording();
 		bool IsRecording() const;
 
+		// Save Callback
+		void					SaveCallback();
+
 	private:
 		RecordBase				*mpRecorder;
 		std::deque<Commands*>	mDeqRedo;
 		std::deque<Commands*>	mDeqUndo;
 		bool					mRecording;
+		bool					mUnsavedChanges;
 		void					PopFrontOfDeque(std::deque<Commands*>&);
 		void					RemoveStray(std::deque<Commands*>&);
 		size_t					mMaxSize;

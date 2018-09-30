@@ -100,7 +100,7 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 	/*Consume Start Block*/
 	SerialObj.ConsumeStartBlock();
 	/*Get Next Scene to Unserialise*/
-	mpNextScene->Unserialise(SerialObj);
+	mpCurrScene->Unserialise(SerialObj);
 	/*Get all System who are ComponentDonor to unserialise*/
 	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
 	/*Consume End Block*/

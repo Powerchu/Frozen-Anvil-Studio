@@ -22,6 +22,7 @@ namespace Dystopia
 	class GraphicsSystem;
 	class GameObject;
 	class Camera;
+	class EditorInput;
 
 	class SceneView : public EditorTab
 	{
@@ -57,13 +58,15 @@ namespace Dystopia
 			eZOOM_NONE
 		};
 
+		bool			mAmFocused;
 		float			mDelta;
 		float			mSensitivity;
+		float			mMoveSens;
 		eZoom			mToZoom;
 		std::string		mLabel;
 		GraphicsSystem	*mpGfxSys;
 		GameObject		*mpSceneCamera;
-
+		EditorInput		*mpEditorInput;
 		//TODO delete me
 		GameObject*		mpStaticBoxObject;
 		GameObject*		mpCircleObject;

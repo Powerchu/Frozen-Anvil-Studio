@@ -51,26 +51,21 @@ namespace Dystopia
 
 	void CommandHandler::InvokeCommand(Commands *_comd)
 	{
-		if (!_comd->ExecuteDo())
-		{
-			return;
-		}
-
+		if (!_comd->ExecuteDo()) return;
 		if (Editor::GetInstance()->CurrentState() == EDITOR_PLAY)
 		{
 			delete _comd;
 			return;
 		}
 
+		mUnsavedChanges = true;
 		if (mDeqUndo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqUndo);
-
 		for (auto& e : mDeqRedo)
 		{
 			delete e;
 			e = nullptr;
 		}
-
 		mDeqRedo.clear();
 		mDeqUndo.push_back(_comd);
 	}
@@ -79,13 +74,13 @@ namespace Dystopia
 	{
 		EndRecording();
 		if (!mDeqUndo.size()) return; 
-
 		if (!mDeqUndo.back()->ExecuteUndo())
 		{
 			RemoveStray(mDeqUndo);
 			return;
 		}
 
+		mUnsavedChanges = true;
 		if (mDeqRedo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqRedo);
 
@@ -97,16 +92,15 @@ namespace Dystopia
 	{
 		EndRecording();
 		if (!mDeqRedo.size()) return;
-
 		if (!mDeqRedo.back()->ExecuteDo())
 		{
 			RemoveStray(mDeqRedo);
 			return;
 		}
 
+		mUnsavedChanges = true;
 		if (mDeqUndo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqUndo);
-
 		mDeqUndo.push_back(mDeqRedo.back());
 		mDeqRedo.pop_back();
 	}
@@ -155,6 +149,16 @@ namespace Dystopia
 	void CommandHandler::InvokeCommandDelete(GameObject& _pObj, Scene& _pScene, bool * _notify)
 	{
 		InvokeCommand(new ComdDeleteObject{ &_pObj, &_pScene, _notify });
+	}
+
+	void CommandHandler::SaveCallback()
+	{
+		mUnsavedChanges = false;
+	}
+
+	bool CommandHandler::HasUnsavedChanges() const
+	{
+		return mUnsavedChanges;
 	}
 }
 
