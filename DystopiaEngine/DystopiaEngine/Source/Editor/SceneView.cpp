@@ -98,10 +98,12 @@ namespace Dystopia
 		ImGui::Image(reinterpret_cast<void*>(id), size);
 		if (ImGui::IsItemHovered())
 		{
-			if (mToZoom != eZOOM_NONE)		Zoom(eZOOM_IN == mToZoom);
-			if (ImGui::IsMouseClicked(0))	FindMouseObject(size);
+			if (mToZoom != eZOOM_NONE)		
+				Zoom(eZOOM_IN == mToZoom);
+			if (ImGui::IsMouseClicked(0))	
+				FindMouseObject(size);
 		}
-		if (ImGui::IsItemFocused())		
+		 if (ImGui::IsItemFocused())		
 			Move();
 		EGUI::Indent(2);
 	}

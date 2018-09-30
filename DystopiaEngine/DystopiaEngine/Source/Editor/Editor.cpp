@@ -287,9 +287,9 @@ namespace Dystopia
 		{
 		case EDITOR_MAIN:
 			EngineCore::GetInstance()->PostUpdate();
-			mpBehaviourSys->PostUpdate();
 			break;
 		}
+		mpBehaviourSys->PostUpdate();
 		mpGuiSystem->EndFrame(); 
 		if (mCurrentState != mNextState)  UpdateState();
 	}
@@ -614,6 +614,7 @@ namespace Dystopia
 		mpSceneSystem->LoadScene(mTempSaveFile);
 		remove(mTempSaveFile.c_str());
 		mTempSaveFile.clear();
+		mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGE);
 	}
 
 	void Editor::UpdateKeys()
@@ -700,7 +701,6 @@ namespace Dystopia
 	
 	void Editor::InstallHotkeys()
 	{
-		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DLL_CHANGED)->Bind(&Editor::ReloadDLL, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_UNDO)->Bind(&Editor::EditorUndo, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_REDO)->Bind(&Editor::EditorRedo, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_COPY)->Bind(&Editor::EditorCopy, this);
@@ -715,7 +715,6 @@ namespace Dystopia
 
 	void Editor::UnInstallHotkeys()
 	{
-		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DLL_CHANGED)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_UNDO)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_REDO)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_COPY)->Unbind(this);
@@ -792,34 +791,6 @@ namespace Dystopia
 	EditorInput* Editor::GetEditorInput()
 	{
 		return mpInput;
-	}
-
-	void Editor::ReloadDLL()
-	{
-		return;
-
-		auto & arr = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
-		auto BehaviourSys = EngineCore::GetInstance()->GetSystem<BehaviourSystem>();
-		auto const & BehaviourArr = BehaviourSys->GetDllChanges();
-		for (auto & elem : BehaviourArr)
-		{
-			for (auto & gobj : arr)
-			{
-				auto & gobjBehaviours = gobj.GetAllBehaviours();
-				for (auto & behave : gobjBehaviours)
-				{
-					std::string Name = behave->GetBehaviourName();
-					if (Name == elem->mName)
-					{
-						delete behave;
-						behave = elem->mpBehaviour ? elem->mpBehaviour->Duplicate() : nullptr;
-						behave->Update(0.16f);
-						behave->SetOwner(&gobj);
-						break;
-					}
-				}
-			}
-		}
 	}
 }
 

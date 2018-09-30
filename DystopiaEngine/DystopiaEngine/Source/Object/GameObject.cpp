@@ -180,6 +180,8 @@ void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)
 		if (_pComponent == mBehaviours[n])
 		{
 			mBehaviours[n]->DestroyComponent();
+			mBehaviours[n] = nullptr;
+			mBehaviours.FastRemove(n);
 			return;
 		}
 	}
