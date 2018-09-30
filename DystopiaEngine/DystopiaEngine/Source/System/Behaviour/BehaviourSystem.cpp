@@ -39,7 +39,7 @@ namespace Dystopia
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine_D.lib", eCompile);
 		//mHotloader->AddAdditionalSourcePath(std::wstring{ strDystopia_Lib.begin(),strDystopia_Lib.end() });
 #else
-		mHotloader->AddFilesToCrawl(L"DystopiaEngine.lib", eCompile);
+		mHotloader->AddFilesToCrawl(L"DystopiaEngine_Editor.lib", eCompile);
 #endif
 
 		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL", eFileDir::eAppData));
