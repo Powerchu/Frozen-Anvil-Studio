@@ -120,7 +120,7 @@ namespace Dystopia
 		}
 
 		Camera* pCam = mpSceneCamera->GetComponent<Camera>();
-		if (!pCam)
+		if (nullptr == pCam)
 		{
 			PrintToConsoleLog("Camera is NULL in SceneView::FindMouseObject()");
 			return;
