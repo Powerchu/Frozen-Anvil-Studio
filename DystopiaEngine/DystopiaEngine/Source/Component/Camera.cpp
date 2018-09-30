@@ -64,7 +64,7 @@ void Dystopia::Camera::Init(void)
 	mProjection = Math::Matrix4{
 		2.f / 800.f, .0f, .0f, .0f,
 		.0f, -2.f / 500.f, .0f, .0f,
-		.0f, .0f, 2.f / 1000.f, .0f,
+		.0f, .0f, -1.f / 1000.f, .0f,
 		.0f, .0f, .0f, 1.f
 	};
 }
@@ -154,7 +154,8 @@ void Dystopia::Camera::SetCamera(void)
 
 	mView = mTransform->GetTransformMatrix();
 	auto masterView = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
-	mInvScreen = Math::AffineInverse(mProjection) * 
+
+	mInvScreen = mView * Math::AffineInverse(mProjection) * 
 		Math::Mat4{
 			2.f / (masterView.mnWidth), .0f, -(1.f + 2.f * masterView.mnX) / masterView.mnWidth - 1.f, .0f,
 			.0f, 2.f / masterView.mnHeight, 1.f + (1.f + 2.f * masterView.mnY) / masterView.mnHeight, .0f,

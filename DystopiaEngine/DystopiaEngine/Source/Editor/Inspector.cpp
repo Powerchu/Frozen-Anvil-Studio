@@ -155,6 +155,14 @@ namespace Dystopia
 				c->EditorUI();
 				EGUI::Display::EndTreeNode();
 			}
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove"))
+				{
+
+				}
+				ImGui::EndPopup();
+			}
 		}
 
 		auto& arrBehav = mpFocus->GetAllBehaviours();

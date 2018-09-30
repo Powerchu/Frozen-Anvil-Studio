@@ -167,7 +167,6 @@ namespace Dystopia
 		if (Camera* pCam = GetCamera())
 		{
 			Math::Pt3D worldClickPos = GetWorldClickPos(pCam);
-			PrintToConsoleLog("HitPoint (Screen To world) : [" + std::to_string(worldClickPos.x) + "] / [" + std::to_string(worldClickPos.y) + "]");
 
 			GameObject* pTarget = nullptr;
 			float vLength = FLT_MAX;
@@ -196,7 +195,11 @@ namespace Dystopia
 					}
 				}
 			}
-			if (pTarget) GetMainEditor().SetFocus(*pTarget);
+			if (pTarget)
+			{
+				GetMainEditor().SetFocus(*pTarget);
+				PrintToConsoleLog("HitPoint (Screen To world) : [" + pTarget->GetName() + "]");
+			}
 		}
 	}
 
@@ -269,7 +272,7 @@ namespace Dystopia
 							 (relPos.y / mImgSize.y) * viewport.mnHeight };
 		auto worldPos = _cam->ScreenToWorld(Math::Vec3D{ hitPoint.x - (viewport.mnWidth / 2),
 														 hitPoint.y - (viewport.mnHeight / 2),
-														 0.f });
+														 0.f, 1.f });
 		return worldPos;
 	}
 
