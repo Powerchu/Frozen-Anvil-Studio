@@ -73,6 +73,7 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 
+		Renderer(const Renderer&) = delete;
 	private:
 
 		unsigned mnUnique;
@@ -80,8 +81,7 @@ namespace Dystopia
 		Mesh* mpMesh;
 		Shader* mpShader;
 		Texture* mpTexture;
-
-		Renderer(const Renderer&) = delete;
+		std::string mLastKnownPath;
 
 		void TextureField();
 		void MeshField();
