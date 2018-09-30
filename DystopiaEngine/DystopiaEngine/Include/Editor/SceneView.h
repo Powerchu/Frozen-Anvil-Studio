@@ -58,6 +58,7 @@ namespace Dystopia
 			eZOOM_NONE
 		};
 
+		bool			mDragging;
 		bool			mAmFocused;
 		float			mDelta;
 		float			mSensitivity;
@@ -68,6 +69,7 @@ namespace Dystopia
 		GameObject		*mpSceneCamera;
 		EditorInput		*mpEditorInput;
 		Math::Vec2		mImgSize;
+		Math::Vec2		mMoveVec;
 		
 		void			ScrollIn();
 		void			ScrollOut();

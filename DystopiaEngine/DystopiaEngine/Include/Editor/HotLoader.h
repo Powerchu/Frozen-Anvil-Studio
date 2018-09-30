@@ -1044,7 +1044,7 @@ namespace Dystopia
 					}
 			}
 
-			std::filesystem::path p{ "C:/" };
+			std::filesystem::path p = std::filesystem::current_path().parent_path();
 			std::error_code err;
 			std::filesystem::recursive_directory_iterator iter{ p,std::filesystem::directory_options::skip_permission_denied,err };
 			for (auto & file : iter)
