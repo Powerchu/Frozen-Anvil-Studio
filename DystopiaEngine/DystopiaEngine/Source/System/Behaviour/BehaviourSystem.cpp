@@ -123,6 +123,7 @@ namespace Dystopia
 						{
 							iter.first = iter.second->GetOwner()->GetID();
 							iter.second->GetOwner()->RemoveComponent(iter.second);
+							delete iter.second;
 							iter.second = nullptr;
 						}
 					}
@@ -213,8 +214,8 @@ namespace Dystopia
 			{
 				iter.second->Update(0.f);
 			}
-			
 		}
+
 		vTempFileName.clear();
 #endif
 	}

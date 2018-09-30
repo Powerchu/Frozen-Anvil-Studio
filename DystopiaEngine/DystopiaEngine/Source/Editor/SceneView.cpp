@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/Editor.h"
 #include "Editor/EditorEvents.h"
+#include "Editor/EditorInputs.h"
 #include "Editor/ConsoleLog.h"
 #include "Editor/DefaultFactory.h"
 
@@ -50,7 +51,8 @@ namespace Dystopia
 		mpGfxSys{ nullptr },
 		mDelta{},
 		mpSceneCamera{ nullptr },
-		mSensitivity{ 0.1f }
+		mSensitivity{ 0.1f },
+		mpEditorInput{ nullptr }
 	{}
 
 	SceneView::~SceneView()
@@ -63,6 +65,7 @@ namespace Dystopia
 
 	void SceneView::Init()
 	{
+		mpEditorInput = GetMainEditor().GetEditorInput();
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
 		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Bind(&SceneView::SceneChanged, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);
@@ -89,16 +92,20 @@ namespace Dystopia
 
 	void SceneView::EditorUI()
 	{
+		EGUI::UnIndent(2);
 		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
 		ImVec2 size{ Size().x,  Size().y - imageOffsetY };
-		EGUI::UnIndent(2);
 		ImGui::Image(reinterpret_cast<void*>(id), size);
-		EGUI::Indent(2);
 		if (ImGui::IsItemHovered())
 		{
-			if (mToZoom != eZOOM_NONE)		Zoom(eZOOM_IN == mToZoom);
-			if (ImGui::IsMouseClicked(0))	FindMouseObject(size);
+			if (mToZoom != eZOOM_NONE)		
+				Zoom(eZOOM_IN == mToZoom);
+			if (ImGui::IsMouseClicked(0))	
+				FindMouseObject(size);
 		}
+		 if (ImGui::IsItemFocused())		
+			Move();
+		EGUI::Indent(2);
 	}
 
 	void SceneView::Shutdown()
@@ -109,6 +116,31 @@ namespace Dystopia
 	std::string SceneView::GetLabel() const
 	{
 		return mLabel;
+	}
+
+	void SceneView::Move()
+	{
+		if (mpSceneCamera && !mpEditorInput->IsKeyPressed(KEY_CTRL))
+		{
+			Math::Point3D newPos = mpSceneCamera->GetComponent<Transform>()->GetPosition();
+			if (mpEditorInput->IsKeyPressed(KEY_W))
+			{
+				newPos.y = newPos.y + mSensitivity;
+			}
+			if (mpEditorInput->IsKeyPressed(KEY_A))
+			{
+				newPos.x = newPos.x - mSensitivity;
+				}
+			if (mpEditorInput->IsKeyPressed(KEY_S))
+			{
+				newPos.y = newPos.y - mSensitivity;
+			}
+			if (mpEditorInput->IsKeyPressed(KEY_D))
+			{
+				newPos.x = newPos.x + mSensitivity;
+			}
+			mpSceneCamera->GetComponent<Transform>()->SetPosition(newPos);
+		}
 	}
 
 	void SceneView::FindMouseObject(const Math::Vec2& _imgSize)

@@ -157,6 +157,18 @@ namespace Dystopia
 				EGUI::Display::EndTreeNode();
 			}
 		}
+
+		auto& arrBehav = mpFocus->GetAllBehaviours();
+		for (const auto& c : arrBehav)
+		{
+			EGUI::Display::HorizontalSeparator();
+			if (EGUI::Display::StartTreeNode(c->GetEditorName() + "##" +
+				std::to_string(mpFocus->GetID())))
+			{
+				c->EditorUI();
+				EGUI::Display::EndTreeNode();
+			}
+		}
 	}
 
 	std::string Inspector::GetLabel() const
@@ -228,20 +240,14 @@ namespace Dystopia
 				if (EGUI::Display::SelectableTxt(elem.mName))
 				{
 					auto ptr = mpBehaviourSys->RequestBehaviour(mpFocus->GetID(), elem.mName);
-					if (ptr)
-					{
+					if (ptr) 
 						mpFocus->AddComponent(ptr, BehaviourTag{});
-						//ptr->
-					}
-						
-					//(p)->Update(0.16f);
 				}
 			}
 
-			if (EGUI::Display::SelectableTxt("New Behaviour"))
-			{
+			if (EGUI::Display::SelectableTxt("New Behaviour")) 
 				mPromptNewBehaviour = true;
-			}
+
 			EGUI::Display::EndPopup();
 		}
 		PromptCreateBehaviour();
@@ -285,6 +291,10 @@ namespace Dystopia
 			GenerateScript(std::string{ mBufferInput }, 
 						   std::string{ mBufferCreator }, 
 						   std::string{ mBufferLogin });
+			mpBehaviourSys->Update(0.16f);
+			mpBehaviourSys->Update(0.16f);
+			auto ptr = mpBehaviourSys->RequestBehaviour(mpFocus->GetID(), std::string{ mBufferInput });
+			if (ptr) mpFocus->AddComponent(ptr, BehaviourTag{});
 			ResetBehaviourCreation();
 		}
 	}
