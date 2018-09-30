@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <cstdlib>
 #include <cstddef>
+#include <iostream>
 #include <exception>
 
 
@@ -97,7 +98,7 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 			}
 
 			mpFree = pSeek == mpFree ? temp : mpFree;
-
+			std::cout << "Allocating[Actual: " << pSeek << " | Given: " << pRet << " | " << adjSz << " Align: " << _align << "]" << std::endl;
 			return pRet;
 		}
 		else
