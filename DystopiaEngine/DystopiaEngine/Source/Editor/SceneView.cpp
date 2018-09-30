@@ -54,7 +54,7 @@ namespace Dystopia
 		mSensitivity{ 0.1f },
 		mpEditorInput{ nullptr },
 		mAmFocused{ false }, mMoveVec{ 0,0 },
-		mMoveSens{ 1 }, mDragging{ false }
+		mMoveSens{ 0.5f }, mDragging{ false }
 	{}
 
 	SceneView::~SceneView()
@@ -230,7 +230,8 @@ namespace Dystopia
 			PrintToConsoleLog("Camera Transform is NULL in SceneView::Zoom");
 			return;
 		}
-		Math::Vec4 newScalep = pObjTransform->GetScale() * (1 - mSensitivity);
+		float s = _in ? 1 - mSensitivity : 1 + mSensitivity;
+		Math::Vec4 newScalep = pObjTransform->GetScale() * s;
 		pObjTransform->SetScale(newScalep);
 	}
 
