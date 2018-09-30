@@ -896,6 +896,8 @@ namespace Dystopia
 		std::vector<std::wstring>                        mvTempFilesName;
 		MagicArray<DLLWrapper>                           mvDLL;
 
+		std::filesystem::recursive_directory_iterator	 mIterator;
+
 
 
 
@@ -1034,8 +1036,8 @@ namespace Dystopia
 			{
 				std::filesystem::path p{ elem };
 				std::error_code err;
-				std::filesystem::recursive_directory_iterator iter{ p,std::filesystem::directory_options::skip_permission_denied,err };
-				for (auto & file : iter)
+				mIterator = { p,std::filesystem::directory_options::skip_permission_denied,err };
+				for (auto & file : mIterator)
 					if (file.path().filename().wstring() == _File.GetFileName())
 					{
 						_File.SetFullFilePath(file.path().wstring());
@@ -1044,10 +1046,10 @@ namespace Dystopia
 					}
 			}
 
-			std::filesystem::path p = std::filesystem::current_path().parent_path();
+			const std::filesystem::path root = std::filesystem::current_path().parent_path();
 			std::error_code err;
-			std::filesystem::recursive_directory_iterator iter{ p,std::filesystem::directory_options::skip_permission_denied,err };
-			for (auto & file : iter)
+			mIterator = { root,std::filesystem::directory_options::skip_permission_denied,err };
+			for (auto & file : mIterator)
 				if (file.path().filename().wstring() == _File.GetFileName())
 				{
 					_File.SetFullFilePath(file.path().wstring());
@@ -1055,7 +1057,6 @@ namespace Dystopia
 
 					return true;
 				}
-
 
 			return false;
 		}

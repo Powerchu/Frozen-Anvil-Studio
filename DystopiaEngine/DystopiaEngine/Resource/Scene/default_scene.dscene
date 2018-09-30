@@ -1,10 +1,19 @@
 [START_Scene]
-1,testerersersts,[START_START_GO_DATA]
+2,default_scene,[START_START_GO_DATA]
 3795845120,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,0,0,0,
+0.4,0.4,1,0,0,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+806511909481218048,1,GameObject,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,1,0,0,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -18,10 +27,22 @@
 
 [END_ComponentDonor End]
 [START_ComponentDonor]
-0,
+1,[START_Component]
+[START_Renderer]
+806511909481218048,..\DystopiaEngine\Resource\Asset\sprite_01.png,
+[END_Renderer]
+
+[END_Component End]
+
 [END_ComponentDonor End]
 [START_ComponentDonor]
-0,
+1,[START_Component]
+[START_RigidBody]
+806511909481218048,0,0.6,0.6,0.5,0.7,0.5,1,100,1,0,1,205,0,
+[END_RigidBody]
+
+[END_Component End]
+
 [END_ComponentDonor End]
 [START_ComponentDonor]
 0,
