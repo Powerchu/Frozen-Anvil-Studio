@@ -103,6 +103,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 namespace Dystopia
 {
 	static Editor* gpInstance = 0;
+	static const std::string g_nsPopup = "Prompt Save";
 	Editor* Editor::GetInstance()
 	{
 		if (gpInstance) return gpInstance;
@@ -219,10 +220,37 @@ namespace Dystopia
 
 	void Editor::UpdateFrame(const float& _dt)
 	{ 
-		if (mCurrentState == EDITOR_PLAY)
-		{	
+		switch (mCurrentState)
+		{
+		case EDITOR_PLAY:
 			mpDriver->FixedUpdate();
-			mpDriver->Update();	
+			mpDriver->Update();
+			break;
+		case EDITOR_PROMPT_SAVE:
+			EGUI::Display::OpenPopup(g_nsPopup);
+			if (EGUI::Display::StartPopupModal(g_nsPopup.c_str(), "Save before Exit?"))
+			{
+				if (EGUI::Display::Button("Save"))
+				{
+					EGUI::Display::CloseCurrentPopup();
+					ChangeState(EDITOR_MAIN);
+					mpEditorEventSys->FireNow(EDITOR_HOTKEY_SAVE);
+				}
+				EGUI::SameLine();
+				if (EGUI::Display::Button("Cancel"))
+				{
+					EGUI::Display::CloseCurrentPopup();
+					ChangeState(EDITOR_MAIN);
+				}
+				EGUI::SameLine();
+				if (EGUI::Display::Button("Exit"))
+				{
+					EGUI::Display::CloseCurrentPopup();
+					ChangeState(EDITOR_EXIT);
+				}
+				EGUI::Display::EndPopup();
+			}
+			break;
 		}
 
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
@@ -361,9 +389,9 @@ namespace Dystopia
 		{
 			if (EGUI::StartMenuBody("New"))			NewScene();
 			if (EGUI::StartMenuBody("Open"))		LoadProc();
-			if (EGUI::StartMenuBody("Save"))		SaveProc();
-			if (EGUI::StartMenuBody("Save As.."))	SaveAsProc();
-			if (EGUI::StartMenuBody("Quit"))		ChangeState(EDITOR_EXIT);
+			if (EGUI::StartMenuBody("Save"))		mpEditorEventSys->FireNow(EDITOR_HOTKEY_SAVE);
+			if (EGUI::StartMenuBody("Save As.."))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_SAVEAS);
+			if (EGUI::StartMenuBody("Quit"))		ChangeState((mpComdHandler->HasUnsavedChanges()) ? EDITOR_PROMPT_SAVE : EDITOR_EXIT);
 			EGUI::EndMenuHeader();
 		}
 	}
@@ -372,11 +400,11 @@ namespace Dystopia
 	{
 		if (EGUI::StartMenuHeader("Edit"))
 		{
-			if (EGUI::StartMenuBody("Undo ", "Ctrl + Z"))	EditorUndo();
-			if (EGUI::StartMenuBody("Redo ", "Ctrl + Y"))	EditorRedo();
-			if (EGUI::StartMenuBody("Cut ", "Ctrl + X"))	EditorCut();
-			if (EGUI::StartMenuBody("Copy ", "Ctrl + C"))	EditorCopy();
-			if (EGUI::StartMenuBody("Paste ", "Ctrl + V"))	EditorPaste();
+			if (EGUI::StartMenuBody("Undo ", "Ctrl + Z"))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_UNDO);
+			if (EGUI::StartMenuBody("Redo ", "Ctrl + Y"))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_REDO);
+			if (EGUI::StartMenuBody("Cut ", "Ctrl + X"))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_CUT);
+			if (EGUI::StartMenuBody("Copy ", "Ctrl + C"))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_COPY);
+			if (EGUI::StartMenuBody("Paste ", "Ctrl + V"))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_PASTE);
 			EGUI::EndMenuHeader();
 		}
 	}
@@ -467,7 +495,7 @@ namespace Dystopia
 			std::string ext{ DYSTOPIA_SCENE_EXTENSION.begin(), DYSTOPIA_SCENE_EXTENSION.end() };
 			std::string file{ DYSTOPIA_SCENE_LOAD + sceneName + "." + ext };
 			mpSceneSystem->SaveScene(file, sceneName);
-
+			mpComdHandler->SaveCallback();
 			std::wstring name{ sceneName.begin(), sceneName.end() };
 			auto pos = name.find('.');
 			if (pos != std::string::npos)
@@ -510,6 +538,7 @@ namespace Dystopia
 							}
 							mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() }, 
 													 std::string{ name.begin(), name.end() });
+							mpComdHandler->SaveCallback();
 							CoTaskMemFree(pszFilePath);
 						}
 						pItem->Release();
@@ -758,6 +787,11 @@ namespace Dystopia
 	void Editor::SetLastPayloadFocus(ePayloadTags e)
 	{
 		mLatestPayloadFocus = e;
+	}
+
+	EditorInput* Editor::GetEditorInput()
+	{
+		return mpInput;
 	}
 
 	void Editor::ReloadDLL()
