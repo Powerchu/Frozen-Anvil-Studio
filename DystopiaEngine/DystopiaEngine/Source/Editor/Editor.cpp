@@ -614,7 +614,7 @@ namespace Dystopia
 		mpSceneSystem->LoadScene(mTempSaveFile);
 		remove(mTempSaveFile.c_str());
 		mTempSaveFile.clear();
-		mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGE);
+		mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
 	}
 
 	void Editor::UpdateKeys()
