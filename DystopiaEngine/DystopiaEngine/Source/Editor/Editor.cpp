@@ -253,6 +253,10 @@ namespace Dystopia
 			break;
 		}
 
+		bool nightmode = EDITOR_PLAY == mCurrentState;
+		
+		if (nightmode)
+			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);
@@ -278,6 +282,8 @@ namespace Dystopia
 			EGUI::EndTab();
 			EGUI::PopID();
 		}
+		if (nightmode)
+			ImGui::PopStyleVar();
 	}
 
 	void Editor::EndFrame()

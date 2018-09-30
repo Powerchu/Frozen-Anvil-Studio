@@ -58,8 +58,10 @@ namespace Dystopia
 			eZOOM_NONE
 		};
 
+		bool			mAmFocused;
 		float			mDelta;
 		float			mSensitivity;
+		float			mMoveSens;
 		eZoom			mToZoom;
 		std::string		mLabel;
 		GraphicsSystem	*mpGfxSys;
