@@ -82,13 +82,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
 #endif
 	hInstance;
 
-	Math::Quaternion a{ 1.f * (rand() % 10), 1.f * (rand() % 10), 1.f * (rand() % 10), 1.f * (rand() % 10) }, 
-		b{ 1.f * (rand() % 10),1.f * (rand() % 10),1.f * (rand() % 10),1.f * (rand() % 10) };
-
-	a = a*b;
-
-	std::cout << a.MagnitudeSqr();
-
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
 	while (!editor->IsClosing())

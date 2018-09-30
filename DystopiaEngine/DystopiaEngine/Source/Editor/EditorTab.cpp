@@ -115,11 +115,11 @@ namespace Dystopia
 		return mpCurrentScene;
 	}
 
-	void EditorTab::SaveSettings(TextSerialiser& _out) const
+	void EditorTab::SaveSettings(TextSerialiser& /*_out*/) const
 	{
 	}
 
-	void EditorTab::LoadSettings(TextSerialiser& _in)
+	void EditorTab::LoadSettings(TextSerialiser& /*_in*/)
 	{
 	}
 }
