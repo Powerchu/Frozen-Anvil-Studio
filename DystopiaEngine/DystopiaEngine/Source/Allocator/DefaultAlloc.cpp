@@ -64,12 +64,11 @@ Dystopia::DefaultAlloc::~DefaultAlloc(void) noexcept
 
 void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 {
-	if (!_sz) return nullptr;
-
 	void *pSeek = mpFree, *pPrev = nullptr;
 
 	// Force size and alignment to be at least the minimum
 	_sz = Math::Max(_sz, MIN_SIZE);
+	_sz = Align(_sz, Utility::Constant<decltype(_sz), MIN_ALIGN>::value);
 	_align = Math::Max(_align, Utility::Constant<decltype(_align), MIN_ALIGN>::value);
 
 	while (pSeek)
@@ -84,7 +83,7 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 			blkSz = blkSz - adjSz;
 			std::byte* temp;
 
-			if (blkSz)
+			if (blkSz > Utility::Constant<size_t, sizeof(MetaData_t) * 2 - 1>::value)
 			{
 				temp = static_cast<std::byte*>(pRet) + adjSz;
 				reinterpret_cast<MetaData_t*>(temp)[0] = GetNextOffset(pSeek);
@@ -101,9 +100,8 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 			}
 
 			mpFree = pSeek == mpFree ? temp : mpFree;
-			reinterpret_cast<MetaData_t*>(pRet)[-1] = ((adjSz & ~0x3u) << 6) | static_cast<unsigned char>(_align - 1);
+			reinterpret_cast<MetaData_t*>(pRet)[-1] = ((adjSz & ~0x3) << 6) + static_cast<unsigned char>(_align - 1);
 
-			std::cout << "Allocating[Actual: " << pSeek << " | Given: " << pRet << " | " << adjSz << " Align: " << _align << "]" << std::endl;
 			return pRet;
 		}
 		else
@@ -120,7 +118,7 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 
 void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 {
-	if (!_ptr) return;
+	if (nullptr == _ptr) return;
 	
 	MetaData_t sz     = static_cast<MetaData_t*>(_ptr)[-1];
 	MetaData_t offset = (sz & 0xFF) + 1;

@@ -81,7 +81,7 @@ Dystopia::LoggerSystem::LoggerSystem(void) noexcept
 {
 	std::set_terminate(ProgramTerminate);
 
-#if 1//!EDITOR && defined(COMMAND_PROMPT)
+#if !EDITOR && defined(COMMAND_PROMPT)
 
 	if (AllocConsole())
 	{
@@ -89,7 +89,7 @@ Dystopia::LoggerSystem::LoggerSystem(void) noexcept
 
 		freopen_s(&file, "CONOUT$", "wt", stdout);
 		freopen_s(&file, "CONOUT$", "wt", stderr);
-		//			freopen_s(&file, "CONOUT$", "wt", stdin);
+//		freopen_s(&file, "CONOUT$", "wt", stdin);
 
 		SetConsoleTitle(L"Dystopia Engine");
 	}
