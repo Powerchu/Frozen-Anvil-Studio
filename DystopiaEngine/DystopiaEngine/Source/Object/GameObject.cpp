@@ -171,6 +171,7 @@ void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)
 		if (_pComponent == mComponents[n])
 		{
 			mComponents[n]->DestroyComponent();
+			mComponents.FastRemove(n);
 			return;
 		}
 	}

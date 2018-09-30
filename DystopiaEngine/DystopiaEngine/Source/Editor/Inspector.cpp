@@ -146,23 +146,22 @@ namespace Dystopia
 		}
 
 		auto& arrComp = mpFocus->GetAllComponents();
-		for (const auto& c : arrComp)
+		for (unsigned int i = 0; i < arrComp.size(); ++i)
 		{
+			EGUI::PushID(i);
 			EGUI::Display::HorizontalSeparator();
-			if (EGUI::Display::StartTreeNode(c->GetEditorName() + "##" +
-				std::to_string(mpFocus->GetID())))
+			bool open = EGUI::Display::StartTreeNode(arrComp[i]->GetEditorName() + "##" +
+				std::to_string(mpFocus->GetID()));
+			bool show = !RemoveComponent(arrComp[i]);
+			if (open)
 			{
-				c->EditorUI();
+				if (show)
+				{
+					arrComp[i]->EditorUI();
+				}
 				EGUI::Display::EndTreeNode();
 			}
-			if (ImGui::BeginPopupContextItem())
-			{
-				if (EGUI::Display::SelectableTxt("Remove"))
-				{
-
-				}
-				ImGui::EndPopup();
-			}
+			EGUI::PopID();
 		}
 
 		auto& arrBehav = mpFocus->GetAllBehaviours();
@@ -307,6 +306,20 @@ namespace Dystopia
 		mBufferInput[0] = mBufferCreator[0] = mBufferLogin[0] = '\0';
 	}
 
+	bool Inspector::RemoveComponent(Component* _pCom)
+	{
+		bool ret = false;
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (EGUI::Display::SelectableTxt("Remove"))
+			{
+				mpFocus->RemoveComponent(_pCom);
+				ret = true;
+			}
+			ImGui::EndPopup();
+		}
+		return ret;
+	}
 }
 
 #endif // EDITOR 
