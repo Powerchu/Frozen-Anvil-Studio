@@ -238,7 +238,7 @@ void Dystopia::EngineCore::Shutdown(void)
 	}
 
 	for (auto& e : mSystemList)
-		delete e;
+		DefaultAllocator<Systems>::DestructFree(e);
 
 	DeleteSubSys(mSubSystems, Utility::MakeTypeList_t<Utility::TypeList, SubSys>{});
 
