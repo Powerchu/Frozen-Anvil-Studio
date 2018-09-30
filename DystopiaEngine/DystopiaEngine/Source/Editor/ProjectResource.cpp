@@ -27,12 +27,16 @@ static float delay = 5;
 
 namespace Dystopia
 {
+	char my_tolower(char const ch)
+	{
+		return static_cast<unsigned char>(::tolower(static_cast<unsigned char>(ch)));
+	}
 	/********************************************************************* FILE & FOLDER *********************************************************************/
 
 	CrawlItem::CrawlItem(const std::string& _name, const std::string& _path)
 		: mName{ _name }, mPath{ _path }, mLowerCaseName{ mName }
 	{
-		std::transform(mLowerCaseName.begin(), mLowerCaseName.end(), mLowerCaseName.begin(), ::tolower);
+		std::transform(mLowerCaseName.begin(), mLowerCaseName.end(), mLowerCaseName.begin(), my_tolower);
 	}
 
 	Folder::Folder(const std::string& _name, const std::string& _path, Folder * const _parent)
@@ -452,7 +456,7 @@ namespace Dystopia
 
 	void ProjectResource::MakeStringLower(std::string& _transformMe)
 	{
-		std::transform(_transformMe.begin(), _transformMe.end(), _transformMe.begin(), ::tolower);
+		std::transform(_transformMe.begin(), _transformMe.end(), _transformMe.begin(), my_tolower);
 	}
 
 }

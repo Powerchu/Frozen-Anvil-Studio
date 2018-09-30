@@ -195,16 +195,22 @@ namespace Dystopia
 
 	bool CollisionSystem::CircleVsAABB(Collider * const & _ColA, Collider * const & _ColB) const
 	{
+		UNUSED_PARAMETER(_ColA);
+		UNUSED_PARAMETER(_ColB);
 		return false;
 	}
 
 	bool CollisionSystem::AABBvsCircle(Collider * const & _ColA, Collider * const & _ColB) const
 	{
+		UNUSED_PARAMETER(_ColA);
+		UNUSED_PARAMETER(_ColB);
 		return false;
 	}
 
 	bool CollisionSystem::CircleVsConvex(Collider * const & _ColA, Collider * const & _ColB) const
 	{
+		UNUSED_PARAMETER(_ColA);
+		UNUSED_PARAMETER(_ColB);
 		return false;
 	}
 

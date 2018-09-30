@@ -187,19 +187,23 @@ namespace Dystopia
 	}
 	bool Circle::isColliding(const AABB & other_col)
 	{
+		UNUSED_PARAMETER(other_col);
 		return false;
 	}
 	bool Circle::isColliding(const AABB * const & other_col)
 	{
+		UNUSED_PARAMETER(other_col);
 		return this->isColliding(*other_col);
 
 	}
 	bool Circle::isColliding(const Convex & other_col)
 	{
+		UNUSED_PARAMETER(other_col);
 		return false;
 	}
 	bool Circle::isColliding(const Convex * const & other_col)
 	{
+		UNUSED_PARAMETER(other_col);
 		return this->isColliding(*other_col);
 	}
 	

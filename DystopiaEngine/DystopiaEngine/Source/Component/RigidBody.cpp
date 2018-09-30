@@ -373,14 +373,20 @@ namespace Dystopia
 
 	void RigidBody::AddImpulse(Vec3D const& _impul)
 	{
+		UNUSED_PARAMETER(_impul);
 	}
 
 	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point)
 	{
+		UNUSED_PARAMETER(_impul);
+		UNUSED_PARAMETER(_point);
 	}
 
 	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const & _org)
 	{
+		UNUSED_PARAMETER(_org);
+		UNUSED_PARAMETER(_point);
+		UNUSED_PARAMETER(_impul);
 	}
 
 	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)

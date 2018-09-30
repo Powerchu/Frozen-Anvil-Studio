@@ -124,6 +124,7 @@ namespace EGUI
 
 	bool StartChild(const std::string& _label, const Math::Vec2& _size, bool _showBorder, const Math::Vec4& _colour)
 	{
+		UNUSED_PARAMETER(_colour);
 		return ImGui::BeginChild(_label.c_str(), ImVec2{ _size.x, _size.y }, _showBorder);
 	}
 
@@ -322,6 +323,9 @@ namespace EGUI
 			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
 
 			ImGui::PopItemWidth();
+
+			// TODO UNUSED Z
+			UNUSED_PARAMETER(z);
 
 			return Array<eDragStatus, 2>{statX, statY};
 		}

@@ -185,16 +185,20 @@ namespace Dystopia
 
 	bool Convex::isColliding(Circle & _ColB)
 	{
+		UNUSED_PARAMETER(_ColB);
 		return false;
 	}
 
 	bool Convex::isColliding(Circle * const & _pColB)
 	{
+		UNUSED_PARAMETER(_pColB);
 		return false;
 	}
 
 	bool Convex::isColliding(Circle & _pColB, const Math::Vec3D & _v3Dir)
 	{
+		UNUSED_PARAMETER(_pColB);
+		UNUSED_PARAMETER(_v3Dir);
 		return false;
 	}
 

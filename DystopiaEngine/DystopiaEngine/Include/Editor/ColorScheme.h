@@ -10,9 +10,9 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#if EDITOR
 #ifndef _COLOR_SCHEME_H_
 #define _COLOR_SCHEME_H_
+#if EDITOR
 #include "Math/Vector4.h"
 #include "DataStructure/Array.h"
 #include "Editor/EditorTab.h"
@@ -88,8 +88,8 @@ namespace Dystopia
 			eCOLOR_DATA_Last
 		};
 
-		int									mBarSize;
-		int									mAlignment;
+		float								mBarSize;
+		float								mAlignment;
 		std::string							mLabel;
 		Array<Math::Vec4, eCOLOR_DATA_Last> mArrColors;
 
@@ -97,5 +97,5 @@ namespace Dystopia
 	};
 }
 
-#endif //_COLOR_SCHEME_H_
 #endif //EDITOR
+#endif //_COLOR_SCHEME_H_
