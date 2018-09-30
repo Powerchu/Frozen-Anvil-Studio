@@ -58,6 +58,7 @@ namespace Dystopia
 			eZOOM_NONE
 		};
 
+		bool			mAmFocused;
 		float			mDelta;
 		float			mSensitivity;
 		eZoom			mToZoom;

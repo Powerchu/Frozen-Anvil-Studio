@@ -52,7 +52,8 @@ namespace Dystopia
 		mDelta{},
 		mpSceneCamera{ nullptr },
 		mSensitivity{ 0.1f },
-		mpEditorInput{ nullptr }
+		mpEditorInput{ nullptr },
+		mAmFocused{ false }
 	{}
 
 	SceneView::~SceneView()
@@ -92,20 +93,35 @@ namespace Dystopia
 
 	void SceneView::EditorUI()
 	{
+		if (ImGui::IsMouseClicked(0))
+			mAmFocused = false;
+
 		EGUI::UnIndent(2);
 		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
 		ImVec2 size{ Size().x,  Size().y - imageOffsetY };
-		ImGui::Image(reinterpret_cast<void*>(id), size);
+
+		if (GetMainEditor().CurrentState() == EDITOR_PLAY)
+			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
+
+		if (ImGui::ImageButton(reinterpret_cast<void*>(id), size, ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0))
+			mAmFocused = true;
+
+		if (GetMainEditor().CurrentState() == EDITOR_PLAY)
+			ImGui::PopStyleVar();
+
 		if (ImGui::IsItemHovered())
 		{
-			if (mToZoom != eZOOM_NONE)		
-				Zoom(eZOOM_IN == mToZoom);
 			if (ImGui::IsMouseClicked(0))	
 				FindMouseObject(size);
 		}
-		 if (ImGui::IsItemFocused())		
+		if (mAmFocused)
+		{
 			Move();
+			if (mToZoom != eZOOM_NONE) Zoom(eZOOM_IN == mToZoom);
+		}
+
 		EGUI::Indent(2);
+		mToZoom = eZOOM_NONE;
 	}
 
 	void SceneView::Shutdown()
@@ -125,19 +141,19 @@ namespace Dystopia
 			Math::Point3D newPos = mpSceneCamera->GetComponent<Transform>()->GetPosition();
 			if (mpEditorInput->IsKeyPressed(KEY_W))
 			{
-				newPos.y = newPos.y + mSensitivity;
+				newPos.y = newPos.y + 10 * mSensitivity;
 			}
 			if (mpEditorInput->IsKeyPressed(KEY_A))
 			{
-				newPos.x = newPos.x - mSensitivity;
+				newPos.x = newPos.x - 10 * mSensitivity;
 				}
 			if (mpEditorInput->IsKeyPressed(KEY_S))
 			{
-				newPos.y = newPos.y - mSensitivity;
+				newPos.y = newPos.y - 10 * mSensitivity;
 			}
 			if (mpEditorInput->IsKeyPressed(KEY_D))
 			{
-				newPos.x = newPos.x + mSensitivity;
+				newPos.x = newPos.x + 10 * mSensitivity;
 			}
 			mpSceneCamera->GetComponent<Transform>()->SetPosition(newPos);
 		}
