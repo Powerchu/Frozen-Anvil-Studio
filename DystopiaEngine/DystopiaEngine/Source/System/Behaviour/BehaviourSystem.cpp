@@ -30,6 +30,7 @@ namespace Dystopia
 
 		FileSys->CreateFiles("Dystopia/BehaviourDLL", eFileDir::eAppData);
 		FileSys->CreateFiles("Dystopia/Temp", eFileDir::eAppData);
+		FileSys->CreateFiles("Behaviour/BehaviourScripts", eFileDir::eResource);
 
 #if _DEBUG
 
