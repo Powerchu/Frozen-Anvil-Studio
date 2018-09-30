@@ -30,6 +30,7 @@ namespace Dystopia
 
 		using TAG = BehaviourTag;
 		virtual unsigned GetComponentType(void) const { return unsigned(-2); };
+		virtual const std::string GetEditorName(void) const { return "Generic Behaviour"; }
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 

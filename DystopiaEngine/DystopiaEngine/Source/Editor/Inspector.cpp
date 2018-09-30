@@ -161,7 +161,7 @@ namespace Dystopia
 		for (const auto& c : arrBehav)
 		{
 			EGUI::Display::HorizontalSeparator();
-			if (EGUI::Display::StartTreeNode(c->GetEditorName() + "##" +
+			if (EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } + "##" +
 				std::to_string(mpFocus->GetID())))
 			{
 				c->EditorUI();
@@ -239,8 +239,7 @@ namespace Dystopia
 				if (EGUI::Display::SelectableTxt(elem.mName))
 				{
 					auto ptr = mpBehaviourSys->RequestBehaviour(mpFocus->GetID(), elem.mName);
-					if (ptr) 
-						mpFocus->AddComponent(ptr, BehaviourTag{});
+					if (ptr) mpFocus->AddComponent(ptr, BehaviourTag{});
 				}
 			}
 
@@ -290,10 +289,6 @@ namespace Dystopia
 			GenerateScript(std::string{ mBufferInput }, 
 						   std::string{ mBufferCreator }, 
 						   std::string{ mBufferLogin });
-			mpBehaviourSys->Update(0.16f);
-			mpBehaviourSys->Update(0.16f);
-			auto ptr = mpBehaviourSys->RequestBehaviour(mpFocus->GetID(), std::string{ mBufferInput });
-			if (ptr) mpFocus->AddComponent(ptr, BehaviourTag{});
 			ResetBehaviourCreation();
 		}
 	}
