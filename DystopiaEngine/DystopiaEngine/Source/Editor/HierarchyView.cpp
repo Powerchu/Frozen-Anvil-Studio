@@ -112,7 +112,7 @@ namespace Dystopia
 	void HierarchyView::CreateButton()
 	{
 		EGUI::Indent(5);
-		if (EGUI::Display::Button("Create", Math::Vec2{ 50, 18 }))
+		if (EGUI::Display::Button("Create", Math::Vec2{ 50, 22 }))
 		{
 			EGUI::Display::OpenPopup(mPopupID);
 		}

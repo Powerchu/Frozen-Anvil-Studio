@@ -177,7 +177,7 @@ Tabs::~Tabs()
 ImVec2 Tabs::GetMinSize() const
 {
 	if (!mArrChildPtr[0]) 
-		return ImVec2{ 16, 16 + ImGui::GetTextLineHeightWithSpacing() };
+		return ImVec2{ 300, 200 + ImGui::GetTextLineHeightWithSpacing() };
 
 	ImVec2 s0 = mArrChildPtr[0]->GetMinSize();
 	ImVec2 s1 = mArrChildPtr[1]->GetMinSize();

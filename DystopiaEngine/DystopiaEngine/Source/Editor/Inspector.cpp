@@ -77,10 +77,10 @@ namespace Dystopia
 	{
 		if (!mpFocus) return;
 
-		static constexpr Math::Vec2 btnSize{ 250, 20 };
-		float mid = Size().x / 2;
+		static constexpr Math::Vec2 btnSize{ 270, 20 };
+		const float mid = Size().x / 2;
 		float inde = mid - (btnSize.x / 2);
-		inde = (inde < 20) ? 20 : inde;
+		//inde = (inde < 20) ? 20 : inde;
 
 		GameObjectDetails();
 		GameObjectComponents();
@@ -118,16 +118,16 @@ namespace Dystopia
 		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 50 }, false, Math::Vec4{ 0,0,0,0 }))
 		{
 			EGUI::SameLine();
-			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 330.f) && strlen(buffer))
+			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 223.f) && strlen(buffer))
 			{
 				auto f_Old = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, mpFocus->GetName());
 				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
 				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
-			EGUI::Display::DropDownSelection("Tag", i, arr, 100);
+			EGUI::Display::DropDownSelection("Tag", i, arr, 80);
 			EGUI::SameLine();
 			EGUI::ChangeAlignmentYOffset(0);
-			EGUI::Display::DropDownSelection("Layer", j, arr2, 100);
+			EGUI::Display::DropDownSelection("Layer", j, arr2, 80);
 			EGUI::ChangeAlignmentYOffset();
 		}
 		EGUI::EndChild();
