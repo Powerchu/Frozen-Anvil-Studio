@@ -181,6 +181,7 @@ namespace Dystopia
 		}
 	}
 
+
 	bool Convex::isColliding(Circle & _ColB)
 	{
 		UNUSED_PARAMETER(_ColB);
@@ -226,7 +227,7 @@ namespace Dystopia
 					isInside = true;
 					CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
 					newEvent.mdPeneDepth = _ColB.GetRadius() - distance;
-					newEvent.mEdgeNormal = Math::Normalise(elem.mNorm3);
+					newEvent.mEdgeNormal = Math::Normalise(PointOfImpact - _ColB.GetPosition());
 					newEvent.mEdgeVector = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
 					isInside = true;

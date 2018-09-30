@@ -84,60 +84,60 @@ namespace Dystopia
 		delete p;
 
 		//// Sample Box Object
-		//GameObject *b = Factory::CreateBox("Box Object");
-		//Texture2D* _bt = new Texture2D{ "Resource/Editor/red_box.png" };
-		//mpBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*b));
-		//mpBoxObject->GetComponent<RigidBody>()->Init();
-		//mpBoxObject->GetComponent<RigidBody>()->SetRestitution(0.4F);
-		//mpBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.9F);
-		//mpBoxObject->GetComponent<RigidBody>()->SetKineticFriction(0.1F);
-		//mpBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 64.f, 64.f, 1.f });
-		//mpBoxObject->GetComponent<Renderer>()->SetTexture(_bt);
-		//mpBoxObject->GetComponent<Collider>()->Init();
-		//mpBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
-		//delete b;
+		GameObject *b = Factory::CreateBox("Box Object");
+		Texture2D* _bt = new Texture2D{ "Resource/Editor/red_box.png" };
+		mpBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*b));
+		mpBoxObject->GetComponent<RigidBody>()->Init();
+		mpBoxObject->GetComponent<RigidBody>()->SetRestitution(0.4F);
+		mpBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.9F);
+		mpBoxObject->GetComponent<RigidBody>()->SetKineticFriction(0.1F);
+		mpBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 64.f, 64.f, 1.f });
+		mpBoxObject->GetComponent<Renderer>()->SetTexture(_bt);
+		mpBoxObject->GetComponent<Collider>()->Init();
+		mpBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
+		delete b;
 
-		//// Sample Box Object
-		//GameObject *bb = Factory::CreateBox("Another box");
-		//Texture2D* _bbt = new Texture2D{ "Resource/Editor/red_box.png" };
-		//mpBoxObject2 = GetCurrentScene()->InsertGameObject(Utility::Move(*bb));
-		//mpBoxObject2->GetComponent<RigidBody>()->Init();
-		//mpBoxObject2->GetComponent<Transform>()->SetScale(Math::Vec4{ 64.f, 64.f, 1.f });
-		//mpBoxObject2->GetComponent<Transform>()->SetGlobalPosition({ 0.0F, 200.0f, 1 });
-		//mpBoxObject2->GetComponent<Renderer>()->SetTexture(_bbt);
-		//mpBoxObject2->GetComponent<Collider>()->Init();
-		//mpBoxObject2->GetComponent<RigidBody>()->SetRestitution(1.0F);
-		//mpBoxObject2->GetComponent<RigidBody>()->SetStaticFriction(0.9F);
-		//mpBoxObject2->GetComponent<RigidBody>()->SetKineticFriction(0.1F);
-		//delete bb;
+		// Sample Box Object
+		GameObject *bb = Factory::CreateBox("Another box");
+		Texture2D* _bbt = new Texture2D{ "Resource/Editor/red_box.png" };
+		mpBoxObject2 = GetCurrentScene()->InsertGameObject(Utility::Move(*bb));
+		mpBoxObject2->GetComponent<RigidBody>()->Init();
+		mpBoxObject2->GetComponent<Transform>()->SetScale(Math::Vec4{ 64.f, 64.f, 1.f });
+		mpBoxObject2->GetComponent<Transform>()->SetGlobalPosition({ 50.0F, 100.0f, 1 });
+		mpBoxObject2->GetComponent<Renderer>()->SetTexture(_bbt);
+		mpBoxObject2->GetComponent<Collider>()->Init();
+		mpBoxObject2->GetComponent<RigidBody>()->SetRestitution(1.0F);
+		mpBoxObject2->GetComponent<RigidBody>()->SetStaticFriction(0.9F);
+		mpBoxObject2->GetComponent<RigidBody>()->SetKineticFriction(0.1F);
+		delete bb;
 
 		// Sample Circle Object
-		GameObject *c = Factory::CreateCircle("Circle Object");
-		Texture2D* _ct = new Texture2D{ "Resource/Editor/red_circle.png" };
-		mpCircleObject = GetCurrentScene()->InsertGameObject(Utility::Move(*c));
-		mpCircleObject->GetComponent<RigidBody>()->Init();
-		mpCircleObject->GetComponent<RigidBody>()->SetRestitution(1.0F);
-		mpCircleObject->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
-		mpCircleObject->GetComponent<RigidBody>()->SetKineticFriction(0.3F);
-		mpCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 60.0F, 150.0f, 0});
-		mpCircleObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 100, 100.f, 1.f });
-		mpCircleObject->GetComponent<Renderer>()->SetTexture(_ct);
-		mpCircleObject->GetComponent<Collider>()->Init();
-		delete c;
-
-		GameObject *cc = Factory::CreateCircle("Static Circle");
-		mpStaticCircleObject = GetCurrentScene()->InsertGameObject(Utility::Move(*cc));
+		//GameObject *c = Factory::CreateCircle("Circle Object");
 		//Texture2D* _ct = new Texture2D{ "Resource/Editor/red_circle.png" };
-		mpStaticCircleObject->GetComponent<RigidBody>()->Init();
-		mpStaticCircleObject->GetComponent<RigidBody>()->Set_IsStatic(true);
-		mpStaticCircleObject->GetComponent<RigidBody>()->SetRestitution(0.4F);
-		mpStaticCircleObject->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
-		mpStaticCircleObject->GetComponent<RigidBody>()->SetKineticFriction(0.3F);
-		mpStaticCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 0.0f, -185.f, 0});
-		mpStaticCircleObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 100.f, 100.f, 1.f });
-		mpStaticCircleObject->GetComponent<Renderer>()->SetTexture(_ct);
-		mpStaticCircleObject->GetComponent<Collider>()->Init();
-		delete cc;
+		//mpCircleObject = GetCurrentScene()->InsertGameObject(Utility::Move(*c));
+		//mpCircleObject->GetComponent<RigidBody>()->Init();
+		//mpCircleObject->GetComponent<RigidBody>()->SetRestitution(1.0F);
+		//mpCircleObject->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
+		//mpCircleObject->GetComponent<RigidBody>()->SetKineticFriction(0.3F);
+		//mpCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 60.0F, 150.0f, 0});
+		//mpCircleObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 100, 100.f, 1.f });
+		//mpCircleObject->GetComponent<Renderer>()->SetTexture(_ct);
+		//mpCircleObject->GetComponent<Collider>()->Init();
+		//delete c;
+
+		//GameObject *cc = Factory::CreateCircle("Static Circle");
+		//mpStaticCircleObject = GetCurrentScene()->InsertGameObject(Utility::Move(*cc));
+		////Texture2D* _ct = new Texture2D{ "Resource/Editor/red_circle.png" };
+		//mpStaticCircleObject->GetComponent<RigidBody>()->Init();
+		//mpStaticCircleObject->GetComponent<RigidBody>()->Set_IsStatic(true);
+		//mpStaticCircleObject->GetComponent<RigidBody>()->SetRestitution(0.4F);
+		//mpStaticCircleObject->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
+		//mpStaticCircleObject->GetComponent<RigidBody>()->SetKineticFriction(0.3F);
+		//mpStaticCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 0.0f, -185.f, 0});
+		//mpStaticCircleObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 100.f, 100.f, 1.f });
+		//mpStaticCircleObject->GetComponent<Renderer>()->SetTexture(_ct);
+		//mpStaticCircleObject->GetComponent<Collider>()->Init();
+		//delete cc;
 
 		// Sample Static Object
 		GameObject *s = Factory::CreateStaticBox("Ground");

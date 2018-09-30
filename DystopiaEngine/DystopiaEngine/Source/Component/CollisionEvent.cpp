@@ -61,8 +61,8 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 		if (!bodyA->Get_IsStaticState())
 			bodyA->SetVelocity(a_newVel);
 
-		if (!bodyB->Get_IsStaticState())
-			bodyB->SetVelocity(b_newVel);
+		//if (!bodyB->Get_IsStaticState())
+			//bodyB->SetVelocity(b_newVel);
 
 		// Calculate Frictional Velocity (vec3D) after normal impulse
 		rv = b_newVel - a_newVel;
@@ -97,8 +97,8 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 		if (!bodyA->Get_IsStaticState())
 			bodyA->SetVelocity(a_newVel);
 
-		if (!bodyB->Get_IsStaticState())
-			bodyB->SetVelocity(b_newVel);
+		//if (!bodyB->Get_IsStaticState())
+			//bodyB->SetVelocity(b_newVel);
 	}
 }
 
@@ -116,6 +116,6 @@ void Dystopia::CollisionEvent::ApplyPenetrationCorrection()
 
 	if (!bodyA->Get_IsStaticState())
 		bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
-	if (!bodyB->Get_IsStaticState())
-		bodyB->SetPosition(bodyA->GetPosition() + correction * b_invmass);
+	//if (!bodyB->Get_IsStaticState())
+		//bodyB->SetPosition(bodyA->GetPosition() + correction * b_invmass);
 }
