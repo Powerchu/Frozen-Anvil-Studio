@@ -65,9 +65,10 @@ namespace Dystopia
 		GameObject		*mpSceneCamera;
 
 		//TODO delete me
-		GameObject*		mpStaticWall;
-		GameObject*		mpBall;
-		GameObject*		mpStaticBall;
+		GameObject*		mpStaticBoxObject;
+		GameObject*		mpCircleObject;
+		GameObject*		mpStaticCircleObject;
+		GameObject*		mpBoxObject;
 		
 		void		ScrollIn();
 		void		ScrollOut();
