@@ -236,7 +236,7 @@ namespace Dystopia
 		{
 			EGUI::PushID(i);
 			EditorTab *pTab = mArrTabs[i];
-			pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()) - Math::Vec2{ 16, 4 });
+			pTab->SetSize(EGUI::Docking::GetTabSize(pTab->GetLabel().c_str()) - Math::Vec2{ 8, 4 });
 			pTab->SetPosition(EGUI::Docking::GetTabPosition(pTab->GetLabel().c_str()));
 			pTab->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			{
@@ -650,8 +650,6 @@ namespace Dystopia
 			mpGuiSystem->UpdateScroll(0, scrollV);
 			mpEditorEventSys->Fire(scrollV > 0 ? EDITOR_SCROLL_UP : EDITOR_SCROLL_DOWN);
 		}
-
-
 
 		if (mpInput->IsKeyPressed(KEY_CTRL))
 		{

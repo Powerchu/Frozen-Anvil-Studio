@@ -264,7 +264,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		}
 	}
 
-	arrResult = EGUI::Display::VectorFields("Scale", &mScale, 0.01f, -FLT_MAX, FLT_MAX);
+	arrResult = EGUI::Display::VectorFields("Scale   ", &mScale, 0.01f, -FLT_MAX, FLT_MAX);
 	for (auto &e : arrResult)
 	{
 		switch (e)

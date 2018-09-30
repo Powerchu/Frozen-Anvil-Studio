@@ -310,7 +310,8 @@ namespace EGUI
 				}
 		======================================================================================================================= */
 		// Start a tree node 
-		bool StartTreeNode(const std::string& _label, bool* _outClicked = nullptr, bool _highlighted = false, bool _noArrow = false);
+		bool StartTreeNode(const std::string& _label, bool* _outClicked = nullptr, bool _highlighted = false, 
+						   bool _noArrow = false, bool _defaultOpen = true);
 		// Set a specific tree node to be collapsed (closed) or not
 		void OpenTreeNode(const std::string& _label, bool _open);
 		// opens the next tree node
@@ -493,14 +494,8 @@ namespace EGUI
 			//EGUI::Display::Label(_uniqueLabel.c_str());
 			std::string intercerptName = "##LG" + _uniqueLabel;
 			
-			if (StartTreeNode(_uniqueLabel.c_str()))
-			{
-				EGUI::Indent(20);
-				ImGui::PlotLines(intercerptName.c_str(), _array.begin(), static_cast<int>(_array.size()), 0,
-					_overlapText.c_str(), _min, _max, ImVec2{ _size.x, _size.y });
-				EGUI::UnIndent(20);
-				EndTreeNode();
-			}
+			ImGui::PlotLines(intercerptName.c_str(), _array.begin(), static_cast<int>(_array.size()), 0,
+								_overlapText.c_str(), _min, _max, ImVec2{ _size.x, _size.y });
 		}
 	}
 }

@@ -92,12 +92,12 @@ void Dystopia::ColorScheme::EditorUI()
 	//{
 	//	Apply();
 	//}
-	ImGui::PushItemWidth(mBarSize);
+	ImGui::PushItemWidth(static_cast<float>(mBarSize));
 	for (unsigned int i = 0; i < mArrColors.size(); ++i)
 	{
 		EGUI::PushID(i);
 		EGUI::Display::Label(ToName(static_cast<eColorData>(i)).c_str());
-		ImGui::SameLine(mAlignment);
+		ImGui::SameLine(static_cast<float>(mAlignment));
 		if (ImGui::ColorEdit4("MyColor##2f", (float*)&mArrColors[i], ImGuiColorEditFlags_Float))
 			Apply();
 		EGUI::PopID();
