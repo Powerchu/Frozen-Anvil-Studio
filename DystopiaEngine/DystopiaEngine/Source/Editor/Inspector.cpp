@@ -155,10 +155,8 @@ namespace Dystopia
 			bool show = !RemoveComponent(arrComp[i]);
 			if (open)
 			{
-				if (show)
-				{
+				if (show)	
 					arrComp[i]->EditorUI();
-				}
 				EGUI::Display::EndTreeNode();
 			}
 			EGUI::PopID();

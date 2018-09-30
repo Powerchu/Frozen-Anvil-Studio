@@ -54,7 +54,7 @@ namespace Dystopia
 		mSensitivity{ 0.1f },
 		mpEditorInput{ nullptr },
 		mAmFocused{ false }, mMoveVec{ 0,0 },
-		mMoveSens{ 0.5f }, mDragging{ false }
+		mMoveSens{ 0.75f }, mDragging{ false }
 	{}
 
 	SceneView::~SceneView()
