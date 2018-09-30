@@ -156,7 +156,7 @@ namespace Dystopia
 				worldClickPos.y >= (pos.y - (scale.y / 2)) &&
 				worldClickPos.y <= (pos.y + (scale.y / 2)))
 			{
-				PrintToConsoleLog("Cicked on a GameObject from scene view!");
+				PrintToConsoleLog("Clicked on a GameObject from scene view!");
 			}
 		}
 	}
