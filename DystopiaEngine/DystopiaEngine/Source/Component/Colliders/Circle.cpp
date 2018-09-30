@@ -80,6 +80,16 @@ namespace Dystopia
 		return new Circle{*this};
 	}
 
+	Math::Point3D Circle::GetPosition() const
+	{
+		return m_originCentre;
+	}
+
+	float Circle::GetRadius() const
+	{
+		return m_radius;
+	}
+
 	/*Serialise and Unserialise*/
 	void Circle::Serialise(TextSerialiser& _out) const
 	{
@@ -140,8 +150,9 @@ namespace Dystopia
 				const auto rv = this_body.GetLinearVelocity() - other_body.GetLinearVelocity();
 				Vec3D tangent = { normal.y, -normal.x,0 };
 				float length = rv.Dot(tangent);
+				
 				const auto velCompOnTangent = tangent * length;
-				const auto reflectedVec = rv - velCompOnTangent;
+				const auto reflectedVec = rv - velCompOnTangent - velCompOnTangent;
 
 				if (reflectedVec.MagnitudeSqr() > FLT_EPSILON)
 				{

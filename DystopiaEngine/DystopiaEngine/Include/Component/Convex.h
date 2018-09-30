@@ -55,8 +55,7 @@ namespace Dystopia
 		void Load(void) override;
 		/*Initialise the Component*/
 		void Init(void) override;
-		/*OnDestroy*/
-		void OnDestroy(void) override;
+
 		/*Unload the Component*/
 		void Unload(void) override;
 		/*Duplicate the Component*/
@@ -98,7 +97,7 @@ namespace Dystopia
 		Math::Point3D Support(const Convex & _ColB,
 			const Math::Vec3D & _Dir)const;
 
-
+		AutoArray<Edge> GetConvexEdges() const;
 
 	protected:
 		CollisionEvent GetCollisionEvent(AutoArray<Vertice> _Simplex,	const Convex & _ColB);

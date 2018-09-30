@@ -153,7 +153,7 @@ namespace Dystopia
 		void ClearCollisionEvent();
 
 		// Gettors
-		Math::Point3D GetPosition() const;
+		virtual Math::Point3D GetPosition() const;
 		Math::Vec3D GetOffSet()   const;
 		bool HasCollision() const;
 

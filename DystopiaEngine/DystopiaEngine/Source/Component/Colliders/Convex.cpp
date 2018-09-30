@@ -5,6 +5,7 @@
 #include "Component/RigidBody.h"
 #include "Object/GameObject.h"
 #include "IO/TextSerialiser.h"
+#include "Component/Circle.h"
 
 namespace Dystopia
 {
@@ -62,11 +63,6 @@ namespace Dystopia
 
 	}
 
-	void Convex::OnDestroy()
-	{
-
-	}
-
 	void Convex::Unload()
 	{
 
@@ -74,21 +70,18 @@ namespace Dystopia
 
 	void Convex::Serialise(TextSerialiser& _out) const
 	{
-		const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
-		const float _yScale = GetOwner()->GetComponent<Transform>()->GetScale().y;
-
 		_out.InsertStartBlock("Convex Collider");
-		_out << mID;						// gObj ID
+		_out << mID;					     // gObj ID
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);
 
 		_out << int(mVertices.size());
 
-		for (const auto& vertex : mVertices)
+		for (const auto vertex : mVertices)
 		{
-			_out << float(vertex.mPosition[0]) / _xScale;
-			_out << float(vertex.mPosition[1]) / _yScale;
+			_out << float(vertex.mPosition[0]);
+			_out << float(vertex.mPosition[1]);
 			_out << float(vertex.mPosition[2]);
 		}
 
@@ -97,11 +90,8 @@ namespace Dystopia
 
 	void Convex::Unserialise(TextSerialiser& _in)
 	{
-		int arr_vert_size = 0;
-		float tmp_x{ 0.0F }, tmp_y{ 0.0F }, tmp_z{ 0.0F };
-
-		mVertices.clear();
-		mDebugVertices.clear();
+		int arr_vert_size;
+		float tmp_x, tmp_y, tmp_z;
 
 		_in.ConsumeStartBlock();
 		_in >> mID;				// gObj ID
@@ -194,7 +184,61 @@ namespace Dystopia
 	bool Convex::isColliding(Circle & _ColB)
 	{
 		UNUSED_PARAMETER(_ColB);
-		return false;
+		auto & Edges = GetConvexEdges();
+		bool isInside = true;
+		/*Check for Circle inside Convex*/
+		for(auto & elem : Edges)
+		{
+			if( elem.mNorm3.Dot(elem.mPos - _ColB.GetPosition()) < 0 )
+			{
+				isInside = false;
+			}
+		}
+
+		if(!isInside)
+		{
+			float distance = 0;
+			for(auto & elem : Edges)
+			{
+				Vec3D v = elem.mVec3;
+				Vec3D w = _ColB.GetPosition() - elem.mPos;
+				float c1 = v.Dot((w));
+				float c2 = v.Dot(v);
+				float ratio = 0.f;
+				Point3D PointOfImpact;
+				if(c1 < 0 )
+				{
+					distance = w.Magnitude();
+				}
+				else if(c1 > c2)
+				{
+					distance =  (_ColB.GetPosition() - (elem.mPos + elem.mVec3)).Magnitude();
+				}
+				else
+				{
+					ratio = c1 / c2;
+					PointOfImpact = elem.mPos + ratio * elem.mVec3;
+					distance = (_ColB.GetPosition() - PointOfImpact).Magnitude();
+				}
+
+				if (distance < _ColB.GetRadius())
+				{
+					isInside = true;
+					CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
+					newEvent.mdPeneDepth = _ColB.GetRadius() - distance;
+					newEvent.mEdgeNormal = Math::Normalise(elem.mNorm3);
+					newEvent.mEdgeVector = elem.mVec3;
+					newEvent.mCollisionPoint = PointOfImpact;
+					isInside = true;
+					marr_ContactSets.push_back(newEvent);
+					mbColliding = true;
+					_ColB.SetColliding(true);
+				}
+			}
+
+		}
+		
+		return isInside;
 	}
 
 	bool Convex::isColliding(Circle * const & _pColB)
@@ -318,6 +362,33 @@ namespace Dystopia
 	Math::Point3D Convex::Support(const Convex & _ColB, const Math::Vec3D & _Dir) const
 	{
 		return Convex::Support(*this, _ColB, _Dir);
+	}
+
+	AutoArray<Edge> Convex::GetConvexEdges() const
+	{
+		AutoArray<Edge> ToRet;
+		for(unsigned i=0; i<mVertices.size(); ++i)
+		{
+			unsigned j = i + 1 >= mVertices.size() ? 0: i + 1;
+			Vertice const & start = mVertices[i];
+			Vertice const & end   = mVertices[j];
+			Edge e;
+			e.mVec3  = end.mPosition - start.mPosition;
+			e.mNorm3.xyzw = e.mVec3.yxzw;
+			e.mSimplexIndex = i;
+			e.mOrthogonalDistance = start.mPosition.Magnitude();
+			e.mPos = mPosition + GetOffSet() + Vec3D{ start.mPosition.x, start.mPosition.y,0 };
+#if CLOCKWISE
+
+			e.mNorm3.Negate<Math::NegateFlag::Z>();
+			
+#else
+			e.mNorm3.Negate<Math::NegateFlag::Y>();
+
+#endif
+			ToRet.push_back(e);
+		}
+		return ToRet;
 	}
 
 	CollisionEvent Convex::GetCollisionEvent(AutoArray<Vertice> _Simplex, const Convex & _ColB)

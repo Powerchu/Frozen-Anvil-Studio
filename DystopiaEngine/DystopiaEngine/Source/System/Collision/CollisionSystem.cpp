@@ -84,14 +84,15 @@ namespace Dystopia
 		{
 			CollisionTableMap i
 			{
-			{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }    ,&CollisionSystem::AABBvsAABB },
+			{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }    ,&CollisionSystem::AABBvsAABB     },
 			{ CollisionTable{ eColliderType::AABB    ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::AABB }    ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
-			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::CIRCLE}    ,&CollisionSystem::CircleVsCircle },
+			{ CollisionTable{ eColliderType::CIRCLE  ,eColliderType::CIRCLE}   ,&CollisionSystem::CircleVsCircle },
 			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::AABB}      ,&CollisionSystem::CircleVsAABB   },
-			{ CollisionTable{ eColliderType::AABB, eColliderType::CIRCLE}      ,&CollisionSystem::AABBvsCircle   },
-			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::CONVEX}    ,&CollisionSystem::CircleVsConvex}
+			{ CollisionTable{ eColliderType::AABB,   eColliderType::CIRCLE}    ,&CollisionSystem::AABBvsCircle   },
+			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::CONVEX}    ,&CollisionSystem::CircleVsConvex },
+			{ CollisionTable{ eColliderType::CONVEX, eColliderType::CIRCLE }   ,&CollisionSystem::CircleVsConvex}
 			};
 			return i;
 		}();
@@ -211,7 +212,25 @@ namespace Dystopia
 	{
 		UNUSED_PARAMETER(_ColA);
 		UNUSED_PARAMETER(_ColB);
-		return false;
+
+		Circle   * pCircle;
+		Convex   * pConvex;
+
+		if(_ColA->GetColliderType() == eColliderType::CIRCLE)
+		{
+			pCircle = dynamic_cast<Circle *>(_ColA);
+			pConvex = dynamic_cast<Convex *>(_ColB);
+		}
+		else
+		{
+			pCircle = dynamic_cast<Circle *>(_ColB);
+			pConvex = dynamic_cast<Convex *>(_ColA);
+			
+		}
+		bool isColliding = pConvex->isColliding(*pCircle);
+
+		return isColliding;
+		/*Check if Circle is inside the convex*/
 	}
 
 	AutoArray<Collider*> CollisionSystem::GetAllColliders() const

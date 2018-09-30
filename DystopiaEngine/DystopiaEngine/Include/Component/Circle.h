@@ -56,6 +56,9 @@ namespace Dystopia
 		/*Duplicate the Component*/
 		virtual Circle* Duplicate() const;
 
+		virtual Math::Point3D GetPosition() const;
+		float GetRadius() const;
+
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const;
 		virtual void Unserialise(TextSerialiser&);

@@ -67,14 +67,18 @@ namespace Dystopia
 		GraphicsSystem	*mpGfxSys;
 		GameObject		*mpSceneCamera;
 		EditorInput		*mpEditorInput;
+		//TODO delete me
+		GameObject*		mpStaticBoxObject;
+		GameObject*		mpCircleObject;
+		GameObject*		mpStaticCircleObject;
+		GameObject*		mpBoxObject;
 		
-		void			ScrollIn();
-		void			ScrollOut();
-		void			SceneChanged();
-		void			Zoom(bool);
-		void			Move();
-		void			FindMouseObject(const Math::Vec2& _imgSize);
-		Math::Pt3D		GetWorldClickPos(const Camera * const _cam, const Math::Vec2& _imgSize)  const;
+		void		ScrollIn();
+		void		ScrollOut();
+		void		SceneChanged();
+		void		Zoom(bool);
+		void		FindMouseObject(const Math::Vec2& _imgSize);
+		Math::Pt3D	GetWorldClickPos(const Camera * const _cam, const Math::Vec2& _imgSize)  const;
 	};
 
 }
