@@ -614,6 +614,8 @@ namespace Dystopia
 		mpSceneSystem->LoadScene(mTempSaveFile);
 		remove(mTempSaveFile.c_str());
 		mTempSaveFile.clear();
+		for (auto& e : mArrTabs)
+			e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
 		mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
 	}
 
