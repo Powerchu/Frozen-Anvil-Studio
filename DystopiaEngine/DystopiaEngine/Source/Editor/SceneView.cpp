@@ -28,6 +28,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/GameObject.h"
 #include "Component/Transform.h"
 #include "Component/Camera.h"
+#include "Component/Renderer.h"
+#include "Component/RigidBody.h"
 
 #include "Math/MathUtility.h"
 
@@ -74,6 +76,29 @@ namespace Dystopia
 		//mpSceneCamera->GetComponent<Camera>()->Init();
 		//mpSceneCamera->GetComponent<Transform>()->SetScale(Math::Vec4{ 1.f, 1.f, 1.f });
 		//delete p;
+
+		GameObject *sb = Factory::CreateStaticBox("Ground");
+		mpStaticWall = GetCurrentScene()->InsertGameObject(Utility::Move(*sb));
+		mpStaticWall->GetComponent<RigidBody>()->Init();
+		mpStaticWall->GetComponent<Transform>()->SetScale(Math::Vec4{ 1024.f, 32.f, 1.f });
+		mpStaticWall->GetComponent<Transform>()->SetGlobalPosition({ 0,-180.f,0 });
+		delete sb;
+
+		GameObject *sball = Factory::CreateCircle("Static Ball");
+		mpStaticBall = GetCurrentScene()->InsertGameObject(Utility::Move(*sball));
+		mpStaticBall->GetComponent<RigidBody>()->Init();
+		mpStaticBall->GetComponent<RigidBody>()->Set_IsStatic(true);
+		mpStaticBall->GetComponent<Transform>()->SetScale(Math::Vec4{ 32, 32.f, 1.f });
+		mpStaticBall->GetComponent<Transform>()->SetGlobalPosition({ 0,-90.0,0 });
+		delete sball;
+
+		sball = Factory::CreateCircle("Ball");
+		mpBall = GetCurrentScene()->InsertGameObject(Utility::Move(*sball));
+		mpBall->GetComponent<RigidBody>()->Init();
+		mpBall->GetComponent<RigidBody>()->Set_IsStatic(false);
+		mpBall->GetComponent<Transform>()->SetScale(Math::Vec4{ 32, 32.f, 1.f });
+		mpBall->GetComponent<Transform>()->SetGlobalPosition({ 0,90.0,0 });
+		delete sball;
 
 		SceneChanged();
 	}

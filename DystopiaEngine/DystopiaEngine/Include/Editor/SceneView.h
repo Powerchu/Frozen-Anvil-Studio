@@ -63,6 +63,11 @@ namespace Dystopia
 		std::string		mLabel;
 		GraphicsSystem	*mpGfxSys;
 		GameObject		*mpSceneCamera;
+
+		//TODO delete me
+		GameObject*		mpStaticWall;
+		GameObject*		mpBall;
+		GameObject*		mpStaticBall;
 		
 		void		ScrollIn();
 		void		ScrollOut();
