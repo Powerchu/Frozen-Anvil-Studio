@@ -118,7 +118,7 @@ namespace Dystopia
 		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 50 }, false, Math::Vec4{ 0,0,0,0 }))
 		{
 			EGUI::SameLine();
-			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 350.f) && strlen(buffer))
+			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 330.f) && strlen(buffer))
 			{
 				auto f_Old = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, mpFocus->GetName());
 				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
@@ -129,7 +129,6 @@ namespace Dystopia
 			EGUI::ChangeAlignmentYOffset(0);
 			EGUI::Display::DropDownSelection("Layer", j, arr2, 100);
 			EGUI::ChangeAlignmentYOffset();
-
 		}
 		EGUI::EndChild();
 	}

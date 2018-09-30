@@ -53,7 +53,8 @@ namespace Dystopia
 		mpSceneCamera{ nullptr },
 		mSensitivity{ 0.1f },
 		mpEditorInput{ nullptr },
-		mAmFocused{ false }
+		mAmFocused{ false },
+		mMoveSens{ 1 }
 	{}
 
 	SceneView::~SceneView()
@@ -141,19 +142,19 @@ namespace Dystopia
 			Math::Point3D newPos = mpSceneCamera->GetComponent<Transform>()->GetPosition();
 			if (mpEditorInput->IsKeyPressed(KEY_W))
 			{
-				newPos.y = newPos.y + 10 * mSensitivity;
+				newPos.y = newPos.y + mMoveSens;
 			}
 			if (mpEditorInput->IsKeyPressed(KEY_A))
 			{
-				newPos.x = newPos.x - 10 * mSensitivity;
+				newPos.x = newPos.x - mMoveSens;
 				}
 			if (mpEditorInput->IsKeyPressed(KEY_S))
 			{
-				newPos.y = newPos.y - 10 * mSensitivity;
+				newPos.y = newPos.y - mMoveSens;
 			}
 			if (mpEditorInput->IsKeyPressed(KEY_D))
 			{
-				newPos.x = newPos.x + 10 * mSensitivity;
+				newPos.x = newPos.x + mMoveSens;
 			}
 			mpSceneCamera->GetComponent<Transform>()->SetPosition(newPos);
 		}
