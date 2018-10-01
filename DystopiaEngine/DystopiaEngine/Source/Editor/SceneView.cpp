@@ -96,8 +96,10 @@ namespace Dystopia
 
 		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
 		mImgSize = Math::Vec2{ Size().x,  Size().y - imageOffsetY };
-		if (ImGui::ImageButton(reinterpret_cast<void*>(id), mImgSize, ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0))
+
+		if (EGUI::Display::Image(id, mImgSize, true))
 			mAmFocused = true;
+
 		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PREFAB))
 		{
 			AcceptPayload(t);
@@ -312,7 +314,7 @@ namespace Dystopia
 			Math::Pt3D worldClickPos	= GetWorldClickPos(pCam);
 			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ };
 
-
+			/* TODO: Unserialise a prefab file */
 		}
 	}
 

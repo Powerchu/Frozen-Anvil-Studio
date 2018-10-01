@@ -497,6 +497,15 @@ namespace EGUI
 			ImGui::PlotLines(intercerptName.c_str(), _array.begin(), static_cast<int>(_array.size()), 0,
 								_overlapText.c_str(), _min, _max, ImVec2{ _size.x, _size.y });
 		}
+		/* =======================================================================================================================
+		Brief:
+				Creates aN IMAGE as either a button or not (_interactive)
+		Usage:
+				size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
+				mImgSize = Math::Vec2{ Size().x,  Size().y - imageOffsetY };
+				if (EGUI::Display::Image(id, mImgSize, true))
+		======================================================================================================================= */
+		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize = Math::Vec2{ 30, 30 }, bool _interactive = false);
 	}
 }
 

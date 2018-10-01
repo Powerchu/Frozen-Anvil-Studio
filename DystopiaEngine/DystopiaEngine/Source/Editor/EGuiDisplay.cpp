@@ -665,6 +665,16 @@ namespace EGUI
 
 			ImGui::SetCursorScreenPos(pos);
 		}
+
+		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize, bool _interactive)
+		{
+			if (!_interactive)
+			{
+				ImGui::Image(reinterpret_cast<void*>(_imgID), _imgSize);
+				return false;
+			}
+			return ImGui::ImageButton(reinterpret_cast<void*>(_imgID), _imgSize, ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0);
+		}
 	}
 }	// NAMESPACE DYSTOPIA::EGUI::DISPLAY
 #endif // EDITOR

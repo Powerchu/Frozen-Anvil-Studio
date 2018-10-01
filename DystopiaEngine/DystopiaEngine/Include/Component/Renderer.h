@@ -81,11 +81,13 @@ namespace Dystopia
 		Mesh* mpMesh;
 		Shader* mpShader;
 		Texture* mpTexture;
-		std::string mLastKnownPath;
+		std::string mTexturePath;
+		std::string mTextureName;
 
 		void TextureField();
 		void MeshField();
 		void ShaderField();
+		std::string GetTextureName();
 	};
 }
 
