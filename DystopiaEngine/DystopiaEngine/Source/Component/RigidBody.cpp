@@ -111,10 +111,10 @@ namespace Dystopia
 		}
 
 		// compute final local centroid
-		mLocalCentroid *= mfInvMass;
+		//mLocalCentroid *= mfInvMass;
 
 		// If Static, then is Sleeping
-		if (mbIsStatic) mbIsAwake = false;
+		//if (mbIsStatic) mbIsAwake = false;
 
 		//// compute local inertia tensor
 		//Mat3D localInertiaTensor{ { 1, 0, 0, 0 },{ 0, 1, 0, 0 },{ 0, 0, 1, 0 },{ 0, 0, 0, 1 } };
