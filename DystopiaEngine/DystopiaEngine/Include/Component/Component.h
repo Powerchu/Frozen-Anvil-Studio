@@ -37,6 +37,7 @@ namespace Dystopia
 
 		Component(void) noexcept;
 		explicit Component(GameObject* _pOwner) noexcept;
+		Component(const Component&) noexcept;
 		virtual ~Component(void);
 
 
