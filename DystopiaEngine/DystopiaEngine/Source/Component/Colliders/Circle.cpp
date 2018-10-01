@@ -189,6 +189,10 @@ namespace Dystopia
 	}
 	bool Circle::isColliding(const Convex & other_col)
 	{
+		RigidBody* other_body{ nullptr };
+		if (other_col.GetOwner()->GetComponent<RigidBody>())
+			other_body = other_col.GetOwner()->GetComponent<RigidBody>();
+
 		AutoArray<Edge> const & ConvexEdges = other_col.GetConvexEdges();
 		bool isInside = true;
 		/*Check for Circle inside Convex*/
@@ -235,8 +239,14 @@ namespace Dystopia
 					newEvent.mEdgeNormal     = -elem.mNorm3.Normalise();
 					newEvent.mEdgeVector     = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
+					if (nullptr != other_body)
+					{
+						newEvent.mfRestitution = DetermineRestitution(*other_body);
+						newEvent.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
+						newEvent.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
+					}
 					marr_ContactSets.push_back(newEvent);
-					mbColliding = isInside   = true;
+					mbColliding = isInside  = true;
 				}
 			}
 

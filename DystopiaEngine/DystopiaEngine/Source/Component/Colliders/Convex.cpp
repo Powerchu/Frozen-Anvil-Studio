@@ -202,7 +202,10 @@ namespace Dystopia
 
 	bool Convex::isColliding(Circle & _ColB)
 	{
-		UNUSED_PARAMETER(_ColB);
+		RigidBody* other_body{ nullptr };
+		if (_ColB.GetOwner()->GetComponent<RigidBody>())
+			other_body = _ColB.GetOwner()->GetComponent<RigidBody>();
+
 		const auto & Edges = GetConvexEdges();
 		bool isInside = true;
 		/*Check for Circle inside Convex*/
@@ -248,6 +251,12 @@ namespace Dystopia
 					newEvent.mEdgeNormal = Math::Normalise(_ColB.GetPosition() - PointOfImpact);
 					newEvent.mEdgeVector = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
+					if (nullptr != other_body)
+					{
+						newEvent.mfRestitution = DetermineRestitution(*other_body);
+						newEvent.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
+						newEvent.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
+					}
 					isInside = true;
 					marr_ContactSets.push_back(newEvent);
 					mbColliding = true;

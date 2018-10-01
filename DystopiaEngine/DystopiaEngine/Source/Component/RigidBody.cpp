@@ -48,7 +48,7 @@ namespace Dystopia
 		, mbIsStatic(false)
 		, mbIsAwake(true)
 		, mbCanSleep(true)
-		//, mPhysicsType(discrete)
+		, mPhysicsType(t_dynamic)
 	{
 		
 	}
@@ -74,7 +74,7 @@ namespace Dystopia
 		, mbIsStatic(_staticState)
 		, mbIsAwake(true)
 		, mbCanSleep(true)
-		//, mPhysicsType(discrete)
+		, mPhysicsType(t_dynamic)
 	{
 
 	}
@@ -106,6 +106,7 @@ namespace Dystopia
 			if (!mbIsStatic)
 			{
 				mbIsStatic = true;
+				mPhysicsType = t_static;
 			}
 			mfInvMass = 0.0F;
 		}
@@ -114,7 +115,15 @@ namespace Dystopia
 		//mLocalCentroid *= mfInvMass;
 
 		// If Static, then is Sleeping
-		//if (mbIsStatic) mbIsAwake = false;
+		if (mbIsStatic) {
+			mbIsAwake = false;
+			mPhysicsType = t_static;
+		}
+		else
+		{
+			mbIsAwake = true;
+			mPhysicsType = t_dynamic;
+		}
 
 		//// compute local inertia tensor
 		//Mat3D localInertiaTensor{ { 1, 0, 0, 0 },{ 0, 1, 0, 0 },{ 0, 0, 1, 0 },{ 0, 0, 0, 1 } };
@@ -301,11 +310,6 @@ namespace Dystopia
 	{
 		if (!mbIsStatic)
 			LoggerSystem::ConsoleLog(eLog::MESSAGE, "transform: (%f,%f) \n X vel: %f, Y vel: %f \n Awake: %i", float(mPosition.x), float(mPosition.y), float(mLinearVelocity.x), float(mLinearVelocity.y), mbIsAwake);
-	}
-
-	void RigidBody::EditorUI() noexcept
-	{
-		// Rigidbody editor UI will be here
 	}
 
 	void RigidBody::GlobalCentroidFromPosition(void)
@@ -549,4 +553,311 @@ namespace Dystopia
 		return mbIsAwake;
 	}
 
+	/****************************************************************
+	* EDITOR GUI STUFF
+	****************************************************************/
+	void RigidBody::CheckMass()
+	{
+		if (mfMass)
+		{
+			mfInvMass = 1 / mfMass;
+		}
+		else
+		{
+			mfInvMass = 0;
+			mbIsStatic = true;
+			mPhysicsType = t_static;
+		}
+	}
+
+	void RigidBody::EditorUI() noexcept
+	{
+		eBodyTypeDropDown();
+		eMassField();
+		eLinearDragField();
+		eAngularDragField();
+		eGravityScaleField();
+		eCollisionDetectionField();
+		eSleepingModeDropdown();
+		eRotationConstraintCheckBox();
+		eCurrentPositionVectorField();
+		ePreviousPositionVectorField();
+		eRotationField();
+		eCurrentVelocityVectorField();
+		eCurrentAngularVectorField();
+		eCurrentSleepStatusText();
+	}
+
+	void RigidBody::eBodyTypeDropDown()
+	{
+		static int i_type = mPhysicsType;
+		AutoArray<std::string> arr{ std::string{"Dynamic"}, 
+									std::string{"Kinematic"}, 
+									std::string{"Static"} };
+		if (EGUI::Display::DropDownSelection("Body Type			", i_type, arr))
+		{
+			switch (i_type)
+			{
+				case 0: // Dynamic
+					mPhysicsType = t_dynamic;
+					mbIsAwake = true;
+					mbIsStatic = false;
+					if (mfMass <= FLT_EPSILON) mfMass = 10.0f;
+					LoggerSystem::ConsoleLog(eLog::MESSAGE, "Body is now Dynamic, Awake and not Static.");
+					break;
+				case 1: // Kinematic
+					LoggerSystem::ConsoleLog(eLog::WARNING, "Kinematic is not implemented yet. Switching to Dynamic");
+					i_type = 0;
+					mPhysicsType = t_dynamic;
+					mbIsAwake = true;
+					mbIsStatic = false;
+					if (mfMass <= FLT_EPSILON) mfMass = 10.0f;
+					LoggerSystem::ConsoleLog(eLog::MESSAGE, "Body is now Dynamic, Awake and not Static.");
+					break;
+				case 2: // Static
+					mPhysicsType = t_static;
+					mbIsAwake = false;
+					mbIsStatic = true;
+					mfMass = 0.0f;
+					CheckMass();
+					LoggerSystem::ConsoleLog(eLog::MESSAGE, "Body is now Static, and not Awake.");
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	void RigidBody::eMassField()
+	{
+		if (mPhysicsType != t_static)
+		{
+			switch (EGUI::Display::DragFloat("Mass				", &mfMass, 0.05f, 0.01F, FLT_MAX))
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				CheckMass();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				CheckMass();
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				EGUI::GetCommandHND()->StartRecording<RigidBody>(GetOwner()->GetID(), &mfMass);
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				CheckMass();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				CheckMass();
+				break;
+			default:
+				break;
+			}
+		}
+		
+	}
+
+	void RigidBody::eLinearDragField()
+	{
+		switch (EGUI::Display::DragFloat("Linear Drag				", &mfLinearDamping, 0.01f, 0.0F, FLT_MAX))
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eDRAGGING:
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(GetOwner()->GetID(), &mfLinearDamping);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eNO_CHANGE:
+			break;
+		case EGUI::eDragStatus::eTABBED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		default:
+			break;
+		}
+	}
+
+	void RigidBody::eAngularDragField()
+	{
+		switch (EGUI::Display::DragFloat("Angular Drag			", &mfAngularDrag, 0.01f, 0.0F, FLT_MAX))
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eDRAGGING:
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(GetOwner()->GetID(), &mfAngularDrag);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eNO_CHANGE:
+			break;
+		case EGUI::eDragStatus::eTABBED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		default:
+			break;
+		}
+	}
+
+	void RigidBody::eGravityScaleField()
+	{
+		switch (EGUI::Display::DragFloat("Gravity Scale			", &mfGravityScale, 0.01f, -FLT_MAX, FLT_MAX))
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eDRAGGING:
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(GetOwner()->GetID(), &mfGravityScale);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eNO_CHANGE:
+			break;
+		case EGUI::eDragStatus::eTABBED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		default:
+			break;
+		}
+	}
+
+	void RigidBody::eCollisionDetectionField()
+	{
+		static int i_type = 0;
+		AutoArray<std::string> arr{ std::string{ "Discrete" },
+			std::string{ "Continuous" } };
+		if (EGUI::Display::DropDownSelection("Collision Detection   ", i_type, arr))
+		{
+			switch (i_type)
+			{
+			case 0: // Dynamic
+				LoggerSystem::ConsoleLog(eLog::MESSAGE, "Body will now check Discrete Collision.");
+				break;
+			case 1: // Kinematic
+				LoggerSystem::ConsoleLog(eLog::WARNING, "Continuous is not implemented yet. Switching to Discrete");
+				i_type = 0;
+				LoggerSystem::ConsoleLog(eLog::MESSAGE, "Body will now check Discrete Collision.");
+				break;
+			case 2: // Static
+
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	void RigidBody::eSleepingModeDropdown()
+	{
+		static int i_type = 0;
+		AutoArray<std::string> arr{ std::string{ "Never Sleep" },
+									std::string{ "Start Awake" },
+									std::string{"Start Asleep"}};
+		if (EGUI::Display::DropDownSelection("Sleeping Mode			", i_type, arr))
+		{
+			switch (i_type)
+			{
+			case 0: // Dynamic
+				LoggerSystem::ConsoleLog(eLog::WARNING, "Not implemented yet.");
+				break;
+			case 1: // Kinematic
+				LoggerSystem::ConsoleLog(eLog::WARNING, "Not implemented yet.");
+				break;
+			case 2: // Static
+				LoggerSystem::ConsoleLog(eLog::WARNING, "Not implemented yet.");
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	void RigidBody::eRotationConstraintCheckBox()
+	{
+		static bool toggleState = false;
+		if (EGUI::Display::CheckBox("Freeze Rotation		", &toggleState))
+		{
+			// Freeze Z Rotation Function here
+			if (toggleState)
+			{
+				//EGUI::Display::IconTick();
+			}
+			else
+			{
+				
+			}
+		}
+	}
+
+	void RigidBody::eCurrentPositionVectorField()
+	{
+		EGUI::Display::Label("Position     : x[%.2f], y[%.2f], z[%.2f]", 
+							 mPosition.x, 
+							 mPosition.y, 
+							 mPosition.z);
+	}
+
+	void RigidBody::ePreviousPositionVectorField()
+	{
+		EGUI::Display::Label("Prev Position: x[%.2f], y[%.2f], z[%.2f]", 
+							 mPrevPosition.x, 
+							 mPrevPosition.y, 
+							 mPrevPosition.z);
+	}
+
+	void RigidBody::eRotationField()
+	{
+		EGUI::Display::Label("Angle Degree : %.2f", 
+							 mfAngleDeg);
+	}
+
+	void RigidBody::eCurrentVelocityVectorField()
+	{
+		EGUI::Display::Label("Linear Vel.  : x[%.2f], y[%.2f], z[%.2f]", 
+							 mLinearVelocity.x, 
+							 mLinearVelocity.y, 
+							 mLinearVelocity.z);
+	}
+
+	void RigidBody::eCurrentAngularVectorField()
+	{
+		EGUI::Display::Label("Angular Vel. : x[%.2f], y[%.2f], z[%.2f]", 
+							  mAngularVelocity.x, 
+							  mAngularVelocity.y, 
+							  mAngularVelocity.z);
+	}
+
+	void RigidBody::eCurrentSleepStatusText()
+	{
+		std::string show= "Is Awake     :  ";
+		show += (mbIsAwake) ? "true" : "false";
+		EGUI::Display::Label(show.c_str());
+	}
 }

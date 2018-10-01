@@ -66,9 +66,9 @@ namespace Dystopia
 	protected:
 		enum PhysicsType
 		{
-			discrete,		// fixed timestep frame checking for collision
-			continuous,		// continuous checking for collision
-			kinematic		// dynamic objects that will not be pushed around
+			t_dynamic = 0,		// fixed timestep frame checking for collision
+			t_kinematic,		// dynamic objects that will not be pushed around
+			t_static	// continuous checking for collision
 		};
 		//~RigidBody(void);
 
@@ -196,7 +196,7 @@ namespace Dystopia
 		float			mfDynamicFriction;
 		float			mfRestitution;				/* Elasticity Coefficient: 'Bounciness' of the body*/
 
-		float			mfGravityScale;		/* A scalar multiple (in float) of the Physics Engine's gravity*/
+		float			mfGravityScale;				/* A scalar multiple (in float) of the Physics Engine's gravity*/
 	
 		float			mfMass;						/* Defines how difficult it is to move an object*/
 		float			mfInvMass;					/* For calculation purposes, since integration uses mass inverse*/
@@ -210,10 +210,31 @@ namespace Dystopia
 		bool			mbIsAwake;
 		bool			mbCanSleep;
 
-		//PhysicsType		mPhysicsType;
+		PhysicsType		mPhysicsType;
 
 
 		/*Quaternion if needed*/
+
+		/*=================Editor Stuff=====================*/
+#if EDITOR
+		void eBodyTypeDropDown();
+		void CheckMass();
+		void eMassField();
+		void eLinearDragField();
+		void eAngularDragField();
+		void eGravityScaleField();
+		void eCollisionDetectionField();
+		void eSleepingModeDropdown();
+		void eRotationConstraintCheckBox();
+
+		void eCurrentPositionVectorField();
+		void ePreviousPositionVectorField();
+		void eRotationField();
+		void eCurrentVelocityVectorField();
+		void eCurrentAngularVectorField();
+		void eCurrentSleepStatusText();
+
+#endif // EDITOR
 
 	};
 }

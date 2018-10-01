@@ -125,7 +125,7 @@ void Dystopia::CollisionEvent::ApplyPenetrationCorrection()
 
 	if (!bodyA->Get_IsStaticState())
 		bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
-	if (!bodyB->Get_IsStaticState())
-		bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);
+	/*if (!bodyB->Get_IsStaticState())
+		bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);*/
 
 }
