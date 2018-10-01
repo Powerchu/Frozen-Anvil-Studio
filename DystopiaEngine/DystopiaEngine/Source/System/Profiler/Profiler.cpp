@@ -20,12 +20,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Profiler/ProfileInfo.h"
 #include "System/Time/TimeDefs.h"
 #include "System/Time/Timer.h"
+#include "System/Logger/LogPriority.h"
+#include "System/Logger/LoggerSystem.h"
+
+#include "DataStructure/Array.h"
+#include "DataStructure/AutoArray.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
 #include <Psapi.h>
 #include <iostream>
+#include <intrin.h>
 
 namespace
 {
@@ -64,6 +70,58 @@ std::map<std::string, Dystopia::ProfileInfo>& Dystopia::Profiler::GetInfo(void)
 
 bool Dystopia::Profiler::Init(void)
 {
+	// Check for CPU and available instruction set
+	int nAvailableID;
+	char buf1[128]{ 0 }, buf2[128]{ 0 };
+	Array<int, 4> out;
+	Array<int, 2> data = { 0, 0 };
+	AutoArray<Array<int, 4>> ExData;
+
+	// Get CPU Vendor
+	__cpuid(out.begin(), 0);
+	nAvailableID = out[0];
+	reinterpret_cast<int*>(buf1)[0] = out[1];
+	reinterpret_cast<int*>(buf1)[1] = out[3];
+	reinterpret_cast<int*>(buf1)[2] = out[2];
+
+	if (nAvailableID > 0)
+	{
+		__cpuid(out.begin(), 1);
+		data[0] = out[2];
+		data[1] = out[3];
+	}
+
+	__cpuid(out.begin(), 0x80000000);
+	nAvailableID = out[0];
+
+	for (int n = 0x80000000; n < nAvailableID; ++n)
+	{
+		__cpuidex(out.begin(), n, 0);
+		ExData.push_back(out);
+	}
+
+	// If we can get the CPU brand, print it!
+	if (nAvailableID > 0x80000003)
+	{
+		std::memcpy(buf2     , ExData[2].begin(), sizeof(ExData[0]));
+		std::memcpy(buf2 + 16, ExData[3].begin(), sizeof(ExData[0]));
+		std::memcpy(buf2 + 32, ExData[4].begin(), sizeof(ExData[0]));
+
+		LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: Using %s, %s!\n", buf1, buf2);
+	}
+	else
+	{
+		LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: Using %s!", buf1);
+	}
+
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE %s!", data[1] & (0x1 << 6) ? "Available" : "Not Supported");
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE2 %s!", data[1] & (0x1 << 5) ? "Available" : "Not Supported");
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE3 %s!", data[0] & (0x1 << 31) ? "Available" : "Not Supported");
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSSE3 %s!", data[0] & (0x1 << 22) ? "Available" : "Not Supported");
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE4.1 %s!", data[0] & (0x1 << 11) ? "Available" : "Not Supported");
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE4.2 %s!", data[0] & (0x1 << 12) ? "Available" : "Not Supported");
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: FMA %s!", data[0] & (0x1 << 19) ? "Available" : "Not Supported");
+
 	return true;
 }
 
