@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Component/Renderer.h"
+
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Graphics/Mesh.h"
 #include "System/Graphics/MeshSystem.h"
@@ -20,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
+
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
 #include "IO/TextSerialiser.h"

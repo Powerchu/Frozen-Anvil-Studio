@@ -203,7 +203,7 @@ namespace Dystopia
 			}
 			ImGui::EndPopup();
 		}
-		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAMEOBJECT, &_obj, sizeof(_obj), _obj.GetName()))
+		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &_obj, sizeof(_obj), _obj.GetName()))
 		{
 			EGUI::Display::EndPayload();
 		}

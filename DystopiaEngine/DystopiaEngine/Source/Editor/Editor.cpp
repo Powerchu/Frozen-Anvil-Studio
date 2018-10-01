@@ -227,36 +227,14 @@ namespace Dystopia
 			mpDriver->Update();
 			break;
 		case EDITOR_PROMPT_SAVE:
-			EGUI::Display::OpenPopup(g_nsPopup);
-			if (EGUI::Display::StartPopupModal(g_nsPopup.c_str(), "Save before Exit?"))
-			{
-				if (EGUI::Display::Button("Save"))
-				{
-					EGUI::Display::CloseCurrentPopup();
-					ChangeState(EDITOR_MAIN);
-					mpEditorEventSys->FireNow(EDITOR_HOTKEY_SAVE);
-				}
-				EGUI::SameLine();
-				if (EGUI::Display::Button("Cancel"))
-				{
-					EGUI::Display::CloseCurrentPopup();
-					ChangeState(EDITOR_MAIN);
-				}
-				EGUI::SameLine();
-				if (EGUI::Display::Button("Exit"))
-				{
-					EGUI::Display::CloseCurrentPopup();
-					ChangeState(EDITOR_EXIT);
-				}
-				EGUI::Display::EndPopup();
-			}
+			PromptSaving();
 			break;
 		}
 
 		bool nightmode = EDITOR_PLAY == mCurrentState;
 		
-		if (nightmode)
-			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
+		if (nightmode) ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
+
 		for (unsigned int i = 0; i < mArrTabs.size(); ++i)
 		{
 			EGUI::PushID(i);
@@ -282,8 +260,7 @@ namespace Dystopia
 			EGUI::EndTab();
 			EGUI::PopID();
 		}
-		if (nightmode)
-			ImGui::PopStyleVar();
+		if (nightmode) ImGui::PopStyleVar();
 	}
 
 	void Editor::EndFrame()
@@ -393,11 +370,12 @@ namespace Dystopia
 	{
 		if (EGUI::StartMenuHeader("File"))
 		{
-			if (EGUI::StartMenuBody("New"))			NewScene();
-			if (EGUI::StartMenuBody("Open"))		LoadProc();
-			if (EGUI::StartMenuBody("Save"))		mpEditorEventSys->FireNow(EDITOR_HOTKEY_SAVE);
-			if (EGUI::StartMenuBody("Save As.."))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_SAVEAS);
-			if (EGUI::StartMenuBody("Quit"))		ChangeState((mpComdHandler->HasUnsavedChanges()) ? EDITOR_PROMPT_SAVE : EDITOR_EXIT);
+			if (EGUI::StartMenuBody("New", "Ctrl + N"))					mpEditorEventSys->FireNow(EDITOR_HOTKEY_NEW); 
+			if (EGUI::StartMenuBody("Open", "Ctrl + O"))				mpEditorEventSys->FireNow(EDITOR_HOTKEY_OPEN);
+			if (EGUI::StartMenuBody("Save", "Ctrl + S"))				mpEditorEventSys->FireNow(EDITOR_HOTKEY_SAVE);
+			if (EGUI::StartMenuBody("Save As..", "Ctrl + Shift + S"))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_SAVEAS);
+			if (EGUI::StartMenuBody("Quit"))							ChangeState((mpComdHandler->HasUnsavedChanges()) ? 
+																					 EDITOR_PROMPT_SAVE : EDITOR_EXIT);
 			EGUI::EndMenuHeader();
 		}
 	}
@@ -480,6 +458,7 @@ namespace Dystopia
 
 	void Editor::NewScene()
 	{
+
 	}
 
 	void Editor::GamePlay()
@@ -690,11 +669,13 @@ namespace Dystopia
 			else if (mpInput->IsKeyTriggered(KEY_X))	mpEditorEventSys->Fire(EDITOR_HOTKEY_CUT);
 			else if (mpInput->IsKeyTriggered(KEY_V))	mpEditorEventSys->Fire(EDITOR_HOTKEY_PASTE);
 			else if (mpInput->IsKeyTriggered(KEY_S))	mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVE);
-			else if (mpInput->IsKeyTriggered(KEY_SHIFT))
+			else if (mpInput->IsKeyPressed(KEY_SHIFT))
 			{
 				if (mpInput->IsKeyTriggered(KEY_S))		mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVEAS);
 			}
 			else if (mpInput->IsKeyTriggered(KEY_P))	mpEditorEventSys->Fire(EDITOR_HOTKEY_PLAY);
+			else if (mpInput->IsKeyTriggered(KEY_O))	mpEditorEventSys->Fire(EDITOR_HOTKEY_OPEN);
+			else if (mpInput->IsKeyTriggered(KEY_N))	mpEditorEventSys->Fire(EDITOR_HOTKEY_NEW);
 		}
 		else if (mpInput->IsKeyTriggered(KEY_DELETE))	
 			mpEditorEventSys->Fire(EDITOR_HOTKEY_DELETE);
@@ -709,6 +690,8 @@ namespace Dystopia
 	
 	void Editor::InstallHotkeys()
 	{
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_OPEN)->Bind(&Editor::LoadProc, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_NEW)->Bind(&Editor::NewScene, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_UNDO)->Bind(&Editor::EditorUndo, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_REDO)->Bind(&Editor::EditorRedo, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_COPY)->Bind(&Editor::EditorCopy, this);
@@ -723,6 +706,8 @@ namespace Dystopia
 
 	void Editor::UnInstallHotkeys()
 	{
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_OPEN)->Unbind(this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_NEW)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_UNDO)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_REDO)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_COPY)->Unbind(this);
@@ -800,6 +785,34 @@ namespace Dystopia
 	{
 		return mpInput;
 	}
+
+	void Editor::PromptSaving()
+	{
+		EGUI::Display::OpenPopup(g_nsPopup);
+		if (EGUI::Display::StartPopupModal(g_nsPopup.c_str(), "Save before Exit?"))
+		{
+			if (EGUI::Display::Button("Save"))
+			{
+				EGUI::Display::CloseCurrentPopup();
+				ChangeState(EDITOR_MAIN);
+				mpEditorEventSys->FireNow(EDITOR_HOTKEY_SAVE);
+			}
+			EGUI::SameLine();
+			if (EGUI::Display::Button("Cancel"))
+			{
+				EGUI::Display::CloseCurrentPopup();
+				ChangeState(EDITOR_MAIN);
+			}
+			EGUI::SameLine();
+			if (EGUI::Display::Button("Exit"))
+			{
+				EGUI::Display::CloseCurrentPopup();
+				ChangeState(EDITOR_EXIT);
+			}
+			EGUI::Display::EndPopup();
+		}
+	}
+
 }
 
 #endif		// EDITOR ONLY

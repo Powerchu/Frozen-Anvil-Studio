@@ -13,8 +13,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Utility/DebugAssert.h"
+
 #include "Editor/ConsoleLog.h"
 #include "Editor/EGUI.h"
+
 #include "System/Driver/Driver.h"
 #include "System/Logger/LoggerSystem.h"
 #include <algorithm>

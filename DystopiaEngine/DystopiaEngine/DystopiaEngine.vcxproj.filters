@@ -244,6 +244,9 @@
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp">
       <Filter>Allocator</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\Payload.cpp">
+      <Filter>Editor\Payload</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
