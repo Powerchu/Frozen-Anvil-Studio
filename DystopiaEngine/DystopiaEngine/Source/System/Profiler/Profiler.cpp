@@ -32,6 +32,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <Psapi.h>
 #include <iostream>
 #include <intrin.h>
+#include <bitset>
 
 namespace
 {
@@ -74,7 +75,8 @@ bool Dystopia::Profiler::Init(void)
 	int nAvailableID;
 	char buf1[128]{ 0 }, buf2[128]{ 0 };
 	Array<int, 4> out;
-	Array<int, 2> data = { 0, 0 };
+	
+	std::bitset<32> data[2];
 	AutoArray<Array<int, 4>> ExData;
 
 	// Get CPU Vendor
@@ -114,13 +116,12 @@ bool Dystopia::Profiler::Init(void)
 		LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: Using %s!", buf1);
 	}
 
-	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE %s!", data[1] & (0x1 << 6) ? "Available" : "Not Supported");
-	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE2 %s!", data[1] & (0x1 << 5) ? "Available" : "Not Supported");
-	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE3 %s!", data[0] & (0x1 << 31) ? "Available" : "Not Supported");
-	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSSE3 %s!", data[0] & (0x1 << 22) ? "Available" : "Not Supported");
-	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE4.1 %s!", data[0] & (0x1 << 11) ? "Available" : "Not Supported");
-	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE4.2 %s!", data[0] & (0x1 << 12) ? "Available" : "Not Supported");
-	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: FMA %s!", data[0] & (0x1 << 19) ? "Available" : "Not Supported");
+#define AVAIL_MSG(_X_) ((_X_) ? "Available" : "Not Supported")
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE %s, SSE2 %s, SSE3 %s, SSE4.1 %s, SSE4.2 %s, FMA %s!", 
+		AVAIL_MSG(data[1][25]), AVAIL_MSG(data[1][26]), AVAIL_MSG(data[0][0]),
+		AVAIL_MSG(data[0][19]), AVAIL_MSG(data[0][20]), AVAIL_MSG(data[0][12])
+	);
+#undef AVAIL_MSG
 
 	return true;
 }
