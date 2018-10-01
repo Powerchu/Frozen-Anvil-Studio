@@ -288,7 +288,7 @@ namespace Dystopia
 
 		/*Construct the Matrix for Global Coordinate Conversion*/
 		Math::Matrix3D WorldSpace = Math::Translate(_ColA.mPosition.x + OffSet.x, _ColA.mPosition.y + OffSet.y, _ColA.mPosition.z + OffSet.z);
-
+		WorldSpace = WorldSpace * _ColA.GetTransformationMatrix();
 		Vertice * pFirst = _ColA.mVertices.begin();
 		Vertice FarthestPoint = *pFirst;
 		FarthestPoint.mPosition = (WorldSpace * pFirst->mPosition);
@@ -386,17 +386,18 @@ namespace Dystopia
 	AutoArray<Edge> Convex::GetConvexEdges() const
 	{
 		AutoArray<Edge> ToRet;
+		Math::Matrix4 World = Math::Translate(GetOffSet() + mPosition) * GetTransformationMatrix();
 		for(unsigned i=0; i<mVertices.size(); ++i)
 		{
 			unsigned j = i + 1 >= mVertices.size() ? 0: i + 1;
-			Vertice const & start = mVertices[i];
-			Vertice const & end   = mVertices[j];
+			Math::Point3D const & start = World * mVertices[i].mPosition;
+			Math::Point3D const & end   = World * mVertices[j].mPosition;
 			Edge e;
-			e.mVec3  = end.mPosition - start.mPosition;
+			e.mVec3  = end - start;
 			e.mNorm3.xyzw = e.mVec3.yxzw;
 			e.mSimplexIndex = i;
-			e.mOrthogonalDistance = start.mPosition.Magnitude();
-			e.mPos = mPosition + GetOffSet() + Vec3D{ start.mPosition.x, start.mPosition.y,0 };
+			e.mOrthogonalDistance = start.Magnitude();
+			e.mPos = start;
 #if CLOCKWISE
 
 			e.mNorm3.Negate<Math::NegateFlag::X>();

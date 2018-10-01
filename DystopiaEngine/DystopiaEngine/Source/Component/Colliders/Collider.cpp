@@ -144,15 +144,32 @@ namespace Dystopia
 		return mpMesh;
 	}
 
-	//void Collider::Serialise(TextSerialiser&) const
-	//{
+	void Collider::SetRotation(Math::Degrees _deg)
+	{
+		mTransformation = Math::RotateZ(_deg);
+	}
 
-	//}
+	void Collider::SetRotation(Math::Radians _rad)
+	{
+		mTransformation = Math::RotateZ(_rad);
+	}
 
-	//void Collider::Unserialise(TextSerialiser&)
-	//{
+	void Collider::AddRotation(Math::Radians _rad)
+	{
+		Math::Matrix3D Rotation = Math::RotateZ(_rad);
+		mTransformation = Rotation * mTransformation;
+	}
 
-	//}
+	void Collider::AddRotation(Math::Degrees _deg)
+	{
+		Math::Matrix3D Rotation = Math::RotateZ(_deg);
+		mTransformation = Rotation * mTransformation;
+	}
+
+	Math::Matrix3D Collider::GetTransformationMatrix() const
+	{
+		return mTransformation;
+	}
 
 	Collider::~Collider()
 	{

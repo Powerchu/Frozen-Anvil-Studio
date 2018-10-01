@@ -86,6 +86,7 @@ namespace Dystopia
 
 			auto c = static_cast<ComponentDonor<Convex>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
 			pObject->AddComponent(c, typename Collider::TAG{});
+			c->SetRotation(Math::Degrees{ 45 });
 			return pObject;
 		}
 
