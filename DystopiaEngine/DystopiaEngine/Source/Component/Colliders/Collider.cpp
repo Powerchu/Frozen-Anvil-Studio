@@ -78,7 +78,7 @@ namespace Dystopia
 			const float a_rest = GetOwner()->GetComponent<RigidBody>()->GetRestitution();
 			return Math::Min(a_rest, b.GetRestitution());
 		}
-		
+		return 0;
 	}
 
 	float Collider::DetermineStaticFriction(RigidBody const & b) const
@@ -88,6 +88,7 @@ namespace Dystopia
 			const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetStaticFriction();
 			return sqrt(a_fric*b.GetStaticFriction());
 		}
+		return 0;
 	}
 
 	float Collider::DetermineKineticFriction(RigidBody const & b) const
@@ -97,6 +98,7 @@ namespace Dystopia
 			const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetKineticFriction();
 			return sqrt(a_fric*b.GetKineticFriction());
 		}
+		return 0;
 	}
 
 	AutoArray<CollisionEvent> const & Collider::GetCollisionEvents() const

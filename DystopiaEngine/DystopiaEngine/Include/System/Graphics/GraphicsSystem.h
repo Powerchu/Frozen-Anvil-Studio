@@ -56,6 +56,7 @@ namespace Dystopia
 		void SetGamma(float) noexcept;
 		float GetGamma(void) noexcept;
 
+		bool GetDebugDraw(void) const;
 		void ToggleDebugDraw(void);
 
 		// Sets up Window for openGL rendering

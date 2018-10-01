@@ -175,9 +175,6 @@ namespace Dystopia
 		//Integrate the velocity
 		mLinearVelocity += mAcceleration * _dt;
 
-		// Update Position
-		mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
-
 		const Vec3D new_accel = mCumulativeForce * mfInvMass + mAcceleration;
 
 		//Integrate the velocity
@@ -228,10 +225,12 @@ namespace Dystopia
 		}
 	}
 
-	void RigidBody::UpdateResult(float)
+	void RigidBody::UpdateResult(float _dt)
 	{
 		if (!mbIsStatic) // only update when body is not static
 		{		
+			// Update Position
+			mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
 			P_TX->SetGlobalPosition(mPosition);
 		}
 	}

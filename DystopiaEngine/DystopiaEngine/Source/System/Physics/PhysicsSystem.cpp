@@ -15,7 +15,7 @@ namespace Dystopia
 		, mGravity(-950.665F)
 		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.025F)
+		, mPenetrationEpsilon(0.03F)
 		, mPenetrationResolutionPercentage(0.8F)
 	{
 	}
@@ -47,21 +47,20 @@ namespace Dystopia
 
 	void PhysicsSystem::IntegrateRigidBodies(float _dt)
 	{
-		for (auto& bodies : mComponents)
+		for (auto& body : mComponents)
 		{
-			if (bodies.GetOwner())
+			if (body.GetOwner())
 			{
-				bodies.Integrate(_dt);
+				body.Integrate(_dt);
 			}
 		}
 	}
 
 	void PhysicsSystem::ResolveCollision(float)
 	{
-		const GameObject* owner;
 		for (auto& body : mComponents)
 		{
-			owner = body.GetOwner();
+			const GameObject* owner = body.GetOwner();
 			if (nullptr != owner && !body.Get_IsStaticState())
 			{
 				const auto col = owner->GetComponent<Collider>();
@@ -72,10 +71,16 @@ namespace Dystopia
 						CollisionEvent* worstContact = nullptr;
 						double worstPene = mPenetrationEpsilon;
 
+						for (int i = 0; i < 8; ++i)
+						{
+							for (auto& manifold : col->GetCollisionEvents())
+							{
+								manifold.ApplyImpulse();
+							}
+						}
+
 						for (auto& manifold : col->GetCollisionEvents())
 						{
-							manifold.ApplyImpulse();
-
 							if (manifold.mdPeneDepth > worstPene)
 							{
 								worstContact = &manifold;
@@ -85,8 +90,7 @@ namespace Dystopia
 							{
 								worstContact->ApplyPenetrationCorrection();
 							}
-
-						};
+						}
 					}
 				}
 			}
@@ -119,17 +123,17 @@ namespace Dystopia
 
 	void PhysicsSystem::Step(float _dt)
 	{
-		
-
 		/* Broad Phase Collision Detection*/
 
 		/* Narrow Phase Collision Detection*/
 		
-		/* Collision Resolution (Response) Logic */
-		ResolveCollision(_dt);
+		
 
 		// Integrate RigidBodies
 		IntegrateRigidBodies(_dt);
+
+		/* Collision Resolution (Response) Logic */
+		ResolveCollision(_dt);
 
 		/*Update positions and rotation as result*/
 		UpdateResults(_dt);
@@ -155,7 +159,7 @@ namespace Dystopia
 		}
 	}
 
-	void PhysicsSystem::Update(float _dt)
+	void PhysicsSystem::Update(float)
 	{
 		
 	}
