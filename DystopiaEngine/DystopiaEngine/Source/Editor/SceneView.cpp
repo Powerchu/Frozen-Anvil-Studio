@@ -87,28 +87,39 @@ namespace Dystopia
 		GameObject *b = Factory::CreateBox("Box Object");
 		Texture2D* _bt = new Texture2D{ "Resource/Editor/red_box.png" };
 		mpBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*b));
-		mpBoxObject->GetComponent<RigidBody>()->Init();
-		mpBoxObject->GetComponent<RigidBody>()->SetRestitution(0.4F);
-		mpBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.9F);
-		mpBoxObject->GetComponent<RigidBody>()->SetKineticFriction(0.1F);
+		mpBoxObject->GetComponent<RigidBody>()->SetRestitution(1.0F);
+		mpBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.1F);
+		mpBoxObject->GetComponent<RigidBody>()->SetKineticFriction(0.4F);
 		mpBoxObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 64.f, 64.f, 1.f });
 		mpBoxObject->GetComponent<Renderer>()->SetTexture(_bt);
 		mpBoxObject->GetComponent<Collider>()->Init();
-		mpBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.3F);
+		mpBoxObject->GetComponent<RigidBody>()->Init();
 		delete b;
 
 		// Sample Box Object
 		GameObject *bb = Factory::CreateBox("Another box");
 		Texture2D* _bbt = new Texture2D{ "Resource/Editor/red_box.png" };
 		mpBoxObject2 = GetCurrentScene()->InsertGameObject(Utility::Move(*bb));
-		mpBoxObject2->GetComponent<RigidBody>()->Init();
 		mpBoxObject2->GetComponent<Transform>()->SetScale(Math::Vec4{ 64.f, 64.f, 1.f });
 		mpBoxObject2->GetComponent<Transform>()->SetGlobalPosition({ 50.0F, 100.0f, 1 });
 		mpBoxObject2->GetComponent<Renderer>()->SetTexture(_bbt);
 		mpBoxObject2->GetComponent<Collider>()->Init();
-		mpBoxObject2->GetComponent<RigidBody>()->SetRestitution(1.0F);
-		mpBoxObject2->GetComponent<RigidBody>()->SetStaticFriction(0.9F);
-		mpBoxObject2->GetComponent<RigidBody>()->SetKineticFriction(0.1F);
+		mpBoxObject2->GetComponent<RigidBody>()->SetRestitution(0.4F);
+		mpBoxObject2->GetComponent<RigidBody>()->SetStaticFriction(0.2F);
+		mpBoxObject2->GetComponent<RigidBody>()->SetKineticFriction(0.6F);
+		mpBoxObject2->GetComponent<RigidBody>()->Init();
+		delete bb;
+
+		bb = Factory::CreateBox("Another box");
+		mpBoxObject2 = GetCurrentScene()->InsertGameObject(Utility::Move(*bb));
+		mpBoxObject2->GetComponent<Transform>()->SetScale(Math::Vec4{ 64.f, 64.f, 1.f });
+		mpBoxObject2->GetComponent<Transform>()->SetGlobalPosition({ 50.0F, -100.0f, 1 });
+		mpBoxObject2->GetComponent<Renderer>()->SetTexture(_bbt);
+		mpBoxObject2->GetComponent<Collider>()->Init();
+		mpBoxObject2->GetComponent<RigidBody>()->SetRestitution(0.5F);
+		mpBoxObject2->GetComponent<RigidBody>()->SetStaticFriction(0.1F);
+		mpBoxObject2->GetComponent<RigidBody>()->SetKineticFriction(0.6F);
+		mpBoxObject2->GetComponent<RigidBody>()->Init();
 		delete bb;
 
 		// Sample Circle Object
@@ -143,54 +154,54 @@ namespace Dystopia
 		GameObject *s = Factory::CreateStaticBox("Ground");
 		Texture2D* _st = new Texture2D{ "Resource/Editor/white_box.png" };
 		mpStaticBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*s));
-		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
-		mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
-		mpStaticBoxObject->GetComponent<RigidBody>()->SetRestitution(1.0F);
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetRestitution(0.5F);
 		mpStaticBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.1F);
-		mpStaticBoxObject->GetComponent<RigidBody>()->SetKineticFriction(0.1F);
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetKineticFriction(0.4F);
 		mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0, -240.f, 1 });
 		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 2048.f, 32.f, 1.f });
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetMass(0.0F);
 		mpStaticBoxObject->GetComponent<Collider>()->Init();
+		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
 		mpStaticBoxObject->GetComponent<Renderer>()->SetTexture(_st);
 		delete s;
 
 		s = Factory::CreateStaticBox("Left");
 		mpStaticBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*s));
-		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
-		mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
-		mpStaticBoxObject->GetComponent<RigidBody>()->SetRestitution(1.0F);
-		mpStaticBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.1F);
-		mpStaticBoxObject->GetComponent<RigidBody>()->SetKineticFriction(0.1F);
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetRestitution(0.5F);
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.4F);
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetKineticFriction(0.4F);
 		mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition({ -390.0F, 0.0F, 1 });
 		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 32.f, 1024.0f, 1.f });
 		mpStaticBoxObject->GetComponent<Collider>()->Init();
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetMass(0.0F);
 		mpStaticBoxObject->GetComponent<Renderer>()->SetTexture(_st);
+		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
 		delete s;
 
 		s = Factory::CreateStaticBox("Right");
 		mpStaticBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*s));
-		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
-		mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
-		mpStaticBoxObject->GetComponent<RigidBody>()->SetRestitution(1.0F);
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetRestitution(0.5F);
 		mpStaticBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.1F);
-		mpStaticBoxObject->GetComponent<RigidBody>()->SetKineticFriction(0.1F);
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetKineticFriction(0.4F);
 		mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 390.0F, 0.0F, 1 });
 		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 32.f, 1024.0f, 1.f });
 		mpStaticBoxObject->GetComponent<Collider>()->Init();
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetMass(0.0F);
 		mpStaticBoxObject->GetComponent<Renderer>()->SetTexture(_st);
+		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
 		delete s;
 
 		s = Factory::CreateStaticBox("Top");
 		mpStaticBoxObject = GetCurrentScene()->InsertGameObject(Utility::Move(*s));
-		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
-		mpStaticBoxObject->GetComponent<RigidBody>()->Set_IsStatic(true);
-		mpStaticBoxObject->GetComponent<RigidBody>()->SetRestitution(1.0F);
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetRestitution(0.5F);
 		mpStaticBoxObject->GetComponent<RigidBody>()->SetStaticFriction(0.1F);
-		mpStaticBoxObject->GetComponent<RigidBody>()->SetKineticFriction(0.1F);
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetKineticFriction(0.4F);
 		mpStaticBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0.0F, 240.0F, 1 });
 		mpStaticBoxObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 1024.f, 32.f, 1.f });
 		mpStaticBoxObject->GetComponent<Collider>()->Init();
+		mpStaticBoxObject->GetComponent<RigidBody>()->SetMass(0.0F);
 		mpStaticBoxObject->GetComponent<Renderer>()->SetTexture(_st);
+		mpStaticBoxObject->GetComponent<RigidBody>()->Init();
 		delete s;
 
 		SceneChanged();
@@ -199,17 +210,31 @@ namespace Dystopia
 	void SceneView::Update(const float& _dt)
 	{
 		mDelta = _dt;
+		const auto * input = EngineCore::GetInstance()->GetSystem<InputManager>();
 		if (GetMainEditor().CurrentState() == EDITOR_MAIN)
 		{
 			mpGfxSys->Update(mDelta);
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eUserButton::MOUSE_M))
+		if (input->IsKeyTriggered(eUserButton::MOUSE_M))
 		{
-			mpCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 0,90,0,0 });
-			mpCircleObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
-			/*mpBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
-			mpBoxObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });*/
+			/*mpCircleObject->GetComponent<Transform>()->SetGlobalPosition({ 0,90,0,0 });
+			mpCircleObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });*/
+			mpBoxObject->GetComponent<Transform>()->SetGlobalPosition({ 0,0,0,0 });
+			mpBoxObject->GetComponent<RigidBody>()->SetVelocity({ 0,0,0,0 });
+		}
+
+		if (input->IsKeyPressed(eUserButton::BUTTON_LEFT))
+		{
+			mpBoxObject->GetComponent<RigidBody>()->AddForce({ -5,0,0 });
+		}
+		if (input->IsKeyPressed(eUserButton::BUTTON_RIGHT))
+		{
+			mpBoxObject->GetComponent<RigidBody>()->AddForce({ 5,0,0 });
+		}
+		if (input->IsKeyPressed(eUserButton::BUTTON_SPACEBAR))
+		{
+			mpBoxObject->GetComponent<RigidBody>()->AddForce({ 0,10,0 });
 		}
 	}
 
@@ -256,7 +281,7 @@ namespace Dystopia
 		return mLabel;
 	}
 
-	void SceneView::Move()
+	void SceneView::Move() const
 	{
 		if (mpSceneCamera && !mpEditorInput->IsKeyPressed(KEY_CTRL))
 		{

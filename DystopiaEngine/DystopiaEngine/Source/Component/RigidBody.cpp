@@ -97,7 +97,6 @@ namespace Dystopia
 		// If mass is zero, object is interpreted to be static
 		if (mfMass > 0.0F)
 		{
-			mbIsStatic = false;
 			mfInvMass = 1.0F / mfMass;
 		}
 		else //if mfMass <= 0
@@ -159,7 +158,7 @@ namespace Dystopia
 
 		if (mbHasGravity)
 		{
-			mAcceleration += Vec3D{0, mpPhysSys->mGravity*mfGravityScale,0};
+			mAcceleration += Vec3D{0, mpPhysSys->mGravity*mfGravityScale*5,0};
 		}
 
 		//Integrate the velocity
@@ -361,13 +360,13 @@ namespace Dystopia
 		/*Add to the total Angular velocity of the object in this Update Frame*/
 		mAngularVelocity += angularVel;
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
-		mCumulativeForce += _force * 10000.0F;
+		mCumulativeForce += _force * 5000.0F;
 		mbIsAwake = true;
 	}
 
 	void RigidBody::AddForce(Math::Vec3D const & _force)
 	{
-		mCumulativeForce += _force * 10000.0F;
+		mCumulativeForce += _force * 5000.0F;
 		mbIsAwake = true;
 	}
 

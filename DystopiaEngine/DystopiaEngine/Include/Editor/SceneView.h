@@ -33,8 +33,6 @@ namespace Dystopia
 		/* Init() is called immediately after the creation of the object */
 		virtual void Init();
 
-		void Move() const;
-
 		/* Update() is called before Window(), so alter most variables (frame based) here to be printed in Window() later */
 		virtual void Update(const float&);
 
@@ -80,7 +78,7 @@ namespace Dystopia
 		void		ScrollOut();
 		void		SceneChanged();
 		void		Zoom(bool);
-		void		Move();
+		void		Move() const;
 		void		FindMouseObject(const Math::Vec2& _imgSize);
 		Math::Pt3D	GetWorldClickPos(const Camera * const _cam, const Math::Vec2& _imgSize)  const;
 	};

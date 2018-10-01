@@ -12,10 +12,10 @@ namespace Dystopia
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(false)
 		, mInterpolation_mode(none)
-		, mGravity(-910.665F)
+		, mGravity(-98.0665F)
 		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.1F)
+		, mPenetrationEpsilon(0.2F)
 		, mPenetrationResolutionPercentage(0.8F)
 	{
 	}
