@@ -86,7 +86,10 @@ namespace Dystopia
 
 	void Convex::Serialise(TextSerialiser& _out) const
 	{
-		_out.InsertStartBlock("Convex Collider");
+		const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
+		const float _yScale = GetOwner()->GetComponent<Transform>()->GetScale().y;
+
+		_out.InsertStartBlock("Convex_Collider");
 		_out << mID;					     // gObj ID
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
@@ -96,12 +99,12 @@ namespace Dystopia
 
 		for (const auto vertex : mVertices)
 		{
-			_out << float(vertex.mPosition[0]);
-			_out << float(vertex.mPosition[1]);
+			_out << float(vertex.mPosition[0]) / _xScale;
+			_out << float(vertex.mPosition[1]) / _yScale;
 			_out << float(vertex.mPosition[2]);
 		}
 
-		_out.InsertEndBlock("Convex Collider");
+		_out.InsertEndBlock("Convex_Collider");
 	}
 
 	void Convex::Unserialise(TextSerialiser& _in)
@@ -145,7 +148,7 @@ namespace Dystopia
 
 	bool Convex::isColliding(Convex & _ColB)
 	{
-		static Math::Vec3D InitialSearchDir{ 1,0,0,0 };
+		static Math::Vec3D InitialSearchDir{ 1,1,0,0 };
 		return isColliding(_ColB, InitialSearchDir);
 	}
 

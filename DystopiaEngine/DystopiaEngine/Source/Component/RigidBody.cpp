@@ -47,7 +47,8 @@ namespace Dystopia
 		, mbHasGravity(true)
 		, mbIsStatic(false)
 		, mbIsAwake(true)
-		, mPhysicsType(discrete)
+		, mbCanSleep(true)
+		//, mPhysicsType(discrete)
 	{
 		
 	}
@@ -72,7 +73,8 @@ namespace Dystopia
 		, mbHasGravity(_gravityState)
 		, mbIsStatic(_staticState)
 		, mbIsAwake(true)
-		, mPhysicsType(discrete)
+		, mbCanSleep(true)
+		//, mPhysicsType(discrete)
 	{
 
 	}
@@ -215,7 +217,7 @@ namespace Dystopia
 		}
 	}
 
-	void RigidBody::UpdateResult(float _dt)
+	void RigidBody::UpdateResult(float)
 	{
 		if (!mbIsStatic) // only update when body is not static
 		{		
@@ -255,20 +257,19 @@ namespace Dystopia
 		_out << mfRestitution;
 		_out << mfGravityScale;
 		_out << mfMass;
-		//   << mfInvMass;
 		_out << mbHasGravity;			// Gravity State
 		_out << mbIsStatic;				// Static State
 		_out << mbIsAwake;				// Awake State
 		_out << mbCanSleep;				// Can Sleep Boolean
-		_out << int(mPhysicsType);		// enum for physicstype
+		//_out << int(mPhysicsType);		// enum for physicstype
 		_out.InsertEndBlock("RigidBody");
 	}
 
 	void RigidBody::Unserialise(TextSerialiser & _in)
 	{
-		int physicsType;
+		//int physicsType;
 		_in.ConsumeStartBlock();
-		_in >> mID;					// gObjID
+		_in >> mID;						// gObjID
 		_in >> mfAngleDeg;				// Angle in degrees
 		_in >> mfLinearDamping;			// Linear Drag
 		_in >> mfAngularDrag;			// Angular Drag
@@ -277,15 +278,14 @@ namespace Dystopia
 		_in >> mfRestitution;
 		_in >> mfGravityScale;
 		_in >> mfMass;
-		//  >> mfInvMass;
 		_in >> mbHasGravity;			// Gravity State
 		_in >> mbIsStatic;				// Static State
 		_in >> mbIsAwake;				// Awake State
 		_in >> mbCanSleep;				// Can Sleep Boolean
-		_in >> physicsType;		// enum for physicstype
+		//_in >> physicsType;				// enum for physicstype
 		_in.ConsumeEndBlock();
 
-		mPhysicsType = static_cast<PhysicsType>(physicsType);
+		//mPhysicsType = static_cast<PhysicsType>(physicsType);
 
 		if (GameObject* owner =
 			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))

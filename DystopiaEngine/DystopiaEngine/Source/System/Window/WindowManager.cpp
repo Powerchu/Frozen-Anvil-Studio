@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/MouseData.h"
 #include "IO/TextSerialiser.h"
 #include "System/Logger/LoggerSystem.h"
+#include "Editor/EditorEvents.h"
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
@@ -177,6 +178,12 @@ void Dystopia::WindowManager::PostInit(void)
 
 	mWidth  = GetSystemMetrics(SM_CXSCREEN);
 	mHeight = GetSystemMetrics(SM_CYSCREEN);
+
+#if EDITOR
+
+	mWindows[0].SetAcceptFiles(true);
+
+#endif
 }
 
 void Dystopia::WindowManager::Update(float)

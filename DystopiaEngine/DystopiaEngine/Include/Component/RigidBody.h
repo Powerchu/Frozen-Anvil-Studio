@@ -210,7 +210,7 @@ namespace Dystopia
 		bool			mbIsAwake;
 		bool			mbCanSleep;
 
-		PhysicsType		mPhysicsType;
+		//PhysicsType		mPhysicsType;
 
 
 		/*Quaternion if needed*/

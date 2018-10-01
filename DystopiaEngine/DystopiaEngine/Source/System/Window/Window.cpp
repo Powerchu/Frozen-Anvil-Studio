@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
 #include <windows.h>						// Windows Header
+#include <shellapi.h>
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
 #undef  NOMINMAX
@@ -124,6 +125,11 @@ void Dystopia::Window::Show(void) const noexcept
 void Dystopia::Window::Hide(void) const noexcept
 {
 	ShowWindow(GetWindowHandle(), SW_HIDE);
+}
+
+void Dystopia::Window::SetAcceptFiles(bool _bAccept) const noexcept
+{
+	DragAcceptFiles(GetWindowHandle(), _bAccept ? TRUE : FALSE);
 }
 
 

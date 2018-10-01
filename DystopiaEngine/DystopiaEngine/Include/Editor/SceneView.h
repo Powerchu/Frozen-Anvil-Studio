@@ -70,6 +70,10 @@ namespace Dystopia
 		EditorInput		*mpEditorInput;
 		Math::Vec2		mImgSize;
 		Math::Vec2		mMoveVec;
+
+		GameObject*		mpBoxObject;
+		GameObject*		mpBoxObject2;
+		GameObject*		mpStaticBoxObject;
 		
 		void			ScrollIn();
 		void			ScrollOut();

@@ -48,7 +48,7 @@ namespace Dystopia
 		//empty
 	}
 
-	void CollisionSystem::Update(float _dt)
+	void CollisionSystem::Update(float)
 	{
 		
 	}
@@ -144,19 +144,38 @@ namespace Dystopia
 			{
 				if (nullptr == bodyB->GetOwner()) continue;
 
-				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB) &&
-					(!bodyA->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState() ||
-					 !bodyB->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState()))
+				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
 				{
-					const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
-					for (auto & key : CollisionFuncTable)
+					if (bodyA->GetOwner()->GetComponent<RigidBody>() && bodyB->GetOwner()->GetComponent<RigidBody>())
 					{
-						if (key.first == pair_key)
+						if (!bodyA->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState() ||
+							!bodyB->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState())
 						{
-							(this->*key.second)(bodyA, bodyB);
-							bodyB->SetColliding(bodyB->Collider::HasCollision());
-							bodyA->SetColliding(bodyA->Collider::HasCollision());
-							break;
+							const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+							for (auto & key : CollisionFuncTable)
+							{
+								if (key.first == pair_key)
+								{
+									(this->*key.second)(bodyA, bodyB);
+									bodyB->SetColliding(bodyB->Collider::HasCollision());
+									bodyA->SetColliding(bodyA->Collider::HasCollision());
+									break;
+								}
+							}
+						}
+					}
+					else
+					{
+						const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+						for (auto & key : CollisionFuncTable)
+						{
+							if (key.first == pair_key)
+							{
+								(this->*key.second)(bodyA, bodyB);
+								bodyB->SetColliding(bodyB->Collider::HasCollision());
+								bodyA->SetColliding(bodyA->Collider::HasCollision());
+								break;
+							}
 						}
 					}
 				}				

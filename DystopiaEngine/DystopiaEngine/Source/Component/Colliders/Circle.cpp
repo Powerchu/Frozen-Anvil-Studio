@@ -98,7 +98,7 @@ namespace Dystopia
 	/*Serialise and Unserialise*/
 	void Circle::Serialise(TextSerialiser& _out) const
 	{
-		_out.InsertStartBlock("Circle Collider2D");
+		_out.InsertStartBlock("Circle_Collider2D");
 		_out << mID;					// gObj ID
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
@@ -106,7 +106,7 @@ namespace Dystopia
 
 		_out << float(m_radius);
 		
-		_out.InsertEndBlock("Circle Collider2D");
+		_out.InsertEndBlock("Circle_Collider2D");
 	}
 	void Circle::Unserialise(TextSerialiser& _in)
 	{
