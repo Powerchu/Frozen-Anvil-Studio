@@ -34,9 +34,9 @@ namespace Dystopia
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllBehaviours>::value;
 		};
-		const std::string GetEditorName(void) const { return "_SF_ClassName_"; }
 
 #endif
+		virtual const std::string GetEditorName(void) const override { return "_SF_ClassName_"; }
 		static uint64_t constexpr m_SF_ClassName_ID = _SF_UID_;
 
 		_SF_ClassName_();

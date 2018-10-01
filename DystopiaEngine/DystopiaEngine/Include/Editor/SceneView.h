@@ -58,6 +58,7 @@ namespace Dystopia
 			eZOOM_NONE
 		};
 
+		bool			mDragging;
 		bool			mAmFocused;
 		float			mDelta;
 		float			mSensitivity;
@@ -67,14 +68,18 @@ namespace Dystopia
 		GraphicsSystem	*mpGfxSys;
 		GameObject		*mpSceneCamera;
 		EditorInput		*mpEditorInput;
+		Math::Vec2		mImgSize;
+		Math::Vec2		mMoveVec;
 		
-		void		ScrollIn();
-		void		ScrollOut();
-		void		SceneChanged();
-		void		Zoom(bool);
-		void		Move() const;
-		void		FindMouseObject(const Math::Vec2& _imgSize);
-		Math::Pt3D	GetWorldClickPos(const Camera * const _cam, const Math::Vec2& _imgSize)  const;
+		void			ScrollIn();
+		void			ScrollOut();
+		void			SceneChanged();
+		void			Zoom(bool);
+		void			Move();
+		void			FindMouseObject();
+		Math::Pt3D		GetWorldClickPos(const Camera * const _cam) const;
+		Math::Vec2		FindMouseVector();
+		Camera*			GetCamera();
 	};
 
 }

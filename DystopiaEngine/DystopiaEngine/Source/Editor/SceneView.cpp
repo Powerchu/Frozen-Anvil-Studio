@@ -39,6 +39,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	static constexpr float imageOffsetY = 27.f;
+	static constexpr float dragMagnitudeEpsilon = 2.f;
 
 	static SceneView* gpInstance = 0;
 	SceneView* SceneView::GetInstance()
@@ -52,13 +53,12 @@ namespace Dystopia
 	SceneView::SceneView()
 		: EditorTab{ false },
 		mLabel{ "Scene View" },
-		mpGfxSys{ nullptr },
-		mDelta{},
+		mpGfxSys{ nullptr }, mDelta{},
 		mpSceneCamera{ nullptr },
 		mSensitivity{ 0.1f },
 		mpEditorInput{ nullptr },
-		mAmFocused{ false },
-		mMoveSens{ 1 }
+		mAmFocused{ false }, mMoveVec{ 0,0 },
+		mMoveSens{ 0.75f }, mDragging{ false }
 	{}
 
 	SceneView::~SceneView()
@@ -100,15 +100,17 @@ namespace Dystopia
 	{
 		if (ImGui::IsMouseClicked(0))
 			mAmFocused = false;
+		if (mDragging && !ImGui::IsMouseDown(1))
+			mDragging = false;
 
 		EGUI::UnIndent(2);
 		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
-		ImVec2 size{ Size().x,  Size().y - imageOffsetY };
+		mImgSize = Math::Vec2{ Size().x,  Size().y - imageOffsetY };
 
 		if (GetMainEditor().CurrentState() == EDITOR_PLAY)
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 
-		if (ImGui::ImageButton(reinterpret_cast<void*>(id), size, ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0))
+		if (ImGui::ImageButton(reinterpret_cast<void*>(id), mImgSize, ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0))
 			mAmFocused = true;
 
 		if (GetMainEditor().CurrentState() == EDITOR_PLAY)
@@ -116,13 +118,18 @@ namespace Dystopia
 
 		if (ImGui::IsItemHovered())
 		{
-			if (ImGui::IsMouseClicked(0))	
-				FindMouseObject(size);
+			if (ImGui::IsMouseClicked(0))	FindMouseObject();
+			if (ImGui::IsMouseClicked(1))
+			{
+				mDragging = true;
+				mMoveVec = FindMouseVector();
+			}
 		}
-		if (mAmFocused)
+
+		if (mAmFocused || mDragging)
 		{
-			Move();
-			if (mToZoom != eZOOM_NONE) Zoom(eZOOM_IN == mToZoom);
+			if (mDragging)				Move();
+			if (mToZoom != eZOOM_NONE)  Zoom(eZOOM_IN == mToZoom);
 		}
 
 		EGUI::Indent(2);
@@ -141,77 +148,78 @@ namespace Dystopia
 
 	void SceneView::Move() const
 	{
-		if (mpSceneCamera && !mpEditorInput->IsKeyPressed(KEY_CTRL))
+		if (mpSceneCamera)
 		{
-			Math::Point3D newPos = mpSceneCamera->GetComponent<Transform>()->GetPosition();
-			if (mpEditorInput->IsKeyPressed(KEY_W))
-			{
-				newPos.y = newPos.y + mMoveSens;
-			}
-			if (mpEditorInput->IsKeyPressed(KEY_A))
-			{
-				newPos.x = newPos.x - mMoveSens;
-				}
-			if (mpEditorInput->IsKeyPressed(KEY_S))
-			{
-				newPos.y = newPos.y - mMoveSens;
-			}
-			if (mpEditorInput->IsKeyPressed(KEY_D))
-			{
-				newPos.x = newPos.x + mMoveSens;
-			}
-			mpSceneCamera->GetComponent<Transform>()->SetPosition(newPos);
+			Math::Vec2 vDest	= FindMouseVector();
+			Math::Vec2 vDir		= vDest - mMoveVec;
+
+			if (vDir.MagnitudeSqr() < dragMagnitudeEpsilon) 
+				return;
+
+			Math::Point3D pos	= mpSceneCamera->GetComponent<Transform>()->GetPosition();
+			pos.x				= pos.x - mMoveSens * vDir.x;
+			pos.y				= pos.y - mMoveSens * vDir.y;
+
+			mpSceneCamera->GetComponent<Transform>()->SetPosition(pos);
+			mMoveVec = FindMouseVector();
+			PrintToConsoleLog("Moving Vector: [" + std::to_string(pos.x) + "] / [" + std::to_string(pos.y) + "]");
 		}
 	}
 
-	void SceneView::FindMouseObject(const Math::Vec2& _imgSize)
+	void SceneView::FindMouseObject()
 	{
-		if (!mpSceneCamera)
+		if (Camera* pCam = GetCamera())
 		{
-			PrintToConsoleLog("Camera GameObject is NULL in SceneView::FindMouseObject()");
-			return;
-		}
+			Math::Pt3D worldClickPos = GetWorldClickPos(pCam);
 
-		Camera* pCam = mpSceneCamera->GetComponent<Camera>();
-		if (nullptr == pCam)
-		{
-			PrintToConsoleLog("Camera is NULL in SceneView::FindMouseObject()");
-			return;
-		}
-
-		Math::Pt3D worldClickPos = GetWorldClickPos(pCam, _imgSize);
-		PrintToConsoleLog("HitPoint (Screen To world) : [" + std::to_string(worldClickPos.x) + "] / [" + std::to_string(worldClickPos.y) + "]");
-
-		const GameObject* pTarget = nullptr;
-		float vLength = FLT_MAX;
-		for (const auto& obj : GetCurrentScene()->GetAllGameObjects())
-		{
-			if (&obj == mpSceneCamera) continue;
-
-			Math::Pt3D objPos	= obj.GetComponent<Transform>()->GetGlobalPosition();
-			Math::Vec4 distV	= objPos - worldClickPos;
-			Math::Vec2 flatVec	= { distV.x, distV.y };
-			float lSquared = flatVec.MagnitudeSqr();
-			if (lSquared < vLength)
+			GameObject* pTarget = nullptr;
+			float vLength = FLT_MAX;
+			for (auto& obj : GetCurrentScene()->GetAllGameObjects())
 			{
-				vLength = lSquared;
-				pTarget = &obj;
+				if (&obj == mpSceneCamera) continue;
+
+				Math::Pt3D objPos = obj.GetComponent<Transform>()->GetGlobalPosition();
+				Math::Vec4 distV = objPos - worldClickPos;
+				Math::Vec2 flatVec = { distV.x, distV.y };
+
+				const auto& trans = obj.GetComponent<Transform>();
+				Math::Vec4 scale = trans->GetGlobalScale();
+				Math::Pt3D pos = trans->GetGlobalPosition();
+
+				if (worldClickPos.x >= (pos.x - (scale.x / 2)) &&
+					worldClickPos.x <= (pos.x + (scale.x / 2)) &&
+					worldClickPos.y >= (pos.y - (scale.y / 2)) &&
+					worldClickPos.y <= (pos.y + (scale.y / 2)))
+				{
+					float lSquared = flatVec.MagnitudeSqr();
+					if (lSquared < vLength)
+					{
+						vLength = lSquared;
+						pTarget = &obj;
+					}
+				}
+			}
+			if (pTarget)
+			{
+				GetMainEditor().SetFocus(*pTarget);
+				PrintToConsoleLog("HitPoint (Screen To world) : [" + pTarget->GetName() + "]");
 			}
 		}
+	}
 
-		if (pTarget)
+	Math::Vec2 SceneView::FindMouseVector()
+	{
+		if (Camera* pCam = GetCamera())
 		{
-			const auto& trans	= pTarget->GetComponent<Transform>();
-			Math::Vec4 scale	= trans->GetGlobalScale();
-			Math::Pt3D pos		= trans->GetGlobalPosition();
-			if (worldClickPos.x >= (pos.x - (scale.x / 2)) &&
-				worldClickPos.x <= (pos.x + (scale.x / 2)) &&
-				worldClickPos.y >= (pos.y - (scale.y / 2)) &&
-				worldClickPos.y <= (pos.y + (scale.y / 2)))
+			if (Transform* pTrans = mpSceneCamera->GetComponent<Transform>())
 			{
-				PrintToConsoleLog("Clicked on a GameObject from scene view!");
+				Math::Pt3D worldClickPos = GetWorldClickPos(pCam);
+				Math::Vec2 v{ worldClickPos.x - pTrans->GetGlobalPosition().x,
+							  worldClickPos.y - pTrans->GetGlobalPosition().y };
+				return v;
 			}
 		}
+		return Math::Vec2{ 0,0 };
 	}
 
 	void SceneView::Zoom(bool _in)
@@ -229,12 +237,11 @@ namespace Dystopia
 			PrintToConsoleLog("Camera Transform is NULL in SceneView::Zoom");
 			return;
 		}
-
-		Math::Vec4 movement{ mSensitivity, mSensitivity, 0.f };
-		movement = _in ? movement * -1 : movement;
-		pObjTransform->SetScale(pObjTransform->GetScale() + movement);
+		float s = _in ? 1 - mSensitivity : 1 + mSensitivity;
+		Math::Vec4 newScalep = pObjTransform->GetScale() * s;
+		pObjTransform->SetScale(newScalep);
 	}
-	
+
 	void SceneView::ScrollIn()
 	{
 		mToZoom = eZOOM_IN;
@@ -260,17 +267,34 @@ namespace Dystopia
 		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
 	}
 
-	Math::Pt3D SceneView::GetWorldClickPos(const Camera * const _cam, const Math::Vec2& _imgSize) const
+	Math::Pt3D SceneView::GetWorldClickPos(const Camera * const _cam) const
 	{
 		Math::Vec2 mousePos = ImGui::GetMousePos();
 		Math::Vec2 relPos = mousePos - ImGui::GetItemRectMin();
 		auto viewport = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
-		Math::Vec2 hitPoint{ (relPos.x / _imgSize.x) * viewport.mnWidth,
-							 (relPos.y / _imgSize.y) * viewport.mnHeight };
+		Math::Vec2 hitPoint{ (relPos.x / mImgSize.x) * viewport.mnWidth,
+							 (relPos.y / mImgSize.y) * viewport.mnHeight };
 		auto worldPos = _cam->ScreenToWorld(Math::Vec3D{ hitPoint.x - (viewport.mnWidth / 2),
-													     hitPoint.y - (viewport.mnHeight / 2), 
-														 0.f });
+														 hitPoint.y - (viewport.mnHeight / 2),
+														 0.f, 1.f });
 		return worldPos;
+	}
+
+	Camera* SceneView::GetCamera()
+	{
+		if (!mpSceneCamera)
+		{
+			PrintToConsoleLog("Camera GameObject is NULL in SceneView");
+			return nullptr;
+		}
+
+		Camera* pCam = mpSceneCamera->GetComponent<Camera>();
+		if (!pCam)
+		{
+			PrintToConsoleLog("Camera is NULL in SceneView");
+			return nullptr;
+		}
+		return pCam;
 	}
 
 }
