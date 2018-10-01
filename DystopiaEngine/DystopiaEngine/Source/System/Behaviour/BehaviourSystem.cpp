@@ -227,8 +227,18 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::Shutdown(void)
 	{
+#if EDITOR
 		for (auto const & elem : mvBehaviourReferences)
 		delete elem.mpBehaviour;
+
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				delete iter.second;
+			}
+		}
+#endif
 	}
 
 	void Dystopia::BehaviourSystem::LoadDefaults(void)

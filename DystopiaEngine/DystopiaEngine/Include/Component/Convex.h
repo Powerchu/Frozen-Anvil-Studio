@@ -88,8 +88,8 @@ namespace Dystopia
 		static Edge	   GetClosestEdge(AutoArray<Vertice> & _Simplex);
 
 		static Math::Point3D Support(const Convex & _ColA,
-			const Convex & _ColB,
-			const Math::Vec3D & _Dir);
+			                         const Convex & _ColB,
+			                         const Math::Vec3D & _Dir);
 
 		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
 

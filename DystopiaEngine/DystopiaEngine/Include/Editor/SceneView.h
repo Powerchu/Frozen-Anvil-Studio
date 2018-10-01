@@ -70,6 +70,7 @@ namespace Dystopia
 		GameObject		*mpSceneCamera;
 		EditorInput		*mpEditorInput;
 		//TODO delete me
+		GameObject*     mpBoxObject2;
 		GameObject*		mpStaticBoxObject;
 		GameObject*		mpCircleObject;
 		GameObject*		mpStaticCircleObject;
@@ -79,6 +80,7 @@ namespace Dystopia
 		void		ScrollOut();
 		void		SceneChanged();
 		void		Zoom(bool);
+		void		Move();
 		void		FindMouseObject(const Math::Vec2& _imgSize);
 		Math::Pt3D	GetWorldClickPos(const Camera * const _cam, const Math::Vec2& _imgSize)  const;
 	};
