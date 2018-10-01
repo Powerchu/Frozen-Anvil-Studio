@@ -124,7 +124,7 @@ namespace Dystopia
 
 		/*Default - (Box Collider)*/
 		Collider();
-		explicit Collider(const Math::Point3D & _offset);
+		explicit Collider(const Math::Point3D & _offset, const Math::Point3D & _origin = Math::MakePoint3D(0.f,0.f,0.f));
 		
 		/*Load the Component*/
 		virtual void Load(void);

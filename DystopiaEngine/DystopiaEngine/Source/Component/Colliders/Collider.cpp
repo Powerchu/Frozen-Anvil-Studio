@@ -22,12 +22,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	Collider::Collider()
-		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}
+		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}, mPosition{ Math::MakePoint3D(0.f,0.f,0.f) }
 	{
 		
 	}
-	Collider::Collider(const Math::Point3D & _offset)
-		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }
+	Collider::Collider(const Math::Point3D & _offset, const Math::Point3D & _origin)
+		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }, mPosition{_origin}
 	{
 
 	}

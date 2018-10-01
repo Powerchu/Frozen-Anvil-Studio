@@ -51,9 +51,12 @@ namespace Dystopia
 							Collider * const & _ColB) const;
 
 		bool AABBvsCircle(Collider * const & _ColA,
-							Collider * const & _ColB) const;
+						  Collider * const & _ColB) const;
 
 		bool CircleVsConvex(Collider * const & _ColA,
+							Collider * const & _ColB) const;
+
+		bool ConvexVsCircle(Collider * const & _ColA,
 							Collider * const & _ColB) const;
 
 		AutoArray<Collider *> GetAllColliders() const;
