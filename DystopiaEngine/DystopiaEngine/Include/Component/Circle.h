@@ -58,7 +58,6 @@ namespace Dystopia
 		/*Duplicate the Component*/
 		virtual Circle* Duplicate() const;
 
-		virtual Math::Point3D GetPosition() const;
 		float GetRadius() const;
 
 		/*Serialise and Unserialise*/
@@ -75,11 +74,10 @@ namespace Dystopia
 
 		/*Collision Check Functions*/
 		bool isColliding(const Convex & other_col);
-		bool isColliding(const Convex * const & other_col);
+		bool isColliding(Convex * const & other_col);
 
 	private:
 		float m_radius;
-		Math::Vec3D m_originCentre; // GLOBAL COORDINATES
 	};
 }
 

@@ -245,7 +245,7 @@ namespace Dystopia
 					isInside = true;
 					CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
 					newEvent.mdPeneDepth = _ColB.GetRadius() - distance;
-					newEvent.mEdgeNormal = Math::Normalise(PointOfImpact-_ColB.GetPosition());
+					newEvent.mEdgeNormal = Math::Normalise(_ColB.GetPosition() - PointOfImpact);
 					newEvent.mEdgeVector = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
 					isInside = true;
@@ -390,7 +390,7 @@ namespace Dystopia
 			e.mPos = mPosition + GetOffSet() + Vec3D{ start.mPosition.x, start.mPosition.y,0 };
 #if CLOCKWISE
 
-			e.mNorm3.Negate<Math::NegateFlag::Z>();
+			e.mNorm3.Negate<Math::NegateFlag::X>();
 			
 #else
 			e.mNorm3.Negate<Math::NegateFlag::Y>();
