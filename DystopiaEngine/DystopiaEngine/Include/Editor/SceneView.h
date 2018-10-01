@@ -67,12 +67,6 @@ namespace Dystopia
 		GraphicsSystem	*mpGfxSys;
 		GameObject		*mpSceneCamera;
 		EditorInput		*mpEditorInput;
-		//TODO delete me
-		GameObject*     mpBoxObject2;
-		GameObject*		mpStaticBoxObject;
-		GameObject*		mpCircleObject;
-		GameObject*		mpStaticCircleObject;
-		GameObject*		mpBoxObject;
 		
 		void		ScrollIn();
 		void		ScrollOut();

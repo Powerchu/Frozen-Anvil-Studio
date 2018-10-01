@@ -289,12 +289,7 @@ namespace Dystopia
 	void Editor::EndFrame()
 	{
 		LogTabPerformance();
-		switch (mCurrentState)
-		{
-		case EDITOR_MAIN:
-			EngineCore::GetInstance()->PostUpdate();
-			break;
-		}
+		EngineCore::GetInstance()->PostUpdate();
 		mpBehaviourSys->PostUpdate();
 		mpGuiSystem->EndFrame(); 
 		if (mCurrentState != mNextState)  UpdateState();

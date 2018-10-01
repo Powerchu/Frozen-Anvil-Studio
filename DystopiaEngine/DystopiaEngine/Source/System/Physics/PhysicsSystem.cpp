@@ -12,10 +12,10 @@ namespace Dystopia
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(false)
 		, mInterpolation_mode(none)
-		, mGravity(-98.0665F)
-		, mMaxVelocityConstant(1024.0F)
+		, mGravity(-980.665F)
+		, mMaxVelocityConstant(512.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.2F)
+		, mPenetrationEpsilon(0.1F)
 		, mPenetrationResolutionPercentage(0.8F)
 	{
 	}
@@ -56,9 +56,8 @@ namespace Dystopia
 		}
 	}
 
-	void PhysicsSystem::ResolveCollision(float _dt)
+	void PhysicsSystem::ResolveCollision(float)
 	{
-		UNUSED_PARAMETER(_dt);
 		const GameObject* owner;
 		for (auto& body : mComponents)
 		{
@@ -70,19 +69,9 @@ namespace Dystopia
 				{
 					if (col->HasCollision())
 					{
-						CollisionEvent* worstContact = nullptr;
-						double worstPene = mPenetrationEpsilon;
-
 						for (auto& manifold : col->GetCollisionEvents())
 						{
 							manifold.ApplyImpulse();
-							if (manifold.mdPeneDepth > worstPene)
-							{
-								worstContact = &manifold;
-								worstPene = manifold.mdPeneDepth;
-							}
-							if (nullptr != worstContact)
-								worstContact->ApplyPenetrationCorrection();
 						};
 					}
 				}
@@ -90,13 +79,39 @@ namespace Dystopia
 		}
 	}
 
-	void PhysicsSystem::UpdateResults()
+	void PhysicsSystem::UpdateResults(float _dt)
 	{
 		for (auto& body : mComponents)
 		{
 			if (body.GetOwner())
 			{
-				body.UpdateResult();
+				const GameObject* owner = body.GetOwner();
+				if (nullptr != owner && !body.Get_IsStaticState())
+				{
+					const auto col = owner->GetComponent<Collider>();
+					if (nullptr != col)
+					{
+						if (col->HasCollision())
+						{
+							CollisionEvent* worstContact = nullptr;
+							double worstPene = mPenetrationEpsilon;
+
+							for (auto& manifold : col->GetCollisionEvents())
+							{
+								if (manifold.mdPeneDepth > worstPene)
+								{
+									worstContact = &manifold;
+									worstPene = manifold.mdPeneDepth;
+								}
+								if (nullptr != worstContact)
+								{
+									worstContact->ApplyPenetrationCorrection();
+								}
+							};
+						}
+					}
+				}
+				body.UpdateResult(_dt);
 			}
 		}
 
@@ -116,6 +131,8 @@ namespace Dystopia
 
 	void PhysicsSystem::Step(float _dt)
 	{
+		
+
 		/* Broad Phase Collision Detection*/
 
 		/* Narrow Phase Collision Detection*/
@@ -127,7 +144,7 @@ namespace Dystopia
 		IntegrateRigidBodies(_dt);
 
 		/*Update positions and rotation as result*/
-		UpdateResults();
+		UpdateResults(_dt);
 
 		// Set all objects at rest to sleeping
 		CheckSleepingBodies(_dt);
@@ -150,7 +167,7 @@ namespace Dystopia
 		}
 	}
 
-	void PhysicsSystem::Update(float)
+	void PhysicsSystem::Update(float _dt)
 	{
 		
 	}

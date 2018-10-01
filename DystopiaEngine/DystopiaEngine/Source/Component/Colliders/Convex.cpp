@@ -6,6 +6,7 @@
 #include "Object/GameObject.h"
 #include "IO/TextSerialiser.h"
 #include "Component/Circle.h"
+#include "Component/Transform.h"
 
 namespace Dystopia
 {
@@ -61,6 +62,21 @@ namespace Dystopia
 		Collider::Triangulate();
 		Collider::Init();
 
+		mLastKnownScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
+	}
+
+	void Convex::Update(float)
+	{
+		if (mLastKnownScale != GetOwner()->GetComponent<Transform>()->GetGlobalScale())
+		{	
+			mLastKnownScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
+
+			for (auto & elem : mVertices)
+			{
+				elem.mPosition.x = elem.mPosition.x * Math::Abs(float(mLastKnownScale.x));
+				elem.mPosition.y = elem.mPosition.y * Math::Abs(float(mLastKnownScale.y));
+			}
+		}
 	}
 
 	void Convex::Unload()

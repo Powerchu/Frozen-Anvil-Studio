@@ -56,6 +56,9 @@ namespace Dystopia
 		/*Initialise the Component*/
 		void Init(void) override;
 
+		/* Update Check */
+		void Update(float) override;
+
 		/*Unload the Component*/
 		void Unload(void) override;
 		/*Duplicate the Component*/
@@ -102,7 +105,9 @@ namespace Dystopia
 		CollisionEvent GetCollisionEvent(AutoArray<Vertice> _Simplex,	const Convex & _ColB);
 
 		/*The vertices of the collider in the Collider Local Coordinate System*/
-		AutoArray<Vertice>         mVertices;
+		AutoArray<Vertice>			mVertices;
+	private:
+		Math::Vector3D				mLastKnownScale;
 	};
 }
 

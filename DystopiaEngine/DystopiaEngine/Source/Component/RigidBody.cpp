@@ -34,7 +34,7 @@ namespace Dystopia
 		, mpOwnerTransform(nullptr)
 		, mpPhysSys(nullptr)
 		, mfAngleDeg(0.0F)
-		, mfLinearDamping(0.6F)
+		, mfLinearDamping(0.75F)
 		, mfAngularDrag(0.6F)
 		, mfStaticFriction(0.5F)
 		, mfDynamicFriction(0.7F)
@@ -158,7 +158,7 @@ namespace Dystopia
 
 		if (mbHasGravity)
 		{
-			mAcceleration += Vec3D{0, mpPhysSys->mGravity*mfGravityScale*5,0};
+			mAcceleration += Vec3D{0, mpPhysSys->mGravity*mfGravityScale,0};
 		}
 
 		//Integrate the velocity
@@ -189,11 +189,14 @@ namespace Dystopia
 			mLinearVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
-		// Update Position
-		mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
-
-		 //*Reset Cumulative Force*/
-		ResetCumulative();
+		if (!mbIsStatic) // only update when body is not static
+		{
+			// Update Position
+			mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
+			//*Reset Cumulative Force*/
+			ResetCumulative();
+		}
+		
 	}
 
 	void RigidBody::CheckSleeping(float _dt)
@@ -212,10 +215,10 @@ namespace Dystopia
 		}
 	}
 
-	void RigidBody::UpdateResult() const
+	void RigidBody::UpdateResult(float _dt)
 	{
 		if (!mbIsStatic) // only update when body is not static
-		{
+		{		
 			P_TX->SetGlobalPosition(mPosition);
 		}
 	}

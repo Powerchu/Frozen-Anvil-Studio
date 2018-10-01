@@ -49,6 +49,8 @@ namespace Dystopia
 		virtual void Load(void);
 		/*Initialise the Component*/
 		virtual void Init(void);
+		/* Update */
+		virtual void Update(float) override;
 		/*OnDestroy*/
 		virtual void OnDestroy(void);
 		/*Unload the Component*/

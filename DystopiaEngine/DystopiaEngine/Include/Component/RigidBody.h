@@ -76,7 +76,7 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		void Integrate(float _dt);
 		void CheckSleeping(float _dt);
-		void UpdateResult() const;
+		void UpdateResult(float _dt);
 
 		// void Update(float _dt);
 		// void LateUpdate(float _dt);

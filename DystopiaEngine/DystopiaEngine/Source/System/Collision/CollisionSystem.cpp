@@ -48,9 +48,9 @@ namespace Dystopia
 		//empty
 	}
 
-	void CollisionSystem::Update(float)
+	void CollisionSystem::Update(float _dt)
 	{
-		// empty
+		
 	}
 
 	void CollisionSystem::PostUpdate()
@@ -72,9 +72,14 @@ namespace Dystopia
 		}
 	}
 
-	void CollisionSystem::FixedUpdate(float)
+	void CollisionSystem::FixedUpdate(float _dt)
 	{
 		ScopedTimer<ProfilerAction> timeKeeper{ "Collision System", "Update" };
+
+		for (auto& conv : ComponentDonor<Convex>::mComponents)
+		{
+			conv.Update(_dt);
+		}
 
 		using CollisionTable = std::pair<eColliderType, eColliderType>;
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;

@@ -63,6 +63,11 @@ namespace Dystopia
 		
 	}
 
+	void Circle::Update(float)
+	{
+
+	}
+
 	/*OnDestroy*/
 	void Circle::OnDestroy(void)
 	{
