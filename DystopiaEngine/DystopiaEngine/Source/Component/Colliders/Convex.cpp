@@ -140,7 +140,7 @@ namespace Dystopia
 	Convex * Convex::Duplicate() const
 	{
 		//return EngineCore::GetInstance()->GetSystem<CollisionSystem>()->RequestComponent<Convex>(*this);
-
+		return new Convex{ *this };
 	}
 
 	void Convex::EditorUI() noexcept

@@ -89,7 +89,6 @@ namespace Dystopia
 	void SceneView::Update(const float& _dt)
 	{
 		mDelta = _dt;
-		const auto * input = EngineCore::GetInstance()->GetSystem<InputManager>();
 		if (GetMainEditor().CurrentState() == EDITOR_MAIN)
 		{
 			mpGfxSys->Update(mDelta);

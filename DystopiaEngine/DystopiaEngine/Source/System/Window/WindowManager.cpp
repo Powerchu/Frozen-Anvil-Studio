@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <windows.h>						// Windows Header
 #include <shellapi.h>
 #include "../../../resource.h"
+#include "Utility/DebugAssert.h"
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
 #undef  NOMINMAX
