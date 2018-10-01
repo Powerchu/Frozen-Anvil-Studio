@@ -223,16 +223,15 @@ namespace Dystopia
 		void eLinearDragField();
 		void eAngularDragField();
 		void eGravityScaleField();
+		void eStaticFrictionDragField();
+		void eDynamicFrictionDragField();
+		void eRestitutionDragField();
+
 		void eCollisionDetectionField();
 		void eSleepingModeDropdown();
 		void eRotationConstraintCheckBox();
 
-		void eCurrentPositionVectorField();
-		void ePreviousPositionVectorField();
-		void eRotationField();
-		void eCurrentVelocityVectorField();
-		void eCurrentAngularVectorField();
-		void eCurrentSleepStatusText();
+		void eExtraInfoHeader();
 
 #endif // EDITOR
 

@@ -235,7 +235,7 @@ namespace EGUI
 				}
 		======================================================================================================================= */
 		eDragStatus DragFloat(const std::string& _label, float *_pOutFloat, float _dragSpeed = 1.0f, 
-								float _min = 0.0f, float _max = 1.0f, bool _hideText = false, float _width = 50.f);
+								float _min = 0.0f, float _max = 1.0f, bool _hideText = false, float _width = 100.f);
 		/* =======================================================================================================================
 		Brief:
 				Creates a draggable int editable field. Returns if the value is changed
@@ -251,7 +251,7 @@ namespace EGUI
 				}
 		======================================================================================================================= */
 		eDragStatus DragInt(const std::string& _label, int *_pOutInt, float _dragSpeed = 1.0f, 
-								int _min = 0, int _max = 0, bool _hideText = false, float _width = 50.f);
+								int _min = 0, int _max = 0, bool _hideText = false, float _width = 100.f);
 		/* =======================================================================================================================
 		Brief:
 				Creates a selectable text field. Returns if the text field is clicked is changed

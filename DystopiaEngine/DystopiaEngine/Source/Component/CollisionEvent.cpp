@@ -36,7 +36,7 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 	//}
 
 	//Debug
-	LoggerSystem::ConsoleLog(eLog::MESSAGE, "%s Collided with %s", mThisCollider->GetName().c_str(), mCollidedWith->GetName().c_str());
+	//LoggerSystem::ConsoleLog(eLog::MESSAGE, "%s Collided with %s", mThisCollider->GetName().c_str(), mCollidedWith->GetName().c_str());
 
 
 	Math::Vec3D rv = b_oldVel - a_oldVel;

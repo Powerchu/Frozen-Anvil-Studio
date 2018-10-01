@@ -494,7 +494,7 @@ namespace EGUI
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine();
+			SameLine(4.f);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			bool ret = ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), static_cast<int>(arrCharPtr.size()));
 			ImGui::PopItemWidth();

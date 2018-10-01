@@ -7,6 +7,7 @@
 #include "IO/TextSerialiser.h"
 #include "Component/Circle.h"
 #include "Component/Transform.h"
+#include "Editor/EGUI.h"
 
 namespace Dystopia
 {
@@ -139,6 +140,16 @@ namespace Dystopia
 	Convex * Convex::Duplicate() const
 	{
 		return new Convex{ *this };
+	}
+
+	void Convex::EditorUI() noexcept
+	{
+		eIsTriggerCheckBox();
+		ePositionOffsetVectorFields();
+		ePointVerticesVectorArray();
+		
+		eAttachedBodyEmptyBox();
+		eNumberOfContactsLabel();
 	}
 
 	Convex::~Convex()
@@ -467,6 +478,173 @@ namespace Dystopia
 			}
 		}
 		//return col_info;
+
+	}
+
+	void Convex::eIsTriggerCheckBox()
+	{
+		bool toggleState = false;
+		if (EGUI::Display::CheckBox("Is Trigger		  ", &toggleState))
+		{
+			// Is Trigger Function here
+			if (toggleState)
+			{
+				//EGUI::Display::IconTick();
+			}
+			else
+			{
+
+			}
+		}
+	}
+
+	void Convex::ePositionOffsetVectorFields()
+	{
+		EGUI::Display::Label("Offset");
+		auto arrResult = EGUI::Display::VectorFields("   ", &mv3Offset, 0.05f, -FLT_MAX, FLT_MAX);
+		for (auto &e : arrResult)
+		{
+			switch (e)
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mv3Offset);
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default: 
+				break;
+			}
+		}
+	}
+
+	void Convex::ePointVerticesVectorArray()
+	{
+		int v_size = 4;
+
+		while (mVertices.size() < unsigned int(v_size))
+		{
+			mVertices.push_back(Math::MakePoint3D(0.0f, 0.0f, 0.0f));
+		}
+		while (mVertices.size() > unsigned int(v_size))
+		{
+			mVertices.pop_back();
+		}
+
+		if (EGUI::Display::CollapsingHeader("Points"))
+		{
+			switch (EGUI::Display::DragInt("	Size		", &v_size, 1, 4, 32, false, 128))
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &v_size);
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default:
+				break;
+			}
+
+			for (unsigned int i = 0; i < mVertices.size(); ++i)
+			{
+				EGUI::PushID(i);
+				auto& c = mVertices[i];
+				Math::Vector3D* temp = &(c.mPosition);
+				EGUI::Display::Label("	Vertex");
+				auto arrResult = EGUI::Display::VectorFields("	", temp, 0.01f, -FLT_MAX, FLT_MAX);
+				for (auto &e : arrResult)
+				{
+					switch (e)
+					{
+					case EGUI::eDragStatus::eEND_DRAG:
+						EGUI::GetCommandHND()->EndRecording();
+						break;
+					case EGUI::eDragStatus::eENTER:
+						EGUI::GetCommandHND()->EndRecording();
+						break;
+					case EGUI::eDragStatus::eDRAGGING:
+						break;
+					case EGUI::eDragStatus::eSTART_DRAG:
+						EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), temp);
+						break;
+					case EGUI::eDragStatus::eDEACTIVATED:
+						EGUI::GetCommandHND()->EndRecording();
+						break;
+					case EGUI::eDragStatus::eNO_CHANGE:
+						break;
+					case EGUI::eDragStatus::eTABBED:
+						EGUI::GetCommandHND()->EndRecording();
+						break;
+					}
+				}
+				EGUI::PopID();
+
+			}
+			
+		}
+		
+	}
+
+	void Convex::eAttachedBodyEmptyBox()
+	{
+		std::string bodyAttached;
+		if (GetOwner()->GetComponent<RigidBody>())
+			bodyAttached = GetOwner()->GetName();
+		else
+			bodyAttached = "None";
+
+		EGUI::Display::Label("Attached Body");
+		EGUI::Display::EmptyBox("		", 180.f, bodyAttached, false, true);
+	}
+
+	void Convex::eNumberOfContactsLabel()
+	{
+		if (EGUI::Display::CollapsingHeader("Contacts"))
+		{
+			for (unsigned int i = 0; i < marr_ContactSets.size(); ++i)
+			{
+				EGUI::PushID(i);
+				auto& c = marr_ContactSets[i];
+				std::string name = c.mCollidedWith->GetName();
+				EGUI::Display::EmptyBox("		", 180.f, name, false, true);
+				EGUI::PopID();
+			}
+
+			if (marr_ContactSets.IsEmpty())
+			{
+				EGUI::Display::EmptyBox("		", 180.f, "No Contacts", false, true);
+			}
+		}
+	}
+
+	void Convex::eUseTransformScaleButton()
+	{
 
 	}
 

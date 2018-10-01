@@ -178,20 +178,12 @@ namespace Dystopia
 
 		virtual ~Collider();
 
-
-
-
-
-
-
-
-
-
 	protected:
 		/*AutoArray of collision event*/
 		AutoArray<CollisionEvent>  marr_ContactSets;
 
 		bool mbColliding;
+		bool mbIsTrigger;
 
 		Math::Point3D mPosition;
 		
@@ -204,6 +196,7 @@ namespace Dystopia
 		Math::Vec3D mv3Offset;
 		/*Matrix*/
 		Math::Matrix3D mTransformation;
+
 	private:
 		// Collider Mesh for debug drawing
 		Mesh * mpMesh;

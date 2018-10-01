@@ -22,12 +22,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	Collider::Collider()
-		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}, mPosition{ Math::MakePoint3D(0.f,0.f,0.f) }
+		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}, mPosition{ Math::MakePoint3D(0.f,0.f,0.f) }, mbIsTrigger(false)
 	{
 		
 	}
 	Collider::Collider(const Math::Point3D & _offset, const Math::Point3D & _origin)
-		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }, mPosition{_origin}
+		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }, mPosition{_origin}, mbIsTrigger(false)
 	{
 
 	}
@@ -73,20 +73,30 @@ namespace Dystopia
 
 	float Collider::DetermineRestitution(RigidBody const & b) const
 	{
-		const float a_rest = GetOwner()->GetComponent<RigidBody>()->GetRestitution();
-		return Math::Min(a_rest, b.GetRestitution());
+		if (nullptr != &b)
+		{
+			const float a_rest = GetOwner()->GetComponent<RigidBody>()->GetRestitution();
+			return Math::Min(a_rest, b.GetRestitution());
+		}
+		
 	}
 
 	float Collider::DetermineStaticFriction(RigidBody const & b) const
 	{
-		const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetStaticFriction();
-		return sqrt(a_fric*b.GetStaticFriction());
+		if (nullptr != &b)
+		{
+			const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetStaticFriction();
+			return sqrt(a_fric*b.GetStaticFriction());
+		}
 	}
 
 	float Collider::DetermineKineticFriction(RigidBody const & b) const
 	{
-		const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetKineticFriction();
-		return sqrt(a_fric*b.GetKineticFriction());
+		if (nullptr != &b)
+		{
+			const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetKineticFriction();
+			return sqrt(a_fric*b.GetKineticFriction());
+		}
 	}
 
 	AutoArray<CollisionEvent> const & Collider::GetCollisionEvents() const
