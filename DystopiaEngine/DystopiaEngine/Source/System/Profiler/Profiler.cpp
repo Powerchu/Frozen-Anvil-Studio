@@ -116,6 +116,7 @@ bool Dystopia::Profiler::Init(void)
 		LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: Using %s!", buf1);
 	}
 
+	// Get available instruction sets (Just in case! -- We're using these)
 #define AVAIL_MSG(_X_) ((_X_) ? "Available" : "Not Supported")
 	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE %s, SSE2 %s, SSE3 %s, SSE4.1 %s, SSE4.2 %s, FMA %s!", 
 		AVAIL_MSG(data[1][25]), AVAIL_MSG(data[1][26]), AVAIL_MSG(data[0][0]),

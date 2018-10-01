@@ -546,17 +546,11 @@ namespace Dystopia
 							std::wstring path{ pszFilePath };
 							std::wstring name{ pszFileName };
 							auto pos = name.find('.');
-
-							RemoveFocus();
-							mpSceneSystem->LoadScene(std::string{ path.begin(), path.end() });
-							for (auto& e : mArrTabs)
-								e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
-							mpEditorEventSys->Fire(EDITOR_SCENE_CHANGED);
 							if (pos != std::string::npos)
 							{
 								name.erase(pos);
-								mpWin->GetMainWindow().SetTitle(name.c_str());
 							}
+							OpenScene(path, name);
 							CoTaskMemFree(pszFilePath);
 						}
 						pItem->Release();
@@ -566,6 +560,16 @@ namespace Dystopia
 			}
 			CoUninitialize();
 		}
+	}
+
+	void Editor::OpenScene(const std::wstring& _path, const std::wstring& _name)
+	{
+		mpSceneSystem->LoadScene(std::string{ _path.begin(), _path.end() });
+		for (auto& e : mArrTabs)
+			e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
+		mpEditorEventSys->Fire(EDITOR_SCENE_CHANGED);
+		RemoveFocus();
+		mpWin->GetMainWindow().SetTitle(_name);
 	}
 
 	void Editor::TempSave()

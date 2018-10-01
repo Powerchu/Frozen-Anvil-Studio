@@ -119,9 +119,9 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 {
 	if (nullptr == _ptr) return;
-	
+
 	/*
-	MetaData_t sz     = static_cast<MetaData_t*>(_ptr)[-1];
+	MetaData_t sz = static_cast<MetaData_t*>(_ptr)[-1];
 	MetaData_t offset = (sz & 0xFF) + 1;
 	sz >>= 6;
 
