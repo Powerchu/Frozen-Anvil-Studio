@@ -78,7 +78,6 @@ namespace Dystopia
 		// Convex-Circle Collision Detection
 		bool isColliding(Circle & _ColB);
 		bool isColliding(Circle * const & _pColB);
-		bool isColliding(Circle & _pColB, const Math::Vec3D & _v3Dir);
 
 
 		/*Static Member Functions*/

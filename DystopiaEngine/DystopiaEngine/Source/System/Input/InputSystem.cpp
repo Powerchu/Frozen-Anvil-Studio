@@ -67,6 +67,7 @@ bool Dystopia::InputManager::Init(void)
 #if !EDITOR
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
 #endif 
+	LoadDefaults();
 	return true;
 }
 

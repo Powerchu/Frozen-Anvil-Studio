@@ -125,13 +125,12 @@ namespace Dystopia
 		const auto this_body = *GetOwner()->GetComponent<RigidBody>();
 		const auto other_body = *other_col.GetOwner()->GetComponent<RigidBody>();
 		const auto this_pos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
-		const auto positionDelta = this_pos - other_pos;
-		const auto disSquared = positionDelta.Dot(positionDelta);
+		const auto positionDelta =  other_pos - this_pos;
 		const float combinedRadius = this->m_radius + other_col.m_radius;
 		
 
 		// If the position delta is < combined radius, it is colliding
-		if (disSquared < combinedRadius*combinedRadius) // collided, getCollisionEvent
+		if (positionDelta.MagnitudeSqr() < combinedRadius*combinedRadius) // collided, getCollisionEvent
 		{
 			Vec3D contactPoint;
 			Vec3D normal;
@@ -141,31 +140,12 @@ namespace Dystopia
 			if (dis > FLT_EPSILON) // dis != 0
 			{
 				penetration = combinedRadius - dis;
-				contactPoint = (m_originCentre * other_col.m_radius) + (other_col.m_originCentre * m_radius) / combinedRadius;
-				const auto normalVec = other_col.m_originCentre - contactPoint;
-				if (normalVec.MagnitudeSqr() > FLT_EPSILON)
-				{
-					normal = Normalise(normalVec);
-				}
-				const auto rv = this_body.GetLinearVelocity() - other_body.GetLinearVelocity();
-				Vec3D tangent = { normal.y, -normal.x,0 };
-				float length = rv.Dot(tangent);
-				
-				const auto velCompOnTangent = tangent * length;
-				const auto reflectedVec = rv - velCompOnTangent - velCompOnTangent;
-
-				if (reflectedVec.MagnitudeSqr() > FLT_EPSILON)
-				{
-					normal = Normalise(reflectedVec);
-				}
-
-				/*contactPoint = (m_originCentre * other_col.m_radius) + (other_col.m_originCentre * m_radius) / combinedRadius;
-				normal = Math::Normalise(other_col.m_originCentre - contactPoint);*/
+				normal = positionDelta/dis;
 				
 			}
 			else //dis == 0
 			{
-				//Right on top of each other
+				//Exact Overlap of each other
 				penetration = this->m_radius;
 				normal = Vec3D{ 0,1,0 };
 				contactPoint = this->m_originCentre;

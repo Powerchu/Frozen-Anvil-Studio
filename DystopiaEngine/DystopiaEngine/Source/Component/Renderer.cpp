@@ -38,11 +38,11 @@ Dystopia::Renderer::Renderer(void) noexcept
 
 void Dystopia::Renderer::Init(void)
 {
-	Texture *pTex {nullptr};
 	if (!mLastKnownPath.empty())
 	{		
-		pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mLastKnownPath);
+		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mLastKnownPath);
 		SetTexture(pTex);
+		pTex = nullptr;
 	}
 
 }

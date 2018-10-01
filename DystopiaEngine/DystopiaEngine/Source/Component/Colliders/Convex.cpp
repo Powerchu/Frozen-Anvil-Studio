@@ -184,7 +184,7 @@ namespace Dystopia
 	bool Convex::isColliding(Circle & _ColB)
 	{
 		UNUSED_PARAMETER(_ColB);
-		auto & Edges = GetConvexEdges();
+		const auto & Edges = GetConvexEdges();
 		bool isInside = true;
 		/*Check for Circle inside Convex*/
 		for(auto & elem : Edges)
@@ -226,7 +226,7 @@ namespace Dystopia
 					isInside = true;
 					CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
 					newEvent.mdPeneDepth = _ColB.GetRadius() - distance;
-					newEvent.mEdgeNormal = Math::Normalise(elem.mNorm3);
+					newEvent.mEdgeNormal = Math::Normalise(PointOfImpact-_ColB.GetPosition());
 					newEvent.mEdgeVector = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
 					isInside = true;
@@ -243,21 +243,12 @@ namespace Dystopia
 
 	bool Convex::isColliding(Circle * const & _pColB)
 	{
-		UNUSED_PARAMETER(_pColB);
-		return false;
-	}
-
-	bool Convex::isColliding(Circle & _pColB, const Math::Vec3D & _v3Dir)
-	{
-		UNUSED_PARAMETER(_pColB);
-		UNUSED_PARAMETER(_v3Dir);
-		return false;
+		return isColliding(*_pColB);
 	}
 
 	Vertice Convex::GetFarthestPoint(const Math::Vec3D & _Dir) const
 	{
 		return Convex::GetFarthestPoint(*this, _Dir);
-
 	}
 
 	/*Support Function for getting the farthest point with relation to a Vector*/
