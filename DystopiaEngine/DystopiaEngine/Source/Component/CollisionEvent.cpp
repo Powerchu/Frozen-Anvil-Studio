@@ -118,9 +118,8 @@ void Dystopia::CollisionEvent::ApplyPenetrationCorrection()
 	const auto a_invmass = bodyA->GetInverseMass();
 	const auto b_invmass = bodyB->GetInverseMass();
 
-	const float perc = 0.50F;
-	const float slop = 0.12F;
-
+	const float perc = 0.45F;
+	const float slop = 0.04F;
 
 	const Vec3D correction = std::max(float(mdPeneDepth) - slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 
@@ -128,4 +127,5 @@ void Dystopia::CollisionEvent::ApplyPenetrationCorrection()
 		bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
 	if (!bodyB->Get_IsStaticState())
 		bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);
+
 }

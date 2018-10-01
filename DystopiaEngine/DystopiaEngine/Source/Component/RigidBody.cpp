@@ -165,6 +165,10 @@ namespace Dystopia
 
 		//Integrate the velocity
 		mLinearVelocity += mAcceleration * _dt;
+
+		// Update Position
+		mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
+
 		const Vec3D new_accel = mCumulativeForce * mfInvMass + mAcceleration;
 
 		//Integrate the velocity
@@ -191,13 +195,11 @@ namespace Dystopia
 			mLinearVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
-		if (!mbIsStatic) // only update when body is not static
-		{
-			// Update Position
-			mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
-			//*Reset Cumulative Force*/
-			ResetCumulative();
-		}
+		
+
+		//*Reset Cumulative Force*/
+		ResetCumulative();
+		
 		
 	}
 
