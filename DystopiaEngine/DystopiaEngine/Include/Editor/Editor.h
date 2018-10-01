@@ -39,6 +39,7 @@ namespace Dystopia
 	{
 		EDITOR_INVALID = -1,
 		EDITOR_EXIT = 0,
+		EDITOR_PROMPT_SAVE,
 		EDITOR_MAIN,
 		EDITOR_PLAY,
 		EDITOR_PAUSE
@@ -75,6 +76,9 @@ namespace Dystopia
 		void			RemoveFocus();
 		GameObject*		FindGameObject(const uint64_t& _id) const;
 		GameObject*		GetCurrentFocusGameObj();
+
+		/* Editor Input */
+		EditorInput*	GetEditorInput();
 
 	private:
 		Editor(void);

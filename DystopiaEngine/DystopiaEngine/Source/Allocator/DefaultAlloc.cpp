@@ -83,7 +83,7 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 			blkSz = blkSz - adjSz;
 			std::byte* temp;
 
-			if (blkSz >= Utility::Constant<size_t, sizeof(MetaData_t) * 2>::value)
+			if (blkSz > Utility::Constant<size_t, sizeof(MetaData_t) * 2 - 1>::value)
 			{
 				temp = static_cast<std::byte*>(pRet) + adjSz;
 				reinterpret_cast<MetaData_t*>(temp)[0] = GetNextOffset(pSeek);
@@ -119,9 +119,8 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 {
 	if (nullptr == _ptr) return;
-
 	/*
-	MetaData_t sz = static_cast<MetaData_t*>(_ptr)[-1];
+	MetaData_t sz     = static_cast<MetaData_t*>(_ptr)[-1];
 	MetaData_t offset = (sz & 0xFF) + 1;
 	sz >>= 6;
 

@@ -271,23 +271,18 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();
-			PrintToConsoleLog("End Drag");
 			break;
 		case EGUI::eDragStatus::eENTER:
 			EGUI::GetCommandHND()->EndRecording();
-			PrintToConsoleLog("Enter");
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
 			EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale, &mbChanged);
-			PrintToConsoleLog("Start Drag");
 			break;
 		case EGUI::eDragStatus::eDRAGGING:
 			mbChanged = true;
-			PrintToConsoleLog("Dragging");
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
-			PrintToConsoleLog("Deactivated");
 			break;
 		default:
 			break;

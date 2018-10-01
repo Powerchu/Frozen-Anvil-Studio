@@ -34,7 +34,7 @@ namespace Dystopia
 		, mpOwnerTransform(nullptr)
 		, mpPhysSys(nullptr)
 		, mfAngleDeg(0.0F)
-		, mfLinearDamping(0.6F)
+		, mfLinearDamping(0.75F)
 		, mfAngularDrag(0.6F)
 		, mfStaticFriction(0.5F)
 		, mfDynamicFriction(0.7F)
@@ -47,7 +47,8 @@ namespace Dystopia
 		, mbHasGravity(true)
 		, mbIsStatic(false)
 		, mbIsAwake(true)
-		, mPhysicsType(discrete)
+		, mbCanSleep(true)
+		//, mPhysicsType(discrete)
 	{
 		
 	}
@@ -72,7 +73,8 @@ namespace Dystopia
 		, mbHasGravity(_gravityState)
 		, mbIsStatic(_staticState)
 		, mbIsAwake(true)
-		, mPhysicsType(discrete)
+		, mbCanSleep(true)
+		//, mPhysicsType(discrete)
 	{
 
 	}
@@ -97,7 +99,6 @@ namespace Dystopia
 		// If mass is zero, object is interpreted to be static
 		if (mfMass > 0.0F)
 		{
-			mbIsStatic = false;
 			mfInvMass = 1.0F / mfMass;
 		}
 		else //if mfMass <= 0
@@ -110,10 +111,10 @@ namespace Dystopia
 		}
 
 		// compute final local centroid
-		mLocalCentroid *= mfInvMass;
+		//mLocalCentroid *= mfInvMass;
 
 		// If Static, then is Sleeping
-		if (mbIsStatic) mbIsAwake = false;
+		//if (mbIsStatic) mbIsAwake = false;
 
 		//// compute local inertia tensor
 		//Mat3D localInertiaTensor{ { 1, 0, 0, 0 },{ 0, 1, 0, 0 },{ 0, 0, 1, 0 },{ 0, 0, 0, 1 } };
@@ -190,11 +191,14 @@ namespace Dystopia
 			mLinearVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
-		// Update Position
-		mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
-
-		 //*Reset Cumulative Force*/
-		ResetCumulative();
+		if (!mbIsStatic) // only update when body is not static
+		{
+			// Update Position
+			mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
+			//*Reset Cumulative Force*/
+			ResetCumulative();
+		}
+		
 	}
 
 	void RigidBody::CheckSleeping(float _dt)
@@ -213,10 +217,10 @@ namespace Dystopia
 		}
 	}
 
-	void RigidBody::UpdateResult() const
+	void RigidBody::UpdateResult(float)
 	{
 		if (!mbIsStatic) // only update when body is not static
-		{
+		{		
 			P_TX->SetGlobalPosition(mPosition);
 		}
 	}
@@ -253,20 +257,19 @@ namespace Dystopia
 		_out << mfRestitution;
 		_out << mfGravityScale;
 		_out << mfMass;
-		//   << mfInvMass;
 		_out << mbHasGravity;			// Gravity State
 		_out << mbIsStatic;				// Static State
 		_out << mbIsAwake;				// Awake State
 		_out << mbCanSleep;				// Can Sleep Boolean
-		_out << int(mPhysicsType);		// enum for physicstype
+		//_out << int(mPhysicsType);		// enum for physicstype
 		_out.InsertEndBlock("RigidBody");
 	}
 
 	void RigidBody::Unserialise(TextSerialiser & _in)
 	{
-		int physicsType;
+		//int physicsType;
 		_in.ConsumeStartBlock();
-		_in >> mID;					// gObjID
+		_in >> mID;						// gObjID
 		_in >> mfAngleDeg;				// Angle in degrees
 		_in >> mfLinearDamping;			// Linear Drag
 		_in >> mfAngularDrag;			// Angular Drag
@@ -275,15 +278,14 @@ namespace Dystopia
 		_in >> mfRestitution;
 		_in >> mfGravityScale;
 		_in >> mfMass;
-		//  >> mfInvMass;
 		_in >> mbHasGravity;			// Gravity State
 		_in >> mbIsStatic;				// Static State
 		_in >> mbIsAwake;				// Awake State
 		_in >> mbCanSleep;				// Can Sleep Boolean
-		_in >> physicsType;		// enum for physicstype
+		//_in >> physicsType;				// enum for physicstype
 		_in.ConsumeEndBlock();
 
-		mPhysicsType = static_cast<PhysicsType>(physicsType);
+		//mPhysicsType = static_cast<PhysicsType>(physicsType);
 
 		if (GameObject* owner =
 			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
@@ -361,13 +363,13 @@ namespace Dystopia
 		/*Add to the total Angular velocity of the object in this Update Frame*/
 		mAngularVelocity += angularVel;
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
-		mCumulativeForce += _force * 10000.0F;
+		mCumulativeForce += _force * 5000.0F;
 		mbIsAwake = true;
 	}
 
 	void RigidBody::AddForce(Math::Vec3D const & _force)
 	{
-		mCumulativeForce += _force * 10000.0F;
+		mCumulativeForce += _force * 5000.0F;
 		mbIsAwake = true;
 	}
 

@@ -219,7 +219,12 @@ MagicArray<T, PP>::~MagicArray(void)
 template <typename T, typename PP>
 inline typename MagicArray<T, PP>::Itor_t MagicArray<T, PP>::begin(void) const noexcept
 {
-	return Itor_t{ &mDirectory[0], mDirectory[0].mpArray, 0 };
+	Itor_t ret{ &mDirectory[0], mDirectory[0].mpArray, 0 };
+
+	if (0 == (mDirectory[0].present[0] & 0x1))
+		++ret;
+
+	return ret;
 }
 
 template <typename T, typename PP>

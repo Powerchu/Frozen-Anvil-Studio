@@ -53,6 +53,8 @@ namespace Dystopia
 		void Show(void) const noexcept;
 		void Hide(void) const noexcept;
 
+		void SetAcceptFiles(bool) const noexcept;
+
 		Window& operator= (Window&&) = default;
 
 	private:

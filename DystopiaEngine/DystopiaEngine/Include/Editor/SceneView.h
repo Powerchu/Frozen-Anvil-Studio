@@ -22,6 +22,7 @@ namespace Dystopia
 	class GraphicsSystem;
 	class GameObject;
 	class Camera;
+	class EditorInput;
 
 	class SceneView : public EditorTab
 	{
@@ -57,19 +58,32 @@ namespace Dystopia
 			eZOOM_NONE
 		};
 
+		bool			mDragging;
+		bool			mAmFocused;
 		float			mDelta;
 		float			mSensitivity;
+		float			mMoveSens;
 		eZoom			mToZoom;
 		std::string		mLabel;
 		GraphicsSystem	*mpGfxSys;
 		GameObject		*mpSceneCamera;
+		EditorInput		*mpEditorInput;
+		Math::Vec2		mImgSize;
+		Math::Vec2		mMoveVec;
+
+		GameObject*		mpBoxObject;
+		GameObject*		mpBoxObject2;
+		GameObject*		mpStaticBoxObject;
 		
-		void		ScrollIn();
-		void		ScrollOut();
-		void		SceneChanged();
-		void		Zoom(bool);
-		void		FindMouseObject(const Math::Vec2& _imgSize);
-		Math::Pt3D	GetWorldClickPos(const Camera * const _cam, const Math::Vec2& _imgSize)  const;
+		void			ScrollIn();
+		void			ScrollOut();
+		void			SceneChanged();
+		void			Zoom(bool);
+		void			Move();
+		void			FindMouseObject();
+		Math::Pt3D		GetWorldClickPos(const Camera * const _cam) const;
+		Math::Vec2		FindMouseVector();
+		Camera*			GetCamera();
 	};
 
 }

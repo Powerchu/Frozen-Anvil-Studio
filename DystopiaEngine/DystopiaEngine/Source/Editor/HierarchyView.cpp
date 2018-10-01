@@ -97,7 +97,6 @@ namespace Dystopia
 					{
 						if (!(obj.GetID() == i)) 
 							continue;
-				
 						GameObjectName(obj);
 						break;
 					}
@@ -112,7 +111,7 @@ namespace Dystopia
 	void HierarchyView::CreateButton()
 	{
 		EGUI::Indent(5);
-		if (EGUI::Display::Button("Create", Math::Vec2{ 50, 18 }))
+		if (EGUI::Display::Button("Create", Math::Vec2{ 50, 22 }))
 		{
 			EGUI::Display::OpenPopup(mPopupID);
 		}
@@ -179,7 +178,7 @@ namespace Dystopia
 	{
 		//if (_obj.GetName() == "Scene Camera") return;
 		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
-		bool highlighted = mpFocus && (mpFocus->GetID() == _obj.GetID());
+		bool highlighted = (mpFocus && (mpFocus->GetID() == _obj.GetID()));
 		if (EGUI::Display::SelectableTxt(uniqueifyName, highlighted))
 		{
 			GetMainEditor().RemoveFocus();

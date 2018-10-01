@@ -49,12 +49,17 @@ namespace Dystopia
 		virtual void Load(void);
 		/*Initialise the Component*/
 		virtual void Init(void);
+		/* Update */
+		virtual void Update(float) override;
 		/*OnDestroy*/
 		virtual void OnDestroy(void);
 		/*Unload the Component*/
 		virtual void Unload(void);
 		/*Duplicate the Component*/
 		virtual Circle* Duplicate() const;
+
+		virtual Math::Point3D GetPosition() const;
+		float GetRadius() const;
 
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const;

@@ -144,15 +144,15 @@ namespace Dystopia
 		return mpMesh;
 	}
 
-	void Collider::Serialise(TextSerialiser&) const
-	{
+	//void Collider::Serialise(TextSerialiser&) const
+	//{
 
-	}
+	//}
 
-	void Collider::Unserialise(TextSerialiser&)
-	{
+	//void Collider::Unserialise(TextSerialiser&)
+	//{
 
-	}
+	//}
 
 	Collider::~Collider()
 	{

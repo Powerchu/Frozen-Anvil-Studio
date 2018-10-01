@@ -36,6 +36,7 @@ namespace Dystopia
 		};
 
 #endif
+		virtual const std::string GetEditorName(void) const override { return "_SF_ClassName_"; }
 		static uint64_t constexpr m_SF_ClassName_ID = _SF_UID_;
 
 		_SF_ClassName_();
@@ -58,6 +59,8 @@ namespace Dystopia
 		virtual const char * const GetBehaviourName() const;
 
 		virtual _SF_ClassName_ * Duplicate() const;
+		
+		virtual void EditorUI(void) noexcept override;
 
 	private:
 

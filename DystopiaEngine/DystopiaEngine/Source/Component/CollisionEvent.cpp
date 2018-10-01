@@ -44,16 +44,25 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 	const float contactVel = rv.Dot(mEdgeNormal);
 
 	// Do not resolve if velocities do not meet up
-	if (contactVel >= 0) return;
+	if (contactVel > 0) return;
 
 	for (int i = 0; i < 16; ++i)
 	{
 		// Calculate Impulse Scalar
-		float tmpJ = -(2.0F + mfRestitution) * contactVel;
+		float tmpJ = -(1.0F + mfRestitution) * contactVel;
 		tmpJ /= a_invmass + b_invmass;
 
 		// Apply Impulse
-		const Vec3D impulse = tmpJ * mEdgeNormal;
+		Vec3D impulse = tmpJ * mEdgeNormal;
+
+		// Clamping
+		const Vec3D temp = mCumulativeImpulse;
+		if ((mCumulativeImpulse + impulse).MagnitudeSqr() != 0)
+			mCumulativeImpulse = mCumulativeImpulse + impulse;
+		else
+			mCumulativeImpulse = { 0,0,0,0 };
+
+		impulse = mCumulativeImpulse - temp;
 
 		auto a_newVel = a_oldVel - impulse * a_invmass;
 		auto b_newVel = b_oldVel + impulse * b_invmass;
@@ -109,13 +118,14 @@ void Dystopia::CollisionEvent::ApplyPenetrationCorrection()
 	const auto a_invmass = bodyA->GetInverseMass();
 	const auto b_invmass = bodyB->GetInverseMass();
 
-	const float perc = 0.40F;
-	const float slop = 0.01F;
-	
+	const float perc = 0.50F;
+	const float slop = 0.12F;
+
+
 	const Vec3D correction = std::max(float(mdPeneDepth) - slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 
 	if (!bodyA->Get_IsStaticState())
 		bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
 	if (!bodyB->Get_IsStaticState())
-		bodyB->SetPosition(bodyA->GetPosition() + correction * b_invmass);
+		bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);
 }

@@ -14,11 +14,10 @@
 namespace Dystopia
 {
 	BehaviourSystem::BehaviourSystem()
-		:mHotloader{ CreateShared<Hotloader<1>>(new Hotloader<1>) }
+		:mHotloader{ CreateShared<Hotloader<1>>() }
 	{
 
 	}
-
 
 	void Dystopia::BehaviourSystem::PreInit(void)
 	{
@@ -123,6 +122,7 @@ namespace Dystopia
 						{
 							iter.first = iter.second->GetOwner()->GetID();
 							iter.second->GetOwner()->RemoveComponent(iter.second);
+							delete iter.second;
 							iter.second = nullptr;
 						}
 					}
@@ -213,8 +213,8 @@ namespace Dystopia
 			{
 				iter.second->Update(0.f);
 			}
-			
 		}
+
 		vTempFileName.clear();
 #endif
 	}
@@ -227,8 +227,18 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::Shutdown(void)
 	{
+#if EDITOR
 		for (auto const & elem : mvBehaviourReferences)
 		delete elem.mpBehaviour;
+
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				delete iter.second;
+			}
+		}
+#endif
 	}
 
 	void Dystopia::BehaviourSystem::LoadDefaults(void)

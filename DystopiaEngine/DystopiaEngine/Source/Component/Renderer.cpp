@@ -30,7 +30,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Renderer::Renderer(void) noexcept
-	: mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }
+	: mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }, mLastKnownPath{""}
 {
 	SetMesh("Quad");
 	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
@@ -38,6 +38,12 @@ Dystopia::Renderer::Renderer(void) noexcept
 
 void Dystopia::Renderer::Init(void)
 {
+	if (!mLastKnownPath.empty())
+	{		
+		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mLastKnownPath);
+		SetTexture(pTex);
+		pTex = nullptr;
+	}
 
 }
 
@@ -108,6 +114,7 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Renderer");
 	_out << GetOwner()->GetID();
+	_out << mLastKnownPath;
 	_out.InsertEndBlock("Renderer");
 }
 
@@ -116,6 +123,7 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 	uint64_t id;
 	_in.ConsumeStartBlock();
 	_in >> id;
+	_in >> mLastKnownPath;
 	_in.ConsumeEndBlock();
 	
 	if (GameObject* owner = 
@@ -142,8 +150,10 @@ void Dystopia::Renderer::TextureField()
 	{
 
 	}
+
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
 	{
+		mLastKnownPath = t->mPath;
 		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pTex);

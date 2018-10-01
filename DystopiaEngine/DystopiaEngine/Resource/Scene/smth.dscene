@@ -1,0 +1,111 @@
+[START_Scene]
+6,smth,[START_START_GO_DATA]
+3795845120,1,Scene Camera,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.65588,0.65588,0.65588,0,0,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+806517602684764160,1,Player,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,0,-200,-50,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+806517603690348544,1,Salamander,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+256,256,1,150,0,2,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+806517611893882880,1,NPCGirl,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+50,100,1,-50,-50,3,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+806517612208455680,1,NPCBoy,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,128,1,0,0,4,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+806517496454578176,1,BG,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+512,512,1,0,0,5,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,[START_Component]
+[START_Camera]
+3795845120,
+[END_Camera]
+
+[END_Component End]
+
+[END_ComponentDonor End]
+[START_ComponentDonor]
+5,[START_Component]
+[START_Renderer]
+806517496454578176,..\DystopiaEngine\Resource\Asset\guide.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+806517612208455680,..\DystopiaEngine\Resource\Asset\boy01.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+806517603690348544,..\DystopiaEngine\Resource\Asset\Salamander_Stand.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+806517611893882880,..\DystopiaEngine\Resource\Asset\woman01.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+806517602684764160,..\DystopiaEngine\Resource\Asset\sprite_01.png,
+[END_Renderer]
+
+[END_Component End]
+
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+
+[END_Scene]

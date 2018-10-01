@@ -20,6 +20,7 @@ namespace Dystopia
 {
 	class GameObject;
 	class BehaviourSystem;
+	class Component;
 	static constexpr size_t MAX_BUFFER_SIZE = 128;
 	class Inspector : public EditorTab
 	{
@@ -67,6 +68,7 @@ namespace Dystopia
 		void			PromptCreateBehaviour();
 		void			ConfirmCreateBehaviour();
 		void			ResetBehaviourCreation();
+		bool			RemoveComponent(Component*);
 	};
 }
 

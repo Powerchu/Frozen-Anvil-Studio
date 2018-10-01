@@ -12,10 +12,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "_SF_ClassName_.h"
-#include "Math\Vector2.h"
-#include "System\Input\InputSystem.h"
-#include "System\Input\InputMap.h"
-#include "System\Driver\Driver.h"
+#include "Math/Vector2.h"
+#include "System/Input/InputSystem.h"
+#include "System/Input/InputMap.h"
+#include "System/Driver/Driver.h"
+#include "Editor/EGUI.h"
+#include "Utility/DebugAssert.h"
 
 namespace Dystopia
 {
@@ -74,8 +76,11 @@ namespace Dystopia
 		return _SF_ClassName_::BehaviourName;
 	}
 
-	
-
+	void _SF_ClassName_::EditorUI(void) noexcept
+	{
+		
+		
+	}
 }
 
 

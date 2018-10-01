@@ -130,6 +130,8 @@ namespace Dystopia
 		virtual void Load(void);
 		/*Initialise the Component*/
 		virtual void Init(void);
+
+		virtual void Update(float) = 0;
 		/*OnDestroy*/
 		virtual void OnDestroy(void);
 		/*Unload the Component*/
@@ -153,7 +155,7 @@ namespace Dystopia
 		void ClearCollisionEvent();
 
 		// Gettors
-		Math::Point3D GetPosition() const;
+		virtual Math::Point3D GetPosition() const;
 		Math::Vec3D GetOffSet()   const;
 		bool HasCollision() const;
 
@@ -164,8 +166,8 @@ namespace Dystopia
 		Mesh* GetMesh() const;
 
 		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&) const;
-		virtual void Unserialise(TextSerialiser&);
+		virtual void Serialise(TextSerialiser&) const = 0;
+		virtual void Unserialise(TextSerialiser&) = 0;
 
 		virtual ~Collider();
 
