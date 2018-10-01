@@ -68,6 +68,7 @@ namespace Dystopia
 		void			ChangeState(eEditorState);
 		bool			IsClosing() const;
 		eEditorState	CurrentState() const;
+		void			OpenScene(const std::wstring& _path, const std::wstring& _name);
 
 		/* Game Object stuff */
 		void			SetLastPayloadFocus(ePayloadTags);
