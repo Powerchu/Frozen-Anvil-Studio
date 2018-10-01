@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <cstdlib>
 #include <cstddef>
+#include <iostream>
 #include <exception>
 
 
@@ -49,8 +50,8 @@ void Dystopia::DefaultAllocator<void>::Free(void* _ptr) noexcept
 }
 
 Dystopia::DefaultAlloc::DefaultAlloc(void) :
-	mpBlock{ std::malloc(DEFAULT_HEAP) }, 
-	mpFree{ reinterpret_cast<void*>(Align<uintptr_t>(reinterpret_cast<uintptr_t>(mpBlock), 8)) }
+	mpBlock{ reinterpret_cast<std::byte*>(std::malloc(DEFAULT_HEAP)) }, 
+	mpFree{ reinterpret_cast<std::byte*>(Align<uintptr_t>(reinterpret_cast<uintptr_t>(mpBlock), 8)) }
 {
 	reinterpret_cast<MetaData_t*>(mpFree)[0] = 0;
 	reinterpret_cast<MetaData_t*>(mpFree)[1] = DEFAULT_HEAP;
@@ -67,20 +68,22 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 
 	// Force size and alignment to be at least the minimum
 	_sz = Math::Max(_sz, MIN_SIZE);
-	_align = Math::Max(_align, Utility::Constant<decltype(_align),8>::value);
+	_sz = Align(_sz, Utility::Constant<decltype(_sz), MIN_ALIGN>::value);
+	_align = Math::Max(_align, Utility::Constant<decltype(_align), MIN_ALIGN>::value);
 
 	while (pSeek)
 	{
 		MetaData_t blkSz = GetBlockSize(pSeek);
-		void* pRet = reinterpret_cast<void*>(Align<uintptr_t>(reinterpret_cast<uintptr_t>(pSeek), _align));
-		MetaData_t adjSz = static_cast<MetaData_t>(_sz + (pRet != pSeek) * _align);
+		void* pRet = reinterpret_cast<void*>(Align<uintptr_t>(reinterpret_cast<uintptr_t>(pSeek) + sizeof(MetaData_t), _align));
+		_align = static_cast<std::byte*>(pRet) - static_cast<std::byte*>(pSeek);
+		MetaData_t adjSz = static_cast<MetaData_t>(_sz + _align);
 		
 		if (blkSz >= adjSz)
 		{
 			blkSz = blkSz - adjSz;
 			std::byte* temp;
 
-			if (blkSz)
+			if (blkSz > Utility::Constant<size_t, sizeof(MetaData_t) * 2 - 1>::value)
 			{
 				temp = static_cast<std::byte*>(pRet) + adjSz;
 				reinterpret_cast<MetaData_t*>(temp)[0] = GetNextOffset(pSeek);
@@ -97,6 +100,7 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 			}
 
 			mpFree = pSeek == mpFree ? temp : mpFree;
+			reinterpret_cast<MetaData_t*>(pRet)[-1] = ((adjSz & ~0x3) << 6) + static_cast<unsigned char>(_align - 1);
 
 			return pRet;
 		}
@@ -112,13 +116,63 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 	throw std::bad_alloc{};
 }
 
-void Dystopia::DefaultAlloc::Deallocate(void*)
+void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 {
-	// TODO
+	if (nullptr == _ptr) return;
+	
+	MetaData_t sz     = static_cast<MetaData_t*>(_ptr)[-1];
+	MetaData_t offset = (sz & 0xFF) + 1;
+	sz >>= 6;
 
-#if __INTELLISENSE__
-#error Dystopia::DefaultAlloc::Deallocate(void*) "not implmented!"
-#endif
+	std::byte* actual = static_cast<std::byte*>(_ptr) - offset;
+	offset = static_cast<MetaData_t>(actual - mpBlock);
+
+	std::byte* pSeek = mpFree, *pPrev = nullptr;
+
+	while (pSeek)
+	{
+		if (offset < pSeek - mpBlock)
+			break;
+
+		pPrev = pSeek;
+		pSeek = static_cast<std::byte*>(GetBlockFromOffset(GetNextOffset(pSeek)));
+	}
+
+	if (pSeek == (actual + sz))
+	{
+		sz += GetBlockSize(pSeek);
+		pSeek = static_cast<std::byte*>(GetBlockFromOffset(GetNextOffset(pSeek)));
+	}
+
+	if (pPrev)
+	{
+		if (pPrev + GetBlockSize(pPrev) != actual)
+		{
+			reinterpret_cast<MetaData_t*>(actual)[0] = pSeek ? static_cast<MetaData_t>(pSeek - mpBlock) : 0;
+			reinterpret_cast<MetaData_t*>(actual)[1] = sz;
+			reinterpret_cast<MetaData_t*>(pPrev)[0] = offset;
+		}
+		else
+		{
+			reinterpret_cast<MetaData_t*>(pPrev)[0] += pSeek ? static_cast<MetaData_t>(pSeek - mpBlock) : 0;
+			reinterpret_cast<MetaData_t*>(pPrev)[1] += sz;
+		}
+	}
+	else
+	{
+		if (mpFree == (actual + sz))
+		{
+			reinterpret_cast<MetaData_t*>(actual)[0] = GetNextOffset(mpFree);
+			sz += GetBlockSize(mpFree);
+		}
+		else
+		{
+			reinterpret_cast<MetaData_t*>(actual)[0] = mpFree ? static_cast<MetaData_t>(mpFree - mpBlock) : 0;
+		}
+
+		reinterpret_cast<MetaData_t*>(actual)[1] = sz;
+		mpFree = actual;
+	}
 }
 
 typename Dystopia::DefaultAlloc::MetaData_t Dystopia::DefaultAlloc::GetBlockSize(void* _p)
@@ -134,7 +188,7 @@ typename Dystopia::DefaultAlloc::MetaData_t Dystopia::DefaultAlloc::GetNextOffse
 void* Dystopia::DefaultAlloc::GetBlockFromOffset(MetaData_t _nOffset)
 {
 	if (_nOffset)
-		return static_cast<std::byte*>(mpBlock) + _nOffset;
+		return mpBlock + _nOffset;
 
 	return nullptr;
 }

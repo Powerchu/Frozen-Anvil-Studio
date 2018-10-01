@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/MathUtility.h"
 
 #include "DataStructure/Array.h"
+#include "Allocator/DefaultAlloc.h"
 
 #include <intrin.h>			// _BitScanForward64
 #include <initializer_list> // init-list
@@ -33,7 +34,7 @@ class _DLL_EXPORT_ONLY MagicArray;
 
 namespace Ctor
 {
-	template <typename T, unsigned BLOCK_SIZE = 64, unsigned MAX_BLOCKS = 16>
+	template <typename T, unsigned BLOCK_SIZE = 64, unsigned MAX_BLOCKS = 16, typename Alloc = Dystopia::DefaultAllocator<T[]>>
 	struct _DLL_EXPORT_ONLY MagicArrayBuilder
 	{
 		static_assert(Utility::IsPowerOf2(BLOCK_SIZE), "Block Size must be a power of 2");
@@ -44,6 +45,9 @@ namespace Ctor
 		template <unsigned NEW_SIZE>
 		using SetBlockLimit = MagicArrayBuilder<T, BLOCK_SIZE, NEW_SIZE>;
 
+		template <template <typename> class NewAlloc>
+		using SetAllocator = NewAlloc<T[]>;
+
 		using type = MagicArray<T, MagicArrayBuilder>;
 
 
@@ -52,6 +56,8 @@ namespace Ctor
 		static constexpr unsigned blk_max = MAX_BLOCKS;
 		static constexpr unsigned shift   = Math::Log<BLOCK_SIZE>::value;
 		static constexpr unsigned offset  = BLOCK_SIZE - 1;
+
+		using Alloc_t = Alloc;
 
 		friend class MagicArray<T, MagicArrayBuilder>;
 
@@ -205,7 +211,7 @@ MagicArray<T, PP>::~MagicArray(void)
 
 	for (auto& e : mDirectory)
 	{
-		::operator delete[](static_cast<void*>(e.mpArray));
+		PP::Alloc_t::Free(e.mpArray);
 		e.mpArray = nullptr;
 	}
 }
@@ -388,7 +394,7 @@ inline bool MagicArray<T, PP>::IsEmpty(void) const noexcept
 template<typename T, typename PP>
 inline void MagicArray<T, PP>::Allocate(Block& _blk)
 {
-	_blk.mpArray = static_cast<T*>(::operator new[](sizeof(T) * PP::blk_sz));
+	_blk.mpArray = static_cast<T*>(PP::Alloc_t::Alloc(PP::blk_sz));
 }
 
 
