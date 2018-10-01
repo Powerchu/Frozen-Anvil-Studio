@@ -257,7 +257,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 		GameObject* pOwner = Obj->GetOwner();
 		if (pOwner->GetFlags() & ActiveFlags)
 		{
-			s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix());
+			s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix() * Obj->GetTransformationMatrix());
 			
 			activeColor = Obj->HasCollision() ? CollidingColor : mvDebugColour;
 
