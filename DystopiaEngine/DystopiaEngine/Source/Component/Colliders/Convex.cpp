@@ -31,6 +31,7 @@ namespace Dystopia
 
 	void Convex::Init()
 	{
+		mDebugVertices.clear();
 		for (auto & elem : mVertices)
 		{
 			auto offset = GetOffSet();
@@ -40,7 +41,7 @@ namespace Dystopia
 		Collider::Triangulate();
 		Collider::Init();
 
-		mLastKnownScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
+		//mLastKnownScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 	}
 
 	void Convex::Update(float)

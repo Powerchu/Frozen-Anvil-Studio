@@ -111,7 +111,7 @@ namespace Dystopia
 		/*The vertices of the collider in the Collider Local Coordinate System*/
 		AutoArray<Vertice>			mVertices;
 	private:
-		Math::Vector3D				mLastKnownScale;
+		//Math::Vector3D				mLastKnownScale;
 
 		//EDITOR FUNCTIONS
 		/*=================Editor Stuff=====================*/
