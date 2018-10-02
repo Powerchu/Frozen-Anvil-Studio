@@ -182,7 +182,7 @@ void Dystopia::Renderer::TextureField()
 		EGUI::Display::EndPayloadReceiver();
 	}
 	EGUI::SameLine();
-	if (EGUI::Display::IconCircle("clear"))
+	if (EGUI::Display::IconCross("clear"))
 	{
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, nullptr);

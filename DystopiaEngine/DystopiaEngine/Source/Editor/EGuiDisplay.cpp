@@ -595,6 +595,25 @@ namespace EGUI
 				   ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
 		}
 
+		bool IconCross(const std::string& _uniqueId, float radius, float offsetX, float offsetY, const Math::Vec4& _colour)
+		{
+			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
+			ImVec2			pos = ImGui::GetCursorScreenPos();
+			const ImU32		col32 = static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
+
+			ImVec2 centre{ pos.x + radius + offsetX, pos.y + radius + offsetY };
+			pCanvas->AddCircle(centre, radius, col32);
+			float r = radius / 3.f;
+			pCanvas->AddLine(ImVec2{ centre.x - r, centre.y - r }, 
+							 ImVec2{ centre.x + r, centre.y + r }, 
+							 col32);
+			pCanvas->AddLine(ImVec2{ centre.x - r, centre.y + r },
+							 ImVec2{ centre.x + r, centre.y - r },
+							 col32);
+			return ImGui::InvisibleButton(("##iconCross" + _uniqueId).c_str(),
+					ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
+		}
+
 		bool IconGameObj(const std::string& _uniqueId, float _width, float _height)
 		{
 			const ImU32		col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
