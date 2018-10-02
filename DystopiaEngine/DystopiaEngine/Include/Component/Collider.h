@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Component.h"		       /*Component Base Class*/
 #include "Component/ComponentList.h"           /*Component List*/
 #include "Math/Vector4.h"                      /*Vector*/
+#include "Math/Matrix4.h"
 #include "DataStructure/AutoArray.h"	       /*AutoArray Data Structure*/
 #include "Utility/MetaAlgorithms.h"		       // MetaFind
 #include "System/Collision/CollisionEvent.h"
@@ -124,12 +125,14 @@ namespace Dystopia
 
 		/*Default - (Box Collider)*/
 		Collider();
-		explicit Collider(const Math::Point3D & _offset);
+		explicit Collider(const Math::Point3D & _offset, const Math::Point3D & _origin = Math::MakePoint3D(0.f,0.f,0.f));
 		
 		/*Load the Component*/
 		virtual void Load(void);
 		/*Initialise the Component*/
 		virtual void Init(void);
+
+		virtual void Update(float) = 0;
 		/*OnDestroy*/
 		virtual void OnDestroy(void);
 		/*Unload the Component*/
@@ -140,9 +143,9 @@ namespace Dystopia
 		/************************************************************************
 		 * Member Functions
 		 ***********************************************************************/
-		float DetermineRestitution(RigidBody const & b) const;
-		float DetermineStaticFriction(RigidBody const & b) const;
-		float DetermineKineticFriction(RigidBody const & b) const;
+		float DetermineRestitution      (RigidBody const & b) const;
+		float DetermineStaticFriction   (RigidBody const & b) const;
+		float DetermineKineticFriction  (RigidBody const & b) const;
 
 		 /*Get Array of collision event*/
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
@@ -153,9 +156,9 @@ namespace Dystopia
 		void ClearCollisionEvent();
 
 		// Gettors
-		Math::Point3D GetPosition() const;
-		Math::Vec3D GetOffSet()   const;
-		bool HasCollision() const;
+		virtual Math::Point3D GetPosition() const;
+		Math::Vec3D           GetOffSet()   const;
+		bool                  HasCollision() const;
 
 		AutoArray<Vertex> GetVertexBuffer() const;
 		AutoArray<short>  GetIndexBuffer()  const;
@@ -163,9 +166,15 @@ namespace Dystopia
 		void  SetMesh(Mesh * _ptr);
 		Mesh* GetMesh() const;
 
+		void SetRotation(Math::Degrees _deg);
+		void SetRotation(Math::Radians _rad);
+		void AddRotation(Math::Radians _rad);
+		void AddRotation(Math::Degrees _deg);
+		Math::Matrix3D GetTransformationMatrix() const;
+
 		/*Serialise and Unserialise*/
-		virtual void Serialise(TextSerialiser&) const;
-		virtual void Unserialise(TextSerialiser&);
+		virtual void Serialise(TextSerialiser&) const = 0;
+		virtual void Unserialise(TextSerialiser&) = 0;
 
 		virtual ~Collider();
 
@@ -174,6 +183,7 @@ namespace Dystopia
 		AutoArray<CollisionEvent>  marr_ContactSets;
 
 		bool mbColliding;
+		bool mbIsTrigger;
 
 		Math::Point3D mPosition;
 		
@@ -184,6 +194,9 @@ namespace Dystopia
 
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
+		/*Matrix*/
+		Math::Matrix3D mTransformation;
+
 	private:
 		// Collider Mesh for debug drawing
 		Mesh * mpMesh;

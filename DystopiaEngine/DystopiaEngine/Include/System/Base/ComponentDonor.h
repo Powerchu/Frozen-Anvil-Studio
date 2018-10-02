@@ -62,6 +62,7 @@ inline void Dystopia::ComponentDonor<Ty, Settings>::Serialise(TextSerialiser & _
 {
 	_Serialiser.InsertStartBlock("ComponentDonor");
 	_Serialiser << mComponents.size();
+	_Serialiser.InsertEndBlock("ComponentDonor End");
 
 	for (auto & elem : mComponents)
 	{
@@ -69,7 +70,7 @@ inline void Dystopia::ComponentDonor<Ty, Settings>::Serialise(TextSerialiser & _
 		elem.Serialise(_Serialiser);
 		_Serialiser.InsertEndBlock("Component End");
 	}
-	_Serialiser.InsertEndBlock("ComponentDonor End");
+
 
 }
 
@@ -83,7 +84,9 @@ inline void Dystopia::ComponentDonor<Ty, Settings>::Unserialise(TextSerialiser &
 
 	_Serialiser.ConsumeStartBlock();
 
-	_Serialiser.Read(Size);
+	_Serialiser >> Size;
+
+	_Serialiser.ConsumeEndBlock();
 
 	
 	for (unsigned i = 0; i < Size; ++i)
@@ -96,7 +99,6 @@ inline void Dystopia::ComponentDonor<Ty, Settings>::Unserialise(TextSerialiser &
 		_Serialiser.ConsumeEndBlock();
 	}
 
-	_Serialiser.ConsumeEndBlock();
 }
 
 

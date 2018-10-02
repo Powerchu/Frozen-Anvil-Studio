@@ -65,7 +65,8 @@ namespace Dystopia
 			g->SetOwner(pObject);
 			pObject->AddComponent(g, typename Renderer::TAG{});
 
-			pObject->AddComponent<Convex>();
+			auto c = static_cast<ComponentDonor<Convex>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
+			pObject->AddComponent(c, typename Collider::TAG{});
 			pObject->GetComponent<Transform>()->SetGlobalPosition(0, -185, 0);
 
 			return pObject;
@@ -83,7 +84,9 @@ namespace Dystopia
 			g->SetOwner(pObject);
 			pObject->AddComponent(g, typename Renderer::TAG{});
 
-			pObject->AddComponent<Convex>();
+			auto c = static_cast<ComponentDonor<Convex>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
+			pObject->AddComponent(c, typename Collider::TAG{});
+			c->SetRotation(Math::Degrees{ 45 });
 			return pObject;
 		}
 
@@ -99,7 +102,8 @@ namespace Dystopia
 			g->SetOwner(pObject);
 			pObject->AddComponent(g, typename Renderer::TAG{});
 
-			pObject->AddComponent<Circle>();
+			auto c = static_cast<ComponentDonor<Circle>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
+			pObject->AddComponent(c, typename Collider::TAG{});
 			return pObject;
 		}
 	}

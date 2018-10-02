@@ -40,7 +40,7 @@ namespace Dystopia
 		void CheckSleepingBodies(float _dt);
 		void IntegrateRigidBodies(float _dt);
 		void ResolveCollision(float);
-		void UpdateResults();
+		void UpdateResults(float _dt);
 		void DebugPrint();
 
 		bool  mbIsDebugActive;

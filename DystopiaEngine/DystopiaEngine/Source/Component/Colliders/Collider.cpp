@@ -22,12 +22,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	Collider::Collider()
-		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}
+		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}, mPosition{ Math::MakePoint3D(0.f,0.f,0.f) }, mbIsTrigger(false)
 	{
 		
 	}
-	Collider::Collider(const Math::Point3D & _offset)
-		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }
+	Collider::Collider(const Math::Point3D & _offset, const Math::Point3D & _origin)
+		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }, mPosition{_origin}, mbIsTrigger(false)
 	{
 
 	}
@@ -73,20 +73,32 @@ namespace Dystopia
 
 	float Collider::DetermineRestitution(RigidBody const & b) const
 	{
-		const float a_rest = GetOwner()->GetComponent<RigidBody>()->GetRestitution();
-		return Math::Min(a_rest, b.GetRestitution());
+		if (nullptr != &b)
+		{
+			const float a_rest = GetOwner()->GetComponent<RigidBody>()->GetRestitution();
+			return Math::Min(a_rest, b.GetRestitution());
+		}
+		return 0;
 	}
 
 	float Collider::DetermineStaticFriction(RigidBody const & b) const
 	{
-		const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetStaticFriction();
-		return sqrt(a_fric*b.GetStaticFriction());
+		if (nullptr != &b)
+		{
+			const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetStaticFriction();
+			return sqrt(a_fric*b.GetStaticFriction());
+		}
+		return 0;
 	}
 
 	float Collider::DetermineKineticFriction(RigidBody const & b) const
 	{
-		const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetKineticFriction();
-		return sqrt(a_fric*b.GetKineticFriction());
+		if (nullptr != &b)
+		{
+			const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetKineticFriction();
+			return sqrt(a_fric*b.GetKineticFriction());
+		}
+		return 0;
 	}
 
 	AutoArray<CollisionEvent> const & Collider::GetCollisionEvents() const
@@ -144,14 +156,31 @@ namespace Dystopia
 		return mpMesh;
 	}
 
-	void Collider::Serialise(TextSerialiser&) const
+	void Collider::SetRotation(Math::Degrees _deg)
 	{
-
+		mTransformation = Math::RotateZ(_deg);
 	}
 
-	void Collider::Unserialise(TextSerialiser&)
+	void Collider::SetRotation(Math::Radians _rad)
 	{
+		mTransformation = Math::RotateZ(_rad);
+	}
 
+	void Collider::AddRotation(Math::Radians _rad)
+	{
+		Math::Matrix3D Rotation = Math::RotateZ(_rad);
+		mTransformation = Rotation * mTransformation;
+	}
+
+	void Collider::AddRotation(Math::Degrees _deg)
+	{
+		Math::Matrix3D Rotation = Math::RotateZ(_deg);
+		mTransformation = Rotation * mTransformation;
+	}
+
+	Math::Matrix3D Collider::GetTransformationMatrix() const
+	{
+		return mTransformation;
 	}
 
 	Collider::~Collider()

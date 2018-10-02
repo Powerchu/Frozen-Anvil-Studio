@@ -160,9 +160,6 @@
     <ClCompile Include="Source\Editor\EditorTab.cpp">
       <Filter>Editor\Editor Tabs</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Profiler\Profiler.cpp">
-      <Filter>Game Engine\Systems\Profiler</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Profiler\ProfilerAction.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerAction</Filter>
     </ClCompile>
@@ -243,6 +240,9 @@
     </ClCompile>
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp">
       <Filter>Allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Profiler\Profiler.cpp">
+      <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Payload.cpp">
       <Filter>Editor\Payload</Filter>

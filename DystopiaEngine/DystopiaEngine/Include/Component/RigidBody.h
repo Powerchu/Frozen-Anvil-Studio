@@ -66,9 +66,9 @@ namespace Dystopia
 	protected:
 		enum PhysicsType
 		{
-			discrete,		// fixed timestep frame checking for collision
-			continuous,		// continuous checking for collision
-			kinematic		// dynamic objects that will not be pushed around
+			t_dynamic = 0,		// fixed timestep frame checking for collision
+			t_kinematic,		// dynamic objects that will not be pushed around
+			t_static	// continuous checking for collision
 		};
 		//~RigidBody(void);
 
@@ -76,7 +76,7 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		void Integrate(float _dt);
 		void CheckSleeping(float _dt);
-		void UpdateResult() const;
+		void UpdateResult(float _dt);
 
 		// void Update(float _dt);
 		// void LateUpdate(float _dt);
@@ -196,7 +196,7 @@ namespace Dystopia
 		float			mfDynamicFriction;
 		float			mfRestitution;				/* Elasticity Coefficient: 'Bounciness' of the body*/
 
-		float			mfGravityScale;		/* A scalar multiple (in float) of the Physics Engine's gravity*/
+		float			mfGravityScale;				/* A scalar multiple (in float) of the Physics Engine's gravity*/
 	
 		float			mfMass;						/* Defines how difficult it is to move an object*/
 		float			mfInvMass;					/* For calculation purposes, since integration uses mass inverse*/
@@ -214,6 +214,26 @@ namespace Dystopia
 
 
 		/*Quaternion if needed*/
+
+		/*=================Editor Stuff=====================*/
+#if EDITOR
+		void eBodyTypeDropDown();
+		void CheckMass();
+		void eMassField();
+		void eLinearDragField();
+		void eAngularDragField();
+		void eGravityScaleField();
+		void eStaticFrictionDragField();
+		void eDynamicFrictionDragField();
+		void eRestitutionDragField();
+
+		void eCollisionDetectionField();
+		void eSleepingModeDropdown();
+		void eRotationConstraintCheckBox();
+
+		void eExtraInfoHeader();
+
+#endif // EDITOR
 
 	};
 }

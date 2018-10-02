@@ -34,6 +34,9 @@ namespace Dystopia
 
 		void ApplyImpulse(void);
 		void ApplyPenetrationCorrection(void);
+
+	private:
+		Math::Vec3D			mCumulativeImpulse;
 	};
 }
 

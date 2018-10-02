@@ -18,12 +18,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/MouseData.h"
 #include "IO/TextSerialiser.h"
 #include "System/Logger/LoggerSystem.h"
+#include "Editor/Editor.h"
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
 #include <cstdio>							// FILE, freopen_s
 #include <windows.h>						// Windows Header
+#include <shellapi.h>
 #include "../../../resource.h"
+#include "Utility/DebugAssert.h"
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
 #undef  NOMINMAX
@@ -177,6 +180,12 @@ void Dystopia::WindowManager::PostInit(void)
 
 	mWidth  = GetSystemMetrics(SM_CXSCREEN);
 	mHeight = GetSystemMetrics(SM_CYSCREEN);
+
+#if EDITOR
+
+	mWindows[0].SetAcceptFiles(true);
+
+#endif
 }
 
 void Dystopia::WindowManager::Update(float)
@@ -196,6 +205,11 @@ void Dystopia::WindowManager::Update(float)
 			case WM_KEYDOWN:
 			case WM_SYSKEYDOWN:
 				inputQueue.Insert(static_cast<eButton>(msg.wParam));
+				break;
+			case WM_DROPFILES:
+			#if EDITOR
+				HandleFileInput(msg.wParam);
+			#endif
 				break;
 			case WM_KEYUP:
 			case WM_SYSKEYUP:
@@ -270,6 +284,48 @@ void Dystopia::WindowManager::DestroySplash(void)
 	mWindows[0].CenterWindow();
 
 	mWindows[0].Show();
+}
+
+void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
+{
+	HDROP handle = reinterpret_cast<HDROP>(_wParam);
+	int files = DragQueryFile(handle, 0xFFFFFFFF, 0, 0);
+
+	// For now only handle single file drop
+	if (1 == files)
+	{
+		AutoArray<wchar_t> buf;
+		std::wstring path, name;
+
+		buf.reserve(DragQueryFile(handle, 0, 0, 0) + 1);
+		DragQueryFile(handle, 0, buf.begin(), static_cast<unsigned>(buf.Cap()));
+		
+		path = buf.begin();
+		if (path == L"")
+			__debugbreak();
+
+		size_t pos = path.find_last_of(L'\\');
+		if (path.npos == pos)
+			pos = path.find_last_of(L'/');
+
+		name = path.substr(pos + 1);
+
+		pos = name.find_last_of(L'.');
+		if ((name.npos != pos) && (L"dscene" == name.substr(pos + 1)))
+		{
+			Editor::GetInstance()->OpenScene(path, name);
+		}
+		else
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "Window: Ignoring Unknown file %ls!", name.data());
+		}
+	}
+	else
+	{
+		DEBUG_PRINT(eLog::MESSAGE, "Window: %d files dropped, ignoring!", files);
+	}
+
+	DragFinish(handle);
 }
 
 

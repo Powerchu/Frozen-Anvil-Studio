@@ -25,6 +25,7 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 	const auto b_invmass = bodyB->GetInverseMass();
 	const auto a_oldVel = bodyA->GetLinearVelocity();
 	const auto b_oldVel = bodyB->GetLinearVelocity();
+	const double slop = 0.1F;
 
 	bodyA->SetSleeping(false);
 	bodyB->SetSleeping(false);
@@ -36,7 +37,7 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 	//}
 
 	//Debug
-	LoggerSystem::ConsoleLog(eLog::MESSAGE, "%s Collided with %s", mThisCollider->GetName().c_str(), mCollidedWith->GetName().c_str());
+	//LoggerSystem::ConsoleLog(eLog::MESSAGE, "%s Collided with %s", mThisCollider->GetName().c_str(), mCollidedWith->GetName().c_str());
 
 
 	Math::Vec3D rv = b_oldVel - a_oldVel;
@@ -44,62 +45,70 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 	const float contactVel = rv.Dot(mEdgeNormal);
 
 	// Do not resolve if velocities do not meet up
-	if (contactVel >= 0) return;
+	if (contactVel > 0) return;
 
-	for (int i = 0; i < 16; ++i)
+
+	// Calculate Impulse Scalar
+	float tmpJ = -(1.0F + mfRestitution) * contactVel  + (slop * mdPeneDepth);
+	tmpJ /= a_invmass + b_invmass;
+
+	// Apply Impulse
+	Vec3D impulse = tmpJ * mEdgeNormal;
+
+	// Clamping
+	const Vec3D temp = mCumulativeImpulse;
+	if ((mCumulativeImpulse + impulse).MagnitudeSqr() != 0)
+		mCumulativeImpulse = mCumulativeImpulse + impulse;
+	else
+		mCumulativeImpulse = { 0,0,0,0 };
+
+	impulse = mCumulativeImpulse - temp;
+
+	auto a_newVel = a_oldVel - impulse * a_invmass;
+	auto b_newVel = b_oldVel + impulse * b_invmass;
+
+	if (!bodyA->Get_IsStaticState())
+		bodyA->SetVelocity(a_newVel);
+
+	if (!bodyB->Get_IsStaticState())
+		bodyB->SetVelocity(b_newVel);
+
+	// Calculate Frictional Velocity (vec3D) after normal impulse
+	rv = b_newVel - a_newVel;
+
+	// Solving for tangent vector
+	Vec3D tangent = rv - rv.Dot(mEdgeNormal) * mEdgeNormal;
+
+	if (tangent.MagnitudeSqr() < FLT_EPSILON)
+		return;
+
+	tangent = Normalise(tangent);
+
+	// Solve for magnitude to apply along the friction vector
+	float jt = -rv.Dot(tangent);
+	jt /= (a_invmass + b_invmass);
+
+	// Clamp magnitude of friction and create final Friction Impulse
+	Vec3D frictionImpulse;
+
+	if (Math::Abs(jt) < tmpJ * mfStaticFrictionCof)
 	{
-		// Calculate Impulse Scalar
-		float tmpJ = -(2.0F + mfRestitution) * contactVel;
-		tmpJ /= a_invmass + b_invmass;
-
-		// Apply Impulse
-		const Vec3D impulse = tmpJ * mEdgeNormal;
-
-		auto a_newVel = a_oldVel - impulse * a_invmass;
-		auto b_newVel = b_oldVel + impulse * b_invmass;
-
-		if (!bodyA->Get_IsStaticState())
-			bodyA->SetVelocity(a_newVel);
-
-		if (!bodyB->Get_IsStaticState())
-			bodyB->SetVelocity(b_newVel);
-
-		// Calculate Frictional Velocity (vec3D) after normal impulse
-		rv = b_newVel - a_newVel;
-
-		// Solving for tangent vector
-		Vec3D tangent = rv - rv.Dot(mEdgeNormal) * mEdgeNormal;
-
-		if (tangent.MagnitudeSqr() < FLT_EPSILON)
-			return;
-
-		tangent = Normalise(tangent);
-
-		// Solve for magnitude to apply along the friction vector
-		float jt = -rv.Dot(tangent);
-		jt /= (a_invmass + b_invmass);
-
-		// Clamp magnitude of friction and create final Friction Impulse
-		Vec3D frictionImpulse;
-
-		if (Math::Abs(jt) < tmpJ * mfStaticFrictionCof)
-		{
-			frictionImpulse = jt * tangent;
-		}
-		else
-		{
-			frictionImpulse = -tmpJ * tangent * mfDynamicFrictionCof;
-		}
-
-		a_newVel = bodyA->GetLinearVelocity() - frictionImpulse * a_invmass;
-		b_newVel = bodyB->GetLinearVelocity() + frictionImpulse * b_invmass;
-
-		if (!bodyA->Get_IsStaticState())
-			bodyA->SetVelocity(a_newVel);
-
-		if (!bodyB->Get_IsStaticState())
-			bodyB->SetVelocity(b_newVel);
+		frictionImpulse = jt * tangent;
 	}
+	else
+	{
+		frictionImpulse = -tmpJ * tangent * mfDynamicFrictionCof;
+	}
+
+	a_newVel = bodyA->GetLinearVelocity() - frictionImpulse * a_invmass;
+	b_newVel = bodyB->GetLinearVelocity() + frictionImpulse * b_invmass;
+
+	if (!bodyA->Get_IsStaticState())
+		bodyA->SetVelocity(a_newVel);
+
+	if (!bodyB->Get_IsStaticState())
+		bodyB->SetVelocity(b_newVel);
+
 }
 
 void Dystopia::CollisionEvent::ApplyPenetrationCorrection()
@@ -109,13 +118,14 @@ void Dystopia::CollisionEvent::ApplyPenetrationCorrection()
 	const auto a_invmass = bodyA->GetInverseMass();
 	const auto b_invmass = bodyB->GetInverseMass();
 
-	const float perc = 0.40F;
-	const float slop = 0.01F;
-	
-	const Vec3D correction = std::max(float(mdPeneDepth) - slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
+	const double perc = 0.2F;
+	const double slop = 0.01F;
+
+	const Vec3D correction = std::max((mdPeneDepth+0.1) - slop, 0.0) / (a_invmass + b_invmass) * float(perc) * mEdgeNormal;
 
 	if (!bodyA->Get_IsStaticState())
 		bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
-	if (!bodyB->Get_IsStaticState())
-		bodyB->SetPosition(bodyA->GetPosition() + correction * b_invmass);
+	/*if (!bodyB->Get_IsStaticState())
+		bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);*/
+
 }

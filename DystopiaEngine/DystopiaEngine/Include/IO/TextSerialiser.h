@@ -80,6 +80,15 @@ inline void Dystopia::TextSerialiser::ApplyRead<std::string>(std::string& _rhs)
 	std::getline(mFile, _rhs, ',');
 }
 
+template <>
+inline void Dystopia::TextSerialiser::ApplyRead<bool>(bool& _rhs)
+{
+	int ch;
+	mFile >> ch;
+
+	_rhs = !!ch;
+}
+
 
 
 #endif		// INCLUDE GUARD

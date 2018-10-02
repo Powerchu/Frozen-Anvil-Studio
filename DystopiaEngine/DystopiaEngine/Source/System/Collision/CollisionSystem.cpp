@@ -50,7 +50,7 @@ namespace Dystopia
 
 	void CollisionSystem::Update(float)
 	{
-		// empty
+		
 	}
 
 	void CollisionSystem::PostUpdate()
@@ -72,9 +72,14 @@ namespace Dystopia
 		}
 	}
 
-	void CollisionSystem::FixedUpdate(float)
+	void CollisionSystem::FixedUpdate(float _dt)
 	{
 		ScopedTimer<ProfilerAction> timeKeeper{ "Collision System", "Update" };
+
+		for (auto& conv : ComponentDonor<Convex>::mComponents)
+		{
+			conv.Update(_dt);
+		}
 
 		using CollisionTable = std::pair<eColliderType, eColliderType>;
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
@@ -84,14 +89,15 @@ namespace Dystopia
 		{
 			CollisionTableMap i
 			{
-			{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }    ,&CollisionSystem::AABBvsAABB },
+			{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }    ,&CollisionSystem::AABBvsAABB     },
 			{ CollisionTable{ eColliderType::AABB    ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::AABB }    ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
-			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::CIRCLE}    ,&CollisionSystem::CircleVsCircle },
+			{ CollisionTable{ eColliderType::CIRCLE  ,eColliderType::CIRCLE}   ,&CollisionSystem::CircleVsCircle },
 			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::AABB}      ,&CollisionSystem::CircleVsAABB   },
-			{ CollisionTable{ eColliderType::AABB, eColliderType::CIRCLE}      ,&CollisionSystem::AABBvsCircle   },
-			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::CONVEX}    ,&CollisionSystem::CircleVsConvex}
+			{ CollisionTable{ eColliderType::AABB,   eColliderType::CIRCLE}    ,&CollisionSystem::AABBvsCircle   },
+			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::CONVEX}    ,&CollisionSystem::CircleVsConvex },
+			{ CollisionTable{ eColliderType::CONVEX, eColliderType::CIRCLE }   ,&CollisionSystem::ConvexVsCircle}
 			};
 			return i;
 		}();
@@ -138,19 +144,38 @@ namespace Dystopia
 			{
 				if (nullptr == bodyB->GetOwner()) continue;
 
-				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB) &&
-					(!bodyA->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState() ||
-					 !bodyB->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState()))
+				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
 				{
-					const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
-					for (auto & key : CollisionFuncTable)
+					if (bodyA->GetOwner()->GetComponent<RigidBody>() && bodyB->GetOwner()->GetComponent<RigidBody>())
 					{
-						if (key.first == pair_key)
+						if (!bodyA->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState() ||
+							!bodyB->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState())
 						{
-							(this->*key.second)(bodyA, bodyB);
-							bodyB->SetColliding(bodyB->Collider::HasCollision());
-							bodyA->SetColliding(bodyA->Collider::HasCollision());
-							break;
+							const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+							for (auto & key : CollisionFuncTable)
+							{
+								if (key.first == pair_key)
+								{
+									(this->*key.second)(bodyA, bodyB);
+									bodyB->SetColliding(bodyB->Collider::HasCollision());
+									bodyA->SetColliding(bodyA->Collider::HasCollision());
+									break;
+								}
+							}
+						}
+					}
+					else
+					{
+						const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+						for (auto & key : CollisionFuncTable)
+						{
+							if (key.first == pair_key)
+							{
+								(this->*key.second)(bodyA, bodyB);
+								bodyB->SetColliding(bodyB->Collider::HasCollision());
+								bodyA->SetColliding(bodyA->Collider::HasCollision());
+								break;
+							}
 						}
 					}
 				}				
@@ -166,7 +191,6 @@ namespace Dystopia
 		delete elem;
 		}
 		*/
-
 	}
 
 	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const
@@ -211,7 +235,45 @@ namespace Dystopia
 	{
 		UNUSED_PARAMETER(_ColA);
 		UNUSED_PARAMETER(_ColB);
-		return false;
+
+		Circle   * pCircle;
+		Convex   * pConvex;
+
+		if(_ColA->GetColliderType() == eColliderType::CIRCLE)
+		{
+		pCircle = dynamic_cast<Circle *>(_ColA);
+		pConvex = dynamic_cast<Convex *>(_ColB);
+		}
+		else
+		{
+		pCircle = dynamic_cast<Circle *>(_ColB);
+		pConvex = dynamic_cast<Convex *>(_ColA);
+			
+		}
+		bool isColliding = pCircle->isColliding((*pConvex));
+
+		return isColliding;
+	}
+
+	bool CollisionSystem::ConvexVsCircle(Collider* const& _ColA, Collider* const& _ColB) const
+	{
+		Circle   * pCircle;
+		Convex   * pConvex;
+
+		if (_ColA->GetColliderType() == eColliderType::CIRCLE)
+		{
+			pCircle = dynamic_cast<Circle *>(_ColA);
+			pConvex = dynamic_cast<Convex *>(_ColB);
+		}
+		else
+		{
+			pCircle = dynamic_cast<Circle *>(_ColB);
+			pConvex = dynamic_cast<Convex *>(_ColA);
+
+		}
+		bool isColliding = pConvex->isColliding((*pCircle));
+
+		return isColliding;
 	}
 
 	AutoArray<Collider*> CollisionSystem::GetAllColliders() const

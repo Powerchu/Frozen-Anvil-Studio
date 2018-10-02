@@ -57,6 +57,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/ColorScheme.h"
 #include "Editor/StyleScheme.h"
 
+#include "Allocator/DefaultAlloc.h"
+
 /* library includes */
 #include <iostream>
 #include <windows.h>
@@ -75,12 +77,11 @@ static constexpr COMDLG_FILTERSPEC DYSTOPIA_SCENE_FILTER_EXTENSION[1] =
 };
 
 // Entry point for editor
-int WinMain(HINSTANCE hInstance, HINSTANCE, char *, int)
+int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-	hInstance;
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
@@ -266,12 +267,7 @@ namespace Dystopia
 	void Editor::EndFrame()
 	{
 		LogTabPerformance();
-		switch (mCurrentState)
-		{
-		case EDITOR_MAIN:
-			EngineCore::GetInstance()->PostUpdate();
-			break;
-		}
+		EngineCore::GetInstance()->PostUpdate();
 		mpBehaviourSys->PostUpdate();
 		mpGuiSystem->EndFrame(); 
 		if (mCurrentState != mNextState)  UpdateState();
@@ -360,6 +356,7 @@ namespace Dystopia
 			MMFile();
 			MMEdit();
 			MMView();
+			MMDebug();
 			MMGame();
 
 			EGUI::EndMainMenuBar();
@@ -409,10 +406,27 @@ namespace Dystopia
 			EGUI::EndMenuHeader();
 		}
 	}
-	
+
+	void Editor::MMDebug()
+	{
+		static constexpr float icon = 10.f;
+		static GraphicsSystem *pGraphic = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
+		if (EGUI::StartMenuHeader("Debug"))
+		{
+
+				if (pGraphic->GetDebugDraw())	EGUI::Display::IconTick(icon, icon);
+				else							EGUI::Display::Dummy(icon, icon);
+				EGUI::SameLine();
+				if (EGUI::StartMenuBody("Draw Debug Collision"))
+					pGraphic->ToggleDebugDraw();
+			
+			EGUI::EndMenuHeader();
+		}
+	}
+
 	void Editor::MMGame()
 	{
-		if (EGUI::StartMenuHeader("GAME"))
+		if (EGUI::StartMenuHeader("Game"))
 		{
 			if (EGUI::StartMenuBody("Play", "Ctrl + P", mCurrentState == EDITOR_MAIN))
 			{
@@ -559,17 +573,11 @@ namespace Dystopia
 							std::wstring path{ pszFilePath };
 							std::wstring name{ pszFileName };
 							auto pos = name.find('.');
-
-							RemoveFocus();
-							mpSceneSystem->LoadScene(std::string{ path.begin(), path.end() });
-							for (auto& e : mArrTabs)
-								e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
-							mpEditorEventSys->Fire(EDITOR_SCENE_CHANGED);
 							if (pos != std::string::npos)
 							{
 								name.erase(pos);
-								mpWin->GetMainWindow().SetTitle(name.c_str());
 							}
+							OpenScene(path, name);
 							CoTaskMemFree(pszFilePath);
 						}
 						pItem->Release();
@@ -579,6 +587,16 @@ namespace Dystopia
 			}
 			CoUninitialize();
 		}
+	}
+
+	void Editor::OpenScene(const std::wstring& _path, const std::wstring& _name)
+	{
+		mpSceneSystem->LoadScene(std::string{ _path.begin(), _path.end() });
+		for (auto& e : mArrTabs)
+			e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
+		mpEditorEventSys->Fire(EDITOR_SCENE_CHANGED);
+		RemoveFocus();
+		mpWin->GetMainWindow().SetTitle(_name);
 	}
 
 	void Editor::TempSave()

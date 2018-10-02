@@ -72,6 +72,7 @@ namespace Dystopia
 		bool mbFullscreen;
 
 		void DestroySplash(void);
+		void HandleFileInput(uint64_t);
 	};
 }
 

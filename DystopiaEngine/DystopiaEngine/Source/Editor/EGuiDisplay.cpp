@@ -137,9 +137,9 @@ namespace EGUI
 		ImGui::EndChild();
 	}
 
-	void SameLine(float _customOffset)
+	void SameLine(float _customOffset, float _leftOff)
 	{
-		ImGui::SameLine(0, _customOffset);
+		ImGui::SameLine(_leftOff, _customOffset);
 	}
 
 	void PushID(int id)
@@ -220,7 +220,7 @@ namespace EGUI
 			return ImGui::Checkbox(("##CheckBox" + _label).c_str(), _outputBool);
 		}
 
-		eDragStatus DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText)
+		eDragStatus DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText, float _width)
 		{
 			if (!_hideText)
 			{
@@ -230,7 +230,9 @@ namespace EGUI
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool changing = false;
+			ImGui::PushItemWidth(_width);
 			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max, "%.2f");
+			ImGui::PopItemWidth();
 
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
 			if (changing) return eDRAGGING;
@@ -242,7 +244,7 @@ namespace EGUI
 			return eNO_CHANGE;
 		}
 
-		eDragStatus DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max, bool _hideText)
+		eDragStatus DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max, bool _hideText, float _width)
 		{
 			if (!_hideText)
 			{
@@ -252,7 +254,9 @@ namespace EGUI
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool changing = false;
+			ImGui::PushItemWidth(_width);
 			changing = ImGui::DragInt(("###DragInt" + _label).c_str(), _outputInt, _dragSpeed, _min, _max);
+			ImGui::PopItemWidth();
 
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
 			if (changing) return eDRAGGING;
@@ -275,25 +279,23 @@ namespace EGUI
 			field2 += _label;
 			field3 += _label;
 
-			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
 			SameLine(DefaultAlighnmentSpacing);
 
 			Label("X:"); SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
-			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true);
+			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true, _width);
 			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = x;
 
 			SameLine(); Label("Y:"); SameLine();
-			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true);
+			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true, _width);
 			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
 
 			SameLine(); Label("Z:"); SameLine();
-			eDragStatus statZ = EGUI::Display::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max, true);
+			eDragStatus statZ = EGUI::Display::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max, true, _width);
 			if (statZ != eDragStatus::eNO_CHANGE) _outputVec->z = z;
 
-			ImGui::PopItemWidth();
 
 			return Array<eDragStatus, 3>{statX, statY, statZ};
 		}
@@ -492,7 +494,7 @@ namespace EGUI
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine();
+			SameLine(4.f);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			bool ret = ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), static_cast<int>(arrCharPtr.size()));
 			ImGui::PopItemWidth();

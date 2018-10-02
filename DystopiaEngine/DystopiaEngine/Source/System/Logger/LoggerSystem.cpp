@@ -29,6 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #undef  NOMINMAX
 #define STACKFRAMES 32
 
+
 namespace
 {
 	void WriteCallStack(FILE* out, unsigned nNumSkip)
@@ -88,9 +89,9 @@ Dystopia::LoggerSystem::LoggerSystem(void) noexcept
 
 		freopen_s(&file, "CONOUT$", "wt", stdout);
 		freopen_s(&file, "CONOUT$", "wt", stderr);
-		//			freopen_s(&file, "CONOUT$", "wt", stdin);
+//		freopen_s(&file, "CONOUT$", "wt", stdin);
 
-		SetConsoleTitle(ENGINE_NAME);
+		SetConsoleTitle(L"Dystopia Engine");
 	}
 
 #endif	// Show Command Prompt

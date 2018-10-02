@@ -55,12 +55,17 @@ namespace Dystopia
 		void Load(void) override;
 		/*Initialise the Component*/
 		void Init(void) override;
-		/*OnDestroy*/
-		void OnDestroy(void) override;
+
+		/* Update Check */
+		void Update(float) override;
+
 		/*Unload the Component*/
 		void Unload(void) override;
 		/*Duplicate the Component*/
 		Convex* Duplicate() const override;
+
+		// Editor UI
+		void EditorUI(void) noexcept override;
 
 		/*Serialise and Unserialise*/
 		void Serialise(TextSerialiser&) const override;
@@ -79,7 +84,6 @@ namespace Dystopia
 		// Convex-Circle Collision Detection
 		bool isColliding(Circle & _ColB);
 		bool isColliding(Circle * const & _pColB);
-		bool isColliding(Circle & _pColB, const Math::Vec3D & _v3Dir);
 
 
 		/*Static Member Functions*/
@@ -90,21 +94,37 @@ namespace Dystopia
 		static Edge	   GetClosestEdge(AutoArray<Vertice> & _Simplex);
 
 		static Math::Point3D Support(const Convex & _ColA,
-			const Convex & _ColB,
-			const Math::Vec3D & _Dir);
+			                         const Convex & _ColB,
+			                         const Math::Vec3D & _Dir);
 
 		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
 
 		Math::Point3D Support(const Convex & _ColB,
 			const Math::Vec3D & _Dir)const;
 
-
+		AutoArray<Edge> GetConvexEdges() const;
 
 	protected:
 		CollisionEvent GetCollisionEvent(AutoArray<Vertice> _Simplex,	const Convex & _ColB);
 
 		/*The vertices of the collider in the Collider Local Coordinate System*/
-		AutoArray<Vertice>         mVertices;
+		AutoArray<Vertice>			mVertices;
+	private:
+		Math::Vector3D				mLastKnownScale;
+
+		//EDITOR FUNCTIONS
+		/*=================Editor Stuff=====================*/
+#if EDITOR
+		void eIsTriggerCheckBox();
+		void ePositionOffsetVectorFields();
+		void ePointVerticesVectorArray();
+		//INFO
+		void eAttachedBodyEmptyBox();
+		void eNumberOfContactsLabel();
+		void eUseTransformScaleButton();
+
+#endif // EDITOR
+
 	};
 }
 

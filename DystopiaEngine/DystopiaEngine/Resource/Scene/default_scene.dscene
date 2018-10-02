@@ -1,10 +1,10 @@
 [START_Scene]
-2,default_scene,[START_START_GO_DATA]
+2,default_scene - Copy,[START_START_GO_DATA]
 3795845120,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.4,0.4,1,0,0,0,
+0.457895,0.457895,1.14474,0,0,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -18,38 +18,44 @@
 
 [END_END_GO_TRANSFORM]
 [START_ComponentDonor]
-1,[START_Component]
+1,
+[END_ComponentDonor End]
+[START_Component]
 [START_Camera]
 3795845120,
 [END_Camera]
 
 [END_Component End]
-
-[END_ComponentDonor End]
 [START_ComponentDonor]
-1,[START_Component]
+1,
+[END_ComponentDonor End]
+[START_Component]
 [START_Renderer]
 806511909481218048,..\DystopiaEngine\Resource\Asset\sprite_01.png,
 [END_Renderer]
 
 [END_Component End]
-
-[END_ComponentDonor End]
 [START_ComponentDonor]
-1,[START_Component]
+1,
+[END_ComponentDonor End]
+[START_Component]
 [START_RigidBody]
-806511909481218048,0,0.6,0.6,0.5,0.7,0.5,1,100,1,0,1,205,0,
+806511909481218048,0,0.6,0.6,0.5,0.7,0.5,1,100,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+806511909481218048,0,0,0,20,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,
+[END_Convex_Collider]
 
-[END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]

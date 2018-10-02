@@ -6,20 +6,20 @@
 #include "Component/RigidBody.h"
 #include "Component/Circle.h"
 #include "IO/TextSerialiser.h"
+#include "Component/Convex.h"
 
 namespace Dystopia
 {
 	using Math::Vec3D;
 	Circle::Circle()
 		: m_radius(0.5F)
-		, m_originCentre{Vec3D{0,0,0} }
+		, Collider{Vec3D{0,0,0} }
 	{
 
 	}
 
 	Circle::Circle(float const & _radius, Vec3D const & _v3Offset)
-		: m_radius(_radius)
-		, m_originCentre{ _v3Offset }
+		: m_radius(_radius), Collider{ _v3Offset }
 	{
 
 	}
@@ -34,7 +34,7 @@ namespace Dystopia
 	{
 		if (mv3Offset != Vec3D{0,0,0,0})
 		{
-			m_originCentre = mv3Offset;
+			mPosition = mv3Offset;
 		}
 
 		if (mDebugVertices.size() == 0)
@@ -56,11 +56,16 @@ namespace Dystopia
 
 		if (nullptr != GetOwner())
 		{
-			m_originCentre += GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+			mPosition += GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 			const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
 			m_radius *= _xScale;
 		}
 		
+	}
+
+	void Circle::Update(float)
+	{
+
 	}
 
 	/*OnDestroy*/
@@ -80,10 +85,15 @@ namespace Dystopia
 		return new Circle{*this};
 	}
 
+	float Circle::GetRadius() const
+	{
+		return m_radius;
+	}
+
 	/*Serialise and Unserialise*/
 	void Circle::Serialise(TextSerialiser& _out) const
 	{
-		_out.InsertStartBlock("Circle Collider2D");
+		_out.InsertStartBlock("Circle_Collider2D");
 		_out << mID;					// gObj ID
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
@@ -91,7 +101,7 @@ namespace Dystopia
 
 		_out << float(m_radius);
 		
-		_out.InsertEndBlock("Circle Collider2D");
+		_out.InsertEndBlock("Circle_Collider2D");
 	}
 	void Circle::Unserialise(TextSerialiser& _in)
 	{
@@ -115,13 +125,12 @@ namespace Dystopia
 		const auto this_body = *GetOwner()->GetComponent<RigidBody>();
 		const auto other_body = *other_col.GetOwner()->GetComponent<RigidBody>();
 		const auto this_pos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
-		const auto positionDelta = this_pos - other_pos;
-		const auto disSquared = positionDelta.Dot(positionDelta);
+		const auto positionDelta =  other_pos - this_pos;
 		const float combinedRadius = this->m_radius + other_col.m_radius;
 		
 
 		// If the position delta is < combined radius, it is colliding
-		if (disSquared < combinedRadius*combinedRadius) // collided, getCollisionEvent
+		if (positionDelta.MagnitudeSqr() < combinedRadius*combinedRadius) // collided, getCollisionEvent
 		{
 			Vec3D contactPoint;
 			Vec3D normal;
@@ -131,33 +140,15 @@ namespace Dystopia
 			if (dis > FLT_EPSILON) // dis != 0
 			{
 				penetration = combinedRadius - dis;
-				contactPoint = (m_originCentre * other_col.m_radius) + (other_col.m_originCentre * m_radius) / combinedRadius;
-				const auto normalVec = other_col.m_originCentre - contactPoint;
-				if (normalVec.MagnitudeSqr() > FLT_EPSILON)
-				{
-					normal = Normalise(normalVec);
-				}
-				const auto rv = this_body.GetLinearVelocity() - other_body.GetLinearVelocity();
-				Vec3D tangent = { normal.y, -normal.x,0 };
-				float length = rv.Dot(tangent);
-				const auto velCompOnTangent = tangent * length;
-				const auto reflectedVec = rv - velCompOnTangent;
-
-				if (reflectedVec.MagnitudeSqr() > FLT_EPSILON)
-				{
-					normal = Normalise(reflectedVec);
-				}
-
-				/*contactPoint = (m_originCentre * other_col.m_radius) + (other_col.m_originCentre * m_radius) / combinedRadius;
-				normal = Math::Normalise(other_col.m_originCentre - contactPoint);*/
+				normal = positionDelta/dis;
 				
 			}
 			else //dis == 0
 			{
-				//Right on top of each other
+				//Exact Overlap of each other
 				penetration = this->m_radius;
 				normal = Vec3D{ 0,1,0 };
-				contactPoint = this->m_originCentre;
+				contactPoint = this->mPosition;
 			}
 
 			// Add to Collision Events
@@ -198,10 +189,72 @@ namespace Dystopia
 	}
 	bool Circle::isColliding(const Convex & other_col)
 	{
-		UNUSED_PARAMETER(other_col);
-		return false;
+		RigidBody* other_body{ nullptr };
+		if (other_col.GetOwner()->GetComponent<RigidBody>())
+			other_body = other_col.GetOwner()->GetComponent<RigidBody>();
+
+		AutoArray<Edge> const & ConvexEdges = other_col.GetConvexEdges();
+		bool isInside = true;
+		/*Check for Circle inside Convex*/
+		for (auto & elem : ConvexEdges)
+		{
+			if (elem.mNorm3.Dot(elem.mPos - GetPosition()) < 0)
+			{
+				isInside = false;
+				break;
+			}
+		}
+
+		if (!isInside)
+		{
+			float distance = 0;
+			for (auto & elem : ConvexEdges)
+			{
+				Vec3D v = elem.mVec3;
+				Vec3D w = GetPosition() - elem.mPos;
+				float c1 = v.Dot((w));
+				float c2 = v.Dot(v);
+				float ratio = 0.f;
+				Point3D PointOfImpact;
+				if (c1 < 0)
+				{
+					distance = w.Magnitude();
+				}
+				else if (c1 > c2)
+				{
+					distance = (GetPosition() - (elem.mPos + elem.mVec3)).Magnitude();
+				}
+				else
+				{
+					ratio = c1 / c2;
+					PointOfImpact = elem.mPos + ratio * elem.mVec3;
+					distance = (GetPosition() - PointOfImpact).Magnitude();
+				}
+
+				if (distance < GetRadius())
+				{
+					isInside = true;
+					CollisionEvent newEvent(this->GetOwner(), other_col.GetOwner());
+					newEvent.mdPeneDepth     = GetRadius() - distance;
+					newEvent.mEdgeNormal     = -elem.mNorm3.Normalise();
+					newEvent.mEdgeVector     = elem.mVec3;
+					newEvent.mCollisionPoint = PointOfImpact;
+					if (nullptr != other_body)
+					{
+						newEvent.mfRestitution = DetermineRestitution(*other_body);
+						newEvent.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
+						newEvent.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
+					}
+					marr_ContactSets.push_back(newEvent);
+					mbColliding = isInside  = true;
+				}
+			}
+
+		}
+
+		return isInside;
 	}
-	bool Circle::isColliding(const Convex * const & other_col)
+	bool Circle::isColliding(Convex * const & other_col)
 	{
 		UNUSED_PARAMETER(other_col);
 		return this->isColliding(*other_col);

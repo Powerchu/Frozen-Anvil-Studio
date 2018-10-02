@@ -9,14 +9,15 @@
 
 [END_END_GO_TRANSFORM]
 [START_ComponentDonor]
-1,[START_Component]
+1,
+[END_ComponentDonor End]
+[START_Component]
 [START_Camera]
 3795845120,
 [END_Camera]
 
 [END_Component End]
 
-[END_ComponentDonor End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]

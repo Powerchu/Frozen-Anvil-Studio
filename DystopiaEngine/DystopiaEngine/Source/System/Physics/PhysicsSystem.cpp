@@ -12,10 +12,10 @@ namespace Dystopia
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(false)
 		, mInterpolation_mode(none)
-		, mGravity(-910.665F)
+		, mGravity(-950.665F)
 		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.1F)
+		, mPenetrationEpsilon(0.03F)
 		, mPenetrationResolutionPercentage(0.8F)
 	{
 	}
@@ -47,22 +47,20 @@ namespace Dystopia
 
 	void PhysicsSystem::IntegrateRigidBodies(float _dt)
 	{
-		for (auto& bodies : mComponents)
+		for (auto& body : mComponents)
 		{
-			if (bodies.GetOwner())
+			if (body.GetOwner())
 			{
-				bodies.Integrate(_dt);
+				body.Integrate(_dt);
 			}
 		}
 	}
 
-	void PhysicsSystem::ResolveCollision(float _dt)
+	void PhysicsSystem::ResolveCollision(float)
 	{
-		UNUSED_PARAMETER(_dt);
-		const GameObject* owner;
 		for (auto& body : mComponents)
 		{
-			owner = body.GetOwner();
+			const GameObject* owner = body.GetOwner();
 			if (nullptr != owner && !body.Get_IsStaticState())
 			{
 				const auto col = owner->GetComponent<Collider>();
@@ -73,30 +71,39 @@ namespace Dystopia
 						CollisionEvent* worstContact = nullptr;
 						double worstPene = mPenetrationEpsilon;
 
+						for (int i = 0; i < 8; ++i)
+						{
+							for (auto& manifold : col->GetCollisionEvents())
+							{
+								manifold.ApplyImpulse();
+							}
+						}
+
 						for (auto& manifold : col->GetCollisionEvents())
 						{
-							manifold.ApplyImpulse();
 							if (manifold.mdPeneDepth > worstPene)
 							{
 								worstContact = &manifold;
 								worstPene = manifold.mdPeneDepth;
 							}
 							if (nullptr != worstContact)
+							{
 								worstContact->ApplyPenetrationCorrection();
-						};
+							}
+						}
 					}
 				}
 			}
 		}
 	}
 
-	void PhysicsSystem::UpdateResults()
+	void PhysicsSystem::UpdateResults(float _dt)
 	{
 		for (auto& body : mComponents)
 		{
 			if (body.GetOwner())
 			{
-				body.UpdateResult();
+				body.UpdateResult(_dt);
 			}
 		}
 
@@ -120,14 +127,16 @@ namespace Dystopia
 
 		/* Narrow Phase Collision Detection*/
 		
-		/* Collision Resolution (Response) Logic */
-		ResolveCollision(_dt);
+		
 
 		// Integrate RigidBodies
 		IntegrateRigidBodies(_dt);
 
+		/* Collision Resolution (Response) Logic */
+		ResolveCollision(_dt);
+
 		/*Update positions and rotation as result*/
-		UpdateResults();
+		UpdateResults(_dt);
 
 		// Set all objects at rest to sleeping
 		CheckSleepingBodies(_dt);
