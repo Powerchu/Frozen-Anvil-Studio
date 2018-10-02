@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _BASICRENDERER_H_
 #define _BASICRENDERER_H_
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
 #include "Component/Component.h"		// Base Class
 #include "Component/ComponentList.h"	// TRANSFORM
 #include "DataStructure/AutoArray.h"	// AutoArray
@@ -92,6 +94,6 @@ namespace Dystopia
 }
 
 
-
+#pragma warning(pop)
 #endif
 

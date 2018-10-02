@@ -28,7 +28,7 @@ namespace Dystopia
 		static std::chrono::duration<double> start = std::chrono::duration_cast<TimeUnit>(std::chrono::system_clock::now().time_since_epoch());
 
 		/*Update the current time*/
-		static std::chrono::duration<double> currTime = std::chrono::duration_cast<TimeUnit>(std::chrono::system_clock::now().time_since_epoch());
+		std::chrono::duration<double> currTime = std::chrono::duration_cast<TimeUnit>(std::chrono::system_clock::now().time_since_epoch());
 		
 		/*If the current time of the function called is within 1ms of the last function call*/
 		if ( !std::chrono::duration_cast<TimeUnit>(currTime - start).count() )

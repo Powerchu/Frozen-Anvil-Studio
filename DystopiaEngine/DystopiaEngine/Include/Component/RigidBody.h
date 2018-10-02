@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/ComponentList.h"
 #include "Math/Vector4.h"
 #include "Math/Matrix4.h"
+#include "DataStructure/Queue.h"
 
 
 //#include "Math/Quaternion.h"
@@ -166,51 +167,52 @@ namespace Dystopia
 		bool GetIsAwake() const;
 
 	private:
-		Primitive*		mpPrimitiveShape;			/* The underlying primitive of the RigidBody*/
-		Transform*		mpOwnerTransform;			/* Used for accessing position and GameObject World orientation*/
-		PhysicsSystem*	mpPhysSys;					/* A pointer to Physics System to get global constants (i.e. Gravity)*/
+		Primitive*				mpPrimitiveShape;			/* The underlying primitive of the RigidBody*/
+		Transform*				mpOwnerTransform;			/* Used for accessing position and GameObject World orientation*/
+		PhysicsSystem*			mpPhysSys;					/* A pointer to Physics System to get global constants (i.e. Gravity)*/
 
-		Mat3D			mOrientation;				/* The orientation in local transformation space*/
-		Mat3D			mInverseOrientation;
-		Vec3D			mPosition;					/* For Calculation purposes, set by Gameobject's Transform.GetGlobalPosition()*/
-		Vec3D			mPrevPosition;				/* For Collision purposes - the position in the last frame*/
+		Mat3D					mOrientation;				/* The orientation in local transformation space*/
+		Mat3D					mInverseOrientation;
+		Vec3D					mPosition;					/* For Calculation purposes, set by Gameobject's Transform.GetGlobalPosition()*/
+		Vec3D					mPrevPosition;				/* For Collision purposes - the position in the last frame*/
 
-		Vec3D			mLinearVelocity;			/* Linear Velocity of the RigidBody with respect to World Space*/
-		Vec3D			mAngularVelocity;			/* Angular Velocity/Rotation with respect to World Space*/
-		Vec3D			mAcceleration;				/* For integration purpose when updating position.*/
+		Vec3D					mLinearVelocity;			/* Linear Velocity of the RigidBody with respect to World Space*/
+		Vec3D					mAngularVelocity;			/* Angular Velocity/Rotation with respect to World Space*/
+		Vec3D					mAcceleration;				/* For integration purpose when updating position.*/
 
-		Vec3D			mCumulativeForce;			/* The sum of all the force acting on the body*/
-		Vec3D			mCumulativeTorque;			/* Sum of all angular forces acting on the body*/
+		Vec3D					mCumulativeForce;			/* The sum of all the force acting on the body*/
+		Vec3D					mCumulativeTorque;			/* Sum of all angular forces acting on the body*/
 
-		Mat3D			mLocalInvInertiaTensor;
-		Mat3D			mGlobalInvInertiaTensor;
+		Mat3D					mLocalInvInertiaTensor;
+		Mat3D					mGlobalInvInertiaTensor;
 		
-		Vec3D			mGlobalCentroid;
-		Vec3D			mLocalCentroid;
+		Vec3D					mGlobalCentroid;
+		Vec3D					mLocalCentroid;
 			
-		float			mfAngleDeg;					/* Anticlockwise Direction: Angles in Degrees*/
-		float			mfLinearDamping;			/* Linear Drag, slows down motion dynamics over time*/
+		float					mfAngleDeg;					/* Anticlockwise Direction: Angles in Degrees*/
+		float					mfLinearDamping;			/* Linear Drag, slows down motion dynamics over time*/
 
-		float			mfAngularDrag;				/* Coefficient of angular drag. */
-		float			mfStaticFriction;			/* Like LinearDamping, but only drag the forces when 2 or more objects are colliding*/
-		float			mfDynamicFriction;
-		float			mfRestitution;				/* Elasticity Coefficient: 'Bounciness' of the body*/
+		float					mfAngularDrag;				/* Coefficient of angular drag. */
+		float					mfStaticFriction;			/* Like LinearDamping, but only drag the forces when 2 or more objects are colliding*/
+		float					mfDynamicFriction;
+		float					mfRestitution;				/* Elasticity Coefficient: 'Bounciness' of the body*/
 
-		float			mfGravityScale;				/* A scalar multiple (in float) of the Physics Engine's gravity*/
+		float					mfGravityScale;				/* A scalar multiple (in float) of the Physics Engine's gravity*/
 	
-		float			mfMass;						/* Defines how difficult it is to move an object*/
-		float			mfInvMass;					/* For calculation purposes, since integration uses mass inverse*/
+		float					mfMass;						/* Defines how difficult it is to move an object*/
+		float					mfInvMass;					/* For calculation purposes, since integration uses mass inverse*/
 
-		float			mfWeightedMotion;
+		float					mfWeightedMotion;
 
-		bool			mOwnerIsActive;				/* Check if owner is active*/
-		bool			mbHasGravity;				/* If it has no gravity, do not provide acceleration due to gravity*/
-		bool			mbIsStatic;					/* Static bodies do not need to be integrated/updated*/
+		bool					mOwnerIsActive;				/* Check if owner is active*/
+		bool					mbHasGravity;				/* If it has no gravity, do not provide acceleration due to gravity*/
+		bool					mbIsStatic;					/* Static bodies do not need to be integrated/updated*/
 
-		bool			mbIsAwake;
-		bool			mbCanSleep;
+		bool					mbIsAwake;
+		bool					mbCanSleep;
 
-		PhysicsType		mPhysicsType;
+		PhysicsType				mPhysicsType;
+
 
 
 		/*Quaternion if needed*/

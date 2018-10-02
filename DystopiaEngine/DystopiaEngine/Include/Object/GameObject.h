@@ -14,6 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GAMEOBJ_H_
 #define _GAMEOBJ_H_
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 #include "System/Driver/Driver.h"
 #include "DataStructure/AutoArray.h"		// AutoArray
 #include "Component/ComponentList.h"		// AllComponents
@@ -278,6 +281,6 @@ inline void Dystopia::GameObject::RemoveComponent(BehaviourTag)
 }
 
 
-
+#pragma warning(pop)
 #endif		// INCLUDE GUARD
 

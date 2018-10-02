@@ -2,9 +2,9 @@
 /*!
 \file	Collider.h
 \author Keith (70%)
-		Aaron (30%)
+Aaron (30%)
 \par    email: keith.goh\@digipen.edu
-		email: m.chu\@digipen.edu
+email: m.chu\@digipen.edu
 \brief
 Collider2D for 2D Sprites.
 
@@ -30,27 +30,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #define CLOCKWISE 0
 /*
-                                 -----------AABB
- Collider[BASE]<--- CONVEX <-----|
-                                 -----------TRIANGLE
+-----------AABB
+Collider[BASE]<--- CONVEX <-----|
+-----------TRIANGLE
 
-	 There is 3 Coordinate system at play here.
-	 Global Coordinate System
-	 - The Global Position of the object
-	 Local Object Position
-	 - The Local Coordinate System of the Object
-	 Collider Coordinate System
-	 - The Local Coordinate System of the Collider
+There is 3 Coordinate system at play here.
+Global Coordinate System
+- The Global Position of the object
+Local Object Position
+- The Local Coordinate System of the Object
+Collider Coordinate System
+- The Local Coordinate System of the Collider
 
-	 EG. Object Global Coordinates is (10 , 10)
-	 Offset is (4,4)
-	 One of the Collider Vertice Position is (1,2)
+EG. Object Global Coordinates is (10 , 10)
+Offset is (4,4)
+One of the Collider Vertice Position is (1,2)
 
-	 The Global Position of the Collider Vertice is
-	 (10,10) + (4,4) + (1,2) = (15,16)
+The Global Position of the Collider Vertice is
+(10,10) + (4,4) + (1,2) = (15,16)
 
-	 The Global Position of the Collider is
-	 (10,10) + (4,4)         = (14,14)
+The Global Position of the Collider is
+(10,10) + (4,4)         = (14,14)
 
 */
 namespace Dystopia
@@ -79,14 +79,14 @@ namespace Dystopia
 	{
 		/*Position of the vectice*/
 		Math::Point3D mPosition;
-		
+
 		Vertice(Math::Point3D const & p)
-			:mPosition{p}
+			:mPosition{ p }
 		{
 
 		}
 		Vertice(float const & x, float const & y)
-			:mPosition{x,y,1,1}
+			:mPosition{ x,y,1,1 }
 		{
 
 		}
@@ -107,12 +107,12 @@ namespace Dystopia
 
 		using SYSTEM = CollisionSystem;
 
-		
+
 		unsigned GetComponentType(void) const
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
 		};
-		
+
 
 #if EDITOR
 		static const std::string GetCompileName(void) { return "Collider"; }
@@ -121,12 +121,12 @@ namespace Dystopia
 
 		static  const eColliderType ColliderType = eColliderType::BASE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; } // returns const
-		/*Constructors*/
+																						 /*Constructors*/
 
-		/*Default - (Box Collider)*/
+																						 /*Default - (Box Collider)*/
 		Collider();
-		explicit Collider(const Math::Point3D & _offset, const Math::Point3D & _origin = Math::MakePoint3D(0.f,0.f,0.f));
-		
+		explicit Collider(const Math::Point3D & _offset, const Math::Point3D & _origin = Math::MakePoint3D(0.f, 0.f, 0.f));
+
 		/*Load the Component*/
 		virtual void Load(void);
 		/*Initialise the Component*/
@@ -139,15 +139,15 @@ namespace Dystopia
 		virtual void Unload(void);
 		/*Duplicate the Component*/
 		virtual Collider* Duplicate() const;
-		
-		/************************************************************************
-		 * Member Functions
-		 ***********************************************************************/
-		float DetermineRestitution      (RigidBody const & b) const;
-		float DetermineStaticFriction   (RigidBody const & b) const;
-		float DetermineKineticFriction  (RigidBody const & b) const;
 
-		 /*Get Array of collision event*/
+		/************************************************************************
+		* Member Functions
+		***********************************************************************/
+		float DetermineRestitution(RigidBody const & b) const;
+		float DetermineStaticFriction(RigidBody const & b) const;
+		float DetermineKineticFriction(RigidBody const & b) const;
+
+		/*Get Array of collision event*/
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
 
 		// Settors
@@ -186,7 +186,7 @@ namespace Dystopia
 		bool mbIsTrigger;
 
 		Math::Point3D mPosition;
-		
+
 		AutoArray<Vertex> mDebugVertices;
 		AutoArray<short>  mIndexBuffer;
 

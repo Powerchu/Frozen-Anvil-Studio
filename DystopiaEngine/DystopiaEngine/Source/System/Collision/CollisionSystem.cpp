@@ -50,7 +50,7 @@ namespace Dystopia
 
 	void CollisionSystem::Update(float)
 	{
-		
+
 	}
 
 	void CollisionSystem::PostUpdate()
@@ -89,15 +89,15 @@ namespace Dystopia
 		{
 			CollisionTableMap i
 			{
-			{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }    ,&CollisionSystem::AABBvsAABB     },
+				{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }    ,&CollisionSystem::AABBvsAABB },
 			{ CollisionTable{ eColliderType::AABB    ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::AABB }    ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
-			{ CollisionTable{ eColliderType::CIRCLE  ,eColliderType::CIRCLE}   ,&CollisionSystem::CircleVsCircle },
-			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::AABB}      ,&CollisionSystem::CircleVsAABB   },
-			{ CollisionTable{ eColliderType::AABB,   eColliderType::CIRCLE}    ,&CollisionSystem::AABBvsCircle   },
-			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::CONVEX}    ,&CollisionSystem::CircleVsConvex },
-			{ CollisionTable{ eColliderType::CONVEX, eColliderType::CIRCLE }   ,&CollisionSystem::ConvexVsCircle}
+			{ CollisionTable{ eColliderType::CIRCLE  ,eColliderType::CIRCLE }   ,&CollisionSystem::CircleVsCircle },
+			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::AABB }      ,&CollisionSystem::CircleVsAABB },
+			{ CollisionTable{ eColliderType::AABB,   eColliderType::CIRCLE }    ,&CollisionSystem::AABBvsCircle },
+			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::CONVEX }    ,&CollisionSystem::CircleVsConvex },
+			{ CollisionTable{ eColliderType::CONVEX, eColliderType::CIRCLE }   ,&CollisionSystem::ConvexVsCircle }
 			};
 			return i;
 		}();
@@ -138,7 +138,7 @@ namespace Dystopia
 		}
 
 		for (auto & bodyA : mColliders)
-		{	
+		{
 			if (nullptr == bodyA->GetOwner()) continue;
 			for (auto & bodyB : mColliders)
 			{
@@ -178,7 +178,7 @@ namespace Dystopia
 							}
 						}
 					}
-				}				
+				}
 			}
 		}
 	}
@@ -205,7 +205,7 @@ namespace Dystopia
 	{
 		const auto col_a = dynamic_cast<Convex * const>(_ColA);
 		const auto col_b = dynamic_cast<Convex * const>(_ColB);
-		
+
 		return col_a->isColliding(col_b);
 	}
 
@@ -239,16 +239,16 @@ namespace Dystopia
 		Circle   * pCircle;
 		Convex   * pConvex;
 
-		if(_ColA->GetColliderType() == eColliderType::CIRCLE)
+		if (_ColA->GetColliderType() == eColliderType::CIRCLE)
 		{
-		pCircle = dynamic_cast<Circle *>(_ColA);
-		pConvex = dynamic_cast<Convex *>(_ColB);
+			pCircle = dynamic_cast<Circle *>(_ColA);
+			pConvex = dynamic_cast<Convex *>(_ColB);
 		}
 		else
 		{
-		pCircle = dynamic_cast<Circle *>(_ColB);
-		pConvex = dynamic_cast<Convex *>(_ColA);
-			
+			pCircle = dynamic_cast<Circle *>(_ColB);
+			pConvex = dynamic_cast<Convex *>(_ColA);
+
 		}
 		bool isColliding = pCircle->isColliding((*pConvex));
 

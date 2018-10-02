@@ -149,7 +149,7 @@ namespace Dystopia
 
 	void RigidBody::Integrate(float _dt)
 	{
-		constexpr const auto VEL_EPSILON = 0.0001F;
+		constexpr const auto VEL_EPSILON = 0.001F;
 
 		if (!GetOwner()->IsActive() || mbIsStatic || !mbIsAwake)
 		{
@@ -211,9 +211,9 @@ namespace Dystopia
 
 	void RigidBody::CheckSleeping(float _dt)
 	{
-		constexpr const auto SLEEP_EPSILON = 0.001F;
-		if (mbIsStatic) return;
-		const float bias = std::pow(0.5F, _dt);
+		constexpr const auto SLEEP_EPSILON = 0.2F;
+
+		const float bias = std::pow(0.1F, _dt);
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
 		mfWeightedMotion = bias * mfWeightedMotion + (1 - bias)*currentMotion;
 
@@ -221,13 +221,16 @@ namespace Dystopia
 		if (mfWeightedMotion > 10 * SLEEP_EPSILON) mfWeightedMotion = 10 * SLEEP_EPSILON;
 		if (mfWeightedMotion < SLEEP_EPSILON)
 		{
-			mbIsAwake = false;
+			const auto t = Math::Abs(mPosition.MagnitudeSqr() - mPrevPosition.MagnitudeSqr());
+			{
+				mbIsAwake = false;
+			}
 		}
 	}
 
 	void RigidBody::UpdateResult(float _dt)
 	{
-		if (!mbIsStatic) // only update when body is not static
+		if (!mbIsStatic && mbIsAwake) // only update when body is not static
 		{		
 			// Update Position
 			mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;

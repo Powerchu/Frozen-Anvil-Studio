@@ -41,16 +41,6 @@ namespace Dystopia
 			const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
 			const float _yScale = GetOwner()->GetComponent<Transform>()->GetScale().y;
 
-			if (mVertices.IsEmpty())
-			{
-				mVertices = {
-					Vertice{ Math::MakePoint3D(.5f,.5f,0) },
-					Vertice{ Math::MakePoint3D(-.5f,.5f,0) },
-					Vertice{ Math::MakePoint3D(-.5f,-.5f,0) },
-					Vertice{ Math::MakePoint3D(.5f,-.5f,0) }
-				};
-			}
-
 			for (auto & elem : mVertices)
 			{
 				elem.mPosition.x = elem.mPosition.x * Math::Abs(_xScale);
@@ -100,8 +90,8 @@ namespace Dystopia
 
 		for (const auto vertex : mVertices)
 		{
-			_out << float(vertex.mPosition[0]) / _xScale;
-			_out << float(vertex.mPosition[1]) / _yScale;
+			_out << float(vertex.mPosition[0]/ _xScale);
+			_out << float(vertex.mPosition[1]/ _yScale);
 			_out << float(vertex.mPosition[2]);
 		}
 
@@ -113,12 +103,19 @@ namespace Dystopia
 		int arr_vert_size;
 		float tmp_x, tmp_y, tmp_z;
 
+
 		_in.ConsumeStartBlock();
 		_in >> mID;				// gObj ID
 		_in >> mv3Offset[0];		// offset for colliders
 		_in >> mv3Offset[1];
 		_in >> mv3Offset[2];
+
 		_in >> arr_vert_size;
+
+		if (arr_vert_size)
+			mVertices.clear();
+		
+		mDebugVertices.clear();
 
 		for (int i = 0; i< arr_vert_size; ++i)
 		{
@@ -127,6 +124,7 @@ namespace Dystopia
 			_in >> tmp_z;
 			mVertices.Insert(Vertice{ Math::MakePoint3D(tmp_x,tmp_y,tmp_z) });
 		}
+
 		_in.ConsumeEndBlock();
 
 		if (GameObject* owner =
@@ -139,8 +137,7 @@ namespace Dystopia
 
 	Convex * Convex::Duplicate() const
 	{
-		//return EngineCore::GetInstance()->GetSystem<CollisionSystem>()->RequestComponent<Convex>(*this);
-		return new Convex{ *this };
+		return static_cast<ComponentDonor<Convex> *>(EngineCore::GetInstance()->GetSystem<Convex::SYSTEM>())->RequestComponent();
 	}
 
 	void Convex::EditorUI() noexcept
@@ -387,7 +384,7 @@ namespace Dystopia
 		const Vertice Farthest_In_ColB = _ColB.GetFarthestPoint(_Dir * -1);
 
 		const auto MikwoskiPoint = Farthest_In_ColA.mPosition - Farthest_In_ColB.mPosition;
-		return Math::MakePoint3D(MikwoskiPoint.x, MikwoskiPoint.y, MikwoskiPoint.z);
+		return Math::MakePoint3D(MikwoskiPoint.x, MikwoskiPoint.y, 0);
 	}
 
 	Math::Point3D Convex::Support(const Convex & _ColB, const Math::Vec3D & _Dir) const
@@ -399,13 +396,13 @@ namespace Dystopia
 	{
 		AutoArray<Edge> ToRet;
 		Math::Matrix4 World = Math::Translate(GetOffSet() + mPosition) * GetTransformationMatrix();
-		for(unsigned i=0; i<mVertices.size(); ++i)
+		for (unsigned i = 0; i<mVertices.size(); ++i)
 		{
-			unsigned j = i + 1 >= mVertices.size() ? 0: i + 1;
+			unsigned j = i + 1 >= mVertices.size() ? 0 : i + 1;
 			Math::Point3D const & start = World * mVertices[i].mPosition;
-			Math::Point3D const & end   = World * mVertices[j].mPosition;
+			Math::Point3D const & end = World * mVertices[j].mPosition;
 			Edge e;
-			e.mVec3  = end - start;
+			e.mVec3 = end - start;
 			e.mNorm3.xyzw = e.mVec3.yxzw;
 			e.mSimplexIndex = i;
 			e.mOrthogonalDistance = start.Magnitude();
@@ -413,7 +410,7 @@ namespace Dystopia
 #if CLOCKWISE
 
 			e.mNorm3.Negate<Math::NegateFlag::X>();
-			
+
 #else
 			e.mNorm3.Negate<Math::NegateFlag::Y>();
 
@@ -534,16 +531,7 @@ namespace Dystopia
 
 	void Convex::ePointVerticesVectorArray()
 	{
-		int v_size = 4;
-
-		while (mVertices.size() < unsigned int(v_size))
-		{
-			mVertices.push_back(Math::MakePoint3D(0.0f, 0.0f, 0.0f));
-		}
-		while (mVertices.size() > unsigned int(v_size))
-		{
-			mVertices.pop_back();
-		}
+		int v_size = mVertices.size();
 
 		if (EGUI::Display::CollapsingHeader("Points"))
 		{
@@ -607,7 +595,15 @@ namespace Dystopia
 				EGUI::PopID();
 
 			}
-			
+
+			while (mVertices.size() < unsigned int(v_size))
+			{
+				mVertices.push_back(Math::MakePoint3D(0.0f, 0.0f, 0.0f));
+			}
+			while (mVertices.size() > unsigned int(v_size))
+			{
+				mVertices.pop_back();
+			}
 		}
 		
 	}
