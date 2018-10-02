@@ -82,7 +82,7 @@ namespace Dystopia
 	/*Duplicate the Component*/
 	Circle* Circle::Duplicate() const
 	{
-		return new Circle{*this};
+		return static_cast<ComponentDonor<Circle> *>(EngineCore::GetInstance()->GetSystem<Circle::SYSTEM>())->RequestComponent();
 	}
 
 	float Circle::GetRadius() const
@@ -94,7 +94,7 @@ namespace Dystopia
 	void Circle::Serialise(TextSerialiser& _out) const
 	{
 		_out.InsertStartBlock("Circle_Collider2D");
-		_out << mID;					// gObj ID
+		_out << mID;					    // gObj ID
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);

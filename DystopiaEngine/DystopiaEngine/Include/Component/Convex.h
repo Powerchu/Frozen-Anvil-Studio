@@ -71,6 +71,7 @@ namespace Dystopia
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;
 
+
 		virtual ~Convex();
 
 		Vertice GetFarthestPoint(const Math::Vec3D & _Dir)const;
@@ -100,7 +101,7 @@ namespace Dystopia
 		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
 
 		Math::Point3D Support(const Convex & _ColB,
-			const Math::Vec3D & _Dir)const;
+			                  const Math::Vec3D & _Dir)const;
 
 		AutoArray<Edge> GetConvexEdges() const;
 

@@ -49,7 +49,7 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 
 
 	// Calculate Impulse Scalar
-	float tmpJ = -(1.0F + mfRestitution) * contactVel  + (slop * mdPeneDepth);
+	float tmpJ = static_cast<float>(-(1.0F + mfRestitution) * contactVel  + (slop * mdPeneDepth));
 	tmpJ /= a_invmass + b_invmass;
 
 	// Apply Impulse
@@ -121,7 +121,7 @@ void Dystopia::CollisionEvent::ApplyPenetrationCorrection()
 	const double perc = 0.2F;
 	const double slop = 0.01F;
 
-	const Vec3D correction = std::max((mdPeneDepth+0.1) - slop, 0.0) / (a_invmass + b_invmass) * float(perc) * mEdgeNormal;
+	const Vec3D correction = std::max(static_cast<float>(mdPeneDepth+0.1f - slop), static_cast<float>(0.0)) / (a_invmass + b_invmass) * float(perc) * mEdgeNormal;
 
 	if (!bodyA->Get_IsStaticState())
 		bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
