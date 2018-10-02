@@ -48,7 +48,7 @@ namespace Dystopia
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		Renderer(void) noexcept;
-
+		Renderer(Renderer&&) noexcept;
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 

@@ -39,16 +39,27 @@ Dystopia::Renderer::Renderer(void) noexcept
 	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
 }
 
+Dystopia::Renderer::Renderer(Dystopia::Renderer&& _rhs) noexcept
+	: mnUnique{ _rhs.mnUnique }, mpMesh{ _rhs.mpMesh }, mpShader{ _rhs.mpShader }, mpTexture{ _rhs.mpTexture }, mTexturePath{ _rhs.mTexturePath },
+	mTextureName{ _rhs.mTextureName }, Component{ _rhs }
+{
+	_rhs.mnUnique = 0;
+	_rhs.mpTexture = nullptr;
+	_rhs.mpShader = nullptr;
+	_rhs.mpMesh = nullptr;
+	_rhs.mTexturePath.clear();
+	_rhs.mTextureName.clear();
+}
+
 void Dystopia::Renderer::Init(void)
 {
 	Texture *pTex {nullptr};
-	if (!mTexturePath.empty())
+	if (mTexturePath.length())
 	{		
 		pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mTexturePath);
 		SetTexture(pTex);
 		mTextureName = GetTextureName();
 	}
-
 }
 
 void Dystopia::Renderer::Draw(void) const noexcept
@@ -91,6 +102,8 @@ Dystopia::Shader* Dystopia::Renderer::GetShader(void) const noexcept
 
 void Dystopia::Renderer::SetTexture(Texture* _pTexture) noexcept
 {
+	mTexturePath = _pTexture->GetPath();
+	mTextureName = GetTextureName();
 	mpTexture = _pTexture;
 }
 
