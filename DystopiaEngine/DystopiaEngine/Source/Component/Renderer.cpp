@@ -176,7 +176,12 @@ void Dystopia::Renderer::TextureField()
 		EGUI::Display::EndPayloadReceiver();
 	}
 
-	EGUI::Display::Image(mpTexture->GetID());
+	if (mpTexture)
+	{
+		EGUI::Indent(80);
+		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 100, 100 });
+		EGUI::UnIndent(80);
+	}
 }
 
 void Dystopia::Renderer::MeshField()

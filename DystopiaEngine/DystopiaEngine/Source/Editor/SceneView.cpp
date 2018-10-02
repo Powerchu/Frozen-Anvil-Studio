@@ -305,7 +305,7 @@ namespace Dystopia
 		mToZoom = eZOOM_NONE;
 	}
 
-	void SceneView::AcceptPayload(File* _pFile)
+	void SceneView::AcceptPayload(File* /*_pFile*/)
 	{
 		if (Camera* pCam = GetCamera())
 		{

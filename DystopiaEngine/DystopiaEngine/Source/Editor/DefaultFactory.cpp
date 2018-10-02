@@ -42,6 +42,26 @@ namespace Dystopia
 			return pObject;
 		}
 
+		GameObject* CreatePerformanceObj(const std::string& _name)
+		{
+			GameObject *pObject = new GameObject{ GUIDGenerator::GetUniqueID() };
+			pObject->SetName(_name);
+			pObject->SetActive(true);
+			pObject->Init();
+			auto rend = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			pObject->AddComponent(rend, typename Renderer::TAG{});
+			auto rigid = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
+			pObject->AddComponent(rigid, typename RigidBody::TAG{});
+
+			rend->SetOwner(pObject);
+			rend->Init();
+			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Asset/Salamander_Stand.png"));
+			rigid->SetOwner(pObject);
+			rigid->Init();
+			pObject->GetComponent<Transform>()->SetScale(Math::Vec4{100, 100, 1});
+			return pObject;
+		}
+
 		GameObject* CreateCamera(const std::string& _name)
 		{
 			GameObject *pObject = CreateGameObj(_name);

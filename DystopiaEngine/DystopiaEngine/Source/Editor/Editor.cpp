@@ -653,7 +653,9 @@ namespace Dystopia
 			else if (k == eButton::KEYBOARD_OEM_PERIOD)
 				mpGuiSystem->UpdateChar(46);
 			else if (k == eButton::KEYBOARD_OEM_MINUS)
-				mpGuiSystem->UpdateChar(45);
+				mpGuiSystem->UpdateChar(caps ? 95 : 45);
+			else if (k == eButton::KEYBOARD_SPACEBAR)
+				mpGuiSystem->UpdateChar(32);
 			// misc keys like ctrl, del, back etc
 			else
 				mpGuiSystem->UpdateKey(k, true);
@@ -776,6 +778,7 @@ namespace Dystopia
 				}
 			}
 			PLogTaskManager p;
+			p.mFrameRate	= mDeltaTime;
 			p.mCPUIdle		= mpProfiler->GetCPUPercentageIdle();
 			p.mCPUBusy		= mpProfiler->GetCPUPercentageBusy();
 			p.mCPUOS		= mpProfiler->GetCPUPercentageOS();

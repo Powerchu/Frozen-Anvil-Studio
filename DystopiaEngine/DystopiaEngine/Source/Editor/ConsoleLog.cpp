@@ -16,8 +16,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Editor/ConsoleLog.h"
 #include "Editor/EGUI.h"
+#include "Editor/AdminCalls.h"
 
 #include "System/Driver/Driver.h"
+#include "System/Scene/Scene.h"
+#include "System/Scene/SceneSystem.h"
 #include "System/Logger/LoggerSystem.h"
 #include <algorithm>
 
@@ -47,7 +50,8 @@ namespace Dystopia
 		mLabel{ "Console" },
 		mArrDebugTexts{ "" },
 		mLoggingIndex{ 0 },
-		mRecordIndex{ 0 }
+		mRecordIndex{ 0 },
+		mAdminCommands{ "" }
 	{}
 
 	ConsoleLog::~ConsoleLog()
@@ -72,6 +76,7 @@ namespace Dystopia
 		EGUI::UnIndent(5);
 		EGUI::Display::HorizontalSeparator();
 		PrintLogs();
+		AdminInput();
 	}
 
 	void ConsoleLog::Shutdown()
@@ -86,13 +91,43 @@ namespace Dystopia
 
 	void ConsoleLog::PrintLogs()
 	{
-		if (EGUI::StartChild("##DetailLog", Math::Vec2{Size().x, Size().y - 100.f}, false))
+		if (EGUI::StartChild("##DetailLog", Math::Vec2{Size().x - 2.f, Size().y - 85.f}, false))
 		{
 			for (unsigned int i = 0; i < mLoggingIndex; ++i)
 				EGUI::Display::Label(mArrDebugTexts[i].c_str());
 			EGUI::EndChild();
 		}
 		EGUI::Display::HorizontalSeparator();
+	}
+
+	void ConsoleLog::AdminInput()
+	{
+		if (EGUI::Display::TextField("AdminText", mAdminCommands, MAX_SEARCH, false, Size().x - 6.f))
+		{
+			int count	= 0;
+			std::string var = "";
+			std::string fnName = "";
+			PrintToConsoleLog(std::string{ mAdminCommands });
+			if (!Admin::ValidCommand(mAdminCommands, count, var, fnName))
+				PrintToConsoleLog("Invalid Command");
+			else
+			{
+				for (int i = 0; i < count; ++i)
+				{
+					auto *p = (*(Admin::g_AdminFuncs[fnName]))(var + std::to_string(i));
+					p->GetComponent<Transform>()->SetPosition(Math::Pt3D{ 5.f * i , 0, 0.1f * i});
+					GetCurrentScene()->GetAllGameObjects().EmplaceBack(Utility::Move(*p));
+					delete p;
+				}
+			}
+
+			int i = MAX_SEARCH - 1;
+			while (i > -1)
+			{
+				mAdminCommands[i] = '\0';
+				--i;
+			}
+		}
 	}
 
 	void ConsoleLog::Debug(const std::string& _text)

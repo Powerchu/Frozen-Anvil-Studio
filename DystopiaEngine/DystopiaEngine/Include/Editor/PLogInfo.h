@@ -23,6 +23,7 @@ namespace Dystopia
 {
 	struct PLogTaskManager
 	{
+		float mFrameRate;
 		float mCPUIdle;
 		float mCPUBusy;
 		float mCPUOS;

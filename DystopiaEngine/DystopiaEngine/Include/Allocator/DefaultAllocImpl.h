@@ -24,7 +24,7 @@ namespace Dystopia
 	class DefaultAlloc
 	{
 	public:
-		using MetaData_t = uint32_t;
+		using MetaData_t = uint64_t;
 
 		DefaultAlloc(void);
 		~DefaultAlloc(void) noexcept;

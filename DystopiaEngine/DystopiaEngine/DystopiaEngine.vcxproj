@@ -31,6 +31,7 @@
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp" />
     <ClCompile Include="Source\Component\CharacterController.cpp" />
     <ClCompile Include="Source\Component\CollisionEvent.cpp" />
+    <ClCompile Include="Source\Editor\AdminCalls.cpp" />
     <ClCompile Include="Source\Editor\Clipboard.cpp" />
     <ClCompile Include="Source\Component\Colliders\Circle.cpp" />
     <ClCompile Include="Source\Editor\ColorScheme.cpp" />
@@ -118,6 +119,7 @@
     <ClInclude Include="Include\Component\ColliderList.h" />
     <ClInclude Include="Include\Component\Convex.h" />
     <ClInclude Include="Include\Component\Triangle.h" />
+    <ClInclude Include="Include\Editor\AdminCalls.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />
     <ClInclude Include="Include\Editor\ColorScheme.h" />
     <ClInclude Include="Include\Editor\Gizmo.h" />
