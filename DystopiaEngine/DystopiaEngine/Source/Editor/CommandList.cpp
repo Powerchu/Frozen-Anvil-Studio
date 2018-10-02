@@ -111,15 +111,15 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
 	mpObj->SetID(mObjID);
-	for (auto& e : mpObj->GetAllComponents())
+	for (auto& c : mpObj->GetAllComponents())
 	{
-		e->SetOwner(mpObj);
-		e->Init();
+		c->SetOwner(mpObj);
+		c->Init();
 	}
-	for (auto& e : mpObj->GetAllBehaviours())
+	for (auto& b : mpObj->GetAllBehaviours())
 	{
-		e->SetOwner(mpObj);
-		e->Init();
+		b->SetOwner(mpObj);
+		b->Init();
 	}
 	p->Destroy();
 	return true;
