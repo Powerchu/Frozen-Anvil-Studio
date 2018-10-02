@@ -25,7 +25,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Collision/CollisionEvent.h"
 
 #include "System/Graphics/VertexDefs.h"
-
+#include "System/Graphics/Shader.h"
+#include "Math/Quaternion.h"
 
 
 #define CLOCKWISE 0
@@ -152,11 +153,11 @@ namespace Dystopia
 
 		// Settors
 		void SetColliding(bool _b);
-		void SetPosition(Math::Point3D const & _point);
+		void SetLocalPosition(Math::Point3D const & _point);
 		void ClearCollisionEvent();
 
 		// Gettors
-		virtual Math::Point3D GetPosition() const;
+		virtual Math::Point3D GetGlobalPosition() const;
 		Math::Vec3D           GetOffSet()   const;
 		bool                  HasCollision() const;
 
@@ -166,10 +167,7 @@ namespace Dystopia
 		void  SetMesh(Mesh * _ptr);
 		Mesh* GetMesh() const;
 
-		void SetRotation(Math::Degrees _deg);
-		void SetRotation(Math::Radians _rad);
-		void AddRotation(Math::Radians _rad);
-		void AddRotation(Math::Degrees _deg);
+
 		Math::Matrix3D GetTransformationMatrix() const;
 		void SetOwnerTransform(Math::Matrix3D const & _ownerMatrix);
 		Math::Matrix3D GetOwnerTransform() const;
@@ -197,12 +195,16 @@ namespace Dystopia
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
 		/*Matrix*/
-		Math::Matrix3D mTransformation;
 		Math::Matrix3D mOwnerTransformation;
+#if EDITOR
+		Math::Vec3D          mScale;
+		Math::Quaternion     mRotation;
+#endif
 
 	private:
 		// Collider Mesh for debug drawing
 		Mesh * mpMesh;
+
 	};
 }
 #endif /*COLLIDER_H*/

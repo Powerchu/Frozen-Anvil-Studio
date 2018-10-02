@@ -19,15 +19,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/VertexDefs.h"
 #include "System/Graphics/MeshSystem.h"
 
+
 namespace Dystopia
 {
 	Collider::Collider()
-		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}, mPosition{ Math::MakePoint3D(0.f,0.f,0.f) }, mbIsTrigger(false)
+		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}, mPosition{ Math::MakePoint3D(0.f,0.f,0.f) }, mbIsTrigger(false), mScale{1,1,1}
 	{
 		
 	}
 	Collider::Collider(const Math::Point3D & _offset, const Math::Point3D & _origin)
-		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }, mPosition{_origin}, mbIsTrigger(false)
+		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }, mPosition{_origin}, mbIsTrigger(false), mScale{ 1,1,1 }
 	{
 
 	}
@@ -121,14 +122,14 @@ namespace Dystopia
 		mbColliding = _b;
 	}
 
-	void Collider::SetPosition(Math::Point3D const & _point)
+	void Collider::SetLocalPosition(Math::Point3D const & _point)
 	{
 		mPosition = _point;
 	}
 
-	Math::Point3D Collider::GetPosition() const
+	Math::Point3D Collider::GetGlobalPosition() const
 	{
-		return mPosition;
+		return mOwnerTransformation * Math::Translate(mv3Offset.x, mv3Offset.y , mv3Offset.z) * GetTransformationMatrix() *  mPosition;
 	}
 
 	Math::Vec3D Collider::GetOffSet() const
@@ -156,31 +157,10 @@ namespace Dystopia
 		return mpMesh;
 	}
 
-	void Collider::SetRotation(Math::Degrees _deg)
-	{
-		mTransformation = Math::RotateZ(_deg);
-	}
-
-	void Collider::SetRotation(Math::Radians _rad)
-	{
-		mTransformation = Math::RotateZ(_rad);
-	}
-
-	void Collider::AddRotation(Math::Radians _rad)
-	{
-		Math::Matrix3D Rotation = Math::RotateZ(_rad);
-		mTransformation = Rotation * mTransformation;
-	}
-
-	void Collider::AddRotation(Math::Degrees _deg)
-	{
-		Math::Matrix3D Rotation = Math::RotateZ(_deg);
-		mTransformation = Rotation * mTransformation;
-	}
-
 	Math::Matrix3D Collider::GetTransformationMatrix() const
 	{
-		return mTransformation;
+		auto rot = Math::Normalise(mRotation);
+		return rot.Matrix() * Math::Scale(mScale.x,mScale.y,mScale.z);
 	}
 
 	void Collider::SetOwnerTransform(Math::Matrix3D const& _ownerMatrix)
