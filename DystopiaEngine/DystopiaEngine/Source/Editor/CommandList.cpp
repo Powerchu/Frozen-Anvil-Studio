@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/CommandList.h"
 #include "System/Scene/Scene.h"
+#include "Behaviour/Behaviour.h"	 
 #include "Object/GameObject.h"
 
 /* Insert Game Object Command  ****************************************************************************/
@@ -62,7 +63,17 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
-	mpObj->SetID(p->GetID());
+	mpObj->SetID(mObjID);
+	for (auto& e : mpObj->GetAllComponents())
+	{
+		e->SetOwner(mpObj);
+		e->Init();
+	}
+	for (auto& e : mpObj->GetAllBehaviours())
+	{
+		e->SetOwner(mpObj);
+		e->Init();
+	}
 	p->Destroy();
 	return true;
 }
@@ -99,7 +110,17 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
-	mpObj->SetID(p->GetID());
+	mpObj->SetID(mObjID);
+	for (auto& e : mpObj->GetAllComponents())
+	{
+		e->SetOwner(mpObj);
+		e->Init();
+	}
+	for (auto& e : mpObj->GetAllBehaviours())
+	{
+		e->SetOwner(mpObj);
+		e->Init();
+	}
 	p->Destroy();
 	return true;
 }

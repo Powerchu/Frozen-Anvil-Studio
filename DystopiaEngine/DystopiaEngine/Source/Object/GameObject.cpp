@@ -263,11 +263,17 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	p->mName = mName;
 	for (auto& e : mComponents)
 	{
-		p->mComponents.Insert(e->Duplicate());
+		auto t = e->Duplicate();
+		t->SetOwner(p);
+		t->Init();
+		p->mComponents.Insert(t);
 	}
 	for (auto& e : mBehaviours)
 	{
-		p->mBehaviours.Insert(e->Duplicate());
+		auto t = e->Duplicate();
+		t->SetOwner(p);
+		t->Init();
+		p->mBehaviours.Insert(t);
 	}
 	p->mTransform = mTransform;
 	return p;

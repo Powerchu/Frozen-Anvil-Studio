@@ -203,7 +203,6 @@ namespace EGUI
 			{
 				if (show) clicked = true;
 			}
-			//ImGui::PopStyleColor(3);
 			ImGui::PopItemWidth();
 			return clicked;
 		}
@@ -668,14 +667,22 @@ namespace EGUI
 			ImGui::SetCursorScreenPos(pos);
 		}
 
-		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize, bool _interactive)
+		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize, bool _interactive, bool _outlineBG)
 		{
 			if (!_interactive)
 			{
-				ImGui::Image(reinterpret_cast<void*>(_imgID), _imgSize);
+				ImGui::Image(reinterpret_cast<void*>(_imgID), _imgSize, 
+							 ImVec2{ 0,0 }, ImVec2{ 1,1 }, ImVec4{ 1,1,1,1 }, 
+							 (_outlineBG) ? ImGui::GetStyleColorVec4(ImGuiCol_Border) : ImVec4{ 0,0,0,0 });
 				return false;
 			}
-			return ImGui::ImageButton(reinterpret_cast<void*>(_imgID), _imgSize, ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0,0,0,0 });
+			bool ret = ImGui::ImageButton(reinterpret_cast<void*>(_imgID), _imgSize, 
+										  ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0, 
+										  (_outlineBG) ? ImGui::GetStyleColorVec4(ImGuiCol_BorderShadow) : ImVec4{ 0,0,0,0 },
+										  ImVec4{ 1,1,1,1 });
+			ImGui::PopStyleColor();
+			return ret;
 		}
 	}
 }	// NAMESPACE DYSTOPIA::EGUI::DISPLAY

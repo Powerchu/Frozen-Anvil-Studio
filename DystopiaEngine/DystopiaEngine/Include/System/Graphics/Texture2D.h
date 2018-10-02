@@ -16,8 +16,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Graphics/Texture.h"
 
-#include <string>
-
 namespace Dystopia
 {
 	class Texture2D : public Texture
@@ -30,9 +28,12 @@ namespace Dystopia
 
 		void GenerateMipmap(void) const;
 
+		std::string GetPath() const noexcept;
+
 	private:
 
 		void InitTexture(void*, bool _bAlpha);
+		std::string mPath;
 	};
 }
 

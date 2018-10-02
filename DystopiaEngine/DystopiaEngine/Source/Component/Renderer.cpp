@@ -91,6 +91,16 @@ Dystopia::Shader* Dystopia::Renderer::GetShader(void) const noexcept
 
 void Dystopia::Renderer::SetTexture(Texture* _pTexture) noexcept
 {
+	if (_pTexture)
+	{
+		mTexturePath = _pTexture->GetPath();
+		mTextureName = GetTextureName();
+	}
+	else
+	{
+		mTexturePath.clear();
+		mTextureName.clear();
+	}
 	mpTexture = _pTexture;
 }
 
@@ -137,7 +147,7 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 
 std::string Dystopia::Renderer::GetTextureName()
 {
-	size_t pos = mTexturePath.find_last_of("/\\");
+	size_t pos = mTexturePath.find_last_of("/\\") + 1;
 	if (pos < mTexturePath.length())
 	{
 		return std::string{ mTexturePath.begin() + pos, mTexturePath.end() };
@@ -159,25 +169,31 @@ void Dystopia::Renderer::TextureField()
 {
 	if (EGUI::Display::EmptyBox("Texture   ", 150, (mpTexture) ? mTextureName : "-empty-", true))
 	{
-
+		if (mpTexture) ProjectResource::GetInstance()->FocusOnFile(mTextureName);
 	}
-
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
 	{
-		mTexturePath = t->mPath;
-		mTextureName = GetTextureName();
 		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
+
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pTex);
 		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+
 		EGUI::Display::EndPayloadReceiver();
+	}
+	EGUI::SameLine();
+	if (EGUI::Display::IconCircle("clear"))
+	{
+		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
+		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, nullptr);
+		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 	}
 
 	if (mpTexture)
 	{
-		EGUI::Indent(80);
-		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 100, 100 });
-		EGUI::UnIndent(80);
+		EGUI::Display::Label("Preview    ");
+		EGUI::SameLine();
+		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 100, 100 }, false, true);
 	}
 }
 
