@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/CommandList.h"
+#include "Behaviour/Behaviour.h"
 #include "System/Scene/Scene.h"
 #include "Object/GameObject.h"
 
@@ -34,6 +35,7 @@ bool Dystopia::ComdInsertObject::ExecuteDo()
 	if (p || !mpObj) return false;
 
 	mpScene->GetAllGameObjects().EmplaceBack(Utility::Move(*mpObj));
+	mpScene->GetAllGameObjects().back().GetComponent<Transform>()->SetOwner(&mpScene->GetAllGameObjects().back());
 	if (mFocusBack)
 	{
 		Editor *e = Editor::GetInstance();
@@ -62,7 +64,17 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
-	mpObj->SetID(p->GetID());
+	mpObj->SetID(mObjID);
+	for (auto c : mpObj->GetAllComponents())
+	{
+		c->SetOwner(mpObj);
+		c->Init();
+	}
+	for (auto b : mpObj->GetAllBehaviours())
+	{
+		b->SetOwner(mpObj);
+		b->Init();
+	}
 	p->Destroy();
 	return true;
 }
@@ -99,7 +111,17 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
-	mpObj->SetID(p->GetID());
+	mpObj->SetID(mObjID);
+	for (auto c : mpObj->GetAllComponents())
+	{
+		c->SetOwner(mpObj);
+		c->Init();
+	}
+	for (auto b : mpObj->GetAllBehaviours())
+	{
+		b->SetOwner(mpObj);
+		b->Init();
+	}
 	p->Destroy();
 	return true;
 }
@@ -110,6 +132,7 @@ bool Dystopia::ComdDeleteObject::ExecuteUndo()
 	if (p || !mpObj) return false;
 
 	mpScene->GetAllGameObjects().EmplaceBack(Utility::Move(*mpObj));
+	mpScene->GetAllGameObjects().back().GetComponent<Transform>()->SetOwner(&mpScene->GetAllGameObjects().back());
 	if (mFocusBack)
 	{
 		Editor* e = Editor::GetInstance();
