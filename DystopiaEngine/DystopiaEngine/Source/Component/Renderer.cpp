@@ -137,7 +137,7 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 
 std::string Dystopia::Renderer::GetTextureName()
 {
-	size_t pos = mTexturePath.find_last_of("/\\");
+	size_t pos = mTexturePath.find_last_of("/\\") + 1;
 	if (pos < mTexturePath.length())
 	{
 		return std::string{ mTexturePath.begin() + pos, mTexturePath.end() };

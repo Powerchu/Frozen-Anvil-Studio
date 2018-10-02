@@ -91,7 +91,7 @@ namespace Dystopia
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
 			mOwnerIsActive = GetOwner()->IsActive();
-			mPosition = P_TX->GetGlobalPosition();
+			mPosition = mpOwnerTransform->GetGlobalPosition();
 
 			mInverseOrientation = Math::Inverse(mOrientation);
 		}
