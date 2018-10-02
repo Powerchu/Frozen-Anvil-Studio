@@ -26,6 +26,7 @@ namespace Dystopia
 
 	class CameraSystem : public Systems, public ComponentDonor<Camera>
 	{
+		using CameraArr = ComponentDonor<Camera>::Array_t;
 	public:
 
 		CameraSystem(void) noexcept;
@@ -48,7 +49,7 @@ namespace Dystopia
 
 		void ApplyViewport(const Gfx::Viewport&);
 
-		MagicArray<Camera>& GetAllCameras(void);
+		CameraArr& GetAllCameras(void);
 
 
 	private:
