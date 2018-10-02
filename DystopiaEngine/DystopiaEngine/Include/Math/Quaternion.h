@@ -68,8 +68,8 @@ namespace Math
 
 		// ======================================== OPERATORS ======================================= // 
 
-		inline float& _CALL operator[](const size_t _nIndex);
-		inline float  _CALL operator[](const size_t _nIndex) const;
+		inline float& _CALL operator[](const unsigned _nIndex);
+		inline float  _CALL operator[](const unsigned _nIndex) const;
 
 		inline Quaternion  _CALL operator-(void) const;
 		inline Quaternion  _CALL operator* (const Quaternion);
@@ -263,12 +263,12 @@ inline Math::Quaternion _CALL Math::operator/(Quaternion _lhs, const float _rhs)
 	return _lhs /= _rhs;
 }
 
-inline float& _CALL Math::Quaternion::operator[](size_t _nIndex)
+inline float& _CALL Math::Quaternion::operator[](unsigned _nIndex)
 {
 	return mData[_nIndex];
 }
 
-inline float _CALL Math::Quaternion::operator[](size_t _nIndex) const
+inline float _CALL Math::Quaternion::operator[](unsigned _nIndex) const
 {
 	return mData[_nIndex];
 }

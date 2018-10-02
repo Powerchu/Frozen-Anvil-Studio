@@ -163,15 +163,16 @@ namespace Dystopia
 		return rot.Matrix() * Math::Scale(mScale.x,mScale.y,mScale.z);
 	}
 
-	//void Collider::SetOwnerTransform(Math::Matrix3D const& _ownerMatrix)
-	//{
-	//	mOwnerTransformation = _ownerMatrix;
-	//}
+	Math::Matrix3D Collider::GetOwnerTransform() const
+	{
+		return mOwnerTransformation;
+	}
 
-	//Math::Matrix3D Collider::GetOwnerTransform() const
-	//{
-	//	return mOwnerTransformation;
-	//}
+	void Collider::SetOwnerTransform(Math::Matrix3D const& _ownerMatrix)
+	{
+		mOwnerTransformation = _ownerMatrix;
+	}
+
 
 	Collider::~Collider()
 	{

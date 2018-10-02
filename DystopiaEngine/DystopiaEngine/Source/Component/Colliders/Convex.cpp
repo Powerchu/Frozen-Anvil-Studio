@@ -65,8 +65,8 @@ namespace Dystopia
 
 		for (const auto vertex : mVertices)
 		{
-			_out << float(vertex.mPosition[0]/ _xScale);
-			_out << float(vertex.mPosition[1]/ _yScale);
+			_out << float(vertex.mPosition[0]);
+			_out << float(vertex.mPosition[1]);
 			_out << float(vertex.mPosition[2]);
 		}
 
@@ -524,7 +524,7 @@ namespace Dystopia
 
 	void Convex::ePointVerticesVectorArray()
 	{
-		int v_size = mVertices.size();
+		static int v_size = int(mVertices.size());
 
 		if (EGUI::Display::CollapsingHeader("Points"))
 		{

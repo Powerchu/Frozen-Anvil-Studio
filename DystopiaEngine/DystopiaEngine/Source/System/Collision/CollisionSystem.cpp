@@ -110,7 +110,7 @@ namespace Dystopia
 			if (elem.GetOwner())
 			{
 				elem.ClearCollisionEvent(); //clear collision table
-				auto const & GobjPoint = elem.GetOwner()->GetComponent<Transform>()->GetPosition();
+				//auto const & GobjPoint = elem.GetOwner()->GetComponent<Transform>()->GetPosition();
 			    //Math::Matrix3D gobjMatrix = Math::Translate(GobjPoint.x, GobjPoint.y, GobjPoint.z) * elem.GetOwner()->GetComponent<Transform>()->GetRotation().Matrix();
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
