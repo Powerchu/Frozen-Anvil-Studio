@@ -43,8 +43,8 @@ namespace Dystopia
 
 			for (auto & elem : mVertices)
 			{
-				//elem.mPosition.x = elem.mPosition.x * Math::Abs(_xScale);
-				//elem.mPosition.y = elem.mPosition.y * Math::Abs(_yScale);
+				elem.mPosition.x = elem.mPosition.x * Math::Abs(_xScale);
+				elem.mPosition.y = elem.mPosition.y * Math::Abs(_yScale);
 			}
 		}
 
@@ -90,8 +90,8 @@ namespace Dystopia
 
 		for (const auto vertex : mVertices)
 		{
-			_out << float(vertex.mPosition[0]);
-			_out << float(vertex.mPosition[1]);
+			_out << float(vertex.mPosition[0]/ _xScale);
+			_out << float(vertex.mPosition[1]/ _yScale);
 			_out << float(vertex.mPosition[2]);
 		}
 
@@ -297,7 +297,8 @@ namespace Dystopia
 		Math::Vec3D const & OffSet = _ColA.GetOffSet();
 
 		/*Construct the Matrix for Global Coordinate Conversion*/
-		Math::Matrix3D WorldSpace = Math::Translate(_ColA.mPosition.x, _ColA.mPosition.y, _ColA.mPosition.z)  * _ColA.GetOwnerTransform() * Math::Translate(OffSet.x, OffSet.y, OffSet.z) * _ColA.GetTransformationMatrix();
+		Math::Matrix3D WorldSpace = Math::Translate(_ColA.mPosition.x + OffSet.x, _ColA.mPosition.y + OffSet.y, _ColA.mPosition.z + OffSet.z);
+		WorldSpace = WorldSpace * _ColA.GetTransformationMatrix();
 		Vertice * pFirst = _ColA.mVertices.begin();
 		Vertice FarthestPoint = *pFirst;
 		FarthestPoint.mPosition = (WorldSpace * pFirst->mPosition);
@@ -395,15 +396,14 @@ namespace Dystopia
 	AutoArray<Edge> Convex::GetConvexEdges() const
 	{
 		AutoArray<Edge> ToRet;
-		Math::Matrix3D World = Math::Translate(mPosition.x, mPosition.y, mPosition.z)  * mOwnerTransformation * Math::Translate(mv3Offset) * GetTransformationMatrix();
-
-		for(unsigned i=0; i<mVertices.size(); ++i)
+		Math::Matrix4 World = Math::Translate(GetOffSet() + mPosition) * GetTransformationMatrix();
+		for (unsigned i = 0; i<mVertices.size(); ++i)
 		{
-			unsigned j = i + 1 >= mVertices.size() ? 0: i + 1;
+			unsigned j = i + 1 >= mVertices.size() ? 0 : i + 1;
 			Math::Point3D const & start = World * mVertices[i].mPosition;
-			Math::Point3D const & end   = World * mVertices[j].mPosition;
+			Math::Point3D const & end = World * mVertices[j].mPosition;
 			Edge e;
-			e.mVec3  = end - start;
+			e.mVec3 = end - start;
 			e.mNorm3.xyzw = e.mVec3.yxzw;
 			e.mSimplexIndex = i;
 			e.mOrthogonalDistance = start.Magnitude();
@@ -411,7 +411,7 @@ namespace Dystopia
 #if CLOCKWISE
 
 			e.mNorm3.Negate<Math::NegateFlag::X>();
-			
+
 #else
 			e.mNorm3.Negate<Math::NegateFlag::Y>();
 

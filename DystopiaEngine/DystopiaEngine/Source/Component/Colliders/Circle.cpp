@@ -56,9 +56,9 @@ namespace Dystopia
 
 		if (nullptr != GetOwner())
 		{
-			//mPosition += GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
-			//const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
-			//m_radius *= _xScale;
+			mPosition += GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+			const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
+			m_radius *= _xScale;
 		}
 		
 	}
@@ -103,7 +103,7 @@ namespace Dystopia
 		_out << static_cast<float>(mPosition[0]);
 		_out << static_cast<float>(mPosition[1]);
 		_out << static_cast<float>(mPosition[2]);
-		_out << float(m_radius);
+		_out << float(m_radius / _xScale);
 		
 		_out.InsertEndBlock("Circle_Collider2D");
 	}

@@ -183,15 +183,15 @@ namespace Dystopia
 		return mTransformation;
 	}
 
-	void Collider::SetOwnerTransform(Math::Matrix3D const& _ownerMatrix)
-	{
-		mOwnerTransformation = _ownerMatrix;
-	}
+	//void Collider::SetOwnerTransform(Math::Matrix3D const& _ownerMatrix)
+	//{
+	//	mOwnerTransformation = _ownerMatrix;
+	//}
 
-	Math::Matrix3D Collider::GetOwnerTransform() const
-	{
-		return mOwnerTransformation;
-	}
+	//Math::Matrix3D Collider::GetOwnerTransform() const
+	//{
+	//	return mOwnerTransformation;
+	//}
 
 	Collider::~Collider()
 	{
