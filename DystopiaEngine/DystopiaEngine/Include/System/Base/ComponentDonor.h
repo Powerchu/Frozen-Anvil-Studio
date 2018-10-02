@@ -26,6 +26,7 @@ namespace Dystopia
 	{
 	public:
 		using Component_t = Ty;
+		using Array_t     = typename Settings::type;
 
 		template <typename ... U>
 		Ty* RequestComponent(U&& ...);
@@ -37,7 +38,7 @@ namespace Dystopia
 
 	protected:
 
-		typename Settings::type mComponents;
+		Array_t mComponents;
 	};
 
 }

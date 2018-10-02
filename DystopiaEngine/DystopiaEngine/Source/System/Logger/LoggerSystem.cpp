@@ -62,7 +62,7 @@ namespace
 	[[noreturn]] void ProgramTerminate(void)
 	{
 		FILE* log;
-		if (0 == fopen_s(&log, "CrashReport.log", "w+"))
+		if (0 == fopen_s(&log, "CrashReport.dystor", "w+"))
 		{
 			fprintf(log, "Crash Report %zu\n\nCall Stack:\n", time(0));
 

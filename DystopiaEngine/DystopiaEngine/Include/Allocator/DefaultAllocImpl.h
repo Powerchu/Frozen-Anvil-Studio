@@ -24,7 +24,7 @@ namespace Dystopia
 	class DefaultAlloc
 	{
 	public:
-		using MetaData_t = uint64_t;
+		using MetaData_t = uint32_t;
 
 		DefaultAlloc(void);
 		~DefaultAlloc(void) noexcept;
@@ -39,9 +39,9 @@ namespace Dystopia
 		static constexpr auto MIN_ALIGN = alignof(MetaData_t);
 		static constexpr auto MIN_SIZE  = sizeof(MetaData_t) * 2 - MIN_ALIGN;
 
-		MetaData_t GetBlockSize(void*);
-		MetaData_t GetNextOffset(void*);
-		void* GetBlockFromOffset(MetaData_t);
+		static MetaData_t GetBlockSize(void*);
+		static MetaData_t GetNextOffset(void*);
+		void* GetBlockFromOffset(MetaData_t) const;
 	};
 }
 

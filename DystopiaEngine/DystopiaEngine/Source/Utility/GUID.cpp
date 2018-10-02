@@ -23,12 +23,11 @@ namespace Dystopia
 		/*The number of times this function is called within 1 ms*/
 		static unsigned long count = 0;
 		/*currTime will be updated everytime this function is called*/
-		std::chrono::duration<double> currTime{};
 		/*start time will be update when the duration between each GetUniqueID call is more than 1 ms*/
-		static std::chrono::duration<double> start = std::chrono::duration_cast<TimeUnit>(std::chrono::system_clock::now().time_since_epoch());
+		std::chrono::duration<double> start = std::chrono::duration_cast<TimeUnit>(std::chrono::system_clock::now().time_since_epoch());
 
 		/*Update the current time*/
-		currTime = std::chrono::duration_cast<TimeUnit>(std::chrono::system_clock::now().time_since_epoch());
+		std::chrono::duration<double> currTime = std::chrono::duration_cast<TimeUnit>(std::chrono::system_clock::now().time_since_epoch());
 		
 		/*If the current time of the function called is within 1ms of the last function call*/
 		if ( !std::chrono::duration_cast<TimeUnit>(currTime - start).count() )

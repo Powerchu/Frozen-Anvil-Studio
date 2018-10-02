@@ -152,10 +152,11 @@ private:
 	struct _DLL_EXPORT_ONLY Iterator
 	{
 		Block const * mpBlock;
+		Block const * mpEnd;
 		Ptr_t mpAt;
 		Sz_t mnIndex;
 
-		Iterator(Block const *, const Ptr_t&, Sz_t);
+		Iterator(Array<Block, Params::blk_max> const&, const Ptr_t&, Sz_t);
 
 		Itor_t operator++(int) noexcept;
 		Itor_t& operator++(void) noexcept;
@@ -219,7 +220,7 @@ MagicArray<T, PP>::~MagicArray(void)
 template <typename T, typename PP>
 inline typename MagicArray<T, PP>::Itor_t MagicArray<T, PP>::begin(void) const noexcept
 {
-	Itor_t ret{ &mDirectory[0], mDirectory[0].mpArray, 0 };
+	Itor_t ret{ mDirectory, mDirectory[0].mpArray, 0 };
 
 	if (0 == (mDirectory[0].present[0] & 0x1))
 		++ret;
@@ -546,8 +547,8 @@ inline void MagicArray<T, Params>::Destroy(Val_t& it) noexcept
 }
 
 template<typename T, typename Params>
-inline MagicArray<T, Params>::Iterator::Iterator(Block const * _pBlk, const Ptr_t& _pAt, Sz_t _nIndex) :
-	mpBlock{ _pBlk }, mpAt{ _pAt }, mnIndex{ _nIndex }
+inline MagicArray<T, Params>::Iterator::Iterator(Array<Block, Params::blk_max> const& _dir, const Ptr_t& _pAt, Sz_t _nIndex) :
+	mpBlock{ _dir.begin() }, mpEnd{ _dir.end() }, mpAt{ _pAt }, mnIndex{ _nIndex }
 {
 }
 
@@ -571,10 +572,18 @@ inline typename MagicArray<T, PP>::Itor_t& MagicArray<T, PP>::Iterator::operator
 		else
 		{
 			++mpBlock;
-			mpAt = mpBlock->mpArray;
-			mnIndex = 0;
-			if (!mpAt)
+			if (mpBlock != mpEnd)
+			{
+				mpAt = mpBlock->mpArray;
+				mnIndex = 0;
+				if (!mpAt)
+					break;
+			}
+			else
+			{
+				mpAt = nullptr;
 				break;
+			}
 		}
 	} while (0 == (0x1 & (mpBlock->present[Block::GetPresentIndex(mnIndex)] >> (mnIndex & 63))));
 	return *this;
