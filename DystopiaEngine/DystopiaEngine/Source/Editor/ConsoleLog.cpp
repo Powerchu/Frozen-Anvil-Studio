@@ -22,6 +22,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Logger/LoggerSystem.h"
+
+#include "Behaviour/Behaviour.h"
+#include "Component/Component.h"
+#include "Object/GameObject.h"
 #include <algorithm>
 
 namespace Dystopia
@@ -117,7 +121,18 @@ namespace Dystopia
 					auto *p = (*(Admin::g_AdminFuncs[fnName]))(var + std::to_string(i));
 					p->GetComponent<Transform>()->SetPosition(Math::Pt3D{ 5.f * i , 0, 0.1f * i});
 					GetCurrentScene()->GetAllGameObjects().EmplaceBack(Utility::Move(*p));
-					GetCurrentScene()->GetAllGameObjects().back().GetComponent<Transform>()->SetOwner(&GetCurrentScene()->GetAllGameObjects().back());
+					auto& g = GetCurrentScene()->GetAllGameObjects().back();
+					g.GetComponent<Transform>()->SetOwner(&g);
+					for (auto& c: g.GetAllComponents())
+					{
+						c->SetOwner(&g);
+						c->Init();
+					}
+					for (auto& b : g.GetAllBehaviours())
+					{
+						b->SetOwner(&g);
+						b->Init();
+					}
 					delete p;
 				}
 			}

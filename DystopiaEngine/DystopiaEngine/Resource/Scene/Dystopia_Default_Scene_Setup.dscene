@@ -1,6 +1,6 @@
 [START_Scene]
 1,Dystopia_Default_Scene_Setup,[START_START_GO_DATA]
-3795845120,1,Scene Camera,
+18446744072484290560,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
@@ -13,11 +13,10 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Camera]
-3795845120,
+18446744072484290560,
 [END_Camera]
 
 [END_Component End]
-
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
