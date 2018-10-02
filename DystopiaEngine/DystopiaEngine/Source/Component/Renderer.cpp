@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Component/Renderer.h"
+
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Graphics/Mesh.h"
 #include "System/Graphics/MeshSystem.h"
@@ -20,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
+
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
 #include "IO/TextSerialiser.h"
@@ -30,7 +32,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Renderer::Renderer(void) noexcept
-	: mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }, mLastKnownPath{""}
+	: mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }, mTexturePath{""},
+	mTextureName{""}
 {
 	SetMesh("Quad");
 	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
@@ -38,11 +41,12 @@ Dystopia::Renderer::Renderer(void) noexcept
 
 void Dystopia::Renderer::Init(void)
 {
-	if (!mLastKnownPath.empty())
+	Texture *pTex {nullptr};
+	if (!mTexturePath.empty())
 	{		
-		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mLastKnownPath);
+		pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mTexturePath);
 		SetTexture(pTex);
-		pTex = nullptr;
+		mTextureName = GetTextureName();
 	}
 
 }
@@ -111,7 +115,7 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Renderer");
 	_out << GetOwner()->GetID();
-	_out << mLastKnownPath;
+	_out << mTexturePath;
 	_out.InsertEndBlock("Renderer");
 }
 
@@ -120,7 +124,7 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 	uint64_t id;
 	_in.ConsumeStartBlock();
 	_in >> id;
-	_in >> mLastKnownPath;
+	_in >> mTexturePath;
 	_in.ConsumeEndBlock();
 	
 	if (GameObject* owner = 
@@ -129,6 +133,16 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 		owner->AddComponent(this, Renderer::TAG{});
 		Init();
 	}
+}
+
+std::string Dystopia::Renderer::GetTextureName()
+{
+	size_t pos = mTexturePath.find_last_of("/\\");
+	if (pos < mTexturePath.length())
+	{
+		return std::string{ mTexturePath.begin() + pos, mTexturePath.end() };
+	}
+	return "";
 }
 
 void Dystopia::Renderer::EditorUI(void) noexcept
@@ -143,19 +157,27 @@ void Dystopia::Renderer::EditorUI(void) noexcept
 #if EDITOR
 void Dystopia::Renderer::TextureField()
 {
-	if (EGUI::Display::EmptyBox("Texture   ", 150, (mpTexture) ? std::to_string(mpTexture->GetID()) : "", true))
+	if (EGUI::Display::EmptyBox("Texture   ", 150, (mpTexture) ? mTextureName : "-empty-", true))
 	{
 
 	}
 
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
 	{
-		mLastKnownPath = t->mPath;
+		mTexturePath = t->mPath;
+		mTextureName = GetTextureName();
 		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pTex);
 		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 		EGUI::Display::EndPayloadReceiver();
+	}
+
+	if (mpTexture)
+	{
+		EGUI::Indent(80);
+		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 100, 100 });
+		EGUI::UnIndent(80);
 	}
 }
 

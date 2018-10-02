@@ -11,7 +11,6 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System/Physics/PhysicsSystem.h"
 #if EDITOR
 #ifndef _SCENE_VIEW_H_
 #define _SCENE_VIEW_H_
@@ -23,6 +22,7 @@ namespace Dystopia
 	class GameObject;
 	class Camera;
 	class EditorInput;
+	struct File;
 
 	class SceneView : public EditorTab
 	{
@@ -76,7 +76,10 @@ namespace Dystopia
 		void			SceneChanged();
 		void			Zoom(bool);
 		void			Move();
-		void			FindMouseObject();
+		GameObject*		FindMouseObject();
+		void			ResetMouseEvents();
+		void			CheckMouseEvents();
+		void			AcceptPayload(File *t);
 		Math::Pt3D		GetWorldClickPos(const Camera * const _cam) const;
 		Math::Vec2		FindMouseVector();
 		Camera*			GetCamera();

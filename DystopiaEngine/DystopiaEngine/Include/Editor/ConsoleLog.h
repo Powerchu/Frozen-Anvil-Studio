@@ -14,11 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _CONSOLE_LOG_H_
 #define _CONSOLE_LOG_H_
-
 #include "Globals.h"
 #include "EditorTab.h"
 #include "DataStructure/Array.h"
-
 
 namespace Dystopia
 {
@@ -44,11 +42,13 @@ namespace Dystopia
 		ConsoleLog(void);
 
 		void PrintLogs();
+		void AdminInput();
 
 		static constexpr unsigned int	maxLog = 50;
 		unsigned int					mLoggingIndex;
 		unsigned int					mRecordIndex;
 		std::string						mLabel;
+		char							mAdminCommands[MAX_SEARCH];
 		Array<std::string, maxLog>		mArrDebugTexts;
 	};
 }

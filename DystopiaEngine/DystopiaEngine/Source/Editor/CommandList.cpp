@@ -81,7 +81,8 @@ Dystopia::ComdDeleteObject::ComdDeleteObject(GameObject* _pObj, Scene * _pScene,
 
 Dystopia::ComdDeleteObject::~ComdDeleteObject()
 {
-	if (mpObj) delete mpObj;
+	if (mpObj) 
+		delete mpObj;
 }
 
 bool Dystopia::ComdDeleteObject::ExecuteDo()

@@ -19,20 +19,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorInputs.h"
 #include "Editor/ConsoleLog.h"
 #include "Editor/DefaultFactory.h"
+#include "Editor/Payloads.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Scene/Scene.h"
 #include "System/Graphics/Texture2D.h"
 #include "System/Camera/CameraSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
-#include "System/Input/InputSystem.h"
 
 #include "Object/GameObject.h"
 #include "Component/Transform.h"
 #include "Component/Camera.h"
-#include "Component/Renderer.h"
-#include "Component/RigidBody.h"
-#include "Component/ColliderList.h"
 
 #include "Math/MathUtility.h"
 
@@ -77,12 +74,6 @@ namespace Dystopia
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Bind(&SceneView::ScrollOut, this);
 
-		/*GameObject *p = Factory::CreateCamera("Scene Camera");
-		mpSceneCamera = GetCurrentScene()->InsertGameObject(Utility::Move(*p));
-		mpSceneCamera->GetComponent<Camera>()->Init();
-		mpSceneCamera->GetComponent<Transform>()->SetScale(Math::Vec4{ 1.f, 1.f, 1.f });
-		delete p;*/
-
 		SceneChanged();
 	}
 
@@ -97,42 +88,29 @@ namespace Dystopia
 
 	void SceneView::EditorUI()
 	{
-		if (ImGui::IsMouseClicked(0))
-			mAmFocused = false;
-		if (mDragging && !ImGui::IsMouseDown(1))
-			mDragging = false;
-
+		ResetMouseEvents();
 		EGUI::UnIndent(2);
-		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
-		mImgSize = Math::Vec2{ Size().x,  Size().y - imageOffsetY };
 
 		if (GetMainEditor().CurrentState() == EDITOR_PLAY)
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 
-		if (ImGui::ImageButton(reinterpret_cast<void*>(id), mImgSize, ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0))
+		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
+		mImgSize = Math::Vec2{ Size().x,  Size().y - imageOffsetY };
+
+		if (EGUI::Display::Image(id, mImgSize, true))
 			mAmFocused = true;
+
+		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PREFAB))
+		{
+			AcceptPayload(t);
+			EGUI::Display::EndPayloadReceiver();
+		}
 
 		if (GetMainEditor().CurrentState() == EDITOR_PLAY)
 			ImGui::PopStyleVar();
 
-		if (ImGui::IsItemHovered())
-		{
-			if (ImGui::IsMouseClicked(0))	FindMouseObject();
-			if (ImGui::IsMouseClicked(1))
-			{
-				mDragging = true;
-				mMoveVec = FindMouseVector();
-			}
-		}
-
-		if (mAmFocused || mDragging)
-		{
-			if (mDragging)				Move();
-			if (mToZoom != eZOOM_NONE)  Zoom(eZOOM_IN == mToZoom);
-		}
-
+		CheckMouseEvents();
 		EGUI::Indent(2);
-		mToZoom = eZOOM_NONE;
 	}
 
 	void SceneView::Shutdown()
@@ -165,7 +143,7 @@ namespace Dystopia
 		}
 	}
 
-	void SceneView::FindMouseObject()
+	GameObject* SceneView::FindMouseObject()
 	{
 		if (Camera* pCam = GetCamera())
 		{
@@ -202,8 +180,10 @@ namespace Dystopia
 			{
 				GetMainEditor().SetFocus(*pTarget);
 				PrintToConsoleLog("HitPoint (Screen To world) : [" + pTarget->GetName() + "]");
+				return pTarget;
 			}
 		}
+		return nullptr;
 	}
 
 	Math::Vec2 SceneView::FindMouseVector()
@@ -294,6 +274,48 @@ namespace Dystopia
 			return nullptr;
 		}
 		return pCam;
+	}
+
+	void SceneView::ResetMouseEvents()
+	{
+		if (ImGui::IsMouseClicked(0))
+			mAmFocused = false;
+		if (mDragging && !ImGui::IsMouseDown(1))
+			mDragging = false;
+
+	}
+
+	void SceneView::CheckMouseEvents()
+	{
+		if (ImGui::IsItemHovered())
+		{
+			if (ImGui::IsMouseClicked(0))	FindMouseObject();
+			if (ImGui::IsMouseClicked(1))
+			{
+				mDragging = true;
+				mMoveVec = FindMouseVector();
+			}
+		}
+
+		if (mAmFocused || mDragging)
+		{
+			if (mDragging)				Move();
+			if (mToZoom != eZOOM_NONE)  Zoom(eZOOM_IN == mToZoom);
+		}
+		mToZoom = eZOOM_NONE;
+	}
+
+	void SceneView::AcceptPayload(File* /*_pFile*/)
+	{
+		if (Camera* pCam = GetCamera())
+		{
+			GameObject* pTarget			= FindMouseObject();
+			float betterZ				= (pTarget) ? pTarget->GetComponent<Transform>()->GetPosition().z + 0.1f : 0;
+			Math::Pt3D worldClickPos	= GetWorldClickPos(pCam);
+			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ };
+
+			/* TODO: Unserialise a prefab file */
+		}
 	}
 
 }

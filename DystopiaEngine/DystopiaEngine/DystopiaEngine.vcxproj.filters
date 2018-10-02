@@ -244,6 +244,12 @@
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\Payload.cpp">
+      <Filter>Editor\Payload</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\AdminCalls.cpp">
+      <Filter>Editor\Admin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -651,6 +657,9 @@
     <ClInclude Include="Include\Allocator\DefaultAllocImpl.h">
       <Filter>Allocator</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\AdminCalls.h">
+      <Filter>Editor\Admin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -925,6 +934,9 @@
     </Filter>
     <Filter Include="Game Engine\Components\Physics\Character Controller">
       <UniqueIdentifier>{dc0c52cd-8f25-4932-a9fd-7d1916f1378d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Admin">
+      <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

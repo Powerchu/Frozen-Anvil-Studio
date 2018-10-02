@@ -165,13 +165,13 @@ namespace Dystopia
 
 	void PhysicsSystem::PostUpdate()
 	{
-		for (auto& body : mComponents)
-		{
-			if (body.GetFlags() & FLAG_REMOVE)
-			{
-				mComponents.Remove(&body);
-			}
-		}
+		//for (auto& body : mComponents)
+		//{
+		//	if (body.GetFlags() & FLAG_REMOVE)
+		//	{
+		//		mComponents.Remove(&body);
+		//	}
+		//}
 	}
 
 	void PhysicsSystem::Shutdown(void)

@@ -451,7 +451,7 @@ MagicArray<T, PP>& MagicArray<T, PP>::operator= (MagicArray<T, PP>&& _other) noe
 template<typename T, typename Params>
 inline typename uint64_t MagicArray<T, Params>::Block::GetPresentIndex(uint64_t _nIndex)
 {
-	return _nIndex >> 6;
+	return _nIndex >> Math::Log<sizeof(uint64_t) * 8>::value;
 }
 
 template <typename T, typename PP>
