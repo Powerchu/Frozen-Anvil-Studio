@@ -201,8 +201,6 @@ namespace Dystopia
 			mLinearVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
-		
-
 		//*Reset Cumulative Force*/
 		ResetCumulative();
 		
@@ -211,7 +209,7 @@ namespace Dystopia
 
 	void RigidBody::CheckSleeping(float _dt)
 	{
-		constexpr const auto SLEEP_EPSILON = 0.3F;
+		constexpr const auto SLEEP_EPSILON = 0.05F;
 
 		const float bias = std::pow(0.1F, _dt);
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
@@ -224,7 +222,7 @@ namespace Dystopia
 		if (mfWeightedMotion < SLEEP_EPSILON)
 		{
 			const auto t = Math::Abs(mPosition.Magnitude() - mPrevPosition.Magnitude());
-			if (t < 0.07f)
+			if (t < 0.05f)
 			{
 				mbIsAwake = false;
 			}
