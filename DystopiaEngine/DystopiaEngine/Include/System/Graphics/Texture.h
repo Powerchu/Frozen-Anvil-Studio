@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
+#include <string>
 
 namespace Dystopia
 {
@@ -41,6 +42,8 @@ namespace Dystopia
 		void SetType(unsigned) noexcept;
 
 		unsigned GetID(void) const noexcept;
+
+		virtual std::string GetPath() const noexcept = 0;
 
 	protected:
 		unsigned mnWidth, mnHeight, mnType, mnID;
