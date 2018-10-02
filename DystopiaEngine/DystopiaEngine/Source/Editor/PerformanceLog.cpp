@@ -95,6 +95,7 @@ namespace Dystopia
 				{
 					for (unsigned int i = 0; i < item.mData.size(); ++i)
 					{
+						EGUI::Display::Label(item.mData[i].mLabel.c_str());
 						ShowLog(item.mData[i], mGraphSizeS);
 					}
 					EGUI::Display::EndTreeNode();

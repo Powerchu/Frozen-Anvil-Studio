@@ -86,8 +86,13 @@ namespace Dystopia
 
 	void ConsoleLog::PrintLogs()
 	{
-		for (unsigned int i = 0; i < mLoggingIndex; ++i)
-			EGUI::Display::Label(mArrDebugTexts[i].c_str());
+		if (EGUI::StartChild("##DetailLog", Math::Vec2{Size().x, Size().y - 100.f}, false))
+		{
+			for (unsigned int i = 0; i < mLoggingIndex; ++i)
+				EGUI::Display::Label(mArrDebugTexts[i].c_str());
+			EGUI::EndChild();
+		}
+		EGUI::Display::HorizontalSeparator();
 	}
 
 	void ConsoleLog::Debug(const std::string& _text)
