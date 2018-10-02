@@ -122,27 +122,34 @@ Dystopia::EngineCore::EngineCore(void) :
 
 void Dystopia::EngineCore::LoadSettings(void)
 {
+	if (GetSubSystem<FileSystem>()->CheckFileExist(SETTINGS_FILE, SETTINGS_DIR))
+	{
+		auto file = Serialiser::OpenFile<TextSerialiser>(
+			GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
+			SETTINGS_FILE
+			);
 
-		if (GetSubSystem<FileSystem>()->CheckFileExist(SETTINGS_FILE, SETTINGS_DIR))
+		std::string sentry;
+
+		file >> sentry;
+		file.ConsumeStartBlock();
+
+		// Check if the file is okay
+		if (!file.EndOfInput() && (sentry == "SENTRY"))
 		{
-			auto file = Serialiser::OpenFile<TextSerialiser>(
-				GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
-				SETTINGS_FILE
-				);
-
 			for (auto& e : mSystemTable)
 			{
 				file.ConsumeStartBlock();
 				e->LoadSettings(file);
 				file.ConsumeEndBlock();
 			}
-		}
-		else
-		{
-			for (auto& e : mSystemTable)
-				e->LoadDefaults();
-		}
 
+			return;
+		}
+	}
+
+	for (auto& e : mSystemTable)
+		e->LoadDefaults();
 }
 
 
@@ -228,6 +235,9 @@ void Dystopia::EngineCore::Shutdown(void)
 		SETTINGS_FILE,
 		DysSerialiser_t::MODE_WRITE
 	);
+
+	s << "SENTRY";
+	s.InsertStartBlock("SETTINGS");
 
 	for (auto& e : mSystemList)
 	{
