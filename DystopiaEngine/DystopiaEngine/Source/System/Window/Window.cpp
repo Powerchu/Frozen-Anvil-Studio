@@ -101,7 +101,8 @@ void Dystopia::Window::SetSizeNoAdjust(int _nWidth, int _nHeight)
 
 void Dystopia::Window::CenterWindow(void) noexcept
 {
-	int left = (GetSystemMetrics(SM_CXSCREEN) - mnWidth) >> 1,
+	const int 
+		left = (GetSystemMetrics(SM_CXSCREEN) - mnWidth) >> 1,
 		top  = (GetSystemMetrics(SM_CYSCREEN) - mnHeight) >> 1;
 
 	// center the window

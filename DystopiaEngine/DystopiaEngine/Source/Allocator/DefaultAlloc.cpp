@@ -87,35 +87,42 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 		void* pRet = reinterpret_cast<void*>(Align<uintptr_t>(reinterpret_cast<uintptr_t>(pSeek) + sizeof(MetaData_t), _align));
 		_align = static_cast<std::byte*>(pRet) - static_cast<std::byte*>(pSeek);
 		MetaData_t adjSz = static_cast<MetaData_t>(_sz + _align);
-		
+
 		if (blkSz >= adjSz)
 		{
 			blkSz = blkSz - adjSz;
-			std::byte* temp;
+			std::byte* temp = nullptr;
+
+			const auto offs = static_cast<uint32_t>(static_cast<std::byte*>(pRet) - mpBlock);
 
 			if (blkSz > Utility::Constant<size_t, sizeof(MetaData_t) * 2 - 1>::value)
 			{
-				temp = static_cast<std::byte*>(pRet) + adjSz;
-				reinterpret_cast<MetaData_t*>(temp)[0] = GetNextOffset(pSeek);
-				reinterpret_cast<MetaData_t*>(temp)[1] = blkSz;
+				temp = static_cast<std::byte*>(pRet) + _sz;
+
+				if (temp - mpBlock < DEFAULT_HEAP)
+				{
+					reinterpret_cast<MetaData_t*>(temp)[0] = GetNextOffset(pSeek);
+					reinterpret_cast<MetaData_t*>(temp)[1] = blkSz;
+				}
 			}
 			else
 			{
 				adjSz += blkSz;
+				blkSz = 0;
 				temp = static_cast<std::byte*>(GetBlockFromOffset(GetNextOffset(pSeek)));
 			}
 
 			if (pPrev)
 			{
-				*static_cast<MetaData_t*>(pPrev) = temp ? static_cast<MetaData_t>(temp - static_cast<decltype(temp)>(mpBlock)) : 0;
+				static_cast<MetaData_t*>(pPrev)[0] = temp ? static_cast<MetaData_t>(temp - mpBlock) : 0;
 			}
 
 			mpFree = pSeek == mpFree ? temp : mpFree;
 			reinterpret_cast<MetaData_t*>(pRet)[-1] = ((adjSz & ~0x3) << 6) + static_cast<unsigned char>(_align - 1);
 
 #        if defined(DEBUGALLOC)
-			printf("Alloc   [Actual: %p, Adjusted: %p, Size: %u, Adjust: %zu, Block: %u]\n", pSeek, pRet, adjSz, _align, blkSz);
-			fprintf(output, "Alloc   [Actual: %p, Adjusted: %p, Size: %u, Adjust: %zu, Block: %u]\n", pSeek, pRet, adjSz, _align, blkSz);
+			printf("Alloc   [Actual: %p, Adjusted: %p, Size: %u, Adjust: %zu, Block: %u, %u]\n", pSeek, pRet, adjSz, _align, blkSz, offs);
+			fprintf(output, "Alloc   [Actual: %p, Adjusted: %p, Size: %u, Adjust: %zu, Block: %u, %u]\n", pSeek, pRet, adjSz, _align, blkSz, offs);
 			fflush(output);
 #        endif
 
@@ -150,29 +157,38 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 
 	std::byte* pSeek = mpFree, *pPrev = nullptr;
 
-	while (pSeek)
-	{
-		if (offset < pSeek - mpBlock)
-			break;
-
-		pPrev = pSeek;
-		pSeek = static_cast<std::byte*>(GetBlockFromOffset(GetNextOffset(pSeek)));
-	}
-
-	if (pSeek == (actual + sz))
-	{
-		sz += GetBlockSize(pSeek);
-		pSeek = static_cast<std::byte*>(GetBlockFromOffset(GetNextOffset(pSeek)));
-	}
-
 #if defined(DEBUGALLOC)
 	printf("Dealloc [Actual: %p, Adjusted: %p, Size: %u, Adjust: %u]\n", actual, _ptr, sz, adjust);
 	fprintf(output, "Dealloc [Actual: %p, Adjusted: %p, Size: %u, Adjust: %u]\n", actual, _ptr, sz, adjust);
 	fflush(output);
 #endif
 
+	while (pSeek && offset > static_cast<MetaData_t>(pSeek - mpBlock))
+	{
+		pPrev = pSeek;
+		pSeek = static_cast<std::byte*>(GetBlockFromOffset(GetNextOffset(pSeek)));
+	}
+
 	if (pPrev)
 	{
+		if (pSeek == (actual + sz))
+		{
+#		if defined(DEBUGALLOC)
+			const auto oldSz = sz;
+#		endif
+
+			sz += GetBlockSize(pSeek);
+
+#		if defined(DEBUGALLOC)
+			printf("JoinNxt [Joined: %p, With: %p, New: %u, Old: %u]\n", pSeek, _ptr, sz, oldSz);
+			fprintf(output, "JoinNxt [Joined: %p, With: %p, New: %u, Old: %u]\n", pSeek, _ptr, sz, oldSz);
+#		endif
+
+			const auto tmp = GetNextOffset(pSeek);
+			reinterpret_cast<MetaData_t*>(pSeek)[0] = 0;
+			pSeek = static_cast<std::byte*>(GetBlockFromOffset(tmp));
+		}
+
 		if (pPrev + GetBlockSize(pPrev) != actual)
 		{
 			reinterpret_cast<MetaData_t*>(actual)[0] = pSeek ? static_cast<MetaData_t>(pSeek - mpBlock) : 0;
@@ -181,16 +197,17 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 		}
 		else
 		{
-			auto old_sz = reinterpret_cast<MetaData_t*>(pPrev)[1];
+#		if defined(DEBUGALLOC)
+			const auto old_sz = reinterpret_cast<MetaData_t*>(pPrev)[1];
+#		endif
 
-			reinterpret_cast<MetaData_t*>(pPrev)[0] += pSeek ? static_cast<MetaData_t>(pSeek - mpBlock) : 0;
+			reinterpret_cast<MetaData_t*>(pPrev)[0]  = pSeek ? static_cast<MetaData_t>(pSeek - mpBlock) : 0;
 			reinterpret_cast<MetaData_t*>(pPrev)[1] += sz;
 
-			auto new_sz = reinterpret_cast<MetaData_t*>(pPrev)[1];
-
 #		if defined(DEBUGALLOC)
-			printf("Join1   [Joined: %p, With: %p, New: %u, Old: %u]\n", pSeek, _ptr, new_sz, old_sz);
-			fprintf(output, "Join1   [Actual: %p, Adjusted: %p, New: %u, Old: %u]\n", pSeek, _ptr, new_sz, old_sz);
+			const auto new_sz = old_sz + sz;
+			printf("JoinPrv [Joined: %p, With: %p, New: %u, Old: %u]\n", pSeek, _ptr, new_sz, old_sz);
+			fprintf(output, "JoinPrv [Joined: %p, With: %p, New: %u, Old: %u]\n", pSeek, _ptr, new_sz, old_sz);
 #		endif
 		}
 	}
@@ -199,12 +216,8 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 		if (mpFree == (actual + sz))
 		{
 			reinterpret_cast<MetaData_t*>(actual)[0] = GetNextOffset(mpFree);
+			reinterpret_cast<MetaData_t*>(mpFree)[0] = 0;
 			sz += GetBlockSize(mpFree);
-
-#		if defined(DEBUGALLOC)
-			printf("Join2   [Joined: %p, With: %p, New: %u, Old: %u]\n", _ptr, mpFree, sz, GetBlockSize(mpFree));
-			fprintf(output, "Join2   [Actual: %p, Adjusted: %p, New: %u, Old: %u]\n", _ptr, mpFree, sz, GetBlockSize(mpFree));
-#		endif
 		}
 		else
 		{
@@ -220,17 +233,17 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 #endif
 }
 
-typename Dystopia::DefaultAlloc::MetaData_t Dystopia::DefaultAlloc::GetBlockSize(void* _p)
+Dystopia::DefaultAlloc::MetaData_t Dystopia::DefaultAlloc::GetBlockSize(void* _p)
 {
 	return *(static_cast<MetaData_t*>(_p) + 1);
 }
 
-typename Dystopia::DefaultAlloc::MetaData_t Dystopia::DefaultAlloc::GetNextOffset(void* _p)
+Dystopia::DefaultAlloc::MetaData_t Dystopia::DefaultAlloc::GetNextOffset(void* _p)
 {
 	return *static_cast<MetaData_t*>(_p);
 }
 
-void* Dystopia::DefaultAlloc::GetBlockFromOffset(MetaData_t _nOffset)
+void* Dystopia::DefaultAlloc::GetBlockFromOffset(MetaData_t const _nOffset) const
 {
 	if (_nOffset)
 		return mpBlock + _nOffset;
