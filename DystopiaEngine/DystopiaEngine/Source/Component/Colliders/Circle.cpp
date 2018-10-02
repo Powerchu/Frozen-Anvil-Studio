@@ -82,7 +82,7 @@ namespace Dystopia
 	/*Duplicate the Component*/
 	Circle* Circle::Duplicate() const
 	{
-		return new Circle{*this};
+		return static_cast<ComponentDonor<Circle> *>(EngineCore::GetInstance()->GetSystem<Circle::SYSTEM>())->RequestComponent();
 	}
 
 	float Circle::GetRadius() const

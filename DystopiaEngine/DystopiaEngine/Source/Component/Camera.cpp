@@ -221,7 +221,7 @@ const Math::Matrix4 & Dystopia::Camera::GetProjectionMatrix(void)
 
 Dystopia::Camera* Dystopia::Camera::Duplicate(void) const
 {
-	return nullptr;
+	return static_cast<ComponentDonor<Camera> *>(EngineCore::GetInstance()->Get<Camera::SYSTEM>())->RequestComponent();
 }
 
 void Dystopia::Camera::Serialise(TextSerialiser& _out) const
