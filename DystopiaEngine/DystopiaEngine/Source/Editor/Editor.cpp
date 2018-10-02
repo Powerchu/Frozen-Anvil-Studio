@@ -379,6 +379,7 @@ namespace Dystopia
 			MMFile();
 			MMEdit();
 			MMView();
+			MMDebug();
 			MMGame();
 
 			EGUI::EndMainMenuBar();
@@ -427,10 +428,27 @@ namespace Dystopia
 			EGUI::EndMenuHeader();
 		}
 	}
-	
+
+	void Editor::MMDebug()
+	{
+		static constexpr float icon = 10.f;
+		static GraphicsSystem *pGraphic = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
+		if (EGUI::StartMenuHeader("Debug"))
+		{
+
+				if (pGraphic->GetDebugDraw())	EGUI::Display::IconTick(icon, icon);
+				else							EGUI::Display::Dummy(icon, icon);
+				EGUI::SameLine();
+				if (EGUI::StartMenuBody("Draw Debug Collision"))
+					pGraphic->ToggleDebugDraw();
+			
+			EGUI::EndMenuHeader();
+		}
+	}
+
 	void Editor::MMGame()
 	{
-		if (EGUI::StartMenuHeader("GAME"))
+		if (EGUI::StartMenuHeader("Game"))
 		{
 			if (EGUI::StartMenuBody("Play", "Ctrl + P", mCurrentState == EDITOR_MAIN))
 			{

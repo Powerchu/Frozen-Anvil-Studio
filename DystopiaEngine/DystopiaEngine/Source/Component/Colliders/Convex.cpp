@@ -7,6 +7,7 @@
 #include "IO/TextSerialiser.h"
 #include "Component/Circle.h"
 #include "Component/Transform.h"
+#include "Editor/EGUI.h"
 
 namespace Dystopia
 {
@@ -138,7 +139,18 @@ namespace Dystopia
 
 	Convex * Convex::Duplicate() const
 	{
+		//return EngineCore::GetInstance()->GetSystem<CollisionSystem>()->RequestComponent<Convex>(*this);
 		return new Convex{ *this };
+	}
+
+	void Convex::EditorUI() noexcept
+	{
+		eIsTriggerCheckBox();
+		ePositionOffsetVectorFields();
+		ePointVerticesVectorArray();
+		
+		eAttachedBodyEmptyBox();
+		eNumberOfContactsLabel();
 	}
 
 	Convex::~Convex()
@@ -202,7 +214,10 @@ namespace Dystopia
 
 	bool Convex::isColliding(Circle & _ColB)
 	{
-		UNUSED_PARAMETER(_ColB);
+		RigidBody* other_body{ nullptr };
+		if (_ColB.GetOwner()->GetComponent<RigidBody>())
+			other_body = _ColB.GetOwner()->GetComponent<RigidBody>();
+
 		const auto & Edges = GetConvexEdges();
 		bool isInside = true;
 		/*Check for Circle inside Convex*/
@@ -245,9 +260,15 @@ namespace Dystopia
 					isInside = true;
 					CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
 					newEvent.mdPeneDepth = _ColB.GetRadius() - distance;
-					newEvent.mEdgeNormal = Math::Normalise(PointOfImpact-_ColB.GetPosition());
+					newEvent.mEdgeNormal = Math::Normalise(_ColB.GetPosition() - PointOfImpact);
 					newEvent.mEdgeVector = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
+					if (nullptr != other_body)
+					{
+						newEvent.mfRestitution = DetermineRestitution(*other_body);
+						newEvent.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
+						newEvent.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
+					}
 					isInside = true;
 					marr_ContactSets.push_back(newEvent);
 					mbColliding = true;
@@ -279,7 +300,7 @@ namespace Dystopia
 
 		/*Construct the Matrix for Global Coordinate Conversion*/
 		Math::Matrix3D WorldSpace = Math::Translate(_ColA.mPosition.x + OffSet.x, _ColA.mPosition.y + OffSet.y, _ColA.mPosition.z + OffSet.z);
-
+		WorldSpace = WorldSpace * _ColA.GetTransformationMatrix();
 		Vertice * pFirst = _ColA.mVertices.begin();
 		Vertice FarthestPoint = *pFirst;
 		FarthestPoint.mPosition = (WorldSpace * pFirst->mPosition);
@@ -377,20 +398,21 @@ namespace Dystopia
 	AutoArray<Edge> Convex::GetConvexEdges() const
 	{
 		AutoArray<Edge> ToRet;
+		Math::Matrix4 World = Math::Translate(GetOffSet() + mPosition) * GetTransformationMatrix();
 		for(unsigned i=0; i<mVertices.size(); ++i)
 		{
 			unsigned j = i + 1 >= mVertices.size() ? 0: i + 1;
-			Vertice const & start = mVertices[i];
-			Vertice const & end   = mVertices[j];
+			Math::Point3D const & start = World * mVertices[i].mPosition;
+			Math::Point3D const & end   = World * mVertices[j].mPosition;
 			Edge e;
-			e.mVec3  = end.mPosition - start.mPosition;
+			e.mVec3  = end - start;
 			e.mNorm3.xyzw = e.mVec3.yxzw;
 			e.mSimplexIndex = i;
-			e.mOrthogonalDistance = start.mPosition.Magnitude();
-			e.mPos = mPosition + GetOffSet() + Vec3D{ start.mPosition.x, start.mPosition.y,0 };
+			e.mOrthogonalDistance = start.Magnitude();
+			e.mPos = start;
 #if CLOCKWISE
 
-			e.mNorm3.Negate<Math::NegateFlag::Z>();
+			e.mNorm3.Negate<Math::NegateFlag::X>();
 			
 #else
 			e.mNorm3.Negate<Math::NegateFlag::Y>();
@@ -457,6 +479,173 @@ namespace Dystopia
 			}
 		}
 		//return col_info;
+
+	}
+
+	void Convex::eIsTriggerCheckBox()
+	{
+		bool toggleState = false;
+		if (EGUI::Display::CheckBox("Is Trigger		  ", &toggleState))
+		{
+			// Is Trigger Function here
+			if (toggleState)
+			{
+				//EGUI::Display::IconTick();
+			}
+			else
+			{
+
+			}
+		}
+	}
+
+	void Convex::ePositionOffsetVectorFields()
+	{
+		EGUI::Display::Label("Offset");
+		auto arrResult = EGUI::Display::VectorFields("   ", &mv3Offset, 0.05f, -FLT_MAX, FLT_MAX);
+		for (auto &e : arrResult)
+		{
+			switch (e)
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mv3Offset);
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default: 
+				break;
+			}
+		}
+	}
+
+	void Convex::ePointVerticesVectorArray()
+	{
+		int v_size = 4;
+
+		while (mVertices.size() < unsigned int(v_size))
+		{
+			mVertices.push_back(Math::MakePoint3D(0.0f, 0.0f, 0.0f));
+		}
+		while (mVertices.size() > unsigned int(v_size))
+		{
+			mVertices.pop_back();
+		}
+
+		if (EGUI::Display::CollapsingHeader("Points"))
+		{
+			switch (EGUI::Display::DragInt("	Size		", &v_size, 1, 4, 32, false, 128))
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &v_size);
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default:
+				break;
+			}
+
+			for (unsigned int i = 0; i < mVertices.size(); ++i)
+			{
+				EGUI::PushID(i);
+				auto& c = mVertices[i];
+				Math::Vector3D* temp = &(c.mPosition);
+				EGUI::Display::Label("	Vertex");
+				auto arrResult = EGUI::Display::VectorFields("	", temp, 0.01f, -FLT_MAX, FLT_MAX);
+				for (auto &e : arrResult)
+				{
+					switch (e)
+					{
+					case EGUI::eDragStatus::eEND_DRAG:
+						EGUI::GetCommandHND()->EndRecording();
+						break;
+					case EGUI::eDragStatus::eENTER:
+						EGUI::GetCommandHND()->EndRecording();
+						break;
+					case EGUI::eDragStatus::eDRAGGING:
+						break;
+					case EGUI::eDragStatus::eSTART_DRAG:
+						EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), temp);
+						break;
+					case EGUI::eDragStatus::eDEACTIVATED:
+						EGUI::GetCommandHND()->EndRecording();
+						break;
+					case EGUI::eDragStatus::eNO_CHANGE:
+						break;
+					case EGUI::eDragStatus::eTABBED:
+						EGUI::GetCommandHND()->EndRecording();
+						break;
+					}
+				}
+				EGUI::PopID();
+
+			}
+			
+		}
+		
+	}
+
+	void Convex::eAttachedBodyEmptyBox()
+	{
+		std::string bodyAttached;
+		if (GetOwner()->GetComponent<RigidBody>())
+			bodyAttached = GetOwner()->GetName();
+		else
+			bodyAttached = "None";
+
+		EGUI::Display::Label("Attached Body");
+		EGUI::Display::EmptyBox("		", 180.f, bodyAttached, false, true);
+	}
+
+	void Convex::eNumberOfContactsLabel()
+	{
+		if (EGUI::Display::CollapsingHeader("Contacts"))
+		{
+			for (unsigned int i = 0; i < marr_ContactSets.size(); ++i)
+			{
+				EGUI::PushID(i);
+				auto& c = marr_ContactSets[i];
+				std::string name = c.mCollidedWith->GetName();
+				EGUI::Display::EmptyBox("		", 180.f, name, false, true);
+				EGUI::PopID();
+			}
+
+			if (marr_ContactSets.IsEmpty())
+			{
+				EGUI::Display::EmptyBox("		", 180.f, "No Contacts", false, true);
+			}
+		}
+	}
+
+	void Convex::eUseTransformScaleButton()
+	{
 
 	}
 

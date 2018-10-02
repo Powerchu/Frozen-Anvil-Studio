@@ -97,6 +97,7 @@ Dystopia::Component* Dystopia::Component::Duplicate(void) const
 
 void Dystopia::Component::EditorUI(void) noexcept
 {
+
 }
 
 uint64_t Dystopia::Component::GetID() const

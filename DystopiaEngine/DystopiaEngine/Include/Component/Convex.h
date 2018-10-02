@@ -64,6 +64,9 @@ namespace Dystopia
 		/*Duplicate the Component*/
 		Convex* Duplicate() const override;
 
+		// Editor UI
+		void EditorUI(void) noexcept override;
+
 		/*Serialise and Unserialise*/
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;
@@ -108,6 +111,20 @@ namespace Dystopia
 		AutoArray<Vertice>			mVertices;
 	private:
 		Math::Vector3D				mLastKnownScale;
+
+		//EDITOR FUNCTIONS
+		/*=================Editor Stuff=====================*/
+#if EDITOR
+		void eIsTriggerCheckBox();
+		void ePositionOffsetVectorFields();
+		void ePointVerticesVectorArray();
+		//INFO
+		void eAttachedBodyEmptyBox();
+		void eNumberOfContactsLabel();
+		void eUseTransformScaleButton();
+
+#endif // EDITOR
+
 	};
 }
 
