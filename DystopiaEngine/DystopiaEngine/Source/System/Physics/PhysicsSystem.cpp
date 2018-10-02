@@ -12,8 +12,8 @@ namespace Dystopia
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(false)
 		, mInterpolation_mode(none)
-		, mGravity(-960.665F)
-		, mMaxVelocityConstant(600.0F)
+		, mGravity(-910.665F)
+		, mMaxVelocityConstant(800.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.05F)
 		, mPenetrationResolutionPercentage(0.8F)
@@ -59,7 +59,7 @@ namespace Dystopia
 
 	void PhysicsSystem::ResolveCollision(float)
 	{
-		for (int i = 0; i < 8; ++i)
+		for (int i = 0; i < 10; ++i)
 		{
 			for (auto& body : mComponents)
 			{
@@ -126,8 +126,7 @@ namespace Dystopia
 
 		/* Narrow Phase Collision Detection*/
 		
-		
-
+	
 		// Integrate RigidBodies
 		IntegrateRigidBodies(_dt);
 
@@ -138,7 +137,7 @@ namespace Dystopia
 		UpdateResults(_dt);
 
 		// Set all objects at rest to sleeping
-		//CheckSleepingBodies(_dt);
+		CheckSleepingBodies(_dt);
 
 		/* Debug Velocity*/
 		//DebugPrint();
@@ -165,13 +164,13 @@ namespace Dystopia
 
 	void PhysicsSystem::PostUpdate()
 	{
-		//for (auto& body : mComponents)
-		//{
-		//	if (body.GetFlags() & FLAG_REMOVE)
-		//	{
-		//		mComponents.Remove(&body);
-		//	}
-		//}
+		for (auto& body : mComponents)
+		{
+			if (body.GetFlags() & FLAG_REMOVE)
+			{
+				mComponents.Remove(&body);
+			}
+		}
 	}
 
 	void PhysicsSystem::Shutdown(void)

@@ -29,7 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace
 {
 	static constexpr size_t MEBIBYTE = 1048576;
-	static constexpr size_t DEFAULT_HEAP = 8192 * MEBIBYTE;
+	static constexpr size_t DEFAULT_HEAP = 512 * MEBIBYTE;
 	static Dystopia::DefaultAlloc mAllocator{};
 
 	template <typename T>
