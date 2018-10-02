@@ -20,17 +20,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math\MathUtility.h"
 #include "Utility\DebugAssert.h"
 
+#include <cstdio>
 #include <cstdlib>
 #include <cstddef>
-#include <iostream>
 #include <exception>
 
+#pragma warning(push)
+#pragma warning(disable : 4996)
 
 namespace
 {
 	static constexpr size_t MEBIBYTE = 1048576;
 	static constexpr size_t DEFAULT_HEAP = 512 * MEBIBYTE;
 	static Dystopia::DefaultAlloc mAllocator{};
+
+#if defined(DEBUGALLOC)
+	static auto output = std::fopen("allocator_log.dystor", "w");
+#endif
 
 	template <typename T>
 	inline auto Align(T _in, T _align) -> Utility::EnableIf_t<Utility::IsIntegral<T>::value, T>
@@ -60,6 +66,10 @@ Dystopia::DefaultAlloc::DefaultAlloc(void) :
 Dystopia::DefaultAlloc::~DefaultAlloc(void) noexcept
 {
 	std::free(mpBlock);
+
+#if defined(DEBUGALLOC)
+	std::fclose(output);
+#endif
 }
 
 void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
@@ -91,6 +101,7 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 			}
 			else
 			{
+				adjSz += blkSz;
 				temp = static_cast<std::byte*>(GetBlockFromOffset(GetNextOffset(pSeek)));
 			}
 
@@ -101,6 +112,12 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 
 			mpFree = pSeek == mpFree ? temp : mpFree;
 			reinterpret_cast<MetaData_t*>(pRet)[-1] = ((adjSz & ~0x3) << 6) + static_cast<unsigned char>(_align - 1);
+
+#        if defined(DEBUGALLOC)
+			printf("Alloc   [Actual: %p, Adjusted: %p, Size: %u, Adjust: %zu, Block: %u]\n", pSeek, pRet, adjSz, _align, blkSz);
+			fprintf(output, "Alloc   [Actual: %p, Adjusted: %p, Size: %u, Adjust: %zu, Block: %u]\n", pSeek, pRet, adjSz, _align, blkSz);
+			fflush(output);
+#        endif
 
 			return pRet;
 		}
@@ -119,10 +136,14 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 {
 	if (nullptr == _ptr) return;
-	/*
+	
 	MetaData_t sz     = static_cast<MetaData_t*>(_ptr)[-1];
 	MetaData_t offset = (sz & 0xFF) + 1;
 	sz >>= 6;
+
+#if defined (DEBUGALLOC)
+	auto adjust = offset;
+#endif
 
 	std::byte* actual = static_cast<std::byte*>(_ptr) - offset;
 	offset = static_cast<MetaData_t>(actual - mpBlock);
@@ -144,6 +165,12 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 		pSeek = static_cast<std::byte*>(GetBlockFromOffset(GetNextOffset(pSeek)));
 	}
 
+#if defined(DEBUGALLOC)
+	printf("Dealloc [Actual: %p, Adjusted: %p, Size: %u, Adjust: %u]\n", actual, _ptr, sz, adjust);
+	fprintf(output, "Dealloc [Actual: %p, Adjusted: %p, Size: %u, Adjust: %u]\n", actual, _ptr, sz, adjust);
+	fflush(output);
+#endif
+
 	if (pPrev)
 	{
 		if (pPrev + GetBlockSize(pPrev) != actual)
@@ -154,8 +181,17 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 		}
 		else
 		{
+			auto old_sz = reinterpret_cast<MetaData_t*>(pPrev)[1];
+
 			reinterpret_cast<MetaData_t*>(pPrev)[0] += pSeek ? static_cast<MetaData_t>(pSeek - mpBlock) : 0;
 			reinterpret_cast<MetaData_t*>(pPrev)[1] += sz;
+
+			auto new_sz = reinterpret_cast<MetaData_t*>(pPrev)[1];
+
+#		if defined(DEBUGALLOC)
+			printf("Join1   [Joined: %p, With: %p, New: %u, Old: %u]\n", pSeek, _ptr, new_sz, old_sz);
+			fprintf(output, "Join1   [Actual: %p, Adjusted: %p, New: %u, Old: %u]\n", pSeek, _ptr, new_sz, old_sz);
+#		endif
 		}
 	}
 	else
@@ -164,6 +200,11 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 		{
 			reinterpret_cast<MetaData_t*>(actual)[0] = GetNextOffset(mpFree);
 			sz += GetBlockSize(mpFree);
+
+#		if defined(DEBUGALLOC)
+			printf("Join2   [Joined: %p, With: %p, New: %u, Old: %u]\n", _ptr, mpFree, sz, GetBlockSize(mpFree));
+			fprintf(output, "Join2   [Actual: %p, Adjusted: %p, New: %u, Old: %u]\n", _ptr, mpFree, sz, GetBlockSize(mpFree));
+#		endif
 		}
 		else
 		{
@@ -172,7 +213,11 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 
 		reinterpret_cast<MetaData_t*>(actual)[1] = sz;
 		mpFree = actual;
-	}*/
+	}
+
+#if defined(DEBUGALLOC)
+	fflush(output);
+#endif
 }
 
 typename Dystopia::DefaultAlloc::MetaData_t Dystopia::DefaultAlloc::GetBlockSize(void* _p)
@@ -192,5 +237,7 @@ void* Dystopia::DefaultAlloc::GetBlockFromOffset(MetaData_t _nOffset)
 
 	return nullptr;
 }
+
+#pragma warning(pop)
 
 

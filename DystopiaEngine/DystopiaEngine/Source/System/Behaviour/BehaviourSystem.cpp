@@ -214,7 +214,7 @@ namespace Dystopia
 				iter.second->Update(0.f);
 			}
 		}
-
+		
 		vTempFileName.clear();
 #endif
 	}
