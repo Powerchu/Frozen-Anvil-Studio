@@ -56,9 +56,9 @@ namespace Dystopia
 
 		if (nullptr != GetOwner())
 		{
-			mPosition += GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
-			const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
-			m_radius *= _xScale;
+			//mPosition += GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+			//const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
+			//m_radius *= _xScale;
 		}
 		
 	}
@@ -93,23 +93,36 @@ namespace Dystopia
 	/*Serialise and Unserialise*/
 	void Circle::Serialise(TextSerialiser& _out) const
 	{
+		const float _xScale = GetOwner()->GetComponent<Transform>()->GetScale().x;
 		_out.InsertStartBlock("Circle_Collider2D");
-		_out << mID;					// gObj ID
+		_out << mID;						// gObj ID
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);
-
+		_out << float(_xScale);
+		_out << static_cast<float>(mPosition[0]);
+		_out << static_cast<float>(mPosition[1]);
+		_out << static_cast<float>(mPosition[2]);
 		_out << float(m_radius);
 		
 		_out.InsertEndBlock("Circle_Collider2D");
 	}
 	void Circle::Unserialise(TextSerialiser& _in)
 	{
+		float _xScale;
+		_in.ConsumeStartBlock();
 		_in >> mID;					// gObj ID
 		_in >> mv3Offset[0];
 		_in >> mv3Offset[1];
 		_in >> mv3Offset[2];
+		_in >> _xScale;
+		_in >> (mPosition[0]);
+		_in >> (mPosition[1]);
+		_in >> (mPosition[2]);
 		_in >> m_radius;
+		_in.ConsumeEndBlock();
+
+		mDebugVertices.clear();
 
 		if (GameObject* owner =
 			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))

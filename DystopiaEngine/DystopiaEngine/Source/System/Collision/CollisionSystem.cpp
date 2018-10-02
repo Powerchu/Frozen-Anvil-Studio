@@ -110,6 +110,7 @@ namespace Dystopia
 			{
 				elem.ClearCollisionEvent(); //clear collision table
 				elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+				elem.SetOwnerTransform(elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix());
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
 			}
@@ -121,6 +122,7 @@ namespace Dystopia
 			{
 				elem.ClearCollisionEvent(); //clear collision table
 				elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+				elem.SetOwnerTransform(elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix());
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
 			}
@@ -132,6 +134,7 @@ namespace Dystopia
 			{
 				elem.ClearCollisionEvent(); //clear collision table
 				elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+				elem.SetOwnerTransform(elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix());
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
 			}

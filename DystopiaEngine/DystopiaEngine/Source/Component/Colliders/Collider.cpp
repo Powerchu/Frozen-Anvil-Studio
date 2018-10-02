@@ -73,7 +73,7 @@ namespace Dystopia
 
 	float Collider::DetermineRestitution(RigidBody const & b) const
 	{
-		if (nullptr != &b)
+		if (nullptr != &b && nullptr != this->GetOwner()->GetComponent<RigidBody>())
 		{
 			const float a_rest = GetOwner()->GetComponent<RigidBody>()->GetRestitution();
 			return Math::Min(a_rest, b.GetRestitution());
@@ -83,7 +83,7 @@ namespace Dystopia
 
 	float Collider::DetermineStaticFriction(RigidBody const & b) const
 	{
-		if (nullptr != &b)
+		if (nullptr != &b && nullptr != this->GetOwner()->GetComponent<RigidBody>())
 		{
 			const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetStaticFriction();
 			return sqrt(a_fric*b.GetStaticFriction());
@@ -93,7 +93,7 @@ namespace Dystopia
 
 	float Collider::DetermineKineticFriction(RigidBody const & b) const
 	{
-		if (nullptr != &b)
+		if (nullptr != &b && nullptr != this->GetOwner()->GetComponent<RigidBody>())
 		{
 			const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetKineticFriction();
 			return sqrt(a_fric*b.GetKineticFriction());
@@ -181,6 +181,16 @@ namespace Dystopia
 	Math::Matrix3D Collider::GetTransformationMatrix() const
 	{
 		return mTransformation;
+	}
+
+	void Collider::SetOwnerTransform(Math::Matrix3D const& _ownerMatrix)
+	{
+		mOwnerTransformation = _ownerMatrix;
+	}
+
+	Math::Matrix3D Collider::GetOwnerTransform() const
+	{
+		return mOwnerTransformation;
 	}
 
 	Collider::~Collider()

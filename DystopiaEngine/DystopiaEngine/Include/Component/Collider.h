@@ -171,6 +171,8 @@ namespace Dystopia
 		void AddRotation(Math::Radians _rad);
 		void AddRotation(Math::Degrees _deg);
 		Math::Matrix3D GetTransformationMatrix() const;
+		void SetOwnerTransform(Math::Matrix3D const & _ownerMatrix);
+		Math::Matrix3D GetOwnerTransform() const;
 
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const = 0;
@@ -196,6 +198,7 @@ namespace Dystopia
 		Math::Vec3D mv3Offset;
 		/*Matrix*/
 		Math::Matrix3D mTransformation;
+		Math::Matrix3D mOwnerTransformation;
 
 	private:
 		// Collider Mesh for debug drawing
