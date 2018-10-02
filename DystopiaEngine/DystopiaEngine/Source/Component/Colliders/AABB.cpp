@@ -82,7 +82,7 @@ namespace Dystopia
 	/*Duplicate the Component*/
 	AABB* AABB::Duplicate() const
 	{
-		return static_cast<ComponentDonor<AABB> *>(EngineCore::GetInstance()->GetSystem<AABB::SYSTEM>())->RequestComponent();
+		return static_cast<ComponentDonor<AABB> *>(EngineCore::GetInstance()->GetSystem<AABB::SYSTEM>())->RequestComponent(*this);
 	}
 
 	/*Serialise and Unserialise*/

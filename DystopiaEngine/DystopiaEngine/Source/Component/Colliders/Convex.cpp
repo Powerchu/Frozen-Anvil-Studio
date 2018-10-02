@@ -131,7 +131,7 @@ namespace Dystopia
 
 	Convex * Convex::Duplicate() const
 	{
-		return static_cast<ComponentDonor<Convex> *>(EngineCore::GetInstance()->GetSystem<Convex::SYSTEM>())->RequestComponent();
+		return static_cast<ComponentDonor<Convex> *>(EngineCore::GetInstance()->GetSystem<Convex::SYSTEM>())->RequestComponent(*this);
 	}
 
 	void Convex::EditorUI() noexcept

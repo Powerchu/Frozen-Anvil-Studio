@@ -108,15 +108,20 @@ bool Dystopia::Renderer::HasTransparency(void) const noexcept
 
 Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 {
-	return static_cast<ComponentDonor<Renderer> *>(EngineCore::GetInstance()->Get<Renderer::SYSTEM>())->RequestComponent();
+	return static_cast<ComponentDonor<Renderer> *>(EngineCore::GetInstance()->Get<Renderer::SYSTEM>())->RequestComponent(*this);
+
 }
 
 void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
-	_out.InsertStartBlock("Renderer");
-	_out << GetOwner()->GetID();
-	_out << mTexturePath;
-	_out.InsertEndBlock("Renderer");
+	//TODO SHANNON
+	if (nullptr != GetOwner())
+	{
+		_out.InsertStartBlock("Renderer");
+		_out << GetOwner()->GetID();
+		_out << mTexturePath;
+		_out.InsertEndBlock("Renderer");
+	}
 }
 
 void Dystopia::Renderer::Unserialise(TextSerialiser& _in)

@@ -321,8 +321,11 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 	for (auto& render : mComponents)
 	{
 		if (eObjFlag::FLAG_REMOVE & render.GetFlags())
+		{
 			mComponents.Remove(&render);
+		}
 	}
+
 }
 
 
