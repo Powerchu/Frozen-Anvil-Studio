@@ -34,7 +34,7 @@ class _DLL_EXPORT_ONLY MagicArray;
 
 namespace Ctor
 {
-	template <typename T, unsigned BLOCK_SIZE = 4, unsigned MAX_BLOCKS = 2, typename Alloc = Dystopia::DefaultAllocator<T[]>>
+	template <typename T, unsigned BLOCK_SIZE = 64, unsigned MAX_BLOCKS = 16, typename Alloc = Dystopia::DefaultAllocator<T[]>>
 	struct _DLL_EXPORT_ONLY MagicArrayBuilder
 	{
 		static_assert(Utility::IsPowerOf2(BLOCK_SIZE), "Block Size must be a power of 2");
