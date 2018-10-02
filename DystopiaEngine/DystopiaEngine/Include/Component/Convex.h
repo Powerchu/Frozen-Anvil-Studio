@@ -119,6 +119,7 @@ namespace Dystopia
 		void eIsTriggerCheckBox();
 		void ePositionOffsetVectorFields();
 		void ePointVerticesVectorArray();
+		void eSetScale();
 		//INFO
 		void eAttachedBodyEmptyBox();
 		void eNumberOfContactsLabel();
