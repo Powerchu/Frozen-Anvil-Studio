@@ -49,7 +49,7 @@ namespace Dystopia
 
 		Renderer(void) noexcept;
 		Renderer(Renderer&&) noexcept;
-		//Renderer(const Renderer&) noexcept;
+		Renderer(const Renderer&) noexcept;
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 

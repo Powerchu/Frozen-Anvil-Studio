@@ -51,6 +51,13 @@ Dystopia::Renderer::Renderer(Dystopia::Renderer&& _rhs) noexcept
 	_rhs.mTextureName.clear();
 }
 
+Dystopia::Renderer::Renderer(const Renderer& _rhs) noexcept
+	: mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }, mTexturePath{ _rhs.mTexturePath },
+	mTextureName{ _rhs.mTextureName }, Component{ _rhs }
+{
+
+}
+
 void Dystopia::Renderer::Init(void)
 {
 	Texture *pTex {nullptr};
@@ -78,8 +85,7 @@ void Dystopia::Renderer::SetMesh(Mesh* _pMesh) noexcept
 
 void Dystopia::Renderer::SetMesh(const std::string& _strMesh) noexcept
 {
-	mpMesh =
-		EngineCore::GetInstance()->GetSubSystem<MeshSystem>()->GetMesh(_strMesh);
+	mpMesh = EngineCore::GetInstance()->GetSubSystem<MeshSystem>()->GetMesh(_strMesh);
 }
 
 

@@ -1,10 +1,10 @@
 [START_Scene]
-5,circle_physics_2,[START_START_GO_DATA]
+5,circle_physics_curved_slope,[START_START_GO_DATA]
 3795845120,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1.0593,1.0593,1.0593,6.15139,35.0994,0,0,0,0,1,
+1.51218,1.51218,1.51218,6.15139,35.0994,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -40,7 +40,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-300,25,1,-100,-90,0,0,0,-0.130526,0.991445,
+32,32,1,-60,0,0,0,0,-0.707107,0.707107,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -193,7 +193,7 @@
 [END_Component End]
 [START_Component]
 [START_Convex_Collider]
-18446744072194976256,0,0,0,6,0.5,0.5,0,-0.5,4,0,-0.5,-0.5,0,0.5,-0.5,0,0.5,-4,0,-0.25,0,0,1.65,1,1,0,0,0,1,
+18446744072194976256,0,0,0,8,0.5,-0.5,0,0.5,0.5,0,0.4,0.4,0,0.3,0.3,0,0,0,0,-0.3,-0.3,0,-0.4,-0.4,0,-0.5,-0.5,0,10,10,1,0,0,0,1,
 [END_Convex_Collider]
 
 [END_Component End]

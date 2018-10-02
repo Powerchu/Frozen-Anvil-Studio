@@ -220,9 +220,13 @@ void Dystopia::Transform::Serialise(TextSerialiser& _out) const
 	_out << static_cast<float>(mScale.x);
 	_out << static_cast<float>(mScale.y);
 	_out << static_cast<float>(mScale.z);
-	_out << static_cast<float>(mPosition.x);
-	_out << static_cast<float>(mPosition.y);
-	_out << static_cast<float>(mPosition.z);
+	_out << static_cast<float>(mPosition[0]);
+	_out << static_cast<float>(mPosition[1]);
+	_out << static_cast<float>(mPosition[2]);
+	_out << static_cast<float>(mRotation[0]);
+	_out << static_cast<float>(mRotation[1]);
+	_out << static_cast<float>(mRotation[2]);
+	_out << static_cast<float>(mRotation[3]);
 	_out.InsertEndBlock("Transform");
 }
 
@@ -235,6 +239,10 @@ void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 	_in >> mPosition[0];
 	_in >> mPosition[1];
 	_in >> mPosition[2];
+	_in >> mRotation[0];
+	_in >> mRotation[1];
+	_in >> mRotation[2];
+	_in >> mRotation[3];
 	_in.ConsumeEndBlock();
 }
 

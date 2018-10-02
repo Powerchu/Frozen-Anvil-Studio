@@ -19,7 +19,7 @@ namespace Dystopia
 		Vertice{ Math::MakePoint3D(-.5f,.5f,0) },
 		Vertice{ Math::MakePoint3D(-.5f,-.5f,0) },
 		Vertice{ Math::MakePoint3D(.5f,-.5f,0) }
-	}
+	}, mNumPoints(4)
 	{
 
 	}
@@ -525,11 +525,11 @@ namespace Dystopia
 
 	void Convex::ePointVerticesVectorArray()
 	{
-		static int v_size = int(mVertices.size());
+		mNumPoints = int(mVertices.size());
 
 		if (EGUI::Display::CollapsingHeader("Points"))
 		{
-			switch (EGUI::Display::DragInt("	Size		", &v_size, 1, 4, 32, false, 128))
+			switch (EGUI::Display::DragInt("	Size		", &mNumPoints, 1, 4, 32, false, 128))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
 				EGUI::GetCommandHND()->EndRecording();
@@ -540,7 +540,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &v_size);
+				EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mNumPoints);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
@@ -554,15 +554,25 @@ namespace Dystopia
 				break;
 			}
 
+			while (mVertices.size() < unsigned int(mNumPoints))
+			{
+				mVertices.push_back(Math::MakePoint3D(0.0f, 0.0f, 0.0f));
+			}
+			while (mVertices.size() > unsigned int(mNumPoints))
+			{
+				mVertices.pop_back();
+			}
+
 			for (unsigned int i = 0; i < mVertices.size(); ++i)
 			{
 				EGUI::PushID(i);
 				auto& c = mVertices[i];
 				Math::Vector3D* temp = &(c.mPosition);
 				EGUI::Display::Label("	Vertex");
-				auto arrResult = EGUI::Display::VectorFields("	", temp, 0.01f, -FLT_MAX, FLT_MAX);
+				auto arrResult = EGUI::Display::VectorFields("	", &(c.mPosition), 0.01f, -FLT_MAX, FLT_MAX);
 				for (auto &e : arrResult)
 				{
+
 					switch (e)
 					{
 					case EGUI::eDragStatus::eEND_DRAG:
@@ -574,7 +584,7 @@ namespace Dystopia
 					case EGUI::eDragStatus::eDRAGGING:
 						break;
 					case EGUI::eDragStatus::eSTART_DRAG:
-						EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), temp);
+						EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &(c.mPosition));
 						break;
 					case EGUI::eDragStatus::eDEACTIVATED:
 						EGUI::GetCommandHND()->EndRecording();
@@ -590,16 +600,9 @@ namespace Dystopia
 
 			}
 
-			while (mVertices.size() < unsigned int(v_size))
-			{
-				mVertices.push_back(Math::MakePoint3D(0.0f, 0.0f, 0.0f));
-			}
-			while (mVertices.size() > unsigned int(v_size))
-			{
-				mVertices.pop_back();
-			}
+			Init();
+
 		}
-		
 	}
 
 	void Convex::eSetScale()
