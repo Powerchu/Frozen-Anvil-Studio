@@ -28,6 +28,7 @@ namespace Dystopia
 			std::make_pair("SpawnObj", &Factory::CreateGameObj),
 			std::make_pair("SpawnObj_T", &Factory::CreatePerformanceObj)
 		};
+
 		bool ValidCommand(const std::string& _toValidate, int& _outCount, std::string& _outParam, std::string& _outAdminFuncName);
 	}
 }
