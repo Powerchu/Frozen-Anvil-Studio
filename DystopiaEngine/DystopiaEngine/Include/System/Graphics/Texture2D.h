@@ -25,6 +25,8 @@ namespace Dystopia
 		Texture2D(void) noexcept;
 		explicit Texture2D(const std::string&, bool _bAlpha = true);
 		Texture2D(unsigned _nWidth, unsigned _nHeight, void*, bool _bAlpha = true);
+		~Texture2D(void) noexcept;
+
 
 		void GenerateMipmap(void) const;
 

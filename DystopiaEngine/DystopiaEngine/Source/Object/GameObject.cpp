@@ -277,6 +277,7 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	}
 	p->mTransform = mTransform;
 	return p;
+	return nullptr;
 }
 
 void Dystopia::GameObject::SetID(const uint64_t& _id)

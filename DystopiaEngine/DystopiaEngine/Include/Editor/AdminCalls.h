@@ -17,13 +17,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/DefaultFactory.h"
 #include "Object/GameObject.h"
 #include <map>
-#include <regex>
 
 namespace Dystopia
 {
 	namespace Admin
 	{
-		static std::map<const std::string, GameObject*(*)(const std::string&)> g_AdminFuncs
+		static std::map<std::string, GameObject*(*)(const std::string&)> g_AdminFuncs
 		{
 			std::make_pair("SpawnObj", &Factory::CreateGameObj),
 			std::make_pair("SpawnObj_T", &Factory::CreatePerformanceObj)

@@ -60,9 +60,6 @@ namespace Dystopia
 
 	SceneView::~SceneView()
 	{
-		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Unbind(this);
-		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Unbind(this);
-		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Unbind(this);
 		gpInstance = nullptr;
 	}
 
@@ -116,6 +113,9 @@ namespace Dystopia
 	void SceneView::Shutdown()
 	{
 		mpGfxSys = nullptr;
+		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Unbind(this);
+		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Unbind(this);
+		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Unbind(this);
 	}
 
 	std::string SceneView::GetLabel() const

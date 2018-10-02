@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/AdminCalls.h"
+#include <regex>
 
 namespace Dystopia
 {
@@ -19,7 +20,7 @@ namespace Dystopia
 	{
 		bool ValidCommand(const std::string& _toValidate, int& _outCount, std::string& _outParam, std::string& _outAdminFuncName)
 		{
-			std::regex adminFormat{ "(.*)\\s(.*)\\s(.*)" };
+			static std::regex adminFormat{ "(.*)\\s(.*)\\s(.*)" };
 			std::string parse{ _toValidate };
 			std::smatch match;
 			int failPass = 3, iterations = 0, counter = -1;
