@@ -82,14 +82,14 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
-	//while (!editor->IsClosing())
-	//{
-	//	editor->StartFrame();
-	//
-	//	editor->UpdateFrame(editor->GetDeltaTime());
-	//	
-	//	editor->EndFrame();
-	//}
+	while (!editor->IsClosing())
+	{
+		editor->StartFrame();
+	
+		editor->UpdateFrame(editor->GetDeltaTime());
+		
+		editor->EndFrame();
+	}
 	editor->Shutdown();
 	delete editor;
 	return 0;

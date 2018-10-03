@@ -36,7 +36,6 @@ namespace Dystopia
 
 		std::string mPath;
 		void InitTexture(void*, bool _bAlpha);
-		std::string mPath;
 	};
 }
 
