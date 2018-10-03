@@ -108,8 +108,16 @@ Dystopia::Shader* Dystopia::Renderer::GetShader(void) const noexcept
 
 void Dystopia::Renderer::SetTexture(Texture* _pTexture) noexcept
 {
-	mTexturePath = _pTexture->GetPath();
-	mTextureName = GetTextureName();
+	if (_pTexture)
+	{
+		mTexturePath = _pTexture->GetPath();
+		mTextureName = GetTextureName();
+	}
+	else
+	{
+		mTexturePath.clear();
+		mTextureName.clear();
+	}
 	mpTexture = _pTexture;
 }
 

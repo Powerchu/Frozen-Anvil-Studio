@@ -79,7 +79,8 @@ namespace Dystopia
 		GameObject*		FindMouseObject();
 		void			ResetMouseEvents();
 		void			CheckMouseEvents();
-		void			AcceptPayload(File *t);
+		void			AcceptPrefab(File *t);
+		void			AcceptTexture(File *t);
 		Math::Pt3D		GetWorldClickPos(const Camera * const _cam) const;
 		Math::Vec2		FindMouseVector();
 		Camera*			GetCamera();

@@ -30,6 +30,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/GameObject.h"
 #include "Component/Transform.h"
 #include "Component/Camera.h"
+#include "Component/Renderer.h"
 #include "Behaviour/Behaviour.h"
 
 #include "Math/MathUtility.h"
@@ -116,7 +117,12 @@ namespace Dystopia
 
 		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PREFAB))
 		{
-			AcceptPayload(t);
+			AcceptPrefab(t);
+			EGUI::Display::EndPayloadReceiver();
+		}
+		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
+		{
+			AcceptTexture(t);
 			EGUI::Display::EndPayloadReceiver();
 		}
 
@@ -322,7 +328,7 @@ namespace Dystopia
 		mToZoom = eZOOM_NONE;
 	}
 
-	void SceneView::AcceptPayload(File* /*_pFile*/)
+	void SceneView::AcceptPrefab(File* /*_pFile*/)
 	{
 		if (Camera* pCam = GetCamera())
 		{
@@ -332,6 +338,23 @@ namespace Dystopia
 			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ };
 
 			/* TODO: Unserialise a prefab file */
+		}
+	}
+
+	void SceneView::AcceptTexture(File* _pFile)
+	{
+		if (Camera* pCam = GetCamera())
+		{
+			GameObject* pTarget			= FindMouseObject();
+			Renderer *pRend = nullptr;
+			if (pTarget && (pRend = pTarget->GetComponent<Renderer>()))
+			{
+				auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, 
+																			pRend->GetTexture());
+				auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, 
+																			mpGfxSys->LoadTexture(_pFile->mPath));
+				GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
+			}
 		}
 	}
 
