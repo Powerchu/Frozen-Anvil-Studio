@@ -62,7 +62,7 @@ namespace
 	[[noreturn]] void ProgramTerminate(void)
 	{
 		FILE* log;
-		if (0 == fopen_s(&log, "CrashReport.log", "w+"))
+		if (0 == fopen_s(&log, "CrashReport.dystor", "w+"))
 		{
 			fprintf(log, "Crash Report %zu\n\nCall Stack:\n", time(0));
 
@@ -81,7 +81,7 @@ Dystopia::LoggerSystem::LoggerSystem(void) noexcept
 {
 	std::set_terminate(ProgramTerminate);
 
-#if !EDITOR && defined(COMMAND_PROMPT)
+#if defined(COMMANDPROMPT)
 
 	if (AllocConsole())
 	{
@@ -105,7 +105,7 @@ Dystopia::LoggerSystem::~LoggerSystem(void) noexcept
 	mpOut = nullptr;
 	mActiveFlags = eLog::NONE;
 
-#if !EDITOR && defined(COMMAND_PROMPT)
+#if defined(COMMANDPROMPT)
 	FreeConsole();
 #endif
 }

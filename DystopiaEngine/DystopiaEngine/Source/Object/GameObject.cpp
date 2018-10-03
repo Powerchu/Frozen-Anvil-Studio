@@ -261,23 +261,22 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	p->mnID = GUIDGenerator::GetUniqueID();
 	p->mnFlags = mnFlags;
 	p->mName = mName;
-	for (auto& e : mComponents)
+	for (auto& c : mComponents)
 	{
-		auto t = e->Duplicate();
+		auto t = c->Duplicate();
 		t->SetOwner(p);
 		t->Init();
 		p->mComponents.Insert(t);
 	}
-	for (auto& e : mBehaviours)
+	for (auto& b : mBehaviours)
 	{
-		auto t = e->Duplicate();
+		auto t = b->Duplicate();
 		t->SetOwner(p);
 		t->Init();
 		p->mBehaviours.Insert(t);
 	}
-	p->mTransform = mTransform;
+	p->mTransform.SetOwner(p);
 	return p;
-	return nullptr;
 }
 
 void Dystopia::GameObject::SetID(const uint64_t& _id)

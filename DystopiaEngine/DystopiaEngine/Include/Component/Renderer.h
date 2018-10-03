@@ -48,6 +48,8 @@ namespace Dystopia
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		Renderer(void) noexcept;
+		Renderer(Renderer&&) noexcept;
+		Renderer(const Renderer&) noexcept;
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
@@ -75,7 +77,7 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 
-		Renderer(const Renderer&) = delete;
+		//Renderer(const Renderer&) = delete;
 	private:
 
 		unsigned mnUnique;

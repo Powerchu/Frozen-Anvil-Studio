@@ -197,7 +197,7 @@ inline unsigned Queue<T>::Size(void) const
 template<typename T>
 inline bool Queue<T>::IsFull(void) const
 {
-	return mnSize == mnCap;
+	return mnSize >= mnCap;
 }
 
 template <typename T> 

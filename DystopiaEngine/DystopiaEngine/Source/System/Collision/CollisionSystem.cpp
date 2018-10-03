@@ -10,6 +10,7 @@
 
 #include <utility>
 #include <map>
+#include "System/Graphics/Shader.h"
 
 namespace Dystopia
 {
@@ -109,7 +110,10 @@ namespace Dystopia
 			if (elem.GetOwner())
 			{
 				elem.ClearCollisionEvent(); //clear collision table
-				elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+				//auto const & GobjPoint = elem.GetOwner()->GetComponent<Transform>()->GetPosition();
+			    //Math::Matrix3D gobjMatrix = Math::Translate(GobjPoint.x, GobjPoint.y, GobjPoint.z) * elem.GetOwner()->GetComponent<Transform>()->GetRotation().Matrix();
+				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
+				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
 			}
@@ -120,7 +124,9 @@ namespace Dystopia
 			if (elem.GetOwner())
 			{
 				elem.ClearCollisionEvent(); //clear collision table
-				elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+				//auto const & GobjPoint =  elem.GetOwner()->GetComponent<Transform>()->GetPosition();
+				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
+				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
 			}
@@ -131,7 +137,9 @@ namespace Dystopia
 			if (elem.GetOwner())
 			{
 				elem.ClearCollisionEvent(); //clear collision table
-				elem.SetPosition(elem.GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+				//auto const   & GobjPoint = elem.GetOwner()->GetComponent<Transform>()->GetPosition();
+				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
+				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
 			}

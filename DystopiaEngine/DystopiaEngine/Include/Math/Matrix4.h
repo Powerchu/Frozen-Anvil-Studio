@@ -29,7 +29,7 @@ namespace Math
 	#define _CALL	__vectorcall
 	#define USE_DP	0
 
-	struct __declspec(align (alignof(Vector4))) _DLL_EXPORT Matrix4
+	struct __declspec(align (16)) _DLL_EXPORT Matrix4
 	{
 		// ====================================== CONSTRUCTORS ======================================= // 
 

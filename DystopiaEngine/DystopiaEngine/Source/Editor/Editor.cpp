@@ -61,14 +61,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <tchar.h>
 #include <objbase.h>
 
-static const std::string DYSTOPIA_EDITOR_SETTINGS = "EditorSettings.dyst";
-static const std::string DYSTOPIA_SCENE_LOAD = "Resource/Scene/";
-static const std::string DYSTOPIA_SCENE_TEMP = "Resource/Temp/";
-static const std::wstring DYSTOPIA_SCENE_EXTENSION = L"dscene";
-static constexpr COMDLG_FILTERSPEC DYSTOPIA_SCENE_FILTER_EXTENSION[1] =
+namespace
 {
-	{ L"DystopiaScene", L"*.dscene" }
-};
+	static const std::string DYSTOPIA_EDITOR_SETTINGS = "EditorSettings.dyst";
+	static const std::string DYSTOPIA_SCENE_LOAD = "Resource/Scene/";
+	static const std::string DYSTOPIA_SCENE_TEMP = "Resource/Temp/";
+	static const std::wstring DYSTOPIA_SCENE_EXTENSION = L"dscene";
+	static constexpr COMDLG_FILTERSPEC DYSTOPIA_SCENE_FILTER_EXTENSION[1] =
+	{
+		{ L"DystopiaScene", L"*.dscene" }
+	};
+}
 
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int)

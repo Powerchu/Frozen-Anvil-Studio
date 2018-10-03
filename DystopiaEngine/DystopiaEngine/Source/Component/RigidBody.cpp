@@ -34,8 +34,8 @@ namespace Dystopia
 		, mpOwnerTransform(nullptr)
 		, mpPhysSys(nullptr)
 		, mfAngleDeg(0.0F)
-		, mfLinearDamping(0.75F)
-		, mfAngularDrag(0.6F)
+		, mfLinearDamping(0.5F)
+		, mfAngularDrag(0.5F)
 		, mfStaticFriction(0.5F)
 		, mfDynamicFriction(0.7F)
 		, mfRestitution(0.5F)
@@ -91,7 +91,7 @@ namespace Dystopia
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
 			mOwnerIsActive = GetOwner()->IsActive();
-			mPosition = P_TX->GetGlobalPosition();
+			mPosition = mpOwnerTransform->GetGlobalPosition();
 
 			mInverseOrientation = Math::Inverse(mOrientation);
 		}
@@ -201,8 +201,6 @@ namespace Dystopia
 			mLinearVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
-		
-
 		//*Reset Cumulative Force*/
 		ResetCumulative();
 		
@@ -211,17 +209,20 @@ namespace Dystopia
 
 	void RigidBody::CheckSleeping(float _dt)
 	{
-		constexpr const auto SLEEP_EPSILON = 0.2F;
+		constexpr const auto SLEEP_EPSILON = 0.05F;
 
 		const float bias = std::pow(0.1F, _dt);
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
 		mfWeightedMotion = bias * mfWeightedMotion + (1 - bias)*currentMotion;
 
 		// TODO change to global sleep epsilon
-		if (mfWeightedMotion > 10 * SLEEP_EPSILON) mfWeightedMotion = 10 * SLEEP_EPSILON;
+		if (mfWeightedMotion > 10 * SLEEP_EPSILON) 
+			mfWeightedMotion = 10 * SLEEP_EPSILON;
+
 		if (mfWeightedMotion < SLEEP_EPSILON)
 		{
-			const auto t = Math::Abs(mPosition.MagnitudeSqr() - mPrevPosition.MagnitudeSqr());
+			const auto t = Math::Abs(mPosition.Magnitude() - mPrevPosition.Magnitude());
+			if (t < 0.05f)
 			{
 				mbIsAwake = false;
 			}
@@ -453,12 +454,16 @@ namespace Dystopia
 
 	void RigidBody::SetStaticFriction(const float _f)
 	{
-		mfStaticFriction = _f;
+		if (_f > 1.0F) mfStaticFriction = 1.0F;
+		else if (_f < 0.0) mfStaticFriction = 0.0F;
+		else mfStaticFriction = _f;
 	}
 
 	void RigidBody::SetKineticFriction(const float _f)
 	{
-		mfDynamicFriction = _f;
+		if (_f > 1.0F) mfDynamicFriction = 1.0F;
+		else if (_f < 0.0) mfDynamicFriction = 0.0F;
+		else mfDynamicFriction = _f;
 	}
 
 	void RigidBody::SetRestitution(const float _f)
@@ -670,7 +675,7 @@ namespace Dystopia
 
 	void RigidBody::eLinearDragField()
 	{
-		switch (EGUI::Display::DragFloat("Linear Drag			 ", &mfLinearDamping, 0.01f, 0.0F, FLT_MAX))
+		switch (EGUI::Display::DragFloat("Linear Drag			 ", &mfLinearDamping, 0.01f, FLT_EPSILON, 1.0F))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();
@@ -698,7 +703,7 @@ namespace Dystopia
 
 	void RigidBody::eAngularDragField()
 	{
-		switch (EGUI::Display::DragFloat("Angular Drag			", &mfAngularDrag, 0.01f, 0.0F, FLT_MAX))
+		switch (EGUI::Display::DragFloat("Angular Drag			", &mfAngularDrag, 0.01f, FLT_EPSILON, 1.0F))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();

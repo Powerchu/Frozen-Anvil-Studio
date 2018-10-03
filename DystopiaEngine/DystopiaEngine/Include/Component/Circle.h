@@ -76,6 +76,17 @@ namespace Dystopia
 		bool isColliding(const Convex & other_col);
 		bool isColliding(Convex * const & other_col);
 
+		/**/
+
+#if EDITOR
+		void ePositionOffsetVectorFields();
+		void eRadiusFields();
+
+		// Editor UI
+		void EditorUI(void) noexcept override;
+
+#endif // EDITOR
+
 	private:
 		float m_radius;
 	};

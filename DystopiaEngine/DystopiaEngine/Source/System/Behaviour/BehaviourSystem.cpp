@@ -29,7 +29,7 @@ namespace Dystopia
 
 		FileSys->CreateFiles("Dystopia/BehaviourDLL", eFileDir::eAppData);
 		FileSys->CreateFiles("Dystopia/Temp", eFileDir::eAppData);
-		FileSys->CreateFiles("Behaviour/BehaviourScripts", eFileDir::eResource);
+		FileSys->CreateFiles("Behaviours/BehaviourScripts", eFileDir::eResource);
 
 #if _DEBUG
 
@@ -214,7 +214,7 @@ namespace Dystopia
 				iter.second->Update(0.f);
 			}
 		}
-
+		
 		vTempFileName.clear();
 #endif
 	}

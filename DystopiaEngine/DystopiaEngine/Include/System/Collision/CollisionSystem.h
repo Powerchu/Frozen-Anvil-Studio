@@ -38,6 +38,10 @@ namespace Dystopia
 		virtual void LoadDefaults(void) override { };
 		virtual void LoadSettings(TextSerialiser&) override { };
 
+#if EDITOR
+
+#endif
+
 		bool AABBvsAABB(Collider  * const & _ColA,
 			            Collider  * const & _ColB) const;
 
