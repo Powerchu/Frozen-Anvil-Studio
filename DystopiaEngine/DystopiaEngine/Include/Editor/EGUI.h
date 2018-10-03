@@ -36,6 +36,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 struct ImDrawData;
 struct ImGuiContext;
 
+static float DefaultAlighnmentOffsetY = 3.f;
+static float DefaultAlighnmentSpacing = 10.f;
+
 namespace Dystopia
 {
 	class CommandHandler;
@@ -163,7 +166,7 @@ namespace EGUI
 		/* =======================================================================================================================
 		Brief:
 				Creates a editable text field with a label to the left of the text field. If edited, the _pOutText will be changed
-				accordingly. The size limits the number of characters accepted. 
+				accordingly. The size limits the number of characters accepted.
 		Usage:
 				char buffer[size];
 				EGUI::Display::TextField("This is an editable text field: ", &buffer, size);
@@ -171,13 +174,13 @@ namespace EGUI
 		bool TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true, float _width = 250);
 		/* =======================================================================================================================
 		Brief:
-				Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked. 
+				Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked.
 				If the last bool param is false, hovering wont show and clicking wont return true
 		Usage:
 				EGUI::Display::EmptyBox("Accepting field", 100);
 		======================================================================================================================= */
-		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside="", 
-					  bool _iteractive = false, bool _showLabel = true);
+		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside = "",
+			bool _iteractive = false, bool _showLabel = true);
 		/* =======================================================================================================================
 		Brief:
 				Starts a Collaspe-able header that can be clicked to open or close - Which is also the return-ed bool.
@@ -205,10 +208,10 @@ namespace EGUI
 					break;
 				}
 		======================================================================================================================= */
-		Array<eDragStatus,3> VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f, 
-							float _min = 0.0f, float _max = 1.0f, float _width= 50.f);
+		Array<eDragStatus, 3> VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f,
+			float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
 		Array<eDragStatus, 2> VectorFields(const std::string& _label, Math::Vector2 *_outputVec, float _dragSpeed = 1.0f,
-							float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
+			float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
 		/* =======================================================================================================================
 		Brief:
 				Creats a check box for a boolean variable. Returns true when the check box is clicked, toggles the _pOutBool
@@ -226,16 +229,16 @@ namespace EGUI
 		Usage:
 				switch (EGUI::Display::DragFloat("Test Float", &mpFocus->mTestFloat, 0.01f, -FLT_MAX, FLT_MAX))
 				{
-				case EGUI::eDragStatus::eSTART_DRAG: 
+				case EGUI::eDragStatus::eSTART_DRAG:
 					GetCommandHND()->StartRecording<GameObject>(mpFocus->GetID(), &mpFocus->mTestFloat);
 					break;
-				case EGUI::eDragStatus::eEND_DRAG: 
+				case EGUI::eDragStatus::eEND_DRAG:
 					GetCommandHND()->EndRecording();
 					break;
 				}
 		======================================================================================================================= */
-		eDragStatus DragFloat(const std::string& _label, float *_pOutFloat, float _dragSpeed = 1.0f, 
-								float _min = 0.0f, float _max = 1.0f, bool _hideText = false, float _width = 100.f);
+		eDragStatus DragFloat(const std::string& _label, float *_pOutFloat, float _dragSpeed = 1.0f,
+			float _min = 0.0f, float _max = 1.0f, bool _hideText = false, float _width = 100.f);
 		/* =======================================================================================================================
 		Brief:
 				Creates a draggable int editable field. Returns if the value is changed
@@ -250,8 +253,8 @@ namespace EGUI
 					break;
 				}
 		======================================================================================================================= */
-		eDragStatus DragInt(const std::string& _label, int *_pOutInt, float _dragSpeed = 1.0f, 
-								int _min = 0, int _max = 0, bool _hideText = false, float _width = 100.f);
+		eDragStatus DragInt(const std::string& _label, int *_pOutInt, float _dragSpeed = 1.0f,
+			int _min = 0, int _max = 0, bool _hideText = false, float _width = 100.f);
 		/* =======================================================================================================================
 		Brief:
 				Creates a selectable text field. Returns if the text field is clicked is changed
@@ -310,8 +313,8 @@ namespace EGUI
 				}
 		======================================================================================================================= */
 		// Start a tree node 
-		bool StartTreeNode(const std::string& _label, bool* _outClicked = nullptr, bool _highlighted = false, 
-						   bool _noArrow = false, bool _defaultOpen = true);
+		bool StartTreeNode(const std::string& _label, bool* _outClicked = nullptr, bool _highlighted = false,
+			bool _noArrow = false, bool _defaultOpen = true);
 		// Set a specific tree node to be collapsed (closed) or not
 		void OpenTreeNode(const std::string& _label, bool _open);
 		// opens the next tree node
@@ -326,10 +329,10 @@ namespace EGUI
 				Very specific as of creation date.
 		======================================================================================================================= */
 		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
-						   const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize);
+			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize);
 		/* =======================================================================================================================
 		Brief:
-				Sets the previos UI widget/item to be a payload type. Preferably call according to the usage please. 
+				Sets the previos UI widget/item to be a payload type. Preferably call according to the usage please.
 				Usage shows that button will have additional of being a payload type.
 		Usage:
 				EGUI::Button("Hello", Math::Vec2{ 200, 20 } );
@@ -363,6 +366,8 @@ namespace EGUI
 					DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
 					return static_cast<Specified*>(payload->Data);
 				}
+				else
+					ImGui::EndDragDropTarget();
 			}
 			return nullptr;
 		}
@@ -370,7 +375,7 @@ namespace EGUI
 		void EndPayloadReceiver();
 		/* =======================================================================================================================
 		Brief:
-				Opens a little popup window that is passed into the param. BASICALLY - the param is the same as the _uniqueID 
+				Opens a little popup window that is passed into the param. BASICALLY - the param is the same as the _uniqueID
 				of the StartPopup function you want to call.
 				Note : For the second boolean param of OpenPopup is set to false, the popup will be defaulted to the
 				bottom left of the last ui item called. In the usage case, it would be the bottom left of the Button("Add Co..")
@@ -406,6 +411,22 @@ namespace EGUI
 				EGUI::Display::DropDownSelection("TestDropDown", i, arr);
 		======================================================================================================================= */
 		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width = 100);
+		template<unsigned N>
+		bool DropDownSelection(const std::string& _label, int& _currentIndex, std::string(&_arrOfItems)[N], float _width)
+		{
+			const char* arrCharPtr[N];
+			for (unsigned i = 0; i < N; ++i)
+				arrCharPtr[i] = _arrOfItems[i].c_str();
+
+			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label.c_str());
+			SameLine(4.f);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			bool ret = ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr, N);
+			ImGui::PopItemWidth();
+			return ret;
+		}
 		/* =======================================================================================================================
 		Brief:
 				Creates a button

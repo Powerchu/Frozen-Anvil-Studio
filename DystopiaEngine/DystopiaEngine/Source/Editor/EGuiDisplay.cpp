@@ -19,8 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <stdlib.h>
 #include <iostream>
 
-static float DefaultAlighnmentOffsetY = 3.f;
-static float DefaultAlighnmentSpacing = 10.f;
 Dystopia::CommandHandler *gContextComdHND = nullptr;
 
 namespace EGUI

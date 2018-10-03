@@ -43,6 +43,9 @@ static const std::string g_nPopup = "New Behaviour Name";
 
 namespace Dystopia
 {
+	static std::string g_arr[3] = { "item1", "item2", "item3" };
+	static std::string g_arr2[3] = { "item4", "item5", "item6" };
+
 	static Inspector* gpInstance = 0;
 	Inspector* Inspector::GetInstance()
 	{
@@ -82,7 +85,6 @@ namespace Dystopia
 		static constexpr Math::Vec2 btnSize{ 270, 20 };
 		const float mid = Size().x / 2;
 		float inde = mid - (btnSize.x / 2);
-		//inde = (inde < 20) ? 20 : inde;
 
 		GameObjectDetails();
 		GameObjectComponents();
@@ -102,14 +104,6 @@ namespace Dystopia
 	{
 		static int i = 0;
 		static int j = 0;
-		AutoArray<std::string> arr;
-		arr.push_back("");
-		arr.push_back("item1");
-		arr.push_back("item2");
-		AutoArray<std::string> arr2;
-		arr2.push_back("item3");
-		arr2.push_back("item4");
-		arr2.push_back("item5");
 
 		char buffer[MAX_SEARCH * 2] = "";
 		std::string name = mpFocus->GetName();
@@ -126,10 +120,10 @@ namespace Dystopia
 				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
 				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
-			EGUI::Display::DropDownSelection("Tag", i, arr, 80);
+			EGUI::Display::DropDownSelection("Tag", i, g_arr, 80);
 			EGUI::SameLine();
 			EGUI::ChangeAlignmentYOffset(0);
-			EGUI::Display::DropDownSelection("Layer", j, arr2, 80);
+			EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80);
 			EGUI::ChangeAlignmentYOffset();
 		}
 		EGUI::EndChild();
