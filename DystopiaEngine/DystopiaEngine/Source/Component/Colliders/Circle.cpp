@@ -94,7 +94,7 @@ namespace Dystopia
 	{
 
 		_out.InsertStartBlock("Circle_Collider2D");
-		_out << mID;						// gObj ID
+		_out << GetOwner()->GetID();						// gObj ID
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);

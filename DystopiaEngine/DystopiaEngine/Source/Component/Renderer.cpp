@@ -41,7 +41,7 @@ Dystopia::Renderer::Renderer(void) noexcept
 
 Dystopia::Renderer::Renderer(Dystopia::Renderer&& _rhs) noexcept
 	: mnUnique{ _rhs.mnUnique }, mpMesh{ _rhs.mpMesh }, mpShader{ _rhs.mpShader }, mpTexture{ _rhs.mpTexture }, mTexturePath{ _rhs.mTexturePath },
-	mTextureName{ _rhs.mTextureName }, Component{ _rhs }
+	mTextureName{ _rhs.mTextureName }, Component{ Utility::Move(_rhs) }
 {
 	_rhs.mnUnique = 0;
 	_rhs.mpTexture = nullptr;
@@ -52,7 +52,7 @@ Dystopia::Renderer::Renderer(Dystopia::Renderer&& _rhs) noexcept
 }
 
 Dystopia::Renderer::Renderer(const Renderer& _rhs) noexcept
-	: mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }, mTexturePath{ _rhs.mTexturePath },
+	: mnUnique{ 999 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }, mTexturePath{ _rhs.mTexturePath },
 	mTextureName{ _rhs.mTextureName }, Component{ _rhs }
 {
 
@@ -108,8 +108,16 @@ Dystopia::Shader* Dystopia::Renderer::GetShader(void) const noexcept
 
 void Dystopia::Renderer::SetTexture(Texture* _pTexture) noexcept
 {
-	mTexturePath = _pTexture->GetPath();
-	mTextureName = GetTextureName();
+	if (_pTexture)
+	{
+		mTexturePath = _pTexture->GetPath();
+		mTextureName = GetTextureName();
+	}
+	else
+	{
+		mTexturePath.clear(); 
+		mTextureName.clear(); 
+	}
 	mpTexture = _pTexture;
 }
 
@@ -127,7 +135,7 @@ bool Dystopia::Renderer::HasTransparency(void) const noexcept
 
 Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 {
-	return static_cast<ComponentDonor<Renderer> *>(EngineCore::GetInstance()->Get<Renderer::SYSTEM>())->RequestComponent(*this);
+	return EngineCore::GetInstance()->Get<Renderer::SYSTEM>()->RequestComponent(*this);
 }
 
 void Dystopia::Renderer::Serialise(TextSerialiser& _out) const

@@ -76,6 +76,20 @@ void Dystopia::GameObject::SetActive(const bool _bEnable)
 	mnFlags = _bEnable ? mnFlags | FLAG_ACTIVE : mnFlags & ~FLAG_ACTIVE;
 }
 
+void Dystopia::GameObject::SetFlag(eObjFlag _flag)
+{
+	mnFlags |= _flag;
+}
+
+void Dystopia::GameObject::RemoveFlags(eObjFlag _flags)
+{
+	mnFlags &= ~_flags;
+}
+
+unsigned Dystopia::GameObject::GetFlag() const
+{
+	return mnFlags;
+}
 
 void Dystopia::GameObject::Load(void)
 {
@@ -120,15 +134,10 @@ void Dystopia::GameObject::PostUpdate(void)
 
 void Dystopia::GameObject::Destroy(void)
 {
-//	Ping(mComponents, GameObjectDestroy);
-	Ping(mBehaviours, GameObjectDestroy);
+	ForcePing(mComponents, GameObjectDestroy);
+	ForcePing(mBehaviours, GameObjectDestroy);
 
 	mnFlags = FLAG_REMOVE;
-
-	for (auto & e : mComponents)
-	{
-		e->GameObjectDestroy();
-	}
 }
 
 void Dystopia::GameObject::Unload(void)
@@ -155,8 +164,8 @@ void Dystopia::GameObject::OnCollisionExit(const CollisionEvent& _pEvent)
 
 void Dystopia::GameObject::PurgeComponents(void)
 {
-	for (Behaviour* e : mBehaviours)
-		delete e;
+	//for (Behaviour* e : mBehaviours)
+	//	delete e;
 	mBehaviours.clear();
 	mComponents.clear();
 }

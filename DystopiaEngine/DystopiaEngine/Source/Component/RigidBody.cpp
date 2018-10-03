@@ -264,7 +264,7 @@ namespace Dystopia
 	void RigidBody::Serialise(TextSerialiser & _out) const
 	{
 		_out.InsertStartBlock("RigidBody");
-		_out << mID;					// gObjID
+		_out << GetOwner()->GetID();	// gObjID
 		_out << mfAngleDeg;				// Angle in degrees
 		_out << mfLinearDamping;		// Linear Drag
 		_out << mfAngularDrag;			// Angular Drag

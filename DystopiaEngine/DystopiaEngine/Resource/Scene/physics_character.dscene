@@ -1,0 +1,114 @@
+[START_Scene]
+4,physics_character,[START_START_GO_DATA]
+18446744072484290560,1,Scene Camera,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.713772,0.713772,0.713772,0,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+351274496,1,Floor,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1024,16,1,0,-100,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073463221248,1,Background,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+2048,2048,1,0,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+516441088,1,Character,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,1,0,0,2,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+18446744072484290560,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+3,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+351274496,,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+516441088,..\DystopiaEngine\Resource\Asset\sprite_01.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073463221248,..\DystopiaEngine\Resource\Asset\guide.png,
+[END_Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+351274496,0,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+516441088,0,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+351274496,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+516441088,-0.03,-0.06,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.4,0.7,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Character_Controller]
+516441088,
+[END_Character_Controller]
+
+[END_Component End]
+
+[END_Scene]

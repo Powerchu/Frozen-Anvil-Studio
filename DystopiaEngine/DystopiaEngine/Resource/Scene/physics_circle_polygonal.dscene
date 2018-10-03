@@ -201,14 +201,8 @@
 
 [END_Component End]
 [START_ComponentDonor]
-23,
+12,
 [END_ComponentDonor End]
-[START_Component]
-[START_RigidBody]
-806605309910974464,0,0.75,0.6,0.5,0.7,0.5,1,0,1,1,0,1,
-[END_RigidBody]
-
-[END_Component End]
 [START_Component]
 [START_RigidBody]
 806605695306170368,0,0.75,0.6,0,0,1,1,0,1,1,0,1,
@@ -217,67 +211,7 @@
 [END_Component End]
 [START_Component]
 [START_RigidBody]
-806601857586692096,0,0.75,0.6,0.5,0.7,0.5,1,100,1,0,1,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-806602022355730432,0,0.75,0.6,0.5,0.7,1,1,100,1,0,1,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-806602214236749824,0,0.75,0.6,0.5,0.87,1,1,150,1,0,1,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-806604249991479296,0,0.75,0.6,0.5,0.7,0.5,1,100,1,0,1,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-806604626921521152,0,0.75,0.6,0.5,0.7,0.5,1,100,1,0,1,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-806605134173831168,0,0.75,0.6,0.5,0.7,0.5,1,100,1,0,1,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-806601709493157888,0,0.75,0.6,0.5,0.7,1,1,0,1,1,0,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-806606368675987456,0,0.75,0.6,0.5,0.7,0.5,1,100,1,0,1,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
 806610443280842752,0,1,0.6,0,0,0.95,1.18,100,1,0,1,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-806606172204826624,0,0.75,0.6,0.5,0.7,0.5,1,100,1,0,1,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-806605718929014784,0,0.75,0.6,0.5,0.7,0.5,1,100,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -345,17 +279,11 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-9,
+8,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
 806605695306170368,0,0,0,4,-0.5,-0.5,0,0.5,-0.5,0,0,0,0,-0.5,0.5,0,5,5,1,0,0,0,1,
-[END_Convex_Collider]
-
-[END_Component End]
-[START_Component]
-[START_Convex_Collider]
-637534208,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0,0,0,0,0,0,0,
 [END_Convex_Collider]
 
 [END_Component End]
@@ -428,5 +356,8 @@
 [END_Circle_Collider2D]
 
 [END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
 
 [END_Scene]

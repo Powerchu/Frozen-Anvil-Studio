@@ -14,12 +14,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _LOGPRIORITY_H_
 #define _LOGPRIORITY_H_
 
-#include "Globals.h"
+#if defined(ERROR)
+#undef ERROR
+#endif
 
 enum class eLog
 {
-	NONE       = 0,
-	ERROR      = 1 << 0,
+	NONE       ,
+	ERROR      = 1,
 	WARNING    = 1 << 1,
 	MESSAGE    = 1 << 2,
 	SYSINFO    = 1 << 3,

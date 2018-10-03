@@ -8,6 +8,7 @@
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
 
+#define NOMINMAX				// Disable Window header min & max macros
 #include <windows.h>
 #include <map>
 #include <functional>
@@ -16,6 +17,7 @@
 #include <filesystem>
 #include <iostream>
 #include <vector>
+#undef NOMINMAX
 
 namespace Dystopia
 {

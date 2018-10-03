@@ -9,6 +9,11 @@
 #include "System/Driver/Driver.h"
 #include "Object/GameObject.h"
 
+#include "Globals.h"
+#include "Utility/DebugAssert.h"
+#include "System/Logger/LoggerSystem.h"
+#include "System/Logger/LogPriority.h"
+
 #include <utility>
 
 namespace Dystopia
@@ -91,7 +96,7 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::BehaviourSystem::Update(float)
+	void Dystopia::BehaviourSystem::PollChanges(void)
 	{
 #if EDITOR
 
@@ -121,7 +126,9 @@ namespace Dystopia
 						if (iter.second)
 						{
 							//iter.first = iter.second->GetOwner()->GetID();
-							iter.second->GetOwner()->RemoveComponent(iter.second);
+							if (auto x = iter.second->GetOwner())
+								x->RemoveComponent(iter.second);
+							//iter.second->GetOwner()->RemoveComponent(iter.second);
 							delete iter.second;
 							iter.second = nullptr;
 						}
@@ -131,7 +138,7 @@ namespace Dystopia
 			hasChange = true;
 		}
 
-		if(hasChange)
+		if (hasChange)
 			mHotloader->InitialiseTransfer();
 
 		DLLWrapper * arr[100]{ nullptr };
@@ -145,7 +152,7 @@ namespace Dystopia
 			{
 				std::wstring wName{ (*start)->GetDllName() };
 				/**/
-				std::string DllName = FileSys->RemoveFileExtension<std::string>(std::string(wName.begin(),wName.end()));
+				std::string DllName = FileSys->RemoveFileExtension<std::string>(std::string(wName.begin(), wName.end()));
 
 				bool found = false;
 
@@ -183,10 +190,10 @@ namespace Dystopia
 					wrap.mpBehaviour = (BehaviourClone());
 					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Utility::Move(wrap)));
 					AutoArray< BehaviourPair> temp;
-					
+
 					mvBehaviours.push_back(std::make_pair(std::wstring{ DllName.begin(), DllName.end() }, temp));
 				}
-				
+
 
 				++start;
 			}
@@ -205,43 +212,75 @@ namespace Dystopia
 
 						auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
 						auto ptr = elem->mpBehaviour->Duplicate();
-						SceneSys->FindGameObject(iter.first)->AddComponent(ptr, BehaviourTag{});
+						if (auto x = SceneSys->FindGameObject(iter.first))
+							x->AddComponent(ptr, BehaviourTag{});
 						iter.second = ptr;
 					}
 				}
 			}
 		}
 
+		vTempFileName.clear();
+		mvRecentChanges.clear();
+#endif
+	}
+
+	void Dystopia::BehaviourSystem::Update(float)
+	{
 		for (auto & i : mvBehaviours)
 		{
 			for (auto & iter : i.second)
 			{
-				iter.second->Update(0.f);
+				if(auto p = iter.second->GetOwner())
+				{
+					if (p->GetFlag() & eObjFlag::FLAG_ACTIVE)
+					{
+						_EDITOR_START_TRY
+							iter.second->Update(0.f);
+						_EDITOR_CATCH(std::exception& e)
+						{
+							_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Error: %s!", e.what()));
+							_EDITOR_CODE(p->RemoveComponent(iter.second));
+							_EDITOR_CODE(iter.second->DestroyComponent());
+						}
+					}
+				}
+				else
+				{
+					iter.second->DestroyComponent();
+				}
 			}
 		}
-		
-		vTempFileName.clear();
-		mvRecentChanges.clear();
-#endif
 	}
 
 	void Dystopia::BehaviourSystem::PostUpdate(void)
 	{
 		/*Clear the recently change*/
 		mvRecentChanges.clear();
+
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
+				{
+					i.second.FastRemove(&iter);
+				}
+			}
+		}
 	}
 
 	void Dystopia::BehaviourSystem::Shutdown(void)
 	{
 #if EDITOR
-		//for (auto & i : mvBehaviours)
-		//{
-		//	for (auto & iter : i.second)
-		//	{
-		//		/*SOMEONE IS DELETEING THIS - COMMENT : PURGE COMPONENT IS KILLING MY BEHAVIOUR*/
-		//		//delete iter.second;
-		//	}
-		//}
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				/*SOMEONE IS DELETEING THIS - COMMENT : PURGE COMPONENT IS KILLING MY BEHAVIOUR*/
+				delete iter.second;
+			}
+		}
 
 		for (auto const & elem : mvBehaviourReferences)
 		delete elem.mpBehaviour;

@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Transform.h"			// Transform
 #include "Utility/MetaAlgorithms.h"			// MetaFind_t
 #include "IO/TextSerialiser.h"
+#include "Object/ObjectFlags.h"
 #include "Globals.h"
 
 #include <string>
@@ -85,6 +86,10 @@ namespace Dystopia
 		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
 		void SetName(const std::string&);
+
+		void RemoveFlags(eObjFlag);
+		void SetFlag(eObjFlag);
+		unsigned GetFlag() const;
 
 		template<class T>
 		T* GetComponent(void) const;

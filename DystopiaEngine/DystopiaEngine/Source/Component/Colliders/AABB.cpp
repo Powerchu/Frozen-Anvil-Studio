@@ -89,7 +89,7 @@ namespace Dystopia
 	void  AABB::Serialise(TextSerialiser& _out) const
 	{
 		_out.InsertStartBlock("Box_Collider2D");
-		_out << mID;					// gObj ID
+		_out << GetOwner()->GetID();					// gObj ID
 		_out << mv3Offset[0];
 		_out << mv3Offset[1];
 		_out << mv3Offset[2];

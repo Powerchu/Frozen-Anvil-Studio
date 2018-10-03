@@ -34,7 +34,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Logger/LoggerSystem.h"
 
 #include "IO/TextSerialiser.h"
-#include "IO/ImageParser.h"
 
 #include "Object/GameObject.h"              // GameObject
 #include "Object/ObjectFlags.h"
@@ -49,7 +48,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define NOMINMAX				// Disable Window header min & max macros
 
 #include <string>
-#include <cstdio>
 #include <windows.h>			// WinAPI
 #include <GL/glew.h>
 #include <GL/wglew.h>			// glew Windows ext

@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Utility.h"
 #include "DataStructure/MagicArray.h"
 #include "IO/TextSerialiser.h"
-
+#include "Object/ObjectFlags.h"
 
 namespace Dystopia
 {
@@ -62,11 +62,18 @@ template<typename Ty, typename Settings>
 inline void Dystopia::ComponentDonor<Ty, Settings>::Serialise(TextSerialiser & _Serialiser) const
 {
 	_Serialiser.InsertStartBlock("ComponentDonor");
-	_Serialiser << mComponents.size();
+	int n = 0;
+	for(auto& e : mComponents)
+	{
+		n += !(e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ);
+	}
+	_Serialiser << n;
 	_Serialiser.InsertEndBlock("ComponentDonor End");
 
-	for (auto & elem : mComponents)
+	for (auto& elem : mComponents)
 	{
+		if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+			continue;
 		_Serialiser.InsertStartBlock("Component");
 		elem.Serialise(_Serialiser);
 		_Serialiser.InsertEndBlock("Component End");

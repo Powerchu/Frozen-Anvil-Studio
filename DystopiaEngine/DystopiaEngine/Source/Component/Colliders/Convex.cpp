@@ -57,7 +57,7 @@ namespace Dystopia
 	void Convex::Serialise(TextSerialiser& _out) const
 	{
 		_out.InsertStartBlock("Convex_Collider");
-		_out << mID;					     // gObj ID
+		_out << GetOwner()->GetID();					     // gObj ID
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);

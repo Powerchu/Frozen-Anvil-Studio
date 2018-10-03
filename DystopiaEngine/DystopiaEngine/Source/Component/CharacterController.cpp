@@ -59,7 +59,7 @@ namespace Dystopia
 	void CharacterController::Serialise(TextSerialiser& _out) const
 	{
 		_out.InsertStartBlock("Character_Controller");
-		_out << mID;					// gObjID
+		_out << GetOwner()->GetID();					// gObjID
 		_out.InsertEndBlock("Character_Controller");
 	}
 

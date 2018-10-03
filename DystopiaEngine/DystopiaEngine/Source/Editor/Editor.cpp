@@ -198,7 +198,7 @@ namespace Dystopia
 		case EDITOR_MAIN:
 			mpProfiler->Update(mDeltaTime);
 			mpWin->Update(mDeltaTime);
-			mpBehaviourSys->Update(mDeltaTime);
+			mpBehaviourSys->PollChanges();
 			UpdateKeys();
 			UpdateHotkeys();
 			break;
