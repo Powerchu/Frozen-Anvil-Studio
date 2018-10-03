@@ -35,18 +35,7 @@ bool Dystopia::ComdInsertObject::ExecuteDo()
 	if (p || !mpObj) return false;
 
 	mpScene->GetAllGameObjects().EmplaceBack(Utility::Move(*mpObj));
-	auto& o = mpScene->GetAllGameObjects().back();
-	o.GetComponent<Transform>()->SetOwner(&o);
-	for (auto c : o.GetAllComponents())
-	{
-		c->SetOwner(&o);
-		c->Init();
-	}
-	for (auto b : o.GetAllBehaviours())
-	{
-		b->SetOwner(&o);
-		b->Init();
-	}
+	mpScene->GetAllGameObjects().back().Init();
 	if (mFocusBack)
 	{
 		Editor *e = Editor::GetInstance();
@@ -76,16 +65,6 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
 	mpObj->SetID(mObjID);
-	for (auto c : mpObj->GetAllComponents())
-	{
-		c->SetOwner(mpObj);
-		c->Init();
-	}
-	for (auto b : mpObj->GetAllBehaviours())
-	{
-		b->SetOwner(mpObj);
-		b->Init();
-	}
 	p->Destroy();
 	return true;
 }
@@ -123,16 +102,6 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
 	mpObj->SetID(mObjID);
-	for (auto c : mpObj->GetAllComponents())
-	{
-		c->SetOwner(mpObj);
-		c->Init();
-	}
-	for (auto b : mpObj->GetAllBehaviours())
-	{
-		b->SetOwner(mpObj);
-		b->Init();
-	}
 	p->Destroy();
 	return true;
 }
@@ -143,18 +112,7 @@ bool Dystopia::ComdDeleteObject::ExecuteUndo()
 	if (p || !mpObj) return false;
 
 	mpScene->GetAllGameObjects().EmplaceBack(Utility::Move(*mpObj));
-	auto& o = mpScene->GetAllGameObjects().back();
-	o.GetComponent<Transform>()->SetOwner(&o);
-	for (auto c : o.GetAllComponents())
-	{
-		c->SetOwner(&o);
-		c->Init();
-	}
-	for (auto b : o.GetAllBehaviours())
-	{
-		b->SetOwner(&o);
-		b->Init();
-	}
+	mpScene->GetAllGameObjects().back().Init();
 	if (mFocusBack)
 	{
 		Editor* e = Editor::GetInstance();

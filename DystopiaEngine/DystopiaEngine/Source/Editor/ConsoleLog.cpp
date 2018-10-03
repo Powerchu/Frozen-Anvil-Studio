@@ -121,18 +121,7 @@ namespace Dystopia
 					auto *p = (*(Admin::g_AdminFuncs[fnName]))(var + std::to_string(i));
 					p->GetComponent<Transform>()->SetPosition(Math::Pt3D{ 5.f * i , 0, 0.1f * i});
 					GetCurrentScene()->GetAllGameObjects().EmplaceBack(Utility::Move(*p));
-					auto& g = GetCurrentScene()->GetAllGameObjects().back();
-					g.GetComponent<Transform>()->SetOwner(&g);
-					for (auto& c: g.GetAllComponents())
-					{
-						c->SetOwner(&g);
-						c->Init();
-					}
-					for (auto& b : g.GetAllBehaviours())
-					{
-						b->SetOwner(&g);
-						b->Init();
-					}
+					GetCurrentScene()->GetAllGameObjects().back().Init();
 					delete p;
 				}
 			}

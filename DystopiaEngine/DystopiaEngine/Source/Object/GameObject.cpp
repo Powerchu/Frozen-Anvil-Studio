@@ -85,6 +85,17 @@ void Dystopia::GameObject::Load(void)
 
 void Dystopia::GameObject::Init(void)
 {
+	mTransform.SetOwner(this);
+	for (auto c : mComponents)
+	{
+		c->SetOwner(this);
+		c->Init();
+	}
+	for (auto b : mBehaviours)
+	{
+		b->SetOwner(this);
+		b->Init();
+	}
 //	ForcePing(mComponents, Init);
 	ForcePing(mBehaviours, Init);
 }
@@ -261,6 +272,7 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	p->mnID = GUIDGenerator::GetUniqueID();
 	p->mnFlags = mnFlags;
 	p->mName = mName;
+	p->mTransform.SetOwner(p);
 	for (auto& c : mComponents)
 	{
 		auto t = c->Duplicate();
@@ -275,7 +287,6 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 		t->Init();
 		p->mBehaviours.Insert(t);
 	}
-	p->mTransform.SetOwner(p);
 	return p;
 }
 
