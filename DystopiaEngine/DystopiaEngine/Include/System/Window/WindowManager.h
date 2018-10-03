@@ -58,6 +58,8 @@ namespace Dystopia
 
 		void RegisterMouseData(MouseData*);
 
+		bool GetIfFullScreen() const;
+
 	private:
 
 		std::wstring mTitle;

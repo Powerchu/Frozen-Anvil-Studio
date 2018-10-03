@@ -59,7 +59,7 @@ namespace Dystopia
 
 	void PhysicsSystem::ResolveCollision(float)
 	{
-		for (int i = 0; i < mResolutionIterations; ++i)
+		for (unsigned i = 0; i < mResolutionIterations; ++i)
 		{
 			for (auto& body : mComponents)
 			{

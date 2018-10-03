@@ -566,7 +566,7 @@ namespace Dystopia
 			{
 				EGUI::PushID(i);
 				auto& c = mVertices[i];
-				Math::Vector3D* temp = &(c.mPosition);
+				//Math::Vector3D* temp = &(c.mPosition);
 				EGUI::Display::Label("	Vertex");
 				auto arrResult = EGUI::Display::VectorFields("	", &(c.mPosition), 0.01f, -FLT_MAX, FLT_MAX);
 				for (auto &e : arrResult)

@@ -44,7 +44,7 @@ namespace Dystopia
 
 		if (mDebugVertices.size() == 0)
 		{
-			const unsigned numberOfSegments = 16;
+			const unsigned numberOfSegments = 25;
 			const float increment = 2.0f * Math::pi / float(numberOfSegments);
 
 			const float theta = 0.0f;

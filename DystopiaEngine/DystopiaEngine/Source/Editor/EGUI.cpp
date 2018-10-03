@@ -12,7 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-
+#include "System/Driver/Driver.h"
 #include "Editor/EGUI.h"
 #include "Editor/EditorInputs.h"
 #include "System/Window/Window.h"
@@ -196,8 +196,19 @@ namespace Dystopia
 
 		// Setup display size (every frame to accommodate for window resizing)
 		int w, h, display_w, display_h;
-		w = display_w = mpWin->GetMainWindow().GetWidth() - 16;
-		h = display_h = mpWin->GetMainWindow().GetHeight() - 40;
+
+		if (Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetIfFullScreen())
+		{
+			w = display_w = mpWin->GetMainWindow().GetWidth() - GetSystemMetrics(SM_CXBORDER) + 1;
+			h = display_h = mpWin->GetMainWindow().GetHeight() - GetSystemMetrics(SM_CYSIZE) - 2 * GetSystemMetrics(SM_CXBORDER);
+		}
+		else
+		{
+			const auto t = GetSystemMetrics(SM_CXSIZEFRAME) * GetSystemMetrics(SM_CXPADDEDBORDER);
+			w = display_w = mpWin->GetMainWindow().GetWidth() - t;
+			h = display_h = mpWin->GetMainWindow().GetHeight() - GetSystemMetrics(SM_CYSIZE) + 3*GetSystemMetrics(SM_CYEDGE) - GetSystemMetrics(SM_CYCAPTION);
+		}
+
 
 		io.DisplaySize = ImVec2{ static_cast<float>(w), static_cast<float>(h) };
 		io.DisplayFramebufferScale = ImVec2{ w > 0 ? static_cast<float>(display_w / w) : 0, 

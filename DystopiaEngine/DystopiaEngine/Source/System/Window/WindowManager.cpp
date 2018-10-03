@@ -35,10 +35,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	constexpr long	DEFAULT_WINDOWSTYLE		= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+	constexpr long	DEFAULT_WINDOWSTYLE		= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 	constexpr long	DEFAULT_WINDOWSTYLE_EX	= WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
 
-	constexpr bool	DEFAULT_FULLSCREEN		= false;
+	constexpr bool	DEFAULT_FULLSCREEN		= true;
 	constexpr int	DEFAULT_WIDTH			= 1600;
 	constexpr int	DEFAULT_HEIGHT			= 900;
 
@@ -46,27 +46,40 @@ namespace
 
 	LRESULT WINAPI MessageProcessor(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
+		static auto oldsz = std::make_pair(0, 0);
 		switch (message)
 		{
 		case WM_SETFOCUS:
-			/*
-			if (mbFullscreen)
-			{
-				DEVMODE mode{};
-				mode.dmSize = sizeof(DEVMODE);
-				mode.dmPelsWidth = mWidth;
-				mode.dmPelsHeight = mHeight;
-				mode.dmBitsPerPel = 32;
-				mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
-				ChangeDisplaySettings(&mode, 0);
-			} */
+			
+			//Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(true);
 			break;
 		case WM_KILLFOCUS:
-			/*
-			if (mbFullscreen)
+			
+			//Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(false);
+			break;
+
+		case WM_SIZE:
+			if(SIZE_MAXIMIZED == wParam)
 			{
-				ChangeDisplaySettings(NULL, 0);
-			} */
+				RECT scr;
+				SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
+				oldsz.first = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetWidth();
+				oldsz.second = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetHeight();
+
+				Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().
+					SetSize(scr.right - scr.left, scr.bottom - scr.top);
+
+				Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(true);
+			}
+			else if (SIZE_RESTORED == wParam)
+			{
+				if (oldsz.first)
+				{
+					Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().SetSize(oldsz.first, oldsz.second);
+					oldsz.first = 0; oldsz.second = 0;
+					Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(false);
+				}
+			}
 			break;
 
 		case WM_CLOSE:
@@ -157,9 +170,6 @@ void Dystopia::WindowManager::PreInit(void)
 
 	mWindows.EmplaceBack(window);
 //	mWindows[0].ShowCursor(EDITOR);
-
-//	ShowWindow(window, SW_SHOW);
-//	UpdateWindow(window);
 }
 
 bool Dystopia::WindowManager::Init(void)
@@ -250,13 +260,30 @@ void Dystopia::WindowManager::SaveSettings(DysSerialiser_t& _in)
 	_in << mbFullscreen;
 	_in << mWindowStyle;
 	_in << mWindowStyleEx;
-	_in << mWindows[0].GetWidth();
-	_in << mWindows[0].GetHeight();
+	_in << DEFAULT_WIDTH;
+	_in << DEFAULT_HEIGHT;
 }
 
 void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
 {
 	mbFullscreen = _bFullscreen;
+
+	if (mbFullscreen)
+	{
+		/*
+		DEVMODE mode{};
+		mode.dmSize = sizeof(DEVMODE);
+		mode.dmPelsWidth  = mWidth;
+		mode.dmPelsHeight = mHeight;
+		mode.dmBitsPerPel = 32;
+		mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
+		ChangeDisplaySettings(&mode, 0);
+		*/
+	}
+	else
+	{
+		//ChangeDisplaySettings(nullptr, 0);
+	}
 }
 
 void Dystopia::WindowManager::ShowCursor(bool _bShow) const
@@ -268,6 +295,11 @@ void Dystopia::WindowManager::ShowCursor(bool _bShow) const
 void Dystopia::WindowManager::RegisterMouseData(MouseData* _pMouse)
 {
 	pMouse = _pMouse;
+}
+
+bool Dystopia::WindowManager::GetIfFullScreen() const
+{
+	return mbFullscreen;
 }
 
 Dystopia::Window& Dystopia::WindowManager::GetMainWindow(void) const
@@ -283,7 +315,10 @@ void Dystopia::WindowManager::DestroySplash(void)
 	mWindows[0].SetSize(mWidth, mHeight);
 	mWindows[0].CenterWindow();
 
-	mWindows[0].Show();
+	if (mbFullscreen)
+		mWindows[0].ShowMax();
+	else
+		mWindows[0].Show();
 }
 
 void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)

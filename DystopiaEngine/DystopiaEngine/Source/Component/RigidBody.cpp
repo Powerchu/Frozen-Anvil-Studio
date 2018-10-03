@@ -375,6 +375,7 @@ namespace Dystopia
 		mAngularVelocity += angularVel;
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
 		mCumulativeForce += _force * 5000.0F;
+		mCumulativeTorque += (_point - mGlobalCentroid).Cross(_force);
 		mbIsAwake = true;
 	}
 
