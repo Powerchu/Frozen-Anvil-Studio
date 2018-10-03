@@ -97,7 +97,7 @@ namespace Dystopia
 
 
 		/*Update Hotloader*/
-		static std::vector<std::wstring> vTempFileName;
+		std::vector<std::wstring> vTempFileName;
 		mHotloader->Update();
 		mHotloader->ChangesInTempFolder(vTempFileName);
 		bool hasChange = false;
@@ -154,6 +154,9 @@ namespace Dystopia
 					/*If the name matches*/
 					if (DllName == elem.mName)
 					{
+						if (std::find(mvRecentChanges.begin(), mvRecentChanges.end(), &elem) != mvRecentChanges.end())
+							continue;
+
 						delete elem.mpBehaviour;
 						elem.mpBehaviour = nullptr;
 						/*Reload the Dll*/
@@ -167,6 +170,7 @@ namespace Dystopia
 						{
 							elem.mpBehaviour = BehaviourClone();
 							found = true;
+
 							mvRecentChanges.Insert(&elem);
 						}
 					}
@@ -174,6 +178,7 @@ namespace Dystopia
 
 				if (!found)
 				{
+
 					BehaviourWrap wrap;
 					using fpClone = Behaviour * (*) ();
 					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
@@ -228,16 +233,17 @@ namespace Dystopia
 	void Dystopia::BehaviourSystem::Shutdown(void)
 	{
 #if EDITOR
+		//for (auto & i : mvBehaviours)
+		//{
+		//	for (auto & iter : i.second)
+		//	{
+		//		/*SOMEONE IS DELETEING THIS - COMMENT : PURGE COMPONENT IS KILLING MY BEHAVIOUR*/
+		//		//delete iter.second;
+		//	}
+		//}
+
 		for (auto const & elem : mvBehaviourReferences)
 		delete elem.mpBehaviour;
-
-		for (auto & i : mvBehaviours)
-		{
-			for (auto & iter : i.second)
-			{
-				delete iter.second;
-			}
-		}
 #endif
 	}
 

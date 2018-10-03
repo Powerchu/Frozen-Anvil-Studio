@@ -158,7 +158,6 @@ void Dystopia::GameObject::PurgeComponents(void)
 	for (Behaviour* e : mBehaviours)
 		delete e;
 	mBehaviours.clear();
-
 	mComponents.clear();
 }
 

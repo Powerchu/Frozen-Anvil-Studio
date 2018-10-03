@@ -199,11 +199,6 @@ namespace Dystopia
 			mpProfiler->Update(mDeltaTime);
 			mpWin->Update(mDeltaTime);
 			mpBehaviourSys->Update(mDeltaTime);
-			if (mpBehaviourSys->hasDllChanges())
-			{
-				mpEditorEventSys->Fire(eEditorEvents::EDITOR_HOTKEY_DLL_CHANGED);
-				mpBehaviourSys->hasDllChanges();
-			}
 			UpdateKeys();
 			UpdateHotkeys();
 			break;
