@@ -260,7 +260,7 @@ namespace Dystopia
 
 	void SceneView::SceneChanged()
 	{
-		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
+ 		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
 	}
 
 	Math::Pt3D SceneView::GetWorldClickPos(const Camera * const _cam) const

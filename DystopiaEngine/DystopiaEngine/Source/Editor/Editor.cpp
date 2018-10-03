@@ -591,7 +591,7 @@ namespace Dystopia
 		mpSceneSystem->LoadScene(std::string{ _path.begin(), _path.end() });
 		for (auto& e : mArrTabs)
 			e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
-		mpEditorEventSys->Fire(EDITOR_SCENE_CHANGED);
+		mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
 		RemoveFocus();
 		mpWin->GetMainWindow().SetTitle(_name);
 	}
@@ -616,7 +616,7 @@ namespace Dystopia
 		mTempSaveFile.clear();
 		for (auto& e : mArrTabs)
 			e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
-		mpEditorEventSys->Fire(EDITOR_SCENE_CHANGED);
+		mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
 	}
 
 	void Editor::UpdateKeys()
