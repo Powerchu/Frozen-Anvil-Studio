@@ -1,10 +1,10 @@
 [START_Scene]
-11,physics_scene_2,[START_START_GO_DATA]
+14,physics_scene_2,[START_START_GO_DATA]
 3795845120,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.34356,0.34356,0.858903,0,0,0,0,0,0,1,
+0.352242,0.352242,0.880609,0,0,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -54,11 +54,11 @@
 
 [END_END_GO_TRANSFORM]
 [START_START_GO_DATA]
-543176192,1,SmalBox,
+543176192,1,SmallBox,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-28,28,1,100,3.92,0,0,0,0,1,
+28,28,1,-16,0,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -67,7 +67,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-18,18,1,100,34.83,0,0,0,0,1,
+20,20,1,0,30,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -76,7 +76,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-8,8,1,100,50,0,0,0,0,1,
+12,12,1,0,50,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -85,7 +85,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-250,160,1,0,0,0,
+250,160,1,9999,0,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -94,7 +94,34 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,0,0,0,
+32,32,1,0,-40,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+102252032,1,Box3,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,35,-40,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1314409472,1,SmallBox2,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+28,28,1,16,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1606964736,1,Microbox,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,8,1,0,65,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -108,7 +135,7 @@
 
 [END_Component End]
 [START_ComponentDonor]
-10,
+13,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -166,12 +193,30 @@
 [END_Component End]
 [START_Component]
 [START_Renderer]
-806617046164439040,,
+806617046164439040,..\DystopiaEngine\Resource\Editor\white_box.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+102252032,..\DystopiaEngine\Resource\Editor\white_box.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1314409472,..\DystopiaEngine\Resource\Editor\white_box.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1606964736,..\DystopiaEngine\Resource\Editor\white_box.png,
 [END_Renderer]
 
 [END_Component End]
 [START_ComponentDonor]
-12,
+16,
 [END_ComponentDonor End]
 [START_Component]
 [START_RigidBody]
@@ -229,13 +274,13 @@
 [END_Component End]
 [START_Component]
 [START_RigidBody]
-1773693440,0,0.01,0.6,0.5,0.7,0.9,1,25,1,0,1,1,
+1773693440,0,0.01,0.6,0.5,0.7,0.85,1,25,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
 [START_Component]
 [START_RigidBody]
-18446744072375255552,0,0.01,0.6,0.5,0.7,0.5,1,12,1,0,1,1,
+18446744072375255552,0,0.01,0.6,0.5,0.7,0.5,1,15,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -245,11 +290,35 @@
 [END_RigidBody]
 
 [END_Component End]
+[START_Component]
+[START_RigidBody]
+806617046164439040,0,0.01,0.5,0.5,0.7,0.7,1,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+102252032,0,0.01,0.5,0.5,0.7,0.7,1,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1314409472,0,0.01,0.5,0.5,0.7,0.75,1,50,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1606964736,0,0.01,0.5,0.5,0.7,0.5,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-8,
+12,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -296,6 +365,30 @@
 [START_Component]
 [START_Convex_Collider]
 18446744072375255552,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+806617046164439040,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+102252032,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1314409472,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1606964736,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
 [END_Convex_Collider]
 
 [END_Component End]

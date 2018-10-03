@@ -475,11 +475,10 @@ namespace Dystopia
 
 	void Convex::eIsTriggerCheckBox()
 	{
-		bool toggleState = false;
-		if (EGUI::Display::CheckBox("Is Trigger		  ", &toggleState))
+		if (EGUI::Display::CheckBox("Is Trigger		  ", &mbIsTrigger))
 		{
 			// Is Trigger Function here
-			if (toggleState)
+			if (mbIsTrigger)
 			{
 				//EGUI::Display::IconTick();
 			}

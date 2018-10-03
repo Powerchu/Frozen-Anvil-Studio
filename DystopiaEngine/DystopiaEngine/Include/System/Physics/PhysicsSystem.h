@@ -57,7 +57,7 @@ namespace Dystopia
 		// Position Correction Tolerance
 		float mPenetrationEpsilon;
 		// Position Correction Resolution as Percentage;
-		float mPenetrationResolutionPercentage;
+		unsigned int mResolutionIterations;
 	};
 }
 

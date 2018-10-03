@@ -16,7 +16,7 @@ namespace Dystopia
 		, mMaxVelocityConstant(800.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.05F)
-		, mPenetrationResolutionPercentage(0.8F)
+		, mResolutionIterations(16)
 	{
 	}
 
@@ -59,7 +59,7 @@ namespace Dystopia
 
 	void PhysicsSystem::ResolveCollision(float)
 	{
-		for (int i = 0; i < 10; ++i)
+		for (int i = 0; i < mResolutionIterations; ++i)
 		{
 			for (auto& body : mComponents)
 			{
