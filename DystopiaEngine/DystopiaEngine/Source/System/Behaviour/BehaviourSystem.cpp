@@ -154,9 +154,6 @@ namespace Dystopia
 					/*If the name matches*/
 					if (DllName == elem.mName)
 					{
-						if (std::find(mvRecentChanges.begin(), mvRecentChanges.end(), &elem) != mvRecentChanges.end())
-							continue;
-
 						delete elem.mpBehaviour;
 						elem.mpBehaviour = nullptr;
 						/*Reload the Dll*/

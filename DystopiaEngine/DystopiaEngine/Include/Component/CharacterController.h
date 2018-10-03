@@ -52,6 +52,9 @@ namespace Dystopia
 		void MovePlayer(float _dt);
 	private:
 		RigidBody * mpBody;
+		bool		mbIsFacingRight;
+		bool		mbIsGrounded;
+		float		mfCharacterSpeed;
 	};
 }
 

@@ -134,16 +134,6 @@ namespace Dystopia
 		return static_cast<ComponentDonor<Convex> *>(EngineCore::GetInstance()->GetSystem<Convex::SYSTEM>())->RequestComponent(*this);
 	}
 
-	void Convex::EditorUI() noexcept
-	{
-		eIsTriggerCheckBox();
-		//ePositionOffsetVectorFields();
-		ePointVerticesVectorArray();
-		eSetScale();
-		eAttachedBodyEmptyBox();
-		eNumberOfContactsLabel();
-	}
-
 	Convex::~Convex()
 	{
 
@@ -473,6 +463,16 @@ namespace Dystopia
 
 	}
 
+	void Convex::EditorUI() noexcept
+	{
+		eAttachedBodyEmptyBox();
+		eIsTriggerCheckBox();
+		ePositionOffsetVectorFields();
+		eSetScale();
+		ePointVerticesVectorArray();
+		eNumberOfContactsLabel();
+	}
+
 	void Convex::eIsTriggerCheckBox()
 	{
 		if (EGUI::Display::CheckBox("Is Trigger		  ", &mbIsTrigger))
@@ -492,7 +492,7 @@ namespace Dystopia
 	void Convex::ePositionOffsetVectorFields()
 	{
 		EGUI::Display::Label("Offset");
-		auto arrResult = EGUI::Display::VectorFields("   ", &mv3Offset, 0.05f, -FLT_MAX, FLT_MAX);
+		auto arrResult = EGUI::Display::VectorFields("    ", &mv3Offset, 0.01f, -FLT_MAX, FLT_MAX);
 		for (auto &e : arrResult)
 		{
 			switch (e)
@@ -568,10 +568,9 @@ namespace Dystopia
 				auto& c = mVertices[i];
 				//Math::Vector3D* temp = &(c.mPosition);
 				EGUI::Display::Label("	Vertex");
-				auto arrResult = EGUI::Display::VectorFields("	", &(c.mPosition), 0.01f, -FLT_MAX, FLT_MAX);
+				auto arrResult = EGUI::Display::VectorFields("	 ", &(c.mPosition), 0.01f, -FLT_MAX, FLT_MAX);
 				for (auto &e : arrResult)
 				{
-
 					switch (e)
 					{
 					case EGUI::eDragStatus::eEND_DRAG:
@@ -607,7 +606,7 @@ namespace Dystopia
 	void Convex::eSetScale()
 	{
 		EGUI::Display::Label("Scale");
-		auto arrResult = EGUI::Display::VectorFields("   ", &mScale, 0.05f, -FLT_MAX, FLT_MAX);
+		auto arrResult = EGUI::Display::VectorFields("\t", &mScale, 0.05f, -FLT_MAX, FLT_MAX);
 		for (auto &e : arrResult)
 		{
 			switch (e)

@@ -47,6 +47,9 @@ void Dystopia::SceneSystem::FixedUpdate(float _dt)
 	{
 		mpCurrScene->FixedUpdate(_dt);
 	}
+	else
+	{
+	}
 }
 
 void Dystopia::SceneSystem::Update(float _dt)
@@ -57,7 +60,6 @@ void Dystopia::SceneSystem::Update(float _dt)
 	}
 	else
 	{
-		
 	}
 }
 
@@ -66,6 +68,9 @@ void Dystopia::SceneSystem::PostUpdate(void)
 	if (mpNextScene == mpCurrScene)
 	{
 		mpCurrScene->PostUpdate();
+	}
+	else
+	{
 	}
 }
 
@@ -88,23 +93,41 @@ void Dystopia::SceneSystem::LoadSettings(TextSerialiser&)
 
 }
 
+void Dystopia::SceneSystem::ChangeScene()
+{
+	mpCurrScene->Shutdown();
+	delete mpCurrScene;
+	mpCurrScene = mpNextScene;
+	//mpCurrScene->Init();
+}
+
+
+void Dystopia::SceneSystem::RestartScene()
+{
+//	mpCurrScene->Shutdown();
+	/* unserialize current scene */
+	//mpCurrScene->Init();
+}
+
 void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 {
 	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
 
 	delete mpCurrScene;
-	mpNextScene = mpCurrScene = new Scene{};
+	mpCurrScene = mpNextScene = new Scene{};
 
 	/*Open File*/
 	auto SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_READ);
 	/*Consume Start Block*/
 	SerialObj.ConsumeStartBlock();
 	/*Get Next Scene to Unserialise*/
-	mpCurrScene->Unserialise(SerialObj);
+	mpNextScene->Unserialise(SerialObj);
 	/*Get all System who are ComponentDonor to unserialise*/
 	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
 	/*Consume End Block*/
 	SerialObj.ConsumeEndBlock();
+
+	//ChangeScene();
 }
 
 void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::string& _strSceneName)
@@ -115,9 +138,9 @@ void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::s
 	auto SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_WRITE);
 	/*Consume Start Block*/
 	SerialObj.InsertStartBlock("Scene");
-	/*Get Next Scene to Unserialise*/
-	mpNextScene->SetSceneName(_strSceneName);
-	mpNextScene->Serialise(SerialObj);
+	/*Get Current Scene to Serialize*/
+	mpCurrScene->SetSceneName(_strSceneName);
+	mpCurrScene->Serialise(SerialObj);
 	/*Get all System who are ComponentDonor to unserialise*/
 	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemSerialise(SerialObj);
 	/*Consume End Block*/

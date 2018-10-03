@@ -471,7 +471,7 @@ namespace Dystopia
 
 	void RigidBody::SetRestitution(const float _f)
 	{
-		if (_f > 1.0F) mfRestitution = 1.0F;
+		if (_f > 2.0F) mfRestitution = 2.0F;
 		else if (_f < 0.0) mfRestitution = 0.0F;
 		else mfRestitution = _f;
 	}
@@ -818,7 +818,7 @@ namespace Dystopia
 
 	void RigidBody::eRestitutionDragField()
 	{
-		switch (EGUI::Display::DragFloat("Bounciness			  ", &mfRestitution, 0.01f, 0.0f, 1.0f))
+		switch (EGUI::Display::DragFloat("Bounciness			  ", &mfRestitution, 0.01f, 0.0f, 2.0f))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();
@@ -903,7 +903,7 @@ namespace Dystopia
 			// Freeze Z Rotation Function here
 			if (toggleState)
 			{
-				//EGUI::Display::IconTick();
+				//P_TX->SetRotation(Math::Angle{0});
 			}
 			else
 			{

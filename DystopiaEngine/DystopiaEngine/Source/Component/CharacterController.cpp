@@ -12,6 +12,7 @@
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
 #endif 
+
 namespace Dystopia
 {
 	CharacterController::CharacterController()
@@ -49,7 +50,10 @@ namespace Dystopia
 
 	Component* CharacterController::Duplicate() const
 	{
-		return nullptr;
+		const auto cc = EngineCore::GetInstance()->GetSystem<InputManager>()->RequestComponent();
+		cc->SetOwner(GetOwner());
+		cc->Init();
+		return cc;
 	}
 
 	void CharacterController::Serialise(TextSerialiser& _out) const
@@ -82,23 +86,23 @@ namespace Dystopia
 		if (mpBody == nullptr) return;
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_LEFT))
 		{
-			mpBody->AddForce({ -5,0,0 });
+			mpBody->AddImpulse({ -20,0,0 });
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_RIGHT))
 		{
-			mpBody->AddForce({ 5,0,0 });
+			mpBody->AddImpulse({ 20,0,0 });
 
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_UP))
 		{
-			mpBody->AddForce({ 0,8,0 });
+			mpBody->AddImpulse({ 0,20,0 });
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
 		{
-			mpBody->AddImpulse({ 0,50,0 });
+			mpBody->AddImpulse({ 0,300*mpBody->GetGravityScalar(),0 });
 		}
 	}
 }

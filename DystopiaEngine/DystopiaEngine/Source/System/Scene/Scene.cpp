@@ -51,6 +51,10 @@ Dystopia::GameObject* Dystopia::Scene::FindGameObject(const std::string& _strNam
 
 void Dystopia::Scene::Init(void)
 {
+	for (auto& obj : mGameObjs)
+	{
+		obj.Init();
+	}
 }
 
 void Dystopia::Scene::FixedUpdate(float _dt)
