@@ -29,7 +29,7 @@ namespace Dystopia
 
 		FileSys->CreateFiles("Dystopia/BehaviourDLL", eFileDir::eAppData);
 		FileSys->CreateFiles("Dystopia/Temp", eFileDir::eAppData);
-		FileSys->CreateFiles("Behaviours/BehaviourScripts", eFileDir::eResource);
+		FileSys->CreateFiles("Behaviours/BehavioursScripts", eFileDir::eResource);
 
 #if _DEBUG
 
@@ -44,7 +44,7 @@ namespace Dystopia
 
 		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL", eFileDir::eAppData));
 		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
-		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehaviourScripts", eFileDir::eResource));
+		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
 
 		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
 

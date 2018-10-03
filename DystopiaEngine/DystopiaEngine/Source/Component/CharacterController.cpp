@@ -31,10 +31,12 @@ namespace Dystopia
 	{
 		if (nullptr != GetOwner())
 		{
-			if (nullptr != GetOwner()->GetComponent<RigidBody>())
+			if (nullptr == GetOwner()->GetComponent<RigidBody>())
 			{
-				const auto rb = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
+				auto rb = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 				GetOwner()->AddComponent(rb, RigidBody::TAG{});
+				rb->SetOwner(GetOwner());
+				rb->Init();
 			}
 
 			mpBody = GetOwner()->GetComponent<RigidBody>();
@@ -50,12 +52,25 @@ namespace Dystopia
 		return nullptr;
 	}
 
-	void CharacterController::Serialise(TextSerialiser&) const
+	void CharacterController::Serialise(TextSerialiser& _out) const
 	{
+		_out.InsertStartBlock("Character_Controller");
+		_out << mID;					// gObjID
+		_out.InsertEndBlock("Character_Controller");
 	}
 
-	void CharacterController::Unserialise(TextSerialiser&)
+	void CharacterController::Unserialise(TextSerialiser& _in)
 	{
+		_in.ConsumeStartBlock();
+		_in >> mID;						// gObjID
+		_in.ConsumeEndBlock();
+
+		if (GameObject* owner =
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
+		{
+			owner->AddComponent(this, CharacterController::TAG{});
+			Init();
+		}
 	}
 
 	void CharacterController::EditorUI() noexcept
@@ -67,23 +82,23 @@ namespace Dystopia
 		if (mpBody == nullptr) return;
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_LEFT))
 		{
-			mpBody->AddForce({ -10,0,0 });
+			mpBody->AddForce({ -5,0,0 });
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_RIGHT))
 		{
-			mpBody->AddForce({ 10,0,0 });
+			mpBody->AddForce({ 5,0,0 });
 
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_UP))
 		{
-			mpBody->AddForce({ 0,20,0 });
+			mpBody->AddForce({ 0,8,0 });
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_SPACEBAR))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
 		{
-			mpBody->AddImpulse({ 0,100,0 });
+			mpBody->AddImpulse({ 0,50,0 });
 		}
 	}
 }

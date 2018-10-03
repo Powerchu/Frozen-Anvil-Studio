@@ -1,10 +1,28 @@
 [START_Scene]
-1,Dystopia_Default_Scene_Setup,[START_START_GO_DATA]
+3,Dystopia_Default_Scene_Setup,[START_START_GO_DATA]
 18446744072484290560,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,0,0,0,0,0,0,1,
+0.94148,0.94148,0.94148,0,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072554021376,1,GameObject,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1024,16,1,0,-200,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072115719168,1,Character,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,1,0,0,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -18,19 +36,61 @@
 
 [END_Component End]
 [START_ComponentDonor]
-0,
+2,
 [END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+18446744072554021376,..\DystopiaEngine\Resource\Editor\white_box.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072115719168,..\DystopiaEngine\Resource\Asset\sprite_01.png,
+[END_Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+18446744072554021376,0,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072115719168,0,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-0,
+2,
 [END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+18446744072554021376,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744072115719168,0,0,0,4,0.2,0.5,0,-0.25,0.5,0,-0.25,-0.5,0,0.2,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-0,
+1,
 [END_ComponentDonor End]
+[START_Component]
+
+[END_Component End]
 
 [END_Scene]
