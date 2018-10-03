@@ -25,6 +25,7 @@ namespace Dystopia
 {
 	Milestone::Milestone()
 	{
+        
 	}
 
 	Milestone::~Milestone()
@@ -37,13 +38,13 @@ namespace Dystopia
 	}
 
 	void Milestone::Init()
-	{
+	{ 
 	}
 
 	void Milestone::Update(const float _fDeltaTime)
 	{
-        this->GetOwner()->GetComponent<Transform>()->SetScale(10,80,1);     
-	}
+        this->GetOwner()->GetComponent<Transform>()->SetScale(10,800,1);   
+	}  
 
 	void Milestone::FixedUpdate(const float _fDeltaTime)
 	{

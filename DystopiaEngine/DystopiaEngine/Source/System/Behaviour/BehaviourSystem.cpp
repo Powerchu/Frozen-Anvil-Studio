@@ -120,7 +120,7 @@ namespace Dystopia
 					{
 						if (iter.second)
 						{
-							iter.first = iter.second->GetOwner()->GetID();
+							//iter.first = iter.second->GetOwner()->GetID();
 							iter.second->GetOwner()->RemoveComponent(iter.second);
 							delete iter.second;
 							iter.second = nullptr;
@@ -203,6 +203,9 @@ namespace Dystopia
 				{
 					for (auto & iter : i.second)
 					{
+						if (iter.second != nullptr)
+							continue;
+
 						auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
 						auto ptr = elem->mpBehaviour->Duplicate();
 						SceneSys->FindGameObject(iter.first)->AddComponent(ptr, BehaviourTag{});
@@ -221,6 +224,7 @@ namespace Dystopia
 		}
 		
 		vTempFileName.clear();
+		mvRecentChanges.clear();
 #endif
 	}
 
