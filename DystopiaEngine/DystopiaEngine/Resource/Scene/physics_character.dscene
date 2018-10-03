@@ -1,5 +1,5 @@
 [START_Scene]
-4,physics_character,[START_START_GO_DATA]
+5,physics_character,[START_START_GO_DATA]
 18446744072484290560,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
@@ -31,7 +31,16 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-128,128,1,0,0,2,0,0,0,1,
+128,128,1,0,0,1,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073132380160,1,Box1,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,40,0,2,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -45,7 +54,7 @@
 
 [END_Component End]
 [START_ComponentDonor]
-3,
+4,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -65,8 +74,14 @@
 [END_Renderer]
 
 [END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073132380160,,
+[END_Renderer]
+
+[END_Component End]
 [START_ComponentDonor]
-2,
+3,
 [END_ComponentDonor End]
 [START_Component]
 [START_RigidBody]
@@ -76,7 +91,13 @@
 [END_Component End]
 [START_Component]
 [START_RigidBody]
-516441088,0,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,
+516441088,0,0.2,0.5,0.5,0.9,0.31,1,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744073132380160,0,0.3,0.5,0.96,0.11,0.5,1,200,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -84,7 +105,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-2,
+3,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -94,7 +115,13 @@
 [END_Component End]
 [START_Component]
 [START_Convex_Collider]
-516441088,-0.03,-0.06,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.4,0.7,1,0,0,0,1,
+516441088,0,0,0,4,0.1,0.15,0,-0.2,0.15,0,-0.2,-0.47,0,0.1,-0.47,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744073132380160,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
 [END_Convex_Collider]
 
 [END_Component End]
