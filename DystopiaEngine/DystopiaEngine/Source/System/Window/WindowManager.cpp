@@ -260,8 +260,8 @@ void Dystopia::WindowManager::SaveSettings(DysSerialiser_t& _in)
 	_in << mbFullscreen;
 	_in << mWindowStyle;
 	_in << mWindowStyleEx;
-	_in << mWindows[0].GetWidth();
-	_in << mWindows[0].GetHeight();
+	_in << DEFAULT_WIDTH;
+	_in << DEFAULT_HEIGHT;
 }
 
 void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
@@ -315,7 +315,10 @@ void Dystopia::WindowManager::DestroySplash(void)
 	mWindows[0].SetSize(mWidth, mHeight);
 	mWindows[0].CenterWindow();
 
-	mWindows[0].ShowMax();
+	if (mbFullscreen)
+		mWindows[0].ShowMax();
+	else
+		mWindows[0].Show();
 }
 
 void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
