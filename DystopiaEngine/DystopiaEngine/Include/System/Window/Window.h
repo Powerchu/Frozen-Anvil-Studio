@@ -51,6 +51,7 @@ namespace Dystopia
 		void ShowCursor(int _bShow) const;
 
 		void Show(void) const noexcept;
+		void ShowMax(void) const noexcept;
 		void Hide(void) const noexcept;
 
 		void SetAcceptFiles(bool) const noexcept;
