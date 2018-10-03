@@ -23,12 +23,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Collider.h"
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
+#include "Component/CharacterController.h"
 
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Camera/CameraSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Input/InputSystem.h"
 
 #include "Utility/ComponentGUID.h"
 

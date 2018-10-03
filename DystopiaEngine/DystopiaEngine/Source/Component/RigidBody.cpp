@@ -385,27 +385,29 @@ namespace Dystopia
 		mbIsAwake = true;
 	}
 
+	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
+	{
+		AddForce(_force, _point, P_TX->GetGlobalPosition());
+	}
+
 	void RigidBody::AddImpulse(Vec3D const& _impul)
 	{
-		UNUSED_PARAMETER(_impul);
+		mCumulativeForce = _impul * 5000.0F;
+		mbIsAwake = true;
 	}
 
 	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point)
 	{
-		UNUSED_PARAMETER(_impul);
-		UNUSED_PARAMETER(_point);
+		AddForce(_impul, _point, P_TX->GetGlobalPosition());
+
 	}
 
-	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const & _org)
+	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const &)
 	{
-		UNUSED_PARAMETER(_org);
-		UNUSED_PARAMETER(_point);
-		UNUSED_PARAMETER(_impul);
-	}
-
-	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
-	{
-		AddForce(_force, _point, P_TX->GetGlobalPosition());
+		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
+		mCumulativeForce = _impul * 5000.0F;
+		mCumulativeTorque = (_point - mGlobalCentroid).Cross(_impul);
+		mbIsAwake = true;
 	}
 
 	void RigidBody::ResetCumulative()
