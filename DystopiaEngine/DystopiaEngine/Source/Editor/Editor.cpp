@@ -12,20 +12,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-
-#include <memory>
 #define _CRTDBG_MAP_ALLOC
 #include <cstdlib>
 #include <crtdbg.h>
-
 #ifdef _DEBUG
-#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
-// allocations to be of _CLIENT_BLOCK type
-#else
-#define DBG_NEW new
+	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
+#include <memory>
 /* System includes */
 #include "System/Window/WindowManager.h"
 #include "System/Window/Window.h"
@@ -173,9 +167,9 @@ namespace Dystopia
 			mCurrentState = EDITOR_EXIT;
 			return;
 		}
-
-		LoadTabs();
+		
 		LoadDefaults();
+		LoadTabs();
 		mpInput->Init();
 		mpEditorEventSys->Init();
 		InstallHotkeys();
@@ -368,12 +362,12 @@ namespace Dystopia
 
 	void Editor::MMFile()
 	{
-		if (EGUI::StartMenuHeader("File"))
+		if (EGUI::StartMenuHeader("File", mCurrentState == EDITOR_MAIN))
 		{
-			if (EGUI::StartMenuBody("New", "Ctrl + N"))					mpEditorEventSys->FireNow(EDITOR_HOTKEY_NEW); 
-			if (EGUI::StartMenuBody("Open", "Ctrl + O"))				mpEditorEventSys->FireNow(EDITOR_HOTKEY_OPEN);
-			if (EGUI::StartMenuBody("Save", "Ctrl + S"))				mpEditorEventSys->FireNow(EDITOR_HOTKEY_SAVE);
-			if (EGUI::StartMenuBody("Save As..", "Ctrl + Shift + S"))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_SAVEAS);
+			if (EGUI::StartMenuBody("New", "Ctrl + N"))					mpEditorEventSys->Fire(EDITOR_HOTKEY_NEW); 
+			if (EGUI::StartMenuBody("Open", "Ctrl + O"))				mpEditorEventSys->Fire(EDITOR_HOTKEY_OPEN);
+			if (EGUI::StartMenuBody("Save", "Ctrl + S"))				mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVE);
+			if (EGUI::StartMenuBody("Save As..", "Ctrl + Shift + S"))	mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVEAS);
 			if (EGUI::StartMenuBody("Quit"))							ChangeState((mpComdHandler->HasUnsavedChanges()) ? 
 																					 EDITOR_PROMPT_SAVE : EDITOR_EXIT);
 			EGUI::EndMenuHeader();
@@ -382,13 +376,13 @@ namespace Dystopia
 
 	void Editor::MMEdit()
 	{
-		if (EGUI::StartMenuHeader("Edit"))
+		if (EGUI::StartMenuHeader("Edit", mCurrentState == EDITOR_MAIN))
 		{
-			if (EGUI::StartMenuBody("Undo ", "Ctrl + Z"))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_UNDO);
-			if (EGUI::StartMenuBody("Redo ", "Ctrl + Y"))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_REDO);
-			if (EGUI::StartMenuBody("Cut ", "Ctrl + X"))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_CUT);
-			if (EGUI::StartMenuBody("Copy ", "Ctrl + C"))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_COPY);
-			if (EGUI::StartMenuBody("Paste ", "Ctrl + V"))	mpEditorEventSys->FireNow(EDITOR_HOTKEY_PASTE);
+			if (EGUI::StartMenuBody("Undo ", "Ctrl + Z"))	mpEditorEventSys->Fire(EDITOR_HOTKEY_UNDO);
+			if (EGUI::StartMenuBody("Redo ", "Ctrl + Y"))	mpEditorEventSys->Fire(EDITOR_HOTKEY_REDO);
+			if (EGUI::StartMenuBody("Cut ", "Ctrl + X"))	mpEditorEventSys->Fire(EDITOR_HOTKEY_CUT);
+			if (EGUI::StartMenuBody("Copy ", "Ctrl + C"))	mpEditorEventSys->Fire(EDITOR_HOTKEY_COPY);
+			if (EGUI::StartMenuBody("Paste ", "Ctrl + V"))	mpEditorEventSys->Fire(EDITOR_HOTKEY_PASTE);
 			EGUI::EndMenuHeader();
 		}
 	}
@@ -622,7 +616,7 @@ namespace Dystopia
 		mTempSaveFile.clear();
 		for (auto& e : mArrTabs)
 			e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
-		mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
+		mpEditorEventSys->Fire(EDITOR_SCENE_CHANGED);
 	}
 
 	void Editor::UpdateKeys()
@@ -819,7 +813,7 @@ namespace Dystopia
 			{
 				EGUI::Display::CloseCurrentPopup();
 				ChangeState(EDITOR_MAIN);
-				mpEditorEventSys->FireNow(EDITOR_HOTKEY_SAVE);
+				mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVE);
 			}
 			EGUI::SameLine();
 			if (EGUI::Display::Button("Cancel"))

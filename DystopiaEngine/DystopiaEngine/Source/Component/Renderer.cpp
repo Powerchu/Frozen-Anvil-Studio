@@ -128,19 +128,14 @@ bool Dystopia::Renderer::HasTransparency(void) const noexcept
 Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 {
 	return static_cast<ComponentDonor<Renderer> *>(EngineCore::GetInstance()->Get<Renderer::SYSTEM>())->RequestComponent(*this);
-
 }
 
 void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
-	//TODO SHANNON
-	if (nullptr != GetOwner())
-	{
-		_out.InsertStartBlock("Renderer");
-		_out << GetOwner()->GetID();
-		_out << mTexturePath;
-		_out.InsertEndBlock("Renderer");
-	}
+	_out.InsertStartBlock("Renderer");
+	_out << GetOwner()->GetID();
+	_out << mTexturePath;
+	_out.InsertEndBlock("Renderer");
 }
 
 void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
@@ -188,8 +183,6 @@ void Dystopia::Renderer::TextureField()
 
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
 	{
-		mTexturePath = t->mPath;
-		mTextureName = GetTextureName();
 		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pTex);
@@ -199,9 +192,9 @@ void Dystopia::Renderer::TextureField()
 
 	if (mpTexture)
 	{
-		EGUI::Indent(80);
-		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 100, 100 });
-		EGUI::UnIndent(80);
+		EGUI::Display::Label("Preview    ");
+		EGUI::SameLine();
+		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 }, false, true);
 	}
 }
 

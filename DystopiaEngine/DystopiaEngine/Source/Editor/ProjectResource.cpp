@@ -45,7 +45,6 @@ namespace Dystopia
 
 	ProjectResource::~ProjectResource()
 	{
-		GetEditorEventHND()->GetEvent(eEditorEvents::EDITOR_LCLICK)->Unbind(this);
 		gpInstance = nullptr;
 	}
 
@@ -119,6 +118,8 @@ namespace Dystopia
 		mFocusedFile = nullptr;
 		mpRootFolder = nullptr;
 		mpCurrentFolder = nullptr;
+
+		GetEditorEventHND()->GetEvent(eEditorEvents::EDITOR_LCLICK)->Unbind(this);
 	}
 
 	void ProjectResource::UpdateSearch()

@@ -16,7 +16,7 @@ namespace Dystopia
 		, mMaxVelocityConstant(800.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.05F)
-		, mResolutionIterations(16)
+		, mResolutionIterations(8)
 	{
 	}
 
