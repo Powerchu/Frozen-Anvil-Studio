@@ -47,6 +47,7 @@ namespace Dystopia
 
 	protected:
 		unsigned mnWidth, mnHeight, mnType, mnID;
+
 	};
 }
 

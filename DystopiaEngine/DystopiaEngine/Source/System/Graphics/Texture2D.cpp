@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <GL/glew.h>
 
-Dystopia::Texture2D::Texture2D(void) noexcept : Texture{ GL_TEXTURE_2D }, mPath{}
+Dystopia::Texture2D::Texture2D(void) noexcept : Texture{ GL_TEXTURE_2D }, mPath{ "" }
 {
 
 }
@@ -54,9 +54,13 @@ Dystopia::Texture2D::Texture2D(const std::string& _strPath, bool _bAlpha) :
 }
 
 Dystopia::Texture2D::Texture2D(unsigned _nWidth, unsigned _nHeight, void* _pData, bool _bAlpha) :
-	Texture{ _nWidth, _nHeight, GL_TEXTURE_2D }, mPath{}
+	Texture{ _nWidth, _nHeight, GL_TEXTURE_2D }, mPath{ "" }
 {
 	InitTexture(_pData, _bAlpha);
+}
+
+Dystopia::Texture2D::~Texture2D(void) noexcept
+{
 }
 
 void Dystopia::Texture2D::GenerateMipmap(void) const
@@ -99,4 +103,3 @@ std::string Dystopia::Texture2D::GetPath() const
 {
 	return mPath;
 }
-

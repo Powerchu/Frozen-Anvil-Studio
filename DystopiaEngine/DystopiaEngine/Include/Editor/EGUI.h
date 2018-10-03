@@ -452,6 +452,16 @@ namespace EGUI
 					    float offsetY = 0.f, const Math::Vec4& _colour = Math::Vec4{ 0.7f, 0.7f, 0.7f, 0.8f });
 		/* =======================================================================================================================
 		Brief:
+				Creates a small circle icon thingy. Like the one you see in unity field boxes.
+				Returns true when clicked
+				For best display, use small radiuses < 10
+		Usage:
+				EGUI::Display::IconCross("something");
+		======================================================================================================================= */
+		bool IconCross(const std::string& _uniqueID, float radius = 10.f, float offsetX = 0.f,
+					   float offsetY = 0.f, const Math::Vec4& _colour = Math::Vec4{ 0.7f, 0.7f, 0.7f, 0.8f });
+		/* =======================================================================================================================
+		Brief:
 				Creates a small game object icon. Returns true when clicked
 		Usage:
 				EGUI::Display::IconGameObj("something");
@@ -505,7 +515,8 @@ namespace EGUI
 				mImgSize = Math::Vec2{ Size().x,  Size().y - imageOffsetY };
 				if (EGUI::Display::Image(id, mImgSize, true))
 		======================================================================================================================= */
-		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize = Math::Vec2{ 30, 30 }, bool _interactive = false);
+		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize = Math::Vec2{ 30, 30 }, 
+				   bool _interactive = false, bool _outlineBG = false);
 	}
 }
 

@@ -12,20 +12,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-
-#include <memory>
 #define _CRTDBG_MAP_ALLOC
 #include <cstdlib>
 #include <crtdbg.h>
-
 #ifdef _DEBUG
-#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
-// allocations to be of _CLIENT_BLOCK type
-#else
-#define DBG_NEW new
+	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
+#include <memory>
 /* System includes */
 #include "System/Window/WindowManager.h"
 #include "System/Window/Window.h"
@@ -88,14 +82,14 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
-	while (!editor->IsClosing())
-	{
-		editor->StartFrame();
-	
-		editor->UpdateFrame(editor->GetDeltaTime());
-		
-		editor->EndFrame();
-	}
+	//while (!editor->IsClosing())
+	//{
+	//	editor->StartFrame();
+	//
+	//	editor->UpdateFrame(editor->GetDeltaTime());
+	//	
+	//	editor->EndFrame();
+	//}
 	editor->Shutdown();
 	delete editor;
 	return 0;
@@ -173,9 +167,9 @@ namespace Dystopia
 			mCurrentState = EDITOR_EXIT;
 			return;
 		}
-
-		LoadTabs();
+		
 		LoadDefaults();
+		LoadTabs();
 		mpInput->Init();
 		mpEditorEventSys->Init();
 		InstallHotkeys();
