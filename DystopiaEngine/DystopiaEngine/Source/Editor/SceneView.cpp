@@ -201,8 +201,6 @@ namespace Dystopia
 			}
 			if (pTarget)
 			{
-				GetMainEditor().SetFocus(*pTarget);
-				PrintToConsoleLog("HitPoint (Screen To world) : [" + pTarget->GetName() + "]");
 				return pTarget;
 			}
 		}
@@ -312,7 +310,11 @@ namespace Dystopia
 	{
 		if (ImGui::IsItemHovered())
 		{
-			if (ImGui::IsMouseClicked(0))	FindMouseObject();
+			if (ImGui::IsMouseClicked(0))
+			{
+				GameObject *pObj = FindMouseObject();
+				if (pObj) GetMainEditor().SetFocus(*pObj);
+			}
 			if (ImGui::IsMouseClicked(1))
 			{
 				mDragging = true;
@@ -354,6 +356,7 @@ namespace Dystopia
 				auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, 
 																			mpGfxSys->LoadTexture(_pFile->mPath));
 				GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
+				GetMainEditor().SetFocus(*pTarget);
 			}
 		}
 	}
