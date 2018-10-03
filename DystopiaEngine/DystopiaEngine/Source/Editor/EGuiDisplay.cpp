@@ -92,9 +92,9 @@ namespace EGUI
 		return ImGui::BeginMainMenuBar();
 	}
 
-	bool StartMenuHeader(const std::string& _label)
+	bool StartMenuHeader(const std::string& _label, bool _enabled)
 	{
-		return ImGui::BeginMenu(_label.c_str());
+		return ImGui::BeginMenu(_label.c_str(), _enabled);
 	}
 
 	bool StartMenuBody(const std::string& _label, const std::string& _shortcut, bool _enabled)

@@ -83,7 +83,7 @@ namespace EGUI
 	float GetLabelSpacing();
 
 	bool StartMainMenuBar();
-	bool StartMenuHeader(const std::string&);
+	bool StartMenuHeader(const std::string&, bool _enabled = true);
 	bool StartMenuBody(const std::string&, const std::string& _shortcut="", bool _enabled = true);
 	void EndMainMenuBar();
 	void EndMenuHeader();

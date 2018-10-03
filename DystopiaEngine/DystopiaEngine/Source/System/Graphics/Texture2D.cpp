@@ -95,7 +95,7 @@ void Dystopia::Texture2D::InitTexture(void* _pData, bool _bAlpha)
 	UnbindTexture();
 }
 
-std::string Dystopia::Texture2D::GetPath() const noexcept
+std::string Dystopia::Texture2D::GetPath() const
 {
 	return mPath;
 }

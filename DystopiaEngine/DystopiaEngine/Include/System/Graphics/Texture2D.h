@@ -28,7 +28,7 @@ namespace Dystopia
 
 		void GenerateMipmap(void) const;
 
-		std::string GetPath() const noexcept;
+		std::string GetPath() const;
 
 	private:
 
