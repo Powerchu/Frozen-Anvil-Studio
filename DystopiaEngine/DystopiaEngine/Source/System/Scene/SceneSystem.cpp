@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/Array.h"
 #include "IO/TextSerialiser.h"
 #include "Utility/DebugAssert.h"
+#include "Editor/Editor.h"
 
 Dystopia::SceneSystem::SceneSystem(void) :
 	mpCurrScene{ nullptr }, mpNextScene{ nullptr }, mLastSavedData{ "" }
@@ -95,12 +96,14 @@ void Dystopia::SceneSystem::SceneChanged(void)
 	mpCurrScene->Shutdown();
 	delete mpCurrScene;
 	mpCurrScene = mpNextScene;
+	mpCurrScene->Init();
 }
 
 void Dystopia::SceneSystem::RestartScene(void)
 {
 	if (mLastSavedData.length())
 	{
+		auto q = Editor::GetInstance();
 		mpCurrScene->PostUpdate();
 		mpCurrScene->Shutdown();
 
@@ -110,6 +113,7 @@ void Dystopia::SceneSystem::RestartScene(void)
 		mpCurrScene->Unserialise(SerialObj);
 		SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
 		SerialObj.ConsumeEndBlock();
+		mpCurrScene->Init();
 	}
 }
 

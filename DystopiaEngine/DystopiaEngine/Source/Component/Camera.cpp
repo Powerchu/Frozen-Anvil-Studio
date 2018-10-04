@@ -234,16 +234,25 @@ void Dystopia::Camera::Serialise(TextSerialiser& _out) const
 
 void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 {
-	uint64_t id;
 	_in.ConsumeStartBlock();
-	_in >> id;
+	_in >> mnOwner;
 	_in.ConsumeEndBlock();
 
-	if (GameObject* owner =
-		EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(id))
+	auto sceneSys		= EngineCore::GetInstance()->GetSystem<SceneSystem>();
+
+	// technically should unserialize into next scene 
+	GameObject* owner	= sceneSys->GetNextScene().FindGameObject(mnOwner);
+	if (owner)
 	{
+		// dont need init cuz next scene will get init-ed when the scene inits
 		owner->AddComponent(this, Camera::TAG{});
-		Init();
+	}
+	else
+	{
+		// in case of reloading current scene, then need re-init
+		owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
+		owner->AddComponent(this, Camera::TAG{});
+		owner->Init();
 	}
 }
 

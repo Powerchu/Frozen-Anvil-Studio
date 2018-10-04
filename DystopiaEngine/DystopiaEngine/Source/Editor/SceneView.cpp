@@ -348,8 +348,8 @@ namespace Dystopia
 		if (Camera* pCam = GetCamera())
 		{
 			GameObject* pTarget			= FindMouseObject();
-			Renderer *pRend = nullptr;
-			if (pTarget && (pRend = pTarget->GetComponent<Renderer>()))
+			Renderer *pRend				= pTarget ? pTarget->GetComponent<Renderer>() : nullptr;
+			if (pRend)
 			{
 				auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, 
 																			pRend->GetTexture());

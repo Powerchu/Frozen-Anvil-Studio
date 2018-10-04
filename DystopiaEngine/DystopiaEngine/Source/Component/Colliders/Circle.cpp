@@ -110,7 +110,7 @@ namespace Dystopia
 	void Circle::Unserialise(TextSerialiser& _in)
 	{
 		_in.ConsumeStartBlock();
-		_in >> mID;					// gObj ID
+		_in >> mnOwner;					// gObj ID
 		_in >> mv3Offset[0];
 		_in >> mv3Offset[1];
 		_in >> mv3Offset[2];
@@ -124,10 +124,22 @@ namespace Dystopia
 		mDebugVertices.clear();
 		mScale[0] = m_radius;
 		mScale[1] = m_radius;
-		if (GameObject* owner = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
+
+		auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+
+		// technically should unserialize into next scene 
+		GameObject* owner = sceneSys->GetNextScene().FindGameObject(mnOwner);
+		if (owner)
 		{
+			// dont need init cuz next scene will get init-ed when the scene inits
 			owner->AddComponent(this, Circle::TAG{});
-			Init();
+		}
+		else
+		{
+			// in case of reloading current scene, then need re-init
+			owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
+			owner->AddComponent(this, Circle::TAG{});
+			owner->Init();
 		}
 	}
 

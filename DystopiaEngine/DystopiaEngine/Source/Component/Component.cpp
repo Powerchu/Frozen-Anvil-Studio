@@ -56,6 +56,11 @@ void Dystopia::Component::Load(void)
 
 }
 
+void Dystopia::Component::Awake(void)
+{
+
+}
+
 void Dystopia::Component::Init(void)
 {
 

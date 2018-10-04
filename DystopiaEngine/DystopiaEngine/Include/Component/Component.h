@@ -47,6 +47,7 @@ namespace Dystopia
 		bool IsActive(void) const;
 		void SetActive(const bool _bEnable);
 
+		virtual void Awake(void);
 		virtual void Load(void);
 		virtual void Init(void);
 
@@ -72,14 +73,9 @@ namespace Dystopia
 	protected:
 		uint64_t mID;
 		unsigned mnFlags;
-
-	private:
-
-		// TODO
-		// Temporary ID -- Will change back to pointer
 		uint64_t mnOwner;
 
-
+	private:
 	};
 }
 

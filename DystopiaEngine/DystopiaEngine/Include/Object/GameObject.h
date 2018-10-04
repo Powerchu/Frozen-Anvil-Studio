@@ -54,6 +54,7 @@ namespace Dystopia
 		void SetStatic(bool _bEnable);
 
 		void Load(void);
+		void Awake(void);
 		void Init(void);
 
 		void Update(const float _fDeltaTime);

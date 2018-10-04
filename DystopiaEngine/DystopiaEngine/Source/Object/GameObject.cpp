@@ -97,9 +97,14 @@ void Dystopia::GameObject::Load(void)
 	ForcePing(mBehaviours, Load);
 }
 
+void Dystopia::GameObject::Awake(void)
+{
+
+}
+
 void Dystopia::GameObject::Init(void)
 {
-//	ForcePing(mComponents, Init);
+	ForcePing(mComponents, Init);
 	ForcePing(mBehaviours, Init);
 }
 

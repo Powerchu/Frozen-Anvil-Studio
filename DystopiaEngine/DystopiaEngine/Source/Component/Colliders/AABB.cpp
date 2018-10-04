@@ -101,7 +101,7 @@ namespace Dystopia
 	void  AABB::Unserialise(TextSerialiser& _in)
 	{
 		_in.ConsumeStartBlock();
-		_in >> mID;
+		_in >> mnOwner;
 		_in >> mv3Offset[0];
 		_in >> mv3Offset[1];
 		_in >> mv3Offset[2];
@@ -109,11 +109,21 @@ namespace Dystopia
 		_in >> mfWidth;
 		_in.ConsumeEndBlock();
 
-		if (GameObject* owner =
-			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
+		auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+
+		// technically should unserialize into next scene 
+		GameObject* owner = sceneSys->GetNextScene().FindGameObject(mnOwner);
+		if (owner)
 		{
+			// dont need init cuz next scene will get init-ed when the scene inits
 			owner->AddComponent(this, AABB::TAG{});
-			Init();
+		}
+		else
+		{
+			// in case of reloading current scene, then need re-init
+			owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
+			owner->AddComponent(this, AABB::TAG{});
+			owner->Init();
 		}
 	}
 

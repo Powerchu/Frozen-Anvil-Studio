@@ -285,7 +285,7 @@ namespace Dystopia
 	{
 		//int physicsType;
 		_in.ConsumeStartBlock();
-		_in >> mID;						// gObjID
+		_in >> mnOwner;						// gObjID
 		_in >> mfAngleDeg;				// Angle in degrees
 		_in >> mfLinearDamping;			// Linear Drag
 		_in >> mfAngularDrag;			// Angular Drag
@@ -303,11 +303,21 @@ namespace Dystopia
 
 		//mPhysicsType = static_cast<PhysicsType>(physicsType);
 
-		if (GameObject* owner =
-			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
+		auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+
+		// technically should unserialize into next scene 
+		GameObject* owner = sceneSys->GetNextScene().FindGameObject(mnOwner);
+		if (owner)
 		{
+			// dont need init cuz next scene will get init-ed when the scene inits
 			owner->AddComponent(this, RigidBody::TAG{});
-			Init();
+		}
+		else
+		{
+			// in case of reloading current scene, then need re-init
+			owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
+			owner->AddComponent(this, RigidBody::TAG{});
+			owner->Init();
 		}
 	}
 
