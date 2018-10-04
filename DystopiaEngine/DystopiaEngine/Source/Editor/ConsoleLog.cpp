@@ -118,11 +118,15 @@ namespace Dystopia
 			{
 				for (int i = 0; i < count; ++i)
 				{
-					auto *p = (*(Admin::g_AdminFuncs[fnName]))(var + std::to_string(i));
-					p->GetComponent<Transform>()->SetPosition(Math::Pt3D{ 5.f * i , 0, 0.1f * i});
-					GetCurrentScene()->GetAllGameObjects().EmplaceBack(Utility::Move(*p));
-					GetCurrentScene()->GetAllGameObjects().back().Init();
-					delete p;
+					for (int j = 0; j < count; ++j)
+					{
+						auto *p = (*(Admin::g_AdminFuncs[fnName]))(var + std::to_string(i));
+						p->GetComponent<Transform>()->SetPosition(Math::Vec3D{ 24.f * j , 24.f * i, 1 });
+						GetCurrentScene()->GetAllGameObjects().EmplaceBack(Utility::Move(*p));
+						GetCurrentScene()->GetAllGameObjects().back().Init();
+						delete p;
+					}
+					
 				}
 			}
 

@@ -61,6 +61,30 @@ namespace Dystopia
 			return pObject;
 		}
 
+		GameObject* CreatePerformanceObjCol(const std::string& _name)
+		{
+			GameObject *pObject = new GameObject{ GUIDGenerator::GetUniqueID() };
+			pObject->SetName(_name);
+			pObject->SetActive(true);
+			pObject->Init();
+			pObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 16, 16, 1 });
+			const auto rend = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			const auto rigid = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
+			const auto col = static_cast<ComponentDonor<Convex>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
+			pObject->AddComponent(rend, Renderer::TAG{});
+			pObject->AddComponent(rigid, RigidBody::TAG{});
+			pObject->AddComponent(col, Collider::TAG{});
+			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Editor/red_box.png"));
+			rend->SetOwner(pObject);
+			rend->Init();
+			rigid->SetOwner(pObject);
+			rigid->Init();
+			col->SetOwner(pObject);
+			col->Init();
+			pObject->Init();
+			return pObject;
+		}
+
 		GameObject* CreateCamera(const std::string& _name)
 		{
 			GameObject *pObject = CreateGameObj(_name);

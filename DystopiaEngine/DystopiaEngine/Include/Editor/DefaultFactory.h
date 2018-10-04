@@ -24,6 +24,7 @@ namespace Dystopia
 	{
 		GameObject* CreateGameObj(const std::string& _name);
 		GameObject* CreatePerformanceObj(const std::string& _name);
+		GameObject* CreatePerformanceObjCol(const std::string& _name);
 
 		GameObject* CreateCamera(const std::string& _name);
 
