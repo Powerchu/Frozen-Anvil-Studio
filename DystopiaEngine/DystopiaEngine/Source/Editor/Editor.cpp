@@ -602,11 +602,8 @@ namespace Dystopia
 
 	void Editor::TempLoad()
 	{
-		if (!mTempSaveFile.length()) 
-			__debugbreak();
-
 		RemoveFocus();
-		mpSceneSystem->LoadScene(mTempSaveFile);
+		mpSceneSystem->RestartScene();
 		remove(mTempSaveFile.c_str());
 		mTempSaveFile.clear();
 		for (auto& e : mArrTabs)

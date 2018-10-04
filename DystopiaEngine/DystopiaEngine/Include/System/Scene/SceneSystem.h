@@ -43,8 +43,7 @@ namespace Dystopia
 
 //		void ReceiveMessage(const Message&);
 
-		void RestartScene();
-		void ChangeScene();
+		void RestartScene(void);
 		void LoadScene(const std::string& _strName);
 		void SaveScene(const std::string & _strName, const std::string& _sceneName = "defaultSceneName");
 
@@ -57,6 +56,8 @@ namespace Dystopia
 
 		Scene *mpNextScene;
 		Scene *mpCurrScene;
+		std::string mLastSavedData;
+		void SceneChanged(void);
 	};
 
 	// ============================================ FUNCTION DEFINITIONS ============================================ // 

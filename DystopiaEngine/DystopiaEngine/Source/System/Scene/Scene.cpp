@@ -17,13 +17,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/ComponentList.h"
 #include "System/Driver/Driver.h"
+#include "Utility/GUID.h"
 
 #include <string>
 #include <utility>
 
 
 Dystopia::Scene::Scene(void) :
-	mGameObjs{ 1000 }, mName{ "Untitled" }
+	mGameObjs{ 1000 }, mName{ "Untitled" }, mID{ GUIDGenerator::GetUniqueID() }
 {
 }
 
@@ -51,10 +52,9 @@ Dystopia::GameObject* Dystopia::Scene::FindGameObject(const std::string& _strNam
 
 void Dystopia::Scene::Init(void)
 {
-	for (auto& obj : mGameObjs)
-	{
-		obj.Init();
-	}
+	for (auto& e : mGameObjs)
+		if (e.GetFlags())
+			e.Init();
 }
 
 void Dystopia::Scene::FixedUpdate(float _dt)
@@ -98,11 +98,11 @@ void Dystopia::Scene::Shutdown(void)
 	mGameObjs.clear();
 }
 
-
 void Dystopia::Scene::Serialise(TextSerialiser & _TextSerialiser) const
 {
-	_TextSerialiser.Write(std::to_string(mGameObjs.size()));
+	_TextSerialiser << mID;
 	_TextSerialiser << mName;
+	_TextSerialiser.Write(std::to_string(mGameObjs.size()));
 
 	for (auto & elem : mGameObjs)
 		elem.Serialise(_TextSerialiser);
@@ -111,8 +111,10 @@ void Dystopia::Scene::Serialise(TextSerialiser & _TextSerialiser) const
 void Dystopia::Scene::Unserialise(TextSerialiser & _TextUnserialiser)
 {
 	size_t Size;
-	_TextUnserialiser.Read(Size);
+	_TextUnserialiser >> mID;
 	_TextUnserialiser >> mName;
+	_TextUnserialiser.Read(Size);
+
 	for (int i = 0; i < Size; ++i)
 	{
 		auto pGameObj = InsertGameObject();
@@ -120,12 +122,17 @@ void Dystopia::Scene::Unserialise(TextSerialiser & _TextUnserialiser)
 	}
 }
 
+uint64_t Dystopia::Scene::GetSceneID(void) const
+{
+	return mID;
+}
+
 void Dystopia::Scene::SetSceneName(const std::string& _name)
 {
 	mName = _name;
 }
 
-std::string Dystopia::Scene::GetSceneName() const
+std::string Dystopia::Scene::GetSceneName(void) const
 {
 	return mName;
 }
