@@ -295,6 +295,11 @@ void Dystopia::GraphicsSystem::Update(float)
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
 	{
+
+#if EDITOR
+		if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
+
 		// If the camera is inactive, skip
 		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{

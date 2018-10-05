@@ -141,7 +141,7 @@ Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Renderer");
-	_out << GetOwner()->GetID();
+	_out << mnOwner;
 	_out << mTexturePath;
 	_out.InsertEndBlock("Renderer");
 }
@@ -162,12 +162,15 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 		// dont need init cuz next scene will get init-ed when the scene inits
 		owner->AddComponent(this, Renderer::TAG{});
 	}
-	else
+	else 
 	{
-		// in case of reloading current scene, then need re-init
 		owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
-		owner->AddComponent(this, Renderer::TAG{});
-		owner->Init();
+		if (owner)
+		{
+			// in case of reloading current scene, then need re-init
+			owner->AddComponent(this, Renderer::TAG{});
+			owner->Init();
+		}
 	}
 }
 

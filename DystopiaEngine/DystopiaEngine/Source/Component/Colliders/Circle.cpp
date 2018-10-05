@@ -94,7 +94,7 @@ namespace Dystopia
 	{
 
 		_out.InsertStartBlock("Circle_Collider2D");
-		_out << GetOwner()->GetID();						// gObj ID
+		_out << mnOwner;						// gObj ID
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);
@@ -136,10 +136,13 @@ namespace Dystopia
 		}
 		else
 		{
-			// in case of reloading current scene, then need re-init
 			owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
-			owner->AddComponent(this, Circle::TAG{});
-			owner->Init();
+			if (owner)
+			{
+				// in case of reloading current scene, then need re-init
+				owner->AddComponent(this, Circle::TAG{});
+				owner->Init();
+			}
 		}
 	}
 

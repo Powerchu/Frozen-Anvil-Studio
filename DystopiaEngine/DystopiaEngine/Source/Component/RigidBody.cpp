@@ -264,7 +264,7 @@ namespace Dystopia
 	void RigidBody::Serialise(TextSerialiser & _out) const
 	{
 		_out.InsertStartBlock("RigidBody");
-		_out << GetOwner()->GetID();	// gObjID
+		_out << mnOwner;	// gObjID
 		_out << mfAngleDeg;				// Angle in degrees
 		_out << mfLinearDamping;		// Linear Drag
 		_out << mfAngularDrag;			// Angular Drag
@@ -314,10 +314,13 @@ namespace Dystopia
 		}
 		else
 		{
-			// in case of reloading current scene, then need re-init
 			owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
-			owner->AddComponent(this, RigidBody::TAG{});
-			owner->Init();
+			if (owner)
+			{
+				// in case of reloading current scene, then need re-init
+				owner->AddComponent(this, RigidBody::TAG{});
+				owner->Init();
+			}
 		}
 	}
 

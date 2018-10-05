@@ -89,7 +89,7 @@ namespace Dystopia
 	void  AABB::Serialise(TextSerialiser& _out) const
 	{
 		_out.InsertStartBlock("Box_Collider2D");
-		_out << GetOwner()->GetID();					// gObj ID
+		_out << mnOwner;					// gObj ID
 		_out << mv3Offset[0];
 		_out << mv3Offset[1];
 		_out << mv3Offset[2];
@@ -120,10 +120,13 @@ namespace Dystopia
 		}
 		else
 		{
-			// in case of reloading current scene, then need re-init
 			owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
-			owner->AddComponent(this, AABB::TAG{});
-			owner->Init();
+			if (owner)
+			{
+				// in case of reloading current scene, then need re-init
+				owner->AddComponent(this, AABB::TAG{});
+				owner->Init();
+			}
 		}
 	}
 

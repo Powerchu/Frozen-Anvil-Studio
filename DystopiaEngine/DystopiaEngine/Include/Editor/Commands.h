@@ -89,7 +89,7 @@ namespace Dystopia
 		bool IsRecording() const;
 
 		// Save Callback
-		void					SaveCallback();
+		void SaveCallback();
 
 	private:
 		RecordBase				*mpRecorder;

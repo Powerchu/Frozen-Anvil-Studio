@@ -57,7 +57,7 @@ namespace Dystopia
 	void Convex::Serialise(TextSerialiser& _out) const
 	{
 		_out.InsertStartBlock("Convex_Collider");
-		_out << GetOwner()->GetID();					     // gObj ID
+		_out << mnOwner;					     // gObj ID
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);
@@ -131,10 +131,13 @@ namespace Dystopia
 		}
 		else
 		{
-			// in case of reloading current scene, then need re-init
 			owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
-			owner->AddComponent(this, Convex::TAG{});
-			owner->Init();
+			if (owner)
+			{
+				// in case of reloading current scene, then need re-init
+				owner->AddComponent(this, Convex::TAG{});
+				owner->Init();
+			}
 		}
 	}
 
@@ -515,7 +518,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Collider>(GetOwner()->GetID(), &mv3Offset);
+				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &mv3Offset);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
@@ -548,7 +551,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mNumPoints);
+				EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mNumPoints);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
@@ -591,7 +594,7 @@ namespace Dystopia
 					case EGUI::eDragStatus::eDRAGGING:
 						break;
 					case EGUI::eDragStatus::eSTART_DRAG:
-						EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &(c.mPosition));
+						EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &(c.mPosition));
 						break;
 					case EGUI::eDragStatus::eDEACTIVATED:
 						EGUI::GetCommandHND()->EndRecording();
@@ -629,7 +632,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Collider>(GetOwner()->GetID(), &mScale);
+				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &mScale);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();

@@ -59,7 +59,7 @@ namespace Dystopia
 	void CharacterController::Serialise(TextSerialiser& _out) const
 	{
 		_out.InsertStartBlock("Character_Controller");
-		_out << GetOwner()->GetID();					// gObjID
+		_out << mnOwner;					// gObjID
 		_out.InsertEndBlock("Character_Controller");
 	}
 
@@ -80,10 +80,13 @@ namespace Dystopia
 		}
 		else
 		{
-			// in case of reloading current scene, then need re-init
 			owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
-			owner->AddComponent(this, CharacterController::TAG{});
-			owner->Init();
+			if (owner)
+			{
+				// in case of reloading current scene, then need re-init
+				owner->AddComponent(this, CharacterController::TAG{});
+				owner->Init();
+			}
 		}
 	}
 

@@ -228,7 +228,7 @@ Dystopia::Camera* Dystopia::Camera::Duplicate(void) const
 void Dystopia::Camera::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Camera");
-	_out << GetOwner()->GetID();
+	_out << mnOwner;
 	_out.InsertEndBlock("Camera");
 }
 
@@ -249,10 +249,13 @@ void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 	}
 	else
 	{
-		// in case of reloading current scene, then need re-init
 		owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
-		owner->AddComponent(this, Camera::TAG{});
-		owner->Init();
+		if (owner)
+		{
+			// in case of reloading current scene, then need re-init
+			owner->AddComponent(this, Camera::TAG{});
+			owner->Init();
+		}
 	}
 }
 

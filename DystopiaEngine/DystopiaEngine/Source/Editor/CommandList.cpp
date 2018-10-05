@@ -53,7 +53,7 @@ bool Dystopia::ComdInsertObject::ExecuteDo()
 	obj.Identify();
 	obj.Init();
 	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
-	for (auto& c : mpObj->GetAllComponents())
+	for (auto& c : obj.GetAllComponents())
 		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 
 	if (mFocusBack)
@@ -173,7 +173,7 @@ bool Dystopia::ComdDeleteObject::ExecuteUndo()
 	obj.Identify();
 	obj.Init();
 	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
-	for (auto& c : mpObj->GetAllComponents())
+	for (auto& c : obj.GetAllComponents())
 		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 
 	if (mFocusBack)
