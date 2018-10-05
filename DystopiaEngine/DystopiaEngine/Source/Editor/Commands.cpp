@@ -160,6 +160,16 @@ namespace Dystopia
 	{
 		return mUnsavedChanges;
 	}
+
+	std::deque<Commands*>& CommandHandler::GetDeqRedo(void)
+	{
+		return mDeqRedo;
+	}
+
+	std::deque<Commands*>& CommandHandler::GetDeqUndo(void)
+	{
+		return mDeqUndo;
+	}
 }
 
 

@@ -35,6 +35,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System//Behaviour/BehaviourSystem.h"
 #include "System/Physics/PhysicsSystem.h"
 
+#include "Component/Component.h"
+
 /* Editor includes */
 #include "Editor/EGUI.h"
 #include "Editor/Editor.h"
@@ -794,6 +796,48 @@ namespace Dystopia
 	EditorInput* Editor::GetEditorInput()
 	{
 		return mpInput;
+	}
+
+	void Editor::ReAttachComponent(Component* _pComponent)
+	{
+		auto& undo = mpComdHandler->GetDeqUndo();
+		auto& redo = mpComdHandler->GetDeqRedo();
+
+		GameObject* pObj = nullptr;
+		for (auto& e : undo)
+		{
+			pObj = e->RetrieveGameObject();
+			if (pObj && (pObj->GetID() == _pComponent->GetOwnerID()))
+			{
+				for (auto & c : pObj->GetAllComponents())
+				{
+					if (c->GetID() == _pComponent->GetID())
+					{
+						c = _pComponent;
+						pObj->Identify();
+						pObj->Init();
+						return;
+					}
+				}
+			}
+		}
+		for (auto& e : redo)
+		{
+			pObj = e->RetrieveGameObject();
+			if (pObj && (pObj->GetID() == _pComponent->GetOwnerID()))
+			{
+				for (auto & c : pObj->GetAllComponents())
+				{
+					if (c->GetID() == _pComponent->GetID())
+					{
+						c = _pComponent;
+						pObj->Identify();
+						pObj->Init();
+						return;
+					}
+				}
+			}
+		}
 	}
 
 	void Editor::PromptSaving()

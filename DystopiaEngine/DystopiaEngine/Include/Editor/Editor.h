@@ -33,6 +33,7 @@ namespace Dystopia
 	class Profiler;
 	class GameObject;
 	class BehaviourSystem;
+	class Component;
 
 	enum ePayloadTags;
 	enum eEditorState
@@ -65,20 +66,23 @@ namespace Dystopia
 		float			GetDeltaTime() const;
 
 		/* State change stuff */
-		void			ChangeState(eEditorState);
 		bool			IsClosing() const;
 		eEditorState	CurrentState() const;
+		void			ChangeState(eEditorState);
 		void			OpenScene(const std::wstring& _path, const std::wstring& _name);
 
 		/* Game Object stuff */
-		void			SetLastPayloadFocus(ePayloadTags);
-		void			SetFocus(GameObject&);
 		void			RemoveFocus();
-		GameObject*		FindGameObject(const uint64_t& _id) const;
+		void			SetFocus(GameObject&);
+		void			SetLastPayloadFocus(ePayloadTags);
 		GameObject*		GetCurrentFocusGameObj();
+		GameObject*		FindGameObject(const uint64_t& _id) const;
 
 		/* Editor Input */
 		EditorInput*	GetEditorInput();
+
+		/* Reattach stuff */
+		void			ReAttachComponent(Component*);
 
 	private:
 		Editor(void);

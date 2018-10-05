@@ -103,7 +103,6 @@ void Dystopia::SceneSystem::RestartScene(void)
 {
 	if (mLastSavedData.length())
 	{
-		auto q = Editor::GetInstance();
 		mpCurrScene->PostUpdate();
 		mpCurrScene->Shutdown();
 

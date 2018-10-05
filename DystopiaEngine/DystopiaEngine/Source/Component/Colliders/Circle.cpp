@@ -2,12 +2,12 @@
 #include "System/Collision/CollisionEvent.h"
 #include "System/Scene/SceneSystem.h"
 #include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 #include "Math/Vector4.h"
 #include "Component/RigidBody.h"
 #include "Component/Circle.h"
 #include "IO/TextSerialiser.h"
 #include "Component/Convex.h"
-
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -92,9 +92,8 @@ namespace Dystopia
 	/*Serialise and Unserialise*/
 	void Circle::Serialise(TextSerialiser& _out) const
 	{
-
 		_out.InsertStartBlock("Circle_Collider2D");
-		_out << mnOwner;						// gObj ID
+		Component::Serialise(_out);
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);
@@ -110,7 +109,7 @@ namespace Dystopia
 	void Circle::Unserialise(TextSerialiser& _in)
 	{
 		_in.ConsumeStartBlock();
-		_in >> mnOwner;					// gObj ID
+		Component::Unserialise(_in);
 		_in >> mv3Offset[0];
 		_in >> mv3Offset[1];
 		_in >> mv3Offset[2];
@@ -125,25 +124,6 @@ namespace Dystopia
 		mScale[0] = m_radius;
 		mScale[1] = m_radius;
 
-		auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-
-		// technically should unserialize into next scene 
-		GameObject* owner = sceneSys->GetNextScene().FindGameObject(mnOwner);
-		if (owner)
-		{
-			// dont need init cuz next scene will get init-ed when the scene inits
-			owner->AddComponent(this, Circle::TAG{});
-		}
-		else
-		{
-			owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
-			if (owner)
-			{
-				// in case of reloading current scene, then need re-init
-				owner->AddComponent(this, Circle::TAG{});
-				owner->Init();
-			}
-		}
 	}
 
 	/*Collision Check Functions*/

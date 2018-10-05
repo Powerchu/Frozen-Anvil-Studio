@@ -66,6 +66,7 @@ namespace Dystopia
 		virtual void EditorUI(void) noexcept;
 
 		uint64_t GetID(void) const;
+		uint64_t GetOwnerID(void) const;
 		unsigned GetFlags(void) const;
 		void SetFlags(eObjFlag);
 		void RemoveFlags(eObjFlag _flags);

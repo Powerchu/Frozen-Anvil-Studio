@@ -21,6 +21,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 /* Insert Game Object Command  ****************************************************************************/
 
+Dystopia::GameObject* Dystopia::Commands::RetrieveGameObject()
+{
+	return nullptr;
+}
+
 Dystopia::ComdInsertObject::ComdInsertObject(GameObject* _pObj, Scene * _pScene, bool * _notify)
 	: mObjID{ _pObj->GetID() }, mpObj{ _pObj }, mpScene{ _pScene }, mFocusBack{ false },
 	mpNotify{ _notify }
@@ -100,6 +105,11 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	p->Destroy();
 	return true;
+}
+
+Dystopia::GameObject* Dystopia::ComdInsertObject::RetrieveGameObject()
+{
+	return mpObj;
 }
 
 bool Dystopia::ComdInsertObject::Unchanged() const 
@@ -188,6 +198,11 @@ bool Dystopia::ComdDeleteObject::ExecuteUndo()
 	delete mpObj;
 	mpObj = nullptr;
 	return true;
+}
+
+Dystopia::GameObject* Dystopia::ComdDeleteObject::RetrieveGameObject()
+{
+	return mpObj;
 }
 
 bool Dystopia::ComdDeleteObject::Unchanged() const

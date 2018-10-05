@@ -14,13 +14,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/RigidBody.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 #include "System/Logger/LoggerSystem.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
-#if EDITOR
 #include "IO/TextSerialiser.h"
+
+#if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
+#include "Editor/Editor.h"
 #endif 
 
 #include <cmath>
@@ -264,7 +267,7 @@ namespace Dystopia
 	void RigidBody::Serialise(TextSerialiser & _out) const
 	{
 		_out.InsertStartBlock("RigidBody");
-		_out << mnOwner;	// gObjID
+		Component::Serialise(_out);
 		_out << mfAngleDeg;				// Angle in degrees
 		_out << mfLinearDamping;		// Linear Drag
 		_out << mfAngularDrag;			// Angular Drag
@@ -285,7 +288,7 @@ namespace Dystopia
 	{
 		//int physicsType;
 		_in.ConsumeStartBlock();
-		_in >> mnOwner;						// gObjID
+		Component::Unserialise(_in);
 		_in >> mfAngleDeg;				// Angle in degrees
 		_in >> mfLinearDamping;			// Linear Drag
 		_in >> mfAngularDrag;			// Angular Drag
@@ -303,25 +306,6 @@ namespace Dystopia
 
 		//mPhysicsType = static_cast<PhysicsType>(physicsType);
 
-		auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-
-		// technically should unserialize into next scene 
-		GameObject* owner = sceneSys->GetNextScene().FindGameObject(mnOwner);
-		if (owner)
-		{
-			// dont need init cuz next scene will get init-ed when the scene inits
-			owner->AddComponent(this, RigidBody::TAG{});
-		}
-		else
-		{
-			owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
-			if (owner)
-			{
-				// in case of reloading current scene, then need re-init
-				owner->AddComponent(this, RigidBody::TAG{});
-				owner->Init();
-			}
-		}
 	}
 
 	void RigidBody::DebugPrint()

@@ -16,8 +16,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/GameObject.h"
 #include "System/Driver/Driver.h"
 #include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
 #include "Utility/Utility.h"
 #include "Utility/GUID.h"
+
+#if EDITOR
+#include "Editor/EGUI.h"
+#include "Editor/Editor.h"
+#endif
 
 Dystopia::Component::Component(void) noexcept
 	: mnFlags{ FLAG_NONE }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }, mID{ GUIDGenerator::GetUniqueID() }
@@ -26,7 +32,7 @@ Dystopia::Component::Component(void) noexcept
 }
 
 Dystopia::Component::Component(GameObject * _pOwner) noexcept
-	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }, mID{ _pOwner->GetID() }
+	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }, mID{ GUIDGenerator::GetUniqueID() }
 {
 }
 
@@ -94,6 +100,11 @@ Dystopia::GameObject* Dystopia::Component::GetOwner(void) const
 	return EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject(mnOwner);
 }
 
+uint64_t Dystopia::Component::GetOwnerID(void) const
+{
+	return mnOwner;
+}
+
 
 Dystopia::Component* Dystopia::Component::Duplicate(void) const
 {
@@ -123,4 +134,33 @@ void Dystopia::Component::SetFlags(eObjFlag _flags)
 void Dystopia::Component::RemoveFlags(eObjFlag _flags)
 {
 	mnFlags &= ~_flags;
+}
+
+void Dystopia::Component::Serialise(TextSerialiser& _out) const
+{
+	_out << mID;
+	_out << mnFlags;
+	_out << mnOwner;
+}
+
+void Dystopia::Component::Unserialise(TextSerialiser& _in)
+{
+	_in >> mID;
+	_in >> mnFlags;
+	_in >> mnOwner;
+
+	auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+	GameObject* owner = sceneSys->GetActiveScene().FindGameObject(mnOwner);
+
+	if (owner)
+	{
+		// dont need init cuz next scene will get init-ed when the scene inits
+		owner->AddComponent(this, Component::TAG{});
+	}
+#if EDITOR
+	else if (mnFlags & eObjFlag::FLAG_EDITOR_OBJ)
+	{
+		Editor::GetInstance()->ReAttachComponent(this);
+	}
+#endif 
 }

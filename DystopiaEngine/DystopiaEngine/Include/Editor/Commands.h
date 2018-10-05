@@ -91,6 +91,9 @@ namespace Dystopia
 		// Save Callback
 		void SaveCallback();
 
+		std::deque<Commands*>& GetDeqRedo(void);
+		std::deque<Commands*>& GetDeqUndo(void);
+
 	private:
 		RecordBase				*mpRecorder;
 		std::deque<Commands*>	mDeqRedo;

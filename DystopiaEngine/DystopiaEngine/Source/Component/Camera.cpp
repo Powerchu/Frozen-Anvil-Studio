@@ -27,8 +27,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #if EDITOR
 #include "Editor/EGUI.h"
+#include "Editor/Editor.h"
 #endif
-
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
 	mViewport{0, 0, _fWidth, _fHeight}, mView{}, mProjection{},
@@ -228,35 +228,16 @@ Dystopia::Camera* Dystopia::Camera::Duplicate(void) const
 void Dystopia::Camera::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Camera");
-	_out << mnOwner;
+	Component::Serialise(_out);
 	_out.InsertEndBlock("Camera");
 }
 
 void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 {
 	_in.ConsumeStartBlock();
-	_in >> mnOwner;
+	Component::Unserialise(_in);
 	_in.ConsumeEndBlock();
 
-	auto sceneSys		= EngineCore::GetInstance()->GetSystem<SceneSystem>();
-
-	// technically should unserialize into next scene 
-	GameObject* owner	= sceneSys->GetNextScene().FindGameObject(mnOwner);
-	if (owner)
-	{
-		// dont need init cuz next scene will get init-ed when the scene inits
-		owner->AddComponent(this, Camera::TAG{});
-	}
-	else
-	{
-		owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
-		if (owner)
-		{
-			// in case of reloading current scene, then need re-init
-			owner->AddComponent(this, Camera::TAG{});
-			owner->Init();
-		}
-	}
 }
 
 void Dystopia::Camera::EditorUI(void) noexcept

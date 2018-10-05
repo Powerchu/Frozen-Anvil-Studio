@@ -331,3 +331,13 @@ void Dystopia::Transform::EditorUI(void) noexcept
 #endif 
 }
 
+Dystopia::Transform& Dystopia::Transform::operator=(const Dystopia::Transform& _rhs)
+{
+	mbChanged	= _rhs.mbChanged;
+	mMatrix		= _rhs.mMatrix;
+	mScale		= _rhs.mScale;
+	mPosition	= _rhs.mPosition;
+	mRotation	= _rhs.mRotation;
+	return *this;
+}
+

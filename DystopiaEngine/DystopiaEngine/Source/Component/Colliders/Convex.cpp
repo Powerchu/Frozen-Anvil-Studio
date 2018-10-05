@@ -4,11 +4,16 @@
 #include "Component/Convex.h"
 #include "Component/RigidBody.h"
 #include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 #include "IO/TextSerialiser.h"
 #include "Component/Circle.h"
 #include "Component/Transform.h"
-#include "Editor/EGUI.h"
 #include "Math/Quaternion.h"
+
+#if EDITOR
+#include "Editor/Editor.h"
+#include "Editor/EGUI.h"
+#endif
 
 namespace Dystopia
 {
@@ -57,7 +62,7 @@ namespace Dystopia
 	void Convex::Serialise(TextSerialiser& _out) const
 	{
 		_out.InsertStartBlock("Convex_Collider");
-		_out << mnOwner;					     // gObj ID
+		Component::Serialise(_out);
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);
@@ -89,7 +94,7 @@ namespace Dystopia
 		float tmp_x, tmp_y, tmp_z;
 
 		_in.ConsumeStartBlock();
-		_in >> mnOwner;				// gObj ID
+		Component::Unserialise(_in);
 		_in >> mv3Offset[0];		// offset for colliders
 		_in >> mv3Offset[1];
 		_in >> mv3Offset[2];
@@ -120,25 +125,6 @@ namespace Dystopia
 
 		_in.ConsumeEndBlock();
 
-		auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-
-		// technically should unserialize into next scene 
-		GameObject* owner = sceneSys->GetNextScene().FindGameObject(mnOwner);
-		if (owner)
-		{
-			// dont need init cuz next scene will get init-ed when the scene inits
-			owner->AddComponent(this, Convex::TAG{});
-		}
-		else
-		{
-			owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
-			if (owner)
-			{
-				// in case of reloading current scene, then need re-init
-				owner->AddComponent(this, Convex::TAG{});
-				owner->Init();
-			}
-		}
 	}
 
 	Convex * Convex::Duplicate() const

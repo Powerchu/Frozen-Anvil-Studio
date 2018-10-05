@@ -274,7 +274,7 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	p->mnID = GUIDGenerator::GetUniqueID();
 	p->mnFlags = mnFlags;
 	p->mName = mName;
-	p->mTransform.SetOwner(p);
+	p->mTransform = mTransform;
 
 	for (auto& c : mComponents)
 	{

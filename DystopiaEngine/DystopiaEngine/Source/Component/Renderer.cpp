@@ -28,6 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
+#include "Editor/Editor.h"
 #endif 
 
 
@@ -141,7 +142,7 @@ Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Renderer");
-	_out << mnOwner;
+	Component::Serialise(_out);
 	_out << mTexturePath;
 	_out.InsertEndBlock("Renderer");
 }
@@ -149,29 +150,9 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 {
 	_in.ConsumeStartBlock();
-	_in >> mnOwner;
+	Component::Unserialise(_in);
 	_in >> mTexturePath;
 	_in.ConsumeEndBlock();
-	
-	auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-
-	// technically should unserialize into next scene 
-	GameObject* owner = sceneSys->GetNextScene().FindGameObject(mnOwner);
-	if (owner)
-	{
-		// dont need init cuz next scene will get init-ed when the scene inits
-		owner->AddComponent(this, Renderer::TAG{});
-	}
-	else 
-	{
-		owner = sceneSys->GetCurrentScene().FindGameObject(mnOwner);
-		if (owner)
-		{
-			// in case of reloading current scene, then need re-init
-			owner->AddComponent(this, Renderer::TAG{});
-			owner->Init();
-		}
-	}
 }
 
 std::string Dystopia::Renderer::GetTextureName()

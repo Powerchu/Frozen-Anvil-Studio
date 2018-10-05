@@ -29,6 +29,7 @@ namespace Dystopia
 		virtual bool ExecuteDo() = 0;
 		virtual bool ExecuteUndo() = 0;
 		virtual bool Unchanged() const = 0;
+		virtual GameObject* RetrieveGameObject();
 		virtual ~Commands() {}
 	};
 
@@ -45,6 +46,7 @@ namespace Dystopia
 		bool ExecuteDo() override;
 		bool ExecuteUndo() override;
 		bool Unchanged() const;
+		GameObject* RetrieveGameObject();
 
 	private:
 		bool *mpNotify;
@@ -61,6 +63,7 @@ namespace Dystopia
 		bool ExecuteDo() override;
 		bool ExecuteUndo() override;
 		bool Unchanged() const;
+		GameObject* RetrieveGameObject();
 
 	private:
 		bool *mpNotify;
