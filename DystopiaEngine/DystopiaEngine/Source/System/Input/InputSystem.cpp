@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Window/WindowManager.h"
 #include "System/Window/Window.h"
 #include "System/Driver/Driver.h"
+#include "Component/CharacterController.h"
 
 #include "Math/Vector2.h"
 #include "Math/Vector4.h"
@@ -23,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN			// Exclude rare stuff from Window's header
 #include <Windows.h>
+#include "Object/ObjectFlags.h"
 #undef  WIN32_LEAN_AND_MEAN			// Stop define from spilling into code
 #undef NOMINMAX
 
@@ -71,7 +73,7 @@ bool Dystopia::InputManager::Init(void)
 	return true;
 }
 
-void Dystopia::InputManager::Update(float)
+void Dystopia::InputManager::Update(float _dt)
 {
 	mMouseInput.mnWheel = 0;
 	for (unsigned n = 0; n < eUserButton::TOTAL_USERBUTTONS; ++n)
@@ -82,11 +84,30 @@ void Dystopia::InputManager::Update(float)
 		mButtonMap[n].mbReleased  = !bState &&  mButtonMap[n].mbPressed;
 		mButtonMap[n].mbPressed   =  bState;
 	}
+
+	for (auto& control : mComponents)
+	{
+		if (control.GetOwner())
+		{
+			control.MovePlayer(_dt);
+		}
+	}
 }
 
 void Dystopia::InputManager::Shutdown(void)
 {
 
+}
+
+void Dystopia::InputManager::PostUpdate()
+{
+	for (auto& control : mComponents)
+	{
+		if (control.GetFlags() & FLAG_REMOVE)
+		{
+			mComponents.Remove(&control);
+		}
+	}
 }
 
 void Dystopia::InputManager::LoadDefaults(void)

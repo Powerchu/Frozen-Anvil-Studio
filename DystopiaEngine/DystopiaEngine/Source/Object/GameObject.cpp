@@ -76,6 +76,20 @@ void Dystopia::GameObject::SetActive(const bool _bEnable)
 	mnFlags = _bEnable ? mnFlags | FLAG_ACTIVE : mnFlags & ~FLAG_ACTIVE;
 }
 
+void Dystopia::GameObject::SetFlag(eObjFlag _flag)
+{
+	mnFlags |= _flag;
+}
+
+void Dystopia::GameObject::RemoveFlags(eObjFlag _flags)
+{
+	mnFlags &= ~_flags;
+}
+
+unsigned Dystopia::GameObject::GetFlag() const
+{
+	return mnFlags;
+}
 
 void Dystopia::GameObject::Load(void)
 {
@@ -85,6 +99,17 @@ void Dystopia::GameObject::Load(void)
 
 void Dystopia::GameObject::Init(void)
 {
+	mTransform.SetOwner(this);
+	for (auto c : mComponents)
+	{
+		c->SetOwner(this);
+		c->Init();
+	}
+	for (auto b : mBehaviours)
+	{
+		b->SetOwner(this);
+		b->Init();
+	}
 //	ForcePing(mComponents, Init);
 	ForcePing(mBehaviours, Init);
 }
@@ -109,15 +134,10 @@ void Dystopia::GameObject::PostUpdate(void)
 
 void Dystopia::GameObject::Destroy(void)
 {
-//	Ping(mComponents, GameObjectDestroy);
-	Ping(mBehaviours, GameObjectDestroy);
+	ForcePing(mComponents, GameObjectDestroy);
+	ForcePing(mBehaviours, GameObjectDestroy);
 
 	mnFlags = FLAG_REMOVE;
-
-	for (auto & e : mComponents)
-	{
-		e->GameObjectDestroy();
-	}
 }
 
 void Dystopia::GameObject::Unload(void)
@@ -144,10 +164,9 @@ void Dystopia::GameObject::OnCollisionExit(const CollisionEvent& _pEvent)
 
 void Dystopia::GameObject::PurgeComponents(void)
 {
-	for (Behaviour* e : mBehaviours)
-		delete e;
+	//for (Behaviour* e : mBehaviours)
+	//	delete e;
 	mBehaviours.clear();
-
 	mComponents.clear();
 }
 
@@ -261,15 +280,21 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	p->mnID = GUIDGenerator::GetUniqueID();
 	p->mnFlags = mnFlags;
 	p->mName = mName;
-	for (auto& e : mComponents)
+	p->mTransform.SetOwner(p);
+	for (auto& c : mComponents)
 	{
-		p->mComponents.Insert(e->Duplicate());
+		auto t = c->Duplicate();
+		t->SetOwner(p);
+		t->Init();
+		p->mComponents.Insert(t);
 	}
-	for (auto& e : mBehaviours)
+	for (auto& b : mBehaviours)
 	{
-		p->mBehaviours.Insert(e->Duplicate());
+		auto t = b->Duplicate();
+		t->SetOwner(p);
+		t->Init();
+		p->mBehaviours.Insert(t);
 	}
-	p->mTransform = mTransform;
 	return p;
 }
 

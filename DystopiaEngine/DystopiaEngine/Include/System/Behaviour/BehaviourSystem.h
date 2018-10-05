@@ -63,6 +63,7 @@ namespace Dystopia
 		virtual void Update(float);
 		virtual void PostUpdate(void);
 		virtual void Shutdown(void);
+		void PollChanges(void);
 
 		virtual void LoadDefaults(void);
 		virtual void LoadSettings(TextSerialiser&);

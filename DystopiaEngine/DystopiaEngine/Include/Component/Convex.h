@@ -71,6 +71,7 @@ namespace Dystopia
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;
 
+
 		virtual ~Convex();
 
 		Vertice GetFarthestPoint(const Math::Vec3D & _Dir)const;
@@ -100,7 +101,7 @@ namespace Dystopia
 		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
 
 		Math::Point3D Support(const Convex & _ColB,
-			const Math::Vec3D & _Dir)const;
+			                  const Math::Vec3D & _Dir)const;
 
 		AutoArray<Edge> GetConvexEdges() const;
 
@@ -109,8 +110,9 @@ namespace Dystopia
 
 		/*The vertices of the collider in the Collider Local Coordinate System*/
 		AutoArray<Vertice>			mVertices;
+		int							mNumPoints;
 	private:
-		Math::Vector3D				mLastKnownScale;
+		//Math::Vector3D				mLastKnownScale;
 
 		//EDITOR FUNCTIONS
 		/*=================Editor Stuff=====================*/
@@ -118,6 +120,7 @@ namespace Dystopia
 		void eIsTriggerCheckBox();
 		void ePositionOffsetVectorFields();
 		void ePointVerticesVectorArray();
+		void eSetScale();
 		//INFO
 		void eAttachedBodyEmptyBox();
 		void eNumberOfContactsLabel();

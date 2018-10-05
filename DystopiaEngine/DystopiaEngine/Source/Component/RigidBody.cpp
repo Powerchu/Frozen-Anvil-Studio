@@ -34,8 +34,8 @@ namespace Dystopia
 		, mpOwnerTransform(nullptr)
 		, mpPhysSys(nullptr)
 		, mfAngleDeg(0.0F)
-		, mfLinearDamping(0.75F)
-		, mfAngularDrag(0.6F)
+		, mfLinearDamping(0.5F)
+		, mfAngularDrag(0.5F)
 		, mfStaticFriction(0.5F)
 		, mfDynamicFriction(0.7F)
 		, mfRestitution(0.5F)
@@ -91,7 +91,7 @@ namespace Dystopia
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
 			mOwnerIsActive = GetOwner()->IsActive();
-			mPosition = P_TX->GetGlobalPosition();
+			mPosition = mpOwnerTransform->GetGlobalPosition();
 
 			mInverseOrientation = Math::Inverse(mOrientation);
 		}
@@ -149,7 +149,7 @@ namespace Dystopia
 
 	void RigidBody::Integrate(float _dt)
 	{
-		constexpr const auto VEL_EPSILON = 0.0001F;
+		constexpr const auto VEL_EPSILON = 0.001F;
 
 		if (!GetOwner()->IsActive() || mbIsStatic || !mbIsAwake)
 		{
@@ -201,8 +201,6 @@ namespace Dystopia
 			mLinearVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
-		
-
 		//*Reset Cumulative Force*/
 		ResetCumulative();
 		
@@ -211,23 +209,29 @@ namespace Dystopia
 
 	void RigidBody::CheckSleeping(float _dt)
 	{
-		constexpr const auto SLEEP_EPSILON = 0.001F;
-		if (mbIsStatic) return;
-		const float bias = std::pow(0.5F, _dt);
+		constexpr const auto SLEEP_EPSILON = 0.05F;
+
+		const float bias = std::pow(0.1F, _dt);
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
 		mfWeightedMotion = bias * mfWeightedMotion + (1 - bias)*currentMotion;
 
 		// TODO change to global sleep epsilon
-		if (mfWeightedMotion > 10 * SLEEP_EPSILON) mfWeightedMotion = 10 * SLEEP_EPSILON;
+		if (mfWeightedMotion > 10 * SLEEP_EPSILON) 
+			mfWeightedMotion = 10 * SLEEP_EPSILON;
+
 		if (mfWeightedMotion < SLEEP_EPSILON)
 		{
-			mbIsAwake = false;
+			const auto t = Math::Abs(mPosition.Magnitude() - mPrevPosition.Magnitude());
+			if (t < 0.05f)
+			{
+				mbIsAwake = false;
+			}
 		}
 	}
 
 	void RigidBody::UpdateResult(float _dt)
 	{
-		if (!mbIsStatic) // only update when body is not static
+		if (!mbIsStatic && mbIsAwake) // only update when body is not static
 		{		
 			// Update Position
 			mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
@@ -260,7 +264,7 @@ namespace Dystopia
 	void RigidBody::Serialise(TextSerialiser & _out) const
 	{
 		_out.InsertStartBlock("RigidBody");
-		_out << mID;					// gObjID
+		_out << GetOwner()->GetID();	// gObjID
 		_out << mfAngleDeg;				// Angle in degrees
 		_out << mfLinearDamping;		// Linear Drag
 		_out << mfAngularDrag;			// Angular Drag
@@ -371,6 +375,7 @@ namespace Dystopia
 		mAngularVelocity += angularVel;
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
 		mCumulativeForce += _force * 5000.0F;
+		mCumulativeTorque += (_point - mGlobalCentroid).Cross(_force);
 		mbIsAwake = true;
 	}
 
@@ -380,27 +385,29 @@ namespace Dystopia
 		mbIsAwake = true;
 	}
 
+	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
+	{
+		AddForce(_force, _point, P_TX->GetGlobalPosition());
+	}
+
 	void RigidBody::AddImpulse(Vec3D const& _impul)
 	{
-		UNUSED_PARAMETER(_impul);
+		mCumulativeForce = _impul * 5000.0F;
+		mbIsAwake = true;
 	}
 
 	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point)
 	{
-		UNUSED_PARAMETER(_impul);
-		UNUSED_PARAMETER(_point);
+		AddForce(_impul, _point, P_TX->GetGlobalPosition());
+
 	}
 
-	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const & _org)
+	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const &)
 	{
-		UNUSED_PARAMETER(_org);
-		UNUSED_PARAMETER(_point);
-		UNUSED_PARAMETER(_impul);
-	}
-
-	void RigidBody::AddForce(Math::Vec3D const & _force, Math::Point3D const & _point)
-	{
-		AddForce(_force, _point, P_TX->GetGlobalPosition());
+		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
+		mCumulativeForce = _impul * 5000.0F;
+		mCumulativeTorque = (_point - mGlobalCentroid).Cross(_impul);
+		mbIsAwake = true;
 	}
 
 	void RigidBody::ResetCumulative()
@@ -450,17 +457,21 @@ namespace Dystopia
 
 	void RigidBody::SetStaticFriction(const float _f)
 	{
-		mfStaticFriction = _f;
+		if (_f > 1.0F) mfStaticFriction = 1.0F;
+		else if (_f < 0.0) mfStaticFriction = 0.0F;
+		else mfStaticFriction = _f;
 	}
 
 	void RigidBody::SetKineticFriction(const float _f)
 	{
-		mfDynamicFriction = _f;
+		if (_f > 1.0F) mfDynamicFriction = 1.0F;
+		else if (_f < 0.0) mfDynamicFriction = 0.0F;
+		else mfDynamicFriction = _f;
 	}
 
 	void RigidBody::SetRestitution(const float _f)
 	{
-		if (_f > 1.0F) mfRestitution = 1.0F;
+		if (_f > 2.0F) mfRestitution = 2.0F;
 		else if (_f < 0.0) mfRestitution = 0.0F;
 		else mfRestitution = _f;
 	}
@@ -667,7 +678,7 @@ namespace Dystopia
 
 	void RigidBody::eLinearDragField()
 	{
-		switch (EGUI::Display::DragFloat("Linear Drag			 ", &mfLinearDamping, 0.01f, 0.0F, FLT_MAX))
+		switch (EGUI::Display::DragFloat("Linear Drag			 ", &mfLinearDamping, 0.01f, FLT_EPSILON, 1.0F))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();
@@ -695,7 +706,7 @@ namespace Dystopia
 
 	void RigidBody::eAngularDragField()
 	{
-		switch (EGUI::Display::DragFloat("Angular Drag			", &mfAngularDrag, 0.01f, 0.0F, FLT_MAX))
+		switch (EGUI::Display::DragFloat("Angular Drag			", &mfAngularDrag, 0.01f, FLT_EPSILON, 1.0F))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();
@@ -807,7 +818,7 @@ namespace Dystopia
 
 	void RigidBody::eRestitutionDragField()
 	{
-		switch (EGUI::Display::DragFloat("Bounciness			  ", &mfRestitution, 0.01f, 0.0f, 1.0f))
+		switch (EGUI::Display::DragFloat("Bounciness			  ", &mfRestitution, 0.01f, 0.0f, 2.0f))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();
@@ -892,7 +903,7 @@ namespace Dystopia
 			// Freeze Z Rotation Function here
 			if (toggleState)
 			{
-				//EGUI::Display::IconTick();
+				//P_TX->SetRotation(Math::Angle{0});
 			}
 			else
 			{

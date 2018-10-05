@@ -34,7 +34,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Logger/LoggerSystem.h"
 
 #include "IO/TextSerialiser.h"
-#include "IO/ImageParser.h"
 
 #include "Object/GameObject.h"              // GameObject
 #include "Object/ObjectFlags.h"
@@ -49,7 +48,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define NOMINMAX				// Disable Window header min & max macros
 
 #include <string>
-#include <cstdio>
 #include <windows.h>			// WinAPI
 #include <GL/glew.h>
 #include <GL/wglew.h>			// glew Windows ext
@@ -260,9 +258,10 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	for (auto& Obj : AllObj)
 	{
 		GameObject* pOwner = Obj->GetOwner();
-		if (pOwner->GetFlags() & ActiveFlags)
+		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
 		{
-			s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix() * Obj->GetTransformationMatrix());
+			
+			s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetLocalTransformMatrix() *Math::Translate(Obj->GetOffSet().x, Obj->GetOffSet().y, Obj->GetOffSet().z)  * Obj->GetTransformationMatrix());
 			
 			activeColor = Obj->HasCollision() ? CollidingColor : mvDebugColour;
 
@@ -320,8 +319,11 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 	for (auto& render : mComponents)
 	{
 		if (eObjFlag::FLAG_REMOVE & render.GetFlags())
+		{
 			mComponents.Remove(&render);
+		}
 	}
+
 }
 
 

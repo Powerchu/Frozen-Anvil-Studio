@@ -14,12 +14,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GAMEOBJ_H_
 #define _GAMEOBJ_H_
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 #include "System/Driver/Driver.h"
 #include "DataStructure/AutoArray.h"		// AutoArray
 #include "Component/ComponentList.h"		// AllComponents
 #include "Component/Transform.h"			// Transform
 #include "Utility/MetaAlgorithms.h"			// MetaFind_t
 #include "IO/TextSerialiser.h"
+#include "Object/ObjectFlags.h"
 #include "Globals.h"
 
 #include <string>
@@ -82,6 +86,10 @@ namespace Dystopia
 		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
 		void SetName(const std::string&);
+
+		void RemoveFlags(eObjFlag);
+		void SetFlag(eObjFlag);
+		unsigned GetFlag() const;
 
 		template<class T>
 		T* GetComponent(void) const;
@@ -278,6 +286,6 @@ inline void Dystopia::GameObject::RemoveComponent(BehaviourTag)
 }
 
 
-
+#pragma warning(pop)
 #endif		// INCLUDE GUARD
 

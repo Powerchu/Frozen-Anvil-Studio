@@ -123,6 +123,11 @@ void Dystopia::Window::Show(void) const noexcept
 	ShowWindow(GetWindowHandle(), SW_SHOW);
 }
 
+void Dystopia::Window::ShowMax(void) const noexcept
+{
+	ShowWindow(GetWindowHandle(), SW_MAXIMIZE);
+}
+
 void Dystopia::Window::Hide(void) const noexcept
 {
 	ShowWindow(GetWindowHandle(), SW_HIDE);

@@ -16,6 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _PAYLOADS_H_
 #define _PAYLOADS_H_
+#include "DataStructure/AutoArray.h"
+#include <string>
 
 namespace EGUI
 {
@@ -25,7 +27,8 @@ namespace EGUI
 		FILE,
 		PNG,
 		BMP,
-		GAMEOBJECT,
+		PREFAB,
+		GAME_OBJ,
 		COMPONENT,
 
 		ePAY_LOAD_LAST
@@ -35,15 +38,56 @@ namespace EGUI
 	{
 		switch (_tag)
 		{
-			case FILE:			return "FILE";
-			case PNG:			return "PNG";
-			case BMP:			return "BMP";
-			case GAMEOBJECT:	return "GAMEOBJECT";
-			case COMPONENT:		return "COMPONENT";
-			default:			return "ePAY_LOAD_LAST";
+		case FILE:			return "FILE";
+		case PNG:			return "PNG";
+		case BMP:			return "BMP";
+		case PREFAB:		return "PREFAB";
+		case GAME_OBJ:		return "GAME_OBJ";
+		case COMPONENT:		return "COMPONENT";
+		default:			return "ePAY_LOAD_LAST";
 		}
 	}
 }
+
+namespace Dystopia
+{
+	/********************************************************************* FILE & FOLDER *********************************************************************/
+	char my_tolower(char const ch);
+
+	struct CrawlItem
+	{
+		CrawlItem(const std::string& _name, const std::string& _path);
+		std::string mName;
+		std::string mPath;
+		std::string mLowerCaseName;
+	};
+
+	struct Folder;
+	struct File : CrawlItem
+	{
+		File(const std::string& _name, const std::string& _path, Folder * const _parent);
+		~File();
+		bool operator<(const File&);
+		static EGUI::ePayloadTags DetermineTag(const std::string& _name);
+		EGUI::ePayloadTags mTag;
+		Folder*	mpParentFolder;
+	};
+
+	struct Folder : CrawlItem
+	{
+		Folder(const std::string& _name, const std::string& _path, Folder * const _parent);
+		~Folder();
+
+		void				Crawl();
+		void				ClearFolder();
+
+		Folder*				mpParentFolder;
+		AutoArray<File*>	mArrPtrFiles;
+		AutoArray<Folder*>	mArrPtrFolders;
+		bool				mToggle;
+	};
+}
+
 
 #endif	// _PAYLOADS_H_
 #endif	// EDITOR

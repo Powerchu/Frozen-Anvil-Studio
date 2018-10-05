@@ -95,6 +95,7 @@ namespace Dystopia
 				{
 					for (unsigned int i = 0; i < item.mData.size(); ++i)
 					{
+						EGUI::Display::Label(item.mData[i].mLabel.c_str());
 						ShowLog(item.mData[i], mGraphSizeS);
 					}
 					EGUI::Display::EndTreeNode();
@@ -171,15 +172,16 @@ namespace Dystopia
 		Math::Vec2 size{Size().x - 7.f, sizeY };
 		if (EGUI::StartChild("Task Manager Breakdown", size))
 		{
-			EGUI::Display::Label("CPU Idle         : %f", mTaskMgrDetails.mCPUIdle);
-			EGUI::Display::Label("CPU Busy         : %f", mTaskMgrDetails.mCPUBusy);
-			EGUI::Display::Label("CPU OS           : %f", mTaskMgrDetails.mCPUOS);
-			EGUI::Display::Label("CPU Proc         : %f", mTaskMgrDetails.mCPUProc);
-			EGUI::Display::Label("Page Faults      : %d", mTaskMgrDetails.mPageFaults);
-			EGUI::Display::Label("Memory Used      : %d", mTaskMgrDetails.mMemUsed);
-			EGUI::Display::Label("RAM Used         : %d", mTaskMgrDetails.mRamUsed);
-			EGUI::Display::Label("Memory Available : %d", mTaskMgrDetails.mMemAvail);
-			EGUI::Display::Label("Memory Load      : %f", mTaskMgrDetails.mMemLoad);
+			EGUI::Display::Label(" Frame Rate (s)   : %.1f FPS", 1.f / mTaskMgrDetails.mFrameRate);
+			EGUI::Display::Label(" CPU Idle (%%)     : %.1f", mTaskMgrDetails.mCPUIdle);
+			EGUI::Display::Label(" CPU Busy (%%)     : %.1f", mTaskMgrDetails.mCPUBusy);
+			EGUI::Display::Label(" CPU OS   (%%)     : %.1f", mTaskMgrDetails.mCPUOS);
+			EGUI::Display::Label(" CPU Proc (%%)     : %.1f", mTaskMgrDetails.mCPUProc);
+			EGUI::Display::Label(" Page Faults      : %d", mTaskMgrDetails.mPageFaults);
+			EGUI::Display::Label(" Memory Used (MB) : %d", mTaskMgrDetails.mMemUsed);
+			EGUI::Display::Label(" RAM Used (MB)    : %d", mTaskMgrDetails.mRamUsed);
+			EGUI::Display::Label(" Memory Available : %d", mTaskMgrDetails.mMemAvail);
+			EGUI::Display::Label(" Memory Load      : %.1f", mTaskMgrDetails.mMemLoad);
 		}
 		EGUI::EndChild();
 	}

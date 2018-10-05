@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Scene::Scene(void) :
-	mGameObjs{ 100 }, mName{ "Untitled" }
+	mGameObjs{ 1000 }, mName{ "Untitled" }
 {
 }
 
@@ -51,6 +51,10 @@ Dystopia::GameObject* Dystopia::Scene::FindGameObject(const std::string& _strNam
 
 void Dystopia::Scene::Init(void)
 {
+	for (auto& obj : mGameObjs)
+	{
+		obj.Init();
+	}
 }
 
 void Dystopia::Scene::FixedUpdate(float _dt)

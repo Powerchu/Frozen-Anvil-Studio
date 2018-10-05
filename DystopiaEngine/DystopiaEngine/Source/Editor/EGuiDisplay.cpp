@@ -19,8 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <stdlib.h>
 #include <iostream>
 
-static float DefaultAlighnmentOffsetY = 3.f;
-static float DefaultAlighnmentSpacing = 10.f;
 Dystopia::CommandHandler *gContextComdHND = nullptr;
 
 namespace EGUI
@@ -92,9 +90,9 @@ namespace EGUI
 		return ImGui::BeginMainMenuBar();
 	}
 
-	bool StartMenuHeader(const std::string& _label)
+	bool StartMenuHeader(const std::string& _label, bool _enabled)
 	{
-		return ImGui::BeginMenu(_label.c_str());
+		return ImGui::BeginMenu(_label.c_str(), _enabled);
 	}
 
 	bool StartMenuBody(const std::string& _label, const std::string& _shortcut, bool _enabled)
@@ -203,7 +201,6 @@ namespace EGUI
 			{
 				if (show) clicked = true;
 			}
-			//ImGui::PopStyleColor(3);
 			ImGui::PopItemWidth();
 			return clicked;
 		}
@@ -596,6 +593,25 @@ namespace EGUI
 				   ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
 		}
 
+		bool IconCross(const std::string& _uniqueId, float radius, float offsetX, float offsetY, const Math::Vec4& _colour)
+		{
+			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
+			ImVec2			pos = ImGui::GetCursorScreenPos();
+			const ImU32		col32 = static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
+
+			ImVec2 centre{ pos.x + radius + offsetX, pos.y + radius + offsetY };
+			pCanvas->AddCircle(centre, radius, col32);
+			float r = radius / 3.f;
+			pCanvas->AddLine(ImVec2{ centre.x - r, centre.y - r }, 
+							 ImVec2{ centre.x + r, centre.y + r }, 
+							 col32);
+			pCanvas->AddLine(ImVec2{ centre.x - r, centre.y + r },
+							 ImVec2{ centre.x + r, centre.y - r },
+							 col32);
+			return ImGui::InvisibleButton(("##iconCross" + _uniqueId).c_str(),
+					ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
+		}
+
 		bool IconGameObj(const std::string& _uniqueId, float _width, float _height)
 		{
 			const ImU32		col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
@@ -666,6 +682,24 @@ namespace EGUI
 			if (push_clip_rect) window->DrawList->PopClipRect();
 
 			ImGui::SetCursorScreenPos(pos);
+		}
+
+		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize, bool _interactive, bool _outlineBG)
+		{
+			if (!_interactive)
+			{
+				ImGui::Image(reinterpret_cast<void*>(_imgID), _imgSize, 
+							 ImVec2{ 0,0 }, ImVec2{ 1,1 }, ImVec4{ 1,1,1,1 }, 
+							 (_outlineBG) ? ImGui::GetStyleColorVec4(ImGuiCol_Border) : ImVec4{ 0,0,0,0 });
+				return false;
+			}
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0,0,0,0 });
+			bool ret = ImGui::ImageButton(reinterpret_cast<void*>(_imgID), _imgSize, 
+										  ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0, 
+										  (_outlineBG) ? ImGui::GetStyleColorVec4(ImGuiCol_BorderShadow) : ImVec4{ 0,0,0,0 },
+										  ImVec4{ 1,1,1,1 });
+			ImGui::PopStyleColor();
+			return ret;
 		}
 	}
 }	// NAMESPACE DYSTOPIA::EGUI::DISPLAY

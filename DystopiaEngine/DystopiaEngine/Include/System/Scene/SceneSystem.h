@@ -42,7 +42,9 @@ namespace Dystopia
 		void LoadSettings(TextSerialiser&);
 
 //		void ReceiveMessage(const Message&);
-		
+
+		void RestartScene();
+		void ChangeScene();
 		void LoadScene(const std::string& _strName);
 		void SaveScene(const std::string & _strName, const std::string& _sceneName = "defaultSceneName");
 

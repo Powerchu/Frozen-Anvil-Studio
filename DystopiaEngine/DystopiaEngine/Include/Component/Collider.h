@@ -2,9 +2,9 @@
 /*!
 \file	Collider.h
 \author Keith (70%)
-		Aaron (30%)
+Aaron (30%)
 \par    email: keith.goh\@digipen.edu
-		email: m.chu\@digipen.edu
+email: m.chu\@digipen.edu
 \brief
 Collider2D for 2D Sprites.
 
@@ -25,32 +25,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Collision/CollisionEvent.h"
 
 #include "System/Graphics/VertexDefs.h"
-
+#include "System/Graphics/Shader.h"
+#include "Math/Quaternion.h"
 
 
 #define CLOCKWISE 0
 /*
-                                 -----------AABB
- Collider[BASE]<--- CONVEX <-----|
-                                 -----------TRIANGLE
+-----------AABB
+Collider[BASE]<--- CONVEX <-----|
+-----------TRIANGLE
 
-	 There is 3 Coordinate system at play here.
-	 Global Coordinate System
-	 - The Global Position of the object
-	 Local Object Position
-	 - The Local Coordinate System of the Object
-	 Collider Coordinate System
-	 - The Local Coordinate System of the Collider
+There is 3 Coordinate system at play here.
+Global Coordinate System
+- The Global Position of the object
+Local Object Position
+- The Local Coordinate System of the Object
+Collider Coordinate System
+- The Local Coordinate System of the Collider
 
-	 EG. Object Global Coordinates is (10 , 10)
-	 Offset is (4,4)
-	 One of the Collider Vertice Position is (1,2)
+EG. Object Global Coordinates is (10 , 10)
+Offset is (4,4)
+One of the Collider Vertice Position is (1,2)
 
-	 The Global Position of the Collider Vertice is
-	 (10,10) + (4,4) + (1,2) = (15,16)
+The Global Position of the Collider Vertice is
+(10,10) + (4,4) + (1,2) = (15,16)
 
-	 The Global Position of the Collider is
-	 (10,10) + (4,4)         = (14,14)
+The Global Position of the Collider is
+(10,10) + (4,4)         = (14,14)
 
 */
 namespace Dystopia
@@ -79,14 +80,14 @@ namespace Dystopia
 	{
 		/*Position of the vectice*/
 		Math::Point3D mPosition;
-		
+
 		Vertice(Math::Point3D const & p)
-			:mPosition{p}
+			:mPosition{ p }
 		{
 
 		}
 		Vertice(float const & x, float const & y)
-			:mPosition{x,y,1,1}
+			:mPosition{ x,y,0,1 }
 		{
 
 		}
@@ -107,12 +108,12 @@ namespace Dystopia
 
 		using SYSTEM = CollisionSystem;
 
-		
+
 		unsigned GetComponentType(void) const
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
 		};
-		
+
 
 #if EDITOR
 		static const std::string GetCompileName(void) { return "Collider"; }
@@ -121,12 +122,12 @@ namespace Dystopia
 
 		static  const eColliderType ColliderType = eColliderType::BASE;
 		virtual const eColliderType GetColliderType(void) const { return ColliderType; } // returns const
-		/*Constructors*/
+																						 /*Constructors*/
 
-		/*Default - (Box Collider)*/
+																						 /*Default - (Box Collider)*/
 		Collider();
-		explicit Collider(const Math::Point3D & _offset, const Math::Point3D & _origin = Math::MakePoint3D(0.f,0.f,0.f));
-		
+		explicit Collider(const Math::Point3D & _offset, const Math::Point3D & _origin = Math::MakePoint3D(0.f, 0.f, 0.f));
+
 		/*Load the Component*/
 		virtual void Load(void);
 		/*Initialise the Component*/
@@ -139,24 +140,24 @@ namespace Dystopia
 		virtual void Unload(void);
 		/*Duplicate the Component*/
 		virtual Collider* Duplicate() const;
-		
-		/************************************************************************
-		 * Member Functions
-		 ***********************************************************************/
-		float DetermineRestitution      (RigidBody const & b) const;
-		float DetermineStaticFriction   (RigidBody const & b) const;
-		float DetermineKineticFriction  (RigidBody const & b) const;
 
-		 /*Get Array of collision event*/
+		/************************************************************************
+		* Member Functions
+		***********************************************************************/
+		float DetermineRestitution(RigidBody const & b) const;
+		float DetermineStaticFriction(RigidBody const & b) const;
+		float DetermineKineticFriction(RigidBody const & b) const;
+
+		/*Get Array of collision event*/
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
 
 		// Settors
 		void SetColliding(bool _b);
-		void SetPosition(Math::Point3D const & _point);
+		void SetLocalPosition(Math::Point3D const & _point);
 		void ClearCollisionEvent();
 
 		// Gettors
-		virtual Math::Point3D GetPosition() const;
+		virtual Math::Point3D GetGlobalPosition() const;
 		Math::Vec3D           GetOffSet()   const;
 		bool                  HasCollision() const;
 
@@ -166,11 +167,10 @@ namespace Dystopia
 		void  SetMesh(Mesh * _ptr);
 		Mesh* GetMesh() const;
 
-		void SetRotation(Math::Degrees _deg);
-		void SetRotation(Math::Radians _rad);
-		void AddRotation(Math::Radians _rad);
-		void AddRotation(Math::Degrees _deg);
+
 		Math::Matrix3D GetTransformationMatrix() const;
+		Math::Matrix3D GetOwnerTransform() const;
+		void SetOwnerTransform(Math::Matrix3D const & _OwnerTransform);
 
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const = 0;
@@ -186,7 +186,7 @@ namespace Dystopia
 		bool mbIsTrigger;
 
 		Math::Point3D mPosition;
-		
+
 		AutoArray<Vertex> mDebugVertices;
 		AutoArray<short>  mIndexBuffer;
 
@@ -195,11 +195,16 @@ namespace Dystopia
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
 		/*Matrix*/
-		Math::Matrix3D mTransformation;
+		Math::Matrix3D mOwnerTransformation;
+#if EDITOR
+		Math::Vec3D          mScale;
+		Math::Quaternion     mRotation;
+#endif
 
 	private:
 		// Collider Mesh for debug drawing
 		Mesh * mpMesh;
+
 	};
 }
 #endif /*COLLIDER_H*/

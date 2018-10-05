@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Math/Vector4.h"	// Vector4
 #include "Math/Matrix4.h"	// Matrix4
+#include "System/Graphics/Shader.h"
 
 
 namespace Math
@@ -31,7 +32,7 @@ namespace Math
 	\brief
 		Representing rotations
 	*/
-	union __declspec(align (alignof(Vector4))) _DLL_EXPORT Quaternion
+	union __declspec(align (16)) _DLL_EXPORT Quaternion
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -67,8 +68,8 @@ namespace Math
 
 		// ======================================== OPERATORS ======================================= // 
 
-		//inline float& _CALL operator[](const unsigned _nIndex);
-		//inline const float _CALL operator[](const unsigned _nIndex) const;
+		inline float& _CALL operator[](const unsigned _nIndex);
+		inline float  _CALL operator[](const unsigned _nIndex) const;
 
 		inline Quaternion  _CALL operator-(void) const;
 		inline Quaternion  _CALL operator* (const Quaternion);
@@ -260,6 +261,16 @@ inline Math::Quaternion _CALL Math::operator*(Quaternion _lhs, const float _rhs)
 inline Math::Quaternion _CALL Math::operator/(Quaternion _lhs, const float _rhs)
 {
 	return _lhs /= _rhs;
+}
+
+inline float& _CALL Math::Quaternion::operator[](unsigned _nIndex)
+{
+	return mData[_nIndex];
+}
+
+inline float _CALL Math::Quaternion::operator[](unsigned _nIndex) const
+{
+	return mData[_nIndex];
 }
 
 

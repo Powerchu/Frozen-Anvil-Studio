@@ -20,13 +20,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 //#include "Math\Vector4.h"		    // Vector4
 #include "System/Input/InputMap.h"
 #include "System/Input/MouseData.h"
+#include "Component/Component.h"
+#include "System/Base/ComponentDonor.h"
 
 namespace Dystopia
 {
+	class CharacterController;
 	class Window;
 	class TextSerialiser;
 
-	class InputManager : public Systems
+	class InputManager : public Systems, public ComponentDonor<CharacterController>
 	{
 	public:
 		InputManager(void);
@@ -35,6 +38,8 @@ namespace Dystopia
 		bool Init(void);
 		void Update(float _dt);
 		void Shutdown(void);
+
+		void PostUpdate() override;
 
 		void LoadDefaults(void);
 		void LoadSettings(TextSerialiser&);

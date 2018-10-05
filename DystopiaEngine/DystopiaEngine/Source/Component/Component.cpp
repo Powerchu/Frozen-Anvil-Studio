@@ -81,7 +81,7 @@ void Dystopia::Component::DestroyComponent(void)
 void Dystopia::Component::SetOwner(GameObject* _pOwner)
 {
 	mnOwner = _pOwner->GetID();
-	mID = _pOwner->GetID();
+	//mID = _pOwner->GetID();
 }
 
 Dystopia::GameObject* Dystopia::Component::GetOwner(void) const
@@ -110,3 +110,12 @@ unsigned Dystopia::Component::GetFlags(void) const
 	return mnFlags;
 }
 
+void Dystopia::Component::SetFlags(eObjFlag _flags)
+{
+	mnFlags |= _flags;
+}
+
+void Dystopia::Component::RemoveFlags(eObjFlag _flags)
+{
+	mnFlags &= ~_flags;
+}

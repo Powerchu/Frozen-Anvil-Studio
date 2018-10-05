@@ -33,8 +33,8 @@ namespace Dystopia
 	class Profiler;
 	class GameObject;
 	class BehaviourSystem;
-	enum ePayloadTags;
 
+	enum ePayloadTags;
 	enum eEditorState
 	{
 		EDITOR_INVALID = -1,
@@ -138,10 +138,10 @@ namespace Dystopia
 		void			UpdateGameModeKeys();
 		void			InstallHotkeys();
 		void			UnInstallHotkeys();
-		void			ReloadDLL();
 
 		/* Misc functions */
 		void			LogTabPerformance();
+		void			PromptSaving();
 	};
 }
 
