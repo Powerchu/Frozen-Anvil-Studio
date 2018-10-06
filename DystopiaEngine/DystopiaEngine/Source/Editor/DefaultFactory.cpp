@@ -53,11 +53,15 @@ namespace Dystopia
 			pObject->AddComponent(rend, typename Renderer::TAG{});
 			auto rigid = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 			pObject->AddComponent(rigid, typename RigidBody::TAG{});
+			auto c = static_cast<ComponentDonor<Convex>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
+			pObject->AddComponent(c, typename Collider::TAG{});
 			rend->SetOwner(pObject);
 			rend->Init();
-			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Asset/Salamander_Stand.png"));
+			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Editor/white_box.png"));
 			rigid->SetOwner(pObject);
 			rigid->Init();
+			c->SetOwner(pObject);
+			c->Init();
 			return pObject;
 		}
 
