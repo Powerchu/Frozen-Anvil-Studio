@@ -250,6 +250,9 @@
     <ClCompile Include="Source\Editor\AdminCalls.cpp">
       <Filter>Editor\Admin</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\SystemSettings.cpp">
+      <Filter>Editor\Editor Tabs\SystemSettings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -660,6 +663,9 @@
     <ClInclude Include="Include\Editor\AdminCalls.h">
       <Filter>Editor\Admin</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\SystemSettings.h">
+      <Filter>Editor\Editor Tabs\SystemSettings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -937,6 +943,9 @@
     </Filter>
     <Filter Include="Editor\Admin">
       <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\SystemSettings">
+      <UniqueIdentifier>{f494a940-4551-4291-aa92-cff931764600}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	class Clipboard;
 	class EngineCore;
 	class WindowManager;
 	class GraphicsSystem;
@@ -74,12 +75,16 @@ namespace Dystopia
 		/* Game Object stuff */
 		void			RemoveFocus();
 		void			SetFocus(GameObject&);
-		void			SetLastPayloadFocus(ePayloadTags);
 		GameObject*		GetCurrentFocusGameObj();
 		GameObject*		FindGameObject(const uint64_t& _id) const;
 
+		void					SetSelection(const uint64_t& _id);
+		void					ClearSelections(void);
+		AutoArray<GameObject*>	GetSelectionObjects(void);
+
 		/* Editor Input */
 		EditorInput*	GetEditorInput();
+		bool			IsCtrlDown(void) const;
 
 		/* Reattach stuff */
 		void			ReAttachComponent(Component*);
@@ -101,13 +106,14 @@ namespace Dystopia
 		Timer					*mpTimer;
 		EditorInput				*mpInput;
 
-		AutoArray<EditorTab*>	mArrTabs;
-		eEditorState			mCurrentState;
-		eEditorState			mNextState;
+		bool					mCtrlKey;
 		float					mDeltaTime;
 		std::string				mTempSaveFile;
+		eEditorState			mCurrentState;
+		eEditorState			mNextState;
+		AutoArray<EditorTab*>	mArrTabs;
+		Clipboard				*mpClipBoard;
 		GameObject				*mpFocusGameObj;
-		ePayloadTags			mLatestPayloadFocus;
 
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
