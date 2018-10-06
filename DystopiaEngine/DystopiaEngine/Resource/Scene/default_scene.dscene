@@ -1,5 +1,5 @@
 [START_Scene]
-18446744072511553536,default_scene,6,[START_START_GO_DATA]
+18446744072511553536,default_scene,4,[START_START_GO_DATA]
 910164992,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
@@ -35,24 +35,6 @@
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
-[START_START_GO_DATA]
-18446744072700758016,1,SmallBox,
-[END_END_GO_DATA]
-[START_START_GO_TRANSFORM]
-[START_Transform]
-32,32,1,0,0,0,0,0,0,1,
-[END_Transform]
-
-[END_END_GO_TRANSFORM]
-[START_START_GO_DATA]
-859403264,1,BouncyBall,
-[END_END_GO_DATA]
-[START_START_GO_TRANSFORM]
-[START_Transform]
-16,16,1,200,200,0,0,0,0,1,
-[END_Transform]
-
-[END_END_GO_TRANSFORM]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]
@@ -67,13 +49,13 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
-334177280,0,18446744072700758016,..\DystopiaEngine\Resource\Editor\red_box.png,
+18446744073606500352,536870912,859403264,..\DystopiaEngine\Resource\Editor\red_circle.png,
 [END_Renderer]
 
 [END_Component End]
 [START_Component]
 [START_Renderer]
-263813632,0,859403264,..\DystopiaEngine\Resource\Editor\red_circle.png,
+18446744073391508992,536870912,18446744072700758016,..\DystopiaEngine\Resource\Editor\red_box.png,
 [END_Renderer]
 
 [END_Component End]
@@ -100,13 +82,13 @@
 [END_Component End]
 [START_Component]
 [START_RigidBody]
-1792059904,0,18446744072700758016,0,0.5,0.5,0.5,0.7,0.8,1,100,1,0,1,1,
+18446744073606500864,536870912,859403264,0,0.01,0.5,0.5,0.7,1.47,1,100,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
 [START_Component]
 [START_RigidBody]
-18446744072627135488,0,859403264,0,0.01,0.5,0.5,0.7,1.47,1,100,1,0,1,1,
+18446744073391509504,536870912,18446744072700758016,0,0.5,0.5,0.5,0.7,0.8,1,100,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -136,7 +118,7 @@
 [END_Component End]
 [START_Component]
 [START_Convex_Collider]
-18446744071796473344,0,18446744072700758016,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+18446744073391510016,536870912,18446744072700758016,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
 [END_Convex_Collider]
 
 [END_Component End]
@@ -145,7 +127,7 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Circle_Collider2D]
-108157440,0,859403264,0,0,0,0,0,0,1,
+18446744073606501376,536870912,859403264,0,0,0,0,0,0,1,
 [END_Circle_Collider2D]
 
 [END_Component End]
