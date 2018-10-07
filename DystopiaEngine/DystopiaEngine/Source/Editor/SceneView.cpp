@@ -55,7 +55,6 @@ namespace Dystopia
 		mpGfxSys{ nullptr }, mDelta{},
 		mpSceneCamera{ nullptr },
 		mSensitivity{ 0.1f },
-		mpEditorInput{ nullptr },
 		mAmFocused{ false }, mMoveVec{ 0,0 },
 		mMoveSens{ 0.75f }, mDragging{ false }
 	{}
@@ -67,7 +66,6 @@ namespace Dystopia
 
 	void SceneView::Init()
 	{
-		mpEditorInput = GetMainEditor().GetEditorInput();
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
 		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Bind(&SceneView::SceneChanged, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);
@@ -95,7 +93,7 @@ namespace Dystopia
 	void SceneView::Update(const float& _dt)
 	{
 		mDelta = _dt;
-		if (GetMainEditor().CurrentState() == EDITOR_MAIN)
+		if (GetMainEditor()->CurrentState() == EDITOR_MAIN)
 		{
 			mpGfxSys->Update(mDelta);
 		}
@@ -106,7 +104,7 @@ namespace Dystopia
 		ResetMouseEvents();
 		EGUI::UnIndent(2);
 
-		if (GetMainEditor().CurrentState() == EDITOR_PLAY)
+		if (GetMainEditor()->CurrentState() == EDITOR_PLAY)
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 
 		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
@@ -126,7 +124,7 @@ namespace Dystopia
 			EGUI::Display::EndPayloadReceiver();
 		}
 
-		if (GetMainEditor().CurrentState() == EDITOR_PLAY)
+		if (GetMainEditor()->CurrentState() == EDITOR_PLAY)
 			ImGui::PopStyleVar();
 
 		CheckMouseEvents();
@@ -313,7 +311,13 @@ namespace Dystopia
 			if (ImGui::IsMouseClicked(0))
 			{
 				GameObject *pObj = FindMouseObject();
-				if (pObj) GetMainEditor().SetFocus(*pObj);
+				if (pObj)
+				{
+					auto ed = GetMainEditor();
+					if (ed->IsCtrlDown())	ed->AddSelection(pObj->GetID());
+					else					ed->NewSelection(pObj->GetID());
+					//GetMainEditor().SetFocus(*pObj);
+				}
 			}
 			if (ImGui::IsMouseClicked(1))
 			{
@@ -356,7 +360,9 @@ namespace Dystopia
 				auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, 
 																			mpGfxSys->LoadTexture(_pFile->mPath));
 				GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
-				GetMainEditor().SetFocus(*pTarget);
+
+				GetMainEditor()->NewSelection(pTarget->GetID());
+				//GetMainEditor().SetFocus(*pTarget);
 			}
 		}
 	}

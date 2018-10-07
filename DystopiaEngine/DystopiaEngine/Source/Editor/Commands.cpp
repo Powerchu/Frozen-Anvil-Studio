@@ -141,14 +141,40 @@ namespace Dystopia
 		return mRecording;
 	}
 
-	void CommandHandler::InvokeCommandInsert(GameObject& _pObj, Scene& _pScene, bool * _notify)
+	void CommandHandler::InvokeCommandInsert(GameObject& _pObj, Scene& _scene, bool * _notify)
 	{
-		InvokeCommand(new ComdInsertObject{&_pObj, &_pScene, _notify });
+		InvokeCommand(new ComdInsertObject{&_pObj, &_scene, _notify });
 	}
 
-	void CommandHandler::InvokeCommandDelete(GameObject& _pObj, Scene& _pScene, bool * _notify)
+	void CommandHandler::InvokeCommandDelete(GameObject& _pObj, Scene& _scene, bool * _notify)
 	{
-		InvokeCommand(new ComdDeleteObject{ &_pObj, &_pScene, _notify });
+		InvokeCommand(new ComdDeleteObject{ &_pObj, &_scene, _notify });
+	}
+
+	void CommandHandler::InvokeCommandInsert(const AutoArray<GameObject*>& _arrObj, Scene& _scene, bool *_notify)
+	{
+		if (_arrObj.size() == 1)
+			InvokeCommandInsert(**(_arrObj.begin()), _scene, _notify);
+		else
+		{
+			AutoArray<Commands*> mComdArray{ _arrObj.size() };
+			for (const auto& elem : _arrObj)
+				mComdArray.Insert(new ComdInsertObject{ elem, &_scene, _notify });
+			InvokeCommand(new ComdBatch{ Utility::Move(mComdArray) });
+		}
+	}
+
+	void CommandHandler::InvokeCommandDelete(const AutoArray<GameObject*>& _arrObj, Scene& _scene, bool *_notify)
+	{
+		if (_arrObj.size() == 1)
+			InvokeCommandDelete(**(_arrObj.begin()), _scene, _notify);
+		else
+		{
+			AutoArray<Commands*> mComdArray{ _arrObj.size() };
+			for (const auto& elem : _arrObj)
+				mComdArray.Insert(new ComdDeleteObject{ elem, &_scene, _notify });
+			InvokeCommand(new ComdBatch{ Utility::Move(mComdArray) });
+		}
 	}
 
 	void CommandHandler::SaveCallback()

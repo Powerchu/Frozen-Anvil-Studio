@@ -80,6 +80,8 @@ namespace Dystopia
 
 	void Inspector::EditorUI()
 	{
+		auto& allObj = GetMainEditor()->GetSelectionObjects();
+		mpFocus = (allObj.size() == 1) ? *allObj.begin() : nullptr;
 		if (!mpFocus) return;
 
 		static constexpr Math::Vec2 btnSize{ 270, 20 };
@@ -174,16 +176,6 @@ namespace Dystopia
 	std::string Inspector::GetLabel() const
 	{
 		return mLabel;
-	}
-
-	void Inspector::SetFocus(GameObject& _rGameObj)
-	{
-		mpFocus = &_rGameObj;
-	}
-
-	void Inspector::RemoveFocus()
-	{
-		mpFocus = nullptr;
 	}
 
 	void Inspector::AddComponentButton(const Math::Vec2& _btnSize)

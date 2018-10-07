@@ -107,6 +107,18 @@ AutoArray<void*> Dystopia::Clipboard::RetrieveDatas(eClipDataTypes _dataType, co
 	return ret;
 }
 
+void Dystopia::Clipboard::RemoveSelection(const uint64_t & _uniqueID)
+{
+	for (unsigned int i = 0; i < mArrSelectionID.size(); ++i)
+	{
+		if (mArrSelectionID[i] == _uniqueID)
+		{
+			mArrSelectionID.FastRemove(i);
+			return;
+		}
+	}
+}
+
 const AutoArray<uint64_t>& Dystopia::Clipboard::RetrieveSelections(void) const
 {
 	return mArrSelectionID;

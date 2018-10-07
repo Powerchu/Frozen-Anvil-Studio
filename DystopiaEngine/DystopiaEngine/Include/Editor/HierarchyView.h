@@ -42,14 +42,13 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const override;
 
-		virtual void SetFocus(GameObject&) override final;
-
-		virtual void RemoveFocus() override final;
+		//virtual void SetFocus(GameObject&) override final;
+		//
+		//virtual void RemoveFocus() override final;
 
 	private:
 		HierarchyView(void);
 
-		GameObject					*mpFocus;
 		char						mSearchText[MAX_SEARCH];
 		char						mSearchTextPrevFrame[MAX_SEARCH];
 		std::string					mLabel;
@@ -61,7 +60,7 @@ namespace Dystopia
 		void			CreateButton();
 		void			CreatePopup();
 		void			GameObjectPopups(GameObject&);
-		void			GameObjectName(GameObject&);
+		void			GameObjectName(GameObject&, bool selected);
 	};
 }
 

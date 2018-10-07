@@ -73,6 +73,18 @@ namespace Dystopia
 		Scene *mpScene;
 	};
 
+	struct ComdBatch : Commands
+	{
+		ComdBatch(AutoArray<Commands*>&& _arrComds);
+		~ComdBatch();
+		bool ExecuteDo() override;
+		bool ExecuteUndo() override;
+		bool Unchanged() const;
+
+	private:
+		AutoArray<Commands*> mArrCommands;
+	};
+
 	template <typename T, class Component>
 	struct ComdModifyValue : Commands
 	{

@@ -114,10 +114,10 @@ namespace Dystopia
 
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mpWin{ nullptr }, mpGfx{ nullptr },
-		mpSceneSystem{ nullptr }, mpProfiler{ nullptr }, mpFocusGameObj{ nullptr }, mTempSaveFile{},
+		mpSceneSystem{ nullptr }, mpProfiler{ nullptr }, mTempSaveFile{},
 		mpEditorEventSys{ new EditorEventHandler{} }, mpInput{ new EditorInput{} },
 		mpComdHandler{ new CommandHandler{} }, mpGuiSystem{ new GuiSystem{} }, mpTimer{ new Timer{} },
-		mpClipBoard{ new Clipboard{} }, mCtrlKey{ false }
+		mpClipBoard{ new Clipboard{} }, mCtrlKey{ false }, mArrSelectedObj{ 100 }, mUpdateSelection{ true }
 	{}
 
 	Editor::~Editor(void)
@@ -183,7 +183,7 @@ namespace Dystopia
 			e->SetEventContext(mpEditorEventSys);
 			e->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			e->Init();
-			e->RemoveFocus();
+			//e->RemoveFocus();
 		}
 		LoadSettings();
 		EGUI::SetContext(mpComdHandler);
@@ -262,6 +262,12 @@ namespace Dystopia
 
 	void Editor::EndFrame()
 	{
+		if (mUpdateSelection)
+		{
+			UpdateSelections();
+			mUpdateSelection = false;
+		}
+
 		LogTabPerformance();
 		EngineCore::GetInstance()->PostUpdate();
 		mpBehaviourSys->PostUpdate();
@@ -300,7 +306,6 @@ namespace Dystopia
 		mpWin				= nullptr;
 		mpGfx				= nullptr;
 		mpProfiler			= nullptr;
-		mpFocusGameObj		= nullptr;
 		mpBehaviourSys		= nullptr;
 		mpDriver->Shutdown();
 		EGUI::RemoveContext();
@@ -451,15 +456,9 @@ namespace Dystopia
 	void Editor::EditorCopy()
 	{
 		mpClipBoard->ClearData();
-		auto& selections = mpClipBoard->RetrieveSelections();
-		GameObject *pObj = nullptr;
-		for (const auto& id : selections)
+		for (const auto& o : mArrSelectedObj)
 		{
-			pObj = mpSceneSystem->GetCurrentScene().FindGameObject(id);
-			if (pObj)
-			{
-				mpClipBoard->InsertData(eCLIP_GAME_OBJECT, reinterpret_cast<void*>(pObj), sizeof(GameObject));
-			}
+			mpClipBoard->InsertData(eCLIP_GAME_OBJECT, reinterpret_cast<void*>(o), sizeof(GameObject));
 		}
 	}
 
@@ -469,14 +468,38 @@ namespace Dystopia
 
 	void Editor::EditorPaste()
 	{
+		auto toPaste = mpClipBoard->RetrieveDatas(eCLIP_GAME_OBJECT, sizeof(GameObject));
+		if (!toPaste.size()) return;
+
+		AutoArray<GameObject*> mToInsert{ toPaste.size() };
+		auto& existingObj = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
+		int replicas = 0;
+		ClearSelections();
+		for (auto& elem : toPaste)
+		{
+			GameObject *pDup = static_cast<GameObject*>(elem)->Duplicate();
+
+			for (const auto& o : existingObj)
+				if (o.GetName() == pDup->GetName())
+					replicas++;
+
+			if (replicas > 0)
+				pDup->SetName(pDup->GetName() + "_Clone");
+
+			mToInsert.Insert(pDup);
+			AddSelection(pDup->GetID());
+			replicas = 0;
+		}
+		mpComdHandler->InvokeCommandInsert(mToInsert, mpSceneSystem->GetCurrentScene());
 	}
 
-	void Editor::EditorDeleteFocus()
+	void Editor::EditorDelete()
 	{
-		if (!mpFocusGameObj) return;
+		auto& allObj = GetSelectionObjects();
+		if (!allObj.size()) return;
 
-		mpComdHandler->InvokeCommandDelete(*mpFocusGameObj, mpSceneSystem->GetCurrentScene());
-		RemoveFocus();
+		mpComdHandler->InvokeCommandDelete(allObj, mpSceneSystem->GetCurrentScene());
+		ClearSelections();
 	}
 
 	void Editor::NewScene()
@@ -604,13 +627,13 @@ namespace Dystopia
 		for (auto& e : mArrTabs)
 			e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
 		mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
-		RemoveFocus();
+		ClearSelections();
 		mpWin->GetMainWindow().SetTitle(_name);
 	}
 
 	void Editor::TempSave()
 	{
-		RemoveFocus();
+		ClearSelections();
 		std::string ext{ DYSTOPIA_SCENE_EXTENSION.begin(), DYSTOPIA_SCENE_EXTENSION.end() };
 		std::string file{ DYSTOPIA_SCENE_TEMP + std::to_string(GUIDGenerator::GetUniqueID()) + "." + ext };
 		mpSceneSystem->SaveScene(file, mpSceneSystem->GetCurrentScene().GetSceneName());
@@ -619,7 +642,7 @@ namespace Dystopia
 
 	void Editor::TempLoad()
 	{
-		RemoveFocus();
+		ClearSelections();
 		mpSceneSystem->RestartScene();
 		remove(mTempSaveFile.c_str());
 		mTempSaveFile.clear();
@@ -727,7 +750,7 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_COPY)->Bind(&Editor::EditorCopy, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_CUT)->Bind(&Editor::EditorCut, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PASTE)->Bind(&Editor::EditorPaste, this);
-		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DELETE)->Bind(&Editor::EditorDeleteFocus, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DELETE)->Bind(&Editor::EditorDelete, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVE)->Bind(&Editor::SaveProc, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVEAS)->Bind(&Editor::SaveAsProc, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PLAY)->Bind(&Editor::GamePlay, this);
@@ -748,20 +771,6 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVEAS)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PLAY)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_STOP)->Unbind(this);
-	}
-
-	void Editor::SetFocus(GameObject& _rObj)
-	{
-		for (auto& e : mArrTabs)
-			e->SetFocus(_rObj);
-		mpFocusGameObj = &_rObj;
-	}
-	
-	void Editor::RemoveFocus()
-	{
-		for (auto& e : mArrTabs)
-			e->RemoveFocus();
-		mpFocusGameObj = nullptr;
 	}
 
 	GameObject* Editor::FindGameObject(const uint64_t& _id) const
@@ -800,16 +809,6 @@ namespace Dystopia
 			p.mMemLoad		= mpProfiler->GetSystemMemoryLoad();
 			Performance::LogTaskMgr(p);
 		}
-	}
-
-	GameObject* Editor::GetCurrentFocusGameObj()
-	{
-		return mpFocusGameObj;
-	}
-
-	EditorInput* Editor::GetEditorInput()
-	{
-		return mpInput;
 	}
 
 	void Editor::ReAttachComponent(Component* _pComponent)
@@ -852,6 +851,7 @@ namespace Dystopia
 				}
 			}
 		}
+		_pComponent->DestroyComponent();
 	}
 
 	void Editor::PromptSaving()
@@ -881,30 +881,48 @@ namespace Dystopia
 		}
 	}
 
-	AutoArray<GameObject*> Editor::GetSelectionObjects(void)
+	const AutoArray<GameObject*>& Editor::GetSelectionObjects(void)
+	{
+		return mArrSelectedObj;
+	}
+
+	void Editor::AddSelection(const uint64_t& _id)
+	{
+		mUpdateSelection = true;
+		mpClipBoard->InsertSelection(_id);
+	}
+
+	void Editor::NewSelection(const uint64_t& _id)
+	{
+		mUpdateSelection = true;
+		ClearSelections();
+		mpClipBoard->InsertSelection(_id);
+	}
+
+	void Editor::RemoveSelection(const uint64_t _id)
+	{
+		mUpdateSelection = true;
+		mpClipBoard->RemoveSelection(_id);
+	}
+
+	void Editor::ClearSelections(void)
+	{
+		mpClipBoard->ClearSelection();
+	}
+
+	void Editor::UpdateSelections(void)
 	{
 		GameObject* temp = nullptr;
-		AutoArray<GameObject*> ret;
+		mArrSelectedObj.clear();
 		auto& selections = mpClipBoard->RetrieveSelections();
 		for (auto& id : selections)
 		{
 			temp = mpSceneSystem->GetActiveScene().FindGameObject(id);
 			if (temp)
 			{
-				ret.Insert(temp);
+				mArrSelectedObj.Insert(temp);
 			}
 		}
-		return ret;
-	}
-
-	void Editor::SetSelection(const uint64_t& _id)
-	{
-		mpClipBoard->InsertSelection(_id);
-	}
-
-	void Editor::ClearSelections(void)
-	{
-		mpClipBoard->ClearSelection();
 	}
 
 	bool Editor::IsCtrlDown(void) const

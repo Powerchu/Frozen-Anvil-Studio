@@ -55,6 +55,7 @@ namespace Dystopia
 		void ClearData(void);
 
 		void InsertSelection(const uint64_t & _uniqueID);
+		void RemoveSelection(const uint64_t & _uniqueID);
 		void InsertData(eClipDataTypes, void* _data, const size_t _dataSize);
 
 		AutoArray<void*> RetrieveDatas(eClipDataTypes, const size_t& _dataSize) const;

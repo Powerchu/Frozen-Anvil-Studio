@@ -73,18 +73,25 @@ namespace Dystopia
 		void			OpenScene(const std::wstring& _path, const std::wstring& _name);
 
 		/* Game Object stuff */
-		void			RemoveFocus();
-		void			SetFocus(GameObject&);
-		GameObject*		GetCurrentFocusGameObj();
 		GameObject*		FindGameObject(const uint64_t& _id) const;
 
-		void					SetSelection(const uint64_t& _id);
-		void					ClearSelections(void);
-		AutoArray<GameObject*>	GetSelectionObjects(void);
+		void			AddSelection(const uint64_t& _id);
+		void			NewSelection(const uint64_t& _id);
+		void			RemoveSelection(const uint64_t _id);
+		void			ClearSelections(void);
+
+		const AutoArray<GameObject*>&	GetSelectionObjects(void);
 
 		/* Editor Input */
-		EditorInput*	GetEditorInput();
 		bool			IsCtrlDown(void) const;
+
+		/* The edit functions */
+		void			EditorUndo();
+		void			EditorRedo();
+		void			EditorCopy();
+		void			EditorCut();
+		void			EditorPaste();
+		void			EditorDelete();
 
 		/* Reattach stuff */
 		void			ReAttachComponent(Component*);
@@ -106,14 +113,15 @@ namespace Dystopia
 		Timer					*mpTimer;
 		EditorInput				*mpInput;
 
+		bool					mUpdateSelection;
 		bool					mCtrlKey;
 		float					mDeltaTime;
 		std::string				mTempSaveFile;
 		eEditorState			mCurrentState;
 		eEditorState			mNextState;
 		AutoArray<EditorTab*>	mArrTabs;
+		AutoArray<GameObject*>	mArrSelectedObj;
 		Clipboard				*mpClipBoard;
-		GameObject				*mpFocusGameObj;
 
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
@@ -134,14 +142,6 @@ namespace Dystopia
 		void			MMDebug();
 		void			MMGame();
 
-		/* The edit functions */
-		void			EditorUndo();
-		void			EditorRedo();
-		void			EditorCopy();
-		void			EditorCut();
-		void			EditorPaste();
-		void			EditorDeleteFocus();
-
 		/* EditorEvents */
 		void			UpdateKeys();
 		void			UpdateHotkeys();
@@ -152,6 +152,7 @@ namespace Dystopia
 		/* Misc functions */
 		void			LogTabPerformance();
 		void			PromptSaving();
+		void			UpdateSelections(void);
 	};
 }
 
