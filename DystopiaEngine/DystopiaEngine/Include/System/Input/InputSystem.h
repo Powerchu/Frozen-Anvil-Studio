@@ -23,12 +23,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Component.h"
 #include "System/Base/ComponentDonor.h"
 
+#define _INPUT_MANAGER_TEST_CODE_ 1
+
 namespace Dystopia
 {
 	class CharacterController;
 	class Window;
 	class TextSerialiser;
-
+#if !_INPUT_MANAGER_TEST_CODE_
 	class InputManager : public Systems, public ComponentDonor<CharacterController>
 	{
 	public:
@@ -56,7 +58,6 @@ namespace Dystopia
 		float GetMouseWheel(void) const noexcept;
 
 	private:
-
 		struct KeyBinding
 		{
 			unsigned mnKey;
@@ -73,6 +74,76 @@ namespace Dystopia
 		
 		void LoadDefaultUserKeys(void);
 	};
+
+#else 
+	/*This is the revised InputManager*/
+	class InputManager : public Systems, public ComponentDonor<CharacterController>
+	{
+	public:
+
+		struct KeyboardState
+		{
+			using u64int = unsigned long;
+
+			/*Cover all 256 Keys*/
+			u64int mKeyPressFlags[4];
+
+			operator void*();
+			operator u64int*();
+			operator const u64int* () const;
+		};
+
+	public:
+		InputManager(void);
+		~InputManager(void);
+
+		bool Init(void);
+		void Update(float _dt);
+		void Shutdown(void);
+
+		void PostUpdate() override;
+
+		void LoadDefaults(void);
+		void LoadSettings(TextSerialiser&);
+
+		void MapUserButton(eUserButton, eButton);
+
+		
+		bool IsKeyTriggered(eUserButton) const noexcept;
+		bool IsKeyPressed(eUserButton)   const noexcept;
+		bool IsKeyReleased(eUserButton)  const noexcept;
+
+		bool IsKeyTriggered(eButton) const noexcept;
+		bool IsKeyPressed(eButton)   const noexcept;
+		bool IsKeyReleased(eButton)  const noexcept;
+
+		Math::Vector2 GetMousePosition(void) const;
+		Math::Vector2 GetMousePosition(const Window&) const;
+		Math::Vector2 GetMouseDelta(void) const noexcept;
+		float GetMouseWheel(void) const noexcept;
+
+	private:
+		struct KeyBinding
+		{
+			unsigned mnKey;
+
+			bool mbTriggered;
+			bool mbPressed;
+			bool mbReleased;
+
+			KeyBinding& operator = (eButton);
+		};
+
+		MouseData mMouseInput;
+		Array<KeyBinding, eUserButton::TOTAL_USERBUTTONS> mButtonMap;
+		KeyboardState mKeyBoardState;
+		KeyboardState mPrevKeyBoardState;
+
+		void LoadDefaultUserKeys(void);
+	};
+
+
+#endif
 }
 
 
