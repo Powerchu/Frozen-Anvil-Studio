@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaHelper.h"
 #include "Utility/MetaDataStructures.h"
 
-namespace Utility
+namespace Ut
 {
 	// =========================================== COMPILE TIME FIND =========================================== //
 
@@ -188,7 +188,7 @@ namespace Utility
 
 	// TODO: SFINAE Friendly?
 	template <typename T, typename ... Ty>
-	struct ConvertType : public Type<decltype(Helper::ConversionSelector<Ty...>{}(declval<Utility::Decay_t<T>>()))>
+	struct ConvertType : public Type<decltype(Helper::ConversionSelector<Ty...>{}(declval<Ut::Decay_t<T>>()))>
 	{
 
 	};

@@ -124,6 +124,11 @@
     <ClInclude Include="Include\Editor\ColorScheme.h" />
     <ClInclude Include="Include\Editor\Gizmo.h" />
     <ClInclude Include="Include\Editor\StyleScheme.h" />
+    <ClInclude Include="Include\Math\MetaFloat.h" />
+    <ClInclude Include="Include\Reflection\PPForEachSeq.h" />
+    <ClInclude Include="Include\Reflection\PPToSequence.h" />
+    <ClInclude Include="Include\Reflection\PPVariadicSize.h" />
+    <ClInclude Include="Include\Reflection\Reflection.h" />
     <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />

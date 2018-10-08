@@ -198,7 +198,7 @@ namespace Dystopia
 	void Inspector::ComponentsDropDownList()
 	{
 		static ListOfComponents availableComp;
-		static constexpr size_t numComponents = Utility::SizeofList<UsableComponents>::value;
+		static constexpr size_t numComponents = Ut::SizeofList<UsableComponents>::value;
 		Array<std::string, numComponents> arr;
 		ListOfComponentsName<std::make_index_sequence<numComponents>, UsableComponents>::Extract(arr);
 

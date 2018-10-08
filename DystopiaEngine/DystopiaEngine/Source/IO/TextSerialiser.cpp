@@ -27,7 +27,7 @@ Dystopia::TextSerialiser::TextSerialiser(void) :
 }
 
 Dystopia::TextSerialiser::TextSerialiser(std::fstream& _file) :
-	mFile{ Utility::Move(_file) }
+	mFile{ Ut::Move(_file) }
 {
 
 }

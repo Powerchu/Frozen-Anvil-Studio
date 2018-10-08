@@ -41,7 +41,7 @@ Next 9 Bits can be used for anything you want
 	struct GUIDGenerator
 	{
 		static GUID_t GetUniqueID(void);
-		static constexpr GUID_t INVALID = Utility::Constant<GUID_t, ~0>::value;
+		static constexpr GUID_t INVALID = Ut::Constant<GUID_t, ~0>::value;
 	};
 }
 

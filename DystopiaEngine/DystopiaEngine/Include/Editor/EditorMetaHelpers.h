@@ -44,7 +44,7 @@ namespace Dystopia
 		template<size_t Num>
 		static void Extract(Array<std::string, Num>& arr)
 		{
-			AuxEx<0>(arr, Utility::MetaExtract<Ns, List>::result::type::GetCompileName() ...);
+			AuxEx<0>(arr, Ut::MetaExtract<Ns, List>::result::type::GetCompileName() ...);
 		}
 	};
 
@@ -62,7 +62,7 @@ namespace Dystopia
 
 	struct ListOfComponents
 	{
-		static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
+		static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 
 		template<typename A>
 		struct GenerateCollection;
@@ -80,7 +80,7 @@ namespace Dystopia
 
 			using tupleType = std::tuple
 			<
-				typename GetType<typename Utility::MetaExtract<Ns, UsableComponents>::result::type * (&)(void) >::type ...    //::result::type * (&)(void)
+				typename GetType<typename Ut::MetaExtract<Ns, UsableComponents>::result::type * (&)(void) >::type ...    //::result::type * (&)(void)
 			>;
 
 			struct ApplyFunction
@@ -97,14 +97,14 @@ namespace Dystopia
 			template<typename List, size_t Head, size_t ... Rest>
 			struct BreakTuple<std::index_sequence<Head, Rest ...>, List>
 			{
-				std::tuple< typename GetType<typename Utility::MetaExtract_t<Rest, List>::type* (&)(void)>::type ...> mData
-					= { AuxGenFunction<typename Utility::MetaExtract_t<Rest, List>::type>::Extract ... };
+				std::tuple< typename GetType<typename Ut::MetaExtract_t<Rest, List>::type* (&)(void)>::type ...> mData
+					= { AuxGenFunction<typename Ut::MetaExtract_t<Rest, List>::type>::Extract ... };
 			};
 			template<typename List>
 			struct BreakTuple<std::index_sequence<0>, List>
 			{
-				std::tuple<typename Utility::MetaExtract<size - 1, UsableComponents>::result::type* (&)(void)> mData
-					= { AuxGenFunction<typename Utility::MetaExtract<size - 1, UsableComponents>::result::type>::Extract  };
+				std::tuple<typename Ut::MetaExtract<size - 1, UsableComponents>::result::type* (&)(void)> mData
+					= { AuxGenFunction<typename Ut::MetaExtract<size - 1, UsableComponents>::result::type>::Extract  };
 			};
 
 
@@ -116,20 +116,20 @@ namespace Dystopia
 				template <typename List, typename... Ts>
 				void* HelperFunction(unsigned int _i, std::tuple<Ts ...>& _data)
 				{
-					BreakTuple<Utility::MetaPopFront_t<List>> newData;
+					BreakTuple<Ut::MetaPopFront_t<List>> newData;
 					if (!_i)
 					{
 						ApplyFunction a;
 						return a(std::get<0>(_data));
 					}
-					return HelperFunction<Utility::MetaPopFront_t<List>>(_i - 1, newData.mData);
+					return HelperFunction<Ut::MetaPopFront_t<List>>(_i - 1, newData.mData);
 				}
 			};
 			*/
 
 			Component* Get(unsigned int _i, GameObject *_owner)
 			{
-				static auto mData = Ctor::MakeArray<Component*(*)(GameObject *)>(AuxGenFunction<typename Utility::MetaExtract<Ns, UsableComponents>::result::type>::Extract
+				static auto mData = Ctor::MakeArray<Component*(*)(GameObject *)>(AuxGenFunction<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::Extract
 					...
 				);
 				/*

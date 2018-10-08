@@ -660,6 +660,21 @@
     <ClInclude Include="Include\Editor\AdminCalls.h">
       <Filter>Editor\Admin</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Math\MetaFloat.h">
+      <Filter>Math\MetaMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\Reflection.h">
+      <Filter>Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPVariadicSize.h">
+      <Filter>Reflection\MetaData.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPToSequence.h">
+      <Filter>Reflection\MetaData.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPForEachSeq.h">
+      <Filter>Reflection\MetaData.h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -937,6 +952,18 @@
     </Filter>
     <Filter Include="Editor\Admin">
       <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\MetaMath">
+      <UniqueIdentifier>{08413c81-cbde-4575-842c-fc63e39a282d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection">
+      <UniqueIdentifier>{c13d8e9d-1ea4-40c5-b67f-f2713024e57a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\Preprocessor">
+      <UniqueIdentifier>{af73041d-894d-4be1-9ac1-a597e6a69bf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\MetaData.h">
+      <UniqueIdentifier>{a8ac820c-8de3-42f2-ba5c-2add3b365828}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

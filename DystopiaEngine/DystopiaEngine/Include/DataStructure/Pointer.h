@@ -28,7 +28,7 @@ public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
 	template <typename ... Ps, typename 
-		= Utility::EnableIf_t<!Utility::MetaFind<Pointer, Utility::Decay_t<Ps>...>::value>>
+		= Ut::EnableIf_t<!Ut::MetaFind<Pointer, Ut::Decay_t<Ps>...>::value>>
 	Pointer(Ps&& ...);
 	constexpr explicit Pointer(T* const _pObj) noexcept;
 	Pointer(Pointer&& _pPointer) noexcept;
@@ -74,7 +74,7 @@ private:
 */
 template <class T, class A> template <typename ... Ps, typename>
 Pointer<T, A>::Pointer(Ps&& ... _Args)
-	: mpObj{ A::ConstructAlloc(Utility::Forward<Ps>(_Args)...) }
+	: mpObj{ A::ConstructAlloc(Ut::Forward<Ps>(_Args)...) }
 {
 
 }
@@ -124,7 +124,7 @@ Pointer<T, A>& Pointer<T, A>::operator = (std::nullptr_t)
 template <class T, class A>
 Pointer<T, A>& Pointer<T, A>::operator = (Pointer<T, A>&& _ptr) noexcept
 {
-	Utility::Swap(mpObj, _ptr.mpObj);
+	Ut::Swap(mpObj, _ptr.mpObj);
 	return *this;
 }
 

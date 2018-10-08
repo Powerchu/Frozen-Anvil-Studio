@@ -12,7 +12,7 @@ namespace Dystopia
 		static GUID_t GetUniqueID(void)
 		{
 			auto   BaseID = GUIDGenerator::GetUniqueID();
-			return BaseID + Utility::MetaFind_t<Component, AllComponents>::value;
+			return BaseID + Ut::MetaFind_t<Component, AllComponents>::value;
 		}
 	};
 }

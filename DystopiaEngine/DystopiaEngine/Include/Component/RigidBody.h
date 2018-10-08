@@ -42,7 +42,7 @@ namespace Dystopia
 		using SYSTEM = PhysicsSystem;
 		unsigned GetComponentType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllComponents>::value;
 		};
 		static const std::string GetCompileName(void) { return "RigidBody"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }

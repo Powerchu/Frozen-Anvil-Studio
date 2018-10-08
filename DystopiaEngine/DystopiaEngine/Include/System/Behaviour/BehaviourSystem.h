@@ -48,7 +48,7 @@ namespace Dystopia
 	public :
 #if !EDITOR
 		using AllBehaviour = 
-			Utility::MetaSortT_t <Utility::MetaLessThan, Utility::Collection 
+			Ut::MetaSortT_t <Ut::MetaLessThan, Ut::Collection 
 			<
 
 			>>;

@@ -111,7 +111,7 @@ void Dystopia::SceneSystem::RestartScene()
 
 void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 {
-	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
+	static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 
 	delete mpCurrScene;
 	mpCurrScene = mpNextScene = new Scene{};
@@ -132,7 +132,7 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 
 void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::string& _strSceneName)
 {
-	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
+	static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 
 	/*Open File*/
 	auto SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_WRITE);

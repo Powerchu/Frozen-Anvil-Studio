@@ -63,9 +63,9 @@ Math::Matrix4& _CALL Math::Matrix4::Inverse(void)
 Math::Matrix4& _CALL Math::Matrix4::AffineInverse(void)
 {
 	Vector4 mag{ .0f, .0f, .0f, 1.f };
-	mag += mData[0] * mData[0];
-	mag += mData[1] * mData[1];
-	mag += mData[2] * mData[2];
+	mag.MultiplyAdd(mData[0], mData[0]);
+	mag.MultiplyAdd(mData[1], mData[1]);
+	mag.MultiplyAdd(mData[2], mData[2]);
 	mag.Reciprocal();
 	mag.w = .0f;
 
@@ -76,9 +76,9 @@ Math::Matrix4& _CALL Math::Matrix4::AffineInverse(void)
 	inverse.mData[2] *= mag;
 
 	inverse.mData[3] = Vector4{ .0f, .0f, .0f, 1.f };
-	inverse.mData[3] -= inverse.mData[0] * mData[0].wwww;
-	inverse.mData[3] -= inverse.mData[1] * mData[1].wwww;
-	inverse.mData[3] -= inverse.mData[2] * mData[2].wwww;
+	inverse.mData[3].MultiplySub(inverse.mData[0], mData[0].wwww);
+	inverse.mData[3].MultiplySub(inverse.mData[1], mData[1].wwww);
+	inverse.mData[3].MultiplySub(inverse.mData[2], mData[2].wwww);
 
 	return *this = inverse.Transpose();
 }
