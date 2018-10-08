@@ -13,6 +13,58 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "TagSystem.h"
 
 
+Dystopia::TagSystem::TagSystem(void)
+	: mArrStoredTags{ 0 }
+{
+}
+
+Dystopia::TagSystem::~TagSystem(void)
+{
+}
+
+void Dystopia::TagSystem::Init(void)
+{
+}
+
+void Dystopia::TagSystem::Shutdown(void)
+{
+}
+
+void Dystopia::TagSystem::Update(float)
+{
+}
+
+void Dystopia::TagSystem::LoadDefault(void)
+{
+}
+
+void Dystopia::TagSystem::LoadSettings(void)
+{
+}
+
+void Dystopia::TagSystem::Serialize(TextSerializer&)
+{
+}
+
+void Dystopia::TagSystem::UnSerialize(TextSerializer&)
+{
+}
+
+void Dystopia::TagSystem::AddTag(unsigned _index)
+{
+}
+
+void Dystopia::TagSystem::AddTag(const std::string& _tagName)
+{
+}
+
+void Dystopia::TagSystem::RemoveTag(unsigned _index)
+{
+}
+
+void Dystopia::TagSystem::RemoveTag(const std::string& _tagName)
+{
+}
 
 
 

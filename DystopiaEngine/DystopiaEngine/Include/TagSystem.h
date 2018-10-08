@@ -13,17 +13,35 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TAG_SYSTEM_H_
 #define _TAG_SYSTEM_H_
 
+#define TagType unsigned
+
+#include "DataStructure/Array.h"
+#include <string>
+
 namespace Dystopia
 {
+	class TextSerializer;
 	class TagSystem
 	{
 	public:
 		TagSystem(void);
 		~TagSystem(void);
 
+		void Init(void);
+		void Shutdown(void);
+		void Update(float);
+		void LoadDefault(void);
+		void LoadSettings(void);
+		void Serialize(TextSerializer&);
+		void UnSerialize(TextSerializer&);
+
+		void AddTag(unsigned _index);
+		void AddTag(const std::string& _tagName);
+		void RemoveTag(unsigned _index);
+		void RemoveTag(const std::string& _tagName);
 
 	private:
-		unsigned mAllTags;
+		Array<std::string, sizeof(TagType)> mArrStoredTags;
 
 	};
 }
