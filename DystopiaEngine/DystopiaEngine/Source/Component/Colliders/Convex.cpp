@@ -4,11 +4,16 @@
 #include "Component/Convex.h"
 #include "Component/RigidBody.h"
 #include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 #include "IO/TextSerialiser.h"
 #include "Component/Circle.h"
 #include "Component/Transform.h"
-#include "Editor/EGUI.h"
 #include "Math/Quaternion.h"
+
+#if EDITOR
+#include "Editor/Editor.h"
+#include "Editor/EGUI.h"
+#endif
 
 namespace Dystopia
 {
@@ -57,7 +62,7 @@ namespace Dystopia
 	void Convex::Serialise(TextSerialiser& _out) const
 	{
 		_out.InsertStartBlock("Convex_Collider");
-		_out << GetOwner()->GetID();					     // gObj ID
+		Component::Serialise(_out);
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);
@@ -88,9 +93,8 @@ namespace Dystopia
 		int arr_vert_size;
 		float tmp_x, tmp_y, tmp_z;
 
-
 		_in.ConsumeStartBlock();
-		_in >> mID;				// gObj ID
+		Component::Unserialise(_in);
 		_in >> mv3Offset[0];		// offset for colliders
 		_in >> mv3Offset[1];
 		_in >> mv3Offset[2];
@@ -121,12 +125,6 @@ namespace Dystopia
 
 		_in.ConsumeEndBlock();
 
-		if (GameObject* owner =
-			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
-		{
-			owner->AddComponent(this, Convex::TAG{});
-			Init();
-		}
 	}
 
 	Convex * Convex::Duplicate() const
@@ -506,7 +504,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Collider>(GetOwner()->GetID(), &mv3Offset);
+				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &mv3Offset);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
@@ -539,7 +537,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mNumPoints);
+				EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mNumPoints);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
@@ -582,7 +580,7 @@ namespace Dystopia
 					case EGUI::eDragStatus::eDRAGGING:
 						break;
 					case EGUI::eDragStatus::eSTART_DRAG:
-						EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &(c.mPosition));
+						EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &(c.mPosition));
 						break;
 					case EGUI::eDragStatus::eDEACTIVATED:
 						EGUI::GetCommandHND()->EndRecording();
@@ -620,7 +618,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Collider>(GetOwner()->GetID(), &mScale);
+				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &mScale);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();

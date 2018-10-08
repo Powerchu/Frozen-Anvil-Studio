@@ -48,16 +48,17 @@ namespace Dystopia
 			pObject->SetName(_name);
 			pObject->SetActive(true);
 			pObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 100, 100, 1 });
-			pObject->Init();
 			auto rend = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
 			pObject->AddComponent(rend, typename Renderer::TAG{});
 			auto rigid = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 			pObject->AddComponent(rigid, typename RigidBody::TAG{});
-			rend->SetOwner(pObject);
+
+			pObject->Identify();
+			pObject->Init();
 			rend->Init();
-			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Asset/Salamander_Stand.png"));
-			rigid->SetOwner(pObject);
 			rigid->Init();
+
+			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Asset/Salamander_Stand.png"));
 			return pObject;
 		}
 
@@ -65,9 +66,8 @@ namespace Dystopia
 		{
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent();
-			p->SetOwner(pObject);
-			p->Init();
 			pObject->AddComponent(p, typename Camera::TAG{});
+			pObject->Identify();
 			return pObject;
 		}
 

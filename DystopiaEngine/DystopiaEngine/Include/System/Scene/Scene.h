@@ -51,11 +51,16 @@ namespace Dystopia
 
 		void SetSceneName(const std::string& _name);
 
-		std::string GetSceneName() const;
+		uint64_t GetSceneID(void) const;
+
+		std::string GetSceneName(void) const;
 
 	private:
-		std::string mName;
+
+		uint64_t			  mID;
+		std::string			  mName;
 		AutoArray<GameObject> mGameObjs;
+
 		//Ctor::MagicArrayBuilder<GameObject>::SetBlockLimit<16>::SetBlockSize<256>::type mGameObjs;
 	};
 }

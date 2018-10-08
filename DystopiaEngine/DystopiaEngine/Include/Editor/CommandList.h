@@ -29,6 +29,7 @@ namespace Dystopia
 		virtual bool ExecuteDo() = 0;
 		virtual bool ExecuteUndo() = 0;
 		virtual bool Unchanged() const = 0;
+		virtual GameObject* RetrieveGameObject();
 		virtual ~Commands() {}
 	};
 
@@ -45,6 +46,7 @@ namespace Dystopia
 		bool ExecuteDo() override;
 		bool ExecuteUndo() override;
 		bool Unchanged() const;
+		GameObject* RetrieveGameObject();
 
 	private:
 		bool *mpNotify;
@@ -61,6 +63,7 @@ namespace Dystopia
 		bool ExecuteDo() override;
 		bool ExecuteUndo() override;
 		bool Unchanged() const;
+		GameObject* RetrieveGameObject();
 
 	private:
 		bool *mpNotify;
@@ -68,6 +71,18 @@ namespace Dystopia
 		uint64_t mObjID;
 		GameObject *mpObj;
 		Scene *mpScene;
+	};
+
+	struct ComdBatch : Commands
+	{
+		ComdBatch(AutoArray<Commands*>&& _arrComds);
+		~ComdBatch();
+		bool ExecuteDo() override;
+		bool ExecuteUndo() override;
+		bool Unchanged() const;
+
+	private:
+		AutoArray<Commands*> mArrCommands;
 	};
 
 	template <typename T, class Component>

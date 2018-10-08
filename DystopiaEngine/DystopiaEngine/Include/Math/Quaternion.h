@@ -20,7 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Matrix4.h"	// Matrix4
 #include "System/Graphics/Shader.h"
 
-
 namespace Math
 {
 	#define _CALL	__vectorcall
@@ -78,6 +77,7 @@ namespace Math
 		inline Quaternion& _CALL operator/=(const float);
 		inline Quaternion& _CALL operator+=(const Quaternion);
 		inline Quaternion& _CALL operator-=(const Quaternion);
+		inline bool _CALL operator==(const Quaternion);
 
 		
 		// ================================= QUATERNION GENERATORS ================================= // 
@@ -273,7 +273,10 @@ inline float _CALL Math::Quaternion::operator[](unsigned _nIndex) const
 	return mData[_nIndex];
 }
 
-
+inline bool _CALL Math::Quaternion::operator==(const Quaternion _rhs)
+{
+	return mData == _rhs.mData;
+}
 
 
 

@@ -2,12 +2,12 @@
 #include "System/Collision/CollisionEvent.h"
 #include "System/Scene/SceneSystem.h"
 #include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 #include "Math/Vector4.h"
 #include "Component/RigidBody.h"
 #include "Component/Circle.h"
 #include "IO/TextSerialiser.h"
 #include "Component/Convex.h"
-
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -92,9 +92,8 @@ namespace Dystopia
 	/*Serialise and Unserialise*/
 	void Circle::Serialise(TextSerialiser& _out) const
 	{
-
 		_out.InsertStartBlock("Circle_Collider2D");
-		_out << GetOwner()->GetID();						// gObj ID
+		Component::Serialise(_out);
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);
@@ -110,7 +109,7 @@ namespace Dystopia
 	void Circle::Unserialise(TextSerialiser& _in)
 	{
 		_in.ConsumeStartBlock();
-		_in >> mID;					// gObj ID
+		Component::Unserialise(_in);
 		_in >> mv3Offset[0];
 		_in >> mv3Offset[1];
 		_in >> mv3Offset[2];
@@ -124,11 +123,7 @@ namespace Dystopia
 		mDebugVertices.clear();
 		mScale[0] = m_radius;
 		mScale[1] = m_radius;
-		if (GameObject* owner = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
-		{
-			owner->AddComponent(this, Circle::TAG{});
-			Init();
-		}
+
 	}
 
 	/*Collision Check Functions*/

@@ -28,6 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
+#include "Editor/Editor.h"
 #endif 
 
 
@@ -55,7 +56,8 @@ Dystopia::Renderer::Renderer(const Renderer& _rhs) noexcept
 	: mnUnique{ 999 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }, mTexturePath{ _rhs.mTexturePath },
 	mTextureName{ _rhs.mTextureName }, Component{ _rhs }
 {
-
+	SetMesh("Quad");
+	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
 }
 
 void Dystopia::Renderer::Init(void)
@@ -141,25 +143,17 @@ Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Renderer");
-	_out << GetOwner()->GetID();
+	Component::Serialise(_out);
 	_out << mTexturePath;
 	_out.InsertEndBlock("Renderer");
 }
 
 void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 {
-	uint64_t id;
 	_in.ConsumeStartBlock();
-	_in >> id;
+	Component::Unserialise(_in);
 	_in >> mTexturePath;
 	_in.ConsumeEndBlock();
-	
-	if (GameObject* owner = 
-		EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(id))
-	{
-		owner->AddComponent(this, Renderer::TAG{});
-		Init();
-	}
 }
 
 std::string Dystopia::Renderer::GetTextureName()

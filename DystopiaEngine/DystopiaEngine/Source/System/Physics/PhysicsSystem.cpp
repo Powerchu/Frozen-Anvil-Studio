@@ -38,6 +38,9 @@ namespace Dystopia
 	{
 		for (auto& bodies : mComponents)
 		{
+#if EDITOR
+			if (bodies.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 			if (bodies.GetOwner())
 			{
 				if(!bodies.Get_IsStaticState())
@@ -50,6 +53,9 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
+#if EDITOR
+			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 			if (nullptr != body.GetOwner() && !body.Get_IsStaticState() && body.GetIsAwake())
 			{
 				body.Integrate(_dt);
@@ -63,6 +69,9 @@ namespace Dystopia
 		{
 			for (auto& body : mComponents)
 			{
+#if EDITOR
+				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 				const GameObject* owner = body.GetOwner();
 				if (nullptr != owner && !body.Get_IsStaticState() && body.GetIsAwake())
 				{
@@ -100,6 +109,9 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
+#if EDITOR
+			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 			if (body.GetOwner())
 			{
 				body.UpdateResult(_dt);

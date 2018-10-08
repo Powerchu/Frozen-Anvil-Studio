@@ -89,6 +89,9 @@ void Dystopia::InputManager::Update(float _dt)
 
 	for (auto& control : mComponents)
 	{
+#if EDITOR
+		if (control.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		if (control.GetOwner())
 		{
 			control.MovePlayer(_dt);

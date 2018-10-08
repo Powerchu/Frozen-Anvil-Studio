@@ -21,7 +21,6 @@ namespace Dystopia
 	class GraphicsSystem;
 	class GameObject;
 	class Camera;
-	class EditorInput;
 	struct File;
 
 	class SceneView : public EditorTab
@@ -67,7 +66,6 @@ namespace Dystopia
 		std::string		mLabel;
 		GraphicsSystem	*mpGfxSys;
 		GameObject		*mpSceneCamera;
-		EditorInput		*mpEditorInput;
 		Math::Vec2		mImgSize;
 		Math::Vec2		mMoveVec;
 		

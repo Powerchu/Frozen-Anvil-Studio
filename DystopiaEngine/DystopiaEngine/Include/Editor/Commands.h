@@ -44,7 +44,9 @@ namespace Dystopia
 		//	  InvokeCommand(new ComdModifyValue<T>{ _var, _newVal });
 		//}
 		void InvokeCommandInsert(GameObject&, Scene&, bool *_notify = nullptr);
+		void InvokeCommandInsert(const AutoArray<GameObject*>&, Scene&, bool *_notify = nullptr);
 		void InvokeCommandDelete(GameObject&, Scene&, bool *_notify = nullptr);
+		void InvokeCommandDelete(const AutoArray<GameObject*>&, Scene&, bool *_notify = nullptr);
 
 		template<class Component, typename T>
 		void InvokeCommand(const uint64_t& _id, T* _var, const T& _oldVal, bool *_notify = nullptr)
@@ -89,7 +91,10 @@ namespace Dystopia
 		bool IsRecording() const;
 
 		// Save Callback
-		void					SaveCallback();
+		void SaveCallback();
+
+		std::deque<Commands*>& GetDeqRedo(void);
+		std::deque<Commands*>& GetDeqUndo(void);
 
 	private:
 		RecordBase				*mpRecorder;

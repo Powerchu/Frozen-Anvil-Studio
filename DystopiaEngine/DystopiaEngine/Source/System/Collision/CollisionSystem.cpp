@@ -79,6 +79,9 @@ namespace Dystopia
 
 		for (auto& conv : ComponentDonor<Convex>::mComponents)
 		{
+#if EDITOR
+			if (conv.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 			conv.Update(_dt);
 		}
 

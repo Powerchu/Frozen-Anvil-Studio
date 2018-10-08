@@ -40,6 +40,7 @@
     <ClCompile Include="Source\Editor\Gizmo.cpp" />
     <ClCompile Include="Source\Editor\Payload.cpp" />
     <ClCompile Include="Source\Editor\StyleScheme.cpp" />
+    <ClCompile Include="Source\Editor\SystemSettings.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
@@ -107,6 +108,7 @@
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
     <ClCompile Include="Source\System\Window\Window.cpp" />
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
+    <ClCompile Include="Source\TagSystem.cpp" />
     <ClCompile Include="Source\Utility\GUID.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +126,7 @@
     <ClInclude Include="Include\Editor\ColorScheme.h" />
     <ClInclude Include="Include\Editor\Gizmo.h" />
     <ClInclude Include="Include\Editor\StyleScheme.h" />
+    <ClInclude Include="Include\Editor\SystemSettings.h" />
     <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
@@ -227,6 +230,7 @@
     <ClInclude Include="Include\System\Time\TimeSystem.h" />
     <ClInclude Include="Include\System\Window\Window.h" />
     <ClInclude Include="Include\System\Window\WindowManager.h" />
+    <ClInclude Include="Include\TagSystem.h" />
     <ClInclude Include="Include\Utility\DebugAssert.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Utility\Meta.h" />
