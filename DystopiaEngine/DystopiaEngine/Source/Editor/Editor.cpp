@@ -361,7 +361,6 @@ namespace Dystopia
 			MMFile();
 			MMEdit();
 			MMView();
-			MMDebug();
 			MMGame();
 
 			EGUI::EndMainMenuBar();
@@ -408,23 +407,6 @@ namespace Dystopia
 				if (EGUI::StartMenuBody(e->GetLabel()))
 					*(e->GetOpenedBool()) = !*(e->GetOpenedBool());
 			}
-			EGUI::EndMenuHeader();
-		}
-	}
-
-	void Editor::MMDebug()
-	{
-		static constexpr float icon = 10.f;
-		static GraphicsSystem *pGraphic = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
-		if (EGUI::StartMenuHeader("Debug"))
-		{
-
-				if (pGraphic->GetDebugDraw())	EGUI::Display::IconTick(icon, icon);
-				else							EGUI::Display::Dummy(icon, icon);
-				EGUI::SameLine();
-				if (EGUI::StartMenuBody("Draw Debug Collision"))
-					pGraphic->ToggleDebugDraw();
-			
 			EGUI::EndMenuHeader();
 		}
 	}
@@ -665,12 +647,14 @@ namespace Dystopia
 			mpGuiSystem->UpdateKey(i, false);
 		for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
 			mpGuiSystem->UpdateKey(i, false);
-		bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
-		const auto& queue = mpWin->GetMainWindow().GetInputQueue();
+		for (int i = eButton::KEYBOARD_SHIFT; i <= eButton::KEYBOARD_ALT; ++i)
+			mpGuiSystem->UpdateKey(i, false);
 
 		mCtrlKey = mpInput->IsKeyPressed(KEY_CTRL);
 		if (!mCtrlKey)
 		{
+			const auto& queue = mpWin->GetMainWindow().GetInputQueue();
+			bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
 			for (const auto& k : queue)
 			{
 				// 0 to 9
@@ -683,8 +667,6 @@ namespace Dystopia
 				else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
 					mpGuiSystem->UpdateChar(k - 48);
 				// arithmetics
-				//else if (k >= eButton::KEYBOARD_OEM_1 && k <= eButton::KEYBOARD_OEM_PERIOD)
-				//	mpGuiSystem->UpdateChar(k);
 				else if (k == eButton::KEYBOARD_OEM_PERIOD)
 					mpGuiSystem->UpdateChar(46);
 				else if (k == eButton::KEYBOARD_OEM_MINUS)
@@ -695,7 +677,10 @@ namespace Dystopia
 				else
 					mpGuiSystem->UpdateKey(k, true);
 			}
+			mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, caps);
+			mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, mpInput->IsKeyPressed(KEY_ALT));
 		}
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, mCtrlKey);
 	}
 
 	void Editor::UpdateHotkeys()

@@ -45,6 +45,12 @@ namespace Dystopia
 		void UpdateResults(float _dt);
 		void DebugPrint();
 
+#if EDITOR
+		void GravityUI(void);
+		void IsDebugUI(void);
+		void ResolutionUI(void);
+#endif 
+
 		bool  mbIsDebugActive;
 		
 		InterpolationMode mInterpolation_mode;
@@ -59,7 +65,7 @@ namespace Dystopia
 		// Position Correction Tolerance
 		float mPenetrationEpsilon;
 		// Position Correction Resolution as Percentage;
-		unsigned int mResolutionIterations;
+		int mResolutionIterations;
 	};
 }
 

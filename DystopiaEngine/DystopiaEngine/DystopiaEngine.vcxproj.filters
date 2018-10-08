@@ -250,9 +250,6 @@
     <ClCompile Include="Source\Editor\AdminCalls.cpp">
       <Filter>Editor\Admin</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\SystemSettings.cpp">
-      <Filter>Editor\Editor Tabs\SystemSettings</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\ProjectSettings.cpp">
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClCompile>
@@ -666,9 +663,6 @@
     <ClInclude Include="Include\Editor\AdminCalls.h">
       <Filter>Editor\Admin</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\SystemSettings.h">
-      <Filter>Editor\Editor Tabs\SystemSettings</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\ProjectSettings.h">
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClInclude>
@@ -949,9 +943,6 @@
     </Filter>
     <Filter Include="Editor\Admin">
       <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Editor Tabs\SystemSettings">
-      <UniqueIdentifier>{f494a940-4551-4291-aa92-cff931764600}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Editor Tabs\Project Settings">
       <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
