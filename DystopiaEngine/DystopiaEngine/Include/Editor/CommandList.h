@@ -26,9 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Component;
 	class Scene;
-	class System;
 	class GameObject;
 
 	struct Commands
@@ -96,7 +94,7 @@ namespace Dystopia
 	struct ComdModifyValue;
 
 	template <typename T, class Comp>
-	struct ComdModifyValue<T, Comp, Utility::Type_t<Utility::EnableIf_t<std::is_base_of<Comp, Component>::value, T>>>
+	struct ComdModifyValue<T, Comp, Utility::Type_t<Utility::EnableIf_t<std::is_base_of<Component, Comp>::value>>>
 		: Commands
 	{
 		ComdModifyValue(const uint64_t& _objID, T* _pmData, const T& _oldV, bool * _notify = nullptr)
@@ -138,10 +136,10 @@ namespace Dystopia
 	}; 
 
 	template <typename T, class Sys>
-	struct ComdModifyValue<T, Sys, Utility::Type_t<Utility::EnableIf_t<std::is_base_of<Sys, System>::value, T>>>
+	struct ComdModifyValue<T, Sys, Utility::Type_t<Utility::EnableIf_t<std::is_base_of<Systems, Sys>::value>>>
 		: Commands
 	{
-		ComdModifyValue(T* _pData, const T& _oldV, bool * _notify = nullptr)
+		ComdModifyValue(const uint64_t&, T* _pData, const T& _oldV, bool * _notify = nullptr)
 			: mpData{ _pData }, mOldValue{ _oldV }, mNewValue{ *_pData }, mpNotify{ _notify }
 		{}
 
@@ -151,7 +149,7 @@ namespace Dystopia
 			if (!pSystem) return false;
 
 			if (mpNotify) *mpNotify = true;
-			*_pData = mNewValue;
+			*mpData = mNewValue;
 			return true;
 		}
 
@@ -161,7 +159,7 @@ namespace Dystopia
 			if (!pSystem) return false;
 
 			if (mpNotify) *mpNotify = true;
-			*_pData = mOldValue;
+			*mpData = mOldValue;
 			return true;
 		}
 
@@ -263,7 +261,7 @@ namespace Dystopia
 	struct ComdRecord<T, Sys, Utility::Type_t<Utility::EnableIf_t<std::is_base_of<Systems, Sys>::value>>>
 		: RecordBase
 	{
-		ComdRecord(T* _pData, bool * _notify = nullptr)
+		ComdRecord(const uint64_t&, T* _pData, bool * _notify = nullptr)
 			: mpTarget{ _pData }, mOldValue{ *_pData },
 			mNewValue{ mOldValue }, mpNotify{ _notify }
 		{}
@@ -271,7 +269,7 @@ namespace Dystopia
 		bool EndRecord()
 		{
 			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
-			if (!pSystme) return false;
+			if (!pSystem) return false;
 	
 			mNewValue = *mpTarget;
 			return true;
@@ -280,7 +278,7 @@ namespace Dystopia
 		bool ExecuteDo() override
 		{
 			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
-			if (!pSystme) return false;
+			if (!pSystem) return false;
 	
 			if (mpNotify) *mpNotify = true;
 			*mpTarget = mNewValue;
@@ -290,7 +288,7 @@ namespace Dystopia
 		bool ExecuteUndo() override
 		{
 			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
-			if (!pSystme) return false;
+			if (!pSystem) return false;
 	
 			if (mpNotify) *mpNotify = true;
 			*mpTarget = mOldValue;

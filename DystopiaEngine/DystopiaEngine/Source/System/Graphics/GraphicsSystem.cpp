@@ -590,8 +590,54 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer()
 
 void Dystopia::GraphicsSystem::EditorUI(void)
 {
-#if EDITOR
+#if EDITOR								   
+	auto result = EGUI::Display::DragFloat("Gamma       ", &mfGamma, 0.1f, 0.1f, 10.f);
+	switch (result)
+	{
+	case EGUI::eDragStatus::eEND_DRAG:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	case EGUI::eDragStatus::eENTER:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	case EGUI::eDragStatus::eSTART_DRAG:
+		EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&mfGamma);
+		break;
+	case EGUI::eDragStatus::eDRAGGING:
+		break;
+	case EGUI::eDragStatus::eDEACTIVATED:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	}
 
+	bool tempBool = mbDebugDraw;
+	if (EGUI::Display::CheckBox("Debug Draw  ", &tempBool))
+	{
+		mbDebugDraw = tempBool;
+		EGUI::GetCommandHND()->InvokeCommand<GraphicsSystem>(&mbDebugDraw, tempBool);
+	}
+
+	auto result2 = EGUI::Display::VectorFields("Debug Color ", &mvDebugColour, 0.01f, 0.f, 1.f);
+	for (const auto& elem : result2)
+	{
+		switch (elem)
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&mvDebugColour);
+			break;
+		case EGUI::eDragStatus::eDRAGGING:
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		}
+	}
 
 #endif 
 }
