@@ -20,27 +20,6 @@ namespace Dystopia
 	}
 	bool CollisionSystem::Init()
 	{
-		auto * pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
-		if (pMeshSys)
-		{
-			for (auto & elem : ComponentDonor<Convex>::mComponents)
-			{
-				/*If Collider already has a mesh, do not make a new one*/
-				if (elem.GetMesh() == nullptr)
-					continue;
-
-				pMeshSys->StartMesh();
-
-				auto const & arr = elem.GetVertexBuffer();
-				for (auto i : arr)
-				{
-					pMeshSys->AddVertex(i.x, i.y, i.z);
-				}
-
-				elem.SetMesh(pMeshSys->AddIndices("Collider Mesh", elem.GetIndexBuffer()));
-				pMeshSys->EndMesh();
-			}
-		}
 		return true;
 	}
 
@@ -93,15 +72,15 @@ namespace Dystopia
 		{
 			CollisionTableMap i
 			{
-				{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }    ,&CollisionSystem::AABBvsAABB },
+			{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }    ,&CollisionSystem::AABBvsAABB },
 			{ CollisionTable{ eColliderType::AABB    ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::AABB }    ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
-			{ CollisionTable{ eColliderType::CIRCLE  ,eColliderType::CIRCLE }   ,&CollisionSystem::CircleVsCircle },
-			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::AABB }      ,&CollisionSystem::CircleVsAABB },
-			{ CollisionTable{ eColliderType::AABB,   eColliderType::CIRCLE }    ,&CollisionSystem::AABBvsCircle },
-			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::CONVEX }    ,&CollisionSystem::CircleVsConvex },
-			{ CollisionTable{ eColliderType::CONVEX, eColliderType::CIRCLE }   ,&CollisionSystem::ConvexVsCircle }
+			{ CollisionTable{ eColliderType::CIRCLE  ,eColliderType::CIRCLE }  ,&CollisionSystem::CircleVsCircle },
+			{ CollisionTable{ eColliderType::CIRCLE,  eColliderType::AABB }    ,&CollisionSystem::CircleVsAABB },
+			{ CollisionTable{ eColliderType::AABB,    eColliderType::CIRCLE }  ,&CollisionSystem::AABBvsCircle },
+			{ CollisionTable{ eColliderType::CIRCLE,  eColliderType::CONVEX }  ,&CollisionSystem::CircleVsConvex },
+			{ CollisionTable{ eColliderType::CONVEX,  eColliderType::CIRCLE }  ,&CollisionSystem::ConvexVsCircle }
 			};
 			return i;
 		}();
@@ -110,83 +89,57 @@ namespace Dystopia
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
-			if (elem.GetOwner())
-			{
-				elem.ClearCollisionEvent(); //clear collision table
-				//auto const & GobjPoint = elem.GetOwner()->GetComponent<Transform>()->GetPosition();
-			    //Math::Matrix3D gobjMatrix = Math::Translate(GobjPoint.x, GobjPoint.y, GobjPoint.z) * elem.GetOwner()->GetComponent<Transform>()->GetRotation().Matrix();
-				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
-				elem.SetOwnerTransform(gobjMatrix);
-				elem.SetColliding((false));
-				mColliders.push_back(&elem);
-			}
+			elem.ClearCollisionEvent(); //clear collision table
+			Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
+			elem.SetOwnerTransform(gobjMatrix);
+			elem.SetColliding((false));
+			mColliders.push_back(&elem);
 		}
 
 		for (auto & elem : ComponentDonor<AABB>::mComponents)
 		{
-			if (elem.GetOwner())
-			{
-				elem.ClearCollisionEvent(); //clear collision table
-				//auto const & GobjPoint =  elem.GetOwner()->GetComponent<Transform>()->GetPosition();
-				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
-				elem.SetOwnerTransform(gobjMatrix);
-				elem.SetColliding((false));
-				mColliders.push_back(&elem);
-			}
+			elem.ClearCollisionEvent(); //clear collision table
+			Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
+			elem.SetOwnerTransform(gobjMatrix);
+			elem.SetColliding((false));
+			mColliders.push_back(&elem);
+			
 		}
 
 		for (auto & elem : ComponentDonor<Circle>::mComponents)
 		{
-			if (elem.GetOwner())
-			{
-				elem.ClearCollisionEvent(); //clear collision table
-				//auto const   & GobjPoint = elem.GetOwner()->GetComponent<Transform>()->GetPosition();
-				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
-				elem.SetOwnerTransform(gobjMatrix);
-				elem.SetColliding((false));
-				mColliders.push_back(&elem);
-			}
+			elem.ClearCollisionEvent(); //clear collision table
+			Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
+			elem.SetOwnerTransform(gobjMatrix);
+			elem.SetColliding((false));
+			mColliders.push_back(&elem);
+			
 		}
 
 		for (auto & bodyA : mColliders)
 		{
-			if (nullptr == bodyA->GetOwner()) continue;
 			for (auto & bodyB : mColliders)
 			{
-				if (nullptr == bodyB->GetOwner()) continue;
+				const auto rigidA = bodyA->GetOwner()->GetComponent<RigidBody>();
+				const auto rigidB = bodyB->GetOwner()->GetComponent<RigidBody>();
 
 				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
 				{
-					if (bodyA->GetOwner()->GetComponent<RigidBody>() && bodyB->GetOwner()->GetComponent<RigidBody>())
+					if (rigidA && rigidB)
 					{
-						if (!bodyA->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState() ||
-							!bodyB->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState())
-						{
-							const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
-							for (auto & key : CollisionFuncTable)
-							{
-								if (key.first == pair_key)
-								{
-									(this->*key.second)(bodyA, bodyB);
-									bodyB->SetColliding(bodyB->Collider::HasCollision());
-									bodyA->SetColliding(bodyA->Collider::HasCollision());
-									break;
-								}
-							}
-						}
+						if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState())
+							continue;
 					}
-					else
+
+					const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+					for (auto & key : CollisionFuncTable)
 					{
-						const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
-						for (auto & key : CollisionFuncTable)
+						if (key.first == pair_key)
 						{
-							if (key.first == pair_key)
-							{
-								(this->*key.second)(bodyA, bodyB);
-								bodyB->SetColliding(bodyB->Collider::HasCollision());
-								bodyA->SetColliding(bodyA->Collider::HasCollision());
-								break;
-							}
+							(this->*key.second)(bodyA, bodyB);
+							bodyB->SetColliding(bodyB->Collider::HasCollision());
+							bodyA->SetColliding(bodyA->Collider::HasCollision());
+							break;
 						}
 					}
 				}

@@ -24,7 +24,8 @@ namespace Dystopia
 		Vertice{ Math::MakePoint3D(-.5f,.5f,0) },
 		Vertice{ Math::MakePoint3D(-.5f,-.5f,0) },
 		Vertice{ Math::MakePoint3D(.5f,-.5f,0) }
-	}, mNumPoints(4)
+		}, 
+		mNumPoints(4)
 	{
 
 	}
@@ -39,7 +40,7 @@ namespace Dystopia
 		mDebugVertices.clear();
 		for (auto & elem : mVertices)
 		{
-			auto offset = GetOffSet();
+			auto offset = mv3Offset;
 			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x + offset.x, elem.mPosition.y + offset.y , elem.mPosition.z + offset.z });
 		}
 
@@ -69,7 +70,7 @@ namespace Dystopia
 
 		_out << int(mVertices.size());
 
-		for (const auto vertex : mVertices)
+		for (const auto& vertex : mVertices)
 		{
 			_out << float(vertex.mPosition[0]);
 			_out << float(vertex.mPosition[1]);
@@ -106,7 +107,7 @@ namespace Dystopia
 		
 		mDebugVertices.clear();
 
-		for (int i = 0; i< arr_vert_size; ++i)
+		for (int i = 0; i < arr_vert_size; ++i)
 		{
 			_in >> tmp_x;
 			_in >> tmp_y;
@@ -469,6 +470,7 @@ namespace Dystopia
 		eSetScale();
 		ePointVerticesVectorArray();
 		eNumberOfContactsLabel();
+		eUseTransformScaleButton();
 	}
 
 	void Convex::eIsTriggerCheckBox()
@@ -526,7 +528,7 @@ namespace Dystopia
 
 		if (EGUI::Display::CollapsingHeader("Points"))
 		{
-			switch (EGUI::Display::DragInt("	Size		", &mNumPoints, 1, 4, 32, false, 128))
+			switch (EGUI::Display::DragInt("	Size		", &mNumPoints, 1, 3, 32, false, 128))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
 				EGUI::GetCommandHND()->EndRecording();
@@ -551,11 +553,11 @@ namespace Dystopia
 				break;
 			}
 
-			while (mVertices.size() < unsigned int(mNumPoints))
+			if (mVertices.size() < unsigned int(mNumPoints))
 			{
 				mVertices.push_back(Math::MakePoint3D(0.0f, 0.0f, 0.0f));
 			}
-			while (mVertices.size() > unsigned int(mNumPoints))
+			if (mVertices.size() > unsigned int(mNumPoints))
 			{
 				mVertices.pop_back();
 			}
@@ -581,6 +583,7 @@ namespace Dystopia
 						break;
 					case EGUI::eDragStatus::eSTART_DRAG:
 						EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &(c.mPosition));
+						Init();
 						break;
 					case EGUI::eDragStatus::eDEACTIVATED:
 						EGUI::GetCommandHND()->EndRecording();
@@ -595,9 +598,6 @@ namespace Dystopia
 				EGUI::PopID();
 
 			}
-
-			Init();
-
 		}
 	}
 
@@ -667,7 +667,10 @@ namespace Dystopia
 
 	void Convex::eUseTransformScaleButton()
 	{
-
+		if (EGUI::Display::Button("Update Points", Math::Vec2{180.0f, 20.0f}))
+		{
+			Init();
+		}
 	}
 
 	bool Convex::ContainOrigin(AutoArray<Vertice> & _Simplex,

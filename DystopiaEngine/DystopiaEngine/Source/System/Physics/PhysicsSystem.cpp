@@ -12,11 +12,11 @@ namespace Dystopia
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(false)
 		, mInterpolation_mode(none)
-		, mGravity(-910.665F)
+		, mGravity(-930.665F)
 		, mMaxVelocityConstant(800.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.05F)
-		, mResolutionIterations(10)
+		, mPenetrationEpsilon(0.1F)
+		, mResolutionIterations(8)
 	{
 	}
 
@@ -72,10 +72,9 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				const GameObject* owner = body.GetOwner();
-				if (nullptr != owner && !body.Get_IsStaticState() && body.GetIsAwake())
+				if (!body.Get_IsStaticState() && body.GetIsAwake())
 				{
-					const auto col = owner->GetComponent<Collider>();
+					const auto col = body.GetOwner()->GetComponent<Collider>();
 					if (nullptr != col)
 					{
 						if (col->HasCollision())

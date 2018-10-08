@@ -1,10 +1,10 @@
 [START_Scene]
-18446744072511553536,player_scene,8,[START_START_GO_DATA]
+18446744072511553536,player_scene,11,[START_START_GO_DATA]
 910164992,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,0,0,0,0,0,0,1,
+1.27855,1.27855,0.0908386,0,0,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -13,7 +13,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-800,16,1,0,240,0,0,0,0,1,
+800,32,1,0,246.51,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -23,15 +23,6 @@
 [START_START_GO_TRANSFORM]
 [START_Transform]
 200,16,1,200,-80,0,0,0,0,1,
-[END_Transform]
-
-[END_END_GO_TRANSFORM]
-[START_START_GO_DATA]
-18446744071771702784,1,Character,
-[END_END_GO_DATA]
-[START_START_GO_TRANSFORM]
-[START_Transform]
-128,128,1,0,0,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -49,7 +40,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-16,800,1,390,0,0,0,0,0,1,
+32,800,1,402.26,0,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -58,7 +49,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-16,800,1,-390.61,0,0,0,0,0,1,
+32,800,1,-402.03,0,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -67,7 +58,43 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-800,16,1,0,-240,0,0,0,0,1,
+800,32,1,0,-252.38,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072212923904,1,GameObject,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,64,1,-200,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071862940160,1,Floor_Clone_1_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+200,16,1,-200,-150,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072207692800,1,Floor_Clone_1_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+200,16,1,200,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071771702784,1,Character,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,1,0,0,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -81,7 +108,7 @@
 
 [END_Component End]
 [START_ComponentDonor]
-7,
+9,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -92,12 +119,6 @@
 [START_Component]
 [START_Renderer]
 18446744071607800832,0,18446744072324877824,,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-18446744071607803392,0,18446744071771702784,..\DystopiaEngine\Resource\Asset\sprite_01.png,
 [END_Renderer]
 
 [END_Component End]
@@ -125,8 +146,26 @@
 [END_Renderer]
 
 [END_Component End]
+[START_Component]
+[START_Renderer]
+343826432,0,18446744071771702784,..\DystopiaEngine\Resource\Asset\sprite_01.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071862940672,0,18446744071862940160,,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072207693312,0,18446744072207692800,,
+[END_Renderer]
+
+[END_Component End]
 [START_ComponentDonor]
-7,
+10,
 [END_ComponentDonor End]
 [START_Component]
 [START_RigidBody]
@@ -137,12 +176,6 @@
 [START_Component]
 [START_RigidBody]
 18446744071607801344,0,18446744072324877824,0,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-18446744071607803904,0,18446744071771702784,0,0.1,0.5,0.5,1,0.3,1,100,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -166,7 +199,31 @@
 [END_Component End]
 [START_Component]
 [START_RigidBody]
-18446744071607814656,0,18446744073580751872,0,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
+18446744071607814656,0,18446744073580751872,0,0.5,0.5,0.5,0.7,2,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+343826944,0,18446744071771702784,0,0.2,0.5,0.5,0.3,0.03,1.2,150,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+68989440,0,18446744072212923904,0,0.5,0.5,0.5,0.7,0.8,1,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744071862941184,0,18446744071862940160,0,0.5,0.5,0.5,0.7,1.83,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072207693824,0,18446744072207692800,0,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -174,7 +231,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-7,
+9,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -185,12 +242,6 @@
 [START_Component]
 [START_Convex_Collider]
 18446744071607801856,0,18446744072324877824,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
-[END_Convex_Collider]
-
-[END_Component End]
-[START_Component]
-[START_Convex_Collider]
-18446744071607804416,0,18446744071771702784,0,0,0,4,0.1,0.2,0,-0.2,0.2,0,-0.2,-0.5,0,0.1,-0.5,0,1,1,1,0,0,0,1,
 [END_Convex_Collider]
 
 [END_Component End]
@@ -218,15 +269,39 @@
 [END_Convex_Collider]
 
 [END_Component End]
+[START_Component]
+[START_Convex_Collider]
+343827456,0,18446744071771702784,0,0,0,4,0.1,0.17,0,-0.2,0.17,0,-0.2,-0.47,0,0.1,-0.47,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744071862941696,0,18446744071862940160,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744072207694336,0,18446744072207692800,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
 [START_ComponentDonor]
-0,
+1,
 [END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+1730555904,0,18446744072212923904,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]
 [START_Component]
 [START_Character_Controller]
-18446744071607804928,0,18446744071771702784,
+343827968,0,18446744071771702784,
 [END_Character_Controller]
 
 [END_Component End]

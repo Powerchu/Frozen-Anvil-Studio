@@ -87,17 +87,16 @@ namespace Dystopia
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_RIGHT))
 		{
 			mpBody->AddImpulse({ 20,0,0 });
-
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_UP))
 		{
-			mpBody->AddImpulse({ 0,20,0 });
+			mpBody->AddForce({ 0,20,0 });
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
 		{
-			mpBody->AddImpulse({ 0,300*mpBody->GetGravityScalar(),0 });
+			mpBody->AddImpulse({ 0,500*mpBody->GetGravityScalar(),0 });
 		}
 	}
 }

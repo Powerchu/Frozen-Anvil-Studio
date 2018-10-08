@@ -64,9 +64,6 @@ namespace Dystopia
 		/*Duplicate the Component*/
 		Convex* Duplicate() const override;
 
-		// Editor UI
-		void EditorUI(void) noexcept override;
-
 		/*Serialise and Unserialise*/
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;
@@ -121,11 +118,14 @@ namespace Dystopia
 		void ePositionOffsetVectorFields();
 		void ePointVerticesVectorArray();
 		void eSetScale();
+
 		//INFO
 		void eAttachedBodyEmptyBox();
 		void eNumberOfContactsLabel();
 		void eUseTransformScaleButton();
 
+		// Editor UI
+		void EditorUI(void) noexcept override;
 #endif // EDITOR
 
 	};

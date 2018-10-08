@@ -17,7 +17,7 @@ namespace Dystopia
 {
 	using Math::Vec3D;
 	Circle::Circle()
-		: m_radius(0.5F)
+		: m_radius(1.0F)
 		, Collider{Vec3D{0,0,0} }
 	{
 
@@ -266,10 +266,45 @@ namespace Dystopia
 		UNUSED_PARAMETER(other_col);
 		return this->isColliding(*other_col);
 	}
+
+	
 #if EDITOR
-	void Circle::eRadiusFields()
+	void Circle::ePositionOffsetVectorFields()
 	{
-		EGUI::Display::Label("Radius");
+		EGUI::Display::Label("Offset");
+		auto arrResult = EGUI::Display::VectorFields("    ", &mv3Offset, 0.01f, -FLT_MAX, FLT_MAX);
+		for (auto &e : arrResult)
+		{
+			switch (e)
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &mv3Offset);
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	void Circle::eScaleField()
+	{
+		EGUI::Display::Label("Scale");
 		auto e = EGUI::Display::DragFloat("   ", &m_radius, 0.05f, -FLT_MAX, FLT_MAX);
 		switch (e)
 		{
@@ -299,9 +334,44 @@ namespace Dystopia
 
 	}
 
+	void Circle::eAttachedBodyEmptyBox()
+	{
+		std::string bodyAttached;
+		if (GetOwner()->GetComponent<RigidBody>())
+			bodyAttached = GetOwner()->GetName();
+		else
+			bodyAttached = "None";
+
+		EGUI::Display::Label("Attached Body");
+		EGUI::Display::EmptyBox("		", 180.f, bodyAttached, false, true);
+	}
+
+	void Circle::eNumberOfContactsLabel()
+	{
+		if (EGUI::Display::CollapsingHeader("Contacts"))
+		{
+			for (unsigned int i = 0; i < marr_ContactSets.size(); ++i)
+			{
+				EGUI::PushID(i);
+				auto& c = marr_ContactSets[i];
+				std::string name = c.mCollidedWith->GetName();
+				EGUI::Display::EmptyBox("		", 180.f, name, false, true);
+				EGUI::PopID();
+			}
+
+			if (marr_ContactSets.IsEmpty())
+			{
+				EGUI::Display::EmptyBox("		", 180.f, "No Contacts", false, true);
+			}
+		}
+	}
+
 	void Circle::EditorUI() noexcept
 	{
-		eRadiusFields();
+		ePositionOffsetVectorFields();
+		eScaleField();
+		eAttachedBodyEmptyBox();
+		eNumberOfContactsLabel();
 	}
 #endif
 }

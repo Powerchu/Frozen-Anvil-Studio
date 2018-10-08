@@ -25,6 +25,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define WIN32_LEAN_AND_MEAN			// Exclude rare stuff from Window's header
 #include <Windows.h>
 #include "Object/ObjectFlags.h"
+#include "System/Profiler/ProfilerAction.h"
+#include "System/Time/ScopedTimer.h"
 #undef  WIN32_LEAN_AND_MEAN			// Stop define from spilling into code
 #undef NOMINMAX
 
@@ -75,6 +77,8 @@ bool Dystopia::InputManager::Init(void)
 
 void Dystopia::InputManager::Update(float _dt)
 {
+	ScopedTimer<ProfilerAction> timeKeeper{ "Input System", "Update" };
+
 	mMouseInput.mnWheel = 0;
 	for (unsigned n = 0; n < eUserButton::TOTAL_USERBUTTONS; ++n)
 	{
