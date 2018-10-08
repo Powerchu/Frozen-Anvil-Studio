@@ -40,6 +40,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* Editor includes */
 #include "Editor/EGUI.h"
 #include "Editor/Editor.h"
+#include "Editor/ProjectSettings.h"
 #include "Editor/EditorInputs.h"
 #include "Editor/EditorEvents.h"
 #include "Editor/Commands.h"
@@ -126,6 +127,7 @@ namespace Dystopia
 
 	void Editor::LoadTabs()
 	{
+		mArrTabs.push_back(ProjectSettings::GetInstance());
 		mArrTabs.push_back(ConsoleLog::GetInstance());
 		mArrTabs.push_back(PerformanceLog::GetInstance());
 		mArrTabs.push_back(ColorScheme::GetInstance());
@@ -183,7 +185,6 @@ namespace Dystopia
 			e->SetEventContext(mpEditorEventSys);
 			e->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			e->Init();
-			//e->RemoveFocus();
 		}
 		LoadSettings();
 		EGUI::SetContext(mpComdHandler);
@@ -191,6 +192,7 @@ namespace Dystopia
 
 	void Editor::StartFrame()
 	{
+		mCtrlKey = false;
 		mDeltaTime = mpTimer->Elapsed();
 		mpTimer->Lap();
 		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow())

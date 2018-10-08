@@ -57,6 +57,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #undef NOMINMAX
 #undef ERROR
 
+#if EDITOR
+#include "Editor/EGUI.h"
+#include "Editor/CommandList.h"
+#include "Editor/Commands.h"
+#endif 
 
 int Dystopia::GraphicsSystem::DRAW_MODE = GL_TRIANGLES;
 const int& Dystopia::GraphicsSystem::GetDrawMode(void) noexcept
@@ -581,6 +586,14 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer()
 {
 	return mGameView;
+}
+
+void Dystopia::GraphicsSystem::EditorUI(void)
+{
+#if EDITOR
+
+
+#endif 
 }
 
 

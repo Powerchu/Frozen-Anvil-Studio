@@ -253,7 +253,9 @@
     <ClCompile Include="Source\Editor\SystemSettings.cpp">
       <Filter>Editor\Editor Tabs\SystemSettings</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TagSystem.cpp" />
+    <ClCompile Include="Source\Editor\ProjectSettings.cpp">
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -667,7 +669,9 @@
     <ClInclude Include="Include\Editor\SystemSettings.h">
       <Filter>Editor\Editor Tabs\SystemSettings</Filter>
     </ClInclude>
-    <ClInclude Include="Include\TagSystem.h" />
+    <ClInclude Include="Include\Editor\ProjectSettings.h">
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -949,8 +953,8 @@
     <Filter Include="Editor\Editor Tabs\SystemSettings">
       <UniqueIdentifier>{f494a940-4551-4291-aa92-cff931764600}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor Tabs\TagSystem">
-      <UniqueIdentifier>{717afecd-7ef3-4406-b046-fe7b2ed2f840}</UniqueIdentifier>
+    <Filter Include="Editor\Editor Tabs\Project Settings">
+      <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

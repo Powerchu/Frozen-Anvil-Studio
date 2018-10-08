@@ -35,6 +35,8 @@ namespace Dystopia
 		void LoadDefaults(void) override;
 		void LoadSettings(TextSerialiser&) override;
 
+		void EditorUI(void);
+
 	private:
 		void Step(float _dt);
 		void CheckSleepingBodies(float _dt);

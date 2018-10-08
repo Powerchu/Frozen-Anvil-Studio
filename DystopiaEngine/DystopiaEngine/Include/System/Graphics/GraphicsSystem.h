@@ -83,6 +83,8 @@ namespace Dystopia
 
 		Framebuffer& GetFrameBuffer();
 
+		void EditorUI(void);
+
 	private:
 		Math::Vector4 mvDebugColour;
 		float mfGamma;

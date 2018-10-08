@@ -12908,7 +12908,7 @@ void ImGui::Separator()
         return;
     }
 
-    window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x,bb.Min.y), GetColorU32(ImGuiCol_Separator));
+    window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x,bb.Min.y), GetColorU32(ImGuiCol_Separator), 2);
 
     if (g.LogEnabled)
             LogRenderedText(NULL, IM_NEWLINE "--------------------------------");

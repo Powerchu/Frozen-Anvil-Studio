@@ -7,6 +7,12 @@
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
 
+#if EDITOR
+#include "Editor/EGUI.h"
+#include "Editor/CommandList.h"
+#include "Editor/Commands.h"
+#endif 
+
 namespace Dystopia
 {
 	PhysicsSystem::PhysicsSystem()
@@ -199,4 +205,18 @@ namespace Dystopia
 	{
 		UNUSED_PARAMETER(serial);
 	}
+
+	void PhysicsSystem::EditorUI(void)
+	{
+#if EDITOR
+
+
+
+
+
+#endif 
+	}
 }
+
+
+
