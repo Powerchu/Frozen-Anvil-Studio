@@ -108,6 +108,7 @@
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
     <ClCompile Include="Source\System\Window\Window.cpp" />
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
+    <ClCompile Include="Source\TagSystem.cpp" />
     <ClCompile Include="Source\Utility\GUID.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -229,6 +230,7 @@
     <ClInclude Include="Include\System\Time\TimeSystem.h" />
     <ClInclude Include="Include\System\Window\Window.h" />
     <ClInclude Include="Include\System\Window\WindowManager.h" />
+    <ClInclude Include="Include\TagSystem.h" />
     <ClInclude Include="Include\Utility\DebugAssert.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Utility\Meta.h" />

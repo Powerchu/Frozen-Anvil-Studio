@@ -56,7 +56,8 @@ Dystopia::Renderer::Renderer(const Renderer& _rhs) noexcept
 	: mnUnique{ 999 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }, mTexturePath{ _rhs.mTexturePath },
 	mTextureName{ _rhs.mTextureName }, Component{ _rhs }
 {
-
+	SetMesh("Quad");
+	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
 }
 
 void Dystopia::Renderer::Init(void)

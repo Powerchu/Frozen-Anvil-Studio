@@ -33,6 +33,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputSystem.h"
 
 #include "Utility/ComponentGUID.h"
+#include "Object/ObjectFlags.h"
+#include "Object/GameObject.h"
 
 #include <iostream>
 
@@ -43,8 +45,8 @@ static const std::string g_nPopup = "New Behaviour Name";
 
 namespace Dystopia
 {
-	static std::string g_arr[3] = { "item1", "item2", "item3" };
-	static std::string g_arr2[3] = { "item4", "item5", "item6" };
+	static std::string g_Tags[3] = { "item1", "item2", "item3" };
+	static std::string g_Layer[3] = { "item4", "item5", "item6" };
 
 	static Inspector* gpInstance = 0;
 	Inspector* Inspector::GetInstance()
@@ -122,10 +124,16 @@ namespace Dystopia
 				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
 				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
-			EGUI::Display::DropDownSelection("Tag", i, g_arr, 80);
+			if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))
+			{
+
+			}
 			EGUI::SameLine();
 			EGUI::ChangeAlignmentYOffset(0);
-			EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80);
+			if (EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80))
+			{
+
+			}
 			EGUI::ChangeAlignmentYOffset();
 		}
 		EGUI::EndChild();
