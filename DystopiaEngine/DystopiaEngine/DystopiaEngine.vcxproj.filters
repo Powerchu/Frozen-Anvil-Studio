@@ -250,12 +250,13 @@
     <ClCompile Include="Source\Editor\AdminCalls.cpp">
       <Filter>Editor\Admin</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\SystemSettings.cpp">
-      <Filter>Editor\Editor Tabs\SystemSettings</Filter>
+    <ClCompile Include="Source\Editor\ProjectSettings.cpp">
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClCompile>
     <ClCompile Include="Source\TagSystem.cpp">
       <Filter>Game Engine\SubSystems</Filter>
     </ClCompile>
+    <ClCompile Include="XGamePad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -666,6 +667,8 @@
     <ClInclude Include="Include\Editor\AdminCalls.h">
       <Filter>Editor\Admin</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\ProjectSettings.h">
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
     <ClInclude Include="Include\Math\MetaFloat.h">
       <Filter>Math\MetaMath</Filter>
     </ClInclude>
@@ -684,6 +687,7 @@
     <ClInclude Include="Include\Editor\SystemSettings.h">
       <Filter>Editor\Editor Tabs\SystemSettings</Filter>
     </ClInclude>
+    <ClInclude Include="XGamePad.h" />
     <ClInclude Include="Include\TagSystem.h">
       <Filter>Game Engine\SubSystems</Filter>
     </ClInclude>
@@ -965,6 +969,8 @@
     <Filter Include="Editor\Admin">
       <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Editor\Editor Tabs\Project Settings">
+      <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
     <Filter Include="Math\MetaMath">
       <UniqueIdentifier>{08413c81-cbde-4575-842c-fc63e39a282d}</UniqueIdentifier>
     </Filter>

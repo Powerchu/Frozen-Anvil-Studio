@@ -51,7 +51,13 @@ namespace Dystopia
 		template<class Component, typename T>
 		void InvokeCommand(const uint64_t& _id, T* _var, const T& _oldVal, bool *_notify = nullptr)
 		{
-			InvokeCommand(new ComdModifyValue<T, Component>{ _id, _var, _oldVal, _notify });
+			InvokeCommand(new ComdModifyValue<T, Component, void>{ _id, _var, _oldVal, _notify });
+		}
+		template<class Component, typename T>
+		void InvokeCommand(T* _var, const T& _oldVal, bool *_notify = nullptr)
+		{
+			static constexpr uint64_t invalidID = 0;
+			InvokeCommand(new ComdModifyValue<T, Component, void>{ invalidID, _var, _oldVal, _notify });
 		}
 
 		template<class C, typename ... Params>
@@ -82,7 +88,16 @@ namespace Dystopia
 		void StartRecording(const uint64_t& _id, T* _target, bool *_notify = nullptr)
 		{ 
 			if (mRecording) return;
-			mpRecorder = new ComdRecord<T, C>(_id, _target, _notify);
+			mpRecorder = new ComdRecord<T, C, void>(_id, _target, _notify);
+			mRecording = true;
+		}
+
+		template<class C, typename T>
+		void StartRecording(T* _target, bool *_notify = nullptr)
+		{
+			if (mRecording) return;
+			static constexpr uint64_t invalidID = 0;
+			mpRecorder = new ComdRecord<T, C, void>(invalidID, _target, _notify);
 			mRecording = true;
 		}
 

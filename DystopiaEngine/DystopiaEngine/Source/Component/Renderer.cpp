@@ -186,10 +186,20 @@ void Dystopia::Renderer::TextureField()
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
 	{
 		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
+
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pTex);
 		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+
 		EGUI::Display::EndPayloadReceiver();
+	}
+
+	EGUI::SameLine();
+	if (EGUI::Display::IconCross("Clear", 8.f))
+	{
+		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
+		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, nullptr);
+		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 	}
 
 	if (mpTexture)

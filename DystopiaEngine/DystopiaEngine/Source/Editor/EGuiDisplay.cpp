@@ -233,7 +233,7 @@ namespace EGUI
 			}
 			bool changing = false;
 			ImGui::PushItemWidth(_width);
-			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max, "%.2f");
+			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max, "%.3f");
 			ImGui::PopItemWidth();
 
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())

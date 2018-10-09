@@ -139,7 +139,6 @@ namespace Dystopia
 		void			MMFile();
 		void			MMEdit();
 		void			MMView();
-		void			MMDebug();
 		void			MMGame();
 
 		/* EditorEvents */
