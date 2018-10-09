@@ -6,17 +6,18 @@
 #include "System/Time/ScopedTimer.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
+#include "System/Collision/CollisionSystem.h"
 
 namespace Dystopia
 {
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(false)
 		, mInterpolation_mode(none)
-		, mGravity(-930.665F)
+		, mGravity(400.0F)
 		, mMaxVelocityConstant(800.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.1F)
-		, mResolutionIterations(8)
+		, mResolutionIterations(6)
 	{
 	}
 
@@ -79,29 +80,30 @@ namespace Dystopia
 					{
 						if (col->HasCollision())
 						{
-							CollisionEvent* worstContact = nullptr;
-							double worstPene = mPenetrationEpsilon;
-
 							for (auto& manifold : col->GetCollisionEvents())
 							{
-								manifold.ApplyImpulse();
+								CollisionEvent* worstContact = nullptr;
+								auto worstPene = mPenetrationEpsilon;
 
-								if (manifold.mdPeneDepth > worstPene)
+								if (manifold.mfPeneDepth > worstPene)
 								{
 									worstContact = &manifold;
-									worstPene = manifold.mdPeneDepth;
+									worstPene = manifold.mfPeneDepth;
+
+									if (nullptr != worstContact)
+									{
+										worstContact->ApplyPenetrationCorrection();
+										worstContact->ApplyImpulse();
+									}
 								}
-								if (nullptr != worstContact)
-								{
-									worstContact->ApplyPenetrationCorrection();
-								}
+
 							}
+
 						}
 					}
 				}
 			}
 		}
-
 	}
 
 	void PhysicsSystem::UpdateResults(float _dt)
@@ -136,19 +138,19 @@ namespace Dystopia
 		/* Broad Phase Collision Detection*/
 
 		/* Narrow Phase Collision Detection*/
-		
-	
-		// Integrate RigidBodies
-		IntegrateRigidBodies(_dt);
 
+	
 		/* Collision Resolution (Response) Logic */
 		ResolveCollision(_dt);
 
+		// Integrate RigidBodies
+		IntegrateRigidBodies(_dt);
+		
 		/*Update positions and rotation as result*/
 		UpdateResults(_dt);
 
 		// Set all objects at rest to sleeping
-		//CheckSleepingBodies(_dt);
+		CheckSleepingBodies(_dt);
 
 		/* Debug Velocity*/
 		//DebugPrint();

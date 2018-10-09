@@ -158,6 +158,8 @@ namespace Dystopia
 				contactPoint = this->GetGlobalPosition();
 			}
 
+			normal.z = 0;
+
 			// Add to Collision Events
 			mbColliding = true;
 			other_col.mbColliding = true;
@@ -166,7 +168,7 @@ namespace Dystopia
 			col_info.mEdgeNormal = normal;
 			//col_info.mEdgeVector = Math::Normalise(positionDelta);
 			col_info.mCollisionPoint      = contactPoint;
-			col_info.mdPeneDepth          = static_cast<double>(penetration);
+			col_info.mfPeneDepth          = penetration;
 			col_info.mfRestitution        = DetermineRestitution(other_body);
 			col_info.mfStaticFrictionCof  = DetermineStaticFriction(other_body);
 			col_info.mfDynamicFrictionCof = DetermineKineticFriction(other_body);
@@ -242,7 +244,8 @@ namespace Dystopia
 				{
 					isInside = true;
 					CollisionEvent newEvent(this->GetOwner(), other_col.GetOwner());
-					newEvent.mdPeneDepth     = GetRadius() - distance;
+					newEvent.mfPeneDepth     = GetRadius() - distance;
+					elem.mNorm3.z = 0;
 					newEvent.mEdgeNormal     = -elem.mNorm3.Normalise();
 					newEvent.mEdgeVector     = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
@@ -256,7 +259,6 @@ namespace Dystopia
 					mbColliding = isInside  = true;
 				}
 			}
-
 		}
 
 		return isInside;

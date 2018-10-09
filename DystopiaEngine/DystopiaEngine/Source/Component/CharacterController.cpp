@@ -18,6 +18,10 @@
 namespace Dystopia
 {
 	CharacterController::CharacterController()
+		:mpBody(nullptr)
+		,mbIsFacingRight(true)
+		,mbIsGrounded(false)
+		,mfCharacterSpeed(10.0f)
 	{
 	}
 
@@ -41,7 +45,6 @@ namespace Dystopia
 				rb->SetOwner(GetOwner());
 				rb->Init();
 			}
-
 			mpBody = GetOwner()->GetComponent<RigidBody>();
 		}
 	}
@@ -70,6 +73,8 @@ namespace Dystopia
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
 		_in.ConsumeEndBlock();
+
+		Init();
 	}
 
 	void CharacterController::EditorUI() noexcept
@@ -81,22 +86,22 @@ namespace Dystopia
 		if (mpBody == nullptr) return;
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_LEFT))
 		{
-			mpBody->AddImpulse({ -20,0,0 });
+			mpBody->AddImpulse({ -10,0,0 });
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_RIGHT))
 		{
-			mpBody->AddImpulse({ 20,0,0 });
+			mpBody->AddImpulse({ 10,0,0 });
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_UP))
 		{
-			mpBody->AddForce({ 0,20,0 });
+			mpBody->AddForce({ 0,500,0 });
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
 		{
-			mpBody->AddImpulse({ 0,500*mpBody->GetGravityScalar(),0 });
+			mpBody->AddImpulse({ 0,500,0 });
 		}
 	}
 }

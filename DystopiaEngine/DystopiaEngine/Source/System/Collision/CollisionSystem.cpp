@@ -89,30 +89,41 @@ namespace Dystopia
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
-			elem.ClearCollisionEvent(); //clear collision table
-			Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
-			elem.SetOwnerTransform(gobjMatrix);
-			elem.SetColliding((false));
-			mColliders.push_back(&elem);
+			if (elem.GetOwner())
+			{
+				elem.ClearCollisionEvent(); //clear collision table
+				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
+				elem.SetOwnerTransform(gobjMatrix);
+				elem.SetColliding((false));
+				mColliders.push_back(&elem);
+			}
+			
+			
 		}
 
 		for (auto & elem : ComponentDonor<AABB>::mComponents)
 		{
-			elem.ClearCollisionEvent(); //clear collision table
-			Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
-			elem.SetOwnerTransform(gobjMatrix);
-			elem.SetColliding((false));
-			mColliders.push_back(&elem);
+			if (elem.GetOwner())
+			{
+				elem.ClearCollisionEvent(); //clear collision table
+				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
+				elem.SetOwnerTransform(gobjMatrix);
+				elem.SetColliding((false));
+				mColliders.push_back(&elem);
+			}
 			
 		}
 
 		for (auto & elem : ComponentDonor<Circle>::mComponents)
 		{
-			elem.ClearCollisionEvent(); //clear collision table
-			Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
-			elem.SetOwnerTransform(gobjMatrix);
-			elem.SetColliding((false));
-			mColliders.push_back(&elem);
+			if (elem.GetOwner())
+			{
+				elem.ClearCollisionEvent(); //clear collision table
+				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
+				elem.SetOwnerTransform(gobjMatrix);
+				elem.SetColliding((false));
+				mColliders.push_back(&elem);
+			}
 			
 		}
 

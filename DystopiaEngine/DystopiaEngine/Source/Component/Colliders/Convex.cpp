@@ -239,7 +239,7 @@ namespace Dystopia
 				{
 					isInside = true;
 					CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
-					newEvent.mdPeneDepth = _ColB.GetRadius() - distance;
+					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
 					newEvent.mEdgeNormal = Math::Normalise(_ColB.GetGlobalPosition() - PointOfImpact);
 					newEvent.mEdgeVector = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
@@ -444,7 +444,7 @@ namespace Dystopia
 				col_info.mCollisionPoint = ClosestEdge.mPos;
 				col_info.mEdgeVector = ClosestEdge.mVec3;
 				col_info.mEdgeNormal = ClosestEdge.mNorm3;
-				col_info.mdPeneDepth = ProjectDis;
+				col_info.mfPeneDepth = static_cast<float>(ProjectDis);
 				if( nullptr != other_body)
 				{
 					col_info.mfRestitution = DetermineRestitution(*other_body);
