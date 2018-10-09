@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	using AllComponents = Utility::MetaAutoIndexer <
+	using AllComponents = Ut::MetaAutoIndexer <
 		class Transform,
 		class Camera,
 		class Renderer,
@@ -28,7 +28,7 @@ namespace Dystopia
 		class CharacterController
 	>::result;
 
-	using UsableComponents = Utility::MetaAutoIndexer <
+	using UsableComponents = Ut::MetaAutoIndexer <
 		class Camera,
 		class Renderer,
 		class RigidBody,

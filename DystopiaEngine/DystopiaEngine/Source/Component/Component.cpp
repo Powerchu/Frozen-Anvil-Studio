@@ -26,7 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif
 
 Dystopia::Component::Component(void) noexcept
-	: mnFlags{ FLAG_NONE }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }, mID{ GUIDGenerator::GetUniqueID() }
+	: mnFlags{ FLAG_NONE }, mnOwner{ Ut::Constant<decltype(mnOwner), -1>::value }, mID{ GUIDGenerator::GetUniqueID() }
 {
 
 }
@@ -37,7 +37,7 @@ Dystopia::Component::Component(GameObject * _pOwner) noexcept
 }
 
 Dystopia::Component::Component(const Component& _rhs) noexcept
-	: mnFlags{ _rhs.mnFlags }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }, mID{ GUIDGenerator::GetUniqueID() }
+	: mnFlags{ _rhs.mnFlags }, mnOwner{ Ut::Constant<decltype(mnOwner), -1>::value }, mID{ GUIDGenerator::GetUniqueID() }
 {
 }
 

@@ -50,8 +50,8 @@ namespace Dystopia
 		virtual void		LoadSettings(TextSerialiser& _in);
 		/************************************************************************************************************/
 
-		virtual void		SetFocus(GameObject&);
-		virtual void		RemoveFocus();
+		//virtual void		SetFocus(GameObject&);
+		//virtual void		RemoveFocus();
 
 		void				SetSize(const Math::Vec2&);
 		void				SetSize(const float&, const float&);
@@ -68,7 +68,7 @@ namespace Dystopia
 		bool*				GetOpenedBool();
 
 	protected:
-		Editor&				GetMainEditor()		const;
+		Editor*				GetMainEditor()		const;
 		CommandHandler*		GetCommandHND()		const;
 		EditorEventHandler*	GetEditorEventHND() const;
 		Scene*				GetCurrentScene()	const;

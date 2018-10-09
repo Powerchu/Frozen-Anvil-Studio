@@ -42,7 +42,7 @@ namespace Dystopia
 		using SYSTEM = PhysicsSystem;
 		unsigned GetComponentType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllComponents>::value;
 		};
 		static const std::string GetCompileName(void) { return "RigidBody"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
@@ -127,7 +127,6 @@ namespace Dystopia
 		void AddImpulse(Vec3D const & _impul, Point3D const & _point);
 		void AddImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const & _org);
 
-
 		/**************************************************************************************************
 		\brief
 		Resets the Cumulative Force for the current RigidBody
@@ -181,6 +180,7 @@ namespace Dystopia
 		Vec3D					mAcceleration;				/* For integration purpose when updating position.*/
 
 		Vec3D					mCumulativeForce;			/* The sum of all the force acting on the body*/
+		Vec3D					mCurrImpulse;
 		Vec3D					mCumulativeTorque;			/* Sum of all angular forces acting on the body*/
 
 		Mat3D					mLocalInvInertiaTensor;

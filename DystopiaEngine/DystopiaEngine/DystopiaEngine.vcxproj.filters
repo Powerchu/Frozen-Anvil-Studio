@@ -250,6 +250,13 @@
     <ClCompile Include="Source\Editor\AdminCalls.cpp">
       <Filter>Editor\Admin</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\ProjectSettings.cpp">
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TagSystem.cpp">
+      <Filter>Game Engine\SubSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="XGamePad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -660,6 +667,31 @@
     <ClInclude Include="Include\Editor\AdminCalls.h">
       <Filter>Editor\Admin</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\ProjectSettings.h">
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\MetaFloat.h">
+      <Filter>Math\MetaMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\Reflection.h">
+      <Filter>Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPVariadicSize.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPToSequence.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPForEachSeq.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\SystemSettings.h">
+      <Filter>Editor\Editor Tabs\SystemSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="XGamePad.h" />
+    <ClInclude Include="Include\TagSystem.h">
+      <Filter>Game Engine\SubSystems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -937,6 +969,27 @@
     </Filter>
     <Filter Include="Editor\Admin">
       <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Project Settings">
+      <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\MetaMath">
+      <UniqueIdentifier>{08413c81-cbde-4575-842c-fc63e39a282d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection">
+      <UniqueIdentifier>{c13d8e9d-1ea4-40c5-b67f-f2713024e57a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\Preprocessor">
+      <UniqueIdentifier>{af73041d-894d-4be1-9ac1-a597e6a69bf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\MetaData.h">
+      <UniqueIdentifier>{a8ac820c-8de3-42f2-ba5c-2add3b365828}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\SystemSettings">
+      <UniqueIdentifier>{f494a940-4551-4291-aa92-cff931764600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\TagSystem">
+      <UniqueIdentifier>{717afecd-7ef3-4406-b046-fe7b2ed2f840}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

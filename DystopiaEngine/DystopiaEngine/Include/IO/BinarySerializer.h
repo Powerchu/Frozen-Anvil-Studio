@@ -84,7 +84,7 @@ namespace Dystopia
 		void ApplyWrite(const T&);
 	};
 
-	namespace System
+	namespace Hardware
 	{
 		inline eEndianess GetSoftwareEndian()
 		{

@@ -42,7 +42,7 @@ Dystopia::Renderer::Renderer(void) noexcept
 
 Dystopia::Renderer::Renderer(Dystopia::Renderer&& _rhs) noexcept
 	: mnUnique{ _rhs.mnUnique }, mpMesh{ _rhs.mpMesh }, mpShader{ _rhs.mpShader }, mpTexture{ _rhs.mpTexture }, mTexturePath{ _rhs.mTexturePath },
-	mTextureName{ _rhs.mTextureName }, Component{ Utility::Move(_rhs) }
+	mTextureName{ _rhs.mTextureName }, Component{ Ut::Move(_rhs) }
 {
 	_rhs.mnUnique = 0;
 	_rhs.mpTexture = nullptr;
@@ -56,7 +56,8 @@ Dystopia::Renderer::Renderer(const Renderer& _rhs) noexcept
 	: mnUnique{ 999 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }, mTexturePath{ _rhs.mTexturePath },
 	mTextureName{ _rhs.mTextureName }, Component{ _rhs }
 {
-
+	SetMesh("Quad");
+	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
 }
 
 void Dystopia::Renderer::Init(void)
@@ -185,10 +186,20 @@ void Dystopia::Renderer::TextureField()
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
 	{
 		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
+
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pTex);
 		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+
 		EGUI::Display::EndPayloadReceiver();
+	}
+
+	EGUI::SameLine();
+	if (EGUI::Display::IconCross("Clear", 8.f))
+	{
+		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
+		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, nullptr);
+		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 	}
 
 	if (mpTexture)

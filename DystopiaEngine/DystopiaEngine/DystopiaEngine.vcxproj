@@ -39,6 +39,7 @@
     <ClCompile Include="Source\Editor\DefaultFactory.cpp" />
     <ClCompile Include="Source\Editor\Gizmo.cpp" />
     <ClCompile Include="Source\Editor\Payload.cpp" />
+    <ClCompile Include="Source\Editor\ProjectSettings.cpp" />
     <ClCompile Include="Source\Editor\StyleScheme.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
@@ -108,6 +109,7 @@
     <ClCompile Include="Source\System\Window\Window.cpp" />
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
     <ClCompile Include="Source\Utility\GUID.cpp" />
+    <ClCompile Include="XGamePad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
@@ -123,7 +125,14 @@
     <ClInclude Include="Include\Editor\Clipboard.h" />
     <ClInclude Include="Include\Editor\ColorScheme.h" />
     <ClInclude Include="Include\Editor\Gizmo.h" />
+    <ClInclude Include="Include\Editor\ProjectSettings.h" />
     <ClInclude Include="Include\Editor\StyleScheme.h" />
+    <ClInclude Include="Include\Math\MetaFloat.h" />
+    <ClInclude Include="Include\Reflection\PPForEachSeq.h" />
+    <ClInclude Include="Include\Reflection\PPToSequence.h" />
+    <ClInclude Include="Include\Reflection\PPVariadicSize.h" />
+    <ClInclude Include="Include\Reflection\Reflection.h" />
+    <ClInclude Include="Include\Editor\SystemSettings.h" />
     <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
@@ -240,6 +249,7 @@
     <ClInclude Include="Include\Math\MathFwd.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h" />
+    <ClInclude Include="XGamePad.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />

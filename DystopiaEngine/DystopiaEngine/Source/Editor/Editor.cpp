@@ -40,6 +40,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* Editor includes */
 #include "Editor/EGUI.h"
 #include "Editor/Editor.h"
+#include "Editor/ProjectSettings.h"
 #include "Editor/EditorInputs.h"
 #include "Editor/EditorEvents.h"
 #include "Editor/Commands.h"
@@ -52,6 +53,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/PLogger.h"
 #include "Editor/ColorScheme.h"
 #include "Editor/StyleScheme.h"
+#include "Editor/Clipboard.h"
 
 #include "Allocator/DefaultAlloc.h"
 
@@ -62,6 +64,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <ShlObj_core.h>
 #include <tchar.h>
 #include <objbase.h>
+
+#include "../XGamePad.h"
 
 namespace
 {
@@ -82,10 +86,14 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
+	static bool once = true;
+	XGamePad p1{ 0 };
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
 	while (!editor->IsClosing())
 	{
+		p1.PollInputs();
+
 		editor->StartFrame();
 	
 		editor->UpdateFrame(editor->GetDeltaTime());
@@ -113,9 +121,10 @@ namespace Dystopia
 
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mpWin{ nullptr }, mpGfx{ nullptr },
-		mpSceneSystem{ nullptr }, mpProfiler{ nullptr }, mpFocusGameObj{ nullptr }, mTempSaveFile{},
+		mpSceneSystem{ nullptr }, mpProfiler{ nullptr }, mTempSaveFile{},
 		mpEditorEventSys{ new EditorEventHandler{} }, mpInput{ new EditorInput{} },
-		mpComdHandler{ new CommandHandler{} }, mpGuiSystem{ new GuiSystem{} }, mpTimer{ new Timer{} }
+		mpComdHandler{ new CommandHandler{} }, mpGuiSystem{ new GuiSystem{} }, mpTimer{ new Timer{} },
+		mpClipBoard{ new Clipboard{} }, mCtrlKey{ false }, mArrSelectedObj{ 100 }, mUpdateSelection{ true }
 	{}
 
 	Editor::~Editor(void)
@@ -124,6 +133,7 @@ namespace Dystopia
 
 	void Editor::LoadTabs()
 	{
+		mArrTabs.push_back(ProjectSettings::GetInstance());
 		mArrTabs.push_back(ConsoleLog::GetInstance());
 		mArrTabs.push_back(PerformanceLog::GetInstance());
 		mArrTabs.push_back(ColorScheme::GetInstance());
@@ -181,7 +191,6 @@ namespace Dystopia
 			e->SetEventContext(mpEditorEventSys);
 			e->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			e->Init();
-			e->RemoveFocus();
 		}
 		LoadSettings();
 		EGUI::SetContext(mpComdHandler);
@@ -189,6 +198,7 @@ namespace Dystopia
 
 	void Editor::StartFrame()
 	{
+		mCtrlKey = false;
 		mDeltaTime = mpTimer->Elapsed();
 		mpTimer->Lap();
 		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow())
@@ -260,6 +270,12 @@ namespace Dystopia
 
 	void Editor::EndFrame()
 	{
+		if (mUpdateSelection)
+		{
+			UpdateSelections();
+			mUpdateSelection = false;
+		}
+
 		LogTabPerformance();
 		EngineCore::GetInstance()->PostUpdate();
 		mpBehaviourSys->PostUpdate();
@@ -283,11 +299,13 @@ namespace Dystopia
 		mpComdHandler->Shutdown();
 		mpGuiSystem->Shutdown();
 		EGUI::Docking::ShutdownTabs();
+		mpClipBoard->Close();
 		delete mpInput;
 		delete mpEditorEventSys;
 		delete mpComdHandler;
 		delete mpGuiSystem;
 		delete mpTimer;
+		delete mpClipBoard;
 		mpEditorEventSys	= nullptr;
 		mpInput				= nullptr;
 		mpComdHandler		= nullptr;
@@ -296,7 +314,6 @@ namespace Dystopia
 		mpWin				= nullptr;
 		mpGfx				= nullptr;
 		mpProfiler			= nullptr;
-		mpFocusGameObj		= nullptr;
 		mpBehaviourSys		= nullptr;
 		mpDriver->Shutdown();
 		EGUI::RemoveContext();
@@ -350,7 +367,6 @@ namespace Dystopia
 			MMFile();
 			MMEdit();
 			MMView();
-			MMDebug();
 			MMGame();
 
 			EGUI::EndMainMenuBar();
@@ -401,23 +417,6 @@ namespace Dystopia
 		}
 	}
 
-	void Editor::MMDebug()
-	{
-		static constexpr float icon = 10.f;
-		static GraphicsSystem *pGraphic = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
-		if (EGUI::StartMenuHeader("Debug"))
-		{
-
-				if (pGraphic->GetDebugDraw())	EGUI::Display::IconTick(icon, icon);
-				else							EGUI::Display::Dummy(icon, icon);
-				EGUI::SameLine();
-				if (EGUI::StartMenuBody("Draw Debug Collision"))
-					pGraphic->ToggleDebugDraw();
-			
-			EGUI::EndMenuHeader();
-		}
-	}
-
 	void Editor::MMGame()
 	{
 		if (EGUI::StartMenuHeader("Game"))
@@ -446,6 +445,11 @@ namespace Dystopia
 
 	void Editor::EditorCopy()
 	{
+		mpClipBoard->ClearData();
+		for (const auto& o : mArrSelectedObj)
+		{
+			mpClipBoard->InsertData(eCLIP_GAME_OBJECT, reinterpret_cast<void*>(o), sizeof(GameObject));
+		}
 	}
 
 	void Editor::EditorCut()
@@ -454,14 +458,38 @@ namespace Dystopia
 
 	void Editor::EditorPaste()
 	{
+		auto toPaste = mpClipBoard->RetrieveDatas(eCLIP_GAME_OBJECT, sizeof(GameObject));
+		if (!toPaste.size()) return;
+
+		AutoArray<GameObject*> mToInsert{ toPaste.size() };
+		auto& existingObj = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
+		int replicas = 0;
+		ClearSelections();
+		for (auto& elem : toPaste)
+		{
+			GameObject *pDup = static_cast<GameObject*>(elem)->Duplicate();
+
+			for (const auto& o : existingObj)
+				if (o.GetName() == pDup->GetName())
+					replicas++;
+
+			if (replicas > 0)
+				pDup->SetName(pDup->GetName() + "_Clone");
+
+			mToInsert.Insert(pDup);
+			AddSelection(pDup->GetID());
+			replicas = 0;
+		}
+		mpComdHandler->InvokeCommandInsert(mToInsert, mpSceneSystem->GetCurrentScene());
 	}
 
-	void Editor::EditorDeleteFocus()
+	void Editor::EditorDelete()
 	{
-		if (!mpFocusGameObj) return;
+		auto& allObj = GetSelectionObjects();
+		if (!allObj.size()) return;
 
-		mpComdHandler->InvokeCommandDelete(*mpFocusGameObj, mpSceneSystem->GetCurrentScene());
-		RemoveFocus();
+		mpComdHandler->InvokeCommandDelete(allObj, mpSceneSystem->GetCurrentScene());
+		ClearSelections();
 	}
 
 	void Editor::NewScene()
@@ -589,13 +617,13 @@ namespace Dystopia
 		for (auto& e : mArrTabs)
 			e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
 		mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
-		RemoveFocus();
+		ClearSelections();
 		mpWin->GetMainWindow().SetTitle(_name);
 	}
 
 	void Editor::TempSave()
 	{
-		RemoveFocus();
+		ClearSelections();
 		std::string ext{ DYSTOPIA_SCENE_EXTENSION.begin(), DYSTOPIA_SCENE_EXTENSION.end() };
 		std::string file{ DYSTOPIA_SCENE_TEMP + std::to_string(GUIDGenerator::GetUniqueID()) + "." + ext };
 		mpSceneSystem->SaveScene(file, mpSceneSystem->GetCurrentScene().GetSceneName());
@@ -604,7 +632,7 @@ namespace Dystopia
 
 	void Editor::TempLoad()
 	{
-		RemoveFocus();
+		ClearSelections();
 		mpSceneSystem->RestartScene();
 		remove(mTempSaveFile.c_str());
 		mTempSaveFile.clear();
@@ -625,32 +653,40 @@ namespace Dystopia
 			mpGuiSystem->UpdateKey(i, false);
 		for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
 			mpGuiSystem->UpdateKey(i, false);
-		bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
-		const auto& queue = mpWin->GetMainWindow().GetInputQueue();
-		for (const auto& k : queue)
+		for (int i = eButton::KEYBOARD_SHIFT; i <= eButton::KEYBOARD_ALT; ++i)
+			mpGuiSystem->UpdateKey(i, false);
+
+		mCtrlKey = mpInput->IsKeyPressed(KEY_CTRL);
+		if (!mCtrlKey)
 		{
-			// 0 to 9
-			if (k >= eButton::KEYBOARD_0 && k <= eButton::KEYBOARD_9)
-				mpGuiSystem->UpdateChar(k);
-			// A to Z
-			else if (k >= eButton::KEYBOARD_A && k <= eButton::KEYBOARD_Z)
-				mpGuiSystem->UpdateChar(caps ? k : k + 32);
-			// numpad 0 to 9
-			else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
-				mpGuiSystem->UpdateChar(k - 48);
-			// arithmetics
-			//else if (k >= eButton::KEYBOARD_OEM_1 && k <= eButton::KEYBOARD_OEM_PERIOD)
-			//	mpGuiSystem->UpdateChar(k);
-			else if (k == eButton::KEYBOARD_OEM_PERIOD)
-				mpGuiSystem->UpdateChar(46);
-			else if (k == eButton::KEYBOARD_OEM_MINUS)
-				mpGuiSystem->UpdateChar(caps ? 95 : 45);
-			else if (k == eButton::KEYBOARD_SPACEBAR)
-				mpGuiSystem->UpdateChar(32);
-			// misc keys like ctrl, del, back etc
-			else
-				mpGuiSystem->UpdateKey(k, true);
+			const auto& queue = mpWin->GetMainWindow().GetInputQueue();
+			bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
+			for (const auto& k : queue)
+			{
+				// 0 to 9
+				if (k >= eButton::KEYBOARD_0 && k <= eButton::KEYBOARD_9)
+					mpGuiSystem->UpdateChar(k);
+				// A to Z
+				else if (k >= eButton::KEYBOARD_A && k <= eButton::KEYBOARD_Z)
+					mpGuiSystem->UpdateChar(caps ? k : k + 32);
+				// numpad 0 to 9
+				else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
+					mpGuiSystem->UpdateChar(k - 48);
+				// arithmetics
+				else if (k == eButton::KEYBOARD_OEM_PERIOD)
+					mpGuiSystem->UpdateChar(46);
+				else if (k == eButton::KEYBOARD_OEM_MINUS)
+					mpGuiSystem->UpdateChar(caps ? 95 : 45);
+				else if (k == eButton::KEYBOARD_SPACEBAR)
+					mpGuiSystem->UpdateChar(32);
+				// misc keys like ctrl, del, back etc
+				else
+					mpGuiSystem->UpdateKey(k, true);
+			}
+			mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, caps);
+			mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, mpInput->IsKeyPressed(KEY_ALT));
 		}
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, mCtrlKey);
 	}
 
 	void Editor::UpdateHotkeys()
@@ -671,8 +707,7 @@ namespace Dystopia
 			mpGuiSystem->UpdateScroll(0, scrollV);
 			mpEditorEventSys->Fire(scrollV > 0 ? EDITOR_SCROLL_UP : EDITOR_SCROLL_DOWN);
 		}
-
-		if (mpInput->IsKeyPressed(KEY_CTRL))
+		if (mCtrlKey)
 		{
 			if (mpInput->IsKeyTriggered(KEY_Z))			mpEditorEventSys->Fire(EDITOR_HOTKEY_UNDO);
 			else if (mpInput->IsKeyTriggered(KEY_Y))	mpEditorEventSys->Fire(EDITOR_HOTKEY_REDO);
@@ -708,7 +743,7 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_COPY)->Bind(&Editor::EditorCopy, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_CUT)->Bind(&Editor::EditorCut, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PASTE)->Bind(&Editor::EditorPaste, this);
-		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DELETE)->Bind(&Editor::EditorDeleteFocus, this);
+		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DELETE)->Bind(&Editor::EditorDelete, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVE)->Bind(&Editor::SaveProc, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVEAS)->Bind(&Editor::SaveAsProc, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PLAY)->Bind(&Editor::GamePlay, this);
@@ -729,20 +764,6 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVEAS)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PLAY)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_STOP)->Unbind(this);
-	}
-
-	void Editor::SetFocus(GameObject& _rObj)
-	{
-		for (auto& e : mArrTabs)
-			e->SetFocus(_rObj);
-		mpFocusGameObj = &_rObj;
-	}
-	
-	void Editor::RemoveFocus()
-	{
-		for (auto& e : mArrTabs)
-			e->RemoveFocus();
-		mpFocusGameObj = nullptr;
 	}
 
 	GameObject* Editor::FindGameObject(const uint64_t& _id) const
@@ -781,21 +802,6 @@ namespace Dystopia
 			p.mMemLoad		= mpProfiler->GetSystemMemoryLoad();
 			Performance::LogTaskMgr(p);
 		}
-	}
-
-	GameObject* Editor::GetCurrentFocusGameObj()
-	{
-		return mpFocusGameObj;
-	}
-
-	void Editor::SetLastPayloadFocus(ePayloadTags e)
-	{
-		mLatestPayloadFocus = e;
-	}
-
-	EditorInput* Editor::GetEditorInput()
-	{
-		return mpInput;
 	}
 
 	void Editor::ReAttachComponent(Component* _pComponent)
@@ -838,6 +844,7 @@ namespace Dystopia
 				}
 			}
 		}
+		_pComponent->DestroyComponent();
 	}
 
 	void Editor::PromptSaving()
@@ -867,6 +874,54 @@ namespace Dystopia
 		}
 	}
 
+	const AutoArray<GameObject*>& Editor::GetSelectionObjects(void)
+	{
+		return mArrSelectedObj;
+	}
+
+	void Editor::AddSelection(const uint64_t& _id)
+	{
+		mUpdateSelection = true;
+		mpClipBoard->InsertSelection(_id);
+	}
+
+	void Editor::NewSelection(const uint64_t& _id)
+	{
+		mUpdateSelection = true;
+		ClearSelections();
+		mpClipBoard->InsertSelection(_id);
+	}
+
+	void Editor::RemoveSelection(const uint64_t _id)
+	{
+		mUpdateSelection = true;
+		mpClipBoard->RemoveSelection(_id);
+	}
+
+	void Editor::ClearSelections(void)
+	{
+		mpClipBoard->ClearSelection();
+	}
+
+	void Editor::UpdateSelections(void)
+	{
+		GameObject* temp = nullptr;
+		mArrSelectedObj.clear();
+		auto& selections = mpClipBoard->RetrieveSelections();
+		for (auto& id : selections)
+		{
+			temp = mpSceneSystem->GetActiveScene().FindGameObject(id);
+			if (temp)
+			{
+				mArrSelectedObj.Insert(temp);
+			}
+		}
+	}
+
+	bool Editor::IsCtrlDown(void) const
+	{
+		return mCtrlKey;
+	}
 }
 
 #endif		// EDITOR ONLY

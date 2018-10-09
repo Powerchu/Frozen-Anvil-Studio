@@ -52,8 +52,7 @@ bool Dystopia::ComdInsertObject::ExecuteDo()
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (p || !mpObj) return false;
 
-	mpScene->GetAllGameObjects().EmplaceBack(Utility::Move(*mpObj));
-
+	mpScene->GetAllGameObjects().EmplaceBack(Ut::Move(*mpObj));
 	auto& obj = mpScene->GetAllGameObjects().back();
 	obj.Identify();
 	obj.Init();
@@ -65,7 +64,7 @@ bool Dystopia::ComdInsertObject::ExecuteDo()
 	{
 		Editor *e = Editor::GetInstance();
 		GameObject *temp = mpScene->FindGameObject(mObjID);
-		if (temp) e->SetFocus(*temp);
+		if (temp) e->NewSelection(mObjID);//e->SetFocus(*temp);
 		mFocusBack = false;
 	}
 
@@ -89,10 +88,15 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 	if (!p) return false;
 
 	Editor *e = Editor::GetInstance();
-	if (e->GetCurrentFocusGameObj() == p)
+	auto all = e->GetSelectionObjects();
+	for (auto & elem : all)
 	{
-		e->RemoveFocus();
-		mFocusBack = true;
+		if (elem == p)
+		{
+			e->RemoveSelection(mObjID);
+			mFocusBack = true;
+			break;
+		}
 	}
 
 	if (mpNotify) *mpNotify = true;
@@ -147,10 +151,15 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 	if (!p) return false;
 
 	Editor* e = Editor::GetInstance();
-	if (e->GetCurrentFocusGameObj() == p)
+	auto all = e->GetSelectionObjects();
+	for (auto & elem : all)
 	{
-		e->RemoveFocus();
-		mFocusBack = true;
+		if (elem == p)
+		{
+			e->RemoveSelection(mObjID);
+			mFocusBack = true;
+			break;
+		}
 	}
 
 	if (mpNotify) *mpNotify = true;
@@ -177,8 +186,7 @@ bool Dystopia::ComdDeleteObject::ExecuteUndo()
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (p || !mpObj) return false;
 
-	mpScene->GetAllGameObjects().EmplaceBack(Utility::Move(*mpObj));
-
+	mpScene->GetAllGameObjects().EmplaceBack(Ut::Move(*mpObj));
 	auto& obj = mpScene->GetAllGameObjects().back();
 	obj.Identify();
 	obj.Init();
@@ -190,7 +198,7 @@ bool Dystopia::ComdDeleteObject::ExecuteUndo()
 	{
 		Editor* e = Editor::GetInstance();
 		GameObject *temp = mpScene->FindGameObject(mObjID);
-		if (temp) e->SetFocus(*temp);
+		if (temp) e->NewSelection(mObjID);// e->SetFocus(*temp);
 		mFocusBack = false;
 	}
 
@@ -210,5 +218,37 @@ bool Dystopia::ComdDeleteObject::Unchanged() const
 	return false;
 }
 
+Dystopia::ComdBatch::ComdBatch(AutoArray<Commands*>&& _arrComds)
+	: mArrCommands{ _arrComds }
+{
+}
+
+Dystopia::ComdBatch::~ComdBatch()
+{
+	for (auto e : mArrCommands)
+		delete e;
+	mArrCommands.clear();
+}
+
+bool Dystopia::ComdBatch::ExecuteDo()
+{
+	int passes = 0;
+	for (const auto& c : mArrCommands)
+		passes = (c->ExecuteDo()) ? passes + 1 : passes;
+	return (passes > 0);
+}
+
+bool Dystopia::ComdBatch::ExecuteUndo()
+{
+	int passes = 0;
+	for (const auto& c : mArrCommands)
+		passes = (c->ExecuteUndo()) ? passes + 1 : passes;
+	return (passes > 0);
+}
+
+bool Dystopia::ComdBatch::Unchanged() const
+{
+	return false;
+}
 
 #endif //EDITOR

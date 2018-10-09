@@ -310,7 +310,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 			EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mScale, &mbChanged);
+			EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mRotation, &mbChanged);
 			break;
 		case EGUI::eDragStatus::eDRAGGING:
 			mbChanged = true;

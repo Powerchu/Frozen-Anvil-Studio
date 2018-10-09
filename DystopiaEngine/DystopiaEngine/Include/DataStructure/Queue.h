@@ -178,14 +178,14 @@ void Queue<T>::Insert(const T& _obj)
 {
 	++mnSize;
 	mpArray[mnBack] = _obj;
-	mnBack = Utility::LoopIncrement(mnBack, mnCap);
+	mnBack = Ut::LoopIncrement(mnBack, mnCap);
 }
 
 template <typename T>
 void Queue<T>::Remove(void)
 {
 	--mnSize;
-	mnFront = Utility::LoopIncrement(mnFront, mnCap);
+	mnFront = Ut::LoopIncrement(mnFront, mnCap);
 }
 
 template <typename T>
@@ -221,7 +221,7 @@ Queue<T>::QueueIterator::QueueIterator(const T* _pArr, unsigned _nPos, unsigned 
 template <typename T>
 typename Queue<T>::QueueIterator& Queue<T>::QueueIterator::operator++ (void) noexcept
 {
-	mnPos = Utility::LoopIncrement(mnPos, mnLimit);
+	mnPos = Ut::LoopIncrement(mnPos, mnLimit);
 	return *this;
 }
 
@@ -229,7 +229,7 @@ template <typename T>
 typename Queue<T>::QueueIterator Queue<T>::QueueIterator::operator++ (int) noexcept
 {
 	QueueIterator ret = *this;
-	mnPos = Utility::LoopIncrement(mnPos, mnLimit);
+	mnPos = Ut::LoopIncrement(mnPos, mnLimit);
 	return ret;
 }
 

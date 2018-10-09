@@ -61,13 +61,13 @@ namespace Dystopia
 		template <typename T>
 		void TestFunction(float _fSeconds, T&& _pInvokable)
 		{
-			TestFunction(_fSeconds, 0, Utility::Forward<T>(_pInvokable));
+			TestFunction(_fSeconds, 0, Ut::Forward<T>(_pInvokable));
 		}
 
 		template <typename T>
 		void TestFunction(float _fSeconds, unsigned _nIterations, T&& _pInvokable)
 		{
-			mPQueue.Insert(new InvokeMe<T>{ _fSeconds, _nIterations, Utility::Forward<T>(_pInvokable) },
+			mPQueue.Insert(new InvokeMe<T>{ _fSeconds, _nIterations, Ut::Forward<T>(_pInvokable) },
 				[](const QueueObject* _lhs, const QueueObject* _rhs)->bool
 				{
 					return _lhs->mDelay.Time() < _rhs->mDelay.Time();
