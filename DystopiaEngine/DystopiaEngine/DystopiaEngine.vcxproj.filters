@@ -253,7 +253,9 @@
     <ClCompile Include="Source\Editor\SystemSettings.cpp">
       <Filter>Editor\Editor Tabs\SystemSettings</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TagSystem.cpp" />
+    <ClCompile Include="Source\TagSystem.cpp">
+      <Filter>Game Engine\SubSystems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -667,7 +669,9 @@
     <ClInclude Include="Include\Editor\SystemSettings.h">
       <Filter>Editor\Editor Tabs\SystemSettings</Filter>
     </ClInclude>
-    <ClInclude Include="Include\TagSystem.h" />
+    <ClInclude Include="Include\TagSystem.h">
+      <Filter>Game Engine\SubSystems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
