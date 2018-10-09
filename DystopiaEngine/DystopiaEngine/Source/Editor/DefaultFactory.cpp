@@ -47,7 +47,7 @@ namespace Dystopia
 			GameObject *pObject = new GameObject{ GUIDGenerator::GetUniqueID() };
 			pObject->SetName(_name);
 			pObject->SetActive(true);
-			pObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 16, 16, 1 });
+			pObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 16, 16, 1 });
 			auto rend = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
 			pObject->AddComponent(rend, typename Renderer::TAG{});
 			auto rigid = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();

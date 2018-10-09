@@ -968,7 +968,7 @@ namespace Dystopia
 					col_info.mEdgeNormal     = pointnormal;
 					col_info.mEdgeVector     = (pointnormal.yxzw);
 					col_info.mEdgeVector     = col_info.mEdgeVector.Negate< Math::NegateFlag::Y>();
-					col_info.mfPeneDepth     = ProjectDis;
+					col_info.mfPeneDepth     = static_cast<float>(ProjectDis);
 
 					if (nullptr != other_body)
 					{
@@ -992,7 +992,7 @@ namespace Dystopia
 					col_info.mEdgeNormal     = Normal.Normalise();
 					col_info.mEdgeVector     = Normal.xyzw;
 
-					col_info.mfPeneDepth     = ProjectDis;
+					col_info.mfPeneDepth     = static_cast<float>(ProjectDis);
 
 					if (!Normal.MagnitudeSqr())
 						__debugbreak();

@@ -23,7 +23,7 @@ namespace Dystopia
 		, mMaxVelocityConstant(800.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.1F)
-		, mResolutionIterations(6)
+		, mResolutionIterations(10)
 	{
 	}
 
@@ -88,6 +88,8 @@ namespace Dystopia
 						{
 							for (auto& manifold : col->GetCollisionEvents())
 							{
+								manifold.ApplyImpulse();
+
 								CollisionEvent* worstContact = nullptr;
 								auto worstPene = mPenetrationEpsilon;
 
@@ -99,12 +101,9 @@ namespace Dystopia
 									if (nullptr != worstContact)
 									{
 										worstContact->ApplyPenetrationCorrection();
-										worstContact->ApplyImpulse();
 									}
 								}
-
 							}
-
 						}
 					}
 				}

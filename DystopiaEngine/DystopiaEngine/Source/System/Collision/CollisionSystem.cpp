@@ -129,10 +129,12 @@ namespace Dystopia
 
 		for (auto & bodyA : mColliders)
 		{
+			const auto ownerA = bodyA->GetOwner();
 			for (auto & bodyB : mColliders)
 			{
-				const auto rigidA = bodyA->GetOwner()->GetComponent<RigidBody>();
-				const auto rigidB = bodyB->GetOwner()->GetComponent<RigidBody>();
+				const auto ownerB= bodyB->GetOwner();
+				const auto rigidA = ownerA->GetComponent<RigidBody>();
+				const auto rigidB = ownerB->GetComponent<RigidBody>();
 
 				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
 				{
@@ -140,8 +142,9 @@ namespace Dystopia
 					{
 						if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState())
 							continue;
+						if (ownerA == ownerB)
+							continue;
 					}
-
 					const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
 					for (auto & key : CollisionFuncTable)
 					{
