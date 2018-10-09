@@ -65,6 +65,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <tchar.h>
 #include <objbase.h>
 
+#include "../XGamePad.h"
+
 namespace
 {
 	static const std::string DYSTOPIA_EDITOR_SETTINGS = "EditorSettings.dyst";
@@ -84,14 +86,19 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
+	XGamePad p1{ 0 };
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
 	while (!editor->IsClosing())
 	{
+		p1.PollInputs();
+
 		editor->StartFrame();
 	
 		editor->UpdateFrame(editor->GetDeltaTime());
 		
+		Dystopia::PrintToConsoleLog(p1.GetPrint());
+
 		editor->EndFrame();
 	}
 	editor->Shutdown();

@@ -253,6 +253,7 @@
     <ClCompile Include="Source\Editor\ProjectSettings.cpp">
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClCompile>
+    <ClCompile Include="XGamePad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -666,6 +667,7 @@
     <ClInclude Include="Include\Editor\ProjectSettings.h">
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClInclude>
+    <ClInclude Include="XGamePad.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
