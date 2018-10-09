@@ -14,9 +14,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _REFLECTIONLIB_H_
 #define _REFLECTIONLIB_H_
 
+#include "Reflection/PPToSequence.h"
+#include "Reflection/PPForEachSeq.h"
 
 
-#define REFLECT(STRUCT_, ...) 
+#define PP_REFLECT(STRUCT_, ...) 
 
 
 #endif		// INCLUDE GUARD
