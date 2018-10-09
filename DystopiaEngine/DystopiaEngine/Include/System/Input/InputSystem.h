@@ -23,6 +23,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Component.h"
 #include "System/Base/ComponentDonor.h"
 
+#include <map>
+
 #define _INPUT_MANAGER_TEST_CODE_ 1
 
 namespace Dystopia
@@ -83,14 +85,14 @@ namespace Dystopia
 
 		struct KeyboardState
 		{
-			using u64int = unsigned long;
+			using u32int = unsigned long;
 
 			/*Cover all 256 Keys*/
-			u64int mKeyPressFlags[4];
+			u32int mKeyPressFlags[8];
 
 			operator void*();
-			operator u64int*();
-			operator const u64int* () const;
+			operator u32int*();
+			operator const u32int* () const;
 		};
 
 	public:
@@ -108,14 +110,15 @@ namespace Dystopia
 
 		void MapUserButton(eUserButton, eButton);
 
-		
-		bool IsKeyTriggered(eUserButton) const noexcept;
-		bool IsKeyPressed(eUserButton)   const noexcept;
-		bool IsKeyReleased(eUserButton)  const noexcept;
+		void MapButton(std::string const & _name, eButton _Button);
 
 		bool IsKeyTriggered(eButton) const noexcept;
 		bool IsKeyPressed(eButton)   const noexcept;
 		bool IsKeyReleased(eButton)  const noexcept;
+
+		bool IsKeyTriggered(std::string const & _ButtonName) const noexcept;
+		bool IsKeyPressed(std::string const & _ButtonName)   const noexcept;
+		bool IsKeyReleased(std::string const & _ButtonName)  const noexcept;
 
 		Math::Vector2 GetMousePosition(void) const;
 		Math::Vector2 GetMousePosition(const Window&) const;
@@ -135,11 +138,13 @@ namespace Dystopia
 		};
 
 		MouseData mMouseInput;
-		Array<KeyBinding, eUserButton::TOTAL_USERBUTTONS> mButtonMap;
+
 		KeyboardState mKeyBoardState;
 		KeyboardState mPrevKeyBoardState;
 
 		void LoadDefaultUserKeys(void);
+
+		std::map<std::string, eButton> mButtonMapping;
 	};
 
 

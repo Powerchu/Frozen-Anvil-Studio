@@ -84,18 +84,18 @@ namespace Dystopia
 			mpBody->AddImpulse({ -20,0,0 });
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_RIGHT))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_RIGHT))
 		{
 			mpBody->AddImpulse({ 20,0,0 });
 
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_UP))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_UP))
 		{
 			mpBody->AddImpulse({ 0,20,0 });
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyReleased(eButton::KEYBOARD_SPACEBAR))
 		{
 			mpBody->AddImpulse({ 0,300*mpBody->GetGravityScalar(),0 });
 		}
