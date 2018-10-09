@@ -180,7 +180,6 @@ void Dystopia::Renderer::TextureField()
 {
 	if (EGUI::Display::EmptyBox("Texture   ", 150, (mpTexture) ? mTextureName : "-empty-", true))
 	{
-
 	}
 
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
@@ -206,7 +205,8 @@ void Dystopia::Renderer::TextureField()
 	{
 		EGUI::Display::Label("Preview    ");
 		EGUI::SameLine();
-		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 }, false, true);
+		float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
+		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
 	}
 }
 

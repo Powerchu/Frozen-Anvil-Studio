@@ -37,7 +37,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	static constexpr float imageOffsetY = 27.f;
 	static constexpr float dragMagnitudeEpsilon = 2.f;
 
 	static SceneView* gpInstance = 0;
@@ -51,12 +50,11 @@ namespace Dystopia
 
 	SceneView::SceneView()
 		: EditorTab{ false },
-		mLabel{ "Scene View" },
-		mpGfxSys{ nullptr }, mDelta{},
-		mpSceneCamera{ nullptr },
-		mSensitivity{ 0.1f },
-		mAmFocused{ false }, mMoveVec{ 0,0 },
-		mMoveSens{ 0.75f }, mDragging{ false }
+		mLabel{ "Scene View" }, mpGfxSys{ nullptr }, 
+		mpSceneCamera{ nullptr }, mSensitivity{ 0.1f },
+		mToZoom{ eZOOM_NONE }, mAmFocused{ false }, 
+		mMoveVec{ 0,0 }, mMoveSens{ 0.75f }, 
+		mDragging{ false }, mImgPos{}, mImgSize{}
 	{}
 
 	SceneView::~SceneView()
@@ -92,10 +90,9 @@ namespace Dystopia
 
 	void SceneView::Update(const float& _dt)
 	{
-		mDelta = _dt;
 		if (GetMainEditor()->CurrentState() == EDITOR_MAIN)
 		{
-			mpGfxSys->Update(mDelta);
+			mpGfxSys->Update(_dt);
 		}
 	}
 
@@ -103,15 +100,18 @@ namespace Dystopia
 	{
 		ResetMouseEvents();
 		EGUI::UnIndent(2);
-
 		if (GetMainEditor()->CurrentState() == EDITOR_PLAY)
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 
-		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
-		mImgSize = Math::Vec2{ Size().x,  Size().y - imageOffsetY };
+		Texture *pTex = mpGfxSys->GetFrameBuffer().AsTexture();
+		AdjustImageSize(pTex);
+		AdjustDisplayPos();
 
-		if (EGUI::Display::Image(id, mImgSize, true))
+		auto orig = ImGui::GetCursorPos();
+		ImGui::SetCursorPos(ImVec2{ orig.x + mImgPos.x, orig.y + mImgPos.y - 1.f });
+		if (EGUI::Display::Image(pTex->GetID(), mImgSize, true))
 			mAmFocused = true;
+		ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
 
 		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PREFAB))
 		{
@@ -126,7 +126,6 @@ namespace Dystopia
 
 		if (GetMainEditor()->CurrentState() == EDITOR_PLAY)
 			ImGui::PopStyleVar();
-
 		CheckMouseEvents();
 		EGUI::Indent(2);
 	}
@@ -263,6 +262,35 @@ namespace Dystopia
 	void SceneView::SceneChanged()
 	{
  		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
+	}
+
+	void SceneView::AdjustImageSize(Texture *_pTex)
+	{
+		float ix = static_cast<float>(_pTex->GetWidth());
+		float iy = static_cast<float>(_pTex->GetHeight());
+		float sx = Size().x;
+		float sy = Size().y - EGUI::TabsImageOffsetY;
+		mImgSize = GetAdjustedRatio(sx, sy, ix, iy);
+	}
+
+	void SceneView::AdjustDisplayPos(void)
+	{
+		mImgPos= GetAdjustedPosition(Size().x, Size().y - EGUI::TabsImageOffsetY, mImgSize.x, mImgSize.y);
+	}
+
+	Math::Vec2 SceneView::GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY)
+	{
+		float iRatio = _iX / _iY;
+		float sRatio = _sX / _sY;
+		return sRatio > iRatio ? Math::Vec2{ _iX * (_sY / _iY), _sY } :
+								 Math::Vec2{ _sX, _iY * (_sX / _iX) };
+	}
+
+	Math::Vec2 SceneView::GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY)
+	{
+		float xDiff = _sX - _iX;
+		float yDiff = _sY - _iY;
+		return Math::Vec2{ xDiff / 2, yDiff / 2};
 	}
 
 	Math::Pt3D SceneView::GetWorldClickPos(const Camera * const _cam) const

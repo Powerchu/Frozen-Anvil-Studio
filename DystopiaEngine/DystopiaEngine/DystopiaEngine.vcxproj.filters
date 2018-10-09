@@ -254,6 +254,9 @@
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClCompile>
     <ClCompile Include="XGamePad.cpp" />
+    <ClCompile Include="Source\Editor\SpritePreviewer.cpp">
+      <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -668,6 +671,9 @@
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClInclude>
     <ClInclude Include="XGamePad.h" />
+    <ClInclude Include="Include\Editor\SpritePreviewer.h">
+      <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -948,6 +954,9 @@
     </Filter>
     <Filter Include="Editor\Editor Tabs\Project Settings">
       <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Sprite Previewer">
+      <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
