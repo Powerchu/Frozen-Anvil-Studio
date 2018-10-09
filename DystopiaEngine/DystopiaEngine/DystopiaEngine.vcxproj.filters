@@ -667,13 +667,13 @@
       <Filter>Reflection</Filter>
     </ClInclude>
     <ClInclude Include="Include\Reflection\PPVariadicSize.h">
-      <Filter>Reflection\MetaData.h</Filter>
+      <Filter>Reflection\Preprocessor</Filter>
     </ClInclude>
     <ClInclude Include="Include\Reflection\PPToSequence.h">
-      <Filter>Reflection\MetaData.h</Filter>
+      <Filter>Reflection\Preprocessor</Filter>
     </ClInclude>
     <ClInclude Include="Include\Reflection\PPForEachSeq.h">
-      <Filter>Reflection\MetaData.h</Filter>
+      <Filter>Reflection\Preprocessor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -14,9 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _PP_FOREACH_SEQ_H_
 #define _PP_FOREACH_SEQ_H_
 
-#include "Reflection/PPVariadicSize.h"
 
-#define PP_FOREACH_SEQ(...)
+#define PP_FOREACH_SEQ(ACTION_, SEQ_)
+
+#define PP_FOREACH_SEQ0(...)
 
 
 
