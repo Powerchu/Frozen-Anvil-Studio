@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility/MetaDataStructures.h"
 
-namespace Utility
+namespace Ut
 {
 	// Foward Decls
 	template <bool, typename true_t, typename false_t>
@@ -268,7 +268,7 @@ namespace Utility
 		template <typename Ty>
 		struct ConvertionOption
 		{
-			Ty operator () (typename Utility::RemoveRef<Ty>::type);
+			Ty operator () (typename Ut::RemoveRef<Ty>::type);
 		};
 
 		template <>

@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Math/Vector4.h"	// Vector4
 #include "Math/Matrix4.h"	// Matrix4
-#include "System/Graphics/Shader.h"
+#include "Math/MathUtility.h"
 
 namespace Math
 {
@@ -152,7 +152,11 @@ inline Math::Quaternion::Quaternion(__m128 _Q) noexcept
 
 inline Math::Quaternion& _CALL Math::Quaternion::Normalise(void)
 {
-	mData.Normalise();
+	if (mData != Math::Zero<Math::Vector4>())
+		mData.Normalise();
+	else
+		mData = Vec4{ 0, 0, 0, 1.f };
+
 	return *this;
 }
 

@@ -106,7 +106,7 @@ void Dystopia::SceneSystem::RestartScene(void)
 		mpCurrScene->PostUpdate();
 		mpCurrScene->Shutdown();
 
-		static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
+		static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 		auto SerialObj = TextSerialiser::OpenFile(mLastSavedData, TextSerialiser::MODE_READ);
 		SerialObj.ConsumeStartBlock();
 		mpCurrScene->Unserialise(SerialObj);
@@ -120,7 +120,7 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 {
 	mpNextScene = new Scene{};
 
-	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
+	static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 	auto SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_READ);
 
 	SerialObj.ConsumeStartBlock();
@@ -134,7 +134,7 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 
 void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::string & _strSceneName)
 {
-	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
+	static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 
 	mpCurrScene->SetSceneName(_strSceneName);
 	auto SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_WRITE);

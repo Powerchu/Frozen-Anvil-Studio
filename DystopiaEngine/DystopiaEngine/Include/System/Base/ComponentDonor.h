@@ -54,7 +54,7 @@ namespace Dystopia
 template <typename Ty, typename S> template <typename ... U>
 inline Ty* Dystopia::ComponentDonor<Ty, S>::RequestComponent(U&& ... _Args)
 {
-	return mComponents.Emplace(Utility::Forward<U>(_Args)...);
+	return mComponents.Emplace(Ut::Forward<U>(_Args)...);
 }
 
 

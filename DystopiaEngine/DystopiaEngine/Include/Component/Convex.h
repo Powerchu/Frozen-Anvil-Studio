@@ -28,7 +28,7 @@ namespace Dystopia
 
 		unsigned GetComponentType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<Collider>, AllComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<Collider>, AllComponents>::value;
 		};
 
 #if EDITOR

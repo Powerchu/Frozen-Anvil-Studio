@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 
-namespace Utility
+namespace Ut
 {
 	struct NULL_TYPE;
 
