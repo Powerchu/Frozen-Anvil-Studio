@@ -94,7 +94,7 @@ namespace Dystopia
 	struct ComdModifyValue;
 
 	template <typename T, class Comp>
-	struct ComdModifyValue<T, Comp, Utility::Type_t<Utility::EnableIf_t<std::is_base_of<Component, Comp>::value>>>
+	struct ComdModifyValue<T, Comp, Ut::Type_t<Ut::EnableIf_t<std::is_base_of<Component, Comp>::value>>>
 		: Commands
 	{
 		ComdModifyValue(const uint64_t& _objID, T* _pmData, const T& _oldV, bool * _notify = nullptr)
@@ -136,7 +136,7 @@ namespace Dystopia
 	}; 
 
 	template <typename T, class Sys>
-	struct ComdModifyValue<T, Sys, Utility::Type_t<Utility::EnableIf_t<std::is_base_of<Systems, Sys>::value>>>
+	struct ComdModifyValue<T, Sys, Ut::Type_t<Ut::EnableIf_t<std::is_base_of<Systems, Sys>::value>>>
 		: Commands
 	{
 		ComdModifyValue(const uint64_t&, T* _pData, const T& _oldV, bool * _notify = nullptr)
@@ -208,7 +208,7 @@ namespace Dystopia
 	struct ComdRecord;
 
 	template <typename T, class Comp>
-	struct ComdRecord<T, Comp, Utility::Type_t<Utility::EnableIf_t<std::is_base_of_v<::Dystopia::Component, Comp>>>>
+	struct ComdRecord<T, Comp, Ut::Type_t<Ut::EnableIf_t<std::is_base_of_v<::Dystopia::Component, Comp>>>>
 		: RecordBase
 	{
 		ComdRecord(const uint64_t& _objID, T* rhs, bool * _notify = nullptr)
@@ -258,7 +258,7 @@ namespace Dystopia
 	};
 
 	template <typename T, class Sys>
-	struct ComdRecord<T, Sys, Utility::Type_t<Utility::EnableIf_t<std::is_base_of<Systems, Sys>::value>>>
+	struct ComdRecord<T, Sys, Ut::Type_t<Ut::EnableIf_t<std::is_base_of<Systems, Sys>::value>>>
 		: RecordBase
 	{
 		ComdRecord(const uint64_t&, T* _pData, bool * _notify = nullptr)

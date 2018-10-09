@@ -669,6 +669,7 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\ProjectSettings.h">
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
+    </ClInclude>
     <ClInclude Include="Include\Math\MetaFloat.h">
       <Filter>Math\MetaMath</Filter>
     </ClInclude>
@@ -971,6 +972,7 @@
     </Filter>
     <Filter Include="Editor\Editor Tabs\Project Settings">
       <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Math\MetaMath">
       <UniqueIdentifier>{08413c81-cbde-4575-842c-fc63e39a282d}</UniqueIdentifier>
     </Filter>
