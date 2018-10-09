@@ -1,9 +1,28 @@
 #include "XGamePad.h"
 #include "Math/MathLib.h"
 
+static constexpr unsigned short g_ControllerHexa[14] = 
+{
+	XINPUT_GAMEPAD_DPAD_UP,          
+	XINPUT_GAMEPAD_DPAD_DOWN,       
+	XINPUT_GAMEPAD_DPAD_LEFT,        
+	XINPUT_GAMEPAD_DPAD_RIGHT,      
+	XINPUT_GAMEPAD_START,            
+	XINPUT_GAMEPAD_BACK,            
+	XINPUT_GAMEPAD_LEFT_THUMB,       
+	XINPUT_GAMEPAD_RIGHT_THUMB,      
+	XINPUT_GAMEPAD_LEFT_SHOULDER,    
+	XINPUT_GAMEPAD_RIGHT_SHOULDER,   
+	XINPUT_GAMEPAD_A,                
+	XINPUT_GAMEPAD_B,                
+	XINPUT_GAMEPAD_X,                
+	XINPUT_GAMEPAD_Y                
+};
+
 XGamePad::XGamePad(unsigned _id)
 	: mdwID{ static_cast<DWORD>(_id) },
 	mbConnected{ false }, 
+	mbChangeDetected{ false },
 	mxState{},
 	mfDeadZoneL{ XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE }, 
 	mfDeadZoneR{ XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE }, 
@@ -13,7 +32,8 @@ XGamePad::XGamePad(unsigned _id)
 	mxLeftThumb{},
 	mxRightThumb{},
 	mcTrigger{},
-	msButtons{}
+	msButtons{},
+	mArrXBtnStates{}
 {
 }
 
@@ -22,9 +42,10 @@ XGamePad::~XGamePad(void)
 
 void XGamePad::PollInputs(void)
 {
+	DWORD prevPacket = mxState.dwPacketNumber;
 	ZeroMemory(&mxState, sizeof(XINPUT_STATE));
 	mbConnected = (XInputGetState(mdwID, &mxState) == ERROR_SUCCESS) ? true : false ;
-
+	mbChangeDetected = prevPacket != mxState.dwPacketNumber;
 	if (mbConnected)
 	{
 		UpdateLeftThumb();
@@ -118,6 +139,15 @@ void XGamePad::UpdateTriggers(void)
 void XGamePad::UpdateButtons(void)
 {
 	msButtons = mxState.Gamepad.wButtons;
+	for (unsigned i = 0; i < eXBUTTON_LAST; ++i)
+	{
+		bool pressed = msButtons & g_ControllerHexa[i];
+		auto& btn = mArrXBtnStates[i];
+
+		btn.mbTriggered = pressed && !btn.mbPressed;
+		btn.mbReleased = !pressed && btn.mbPressed;
+		btn.mbPressed = pressed;
+	}
 }
 
 void XGamePad::Vibrate(unsigned short _speedL, unsigned short _speedR)
@@ -131,25 +161,46 @@ void XGamePad::Vibrate(unsigned short _speedL, unsigned short _speedR)
 	}
 }
 
-std::string XGamePad::GetPrint(void) const
+void XGamePad::StopVibrate(void)
 {
-	std::string printout = "";
+	Vibrate(0, 0);
+}
 
-	printout += "Left Thumb X	: " + std::to_string(mxLeftThumb[0].mfMagnitudeNormal);
-	printout += "\n";
-	printout += "Left Thumb Y	: " + std::to_string(mxLeftThumb[1].mfMagnitudeNormal);
-	printout += "\n";
-	printout += "Right Thumb X	: " + std::to_string(mxRightThumb[0].mfMagnitudeNormal);
-	printout += "\n";
-	printout += "Right Thumb Y	: " + std::to_string(mxRightThumb[1].mfMagnitudeNormal);
-	printout += "\n";
-	printout += "Trigger L		: " + std::to_string(mcTrigger[0]);
-	printout += "\n";
-	printout += "Trigger R		: " + std::to_string(mcTrigger[1]);
-	printout += "\n";
-	printout += "Buttons		: " + std::to_string(msButtons);
+float XGamePad::GetAnalogX(int _i) const
+{
+	return (!_i) ? mxLeftThumb[0].mfMagnitudeNormal : 
+				   mxRightThumb[0].mfMagnitudeNormal ;
+}
 
-	return printout;
+float XGamePad::GetAnalogY(int _i) const
+{
+	return (!_i) ? mxLeftThumb[1].mfMagnitudeNormal :
+				   mxRightThumb[1].mfMagnitudeNormal ;
+}
+
+float XGamePad::GetTriggers(int _i) const
+{
+	return (!_i) ? mcTrigger[0] : mcTrigger[1];
+}
+
+bool XGamePad::IsKeyPressed(eXButtons _btn) const
+{
+	return mArrXBtnStates[_btn].mbPressed;
+}
+
+bool XGamePad::IsKeyTriggered(eXButtons _btn) const
+{
+	return mArrXBtnStates[_btn].mbTriggered;
+}
+
+bool XGamePad::IsKeyReleased(eXButtons _btn) const
+{
+	return mArrXBtnStates[_btn].mbReleased;
+}
+
+bool XGamePad::HasChanged(void) const
+{
+	return mbChangeDetected;
 }
 
 bool XGamePad::IsConnected(void) const

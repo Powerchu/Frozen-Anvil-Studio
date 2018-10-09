@@ -86,6 +86,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
+	static bool once = true;
 	XGamePad p1{ 0 };
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
@@ -97,8 +98,6 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	
 		editor->UpdateFrame(editor->GetDeltaTime());
 		
-		Dystopia::PrintToConsoleLog(p1.GetPrint());
-
 		editor->EndFrame();
 	}
 	editor->Shutdown();
