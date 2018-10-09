@@ -56,7 +56,7 @@ namespace Dystopia
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (nullptr != body.GetOwner() && !body.Get_IsStaticState() && body.GetIsAwake())
+			if (!body.Get_IsStaticState() && body.GetIsAwake())
 			{
 				body.Integrate(_dt);
 			}
