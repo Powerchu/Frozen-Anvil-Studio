@@ -25,21 +25,6 @@ enum eXButtons : unsigned
 	eXBUTTON_LAST
 };
 
-struct XThumbStick
-{
-	float mfActualVal;
-	float mfNormal;
-	float mfMagnitude;
-	float mfMagnitudeNormal;
-};
-
-struct XBtnStates
-{
-	bool mbTriggered = false;
-	bool mbPressed = false;
-	bool mbReleased = false;
-};
-
 class XGamePad
 {
 public:
@@ -66,10 +51,25 @@ public:
 									// values returned are between: mfTriggerThresh ~ 255
 
 private:
-	void			UpdateLeftThumb(void);
-	void			UpdateRightThumb(void);
-	void			UpdateTriggers(void);
-	void			UpdateButtons(void);
+	void UpdateLeftThumb(void);
+	void UpdateRightThumb(void);
+	void UpdateTriggers(void);
+	void UpdateButtons(void);
+
+	struct XThumbStick
+	{
+		float mfActualVal;
+		float mfNormal;
+		float mfMagnitude;
+		float mfMagnitudeNormal;
+	};
+
+	struct XBtnStates
+	{
+		bool mbTriggered = false;
+		bool mbPressed = false;
+		bool mbReleased = false;
+	};
 
 	XBtnStates		mArrXBtnStates[eXBUTTON_LAST];
 	XThumbStick		mxLeftThumb[2];		// [0] = x, [1] = y
