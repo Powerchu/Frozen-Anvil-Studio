@@ -95,7 +95,7 @@ namespace Dystopia
 			mpBody->AddImpulse({ 0,20,0 });
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyReleased(eButton::KEYBOARD_SPACEBAR))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eButton::KEYBOARD_SPACEBAR))
 		{
 			mpBody->AddImpulse({ 0,300*mpBody->GetGravityScalar(),0 });
 		}

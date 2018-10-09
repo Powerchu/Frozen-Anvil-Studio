@@ -10,6 +10,7 @@
 #include "Component/Transform.h"
 #include "Math/Quaternion.h"
 
+#include <vector>
 #if EDITOR
 #include "Editor/Editor.h"
 #include "Editor/EGUI.h"
@@ -176,7 +177,7 @@ namespace Dystopia
 			else
 			{
 				/*Check if Simplex contains Origin*/
-				if (ContainOrigin(Simplex, vDir))
+				if (ContainOrigin(Simplex,vDir))
 				{
 					mbColliding = true;
 					_pColB.mbColliding = true;
@@ -304,6 +305,7 @@ namespace Dystopia
 		return FarthestPoint;
 	}
 
+
 	Edge Convex::GetClosestEdge(AutoArray<Vertice>& _Simplex)
 	{
 		Edge   ClosestEdge;
@@ -341,14 +343,13 @@ namespace Dystopia
 				EdgeNorm.Normalise();
 			}
 
-
 			const double distance = EdgeNorm.Dot(a.mPosition);
 			if (Math::Abs(distance) < Math::Abs(ClosestDistance))
 			{
-				ClosestDistance = Math::Abs(distance);
+				ClosestDistance    = Math::Abs(distance);
 				ClosestEdge.mNorm3 = EdgeNorm;
-				ClosestEdge.mVec3 = EdgeVec;
-				ClosestEdge.mPos = a.mPosition;
+				ClosestEdge.mVec3  = EdgeVec;
+				ClosestEdge.mPos   = a.mPosition;
 				ClosestEdge.mOrthogonalDistance = distance;
 				ClosestEdge.mSimplexIndex = j;
 			}
@@ -358,8 +359,8 @@ namespace Dystopia
 
 	/*Support Function for getting the Minkowski Difference*/
 	Math::Point3D Convex::Support(const Convex & _ColA,
-		const Convex & _ColB,
-		const Math::Vec3D & _Dir)
+		                          const Convex & _ColB,
+		                          const Math::Vec3D & _Dir)
 	{
 		const Vertice Farthest_In_ColA = _ColA.GetFarthestPoint(_Dir);
 		const Vertice Farthest_In_ColB = _ColB.GetFarthestPoint(_Dir * -1);
@@ -368,10 +369,12 @@ namespace Dystopia
 		return Math::MakePoint3D(MikwoskiPoint.x, MikwoskiPoint.y, 0);
 	}
 
+
 	Math::Point3D Convex::Support(const Convex & _ColB, const Math::Vec3D & _Dir) const
 	{
 		return Convex::Support(*this, _ColB, _Dir);
 	}
+
 
 	AutoArray<Edge> Convex::GetConvexEdges() const
 	{
@@ -382,7 +385,7 @@ namespace Dystopia
 		{
 			unsigned j = i + 1 >= mVertices.size() ? 0 : i + 1;
 			Math::Point3D const & start = World * mVertices[i].mPosition;
-			Math::Point3D const & end = World * mVertices[j].mPosition;
+			Math::Point3D const & end   = World * mVertices[j].mPosition;
 			Edge e;
 			e.mVec3         = end - start;
 			e.mNorm3.xyzw   = e.mVec3.yxzw;
@@ -404,6 +407,14 @@ namespace Dystopia
 
 	CollisionEvent Convex::GetCollisionEvent(AutoArray<Vertice> _Simplex, const Convex & _ColB)
 	{
+		static AutoArray<Math::Vec3D> SearchDirection
+		{
+			Math::Vec3D{0,1,0},
+			Math::Vec3D{0,-1,0},
+			Math::Vec3D{1,0,0},
+			Math::Vec3D{-1,0,0}
+		};
+
 		RigidBody* other_body {nullptr};
 		if (_ColB.GetOwner()->GetComponent<RigidBody>())
 			other_body = _ColB.GetOwner()->GetComponent<RigidBody>();
@@ -415,50 +426,79 @@ namespace Dystopia
 			/*Get the closest edge of our simplex(Made by the minkowski difference to the origin*/
 			Edge ClosestEdge = GetClosestEdge(_Simplex);
 			Vertice Point{ 0,0 };
+			//for (auto const & elem : SearchDirection)
+			//{
+			//	Point = Support(_ColB, elem);
+			//	if ((Point.mPosition - _Simplex[ClosestEdge.mSimplexIndex].mPosition).MagnitudeSqr() >= FLT_EPSILON)
+			//		break;
+			//}
 			/*Search for a point in the Normal direction of the ClosestEdge*/
-			if ((ClosestEdge.mNorm3 - prevSearchDir).MagnitudeSqr() != 0)
-			{
-				Point = Support(_ColB, ClosestEdge.mNorm3);
-				prevSearchDir = ClosestEdge.mNorm3;
-			}
-			else
-			{
-				Point = Support(_ColB, -ClosestEdge.mNorm3);
-				prevSearchDir = -ClosestEdge.mNorm3;
-			}
+			//if ((ClosestEdge.mNorm3 - prevSearchDir).MagnitudeSqr() != 0)
+			//{
+			//	Point = Support(_ColB, ClosestEdge.mNorm3);
+			//	prevSearchDir = ClosestEdge.mNorm3;
+			//}
+			//else
+			//{
+			//	Point = Support(_ColB, -ClosestEdge.mNorm3);
+			//	prevSearchDir = -ClosestEdge.mNorm3;
+			//}
 
+			Point         = Support(_ColB, ClosestEdge.mNorm3);
+			prevSearchDir = ClosestEdge.mNorm3;
 
 			/*
 			If closest edge is already on the minkowski sum edge,
 			The projection distance from the point to the ClosestEdge normal will be
 			the same as the orthogonal distance from the origin to the ClosestEdge
 			*/
-			const double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
-			const double result = ProjectDis - ClosestEdge.mOrthogonalDistance;
+			const double ProjectDis         = ClosestEdge.mNorm3.Dot(Point.mPosition);
+			const double OrthogonalDistance = Math::Abs(ClosestEdge.mPos.Dot(ClosestEdge.mNorm3));
+			const double result             = Math::Abs(ProjectDis) - Math::Abs(OrthogonalDistance);
+			bool check = false;
+
+			for (auto elem : _Simplex)
+			{
+				if (!(elem.mPosition - Point.mPosition).MagnitudeSqr())
+					check = true;
+			}
+			if (!ClosestEdge.mNorm3.MagnitudeSqr())
+				__debugbreak();
 
 			/*If fail the test, expand the simplex and run the test again*/
-			if (Math::Abs(result) <= FLT_EPSILON)
+			if (Math::Abs(result) <= 0.00001 || check)
 			{
 				/*This Position belongs to either ColA or B*/
 				col_info.mCollisionPoint = ClosestEdge.mPos;
-				col_info.mEdgeVector = ClosestEdge.mVec3;
-				col_info.mEdgeNormal = ClosestEdge.mNorm3;
+				col_info.mEdgeVector     = ClosestEdge.mVec3;
+				col_info.mEdgeNormal     = ClosestEdge.mNorm3;
 				col_info.mdPeneDepth = ProjectDis;
 				if( nullptr != other_body)
 				{
-					col_info.mfRestitution = DetermineRestitution(*other_body);
+					col_info.mfRestitution        = DetermineRestitution(*other_body);
 					col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
-					col_info.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
+					col_info.mfStaticFrictionCof  = DetermineStaticFriction(*other_body);
 				}
 				return col_info;
 			}
 			else
 			{
-				_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
+				//for (auto elem : _Simplex)
+				//{
+				//	if (!(elem.mPosition - Point.mPosition).MagnitudeSqr())
+				//		check = true;
+				//}
+				//_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
+				std::vector<Vertice> v;
+				for (auto & elem : _Simplex)
+					v.push_back(elem);
+				v.insert(v.begin() + ClosestEdge.mSimplexIndex, Point);
+				_Simplex.clear();
+				for (auto & elem : v)
+					_Simplex.push_back(elem);
 			}
 		}
 		//return col_info;
-
 	}
 
 	void Convex::EditorUI() noexcept
@@ -771,5 +811,241 @@ namespace Dystopia
 		}
 
 		return false;
+	}
+
+
+
+	Edge Convex::GetClosestEdge(AutoArray<SimplexVertex>& _Simplex)
+	{
+		Edge   ClosestEdge;
+		double ClosestDistance = std::numeric_limits<double>::max();
+
+		for (unsigned i = 0; i < _Simplex.size(); ++i)
+		{
+			unsigned j = (i + 1) >= _Simplex.size() ? 0 : i + 1;
+
+			/*Get the vertice of the _Simplex*/
+			SimplexVertex const &  a = _Simplex[i];
+			SimplexVertex const &  b = _Simplex[j];
+			/*Get the vector of the edge*/
+			Math::Vec3D EdgeVec = b.mPosition - a.mPosition;
+
+#if CLOCKWISE
+			Math::Vec3D Check = { EdgeVec.y, -EdgeVec.x,EdgeVec.z };
+			if (Check.Dot(a.mPosition) < 0)
+				EdgeVec = -EdgeVec;
+#else
+			Math::Vec3D Check = { -EdgeVec.y, EdgeVec.x,EdgeVec.z };
+			if (Check.Dot(a.mPosition) < 0)
+				EdgeVec = -EdgeVec;
+#endif
+			Math::Vec3D EdgeNorm;
+			EdgeNorm.xyzw = EdgeVec.yxzw;
+
+#if CLOCKWISE
+			EdgeNorm.Negate<Math::NegateFlag::Y>();
+#else
+			EdgeNorm.Negate<Math::NegateFlag::X>();
+#endif
+			if (EdgeNorm.MagnitudeSqr() == 0.f)
+			{
+				//_Simplex.Remove(std::find(_Simplex.begin(), _Simplex.end(), b));
+				//continue;
+			}
+
+			if (EdgeNorm.MagnitudeSqr() > FLT_EPSILON)
+			{
+				EdgeNorm.Normalise();
+			}
+
+
+			const double distance = EdgeNorm.Dot(a.mPosition);
+			if (Math::Abs(distance) < Math::Abs(ClosestDistance))
+			{
+				ClosestDistance = Math::Abs(distance);
+				ClosestEdge.mNorm3 = EdgeNorm;
+				ClosestEdge.mVec3 = EdgeVec;
+				ClosestEdge.mPos = a.mPosition;
+				ClosestEdge.mOrthogonalDistance = distance;
+				ClosestEdge.mSimplexIndex = j;
+
+			}
+		}
+		return ClosestEdge;
+	}
+
+	SimplexVertex Convex::GetMiwoskiPoint(const Convex & _ColA, const Convex & _ColB, const Math::Vec3D & _Dir)
+	{
+		SimplexVertex ToRet;
+		unsigned ColAIndex = 0;
+		unsigned ColBIndex = 0;
+		const Math::Point3D Farthest_In_ColA = Convex::GetFarthestPoint(_ColA, _Dir, ColAIndex);
+		const Math::Point3D Farthest_In_ColB = Convex::GetFarthestPoint(_ColB, _Dir * -1, ColBIndex);
+		Math::Point3D pt = Farthest_In_ColA - Farthest_In_ColB;
+		ToRet.mPosition = MakePoint3D(pt.x, pt.y, pt.z);
+		ToRet.ColAIndex = ColAIndex;
+		ToRet.ColBIndex = ColBIndex;
+
+		return ToRet;
+	}
+
+	CollisionEvent Convex::GetCollisionEvent(AutoArray<SimplexVertex> _Simplex, const Convex& _ColB)
+	{
+		RigidBody* other_body{ nullptr };
+		if (_ColB.GetOwner()->GetComponent<RigidBody>())
+			other_body = _ColB.GetOwner()->GetComponent<RigidBody>();
+
+		CollisionEvent col_info(GetOwner(), _ColB.GetOwner());
+		Vec3D prevSearchDir{ 0,0,0,0 };
+		while (true)
+		{
+			/*Get the closest edge of our simplex(Made by the minkowski difference to the origin*/
+			Edge ClosestEdge = GetClosestEdge(_Simplex);
+			SimplexVertex Point{ 0,0 };
+
+			/*Search for a point in the Normal direction of the ClosestEdge*/
+			if ((ClosestEdge.mNorm3 - prevSearchDir).MagnitudeSqr() != 0)
+			{
+				Point = Convex::GetMiwoskiPoint(*this, _ColB, ClosestEdge.mNorm3);
+				prevSearchDir = ClosestEdge.mNorm3;
+			}
+			else
+			{
+				Point = Convex::GetMiwoskiPoint(*this, _ColB, -ClosestEdge.mNorm3);
+				prevSearchDir = -ClosestEdge.mNorm3;
+			}
+
+
+			const double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
+			const double result = ProjectDis - ClosestEdge.mOrthogonalDistance;
+			bool check = false;
+			for (auto elem : _Simplex)
+			{
+				if (!(elem.mPosition - Point.mPosition).MagnitudeSqr())
+					check = true;
+			}
+			/*If fail the test, expand the simplex and run the test again*/
+			if (Math::Abs(result) <= FLT_EPSILON || check)
+			{
+				Math::Vec3D const & OffSetA = GetOffSet();
+				Math::Matrix3D WorldSpaceA = GetOwnerTransform() * Math::Translate(OffSetA.x, OffSetA.y, OffSetA.z)* GetTransformationMatrix();
+
+				Math::Vec3D const & OffSetB = _ColB.GetOffSet();
+				Math::Matrix3D WorldSpaceB  = _ColB.GetOwnerTransform() * Math::Translate(OffSetB.x, OffSetB.y, OffSetB.z)* _ColB.GetTransformationMatrix();
+				
+				bool isInsideCollider = false;
+				unsigned count = 0;
+				for (auto & elem : _ColB.mVertices)
+				{
+					auto PointB = WorldSpaceB * elem.mPosition;
+					for (unsigned i = 0; i < mVertices.size(); ++i)
+					{
+						unsigned j = i + 1 >= mVertices.size() ? 0 : i + 1;
+						auto start = WorldSpaceA * mVertices[i].mPosition;
+						auto end   = WorldSpaceA * mVertices[j].mPosition;
+						Math::Vec3D normal = ((start - end).yxzw);
+
+						normal = normal.Negate<Math::NegateFlag::Y>();
+						if (normal.Dot(PointB - start) > 0)
+						{
+							isInsideCollider = true;
+							++count;
+							break;
+						}
+					}
+					if (count > 1)
+						break;
+				}
+
+				if (isInsideCollider && count == 1)
+				{
+					Math::Vec3D pointnormal = (WorldSpaceB * (_ColB.mVertices[Point.ColBIndex].mPosition - Math::MakePoint3D(0, 0, 0))).Normalise();
+					/*This Position belongs to either ColA or B*/
+					col_info.mCollisionPoint = ClosestEdge.mPos;
+					col_info.mEdgeNormal     = pointnormal;
+					col_info.mEdgeVector     = (pointnormal.yxzw);
+					col_info.mEdgeVector     = col_info.mEdgeVector.Negate< Math::NegateFlag::Y>();
+					col_info.mdPeneDepth     = ProjectDis;
+
+					if (nullptr != other_body)
+					{
+						col_info.mfRestitution = DetermineRestitution(*other_body);
+						col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
+						col_info.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
+					}
+					return col_info;
+				}
+				else
+				{
+					unsigned j = Point.ColBIndex + 1 >= _ColB.mVertices.size() ? 0 : Point.ColBIndex + 1;
+					auto start = WorldSpaceB * _ColB.mVertices[Point.ColBIndex].mPosition;
+					auto end   = WorldSpaceB * _ColB.mVertices[j].mPosition;
+#if CLOCKWISE
+					Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::Y>();
+#else
+					Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::X>();
+#endif
+					col_info.mCollisionPoint = ClosestEdge.mPos;
+					col_info.mEdgeNormal     = Normal.Normalise();
+					col_info.mEdgeVector     = Normal.xyzw;
+
+					col_info.mdPeneDepth     = ProjectDis;
+
+					if (!Normal.MagnitudeSqr())
+						__debugbreak();
+
+					if (nullptr != other_body)
+					{
+						col_info.mfRestitution = DetermineRestitution(*other_body);
+						col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
+						col_info.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
+					}
+					return col_info;
+				}
+			}
+			else
+			{
+				_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
+			}
+
+		}
+		//return col_info;
+	}
+
+
+	Math::Point3D Convex::GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir, unsigned & _IndexStorage)
+	{
+		/*Convert the points to global*/
+		/*Offset of the collider from Object Local Coordinate System*/
+		Math::Vec3D const & OffSet = _ColA.GetOffSet();
+
+		/*Construct the Matrix for Global Coordinate Conversion*/
+		Math::Matrix3D WorldSpace = _ColA.GetOwnerTransform() * Math::Translate(OffSet.x, OffSet.y, OffSet.z)* _ColA.GetTransformationMatrix();;
+		Vertice * pFirst = _ColA.mVertices.begin();
+		Vertice FarthestPoint = *pFirst;
+		FarthestPoint.mPosition = (WorldSpace * pFirst->mPosition);
+		/*Get the dot product of first Vertice's position for comparision*/
+		auto p = WorldSpace * (pFirst->mPosition);
+		float FarthestVal = (p).Dot(_Dir);
+		unsigned count = 0;
+		/*Loop through the array of Vertices*/
+		for (Vertice const & elem : _ColA.mVertices)
+		{
+			const float val = (WorldSpace * elem.mPosition).Dot(_Dir);
+			/*
+			If the Dot product is more than the current max
+			The current vertice take over as the FarthestVertice
+			*/
+			if (val > FarthestVal)
+			{
+				FarthestPoint = elem;
+				/*Store the FarthestPoint in terms of global space*/
+				FarthestPoint.mPosition = (WorldSpace * elem.mPosition);
+				FarthestVal = val;
+				_IndexStorage = count;
+			}
+			count++;
+		}
+		return FarthestPoint.mPosition;
 	}
 }
