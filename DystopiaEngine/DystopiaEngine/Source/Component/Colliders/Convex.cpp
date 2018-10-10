@@ -712,10 +712,10 @@ namespace Dystopia
 			const double distance = EdgeNorm.Dot(a.mPosition);
 			if (Math::Abs(distance) < Math::Abs(ClosestDistance))
 			{
-				ClosestDistance = Math::Abs(distance);
-				ClosestEdge.mNorm3 = EdgeNorm;
-				ClosestEdge.mVec3 = EdgeVec;
-				ClosestEdge.mPos = a.mPosition;
+				ClosestDistance                 = Math::Abs(distance);
+				ClosestEdge.mNorm3              = EdgeNorm;
+				ClosestEdge.mVec3               = EdgeVec;
+				ClosestEdge.mPos                = a.mPosition;
 				ClosestEdge.mOrthogonalDistance = distance;
 				ClosestEdge.mSimplexIndex = j;
 

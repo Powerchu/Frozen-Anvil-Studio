@@ -126,14 +126,20 @@ namespace Dystopia
 
 	bool AABB::isColliding(AABB & _ColB)
 	{
-		/*Static vs. Dynamic AABB Collision Check*/
-		auto TransformA = GetOwner()->GetComponent<Transform>();
-		auto TransformB = _ColB.GetOwner()->GetComponent<Transform>();
+		auto OffSetA    = GetOffSet();
+		auto OffSetB    = _ColB.GetOffSet();
+		auto ColAWorldMatrix = GetOwnerTransform() * Math::Translate(OffSetA.x, OffSetA.y, OffSetA.z)* GetTransformationMatrix();
+		auto ColBWorldMatrix = _ColB.GetOwnerTransform() * Math::Translate(OffSetB.x, OffSetB.y, OffSetB.z)* _ColB.GetTransformationMatrix();
 
-		if (   TransformA->GetGlobalPosition().x + this->mMin->mPosition.x <= TransformB->GetGlobalPosition().x + _ColB.mMax->mPosition.x
-			&& TransformA->GetGlobalPosition().x + this->mMax->mPosition.x >= TransformB->GetGlobalPosition().x + _ColB.mMin->mPosition.x
-			&& TransformA->GetGlobalPosition().y + this->mMax->mPosition.y >= TransformB->GetGlobalPosition().y + _ColB.mMin->mPosition.y
-			&& TransformA->GetGlobalPosition().y + this->mMin->mPosition.y <= TransformB->GetGlobalPosition().y + _ColB.mMax->mPosition.y)
+		auto MinPosA         = ColAWorldMatrix * this->mMin->mPosition;
+		auto MaxPosA         = ColAWorldMatrix * this->mMax->mPosition;
+		auto MinPosB         = ColBWorldMatrix * _ColB.mMin->mPosition;
+		auto MaxPosB         = ColBWorldMatrix * _ColB.mMax->mPosition;
+
+		if (   MinPosA.x <= MaxPosB.x
+			&& MaxPosA.x >= MinPosB.x
+			&& MaxPosA.y >= MinPosB.y
+			&& MinPosA.y <= MaxPosB.y)
 		{
 			mbColliding = true;
 			return mbColliding;
