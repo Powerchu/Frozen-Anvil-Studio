@@ -138,7 +138,7 @@ void Dystopia::InputManager::LoadSettings(TextSerialiser&)
 {
 }
 
-void Dystopia::InputManager::MapUserButton(eUserButton _nBtn, eButton _nTo)
+void Dystopia::InputManager::MapUserButton(eUserButton , eButton )
 {
 	
 }
