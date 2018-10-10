@@ -303,12 +303,6 @@ void Dystopia::Transform::EditorUI(void) noexcept
 	{
 		switch (e)
 		{
-		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
 			EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mRotation, &mbChanged);
 			break;
@@ -320,10 +314,10 @@ void Dystopia::Transform::EditorUI(void) noexcept
 				Math::Degrees(eulerAngle[2])
 			);
 			break;
+		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
+		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();
-			break;
-		default:
 			break;
 		}
 	}

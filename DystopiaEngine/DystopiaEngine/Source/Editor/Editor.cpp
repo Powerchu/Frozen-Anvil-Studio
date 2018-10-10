@@ -54,6 +54,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/ColorScheme.h"
 #include "Editor/StyleScheme.h"
 #include "Editor/Clipboard.h"
+#include "Editor/SpritePreviewer.h"
 
 #include "Allocator/DefaultAlloc.h"
 
@@ -65,7 +66,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <tchar.h>
 #include <objbase.h>
 
-#include "../XGamePad.h"
+#include "System/Input/XGamePad.h"
 
 namespace
 {
@@ -133,15 +134,16 @@ namespace Dystopia
 
 	void Editor::LoadTabs()
 	{
-		mArrTabs.push_back(ProjectSettings::GetInstance());
-		mArrTabs.push_back(ConsoleLog::GetInstance());
-		mArrTabs.push_back(PerformanceLog::GetInstance());
-		mArrTabs.push_back(ColorScheme::GetInstance());
-		mArrTabs.push_back(StyleScheme::GetInstance());
 		mArrTabs.push_back(Inspector::GetInstance());
 		mArrTabs.push_back(ProjectResource::GetInstance());
 		mArrTabs.push_back(HierarchyView::GetInstance());
 		mArrTabs.push_back(SceneView::GetInstance());
+		mArrTabs.push_back(ProjectSettings::GetInstance());
+		mArrTabs.push_back(ConsoleLog::GetInstance());
+		mArrTabs.push_back(PerformanceLog::GetInstance());
+		mArrTabs.push_back(SpritePreviewer::GetInstance());
+		mArrTabs.push_back(ColorScheme::GetInstance());
+		mArrTabs.push_back(StyleScheme::GetInstance());
 	}
 
 	void Editor::LoadDefaults()
