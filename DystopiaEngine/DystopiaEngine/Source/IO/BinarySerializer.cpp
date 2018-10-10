@@ -24,15 +24,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::BinarySerializer::BinarySerializer(void) 
 	: mFile{}, 
-	mfpWrite{ Dystopia::System::GetSoftwareEndian() ? &Dystopia::BinarySerializer::WriteLE : &Dystopia::BinarySerializer::WriteBE },
-	mfpRead{ Dystopia::System::GetSoftwareEndian() ? &Dystopia::BinarySerializer::ReadLE : &Dystopia::BinarySerializer::ReadBE }
+	mfpWrite{ Dystopia::Hardware::GetSoftwareEndian() ? &Dystopia::BinarySerializer::WriteLE : &Dystopia::BinarySerializer::WriteBE },
+	mfpRead{ Dystopia::Hardware::GetSoftwareEndian() ? &Dystopia::BinarySerializer::ReadLE : &Dystopia::BinarySerializer::ReadBE }
 {
 }
 
 Dystopia::BinarySerializer::BinarySerializer(std::fstream& _file) 
 	: mFile{ Utility::Move(_file) },
-	mfpWrite{ Dystopia::System::GetSoftwareEndian() ? &Dystopia::BinarySerializer::WriteLE : &Dystopia::BinarySerializer::WriteBE },
-	mfpRead{ Dystopia::System::GetSoftwareEndian() ? &Dystopia::BinarySerializer::ReadLE : &Dystopia::BinarySerializer::ReadBE }
+	mfpWrite{ Dystopia::Hardware::GetSoftwareEndian() ? &Dystopia::BinarySerializer::WriteLE : &Dystopia::BinarySerializer::WriteBE },
+	mfpRead{ Dystopia::Hardware::GetSoftwareEndian() ? &Dystopia::BinarySerializer::ReadLE : &Dystopia::BinarySerializer::ReadBE }
 {
 }
 

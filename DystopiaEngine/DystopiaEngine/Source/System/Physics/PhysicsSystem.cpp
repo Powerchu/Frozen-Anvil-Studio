@@ -7,6 +7,12 @@
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
 
+#if EDITOR
+#include "Editor/EGUI.h"
+#include "Editor/CommandList.h"
+#include "Editor/Commands.h"
+#endif 
+
 namespace Dystopia
 {
 	PhysicsSystem::PhysicsSystem()
@@ -65,7 +71,7 @@ namespace Dystopia
 
 	void PhysicsSystem::ResolveCollision(float)
 	{
-		for (unsigned i = 0; i < mResolutionIterations; ++i)
+		for (int i = 0; i < mResolutionIterations; ++i)
 		{
 			for (auto& body : mComponents)
 			{
@@ -199,4 +205,69 @@ namespace Dystopia
 	{
 		UNUSED_PARAMETER(serial);
 	}
+
+	void PhysicsSystem::EditorUI(void)
+	{
+#if EDITOR			
+		IsDebugUI();
+		GravityUI();
+		ResolutionUI();
+#endif 
+	}
+
+#if EDITOR
+	void PhysicsSystem::GravityUI(void)
+	{
+		auto result = EGUI::Display::DragFloat("Gravity     ", &mGravity, 0.01f, -FLT_MAX, FLT_MAX);
+		switch (result)
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&mGravity);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		}
+	}
+
+	void PhysicsSystem::IsDebugUI(void)
+	{
+		bool tempBool = mbIsDebugActive;
+		if (EGUI::Display::CheckBox("Debug Draw  ", &tempBool))
+		{
+			mbIsDebugActive = tempBool;
+			EGUI::GetCommandHND()->InvokeCommand<PhysicsSystem>(&mbIsDebugActive, tempBool);
+		}
+	}
+
+	void PhysicsSystem::ResolutionUI(void)
+	{
+		auto result = EGUI::Display::DragInt("Resolution  ", &mResolutionIterations, 1, 0, 20);
+		switch (result)
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&mResolutionIterations);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		}
+	}
+
+#endif 
 }
+
+
+

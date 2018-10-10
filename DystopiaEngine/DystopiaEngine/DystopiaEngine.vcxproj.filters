@@ -250,10 +250,15 @@
     <ClCompile Include="Source\Editor\AdminCalls.cpp">
       <Filter>Editor\Admin</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\SystemSettings.cpp">
-      <Filter>Editor\Editor Tabs\SystemSettings</Filter>
+    <ClCompile Include="Source\Editor\ProjectSettings.cpp">
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TagSystem.cpp" />
+    <ClCompile Include="Source\Editor\SpritePreviewer.cpp">
+      <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Input\XGamePad.cpp">
+      <Filter>Game Engine\Systems\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -664,10 +669,15 @@
     <ClInclude Include="Include\Editor\AdminCalls.h">
       <Filter>Editor\Admin</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\SystemSettings.h">
-      <Filter>Editor\Editor Tabs\SystemSettings</Filter>
+    <ClInclude Include="Include\Editor\ProjectSettings.h">
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClInclude>
-    <ClInclude Include="Include\TagSystem.h" />
+    <ClInclude Include="Include\Editor\SpritePreviewer.h">
+      <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Input\XGamePad.h">
+      <Filter>Game Engine\Systems\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -946,11 +956,11 @@
     <Filter Include="Editor\Admin">
       <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor Tabs\SystemSettings">
-      <UniqueIdentifier>{f494a940-4551-4291-aa92-cff931764600}</UniqueIdentifier>
+    <Filter Include="Editor\Editor Tabs\Project Settings">
+      <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor Tabs\TagSystem">
-      <UniqueIdentifier>{717afecd-7ef3-4406-b046-fe7b2ed2f840}</UniqueIdentifier>
+    <Filter Include="Editor\Editor Tabs\Sprite Previewer">
+      <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -289,6 +289,9 @@ namespace Utility
 	struct Type<NULL_TYPE>
 	{
 	};
+
+	template <typename Ty>
+	using Type_t = typename Type<Ty>::type;
 }
 
 

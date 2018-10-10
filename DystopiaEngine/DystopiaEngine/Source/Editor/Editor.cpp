@@ -40,6 +40,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* Editor includes */
 #include "Editor/EGUI.h"
 #include "Editor/Editor.h"
+#include "Editor/ProjectSettings.h"
 #include "Editor/EditorInputs.h"
 #include "Editor/EditorEvents.h"
 #include "Editor/Commands.h"
@@ -53,6 +54,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/ColorScheme.h"
 #include "Editor/StyleScheme.h"
 #include "Editor/Clipboard.h"
+#include "Editor/SpritePreviewer.h"
 
 #include "Allocator/DefaultAlloc.h"
 
@@ -63,6 +65,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <ShlObj_core.h>
 #include <tchar.h>
 #include <objbase.h>
+
+#include "System/Input/XGamePad.h"
 
 namespace
 {
@@ -83,10 +87,14 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
+	static bool once = true;
+	XGamePad p1{ 0 };
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
 	while (!editor->IsClosing())
 	{
+		p1.PollInputs();
+
 		editor->StartFrame();
 	
 		editor->UpdateFrame(editor->GetDeltaTime());
@@ -126,14 +134,16 @@ namespace Dystopia
 
 	void Editor::LoadTabs()
 	{
-		mArrTabs.push_back(ConsoleLog::GetInstance());
-		mArrTabs.push_back(PerformanceLog::GetInstance());
-		mArrTabs.push_back(ColorScheme::GetInstance());
-		mArrTabs.push_back(StyleScheme::GetInstance());
 		mArrTabs.push_back(Inspector::GetInstance());
 		mArrTabs.push_back(ProjectResource::GetInstance());
 		mArrTabs.push_back(HierarchyView::GetInstance());
 		mArrTabs.push_back(SceneView::GetInstance());
+		mArrTabs.push_back(ProjectSettings::GetInstance());
+		mArrTabs.push_back(ConsoleLog::GetInstance());
+		mArrTabs.push_back(PerformanceLog::GetInstance());
+		mArrTabs.push_back(SpritePreviewer::GetInstance());
+		mArrTabs.push_back(ColorScheme::GetInstance());
+		mArrTabs.push_back(StyleScheme::GetInstance());
 	}
 
 	void Editor::LoadDefaults()
@@ -183,7 +193,6 @@ namespace Dystopia
 			e->SetEventContext(mpEditorEventSys);
 			e->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			e->Init();
-			//e->RemoveFocus();
 		}
 		LoadSettings();
 		EGUI::SetContext(mpComdHandler);
@@ -191,6 +200,7 @@ namespace Dystopia
 
 	void Editor::StartFrame()
 	{
+		mCtrlKey = false;
 		mDeltaTime = mpTimer->Elapsed();
 		mpTimer->Lap();
 		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow())
@@ -359,7 +369,6 @@ namespace Dystopia
 			MMFile();
 			MMEdit();
 			MMView();
-			MMDebug();
 			MMGame();
 
 			EGUI::EndMainMenuBar();
@@ -406,23 +415,6 @@ namespace Dystopia
 				if (EGUI::StartMenuBody(e->GetLabel()))
 					*(e->GetOpenedBool()) = !*(e->GetOpenedBool());
 			}
-			EGUI::EndMenuHeader();
-		}
-	}
-
-	void Editor::MMDebug()
-	{
-		static constexpr float icon = 10.f;
-		static GraphicsSystem *pGraphic = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
-		if (EGUI::StartMenuHeader("Debug"))
-		{
-
-				if (pGraphic->GetDebugDraw())	EGUI::Display::IconTick(icon, icon);
-				else							EGUI::Display::Dummy(icon, icon);
-				EGUI::SameLine();
-				if (EGUI::StartMenuBody("Draw Debug Collision"))
-					pGraphic->ToggleDebugDraw();
-			
 			EGUI::EndMenuHeader();
 		}
 	}
@@ -663,12 +655,14 @@ namespace Dystopia
 			mpGuiSystem->UpdateKey(i, false);
 		for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
 			mpGuiSystem->UpdateKey(i, false);
-		bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
-		const auto& queue = mpWin->GetMainWindow().GetInputQueue();
+		for (int i = eButton::KEYBOARD_SHIFT; i <= eButton::KEYBOARD_ALT; ++i)
+			mpGuiSystem->UpdateKey(i, false);
 
 		mCtrlKey = mpInput->IsKeyPressed(KEY_CTRL);
 		if (!mCtrlKey)
 		{
+			const auto& queue = mpWin->GetMainWindow().GetInputQueue();
+			bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
 			for (const auto& k : queue)
 			{
 				// 0 to 9
@@ -681,8 +675,6 @@ namespace Dystopia
 				else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
 					mpGuiSystem->UpdateChar(k - 48);
 				// arithmetics
-				//else if (k >= eButton::KEYBOARD_OEM_1 && k <= eButton::KEYBOARD_OEM_PERIOD)
-				//	mpGuiSystem->UpdateChar(k);
 				else if (k == eButton::KEYBOARD_OEM_PERIOD)
 					mpGuiSystem->UpdateChar(46);
 				else if (k == eButton::KEYBOARD_OEM_MINUS)
@@ -693,7 +685,10 @@ namespace Dystopia
 				else
 					mpGuiSystem->UpdateKey(k, true);
 			}
+			mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, caps);
+			mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, mpInput->IsKeyPressed(KEY_ALT));
 		}
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, mCtrlKey);
 	}
 
 	void Editor::UpdateHotkeys()
