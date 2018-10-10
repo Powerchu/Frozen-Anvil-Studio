@@ -1,7 +1,7 @@
 #include <Windows.h>
 #include <Xinput.h>
 #if(_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-#pragma comment(lib, "XInput.lib")
+#pragma comment(lib, "XINPUT9_1_0.lib")
 #else
 #pragma comment(lib, "XINPUT9_1_0.lib")
 #endif
@@ -150,14 +150,14 @@ void XGamePad::UpdateTriggers(void)
 void XGamePad::UpdateButtons(void)
 {
 	msButtons = mpxState->Gamepad.wButtons;
-	for (unsigned i = 0; i < eXBUTTON_LAST; ++i)
+	for (unsigned i = eButton::XBUTTON_DPAD_UP, Index = 0; i < eButton::XBUTTON_LAST; ++Index,++i)
 	{
-		bool pressed = msButtons & g_ControllerHexa[i];
-		auto& btn = mArrXBtnStates[i];
+		bool pressed = msButtons & g_ControllerHexa[Index];
+		auto& btn = mArrXBtnStates[Index];
 
 		btn.mbTriggered = pressed && !btn.mbPressed;
-		btn.mbReleased = !pressed && btn.mbPressed;
-		btn.mbPressed = pressed;
+		btn.mbReleased  = !pressed && btn.mbPressed;
+		btn.mbPressed   = pressed;
 	}
 }
 
@@ -194,17 +194,17 @@ float XGamePad::GetTriggers(int _i) const
 	return (!_i) ? mcTrigger[0] : mcTrigger[1];
 }
 
-bool XGamePad::IsKeyPressed(eXButtons _btn) const
+bool XGamePad::IsKeyPressed(eButton _btn) const
 {
 	return mArrXBtnStates[_btn].mbPressed;
 }
 
-bool XGamePad::IsKeyTriggered(eXButtons _btn) const
+bool XGamePad::IsKeyTriggered(eButton _btn) const
 {
 	return mArrXBtnStates[_btn].mbTriggered;
 }
 
-bool XGamePad::IsKeyReleased(eXButtons _btn) const
+bool XGamePad::IsKeyReleased(eButton _btn) const
 {
 	return mArrXBtnStates[_btn].mbReleased;
 }
