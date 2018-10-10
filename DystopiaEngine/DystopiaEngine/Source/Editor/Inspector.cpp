@@ -124,7 +124,7 @@ namespace Dystopia
 				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
 				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
-			if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))
+			/*if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))
 			{
 
 			}
@@ -134,7 +134,7 @@ namespace Dystopia
 			{
 
 			}
-			EGUI::ChangeAlignmentYOffset();
+			EGUI::ChangeAlignmentYOffset();*/
 		}
 		EGUI::EndChild();
 	}

@@ -79,23 +79,23 @@ namespace Dystopia
 	void CharacterController::MovePlayer(float)
 	{
 		if (mpBody == nullptr) return;
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_LEFT))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_LEFT))
 		{
 			mpBody->AddImpulse({ -20,0,0 });
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_RIGHT))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_RIGHT))
 		{
 			mpBody->AddImpulse({ 20,0,0 });
 
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_UP))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_UP))
 		{
 			mpBody->AddImpulse({ 0,20,0 });
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eButton::KEYBOARD_SPACEBAR))
 		{
 			mpBody->AddImpulse({ 0,300*mpBody->GetGravityScalar(),0 });
 		}
