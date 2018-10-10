@@ -32,53 +32,7 @@ namespace Dystopia
 	class CharacterController;
 	class Window;
 	class TextSerialiser;
-#if !_INPUT_MANAGER_TEST_CODE_
-	class InputManager : public Systems, public ComponentDonor<CharacterController>
-	{
-	public:
-		InputManager(void);
-		~InputManager(void);
 
-		bool Init(void);
-		void Update(float _dt);
-		void Shutdown(void);
-
-		void PostUpdate() override;
-
-		void LoadDefaults(void);
-		void LoadSettings(TextSerialiser&);
-		
-		void MapUserButton(eUserButton, eButton);
-
-		bool IsKeyTriggered(eUserButton) const noexcept;
-		bool IsKeyPressed(eUserButton) const noexcept;
-		bool IsKeyReleased(eUserButton) const noexcept;
-
-		Math::Vector2 GetMousePosition(void) const;
-		Math::Vector2 GetMousePosition(const Window&) const;
-		Math::Vector2 GetMouseDelta(void) const noexcept;
-		float GetMouseWheel(void) const noexcept;
-
-	private:
-		struct KeyBinding
-		{
-			unsigned mnKey;
-
-			bool mbTriggered;
-			bool mbPressed;
-			bool mbReleased;
-
-			KeyBinding& operator = (eButton);
-		};
-
-		MouseData mMouseInput;
-		Array<KeyBinding, eUserButton::TOTAL_USERBUTTONS> mButtonMap;
-		
-		void LoadDefaultUserKeys(void);
-	};
-
-#else 
-	/*This is the revised InputManager*/
 	class InputManager : public Systems, public ComponentDonor<CharacterController>
 	{
 	public:
@@ -147,8 +101,6 @@ namespace Dystopia
 		std::map<std::string, eButton> mButtonMapping;
 	};
 
-
-#endif
 }
 
 
