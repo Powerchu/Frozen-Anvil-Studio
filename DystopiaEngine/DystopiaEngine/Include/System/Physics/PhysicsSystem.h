@@ -37,7 +37,6 @@ namespace Dystopia
 		void EditorUI(void);
 
 	private:
-		void Step(float _dt);
 		void CheckSleepingBodies(float _dt);
 		void IntegrateRigidBodies(float _dt);
 		void ResolveCollision(float);

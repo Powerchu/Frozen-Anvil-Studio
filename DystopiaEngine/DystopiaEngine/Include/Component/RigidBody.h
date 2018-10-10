@@ -152,11 +152,11 @@ namespace Dystopia
 		void SetFixedRotation(bool flag);
 
 		// Gettors
-		const Vec3D& GetPosition() const;
-		const Vec3D& GetPrevPosition() const;
-		const Vec3D& GetLinearVelocity() const;
-		const Vec3D& GetAngularVelocity() const;
-		const Vec3D& GetAcceleration() const;
+		Vec3D GetPosition() const;
+		Vec3D GetPrevPosition() const;
+		Vec3D GetLinearVelocity() const;
+		Vec3D GetAngularVelocity() const;
+		Vec3D GetAcceleration() const;
 		Transform* GetOwnerTransform() const;
 		float GetAngle() const; //degrees
 		float GetStaticFriction() const;
@@ -233,16 +233,16 @@ namespace Dystopia
 
 		PhysicsType				mPhysicsType;
 
-		// m_flags
-		enum
-		{
-			eIslandFlag = 0x0001,
-			eAwakeFlag = 0x0002,
-			eAutoSleepFlag = 0x0004,
-			eBulletFlag = 0x0008,
-			eFixedRotationFlag = 0x0010,
-			eActiveFlag = 0x0020,
-		};
+		//// m_flags
+		//enum
+		//{
+		//	eIslandFlag = 0x0001,
+		//	eAwakeFlag = 0x0002,
+		//	eAutoSleepFlag = 0x0004,
+		//	eBulletFlag = 0x0008,
+		//	eFixedRotationFlag = 0x0010,
+		//	eActiveFlag = 0x0020,
+		//};
 
 		/*Quaternion if needed*/
 

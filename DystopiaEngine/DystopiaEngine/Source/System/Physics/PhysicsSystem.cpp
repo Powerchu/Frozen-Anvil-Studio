@@ -138,19 +138,22 @@ namespace Dystopia
 		}
 	}
 
-	void PhysicsSystem::Step(float _dt)
+
+	void PhysicsSystem::FixedUpdate(float _dt)
 	{
+		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
+
 		/* Broad Phase Collision Detection*/
 
 		/* Narrow Phase Collision Detection*/
 
-	
+
 		/* Collision Resolution (Response) Logic */
 		ResolveCollision(_dt);
 
 		// Integrate RigidBodies
 		IntegrateRigidBodies(_dt);
-		
+
 		/*Update positions and rotation as result*/
 		UpdateResults(_dt);
 
@@ -158,17 +161,6 @@ namespace Dystopia
 		CheckSleepingBodies(_dt);
 
 		/* Debug Velocity*/
-		//DebugPrint();
-	}
-
-	
-
-	void PhysicsSystem::FixedUpdate(float _dt)
-	{
-		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
-
-		Step(_dt);
-
 		if (mbIsDebugActive)
 		{
 			DebugPrint();
