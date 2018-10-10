@@ -394,7 +394,6 @@ namespace Dystopia
 			mfptr = _rhs.mfptr;
 			mTupleVariables = _rhs.mTupleVariables;
 		}
-
 	};
 
 	template<class Do, class UDo>

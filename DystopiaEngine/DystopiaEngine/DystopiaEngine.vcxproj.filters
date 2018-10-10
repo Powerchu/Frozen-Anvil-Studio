@@ -259,6 +259,9 @@
     <ClCompile Include="Source\System\Input\XGamePad.cpp">
       <Filter>Game Engine\Systems\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Events\Events.cpp">
+      <Filter>Game Engine\Systems\Event</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -677,6 +680,9 @@
     </ClInclude>
     <ClInclude Include="Include\System\Input\XGamePad.h">
       <Filter>Game Engine\Systems\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Events\Events.h">
+      <Filter>Game Engine\Systems\Event</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

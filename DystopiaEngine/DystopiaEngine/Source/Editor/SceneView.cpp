@@ -390,7 +390,6 @@ namespace Dystopia
 				GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
 
 				GetMainEditor()->NewSelection(pTarget->GetID());
-				//GetMainEditor().SetFocus(*pTarget);
 			}
 		}
 	}

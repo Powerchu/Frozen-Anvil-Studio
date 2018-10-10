@@ -87,14 +87,10 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
-	static bool once = true;
-	XGamePad p1{ 0 };
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
 	while (!editor->IsClosing())
 	{
-		p1.PollInputs();
-
 		editor->StartFrame();
 	
 		editor->UpdateFrame(editor->GetDeltaTime());
@@ -217,6 +213,7 @@ namespace Dystopia
 			UpdateHotkeys();
 			break;
 		case EDITOR_PLAY:
+			UpdateKeys();
 			UpdateGameModeKeys();
 			break;
 		}
@@ -478,6 +475,8 @@ namespace Dystopia
 			if (replicas > 0)
 				pDup->SetName(pDup->GetName() + "_Clone");
 
+			pDup->Identify();
+			pDup->Init();
 			mToInsert.Insert(pDup);
 			AddSelection(pDup->GetID());
 			replicas = 0;
@@ -647,6 +646,9 @@ namespace Dystopia
 	{
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ENTER, false);
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ESCAPE, false);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, false);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, false);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, false);
 		for (int i = eButton::KEYBOARD_BACKSPACE; i <= eButton::KEYBOARD_TAB; ++i)
 			mpGuiSystem->UpdateKey(i, false);
 		for (int i = eButton::KEYBOARD_SPACEBAR; i <= eButton::KEYBOARD_HOME; ++i)
@@ -654,8 +656,6 @@ namespace Dystopia
 		for (int i = eButton::KEYBOARD_LEFT; i <= eButton::KEYBOARD_DOWN; ++i)
 			mpGuiSystem->UpdateKey(i, false);
 		for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
-			mpGuiSystem->UpdateKey(i, false);
-		for (int i = eButton::KEYBOARD_SHIFT; i <= eButton::KEYBOARD_ALT; ++i)
 			mpGuiSystem->UpdateKey(i, false);
 
 		mCtrlKey = mpInput->IsKeyPressed(KEY_CTRL);

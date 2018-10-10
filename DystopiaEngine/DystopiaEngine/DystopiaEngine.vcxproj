@@ -43,6 +43,7 @@
     <ClCompile Include="Source\Editor\SpritePreviewer.cpp" />
     <ClCompile Include="Source\Editor\StyleScheme.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
+    <ClCompile Include="Source\System\Events\Events.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
@@ -130,6 +131,7 @@
     <ClInclude Include="Include\Editor\SpritePreviewer.h" />
     <ClInclude Include="Include\Editor\StyleScheme.h" />
     <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
+    <ClInclude Include="Include\System\Events\Events.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />
