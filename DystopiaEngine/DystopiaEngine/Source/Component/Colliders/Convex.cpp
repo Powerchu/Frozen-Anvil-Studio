@@ -242,7 +242,7 @@ namespace Dystopia
 				{
 					isInside = true;
 					CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
-					newEvent.mdPeneDepth = _ColB.GetRadius() - distance;
+					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
 					newEvent.mEdgeNormal = Math::Normalise(_ColB.GetGlobalPosition() - PointOfImpact);
 					newEvent.mEdgeVector = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
@@ -790,7 +790,7 @@ namespace Dystopia
 				col_info.mEdgeNormal     = Normal.Normalise();
 				col_info.mEdgeVector     = Normal.xyzw;
 
-				col_info.mdPeneDepth     = ProjectDis;
+				col_info.mfPeneDepth     = static_cast<float>(ProjectDis);
 
 				if (nullptr != other_body)
 				{
@@ -808,7 +808,6 @@ namespace Dystopia
 		}
 		//return col_info;
 	}
-
 
 	Math::Point3D Convex::GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir, unsigned & _IndexStorage)
 	{
