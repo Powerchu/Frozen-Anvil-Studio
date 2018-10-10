@@ -309,7 +309,7 @@ namespace Dystopia
 
 	Edge Convex::GetClosestEdge(AutoArray<Vertice>& _Simplex)
 	{
-		Edge   ClosestEdge;
+		Edge   ClosestEdge{};
 		double ClosestDistance = std::numeric_limits<double>::max();
 
 		for (unsigned i = 0; i < _Simplex.size(); ++i)
@@ -380,7 +380,7 @@ namespace Dystopia
 	AutoArray<Edge> Convex::GetConvexEdges() const
 	{
 		AutoArray<Edge> ToRet;
-		Math::Matrix3D World = GetOwnerTransform() * Math::Translate(mv3Offset.x, mv3Offset.y, mv3Offset.z)* GetTransformationMatrix();;
+		const Math::Matrix3D World = GetOwnerTransform() * Math::Translate(mv3Offset.x, mv3Offset.y, mv3Offset.z)* GetTransformationMatrix();;
 
 		for (unsigned i = 0; i<mVertices.size(); ++i)
 		{

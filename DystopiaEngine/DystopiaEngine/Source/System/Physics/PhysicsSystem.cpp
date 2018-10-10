@@ -20,7 +20,7 @@ namespace Dystopia
 		: mbIsDebugActive(false)
 		, mInterpolation_mode(none)
 		, mGravity(400.0F)
-		, mMaxVelocityConstant(800.0F)
+		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.1F)
 		, mResolutionIterations(10)
