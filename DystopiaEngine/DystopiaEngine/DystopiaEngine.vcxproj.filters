@@ -259,10 +259,6 @@
     <ClCompile Include="Source\System\Input\XGamePad.cpp">
       <Filter>Game Engine\Systems\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TagSystem.cpp">
-      <Filter>Game Engine\SubSystems</Filter>
-    </ClCompile>
-    <ClCompile Include="XGamePad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -699,10 +695,6 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\SystemSettings.h">
       <Filter>Editor\Editor Tabs\SystemSettings</Filter>
-    </ClInclude>
-    <ClInclude Include="XGamePad.h" />
-    <ClInclude Include="Include\TagSystem.h">
-      <Filter>Game Engine\SubSystems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

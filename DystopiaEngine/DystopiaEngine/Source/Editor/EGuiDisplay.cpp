@@ -238,9 +238,9 @@ namespace EGUI
 
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
 			{
-				GetCursorPos(&p);
-				SetCursorPos(xPos, yPos);
-				ShowCursor(false);
+				//GetCursorPos(&p);
+				//SetCursorPos(xPos, yPos);
+				//ShowCursor(false);
 				return eSTART_DRAG;
 			}
 
@@ -249,14 +249,14 @@ namespace EGUI
 
 			if (ImGui::IsItemDeactivatedAfterChange())
 			{
-				SetCursorPos(p.x, p.y);
-				ShowCursor(true);
+				//SetCursorPos(p.x, p.y);
+				//ShowCursor(true);
 				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
 			}
 
 			if (ImGui::IsItemDeactivated()) {
-				SetCursorPos(p.x, p.y);
-				ShowCursor(true);
+				//SetCursorPos(p.x, p.y);
+				//ShowCursor(true);
 				return eDEACTIVATED;
 			}
 			return eNO_CHANGE;

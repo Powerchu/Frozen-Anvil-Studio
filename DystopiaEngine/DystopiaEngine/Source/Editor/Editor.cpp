@@ -478,6 +478,8 @@ namespace Dystopia
 			if (replicas > 0)
 				pDup->SetName(pDup->GetName() + "_Clone");
 
+			pDup->Identify();
+			pDup->Init();
 			mToInsert.Insert(pDup);
 			AddSelection(pDup->GetID());
 			replicas = 0;

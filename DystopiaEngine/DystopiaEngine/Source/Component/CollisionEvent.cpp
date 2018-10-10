@@ -104,7 +104,7 @@ void Dystopia::CollisionEvent::ApplyPenetrationCorrection() const
 	const auto a_invmass = bodyA->GetInverseMass();
 	const auto b_invmass = bodyB->GetInverseMass();
 
-	const float perc = 0.04F;
+	const float perc = 0.05F;
 	const float slop = 0.01F;
 
 	const Vec3D correction = Math::Max((mfPeneDepth) - slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
