@@ -1,6 +1,10 @@
 #include <Windows.h>
 #include <Xinput.h>
+#if(_WIN32_WINNT >= _WIN32_WINNT_WIN8)
 #pragma comment(lib, "XInput.lib")
+#else
+#pragma comment(lib, "XINPUT9_1_0.lib")
+#endif
 
 #include "System/Input/XGamePad.h"
 #include "Math/MathLib.h"
