@@ -86,12 +86,12 @@ namespace Dystopia
 		if (mpBody == nullptr) return;
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_LEFT))
 		{
-			mpBody->AddImpulse({ -10,0,0 });
+			mpBody->AddLinearImpulse({ -10,0,0 });
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_RIGHT))
 		{
-			mpBody->AddImpulse({ 10,0,0 });
+			mpBody->AddLinearImpulse({ 10,0,0 });
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_UP))
@@ -101,7 +101,7 @@ namespace Dystopia
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eButton::KEYBOARD_SPACEBAR))
 		{
-			mpBody->AddImpulse({ 0,500,0 });
+			mpBody->AddLinearImpulse({ 0,500,0 });
 		}
 	}
 }

@@ -427,23 +427,23 @@ namespace Dystopia
 			/*Get the closest edge of our simplex(Made by the minkowski difference to the origin*/
 			Edge ClosestEdge = GetClosestEdge(_Simplex);
 			Vertice Point{ 0,0 };
-			//for (auto const & elem : SearchDirection)
-			//{
-			//	Point = Support(_ColB, elem);
-			//	if ((Point.mPosition - _Simplex[ClosestEdge.mSimplexIndex].mPosition).MagnitudeSqr() >= FLT_EPSILON)
-			//		break;
-			//}
+			for (auto const & elem : SearchDirection)
+			{
+				Point = Support(_ColB, elem);
+				if ((Point.mPosition - _Simplex[ClosestEdge.mSimplexIndex].mPosition).MagnitudeSqr() >= FLT_EPSILON)
+					break;
+			}
 			/*Search for a point in the Normal direction of the ClosestEdge*/
-			//if ((ClosestEdge.mNorm3 - prevSearchDir).MagnitudeSqr() != 0)
-			//{
-			//	Point = Support(_ColB, ClosestEdge.mNorm3);
-			//	prevSearchDir = ClosestEdge.mNorm3;
-			//}
-			//else
-			//{
-			//	Point = Support(_ColB, -ClosestEdge.mNorm3);
-			//	prevSearchDir = -ClosestEdge.mNorm3;
-			//}
+			if ((ClosestEdge.mNorm3 - prevSearchDir).MagnitudeSqr() != 0)
+			{
+				Point = Support(_ColB, ClosestEdge.mNorm3);
+				prevSearchDir = ClosestEdge.mNorm3;
+			}
+			else
+			{
+				Point = Support(_ColB, -ClosestEdge.mNorm3);
+				prevSearchDir = -ClosestEdge.mNorm3;
+			}
 
 			Point         = Support(_ColB, ClosestEdge.mNorm3);
 			prevSearchDir = ClosestEdge.mNorm3;
@@ -458,11 +458,12 @@ namespace Dystopia
 			const double result             = Math::Abs(ProjectDis) - Math::Abs(OrthogonalDistance);
 			bool check = false;
 
-			for (auto elem : _Simplex)
+			for (const auto& elem : _Simplex)
 			{
 				if (!(elem.mPosition - Point.mPosition).MagnitudeSqr())
 					check = true;
 			}
+
 			if (!ClosestEdge.mNorm3.MagnitudeSqr())
 				__debugbreak();
 
@@ -482,22 +483,16 @@ namespace Dystopia
 				}
 				return col_info;
 			}
-			else
-			{
-				//for (auto elem : _Simplex)
-				//{
-				//	if (!(elem.mPosition - Point.mPosition).MagnitudeSqr())
-				//		check = true;
-				//}
-				//_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
-				std::vector<Vertice> v;
+			
+			_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
+				/*std::vector<Vertice> v;
 				for (auto & elem : _Simplex)
 					v.push_back(elem);
 				v.insert(v.begin() + ClosestEdge.mSimplexIndex, Point);
 				_Simplex.clear();
 				for (auto & elem : v)
-					_Simplex.push_back(elem);
-			}
+					_Simplex.push_back(elem);*/
+			
 		}
 		//return col_info;
 	}

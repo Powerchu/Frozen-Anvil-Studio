@@ -127,16 +127,16 @@ namespace Dystopia
 			
 		}
 
-		for (auto & bodyA : mColliders)
+		for (auto & colA : mColliders)
 		{
-			const auto ownerA = bodyA->GetOwner();
-			for (auto & bodyB : mColliders)
+			const auto ownerA = colA->GetOwner();
+			for (auto & colB : mColliders)
 			{
-				const auto ownerB= bodyB->GetOwner();
+				const auto ownerB= colB->GetOwner();
 				const auto rigidA = ownerA->GetComponent<RigidBody>();
 				const auto rigidB = ownerB->GetComponent<RigidBody>();
 
-				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
+				if (static_cast<Collider *>(colA) != static_cast<Collider *>(colB))
 				{
 					if (rigidA && rigidB)
 					{
@@ -145,14 +145,14 @@ namespace Dystopia
 						if (ownerA == ownerB)
 							continue;
 					}
-					const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+					const auto pair_key = std::make_pair(colA->GetColliderType(), (colB)->GetColliderType());
 					for (auto & key : CollisionFuncTable)
 					{
 						if (key.first == pair_key)
 						{
-							(this->*key.second)(bodyA, bodyB);
-							bodyB->SetColliding(bodyB->Collider::HasCollision());
-							bodyA->SetColliding(bodyA->Collider::HasCollision());
+							(this->*key.second)(colA, colB);
+							colB->SetColliding(colB->Collider::HasCollision());
+							colA->SetColliding(colA->Collider::HasCollision());
 							break;
 						}
 					}

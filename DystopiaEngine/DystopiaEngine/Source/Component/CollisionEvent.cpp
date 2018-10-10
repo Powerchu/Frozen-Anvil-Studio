@@ -54,11 +54,11 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 	auto b_newVel = b_oldVel + impulse * b_invmass;
 
 	if (bodyA->GetIsAwake() && !bodyA->Get_IsStaticState())
-		bodyA->SetVelocity(a_newVel);
+		bodyA->SetLinearVel(a_newVel);
 		//bodyA->AddForce(-impulse);
 
 	if (bodyB->GetIsAwake() && !bodyB->Get_IsStaticState())
-		bodyB->SetVelocity(b_newVel);
+		bodyB->SetLinearVel(b_newVel);
 		//bodyB->AddForce(impulse);
 
 	// Calculate Frictional Velocity (vec3D) after normal impulse
@@ -89,11 +89,11 @@ void Dystopia::CollisionEvent::ApplyImpulse(void)
 	b_newVel = bodyB->GetLinearVelocity() + frictionImpulse * b_invmass;
 
 	if (bodyA->GetIsAwake() && !bodyA->Get_IsStaticState())
-		bodyA->SetVelocity(a_newVel);
+		bodyA->SetLinearVel(a_newVel);
 		//bodyA->AddForce(-frictionImpulse);
 
 	if (bodyB->GetIsAwake() && !bodyB->Get_IsStaticState())
-		bodyB->SetVelocity(b_newVel);
+		bodyB->SetLinearVel(b_newVel);
 		//bodyB->AddForce(frictionImpulse);
 }
 
