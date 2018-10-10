@@ -154,18 +154,19 @@ namespace Dystopia
 	bool Convex::isColliding(Convex & _pColB, const Math::Vec3D & _v3Dir)
 	{
 		/*Only need one simplex to check*/
-		static AutoArray<Vertice> Simplex{ 3 };
+		AutoArray<Vertice> Simplex{ 3 };
 		static Math::Vec3D vDir;
 		/*Insert the first Miwoski difference point*/
 		vDir = _v3Dir;
-		Simplex.Insert(Vertice{ Support(_pColB, vDir) });
+		Simplex.push_back(Vertice{ Support(_pColB, vDir) });
 		/*Negate the Direction*/
 		vDir = -vDir;
+		unsigned count = 0;
 		/*Continue to loop until the return statement stops it*/
 		while (true)
 		{
 			/*Add the Second Miwoski difference Point */
-			Simplex.Insert(Vertice{ Support(_pColB, vDir) });
+			Simplex.push_back(Vertice{ Support(_pColB, vDir) });
 			/*If the Second Miwoski difference point does not go pass the origin,
 			That means that the Shape of the Miwoski difference does not contain origin*/
 			if (Math::Dot(Simplex.back().mPosition, vDir) <= 0)
@@ -190,6 +191,8 @@ namespace Dystopia
 					return true;
 				}
 			}
+			if (count++ > _pColB.mVertices.size() * mVertices.size())
+				return false;
 		}
 	}
 
@@ -427,23 +430,23 @@ namespace Dystopia
 			/*Get the closest edge of our simplex(Made by the minkowski difference to the origin*/
 			Edge ClosestEdge = GetClosestEdge(_Simplex);
 			Vertice Point{ 0,0 };
-			for (auto const & elem : SearchDirection)
-			{
-				Point = Support(_ColB, elem);
-				if ((Point.mPosition - _Simplex[ClosestEdge.mSimplexIndex].mPosition).MagnitudeSqr() >= FLT_EPSILON)
-					break;
-			}
+			//for (auto const & elem : SearchDirection)
+			//{
+			//	Point = Support(_ColB, elem);
+			//	if ((Point.mPosition - _Simplex[ClosestEdge.mSimplexIndex].mPosition).MagnitudeSqr() >= FLT_EPSILON)
+			//		break;
+			//}
 			/*Search for a point in the Normal direction of the ClosestEdge*/
-			if ((ClosestEdge.mNorm3 - prevSearchDir).MagnitudeSqr() != 0)
-			{
-				Point = Support(_ColB, ClosestEdge.mNorm3);
-				prevSearchDir = ClosestEdge.mNorm3;
-			}
-			else
-			{
-				Point = Support(_ColB, -ClosestEdge.mNorm3);
-				prevSearchDir = -ClosestEdge.mNorm3;
-			}
+			//if ((ClosestEdge.mNorm3 - prevSearchDir).MagnitudeSqr() != 0)
+			//{
+			//	prevSearchDir = ClosestEdge.mNorm3;
+			//	Point = Support(_ColB, ClosestEdge.mNorm3);
+			//}
+			//else
+			//{
+			//	Point = Support(_ColB, -ClosestEdge.mNorm3);
+			//	prevSearchDir = -ClosestEdge.mNorm3;
+			//}
 
 			Point         = Support(_ColB, ClosestEdge.mNorm3);
 			prevSearchDir = ClosestEdge.mNorm3;
