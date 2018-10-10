@@ -127,6 +127,7 @@
     <ClInclude Include="Include\Math\MetaFloat.h" />
     <ClInclude Include="Include\Reflection\PPConcat.h" />
     <ClInclude Include="Include\Reflection\PPExtract.h" />
+    <ClInclude Include="Include\Reflection\PPForceEval.h" />
     <ClInclude Include="Include\Reflection\PPForEachSeq.h" />
     <ClInclude Include="Include\Reflection\PPPopFront.h" />
     <ClInclude Include="Include\Reflection\PPRemove.h" />
