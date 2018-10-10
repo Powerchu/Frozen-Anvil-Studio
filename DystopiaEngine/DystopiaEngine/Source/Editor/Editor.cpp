@@ -66,7 +66,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <tchar.h>
 #include <objbase.h>
 
-#include "../XGamePad.h"
+#include "System/Input/XGamePad.h"
 
 namespace
 {

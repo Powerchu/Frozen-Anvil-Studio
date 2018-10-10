@@ -253,9 +253,11 @@
     <ClCompile Include="Source\Editor\ProjectSettings.cpp">
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClCompile>
-    <ClCompile Include="XGamePad.cpp" />
     <ClCompile Include="Source\Editor\SpritePreviewer.cpp">
       <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Input\XGamePad.cpp">
+      <Filter>Game Engine\Systems\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -670,9 +672,11 @@
     <ClInclude Include="Include\Editor\ProjectSettings.h">
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClInclude>
-    <ClInclude Include="XGamePad.h" />
     <ClInclude Include="Include\Editor\SpritePreviewer.h">
       <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Input\XGamePad.h">
+      <Filter>Game Engine\Systems\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
