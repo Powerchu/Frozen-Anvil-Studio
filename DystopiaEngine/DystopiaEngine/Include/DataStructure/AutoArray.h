@@ -332,7 +332,7 @@ void AutoArray<T, A>::Insert(const T& _obj, const Sz_t _nIndex)
 	Itor_t j = mpLast - 1;
 	Itor_t i = mpLast;
 
-	while (j != at)
+	while (i != at)
 	{
 		*i = Ut::Move(*j);
 		--i; --j;
