@@ -1,9 +1,6 @@
 #ifndef _XGAMEPAD_H_
 #define _XGAMEPAD_H_
-#include <Windows.h>
-#include <Xinput.h>
 #include <string>
-#pragma comment(lib, "XInput.lib")
 
 enum eXButtons : unsigned
 {
@@ -23,7 +20,11 @@ enum eXButtons : unsigned
 	eXBUTTON_Y,
 
 	eXBUTTON_LAST
-};
+}; 
+
+typedef struct _XINPUT_STATE XINPUT_STATE, *PXINPUT_STATE;
+typedef struct _XINPUT_VIBRATION XINPUT_VIBRATION, *PXINPUT_VIBRATION;
+typedef unsigned long DWORD;
 
 class XGamePad
 {
@@ -79,7 +80,7 @@ private:
 	unsigned short	msButtons;
 
 	DWORD			mdwID;
-	XINPUT_STATE	mxState;
+	XINPUT_STATE	*mpxState;
 	bool			mbConnected;
 	bool			mbChangeDetected;
 	float			mfDeadZoneL;		//0-65534
@@ -87,7 +88,7 @@ private:
 	float			mfMaxThumbVal;		//32767
 	float			mfTriggerThresh;	//30
 
-	XINPUT_VIBRATION mxVibrate;
+	XINPUT_VIBRATION *mpxVibrate;
 };
 
 
