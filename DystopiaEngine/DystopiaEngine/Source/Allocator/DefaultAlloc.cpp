@@ -25,16 +25,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <cstddef>
 #include <exception>
 
-#pragma warning(push)
-#pragma warning(disable : 4996)
+#if defined(DEBUGALLOC)
+#include "Allocator/ProxyAlloc.h"
+#endif
 
 namespace
 {
 	static constexpr uint32_t MEBIBYTE = 1048576;
 	static constexpr uint32_t DEFAULT_HEAP = 1024 * MEBIBYTE;
-	static Dystopia::DefaultAlloc mAllocator{};
 
 #if defined(DEBUGALLOC)
+	static Dystopia::ProxyAlloc<Dystopia::DefaultAlloc> mAllocator{};
+#else
+	static Dystopia::DefaultAlloc mAllocator{};
+#endif
+
+#if defined(DEBUGDEFAULTALLOC)
 	static auto output = std::fopen("allocator_log.dystor", "w");
 #endif
 
@@ -67,7 +73,7 @@ Dystopia::DefaultAlloc::~DefaultAlloc(void) noexcept
 {
 	std::free(mpBlock);
 
-#if defined(DEBUGALLOC)
+#if defined(DEBUGDEFAULTALLOC)
 	std::fclose(output);
 #endif
 }
@@ -120,7 +126,7 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 			mpFree = pSeek == mpFree ? temp : mpFree;
 			reinterpret_cast<MetaData_t*>(pRet)[-1] = ((adjSz & ~0x3) << 6) + static_cast<unsigned char>(_align - 1);
 
-#        if defined(DEBUGALLOC)
+#        if defined(DEBUGDEFAULTALLOC)
 			printf("Alloc   [Actual: %p, Adjusted: %p, Size: %u, Adjust: %zu, Block: %u, %u]\n", pSeek, pRet, adjSz, _align, blkSz, offs);
 			fprintf(output, "Alloc   [Actual: %p, Adjusted: %p, Size: %u, Adjust: %zu, Block: %u, %u]\n", pSeek, pRet, adjSz, _align, blkSz, offs);
 			fflush(output);
@@ -148,7 +154,7 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 	MetaData_t offset = (sz & 0xFF) + 1;
 	sz >>= 6;
 
-#if defined (DEBUGALLOC)
+#if defined (DEBUGDEFAULTALLOC)
 	auto adjust = offset;
 #endif
 
@@ -157,7 +163,7 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 
 	std::byte* pSeek = mpFree, *pPrev = nullptr;
 
-#if defined(DEBUGALLOC)
+#if defined(DEBUGDEFAULTALLOC)
 	printf("Dealloc [Actual: %p, Adjusted: %p, Size: %u, Adjust: %u]\n", actual, _ptr, sz, adjust);
 	fprintf(output, "Dealloc [Actual: %p, Adjusted: %p, Size: %u, Adjust: %u]\n", actual, _ptr, sz, adjust);
 	fflush(output);
@@ -173,13 +179,13 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 	{
 		if (pSeek == (actual + sz))
 		{
-#		if defined(DEBUGALLOC)
+#		if defined(DEBUGDEFAULTALLOC)
 			const auto oldSz = sz;
 #		endif
 
 			sz += GetBlockSize(pSeek);
 
-#		if defined(DEBUGALLOC)
+#		if defined(DEBUGDEFAULTALLOC)
 			printf("JoinNxt [Joined: %p, With: %p, New: %u, Old: %u]\n", pSeek, _ptr, sz, oldSz);
 			fprintf(output, "JoinNxt [Joined: %p, With: %p, New: %u, Old: %u]\n", pSeek, _ptr, sz, oldSz);
 #		endif
@@ -197,14 +203,14 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 		}
 		else
 		{
-#		if defined(DEBUGALLOC)
+#		if defined(DEBUGDEFAULTALLOC)
 			const auto old_sz = reinterpret_cast<MetaData_t*>(pPrev)[1];
 #		endif
 
 			reinterpret_cast<MetaData_t*>(pPrev)[0]  = pSeek ? static_cast<MetaData_t>(pSeek - mpBlock) : 0;
 			reinterpret_cast<MetaData_t*>(pPrev)[1] += sz;
 
-#		if defined(DEBUGALLOC)
+#		if defined(DEBUGDEFAULTALLOC)
 			const auto new_sz = old_sz + sz;
 			printf("JoinPrv [Joined: %p, With: %p, New: %u, Old: %u]\n", pSeek, _ptr, new_sz, old_sz);
 			fprintf(output, "JoinPrv [Joined: %p, With: %p, New: %u, Old: %u]\n", pSeek, _ptr, new_sz, old_sz);
@@ -228,7 +234,7 @@ void Dystopia::DefaultAlloc::Deallocate(void* _ptr)
 		mpFree = actual;
 	}
 
-#if defined(DEBUGALLOC)
+#if defined(DEBUGDEFAULTALLOC)
 	fflush(output);
 #endif
 }
@@ -250,7 +256,5 @@ void* Dystopia::DefaultAlloc::GetBlockFromOffset(MetaData_t const _nOffset) cons
 
 	return nullptr;
 }
-
-#pragma warning(pop)
 
 

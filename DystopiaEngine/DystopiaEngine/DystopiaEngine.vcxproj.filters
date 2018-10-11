@@ -238,9 +238,6 @@
     <ClCompile Include="Source\Math\Vector4.cpp">
       <Filter>Math\Vector</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Allocator\DefaultAlloc.cpp">
-      <Filter>Allocator</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
@@ -250,7 +247,9 @@
     <ClCompile Include="Source\Editor\AdminCalls.cpp">
       <Filter>Editor\Admin</Filter>
     </ClCompile>
-    <ClCompile Include="Include\Reflection\tester.cpp" />
+    <ClCompile Include="Source\Allocator\DefaultAlloc.cpp">
+      <Filter>Allocator\DefaultAllocator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -414,9 +413,6 @@
     </ClInclude>
     <ClInclude Include="Include\DataStructure\SharedPtr.h">
       <Filter>DataStructures\Pointers</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Allocator\DefaultAlloc.h">
-      <Filter>Allocator</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\MeshSystem.h">
       <Filter>Game Engine\SubSystems\Mesh</Filter>
@@ -655,9 +651,6 @@
     <ClInclude Include="Include\System\Collision\CollisionEvent.h">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Allocator\DefaultAllocImpl.h">
-      <Filter>Allocator</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\AdminCalls.h">
       <Filter>Editor\Admin</Filter>
     </ClInclude>
@@ -699,6 +692,15 @@
     </ClInclude>
     <ClInclude Include="Include\Reflection\ReflectedData.h">
       <Filter>Reflection\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\DefaultAllocImpl.h">
+      <Filter>Allocator\DefaultAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\DefaultAlloc.h">
+      <Filter>Allocator\DefaultAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\ProxyAlloc.h">
+      <Filter>Allocator\ProxyAllocator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -989,6 +991,12 @@
     </Filter>
     <Filter Include="Reflection\Metadata">
       <UniqueIdentifier>{7b27b49c-13db-4784-8317-6eb1859a099c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Allocator\DefaultAllocator">
+      <UniqueIdentifier>{c72b2281-3bc2-4610-b2e5-183e13bc5bbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Allocator\ProxyAllocator">
+      <UniqueIdentifier>{4ffb5d1f-2ca0-4a43-917c-a699ba07a0da}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

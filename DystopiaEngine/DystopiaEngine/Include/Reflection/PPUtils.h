@@ -15,10 +15,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _PP_UTILITY_H_
 
 
-#define PP_EVAL(_X_)  _X_
-#define PP_OBSTRUCT(_X_) _X_ PP_EVAL(PP_NOTHING)()
+#define PP_EVAL(...)        PP_EVAL_AUX(__VA_ARGS__)
+#define PP_OBSTRUCT(_X_)    _X_ PP_EVAL(PP_NOTHING)()
 #define PP_NOTHING()
 #define PP_REMOVEBRACE(_X_) _X_
+
+
+#define PP_EVAL_AUX(_X_)    _X_
 
 
 
