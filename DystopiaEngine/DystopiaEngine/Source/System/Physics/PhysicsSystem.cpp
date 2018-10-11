@@ -86,13 +86,11 @@ namespace Dystopia
 					{
 						if (col->HasCollision())
 						{
+							CollisionEvent* worstContact = nullptr;
+							auto worstPene = mPenetrationEpsilon;
+
 							for (auto& manifold : col->GetCollisionEvents())
 							{
-								manifold.ApplyImpulse();
-
-								CollisionEvent* worstContact = nullptr;
-								auto worstPene = mPenetrationEpsilon;
-
 								if (manifold.mfPeneDepth > worstPene)
 								{
 									worstContact = &manifold;
@@ -100,6 +98,7 @@ namespace Dystopia
 
 									if (nullptr != worstContact)
 									{
+										worstContact->ApplyImpulse();
 										worstContact->ApplyPenetrationCorrection();
 									}
 								}

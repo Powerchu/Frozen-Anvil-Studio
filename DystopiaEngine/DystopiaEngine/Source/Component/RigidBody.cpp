@@ -93,7 +93,7 @@ namespace Dystopia
 	void RigidBody::Init(void)
 	{
 		// Get Owner's Transform Component as pointer
-		if (nullptr == mpOwnerTransform && nullptr != GetOwner())
+		if (nullptr != GetOwner())
 		{
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
@@ -160,8 +160,8 @@ namespace Dystopia
 		 *  Physics 2.0
 		 *  Verlet/Leapfrog method, 2nd order integration
 		 ********************************************************************/
-		 //Store previous Position
-		mPrevPosition = mPosition;
+		//Store previous Position
+		mPrevPosition = mPosition = mpOwnerTransform->GetPosition();
 
 		if (mbHasGravity)
 		{

@@ -40,6 +40,7 @@
     <ClCompile Include="Source\Editor\Gizmo.cpp" />
     <ClCompile Include="Source\Editor\Payload.cpp" />
     <ClCompile Include="Source\Editor\ProjectSettings.cpp" />
+    <ClCompile Include="Source\Editor\SpritePreviewer.cpp" />
     <ClCompile Include="Source\Editor\StyleScheme.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
@@ -109,7 +110,7 @@
     <ClCompile Include="Source\System\Window\Window.cpp" />
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
     <ClCompile Include="Source\Utility\GUID.cpp" />
-    <ClCompile Include="XGamePad.cpp" />
+    <ClCompile Include="Source\System\Input\XGamePad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
@@ -126,6 +127,7 @@
     <ClInclude Include="Include\Editor\ColorScheme.h" />
     <ClInclude Include="Include\Editor\Gizmo.h" />
     <ClInclude Include="Include\Editor\ProjectSettings.h" />
+    <ClInclude Include="Include\Editor\SpritePreviewer.h" />
     <ClInclude Include="Include\Editor\StyleScheme.h" />
     <ClInclude Include="Include\Math\MetaFloat.h" />
     <ClInclude Include="Include\Reflection\PPForEachSeq.h" />
@@ -249,7 +251,7 @@
     <ClInclude Include="Include\Math\MathFwd.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h" />
-    <ClInclude Include="XGamePad.h" />
+    <ClInclude Include="Include\System\Input\XGamePad.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />
@@ -389,7 +391,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT </AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -460,6 +462,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

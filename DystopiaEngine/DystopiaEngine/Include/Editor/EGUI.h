@@ -64,6 +64,7 @@ namespace Dystopia
 ======================================================================================================================= */
 namespace EGUI
 {
+	static constexpr float TabsImageOffsetY = 27.f;
 	enum eDragStatus
 	{
 		eNO_CHANGE = 0,

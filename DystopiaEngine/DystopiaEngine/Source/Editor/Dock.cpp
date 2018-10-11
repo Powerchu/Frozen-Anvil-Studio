@@ -1069,7 +1069,7 @@ bool DockSpace::Begin(const char *_pLabel, bool *_pOpened, ImGuiWindowFlags _fla
 	{
 		ImGui::SetNextWindowPos(first ? ImVec2{ 100, 100 } : _tab.mPos);
 		ImGui::SetNextWindowSize(_tab.mSize, ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowBgAlpha(.8f);
+		ImGui::SetNextWindowBgAlpha(1.1f);
 		bool ret = ImGui::Begin(_pLabel, _pOpened, ImGuiWindowFlags_NoCollapse | _flags);
 		mEndAction = eEND_ACTION_END;
 		_tab.mPos = ImGui::GetWindowPos();
