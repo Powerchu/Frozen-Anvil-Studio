@@ -59,7 +59,8 @@ namespace Dystopia
 		mToZoom{ eZOOM_NONE }, mAmFocused{ false }, 
 		mMoveVec{ 0,0 }, mMoveSens{ 0.75f }, 
 		mDragging{ false }, mImgPos{}, mImgSize{},
-		mClearSelection{ false }
+		mClearSelection{ false },
+		mGizmoHovered{ false }
 	{}
 
 	SceneView::~SceneView()
@@ -96,9 +97,7 @@ namespace Dystopia
 	void SceneView::Update(const float& _dt)
 	{
 		if (GetMainEditor()->CurrentState() == EDITOR_MAIN)
-		{
 			mpGfxSys->Update(_dt);
-		}
 	}
 
 	void SceneView::EditorUI()
@@ -139,7 +138,6 @@ namespace Dystopia
 			mClearSelection = false;
 			GetMainEditor()->ClearSelections();
 		}
-
 		EGUI::Indent(2);
 	}
 
@@ -325,7 +323,7 @@ namespace Dystopia
 			if (ImGui::IsMouseClicked(0))
 			{
 				GameObject* pObj = FindMouseObject();
-				if (pObj)
+				if (pObj && !mGizmoHovered)
 				{
 					auto ed = GetMainEditor();
 					if (ed->IsCtrlDown())	ed->AddSelection(pObj->GetID());
@@ -382,6 +380,7 @@ namespace Dystopia
 
 	void SceneView::DrawGizmos()
 	{
+		mGizmoHovered = false; 
 		auto& clipboardObjs = GetMainEditor()->GetSelectionObjects();
 		if (!clipboardObjs.size())
 			return;
@@ -423,7 +422,7 @@ namespace Dystopia
 		float changeX = 0;
 		float changeY = 0;
 
-		switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor))
+		switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
 		{
 		case EGUI::eDRAGGING:
 			for (auto& obj : _arr)
@@ -440,7 +439,7 @@ namespace Dystopia
 			mClearSelection = false;
 			break;
 		}
-		switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor))
+		switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
 		{
 		case EGUI::eDRAGGING:
 			for (auto& obj : _arr)
@@ -457,7 +456,7 @@ namespace Dystopia
 			mClearSelection = false;
 			break;
 		}
-		switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor))
+		switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
 		{
 		case EGUI::eDRAGGING:
 			for (auto& obj : _arr)
@@ -483,7 +482,7 @@ namespace Dystopia
 		float changeX = 0;
 		float changeY = 0;
 
-		switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor))
+		switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
 		{
 		case EGUI::eDRAGGING:
 			obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX, curPos.y, curPos.z, curPos.w });
@@ -496,7 +495,7 @@ namespace Dystopia
 			mClearSelection = false;
 			break;
 		}
-		switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor))
+		switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
 		{
 		case EGUI::eDRAGGING:
 			obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x, curPos.y + changeY, curPos.z, curPos.w });
@@ -509,7 +508,7 @@ namespace Dystopia
 			mClearSelection = false;
 			break;
 		}
-		switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor))
+		switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
 		{
 		case EGUI::eDRAGGING:
 			obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX, curPos.y + changeY, curPos.z, curPos.w });

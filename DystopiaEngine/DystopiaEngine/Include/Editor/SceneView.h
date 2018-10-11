@@ -59,6 +59,7 @@ namespace Dystopia
 			eZOOM_NONE
 		};
 
+		bool			mGizmoHovered;
 		bool			mClearSelection;
 		bool			mDragging;
 		bool			mAmFocused;

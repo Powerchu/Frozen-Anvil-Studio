@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 static ImVec4 yellow{ 1.f, 1.f,0.f ,1.f };
 static constexpr int sizeGizA = 7;
 
-EGUI::eDragStatus EGUI::Gizmo2D::ArrowLeft(const std::string& _uniqueID, float& _outputValX, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, float _len, float _thickness)
+EGUI::eDragStatus EGUI::Gizmo2D::ArrowLeft(const std::string& _uniqueID, float& _outputValX, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, bool* _pHovered, float _len, float _thickness)
 {
 	EGUI::eDragStatus status = EGUI::eNO_CHANGE;
 	auto initialOrigin = ImGui::GetCursorPos();
@@ -54,6 +54,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ArrowLeft(const std::string& _uniqueID, float& 
 	bool hovered, held;
 	bool released = ImGui::ButtonBehavior(bb, id, &hovered, &held);
 	bool amActive = g.ActiveId == window->DC.LastItemId;
+	if (hovered &&_pHovered) *_pHovered = true;
 	if (released)
 		status = EGUI::eEND_DRAG;
 	else if (amActive)
@@ -80,7 +81,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ArrowLeft(const std::string& _uniqueID, float& 
 	return status;
 }
 
-EGUI::eDragStatus EGUI::Gizmo2D::ArrowUp(const std::string& _uniqueID, float& _outputValY, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, float _len, float _thickness)
+EGUI::eDragStatus EGUI::Gizmo2D::ArrowUp(const std::string& _uniqueID, float& _outputValY, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, bool* _pHovered, float _len, float _thickness)
 {
 	EGUI::eDragStatus status = EGUI::eNO_CHANGE;
 	auto initialOrigin = ImGui::GetCursorPos();
@@ -116,6 +117,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ArrowUp(const std::string& _uniqueID, float& _o
 	bool hovered, held;
 	bool released = ImGui::ButtonBehavior(bb, id, &hovered, &held);
 	bool amActive = g.ActiveId == window->DC.LastItemId;
+	if (hovered &&_pHovered) *_pHovered = true;
 	if (released)
 		status = EGUI::eEND_DRAG;
 	else if (amActive)
@@ -142,7 +144,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ArrowUp(const std::string& _uniqueID, float& _o
 	return status;
 }
 
-EGUI::eDragStatus EGUI::Gizmo2D::Box(const std::string& _uniqueID, float& _outputValX, float& _outputValY, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, float _side)
+EGUI::eDragStatus EGUI::Gizmo2D::Box(const std::string& _uniqueID, float& _outputValX, float& _outputValY, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, bool* _pHovered, float _side)
 {
 	EGUI::eDragStatus status = EGUI::eNO_CHANGE;
 	float offset = (_side / 4);
@@ -167,6 +169,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::Box(const std::string& _uniqueID, float& _outpu
 	bool hovered, held;
 	bool released = ImGui::ButtonBehavior(bb, id, &hovered, &held);
 	bool amActive = g.ActiveId == window->DC.LastItemId;
+	if (hovered &&_pHovered) *_pHovered = true;
 	if (released)
 		status = EGUI::eEND_DRAG;
 	else if (amActive)
