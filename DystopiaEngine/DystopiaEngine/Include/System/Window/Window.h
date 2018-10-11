@@ -42,6 +42,7 @@ namespace Dystopia
 		int GetFullHeight(void) const noexcept;
 
 		void SetTitle(const std::wstring&);
+		std::wstring GetTitle(void) const noexcept;
 		void SetStyle(long _nStyle, long _nStyleEx);
 		void SetSize(int _nWidth, int _nHeight);
 		void SetSizeNoAdjust(int _nWidth, int _nHeight);

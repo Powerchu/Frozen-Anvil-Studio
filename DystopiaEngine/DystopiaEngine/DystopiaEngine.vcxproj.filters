@@ -684,6 +684,9 @@
     <ClInclude Include="Include\System\Events\Events.h">
       <Filter>Game Engine\Systems\Event</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\DragStatus.h">
+      <Filter>Editor\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

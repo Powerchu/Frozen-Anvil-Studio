@@ -18,154 +18,22 @@
 
 [END_Component End]
 [START_ComponentDonor]
-7,
+0,
 [END_ComponentDonor End]
-[START_Component]
-[START_Renderer]
-18446744073034222080,536870912,515547136,,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-18446744073034224640,536870912,18446744072324877824,,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-18446744073034227200,536870912,18446744071771702784,..\DystopiaEngine\Resource\Asset\sprite_01.png,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-18446744073034230272,536870912,18446744072714464768,,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-18446744073034232832,536870912,133783552,,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-18446744073034235392,536870912,18446744072534948352,,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-18446744073034237952,536870912,18446744073580751872,,
-[END_Renderer]
-
-[END_Component End]
-[START_ComponentDonor]
-7,
-[END_ComponentDonor End]
-[START_Component]
-[START_RigidBody]
-18446744073034222592,536870912,515547136,0,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-18446744073034225152,536870912,18446744072324877824,0,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-18446744073034227712,536870912,18446744071771702784,0,0.1,0.5,0.5,1,0.3,1,100,1,0,1,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-18446744073034230784,536870912,18446744072714464768,0,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-18446744073034233344,536870912,133783552,0,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-18446744073034235904,536870912,18446744072534948352,0,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-[START_RigidBody]
-18446744073034238464,536870912,18446744073580751872,0,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
-[END_RigidBody]
-
-[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-7,
+0,
 [END_ComponentDonor End]
-[START_Component]
-[START_Convex_Collider]
-18446744073034223104,536870912,515547136,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
-[END_Convex_Collider]
-
-[END_Component End]
-[START_Component]
-[START_Convex_Collider]
-18446744073034225664,536870912,18446744072324877824,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
-[END_Convex_Collider]
-
-[END_Component End]
-[START_Component]
-[START_Convex_Collider]
-18446744073034228224,536870912,18446744071771702784,0,0,0,4,0.1,0.2,0,-0.2,0.2,0,-0.2,-0.5,0,0.1,-0.5,0,1,1,1,0,0,0,1,
-[END_Convex_Collider]
-
-[END_Component End]
-[START_Component]
-[START_Convex_Collider]
-18446744073034231296,536870912,18446744072714464768,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
-[END_Convex_Collider]
-
-[END_Component End]
-[START_Component]
-[START_Convex_Collider]
-18446744073034233856,536870912,133783552,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
-[END_Convex_Collider]
-
-[END_Component End]
-[START_Component]
-[START_Convex_Collider]
-18446744073034236416,536870912,18446744072534948352,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
-[END_Convex_Collider]
-
-[END_Component End]
-[START_Component]
-[START_Convex_Collider]
-18446744073034238976,536870912,18446744073580751872,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
-[END_Convex_Collider]
-
-[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-1,
+0,
 [END_ComponentDonor End]
-[START_Component]
-[START_Character_Controller]
-18446744073034228736,536870912,18446744071771702784,
-[END_Character_Controller]
-
-[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
 
 [END_Scene]

@@ -26,7 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif 
 
 Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
-	: mRotation{ }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f }, 
+	: mRotation{ }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f, 1.f }, 
 	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, Component { _pOwner }
 {
 

@@ -13,6 +13,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Editor/Commands.h"
 
+#include "System/Driver/Driver.h"
+#include "System/Window/WindowManager.h"
+#include "System/Window/Window.h"
 #include "System/Scene/Scene.h"
 #include "Object/GameObject.h"
 
@@ -57,6 +60,9 @@ namespace Dystopia
 			delete _comd;
 			return;
 		}
+
+		auto& w = EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow();
+		w.SetTitle(w.GetTitle() + L"*");
 
 		mUnsavedChanges = true;
 		if (mDeqUndo.size() == mMaxSize)

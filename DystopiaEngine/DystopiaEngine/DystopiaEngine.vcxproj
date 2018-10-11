@@ -126,6 +126,7 @@
     <ClInclude Include="Include\Editor\AdminCalls.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />
     <ClInclude Include="Include\Editor\ColorScheme.h" />
+    <ClInclude Include="Include\Editor\DragStatus.h" />
     <ClInclude Include="Include\Editor\Gizmo.h" />
     <ClInclude Include="Include\Editor\ProjectSettings.h" />
     <ClInclude Include="Include\Editor\SpritePreviewer.h" />
