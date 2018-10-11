@@ -84,6 +84,7 @@ namespace Dystopia
 		_out << static_cast<float>(mRotation[1]);
 		_out << static_cast<float>(mRotation[2]);
 		_out << static_cast<float>(mRotation[3]);
+		_out << mbIsTrigger;
 
 		_out.InsertEndBlock("Convex_Collider");
 	}
@@ -122,6 +123,8 @@ namespace Dystopia
 		_in >> mRotation[1];
 		_in >> mRotation[2];
 		_in >> mRotation[3];
+
+		_in >> mbIsTrigger;
 
 		_in.ConsumeEndBlock();
 
@@ -174,21 +177,20 @@ namespace Dystopia
 				/*Return no collision*/
 				return false;
 			}
-			else
+
+			/*Check if Simplex contains Origin*/
+			if (ContainOrigin(Simplex,vDir))
 			{
-				/*Check if Simplex contains Origin*/
-				if (ContainOrigin(Simplex,vDir))
-				{
-					mbColliding = true;
-					_pColB.mbColliding = true;
-					/*Use EPA to get collision information*/
-					marr_ContactSets.Insert(GetCollisionEvent(Simplex, _pColB));
-					/*Clear the simplex for the next function call*/
-					Simplex.clear();
-					/*Return true for collision*/
-					return true;
-				}
+				mbColliding = true;
+				_pColB.mbColliding = true;
+				/*Use EPA to get collision information*/
+				marr_ContactSets.Insert(GetCollisionEvent(Simplex, _pColB));
+				/*Clear the simplex for the next function call*/
+				Simplex.clear();
+				/*Return true for collision*/
+				return true;
 			}
+			
 			if (count++ > _pColB.mVertices.size() * mVertices.size())
 				return false;
 		}
@@ -202,6 +204,7 @@ namespace Dystopia
 
 		const auto & Edges = GetConvexEdges();
 		bool isInside = true;
+
 		/*Check for Circle inside Convex*/
 		for(auto & elem : Edges)
 		{
@@ -257,9 +260,7 @@ namespace Dystopia
 					_ColB.SetColliding(true);
 				}
 			}
-
 		}
-		
 		return isInside;
 	}
 
@@ -324,7 +325,7 @@ namespace Dystopia
 	AutoArray<Edge> Convex::GetConvexEdges() const
 	{
 		AutoArray<Edge> ToRet;
-		Math::Matrix3D World = GetOwnerTransform() * Math::Translate(mv3Offset.x, mv3Offset.y, mv3Offset.z)* GetTransformationMatrix();;
+		const Math::Matrix3D World = GetOwnerTransform() * Math::Translate(mv3Offset.x, mv3Offset.y, mv3Offset.z) * GetTransformationMatrix();;
 
 		for (unsigned i = 0; i<mVertices.size(); ++i)
 		{
@@ -362,17 +363,12 @@ namespace Dystopia
 
 	void Convex::eIsTriggerCheckBox()
 	{
-		if (EGUI::Display::CheckBox("Is Trigger		  ", &mbIsTrigger))
-		{
-			// Is Trigger Function here
-			if (mbIsTrigger)
-			{
-				//EGUI::Display::IconTick();
-			}
-			else
-			{
+		bool tempBool = mbIsTrigger;
 
-			}
+		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
+		{
+			mbIsTrigger = tempBool;
+			EGUI::GetCommandHND()->InvokeCommand<Collider>(&mbIsTrigger, tempBool);
 		}
 	}
 

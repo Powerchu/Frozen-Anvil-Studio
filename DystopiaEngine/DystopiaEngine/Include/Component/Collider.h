@@ -161,6 +161,7 @@ namespace Dystopia
 		virtual Math::Point3D GetGlobalPosition() const;
 		Math::Vec3D           GetOffSet()   const;
 		bool                  HasCollision() const;
+		bool				  IsTrigger() const;
 
 		AutoArray<Vertex> GetVertexBuffer() const;
 		AutoArray<short>  GetIndexBuffer()  const;

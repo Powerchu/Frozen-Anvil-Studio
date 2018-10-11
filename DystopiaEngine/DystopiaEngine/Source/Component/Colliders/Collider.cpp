@@ -121,6 +121,11 @@ namespace Dystopia
 		return mbColliding;
 	}
 
+	bool Collider::IsTrigger() const
+	{
+		return mbIsTrigger;
+	}
+
 	void Collider::SetColliding(bool _b)
 	{
 		mbColliding = _b;
