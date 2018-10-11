@@ -21,10 +21,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #define PP_EXTRACTFRONT(_SEQ_) PP_EXTRACT(0, _SEQ_)
 
-#define PP_EXTRACT(_INDEX_, _SEQ_) PP_EXTRACT_AUX_1((PP_EXTRACT ## _INDEX_ _SEQ_))
 
-#define PP_EXTRACT_AUX_1(_AUX_)         PP_EVAL (PP_EXTRACT_AUX_2 _AUX_)
-#define PP_EXTRACT_AUX_2(_SEQ_, _X_)   _SEQ_
+#define PP_EXTRACT(_INDEX_, _SEQ_) PP_EXTRACT_AUX_3(_INDEX_,_SEQ_)
+
+#define PP_EXTRACT_AUX_1(_AUX_)          PP_EVAL(PP_EXTRACT_AUX_2 _AUX_)
+#define PP_EXTRACT_AUX_2(_SEQ_, _X_)     (_SEQ_)
+#define PP_EXTRACT_AUX_3(_INDEX_, _SEQ_) PP_EXTRACT_AUX_1((PP_EXTRACT ## _INDEX_ _SEQ_))
 
 
 #define PP_EXTRACT0(_X_) _X_, 0

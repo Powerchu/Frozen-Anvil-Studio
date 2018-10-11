@@ -15,7 +15,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _PP_FORCEEVAL_H_
 
 
-#define PP_EVAL(_X_) _X_
+#define PP_EVAL(...)  PP_EVAL_AUX1(__VA_ARGS__)
+
+#define PP_EVAL_AUX1(_X_) PP_EVAL_AUX2(_X_)
+#define PP_EVAL_AUX2(_X_) _X_
 
 
 
