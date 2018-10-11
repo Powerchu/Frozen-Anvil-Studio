@@ -54,7 +54,9 @@ namespace Dystopia
 		RigidBody * mpBody;
 		bool		mbIsFacingRight;
 		bool		mbIsGrounded;
+		bool		mbIsCeilinged;
 		float		mfCharacterSpeed;
+		float		mfJumpForce;
 	};
 }
 
