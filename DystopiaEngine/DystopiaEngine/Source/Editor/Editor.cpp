@@ -614,11 +614,12 @@ namespace Dystopia
 
 	void Editor::OpenScene(const std::wstring& _path, const std::wstring& _name)
 	{
+		mArrSelectedObj.clear();
+		ClearSelections();
 		mpSceneSystem->LoadScene(std::string{ _path.begin(), _path.end() });
 		for (auto& e : mArrTabs)
 			e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
 		mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
-		ClearSelections();
 		mpWin->GetMainWindow().SetTitle(_name);
 	}
 
