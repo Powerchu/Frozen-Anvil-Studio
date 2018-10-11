@@ -129,8 +129,8 @@ namespace Dystopia
 	/*Collision Check Functions*/
 	bool Circle::isColliding(Circle & other_col, Math::Point3D other_pos)
 	{
-		const auto this_body       = *GetOwner()->GetComponent<RigidBody>();
-		const auto other_body      = *other_col.GetOwner()->GetComponent<RigidBody>();
+		//const auto this_body       = *GetOwner()->GetComponent<RigidBody>();
+		const auto other_body      = other_col.GetOwner()->GetComponent<RigidBody>();
 		const auto this_pos        = this->GetGlobalPosition();
 		const auto positionDelta   =  other_pos - this_pos;
 		const float combinedRadius = this->GetRadius() + other_col.GetRadius();
@@ -148,14 +148,14 @@ namespace Dystopia
 			{
 				penetration = combinedRadius - dis;
 				normal = positionDelta/dis;
-				
+				contactPoint = (GetGlobalPosition() * other_col.m_radius) + (other_col.GetGlobalPosition() * m_radius) / combinedRadius;
 			}
 			else //dis == 0
 			{
 				//Exact Overlap of each other
-				penetration = this->GetRadius();
+				penetration = m_radius;
 				normal = Vec3D{ 0,1,0 };
-				contactPoint = this->GetGlobalPosition();
+				contactPoint = GetGlobalPosition();
 			}
 
 			normal.z = 0;
@@ -165,13 +165,16 @@ namespace Dystopia
 			other_col.mbColliding = true;
 
 			CollisionEvent col_info(GetOwner(), other_col.GetOwner());
-			col_info.mEdgeNormal = normal;
-			//col_info.mEdgeVector = Math::Normalise(positionDelta);
-			col_info.mCollisionPoint      = contactPoint;
-			col_info.mfPeneDepth          = penetration;
-			col_info.mfRestitution        = DetermineRestitution(other_body);
-			col_info.mfStaticFrictionCof  = DetermineStaticFriction(other_body);
-			col_info.mfDynamicFrictionCof = DetermineKineticFriction(other_body);
+			col_info.mEdgeNormal			= normal;
+			col_info.mEdgeVector			= Math::Normalise(positionDelta);
+			col_info.mCollisionPoint		= contactPoint;
+			col_info.mfPeneDepth			= penetration;
+			if (nullptr != other_body)
+			{
+				col_info.mfRestitution = DetermineRestitution(*other_body);
+				col_info.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
+				col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
+			}
 
 			marr_ContactSets.Insert(col_info);
 	
@@ -245,7 +248,7 @@ namespace Dystopia
 					isInside = true;
 					CollisionEvent newEvent(this->GetOwner(), other_col.GetOwner());
 					newEvent.mfPeneDepth     = GetRadius() - distance;
-					elem.mNorm3.z = 0;
+					elem.mNorm3.z			 = 0;
 					newEvent.mEdgeNormal     = -elem.mNorm3.Normalise();
 					newEvent.mEdgeVector     = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;

@@ -177,7 +177,6 @@ namespace Dystopia
 		mOwnerTransformation = _ownerMatrix;
 	}
 
-
 	Collider::~Collider()
 	{
 		mpMesh = nullptr;
@@ -197,7 +196,6 @@ namespace Dystopia
 		auto  third   = second+1;
 		do
 		{
-		
 		  mIndexBuffer.push_back(static_cast<const short>(first  - start));
 		  mIndexBuffer.push_back(static_cast<const short>(second - start));
 		  mIndexBuffer.push_back(static_cast<const short>(third - start));

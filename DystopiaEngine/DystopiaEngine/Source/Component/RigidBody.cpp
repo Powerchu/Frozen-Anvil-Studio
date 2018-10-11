@@ -241,7 +241,6 @@ namespace Dystopia
 			//mPosition = mPosition - mPrevPosition + mAcceleration * _dt * _dt;
 			mPosition += mLinearVelocity * _dt;
 			P_TX->SetGlobalPosition(mPosition);
-			mPosition = P_TX->GetGlobalPosition();
 		}
 	}
 

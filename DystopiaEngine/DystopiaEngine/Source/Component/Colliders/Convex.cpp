@@ -40,8 +40,7 @@ namespace Dystopia
 		mDebugVertices.clear();
 		for (auto & elem : mVertices)
 		{
-			auto offset = GetOffSet();
-			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x + offset.x, elem.mPosition.y + offset.y , elem.mPosition.z + offset.z });
+			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z});
 		}
 
 		Collider::Triangulate();
@@ -70,7 +69,7 @@ namespace Dystopia
 
 		_out << int(mVertices.size());
 
-		for (const auto vertex : mVertices)
+		for (const auto& vertex : mVertices)
 		{
 			_out << float(vertex.mPosition[0]);
 			_out << float(vertex.mPosition[1]);
@@ -219,8 +218,8 @@ namespace Dystopia
 			{
 				Vec3D v = elem.mVec3;
 				Vec3D w = _ColB.GetGlobalPosition() - elem.mPos;
-				float c1 = v.Dot((w));
-				float c2 = v.Dot(v);
+				const float c1 = v.Dot((w));
+				const float c2 = v.Dot(v);
 				float ratio = 0.f;
 				Point3D PointOfImpact;
 				if(c1 < 0 )
@@ -282,7 +281,7 @@ namespace Dystopia
 		Math::Vec3D const & OffSet = _ColA.GetOffSet();
 
 		/*Construct the Matrix for Global Coordinate Conversion*/
-		Math::Matrix3D WorldSpace = _ColA.GetOwnerTransform() * Math::Translate(OffSet.x, OffSet.y, OffSet.z)* _ColA.GetTransformationMatrix();;
+		const Math::Matrix3D WorldSpace = _ColA.GetOwnerTransform() * Math::Translate(OffSet.x, OffSet.y, OffSet.z)* _ColA.GetTransformationMatrix();;
 		Vertice * pFirst = _ColA.mVertices.begin();
 		Vertice FarthestPoint = *pFirst;
 		FarthestPoint.mPosition = (WorldSpace * pFirst->mPosition);
@@ -499,24 +498,17 @@ namespace Dystopia
 		{
 			switch (e)
 			{
-			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eENTER:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eDRAGGING:
-				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
 				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &mScale);
 				break;
+			case EGUI::eDragStatus::eEND_DRAG:
+			case EGUI::eDragStatus::eENTER:
+			case EGUI::eDragStatus::eDRAGGING:
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eNO_CHANGE:
-				break;
 			case EGUI::eDragStatus::eTABBED:
-				break;
 			default:
 				break;
 			}
@@ -667,7 +659,7 @@ namespace Dystopia
 
 	Edge Convex::GetClosestEdge(AutoArray<SimplexVertex>& _Simplex)
 	{
-		Edge   ClosestEdge;
+		Edge   ClosestEdge{};
 		double ClosestDistance = std::numeric_limits<double>::max();
 
 		for (unsigned i = 0; i < _Simplex.size(); ++i)
@@ -731,7 +723,7 @@ namespace Dystopia
 		unsigned ColBIndex = 0;
 		const Math::Point3D Farthest_In_ColA = Convex::GetFarthestPoint(_ColA, _Dir, ColAIndex);
 		const Math::Point3D Farthest_In_ColB = Convex::GetFarthestPoint(_ColB, _Dir * -1, ColBIndex);
-		Math::Point3D pt = Farthest_In_ColA - Farthest_In_ColB;
+		const Math::Point3D pt = Farthest_In_ColA - Farthest_In_ColB;
 		ToRet.mPosition = MakePoint3D(pt.x, pt.y, pt.z);
 		ToRet.ColAIndex = ColAIndex;
 		ToRet.ColBIndex = ColBIndex;
@@ -774,13 +766,13 @@ namespace Dystopia
 				Math::Matrix3D WorldSpaceA = GetOwnerTransform() * Math::Translate(OffSetA.x, OffSetA.y, OffSetA.z)* GetTransformationMatrix();
 
 				Math::Vec3D const & OffSetB = _ColB.GetOffSet();
-				Math::Matrix3D WorldSpaceB  = _ColB.GetOwnerTransform() * Math::Translate(OffSetB.x, OffSetB.y, OffSetB.z)* _ColB.GetTransformationMatrix();
+				const Math::Matrix3D WorldSpaceB  = _ColB.GetOwnerTransform() * Math::Translate(OffSetB.x, OffSetB.y, OffSetB.z)* _ColB.GetTransformationMatrix();
 				
-				bool isInsideCollider = false;
+				//bool isInsideCollider = false;
 
 				unsigned j = Point.ColBIndex + 1 >= _ColB.mVertices.size() ? 0 : Point.ColBIndex + 1;
-				auto start = WorldSpaceB * _ColB.mVertices[Point.ColBIndex].mPosition;
-				auto end   = WorldSpaceB * _ColB.mVertices[j].mPosition;
+				const auto start = WorldSpaceB * _ColB.mVertices[Point.ColBIndex].mPosition;
+				const auto end   = WorldSpaceB * _ColB.mVertices[j].mPosition;
 #if CLOCKWISE
 				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::Y>();
 #else
@@ -789,7 +781,6 @@ namespace Dystopia
 				col_info.mCollisionPoint = ClosestEdge.mPos;
 				col_info.mEdgeNormal     = Normal.Normalise();
 				col_info.mEdgeVector     = Normal.xyzw;
-
 				col_info.mfPeneDepth     = static_cast<float>(ProjectDis);
 
 				if (nullptr != other_body)
@@ -800,10 +791,9 @@ namespace Dystopia
 				}
 				return col_info;
 			}
-			else
-			{
-				_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
-			}
+
+			_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
+			
 
 		}
 		//return col_info;

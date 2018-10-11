@@ -67,6 +67,7 @@ namespace Dystopia
 	enum class eColliderType
 	{
 		BASE = 0,
+		LINE,
 		AABB,
 		CIRCLE,			/*Status : Not Done*/
 		TRIANGLE,       /*Status : Not Done*/
@@ -170,7 +171,7 @@ namespace Dystopia
 
 		Math::Matrix3D GetTransformationMatrix() const;
 		Math::Matrix3D GetOwnerTransform() const;
-		void SetOwnerTransform(Math::Matrix3D const & _OwnerTransform);
+		void SetOwnerTransform(Math::Matrix3D const &);
 
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const = 0;
