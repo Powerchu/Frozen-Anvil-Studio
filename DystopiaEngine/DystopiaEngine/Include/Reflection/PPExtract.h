@@ -14,9 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _PP_EXTRACTFRONT_H_
 #define _PP_EXTRACTFRONT_H_
 
+#include "Reflection/PPUtils.h"
 #include "Reflection/PPRemove.h"
 #include "Reflection/PPConcat.h"
-#include "Reflection/PPForceEval.h"
 
 
 #define PP_EXTRACTFRONT(_SEQ_) PP_EXTRACT(0, _SEQ_)

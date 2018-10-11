@@ -250,9 +250,7 @@
     <ClCompile Include="Source\Editor\AdminCalls.cpp">
       <Filter>Editor\Admin</Filter>
     </ClCompile>
-    <ClCompile Include="Include\Reflection\tester.cpp">
-      <Filter>Reflection\NewFilter1</Filter>
-    </ClCompile>
+    <ClCompile Include="Include\Reflection\tester.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -675,9 +673,6 @@
     <ClInclude Include="Include\Reflection\PPToSequence.h">
       <Filter>Reflection\Preprocessor</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Reflection\PPForEachSeq.h">
-      <Filter>Reflection\Preprocessor</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Reflection\PPPopFront.h">
       <Filter>Reflection\Preprocessor</Filter>
     </ClInclude>
@@ -690,8 +685,20 @@
     <ClInclude Include="Include\Reflection\PPExtract.h">
       <Filter>Reflection\Preprocessor</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Reflection\PPForceEval.h">
+    <ClInclude Include="Include\Reflection\MetaData.h">
+      <Filter>Reflection\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPForEach.h">
       <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPUtils.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPStringify.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\ReflectedData.h">
+      <Filter>Reflection\Metadata</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

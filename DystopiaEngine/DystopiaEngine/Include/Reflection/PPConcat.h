@@ -14,11 +14,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _PP_CONCAT_H_
 #define _PP_CONCAT_H_
 
-#include "Reflection/PPForceEval.h"
+#include "Reflection/PPUtils.h"
 
 
 #define PP_CONCAT(_LHS_, _RHS_) PP_CONCAT_AUX1(_LHS_, _RHS_)
-#define PP_CONCAT_AUX1(_LHS_, _RHS_) PP_EVAL(_LHS_ ## _RHS_)
+
+
+#define PP_CONCAT_AUX1(_LHS_, _RHS_) PP_CONCAT_AUX2(_LHS_, _RHS_)
+#define PP_CONCAT_AUX2(_LHS_, _RHS_) _LHS_ ## _RHS_
 
 
 

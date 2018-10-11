@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _PP_REMOVE_H_
 
 
-#define PP_REMOVE(_X_)
+#define PP_REMOVE(...)
 
 
 
