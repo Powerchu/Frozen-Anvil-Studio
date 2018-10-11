@@ -59,7 +59,7 @@ public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
 	template <typename ... U, typename =
-		Utility::EnableIf_t<!IsAnyArray<Utility::Decay_t<U>...>::value>>
+		Ut::EnableIf_t<!IsAnyArray<Ut::Decay_t<U>...>::value>>
 	Array(U&& ...) noexcept;
 	Array(const Array&) = default;
 	Array(Array&&) noexcept = default;
@@ -86,7 +86,7 @@ public:
 	Val_t const& operator[] (Sz_t _nIndex) const;
 
 	template<typename U>
-	auto operator= (const Array<U, SIZE>&) -> Utility::EnableIf_t<!Utility::IsSame<T, U>::value, Array&>;
+	auto operator= (const Array<U, SIZE>&) -> Ut::EnableIf_t<!Ut::IsSame<T, U>::value, Array&>;
 	Array& operator= (const Array&) = default;
 	Array& operator= (Array&&) noexcept = default;
 	
@@ -109,13 +109,13 @@ namespace Ctor
 	template <typename T, typename ... Us>
 	constexpr Array<T, sizeof...(Us)> MakeArray(Us&&... args) noexcept
 	{
-		return Array<T, sizeof...(Us)>{ Utility::Forward<Us>(args)... };
+		return Array<T, sizeof...(Us)>{ Ut::Forward<Us>(args)... };
 	}
 }
 
 template <typename T, size_t Sz> template <typename ... U, typename>
 Array<T, Sz>::Array(U&& ... _Args) noexcept
-	: mArray { Utility::Forward<U>(_Args)... }
+	: mArray { Ut::Forward<U>(_Args)... }
 {
 }
 
@@ -167,7 +167,7 @@ inline typename Array<T, Sz>::Val_t const& Array<T, Sz>::operator[] (const Sz_t 
 }
 
 template <typename T, size_t Sz> template<typename U>
-auto Array<T, Sz>::operator= (const Array<U, Sz>& _other) -> Utility::EnableIf_t<!Utility::IsSame<T, U>::value, Array&>
+auto Array<T, Sz>::operator= (const Array<U, Sz>& _other) -> Ut::EnableIf_t<!Ut::IsSame<T, U>::value, Array&>
 {
 	Itor_t dest = mArray;
 

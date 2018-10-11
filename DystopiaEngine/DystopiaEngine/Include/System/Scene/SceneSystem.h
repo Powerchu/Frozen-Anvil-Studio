@@ -43,12 +43,13 @@ namespace Dystopia
 
 //		void ReceiveMessage(const Message&);
 
-		void RestartScene();
-		void ChangeScene();
+		void RestartScene(void);
 		void LoadScene(const std::string& _strName);
 		void SaveScene(const std::string & _strName, const std::string& _sceneName = "defaultSceneName");
 
 		inline Scene& GetCurrentScene(void) const;
+		inline Scene& GetNextScene(void) const;
+		inline Scene& GetActiveScene(void) const;
 
 		inline GameObject* FindGameObject(uint64_t _nID);
 		inline GameObject* FindGameObject(const std::string& _strName);
@@ -57,6 +58,8 @@ namespace Dystopia
 
 		Scene *mpNextScene;
 		Scene *mpCurrScene;
+		std::string mLastSavedData;
+		void SceneChanged(void);
 	};
 
 	// ============================================ FUNCTION DEFINITIONS ============================================ // 
@@ -75,6 +78,16 @@ namespace Dystopia
 	inline GameObject* Dystopia::SceneSystem::FindGameObject(const std::string& _strName)
 	{
 		return mpCurrScene->FindGameObject(_strName);
+	}
+
+	inline Scene& Dystopia::SceneSystem::GetNextScene(void) const
+	{
+		return *mpNextScene;
+	}
+
+	inline Scene& Dystopia::SceneSystem::GetActiveScene(void) const
+	{
+		return (mpNextScene == mpCurrScene) ? *mpCurrScene : *mpNextScene;
 	}
 }
 #endif

@@ -1,0 +1,216 @@
+[START_Scene]
+18446744072511553536,test_phyis,6,[START_START_GO_DATA]
+910164992,1,Scene Camera,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.809182,0.809182,0.809182,-16.1482,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072039917568,1,Wall,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,400,1,-200,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+553284608,1,Wall_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,400,1,200,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073137183744,1,Floor,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+400,16,1,0,-191.86,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+2079813120,1,character,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,64,1,-50.2,-100,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+66686976,1,GameObject,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,0,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+910166016,0,910164992,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+7,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+1440426496,0,18446744072039917568,..\DystopiaEngine\Resource\Editor\red_box.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+553285120,0,553284608,..\DystopiaEngine\Resource\Editor\red_box.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+2113718272,0,2079813120,..\DystopiaEngine\Resource\Editor\white_box.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072614810112,0,18446744073137183744,..\DystopiaEngine\Resource\Editor\red_box.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072551815168,536870912,1908045312,,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1341244928,536870912,18446744072667811328,..\DystopiaEngine\Resource\Editor\red_circle.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071859839488,0,66686976,..\DystopiaEngine\Resource\Editor\red_circle.png,
+[END_Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+7,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+18446744071791948800,0,18446744073137183744,0,0.5,0.5,0.5,0.5,0.81,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1711054848,0,553284608,0,0.5,0.5,0.5,0.5,0.41,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+249270784,0,18446744072039917568,0,0.5,0.5,0.5,0.5,0.44,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1341672448,0,2079813120,0,0.7,0,0.5,0.9,0.5,1,200,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072551815680,536870912,1908045312,0,0.5,0.5,0.5,0.5,0.5,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1341245440,536870912,18446744072667811328,0,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+2053728256,0,66686976,0,0.5,0.5,0.5,0.7,0.77,1,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+5,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+1751778816,0,18446744072039917568,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+553285632,0,553284608,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1039898624,0,18446744073137183744,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744073373378560,0,2079813120,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744072551816192,536870912,1908045312,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+1341245952,536870912,18446744072667811328,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+620258304,0,66686976,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Character_Controller]
+1341671936,0,2079813120,
+[END_Character_Controller]
+
+[END_Component End]
+
+[END_Scene]

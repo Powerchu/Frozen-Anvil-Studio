@@ -35,15 +35,15 @@ namespace Dystopia
 		mpCurrentScene = nullptr;
 	}
 
-	void EditorTab::SetFocus(GameObject&)
-	{
-		// do nothing
-	}
-
-	void EditorTab::RemoveFocus()
-	{
-		// do nothing
-	}
+	//void EditorTab::SetFocus(GameObject&)
+	//{
+	//	// do nothing
+	//}
+	//
+	//void EditorTab::RemoveFocus()
+	//{
+	//	// do nothing
+	//}
 
 	void EditorTab::SetSize(const Math::Vec2& _size)
 	{
@@ -95,9 +95,9 @@ namespace Dystopia
 		mpCurrentScene = _ctx;
 	}
 	
-	Editor&	EditorTab::GetMainEditor() const
+	Editor*	EditorTab::GetMainEditor() const
 	{
-		return *(Editor::GetInstance());
+		return Editor::GetInstance();
 	}
 	
 	CommandHandler* EditorTab::GetCommandHND() const

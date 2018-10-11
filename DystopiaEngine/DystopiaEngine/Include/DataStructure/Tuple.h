@@ -35,9 +35,9 @@ namespace
 }
 
 template <typename ... T>
-class Tuple : public TupleBase<Utility::MetaMakeRange_t<sizeof...(T)>, Tuple<T...>>
+class Tuple : public TupleBase<Ut::MetaMakeRange_t<sizeof...(T)>, Tuple<T...>>
 {
-	using Range_t = Utility::MetaMakeRange_t<sizeof...(T)>;
+	using Range_t = Ut::MetaMakeRange_t<sizeof...(T)>;
 
 public:
 
@@ -60,7 +60,7 @@ template <typename ... T> template <unsigned _Index>
 inline decltype(auto) Tuple<T...>::Get(void) noexcept
 {
 	static_assert(_Index < sizeof...(T), "Tuple: Get Index out of Range!");
-	return (static_cast<TupleLeaf<Utility::MetaExtract_t<_Index, Tuple<T...>>>&>(*this).value);
+	return (static_cast<TupleLeaf<Ut::MetaExtract_t<_Index, Tuple<T...>>>&>(*this).value);
 }
 
 

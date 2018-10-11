@@ -27,8 +27,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #if EDITOR
 #include "Editor/EGUI.h"
+#include "Editor/Editor.h"
 #endif
-
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
 	mViewport{0, 0, _fWidth, _fHeight}, mView{}, mProjection{},
@@ -228,23 +228,16 @@ Dystopia::Camera* Dystopia::Camera::Duplicate(void) const
 void Dystopia::Camera::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Camera");
-	_out << GetOwner()->GetID();
+	Component::Serialise(_out);
 	_out.InsertEndBlock("Camera");
 }
 
 void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 {
-	uint64_t id;
 	_in.ConsumeStartBlock();
-	_in >> id;
+	Component::Unserialise(_in);
 	_in.ConsumeEndBlock();
 
-	if (GameObject* owner =
-		EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(id))
-	{
-		owner->AddComponent(this, Camera::TAG{});
-		Init();
-	}
 }
 
 void Dystopia::Camera::EditorUI(void) noexcept

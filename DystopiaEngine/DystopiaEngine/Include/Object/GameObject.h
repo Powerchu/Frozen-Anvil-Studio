@@ -54,6 +54,7 @@ namespace Dystopia
 		void SetStatic(bool _bEnable);
 
 		void Load(void);
+		void Awake(void);
 		void Init(void);
 
 		void Update(const float _fDeltaTime);
@@ -80,6 +81,9 @@ namespace Dystopia
 
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
+
+		// Tells all components/behaviours > I am their owner
+		void Identify(void);
 		
 		void SetID(const uint64_t&); //explicit purposes only
 		uint64_t GetID(void) const;
@@ -197,7 +201,7 @@ T* Dystopia::GameObject::GetComponent(ComponentTag) const
 {
 	for (auto& e : mComponents)
 	{
-		if (Utility::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
+		if (Ut::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
 		{
 			return static_cast<T*>(e);
 		}
@@ -211,7 +215,7 @@ T* Dystopia::GameObject::GetComponent(BehaviourTag) const
 {
 	for (auto& e : mBehaviours)
 	{
-		if (Utility::MetaFind_t<T, AllBehaviours>::value == e->GetComponentType())
+		if (Ut::MetaFind_t<T, AllBehaviours>::value == e->GetComponentType())
 		{
 			return static_cast<T*>(e);
 		}
@@ -232,7 +236,7 @@ AutoArray<T*> Dystopia::GameObject::GetComponents(ComponentTag) const
 	AutoArray<T*> temp{};
 	for (Component* e : mComponents)
 	{
-		if (Utility::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
+		if (Ut::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
 		{
 			temp.Insert(static_cast<T*>(e));
 		}
@@ -264,7 +268,7 @@ inline void Dystopia::GameObject::RemoveComponent(ComponentTag)
 {
 	for (unsigned n = 0; n < mComponents.size(); ++n)
 	{
-		if (Utility::MetaFind_t<Ty, AllComponents>::value == mComponents[n]->GetComponentType())
+		if (Ut::MetaFind_t<Ty, AllComponents>::value == mComponents[n]->GetComponentType())
 		{
 			mComponents.FastRemove(n);
 			break;
@@ -277,7 +281,7 @@ inline void Dystopia::GameObject::RemoveComponent(BehaviourTag)
 {
 	for (unsigned n = 0; n < mBehaviours.size(); ++n)
 	{
-		if (Utility::MetaFind_t<Ty, AllBehaviours>::value == mBehaviours[n]->GetComponentType())
+		if (Ut::MetaFind_t<Ty, AllBehaviours>::value == mBehaviours[n]->GetComponentType())
 		{
 			mBehaviours.FastRemove(n);
 			break;

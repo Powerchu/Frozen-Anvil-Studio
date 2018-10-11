@@ -502,7 +502,14 @@ namespace Dystopia
 	void GuiSystem::UpdateKey(int _k, bool _down)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.KeysDown[_k] = _down;
+		if (_k == eButton::KEYBOARD_SHIFT)
+			io.KeyShift = _down;
+		else if (_k == eButton::KEYBOARD_ALT)
+			io.KeyAlt = _down;
+		else if (_k == eButton::KEYBOARD_CTRL)
+			io.KeyCtrl = _down;
+		else
+			io.KeysDown[_k] = _down;
 	}
 
 	const char* GuiSystem::GetMainDockspaceName() const

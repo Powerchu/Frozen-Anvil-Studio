@@ -11,13 +11,14 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#include <Windows.h>
+#include <consoleapi2.h>
+#include <winuser.h>
 #if EDITOR
 #include "Editor/EGUI.h"
 #include "Editor/Commands.h"
 #include "Editor/CommandList.h"
 #include "Editor/EditorInputs.h"
-#include <stdlib.h>
-#include <iostream>
 
 Dystopia::CommandHandler *gContextComdHND = nullptr;
 
@@ -219,6 +220,10 @@ namespace EGUI
 
 		eDragStatus DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText, float _width)
 		{
+			static POINT p;
+			static const int xPos = (GetSystemMetrics(SM_CXSCREEN)) / 2;
+			static const int yPos = (GetSystemMetrics(SM_CYSCREEN)) / 2;
+
 			if (!_hideText)
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
@@ -228,16 +233,32 @@ namespace EGUI
 			}
 			bool changing = false;
 			ImGui::PushItemWidth(_width);
-			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max, "%.2f");
+			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max, "%.3f");
 			ImGui::PopItemWidth();
 
-			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
+			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
+			{
+				GetCursorPos(&p);
+				SetCursorPos(xPos, yPos);
+				ShowCursor(false);
+				return eSTART_DRAG;
+			}
+
 			if (changing) return eDRAGGING;
+
+
 			if (ImGui::IsItemDeactivatedAfterChange())
 			{
+				SetCursorPos(p.x, p.y);
+				ShowCursor(true);
 				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
 			}
-			if (ImGui::IsItemDeactivated())  return eDEACTIVATED;
+
+			if (ImGui::IsItemDeactivated()) {
+				SetCursorPos(p.x, p.y);
+				ShowCursor(true);
+				return eDEACTIVATED;
+			}
 			return eNO_CHANGE;
 		}
 

@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 
-namespace Utility {
+namespace Ut {
 
 	template <typename T>
 	struct ReverseItor;

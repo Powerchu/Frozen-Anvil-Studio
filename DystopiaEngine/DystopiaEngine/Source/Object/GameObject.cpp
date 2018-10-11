@@ -30,7 +30,7 @@ for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
 
 Dystopia::GameObject::GameObject(void) noexcept
-	: GameObject{ Utility::Constant<decltype(mnID), ~0>::value }
+	: GameObject{ Ut::Constant<decltype(mnID), ~0>::value }
 {
 
 }
@@ -45,15 +45,15 @@ Dystopia::GameObject::GameObject(uint64_t _ID) noexcept
 
 Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	: mnID{ _obj.mnID }, mnFlags{ _obj.mnFlags }, mName{ _obj.mName },
-	mComponents{ Utility::Move(_obj.mComponents) },
-	mBehaviours{ Utility::Move(_obj.mBehaviours) },
+	mComponents{ Ut::Move(_obj.mComponents) },
+	mBehaviours{ Ut::Move(_obj.mBehaviours) },
 	mTransform{ _obj.mTransform }
 	, mbIsStatic(false)
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
 
-	_obj.mnID = Utility::Constant<decltype(mnID), ~0>::value;
+	_obj.mnID = Ut::Constant<decltype(mnID), ~0>::value;
 	_obj.mnFlags = FLAG_REMOVE;
 }
 
@@ -97,20 +97,14 @@ void Dystopia::GameObject::Load(void)
 	ForcePing(mBehaviours, Load);
 }
 
+void Dystopia::GameObject::Awake(void)
+{
+
+}
+
 void Dystopia::GameObject::Init(void)
 {
-	mTransform.SetOwner(this);
-	for (auto c : mComponents)
-	{
-		c->SetOwner(this);
-		c->Init();
-	}
-	for (auto b : mBehaviours)
-	{
-		b->SetOwner(this);
-		b->Init();
-	}
-//	ForcePing(mComponents, Init);
+	ForcePing(mComponents, Init);
 	ForcePing(mBehaviours, Init);
 }
 
@@ -261,9 +255,9 @@ void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 //	ForcePing(mComponents, Unserialise, _out);
 	//while (!_in.EndOfInput())
 	//{
-	//	decltype(Utility::RemoveRef_t<decltype(mComponents[0])>::mID)        id;
-	//	decltype(Utility::RemoveRef_t<decltype(mComponents[0])>::mComponent) comp;
-	//	decltype(Utility::RemoveRef_t<decltype(mComponents[0])>::mSystem)    sys;
+	//	decltype(Ut::RemoveRef_t<decltype(mComponents[0])>::mID)        id;
+	//	decltype(Ut::RemoveRef_t<decltype(mComponents[0])>::mComponent) comp;
+	//	decltype(Ut::RemoveRef_t<decltype(mComponents[0])>::mSystem)    sys;
 
 	//	_in >> id >> comp >> sys;
 	//	mComponents.EmplaceBack(id, comp, sys);
@@ -280,21 +274,17 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	p->mnID = GUIDGenerator::GetUniqueID();
 	p->mnFlags = mnFlags;
 	p->mName = mName;
-	p->mTransform.SetOwner(p);
+	p->mTransform = mTransform;
+
 	for (auto& c : mComponents)
 	{
-		auto t = c->Duplicate();
-		t->SetOwner(p);
-		t->Init();
-		p->mComponents.Insert(t);
+		p->mComponents.Insert(c->Duplicate());
 	}
 	for (auto& b : mBehaviours)
 	{
-		auto t = b->Duplicate();
-		t->SetOwner(p);
-		t->Init();
-		p->mBehaviours.Insert(t);
+		p->mBehaviours.Insert(b->Duplicate());
 	}
+
 	return p;
 }
 
@@ -318,6 +308,15 @@ void Dystopia::GameObject::SetName(const std::string& _strName)
 	mName = _strName;
 }
 
+void Dystopia::GameObject::Identify(void)
+{
+	mTransform.SetOwner(this);
+	for (auto c : mComponents)
+		c->SetOwner(this);
+	for (auto b : mBehaviours)
+		b->SetOwner(this);
+}
+
 Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
 {
 	mnID    = _rhs.mnID;
@@ -325,10 +324,10 @@ Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
 	mName   = _rhs.mName;
 
 	mTransform = _rhs.mTransform;
-	Utility::Swap(mComponents, _rhs.mComponents);
-	Utility::Swap(mBehaviours, _rhs.mBehaviours);
+	Ut::Swap(mComponents, _rhs.mComponents);
+	Ut::Swap(mBehaviours, _rhs.mBehaviours);
 
-	_rhs.mnID = Utility::Constant<decltype(mnID), ~0>::value;
+	_rhs.mnID = Ut::Constant<decltype(mnID), ~0>::value;
 
 	return *this;
 }

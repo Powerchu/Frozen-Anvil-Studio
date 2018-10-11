@@ -54,7 +54,7 @@ namespace Dystopia
 template <typename Ty, typename S> template <typename ... U>
 inline Ty* Dystopia::ComponentDonor<Ty, S>::RequestComponent(U&& ... _Args)
 {
-	return mComponents.Emplace(Utility::Forward<U>(_Args)...);
+	return mComponents.Emplace(Ut::Forward<U>(_Args)...);
 }
 
 
@@ -62,18 +62,18 @@ template<typename Ty, typename Settings>
 inline void Dystopia::ComponentDonor<Ty, Settings>::Serialise(TextSerialiser & _Serialiser) const
 {
 	_Serialiser.InsertStartBlock("ComponentDonor");
-	int n = 0;
-	for(auto& e : mComponents)
-	{
-		n += !(e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ);
-	}
-	_Serialiser << n;
+	//int n = 0;
+	//for(auto& e : mComponents)
+	//{
+	//	n += !(e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ);
+	//}
+	_Serialiser << mComponents.size();
 	_Serialiser.InsertEndBlock("ComponentDonor End");
 
 	for (auto& elem : mComponents)
 	{
-		if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
-			continue;
+		//if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+		//	continue;
 		_Serialiser.InsertStartBlock("Component");
 		elem.Serialise(_Serialiser);
 		_Serialiser.InsertEndBlock("Component End");
