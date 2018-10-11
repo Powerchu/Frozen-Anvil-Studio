@@ -87,6 +87,8 @@ namespace Dystopia
 		Math::Vec2		GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY);
 		Math::Vec2		GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY);
 		Camera*			GetCamera();
+		void			DrawGizmos(void);
+		void			DrawGizmos(const Math::Vec2& _pos);
 	};
 
 }

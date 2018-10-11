@@ -43,6 +43,7 @@
     <ClCompile Include="Source\Editor\SpritePreviewer.cpp" />
     <ClCompile Include="Source\Editor\StyleScheme.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
+    <ClCompile Include="Source\System\Events\Events.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
@@ -125,6 +126,7 @@
     <ClInclude Include="Include\Editor\AdminCalls.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />
     <ClInclude Include="Include\Editor\ColorScheme.h" />
+    <ClInclude Include="Include\Editor\DragStatus.h" />
     <ClInclude Include="Include\Editor\Gizmo.h" />
     <ClInclude Include="Include\Editor\ProjectSettings.h" />
     <ClInclude Include="Include\Editor\SpritePreviewer.h" />
@@ -136,6 +138,7 @@
     <ClInclude Include="Include\Reflection\Reflection.h" />
     <ClInclude Include="Include\Editor\SystemSettings.h" />
     <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
+    <ClInclude Include="Include\System\Events\Events.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />

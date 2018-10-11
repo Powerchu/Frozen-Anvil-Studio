@@ -87,14 +87,10 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
-	static bool once = true;
-	XGamePad p1{ 0 };
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
 	while (!editor->IsClosing())
 	{
-		p1.PollInputs();
-
 		editor->StartFrame();
 	
 		editor->UpdateFrame(editor->GetDeltaTime());
@@ -217,6 +213,7 @@ namespace Dystopia
 			UpdateHotkeys();
 			break;
 		case EDITOR_PLAY:
+			UpdateKeys();
 			UpdateGameModeKeys();
 			break;
 		}
@@ -649,6 +646,9 @@ namespace Dystopia
 	{
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ENTER, false);
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ESCAPE, false);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, false);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, false);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, false);
 		for (int i = eButton::KEYBOARD_BACKSPACE; i <= eButton::KEYBOARD_TAB; ++i)
 			mpGuiSystem->UpdateKey(i, false);
 		for (int i = eButton::KEYBOARD_SPACEBAR; i <= eButton::KEYBOARD_HOME; ++i)
@@ -657,14 +657,12 @@ namespace Dystopia
 			mpGuiSystem->UpdateKey(i, false);
 		for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
 			mpGuiSystem->UpdateKey(i, false);
-		for (int i = eButton::KEYBOARD_SHIFT; i <= eButton::KEYBOARD_ALT; ++i)
-			mpGuiSystem->UpdateKey(i, false);
 
+		bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
 		mCtrlKey = mpInput->IsKeyPressed(KEY_CTRL);
 		if (!mCtrlKey)
 		{
 			const auto& queue = mpWin->GetMainWindow().GetInputQueue();
-			bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
 			for (const auto& k : queue)
 			{
 				// 0 to 9
@@ -687,9 +685,9 @@ namespace Dystopia
 				else
 					mpGuiSystem->UpdateKey(k, true);
 			}
-			mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, caps);
-			mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, mpInput->IsKeyPressed(KEY_ALT));
 		}
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, caps);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, mpInput->IsKeyPressed(KEY_ALT));
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, mCtrlKey);
 	}
 
@@ -713,16 +711,13 @@ namespace Dystopia
 		}
 		if (mCtrlKey)
 		{
+			auto s = mpInput->IsKeyPressed(KEY_SHIFT) ? EDITOR_HOTKEY_SAVEAS : EDITOR_HOTKEY_SAVE;
 			if (mpInput->IsKeyTriggered(KEY_Z))			mpEditorEventSys->Fire(EDITOR_HOTKEY_UNDO);
 			else if (mpInput->IsKeyTriggered(KEY_Y))	mpEditorEventSys->Fire(EDITOR_HOTKEY_REDO);
 			else if (mpInput->IsKeyTriggered(KEY_C))	mpEditorEventSys->Fire(EDITOR_HOTKEY_COPY);
 			else if (mpInput->IsKeyTriggered(KEY_X))	mpEditorEventSys->Fire(EDITOR_HOTKEY_CUT);
 			else if (mpInput->IsKeyTriggered(KEY_V))	mpEditorEventSys->Fire(EDITOR_HOTKEY_PASTE);
-			else if (mpInput->IsKeyTriggered(KEY_S))	mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVE);
-			else if (mpInput->IsKeyPressed(KEY_SHIFT))
-			{
-				if (mpInput->IsKeyTriggered(KEY_S))		mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVEAS);
-			}
+			else if (mpInput->IsKeyTriggered(KEY_S))	mpEditorEventSys->Fire(s);
 			else if (mpInput->IsKeyTriggered(KEY_P))	mpEditorEventSys->Fire(EDITOR_HOTKEY_PLAY);
 			else if (mpInput->IsKeyTriggered(KEY_O))	mpEditorEventSys->Fire(EDITOR_HOTKEY_OPEN);
 			else if (mpInput->IsKeyTriggered(KEY_N))	mpEditorEventSys->Fire(EDITOR_HOTKEY_NEW);
