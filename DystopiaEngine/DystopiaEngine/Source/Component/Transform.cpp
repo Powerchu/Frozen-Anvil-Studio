@@ -254,18 +254,14 @@ void Dystopia::Transform::EditorUI(void) noexcept
 	{
 		switch (e)
 		{
-		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
 		case EGUI::eDragStatus::eDRAGGING:
 			mbChanged = true;
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
 			EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mPosition, &mbChanged);
 			break;
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
 			break;
@@ -277,22 +273,16 @@ void Dystopia::Transform::EditorUI(void) noexcept
 	{
 		switch (e)
 		{
-		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
 			EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mScale, &mbChanged);
 			break;
 		case EGUI::eDragStatus::eDRAGGING:
 			mbChanged = true;
 			break;
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
-			break;
-		default:
 			break;
 		}
 	}

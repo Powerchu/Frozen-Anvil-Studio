@@ -23,26 +23,22 @@ namespace Dystopia
 	class CommandHandler
 	{
 	public:
-		// Constructs with a fixed size	maximum history of commands recorded).
 		CommandHandler(size_t _nHistory=20);
-
-		// Destructor
 		~CommandHandler();
 
-		// has unsaved changes
 		bool HasUnsavedChanges() const;
 
-		// shutdown
+		void UndoCommand();
+		void RedoCommand();
+
+		void EndRecording();
+		bool IsRecording() const;
+
+		void SaveCallback();
+
 		void Shutdown();
 
-		// Calls the ExecuteDo function of the param command and passes it into the undo deque, also empties the redo deque
 		void InvokeCommand(Commands *_comd);
-		
-		//template<typename T>
-		//void InvokeCommand(T * const _var, const T& _newVal)
-		//{
-		//	  InvokeCommand(new ComdModifyValue<T>{ _var, _newVal });
-		//}
 		void InvokeCommandInsert(GameObject&, Scene&, bool *_notify = nullptr);
 		void InvokeCommandInsert(const AutoArray<GameObject*>&, Scene&, bool *_notify = nullptr);
 		void InvokeCommandDelete(GameObject&, Scene&, bool *_notify = nullptr);
@@ -76,14 +72,6 @@ namespace Dystopia
 			return FMW{ _ptrFunc, _vals... };
 		}
 
-		// Calls the ExecuteUndo function of latest command in the undo deque and puts it into the redo deque
-		void UndoCommand();
-		// Performs InvokeCommand on the latest command in the redo deque 
-		void RedoCommand();
-		// Attempt to create a command that last several frames. Like a continuously changing variable but at some point you want to revert back to 
-		// Takes in a pointer to the variable to be changed and keeps the initial first call as the value to revert back when undo is called.
-		// Only 1 pointer can be stored to recording at any given time. 
-		// DO NOT pass in any variable that you would be deleted without EndRecording being called.
 		template<class C, typename T>
 		void StartRecording(const uint64_t& _id, T* _target, bool *_notify = nullptr)
 		{ 
@@ -100,13 +88,6 @@ namespace Dystopia
 			mpRecorder = new ComdRecord<T, C, void>(invalidID, _target, _notify);
 			mRecording = true;
 		}
-
-		// Call after done recording the data 
-		void EndRecording();
-		bool IsRecording() const;
-
-		// Save Callback
-		void SaveCallback();
 
 		std::deque<Commands*>& GetDeqRedo(void);
 		std::deque<Commands*>& GetDeqUndo(void);

@@ -685,25 +685,19 @@ namespace Dystopia
 #else
 			EdgeNorm.Negate<Math::NegateFlag::X>();
 #endif
-			if (EdgeNorm.MagnitudeSqr() == 0.f)
-			{
-				//_Simplex.Remove(std::find(_Simplex.begin(), _Simplex.end(), b));
-				//continue;
-			}
 
 			if (EdgeNorm.MagnitudeSqr() > FLT_EPSILON)
 			{
 				EdgeNorm.Normalise();
 			}
 
-
 			const double distance = EdgeNorm.Dot(a.mPosition);
 			if (Math::Abs(distance) < Math::Abs(ClosestDistance))
 			{
-				ClosestDistance = Math::Abs(distance);
-				ClosestEdge.mNorm3 = EdgeNorm;
-				ClosestEdge.mVec3 = EdgeVec;
-				ClosestEdge.mPos = a.mPosition;
+				ClosestDistance                 = Math::Abs(distance);
+				ClosestEdge.mNorm3              = EdgeNorm;
+				ClosestEdge.mVec3               = EdgeVec;
+				ClosestEdge.mPos                = a.mPosition;
 				ClosestEdge.mOrthogonalDistance = distance;
 				ClosestEdge.mSimplexIndex = j;
 
@@ -766,15 +760,22 @@ namespace Dystopia
 				
 				//bool isInsideCollider = false;
 
-				unsigned j = Point.ColBIndex + 1 >= _ColB.mVertices.size() ? 0 : Point.ColBIndex + 1;
-				const auto start = WorldSpaceB * _ColB.mVertices[Point.ColBIndex].mPosition;
-				const auto end   = WorldSpaceB * _ColB.mVertices[j].mPosition;
+				unsigned j      = Point.ColBIndex + 1 >= _ColB.mVertices.size() ? 0 : Point.ColBIndex + 1;
+				unsigned A_Next = Point.ColAIndex + 1 >=  mVertices.size() ? 0      : Point.ColAIndex + 1;
+
+				auto start = WorldSpaceB * _ColB.mVertices[Point.ColBIndex].mPosition;
+				auto end   = WorldSpaceB * _ColB.mVertices[j].mPosition;
+
+				auto start_A = WorldSpaceA * _ColB.mVertices[Point.ColAIndex].mPosition;
+				auto end_A   = WorldSpaceA * _ColB.mVertices[A_Next].mPosition;
 #if CLOCKWISE
 				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::Y>();
 #else
 				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::X>();
 #endif
-				col_info.mCollisionPoint = ClosestEdge.mPos;
+				Math::Vec3D OriginVector = Math::MakePoint3D(0.f, 0.f, 0.f) - ClosestEdge.mPos;
+				float BarycentricRatio   = Math::Abs(OriginVector.Dot(ClosestEdge.mVec3.Normalise()) / ClosestEdge.mVec3.Magnitude());
+				col_info.mCollisionPoint = (end_A - start_A) * BarycentricRatio + start_A;
 				col_info.mEdgeNormal     = Normal.Normalise();
 				col_info.mEdgeVector     = Normal.xyzw;
 				col_info.mfPeneDepth     = static_cast<float>(ProjectDis);
