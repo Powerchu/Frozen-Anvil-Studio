@@ -786,7 +786,7 @@ namespace Dystopia
 				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::X>();
 #endif
 				Math::Vec3D OriginVector = Math::MakePoint3D(0.f, 0.f, 0.f) - ClosestEdge.mPos;
-				float BarycentricRatio   = Math::Abs(OriginVector.Dot(ClosestEdge.mVec3) / ClosestEdge.mVec3.Magnitude());
+				float BarycentricRatio   = Math::Abs(OriginVector.Dot(ClosestEdge.mVec3.Normalise()) / ClosestEdge.mVec3.Magnitude());
 				col_info.mCollisionPoint = (end_A - start_A) * BarycentricRatio + start_A;
 				col_info.mEdgeNormal     = Normal.Normalise();
 				col_info.mEdgeVector     = Normal.xyzw;
