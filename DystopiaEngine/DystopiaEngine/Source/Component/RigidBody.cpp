@@ -464,8 +464,6 @@ namespace Dystopia
 		}
 	}
 
-
-
 	void RigidBody::ResetCumulative()
 	{
 		mCumulativeForce = { 0,0,0,0 };
@@ -530,14 +528,14 @@ namespace Dystopia
 
 	void RigidBody::SetStaticFriction(const float _f)
 	{
-		if (_f > 1.0F) mfStaticFriction = 1.0F;
+		if (_f > 2.0F) mfStaticFriction = 2.0F;
 		else if (_f < 0.0) mfStaticFriction = 0.0F;
 		else mfStaticFriction = _f;
 	}
 
 	void RigidBody::SetKineticFriction(const float _f)
 	{
-		if (_f > 1.0F) mfDynamicFriction = 1.0F;
+		if (_f > 2.0F) mfDynamicFriction = 2.0F;
 		else if (_f < 0.0) mfDynamicFriction = 0.0F;
 		else mfDynamicFriction = _f;
 	}
