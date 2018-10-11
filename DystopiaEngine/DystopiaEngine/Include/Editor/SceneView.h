@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SCENE_VIEW_H_
 #define _SCENE_VIEW_H_
 #include "EditorTab.h"
+#include "DataStructure/AutoArray.h"
 
 namespace Dystopia
 {
@@ -58,6 +59,7 @@ namespace Dystopia
 			eZOOM_NONE
 		};
 
+		bool			mClearSelection;
 		bool			mDragging;
 		bool			mAmFocused;
 		float			mSensitivity;
@@ -86,9 +88,11 @@ namespace Dystopia
 		void			AdjustDisplayPos(void);
 		Math::Vec2		GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY);
 		Math::Vec2		GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY);
+		Math::Vec2		GetWorldToScreen(const Math::Pt3D&) const;
 		Camera*			GetCamera();
 		void			DrawGizmos(void);
-		void			DrawGizmos(const Math::Vec2& _pos);
+		void			DrawGizmoSingle(GameObject&);
+		void			DrawGizmoMul(const AutoArray<GameObject*>&);
 	};
 
 }

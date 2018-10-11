@@ -899,6 +899,7 @@ namespace Dystopia
 
 	void Editor::ClearSelections(void)
 	{
+		mUpdateSelection = true;
 		mpClipBoard->ClearSelection();
 	}
 
