@@ -149,153 +149,16 @@ namespace Dystopia
 
 }
 
-/*
-namespace
+
+namespace TestingNewEvent
 {
-	template<class Caller, typename ... Params>
-	struct FunctionContainer
-	{
-	private:
-		template<typename A>
-		struct AuxExecution;
 
-		template<size_t ... Ns>
-		struct AuxExecution<std::index_sequence<Ns ...>>
-		{
-			AuxExecution(FunctionContainer<Caller, Params...>& p)
-				: parent{ p }
-			{}
 
-			void Execute(Caller * const _toMod) const
-			{
-				(_toMod->*(parent.mfptr))(std::get<Ns>(parent.mTupleVariables) ...);
-			}
 
-			FunctionContainer<Caller, Params...> &parent;
-		};
 
-		void(Caller::*mfptr)(Params ...);
-		std::tuple<std::remove_reference_t<Params>...> mTupleVariables;
-		AuxExecution<std::make_index_sequence<sizeof...(Params)>> auxCaller;
 
-	public:
-		FunctionContainer(void(Caller::*_fnptr)(Params ...), std::remove_reference_t<Params> ... pack)
-			: mfptr{ _fnptr },
-			mTupleVariables{ pack... },
-			auxCaller{ *this }
-		{}
-
-		FunctionContainer(const FunctionContainer& _rhs)
-			: mfptr{ _rhs.mfptr },
-			mTupleVariables{ _rhs.mTupleVariables },
-			auxCaller{ *this }
-		{}
-
-		void Execute(Caller * const _toMod) const
-		{
-			auxCaller.Execute(_toMod);
-		}
-
-		FunctionContainer& operator=(const FunctionContainer& _rhs)
-		{
-			mfptr = _rhs.mfptr;
-			mTupleVariables = _rhs.mTupleVariables;
-		}
-	};
 }
-* /
 
-class EventWrapper
-{
-public:
-	template<typename ... Params>
-	EventWrapper(void(&_rhs)(Params ...))
-	{}
-
-	template<class Caller, typename ... Params>
-	EventWrapper(void(Caller::*_rhs)(Params...), Caller* const _user)
-		: mpModelEvent{ new Model<void(Caller::*)(Params...)>{ _rhs, _user } },
-		mpGenericComparison{ _user }
-	{}
-
-	template<typename ... Params>
-	void Fire(Params ... ps) const
-	{
-		mpModelEvent->Fire(ps ...);
-	}
-
-	template<class Caller>
-	bool IsBindedTo(Caller * const _toCheckAgainst)
-	{
-		void* const toGeneric = _toCheckAgainst;
-		return (toGeneric == mpGenericComparison);
-	}
-
-private:
-	/*
-	template <typename>
-	struct EventCaller;
-
-	template <typename T>
-	struct EvemtCaller<Event<T>>
-	{
-		Event<T> sad;
-
-		template <typename ... Ts>
-		auto operator () (Ts&& ... args)
-		{
-			return static_cast<T&>(sad).Fire(Ut::Forward<Ts>(args)...);
-		}
-	};
-	template <typename D>
-	struct Concept
-	{
-		virtual ~Concept() {}
-
-		template <typename ... Params>
-		void Fire(Params ... ps) const
-		{
-			static_cast<D*>(this)->Fire(ps...);
-		}
-	};
-
-	template<typename ... Params>
-	struct Model : Concept<Model<Params ...>>
-	{
-		Model(void(*_fn)(Params...))
-			: mpNonMemFunc{ _fn }
-		{}
-
-		template <typename ... Ps>
-		void Fire(Ps ... p) const
-		{
-			mpNonMemFunc(p ...);
-		}
-		void(*mpNonMemFunc)(Params...);
-	};
-
-
-	template<typename ClassCaller, typename ... Params>
-	struct Model<void(ClassCaller::*)(Params...)> : Concept<Model<void(ClassCaller::*)(Params...)>>
-	{
-		Model(void(ClassCaller::*_fn)(Params...), ClassCaller * const _user)
-			: mpMemberFunc{ _fn }, mpCaller{ _user }
-		{}
-
-		template <typename ... Ps>
-		void Fire(Ps ... p) const
-		{
-			(mpCaller->*mpMemberFunc)(p ...);
-		}
-
-		void(ClassCaller::*mpMemberFunc)(Params...);
-		ClassCaller * const mpCaller;
-	};
-
-	void*		mpGenericComparison;
-	Concept		*mpModelEvent;
-};
-	*/
 
 /* Possible future expansion for return types and parameters not void */
 
