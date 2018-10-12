@@ -80,10 +80,30 @@ inline Dystopia::ProxyAlloc<Alloc_t>::~ProxyAlloc(void) noexcept
 template <typename A>
 [[nodiscard]] void* Dystopia::ProxyAlloc<A>::Allocate(size_t _sz, size_t _align)
 {
-	void* ptr = mAlloc(_sz, _align);
-	mData.emplace(ptr, _sz, _align);
+	void* ptr;
+	
+	if (ptr = mAlloc.Allocate(_sz, _align))
+	{
+		_sz = Math::Max(_sz, A::MIN_SIZE);
 
-	// Do a check for invalid allocation?
+		auto left = reinterpret_cast<uintptr_t>(ptr) - sizeof(A::METADATA_SZ);
+		auto right = reinterpret_cast<uintptr_t>(ptr) + _sz;
+
+		for (auto& e : mData)
+		{
+			auto data_left = reinterpret_cast<uintptr_t>(e.mPointer) - sizeof(A::METADATA_SZ);
+			auto data_right = reinterpret_cast<uintptr_t>(e.mPointer) + e.mReqSz;
+
+			if (right < data_left) continue;
+			if (left > data_right) continue;
+
+			DEBUG_BREAK(true, "Alloc Error: Invalid Allocation!");
+		}
+
+		DEBUG_BREAK((_align - 1) & reinterpret_cast<uintptr_t>(ptr), "Alloc Error: Pointer is misaligned!");
+
+		mData.push_back(AllocInfo{ ptr, _sz, _align });
+	}
 
 	return ptr;
 }

@@ -80,6 +80,8 @@ Dystopia::DefaultAlloc::~DefaultAlloc(void) noexcept
 
 void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 {
+	if (!_sz) return nullptr;
+
 	void *pSeek = mpFree, *pPrev = nullptr;
 
 	// Force size and alignment to be at least the minimum
