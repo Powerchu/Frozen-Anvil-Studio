@@ -51,6 +51,11 @@ namespace EGUI
 
 namespace Dystopia
 {
+	static const std::string g_PayloadPrefabEx = ".dobj";
+	static const std::string g_PayloadPngEx = ".png";
+	static const std::string g_PayloadBmpEx = ".bmp";
+	static const std::string g_PayloadCppEx = ".cpp";
+
 	/********************************************************************* FILE & FOLDER *********************************************************************/
 	char my_tolower(char const ch);
 

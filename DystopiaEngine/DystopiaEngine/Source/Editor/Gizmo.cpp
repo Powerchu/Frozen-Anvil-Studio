@@ -277,7 +277,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ScalarUp(const std::string& _uniqueID, float& _
 EGUI::eDragStatus EGUI::Gizmo2D::Box(const std::string& _uniqueID, float& _outputValX, float& _outputValY, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, bool* _pHovered, float _side)
 {
 	EGUI::eDragStatus status = EGUI::eNO_CHANGE;
-	float offset = (_side / 4);
+	float offset = (_side / 3);
 	auto initialOrigin = ImGui::GetCursorPos();
 	ImGui::SetCursorPos(_origin);
 
@@ -326,7 +326,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::Box(const std::string& _uniqueID, float& _outpu
 	/* End Button Behaviours --------------------------------------------------------- */
 
 	ImGui::SetCursorPos(_origin);
-	pCanvas->AddRectFilled(ImVec2{ pos.x + offset, pos.y - offset }, ImVec2{ pos.x + offset + _side, pos.y - offset - _side }, color);
+	pCanvas->AddRectFilled(ImVec2{ pos.x + offset, pos.y - offset - _side }, ImVec2{ pos.x + offset + _side, pos.y - offset}, color);
 	ImGui::SetCursorPos(initialOrigin);
 	return status;
 }

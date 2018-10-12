@@ -210,22 +210,6 @@ void Dystopia::GameObject::Serialise(TextSerialiser& _out) const
 	_out.InsertStartBlock("START_GO_TRANSFORM");
 	mTransform.Serialise(_out);
 	_out.InsertEndBlock("END_GO_TRANSFORM");
-
-//	ForcePing(mComponents, Serialise, _in);
-	// _out << e.mID << e.mComponent << e.mSystem;
-/*
-	_out.InsertStartBlock("START_COMPONENT_TRANSFORM");
-	_out << mComponents.size();
-	for (auto& e : mComponents)
-	{
-		_out << e->GetComponentType();
-		_out << e->GetID();
-	}
-	_out.InsertEndBlock("END_COMPONENT_LIST");*/
-
-	//_out.InsertStartBlock("START_BEHAVIOUR_LIST");
-	//ForcePing(mBehaviours, Serialise, _out);
-	//_out.InsertEndBlock("END_BEHAVIOUR_LIST");
 }
 
 void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
@@ -238,34 +222,6 @@ void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 	mTransform.Unserialise(_in);
 	mTransform.SetOwner(this);
 	_in.ConsumeEndBlock();
-/*
-	unsigned int maxCount;
-	unsigned typeID;
-	uint16_t compID;
-	_in.ConsumeStartBlock();
-	_in >> maxCount;
-	for (unsigned int i = 0; i < maxCount; ++i)
-	{
-		_in >> typeID;
-		_in >> compID;
-	}
-	_in.ConsumeEndBlock();*/
-	
-
-//	ForcePing(mComponents, Unserialise, _out);
-	//while (!_in.EndOfInput())
-	//{
-	//	decltype(Utility::RemoveRef_t<decltype(mComponents[0])>::mID)        id;
-	//	decltype(Utility::RemoveRef_t<decltype(mComponents[0])>::mComponent) comp;
-	//	decltype(Utility::RemoveRef_t<decltype(mComponents[0])>::mSystem)    sys;
-
-	//	_in >> id >> comp >> sys;
-	//	mComponents.EmplaceBack(id, comp, sys);
-	//}
-
-	//_in.ConsumeEndBlock();
-	//ForcePing(mBehaviours, Unserialise, _in);
-	//_in.ConsumeEndBlock();
 }
 
 Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const

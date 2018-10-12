@@ -325,6 +325,8 @@ namespace Dystopia
 				GameObject* pObj = FindMouseObject();
 				if (pObj && !mGizmoHovered)
 				{
+					//Factory::SaveAsPrefab(*pObj);
+					//GameObject *p = Factory::LoadFromPrefab(pObj->GetName());
 					auto ed = GetMainEditor();
 					if (ed->IsCtrlDown())	ed->AddSelection(pObj->GetID());
 					else					ed->NewSelection(pObj->GetID());

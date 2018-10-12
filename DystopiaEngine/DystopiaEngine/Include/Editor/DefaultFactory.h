@@ -27,6 +27,9 @@ namespace Dystopia
 
 		GameObject* CreateCamera(const std::string& _name);
 
+		void SaveAsPrefab(GameObject& _obj);
+		GameObject* LoadFromPrefab(std::string _gameObjName);
+
 		// TODO: DELETE
 		GameObject* CreateStaticBox(const std::string& _name);
 		GameObject* CreateBox(const std::string& _name);

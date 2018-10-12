@@ -98,13 +98,13 @@ namespace Dystopia
 
 	EGUI::ePayloadTags File::DetermineTag(const std::string& _name)
 	{
-		if (_name.find(".png") == _name.length() - 4)
+		if (_name.find(g_PayloadPngEx) == _name.length() - 4)
 			return EGUI::ePayloadTags::PNG;
-		else if (_name.find(".bmp") == _name.length() - 4)
+		else if (_name.find(g_PayloadBmpEx) == _name.length() - 4)
 			return EGUI::ePayloadTags::BMP;
-		else if (_name.find(".cpp") == _name.length() - 4)
+		else if (_name.find(g_PayloadCppEx) == _name.length() - 4)
 			return EGUI::ePayloadTags::FILE;
-		else if (_name.find(".dobj") == _name.length() - 5)
+		else if (_name.find(g_PayloadPrefabEx) == _name.length() - 5)
 			return EGUI::ePayloadTags::PREFAB;
 
 		return EGUI::ePayloadTags::UNKNOWN;

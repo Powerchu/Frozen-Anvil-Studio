@@ -13,23 +13,31 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/DefaultFactory.h"
+#include "Editor/Payloads.h"
 
 #include "Component/Camera.h"
-#include "Component/ColliderList.h"
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
+#include "Component/ColliderList.h"
 
 #include "System/Driver/Driver.h"
-#include "System/Graphics/GraphicsSystem.h"
+#include "System/Scene/SceneSystem.h"
 #include "System/Camera/CameraSystem.h"
+#include "System/Graphics/GraphicsSystem.h"
+
+#include "Utility/GUID.h"
+#include "Utility/DebugAssert.h"
+#include "Object/GameObject.h"
+#include "IO/TextSerialiser.h"
+
+#include <fstream>
+#include <iostream>
 
 // TODO: DELETE
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Collision/CollisionSystem.h"
 
-#include "Object/GameObject.h"
-#include "Utility/GUID.h"
-
+static const std::string DEFAULT_PREFAB_FOLDER = "..\\DystopiaEngine\\Resource\\Prefab";
 namespace Dystopia
 {
 	namespace Factory
@@ -123,6 +131,43 @@ namespace Dystopia
 			auto c = static_cast<ComponentDonor<Circle>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
 			pObject->AddComponent(c, typename Collider::TAG{});
 			return pObject;
+		}
+	
+		void SaveAsPrefab(GameObject& _obj)
+		{
+			std::string fileName = DEFAULT_PREFAB_FOLDER + "\\" + _obj.GetName() + g_PayloadPrefabEx;
+			std::ofstream file{ fileName, std::ios::out };
+			if (!file.is_open())
+				__debugbreak();
+
+			auto toFile					= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_WRITE);
+			const auto& allComponents	= _obj.GetAllComponents();
+
+			_obj.Serialise(toFile);
+			toFile << allComponents.size();
+			for (const auto& elem : allComponents)
+			{
+				toFile.InsertStartBlock("Component");
+				elem->Serialise(toFile);
+				toFile.InsertEndBlock("Component End");
+			}
+		}
+
+		GameObject* LoadFromPrefab(std::string _gameObjName)
+		{
+			unsigned	num			= 0;
+			std::string fileName	= DEFAULT_PREFAB_FOLDER + "\\" + _gameObjName + g_PayloadPrefabEx;
+			auto		fromFile	= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_READ);
+			GameObject* pObj		= new GameObject{};
+
+			pObj->Unserialise(fromFile);
+			fromFile >> numComponents;
+			for (unsigned i = 0; i < num; i++)
+			{
+
+			}
+
+			return pObj;
 		}
 	}
 }
