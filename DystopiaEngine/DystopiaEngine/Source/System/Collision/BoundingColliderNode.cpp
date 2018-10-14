@@ -82,7 +82,7 @@ namespace Dystopia
 		}
 		else
 		{
-			if (mChildrenNode[0]->mBoundingCircle.GetRadiusGrowth(_circle) > mChildrenNode[1]->mBoundingCircle.GetRadiusGrowth(_circle))
+			if (mChildrenNode[0]->mBoundingCircle.GetRadiusGrowth(_circle) < mChildrenNode[1]->mBoundingCircle.GetRadiusGrowth(_circle))
 			{
 				mChildrenNode[0]->Insert(_pCollider, _circle);
 			}
