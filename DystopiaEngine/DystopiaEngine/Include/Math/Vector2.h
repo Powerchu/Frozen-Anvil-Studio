@@ -18,8 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/DebugAssert.h"
 #endif // Debug only includes
 
-#include "Math/MathUtility.h"
 #include "Math/Vector4.h"
+#include "Math/MathUtility.h"
 
 #include <cmath>
 

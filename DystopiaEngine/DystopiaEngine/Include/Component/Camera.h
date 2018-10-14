@@ -108,7 +108,7 @@ namespace Dystopia
 
 		Gfx::Viewport mViewport;
 
-		Transform* mTransform;
+		//Transform* mTransform;
 
 		Math::Mat4 mView;
 		Math::Mat4 mInvScreen;

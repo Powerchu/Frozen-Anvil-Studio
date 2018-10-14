@@ -238,9 +238,6 @@
     <ClCompile Include="Source\Math\Vector4.cpp">
       <Filter>Math\Vector</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Allocator\DefaultAlloc.cpp">
-      <Filter>Allocator</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
@@ -258,6 +255,9 @@
     </ClCompile>
     <ClCompile Include="Source\System\Input\XGamePad.cpp">
       <Filter>Game Engine\Systems\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Allocator\DefaultAlloc.cpp">
+      <Filter>Allocator\DefaultAllocator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -422,9 +422,6 @@
     </ClInclude>
     <ClInclude Include="Include\DataStructure\SharedPtr.h">
       <Filter>DataStructures\Pointers</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Allocator\DefaultAlloc.h">
-      <Filter>Allocator</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\MeshSystem.h">
       <Filter>Game Engine\SubSystems\Mesh</Filter>
@@ -663,9 +660,6 @@
     <ClInclude Include="Include\System\Collision\CollisionEvent.h">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Allocator\DefaultAllocImpl.h">
-      <Filter>Allocator</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\AdminCalls.h">
       <Filter>Editor\Admin</Filter>
     </ClInclude>
@@ -690,8 +684,41 @@
     <ClInclude Include="Include\Reflection\PPToSequence.h">
       <Filter>Reflection\Preprocessor</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Reflection\PPForEachSeq.h">
+    <ClInclude Include="Include\Reflection\PPPopFront.h">
       <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPRemove.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPConcat.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPExtract.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\MetaData.h">
+      <Filter>Reflection\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPForEach.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPUtils.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPStringify.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\ReflectedData.h">
+      <Filter>Reflection\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\DefaultAllocImpl.h">
+      <Filter>Allocator\DefaultAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\DefaultAlloc.h">
+      <Filter>Allocator\DefaultAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\ProxyAlloc.h">
+      <Filter>Allocator\ProxyAllocator</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\SystemSettings.h">
       <Filter>Editor\Editor Tabs\SystemSettings</Filter>
@@ -989,8 +1016,14 @@
     <Filter Include="Reflection\Preprocessor">
       <UniqueIdentifier>{af73041d-894d-4be1-9ac1-a597e6a69bf5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Reflection\MetaData.h">
-      <UniqueIdentifier>{a8ac820c-8de3-42f2-ba5c-2add3b365828}</UniqueIdentifier>
+    <Filter Include="Reflection\Metadata">
+      <UniqueIdentifier>{7b27b49c-13db-4784-8317-6eb1859a099c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Allocator\DefaultAllocator">
+      <UniqueIdentifier>{c72b2281-3bc2-4610-b2e5-183e13bc5bbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Allocator\ProxyAllocator">
+      <UniqueIdentifier>{4ffb5d1f-2ca0-4a43-917c-a699ba07a0da}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Editor Tabs\SystemSettings">
       <UniqueIdentifier>{f494a940-4551-4291-aa92-cff931764600}</UniqueIdentifier>

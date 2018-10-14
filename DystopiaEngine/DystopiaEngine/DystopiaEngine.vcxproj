@@ -115,6 +115,7 @@
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
     <ClInclude Include="Include\Allocator\DefaultAllocImpl.h" />
+    <ClInclude Include="Include\Allocator\ProxyAlloc.h" />
     <ClInclude Include="Include\Component\AABB.h" />
     <ClInclude Include="Include\Component\BehaviourList.h" />
     <ClInclude Include="Include\Component\CharacterController.h" />
@@ -130,9 +131,17 @@
     <ClInclude Include="Include\Editor\SpritePreviewer.h" />
     <ClInclude Include="Include\Editor\StyleScheme.h" />
     <ClInclude Include="Include\Math\MetaFloat.h" />
-    <ClInclude Include="Include\Reflection\PPForEachSeq.h" />
+    <ClInclude Include="Include\Reflection\MetaData.h" />
+    <ClInclude Include="Include\Reflection\PPConcat.h" />
+    <ClInclude Include="Include\Reflection\PPExtract.h" />
+    <ClInclude Include="Include\Reflection\PPStringify.h" />
+    <ClInclude Include="Include\Reflection\PPUtils.h" />
+    <ClInclude Include="Include\Reflection\PPForEach.h" />
+    <ClInclude Include="Include\Reflection\PPPopFront.h" />
+    <ClInclude Include="Include\Reflection\PPRemove.h" />
     <ClInclude Include="Include\Reflection\PPToSequence.h" />
     <ClInclude Include="Include\Reflection\PPVariadicSize.h" />
+    <ClInclude Include="Include\Reflection\ReflectedData.h" />
     <ClInclude Include="Include\Reflection\Reflection.h" />
     <ClInclude Include="Include\Editor\SystemSettings.h" />
     <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
