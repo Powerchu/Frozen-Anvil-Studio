@@ -150,16 +150,20 @@ namespace Dystopia
 
 		/*Get Array of collision event*/
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
+		CollisionEvent *  FindCollisionEvent(unsigned long long _ID) const;
 
 		// Settors
 		void SetColliding(bool _b);
 		void SetLocalPosition(Math::Point3D const & _point);
 		void ClearCollisionEvent();
-
+		void RemoveCollisionEvent(unsigned long long _OtherID);
+		void InformOtherComponents(bool _isColliding, CollisionEvent const & _Event);
 		// Gettors
 		virtual Math::Point3D GetGlobalPosition() const;
 		Math::Vec3D           GetOffSet()   const;
 		bool                  HasCollision() const;
+		bool				  HasCollisionWith(unsigned long long _ID) const;
+		bool				  HasCollisionWith(GameObject const * const _pointer) const;
 
 		AutoArray<Vertex> GetVertexBuffer() const;
 		AutoArray<short>  GetIndexBuffer()  const;

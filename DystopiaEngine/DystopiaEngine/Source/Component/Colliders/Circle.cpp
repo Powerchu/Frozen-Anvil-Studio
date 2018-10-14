@@ -134,7 +134,7 @@ namespace Dystopia
 		const auto this_pos        = this->GetGlobalPosition();
 		const auto positionDelta   =  other_pos - this_pos;
 		const float combinedRadius = this->GetRadius() + other_col.GetRadius();
-		
+		CollisionEvent col_info(GetOwner(), other_col.GetOwner());
 
 		// If the position delta is < combined radius, it is colliding
 		if (positionDelta.MagnitudeSqr() < combinedRadius*combinedRadius) // collided, getCollisionEvent
@@ -162,7 +162,7 @@ namespace Dystopia
 			mbColliding = true;
 			other_col.mbColliding = true;
 
-			CollisionEvent col_info(GetOwner(), other_col.GetOwner());
+
 			col_info.mEdgeNormal = normal;
 			//col_info.mEdgeVector = Math::Normalise(positionDelta);
 			col_info.mCollisionPoint      = contactPoint;
@@ -170,12 +170,13 @@ namespace Dystopia
 			col_info.mfRestitution        = DetermineRestitution(other_body);
 			col_info.mfStaticFrictionCof  = DetermineStaticFriction(other_body);
 			col_info.mfDynamicFrictionCof = DetermineKineticFriction(other_body);
-
+			InformOtherComponents(true, col_info);
 			marr_ContactSets.Insert(col_info);
 	
 			/*Return true for collision*/
 			return true;
 		}
+			InformOtherComponents(false, col_info);
 			return false;
 	}
 
@@ -200,6 +201,7 @@ namespace Dystopia
 		if (other_col.GetOwner()->GetComponent<RigidBody>())
 			other_body = other_col.GetOwner()->GetComponent<RigidBody>();
 
+		CollisionEvent newEvent(this->GetOwner(), other_col.GetOwner());
 		AutoArray<Edge> const & ConvexEdges = other_col.GetConvexEdges();
 		bool isInside = true;
 		/*Check for Circle inside Convex*/
@@ -241,7 +243,7 @@ namespace Dystopia
 				if (distance < GetRadius())
 				{
 					isInside = true;
-					CollisionEvent newEvent(this->GetOwner(), other_col.GetOwner());
+
 					newEvent.mdPeneDepth     = GetRadius() - distance;
 					newEvent.mEdgeNormal     = -elem.mNorm3.Normalise();
 					newEvent.mEdgeVector     = elem.mVec3;
@@ -258,7 +260,14 @@ namespace Dystopia
 			}
 
 		}
-
+		if (isInside)
+		{
+			InformOtherComponents(true, newEvent);
+		}
+		else
+		{
+			InformOtherComponents(false, newEvent);
+		}
 		return isInside;
 	}
 	bool Circle::isColliding(Convex * const & other_col)

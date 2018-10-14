@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Component/Collider.h"
 #include "Component/RigidBody.h"
+#include "Behaviour/Behaviour.h"
 #include "Object/GameObject.h"
 #include "System/Graphics/VertexDefs.h"
 #include "System/Graphics/MeshSystem.h"
@@ -107,14 +108,84 @@ namespace Dystopia
 		return marr_ContactSets;
 	}
 
+	CollisionEvent * Collider::FindCollisionEvent(unsigned long long _ID) const
+	{
+		for (auto & elem : marr_ContactSets)
+			if (elem == _ID)
+				return &elem;
+
+		return nullptr;
+	}
+
 	void Collider::ClearCollisionEvent()
 	{
 		marr_ContactSets.clear();
 	}
 
+	void Collider::RemoveCollisionEvent(unsigned long long _OtherID)
+	{
+		auto start = marr_ContactSets.begin();
+		auto end   = marr_ContactSets.end();
+		while (start != end)
+		{
+			if (*start == _OtherID)
+			{
+				marr_ContactSets.Remove(start);
+				return;
+			}
+		}
+	}
+
+	void Collider::InformOtherComponents(bool _isColliding, CollisionEvent const & _Event)
+	{
+		if (_isColliding)
+		{
+			if (auto * ptr = FindCollisionEvent(_Event.mOtherID))
+			{
+				auto & BehaviourList = GetOwner()->GetAllBehaviours();
+				for (auto & elem : BehaviourList)
+					elem->OnCollisionStay(_Event);
+				*ptr = _Event;
+			}
+			else
+			{
+				auto & BehaviourList = GetOwner()->GetAllBehaviours();
+				for (auto & elem : BehaviourList)
+					elem->OnCollisionEnter(_Event);
+				marr_ContactSets.push_back(_Event);
+			}
+		}
+		else
+		{
+			if (FindCollisionEvent(_Event.mOtherID))
+			{
+				auto & BehaviourList = GetOwner()->GetAllBehaviours();
+				for (auto & elem : BehaviourList)
+					elem->OnCollisionExit(_Event);
+				RemoveCollisionEvent(_Event.mOtherID);
+			}
+		}
+	}
+
 	bool Collider::HasCollision() const
 	{
 		return mbColliding;
+	}
+
+	bool Collider::HasCollisionWith(unsigned long long _ID) const
+	{
+		for (auto const & elem : marr_ContactSets)
+			if (elem == _ID)
+				return true;
+		return false;
+	}
+
+	bool Collider::HasCollisionWith(GameObject const * const _pointer) const
+	{
+		for (auto const & elem : marr_ContactSets)
+			if (elem == _pointer)
+				return true;
+		return false;
 	}
 
 	void Collider::SetColliding(bool _b)

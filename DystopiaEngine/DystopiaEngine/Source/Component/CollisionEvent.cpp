@@ -11,6 +11,7 @@ Dystopia::CollisionEvent::CollisionEvent(GameObject* _Self, GameObject * _Target
 	, mfRestitution(0.0F)
 	, mfStaticFrictionCof(0.5F)
 	, mfDynamicFrictionCof(0.7F)
+	, mOtherID{ _Target->GetID()}
 {
 
 }
@@ -132,4 +133,19 @@ void Dystopia::CollisionEvent::ApplyPenetrationCorrection()
 	/*if (!bodyB->Get_IsStaticState())
 		bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);*/
 
+}
+
+bool Dystopia::CollisionEvent::operator==(CollisionEvent const & _rhs) const
+{
+	return operator==(_rhs.mCollidedWith) && operator==(_rhs.mOtherID);
+}
+
+bool Dystopia::CollisionEvent::operator==(unsigned long long _mCollidedWithID) const
+{
+	return mOtherID == _mCollidedWithID;
+}
+
+bool Dystopia::CollisionEvent::operator==(mpcGobj _pCollidedWith) const
+{
+	return mCollidedWith == _pCollidedWith;
 }

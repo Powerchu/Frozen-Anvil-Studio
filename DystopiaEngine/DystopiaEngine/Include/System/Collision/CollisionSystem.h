@@ -64,6 +64,8 @@ namespace Dystopia
 							Collider * const & _ColB) const;
 
 		AutoArray<Collider *> GetAllColliders() const;
+
+		void InformOtherComponents(bool _isColliding, Collider const * _ColA, Collider const * _ColB) const;
 	};
 }
 

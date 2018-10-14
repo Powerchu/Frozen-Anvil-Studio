@@ -7,7 +7,7 @@
 #include "System/Time/ScopedTimer.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
-
+#include "Behaviour/Behaviour.h"
 #include <utility>
 #include <map>
 #include "System/Graphics/Shader.h"
@@ -85,9 +85,9 @@ namespace Dystopia
 			conv.Update(_dt);
 		}
 
-		using CollisionTable = std::pair<eColliderType, eColliderType>;
+		using CollisionTable        = std::pair<eColliderType, eColliderType>;
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
-		using CollisionTableMap = std::map < CollisionTable, fpCollisionResolution>;
+		using CollisionTableMap     = std::map < CollisionTable, fpCollisionResolution>;
 
 		static CollisionTableMap CollisionFuncTable = []()->CollisionTableMap
 		{
@@ -112,7 +112,7 @@ namespace Dystopia
 		{
 			if (elem.GetOwner())
 			{
-				elem.ClearCollisionEvent(); //clear collision table
+				//elem.ClearCollisionEvent(); //clear collision table
 				//auto const & GobjPoint = elem.GetOwner()->GetComponent<Transform>()->GetPosition();
 			    //Math::Matrix3D gobjMatrix = Math::Translate(GobjPoint.x, GobjPoint.y, GobjPoint.z) * elem.GetOwner()->GetComponent<Transform>()->GetRotation().Matrix();
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
@@ -126,7 +126,7 @@ namespace Dystopia
 		{
 			if (elem.GetOwner())
 			{
-				elem.ClearCollisionEvent(); //clear collision table
+				//elem.ClearCollisionEvent(); //clear collision table
 				//auto const & GobjPoint =  elem.GetOwner()->GetComponent<Transform>()->GetPosition();
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
@@ -139,7 +139,7 @@ namespace Dystopia
 		{
 			if (elem.GetOwner())
 			{
-				elem.ClearCollisionEvent(); //clear collision table
+				//elem.ClearCollisionEvent(); //clear collision table
 				//auto const   & GobjPoint = elem.GetOwner()->GetComponent<Transform>()->GetPosition();
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
@@ -168,7 +168,7 @@ namespace Dystopia
 								if (key.first == pair_key)
 								{
 									(this->*key.second)(bodyA, bodyB);
-									bodyB->SetColliding(bodyB->Collider::HasCollision());
+									//bodyB->SetColliding(bodyB->Collider::HasCollision());
 									bodyA->SetColliding(bodyA->Collider::HasCollision());
 									break;
 								}
@@ -183,7 +183,7 @@ namespace Dystopia
 							if (key.first == pair_key)
 							{
 								(this->*key.second)(bodyA, bodyB);
-								bodyB->SetColliding(bodyB->Collider::HasCollision());
+								//bodyB->SetColliding(bodyB->Collider::HasCollision());
 								bodyA->SetColliding(bodyA->Collider::HasCollision());
 								break;
 							}
@@ -303,6 +303,11 @@ namespace Dystopia
 			ToRet.push_back(&elem);
 		}
 		return Utility::Move(ToRet);
+	}
+
+	void CollisionSystem::InformOtherComponents(bool _isColliding, Collider const * _ColA, Collider const * _ColB) const
+	{
+
 	}
 
 	CollisionSystem::CollisionSystem()
