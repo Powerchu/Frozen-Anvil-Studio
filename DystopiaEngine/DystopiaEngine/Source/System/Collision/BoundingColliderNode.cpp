@@ -3,7 +3,12 @@
 namespace Dystopia
 {
 	BoundingColliderNode::BoundingColliderNode()
-		:mBoundingCircle{}, mCollider{nullptr}, mChildrenNode{{nullptr}}
+		:mBoundingCircle{}, mCollider{nullptr}, mChildrenNode{{nullptr}}, mParent{nullptr}
+	{
+	}
+
+	BoundingColliderNode::BoundingColliderNode(Collider * _MyCollider, BroadPhaseCircle _Circle, BoundingColliderNode * _parent)
+		: mBoundingCircle{ _Circle }, mCollider{ _MyCollider }, mChildrenNode{ {nullptr} }, mParent{ _parent }
 	{
 	}
 
@@ -63,6 +68,55 @@ namespace Dystopia
 
 	void BoundingColliderNode::Insert(Collider* _pCollider, BroadPhaseCircle const& _circle)
 	{
+		/*If current node is leaf, spawn 2 child and assign the new collider to child 2*/
+		if (isLeaf())
+		{
+			/*First Leaf will be current Node*/
+			mChildrenNode[0] = new BoundingColliderNode{ mCollider, mBoundingCircle, this };
+			/*Second Leaf will be new Node*/
+			mChildrenNode[1] = new BoundingColliderNode{ _pCollider, _circle, this};
+			/*Remove Collider because this node is now a branch*/
+			mCollider        = nullptr;
+			/*Recalculate this Node Bounding Circle*/
+			mBoundingCircle  = BroadPhaseCircle{_circle, mBoundingCircle};
+		}
+		else
+		{
+			if (mChildrenNode[0]->mBoundingCircle.GetRadiusGrowth(_circle) > mChildrenNode[1]->mBoundingCircle.GetRadiusGrowth(_circle))
+			{
+				mChildrenNode[0]->Insert(_pCollider, _circle);
+			}
+			else
+			{
+				mChildrenNode[1]->Insert(_pCollider, _circle);
+			}
+		}
+	}
+	BoundingColliderNode::~BoundingColliderNode()
+	{
+		if (mParent)
+		{
+			/*Make Parent be the same as sibling since this Node and all children will be dead*/
+			auto * Sibling = mParent->mChildrenNode[0] == this ? mParent->mChildrenNode[1] : mParent->mChildrenNode[0];
+			/*Assign parent Bounding Circle to sibling circle*/
+			mParent->mBoundingCircle = Sibling->mBoundingCircle;
+			/*Assign parent's children to sibling children*/
+			for (unsigned i = 0; i < 2; ++i)
+				mParent->mChildrenNode[i] = Sibling->mChildrenNode[i];
+			/*Assign parent collider to Sibling collider*/
+			mParent->mCollider = Sibling->mCollider;
 
+			/*Remove all pointers from Sibling copy to prevent the pointers from being deleted*/
+			Sibling->mChildrenNode[0] = Sibling->mChildrenNode[1] = nullptr;
+			Sibling->mParent          = nullptr;
+			Sibling->mCollider        = nullptr;
+
+			delete Sibling;
+		}
+		for (auto ptr : mChildrenNode)
+		{
+			ptr->mParent = nullptr;
+			delete ptr;
+		}
 	}
 }

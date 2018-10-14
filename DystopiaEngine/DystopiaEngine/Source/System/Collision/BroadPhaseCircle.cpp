@@ -48,3 +48,8 @@ float Dystopia::BroadPhaseCircle::GetRadius() const
 {
 	return mRadius;
 }
+
+float Dystopia::BroadPhaseCircle::GetRadiusGrowth(BroadPhaseCircle _other) const
+{
+	return BroadPhaseCircle{ *this,_other }.GetRadius() - mRadius;
+}

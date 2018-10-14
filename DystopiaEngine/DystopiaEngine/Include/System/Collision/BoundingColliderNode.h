@@ -17,6 +17,7 @@ namespace Dystopia
 	struct BoundingColliderNode
 	{
 		BoundingColliderNode();
+		BoundingColliderNode(Collider * _MyCollider, BroadPhaseCircle _Circle, BoundingColliderNode * _parent);
 		unsigned GetNumPotentialContact(unsigned _limit, PotentialContacts * _pPotentialContacts) const;
 		unsigned GetPotentialContactWith(BoundingColliderNode * _other,
 			                             PotentialContacts    * _pPotentialContacts,
@@ -28,8 +29,12 @@ namespace Dystopia
 
 		void     Insert(Collider * _pCollider, BroadPhaseCircle const & _circle);
 
+
+		~BoundingColliderNode();
+
 	private:
 		BoundingColliderNode * mChildrenNode[2];
+		BoundingColliderNode * mParent;
 		BroadPhaseCircle       mBoundingCircle;
 		Collider             * mCollider;
 	};

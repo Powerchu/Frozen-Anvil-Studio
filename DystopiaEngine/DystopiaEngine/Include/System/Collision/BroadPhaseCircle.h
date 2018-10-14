@@ -19,6 +19,7 @@ namespace Dystopia
 		bool isOverlapping(BroadPhaseCircle const &_rhs) const;
 
 		float GetRadius() const;
+		float GetRadiusGrowth(BroadPhaseCircle) const;
 		Math::Point3D GetOrigin() const;
 
 	private:
