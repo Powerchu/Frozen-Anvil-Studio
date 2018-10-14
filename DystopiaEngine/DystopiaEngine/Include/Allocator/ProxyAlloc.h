@@ -91,7 +91,7 @@ template <typename A>
 
 		for (auto& e : mData)
 		{
-			auto data_left = reinterpret_cast<uintptr_t>(e.mPointer) - sizeof(A::METADATA_SZ);
+			auto data_left = reinterpret_cast<uintptr_t>(e.mPointer) - A::METADATA_SZ;
 			auto data_right = reinterpret_cast<uintptr_t>(e.mPointer) + e.mReqSz;
 
 			if (right < data_left) continue;
