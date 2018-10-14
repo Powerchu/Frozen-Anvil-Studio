@@ -161,7 +161,7 @@ namespace Dystopia
 			GameObject* pObj		= new GameObject{};
 
 			pObj->Unserialise(fromFile);
-			fromFile >> numComponents;
+			fromFile >> num;
 			for (unsigned i = 0; i < num; i++)
 			{
 

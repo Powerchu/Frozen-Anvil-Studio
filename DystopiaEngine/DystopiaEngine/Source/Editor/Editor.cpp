@@ -446,9 +446,7 @@ namespace Dystopia
 	{
 		mpClipBoard->ClearData();
 		for (const auto& o : mArrSelectedObj)
-		{
 			mpClipBoard->InsertData(eCLIP_GAME_OBJECT, reinterpret_cast<void*>(o), sizeof(GameObject));
-		}
 	}
 
 	void Editor::EditorCut()
@@ -462,24 +460,22 @@ namespace Dystopia
 
 		AutoArray<GameObject*> mToInsert{ toPaste.size() };
 		auto& existingObj = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
-		int replicas = 0;
 		ClearSelections();
 		for (auto& elem : toPaste)
 		{
 			GameObject *pDup = static_cast<GameObject*>(elem)->Duplicate();
-
 			for (const auto& o : existingObj)
+			{
 				if (o.GetName() == pDup->GetName())
-					replicas++;
-
-			if (replicas > 0)
-				pDup->SetName(pDup->GetName() + "_Clone");
-
+				{
+					pDup->SetName(pDup->GetName() + "_Clone");
+					break;
+				}
+			}
 			pDup->Identify();
 			pDup->Init();
 			mToInsert.Insert(pDup);
 			AddSelection(pDup->GetID());
-			replicas = 0;
 		}
 		mpComdHandler->InvokeCommandInsert(mToInsert, mpSceneSystem->GetCurrentScene());
 	}
@@ -913,15 +909,18 @@ namespace Dystopia
 		{
 			temp = mpSceneSystem->GetActiveScene().FindGameObject(id);
 			if (temp)
-			{
 				mArrSelectedObj.Insert(temp);
-			}
 		}
 	}
 
 	bool Editor::IsCtrlDown(void) const
 	{
 		return mCtrlKey;
+	}
+
+	Clipboard& Editor::GetClipboard(void)
+	{
+		return *mpClipBoard;
 	}
 }
 

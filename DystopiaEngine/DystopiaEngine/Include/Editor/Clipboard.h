@@ -26,9 +26,8 @@ namespace Dystopia
 		eCLIP_COMPONENTS
 	};
 
-	class ClipData
+	struct ClipData
 	{
-	public:
 		ClipData(eClipDataTypes _dataType, void* _data, const size_t _dataSize);
 		~ClipData(void);
 
@@ -38,7 +37,6 @@ namespace Dystopia
 
 		bool operator==(const ClipData& _rhs) const;
 
-	private:
 		void			*mpData;
 		size_t			mDataSize;
 		eClipDataTypes	mDataType;
@@ -57,6 +55,8 @@ namespace Dystopia
 		void InsertSelection(const uint64_t & _uniqueID);
 		void RemoveSelection(const uint64_t & _uniqueID);
 		void InsertData(eClipDataTypes, void* _data, const size_t _dataSize);
+
+		AutoArray<ClipData>& GetAllClipData(void);
 
 		AutoArray<void*> RetrieveDatas(eClipDataTypes, const size_t& _dataSize) const;
 		const AutoArray<uint64_t>& RetrieveSelections(void) const;

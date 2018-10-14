@@ -95,6 +95,7 @@ namespace Dystopia
 
 		/* Reattach stuff */
 		void			ReAttachComponent(Component*);
+		Clipboard&		GetClipboard(void);
 
 	private:
 		Editor(void);
