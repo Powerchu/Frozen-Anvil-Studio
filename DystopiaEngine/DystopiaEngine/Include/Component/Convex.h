@@ -126,6 +126,7 @@ namespace Dystopia
 
 		AutoArray<Edge> GetConvexEdges() const;
 
+		virtual BroadPhaseCircle GenerateBoardPhaseCircle() override;
 	protected:
 
 		CollisionEvent GetCollisionEvent(AutoArray<SimplexVertex> _Simplex,

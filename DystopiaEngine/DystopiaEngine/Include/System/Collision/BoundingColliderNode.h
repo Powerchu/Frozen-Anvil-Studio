@@ -7,10 +7,11 @@
 
 namespace Dystopia
 {
-	struct Collider;
+	class Collider;
 
 	struct PotentialContacts
 	{
+		PotentialContacts() : mContacts{ nullptr } {}
 		Collider * mContacts[2];
 	};
 
@@ -29,7 +30,9 @@ namespace Dystopia
 
 		void     Insert(Collider * _pCollider, BroadPhaseCircle const & _circle);
 
+		void     UpdateNodes();
 
+		void     RecalculateBoundingCircle();
 		~BoundingColliderNode();
 
 	private:

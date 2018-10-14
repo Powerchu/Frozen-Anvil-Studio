@@ -1,5 +1,5 @@
 #include "System/Collision/BoundingColliderNode.h"
-
+#include "Component/Collider.h"
 namespace Dystopia
 {
 	BoundingColliderNode::BoundingColliderNode()
@@ -23,7 +23,7 @@ namespace Dystopia
 		                                                   unsigned              _limit) const
 	{
 		/*If current Node is not overlapping the other node, there is no collision*/
-		if (isOverlapping(*_other) || _limit == 0) return 0;
+		if (!isOverlapping(*_other) || _limit == 0) return 0;
 		/*If Both Nodes are Leaf, there is a potential collision*/
 		else if (isLeaf() && _other->isLeaf())
 		{
@@ -50,7 +50,7 @@ namespace Dystopia
 			unsigned count = GetPotentialContactWith(_other->mChildrenNode[0], _pPotentialContacts, _limit);
 
 			if (_limit > count)
-				return count + _other->mChildrenNode[1]->GetPotentialContactWith(_other, _pPotentialContacts + count, _limit - count);
+				return count + GetPotentialContactWith(_other->mChildrenNode[1], _pPotentialContacts + count, _limit - count);
 			else
 				return count;
 		}
@@ -80,6 +80,11 @@ namespace Dystopia
 			/*Recalculate this Node Bounding Circle*/
 			mBoundingCircle  = BroadPhaseCircle{_circle, mBoundingCircle};
 		}
+		else if (!mCollider && (mChildrenNode[0] == nullptr && mChildrenNode[1] == nullptr))
+		{
+			mCollider       = _pCollider;
+			mBoundingCircle = _circle;
+		}
 		else
 		{
 			if (mChildrenNode[0]->mBoundingCircle.GetRadiusGrowth(_circle) < mChildrenNode[1]->mBoundingCircle.GetRadiusGrowth(_circle))
@@ -91,6 +96,38 @@ namespace Dystopia
 				mChildrenNode[1]->Insert(_pCollider, _circle);
 			}
 		}
+	}
+	void BoundingColliderNode::UpdateNodes()
+	{
+		if (isLeaf())
+		{
+			mBoundingCircle = mCollider->GetBroadPhaseCircle();
+			if (mParent)
+				mParent->RecalculateBoundingCircle();
+		}
+		else
+		{
+			for (auto & elem : mChildrenNode)
+				elem->UpdateNodes();
+		}
+	}
+	void BoundingColliderNode::RecalculateBoundingCircle()
+	{
+		if (!isLeaf())
+		{
+			if (mChildrenNode[0] == nullptr || mChildrenNode[1] == nullptr)
+			{
+				auto * ValidChildren = mChildrenNode[0] == nullptr ? mChildrenNode[1] : mChildrenNode[0];
+				mBoundingCircle = BroadPhaseCircle{ValidChildren->mBoundingCircle.GetRadius(),ValidChildren->mBoundingCircle.GetOrigin()};
+			}
+			else
+			{
+				mBoundingCircle = BroadPhaseCircle{ mChildrenNode[0]->mBoundingCircle, mChildrenNode[1]->mBoundingCircle };
+			}
+		}
+
+		if (mParent)
+			mParent->RecalculateBoundingCircle();
 	}
 	BoundingColliderNode::~BoundingColliderNode()
 	{
@@ -115,6 +152,8 @@ namespace Dystopia
 		}
 		for (auto ptr : mChildrenNode)
 		{
+			if(ptr == nullptr)
+				continue;
 			ptr->mParent = nullptr;
 			delete ptr;
 		}

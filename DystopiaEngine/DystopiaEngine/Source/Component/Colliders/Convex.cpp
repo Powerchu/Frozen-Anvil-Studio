@@ -362,6 +362,19 @@ namespace Dystopia
 		return ToRet;
 	}
 
+	BroadPhaseCircle Convex::GenerateBoardPhaseCircle()
+	{
+		float LongestRadius = 0;
+		Math::Point3D MyGlobalCentre = this->GetGlobalPosition();
+		for (auto & elem : mVertices)
+		{
+			Math::Vec3D v  = elem.mPosition - mPosition;
+			float distance = (this->GetWorldMatrix() * v).Magnitude();
+			LongestRadius = distance > LongestRadius ? distance : LongestRadius;
+		}
+		return BroadPhaseCircle{ LongestRadius, MyGlobalCentre };
+	}
+
 	void Convex::EditorUI() noexcept
 	{
 		eAttachedBodyEmptyBox();

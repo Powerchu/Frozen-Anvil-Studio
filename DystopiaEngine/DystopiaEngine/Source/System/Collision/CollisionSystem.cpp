@@ -75,8 +75,10 @@ namespace Dystopia
 
 	void CollisionSystem::FixedUpdate(float _dt)
 	{
-		ScopedTimer<ProfilerAction> timeKeeper{ "Collision System", "Update" };
 
+		ScopedTimer<ProfilerAction> timeKeeper{ "Collision System", "Update" };
+		BoundingColliderNode     mCollisionTree;
+		static PotentialContacts ArrayContacts[1024]{};
 		for (auto& conv : ComponentDonor<Convex>::mComponents)
 		{
 #if EDITOR
@@ -119,6 +121,7 @@ namespace Dystopia
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
+				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 		}
 
@@ -132,6 +135,7 @@ namespace Dystopia
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
+				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 		}
 
@@ -145,9 +149,53 @@ namespace Dystopia
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
+				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 		}
 
+		unsigned ContactCount = mCollisionTree.GetNumPotentialContact(1024, ArrayContacts);
+		for (unsigned i = 0; i < ContactCount; ++i)
+		{
+			if (nullptr == ArrayContacts[i].mContacts[0] || nullptr == ArrayContacts[i].mContacts[1]) continue;
+			Collider * bodyA = ArrayContacts[i].mContacts[0];
+			Collider * bodyB = ArrayContacts[i].mContacts[1];
+			if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
+			{
+				if (bodyA->GetOwner()->GetComponent<RigidBody>() && bodyB->GetOwner()->GetComponent<RigidBody>())
+				{
+					if (!bodyA->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState() ||
+						!bodyB->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState())
+					{
+						const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+						for (auto & key : CollisionFuncTable)
+						{
+							if (key.first == pair_key)
+							{
+								(this->*key.second)(bodyA, bodyB);
+								//bodyB->SetColliding(bodyB->Collider::HasCollision());
+								bodyA->SetColliding(bodyA->Collider::HasCollision());
+								break;
+							}
+						}
+					}
+				}
+				else
+				{
+					const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+					for (auto & key : CollisionFuncTable)
+					{
+						if (key.first == pair_key)
+						{
+							(this->*key.second)(bodyA, bodyB);
+							//bodyB->SetColliding(bodyB->Collider::HasCollision());
+							bodyA->SetColliding(bodyA->Collider::HasCollision());
+							break;
+						}
+					}
+				}
+			}
+		}
+		return;
 		for (auto & bodyA : mColliders)
 		{
 			if (nullptr == bodyA->GetOwner()) continue;
@@ -196,12 +244,7 @@ namespace Dystopia
 
 	void CollisionSystem::Shutdown()
 	{
-		/*
-		for (Collider * const & elem : mArrOfCollider)
-		{
-		delete elem;
-		}
-		*/
+
 	}
 
 	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const
@@ -303,11 +346,6 @@ namespace Dystopia
 			ToRet.push_back(&elem);
 		}
 		return Utility::Move(ToRet);
-	}
-
-	void CollisionSystem::InformOtherComponents(bool _isColliding, Collider const * _ColA, Collider const * _ColB) const
-	{
-
 	}
 
 	CollisionSystem::CollisionSystem()

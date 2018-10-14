@@ -5,6 +5,7 @@
 #include "DataStructure/AutoArray.h"
 #include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
+#include "System/Collision/BoundingColliderNode.h"
 
 namespace Dystopia
 {
@@ -65,7 +66,8 @@ namespace Dystopia
 
 		AutoArray<Collider *> GetAllColliders() const;
 
-		void InformOtherComponents(bool _isColliding, Collider const * _ColA, Collider const * _ColB) const;
+	private:
+
 	};
 }
 

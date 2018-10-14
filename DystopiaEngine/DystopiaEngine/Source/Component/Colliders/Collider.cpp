@@ -24,12 +24,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	Collider::Collider()
-		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}, mPosition{ Math::MakePoint3D(0.f,0.f,0.f) }, mbIsTrigger(false), mScale{1,1,1}
+		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}, mPosition{ Math::MakePoint3D(0.f,0.f,0.f) }, mbIsTrigger(false), mScale{1,1,1}, mBoundingCircle{ GenerateBoardPhaseCircle()}
 	{
 		
 	}
 	Collider::Collider(const Math::Point3D & _offset, const Math::Point3D & _origin)
-		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }, mPosition{_origin}, mbIsTrigger(false), mScale{ 1,1,1 }
+		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }, mPosition{_origin}, mbIsTrigger(false), mScale{ 1,1,1 }, mBoundingCircle{ GenerateBoardPhaseCircle() }
 	{
 
 	}
@@ -188,6 +188,11 @@ namespace Dystopia
 		return false;
 	}
 
+	BroadPhaseCircle Collider::GetBroadPhaseCircle() const
+	{
+		return mBoundingCircle;
+	}
+
 	void Collider::SetColliding(bool _b)
 	{
 		mbColliding = _b;
@@ -196,6 +201,7 @@ namespace Dystopia
 	void Collider::SetLocalPosition(Math::Point3D const & _point)
 	{
 		mPosition = _point;
+		mBoundingCircle = GenerateBoardPhaseCircle();
 	}
 
 	Math::Point3D Collider::GetGlobalPosition() const
@@ -239,11 +245,22 @@ namespace Dystopia
 		return mOwnerTransformation;
 	}
 
+	Math::Matrix3D Collider::GetWorldMatrix() const
+	{
+		return mOwnerTransformation * Math::Translate(mv3Offset.x, mv3Offset.y, mv3Offset.z) * GetTransformationMatrix();
+	}
+
 	void Collider::SetOwnerTransform(Math::Matrix3D const& _ownerMatrix)
 	{
 		mOwnerTransformation = _ownerMatrix;
+		mBoundingCircle = GenerateBoardPhaseCircle();
 	}
 
+
+	BroadPhaseCircle Collider::GenerateBoardPhaseCircle()
+	{
+		return BroadPhaseCircle();
+	}
 
 	Collider::~Collider()
 	{

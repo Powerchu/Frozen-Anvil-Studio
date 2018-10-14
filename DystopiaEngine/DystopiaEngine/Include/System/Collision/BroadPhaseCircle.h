@@ -3,9 +3,11 @@
 #define BOARD_PHASE_CIRLCE_H
 
 #include "Math/MathLib.h"
+#include "Globals.h"
+
 namespace Dystopia
 {
-	struct BroadPhaseCircle
+	struct _DLL_EXPORT BroadPhaseCircle
 	{
 		/*Default Constructor*/
 		BroadPhaseCircle() {}
