@@ -247,6 +247,15 @@
     <ClCompile Include="Source\Editor\AdminCalls.cpp">
       <Filter>Editor\Admin</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\ProjectSettings.cpp">
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\SpritePreviewer.cpp">
+      <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Input\XGamePad.cpp">
+      <Filter>Game Engine\Systems\Input</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp">
       <Filter>Allocator\DefaultAllocator</Filter>
     </ClCompile>
@@ -654,6 +663,15 @@
     <ClInclude Include="Include\Editor\AdminCalls.h">
       <Filter>Editor\Admin</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\ProjectSettings.h">
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\SpritePreviewer.h">
+      <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Input\XGamePad.h">
+      <Filter>Game Engine\Systems\Input</Filter>
+    </ClInclude>
     <ClInclude Include="Include\Math\MetaFloat.h">
       <Filter>Math\MetaMath</Filter>
     </ClInclude>
@@ -701,6 +719,9 @@
     </ClInclude>
     <ClInclude Include="Include\Allocator\ProxyAlloc.h">
       <Filter>Allocator\ProxyAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\SystemSettings.h">
+      <Filter>Editor\Editor Tabs\SystemSettings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -980,6 +1001,12 @@
     <Filter Include="Editor\Admin">
       <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Editor\Editor Tabs\Project Settings">
+      <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Sprite Previewer">
+      <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Math\MetaMath">
       <UniqueIdentifier>{08413c81-cbde-4575-842c-fc63e39a282d}</UniqueIdentifier>
     </Filter>
@@ -997,6 +1024,12 @@
     </Filter>
     <Filter Include="Allocator\ProxyAllocator">
       <UniqueIdentifier>{4ffb5d1f-2ca0-4a43-917c-a699ba07a0da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\SystemSettings">
+      <UniqueIdentifier>{f494a940-4551-4291-aa92-cff931764600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\TagSystem">
+      <UniqueIdentifier>{717afecd-7ef3-4406-b046-fe7b2ed2f840}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

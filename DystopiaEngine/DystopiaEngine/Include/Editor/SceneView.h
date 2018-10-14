@@ -21,7 +21,7 @@ namespace Dystopia
 	class GraphicsSystem;
 	class GameObject;
 	class Camera;
-	class EditorInput;
+	class Texture;
 	struct File;
 
 	class SceneView : public EditorTab
@@ -60,16 +60,15 @@ namespace Dystopia
 
 		bool			mDragging;
 		bool			mAmFocused;
-		float			mDelta;
 		float			mSensitivity;
 		float			mMoveSens;
 		eZoom			mToZoom;
 		std::string		mLabel;
 		GraphicsSystem	*mpGfxSys;
 		GameObject		*mpSceneCamera;
-		EditorInput		*mpEditorInput;
 		Math::Vec2		mImgSize;
 		Math::Vec2		mMoveVec;
+		Math::Vec2		mImgPos;
 		
 		void			ScrollIn();
 		void			ScrollOut();
@@ -83,6 +82,10 @@ namespace Dystopia
 		void			AcceptTexture(File *t);
 		Math::Pt3D		GetWorldClickPos(const Camera * const _cam) const;
 		Math::Vec2		FindMouseVector();
+		void			AdjustImageSize(Texture*);
+		void			AdjustDisplayPos(void);
+		Math::Vec2		GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY);
+		Math::Vec2		GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY);
 		Camera*			GetCamera();
 	};
 

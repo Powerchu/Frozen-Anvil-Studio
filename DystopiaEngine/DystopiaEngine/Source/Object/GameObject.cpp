@@ -97,20 +97,14 @@ void Dystopia::GameObject::Load(void)
 	ForcePing(mBehaviours, Load);
 }
 
+void Dystopia::GameObject::Awake(void)
+{
+
+}
+
 void Dystopia::GameObject::Init(void)
 {
-	mTransform.SetOwner(this);
-	for (auto c : mComponents)
-	{
-		c->SetOwner(this);
-		c->Init();
-	}
-	for (auto b : mBehaviours)
-	{
-		b->SetOwner(this);
-		b->Init();
-	}
-//	ForcePing(mComponents, Init);
+	ForcePing(mComponents, Init);
 	ForcePing(mBehaviours, Init);
 }
 
@@ -280,21 +274,17 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	p->mnID = GUIDGenerator::GetUniqueID();
 	p->mnFlags = mnFlags;
 	p->mName = mName;
-	p->mTransform.SetOwner(p);
+	p->mTransform = mTransform;
+
 	for (auto& c : mComponents)
 	{
-		auto t = c->Duplicate();
-		t->SetOwner(p);
-		t->Init();
-		p->mComponents.Insert(t);
+		p->mComponents.Insert(c->Duplicate());
 	}
 	for (auto& b : mBehaviours)
 	{
-		auto t = b->Duplicate();
-		t->SetOwner(p);
-		t->Init();
-		p->mBehaviours.Insert(t);
+		p->mBehaviours.Insert(b->Duplicate());
 	}
+
 	return p;
 }
 
@@ -316,6 +306,15 @@ std::string Dystopia::GameObject::GetName(void) const
 void Dystopia::GameObject::SetName(const std::string& _strName)
 {
 	mName = _strName;
+}
+
+void Dystopia::GameObject::Identify(void)
+{
+	mTransform.SetOwner(this);
+	for (auto c : mComponents)
+		c->SetOwner(this);
+	for (auto b : mBehaviours)
+		b->SetOwner(this);
 }
 
 Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)

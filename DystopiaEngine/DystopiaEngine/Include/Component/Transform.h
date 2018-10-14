@@ -78,6 +78,8 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 
+		Transform& operator=(const Transform& _rhs);
+
 	private:
 
 		bool mbChanged;

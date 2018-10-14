@@ -33,6 +33,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputSystem.h"
 
 #include "Utility/ComponentGUID.h"
+#include "Object/ObjectFlags.h"
+#include "Object/GameObject.h"
 
 #include <iostream>
 
@@ -80,6 +82,8 @@ namespace Dystopia
 
 	void Inspector::EditorUI()
 	{
+		auto& allObj = GetMainEditor()->GetSelectionObjects();
+		mpFocus = (allObj.size() == 1) ? *allObj.begin() : nullptr;
 		if (!mpFocus) return;
 
 		static constexpr Math::Vec2 btnSize{ 270, 20 };
@@ -120,10 +124,16 @@ namespace Dystopia
 				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
 				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
-			EGUI::Display::DropDownSelection("Tag", i, g_arr, 80);
+			if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))
+			{
+
+			}
 			EGUI::SameLine();
 			EGUI::ChangeAlignmentYOffset(0);
-			EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80);
+			if (EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80))
+			{
+
+			}
 			EGUI::ChangeAlignmentYOffset();
 		}
 		EGUI::EndChild();
@@ -174,16 +184,6 @@ namespace Dystopia
 	std::string Inspector::GetLabel() const
 	{
 		return mLabel;
-	}
-
-	void Inspector::SetFocus(GameObject& _rGameObj)
-	{
-		mpFocus = &_rGameObj;
-	}
-
-	void Inspector::RemoveFocus()
-	{
-		mpFocus = nullptr;
 	}
 
 	void Inspector::AddComponentButton(const Math::Vec2& _btnSize)

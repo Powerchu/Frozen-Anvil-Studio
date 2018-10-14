@@ -14,13 +14,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/RigidBody.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 #include "System/Logger/LoggerSystem.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
-#if EDITOR
 #include "IO/TextSerialiser.h"
+
+#if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
+#include "Editor/Editor.h"
 #endif 
 
 #include <cmath>
@@ -86,12 +89,12 @@ namespace Dystopia
 	void RigidBody::Init(void)
 	{
 		// Get Owner's Transform Component as pointer
-		if (nullptr == mpOwnerTransform && nullptr != GetOwner())
+		if (nullptr != GetOwner())
 		{
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
 			mOwnerIsActive = GetOwner()->IsActive();
-			mPosition = mpOwnerTransform->GetGlobalPosition();
+			mPrevPosition = mPosition = mpOwnerTransform->GetGlobalPosition();
 
 			mInverseOrientation = Math::Inverse(mOrientation);
 		}
@@ -160,17 +163,16 @@ namespace Dystopia
 		 *  Physics 2.0
 		 *  Verlet/Leapfrog method, 2nd order integration
 		 ********************************************************************/
-
 		//Store previous Position
-		mPrevPosition = mPosition = mpOwnerTransform->GetGlobalPosition();
-
-		//Determine the acceleration
-		mAcceleration = mCumulativeForce * mfInvMass;
+		mPrevPosition = mPosition = mpOwnerTransform->GetPosition();
 
 		if (mbHasGravity)
 		{
-			mAcceleration += Vec3D{0, mpPhysSys->mGravity*mfGravityScale,0};
+			mAcceleration = Vec3D{ 0, -mpPhysSys->mGravity*mfGravityScale,0 };
 		}
+
+		//Determine the acceleration
+		mAcceleration += mCumulativeForce * mfInvMass;
 
 		//Integrate the velocity
 		mLinearVelocity += mAcceleration * _dt;
@@ -180,8 +182,11 @@ namespace Dystopia
 		//Integrate the velocity
 		mLinearVelocity += (new_accel - mAcceleration) * 0.5f * _dt;
 
+		//Impulse Calculation
+		mLinearVelocity += mCurrImpulse * mfInvMass;
+
 		// Linear Damping (Drag)
-		mLinearVelocity *= std::pow(mfLinearDamping, _dt);
+		mLinearVelocity *= std::pow(1.0F-mfLinearDamping, _dt);
 
 		// Clamp to zero
 		if (std::abs(mLinearVelocity.x) < VEL_EPSILON)
@@ -203,8 +208,6 @@ namespace Dystopia
 
 		//*Reset Cumulative Force*/
 		ResetCumulative();
-		
-		
 	}
 
 	void RigidBody::CheckSleeping(float _dt)
@@ -234,8 +237,11 @@ namespace Dystopia
 		if (!mbIsStatic && mbIsAwake) // only update when body is not static
 		{		
 			// Update Position
-			mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F) * _dt;
+			//mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F)  * _dt;
+			//mPosition = mPosition - mPrevPosition + mAcceleration * _dt * _dt;
+			mPosition += mLinearVelocity * _dt;
 			P_TX->SetGlobalPosition(mPosition);
+			mPosition = P_TX->GetGlobalPosition();
 		}
 	}
 
@@ -264,7 +270,7 @@ namespace Dystopia
 	void RigidBody::Serialise(TextSerialiser & _out) const
 	{
 		_out.InsertStartBlock("RigidBody");
-		_out << GetOwner()->GetID();	// gObjID
+		Component::Serialise(_out);
 		_out << mfAngleDeg;				// Angle in degrees
 		_out << mfLinearDamping;		// Linear Drag
 		_out << mfAngularDrag;			// Angular Drag
@@ -285,7 +291,7 @@ namespace Dystopia
 	{
 		//int physicsType;
 		_in.ConsumeStartBlock();
-		_in >> mID;						// gObjID
+		Component::Unserialise(_in);
 		_in >> mfAngleDeg;				// Angle in degrees
 		_in >> mfLinearDamping;			// Linear Drag
 		_in >> mfAngularDrag;			// Angular Drag
@@ -303,12 +309,6 @@ namespace Dystopia
 
 		//mPhysicsType = static_cast<PhysicsType>(physicsType);
 
-		if (GameObject* owner =
-			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
-		{
-			owner->AddComponent(this, RigidBody::TAG{});
-			Init();
-		}
 	}
 
 	void RigidBody::DebugPrint()
@@ -374,14 +374,14 @@ namespace Dystopia
 		/*Add to the total Angular velocity of the object in this Update Frame*/
 		mAngularVelocity += angularVel;
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
-		mCumulativeForce += _force * 5000.0F;
+		mCumulativeForce += _force * 100.f;
 		mCumulativeTorque += (_point - mGlobalCentroid).Cross(_force);
 		mbIsAwake = true;
 	}
 
 	void RigidBody::AddForce(Math::Vec3D const & _force)
 	{
-		mCumulativeForce += _force * 5000.0F;
+		mCumulativeForce += _force * 100.f;
 		mbIsAwake = true;
 	}
 
@@ -392,28 +392,28 @@ namespace Dystopia
 
 	void RigidBody::AddImpulse(Vec3D const& _impul)
 	{
-		mCumulativeForce = _impul * 5000.0F;
+		mCurrImpulse += _impul * 100.f;
 		mbIsAwake = true;
-	}
-
-	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point)
-	{
-		AddForce(_impul, _point, P_TX->GetGlobalPosition());
-
 	}
 
 	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const &)
 	{
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
-		mCumulativeForce = _impul * 5000.0F;
+		mCurrImpulse += _impul * 100.f;
 		mCumulativeTorque = (_point - mGlobalCentroid).Cross(_impul);
 		mbIsAwake = true;
+	}
+
+	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point)
+	{
+		AddImpulse(_impul, _point, P_TX->GetGlobalPosition());
 	}
 
 	void RigidBody::ResetCumulative()
 	{
 		mCumulativeForce = { 0,0,0,0 };
 		mCumulativeTorque = { 0,0,0,0 };
+		mCurrImpulse = { 0,0,0,0 };
 	}
 
 	/****************************************************************
@@ -678,7 +678,7 @@ namespace Dystopia
 
 	void RigidBody::eLinearDragField()
 	{
-		switch (EGUI::Display::DragFloat("Linear Drag			 ", &mfLinearDamping, 0.01f, FLT_EPSILON, 1.0F))
+		switch (EGUI::Display::DragFloat("Linear Drag			 ", &mfLinearDamping, 0.01f, 0.0F, 1.0F))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();
@@ -706,7 +706,7 @@ namespace Dystopia
 
 	void RigidBody::eAngularDragField()
 	{
-		switch (EGUI::Display::DragFloat("Angular Drag			", &mfAngularDrag, 0.01f, FLT_EPSILON, 1.0F))
+		switch (EGUI::Display::DragFloat("Angular Drag			", &mfAngularDrag, 0.01f, 0.0F, 1.0F))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();
@@ -762,7 +762,7 @@ namespace Dystopia
 
 	void RigidBody::eStaticFrictionDragField()
 	{
-		switch (EGUI::Display::DragFloat("Static Friction		 ", &mfStaticFriction, 0.01f, 0.0f, 1.0f))
+		switch (EGUI::Display::DragFloat("Static Friction		 ", &mfStaticFriction, 0.01f, 0.0f, 2.0f))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();
@@ -790,7 +790,7 @@ namespace Dystopia
 
 	void RigidBody::eDynamicFrictionDragField()
 	{
-		switch (EGUI::Display::DragFloat("Dynamic Friction		", &mfDynamicFriction, 0.01f, 0.0f, 1.0f))
+		switch (EGUI::Display::DragFloat("Dynamic Friction		", &mfDynamicFriction, 0.01f, 0.0f, 2.0f))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();

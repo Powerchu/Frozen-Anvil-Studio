@@ -1,10 +1,19 @@
 [START_Scene]
-1,Dystopia_Default_Scene_Setup,[START_START_GO_DATA]
-18446744072484290560,1,Scene Camera,
+18446744072511553536,test,2,[START_START_GO_DATA]
+910164992,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.94148,0.94148,0.94148,0,0,0,0,0,0,1,
+1,1,1,0,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073642974208,1,GameObject,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,64,1,0,0,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -13,7 +22,7 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Camera]
-18446744072484290560,
+910166016,0,910164992,
 [END_Camera]
 
 [END_Component End]
@@ -27,8 +36,14 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-0,
+1,
 [END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+1035017728,0,18446744073642974208,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+[END_Convex_Collider]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]

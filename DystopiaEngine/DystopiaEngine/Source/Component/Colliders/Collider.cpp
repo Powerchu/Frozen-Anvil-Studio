@@ -44,17 +44,21 @@ namespace Dystopia
 			return;
 
 		auto * pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
-		/*Create Mesh*/
-		pMeshSys->StartMesh();
-
-		auto const & arr = GetVertexBuffer();
-		for (auto i : arr)
+		if (pMeshSys)
 		{
-			pMeshSys->AddVertex(i.x, i.y, i.z);
-		}
+			/*Create Mesh*/
+			pMeshSys->StartMesh();
 
-		SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
-		pMeshSys->EndMesh();
+			auto const & arr = GetVertexBuffer();
+			for (auto i : arr)
+			{
+				pMeshSys->AddVertex(i.x, i.y, i.z);
+			}
+
+			SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
+			pMeshSys->EndMesh();
+		}
+		
 	}
 
 	void Collider::OnDestroy(void)

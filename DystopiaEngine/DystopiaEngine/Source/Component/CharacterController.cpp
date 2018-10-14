@@ -1,5 +1,6 @@
 #include "Component/CharacterController.h"
 #include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 #include "Component/RigidBody.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Input/InputSystem.h"
@@ -7,15 +8,20 @@
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
 #include "System/Base/ComponentDonor.h"
-#if EDITOR
 #include "IO/TextSerialiser.h"
+#if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
+#include "Editor/Editor.h"
 #endif 
 
 namespace Dystopia
 {
 	CharacterController::CharacterController()
+		:mpBody(nullptr)
+		,mbIsFacingRight(true)
+		,mbIsGrounded(false)
+		,mfCharacterSpeed(10.0f)
 	{
 	}
 
@@ -39,7 +45,6 @@ namespace Dystopia
 				rb->SetOwner(GetOwner());
 				rb->Init();
 			}
-
 			mpBody = GetOwner()->GetComponent<RigidBody>();
 		}
 	}
@@ -59,22 +64,17 @@ namespace Dystopia
 	void CharacterController::Serialise(TextSerialiser& _out) const
 	{
 		_out.InsertStartBlock("Character_Controller");
-		_out << GetOwner()->GetID();					// gObjID
+		Component::Serialise(_out);
 		_out.InsertEndBlock("Character_Controller");
 	}
 
 	void CharacterController::Unserialise(TextSerialiser& _in)
 	{
 		_in.ConsumeStartBlock();
-		_in >> mID;						// gObjID
+		Component::Unserialise(_in);
 		_in.ConsumeEndBlock();
 
-		if (GameObject* owner =
-			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
-		{
-			owner->AddComponent(this, CharacterController::TAG{});
-			Init();
-		}
+		Init();
 	}
 
 	void CharacterController::EditorUI() noexcept
@@ -84,25 +84,24 @@ namespace Dystopia
 	void CharacterController::MovePlayer(float)
 	{
 		if (mpBody == nullptr) return;
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_LEFT))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_LEFT))
 		{
-			mpBody->AddImpulse({ -20,0,0 });
+			mpBody->AddImpulse({ -10,0,0 });
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_RIGHT))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_RIGHT))
 		{
-			mpBody->AddImpulse({ 20,0,0 });
-
+			mpBody->AddImpulse({ 10,0,0 });
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eUserButton::BUTTON_UP))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_UP))
 		{
-			mpBody->AddImpulse({ 0,20,0 });
+			mpBody->AddForce({ 0,500,0 });
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eUserButton::BUTTON_SPACEBAR))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eButton::KEYBOARD_SPACEBAR))
 		{
-			mpBody->AddImpulse({ 0,300*mpBody->GetGravityScalar(),0 });
+			mpBody->AddImpulse({ 0,500,0 });
 		}
 	}
 }

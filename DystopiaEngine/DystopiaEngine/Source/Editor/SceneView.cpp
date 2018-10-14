@@ -37,7 +37,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	static constexpr float imageOffsetY = 27.f;
 	static constexpr float dragMagnitudeEpsilon = 2.f;
 
 	static SceneView* gpInstance = 0;
@@ -51,13 +50,11 @@ namespace Dystopia
 
 	SceneView::SceneView()
 		: EditorTab{ false },
-		mLabel{ "Scene View" },
-		mpGfxSys{ nullptr }, mDelta{},
-		mpSceneCamera{ nullptr },
-		mSensitivity{ 0.1f },
-		mpEditorInput{ nullptr },
-		mAmFocused{ false }, mMoveVec{ 0,0 },
-		mMoveSens{ 0.75f }, mDragging{ false }
+		mLabel{ "Scene View" }, mpGfxSys{ nullptr }, 
+		mpSceneCamera{ nullptr }, mSensitivity{ 0.1f },
+		mToZoom{ eZOOM_NONE }, mAmFocused{ false }, 
+		mMoveVec{ 0,0 }, mMoveSens{ 0.75f }, 
+		mDragging{ false }, mImgPos{}, mImgSize{}
 	{}
 
 	SceneView::~SceneView()
@@ -67,7 +64,6 @@ namespace Dystopia
 
 	void SceneView::Init()
 	{
-		mpEditorInput = GetMainEditor().GetEditorInput();
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
 		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Bind(&SceneView::SceneChanged, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);
@@ -94,10 +90,9 @@ namespace Dystopia
 
 	void SceneView::Update(const float& _dt)
 	{
-		mDelta = _dt;
-		if (GetMainEditor().CurrentState() == EDITOR_MAIN)
+		if (GetMainEditor()->CurrentState() == EDITOR_MAIN)
 		{
-			mpGfxSys->Update(mDelta);
+			mpGfxSys->Update(_dt);
 		}
 	}
 
@@ -105,15 +100,18 @@ namespace Dystopia
 	{
 		ResetMouseEvents();
 		EGUI::UnIndent(2);
-
-		if (GetMainEditor().CurrentState() == EDITOR_PLAY)
+		if (GetMainEditor()->CurrentState() == EDITOR_PLAY)
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 
-		size_t id = mpGfxSys->GetFrameBuffer().AsTexture()->GetID();
-		mImgSize = Math::Vec2{ Size().x,  Size().y - imageOffsetY };
+		Texture *pTex = mpGfxSys->GetFrameBuffer().AsTexture();
+		AdjustImageSize(pTex);
+		AdjustDisplayPos();
 
-		if (EGUI::Display::Image(id, mImgSize, true))
+		auto orig = ImGui::GetCursorPos();
+		ImGui::SetCursorPos(ImVec2{ orig.x + mImgPos.x, orig.y + mImgPos.y - 1.f });
+		if (EGUI::Display::Image(pTex->GetID(), mImgSize, true))
 			mAmFocused = true;
+		ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
 
 		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PREFAB))
 		{
@@ -126,9 +124,8 @@ namespace Dystopia
 			EGUI::Display::EndPayloadReceiver();
 		}
 
-		if (GetMainEditor().CurrentState() == EDITOR_PLAY)
+		if (GetMainEditor()->CurrentState() == EDITOR_PLAY)
 			ImGui::PopStyleVar();
-
 		CheckMouseEvents();
 		EGUI::Indent(2);
 	}
@@ -267,6 +264,35 @@ namespace Dystopia
  		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
 	}
 
+	void SceneView::AdjustImageSize(Texture *_pTex)
+	{
+		float ix = static_cast<float>(_pTex->GetWidth());
+		float iy = static_cast<float>(_pTex->GetHeight());
+		float sx = Size().x;
+		float sy = Size().y - EGUI::TabsImageOffsetY;
+		mImgSize = GetAdjustedRatio(sx, sy, ix, iy);
+	}
+
+	void SceneView::AdjustDisplayPos(void)
+	{
+		mImgPos= GetAdjustedPosition(Size().x, Size().y - EGUI::TabsImageOffsetY, mImgSize.x, mImgSize.y);
+	}
+
+	Math::Vec2 SceneView::GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY)
+	{
+		float iRatio = _iX / _iY;
+		float sRatio = _sX / _sY;
+		return sRatio > iRatio ? Math::Vec2{ _iX * (_sY / _iY), _sY } :
+								 Math::Vec2{ _sX, _iY * (_sX / _iX) };
+	}
+
+	Math::Vec2 SceneView::GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY)
+	{
+		float xDiff = _sX - _iX;
+		float yDiff = _sY - _iY;
+		return Math::Vec2{ xDiff / 2, yDiff / 2};
+	}
+
 	Math::Pt3D SceneView::GetWorldClickPos(const Camera * const _cam) const
 	{
 		Math::Vec2 mousePos = ImGui::GetMousePos();
@@ -313,7 +339,13 @@ namespace Dystopia
 			if (ImGui::IsMouseClicked(0))
 			{
 				GameObject *pObj = FindMouseObject();
-				if (pObj) GetMainEditor().SetFocus(*pObj);
+				if (pObj)
+				{
+					auto ed = GetMainEditor();
+					if (ed->IsCtrlDown())	ed->AddSelection(pObj->GetID());
+					else					ed->NewSelection(pObj->GetID());
+					//GetMainEditor().SetFocus(*pObj);
+				}
 			}
 			if (ImGui::IsMouseClicked(1))
 			{
@@ -348,15 +380,17 @@ namespace Dystopia
 		if (Camera* pCam = GetCamera())
 		{
 			GameObject* pTarget			= FindMouseObject();
-			Renderer *pRend = nullptr;
-			if (pTarget && (pRend = pTarget->GetComponent<Renderer>()))
+			Renderer *pRend				= pTarget ? pTarget->GetComponent<Renderer>() : nullptr;
+			if (pRend)
 			{
 				auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, 
 																			pRend->GetTexture());
 				auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, 
 																			mpGfxSys->LoadTexture(_pFile->mPath));
 				GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
-				GetMainEditor().SetFocus(*pTarget);
+
+				GetMainEditor()->NewSelection(pTarget->GetID());
+				//GetMainEditor().SetFocus(*pTarget);
 			}
 		}
 	}

@@ -20,8 +20,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+
+	struct SimplexVertex
+	{
+		unsigned ColAIndex;
+		unsigned ColBIndex;
+		Math::Point3D mPosition;
+		bool operator ==(SimplexVertex const & _rhs)
+		{
+			return ColAIndex == _rhs.ColAIndex && _rhs.ColBIndex == ColBIndex;
+		}
+	};
+
+
 	class _DLL_EXPORT Convex : public Collider
 	{
+
 	public:
 
 		using SYSTEM = CollisionSystem;
@@ -64,9 +78,6 @@ namespace Dystopia
 		/*Duplicate the Component*/
 		Convex* Duplicate() const override;
 
-		// Editor UI
-		void EditorUI(void) noexcept override;
-
 		/*Serialise and Unserialise*/
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;
@@ -90,29 +101,37 @@ namespace Dystopia
 		/*Static Member Functions*/
 
 		/*Support Function for getting the farthest point with relation to a Vector*/
-		static Vertice GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir);
+		static Vertice       GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir);
 
-		static Edge	   GetClosestEdge(AutoArray<Vertice> & _Simplex);
 
 		static Math::Point3D Support(const Convex & _ColA,
 			                         const Convex & _ColB,
 			                         const Math::Vec3D & _Dir);
 
-		static bool ContainOrigin(AutoArray<Vertice> & _Simplex, Math::Vec3D & _v3Dir);
+		bool                ContainOrigin(AutoArray<SimplexVertex> & _Simplex,
+			                              Math::Vec3D & _v3Dir);
 
-		Math::Point3D Support(const Convex & _ColB,
-			                  const Math::Vec3D & _Dir)const;
+		static SimplexVertex GetMiwoskiPoint(const Convex & _ColA,
+											 const Convex & _ColB,
+											 const Math::Vec3D & _Dir);
+
+		static Edge	         GetClosestEdge(AutoArray<SimplexVertex> & _Simplex);
+
+		static Math::Point3D GetFarthestPoint(const Convex & _ColA,
+			                                  const Math::Vec3D & _Dir,
+			                                  unsigned & _IndexStorage);
 
 		AutoArray<Edge> GetConvexEdges() const;
 
 	protected:
-		CollisionEvent GetCollisionEvent(AutoArray<Vertice> _Simplex,	const Convex & _ColB);
+
+		CollisionEvent GetCollisionEvent(AutoArray<SimplexVertex> _Simplex,
+			                             const Convex & _ColB);
 
 		/*The vertices of the collider in the Collider Local Coordinate System*/
 		AutoArray<Vertice>			mVertices;
 		int							mNumPoints;
 	private:
-		//Math::Vector3D				mLastKnownScale;
 
 		//EDITOR FUNCTIONS
 		/*=================Editor Stuff=====================*/
@@ -121,11 +140,14 @@ namespace Dystopia
 		void ePositionOffsetVectorFields();
 		void ePointVerticesVectorArray();
 		void eSetScale();
+
 		//INFO
 		void eAttachedBodyEmptyBox();
 		void eNumberOfContactsLabel();
 		void eUseTransformScaleButton();
 
+		// Editor UI
+		void EditorUI(void) noexcept override;
 #endif // EDITOR
 
 	};

@@ -21,22 +21,20 @@ namespace Dystopia
 
 		CollisionEvent(GameObject* _Self, GameObject * _Target);
 
-		Math::Point3D		mCollisionPoint;	//Contact Point
+		mpcGobj				mThisCollider;		//Gameobject Collision This
+		mpcGobj				mCollidedWith;		//Gameobject Collision That
 
+		Math::Point3D		mCollisionPoint;	//Contact Point
 		Math::Vector3D		mEdgeVector;		//Contact Vector
 		Math::Vector3D		mEdgeNormal;		//Contact Normal
-		double				mdPeneDepth;		//Previous Frame penetration
-		mpcGobj				mThisCollider;		//Gameobject Collision Who?
-		mpcGobj				mCollidedWith;		//Gameobject Collision Who?
+
+		float				mfPeneDepth;		//Previous Frame penetration
 		float				mfRestitution;		//Total summed (min) restitution
 		float				mfStaticFrictionCof;		//Total friction averaged (sqrt)
 		float				mfDynamicFrictionCof;
 
 		void ApplyImpulse(void);
-		void ApplyPenetrationCorrection(void);
-
-	private:
-		Math::Vec3D			mCumulativeImpulse;
+		void ApplyPenetrationCorrection(void) const;
 	};
 }
 
