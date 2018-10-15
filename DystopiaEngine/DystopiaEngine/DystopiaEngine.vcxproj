@@ -133,6 +133,12 @@
     <ClInclude Include="Include\Editor\ProjectSettings.h" />
     <ClInclude Include="Include\Editor\SpritePreviewer.h" />
     <ClInclude Include="Include\Editor\StyleScheme.h" />
+    <ClInclude Include="Include\Math\MetaFloat.h" />
+    <ClInclude Include="Include\Reflection\PPForEachSeq.h" />
+    <ClInclude Include="Include\Reflection\PPToSequence.h" />
+    <ClInclude Include="Include\Reflection\PPVariadicSize.h" />
+    <ClInclude Include="Include\Reflection\Reflection.h" />
+    <ClInclude Include="Include\Editor\SystemSettings.h" />
     <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
@@ -460,6 +466,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

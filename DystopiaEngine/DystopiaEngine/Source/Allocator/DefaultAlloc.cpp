@@ -39,7 +39,7 @@ namespace
 #endif
 
 	template <typename T>
-	inline auto Align(T _in, T _align) -> Utility::EnableIf_t<Utility::IsIntegral<T>::value, T>
+	inline auto Align(T _in, T _align) -> Ut::EnableIf_t<Ut::IsIntegral<T>::value, T>
 	{
 		return _in + (_align-1) & ~T(_align-1);
 	}
@@ -78,8 +78,8 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 
 	// Force size and alignment to be at least the minimum
 	_sz = Math::Max(_sz, MIN_SIZE);
-	_sz = Align(_sz, Utility::Constant<decltype(_sz), MIN_ALIGN>::value);
-	_align = Math::Max(_align, Utility::Constant<decltype(_align), MIN_ALIGN>::value);
+	_sz = Align(_sz, Ut::Constant<decltype(_sz), MIN_ALIGN>::value);
+	_align = Math::Max(_align, Ut::Constant<decltype(_align), MIN_ALIGN>::value);
 
 	while (pSeek)
 	{
@@ -95,7 +95,7 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 
 			const auto offs = static_cast<uint32_t>(static_cast<std::byte*>(pRet) - mpBlock);
 
-			if (blkSz > Utility::Constant<size_t, sizeof(MetaData_t) * 2 - 1>::value)
+			if (blkSz > Ut::Constant<size_t, sizeof(MetaData_t) * 2 - 1>::value)
 			{
 				temp = static_cast<std::byte*>(pRet) + _sz;
 

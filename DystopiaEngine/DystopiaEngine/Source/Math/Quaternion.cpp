@@ -28,39 +28,40 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Math::Quaternion _CALL Math::Quaternion::FromEuler(Math::Angle _x, Math::Angle _y, Math::Angle _z)
 {
-	const float sx = std::sinf(_x.Radians() * 0.5f);
-	const float cx = std::cosf(_x.Radians() * 0.5f);
-	const float sy = std::sinf(_y.Radians() * 0.5f);
-	const float cy = std::cosf(_y.Radians() * 0.5f);
-	const float sz = std::sinf(_z.Radians() * 0.5f);
-	const float cz = std::cosf(_z.Radians() * 0.5f);
+	// The double versions of std trig functions are apparently faster
+	const double sx = std::sin(_x.Radians() * 0.5);
+	const double cx = std::cos(_x.Radians() * 0.5);
+	const double sy = std::sin(_y.Radians() * 0.5);
+	const double cy = std::cos(_y.Radians() * 0.5);
+	const double sz = std::sin(_z.Radians() * 0.5);
+	const double cz = std::cos(_z.Radians() * 0.5);
 
 	// pitch = y
 	// roll = x
 	// yaw = z
 	return Math::Quaternion{
-		sx * cy * cz - cx * sy * sz, //x
-		cx * sy * cz + sx * cy * sz, //y 
-		cx * cy * sz - sx * sy * cz, //z 
-		cx * cy * cz + sx * sy * sz  //w
+		static_cast<float>(sx * cy * cz - cx * sy * sz), //x
+		static_cast<float>(cx * sy * cz + sx * cy * sz), //y 
+		static_cast<float>(cx * cy * sz - sx * sy * cz), //z 
+		static_cast<float>(cx * cy * cz + sx * sy * sz)  //w
 	};
 }
 
 Math::Vector4 _CALL Math::Quaternion::ToEuler(void) const
 {
-	const float ySq = mData[1] * mData[1];
-	const float t0 = 1.f - 2.0f * (ySq + mData[0] * mData[0]);
-	const float t1 = 1.f - 2.0f * (ySq + mData[2] * mData[2]);
-	const float t2 = 2.0f * (mData[0] * mData[3] + mData[1] * mData[2]);
-	const float t3 = 2.0f * (mData[0] * mData[1] + mData[2] * mData[3]);
-	      float t4 = 2.0f * (mData[1] * mData[3] - mData[0] * mData[2]);
+	const double ySq = mData[1] * mData[1];
+	const double t0 = 1.0 - 2.0 * (ySq + mData[0] * mData[0]);
+	const double t1 = 1.0 - 2.0 * (ySq + mData[2] * mData[2]);
+	const double t2 = 2.0 * (mData[0] * mData[3] + mData[1] * mData[2]);
+	const double t3 = 2.0 * (mData[0] * mData[1] + mData[2] * mData[3]);
+	      double t4 = 2.0 * (mData[1] * mData[3] - mData[0] * mData[2]);
 
-	t4 = Math::Clamp(t4, -1.f, 1.f);
+	t4 = Math::Clamp(t4, -1.0, 1.0);
 
-	return Math::Vector4{ 
-		Math::Radians{std::atan2(t2, t0)}.Degrees(),  
-		Math::Radians{std::asin(t4)     }.Degrees(),
-		Math::Radians{std::atan2(t3, t1)}.Degrees(), 
+	return Math::Vector4{
+		Math::Radians{static_cast<float>(std::atan2(t2, t0))}.Degrees(),  
+		Math::Radians{static_cast<float>(std::asin (t4)    )}.Degrees(),
+		Math::Radians{static_cast<float>(std::atan2(t3, t1))}.Degrees(), 
 		0
 	};
 }
@@ -68,7 +69,7 @@ Math::Vector4 _CALL Math::Quaternion::ToEuler(void) const
 
 Math::Vector4 _CALL Math::Quaternion::Rotate(Vector4 _v) const noexcept
 {
-	Vec4 temp = 2 * Math::Cross(mData, _v);
+	const Vec4 temp = 2 * Math::Cross(mData, _v);
 	return _v + mData.wwww * temp + Math::Cross(mData, temp);
 }
 

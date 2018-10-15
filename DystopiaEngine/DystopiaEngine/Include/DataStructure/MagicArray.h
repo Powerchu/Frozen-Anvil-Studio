@@ -37,7 +37,7 @@ namespace Ctor
 	template <typename T, unsigned BLOCK_SIZE = 64, unsigned MAX_BLOCKS = 16, typename Alloc = Dystopia::DefaultAllocator<T[]>>
 	struct _DLL_EXPORT_ONLY MagicArrayBuilder
 	{
-		static_assert(Utility::IsPowerOf2(BLOCK_SIZE), "Block Size must be a power of 2");
+		static_assert(Ut::IsPowerOf2(BLOCK_SIZE), "Block Size must be a power of 2");
 
 		template <unsigned NEW_SIZE>
 		using SetBlockSize = MagicArrayBuilder<T, NEW_SIZE, MAX_BLOCKS>;
@@ -200,7 +200,7 @@ MagicArray<T, PP>::MagicArray(const MagicArray& _other) noexcept
 
 template <typename T, typename PP>
 MagicArray<T, PP>::MagicArray(MagicArray&& _other) noexcept
-	: mDirectory{ Utility::Move(_other.mDirectory) }
+	: mDirectory{ Ut::Move(_other.mDirectory) }
 {
 	std::memset(_other.mDirectory, 0, sizeof(_other.mDirectory));
 }
@@ -333,7 +333,7 @@ typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Emplace(Ps&& ...args)
 		if (!e.mpArray)
 			Allocate(e);
 
-		if (auto ptr = e.EmplaceNextEmpty(Utility::Forward<Ps>(args)...))
+		if (auto ptr = e.EmplaceNextEmpty(Ut::Forward<Ps>(args)...))
 			return ptr;
 	}
 	return nullptr;
@@ -440,7 +440,7 @@ MagicArray<T, PP>& MagicArray<T, PP>::operator= (const MagicArray<T, PP>& _other
 template <typename T, typename PP>
 MagicArray<T, PP>& MagicArray<T, PP>::operator= (MagicArray<T, PP>&& _other) noexcept
 {
-	Utility::Swap(mDirectory, _other.mDirectory);
+	Ut::Swap(mDirectory, _other.mDirectory);
 	return *this;
 }
 

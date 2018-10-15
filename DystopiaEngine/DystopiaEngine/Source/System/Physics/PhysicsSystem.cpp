@@ -6,6 +6,7 @@
 #include "System/Time/ScopedTimer.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
+#include "System/Collision/CollisionSystem.h"
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -18,11 +19,11 @@ namespace Dystopia
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(false)
 		, mInterpolation_mode(none)
-		, mGravity(-910.665F)
-		, mMaxVelocityConstant(800.0F)
+		, mGravity(400.0F)
+		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.05F)
-		, mResolutionIterations(10)
+		, mPenetrationEpsilon(0.1F)
+		, mResolutionIterations(5)
 	{
 	}
 
@@ -62,7 +63,7 @@ namespace Dystopia
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (nullptr != body.GetOwner() && !body.Get_IsStaticState() && body.GetIsAwake())
+			if (!body.Get_IsStaticState() && body.GetIsAwake())
 			{
 				body.Integrate(_dt);
 			}
@@ -78,37 +79,35 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				const GameObject* owner = body.GetOwner();
-				if (nullptr != owner && !body.Get_IsStaticState() && body.GetIsAwake())
+				if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+
+				const auto col = body.GetOwner()->GetComponent<Collider>();
+
+				if (nullptr != col)
 				{
-					const auto col = owner->GetComponent<Collider>();
-					if (nullptr != col)
+					if (col->HasCollision() && !col->IsTrigger())
 					{
-						if (col->HasCollision())
+						auto worstPene = mPenetrationEpsilon;
+
+						for (auto& manifold : col->GetCollisionEvents())
 						{
-							CollisionEvent* worstContact = nullptr;
-							double worstPene = mPenetrationEpsilon;
-
-							for (auto& manifold : col->GetCollisionEvents())
+							if (manifold.mfPeneDepth > worstPene)
 							{
-								manifold.ApplyImpulse();
+								auto worstContact = &manifold;
+								worstPene = manifold.mfPeneDepth;
 
-								if (manifold.mdPeneDepth > worstPene)
-								{
-									worstContact = &manifold;
-									worstPene = manifold.mdPeneDepth;
-								}
 								if (nullptr != worstContact)
 								{
+									worstContact->ApplyImpulse();
 									worstContact->ApplyPenetrationCorrection();
 								}
 							}
 						}
 					}
 				}
+				
 			}
 		}
-
 	}
 
 	void PhysicsSystem::UpdateResults(float _dt)
@@ -143,19 +142,19 @@ namespace Dystopia
 		/* Broad Phase Collision Detection*/
 
 		/* Narrow Phase Collision Detection*/
-		
-	
-		// Integrate RigidBodies
-		IntegrateRigidBodies(_dt);
 
+	
 		/* Collision Resolution (Response) Logic */
 		ResolveCollision(_dt);
 
+		// Integrate RigidBodies
+		IntegrateRigidBodies(_dt);
+		
 		/*Update positions and rotation as result*/
 		UpdateResults(_dt);
 
 		// Set all objects at rest to sleeping
-		//CheckSleepingBodies(_dt);
+		CheckSleepingBodies(_dt);
 
 		/* Debug Velocity*/
 		//DebugPrint();

@@ -2,7 +2,6 @@
 #define PHYSICS_SYSTEM_H
 #include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
-#include "System/Collision/CollisionSystem.h"
 
 namespace Dystopia
 {

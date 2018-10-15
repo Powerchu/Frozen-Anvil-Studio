@@ -21,13 +21,14 @@ namespace Dystopia
 		using u64int  = unsigned long long;
 		CollisionEvent(GameObject* _Self, GameObject * _Target);
 
-		Math::Point3D		mCollisionPoint;	//Contact Point
+		mpcGobj				mThisCollider;		//Gameobject Collision This
+		mpcGobj				mCollidedWith;		//Gameobject Collision That
 
+		Math::Point3D		mCollisionPoint;	//Contact Point
 		Math::Vector3D		mEdgeVector;		//Contact Vector
 		Math::Vector3D		mEdgeNormal;		//Contact Normal
-		double				mdPeneDepth;		//Previous Frame penetration
-		mpcGobj				mThisCollider;		//Gameobject Collision Who?
-		mpcGobj				mCollidedWith;		//Gameobject Collision Who?
+
+		float				mfPeneDepth;		//Previous Frame penetration
 		float				mfRestitution;		//Total summed (min) restitution
 		float				mfStaticFrictionCof;		//Total friction averaged (sqrt)
 		float				mfDynamicFrictionCof;

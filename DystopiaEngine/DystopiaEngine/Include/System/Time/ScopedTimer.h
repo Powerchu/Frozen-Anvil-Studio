@@ -59,7 +59,7 @@ namespace Dystopia
 
 template <typename Ty> template <typename ... Ts>
 inline Dystopia::ScopedTimer<Ty>::ScopedTimer(Ts&& ... Args)
-	: mMarker{ Clock::now() }, ActionFunctor{ Utility::Forward<Ts>(Args) ... }
+	: mMarker{ Clock::now() }, ActionFunctor{ Ut::Forward<Ts>(Args) ... }
 {
 
 }

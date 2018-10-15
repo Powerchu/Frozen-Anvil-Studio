@@ -160,7 +160,7 @@ namespace Dystopia
 			AutoArray<Commands*> mComdArray{ _arrObj.size() };
 			for (const auto& elem : _arrObj)
 				mComdArray.Insert(new ComdInsertObject{ elem, &_scene, _notify });
-			InvokeCommand(new ComdBatch{ Utility::Move(mComdArray) });
+			InvokeCommand(new ComdBatch{ Ut::Move(mComdArray) });
 		}
 	}
 
@@ -173,7 +173,7 @@ namespace Dystopia
 			AutoArray<Commands*> mComdArray{ _arrObj.size() };
 			for (const auto& elem : _arrObj)
 				mComdArray.Insert(new ComdDeleteObject{ elem, &_scene, _notify });
-			InvokeCommand(new ComdBatch{ Utility::Move(mComdArray) });
+			InvokeCommand(new ComdBatch{ Ut::Move(mComdArray) });
 		}
 	}
 

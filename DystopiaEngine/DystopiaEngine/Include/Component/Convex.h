@@ -42,7 +42,7 @@ namespace Dystopia
 
 		unsigned GetComponentType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<Collider>, AllComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<Collider>, AllComponents>::value;
 		};
 
 #if EDITOR
@@ -77,9 +77,6 @@ namespace Dystopia
 		void Unload(void) override;
 		/*Duplicate the Component*/
 		Convex* Duplicate() const override;
-
-		// Editor UI
-		void EditorUI(void) noexcept override;
 
 		/*Serialise and Unserialise*/
 		void Serialise(TextSerialiser&) const override;
@@ -144,11 +141,14 @@ namespace Dystopia
 		void ePositionOffsetVectorFields();
 		void ePointVerticesVectorArray();
 		void eSetScale();
+
 		//INFO
 		void eAttachedBodyEmptyBox();
 		void eNumberOfContactsLabel();
 		void eUseTransformScaleButton();
 
+		// Editor UI
+		void EditorUI(void) noexcept override;
 #endif // EDITOR
 
 	};

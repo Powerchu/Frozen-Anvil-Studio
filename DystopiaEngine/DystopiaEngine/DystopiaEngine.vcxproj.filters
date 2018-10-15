@@ -682,6 +682,24 @@
     <ClInclude Include="Include\System\Input\XGamePad.h">
       <Filter>Game Engine\Systems\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Math\MetaFloat.h">
+      <Filter>Math\MetaMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\Reflection.h">
+      <Filter>Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPVariadicSize.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPToSequence.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPForEachSeq.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\SystemSettings.h">
+      <Filter>Editor\Editor Tabs\SystemSettings</Filter>
+    </ClInclude>
     <ClInclude Include="Include\System\Collision\BroadPhaseCircle.h">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
@@ -969,6 +987,24 @@
     </Filter>
     <Filter Include="Editor\Editor Tabs\Sprite Previewer">
       <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\MetaMath">
+      <UniqueIdentifier>{08413c81-cbde-4575-842c-fc63e39a282d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection">
+      <UniqueIdentifier>{c13d8e9d-1ea4-40c5-b67f-f2713024e57a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\Preprocessor">
+      <UniqueIdentifier>{af73041d-894d-4be1-9ac1-a597e6a69bf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\MetaData.h">
+      <UniqueIdentifier>{a8ac820c-8de3-42f2-ba5c-2add3b365828}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\SystemSettings">
+      <UniqueIdentifier>{f494a940-4551-4291-aa92-cff931764600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\TagSystem">
+      <UniqueIdentifier>{717afecd-7ef3-4406-b046-fe7b2ed2f840}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

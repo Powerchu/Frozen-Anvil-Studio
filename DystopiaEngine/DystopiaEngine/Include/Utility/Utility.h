@@ -17,12 +17,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Meta.h"
 #include "Utility/UtilityInternals.h"
 
-namespace Utility
+namespace Ut
 {
 	template <typename T>
 	constexpr inline typename RemoveRef<T>::type&& Move(T&& _obj) noexcept
 	{
-		return static_cast<Utility::RemoveRef_t<T>&&>(_obj);
+		return static_cast<Ut::RemoveRef_t<T>&&>(_obj);
 	}
 
 
@@ -85,19 +85,19 @@ namespace Utility
 	}
 
 
-	template <class Itor, class Ty = Utility::Decay_t<decltype(*Utility::declval<Itor>())>>
+	template <class Itor, class Ty = Ut::Decay_t<decltype(*Ut::declval<Itor>())>>
 	Itor MoveInit(Itor _begin, const Itor _end, Itor _dest)
 	{
 		while (_begin != _end)
 		{
-			new (&*_dest) Ty { Utility::Move(*_begin) };
+			new (&*_dest) Ty { Ut::Move(*_begin) };
 			++_dest; ++_begin;
 		}
 
 		return _dest;
 	}
 
-	template <class Itor, class Ty = Utility::Decay_t<decltype(*Utility::declval<Itor>())>>
+	template <class Itor, class Ty = Ut::Decay_t<decltype(*Ut::declval<Itor>())>>
 	Itor CopyInit(Itor _begin, const Itor _end, Itor _dest)
 	{
 		while(_begin != _end)
@@ -114,10 +114,10 @@ namespace Utility
 	template<typename T>
 	inline void Swap(T& _lhs, T& _rhs)
 	{
-		T tmp{ Utility::Move(_lhs) };
+		T tmp{ Ut::Move(_lhs) };
 
-		_lhs = Utility::Move(_rhs);
-		_rhs = Utility::Move(tmp);
+		_lhs = Ut::Move(_rhs);
+		_rhs = Ut::Move(tmp);
 	}
 
 

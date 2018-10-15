@@ -77,7 +77,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f },
-	mvDebugColour{ .78f, 1.f, .278f, .75f }, mbDebugDraw{ false }
+	mfDebugLineWidth{ 5.0f }, mvDebugColour{ .68f, 1.f, .278f, .65f }, mbDebugDraw{ false }
 {
 }
 
@@ -136,7 +136,7 @@ bool Dystopia::GraphicsSystem::Init(void)
 	mGameView.Init(2048, 2048);
 	mUIView.Init(1024, 1024);
 
-	glLineWidth(10.f);
+	glLineWidth(mfDebugLineWidth);
 
 	return true;
 }
@@ -257,7 +257,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 
 	Math::Vec4 no_alpha{ mvDebugColour };
 
-	Math::Vector4 activeColor, CollidingColor{1.f, 0, 0, .75f}, inactiveColor;
+	Math::Vector4 CollidingColor{1.f, 0, 0, .75f}, inactiveColor;
 
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
@@ -268,13 +268,13 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 			
 			s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetLocalTransformMatrix() *Math::Translate(Obj->GetOffSet().x, Obj->GetOffSet().y, Obj->GetOffSet().z)  * Obj->GetTransformationMatrix());
 			
-			activeColor = Obj->HasCollision() ? CollidingColor : mvDebugColour;
+			Math::Vector4 activeColor = Obj->HasCollision() ? CollidingColor : mvDebugColour;
 
 			if (Mesh* pObjMesh = Obj->GetMesh())
 			{
 				s->UploadUniform("vColor", activeColor);
 				pObjMesh->UseMesh(GetDrawMode());
-				activeColor.w = 1.f;
+				activeColor.w = 1.F;
 				s->UploadUniform("vColor", activeColor);
 				pObjMesh->UseMesh(GL_LINE_LOOP);
 			}
@@ -591,7 +591,7 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer()
 void Dystopia::GraphicsSystem::EditorUI(void)
 {
 #if EDITOR								   
-	auto result = EGUI::Display::DragFloat("Gamma       ", &mfGamma, 0.1f, 0.1f, 10.f);
+	const auto result = EGUI::Display::DragFloat("Gamma       ", &mfGamma, 0.1f, 0.1f, 10.f);
 	switch (result)
 	{
 	case EGUI::eDragStatus::eEND_DRAG:
@@ -607,6 +607,8 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 		break;
 	case EGUI::eDragStatus::eDEACTIVATED:
 		EGUI::GetCommandHND()->EndRecording();
+		break;
+	default:
 		break;
 	}
 
@@ -636,8 +638,33 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
 			break;
+		default:
+			break;
 		}
 	}
+
+	const auto result3 = EGUI::Display::DragFloat("Debug Line Width", &mfDebugLineWidth, 0.01F, 0.F, 10.F);
+
+	switch (result3)
+	{
+	case EGUI::eDragStatus::eEND_DRAG:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	case EGUI::eDragStatus::eENTER:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	case EGUI::eDragStatus::eSTART_DRAG:
+		EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&mfDebugLineWidth);
+		break;
+	case EGUI::eDragStatus::eDRAGGING:
+		break;
+	case EGUI::eDragStatus::eDEACTIVATED:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	default:
+		break;
+	}
+	
 
 #endif 
 }

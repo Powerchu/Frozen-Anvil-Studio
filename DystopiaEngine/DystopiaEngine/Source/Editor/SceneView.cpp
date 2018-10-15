@@ -70,7 +70,7 @@ namespace Dystopia
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Bind(&SceneView::ScrollOut, this);
 
 		//mpSceneCamera = Factory::CreateCamera("Scene Camera");
-		//GetCurrentScene()->GetAllGameObjects().EmplaceBack(Utility::Move(*mpSceneCamera));
+		//GetCurrentScene()->GetAllGameObjects().EmplaceBack(Ut::Move(*mpSceneCamera));
 		//auto& g = GetCurrentScene()->GetAllGameObjects().back();
 		//g.GetComponent<Transform>()->SetOwner(&g);
 		//for (auto& c : g.GetAllComponents())

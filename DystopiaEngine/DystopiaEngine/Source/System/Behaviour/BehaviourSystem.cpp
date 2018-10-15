@@ -77,7 +77,7 @@ namespace Dystopia
 				std::wstring name = FileSys->RemoveFileExtension<std::wstring>(elem.GetDllName());
 				wrap.mName = std::string{ name.begin(), name.end() };
 				wrap.mpBehaviour = (BehaviourClone());
-				mvBehaviourReferences.Emplace(Utility::Move(wrap));
+				mvBehaviourReferences.Emplace(Ut::Move(wrap));
 				mvBehaviours.push_back(std::make_pair(name, AutoArray<BehaviourPair>{}));
 			}
 			//mvBehaviourReferences.Emplace(BehaviourClone());
@@ -188,7 +188,7 @@ namespace Dystopia
 					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
 					wrap.mName = DllName;
 					wrap.mpBehaviour = (BehaviourClone());
-					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Utility::Move(wrap)));
+					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Ut::Move(wrap)));
 					AutoArray< BehaviourPair> temp;
 
 					mvBehaviours.push_back(std::make_pair(std::wstring{ DllName.begin(), DllName.end() }, temp));

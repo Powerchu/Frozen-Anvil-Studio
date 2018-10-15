@@ -27,11 +27,11 @@ namespace Dystopia
 
 		unsigned GetComponentType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<Collider>, AllComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<Collider>, AllComponents>::value;
 		};
 
 #if EDITOR
-		static const std::string GetCompileName(void) { return "Circle Collider2D"; }
+		static const std::string GetCompileName(void) { return "Circle Collider"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 #endif
 
@@ -77,20 +77,21 @@ namespace Dystopia
 		bool isColliding(const Convex & other_col);
 		bool isColliding(Convex * const & other_col);
 
-		/**/
+	private:
+		float m_radius;
 
 #if EDITOR
 		void ePositionOffsetVectorFields();
-		void eRadiusFields();
+		void eScaleField();
+
+		// INFO
+		void eAttachedBodyEmptyBox();
+		void eNumberOfContactsLabel();
 
 		// Editor UI
 		void EditorUI(void) noexcept override;
 
 #endif // EDITOR
-
-	private:
-		float m_radius;
 	};
 }
-
 #endif //CIRCLE_H

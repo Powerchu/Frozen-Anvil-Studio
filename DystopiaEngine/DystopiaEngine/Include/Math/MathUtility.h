@@ -48,8 +48,9 @@ namespace Math
 	// Floating point error tolerance
 	constexpr float epsilon = 0.0000001f;
 
+
 	template<typename Num>
-	inline constexpr typename Utility::EnableIf<Utility::IsNumeric<Num>::value, Num>::type Abs(const Num _x)
+	inline constexpr typename Ut::EnableIf<Ut::IsNumeric<Num>::value, Num>::type Abs(const Num _x)
 	{
 		return _x < 0 ? -_x : _x;
 	}
@@ -71,6 +72,12 @@ namespace Math
 		return _x < _y ? _y : _x;
 	}
 
+	template <typename T>
+	inline constexpr T Zero(void)
+	{
+		return T{ };
+	}
+
 	// Checks if two floats are approximately equal
 	// Returns false if one of the numbers is zero
 	inline bool ApproxEq(float _lhs, float _rhs)
@@ -84,9 +91,11 @@ namespace Math
 		return diff <= (scale * epsilon);
 	}
 
-	inline constexpr float Clamp(float _fInput, float _fMin, float _fMax)
+	// Prevent deduction on Min and Max types
+	template <typename T>
+	inline constexpr T Clamp(T _input, Ut::Type_t<T> _min, Ut::Type_t<T> _max)
 	{
-		return Max(_fMin, Min(_fMax, _fInput));
+		return Max(_min, Min(_max, _input));
 	}
 
 	template<class T>

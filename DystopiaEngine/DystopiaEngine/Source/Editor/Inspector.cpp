@@ -124,7 +124,7 @@ namespace Dystopia
 				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
 				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
-			/*if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))
+			if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))
 			{
 
 			}
@@ -134,7 +134,7 @@ namespace Dystopia
 			{
 
 			}
-			EGUI::ChangeAlignmentYOffset();*/
+			EGUI::ChangeAlignmentYOffset();
 		}
 		EGUI::EndChild();
 	}
@@ -198,7 +198,7 @@ namespace Dystopia
 	void Inspector::ComponentsDropDownList()
 	{
 		static ListOfComponents availableComp;
-		static constexpr size_t numComponents = Utility::SizeofList<UsableComponents>::value;
+		static constexpr size_t numComponents = Ut::SizeofList<UsableComponents>::value;
 		Array<std::string, numComponents> arr;
 		ListOfComponentsName<std::make_index_sequence<numComponents>, UsableComponents>::Extract(arr);
 
