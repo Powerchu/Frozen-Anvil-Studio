@@ -101,9 +101,11 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 			blkSz = blkSz - adjSz;
 			std::byte* temp = nullptr;
 
+#        if defined(DEBUGDEFAULTALLOC)
 			const auto offs = static_cast<uint32_t>(static_cast<std::byte*>(pRet) - mpBlock);
+#        endif
 
-			if (blkSz > Ut::Constant<size_t, sizeof(MetaData_t) * 2 - 1>::value)
+			if (blkSz > Ut::Constant<size_t, MIN_ALIGN + METADATA_SZ * 2 - 1>::value)
 			{
 				temp = static_cast<std::byte*>(pRet) + _sz;
 
@@ -116,8 +118,11 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 			else
 			{
 				adjSz += blkSz;
-				blkSz = 0;
 				temp = static_cast<std::byte*>(GetBlockFromOffset(GetNextOffset(pSeek)));
+
+#			if defined(DEBUGDEFAULTALLOC)
+				blkSz = 0;
+#			endif
 			}
 
 			if (pPrev)
