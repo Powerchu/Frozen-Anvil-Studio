@@ -163,7 +163,7 @@ namespace Dystopia
 			mbColliding = true;
 			other_col.mbColliding = true;
 
-			CollisionEvent col_info(GetOwner(), other_col.GetOwner());
+			//CollisionEvent col_info(GetOwner(), other_col.GetOwner());
 			col_info.mEdgeNormal			= normal;
 			col_info.mEdgeVector			= Math::Normalise(positionDelta);
 			col_info.mCollisionPoint		= contactPoint;
@@ -174,14 +174,14 @@ namespace Dystopia
 				col_info.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
 				col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 			}
-			InformOtherComponents(true, col_info);
+			//InformOtherComponents(true, col_info);
 
-			marr_ContactSets.Insert(col_info);
+			marr_ContactSets.push_back(col_info);
 	
 			/*Return true for collision*/
 			return true;
 		}
-			InformOtherComponents(false, col_info);
+			//InformOtherComponents(false, col_info);
 			return false;
 	}
 
@@ -266,11 +266,11 @@ namespace Dystopia
 		}
 		if (isInside)
 		{
-			InformOtherComponents(true, newEvent);
+			//InformOtherComponents(true, newEvent);
 		}
 		else
 		{
-			InformOtherComponents(false, newEvent);
+			//InformOtherComponents(false, newEvent);
 		}
 		return isInside;
 	}

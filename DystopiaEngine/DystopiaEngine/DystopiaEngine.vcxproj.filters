@@ -262,7 +262,9 @@
     <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
+    <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -703,7 +705,9 @@
     <ClInclude Include="Include\System\Collision\BroadPhaseCircle.h">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Collision\BoundingColliderNode.h" />
+    <ClInclude Include="Include\System\Collision\BoundingColliderNode.h">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

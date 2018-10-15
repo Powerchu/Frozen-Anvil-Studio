@@ -16,11 +16,11 @@ namespace Dystopia
 	{
 		unsigned Total = 0;
 
-		if (!isLeaf() || !_limit)
+		if (!isLeaf() && _limit > 0)
 			Total += mChildrenNode[0]->GetPotentialContactWith(mChildrenNode[1], _pPotentialContacts, _limit);
-		if (!isLeaf() || !_limit - Total)
+		if (!isLeaf() && _limit - Total > 0)
 			Total += mChildrenNode[0]->GetNumPotentialContact(_limit - Total, _pPotentialContacts + Total);
-		if (!isLeaf() || !_limit - Total)
+		if (!isLeaf() && _limit - Total > 0)
 			Total += mChildrenNode[1]->GetNumPotentialContact(_limit - Total, _pPotentialContacts + Total);
 
 		return Total;

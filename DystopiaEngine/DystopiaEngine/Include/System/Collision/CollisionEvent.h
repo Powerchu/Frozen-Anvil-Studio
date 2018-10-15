@@ -34,8 +34,8 @@ namespace Dystopia
 		float				mfDynamicFrictionCof;
 		u64int              mOtherID;
 
-		void ApplyImpulse(void);
-		void ApplyPenetrationCorrection(void);
+		void ApplyImpulse();
+		void ApplyPenetrationCorrection() const;
 
 		bool operator==(CollisionEvent const & _rhs)         const;
 		bool operator==(unsigned long long _mCollidedWithID) const;

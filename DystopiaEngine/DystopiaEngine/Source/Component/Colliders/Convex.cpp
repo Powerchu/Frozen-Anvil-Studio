@@ -269,11 +269,11 @@ namespace Dystopia
 		}
 		if (isInside)
 		{
-			InformOtherComponents(true, newEvent);
+			//InformOtherComponents(true, newEvent);
 		}
 		else
 		{
-			InformOtherComponents(false, newEvent);
+			//InformOtherComponents(false, newEvent);
 		}
 		return isInside;
 	}
