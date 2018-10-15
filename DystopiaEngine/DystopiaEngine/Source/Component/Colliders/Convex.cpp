@@ -172,8 +172,8 @@ namespace Dystopia
 			{
 				/*Clear the simplex for the next function call*/
 				Simplex.clear();
-				if(CollisionEvent const * const ColEvent = FindCollisionEvent(_pColB.GetOwnerID()))
-					InformOtherComponents(false, *ColEvent);
+				//if(CollisionEvent const * const ColEvent = FindCollisionEvent(_pColB.GetOwnerID()))
+					//InformOtherComponents(false, *ColEvent);
 				/*Return no collision*/
 				return false;
 			}
@@ -186,7 +186,8 @@ namespace Dystopia
 					_pColB.mbColliding = true;
 					/*Use EPA to get collision information*/
 					CollisionEvent ColEvent = GetCollisionEvent(Simplex, _pColB);
-					InformOtherComponents(true, ColEvent);
+					marr_ContactSets.push_back(ColEvent);
+					//InformOtherComponents(true, ColEvent);
 					/*Clear the simplex for the next function call*/
 					Simplex.clear();
 					/*Return true for collision*/
@@ -362,7 +363,7 @@ namespace Dystopia
 		return ToRet;
 	}
 
-	BroadPhaseCircle Convex::GenerateBoardPhaseCircle()
+	BroadPhaseCircle Convex::GenerateBoardPhaseCircle() const
 	{
 		float LongestRadius = 0;
 		Math::Point3D MyGlobalCentre = this->GetGlobalPosition();

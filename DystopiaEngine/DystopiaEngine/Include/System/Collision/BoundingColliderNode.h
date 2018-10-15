@@ -19,10 +19,11 @@ namespace Dystopia
 	{
 		BoundingColliderNode();
 		BoundingColliderNode(Collider * _MyCollider, BroadPhaseCircle _Circle, BoundingColliderNode * _parent);
-		unsigned GetNumPotentialContact(unsigned _limit, PotentialContacts * _pPotentialContacts) const;
+		unsigned GetNumPotentialContact(unsigned _limit, PotentialContacts * _pPotentialContacts)     const;
 		unsigned GetPotentialContactWith(BoundingColliderNode * _other,
 			                             PotentialContacts    * _pPotentialContacts,
 			                             unsigned               _limit) const;
+		unsigned GetChildrenPotentialContact(unsigned _limit, PotentialContacts * _pPotentialContacts) const;
 
 		bool     isOverlapping(const BoundingColliderNode & _rhs) const;
 

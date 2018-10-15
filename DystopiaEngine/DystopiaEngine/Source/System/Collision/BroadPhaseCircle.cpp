@@ -41,7 +41,7 @@ Dystopia::BroadPhaseCircle::BroadPhaseCircle(BroadPhaseCircle _c1, BroadPhaseCir
 
 bool Dystopia::BroadPhaseCircle::isOverlapping(BroadPhaseCircle const& _rhs) const
 {
-	return (_rhs.mOrigin - mOrigin).MagnitudeSqr() < (_rhs.mRadius + mRadius) * (_rhs.mRadius + mRadius);
+	return (_rhs.mOrigin - mOrigin).MagnitudeSqr() <= (_rhs.mRadius + mRadius) * (_rhs.mRadius + mRadius);
 }
 
 float Dystopia::BroadPhaseCircle::GetRadius() const

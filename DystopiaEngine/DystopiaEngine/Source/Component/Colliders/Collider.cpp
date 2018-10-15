@@ -257,7 +257,7 @@ namespace Dystopia
 	}
 
 
-	BroadPhaseCircle Collider::GenerateBoardPhaseCircle()
+	BroadPhaseCircle Collider::GenerateBoardPhaseCircle() const
 	{
 		return BroadPhaseCircle();
 	}

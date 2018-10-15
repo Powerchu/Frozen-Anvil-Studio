@@ -58,7 +58,7 @@ namespace Dystopia
 		/*Duplicate the Component*/
 		virtual Circle* Duplicate() const;
 
-		virtual BroadPhaseCircle GenerateBoardPhaseCircle();
+		virtual BroadPhaseCircle GenerateBoardPhaseCircle() const;
 		float GetRadius() const;
 
 		/*Serialise and Unserialise*/

@@ -183,7 +183,7 @@ namespace Dystopia
 		virtual void Serialise(TextSerialiser&) const = 0;
 		virtual void Unserialise(TextSerialiser&) = 0;
 
-		virtual BroadPhaseCircle GenerateBoardPhaseCircle();
+		virtual BroadPhaseCircle GenerateBoardPhaseCircle() const;
 		virtual ~Collider();
 
 	protected:

@@ -114,7 +114,7 @@ namespace Dystopia
 		{
 			if (elem.GetOwner())
 			{
-				//elem.ClearCollisionEvent(); //clear collision table
+				elem.ClearCollisionEvent(); //clear collision table
 				//auto const & GobjPoint = elem.GetOwner()->GetComponent<Transform>()->GetPosition();
 			    //Math::Matrix3D gobjMatrix = Math::Translate(GobjPoint.x, GobjPoint.y, GobjPoint.z) * elem.GetOwner()->GetComponent<Transform>()->GetRotation().Matrix();
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
@@ -129,7 +129,7 @@ namespace Dystopia
 		{
 			if (elem.GetOwner())
 			{
-				//elem.ClearCollisionEvent(); //clear collision table
+				elem.ClearCollisionEvent(); //clear collision table
 				//auto const & GobjPoint =  elem.GetOwner()->GetComponent<Transform>()->GetPosition();
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
@@ -143,7 +143,7 @@ namespace Dystopia
 		{
 			if (elem.GetOwner())
 			{
-				//elem.ClearCollisionEvent(); //clear collision table
+				elem.ClearCollisionEvent(); //clear collision table
 				//auto const   & GobjPoint = elem.GetOwner()->GetComponent<Transform>()->GetPosition();
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
@@ -172,7 +172,8 @@ namespace Dystopia
 							if (key.first == pair_key)
 							{
 								(this->*key.second)(bodyA, bodyB);
-								//bodyB->SetColliding(bodyB->Collider::HasCollision());
+								(this->*key.second)(bodyB, bodyA);
+								bodyB->SetColliding(bodyB->Collider::HasCollision());
 								bodyA->SetColliding(bodyA->Collider::HasCollision());
 								break;
 							}
@@ -187,7 +188,8 @@ namespace Dystopia
 						if (key.first == pair_key)
 						{
 							(this->*key.second)(bodyA, bodyB);
-							//bodyB->SetColliding(bodyB->Collider::HasCollision());
+							(this->*key.second)(bodyB, bodyA);
+							bodyB->SetColliding(bodyB->Collider::HasCollision());
 							bodyA->SetColliding(bodyA->Collider::HasCollision());
 							break;
 						}
@@ -195,7 +197,9 @@ namespace Dystopia
 				}
 			}
 		}
+
 		return;
+
 		for (auto & bodyA : mColliders)
 		{
 			if (nullptr == bodyA->GetOwner()) continue;
@@ -216,7 +220,7 @@ namespace Dystopia
 								if (key.first == pair_key)
 								{
 									(this->*key.second)(bodyA, bodyB);
-									//bodyB->SetColliding(bodyB->Collider::HasCollision());
+									bodyB->SetColliding(bodyB->Collider::HasCollision());
 									bodyA->SetColliding(bodyA->Collider::HasCollision());
 									break;
 								}
@@ -231,7 +235,7 @@ namespace Dystopia
 							if (key.first == pair_key)
 							{
 								(this->*key.second)(bodyA, bodyB);
-								//bodyB->SetColliding(bodyB->Collider::HasCollision());
+								bodyB->SetColliding(bodyB->Collider::HasCollision());
 								bodyA->SetColliding(bodyA->Collider::HasCollision());
 								break;
 							}

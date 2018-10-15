@@ -84,7 +84,7 @@ namespace Dystopia
 		return static_cast<ComponentDonor<Circle> *>(EngineCore::GetInstance()->GetSystem<Circle::SYSTEM>())->RequestComponent(*this);
 	}
 
-	BroadPhaseCircle Circle::GenerateBoardPhaseCircle()
+	BroadPhaseCircle Circle::GenerateBoardPhaseCircle() const
 	{
 		return BroadPhaseCircle(GetRadius(), GetGlobalPosition());
 	}

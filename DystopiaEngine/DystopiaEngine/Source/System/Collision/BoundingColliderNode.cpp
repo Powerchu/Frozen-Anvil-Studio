@@ -14,8 +14,16 @@ namespace Dystopia
 
 	unsigned BoundingColliderNode::GetNumPotentialContact(unsigned _limit, PotentialContacts* _pPotentialContacts) const
 	{
-		
-		return (isLeaf() || !_limit) ? 0 : mChildrenNode[0]->GetPotentialContactWith(mChildrenNode[1], _pPotentialContacts, _limit);
+		unsigned Total = 0;
+
+		if (!isLeaf() || !_limit)
+			Total += mChildrenNode[0]->GetPotentialContactWith(mChildrenNode[1], _pPotentialContacts, _limit);
+		if (!isLeaf() || !_limit - Total)
+			Total += mChildrenNode[0]->GetNumPotentialContact(_limit - Total, _pPotentialContacts + Total);
+		if (!isLeaf() || !_limit - Total)
+			Total += mChildrenNode[1]->GetNumPotentialContact(_limit - Total, _pPotentialContacts + Total);
+
+		return Total;
 	}
 
 	unsigned BoundingColliderNode::GetPotentialContactWith(BoundingColliderNode* _other,
@@ -31,10 +39,7 @@ namespace Dystopia
 			_pPotentialContacts->mContacts[1] = _other->mCollider;
 			return 1;
 		}
-		/*
-		 * Use the Bounding Circle with the largest Size as there are more colliders inside the Circle
-		 */
-		else if(_other->isLeaf() || (!isLeaf() && mBoundingCircle.GetRadius() > _other->mBoundingCircle.GetRadius()))
+		else if (_other->isLeaf())
 		{
 			/*Recurse into self*/
 			unsigned count = mChildrenNode[0]->GetPotentialContactWith(_other, _pPotentialContacts, _limit);
@@ -44,7 +49,7 @@ namespace Dystopia
 			else
 				return count;
 		}
-		else
+		else if(isLeaf())
 		{
 			/*Recurse into other*/
 			unsigned count = GetPotentialContactWith(_other->mChildrenNode[0], _pPotentialContacts, _limit);
@@ -54,6 +59,57 @@ namespace Dystopia
 			else
 				return count;
 		}
+		else
+		{
+			unsigned count = 0;
+			unsigned Total = count = mChildrenNode[0]->GetPotentialContactWith(_other->mChildrenNode[0], _pPotentialContacts, _limit);
+
+			if (_limit - Total)
+				Total += mChildrenNode[0]->GetPotentialContactWith(_other->mChildrenNode[1], _pPotentialContacts + Total, _limit - Total);
+			if (_limit - Total)
+				Total += mChildrenNode[1]->GetPotentialContactWith(_other->mChildrenNode[0], _pPotentialContacts + Total, _limit - Total);
+			if (_limit - Total)
+				Total += mChildrenNode[1]->GetPotentialContactWith(_other->mChildrenNode[1], _pPotentialContacts + Total, _limit - Total);
+			return Total;
+		}
+		/*Leave this in. Dont delete yet*/
+		/*
+		 * Use the Bounding Circle with the largest Size as there are more colliders inside the Circle
+		 */
+		//else if(_other->isLeaf() || (!isLeaf() && mBoundingCircle.GetRadius() > _other->mBoundingCircle.GetRadius()))
+		//{
+		//	/*Recurse into self*/
+		//	unsigned count = mChildrenNode[0]->GetPotentialContactWith(_other, _pPotentialContacts, _limit);
+
+		//	if (_limit > count)
+		//		return count + mChildrenNode[1]->GetPotentialContactWith(_other, _pPotentialContacts + count, _limit - count);
+		//	else
+		//		return count;
+		//}
+		//else
+		//{
+		//	/*Recurse into other*/
+		//	unsigned count = GetPotentialContactWith(_other->mChildrenNode[0], _pPotentialContacts, _limit);
+
+		//	if (_limit > count)
+		//		return count + GetPotentialContactWith(_other->mChildrenNode[1], _pPotentialContacts + count, _limit - count);
+		//	else
+		//		return count;
+		//}
+	}
+
+	unsigned BoundingColliderNode::GetChildrenPotentialContact(unsigned _limit, PotentialContacts * _pPotentialContacts) const
+	{
+		if (isLeaf())
+			return 0;
+
+		unsigned count = 0;
+		unsigned total = count = mChildrenNode[0]->GetPotentialContactWith(mChildrenNode[1], _pPotentialContacts, _limit);
+		for (auto & elem : mChildrenNode)
+		{
+			total += count = elem->GetChildrenPotentialContact(_limit - count, _pPotentialContacts);
+		}
+		return total;
 	}
 
 	bool BoundingColliderNode::isOverlapping(const BoundingColliderNode& _rhs) const
