@@ -297,8 +297,8 @@ namespace Dystopia
 		auto viewport = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
 		Math::Vec2 hitPoint{ (relPos.x / mImgSize.x) * viewport.mnWidth,
 							 (relPos.y / mImgSize.y) * viewport.mnHeight };
-		auto worldPos = _cam->ScreenToWorld(Math::MakeVector3D( (hitPoint.x - (viewport.mnWidth / 2)),
-																(hitPoint.y - (viewport.mnHeight / 2)),
+		auto worldPos = _cam->ScreenToWorld(Math::MakeVector3D( (hitPoint.x - (mImgSize.x / 2)),
+																(hitPoint.y - (mImgSize.y / 2)),
 																 0.f));
 		return worldPos;
 	}
@@ -399,13 +399,19 @@ namespace Dystopia
 	{
 		if (!mpSceneCamera) return Math::Vec2{ 0,0 };
 
-		auto		viewport	= EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
+		//auto		viewport	= EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
 		Camera*		pCamera		= mpSceneCamera->GetComponent<Camera>();
 		auto		equation1	= pCamera->GetProjectionMatrix() * (pCamera->GetViewMatrix() * curPos);
-		auto		equation2	= pCamera->GetViewMatrix() * (equation1 / equation1.w);
 
-		return Math::Vec2{ (equation2.x * (mImgSize.x / 2)) + (Size().x / 2), 
-						   (equation2.y * (mImgSize.y / 2)) + (Size().y / 2) };
+		//float		thisFirstpart = ((viewport.mnX * viewport.mnWidth) / 2);
+		//int			resultantX  = (viewport.mnWidth / 2) + viewport.mnX;
+		//equation1 = equation1 / equation1.w;
+		//equation1.x = equation1.x * thisFirstpart;
+		//equation1.x = equation1.x+ resultantX;
+		//auto		equation2	= (equation1 / equation1.w);
+
+		return Math::Vec2{ (equation1.x * (mImgSize.x / 2)) + (Size().x / 2),
+						   (equation1.y * (mImgSize.y / 2)) + (Size().y / 2) };
 	}
 
 	void SceneView::DrawGizmoMul(const AutoArray<GameObject*>& _arr)
@@ -414,7 +420,7 @@ namespace Dystopia
 		unsigned int size = _arr.size();
 		for (auto& obj : _arr)
 		{
-			const auto& pos = obj->GetComponent<Transform>()->GetGlobalPosition();
+			const auto pos = obj->GetComponent<Transform>()->GetGlobalPosition();
 			avgPos.x = avgPos.x + pos.x;
 			avgPos.y = avgPos.y + pos.y;
 		}
@@ -429,7 +435,7 @@ namespace Dystopia
 		case EGUI::eDRAGGING:
 			for (auto& obj : _arr)
 			{
-				auto& cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
+				auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
 				obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX, cpos.y, cpos.z, cpos.w });
 			}
 			mClearSelection = false;
@@ -446,7 +452,7 @@ namespace Dystopia
 		case EGUI::eDRAGGING:
 			for (auto& obj : _arr)
 			{
-				auto& cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
+				auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
 				obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x, cpos.y + changeY, cpos.z, cpos.w });
 			}
 			mClearSelection = false;
@@ -463,7 +469,7 @@ namespace Dystopia
 		case EGUI::eDRAGGING:
 			for (auto& obj : _arr)
 			{
-				auto& cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
+				auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
 				obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX, cpos.y + changeY, cpos.z, cpos.w });
 			}
 			mClearSelection = false;
