@@ -1,5 +1,5 @@
 [START_Scene]
-18446744072511553536,player_scene,8,[START_START_GO_DATA]
+18446744072511553536,player_scene,9,[START_START_GO_DATA]
 910164992,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
@@ -71,6 +71,15 @@
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073057433088,1,GameObject,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+50,50,1,200,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]
@@ -126,7 +135,7 @@
 
 [END_Component End]
 [START_ComponentDonor]
-7,
+8,
 [END_ComponentDonor End]
 [START_Component]
 [START_RigidBody]
@@ -167,6 +176,12 @@
 [START_Component]
 [START_RigidBody]
 18446744071607814656,0,18446744073580751872,0,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+973763584,0,18446744073057433088,0,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -219,8 +234,14 @@
 
 [END_Component End]
 [START_ComponentDonor]
-0,
+1,
 [END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+1665371648,0,18446744073057433088,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]

@@ -166,12 +166,22 @@ namespace Dystopia
 					if (!bodyA->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState() ||
 						!bodyB->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState())
 					{
-						const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+						const auto pair_key1 = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+						const auto pair_key2 = std::make_pair(bodyB->GetColliderType(), (bodyA)->GetColliderType());
 						for (auto & key : CollisionFuncTable)
 						{
-							if (key.first == pair_key)
+							if (key.first == pair_key1)
 							{
 								(this->*key.second)(bodyA, bodyB);
+								bodyB->SetColliding(bodyB->Collider::HasCollision());
+								bodyA->SetColliding(bodyA->Collider::HasCollision());
+								break;
+							}
+						}
+						for (auto & key : CollisionFuncTable)
+						{
+							if (key.first == pair_key2)
+							{
 								(this->*key.second)(bodyB, bodyA);
 								bodyB->SetColliding(bodyB->Collider::HasCollision());
 								bodyA->SetColliding(bodyA->Collider::HasCollision());
@@ -182,12 +192,22 @@ namespace Dystopia
 				}
 				else
 				{
-					const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+					const auto pair_key1 = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+					const auto pair_key2 = std::make_pair(bodyB->GetColliderType(), (bodyA)->GetColliderType());
 					for (auto & key : CollisionFuncTable)
 					{
-						if (key.first == pair_key)
+						if (key.first == pair_key1)
 						{
 							(this->*key.second)(bodyA, bodyB);
+							bodyB->SetColliding(bodyB->Collider::HasCollision());
+							bodyA->SetColliding(bodyA->Collider::HasCollision());
+							break;
+						}
+					}
+					for (auto & key : CollisionFuncTable)
+					{
+						if (key.first == pair_key2)
+						{
 							(this->*key.second)(bodyB, bodyA);
 							bodyB->SetColliding(bodyB->Collider::HasCollision());
 							bodyA->SetColliding(bodyA->Collider::HasCollision());
@@ -214,12 +234,23 @@ namespace Dystopia
 						if (!bodyA->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState() ||
 							!bodyB->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState())
 						{
-							const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+							const auto pair_key1 = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+							const auto pair_key2 = std::make_pair(bodyB->GetColliderType(), (bodyA)->GetColliderType());
 							for (auto & key : CollisionFuncTable)
 							{
-								if (key.first == pair_key)
+								if (key.first == pair_key1)
 								{
 									(this->*key.second)(bodyA, bodyB);
+									bodyB->SetColliding(bodyB->Collider::HasCollision());
+									bodyA->SetColliding(bodyA->Collider::HasCollision());
+									break;
+								}
+							}
+							for (auto & key : CollisionFuncTable)
+							{
+								if (key.first == pair_key2)
+								{
+									(this->*key.second)(bodyB, bodyA);
 									bodyB->SetColliding(bodyB->Collider::HasCollision());
 									bodyA->SetColliding(bodyA->Collider::HasCollision());
 									break;
@@ -229,12 +260,23 @@ namespace Dystopia
 					}
 					else
 					{
-						const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+						const auto pair_key1 = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+						const auto pair_key2 = std::make_pair(bodyB->GetColliderType(), (bodyA)->GetColliderType());
 						for (auto & key : CollisionFuncTable)
 						{
-							if (key.first == pair_key)
+							if (key.first == pair_key1)
 							{
 								(this->*key.second)(bodyA, bodyB);
+								bodyB->SetColliding(bodyB->Collider::HasCollision());
+								bodyA->SetColliding(bodyA->Collider::HasCollision());
+								break;
+							}
+						}
+						for (auto & key : CollisionFuncTable)
+						{
+							if (key.first == pair_key2)
+							{
+								(this->*key.second)(bodyB, bodyA);
 								bodyB->SetColliding(bodyB->Collider::HasCollision());
 								bodyA->SetColliding(bodyA->Collider::HasCollision());
 								break;

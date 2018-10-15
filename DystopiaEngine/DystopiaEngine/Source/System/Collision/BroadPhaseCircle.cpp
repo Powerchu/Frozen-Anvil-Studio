@@ -46,12 +46,12 @@ bool Dystopia::BroadPhaseCircle::isOverlapping(BroadPhaseCircle const& _rhs) con
 
 float Dystopia::BroadPhaseCircle::GetRadius() const
 {
-	return mRadius;
+	return Math::Abs(mRadius);
 }
 
 float Dystopia::BroadPhaseCircle::GetRadiusGrowth(BroadPhaseCircle _other) const
 {
-	return BroadPhaseCircle{ *this,_other }.GetRadius() - mRadius;
+	return BroadPhaseCircle{ *this,_other }.GetRadius() - GetRadius();
 }
 
 Math::Point3D Dystopia::BroadPhaseCircle::GetOrigin() const
