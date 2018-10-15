@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\Allocator\Allocator.cpp" />
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp" />
     <ClCompile Include="Source\Component\CharacterController.cpp" />
     <ClCompile Include="Source\Component\CollisionEvent.cpp" />
@@ -114,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="Include\Allocator\Allocator.h" />
     <ClInclude Include="Include\Allocator\DefaultAllocImpl.h" />
     <ClInclude Include="Include\Allocator\ProxyAlloc.h" />
     <ClInclude Include="Include\Component\AABB.h" />

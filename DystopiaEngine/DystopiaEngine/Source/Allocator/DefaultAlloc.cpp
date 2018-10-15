@@ -126,9 +126,10 @@ void* Dystopia::DefaultAlloc::Allocate(size_t _sz, size_t _align)
 			}
 
 			mpFree = pSeek == mpFree ? temp : mpFree;
-			reinterpret_cast<MetaData_t*>(pRet)[-1] = ((adjSz & ~0x3) << 6) + static_cast<unsigned char>(_align - 1);
+			reinterpret_cast<MetaData_t*>(pRet)[-1] = (adjSz << 6) + static_cast<unsigned char>(_align - 1);
 
 #        if defined(DEBUGDEFAULTALLOC)
+			DEBUG_BREAK(adjSz & 0x3, "Error: Size is not a multiple of 4!\n");
 			printf("Alloc   [Actual: %p, Adjusted: %p, Size: %u, Adjust: %zu, Block: %u, %u]\n", pSeek, pRet, adjSz, _align, blkSz, offs);
 			fprintf(output, "Alloc   [Actual: %p, Adjusted: %p, Size: %u, Adjust: %zu, Block: %u, %u]\n", pSeek, pRet, adjSz, _align, blkSz, offs);
 			fflush(output);
@@ -257,6 +258,28 @@ void* Dystopia::DefaultAlloc::GetBlockFromOffset(MetaData_t const _nOffset) cons
 		return mpBlock + _nOffset;
 
 	return nullptr;
+}
+
+void Dystopia::DefaultAlloc::WriteFreeMemory(void* _p)
+{
+#if defined(DEBUGALLOC)
+
+	mAllocator.Get().WriteFreeMemory(_p);
+
+#endif
+}
+
+void Dystopia::DefaultAlloc::WriteFreeMemoryImpl(void*) const
+{
+}
+
+void Dystopia::DefaultAlloc::WriteActiveAllocations(void* _out)
+{
+#if defined(DEBUGALLOC)
+
+	mAllocator.WriteActiveAllocations(static_cast<FILE*>(_out));
+
+#endif
 }
 
 

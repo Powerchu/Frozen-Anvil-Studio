@@ -32,6 +32,9 @@ namespace Dystopia
 		[[nodiscard]] void* Allocate(size_t, size_t);
 		void Deallocate(void*);
 
+		static void WriteFreeMemory(void*);
+		static void WriteActiveAllocations(void*);
+
 	private:
 		std::byte* mpBlock;
 		std::byte* mpFree;
@@ -43,6 +46,8 @@ namespace Dystopia
 		static MetaData_t GetBlockSize(void*);
 		static MetaData_t GetNextOffset(void*);
 		void* GetBlockFromOffset(MetaData_t) const;
+
+		void WriteFreeMemoryImpl(void*) const;
 	};
 }
 

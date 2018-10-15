@@ -259,6 +259,9 @@
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp">
       <Filter>Allocator\DefaultAllocator</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Allocator\Allocator.cpp">
+      <Filter>Allocator\Allocator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -723,6 +726,9 @@
     <ClInclude Include="Include\Editor\SystemSettings.h">
       <Filter>Editor\Editor Tabs\SystemSettings</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Allocator\Allocator.h">
+      <Filter>Allocator\Allocator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1030,6 +1036,9 @@
     </Filter>
     <Filter Include="Editor\Editor Tabs\TagSystem">
       <UniqueIdentifier>{717afecd-7ef3-4406-b046-fe7b2ed2f840}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Allocator\Allocator">
+      <UniqueIdentifier>{9baa3d75-f8aa-4e1c-8273-18e2128a6cdc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

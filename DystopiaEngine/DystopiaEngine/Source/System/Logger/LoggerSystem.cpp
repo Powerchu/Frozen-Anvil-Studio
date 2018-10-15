@@ -15,6 +15,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 #include "Editor/ConsoleLog.h"
 
+#if defined(DEBUGALLOC)
+#include "Allocator/DefaultAllocImpl.h"
+#endif
+
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
 #include <ctime>
@@ -54,6 +58,9 @@ namespace
 				else
 					fprintf(out, "Function %p\n", data[n]);
 			}
+
+#       if defined(DEBUGALLOC)
+#       endif
 
 			SymCleanup(GetCurrentProcess());
 		}

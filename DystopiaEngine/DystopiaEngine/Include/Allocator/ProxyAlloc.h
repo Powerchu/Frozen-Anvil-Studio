@@ -37,6 +37,10 @@ namespace Dystopia
 		[[nodiscard]] void* Allocate(size_t, size_t);
 		void Deallocate(void*);
 
+		void WriteActiveAllocations(FILE*) const;
+
+		Alloc_t const& Get(void) const;
+
 
 	private:
 
@@ -73,7 +77,10 @@ inline Dystopia::ProxyAlloc<Alloc_t>::~ProxyAlloc(void) noexcept
 {
 	if (mData.size())
 	{
-		DEBUG_BREAK(true, "Alloc Warning: Detected Memory Leaks!");
+		if (auto out = LoggerSystem::OutputFile("Memleak"))
+		{
+			fprintf(out, "Proxy Allocator: Detected Memory leaks!");
+		}
 	}
 }
 
@@ -128,6 +135,27 @@ void Dystopia::ProxyAlloc<A>::Deallocate(void* _ptr)
 	}
 
 	mAlloc.Deallocate(_ptr);
+}
+
+template<typename Alloc_t>
+inline void Dystopia::ProxyAlloc<Alloc_t>::WriteFreeMemory(void* _p) const
+{
+	mAlloc.WriteFreeMemoryImpl(_p);
+}
+
+template<typename Alloc_t>
+inline void Dystopia::ProxyAlloc<Alloc_t>::WriteActiveAllocations(FILE* _out) const
+{
+	for (auto& e : mData)
+	{
+		fprintf(_out, "", e.mPointer, e.mReqSz, e.mAlignment)
+	}
+}
+
+template<typename A>
+inline A const& Dystopia::ProxyAlloc<A>::Get(void) const
+{
+	return mAlloc
 }
 
 
