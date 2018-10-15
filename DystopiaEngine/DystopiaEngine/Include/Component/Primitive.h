@@ -36,7 +36,7 @@ namespace Dystopia
 		Primitive(const Primitive&) = delete;
 		// Unnecessary move constructor
 		Primitive(Primitive&&) = delete;
-		// Unnecessary Copy Operato
+		// Unnecessary Copy Operator
 		auto operator=(const Primitive&) = delete;
 		// Unnecessary move operator
 		auto operator=(Primitive&&) = delete;

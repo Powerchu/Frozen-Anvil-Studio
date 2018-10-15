@@ -14,12 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _EDITOR_INPUT_H_
 #define _EDITOR_INPUT_H_
-#include "System\Base\Systems.h"    // Base Class
-#include "DataStructure\Array.h"    // Array
-#include "Math\Vector2.h"           // Vector2
-#include "Math\Vector4.h"		    // Vector4
-#include "System\Input\InputMap.h"
-#include "System\Input\MouseData.h"
+#include "DataStructure/Array.h"    // Array
+#include "Math/Vector2.h"           // Vector2
+#include "System/Input/InputMap.h"
+#include "System/Input/MouseData.h"
 
 namespace Dystopia
 {

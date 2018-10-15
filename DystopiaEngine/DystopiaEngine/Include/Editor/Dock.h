@@ -14,8 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _DOCK_H_
 #define _DOCK_H_
-#include "Math\Vector4.h"
-#include "Math\Vector2.h"
+#include "Math/Vector2.h"
 
 // Work-In-Progress
 namespace EGUI
@@ -43,7 +42,7 @@ namespace EGUI
 		bool		BeginTabs(const char*, bool* = nullptr, ImGuiWindowFlags = 0);
 		void		EndTabs();
 		void		InitTabs();
-		void		PushTabSize(const Math::Vec4&);
+		void		PushTabSize(const Math::Vec2&);
 		void		PushTabSize(const float&, const float&);
 		void		PopTabSize();
 		Math::Vec2	GetTabSize(const char*_tabName);

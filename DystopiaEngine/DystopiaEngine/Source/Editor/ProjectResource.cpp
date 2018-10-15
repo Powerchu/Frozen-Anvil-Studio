@@ -12,13 +12,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\ProjectResource.h"
-#include "Editor\EGUI.h"
-#include "Editor\EditorEvents.h"
+#include "Editor/ProjectResource.h"
+#include "Editor/EGUI.h"
+#include "Editor/EditorEvents.h"
 #include <algorithm>
 #include <iostream>
 #include <Windows.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <tchar.h>
 
 static const std::string DEFAULT_PATH = "..\\DystopiaEngine\\Resource";
@@ -27,80 +27,7 @@ static float delay = 5;
 
 namespace Dystopia
 {
-	/********************************************************************* FILE & FOLDER *********************************************************************/
-
-	CrawlItem::CrawlItem(const std::string& _name, const std::string& _path)
-		: mName{ _name }, mPath{ _path }, mLowerCaseName{ mName }
-	{
-		std::transform(mLowerCaseName.begin(), mLowerCaseName.end(), mLowerCaseName.begin(), ::tolower);
-	}
-
-	Folder::Folder(const std::string& _name, const std::string& _path, Folder * const _parent)
-		: CrawlItem{ _name, _path }, mpParentFolder{ _parent }, mArrPtrFiles{}, mArrPtrFolders{}
-	{
-	}
-
-	Folder::~Folder()
-	{
-		ClearFolder();
-		mpParentFolder = nullptr;
-	}
-
-	void Folder::Crawl()
-	{
-		WIN32_FIND_DATAA data;
-		std::string pathBuffer = mPath + "\\*";
-		HANDLE hfind = FindFirstFileA(pathBuffer.c_str(), &data);
-		if (hfind != INVALID_HANDLE_VALUE)
-		{
-			do
-			{
-				if (strcmp(data.cFileName, ".") && strcmp(data.cFileName, "..") && data.dwFileAttributes != FILE_ATTRIBUTE_HIDDEN)
-				{
-					if (data.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
-						mArrPtrFolders.push_back(new Folder{ data.cFileName , mPath + "\\" + data.cFileName, this });
-					else
-						mArrPtrFiles.push_back(new File{ data.cFileName, mPath + "\\" + data.cFileName, this });
-				}
-			} while (FindNextFileA(hfind, &data));
-			FindClose(hfind);
-		}
-	}
-
-	void Folder::ClearFolder()
-	{
-		for (auto& e : mArrPtrFiles)
-		{
-			delete e;
-			e = nullptr;
-		}
-		for (auto& e : mArrPtrFolders)
-		{
-			delete e;
-			e = nullptr;
-		}
-		mArrPtrFiles.clear();
-		mArrPtrFolders.clear();
-	}
-
-	File::File(const std::string& _name, const std::string& _path, Folder * const _parent)
-		: CrawlItem{ _name, _path }, mpParentFolder{ _parent }
-	{}
-
-	File::~File()
-	{
-		mpParentFolder = nullptr;
-	}
-	
-	bool File::operator<(const File& rhs)
-	{
-		 return mName.compare(rhs.mName) <= 0;
-	}
-
-	/****************************************************************** PROJECT RESOURCE ********************************************************************/
-	
 	static ProjectResource* gpInstance = 0;
-	
 	ProjectResource* ProjectResource::GetInstance()
 	{
 		if (gpInstance) return gpInstance;
@@ -110,7 +37,7 @@ namespace Dystopia
 	}
 
 	ProjectResource::ProjectResource()
-		: EditorTab{ true },
+		: EditorTab{ false },
 		mLabel{ "Project" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
 		mpCurrentFolder{ nullptr }, mArrAllFiles{}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
 		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 90 }
@@ -118,7 +45,6 @@ namespace Dystopia
 
 	ProjectResource::~ProjectResource()
 	{
-		GetEditorEventHND()->GetEvent(eEditorEvents::EDITOR_LCLICK)->Unbind(this);
 		gpInstance = nullptr;
 	}
 
@@ -170,14 +96,17 @@ namespace Dystopia
 	{
 		Math::Vec2 fileWindowSize = Math::Vec2{ Size().x - 210, Size().y - 55 };
 		SearchWindow();
+		EGUI::Display::OpenTreeNode();
 		FolderWindow();
 		EGUI::SameLine(2);
+		ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4{ 0,0,0,0 });
 		EGUI::StartChild("FileWindow", fileWindowSize);
 		if (!strlen(mSearchText))
 			FileWindow(fileWindowSize);
 		else
 			SearchResultWindow(fileWindowSize);
 		EGUI::EndChild();
+		ImGui::PopStyleColor();
 	}
 
 	void ProjectResource::Shutdown()
@@ -189,6 +118,8 @@ namespace Dystopia
 		mFocusedFile = nullptr;
 		mpRootFolder = nullptr;
 		mpCurrentFolder = nullptr;
+
+		GetEditorEventHND()->GetEvent(eEditorEvents::EDITOR_LCLICK)->Unbind(this);
 	}
 
 	void ProjectResource::UpdateSearch()
@@ -220,13 +151,13 @@ namespace Dystopia
 
 	void ProjectResource::SearchWindow()
 	{
-		float width = Size().x - 70;
+		float width = Size().x - 20;
 		width = (width < 20) ? 20 : width;
-		EGUI::Indent(5);
+		EGUI::Indent(4);
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, true, width);
+		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, false, width);
 		EGUI::ChangeLabelSpacing();
-		EGUI::UnIndent(5);
+		EGUI::UnIndent(4);
 		EGUI::Display::HorizontalSeparator();
 	}
 
@@ -422,19 +353,10 @@ namespace Dystopia
 		if (_file == mFocusedFile) EGUI::Display::Outline(mPayloadRect.x, mPayloadRect.y);
 
 		if (EGUI::Display::CustomPayload(("###ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
-			_file->mName.c_str(), mPayloadRect, EGUI::FILE, &(*_file), sizeof(File)))
+			_file->mName.c_str(), mPayloadRect, _file->mTag, &(*_file), sizeof(File)))
 		{
 			mFocusedFile = _file;
 		}
-		//if (EGUI::Display::Button(_file->mName.c_str(), mPayloadRect))
-		//{
-		//	mFocusedFile = nullptr;
-		//}
-		//if (EGUI::Display::StartPayload(EGUI::FILE, &(*_file), sizeof(File), _file->mName.c_str()))
-		//{
-		//	mFocusedFile = nullptr;
-		//	EGUI::Display::EndPayload();
-		//}
 	}
 
 	void ProjectResource::FullCrawl(Folder* _folder)
@@ -446,7 +368,7 @@ namespace Dystopia
 
 	void ProjectResource::MakeStringLower(std::string& _transformMe)
 	{
-		std::transform(_transformMe.begin(), _transformMe.end(), _transformMe.begin(), ::tolower);
+		std::transform(_transformMe.begin(), _transformMe.end(), _transformMe.begin(), my_tolower);
 	}
 
 }

@@ -28,16 +28,31 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
-    <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
+    <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
+    <ClCompile Include="Source\Allocator\DefaultAlloc.cpp" />
+    <ClCompile Include="Source\Component\CharacterController.cpp" />
     <ClCompile Include="Source\Component\CollisionEvent.cpp" />
+    <ClCompile Include="Source\Editor\AdminCalls.cpp" />
     <ClCompile Include="Source\Editor\Clipboard.cpp" />
+    <ClCompile Include="Source\Component\Colliders\Circle.cpp" />
+    <ClCompile Include="Source\Editor\ColorScheme.cpp" />
     <ClCompile Include="Source\Editor\CommandList.cpp" />
     <ClCompile Include="Source\Editor\DefaultFactory.cpp" />
+    <ClCompile Include="Source\Editor\Gizmo.cpp" />
+    <ClCompile Include="Source\Editor\Payload.cpp" />
+    <ClCompile Include="Source\Editor\ProjectSettings.cpp" />
+    <ClCompile Include="Source\Editor\SpritePreviewer.cpp" />
+    <ClCompile Include="Source\Editor\StyleScheme.cpp" />
+    <ClCompile Include="Source\Math\Vector4.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
+    <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp" />
+    <ClCompile Include="Source\System\Graphics\TextureSystem.cpp" />
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp" />
+    <ClCompile Include="Source\System\Physics\CollisionResolution.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp" />
     <ClCompile Include="Source\Component\Particle.cpp" />
@@ -97,15 +112,32 @@
     <ClCompile Include="Source\System\Window\Window.cpp" />
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
     <ClCompile Include="Source\Utility\GUID.cpp" />
+    <ClCompile Include="Source\System\Input\XGamePad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="Include\System\Collision\BoundingColliderNode.h" />
+    <ClInclude Include="Include\System\Collision\BroadPhaseCircle.h" />
+    <ClInclude Include="Include\Allocator\DefaultAllocImpl.h" />
+    <ClInclude Include="Include\Component\AABB.h" />
     <ClInclude Include="Include\Component\BehaviourList.h" />
-    <ClInclude Include="Include\Component\CollisionEvent.h" />
+    <ClInclude Include="Include\Component\CharacterController.h" />
+    <ClInclude Include="Include\Component\Circle.h" />
+    <ClInclude Include="Include\Component\ColliderList.h" />
+    <ClInclude Include="Include\Component\Convex.h" />
+    <ClInclude Include="Include\Component\Triangle.h" />
+    <ClInclude Include="Include\Editor\AdminCalls.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />
+    <ClInclude Include="Include\Editor\ColorScheme.h" />
+    <ClInclude Include="Include\Editor\Gizmo.h" />
+    <ClInclude Include="Include\Editor\ProjectSettings.h" />
+    <ClInclude Include="Include\Editor\SpritePreviewer.h" />
+    <ClInclude Include="Include\Editor\StyleScheme.h" />
+    <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />
+    <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Renderer.h" />
     <ClInclude Include="Include\Component\RigidBody.h" />
@@ -124,6 +156,8 @@
     <ClInclude Include="Include\System\Base\ComponentDonor.h" />
     <ClInclude Include="Include\System\Collision\CollisionSystem.h" />
     <ClInclude Include="Include\System\Graphics\Framebuffer.h" />
+    <ClInclude Include="Include\System\Graphics\ShaderSystem.h" />
+    <ClInclude Include="Include\System\Graphics\TextureSystem.h" />
     <ClInclude Include="Include\System\Input\MouseData.h" />
     <ClInclude Include="Include\System\Logger\LoggerSystem.h" />
     <ClInclude Include="Include\System\Logger\LogPriority.h" />
@@ -202,7 +236,6 @@
     <ClInclude Include="Include\System\Time\TimeSystem.h" />
     <ClInclude Include="Include\System\Window\Window.h" />
     <ClInclude Include="Include\System\Window\WindowManager.h" />
-    <ClInclude Include="Include\Utility\ComponentGUID.h" />
     <ClInclude Include="Include\Utility\DebugAssert.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Utility\Meta.h" />
@@ -213,13 +246,16 @@
     <ClInclude Include="Include\Math\Vector2.h" />
     <ClInclude Include="Include\Utility\UtilityInternals.h" />
     <ClInclude Include="Include\DataStructure\Pointer.h" />
+    <ClInclude Include="Include\Math\MathFwd.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h" />
+    <ClInclude Include="Include\System\Input\XGamePad.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="dystopia_x86_64.ico" />
+    <Image Include="Resource\Editor\icons\dystopia_x86_64.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>
@@ -353,7 +389,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -420,7 +456,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -431,7 +467,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>

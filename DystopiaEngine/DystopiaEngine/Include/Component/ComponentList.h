@@ -15,22 +15,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _COMPONENTLIST_H_
 #define _COMPONENTLIST_H_
 
-#include "Utility\MetaAlgorithms.h"
+#include "Utility/MetaAlgorithms.h"
 
 namespace Dystopia
 {
 	using AllComponents = Utility::MetaAutoIndexer <
 		class Transform,
 		class Camera,
-		class Collider,
+		class Renderer,
 		class RigidBody,
-		class Renderer
+		class Collider,
+		class CharacterController
 	>::result;
 
 	using UsableComponents = Utility::MetaAutoIndexer <
 		class Camera,
 		class Renderer,
-		class Convex
+		class RigidBody,
+		class AABB,
+		class Convex,
+		class Circle,
+		class CharacterController
 		//class Particle
 	>::result;
 
@@ -40,17 +45,7 @@ namespace Dystopia
 	// Tag for Components that are behaviours
 	struct BehaviourTag : ComponentTag {};
 
-	//using SysRef_t  = unsigned;
-	//using CompRef_t = unsigned;
-	//using GUID_t    = unsigned long long;
-
-	//struct ComponentID
-	//{
-	//	GUID_t mID;
-	//	CompRef_t mComponent;
-	//	SysRef_t  mSystem;
-	//};
-
+	//using GUID_t    = uint64_t;
 }
 
 

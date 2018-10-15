@@ -11,9 +11,9 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Graphics\Texture.h"
+#include "System/Graphics/Texture.h"
 
-#include <GL\glew.h>
+#include <GL/glew.h>
 
 
 Dystopia::Texture::Texture(void) noexcept :

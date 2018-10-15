@@ -12,19 +12,24 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\EGUI.h"
-#include "Editor\Commands.h"
-#include "Editor\CommandList.h"
-#include "Editor\EditorInputs.h"
+#include "Editor/EGUI.h"
+#include "Editor/Commands.h"
+#include "Editor/CommandList.h"
+#include "Editor/EditorInputs.h"
 #include <stdlib.h>
 #include <iostream>
 
-static float DefaultAlighnmentOffsetY = 3.f;
-static float DefaultAlighnmentSpacing = 10.f;
 Dystopia::CommandHandler *gContextComdHND = nullptr;
 
 namespace EGUI
 {
+	static bool IsItemActiveLastFrame()
+	{
+		ImGuiContext g = *GImGui;
+		if (g.ActiveIdPreviousFrame) return g.ActiveIdPreviousFrame == g.CurrentWindow->DC.LastItemId;
+		return false;
+	}
+
 	void SetContext(Dystopia::CommandHandler *_pContext)
 	{
 		gContextComdHND = _pContext;
@@ -85,14 +90,14 @@ namespace EGUI
 		return ImGui::BeginMainMenuBar();
 	}
 
-	bool StartMenuHeader(const std::string& _label)
+	bool StartMenuHeader(const std::string& _label, bool _enabled)
 	{
-		return ImGui::BeginMenu(_label.c_str());
+		return ImGui::BeginMenu(_label.c_str(), _enabled);
 	}
 
-	bool StartMenuBody(const std::string& _label, const std::string& _shortcut)
+	bool StartMenuBody(const std::string& _label, const std::string& _shortcut, bool _enabled)
 	{
-		return ImGui::MenuItem(_label.c_str(), _shortcut.c_str());
+		return ImGui::MenuItem(_label.c_str(), _shortcut.c_str(), false, _enabled);
 	}
 
 	void EndMainMenuBar()
@@ -115,12 +120,8 @@ namespace EGUI
 		ImGui::Unindent(_spacing);
 	}
 
-	bool StartChild(const std::string& _label, const Math::Vec2& _size, bool _showBorder, const Math::Vec4& _colour)
+	bool StartChild(const std::string& _label, const Math::Vec2& _size, bool _showBorder, const Math::Vec4& /*_colour*/)
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 5, 5 });
-		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1);
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ _colour.x, _colour.y, _colour.z, _colour.w });
-		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0, 0, 0, 0 });
 		return ImGui::BeginChild(_label.c_str(), ImVec2{ _size.x, _size.y }, _showBorder);
 	}
 
@@ -132,13 +133,11 @@ namespace EGUI
 	void EndChild()
 	{
 		ImGui::EndChild();
-		ImGui::PopStyleColor(2);
-		ImGui::PopStyleVar(2);
 	}
 
-	void SameLine(float _customOffset)
+	void SameLine(float _customOffset, float _leftOff)
 	{
-		ImGui::SameLine(0, _customOffset);
+		ImGui::SameLine(_leftOff, _customOffset);
 	}
 
 	void PushID(int id)
@@ -186,9 +185,6 @@ namespace EGUI
 		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside, bool _iteractive, bool _showLabel)
 		{
 			bool clicked = false;
-			ImVec4 greyColor = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
-			ImVec4 btnHoveredColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered);
-			ImVec4 btnActiveColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive);
 			bool show = _iteractive ? true : false;
 
 			if (_showLabel)
@@ -200,15 +196,11 @@ namespace EGUI
 			}
 
 			ImGui::PushItemWidth(_width);
-			ImGui::PushStyleColor(ImGuiCol_Button, greyColor);
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, show ? btnHoveredColor : greyColor);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, show ? btnActiveColor : greyColor);
 			if (ImGui::Button((_anythingToShowInside + "###" + _label).c_str(),
 				ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize }))
 			{
 				if (show) clicked = true;
 			}
-			ImGui::PopStyleColor(3);
 			ImGui::PopItemWidth();
 			return clicked;
 		}
@@ -225,7 +217,7 @@ namespace EGUI
 			return ImGui::Checkbox(("##CheckBox" + _label).c_str(), _outputBool);
 		}
 
-		eDragStatus DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText)
+		eDragStatus DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText, float _width)
 		{
 			if (!_hideText)
 			{
@@ -235,14 +227,21 @@ namespace EGUI
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool changing = false;
-			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max);
+			ImGui::PushItemWidth(_width);
+			changing = ImGui::DragFloat(("###DragFloat" + _label).c_str(), _outputFloat, _dragSpeed, _min, _max, "%.3f");
+			ImGui::PopItemWidth();
 
-			if (ImGui::IsItemClicked()) return eDragStatus::eSTART_DRAG;
-			if (ImGui::IsItemDeactivatedAfterChange()) return eDragStatus::eEND_DRAG;
-			return (changing) ? eDragStatus::eDRAGGING : eDragStatus::eNO_CHANGE;
+			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
+			if (changing) return eDRAGGING;
+			if (ImGui::IsItemDeactivatedAfterChange())
+			{
+				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
+			}
+			if (ImGui::IsItemDeactivated())  return eDEACTIVATED;
+			return eNO_CHANGE;
 		}
 
-		eDragStatus DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max, bool _hideText)
+		eDragStatus DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max, bool _hideText, float _width)
 		{
 			if (!_hideText)
 			{
@@ -251,16 +250,22 @@ namespace EGUI
 				SameLine(DefaultAlighnmentSpacing);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
-
 			bool changing = false;
+			ImGui::PushItemWidth(_width);
 			changing = ImGui::DragInt(("###DragInt" + _label).c_str(), _outputInt, _dragSpeed, _min, _max);
+			ImGui::PopItemWidth();
 
-			if (ImGui::IsItemClicked()) return eDragStatus::eSTART_DRAG;
-			if (ImGui::IsItemDeactivatedAfterChange()) return eDragStatus::eEND_DRAG;
-			return (changing) ? eDragStatus::eDRAGGING : eDragStatus::eNO_CHANGE;
+			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
+			if (changing) return eDRAGGING;
+			if (ImGui::IsItemDeactivatedAfterChange())
+			{
+				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
+			}
+			if (ImGui::IsItemDeactivated()) return eDEACTIVATED;
+			return eNO_CHANGE;
 		}
 
-		eDragStatus VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
+		Array<eDragStatus, 3> VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
 		{
 			std::string field1 = "##VecFieldX", field2 = "##VecFieldY", field3 = "##VecFieldZ";
 			float x, y, z;
@@ -270,6 +275,36 @@ namespace EGUI
 			field1 += _label;
 			field2 += _label;
 			field3 += _label;
+
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label.c_str());
+			SameLine(DefaultAlighnmentSpacing);
+
+			Label("X:"); SameLine();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true, _width);
+			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = x;
+
+			SameLine(); Label("Y:"); SameLine();
+			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true, _width);
+			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
+
+			SameLine(); Label("Z:"); SameLine();
+			eDragStatus statZ = EGUI::Display::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max, true, _width);
+			if (statZ != eDragStatus::eNO_CHANGE) _outputVec->z = z;
+
+
+			return Array<eDragStatus, 3>{statX, statY, statZ};
+		}
+	
+		Array<eDragStatus, 2> VectorFields(const std::string& _label, Math::Vector2 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
+		{
+			std::string field1 = "##VecFieldX", field2 = "##VecFieldY";
+			float x, y;
+			x = _outputVec->x;
+			y = _outputVec->y;
+			field1 += _label;
+			field2 += _label;
 
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
@@ -285,21 +320,9 @@ namespace EGUI
 			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true);
 			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
 
-			SameLine(); Label("Z:"); SameLine();
-			eDragStatus statZ = EGUI::Display::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max, true);
-			if (statZ != eDragStatus::eNO_CHANGE) _outputVec->z = z;
-
 			ImGui::PopItemWidth();
 
-			return (statX == eSTART_DRAG) ? eSTART_DRAG :
-				   (statY == eSTART_DRAG) ? eSTART_DRAG :
-				   (statZ == eSTART_DRAG) ? eSTART_DRAG :
-				   (statX == eEND_DRAG) ? eEND_DRAG :
-				   (statY == eEND_DRAG) ? eEND_DRAG :
-				   (statZ == eEND_DRAG) ? eEND_DRAG :
-				   (statX == eDRAGGING) ? eDRAGGING :
-				   (statY == eDRAGGING) ? eDRAGGING :
-				   (statZ == eDRAGGING) ? eDRAGGING : eNO_CHANGE;
+			return Array<eDragStatus, 2>{statX, statY};
 		}
 
 		bool CollapsingHeader(const std::string& _label)
@@ -334,7 +357,7 @@ namespace EGUI
 			return false;
 		}
 
-		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow)
+		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow, bool _defaultOpen)
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 			flags = _highlighted ? flags | ImGuiTreeNodeFlags_Selected : flags;
@@ -342,7 +365,8 @@ namespace EGUI
 
 			if (_highlighted)
 				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
-
+			if (_defaultOpen)
+				flags |= ImGuiTreeNodeFlags_DefaultOpen;
 			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, flags);
 
 			if (_highlighted)
@@ -363,7 +387,7 @@ namespace EGUI
 
 		void OpenTreeNode(bool _open)
 		{
-			ImGui::SetNextTreeNodeOpen(_open);
+			ImGui::SetNextTreeNodeOpen(_open, ImGuiCond_FirstUseEver);
 		}
 
 		void EndTreeNode()
@@ -395,7 +419,6 @@ namespace EGUI
 		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
 						   const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize)
 		{
-			const ImU32	col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
 			ImVec2 pos = ImGui::GetCursorScreenPos();
 			ImVec2 size{ _displaytSize.x, _displaytSize.y };
 			const float iconWidth = size.x / 2;
@@ -407,8 +430,8 @@ namespace EGUI
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), size);
-			ImGui::PopStyleColor();
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
+			ImGui::PopStyleColor();
 			if (payload) EndPayload();
 			ImGui::SetCursorScreenPos(posIcon);
 			IconFile(_uniqueId.c_str(), size.x, size.y);
@@ -435,6 +458,25 @@ namespace EGUI
 			return ImGui::BeginPopup(_uniqueID.c_str());
 		}
 
+		bool StartPopupModal(const std::string& _uniqueID, const std::string& _label)
+		{
+			ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize |
+									 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+
+			bool ret = ImGui::BeginPopupModal(_uniqueID.c_str(), NULL, flags);
+			if (ret)
+			{
+				EGUI::Display::Label(_label.c_str());
+				EGUI::Display::HorizontalSeparator();
+			}
+			return ret;
+		}
+
+		void CloseCurrentPopup()
+		{
+			ImGui::CloseCurrentPopup();
+		}
+
 		void EndPopup()
 		{
 			ImGui::EndPopup();
@@ -449,7 +491,7 @@ namespace EGUI
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine();
+			SameLine(4.f);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			bool ret = ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), static_cast<int>(arrCharPtr.size()));
 			ImGui::PopItemWidth();
@@ -551,6 +593,25 @@ namespace EGUI
 				   ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
 		}
 
+		bool IconCross(const std::string& _uniqueId, float radius, float offsetX, float offsetY, const Math::Vec4& _colour)
+		{
+			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
+			ImVec2			pos = ImGui::GetCursorScreenPos();
+			const ImU32		col32 = static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
+
+			ImVec2 centre{ pos.x + radius + offsetX, pos.y + radius + offsetY };
+			pCanvas->AddCircle(centre, radius, col32);
+			float r = radius / 3.f;
+			pCanvas->AddLine(ImVec2{ centre.x - r, centre.y - r }, 
+							 ImVec2{ centre.x + r, centre.y + r }, 
+							 col32);
+			pCanvas->AddLine(ImVec2{ centre.x - r, centre.y + r },
+							 ImVec2{ centre.x + r, centre.y - r },
+							 col32);
+			return ImGui::InvisibleButton(("##iconCross" + _uniqueId).c_str(),
+					ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
+		}
+
 		bool IconGameObj(const std::string& _uniqueId, float _width, float _height)
 		{
 			const ImU32		col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
@@ -621,6 +682,24 @@ namespace EGUI
 			if (push_clip_rect) window->DrawList->PopClipRect();
 
 			ImGui::SetCursorScreenPos(pos);
+		}
+
+		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize, bool _interactive, bool _outlineBG)
+		{
+			if (!_interactive)
+			{
+				ImGui::Image(reinterpret_cast<void*>(_imgID), _imgSize, 
+							 ImVec2{ 0,0 }, ImVec2{ 1,1 }, ImVec4{ 1,1,1,1 }, 
+							 (_outlineBG) ? ImGui::GetStyleColorVec4(ImGuiCol_Border) : ImVec4{ 0,0,0,0 });
+				return false;
+			}
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0,0,0,0 });
+			bool ret = ImGui::ImageButton(reinterpret_cast<void*>(_imgID), _imgSize, 
+										  ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0, 
+										  (_outlineBG) ? ImGui::GetStyleColorVec4(ImGuiCol_BorderShadow) : ImVec4{ 0,0,0,0 },
+										  ImVec4{ 1,1,1,1 });
+			ImGui::PopStyleColor();
+			return ret;
 		}
 	}
 }	// NAMESPACE DYSTOPIA::EGUI::DISPLAY

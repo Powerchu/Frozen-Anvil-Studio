@@ -14,8 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _WINDOW_MANAGER_H_
 #define _WINDOW_MANAGER_H_
 
-#include "System\Base\Systems.h"		// Base Class
-#include "DataStructure\AutoArray.h"	// AutoArray
+#include "System/Base/Systems.h"		// Base Class
+#include "DataStructure/AutoArray.h"	// AutoArray
 
 #include <string>
 
@@ -45,10 +45,8 @@ namespace Dystopia
 		void Update(float _dt);
 		void Shutdown(void);
 		void LoadDefaults(void);
-		void LoadSettings(TextSerialiser&);
-
-		void GetSplashDimensions(int& w, int& h);
-		void DestroySplash(void);
+		void LoadSettings(DysSerialiser_t&) override;
+		void SaveSettings(DysSerialiser_t&) override;
 
 		void ToggleFullscreen(bool _bFullscreen);
 		void ShowCursor(bool _bShow) const;
@@ -59,6 +57,8 @@ namespace Dystopia
 		Window& GetMainWindow(void) const;
 
 		void RegisterMouseData(MouseData*);
+
+		bool GetIfFullScreen() const;
 
 	private:
 
@@ -72,6 +72,9 @@ namespace Dystopia
 		unsigned long mWindowStyle;
 		unsigned long mWindowStyleEx;
 		bool mbFullscreen;
+
+		void DestroySplash(void);
+		void HandleFileInput(uint64_t);
 	};
 }
 

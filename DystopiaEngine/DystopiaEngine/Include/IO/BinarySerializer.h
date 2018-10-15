@@ -31,7 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <string>
 #include <fstream>
 
-#include "IO\Serialiser.h"
+#include "IO/Serialiser.h"
 
 namespace Dystopia
 {
@@ -84,7 +84,7 @@ namespace Dystopia
 		void ApplyWrite(const T&);
 	};
 
-	namespace System
+	namespace Hardware
 	{
 		inline eEndianess GetSoftwareEndian()
 		{

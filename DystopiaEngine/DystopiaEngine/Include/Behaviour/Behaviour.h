@@ -17,12 +17,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _BEHAVIOUR_H_
 
 #include "Globals.h"
-#include "Component\ComponentList.h"	// eComponents
-#include "Component\Component.h"		// Component
+#include "Component/ComponentList.h"	// eComponents
+#include "Component/Component.h"		// Component
 
 namespace Dystopia
 {
-	class CollisionEvent;
+	struct CollisionEvent;
 
 	class _DLL_EXPORT Behaviour : public Component
 	{
@@ -30,6 +30,7 @@ namespace Dystopia
 
 		using TAG = BehaviourTag;
 		virtual unsigned GetComponentType(void) const { return unsigned(-2); };
+		virtual const std::string GetEditorName(void) const { return "Generic Behaviour"; }
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
@@ -53,6 +54,9 @@ namespace Dystopia
 		void OnCollisionEnter(const CollisionEvent&);
 		void OnCollisionStay (const CollisionEvent&);
 		void OnCollisionExit (const CollisionEvent&);
+		virtual void Serialise(TextSerialiser&) const {};
+		virtual void Unserialise(TextSerialiser&) {};
+
 
 		virtual Behaviour * Duplicate() const;
 	};

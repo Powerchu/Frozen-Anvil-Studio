@@ -14,8 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _EDITOR_EVENTS_H_
 #define _EDITOR_EVENTS_H_
-#include "DataStructure\Array.h"
-#include "System\Events\EventSystem.h"
+#include "DataStructure/Array.h"
+#include "System/Events/EventSystem.h"
 
 namespace Dystopia
 {
@@ -23,13 +23,23 @@ namespace Dystopia
 	{
 		EDITOR_LCLICK,
 		EDITOR_RCLICK,
+		EDITOR_HOTKEY_NEW,
+		EDITOR_HOTKEY_OPEN,
 		EDITOR_HOTKEY_UNDO,
 		EDITOR_HOTKEY_REDO,
 		EDITOR_HOTKEY_COPY,
 		EDITOR_HOTKEY_CUT,
 		EDITOR_HOTKEY_PASTE,
-		EDITOR_HOTKEY_DEL,
+		EDITOR_HOTKEY_DELETE,
+		EDITOR_HOTKEY_SAVE,
+		EDITOR_HOTKEY_SAVEAS,
 		EDITOR_HOTKEY_DLL_CHANGED,
+		EDITOR_HOTKEY_PLAY,
+		EDITOR_HOTKEY_STOP,
+		EDITOR_SCROLL_UP,
+		EDITOR_SCROLL_DOWN,
+		EDITOR_SCENE_CHANGED,
+		EDITOR_SCENE_DROPPED,
 
 		EDITOR_EVENT_LAST
 	};

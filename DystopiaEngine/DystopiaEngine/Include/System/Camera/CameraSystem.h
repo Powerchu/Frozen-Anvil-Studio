@@ -14,10 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _CAMERA_SYS_H_
 #define _CAMERA_SYS_H_
 
-#include "System\Base\Systems.h"
-#include "System\Base\ComponentDonor.h"
+#include "System/Base/Systems.h"
+#include "System/Base/ComponentDonor.h"
 
-#include "System\Graphics\GraphicsDefs.h"
+#include "System/Graphics/GraphicsDefs.h"
 
 
 namespace Dystopia
@@ -26,6 +26,7 @@ namespace Dystopia
 
 	class CameraSystem : public Systems, public ComponentDonor<Camera>
 	{
+		using CameraArr = ComponentDonor<Camera>::Array_t;
 	public:
 
 		CameraSystem(void) noexcept;
@@ -48,7 +49,7 @@ namespace Dystopia
 
 		void ApplyViewport(const Gfx::Viewport&);
 
-		MagicArray<Camera>& GetAllCameras(void);
+		CameraArr& GetAllCameras(void);
 
 
 	private:

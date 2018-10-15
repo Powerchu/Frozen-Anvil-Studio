@@ -11,12 +11,15 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Editor\EditorTab.h"
-#include "Editor\Editor.h"
-#include "Editor\EditorEvents.h"
-#include "Editor\Commands.h"
-#include "System\Scene\Scene.h"
-#include "Object\GameObject.h"
+#include "Editor/EditorTab.h"
+#include "Editor/Editor.h"
+#include "Editor/EditorEvents.h"
+#include "Editor/Commands.h"
+
+#include "System/Scene/Scene.h"
+#include "Object/GameObject.h"
+
+#include "IO/BinarySerializer.h"
 
 namespace Dystopia
 {
@@ -32,15 +35,15 @@ namespace Dystopia
 		mpCurrentScene = nullptr;
 	}
 
-	void EditorTab::SetFocus(GameObject&)
-	{
-		// do nothing
-	}
-
-	void EditorTab::RemoveFocus()
-	{
-		// do nothing
-	}
+	//void EditorTab::SetFocus(GameObject&)
+	//{
+	//	// do nothing
+	//}
+	//
+	//void EditorTab::RemoveFocus()
+	//{
+	//	// do nothing
+	//}
 
 	void EditorTab::SetSize(const Math::Vec2& _size)
 	{
@@ -92,9 +95,9 @@ namespace Dystopia
 		mpCurrentScene = _ctx;
 	}
 	
-	Editor&	EditorTab::GetMainEditor() const
+	Editor*	EditorTab::GetMainEditor() const
 	{
-		return *(Editor::GetInstance());
+		return Editor::GetInstance();
 	}
 	
 	CommandHandler* EditorTab::GetCommandHND() const
@@ -110,5 +113,13 @@ namespace Dystopia
 	Scene* EditorTab::GetCurrentScene()	const
 	{
 		return mpCurrentScene;
+	}
+
+	void EditorTab::SaveSettings(TextSerialiser& /*_out*/) const
+	{
+	}
+
+	void EditorTab::LoadSettings(TextSerialiser& /*_in*/)
+	{
 	}
 }

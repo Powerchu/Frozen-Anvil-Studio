@@ -4,28 +4,40 @@
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Base class for all components
+Base class for all components
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Component\Component.h"		// File Header
-#include "Object\ObjectFlags.h"
-#include "Object\GameObject.h"
-#include "System\Driver\Driver.h"
-#include "System\Scene\SceneSystem.h"
-#include "Utility\Utility.h"
+#include "Component/Component.h"		// File Header
+#include "Object/ObjectFlags.h"
+#include "Object/GameObject.h"
+#include "System/Driver/Driver.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
+#include "Utility/Utility.h"
+#include "Utility/GUID.h"
+
+#if EDITOR
+#include "Editor/EGUI.h"
+#include "Editor/Editor.h"
+#endif
 
 Dystopia::Component::Component(void) noexcept
-	: mnFlags{ FLAG_NONE }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }
+	: mnFlags{ FLAG_NONE }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }, mID{ GUIDGenerator::GetUniqueID() }
 {
 
 }
 
 Dystopia::Component::Component(GameObject * _pOwner) noexcept
-	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }
+	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }, mID{ GUIDGenerator::GetUniqueID() }
+{
+}
+
+Dystopia::Component::Component(const Component& _rhs) noexcept
+	: mnFlags{ _rhs.mnFlags }, mnOwner{ Utility::Constant<decltype(mnOwner), -1>::value }, mID{ GUIDGenerator::GetUniqueID() }
 {
 }
 
@@ -45,7 +57,12 @@ void Dystopia::Component::SetActive(const bool _bEnable)
 }
 
 
-void Dystopia::Component::Load(void) 
+void Dystopia::Component::Load(void)
+{
+
+}
+
+void Dystopia::Component::Awake(void)
 {
 
 }
@@ -57,7 +74,7 @@ void Dystopia::Component::Init(void)
 
 void Dystopia::Component::GameObjectDestroy(void)
 {
-
+	DestroyComponent();
 }
 
 void Dystopia::Component::Unload(void)
@@ -75,11 +92,17 @@ void Dystopia::Component::DestroyComponent(void)
 void Dystopia::Component::SetOwner(GameObject* _pOwner)
 {
 	mnOwner = _pOwner->GetID();
+	//mID = _pOwner->GetID();
 }
 
 Dystopia::GameObject* Dystopia::Component::GetOwner(void) const
 {
 	return EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject(mnOwner);
+}
+
+uint64_t Dystopia::Component::GetOwnerID(void) const
+{
+	return mnOwner;
 }
 
 
@@ -90,5 +113,54 @@ Dystopia::Component* Dystopia::Component::Duplicate(void) const
 
 void Dystopia::Component::EditorUI(void) noexcept
 {
+
 }
 
+uint64_t Dystopia::Component::GetID() const
+{
+	return mID;
+}
+
+unsigned Dystopia::Component::GetFlags(void) const
+{
+	return mnFlags;
+}
+
+void Dystopia::Component::SetFlags(eObjFlag _flags)
+{
+	mnFlags |= _flags;
+}
+
+void Dystopia::Component::RemoveFlags(eObjFlag _flags)
+{
+	mnFlags &= ~_flags;
+}
+
+void Dystopia::Component::Serialise(TextSerialiser& _out) const
+{
+	_out << mID;
+	_out << mnFlags;
+	_out << mnOwner;
+}
+
+void Dystopia::Component::Unserialise(TextSerialiser& _in)
+{
+	_in >> mID;
+	_in >> mnFlags;
+	_in >> mnOwner;
+
+	auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+	GameObject* owner = sceneSys->GetActiveScene().FindGameObject(mnOwner);
+
+	if (owner)
+	{
+		// dont need init cuz next scene will get init-ed when the scene inits
+		owner->AddComponent(this, Component::TAG{});
+	}
+#if EDITOR
+	else if (mnFlags & eObjFlag::FLAG_EDITOR_OBJ)
+	{
+		Editor::GetInstance()->ReAttachComponent(this);
+	}
+#endif 
+}

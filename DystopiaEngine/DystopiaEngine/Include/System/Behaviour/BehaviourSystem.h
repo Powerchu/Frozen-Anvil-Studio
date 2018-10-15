@@ -63,6 +63,7 @@ namespace Dystopia
 		virtual void Update(float);
 		virtual void PostUpdate(void);
 		virtual void Shutdown(void);
+		void PollChanges(void);
 
 		virtual void LoadDefaults(void);
 		virtual void LoadSettings(TextSerialiser&);
@@ -71,20 +72,24 @@ namespace Dystopia
 
 		MagicArray<BehaviourWrap *> const & GetDllChanges() const;
 		bool hasDllChanges() const;
+		MagicArray<BehaviourWrap> & GetAllBehaviour();
+		Behaviour * RequestBehaviour(uint64_t const & _ID, std::string const & _name);
+
 
 #endif
 
 	private:
 		/*Array of Behaviours components*/
 		//MagicArray< SharedPtr<Behaviour> > mBehaviours;
-
+		FileSystem * FileSys;
 #if EDITOR
-
+		using BehaviourPair = std::pair<uint64_t, Behaviour *>;
+		using BehaviourTable = std::pair<std::wstring, AutoArray<BehaviourPair>>;
 		SharedPtr< Hotloader<1> > mHotloader;
-		
 		/*A reference copy of all the available Behaviour Component created from a List of Dlls*/
-		MagicArray<BehaviourWrap> mvBehaviourReferences;
+		MagicArray<BehaviourWrap>   mvBehaviourReferences;
 		MagicArray<BehaviourWrap *> mvRecentChanges;
+		AutoArray< BehaviourTable > mvBehaviours;
 
 #endif
 	};

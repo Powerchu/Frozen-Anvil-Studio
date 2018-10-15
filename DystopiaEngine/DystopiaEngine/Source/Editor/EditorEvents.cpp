@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Editor\EditorEvents.h"
+#include "Editor/EditorEvents.h"
 #include <string>
 
 namespace Dystopia
@@ -43,8 +43,7 @@ namespace Dystopia
 	}
 
 	void EditorEventHandler::Update(float)
-	{
-	}
+	{ }
 
 	void EditorEventHandler::Shutdown()
 	{
@@ -55,12 +54,12 @@ namespace Dystopia
 
 	void EditorEventHandler::Fire(eEditorEvents _e)
 	{
-		GetEvent(_e)->Fire();
+		mpEventSystem->Fire(GetEvent(_e)->GetID());
 	}
 
 	void EditorEventHandler::FireNow(eEditorEvents _e)
 	{
-		mpEventSystem->Fire(GetEvent(_e)->GetID());
+		mpEventSystem->FireNow(GetEvent(_e)->GetID());
 	}
 
 	void EditorEventHandler::FireAllPending()

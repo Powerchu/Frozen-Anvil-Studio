@@ -12,21 +12,23 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Component\Camera.h"		// File header
-#include "Component\Transform.h"
-#include "Math\Matrix4.h"
-#include "Math\MathUtility.h"
+#include "Component/Camera.h"		// File header
+#include "Component/Transform.h"
+#include "Math/Matrix4.h"
+#include "Math/MathUtility.h"
 
-#include "System\Camera\CameraSystem.h"
-#include "System\Driver\Driver.h"
+#include "System/Camera/CameraSystem.h"
+#include "System/Driver/Driver.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
 
-#include "Object\GameObject.h"
-#include "Object\ObjectFlags.h"
+#include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 
 #if EDITOR
-#include "Editor\EGUI.h"
+#include "Editor/EGUI.h"
+#include "Editor/Editor.h"
 #endif
-
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
 	mViewport{0, 0, _fWidth, _fHeight}, mView{}, mProjection{},
@@ -62,7 +64,7 @@ void Dystopia::Camera::Init(void)
 	mProjection = Math::Matrix4{
 		2.f / 800.f, .0f, .0f, .0f,
 		.0f, -2.f / 500.f, .0f, .0f,
-		.0f, .0f, 2.f / 1000.f, .0f,
+		.0f, .0f, -1.f / 1000.f, .0f,
 		.0f, .0f, .0f, 1.f
 	};
 }
@@ -151,14 +153,15 @@ void Dystopia::Camera::SetCamera(void)
 	EngineCore::GetInstance()->GetSystem<CameraSystem>()->ApplyViewport(mViewport);
 
 	mView = mTransform->GetTransformMatrix();
+	auto masterView = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
 
-	mInvScreen =
+	mInvScreen = mView * Math::AffineInverse(mProjection) * 
 		Math::Mat4{
-			2.f / mViewport.mnWidth, .0f, -(1.f + 2.f * mViewport.mnX) / mViewport.mnWidth - 1.f, .0f,
-			.0f, -2.f / mViewport.mnHeight, 1.f + (1.f + 2.f * mViewport.mnY) / mViewport.mnHeight, .0f,
+			2.f / (masterView.mnWidth), .0f, -(1.f + 2.f * masterView.mnX) / masterView.mnWidth - 1.f, .0f,
+			.0f, 2.f / masterView.mnHeight, 1.f + (1.f + 2.f * masterView.mnY) / masterView.mnHeight, .0f,
 			.0f, .0f, .0f, .0f,
 			.0f, .0f, .0f, 1.f
-		} * mView; // Screen space -> Viewport space -> projection space
+		}; // Screen space -> Viewport space -> projection space
 
 	mView.AffineInverse();
 }
@@ -218,16 +221,22 @@ const Math::Matrix4 & Dystopia::Camera::GetProjectionMatrix(void)
 
 Dystopia::Camera* Dystopia::Camera::Duplicate(void) const
 {
-	return nullptr;
+	return static_cast<ComponentDonor<Camera> *>(EngineCore::GetInstance()->Get<Camera::SYSTEM>())->RequestComponent(*this);
+	//return EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent(*this);
 }
 
-void Dystopia::Camera::Serialise(TextSerialiser&) const
+void Dystopia::Camera::Serialise(TextSerialiser& _out) const
 {
-
+	_out.InsertStartBlock("Camera");
+	Component::Serialise(_out);
+	_out.InsertEndBlock("Camera");
 }
 
-void Dystopia::Camera::Unserialise(TextSerialiser&)
+void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 {
+	_in.ConsumeStartBlock();
+	Component::Unserialise(_in);
+	_in.ConsumeEndBlock();
 
 }
 

@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure\AutoArray.h" 
 #include "Utility\Utility.h"		 // Move
 #include "IO\TextSerialiser.h"
+#include "Utility\GUID.h"			// Global UniqueID
 
 #define Ping(_ARR, _FUNC, ...)			\
 for (auto& e : _ARR)					\
@@ -34,9 +35,10 @@ Dystopia::GameObject::GameObject(void) noexcept
 
 }
 
-Dystopia::GameObject::GameObject(unsigned long _ID) noexcept
+Dystopia::GameObject::GameObject(uint64_t _ID) noexcept
 	: mnID{ _ID }, mnFlags{ FLAG_NONE },
 	mTransform{ this }, mComponents{}, mBehaviours{}
+	,mbIsStatic(false)
 {
 
 }
@@ -46,6 +48,7 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	mComponents{ Utility::Move(_obj.mComponents) },
 	mBehaviours{ Utility::Move(_obj.mBehaviours) },
 	mTransform{ _obj.mTransform }
+	, mbIsStatic(false)
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
@@ -73,6 +76,20 @@ void Dystopia::GameObject::SetActive(const bool _bEnable)
 	mnFlags = _bEnable ? mnFlags | FLAG_ACTIVE : mnFlags & ~FLAG_ACTIVE;
 }
 
+void Dystopia::GameObject::SetFlag(eObjFlag _flag)
+{
+	mnFlags |= _flag;
+}
+
+void Dystopia::GameObject::RemoveFlags(eObjFlag _flags)
+{
+	mnFlags &= ~_flags;
+}
+
+unsigned Dystopia::GameObject::GetFlag() const
+{
+	return mnFlags;
+}
 
 void Dystopia::GameObject::Load(void)
 {
@@ -80,9 +97,14 @@ void Dystopia::GameObject::Load(void)
 	ForcePing(mBehaviours, Load);
 }
 
+void Dystopia::GameObject::Awake(void)
+{
+
+}
+
 void Dystopia::GameObject::Init(void)
 {
-//	ForcePing(mComponents, Init);
+	ForcePing(mComponents, Init);
 	ForcePing(mBehaviours, Init);
 }
 
@@ -106,8 +128,8 @@ void Dystopia::GameObject::PostUpdate(void)
 
 void Dystopia::GameObject::Destroy(void)
 {
-	Ping(mComponents, GameObjectDestroy);
-	Ping(mBehaviours, GameObjectDestroy);
+	ForcePing(mComponents, GameObjectDestroy);
+	ForcePing(mBehaviours, GameObjectDestroy);
 
 	mnFlags = FLAG_REMOVE;
 }
@@ -136,10 +158,9 @@ void Dystopia::GameObject::OnCollisionExit(const CollisionEvent& _pEvent)
 
 void Dystopia::GameObject::PurgeComponents(void)
 {
-	for (Behaviour* e : mBehaviours)
-		delete e;
+	//for (Behaviour* e : mBehaviours)
+	//	delete e;
 	mBehaviours.clear();
-
 	mComponents.clear();
 }
 
@@ -163,6 +184,7 @@ void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)
 		if (_pComponent == mComponents[n])
 		{
 			mComponents[n]->DestroyComponent();
+			mComponents.FastRemove(n);
 			return;
 		}
 	}
@@ -172,6 +194,8 @@ void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)
 		if (_pComponent == mBehaviours[n])
 		{
 			mBehaviours[n]->DestroyComponent();
+			mBehaviours[n] = nullptr;
+			mBehaviours.FastRemove(n);
 			return;
 		}
 	}
@@ -179,23 +203,54 @@ void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)
 
 void Dystopia::GameObject::Serialise(TextSerialiser& _out) const
 {
+	_out.InsertStartBlock("START_GO_DATA");
 	_out << mnID << mnFlags << mName;
-	_out.InsertEndBlock("GO_DATA");
+	_out.InsertEndBlock("END_GO_DATA");
+
+	_out.InsertStartBlock("START_GO_TRANSFORM");
+	mTransform.Serialise(_out);
+	_out.InsertEndBlock("END_GO_TRANSFORM");
 
 //	ForcePing(mComponents, Serialise, _in);
 	// _out << e.mID << e.mComponent << e.mSystem;
+/*
+	_out.InsertStartBlock("START_COMPONENT_TRANSFORM");
+	_out << mComponents.size();
+	for (auto& e : mComponents)
+	{
+		_out << e->GetComponentType();
+		_out << e->GetID();
+	}
+	_out.InsertEndBlock("END_COMPONENT_LIST");*/
 
-//	for (auto& e : mComponents)
-//		_out << e->GetID();
-	_out.InsertEndBlock("COMPONENT_LIST");
-	ForcePing(mBehaviours, Serialise, _out);
-	_out.InsertEndBlock("BEHAVIOUR_LIST");
+	//_out.InsertStartBlock("START_BEHAVIOUR_LIST");
+	//ForcePing(mBehaviours, Serialise, _out);
+	//_out.InsertEndBlock("END_BEHAVIOUR_LIST");
 }
 
 void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 {
+	_in.ConsumeStartBlock();
 	_in >> mnID >> mnFlags >> mName;
 	_in.ConsumeEndBlock();
+
+	_in.ConsumeStartBlock();
+	mTransform.Unserialise(_in);
+	mTransform.SetOwner(this);
+	_in.ConsumeEndBlock();
+/*
+	unsigned int maxCount;
+	unsigned typeID;
+	uint16_t compID;
+	_in.ConsumeStartBlock();
+	_in >> maxCount;
+	for (unsigned int i = 0; i < maxCount; ++i)
+	{
+		_in >> typeID;
+		_in >> compID;
+	}
+	_in.ConsumeEndBlock();*/
+	
 
 //	ForcePing(mComponents, Unserialise, _out);
 	//while (!_in.EndOfInput())
@@ -207,23 +262,36 @@ void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 	//	_in >> id >> comp >> sys;
 	//	mComponents.EmplaceBack(id, comp, sys);
 	//}
-	_in.ConsumeEndBlock();
-	ForcePing(mBehaviours, Unserialise, _in);
-	_in.ConsumeEndBlock();
+
+	//_in.ConsumeEndBlock();
+	//ForcePing(mBehaviours, Unserialise, _in);
+	//_in.ConsumeEndBlock();
 }
 
 Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 {
 	GameObject *p = new GameObject{};
-	p->mnID = mnID;
+	p->mnID = GUIDGenerator::GetUniqueID();
 	p->mnFlags = mnFlags;
 	p->mName = mName;
-	p->mComponents = mComponents;
-	p->mBehaviours = mBehaviours;
 	p->mTransform = mTransform;
+
+	for (auto& c : mComponents)
+	{
+		p->mComponents.Insert(c->Duplicate());
+	}
+	for (auto& b : mBehaviours)
+	{
+		p->mBehaviours.Insert(b->Duplicate());
+	}
+
 	return p;
 }
 
+void Dystopia::GameObject::SetID(const uint64_t& _id)
+{
+	mnID = _id;
+}
 
 uint64_t Dystopia::GameObject::GetID(void) const
 {
@@ -238,6 +306,15 @@ std::string Dystopia::GameObject::GetName(void) const
 void Dystopia::GameObject::SetName(const std::string& _strName)
 {
 	mName = _strName;
+}
+
+void Dystopia::GameObject::Identify(void)
+{
+	mTransform.SetOwner(this);
+	for (auto c : mComponents)
+		c->SetOwner(this);
+	for (auto b : mBehaviours)
+		b->SetOwner(this);
 }
 
 Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)

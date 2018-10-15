@@ -11,12 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Editor\Commands.h"
+#include "Editor/Commands.h"
 
-#include "System\Scene\Scene.h"
-#include "Object\GameObject.h"
+#include "System/Scene/Scene.h"
+#include "Object/GameObject.h"
 
-#include "..\..\Dependancies\ImGui\imgui.h"
+#include "../../Dependancies/ImGui/imgui.h"
 #include <typeinfo>
 
 namespace Dystopia
@@ -51,34 +51,36 @@ namespace Dystopia
 
 	void CommandHandler::InvokeCommand(Commands *_comd)
 	{
-		if (!_comd->ExecuteDo())
+		if (!_comd->ExecuteDo()) return;
+		if (Editor::GetInstance()->CurrentState() == EDITOR_PLAY)
 		{
+			delete _comd;
 			return;
 		}
 
+		mUnsavedChanges = true;
 		if (mDeqUndo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqUndo);
-
 		for (auto& e : mDeqRedo)
 		{
 			delete e;
 			e = nullptr;
 		}
-
 		mDeqRedo.clear();
 		mDeqUndo.push_back(_comd);
 	}
 
 	void CommandHandler::UndoCommand()
 	{
+		EndRecording();
 		if (!mDeqUndo.size()) return; 
-
 		if (!mDeqUndo.back()->ExecuteUndo())
 		{
 			RemoveStray(mDeqUndo);
 			return;
 		}
 
+		mUnsavedChanges = true;
 		if (mDeqRedo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqRedo);
 
@@ -88,17 +90,17 @@ namespace Dystopia
 
 	void CommandHandler::RedoCommand()
 	{
+		EndRecording();
 		if (!mDeqRedo.size()) return;
-
 		if (!mDeqRedo.back()->ExecuteDo())
 		{
 			RemoveStray(mDeqRedo);
 			return;
 		}
 
+		mUnsavedChanges = true;
 		if (mDeqUndo.size() == mMaxSize)
 			PopFrontOfDeque(mDeqUndo);
-
 		mDeqUndo.push_back(mDeqRedo.back());
 		mDeqRedo.pop_back();
 	}
@@ -139,14 +141,60 @@ namespace Dystopia
 		return mRecording;
 	}
 
-	void CommandHandler::InvokeCommandInsert(GameObject& _pObj, Scene& _pScene)
+	void CommandHandler::InvokeCommandInsert(GameObject& _pObj, Scene& _scene, bool * _notify)
 	{
-		InvokeCommand(new ComdInsertObject{&_pObj, &_pScene});
+		InvokeCommand(new ComdInsertObject{&_pObj, &_scene, _notify });
 	}
 
-	void CommandHandler::InvokeCommandDelete(GameObject& _pObj, Scene& _pScene) 
+	void CommandHandler::InvokeCommandDelete(GameObject& _pObj, Scene& _scene, bool * _notify)
 	{
-		InvokeCommand(new ComdDeleteObject{ &_pObj, &_pScene });
+		InvokeCommand(new ComdDeleteObject{ &_pObj, &_scene, _notify });
+	}
+
+	void CommandHandler::InvokeCommandInsert(const AutoArray<GameObject*>& _arrObj, Scene& _scene, bool *_notify)
+	{
+		if (_arrObj.size() == 1)
+			InvokeCommandInsert(**(_arrObj.begin()), _scene, _notify);
+		else
+		{
+			AutoArray<Commands*> mComdArray{ _arrObj.size() };
+			for (const auto& elem : _arrObj)
+				mComdArray.Insert(new ComdInsertObject{ elem, &_scene, _notify });
+			InvokeCommand(new ComdBatch{ Utility::Move(mComdArray) });
+		}
+	}
+
+	void CommandHandler::InvokeCommandDelete(const AutoArray<GameObject*>& _arrObj, Scene& _scene, bool *_notify)
+	{
+		if (_arrObj.size() == 1)
+			InvokeCommandDelete(**(_arrObj.begin()), _scene, _notify);
+		else
+		{
+			AutoArray<Commands*> mComdArray{ _arrObj.size() };
+			for (const auto& elem : _arrObj)
+				mComdArray.Insert(new ComdDeleteObject{ elem, &_scene, _notify });
+			InvokeCommand(new ComdBatch{ Utility::Move(mComdArray) });
+		}
+	}
+
+	void CommandHandler::SaveCallback()
+	{
+		mUnsavedChanges = false;
+	}
+
+	bool CommandHandler::HasUnsavedChanges() const
+	{
+		return mUnsavedChanges;
+	}
+
+	std::deque<Commands*>& CommandHandler::GetDeqRedo(void)
+	{
+		return mDeqRedo;
+	}
+
+	std::deque<Commands*>& CommandHandler::GetDeqUndo(void)
+	{
+		return mDeqUndo;
 	}
 }
 

@@ -23,8 +23,14 @@ namespace Dystopia
 	namespace Factory
 	{
 		GameObject* CreateGameObj(const std::string& _name);
+		GameObject* CreatePerformanceObj(const std::string& _name);
 
 		GameObject* CreateCamera(const std::string& _name);
+
+		// TODO: DELETE
+		GameObject* CreateStaticBox(const std::string& _name);
+		GameObject* CreateBox(const std::string& _name);
+		GameObject* CreateCircle(const std::string& _name);
 	}
 }
 #endif // _DEFAULT_FACTORY_H_

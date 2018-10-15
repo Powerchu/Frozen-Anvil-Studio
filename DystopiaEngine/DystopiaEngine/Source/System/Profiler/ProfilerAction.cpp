@@ -11,9 +11,9 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Profiler\ProfilerAction.h"
-#include "System\Driver\Driver.h"
-#include "System\Profiler\Profiler.h"
+#include "System/Profiler/ProfilerAction.h"
+#include "System/Driver/Driver.h"
+#include "System/Profiler/Profiler.h"
 
 #include <string>
 
@@ -24,6 +24,7 @@ Dystopia::ProfilerAction::ProfilerAction(const std::string& _strModule, const st
 
 void Dystopia::ProfilerAction::PostDuration(ProfilerAction::Precision_t _dur)
 {
+#if !defined(DISABLE_PROFILER)
 	auto& info = EngineCore::GetInstance()->GetSystem<Profiler>()->GetInfo();
 
 	size_t time = _dur.count();
@@ -31,6 +32,9 @@ void Dystopia::ProfilerAction::PostDuration(ProfilerAction::Precision_t _dur)
 
 	module.mTotal += time;
 	module.mTimes[strFunction] = time;
+#else
+	_dur;
+#endif
 }
 
 

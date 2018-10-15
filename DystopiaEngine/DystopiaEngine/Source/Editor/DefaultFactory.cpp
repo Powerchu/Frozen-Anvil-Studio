@@ -12,19 +12,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\DefaultFactory.h"
+#include "Editor/DefaultFactory.h"
 
-#include "Component\Camera.h"
-#include "Component\Collider.h"
-#include "Component\Renderer.h"
-#include "Component\RigidBody.h"
+#include "Component/Camera.h"
+#include "Component/ColliderList.h"
+#include "Component/Renderer.h"
+#include "Component/RigidBody.h"
 
-#include "System\Driver\Driver.h"
-#include "System\Graphics\GraphicsSystem.h"
-#include "System\Camera\CameraSystem.h"
+#include "System/Driver/Driver.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Camera/CameraSystem.h"
 
-#include "Object\GameObject.h"
-#include "Utility\GUID.h"
+// TODO: DELETE
+#include "System/Physics/PhysicsSystem.h"
+#include "System/Collision/CollisionSystem.h"
+
+#include "Object/GameObject.h"
+#include "Utility/GUID.h"
 
 namespace Dystopia
 {
@@ -38,13 +42,86 @@ namespace Dystopia
 			return pObject;
 		}
 
+		GameObject* CreatePerformanceObj(const std::string& _name)
+		{
+			GameObject *pObject = new GameObject{ GUIDGenerator::GetUniqueID() };
+			pObject->SetName(_name);
+			pObject->SetActive(true);
+			pObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 100, 100, 1 });
+			auto rend = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			pObject->AddComponent(rend, typename Renderer::TAG{});
+			auto rigid = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
+			pObject->AddComponent(rigid, typename RigidBody::TAG{});
+
+			pObject->Identify();
+			pObject->Init();
+			rend->Init();
+			rigid->Init();
+
+			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Asset/Salamander_Stand.png"));
+			return pObject;
+		}
+
 		GameObject* CreateCamera(const std::string& _name)
 		{
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent();
+			pObject->AddComponent(p, typename Camera::TAG{});
+			pObject->Identify();
+			return pObject;
+		}
+
+		GameObject* CreateStaticBox(const std::string& _name)
+		{
+			GameObject *pObject = CreateGameObj(_name);
+			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 			p->SetOwner(pObject);
 			p->Init();
-			pObject->AddComponent(p, typename Camera::TAG{});
+			p->Set_IsStatic(true);
+			pObject->AddComponent(p, typename RigidBody::TAG{});
+
+			auto g = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			g->SetOwner(pObject);
+			pObject->AddComponent(g, typename Renderer::TAG{});
+
+			auto c = static_cast<ComponentDonor<Convex>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
+			pObject->AddComponent(c, typename Collider::TAG{});
+			pObject->GetComponent<Transform>()->SetGlobalPosition(0, -185, 0);
+
+			return pObject;
+		}
+
+		GameObject* CreateBox(const std::string& _name)
+		{
+			GameObject *pObject = CreateGameObj(_name);
+			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
+			p->SetOwner(pObject);
+			p->Init();
+			pObject->AddComponent(p, typename RigidBody::TAG{});
+
+			auto g = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			g->SetOwner(pObject);
+			pObject->AddComponent(g, typename Renderer::TAG{});
+
+			auto c = static_cast<ComponentDonor<Convex>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
+			pObject->AddComponent(c, typename Collider::TAG{});
+			return pObject;
+		}
+
+		GameObject * CreateCircle(const std::string & _name)
+		{
+			GameObject *pObject = CreateGameObj(_name);
+			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
+			p->SetOwner(pObject);
+			p->Init();
+			pObject->AddComponent(p, typename RigidBody::TAG{});
+
+			auto g = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			g->SetOwner(pObject);
+			pObject->AddComponent(g, typename Renderer::TAG{});
+
+			auto c = static_cast<ComponentDonor<Circle>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
+			pObject->AddComponent(c, typename Collider::TAG{});
 			return pObject;
 		}
 	}

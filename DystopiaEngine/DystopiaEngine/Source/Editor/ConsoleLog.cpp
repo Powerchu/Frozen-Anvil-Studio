@@ -12,25 +12,39 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Utility\DebugAssert.h"
-#include "Editor\ConsoleLog.h"
-#include "Editor\EGUI.h"
-#include "System\Driver\Driver.h"
-#include "System\Logger\LoggerSystem.h"
+#include "Utility/DebugAssert.h"
+
+#include "Editor/ConsoleLog.h"
+#include "Editor/EGUI.h"
+#include "Editor/AdminCalls.h"
+
+#include "System/Driver/Driver.h"
+#include "System/Scene/Scene.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Logger/LoggerSystem.h"
+
+#include "Behaviour/Behaviour.h"
+#include "Component/Component.h"
+#include "Object/GameObject.h"
 #include <algorithm>
 
 namespace Dystopia
 {
-	static ConsoleLog* gpInstance = 0;
+	static ConsoleLog* gpConsoleInst = 0;
 	ConsoleLog* ConsoleLog::GetInstance()
 	{
-		if (gpInstance) return gpInstance;
+		if (gpConsoleInst) return gpConsoleInst;
 
-		gpInstance = new ConsoleLog{};
-		return gpInstance;
+		gpConsoleInst = new ConsoleLog{};
+		return gpConsoleInst;
 	}
 
-	void PrintToConsoleLog(const std::string& _text)
+	void _DLL_EXPORT PrintToConsoleLog(const std::string& _text)
+	{
+		ConsoleLog::GetInstance()->Debug(_text);
+	}
+
+	void _DLL_EXPORT PrintToConsoleLog(const char* _text)
 	{
 		ConsoleLog::GetInstance()->Debug(_text);
 	}
@@ -40,12 +54,13 @@ namespace Dystopia
 		mLabel{ "Console" },
 		mArrDebugTexts{ "" },
 		mLoggingIndex{ 0 },
-		mRecordIndex{ 0 }
+		mRecordIndex{ 0 },
+		mAdminCommands{ "" }
 	{}
 
 	ConsoleLog::~ConsoleLog()
 	{
-		gpInstance = nullptr;
+		gpConsoleInst = nullptr;
 	}
 	
 	void ConsoleLog::Init()
@@ -65,6 +80,7 @@ namespace Dystopia
 		EGUI::UnIndent(5);
 		EGUI::Display::HorizontalSeparator();
 		PrintLogs();
+		AdminInput();
 	}
 
 	void ConsoleLog::Shutdown()
@@ -79,15 +95,45 @@ namespace Dystopia
 
 	void ConsoleLog::PrintLogs()
 	{
-		static constexpr float bottomOffset = -55.f;
-		Math::Vec2 size{ Size() };
-		size.y = (size.y > 100.f) ? size.y + bottomOffset : size.y;
-		if (EGUI::StartChild("PrintingArea", size))
+		if (EGUI::StartChild("##DetailLog", Math::Vec2{Size().x - 2.f, Size().y - 85.f}, false))
 		{
 			for (unsigned int i = 0; i < mLoggingIndex; ++i)
 				EGUI::Display::Label(mArrDebugTexts[i].c_str());
+			EGUI::EndChild();
 		}
-		EGUI::EndChild();
+		EGUI::Display::HorizontalSeparator();
+	}
+
+	void ConsoleLog::AdminInput()
+	{
+		if (EGUI::Display::TextField("AdminText", mAdminCommands, MAX_SEARCH, false, Size().x - 6.f))
+		{
+			int count	= 0;
+			std::string var = "";
+			std::string fnName = "";
+			PrintToConsoleLog(std::string{ mAdminCommands });
+			if (!Admin::ValidCommand(mAdminCommands, count, var, fnName))
+				PrintToConsoleLog("Invalid Command");
+			else
+			{
+				for (int i = 0; i < count; ++i)
+				{
+					auto *p = (*(Admin::g_AdminFuncs[fnName]))(var + std::to_string(i));
+					p->GetComponent<Transform>()->SetPosition(Math::Pt3D{ 5.f * i , 0, 0.1f * i});
+					GetCurrentScene()->GetAllGameObjects().EmplaceBack(Utility::Move(*p));
+					GetCurrentScene()->GetAllGameObjects().back().Identify();
+					GetCurrentScene()->GetAllGameObjects().back().Init();
+					delete p;
+				}
+			}
+
+			int i = MAX_SEARCH - 1;
+			while (i > -1)
+			{
+				mAdminCommands[i] = '\0';
+				--i;
+			}
+		}
 	}
 
 	void ConsoleLog::Debug(const std::string& _text)
@@ -95,9 +141,9 @@ namespace Dystopia
 		if (mLoggingIndex == maxLog)
 		{
 			std::rotate(mArrDebugTexts.begin(), mArrDebugTexts.begin() + 1, mArrDebugTexts.end());
-			mArrDebugTexts[maxLog - 1] = _text;
+			mArrDebugTexts[maxLog - 1] = _text.c_str();
 		}
-		else mArrDebugTexts[mLoggingIndex++] = _text;
+		else mArrDebugTexts[mLoggingIndex++] = _text.c_str();
 		mRecordIndex++;
 	}
 	

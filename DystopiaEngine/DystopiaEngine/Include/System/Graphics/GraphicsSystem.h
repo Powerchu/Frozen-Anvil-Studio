@@ -14,21 +14,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GRAPHICS_SYS_H_
 #define _GRAPHICS_SYS_H_
 
-#include "System\Base\Systems.h"		 // System
-#include "System\Base\ComponentDonor.h"
-#include "System\Graphics\Framebuffer.h"
+#include "System/Base/Systems.h"		 // System
+#include "System/Base/ComponentDonor.h"
+#include "System/Graphics/Framebuffer.h"
+#include "Math/MathFwd.h"
+#include "Math/Vector4.h"
 
-#include <string>
 #include <map>
-#include "DataStructure\AutoArray.h"
+#include <string>
 
 
 namespace Dystopia
 {
-	class Window;
 	class Mesh;
-	class Texture;
 	class Shader;
+	class Camera;
+	class Window;
+	class Texture;
 	class Renderer;
 
 	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>
@@ -47,18 +49,23 @@ namespace Dystopia
 		bool Init(void);
 		void PostInit(void);
 
-		void Update(float);		// Draws the currently bounded window
+		void Update(float) override;		// Draws the currently bounded window
+		void PostUpdate(void) override;
 		void Shutdown(void);
 
 		void SetGamma(float) noexcept;
 		float GetGamma(void) noexcept;
 
+		bool GetDebugDraw(void) const;
+		void ToggleDebugDraw(void);
+
 		// Sets up Window for openGL rendering
 		bool InitOpenGL(Window&);
 		void BindOpenGL(Window&) noexcept;
 
-		void LoadDefaults(void);
-		void LoadSettings(DysSerialiser_t&);
+		void LoadDefaults(void) override;
+		void LoadSettings(DysSerialiser_t&) override;
+		void SaveSettings(DysSerialiser_t&) override;
 
 		void     LevelLoad(TextSerialiser&);
 		void     LoadMesh(const std::string&);
@@ -76,14 +83,17 @@ namespace Dystopia
 
 		Framebuffer& GetFrameBuffer();
 
-	private:
+		void EditorUI(void);
 
+	private:
+		Math::Vector4 mvDebugColour;
 		float mfGamma;
 
 		void* mOpenGL;
 		int mPixelFormat, mAvailable;
 		Framebuffer mGameView, mUIView;
 
+		bool mbDebugDraw;
 
 		static int DRAW_MODE;
 
@@ -91,6 +101,8 @@ namespace Dystopia
 		void EndFrame(void);
 
 		void DrawSplash(void);
+		void DrawScene(Camera&, Math::Matrix4&);
+		void DrawDebug(Camera&, Math::Matrix4&);
 
 		bool SelectOpenGLVersion(Window&) noexcept;
 	};

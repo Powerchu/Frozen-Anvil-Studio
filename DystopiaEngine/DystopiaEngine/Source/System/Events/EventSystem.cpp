@@ -10,7 +10,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Events\EventSystem.h"
+#include "System/Events/EventSystem.h"
 #include <functional>
 
 namespace Dystopia
@@ -145,7 +145,9 @@ namespace Dystopia
 	{}
 
 	void EventSystem::LoadSettings(TextSerialiser& _ser)
-	{}
+	{
+		UNUSED_PARAMETER(_ser);
+	}
 
 	EventID	EventSystem::CreateEvent(const char* _eventName)
 	{

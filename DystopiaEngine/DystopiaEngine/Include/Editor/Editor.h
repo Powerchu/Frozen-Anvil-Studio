@@ -15,11 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_H_
 #define _EDITOR_H_
 #include "DataStructure\AutoArray.h"
-#include "DataStructure\SharedPtr.h"
-#include <chrono>
+#include <string>
 
 namespace Dystopia
 {
+	class Clipboard;
 	class EngineCore;
 	class WindowManager;
 	class GraphicsSystem;
@@ -29,21 +29,22 @@ namespace Dystopia
 	class EditorTab;
 	class EditorEventHandler;
 	class SceneSystem;
+	class PhysicsSystem;
 	class Timer;
 	class Profiler;
 	class GameObject;
-	//class Scene;
-	enum ePayloadTags;
+	class BehaviourSystem;
+	class Component;
 
+	enum ePayloadTags;
 	enum eEditorState
 	{
 		EDITOR_INVALID = -1,
 		EDITOR_EXIT = 0,
+		EDITOR_PROMPT_SAVE,
 		EDITOR_MAIN,
 		EDITOR_PLAY,
-		EDITOR_PAUSE,
-		EDITOR_SAVE,
-		EDITOR_LOAD
+		EDITOR_PAUSE
 	};
 
 	class Editor
@@ -55,6 +56,8 @@ namespace Dystopia
 		/* General Looping Funcs */
 		void			Init();
 		void			LoadDefaults();
+		void			LoadSettings();
+		void			LoadTabs();
 		void			StartFrame();
 		void			UpdateFrame(const float&);
 		void			EndFrame();
@@ -64,16 +67,34 @@ namespace Dystopia
 		float			GetDeltaTime() const;
 
 		/* State change stuff */
-		void			ChangeState(eEditorState);
 		bool			IsClosing() const;
 		eEditorState	CurrentState() const;
+		void			ChangeState(eEditorState);
+		void			OpenScene(const std::wstring& _path, const std::wstring& _name);
 
 		/* Game Object stuff */
-		void			SetLastPayloadFocus(ePayloadTags);
-		void			SetFocus(GameObject&);
-		void			RemoveFocus();
-		GameObject*		FindGameObject(const unsigned long& _id) const;
-		GameObject*		GetCurrentFocusGameObj();
+		GameObject*		FindGameObject(const uint64_t& _id) const;
+
+		void			AddSelection(const uint64_t& _id);
+		void			NewSelection(const uint64_t& _id);
+		void			RemoveSelection(const uint64_t _id);
+		void			ClearSelections(void);
+
+		const AutoArray<GameObject*>&	GetSelectionObjects(void);
+
+		/* Editor Input */
+		bool			IsCtrlDown(void) const;
+
+		/* The edit functions */
+		void			EditorUndo();
+		void			EditorRedo();
+		void			EditorCopy();
+		void			EditorCut();
+		void			EditorPaste();
+		void			EditorDelete();
+
+		/* Reattach stuff */
+		void			ReAttachComponent(Component*);
 
 	private:
 		Editor(void);
@@ -82,26 +103,34 @@ namespace Dystopia
 		WindowManager			*mpWin;
 		GraphicsSystem			*mpGfx;
 		SceneSystem				*mpSceneSystem;
+		PhysicsSystem			*mpPhysicsSystem;
 		Profiler				*mpProfiler;
+		BehaviourSystem			*mpBehaviourSys;
 
 		EditorEventHandler		*mpEditorEventSys;
-		EditorInput				*mpInput;
 		CommandHandler			*mpComdHandler;
 		GuiSystem				*mpGuiSystem;
 		Timer					*mpTimer;
+		EditorInput				*mpInput;
 
-		AutoArray<EditorTab*>	mArrTabs;
+		bool					mUpdateSelection;
+		bool					mCtrlKey;
+		float					mDeltaTime;
+		std::string				mTempSaveFile;
 		eEditorState			mCurrentState;
 		eEditorState			mNextState;
-		float					mDeltaTime;
-		GameObject				*mpFocusGameObj;
-		ePayloadTags			mLatestPayloadFocus;
+		AutoArray<EditorTab*>	mArrTabs;
+		AutoArray<GameObject*>	mArrSelectedObj;
+		Clipboard				*mpClipBoard;
 
 		/* TODO: The functions for changing into different states. */
 		void			UpdateState();
-		void			Play();
-		void			Save();
-		void			Load();
+		void			GamePlay();
+		void			GameStop();
+		void			NewScene();
+		void			SaveProc();
+		void			SaveAsProc();
+		void			LoadProc();
 		void			TempSave();
 		void			TempLoad();
 
@@ -110,23 +139,19 @@ namespace Dystopia
 		void			MMFile();
 		void			MMEdit();
 		void			MMView();
-
-		/* The edit functions */
-		void			EditorUndo();
-		void			EditorRedo();
-		void			EditorCopy();
-		void			EditorCut();
-		void			EditorPaste();
+		void			MMGame();
 
 		/* EditorEvents */
 		void			UpdateKeys();
 		void			UpdateHotkeys();
+		void			UpdateGameModeKeys();
 		void			InstallHotkeys();
 		void			UnInstallHotkeys();
-		void			ReloadDLL();
 
 		/* Misc functions */
 		void			LogTabPerformance();
+		void			PromptSaving();
+		void			UpdateSelections(void);
 	};
 }
 

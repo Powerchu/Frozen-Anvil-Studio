@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _QUEUE_H_
 #define _QUEUE_H_
 
-#include "Utility\Utility.h"	// LoopIncrement
+#include "Utility/Utility.h"	// LoopIncrement
 
 #include <iterator>				// std::input_iterator_tag
 
@@ -197,7 +197,7 @@ inline unsigned Queue<T>::Size(void) const
 template<typename T>
 inline bool Queue<T>::IsFull(void) const
 {
-	return mnSize == mnCap;
+	return mnSize >= mnCap;
 }
 
 template <typename T> 

@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _META_H_
 #define _META_H_
 
-#include "Utility\MetaHelper.h"
+#include "Utility/MetaHelper.h"
 
 
 namespace Utility
@@ -289,6 +289,9 @@ namespace Utility
 	struct Type<NULL_TYPE>
 	{
 	};
+
+	template <typename Ty>
+	using Type_t = typename Type<Ty>::type;
 }
 
 

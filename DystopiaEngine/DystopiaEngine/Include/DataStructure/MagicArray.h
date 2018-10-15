@@ -15,11 +15,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _MAGIC_ARRAY_H_
 
 #include "Globals.h"
-#include "Utility\Meta.h"
-#include "Utility\Utility.h"
-#include "Math\MathUtility.h"
+#include "Utility/Meta.h"
+#include "Utility/Utility.h"
+#include "Math/MathUtility.h"
 
-#include "DataStructure\Array.h"
+#include "DataStructure/Array.h"
+#include "Allocator/DefaultAlloc.h"
 
 #include <intrin.h>			// _BitScanForward64
 #include <initializer_list> // init-list
@@ -33,7 +34,7 @@ class _DLL_EXPORT_ONLY MagicArray;
 
 namespace Ctor
 {
-	template <typename T, unsigned BLOCK_SIZE = 64, unsigned MAX_BLOCKS = 16>
+	template <typename T, unsigned BLOCK_SIZE = 64, unsigned MAX_BLOCKS = 16, typename Alloc = Dystopia::DefaultAllocator<T[]>>
 	struct _DLL_EXPORT_ONLY MagicArrayBuilder
 	{
 		static_assert(Utility::IsPowerOf2(BLOCK_SIZE), "Block Size must be a power of 2");
@@ -44,14 +45,19 @@ namespace Ctor
 		template <unsigned NEW_SIZE>
 		using SetBlockLimit = MagicArrayBuilder<T, BLOCK_SIZE, NEW_SIZE>;
 
+		template <template <typename> class NewAlloc>
+		using SetAllocator = NewAlloc<T[]>;
+
 		using type = MagicArray<T, MagicArrayBuilder>;
 
 
 	private:
 		static constexpr unsigned blk_sz  = BLOCK_SIZE;
 		static constexpr unsigned blk_max = MAX_BLOCKS;
-		static constexpr unsigned shift   = Math::Log2<BLOCK_SIZE>::value;
+		static constexpr unsigned shift   = Math::Log<BLOCK_SIZE>::value;
 		static constexpr unsigned offset  = BLOCK_SIZE - 1;
+
+		using Alloc_t = Alloc;
 
 		friend class MagicArray<T, MagicArrayBuilder>;
 
@@ -90,7 +96,7 @@ public:
 	inline Itor_t begin(void) const noexcept; 
 	inline Itor_t end(void) const noexcept;
 
-//	inline Sz_t size(void) const noexcept;
+	inline Sz_t size(void) const noexcept;
 	constexpr inline Sz_t Cap(void) const noexcept;
 
 	void clear(void) noexcept;
@@ -107,7 +113,7 @@ public:
 	//inline void Remove(void) noexcept;
 	//inline void Remove(const T&) noexcept;
 	inline void Remove(const Sz_t _nIndex);
-	void Remove(const T* _pObj);
+	void Remove(T* _pObj);
 //	void Remove(const Itor_t _pObj);
 
 	inline bool IsEmpty(void) const noexcept;
@@ -146,10 +152,11 @@ private:
 	struct _DLL_EXPORT_ONLY Iterator
 	{
 		Block const * mpBlock;
+		Block const * mpEnd;
 		Ptr_t mpAt;
 		Sz_t mnIndex;
 
-		Iterator(Block const *, const Ptr_t&, Sz_t);
+		Iterator(Array<Block, Params::blk_max> const&, const Ptr_t&, Sz_t);
 
 		Itor_t operator++(int) noexcept;
 		Itor_t& operator++(void) noexcept;
@@ -205,24 +212,47 @@ MagicArray<T, PP>::~MagicArray(void)
 
 	for (auto& e : mDirectory)
 	{
-		::operator delete[](static_cast<void*>(e.mpArray));
+		PP::Alloc_t::Free(e.mpArray);
 		e.mpArray = nullptr;
 	}
 }
 
-template<typename T, typename PP>
+template <typename T, typename PP>
 inline typename MagicArray<T, PP>::Itor_t MagicArray<T, PP>::begin(void) const noexcept
 {
-	return Itor_t{ &mDirectory[0], mDirectory[0].mpArray, 0 };
+	Itor_t ret{ mDirectory, mDirectory[0].mpArray, 0 };
+
+	if (0 == (mDirectory[0].present[0] & 0x1))
+		++ret;
+
+	return ret;
 }
 
-template<typename T, typename PP>
+template <typename T, typename PP>
 inline typename MagicArray<T, PP>::Itor_t MagicArray<T, PP>::end(void) const noexcept
 {
 	return MagicArray<T, PP>::Itor_t{ nullptr, nullptr, 0 };
 }
 
-template<typename T, typename PP>
+template <typename T, typename PP>
+inline typename MagicArray<T, PP>::Sz_t MagicArray<T, PP>::size(void) const noexcept
+{
+	Sz_t size = 0;
+	for (auto& blk : mDirectory)
+	{
+		for (auto e : blk.present)
+		{
+			e &= blk.Range;
+			e = e - (e >> 1 & 0x5555555555555555);
+			e = (e & 0x3333333333333333) + (e >> 2 & 0x3333333333333333);
+			size += (((e >> 4) + e) & 0x0F0F0F0F0F0F0F0F) * 0x0101010101010101 >> 56;
+		}
+	}
+
+	return size;
+}
+
+template <typename T, typename PP>
 constexpr inline typename MagicArray<T, PP>::Sz_t MagicArray<T, PP>::Cap(void) const noexcept
 {
 	return PP::blk_sz * PP::blk_max;
@@ -328,7 +358,7 @@ inline void MagicArray<T, PP>::Remove(const Sz_t _nIndex)
 }
 
 template<typename T, typename PP>
-void MagicArray<T, PP>::Remove(const T* _pObj)
+void MagicArray<T, PP>::Remove(T* _pObj)
 {
 	for (auto& blk : mDirectory)
 	{
@@ -351,7 +381,7 @@ inline bool MagicArray<T, PP>::IsEmpty(void) const noexcept
 		if (blk.mpArray)
 		{
 			for (auto e : blk.present)
-				if (~e & blk.Range)
+				if (e & blk.Range)
 					return false;
 		}
 		else
@@ -365,7 +395,7 @@ inline bool MagicArray<T, PP>::IsEmpty(void) const noexcept
 template<typename T, typename PP>
 inline void MagicArray<T, PP>::Allocate(Block& _blk)
 {
-	_blk.mpArray = static_cast<T*>(::operator new[](sizeof(T) * PP::blk_sz));
+	_blk.mpArray = static_cast<T*>(PP::Alloc_t::Alloc(PP::blk_sz));
 }
 
 
@@ -422,7 +452,7 @@ MagicArray<T, PP>& MagicArray<T, PP>::operator= (MagicArray<T, PP>&& _other) noe
 template<typename T, typename Params>
 inline typename uint64_t MagicArray<T, Params>::Block::GetPresentIndex(uint64_t _nIndex)
 {
-	return _nIndex >> 6;
+	return _nIndex >> Math::Log<sizeof(uint64_t) * 8>::value;
 }
 
 template <typename T, typename PP>
@@ -517,8 +547,8 @@ inline void MagicArray<T, Params>::Destroy(Val_t& it) noexcept
 }
 
 template<typename T, typename Params>
-inline MagicArray<T, Params>::Iterator::Iterator(Block const * _pBlk, const Ptr_t& _pAt, Sz_t _nIndex) :
-	mpBlock{ _pBlk }, mpAt{ _pAt }, mnIndex{ _nIndex }
+inline MagicArray<T, Params>::Iterator::Iterator(Array<Block, Params::blk_max> const& _dir, const Ptr_t& _pAt, Sz_t _nIndex) :
+	mpBlock{ _dir.begin() }, mpEnd{ _dir.end() }, mpAt{ _pAt }, mnIndex{ _nIndex }
 {
 }
 
@@ -542,10 +572,18 @@ inline typename MagicArray<T, PP>::Itor_t& MagicArray<T, PP>::Iterator::operator
 		else
 		{
 			++mpBlock;
-			mpAt = mpBlock->mpArray;
-			mnIndex = 0;
-			if (!mpAt)
+			if (mpBlock != mpEnd)
+			{
+				mpAt = mpBlock->mpArray;
+				mnIndex = 0;
+				if (!mpAt)
+					break;
+			}
+			else
+			{
+				mpAt = nullptr;
 				break;
+			}
 		}
 	} while (0 == (0x1 & (mpBlock->present[Block::GetPresentIndex(mnIndex)] >> (mnIndex & 63))));
 	return *this;

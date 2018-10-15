@@ -15,7 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _MATH_ANGLE_H_
 #define _MATH_ANGLE_H_
 
-#include "MathUtility.h"
+#include "Utility\Meta.h"
+#include "Math\MathUtility.h"
 
 namespace Math
 {
@@ -34,6 +35,7 @@ namespace Math
 			return RadToDeg * mfAngle;
 		}
 
+	protected:
 		explicit constexpr Angle(float _angle) :
 			mfAngle{ _angle }
 		{}
@@ -59,11 +61,14 @@ namespace Math
 			Angle{ _angle * DegToRad }
 		{}
 	};
+
+
 }
 
 // For some reason Visual Studio doesn't like these when they are not in global namespace
 
-#if NO_UNDERSCORE
+#if defined(NO_UNDERSCORE)
+#undef NO_UNDERSCORE
 #pragma warning(push)
 #pragma warning(disable : 4455)
 
@@ -111,7 +116,6 @@ constexpr Math::Degrees operator ""_deg(unsigned long long _angle)
 }
 
 #endif
-#undef NO_UNDERSCORE
 
 
 

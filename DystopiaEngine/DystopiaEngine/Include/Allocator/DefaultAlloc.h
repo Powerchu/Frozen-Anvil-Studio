@@ -1,18 +1,19 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Defaults.h
+\file	DefaultAlloc.h
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	TODO: Think of a description for this file
+	Default allocator with a limited pool size.
+	Exceeding the pool size from the default allocator will forcefully crash the program.
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _DEFAULTS_H_
-#define _DEFAULTS_H_
+#ifndef _DEFAULTALLOC_H_
+#define _DEFAULTALLOC_H_
 
 namespace Dystopia
 {
@@ -21,9 +22,9 @@ namespace Dystopia
 	{
 		using Base = DefaultAllocator<void>;
 
-		static inline Ty* Alloc(void)
+		[[nodiscard]] static inline Ty* Alloc(void)
 		{
-			return static_cast<Ty*>(Base::Alloc(sizeof(Ty)));
+			return static_cast<Ty*>(Base::Alloc(sizeof(Ty), alignof(Ty)));
 		}
 
 		static inline void Free(Ty* _ptr) noexcept
@@ -32,43 +33,39 @@ namespace Dystopia
 		}
 
 		template <typename ... Ps>
-		static inline Ty* ConstructAlloc(Ps&& ... _Args)
+		[[nodiscard]] static inline Ty* ConstructAlloc(Ps&& ... _Args)
 		{
-			// Use static cast to avoid includes
-			return new Ty{ static_cast<Ps&&>(_Args) ... };
+			Ty* temp = Alloc();
+			return ::new(temp) Ty{ static_cast<Ps&&>(_Args) ... };
 		}
 
 		static inline void DestructFree(Ty* _ptr) noexcept
 		{
-			delete _ptr;
+			_ptr->~Ty();
+			Free(_ptr);
 		}
 	};
 
 	template <>
 	struct DefaultAllocator<void>
 	{
-		static inline void* Alloc(size_t sz)
-		{
-			return ::operator new (sz);
-		}
-
-		static inline void Free(void* _ptr) noexcept
-		{
-			::operator delete (_ptr);
-		}
+		[[nodiscard]] static void* Alloc(size_t _sz, size_t _align = 8);
+		static void Free(void* _ptr) noexcept;
 	};
 
 	template <typename Ty>
-	struct DefaultAllocator<Ty[]>
+	struct DefaultAllocator<Ty[]> : DefaultAllocator<void>
 	{
-		static inline Ty* Alloc(size_t sz)
+		using Base = DefaultAllocator<void>;
+
+		[[nodiscard]] static inline Ty* Alloc(size_t _sz)
 		{
-			return static_cast<Ty*>(::operator new[](sz * sizeof(Ty)));
+			return static_cast<Ty*>(Base::Alloc(_sz * sizeof(Ty), alignof(Ty)));
 		}
 
 		static inline void Free(Ty* _ptr) noexcept
 		{
-			::operator delete[] (static_cast<void*>(_ptr));
+			Base::Free(static_cast<void*>(_ptr));
 		}
 	};
 }

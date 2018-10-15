@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SCOPED_TIMER_H_
 #define _SCOPED_TIMER_H_
 
-#include "System\Time\TimeDefs.h"
+#include "System/Time/TimeDefs.h"
 
 
 namespace Dystopia

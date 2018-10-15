@@ -14,15 +14,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _ENGINE_DRIVER_H_
 #define _ENGINE_DRIVER_H_
 
-#include "DataStructure\AutoArray.h"
-#include "DataStructure\Queue.h"
+#include "DataStructure/AutoArray.h"
+#include "DataStructure/Queue.h"
 
-#include "System\SystemTypes.h"
-#include "System\Base\Systems.h"
-#include "System\Time\Timer.h"
+#include "System/SystemTypes.h"
+#include "System/Base/Systems.h"
+#include "System/Time/Timer.h"
 
-#include "Utility\Meta.h"
-#include "Utility\MetaAlgorithms.h"
+#include "Utility/Meta.h"
+#include "Utility/MetaAlgorithms.h"
 
 
 
@@ -36,8 +36,7 @@ namespace Dystopia
 			Utility::Indexer<eSYSTEMS::TIME_SYSTEM     , class TimeSystem     >,
 			Utility::Indexer<eSYSTEMS::INPUT_SYSTEM    , class InputManager   >,
 			Utility::Indexer<eSYSTEMS::WINDOW_SYSTEM   , class WindowManager  >,
-//			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM    , class SoundSystem    >,
-
+//			Utility::Indexer<eSYSTEMS::SOUND_SYSTEM    , class SoundSystem    >, // TODO
 			Utility::Indexer<eSYSTEMS::SCENE_SYSTEM    , class SceneSystem    >,
 			Utility::Indexer<eSYSTEMS::CAMERA_SYSTEM   , class CameraSystem   >,
 			Utility::Indexer<eSYSTEMS::GRAPHIC_SYSTEM  , class GraphicsSystem >,
@@ -58,6 +57,9 @@ namespace Dystopia
 		~EngineCore(void) = default;
 
 		template <class T>
+		T* const Get(void) const;
+
+		template <class T>
 		T* const GetSystem(void) const;
 
 		template <unsigned N, class T = typename Utility::MetaExtract_t<N, AllSys>::type>
@@ -74,6 +76,11 @@ namespace Dystopia
 		void Update(void);
 		void Shutdown(void);
 
+		void Interrupt(void);
+		void InterruptContinue(void);
+
+		void PostUpdate(void);
+
 	private:
 
 		Timer mTime;
@@ -84,6 +91,8 @@ namespace Dystopia
 		AutoArray<void*>	mSubSystems;
 		AutoArray<Systems*> mSystemList;
 		AutoArray<Systems*> mSystemTable;
+
+		float mfAccumulatedTime;
 
 		EngineCore(void);
 
@@ -101,7 +110,20 @@ namespace Dystopia
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
-template<class T>
+template <class T>
+inline T* const Dystopia::EngineCore::Get(void) const
+{
+	if constexpr (Utility::MetaFind<T, AllSys>::value)
+	{
+		return GetSystem<T>();
+	}
+	else
+	{
+		return GetSubSystem<T>();
+	}
+}
+
+template <class T>
 inline T* const Dystopia::EngineCore::GetSystem(void) const
 {
 	using type = Utility::MetaFind<T, AllSys>;
@@ -110,13 +132,13 @@ inline T* const Dystopia::EngineCore::GetSystem(void) const
 	return static_cast<T*>(mSystemTable[type::result::value]);
 }
 
-template<unsigned _N, class T>
+template <unsigned _N, class T>
 inline T* const Dystopia::EngineCore::GetSystem(void) const
 {
 	return static_cast<T*>(mSystemTable[_N]);
 }
 
-template<class T>
+template <class T>
 inline T* const Dystopia::EngineCore::GetSubSystem(void) const
 {
 	using type = Utility::MetaFind<T, SubSys>;

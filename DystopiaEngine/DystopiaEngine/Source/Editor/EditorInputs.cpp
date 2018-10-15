@@ -11,10 +11,10 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Editor\EditorInputs.h"
-#include "System\Window\WindowManager.h"
-#include "System\Window\Window.h"
-#include "System\Driver\Driver.h"
+#include "System/Window/WindowManager.h"
+#include "System/Window/Window.h"
+#include "System/Driver/Driver.h"
+#include "Editor/EditorInputs.h"
 
 #define WIN32_LEAN_AND_MEAN			// Exclude rare stuff from Window's header
 #include <Windows.h>
@@ -27,7 +27,7 @@ namespace
 }
 
 Dystopia::EditorInput::EditorInput(void) :
-	mButtonMap{ static_cast<unsigned>(eEditorButton::TOTAL_EDITOR_BUTTONS) }
+	mButtonMap{ static_cast<unsigned>(eEditorButton::TOTAL_EDITOR_BUTTONS) }, mMouseInput{}
 {
 }
 
@@ -124,6 +124,11 @@ void Dystopia::EditorInput::Init(void)
 	mButtonMap[eEditorButton::KEY_RIGHT]		= eButton::KEYBOARD_RIGHT;
 	mButtonMap[eEditorButton::KEY_DOWN]			= eButton::KEYBOARD_DOWN;
 
+	mButtonMap[eEditorButton::KEY_MISC_1]		= eButton::KEYBOARD_OEM_1;
+	mButtonMap[eEditorButton::KEY_MISC_PLUS]	= eButton::KEYBOARD_OEM_PLUS;
+	mButtonMap[eEditorButton::KEY_MISC_COMMA]	= eButton::KEYBOARD_OEM_COMMA;
+	mButtonMap[eEditorButton::KEY_MISC_MINUS]	= eButton::KEYBOARD_OEM_MINUS;
+	mButtonMap[eEditorButton::KEY_MISC_PERIOD]	= eButton::KEYBOARD_OEM_PERIOD;
 
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
 }

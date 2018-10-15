@@ -11,39 +11,46 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Driver\Driver.h"
+#include "System/Driver/Driver.h"
 
 #include "Globals.h"
-#include "IO\TextSerialiser.h"
-#include "Utility\MetaAlgorithms.h"
-#include "Utility\MetaDataStructures.h"
-#include "DataStructure\Array.h"
-#include "DataStructure\Queue.h"
-#include "DataStructure\AutoArray.h"
+#include "IO/TextSerialiser.h"
+#include "Utility/MetaAlgorithms.h"
+#include "Utility/MetaDataStructures.h"
+#include "DataStructure/Array.h"
+#include "DataStructure/Queue.h"
+#include "DataStructure/AutoArray.h"
+#include "Allocator/DefaultAlloc.h"
 
 // Systems
-#include "System\Time\TimeSystem.h"
-#include "System\Scene\SceneSystem.h"
-#include "System\Input\InputSystem.h"
-#include "System\Sound\SoundSystem.h"
-#include "System\Graphics\GraphicsSystem.h"
-#include "System\Window\WindowManager.h"
-#include "System\Collision\CollisionSystem.h"
-#include "System\Physics\PhysicsSystem.h"
-#include "System\Camera\CameraSystem.h"
-#include "System\Events\EventSystem.h"
-#include "System\Profiler\Profiler.h"
-#include "System\Behaviour\BehaviourSystem.h"
+#include "System/Time/TimeSystem.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Input/InputSystem.h"
+#include "System/Sound/SoundSystem.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Window/WindowManager.h"
+#include "System/Collision/CollisionSystem.h"
+#include "System/Physics/PhysicsSystem.h"
+#include "System/Camera/CameraSystem.h"
+#include "System/Events/EventSystem.h"
+#include "System/Profiler/Profiler.h"
+#include "System/Behaviour/BehaviourSystem.h"
 
 // SubSystems
-#include "System\Graphics\MeshSystem.h"
-#include "System\File\FileSystem.h"
-#include "System\Logger\LoggerSystem.h"
+#include "System/Graphics/MeshSystem.h"
+#include "System/File/FileSystem.h"
+#include "System/Logger/LoggerSystem.h"
 
-#include "System\Time\Timer.h"
-#include "System\Time\ScopedTimer.h"
+#include "System/Time/Timer.h"
+#include "System/Time/ScopedTimer.h"
 
-#define SETTINGS_FILE "settings.dyst" 
+// STL Includes
+#include <string>
+#include <filesystem>
+
+
+#define SETTINGS_DIR  eFileDir::eCurrent
+#define SETTINGS_FILE "Settings.dyst" 
 
 
 
@@ -52,14 +59,14 @@ namespace
 	template <typename Ty, typename ... T>
 	AutoArray<Ty> MakeAutoArray(Utility::TypeList<T...>)
 	{
-		 return AutoArray<Ty>{ static_cast<Ty>(new T{})...};
+		 return AutoArray<Ty>{ static_cast<Ty>(Dystopia::DefaultAllocator<T>::ConstructAlloc())...};
 	}
 
 	template <typename ... T>
 	void DeleteSubSys(AutoArray<void*>& _SubSys, Utility::TypeList<T...>)
 	{
 		void(*deleters[])(void*) {
-			[] (void* _p)  { delete static_cast<T*>(_p);  }...
+			[] (void* _p)  { Dystopia::DefaultAllocator<T>::DestructFree(static_cast<T*>(_p));  }...
 		};
 
 		auto b = _SubSys.begin();
@@ -105,7 +112,7 @@ Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mTime{}, mTimeFixed{}, mMessageQueue{60}, mSystemList{ Utility::SizeofList<AllSys>::value },
+	mTime{}, mTimeFixed{}, mfAccumulatedTime{ 0 }, mMessageQueue{ 60 }, mSystemList{ Utility::SizeofList<AllSys>::value },
 	mSubSystems { MakeAutoArray<void*>(Utility::MakeTypeList_t<Utility::TypeList, SubSys>{}) },
 	mSystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) }
 {
@@ -115,15 +122,34 @@ Dystopia::EngineCore::EngineCore(void) :
 
 void Dystopia::EngineCore::LoadSettings(void)
 {
-	if (false)
+	if (GetSubSystem<FileSystem>()->CheckFileExist(SETTINGS_FILE, SETTINGS_DIR))
 	{
-		auto file = Serialiser::OpenFile<TextSerialiser>(SETTINGS_FILE);
+		auto file = Serialiser::OpenFile<TextSerialiser>(
+			GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
+			SETTINGS_FILE
+			);
+
+		std::string sentry;
+
+		file >> sentry;
+		file.ConsumeStartBlock();
+
+		// Check if the file is okay
+		if (!file.EndOfInput() && (sentry == "SENTRY"))
+		{
+			for (auto& e : mSystemTable)
+			{
+				file.ConsumeStartBlock();
+				e->LoadSettings(file);
+				file.ConsumeEndBlock();
+			}
+
+			return;
+		}
 	}
-	else
-	{
-		for (auto& e : mSystemTable)
-			e->LoadDefaults();
-	}
+
+	for (auto& e : mSystemTable)
+		e->LoadDefaults();
 }
 
 
@@ -152,21 +178,32 @@ void Dystopia::EngineCore::Init(void)
 
 	mTime.Lap();
 	mTimeFixed.Lap();
+	mfAccumulatedTime = 0;
+}
+
+void Dystopia::EngineCore::Interrupt(void)
+{
+	mfAccumulatedTime += mTimeFixed.Elapsed();
+}
+
+void Dystopia::EngineCore::InterruptContinue(void)
+{
+	mTimeFixed.Lap();
 }
 
 void Dystopia::EngineCore::FixedUpdate(void)
 {
-	static float dt = mTimeFixed.Elapsed();
+	mfAccumulatedTime += mTimeFixed.Elapsed();
 	mTimeFixed.Lap();
 
-	while (dt > _FIXED_UPDATE_DT)
+	while (mfAccumulatedTime > _FIXED_UPDATE_DT)
 	{
 		for (auto& e : mSystemList)
 		{
-			e->FixedUpdate(dt);
+			e->FixedUpdate(_FIXED_UPDATE_DT);
 		}
 
-		dt -= _FIXED_UPDATE_DT;
+		mfAccumulatedTime -= _FIXED_UPDATE_DT;
 	}
 }
 
@@ -180,6 +217,10 @@ void Dystopia::EngineCore::Update(void)
 		e->Update(dt);
 	}
 
+}
+
+void Dystopia::EngineCore::PostUpdate(void)
+{
 	for (auto& e : mSystemList)
 	{
 		e->PostUpdate();
@@ -188,16 +229,26 @@ void Dystopia::EngineCore::Update(void)
 
 void Dystopia::EngineCore::Shutdown(void)
 {
-	//TextSerialiser s = Serialiser::OpenFile<TextSerialiser>(SETTINGS_FILE, TextSerialiser::MODE_WRITE);
+	GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
+	auto s = Serialiser::OpenFile<DysSerialiser_t>(
+		GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
+		SETTINGS_FILE,
+		DysSerialiser_t::MODE_WRITE
+	);
+
+	s << "SENTRY";
+	s.InsertStartBlock("SETTINGS");
 
 	for (auto& e : mSystemList)
 	{
-		//e->SaveSettings(s);
+		s.InsertStartBlock("SYSTEM");
+		e->SaveSettings(s);
+		s.InsertEndBlock("SYSTEM");
 		e->Shutdown();
 	}
 
 	for (auto& e : mSystemList)
-		delete e;
+		DefaultAllocator<Systems>::DestructFree(e);
 
 	DeleteSubSys(mSubSystems, Utility::MakeTypeList_t<Utility::TypeList, SubSys>{});
 

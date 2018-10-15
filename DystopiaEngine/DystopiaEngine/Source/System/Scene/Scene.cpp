@@ -11,12 +11,20 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Scene\Scene.h"
-#include "Object\ObjectFlags.h"
+#include "System/Scene/Scene.h"
+#include "Object/ObjectFlags.h"
+#include "IO/TextSerialiser.h"
+
+#include "Component/ComponentList.h"
+#include "System/Driver/Driver.h"
+#include "Utility/GUID.h"
+
+#include <string>
+#include <utility>
 
 
 Dystopia::Scene::Scene(void) :
-	mGameObjs{ 100 }
+	mGameObjs{ 1000 }, mName{ "Untitled" }, mID{ GUIDGenerator::GetUniqueID() }
 {
 }
 
@@ -44,6 +52,9 @@ Dystopia::GameObject* Dystopia::Scene::FindGameObject(const std::string& _strNam
 
 void Dystopia::Scene::Init(void)
 {
+	for (auto& e : mGameObjs)
+		if (e.GetFlags())
+			e.Init();
 }
 
 void Dystopia::Scene::FixedUpdate(float _dt)
@@ -67,7 +78,7 @@ void Dystopia::Scene::PostUpdate(void)
 
 	while (b != e)
 	{
-		auto flag = e->GetFlags();
+		auto flag = b->GetFlags();
 
 		if (flag & eObjFlag::FLAG_REMOVE)
 		{
@@ -87,5 +98,42 @@ void Dystopia::Scene::Shutdown(void)
 	mGameObjs.clear();
 }
 
+void Dystopia::Scene::Serialise(TextSerialiser & _TextSerialiser) const
+{
+	_TextSerialiser << mID;
+	_TextSerialiser << mName;
+	_TextSerialiser.Write(std::to_string(mGameObjs.size()));
 
+	for (auto & elem : mGameObjs)
+		elem.Serialise(_TextSerialiser);
+}
+
+void Dystopia::Scene::Unserialise(TextSerialiser & _TextUnserialiser)
+{
+	size_t Size;
+	_TextUnserialiser >> mID;
+	_TextUnserialiser >> mName;
+	_TextUnserialiser.Read(Size);
+
+	for (int i = 0; i < Size; ++i)
+	{
+		auto pGameObj = InsertGameObject();
+		pGameObj->Unserialise(_TextUnserialiser);
+	}
+}
+
+uint64_t Dystopia::Scene::GetSceneID(void) const
+{
+	return mID;
+}
+
+void Dystopia::Scene::SetSceneName(const std::string& _name)
+{
+	mName = _name;
+}
+
+std::string Dystopia::Scene::GetSceneName(void) const
+{
+	return mName;
+}
 

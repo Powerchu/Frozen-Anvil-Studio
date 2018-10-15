@@ -12,9 +12,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\PLogInfo.h"
-#include "Math\MathLib.h"
-#include "Utility\Utility.h"
+#include "Editor/PLogInfo.h"
+#include "Math/MathLib.h"
+#include "Utility/Utility.h"
 #include <algorithm>
 
 namespace Dystopia

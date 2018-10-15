@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "IO\TextSerialiser.h"		// File Header
-#include "Utility\Utility.h"
+#include "IO/TextSerialiser.h"		// File Header
+#include "Utility/Utility.h"
 
 #include <limits>		// numeric_limit
 #include <string>		// string

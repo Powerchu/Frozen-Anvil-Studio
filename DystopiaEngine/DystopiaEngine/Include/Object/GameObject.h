@@ -14,27 +14,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GAMEOBJ_H_
 #define _GAMEOBJ_H_
 
-#include "System\Driver\Driver.h"
-#include "DataStructure\AutoArray.h"		// AutoArray
-#include "Component\Component.h"			// Component
-#include "Component\ComponentList.h"		// AllComponents
-#include "Component\Transform.h"			// Transform
-#include "Behaviour\Behaviour.h"			// Behaviour
-#include "Utility\MetaAlgorithms.h"			// MetaFind_t
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
+#include "System/Driver/Driver.h"
+#include "DataStructure/AutoArray.h"		// AutoArray
+#include "Component/ComponentList.h"		// AllComponents
+#include "Component/Transform.h"			// Transform
+#include "Utility/MetaAlgorithms.h"			// MetaFind_t
+#include "IO/TextSerialiser.h"
+#include "Object/ObjectFlags.h"
+#include "Globals.h"
 
 #include <string>
 
 namespace Dystopia
 {
-	class CollisionEvent;
+	class Component;
+	class Behaviour;
+	struct CollisionEvent;
 
-	class GameObject
+	class _DLL_EXPORT GameObject
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		GameObject(void) noexcept;
-		explicit GameObject(unsigned long _ID) noexcept;
+		explicit GameObject(uint64_t _ID) noexcept;
 		GameObject(GameObject&&) noexcept;
 
 		~GameObject(void);
@@ -44,8 +50,11 @@ namespace Dystopia
 
 		bool IsActive(void) const;
 		void SetActive(const bool _bEnable);
+		bool IsStatic() const;
+		void SetStatic(bool _bEnable);
 
 		void Load(void);
+		void Awake(void);
 		void Init(void);
 
 		void Update(const float _fDeltaTime);
@@ -60,11 +69,11 @@ namespace Dystopia
 		void OnCollisionExit (const CollisionEvent&);
 
 		template <typename T>
-		void AddComponent();
+		void AddComponent(void);
 		void AddComponent(Component*, ComponentTag);
 		void AddComponent(Behaviour*, BehaviourTag);
 		template <typename T>
-		void RemoveComponent();
+		void RemoveComponent(void);
 		void RemoveComponent(Component*);
 
 		void Serialise(TextSerialiser&) const;
@@ -73,36 +82,41 @@ namespace Dystopia
 		// Creates an exact copy of the Game Object
 		GameObject* Duplicate(void) const; 
 
+		// Tells all components/behaviours > I am their owner
+		void Identify(void);
+		
+		void SetID(const uint64_t&); //explicit purposes only
 		uint64_t GetID(void) const;
 		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
 		void SetName(const std::string&);
 
+		void RemoveFlags(eObjFlag);
+		void SetFlag(eObjFlag);
+		unsigned GetFlag() const;
+
 		template<class T>
 		T* GetComponent(void) const;
 
-		// DOESNT WORK YET
 		template<class T>
-		AutoArray<T*> GetComponents(void) const;
+		inline AutoArray<T*> GetComponents(void) const;
 
-		inline const AutoArray<Component*>& GetAllComponents() const;
-		inline const AutoArray<Behaviour*>& GetAllBehaviours() const;
+		inline const AutoArray<Component*>& GetAllComponents(void) const noexcept;
+		inline const AutoArray<Behaviour*>& GetAllBehaviours(void) const noexcept;
 
 
 		// ======================================== OPERATORS ======================================== // 
 
 		GameObject& operator = (GameObject&&);
-
-		bool mTestBool = false;
-		float mTestFloat = 0.f;
-		int mTestInt = 0;
 	private:
+		bool mbIsStatic;					/* Static bodies do not need to be integrated/updated*/
 
 		uint64_t mnID;
 		unsigned mnFlags;
 		std::string mName;
 
 		Transform mTransform;
+
 		AutoArray<Component*> mComponents;
 		AutoArray<Behaviour*> mBehaviours;
 
@@ -115,6 +129,9 @@ namespace Dystopia
 
 		template <typename T> T* GetComponent(ComponentTag) const;
 		template <typename T> T* GetComponent(BehaviourTag) const;
+
+		template <typename T> AutoArray<T*> GetComponents(ComponentTag) const;
+		template <typename T> AutoArray<T*> GetComponents(BehaviourTag) const;
 
 		void PurgeComponents(void);
 	};
@@ -135,7 +152,7 @@ inline unsigned Dystopia::GameObject::GetFlags(void) const
 }
 
 template <typename T>
-inline void Dystopia::GameObject::AddComponent()
+inline void Dystopia::GameObject::AddComponent(void)
 {
 	AddComponent<T>(typename T::TAG{});
 }
@@ -143,14 +160,9 @@ inline void Dystopia::GameObject::AddComponent()
 template <typename Ty>
 inline void Dystopia::GameObject::AddComponent(ComponentTag)
 {
-	//GUID_t get = EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()->RequestComponent();
-
-	//mComponents.EmplaceBack(get, 
-	//	Utility::MetaFind_t<Ty, AllComponents>::value, 
-	//	Utility::MetaFind_t<typename Ty::SYSTEM, EngineCore::AllSys>::value
-	//);
-
-	auto Comp = EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()->RequestComponent();
+	auto Comp = static_cast<ComponentDonor<Ty>*>(
+		EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()
+		)->RequestComponent();
 
 	mComponents.Insert(Comp);
 
@@ -167,7 +179,7 @@ inline void Dystopia::GameObject::AddComponent(BehaviourTag)
 }
 
 template <typename T>
-inline void Dystopia::GameObject::RemoveComponent()
+inline void Dystopia::GameObject::RemoveComponent(void)
 {
 	RemoveComponent<T>(typename T::TAG{});
 }
@@ -189,11 +201,6 @@ T* Dystopia::GameObject::GetComponent(ComponentTag) const
 {
 	for (auto& e : mComponents)
 	{
-		//if (Utility::MetaFind_t<T, AllComponents>::value == e.mComponent)
-		//{
-		//	return EngineCore::GetInstance()->GetSystem<typename T::SYSTEM>()->GetComponent(e.mID);
-		//}
-
 		if (Utility::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
 		{
 			return static_cast<T*>(e);
@@ -218,27 +225,39 @@ T* Dystopia::GameObject::GetComponent(BehaviourTag) const
 }
 
 template <typename T>
-AutoArray<T*> Dystopia::GameObject::GetComponents(void) const
+inline AutoArray<T*> Dystopia::GameObject::GetComponents(void) const
 {
-	/*AutoArray<T*> temp{};
-	for (Component * e : mComponents)
+	return GetComponents<T>(T::TAG{});
+}
+
+template <typename T>
+AutoArray<T*> Dystopia::GameObject::GetComponents(ComponentTag) const
+{
+	AutoArray<T*> temp{};
+	for (Component* e : mComponents)
 	{
-		if (T::TYPE == e->GetComponentType())
+		if (Utility::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
 		{
 			temp.Insert(static_cast<T*>(e));
 		}
 	}
 
-	return temp;*/
+	return temp;
+}
+
+template<typename T>
+inline AutoArray<T*> Dystopia::GameObject::GetComponents(BehaviourTag) const
+{
+	static_assert(false, "Function " __FUNCSIG__ " not implemented yet!");
 	return AutoArray<T*>{};
 }
 
-inline const AutoArray<Dystopia::Component*>& Dystopia::GameObject::GetAllComponents() const
+inline const AutoArray<Dystopia::Component*>& Dystopia::GameObject::GetAllComponents(void) const noexcept
 {
 	return mComponents;
 }
 
-inline const AutoArray<Dystopia::Behaviour*>& Dystopia::GameObject::GetAllBehaviours() const
+inline const AutoArray<Dystopia::Behaviour*>& Dystopia::GameObject::GetAllBehaviours(void) const noexcept
 {
 	return mBehaviours;
 }
@@ -271,6 +290,6 @@ inline void Dystopia::GameObject::RemoveComponent(BehaviourTag)
 }
 
 
-
+#pragma warning(pop)
 #endif		// INCLUDE GUARD
 

@@ -18,8 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(disable : 4251)
 
 #include "Globals.h"
-#include "Utility\Meta.h"
-#include "Utility\Utility.h"
+#include "Utility/Meta.h"
+#include "Utility/Utility.h"
 
 
 template <typename T, size_t SIZE>

@@ -4,7 +4,7 @@
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Base class for all components
+Base class for all components
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -15,7 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _COMPONENT_H_
 
 #include "Globals.h"
-#include "Component\ComponentList.h"	// eComponents
+#include "Object/ObjectFlags.h"
+#include "Component/ComponentList.h"	// eComponents
 
 #include <string>
 
@@ -30,13 +31,14 @@ namespace Dystopia
 	public:
 		using TAG = ComponentTag;
 		using SYSTEM = class NULL_SYSTEM;
-		virtual unsigned GetComponentType(void) const {	return unsigned(-1); };
+		virtual unsigned GetComponentType(void) const { return unsigned(-1); };
 		virtual const std::string GetEditorName(void) const { return "Generic Component"; }
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		Component(void) noexcept;
 		explicit Component(GameObject* _pOwner) noexcept;
+		Component(const Component&) noexcept;
 		virtual ~Component(void);
 
 
@@ -45,11 +47,12 @@ namespace Dystopia
 		bool IsActive(void) const;
 		void SetActive(const bool _bEnable);
 
-		void Load(void);
+		virtual void Awake(void);
+		virtual void Load(void);
 		virtual void Init(void);
 
 		virtual void GameObjectDestroy(void);
-		void Unload(void);
+		virtual void Unload(void);
 
 		void DestroyComponent(void);
 
@@ -62,15 +65,18 @@ namespace Dystopia
 		virtual void Unserialise(TextSerialiser&) = 0;
 		virtual void EditorUI(void) noexcept;
 
-	private:
-
-		// TODO
-		// Temporary ID -- Will change back to pointer
-		uint64_t mnOwner;
+		uint64_t GetID(void) const;
+		uint64_t GetOwnerID(void) const;
+		unsigned GetFlags(void) const;
+		void SetFlags(eObjFlag);
+		void RemoveFlags(eObjFlag _flags);
 
 	protected:
-
+		uint64_t mID;
 		unsigned mnFlags;
+		uint64_t mnOwner;
+
+	private:
 	};
 }
 

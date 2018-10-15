@@ -1,4 +1,3 @@
-
 /* HEADER *********************************************************************************/
 /*!
 \file	MeshSystem.h
@@ -15,11 +14,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _MESHSYS_H_
 #define _MESHSYS_H_
 
-#include "System\Graphics\VertexDefs.h"
-#include "System\Graphics\Mesh.h"
-#include "System\Graphics\RawMesh.h"
-#include "DataStructure\AutoArray.h"
-#include "DataStructure\MagicArray.h"
+#include "System/Graphics/VertexDefs.h"
+#include "System/Graphics/Mesh.h"
+#include "System/Graphics/RawMesh.h"
+#include "DataStructure/AutoArray.h"
+#include "DataStructure/MagicArray.h"
 
 #include <string>
 
@@ -35,6 +34,8 @@ namespace Dystopia
 
 		void StartMesh(void);
 		void LoadMesh(const std::string&);
+		void AddVertex(float x, float y, float z, float u = 0, float v = 0);
+		Mesh* AddIndices(const std::string& _strName, const AutoArray<short>&);
 		void EndMesh(void);
 
 		void FreeMeshes(void);

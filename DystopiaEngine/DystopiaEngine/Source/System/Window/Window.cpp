@@ -11,13 +11,14 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Window\Window.h"		// File Header
-#include "DataStructure\Queue.h"		// Queue
-#include "System\Input\InputMap.h"		// eButton
+#include "System/Window/Window.h"		// File Header
+#include "DataStructure/Queue.h"		// Queue
+#include "System/Input/InputMap.h"		// eButton
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
 #include <windows.h>						// Windows Header
+#include <shellapi.h>
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
 #undef  NOMINMAX
@@ -52,6 +53,16 @@ int Dystopia::Window::GetHeight(void) const noexcept
 	return mnHeight;
 }
 
+int Dystopia::Window::GetFullWidth(void) const noexcept
+{
+	return mnFWidth;
+}
+
+int Dystopia::Window::GetFullHeight(void) const noexcept
+{
+	return mnFHeight;
+}
+
 const Queue<eButton>& Dystopia::Window::GetInputQueue(void) const noexcept
 {
 	return mInputQueue;
@@ -72,16 +83,26 @@ void Dystopia::Window::SetStyle(long _nStyle, long _nStyleEx)
 
 void Dystopia::Window::SetSize(int _nWidth, int _nHeight)
 {
+	mnWidth = _nWidth;
+	mnHeight = _nHeight;
+
 	RECT WindowRect{ 0, 0, _nWidth, _nHeight };
 	AdjustWindowRect(&WindowRect, mStyle, FALSE);
 
-	mnWidth  = WindowRect.right - WindowRect.left;
-	mnHeight = WindowRect.bottom - WindowRect.top;
+	mnFWidth  = WindowRect.right - WindowRect.left;
+	mnFHeight = WindowRect.bottom - WindowRect.top;
+}
+
+void Dystopia::Window::SetSizeNoAdjust(int _nWidth, int _nHeight)
+{
+	mnFWidth = mnWidth = _nWidth;
+	mnFHeight = mnHeight = _nHeight;
 }
 
 void Dystopia::Window::CenterWindow(void) noexcept
 {
-	int left = (GetSystemMetrics(SM_CXSCREEN) - mnWidth) >> 1,
+	const int 
+		left = (GetSystemMetrics(SM_CXSCREEN) - mnWidth) >> 1,
 		top  = (GetSystemMetrics(SM_CYSCREEN) - mnHeight) >> 1;
 
 	// center the window
@@ -102,9 +123,19 @@ void Dystopia::Window::Show(void) const noexcept
 	ShowWindow(GetWindowHandle(), SW_SHOW);
 }
 
+void Dystopia::Window::ShowMax(void) const noexcept
+{
+	ShowWindow(GetWindowHandle(), SW_MAXIMIZE);
+}
+
 void Dystopia::Window::Hide(void) const noexcept
 {
 	ShowWindow(GetWindowHandle(), SW_HIDE);
+}
+
+void Dystopia::Window::SetAcceptFiles(bool _bAccept) const noexcept
+{
+	DragAcceptFiles(GetWindowHandle(), _bAccept ? TRUE : FALSE);
 }
 
 

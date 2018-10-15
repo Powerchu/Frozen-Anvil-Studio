@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _EDITOR_TAB_H_
 #define _EDITOR_TAB_H_
-#include "Math\Vector2.h"
+#include "Math/Vector2.h"
 #include <string>
 
 namespace Dystopia
@@ -25,6 +25,7 @@ namespace Dystopia
 	class CommandHandler;
 	class Scene;
 	class Editor;
+	class TextSerialiser;
 
 	class EditorTab
 	{
@@ -44,10 +45,13 @@ namespace Dystopia
 		virtual void		Shutdown() = 0;
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const = 0;
+
+		virtual void		SaveSettings(TextSerialiser& _out) const;
+		virtual void		LoadSettings(TextSerialiser& _in);
 		/************************************************************************************************************/
 
-		virtual void		SetFocus(GameObject&);
-		virtual void		RemoveFocus();
+		//virtual void		SetFocus(GameObject&);
+		//virtual void		RemoveFocus();
 
 		void				SetSize(const Math::Vec2&);
 		void				SetSize(const float&, const float&);
@@ -64,7 +68,7 @@ namespace Dystopia
 		bool*				GetOpenedBool();
 
 	protected:
-		Editor&				GetMainEditor()		const;
+		Editor*				GetMainEditor()		const;
 		CommandHandler*		GetCommandHND()		const;
 		EditorEventHandler*	GetEditorEventHND() const;
 		Scene*				GetCurrentScene()	const;

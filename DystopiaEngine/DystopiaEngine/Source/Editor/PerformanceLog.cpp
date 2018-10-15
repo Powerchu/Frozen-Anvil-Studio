@@ -12,10 +12,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\PLogger.h"
-#include "Editor\PerformanceLog.h"
-#include "Editor\EGUI.h"
-#include "Math\MathUtility.h"
+#include "Editor/PLogger.h"
+#include "Editor/PerformanceLog.h"
+#include "Editor/EGUI.h"
+#include "Math/MathUtility.h"
 #include <algorithm>
 
 namespace Dystopia
@@ -75,6 +75,7 @@ namespace Dystopia
 
 	void PerformanceLog::Update(const float& _dt)
 	{
+		UNUSED_PARAMETER(_dt);
 		static constexpr float offset	= -80.f;
 		mGraphSizeB.x					= Math::Clamp(Size().x + offset, 50.f, Size().x);
 		mGraphSizeS.x					= mGraphSizeB.x;
@@ -86,16 +87,20 @@ namespace Dystopia
 		ShowTaskMgrBreakdown();
 		for (const auto& item : mArrLoggedData)
 		{
-			if (item.mShowGeneric)
+			if (item.mShowGeneric && EGUI::Display::StartTreeNode(item.mGenericOverview.mLabel))
 			{
+				EGUI::Indent(10);
 				ShowLog(item.mGenericOverview, mGraphSizeB);
-			}
-			if (item.mData.size() && EGUI::Display::StartTreeNode(item.mLabel))
-			{
-				for (unsigned int i = 0; i < item.mData.size(); ++i)
+				if (item.mData.size() && EGUI::Display::StartTreeNode(item.mLabel, nullptr, false, false, false))
 				{
-					ShowLog(item.mData[i], mGraphSizeS);
+					for (unsigned int i = 0; i < item.mData.size(); ++i)
+					{
+						EGUI::Display::Label(item.mData[i].mLabel.c_str());
+						ShowLog(item.mData[i], mGraphSizeS);
+					}
+					EGUI::Display::EndTreeNode();
 				}
+				EGUI::UnIndent(10);
 				EGUI::Display::EndTreeNode();
 			}
 			EGUI::Display::HorizontalSeparator();
@@ -158,7 +163,7 @@ namespace Dystopia
 	{
 		_size.y = (_log.mIsBigGraph) ? mGraphBigY : mGraphSmallY;
 		EGUI::Display::LineGraph(_log.mLabel.c_str(), _log.mArrValues, 0, static_cast<float>(_log.mMax), _size,
-						std::to_string(static_cast<int>(_log.mArrValues[_log.mCurrentIndex])));
+								 std::to_string(static_cast<int>(_log.mArrValues[_log.mCurrentIndex])));
 	}
 
 	void PerformanceLog::ShowTaskMgrBreakdown()
@@ -167,15 +172,16 @@ namespace Dystopia
 		Math::Vec2 size{Size().x - 7.f, sizeY };
 		if (EGUI::StartChild("Task Manager Breakdown", size))
 		{
-			EGUI::Display::Label("CPU Idle         : %f", mTaskMgrDetails.mCPUIdle);
-			EGUI::Display::Label("CPU Busy         : %f", mTaskMgrDetails.mCPUBusy);
-			EGUI::Display::Label("CPU OS           : %f", mTaskMgrDetails.mCPUOS);
-			EGUI::Display::Label("CPU Proc         : %f", mTaskMgrDetails.mCPUProc);
-			EGUI::Display::Label("Page Faults      : %d", mTaskMgrDetails.mPageFaults);
-			EGUI::Display::Label("Memory Used      : %d", mTaskMgrDetails.mMemUsed);
-			EGUI::Display::Label("RAM Used         : %d", mTaskMgrDetails.mRamUsed);
-			EGUI::Display::Label("Memory Available : %d", mTaskMgrDetails.mMemAvail);
-			EGUI::Display::Label("Memory Load      : %f", mTaskMgrDetails.mMemLoad);
+			EGUI::Display::Label(" Frame Rate (s)   : %.1f FPS", 1.f / mTaskMgrDetails.mFrameRate);
+			EGUI::Display::Label(" CPU Idle (%%)     : %.1f", mTaskMgrDetails.mCPUIdle);
+			EGUI::Display::Label(" CPU Busy (%%)     : %.1f", mTaskMgrDetails.mCPUBusy);
+			EGUI::Display::Label(" CPU OS   (%%)     : %.1f", mTaskMgrDetails.mCPUOS);
+			EGUI::Display::Label(" CPU Proc (%%)     : %.1f", mTaskMgrDetails.mCPUProc);
+			EGUI::Display::Label(" Page Faults      : %d", mTaskMgrDetails.mPageFaults);
+			EGUI::Display::Label(" Memory Used (MB) : %d", mTaskMgrDetails.mMemUsed);
+			EGUI::Display::Label(" RAM Used (MB)    : %d", mTaskMgrDetails.mRamUsed);
+			EGUI::Display::Label(" Memory Available : %d", mTaskMgrDetails.mMemAvail);
+			EGUI::Display::Label(" Memory Load      : %.1f", mTaskMgrDetails.mMemLoad);
 		}
 		EGUI::EndChild();
 	}

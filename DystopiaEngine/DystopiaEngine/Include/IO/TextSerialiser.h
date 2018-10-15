@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <string>
 #include <fstream>
 
-#include "IO\Serialiser.h"
+#include "IO/Serialiser.h"
 
 namespace Dystopia
 {
@@ -78,6 +78,15 @@ template <>
 inline void Dystopia::TextSerialiser::ApplyRead<std::string>(std::string& _rhs)
 {
 	std::getline(mFile, _rhs, ',');
+}
+
+template <>
+inline void Dystopia::TextSerialiser::ApplyRead<bool>(bool& _rhs)
+{
+	int ch;
+	mFile >> ch;
+
+	_rhs = !!ch;
 }
 
 

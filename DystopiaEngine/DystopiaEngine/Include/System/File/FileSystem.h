@@ -17,7 +17,7 @@ namespace Dystopia
 		eHeader,
 		eSource,
 		eResource,
-		
+		eCurrent,
 		eRoot,
 		eAppData,
 		eTotalFilePath
@@ -39,6 +39,8 @@ namespace Dystopia
 
 		template<typename T, typename U = std::enable_if_t< std::is_same_v< T, std::string> || std::is_same_v<T, std::wstring>>>
 		T RemoveFileExtension(T const & _File);
+
+		bool CheckFileExist(std::string const & _FileName, eFileDir _Directory = eFileDir::eRoot);
 
 	private:
 
@@ -74,7 +76,14 @@ namespace Dystopia
 				retString = std::filesystem::current_path().wstring() + L'/' + std::wstring{ mPathTable[_ParentDirectory].begin(), mPathTable[_ParentDirectory].end() };
 		}
 			break;
-
+		case eFileDir::eCurrent:
+		{
+			if constexpr (std::is_same_v<T, std::string>)
+				retString = std::filesystem::current_path().string();
+			else
+			if constexpr (std::is_same_v<T, std::wstring>)
+				retString = std::filesystem::current_path().wstring();
+		}
 		default:
 		{
 			if constexpr (std::is_same_v<T, std::string>)

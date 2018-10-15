@@ -5,7 +5,6 @@
 \par    email: t.jieweijacky\@digipen.edu
 \brief
 	Something like a union.
-	TODO: Use visitor to get the value of the correct current type
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -15,9 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _VARIANT_H_
 #define _VARIANT_H_
 
-#include "Utility\Meta.h"
-#include "Utility\MetaAlgorithms.h"
-#include "Utility\DebugAssert.h"
+#include "Utility/Meta.h"
+#include "Utility/MetaAlgorithms.h"
+#include "Utility/DebugAssert.h"
 
 #include <cstring>
 #include <type_traits>

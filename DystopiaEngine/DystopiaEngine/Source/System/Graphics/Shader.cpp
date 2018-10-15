@@ -11,12 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Graphics\Shader.h"		// File Header
+#include "System/Graphics/Shader.h"		// File Header
 
-#include "Math\MathLib.h"
+#include "Math/MathLib.h"
 
-#include <GL\glew.h>
-#include <GL\GL.h>
+#include <GL/glew.h>
+#include <GL/GL.h>
 #include <fstream>		// ifstream
 #include <sstream>		// stringstream
 #include <cstdio>		// printf

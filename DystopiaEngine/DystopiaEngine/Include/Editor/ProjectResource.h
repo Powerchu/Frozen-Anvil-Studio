@@ -15,47 +15,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _PROJECT_RESOURCE_H_
 #define _PROJECT_RESOURCE_H_
 #include "EditorTab.h"
-#include "DataStructure\AutoArray.h"
+#include "Editor/Payloads.h"
 
 typedef void *HANDLE;
 typedef unsigned long DWORD;
 
 namespace Dystopia
 {
-	/********************************************************************* FILE & FOLDER *********************************************************************/
-
-	struct File;
-	struct CrawlItem
-	{
-		CrawlItem(const std::string& _name, const std::string& _path);
-		std::string mName;
-		std::string mPath;
-		std::string mLowerCaseName;
-	};
-
-	struct Folder : CrawlItem
-	{
-		Folder(const std::string& _name, const std::string& _path, Folder * const _parent);
-		~Folder();
-
-		void				Crawl();
-		void				ClearFolder();
-
-		Folder*				mpParentFolder;
-		AutoArray<File*>	mArrPtrFiles;
-		AutoArray<Folder*>	mArrPtrFolders;
-		bool				mToggle;
-	};
-
-	struct File : CrawlItem
-	{
-		File(const std::string& _name, const std::string& _path, Folder * const _parent);
-		~File();
-		bool operator<(const File&);
-
-		Folder*	mpParentFolder;
-	};
-
 	/****************************************************************** PROJECT RESOURCE ********************************************************************/
 
 	class ProjectResource : public EditorTab

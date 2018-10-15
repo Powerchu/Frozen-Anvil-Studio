@@ -15,8 +15,8 @@
 #ifndef _MATH_UTILS_H_
 #define _MATH_UTILS_H_
 
-#include "Utility\Meta.h"		// EnableIf, IsNumeric
-#include "Math\MathInternal.h"
+#include "Utility/Meta.h"		// EnableIf, IsNumeric
+#include "Math/MathInternal.h"
 
 namespace Math
 {
@@ -81,7 +81,7 @@ namespace Math
 		_rhs = Abs(_rhs);
 
 		float scale = Max(_lhs, _rhs);
-		return diff < (scale * epsilon);
+		return diff <= (scale * epsilon);
 	}
 
 	inline constexpr float Clamp(float _fInput, float _fMin, float _fMax)
@@ -101,16 +101,22 @@ namespace Math
 		return Internal::PowerCalc<T, exponent <0, Abs(exponent)>::Power(_x);
 	}
 
-	template <size_t _val>
-	struct Log2
+	template <size_t _val, size_t _Base = 2>
+	struct Log
 	{
-		static constexpr size_t value = 1 + Log2<_val / 2>::value;
+		static constexpr size_t value = 1 + Log<_val? (_val<_Base)?1:(_val/_Base) : 0, _Base>::value;
 	};
 
-	template <>
-	struct Log2<1>
+	template <size_t _Base>
+	struct Log<1, _Base>
 	{
-		static constexpr size_t value = 1;
+		static constexpr size_t value = 0;
+	};
+
+	template <size_t _Base>
+	struct Log<0, _Base>
+	{
+		
 	};
 }
 

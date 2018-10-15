@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Behaviour\Behaviour.h"		// File Header
+#include "Behaviour/Behaviour.h"		// File Header
 
 Dystopia::Behaviour::Behaviour(void) :
 	Component{}

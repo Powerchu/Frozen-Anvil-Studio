@@ -11,9 +11,9 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Logger\LoggerSystem.h"
-#include "System\Driver\Driver.h"
-#include "Editor\ConsoleLog.h"
+#include "System/Logger/LoggerSystem.h"
+#include "System/Driver/Driver.h"
+#include "Editor/ConsoleLog.h"
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
@@ -22,12 +22,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <cstdio>							// FILE, freopen_s
 #include <cstdlib>
 #include <exception>
-#include <windows.h>						// Windows Header
+#include <Windows.h>						// Windows Header
 #include <DbgHelp.h>
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
 #undef  NOMINMAX
 #define STACKFRAMES 32
+
 
 namespace
 {
@@ -61,7 +62,7 @@ namespace
 	[[noreturn]] void ProgramTerminate(void)
 	{
 		FILE* log;
-		if (0 == fopen_s(&log, "CrashReport.log", "w+"))
+		if (0 == fopen_s(&log, "CrashReport.dystor", "w+"))
 		{
 			fprintf(log, "Crash Report %zu\n\nCall Stack:\n", time(0));
 
@@ -76,10 +77,11 @@ namespace
 
 
 Dystopia::LoggerSystem::LoggerSystem(void) noexcept
+	: mpOut{ PrintToConsoleLog }, mActiveFlags{ eLog::DEFAULT }
 {
 	std::set_terminate(ProgramTerminate);
 
-#if !EDITOR && defined(COMMAND_PROMPT)
+#if defined(COMMANDPROMPT)
 
 	if (AllocConsole())
 	{
@@ -87,9 +89,9 @@ Dystopia::LoggerSystem::LoggerSystem(void) noexcept
 
 		freopen_s(&file, "CONOUT$", "wt", stdout);
 		freopen_s(&file, "CONOUT$", "wt", stderr);
-		//			freopen_s(&file, "CONOUT$", "wt", stdin);
+//		freopen_s(&file, "CONOUT$", "wt", stdin);
 
-		SetConsoleTitle(ENGINE_NAME);
+		SetConsoleTitle(L"Dystopia Engine");
 	}
 
 #endif	// Show Command Prompt
@@ -98,7 +100,14 @@ Dystopia::LoggerSystem::LoggerSystem(void) noexcept
 Dystopia::LoggerSystem::~LoggerSystem(void) noexcept
 {
 	// Clean exit
-	std::set_terminate(nullptr);
+	//std::set_terminate(nullptr);
+
+	mpOut = nullptr;
+	mActiveFlags = eLog::NONE;
+
+#if defined(COMMANDPROMPT)
+	FreeConsole();
+#endif
 }
 
 Dystopia::LoggerSystem* Dystopia::LoggerSystem::GetInstance(void) noexcept
@@ -106,18 +115,21 @@ Dystopia::LoggerSystem* Dystopia::LoggerSystem::GetInstance(void) noexcept
 	return EngineCore::GetInstance()->GetSubSystem<LoggerSystem>();
 }
 
+
 void Dystopia::LoggerSystem::RedirectOutput(void(*_pOut)(const std::string&))
 {
 	mpOut = _pOut;
+	mActiveFlags = mpOut ? mActiveFlags : eLog::NONE;
 }
 
-void Dystopia::LoggerSystem::RedirectInput(std::string(*_pIn)(void))
+void Dystopia::LoggerSystem::ParseInput(const std::string&)
 {
-	mpIn = _pIn;
 }
 
-void Dystopia::LoggerSystem::SendOutput(const std::string& _strOutput)
+void Dystopia::LoggerSystem::SendOutput(const char* _strOutput)
 {
+	std::string output = _strOutput;
+	mpOut(output);
 }
 
 

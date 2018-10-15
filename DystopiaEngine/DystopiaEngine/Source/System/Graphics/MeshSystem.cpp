@@ -11,14 +11,14 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Graphics\MeshSystem.h"		// File Header
-#include "System\Graphics\Mesh.h"
-#include "System\Graphics\RawMesh.h"
-#include "System\Graphics\VertexDefs.h"
-#include "IO\TextSerialiser.h"
-#include "Math\MathUtility.h"
+#include "System/Graphics/MeshSystem.h"		// File Header
+#include "System/Graphics/Mesh.h"
+#include "System/Graphics/RawMesh.h"
+#include "System/Graphics/VertexDefs.h"
+#include "IO/TextSerialiser.h"
+#include "Math/MathUtility.h"
 
-#include <GL\glew.h>
+#include <GL/glew.h>
 
 
 void Dystopia::MeshSystem::Init(void)
@@ -70,6 +70,7 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 		mUVs.EmplaceBack(uvBuf);
 	}
 
+	CurrentMesh.mVtxCount += nVtxCount;
 	input.ConsumeStartBlock();
 
 	do
@@ -84,7 +85,6 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 		}
 
 		auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, nNumIndices, nCurrOffset);
-		CurrentMesh.mVtxCount += nVtxCount;
 
 		input.ConsumeStartBlock();
 
@@ -92,6 +92,28 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 
 		input.ConsumeStartBlock();
 	} while (!input.EndOfInput());
+}
+
+void Dystopia::MeshSystem::AddVertex(float x, float y, float z, float u, float v)
+{
+	mVtx.EmplaceBack(x, y, z);
+	mVtx.EmplaceBack(.0f, .0f, .1f);
+	mUVs.EmplaceBack(u, v);
+	++(mpRawMeshes.back().mVtxCount);
+}
+
+Dystopia::Mesh* Dystopia::MeshSystem::AddIndices(const std::string& _strName, const AutoArray<short>& _indices)
+{
+	RawMesh& CurrentMesh = mpRawMeshes.back();
+	size_t nCurrOffset = mIndex.size();
+
+	for (auto& e : _indices)
+		mIndex.push_back(e);
+
+	auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, static_cast<unsigned>(_indices.size()), nCurrOffset);
+	pCurrMesh->SetName(_strName);
+
+	return pCurrMesh;
 }
 
 void Dystopia::MeshSystem::EndMesh(void)

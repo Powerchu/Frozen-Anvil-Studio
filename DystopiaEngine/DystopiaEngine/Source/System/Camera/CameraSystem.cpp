@@ -11,16 +11,16 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System\Camera\CameraSystem.h" // File Header
-#include "Component\Camera.h"
-#include "System\Window\WindowManager.h"
-#include "System\Window\Window.h"
-#include "System\Driver\Driver.h"
+#include "System/Camera/CameraSystem.h" // File Header
+#include "Component/Camera.h"
+#include "System/Window/WindowManager.h"
+#include "System/Window/Window.h"
+#include "System/Driver/Driver.h"
 
-#include "DataStructure\MagicArray.h"
-#include "System\Graphics\GraphicsDefs.h"
+#include "DataStructure/MagicArray.h"
+#include "System/Graphics/GraphicsDefs.h"
 
-#include <GL\glew.h>				// glViewport
+#include <GL/glew.h>				// glViewport
 
 
 Dystopia::CameraSystem::CameraSystem(void) noexcept
@@ -62,7 +62,7 @@ Dystopia::Camera* Dystopia::CameraSystem::GetMasterCamera(void) const
 	return mpMasterCam;
 }
 
-MagicArray<Dystopia::Camera>& Dystopia::CameraSystem::GetAllCameras(void)
+Dystopia::CameraSystem::CameraArr& Dystopia::CameraSystem::GetAllCameras(void)
 {
 	return mComponents;
 }

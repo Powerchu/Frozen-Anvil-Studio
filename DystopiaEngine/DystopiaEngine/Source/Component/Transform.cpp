@@ -11,15 +11,22 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Component\Transform.h"
-#include "Object\GameObject.h"
-#include "Math\Matrix4.h"
-#include "Math\Vector4.h"
+#include "Component/Transform.h"
+#include "Object/GameObject.h"
+#include "Math/Matrix4.h"
+#include "Math/Vector4.h"
+#include "IO/TextSerialiser.h"
+#include "Editor/ConsoleLog.h"
+//#include "System/Scene/SceneSystem.h"
+//#include "System/Scene/Scene.h"
 
-#include "Editor\EGUI.h"
+#if EDITOR
+#include "Editor/EGUI.h"
+// #include "System/Logger/LoggerSystem.h"
+#endif 
 
 Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
-	: mRotation{ .0f, .0f, .0f }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f }, 
+	: mRotation{ }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f }, 
 	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, Component { _pOwner }
 {
 
@@ -82,7 +89,7 @@ void Dystopia::Transform::OnChildRemove(Transform*)
 
 void Dystopia::Transform::RemoveChild(Transform* _pChild)
 {
-	auto pChild = mChildren.Find(_pChild);
+	auto const pChild = mChildren.Find(_pChild);
 
 	if (pChild != mChildren.end())
 	{
@@ -93,19 +100,6 @@ void Dystopia::Transform::RemoveChild(Transform* _pChild)
 	}
 }
 
-/*
-void Dystopia::Transform::SetRotation(const float _fRadians)
-{
-	mbChanged = true;
-	mRotation = _fRadians;
-}
-
-void Dystopia::Transform::SetRotationDeg(const float _fDegrees)
-{
-	mbChanged = true;
-	SetRotation(Math::DegreeToRadian(_fDegrees));
-}
-*/
 void Dystopia::Transform::SetScale(const Math::Vec4& _vScale)
 {
 	mbChanged = true;
@@ -148,22 +142,20 @@ void Dystopia::Transform::SetGlobalPosition(const float _x, const float _y, cons
 }
 
 
+void Dystopia::Transform::SetRotation(const Math::Angle _x, const Math::Angle _y, const Math::Angle _z)
+{
+	mRotation = mRotation.FromEuler(_x, _y, _z);
+}
+
 Math::Quaternion Dystopia::Transform::GetGlobalRotation(void) const
 {
 	if (mpParent)
-		return mpParent->GetGlobalRotation() + GetRotation();
+		return mpParent->GetGlobalRotation() * GetRotation();
 	
 	return GetRotation();
 }
-/*
-Math::Vec4 Dystopia::Transform::GetGlobalRotationDeg(void) const
-{
-	if (mpParent)
-		return mpParent->GetGlobalRotationDeg() + GetRotationDeg();
-	
-	return GetRotationDeg();
-}
-*/
+
+
 Math::Vec3D Dystopia::Transform::GetGlobalScale(void) const
 {
 	if (mpParent)
@@ -200,7 +192,7 @@ const Math::Mat4& Dystopia::Transform::GetLocalTransformMatrix(void)
 	if (mbChanged)
 	{
 		mbChanged = false;
-		mMatrix = Math::Translate(mPosition) * Math::Scale(mScale);
+		mMatrix = Math::Translate(mPosition) * mRotation.Matrix() * Math::Scale(mScale);
 	}
 
 	return mMatrix;
@@ -222,45 +214,114 @@ Dystopia::Transform* Dystopia::Transform::Duplicate(void) const
 	return nullptr;
 }
 
-void Dystopia::Transform::Serialise(TextSerialiser&) const
+void Dystopia::Transform::Serialise(TextSerialiser& _out) const
 {
-
+	_out.InsertStartBlock("Transform");
+	_out << static_cast<float>(mScale.x);
+	_out << static_cast<float>(mScale.y);
+	_out << static_cast<float>(mScale.z);
+	_out << static_cast<float>(mPosition[0]);
+	_out << static_cast<float>(mPosition[1]);
+	_out << static_cast<float>(mPosition[2]);
+	_out << static_cast<float>(mRotation[0]);
+	_out << static_cast<float>(mRotation[1]);
+	_out << static_cast<float>(mRotation[2]);
+	_out << static_cast<float>(mRotation[3]);
+	_out.InsertEndBlock("Transform");
 }
 
-void Dystopia::Transform::Unserialise(TextSerialiser&)
+void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 {
-
+	_in.ConsumeStartBlock();
+	_in >> mScale[0];
+	_in >> mScale[1];
+	_in >> mScale[2];
+	_in >> mPosition[0];
+	_in >> mPosition[1];
+	_in >> mPosition[2];
+	_in >> mRotation[0];
+	_in >> mRotation[1];
+	_in >> mRotation[2];
+	_in >> mRotation[3];
+	_in.ConsumeEndBlock();
 }
 
 void Dystopia::Transform::EditorUI(void) noexcept
 {
 #if EDITOR
-	switch (EGUI::Display::VectorFields("Position", &mPosition, 0.1f, -FLT_MAX, FLT_MAX))
+	auto arrResult = EGUI::Display::VectorFields("Position", &mPosition, 0.01f, -FLT_MAX, FLT_MAX);
+	for (auto &e : arrResult)
 	{
-	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mPosition);
-		break;
-	case EGUI::eDragStatus::eEND_DRAG:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
-	case EGUI::eDragStatus::eDRAGGING:
-		mbChanged = true;
-		break;
+		switch (e)
+		{
+		case EGUI::eDragStatus::eDRAGGING:
+			mbChanged = true;
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mPosition, &mbChanged);
+			break;
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eENTER:
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		}
 	}
 
-	switch (EGUI::Display::VectorFields("Scale", &mScale, 0.1f, -FLT_MAX, FLT_MAX))
+	arrResult = EGUI::Display::VectorFields("Scale   ", &mScale, 0.01f, -FLT_MAX, FLT_MAX);
+	for (auto &e : arrResult)
 	{
-	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale);
-		break;
-	case EGUI::eDragStatus::eEND_DRAG:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
-	case EGUI::eDragStatus::eDRAGGING:
-		mbChanged = true;
-		break;
+		switch (e)
+		{
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mScale, &mbChanged);
+			break;
+		case EGUI::eDragStatus::eDRAGGING:
+			mbChanged = true;
+			break;
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eENTER:
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		}
+	}
+
+	Math::Vector4 eulerAngle = mRotation.ToEuler();
+	arrResult = EGUI::Display::VectorFields("Rotation", &eulerAngle, 0.01f, -FLT_MAX, FLT_MAX);
+	for (auto& e : arrResult)
+	{
+		switch (e)
+		{
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mRotation, &mbChanged);
+			break;
+		case EGUI::eDragStatus::eDRAGGING:
+			mbChanged = true;
+			mRotation = mRotation.FromEuler(
+				Math::Degrees(eulerAngle[0]),
+				Math::Degrees(eulerAngle[1]),
+				Math::Degrees(eulerAngle[2])
+			);
+			break;
+		case EGUI::eDragStatus::eENTER:
+		case EGUI::eDragStatus::eDEACTIVATED:
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		}
 	}
 
 #endif 
+}
+
+Dystopia::Transform& Dystopia::Transform::operator=(const Dystopia::Transform& _rhs)
+{
+	mbChanged	= _rhs.mbChanged;
+	mMatrix		= _rhs.mMatrix;
+	mScale		= _rhs.mScale;
+	mPosition	= _rhs.mPosition;
+	mRotation	= _rhs.mRotation;
+	return *this;
 }
 

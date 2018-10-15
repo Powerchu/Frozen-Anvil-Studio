@@ -24,7 +24,7 @@ namespace Math
 	{
 		namespace
 		{
-			union VectorConverter
+			union __declspec(align(alignof(__m128i))) VectorConverter
 			{
 				int32_t _val[4];
 				__m128i vec;
@@ -34,7 +34,7 @@ namespace Math
 		template <int32_t _X, int32_t _Y, int32_t _Z, int32_t _W>
 		inline constexpr __m128i ConstVec4()
 		{
-			return VectorConverter{ _X, _Y, _Z, _W }.vec;
+			return VectorConverter{{_X, _Y, _Z, _W}}.vec;
 		}
 
 		// Hurray for code bloat!

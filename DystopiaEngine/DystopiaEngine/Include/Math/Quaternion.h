@@ -16,29 +16,29 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _QUARTERNION_H_
 #define _QUARTERNION_H_
 
-#include "Math\Vector4.h"	// Vector4
-#include "Math\Matrix4.h"	// Matrix4
-
-#include <cmath>			// sin, cos, asin, acos
-
+#include "Math/Vector4.h"	// Vector4
+#include "Math/Matrix4.h"	// Matrix4
+#include "System/Graphics/Shader.h"
 
 namespace Math
 {
 	#define _CALL	__vectorcall
 	
+	class Angle;
+
 	/*!
 	\struct Quaternion
 	\brief
 		Representing rotations
 	*/
-	union _DLL_EXPORT Quaternion
+	union __declspec(align (16)) _DLL_EXPORT Quaternion
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		inline Quaternion(void) noexcept;
 		inline Quaternion(const Quaternion&) noexcept;
-		inline Quaternion(float x, float y = 0, float z = 0, float w = 0) noexcept;
+		inline explicit Quaternion(float x, float y, float z, float w) noexcept;
 		inline explicit Quaternion(__m128) noexcept;
 
 
@@ -49,18 +49,6 @@ namespace Math
 
 		inline Quaternion& _CALL Identity(void);
 
-		// TODO
-		// Computes the dot product of this Quaternion and a given Quaternion
-		inline float _CALL Dot(const Quaternion) const;
-
-		// TODO
-		// Computes the cross product of this Quaternion and a given Quaternion 
-		inline Quaternion& _CALL Cross(const Quaternion);
-
-		// TODO
-		// Projects the Quaternion onto the given Quaternion
-		inline Quaternion& _CALL Project(const Quaternion);
-
 		inline float _CALL Magnitude(void) const;
 		inline float _CALL MagnitudeSqr(void) const;
 
@@ -69,28 +57,32 @@ namespace Math
 		template <NegateFlag FLAGS>
 		inline Quaternion& _CALL Negate(void) noexcept;
 
-		// TODO
+		Vector4 _CALL Rotate(Vector4) const noexcept;
+
 		Matrix4 _CALL Matrix(void) const noexcept;
+
+		Vector4 _CALL ToEuler(void) const;
 
 
 
 		// ======================================== OPERATORS ======================================= // 
 
-		//inline float& _CALL operator[](const unsigned _nIndex);
-		//inline const float _CALL operator[](const unsigned _nIndex) const;
+		inline float& _CALL operator[](const unsigned _nIndex);
+		inline float  _CALL operator[](const unsigned _nIndex) const;
 
 		inline Quaternion  _CALL operator-(void) const;
+		inline Quaternion  _CALL operator* (const Quaternion);
 		inline Quaternion& _CALL operator*=(const float);
 		inline Quaternion& _CALL operator*=(const Quaternion);
 		inline Quaternion& _CALL operator/=(const float);
 		inline Quaternion& _CALL operator+=(const Quaternion);
 		inline Quaternion& _CALL operator-=(const Quaternion);
+		inline bool _CALL operator==(const Quaternion);
 
 		
 		// ================================= QUATERNION GENERATORS ================================= // 
 
-		static inline Quaternion _CALL FromEuler   (float _x, float _y, float _z);
-		static inline Quaternion _CALL FromEulerDeg(float _x, float _y, float _z);
+		static Quaternion _CALL FromEuler(Angle _x, Angle _y, Angle _z);
 
 
 	private:
@@ -112,22 +104,15 @@ namespace Math
 
 	inline Quaternion _CALL Conjugate(const Quaternion);
 
+	inline Vector4 _CALL Reflect(const Vector4, const Quaternion);
+
 	inline Matrix4 _CALL Matrix(const Quaternion) noexcept;
-
-	// ====================================== MATH UTILITY ======================================= // 
-	// Manually overload the math utility functions which cannot be called for type Quaternion
-
-	//inline Quaternion _CALL Abs(const Quaternion);
-
-	//inline Quaternion _CALL Min(const Quaternion, const Quaternion);
-	//inline Quaternion _CALL Max(const Quaternion, const Quaternion);
 
 
 	// ======================================== OPERATORS ======================================== // 
 
 	inline Quaternion _CALL operator-(const Quaternion, const Quaternion);
 	inline Quaternion _CALL operator+(const Quaternion, const Quaternion);
-	inline Quaternion _CALL operator*(const Quaternion, const Quaternion);
 	inline Quaternion _CALL operator*(const float, const Quaternion);
 	inline Quaternion _CALL operator*(const Quaternion, const float);
 	inline Quaternion _CALL operator/(const Quaternion, const float);
@@ -192,38 +177,6 @@ inline Math::Quaternion _CALL Math::Conjugate(Quaternion _Q)
 	return _Q.Conjugate();
 }
 
-inline float _CALL Math::Quaternion::Dot(const Quaternion _rhs) const
-{
-	return .0f;
-}
-
-inline float _CALL Math::Dot(const Quaternion _lhs, const Quaternion _rhs)
-{
-	return _lhs.Dot(_rhs);
-}
-
-inline Math::Quaternion& _CALL Math::Quaternion::Cross(const Quaternion _rhs)
-{
-	return *this;
-}
-
-inline Math::Quaternion _CALL Math::Cross(Quaternion _lhs, Quaternion _rhs)
-{
-	return _lhs.Cross(_rhs);
-}
-
-inline Math::Quaternion& _CALL Math::Quaternion::Project(const Quaternion _rhs)
-{
-	_rhs;
-	return *this;
-}
-
-// Projects lhs onto rhs
-inline Math::Quaternion _CALL Math::Project(Quaternion _lhs, Quaternion _rhs)
-{
-	return _lhs.Project(_rhs);
-}
-
 
 inline float _CALL Math::Quaternion::Magnitude(void) const
 {
@@ -260,7 +213,7 @@ inline Math::Quaternion& _CALL Math::Quaternion::operator*=(const float _fScalar
 
 inline Math::Quaternion&_CALL Math::Quaternion::operator*=(const Quaternion _rhs)
 {
-	return *this;
+	return *this = *this * _rhs;
 }
 
 inline Math::Quaternion& _CALL Math::Quaternion::operator/=(const float _fScalar)
@@ -295,11 +248,6 @@ inline Math::Quaternion _CALL Math::operator+(Quaternion _lhs, const Quaternion 
 	return _lhs += _rhs;
 }
 
-inline Math::Quaternion _CALL Math::operator*(Quaternion _lhs, const Quaternion _rhs)
-{
-	return _lhs *= _rhs;
-}
-
 inline Math::Quaternion _CALL Math::operator*(const float _lhs, Quaternion _rhs)
 {
 	return _rhs *= _lhs;
@@ -315,7 +263,20 @@ inline Math::Quaternion _CALL Math::operator/(Quaternion _lhs, const float _rhs)
 	return _lhs /= _rhs;
 }
 
+inline float& _CALL Math::Quaternion::operator[](unsigned _nIndex)
+{
+	return mData[_nIndex];
+}
 
+inline float _CALL Math::Quaternion::operator[](unsigned _nIndex) const
+{
+	return mData[_nIndex];
+}
+
+inline bool _CALL Math::Quaternion::operator==(const Quaternion _rhs)
+{
+	return mData == _rhs.mData;
+}
 
 
 

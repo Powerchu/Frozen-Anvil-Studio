@@ -12,19 +12,20 @@
 		-PNG : 
 		-JPG : 
 
-	TODO: Endianess, Compressed file formats
+	TODO: Compressed file formats
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "IO\ImageParser.h"			// File header
-#include "IO\BinarySerializer.h"
-#include "System\Graphics\Image.h"	// Image
-#include "Utility\DebugAssert.h"	// DEBUG_PRINT
+#include "IO/ImageParser.h"			// File header
+#include "IO/BinarySerializer.h"
+#include "System/Graphics/Image.h"	// Image
+#include "Utility/DebugAssert.h"	// DEBUG_PRINT
+#include "Allocator/DefaultAlloc.h"
 
-#include "..\..\Dependancies\lodepng\lodepng.h"
+#include "../../Dependancies/lodepng/lodepng.h"
 
 #include <cmath>		// abs
 #include <string>		// string
@@ -73,6 +74,11 @@ namespace
 		uint32_t	mCRC;
 	};
 
+	struct StructRGB
+	{
+		uint8_t r, g, b;
+	};
+
 	struct StructRGBA
 	{
 		uint8_t r, g, b, a;
@@ -82,6 +88,7 @@ namespace
 	{
 		uint32_t mColor;
 
+		StructRGB sub_c;
 		StructRGBA sub;
 	};
 }
@@ -102,10 +109,10 @@ namespace BMP
 			return true;
 
 		// No idea on stuff that are not these either
-		if (_info.mBits != 8 || _info.mBits != 24 || _info.mBits != 32)
-			return true;
+		if (_info.mBits == 8 || _info.mBits == 24 || _info.mBits == 32)
+			return false;
 
-		return false;
+		return true;
 	}
 
 	void ColorPalette(Dystopia::BinarySerializer& _file, InfoBMP& _fileInfo, ColorRGBA(&_palette)[256])
@@ -122,7 +129,7 @@ namespace BMP
 	// 8 Bits using Color Palette
 	void* Palette_ColorBMP(Dystopia::BinarySerializer& _in, InfoBMP& _info, ColorRGBA(&_palette)[256])
 	{
-		ColorRGBA* data = new ColorRGBA[_info.mWidth * std::abs(_info.mHeight)];
+		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * std::abs(_info.mHeight));
 
 		for (int n = 0; n < std::abs(_info.mHeight); ++n)
 		{
@@ -135,9 +142,7 @@ namespace BMP
 
 			if (_info.mWidth % 4)
 			{
-				__debugbreak();
-				// NEED FEATURE
-				//_in.ignore(4 - _info.mWidth % 4);
+				_in.Skip(4 - _info.mWidth % 4);
 			}
 		}
 
@@ -150,18 +155,25 @@ namespace BMP
 		unsigned chunkLength = _info.mWidth * 3;
 		unsigned padding = ((chunkLength + 3) >> 2) * 4 - chunkLength; // pad widths to multiple of 4
 
-		unsigned size = chunkLength * std::abs(_info.mHeight);
-		uint8_t* data = new uint8_t[size];
-		uint8_t* ptr = data;
+		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * std::abs(_info.mHeight));
+		ColorRGBA* ptr = data + _info.mWidth * std::abs(_info.mHeight);
 
 		for (int n = 0; n < std::abs(_info.mHeight); ++n)
 		{
-			// NEED FEATURE
-			__debugbreak();
-			//_in.read(reinterpret_cast<char*>(ptr), chunkLength);
-			//_in.ignore(padding);
+			ptr = ptr - _info.mWidth;
+			for (int w = 0; w < _info.mWidth; ++ w)
+			{
+				_in >> ptr->sub.b;
+				_in >> ptr->sub.g;
+				_in >> ptr->sub.r;
+				ptr->sub.a = 255;
 
-			ptr += chunkLength;
+				++ptr;
+			}
+
+
+			ptr = ptr - _info.mWidth;
+			_in.Skip(padding);
 		}
 
 		return data;
@@ -171,7 +183,7 @@ namespace BMP
 	void* RGBA_ColorBMP(Dystopia::BinarySerializer& _in, InfoBMP& _info)
 	{
 		DEBUG_PRINT(eLog::MESSAGE, "ImageParser: Read image as RGBA color!\n");
-		ColorRGBA* data = new ColorRGBA[_info.mWidth * std::abs(_info.mHeight)];
+		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * std::abs(_info.mHeight));
 
 		for (int n = 0; n < _info.mWidth * std::abs(_info.mHeight); ++n)
 		{
@@ -241,9 +253,7 @@ Image ImageParser::LoadBMP(const std::string& _path)
 
 	if (fileInfo.mSize > sizeof(InfoBMP))
 	{
-	//	char dummy[fileInfo.mSize - sizeof(InfoBMP)];
-	//	file.read(reinterpret_cast<char*>(&fileInfo.mWidth), sizeof(InfoBMP) - sizeof(uint32_t));
-	//	file.seekg(fileInfo.mSize - sizeof(InfoBMP), std::ios::cur);
+		file.Skip(fileInfo.mSize - sizeof(InfoBMP));
 	}
 	
 	// Early bail checks before we do anything
@@ -255,13 +265,14 @@ Image ImageParser::LoadBMP(const std::string& _path)
 
 	// Read color palette if there is one
 	ColorRGBA mPalette[256];
-	if (fileInfo.mNumColors)
+	if (fileInfo.mBits < 16 && fileInfo.mNumColors)
 	{
 		 BMP::ColorPalette(file, fileInfo, mPalette);
 	}
 
 	// Seek to start of image data, just in case
-	//file.seekg(fileHeader.mOffset, std::ios::beg);
+	if ( fileHeader.mOffset > sizeof(HeaderBMP) + fileInfo.mSize)
+		file.Skip(fileHeader.mOffset - (sizeof(HeaderBMP) + fileInfo.mSize));
 
 	Image fileData = BMP::ReadData(file, fileInfo, mPalette);
 
@@ -275,14 +286,8 @@ Image ImageParser::LoadPNG(const std::string& _strName)
 	std::vector<unsigned char> buf;
 	lodepng::decode(buf, fileData.mnWidth, fileData.mnHeight, _strName.c_str());
 
-	fileData.mpImageData = new char[buf.size()];
-
-	auto b = buf.begin();
-	auto e = buf.end();
-	unsigned char* data = static_cast<unsigned char*>(fileData.mpImageData);
-
-	while (b != e)
-		*data++ = *b++;
+	fileData.mpImageData = Dystopia::DefaultAllocator<void>::Alloc(buf.size());
+	std::memcpy(fileData.mpImageData, &buf[0], buf.size());
 
 	return fileData;
 }

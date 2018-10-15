@@ -12,18 +12,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "Editor\EGUI.h"
-#include "Editor\HierarchyView.h"
-#include "Editor\EditorEvents.h"
-#include "Editor\Editor.h"
-#include "Editor\DefaultFactory.h"
+#include "Editor/EGUI.h"
+#include "Editor/HierarchyView.h"
+#include "Editor/EditorEvents.h"
+#include "Editor/Editor.h"
+#include "Editor/DefaultFactory.h"
 
-#include "Object\GameObject.h"
-#include "Component\Camera.h"
+#include "Object/GameObject.h"
+#include "Component/Camera.h"
 
-#include "System\Scene\Scene.h"
-#include "System\Camera\CameraSystem.h"
-#include "System\Driver\Driver.h"
+#include "System/Scene/Scene.h"
+#include "System/Camera/CameraSystem.h"
+#include "System/Driver/Driver.h"
 
 #include <algorithm>
 #include <cctype>
@@ -44,8 +44,9 @@ namespace Dystopia
 	}
 
 	HierarchyView::HierarchyView()
-		: EditorTab{ true },  
-		mLabel{ "Hierarchy" }, mpFocus{ nullptr }, mSearchText{ "" }, 
+		: EditorTab{ false },
+		mLabel{ "Hierarchy" }, 
+		mSearchText{ "" }, 
 		mPopupID{ "CreateGameObjFromHierarchy" }, 
 		mSearchTextPrevFrame{ "" }, mArrSearchID{}
 	{
@@ -91,19 +92,28 @@ namespace Dystopia
 			auto& arrayOfGameObjects = GetCurrentScene()->GetAllGameObjects();
 			for (auto& obj : arrayOfGameObjects)
 			{
+				const auto& selections = GetMainEditor()->GetSelectionObjects();
+				bool highlight = false;
+				for (auto& elem : selections)
+				{
+					if (elem == &obj)
+					{
+						highlight = true;
+						break;
+					}
+				}
 				if (strlen(mSearchText))
 				{
 					for (auto& i : mArrSearchID)
 					{
 						if (!(obj.GetID() == i)) 
 							continue;
-				
-						GameObjectName(obj);
+						GameObjectName(obj, highlight);
 						break;
 					}
 				}
 				else
-					GameObjectName(obj);
+					GameObjectName(obj, highlight);
 			}
 		}
 		EGUI::EndChild();
@@ -112,7 +122,7 @@ namespace Dystopia
 	void HierarchyView::CreateButton()
 	{
 		EGUI::Indent(5);
-		if (EGUI::Display::Button("Create", Math::Vec2{ 50, 18 }))
+		if (EGUI::Display::Button("Create", Math::Vec2{ 50, 22 }))
 		{
 			EGUI::Display::OpenPopup(mPopupID);
 		}
@@ -122,10 +132,10 @@ namespace Dystopia
 
 	void HierarchyView::SearchBar()
 	{
-		float width = Size().x - 70 - 55;
+		float width = Size().x - 70;
 		width = (width < 20) ? 20 : width;
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, true, width);
+		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, false, width);
 		EGUI::ChangeLabelSpacing();
 		EGUI::Display::HorizontalSeparator();
 	}
@@ -175,15 +185,29 @@ namespace Dystopia
 		}
 	}
 
-	void HierarchyView::GameObjectName(GameObject& _obj)
+	void HierarchyView::GameObjectName(GameObject& _obj, bool selected)
 	{
 		//if (_obj.GetName() == "Scene Camera") return;
 		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
-		bool highlighted = mpFocus && (mpFocus->GetID() == _obj.GetID());
-		if (EGUI::Display::SelectableTxt(uniqueifyName, highlighted))
+		if (EGUI::Display::SelectableTxt(uniqueifyName, selected))
 		{
-			GetMainEditor().RemoveFocus();
-			GetMainEditor().SetFocus(_obj);
+			auto ed = GetMainEditor();
+			if (ed->IsCtrlDown())
+			{
+				bool exist = false;
+				for (const auto& id : ed->GetSelectionObjects())
+				{
+					if (id->GetID() == _obj.GetID())
+					{
+						ed->RemoveSelection(_obj.GetID());
+						exist = true;
+					}
+				}
+				if (!exist)
+					ed->AddSelection(_obj.GetID());
+			}
+			else
+				ed->NewSelection(_obj.GetID());
 		}
 		GameObjectPopups(_obj);
 	}
@@ -192,11 +216,11 @@ namespace Dystopia
 	{
 		if (ImGui::BeginPopupContextItem())
 		{
-			GetMainEditor().RemoveFocus();
-			GetMainEditor().SetFocus(_obj);
-			if (EGUI::Display::SelectableTxt("Copy"))
+			GetMainEditor()->NewSelection(_obj.GetID());
+			if (EGUI::Display::SelectableTxt("Duplicate"))
 			{
-
+				GetMainEditor()->EditorCopy();
+				GetMainEditor()->EditorPaste();
 			}
 			if (EGUI::Display::SelectableTxt("Delete"))
 			{
@@ -204,20 +228,10 @@ namespace Dystopia
 			}
 			ImGui::EndPopup();
 		}
-		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAMEOBJECT, &_obj, sizeof(_obj), _obj.GetName()))
+		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &_obj, sizeof(_obj), _obj.GetName()))
 		{
 			EGUI::Display::EndPayload();
 		}
-	}
-
-	void HierarchyView::SetFocus(GameObject& _rObj)
-	{
-		mpFocus = &_rObj;
-	}
-
-	void HierarchyView::RemoveFocus()
-	{
-		mpFocus = nullptr;
 	}
 }
 
