@@ -92,9 +92,7 @@ inline Dystopia::ProxyAlloc<Alloc_t>::~ProxyAlloc(void) noexcept
 template <typename A>
 [[nodiscard]] void* Dystopia::ProxyAlloc<A>::Allocate(size_t _sz, size_t _align)
 {
-	void* ptr;
-	
-	if (ptr = mAlloc.Allocate(_sz, _align))
+	if (void* ptr = mAlloc.Allocate(_sz, _align))
 	{
 		_sz = Math::Max(_sz, A::MIN_SIZE);
 
@@ -115,9 +113,10 @@ template <typename A>
 		DEBUG_BREAK((_align - 1) & reinterpret_cast<uintptr_t>(ptr), "Alloc Error: Pointer is misaligned!");
 
 		mData.push_back(AllocInfo{ ptr, _sz, _align });
+		return ptr;
 	}
 
-	return ptr;
+	return nullptr;
 }
 
 template <typename A>
@@ -145,7 +144,7 @@ void Dystopia::ProxyAlloc<A>::Deallocate(void* _ptr)
 template<typename Alloc_t>
 inline void Dystopia::ProxyAlloc<Alloc_t>::WriteFreeMemoryImpl(FileLogger& _out) const
 {
-	mAlloc.WriteFreeMemoryImpl(_p);
+	mAlloc.WriteFreeMemoryImpl(_out);
 }
 
 template<typename Alloc_t>

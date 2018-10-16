@@ -265,9 +265,10 @@ void* Dystopia::DefaultAlloc::GetBlockFromOffset(MetaData_t const _nOffset) cons
 	return nullptr;
 }
 
-void Dystopia::DefaultAlloc::WriteFreeMemory(FileLogger& _p)
+void Dystopia::DefaultAlloc::WriteFreeMemory(FileLogger& _out)
 {
-	mAllocator.WriteFreeMemoryImpl(_p);
+	_out.Write("\n\nDefault Allocator Free Chunks:\n");
+	mAllocator.WriteFreeMemoryImpl(_out);
 }
 
 void Dystopia::DefaultAlloc::WriteFreeMemoryImpl(FileLogger& _out) const
@@ -285,7 +286,8 @@ void Dystopia::DefaultAlloc::WriteActiveAllocations(FileLogger& _out)
 {
 #if defined(DEBUGALLOC)
 
-	mAllocator.WriteActiveAllocations(static_cast<FILE*>(_out));
+	_out.Write("\n\nDefault Allocator Allocations:\n");
+	mAllocator.WriteActiveAllocations(_out);
 
 #else
 

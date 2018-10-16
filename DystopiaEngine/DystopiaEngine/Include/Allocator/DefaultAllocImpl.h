@@ -34,6 +34,7 @@ namespace Dystopia
 		[[nodiscard]] void* Allocate(size_t, size_t);
 		void Deallocate(void*);
 
+		void WriteFreeMemoryImpl(FileLogger&) const;
 		static void WriteFreeMemory(FileLogger&);
 		static void WriteActiveAllocations(FileLogger&);
 
@@ -48,8 +49,6 @@ namespace Dystopia
 		static MetaData_t GetBlockSize(void*);
 		static MetaData_t GetNextOffset(void*);
 		void* GetBlockFromOffset(MetaData_t) const;
-
-		void WriteFreeMemoryImpl(FileLogger&) const;
 	};
 }
 

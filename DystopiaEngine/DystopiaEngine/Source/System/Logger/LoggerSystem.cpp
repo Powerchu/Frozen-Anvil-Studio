@@ -75,8 +75,8 @@ namespace
 			WriteCallStack(log, 3);
 
 #       if defined(DEBUGALLOC)
-			WriteActiveAllocations(_out);
-			WriteFreeMemory(_out);
+			Dystopia::Alloc::WriteActiveAllocations(log);
+			Dystopia::Alloc::WriteFreeMemory(log);
 #       endif
 		}
 
