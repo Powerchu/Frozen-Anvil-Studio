@@ -14,13 +14,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _ALLOCLIB_H_
 #define _ALLOCLIB_H_
 
-#include "DefaultAlloc.h"
+#include "Allocator/DefaultAlloc.h"
+#include "System/Logger/FileLogger.h"
 
 
 namespace Dystopia::Alloc
 {
-	void WriteFreeMemory(void*);
-	void WriteActiveAllocations(void*);
+	void WriteFreeMemory(Dystopia::FileLogger&);
+	void WriteActiveAllocations(Dystopia::FileLogger&);
 }
 
 

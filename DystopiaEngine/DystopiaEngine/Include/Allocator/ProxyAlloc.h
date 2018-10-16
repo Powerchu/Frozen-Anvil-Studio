@@ -18,6 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Utility.h"
 #include "Utility/DebugAssert.h"
 
+#include "System/Logger/FileLogger.h"
+
 #include <list>
 #include <cstdio>
 #include <algorithm>
@@ -37,7 +39,8 @@ namespace Dystopia
 		[[nodiscard]] void* Allocate(size_t, size_t);
 		void Deallocate(void*);
 
-		void WriteActiveAllocations(FILE*) const;
+		void WriteFreeMemoryImpl(FileLogger&) const;
+		void WriteActiveAllocations(FileLogger&) const;
 
 		Alloc_t const& Get(void) const;
 
@@ -77,9 +80,11 @@ inline Dystopia::ProxyAlloc<Alloc_t>::~ProxyAlloc(void) noexcept
 {
 	if (mData.size())
 	{
-		if (auto out = LoggerSystem::OutputFile("Memleak"))
+		FileLogger out = LoggerSystem::FileLog("Memleak.dystor");
+		if (out.Good())
 		{
-			fprintf(out, "Proxy Allocator: Detected Memory leaks!");
+			out.Write("Proxy Allocator: Detected Memory leaks!\n");
+			WriteActiveAllocations(out);
 		}
 	}
 }
@@ -138,24 +143,24 @@ void Dystopia::ProxyAlloc<A>::Deallocate(void* _ptr)
 }
 
 template<typename Alloc_t>
-inline void Dystopia::ProxyAlloc<Alloc_t>::WriteFreeMemory(void* _p) const
+inline void Dystopia::ProxyAlloc<Alloc_t>::WriteFreeMemoryImpl(FileLogger& _out) const
 {
 	mAlloc.WriteFreeMemoryImpl(_p);
 }
 
 template<typename Alloc_t>
-inline void Dystopia::ProxyAlloc<Alloc_t>::WriteActiveAllocations(FILE* _out) const
+inline void Dystopia::ProxyAlloc<Alloc_t>::WriteActiveAllocations(FileLogger& _out) const
 {
 	for (auto& e : mData)
 	{
-		fprintf(_out, "", e.mPointer, e.mReqSz, e.mAlignment)
+		_out.Write("Allocation at %p: %zu bytes with %zu alignment.\n", e.mPointer, e.mReqSz, e.mAlignment);
 	}
 }
 
 template<typename A>
 inline A const& Dystopia::ProxyAlloc<A>::Get(void) const
 {
-	return mAlloc
+	return mAlloc;
 }
 
 

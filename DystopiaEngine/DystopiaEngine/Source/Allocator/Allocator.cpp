@@ -14,24 +14,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Allocator/Allocator.h"
 #include "Allocator/DefaultAllocImpl.h"
 
-#include <cstdio>
+#include "System/Logger/FileLogger.h"
 
 
-void Dystopia::Alloc::WriteFreeMemory(void* _p)
+void Dystopia::Alloc::WriteFreeMemory(Dystopia::FileLogger& _file)
 {
-#if defined (DEBUGALLOC)
-
-	DefaultAlloc::WriteFreeMemory(_p);
-
-#endif
+	DefaultAlloc::WriteFreeMemory(_file);
 }
 
 
-void Dystopia::Alloc::WriteActiveAllocations(void* _p)
+void Dystopia::Alloc::WriteActiveAllocations(Dystopia::FileLogger& _file)
 {
-#if defined (DEBUGALLOC)
-
-	DefaultAlloc::WriteActiveAllocations(_p);
-
-#endif
+	DefaultAlloc::WriteActiveAllocations(_file);
 }

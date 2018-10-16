@@ -15,6 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _DEFAULTALLOCIMPL_H_
 #define _DEFAULTALLOCIMPL_H_
 
+#include "System/Logger/FileLogger.h"
+
 #include <cstddef>
 #include <cstdint>
 
@@ -32,8 +34,8 @@ namespace Dystopia
 		[[nodiscard]] void* Allocate(size_t, size_t);
 		void Deallocate(void*);
 
-		static void WriteFreeMemory(void*);
-		static void WriteActiveAllocations(void*);
+		static void WriteFreeMemory(FileLogger&);
+		static void WriteActiveAllocations(FileLogger&);
 
 	private:
 		std::byte* mpBlock;
@@ -47,7 +49,7 @@ namespace Dystopia
 		static MetaData_t GetNextOffset(void*);
 		void* GetBlockFromOffset(MetaData_t) const;
 
-		void WriteFreeMemoryImpl(void*) const;
+		void WriteFreeMemoryImpl(FileLogger&) const;
 	};
 }
 
