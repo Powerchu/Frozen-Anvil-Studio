@@ -118,7 +118,7 @@ namespace Dystopia
 
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mpWin{ nullptr }, mpGfx{ nullptr },
-		mpSceneSystem{ nullptr }, mpProfiler{ nullptr }, mTempSaveFile{},
+		mpSceneSystem{ nullptr }, mpProfiler{ nullptr }, mTempSaveFile{}, mSceneHasChanged{ true },
 		mpEditorEventSys{ new EditorEventHandler{} }, mpInput{ new EditorInput{} },
 		mpComdHandler{ new CommandHandler{} }, mpGuiSystem{ new GuiSystem{} }, mpTimer{ new Timer{} },
 		mpClipBoard{ new Clipboard{} }, mCtrlKey{ false }, mArrSelectedObj{ 100 }, mUpdateSelection{ true }
@@ -275,17 +275,19 @@ namespace Dystopia
 			mUpdateSelection = false;
 		}
 
-		if (&mpSceneSystem->GetCurrentScene() != &mpSceneSystem->GetActiveScene())
+		mSceneHasChanged = (mSceneHasChanged | &mpSceneSystem->GetCurrentScene() != &mpSceneSystem->GetActiveScene());
+		LogTabPerformance();
+		EngineCore::GetInstance()->PostUpdate();
+		mpBehaviourSys->PostUpdate();
+		if (mSceneHasChanged)
 		{
 			for (auto& e : mArrTabs)
 				e->SetSceneContext(&mpSceneSystem->GetActiveScene());
 			mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
 			auto name = mpSceneSystem->GetActiveScene().GetSceneName();
 			mpWin->GetMainWindow().SetTitle(std::wstring{ name.begin(), name.end() });
+			mSceneHasChanged = false;
 		}
-		LogTabPerformance();
-		EngineCore::GetInstance()->PostUpdate();
-		mpBehaviourSys->PostUpdate();
 
 		mpGuiSystem->EndFrame(); 
 		if (mCurrentState != mNextState)  UpdateState();
@@ -618,7 +620,7 @@ namespace Dystopia
 		}
 	}
 
-	void Editor::OpenScene(const std::wstring& _path, const std::wstring& _name)
+	void Editor::OpenScene(const std::wstring& _path, const std::wstring& /*_name*/)
 	{
 		mArrSelectedObj.clear();
 		ClearSelections();
@@ -636,6 +638,7 @@ namespace Dystopia
 
 	void Editor::TempLoad()
 	{
+		mSceneHasChanged = true;
 		ClearSelections();
 		mpSceneSystem->RestartScene();
 		remove(mTempSaveFile.c_str());
@@ -692,10 +695,8 @@ namespace Dystopia
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, caps);
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, mpInput->IsKeyPressed(KEY_ALT));
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, mCtrlKey);
-	}
 
-	void Editor::UpdateHotkeys()
-	{
+		/* Editor allowed special events to run in game mode*/
 		if (mpInput->IsKeyTriggered(KEY_LMOUSE))
 		{
 			mpGuiSystem->UpdateMouse(KEY_LMOUSE, true);
@@ -712,6 +713,15 @@ namespace Dystopia
 			mpGuiSystem->UpdateScroll(0, scrollV);
 			mpEditorEventSys->Fire(scrollV > 0 ? EDITOR_SCROLL_UP : EDITOR_SCROLL_DOWN);
 		}
+		if (!mCtrlKey && !mpInput->IsKeyPressed(KEY_ALT))
+		{
+			if (mpInput->IsKeyTriggered(KEY_W))			mpEditorEventSys->Fire(EDITOR_W);
+			else if (mpInput->IsKeyTriggered(KEY_E))	mpEditorEventSys->Fire(EDITOR_E);
+		}
+	}
+
+	void Editor::UpdateHotkeys()
+	{
 		if (mCtrlKey)
 		{
 			auto s = mpInput->IsKeyPressed(KEY_SHIFT) ? EDITOR_HOTKEY_SAVEAS : EDITOR_HOTKEY_SAVE;
@@ -727,6 +737,7 @@ namespace Dystopia
 		}
 		else if (mpInput->IsKeyTriggered(KEY_DELETE))	
 			mpEditorEventSys->Fire(EDITOR_HOTKEY_DELETE);
+
 	}
 
 	void Editor::UpdateGameModeKeys()

@@ -60,7 +60,7 @@ namespace Dystopia
 		mMoveVec{ 0,0 }, mMoveSens{ 0.75f }, 
 		mDragging{ false }, mImgPos{}, mImgSize{},
 		mClearSelection{ false },
-		mGizmoHovered{ false }
+		mGizmoHovered{ false }, mCurrGizTool{ eTRANSLATE }
 	{}
 
 	SceneView::~SceneView()
@@ -74,6 +74,8 @@ namespace Dystopia
 		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Bind(&SceneView::SceneChanged, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Bind(&SceneView::ScrollOut, this);
+		GetEditorEventHND()->GetEvent(EDITOR_W)->Bind(&SceneView::SetGizmoTranslate, this);
+		GetEditorEventHND()->GetEvent(EDITOR_E)->Bind(&SceneView::SetGizmoScaler, this);
 
 		//mpSceneCamera = Factory::CreateCamera("Scene Camera");
 		//GetCurrentScene()->GetAllGameObjects().EmplaceBack(Utility::Move(*mpSceneCamera));
@@ -155,6 +157,9 @@ namespace Dystopia
 		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Unbind(this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Unbind(this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Unbind(this);
+		GetEditorEventHND()->GetEvent(EDITOR_W)->Unbind(this);
+		GetEditorEventHND()->GetEvent(EDITOR_E)->Unbind(this);
+
 	}
 
 	std::string SceneView::GetLabel() const
@@ -421,6 +426,16 @@ namespace Dystopia
 						   (equation1.y * (mImgSize.y / 2)) + (Size().y / 2) };
 	}
 
+	void SceneView::SetGizmoTranslate(void)
+	{
+		mCurrGizTool = eGizTool::eTRANSLATE;
+	}
+
+	void SceneView::SetGizmoScaler(void)
+	{
+		mCurrGizTool = eGizTool::eSCALE;
+	}
+
 	void SceneView::DrawGizmoMul(const AutoArray<GameObject*>& _arr)
 	{
 		Math::Pt3D avgPos{ 0, 0, 0, 1.f };
@@ -437,103 +452,211 @@ namespace Dystopia
 		float changeX = 0;
 		float changeY = 0;
 
-		switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+		switch (mCurrGizTool)
 		{
-		case EGUI::eDRAGGING:
-			for (auto& obj : _arr)
+		case eTRANSLATE:
+			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
 			{
-				auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
-				obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX, cpos.y, cpos.z, cpos.w });
+			case EGUI::eDRAGGING:
+				for (auto& obj : _arr)
+				{
+					auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
+					obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX, cpos.y, cpos.z, cpos.w });
+				}
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
 			}
-			mClearSelection = false;
+			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				for (auto& obj : _arr)
+				{
+					auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
+					obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x, cpos.y + changeY, cpos.z, cpos.w });
+				}
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				for (auto& obj : _arr)
+				{
+					auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
+					obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX, cpos.y + changeY, cpos.z, cpos.w });
+				}
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
 			break;
-		case EGUI::eSTART_DRAG:
-			mClearSelection = false;
-			break;
-		case EGUI::eEND_DRAG:
-			mClearSelection = false;
+
+		case eSCALE:
+			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				for (auto& obj : _arr)
+				{
+					auto cScale = obj->GetComponent<Transform>()->GetGlobalScale();
+					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y, cScale.z, cScale.w });
+				}
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				for (auto& obj : _arr)
+				{
+					auto cScale = obj->GetComponent<Transform>()->GetGlobalScale();
+					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY, cScale.z, cScale.w });
+				}
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				for (auto& obj : _arr)
+				{
+					auto cScale = obj->GetComponent<Transform>()->GetGlobalScale();
+					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + changeY, cScale.z, cScale.w });
+				}
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
 			break;
 		}
-		switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
-		{
-		case EGUI::eDRAGGING:
-			for (auto& obj : _arr)
-			{
-				auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
-				obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x, cpos.y + changeY, cpos.z, cpos.w });
-			}
-			mClearSelection = false;
-			break;
-		case EGUI::eSTART_DRAG:
-			mClearSelection = false;
-			break;
-		case EGUI::eEND_DRAG:
-			mClearSelection = false;
-			break;
-		}
-		switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
-		{
-		case EGUI::eDRAGGING:
-			for (auto& obj : _arr)
-			{
-				auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
-				obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX, cpos.y + changeY, cpos.z, cpos.w });
-			}
-			mClearSelection = false;
-			break;
-		case EGUI::eSTART_DRAG:
-			mClearSelection = false;
-			break;
-		case EGUI::eEND_DRAG:
-			mClearSelection = false;
-			break;
-		}
+	
 	}
 
 	void SceneView::DrawGizmoSingle(GameObject& obj)
 	{
-		Math::Pt3D curPos = obj.GetComponent<Transform>()->GetGlobalPosition();
+		Math::Pt3D curPos	 = obj.GetComponent<Transform>()->GetGlobalPosition();
+		Math::Vec4 cScale	 = obj.GetComponent<Transform>()->GetGlobalScale();
 		Math::Vec2 screenPos = GetWorldToScreen(curPos);
 		float changeX = 0;
 		float changeY = 0;
 
-		switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+		switch (mCurrGizTool)
 		{
-		case EGUI::eDRAGGING:
-			obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX, curPos.y, curPos.z, curPos.w });
-			mClearSelection = false;
+		case eTRANSLATE:
+			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX, curPos.y, curPos.z, curPos.w });
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x, curPos.y + changeY, curPos.z, curPos.w });
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX, curPos.y + changeY, curPos.z, curPos.w });
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
 			break;
-		case EGUI::eSTART_DRAG:
-			mClearSelection = false;
-			break;
-		case EGUI::eEND_DRAG:
-			mClearSelection = false;
-			break;
-		}
-		switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
-		{
-		case EGUI::eDRAGGING:
-			obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x, curPos.y + changeY, curPos.z, curPos.w });
-			mClearSelection = false;
-			break;
-		case EGUI::eSTART_DRAG:
-			mClearSelection = false;
-			break;
-		case EGUI::eEND_DRAG:
-			mClearSelection = false;
-			break;
-		}
-		switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
-		{
-		case EGUI::eDRAGGING:
-			obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX, curPos.y + changeY, curPos.z, curPos.w });
-			mClearSelection = false;
-			break;
-		case EGUI::eSTART_DRAG:
-			mClearSelection = false;
-			break;
-		case EGUI::eEND_DRAG:
-			mClearSelection = false;
+
+		case eSCALE:
+			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y, cScale.z, cScale.w });
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY, cScale.z, cScale.w });
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + changeY, cScale.z, cScale.w });
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
 			break;
 		}
 	}

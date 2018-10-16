@@ -114,6 +114,7 @@ namespace Dystopia
 		Timer					*mpTimer;
 		EditorInput				*mpInput;
 
+		bool					mSceneHasChanged;
 		bool					mUpdateSelection;
 		bool					mCtrlKey;
 		float					mDeltaTime;

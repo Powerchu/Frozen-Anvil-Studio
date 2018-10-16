@@ -52,6 +52,13 @@ namespace Dystopia
 	private:
 		SceneView(void);
 
+		enum eGizTool
+		{
+			eTRANSLATE,
+			eSCALE,
+			eROTATE
+		};
+
 		enum eZoom 
 		{
 			eZOOM_IN,
@@ -59,6 +66,7 @@ namespace Dystopia
 			eZOOM_NONE
 		};
 
+		eGizTool		mCurrGizTool;
 		bool			mGizmoHovered;
 		bool			mClearSelection;
 		bool			mDragging;
@@ -94,6 +102,9 @@ namespace Dystopia
 		void			DrawGizmos(void);
 		void			DrawGizmoSingle(GameObject&);
 		void			DrawGizmoMul(const AutoArray<GameObject*>&);
+
+		void			SetGizmoTranslate(void);
+		void			SetGizmoScaler(void);
 	};
 
 }

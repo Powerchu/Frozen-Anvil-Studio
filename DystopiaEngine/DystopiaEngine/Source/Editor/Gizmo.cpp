@@ -145,7 +145,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ArrowUp(const std::string& _uniqueID, float& _o
 	return status;
 }
 
-EGUI::eDragStatus EGUI::Gizmo2D::ScalarLeft(const std::string& _uniqueID, float& _outputValX, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, bool* _pHovered, float _len, float _thickness)
+EGUI::eDragStatus EGUI::Gizmo2D::ScalerLeft(const std::string& _uniqueID, float& _outputValX, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, bool* _pHovered, float _len, float _thickness)
 {
 	EGUI::eDragStatus status = EGUI::eNO_CHANGE;
 	auto initialOrigin = ImGui::GetCursorPos();
@@ -210,7 +210,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ScalarLeft(const std::string& _uniqueID, float&
 	return status;
 }
 
-EGUI::eDragStatus EGUI::Gizmo2D::ScalarUp(const std::string& _uniqueID, float& _outputValY, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, bool* _pHovered, float _len, float _thickness)
+EGUI::eDragStatus EGUI::Gizmo2D::ScalerUp(const std::string& _uniqueID, float& _outputValY, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, bool* _pHovered, float _len, float _thickness)
 {
 	EGUI::eDragStatus status = EGUI::eNO_CHANGE;
 	auto initialOrigin = ImGui::GetCursorPos();
