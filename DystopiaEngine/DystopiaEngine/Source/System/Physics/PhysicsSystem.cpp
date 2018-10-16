@@ -88,17 +88,17 @@ namespace Dystopia
 					if (col->HasCollision() && !col->IsTrigger())
 					{
 						auto worstPene = mPenetrationEpsilon;
-
 						for (auto& manifold : col->GetCollisionEvents())
 						{
+							manifold.ApplyImpulse();
+
 							if (manifold.mfPeneDepth > worstPene)
 							{
-								auto worstContact = &manifold;
+								const auto worstContact = &manifold;
 								worstPene = manifold.mfPeneDepth;
 
 								if (nullptr != worstContact)
 								{
-									worstContact->ApplyImpulse();
 									worstContact->ApplyPenetrationCorrection();
 								}
 							}
@@ -117,10 +117,10 @@ namespace Dystopia
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (body.GetOwner())
-			{
-				body.UpdateResult(_dt);
-			}
+			if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+
+			body.PreUpdatePosition(_dt);
+			body.UpdateResult(_dt);
 		}
 
 		// If Event System is running: this is where to Broadcast Collision Messages
@@ -137,6 +137,12 @@ namespace Dystopia
 		}
 	}
 
+	void PhysicsSystem::PreFixedUpdate(float _dt)
+	{
+		// Integrate RigidBodies
+		IntegrateRigidBodies(_dt);
+	}
+
 	void PhysicsSystem::Step(float _dt)
 	{
 		/* Broad Phase Collision Detection*/
@@ -147,9 +153,6 @@ namespace Dystopia
 		/* Collision Resolution (Response) Logic */
 		ResolveCollision(_dt);
 
-		// Integrate RigidBodies
-		IntegrateRigidBodies(_dt);
-		
 		/*Update positions and rotation as result*/
 		UpdateResults(_dt);
 

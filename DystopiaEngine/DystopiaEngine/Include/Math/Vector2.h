@@ -68,6 +68,7 @@ namespace Math
 		inline Vector2& _CALL operator/=(const float);
 		inline Vector2& _CALL operator+=(const Vector2);
 		inline Vector2& _CALL operator-=(const Vector2);
+		inline bool _CALL operator==(const Vector2);
 
 	private:
 
@@ -415,6 +416,14 @@ inline Math::Vector2 _CALL Math::operator-(Math::Vector2 _v)
 	return Vector2{ -_v.x, -_v.y };
 }
 
+
+inline bool _CALL Math::Vector2::operator==(const Vector2 _rhs)
+{
+	return
+		ApproxEq((*this)[0], _rhs[0]) &&
+		ApproxEq((*this)[1], _rhs[1]);;
+}
+
 inline Math::Vector2 _CALL Math::operator-(Vector2 _lhs, const Vector2 _rhs)
 {
 	return _lhs -= _rhs;
@@ -444,7 +453,6 @@ inline Math::Vector2 _CALL Math::operator/(Vector2 _lhs, const float _rhs)
 {
 	return _lhs /= _rhs;
 }
-
 
 
 // Remove all our defines

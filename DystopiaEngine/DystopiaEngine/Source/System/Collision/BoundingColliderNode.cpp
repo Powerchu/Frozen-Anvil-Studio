@@ -30,48 +30,52 @@ namespace Dystopia
 		                                                   PotentialContacts*    _pPotentialContacts,
 		                                                   unsigned              _limit) const
 	{
-		/*If current Node is not overlapping the other node, there is no collision*/
-		if (!isOverlapping(*_other) || _limit == 0) return 0;
-		/*If Both Nodes are Leaf, there is a potential collision*/
-		else if (isLeaf() && _other->isLeaf())
+		if (nullptr != _other)
 		{
-			_pPotentialContacts->mContacts[0] = mCollider;
-			_pPotentialContacts->mContacts[1] = _other->mCollider;
-			return 1;
-		}
-		else if (_other->isLeaf())
-		{
-			/*Recurse into self*/
-			unsigned count = mChildrenNode[0]->GetPotentialContactWith(_other, _pPotentialContacts, _limit);
+			/*If current Node is not overlapping the other node, there is no collision*/
+			if (!isOverlapping(*_other) || _limit == 0) return 0;
+			/*If Both Nodes are Leaf, there is a potential collision*/
+			else if (isLeaf() && _other->isLeaf())
+			{
+				_pPotentialContacts->mContacts[0] = mCollider;
+				_pPotentialContacts->mContacts[1] = _other->mCollider;
+				return 1;
+			}
+			else if (_other->isLeaf())
+			{
+				/*Recurse into self*/
+				unsigned count = mChildrenNode[0]->GetPotentialContactWith(_other, _pPotentialContacts, _limit);
 
-			if (_limit > count)
-				return count + mChildrenNode[1]->GetPotentialContactWith(_other, _pPotentialContacts + count, _limit - count);
+				if (_limit > count)
+					return count + mChildrenNode[1]->GetPotentialContactWith(_other, _pPotentialContacts + count, _limit - count);
+				else
+					return count;
+			}
+			else if (isLeaf())
+			{
+				/*Recurse into other*/
+				unsigned count = GetPotentialContactWith(_other->mChildrenNode[0], _pPotentialContacts, _limit);
+
+				if (_limit > count)
+					return count + GetPotentialContactWith(_other->mChildrenNode[1], _pPotentialContacts + count, _limit - count);
+				else
+					return count;
+			}
 			else
-				return count;
-		}
-		else if(isLeaf())
-		{
-			/*Recurse into other*/
-			unsigned count = GetPotentialContactWith(_other->mChildrenNode[0], _pPotentialContacts, _limit);
+			{
+				unsigned count = 0;
+				unsigned Total = count = mChildrenNode[0]->GetPotentialContactWith(_other->mChildrenNode[0], _pPotentialContacts, _limit);
 
-			if (_limit > count)
-				return count + GetPotentialContactWith(_other->mChildrenNode[1], _pPotentialContacts + count, _limit - count);
-			else
-				return count;
+				if (_limit - Total)
+					Total += mChildrenNode[0]->GetPotentialContactWith(_other->mChildrenNode[1], _pPotentialContacts + Total, _limit - Total);
+				if (_limit - Total)
+					Total += mChildrenNode[1]->GetPotentialContactWith(_other->mChildrenNode[0], _pPotentialContacts + Total, _limit - Total);
+				if (_limit - Total)
+					Total += mChildrenNode[1]->GetPotentialContactWith(_other->mChildrenNode[1], _pPotentialContacts + Total, _limit - Total);
+				return Total;
+			}
 		}
-		else
-		{
-			unsigned count = 0;
-			unsigned Total = count = mChildrenNode[0]->GetPotentialContactWith(_other->mChildrenNode[0], _pPotentialContacts, _limit);
-
-			if (_limit - Total)
-				Total += mChildrenNode[0]->GetPotentialContactWith(_other->mChildrenNode[1], _pPotentialContacts + Total, _limit - Total);
-			if (_limit - Total)
-				Total += mChildrenNode[1]->GetPotentialContactWith(_other->mChildrenNode[0], _pPotentialContacts + Total, _limit - Total);
-			if (_limit - Total)
-				Total += mChildrenNode[1]->GetPotentialContactWith(_other->mChildrenNode[1], _pPotentialContacts + Total, _limit - Total);
-			return Total;
-		}
+		
 		/*Leave this in. Dont delete yet*/
 		/*
 		 * Use the Bounding Circle with the largest Size as there are more colliders inside the Circle
@@ -185,6 +189,12 @@ namespace Dystopia
 		if (mParent)
 			mParent->RecalculateBoundingCircle();
 	}
+
+	bool BoundingColliderNode::isEmpty() const
+	{
+		return (mChildrenNode[0] == nullptr && mChildrenNode[1] == nullptr);
+	}
+
 	BoundingColliderNode::~BoundingColliderNode()
 	{
 		if (mParent)

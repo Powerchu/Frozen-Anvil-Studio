@@ -34,6 +34,8 @@ namespace Dystopia
 		void     UpdateNodes();
 
 		void     RecalculateBoundingCircle();
+
+		bool	isEmpty() const;
 		~BoundingColliderNode();
 
 	private:

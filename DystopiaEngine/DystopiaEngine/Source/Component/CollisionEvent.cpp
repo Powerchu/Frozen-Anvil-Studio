@@ -2,7 +2,7 @@
 #include "System/Logger/LoggerSystem.h"
 #include "Object/GameObject.h"
 #include "Component/RigidBody.h"
-#include <algorithm>
+//#include <algorithm>
 
 namespace Dystopia
 {
@@ -95,8 +95,8 @@ namespace Dystopia
 			bodyA->SetVelocity(a_newVel);
 		//bodyA->AddForce(-frictionImpulse);
 
-		if (bodyB->GetIsAwake() && !bodyB->Get_IsStaticState())
-			bodyB->SetVelocity(b_newVel);
+		//if (bodyB->GetIsAwake() && !bodyB->Get_IsStaticState())
+		//	bodyB->SetVelocity(b_newVel);
 		//bodyB->AddForce(frictionImpulse);
 	}
 
@@ -110,7 +110,7 @@ namespace Dystopia
 		const float perc = 0.05F;
 		const float slop = 0.01F;
 
-		const Vec3D correction = Math::Max((mfPeneDepth)-slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
+		const Vec3D correction = Math::Max((mfPeneDepth)+slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 
 		if (bodyA->GetIsAwake() && !bodyA->Get_IsStaticState())
 			bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
