@@ -29,11 +29,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Profiler/Profiler.h"
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
-#include "IO/BinarySerializer.h"
-#include "Utility/GUID.h"
 #include "System/File/FileSystem.h"
 #include "System//Behaviour/BehaviourSystem.h"
 #include "System/Physics/PhysicsSystem.h"
+#include "System/Sound/SoundSystem.h"
+
+#include "IO/BinarySerializer.h"
+#include "Utility/GUID.h"
 
 #include "Component/Component.h"
 
@@ -87,18 +89,24 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
-	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
-	editor->Init();
-	while (!editor->IsClosing())
-	{
-		editor->StartFrame();
-	
-		editor->UpdateFrame(editor->GetDeltaTime());
-		
-		editor->EndFrame();
-	}
-	editor->Shutdown();
-	delete editor;
+	Dystopia::SoundSystem sound = Dystopia::SoundSystem{};
+
+	sound.PreInit();
+	sound.Init();
+	sound.PostInit();
+
+	//Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
+	//editor->Init();
+	//while (!editor->IsClosing())
+	//{
+	//	editor->StartFrame();
+	//
+	//	editor->UpdateFrame(editor->GetDeltaTime());
+	//	
+	//	editor->EndFrame();
+	//}
+	//editor->Shutdown();
+	//delete editor;
 	return 0;
 }
 
@@ -275,7 +283,7 @@ namespace Dystopia
 			mUpdateSelection = false;
 		}
 
-		mSceneHasChanged = (mSceneHasChanged | &mpSceneSystem->GetCurrentScene() != &mpSceneSystem->GetActiveScene());
+		mSceneHasChanged |= &mpSceneSystem->GetCurrentScene() != &mpSceneSystem->GetActiveScene();
 		LogTabPerformance();
 		EngineCore::GetInstance()->PostUpdate();
 		mpBehaviourSys->PostUpdate();

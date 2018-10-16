@@ -262,6 +262,9 @@
     <ClCompile Include="Source\System\Events\Events.cpp">
       <Filter>Game Engine\Systems\Event</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Sound\SoundSystem.cpp">
+      <Filter>Game Engine\Systems\Sound</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
