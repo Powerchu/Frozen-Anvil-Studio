@@ -30,6 +30,10 @@ namespace Dystopia
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<Collider>, AllComponents>::value;
 		};
+		unsigned GetRealComponentType(void) const
+		{
+			return Utility::MetaFind_t<Utility::Decay_t<AABB>, UsableComponents>::value;
+		};
 
 #if EDITOR
 		static const std::string GetCompileName(void) { return "Box Collider2D"; }

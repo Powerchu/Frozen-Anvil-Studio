@@ -15,21 +15,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_META_HELPER_H_
 #define _EDITOR_META_HELPER_H_
 
-#include "Component/Camera.h"
 #include "Component/ColliderList.h"
-#include "Component/Renderer.h"
-#include "Component/RigidBody.h"
-#include "System/Graphics/GraphicsSystem.h"
-#include "System/Camera/CameraSystem.h"
+#include "Component/Component.h"
+
+#include "System/Base/ComponentDonor.h"
+#include "System/Driver/Driver.h"
+
+#include "DataStructure/Array.h"
 #include "Object/GameObject.h"
-#include <tuple>
-#include <utility>
+
+#include "Utility/Utility.h"
+#include "Utility/MetaAlgorithms.h"
 
 namespace Dystopia
 {
 	template<typename A, typename B>
 	struct ListOfComponentsName;
-
 	template <class List, size_t ... Ns>
 	struct ListOfComponentsName<std::index_sequence<Ns ...>, List>
 	{
@@ -40,7 +41,6 @@ namespace Dystopia
 			if constexpr (N != sizeof...(Ns) - 1)
 				AuxEx<N + 1>(arr, ts...);
 		}
-
 		template<size_t Num>
 		static void Extract(Array<std::string, Num>& arr)
 		{
@@ -70,14 +70,11 @@ namespace Dystopia
 		template<size_t ... Ns>
 		struct GenerateCollection<std::index_sequence<Ns ...>>
 		{
-
 			Component* Get(unsigned int _i, GameObject *_owner)
 			{
 				static auto mData = Ctor::MakeArray<Component*(*)(GameObject *)>(AuxGenFunction<typename Utility::MetaExtract<Ns, UsableComponents>::result::type>::Extract
-					...
-				);
-
-				if (_i < size || _i >= 0)
+					... );
+				if (_i < size || _i >= 0) 
 					return mData[_i](_owner);
 				return nullptr;
 			}
@@ -90,6 +87,8 @@ namespace Dystopia
 
 		GenerateCollection<std::make_index_sequence<size>> mCollection;
 	};
+
+
 }
 
 #endif //_AUX_META_HELPER_H_

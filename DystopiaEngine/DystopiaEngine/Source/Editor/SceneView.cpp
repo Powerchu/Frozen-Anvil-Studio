@@ -96,6 +96,7 @@ namespace Dystopia
 
 	void SceneView::Update(const float& _dt)
 	{
+		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
 		if (GetMainEditor()->CurrentState() == EDITOR_MAIN)
 			mpGfxSys->Update(_dt);
 	}
@@ -116,15 +117,22 @@ namespace Dystopia
 		if (EGUI::Display::Image(pTex->GetID(), mImgSize, true))
 			mAmFocused = true;
 		ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
-
-		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PREFAB))
+		if (GetCurrentScene()->FindGameObject("Scene Camera"))
 		{
-			AcceptPrefab(t);
-			EGUI::Display::EndPayloadReceiver();
+			if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PREFAB))
+			{
+				AcceptPrefab(t);
+				EGUI::Display::EndPayloadReceiver();
+			}
+			if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
+			{
+				AcceptTexture(t);
+				EGUI::Display::EndPayloadReceiver();
+			}
 		}
-		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
+		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::SCENE))
 		{
-			AcceptTexture(t);
+			GetMainEditor()->OpenScene(std::wstring{ t->mPath.begin(), t->mPath.end() }, std::wstring{ t->mName.begin(), t->mName.end() });
 			EGUI::Display::EndPayloadReceiver();
 		}
 		if (GetMainEditor()->CurrentState() == EDITOR_PLAY)
@@ -156,6 +164,7 @@ namespace Dystopia
 
 	void SceneView::Move()
 	{
+		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
 		if (mpSceneCamera)
 		{
 			Math::Vec2 vDest	= FindMouseVector();
@@ -297,9 +306,13 @@ namespace Dystopia
 		auto viewport = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
 		Math::Vec2 hitPoint{ (relPos.x / mImgSize.x) * viewport.mnWidth,
 							 (relPos.y / mImgSize.y) * viewport.mnHeight };
-		auto worldPos = _cam->ScreenToWorld(Math::MakeVector3D( (hitPoint.x - (mImgSize.x / 2)),
-																(hitPoint.y - (mImgSize.y / 2)),
-																 0.f));
+		auto worldPos = _cam->ScreenToWorld(Math::MakeVector3D( hitPoint.x,
+																hitPoint.y,
+																0.f));
+
+		//PrintToConsoleLog("Ratio " +std::to_string(relPos.x / mImgSize.x) + " / " + std::to_string(relPos.y / mImgSize.y));
+		//PrintToConsoleLog("Hitpt " +std::to_string(hitPoint.x) + " / " + std::to_string(hitPoint.y));
+		//PrintToConsoleLog("Worpt " +std::to_string(worldPos.x) + " / " + std::to_string(worldPos.y));
 		return worldPos;
 	}
 
@@ -325,8 +338,6 @@ namespace Dystopia
 				GameObject* pObj = FindMouseObject();
 				if (pObj && !mGizmoHovered)
 				{
-					//Factory::SaveAsPrefab(*pObj);
-					//GameObject *p = Factory::LoadFromPrefab(pObj->GetName());
 					auto ed = GetMainEditor();
 					if (ed->IsCtrlDown())	ed->AddSelection(pObj->GetID());
 					else					ed->NewSelection(pObj->GetID());
@@ -348,7 +359,7 @@ namespace Dystopia
 		mToZoom = eZOOM_NONE;
 	}
 
-	void SceneView::AcceptPrefab(File* /*_pFile*/)
+	void SceneView::AcceptPrefab(File* _pFile)
 	{
 		if (Camera* pCam = GetCamera())
 		{
@@ -357,7 +368,12 @@ namespace Dystopia
 			Math::Pt3D worldClickPos	= GetWorldClickPos(pCam);
 			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ };
 
-			/* TODO: Unserialise a prefab file */
+			GameObject *pDupl = Factory::LoadFromPrefab("", _pFile->mPath);
+			if (pDupl)
+			{
+				pDupl->GetComponent<Transform>()->SetPosition(spawnSite);
+				GetCommandHND()->InvokeCommandInsert(*pDupl, *GetCurrentScene());
+			}
 		}
 	}
 
@@ -374,7 +390,6 @@ namespace Dystopia
 				auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, 
 																			mpGfxSys->LoadTexture(_pFile->mPath));
 				GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
-
 				GetMainEditor()->NewSelection(pTarget->GetID());
 			}
 		}
@@ -399,16 +414,8 @@ namespace Dystopia
 	{
 		if (!mpSceneCamera) return Math::Vec2{ 0,0 };
 
-		//auto		viewport	= EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
-		Camera*		pCamera		= mpSceneCamera->GetComponent<Camera>();
-		auto		equation1	= pCamera->GetProjectionMatrix() * (pCamera->GetViewMatrix() * curPos);
-
-		//float		thisFirstpart = ((viewport.mnX * viewport.mnWidth) / 2);
-		//int			resultantX  = (viewport.mnWidth / 2) + viewport.mnX;
-		//equation1 = equation1 / equation1.w;
-		//equation1.x = equation1.x * thisFirstpart;
-		//equation1.x = equation1.x+ resultantX;
-		//auto		equation2	= (equation1 / equation1.w);
+		Camera*	pCamera	= mpSceneCamera->GetComponent<Camera>();
+		auto equation1 = pCamera->GetProjectionMatrix() * (pCamera->GetViewMatrix() * curPos);
 
 		return Math::Vec2{ (equation1.x * (mImgSize.x / 2)) + (Size().x / 2),
 						   (equation1.y * (mImgSize.y / 2)) + (Size().y / 2) };

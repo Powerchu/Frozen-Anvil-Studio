@@ -44,7 +44,7 @@ namespace Dystopia
 
 	class Clipboard
 	{
-	public: 
+	public:
 		Clipboard(void);
 		~Clipboard(void);
 

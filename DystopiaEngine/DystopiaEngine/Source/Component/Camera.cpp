@@ -157,8 +157,8 @@ void Dystopia::Camera::SetCamera(void)
 
 	mInvScreen = mView * Math::AffineInverse(mProjection) * 
 		Math::Mat4{
-			2.f / (masterView.mnWidth), .0f, -(1.f + 2.f * masterView.mnX) / masterView.mnWidth - 1.f, .0f,
-			.0f, 2.f / masterView.mnHeight, 1.f + (1.f + 2.f * masterView.mnY) / masterView.mnHeight, .0f,
+			2.f / (masterView.mnWidth), .0f, .0f, -(1.f + 2.f * masterView.mnX) / masterView.mnWidth - 1.f,
+			.0f, 2.f / masterView.mnHeight, .0f, 1.f + (1.f + 2.f * masterView.mnY) / masterView.mnHeight,
 			.0f, .0f, .0f, .0f,
 			.0f, .0f, .0f, 1.f
 		}; // Screen space -> Viewport space -> projection space

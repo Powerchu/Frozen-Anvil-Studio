@@ -14,30 +14,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
-
-#include "Component/Camera.h"
-#include "Component/Renderer.h"
-#include "Component/RigidBody.h"
-#include "Component/ColliderList.h"
-
-#include "System/Driver/Driver.h"
-#include "System/Scene/SceneSystem.h"
-#include "System/Camera/CameraSystem.h"
-#include "System/Graphics/GraphicsSystem.h"
+#include "Editor/EditorMetaHelpers.h"
 
 #include "Utility/GUID.h"
 #include "Utility/DebugAssert.h"
 #include "Object/GameObject.h"
 #include "IO/TextSerialiser.h"
 
+#include "Component/Camera.h"
+#include "Component/Collider.h"
+#include "Component/Circle.h"
+#include "Component/AABB.h"
+#include "Component/Convex.h"
+#include "Component/Renderer.h"
+#include "Component/RigidBody.h"
+#include "Component/CharacterController.h"
+
+#include "System/Driver/Driver.h"
+#include "System/Input/InputSystem.h"
+#include "System/Camera/CameraSystem.h"
+#include "System/Physics/PhysicsSystem.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Behaviour/BehaviourSystem.h"
+#include "System/Collision/CollisionSystem.h"
+
 #include <fstream>
 #include <iostream>
 
-// TODO: DELETE
-#include "System/Physics/PhysicsSystem.h"
-#include "System/Collision/CollisionSystem.h"
-
-static const std::string DEFAULT_PREFAB_FOLDER = "..\\DystopiaEngine\\Resource\\Prefab";
 namespace Dystopia
 {
 	namespace Factory
@@ -133,9 +136,9 @@ namespace Dystopia
 			return pObject;
 		}
 	
-		void SaveAsPrefab(GameObject& _obj)
+		std::string SaveAsPrefab(GameObject& _obj, const std::string& _path)
 		{
-			std::string fileName = DEFAULT_PREFAB_FOLDER + "\\" + _obj.GetName() + g_PayloadPrefabEx;
+			std::string fileName = _path + "\\" + _obj.GetName() + g_PayloadPrefabEx;
 			std::ofstream file{ fileName, std::ios::out };
 			if (!file.is_open())
 				__debugbreak();
@@ -143,30 +146,49 @@ namespace Dystopia
 			auto toFile					= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_WRITE);
 			const auto& allComponents	= _obj.GetAllComponents();
 
-			_obj.Serialise(toFile);
+			toFile.InsertStartBlock("GameObject");
 			toFile << allComponents.size();
+			_obj.Serialise(toFile);
+			toFile.InsertEndBlock("GameObject");
 			for (const auto& elem : allComponents)
 			{
 				toFile.InsertStartBlock("Component");
+				toFile << elem->GetRealComponentType();
 				elem->Serialise(toFile);
 				toFile.InsertEndBlock("Component End");
 			}
+			return _obj.GetName() + g_PayloadPrefabEx;
 		}
 
-		GameObject* LoadFromPrefab(std::string _gameObjName)
+		GameObject* LoadFromPrefab(std::string _gameObjName, const std::string& _path)
 		{
+			std::string fileName = _gameObjName.length() ? _path + "\\" + _gameObjName : _path;
+
+			if (fileName.find(Dystopia::g_PayloadPrefabEx) == std::string::npos)
+				return nullptr;
+
+			ListOfComponents availComponents;
 			unsigned	num			= 0;
-			std::string fileName	= DEFAULT_PREFAB_FOLDER + "\\" + _gameObjName + g_PayloadPrefabEx;
+			unsigned	sysID		= 0;
 			auto		fromFile	= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_READ);
 			GameObject* pObj		= new GameObject{};
 
-			pObj->Unserialise(fromFile);
+			fromFile.ConsumeStartBlock();
 			fromFile >> num;
+			pObj->Unserialise(fromFile);
+			fromFile.ConsumeEndBlock();
 			for (unsigned i = 0; i < num; i++)
 			{
-
+				fromFile.ConsumeStartBlock();
+				fromFile >> sysID;
+				Component* pComp = availComponents.Get(sysID, pObj);
+				pObj->AddComponent(pComp, typename Component::TAG{});
+				pComp->Unserialise(fromFile);
+				fromFile.ConsumeEndBlock();
 			}
 
+			pObj->SetID(GUIDGenerator::GetUniqueID());
+			pObj->Identify();
 			return pObj;
 		}
 	}

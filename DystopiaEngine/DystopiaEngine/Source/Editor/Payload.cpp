@@ -82,6 +82,22 @@ namespace Dystopia
 		mArrPtrFolders.clear();
 	}
 
+	Folder* Folder::FindFolder(const std::string& _name)
+	{
+		Folder* temp = nullptr;
+		if (mName == _name) 
+			return this;
+
+		for (auto& e : mArrPtrFolders)
+		{
+			temp = e->FindFolder(_name);
+
+			if (temp)  
+				return temp;
+		}
+		return nullptr;
+	}
+
 	File::File(const std::string& _name, const std::string& _path, Folder * const _parent)
 		: CrawlItem{ _name, _path }, mpParentFolder{ _parent }, mTag{ DetermineTag(_name) }
 	{}
@@ -106,7 +122,8 @@ namespace Dystopia
 			return EGUI::ePayloadTags::FILE;
 		else if (_name.find(g_PayloadPrefabEx) == _name.length() - 5)
 			return EGUI::ePayloadTags::PREFAB;
-
+		else if (_name.find(g_PayloadSceneEx) == _name.length() - 7)
+			return EGUI::ePayloadTags::SCENE;
 		return EGUI::ePayloadTags::UNKNOWN;
 	}
 }

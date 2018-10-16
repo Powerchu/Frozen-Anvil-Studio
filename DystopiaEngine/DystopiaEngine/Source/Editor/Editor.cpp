@@ -275,9 +275,18 @@ namespace Dystopia
 			mUpdateSelection = false;
 		}
 
+		if (&mpSceneSystem->GetCurrentScene() != &mpSceneSystem->GetActiveScene())
+		{
+			for (auto& e : mArrTabs)
+				e->SetSceneContext(&mpSceneSystem->GetActiveScene());
+			mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
+			auto name = mpSceneSystem->GetActiveScene().GetSceneName();
+			mpWin->GetMainWindow().SetTitle(std::wstring{ name.begin(), name.end() });
+		}
 		LogTabPerformance();
 		EngineCore::GetInstance()->PostUpdate();
 		mpBehaviourSys->PostUpdate();
+
 		mpGuiSystem->EndFrame(); 
 		if (mCurrentState != mNextState)  UpdateState();
 	}
@@ -421,13 +430,9 @@ namespace Dystopia
 		if (EGUI::StartMenuHeader("Game"))
 		{
 			if (EGUI::StartMenuBody("Play", "Ctrl + P", mCurrentState == EDITOR_MAIN))
-			{
 				GamePlay();
-			}
 			if (EGUI::StartMenuBody("Stop", "Ctrl + P", mCurrentState == EDITOR_PLAY))
-			{
 				GameStop();
-			}
 			EGUI::EndMenuHeader();
 		}
 	}
@@ -463,21 +468,26 @@ namespace Dystopia
 		ClearSelections();
 		for (auto& elem : toPaste)
 		{
-			GameObject *pDup = static_cast<GameObject*>(elem)->Duplicate();
-			for (const auto& o : existingObj)
+			if (mpSceneSystem->GetCurrentScene().FindGameObject(static_cast<GameObject*>(elem)->GetID()))
 			{
-				if (o.GetName() == pDup->GetName())
+				GameObject *pDup = static_cast<GameObject*>(elem)->Duplicate();
+				for (const auto& o : existingObj)
 				{
-					pDup->SetName(pDup->GetName() + "_Clone");
-					break;
+					if (o.GetName() == pDup->GetName())
+					{
+						pDup->SetName(pDup->GetName() + "_Clone");
+						break;
+					}
 				}
+				pDup->Identify();
+				pDup->Init();
+				mToInsert.Insert(pDup);
+				AddSelection(pDup->GetID());
 			}
-			pDup->Identify();
-			pDup->Init();
-			mToInsert.Insert(pDup);
-			AddSelection(pDup->GetID());
 		}
-		mpComdHandler->InvokeCommandInsert(mToInsert, mpSceneSystem->GetCurrentScene());
+
+		if (mToInsert.size())
+			mpComdHandler->InvokeCommandInsert(mToInsert, mpSceneSystem->GetCurrentScene());
 	}
 
 	void Editor::EditorDelete()
@@ -613,10 +623,6 @@ namespace Dystopia
 		mArrSelectedObj.clear();
 		ClearSelections();
 		mpSceneSystem->LoadScene(std::string{ _path.begin(), _path.end() });
-		for (auto& e : mArrTabs)
-			e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
-		mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
-		mpWin->GetMainWindow().SetTitle(_name);
 	}
 
 	void Editor::TempSave()

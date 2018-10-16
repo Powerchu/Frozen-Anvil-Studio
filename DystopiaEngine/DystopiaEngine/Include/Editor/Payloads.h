@@ -30,6 +30,7 @@ namespace EGUI
 		PREFAB,
 		GAME_OBJ,
 		COMPONENT,
+		SCENE,
 
 		ePAY_LOAD_LAST
 	};
@@ -44,6 +45,7 @@ namespace EGUI
 		case PREFAB:		return "PREFAB";
 		case GAME_OBJ:		return "GAME_OBJ";
 		case COMPONENT:		return "COMPONENT";
+		case SCENE:			return "SCENE";
 		default:			return "ePAY_LOAD_LAST";
 		}
 	}
@@ -51,6 +53,7 @@ namespace EGUI
 
 namespace Dystopia
 {
+	static const std::string g_PayloadSceneEx = ".dscene";
 	static const std::string g_PayloadPrefabEx = ".dobj";
 	static const std::string g_PayloadPngEx = ".png";
 	static const std::string g_PayloadBmpEx = ".bmp";
@@ -85,6 +88,7 @@ namespace Dystopia
 
 		void				Crawl();
 		void				ClearFolder();
+		Folder*				FindFolder(const std::string& _name);
 
 		Folder*				mpParentFolder;
 		AutoArray<File*>	mArrPtrFiles;
