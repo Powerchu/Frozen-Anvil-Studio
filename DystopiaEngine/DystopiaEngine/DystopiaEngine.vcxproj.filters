@@ -756,6 +756,7 @@
     <ClInclude Include="Include\Editor\DragStatus.h">
       <Filter>Editor\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DataStructure\TypeErasure.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

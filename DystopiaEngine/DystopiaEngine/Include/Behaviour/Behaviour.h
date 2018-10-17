@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Globals.h"
 #include "Component/ComponentList.h"	// eComponents
 #include "Component/Component.h"		// Component
-
+#include "DataStructure/TypeErasure.h"
 namespace Dystopia
 {
 	struct CollisionEvent;
@@ -57,6 +57,8 @@ namespace Dystopia
 		virtual void Serialise(TextSerialiser&) const {};
 		virtual void Unserialise(TextSerialiser&) {};
 
+		virtual TypeErase       GetMetaData()       = 0;
+		virtual TypeErase const GetMetaData() const = 0;
 
 		virtual Behaviour * Duplicate() const;
 	};
