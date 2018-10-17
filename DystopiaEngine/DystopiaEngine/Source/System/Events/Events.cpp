@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "System/Events/Events.h"
+#include "Utility/Utility.h"
 
 namespace Dystopia
 {
@@ -61,8 +62,8 @@ namespace Dystopia
 
 	EventCallback& EventCallback::operator=(EventCallback&& _rhs)
 	{
-		std::swap(_rhs.mpModelEvent, mpModelEvent);
-		std::swap(_rhs.mpGenericComparison, mpGenericComparison);
+		Ut::Swap(_rhs.mpModelEvent, mpModelEvent);
+		Ut::Swap(_rhs.mpGenericComparison, mpGenericComparison);
 		return *this;
 	}
 

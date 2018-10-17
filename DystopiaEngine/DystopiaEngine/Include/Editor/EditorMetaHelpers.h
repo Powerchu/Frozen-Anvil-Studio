@@ -129,7 +129,7 @@ namespace Dystopia
 
 			Component* Get(unsigned int _i, GameObject *_owner)
 			{
-				static auto mData = Ctor::MakeArray<Component*(*)(GameObject *)>(AuxGenFunction<typename Utility::MetaExtract<Ns, UsableComponents>::result::type>::Extract
+				static auto mData = Ctor::MakeArray<Component*(*)(GameObject *)>(AuxGenFunction<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::Extract
 					... );
 				if (_i < size || _i >= 0) 
 					return mData[_i](_owner);

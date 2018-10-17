@@ -89,7 +89,7 @@ void Dystopia::SceneSystem::SceneChanged(void)
 	mpCurrScene->Shutdown();
 	delete mpCurrScene;
 
-	static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
+	static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 	auto SerialObj = TextSerialiser::OpenFile(mNextSceneFile, TextSerialiser::MODE_READ);
 	SerialObj.ConsumeStartBlock();
 	mpNextScene->Unserialise(SerialObj);

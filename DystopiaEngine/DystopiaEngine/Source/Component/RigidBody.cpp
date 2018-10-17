@@ -241,7 +241,7 @@ namespace Dystopia
 		}
 	}
 
-	void RigidBody::UpdateResult(float _dt)
+	void RigidBody::UpdateResult(float)
 	{
 		if (!mbIsStatic && mbIsAwake) // only update when body is not static
 		{		

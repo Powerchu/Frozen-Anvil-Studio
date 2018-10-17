@@ -31,7 +31,7 @@ namespace Dystopia
 		};
 		unsigned GetRealComponentType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<Circle>, UsableComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<Circle>, UsableComponents>::value;
 		};
 
 #if EDITOR

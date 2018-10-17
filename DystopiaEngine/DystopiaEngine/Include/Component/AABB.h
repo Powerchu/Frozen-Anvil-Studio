@@ -32,7 +32,7 @@ namespace Dystopia
 		};
 		unsigned GetRealComponentType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<AABB>, UsableComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<AABB>, UsableComponents>::value;
 		};
 
 #if EDITOR
