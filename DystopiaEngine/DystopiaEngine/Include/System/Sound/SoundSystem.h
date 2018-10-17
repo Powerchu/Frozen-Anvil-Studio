@@ -41,7 +41,6 @@ namespace Dystopia
 	};
 
 	class AudioSource;
-	
 	class SoundSystem : public Systems, public ComponentDonor<AudioSource>
 	{
 	public:

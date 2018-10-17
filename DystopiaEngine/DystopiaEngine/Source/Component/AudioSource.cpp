@@ -18,15 +18,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Editor.h"
 #endif 
 
-Dystopia::AudioSource::AudioSource(void) noexcept 
+Dystopia::AudioSource::AudioSource(void) 
 {
 }
 
-Dystopia::AudioSource::AudioSource(GameObject* _pOwner) noexcept
-{
-}
 
-Dystopia::AudioSource::AudioSource(const AudioSource&) noexcept
+Dystopia::AudioSource::AudioSource(const AudioSource&)
 {
 }
 

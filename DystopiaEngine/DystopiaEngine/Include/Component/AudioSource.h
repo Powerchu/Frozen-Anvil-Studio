@@ -13,8 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _AUDIO_SOURCE_H_
 #define _AUDIO_SOURCE_H_
 
-#include "Component/Component.h"		// Base Class
-#include "Component/ComponentList.h"	// TRANSFORM
+#include "Component/ComponentList.h"	
+#include "Component/Component.h"
 #include <string>
 
 namespace FMOD
@@ -43,9 +43,8 @@ namespace Dystopia
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		AudioSource(void) noexcept;
-		AudioSource(GameObject* _pOwner) noexcept;
-		AudioSource(const AudioSource&) noexcept;
+		AudioSource(void);
+		AudioSource(const AudioSource&);
 		~AudioSource(void);
 
 
@@ -64,14 +63,11 @@ namespace Dystopia
 
 		AudioSource* Duplicate() const;
 
-		void Serialise(TextSerialiser&) const = 0;
-		void Unserialise(TextSerialiser&) = 0;
+		void Serialise(TextSerialiser&) const;
+		void Unserialise(TextSerialiser&);
 		void EditorUI(void) noexcept;
 
 	private:
-		
-		std::string name;
-	
 	};
 }
 
