@@ -17,24 +17,28 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/ScriptFormatter.h"
 #include "Editor/Commands.h"
 #include "Editor/EditorEvents.h"
-#include "Editor/EditorMetaHelpers.h"
 
 #include "Component/Camera.h"
 #include "Component/Collider.h"
+#include "Component/Circle.h"
+#include "Component/AABB.h"
+#include "Component/Convex.h"
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
 #include "Component/CharacterController.h"
 
+#include "System/Input/InputSystem.h"
+#include "System/Camera/CameraSystem.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
-#include "System/Camera/CameraSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
-#include "System/Input/InputSystem.h"
 
 #include "Utility/ComponentGUID.h"
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
+
+#include "Editor/EditorMetaHelpers.h"
 
 #include <iostream>
 
@@ -42,6 +46,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 static const std::string g_bPopup = "Behaviour List";
 static const std::string g_cPopup = "Component List";
 static const std::string g_nPopup = "New Behaviour Name";
+
 
 namespace Dystopia
 {
@@ -214,7 +219,6 @@ namespace Dystopia
 					mpFocus->AddComponent(pComp, typename Component::TAG{});
 				}
 			}
-
 			EGUI::Display::EndPopup();
 		}
 	}

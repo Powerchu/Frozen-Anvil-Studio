@@ -73,6 +73,15 @@ void Dystopia::Window::SetTitle(const std::wstring& _strTitle)
 	SetWindowText(mHandle, _strTitle.c_str());
 }
 
+std::wstring Dystopia::Window::GetTitle(void) const noexcept
+{
+	static constexpr unsigned max = 254;
+	char buffer[max];
+	GetWindowTextA(mHandle, buffer, max);
+	std::string s{ buffer };
+	return std::wstring{ s.begin(), s.end() };
+}
+
 void Dystopia::Window::SetStyle(long _nStyle, long _nStyleEx)
 {
 	mStyle = _nStyle;

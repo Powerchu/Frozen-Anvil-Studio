@@ -15,6 +15,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
 #include "Editor/EditorEvents.h"
+#include "Editor/DefaultFactory.h"
+
+#include "Object/GameObject.h"
+
 #include <algorithm>
 #include <iostream>
 #include <Windows.h>
@@ -39,8 +43,9 @@ namespace Dystopia
 	ProjectResource::ProjectResource()
 		: EditorTab{ false },
 		mLabel{ "Project" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
-		mpCurrentFolder{ nullptr }, mArrAllFiles{}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
-		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 90 }
+		mpCurrentFolder{ nullptr }, mArrAllFiles{100}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
+		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 90 },
+		mResetToFile{}
 	{}
 
 	ProjectResource::~ProjectResource()
@@ -94,6 +99,12 @@ namespace Dystopia
 
 	void ProjectResource::EditorUI()
 	{
+		if (mResetToFile.length())
+		{
+			FocusOnFile(mResetToFile);
+			mResetToFile.clear();
+		}
+
 		Math::Vec2 fileWindowSize = Math::Vec2{ Size().x - 210, Size().y - 55 };
 		SearchWindow();
 		EGUI::Display::OpenTreeNode();
@@ -101,10 +112,21 @@ namespace Dystopia
 		EGUI::SameLine(2);
 		ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4{ 0,0,0,0 });
 		EGUI::StartChild("FileWindow", fileWindowSize);
-		if (!strlen(mSearchText))
-			FileWindow(fileWindowSize);
-		else
-			SearchResultWindow(fileWindowSize);
+		if (mpCurrentFolder)
+		{
+			auto origin = ImGui::GetCursorPos();
+			EGUI::Display::Dummy(fileWindowSize.x, fileWindowSize.y);
+			if (Dystopia::GameObject *t = EGUI::Display::StartPayloadReceiver<Dystopia::GameObject>(EGUI::GAME_OBJ))
+			{
+				mResetToFile = Factory::SaveAsPrefab(*t);
+				EGUI::Display::EndPayloadReceiver();
+			}
+			ImGui::SetCursorPos(origin);
+			if (!strlen(mSearchText))
+				FileWindow(fileWindowSize);
+			else
+				SearchResultWindow(fileWindowSize);
+		}
 		EGUI::EndChild();
 		ImGui::PopStyleColor();
 	}
@@ -174,25 +196,22 @@ namespace Dystopia
 		unsigned int columns = static_cast<unsigned int>(_mySize.x / buffedSize.x);
 		columns = columns ? columns : 1 ;
 
-		if (mpCurrentFolder)
-		{ 
-			EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
-			EGUI::Display::HorizontalSeparator();
-			for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
+		EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
+		EGUI::Display::HorizontalSeparator();
+		for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
+		{
+			File* pFile = mpCurrentFolder->mArrPtrFiles[i];
+			std::string id = "ProjectResourceFileWindow" + pFile->mName + std::to_string(i);
+			if (i % columns) EGUI::SameLine();
+			if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{ 0,0,0,0 }))
 			{
-				File* pFile = mpCurrentFolder->mArrPtrFiles[i];
-				std::string id = "ProjectResourceFileWindow" + pFile->mName + std::to_string(i);
-				if (i % columns) EGUI::SameLine();
-				if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{0,0,0,0}))
-				{
-					EGUI::Indent(10);
-					EGUI::PushID(i);
-					FileUI(pFile);
-					EGUI::PopID();
-					EGUI::UnIndent(10);
-				}
-				EGUI::EndChild();
+				EGUI::Indent(10);
+				EGUI::PushID(i);
+				FileUI(pFile);
+				EGUI::PopID();
+				EGUI::UnIndent(10);
 			}
+			EGUI::EndChild();
 		}
 	}
 	
@@ -231,7 +250,11 @@ namespace Dystopia
 
 	void ProjectResource::RefreshResourceFolder()
 	{
-		if (strlen(mSearchText)) strcpy_s(mSearchText, "");
+		if (strlen(mSearchText))
+		{
+			strcpy_s(mSearchText, "");
+			strcpy_s(mSearchTextLastFrame, "");
+		}
 		std::string currentSelectionName = mpCurrentFolder ? mpCurrentFolder->mName : "";
 
 		mArrAllFiles.clear();
@@ -249,9 +272,10 @@ namespace Dystopia
 
 	void ProjectResource::FocusOnFile(const std::string& _fileName)
 	{
-		strcpy_s(mSearchText, "");
+		strcpy_s(mSearchText, ""); 
+		strcpy_s(mSearchTextLastFrame, "");
 		mArrFilesSearchedLastFrame.clear();
-		mArrFilesSearchedThisFrame.clear();
+		mArrFilesSearchedThisFrame.clear(); 
 		if (FindFirstOne(mArrFilesSearchedThisFrame, _fileName))
 		{
 			mpCurrentFolder = mArrFilesSearchedThisFrame[0]->mpParentFolder;
@@ -278,12 +302,10 @@ namespace Dystopia
 	{
 		if (_name.length())
 		{
-			for (auto& e : mArrAllFiles)
-			{
-				if (e->mpParentFolder->mName == _name)
-					return e->mpParentFolder;
-			}
-		}
+			Folder* pFound = mpRootFolder->FindFolder(_name);
+			if (pFound) 
+				return pFound;
+		}	
 		return mpRootFolder;
 	}
 
