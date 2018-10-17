@@ -807,7 +807,7 @@ namespace Dystopia
 				col_info.mEdgeVector     = Normal.xyzw;
 				col_info.mOtherID        = _ColB.GetOwner()->GetID();
 
-				col_info.mfPeneDepth     = ProjectDis;
+				col_info.mfPeneDepth     = static_cast<float>(ProjectDis);
 
 				if (nullptr != other_body)
 				{

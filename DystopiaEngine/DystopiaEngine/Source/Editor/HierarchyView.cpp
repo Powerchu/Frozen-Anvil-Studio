@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorEvents.h"
 #include "Editor/Editor.h"
 #include "Editor/DefaultFactory.h"
+#include "Editor/Payloads.h"
 
 #include "Object/GameObject.h"
 #include "Component/Camera.h"

@@ -252,12 +252,12 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	Shader* s = shaderlist["Colour Shader"];
 	
 	s->UseShader();
-	s->UploadUniform("vColor", mvDebugColour);
+	//s->UploadUniform("vColor", mvDebugColour);
 	s->UploadUniform("ProjectViewMat", _ProjView);
 
 	Math::Vec4 no_alpha{ mvDebugColour };
 
-	Math::Vector4 CollidingColor{1.f, 0, 0, .75f}, inactiveColor;
+	Math::Vector4 CollidingColor{1.f, 0, 0, .75f}, activeColor;
 
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
@@ -268,13 +268,13 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 			
 			s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetLocalTransformMatrix() *Math::Translate(Obj->GetOffSet().x, Obj->GetOffSet().y, Obj->GetOffSet().z)  * Obj->GetTransformationMatrix());
 			
-			Math::Vector4 activeColor = Obj->HasCollision() ? CollidingColor : mvDebugColour;
+			activeColor = Obj->HasCollision() ? CollidingColor : mvDebugColour;
 
 			if (Mesh* pObjMesh = Obj->GetMesh())
 			{
 				s->UploadUniform("vColor", activeColor);
 				pObjMesh->UseMesh(GetDrawMode());
-				activeColor.w = 1.F;
+				activeColor.w = 1.f;
 				s->UploadUniform("vColor", activeColor);
 				pObjMesh->UseMesh(GL_LINE_LOOP);
 			}
@@ -594,20 +594,15 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	const auto result = EGUI::Display::DragFloat("Gamma       ", &mfGamma, 0.1f, 0.1f, 10.f);
 	switch (result)
 	{
-	case EGUI::eDragStatus::eEND_DRAG:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
-	case EGUI::eDragStatus::eENTER:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
 	case EGUI::eDragStatus::eSTART_DRAG:
 		EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&mfGamma);
 		break;
-	case EGUI::eDragStatus::eDRAGGING:
-		break;
+	case EGUI::eDragStatus::eENTER:
+	case EGUI::eDragStatus::eEND_DRAG:
 	case EGUI::eDragStatus::eDEACTIVATED:
 		EGUI::GetCommandHND()->EndRecording();
 		break;
+	case EGUI::eDragStatus::eDRAGGING:
 	default:
 		break;
 	}
@@ -624,20 +619,15 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	{
 		switch (elem)
 		{
-		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
 			EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&mvDebugColour);
 			break;
-		case EGUI::eDragStatus::eDRAGGING:
-			break;
+		case EGUI::eDragStatus::eENTER:
+		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
 			break;
+		case EGUI::eDragStatus::eDRAGGING:
 		default:
 			break;
 		}
@@ -647,20 +637,15 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 
 	switch (result3)
 	{
-	case EGUI::eDragStatus::eEND_DRAG:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
-	case EGUI::eDragStatus::eENTER:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
 	case EGUI::eDragStatus::eSTART_DRAG:
 		EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&mfDebugLineWidth);
 		break;
-	case EGUI::eDragStatus::eDRAGGING:
-		break;
+	case EGUI::eDragStatus::eENTER:
+	case EGUI::eDragStatus::eEND_DRAG:
 	case EGUI::eDragStatus::eDEACTIVATED:
 		EGUI::GetCommandHND()->EndRecording();
 		break;
+	case EGUI::eDragStatus::eDRAGGING:
 	default:
 		break;
 	}
@@ -668,5 +653,4 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 
 #endif 
 }
-
 

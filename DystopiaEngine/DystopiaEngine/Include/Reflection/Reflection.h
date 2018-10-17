@@ -14,9 +14,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _REFLECTIONLIB_H_
 #define _REFLECTIONLIB_H_
 
+#include "Reflection/MetaData.h"
+#include "Reflection/PPForEach.h"
+#include "Reflection/PPStringify.h"
+#include "Reflection/PPToSequence.h"
+#include "Reflection/ReflectedData.h"
 
 
-#define REFLECT(STRUCT_, ...) 
+#define PP_REFLECT(_STRUCT_, ...)                                \
+template <>                                                      \
+class MetaData<_STRUCT_>                                         \
+{                                                                \
+	PP_FOREACH(REFLECT_AUX, (_STRUCT_), __VA_ARGS__)             \
+}
+
+
+#define REFLECT_AUX(_TYPE_, _MEMBER_) std::pair<char const*, decltype(&_TYPE_::_MEMBER_)>{STRINGIFY(_MEMBER_), &_TYPE_::_MEMBER_}
+
 
 
 #endif		// INCLUDE GUARD

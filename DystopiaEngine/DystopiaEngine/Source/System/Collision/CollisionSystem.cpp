@@ -54,11 +54,12 @@ namespace Dystopia
 
 	void CollisionSystem::FixedUpdate(float _dt)
 	{
-
 		ScopedTimer<ProfilerAction> timeKeeper{ "Collision System", "Update" };
 
 		BoundingColliderNode     mCollisionTree;
 		static PotentialContacts ArrayContacts[1024]{};
+		static unsigned ContactCount;
+
 		for (auto& conv : ComponentDonor<Convex>::mComponents)
 		{
 #if EDITOR
@@ -131,7 +132,9 @@ namespace Dystopia
 			
 		}
 
-		unsigned ContactCount = mCollisionTree.GetNumPotentialContact(1024, ArrayContacts);
+		if (!mCollisionTree.isEmpty())
+			ContactCount = mCollisionTree.GetNumPotentialContact(1024, ArrayContacts);
+
 		for (unsigned i = 0; i < ContactCount; ++i)
 		{
 			if (nullptr == ArrayContacts[i].mContacts[0] || nullptr == ArrayContacts[i].mContacts[1]) continue;

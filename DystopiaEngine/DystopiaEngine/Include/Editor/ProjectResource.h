@@ -56,6 +56,7 @@ namespace Dystopia
 		AutoArray<File*>	mArrFilesSearchedThisFrame;
 		AutoArray<File*>	mArrFilesSearchedLastFrame;
 		std::string			mLabel;
+		std::string			mResetToFile;
 		char				mSearchText[MAX_SEARCH];
 		char				mSearchTextLastFrame[MAX_SEARCH];
 		Folder				*mpRootFolder;

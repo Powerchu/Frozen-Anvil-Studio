@@ -21,10 +21,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _VECTOR4_H_
 
 #include "Globals.h"
+#include "Math/MathFwd.h"
+#include "Math/MathUtility.h"
+
 #include "Utility/Meta.h"	            // EnableIf
 #include "Utility/MetaAlgorithms.h"     // MetaSortV
 #include "Utility/MetaDataStructures.h" // IntegralList
-#include "Math/MathUtility.h"
 
 #if defined(DEBUG) | defined(_DEBUG)
 #include "Utility/DebugAssert.h"
@@ -129,16 +131,18 @@ namespace Math
 		inline bool _CALL operator!=(const Vector4& _rhs) const;
 
 		// Alternate + and -
-		// x + x , y - y , z + z , w - w
+		// x1 + x2 , y1 - y2 , z1 + z2 , w1 - w2
 		inline Vector4& _CALL AddSub(const Vector4);
 
+		// x1 + y1 , z1 + w1 , x2 + y2 , z2 + w2
 		inline Vector4& _CALL HorizontalAdd(const Vector4);
+		// x1 - y1 , z1 - w1 , x2 - y2 , z2 - w2
 		inline Vector4& _CALL HorizontalSub(const Vector4);
 
 		// this = u * v + this
 		inline Vector4& _CALL MultiplyAdd(const Vector4 u, const Vector4 v);
 
-		// this = u * v - this
+		// this = this - u * v
 		inline Vector4& _CALL MultiplySub(const Vector4 u, const Vector4 v);
 
 #if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
@@ -184,7 +188,7 @@ namespace Math
 		{
 			static constexpr bool value = (X != Y) && (X != Z) && (X != W) && (Y != Z) && (Y != W) && (Z != W);
 		};
-
+		
 		// While we're at it, might as well add swizzle masks
 		// SwizzleMask  -> 1 shuffle (read)
 		// SwizzleMask -> 1 shuffle (read & write)
@@ -314,10 +318,12 @@ namespace Math
 	inline Vector4 _CALL operator/(const Vector4, const float);
 
 	// Alternate + and -
-	// x + x , y - y , z + z , w - w
+	// x1 + x2 , y1 - y2 , z1 + z2 , w1 - w2
 	inline Vector4 _CALL AddSub(const Vector4, const Vector4);
 
+	// x1 + y1 , z1 + w1 , x2 + y2 , z2 + w2
 	inline Vector4 _CALL HorizontalAdd(const Vector4, const Vector4);
+	// x1 - y1 , z1 - w1 , x2 - y2 , z2 - w2
 	inline Vector4 _CALL HorizontalSub(const Vector4, const Vector4);
 
 
