@@ -275,7 +275,7 @@ namespace Dystopia
 			mUpdateSelection = false;
 		}
 
-		mSceneHasChanged = (mSceneHasChanged | &mpSceneSystem->GetCurrentScene() != &mpSceneSystem->GetActiveScene());
+		mSceneHasChanged = (mSceneHasChanged | (&mpSceneSystem->GetCurrentScene() != &mpSceneSystem->GetActiveScene()));
 		LogTabPerformance();
 		EngineCore::GetInstance()->PostUpdate();
 		mpBehaviourSys->PostUpdate();

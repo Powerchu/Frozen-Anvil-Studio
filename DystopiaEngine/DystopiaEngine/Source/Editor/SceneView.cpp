@@ -439,7 +439,7 @@ namespace Dystopia
 	void SceneView::DrawGizmoMul(const AutoArray<GameObject*>& _arr)
 	{
 		Math::Pt3D avgPos{ 0, 0, 0, 1.f };
-		unsigned int size = _arr.size();
+		unsigned int size = static_cast<unsigned int>(_arr.size());
 		for (auto& obj : _arr)
 		{
 			const auto pos = obj->GetComponent<Transform>()->GetGlobalPosition();
