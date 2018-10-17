@@ -265,6 +265,9 @@
     <ClCompile Include="Source\System\Sound\SoundSystem.cpp">
       <Filter>Game Engine\Systems\Sound</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\AudioSource.cpp">
+      <Filter>Game Engine\Components\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -690,6 +693,9 @@
     <ClInclude Include="Include\Editor\DragStatus.h">
       <Filter>Editor\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\AudioSource.h">
+      <Filter>Game Engine\Components\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -973,6 +979,9 @@
     </Filter>
     <Filter Include="Editor\Editor Tabs\Sprite Previewer">
       <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Audio">
+      <UniqueIdentifier>{ecb40fbd-9434-45dc-a5a7-1ae1e1cbac7f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

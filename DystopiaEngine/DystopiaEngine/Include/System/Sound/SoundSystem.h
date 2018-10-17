@@ -20,12 +20,29 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/SharedPtr.h"
 
 #include <string>
+#include <map>
+
+namespace FMOD
+{
+	class Sound;
+	class Channel;
+	class System;
+}
 
 namespace Dystopia
 {
-	class AudioSource;
+	class Sound
+	{
+	public:
+		Sound(FMOD::Sound * _p1, FMOD::Channel * _p2);
+		~Sound(void);
+		FMOD::Sound *mpSound;
+		FMOD::Channel *mpChannel;
+	};
 
-	class SoundSystem : public Systems
+	class AudioSource;
+	
+	class SoundSystem : public Systems, public ComponentDonor<AudioSource>
 	{
 	public:
 		SoundSystem(void);
@@ -46,8 +63,12 @@ namespace Dystopia
 
 		void ReceiveMessage(const eSysMessage&);
 
-	private:
+		Sound* LoadSound(const std::string& _file);
 
+	private:
+		FMOD::System					*mpFMOD;
+		std::string						mDefaultSoundFolder;
+		std::map<std::string, Sound*>	mMapOfAudios;
 
 	};
 }

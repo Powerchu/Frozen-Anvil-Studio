@@ -25,7 +25,8 @@ namespace Dystopia
 		class Renderer,
 		class RigidBody,
 		class Collider,
-		class CharacterController
+		class CharacterController,
+		class AudioSource
 	>::result;
 
 	using UsableComponents = Utility::MetaAutoIndexer <
@@ -35,7 +36,8 @@ namespace Dystopia
 		class AABB,
 		class Convex,
 		class Circle,
-		class CharacterController
+		class CharacterController,
+		class AudioSource
 		//class Particle
 	>::result;
 

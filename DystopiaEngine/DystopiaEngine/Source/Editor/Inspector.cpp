@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
 #include "Component/CharacterController.h"
+#include "Component/AudioSource.h"
 
 #include "System/Input/InputSystem.h"
 #include "System/Camera/CameraSystem.h"
@@ -33,6 +34,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Sound/SoundSystem.h"
 
 #include "Utility/ComponentGUID.h"
 #include "Object/ObjectFlags.h"
