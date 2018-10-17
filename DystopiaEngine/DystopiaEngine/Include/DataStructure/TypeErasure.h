@@ -30,7 +30,7 @@ namespace Dystopia
 			virtual SharedPtr<Wrapper> Duplicate() const
 			{
 				//return new (operator new(sizeof(Wrapper))) Wrapper{ *this };
-				CreateShared<Wrapper>(Wrapper<T>{*this});
+				return CreateShared<Wrapper>(Wrapper<T>{*this});
 			}
 
 			T mObj;
