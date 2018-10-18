@@ -67,6 +67,7 @@ namespace Dystopia
 
 		// =============================== SOUND SPECIFIC FUNCTIONS =============================== // 
 
+		void SetAudio(Audio*);
 		Audio* GetAudio(void);
 		void SetReady(bool = true);
 		bool IsReady(void) const;
@@ -76,7 +77,7 @@ namespace Dystopia
 	private:
 
 		Audio	*mpAudio;
-		bool	mPlay;
+		bool	mReady;
 		bool	mLoop;
 		bool    mIsPlaying;
 

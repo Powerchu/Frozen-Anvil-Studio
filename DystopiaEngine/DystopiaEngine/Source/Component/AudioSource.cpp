@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Sound/SoundSystem.h"
 #include "System/Sound/Audio.h"
+#include "System/Driver/Driver.h"
 #include "Component/AudioSource.h"
 #include "fmod.hpp"
 
@@ -22,12 +23,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif 
 
 Dystopia::AudioSource::AudioSource(void) 
-	: mpAudio{ nullptr }, mPlay{ true }, mLoop{ false }, mIsPlaying{ false }
+	: mpAudio{ nullptr }, mReady{ true }, mLoop{ false }, mIsPlaying{ false }
 {
 }
 
 Dystopia::AudioSource::AudioSource(const AudioSource& _rhs)
-	: mpAudio{ nullptr }, mPlay{ true }, mLoop{ false }, mIsPlaying{ false }
+	: mpAudio{ nullptr }, mReady{ true }, mLoop{ false }, mIsPlaying{ false }
 {
 }
 
@@ -45,6 +46,8 @@ void Dystopia::AudioSource::Load(void)
 
 void Dystopia::AudioSource::Init(void)
 {
+	auto *p = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound("Samsara.mp3");
+	SetAudio(p);
 }
 
 void Dystopia::AudioSource::Update(float)
@@ -53,6 +56,9 @@ void Dystopia::AudioSource::Update(float)
 		return;
 
 	mpAudio->mpChannel->isPlaying(&mIsPlaying);
+
+	if (mIsPlaying) 
+		SetReady(false);
 }
 
 void Dystopia::AudioSource::GameObjectDestroy(void)
@@ -89,7 +95,10 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 #if EDITOR
 	if (!mpAudio) return;
 
-
+	bool b = mReady;
+	if (EGUI::Display::CheckBox("Play On Start", &mReady))
+	{
+	}
 
 
 
@@ -98,7 +107,12 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 
 void Dystopia::AudioSource::SetReady(bool _b)
 {
-	mPlay = _b;
+	mReady = _b;
+}
+
+void Dystopia::AudioSource::SetAudio(Dystopia::Audio* _p)
+{
+	mpAudio = _p;
 }
 
 Dystopia::Audio* Dystopia::AudioSource::GetAudio(void)
@@ -108,7 +122,7 @@ Dystopia::Audio* Dystopia::AudioSource::GetAudio(void)
 
 bool Dystopia::AudioSource::IsReady(void) const
 {
-	return mPlay;
+	return mReady;
 }
 
 bool Dystopia::AudioSource::IsLoop(void) const
