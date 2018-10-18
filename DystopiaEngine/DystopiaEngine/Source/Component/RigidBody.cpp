@@ -33,7 +33,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	RigidBody::RigidBody(void)
-		: mpOwnerTransform(nullptr)
+		: mpPrimitiveShape(nullptr)
+		, mpOwnerTransform(nullptr)
 		, mpPhysSys(nullptr)
 		, mfAngleDeg(0.0F)
 		, mfLinearDamping(0.5F)
@@ -59,20 +60,21 @@ namespace Dystopia
 
 	}
 
-	RigidBody::RigidBody(float _linearDrag, float _angularDrag, 
-						float _friction, float _elasticity, 
-						float _gravityScale, float _mass, 
-						bool _gravityState, bool _staticState)
-		: mpOwnerTransform(nullptr)
+	RigidBody::RigidBody(float _linearDrag, float _angularDrag,
+		float _friction, float _elasticity,
+		float _gravityScale, float _mass,
+		bool _gravityState, bool _staticState)
+		: mpPrimitiveShape(nullptr)
+		, mpOwnerTransform(nullptr)
 		, mpPhysSys(nullptr)
 		, mfAngleDeg(0.0F)
-		, mLinearDamping(_linearDrag,_linearDrag)
+		, mfLinearDamping(_linearDrag)
 		, mfAngularDrag(_angularDrag)
 		, mfStaticFriction(_friction)
 		, mfRestitution(_elasticity)
 		, mfGravityScale(_gravityScale)
 		, mfMass(_mass)
-		, mfInvMass(1/_mass)
+		, mfInvMass(1 / _mass)
 		, mfWeightedMotion(0.0F)
 		, mOwnerIsActive(true)
 		, mbHasGravity(_gravityState)
@@ -144,7 +146,7 @@ namespace Dystopia
 
 	void RigidBody::Integrate(float _dt)
 	{
-		constexpr const auto VEL_EPSILON = 0.001F;
+		constexpr const auto VEL_EPSILON = 0.01F;
 
 		if (!GetOwner()->IsActive() || mbIsStatic || !mbIsAwake)
 		{
@@ -159,7 +161,7 @@ namespace Dystopia
 		 *  Verlet/Leapfrog method, 2nd order integration
 		 ********************************************************************/
 		//Store previous Position
-		mPrevPosition = mPosition;
+		mPrevPosition = mPosition = mpOwnerTransform->GetPosition();
 
 		if (mbHasGravity)
 		{
@@ -216,24 +218,21 @@ namespace Dystopia
 			mAngularVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
-		mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F)  * _dt;
-
-
 		//*Reset Cumulative Force*/
 		ResetCumulative();
 	}
 
 	void RigidBody::CheckSleeping(const float _dt)
 	{
-		constexpr const auto SLEEP_EPSILON = 0.05F;
+		constexpr const auto SLEEP_EPSILON = 0.5F;
 
 		const float bias = std::pow(0.1F, _dt);
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
 		mfWeightedMotion = bias * mfWeightedMotion + (1 - bias)*currentMotion;
 
 		// TODO change to global sleep epsilon
-		if (mfWeightedMotion > 10 * SLEEP_EPSILON) 
-			mfWeightedMotion = 10 * SLEEP_EPSILON;
+		if (mfWeightedMotion > 100 * SLEEP_EPSILON)
+			mfWeightedMotion = 100 * SLEEP_EPSILON;
 
 		if (mfWeightedMotion < SLEEP_EPSILON)
 		{
@@ -241,20 +240,12 @@ namespace Dystopia
 		}
 	}
 
-	void RigidBody::PreUpdatePosition(float _dt)
-	{
-		if (!mbIsStatic && mbIsAwake) // only update when body is not static
-		{
-			// Update Position
-			//mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F)  * _dt;
-			//mPosition += mLinearVelocity * _dt;
-		}
-	}
-
 	void RigidBody::UpdateResult(float _dt)
 	{
 		if (!mbIsStatic && mbIsAwake) // only update when body is not static
-		{		
+		{
+			// Integrate Position
+			mPosition += mLinearVelocity * _dt;
 			// Update Position
 			P_TX->SetGlobalPosition(mPosition);
 			mPosition = P_TX->GetGlobalPosition();
@@ -273,7 +264,7 @@ namespace Dystopia
 
 	void RigidBody::Unload(void)
 	{
-		//mpPrimitiveShape = nullptr;
+		mpPrimitiveShape = nullptr;
 		mpOwnerTransform = nullptr;
 		mpPhysSys = nullptr;
 	}
@@ -288,8 +279,7 @@ namespace Dystopia
 		_out.InsertStartBlock("RigidBody");
 		Component::Serialise(_out);
 		_out << mfAngleDeg;				// Angle in degrees
-		_out << static_cast<float>(mLinearDamping.x);		// Linear Drag X
-		_out << static_cast<float>(mLinearDamping.y);		// Linear Drag y
+		_out << mfLinearDamping;		// Linear Drag
 		_out << mfAngularDrag;			// Angular Drag
 		_out << mfStaticFriction;
 		_out << mfDynamicFriction;
@@ -309,8 +299,7 @@ namespace Dystopia
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
 		_in >> mfAngleDeg;				// Angle in degrees
-		_in >> mLinearDamping.x;			// Linear Drag
-		_in >> mLinearDamping.y;			// Linear Drag
+		_in >> mfLinearDamping;			// Linear Drag
 		_in >> mfAngularDrag;			// Angular Drag
 		_in >> mfStaticFriction;
 		_in >> mfDynamicFriction;
@@ -734,8 +723,8 @@ namespace Dystopia
 	void RigidBody::eBodyTypeDropDown()
 	{
 		int i_type = mPhysicsType;
-		AutoArray<std::string> arr{ std::string{" Dynamic"}, 
-									std::string{" Kinematic"}, 
+		AutoArray<std::string> arr{ std::string{" Dynamic"},
+									std::string{" Kinematic"},
 									std::string{" Static"} };
 		if (EGUI::Display::DropDownSelection("Body Type				", i_type, arr))
 		{
@@ -788,7 +777,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfMass);
+				EGUI::GetCommandHND()->StartRecording<RigidBody>(GetOwner()->GetID(), &mfMass);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
@@ -809,24 +798,29 @@ namespace Dystopia
 
 	void RigidBody::eLinearDragField()
 	{
-		auto arrResult = EGUI::Display::VectorFields("Linear Drag", &mLinearDamping, 0.01f, 0.0F, 0.99999F);
-		for (auto &e : arrResult)
+		switch (EGUI::Display::DragFloat("Linear Drag			 ", &mfLinearDamping, 0.01f, 0.0F, 1.0F))
 		{
-			switch (e)
-			{
-			case EGUI::eDragStatus::eDRAGGING:
-			case EGUI::eDragStatus::eNO_CHANGE:
-				break;
-			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mLinearDamping);
-				break;
-			case EGUI::eDragStatus::eEND_DRAG:
-			case EGUI::eDragStatus::eENTER:
-			case EGUI::eDragStatus::eDEACTIVATED:
-			case EGUI::eDragStatus::eTABBED:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
-			}
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eDRAGGING:
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(GetOwner()->GetID(), &mfLinearDamping);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eNO_CHANGE:
+			break;
+		case EGUI::eDragStatus::eTABBED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -843,7 +837,7 @@ namespace Dystopia
 		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfAngularDrag);
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(GetOwner()->GetID(), &mfAngularDrag);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
@@ -871,7 +865,7 @@ namespace Dystopia
 		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfGravityScale);
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(GetOwner()->GetID(), &mfGravityScale);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
@@ -899,7 +893,7 @@ namespace Dystopia
 		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfStaticFriction);
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(GetOwner()->GetID(), &mfStaticFriction);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
@@ -927,7 +921,7 @@ namespace Dystopia
 		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfDynamicFriction);
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(GetOwner()->GetID(), &mfDynamicFriction);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
@@ -955,7 +949,7 @@ namespace Dystopia
 		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfRestitution);
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(GetOwner()->GetID(), &mfRestitution);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
@@ -1042,7 +1036,7 @@ namespace Dystopia
 				float(mPrevPosition.x),
 				float(mPrevPosition.y),
 				float(mPrevPosition.z));
-			EGUI::Display::Label("Angle Degree : %.2f",	mfAngleDeg);
+			EGUI::Display::Label("Angle Degree : %.2f", mfAngleDeg);
 			EGUI::Display::Label("Linear Vel.  : x[%.2f], y[%.2f], z[%.2f]",
 				float(mLinearVelocity.x),
 				float(mLinearVelocity.y),
