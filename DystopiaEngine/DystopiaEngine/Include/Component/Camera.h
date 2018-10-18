@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
+#include "Math/Angles.h"
 #include "Math/Vector4.h"
 #include "Math/Matrix4.h"
 
@@ -23,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class Transform;
+	class Framebuffer;
 	class CameraSystem;
 
 	class _DLL_EXPORT Camera : public Component
@@ -71,12 +73,6 @@ namespace Dystopia
 		// Modifies the view area of the camera
 		void SetSize(const unsigned _nWidth, const unsigned _nHeight);
 
-		//// Zoom X & Y axis uniformly
-		//// Input taken in percentage form, 1.0f == 100%.
-		//void SetZoom(const float _fZoom);
-		//// Input taken in percentage form, 1.0f == 100%.
-		//void SetZoom(const float _fZoomX, const float _fZoomY);
-
 		void SetRotation(const float);
 		void SetRotationDeg(const float);
 
@@ -84,6 +80,11 @@ namespace Dystopia
 		void SetViewport(const int _x, const int _y, const int _nWidth, const int _nHeight);
 		// Set the area the camera renders to in relative coordinates, from 0 to 1.0
 		void SetViewport(float _x, float _y, float _nWidth, float _nHeight);
+
+		void SetPerspective(Math::Angle _fFOV, float _fAspectRatio, float _fNear, float _fFar);
+		void SetPerspective(float _fLeft, float _fRight, float _fTop, float _fBottom, float _fNear, float _fFar);
+		void SetOrthographic(float _fWidth, float _fHeight, float _fNear, float _fFar);
+
 
 		// Returns the *GLOBAL* position of the Camera
 		Math::Pt3D GetPosition(void) const;
@@ -108,11 +109,11 @@ namespace Dystopia
 
 		Gfx::Viewport mViewport;
 
-		//Transform* mTransform;
-
 		Math::Mat4 mView;
 		Math::Mat4 mInvScreen;
 		Math::Mat4 mProjection;
+
+		Framebuffer* mpSurface;
 	};
 }
 

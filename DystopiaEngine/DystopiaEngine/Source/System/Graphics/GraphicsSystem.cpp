@@ -440,13 +440,6 @@ Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _fileP
 	return nullptr;
 }
 
-void Dystopia::GraphicsSystem::SetMasterViewport(int _nX, int _nY, int _nWidth, int _nHeight) noexcept
-{
-	EngineCore::GetInstance()->GetSystem<CameraSystem>()->SetMasterViewport(
-		_nX, _nY, _nWidth, _nHeight
-	);
-}
-
 void Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
 {
 	wglMakeCurrent(_window.GetDeviceContext(), static_cast<HGLRC>(mOpenGL));

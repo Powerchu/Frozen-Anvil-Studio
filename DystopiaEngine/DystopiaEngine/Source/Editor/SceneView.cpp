@@ -297,13 +297,14 @@ namespace Dystopia
 	{
 		Math::Vec2 mousePos = ImGui::GetMousePos();
 		Math::Vec2 relPos = mousePos - ImGui::GetItemRectMin();
-		auto viewport = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
-		Math::Vec2 hitPoint{ (relPos.x / mImgSize.x) * viewport.mnWidth,
-							 (relPos.y / mImgSize.y) * viewport.mnHeight };
-		auto worldPos = _cam->ScreenToWorld(Math::Vec3D{ hitPoint.x - (viewport.mnWidth / 2),
-														 hitPoint.y - (viewport.mnHeight / 2),
-														 0.f, 1.f });
-		return worldPos;
+//		auto viewport = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
+//		Math::Vec2 hitPoint{ (relPos.x / mImgSize.x) * viewport.mnWidth,
+//							 (relPos.y / mImgSize.y) * viewport.mnHeight };
+//		auto worldPos = _cam->ScreenToWorld(Math::Vec3D{ hitPoint.x - (viewport.mnWidth / 2),
+//														 hitPoint.y - (viewport.mnHeight / 2),
+//														 0.f, 1.f });
+//		return worldPos;
+		return Math::Pt3D{};
 	}
 
 	Camera* SceneView::GetCamera()

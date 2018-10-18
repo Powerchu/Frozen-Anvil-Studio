@@ -142,9 +142,6 @@
     <ClCompile Include="Source\Editor\EditorInputs.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Component\Renderer.cpp">
-      <Filter>Game Engine\Components\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Math\Quaternion.cpp">
       <Filter>Math\Quaternion</Filter>
     </ClCompile>
@@ -264,6 +261,9 @@
     </ClCompile>
     <ClCompile Include="Source\System\Logger\FileLogger.cpp">
       <Filter>Game Engine\SubSystems\Logger\FileLogger</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Renderer.cpp">
+      <Filter>Game Engine\Components\Renderer\BaseRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -494,9 +494,6 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\EditorEvents.h">
       <Filter>Editor\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Component\Renderer.h">
-      <Filter>Game Engine\Components\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Time\ScopedTimer.h">
       <Filter>Game Engine\Systems\Time\ScopedTimer</Filter>
@@ -734,6 +731,9 @@
     </ClInclude>
     <ClInclude Include="Include\System\Logger\FileLogger.h">
       <Filter>Game Engine\SubSystems\Logger\FileLogger</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Renderer.h">
+      <Filter>Game Engine\Components\Renderer\BaseRenderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1051,6 +1051,12 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Logger\FileLogger">
       <UniqueIdentifier>{7034c117-e848-41c3-8883-3d54e3f596b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Renderer\BaseRenderer">
+      <UniqueIdentifier>{020ee904-c7d8-4c7d-b909-1b33bf5ee947}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Texture\Texture\Atlas">
+      <UniqueIdentifier>{21d68eec-32ed-4d4c-94be-94c181d2078c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

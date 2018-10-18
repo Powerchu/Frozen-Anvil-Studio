@@ -72,8 +72,6 @@ namespace Dystopia
 		Texture* LoadTexture(const std::string&);
 		Shader*	 LoadShader(const std::string&);
 
-		void SetMasterViewport(int _nX, int _nY, int _nWidth, int _nHeight) noexcept;
-
 		static const int& GetDrawMode(void) noexcept;
 		static void SetDrawMode(int) noexcept;
 
