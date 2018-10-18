@@ -145,14 +145,25 @@ namespace Dystopia
 						if (ownerA == ownerB)
 							continue;
 					}
-					const auto pair_key = std::make_pair(colA->GetColliderType(), (colB)->GetColliderType());
+					const auto pair_key1 = std::make_pair(colA->GetColliderType(), (colB)->GetColliderType());
+					const auto pair_key2 = std::make_pair(colB->GetColliderType(), (colA)->GetColliderType());
 					for (auto & key : CollisionFuncTable)
 					{
-						if (key.first == pair_key)
+						if (key.first == pair_key1)
 						{
 							(this->*key.second)(colA, colB);
-							colB->SetColliding(colB->Collider::HasCollision());
+							//colB->SetColliding(colB->Collider::HasCollision());
 							colA->SetColliding(colA->Collider::HasCollision());
+							break;
+						}
+					}
+					for (auto & key : CollisionFuncTable)
+					{
+						if (key.first == pair_key2)
+						{
+							(this->*key.second)(colB, colA);
+							colB->SetColliding(colB->Collider::HasCollision());
+							//colA->SetColliding(colA->Collider::HasCollision());
 							break;
 						}
 					}

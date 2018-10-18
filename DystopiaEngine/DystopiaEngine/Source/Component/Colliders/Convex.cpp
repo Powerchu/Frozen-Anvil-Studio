@@ -667,7 +667,8 @@ namespace Dystopia
 
 	Edge Convex::GetClosestEdge(AutoArray<SimplexVertex>& _Simplex)
 	{
-		Edge   ClosestEdge;
+		Edge   ClosestEdge{};
+		//ClosestEdge.mSimplexIndex = 0;
 		double ClosestDistance = std::numeric_limits<double>::max();
 
 		for (unsigned i = 0; i < _Simplex.size(); ++i)
@@ -697,11 +698,6 @@ namespace Dystopia
 #else
 			EdgeNorm.Negate<Math::NegateFlag::X>();
 #endif
-			if (EdgeNorm.MagnitudeSqr() == 0.f)
-			{
-				//_Simplex.Remove(std::find(_Simplex.begin(), _Simplex.end(), b));
-				//continue;
-			}
 
 			if (EdgeNorm.MagnitudeSqr() > FLT_EPSILON)
 			{
@@ -776,7 +772,7 @@ namespace Dystopia
 				Math::Vec3D const & OffSetB = _ColB.GetOffSet();
 				Math::Matrix3D WorldSpaceB  = _ColB.GetOwnerTransform() * Math::Translate(OffSetB.x, OffSetB.y, OffSetB.z)* _ColB.GetTransformationMatrix();
 				
-				bool isInsideCollider = false;
+				//bool isInsideCollider = false;
 
 				unsigned j = Point.ColBIndex + 1 >= _ColB.mVertices.size() ? 0 : Point.ColBIndex + 1;
 				auto start = WorldSpaceB * _ColB.mVertices[Point.ColBIndex].mPosition;
