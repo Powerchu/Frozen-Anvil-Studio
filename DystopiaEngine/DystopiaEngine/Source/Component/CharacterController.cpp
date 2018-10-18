@@ -108,6 +108,7 @@ namespace Dystopia
 			const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 
 			mpBody->AddLinearImpulse({ -1 * mfCharacterSpeed,0,0 });
+
 			if (mbIsFacingRight)
 			{
 				GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
@@ -119,7 +120,7 @@ namespace Dystopia
 		{
 			const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 
-			mpBody->AddLinearImpulse({ 1 * mfCharacterSpeed,0,0 });
+			mpBody->AddLinearImpulse({mfCharacterSpeed,0,0 });
 
 			if (!mbIsFacingRight)
 			{

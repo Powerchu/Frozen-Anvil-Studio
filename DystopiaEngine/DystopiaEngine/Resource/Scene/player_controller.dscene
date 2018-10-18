@@ -22,7 +22,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-128,128,1,0,0,0,0,0,0,1,
+128,128,1,0,0,1,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -40,7 +40,7 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
-332579840,0,18446744072424082432,,
+332579840,0,18446744072424082432,..\DystopiaEngine\Resource\Editor\white_box.png,
 [END_Renderer]
 
 [END_Component End]
@@ -61,7 +61,7 @@
 [END_Component End]
 [START_Component]
 [START_RigidBody]
-18446744072606144512,0,18446744072606142976,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,1,0,1,1,
+18446744072606144512,0,18446744072606142976,0,0.99,0.5,0.5,0.55,0.1,0.1,3,100,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -79,7 +79,7 @@
 [END_Component End]
 [START_Component]
 [START_Convex_Collider]
-18446744072606144000,0,18446744072606142976,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+18446744072606144000,0,18446744072606142976,0,-0.13,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.2,0.65,1,0,0,0,1,0,
 [END_Convex_Collider]
 
 [END_Component End]

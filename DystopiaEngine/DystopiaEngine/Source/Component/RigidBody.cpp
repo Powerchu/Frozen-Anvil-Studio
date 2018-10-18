@@ -69,16 +69,21 @@ namespace Dystopia
 		, mLinearDamping(_linearDrag,_linearDrag)
 		, mfAngularDrag(_angularDrag)
 		, mfStaticFriction(_friction)
+		, mfDynamicFriction(_friction)
 		, mfRestitution(_elasticity)
 		, mfGravityScale(_gravityScale)
 		, mfMass(_mass)
 		, mfInvMass(1 / _mass)
+		, mfInertia(mfMass)
+		, mfInvInertia(0.01F)
 		, mfWeightedMotion(0.0F)
 		, mOwnerIsActive(true)
 		, mbHasGravity(_gravityState)
 		, mbIsStatic(_staticState)
 		, mbIsAwake(true)
 		, mbCanSleep(true)
+		, mbFixedRot(false)
+		, mSleepTime(0.00F)
 		, mPhysicsType(eDynamicBody)
 	{
 
@@ -392,9 +397,9 @@ namespace Dystopia
 		if (!mbIsAwake)
 		{
 			SetSleeping(false);
-			mCumulativeForce += _force;
-			mCumulativeTorque += (_point - _origin).Cross(_force);
 		}
+		mCumulativeForce += _force;
+		mCumulativeTorque += (_point - _origin).Cross(_force);
 	}
 
 	void RigidBody::AddForce(Math::Vec3D const & _force)
@@ -407,8 +412,8 @@ namespace Dystopia
 		if (!mbIsAwake)
 		{
 			SetSleeping(false);
-			mCumulativeForce += _force;
 		}
+		mCumulativeForce += _force;
 	}
 
 	void RigidBody::AddForceWithOrigin(Math::Vec3D const & _force, Math::Point3D const & _point)
@@ -426,8 +431,8 @@ namespace Dystopia
 		if (!mbIsAwake)
 		{
 			SetSleeping(false);
-			mCumulativeTorque += _torque;
 		}
+		mCumulativeTorque += _torque;
 	}
 
 	void RigidBody::AddLinearImpulse(Vec3D const& _impul)
@@ -440,8 +445,8 @@ namespace Dystopia
 		if (!mbIsAwake)
 		{
 			SetSleeping(false);
-			mLinearVelocity += _impul * mfInvMass;
 		}
+		mLinearVelocity += _impul * mfInvMass;
 	}
 
 	void RigidBody::AddLinearImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const & _origin)
@@ -454,9 +459,9 @@ namespace Dystopia
 		if (!mbIsAwake)
 		{
 			SetSleeping(false);
-			mLinearVelocity += _impul * mfInvMass;
-			mAngularVelocity += mfInvInertia * (_point - _origin).Cross(_impul);
 		}
+		mLinearVelocity += _impul * mfInvMass;
+		mAngularVelocity += mfInvInertia * (_point - _origin).Cross(_impul);
 	}
 
 	void RigidBody::AddLinearImpulseWithOrigin(Vec3D const & _impul, Point3D const & _point)
@@ -474,8 +479,8 @@ namespace Dystopia
 		if (!mbIsAwake)
 		{
 			SetSleeping(false);
-			mAngularVelocity += mfInvInertia * _impul;
 		}
+		mAngularVelocity += mfInvInertia * _impul;
 	}
 
 	void RigidBody::ResetCumulative()
@@ -656,7 +661,7 @@ namespace Dystopia
 
 	float RigidBody::GetInverseMass() const
 	{
-		return 1 / mfMass;
+		return mfInvMass;
 	}
 
 	float RigidBody::GetInertia() const
@@ -666,7 +671,7 @@ namespace Dystopia
 
 	float RigidBody::GetInverseInertia() const
 	{
-		return 1 / mfInertia;
+		return mfInvInertia;
 	}
 
 	bool RigidBody::Get_HasGravityState() const

@@ -207,10 +207,9 @@ namespace Dystopia
 		Vec3D					mGlobalCentroid;
 		Vec3D					mLocalCentroid;
 
-		Math::Vector2			mLinearDamping;				/* Linear Damping in the X and Y axis */
-			
 		float					mfAngleDeg;					/* Anticlockwise Direction: Angles in Degrees*/
 
+		Math::Vector2			mLinearDamping;				/* Linear Damping in the X and Y axis */
 		float					mfAngularDrag;				/* Coefficient of angular drag. */
 		float					mfStaticFriction;			/* Like LinearDamping, but only drag the forces when 2 or more objects are colliding*/
 		float					mfDynamicFriction;
