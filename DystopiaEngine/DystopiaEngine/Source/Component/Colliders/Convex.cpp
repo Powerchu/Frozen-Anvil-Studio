@@ -682,7 +682,7 @@ namespace Dystopia
 
 	Edge Convex::GetClosestEdge(AutoArray<SimplexVertex>& _Simplex)
 	{
-		Edge   ClosestEdge{};
+		Edge   ClosestEdge;
 		double ClosestDistance = std::numeric_limits<double>::max();
 
 		for (unsigned i = 0; i < _Simplex.size(); ++i)

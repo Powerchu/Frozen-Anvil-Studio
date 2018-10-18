@@ -107,7 +107,7 @@ namespace Dystopia
 		{
 			const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 
-			mpBody->AddImpulse({ -1 * mfCharacterSpeed,0,0 });
+			mpBody->AddLinearImpulse({ -1 * mfCharacterSpeed,0,0 });
 			if (mbIsFacingRight)
 			{
 				GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
@@ -119,7 +119,7 @@ namespace Dystopia
 		{
 			const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 
-			mpBody->AddImpulse({ 1 * mfCharacterSpeed,0,0 });
+			mpBody->AddLinearImpulse({ 1 * mfCharacterSpeed,0,0 });
 
 			if (!mbIsFacingRight)
 			{
@@ -135,7 +135,7 @@ namespace Dystopia
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered("Jump"))
 		{
-			mpBody->AddImpulse({ 0,mfJumpForce,0 });
+			mpBody->AddLinearImpulse({ 0,mfJumpForce,0 });
 		}
 	}
 }

@@ -39,6 +39,7 @@ namespace Dystopia
 
 	private:
 		void CheckSleepingBodies(float _dt);
+		void Step(float _dt);
 		void IntegrateRigidBodies(float _dt);
 		void ResolveCollision(float);
 		void UpdateResults(float);

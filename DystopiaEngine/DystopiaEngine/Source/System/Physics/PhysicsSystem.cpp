@@ -107,7 +107,7 @@ namespace Dystopia
 #endif 
 			if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
 
-			//body.PreUpdatePosition(_dt);
+			body.PreUpdatePosition(_dt);
 
 			const auto col = body.GetOwner()->GetComponent<Collider>();
 

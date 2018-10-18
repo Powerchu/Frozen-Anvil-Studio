@@ -144,7 +144,7 @@ namespace Dystopia
 
 	void RigidBody::Integrate(float _dt)
 	{
-		constexpr const auto VEL_EPSILON = 0.01F;
+		constexpr const auto VEL_EPSILON = 0.001F;
 
 		if (!GetOwner()->IsActive() || mbIsStatic || !mbIsAwake)
 		{
@@ -159,7 +159,7 @@ namespace Dystopia
 		 *  Verlet/Leapfrog method, 2nd order integration
 		 ********************************************************************/
 		//Store previous Position
-		mPrevPosition = mPosition;
+		mPrevPosition = mPosition = P_TX->GetGlobalPosition();
 
 		if (mbHasGravity)
 		{
@@ -218,7 +218,6 @@ namespace Dystopia
 			mAngularVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
-		mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F)  * _dt;
 
 
 		//*Reset Cumulative Force*/
@@ -248,6 +247,7 @@ namespace Dystopia
 		if (!mbIsStatic && mbIsAwake) // only update when body is not static
 		{
 			// Update Position
+			mPosition += (mLinearVelocity + mLinearAcceleration * _dt * 0.5F)  * _dt;
 			//mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F)  * _dt;
 			//mPosition += mLinearVelocity * _dt;
 		}
@@ -258,11 +258,9 @@ namespace Dystopia
 		if (!mbIsStatic && mbIsAwake) // only update when body is not static
 		{		
 			// Update Position
-			//mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F)  * _dt;
 			//mPosition = mPosition - mPrevPosition + mAcceleration * _dt * _dt;
 			//mPosition += mLinearVelocity * _dt;
 			P_TX->SetGlobalPosition(mPosition);
-			mPosition = P_TX->GetGlobalPosition();
 		}
 	}
 
