@@ -26,10 +26,11 @@ namespace FMOD
 
 namespace Dystopia
 {
+	class SoundSystem;
 	class AudioSource : public Component
 	{
 	public:
-		using SYSTEM = class SoundSystem;
+		using SYSTEM = SoundSystem;
 		unsigned GetComponentType(void) const
 		{
 			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
