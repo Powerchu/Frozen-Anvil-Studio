@@ -21,7 +21,9 @@ namespace Dystopia
 		:mpBody(nullptr)
 		,mbIsFacingRight(true)
 		,mbIsGrounded(false)
-		,mfCharacterSpeed(10.0f)
+		,mbIsCeilinged(false)
+		,mfCharacterSpeed(1000.0f)
+		,mfJumpForce(10000.0F)
 	{
 	}
 
@@ -36,6 +38,8 @@ namespace Dystopia
 
 	void CharacterController::Init()
 	{
+		const auto tInput = EngineCore::GetInstance()->GetSystem<InputManager>();
+
 		if (nullptr != GetOwner())
 		{
 			if (nullptr == GetOwner()->GetComponent<RigidBody>())
@@ -46,6 +50,21 @@ namespace Dystopia
 				rb->Init();
 			}
 			mpBody = GetOwner()->GetComponent<RigidBody>();
+		}
+
+		if (tInput->IsController())
+		{
+			tInput->MapButton("Run Left", eButton::XBUTTON_DPAD_LEFT);
+			tInput->MapButton("Run Right", eButton::XBUTTON_DPAD_RIGHT);
+			tInput->MapButton("Jump", eButton::XBUTTON_A);
+			tInput->MapButton("Fly", eButton::XBUTTON_B);
+		}
+		else
+		{
+			tInput->MapButton("Run Left", eButton::KEYBOARD_LEFT);
+			tInput->MapButton("Run Right", eButton::KEYBOARD_RIGHT);
+			tInput->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
+			tInput->MapButton("Fly", eButton::KEYBOARD_UP);
 		}
 	}
 
@@ -84,24 +103,39 @@ namespace Dystopia
 	void CharacterController::MovePlayer(float)
 	{
 		if (mpBody == nullptr) return;
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_LEFT))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed("Run Left"))
 		{
-			mpBody->AddLinearImpulse({ -10,0,0 });
+			const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
+
+			mpBody->AddImpulse({ -1 * mfCharacterSpeed,0,0 });
+			if (mbIsFacingRight)
+			{
+				GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
+				mbIsFacingRight = false;
+			}
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_RIGHT))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed("Run Right"))
 		{
-			mpBody->AddLinearImpulse({ 10,0,0 });
+			const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
+
+			mpBody->AddImpulse({ 1 * mfCharacterSpeed,0,0 });
+
+			if (!mbIsFacingRight)
+			{
+				GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
+				mbIsFacingRight = true;
+			}
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed(eButton::KEYBOARD_UP))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed("Fly"))
 		{
-			mpBody->AddForce({ 0,500,0 });
+			mpBody->AddForce({ 0,1000,0 });
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eButton::KEYBOARD_SPACEBAR))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered("Jump"))
 		{
-			mpBody->AddLinearImpulse({ 0,500,0 });
+			mpBody->AddImpulse({ 0,mfJumpForce,0 });
 		}
 	}
 }

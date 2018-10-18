@@ -23,7 +23,7 @@ namespace Dystopia
 		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.1F)
-		, mResolutionIterations(6)
+		, mResolutionIterations(5)
 	{
 	}
 
@@ -79,33 +79,21 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				if (!body.Get_IsStaticState() && body.GetIsAwake())
+				if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+
+				const auto col = body.GetOwner()->GetComponent<Collider>();
+
+				if (nullptr != col)
 				{
-					const auto col = body.GetOwner()->GetComponent<Collider>();
-					if (nullptr != col)
+					if (col->HasCollision() && !col->IsTrigger())
 					{
-						if (col->HasCollision())
+						for (auto& manifold : col->GetCollisionEvents())
 						{
-							CollisionEvent* worstContact = nullptr;
-							auto worstPene = mPenetrationEpsilon;
-
-							for (auto& manifold : col->GetCollisionEvents())
-							{
-								if (manifold.mfPeneDepth > worstPene)
-								{
-									worstContact = &manifold;
-									worstPene = manifold.mfPeneDepth;
-
-									if (nullptr != worstContact)
-									{
-										worstContact->ApplyImpulse();
-										worstContact->ApplyPenetrationCorrection();
-									}
-								}
-							}
+							manifold.ApplyImpulse();
 						}
 					}
 				}
+				
 			}
 		}
 	}
@@ -117,10 +105,34 @@ namespace Dystopia
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (body.GetOwner())
+			if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+
+			//body.PreUpdatePosition(_dt);
+
+			const auto col = body.GetOwner()->GetComponent<Collider>();
+
+			if (nullptr != col)
 			{
-				body.UpdateResult(_dt);
+				if (col->HasCollision() && !col->IsTrigger())
+				{
+					auto worstPene = mPenetrationEpsilon;
+					for (auto& manifold : col->GetCollisionEvents())
+					{
+						if (manifold.mfPeneDepth > worstPene)
+						{
+							const auto worstContact = &manifold;
+							worstPene = manifold.mfPeneDepth;
+
+							if (nullptr != worstContact)
+							{
+								worstContact->ApplyPenetrationCorrection();
+							}
+						}
+					}
+				}
 			}
+
+			body.UpdateResult(_dt);
 		}
 
 		// If Event System is running: this is where to Broadcast Collision Messages
@@ -137,11 +149,14 @@ namespace Dystopia
 		}
 	}
 
-
-	void PhysicsSystem::FixedUpdate(float _dt)
+	void PhysicsSystem::PreFixedUpdate(float _dt)
 	{
-		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
+		// Integrate RigidBodies
+		IntegrateRigidBodies(_dt);
+	}
 
+	void PhysicsSystem::Step(float _dt)
+	{
 		/* Broad Phase Collision Detection*/
 
 		/* Narrow Phase Collision Detection*/
@@ -150,9 +165,6 @@ namespace Dystopia
 		/* Collision Resolution (Response) Logic */
 		ResolveCollision(_dt);
 
-		// Integrate RigidBodies
-		IntegrateRigidBodies(_dt);
-
 		/*Update positions and rotation as result*/
 		UpdateResults(_dt);
 
@@ -160,6 +172,17 @@ namespace Dystopia
 		CheckSleepingBodies(_dt);
 
 		/* Debug Velocity*/
+		//DebugPrint();
+	}
+
+	
+
+	void PhysicsSystem::FixedUpdate(float _dt)
+	{
+		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
+
+		Step(_dt);
+
 		if (mbIsDebugActive)
 		{
 			DebugPrint();

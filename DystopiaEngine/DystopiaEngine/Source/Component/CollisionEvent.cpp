@@ -104,13 +104,31 @@ void Dystopia::CollisionEvent::ApplyPenetrationCorrection() const
 	const auto a_invmass = bodyA->GetInverseMass();
 	const auto b_invmass = bodyB->GetInverseMass();
 
-	const float perc = 0.075F;
-	const float slop = 0.01F;
+		const float perc = 0.30F;
+		const float slop = 0.01F;
 
 	const Vec3D correction = Math::Max((mfPeneDepth) - slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 
-	if (bodyA->GetIsAwake() && !bodyA->Get_IsStaticState())
-		bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
-	if (bodyB->GetIsAwake() && !bodyB->Get_IsStaticState())
-		bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);
+		if (bodyA->GetIsAwake() && !bodyA->Get_IsStaticState())
+			bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
+		if (bodyB->GetIsAwake() && !bodyB->Get_IsStaticState())
+			bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);
+	}
+
+	bool CollisionEvent::operator==(CollisionEvent const & _rhs) const
+	{
+		return (operator==(_rhs.mCollidedWith) && operator==(_rhs.mOtherID));
+	}
+
+	bool CollisionEvent::operator==(unsigned long long _mCollidedWithID) const
+	{
+		return mOtherID == _mCollidedWithID;
+	}
+
+	bool CollisionEvent::operator==(mpcGobj _pCollidedWith) const
+	{
+		return mCollidedWith == _pCollidedWith;
+	}
+
 }
+

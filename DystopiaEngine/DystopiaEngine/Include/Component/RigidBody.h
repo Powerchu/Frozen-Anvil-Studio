@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/ComponentList.h"
 #include "Math/Vector4.h"
 #include "Math/Matrix4.h"
+#include "Math/Vector2.h"
 
 //#include "Math/Quaternion.h"
 //#include "Math/Angles.h"
@@ -50,9 +51,9 @@ namespace Dystopia
 		// Default Constructor - Quad shape, Mass = 100.0f, Friction & Elasticity = 0.5F
 		RigidBody(void);
 		RigidBody(float _linearDrag, float _angularDrag,
-			float _friction, float _elasticity,
-			float _gravityScale, float _mass,
-			bool _gravityState, bool _staticState);
+				  float _friction, float _elasticity,
+				  float _gravityScale, float _mass,
+				  bool _gravityState, bool _staticState);
 
 		// ================================VIRTUAL MEMBER FUNCTIONS ================================== // 
 		void Load(void) override;
@@ -179,7 +180,6 @@ namespace Dystopia
 		const Vec3D& GetLocalCenter() const;
 
 	private:
-		Primitive*				mpPrimitiveShape;			/* The underlying primitive of the RigidBody*/
 		Transform*				mpOwnerTransform;			/* Used for accessing position and GameObject World orientation*/
 		PhysicsSystem*			mpPhysSys;					/* A pointer to Physics System to get global constants (i.e. Gravity)*/
 
