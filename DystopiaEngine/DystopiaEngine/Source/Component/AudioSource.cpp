@@ -10,7 +10,10 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#include "System/Sound/SoundSystem.h"
+#include "System/Sound/Audio.h"
 #include "Component/AudioSource.h"
+#include "fmod.hpp"
 
 #if EDITOR
 #include "Editor/ProjectResource.h"
@@ -19,11 +22,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif 
 
 Dystopia::AudioSource::AudioSource(void) 
+	: mpAudio{ nullptr }, mPlay{ true }, mLoop{ false }, mIsPlaying{ false }
 {
 }
 
-
-Dystopia::AudioSource::AudioSource(const AudioSource&)
+Dystopia::AudioSource::AudioSource(const AudioSource& _rhs)
+	: mpAudio{ nullptr }, mPlay{ true }, mLoop{ false }, mIsPlaying{ false }
 {
 }
 
@@ -41,6 +45,14 @@ void Dystopia::AudioSource::Load(void)
 
 void Dystopia::AudioSource::Init(void)
 {
+}
+
+void Dystopia::AudioSource::Update(float)
+{
+	if (!mpAudio || !mpAudio->mpChannel) 
+		return;
+
+	mpAudio->mpChannel->isPlaying(&mIsPlaying);
 }
 
 void Dystopia::AudioSource::GameObjectDestroy(void)
@@ -74,4 +86,37 @@ void Dystopia::AudioSource::Unserialise(TextSerialiser&)
 
 void Dystopia::AudioSource::EditorUI(void) noexcept
 {
+#if EDITOR
+	if (!mpAudio) return;
+
+
+
+
+
+#endif 
+}
+
+void Dystopia::AudioSource::SetReady(bool _b)
+{
+	mPlay = _b;
+}
+
+Dystopia::Audio* Dystopia::AudioSource::GetAudio(void)
+{
+	return mpAudio;
+}
+
+bool Dystopia::AudioSource::IsReady(void) const
+{
+	return mPlay;
+}
+
+bool Dystopia::AudioSource::IsLoop(void) const
+{
+	return mLoop;
+}
+
+bool Dystopia::AudioSource::IsPlaying(void) const
+{
+	return mIsPlaying;
 }

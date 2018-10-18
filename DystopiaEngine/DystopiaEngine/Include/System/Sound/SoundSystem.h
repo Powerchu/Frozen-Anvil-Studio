@@ -24,22 +24,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace FMOD
 {
-	class Sound;
-	class Channel;
 	class System;
+	class Sound;
 }
 
 namespace Dystopia
 {
-	class Sound
-	{
-	public:
-		Sound(FMOD::Sound * _p1, FMOD::Channel * _p2);
-		~Sound(void);
-		FMOD::Sound *mpSound;
-		FMOD::Channel *mpChannel;
-	};
-
+	class Audio;
 	class AudioSource;
 	class SoundSystem : public Systems, public ComponentDonor<AudioSource>
 	{
@@ -62,13 +53,14 @@ namespace Dystopia
 
 		void ReceiveMessage(const eSysMessage&);
 
-		Sound* LoadSound(const std::string& _file);
+		Audio* LoadSound(const std::string& _file);
 
 	private:
-		FMOD::System					*mpFMOD;
-		std::string						mDefaultSoundFolder;
-		std::map<std::string, Sound*>	mMapOfAudios;
 
+		FMOD::System *mpFMOD;
+		std::string	 mDefaultSoundFolder;
+
+		std::map<std::string, Audio*> mMapOfAudios;
 	};
 }
 

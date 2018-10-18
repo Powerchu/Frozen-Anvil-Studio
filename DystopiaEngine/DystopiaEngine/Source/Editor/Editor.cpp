@@ -86,27 +86,21 @@ namespace
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	Dystopia::SoundSystem sound = Dystopia::SoundSystem{};
-
-	sound.PreInit();
-	sound.Init();
-	sound.PostInit();
-
-	//Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
-	//editor->Init();
-	//while (!editor->IsClosing())
-	//{
-	//	editor->StartFrame();
-	//
-	//	editor->UpdateFrame(editor->GetDeltaTime());
-	//	
-	//	editor->EndFrame();
-	//}
-	//editor->Shutdown();
-	//delete editor;
+	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
+	editor->Init();
+	while (!editor->IsClosing())
+	{
+		editor->StartFrame();
+	
+		editor->UpdateFrame(editor->GetDeltaTime());
+		
+		editor->EndFrame();
+	}
+	editor->Shutdown();
+	delete editor;
 	return 0;
 }
 

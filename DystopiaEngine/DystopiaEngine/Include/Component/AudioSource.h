@@ -15,17 +15,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/ComponentList.h"	
 #include "Component/Component.h"
-#include <string>
 
-namespace FMOD
-{
-	class Sound;
-	class Channel;
-	class System;
-}
+#include <string>
 
 namespace Dystopia
 {
+	class Audio;
 	class SoundSystem;
 	class AudioSource : public Component
 	{
@@ -55,6 +50,8 @@ namespace Dystopia
 		void Load(void);
 		void Init(void);
 
+		void Update(float);
+
 		void GameObjectDestroy(void);
 		void Unload(void);
 
@@ -68,7 +65,21 @@ namespace Dystopia
 		void Unserialise(TextSerialiser&);
 		void EditorUI(void) noexcept;
 
+		// =============================== SOUND SPECIFIC FUNCTIONS =============================== // 
+
+		Audio* GetAudio(void);
+		void SetReady(bool = true);
+		bool IsReady(void) const;
+		bool IsLoop(void) const;
+		bool IsPlaying(void) const;
+
 	private:
+
+		Audio	*mpAudio;
+		bool	mPlay;
+		bool	mLoop;
+		bool    mIsPlaying;
+
 	};
 }
 
