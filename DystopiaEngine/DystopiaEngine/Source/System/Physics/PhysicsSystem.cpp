@@ -22,7 +22,7 @@ namespace Dystopia
 		, mGravity(400.0F)
 		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.1F)
+		, mPenetrationEpsilon(0.01F)
 		, mResolutionIterations(5)
 	{
 	}
@@ -87,9 +87,21 @@ namespace Dystopia
 				{
 					if (col->HasCollision() && !col->IsTrigger())
 					{
+						auto worstPene = mPenetrationEpsilon;
 						for (auto& manifold : col->GetCollisionEvents())
 						{
 							manifold.ApplyImpulse();
+
+							if (manifold.mfPeneDepth > worstPene)
+							{
+								const auto worstContact = &manifold;
+								worstPene = manifold.mfPeneDepth;
+
+								if (nullptr != worstContact)
+								{
+									worstContact->ApplyPenetrationCorrection();
+								}
+							}
 						}
 					}
 				}
@@ -108,30 +120,6 @@ namespace Dystopia
 			if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
 
 			body.PreUpdatePosition(_dt);
-
-			const auto col = body.GetOwner()->GetComponent<Collider>();
-
-			if (nullptr != col)
-			{
-				if (col->HasCollision() && !col->IsTrigger())
-				{
-					auto worstPene = mPenetrationEpsilon;
-					for (auto& manifold : col->GetCollisionEvents())
-					{
-						if (manifold.mfPeneDepth > worstPene)
-						{
-							const auto worstContact = &manifold;
-							worstPene = manifold.mfPeneDepth;
-
-							if (nullptr != worstContact)
-							{
-								worstContact->ApplyPenetrationCorrection();
-							}
-						}
-					}
-				}
-			}
-
 			body.UpdateResult(_dt);
 		}
 

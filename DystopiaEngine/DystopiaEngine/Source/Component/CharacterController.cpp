@@ -22,8 +22,8 @@ namespace Dystopia
 		,mbIsFacingRight(true)
 		,mbIsGrounded(false)
 		,mbIsCeilinged(false)
-		,mfCharacterSpeed(1000.0f)
-		,mfJumpForce(10000.0F)
+		,mfCharacterSpeed(50.0f)
+		,mfJumpForce(800.0F)
 	{
 	}
 
@@ -103,11 +103,13 @@ namespace Dystopia
 	void CharacterController::MovePlayer(float)
 	{
 		if (mpBody == nullptr) return;
+
+		auto moveScaler = mpBody->GetMass();
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed("Run Left"))
 		{
 			const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 
-			mpBody->AddLinearImpulse({ -1 * mfCharacterSpeed,0,0 });
+			mpBody->AddLinearImpulse({ -1 * mfCharacterSpeed * moveScaler,0,0 });
 
 			if (mbIsFacingRight)
 			{
@@ -120,7 +122,7 @@ namespace Dystopia
 		{
 			const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 
-			mpBody->AddLinearImpulse({mfCharacterSpeed,0,0 });
+			mpBody->AddLinearImpulse({mfCharacterSpeed * moveScaler,0,0 });
 
 			if (!mbIsFacingRight)
 			{
@@ -131,12 +133,12 @@ namespace Dystopia
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed("Fly"))
 		{
-			mpBody->AddForce({ 0,1000,0 });
+			mpBody->AddForce({ 0,100* moveScaler,0 });
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered("Jump"))
 		{
-			mpBody->AddLinearImpulse({ 0,mfJumpForce,0 });
+			mpBody->AddLinearImpulse({ 0,mfJumpForce*moveScaler,0 });
 		}
 	}
 }
