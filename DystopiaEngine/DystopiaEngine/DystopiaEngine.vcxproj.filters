@@ -274,6 +274,7 @@
     <ClCompile Include="Source\System\Logger\FileLogger.cpp">
       <Filter>Game Engine\SubSystems\Logger\FileLogger</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -756,7 +757,7 @@
     <ClInclude Include="Include\Editor\DragStatus.h">
       <Filter>Editor\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DataStructure\TypeErasure.h" />
+    <ClInclude Include="Include\Reflection\ReflectionTypeErasure.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

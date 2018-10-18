@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility/Meta.h"
 #include "Utility/Utility.h"
-
+#include "ReflectionTypeErasure.h"
 
 template <typename C, typename Ty>
 struct ReflectedData
@@ -63,6 +63,9 @@ private:
 
 		ProxyObj(Get_t, Set_t);
 	};
+
+
+	Dystopia::TypeErasure::ReadWriteObject mData;
 };
 
 

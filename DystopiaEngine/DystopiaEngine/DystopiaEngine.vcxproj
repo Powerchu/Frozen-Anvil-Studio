@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
     <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
     <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
     <ClCompile Include="Source\Allocator\Allocator.cpp" />
@@ -119,7 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
-    <ClInclude Include="Include\DataStructure\TypeErasure.h" />
+    <ClInclude Include="Include\Reflection\ReflectionTypeErasure.h" />
     <ClInclude Include="Include\System\Collision\BoundingColliderNode.h" />
     <ClInclude Include="Include\System\Collision\BroadPhaseCircle.h" />
     <ClInclude Include="Include\Allocator\Allocator.h" />
