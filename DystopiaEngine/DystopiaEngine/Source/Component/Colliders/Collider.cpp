@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Component/Collider.h"
 #include "Component/RigidBody.h"
+#include "Behaviour/Behaviour.h"
 #include "Object/GameObject.h"
 #include "System/Graphics/VertexDefs.h"
 #include "System/Graphics/MeshSystem.h"
@@ -23,12 +24,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	Collider::Collider()
-		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}, mPosition{ Math::MakePoint3D(0.f,0.f,0.f) }, mbIsTrigger(false), mScale{1,1,1}
+		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}, mPosition{ Math::MakePoint3D(0.f,0.f,0.f) }, mbIsTrigger(false), mScale{1,1,1}, mBoundingCircle{ GenerateBoardPhaseCircle()}
 	{
 		
 	}
 	Collider::Collider(const Math::Point3D & _offset, const Math::Point3D & _origin)
-		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }, mPosition{_origin}, mbIsTrigger(false), mScale{ 1,1,1 }
+		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }, mPosition{_origin}, mbIsTrigger(false), mScale{ 1,1,1 }, mBoundingCircle{ GenerateBoardPhaseCircle() }
 	{
 
 	}
@@ -111,14 +112,94 @@ namespace Dystopia
 		return marr_ContactSets;
 	}
 
+	CollisionEvent * Collider::FindCollisionEvent(unsigned long long _ID) const
+	{
+		for (auto & elem : marr_ContactSets)
+			if (elem == _ID)
+				return &elem;
+
+		return nullptr;
+	}
+
 	void Collider::ClearCollisionEvent()
 	{
 		marr_ContactSets.clear();
 	}
 
+	void Collider::RemoveCollisionEvent(unsigned long long _OtherID)
+	{
+		auto start = marr_ContactSets.begin();
+		auto end   = marr_ContactSets.end();
+		while (start != end)
+		{
+			if (*start == _OtherID)
+			{
+				marr_ContactSets.Remove(start);
+				return;
+			}
+		}
+	}
+
+	void Collider::InformOtherComponents(bool _isColliding, CollisionEvent const & _Event)
+	{
+		if (_isColliding)
+		{
+			if (auto * ptr = FindCollisionEvent(_Event.mOtherID))
+			{
+				auto & BehaviourList = GetOwner()->GetAllBehaviours();
+				for (auto & elem : BehaviourList)
+					elem->OnCollisionStay(_Event);
+				*ptr = _Event;
+			}
+			else
+			{
+				auto & BehaviourList = GetOwner()->GetAllBehaviours();
+				for (auto & elem : BehaviourList)
+					elem->OnCollisionEnter(_Event);
+				marr_ContactSets.push_back(_Event);
+			}
+		}
+		else
+		{
+			if (FindCollisionEvent(_Event.mOtherID))
+			{
+				auto & BehaviourList = GetOwner()->GetAllBehaviours();
+				for (auto & elem : BehaviourList)
+					elem->OnCollisionExit(_Event);
+				RemoveCollisionEvent(_Event.mOtherID);
+			}
+		}
+	}
+
 	bool Collider::HasCollision() const
 	{
 		return mbColliding;
+	}
+
+	bool Collider::HasCollisionWith(unsigned long long _ID) const
+	{
+		for (auto const & elem : marr_ContactSets)
+			if (elem == _ID)
+				return true;
+		return false;
+	}
+
+	bool Collider::HasCollisionWith(GameObject const * const _pointer) const
+	{
+		for (auto const & elem : marr_ContactSets)
+			if (elem == _pointer)
+				return true;
+		return false;
+	}
+
+	BroadPhaseCircle Collider::GetBroadPhaseCircle() const
+	{
+		return mBoundingCircle;
+	}
+
+	bool Collider::IsTrigger() const
+	{
+		return mbIsTrigger;
 	}
 
 	void Collider::SetColliding(bool _b)
@@ -129,6 +210,7 @@ namespace Dystopia
 	void Collider::SetLocalPosition(Math::Point3D const & _point)
 	{
 		mPosition = _point;
+		mBoundingCircle = GenerateBoardPhaseCircle();
 	}
 
 	Math::Point3D Collider::GetGlobalPosition() const
@@ -172,11 +254,22 @@ namespace Dystopia
 		return mOwnerTransformation;
 	}
 
+	Math::Matrix3D Collider::GetWorldMatrix() const
+	{
+		return mOwnerTransformation * Math::Translate(mv3Offset.x, mv3Offset.y, mv3Offset.z) * GetTransformationMatrix();
+	}
+
 	void Collider::SetOwnerTransform(Math::Matrix3D const& _ownerMatrix)
 	{
 		mOwnerTransformation = _ownerMatrix;
+		mBoundingCircle = GenerateBoardPhaseCircle();
 	}
 
+
+	BroadPhaseCircle Collider::GenerateBoardPhaseCircle() const
+	{
+		return BroadPhaseCircle();
+	}
 
 	Collider::~Collider()
 	{
@@ -197,7 +290,6 @@ namespace Dystopia
 		auto  third   = second+1;
 		do
 		{
-		
 		  mIndexBuffer.push_back(static_cast<const short>(first  - start));
 		  mIndexBuffer.push_back(static_cast<const short>(second - start));
 		  mIndexBuffer.push_back(static_cast<const short>(third - start));

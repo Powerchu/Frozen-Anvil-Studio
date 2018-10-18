@@ -15,7 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _LOGGERSYS_H_
 
 #include "Globals.h"
-#include "System\Logger\LogPriority.h"
+#include "System/Logger/FileLogger.h"
+#include "System/Logger/LogPriority.h"
 
 #include <cstdio>
 #include <string>
@@ -36,6 +37,8 @@ namespace Dystopia
 
 		template <typename ... Ty>
 		static void ConsoleLog(eLog, const char* _strFormat, Ty&& ...);
+
+		static FileLogger FileLog(const std::string&);
 
 	private:
 

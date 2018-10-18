@@ -1,10 +1,7 @@
 #ifndef _XGAMEPAD_H_
 #define _XGAMEPAD_H_
-#include <Windows.h>
-#include <Xinput.h>
 #include <string>
-#pragma comment(lib, "XInput.lib")
-
+#include "System/Input/InputMap.h"
 enum eXButtons : unsigned
 {
 	eXBUTTON_DPAD_UP = 0,          
@@ -23,7 +20,11 @@ enum eXButtons : unsigned
 	eXBUTTON_Y,
 
 	eXBUTTON_LAST
-};
+}; 
+
+typedef struct _XINPUT_STATE XINPUT_STATE, *PXINPUT_STATE;
+typedef struct _XINPUT_VIBRATION XINPUT_VIBRATION, *PXINPUT_VIBRATION;
+typedef unsigned long DWORD;
 
 class XGamePad
 {
@@ -40,9 +41,9 @@ public:
 	void Vibrate(unsigned short _speedL = 32000, unsigned short _speedR = 16000); //0-65534
 	void StopVibrate(void);
 
-	bool IsKeyPressed(eXButtons) const;
-	bool IsKeyTriggered(eXButtons) const;
-	bool IsKeyReleased(eXButtons) const;
+	bool IsKeyPressed(eButton) const;
+	bool IsKeyTriggered(eButton) const;
+	bool IsKeyReleased(eButton) const;
 
 	float GetAnalogY(int) const;	//0 for left analog, all others for right
 	float GetAnalogX(int) const;	//0 for left analog, all others for right
@@ -79,7 +80,7 @@ private:
 	unsigned short	msButtons;
 
 	DWORD			mdwID;
-	XINPUT_STATE	mxState;
+	XINPUT_STATE	*mpxState;
 	bool			mbConnected;
 	bool			mbChangeDetected;
 	float			mfDeadZoneL;		//0-65534
@@ -87,7 +88,7 @@ private:
 	float			mfMaxThumbVal;		//32767
 	float			mfTriggerThresh;	//30
 
-	XINPUT_VIBRATION mxVibrate;
+	XINPUT_VIBRATION *mpxVibrate;
 };
 
 

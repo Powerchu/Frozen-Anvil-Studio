@@ -25,6 +25,7 @@ namespace Dystopia
 		bool Init(void) override;
 		void PostInit(void) override;
 
+		void PreFixedUpdate(float) override;
 		void FixedUpdate(float) override;
 		void Update(float) override;
 		void PostUpdate() override;
@@ -40,7 +41,7 @@ namespace Dystopia
 		void CheckSleepingBodies(float _dt);
 		void IntegrateRigidBodies(float _dt);
 		void ResolveCollision(float);
-		void UpdateResults(float _dt);
+		void UpdateResults(float);
 		void DebugPrint();
 
 #if EDITOR

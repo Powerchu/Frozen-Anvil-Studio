@@ -9,6 +9,7 @@
 #include "System/Base/ComponentDonor.h"
 #include "Component/BehaviourList.h"
 #include "Behaviour/Behaviour.h"
+#include "System/File/FileSystem.h"
 
 #include <memory>
 

@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/AutoArray.h"	       /*AutoArray Data Structure*/
 #include "Utility/MetaAlgorithms.h"		       // MetaFind
 #include "System/Collision/CollisionEvent.h"
-
+#include "System/Collision/BroadPhaseCircle.h"
 #include "System/Graphics/VertexDefs.h"
 #include "System/Graphics/Shader.h"
 #include "Math/Quaternion.h"
@@ -67,6 +67,7 @@ namespace Dystopia
 	enum class eColliderType
 	{
 		BASE = 0,
+		LINE,
 		AABB,
 		CIRCLE,			/*Status : Not Done*/
 		TRIANGLE,       /*Status : Not Done*/
@@ -150,16 +151,23 @@ namespace Dystopia
 
 		/*Get Array of collision event*/
 		AutoArray<CollisionEvent> const & GetCollisionEvents() const;
+		CollisionEvent *  FindCollisionEvent(unsigned long long _ID) const;
 
 		// Settors
 		void SetColliding(bool _b);
 		void SetLocalPosition(Math::Point3D const & _point);
 		void ClearCollisionEvent();
-
+		void RemoveCollisionEvent(unsigned long long _OtherID);
+		void InformOtherComponents(bool _isColliding, CollisionEvent const & _Event);
 		// Gettors
 		virtual Math::Point3D GetGlobalPosition() const;
 		Math::Vec3D           GetOffSet()   const;
 		bool                  HasCollision() const;
+		bool				  IsTrigger() const;
+		bool				  HasCollisionWith(unsigned long long _ID) const;
+		bool				  HasCollisionWith(GameObject const * const _pointer) const;
+
+		BroadPhaseCircle      GetBroadPhaseCircle() const;
 
 		AutoArray<Vertex> GetVertexBuffer() const;
 		AutoArray<short>  GetIndexBuffer()  const;
@@ -169,13 +177,15 @@ namespace Dystopia
 
 
 		Math::Matrix3D GetTransformationMatrix() const;
-		Math::Matrix3D GetOwnerTransform() const;
+		Math::Matrix3D GetOwnerTransform()       const;
+		Math::Matrix3D GetWorldMatrix()          const;
 		void SetOwnerTransform(Math::Matrix3D const & _OwnerTransform);
 
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const = 0;
 		virtual void Unserialise(TextSerialiser&) = 0;
 
+		virtual BroadPhaseCircle GenerateBoardPhaseCircle() const;
 		virtual ~Collider();
 
 	protected:
@@ -189,7 +199,7 @@ namespace Dystopia
 
 		AutoArray<Vertex> mDebugVertices;
 		AutoArray<short>  mIndexBuffer;
-
+		BroadPhaseCircle  mBoundingCircle;
 		void Triangulate();
 
 		/*Offset of the collider with respect to GameObject Transform position*/

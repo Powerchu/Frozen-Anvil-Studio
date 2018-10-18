@@ -43,6 +43,10 @@ namespace Dystopia
 		{
 			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllComponents>::value;
 		};
+		unsigned GetRealComponentType(void) const
+		{
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, UsableComponents>::value;
+		};
 		static const std::string GetCompileName(void) { return "RigidBody"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 
@@ -76,6 +80,7 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		void Integrate(float _dt);
 		void CheckSleeping(float _dt);
+		void PreUpdatePosition(float _dt);
 		void UpdateResult(float _dt);
 
 		// void Update(float _dt);
@@ -202,8 +207,9 @@ namespace Dystopia
 		Vec3D					mGlobalCentroid;
 		Vec3D					mLocalCentroid;
 
+		Math::Vector2			mLinearDamping;				/* Linear Damping in the X and Y axis */
+			
 		float					mfAngleDeg;					/* Anticlockwise Direction: Angles in Degrees*/
-		float					mfLinearDamping;			/* Linear Drag, slows down motion dynamics over time*/
 
 		float					mfAngularDrag;				/* Coefficient of angular drag. */
 		float					mfStaticFriction;			/* Like LinearDamping, but only drag the forces when 2 or more objects are colliding*/
