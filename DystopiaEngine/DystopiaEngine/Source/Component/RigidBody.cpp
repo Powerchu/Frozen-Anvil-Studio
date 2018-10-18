@@ -205,6 +205,9 @@ namespace Dystopia
 			mLinearVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
+		mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F)  * _dt;
+
+
 		//*Reset Cumulative Force*/
 		ResetCumulative();
 	}
@@ -223,11 +226,7 @@ namespace Dystopia
 
 		if (mfWeightedMotion < SLEEP_EPSILON)
 		{
-			const auto t = Math::Abs(mPosition.Magnitude() - mPrevPosition.Magnitude());
-			if (t < 0.05f)
-			{
-				mbIsAwake = false;
-			}
+			mbIsAwake = false;
 		}
 	}
 
@@ -236,7 +235,7 @@ namespace Dystopia
 		if (!mbIsStatic && mbIsAwake) // only update when body is not static
 		{
 			// Update Position
-			mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F)  * _dt;
+			//mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F)  * _dt;
 			//mPosition += mLinearVelocity * _dt;
 		}
 	}
@@ -380,14 +379,14 @@ namespace Dystopia
 		/*Add to the total Angular velocity of the object in this Update Frame*/
 		mAngularVelocity += angularVel;
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
-		mCumulativeForce += _force * 100.f;
+		mCumulativeForce += _force;
 		mCumulativeTorque += (_point - mGlobalCentroid).Cross(_force);
 		mbIsAwake = true;
 	}
 
 	void RigidBody::AddForce(Math::Vec3D const & _force)
 	{
-		mCumulativeForce += _force * 100.f;
+		mCumulativeForce += _force;
 		mbIsAwake = true;
 	}
 
@@ -398,14 +397,14 @@ namespace Dystopia
 
 	void RigidBody::AddImpulse(Vec3D const& _impul)
 	{
-		mCurrImpulse += _impul * 100.f;
+		mCurrImpulse += _impul;
 		mbIsAwake = true;
 	}
 
 	void RigidBody::AddImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const &)
 	{
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/
-		mCurrImpulse += _impul * 100.f;
+		mCurrImpulse += _impul;
 		mCumulativeTorque = (_point - mGlobalCentroid).Cross(_impul);
 		mbIsAwake = true;
 	}
@@ -436,7 +435,7 @@ namespace Dystopia
 
 	bool RigidBody::Set_ToggleGravity()
 	{
-		return (mbHasGravity = mbHasGravity ? false : true);
+		return (mbHasGravity = !mbHasGravity);
 	}
 
 	void RigidBody::Set_ToggleGravity(bool _state)

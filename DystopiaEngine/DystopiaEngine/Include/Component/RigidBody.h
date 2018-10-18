@@ -19,7 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/ComponentList.h"
 #include "Math/Vector4.h"
 #include "Math/Matrix4.h"
-#include "DataStructure/Queue.h"
 #include "Math/Vector2.h"
 
 

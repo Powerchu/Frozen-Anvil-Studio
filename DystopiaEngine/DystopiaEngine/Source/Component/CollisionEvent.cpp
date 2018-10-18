@@ -95,8 +95,8 @@ namespace Dystopia
 			bodyA->SetVelocity(a_newVel);
 		//bodyA->AddForce(-frictionImpulse);
 
-		//if (bodyB->GetIsAwake() && !bodyB->Get_IsStaticState())
-		//	bodyB->SetVelocity(b_newVel);
+		if (bodyB->GetIsAwake() && !bodyB->Get_IsStaticState())
+			bodyB->SetVelocity(b_newVel);
 		//bodyB->AddForce(frictionImpulse);
 	}
 
@@ -107,7 +107,7 @@ namespace Dystopia
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
 
-		const float perc = 0.05F;
+		const float perc = 0.30F;
 		const float slop = 0.01F;
 
 		const Vec3D correction = Math::Max((mfPeneDepth)+slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;

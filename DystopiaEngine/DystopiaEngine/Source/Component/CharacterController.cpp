@@ -22,8 +22,8 @@ namespace Dystopia
 		,mbIsFacingRight(true)
 		,mbIsGrounded(false)
 		,mbIsCeilinged(false)
-		,mfCharacterSpeed(10.0f)
-		,mfJumpForce(100.0F)
+		,mfCharacterSpeed(1000.0f)
+		,mfJumpForce(10000.0F)
 	{
 	}
 

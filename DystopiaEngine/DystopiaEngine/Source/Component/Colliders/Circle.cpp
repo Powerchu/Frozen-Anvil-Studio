@@ -17,14 +17,15 @@ namespace Dystopia
 {
 	using Math::Vec3D;
 	Circle::Circle()
-		: m_radius(1.0F)
-		, Collider{Vec3D{0,0,0},Math::MakePoint3D(0,0,0)}
+		: Collider{ Vec3D{ 0,0,0 },Math::MakePoint3D(0,0,0) }
+		, m_radius(1.0F)
 	{
 
 	}
 
 	Circle::Circle(float const & _radius, Vec3D const & _v3Offset)
-		: m_radius(_radius), Collider{ _v3Offset,Math::MakePoint3D(0,0,0) }
+		: Collider{ _v3Offset,Math::MakePoint3D(0,0,0) }
+		, m_radius(_radius)
 	{
 
 	}

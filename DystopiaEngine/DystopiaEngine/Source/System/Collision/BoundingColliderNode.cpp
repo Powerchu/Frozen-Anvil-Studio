@@ -75,7 +75,7 @@ namespace Dystopia
 				return Total;
 			}
 		}
-		
+		return 0;
 		/*Leave this in. Dont delete yet*/
 		/*
 		 * Use the Bounding Circle with the largest Size as there are more colliders inside the Circle
