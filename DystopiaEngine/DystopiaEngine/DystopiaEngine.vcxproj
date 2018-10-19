@@ -32,6 +32,7 @@
     <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
     <ClCompile Include="Source\Allocator\Allocator.cpp" />
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp" />
+    <ClCompile Include="Source\Component\AudioSource.cpp" />
     <ClCompile Include="Source\Component\CharacterController.cpp" />
     <ClCompile Include="Source\Component\CollisionEvent.cpp" />
     <ClCompile Include="Source\Editor\AdminCalls.cpp" />
@@ -109,6 +110,8 @@
     <ClCompile Include="Source\System\Profiler\ProfilerAction.cpp" />
     <ClCompile Include="Source\System\Scene\Scene.cpp" />
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
+    <ClCompile Include="Source\System\Sound\Audio.cpp" />
+    <ClCompile Include="Source\System\Sound\SoundSystem.cpp" />
     <ClCompile Include="Source\System\Time\ScopedTimer.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
@@ -125,6 +128,7 @@
     <ClInclude Include="Include\Allocator\DefaultAllocImpl.h" />
     <ClInclude Include="Include\Allocator\ProxyAlloc.h" />
     <ClInclude Include="Include\Component\AABB.h" />
+    <ClInclude Include="Include\Component\AudioSource.h" />
     <ClInclude Include="Include\Component\BehaviourList.h" />
     <ClInclude Include="Include\Component\CharacterController.h" />
     <ClInclude Include="Include\Component\Circle.h" />
@@ -187,6 +191,7 @@
     <ClInclude Include="Include\System\Profiler\ProfileInfo.h" />
     <ClInclude Include="Include\System\Profiler\Profiler.h" />
     <ClInclude Include="Include\System\Profiler\ProfilerAction.h" />
+    <ClInclude Include="Include\System\Sound\Audio.h" />
     <ClInclude Include="Include\System\SystemMessage.h" />
     <ClInclude Include="Include\System\Time\ScopedTimer.h" />
     <ClInclude Include="Include\System\Time\TimeDefs.h" />

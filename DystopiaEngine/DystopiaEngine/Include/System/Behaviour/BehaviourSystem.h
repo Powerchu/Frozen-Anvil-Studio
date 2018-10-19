@@ -76,6 +76,7 @@ namespace Dystopia
 		MagicArray<BehaviourWrap> & GetAllBehaviour();
 		Behaviour * RequestBehaviour(uint64_t const & _ID, std::string const & _name);
 
+		void ReAttach(void);
 
 #endif
 

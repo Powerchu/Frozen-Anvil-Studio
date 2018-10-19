@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Commands.h"
 #include "Editor/EditorEvents.h"
 
+#include "Component/AudioSource.h"
 #include "Component/Camera.h"
 #include "Component/Collider.h"
 #include "Component/Circle.h"
@@ -27,6 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/RigidBody.h"
 #include "Component/CharacterController.h"
 
+#include "System/Sound/SoundSystem.h"
 #include "System/Input/InputSystem.h"
 #include "System/Camera/CameraSystem.h"
 #include "System/Physics/PhysicsSystem.h"

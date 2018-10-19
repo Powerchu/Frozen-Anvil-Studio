@@ -39,12 +39,11 @@ namespace Dystopia
 
 	void Milestone::Init()
 	{ 
+        this->GetOwner()->GetComponent<Transform>()->SetScale(16, 31236, 1); 
 	}
 
 	void Milestone::Update(const float)
 	{
-        this->GetOwner()->GetComponent<Transform>()->SetScale(16, 31236, 1); 
-		//throw std::bad_alloc();		
 	}  
 
 	void Milestone::FixedUpdate(const float)
