@@ -6,8 +6,8 @@
 \brief
 	Implementation for BMP loader and writer
 	References: Wikipedia
-		-BMP : http://paulbourke.net/dataformats/bmp/
-		     : https://www.fileformat.info/format/os2bmp/egff.htm
+		: http://paulbourke.net/dataformats/bmp/
+		: https://www.fileformat.info/format/os2bmp/egff.htm
 
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
@@ -23,7 +23,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <cmath>		// abs
 #include <string>		// string
-#include <fstream>		// ifstream
 
 using Dystopia::Image;
 

@@ -268,7 +268,10 @@
     <ClCompile Include="Source\IO\BitmapParser.cpp">
       <Filter>IO\ImageParser</Filter>
     </ClCompile>
-    <ClCompile Include="Source\IO\ImageParser.cpp">
+    <ClCompile Include="Source\IO\PNGParser.cpp">
+      <Filter>IO\ImageParser</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IO\DDSParser.cpp">
       <Filter>IO\ImageParser</Filter>
     </ClCompile>
   </ItemGroup>

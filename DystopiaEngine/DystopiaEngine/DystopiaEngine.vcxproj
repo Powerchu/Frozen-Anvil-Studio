@@ -43,7 +43,8 @@
     <ClCompile Include="Source\Editor\ProjectSettings.cpp" />
     <ClCompile Include="Source\Editor\SpritePreviewer.cpp" />
     <ClCompile Include="Source\Editor\StyleScheme.cpp" />
-    <ClCompile Include="Source\IO\ImageParser.cpp" />
+    <ClCompile Include="Source\IO\DDSParser.cpp" />
+    <ClCompile Include="Source\IO\PNGParser.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
