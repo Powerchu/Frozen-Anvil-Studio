@@ -28,7 +28,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
+    <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
+    <ClCompile Include="Source\Allocator\Allocator.cpp" />
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp" />
+    <ClCompile Include="Source\Component\AudioSource.cpp" />
     <ClCompile Include="Source\Component\CharacterController.cpp" />
     <ClCompile Include="Source\Component\CollisionEvent.cpp" />
     <ClCompile Include="Source\Editor\AdminCalls.cpp" />
@@ -50,6 +54,7 @@
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
     <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp" />
+    <ClCompile Include="Source\System\Logger\FileLogger.cpp" />
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp" />
     <ClCompile Include="Source\System\Physics\CollisionResolution.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
@@ -105,6 +110,8 @@
     <ClCompile Include="Source\System\Profiler\ProfilerAction.cpp" />
     <ClCompile Include="Source\System\Scene\Scene.cpp" />
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
+    <ClCompile Include="Source\System\Sound\Audio.cpp" />
+    <ClCompile Include="Source\System\Sound\SoundSystem.cpp" />
     <ClCompile Include="Source\System\Time\ScopedTimer.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
@@ -115,8 +122,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="Include\System\Collision\BoundingColliderNode.h" />
+    <ClInclude Include="Include\System\Collision\BroadPhaseCircle.h" />
+    <ClInclude Include="Include\Allocator\Allocator.h" />
     <ClInclude Include="Include\Allocator\DefaultAllocImpl.h" />
+    <ClInclude Include="Include\Allocator\ProxyAlloc.h" />
     <ClInclude Include="Include\Component\AABB.h" />
+    <ClInclude Include="Include\Component\AudioSource.h" />
     <ClInclude Include="Include\Component\BehaviourList.h" />
     <ClInclude Include="Include\Component\CharacterController.h" />
     <ClInclude Include="Include\Component\Circle.h" />
@@ -132,9 +144,17 @@
     <ClInclude Include="Include\Editor\SpritePreviewer.h" />
     <ClInclude Include="Include\Editor\StyleScheme.h" />
     <ClInclude Include="Include\Math\MetaFloat.h" />
-    <ClInclude Include="Include\Reflection\PPForEachSeq.h" />
+    <ClInclude Include="Include\Reflection\MetaData.h" />
+    <ClInclude Include="Include\Reflection\PPConcat.h" />
+    <ClInclude Include="Include\Reflection\PPExtract.h" />
+    <ClInclude Include="Include\Reflection\PPStringify.h" />
+    <ClInclude Include="Include\Reflection\PPUtils.h" />
+    <ClInclude Include="Include\Reflection\PPForEach.h" />
+    <ClInclude Include="Include\Reflection\PPPopFront.h" />
+    <ClInclude Include="Include\Reflection\PPRemove.h" />
     <ClInclude Include="Include\Reflection\PPToSequence.h" />
     <ClInclude Include="Include\Reflection\PPVariadicSize.h" />
+    <ClInclude Include="Include\Reflection\ReflectedData.h" />
     <ClInclude Include="Include\Reflection\Reflection.h" />
     <ClInclude Include="Include\Editor\SystemSettings.h" />
     <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
@@ -142,6 +162,7 @@
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />
+    <ClInclude Include="Include\System\Logger\FileLogger.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Renderer.h" />
@@ -170,6 +191,7 @@
     <ClInclude Include="Include\System\Profiler\ProfileInfo.h" />
     <ClInclude Include="Include\System\Profiler\Profiler.h" />
     <ClInclude Include="Include\System\Profiler\ProfilerAction.h" />
+    <ClInclude Include="Include\System\Sound\Audio.h" />
     <ClInclude Include="Include\System\SystemMessage.h" />
     <ClInclude Include="Include\System\Time\ScopedTimer.h" />
     <ClInclude Include="Include\System\Time\TimeDefs.h" />
@@ -395,15 +417,15 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dbghelp.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64\;$(SolutionDir)Dependancies\FMOD\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dbghelp.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -462,18 +484,18 @@
       <SDLCheck>
       </SDLCheck>
       <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <ExceptionHandling>Async</ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dbghelp.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dbghelp.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
@@ -492,7 +514,7 @@
       <SDLCheck>
       </SDLCheck>
       <AdditionalOptions>/DEDITOR=0 /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -501,8 +523,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64\;$(SolutionDir)Dependancies\FMOD\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

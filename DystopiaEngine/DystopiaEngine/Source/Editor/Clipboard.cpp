@@ -78,9 +78,9 @@ void Dystopia::Clipboard::ClearSelection(void)
 void Dystopia::Clipboard::InsertSelection(const uint64_t& _uniqueID)
 {
 	for (const auto& id : mArrSelectionID)
-	{
-		if (id == _uniqueID) return;
-	}
+		if (id == _uniqueID)
+			return;
+
 	mArrSelectionID.Insert(_uniqueID);
 }
 
@@ -88,9 +88,9 @@ void Dystopia::Clipboard::InsertData(eClipDataTypes _dataType, void* _data, cons
 {
 	ClipData dat{ _dataType, _data, _dataSize };
 	for (const auto& e : mArrClipData)
-	{
-		if (e == dat) return;
-	}
+		if (e == dat)
+			return;
+
 	mArrClipData.Insert(dat);
 }
 
@@ -98,12 +98,9 @@ AutoArray<void*> Dystopia::Clipboard::RetrieveDatas(eClipDataTypes _dataType, co
 {
 	AutoArray<void*> ret{ DEFAULT_CLIP_SIZE };
 	for (auto & e : mArrClipData)
-	{
 		if (e.IsSameSize(_dataSize) && e.IsSameType(_dataType))
-		{
 			ret.push_back(e.GetData());
-		}
-	}
+
 	return ret;
 }
 
@@ -124,6 +121,9 @@ const AutoArray<uint64_t>& Dystopia::Clipboard::RetrieveSelections(void) const
 	return mArrSelectionID;
 }
 
-
+AutoArray<Dystopia::ClipData>& Dystopia::Clipboard::GetAllClipData(void)
+{
+	return mArrClipData;
+}
 
 #endif

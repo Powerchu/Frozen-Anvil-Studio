@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Matrix4.h"	// Matrix4
 #include "Math/MathUtility.h"
 
+
 namespace Math
 {
 	#define _CALL	__vectorcall
@@ -94,13 +95,13 @@ namespace Math
 	inline Quaternion _CALL Normalise(const Quaternion);
 
 	// Computes the dot product of two Quaternions
-	inline float _CALL Dot(const Quaternion, const Quaternion);
+	//inline float _CALL Dot(const Quaternion, const Quaternion);
 
 	// Computes the cross product of two Quaternions
-	inline Quaternion _CALL Cross(const Quaternion, const Quaternion);
+	//inline Quaternion _CALL Cross(const Quaternion, const Quaternion);
 
 	// Projects lhs onto rhs
-	inline Quaternion _CALL Project(const Quaternion, const Quaternion);
+	//inline Quaternion _CALL Project(const Quaternion, const Quaternion);
 
 	inline Quaternion _CALL Conjugate(const Quaternion);
 

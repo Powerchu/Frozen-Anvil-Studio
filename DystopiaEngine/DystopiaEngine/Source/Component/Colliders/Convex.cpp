@@ -174,23 +174,28 @@ namespace Dystopia
 			{
 				/*Clear the simplex for the next function call*/
 				Simplex.clear();
+				//if(CollisionEvent const * const ColEvent = FindCollisionEvent(_pColB.GetOwnerID()))
+					//InformOtherComponents(false, *ColEvent);
 				/*Return no collision*/
 				return false;
 			}
-
-			/*Check if Simplex contains Origin*/
-			if (ContainOrigin(Simplex,vDir))
+			else
 			{
-				mbColliding = true;
-				_pColB.mbColliding = true;
-				/*Use EPA to get collision information*/
-				marr_ContactSets.Insert(GetCollisionEvent(Simplex, _pColB));
-				/*Clear the simplex for the next function call*/
-				Simplex.clear();
-				/*Return true for collision*/
-				return true;
+				/*Check if Simplex contains Origin*/
+				if (ContainOrigin(Simplex,vDir))
+				{
+					mbColliding = true;
+					_pColB.mbColliding = true;
+					/*Use EPA to get collision information*/
+					CollisionEvent ColEvent = GetCollisionEvent(Simplex, _pColB);
+					marr_ContactSets.push_back(ColEvent);
+					//InformOtherComponents(true, ColEvent);
+					/*Clear the simplex for the next function call*/
+					Simplex.clear();
+					/*Return true for collision*/
+					return true;
+				}
 			}
-			
 			if (count++ > _pColB.mVertices.size() * mVertices.size())
 				return false;
 		}
@@ -201,6 +206,8 @@ namespace Dystopia
 		RigidBody* other_body{ nullptr };
 		if (_ColB.GetOwner()->GetComponent<RigidBody>())
 			other_body = _ColB.GetOwner()->GetComponent<RigidBody>();
+
+		CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
 
 		const auto & Edges = GetConvexEdges();
 		bool isInside = true;
@@ -243,11 +250,11 @@ namespace Dystopia
 				if (distance < _ColB.GetRadius())
 				{
 					isInside = true;
-					CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
 					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
 					newEvent.mEdgeNormal = Math::Normalise(_ColB.GetGlobalPosition() - PointOfImpact);
 					newEvent.mEdgeVector = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
+					newEvent.mOtherID        = _ColB.GetOwner()->GetID();
 					if (nullptr != other_body)
 					{
 						newEvent.mfRestitution = DetermineRestitution(*other_body);
@@ -255,11 +262,18 @@ namespace Dystopia
 						newEvent.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
 					}
 					isInside = true;
-					marr_ContactSets.push_back(newEvent);
 					mbColliding = true;
 					_ColB.SetColliding(true);
 				}
 			}
+		}
+		if (isInside)
+		{
+			//InformOtherComponents(true, newEvent);
+		}
+		else
+		{
+			//InformOtherComponents(false, newEvent);
 		}
 		return isInside;
 	}
@@ -349,6 +363,19 @@ namespace Dystopia
 			ToRet.push_back(e);
 		}
 		return ToRet;
+	}
+
+	BroadPhaseCircle Convex::GenerateBoardPhaseCircle() const
+	{
+		float LongestRadius = 0;
+		Math::Point3D MyGlobalCentre = this->GetGlobalPosition();
+		for (auto & elem : mVertices)
+		{
+			Math::Vec3D v  = elem.mPosition - mPosition;
+			float distance = (this->GetWorldMatrix() * v).Magnitude();
+			LongestRadius = distance > LongestRadius ? distance : LongestRadius;
+		}
+		return BroadPhaseCircle{ LongestRadius, MyGlobalCentre };
 	}
 
 	void Convex::EditorUI() noexcept
@@ -634,7 +661,7 @@ namespace Dystopia
 
 	Edge Convex::GetClosestEdge(AutoArray<SimplexVertex>& _Simplex)
 	{
-		Edge   ClosestEdge{};
+		Edge   ClosestEdge;
 		double ClosestDistance = std::numeric_limits<double>::max();
 
 		for (unsigned i = 0; i < _Simplex.size(); ++i)
@@ -757,6 +784,8 @@ namespace Dystopia
 				col_info.mCollisionPoint = (end_A - start_A) * BarycentricRatio + start_A;
 				col_info.mEdgeNormal     = Normal.Normalise();
 				col_info.mEdgeVector     = Normal.xyzw;
+				col_info.mOtherID        = _ColB.GetOwner()->GetID();
+
 				col_info.mfPeneDepth     = static_cast<float>(ProjectDis);
 
 				if (nullptr != other_body)
@@ -765,6 +794,7 @@ namespace Dystopia
 					col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 					col_info.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
 				}
+
 				return col_info;
 			}
 

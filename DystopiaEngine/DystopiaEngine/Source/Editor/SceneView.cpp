@@ -38,6 +38,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	static const Math::Vec4 redColor = Math::Vec4{ 1.f,0.f,0.f,1.f };
+	static const Math::Vec4 greenColor = Math::Vec4{ 0.f,1.f,0.f,1.f };
+	static const Math::Vec4 blueColor = Math::Vec4{ 0.f,0.f,1.f,1.f };
 	static constexpr float dragMagnitudeEpsilon = 2.f;
 
 	static SceneView* gpInstance = 0;
@@ -55,7 +58,9 @@ namespace Dystopia
 		mpSceneCamera{ nullptr }, mSensitivity{ 0.1f },
 		mToZoom{ eZOOM_NONE }, mAmFocused{ false }, 
 		mMoveVec{ 0,0 }, mMoveSens{ 0.75f }, 
-		mDragging{ false }, mImgPos{}, mImgSize{}
+		mDragging{ false }, mImgPos{}, mImgSize{},
+		mClearSelection{ false },
+		mGizmoHovered{ false }, mCurrGizTool{ eTRANSLATE }
 	{}
 
 	SceneView::~SceneView()
@@ -69,6 +74,8 @@ namespace Dystopia
 		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Bind(&SceneView::SceneChanged, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Bind(&SceneView::ScrollOut, this);
+		GetEditorEventHND()->GetEvent(EDITOR_W)->Bind(&SceneView::SetGizmoTranslate, this);
+		GetEditorEventHND()->GetEvent(EDITOR_E)->Bind(&SceneView::SetGizmoScaler, this);
 
 		//mpSceneCamera = Factory::CreateCamera("Scene Camera");
 		//GetCurrentScene()->GetAllGameObjects().EmplaceBack(Ut::Move(*mpSceneCamera));
@@ -91,10 +98,9 @@ namespace Dystopia
 
 	void SceneView::Update(const float& _dt)
 	{
+		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
 		if (GetMainEditor()->CurrentState() == EDITOR_MAIN)
-		{
 			mpGfxSys->Update(_dt);
-		}
 	}
 
 	void SceneView::EditorUI()
@@ -113,15 +119,22 @@ namespace Dystopia
 		if (EGUI::Display::Image(pTex->GetID(), mImgSize, true))
 			mAmFocused = true;
 		ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
-
-		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PREFAB))
+		if (GetCurrentScene()->FindGameObject("Scene Camera"))
 		{
-			AcceptPrefab(t);
-			EGUI::Display::EndPayloadReceiver();
+			if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PREFAB))
+			{
+				AcceptPrefab(t);
+				EGUI::Display::EndPayloadReceiver();
+			}
+			if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
+			{
+				AcceptTexture(t);
+				EGUI::Display::EndPayloadReceiver();
+			}
 		}
-		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
+		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::SCENE))
 		{
-			AcceptTexture(t);
+			GetMainEditor()->OpenScene(std::wstring{ t->mPath.begin(), t->mPath.end() }, std::wstring{ t->mName.begin(), t->mName.end() });
 			EGUI::Display::EndPayloadReceiver();
 		}
 		if (GetMainEditor()->CurrentState() == EDITOR_PLAY)
@@ -129,6 +142,12 @@ namespace Dystopia
 
 		CheckMouseEvents();
 		DrawGizmos();
+
+		if (mClearSelection)
+		{
+			mClearSelection = false;
+			GetMainEditor()->ClearSelections();
+		}
 		EGUI::Indent(2);
 	}
 
@@ -138,6 +157,9 @@ namespace Dystopia
 		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Unbind(this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Unbind(this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Unbind(this);
+		GetEditorEventHND()->GetEvent(EDITOR_W)->Unbind(this);
+		GetEditorEventHND()->GetEvent(EDITOR_E)->Unbind(this);
+
 	}
 
 	std::string SceneView::GetLabel() const
@@ -147,6 +169,7 @@ namespace Dystopia
 
 	void SceneView::Move()
 	{
+		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
 		if (mpSceneCamera)
 		{
 			Math::Vec2 vDest	= FindMouseVector();
@@ -288,9 +311,13 @@ namespace Dystopia
 		auto viewport = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
 		Math::Vec2 hitPoint{ (relPos.x / mImgSize.x) * viewport.mnWidth,
 							 (relPos.y / mImgSize.y) * viewport.mnHeight };
-		auto worldPos = _cam->ScreenToWorld(Math::MakeVector3D( (hitPoint.x - (viewport.mnWidth / 2)),
-																(hitPoint.y - (viewport.mnHeight / 2)),
-																 0.f));
+		auto worldPos = _cam->ScreenToWorld(Math::MakeVector3D( hitPoint.x,
+																hitPoint.y,
+																0.f));
+
+		//PrintToConsoleLog("Ratio " +std::to_string(relPos.x / mImgSize.x) + " / " + std::to_string(relPos.y / mImgSize.y));
+		//PrintToConsoleLog("Hitpt " +std::to_string(hitPoint.x) + " / " + std::to_string(hitPoint.y));
+		//PrintToConsoleLog("Worpt " +std::to_string(worldPos.x) + " / " + std::to_string(worldPos.y));
 		return worldPos;
 	}
 
@@ -314,12 +341,14 @@ namespace Dystopia
 			if (ImGui::IsMouseClicked(0))
 			{
 				GameObject* pObj = FindMouseObject();
-				if (pObj)
+				if (pObj && !mGizmoHovered)
 				{
 					auto ed = GetMainEditor();
 					if (ed->IsCtrlDown())	ed->AddSelection(pObj->GetID());
 					else					ed->NewSelection(pObj->GetID());
 				}
+				else
+					mClearSelection = true;
 			}
 			if (ImGui::IsMouseClicked(1))
 			{
@@ -335,7 +364,7 @@ namespace Dystopia
 		mToZoom = eZOOM_NONE;
 	}
 
-	void SceneView::AcceptPrefab(File* /*_pFile*/)
+	void SceneView::AcceptPrefab(File* _pFile)
 	{
 		if (Camera* pCam = GetCamera())
 		{
@@ -344,7 +373,12 @@ namespace Dystopia
 			Math::Pt3D worldClickPos	= GetWorldClickPos(pCam);
 			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ };
 
-			/* TODO: Unserialise a prefab file */
+			GameObject *pDupl = Factory::LoadFromPrefab("", _pFile->mPath);
+			if (pDupl)
+			{
+				pDupl->GetComponent<Transform>()->SetPosition(spawnSite);
+				GetCommandHND()->InvokeCommandInsert(*pDupl, *GetCurrentScene());
+			}
 		}
 	}
 
@@ -361,7 +395,6 @@ namespace Dystopia
 				auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, 
 																			mpGfxSys->LoadTexture(_pFile->mPath));
 				GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
-
 				GetMainEditor()->NewSelection(pTarget->GetID());
 			}
 		}
@@ -369,62 +402,261 @@ namespace Dystopia
 
 	void SceneView::DrawGizmos()
 	{
-		if (!mpSceneCamera) return;
-
-		static const Math::Vec4 redColor = Math::Vec4{ 1.f,0.f,0.f,1.f };
-
-		auto& clipboard = GetMainEditor()->GetSelectionObjects();
-		if (!clipboard.size())
+		mGizmoHovered = false; 
+		auto& clipboardObjs = GetMainEditor()->GetSelectionObjects();
+		if (!clipboardObjs.size())
 			return;
-		else if (clipboard.size() == 1)
+		else if (clipboardObjs.size() == 1)
 		{
-			auto& gameObj		= *clipboard.begin();
-			auto camera			= mpSceneCamera->GetComponent<Camera>();
-			Math::Pt3D curPos	= gameObj->GetComponent<Transform>()->GetGlobalPosition();
-			auto e1 = camera->GetViewMatrix() * curPos;
-			auto e2 = camera->GetProjectionMatrix() * e1;
-			auto e3 = e2 / e2.w;
-			auto e4 = camera->GetViewMatrix() * e3;
-			auto viewport = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
-
-			Math::Vec2 temp{(e4.x * (mImgSize.x/2)) + (Size().x / 2),( e4.y * (mImgSize.y/2)) + (Size().y / 2) };
-			float x = 0;
-			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", x, temp, 1.f, redColor))
-			{
-			case EGUI::eDRAGGING:
-				PrintToConsoleLog("Dragging");
-				gameObj->GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + x, curPos.y, curPos.z, curPos.w });
-				break;
-			case EGUI::eSTART_DRAG:
-				PrintToConsoleLog("Start Drag");
-				break;
-			case EGUI::eEND_DRAG:
-				PrintToConsoleLog("End Drag");
-				break;
-			}
+			auto& obj = **clipboardObjs.begin();
+			DrawGizmoSingle(obj);
 		}
 		else
-		{
-
-		}
+			DrawGizmoMul(clipboardObjs);
 	}
 
-	void SceneView::DrawGizmos(const Math::Vec2& /*_pos*/)
+	Math::Vec2 SceneView::GetWorldToScreen(const Math::Pt3D& curPos) const
 	{
-		float x = 0;
-		auto s = ImGui::GetWindowSize();
-		static Math::Vec2 center{ s.x / 2,s.y / 2 };
-		switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", x, center, 1.f, Math::Vec4{ 1.f,0.f,0.f,1.f }))
+		if (!mpSceneCamera) return Math::Vec2{ 0,0 };
+
+		Camera*	pCamera	= mpSceneCamera->GetComponent<Camera>();
+		auto equation1 = pCamera->GetProjectionMatrix() * (pCamera->GetViewMatrix() * curPos);
+
+		return Math::Vec2{ (equation1.x * (mImgSize.x / 2)) + (Size().x / 2),
+						   (equation1.y * (mImgSize.y / 2)) + (Size().y / 2) };
+	}
+
+	void SceneView::SetGizmoTranslate(void)
+	{
+		mCurrGizTool = eGizTool::eTRANSLATE;
+	}
+
+	void SceneView::SetGizmoScaler(void)
+	{
+		mCurrGizTool = eGizTool::eSCALE;
+	}
+
+	void SceneView::DrawGizmoMul(const AutoArray<GameObject*>& _arr)
+	{
+		Math::Pt3D avgPos{ 0, 0, 0, 1.f };
+		unsigned int size = static_cast<unsigned int>(_arr.size());
+		for (auto& obj : _arr)
 		{
-		case EGUI::eDRAGGING:
-			PrintToConsoleLog("Dragging");
-			center.x += x;
+			const auto pos = obj->GetComponent<Transform>()->GetGlobalPosition();
+			avgPos.x = avgPos.x + pos.x;
+			avgPos.y = avgPos.y + pos.y;
+		}
+		avgPos.x = avgPos.x / size;
+		avgPos.y = avgPos.y / size;
+		Math::Vec2 screenPos = GetWorldToScreen(avgPos);
+		float changeX = 0;
+		float changeY = 0;
+
+		switch (mCurrGizTool)
+		{
+		case eTRANSLATE:
+			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				for (auto& obj : _arr)
+				{
+					auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
+					obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX, cpos.y, cpos.z, cpos.w });
+				}
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				for (auto& obj : _arr)
+				{
+					auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
+					obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x, cpos.y + changeY, cpos.z, cpos.w });
+				}
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				for (auto& obj : _arr)
+				{
+					auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
+					obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX, cpos.y + changeY, cpos.z, cpos.w });
+				}
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
 			break;
-		case EGUI::eSTART_DRAG:
-			PrintToConsoleLog("Start Drag");
+
+		case eSCALE:
+			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				for (auto& obj : _arr)
+				{
+					auto cScale = obj->GetComponent<Transform>()->GetGlobalScale();
+					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y, cScale.z, cScale.w });
+				}
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				for (auto& obj : _arr)
+				{
+					auto cScale = obj->GetComponent<Transform>()->GetGlobalScale();
+					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY, cScale.z, cScale.w });
+				}
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				for (auto& obj : _arr)
+				{
+					auto cScale = obj->GetComponent<Transform>()->GetGlobalScale();
+					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + changeY, cScale.z, cScale.w });
+				}
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
 			break;
-		case EGUI::eEND_DRAG:
-			PrintToConsoleLog("End Drag");
+		}
+	
+	}
+
+	void SceneView::DrawGizmoSingle(GameObject& obj)
+	{
+		Math::Pt3D curPos	 = obj.GetComponent<Transform>()->GetGlobalPosition();
+		Math::Vec4 cScale	 = obj.GetComponent<Transform>()->GetGlobalScale();
+		Math::Vec2 screenPos = GetWorldToScreen(curPos);
+		float changeX = 0;
+		float changeY = 0;
+
+		switch (mCurrGizTool)
+		{
+		case eTRANSLATE:
+			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX, curPos.y, curPos.z, curPos.w });
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x, curPos.y + changeY, curPos.z, curPos.w });
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX, curPos.y + changeY, curPos.z, curPos.w });
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			break;
+
+		case eSCALE:
+			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y, cScale.z, cScale.w });
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY, cScale.z, cScale.w });
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
+			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			{
+			case EGUI::eDRAGGING:
+				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + changeY, cScale.z, cScale.w });
+				mClearSelection = false;
+				break;
+			case EGUI::eSTART_DRAG:
+				mClearSelection = false;
+				break;
+			case EGUI::eEND_DRAG:
+				mClearSelection = false;
+				break;
+			}
 			break;
 		}
 	}

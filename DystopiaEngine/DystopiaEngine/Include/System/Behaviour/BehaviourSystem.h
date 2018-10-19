@@ -9,6 +9,7 @@
 #include "System/Base/ComponentDonor.h"
 #include "Component/BehaviourList.h"
 #include "Behaviour/Behaviour.h"
+#include "System/File/FileSystem.h"
 
 #include <memory>
 
@@ -75,6 +76,7 @@ namespace Dystopia
 		MagicArray<BehaviourWrap> & GetAllBehaviour();
 		Behaviour * RequestBehaviour(uint64_t const & _ID, std::string const & _name);
 
+		void ReAttach(void);
 
 #endif
 

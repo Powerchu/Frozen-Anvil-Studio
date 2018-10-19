@@ -196,8 +196,17 @@ void Dystopia::EngineCore::FixedUpdate(void)
 	mfAccumulatedTime += mTimeFixed.Elapsed();
 	mTimeFixed.Lap();
 
+	if (mfAccumulatedTime > 1.0f)
+	{
+		mfAccumulatedTime = 1.f / 60.f;
+	}
+
 	while (mfAccumulatedTime > _FIXED_UPDATE_DT)
 	{
+		for (auto& e : mSystemList)
+		{
+			e->PreFixedUpdate(_FIXED_UPDATE_DT);
+		}
 		for (auto& e : mSystemList)
 		{
 			e->FixedUpdate(_FIXED_UPDATE_DT);

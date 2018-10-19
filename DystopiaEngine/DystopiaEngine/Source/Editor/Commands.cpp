@@ -62,7 +62,8 @@ namespace Dystopia
 		}
 
 		auto& w = EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow();
-		w.SetTitle(w.GetTitle() + L"*");
+		if (w.GetTitle().back() != L'*')
+			w.SetTitle(w.GetTitle() + L"*");
 
 		mUnsavedChanges = true;
 		if (mDeqUndo.size() == mMaxSize)

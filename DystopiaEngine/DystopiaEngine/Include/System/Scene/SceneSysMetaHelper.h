@@ -12,6 +12,7 @@
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Camera/CameraSystem.h"
 #include "System/Input/InputSystem.h"
+#include "System/Sound/SoundSystem.h"
 
 #include "Component/ComponentList.h"
 #include "Component/Component.h"
@@ -20,6 +21,7 @@
 #include "Component/RigidBody.h"
 #include "Component/Camera.h"
 #include "Component/CharacterController.h"
+#include "Component/AudioSource.h"
 
 namespace Dystopia
 {

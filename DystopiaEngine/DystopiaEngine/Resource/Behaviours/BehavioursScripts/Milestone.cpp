@@ -39,15 +39,14 @@ namespace Dystopia
 
 	void Milestone::Init()
 	{ 
+        this->GetOwner()->GetComponent<Transform>()->SetScale(16, 31236, 1); 
 	}
 
-	void Milestone::Update(const float _fDeltaTime)
+	void Milestone::Update(const float)
 	{
-        this->GetOwner()->GetComponent<Transform>()->SetScale(16, 31236, 1); 
-		//throw std::bad_alloc();		
 	}  
 
-	void Milestone::FixedUpdate(const float _fDeltaTime)
+	void Milestone::FixedUpdate(const float)
 	{
 	}
 	
@@ -68,11 +67,11 @@ namespace Dystopia
 		return new Milestone{};
 	}
 
-	void Milestone::Serialise(TextSerialiser& _ser) const
+	void Milestone::Serialise(TextSerialiser&) const
 	{
 	}
 
-	void Milestone::Unserialise(TextSerialiser& _ser)
+	void Milestone::Unserialise(TextSerialiser&)
 	{
 	}
 

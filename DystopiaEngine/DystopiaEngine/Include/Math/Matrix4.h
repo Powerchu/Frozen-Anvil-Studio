@@ -366,19 +366,7 @@ inline Math::Vector4 _CALL Math::Matrix4::operator* (const Vector4 _rhs) const
 	// No idea if any of these provides any speed up against the plain old version
 	Vector4 dot1, dot2, dot3, dot4;
 
-#if USE_DP & defined(_INCLUDED_SMM)	// SSE 4.1
-	
-	dot1.mData = _mm_dp_ps(mData[0].GetRaw(), _rhs.GetRaw(), 0xF1); // Store into 1st component
-	dot2.mData = _mm_dp_ps(mData[1].GetRaw(), _rhs.GetRaw(), 0xF2); // Store into 2nd ...
-	dot3.mData = _mm_dp_ps(mData[2].GetRaw(), _rhs.GetRaw(), 0xF4); // Store into 3rd ...
-	dot4.mData = _mm_dp_ps(mData[3].GetRaw(), _rhs.GetRaw(), 0xF8); // Store into 4th ...
-
-	dot1 = dot1 + dot2;
-	dot3 = dot3 + dot4;
-
-	return dot1 + dot3;
-
-#elif defined(_INCLUDED_PMM)		// SSE 3
+#if defined(_INCLUDED_PMM)		// SSE 3
 
 	dot1 = mData[0] * _rhs;
 	dot2 = mData[1] * _rhs;

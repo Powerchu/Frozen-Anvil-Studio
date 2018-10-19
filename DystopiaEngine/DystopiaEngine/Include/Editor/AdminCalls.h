@@ -25,7 +25,8 @@ namespace Dystopia
 		static std::map<std::string, GameObject*(*)(const std::string&)> g_AdminFuncs
 		{
 			std::make_pair("SpawnObj", &Factory::CreateGameObj),
-			std::make_pair("SpawnObj_T", &Factory::CreatePerformanceObj)
+			std::make_pair("SpawnObj_T", &Factory::CreatePerformanceObj),
+			std::make_pair("SpawnObj_C", &Factory::CreatePerformanceObjCol)
 		};
 
 		bool ValidCommand(const std::string& _toValidate, int& _outCount, std::string& _outParam, std::string& _outAdminFuncName);
