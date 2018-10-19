@@ -4,7 +4,12 @@
 #include "System/Collision/CollisionEvent.h"
 #include "System/Scene/SceneSystem.h"
 #include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 #include "IO/TextSerialiser.h"
+
+#if EDITOR
+#include "Editor/Editor.h"
+#endif 
 
 namespace Dystopia
 {
@@ -89,7 +94,7 @@ namespace Dystopia
 	void  AABB::Serialise(TextSerialiser& _out) const
 	{
 		_out.InsertStartBlock("Box_Collider2D");
-		_out << GetOwner()->GetID();					// gObj ID
+		Component::Serialise(_out);
 		_out << mv3Offset[0];
 		_out << mv3Offset[1];
 		_out << mv3Offset[2];
@@ -101,20 +106,13 @@ namespace Dystopia
 	void  AABB::Unserialise(TextSerialiser& _in)
 	{
 		_in.ConsumeStartBlock();
-		_in >> mID;
+		Component::Unserialise(_in);
 		_in >> mv3Offset[0];
 		_in >> mv3Offset[1];
 		_in >> mv3Offset[2];
 		_in >> mfHeight;
 		_in >> mfWidth;
 		_in.ConsumeEndBlock();
-
-		if (GameObject* owner =
-			EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
-		{
-			owner->AddComponent(this, AABB::TAG{});
-			Init();
-		}
 	}
 
 	//TODO: not yet
@@ -128,14 +126,20 @@ namespace Dystopia
 
 	bool AABB::isColliding(AABB & _ColB)
 	{
-		/*Static vs. Dynamic AABB Collision Check*/
-		auto TransformA = GetOwner()->GetComponent<Transform>();
-		auto TransformB = _ColB.GetOwner()->GetComponent<Transform>();
+		auto OffSetA    = GetOffSet();
+		auto OffSetB    = _ColB.GetOffSet();
+		auto ColAWorldMatrix = GetOwnerTransform() * Math::Translate(OffSetA.x, OffSetA.y, OffSetA.z)* GetTransformationMatrix();
+		auto ColBWorldMatrix = _ColB.GetOwnerTransform() * Math::Translate(OffSetB.x, OffSetB.y, OffSetB.z)* _ColB.GetTransformationMatrix();
 
-		if (   TransformA->GetGlobalPosition().x + this->mMin->mPosition.x <= TransformB->GetGlobalPosition().x + _ColB.mMax->mPosition.x
-			&& TransformA->GetGlobalPosition().x + this->mMax->mPosition.x >= TransformB->GetGlobalPosition().x + _ColB.mMin->mPosition.x
-			&& TransformA->GetGlobalPosition().y + this->mMax->mPosition.y >= TransformB->GetGlobalPosition().y + _ColB.mMin->mPosition.y
-			&& TransformA->GetGlobalPosition().y + this->mMin->mPosition.y <= TransformB->GetGlobalPosition().y + _ColB.mMax->mPosition.y)
+		auto MinPosA         = ColAWorldMatrix * this->mMin->mPosition;
+		auto MaxPosA         = ColAWorldMatrix * this->mMax->mPosition;
+		auto MinPosB         = ColBWorldMatrix * _ColB.mMin->mPosition;
+		auto MaxPosB         = ColBWorldMatrix * _ColB.mMax->mPosition;
+
+		if (   MinPosA.x <= MaxPosB.x
+			&& MaxPosA.x >= MinPosB.x
+			&& MaxPosA.y >= MinPosB.y
+			&& MinPosA.y <= MaxPosB.y)
 		{
 			mbColliding = true;
 			return mbColliding;

@@ -2,7 +2,6 @@
 #define PHYSICS_SYSTEM_H
 #include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
-#include "System/Collision/CollisionSystem.h"
 
 namespace Dystopia
 {
@@ -26,6 +25,7 @@ namespace Dystopia
 		bool Init(void) override;
 		void PostInit(void) override;
 
+		void PreFixedUpdate(float) override;
 		void FixedUpdate(float) override;
 		void Update(float) override;
 		void PostUpdate() override;
@@ -35,13 +35,23 @@ namespace Dystopia
 		void LoadDefaults(void) override;
 		void LoadSettings(TextSerialiser&) override;
 
+		void EditorUI(void);
+
 	private:
-		void Step(float _dt);
 		void CheckSleepingBodies(float _dt);
+		void Step(float _dt);
 		void IntegrateRigidBodies(float _dt);
 		void ResolveCollision(float);
-		void UpdateResults(float _dt);
+		void UpdateResults(float);
 		void DebugPrint();
+
+#if EDITOR
+		void GravityUI(void);
+		void IsDebugUI(void);
+		void MaxVelocityUI(void);
+		void VelocityIterationUI(void);
+		void PositionalIterationUI(void);
+#endif 
 
 		bool  mbIsDebugActive;
 		
@@ -56,8 +66,14 @@ namespace Dystopia
 
 		// Position Correction Tolerance
 		float mPenetrationEpsilon;
-		// Position Correction Resolution as Percentage;
-		unsigned int mResolutionIterations;
+
+		// Velocity Iterations For Resolution;
+		int mVelocityIterations;
+
+		// Position Iterations For Resolution;
+		int mPositionalIterations;
+
+
 	};
 }
 

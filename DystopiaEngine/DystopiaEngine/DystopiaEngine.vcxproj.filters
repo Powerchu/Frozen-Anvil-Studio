@@ -175,9 +175,6 @@
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Logger\LoggerSystem.cpp">
-      <Filter>Game Engine\SubSystems\Logger</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\DefaultFactory.cpp">
       <Filter>Editor\Factory</Filter>
     </ClCompile>
@@ -238,9 +235,6 @@
     <ClCompile Include="Source\Math\Vector4.cpp">
       <Filter>Math\Vector</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Allocator\DefaultAlloc.cpp">
-      <Filter>Allocator</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
@@ -249,6 +243,45 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\AdminCalls.cpp">
       <Filter>Editor\Admin</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\ProjectSettings.cpp">
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\SpritePreviewer.cpp">
+      <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Input\XGamePad.cpp">
+      <Filter>Game Engine\Systems\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Events\Events.cpp">
+      <Filter>Game Engine\Systems\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Allocator\DefaultAlloc.cpp">
+      <Filter>Allocator\DefaultAllocator</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Allocator\Allocator.cpp">
+      <Filter>Allocator\Allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Logger\LoggerSystem.cpp">
+      <Filter>Game Engine\SubSystems\Logger\LoggerSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Logger\FileLogger.cpp">
+      <Filter>Game Engine\SubSystems\Logger\FileLogger</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\AudioSource.cpp">
+      <Filter>Game Engine\Components\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Sound\Audio.cpp">
+      <Filter>Game Engine\SubSystems\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Sound\SoundSystem.cpp">
+      <Filter>Game Engine\Systems\Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -414,9 +447,6 @@
     <ClInclude Include="Include\DataStructure\SharedPtr.h">
       <Filter>DataStructures\Pointers</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Allocator\DefaultAlloc.h">
-      <Filter>Allocator</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Graphics\MeshSystem.h">
       <Filter>Game Engine\SubSystems\Mesh</Filter>
     </ClInclude>
@@ -540,9 +570,6 @@
     <ClInclude Include="Include\System\Profiler\Profiler.h">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Logger\LoggerSystem.h">
-      <Filter>Game Engine\SubSystems\Logger</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Graphics\Framebuffer.h">
       <Filter>Game Engine\Systems\Graphic\Framebuffer</Filter>
     </ClInclude>
@@ -654,11 +681,95 @@
     <ClInclude Include="Include\System\Collision\CollisionEvent.h">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Allocator\DefaultAllocImpl.h">
-      <Filter>Allocator</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\AdminCalls.h">
       <Filter>Editor\Admin</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\ProjectSettings.h">
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\SpritePreviewer.h">
+      <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Input\XGamePad.h">
+      <Filter>Game Engine\Systems\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\MetaFloat.h">
+      <Filter>Math\MetaMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\Reflection.h">
+      <Filter>Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPVariadicSize.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPToSequence.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPPopFront.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPRemove.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPConcat.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPExtract.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\MetaData.h">
+      <Filter>Reflection\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPForEach.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPUtils.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\PPStringify.h">
+      <Filter>Reflection\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\ReflectedData.h">
+      <Filter>Reflection\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\DefaultAllocImpl.h">
+      <Filter>Allocator\DefaultAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\DefaultAlloc.h">
+      <Filter>Allocator\DefaultAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\ProxyAlloc.h">
+      <Filter>Allocator\ProxyAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\SystemSettings.h">
+      <Filter>Editor\Editor Tabs\SystemSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\Allocator.h">
+      <Filter>Allocator\Allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Logger\LoggerSystem.h">
+      <Filter>Game Engine\SubSystems\Logger\LoggerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Logger\FileLogger.h">
+      <Filter>Game Engine\SubSystems\Logger\FileLogger</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Collision\BroadPhaseCircle.h">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Collision\BoundingColliderNode.h">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Events\Events.h">
+      <Filter>Game Engine\Systems\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\DragStatus.h">
+      <Filter>Editor\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\AudioSource.h">
+      <Filter>Game Engine\Components\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Sound\Audio.h">
+      <Filter>Game Engine\SubSystems\Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -937,6 +1048,51 @@
     </Filter>
     <Filter Include="Editor\Admin">
       <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Project Settings">
+      <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Sprite Previewer">
+      <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\MetaMath">
+      <UniqueIdentifier>{08413c81-cbde-4575-842c-fc63e39a282d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection">
+      <UniqueIdentifier>{c13d8e9d-1ea4-40c5-b67f-f2713024e57a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\Preprocessor">
+      <UniqueIdentifier>{af73041d-894d-4be1-9ac1-a597e6a69bf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\Metadata">
+      <UniqueIdentifier>{7b27b49c-13db-4784-8317-6eb1859a099c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Allocator\DefaultAllocator">
+      <UniqueIdentifier>{c72b2281-3bc2-4610-b2e5-183e13bc5bbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Allocator\ProxyAllocator">
+      <UniqueIdentifier>{4ffb5d1f-2ca0-4a43-917c-a699ba07a0da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\SystemSettings">
+      <UniqueIdentifier>{f494a940-4551-4291-aa92-cff931764600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\TagSystem">
+      <UniqueIdentifier>{717afecd-7ef3-4406-b046-fe7b2ed2f840}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Allocator\Allocator">
+      <UniqueIdentifier>{9baa3d75-f8aa-4e1c-8273-18e2128a6cdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Logger\LoggerSystem">
+      <UniqueIdentifier>{ac22d190-b1ed-4bb8-9f14-b988bc8d5c98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Logger\FileLogger">
+      <UniqueIdentifier>{7034c117-e848-41c3-8883-3d54e3f596b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Audio">
+      <UniqueIdentifier>{ecb40fbd-9434-45dc-a5a7-1ae1e1cbac7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Audio">
+      <UniqueIdentifier>{af08a7e0-ec45-4ccd-a2b8-08336c4d36da}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

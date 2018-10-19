@@ -15,13 +15,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SCENE_VIEW_H_
 #define _SCENE_VIEW_H_
 #include "EditorTab.h"
+#include "DataStructure/AutoArray.h"
 
 namespace Dystopia
 {
 	class GraphicsSystem;
 	class GameObject;
 	class Camera;
-	class EditorInput;
+	class Texture;
 	struct File;
 
 	class SceneView : public EditorTab
@@ -51,6 +52,13 @@ namespace Dystopia
 	private:
 		SceneView(void);
 
+		enum eGizTool
+		{
+			eTRANSLATE,
+			eSCALE,
+			eROTATE
+		};
+
 		enum eZoom 
 		{
 			eZOOM_IN,
@@ -58,18 +66,20 @@ namespace Dystopia
 			eZOOM_NONE
 		};
 
+		eGizTool		mCurrGizTool;
+		bool			mGizmoHovered;
+		bool			mClearSelection;
 		bool			mDragging;
 		bool			mAmFocused;
-		float			mDelta;
 		float			mSensitivity;
 		float			mMoveSens;
 		eZoom			mToZoom;
 		std::string		mLabel;
 		GraphicsSystem	*mpGfxSys;
 		GameObject		*mpSceneCamera;
-		EditorInput		*mpEditorInput;
 		Math::Vec2		mImgSize;
 		Math::Vec2		mMoveVec;
+		Math::Vec2		mImgPos;
 		
 		void			ScrollIn();
 		void			ScrollOut();
@@ -83,7 +93,18 @@ namespace Dystopia
 		void			AcceptTexture(File *t);
 		Math::Pt3D		GetWorldClickPos(const Camera * const _cam) const;
 		Math::Vec2		FindMouseVector();
+		void			AdjustImageSize(Texture*);
+		void			AdjustDisplayPos(void);
+		Math::Vec2		GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY);
+		Math::Vec2		GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY);
+		Math::Vec2		GetWorldToScreen(const Math::Pt3D&) const;
 		Camera*			GetCamera();
+		void			DrawGizmos(void);
+		void			DrawGizmoSingle(GameObject&);
+		void			DrawGizmoMul(const AutoArray<GameObject*>&);
+
+		void			SetGizmoTranslate(void);
+		void			SetGizmoScaler(void);
 	};
 
 }

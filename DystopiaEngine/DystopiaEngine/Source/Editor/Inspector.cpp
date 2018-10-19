@@ -17,22 +17,30 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/ScriptFormatter.h"
 #include "Editor/Commands.h"
 #include "Editor/EditorEvents.h"
-#include "Editor/EditorMetaHelpers.h"
 
+#include "Component/AudioSource.h"
 #include "Component/Camera.h"
 #include "Component/Collider.h"
+#include "Component/Circle.h"
+#include "Component/AABB.h"
+#include "Component/Convex.h"
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
 #include "Component/CharacterController.h"
 
+#include "System/Sound/SoundSystem.h"
+#include "System/Input/InputSystem.h"
+#include "System/Camera/CameraSystem.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
-#include "System/Camera/CameraSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
-#include "System/Input/InputSystem.h"
 
 #include "Utility/ComponentGUID.h"
+#include "Object/ObjectFlags.h"
+#include "Object/GameObject.h"
+
+#include "Editor/EditorMetaHelpers.h"
 
 #include <iostream>
 
@@ -40,6 +48,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 static const std::string g_bPopup = "Behaviour List";
 static const std::string g_cPopup = "Component List";
 static const std::string g_nPopup = "New Behaviour Name";
+
 
 namespace Dystopia
 {
@@ -80,6 +89,8 @@ namespace Dystopia
 
 	void Inspector::EditorUI()
 	{
+		auto& allObj = GetMainEditor()->GetSelectionObjects();
+		mpFocus = (allObj.size() == 1) ? *allObj.begin() : nullptr;
 		if (!mpFocus) return;
 
 		static constexpr Math::Vec2 btnSize{ 270, 20 };
@@ -120,10 +131,16 @@ namespace Dystopia
 				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
 				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
-			EGUI::Display::DropDownSelection("Tag", i, g_arr, 80);
+			if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))
+			{
+
+			}
 			EGUI::SameLine();
 			EGUI::ChangeAlignmentYOffset(0);
-			EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80);
+			if (EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80))
+			{
+
+			}
 			EGUI::ChangeAlignmentYOffset();
 		}
 		EGUI::EndChild();
@@ -176,16 +193,6 @@ namespace Dystopia
 		return mLabel;
 	}
 
-	void Inspector::SetFocus(GameObject& _rGameObj)
-	{
-		mpFocus = &_rGameObj;
-	}
-
-	void Inspector::RemoveFocus()
-	{
-		mpFocus = nullptr;
-	}
-
 	void Inspector::AddComponentButton(const Math::Vec2& _btnSize)
 	{
 		if (EGUI::Display::Button("Add Component", _btnSize))
@@ -198,7 +205,7 @@ namespace Dystopia
 	void Inspector::ComponentsDropDownList()
 	{
 		static ListOfComponents availableComp;
-		static constexpr size_t numComponents = Utility::SizeofList<UsableComponents>::value;
+		static constexpr size_t numComponents = Ut::SizeofList<UsableComponents>::value;
 		Array<std::string, numComponents> arr;
 		ListOfComponentsName<std::make_index_sequence<numComponents>, UsableComponents>::Extract(arr);
 
@@ -214,7 +221,6 @@ namespace Dystopia
 					mpFocus->AddComponent(pComp, typename Component::TAG{});
 				}
 			}
-
 			EGUI::Display::EndPopup();
 		}
 	}

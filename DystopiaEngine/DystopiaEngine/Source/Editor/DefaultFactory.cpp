@@ -13,22 +13,35 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/DefaultFactory.h"
+#include "Editor/Payloads.h"
+#include "Editor/EditorMetaHelpers.h"
 
+#include "Utility/GUID.h"
+#include "Utility/DebugAssert.h"
+#include "Object/GameObject.h"
+#include "IO/TextSerialiser.h"
+
+#include "Component/AudioSource.h"
 #include "Component/Camera.h"
-#include "Component/ColliderList.h"
+#include "Component/Collider.h"
+#include "Component/Circle.h"
+#include "Component/AABB.h"
+#include "Component/Convex.h"
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
+#include "Component/CharacterController.h"
 
+#include "System/Sound/SoundSystem.h"
 #include "System/Driver/Driver.h"
-#include "System/Graphics/GraphicsSystem.h"
+#include "System/Input/InputSystem.h"
 #include "System/Camera/CameraSystem.h"
-
-// TODO: DELETE
 #include "System/Physics/PhysicsSystem.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
 
-#include "Object/GameObject.h"
-#include "Utility/GUID.h"
+#include <fstream>
+#include <iostream>
 
 namespace Dystopia
 {
@@ -47,21 +60,45 @@ namespace Dystopia
 			GameObject *pObject = new GameObject{ GUIDGenerator::GetUniqueID() };
 			pObject->SetName(_name);
 			pObject->SetActive(true);
-			pObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 100, 100, 1 });
-			pObject->Init();
+			pObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 16, 16, 1 });
 			auto rend = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
 			pObject->AddComponent(rend, typename Renderer::TAG{});
 			auto rigid = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 			pObject->AddComponent(rigid, typename RigidBody::TAG{});
-			auto c = static_cast<ComponentDonor<Convex>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
-			pObject->AddComponent(c, typename Collider::TAG{});
+			auto col = static_cast<ComponentDonor<Convex>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
+			pObject->AddComponent(col, typename Collider::TAG{});
+
+			pObject->Identify();
+			pObject->Init();
+			rend->Init();
+			rigid->Init();
+			col->Init();
+
+			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Editor/white_box.png"));
+			return pObject;
+		}
+
+		GameObject* CreatePerformanceObjCol(const std::string& _name)
+		{
+			GameObject *pObject = new GameObject{ GUIDGenerator::GetUniqueID() };
+			pObject->SetName(_name);
+			pObject->SetActive(true);
+			pObject->Init();
+			pObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 16, 16, 1 });
+			const auto rend = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			const auto rigid = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
+			const auto col = static_cast<ComponentDonor<Convex>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
+			pObject->AddComponent(rend, Renderer::TAG{});
+			pObject->AddComponent(rigid, RigidBody::TAG{});
+			pObject->AddComponent(col, Collider::TAG{});
+			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Editor/red_box.png"));
 			rend->SetOwner(pObject);
 			rend->Init();
-			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Editor/white_box.png"));
 			rigid->SetOwner(pObject);
 			rigid->Init();
-			c->SetOwner(pObject);
-			c->Init();
+			col->SetOwner(pObject);
+			col->Init();
+			pObject->Init();
 			return pObject;
 		}
 
@@ -69,9 +106,8 @@ namespace Dystopia
 		{
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent();
-			p->SetOwner(pObject);
-			p->Init();
 			pObject->AddComponent(p, typename Camera::TAG{});
+			pObject->Identify();
 			return pObject;
 		}
 
@@ -127,6 +163,62 @@ namespace Dystopia
 			auto c = static_cast<ComponentDonor<Circle>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
 			pObject->AddComponent(c, typename Collider::TAG{});
 			return pObject;
+		}
+	
+		std::string SaveAsPrefab(GameObject& _obj, const std::string& _path)
+		{
+			std::string fileName = _path + "\\" + _obj.GetName() + g_PayloadPrefabEx;
+			std::ofstream file{ fileName, std::ios::out };
+			if (!file.is_open())
+				__debugbreak();
+
+			auto toFile					= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_WRITE);
+			const auto& allComponents	= _obj.GetAllComponents();
+
+			toFile.InsertStartBlock("GameObject");
+			toFile << allComponents.size();
+			_obj.Serialise(toFile);
+			toFile.InsertEndBlock("GameObject");
+			for (const auto& elem : allComponents)
+			{
+				toFile.InsertStartBlock("Component");
+				toFile << elem->GetRealComponentType();
+				elem->Serialise(toFile);
+				toFile.InsertEndBlock("Component End");
+			}
+			return _obj.GetName() + g_PayloadPrefabEx;
+		}
+
+		GameObject* LoadFromPrefab(std::string _gameObjName, const std::string& _path)
+		{
+			std::string fileName = _gameObjName.length() ? _path + "\\" + _gameObjName : _path;
+
+			if (fileName.find(Dystopia::g_PayloadPrefabEx) == std::string::npos)
+				return nullptr;
+
+			ListOfComponents availComponents;
+			unsigned	num			= 0;
+			unsigned	sysID		= 0;
+			auto		fromFile	= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_READ);
+			GameObject* pObj		= new GameObject{};
+
+			fromFile.ConsumeStartBlock();
+			fromFile >> num;
+			pObj->Unserialise(fromFile);
+			fromFile.ConsumeEndBlock();
+			for (unsigned i = 0; i < num; i++)
+			{
+				fromFile.ConsumeStartBlock();
+				fromFile >> sysID;
+				Component* pComp = availComponents.Get(sysID, pObj);
+				pObj->AddComponent(pComp, typename Component::TAG{});
+				pComp->Unserialise(fromFile);
+				fromFile.ConsumeEndBlock();
+			}
+
+			pObj->SetID(GUIDGenerator::GetUniqueID());
+			pObj->Identify();
+			return pObj;
 		}
 	}
 }

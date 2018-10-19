@@ -39,7 +39,11 @@ namespace Dystopia
 		using SYSTEM = GraphicsSystem;
 		unsigned GetComponentType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value; 
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllComponents>::value; 
+		};
+		unsigned GetRealComponentType(void) const
+		{
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, UsableComponents>::value;
 		};
 		static const std::string GetCompileName(void) { return "Renderer"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }

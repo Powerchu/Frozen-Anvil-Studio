@@ -13,6 +13,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/CommandList.h"
+#include "Editor/Editor.h"
+#include "Editor/Clipboard.h"
+
 #include "Behaviour/Behaviour.h"
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
@@ -20,6 +23,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/GameObject.h"
 
 /* Insert Game Object Command  ****************************************************************************/
+
+Dystopia::GameObject* Dystopia::Commands::RetrieveGameObject()
+{
+	return nullptr;
+}
 
 Dystopia::ComdInsertObject::ComdInsertObject(GameObject* _pObj, Scene * _pScene, bool * _notify)
 	: mObjID{ _pObj->GetID() }, mpObj{ _pObj }, mpScene{ _pScene }, mFocusBack{ false },
@@ -38,26 +46,25 @@ Dystopia::ComdInsertObject::~ComdInsertObject()
 bool Dystopia::ComdInsertObject::ExecuteDo()
 {
 	if (auto ss = EngineCore::GetInstance()->GetSystem<SceneSystem>())
-	{
 		if (&ss->GetCurrentScene() != mpScene)
-		{
 			return false;
-		}
-	}
+
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (p || !mpObj) return false;
 
-	mpScene->GetAllGameObjects().EmplaceBack(Utility::Move(*mpObj));
+	mpScene->GetAllGameObjects().EmplaceBack(Ut::Move(*mpObj));
 	auto& obj = mpScene->GetAllGameObjects().back();
+	obj.Identify();
 	obj.Init();
 	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
-	for (auto& c : mpObj->GetAllComponents())
+	for (auto& c : obj.GetAllComponents())
 		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+
 	if (mFocusBack)
 	{
 		Editor *e = Editor::GetInstance();
 		GameObject *temp = mpScene->FindGameObject(mObjID);
-		if (temp) e->SetFocus(*temp);
+		if (temp) e->NewSelection(mObjID);//e->SetFocus(*temp);
 		mFocusBack = false;
 	}
 
@@ -70,31 +77,39 @@ bool Dystopia::ComdInsertObject::ExecuteDo()
 bool Dystopia::ComdInsertObject::ExecuteUndo()
 {
 	if (auto ss = EngineCore::GetInstance()->GetSystem<SceneSystem>())
-	{
 		if (&ss->GetCurrentScene() != mpScene)
-		{
 			return false;
-		}
-	}
+
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (!p) return false;
 
 	Editor *e = Editor::GetInstance();
-	if (e->GetCurrentFocusGameObj() == p)
+	auto all = e->GetSelectionObjects();
+	for (auto & elem : all)
 	{
-		e->RemoveFocus();
-		mFocusBack = true;
+		if (elem == p)
+		{
+			e->RemoveSelection(mObjID);
+			mFocusBack = true;
+			break;
+		}
 	}
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
 	mpObj->SetID(mObjID);
+	mpObj->Identify();
 	mpObj->Init();
 	mpObj->SetFlag(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : mpObj->GetAllComponents())
 		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	p->Destroy();
 	return true;
+}
+
+Dystopia::GameObject* Dystopia::ComdInsertObject::RetrieveGameObject()
+{
+	return mpObj;
 }
 
 bool Dystopia::ComdInsertObject::Unchanged() const 
@@ -121,25 +136,28 @@ Dystopia::ComdDeleteObject::~ComdDeleteObject()
 bool Dystopia::ComdDeleteObject::ExecuteDo()
 {
 	if (auto ss = EngineCore::GetInstance()->GetSystem<SceneSystem>())
-	{
 		if (&ss->GetCurrentScene() != mpScene)
-		{
 			return false;
-		}
-	}
+
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (!p) return false;
 
 	Editor* e = Editor::GetInstance();
-	if (e->GetCurrentFocusGameObj() == p)
+	auto all = e->GetSelectionObjects();
+	for (auto & elem : all)
 	{
-		e->RemoveFocus();
-		mFocusBack = true;
+		if (elem == p)
+		{
+			e->RemoveSelection(mObjID);
+			mFocusBack = true;
+			break;
+		}
 	}
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
 	mpObj->SetID(mObjID);
+	mpObj->Identify();
 	mpObj->Init();
 	mpObj->SetFlag(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : mpObj->GetAllComponents())
@@ -151,32 +169,37 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 bool Dystopia::ComdDeleteObject::ExecuteUndo()
 {
 	if (auto ss = EngineCore::GetInstance()->GetSystem<SceneSystem>())
-	{
 		if (&ss->GetCurrentScene() != mpScene)
-		{
 			return false;
-		}
-	}
+
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (p || !mpObj) return false;
 
-	mpScene->GetAllGameObjects().EmplaceBack(Utility::Move(*mpObj));
+	mpScene->GetAllGameObjects().EmplaceBack(Ut::Move(*mpObj));
 	auto& obj = mpScene->GetAllGameObjects().back();
+	obj.Identify();
 	obj.Init();
 	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
-	for (auto& c : mpObj->GetAllComponents())
+	for (auto& c : obj.GetAllComponents())
 		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+
 	if (mFocusBack)
 	{
 		Editor* e = Editor::GetInstance();
 		GameObject *temp = mpScene->FindGameObject(mObjID);
-		if (temp) e->SetFocus(*temp);
+		if (temp) e->NewSelection(mObjID);// e->SetFocus(*temp);
 		mFocusBack = false;
 	}
+
 	if (mpNotify) *mpNotify = true;
 	delete mpObj;
 	mpObj = nullptr;
 	return true;
+}
+
+Dystopia::GameObject* Dystopia::ComdDeleteObject::RetrieveGameObject()
+{
+	return mpObj;
 }
 
 bool Dystopia::ComdDeleteObject::Unchanged() const
@@ -184,5 +207,37 @@ bool Dystopia::ComdDeleteObject::Unchanged() const
 	return false;
 }
 
+Dystopia::ComdBatch::ComdBatch(AutoArray<Commands*>&& _arrComds)
+	: mArrCommands{ _arrComds }
+{
+}
+
+Dystopia::ComdBatch::~ComdBatch()
+{
+	for (auto e : mArrCommands)
+		delete e;
+	mArrCommands.clear();
+}
+
+bool Dystopia::ComdBatch::ExecuteDo()
+{
+	int passes = 0;
+	for (const auto& c : mArrCommands)
+		passes = (c->ExecuteDo()) ? passes + 1 : passes;
+	return (passes > 0);
+}
+
+bool Dystopia::ComdBatch::ExecuteUndo()
+{
+	int passes = 0;
+	for (const auto& c : mArrCommands)
+		passes = (c->ExecuteUndo()) ? passes + 1 : passes;
+	return (passes > 0);
+}
+
+bool Dystopia::ComdBatch::Unchanged() const
+{
+	return false;
+}
 
 #endif //EDITOR

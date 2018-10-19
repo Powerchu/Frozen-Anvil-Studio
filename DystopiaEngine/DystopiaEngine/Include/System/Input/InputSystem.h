@@ -22,6 +22,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/MouseData.h"
 #include "Component/Component.h"
 #include "System/Base/ComponentDonor.h"
+#include "XGamePad.h"
+#include <map>
+
 
 namespace Dystopia
 {
@@ -31,6 +34,20 @@ namespace Dystopia
 
 	class InputManager : public Systems, public ComponentDonor<CharacterController>
 	{
+	public:
+
+		struct KeyboardState
+		{
+			using u32int = unsigned long;
+
+			/*Cover all 256 Keys*/
+			u32int mKeyPressFlags[8];
+
+			operator void*();
+			operator u32int*();
+			operator const u32int* () const;
+		};
+
 	public:
 		InputManager(void);
 		~InputManager(void);
@@ -43,12 +60,27 @@ namespace Dystopia
 
 		void LoadDefaults(void);
 		void LoadSettings(TextSerialiser&);
-		
+
 		void MapUserButton(eUserButton, eButton);
 
-		bool IsKeyTriggered(eUserButton) const noexcept;
-		bool IsKeyPressed(eUserButton) const noexcept;
-		bool IsKeyReleased(eUserButton) const noexcept;
+		void MapButton(std::string const & _name, eButton _Button);
+
+		bool IsKeyTriggered(eButton) const noexcept;
+		bool IsKeyPressed(eButton)   const noexcept;
+		bool IsKeyReleased(eButton)  const noexcept;
+	
+
+		bool IsKeyTriggered(std::string const & _ButtonName) const noexcept;
+		bool IsKeyPressed(std::string const & _ButtonName)   const noexcept;
+		bool IsKeyReleased(std::string const & _ButtonName)  const noexcept;
+
+		bool IsController() const;
+
+		float GetAnalogY(int) const;	//0 for left analog, all others for right
+		float GetAnalogX(int) const;	//0 for left analog, all others for right
+
+		float GetTriggers(int) const;	// 0 for left trigger, all others for right
+										// values returned are between: mfTriggerThresh ~ 255
 
 		Math::Vector2 GetMousePosition(void) const;
 		Math::Vector2 GetMousePosition(const Window&) const;
@@ -56,7 +88,6 @@ namespace Dystopia
 		float GetMouseWheel(void) const noexcept;
 
 	private:
-
 		struct KeyBinding
 		{
 			unsigned mnKey;
@@ -69,10 +100,16 @@ namespace Dystopia
 		};
 
 		MouseData mMouseInput;
-		Array<KeyBinding, eUserButton::TOTAL_USERBUTTONS> mButtonMap;
-		
+
+		KeyboardState mKeyBoardState;
+		KeyboardState mPrevKeyBoardState;
+
 		void LoadDefaultUserKeys(void);
+
+		std::map<std::string, eButton> mButtonMapping;
+		XGamePad mGamePad;
 	};
+
 }
 
 

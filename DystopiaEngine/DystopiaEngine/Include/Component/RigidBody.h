@@ -19,8 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/ComponentList.h"
 #include "Math/Vector4.h"
 #include "Math/Matrix4.h"
-#include "DataStructure/Queue.h"
-
+#include "Math/Vector2.h"
 
 //#include "Math/Quaternion.h"
 //#include "Math/Angles.h"
@@ -42,7 +41,11 @@ namespace Dystopia
 		using SYSTEM = PhysicsSystem;
 		unsigned GetComponentType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllComponents>::value;
+		};
+		unsigned GetRealComponentType(void) const
+		{
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, UsableComponents>::value;
 		};
 		static const std::string GetCompileName(void) { return "RigidBody"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
@@ -67,9 +70,9 @@ namespace Dystopia
 	protected:
 		enum PhysicsType
 		{
-			t_dynamic = 0,		// fixed timestep frame checking for collision
-			t_kinematic,		// dynamic objects that will not be pushed around
-			t_static	// continuous checking for collision
+			eDynamicBody = 0,		// fixed timestep frame checking for collision
+			eKinematicBody,		// dynamic objects that will not be pushed around
+			eStaticBody	// continuous checking for collision
 		};
 		//~RigidBody(void);
 
@@ -77,6 +80,7 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		void Integrate(float _dt);
 		void CheckSleeping(float _dt);
+		void PreUpdatePosition(float _dt);
 		void UpdateResult(float _dt);
 
 		// void Update(float _dt);
@@ -104,7 +108,7 @@ namespace Dystopia
 		Make sure _point is in global coordinates
 
 		**************************************************************************************************/
-		void AddForce(Vec3D const & _force, Point3D const & _point);
+		void AddForceWithOrigin(Vec3D const & _force, Point3D const & _point);
 
 		/**************************************************************************************************
 		\brief
@@ -114,19 +118,23 @@ namespace Dystopia
 		Make sure _point & _origin is in global coordinates
 		**************************************************************************************************/
 		void AddForce(Vec3D   const & _force,
-			          Point3D const & _point, 
-			          Point3D const & _origin);
+			Point3D const & _point,
+			Point3D const & _origin);
 
 		/*Add a force at the origin of the body*/
 		void AddForce(Vec3D const & _force);
 
+		/* Add torque based on COM*/
+		void AddTorque(Math::Vec3D const& _torque);
 
 
 		// ADD IMPULSE
-		void AddImpulse(Vec3D const & _impul);
-		void AddImpulse(Vec3D const & _impul, Point3D const & _point);
-		void AddImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const & _org);
+		void AddLinearImpulse(Vec3D const & _impul);
+		void AddLinearImpulseWithOrigin(Vec3D const & _impul, Point3D const & _point);
+		void AddLinearImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const & _origin);
 
+		// Angular Impulse
+		void ApplyAngularImpulse(Vec3D const & _impul);
 
 		/**************************************************************************************************
 		\brief
@@ -140,13 +148,14 @@ namespace Dystopia
 		void Set_ToggleGravity(bool);
 		void Set_IsStatic(bool);
 		void SetPosition(const Vec3D&);
-		void SetVelocity(const Vec3D&);
+		void SetLinearVel(const Vec3D&);
+		void SetAngularVel(const Vec3D&);
 		void SetMass(const float);
 		void SetStaticFriction(const float);
 		void SetKineticFriction(const float);
 		void SetRestitution(const float);
 		void SetSleeping(const bool);
-
+		void SetFixedRotation(bool flag);
 
 		// Gettors
 		Vec3D GetPosition() const;
@@ -155,19 +164,27 @@ namespace Dystopia
 		Vec3D GetAngularVelocity() const;
 		Vec3D GetAcceleration() const;
 		Transform* GetOwnerTransform() const;
-		float GetAngle() const;
+		float GetAngle() const; //degrees
 		float GetStaticFriction() const;
 		float GetKineticFriction() const;
 		float GetRestitution() const;
 		float GetGravityScalar() const;
 		float GetMass() const;
 		float GetInverseMass() const;
+		float GetInertia() const;
+		float GetInverseInertia() const;
 		bool  Get_HasGravityState() const;
 		bool  Get_IsStaticState() const;
 		bool GetIsAwake() const;
 
+		// Does this body have fixed rotation?
+		bool Get_IsFixedRotation() const;
+		/// Get the world position of the center of mass.
+		const Vec3D& GetWorldCenter() const;
+		/// Get the local position of the center of mass.
+		const Vec3D& GetLocalCenter() const;
+
 	private:
-		Primitive*				mpPrimitiveShape;			/* The underlying primitive of the RigidBody*/
 		Transform*				mpOwnerTransform;			/* Used for accessing position and GameObject World orientation*/
 		PhysicsSystem*			mpPhysSys;					/* A pointer to Physics System to get global constants (i.e. Gravity)*/
 
@@ -178,29 +195,34 @@ namespace Dystopia
 
 		Vec3D					mLinearVelocity;			/* Linear Velocity of the RigidBody with respect to World Space*/
 		Vec3D					mAngularVelocity;			/* Angular Velocity/Rotation with respect to World Space*/
-		Vec3D					mAcceleration;				/* For integration purpose when updating position.*/
+		Vec3D					mLinearAcceleration;		/* For integration purpose when updating position.*/
+		Vec3D					mAngularAcceleration;		/* For integration purpose when updating position.*/
 
 		Vec3D					mCumulativeForce;			/* The sum of all the force acting on the body*/
 		Vec3D					mCumulativeTorque;			/* Sum of all angular forces acting on the body*/
 
 		Mat3D					mLocalInvInertiaTensor;
 		Mat3D					mGlobalInvInertiaTensor;
-		
+
 		Vec3D					mGlobalCentroid;
 		Vec3D					mLocalCentroid;
-			
-		float					mfAngleDeg;					/* Anticlockwise Direction: Angles in Degrees*/
-		float					mfLinearDamping;			/* Linear Drag, slows down motion dynamics over time*/
 
+		float					mfAngleDeg;					/* Anticlockwise Direction: Angles in Degrees*/
+
+		Math::Vector2			mLinearDamping;				/* Linear Damping in the X and Y axis */
 		float					mfAngularDrag;				/* Coefficient of angular drag. */
 		float					mfStaticFriction;			/* Like LinearDamping, but only drag the forces when 2 or more objects are colliding*/
 		float					mfDynamicFriction;
 		float					mfRestitution;				/* Elasticity Coefficient: 'Bounciness' of the body*/
 
 		float					mfGravityScale;				/* A scalar multiple (in float) of the Physics Engine's gravity*/
-	
+
 		float					mfMass;						/* Defines how difficult it is to move an object*/
 		float					mfInvMass;					/* For calculation purposes, since integration uses mass inverse*/
+
+		// Rotational inertia about the center of mass.
+		float					mfInertia;
+		float					mfInvInertia;
 
 		float					mfWeightedMotion;
 
@@ -210,10 +232,22 @@ namespace Dystopia
 
 		bool					mbIsAwake;
 		bool					mbCanSleep;
+		bool					mbFixedRot;
+
+		float					mSleepTime;
 
 		PhysicsType				mPhysicsType;
 
-
+		//// m_flags
+		//enum
+		//{
+		//	eIslandFlag = 0x0001,
+		//	eAwakeFlag = 0x0002,
+		//	eAutoSleepFlag = 0x0004,
+		//	eBulletFlag = 0x0008,
+		//	eFixedRotationFlag = 0x0010,
+		//	eActiveFlag = 0x0020,
+		//};
 
 		/*Quaternion if needed*/
 

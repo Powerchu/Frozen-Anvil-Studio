@@ -17,24 +17,29 @@ namespace Dystopia
 
 	struct CollisionEvent
 	{
-		using mpcGobj = GameObject const * const;
-
+		using mpcGobj = GameObject const *;
+		using u64int  = unsigned long long;
 		CollisionEvent(GameObject* _Self, GameObject * _Target);
 
-		Math::Point3D		mCollisionPoint;	//Contact Point
+		mpcGobj				mThisCollider;		//Gameobject Collision This
+		mpcGobj				mCollidedWith;		//Gameobject Collision That
 
+		Math::Point3D		mCollisionPoint;	//Contact Point
 		Math::Vector3D		mEdgeVector;		//Contact Vector
 		Math::Vector3D		mEdgeNormal;		//Contact Normal
-		double				mdPeneDepth;		//Previous Frame penetration
-		mpcGobj				mThisCollider;		//Gameobject Collision Who?
-		mpcGobj				mCollidedWith;		//Gameobject Collision Who?
+
+		float				mfPeneDepth;		//Previous Frame penetration
 		float				mfRestitution;		//Total summed (min) restitution
 		float				mfStaticFrictionCof;		//Total friction averaged (sqrt)
 		float				mfDynamicFrictionCof;
+		u64int              mOtherID;
 
-		void ApplyImpulse(void);
-		void ApplyPenetrationCorrection(void);
+		void ApplyImpulse();
+		void ApplyPenetrationCorrection(int iter = 1) const;
 
+		bool operator==(CollisionEvent const & _rhs)         const;
+		bool operator==(unsigned long long _mCollidedWithID) const;
+		bool operator==(mpcGobj _pCollidedWith)              const;
 	private:
 		Math::Vec3D			mCumulativeImpulse;
 	};

@@ -26,7 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif 
 
 Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
-	: mRotation{ }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f }, 
+	: mRotation{ }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f, 1.f }, 
 	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, Component { _pOwner }
 {
 
@@ -254,18 +254,14 @@ void Dystopia::Transform::EditorUI(void) noexcept
 	{
 		switch (e)
 		{
-		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
 		case EGUI::eDragStatus::eDRAGGING:
 			mbChanged = true;
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mPosition, &mbChanged);
+			EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mPosition, &mbChanged);
 			break;
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
 			break;
@@ -277,22 +273,16 @@ void Dystopia::Transform::EditorUI(void) noexcept
 	{
 		switch (e)
 		{
-		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale, &mbChanged);
+			EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mScale, &mbChanged);
 			break;
 		case EGUI::eDragStatus::eDRAGGING:
 			mbChanged = true;
 			break;
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
-			break;
-		default:
 			break;
 		}
 	}
@@ -303,14 +293,8 @@ void Dystopia::Transform::EditorUI(void) noexcept
 	{
 		switch (e)
 		{
-		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Transform>(GetOwner()->GetID(), &mScale, &mbChanged);
+			EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mRotation, &mbChanged);
 			break;
 		case EGUI::eDragStatus::eDRAGGING:
 			mbChanged = true;
@@ -320,14 +304,24 @@ void Dystopia::Transform::EditorUI(void) noexcept
 				Math::Degrees(eulerAngle[2])
 			);
 			break;
+		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
+		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();
-			break;
-		default:
 			break;
 		}
 	}
 
 #endif 
+}
+
+Dystopia::Transform& Dystopia::Transform::operator=(const Dystopia::Transform& _rhs)
+{
+	mbChanged	= _rhs.mbChanged;
+	mMatrix		= _rhs.mMatrix;
+	mScale		= _rhs.mScale;
+	mPosition	= _rhs.mPosition;
+	mRotation	= _rhs.mRotation;
+	return *this;
 }
 

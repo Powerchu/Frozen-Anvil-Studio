@@ -12,8 +12,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Logger/LoggerSystem.h"
-#include "System/Driver/Driver.h"
+#include "System/Logger/FileLogger.h"
+
 #include "Editor/ConsoleLog.h"
+#include "System/Driver/Driver.h"
+
+#if defined(DEBUGALLOC)
+#include "Allocator/Allocator.h"
+#endif
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
@@ -32,7 +38,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	void WriteCallStack(FILE* out, unsigned nNumSkip)
+	void WriteCallStack(Dystopia::FileLogger& _out, unsigned nNumSkip)
 	{
 		SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
 		if (SymInitialize(GetCurrentProcess(), NULL, TRUE))
@@ -50,9 +56,9 @@ namespace
 				SymFromAddr(GetCurrentProcess(), reinterpret_cast<DWORD64>(data[n]), NULL, symbol);
 
 				if (symbol->NameLen)
-					fprintf(out, "%s (%p)\n", symbol->Name, data[n]);
+					_out.Write("%s (%p)\n", symbol->Name, data[n]);
 				else
-					fprintf(out, "Function %p\n", data[n]);
+					_out.Write("Function %p\n", data[n]);
 			}
 
 			SymCleanup(GetCurrentProcess());
@@ -60,18 +66,22 @@ namespace
 	}
 
 	[[noreturn]] void ProgramTerminate(void)
-	{
-		FILE* log;
-		if (0 == fopen_s(&log, "CrashReport.dystor", "w+"))
+	{{
+		Dystopia::FileLogger log{ "CrashReport.dystor", "w+" };
+		if (log.Good())
 		{
-			fprintf(log, "Crash Report %zu\n\nCall Stack:\n", time(0));
+			log.Write("Crash Report %zu\n\nCall Stack:\n", time(0));
 
 			WriteCallStack(log, 3);
-			fclose(log);
+
+#       if defined(DEBUGALLOC)
+			Dystopia::Alloc::WriteActiveAllocations(log);
+			Dystopia::Alloc::WriteFreeMemory(log);
+#       endif
 		}
 
 		// Let it crash
-		std::abort();
+		} std::abort();
 	}
 }
 
@@ -124,6 +134,11 @@ void Dystopia::LoggerSystem::RedirectOutput(void(*_pOut)(const std::string&))
 
 void Dystopia::LoggerSystem::ParseInput(const std::string&)
 {
+}
+
+Dystopia::FileLogger Dystopia::LoggerSystem::FileLog(const std::string& _strFilename)
+{
+	return FileLogger{ _strFilename };
 }
 
 void Dystopia::LoggerSystem::SendOutput(const char* _strOutput)

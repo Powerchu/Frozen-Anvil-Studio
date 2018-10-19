@@ -83,7 +83,7 @@ inline SharedPtr<Type> CreateShared(Params&& ...args)
 template<typename Type, template<typename> class Nest, typename ...Params>
 inline SharedPtr<Nest<Type>> CreateShared(Params&& ...args)
 {
-	static_assert(!Utility::IsSame<Nest<Type>, SharedPtr<Type>>::value, 
+	static_assert(!Ut::IsSame<Nest<Type>, SharedPtr<Type>>::value, 
 		"SharedPtr Error: Cannot create SharedPtr to type SharedPtr.");
 
 	return SharedPtr<Type>(new Type{ static_cast<Params&&>(args)... });
@@ -99,7 +99,7 @@ inline SharedPtr<Type> CreateShared(Type* _pObj)
 template<typename Type, template<typename> class Nest>
 inline SharedPtr<Nest<Type>> CreateShared(Nest<Type>* _pObj)
 {
-	static_assert(!Utility::IsSame<Nest<Type>, SharedPtr<Type>>::value, 
+	static_assert(!Ut::IsSame<Nest<Type>, SharedPtr<Type>>::value, 
 		"SharedPtr Error: Cannot create SharedPtr to type SharedPtr.");
 
 	return SharedPtr<Nest<Type>>(_pObj);

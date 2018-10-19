@@ -26,10 +26,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 template <typename ... Ty>
 class Variant
 {
-#define VARIANT_ENABLE_IF_SFINAE(_TYPE_, _RET_) Utility::EnableIf_t<Utility::MetaFind<Utility::Decay_t<_TYPE_>, Ty ...>::value, _RET_>
-#define VARIANT_TYPE_RESOLUTION(_TYPE_)         typename Utility::ConvertType<_TYPE_, Ty...>::result
+#define VARIANT_ENABLE_IF_SFINAE(_TYPE_, _RET_) Ut::EnableIf_t<Ut::MetaFind<Ut::Decay_t<_TYPE_>, Ty ...>::value, _RET_>
+#define VARIANT_TYPE_RESOLUTION(_TYPE_)         typename Ut::ConvertType<_TYPE_, Ty...>::result
 	static_assert(sizeof...(Ty) != 0, "Variant must contain at least one type!");
-	using AllTypes = Utility::MetaAutoIndexer_t<Ty...>;
+	using AllTypes = Ut::MetaAutoIndexer_t<Ty...>;
 
 public:
 	// ====================================== CONSTRUCTORS ======================================= // 
@@ -68,11 +68,11 @@ public:
 
 
 private:
-	__declspec (align (Utility::MetaMax<size_t, alignof(Ty) ...>::value))
-		char raw[Utility::MetaMax<size_t, sizeof(Ty) ...>::value];
+	__declspec (align (Ut::MetaMax<size_t, alignof(Ty) ...>::value))
+		char raw[Ut::MetaMax<size_t, sizeof(Ty) ...>::value];
 
 	unsigned short mType;
-	static constexpr auto mInvalidType = Utility::Constant<decltype(mType), ~0>::value;
+	static constexpr auto mInvalidType = Ut::Constant<decltype(mType), ~0>::value;
 
 	bool IsValidType(void) const noexcept;
 
@@ -104,9 +104,9 @@ inline Variant<Ty...>::~Variant(void) noexcept
 
 template< typename ... Ty> template <typename U, typename Actual_t>
 inline Variant<Ty...>::Variant(U&& _obj) noexcept(std::is_nothrow_constructible_v<Actual_t, U>) :
-	mType{ Utility::MetaFind_t<Actual_t, AllTypes>::value }
+	mType{ Ut::MetaFind_t<Actual_t, AllTypes>::value }
 {
-	::new (reinterpret_cast<void*>(&raw)) Actual_t ( Utility::Move(_obj) );
+	::new (reinterpret_cast<void*>(&raw)) Actual_t ( Ut::Move(_obj) );
 }
 
 
@@ -121,7 +121,7 @@ inline auto Variant<Ty...>::As(void) const noexcept -> VARIANT_ENABLE_IF_SFINAE(
 {
 #if defined(_DEBUG)
 
-	DEBUG_BREAK(!(Utility::MetaFind_t<U, AllTypes>::value == mType),
+	DEBUG_BREAK(!(Ut::MetaFind_t<U, AllTypes>::value == mType),
 		"Variant Error: Wrong type!\n");
 
 #endif
@@ -137,14 +137,14 @@ inline void Variant<Ty...>::Visit(Visitor&& _visitor)
 	};
 
 	if (IsValidType())
-		SwitchTable[mType](raw, Utility::Forward<Visitor>(_visitor));
+		SwitchTable[mType](raw, Ut::Forward<Visitor>(_visitor));
 }
 
 
 template <typename ...Ty>
 inline bool Variant<Ty...>::IsValidType(void) const noexcept
 {
-	return Utility::Constant<decltype(mType), ~0>::value ^ mType;
+	return Ut::Constant<decltype(mType), ~0>::value ^ mType;
 }
 
 template <typename ... Ty>
@@ -175,8 +175,8 @@ inline auto Variant<Ty...>::operator = (U&& _rhs) -> VARIANT_ENABLE_IF_SFINAE(VA
 	using Actual_t = VARIANT_TYPE_RESOLUTION(U);
 
 	DestroyCurrent();
-	mType = Utility::MetaFind_t<Utility::Decay_t<Actual_t>, AllTypes>::value;
-	::new (reinterpret_cast<void*>(&raw)) Utility::Decay_t<Actual_t> ( Utility::Move(_rhs) );
+	mType = Ut::MetaFind_t<Ut::Decay_t<Actual_t>, AllTypes>::value;
+	::new (reinterpret_cast<void*>(&raw)) Ut::Decay_t<Actual_t> ( Ut::Move(_rhs) );
 
 	return *this;
 }

@@ -2,12 +2,12 @@
 #include "System/Collision/CollisionEvent.h"
 #include "System/Scene/SceneSystem.h"
 #include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
 #include "Math/Vector4.h"
 #include "Component/RigidBody.h"
 #include "Component/Circle.h"
 #include "IO/TextSerialiser.h"
 #include "Component/Convex.h"
-
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -17,14 +17,15 @@ namespace Dystopia
 {
 	using Math::Vec3D;
 	Circle::Circle()
-		: m_radius(0.5F)
-		, Collider{Vec3D{0,0,0} }
+		: Collider{ Vec3D{ 0,0,0 },Math::MakePoint3D(0,0,0) }
+		, m_radius(1.0F)
 	{
 
 	}
 
 	Circle::Circle(float const & _radius, Vec3D const & _v3Offset)
-		: m_radius(_radius), Collider{ _v3Offset }
+		: Collider{ _v3Offset,Math::MakePoint3D(0,0,0) }
+		, m_radius(_radius)
 	{
 
 	}
@@ -37,11 +38,6 @@ namespace Dystopia
 	/*Initialise the Component*/
 	void Circle::Init(void)
 	{
-		if (mv3Offset != Vec3D{0,0,0,0})
-		{
-			mPosition = mv3Offset;
-		}
-
 		if (mDebugVertices.size() == 0)
 		{
 			const unsigned numberOfSegments = 25;
@@ -58,7 +54,6 @@ namespace Dystopia
 			Collider::Triangulate();
 			Collider::Init();
 		}
-
 		mScale[0] = mScale[1] = m_radius;
 	}
 
@@ -84,17 +79,21 @@ namespace Dystopia
 		return static_cast<ComponentDonor<Circle> *>(EngineCore::GetInstance()->GetSystem<Circle::SYSTEM>())->RequestComponent(*this);
 	}
 
+	BroadPhaseCircle Circle::GenerateBoardPhaseCircle() const
+	{
+		return BroadPhaseCircle(GetRadius(), GetGlobalPosition());
+	}
+
 	float Circle::GetRadius() const
 	{
-		return m_radius * mOwnerTransformation[0] * 0.5f;
+		return Math::Abs(m_radius * mOwnerTransformation[0] * 0.5f);
 	}
 
 	/*Serialise and Unserialise*/
 	void Circle::Serialise(TextSerialiser& _out) const
 	{
-
 		_out.InsertStartBlock("Circle_Collider2D");
-		_out << GetOwner()->GetID();						// gObj ID
+		Component::Serialise(_out);
 		_out << float(mv3Offset[0]);		// offset for colliders
 		_out << float(mv3Offset[1]);
 		_out << float(mv3Offset[2]);
@@ -110,7 +109,7 @@ namespace Dystopia
 	void Circle::Unserialise(TextSerialiser& _in)
 	{
 		_in.ConsumeStartBlock();
-		_in >> mID;					// gObj ID
+		Component::Unserialise(_in);
 		_in >> mv3Offset[0];
 		_in >> mv3Offset[1];
 		_in >> mv3Offset[2];
@@ -124,22 +123,18 @@ namespace Dystopia
 		mDebugVertices.clear();
 		mScale[0] = m_radius;
 		mScale[1] = m_radius;
-		if (GameObject* owner = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().FindGameObject(mID))
-		{
-			owner->AddComponent(this, Circle::TAG{});
-			Init();
-		}
+
 	}
 
 	/*Collision Check Functions*/
 	bool Circle::isColliding(Circle & other_col, Math::Point3D other_pos)
 	{
-		const auto this_body       = *GetOwner()->GetComponent<RigidBody>();
-		const auto other_body      = *other_col.GetOwner()->GetComponent<RigidBody>();
+		//const auto this_body       = *GetOwner()->GetComponent<RigidBody>();
+		const auto other_body      = other_col.GetOwner()->GetComponent<RigidBody>();
 		const auto this_pos        = this->GetGlobalPosition();
 		const auto positionDelta   =  other_pos - this_pos;
 		const float combinedRadius = this->GetRadius() + other_col.GetRadius();
-		
+		CollisionEvent col_info(GetOwner(), other_col.GetOwner());
 
 		// If the position delta is < combined radius, it is colliding
 		if (positionDelta.MagnitudeSqr() < combinedRadius*combinedRadius) // collided, getCollisionEvent
@@ -153,34 +148,41 @@ namespace Dystopia
 			{
 				penetration = combinedRadius - dis;
 				normal = positionDelta/dis;
-				
+				contactPoint = (GetGlobalPosition() * other_col.GetRadius()) + (other_col.GetGlobalPosition() * GetRadius()) / combinedRadius;
 			}
 			else //dis == 0
 			{
 				//Exact Overlap of each other
-				penetration = this->GetRadius();
+				penetration = GetRadius();
 				normal = Vec3D{ 0,1,0 };
-				contactPoint = this->GetGlobalPosition();
+				contactPoint = GetGlobalPosition();
 			}
+
+			normal.z = 0;
 
 			// Add to Collision Events
 			mbColliding = true;
 			other_col.mbColliding = true;
 
-			CollisionEvent col_info(GetOwner(), other_col.GetOwner());
-			col_info.mEdgeNormal = normal;
-			//col_info.mEdgeVector = Math::Normalise(positionDelta);
-			col_info.mCollisionPoint      = contactPoint;
-			col_info.mdPeneDepth          = static_cast<double>(penetration);
-			col_info.mfRestitution        = DetermineRestitution(other_body);
-			col_info.mfStaticFrictionCof  = DetermineStaticFriction(other_body);
-			col_info.mfDynamicFrictionCof = DetermineKineticFriction(other_body);
+			//CollisionEvent col_info(GetOwner(), other_col.GetOwner());
+			col_info.mEdgeNormal			= normal;
+			col_info.mEdgeVector			= Math::Normalise(positionDelta);
+			col_info.mCollisionPoint		= contactPoint;
+			col_info.mfPeneDepth			= penetration;
+			if (nullptr != other_body)
+			{
+				col_info.mfRestitution = DetermineRestitution(*other_body);
+				col_info.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
+				col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
+			}
+			//InformOtherComponents(true, col_info);
 
-			marr_ContactSets.Insert(col_info);
+			marr_ContactSets.push_back(col_info);
 	
 			/*Return true for collision*/
 			return true;
 		}
+			//InformOtherComponents(false, col_info);
 			return false;
 	}
 
@@ -205,6 +207,7 @@ namespace Dystopia
 		if (other_col.GetOwner()->GetComponent<RigidBody>())
 			other_body = other_col.GetOwner()->GetComponent<RigidBody>();
 
+		CollisionEvent newEvent(this->GetOwner(), other_col.GetOwner());
 		AutoArray<Edge> const & ConvexEdges = other_col.GetConvexEdges();
 		bool isInside = true;
 		/*Check for Circle inside Convex*/
@@ -246,8 +249,8 @@ namespace Dystopia
 				if (distance < GetRadius())
 				{
 					isInside = true;
-					CollisionEvent newEvent(this->GetOwner(), other_col.GetOwner());
-					newEvent.mdPeneDepth     = GetRadius() - distance;
+					newEvent.mfPeneDepth     = GetRadius() - distance;
+					elem.mNorm3.z			 = 0;
 					newEvent.mEdgeNormal     = -elem.mNorm3.Normalise();
 					newEvent.mEdgeVector     = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
@@ -261,9 +264,15 @@ namespace Dystopia
 					mbColliding = isInside  = true;
 				}
 			}
-
 		}
-
+		if (isInside)
+		{
+			//InformOtherComponents(true, newEvent);
+		}
+		else
+		{
+			//InformOtherComponents(false, newEvent);
+		}
 		return isInside;
 	}
 	bool Circle::isColliding(Convex * const & other_col)
@@ -271,42 +280,97 @@ namespace Dystopia
 		UNUSED_PARAMETER(other_col);
 		return this->isColliding(*other_col);
 	}
+
+	
 #if EDITOR
-	void Circle::eRadiusFields()
+	void Circle::ePositionOffsetVectorFields()
 	{
-		EGUI::Display::Label("Radius");
-		auto e = EGUI::Display::DragFloat("   ", &m_radius, 0.05f, -FLT_MAX, FLT_MAX);
+		EGUI::Display::Label("Offset");
+		auto arrResult = EGUI::Display::VectorFields("    ", &mv3Offset, 0.01f, -FLT_MAX, FLT_MAX);
+		for (auto &e : arrResult)
+		{
+			switch (e)
+			{
+			case EGUI::eDragStatus::eSTART_DRAG:
+				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &mv3Offset);
+				break;
+			case EGUI::eDragStatus::eEND_DRAG:
+			case EGUI::eDragStatus::eENTER:
+			case EGUI::eDragStatus::eDRAGGING:
+			case EGUI::eDragStatus::eTABBED:
+			case EGUI::eDragStatus::eDEACTIVATED:
+				Init();
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+			default:
+				break;
+			}
+		}
+	}
+
+	void Circle::eScaleField()
+	{
+		EGUI::Display::Label("Scale");
+		const auto e = EGUI::Display::DragFloat("   ", &m_radius, 0.01f, -FLT_MAX, FLT_MAX);
 		switch (e)
 		{
-		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eDRAGGING:
-			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Collider>(GetOwner()->GetID(), &m_radius);
+			EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &m_radius);
 			break;
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eENTER:
+		case EGUI::eDragStatus::eDRAGGING:
+		case EGUI::eDragStatus::eTABBED:
 		case EGUI::eDragStatus::eDEACTIVATED:
+			Init();
 			EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eNO_CHANGE:
-
-			break;
-		case EGUI::eDragStatus::eTABBED:
-
-			break;
 		default:
 			break;
 		}
 
 	}
 
+	void Circle::eAttachedBodyEmptyBox()
+	{
+		std::string bodyAttached;
+		if (GetOwner()->GetComponent<RigidBody>())
+			bodyAttached = GetOwner()->GetName();
+		else
+			bodyAttached = "None";
+
+		EGUI::Display::Label("Attached Body");
+		EGUI::Display::EmptyBox("		", 180.f, bodyAttached, false, true);
+	}
+
+	void Circle::eNumberOfContactsLabel()
+	{
+		if (EGUI::Display::CollapsingHeader("Contacts"))
+		{
+			for (unsigned int i = 0; i < marr_ContactSets.size(); ++i)
+			{
+				EGUI::PushID(i);
+				auto& c = marr_ContactSets[i];
+				std::string name = c.mCollidedWith->GetName();
+				EGUI::Display::EmptyBox("		", 180.f, name, false, true);
+				EGUI::PopID();
+			}
+
+			if (marr_ContactSets.IsEmpty())
+			{
+				EGUI::Display::EmptyBox("		", 180.f, "No Contacts", false, true);
+			}
+		}
+	}
+
 	void Circle::EditorUI() noexcept
 	{
-		eRadiusFields();
+		ePositionOffsetVectorFields();
+		eScaleField();
+		eAttachedBodyEmptyBox();
+		eNumberOfContactsLabel();
 	}
 #endif
 }

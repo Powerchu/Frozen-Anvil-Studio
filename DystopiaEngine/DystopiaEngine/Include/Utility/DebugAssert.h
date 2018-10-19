@@ -53,6 +53,7 @@ do {								                      \
 		DEBUG_PRINT(eLog::WARNING, __VA_ARGS__);          \
 	}                                                     \
 } while (false)
+
 #define DEBUG_BREAK(_X_, ...)                             \
 do {                                                      \
   if ((_X_))						                      \

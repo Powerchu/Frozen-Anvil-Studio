@@ -25,9 +25,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/Array.h"
 #include "Utility/DebugAssert.h"
+#include "Editor/DragStatus.h"
 #include "Editor/Dock.h"
 #include "Editor/Payloads.h"
 #include "Editor/Commands.h"
+#include "Editor/Gizmo.h"
 #include "../../Dependancies/ImGui/imgui.h"
 #include "../../Dependancies/ImGui/imgui_internal.h"
 #include <string>
@@ -64,16 +66,7 @@ namespace Dystopia
 ======================================================================================================================= */
 namespace EGUI
 {
-	enum eDragStatus
-	{
-		eNO_CHANGE = 0,
-		eEND_DRAG,
-		eENTER,
-		eTABBED,
-		eSTART_DRAG,
-		eDEACTIVATED,
-		eDRAGGING
-	};
+	static constexpr float TabsImageOffsetY = 27.f;
 
 	void SetContext(Dystopia::CommandHandler *_pContext);
 	Dystopia::CommandHandler* GetCommandHND();

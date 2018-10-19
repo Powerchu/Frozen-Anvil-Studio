@@ -145,7 +145,7 @@ inline typename Heap<T,Container>::HeapIterator<> Heap<T, Container>::end(void) 
 template<typename T, class Container>
 inline void Heap<T, Container>::Insert(T&& _obj)
 {
-	Insert(Utility::Forward<T>(_obj), DefaultCompare{});
+	Insert(Ut::Forward<T>(_obj), DefaultCompare{});
 }
 
 template<typename T, class Container>
@@ -159,7 +159,7 @@ void Heap<T, Container>::Insert(const T& _obj, Comp&& _compare)
 {
 	unsigned n = mData.size();
 	mData.push_back(_obj);
-	SiftUp(n, Utility::Forward<Comp>(_compare));
+	SiftUp(n, Ut::Forward<Comp>(_compare));
 }
 
 template<typename T, class Container> template <typename Comp>
@@ -167,10 +167,10 @@ void Heap<T, Container>::Pop(Comp&& _compare)
 {
 	// Remove the first element by swapping it with the last
 	// Then popping the last element off the data structure
-	Utility::Swap(*mData.begin(), *(mData.end() - 1));
+	Ut::Swap(*mData.begin(), *(mData.end() - 1));
 	mData.pop_back();
 
-	SiftDown(0, Utility::Forward<Comp>(_compare));
+	SiftDown(0, Ut::Forward<Comp>(_compare));
 }
 
 template<typename T, class Container>
@@ -230,7 +230,7 @@ void Heap<T, Container>::SiftUp(unsigned _nIndex, Comp _compare)
 	// While the obj is strictly smaller than it's parent
 	while (_compare(*toSift, *(First + father)))
 	{
-		Utility::Swap(*toSift, *(First + father));
+		Ut::Swap(*toSift, *(First + father));
 		toSift = First + father;
 
 		father = Parent(father);
@@ -249,7 +249,7 @@ void Heap<T, Container>::SiftDown(unsigned _nIndex, Comp _compare)
 
 	while ((LChild < size) && _compare(*(First + Path), *(First + _nIndex)))
 	{
-		Utility::Swap(*(First + Path), *(First + _nIndex));
+		Ut::Swap(*(First + Path), *(First + _nIndex));
 
 		_nIndex = Path;
 		LChild = Left(_nIndex);

@@ -7,7 +7,7 @@
 #include "System/Time/ScopedTimer.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
-
+#include "Behaviour/Behaviour.h"
 #include <utility>
 #include <map>
 #include "System/Graphics/Shader.h"
@@ -20,27 +20,6 @@ namespace Dystopia
 	}
 	bool CollisionSystem::Init()
 	{
-		auto * pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
-		if (pMeshSys)
-		{
-			for (auto & elem : ComponentDonor<Convex>::mComponents)
-			{
-				/*If Collider already has a mesh, do not make a new one*/
-				if (elem.GetMesh() == nullptr)
-					continue;
-
-				pMeshSys->StartMesh();
-
-				auto const & arr = elem.GetVertexBuffer();
-				for (auto i : arr)
-				{
-					pMeshSys->AddVertex(i.x, i.y, i.z);
-				}
-
-				elem.SetMesh(pMeshSys->AddIndices("Collider Mesh", elem.GetIndexBuffer()));
-				pMeshSys->EndMesh();
-			}
-		}
 		return true;
 	}
 
@@ -77,45 +56,51 @@ namespace Dystopia
 	{
 		ScopedTimer<ProfilerAction> timeKeeper{ "Collision System", "Update" };
 
+		BoundingColliderNode     mCollisionTree;
+		static PotentialContacts ArrayContacts[1024]{};
+		static unsigned ContactCount;
+
 		for (auto& conv : ComponentDonor<Convex>::mComponents)
 		{
+#if EDITOR
+			if (conv.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 			conv.Update(_dt);
 		}
 
-		using CollisionTable = std::pair<eColliderType, eColliderType>;
+		using CollisionTable        = std::pair<eColliderType, eColliderType>;
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
-		using CollisionTableMap = std::map < CollisionTable, fpCollisionResolution>;
+		using CollisionTableMap     = std::map < CollisionTable, fpCollisionResolution>;
 
 		static CollisionTableMap CollisionFuncTable = []()->CollisionTableMap
 		{
 			CollisionTableMap i
 			{
-				{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }    ,&CollisionSystem::AABBvsAABB },
+			{ CollisionTable{ eColliderType::AABB    ,eColliderType::AABB }    ,&CollisionSystem::AABBvsAABB },
 			{ CollisionTable{ eColliderType::AABB    ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::AABB }    ,&CollisionSystem::ConvexVsConvex },
 			{ CollisionTable{ eColliderType::CONVEX  ,eColliderType::CONVEX }  ,&CollisionSystem::ConvexVsConvex },
-			{ CollisionTable{ eColliderType::CIRCLE  ,eColliderType::CIRCLE }   ,&CollisionSystem::CircleVsCircle },
-			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::AABB }      ,&CollisionSystem::CircleVsAABB },
-			{ CollisionTable{ eColliderType::AABB,   eColliderType::CIRCLE }    ,&CollisionSystem::AABBvsCircle },
-			{ CollisionTable{ eColliderType::CIRCLE, eColliderType::CONVEX }    ,&CollisionSystem::CircleVsConvex },
-			{ CollisionTable{ eColliderType::CONVEX, eColliderType::CIRCLE }   ,&CollisionSystem::ConvexVsCircle }
+			{ CollisionTable{ eColliderType::CIRCLE  ,eColliderType::CIRCLE }  ,&CollisionSystem::CircleVsCircle },
+			{ CollisionTable{ eColliderType::CIRCLE,  eColliderType::AABB }    ,&CollisionSystem::CircleVsAABB },
+			{ CollisionTable{ eColliderType::AABB,    eColliderType::CIRCLE }  ,&CollisionSystem::AABBvsCircle },
+			{ CollisionTable{ eColliderType::CIRCLE,  eColliderType::CONVEX }  ,&CollisionSystem::CircleVsConvex },
+			{ CollisionTable{ eColliderType::CONVEX,  eColliderType::CIRCLE }  ,&CollisionSystem::ConvexVsCircle }
 			};
 			return i;
 		}();
 
-		AutoArray<Collider *> mColliders;
+		//AutoArray<Collider *> mColliders;
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
 			if (elem.GetOwner())
 			{
 				elem.ClearCollisionEvent(); //clear collision table
-				//auto const & GobjPoint = elem.GetOwner()->GetComponent<Transform>()->GetPosition();
-			    //Math::Matrix3D gobjMatrix = Math::Translate(GobjPoint.x, GobjPoint.y, GobjPoint.z) * elem.GetOwner()->GetComponent<Transform>()->GetRotation().Matrix();
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
-				mColliders.push_back(&elem);
+				//mColliders.push_back(&elem);
+				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 		}
 
@@ -124,12 +109,13 @@ namespace Dystopia
 			if (elem.GetOwner())
 			{
 				elem.ClearCollisionEvent(); //clear collision table
-				//auto const & GobjPoint =  elem.GetOwner()->GetComponent<Transform>()->GetPosition();
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
-				mColliders.push_back(&elem);
+				//mColliders.push_back(&elem);
+				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
+			
 		}
 
 		for (auto & elem : ComponentDonor<Circle>::mComponents)
@@ -137,68 +123,101 @@ namespace Dystopia
 			if (elem.GetOwner())
 			{
 				elem.ClearCollisionEvent(); //clear collision table
-				//auto const   & GobjPoint = elem.GetOwner()->GetComponent<Transform>()->GetPosition();
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
-				mColliders.push_back(&elem);
+				//mColliders.push_back(&elem);
+				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
+			
 		}
 
-		for (auto & bodyA : mColliders)
-		{
-			if (nullptr == bodyA->GetOwner()) continue;
-			for (auto & bodyB : mColliders)
-			{
-				if (nullptr == bodyB->GetOwner()) continue;
+		if (!mCollisionTree.isEmpty())
+			ContactCount = mCollisionTree.GetNumPotentialContact(1024, ArrayContacts);
 
-				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
+		for (unsigned i = 0; i < ContactCount; ++i)
+		{
+			if (nullptr == ArrayContacts[i].mContacts[0] || nullptr == ArrayContacts[i].mContacts[1]) continue;
+			Collider * bodyA = ArrayContacts[i].mContacts[0];
+			Collider * bodyB = ArrayContacts[i].mContacts[1];
+			const auto ownerA = bodyA->GetOwner();
+			const auto ownerB = bodyB->GetOwner();
+			const auto rigidA = ownerA->GetComponent<RigidBody>();
+			const auto rigidB = ownerB->GetComponent<RigidBody>();
+
+			if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
+			{
+				if (rigidA && rigidB)
 				{
-					if (bodyA->GetOwner()->GetComponent<RigidBody>() && bodyB->GetOwner()->GetComponent<RigidBody>())
+					if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState())
+						continue;
+					if (ownerA == ownerB)
+						continue;
+				}
+				const auto pair_key1 = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+				const auto pair_key2 = std::make_pair(bodyB->GetColliderType(), (bodyA)->GetColliderType());
+				for (auto & key : CollisionFuncTable)
+				{
+					if (key.first == pair_key1)
 					{
-						if (!bodyA->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState() ||
-							!bodyB->GetOwner()->GetComponent<RigidBody>()->Get_IsStaticState())
-						{
-							const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
-							for (auto & key : CollisionFuncTable)
-							{
-								if (key.first == pair_key)
-								{
-									(this->*key.second)(bodyA, bodyB);
-									bodyB->SetColliding(bodyB->Collider::HasCollision());
-									bodyA->SetColliding(bodyA->Collider::HasCollision());
-									break;
-								}
-							}
-						}
+						(this->*key.second)(bodyA, bodyB);
+						bodyB->SetColliding(bodyB->Collider::HasCollision());
+						bodyA->SetColliding(bodyA->Collider::HasCollision());
+						break;
 					}
-					else
+				}
+				for (auto & key : CollisionFuncTable)
+				{
+					if (key.first == pair_key2)
 					{
-						const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
-						for (auto & key : CollisionFuncTable)
-						{
-							if (key.first == pair_key)
-							{
-								(this->*key.second)(bodyA, bodyB);
-								bodyB->SetColliding(bodyB->Collider::HasCollision());
-								bodyA->SetColliding(bodyA->Collider::HasCollision());
-								break;
-							}
-						}
+						(this->*key.second)(bodyB, bodyA);
+						bodyB->SetColliding(bodyB->Collider::HasCollision());
+						bodyA->SetColliding(bodyA->Collider::HasCollision());
+						break;
 					}
 				}
 			}
 		}
+
+		return;
+
+		//for (auto & bodyA : mColliders)
+		//{
+		//	const auto ownerA = bodyA->GetOwner();
+		//	for (auto & bodyB : mColliders)
+		//	{
+		//		const auto ownerB = bodyB->GetOwner();
+		//		const auto rigidA = ownerA->GetComponent<RigidBody>();
+		//		const auto rigidB = ownerB->GetComponent<RigidBody>();
+
+		//		if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
+		//		{
+		//			if (rigidA && rigidB)
+		//			{
+		//				if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState())
+		//					continue;
+		//				if (ownerA == ownerB)
+		//					continue;
+		//			}
+		//			const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+		//			for (auto & key : CollisionFuncTable)
+		//			{
+		//				if (key.first == pair_key)
+		//				{
+		//					(this->*key.second)(bodyA, bodyB);
+		//					bodyB->SetColliding(bodyB->Collider::HasCollision());
+		//					bodyA->SetColliding(bodyA->Collider::HasCollision());
+		//					break;
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 	}
 
 	void CollisionSystem::Shutdown()
 	{
-		/*
-		for (Collider * const & elem : mArrOfCollider)
-		{
-		delete elem;
-		}
-		*/
+
 	}
 
 	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const
@@ -256,7 +275,7 @@ namespace Dystopia
 		{
 			pCircle = dynamic_cast<Circle *>(_ColB);
 			pConvex = dynamic_cast<Convex *>(_ColA);
-
+			return ConvexVsCircle(_ColA, _ColB);
 		}
 		bool isColliding = pCircle->isColliding((*pConvex));
 
@@ -272,6 +291,7 @@ namespace Dystopia
 		{
 			pCircle = dynamic_cast<Circle *>(_ColA);
 			pConvex = dynamic_cast<Convex *>(_ColB);
+			return CircleVsConvex(_ColA, _ColB);
 		}
 		else
 		{
@@ -299,7 +319,7 @@ namespace Dystopia
 		{
 			ToRet.push_back(&elem);
 		}
-		return Utility::Move(ToRet);
+		return Ut::Move(ToRet);
 	}
 
 	CollisionSystem::CollisionSystem()

@@ -15,6 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _DEFAULTALLOCIMPL_H_
 #define _DEFAULTALLOCIMPL_H_
 
+#include "System/Logger/FileLogger.h"
+
 #include <cstddef>
 #include <cstdint>
 
@@ -23,21 +25,26 @@ namespace Dystopia
 {
 	class DefaultAlloc
 	{
-	public:
 		using MetaData_t = uint32_t;
 
+	public:
 		DefaultAlloc(void);
 		~DefaultAlloc(void) noexcept;
 
 		[[nodiscard]] void* Allocate(size_t, size_t);
 		void Deallocate(void*);
 
+		void WriteFreeMemoryImpl(FileLogger&) const;
+		static void WriteFreeMemory(FileLogger&);
+		static void WriteActiveAllocations(FileLogger&);
+
 	private:
 		std::byte* mpBlock;
 		std::byte* mpFree;
 
-		static constexpr size_t MIN_ALIGN = 16;
-		static constexpr size_t MIN_SIZE  = 8;
+		static constexpr size_t MIN_ALIGN   = 16;
+		static constexpr size_t MIN_SIZE    = 8;
+		static constexpr size_t METADATA_SZ = sizeof(MetaData_t);
 
 		static MetaData_t GetBlockSize(void*);
 		static MetaData_t GetNextOffset(void*);

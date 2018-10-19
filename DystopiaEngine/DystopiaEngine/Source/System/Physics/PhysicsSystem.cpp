@@ -6,17 +6,25 @@
 #include "System/Time/ScopedTimer.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
+#include "System/Collision/CollisionSystem.h"
+
+#if EDITOR
+#include "Editor/EGUI.h"
+#include "Editor/CommandList.h"
+#include "Editor/Commands.h"
+#endif 
 
 namespace Dystopia
 {
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(false)
 		, mInterpolation_mode(none)
-		, mGravity(-910.665F)
-		, mMaxVelocityConstant(800.0F)
+		, mGravity(400.0F)
+		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.05F)
-		, mResolutionIterations(10)
+		, mPenetrationEpsilon(0.1F)
+		, mVelocityIterations(8)
+		, mPositionalIterations(8)
 	{
 	}
 
@@ -38,6 +46,9 @@ namespace Dystopia
 	{
 		for (auto& bodies : mComponents)
 		{
+#if EDITOR
+			if (bodies.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 			if (bodies.GetOwner())
 			{
 				if(!bodies.Get_IsStaticState())
@@ -50,42 +61,80 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
-			if (nullptr != body.GetOwner() && !body.Get_IsStaticState() && body.GetIsAwake())
+#if EDITOR
+			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
+			if (!body.Get_IsStaticState() && body.GetIsAwake())
 			{
 				body.Integrate(_dt);
 			}
 		}
 	}
 
-	void PhysicsSystem::ResolveCollision(float)
+	void PhysicsSystem::ResolveCollision(float _dt)
 	{
-		for (unsigned i = 0; i < mResolutionIterations; ++i)
+		for (int i = 0; i < mVelocityIterations; ++i)
 		{
 			for (auto& body : mComponents)
 			{
-				const GameObject* owner = body.GetOwner();
-				if (nullptr != owner && !body.Get_IsStaticState() && body.GetIsAwake())
+#if EDITOR
+				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
+				if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+
+				const auto col = body.GetOwner()->GetComponent<Collider>();
+
+				if (nullptr != col)
 				{
-					const auto col = owner->GetComponent<Collider>();
-					if (nullptr != col)
+					if (!col->IsTrigger())
 					{
-						if (col->HasCollision())
+						for (auto& manifold : col->GetCollisionEvents())
 						{
-							CollisionEvent* worstContact = nullptr;
-							double worstPene = mPenetrationEpsilon;
+							manifold.ApplyImpulse();
+						}
+					}
+				}
+				
+			}
+		}
 
-							for (auto& manifold : col->GetCollisionEvents())
+		for (auto& body : mComponents)
+		{
+#if EDITOR
+			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
+			if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+
+			body.PreUpdatePosition(_dt);
+		}
+
+		for (int i = 0; i < mPositionalIterations; ++i)
+		{
+			for (auto& body : mComponents)
+			{
+#if EDITOR
+				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
+				if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+
+
+				const auto col = body.GetOwner()->GetComponent<Collider>();
+
+				if (nullptr != col)
+				{
+					if (!col->IsTrigger())
+					{
+						auto worstPene = mPenetrationEpsilon;
+						for (auto& manifold : col->GetCollisionEvents())
+						{
+							if (manifold.mfPeneDepth > worstPene)
 							{
-								manifold.ApplyImpulse();
+								const auto worstContact = &manifold;
+								worstPene = manifold.mfPeneDepth;
 
-								if (manifold.mdPeneDepth > worstPene)
-								{
-									worstContact = &manifold;
-									worstPene = manifold.mdPeneDepth;
-								}
 								if (nullptr != worstContact)
 								{
-									worstContact->ApplyPenetrationCorrection();
+									worstContact->ApplyPenetrationCorrection(mPositionalIterations);
 								}
 							}
 						}
@@ -93,17 +142,18 @@ namespace Dystopia
 				}
 			}
 		}
-
 	}
 
 	void PhysicsSystem::UpdateResults(float _dt)
 	{
 		for (auto& body : mComponents)
 		{
-			if (body.GetOwner())
-			{
-				body.UpdateResult(_dt);
-			}
+#if EDITOR
+			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
+			if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+
+			body.UpdateResult(_dt);
 		}
 
 		// If Event System is running: this is where to Broadcast Collision Messages
@@ -125,10 +175,6 @@ namespace Dystopia
 		/* Broad Phase Collision Detection*/
 
 		/* Narrow Phase Collision Detection*/
-		
-	
-		// Integrate RigidBodies
-		IntegrateRigidBodies(_dt);
 
 		/* Collision Resolution (Response) Logic */
 		ResolveCollision(_dt);
@@ -137,12 +183,14 @@ namespace Dystopia
 		UpdateResults(_dt);
 
 		// Set all objects at rest to sleeping
-		//CheckSleepingBodies(_dt);
-
-		/* Debug Velocity*/
-		//DebugPrint();
+		CheckSleepingBodies(_dt);
 	}
 
+	void PhysicsSystem::PreFixedUpdate(float _dt)
+	{
+		// Integrate RigidBodies
+		IntegrateRigidBodies(_dt);
+	}
 	
 
 	void PhysicsSystem::FixedUpdate(float _dt)
@@ -187,4 +235,115 @@ namespace Dystopia
 	{
 		UNUSED_PARAMETER(serial);
 	}
+
+	void PhysicsSystem::EditorUI(void)
+	{
+#if EDITOR			
+		IsDebugUI();
+		GravityUI();
+		MaxVelocityUI();
+		VelocityIterationUI();
+		PositionalIterationUI();
+#endif 
+	}
+
+#if EDITOR
+	void PhysicsSystem::GravityUI(void)
+	{
+		const auto result = EGUI::Display::DragFloat("Gravity     ", &mGravity, 0.01f, -FLT_MAX, FLT_MAX);
+		switch (result)
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&mGravity);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		default: break;
+		}
+	}
+
+	void PhysicsSystem::IsDebugUI(void)
+	{
+		bool tempBool = mbIsDebugActive;
+		if (EGUI::Display::CheckBox("Debug Draw  ", &tempBool))
+		{
+			mbIsDebugActive = tempBool;
+			EGUI::GetCommandHND()->InvokeCommand<PhysicsSystem>(&mbIsDebugActive, tempBool);
+		}
+	}
+
+	void PhysicsSystem::MaxVelocityUI()
+	{
+		const auto result = EGUI::Display::DragFloat("Max Velocity", &mMaxVelocityConstant, 0.01F, 256.0F, 2048.0F);
+		switch (result)
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&mMaxVelocityConstant);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		default: break;
+		}
+	}
+
+	void PhysicsSystem::VelocityIterationUI(void)
+	{
+		const auto result = EGUI::Display::DragInt("Velocity Iterations", &mVelocityIterations, 1, 1, 20);
+		switch (result)
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&mVelocityIterations);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		default: break;
+		}
+	}
+
+	void PhysicsSystem::PositionalIterationUI()
+	{
+		const auto result = EGUI::Display::DragInt("Positional Iterations", &mPositionalIterations, 1, 1, 20);
+		switch (result)
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&mPositionalIterations);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		default: break;
+		}
+	}
+
+#endif 
 }
+
+
+

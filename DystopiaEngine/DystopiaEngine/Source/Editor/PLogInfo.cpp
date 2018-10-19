@@ -37,20 +37,20 @@ namespace Dystopia
 	PLogData::PLogData(PLogData&& _rhs)
 		: mLabel{}, mArrValues{ 0.f }, mCurrentIndex{}, mIsBigGraph{ false }, mMax{ def_max }
 	{
-		Utility::Swap(mArrValues, _rhs.mArrValues);
-		Utility::Swap(mCurrentIndex, _rhs.mCurrentIndex);
-		Utility::Swap(mLabel, _rhs.mLabel);
-		Utility::Swap(mIsBigGraph, _rhs.mIsBigGraph);
-		Utility::Swap(mMax, _rhs.mMax);
+		Ut::Swap(mArrValues, _rhs.mArrValues);
+		Ut::Swap(mCurrentIndex, _rhs.mCurrentIndex);
+		Ut::Swap(mLabel, _rhs.mLabel);
+		Ut::Swap(mIsBigGraph, _rhs.mIsBigGraph);
+		Ut::Swap(mMax, _rhs.mMax);
 	}
 
 	PLogData& PLogData::operator=(PLogData&& _rhs)
 	{
-		Utility::Swap(mArrValues, _rhs.mArrValues);
-		Utility::Swap(mCurrentIndex, _rhs.mCurrentIndex);
-		Utility::Swap(mLabel, _rhs.mLabel);
-		Utility::Swap(mIsBigGraph, _rhs.mIsBigGraph);
-		Utility::Swap(mMax, _rhs.mMax);
+		Ut::Swap(mArrValues, _rhs.mArrValues);
+		Ut::Swap(mCurrentIndex, _rhs.mCurrentIndex);
+		Ut::Swap(mLabel, _rhs.mLabel);
+		Ut::Swap(mIsBigGraph, _rhs.mIsBigGraph);
+		Ut::Swap(mMax, _rhs.mMax);
 		return*this;
 	}
 
@@ -90,10 +90,10 @@ namespace Dystopia
 	PLogItem::PLogItem(PLogItem&& _rhs)
 		: mLabel{}, mData{}, mGenericOverview{ "", true }, mShowGeneric{ false }
 	{
-		Utility::Swap(mLabel, _rhs.mLabel);
-		Utility::Swap(mData, _rhs.mData);
-		Utility::Swap(mGenericOverview, _rhs.mGenericOverview);
-		Utility::Swap(mShowGeneric, _rhs.mShowGeneric);
+		Ut::Swap(mLabel, _rhs.mLabel);
+		Ut::Swap(mData, _rhs.mData);
+		Ut::Swap(mGenericOverview, _rhs.mGenericOverview);
+		Ut::Swap(mShowGeneric, _rhs.mShowGeneric);
 	}
 
 	PLogItem::~PLogItem()
@@ -147,10 +147,10 @@ namespace Dystopia
 
 	PLogItem& PLogItem::operator=(PLogItem&& _rhs)
 	{
-		Utility::Swap(mLabel, _rhs.mLabel);
-		Utility::Swap(mData, _rhs.mData);
-		Utility::Swap(mGenericOverview, _rhs.mGenericOverview);
-		Utility::Swap(mShowGeneric, _rhs.mShowGeneric);
+		Ut::Swap(mLabel, _rhs.mLabel);
+		Ut::Swap(mData, _rhs.mData);
+		Ut::Swap(mGenericOverview, _rhs.mGenericOverview);
+		Ut::Swap(mShowGeneric, _rhs.mShowGeneric);
 		return *this;
 	}
 }

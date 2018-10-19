@@ -79,7 +79,7 @@ namespace Dystopia
 		static constexpr float offset	= -80.f;
 		mGraphSizeB.x					= Math::Clamp(Size().x + offset, 50.f, Size().x);
 		mGraphSizeS.x					= mGraphSizeB.x;
-		mGraphSizeS.x					= Math::Clamp(mGraphSizeS.x, 50.f, Size().x -120.f);
+		mGraphSizeS.x					= Math::Clamp<float>(mGraphSizeS.x, 50.f, Size().x -120.f);
 	}
 
 	void PerformanceLog::EditorUI()
