@@ -27,7 +27,21 @@ namespace Dystopia
 	{
 	public:
 		Audio(const std::string&, FMOD::Sound*);
+		~Audio(void);
+		
+		bool IsPlaying(void) const;
 
+		void Play(void);
+		void Pause(void);
+		void Stop(void);
+
+		void Release(void);
+
+		FMOD::Sound*& GetSound(void);
+		FMOD::Channel*& GetChannel(void);
+
+	private:
+		bool			mPaused;
 		std::string     mName;
 		FMOD::Sound		*mpSound;
 		FMOD::Channel	*mpChannel;

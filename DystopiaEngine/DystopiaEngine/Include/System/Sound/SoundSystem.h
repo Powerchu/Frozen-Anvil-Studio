@@ -52,7 +52,6 @@ namespace Dystopia
 		void SaveSettings(TextSerialiser&);
 
 		void ReceiveMessage(const eSysMessage&);
-
 		Audio* LoadSound(const std::string& _file);
 
 	private:

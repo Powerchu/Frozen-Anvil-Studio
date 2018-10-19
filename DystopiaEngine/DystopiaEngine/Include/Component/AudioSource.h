@@ -69,17 +69,10 @@ namespace Dystopia
 
 		void SetAudio(Audio*);
 		Audio* GetAudio(void);
-		void SetReady(bool = true);
-		bool IsReady(void) const;
-		bool IsLoop(void) const;
-		bool IsPlaying(void) const;
 
 	private:
-
-		Audio	*mpAudio;
-		bool	mReady;
-		bool	mLoop;
-		bool    mIsPlaying;
+		Audio		*mpAudio;
+		std::string mSoundName;
 
 	};
 }

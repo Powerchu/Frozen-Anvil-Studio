@@ -50,9 +50,6 @@ bool Dystopia::SoundSystem::Init(void)
 
 void Dystopia::SoundSystem::PostInit(void)
 {
-	//Audio* a = LoadSound("Samsara.mp3");
-	//if (a)
-	//	mpFMOD->playSound(a->mpSound, nullptr, false, &a->mpChannel);
 }
 
 void Dystopia::SoundSystem::FixedUpdate(float)
@@ -71,13 +68,6 @@ void Dystopia::SoundSystem::Update(float _dt)
 		if (c.GetFlags() & FLAG_ACTIVE)
 		{
 			c.Update(_dt);
-			if (c.IsReady() && !c.IsPlaying())
-			{
-				Audio *pAud = c.GetAudio();
-				mpFMOD->playSound(pAud->mpSound, nullptr, false, &pAud->mpChannel);
-				pAud->mpChannel->setLoopCount(c.IsLoop() ? -1 : 0);
-				c.SetReady(false);
-			}
 		}
 	}
 }
@@ -97,7 +87,7 @@ void Dystopia::SoundSystem::Shutdown(void)
 {
 	for (auto& elem : mMapOfAudios)
 	{
-		elem.second->mpSound->release();
+		elem.second->Release();
 		delete elem.second;
 	}
 

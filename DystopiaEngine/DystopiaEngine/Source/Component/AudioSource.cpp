@@ -23,12 +23,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif 
 
 Dystopia::AudioSource::AudioSource(void) 
-	: mpAudio{ nullptr }, mReady{ true }, mLoop{ false }, mIsPlaying{ false }
+	: Component{}, 
+	mpAudio{ nullptr }, mSoundName{ "Samsara.mp3" }
 {
 }
 
 Dystopia::AudioSource::AudioSource(const AudioSource& _rhs)
-	: mpAudio{ nullptr }, mReady{ true }, mLoop{ false }, mIsPlaying{ false }
+	: Component{ _rhs }, 
+	mpAudio{ nullptr }, mSoundName{ _rhs.mSoundName }
 {
 }
 
@@ -46,19 +48,11 @@ void Dystopia::AudioSource::Load(void)
 
 void Dystopia::AudioSource::Init(void)
 {
-	auto *p = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound("Samsara.mp3");
-	SetAudio(p);
+	SetAudio(EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(mSoundName));
 }
 
 void Dystopia::AudioSource::Update(float)
 {
-	if (!mpAudio || !mpAudio->mpChannel) 
-		return;
-
-	mpAudio->mpChannel->isPlaying(&mIsPlaying);
-
-	if (mIsPlaying) 
-		SetReady(false);
 }
 
 void Dystopia::AudioSource::GameObjectDestroy(void)
@@ -84,6 +78,7 @@ Dystopia::AudioSource* Dystopia::AudioSource::Duplicate() const
 
 void Dystopia::AudioSource::Serialise(TextSerialiser&) const
 {
+
 }
 
 void Dystopia::AudioSource::Unserialise(TextSerialiser&)
@@ -93,21 +88,9 @@ void Dystopia::AudioSource::Unserialise(TextSerialiser&)
 void Dystopia::AudioSource::EditorUI(void) noexcept
 {
 #if EDITOR
-	if (!mpAudio) return;
-
-	bool b = mReady;
-	if (EGUI::Display::CheckBox("Play On Start", &mReady))
-	{
-	}
-
 
 
 #endif 
-}
-
-void Dystopia::AudioSource::SetReady(bool _b)
-{
-	mReady = _b;
 }
 
 void Dystopia::AudioSource::SetAudio(Dystopia::Audio* _p)
@@ -118,19 +101,4 @@ void Dystopia::AudioSource::SetAudio(Dystopia::Audio* _p)
 Dystopia::Audio* Dystopia::AudioSource::GetAudio(void)
 {
 	return mpAudio;
-}
-
-bool Dystopia::AudioSource::IsReady(void) const
-{
-	return mReady;
-}
-
-bool Dystopia::AudioSource::IsLoop(void) const
-{
-	return mLoop;
-}
-
-bool Dystopia::AudioSource::IsPlaying(void) const
-{
-	return mIsPlaying;
 }
