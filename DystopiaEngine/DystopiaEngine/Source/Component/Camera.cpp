@@ -37,16 +37,20 @@ Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{
 	mViewport{0, 0, _fWidth, _fHeight}, mView{}, mProjection{},
 	mInvScreen {}
 {
+
 }
 
 Dystopia::Camera::Camera(const Camera& _oOther) : Component{ _oOther }, 
 	mViewport{ _oOther.mViewport }, mView{ _oOther.mView }, mProjection{},
 	mInvScreen{ _oOther.mInvScreen }
-{}
+{
+
+}
 
 Dystopia::Camera::~Camera(void)
 {
 }
+
 
 void Dystopia::Camera::Init(void)
 {
@@ -61,12 +65,14 @@ void Dystopia::Camera::Init(void)
 		.0f, .0f, .0f, 1.f
 	};
 }
+
 /*
 void Dystopia::Camera::Update(const float)
 {
 
 }
 */
+
 void Dystopia::Camera::SetMasterCamera(void)
 {
 	EngineCore::GetInstance()->GetSystem<CameraSystem>()->SetMasterCamera(this);
@@ -76,6 +82,7 @@ bool Dystopia::Camera::IsMasterCamera(void) const
 {
 	return EngineCore::GetInstance()->GetSystem<CameraSystem>()->IsMasterCamera(this);
 }
+
 
 void Dystopia::Camera::InitiallyActive(bool b)
 {
@@ -100,10 +107,13 @@ bool Dystopia::Camera::IsWithinCameraBounds(const Math::Pt3D& _vCoords) const
 	return true;
 }
 
-Math::Vec3D Dystopia::Camera::ScreenToWorld(const Math::Vec3D& _vCoords) const
+
+Math::Pt3D Dystopia::Camera::ScreenToWorld(const Math::Pt3D& _vCoords) const
 {
-	return mInvScreen * _vCoords;
+	Math::Pt3D temp = mInvScreen * _vCoords;
+	return temp * Math::Reciprocal(temp.wwww);
 }
+
 
 void Dystopia::Camera::SetPosition(const Math::Pt3D& _vPos)
 {
@@ -114,6 +124,7 @@ void Dystopia::Camera::SetPosition(const float _x, const float _y, const float _
 {
 	GetOwner()->GetComponent<Transform>()->SetGlobalPosition(_x, _y, _z);
 }
+
 
 /*
 void Dystopia::Camera::SetZoom(const float _fZoom)
@@ -127,6 +138,7 @@ void Dystopia::Camera::SetZoom(const float _fZoomX, const float _fZoomY)
 	mZoom.y = _fZoomY;
 }
 */
+
 
 void Dystopia::Camera::SetCamera(void)
 {
@@ -145,20 +157,6 @@ void Dystopia::Camera::SetCamera(void)
 	//	}; // Screen space -> Viewport space -> projection space
 
 	mView.AffineInverse();
-}
-
-void Dystopia::Camera::SetViewport(const int _x, const int _y, const int _nWidth, const int _nHeight)
-{
-//	const Gfx::AbsViewport& master =
-//		EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
-
-//	float InvWidth  = 1.f / master.mnWidth;
-//	float InvHeight = 1.f / master.mnHeight;
-
-//	mViewport.mnX = (_x - master.mnX) * InvWidth;
-//	mViewport.mnY = (_y - master.mnY) * InvHeight;
-//	mViewport.mnWidth  = _nWidth  * InvWidth;
-//	mViewport.mnHeight = _nHeight * InvHeight;
 }
 
 void Dystopia::Camera::SetViewport(float _x, float _y, float _nWidth, float _nHeight)
@@ -237,7 +235,7 @@ const Math::Mat4& Dystopia::Camera::GetViewMatrix(void)
 	return mView;
 }
 
-const Math::Matrix4 & Dystopia::Camera::GetProjectionMatrix(void)
+const Math::Mat4& Dystopia::Camera::GetProjectionMatrix(void)
 {
 	return mProjection;
 }

@@ -63,7 +63,7 @@ namespace Dystopia
 		bool IsWithinCameraBounds(const Math::Pt3D&) const;
 
 		// Converts Screen coords to World coords based on this camera
-		Math::Pt3D ScreenToWorld(const Math::Vec3D&) const;
+		Math::Pt3D ScreenToWorld(const Math::Pt3D&) const;
 
 		// Sets the Camera's position in *GLOBAL* coordinates
 		void SetPosition(const Math::Pt3D&);
@@ -76,9 +76,8 @@ namespace Dystopia
 		void SetRotation(const float);
 		void SetRotationDeg(const float);
 
-		// Sets the area the camera renders to in absolute screen coordinates
-		void SetViewport(const int _x, const int _y, const int _nWidth, const int _nHeight);
-		// Set the area the camera renders to in relative coordinates, from 0 to 1.0
+
+		// Set the area the camera renders to in relative coordinates, from 0.0 to 1.0
 		void SetViewport(float _x, float _y, float _nWidth, float _nHeight);
 
 		void SetPerspective(Math::Angle _fFOV, float _fAspectRatio, float _fNear, float _fFar);

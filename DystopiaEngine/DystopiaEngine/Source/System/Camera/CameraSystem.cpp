@@ -20,8 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/MagicArray.h"
 #include "System/Graphics/GraphicsDefs.h"
 
-#include <GL/glew.h>				// glViewport
-
 
 Dystopia::CameraSystem::CameraSystem(void) noexcept
 	: mpMasterCam{ nullptr }, mpUICam{ nullptr }//, mMasterViewport{}
