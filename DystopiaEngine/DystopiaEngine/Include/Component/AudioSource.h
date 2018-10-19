@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Audio;
+	class Sound;
 	class SoundSystem;
 	class AudioSource : public Component
 	{
@@ -67,13 +67,16 @@ namespace Dystopia
 
 		// =============================== SOUND SPECIFIC FUNCTIONS =============================== // 
 
-		void SetAudio(Audio*);
-		Audio* GetAudio(void);
+		Sound* GetSound(void);
+		void SetSound(Sound*);
+
+		unsigned GetChannel(void) const;
+		void SetChannel(unsigned);
 
 	private:
-		Audio		*mpAudio;
+		unsigned mChannelID;
+		Sound *mpSound;
 		std::string mSoundName;
-
 	};
 }
 

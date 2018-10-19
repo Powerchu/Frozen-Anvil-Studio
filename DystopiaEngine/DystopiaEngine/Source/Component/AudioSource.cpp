@@ -24,13 +24,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::AudioSource::AudioSource(void) 
 	: Component{}, 
-	mpAudio{ nullptr }, mSoundName{ "Samsara.mp3" }
+	mpSound{ nullptr }, mSoundName{ "Samsara.mp3" }
 {
 }
 
 Dystopia::AudioSource::AudioSource(const AudioSource& _rhs)
 	: Component{ _rhs }, 
-	mpAudio{ nullptr }, mSoundName{ _rhs.mSoundName }
+	mpSound{ nullptr }, mSoundName{ _rhs.mSoundName }
 {
 }
 
@@ -48,7 +48,7 @@ void Dystopia::AudioSource::Load(void)
 
 void Dystopia::AudioSource::Init(void)
 {
-	SetAudio(EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(mSoundName));
+	SetSound(EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(mSoundName));
 }
 
 void Dystopia::AudioSource::Update(float)
@@ -93,12 +93,23 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 #endif 
 }
 
-void Dystopia::AudioSource::SetAudio(Dystopia::Audio* _p)
+Dystopia::Sound* Dystopia::AudioSource::GetSound(void)
 {
-	mpAudio = _p;
+	return mpSound;
 }
 
-Dystopia::Audio* Dystopia::AudioSource::GetAudio(void)
+void Dystopia::AudioSource::SetSound(Sound* _s)
 {
-	return mpAudio;
+	mpSound = _s;
 }
+
+unsigned Dystopia::AudioSource::GetChannel(void) const
+{
+	return mChannelID;
+}
+
+void Dystopia::AudioSource::SetChannel(unsigned _i)
+{
+	mChannelID = _i;
+}
+

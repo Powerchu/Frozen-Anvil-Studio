@@ -26,11 +26,18 @@ namespace FMOD
 {
 	class System;
 	class Sound;
+	class Channel;
 }
 
 namespace Dystopia
 {
-	class Audio;
+	class Sound
+	{
+	public:
+		Sound(FMOD::Sound* _p) : mpSound{ _p }{}
+		FMOD::Sound *mpSound;
+	};
+
 	class AudioSource;
 	class SoundSystem : public Systems, public ComponentDonor<AudioSource>
 	{
@@ -52,14 +59,16 @@ namespace Dystopia
 		void SaveSettings(TextSerialiser&);
 
 		void ReceiveMessage(const eSysMessage&);
-		Audio* LoadSound(const std::string& _file);
+		Sound* LoadSound(const std::string& _file);
 
 	private:
-
 		FMOD::System *mpFMOD;
 		std::string	 mDefaultSoundFolder;
 
-		std::map<std::string, Audio*> mMapOfAudios;
+		std::map<std::string, Sound*> mMapOfSounds;
+		AutoArray<FMOD::Channel*> mArrOfChannels;
+
+		void PlayAudio(AudioSource*);
 	};
 }
 

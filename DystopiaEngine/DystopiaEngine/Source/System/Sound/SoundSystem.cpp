@@ -11,8 +11,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Sound/SoundSystem.h"
-#include "System/Sound/Audio.h"
-
 #include "Component/AudioSource.h"
 #include "Object/ObjectFlags.h"
 #include "fmod.hpp"
@@ -22,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 Dystopia::SoundSystem::SoundSystem(void)
 	: mpFMOD{ nullptr }, 
 	mDefaultSoundFolder{ "Resource/Audio/" },
-	mMapOfAudios{}
+	mMapOfSounds{}
 {
 }
 
@@ -85,9 +83,9 @@ void Dystopia::SoundSystem::PostUpdate(void)
 
 void Dystopia::SoundSystem::Shutdown(void)
 {
-	for (auto& elem : mMapOfAudios)
+	for (auto& elem : mMapOfSounds)
 	{
-		elem.second->Release();
+		elem.second->mpSound->release();
 		delete elem.second;
 	}
 
@@ -104,6 +102,11 @@ void Dystopia::SoundSystem::LoadSettings(TextSerialiser&)
 {
 }
 
+void Dystopia::SoundSystem::PlayAudio(Dystopia::AudioSource* _a)
+{
+
+}
+
 void Dystopia::SoundSystem::SaveSettings(TextSerialiser&)
 {
 }
@@ -112,7 +115,7 @@ void Dystopia::SoundSystem::ReceiveMessage(const eSysMessage&)
 {
 }
 
-Dystopia::Audio* Dystopia::SoundSystem::LoadSound(const std::string& _file)
+Dystopia::Sound* Dystopia::SoundSystem::LoadSound(const std::string& _file)
 {
 	size_t pos = _file.find_last_of('/');
 	std::string path = mDefaultSoundFolder + _file;
@@ -124,13 +127,13 @@ Dystopia::Audio* Dystopia::SoundSystem::LoadSound(const std::string& _file)
 		soundName = std::string{ _file.begin() + pos + 1, _file.end() };
 	}
 
-	if (mMapOfAudios.find(soundName) != mMapOfAudios.end())
-		return mMapOfAudios[soundName];
+	if (mMapOfSounds.find(soundName) != mMapOfSounds.end())
+		return mMapOfSounds[soundName];
 
 	FMOD::Sound *pSound;
 	FMOD_RESULT result = mpFMOD->createSound(path.c_str(), FMOD_CREATESAMPLE | FMOD_LOWMEM, nullptr, &pSound);
 	if (result == FMOD_OK)
-		return mMapOfAudios[soundName] = new Audio{ soundName, pSound };
+		return mMapOfSounds[soundName] = new Sound{ pSound };
 
 	return nullptr;
 }
