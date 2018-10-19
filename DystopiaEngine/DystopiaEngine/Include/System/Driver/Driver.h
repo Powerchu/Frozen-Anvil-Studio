@@ -36,7 +36,7 @@ namespace Dystopia
 			Ut::Indexer<eSYSTEMS::TIME_SYSTEM     , class TimeSystem     >,
 			Ut::Indexer<eSYSTEMS::INPUT_SYSTEM    , class InputManager   >,
 			Ut::Indexer<eSYSTEMS::WINDOW_SYSTEM   , class WindowManager  >,
-//			Ut::Indexer<eSYSTEMS::SOUND_SYSTEM    , class SoundSystem    >, // TODO
+			Ut::Indexer<eSYSTEMS::SOUND_SYSTEM    , class SoundSystem    >, 
 			Ut::Indexer<eSYSTEMS::SCENE_SYSTEM    , class SceneSystem    >,
 			Ut::Indexer<eSYSTEMS::CAMERA_SYSTEM   , class CameraSystem   >,
 			Ut::Indexer<eSYSTEMS::GRAPHIC_SYSTEM  , class GraphicsSystem >,
