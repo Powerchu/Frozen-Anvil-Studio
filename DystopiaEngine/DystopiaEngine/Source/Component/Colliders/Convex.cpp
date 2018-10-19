@@ -84,6 +84,7 @@ namespace Dystopia
 		_out << static_cast<float>(mRotation[1]);
 		_out << static_cast<float>(mRotation[2]);
 		_out << static_cast<float>(mRotation[3]);
+		_out << mbIsTrigger;
 
 		_out.InsertEndBlock("Convex_Collider");
 	}
@@ -122,6 +123,8 @@ namespace Dystopia
 		_in >> mRotation[1];
 		_in >> mRotation[2];
 		_in >> mRotation[3];
+
+		_in >> mbIsTrigger;
 
 		_in.ConsumeEndBlock();
 
@@ -171,6 +174,8 @@ namespace Dystopia
 			{
 				/*Clear the simplex for the next function call*/
 				Simplex.clear();
+				//if(CollisionEvent const * const ColEvent = FindCollisionEvent(_pColB.GetOwnerID()))
+					//InformOtherComponents(false, *ColEvent);
 				/*Return no collision*/
 				return false;
 			}
@@ -182,7 +187,9 @@ namespace Dystopia
 					mbColliding = true;
 					_pColB.mbColliding = true;
 					/*Use EPA to get collision information*/
-					marr_ContactSets.Insert(GetCollisionEvent(Simplex, _pColB));
+					CollisionEvent ColEvent = GetCollisionEvent(Simplex, _pColB);
+					marr_ContactSets.push_back(ColEvent);
+					//InformOtherComponents(true, ColEvent);
 					/*Clear the simplex for the next function call*/
 					Simplex.clear();
 					/*Return true for collision*/
@@ -200,8 +207,11 @@ namespace Dystopia
 		if (_ColB.GetOwner()->GetComponent<RigidBody>())
 			other_body = _ColB.GetOwner()->GetComponent<RigidBody>();
 
+		CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
+
 		const auto & Edges = GetConvexEdges();
 		bool isInside = true;
+
 		/*Check for Circle inside Convex*/
 		for(auto & elem : Edges)
 		{
@@ -240,11 +250,11 @@ namespace Dystopia
 				if (distance < _ColB.GetRadius())
 				{
 					isInside = true;
-					CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
 					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
 					newEvent.mEdgeNormal = Math::Normalise(_ColB.GetGlobalPosition() - PointOfImpact);
 					newEvent.mEdgeVector = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
+					newEvent.mOtherID        = _ColB.GetOwner()->GetID();
 					if (nullptr != other_body)
 					{
 						newEvent.mfRestitution = DetermineRestitution(*other_body);
@@ -252,14 +262,19 @@ namespace Dystopia
 						newEvent.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
 					}
 					isInside = true;
-					marr_ContactSets.push_back(newEvent);
 					mbColliding = true;
 					_ColB.SetColliding(true);
 				}
 			}
-
 		}
-		
+		if (isInside)
+		{
+			//InformOtherComponents(true, newEvent);
+		}
+		else
+		{
+			//InformOtherComponents(false, newEvent);
+		}
 		return isInside;
 	}
 
@@ -324,7 +339,7 @@ namespace Dystopia
 	AutoArray<Edge> Convex::GetConvexEdges() const
 	{
 		AutoArray<Edge> ToRet;
-		Math::Matrix3D World = GetOwnerTransform() * Math::Translate(mv3Offset.x, mv3Offset.y, mv3Offset.z)* GetTransformationMatrix();;
+		const Math::Matrix3D World = GetOwnerTransform() * Math::Translate(mv3Offset.x, mv3Offset.y, mv3Offset.z) * GetTransformationMatrix();;
 
 		for (unsigned i = 0; i<mVertices.size(); ++i)
 		{
@@ -350,6 +365,19 @@ namespace Dystopia
 		return ToRet;
 	}
 
+	BroadPhaseCircle Convex::GenerateBoardPhaseCircle() const
+	{
+		float LongestRadius = 0;
+		Math::Point3D MyGlobalCentre = this->GetGlobalPosition();
+		for (auto & elem : mVertices)
+		{
+			Math::Vec3D v  = elem.mPosition - mPosition;
+			float distance = (this->GetWorldMatrix() * v).Magnitude();
+			LongestRadius = distance > LongestRadius ? distance : LongestRadius;
+		}
+		return BroadPhaseCircle{ LongestRadius, MyGlobalCentre };
+	}
+
 	void Convex::EditorUI() noexcept
 	{
 		eAttachedBodyEmptyBox();
@@ -362,17 +390,12 @@ namespace Dystopia
 
 	void Convex::eIsTriggerCheckBox()
 	{
-		if (EGUI::Display::CheckBox("Is Trigger		  ", &mbIsTrigger))
-		{
-			// Is Trigger Function here
-			if (mbIsTrigger)
-			{
-				//EGUI::Display::IconTick();
-			}
-			else
-			{
+		bool tempBool = mbIsTrigger;
 
-			}
+		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
+		{
+			mbIsTrigger = tempBool;
+			EGUI::GetCommandHND()->InvokeCommand<Collider>(&mbIsTrigger, tempBool);
 		}
 	}
 
@@ -384,26 +407,19 @@ namespace Dystopia
 		{
 			switch (e)
 			{
-			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eENTER:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
 				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &mv3Offset);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eNO_CHANGE:
-				break;
+			case EGUI::eDragStatus::eEND_DRAG:
+			case EGUI::eDragStatus::eENTER:
 			case EGUI::eDragStatus::eTABBED:
 				EGUI::GetCommandHND()->EndRecording();
 				break;
-			default: 
+			default:
 				break;
 			}
 		}
@@ -415,24 +431,17 @@ namespace Dystopia
 
 		if (EGUI::Display::CollapsingHeader("Points"))
 		{
-			switch (EGUI::Display::DragInt("	Size		", &mNumPoints, 1, 4, 32, false, 128))
+			switch (EGUI::Display::DragInt("	Size		", &mNumPoints, 1, 3, 32, false, 128))
 			{
-			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eENTER:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
 				EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mNumPoints);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eNO_CHANGE:
-				break;
+			case EGUI::eDragStatus::eEND_DRAG:
+			case EGUI::eDragStatus::eENTER:
 			case EGUI::eDragStatus::eTABBED:
 				EGUI::GetCommandHND()->EndRecording();
 				break;
@@ -453,40 +462,32 @@ namespace Dystopia
 			{
 				EGUI::PushID(i);
 				auto& c = mVertices[i];
-				//Math::Vector3D* temp = &(c.mPosition);
+
 				EGUI::Display::Label("	Vertex");
 				auto arrResult = EGUI::Display::VectorFields("	 ", &(c.mPosition), 0.01f, -FLT_MAX, FLT_MAX);
 				for (auto &e : arrResult)
 				{
 					switch (e)
 					{
-					case EGUI::eDragStatus::eEND_DRAG:
-						EGUI::GetCommandHND()->EndRecording();
-						break;
-					case EGUI::eDragStatus::eENTER:
-						EGUI::GetCommandHND()->EndRecording();
-						break;
+					case EGUI::eDragStatus::eNO_CHANGE:
 					case EGUI::eDragStatus::eDRAGGING:
 						break;
 					case EGUI::eDragStatus::eSTART_DRAG:
 						EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &(c.mPosition));
 						break;
 					case EGUI::eDragStatus::eDEACTIVATED:
-						EGUI::GetCommandHND()->EndRecording();
-						break;
-					case EGUI::eDragStatus::eNO_CHANGE:
-						break;
+					case EGUI::eDragStatus::eEND_DRAG:
+					case EGUI::eDragStatus::eENTER:
 					case EGUI::eDragStatus::eTABBED:
 						EGUI::GetCommandHND()->EndRecording();
+						break;
+					default:
 						break;
 					}
 				}
 				EGUI::PopID();
-
 			}
-
-			Init();
-
+			eUseTransformScaleButton(); // Update Vertices
 		}
 	}
 
@@ -498,17 +499,18 @@ namespace Dystopia
 		{
 			switch (e)
 			{
-			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &mScale);
+			case EGUI::eDragStatus::eNO_CHANGE:
+			case EGUI::eDragStatus::eDRAGGING:
 				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &mScale);
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
 			case EGUI::eDragStatus::eEND_DRAG:
 			case EGUI::eDragStatus::eENTER:
-			case EGUI::eDragStatus::eDRAGGING:
-			case EGUI::eDragStatus::eDEACTIVATED:
+			case EGUI::eDragStatus::eTABBED:
 				EGUI::GetCommandHND()->EndRecording();
 				break;
-			case EGUI::eDragStatus::eNO_CHANGE:
-			case EGUI::eDragStatus::eTABBED:
 			default:
 				break;
 			}
@@ -659,7 +661,7 @@ namespace Dystopia
 
 	Edge Convex::GetClosestEdge(AutoArray<SimplexVertex>& _Simplex)
 	{
-		Edge   ClosestEdge{};
+		Edge   ClosestEdge;
 		double ClosestDistance = std::numeric_limits<double>::max();
 
 		for (unsigned i = 0; i < _Simplex.size(); ++i)
@@ -689,25 +691,19 @@ namespace Dystopia
 #else
 			EdgeNorm.Negate<Math::NegateFlag::X>();
 #endif
-			if (EdgeNorm.MagnitudeSqr() == 0.f)
-			{
-				//_Simplex.Remove(std::find(_Simplex.begin(), _Simplex.end(), b));
-				//continue;
-			}
 
 			if (EdgeNorm.MagnitudeSqr() > FLT_EPSILON)
 			{
 				EdgeNorm.Normalise();
 			}
 
-
 			const double distance = EdgeNorm.Dot(a.mPosition);
 			if (Math::Abs(distance) < Math::Abs(ClosestDistance))
 			{
-				ClosestDistance = Math::Abs(distance);
-				ClosestEdge.mNorm3 = EdgeNorm;
-				ClosestEdge.mVec3 = EdgeVec;
-				ClosestEdge.mPos = a.mPosition;
+				ClosestDistance                 = Math::Abs(distance);
+				ClosestEdge.mNorm3              = EdgeNorm;
+				ClosestEdge.mVec3               = EdgeVec;
+				ClosestEdge.mPos                = a.mPosition;
 				ClosestEdge.mOrthogonalDistance = distance;
 				ClosestEdge.mSimplexIndex = j;
 
@@ -770,17 +766,26 @@ namespace Dystopia
 				
 				//bool isInsideCollider = false;
 
-				unsigned j = Point.ColBIndex + 1 >= _ColB.mVertices.size() ? 0 : Point.ColBIndex + 1;
-				const auto start = WorldSpaceB * _ColB.mVertices[Point.ColBIndex].mPosition;
-				const auto end   = WorldSpaceB * _ColB.mVertices[j].mPosition;
+				unsigned j      = Point.ColBIndex + 1 >= _ColB.mVertices.size() ? 0 : Point.ColBIndex + 1;
+				unsigned A_Next = Point.ColAIndex + 1 >=  mVertices.size() ? 0      : Point.ColAIndex + 1;
+
+				auto start = WorldSpaceB * _ColB.mVertices[Point.ColBIndex].mPosition;
+				auto end   = WorldSpaceB * _ColB.mVertices[j].mPosition;
+
+				auto start_A = WorldSpaceA * _ColB.mVertices[Point.ColAIndex].mPosition;
+				auto end_A   = WorldSpaceA * _ColB.mVertices[A_Next].mPosition;
 #if CLOCKWISE
 				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::Y>();
 #else
 				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::X>();
 #endif
-				col_info.mCollisionPoint = ClosestEdge.mPos;
+				Math::Vec3D OriginVector = Math::MakePoint3D(0.f, 0.f, 0.f) - ClosestEdge.mPos;
+				const float BarycentricRatio   = Math::Abs(OriginVector.Dot(ClosestEdge.mVec3.Normalise()) / ClosestEdge.mVec3.Magnitude());
+				col_info.mCollisionPoint = (end_A - start_A) * BarycentricRatio + start_A;
 				col_info.mEdgeNormal     = Normal.Normalise();
 				col_info.mEdgeVector     = Normal.xyzw;
+				col_info.mOtherID        = _ColB.GetOwner()->GetID();
+
 				col_info.mfPeneDepth     = static_cast<float>(ProjectDis);
 
 				if (nullptr != other_body)
@@ -789,6 +794,7 @@ namespace Dystopia
 					col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 					col_info.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
 				}
+
 				return col_info;
 			}
 

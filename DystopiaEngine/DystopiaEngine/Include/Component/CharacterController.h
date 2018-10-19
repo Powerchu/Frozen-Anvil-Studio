@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class RigidBody;
+	class Collider;
 	class InputManager;
 
 	class _DLL_EXPORT CharacterController : public Component
@@ -29,7 +30,10 @@ namespace Dystopia
 		{
 			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllComponents>::value;
 		}
-
+		unsigned GetRealComponentType(void) const
+		{
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, UsableComponents>::value;
+		};
 		static const std::string GetCompileName(void) { return "Character Controller"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 
@@ -40,7 +44,7 @@ namespace Dystopia
 	// ==================================== PUBLIC FUNCTIONS =======================================//
 		void Load(void) override;
 		void Init(void) override;
-
+		void Update(float _dt);
 		void Unload(void) override;
 
 		Component* Duplicate() const override;
@@ -49,12 +53,24 @@ namespace Dystopia
 		void Unserialise(TextSerialiser&) override;
 		void EditorUI(void) noexcept override;
 
+		void CheckGroundCeiling(void);
 		void MovePlayer(float _dt);
 	private:
 		RigidBody * mpBody;
+		Collider  * mpCol;
 		bool		mbIsFacingRight;
 		bool		mbIsGrounded;
+		bool		mbIsCeilinged;
 		float		mfCharacterSpeed;
+		float		mfJumpForce;
+
+		/*=================Editor Stuff=====================*/
+#if EDITOR
+		void UI_Debug();
+		void UI_CharacterSpeed();
+		void UI_CharacterJumpForce();
+
+#endif // EDITOR
 	};
 }
 

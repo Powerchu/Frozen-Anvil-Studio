@@ -22,10 +22,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/MouseData.h"
 #include "Component/Component.h"
 #include "System/Base/ComponentDonor.h"
-
+#include "XGamePad.h"
 #include <map>
 
-#define _INPUT_MANAGER_TEST_CODE_ 1
 
 namespace Dystopia
 {
@@ -69,10 +68,19 @@ namespace Dystopia
 		bool IsKeyTriggered(eButton) const noexcept;
 		bool IsKeyPressed(eButton)   const noexcept;
 		bool IsKeyReleased(eButton)  const noexcept;
+	
 
 		bool IsKeyTriggered(std::string const & _ButtonName) const noexcept;
 		bool IsKeyPressed(std::string const & _ButtonName)   const noexcept;
 		bool IsKeyReleased(std::string const & _ButtonName)  const noexcept;
+
+		bool IsController() const;
+
+		float GetAnalogY(int) const;	//0 for left analog, all others for right
+		float GetAnalogX(int) const;	//0 for left analog, all others for right
+
+		float GetTriggers(int) const;	// 0 for left trigger, all others for right
+										// values returned are between: mfTriggerThresh ~ 255
 
 		Math::Vector2 GetMousePosition(void) const;
 		Math::Vector2 GetMousePosition(const Window&) const;
@@ -99,6 +107,7 @@ namespace Dystopia
 		void LoadDefaultUserKeys(void);
 
 		std::map<std::string, eButton> mButtonMapping;
+		XGamePad mGamePad;
 	};
 
 }

@@ -1,10 +1,9 @@
 /* HEADER *********************************************************************************/
 /*!
 \file	SoundSystem.h
-\author Tan Jie Wei Jacky (100%)
-\par    email: t.jieweijacky\@digipen.edu
+\author Shannon Tan (100%)
+\par    email: t.shannon\@digipen.edu
 \brief
-	Wrapper class for FMOD
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -15,86 +14,64 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _SOUND_SYSTEM_H_
 
 #include "System/Base/Systems.h"
-#include "System/Sound/SoundTypes.h"
+#include "System/Base/ComponentDonor.h"
+
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/SharedPtr.h"
 
 #include <string>
-
-#define MAX_SOUND_CHANNELS 16
+#include <map>
 
 namespace FMOD
 {
-	class Sound;
 	class System;
+	class Sound;
 	class Channel;
-	class ChannelGroup;
 }
 
 namespace Dystopia
 {
-	class AudioSource;
-	struct SoundInfo;
-
-	class SoundSystem : public Systems
+	class Sound
 	{
-		struct SoundInfo
-		{
-			SoundInfo(const std::string&, FMOD::Sound*);
-			~SoundInfo(void);
-
-			std::string strName;
-			FMOD::Sound* mpSound;
-		};
-
 	public:
+		Sound(FMOD::Sound* _p) : mpSound{ _p }{}
+		FMOD::Sound *mpSound;
+	};
 
-		explicit SoundSystem(int = MAX_SOUND_CHANNELS);
+	class AudioSource;
+	class SoundSystem : public Systems, public ComponentDonor<AudioSource>
+	{
+	public:
+		SoundSystem(void);
 		~SoundSystem(void);
 
-		bool Init();
-		void Update(float _dt);
+		void PreInit(void);
+		bool Init(void);
+		void PostInit(void);
+
+		void FixedUpdate(float);
+		void Update(float);
+		void PostUpdate(void);
 		void Shutdown(void);
 
 		void LoadDefaults(void);
 		void LoadSettings(TextSerialiser&);
+		void SaveSettings(TextSerialiser&);
 
-		// Loads audio to memory and returns the handle to it
-		SharedPtr<SoundInfo> LoadAudio(const std::string& _strFile, eSoundType = eSoundType::AUDIOTYPE_MASTER);
-		SharedPtr<SoundInfo> LoadAudioStreaming(const std::string& _strFile, eSoundType = eSoundType::AUDIOTYPE_MASTER);
-
-		// Attempts to the play a sound and returns the channel the sound is using
-		FMOD::Channel* Play(SharedPtr<SoundInfo>&, eSoundType, const float _fVolume = 1.f);
-
-		// Sets the volume of all sounds of a specific type.
-		// Volume has to be in the closed range of [0, 1] with 0 being silent.
-		void SetVolume(eSoundType, float _fVolume);
-
-		void ToggleMute(eSoundType, bool _bDisable);
-		bool IsMute(eSoundType) const;
-		bool IsDisabled(void) const;
-
-		void UnloadSound(const SharedPtr<SoundInfo>&);
-		void UnloadAllSound(void);
+		void ReceiveMessage(const eSysMessage&);
+		Sound* LoadSound(const std::string& _file);
 
 	private:
+		FMOD::System *mpFMOD;
+		std::string	 mDefaultSoundFolder;
 
-		bool mbIsDisabled;
-		FMOD::System* mpFMOD;
-		AutoArray<FMOD::ChannelGroup*> mpChannelGroups;
+		std::map<std::string, Sound*> mMapOfSounds;
+		AutoArray<FMOD::Channel*> mArrOfChannels;
 
-		AutoArray<SharedPtr<SoundInfo>> LoadedSounds;
+		void PlayAudio(AudioSource*);
 	};
 }
 
 
-
-// Remove our defines!
-#ifdef MAX_SOUND_CHANNELS
-#undef MAX_SOUND_CHANNELS
-#endif
-
-
-
-#endif		// INCLUDE GUARD
+#endif	// _SOUND_SYSTEM_H_
 

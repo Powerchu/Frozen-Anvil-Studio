@@ -59,6 +59,7 @@ Dystopia::InputManager::KeyboardState::operator const unsigned long*() const
 }
 
 Dystopia::InputManager::InputManager(void)
+	:mGamePad{ 0 }
 {
 
 }
@@ -78,11 +79,11 @@ bool Dystopia::InputManager::Init(void)
 	return true;
 }
 
-void Dystopia::InputManager::Update(float _dt)
+void Dystopia::InputManager::Update(const float _dt)
 {
 	using Type = BYTE[256];
 	static Type storage{ 0 };
-
+	mGamePad.PollInputs();
 	if (GetKeyboardState(storage))
 	{
 		KeyboardState::u32int * ptr      = static_cast<KeyboardState::u32int*>(mKeyBoardState);
@@ -101,9 +102,10 @@ void Dystopia::InputManager::Update(float _dt)
 	{
 		if (control.GetOwner())
 		{
-			control.MovePlayer(_dt);
+			control.Update(_dt);
 		}
 	}
+
 	/*Commenting this out makes the input smoother*/
 	//SetKeyboardState(Reset);
 }
@@ -137,7 +139,7 @@ void Dystopia::InputManager::LoadSettings(TextSerialiser&)
 {
 }
 
-void Dystopia::InputManager::MapUserButton(eUserButton _nBtn, eButton _nTo)
+void Dystopia::InputManager::MapUserButton(eUserButton , eButton )
 {
 	
 }
@@ -188,6 +190,10 @@ bool Dystopia::InputManager::IsKeyTriggered(std::string const & _ButtonName) con
 	{
 		return false;
 	}
+	if (iterator->second >= eButton::XBUTTON_DPAD_UP)
+	{
+		return mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second - eButton::XBUTTON_DPAD_UP));
+	}
 	return IsKeyTriggered(iterator->second);
 }
 
@@ -197,6 +203,10 @@ bool Dystopia::InputManager::IsKeyPressed(std::string const & _ButtonName) const
 	if (iterator == mButtonMapping.end())
 	{
 		return false;
+	}
+	if (iterator->second >= eButton::XBUTTON_DPAD_UP)
+	{
+		return mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second - eButton::XBUTTON_DPAD_UP));
 	}
 	return IsKeyPressed(iterator->second);
 }
@@ -208,7 +218,31 @@ bool Dystopia::InputManager::IsKeyReleased(std::string const & _ButtonName) cons
 	{
 		return false;
 	}
+	if (iterator->second >= eButton::XBUTTON_DPAD_UP)
+	{
+		return mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second - eButton::XBUTTON_DPAD_UP));
+	}
 	return IsKeyReleased(iterator->second);
+}
+
+bool Dystopia::InputManager::IsController() const
+{
+	return mGamePad.IsConnected();
+}
+
+float Dystopia::InputManager::GetAnalogY(int _state) const
+{
+	return mGamePad.GetAnalogY(_state);
+}
+
+float Dystopia::InputManager::GetAnalogX(int _state) const
+{
+	return mGamePad.GetAnalogX(_state);
+}
+
+float Dystopia::InputManager::GetTriggers(int _state) const
+{
+	return mGamePad.GetTriggers(_state);
 }
 
 Math::Vector2 Dystopia::InputManager::GetMousePosition(void) const

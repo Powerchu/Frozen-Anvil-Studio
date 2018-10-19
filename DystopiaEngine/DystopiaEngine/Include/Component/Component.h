@@ -32,6 +32,7 @@ namespace Dystopia
 		using TAG = ComponentTag;
 		using SYSTEM = class NULL_SYSTEM;
 		virtual unsigned GetComponentType(void) const { return unsigned(-1); };
+		virtual unsigned GetRealComponentType(void) const { return unsigned(-1); };
 		virtual const std::string GetEditorName(void) const { return "Generic Component"; }
 
 		// ====================================== CONSTRUCTORS ======================================= // 

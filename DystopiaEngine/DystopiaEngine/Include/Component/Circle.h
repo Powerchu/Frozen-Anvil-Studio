@@ -29,6 +29,10 @@ namespace Dystopia
 		{
 			return Ut::MetaFind_t<Ut::Decay_t<Collider>, AllComponents>::value;
 		};
+		unsigned GetRealComponentType(void) const
+		{
+			return Ut::MetaFind_t<Ut::Decay_t<Circle>, UsableComponents>::value;
+		};
 
 #if EDITOR
 		static const std::string GetCompileName(void) { return "Circle Collider"; }
@@ -58,6 +62,7 @@ namespace Dystopia
 		/*Duplicate the Component*/
 		virtual Circle* Duplicate() const;
 
+		virtual BroadPhaseCircle GenerateBoardPhaseCircle() const;
 		float GetRadius() const;
 
 		/*Serialise and Unserialise*/

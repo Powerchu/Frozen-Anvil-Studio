@@ -44,6 +44,10 @@ namespace Dystopia
 		{
 			return Ut::MetaFind_t<Ut::Decay_t<Collider>, AllComponents>::value;
 		};
+		unsigned GetRealComponentType(void) const
+		{
+			return Ut::MetaFind_t<Ut::Decay_t<Convex>, UsableComponents>::value;
+		};
 
 #if EDITOR
 		static const std::string GetCompileName(void) { return "Convex Collider"; }
@@ -123,6 +127,7 @@ namespace Dystopia
 
 		AutoArray<Edge> GetConvexEdges() const;
 
+		virtual BroadPhaseCircle GenerateBoardPhaseCircle() const override;
 	protected:
 
 		CollisionEvent GetCollisionEvent(AutoArray<SimplexVertex> _Simplex,
