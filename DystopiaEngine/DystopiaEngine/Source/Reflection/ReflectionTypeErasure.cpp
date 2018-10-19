@@ -1,5 +1,6 @@
 #include "Reflection/ReflectionTypeErasure.h"
 
+
 Dystopia::TypeErasure::TypeEraseMetaData::TypeEraseMetaData(TypeEraseMetaData const & _TypeEraseRhs)
 	:mpWrapper{ _TypeEraseRhs.mpWrapper->Duplicate() }
 {

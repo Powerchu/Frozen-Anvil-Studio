@@ -26,6 +26,7 @@ template <>                                                      \
 class MetaData<_STRUCT_>                                         \
 {                                                                \
 	PP_FOREACH(REFLECT_AUX, (_STRUCT_), __VA_ARGS__)             \
+											                     \
 }
 
 

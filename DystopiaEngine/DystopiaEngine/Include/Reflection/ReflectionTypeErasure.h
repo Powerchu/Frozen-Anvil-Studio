@@ -7,70 +7,24 @@
 #include "Utility/Utility.h"
 #include "Allocator/Allocator.h"
 #include "Reflection/MetaData.h"
+#include "ReadWriteObject.h"
+#include "Reflection.h"
 
 #include <string>
 #include <map>
+#include <functional>
+#include <any>
+#include <typeinfo>
 namespace Dystopia
 {
 
 	namespace TypeErasure
 	{
-		template<typename T>
-		struct Type
-		{
-			using type = T;
-		};
-
-		template<typename T>
-		struct TypeDescriptor : Type<T>
-		{
-
-		};
 
 		struct TypeEraseMetaData;
-		struct ReadWriteObject;
-
-		struct ReadWriteObject
-		{
-		protected:
-
-			struct Concept
-			{
-				virtual Concept * Duplicate() const = 0;
-				//static std::map<int, > m;
-			};
-
-			template<typename T>
-			struct Wrapper : Concept
-			{
-				template<typename U>
-				Wrapper(U && _obj)
-					:mObj{ _obj }
-				{
-
-				}
-
-				virtual Wrapper * Duplicate() const
-				{
-					return new Wrapper{ *this };
-				}
-
-				T mObj;
-			};
 
 
 
-		public:
-
-			template<typename T>
-			void Get(T _functor) const
-			{
-
-			}
-
-		private:
-			Concept * mpWrapper = nullptr;
-		};
 		struct TypeEraseMetaData
 		{
 		protected:
@@ -79,6 +33,8 @@ namespace Dystopia
 				virtual Concept * Duplicate() const = 0;
 				virtual ReadWriteObject       & operator[](std::string const & _name)       = 0;
 				virtual ReadWriteObject const & operator[](std::string const & _name) const = 0;
+
+
 				virtual ~Concept() {}
 			};
 
@@ -117,14 +73,14 @@ namespace Dystopia
 
 				virtual ReadWriteObject       & operator[](std::string const & _name)
 				{
-					return ReadWriteObject{ mObj[_name] };
+					return ReadWriteObject{  };
 				}
 				virtual ReadWriteObject const & operator[](std::string const & _name) const
 				{
-					
-					return ReadWriteObject{ mObj[_name] };
-					
+					return ReadWriteObject{  };
 				}
+
+			private:
 
 				MetaData<T> mObj;
 			};
@@ -146,6 +102,7 @@ namespace Dystopia
 
 			ReadWriteObject&        operator[](std::string const & _name);
 			ReadWriteObject const & operator[](std::string const & _name) const;
+
 
 		private:
 			Concept* mpWrapper = nullptr;

@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility/Meta.h"
 #include "Utility/Utility.h"
-#include "ReflectionTypeErasure.h"
+#include "ReadWriteObject.h"
 
 template <typename C, typename Ty>
 struct ReflectedData
@@ -36,9 +36,9 @@ private:
 	template <typename T>
 	struct DefaultGet
 	{
-		T operator () (C* _obj) const
+		T operator () (void* _obj) const
 		{
-			return _obj->*mMemPtr;
+			return static_cast<C*>(_obj)->*mMemPtr;
 		}
 
 		T C::*mMemPtr;
@@ -47,9 +47,9 @@ private:
 	template <typename T>
 	struct DefaultSet
 	{
-		T operator () (C* _obj, T&& _val) const
+		T operator () (void* _obj, T&& _val) const
 		{
-			_obj->*mMemPtr = Ut::Forward<T>(_val);
+			static_cast<C*>(_obj)->*mMemPtr = Ut::Forward<T>(_val);
 		}
 
 		T C::*mMemPtr;
@@ -63,7 +63,7 @@ private:
 
 		ProxyObj(Get_t, Set_t);
 	};
-
+	
 
 	Dystopia::TypeErasure::ReadWriteObject mData;
 };
@@ -86,15 +86,15 @@ inline ReflectedData<C, Ty>::ProxyObj<Get_t, Set_t>::ProxyObj(Get_t _get, Set_t 
 
 template <typename C, typename Ty>
 ReflectedData<C, Ty>::ReflectedData(Ty C::*_ptr) :
-	mData{ DefaultGet<Ty>{_ptr}, DefaultSet<Ty>{_ptr} }
+	mData{ ReflectedData<C,Ty>::ProxyObj<Get_t, Set_t> {DefaultGet<Ty>{_ptr}, DefaultSet<Ty>{_ptr}} }
 {
 
 }
 
 template <typename C, typename Ty>
 template<typename Get_t, typename Set_t>
-ReflectedData::ReflectedData(Get_t&& _get, Set_t&& _set) :
-	mData{ Ut::Forward<Get_t>(_get), Ut::Forward<Set_t>(_set) }
+ReflectedData<C,Ty>::ReflectedData(Get_t&& _get, Set_t&& _set) :
+	mData{ ReflectedData<C,Ty>::ProxyObj<Get_t, Set_t> {Ut::Forward<Get_t>(_get), Ut::Forward<Set_t>(_set)} }
 {
 
 }

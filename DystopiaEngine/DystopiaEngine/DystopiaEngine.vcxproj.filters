@@ -274,7 +274,9 @@
     <ClCompile Include="Source\System\Logger\FileLogger.cpp">
       <Filter>Game Engine\SubSystems\Logger\FileLogger</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
+    <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp">
+      <Filter>Reflection\TypeErasure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -757,7 +759,10 @@
     <ClInclude Include="Include\Editor\DragStatus.h">
       <Filter>Editor\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Reflection\ReflectionTypeErasure.h" />
+    <ClInclude Include="Include\Reflection\ReflectionTypeErasure.h">
+      <Filter>Reflection\TypeErasure</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\ReadWriteObject.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1074,6 +1079,9 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Logger\FileLogger">
       <UniqueIdentifier>{7034c117-e848-41c3-8883-3d54e3f596b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\TypeErasure">
+      <UniqueIdentifier>{ecafed53-7b83-4c71-9271-0b0e5af66397}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

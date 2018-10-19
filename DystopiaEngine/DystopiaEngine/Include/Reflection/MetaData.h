@@ -14,9 +14,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _REFLECT_METADATA_H_
 #define _REFLECT_METADATA_H_
 
-
-template <typename>
-struct MetaData;
+#include "DataStructure/Variant.h"
+template <typename T>
+struct MetaData
+{
+	/*Test Code*/
+	using PossibleTypes = Variant<float, int, double>;
+};
 
 
 
