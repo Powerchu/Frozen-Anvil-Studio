@@ -356,12 +356,16 @@ namespace Dystopia
 		switch (mNextState)
 		{
 		case EDITOR_MAIN:
-			if (mCurrentState == EDITOR_PLAY || 
+			if (mCurrentState == EDITOR_PLAY ||
 				mCurrentState == EDITOR_PAUSE)
+			{
 				TempLoad();
+				mpBehaviourSys->ReAttach();
+			}
 			break;
 		case EDITOR_PLAY:
 			TempSave();
+			mpSceneSystem->GetActiveScene().Init();
 			break;
 		case EDITOR_PAUSE:
 			break;
@@ -646,7 +650,7 @@ namespace Dystopia
 		remove(mTempSaveFile.c_str());
 		mTempSaveFile.clear();
 		for (auto& e : mArrTabs)
-			e->SetSceneContext(&mpSceneSystem->GetCurrentScene());
+			e->SetSceneContext(&mpSceneSystem->GetActiveScene());
 		mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
 	}
 

@@ -329,6 +329,35 @@ namespace Dystopia
 		return nullptr;
 	}
 
+	void Dystopia::BehaviourSystem::ReAttach(void)
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (auto p = iter.second->GetOwner())
+				{
+					p->AddComponent(iter.second, Behaviour::TAG{});
+					if (p->GetFlag() & eObjFlag::FLAG_ACTIVE)
+					{
+						_EDITOR_START_TRY
+							iter.second->Update(0.f);
+						_EDITOR_CATCH(std::exception& e)
+						{
+							_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Error: %s!", e.what()));
+							_EDITOR_CODE(p->RemoveComponent(iter.second));
+							_EDITOR_CODE(iter.second->DestroyComponent());
+						}
+					}
+				}
+				else
+				{
+					iter.second->DestroyComponent();
+				}
+			}
+		}
+	}
+
+
 #endif
 }
-
