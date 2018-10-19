@@ -28,9 +28,6 @@
     <ClCompile Include="Source\Editor\Editor.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\IO\ImageParser.cpp">
-      <Filter>IO\ImageParser</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Graphics\Texture2D.cpp">
       <Filter>Game Engine\SubSystems\Texture\Texture\Texture2D</Filter>
     </ClCompile>
@@ -264,6 +261,15 @@
     </ClCompile>
     <ClCompile Include="Source\Component\Renderer.cpp">
       <Filter>Game Engine\Components\Renderer\BaseRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\TextureAtlas.cpp">
+      <Filter>Game Engine\SubSystems\Texture\Texture\Atlas</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IO\BitmapParser.cpp">
+      <Filter>IO\ImageParser</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IO\ImageParser.cpp">
+      <Filter>IO\ImageParser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -735,6 +741,9 @@
     <ClInclude Include="Include\Component\Renderer.h">
       <Filter>Game Engine\Components\Renderer\BaseRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Graphics\TextureAtlas.h">
+      <Filter>Game Engine\SubSystems\Texture\Texture\Atlas</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -829,9 +838,6 @@
     </Filter>
     <Filter Include="IO\TextSerialiser">
       <UniqueIdentifier>{500db7cd-deed-4efd-b173-f377dfb115d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\BinarySerialiser">
-      <UniqueIdentifier>{d6c8bc2a-a1b7-4fde-9efc-c753457d7130}</UniqueIdentifier>
     </Filter>
     <Filter Include="IO\ImageParser">
       <UniqueIdentifier>{8fc9bc42-e537-436b-9608-0fb8466bebc6}</UniqueIdentifier>
@@ -1057,6 +1063,9 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Texture\Texture\Atlas">
       <UniqueIdentifier>{21d68eec-32ed-4d4c-94be-94c181d2078c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\BinarySerialiser">
+      <UniqueIdentifier>{d6c8bc2a-a1b7-4fde-9efc-c753457d7130}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

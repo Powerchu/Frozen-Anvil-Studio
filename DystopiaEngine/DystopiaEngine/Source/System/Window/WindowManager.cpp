@@ -50,12 +50,11 @@ namespace
 		switch (message)
 		{
 		case WM_SETFOCUS:
-			
-			//Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(true);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_GAIN);
 			break;
+
 		case WM_KILLFOCUS:
-			
-			//Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(false);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_LOST);
 			break;
 
 		case WM_SIZE:
@@ -89,6 +88,7 @@ namespace
 		case WM_MOUSEWHEEL:
 			if (pMouse)
 				pMouse->mnWheel = GET_WHEEL_DELTA_WPARAM(wParam);
+			break;
 
 		default:
 			break;

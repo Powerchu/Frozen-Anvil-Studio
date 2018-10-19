@@ -37,9 +37,9 @@ Dystopia::Texture2D::Texture2D(const std::string& _strPath, bool _bAlpha) :
 	{
 		img = ImageParser::LoadBMP(_strPath);
 	}
-	else if ('j' == *fileType || 'J' == *fileType)
+	else if ('d' == *fileType || 'D' == *fileType)
 	{
-		img = ImageParser::LoadJPG(_strPath);
+		img = ImageParser::LoadDDS(_strPath);
 	}
 	else
 	{

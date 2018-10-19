@@ -43,12 +43,14 @@
     <ClCompile Include="Source\Editor\ProjectSettings.cpp" />
     <ClCompile Include="Source\Editor\SpritePreviewer.cpp" />
     <ClCompile Include="Source\Editor\StyleScheme.cpp" />
+    <ClCompile Include="Source\IO\ImageParser.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
     <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp" />
+    <ClCompile Include="Source\System\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp" />
     <ClCompile Include="Source\System\Logger\FileLogger.cpp" />
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp" />
@@ -88,7 +90,7 @@
     <ClCompile Include="Source\Editor\HierarchyView.cpp" />
     <ClCompile Include="Source\Editor\Inspector.cpp" />
     <ClCompile Include="Source\IO\BinarySerializer.cpp" />
-    <ClCompile Include="Source\IO\ImageParser.cpp" />
+    <ClCompile Include="Source\IO\BitmapParser.cpp" />
     <ClCompile Include="Source\IO\TextSerialiser.cpp" />
     <ClCompile Include="Source\Math\Matrix4.cpp" />
     <ClCompile Include="Source\Object\GameObject.cpp" />
@@ -151,6 +153,7 @@
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />
+    <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
     <ClInclude Include="Include\Component\Collider.h" />
