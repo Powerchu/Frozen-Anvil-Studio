@@ -100,14 +100,14 @@ namespace Dystopia
 		//bodyB->AddForce(frictionImpulse);
 	}
 
-	void CollisionEvent::ApplyPenetrationCorrection() const
+	void CollisionEvent::ApplyPenetrationCorrection(const int iter) const
 	{
 		const auto bodyA = mThisCollider->GetComponent<RigidBody>();
 		const auto bodyB = mCollidedWith->GetComponent<RigidBody>();
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
 
-		const float perc = 0.30F;
+		const float perc = 0.4F/iter;
 		const float slop = 0.01F;
 
 		const Vec3D correction = Math::Max((mfPeneDepth)+slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;

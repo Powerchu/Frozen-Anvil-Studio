@@ -79,7 +79,7 @@ bool Dystopia::InputManager::Init(void)
 	return true;
 }
 
-void Dystopia::InputManager::Update(float _dt)
+void Dystopia::InputManager::Update(const float _dt)
 {
 	using Type = BYTE[256];
 	static Type storage{ 0 };
@@ -102,9 +102,10 @@ void Dystopia::InputManager::Update(float _dt)
 	{
 		if (control.GetOwner())
 		{
-			control.MovePlayer(_dt);
+			control.Update(_dt);
 		}
 	}
+
 	/*Commenting this out makes the input smoother*/
 	//SetKeyboardState(Reset);
 }

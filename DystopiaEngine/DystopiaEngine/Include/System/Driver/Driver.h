@@ -23,12 +23,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility/Meta.h"
 #include "Utility/MetaAlgorithms.h"
-
+#include "Globals.h"
 
 
 namespace Dystopia
 {
-	class EngineCore final  
+	class _DLL_EXPORT EngineCore final
 	{
 	public:
 		using AllSys = Ut::MetaSortT_t <Ut::MetaLessThan, Ut::Collection <

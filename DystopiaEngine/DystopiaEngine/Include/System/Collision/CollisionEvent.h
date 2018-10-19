@@ -35,7 +35,7 @@ namespace Dystopia
 		u64int              mOtherID;
 
 		void ApplyImpulse();
-		void ApplyPenetrationCorrection() const;
+		void ApplyPenetrationCorrection(int iter = 1) const;
 
 		bool operator==(CollisionEvent const & _rhs)         const;
 		bool operator==(unsigned long long _mCollidedWithID) const;
