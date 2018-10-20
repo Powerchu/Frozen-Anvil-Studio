@@ -23,11 +23,12 @@ namespace FMOD
 
 namespace Dystopia
 {
-	enum eSoundType
+	enum eSoundType : unsigned
 	{
 		eSOUND_BGM = 0,
 		eSOUND_FX,
 
+		/* speshal case */
 		eSOUND_MASTER,
 		eSOUND_LAST
 	};
@@ -35,10 +36,21 @@ namespace Dystopia
 	class Sound
 	{
 	public:
-		Sound(FMOD::Sound* _p) : mpSound{ _p } {}
+		Sound(FMOD::Sound* _p, std::string _name) : mpSound{ _p }, mName{ _name } {}
 		FMOD::Sound *mpSound;
+		std::string mName;
 	};
 
+	class Channel
+	{
+	public:
+		Channel(void) : mpChannel{ nullptr } {}
+		Channel(FMOD::Channel* _p) : mpChannel{ _p } {}
+		Channel& operator=(const Channel& _c) { mpChannel = _c.mpChannel; return *this; }
+		Channel& operator=(FMOD::Channel* _c) { mpChannel = _c; return *this; }
+		operator FMOD::Channel*() { return mpChannel; }
+		FMOD::Channel *mpChannel;
+	};
 }
 
 #endif	// _SOUND_TYPES_H_ GUARD

@@ -95,6 +95,8 @@ void Dystopia::Scene::PostUpdate(void)
 
 void Dystopia::Scene::Shutdown(void)
 {
+	for (auto& g : mGameObjs)
+		g.Destroy();
 	mGameObjs.clear();
 }
 

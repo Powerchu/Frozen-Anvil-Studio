@@ -25,6 +25,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	static const std::string g_AudioCategory[Dystopia::eSOUND_LAST - 1] =
+	{
+		"BGM",
+		"FX"
+	};
 	class AudioSource;
 	class SoundSystem : public Systems, public ComponentDonor<AudioSource>
 	{
@@ -49,12 +54,16 @@ namespace Dystopia
 		Sound* LoadSound(const std::string& _file);
 
 	private:
+		float mMasterVol;
+		float mBGMVol;
+		float mFXVol;
+
 		FMOD::System *mpFMOD;
 		std::string	mDefaultSoundFolder;
 		std::map<std::string, Sound*> mMapOfSounds;
 		Array<FMOD::ChannelGroup*, eSOUND_LAST> mArrGroups;
 
-		void PlayAudio(AudioSource*);
+		void PlayAudio(AudioSource&);
 	};
 }
 

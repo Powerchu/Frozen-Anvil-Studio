@@ -405,7 +405,7 @@ namespace EGUI
 		======================================================================================================================= */
 		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width = 100);
 		template<unsigned N>
-		bool DropDownSelection(const std::string& _label, int& _currentIndex, std::string(&_arrOfItems)[N], float _width)
+		bool DropDownSelection(const std::string& _label, int& _currentIndex, const std::string(&_arrOfItems)[N], float _width)
 		{
 			const char* arrCharPtr[N];
 			for (unsigned i = 0; i < N; ++i)
