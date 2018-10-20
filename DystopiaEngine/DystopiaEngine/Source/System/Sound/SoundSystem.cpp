@@ -102,7 +102,7 @@ void Dystopia::SoundSystem::LoadSettings(TextSerialiser&)
 {
 }
 
-void Dystopia::SoundSystem::PlayAudio(Dystopia::AudioSource* _a)
+void Dystopia::SoundSystem::PlayAudio(Dystopia::AudioSource*)
 {
 
 }

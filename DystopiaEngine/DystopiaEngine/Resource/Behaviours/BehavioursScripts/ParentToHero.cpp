@@ -6,7 +6,7 @@
 \brief
 INSERT BRIEF HERE
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -24,8 +24,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/ObjectFlags.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
-
 #include "Math/Vector4.h"
+#include "System/Logger/LoggerSystem.h"
 
 
 namespace Dystopia
@@ -44,19 +44,27 @@ namespace Dystopia
 
 	void ParentToHero::Init()
 	{
+		//// mpTarget is a "reference" to game object
+
+		//// mpObj is A game object
 		//mpTarget = EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject("Hero");
-		//mpOwner  = GetOwner();
-		
+		////mpOwner  = GetOwner();
+
+		//mfHealth = 100.0F; // "asd", 2, 'c'		
 	}
 
 	void ParentToHero::Update(const float _dt)
 	{
-		const auto currPos = this->GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
-		const auto nextPos = EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject("Hero")->GetComponent<Transform>()->GetGlobalPosition();
-		const float lerpx = (float(nextPos.x) - float(currPos.x)) * .02F;
-		const float lerpy = (float(nextPos.y) - float(currPos.y)) * .02F;
-		this->GetOwner()->GetComponent<Transform>()->SetGlobalPosition(currPos.x + lerpx, currPos.y + lerpy, 0);
+		//std::string targetName{ "Hero" };
+		const auto currPos = this->GetOwner()->GetComponent<Transform>()->GetPosition();
+		const auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+		const auto heroObj = sceneSys->FindGameObject("Hero");
+		const auto newPos = heroObj->GetComponent<Transform>()->GetPosition();
+		const auto lerp = Math::Lerp(currPos, newPos, 0.02F);
+		this->GetOwner()->GetComponent<Transform>()->SetPosition(lerp.x, lerp.y, 0);
+
 		//this->GetOwner()->GetComponent<Transform>()->SetParent(EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject("Hero")->GetComponent<Transform>());
+
 	}
 
 	void ParentToHero::FixedUpdate(const float)
@@ -87,7 +95,6 @@ namespace Dystopia
 	void ParentToHero::Unserialise(TextSerialiser&)
 	{
 	}
-
 
 	const char * const ParentToHero::GetBehaviourName() const
 	{

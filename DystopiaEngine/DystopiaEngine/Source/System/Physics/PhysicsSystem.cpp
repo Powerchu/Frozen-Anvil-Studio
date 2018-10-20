@@ -22,7 +22,7 @@ namespace Dystopia
 		, mGravity(400.0F)
 		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.1F)
+		, mPenetrationEpsilon(0.01F)
 		, mVelocityIterations(8)
 		, mPositionalIterations(8)
 	{
@@ -44,15 +44,22 @@ namespace Dystopia
 
 	void PhysicsSystem::CheckSleepingBodies(float _dt)
 	{
-		for (auto& bodies : mComponents)
+		for (auto& body : mComponents)
 		{
 #if EDITOR
-			if (bodies.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (bodies.GetOwner())
+			if (body.GetOwner())
 			{
-				if(!bodies.Get_IsStaticState())
-					bodies.CheckSleeping(_dt);
+				if(!body.Get_IsStaticState())
+					body.CheckSleeping(_dt);
+
+				const auto col = body.GetOwner()->GetComponent<Collider>();
+
+				if (nullptr != col)
+				{
+					col->SetSleeping(!body.GetIsAwake());
+				}
 			}
 		}
 	}
@@ -195,7 +202,7 @@ namespace Dystopia
 
 	void PhysicsSystem::FixedUpdate(float _dt)
 	{
-		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
+		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Fixed Update" };
 
 		Step(_dt);
 
@@ -245,6 +252,18 @@ namespace Dystopia
 		VelocityIterationUI();
 		PositionalIterationUI();
 #endif 
+	}
+
+	AutoArray<RigidBody*> PhysicsSystem::GetAllBodies() const
+	{
+		AutoArray<RigidBody*> ToRet;
+
+		for (auto & elem : mComponents)
+		{
+			ToRet.push_back(&elem);
+		}
+
+		return Ut::Move(ToRet);
 	}
 
 #if EDITOR

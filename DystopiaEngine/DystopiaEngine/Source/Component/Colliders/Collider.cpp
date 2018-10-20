@@ -24,14 +24,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	Collider::Collider()
-		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}, mPosition{ Math::MakePoint3D(0.f,0.f,0.f) }, mbIsTrigger(false), mScale{1,1,1}, mBoundingCircle{ GenerateBoardPhaseCircle()}
+		: mv3Offset{0, 0, 0, 0}, mpMesh{nullptr}, mbColliding{false}, mPosition{Math::MakePoint3D(0.f, 0.f, 0.f)},
+		  mbIsTrigger(false), mbIsSleeping(false), mScale{1, 1, 1}, mBoundingCircle{GenerateBoardPhaseCircle()}
 	{
-		
 	}
-	Collider::Collider(const Math::Point3D & _offset, const Math::Point3D & _origin)
-		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }, mPosition{_origin}, mbIsTrigger(false), mScale{ 1,1,1 }, mBoundingCircle{ GenerateBoardPhaseCircle() }
-	{
 
+	Collider::Collider(const Math::Point3D & _offset, const Math::Point3D & _origin)
+		: mv3Offset{_offset}, mpMesh{nullptr}, mbColliding{false}, mPosition{_origin}, mbIsTrigger(false),
+		  mbIsSleeping(false), mScale{1, 1, 1}, mBoundingCircle{GenerateBoardPhaseCircle()}
+	{
 	}
 
 	void Collider::Load(void)
@@ -202,9 +203,19 @@ namespace Dystopia
 		return mbIsTrigger;
 	}
 
+	bool Collider::IsSleeping() const
+	{
+		return mbIsSleeping;
+	}
+
 	void Collider::SetColliding(bool _b)
 	{
 		mbColliding = _b;
+	}
+
+	void Collider::SetSleeping(bool _b)
+	{
+		mbIsSleeping = _b;
 	}
 
 	void Collider::SetLocalPosition(Math::Point3D const & _point)

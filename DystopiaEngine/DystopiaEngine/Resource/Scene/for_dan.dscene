@@ -1,10 +1,10 @@
 [START_Scene]
-18446744072511553536,for_dan,9,[START_START_GO_DATA]
+18446744072511553536,for_dan,10,[START_START_GO_DATA]
 910164992,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.762903,1.2715,1,0,0,0,0,0,0,1,
+1.026,1.57846,1.57846,-10.8053,-68.3036,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -41,6 +41,15 @@
 [START_START_GO_TRANSFORM]
 [START_Transform]
 32,1024,1,413.4,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073330887680,1,TriggerBox,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,1,0,0,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -171,7 +180,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-7,
+8,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -215,6 +224,12 @@
 [END_Convex_Collider]
 
 [END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744071987441664,1,18446744073330887680,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
@@ -223,9 +238,12 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Character_Controller]
-18446744072177823232,0,18446744072606142976,50,75,
+18446744072177823232,0,18446744072606142976,30,75,
 [END_Character_Controller]
 
 [END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
 
 [END_Scene]

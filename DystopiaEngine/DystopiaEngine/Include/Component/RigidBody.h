@@ -14,7 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef RIGID_BODY_H
 #define RIGID_BODY_H
 
-#include "Component/Primitive.h"
 #include "Component/Component.h"
 #include "Component/ComponentList.h"
 #include "Math/Vector4.h"
