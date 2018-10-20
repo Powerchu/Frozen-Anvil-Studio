@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/DebugAssert.h"
 #include "Object/GameObject.h"
 #include "Component/Transform.h"
+#include "Editor/ConsoleLog.h"
 
 namespace Dystopia
 {
@@ -40,6 +41,7 @@ namespace Dystopia
 	void Milestone::Init()
 	{ 
         this->GetOwner()->GetComponent<Transform>()->SetScale(16, 31236, 1); 
+        PrintToConsoleLog("Hi");
 	}
 
 	void Milestone::Update(const float)

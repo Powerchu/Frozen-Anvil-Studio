@@ -103,13 +103,12 @@ void Dystopia::AudioSource::SetSound(Sound* _s)
 	mpSound = _s;
 }
 
-unsigned Dystopia::AudioSource::GetChannel(void) const
+Dystopia::eSoundType Dystopia::AudioSource::GetSoundType(void) const
 {
-	return mChannelID;
+	return mSoundType;
 }
 
-void Dystopia::AudioSource::SetChannel(unsigned _i)
+void Dystopia::AudioSource::SetSoundType(eSoundType _t)
 {
-	mChannelID = _i;
+	mSoundType = _t;
 }
-

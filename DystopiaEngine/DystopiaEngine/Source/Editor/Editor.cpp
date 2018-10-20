@@ -531,12 +531,20 @@ namespace Dystopia
 			mpSceneSystem->SaveScene(file, sceneName);
 			mpComdHandler->SaveCallback();
 			std::wstring name{ sceneName.begin(), sceneName.end() };
-			auto pos = name.find('.');
+			auto pos = name.find('*.');
 			if (pos != std::string::npos)
 			{
 				name.erase(pos);
-				mpWin->GetMainWindow().SetTitle(name.c_str());
 			}
+			else
+			{
+				pos = name.find('.');
+				if (pos != std::string::npos)
+				{
+					name.erase(pos);
+				}
+			}
+			mpWin->GetMainWindow().SetTitle(name.c_str());
 		}
 		else SaveAsProc();
 	}
@@ -564,12 +572,20 @@ namespace Dystopia
 						{
 							std::wstring path{ pszFilePath };
 							std::wstring name{ pszFileName };
-							auto pos = name.find('.');
+							auto pos = name.find('*.');
 							if (pos != std::string::npos)
 							{
 								name.erase(pos);
-								mpWin->GetMainWindow().SetTitle(name.c_str());
 							}
+							else
+							{
+								pos = name.find('.');
+								if (pos != std::string::npos)
+								{
+									name.erase(pos);
+								}
+							}
+							mpWin->GetMainWindow().SetTitle(name.c_str());
 							mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() }, 
 													 std::string{ name.begin(), name.end() });
 							mpComdHandler->SaveCallback();

@@ -17,10 +17,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <Windows.h>
 
+static const std::string g_GroupNames[Dystopia::eSOUND_LAST] =
+{
+	"Master",
+	"BGM",
+	"FX"
+};
+
 Dystopia::SoundSystem::SoundSystem(void)
 	: mpFMOD{ nullptr }, 
 	mDefaultSoundFolder{ "Resource/Audio/" },
-	mMapOfSounds{}
+	mMapOfSounds{}, mArrGroups{ nullptr }
 {
 }
 
@@ -48,6 +55,8 @@ bool Dystopia::SoundSystem::Init(void)
 
 void Dystopia::SoundSystem::PostInit(void)
 {
+	for (unsigned int i = 0; i < eSOUND_LAST; ++i)
+		mpFMOD->createChannelGroup(g_GroupNames[i].c_str(), &mArrGroups[i]);
 }
 
 void Dystopia::SoundSystem::FixedUpdate(float)
@@ -104,7 +113,8 @@ void Dystopia::SoundSystem::LoadSettings(TextSerialiser&)
 
 void Dystopia::SoundSystem::PlayAudio(Dystopia::AudioSource* _a)
 {
-
+	//FMOD::Channel *channel;
+	//mpFMOD->playSound(_a->GetSound()->mpSound, mArrGroups[_a->GetSoundType()], false, &channel);
 }
 
 void Dystopia::SoundSystem::SaveSettings(TextSerialiser&)

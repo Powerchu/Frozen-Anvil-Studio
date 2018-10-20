@@ -16,6 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/ComponentList.h"	
 #include "Component/Component.h"
 
+#include "System/Sound/SoundTypes.h"
+
 #include <string>
 
 namespace Dystopia
@@ -70,12 +72,12 @@ namespace Dystopia
 		Sound* GetSound(void);
 		void SetSound(Sound*);
 
-		unsigned GetChannel(void) const;
-		void SetChannel(unsigned);
+		eSoundType GetSoundType(void) const;
+		void SetSoundType(eSoundType);
 
 	private:
-		unsigned mChannelID;
-		Sound *mpSound;
+		Sound		*mpSound;
+		eSoundType	mSoundType;
 		std::string mSoundName;
 	};
 }
