@@ -234,9 +234,12 @@ namespace Dystopia
 	 */
 	void RigidBody::CheckSleeping(const float _dt)
 	{
+		UNUSED_PARAMETER(_dt); // dt is fixed, so it doesnt matter anyway
 		constexpr const auto SLEEP_EPSILON = 0.05F;
 
-		const float bias = std::pow(0.96F, _dt);
+		//mfWeightedMotion is the average kinetic energy over a given set of frames
+
+		const float bias = 0.96F; //std::pow(0.96F, _dt);
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
 		mfWeightedMotion = bias * mfWeightedMotion + (1 - bias)*currentMotion;
 
@@ -293,7 +296,10 @@ namespace Dystopia
 
 	RigidBody * RigidBody::Duplicate() const
 	{
-		return EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent(*this);
+		const auto cc = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent(*this);
+		cc->SetOwner(GetOwner());
+		cc->Init();
+		return cc;
 	}
 
 	void RigidBody::Serialise(TextSerialiser & _out) const

@@ -6,7 +6,7 @@
 \brief
 INSERT BRIEF HERE
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -54,6 +54,33 @@ namespace Dystopia
 	}
 
 	void _SF_ClassName_::Unload(void)
+	{
+	}
+
+	void Dystopia::Behaviour::OnCollisionEnter(const CollisionEvent&)
+	{
+
+	}
+
+	void Dystopia::Behaviour::OnCollisionStay(const CollisionEvent&)
+	{
+
+	}
+
+	void Dystopia::Behaviour::OnCollisionExit(const CollisionEvent&)
+	{
+
+	}
+
+	void Dystopia::Behaviour::OnTriggerEnter(const GameObject *)
+	{
+	}
+
+	void Dystopia::Behaviour::OnTriggerStay(const GameObject *)
+	{
+	}
+
+	void Dystopia::Behaviour::OnTriggerExit(const GameObject *)
 	{
 	}
 

@@ -141,22 +141,27 @@ namespace Dystopia
 		}
 	}
 
-	void Collider::InformOtherComponents(bool _isColliding, CollisionEvent const & _Event)
+	void Collider::InformOtherComponents(const bool _isColliding, CollisionEvent const & _Event)
 	{
+		const auto _owner = GetOwner();
 		if (_isColliding)
 		{
 			if (auto * ptr = FindCollisionEvent(_Event.mOtherID))
 			{
-				auto & BehaviourList = GetOwner()->GetAllBehaviours();
-				for (auto & elem : BehaviourList)
-					elem->OnCollisionStay(_Event);
+				if (!mbIsTrigger)
+					_owner->OnCollisionStay(_Event);
+				else
+					_owner->OnTriggerStay(_Event.mCollidedWith);
+				
 				*ptr = _Event;
 			}
 			else
 			{
-				auto & BehaviourList = GetOwner()->GetAllBehaviours();
-				for (auto & elem : BehaviourList)
-					elem->OnCollisionEnter(_Event);
+				if (!mbIsTrigger)
+					_owner->OnCollisionEnter(_Event);
+				else
+					_owner->OnTriggerEnter(_Event.mCollidedWith);
+				
 				marr_ContactSets.push_back(_Event);
 			}
 		}
@@ -164,9 +169,11 @@ namespace Dystopia
 		{
 			if (FindCollisionEvent(_Event.mOtherID))
 			{
-				auto & BehaviourList = GetOwner()->GetAllBehaviours();
-				for (auto & elem : BehaviourList)
-					elem->OnCollisionExit(_Event);
+				if (!mbIsTrigger)
+					_owner->OnCollisionExit(_Event);
+				else
+					_owner->OnTriggerExit(_Event.mCollidedWith);
+				
 				RemoveCollisionEvent(_Event.mOtherID);
 			}
 		}

@@ -27,6 +27,7 @@ namespace Dystopia
 		const auto b_invmass = bodyB->GetInverseMass();
 		const auto a_oldVel = bodyA->GetLinearVelocity();
 		const auto b_oldVel = bodyB->GetLinearVelocity();
+		const auto perc = 2.0F;
 
 		mEdgeNormal.z = 0;
 		mfPeneDepth = Math::Abs(mfPeneDepth);
@@ -39,7 +40,7 @@ namespace Dystopia
 		if (contactVel > 0) return;
 
 		// Calculate Impulse Scalar
-		float tmpJ = -(1.0F + mfRestitution) * contactVel;
+		float tmpJ = -(1.0F + mfRestitution) * contactVel + perc*mfPeneDepth;
 		tmpJ /= a_invmass + b_invmass;
 
 		// Apply Impulse

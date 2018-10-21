@@ -1,19 +1,28 @@
 [START_Scene]
-2,collision_testing,[START_START_GO_DATA]
-18446744072484290560,1,Scene Camera,
+18446744072511553536,collision_testing,3,[START_START_GO_DATA]
+910164992,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.94148,0.94148,0.94148,0,0,0,0,0,0,1,
+1,1,1,0,0,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 [START_START_GO_DATA]
-1263010816,1,GameObject,
+220891648,1,Trigger,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1024,8,1,0,-230,0,0,0,0,1,
+1024,32,1,0,-165,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072811464704,1,GameObject_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,0,5,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -22,26 +31,8 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Camera]
-18446744072484290560,
+910166016,0,910164992,
 [END_Camera]
-
-[END_Component End]
-[START_ComponentDonor]
-1,
-[END_ComponentDonor End]
-[START_Component]
-[START_Renderer]
-1263010816,,
-[END_Renderer]
-
-[END_Component End]
-[START_ComponentDonor]
-1,
-[END_ComponentDonor End]
-[START_Component]
-[START_RigidBody]
-1263010816,0,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,
-[END_RigidBody]
 
 [END_Component End]
 [START_ComponentDonor]
@@ -51,11 +42,32 @@
 1,
 [END_ComponentDonor End]
 [START_Component]
+[START_RigidBody]
+18446744072811465728,1,18446744072811464704,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
 [START_Convex_Collider]
-1263010816,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,
+18446744072539154432,1,220891648,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
 [END_Convex_Collider]
 
 [END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744072811465216,1,18446744072811464704,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]

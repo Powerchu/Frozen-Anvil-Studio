@@ -6,7 +6,7 @@
 \brief
 INSERT BRIEF HERE
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -48,6 +48,10 @@ namespace Dystopia
 		virtual void Update(const float _fDeltaTime) override;
 		virtual void FixedUpdate(const float _fDeltaTime) override;
 		virtual void PostUpdate(void) override;
+		
+		void OnTriggerEnter(const GameObject *) override;
+		void OnTriggerStay(const GameObject *) override;
+		void OnTriggerExit(const GameObject *) override;
 
 		virtual void GameObjectDestroy(void) override;
 		virtual void Unload(void) override;

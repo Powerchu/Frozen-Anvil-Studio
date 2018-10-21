@@ -258,7 +258,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 
 	// TODO: Math::Vec4 no_alpha{ mvDebugColour };
 
-	Math::Vector4 CollidingColor{ 1.f, 0, 0, .75f }, SleepingColor{ 1.f,1.f,0,.75f }, TriggerColor{ .8f,.8f,.8f,.75f }, activeColor;
+	Math::Vector4 CollidingColor{ 1.f, 0, 0, .55f }, SleepingColor{ 1.f,1.f,0,.65f }, TriggerColor{ .8f,.8f,.8f,.25f }, activeColor;
 
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
