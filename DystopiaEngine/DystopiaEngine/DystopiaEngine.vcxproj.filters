@@ -283,7 +283,9 @@
     <ClCompile Include="Source\System\Sound\SoundSystem.cpp">
       <Filter>Game Engine\Systems\Sound</Filter>
     </ClCompile>
-    <ClCompile Include="Source\HashString.cpp" />
+    <ClCompile Include="Source\DataStructure\HashString.cpp">
+      <Filter>DataStructures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
