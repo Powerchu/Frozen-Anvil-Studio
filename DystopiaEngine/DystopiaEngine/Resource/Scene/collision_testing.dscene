@@ -1,5 +1,5 @@
 [START_Scene]
-18446744072511553536,collision_testing,3,[START_START_GO_DATA]
+18446744072511553536,collision_testing,4,[START_START_GO_DATA]
 910164992,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
@@ -18,11 +18,20 @@
 
 [END_END_GO_TRANSFORM]
 [START_START_GO_DATA]
-18446744072811464704,1,GameObject_Clone,
+18446744072811464704,1,Hero,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
 32,32,1,0,5,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+617811456,1,Trigger_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,0,48,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -36,8 +45,14 @@
 
 [END_Component End]
 [START_ComponentDonor]
-0,
+1,
 [END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+2106575872,1,617811456,..\DystopiaEngine\Resource\Editor\white_box.png,
+[END_Renderer]
+
+[END_Component End]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]
@@ -51,7 +66,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-2,
+3,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -62,6 +77,12 @@
 [START_Component]
 [START_Convex_Collider]
 18446744072811465216,1,18446744072811464704,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+617811968,1,617811456,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
 [END_Convex_Collider]
 
 [END_Component End]

@@ -57,30 +57,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::Behaviour::OnCollisionEnter(const CollisionEvent&)
+	void Dystopia::_SF_ClassName_::OnCollisionEnter(const CollisionEvent&)
 	{
 
 	}
 
-	void Dystopia::Behaviour::OnCollisionStay(const CollisionEvent&)
+	void Dystopia::_SF_ClassName_::OnCollisionStay(const CollisionEvent&)
 	{
 
 	}
 
-	void Dystopia::Behaviour::OnCollisionExit(const CollisionEvent&)
+	void Dystopia::_SF_ClassName_::OnCollisionExit(const CollisionEvent&)
 	{
 
 	}
 
-	void Dystopia::Behaviour::OnTriggerEnter(const GameObject *)
+	void Dystopia::_SF_ClassName_::OnTriggerEnter(const GameObject *)
 	{
 	}
 
-	void Dystopia::Behaviour::OnTriggerStay(const GameObject *)
+	void Dystopia::_SF_ClassName_::OnTriggerStay(const GameObject *)
 	{
 	}
 
-	void Dystopia::Behaviour::OnTriggerExit(const GameObject *)
+	void Dystopia::_SF_ClassName_::OnTriggerExit(const GameObject *)
 	{
 	}
 

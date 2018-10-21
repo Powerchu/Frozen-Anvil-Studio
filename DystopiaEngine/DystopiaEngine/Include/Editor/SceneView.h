@@ -97,7 +97,7 @@ namespace Dystopia
 		void			AdjustDisplayPos(void);
 		Math::Vec2		GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY);
 		Math::Vec2		GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY);
-		Math::Vec2		GetWorldToScreen(const Math::Pt3D&) const;
+		Math::Vec2		GetWorldToScreen(const Math::Pt3D&);
 		Camera*			GetCamera();
 		void			DrawGizmos(void);
 		void			DrawGizmoSingle(GameObject&);
