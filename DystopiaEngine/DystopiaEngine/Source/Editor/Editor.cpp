@@ -87,7 +87,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-	const char arr[] = "Array!";
+	/*const char arr[] = "Array!";
 	const char *ptr = "Ptr!";
 
 	HashString charArr{ arr };
@@ -119,7 +119,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	size_t pos = testFind.rfind("me");
 
 	HashString subStr{ "Sub my string" };
-	HashString sub = subStr.substr(4, 6);
+	HashString sub = subStr.substr(4, 6);*/
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();

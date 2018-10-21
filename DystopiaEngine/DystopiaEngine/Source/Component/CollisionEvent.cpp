@@ -47,10 +47,10 @@ namespace Dystopia
 		// Apply Impulse
 		const Vec3D impulse = tmpJ * mEdgeNormal;
 
-		if (bodyA->GetIsAwake() && !bodyA->Get_IsStaticState())
+		if (!bodyA->Get_IsStaticState())
 			bodyA->AddLinearImpulse(-impulse);
 
-		if (bodyB->GetIsAwake() && !bodyB->Get_IsStaticState())
+		if (!bodyB->Get_IsStaticState())
 			bodyB->AddLinearImpulse(impulse);
 
 		// Calculate Frictional Velocity (vec3D) after normal impulse
@@ -76,11 +76,11 @@ namespace Dystopia
 		else
 			frictionImpulse = -tmpJ * tangent * mfDynamicFrictionCof;
 
-	if (bodyA->GetIsAwake() && !bodyA->Get_IsStaticState())
-		bodyA->AddLinearImpulse(-frictionImpulse);
-		
-	if (bodyB->GetIsAwake() && !bodyB->Get_IsStaticState())
-		bodyB->AddLinearImpulse(frictionImpulse);
+		if (!bodyA->Get_IsStaticState())
+			bodyA->AddLinearImpulse(-frictionImpulse);
+			
+		if (!bodyB->Get_IsStaticState())
+			bodyB->AddLinearImpulse(frictionImpulse);
 	}
 
 	void CollisionEvent::ApplyPenetrationCorrection(const int iter) const
@@ -97,11 +97,11 @@ namespace Dystopia
 		const float perc = 0.40F/iter;
 		const float slop = 0.05F;
 
-		const Vec3D correction = Math::Max(Math::Abs(mfPeneDepth)-slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
+		const Vec3D correction = Math::Max(Math::Abs(mfPeneDepth)+slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 
-		if (bodyA->GetIsAwake() && !bodyA->Get_IsStaticState())
+		if (!bodyA->Get_IsStaticState())
 			bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
-		if (bodyB->GetIsAwake() && !bodyB->Get_IsStaticState())
+		if (!bodyB->Get_IsStaticState())
 			bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);
 	}
 

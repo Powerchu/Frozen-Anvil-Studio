@@ -77,7 +77,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f },
+	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 3.2f },
 	mfDebugLineWidth{ 5.0f }, mvDebugColour{ .68f, 1.f, .278f, .65f }, mbDebugDraw{ false }
 {
 }
@@ -265,26 +265,22 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	{
 		GameObject* pOwner = Obj->GetOwner();
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
-		{
-			
+		{			
 			s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetLocalTransformMatrix() *Math::Translate(Obj->GetOffSet().x, Obj->GetOffSet().y, Obj->GetOffSet().z)  * Obj->GetTransformationMatrix());
 
-			if (Obj->HasCollision())
+			if (Obj->IsSleeping())
+			{
+				activeColor = SleepingColor;
+			}
+
+			else if (Obj->HasCollision())
 			{
 				activeColor = CollidingColor;
-
 			}
 
 			else if (Obj->IsTrigger())
 			{
 				activeColor = TriggerColor;
-
-			}
-
-			else if (Obj->IsSleeping())
-			{
-				activeColor = SleepingColor;
-
 			}
 
 			else

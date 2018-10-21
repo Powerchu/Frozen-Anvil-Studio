@@ -108,13 +108,13 @@ void Dystopia::GameObject::Init(void)
 	ForcePing(mBehaviours, Init);
 }
 
-void Dystopia::GameObject::Update(const float _fDeltaTime)
+void Dystopia::GameObject::Update(const float)
 {
 //	Ping(mComponents, Update, _fDeltaTime);
 //	Ping(mBehaviours, Update, _fDeltaTime);
 }
 
-void Dystopia::GameObject::FixedUpdate(const float _fFixedDT)
+void Dystopia::GameObject::FixedUpdate(const float)
 {
 //	Ping(mComponents, FixedUpdate, _fFixedDT);
 //	Ping(mBehaviours, FixedUpdate, _fFixedDT);
