@@ -41,7 +41,7 @@ namespace Dystopia
 	void Milestone::Init()
 	{ 
 		SetActive(true);
-        this->GetOwner()->GetComponent<Transform>()->SetScale(128, 128, 1); 
+        this->GetOwner()->GetComponent<Transform>()->SetScale(32, 128, 1); 
 	}
 
 	void Milestone::Update(const float)
@@ -66,7 +66,7 @@ namespace Dystopia
 
 		if (nullptr != body)
 		{
-			body->AddForce({0,1000000,0});
+			body->AddLinearImpulse({0,500,0});
 		}
 	}
 
