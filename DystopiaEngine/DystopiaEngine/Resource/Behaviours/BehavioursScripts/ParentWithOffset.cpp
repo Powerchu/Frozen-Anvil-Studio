@@ -57,31 +57,34 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::Behaviour::OnCollisionEnter(const CollisionEvent&)
+	void Dystopia::ParentWithOffset::OnCollisionEnter(const CollisionEvent&)
 	{
 
 	}
 
-	void Dystopia::Behaviour::OnCollisionStay(const CollisionEvent&)
+	void Dystopia::ParentWithOffset::OnCollisionStay(const CollisionEvent&)
 	{
 
 	}
 
-	void Dystopia::Behaviour::OnCollisionExit(const CollisionEvent&)
+	void Dystopia::ParentWithOffset::OnCollisionExit(const CollisionEvent&)
 	{
 
 	}
 
-	void Dystopia::Behaviour::OnTriggerEnter(const GameObject *)
+	void Dystopia::ParentWithOffset::OnTriggerEnter(const GameObject *)
 	{
+		
 	}
 
-	void Dystopia::Behaviour::OnTriggerStay(const GameObject *)
+	void Dystopia::ParentWithOffset::OnTriggerStay(const GameObject *)
 	{
+
 	}
 
-	void Dystopia::Behaviour::OnTriggerExit(const GameObject *)
+	void Dystopia::ParentWithOffset::OnTriggerExit(const GameObject *)
 	{
+
 	}
 
 	ParentWithOffset * ParentWithOffset::Duplicate() const
