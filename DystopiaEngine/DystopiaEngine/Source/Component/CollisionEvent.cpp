@@ -27,7 +27,8 @@ namespace Dystopia
 		const auto b_invmass = bodyB->GetInverseMass();
 		const auto a_oldVel = bodyA->GetLinearVelocity();
 		const auto b_oldVel = bodyB->GetLinearVelocity();
-		const auto perc = 0.0F;
+		const float slop = 0.1F;
+		//const auto perc = 10.0F;
 
 		mEdgeNormal.z = 0;
 		mfPeneDepth = Math::Abs(mfPeneDepth);
@@ -40,7 +41,7 @@ namespace Dystopia
 		if (contactVel > 0) return;
 
 		// Calculate Impulse Scalar
-		float tmpJ = -(1.0F + mfRestitution) * contactVel + perc*mfPeneDepth;
+		float tmpJ = -(1.0F + Math::Max(mfRestitution-slop,0.0F)) * contactVel;
 		tmpJ /= a_invmass + b_invmass;
 
 		// Apply Impulse
@@ -78,7 +79,6 @@ namespace Dystopia
 	if (bodyA->GetIsAwake() && !bodyA->Get_IsStaticState())
 		bodyA->AddLinearImpulse(-frictionImpulse);
 		
-
 	if (bodyB->GetIsAwake() && !bodyB->Get_IsStaticState())
 		bodyB->AddLinearImpulse(frictionImpulse);
 	}
@@ -90,13 +90,14 @@ namespace Dystopia
 
 		if (nullptr == bodyA || nullptr == bodyB) return;
 
+
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
 
 		const float perc = 0.40F/iter;
-		const float slop = 0.01F;
+		const float slop = 0.05F;
 
-		const Vec3D correction = Math::Max((mfPeneDepth)+slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
+		const Vec3D correction = Math::Max(Math::Abs(mfPeneDepth)-slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 
 		if (bodyA->GetIsAwake() && !bodyA->Get_IsStaticState())
 			bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);

@@ -80,7 +80,7 @@ namespace Dystopia
 
 	float Collider::DetermineRestitution(RigidBody const & b) const
 	{
-		if (nullptr != &b && nullptr != this->GetOwner()->GetComponent<RigidBody>())
+		if (nullptr != this->GetOwner()->GetComponent<RigidBody>())
 		{
 			const float a_rest = GetOwner()->GetComponent<RigidBody>()->GetRestitution();
 			return Math::Min(a_rest, b.GetRestitution());
@@ -90,7 +90,7 @@ namespace Dystopia
 
 	float Collider::DetermineStaticFriction(RigidBody const & b) const
 	{
-		if (nullptr != &b && nullptr != this->GetOwner()->GetComponent<RigidBody>())
+		if (nullptr != this->GetOwner()->GetComponent<RigidBody>())
 		{
 			const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetStaticFriction();
 			return sqrt(a_fric*b.GetStaticFriction());

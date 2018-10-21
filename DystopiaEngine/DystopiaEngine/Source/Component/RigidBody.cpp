@@ -16,8 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
 #include "System/Logger/LoggerSystem.h"
-#include "System/Scene/SceneSystem.h"
-#include "System/Scene/Scene.h"
+//#include "System/Scene/SceneSystem.h"
+//#include "System/Scene/Scene.h"
 #include "IO/TextSerialiser.h"
 
 #if EDITOR
@@ -223,6 +223,7 @@ namespace Dystopia
 			mAngularVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
+		
 		//*Reset Cumulative Force*/
 		ResetCumulative();
 	}
@@ -262,6 +263,7 @@ namespace Dystopia
 	{
 		//mPosition += mLinearVelocity * _dt;
 		mPosition += (mLinearVelocity + mLinearAcceleration * _dt * 0.5F)  * _dt;
+		//mPosition += (mLinearVelocity + mLinearAcceleration * _dt * 0.5F)  * _dt;
 	}
 
 	void RigidBody::UpdateResult(float)
@@ -913,7 +915,7 @@ namespace Dystopia
 
 	void RigidBody::eStaticFrictionDragField()
 	{
-		switch (EGUI::Display::DragFloat("Static Friction		 ", &mfStaticFriction, 0.01f, 0.0f, 2.0f))
+		switch (EGUI::Display::DragFloat("Static Friction		 ", &mfStaticFriction, 0.01f, 0.01f, 2.0f))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 			EGUI::GetCommandHND()->EndRecording();

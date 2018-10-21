@@ -24,7 +24,7 @@ namespace Dystopia
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
 		, mPenetrationEpsilon(0.05F)
 		, mVelocityIterations(8)
-		, mPositionalIterations(8)
+		, mPositionalIterations(4)
 	{
 	}
 
@@ -87,7 +87,7 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+				if (!body.GetIsAwake()) continue;
 
 				const auto col = body.GetOwner()->GetComponent<Collider>();
 
@@ -101,7 +101,6 @@ namespace Dystopia
 						}
 					}
 				}
-				
 			}
 		}
 
@@ -122,8 +121,7 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
-
+				if (!body.GetIsAwake()) continue;
 
 				const auto col = body.GetOwner()->GetComponent<Collider>();
 
