@@ -54,7 +54,7 @@ namespace Dystopia
 	
 	void Milestone::PostUpdate(void)
 	{
-	}
+	} 
 	void Milestone::OnTriggerEnter(const GameObject* other)
 	{
 		DEBUG_PRINT(eLog::MESSAGE, "Entering Trigger (%zu)", other->GetID());
