@@ -214,9 +214,13 @@ namespace Dystopia
 		: RecordBase
 	{
 		ComdRecord(const uint64_t& _objID, T Comp::* rhs, bool Comp::* _notify = nullptr)
-			: mpTarget{ rhs }, mOldValue{ *rhs }, 
-			mNewValue{ mOldValue }, mID{ _objID }, mpNotify{ _notify }
-		{}
+			: mpTarget{ rhs }, mOldValue{}, 
+			mNewValue{}, mID{ _objID }, mpNotify{ _notify }
+		{
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			Comp *pCom = pObj->GetComponent<Comp>();
+			mNewValue = mOldValue = pCom->*rhs;
+		}
 
 		bool EndRecord()
 		{
@@ -225,7 +229,7 @@ namespace Dystopia
 			Comp *pCom = pObj->GetComponent<Comp>();
 			if (!pCom) return false;
 
-			mNewValue = pObj->*mpTarget;
+			mNewValue = pCom->*mpTarget;
 			return true;
 		}
 
