@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\HashString.cpp" />
     <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
     <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
     <ClCompile Include="Source\Allocator\Allocator.cpp" />
@@ -122,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="Include\DataStructure\HashString.h" />
     <ClInclude Include="Include\System\Collision\BoundingColliderNode.h" />
     <ClInclude Include="Include\System\Collision\BroadPhaseCircle.h" />
     <ClInclude Include="Include\Allocator\Allocator.h" />

@@ -283,6 +283,7 @@
     <ClCompile Include="Source\System\Sound\SoundSystem.cpp">
       <Filter>Game Engine\Systems\Sound</Filter>
     </ClCompile>
+    <ClCompile Include="Source\HashString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -771,6 +772,9 @@
     <ClInclude Include="Include\System\Sound\Audio.h">
       <Filter>Game Engine\SubSystems\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DataStructure\HashString.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1075,9 +1079,6 @@
     </Filter>
     <Filter Include="Editor\Editor Tabs\SystemSettings">
       <UniqueIdentifier>{f494a940-4551-4291-aa92-cff931764600}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Editor Tabs\TagSystem">
-      <UniqueIdentifier>{717afecd-7ef3-4406-b046-fe7b2ed2f840}</UniqueIdentifier>
     </Filter>
     <Filter Include="Allocator\Allocator">
       <UniqueIdentifier>{9baa3d75-f8aa-4e1c-8273-18e2128a6cdc}</UniqueIdentifier>
