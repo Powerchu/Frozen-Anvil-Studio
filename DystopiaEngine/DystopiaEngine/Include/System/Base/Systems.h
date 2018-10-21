@@ -15,12 +15,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SYSTEMS_H_
 #define _SYSTEMS_H_
 
+#include "Globals.h"
+
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 namespace Dystopia
 {
 	enum class eSysMessage;
 	using DysSerialiser_t = class TextSerialiser;
 
-	class Systems
+	class _DLL_EXPORT Systems
 	{
 	public:
 		virtual void PreInit(void)					    { };
@@ -47,7 +52,7 @@ namespace Dystopia
 	};
 }
 
-
+#pragma warning(pop)
 
 #endif		// INCLUDE GUARD
 

@@ -174,8 +174,8 @@ namespace Dystopia
 			{
 				/*Clear the simplex for the next function call*/
 				Simplex.clear();
-				//if(CollisionEvent const * const ColEvent = FindCollisionEvent(_pColB.GetOwnerID()))
-					//InformOtherComponents(false, *ColEvent);
+				if(CollisionEvent const * const ColEvent = FindCollisionEvent(_pColB.GetOwnerID()))
+					InformOtherComponents(false, *ColEvent);
 				/*Return no collision*/
 				return false;
 			}
@@ -187,11 +187,14 @@ namespace Dystopia
 					mbColliding = true;
 					_pColB.mbColliding = true;
 					/*Use EPA to get collision information*/
-					CollisionEvent ColEvent = GetCollisionEvent(Simplex, _pColB);
-					marr_ContactSets.push_back(ColEvent);
-					//InformOtherComponents(true, ColEvent);
+					const CollisionEvent ColEvent = GetCollisionEvent(Simplex, _pColB);
+					//marr_ContactSets.push_back(ColEvent);
+					
+					InformOtherComponents(true, ColEvent);
+					
 					/*Clear the simplex for the next function call*/
 					Simplex.clear();
+					
 					/*Return true for collision*/
 					return true;
 				}
@@ -249,18 +252,20 @@ namespace Dystopia
 
 				if (distance < _ColB.GetRadius())
 				{
-					isInside = true;
+					//isInside = true;
 					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
 					newEvent.mEdgeNormal = Math::Normalise(_ColB.GetGlobalPosition() - PointOfImpact);
 					newEvent.mEdgeVector = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
 					newEvent.mOtherID        = _ColB.GetOwner()->GetID();
+
 					if (nullptr != other_body)
 					{
 						newEvent.mfRestitution = DetermineRestitution(*other_body);
 						newEvent.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 						newEvent.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
 					}
+
 					isInside = true;
 					mbColliding = true;
 					_ColB.SetColliding(true);
@@ -269,11 +274,11 @@ namespace Dystopia
 		}
 		if (isInside)
 		{
-			//InformOtherComponents(true, newEvent);
+			InformOtherComponents(true, newEvent);
 		}
 		else
 		{
-			//InformOtherComponents(false, newEvent);
+			InformOtherComponents(false, newEvent);
 		}
 		return isInside;
 	}

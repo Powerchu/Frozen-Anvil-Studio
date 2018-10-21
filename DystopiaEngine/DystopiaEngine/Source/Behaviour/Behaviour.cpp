@@ -65,6 +65,19 @@ void Dystopia::Behaviour::OnCollisionExit(const CollisionEvent&)
 
 }
 
+void Dystopia::Behaviour::OnTriggerEnter(const GameObject *)
+{
+	
+}
+
+void Dystopia::Behaviour::OnTriggerStay(const GameObject *)
+{
+}
+
+void Dystopia::Behaviour::OnTriggerExit(const GameObject *)
+{
+}
+
 Dystopia::Behaviour * Dystopia::Behaviour::Duplicate() const
 {
 	return nullptr;

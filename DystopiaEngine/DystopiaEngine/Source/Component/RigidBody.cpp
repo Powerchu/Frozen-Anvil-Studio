@@ -229,21 +229,34 @@ namespace Dystopia
 		ResetCumulative();
 	}
 
+	/*
+	 * Formula from http://www.xbdev.net/physics/RigidBodyImpulseCubes/
+	 */
 	void RigidBody::CheckSleeping(const float _dt)
 	{
-		constexpr const auto SLEEP_EPSILON = 0.5F;
+		UNUSED_PARAMETER(_dt); // dt is fixed, so it doesnt matter anyway
+		constexpr const auto SLEEP_EPSILON = 0.05F;
 
-		const float bias = std::pow(0.1F, _dt);
+		//mfWeightedMotion is the average kinetic energy over a given set of frames
+
+		const float bias = 0.96F; //std::pow(0.96F, _dt);
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
 		mfWeightedMotion = bias * mfWeightedMotion + (1 - bias)*currentMotion;
 
 		// TODO change to global sleep epsilon
-		if (mfWeightedMotion > 10 * SLEEP_EPSILON) 
-			mfWeightedMotion = 10 * SLEEP_EPSILON;
+		
 
 		if (mfWeightedMotion < SLEEP_EPSILON)
 		{
 			mbIsAwake = false;
+			mLinearVelocity = { 0,0,0 };
+			mAngularVelocity = { 0,0,0 };
+		}
+
+		else if (mfWeightedMotion > 10 * SLEEP_EPSILON)
+		{
+			mfWeightedMotion = 10 * SLEEP_EPSILON;
+			mbIsAwake = true;
 		}
 	}
 
@@ -283,7 +296,10 @@ namespace Dystopia
 
 	RigidBody * RigidBody::Duplicate() const
 	{
-		return EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent(*this);
+		const auto cc = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent(*this);
+		cc->SetOwner(GetOwner());
+		cc->Init();
+		return cc;
 	}
 
 	void RigidBody::Serialise(TextSerialiser & _out) const
@@ -509,7 +525,7 @@ namespace Dystopia
 	void RigidBody::SetPosition(const Vec3D& _pos)
 	{
 		mPosition = _pos;
-		P_TX->SetGlobalPosition(mPosition);
+		//P_TX->SetGlobalPosition(mPosition);
 	}
 
 	void RigidBody::SetLinearVel(const Vec3D& _vel)

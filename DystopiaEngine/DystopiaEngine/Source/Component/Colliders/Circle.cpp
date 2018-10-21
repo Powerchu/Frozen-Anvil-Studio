@@ -175,14 +175,14 @@ namespace Dystopia
 				col_info.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
 				col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 			}
-			//InformOtherComponents(true, col_info);
+			InformOtherComponents(true, col_info);
 
-			marr_ContactSets.push_back(col_info);
+			//marr_ContactSets.push_back(col_info);
 	
 			/*Return true for collision*/
 			return true;
 		}
-			//InformOtherComponents(false, col_info);
+			InformOtherComponents(false, col_info);
 			return false;
 	}
 
@@ -260,18 +260,18 @@ namespace Dystopia
 						newEvent.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 						newEvent.mfStaticFrictionCof  = DetermineStaticFriction(*other_body);
 					}
-					marr_ContactSets.push_back(newEvent);
+					//marr_ContactSets.push_back(newEvent);
 					mbColliding = isInside  = true;
 				}
 			}
 		}
 		if (isInside)
 		{
-			//InformOtherComponents(true, newEvent);
+			InformOtherComponents(true, newEvent);
 		}
 		else
 		{
-			//InformOtherComponents(false, newEvent);
+			InformOtherComponents(false, newEvent);
 		}
 		return isInside;
 	}

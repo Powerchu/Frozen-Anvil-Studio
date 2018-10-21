@@ -1,18 +1,18 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Scaling.h
-\author dan (100%)
-\par    email: dan\@digipen.edu
+\file	ParentWithOffset.h
+\author aaron (100%)
+\par    email: m.chu\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _Scaling_H_
-#define _Scaling_H_
+#ifndef _ParentWithOffset_H_
+#define _ParentWithOffset_H_
 
 #define str(s) #s
 
@@ -22,11 +22,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Scaling : Behaviour
+	class ParentWithOffset : Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = str(Scaling);
+		static constexpr const char * BehaviourName = str(ParentWithOffset);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -36,11 +36,11 @@ namespace Dystopia
 		};
 
 #endif
-		virtual const std::string GetEditorName(void) const override { return "Scaling"; }
-		static uint64_t constexpr mScalingID = 2029529600;
+		virtual const std::string GetEditorName(void) const override { return "ParentWithOffset"; }
+		static uint64_t constexpr mParentWithOffsetID = 18446744073487082496;
 
-		Scaling();
-		~Scaling();
+		ParentWithOffset();
+		~ParentWithOffset();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -52,13 +52,20 @@ namespace Dystopia
 		virtual void GameObjectDestroy(void) override;
 		virtual void Unload(void) override;
 
-		virtual void Serialise(TextSerialiser&) const override;
+		virtual void OnCollisionEnter(const CollisionEvent&);
+		virtual void OnCollisionStay (const CollisionEvent&);
+		virtual void OnCollisionExit (const CollisionEvent&);
 
+		virtual void OnTriggerEnter(const GameObject *);
+		virtual void OnTriggerStay (const GameObject *);
+		virtual void OnTriggerExit (const GameObject *);
+
+		virtual void Serialise(TextSerialiser&) const override;
 		virtual void Unserialise(TextSerialiser&) override;
 
 		virtual const char * const GetBehaviourName() const;
 
-		virtual Scaling * Duplicate() const;
+		virtual ParentWithOffset * Duplicate() const;
 		
 		virtual void EditorUI(void) noexcept override;
 
@@ -72,13 +79,13 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport Scaling * ScalingClone()
+		DllExport ParentWithOffset * ParentWithOffsetClone()
 		{
-			return new Scaling;
+			return new ParentWithOffset;
 		}
 	}
 }
 
-#endif //_Scaling_H_
+#endif //_ParentWithOffset_H_
 
 

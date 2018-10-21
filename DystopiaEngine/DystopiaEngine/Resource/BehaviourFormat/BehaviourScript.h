@@ -6,7 +6,7 @@
 \brief
 INSERT BRIEF HERE
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -52,8 +52,15 @@ namespace Dystopia
 		virtual void GameObjectDestroy(void) override;
 		virtual void Unload(void) override;
 
-		virtual void Serialise(TextSerialiser&) const override;
+		virtual void OnCollisionEnter(const CollisionEvent&);
+		virtual void OnCollisionStay (const CollisionEvent&);
+		virtual void OnCollisionExit (const CollisionEvent&);
 
+		virtual void OnTriggerEnter(const GameObject *);
+		virtual void OnTriggerStay (const GameObject *);
+		virtual void OnTriggerExit (const GameObject *);
+
+		virtual void Serialise(TextSerialiser&) const override;
 		virtual void Unserialise(TextSerialiser&) override;
 
 		virtual const char * const GetBehaviourName() const;

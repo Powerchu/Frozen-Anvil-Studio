@@ -290,3 +290,4 @@ __pycache__/
 /DystopiaEngine/DystopiaEngine/Resource/Temp
 /DystopiaEngine/DystopiaEngine/Resource\Asset
 *.dystor
+/DystopiaEngine/DystopiaEngine/.vscode

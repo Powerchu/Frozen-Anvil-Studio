@@ -14,6 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _ENGINE_DRIVER_H_
 #define _ENGINE_DRIVER_H_
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/Queue.h"
 
@@ -147,7 +150,7 @@ inline T* const Dystopia::EngineCore::GetSubSystem(void) const
 	return static_cast<T*>(mSubSystems[type::result::value]);
 }
 
-
+#pragma warning(pop)
 
 #endif		// INCLUDE GUARD
 

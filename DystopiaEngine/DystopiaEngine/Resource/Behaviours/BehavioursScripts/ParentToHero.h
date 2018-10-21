@@ -6,7 +6,7 @@
 \brief
 INSERT BRIEF HERE
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -16,25 +16,28 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #define str(s) #s
 
-#include "Behaviour\Behaviour.h"
+#include "Behaviour/Behaviour.h"
+#include "Utility/Utility.h"
+#include "Component/BehaviourList.h"
 
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
-	class ParentToHero : Behaviour
+	class GameObject;
+	class BehaviourSystem;
+
+	class ParentToHero : public Behaviour
 	{
 	public:
 
 		static constexpr const char * BehaviourName = str(ParentToHero);
 #if !EDITOR
-		
 		using SYSTEM = BehaviourSystem;
 		unsigned GetBehaviourType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllBehaviours>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllBehaviours>::value;
 		};
-
 #endif
 		virtual const std::string GetEditorName(void) const override { return "ParentToHero"; }
 		static uint64_t constexpr mParentToHeroID = 16555008;
@@ -62,10 +65,12 @@ namespace Dystopia
 		
 		virtual void EditorUI(void) noexcept override;
 
-	private:
-		GameObject * mpTarget;
-		//GameObject * mpOwner;
+		void SwingSword(float damage);
 
+	private:
+		GameObject*    mpTarget;
+		float		   mfHealth;
+		GameObject * mpOwner;
 	};
 
 

@@ -415,8 +415,9 @@ namespace Dystopia
 			DrawGizmoMul(clipboardObjs);
 	}
 
-	Math::Vec2 SceneView::GetWorldToScreen(const Math::Pt3D& curPos) const
+	Math::Vec2 SceneView::GetWorldToScreen(const Math::Pt3D& curPos)
 	{
+		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
 		if (!mpSceneCamera) return Math::Vec2{ 0,0 };
 
 		Camera*	pCamera	= mpSceneCamera->GetComponent<Camera>();

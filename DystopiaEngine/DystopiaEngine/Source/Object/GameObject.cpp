@@ -156,6 +156,21 @@ void Dystopia::GameObject::OnCollisionExit(const CollisionEvent& _pEvent)
 	Ping(mBehaviours, OnCollisionExit, _pEvent);
 }
 
+void Dystopia::GameObject::OnTriggerEnter(const GameObject* _pOther)
+{
+	Ping(mBehaviours, OnTriggerEnter, _pOther);
+}
+
+void Dystopia::GameObject::OnTriggerStay(const GameObject* _pOther)
+{
+	Ping(mBehaviours, OnTriggerStay, _pOther);
+}
+
+void Dystopia::GameObject::OnTriggerExit(const GameObject* _pOther)
+{
+	Ping(mBehaviours, OnTriggerExit, _pOther);
+}
+
 void Dystopia::GameObject::PurgeComponents(void)
 {
 	//for (Behaviour* e : mBehaviours)
