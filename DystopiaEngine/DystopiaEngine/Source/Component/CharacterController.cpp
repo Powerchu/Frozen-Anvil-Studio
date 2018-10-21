@@ -2,13 +2,12 @@
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
 #include "Component/RigidBody.h"
+#include "Component/Collider.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Input/InputSystem.h"
-#include "System/Logger/LoggerSystem.h"
-#include "System/Scene/SceneSystem.h"
-#include "System/Scene/Scene.h"
 #include "System/Base/ComponentDonor.h"
 #include "IO/TextSerialiser.h"
+#include "System/Scene/SceneSystem.h"
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
@@ -19,12 +18,14 @@ namespace Dystopia
 {
 	CharacterController::CharacterController()
 		:mpBody(nullptr)
+		,mpCol(nullptr)
 		,mbIsFacingRight(true)
 		,mbIsGrounded(false)
 		,mbIsCeilinged(false)
-		,mfCharacterSpeed(50.0f)
-		,mfJumpForce(800.0F)
+		,mfCharacterSpeed(30.0f)
+		,mfJumpForce(100.0F)
 	{
+
 	}
 
 
@@ -68,6 +69,13 @@ namespace Dystopia
 		}
 	}
 
+	void CharacterController::Update(const float _dt)
+	{
+		MovePlayer(_dt);
+
+		
+	}
+
 	void CharacterController::Unload()
 	{
 	}
@@ -84,6 +92,8 @@ namespace Dystopia
 	{
 		_out.InsertStartBlock("Character_Controller");
 		Component::Serialise(_out);
+		_out << mfCharacterSpeed;
+		_out << mfJumpForce;
 		_out.InsertEndBlock("Character_Controller");
 	}
 
@@ -91,6 +101,8 @@ namespace Dystopia
 	{
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
+		_in >> mfCharacterSpeed;
+		_in >> mfJumpForce;
 		_in.ConsumeEndBlock();
 
 		Init();
@@ -98,18 +110,27 @@ namespace Dystopia
 
 	void CharacterController::EditorUI() noexcept
 	{
+		UI_Debug();
+		UI_CharacterSpeed();
+		UI_CharacterJumpForce();
 	}
 
+	void CharacterController::CheckGroundCeiling()
+	{
+
+	}
+
+	/*
+	 * Helper Functions
+	 */
 	void CharacterController::MovePlayer(float)
 	{
 		if (mpBody == nullptr) return;
-
-		auto moveScaler = mpBody->GetMass();
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed("Run Left"))
 		{
 			const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 
-			mpBody->AddLinearImpulse({ -1 * mfCharacterSpeed * moveScaler,0,0 });
+			mpBody->AddLinearImpulse({ -1 * mfCharacterSpeed * mpBody->GetMass(),0,0 });
 
 			if (mbIsFacingRight)
 			{
@@ -122,7 +143,7 @@ namespace Dystopia
 		{
 			const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 
-			mpBody->AddLinearImpulse({mfCharacterSpeed * moveScaler,0,0 });
+			mpBody->AddLinearImpulse({mfCharacterSpeed * mpBody->GetMass(),0,0 });
 
 			if (!mbIsFacingRight)
 			{
@@ -133,12 +154,65 @@ namespace Dystopia
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed("Fly"))
 		{
-			mpBody->AddForce({ 0,100* moveScaler,0 });
+			mpBody->AddForce({ 0,1000 * mpBody->GetMass(),0 });
 		}
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered("Jump"))
 		{
-			mpBody->AddLinearImpulse({ 0,mfJumpForce*moveScaler,0 });
+			mpBody->AddLinearImpulse({ 0,mfJumpForce * mpBody->GetMass() * 10,0 });
+		}
+	}
+
+	/*
+	 * EDITOR UI STUFF
+	 */
+
+	void CharacterController::UI_Debug()
+	{
+		EGUI::Display::CheckBox("Is Facing Right		  ", &mbIsFacingRight);
+		EGUI::Display::CheckBox("Is Grounded			  ", &mbIsGrounded);
+		EGUI::Display::CheckBox("Is Ceilinged			  ", &mbIsCeilinged);
+	}
+
+	void CharacterController::UI_CharacterSpeed()
+	{
+		switch (EGUI::Display::DragFloat("Move Speed			  ", &mfCharacterSpeed, 0.01f, FLT_EPSILON, FLT_MAX))
+		{
+		case EGUI::eDragStatus::eNO_CHANGE:
+		case EGUI::eDragStatus::eDRAGGING:
+			break;
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eENTER:
+		case EGUI::eDragStatus::eDEACTIVATED:
+		case EGUI::eDragStatus::eTABBED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfCharacterSpeed);
+			break;
+		default:
+			break;
+		}
+	}
+
+	void CharacterController::UI_CharacterJumpForce()
+	{
+		switch (EGUI::Display::DragFloat("Jump Height			  ", &mfJumpForce, 0.01f, FLT_EPSILON, FLT_MAX))
+		{
+		case EGUI::eDragStatus::eNO_CHANGE:
+		case EGUI::eDragStatus::eDRAGGING:
+			break;
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eENTER:
+		case EGUI::eDragStatus::eDEACTIVATED:
+		case EGUI::eDragStatus::eTABBED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfJumpForce);
+			break;
+		default:
+			break;
 		}
 	}
 }

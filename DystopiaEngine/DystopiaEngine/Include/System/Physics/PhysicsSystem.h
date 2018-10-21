@@ -48,7 +48,9 @@ namespace Dystopia
 #if EDITOR
 		void GravityUI(void);
 		void IsDebugUI(void);
-		void ResolutionUI(void);
+		void MaxVelocityUI(void);
+		void VelocityIterationUI(void);
+		void PositionalIterationUI(void);
 #endif 
 
 		bool  mbIsDebugActive;
@@ -64,8 +66,14 @@ namespace Dystopia
 
 		// Position Correction Tolerance
 		float mPenetrationEpsilon;
-		// Position Correction Resolution as Percentage;
-		int mResolutionIterations;
+
+		// Velocity Iterations For Resolution;
+		int mVelocityIterations;
+
+		// Position Iterations For Resolution;
+		int mPositionalIterations;
+
+
 	};
 }
 

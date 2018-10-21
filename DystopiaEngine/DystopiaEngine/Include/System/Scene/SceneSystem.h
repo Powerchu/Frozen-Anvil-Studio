@@ -16,13 +16,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Base/Systems.h"
 #include "System/Scene/Scene.h"
+#include "Globals.h"
 //#include "DataStructure/Stack.h"
 
 #include <string>
 
 namespace Dystopia
 {
-	class SceneSystem : public Systems
+	class _DLL_EXPORT SceneSystem : public Systems
 	{
 	public:
 
