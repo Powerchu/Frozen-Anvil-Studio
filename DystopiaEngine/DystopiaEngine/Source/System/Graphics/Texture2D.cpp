@@ -12,51 +12,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/Texture2D.h"
-#include "System/Graphics/Image.h"
+
+#include "IO/Image.h"
 #include "IO/ImageParser.h"
+
 #include "Allocator/DefaultAlloc.h"
 
+#include <cstdint>
 #include <GL/glew.h>
 
-Dystopia::Texture2D::Texture2D(void) noexcept : Texture{ GL_TEXTURE_2D, "" }
-{
-
-}
-
-Dystopia::Texture2D::Texture2D(Image const* _pData) noexcept
-	: Texture{ _pData->mnWidth, _pData->mnHeight, GL_TEXTURE_2D }
-{
-	InitTexture(_pData);
-}
 
 Dystopia::Texture2D::Texture2D(const std::string& _strPath) noexcept
 	: Texture{ GL_TEXTURE_2D, _strPath }
 {
-	auto fileType = (_strPath.end() - 3);
-	Image img;
 
-	if ('p' == *fileType || 'P' == *fileType)
-	{
-		img = ImageParser::LoadPNG(_strPath);
-	}
-	else if ('b' == *fileType || 'B' == *fileType)
-	{
-		img = ImageParser::LoadBMP(_strPath);
-	}
-	else if ('d' == *fileType || 'D' == *fileType)
-	{
-		img = ImageParser::LoadDDS(_strPath);
-	}
-	else
-	{
-		return;
-	}
-
-	SetWidth(img.mnWidth);
-	SetHeight(img.mnHeight);
-
-	InitTexture(&img);
-	DefaultAllocator<void>::Free(img.mpImageData);
 }
 
 Dystopia::Texture2D::~Texture2D(void) noexcept
@@ -68,7 +37,6 @@ void Dystopia::Texture2D::GenerateMipmap(void) const
 	BindTexture();
 
 	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
 	UnbindTexture();
 }
@@ -77,21 +45,72 @@ void Dystopia::Texture2D::InitTexture(Image const* _pData)
 {
 	BindTexture();
 
-	unsigned msz = 4 * 512 * 512;
-	unsigned sz = 16 * ((_pData->mnWidth + 3) / 4) * ((_pData->mnHeight + 3) / 4);
+	auto w = _pData->mnWidth;
+	auto h = _pData->mnHeight;
+	mnWidth  = _pData->mnWidth;
+	mnHeight = _pData->mnHeight;
 
-	//glTexImage2D(mnType, 0, _pData->mnFormat, _pData->mnWidth, _pData->mnHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, _pData->mpImageData);
-	glCompressedTexImage2D(mnType, 0, _pData->mnFormat, _pData->mnWidth, _pData->mnHeight, 0, sz, _pData->mpImageData);
+	uint8_t* data_ptr = static_cast<uint8_t*>(_pData->mpImageData);
 
-	if (auto err = glGetError())
+	for (unsigned n = 0; (n < _pData->mnMipMaps) && w && h; ++n)
 	{
-		__debugbreak();
+		glTexImage2D(mnType, n, _pData->mnRawFormat, w, h, 0, _pData->mnFormat, GL_UNSIGNED_BYTE, data_ptr);
+		data_ptr += _pData->mnChannels * w * h;
+
+		// Assume each MipMap is half of the previous
+		w >>= 1;
+		h >>= 1;
+
+#   if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#   endif 
 	}
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+
+	UnbindTexture();
+}
+
+void Dystopia::Texture2D::InitCompressedTexture(Image const* _pData)
+{
+	BindTexture();
+
+	unsigned blksz = _pData->mnRawFormat == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
+
+	auto w = _pData->mnWidth;
+	auto h = _pData->mnHeight;
+	mnWidth  = _pData->mnWidth;
+	mnHeight = _pData->mnHeight;
+
+	uint8_t* data_ptr = static_cast<uint8_t*>(_pData->mpImageData);
+
+	for (unsigned n = 0; (n < _pData->mnMipMaps) && w && h; ++n)
+	{
+		auto sz = blksz * ((w + 3) >> 2) * ((h + 3) >> 2);
+
+		glCompressedTexImage2D(mnType, n, _pData->mnRawFormat, w, h, 0, sz, data_ptr);
+		data_ptr += sz;
+
+		// Assume each MipMap is half of the previous
+		w >>= 1;
+		h >>= 1;
+
+#   if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#   endif
+	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
 	UnbindTexture();
 }

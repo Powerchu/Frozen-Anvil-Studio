@@ -143,12 +143,12 @@ private:
 		static inline uint64_t GetPresentIndex(uint64_t);
 
 		bool IsFull(void) const noexcept;
-		T* ConsumeNextEmpty(void) const;
+		T* ConsumeNextEmpty(void);
 
 		template <typename ... Ps>
 		Ptr_t EmplaceNextEmpty(Ps&& ...);
-		template <typename, typename ... Ps>
-		Ptr_t EmplaceNextEmptyAs(Ps&& ...);
+		template <typename Ty, typename ... Ps>
+		Ty* EmplaceNextEmptyAs(Ps&& ...);
 		Ptr_t InsertNextEmpty(const Val_t& _obj);
 
 		Block(void) noexcept = default;
@@ -488,11 +488,11 @@ bool MagicArray<T, PP>::Block::IsFull(void) const noexcept
 }
 
 template <typename T, typename PP>
-T* MagicArray<T, PP>::Block::ConsumeNextEmpty(void) const
+T* MagicArray<T, PP>::Block::ConsumeNextEmpty(void)
 {
 	T* ptr = mpArray;
 
-	for (auto e : present)
+	for (auto& e : present)
 	{
 		auto tmp = ~e & Range;
 		if (0 == tmp)
@@ -523,11 +523,11 @@ typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Block::EmplaceNextEmpty(Ps&
 }
 
 template <typename T, typename PP> template <typename Ty, typename ...Ps>
-typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Block::EmplaceNextEmptyAs(Ps&& ... args)
+Ty* MagicArray<T, PP>::Block::EmplaceNextEmptyAs(Ps&& ... args)
 {
 	if (auto ptr = ConsumeNextEmpty())
 	{
-		return new (ptr + index) Ty{ Ut::Forward<Ps>(args)... };
+		return new (ptr) Ty{ Ut::Forward<Ps>(args)... };
 	}
 
 	return nullptr;

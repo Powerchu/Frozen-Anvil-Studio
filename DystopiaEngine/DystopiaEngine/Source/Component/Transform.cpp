@@ -26,7 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif 
 
 Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
-	: mRotation{ }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f }, 
+	: mRotation{ }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f, 1.f }, 
 	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, Component { _pOwner }
 {
 
@@ -53,7 +53,7 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
 
         mScale		= InvTrans * mScale;
         mPosition	= InvTrans * mPosition;
-        mRotation  *= mpParent->GetRotation();
+        mRotation   = mpParent->GetRotation() * mRotation;
         mbChanged	= true;
     }
 }
@@ -65,7 +65,7 @@ void Dystopia::Transform::OnParentRemove(Transform* _pParent)
 
 	mScale		= InvTrans * mScale;
 	mPosition	= InvTrans * mPosition;
-	mRotation   = _pParent->GetRotation() * mRotation;
+	mRotation  *= _pParent->GetRotation();
 
 	mbChanged = true;
 }

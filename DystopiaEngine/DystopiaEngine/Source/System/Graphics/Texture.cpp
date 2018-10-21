@@ -83,7 +83,12 @@ unsigned Dystopia::Texture::GetID(void) const noexcept
 	return mnID;
 }
 
-std::string const& Dystopia::Texture::GetPath() const
+std::string Dystopia::Texture::GetName(void) const
+{
+	return mstrPath.substr(mstrPath.find_last_of("/\\") + 1);
+}
+
+std::string const& Dystopia::Texture::GetPath(void) const
 {
 	return mstrPath;
 }

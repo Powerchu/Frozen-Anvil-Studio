@@ -43,7 +43,8 @@ namespace Dystopia
 
 		unsigned GetID(void) const noexcept;
 
-		std::string const& GetPath() const;
+		std::string GetName(void) const;
+		std::string const& GetPath(void) const;
 
 	protected:
 

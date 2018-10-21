@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "IO/ImageParser.h"			 // File header
 #include "IO/BinarySerializer.h"
-#include "System/Graphics/Image.h"	 // Image
+#include "IO/Image.h"                // Image
 #include "Utility/DebugAssert.h"	 // DEBUG_PRINT
 #include "Allocator/DefaultAlloc.h"
 
@@ -46,16 +46,19 @@ namespace
 	};
 }
 
-Image ImageParser::LoadPNG(const std::string& _strName)
+Image* ImageParser::LoadPNG(const std::string& _strName)
 {
-	Image fileData;
 	std::vector<unsigned char> buf;
 
-	fileData.mnFormat = GL_RGBA;
-	lodepng::decode(buf, fileData.mnWidth, fileData.mnHeight, _strName.c_str());
+	Image* fileData = Dystopia::DefaultAllocator<Image>::ConstructAlloc(
+		unsigned(GL_RGBA), unsigned(GL_RGBA),
+		0u, 0u, 4u, 1u, nullptr
+	);
+	
+	lodepng::decode(buf, fileData->mnWidth, fileData->mnHeight, _strName.c_str());
 
-	fileData.mpImageData = Dystopia::DefaultAllocator<void>::Alloc(buf.size());
-	std::memcpy(fileData.mpImageData, &buf[0], buf.size());
+	fileData->mpImageData = Dystopia::DefaultAllocator<void>::Alloc(buf.size());
+	std::memcpy(fileData->mpImageData, &buf[0], buf.size());
 
 	return fileData;
 }

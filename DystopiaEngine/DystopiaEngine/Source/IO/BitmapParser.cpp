@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "IO/ImageParser.h"			// File header
 #include "IO/BinarySerializer.h"
-#include "System/Graphics/Image.h"	// Image
+#include "IO/Image.h"	            // Image
 #include "Utility/DebugAssert.h"	// DEBUG_PRINT
 #include "Allocator/DefaultAlloc.h"
 #include "Math/MathUtility.h"
@@ -177,25 +177,26 @@ namespace BMP
 		return data;
 	}
 
-	Image ReadData(Dystopia::BinarySerializer& _in, InfoBMP& _info, ColorRGBA(&_palette)[256])
+	Image* ReadData(Dystopia::BinarySerializer& _in, InfoBMP& _info, ColorRGBA(&_palette)[256])
 	{
-		Image data = { 
-			GL_RGBA,
+		Image* data = Dystopia::DefaultAllocator<Image>::ConstructAlloc(
+			static_cast<unsigned>(GL_RGBA), static_cast<unsigned>(GL_RGBA),
 			static_cast<unsigned>(_info.mWidth ), 
-			static_cast<unsigned>(_info.mHeight), 
+			static_cast<unsigned>(_info.mHeight),
+			4u, 1u,
 			nullptr
-		};
+		);
 
 		switch (_info.mBits)
 		{
 		case 8:
-			data.mpImageData = Palette_ColorBMP(_in, _info, _palette);
+			data->mpImageData = Palette_ColorBMP(_in, _info, _palette);
 			break;
 		case 24:
-			data.mpImageData = RGB_ColorBMP(_in, _info);
+			data->mpImageData = RGB_ColorBMP(_in, _info);
 			break;
 		case 32:
-			data.mpImageData = RGBA_ColorBMP(_in, _info);
+			data->mpImageData = RGBA_ColorBMP(_in, _info);
 			break;
 		}
 
@@ -203,7 +204,7 @@ namespace BMP
 	}
 }
 
-Image ImageParser::LoadBMP(const std::string& _path)
+Image* ImageParser::LoadBMP(const std::string& _path)
 {
 	auto file = Dystopia::Serialiser::OpenFile<Dystopia::BinarySerializer>(_path);
 
@@ -213,7 +214,7 @@ Image ImageParser::LoadBMP(const std::string& _path)
 	if (file.EndOfInput())
 	{
 		DEBUG_PRINT(eLog::WARNING, "ImageParser Warning: File \"%s\" not found!", _path.c_str());
-		return { 0, 0, 0, nullptr };
+		return nullptr;
 	}
 
 	// Read the BMP and info Headers
@@ -240,7 +241,7 @@ Image ImageParser::LoadBMP(const std::string& _path)
 	// Early bail checks before we do anything
 	if (BMP::IsUnreadable(fileHeader, fileInfo))
 	{
-		return { 0, 0, 0, nullptr };
+		return nullptr;
 	}
 
 	// Read color palette if there is one
@@ -254,7 +255,7 @@ Image ImageParser::LoadBMP(const std::string& _path)
 	if ( fileHeader.mOffset > sizeof(HeaderBMP) + fileInfo.mSize)
 		file.Skip(fileHeader.mOffset - (sizeof(HeaderBMP) + fileInfo.mSize));
 
-	Image fileData = BMP::ReadData(file, fileInfo, mPalette);
+	auto fileData = BMP::ReadData(file, fileInfo, mPalette);
 
 	return fileData;
 }

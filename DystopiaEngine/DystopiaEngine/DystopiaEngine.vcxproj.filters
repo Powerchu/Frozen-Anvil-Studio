@@ -274,6 +274,7 @@
     <ClCompile Include="Source\IO\DDSParser.cpp">
       <Filter>IO\ImageParser</Filter>
     </ClCompile>
+    <ClCompile Include="Source\IO\Image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -353,9 +354,6 @@
     </ClInclude>
     <ClInclude Include="Include\Math\Quaternion.h">
       <Filter>Math\Quaternion</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\Image.h">
-      <Filter>Game Engine\SubSystems\Texture\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\ImageParser.h">
       <Filter>IO\ImageParser</Filter>
@@ -746,6 +744,9 @@
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h">
       <Filter>Game Engine\SubSystems\Texture\Texture\Atlas</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\IO\Image.h">
+      <Filter>Game Engine\SubSystems\Texture\Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -59,16 +59,33 @@ namespace Ut
 		return _nValue && 0 == (_nValue & _nValue - 1);
 	}
 	
+
 	template <typename Itor_t, typename Obj_t>
-	Itor_t& Find(const Obj_t& _obj, Itor_t& _begin, Itor_t const& _end)
+	Itor_t Find(const Obj_t& _obj, Itor_t _begin, Itor_t const& _end)
 	{
 		while (_end != _begin)
 		{
-			if (_obj == *_begin) break;
+			if (_obj == *_begin)
+				break;
+			++_begin;
 		}
 
 		return _begin;
 	}
+
+	template <typename Itor_t, typename Cond_t>
+	Itor_t Find(Itor_t _begin, Itor_t const& _end, Cond_t&& _cond)
+	{
+		while (_end != _begin)
+		{
+			if (_cond(*_begin))
+				break;
+			++_begin;
+		}
+
+		return _begin;
+	}
+
 
 	// Sorts a given array using insertion sort. 
 	// Defaults to sorting the array in ascending order

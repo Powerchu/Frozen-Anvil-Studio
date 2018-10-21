@@ -18,20 +18,31 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/GraphicsSystem.h"	// File header
 #include "System/Graphics/GraphicsDefs.h"	// eGraphicSettings
+#include "System/Driver/Driver.h"			// EngineCore
+
+// Mesh Includes
 #include "System/Graphics/MeshSystem.h"
-#include "System/Graphics/Shader.h"
+
+// Texture Includes
+#include "System/Graphics/TextureSystem.h"
 #include "System/Graphics/Texture2D.h"
+
+// Shader Includes
+#include "System/Graphics/Shader.h"
+
+// Camera Includes
+#include "System/Camera/CameraSystem.h"     // Camera System
+#include "Component/Camera.h"				// Camera
+
 #include "System/Window/WindowManager.h"	// Window Manager
 #include "System/Window/Window.h"			// Window
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
 #include "System/Collision/CollisionSystem.h"
-#include "System/Camera/CameraSystem.h"     // Camera System
-#include "System/Driver/Driver.h"			// EngineCore
-#include "System/Time/ScopedTimer.h"
-#include "System/Profiler/ProfilerAction.h"
-#include "System/Logger/LogPriority.h"
 #include "System/Logger/LoggerSystem.h"
+#include "System/Logger/LogPriority.h"
+#include "System/Profiler/ProfilerAction.h"
+#include "System/Time/ScopedTimer.h"
 
 #include "IO/TextSerialiser.h"
 
@@ -39,7 +50,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/ObjectFlags.h"
 #include "Component/Transform.h"
 #include "Component/Renderer.h"
-#include "Component/Camera.h"				// Camera
 #include "Component/Collider.h"
 
 #include "Utility/DebugAssert.h"			// DEBUG_ASSERT
@@ -149,12 +159,14 @@ void Dystopia::GraphicsSystem::PostInit(void)
 
 void Dystopia::GraphicsSystem::DrawSplash(void)
 {
-	WindowManager* pWinSys = EngineCore::GetInstance()->GetSystem<WindowManager>();
-	MeshSystem* pMeshSys = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
+	auto pCore = EngineCore::GetInstance();
+	MeshSystem*   pMeshSys = pCore->GetSubSystem<MeshSystem>();
+	TextureSystem* pTexSys = pCore->GetSubSystem<TextureSystem>();
+	WindowManager* pWinSys = pCore->GetSystem<WindowManager>();
 
 	Mesh*   mesh = pMeshSys->GetMesh("Quad");
 	Shader* shader = shaderlist["Default Shader"];
-	Texture2D* texture = new Texture2D{ "Resource/Editor/checker_dxt5_nm.dds" };
+	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/checker_dxt3.dds");
 
 	unsigned w = texture->GetWidth(), h = texture->GetHeight();
 
@@ -186,8 +198,6 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	SwapBuffers(
 		pWinSys->GetMainWindow().GetDeviceContext()
 	);
-
-	delete texture;
 }
 
 void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
