@@ -149,7 +149,7 @@ namespace Dystopia
 
 	void RigidBody::Integrate(float _dt)
 	{
-		constexpr const auto VEL_EPSILON = 0.001F;
+		constexpr const auto VEL_EPSILON = 0.01F;
 
 		if (!GetOwner()->IsActive() || mbIsStatic || !mbIsAwake)
 		{
@@ -223,8 +223,6 @@ namespace Dystopia
 			mAngularVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
-
-
 		//*Reset Cumulative Force*/
 		ResetCumulative();
 	}
@@ -262,19 +260,14 @@ namespace Dystopia
 
 	void RigidBody::PreUpdatePosition(float _dt)
 	{
-		mPosition += (mLinearVelocity + mLinearAcceleration * _dt * 0.5F)  * _dt;
-		//mPosition += (mLinearVelocity + mAcceleration * _dt * 0.5F)  * _dt;
 		//mPosition += mLinearVelocity * _dt;
-		
+		mPosition += (mLinearVelocity + mLinearAcceleration * _dt * 0.5F)  * _dt;
 	}
 
 	void RigidBody::UpdateResult(float)
 	{
 		// Update Position
-		//mPosition = mPosition - mPrevPosition + mAcceleration * _dt * _dt;
-		//mPosition += mLinearVelocity * _dt;
 		P_TX->SetGlobalPosition(mPosition);
-		
 	}
 
 	/*void RigidBody::Update(float _dt)

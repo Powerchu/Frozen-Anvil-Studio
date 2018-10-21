@@ -27,7 +27,7 @@ namespace Dystopia
 		const auto b_invmass = bodyB->GetInverseMass();
 		const auto a_oldVel = bodyA->GetLinearVelocity();
 		const auto b_oldVel = bodyB->GetLinearVelocity();
-		const auto perc = 2.0F;
+		const auto perc = 0.0F;
 
 		mEdgeNormal.z = 0;
 		mfPeneDepth = Math::Abs(mfPeneDepth);

@@ -22,7 +22,7 @@ namespace Dystopia
 		, mGravity(400.0F)
 		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.01F)
+		, mPenetrationEpsilon(0.05F)
 		, mVelocityIterations(8)
 		, mPositionalIterations(8)
 	{
