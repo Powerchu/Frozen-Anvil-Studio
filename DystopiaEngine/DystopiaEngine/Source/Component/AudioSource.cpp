@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Payloads.h"
 #include "Editor/Commands.h"
 #include "Editor/CommandList.h"
+#include "Editor/ConsoleLog.h"
 #endif 
 
 #define MAX_VOLUME 3
@@ -131,7 +132,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::AudioSource::SetSound, mpSound);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::AudioSource::SetSound, pSound);
-		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+		EGUI::GetCommandHND()->InvokeCommand(mnOwner, fOld, fNew);
 		EGUI::Display::EndPayloadReceiver();
 	}
 	EGUI::SameLine();
@@ -139,7 +140,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	{
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::AudioSource::SetSound, mpSound);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::AudioSource::SetSound, nullptr);
-		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+		EGUI::GetCommandHND()->InvokeCommand(mnOwner, fOld, fNew);
 	}
 	int old = mSoundType;
 	if (EGUI::Display::DropDownSelection("Category      ", mSoundType, g_AudioCategory, 150))
@@ -189,6 +190,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	{
 	case EGUI::eSTART_DRAG:
 		EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, &mPitch, &mChanged);
+		PrintToConsoleLog("StartRecord");
 		break;
 	case EGUI::eDRAGGING:
 		mChanged = true;
@@ -198,6 +200,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	case EGUI::eDEACTIVATED:
 	case EGUI::eTABBED:
 		EGUI::GetCommandHND()->EndRecording();
+		PrintToConsoleLog("EndRecord");
 		break;
 	}
 #endif 

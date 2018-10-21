@@ -105,6 +105,12 @@ namespace Dystopia
 		bool ExecuteDo() override 
 		{
 			if (!FindComponent()) return false;
+
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			if (!pObj) return nullptr;
+			Comp *pCom = pObj->GetComponent<Comp>();
+			if (!pCom) return nullptr;
+
 			if (mpNotify) *mpNotify = true;
 			*mpData = mNewValue;
 			return true; 
