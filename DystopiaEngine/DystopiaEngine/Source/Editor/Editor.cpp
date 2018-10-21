@@ -118,8 +118,8 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	HashString testFind{ "Find me Something" };
 	size_t pos = testFind.rfind("me");
 
-	//HashString subStr{ "Sub my string" };
-	//HashString sub = subStr.substr(4, 12);
+	HashString subStr{ "Sub my string" };
+	HashString sub = subStr.substr(4, 6);
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();

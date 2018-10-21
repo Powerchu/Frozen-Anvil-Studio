@@ -61,6 +61,7 @@ HashString::HashString(const char * _start, const char* _end)
 	size_t i = 0;
 	while (i < mSize)
 		mCharBuffer[i++] = *(_start + i);
+	mCharBuffer[i] = '\0';
 	mHashedID = StringHasher(mCharBuffer);
 }
 
