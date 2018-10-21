@@ -25,6 +25,8 @@ namespace Dystopia
 
 namespace ImageParser
 {
+	Dystopia::Image* LoadImage(const std::string&);
+
 	Dystopia::Image LoadBMP(const std::string&);
 
 	// External - Use external library, ask later
