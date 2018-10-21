@@ -31,7 +31,7 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
-		void Init(unsigned _nWidth, unsigned _nHeight);
+		void Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha = true);
 
 		void BindFramebuffer(void) const noexcept;
 		void UnbindFramebuffer(void) const noexcept;

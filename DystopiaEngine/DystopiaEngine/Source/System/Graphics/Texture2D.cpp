@@ -18,13 +18,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <GL/glew.h>
 
-Dystopia::Texture2D::Texture2D(void) noexcept : Texture{ GL_TEXTURE_2D }, mPath{ "" }
+Dystopia::Texture2D::Texture2D(void) noexcept : Texture{ GL_TEXTURE_2D, "" }
 {
 
 }
 
-Dystopia::Texture2D::Texture2D(const std::string& _strPath, bool _bAlpha) : 
-	Texture{ GL_TEXTURE_2D }, mPath{ _strPath }
+Dystopia::Texture2D::Texture2D(Image const* _pData) noexcept
+	: Texture{ _pData->mnWidth, _pData->mnHeight, GL_TEXTURE_2D }
+{
+	InitTexture(_pData);
+}
+
+Dystopia::Texture2D::Texture2D(const std::string& _strPath) noexcept
+	: Texture{ GL_TEXTURE_2D, _strPath }
 {
 	auto fileType = (_strPath.end() - 3);
 	Image img;
@@ -49,14 +55,8 @@ Dystopia::Texture2D::Texture2D(const std::string& _strPath, bool _bAlpha) :
 	SetWidth(img.mnWidth);
 	SetHeight(img.mnHeight);
 
-	InitTexture(img.mpImageData, _bAlpha);
+	InitTexture(&img);
 	DefaultAllocator<void>::Free(img.mpImageData);
-}
-
-Dystopia::Texture2D::Texture2D(unsigned _nWidth, unsigned _nHeight, void* _pData, bool _bAlpha) :
-	Texture{ _nWidth, _nHeight, GL_TEXTURE_2D }, mPath{ "" }
-{
-	InitTexture(_pData, _bAlpha);
 }
 
 Dystopia::Texture2D::~Texture2D(void) noexcept
@@ -73,18 +73,15 @@ void Dystopia::Texture2D::GenerateMipmap(void) const
 	UnbindTexture();
 }
 
-void Dystopia::Texture2D::InitTexture(void* _pData, bool _bAlpha)
+void Dystopia::Texture2D::InitTexture(Image const* _pData)
 {
 	BindTexture();
 
-	if (_bAlpha)
-	{
-		glTexImage2D(mnType, 0, GL_SRGB_ALPHA, GetWidth(), GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, _pData);
-	}
-	else
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, GetWidth(), GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, _pData);
-	}
+	unsigned msz = 4 * 512 * 512;
+	unsigned sz = 16 * ((_pData->mnWidth + 3) / 4) * ((_pData->mnHeight + 3) / 4);
+
+	//glTexImage2D(mnType, 0, _pData->mnFormat, _pData->mnWidth, _pData->mnHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, _pData->mpImageData);
+	glCompressedTexImage2D(mnType, 0, _pData->mnFormat, _pData->mnWidth, _pData->mnHeight, 0, sz, _pData->mpImageData);
 
 	if (auto err = glGetError())
 	{
@@ -99,7 +96,4 @@ void Dystopia::Texture2D::InitTexture(void* _pData, bool _bAlpha)
 	UnbindTexture();
 }
 
-std::string Dystopia::Texture2D::GetPath() const
-{
-	return mPath;
-}
+

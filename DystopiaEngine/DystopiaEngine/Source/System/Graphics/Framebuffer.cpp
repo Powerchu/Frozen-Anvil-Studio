@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Framebuffer.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Graphics/Texture2D.h"
+#include "System/Graphics/Image.h"
 #include "System/Driver/Driver.h"
 
 #include <GL/glew.h>
@@ -33,10 +34,12 @@ Dystopia::Framebuffer::~Framebuffer(void) noexcept
 }
 
 
-void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight)
+void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha)
 {
-	mpTexture = new Texture2D{ _nWidth, _nHeight, nullptr };
-	//mpTexture = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->Raw<Texture2D>();
+	Image tmp = { _bAlpha ? GL_RGBA : GL_RGB, _nWidth, _nHeight, nullptr };
+	mpTexture = new Texture2D{ &tmp };
+	//mpTexture = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->Raw<Texture2D>(&tmp);
+
 	glGenFramebuffers(1, &mnID);
 	glGenRenderbuffers(1, &mDepthBuffer);
 

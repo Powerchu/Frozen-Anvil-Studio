@@ -20,9 +20,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Image.h"	// Image
 #include "Utility/DebugAssert.h"	// DEBUG_PRINT
 #include "Allocator/DefaultAlloc.h"
+#include "Math/MathUtility.h"
 
-#include <cmath>		// abs
 #include <string>		// string
+#include <cstdint>
+#include <GL/glew.h>
+#include <GL/GL.h>
 
 using Dystopia::Image;
 
@@ -108,9 +111,9 @@ namespace BMP
 	// 8 Bits using Color Palette
 	void* Palette_ColorBMP(Dystopia::BinarySerializer& _in, InfoBMP& _info, ColorRGBA(&_palette)[256])
 	{
-		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * std::abs(_info.mHeight));
+		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * Math::Abs(_info.mHeight));
 
-		for (int n = 0; n < std::abs(_info.mHeight); ++n)
+		for (int n = 0; n < Math::Abs(_info.mHeight); ++n)
 		{
 			for (int m = 0; m < _info.mWidth; ++m)
 			{
@@ -132,12 +135,12 @@ namespace BMP
 	void* RGB_ColorBMP(Dystopia::BinarySerializer& _in, InfoBMP& _info)
 	{
 		unsigned chunkLength = _info.mWidth * 3;
-		unsigned padding = ((chunkLength + 3) >> 2) * 4 - chunkLength; // pad widths to multiple of 4
+		unsigned padding = (((chunkLength + 3) >> 2) << 2) - chunkLength; // pad widths to multiple of 4
 
-		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * std::abs(_info.mHeight));
-		ColorRGBA* ptr = data + _info.mWidth * std::abs(_info.mHeight);
+		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * Math::Abs(_info.mHeight));
+		ColorRGBA* ptr = data + _info.mWidth * Math::Abs(_info.mHeight);
 
-		for (int n = 0; n < std::abs(_info.mHeight); ++n)
+		for (int n = 0; n < Math::Abs(_info.mHeight); ++n)
 		{
 			ptr = ptr - _info.mWidth;
 			for (int w = 0; w < _info.mWidth; ++ w)
@@ -161,10 +164,9 @@ namespace BMP
 	// 32 Bits
 	void* RGBA_ColorBMP(Dystopia::BinarySerializer& _in, InfoBMP& _info)
 	{
-		DEBUG_PRINT(eLog::MESSAGE, "ImageParser: Read image as RGBA color!\n");
-		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * std::abs(_info.mHeight));
+		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * Math::Abs(_info.mHeight));
 
-		for (int n = 0; n < _info.mWidth * std::abs(_info.mHeight); ++n)
+		for (int n = 0; n < _info.mWidth * Math::Abs(_info.mHeight); ++n)
 		{
 			_in >> data[n].sub.b;
 			_in >> data[n].sub.g;
@@ -178,6 +180,7 @@ namespace BMP
 	Image ReadData(Dystopia::BinarySerializer& _in, InfoBMP& _info, ColorRGBA(&_palette)[256])
 	{
 		Image data = { 
+			GL_RGBA,
 			static_cast<unsigned>(_info.mWidth ), 
 			static_cast<unsigned>(_info.mHeight), 
 			nullptr
@@ -210,8 +213,7 @@ Image ImageParser::LoadBMP(const std::string& _path)
 	if (file.EndOfInput())
 	{
 		DEBUG_PRINT(eLog::WARNING, "ImageParser Warning: File \"%s\" not found!", _path.c_str());
-		//file.close();
-		return { 0, 0, nullptr };
+		return { 0, 0, 0, nullptr };
 	}
 
 	// Read the BMP and info Headers
@@ -238,8 +240,7 @@ Image ImageParser::LoadBMP(const std::string& _path)
 	// Early bail checks before we do anything
 	if (BMP::IsUnreadable(fileHeader, fileInfo))
 	{
-	//	file.close();
-		return { 0, 0, nullptr };
+		return { 0, 0, 0, nullptr };
 	}
 
 	// Read color palette if there is one
@@ -255,7 +256,6 @@ Image ImageParser::LoadBMP(const std::string& _path)
 
 	Image fileData = BMP::ReadData(file, fileInfo, mPalette);
 
-	//file.close();
 	return fileData;
 }
 
@@ -266,7 +266,6 @@ bool ImageParser::WriteBMP(const std::string& _path, void* _pImg, int _nWidth, i
 	if (file.fail())
 		return false;
 
-	unsigned imgSize = _nWidth * _nHeight * 3;
 	HeaderBMP head;
 	InfoBMP   info;
 
@@ -278,15 +277,12 @@ bool ImageParser::WriteBMP(const std::string& _path, void* _pImg, int _nWidth, i
 	info.mNumColors		= 0;
 	info.mImptColors	= 0;
 
+	head.mType = (L'B' << 8) + 'M';
 	head.mBytes = sizeof(HeaderBMP) + sizeof(InfoBMP);
 	head.mOffset = sizeof(HeaderBMP) + sizeof(InfoBMP);
 
-	// Write "BM" infront to denote BMP
-	file.write("B", 1);
-	file.write("M", 1);
-
-	// Write the rest of the header
-	file.write(reinterpret_cast<char*>(&head), sizeof(HeaderBMP) - sizeof(uint16_t));
+	// Write the header
+	file.write(reinterpret_cast<char*>(&head), sizeof(HeaderBMP));
 	
 	// Write the info section
 	file.write(reinterpret_cast<char*>(&info), sizeof(InfoBMP));
@@ -300,7 +296,15 @@ bool ImageParser::WriteBMP(const std::string& _path, void* _pImg, int _nWidth, i
 		return false;
 	}
 
-	file.write(static_cast<char*>(_pImg), imgSize);
+	auto padding = 4 - ((_nWidth * 3) & 3);
+	int paddingBytes = { 0 };
+
+	for (int32_t n = 0; n < info.mHeight; ++n)
+	{
+		file.write(static_cast<char*>(_pImg) + n * _nWidth, _nWidth);
+		file.write(reinterpret_cast<char*>(&paddingBytes), padding);
+	}
+
 	return true;
 }
 
