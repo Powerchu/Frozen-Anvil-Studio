@@ -30,13 +30,31 @@ namespace Dystopia
 		void Shutdown(void) noexcept;
 
 		template <typename Ty>
-		Ty* GetTexture(std::string&);
+		Ty* GetTexture(const std::string&);
 
+		template <typename Ty>
+		Ty* LoadTexture(const std::string&);
 
 	private:
 
 		MagicArray<Texture> mTextures;
 	};
+}
+
+
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+template <typename Ty>
+Ty* GetTexture(const std::string& _strName)
+{
+
+
+	return static_cast<Ty*>();
 }
 
 

@@ -161,7 +161,7 @@
       <Filter>Game Engine\Systems\Profiler\ProfileInfo</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp">
-      <Filter>IO\ImageParser\PNG\lodepng</Filter>
+      <Filter>IO\TextSerialiser\lodepng</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Editor Tabs\Performance</Filter>
@@ -266,13 +266,13 @@
       <Filter>Game Engine\SubSystems\Texture\Texture\Atlas</Filter>
     </ClCompile>
     <ClCompile Include="Source\IO\BitmapParser.cpp">
-      <Filter>IO\ImageParser\BMP</Filter>
+      <Filter>IO\ImageParser</Filter>
     </ClCompile>
     <ClCompile Include="Source\IO\PNGParser.cpp">
-      <Filter>IO\ImageParser\PNG</Filter>
+      <Filter>IO\ImageParser</Filter>
     </ClCompile>
     <ClCompile Include="Source\IO\DDSParser.cpp">
-      <Filter>IO\ImageParser\DDS</Filter>
+      <Filter>IO\ImageParser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -353,6 +353,9 @@
     </ClInclude>
     <ClInclude Include="Include\Math\Quaternion.h">
       <Filter>Math\Quaternion</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\Image.h">
+      <Filter>Game Engine\SubSystems\Texture\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\ImageParser.h">
       <Filter>IO\ImageParser</Filter>
@@ -538,7 +541,7 @@
       <Filter>Game Engine\Systems\Profiler\ProfileInfo</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h">
-      <Filter>IO\ImageParser\PNG\lodepng</Filter>
+      <Filter>IO\TextSerialiser\lodepng</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\PLogInfo.h">
       <Filter>Editor\Editor Tabs\Performance</Filter>
@@ -744,9 +747,6 @@
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h">
       <Filter>Game Engine\SubSystems\Texture\Texture\Atlas</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\Image.h">
-      <Filter>IO\ImageParser</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -841,9 +841,6 @@
     </Filter>
     <Filter Include="IO\TextSerialiser">
       <UniqueIdentifier>{500db7cd-deed-4efd-b173-f377dfb115d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\ImageParser">
-      <UniqueIdentifier>{8fc9bc42-e537-436b-9608-0fb8466bebc6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Components\Camera">
       <UniqueIdentifier>{a431a473-6a2d-4d39-8e59-fa4404bc38b4}</UniqueIdentifier>
@@ -965,6 +962,9 @@
     <Filter Include="Game Engine\Systems\Profiler\ProfileInfo">
       <UniqueIdentifier>{786f882b-e4f0-4e3c-b000-a421b1059b0b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IO\TextSerialiser\lodepng">
+      <UniqueIdentifier>{447b179b-b152-4f92-9cc2-48eb8f301131}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Game Engine\Systems\Camera">
       <UniqueIdentifier>{c6d69b09-93e3-434e-a4bc-e25fb0c06c6d}</UniqueIdentifier>
     </Filter>
@@ -1067,17 +1067,8 @@
     <Filter Include="IO\BinarySerialiser">
       <UniqueIdentifier>{d6c8bc2a-a1b7-4fde-9efc-c753457d7130}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IO\ImageParser\BMP">
-      <UniqueIdentifier>{906aaf46-0707-4861-b28b-d4161ae2186b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\ImageParser\PNG">
-      <UniqueIdentifier>{78b4cb64-fe3a-44be-bbdc-67a4d33c4521}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\ImageParser\DDS">
-      <UniqueIdentifier>{18fba1dc-6e96-4c57-920c-f090fec17db9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\ImageParser\PNG\lodepng">
-      <UniqueIdentifier>{447b179b-b152-4f92-9cc2-48eb8f301131}</UniqueIdentifier>
+    <Filter Include="IO\ImageParser">
+      <UniqueIdentifier>{8fc9bc42-e537-436b-9608-0fb8466bebc6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

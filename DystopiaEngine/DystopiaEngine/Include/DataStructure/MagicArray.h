@@ -110,6 +110,9 @@ public:
 	template<typename ...Ps>
 	Ptr_t Emplace(Ps&& ...args);
 
+	template<typename Ty, typename ...Ps>
+	Ty* EmplaceAs(Ps&& ...args);
+
 	//inline void Remove(void) noexcept;
 	//inline void Remove(const T&) noexcept;
 	inline void Remove(const Sz_t _nIndex);
@@ -140,10 +143,12 @@ private:
 		static inline uint64_t GetPresentIndex(uint64_t);
 
 		bool IsFull(void) const noexcept;
-		T* NextEmpty(void) const;
+		T* ConsumeNextEmpty(void) const;
 
 		template <typename ... Ps>
 		Ptr_t EmplaceNextEmpty(Ps&& ...);
+		template <typename, typename ... Ps>
+		Ptr_t EmplaceNextEmptyAs(Ps&& ...);
 		Ptr_t InsertNextEmpty(const Val_t& _obj);
 
 		Block(void) noexcept = default;
@@ -296,6 +301,7 @@ typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Insert(const Val_t& _obj)
 		if (auto ptr = e.InsertNextEmpty(_obj))
 			return ptr;
 	}
+
 	return nullptr;
 }
 
@@ -336,6 +342,22 @@ typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Emplace(Ps&& ...args)
 		if (auto ptr = e.EmplaceNextEmpty(Ut::Forward<Ps>(args)...))
 			return ptr;
 	}
+
+	return nullptr;
+}
+
+template<typename T, typename PP> template<typename Ty, typename ...Ps>
+Ty* MagicArray<T, PP>::EmplaceAs(Ps&& ...args)
+{
+	for (auto& e : mDirectory)
+	{
+		if (!e.mpArray)
+			Allocate(e);
+
+		if (auto ptr = e.EmplaceNextEmptyAs<Ty>(Ut::Forward<Ps>(args)...))
+			return ptr;
+	}
+
 	return nullptr;
 }
 
@@ -466,20 +488,22 @@ bool MagicArray<T, PP>::Block::IsFull(void) const noexcept
 }
 
 template <typename T, typename PP>
-T* MagicArray<T, PP>::Block::NextEmpty(void) const
+T* MagicArray<T, PP>::Block::ConsumeNextEmpty(void) const
 {
 	T* ptr = mpArray;
 
 	for (auto e : present)
 	{
-		if (0 == (~e & Range))
+		auto tmp = ~e & Range;
+		if (0 == tmp)
 		{
 			ptr += Math::Min<decltype(PP::blk_sz)>(64, PP::blk_sz);
 			continue;
 		}
 
 		unsigned long index = 0;
-		_BitScanForward64(&index, (~e & Range));
+		_BitScanForward64(&index, tmp);
+		e |= 1Ui64 << index;
 
 		return ptr + index;
 	}
@@ -490,24 +514,20 @@ T* MagicArray<T, PP>::Block::NextEmpty(void) const
 template <typename T, typename PP> template <typename ... Ps>
 typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Block::EmplaceNextEmpty(Ps&& ... args)
 {
-	T* ptr = mpArray;
-
-	for (auto& e : present)
+	if (auto ptr = ConsumeNextEmpty())
 	{
-		auto tmp = ~e & Range;
-		if (0 == tmp)
-		{
-			ptr += Math::Min<decltype(PP::blk_sz)>(64, PP::blk_sz);
-			continue;
-		}
+		return new (ptr) T{ Ut::Forward<Ps>(args)... };
+	}
 
-		unsigned long index = 0;
-		_BitScanForward64(&index, tmp);
+	return nullptr;
+}
 
-		e |= 1Ui64 << index;
-		new (ptr + index) T{ args... };
-
-		return ptr + index;
+template <typename T, typename PP> template <typename Ty, typename ...Ps>
+typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Block::EmplaceNextEmptyAs(Ps&& ... args)
+{
+	if (auto ptr = ConsumeNextEmpty())
+	{
+		return new (ptr + index) Ty{ Ut::Forward<Ps>(args)... };
 	}
 
 	return nullptr;
@@ -516,24 +536,9 @@ typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Block::EmplaceNextEmpty(Ps&
 template <typename T, typename PP>
 typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Block::InsertNextEmpty(const Val_t& _obj)
 {
-	T* ptr = mpArray;
-
-	for (auto& e : present)
+	if (auto ptr = ConsumeNextEmpty())
 	{
-		auto tmp = ~e & Range;
-		if (0 == tmp)
-		{
-			ptr += Math::Min<decltype(PP::blk_sz)>(64, PP::blk_sz);
-			continue;
-		}
-
-		unsigned long index = 0;
-		_BitScanForward64(&index, tmp);
-
-		e |= 1Ui64 << index;
-		new (ptr + index) T{ _obj };
-
-		return ptr + index;
+		return new (ptr) T{ _obj };
 	}
 
 	return nullptr;
