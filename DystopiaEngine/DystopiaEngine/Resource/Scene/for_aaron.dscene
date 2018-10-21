@@ -1,10 +1,10 @@
 [START_Scene]
-18446744072511553536,for_aaron,7,[START_START_GO_DATA]
+18446744072511553536,for_aaron,8,[START_START_GO_DATA]
 910164992,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.206683,0.344472,0.881497,-81.6361,2.83743,0,0,0,0,1,
+0.188551,0.301682,0.635972,-0.485698,-6.477,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -31,7 +31,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-21,160,1,-143.6,30,0,0,0,0,1,
+21,160,1,-143,29,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -49,7 +49,16 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-21,160,1,142.4,30,0,0,0,0,1,
+21,160,1,143,29,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072942027776,1,Enemy,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,64,1,39,-20,2,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -58,7 +67,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-32,32,1,-118,-28,10,0,0,0,1,
+32,32,1,-114,-33,10,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -72,7 +81,7 @@
 
 [END_Component End]
 [START_ComponentDonor]
-2,
+5,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -86,8 +95,26 @@
 [END_Renderer]
 
 [END_Component End]
+[START_Component]
+[START_Renderer]
+611364864,536870912,18446744072918678528,..\DystopiaEngine\Resource\Asset\M_Basic Goblin.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1158205952,536870912,18446744073264478208,..\DystopiaEngine\Resource\Asset\M_Basic Goblin.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072942028288,0,18446744072942027776,..\DystopiaEngine\Resource\Asset\salamander_ctr.png,
+[END_Renderer]
+
+[END_Component End]
 [START_ComponentDonor]
-4,
+7,
 [END_ComponentDonor End]
 [START_Component]
 [START_RigidBody]
@@ -113,11 +140,29 @@
 [END_RigidBody]
 
 [END_Component End]
+[START_Component]
+[START_RigidBody]
+611365376,536870912,18446744072918678528,0,0.5,0.5,0.5,0.5,0.7,0.5,1,200,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1158206464,536870912,18446744073264478208,0,0.5,0.5,0.5,0.5,0.7,0.5,1,200,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072942028800,0,18446744072942027776,0,0.999,0.1,0.5,0.5,0.05,0,1,75,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-5,
+8,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -146,6 +191,24 @@
 [START_Component]
 [START_Convex_Collider]
 18446744071909689344,0,18446744071909688320,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+611365888,536870912,18446744072918678528,0.06,-0.25,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.2,0.4,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1158206976,536870912,18446744073264478208,0.06,-0.25,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.2,0.4,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744072942029312,0,18446744072942027776,0,-0.145,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.65,0.65,1,0,0,0,1,0,
 [END_Convex_Collider]
 
 [END_Component End]
