@@ -29,11 +29,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Profiler/Profiler.h"
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
-#include "IO/BinarySerializer.h"
-#include "Utility/GUID.h"
 #include "System/File/FileSystem.h"
 #include "System//Behaviour/BehaviourSystem.h"
 #include "System/Physics/PhysicsSystem.h"
+#include "IO/BinarySerializer.h"
+#include "Utility/GUID.h"
 
 #include "Component/Component.h"
 
@@ -57,6 +57,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/SpritePreviewer.h"
 
 #include "Allocator/DefaultAlloc.h"
+#include "DataStructure/HashString.h"
 
 /* library includes */
 #include <iostream>
@@ -86,6 +87,39 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+	const char arr[] = "Array!";
+	const char *ptr = "Ptr!";
+
+	HashString charArr{ arr };
+	HashString charPtr{ ptr };
+	HashString copyCtor{ charArr };
+	HashString moveCtor{ Ut::Move(copyCtor) };
+
+	HashString Apple{ "apple" };
+	HashString Orange = HashString{ "Orange" };
+	HashString Grapes = "Grapes";
+
+	HashString Gra{Grapes.cbegin(), Grapes.cbegin() + 3};
+
+	Grapes += Apple;
+	Orange += "Pear";
+	HashString Banana{ "Banana" };
+	Banana = "Avacado" + Grapes;
+
+	bool testEquate = Grapes == Apple;
+	bool testEquate2 = Apple == Apple;
+
+	HashString testRemove{ "Remove Something Here" };
+	testRemove.erase(6, 12);
+
+	HashString testReplace{ "dae" };
+	testReplace.replace(1, 8, Apple);
+
+	HashString testFind{ "Find me Something" };
+	size_t pos = testFind.rfind("me");
+
+	HashString subStr{ "Sub my string" };
+	HashString sub = subStr.substr(4, 6);
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
@@ -252,7 +286,8 @@ namespace Dystopia
 			}
 			{
 				ScopedTimer<ProfilerAction> scopeT{ pTab->GetLabel(), "Editor UI" };
-				if (EGUI::StartTab(pTab->GetLabel().c_str(), pTab->GetOpenedBool()))
+				ImGuiWindowFlags f = pTab->GetVertClip() ? ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar : ImGuiWindowFlags_None;
+				if (EGUI::StartTab(pTab->GetLabel().c_str(), pTab->GetOpenedBool(), f))
 				{
 					EGUI::Indent(4);
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
@@ -531,12 +566,20 @@ namespace Dystopia
 			mpSceneSystem->SaveScene(file, sceneName);
 			mpComdHandler->SaveCallback();
 			std::wstring name{ sceneName.begin(), sceneName.end() };
-			auto pos = name.find('.');
+			auto pos = name.find('*.');
 			if (pos != std::string::npos)
 			{
 				name.erase(pos);
-				mpWin->GetMainWindow().SetTitle(name.c_str());
 			}
+			else
+			{
+				pos = name.find('.');
+				if (pos != std::string::npos)
+				{
+					name.erase(pos);
+				}
+			}
+			mpWin->GetMainWindow().SetTitle(name.c_str());
 		}
 		else SaveAsProc();
 	}
@@ -564,12 +607,20 @@ namespace Dystopia
 						{
 							std::wstring path{ pszFilePath };
 							std::wstring name{ pszFileName };
-							auto pos = name.find('.');
+							auto pos = name.find('*.');
 							if (pos != std::string::npos)
 							{
 								name.erase(pos);
-								mpWin->GetMainWindow().SetTitle(name.c_str());
 							}
+							else
+							{
+								pos = name.find('.');
+								if (pos != std::string::npos)
+								{
+									name.erase(pos);
+								}
+							}
+							mpWin->GetMainWindow().SetTitle(name.c_str());
 							mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() }, 
 													 std::string{ name.begin(), name.end() });
 							mpComdHandler->SaveCallback();

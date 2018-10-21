@@ -17,10 +17,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <Windows.h>
 
+static const std::string g_GroupNames[Dystopia::eSOUND_LAST] =
+{
+	"BGM",
+	"FX",
+	"Master"
+};
+
 Dystopia::SoundSystem::SoundSystem(void)
 	: mpFMOD{ nullptr }, 
 	mDefaultSoundFolder{ "Resource/Audio/" },
-	mMapOfSounds{}
+	mMapOfSounds{}, mArrGroups{ nullptr }
 {
 }
 
@@ -48,6 +55,11 @@ bool Dystopia::SoundSystem::Init(void)
 
 void Dystopia::SoundSystem::PostInit(void)
 {
+	for (unsigned int i = 0; i < eSOUND_LAST; ++i)
+		mpFMOD->createChannelGroup(g_GroupNames[i].c_str(), &mArrGroups[i]);
+
+	for (unsigned int i = 0; i < eSOUND_MASTER; ++i)
+		mArrGroups[eSOUND_MASTER]->addGroup(mArrGroups[i]);
 }
 
 void Dystopia::SoundSystem::FixedUpdate(float)
@@ -66,6 +78,8 @@ void Dystopia::SoundSystem::Update(float _dt)
 		if (c.GetFlags() & FLAG_ACTIVE)
 		{
 			c.Update(_dt);
+			if (c.IsReady() && c.GetSound())
+				PlayAudio(c);
 		}
 	}
 }
@@ -102,9 +116,12 @@ void Dystopia::SoundSystem::LoadSettings(TextSerialiser&)
 {
 }
 
-void Dystopia::SoundSystem::PlayAudio(Dystopia::AudioSource*)
+void Dystopia::SoundSystem::PlayAudio(Dystopia::AudioSource& _a)
 {
-
+	FMOD::Channel *channel;
+	mpFMOD->playSound(_a.GetSound()->mpSound, mArrGroups[_a.GetSoundType()], false, &channel);
+	_a.SetChannel(Channel{ channel });
+	_a.SetReady(false);
 }
 
 void Dystopia::SoundSystem::SaveSettings(TextSerialiser&)
@@ -133,7 +150,7 @@ Dystopia::Sound* Dystopia::SoundSystem::LoadSound(const std::string& _file)
 	FMOD::Sound *pSound;
 	FMOD_RESULT result = mpFMOD->createSound(path.c_str(), FMOD_CREATESAMPLE | FMOD_LOWMEM, nullptr, &pSound);
 	if (result == FMOD_OK)
-		return mMapOfSounds[soundName] = new Sound{ pSound };
+		return mMapOfSounds[soundName] = new Sound{ pSound, soundName };
 
 	return nullptr;
 }

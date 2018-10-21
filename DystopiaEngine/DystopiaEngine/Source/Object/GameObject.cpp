@@ -111,19 +111,19 @@ void Dystopia::GameObject::Init(void)
 void Dystopia::GameObject::Update(const float _fDeltaTime)
 {
 //	Ping(mComponents, Update, _fDeltaTime);
-	Ping(mBehaviours, Update, _fDeltaTime);
+//	Ping(mBehaviours, Update, _fDeltaTime);
 }
 
 void Dystopia::GameObject::FixedUpdate(const float _fFixedDT)
 {
 //	Ping(mComponents, FixedUpdate, _fFixedDT);
-	Ping(mBehaviours, FixedUpdate, _fFixedDT);
+//	Ping(mBehaviours, FixedUpdate, _fFixedDT);
 }
 
 void Dystopia::GameObject::PostUpdate(void)
 {
 //	Ping(mComponents, &Component::PostUpdate);
-	Ping(mBehaviours, PostUpdate);
+//	Ping(mBehaviours, PostUpdate);
 }
 
 void Dystopia::GameObject::Destroy(void)

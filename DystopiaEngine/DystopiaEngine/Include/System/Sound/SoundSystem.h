@@ -15,29 +15,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
+#include "System/Sound/SoundTypes.h"
 
 #include "DataStructure/AutoArray.h"
-#include "DataStructure/SharedPtr.h"
+#include "DataStructure/Array.h"
 
 #include <string>
 #include <map>
 
-namespace FMOD
-{
-	class System;
-	class Sound;
-	class Channel;
-}
-
 namespace Dystopia
 {
-	class Sound
+	static const std::string g_AudioCategory[Dystopia::eSOUND_LAST - 1] =
 	{
-	public:
-		Sound(FMOD::Sound* _p) : mpSound{ _p }{}
-		FMOD::Sound *mpSound;
+		"BGM",
+		"FX"
 	};
-
 	class AudioSource;
 	class SoundSystem : public Systems, public ComponentDonor<AudioSource>
 	{
@@ -62,13 +54,16 @@ namespace Dystopia
 		Sound* LoadSound(const std::string& _file);
 
 	private:
+		float mMasterVol;
+		float mBGMVol;
+		float mFXVol;
+
 		FMOD::System *mpFMOD;
-		std::string	 mDefaultSoundFolder;
-
+		std::string	mDefaultSoundFolder;
 		std::map<std::string, Sound*> mMapOfSounds;
-		AutoArray<FMOD::Channel*> mArrOfChannels;
+		Array<FMOD::ChannelGroup*, eSOUND_LAST> mArrGroups;
 
-		void PlayAudio(AudioSource*);
+		void PlayAudio(AudioSource&);
 	};
 }
 

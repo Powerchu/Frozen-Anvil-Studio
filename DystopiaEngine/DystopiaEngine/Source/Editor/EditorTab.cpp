@@ -23,9 +23,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	EditorTab::EditorTab(bool _defaultOpen)
+	EditorTab::EditorTab(bool _defaultOpen, bool _vertClip)
 		: mSize{ Math::Vec2{ 0, 0 } }, mPos{ Math::Vec2{ 0, 0 } }, mIsOpened{ _defaultOpen }, 
-		mpComdHandler{ nullptr }, mpEditorEventHandler{ nullptr }, mpCurrentScene{ nullptr }
+		mpComdHandler{ nullptr }, mpEditorEventHandler{ nullptr }, mpCurrentScene{ nullptr },
+		mVerticalClip{ _vertClip }
 	{}
 
 	EditorTab::~EditorTab()
@@ -121,5 +122,10 @@ namespace Dystopia
 
 	void EditorTab::LoadSettings(TextSerialiser& /*_in*/)
 	{
+	}
+	
+	bool EditorTab::GetVertClip(void) const
+	{
+		return mVerticalClip;
 	}
 }
