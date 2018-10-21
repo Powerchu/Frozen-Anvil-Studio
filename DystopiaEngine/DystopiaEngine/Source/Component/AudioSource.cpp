@@ -149,17 +149,17 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	}
 	if (EGUI::Display::CheckBox("Play On Start", &mPlayOnStart))
 	{
-		EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, &mPlayOnStart, !mPlayOnStart);
+		EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, mPlayOnStart, !mPlayOnStart);
 	}
 	if (EGUI::Display::CheckBox("Loop         ", &mLoop))
 	{
-		EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, &mLoop, !mLoop, &mChanged);
+		EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, mLoop, !mLoop, &mChanged);
 		mChanged = true;
 	}
 	switch (EGUI::Display::SliderFloat("Volume       ", &mVolume, 0.f, MAX_VOLUME))
 	{
 	case EGUI::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, &mVolume, &mChanged);
+		EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, mVolume, &mChanged);
 		break;
 	case EGUI::eDRAGGING:
 		mChanged = true;
@@ -174,7 +174,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	switch (EGUI::Display::SliderFloat("Frequency    ", &mFrequency, 0.f, MAX_CAP_SCALE))
 	{
 	case EGUI::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, &mFrequency, &mChanged);
+		EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, mFrequency, &mChanged);
 		break;
 	case EGUI::eDRAGGING:
 		mChanged = true;
@@ -189,7 +189,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	switch (EGUI::Display::SliderFloat("Pitch        ", &mPitch, 0.f, MAX_CAP_SCALE))
 	{
 	case EGUI::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, &mPitch, &mChanged);
+		EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, mPitch, &mChanged);
 		PrintToConsoleLog("StartRecord");
 		break;
 	case EGUI::eDRAGGING:
