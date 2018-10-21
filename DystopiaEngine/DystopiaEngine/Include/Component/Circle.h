@@ -78,7 +78,7 @@ namespace Dystopia
 		bool isColliding(const AABB * const & other_col);
 
 		/*Collision Check Functions*/
-		bool isColliding(const Convex & other_col);
+		bool isColliding(Convex& other_col);
 		bool isColliding(Convex * const & other_col);
 
 	private:

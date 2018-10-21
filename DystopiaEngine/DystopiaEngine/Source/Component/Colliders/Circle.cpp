@@ -201,7 +201,7 @@ namespace Dystopia
 		return this->isColliding(*other_col);
 
 	}
-	bool Circle::isColliding(const Convex & other_col)
+	bool Circle::isColliding(Convex& other_col)
 	{
 		RigidBody* other_body{ nullptr };
 		if (other_col.GetOwner()->GetComponent<RigidBody>())
@@ -262,6 +262,7 @@ namespace Dystopia
 					}
 					//marr_ContactSets.push_back(newEvent);
 					mbColliding = isInside  = true;
+					other_col.SetColliding(true);
 				}
 			}
 		}
@@ -277,7 +278,6 @@ namespace Dystopia
 	}
 	bool Circle::isColliding(Convex * const & other_col)
 	{
-		UNUSED_PARAMETER(other_col);
 		return this->isColliding(*other_col);
 	}
 

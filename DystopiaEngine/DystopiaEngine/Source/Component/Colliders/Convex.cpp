@@ -252,7 +252,7 @@ namespace Dystopia
 
 				if (distance < _ColB.GetRadius())
 				{
-					//isInside = true;
+					isInside = true;
 					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
 					newEvent.mEdgeNormal = Math::Normalise(_ColB.GetGlobalPosition() - PointOfImpact);
 					newEvent.mEdgeVector = elem.mVec3;
@@ -373,7 +373,7 @@ namespace Dystopia
 	BroadPhaseCircle Convex::GenerateBoardPhaseCircle() const
 	{
 		float LongestRadius = 0;
-		Math::Point3D MyGlobalCentre = this->GetGlobalPosition();
+		const Math::Point3D MyGlobalCentre = this->GetGlobalPosition();
 		for (auto & elem : mVertices)
 		{
 			Math::Vec3D v  = elem.mPosition - mPosition;
