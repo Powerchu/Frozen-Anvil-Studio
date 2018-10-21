@@ -354,24 +354,51 @@ bool HashString::compare(const char* _s) const
 	return (mHashedID == StringHasher(_s));
 }
 
-size_t HashString::find_first_of(const HashString&, size_t _pos) const
+size_t HashString::find_first_of(const HashString& _rhs, size_t _pos) const
 {
-	return -1;
+	return find_first_of(_rhs.c_str(), _pos);
 }
 
 size_t HashString::find_first_of(const char* _s, size_t _pos) const
 {
-	return -1;
+	DEBUG_ASSERT(_pos >= mSize, "Hash String find_first_of _pos out of range");
+	const char* it1 = cbegin() + _pos;
+	const char* it2 = _s;
+	while (it1 < cend())
+	{
+		it2 = _s;
+		while (*it2 != '\0')
+		{
+			if (*it1 == *it2)
+				return it1 - cbegin();
+			it2++;
+		}
+		it1++;
+	}
+	return HashString::nPos;
 }
 
-size_t HashString::find_last_of(const HashString&, size_t _pos) const
+size_t HashString::find_last_of(const HashString& _rhs, size_t _pos) const
 {
-	return -1;
+	return find_last_of(_rhs.c_str(), _pos);
 }
 
 size_t HashString::find_last_of(const char* _s, size_t _pos) const
 {
-	return -1;
+	const char *it1 = (cbegin() + _pos < cend() && _pos != HashString::nPos) ? cbegin() + _pos : cend();
+	const char* it2 = _s;
+	while (it1 >= cbegin())
+	{
+		it2 = _s;
+		while (*it2 != '\0')
+		{
+			if (*it1 == *it2)
+				return it1 - cbegin();
+			it2++;
+		}
+		it1--;
+	}
+	return HashString::nPos;
 }
 
 HashString HashString::substr(size_t _pos, size_t _len) const

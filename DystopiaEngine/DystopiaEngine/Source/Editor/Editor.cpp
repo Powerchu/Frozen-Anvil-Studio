@@ -121,6 +121,10 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	HashString subStr{ "Sub my string" };
 	HashString sub = subStr.substr(4, 6);
 
+	HashString findFirstTest{"Finding First of Something"};
+	size_t fpos = findFirstTest.find_first_of("Something", 10);
+	size_t lpos = findFirstTest.find_last_of("Something");
+
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
 	while (!editor->IsClosing())

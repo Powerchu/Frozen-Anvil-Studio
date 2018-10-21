@@ -371,7 +371,7 @@ namespace Dystopia
 			GameObject* pTarget			= FindMouseObject();
 			float betterZ				= (pTarget) ? pTarget->GetComponent<Transform>()->GetPosition().z + 0.1f : 0;
 			Math::Pt3D worldClickPos	= GetWorldClickPos(pCam);
-			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ };
+			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ, 1.f };
 
 			GameObject *pDupl = Factory::LoadFromPrefab("", _pFile->mPath);
 			if (pDupl)
@@ -421,6 +421,7 @@ namespace Dystopia
 
 		Camera*	pCamera	= mpSceneCamera->GetComponent<Camera>();
 		auto equation1 = pCamera->GetProjectionMatrix() * (pCamera->GetViewMatrix() * curPos);
+
 
 		return Math::Vec2{ (equation1.x * (mImgSize.x / 2)) + (Size().x / 2),
 						   (equation1.y * (mImgSize.y / 2)) + (Size().y / 2) };
@@ -567,12 +568,11 @@ namespace Dystopia
 
 	void SceneView::DrawGizmoSingle(GameObject& obj)
 	{
-		Math::Pt3D curPos	 = obj.GetComponent<Transform>()->GetGlobalPosition();
-		Math::Vec4 cScale	 = obj.GetComponent<Transform>()->GetGlobalScale();
+		Math::Pt3D curPos = obj.GetComponent<Transform>()->GetGlobalPosition();
+		Math::Vec4 cScale = obj.GetComponent<Transform>()->GetGlobalScale();
 		Math::Vec2 screenPos = GetWorldToScreen(curPos);
 		float changeX = 0;
 		float changeY = 0;
-
 		switch (mCurrGizTool)
 		{
 		case eTRANSLATE:
