@@ -33,7 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 Dystopia::AudioSource::AudioSource(void) 
 	: Component{}, 
 	mpSound{ nullptr }, mSoundName{ "Samsara.mp3" }, mChannel{},
-	mSoundType{ eSOUND_BGM }, mPlayOnStart{ true }, mLoop{ false },
+	mSoundType{ 0 }, mPlayOnStart{ true }, mLoop{ false },
 	mPaused{ false }, mIsPlaying{ false }, mReady{ false }, mVolume{ 1.f },
 	mFrequency{ 1.f }, mPitch{ 1.f }, mChanged{ true }
 {
@@ -97,7 +97,7 @@ void Dystopia::AudioSource::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Audio");
 	Component::Serialise(_out);
-	_out << static_cast<unsigned>(mSoundType);
+	_out << mSoundType;
 	_out << mPlayOnStart;
 	_out << mLoop;
 	_out << mSoundName;
@@ -109,11 +109,9 @@ void Dystopia::AudioSource::Serialise(TextSerialiser& _out) const
 
 void Dystopia::AudioSource::Unserialise(TextSerialiser& _in)
 {
-	unsigned i;
 	_in.ConsumeStartBlock();
 	Component::Unserialise(_in);
-	_in >> i;
-	mSoundType = static_cast<eSoundType>(i);
+	_in >> mSoundType;
 	_in >> mPlayOnStart;
 	_in >> mLoop;
 	_in >> mSoundName;
@@ -143,10 +141,10 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::AudioSource::SetSound, nullptr);
 		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 	}
-	int index = static_cast<int>(mSoundType);
-	if (EGUI::Display::DropDownSelection("Category      ", index, g_AudioCategory, 150))
+	int old = mSoundType;
+	if (EGUI::Display::DropDownSelection("Category      ", mSoundType, g_AudioCategory, 150))
 	{
-		EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, &mSoundType, static_cast<eSoundType>(index));
+		EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, &mSoundType, old);
 	}
 	if (EGUI::Display::CheckBox("Play On Start", &mPlayOnStart))
 	{
@@ -157,7 +155,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 		EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, &mLoop, !mLoop, &mChanged);
 		mChanged = true;
 	}
-	switch (EGUI::Display::DragFloat("Volume       ", &mVolume, 0.1f, 0.f, MAX_VOLUME))
+	switch (EGUI::Display::SliderFloat("Volume       ", &mVolume, 0.f, MAX_VOLUME))
 	{
 	case EGUI::eSTART_DRAG:
 		EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, &mVolume, &mChanged);
@@ -172,7 +170,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 		EGUI::GetCommandHND()->EndRecording();
 		break;
 	}
-	switch (EGUI::Display::DragFloat("Frequency    ", &mFrequency, 0.1f, 0.f, MAX_CAP_SCALE))
+	switch (EGUI::Display::SliderFloat("Frequency    ", &mFrequency, 0.f, MAX_CAP_SCALE))
 	{
 	case EGUI::eSTART_DRAG:
 		EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, &mFrequency, &mChanged);
@@ -187,7 +185,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 		EGUI::GetCommandHND()->EndRecording();
 		break;
 	}
-	switch (EGUI::Display::DragFloat("Pitch        ", &mPitch, 0.1f, 0.f, MAX_CAP_SCALE))
+	switch (EGUI::Display::SliderFloat("Pitch        ", &mPitch, 0.f, MAX_CAP_SCALE))
 	{
 	case EGUI::eSTART_DRAG:
 		EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, &mPitch, &mChanged);
@@ -202,7 +200,6 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 		EGUI::GetCommandHND()->EndRecording();
 		break;
 	}
-
 #endif 
 }
 
@@ -219,12 +216,12 @@ void Dystopia::AudioSource::SetSound(Sound* _s)
 
 Dystopia::eSoundType Dystopia::AudioSource::GetSoundType(void) const
 {
-	return mSoundType;
+	return static_cast<eSoundType>(mSoundType);
 }
 
 void Dystopia::AudioSource::SetSoundType(eSoundType _t)
 {
-	mSoundType = _t;
+	mSoundType = static_cast<int>(_t);
 }
 
 Dystopia::Channel& Dystopia::AudioSource::GetChannel(void)

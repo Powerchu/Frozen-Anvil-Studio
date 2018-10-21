@@ -262,6 +262,28 @@ namespace EGUI
 			return eNO_CHANGE;
 		}
 
+		eDragStatus SliderFloat(const std::string& _label, float *_pOutFloat, float _min, float _max, bool _hideText, float _width)
+		{
+			if (!_hideText)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label.c_str());
+				SameLine(DefaultAlighnmentSpacing);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+			bool changing = false;
+			ImGui::PushItemWidth(_width);
+			changing = ImGui::SliderFloat(("###SlideFloat" + _label).c_str(), _pOutFloat, _min, _max, "%.3f");
+			ImGui::PopItemWidth();
+
+			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
+			if (changing) return eDRAGGING;
+			if (ImGui::IsItemDeactivatedAfterChange())
+				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
+			if (ImGui::IsItemDeactivated()) return eDEACTIVATED;
+			return eNO_CHANGE;
+		}
+
 		eDragStatus DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max, bool _hideText, float _width)
 		{
 			if (!_hideText)
