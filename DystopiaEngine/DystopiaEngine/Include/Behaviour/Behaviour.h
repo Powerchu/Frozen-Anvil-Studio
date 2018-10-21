@@ -57,7 +57,7 @@ namespace Dystopia
 		virtual void Serialise(TextSerialiser&) const {};
 		virtual void Unserialise(TextSerialiser&) {};
 
-		virtual TypeErasure::TypeEraseMetaData       GetMetaData()       = 0;
+		virtual TypeErasure::TypeEraseMetaData&       GetMetaData()       = 0;
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const = 0;
 
 		virtual Behaviour * Duplicate() const;

@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Meta.h"
 #include "Utility/Utility.h"
 #include "ReadWriteObject.h"
+#include "Globals.h"
 
 template <typename C, typename Ty>
 struct ReflectedData
@@ -28,7 +29,8 @@ public:
 	template <typename Get_t, typename Set_t>
 	ReflectedData(Get_t&&, Set_t&&);
 
-
+	constexpr Dystopia::TypeErasure::ReadWriteObject Get();
+	
 
 
 private:
@@ -45,7 +47,7 @@ private:
 	};
 
 	template <typename T>
-	struct DefaultSet
+	struct _DLL_EXPORT DefaultSet
 	{
 		T operator () (void* _obj, T&& _val) const
 		{
@@ -63,7 +65,7 @@ private:
 
 		ProxyObj(Get_t, Set_t);
 	};
-	
+
 
 	Dystopia::TypeErasure::ReadWriteObject mData;
 };
@@ -86,7 +88,7 @@ inline ReflectedData<C, Ty>::ProxyObj<Get_t, Set_t>::ProxyObj(Get_t _get, Set_t 
 
 template <typename C, typename Ty>
 ReflectedData<C, Ty>::ReflectedData(Ty C::*_ptr) :
-	mData{ ReflectedData<C,Ty>::ProxyObj<Get_t, Set_t> {DefaultGet<Ty>{_ptr}, DefaultSet<Ty>{_ptr}} }
+	mData{ ReflectedData<C,Ty>::ProxyObj<ReflectedData<C,Ty>::DefaultGet<Ty>, ReflectedData<C,Ty>::DefaultSet<Ty>> {DefaultGet<Ty>{_ptr}, DefaultSet<Ty>{_ptr}} }
 {
 
 }
@@ -99,6 +101,11 @@ ReflectedData<C,Ty>::ReflectedData(Get_t&& _get, Set_t&& _set) :
 
 }
 
+template <typename C, typename Ty>
+constexpr Dystopia::TypeErasure::ReadWriteObject ReflectedData<C, Ty>::Get()
+{
+	return mData;
+}
 
 
 #endif		// INCLUDE GUARD

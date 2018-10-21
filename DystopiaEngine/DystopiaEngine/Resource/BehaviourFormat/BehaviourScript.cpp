@@ -81,6 +81,19 @@ namespace Dystopia
 		
 		
 	}
+	
+	TypeErasure::TypeEraseMetaData& _SF_ClassName_::GetMetaData()
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		return TypeErasure::TypeEraseMetaData{};
+	}
+	TypeErasure::TypeEraseMetaData const _SF_ClassName_::GetMetaData() const
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		return TypeErasure::TypeEraseMetaData{};
+	}
 }
 
 

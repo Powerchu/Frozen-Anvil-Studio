@@ -7,6 +7,7 @@
 
 #include "Globals.h"
 #include "DataStructure/SharedPtr.h"
+#define _ALL_TYPE_QUALIFERS_(_TYPE_) _TYPE_, const _TYPE_, _TYPE_ *, const _TYPE_ *, _TYPE_ * const, _TYPE_ const * const
 namespace Dystopia
 {
 	namespace TypeErasure
@@ -14,6 +15,25 @@ namespace Dystopia
 
 		namespace HelperMeta
 		{
+
+			struct AllPossibleType
+			{
+				using type = Variant < _ALL_TYPE_QUALIFERS_(int), 
+				                       _ALL_TYPE_QUALIFERS_(float),
+				                       _ALL_TYPE_QUALIFERS_(double),
+				                       _ALL_TYPE_QUALIFERS_(short),
+				                       _ALL_TYPE_QUALIFERS_(char),
+				                       _ALL_TYPE_QUALIFERS_(std::string),
+				                       _ALL_TYPE_QUALIFERS_(unsigned int),
+								       _ALL_TYPE_QUALIFERS_(unsigned char),
+									  _ALL_TYPE_QUALIFERS_(unsigned short),
+									  _ALL_TYPE_QUALIFERS_(long),
+					                  _ALL_TYPE_QUALIFERS_(unsigned long),
+									  _ALL_TYPE_QUALIFERS_(long long),
+					                  _ALL_TYPE_QUALIFERS_(unsigned long long)
+
+				>;
+			};
 
 			template <typename Func, typename T>
 			struct GenerateFuncMapPair
@@ -30,26 +50,45 @@ namespace Dystopia
 			};
 		}
 
-		struct ReadWriteObject
+		struct _DLL_EXPORT ReadWriteObject
 		{
 		protected:
 
-			struct Concept
+			struct _DLL_EXPORT Concept
 			{
 				virtual void Set(std::function<void(std::any)> _functor) = 0;
-				virtual void Get(std::function<void(std::any)> _functor) = 0;
-				virtual void Get(void *, void (*) (std::any))            = 0;
+				virtual void Get(void *, void (*) (std::any))    = 0;
 				virtual Concept * Duplicate() const = 0;
+				virtual ~Concept(){}
 			};
 
 			template<typename T>
-			struct Wrapper : Concept
+			struct Wrapper : public Concept
 			{
-				template<typename U>
+				template<typename U, typename SFINAE = Ut::EnableIf_t< !Ut::IsSame<Ut::Decay_t<U>, Wrapper>::value>>
 				Wrapper(U && _obj)
-					:mObj{ _obj }
+					:mObj{ Ut::Forward<U>(_obj) }
 				{
 
+				}
+
+				Wrapper(Wrapper const & _rhs)
+					:mObj{_rhs.mObj}
+				{}
+				Wrapper(Wrapper && _rhs)
+					:mObj{ Ut::Move(_rhs.mObj) }
+				{
+					
+				}
+				Wrapper& operator=(Wrapper const & _rhs)
+				{
+					mObj = _rhs;
+					return *this;
+				}
+				Wrapper& operator=(Wrapper && _rhs)
+				{
+					mObj = Ut::Move(_rhs);
+					return *this;
 				}
 
 				virtual Wrapper * Duplicate() const
@@ -61,10 +100,12 @@ namespace Dystopia
 				{
 					_functor(mObj);
 				}
-				virtual void Get(void *, void(*_fp) (std::any)) override
+				virtual void Get(void *_Address, void(*_fp) (std::any)) override
 				{
-					_fp(mObj.mGet(/*his address*/));
+					_fp(mObj.mGet(_Address));
 				}
+
+				~Wrapper(){}
 
 				T mObj;
 			};
@@ -73,40 +114,59 @@ namespace Dystopia
 
 		public:
 
-			template<typename T, Ut::EnableIf_t< !Ut::IsSame<Ut::Decay_t<T>, ReadWriteObject>::value>>
+			ReadWriteObject()
+				:mpWrapper(nullptr)
+			{}
+			template<typename T, typename SFINAE = Ut::EnableIf_t< !Ut::IsSame<Ut::Decay_t<T>, ReadWriteObject>::value>>
 			ReadWriteObject(T && _Obj)
-				:mpWrapper{ new Wrapper<T>{ Ut::Forward<T &&>(_Obj) } }
+				:mpWrapper{ new Wrapper<T>{ Ut::Forward<T>(_Obj) } }
 			{
 
 			}
 
-			ReadWriteObject(ReadWriteObject const & _TypeEraseRhs);
+			ReadWriteObject(ReadWriteObject const & _TypeEraseRhs)
+				:mpWrapper(_TypeEraseRhs.mpWrapper->Duplicate())
+			{}
+			
 
-			ReadWriteObject(ReadWriteObject  && _TypeEraseRhs);
+			ReadWriteObject(ReadWriteObject  && _TypeEraseRhs)
+				:mpWrapper(_TypeEraseRhs.mpWrapper)
+			{
+				_TypeEraseRhs.mpWrapper = nullptr;
+			}
 
 
 			template <typename SF>
 			void Get(void * _Address ,SF)
 			{
-				void(*passdown)(const std::any&) = ResolveType<SF>;
+				void(*passdown)(std::any) = ResolveType<SF>;
 				mpWrapper->Get(_Address, passdown);
 			}
 
 			void Set(std::function<void(std::any)> _SuperFunctor);
 
+			operator bool() const { return mpWrapper; }
+
+			~ReadWriteObject()
+			{
+				delete mpWrapper;
+				mpWrapper = nullptr;
+			}
+
+
 		private:
-			SharedPtr<Concept> mpWrapper;
+			Concept*  mpWrapper = nullptr;
 
 			template<typename SuperFunctor>
 			static void ResolveType(std::any _a)
 			{
-				static using FunctorMap = std::map<decltype(typeid(int)), void(*)(std::any, SuperFunctor) >;
-				static FunctorMap MyMap = GenerateMap<SuperFunctor>(MetaData<T>::PossibleTypes{});
+				using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor) >;
+				static FunctorMap MyMap = GenerateMap<SuperFunctor>(typename HelperMeta::AllPossibleType::type{});
 
 				auto it = MyMap.find(_a.type().hash_code());
 				if (it != MyMap.end())
 				{
-					it.second(_a, SuperFunctor{});
+					(*it).second(_a, SuperFunctor{});
 				}
 				else
 				{
@@ -116,13 +176,18 @@ namespace Dystopia
 			}
 
 			template<typename SuperFunctor, typename ... T>
-			auto GenerateMap(Variant<T...>)
+			static auto GenerateMap(Variant<T...>)
 			{
 				using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor)>;
-				return FunctorMap
+				static FunctorMap myMap
 				{
-					HelperMeta::GenerateFuncMapPair<SuperFunctor, T>{}...
-				}
+					std::make_pair
+					(
+						typeid(T).hash_code(),
+						[](std::any _a, SuperFunctor _f) {_f(std::any_cast<T>(_a)); }
+					)...
+				};
+				return myMap;
 			}
 
 		};

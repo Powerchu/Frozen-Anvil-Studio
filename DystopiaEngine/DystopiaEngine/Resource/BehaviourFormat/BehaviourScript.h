@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define str(s) #s
 
 #include "Behaviour\Behaviour.h"
+#include "Reflection\Reflection.h"
 
 #define DllExport   __declspec( dllexport )
 
@@ -61,11 +62,15 @@ namespace Dystopia
 		virtual _SF_ClassName_ * Duplicate() const;
 		
 		virtual void EditorUI(void) noexcept override;
+		
+		
+		virtual TypeErasure::TypeEraseMetaData&       GetMetaData();
+		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 	private:
 
 
-
+		friend MetaData<_SF_ClassName_>;
 	};
 
 

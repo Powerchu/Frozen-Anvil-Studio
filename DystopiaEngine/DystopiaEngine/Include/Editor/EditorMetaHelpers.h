@@ -146,6 +146,18 @@ namespace Dystopia
 	};
 
 
+	struct SuperGetFunctor
+	{
+		template<typename T>
+		void operator()(T value) { __debugbreak(); }
+
+		template<>
+		void operator()(float value)
+		{
+			__debugbreak();
+		}
+	};
+
 }
 
 #endif //_AUX_META_HELPER_H_

@@ -9,31 +9,29 @@
 #include "Reflection/MetaData.h"
 #include "ReadWriteObject.h"
 #include "Reflection.h"
-
+#include "DataStructure/AutoArray.h"
 #include <string>
 #include <map>
 #include <functional>
 #include <any>
 #include <typeinfo>
+
 namespace Dystopia
 {
 
 	namespace TypeErasure
 	{
 
-		struct TypeEraseMetaData;
-
-
-
-		struct TypeEraseMetaData
+		struct _DLL_EXPORT TypeEraseMetaData
 		{
 		protected:
-			struct Concept
+			struct _DLL_EXPORT Concept
 			{
 				virtual Concept * Duplicate() const = 0;
 				virtual ReadWriteObject       & operator[](std::string const & _name)       = 0;
 				virtual ReadWriteObject const & operator[](std::string const & _name) const = 0;
-
+				virtual std::map<char const*, ReadWriteObject>&        GetAllReflectedData()       = 0;
+				virtual std::map<const char*, ReadWriteObject> const & GetAllReflectedData() const = 0;
 
 				virtual ~Concept() {}
 			};
@@ -53,46 +51,41 @@ namespace Dystopia
 					return new Wrapper<T>{*this};
 				}
 
-				T mObj;
-			};
-
-			template<typename T>
-			struct Wrapper<MetaData<T>> : Concept
-			{
-				template<typename U>
-				Wrapper(U && _obj)
-					:mObj{ _obj }
+				virtual ReadWriteObject & operator[](std::string const & _name)
 				{
-
-				}
-
-				virtual Wrapper * Duplicate() const
-				{
-					return new Wrapper<MetaData<T>>{*this};
-				}
-
-				virtual ReadWriteObject       & operator[](std::string const & _name)
-				{
-					return ReadWriteObject{  };
+					if (mObj.mMetaMap.find(_name.c_str()) != mObj.mMetaMap.end())
+						return mObj.mMetaMap[_name.c_str()];
+					return ReadWriteObject{};
 				}
 				virtual ReadWriteObject const & operator[](std::string const & _name) const
 				{
-					return ReadWriteObject{  };
+					if (mObj.mMetaMap.find(_name.c_str()) != mObj.mMetaMap.end())
+						return mObj.mMetaMap[_name.c_str()];
+					return ReadWriteObject{};
 				}
+				virtual std::map<char const*, ReadWriteObject>& GetAllReflectedData() override
+				{
+					return mObj.mMetaMap;
+				}
+				virtual std::map<const char*, ReadWriteObject> const & GetAllReflectedData() const override
+				{
+					return mObj.mMetaMap;
+				}
+				virtual ~Wrapper() {}
 
-			private:
-
-				MetaData<T> mObj;
+				T mObj;
 			};
 
 		public:
 
-			template<typename T, Ut::EnableIf_t< !Ut::IsSame<Ut::Decay_t<T>, TypeEraseMetaData>::value>>
+			template<typename T, typename SFINAE = Ut::EnableIf_t< !Ut::IsSame<Ut::Decay_t<T>, TypeEraseMetaData>::value>>
 			TypeEraseMetaData(T && _Obj)
-				:mpWrapper{ new Wrapper<T>{Ut::Forward<T &&>(_Obj)} }
+				:mpWrapper{ new Wrapper<T>{Ut::Forward<T>(_Obj)} }
 			{
 
 			}
+
+			TypeEraseMetaData(void);
 
 			TypeEraseMetaData(TypeEraseMetaData const & _TypeEraseRhs);
 
@@ -102,8 +95,12 @@ namespace Dystopia
 
 			ReadWriteObject&        operator[](std::string const & _name);
 			ReadWriteObject const & operator[](std::string const & _name) const;
+			std::map<char const*, ReadWriteObject>&        GetAllReflectedData();
+			std::map<const char*, ReadWriteObject> const & GetAllReflectedData() const;
 
+			operator bool() const;
 
+			Concept* GetPointer();
 		private:
 			Concept* mpWrapper = nullptr;
 		};
