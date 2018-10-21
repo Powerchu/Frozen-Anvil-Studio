@@ -15,9 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _DYNAMIC_ARRAY_
 #define _DYNAMIC_ARRAY_
 
-#if defined(DEBUG) || defined(_DEBUG)
 #include "Utility/DebugAssert.h"
-#endif // Debug only includes
 
 #include "Globals.h"
 #include "Utility/Utility.h"			// Move, CopyUninit

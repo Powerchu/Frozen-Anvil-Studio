@@ -18,6 +18,7 @@ namespace Dystopia
 {
 	struct Image
 	{
+		unsigned mnFormat;
 		unsigned mnWidth, mnHeight;
 		void* mpImageData;
 	};

@@ -18,24 +18,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	struct Image;
+
 	class Texture2D : public Texture
 	{
 	public:
 
 		Texture2D(void) noexcept;
-		explicit Texture2D(const std::string&, bool _bAlpha = true);
-		Texture2D(unsigned _nWidth, unsigned _nHeight, void*, bool _bAlpha = true);
+		explicit Texture2D(Image const*) noexcept;
+		explicit Texture2D(const std::string&) noexcept;
 		~Texture2D(void) noexcept;
-
 
 		void GenerateMipmap(void) const;
 
-		std::string GetPath() const;
 
 	private:
 
-		std::string mPath;
-		void InitTexture(void*, bool _bAlpha);
+		void InitTexture(Image const*);
 	};
 }
 
