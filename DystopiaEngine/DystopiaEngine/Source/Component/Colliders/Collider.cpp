@@ -130,7 +130,7 @@ namespace Dystopia
 	void Collider::RemoveCollisionEvent(unsigned long long _OtherID)
 	{
 		auto start = marr_ContactSets.begin();
-		auto end   = marr_ContactSets.end();
+		const auto end   = marr_ContactSets.end();
 		while (start != end)
 		{
 			if (*start == _OtherID)
@@ -138,6 +138,7 @@ namespace Dystopia
 				marr_ContactSets.Remove(start);
 				return;
 			}
+			++start;
 		}
 	}
 
