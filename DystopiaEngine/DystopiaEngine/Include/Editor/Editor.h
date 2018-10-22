@@ -23,7 +23,7 @@ namespace Dystopia
 	class EngineCore;
 	class WindowManager;
 	class GraphicsSystem;
-	class EditorInput;
+	class InputManager;
 	class GuiSystem;
 	class CommandHandler;
 	class EditorTab;
@@ -112,7 +112,7 @@ namespace Dystopia
 		CommandHandler			*mpComdHandler;
 		GuiSystem				*mpGuiSystem;
 		Timer					*mpTimer;
-		EditorInput				*mpInput;
+		InputManager			*mpInput;
 
 		bool					mSceneHasChanged;
 		bool					mUpdateSelection;

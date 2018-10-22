@@ -139,9 +139,6 @@
     <ClCompile Include="Source\Editor\EditorEvents.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EditorInputs.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Component\Renderer.cpp">
       <Filter>Game Engine\Components\Renderer</Filter>
     </ClCompile>
@@ -509,9 +506,6 @@
     </ClInclude>
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
       <Filter>Game Engine\Systems\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EditorInputs.h">
-      <Filter>Editor\Editor</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\EditorEvents.h">
       <Filter>Editor\Editor</Filter>

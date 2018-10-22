@@ -72,7 +72,6 @@
     <ClCompile Include="Source\Component\RigidBody.cpp" />
     <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
     <ClCompile Include="Source\Editor\EditorEvents.cpp" />
-    <ClCompile Include="Source\Editor\EditorInputs.cpp" />
     <ClCompile Include="Source\Editor\PerformanceLog.cpp" />
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
@@ -178,7 +177,6 @@
     <ClInclude Include="Include\Editor\PLogInfo.h" />
     <ClInclude Include="Include\Math\MathLib.h" />
     <ClInclude Include="Include\Editor\EditorEvents.h" />
-    <ClInclude Include="Include\Editor\EditorInputs.h" />
     <ClInclude Include="Include\Editor\PerformanceLog.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h" />

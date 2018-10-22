@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "System/Driver/Driver.h"
 #include "Editor/EGUI.h"
-#include "Editor/EditorInputs.h"
+#include "System/Input/InputSystem.h"
 #include "System/Window/Window.h"
 #include "System/Window/WindowManager.h"
 #include "System/Graphics/GraphicsSystem.h"
@@ -122,7 +122,7 @@ namespace Dystopia
 	GuiSystem::~GuiSystem()
 	{}
 
-	bool GuiSystem::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, EditorInput *_pInput, const char *_pMainDockspaceName)
+	bool GuiSystem::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInput, const char *_pMainDockspaceName)
 	{
 		if (!_pWin || !_pGfx || !_pInput) return false;
 		mpWin = _pWin;
@@ -231,7 +231,9 @@ namespace Dystopia
 
 		for (int i = 0; i < 3; i++)
 		{
-			io.MouseDown[i] = mMouseJustPressed[i] || mpInput->IsKeyPressed(static_cast<eEditorButton>(static_cast<int>(eEditorButton::KEY_LMOUSE) + i));
+			io.MouseDown[i] = mMouseJustPressed[i] || mpInput->IsKeyPressed(static_cast<eButton>(static_cast<int>(eButton::MOUSE_LEFT) + i));
+			if (mpInput->IsKeyPressed(static_cast<eButton>(static_cast<int>(eButton::MOUSE_LEFT) + i)))
+				int i = 0;
 			mMouseJustPressed[i] = false;
 		}
 

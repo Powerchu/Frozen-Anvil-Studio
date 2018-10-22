@@ -16,7 +16,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/Editor.h"
 #include "Editor/EditorEvents.h"
-#include "Editor/EditorInputs.h"
 #include "Editor/ConsoleLog.h"
 #include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
