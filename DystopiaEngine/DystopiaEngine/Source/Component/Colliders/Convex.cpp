@@ -227,59 +227,64 @@ namespace Dystopia
 		if(!isInside)
 		{
 			float distance = 0;
-			for(auto & elem : Edges)
+			for (auto & elem : Edges)
 			{
 				Vec3D v = elem.mVec3;
 				Vec3D w = _ColB.GetGlobalPosition() - elem.mPos;
-				const float c1 = v.Dot((w));
-				const float c2 = v.Dot(v);
+				Vec3D norm;
+				float c1 = v.Dot((w));
+				float c2 = v.Dot(v);
 				float ratio = 0.f;
 				Point3D PointOfImpact;
-				if(c1 < 0 )
+				if (c1 < 0)
 				{
 					distance = w.Magnitude();
+					norm = w;
 				}
-				else if(c1 > c2)
+				else if (c1 > c2)
 				{
-					distance =  (_ColB.GetGlobalPosition() - (elem.mPos + elem.mVec3)).Magnitude();
+					distance = (_ColB.GetGlobalPosition() - (elem.mPos + elem.mVec3)).Magnitude();
+					norm = (_ColB.GetGlobalPosition() - (v + elem.mPos));
 				}
 				else
 				{
 					ratio = c1 / c2;
 					PointOfImpact = elem.mPos + ratio * elem.mVec3;
 					distance = (_ColB.GetGlobalPosition() - PointOfImpact).Magnitude();
+					norm = elem.mNorm3;
 				}
 
 				if (distance < _ColB.GetRadius())
 				{
 					isInside = true;
-					newEvent.mfPeneDepth     = _ColB.GetRadius() - distance;
-					newEvent.mEdgeNormal     = elem.mNorm3.Normalise();
-					newEvent.mEdgeVector     = elem.mVec3;
+					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
+					elem.mNorm3.z = 0;
+					newEvent.mEdgeNormal += norm;
+					newEvent.mEdgeVector = Math::Vec3D{ newEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
 					newEvent.mCollisionPoint = PointOfImpact;
-					newEvent.mOtherID        = _ColB.GetOwner()->GetID();
-
 					if (nullptr != other_body)
 					{
 						newEvent.mfRestitution = DetermineRestitution(*other_body);
 						newEvent.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 						newEvent.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
 					}
-
-					isInside = true;
-					mbColliding = true;
-					_ColB.SetColliding(true);
+					mbColliding = isInside = true;
 				}
 			}
+			if (isInside)
+			{
+				newEvent.mEdgeNormal = newEvent.mEdgeNormal.Normalise();
+				InformOtherComponents(true, newEvent);
+			}
 		}
-		if (isInside)
-		{
-			InformOtherComponents(true, newEvent);
-		}
-		else
-		{
-			InformOtherComponents(false, newEvent);
-		}
+		//if (isInside)
+		//{
+		//	InformOtherComponents(true, newEvent);
+		//}
+		//else
+		//{
+		//	InformOtherComponents(false, newEvent);
+		//}
 		return isInside;
 	}
 

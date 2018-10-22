@@ -188,7 +188,7 @@ namespace Dystopia
 		UpdateResults(_dt);
 
 		// Set all objects at rest to sleeping
-		CheckSleepingBodies(_dt);
+		//CheckSleepingBodies(_dt);
 
 		
 	}

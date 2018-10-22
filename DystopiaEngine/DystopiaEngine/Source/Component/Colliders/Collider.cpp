@@ -151,19 +151,19 @@ namespace Dystopia
 		{
 			if (auto * ptr = FindCollisionEvent(_Event.mOtherID))
 			{
-				//if (!mbIsTrigger)
-				//	_owner->OnCollisionStay(_Event);
-				//else
-				//	_owner->OnTriggerStay(_Event.mCollidedWith);
+				if (!mbIsTrigger)
+					_owner->OnCollisionStay(_Event);
+				else
+					_owner->OnTriggerStay(_Event.mCollidedWith);
 				
 				*ptr = _Event;
 			}
 			else
 			{
-				//if (!mbIsTrigger)
-				//	_owner->OnCollisionEnter(_Event);
-				//else
-				//	_owner->OnTriggerEnter(_Event.mCollidedWith);
+				if (!mbIsTrigger)
+					_owner->OnCollisionEnter(_Event);
+				else
+					_owner->OnTriggerEnter(_Event.mCollidedWith);
 				
 				marr_ContactSets.push_back(_Event);
 			}
@@ -172,13 +172,13 @@ namespace Dystopia
 		{
 			if (FindCollisionEvent(_Event.mOtherID))
 			{
-				//if (nullptr != _body)
-				//	_body->SetSleeping(false);
+				if (nullptr != _body)
+					_body->SetSleeping(false);
 
-				//if (!mbIsTrigger)
-				//	_owner->OnCollisionExit(_Event);
-				//else
-				//	_owner->OnTriggerExit(_Event.mCollidedWith);
+				if (!mbIsTrigger)
+					_owner->OnCollisionExit(_Event);
+				else
+					_owner->OnTriggerExit(_Event.mCollidedWith);
 				
 				RemoveCollisionEvent(_Event.mOtherID);
 				
