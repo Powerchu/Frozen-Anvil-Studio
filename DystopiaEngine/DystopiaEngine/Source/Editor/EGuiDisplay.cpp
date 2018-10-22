@@ -276,11 +276,12 @@ namespace EGUI
 			changing = ImGui::SliderFloat(("###SlideFloat" + _label).c_str(), _pOutFloat, _min, _max, "%.3f");
 			ImGui::PopItemWidth();
 
-			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
-			if (changing) return eDRAGGING;
-			if (ImGui::IsItemDeactivatedAfterChange())
-				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
-			if (ImGui::IsItemDeactivated()) return eDEACTIVATED;
+			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
+				return changing ? eINSTANT_CHANGE : eSTART_DRAG;
+			else if (ImGui::IsItemDeactivated())
+				return ImGui::IsMouseReleased(0) ? eEND_DRAG : eDEACTIVATED;
+			else if (ImGui::IsItemActive())
+				return changing ? eDRAGGING : eNO_CHANGE;
 			return eNO_CHANGE;
 		}
 
@@ -301,9 +302,7 @@ namespace EGUI
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
 			if (changing) return eDRAGGING;
 			if (ImGui::IsItemDeactivatedAfterChange())
-			{
 				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
-			}
 			if (ImGui::IsItemDeactivated()) return eDEACTIVATED;
 			return eNO_CHANGE;
 		}

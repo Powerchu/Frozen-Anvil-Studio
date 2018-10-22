@@ -188,19 +188,20 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	}
 	switch (EGUI::Display::SliderFloat("Pitch        ", &mPitch, 0.f, MAX_CAP_SCALE))
 	{
+	case EGUI::eINSTANT_CHANGE:
+		PrintToConsoleLog("eINSTANT_CHANGE");
+		break;
 	case EGUI::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, &AudioSource::mPitch, &AudioSource::mChanged);
-		PrintToConsoleLog("StartRecord");
+		PrintToConsoleLog("eSTART_DRAG");
 		break;
 	case EGUI::eDRAGGING:
-		mChanged = true;
+		PrintToConsoleLog("eDRAGGING");
+		break;
+	case EGUI::eDEACTIVATED:
+		PrintToConsoleLog("eDEACTIVATED");
 		break;
 	case EGUI::eEND_DRAG:
-	case EGUI::eENTER:
-	case EGUI::eDEACTIVATED:
-	case EGUI::eTABBED:
-		EGUI::GetCommandHND()->EndRecording();
-		PrintToConsoleLog("EndRecord");
+		PrintToConsoleLog("eEND_DRAG");
 		break;
 	}
 #endif 

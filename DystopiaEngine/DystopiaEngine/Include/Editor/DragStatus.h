@@ -33,6 +33,7 @@ namespace EGUI
 		eTABBED,
 		eSTART_DRAG,
 		eDEACTIVATED,
+		eINSTANT_CHANGE,
 		eDRAGGING
 	};
 }
