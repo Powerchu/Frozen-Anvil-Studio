@@ -229,13 +229,20 @@ namespace Dystopia
 			io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 		}
 
-		for (int i = 0; i < 3; i++)
-		{
-			io.MouseDown[i] = mMouseJustPressed[i] || mpInput->IsKeyPressed(static_cast<eButton>(static_cast<int>(eButton::MOUSE_LEFT) + i));
-			if (mpInput->IsKeyPressed(static_cast<eButton>(static_cast<int>(eButton::MOUSE_LEFT) + i)))
-				int i = 0;
-			mMouseJustPressed[i] = false;
-		}
+		if (mpInput->IsKeyPressed(eButton::MOUSE_LEFT))
+			io.MouseDown[0] = true;
+		else
+			io.MouseDown[0] = mMouseJustPressed[0];
+		if (mpInput->IsKeyPressed(eButton::MOUSE_RIGHT))
+			io.MouseDown[1] = true;
+		else
+			io.MouseDown[1] = mMouseJustPressed[1];
+		if (mpInput->IsKeyPressed(eButton::MOUSE_MIDDLE))
+			io.MouseDown[2] = true;
+		else
+			io.MouseDown[2] = mMouseJustPressed[2];
+
+		mMouseJustPressed[0] = mMouseJustPressed[1] = mMouseJustPressed[2] = false;
 
 		// Update cursor icon
 		if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0 )

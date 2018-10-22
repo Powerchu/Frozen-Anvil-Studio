@@ -238,9 +238,7 @@ namespace Dystopia
 		mDeltaTime = mpTimer->Elapsed();
 		mpTimer->Lap();
 		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow())
-		{
 			mpInput->Update(mDeltaTime);
-		}
 		switch (mCurrentState)
 		{
 		case EDITOR_MAIN:
@@ -313,9 +311,9 @@ namespace Dystopia
 			UpdateSelections();
 			mUpdateSelection = false;
 		}
-
-		mSceneHasChanged = (mSceneHasChanged | (&mpSceneSystem->GetCurrentScene() != &mpSceneSystem->GetActiveScene()));
 		LogTabPerformance();
+		mSceneHasChanged = (mSceneHasChanged | (&mpSceneSystem->GetCurrentScene() != &mpSceneSystem->GetActiveScene()));
+		mpInput->PostUpdate();
 		EngineCore::GetInstance()->PostUpdate();
 		mpBehaviourSys->PostUpdate();
 		if (mSceneHasChanged)
