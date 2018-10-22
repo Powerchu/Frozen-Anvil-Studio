@@ -253,9 +253,9 @@ namespace Dystopia
 				if (distance < _ColB.GetRadius())
 				{
 					isInside = true;
-					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
-					newEvent.mEdgeNormal = Math::Normalise(_ColB.GetGlobalPosition() - PointOfImpact);
-					newEvent.mEdgeVector = elem.mVec3;
+					newEvent.mfPeneDepth     = _ColB.GetRadius() - distance;
+					newEvent.mEdgeNormal     = Math::Normalise(_ColB.GetGlobalPosition() - PointOfImpact);
+					newEvent.mEdgeVector     = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
 					newEvent.mOtherID        = _ColB.GetOwner()->GetID();
 
@@ -768,8 +768,6 @@ namespace Dystopia
 
 				Math::Vec3D const & OffSetB = _ColB.GetOffSet();
 				const Math::Matrix3D WorldSpaceB  = _ColB.GetOwnerTransform() * Math::Translate(OffSetB.x, OffSetB.y, OffSetB.z)* _ColB.GetTransformationMatrix();
-				
-				//bool isInsideCollider = false;
 
 				unsigned j      = Point.ColBIndex + 1 >= _ColB.mVertices.size() ? 0 : Point.ColBIndex + 1;
 				unsigned A_Next = Point.ColAIndex + 1 >=  mVertices.size() ? 0      : Point.ColAIndex + 1;
@@ -779,10 +777,11 @@ namespace Dystopia
 
 				auto start_A = WorldSpaceA * _ColB.mVertices[Point.ColAIndex].mPosition;
 				auto end_A   = WorldSpaceA * _ColB.mVertices[A_Next].mPosition;
+				if (!ClosestEdge.mNorm3.MagnitudeSqr()) __debugbreak();
 #if CLOCKWISE
-				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::Y>();
+				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : -Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::Y>();
 #else
-				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::X>();
+				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : -Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::X>();
 #endif
 				Math::Vec3D OriginVector = Math::MakePoint3D(0.f, 0.f, 0.f) - ClosestEdge.mPos;
 				const float BarycentricRatio   = Math::Abs(OriginVector.Dot(ClosestEdge.mVec3.Normalise()) / ClosestEdge.mVec3.Magnitude());
@@ -802,10 +801,13 @@ namespace Dystopia
 
 				return col_info;
 			}
-
-			_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
-			
-
+			else
+			{
+				for (auto & elm : _Simplex)
+					if (!(elm.mPosition - Point.mPosition).Magnitude()) __debugbreak();
+				_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
+			}
+				
 		}
 		//return col_info;
 	}
