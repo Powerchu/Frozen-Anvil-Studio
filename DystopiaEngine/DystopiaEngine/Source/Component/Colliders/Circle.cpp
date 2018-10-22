@@ -288,11 +288,11 @@ namespace Dystopia
 		EGUI::Display::Label("Offset");
 		auto arrResult = EGUI::Display::VectorFields("    ", &mv3Offset, 0.01f, -FLT_MAX, FLT_MAX);
 		for (auto &e : arrResult)
-		{
+		{/*
 			switch (e)
 			{
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &mv3Offset);
+				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &Circle::mv3Offset);
 				break;
 			case EGUI::eDragStatus::eEND_DRAG:
 			case EGUI::eDragStatus::eENTER:
@@ -305,7 +305,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eNO_CHANGE:
 			default:
 				break;
-			}
+			}*/
 		}
 	}
 
@@ -314,9 +314,9 @@ namespace Dystopia
 		EGUI::Display::Label("Scale");
 		const auto e = EGUI::Display::DragFloat("   ", &m_radius, 0.01f, -FLT_MAX, FLT_MAX);
 		switch (e)
-		{
+		{/*
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &m_radius);
+			EGUI::GetCommandHND()->StartRecording<Circle>(mnOwner, &Circle::m_radius);
 			break;
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
@@ -328,7 +328,7 @@ namespace Dystopia
 			break;
 		case EGUI::eDragStatus::eNO_CHANGE:
 		default:
-			break;
+			break;*/
 		}
 
 	}

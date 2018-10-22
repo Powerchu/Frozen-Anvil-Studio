@@ -792,7 +792,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfMass);
+				EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfMass);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
@@ -824,7 +824,7 @@ namespace Dystopia
 				case EGUI::eDragStatus::eNO_CHANGE:
 					break;
 				case EGUI::eDragStatus::eSTART_DRAG:
-					EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mLinearDamping);
+					EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mLinearDamping);
 					break;
 				case EGUI::eDragStatus::eEND_DRAG:
 				case EGUI::eDragStatus::eENTER:
@@ -853,7 +853,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfAngularDrag);
+				EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfAngularDrag);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
@@ -885,7 +885,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfGravityScale);
+				EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfGravityScale);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
@@ -915,7 +915,7 @@ namespace Dystopia
 		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfStaticFriction);
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfStaticFriction);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
@@ -943,7 +943,7 @@ namespace Dystopia
 		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfDynamicFriction);
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfDynamicFriction);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
@@ -971,7 +971,7 @@ namespace Dystopia
 		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfRestitution);
+			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfRestitution);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();

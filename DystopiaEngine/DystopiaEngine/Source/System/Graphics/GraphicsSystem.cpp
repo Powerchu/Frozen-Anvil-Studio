@@ -595,7 +595,7 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	switch (result)
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&mfGamma);
+		EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mfGamma);
 		break;
 	case EGUI::eDragStatus::eENTER:
 	case EGUI::eDragStatus::eEND_DRAG:
@@ -611,7 +611,7 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	if (EGUI::Display::CheckBox("Debug Draw  ", &tempBool))
 	{
 		mbDebugDraw = tempBool;
-		EGUI::GetCommandHND()->InvokeCommand<GraphicsSystem>(&mbDebugDraw, tempBool);
+		EGUI::GetCommandHND()->InvokeCommand<GraphicsSystem>(&GraphicsSystem::mbDebugDraw, tempBool);
 	}
 
 	auto result2 = EGUI::Display::VectorFields("Debug Color ", &mvDebugColour, 0.01f, 0.f, 1.f);
@@ -620,7 +620,7 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 		switch (elem)
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&mvDebugColour);
+			EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mvDebugColour);
 			break;
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eEND_DRAG:
@@ -638,7 +638,7 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	switch (result3)
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&mfDebugLineWidth);
+		EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mfDebugLineWidth);
 		break;
 	case EGUI::eDragStatus::eENTER:
 	case EGUI::eDragStatus::eEND_DRAG:

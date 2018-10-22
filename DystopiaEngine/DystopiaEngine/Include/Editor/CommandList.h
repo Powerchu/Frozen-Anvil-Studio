@@ -99,8 +99,12 @@ namespace Dystopia
 	{
 		ComdModifyValue(const uint64_t& _objID, T Comp::* _pmData, const T& _oldV, bool Comp::* _notify = nullptr)
 			: mID{ _objID }, mpData{ _pmData }, 
-			mNewValue{*_pmData }, mOldValue{ _oldV }, mpNotify{ _notify }
-		{}
+			mNewValue{ }, mOldValue{ _oldV }, mpNotify{ _notify }
+		{
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			Comp *pCom = pObj->GetComponent<Comp>();
+			mNewValue = pCom->*_pmData;
+		}
 
 		bool ExecuteDo() override 
 		{
@@ -140,8 +144,11 @@ namespace Dystopia
 		: Commands
 	{
 		ComdModifyValue(const uint64_t&, T Sys::* _pData, const T& _oldV, bool Sys::* _notify = nullptr)
-			: mpData{ _pData }, mOldValue{ _oldV }, mNewValue{ *_pData }, mpNotify{ _notify }
-		{}
+			: mpData{ _pData }, mOldValue{ _oldV }, mNewValue{ }, mpNotify{ _notify }
+		{
+			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
+			mNewValue = pSystem->*_pData;
+		}
 
 		bool ExecuteDo() override
 		{
@@ -176,8 +183,11 @@ namespace Dystopia
 	{
 		ComdModifyValue(const uint64_t& _objID, T GameObject::* _pmData, const T& _oldV, bool GameObject::* _notify = nullptr)
 			: mID{ _objID }, mpData{ _pmData },
-			mNewValue{ *mpData }, mOldValue{ _oldV }, mpNotify{ _notify }
-		{}
+			mNewValue{ }, mOldValue{ _oldV }, mpNotify{ _notify }
+		{
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID); 
+			mNewValue = pObj->*mpData;
+		}
 
 		bool ExecuteDo() override
 		{
@@ -277,9 +287,12 @@ namespace Dystopia
 		: RecordBase
 	{
 		ComdRecord(const uint64_t&, T Sys::* _pData, bool Sys::* _notify = nullptr)
-			: mpTarget{ _pData }, mOldValue{ *_pData },
-			mNewValue{ mOldValue }, mpNotify{ _notify }
-		{}
+			: mpTarget{ _pData }, mOldValue{},
+			mNewValue{}, mpNotify{ _notify }
+		{
+			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
+			mNewValue = mOldValue = pSystem->*_pData;
+		}
 	
 		bool EndRecord()
 		{
@@ -328,9 +341,12 @@ namespace Dystopia
 	struct ComdRecord<T, GameObject, void> : RecordBase
 	{
 		ComdRecord(const uint64_t& _objID, T GameObject::* rhs, bool GameObject::* _notify = nullptr)
-			: mpTarget{ rhs }, mOldValue{ *rhs }, 
+			: mpTarget{ rhs }, mOldValue{}, 
 			mNewValue{ mOldValue }, mID{ _objID }, mpNotify{ _notify }
-		{}
+		{
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			mNewValue = pObj->*rhs;
+		}
 
 		bool EndRecord()
 		{
