@@ -254,7 +254,7 @@ namespace Dystopia
 				{
 					isInside = true;
 					newEvent.mfPeneDepth     = _ColB.GetRadius() - distance;
-					newEvent.mEdgeNormal     = Math::Normalise(_ColB.GetGlobalPosition() - PointOfImpact);
+					newEvent.mEdgeNormal     = elem.mNorm3.Normalise();
 					newEvent.mEdgeVector     = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
 					newEvent.mOtherID        = _ColB.GetOwner()->GetID();

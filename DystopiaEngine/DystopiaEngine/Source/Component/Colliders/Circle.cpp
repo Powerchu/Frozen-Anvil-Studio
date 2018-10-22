@@ -176,7 +176,6 @@ namespace Dystopia
 				col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 			}
 			InformOtherComponents(true, col_info);
-			/*Return true for collision*/
 			return true;
 		}
 			InformOtherComponents(false, col_info);
@@ -247,7 +246,6 @@ namespace Dystopia
 				{
 					isInside = true;
 					newEvent.mfPeneDepth     = GetRadius() - distance;
-					elem.mNorm3.z			 = 0;
 					newEvent.mEdgeNormal     = -elem.mNorm3.Normalise();
 					newEvent.mEdgeVector     = elem.mVec3;
 					newEvent.mCollisionPoint = PointOfImpact;
@@ -264,7 +262,7 @@ namespace Dystopia
 		}
 		if (isInside)
 		{
-			InformOtherComponents(true, newEvent);
+			InformOtherComponents(isInside, newEvent);
 		}
 		else
 		{

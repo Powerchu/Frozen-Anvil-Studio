@@ -89,7 +89,7 @@ namespace Dystopia
 			return i;
 		}();
 
-		//AutoArray<Collider *> mColliders;
+		AutoArray<Collider *> mColliders;
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
@@ -99,7 +99,7 @@ namespace Dystopia
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
-				//mColliders.push_back(&elem);
+				mColliders.push_back(&elem);
 				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 		}
@@ -112,7 +112,7 @@ namespace Dystopia
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
-				//mColliders.push_back(&elem);
+				mColliders.push_back(&elem);
 				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 			
@@ -126,89 +126,89 @@ namespace Dystopia
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
-				//mColliders.push_back(&elem);
+				mColliders.push_back(&elem);
 				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 			
 		}
 
-		if (!mCollisionTree.isEmpty())
-			ContactCount = mCollisionTree.GetNumPotentialContact(1024, ArrayContacts);
+		//if (!mCollisionTree.isEmpty())
+		//	ContactCount = mCollisionTree.GetNumPotentialContact(1024, ArrayContacts);
 
-		for (unsigned i = 0; i < ContactCount; ++i)
-		{
-			if (nullptr == ArrayContacts[i].mContacts[0] || nullptr == ArrayContacts[i].mContacts[1]) continue;
-			Collider * bodyA = ArrayContacts[i].mContacts[0];
-			Collider * bodyB = ArrayContacts[i].mContacts[1];
-			const auto ownerA = bodyA->GetOwner();
-			const auto ownerB = bodyB->GetOwner();
-			const auto rigidA = ownerA->GetComponent<RigidBody>();
-			const auto rigidB = ownerB->GetComponent<RigidBody>();
-
-			if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
-			{
-				if (rigidA && rigidB)
-				{
-					if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState())
-						continue;
-					if (ownerA == ownerB)
-						continue;
-				}
-				const auto pair_key1 = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
-				const auto pair_key2 = std::make_pair(bodyB->GetColliderType(), (bodyA)->GetColliderType());
-				for (auto & key : CollisionFuncTable)
-				{
-					if (key.first == pair_key1)
-					{
-						(this->*key.second)(bodyA, bodyB);
-						break;
-					}
-				}
-				for (auto & key : CollisionFuncTable)
-				{
-					if (key.first == pair_key2)
-					{
-						(this->*key.second)(bodyB, bodyA);
-						break;
-					}
-				}
-			}
-		}
-
-		return;
-
-		//for (auto & bodyA : mColliders)
+		//for (unsigned i = 0; i < ContactCount; ++i)
 		//{
+		//	if (nullptr == ArrayContacts[i].mContacts[0] || nullptr == ArrayContacts[i].mContacts[1]) continue;
+		//	Collider * bodyA = ArrayContacts[i].mContacts[0];
+		//	Collider * bodyB = ArrayContacts[i].mContacts[1];
 		//	const auto ownerA = bodyA->GetOwner();
-		//	for (auto & bodyB : mColliders)
-		//	{
-		//		const auto ownerB = bodyB->GetOwner();
-		//		const auto rigidA = ownerA->GetComponent<RigidBody>();
-		//		const auto rigidB = ownerB->GetComponent<RigidBody>();
+		//	const auto ownerB = bodyB->GetOwner();
+		//	const auto rigidA = ownerA->GetComponent<RigidBody>();
+		//	const auto rigidB = ownerB->GetComponent<RigidBody>();
 
-		//		if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
+		//	if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
+		//	{
+		//		if (rigidA && rigidB)
 		//		{
-		//			if (rigidA && rigidB)
+		//			if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState())
+		//				continue;
+		//			if (ownerA == ownerB)
+		//				continue;
+		//		}
+		//		const auto pair_key1 = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+		//		const auto pair_key2 = std::make_pair(bodyB->GetColliderType(), (bodyA)->GetColliderType());
+		//		for (auto & key : CollisionFuncTable)
+		//		{
+		//			if (key.first == pair_key1)
 		//			{
-		//				if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState())
-		//					continue;
-		//				if (ownerA == ownerB)
-		//					continue;
+		//				(this->*key.second)(bodyA, bodyB);
+		//				break;
 		//			}
-		//			const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
-		//			for (auto & key : CollisionFuncTable)
+		//		}
+		//		for (auto & key : CollisionFuncTable)
+		//		{
+		//			if (key.first == pair_key2)
 		//			{
-		//				if (key.first == pair_key)
-		//				{
-		//					(this->*key.second)(bodyA, bodyB);
-		//					bodyB->SetColliding(bodyB->Collider::HasCollision());
-		//					bodyA->SetColliding(bodyA->Collider::HasCollision());
-		//					break;
-		//				}
+		//				(this->*key.second)(bodyB, bodyA);
+		//				break;
 		//			}
 		//		}
 		//	}
 		//}
+
+		//return;
+
+		for (auto & bodyA : mColliders)
+		{
+			const auto ownerA = bodyA->GetOwner();
+			for (auto & bodyB : mColliders)
+			{
+				const auto ownerB = bodyB->GetOwner();
+				const auto rigidA = ownerA->GetComponent<RigidBody>();
+				const auto rigidB = ownerB->GetComponent<RigidBody>();
+
+				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
+				{
+					if (rigidA && rigidB)
+					{
+						if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState())
+							continue;
+						if (ownerA == ownerB)
+							continue;
+					}
+					const auto pair_key = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
+					for (auto & key : CollisionFuncTable)
+					{
+						if (key.first == pair_key)
+						{
+							(this->*key.second)(bodyA, bodyB);
+							bodyB->SetColliding(bodyB->Collider::HasCollision());
+							bodyA->SetColliding(bodyA->Collider::HasCollision());
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	void CollisionSystem::Shutdown()
