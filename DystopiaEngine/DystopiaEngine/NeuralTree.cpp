@@ -1,12 +1,10 @@
 #include "NeuralTree.h"
 
-
-
-NeuralTree::NeuralTree()
+namespace Dystopia
 {
-}
-
-
-NeuralTree::~NeuralTree()
-{
+	using namespace NeuralTree;
+	Node::eStatus Node::Tick(float)
+	{
+		
+	}
 }

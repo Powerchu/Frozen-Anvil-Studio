@@ -27,9 +27,30 @@ namespace Dystopia
 {
 	namespace NeuralTree
 	{
+		class Node
+		{
+		public:
+			enum class eStatus
+			{
+				Invalid = -1,
+				Ready,
+				Running,
+				Success,
+				Failure
+			};
+
+			virtual ~Node() {};
+
+			virtual void Init() {};
+			virtual eStatus Update(float) = 0;
+			virtual void Terminate(eStatus) {};
+
+			eStatus Tick(float);
+		};
+
+
 
 	}
-
 }
 	
 
