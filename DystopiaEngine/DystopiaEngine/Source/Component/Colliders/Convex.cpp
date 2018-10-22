@@ -770,14 +770,14 @@ namespace Dystopia
 			}
 			else
 			{
-				Point = Convex::GetMiwoskiPoint(*this, _ColB, -ClosestEdge.mNorm3);
-				prevSearchDir = -ClosestEdge.mNorm3;
+				Point = Convex::GetMiwoskiPoint(*this, _ColB, ClosestEdge.mNorm3);
+				prevSearchDir = ClosestEdge.mNorm3;
 			}
 
 			const double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
 			const double result = ProjectDis - ClosestEdge.mOrthogonalDistance;
 			/*If fail the test, expand the simplex and run the test again*/
-			if (Math::Abs(result) <= FLT_EPSILON)
+			if (Math::Abs(result) <= FLT_EPSILON * 10000)
 			{
 				Math::Vec3D const & OffSetA = GetOffSet();
 				Math::Matrix3D WorldSpaceA = GetOwnerTransform() * Math::Translate(OffSetA.x, OffSetA.y, OffSetA.z)* GetTransformationMatrix();
@@ -795,8 +795,9 @@ namespace Dystopia
 
 				auto start_A = WorldSpaceA * _ColB.mVertices[Point.ColAIndex].mPosition;
 				auto end_A   = WorldSpaceA * _ColB.mVertices[A_Next].mPosition;
+				//if (!ClosestEdge.mNorm3.MagnitudeSqr()) __debugbreak();
 #if CLOCKWISE
-				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::Y>();
+				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : -Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::Y>();
 #else
 				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::X>();
 #endif
@@ -804,7 +805,7 @@ namespace Dystopia
 				const float BarycentricRatio   = Math::Abs(OriginVector.Dot(ClosestEdge.mVec3.Normalise()) / ClosestEdge.mVec3.Magnitude());
 				col_info.mCollisionPoint = (end_A - start_A) * BarycentricRatio + start_A;
 				col_info.mEdgeNormal     = Normal.Normalise();
-				col_info.mEdgeVector     = Normal.xyzw;
+				col_info.mEdgeVector     = Normal.yxzw;
 				col_info.mOtherID        = _ColB.GetOwner()->GetID();
 
 				col_info.mfPeneDepth     = static_cast<float>(ProjectDis);
@@ -818,10 +819,14 @@ namespace Dystopia
 
 				return col_info;
 			}
-
+#if DEBUG || _DEBUG
+			for (auto & elm : _Simplex)
+			{
+				/*Not Suppose to Happen*/
+				if (!(elm.mPosition - Point.mPosition).Magnitude()) __debugbreak();
+			}
+#endif
 			_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
-			
-
 		}
 		//return col_info;
 	}
