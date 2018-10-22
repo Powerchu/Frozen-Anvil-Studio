@@ -270,6 +270,10 @@ namespace Dystopia
 				newEvent.mEdgeNormal = newEvent.mEdgeNormal.Normalise();
 				InformOtherComponents(true, newEvent);
 			}
+			else
+			{
+				InformOtherComponents(true, newEvent);
+			}
 
 		}
 		//if (isInside)

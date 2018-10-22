@@ -95,7 +95,7 @@ namespace Dystopia
 		{
 			if (elem.GetOwner())
 			{
-				elem.ClearCollisionEvent(); //clear collision table
+				//elem.ClearCollisionEvent(); //clear collision table
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
@@ -108,7 +108,7 @@ namespace Dystopia
 		{
 			if (elem.GetOwner())
 			{
-				elem.ClearCollisionEvent(); //clear collision table
+				//elem.ClearCollisionEvent(); //clear collision table
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
@@ -122,7 +122,7 @@ namespace Dystopia
 		{
 			if (elem.GetOwner())
 			{
-				elem.ClearCollisionEvent(); //clear collision table
+				//elem.ClearCollisionEvent(); //clear collision table
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
