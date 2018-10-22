@@ -176,9 +176,6 @@ namespace Dystopia
 				col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 			}
 			InformOtherComponents(true, col_info);
-
-			//marr_ContactSets.push_back(col_info);
-	
 			/*Return true for collision*/
 			return true;
 		}
@@ -260,7 +257,6 @@ namespace Dystopia
 						newEvent.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 						newEvent.mfStaticFrictionCof  = DetermineStaticFriction(*other_body);
 					}
-					//marr_ContactSets.push_back(newEvent);
 					mbColliding = isInside  = true;
 					other_col.SetColliding(true);
 				}
