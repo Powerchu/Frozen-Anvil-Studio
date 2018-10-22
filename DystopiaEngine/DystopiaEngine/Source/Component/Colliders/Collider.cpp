@@ -172,8 +172,8 @@ namespace Dystopia
 		{
 			if (FindCollisionEvent(_Event.mOtherID))
 			{
-				if (nullptr != _body)
-					_body->SetSleeping(false);
+				//if (nullptr != _body)
+				//	_body->SetSleeping(false);
 
 				if (!mbIsTrigger)
 					_owner->OnCollisionExit(_Event);

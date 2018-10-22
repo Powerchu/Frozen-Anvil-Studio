@@ -344,7 +344,7 @@ namespace Dystopia
 	AutoArray<Edge> Convex::GetConvexEdges() const
 	{
 		AutoArray<Edge> ToRet;
-		const Math::Matrix3D World = GetOwnerTransform() * Math::Translate(mv3Offset.x, mv3Offset.y, mv3Offset.z) * GetTransformationMatrix();;
+		const Math::Matrix3D World = GetWorldMatrix();
 
 		for (unsigned i = 0; i<mVertices.size(); ++i)
 		{
@@ -373,13 +373,21 @@ namespace Dystopia
 	BroadPhaseCircle Convex::GenerateBoardPhaseCircle() const
 	{
 		float LongestRadius = 0;
-		const Math::Point3D MyGlobalCentre = this->GetGlobalPosition();
+		Math::Point3D MyGlobalCentre = Math::MakePoint3D(0,0,0);
+		unsigned count = 0;
 		for (auto & elem : mVertices)
 		{
-			Math::Vec3D v  = elem.mPosition - mPosition;
-			float distance = (this->GetWorldMatrix() * v).Magnitude();
+			++count;
+			MyGlobalCentre += (GetWorldMatrix() * elem.mPosition);
+		}
+		if(count)
+			MyGlobalCentre *= 1.f / count;
+		for (auto & elem : mVertices)
+		{
+			float distance = ((this->GetWorldMatrix() * elem.mPosition) - MyGlobalCentre).Magnitude();
 			LongestRadius = distance > LongestRadius ? distance : LongestRadius;
 		}
+
 		return BroadPhaseCircle{ LongestRadius, MyGlobalCentre };
 	}
 
@@ -761,7 +769,7 @@ namespace Dystopia
 			const double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
 			const double result = ProjectDis - ClosestEdge.mOrthogonalDistance;
 			/*If fail the test, expand the simplex and run the test again*/
-			if (Math::Abs(result) <= FLT_EPSILON)
+			if (Math::Abs(result) <= FLT_EPSILON*10000)
 			{
 				Math::Vec3D const & OffSetA = GetOffSet();
 				Math::Matrix3D WorldSpaceA = GetOwnerTransform() * Math::Translate(OffSetA.x, OffSetA.y, OffSetA.z)* GetTransformationMatrix();
@@ -781,13 +789,13 @@ namespace Dystopia
 #if CLOCKWISE
 				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : -Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::Y>();
 #else
-				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : -Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::X>();
+				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::X>();
 #endif
 				Math::Vec3D OriginVector = Math::MakePoint3D(0.f, 0.f, 0.f) - ClosestEdge.mPos;
 				const float BarycentricRatio   = Math::Abs(OriginVector.Dot(ClosestEdge.mVec3.Normalise()) / ClosestEdge.mVec3.Magnitude());
 				col_info.mCollisionPoint = (end_A - start_A) * BarycentricRatio + start_A;
 				col_info.mEdgeNormal     = Normal.Normalise();
-				col_info.mEdgeVector     = Normal.xyzw;
+				col_info.mEdgeVector     = Normal.yxzw;
 				col_info.mOtherID        = _ColB.GetOwner()->GetID();
 
 				col_info.mfPeneDepth     = static_cast<float>(ProjectDis);
