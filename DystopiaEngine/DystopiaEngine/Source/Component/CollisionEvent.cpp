@@ -90,12 +90,11 @@ namespace Dystopia
 
 		if (nullptr == bodyA || nullptr == bodyB) return;
 
-
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
 
 		const float perc = 0.40F/iter;
-		const float slop = 0.05F;
+		const float slop = 0.04F;
 
 		const Vec3D correction = Math::Max(Math::Abs(mfPeneDepth)+slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 

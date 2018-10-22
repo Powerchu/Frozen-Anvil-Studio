@@ -185,7 +185,7 @@ namespace Dystopia
 
 					BehaviourWrap wrap;
 					using fpClone = Behaviour * (*) ();
-					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
+					const fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
 					wrap.mName = DllName;
 					wrap.mpBehaviour = (BehaviourClone());
 					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Ut::Move(wrap)));

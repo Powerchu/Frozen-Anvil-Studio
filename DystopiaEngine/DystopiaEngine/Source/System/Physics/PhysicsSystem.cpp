@@ -22,7 +22,7 @@ namespace Dystopia
 		, mGravity(400.0F)
 		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.05F)
+		, mPenetrationEpsilon(0.10F)
 		, mVelocityIterations(8)
 		, mPositionalIterations(4)
 	{
@@ -156,7 +156,7 @@ namespace Dystopia
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+			if (body.Get_IsStaticState()) continue;
 
 			body.UpdateResult(_dt);
 		}
@@ -189,6 +189,8 @@ namespace Dystopia
 
 		// Set all objects at rest to sleeping
 		CheckSleepingBodies(_dt);
+
+		
 	}
 
 	void PhysicsSystem::PreFixedUpdate(float _dt)

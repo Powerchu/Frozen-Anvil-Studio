@@ -27,6 +27,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define WIN32_LEAN_AND_MEAN			// Exclude rare stuff from Window's header
 #include <Windows.h>
 #include "Object/ObjectFlags.h"
+#include "System/Profiler/ProfilerAction.h"
+#include "System/Time/ScopedTimer.h"
 #undef  WIN32_LEAN_AND_MEAN			// Stop define from spilling into code
 #undef NOMINMAX
 
@@ -81,6 +83,8 @@ bool Dystopia::InputManager::Init(void)
 
 void Dystopia::InputManager::Update(const float _dt)
 {
+	ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Fixed Update" };
+
 	using Type = BYTE[256];
 	static Type storage{ 0 };
 	mGamePad.PollInputs();

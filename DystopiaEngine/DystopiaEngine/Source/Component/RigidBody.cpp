@@ -149,7 +149,7 @@ namespace Dystopia
 
 	void RigidBody::Integrate(float _dt)
 	{
-		constexpr const auto VEL_EPSILON = 0.01F;
+		constexpr const auto VEL_EPSILON = 0.005F;
 
 		if (!GetOwner()->IsActive() || mbIsStatic || !mbIsAwake)
 		{
@@ -233,11 +233,11 @@ namespace Dystopia
 	void RigidBody::CheckSleeping(const float _dt)
 	{
 		UNUSED_PARAMETER(_dt); // dt is fixed, so it doesnt matter anyway
-		constexpr const auto SLEEP_EPSILON = 0.05F;
+		constexpr const auto SLEEP_EPSILON = 0.01F;
 
 		//mfWeightedMotion is the average kinetic energy over a given set of frames
 
-		const float bias = 0.96F; //std::pow(0.96F, _dt);
+		const float bias = 0.97F; //std::pow(0.96F, _dt);
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
 		mfWeightedMotion = bias * mfWeightedMotion + (1 - bias)*currentMotion;
 

@@ -371,7 +371,7 @@ namespace Dystopia
 			GameObject* pTarget			= FindMouseObject();
 			float betterZ				= (pTarget) ? pTarget->GetComponent<Transform>()->GetPosition().z + 0.1f : 0;
 			Math::Pt3D worldClickPos	= GetWorldClickPos(pCam);
-			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ };
+			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ, 1 };
 
 			GameObject *pDupl = Factory::LoadFromPrefab("", _pFile->mPath);
 			if (pDupl)
