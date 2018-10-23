@@ -36,6 +36,8 @@ namespace Dystopia
 		TextureSystem(void) noexcept;
 		~TextureSystem(void) noexcept;
 
+		void Shutdown(void) noexcept;
+
 		template <typename Ty = Texture>
 		Ty* GetTexture(const std::string& _strName);
 		TextureAtlas* GetAtlas(const std::string& _strName);

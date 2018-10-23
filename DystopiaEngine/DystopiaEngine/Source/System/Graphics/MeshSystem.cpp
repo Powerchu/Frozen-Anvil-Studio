@@ -24,15 +24,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 void Dystopia::MeshSystem::Init(void)
 {
 	Mesh::LinkSystem(this);
-//	mpMeshes.reserve(10);
 }
 
 void Dystopia::MeshSystem::Shutdown(void) noexcept
 {
-	//glDisableVertexAttribArray(2);
-	//glDisableVertexAttribArray(1);
-	//glDisableVertexAttribArray(0);
-
 	FreeMeshes();
 }
 

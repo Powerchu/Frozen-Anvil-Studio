@@ -77,7 +77,6 @@ namespace Dystopia
 
 		// Temporary
 		std::map<std::string, Shader*> shaderlist;
-		std::map<std::string, Texture*> texturelist;
 
 		Framebuffer& GetFrameBuffer();
 

@@ -201,9 +201,19 @@ T* Dystopia::GameObject::GetComponent(ComponentTag) const
 {
 	for (auto& e : mComponents)
 	{
-		if (Ut::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
+		if constexpr (Ut::MetaFind<T, AllComponents>::value)
 		{
-			return static_cast<T*>(e);
+			if (Ut::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
+			{
+				return static_cast<T*>(e);
+			}
+		}
+		else
+		{
+			if (Ut::MetaFind_t<T, UsableComponents>::value == e->GetUsableType())
+			{
+				return static_cast<T*>(e);
+			}
 		}
 	}
 
@@ -236,9 +246,19 @@ AutoArray<T*> Dystopia::GameObject::GetComponents(ComponentTag) const
 	AutoArray<T*> temp{};
 	for (Component* e : mComponents)
 	{
-		if (Ut::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
+		if constexpr (Ut::MetaFind<T, AllComponents>::value)
 		{
-			temp.Insert(static_cast<T*>(e));
+			if (Ut::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
+			{
+				temp.Insert(static_cast<T*>(e));
+			}
+		}
+		else
+		{
+			if (Ut::MetaFind_t<T, UsableComponents>::value == e->GetUsableType())
+			{
+				temp.Insert(static_cast<T*>(e));
+			}
 		}
 	}
 

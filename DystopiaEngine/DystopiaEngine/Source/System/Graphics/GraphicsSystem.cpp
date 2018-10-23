@@ -25,7 +25,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 // Texture Includes
 #include "System/Graphics/TextureSystem.h"
+#include "System/Graphics/Texture.h"
 #include "System/Graphics/Texture2D.h"
+#include "System/Graphics/TextureAtlas.h"
 
 // Shader Includes
 #include "System/Graphics/Shader.h"
@@ -371,12 +373,9 @@ void Dystopia::GraphicsSystem::Shutdown(void)
 		delete e.second;
 	shaderlist.clear();
 
-	for (auto& e : texturelist)
-		delete static_cast<Texture2D*>(e.second);
-	texturelist.clear();
-
 	// We are responsible for this
-	pCore->GetSubSystem<MeshSystem>()->FreeMeshes();
+	pCore->GetSubSystem<MeshSystem>()->Shutdown();
+	pCore->GetSubSystem<TextureSystem>()->Shutdown();
 }
 
 void Dystopia::GraphicsSystem::LoadDefaults(void)
