@@ -146,7 +146,79 @@ namespace Dystopia
 		GenerateCollection<std::make_index_sequence<size>> mCollection;
 	};
 
+	struct SuperReflectFunctor
+	{
+		template<typename T , typename Settor>
+		void operator()(const char *,T, Settor, void*) {  }
 
+		template<>
+		void operator()(const char * _name,float value, std::function<void(float, void*)> _f, void* _addr)
+		{
+			float Temp = value;
+			switch (EGUI::Display::DragFloat(_name, &Temp, 0.01f, 0.0f, 2.0f))
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				_f(Temp, _addr);
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				//Is it possible to make one that does not require the BehaviourClass to be known
+				//EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfAngularDrag);
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default:
+				break;
+			}
+		}
+		template<>
+		void operator()(const char * _name, int value, std::function<void(int, void*)> _f, void*_addr)
+		{
+			int Temp = value;
+			switch (EGUI::Display::DragInt(_name, &Temp, 0.01f, 0.0f, 2.0f))
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				_f(Temp, _addr);
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				//Is it possible to make one that does not require the BehaviourClass to be known
+				//EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfAngularDrag);
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default:
+				break;
+			}
+		}
+		template<>
+		void operator()(const char *,double value, std::function<void(double, void*)> _f, void*_addr)
+		{
+
+		}
+	};
 	struct SuperGetFunctor
 	{
 		template<typename T>
@@ -170,41 +242,12 @@ namespace Dystopia
 		{
 			
 		}
-		//template<>
-		//void operator()(float * _ptr)
-		//{
-		//	switch (EGUI::Display::DragFloat("Test", _ptr, 0.01f, 0.0f, 2.0f))
-		//	{
-		//	case EGUI::eDragStatus::eEND_DRAG:
-		//		EGUI::GetCommandHND()->EndRecording();
-		//		break;
-		//	case EGUI::eDragStatus::eENTER:
-		//		EGUI::GetCommandHND()->EndRecording();
-		//		break;
-		//	case EGUI::eDragStatus::eDRAGGING:
-		//		break;
-		//	case EGUI::eDragStatus::eSTART_DRAG:
-		//		//EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfDynamicFriction);
-		//		break;
-		//	case EGUI::eDragStatus::eDEACTIVATED:
-		//		EGUI::GetCommandHND()->EndRecording();
-		//		break;
-		//	case EGUI::eDragStatus::eNO_CHANGE:
-		//		break;
-		//	case EGUI::eDragStatus::eTABBED:
-		//		EGUI::GetCommandHND()->EndRecording();
-		//		break;
-		//	default:
-		//		break;
-		//	}
-		//}
-
 
 		template<>
 		void operator()(std::function<void(float, void*)> _f, void * _addr)
 		{
 
-			float Temp = ;
+			float Temp;
 			switch (EGUI::Display::DragFloat("Test", &Temp, 0.01f, 0.0f, 2.0f))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
@@ -217,12 +260,13 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				//EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfDynamicFriction);
+				
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eNO_CHANGE:
+				_f(0, _addr);
 				break;
 			case EGUI::eDragStatus::eTABBED:
 				EGUI::GetCommandHND()->EndRecording();

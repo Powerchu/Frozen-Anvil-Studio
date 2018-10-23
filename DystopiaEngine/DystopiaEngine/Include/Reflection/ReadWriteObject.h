@@ -70,8 +70,10 @@ namespace Dystopia
 
 			struct _DLL_EXPORT Concept
 			{
-				virtual void Set(void *, void (*) (std::any, void*))    = 0;
-				virtual void Get(void *, void (*) (std::any))    = 0;
+				virtual void Set(void *, void (*) (std::any, void*))                    = 0;
+				virtual void Set(void *, void(*) (std::any, void*, std::any), std::any) = 0;
+				virtual void Get(void *, void (*) (std::any))                           = 0;
+				virtual void Reflect(const char *, void *, void(*) (const char *,std::any, std::any, void*)) = 0;
 				virtual Concept * Duplicate() const = 0;
 				virtual ~Concept(){}
 			};
@@ -115,11 +117,18 @@ namespace Dystopia
 					_fp(mObj.mSet.GetFunc(), _Address);
 
 				}
+				virtual void Set(void *_Address, void(*_fp) (std::any, void*, std::any), std::any _v)
+				{
+					_fp(mObj.mSet.GetFunc(), _Address, _v);
+				}
 				virtual void Get(void *_Address, void(*_fp) (std::any)) override
 				{
 					_fp(mObj.mGet(_Address));
 				}
-
+				virtual void Reflect(const char * _name,void *_Address, void(*_fp) (const char *, std::any, std::any, void*))
+				{
+					_fp(_name,mObj.mGet(_Address), mObj.mSet.GetFunc(), _Address);
+				}
 				~Wrapper(){}
 
 				T mObj;
@@ -163,6 +172,20 @@ namespace Dystopia
 			{
 				void(*passdown)(std::any, void*) = ResolveType_Set<SF>;
 				mpWrapper->Set(_Address, passdown);
+			}
+
+			template<typename SF, typename T>
+			void Set(void * _Address, SF, T _value)
+			{
+				void(*passdown)(std::any, void*, std::any) = ResolveType_Set<SF,T>;
+				mpWrapper->Set(_Address, passdown, _value);
+			}
+
+			template <typename SF>
+			void Reflect(const char * _name,void * _Address, SF)
+			{
+				void(*passdown)(const char *,std::any, std::any, void*) = ResolveType_Reflect<SF>;
+				mpWrapper->Reflect(_name,_Address, passdown);
 			}
 
 			operator bool() const { return mpWrapper; }
@@ -242,7 +265,73 @@ namespace Dystopia
 				};
 				return myMap;
 			}
+
+			template<typename SuperFunctor, typename T>
+			static void ResolveType_Set(std::any _a, void*_addr, std::any _value)
+			{
+				using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor, void*, std::any) >;
+				static FunctorMap MyMap = GenerateMap_Set<SuperFunctor, T>(typename HelperMeta::AllPossibleType::type{});
+
+				auto it = MyMap.find(_a.type().hash_code());
+				if (it != MyMap.end())
+				{
+					(*it).second(_a, SuperFunctor{}, _addr);
+				}
+				else
+				{
+					// Don't exist
+					SuperFunctor{}(std::nullptr_t{ nullptr }, _addr);
+				}
+			}
+
+			template<typename SuperFunctor, typename ValueType, typename ... T>
+			static auto GenerateMap_Set(Variant<T...>)
+			{
+				using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor, void*, std::any)>;
+				static FunctorMap myMap
+				{
+					std::make_pair
+					(
+						typeid(T).hash_code(),
+						[](std::any _a, SuperFunctor _f, void* _addr, std::any _v) {_f(std::any_cast<T>(_a), _addr, std::any_cast<ValueType>(_v)); }
+					)...
+				};
+				return myMap;
+			}
 		};
+
+		template<typename SuperFunctor>
+		static void ResolveType_Reflect(const char * _name, std::any _a, std::any _settor, void * _addr)
+		{
+			using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(const char *, std::any, SuperFunctor, std::any, void*)>;
+			static FunctorMap MyMap = GenerateMap_Reflect<SuperFunctor>(typename HelperMeta::AllPossibleType::type{});
+
+			auto it = MyMap.find(_a.type().hash_code());
+			if (it != MyMap.end())
+			{
+				(*it).second(_name,_a, SuperFunctor{}, _settor,_addr);
+			}
+			else
+			{
+				// Don't exist
+				SuperFunctor{}(_name,std::nullptr_t{ nullptr }, _settor, _addr);
+			}
+		}
+
+		template<typename SuperFunctor, typename ... T>
+		static auto GenerateMap_Reflect(Variant<T...>)
+		{
+			using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(const char *, std::any, SuperFunctor, std::any, void*)>;
+			static FunctorMap myMap
+			{
+				std::make_pair
+				(
+					typeid(T).hash_code(),
+					[](const char * _name,std::any _a, SuperFunctor _f, std::any _set, void * _addr) {_f(_name,std::any_cast<T>(_a), std::any_cast<std::function<void (T,void*)>>(_set),_addr); }
+				)...
+			};
+			return myMap;
+		}
 
 	}
 }

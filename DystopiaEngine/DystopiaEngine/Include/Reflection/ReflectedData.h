@@ -51,7 +51,8 @@ private:
 	{
 		T operator () (T _val, void * _obj)
 		{
-			return static_cast<C*>(_obj)->*mMemPtr = Ut::Forward<T>(_val);
+			static_cast<C*>(_obj)->*mMemPtr = Ut::Forward<T>(_val);
+			return static_cast<C*>(_obj)->*mMemPtr;
 		}
 
 		T C::* operator()(void)

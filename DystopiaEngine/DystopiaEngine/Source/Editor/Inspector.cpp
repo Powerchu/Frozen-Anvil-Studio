@@ -186,10 +186,10 @@ namespace Dystopia
 				auto & MetaData = c->GetMetaData();
 				if(MetaData)
 				{
-					auto  & AllReflectedData = MetaData.GetAllReflectedData();
+					auto & AllReflectedData = MetaData.GetAllReflectedData();
 					for (auto & i : AllReflectedData)
 					{
-						i.second.Set(c, SuperSetFunctor{});
+						i.second.Reflect(i.first,c, SuperReflectFunctor{});
 					}
 				}
 

@@ -70,6 +70,7 @@ namespace Dystopia
 
 		
 		float mFloat = 5.f;
+        int   mInt   = 25;
 		
 	private:
 
@@ -86,7 +87,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::Milestone, mFloat)
+PP_REFLECT(Dystopia::Milestone, mFloat, mInt)
 
 #endif //_Milestone_H_
 
