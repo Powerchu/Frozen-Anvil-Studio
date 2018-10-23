@@ -25,7 +25,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Defaults
 {
-	static const HashString g_Declined = "Untitled";
 	static const std::wstring g_Ext = L"dscene";
 	static constexpr COMDLG_FILTERSPEC g_Filter[1] =
 	{

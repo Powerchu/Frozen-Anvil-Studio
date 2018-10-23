@@ -70,6 +70,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/XGamePad.h"
 
 #include "../EditorProc.h"
+#include "../EditorInput.h"
 
 namespace
 {
@@ -124,7 +125,8 @@ namespace Dystopia
 		mpSceneSystem{ nullptr }, mpProfiler{ nullptr }, mTempSaveFile{}, mSceneHasChanged{ true },
 		mpEditorEventSys{ new EditorEventHandler{} }, mpInput{ new InputManager{} },
 		mpComdHandler{ new CommandHandler{} }, mpGuiSystem{ new GuiSystem{} }, mpTimer{ new Timer{} },
-		mpClipBoard{ new Clipboard{} }, mCtrlKey{ false }, mArrSelectedObj{ 100 }, mUpdateSelection{ true }
+		mpClipBoard{ new Clipboard{} }, mCtrlKey{ false }, mArrSelectedObj{ 100 }, mUpdateSelection{ true },
+		mpEditorInput{ new EditorInput{}  }
 	{}
 
 	Editor::~Editor(void)

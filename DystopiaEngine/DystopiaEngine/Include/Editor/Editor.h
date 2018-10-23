@@ -35,6 +35,7 @@ namespace Dystopia
 	class GameObject;
 	class BehaviourSystem;
 	class Component;
+	class EditorInput;
 
 	enum ePayloadTags;
 	enum eEditorState
@@ -113,6 +114,7 @@ namespace Dystopia
 		GuiSystem				*mpGuiSystem;
 		Timer					*mpTimer;
 		InputManager			*mpInput;
+		EditorInput				*mpEditorInput;
 
 		bool					mSceneHasChanged;
 		bool					mUpdateSelection;
