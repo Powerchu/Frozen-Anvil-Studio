@@ -22,9 +22,6 @@
     <ClCompile Include="Source\System\Window\WindowManager.cpp">
       <Filter>Game Engine\Systems\Window\WindowMgr</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Graphics\GraphicsSystem.cpp">
-      <Filter>Game Engine\Systems\Graphic</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\Editor.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
@@ -72,9 +69,6 @@
     </ClCompile>
     <ClCompile Include="Source\System\Scene\Scene.cpp">
       <Filter>Game Engine\Systems\Scene\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
-      <Filter>Game Engine\SubSystems\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Camera\CameraSystem.cpp">
       <Filter>Game Engine\Systems\Camera</Filter>
@@ -265,16 +259,24 @@
     <ClCompile Include="Source\System\Graphics\TextureAtlas.cpp">
       <Filter>Game Engine\SubSystems\Texture\Texture\Atlas</Filter>
     </ClCompile>
-    <ClCompile Include="Source\IO\BitmapParser.cpp">
-      <Filter>IO\ImageParser</Filter>
+    <ClCompile Include="Source\IO\Image.cpp">
+      <Filter>IO\ImageParser\Image</Filter>
     </ClCompile>
     <ClCompile Include="Source\IO\PNGParser.cpp">
-      <Filter>IO\ImageParser</Filter>
+      <Filter>IO\ImageParser\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IO\BitmapParser.cpp">
+      <Filter>IO\ImageParser\BMP</Filter>
     </ClCompile>
     <ClCompile Include="Source\IO\DDSParser.cpp">
-      <Filter>IO\ImageParser</Filter>
+      <Filter>IO\ImageParser\DDS</Filter>
     </ClCompile>
-    <ClCompile Include="Source\IO\Image.cpp" />
+    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
+      <Filter>Game Engine\SubSystems\Mesh\MeshSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\GraphicsSystem.cpp">
+      <Filter>Game Engine\Systems\Graphic\GraphicSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -339,9 +341,6 @@
     </ClInclude>
     <ClInclude Include="Include\System\Window\WindowManager.h">
       <Filter>Game Engine\Systems\Window\WindowMgr</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\GraphicsSystem.h">
-      <Filter>Game Engine\Systems\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="Include\DataStructure\Queue.h">
       <Filter>DataStructures</Filter>
@@ -435,9 +434,6 @@
     </ClInclude>
     <ClInclude Include="Include\DataStructure\SharedPtr.h">
       <Filter>DataStructures\Pointers</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
-      <Filter>Game Engine\SubSystems\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\VertexDefs.h">
       <Filter>Game Engine\SubSystems\Mesh</Filter>
@@ -746,7 +742,13 @@
       <Filter>Game Engine\SubSystems\Texture\Texture\Atlas</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\Image.h">
-      <Filter>Game Engine\SubSystems\Texture\Texture</Filter>
+      <Filter>IO\ImageParser\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
+      <Filter>Game Engine\SubSystems\Mesh\MeshSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\GraphicsSystem.h">
+      <Filter>Game Engine\Systems\Graphic\GraphicSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1070,6 +1072,24 @@
     </Filter>
     <Filter Include="IO\ImageParser">
       <UniqueIdentifier>{8fc9bc42-e537-436b-9608-0fb8466bebc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\ImageParser\Image">
+      <UniqueIdentifier>{4e5a18a1-9470-4410-b912-eeadf33ae0ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\ImageParser\PNG">
+      <UniqueIdentifier>{f8bbf271-1003-43a6-9c54-71af498d2fea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\ImageParser\BMP">
+      <UniqueIdentifier>{dc3c0520-38ef-4426-b7d8-3b558bff7bc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\ImageParser\DDS">
+      <UniqueIdentifier>{44ee47a8-4e3d-4d72-bbf3-9ea5914144ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Mesh\MeshSystem">
+      <UniqueIdentifier>{a96e69f4-5b52-41c9-9c07-589491f8a8df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\GraphicSystem">
+      <UniqueIdentifier>{9104936d-7b9d-40bf-914b-c215841bc815}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -96,6 +96,7 @@ Image* ImageParser::LoadDDS(const std::string& _path)
 	// Check if the magic number is valid
 	if (pixelFormat.mFlags & 0x4)
 	{
+		img->mbCompressed = true;
 		switch (pixelFormat.mMagic)
 		{
 		case '1TXD':
@@ -115,10 +116,6 @@ Image* ImageParser::LoadDDS(const std::string& _path)
 			break;
 		case '01XD':
 			file >> extra;
-			DEBUG_LOG(true, "ImageLoader Warning: Unable to open DXT10 format %s !\n", _path.c_str());
-			Dystopia::DefaultAllocator<Image>::Free(img);
-			return nullptr;
-			break;
 		default:
 			DEBUG_LOG(true, "ImageLoader Warning: File %s is an unknown DDS format!\n", _path.c_str());
 			Dystopia::DefaultAllocator<Image>::Free(img);
@@ -131,6 +128,8 @@ Image* ImageParser::LoadDDS(const std::string& _path)
 	else
 	{
 		// Assume uncompressed
+		img->mbCompressed = false;
+
 		if (pixelFormat.mBitCount == 32)
 		{
 			img->mnRawFormat = GL_RGBA;

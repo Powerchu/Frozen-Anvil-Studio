@@ -185,14 +185,14 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->UseShader();
-	texture->BindTexture();
+	texture->Bind();
 
 	shader->UploadUniform("ProjectViewMat", Project * View);
 	shader->UploadUniform("ModelMat", Math::Scale(w * 1.f, h * 1.f));
 	shader->UploadUniform("Gamma", mfGamma);
 
 	mesh->UseMesh(GL_TRIANGLES);
-	texture->UnbindTexture();
+	texture->Unbind();
 
 	pWinSys->GetMainWindow().Show();
 	SwapBuffers(
@@ -226,14 +226,14 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 				{
 					s->UseShader();
 
-					t->BindTexture();
+					t->Bind();
 					s->UploadUniform("ProjectViewMat", _ProjView);
 					s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
 					s->UploadUniform("Gamma", mfGamma);
 
 					r->Draw();
 
-					t->UnbindTexture();
+					t->Unbind();
 				}
 				else
 				{
@@ -303,9 +303,11 @@ void Dystopia::GraphicsSystem::Update(float)
 	ScopedTimer<ProfilerAction> timeKeeper{"Graphics System", "Update"};
 	StartFrame();
 
-	mGameView.BindFramebuffer();
+	mGameView.Bind();
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
+
+	glViewport(0, 0, 2048, 2048);
 
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
@@ -327,7 +329,7 @@ void Dystopia::GraphicsSystem::Update(float)
 				DrawDebug(Cam, ProjView);
 		}
 	}
-	mGameView.UnbindFramebuffer();
+	mGameView.Unbind();
 
 	// TODO: Final draw to combine layers & draw to screen
 
@@ -409,17 +411,7 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _strName)
 {
-	size_t first = _strName.rfind("/");
-	if (first == std::string::npos)
-	{
-		first = _strName.rfind("\\");
-	}
-
-	std::string strName = _strName.substr(first, _strName.find_first_of('.', first));
-	if (texturelist.find(strName) != texturelist.end())
-		return texturelist[strName];
-
-	return texturelist[strName] = new Texture2D{ _strName };
+	return EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadTexture(_strName);
 }
 
 Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _filePath)
@@ -532,6 +524,11 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: %d bit colour, %d bits depth, %d bit stencil\n", pfd.cColorBits, pfd.cDepthBits, pfd.cStencilBits);
 
 #endif
+
+	if (!wglewIsSupported("WGL_EXT_swap_control"))
+	{
+		mAvailable &= ~(eGfxSettings::GRAPHICS_VSYNC);
+	}
 
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);

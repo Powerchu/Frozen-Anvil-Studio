@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _TEXTURE2D_H_
-#define _TEXTURE2D_H_
+#ifndef _TEXTUREATLAS_H_
+#define _TEXTUREATLAS_H_
 
 #include <string>
 
@@ -29,7 +29,11 @@ namespace Dystopia
 		explicit TextureAtlas(const std::string&);
 		~TextureAtlas(void) noexcept;
 
+		void Bind(void) const noexcept;
+		void Unbind(void) const noexcept;
 
+		std::string GetName(void) const;
+		std::string const& GetPath(void) const noexcept;
 
 	private:
 

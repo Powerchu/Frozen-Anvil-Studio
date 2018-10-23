@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class Texture;
+	class TextureAtlas;
 
 	class TextureSystem
 	{
@@ -35,10 +36,11 @@ namespace Dystopia
 		TextureSystem(void) noexcept;
 		~TextureSystem(void) noexcept;
 
-		template <typename Ty>
-		Ty* GetTexture(const std::string&);
+		template <typename Ty = Texture>
+		Ty* GetTexture(const std::string& _strName);
+		TextureAtlas* GetAtlas(const std::string& _strName);
 
-		template <typename Ty>
+		template <typename Ty = Texture>
 		Ty* LoadTexture(const std::string&);
 
 		template <typename Ty>
@@ -47,6 +49,7 @@ namespace Dystopia
 	private:
 
 		MagicArray<Texture> mTextures;
+		MagicArray<TextureAtlas> mAtlas;
 	};
 }
 
@@ -65,8 +68,7 @@ Ty* Dystopia::TextureSystem::GetTexture(const std::string& _strName)
 		return _strName == _t.GetName();
 	});
 
-	if (it != mTextures.end())
-		return static_cast<Ty*>(&*it);
+	if (it) return static_cast<Ty*>(&*it);
 	
 	return nullptr;
 }
@@ -90,29 +92,26 @@ Ty* Dystopia::TextureSystem::LoadTexture(const std::string& _strPath)
 	if ('p' == *fileType || 'P' == *fileType)
 	{
 		img = ImageParser::LoadPNG(_strPath);
-		ret = mTextures.EmplaceAs<Ty>(_strPath);
-
-		ret->InitTexture(img);
 	}
 	else if ('b' == *fileType || 'B' == *fileType)
 	{
 		img = ImageParser::LoadBMP(_strPath);
-		ret = mTextures.EmplaceAs<Ty>(_strPath);
-
-		ret->InitTexture(img);
 	}
 	else if ('d' == *fileType || 'D' == *fileType)
 	{
 		img = ImageParser::LoadDDS(_strPath);
-		ret = mTextures.EmplaceAs<Ty>(_strPath);
-
-		ret->InitCompressedTexture(img);
 	}
-	
+
+	ret = mTextures.EmplaceAs<Ty>(_strPath);
+	ret->LoadTexture(img);
+
 	DefaultAllocator<Image>::Free(img);
 
 	return ret;
 }
+
+template <>
+Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(const std::string&);
 
 template<typename Ty>
 Ty* Dystopia::TextureSystem::LoadRaw(Image const *_ptr)

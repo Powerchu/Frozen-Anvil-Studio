@@ -180,6 +180,7 @@ namespace BMP
 	Image* ReadData(Dystopia::BinarySerializer& _in, InfoBMP& _info, ColorRGBA(&_palette)[256])
 	{
 		Image* data = Dystopia::DefaultAllocator<Image>::ConstructAlloc(
+			false,
 			static_cast<unsigned>(GL_RGBA), static_cast<unsigned>(GL_RGBA),
 			static_cast<unsigned>(_info.mWidth ), 
 			static_cast<unsigned>(_info.mHeight),

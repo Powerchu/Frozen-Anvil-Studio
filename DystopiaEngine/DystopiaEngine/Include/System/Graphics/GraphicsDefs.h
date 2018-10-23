@@ -21,6 +21,7 @@ namespace Dystopia
 		GRAPHICS_MSAA				= 1 << 0,
 		GRAPHICS_FXAA				= 1 << 1,
 		GRAPHICS_COMPUTE			= 1 << 3,
+		GRAPHICS_VSYNC				= 1 << 4,
 
 		GRAPHICS_GEOG				= 1 << 12,
 		GRAPHICS_TESS				= 1 << 13,

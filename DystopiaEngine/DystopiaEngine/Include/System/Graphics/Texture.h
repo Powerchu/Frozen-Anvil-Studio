@@ -31,8 +31,8 @@ namespace Dystopia
 
 		virtual ~Texture(void);
 
-		void BindTexture(void) const noexcept;
-		void UnbindTexture(void) const noexcept;
+		void Bind(void) const noexcept;
+		void Unbind(void) const noexcept;
 
 		unsigned GetWidth(void) const noexcept;
 		unsigned GetHeight(void) const noexcept;
@@ -44,12 +44,13 @@ namespace Dystopia
 		unsigned GetID(void) const noexcept;
 
 		std::string GetName(void) const;
-		std::string const& GetPath(void) const;
+		std::string const& GetPath(void) const noexcept;
 
 	protected:
 
 		std::string mstrPath;
 		unsigned mnWidth, mnHeight, mnType, mnID;
+		bool mbPureRGB;
 	};
 }
 

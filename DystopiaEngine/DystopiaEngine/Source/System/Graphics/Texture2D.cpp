@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/Texture2D.h"
+#include "System/Graphics/Texture.h"
 
 #include "IO/Image.h"
 #include "IO/ImageParser.h"
@@ -25,7 +26,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 Dystopia::Texture2D::Texture2D(const std::string& _strPath) noexcept
 	: Texture{ GL_TEXTURE_2D, _strPath }
 {
+	Bind();
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+
+	Unbind();
 }
 
 Dystopia::Texture2D::~Texture2D(void) noexcept
@@ -34,16 +43,24 @@ Dystopia::Texture2D::~Texture2D(void) noexcept
 
 void Dystopia::Texture2D::GenerateMipmap(void) const
 {
-	BindTexture();
+	Bind();
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	UnbindTexture();
+	Unbind();
+}
+
+void Dystopia::Texture2D::LoadTexture(Image const * _pData)
+{
+	if (_pData->mbCompressed)
+		InitCompressedTexture(_pData);
+	else
+		InitTexture(_pData);
 }
 
 void Dystopia::Texture2D::InitTexture(Image const* _pData)
 {
-	BindTexture();
+	Bind();
 
 	auto w = _pData->mnWidth;
 	auto h = _pData->mnHeight;
@@ -67,18 +84,12 @@ void Dystopia::Texture2D::InitTexture(Image const* _pData)
 #   endif 
 	}
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-
-	UnbindTexture();
+	Unbind();
 }
 
 void Dystopia::Texture2D::InitCompressedTexture(Image const* _pData)
 {
-	BindTexture();
+	Bind();
 
 	unsigned blksz = _pData->mnRawFormat == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
 
@@ -106,13 +117,7 @@ void Dystopia::Texture2D::InitCompressedTexture(Image const* _pData)
 #   endif
 	}
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-
-	UnbindTexture();
+	Unbind();
 }
 
 

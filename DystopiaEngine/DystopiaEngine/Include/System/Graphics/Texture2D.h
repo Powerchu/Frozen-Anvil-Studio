@@ -29,6 +29,9 @@ namespace Dystopia
 
 		void GenerateMipmap(void) const;
 
+		void LoadTexture(Image const *);
+
+	private:
 		void InitTexture(Image const*);
 		void InitCompressedTexture(Image const*);
 	};

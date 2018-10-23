@@ -93,7 +93,7 @@ namespace Dystopia
 		AutoArray<Systems*> mSystemList;
 		AutoArray<Systems*> mSystemTable;
 
-		float mfAccumulatedTime;
+		std::int64_t mAccumulatedTime;
 
 		EngineCore(void);
 

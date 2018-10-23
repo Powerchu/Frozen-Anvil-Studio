@@ -168,6 +168,7 @@ private:
 
 		Val_t& operator* (void) const noexcept;
 		Ptr_t operator->(void) const noexcept;
+		bool operator== (std::nullptr_t)  const noexcept;
 		bool operator== (const Iterator&) const noexcept;
 		bool operator!= (const Iterator&) const noexcept;
 
@@ -604,6 +605,18 @@ template<typename T, typename PP>
 inline typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Iterator::operator->(void) const noexcept
 {
 	return mpAt;
+}
+
+template<typename T, typename PP>
+inline bool MagicArray<T, PP>::Iterator::operator == (std::nullptr_t) const noexcept
+{
+	return mpAt == nullptr;
+}
+
+template<typename T, typename PP>
+inline bool operator == (std::nullptr_t, typename MagicArray<T, PP>::Iterator const& _rhs) noexcept
+{
+	return _rhs == nullptr;
 }
 
 template<typename T, typename PP>

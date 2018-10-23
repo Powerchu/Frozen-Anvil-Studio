@@ -46,6 +46,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Time/ScopedTimer.h"
 
 // STL Includes
+#include <chrono>
 #include <string>
 #include <filesystem>
 
@@ -113,7 +114,7 @@ Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mTime{}, mTimeFixed{}, mfAccumulatedTime{ 0 }, mMessageQueue{ 60 }, mSystemList{ Ut::SizeofList<AllSys>::value },
+	mTime{}, mTimeFixed{}, mAccumulatedTime{ 0 }, mMessageQueue{ 60 }, mSystemList{ Ut::SizeofList<AllSys>::value },
 	mSubSystems { MakeAutoArray<void*>(Ut::MakeTypeList_t<Ut::TypeList, SubSys>{}) },
 	mSystemTable{ MakeAutoArray<Systems*>(Ut::MakeTypeList_t<Ut::TypeList, AllSys>{}) }
 {
@@ -179,12 +180,15 @@ void Dystopia::EngineCore::Init(void)
 
 	mTime.Lap();
 	mTimeFixed.Lap();
-	mfAccumulatedTime = 0;
+	mAccumulatedTime = 0;
 }
 
 void Dystopia::EngineCore::Interrupt(void)
 {
-	mfAccumulatedTime += mTimeFixed.Elapsed();
+	auto prev = mTimeFixed.Time();
+	mTimeFixed.Lap();
+
+	mAccumulatedTime += (mTimeFixed.Time() - prev).count();
 }
 
 void Dystopia::EngineCore::InterruptContinue(void)
@@ -194,17 +198,18 @@ void Dystopia::EngineCore::InterruptContinue(void)
 
 void Dystopia::EngineCore::FixedUpdate(void)
 {
-	mfAccumulatedTime += mTimeFixed.Elapsed();
+	auto prev = mTimeFixed.Time();
 	mTimeFixed.Lap();
 
-	while (mfAccumulatedTime > _FIXED_UPDATE_DT)
+	mAccumulatedTime += (mTimeFixed.Time() - prev).count();
+	while (mAccumulatedTime > _FIXED_UPDATE_DT)
 	{
 		for (auto& e : mSystemList)
 		{
 			e->FixedUpdate(_FIXED_UPDATE_DT);
 		}
 
-		mfAccumulatedTime -= _FIXED_UPDATE_DT;
+		mAccumulatedTime -= _FIXED_UPDATE_DT;
 	}
 }
 

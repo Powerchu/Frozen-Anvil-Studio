@@ -51,7 +51,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _DLL_EXPORT
 #endif
 
-#define _FIXED_UPDATE_DT		.02f
+#define _FIXED_UPDATE_DT		20000000Ui64
 
 
 #endif		// INCLUDE GUARD

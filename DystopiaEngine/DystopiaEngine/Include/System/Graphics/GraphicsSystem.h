@@ -88,8 +88,9 @@ namespace Dystopia
 		float mfGamma;
 		float mfDebugLineWidth;
 
-		void* mOpenGL;
-		int mPixelFormat, mAvailable;
+		void* mOpenGL; 
+		int mPixelFormat;
+		int mAvailable, mSettings;
 		Framebuffer mGameView, mUIView;
 
 		bool mbDebugDraw;

@@ -17,19 +17,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Texture::Texture(void) noexcept :
-	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ 0 }, mnID{ 0 }
+	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ 0 }, mnID{ 0 }, mbPureRGB{ true }
 {
 	glGenTextures(1, &mnID);
 }
 
 Dystopia::Texture::Texture(unsigned _nType, const std::string& _strPath) noexcept :
-	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ _nType }, mnID{ 0 }, mstrPath{ _strPath }
+	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ _nType }, mnID{ 0 }, mstrPath{ _strPath }, mbPureRGB{ false }
 {
 	glGenTextures(1, &mnID);
 }
 
 Dystopia::Texture::Texture(unsigned _nWidth, unsigned _nHeight, unsigned _nType) noexcept :
-	mnWidth{ _nWidth }, mnHeight{ _nHeight }, mnType{ _nType }, mnID{ 0 }
+	mnWidth{ _nWidth }, mnHeight{ _nHeight }, mnType{ _nType }, mnID{ 0 }, mbPureRGB{ false }
 {
 	glGenTextures(1, &mnID);
 }
@@ -40,12 +40,12 @@ Dystopia::Texture::~Texture(void)
 }
 
 
-void Dystopia::Texture::BindTexture(void) const noexcept
+void Dystopia::Texture::Bind(void) const noexcept
 {
 	glBindTexture(mnType, mnID);
 }
 
-void Dystopia::Texture::UnbindTexture(void) const noexcept
+void Dystopia::Texture::Unbind(void) const noexcept
 {
 	glBindTexture(mnType, 0);
 }
@@ -88,7 +88,7 @@ std::string Dystopia::Texture::GetName(void) const
 	return mstrPath.substr(mstrPath.find_last_of("/\\") + 1);
 }
 
-std::string const& Dystopia::Texture::GetPath(void) const
+std::string const& Dystopia::Texture::GetPath(void) const noexcept
 {
 	return mstrPath;
 }

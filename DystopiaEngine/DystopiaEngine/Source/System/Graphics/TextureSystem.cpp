@@ -17,6 +17,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Texture2D.h"
 #include "System/Graphics/TextureAtlas.h"
 
+#include "DataStructure/MagicArray.h"
+
 
 Dystopia::TextureSystem::TextureSystem(void) noexcept
 	: mTextures{}
@@ -26,6 +28,27 @@ Dystopia::TextureSystem::TextureSystem(void) noexcept
 Dystopia::TextureSystem::~TextureSystem(void) noexcept
 {
 	mTextures.clear();
+}
+
+Dystopia::TextureAtlas* Dystopia::TextureSystem::GetAtlas(const std::string& _strName)
+{
+	auto it = Ut::Find(mAtlas.begin(), mAtlas.end(), [&_strName](const TextureAtlas& _t) {
+		return _strName == _t.GetName();
+	});
+	
+	if (it) return (&*it);
+
+	return nullptr;
+}
+
+template <>
+Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(const std::string& _strPath)
+{
+	// Hardcoded default texture settings
+	// Because we have no idea what the texture should be loaded as
+	// We can allow the user to change it later
+
+	return LoadTexture<Texture2D>(_strPath);
 }
 
 

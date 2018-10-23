@@ -18,6 +18,7 @@ namespace Dystopia
 {
 	struct Image
 	{
+		bool mbCompressed;
 		unsigned mnRawFormat, mnFormat;
 		unsigned mnWidth, mnHeight;
 		unsigned mnChannels;

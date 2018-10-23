@@ -33,8 +33,8 @@ namespace Dystopia
 
 		void Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha = true);
 
-		void BindFramebuffer(void) const noexcept;
-		void UnbindFramebuffer(void) const noexcept;
+		void Bind(void) const noexcept;
+		void Unbind(void) const noexcept;
 
 		Texture* AsTexture(void) const noexcept;
 

@@ -57,13 +57,7 @@ void Dystopia::Camera::Init(void)
 	if (mnFlags & eObjFlag::FLAG_RESERVED)
 		mnFlags |= eObjFlag::FLAG_ACTIVE;
 
-
-	mProjection = Math::Matrix4{
-		2.f / 800.f, .0f, .0f, .0f,
-		.0f, -2.f / 500.f, .0f, .0f,
-		.0f, .0f, -1.f / 1000.f, .0f,
-		.0f, .0f, .0f, 1.f
-	};
+	SetOrthographic(800.f, 500.f, -500.f, 500.f);
 }
 
 /*
@@ -197,7 +191,7 @@ void Dystopia::Camera::SetPerspective(float _fLeft, float _fRight, float _fTop, 
 
 void Dystopia::Camera::SetOrthographic(float _fWidth, float _fHeight, float _fNear, float _fFar)
 {
-	float fDistZ = 1.f / _fFar - _fNear;
+	float fDistZ = 1.f / (_fFar - _fNear);
 
 	mProjection = Math::Matrix4{
 		2.f / _fWidth, .0f               , .0f          , .0f,

@@ -51,21 +51,21 @@ void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight, bool _bAlp
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _nWidth, _nHeight);
 
 	// Bind the texture and stencil buffer to the FBO
-	BindFramebuffer();
+	Bind();
 	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mpTexture->GetID(), 0);
 	glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthBuffer);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	UnbindFramebuffer();
+	Unbind();
 }
 
 
-void Dystopia::Framebuffer::BindFramebuffer(void) const noexcept
+void Dystopia::Framebuffer::Bind(void) const noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mnID);
 }
 
-void Dystopia::Framebuffer::UnbindFramebuffer(void) const noexcept
+void Dystopia::Framebuffer::Unbind(void) const noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
