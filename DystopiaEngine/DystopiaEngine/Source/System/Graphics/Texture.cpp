@@ -17,19 +17,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Texture::Texture(void) noexcept :
-	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ 0 }, mnID{ 0 }, mbPureRGB{ true }
+	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ 0 }, mnID{ 0 }
 {
 	glGenTextures(1, &mnID);
 }
 
 Dystopia::Texture::Texture(unsigned _nType, const std::string& _strPath) noexcept :
-	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ _nType }, mnID{ 0 }, mstrPath{ _strPath }, mbPureRGB{ false }
+	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ _nType }, mnID{ 0 }, mstrPath{ _strPath }
 {
 	glGenTextures(1, &mnID);
 }
 
 Dystopia::Texture::Texture(unsigned _nWidth, unsigned _nHeight, unsigned _nType) noexcept :
-	mnWidth{ _nWidth }, mnHeight{ _nHeight }, mnType{ _nType }, mnID{ 0 }, mbPureRGB{ false }
+	mnWidth{ _nWidth }, mnHeight{ _nHeight }, mnType{ _nType }, mnID{ 0 }
 {
 	glGenTextures(1, &mnID);
 }
