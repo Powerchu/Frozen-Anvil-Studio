@@ -8,6 +8,7 @@
 #include "Globals.h"
 #include "DataStructure/SharedPtr.h"
 #define _ALL_TYPE_QUALIFERS_(_TYPE_) _TYPE_, const _TYPE_, _TYPE_ *, const _TYPE_ *, _TYPE_ * const, _TYPE_ const * const
+#define _VOID_RETURN_FUNC_TYPE_(...) std::function<void(__VA_ARGS__, void *)>
 namespace Dystopia
 {
 	namespace TypeErasure
@@ -26,11 +27,24 @@ namespace Dystopia
 				                       _ALL_TYPE_QUALIFERS_(std::string),
 				                       _ALL_TYPE_QUALIFERS_(unsigned int),
 								       _ALL_TYPE_QUALIFERS_(unsigned char),
-									  _ALL_TYPE_QUALIFERS_(unsigned short),
-									  _ALL_TYPE_QUALIFERS_(long),
-					                  _ALL_TYPE_QUALIFERS_(unsigned long),
-									  _ALL_TYPE_QUALIFERS_(long long),
-					                  _ALL_TYPE_QUALIFERS_(unsigned long long)
+									   _ALL_TYPE_QUALIFERS_(unsigned short),
+									   _ALL_TYPE_QUALIFERS_(long),
+					                   _ALL_TYPE_QUALIFERS_(unsigned long),
+									   _ALL_TYPE_QUALIFERS_(long long),
+					                   _ALL_TYPE_QUALIFERS_(unsigned long long),
+					                   _VOID_RETURN_FUNC_TYPE_(int),
+					                   _VOID_RETURN_FUNC_TYPE_(float),
+					                   _VOID_RETURN_FUNC_TYPE_(double),
+					                   _VOID_RETURN_FUNC_TYPE_(short),
+					                   _VOID_RETURN_FUNC_TYPE_(char),
+					                   _VOID_RETURN_FUNC_TYPE_(std::string),
+					                   _VOID_RETURN_FUNC_TYPE_(unsigned int),
+					                   _VOID_RETURN_FUNC_TYPE_(unsigned char),
+					                   _VOID_RETURN_FUNC_TYPE_(unsigned short),
+					                   _VOID_RETURN_FUNC_TYPE_(long),
+					                   _VOID_RETURN_FUNC_TYPE_(unsigned long),
+					                   _VOID_RETURN_FUNC_TYPE_(long long),
+					                   _VOID_RETURN_FUNC_TYPE_(unsigned long long)
 
 				>;
 			};
@@ -56,7 +70,7 @@ namespace Dystopia
 
 			struct _DLL_EXPORT Concept
 			{
-				virtual void Set(std::function<void(std::any)> _functor) = 0;
+				virtual void Set(void *, void (*) (std::any, void*))    = 0;
 				virtual void Get(void *, void (*) (std::any))    = 0;
 				virtual Concept * Duplicate() const = 0;
 				virtual ~Concept(){}
@@ -96,9 +110,10 @@ namespace Dystopia
 					return new Wrapper{ *this };
 				}
 
-				virtual void Set(std::function<void(std::any)> _functor) override
+				virtual void Set(void *_Address, void(*_fp) (std::any, void*)) override
 				{
-					_functor(mObj);
+					_fp(mObj.mSet.GetFunc(), _Address);
+
 				}
 				virtual void Get(void *_Address, void(*_fp) (std::any)) override
 				{
@@ -143,7 +158,12 @@ namespace Dystopia
 				mpWrapper->Get(_Address, passdown);
 			}
 
-			void Set(std::function<void(std::any)> _SuperFunctor);
+			template<typename SF>
+			void Set(void * _Address, SF)
+			{
+				void(*passdown)(std::any, void*) = ResolveType_Set<SF>;
+				mpWrapper->Set(_Address, passdown);
+			}
 
 			operator bool() const { return mpWrapper; }
 
@@ -190,6 +210,38 @@ namespace Dystopia
 				return myMap;
 			}
 
+			template<typename SuperFunctor>
+			static void ResolveType_Set(std::any _a, void*_addr)
+			{
+				using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor, void*) >;
+				static FunctorMap MyMap = GenerateMap_Set<SuperFunctor>(typename HelperMeta::AllPossibleType::type{});
+
+				auto it = MyMap.find(_a.type().hash_code());
+				if (it != MyMap.end())
+				{
+					(*it).second(_a, SuperFunctor{}, _addr);
+				}
+				else
+				{
+					// Don't exist
+					SuperFunctor{}(std::nullptr_t{ nullptr }, _addr);
+				}
+			}
+
+			template<typename SuperFunctor, typename ... T>
+			static auto GenerateMap_Set(Variant<T...>)
+			{
+				using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor, void*)>;
+				static FunctorMap myMap
+				{
+					std::make_pair
+					(
+						typeid(T).hash_code(),
+						[](std::any _a, SuperFunctor _f, void* _addr) {_f(std::any_cast<T>(_a), _addr); }
+					)...
+				};
+				return myMap;
+			}
 		};
 
 	}

@@ -26,7 +26,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility/Utility.h"
 #include "Utility/MetaAlgorithms.h"
-
+#include "Editor/EGUI.h"
+#include <functional>
 namespace Dystopia
 {
 	template<typename A, typename B>
@@ -149,15 +150,89 @@ namespace Dystopia
 	struct SuperGetFunctor
 	{
 		template<typename T>
-		void operator()(T value) { __debugbreak(); }
+		void operator()(T value) {  }
 
 		template<>
 		void operator()(float value)
 		{
-			__debugbreak();
-		}
-	};
 
+		}
+		template<>
+		void operator()(int value)
+		{
+
+		}	
+	};
+	struct SuperSetFunctor
+	{
+		template<typename T>
+		void operator()(T _value, void *)
+		{
+			
+		}
+		//template<>
+		//void operator()(float * _ptr)
+		//{
+		//	switch (EGUI::Display::DragFloat("Test", _ptr, 0.01f, 0.0f, 2.0f))
+		//	{
+		//	case EGUI::eDragStatus::eEND_DRAG:
+		//		EGUI::GetCommandHND()->EndRecording();
+		//		break;
+		//	case EGUI::eDragStatus::eENTER:
+		//		EGUI::GetCommandHND()->EndRecording();
+		//		break;
+		//	case EGUI::eDragStatus::eDRAGGING:
+		//		break;
+		//	case EGUI::eDragStatus::eSTART_DRAG:
+		//		//EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfDynamicFriction);
+		//		break;
+		//	case EGUI::eDragStatus::eDEACTIVATED:
+		//		EGUI::GetCommandHND()->EndRecording();
+		//		break;
+		//	case EGUI::eDragStatus::eNO_CHANGE:
+		//		break;
+		//	case EGUI::eDragStatus::eTABBED:
+		//		EGUI::GetCommandHND()->EndRecording();
+		//		break;
+		//	default:
+		//		break;
+		//	}
+		//}
+
+
+		template<>
+		void operator()(std::function<void(float, void*)> _f, void * _addr)
+		{
+
+			float Temp = ;
+			switch (EGUI::Display::DragFloat("Test", &Temp, 0.01f, 0.0f, 2.0f))
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				_f(Temp, _addr);
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				//EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfDynamicFriction);
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default:
+				break;
+			}
+		}
+
+	};
 }
 
 #endif //_AUX_META_HELPER_H_

@@ -189,7 +189,7 @@ namespace Dystopia
 					auto  & AllReflectedData = MetaData.GetAllReflectedData();
 					for (auto & i : AllReflectedData)
 					{
-						i.second.Get(c, SuperGetFunctor{});
+						i.second.Set(c, SuperSetFunctor{});
 					}
 				}
 

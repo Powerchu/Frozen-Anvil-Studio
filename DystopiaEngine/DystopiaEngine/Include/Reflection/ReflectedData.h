@@ -47,13 +47,27 @@ private:
 	};
 
 	template <typename T>
-	struct _DLL_EXPORT DefaultSet
+	struct DefaultSet
 	{
-		T operator () (void* _obj, T&& _val) const
+		T operator () (T _val, void * _obj)
 		{
-			static_cast<C*>(_obj)->*mMemPtr = Ut::Forward<T>(_val);
+			return static_cast<C*>(_obj)->*mMemPtr = Ut::Forward<T>(_val);
 		}
 
+		T C::* operator()(void)
+		{
+			return mMemPtr;
+		}
+
+		T *operator()(void * _thisPtr) const
+		{
+			return reinterpret_cast<T *>(&(reinterpret_cast<C*>(_thisPtr)->*mMemPtr));
+		}
+
+		std::function<void(T, void*)> GetFunc()
+		{
+			return std::function<void(T, void*)>{DefaultSet{ *this }};
+		}
 		T C::*mMemPtr;
 	};
 	
