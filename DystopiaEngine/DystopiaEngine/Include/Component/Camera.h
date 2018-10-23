@@ -70,12 +70,10 @@ namespace Dystopia
 		// Sets the Camera's position in *GLOBAL* coordinates
 		void SetPosition(const float _x, const float _y, const float _z = -1000);
 
-		// Modifies the view area of the camera
-		void SetSize(const unsigned _nWidth, const unsigned _nHeight);
-
 		void SetRotation(const float);
 		void SetRotationDeg(const float);
 
+		void SetSurface(Framebuffer*);
 
 		// Set the area the camera renders to in relative coordinates, from 0.0 to 1.0
 		void SetViewport(float _x, float _y, float _nWidth, float _nHeight);
@@ -90,9 +88,10 @@ namespace Dystopia
 
 		Math::Vec4 GetSize(void) const;
 
-		const Gfx::Viewport& GetViewport(void) const;
-		const Math::Matrix4& GetViewMatrix(void);
-		const Math::Matrix4& GetProjectionMatrix(void);
+		Framebuffer* GetSurface(void) const noexcept;
+		const Gfx::Viewport GetViewport(void) const;
+		const Math::Matrix4& GetViewMatrix(void) noexcept;
+		const Math::Matrix4& GetProjectionMatrix(void) noexcept;
 
 		Camera* Duplicate(void) const;
 		void Serialise(TextSerialiser&) const;

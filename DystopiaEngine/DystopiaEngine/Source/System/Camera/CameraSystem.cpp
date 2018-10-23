@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::CameraSystem::CameraSystem(void) noexcept
-	: mpMasterCam{ nullptr }, mpUICam{ nullptr }//, mMasterViewport{}
+	: mpMasterCam{ nullptr }, mpUICam{ nullptr }
 {
 
 }
@@ -35,8 +35,7 @@ bool Dystopia::CameraSystem::Init(void)
 
 void Dystopia::CameraSystem::PostInit(void)
 {
-	//mMasterViewport.mnWidth  = 2048;
-	//mMasterViewport.mnHeight = 2048;
+
 }
 
 void Dystopia::CameraSystem::Update(float)

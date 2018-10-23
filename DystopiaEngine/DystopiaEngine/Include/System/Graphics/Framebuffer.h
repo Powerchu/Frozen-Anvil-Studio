@@ -36,6 +36,9 @@ namespace Dystopia
 		void Bind(void) const noexcept;
 		void Unbind(void) const noexcept;
 
+		unsigned GetWidth(void) const;
+		unsigned GetHeight(void) const;
+
 		Texture* AsTexture(void) const noexcept;
 
 	private:

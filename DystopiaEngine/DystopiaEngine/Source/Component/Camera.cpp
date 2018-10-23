@@ -14,9 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Component/Camera.h"		// File header
 #include "Component/Transform.h"
-#include "Math/Matrix4.h"
-#include "Math/MathUtility.h"
 
+#include "System/Graphics/Framebuffer.h"
 #include "System/Camera/CameraSystem.h"
 #include "System/Driver/Driver.h"
 #include "System/Scene/SceneSystem.h"
@@ -24,6 +23,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
+
+#include "Math/Matrix4.h"
+#include "Math/MathUtility.h"
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -35,14 +37,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
 	mViewport{0, 0, _fWidth, _fHeight}, mView{}, mProjection{},
-	mInvScreen {}
+	mInvScreen{}, mpSurface{ nullptr }
 {
 
 }
 
 Dystopia::Camera::Camera(const Camera& _oOther) : Component{ _oOther }, 
 	mViewport{ _oOther.mViewport }, mView{ _oOther.mView }, mProjection{},
-	mInvScreen{ _oOther.mInvScreen }
+	mInvScreen{ _oOther.mInvScreen }, mpSurface{ _oOther.mpSurface }
 {
 
 }
@@ -153,8 +155,21 @@ void Dystopia::Camera::SetCamera(void)
 	mView.AffineInverse();
 }
 
+void Dystopia::Camera::SetSurface(Framebuffer* _ptr)
+{
+	mpSurface = _ptr;
+}
+
 void Dystopia::Camera::SetViewport(float _x, float _y, float _nWidth, float _nHeight)
 {
+#if EDITOR
+	if (((_x + _nWidth) > 1.f) || ((_y + _nHeight > 1.f)))
+	{
+		DEBUG_BREAK(true, "Camera Error: Invalid viewport specified!\n");
+		return;
+	}
+#endif
+
 	mViewport.mnX = _x;
 	mViewport.mnY = _y;
 	mViewport.mnWidth = _nWidth;
@@ -204,7 +219,6 @@ void Dystopia::Camera::SetOrthographic(float _fWidth, float _fHeight, float _fNe
 
 Math::Pt3D Dystopia::Camera::GetPosition(void) const
 {
-	//return mTransform->GetGlobalPosition();
 	return GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 }
 /*
@@ -216,20 +230,34 @@ Math::Vec3D Dystopia::Camera::GetZoom(void) const
 Math::Vec3D Dystopia::Camera::GetSize(void) const
 {
 	return GetOwner()->GetComponent<Transform>()->GetScale();
-	//return mTransform->GetScale();
 }
 
-const Dystopia::Gfx::Viewport& Dystopia::Camera::GetViewport(void) const
+
+Dystopia::Framebuffer* Dystopia::Camera::GetSurface(void) const noexcept
 {
-	return mViewport;
+	return mpSurface;
 }
 
-const Math::Mat4& Dystopia::Camera::GetViewMatrix(void)
+const Dystopia::Gfx::Viewport Dystopia::Camera::GetViewport(void) const
+{
+	DEBUG_BREAK(mpSurface, "Camera Error: Camera has no surface!\n");
+
+	Gfx::Viewport ret{
+		mViewport.mnX * mpSurface->GetWidth(),
+		mViewport.mnY * mpSurface->GetHeight(),
+		mViewport.mnWidth * mpSurface->GetWidth(),
+		mViewport.mnHeight * mpSurface->GetHeight()
+	};
+
+	return ret;
+}
+
+const Math::Mat4& Dystopia::Camera::GetViewMatrix(void) noexcept
 {
 	return mView;
 }
 
-const Math::Mat4& Dystopia::Camera::GetProjectionMatrix(void)
+const Math::Mat4& Dystopia::Camera::GetProjectionMatrix(void) noexcept
 {
 	return mProjection;
 }
@@ -252,7 +280,6 @@ void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 	_in.ConsumeStartBlock();
 	Component::Unserialise(_in);
 	_in.ConsumeEndBlock();
-
 }
 
 void Dystopia::Camera::EditorUI(void) noexcept

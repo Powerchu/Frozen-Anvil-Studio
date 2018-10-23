@@ -63,7 +63,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <windows.h>			// WinAPI
 #include <GL/glew.h>
 #include <GL/wglew.h>			// glew Windows ext
-#include <GL/GL.h>
 
 #undef WIN32_LEAN_AND_MEAN		// Stop defines from spilling into code
 #undef NOMINMAX
@@ -293,11 +292,12 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 		}
 	}
 
+#if defined(EDITOR) | defined(_DEBUG) | defined(DEBUG)
 	if (glGetError() != GL_NO_ERROR)
 	{
 		__debugbreak();
 	}
-
+#endif
 }
 
 void Dystopia::GraphicsSystem::Update(float)

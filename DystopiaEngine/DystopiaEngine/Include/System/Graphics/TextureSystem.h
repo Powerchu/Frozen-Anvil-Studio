@@ -120,7 +120,7 @@ Ty* Dystopia::TextureSystem::LoadRaw(Image const *_ptr)
 {
 	auto ret = mTextures.EmplaceAs<Ty>(std::to_string(reinterpret_cast<uintptr_t>(_ptr)));
 
-	ret->InitTexture(_ptr);
+	ret->LoadTexture(_ptr);
 
 	return ret;
 }

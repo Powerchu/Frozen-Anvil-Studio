@@ -40,7 +40,7 @@ Dystopia::Framebuffer::~Framebuffer(void) noexcept
 void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha)
 {
 	unsigned format = _bAlpha ? GL_RGBA : GL_RGB;
-	Image tmp = { format, format, _nWidth, _nHeight, _bAlpha ? 4u : 3u, 1u, nullptr };
+	Image tmp = { false, format, format, _nWidth, _nHeight, _bAlpha ? 4u : 3u, 1u, nullptr };
 	mpTexture = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadRaw<Texture2D>(&tmp);
 
 	glGenFramebuffers(1, &mnID);
@@ -68,6 +68,16 @@ void Dystopia::Framebuffer::Bind(void) const noexcept
 void Dystopia::Framebuffer::Unbind(void) const noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+}
+
+unsigned Dystopia::Framebuffer::GetWidth(void) const
+{
+	return mpTexture->GetWidth();
+}
+
+unsigned Dystopia::Framebuffer::GetHeight(void) const
+{
+	return mpTexture->GetHeight();
 }
 
 

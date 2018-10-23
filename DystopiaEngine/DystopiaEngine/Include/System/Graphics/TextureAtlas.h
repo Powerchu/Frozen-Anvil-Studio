@@ -14,30 +14,47 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TEXTUREATLAS_H_
 #define _TEXTUREATLAS_H_
 
+#include "Math/MathFwd.h"
+#include "DataStructure/AutoArray.h"
+
 #include <string>
 
 
 namespace Dystopia
 {
+	class Shader;
 	class Texture;
 
 	class TextureAtlas
 	{
 	public:
 
-		TextureAtlas(void) noexcept;
+		explicit TextureAtlas(Texture* = nullptr) noexcept;
 		explicit TextureAtlas(const std::string&);
 		~TextureAtlas(void) noexcept;
 
 		void Bind(void) const noexcept;
 		void Unbind(void) const noexcept;
 
+		unsigned AddSection(const Math::Vec2& _vPos, unsigned _nWidth, unsigned _nHeight, unsigned _nCols = 1, unsigned _nRows = 1);
+
+		void SetSection(unsigned _nID, unsigned _nCol, unsigned _nRow, Shader const&);
+
 		std::string GetName(void) const;
 		std::string const& GetPath(void) const noexcept;
 
 	private:
 
+		struct SubTexture
+		{
+			float uStart, vStart;
+			float uEnd, vEnd;
+
+			float mCol, mRow;
+		};
+
 		Texture* mpTexture;
+		AutoArray<SubTexture> mSections;
 	};
 }
 
