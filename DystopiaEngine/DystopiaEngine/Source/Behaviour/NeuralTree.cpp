@@ -1,4 +1,4 @@
-#include "NeuralTree.h"
+#include "Behaviour/NeuralTree.h"
 
 namespace Dystopia
 {

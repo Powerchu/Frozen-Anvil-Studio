@@ -31,12 +31,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define P_TX					mpOwnerTransform
 
 namespace Dystopia
-{ 
+{
 	RigidBody::RigidBody(void)
 		: mpOwnerTransform(nullptr)
 		, mpPhysSys(nullptr)
 		, mfAngleDeg(0.0F)
-		, mLinearDamping(0.5,0.5)
+		, mLinearDamping(0.5, 0.5)
 		, mfAngularDrag(0.5F)
 		, mfStaticFriction(0.5F)
 		, mfDynamicFriction(0.7F)
@@ -59,14 +59,14 @@ namespace Dystopia
 
 	}
 
-	RigidBody::RigidBody(float _linearDrag, float _angularDrag, 
-						float _friction, float _elasticity, 
-						float _gravityScale, float _mass, 
-						bool _gravityState, bool _staticState)
+	RigidBody::RigidBody(float _linearDrag, float _angularDrag,
+		float _friction, float _elasticity,
+		float _gravityScale, float _mass,
+		bool _gravityState, bool _staticState)
 		: mpOwnerTransform(nullptr)
 		, mpPhysSys(nullptr)
 		, mfAngleDeg(0.0F)
-		, mLinearDamping(_linearDrag,_linearDrag)
+		, mLinearDamping(_linearDrag, _linearDrag)
 		, mfAngularDrag(_angularDrag)
 		, mfStaticFriction(_friction)
 		, mfDynamicFriction(_friction)
@@ -149,7 +149,7 @@ namespace Dystopia
 
 	void RigidBody::Integrate(float _dt)
 	{
-		constexpr const auto VEL_EPSILON = 0.005F;
+		constexpr const auto VEL_EPSILON = 0.001F;
 
 		if (!GetOwner()->IsActive() || mbIsStatic || !mbIsAwake)
 		{
@@ -163,7 +163,7 @@ namespace Dystopia
 		 *  Physics 2.0
 		 *  Verlet/Leapfrog method, 2nd order integration
 		 ********************************************************************/
-		//Store previous Position
+		 //Store previous Position
 		mPrevPosition = mPosition = P_TX->GetGlobalPosition();
 
 		if (mbHasGravity)
@@ -237,16 +237,17 @@ namespace Dystopia
 
 		//mfWeightedMotion is the average kinetic energy over a given set of frames
 
-		const float bias = 0.97F; //std::pow(0.96F, _dt);
+		const float bias = 0.985F; //std::pow(0.96F, _dt);
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
 		mfWeightedMotion = bias * mfWeightedMotion + (1 - bias)*currentMotion;
 
 		// TODO change to global sleep epsilon
-		
+
 
 		if (mfWeightedMotion < SLEEP_EPSILON)
 		{
 			mbIsAwake = false;
+			mLinearAcceleration = { 0,0,0 };
 			mLinearVelocity = { 0,0,0 };
 			mAngularVelocity = { 0,0,0 };
 		}
@@ -254,6 +255,11 @@ namespace Dystopia
 		else if (mfWeightedMotion > 10 * SLEEP_EPSILON)
 		{
 			mfWeightedMotion = 10 * SLEEP_EPSILON;
+			mbIsAwake = true;
+		}
+
+		else
+		{
 			mbIsAwake = true;
 		}
 	}
@@ -448,7 +454,7 @@ namespace Dystopia
 
 		if (!mbIsAwake)
 		{
-			SetSleeping(false);
+			//SetSleeping(false);
 		}
 		mLinearVelocity += _impul * mfInvMass;
 	}
@@ -462,7 +468,7 @@ namespace Dystopia
 
 		if (!mbIsAwake)
 		{
-			SetSleeping(false);
+			//SetSleeping(false);
 		}
 		mLinearVelocity += _impul * mfInvMass;
 		mAngularVelocity += mfInvInertia * (_point - _origin).Cross(_impul);
@@ -482,7 +488,7 @@ namespace Dystopia
 
 		if (!mbIsAwake)
 		{
-			SetSleeping(false);
+			//SetSleeping(false);
 		}
 		mAngularVelocity += mfInvInertia * _impul;
 	}
@@ -540,7 +546,7 @@ namespace Dystopia
 		}
 
 		mAngularVelocity = _vel;
-		
+
 	}
 
 	void RigidBody::SetMass(const float _mass)
@@ -844,7 +850,7 @@ namespace Dystopia
 				}
 			}
 		}
-		
+
 	}
 
 	void RigidBody::eAngularDragField()
@@ -876,7 +882,7 @@ namespace Dystopia
 				break;
 			}
 		}
-		
+
 	}
 
 	void RigidBody::eGravityScaleField()
@@ -908,7 +914,7 @@ namespace Dystopia
 				break;
 			}
 		}
-		
+
 	}
 
 	void RigidBody::eStaticFrictionDragField()

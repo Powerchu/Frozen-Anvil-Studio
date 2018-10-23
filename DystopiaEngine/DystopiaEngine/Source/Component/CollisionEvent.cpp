@@ -16,8 +16,9 @@ namespace Dystopia
 
 	}
 
-	void CollisionEvent::ApplyImpulse(void)
+	void CollisionEvent::ApplyImpulse()
 	{
+		constexpr auto velLimit = 15.0F;
 		const auto bodyA = mThisCollider->GetComponent<RigidBody>();
 		const auto bodyB = mCollidedWith->GetComponent<RigidBody>();
 
@@ -25,10 +26,8 @@ namespace Dystopia
 
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
-		const auto a_oldVel = bodyA->GetLinearVelocity();
-		const auto b_oldVel = bodyB->GetLinearVelocity();
-		const float slop = 0.1F;
-		//const auto perc = 10.0F;
+		const auto a_oldVel = bodyA->GetLinearVelocity();// -bodyA->GetAcceleration() * 0.5F * _dt * _dt;
+		const auto b_oldVel = bodyB->GetLinearVelocity();// -bodyB->GetAcceleration() * 0.5F * _dt * _dt;
 
 		mEdgeNormal.z = 0;
 		mfPeneDepth = Math::Abs(mfPeneDepth);
@@ -40,9 +39,18 @@ namespace Dystopia
 		// Do not resolve if velocities do not meet up
 		if (contactVel > 0) return;
 
+		auto thisRestitution = mfRestitution;
+		if (Math::Abs(contactVel) < velLimit)
+		{
+			thisRestitution = 0.0F;
+		}
+
 		// Calculate Impulse Scalar
-		float tmpJ = -(1.0F + Math::Max(mfRestitution-slop,0.0F)) * contactVel;
+		float tmpJ = -(1.0F + thisRestitution) * contactVel;
+		//float tmpJ = -(bias / _dt * mfPeneDepth + mfRestitution) * contactVel;
 		tmpJ /= a_invmass + b_invmass;
+
+		if (Math::Abs(tmpJ) < 0.0005F) tmpJ = 0.0F;
 
 		// Apply Impulse
 		const Vec3D impulse = tmpJ * mEdgeNormal;
@@ -66,7 +74,9 @@ namespace Dystopia
 
 		// Solve for magnitude to apply along the friction vector
 		float jt = -rv.Dot(tangent);
-		jt /= (a_invmass + b_invmass);
+		jt /= a_invmass + b_invmass;
+
+		if (Math::Abs(jt) < 0.0005F) jt = 0.0F;
 
 		// Clamp magnitude of friction and create final Friction Impulse
 		Vec3D frictionImpulse;
@@ -78,7 +88,7 @@ namespace Dystopia
 
 		if (!bodyA->Get_IsStaticState())
 			bodyA->AddLinearImpulse(-frictionImpulse);
-			
+
 		if (!bodyB->Get_IsStaticState())
 			bodyB->AddLinearImpulse(frictionImpulse);
 	}
@@ -93,10 +103,10 @@ namespace Dystopia
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
 
-		const float perc = 0.40F/iter;
-		const float slop = 0.04F;
+		const float perc = 0.50F / iter;
+		const float slop = 0.05F;
 
-		const Vec3D correction = Math::Max(Math::Abs(mfPeneDepth)+slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
+		const Vec3D correction = Math::Max(Math::Abs(mfPeneDepth) + slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 
 		if (!bodyA->Get_IsStaticState())
 			bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);

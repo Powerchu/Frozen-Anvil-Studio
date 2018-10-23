@@ -286,7 +286,7 @@
     <ClCompile Include="Source\DataStructure\HashString.cpp">
       <Filter>DataStructures</Filter>
     </ClCompile>
-    <ClCompile Include="NeuralTree.cpp">
+    <ClCompile Include="Source\Behaviour\NeuralTree.cpp">
       <Filter>Game Engine\Behaviours\AI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -780,7 +780,7 @@
     <ClInclude Include="Include\DataStructure\HashString.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
-    <ClInclude Include="NeuralTree.h">
+    <ClInclude Include="Include\Behaviour\NeuralTree.h">
       <Filter>Game Engine\Behaviours\AI</Filter>
     </ClInclude>
   </ItemGroup>

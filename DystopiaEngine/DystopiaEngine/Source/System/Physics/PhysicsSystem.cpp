@@ -1,7 +1,6 @@
 #include "Component/Collider.h"
 #include "Component/RigidBody.h"
 #include "System/Physics/PhysicsSystem.h"
-#include "System/Logger/LoggerSystem.h"
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
 #include "Object/GameObject.h"
@@ -22,7 +21,7 @@ namespace Dystopia
 		, mGravity(400.0F)
 		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.10F)
+		, mPenetrationEpsilon(0.05F)
 		, mVelocityIterations(8)
 		, mPositionalIterations(4)
 	{
@@ -51,14 +50,16 @@ namespace Dystopia
 #endif 
 			if (body.GetOwner())
 			{
-				if(!body.Get_IsStaticState())
+				if (!body.Get_IsStaticState())
+				{
 					body.CheckSleeping(_dt);
 
-				const auto col = body.GetOwner()->GetComponent<Collider>();
+					const auto col = body.GetOwner()->GetComponent<Collider>();
 
-				if (nullptr != col)
-				{
-					col->SetSleeping(!body.GetIsAwake());
+					if (nullptr != col)
+					{
+						col->SetSleeping(!body.GetIsAwake());
+					}
 				}
 			}
 		}
@@ -78,7 +79,7 @@ namespace Dystopia
 		}
 	}
 
-	void PhysicsSystem::ResolveCollision(float _dt)
+	void PhysicsSystem::ResolveCollision(const float _dt)
 	{
 		for (int i = 0; i < mVelocityIterations; ++i)
 		{
@@ -87,7 +88,7 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				if (!body.GetIsAwake()) continue;
+				if (body.Get_IsStaticState()) continue;
 
 				const auto col = body.GetOwner()->GetComponent<Collider>();
 
@@ -121,7 +122,7 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				if (!body.GetIsAwake()) continue;
+				if (body.Get_IsStaticState()) continue;
 
 				const auto col = body.GetOwner()->GetComponent<Collider>();
 
@@ -170,7 +171,8 @@ namespace Dystopia
 		{
 			if (body.GetOwner())
 			{
-				body.DebugPrint();
+				if (body.GetOwner()->GetName() == "Hero")
+					body.DebugPrint();
 			}
 		}
 	}
@@ -188,9 +190,9 @@ namespace Dystopia
 		UpdateResults(_dt);
 
 		// Set all objects at rest to sleeping
-		//CheckSleepingBodies(_dt);
+		CheckSleepingBodies(_dt);
 
-		
+
 	}
 
 	void PhysicsSystem::PreFixedUpdate(float _dt)
@@ -198,7 +200,7 @@ namespace Dystopia
 		// Integrate RigidBodies
 		IntegrateRigidBodies(_dt);
 	}
-	
+
 
 	void PhysicsSystem::FixedUpdate(float _dt)
 	{
@@ -214,7 +216,7 @@ namespace Dystopia
 
 	void PhysicsSystem::Update(float)
 	{
-		
+
 	}
 
 	void PhysicsSystem::PostUpdate()

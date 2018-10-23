@@ -186,6 +186,11 @@ namespace Dystopia
 				const auto rigidA = ownerA->GetComponent<RigidBody>();
 				const auto rigidB = ownerB->GetComponent<RigidBody>();
 
+				if (rigidA == nullptr)
+					bodyA->SetTrigger(true);
+				if (rigidB == nullptr)
+					bodyB->SetTrigger(true);
+
 				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
 				{
 					if (rigidA && rigidB)

@@ -1,5 +1,5 @@
 [START_Scene]
-18446744072511553536,for_dan,10,[START_START_GO_DATA]
+18446744072511553536,for_dan,11,[START_START_GO_DATA]
 910164992,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
@@ -63,6 +63,15 @@
 
 [END_END_GO_TRANSFORM]
 [START_START_GO_DATA]
+18446744072924480000,1,Enemy_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,146,-93,1,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
 731575808,1,Enemy,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
@@ -99,7 +108,7 @@
 
 [END_Component End]
 [START_ComponentDonor]
-5,
+6,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -131,18 +140,24 @@
 [END_Renderer]
 
 [END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072924480512,0,18446744072924480000,..\DystopiaEngine\Resource\Editor\red_circle.png,
+[END_Renderer]
+
+[END_Component End]
 [START_ComponentDonor]
-7,
+8,
 [END_ComponentDonor End]
 [START_Component]
 [START_RigidBody]
-1810502144,0,18446744072424082432,0,0.5,0.5,0.5,0.2,0.3,0,1,0,1,1,0,1,
+1810502144,0,18446744072424082432,0,0.5,0.5,0.5,0.2,0.3,0.5,1,0,1,1,0,1,
 [END_RigidBody]
 
 [END_Component End]
 [START_Component]
 [START_RigidBody]
-18446744072606144512,0,18446744072606142976,0,0.999,0.1,0.5,0,0.1,0,4.5,100,1,0,1,1,
+18446744072606144512,0,18446744072606142976,0,0.999,0.1,0.5,0.5,0.05,0,4.5,100,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -160,7 +175,7 @@
 [END_Component End]
 [START_Component]
 [START_RigidBody]
-18446744072484694528,0,18446744071771407360,0,0.99999,0.99999,0.5,0.5,0.7,0,0,1e+06,1,0,1,1,
+18446744072484694528,0,18446744071771407360,0,0.99999,0.99999,0.5,0.5,0.7,0,0,0,1,1,0,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -173,6 +188,12 @@
 [START_Component]
 [START_RigidBody]
 1807407104,0,1807406080,0,0.5,0.5,0.5,0.5,0.7,0.5,1,200,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072924481024,0,18446744072924480000,0,0.5,0.5,0.5,0.5,0.7,1,1,50,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -231,8 +252,14 @@
 
 [END_Component End]
 [START_ComponentDonor]
-0,
+1,
 [END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744072232297984,1,18446744072924480000,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]

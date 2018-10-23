@@ -237,6 +237,11 @@ namespace Dystopia
 		mbIsSleeping = _b;
 	}
 
+	void Collider::SetTrigger(bool _b)
+	{
+		mbIsTrigger = _b;
+	}
+
 	void Collider::SetLocalPosition(Math::Point3D const & _point)
 	{
 		mPosition = _point;
