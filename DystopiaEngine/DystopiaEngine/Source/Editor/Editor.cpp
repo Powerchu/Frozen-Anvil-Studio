@@ -69,6 +69,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Input/XGamePad.h"
 
+#include "../EditorProc.h"
+
 namespace
 {
 	static const std::string DYSTOPIA_EDITOR_SETTINGS = "EditorSettings.dyst";
@@ -87,43 +89,6 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-	const char arr[] = "Array!";
-	const char *ptr = "Ptr!";
-
-	HashString charArr{ arr };
-	HashString charPtr{ ptr };
-	HashString copyCtor{ charArr };
-	HashString moveCtor{ Ut::Move(copyCtor) };
-
-	HashString Apple{ "apple" };
-	HashString Orange = HashString{ "Orange" };
-	HashString Grapes = "Grapes";
-
-	HashString Gra{Grapes.cbegin(), Grapes.cbegin() + 3};
-
-	Grapes += Apple;
-	Orange += "Pear";
-	HashString Banana{ "Banana" };
-	Banana = "Avacado" + Grapes;
-
-	bool testEquate = Grapes == Apple;
-	bool testEquate2 = Apple == Apple;
-
-	HashString testRemove{ "Remove Something Here" };
-	testRemove.erase(6, 12);
-
-	HashString testReplace{ "dae" };
-	testReplace.replace(1, 8, Apple);
-
-	HashString testFind{ "Find me Something" };
-	size_t pos = testFind.rfind("me");
-
-	HashString subStr{ "Sub my string" };
-	HashString sub = subStr.substr(4, 6);
-
-	HashString findFirstTest{"Finding First of Something"};
-	size_t fpos = findFirstTest.find_first_of("Something", 10);
-	size_t lpos = findFirstTest.find_last_of("Something");
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
@@ -570,16 +535,12 @@ namespace Dystopia
 			std::wstring name{ sceneName.begin(), sceneName.end() };
 			auto pos = name.find('*.');
 			if (pos != std::string::npos)
-			{
 				name.erase(pos);
-			}
 			else
 			{
 				pos = name.find('.');
 				if (pos != std::string::npos)
-				{
 					name.erase(pos);
-				}
 			}
 			mpWin->GetMainWindow().SetTitle(name.c_str());
 		}
@@ -588,92 +549,28 @@ namespace Dystopia
 
 	void Editor::SaveAsProc()
 	{
-		HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-		if (SUCCEEDED(hr))
+		EditorProc p;
+		HashString path;
+		HashString name;
+		if (p.SaveAs(name, path, mpWin->GetMainWindow().GetWindowHandle()))
 		{
-			IFileSaveDialog *pFileSave;
-			hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL,
-				IID_IFileSaveDialog, reinterpret_cast<void**>(&pFileSave));
-			if (SUCCEEDED(hr))
-			{
-				pFileSave->SetDefaultExtension(DYSTOPIA_SCENE_EXTENSION.c_str());
-				pFileSave->SetFileTypes(1, DYSTOPIA_SCENE_FILTER_EXTENSION);
-				if (SUCCEEDED(pFileSave->Show(mpWin->GetMainWindow().GetWindowHandle())))
-				{
-					IShellItem *pItem;
-					if (SUCCEEDED(pFileSave->GetResult(&pItem)))
-					{
-						PWSTR pszFilePath, pszFileName;
-						if (SUCCEEDED(pItem->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &pszFilePath)) &&
-							SUCCEEDED(pItem->GetDisplayName(SIGDN_NORMALDISPLAY, &pszFileName)))
-						{
-							std::wstring path{ pszFilePath };
-							std::wstring name{ pszFileName };
-							auto pos = name.find('*.');
-							if (pos != std::string::npos)
-							{
-								name.erase(pos);
-							}
-							else
-							{
-								pos = name.find('.');
-								if (pos != std::string::npos)
-								{
-									name.erase(pos);
-								}
-							}
-							mpWin->GetMainWindow().SetTitle(name.c_str());
-							mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() }, 
-													 std::string{ name.begin(), name.end() });
-							mpComdHandler->SaveCallback();
-							CoTaskMemFree(pszFilePath);
-						}
-						pItem->Release();
-					}
-				}
-				pFileSave->Release();
-			}
-			CoUninitialize();
+			mpWin->GetMainWindow().SetTitle(std::wstring{name.begin(), name.end()});
+			mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() },
+				std::string{ name.begin(), name.end() });
+			mpComdHandler->SaveCallback();
 		}
 	}
 
 	void Editor::LoadProc()
 	{
-		HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-		if (SUCCEEDED(hr))
+		EditorProc p;
+		HashString path;
+		HashString name;
+		if (p.Load(path))
 		{
-			IFileOpenDialog *pFileOpen;
-			hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, 
-				IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
-			if (SUCCEEDED(hr))
-			{
-				pFileOpen->SetFileTypes(1, DYSTOPIA_SCENE_FILTER_EXTENSION);
-				if (SUCCEEDED(pFileOpen->Show(NULL)))
-				{
-					IShellItem *pItem;					
-					if (SUCCEEDED(pFileOpen->GetResult(&pItem)))
-					{
-						PWSTR pszFilePath, pszFileName;
-						hr = pItem->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &pszFilePath);
-						if (SUCCEEDED(hr) && 
-							SUCCEEDED(pItem->GetDisplayName(SIGDN_NORMALDISPLAY, &pszFileName)))
-						{
-							std::wstring path{ pszFilePath };
-							std::wstring name{ pszFileName };
-							auto pos = name.find('.');
-							if (pos != std::string::npos)
-							{
-								name.erase(pos);
-							}
-							OpenScene(path, name);
-							CoTaskMemFree(pszFilePath);
-						}
-						pItem->Release();
-					}
-				}
-				pFileOpen->Release();
-			}
-			CoUninitialize();
+			mArrSelectedObj.clear();
+			ClearSelections();
+			mpSceneSystem->LoadScene(std::string{ path.begin(), path.end() });
 		}
 	}
 

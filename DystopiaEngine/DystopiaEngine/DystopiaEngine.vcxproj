@@ -28,6 +28,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="EditorInput.cpp" />
+    <ClCompile Include="EditorMain.cpp" />
+    <ClCompile Include="EditorProc.cpp" />
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
     <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
     <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
@@ -122,6 +125,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="EditorInput.h" />
+    <ClInclude Include="EditorMain.h" />
+    <ClInclude Include="EditorProc.h" />
+    <ClInclude Include="EditorStates.h" />
     <ClInclude Include="Include\DataStructure\HashString.h" />
     <ClInclude Include="Include\System\Collision\BoundingColliderNode.h" />
     <ClInclude Include="Include\System\Collision\BroadPhaseCircle.h" />

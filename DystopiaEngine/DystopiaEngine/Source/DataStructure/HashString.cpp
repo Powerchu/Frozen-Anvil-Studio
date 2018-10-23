@@ -13,7 +13,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/HashString.h"
 #include "Utility/Utility.h"
 #include "Utility/DebugAssert.h"
-#include <cstring>
+#include <string>
+#include <stdlib.h>
+#include <strsafe.h>
 
 HashID StringHasher(const char* _s)
 {
@@ -99,6 +101,33 @@ HashString& HashString::operator=(const char * _s)
 	mSize = temp.mSize;
 	mHashedID = temp.mHashedID;
 	temp.mCharBuffer = nullptr;
+	return *this;
+}
+
+HashString& HashString::operator=(const wchar_t *_s)
+{
+	size_t len = 0;
+	const wchar_t * it = _s;
+	while (*_s != '\0')
+	{
+		len++;
+		_s++;
+	}
+	char* buffer = mCharBuffer;
+	if (len > mSize)
+	{
+		buffer = Dystopia::DefaultAllocator<char[]>::Alloc(len + 1);
+		Dystopia::DefaultAllocator<char[]>::Free(mCharBuffer);
+		mCharBuffer = buffer;
+	}
+	mSize = 0;
+	while (*it != '\0')
+	{
+		*buffer++ = *it++;
+		mSize++;
+	}
+	*buffer = '\0';
+	mHashedID = StringHasher(mCharBuffer);
 	return *this;
 }
 
@@ -214,7 +243,7 @@ HashString& HashString::replace(size_t _pos, size_t _len, const HashString& _rhs
 {
 	DEBUG_ASSERT(_pos >= mSize, "Hash String replace _pos out of range");
 	size_t size = mSize + _rhs.mSize + 1;
-	bool realloc = (end() - begin() < size) ? true : false ;
+	bool realloc = (static_cast<size_t>(end() - begin()) < size) ? true : false ;
 	char *buffer = mCharBuffer;
 
 	if (realloc)

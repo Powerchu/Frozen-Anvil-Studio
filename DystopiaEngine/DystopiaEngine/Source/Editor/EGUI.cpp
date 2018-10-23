@@ -229,18 +229,9 @@ namespace Dystopia
 			io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 		}
 
-		if (mpInput->IsKeyPressed(eButton::MOUSE_LEFT))
-			io.MouseDown[0] = true;
-		else
-			io.MouseDown[0] = mMouseJustPressed[0];
-		if (mpInput->IsKeyPressed(eButton::MOUSE_RIGHT))
-			io.MouseDown[1] = true;
-		else
-			io.MouseDown[1] = mMouseJustPressed[1];
-		if (mpInput->IsKeyPressed(eButton::MOUSE_MIDDLE))
-			io.MouseDown[2] = true;
-		else
-			io.MouseDown[2] = mMouseJustPressed[2];
+		io.MouseDown[0] = mMouseJustPressed[0] || mpInput->IsKeyPressed(eButton::MOUSE_LEFT);
+		io.MouseDown[1] = mMouseJustPressed[1] || mpInput->IsKeyPressed(eButton::MOUSE_RIGHT);
+		io.MouseDown[2] = mMouseJustPressed[2] || mpInput->IsKeyPressed(eButton::MOUSE_MIDDLE);
 
 		mMouseJustPressed[0] = mMouseJustPressed[1] = mMouseJustPressed[2] = false;
 

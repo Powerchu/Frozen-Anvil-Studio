@@ -1,0 +1,16 @@
+
+
+class EditorInput
+{
+public:
+
+
+
+private:
+
+
+
+
+
+};
+

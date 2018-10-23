@@ -283,6 +283,9 @@
     <ClCompile Include="Source\DataStructure\HashString.cpp">
       <Filter>DataStructures</Filter>
     </ClCompile>
+    <ClCompile Include="EditorMain.cpp" />
+    <ClCompile Include="EditorProc.cpp" />
+    <ClCompile Include="EditorInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -771,6 +774,10 @@
     <ClInclude Include="Include\DataStructure\HashString.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
+    <ClInclude Include="EditorMain.h" />
+    <ClInclude Include="EditorProc.h" />
+    <ClInclude Include="EditorInput.h" />
+    <ClInclude Include="EditorStates.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

@@ -37,7 +37,7 @@ HashID StringHasher(const char* _s);
 class _DLL_EXPORT_ONLY HashString
 {
 public:
-	static constexpr size_t nPos = -1;
+	static constexpr size_t nPos = static_cast<size_t>(-1);
 	/* constructors */
 	HashString(void);
 	HashString(const HashString&);
@@ -56,6 +56,7 @@ public:
 	HashString& operator=(const HashString&);
 	HashString& operator=(HashString&&);
 	HashString& operator=(const char *);
+	HashString& operator=(const wchar_t *);
 
 	/* capacity */
 	size_t		size(void) const;
