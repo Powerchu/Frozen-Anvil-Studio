@@ -1,22 +1,21 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Renderer.h
+\file	TextRenderer.h
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Basic Renderer.
+	Renders text
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _BASICRENDERER_H_
-#define _BASICRENDERER_H_
+#ifndef _TEXTRENDERER_H_
+#define _TEXTRENDERER_H_
 
-#pragma warning(push)
-#pragma warning(disable : 4251)
 #include "Component/Component.h"		// Base Class
+#include "Component/Renderer.h"			// Base Class
 #include "Component/ComponentList.h"	// TRANSFORM
 #include "DataStructure/AutoArray.h"	// AutoArray
 #include "Utility/MetaAlgorithms.h"		// MetaFind
@@ -31,14 +30,14 @@ namespace Dystopia
 	class Texture;
 	class GraphicsSystem;
 
-	class _DLL_EXPORT Renderer : public Component
+	class _DLL_EXPORT TextRenderer : public Renderer
 	{
 	public:
 
 		using SYSTEM = GraphicsSystem;
 		unsigned GetComponentType(void) const
 		{
-			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllComponents>::value; 
+			return Ut::MetaFind_t<class Renderer, AllComponents>::value;
 		};
 		static const std::string GetCompileName(void) { return "Renderer"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
@@ -46,9 +45,9 @@ namespace Dystopia
 
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		Renderer(void) noexcept;
-		Renderer(Renderer&&) noexcept;
-		Renderer(const Renderer&) noexcept;
+		TextRenderer(void) noexcept;
+		TextRenderer(TextRenderer&&) noexcept;
+		TextRenderer(const TextRenderer&) noexcept;
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
@@ -56,9 +55,6 @@ namespace Dystopia
 		void Init(void) override;
 
 		void Draw(void) const noexcept;
-		
-		void SetMesh(Mesh*) noexcept;
-		void SetMesh(const std::string&) noexcept;
 
 		void SetShader(Shader*) noexcept;
 		void SetShader(const std::string&) noexcept;
@@ -76,24 +72,17 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 
+
 	private:
 
 		unsigned mnUnique;
 
-		Mesh* mpMesh;
 		Shader* mpShader;
 		Texture* mpTexture;
-		std::string mTexturePath;
-
-#   if EDITOR
-		void TextureField();
-		void MeshField();
-		void ShaderField();
-#   endif
+		std::string mFontName;
 	};
 }
 
 
-#pragma warning(pop)
 #endif
 

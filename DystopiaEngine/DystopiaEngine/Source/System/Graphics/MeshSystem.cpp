@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 void Dystopia::MeshSystem::Init(void)
 {
-	Mesh::LinkSystem(this);
+
 }
 
 void Dystopia::MeshSystem::Shutdown(void) noexcept

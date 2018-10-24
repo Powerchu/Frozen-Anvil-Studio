@@ -26,7 +26,7 @@ namespace Dystopia
 	{
 	public:
 		explicit FileLogger(void* const) noexcept;
-		explicit FileLogger(const std::string&, const char* _strMode = "rw") noexcept;
+		explicit FileLogger(const std::string&, const char* _strMode = "w") noexcept;
 		~FileLogger(void) noexcept;
 
 		template <typename ... Ty>

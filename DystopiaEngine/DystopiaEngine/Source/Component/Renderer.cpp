@@ -33,28 +33,25 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Renderer::Renderer(void) noexcept
-	: mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }, mTexturePath{""},
-	mTextureName{""}
+	: Component{}, mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr },
+	mpTexture{ nullptr }, mTexturePath{""}
 {
 	SetMesh("Quad");
 	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
 }
 
 Dystopia::Renderer::Renderer(Dystopia::Renderer&& _rhs) noexcept
-	: mnUnique{ _rhs.mnUnique }, mpMesh{ _rhs.mpMesh }, mpShader{ _rhs.mpShader }, mpTexture{ _rhs.mpTexture }, mTexturePath{ _rhs.mTexturePath },
-	mTextureName{ _rhs.mTextureName }, Component{ Ut::Move(_rhs) }
+	: Component{ Ut::Move(_rhs) }, mnUnique{ _rhs.mnUnique }, mpMesh{ _rhs.mpMesh }, mpShader{ _rhs.mpShader }, 
+	mpTexture{ _rhs.mpTexture }, mTexturePath{ _rhs.mTexturePath }
 {
-	_rhs.mnUnique = 0;
+	_rhs.mpMesh    = nullptr;
+	_rhs.mpShader  = nullptr;
 	_rhs.mpTexture = nullptr;
-	_rhs.mpShader = nullptr;
-	_rhs.mpMesh = nullptr;
-	_rhs.mTexturePath.clear();
-	_rhs.mTextureName.clear();
 }
 
 Dystopia::Renderer::Renderer(const Renderer& _rhs) noexcept
-	: mnUnique{ 999 }, mpMesh{ nullptr }, mpShader{ nullptr }, mpTexture{ nullptr }, mTexturePath{ _rhs.mTexturePath },
-	mTextureName{ _rhs.mTextureName }, Component{ _rhs }
+	: Component{ _rhs }, mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr }, 
+	mpTexture{ nullptr }, mTexturePath{ _rhs.mTexturePath }
 {
 	SetMesh("Quad");
 	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
@@ -67,7 +64,6 @@ void Dystopia::Renderer::Init(void)
 	{		
 		pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mTexturePath);
 		SetTexture(pTex);
-		mTextureName = GetTextureName();
 	}
 }
 
@@ -75,7 +71,7 @@ void Dystopia::Renderer::Draw(void) const noexcept
 {
 	if (mpMesh)
 	{
-		mpMesh->UseMesh(GraphicsSystem::GetDrawMode());
+		mpMesh->DrawMesh(GraphicsSystem::GetDrawMode());
 	}
 }
 
@@ -110,17 +106,16 @@ Dystopia::Shader* Dystopia::Renderer::GetShader(void) const noexcept
 
 void Dystopia::Renderer::SetTexture(Texture* _pTexture) noexcept
 {
+	mpTexture = _pTexture;
+
 	if (_pTexture)
 	{
 		mTexturePath = _pTexture->GetPath();
-		mTextureName = GetTextureName();
 	}
 	else
 	{
 		mTexturePath.clear(); 
-		mTextureName.clear(); 
 	}
-	mpTexture = _pTexture;
 }
 
 Dystopia::Texture* Dystopia::Renderer::GetTexture(void) const noexcept
@@ -156,16 +151,6 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 	_in.ConsumeEndBlock();
 }
 
-std::string Dystopia::Renderer::GetTextureName()
-{
-	size_t pos = mTexturePath.find_last_of("/\\") + 1;
-	if (pos < mTexturePath.length())
-	{
-		return std::string{ mTexturePath.begin() + pos, mTexturePath.end() };
-	}
-	return "";
-}
-
 void Dystopia::Renderer::EditorUI(void) noexcept
 {
 #if EDITOR
@@ -178,7 +163,7 @@ void Dystopia::Renderer::EditorUI(void) noexcept
 #if EDITOR
 void Dystopia::Renderer::TextureField()
 {
-	if (EGUI::Display::EmptyBox("Texture   ", 150, (mpTexture) ? mTextureName : "-empty-", true))
+	if (EGUI::Display::EmptyBox("Texture   ", 150, (mpTexture) ? mpTexture->GetName() : "-empty-", true))
 	{
 	}
 

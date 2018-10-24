@@ -167,7 +167,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 
 	Mesh*   mesh = pMeshSys->GetMesh("Quad");
 	Shader* shader = shaderlist["Default Shader"];
-	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/checker_dxt3.dds");
+	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/EditorStartup.png");
 
 	unsigned w = texture->GetWidth(), h = texture->GetHeight();
 
@@ -177,7 +177,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	Math::Matrix4 View{}, Project{
 			2.f / w, .0f, .0f, .0f,
 			.0f, 2.f / h, .0f, .0f,
-			.0f, .0f, 2.f / 100.f, .0f,
+			.0f, .0f, .0f, .0f,
 			.0f, .0f, .0f, 1.f
 	};
 
@@ -185,14 +185,14 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	glClearColor(.0f, .0f, .0f, .0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	shader->UseShader();
+	shader->Bind();
 	texture->Bind();
 
 	shader->UploadUniform("ProjectViewMat", Project * View);
 	shader->UploadUniform("ModelMat", Math::Scale(w * 1.f, h * 1.f));
 	shader->UploadUniform("Gamma", mfGamma);
 
-	mesh->UseMesh(GL_TRIANGLES);
+	mesh->DrawMesh(GL_TRIANGLES);
 	texture->Unbind();
 
 	pWinSys->GetMainWindow().Show();
@@ -203,6 +203,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 
 void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 {
+	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Scene Draw" };
 	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();
 
@@ -225,7 +226,10 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 
 				if (s && t)
 				{
-					s->UseShader();
+					s->Bind();
+
+					auto m = Obj.GetComponent<Transform>()->GetTransformMatrix();
+					auto mvp = _ProjView * m;
 
 					t->Bind();
 					s->UploadUniform("ProjectViewMat", _ProjView);
@@ -240,7 +244,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 				{
 					s = shaderlist["No Texture"];
 
-					s->UseShader();
+					s->Bind();
 					s->UploadUniform("ProjectViewMat", _ProjView);
 					s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
 
@@ -253,6 +257,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 
 void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 {
+	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Debug Draw" };
 	auto AllObj = EngineCore::GetInstance()->GetSystem<CollisionSystem>()->GetAllColliders();
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();
 
@@ -262,7 +267,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	glClear(GL_DEPTH_BUFFER_BIT);
 	Shader* s = shaderlist["Colour Shader"];
 	
-	s->UseShader();
+	s->Bind();
 	//s->UploadUniform("vColor", mvDebugColour);
 	s->UploadUniform("ProjectViewMat", _ProjView);
 
@@ -284,10 +289,10 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 			if (Mesh* pObjMesh = Obj->GetMesh())
 			{
 				s->UploadUniform("vColor", activeColor);
-				pObjMesh->UseMesh(GetDrawMode());
+				pObjMesh->DrawMesh(GetDrawMode());
 				activeColor.w = 1.f;
 				s->UploadUniform("vColor", activeColor);
-				pObjMesh->UseMesh(GL_LINE_LOOP);
+				pObjMesh->DrawMesh(GL_LINE_LOOP);
 			}
 		}
 	}
@@ -302,19 +307,18 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 
 void Dystopia::GraphicsSystem::Update(float)
 {
-	ScopedTimer<ProfilerAction> timeKeeper{"Graphics System", "Update"};
 	StartFrame();
 
+	glClearColor(.0f, .0f, .0f, 1.f);
 	mGameView.Bind();
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 
 	glViewport(0, 0, 2048, 2048);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
 	{
-
 #if EDITOR
 		if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -331,8 +335,8 @@ void Dystopia::GraphicsSystem::Update(float)
 				DrawDebug(Cam, ProjView);
 		}
 	}
-	mGameView.Unbind();
 
+	mGameView.Unbind();
 	// TODO: Final draw to combine layers & draw to screen
 
 	EndFrame();
@@ -361,7 +365,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 #if !EDITOR
 	// TODO: Draw a fullscreen quad fusing the GameView and UIView
 
-	SwapBuffers(mCurrent->GetDeviceContext());
+	SwapBuffers(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetDeviceContext());
 #endif
 }
 
@@ -520,7 +524,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 
 	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: %s, %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: Using OpenGL Version %d.%d\n", mOpenGLMajor, mOpenGLMinor);
-	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: %d bit colour, %d bits depth, %d bit stencil\n", pfd.cColorBits, pfd.cDepthBits, pfd.cStencilBits);
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: %d bit colour, %d bit depth, %d bit stencil\n", pfd.cColorBits, pfd.cDepthBits, pfd.cStencilBits);
 
 #endif
 
@@ -530,7 +534,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	}
 
 	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
+//	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LINE_SMOOTH);
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

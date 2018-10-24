@@ -95,7 +95,7 @@ void Dystopia::Shader::CreateShader(const std::string& _strVert, const std::stri
 	glDeleteShader(geo);
 }
 
-void Dystopia::Shader::UseShader(void) const
+void Dystopia::Shader::Bind(void) const
 {
 	glUseProgram(mnShaderID);
 }

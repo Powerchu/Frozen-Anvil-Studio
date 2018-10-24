@@ -277,6 +277,9 @@
     <ClCompile Include="Source\System\Graphics\GraphicsSystem.cpp">
       <Filter>Game Engine\Systems\Graphic\GraphicSystem</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\TextRenderer.cpp">
+      <Filter>Game Engine\Components\Renderer\TextRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -750,6 +753,9 @@
     <ClInclude Include="Include\System\Graphics\GraphicsSystem.h">
       <Filter>Game Engine\Systems\Graphic\GraphicSystem</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\TextRenderer.h">
+      <Filter>Game Engine\Components\Renderer\TextRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1090,6 +1096,12 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Graphic\GraphicSystem">
       <UniqueIdentifier>{9104936d-7b9d-40bf-914b-c215841bc815}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Freetype">
+      <UniqueIdentifier>{b4fcfc01-af87-4fff-81f5-85b39f97969e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Renderer\TextRenderer">
+      <UniqueIdentifier>{5c738da4-8474-45bb-86e8-79f3fdb62749}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

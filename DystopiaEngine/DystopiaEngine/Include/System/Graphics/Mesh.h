@@ -27,13 +27,11 @@ namespace Dystopia
 		Mesh(void) noexcept;
 		Mesh(unsigned, unsigned, size_t) noexcept;
 
-		void UseMesh(int _nMode) const;
-		void UseMesh(int _nMode, unsigned _nCount) const;
+		void DrawMesh(int _nMode) const;
+		void DrawMesh(int _nMode, unsigned _nCount) const;
 
 		void SetName(const std::string&);
 		const std::string& GetName(void) const;
-		
-		static void LinkSystem(MeshSystem* _pSystem);
 
 		bool IsUnique(void) const;
 
@@ -44,8 +42,6 @@ namespace Dystopia
 		void* mnOffset;
 		
 		std::string mName;
-
-		static MeshSystem* mpSystem;
 	};
 }
 

@@ -181,7 +181,7 @@ namespace BMP
 	{
 		Image* data = Dystopia::DefaultAllocator<Image>::ConstructAlloc(
 			false,
-			static_cast<unsigned>(GL_RGBA), static_cast<unsigned>(GL_RGBA),
+			static_cast<unsigned>(GL_SRGB_ALPHA), static_cast<unsigned>(GL_RGBA),
 			static_cast<unsigned>(_info.mWidth ), 
 			static_cast<unsigned>(_info.mHeight),
 			4u, 1u,

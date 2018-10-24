@@ -15,6 +15,9 @@ void main()
   // Ignore colour blending for now
   vec4 color = texture(texSampler, vUV);
   
+  if (color.a < 0.003f)
+    discard;
+  
   // Gamma correction
   color.rgb = pow(color.rgb, vec3(1.f / Gamma));
   

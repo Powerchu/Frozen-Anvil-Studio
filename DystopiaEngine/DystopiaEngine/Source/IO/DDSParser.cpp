@@ -100,17 +100,17 @@ Image* ImageParser::LoadDDS(const std::string& _path)
 		switch (pixelFormat.mMagic)
 		{
 		case '1TXD':
-			img->mnRawFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+			img->mnRawFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
 			img->mnChannels  = 4;
 			blksz            = 8;
 			break;
 		case '3TXD':
-			img->mnRawFormat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+			img->mnRawFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
 			img->mnChannels  = 4;
 			blksz            = 16;
 			break;
 		case '5TXD':
-			img->mnRawFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			img->mnRawFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
 			img->mnChannels  = 4;
 			blksz            = 16;
 			break;

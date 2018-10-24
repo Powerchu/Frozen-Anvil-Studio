@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\Component\TextRenderer.cpp" />
     <ClCompile Include="Source\IO\Image.cpp" />
     <ClCompile Include="Source\Allocator\Allocator.cpp" />
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp" />
@@ -129,6 +130,7 @@
     <ClInclude Include="Include\Component\Circle.h" />
     <ClInclude Include="Include\Component\ColliderList.h" />
     <ClInclude Include="Include\Component\Convex.h" />
+    <ClInclude Include="Include\Component\TextRenderer.h" />
     <ClInclude Include="Include\Component\Triangle.h" />
     <ClInclude Include="Include\Editor\AdminCalls.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />

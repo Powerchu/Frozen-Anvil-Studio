@@ -50,7 +50,6 @@ namespace Dystopia
 
 		std::string mstrPath;
 		unsigned mnWidth, mnHeight, mnType, mnID;
-		bool mbPureRGB;
 	};
 }
 

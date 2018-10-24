@@ -46,7 +46,7 @@ namespace Dystopia
 			const std::string& _strGeo
 		);
 
-		void UseShader(void) const;
+		void Bind(void) const;
 
 
 		void UploadUniform(char const*, const Math::Vector2&) const;

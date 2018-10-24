@@ -52,7 +52,7 @@ Image* ImageParser::LoadPNG(const std::string& _strName)
 
 	Image* fileData = Dystopia::DefaultAllocator<Image>::ConstructAlloc(
 		false,
-		unsigned(GL_RGBA), unsigned(GL_RGBA),
+		unsigned(GL_SRGB_ALPHA), unsigned(GL_RGBA),
 		0u, 0u, 4u, 1u, nullptr
 	);
 	

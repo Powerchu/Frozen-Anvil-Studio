@@ -32,7 +32,6 @@ Dystopia::Texture2D::Texture2D(const std::string& _strPath) noexcept
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
 	Unbind();
 }
@@ -46,6 +45,7 @@ void Dystopia::Texture2D::GenerateMipmap(void) const
 	Bind();
 
 	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
 	Unbind();
 }
@@ -100,7 +100,8 @@ void Dystopia::Texture2D::InitCompressedTexture(Image const* _pData)
 
 	uint8_t* data_ptr = static_cast<uint8_t*>(_pData->mpImageData);
 
-	for (unsigned n = 0; (n < _pData->mnMipMaps) && w && h; ++n)
+	unsigned n;
+	for (n = 0; (n < _pData->mnMipMaps) && w && h; ++n)
 	{
 		auto sz = blksz * ((w + 3) >> 2) * ((h + 3) >> 2);
 
@@ -116,6 +117,9 @@ void Dystopia::Texture2D::InitCompressedTexture(Image const* _pData)
 			__debugbreak();
 #   endif
 	}
+
+	//if(n > 1)
+	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
 	Unbind();
 }
