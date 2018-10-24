@@ -82,7 +82,7 @@ namespace Dystopia
 		
 	}
 	
-	TypeErasure::TypeEraseMetaData& Milestone::GetMetaData()
+	TypeErasure::TypeEraseMetaData Milestone::GetMetaData()
 	{
 		/*TO DO*/
 		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/

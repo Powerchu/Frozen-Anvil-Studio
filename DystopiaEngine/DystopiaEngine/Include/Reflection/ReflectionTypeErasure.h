@@ -28,11 +28,14 @@ namespace Dystopia
 			struct _DLL_EXPORT Concept
 			{
 				virtual Concept * Duplicate() const = 0;
-				virtual ReadWriteObject       & operator[](std::string const & _name)       = 0;
-				virtual ReadWriteObject const & operator[](std::string const & _name) const = 0;
-				virtual std::map<char const*, ReadWriteObject>&        GetAllReflectedData()       = 0;
-				virtual std::map<const char*, ReadWriteObject> const & GetAllReflectedData() const = 0;
+				virtual ReadWriteObject        operator[](const char * _name)       = 0;
+				virtual ReadWriteObject        operator[](const char * _name) const = 0;
+				//virtual std::map<char const*, ReadWriteObject, CustomMetaComp>        GetAllReflectedData()       = 0;
+				//virtual std::map<const char*, ReadWriteObject, CustomMetaComp>        GetAllReflectedData() const = 0;
+				virtual AutoArray<const char *> GetAllNames() const = 0;
 
+
+				virtual bool isThereMatch(const char * _name) = 0;
 				virtual ~Concept() {}
 			};
 
@@ -51,25 +54,34 @@ namespace Dystopia
 					return new Wrapper<T>{*this};
 				}
 
-				virtual ReadWriteObject & operator[](std::string const & _name)
+				virtual ReadWriteObject  operator[](const char * _name)
 				{
-					if (mObj.mMetaMap.find(_name.c_str()) != mObj.mMetaMap.end())
-						return mObj.mMetaMap[_name.c_str()];
+					return mObj[_name];
+					//return ReadWriteObject{};
+				}
+				virtual ReadWriteObject operator[](const char * _name) const
+				{
+
 					return ReadWriteObject{};
 				}
-				virtual ReadWriteObject const & operator[](std::string const & _name) const
+				//virtual std::map<char const*, ReadWriteObject, CustomMetaComp> GetAllReflectedData() override
+				//{
+				//	return mObj.mMetaMap;
+				//}
+				//virtual std::map<const char*, ReadWriteObject, CustomMetaComp> GetAllReflectedData() const override
+				//{
+				//	return mObj.mMetaMap;
+				//}
+				virtual AutoArray<const char *> GetAllNames() const
 				{
-					if (mObj.mMetaMap.find(_name.c_str()) != mObj.mMetaMap.end())
-						return mObj.mMetaMap[_name.c_str()];
-					return ReadWriteObject{};
+					AutoArray<const char *> toRet;
+					for (auto const & elem : mObj.mMetaMap)
+						toRet.push_back(elem.first);
+					return toRet;
 				}
-				virtual std::map<char const*, ReadWriteObject>& GetAllReflectedData() override
+				bool isThereMatch(const char * _name) 
 				{
-					return mObj.mMetaMap;
-				}
-				virtual std::map<const char*, ReadWriteObject> const & GetAllReflectedData() const override
-				{
-					return mObj.mMetaMap;
+					return false;
 				}
 				virtual ~Wrapper() {}
 
@@ -93,13 +105,16 @@ namespace Dystopia
 
 			~TypeEraseMetaData();
 
-			ReadWriteObject&        operator[](std::string const & _name);
-			ReadWriteObject const & operator[](std::string const & _name) const;
-			std::map<char const*, ReadWriteObject>&        GetAllReflectedData();
-			std::map<const char*, ReadWriteObject> const & GetAllReflectedData() const;
-
+			ReadWriteObject        operator[](const char * _name);
+			ReadWriteObject        operator[](const char * _name) const;
+			//std::map<char const*, ReadWriteObject, CustomMetaComp>        GetAllReflectedData();
+			//std::map<const char*, ReadWriteObject, CustomMetaComp>        GetAllReflectedData() const;
+			AutoArray<const char *> GetAllNames()                               const;
 			operator bool() const;
-
+			bool isThereMatch(const char * _name)
+			{
+				return mpWrapper->isThereMatch(_name);
+			}
 			Concept* GetPointer();
 		private:
 			Concept* mpWrapper = nullptr;

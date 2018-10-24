@@ -186,13 +186,13 @@ namespace Dystopia
 				auto & MetaData = c->GetMetaData();
 				if(MetaData)
 				{
-					auto & AllReflectedData = MetaData.GetAllReflectedData();
-					for (auto & i : AllReflectedData)
+					auto Allnames =  MetaData.GetAllNames();
+					for (auto i : Allnames)
 					{
-						i.second.Reflect(i.first,c, SuperReflectFunctor{});
+						if(MetaData[i])
+							MetaData[i].Reflect(i, c, SuperReflectFunctor{});
 					}
 				}
-
 				EGUI::Display::EndTreeNode();
 			}
 		}

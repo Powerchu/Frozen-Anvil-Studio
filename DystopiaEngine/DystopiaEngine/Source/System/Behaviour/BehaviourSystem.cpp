@@ -25,9 +25,12 @@ namespace Dystopia
 			template<typename T>
 			void operator()(T, TextSerialiser&, void*)
 			{
-				//_obj << static_cast<T>(_v);
 			}
-
+			template<>
+			void operator()(std::nullptr_t, TextSerialiser&, void*)
+			{
+				/*Failed to deduced to any known type*/
+			}
 			template<>
 			void operator()(Math::Vec3D _v, TextSerialiser& _obj, void*)
 			{
@@ -359,7 +362,7 @@ namespace Dystopia
 	void Dystopia::BehaviourSystem::Serialise(TextSerialiser & _obj) const
 	{
 #if EDITOR
-		_obj.InsertStartBlock("BEHAVIOUR_SYSTEM BLOCK");
+		_obj.InsertStartBlock("BEHAVIOUR_SYSTEM_BLOCK");
 		/*Save number of Behaviours*/
 		_obj << mvBehaviours.size();
 		for (auto & i : mvBehaviours)
@@ -370,7 +373,7 @@ namespace Dystopia
 			_obj << i.second.size();
 			for (auto & iter : i.second)
 			{
-				_obj.InsertStartBlock("BEHAVIOUR BLOCK");
+				_obj.InsertStartBlock("BEHAVIOUR_BLOCK");
 				/*Owner ID*/
 				_obj << iter.first;
 				/*Save the Member Data*/
@@ -379,23 +382,26 @@ namespace Dystopia
 					auto & BehaviourMetaData = iter.second->GetMetaData();
 					if (BehaviourMetaData)
 					{
-						_obj.InsertStartBlock("BEHAVIOUR MEMBER VARIABLE BLOCK");
-						auto & AllReflectedData = BehaviourMetaData.GetAllReflectedData();
-						for (auto & elem : AllReflectedData)
+						_obj.InsertStartBlock("BEHAVIOUR_MEMBER_VARIABLE_BLOCK");
+						auto Allnames = BehaviourMetaData.GetAllNames();
+						for (auto i : Allnames)
 						{
-							/*Save the Member Variable Name*/
-							_obj << std::string{ elem.first };
-							_obj.InsertStartBlock(std::string{ elem.first });
-							(elem.second).Serialise(iter.second, _obj, BehaviourHelper::SuperSerialiseFunctor{});
-							_obj.InsertEndBlock(std::string{ elem.first });
+							if (BehaviourMetaData[i])
+							{
+								_obj << std::string{ i };
+								_obj.InsertStartBlock(std::string{ i });
+								BehaviourMetaData[i].Serialise(iter.second, _obj, BehaviourHelper::SuperSerialiseFunctor{});
+								_obj.InsertStartBlock("MEMBER VAR");
+							}
 						}
-						_obj.InsertEndBlock("BEHAVIOUR MEMBER VARIABLE BLOCK");
+						_obj << "END";
+						_obj.InsertEndBlock("BEHAVIOUR_MEMBER_VARIABLE_BLOCK");
 					}
 				}
-				_obj.InsertEndBlock("BEHAVIOUR BLOCK");
+				_obj.InsertEndBlock("BEHAVIOUR_BLOCK");
 			}
 		}
-		_obj.InsertEndBlock("BEHAVIOUR_SYSTEM BLOCK");
+		_obj.InsertEndBlock("BEHAVIOUR_SYSTEM_BLOCK");
 #endif
 	}
 
@@ -422,13 +428,51 @@ namespace Dystopia
 					for (unsigned u = 0; u < NumOfBehaviour; ++u)
 					{
 						/*Make new Behaviour*/
-						_obj.ConsumeStartBlock();
+						_obj.ConsumeStartBlock(); /*Consume START BEHAVIOUR BLOCK*/
 						uint64_t _ID = 0;
 						_obj >> _ID;
 						auto * ptr = RequestBehaviour(_ID, elem.mName);
-						ptr;
+						_obj.ConsumeStartBlock(); /*Consume Behaviour Member Variable Block*/
+						auto BehaviourMetaData = ptr->GetMetaData();
+						if (BehaviourMetaData)
+						{
+							std::string Var;
+							_obj >> Var;
+							while(Var != "END")
+							{
+								bool value = BehaviourMetaData.isThereMatch(Var.c_str());
+								if (BehaviourMetaData[Var.c_str()])
+								{
+									_obj.ConsumeStartBlock();
+									/*Call Unserialise*/
+									_obj >> Var;
+									_obj.ConsumeStartBlock();
+								}
+								else
+								{
+									_obj.ConsumeStartBlock();
+									/*Call Unserialise*/
+									_obj.ConsumeStartBlock();
+								}
+								_obj >> Var;
+							}
+						}
+						_obj.ConsumeEndBlock();   /*Consume Behaviour Member Variable Block*/
 						/*Time to Super Set Functor*/
-						_obj.ConsumeEndBlock();
+						_obj.ConsumeEndBlock();  /*Consume END BEHAVIOUR BLOCK*/
+
+						/*Insert to GameObject*/
+						auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+						if (auto x = SceneSys->FindGameObject(_ID))
+						{
+							ptr->SetOwner(x);
+							x->AddComponent(ptr, BehaviourTag{});
+						}
+						else
+						{
+							/*GameObject with ID that was serialise could not be found*/
+							/*Remove and delete the Behaviour from mvBehaviourReferences*/
+						}
 					}
 					break;
 				}

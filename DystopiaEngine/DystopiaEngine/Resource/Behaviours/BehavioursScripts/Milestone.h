@@ -65,7 +65,7 @@ namespace Dystopia
 		virtual void EditorUI(void) noexcept override;
 		
 		
-		virtual TypeErasure::TypeEraseMetaData&       GetMetaData();
+		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 		

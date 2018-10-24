@@ -7,15 +7,16 @@ Dystopia::TypeErasure::TypeEraseMetaData::TypeEraseMetaData()
 }
 
 Dystopia::TypeErasure::TypeEraseMetaData::TypeEraseMetaData(TypeEraseMetaData const & _TypeEraseRhs)
-	:mpWrapper{ _TypeEraseRhs.mpWrapper->Duplicate() }
+	:mpWrapper{ nullptr }
 {
-
+	if (_TypeEraseRhs.mpWrapper)
+		mpWrapper = _TypeEraseRhs.mpWrapper->Duplicate();
 }
 
 Dystopia::TypeErasure::TypeEraseMetaData::TypeEraseMetaData(TypeEraseMetaData && _TypeEraseRhs)
 	:mpWrapper{ _TypeEraseRhs.mpWrapper }
 {
-
+	_TypeEraseRhs.mpWrapper = nullptr;
 }
 
 Dystopia::TypeErasure::TypeEraseMetaData::~TypeEraseMetaData()
@@ -26,24 +27,33 @@ Dystopia::TypeErasure::TypeEraseMetaData::~TypeEraseMetaData()
 	
 }
 
-Dystopia::TypeErasure::ReadWriteObject & Dystopia::TypeErasure::TypeEraseMetaData::operator[](std::string const & _name)
+Dystopia::TypeErasure::ReadWriteObject Dystopia::TypeErasure::TypeEraseMetaData::operator[](const char * _name)
 {
-	return (*mpWrapper)[_name];
+	if(mpWrapper)
+		return (*mpWrapper)[_name];
+	return Dystopia::TypeErasure::ReadWriteObject{};
 }
 
-Dystopia::TypeErasure::ReadWriteObject const & Dystopia::TypeErasure::TypeEraseMetaData::operator[](std::string const & _name) const
+Dystopia::TypeErasure::ReadWriteObject Dystopia::TypeErasure::TypeEraseMetaData::operator[](const char * _name) const
 {
-	return (*mpWrapper)[_name];
+	if (mpWrapper)
+		return (*mpWrapper)[_name];
+	return Dystopia::TypeErasure::ReadWriteObject{};
 }
 
-std::map<char const*, Dystopia::TypeErasure::ReadWriteObject>& Dystopia::TypeErasure::TypeEraseMetaData::GetAllReflectedData()
-{
-	return mpWrapper->GetAllReflectedData();
-}
+//std::map<char const*, Dystopia::TypeErasure::ReadWriteObject, CustomMetaComp> Dystopia::TypeErasure::TypeEraseMetaData::GetAllReflectedData()
+//{
+//	return mpWrapper->GetAllReflectedData();
+//}
+//
+//std::map<char const*, Dystopia::TypeErasure::ReadWriteObject, CustomMetaComp> Dystopia::TypeErasure::TypeEraseMetaData::GetAllReflectedData() const
+//{
+//	return mpWrapper->GetAllReflectedData();
+//}
 
-std::map<char const*, Dystopia::TypeErasure::ReadWriteObject> const& Dystopia::TypeErasure::TypeEraseMetaData::GetAllReflectedData() const
+AutoArray<const char*> Dystopia::TypeErasure::TypeEraseMetaData::GetAllNames() const
 {
-	return mpWrapper->GetAllReflectedData();
+	return mpWrapper->GetAllNames();
 }
 
 Dystopia::TypeErasure::TypeEraseMetaData::operator bool() const

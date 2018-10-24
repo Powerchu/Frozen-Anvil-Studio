@@ -156,8 +156,11 @@ namespace Dystopia
 			}
 
 			ReadWriteObject(ReadWriteObject const & _TypeEraseRhs)
-				:mpWrapper(_TypeEraseRhs.mpWrapper->Duplicate())
-			{}
+				:mpWrapper(nullptr)
+			{
+				if (_TypeEraseRhs.mpWrapper)
+					mpWrapper = _TypeEraseRhs.mpWrapper->Duplicate();
+			}
 			
 
 			ReadWriteObject(ReadWriteObject  && _TypeEraseRhs)
@@ -165,6 +168,7 @@ namespace Dystopia
 			{
 				_TypeEraseRhs.mpWrapper = nullptr;
 			}
+			ReadWriteObject& operator=(ReadWriteObject const & _rhs) = delete;
 
 			template <typename T>
 			struct TypeResolve
@@ -207,7 +211,8 @@ namespace Dystopia
 			void Reflect(const char * _name,void * _Address, SF)
 			{
 				void(*passdown)(const char *,std::any, std::any, void*) = ResolveType_Reflect<SF>;
-				mpWrapper->Reflect(_name,_Address, passdown);
+				if(mpWrapper)
+					mpWrapper->Reflect(_name,_Address, passdown);
 			}
 
 			template <typename SF>

@@ -23,15 +23,29 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <map>
 
+struct _DLL_EXPORT CustomMetaComp
+{
+	bool operator()(const char * _1, const char * _2) const
+	{
+		return strcmp(_1, _2) < 0;
+	}
+};
 #define STRINGIFY(_NAME_) #_NAME_
 #define PP_REFLECT(_STRUCT_, ...)                                                                                             \
 template <>                                                                                                                   \
-struct MetaData<_STRUCT_>                                                                                         \
+struct MetaData<_STRUCT_>                                                                                                     \
 {                                                                                                                             \
 																                                                              \
-	using Map_t = std::map<char const*, Dystopia::TypeErasure::ReadWriteObject>;                                              \
+	using Map_t = std::pair<char const*, Dystopia::TypeErasure::ReadWriteObject>[PP_VARIADIC_SIZE(__VA_ARGS__)];                      \
     Map_t mMetaMap = {PP_FOREACH(REFLECT_AUX, (_STRUCT_), __VA_ARGS__)};                                                      \
-											                                                                                  \
+	Dystopia::TypeErasure::ReadWriteObject	operator[](const char * _name)									                  \
+   {																														  \
+		for(auto & elem :  mMetaMap)  															                              \
+		   if(!strcmp(elem.first, _name)) 													                                  \
+		    	return elem.second;								                                                              \
+		return Dystopia::TypeErasure::ReadWriteObject{};																	  \
+                                                                                                                              \
+   }                                                                                                                          \
 																															  \
 };                                                                                                                            \
 //MetaData<_STRUCT_>::Map_t MetaData<_STRUCT_>::mMetaMap {PP_FOREACH(REFLECT_AUX, (_STRUCT_), __VA_ARGS__)   };                 

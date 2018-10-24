@@ -82,7 +82,7 @@ namespace Dystopia
 		
 	}
 	
-	TypeErasure::TypeEraseMetaData& _SF_ClassName_::GetMetaData()
+	TypeErasure::TypeEraseMetaData _SF_ClassName_::GetMetaData()
 	{
 		/*TO DO*/
 		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/

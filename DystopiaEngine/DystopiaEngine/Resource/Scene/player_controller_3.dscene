@@ -1,5 +1,5 @@
 [START_Scene]
-18446744072511553536,player_controller_2,10,[START_START_GO_DATA]
+18446744072511553536,player_controller_3,10,[START_START_GO_DATA]
 910164992,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
@@ -257,6 +257,10 @@
 [START_BEHAVIOUR_SYSTEM_BLOCK]
 1,Milestone,1,[START_BEHAVIOUR_BLOCK]
 613081600,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面,[START_面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面]
+[START_MEMBER VAR]
+面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面,[START_面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面面]
+[START_MEMBER VAR]
 mFloat,[START_mFloat]
 5,[START_MEMBER VAR]
 mInt,[START_mInt]
