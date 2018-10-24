@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <string>
 #include <unordered_map>
 #include "DataStructure/SharedPtr.h"
+#include "Math/Vector4.h"
 
 // TODO: use our reflection stuff
 namespace Dystopia
@@ -32,90 +33,105 @@ namespace Dystopia
 			/*
 			 * Bool-String Map
 			 */
-			void setBool(std::string key, bool value) { bools[key] = value; }
-			bool getBool(std::string key)
+			void setBool(const std::string& key, const bool value) { bools[key] = value; }
+			bool getBool(const std::string& key)
 			{
 				if (bools.find(key) == bools.end()) {
 					bools[key] = false;
 				}
 				return bools[key];
 			}
-			bool hasBool(std::string key) const { return bools.find(key) != bools.end(); }
+			bool hasBool(const std::string& key) const { return bools.find(key) != bools.end(); }
 
 			/*
 			* Int-String Map
 			*/
-			void setInt(std::string key, int value) { ints[key] = value; }
-			int getInt(std::string key)
+			void setInt(const std::string& key, const int value) { ints[key] = value; }
+			int getInt(const std::string& key)
 			{
 				if (ints.find(key) == ints.end()) {
 					ints[key] = 0;
 				}
 				return ints[key];
 			}
-			bool hasInt(std::string key) const { return ints.find(key) != ints.end(); }
+			bool hasInt(const std::string& key) const { return ints.find(key) != ints.end(); }
 
 			/*
 			* Float-String Map
 			*/
-			void setFloat(std::string key, float value) { floats[key] = value; }
-			float getFloat(std::string key)
+			void setFloat(const std::string& key, const float value) { floats[key] = value; }
+
+			float getFloat(const std::string& key)
 			{
 				if (floats.find(key) == floats.end()) {
 					floats[key] = 0.0f;
 				}
 				return floats[key];
 			}
-			bool hasFloat(std::string key) const { return floats.find(key) != floats.end(); }
+			bool hasFloat(const std::string& key) const { return floats.find(key) != floats.end(); }
 
 			/*
 			* Double-String Map
 			*/
-			void setDouble(std::string key, double value) { doubles[key] = value; }
-			double getDouble(std::string key)
+			void setDouble(const std::string& key, const double value) { doubles[key] = value; }
+			double getDouble(const std::string& key)
 			{
 				if (doubles.find(key) == doubles.end()) {
 					doubles[key] = 0.0f;
 				}
 				return doubles[key];
 			}
-			bool hasDouble(std::string key) const { return doubles.find(key) != doubles.end(); }
+			bool hasDouble(const std::string& key) const { return doubles.find(key) != doubles.end(); }
 
 			/*
 			* String-String Map
 			*/
-			void setString(std::string key, std::string value) { strings[key] = value; }
-			std::string getString(std::string key)
+			void setString(const std::string& key, const std::string& value) { strings[key] = value; }
+			std::string getString(const std::string& key)
 			{
 				if (strings.find(key) == strings.end()) {
 					strings[key] = "";
 				}
 				return strings[key];
 			}
-			bool hasString(std::string key) const { return strings.find(key) != strings.end(); }
+			bool hasString(const std::string& key) const { return strings.find(key) != strings.end(); }
 
 			/*
 			* Void*-String Map
 			*/
-			void setPointer(std::string key, void* value) { pointers[key] = value; }
-			void* getPointer(std::string key)
+			void setPointer(const std::string& key, void* value) { pointers[key] = value; }
+			void* getPointer(const std::string& key)
 			{
 				if (pointers.find(key) == pointers.end()) {
 					pointers[key] = nullptr;
 				}
 				return pointers[key];
 			}
-			bool hasPointer(std::string key) const { return pointers.find(key) != pointers.end(); }
+			bool hasPointer(const std::string& key) const { return pointers.find(key) != pointers.end(); }
+
+			/*
+			* Vector4-String Map
+			*/
+			void setVector(const std::string& key, const Math::Vector4& value) { vectors[key] = value; }
+			Math::Vector4 getVector(const std::string& key)
+			{
+				if (vectors.find(key) == vectors.end()) {
+					vectors[key] = {0,0,0,0};
+				}
+				return vectors[key];
+			}
+			bool hasVector(const std::string& key) const { return vectors.find(key) != vectors.end(); }
 
 			using Ptr = SharedPtr<Blackboard>;
 
 		protected:
+			std::unordered_map<std::string, void*> pointers;
 			std::unordered_map<std::string, bool> bools;
 			std::unordered_map<std::string, int> ints;
 			std::unordered_map<std::string, float> floats;
 			std::unordered_map<std::string, double> doubles;
+			std::unordered_map<std::string, Math::Vector4> vectors;
 			std::unordered_map<std::string, std::string> strings;
-			std::unordered_map<std::string, void*> pointers;
 		};
 	}
 }

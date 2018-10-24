@@ -103,14 +103,14 @@ namespace Dystopia
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
 
-		const float perc = 0.50F / iter;
-		const float slop = 0.05F;
+		const float perc = 0.44F / iter;
+		const float slop = 0.15F;
 
-		const Vec3D correction = Math::Max(Math::Abs(mfPeneDepth) + slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
+		const Vec3D correction = Math::Max(Math::Abs(mfPeneDepth) - slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 
-		if (!bodyA->Get_IsStaticState())
+		if (!bodyA->Get_IsStaticState() && bodyA->GetIsAwake())
 			bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
-		if (!bodyB->Get_IsStaticState())
+		if (!bodyB->Get_IsStaticState() && bodyB->GetIsAwake())
 			bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);
 	}
 

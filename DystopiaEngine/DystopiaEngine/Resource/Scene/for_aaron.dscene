@@ -4,7 +4,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.312853,0.500567,1.05523,-63.5579,-3.25303,0,0,0,0,1,
+0.258556,0.413692,0.872094,-64.8931,-0.106249,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -49,7 +49,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-64,64,1,-56,-11,2.1,0,0,0,1,
+64,64,1,39,24,2.1,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -58,7 +58,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-32,32,1,-33,61,10,0,0,0,1,
+32,32,1,-117,-23,10,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -103,7 +103,7 @@
 [END_Component End]
 [START_Component]
 [START_RigidBody]
-18446744072606144512,0,18446744072606142976,0,0.999,0.1,0.5,0.5,0.05,0,1.4,55,1,0,1,1,
+18446744072606144512,0,18446744072606142976,0,0.999,0,0.5,0.5,0.05,0,2,55,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -129,7 +129,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-4,
+5,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -155,15 +155,15 @@
 [END_Convex_Collider]
 
 [END_Component End]
-[START_ComponentDonor]
-1,
-[END_ComponentDonor End]
 [START_Component]
-[START_Circle_Collider2D]
-18446744073549014016,1,18446744072606142976,0,0,0,0,0,0,1.02,
-[END_Circle_Collider2D]
+[START_Convex_Collider]
+18446744073312344576,1,18446744072606142976,0,-0.18,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.25,0.55,1,0,0,0,1,0,
+[END_Convex_Collider]
 
 [END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]

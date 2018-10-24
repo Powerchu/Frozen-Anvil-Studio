@@ -25,8 +25,8 @@ namespace Dystopia
 		mpcGobj				mCollidedWith;		//Gameobject Collision That
 
 		Math::Point3D		mCollisionPoint;	//Contact Point
-		Math::Vector3D		mEdgeVector;		//Contact Vector
-		Math::Vector3D		mEdgeNormal;		//Contact Normal
+		Math::Vector4		mEdgeVector;		//Contact Vector
+		Math::Vector4		mEdgeNormal;		//Contact Normal
 
 		float				mfPeneDepth;		//Previous Frame penetration
 		float				mfRestitution;		//Total summed (min) restitution

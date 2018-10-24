@@ -87,7 +87,7 @@ namespace Dystopia
 		/*Vector from origin/pivot of the object to the _point where the force is applied*/
 		Math::Vec3D && displacement_v = _point - _origin;
 		/*Generate the angular velocity as a result of the force being applied at _point*/
-		Math::Vector3D Angular = Cross(_force, displacement_v) / displacement_v.MagnitudeSqr();
+		Math::Vector4 Angular = Cross(_force, displacement_v) / displacement_v.MagnitudeSqr();
 		/*Add to the total Anuglar velocity of the object in this Update Frame*/
 		mAngularVelocity += Angular;
 		/*Add the the total Linear Veloctiy of the object in this Update Frame*/

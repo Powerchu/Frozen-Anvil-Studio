@@ -16,7 +16,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TREE_BUILDER_H_
 #define _TREE_BUILDER_H_
 
-#include "Behaviour/NeuralTree.h"
+#include "Behaviour/AI/Composite.h"
+#include "Behaviour/AI/Decorator.h"
+#include "Behaviour/AI/Leaf.h"
+
 #include <cassert>
 
 namespace Dystopia

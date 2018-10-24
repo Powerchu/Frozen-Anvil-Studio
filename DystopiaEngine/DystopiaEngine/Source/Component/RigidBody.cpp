@@ -238,7 +238,7 @@ namespace Dystopia
 
 		//mfWeightedMotion is the average kinetic energy over a given set of frames
 
-		const float bias = 0.985F; //std::pow(0.96F, _dt);
+		const float bias = 0.99F; //std::pow(0.96F, _dt);
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
 		mfWeightedMotion = bias * mfWeightedMotion + (1 - bias)*currentMotion;
 
@@ -267,8 +267,8 @@ namespace Dystopia
 
 	void RigidBody::PreUpdatePosition(float _dt)
 	{
-		//mPosition += mLinearVelocity * _dt;
-		mPosition += (mLinearVelocity + mLinearAcceleration * _dt * 0.5F)  * _dt;
+		mPosition += mLinearVelocity * _dt;
+		//mPosition += (mLinearVelocity + mLinearAcceleration * _dt * 0.5F)  * _dt;
 		//mPosition += (mLinearVelocity + mLinearAcceleration * _dt * 0.5F)  * _dt;
 	}
 

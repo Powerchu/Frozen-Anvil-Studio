@@ -1,10 +1,10 @@
 [START_Scene]
-18446744072511553536,collision_testing,4,[START_START_GO_DATA]
+18446744072511553536,collision_testing,25,[START_START_GO_DATA]
 910164992,1,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,0,0,0,0,0,0,1,
+0.951665,1.4641,1.4641,-83.4526,-20.9569,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -13,16 +13,16 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1024,32,1,0,-165,0,0,0,0,1,
+168,187.1,1,-57,-121,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 [START_START_GO_DATA]
-18446744072811464704,1,Hero,
+452698112,1,Trigger_Clone,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-32,32,1,0,5,0,0,0,0,1,
+168,16.1,1,-57,-281,0,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -31,7 +31,196 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-32,32,1,0,48,0,0,0,0,1,
+16,244,1,-155,84,1,0,0,0.300706,0.953717,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1253966848,1,Trigger_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,244,1,32,84,1,0,0,-0.300706,0.953717,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072811464704,1,Hero,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,7,217,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072394435072,1,Hero_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,30,217,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+514340864,1,Hero_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,52,217,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071992242688,1,Hero_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-12.61,217,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073226039296,1,Hero_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-34.71,217,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+343389184,1,Hero_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-55.41,217,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1517934080,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-78.11,217,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071977025024,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-101.31,217,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073210297344,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-124.71,217,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+498060800,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-147.71,217,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1760696320,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-147.71,192.5,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+893381632,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-125.21,192.5,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071726333440,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-101.11,192.5,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072784997888,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-79.11,192.5,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+16131584,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-56.41,192.5,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+978839552,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-32.41,192.5,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1945742336,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-11.41,192.5,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072131122688,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,8.99,192.5,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072851580928,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,31.39,192.5,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073564698624,1,Hero_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,51.99,192.5,3,0,0,0,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -45,16 +234,10 @@
 
 [END_Component End]
 [START_ComponentDonor]
-1,
+0,
 [END_ComponentDonor End]
-[START_Component]
-[START_Renderer]
-2106575872,1,617811456,..\DystopiaEngine\Resource\Editor\white_box.png,
-[END_Renderer]
-
-[END_Component End]
 [START_ComponentDonor]
-1,
+23,
 [END_ComponentDonor End]
 [START_Component]
 [START_RigidBody]
@@ -62,11 +245,143 @@
 [END_RigidBody]
 
 [END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072460885504,1,617811456,0,0.5,0.5,0.5,0.5,0.7,1,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1253967872,1,1253966848,0,0.5,0.5,0.5,0.5,0.7,1,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1021052416,1,452698112,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072394435584,1,18446744072394435072,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+514341376,1,514340864,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744071992243200,1,18446744071992242688,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744073226039808,1,18446744073226039296,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+343389696,1,343389184,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1517934592,1,1517934080,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744071977025536,1,18446744071977025024,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744073210297856,1,18446744073210297344,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+498061312,1,498060800,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1760696832,1,1760696320,0,0.5,0.5,0.5,0.5,0.7,1,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+893382144,1,893381632,0,0.5,0.5,0.5,0.5,0.7,1,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744071726333952,1,18446744071726333440,0,0.5,0.5,0.5,0.5,0.7,1,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072784998400,1,18446744072784997888,0,0.5,0.5,0.5,0.5,0.7,1,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+16132096,1,16131584,0,0.5,0.5,0.5,0.5,0.7,1,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+978840064,1,978839552,0,0.5,0.5,0.5,0.5,0.7,1,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1945742848,1,1945742336,0,0.5,0.5,0.5,0.5,0.7,1,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072131123200,1,18446744072131122688,0,0.5,0.5,0.5,0.5,0.7,1,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072851581440,1,18446744072851580928,0,0.5,0.5,0.5,0.5,0.7,1,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744073564699136,1,18446744073564698624,0,0.5,0.5,0.5,0.5,0.7,1,1,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-3,
+4,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -76,19 +391,145 @@
 [END_Component End]
 [START_Component]
 [START_Convex_Collider]
-18446744072811465216,1,18446744072811464704,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+617811968,1,617811456,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
 [END_Convex_Collider]
 
 [END_Component End]
 [START_Component]
 [START_Convex_Collider]
-617811968,1,617811456,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
+1253967360,1,1253966848,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+452698624,1,452698112,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
 [END_Convex_Collider]
 
 [END_Component End]
 [START_ComponentDonor]
-0,
+20,
 [END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+963228160,1,18446744072811464704,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744072394436096,1,18446744072394435072,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+514341888,1,514340864,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744071992243712,1,18446744071992242688,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744073226040320,1,18446744073226039296,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+343390208,1,343389184,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+1517935104,1,1517934080,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744071977026048,1,18446744071977025024,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744073210298368,1,18446744073210297344,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+498061824,1,498060800,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+1760697344,1,1760696320,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+893382656,1,893381632,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744071726334464,1,18446744071726333440,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744072784998912,1,18446744072784997888,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+16132608,1,16131584,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+978840576,1,978839552,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+1945743360,1,1945742336,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744072131123712,1,18446744072131122688,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744072851581952,1,18446744072851580928,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744073564699648,1,18446744073564698624,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]

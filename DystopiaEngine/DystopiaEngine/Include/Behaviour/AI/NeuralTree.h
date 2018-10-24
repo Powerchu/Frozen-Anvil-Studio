@@ -20,7 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Globals.h"
 #include "DataStructure/MagicArray.h"
 #include "DataStructure/SharedPtr.h"
-#include "Behaviour/Blackboard.h"
+
+#include "Behaviour/AI/Blackboard.h"
+#include "Behaviour/AI/TreeBuilder.h"
 
 namespace Dystopia
 {
@@ -42,16 +44,16 @@ namespace Dystopia
 			virtual ~Node() = default;
 
 			virtual void Init() {};
-			virtual eStatus Update(float) = 0;
+			virtual eStatus Update() = 0;
 			virtual void Exit(eStatus) {};
 
-			eStatus Tick(float dt) 
+			eStatus Tick() 
 			{
 				if (mStatus != eStatus::RUNNING) {
 					Init();
 				}
 
-				mStatus = Update(dt);
+				mStatus = Update();
 
 				if (mStatus != eStatus::RUNNING) {
 					Exit(mStatus);
@@ -137,7 +139,7 @@ namespace Dystopia
 			BehaviorTree() : mpBlackboard(CreateShared<Blackboard>()) {}
 			BehaviorTree(const Node::Ptr &rootNode) : BehaviorTree() { mpRoot = rootNode; }
 
-			eStatus Update(const float dt) override { return mpRoot->Tick(dt);	}
+			eStatus Update() override { return mpRoot->Tick();	}
 
 			void SetRoot(const Node::Ptr &node) { mpRoot = node; }
 			Blackboard::Ptr GetBlackboard() const { return mpBlackboard; }
