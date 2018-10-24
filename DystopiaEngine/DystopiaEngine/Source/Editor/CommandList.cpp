@@ -13,6 +13,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/CommandList.h"
+#include "Editor/Editor.h"
+#include "Editor/Clipboard.h"
+
 #include "Behaviour/Behaviour.h"
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
@@ -43,17 +46,13 @@ Dystopia::ComdInsertObject::~ComdInsertObject()
 bool Dystopia::ComdInsertObject::ExecuteDo()
 {
 	if (auto ss = EngineCore::GetInstance()->GetSystem<SceneSystem>())
-	{
 		if (&ss->GetCurrentScene() != mpScene)
-		{
 			return false;
-		}
-	}
+
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (p || !mpObj) return false;
 
-	mpScene->GetAllGameObjects().EmplaceBack(Utility::Move(*mpObj));
-
+	mpScene->GetAllGameObjects().EmplaceBack(Ut::Move(*mpObj));
 	auto& obj = mpScene->GetAllGameObjects().back();
 	obj.Identify();
 	obj.Init();
@@ -78,12 +77,8 @@ bool Dystopia::ComdInsertObject::ExecuteDo()
 bool Dystopia::ComdInsertObject::ExecuteUndo()
 {
 	if (auto ss = EngineCore::GetInstance()->GetSystem<SceneSystem>())
-	{
 		if (&ss->GetCurrentScene() != mpScene)
-		{
 			return false;
-		}
-	}
 
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (!p) return false;
@@ -141,12 +136,8 @@ Dystopia::ComdDeleteObject::~ComdDeleteObject()
 bool Dystopia::ComdDeleteObject::ExecuteDo()
 {
 	if (auto ss = EngineCore::GetInstance()->GetSystem<SceneSystem>())
-	{
 		if (&ss->GetCurrentScene() != mpScene)
-		{
 			return false;
-		}
-	}
 
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (!p) return false;
@@ -178,17 +169,13 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 bool Dystopia::ComdDeleteObject::ExecuteUndo()
 {
 	if (auto ss = EngineCore::GetInstance()->GetSystem<SceneSystem>())
-	{
 		if (&ss->GetCurrentScene() != mpScene)
-		{
 			return false;
-		}
-	}
+
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (p || !mpObj) return false;
 
-	mpScene->GetAllGameObjects().EmplaceBack(Utility::Move(*mpObj));
-
+	mpScene->GetAllGameObjects().EmplaceBack(Ut::Move(*mpObj));
 	auto& obj = mpScene->GetAllGameObjects().back();
 	obj.Identify();
 	obj.Init();

@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vector4.h"
 #include "Math/Matrix4.h"
 #include "DataStructure/Queue.h"
+#include "Math/Vector2.h"
 
 
 //#include "Math/Quaternion.h"
@@ -42,7 +43,11 @@ namespace Dystopia
 		using SYSTEM = PhysicsSystem;
 		unsigned GetComponentType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllComponents>::value;
+		};
+		unsigned GetRealComponentType(void) const
+		{
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, UsableComponents>::value;
 		};
 		static const std::string GetCompileName(void) { return "RigidBody"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
@@ -77,6 +82,7 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		void Integrate(float _dt);
 		void CheckSleeping(float _dt);
+		void PreUpdatePosition(float _dt);
 		void UpdateResult(float _dt);
 
 		// void Update(float _dt);
@@ -127,7 +133,6 @@ namespace Dystopia
 		void AddImpulse(Vec3D const & _impul, Point3D const & _point);
 		void AddImpulse(Vec3D const & _impul, Point3D const & _point, Point3D const & _org);
 
-
 		/**************************************************************************************************
 		\brief
 		Resets the Cumulative Force for the current RigidBody
@@ -167,7 +172,6 @@ namespace Dystopia
 		bool GetIsAwake() const;
 
 	private:
-		Primitive*				mpPrimitiveShape;			/* The underlying primitive of the RigidBody*/
 		Transform*				mpOwnerTransform;			/* Used for accessing position and GameObject World orientation*/
 		PhysicsSystem*			mpPhysSys;					/* A pointer to Physics System to get global constants (i.e. Gravity)*/
 
@@ -181,6 +185,7 @@ namespace Dystopia
 		Vec3D					mAcceleration;				/* For integration purpose when updating position.*/
 
 		Vec3D					mCumulativeForce;			/* The sum of all the force acting on the body*/
+		Vec3D					mCurrImpulse;
 		Vec3D					mCumulativeTorque;			/* Sum of all angular forces acting on the body*/
 
 		Mat3D					mLocalInvInertiaTensor;
@@ -188,9 +193,10 @@ namespace Dystopia
 		
 		Vec3D					mGlobalCentroid;
 		Vec3D					mLocalCentroid;
+
+		Math::Vector2			mLinearDamping;				/* Linear Damping in the X and Y axis */
 			
 		float					mfAngleDeg;					/* Anticlockwise Direction: Angles in Degrees*/
-		float					mfLinearDamping;			/* Linear Drag, slows down motion dynamics over time*/
 
 		float					mfAngularDrag;				/* Coefficient of angular drag. */
 		float					mfStaticFriction;			/* Like LinearDamping, but only drag the forces when 2 or more objects are colliding*/

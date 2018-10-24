@@ -50,9 +50,9 @@ public:
 	AutoArray(const AutoArray& _other);
 	AutoArray(AutoArray&& _other) noexcept;
 	template <typename U, typename = 
-		Utility::EnableIf_t<
-			 Utility::IsSame<Utility::Decay_t<U>, T>::value &&
-			!Utility::IsIntegral<Utility::Decay_t<U>>::value
+		Ut::EnableIf_t<
+			 Ut::IsSame<Ut::Decay_t<U>, T>::value &&
+			!Ut::IsIntegral<Ut::Decay_t<U>>::value
 	>>
 	AutoArray(std::initializer_list<U>);
 
@@ -197,7 +197,7 @@ AutoArray<T, A>::AutoArray(std::initializer_list<U> _il) :
 	AutoArray(static_cast<Sz_t>(_il.size()))
 {
 	for (auto& e : _il)
-		EmplaceBack(Utility::Move(e));
+		EmplaceBack(Ut::Move(e));
 }
 
 template <class T, class A>
@@ -322,7 +322,7 @@ template <class T, class A>
 void AutoArray<T, A>::Insert(const T& _obj, const Sz_t _nIndex)
 {
 #if _DEBUG
-	DEBUG_BREAK(!(_nIndex < size()), "DynamicArray Error: Array index out of range!\n");
+	DEBUG_BREAK(_nIndex > size(), "DynamicArray Error: Array index out of range!\n");
 #endif
 
 	if (mpLast == mpEnd)
@@ -334,7 +334,7 @@ void AutoArray<T, A>::Insert(const T& _obj, const Sz_t _nIndex)
 
 	while (i != at)
 	{
-		*i = Utility::Move(*j);
+		*i = Ut::Move(*j);
 		--i; --j;
 	}
 
@@ -350,7 +350,7 @@ void AutoArray<T, A>::EmplaceBack(Args &&...args)
 	if (mpLast == mpEnd)
 		GrowArray();
 
-	new (mpLast) T{ Utility::Forward<Args>(args)... };
+	new (mpLast) T{ Ut::Forward<Args>(args)... };
 	++mpLast;
 }
 
@@ -383,7 +383,7 @@ void AutoArray<T, A>::Remove(const T& _obj) noexcept
 			continue;
 		}
 
-		*start = Utility::Move(*target);
+		*start = Ut::Move(*target);
 		++target;
 		++start;
 	}
@@ -411,7 +411,7 @@ inline void AutoArray<T, A>::Remove(Itor_t _pObj)
 	Itor_t nxt = _pObj + 1;
 	while (nxt != mpLast)
 	{
-		*(_pObj) = Utility::Move(*nxt);
+		*(_pObj) = Ut::Move(*nxt);
 		++_pObj; ++nxt;
 	}
 
@@ -436,7 +436,7 @@ inline void AutoArray<T, A>::FastRemove(const Itor_t& _pObj)
 #endif
 
 	--mpLast;
-	Utility::Swap(*_pObj, *mpLast);
+	Ut::Swap(*_pObj, *mpLast);
 	Destroy(*mpLast);
 }
 
@@ -457,15 +457,15 @@ void AutoArray<T, A>::Sort(Condition&& _Test)
 
 	for (Sz_t n2, n1 = 1; n1 < last; ++n1)
 	{
-		temp = Utility::Move(mpArray[n1]);
+		temp = Ut::Move(mpArray[n1]);
 
 		n2 = n1;
 		while (n2-- > 0 && _Test(temp, mpArray[n2]))
 		{
-			mpArray[n2 + 1] = Utility::Move(mpArray[n2]);
+			mpArray[n2 + 1] = Ut::Move(mpArray[n2]);
 		}
 
-		mpArray[n2 + 1] = Utility::Move(temp);
+		mpArray[n2 + 1] = Ut::Move(temp);
 	}
 }
 
@@ -488,7 +488,7 @@ void AutoArray<T, A>::GrowArray(Sz_t _newSize)
 template <class T, class A>
 inline typename AutoArray<T, A>::Itor_t AutoArray<T, A>::ArrayCopy(Itor_t _src_beg, Itor_t _src_end, Itor_t _dest)
 {
-	return Utility::CopyInit(_src_beg, _src_end, _dest);
+	return Ut::CopyInit(_src_beg, _src_end, _dest);
 }
 
 template <class T, class A>
@@ -566,9 +566,9 @@ AutoArray<T, A>& AutoArray<T, A>::operator= (const AutoArray<T, A>& _other)
 template <class T, class A>
 AutoArray<T, A>& AutoArray<T, A>::operator= (AutoArray<T, A>&& _other) noexcept
 {
-	Utility::Swap(mpEnd  , _other.mpEnd  );
-	Utility::Swap(mpLast , _other.mpLast );
-	Utility::Swap(mpArray, _other.mpArray);
+	Ut::Swap(mpEnd  , _other.mpEnd  );
+	Ut::Swap(mpLast , _other.mpLast );
+	Ut::Swap(mpArray, _other.mpArray);
 
 	return *this;
 }

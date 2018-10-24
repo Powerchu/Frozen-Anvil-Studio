@@ -191,7 +191,7 @@ bool Dystopia::InputManager::IsKeyTriggered(std::string const & _ButtonName) con
 	}
 	if (iterator->second >= eButton::XBUTTON_DPAD_UP)
 	{
-		return mGamePad.IsKeyTriggered(iterator->second);
+		return mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second - eButton::XBUTTON_DPAD_UP));
 	}
 	return IsKeyTriggered(iterator->second);
 }
@@ -205,7 +205,7 @@ bool Dystopia::InputManager::IsKeyPressed(std::string const & _ButtonName) const
 	}
 	if (iterator->second >= eButton::XBUTTON_DPAD_UP)
 	{
-		return mGamePad.IsKeyPressed(iterator->second);
+		return mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second - eButton::XBUTTON_DPAD_UP));
 	}
 	return IsKeyPressed(iterator->second);
 }
@@ -219,9 +219,14 @@ bool Dystopia::InputManager::IsKeyReleased(std::string const & _ButtonName) cons
 	}
 	if (iterator->second >= eButton::XBUTTON_DPAD_UP)
 	{
-		return mGamePad.IsKeyReleased(iterator->second);
+		return mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second - eButton::XBUTTON_DPAD_UP));
 	}
 	return IsKeyReleased(iterator->second);
+}
+
+bool Dystopia::InputManager::IsController() const
+{
+	return mGamePad.IsConnected();
 }
 
 float Dystopia::InputManager::GetAnalogY(int _state) const

@@ -74,6 +74,8 @@ namespace Dystopia
 		bool IsKeyPressed(std::string const & _ButtonName)   const noexcept;
 		bool IsKeyReleased(std::string const & _ButtonName)  const noexcept;
 
+		bool IsController() const;
+
 		float GetAnalogY(int) const;	//0 for left analog, all others for right
 		float GetAnalogX(int) const;	//0 for left analog, all others for right
 

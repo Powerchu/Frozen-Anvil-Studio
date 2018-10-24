@@ -95,6 +95,7 @@ namespace Dystopia
 
 		/* Reattach stuff */
 		void			ReAttachComponent(Component*);
+		Clipboard&		GetClipboard(void);
 
 	private:
 		Editor(void);
@@ -113,6 +114,7 @@ namespace Dystopia
 		Timer					*mpTimer;
 		EditorInput				*mpInput;
 
+		bool					mSceneHasChanged;
 		bool					mUpdateSelection;
 		bool					mCtrlKey;
 		float					mDeltaTime;

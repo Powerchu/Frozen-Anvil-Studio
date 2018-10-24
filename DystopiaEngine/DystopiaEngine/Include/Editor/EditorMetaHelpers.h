@@ -15,21 +15,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_META_HELPER_H_
 #define _EDITOR_META_HELPER_H_
 
-#include "Component/Camera.h"
 #include "Component/ColliderList.h"
-#include "Component/Renderer.h"
-#include "Component/RigidBody.h"
-#include "System/Graphics/GraphicsSystem.h"
-#include "System/Camera/CameraSystem.h"
-#include "Object/GameObject.h"
-#include <tuple>
-#include <utility>
+#include "Component/Component.h"
 
+#include "System/Base/ComponentDonor.h"
+#include "System/Driver/Driver.h"
+
+#include "DataStructure/Array.h"
+#include "Object/GameObject.h"
+
+#include "Utility/Utility.h"
+#include "Utility/MetaAlgorithms.h"
+#include "Editor/EGUI.h"
+#include <functional>
 namespace Dystopia
 {
 	template<typename A, typename B>
 	struct ListOfComponentsName;
-
 	template <class List, size_t ... Ns>
 	struct ListOfComponentsName<std::index_sequence<Ns ...>, List>
 	{
@@ -40,11 +42,10 @@ namespace Dystopia
 			if constexpr (N != sizeof...(Ns) - 1)
 				AuxEx<N + 1>(arr, ts...);
 		}
-
 		template<size_t Num>
 		static void Extract(Array<std::string, Num>& arr)
 		{
-			AuxEx<0>(arr, Utility::MetaExtract<Ns, List>::result::type::GetCompileName() ...);
+			AuxEx<0>(arr, Ut::MetaExtract<Ns, List>::result::type::GetCompileName() ...);
 		}
 	};
 
@@ -62,7 +63,7 @@ namespace Dystopia
 
 	struct ListOfComponents
 	{
-		static constexpr size_t size = Utility::SizeofList<UsableComponents>::value;
+		static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 
 		template<typename A>
 		struct GenerateCollection;
@@ -80,7 +81,7 @@ namespace Dystopia
 
 			using tupleType = std::tuple
 			<
-				typename GetType<typename Utility::MetaExtract<Ns, UsableComponents>::result::type * (&)(void) >::type ...    //::result::type * (&)(void)
+				typename GetType<typename Ut::MetaExtract<Ns, UsableComponents>::result::type * (&)(void) >::type ...    //::result::type * (&)(void)
 			>;
 
 			struct ApplyFunction
@@ -97,14 +98,14 @@ namespace Dystopia
 			template<typename List, size_t Head, size_t ... Rest>
 			struct BreakTuple<std::index_sequence<Head, Rest ...>, List>
 			{
-				std::tuple< typename GetType<typename Utility::MetaExtract_t<Rest, List>::type* (&)(void)>::type ...> mData
-					= { AuxGenFunction<typename Utility::MetaExtract_t<Rest, List>::type>::Extract ... };
+				std::tuple< typename GetType<typename Ut::MetaExtract_t<Rest, List>::type* (&)(void)>::type ...> mData
+					= { AuxGenFunction<typename Ut::MetaExtract_t<Rest, List>::type>::Extract ... };
 			};
 			template<typename List>
 			struct BreakTuple<std::index_sequence<0>, List>
 			{
-				std::tuple<typename Utility::MetaExtract<size - 1, UsableComponents>::result::type* (&)(void)> mData
-					= { AuxGenFunction<typename Utility::MetaExtract<size - 1, UsableComponents>::result::type>::Extract  };
+				std::tuple<typename Ut::MetaExtract<size - 1, UsableComponents>::result::type* (&)(void)> mData
+					= { AuxGenFunction<typename Ut::MetaExtract<size - 1, UsableComponents>::result::type>::Extract  };
 			};
 
 
@@ -116,30 +117,22 @@ namespace Dystopia
 				template <typename List, typename... Ts>
 				void* HelperFunction(unsigned int _i, std::tuple<Ts ...>& _data)
 				{
-					BreakTuple<Utility::MetaPopFront_t<List>> newData;
+					BreakTuple<Ut::MetaPopFront_t<List>> newData;
 					if (!_i)
 					{
 						ApplyFunction a;
 						return a(std::get<0>(_data));
 					}
-					return HelperFunction<Utility::MetaPopFront_t<List>>(_i - 1, newData.mData);
+					return HelperFunction<Ut::MetaPopFront_t<List>>(_i - 1, newData.mData);
 				}
 			};
 			*/
 
 			Component* Get(unsigned int _i, GameObject *_owner)
 			{
-				static auto mData = Ctor::MakeArray<Component*(*)(GameObject *)>(AuxGenFunction<typename Utility::MetaExtract<Ns, UsableComponents>::result::type>::Extract
-					...
-				);
-				/*
-				Helper<std::make_index_sequence<size>> h;
-				if (_i >= size || _i < 0)
-					return nullptr;
-				return static_cast<Component*>(h.HelperFunction<UsableComponents>(_i, mData));
-				*/
-
-				if (_i < size || _i >= 0)
+				static auto mData = Ctor::MakeArray<Component*(*)(GameObject *)>(AuxGenFunction<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::Extract
+					... );
+				if (_i < size || _i >= 0) 
 					return mData[_i](_owner);
 				return nullptr;
 			}
@@ -151,6 +144,138 @@ namespace Dystopia
 		}
 
 		GenerateCollection<std::make_index_sequence<size>> mCollection;
+	};
+
+	struct SuperReflectFunctor
+	{
+		template<typename T , typename Settor>
+		void operator()(const char *,T, Settor, void*) {  }
+
+		template<>
+		void operator()(const char * _name,float value, std::function<void(float, void*)> _f, void* _addr)
+		{
+			float Temp = value;
+			switch (EGUI::Display::DragFloat(_name, &Temp, 0.01f, 0.0f, 2.0f))
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				_f(Temp, _addr);
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+					EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default:
+				break;
+			}
+		}
+		template<>
+		void operator()(const char * _name, int value, std::function<void(int, void*)> _f, void*_addr)
+		{
+			int Temp = value;
+			switch (EGUI::Display::DragInt(_name, &Temp, 0.1f, 0, 2))
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				_f(Temp, _addr);
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				//Is it possible to make one that does not require the BehaviourClass to be known
+				//EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfAngularDrag);
+				//EGUI::GetCommandHND()->StartRecording(&Temp);
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default:
+				break;
+			}
+		}
+		template<>
+		void operator()(const char *,double, std::function<void(double, void*)>, void*)
+		{
+
+		}
+	};
+	struct SuperGetFunctor
+	{
+		template<typename T>
+		void operator()(T value) {  }
+
+		template<>
+		void operator()(float)
+		{
+
+		}
+		template<>
+		void operator()(int)
+		{
+
+		}	
+	};
+	struct SuperSetFunctor
+	{
+		template<typename T>
+		void operator()(T _value, void *)
+		{
+			
+		}
+
+		template<>
+		void operator()(std::function<void(float, void*)> _f, void * _addr)
+		{
+
+			float Temp;
+			switch (EGUI::Display::DragFloat("Test", &Temp, 0.01f, 0.0f, 2.0f))
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				_f(Temp, _addr);
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				_f(0, _addr);
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default:
+				break;
+			}
+		}
+
 	};
 }
 

@@ -9,6 +9,7 @@
 #include "System/Base/ComponentDonor.h"
 #include "Component/BehaviourList.h"
 #include "Behaviour/Behaviour.h"
+#include "System/File/FileSystem.h"
 
 #include <memory>
 
@@ -48,7 +49,7 @@ namespace Dystopia
 	public :
 #if !EDITOR
 		using AllBehaviour = 
-			Utility::MetaSortT_t <Utility::MetaLessThan, Utility::Collection 
+			Ut::MetaSortT_t <Ut::MetaLessThan, Ut::Collection 
 			<
 
 			>>;
@@ -67,6 +68,10 @@ namespace Dystopia
 
 		virtual void LoadDefaults(void);
 		virtual void LoadSettings(TextSerialiser&);
+
+		void Serialise(TextSerialiser &) const;
+
+		void Unserialise(TextSerialiser &);
 
 #if EDITOR
 
@@ -91,10 +96,14 @@ namespace Dystopia
 		MagicArray<BehaviourWrap *> mvRecentChanges;
 		AutoArray< BehaviourTable > mvBehaviours;
 
+
+		/*DO NOT TOUCH MY PRIVATES*/
+		void ClearAllBehaviours();
 #endif
 	};
 
 }
+
 
 
 

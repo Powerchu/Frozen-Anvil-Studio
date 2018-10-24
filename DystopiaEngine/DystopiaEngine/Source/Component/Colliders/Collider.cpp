@@ -45,17 +45,21 @@ namespace Dystopia
 			return;
 
 		auto * pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
-		/*Create Mesh*/
-		pMeshSys->StartMesh();
-
-		auto const & arr = GetVertexBuffer();
-		for (auto i : arr)
+		if (pMeshSys)
 		{
-			pMeshSys->AddVertex(i.x, i.y, i.z);
-		}
+			/*Create Mesh*/
+			pMeshSys->StartMesh();
 
-		SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
-		pMeshSys->EndMesh();
+			auto const & arr = GetVertexBuffer();
+			for (auto i : arr)
+			{
+				pMeshSys->AddVertex(i.x, i.y, i.z);
+			}
+
+			SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
+			pMeshSys->EndMesh();
+		}
+		
 	}
 
 	void Collider::OnDestroy(void)
@@ -193,6 +197,11 @@ namespace Dystopia
 		return mBoundingCircle;
 	}
 
+	bool Collider::IsTrigger() const
+	{
+		return mbIsTrigger;
+	}
+
 	void Collider::SetColliding(bool _b)
 	{
 		mbColliding = _b;
@@ -281,7 +290,6 @@ namespace Dystopia
 		auto  third   = second+1;
 		do
 		{
-		
 		  mIndexBuffer.push_back(static_cast<const short>(first  - start));
 		  mIndexBuffer.push_back(static_cast<const short>(second - start));
 		  mIndexBuffer.push_back(static_cast<const short>(third - start));

@@ -14,11 +14,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _DEFAULTALLOC_H_
 #define _DEFAULTALLOC_H_
-
+#include "Globals.h"
 namespace Dystopia
 {
 	template <typename Ty = void>
-	struct DefaultAllocator : public DefaultAllocator<void>
+	struct _DLL_EXPORT DefaultAllocator : public DefaultAllocator<void>
 	{
 		using Base = DefaultAllocator<void>;
 
@@ -47,14 +47,14 @@ namespace Dystopia
 	};
 
 	template <>
-	struct DefaultAllocator<void>
+	struct _DLL_EXPORT DefaultAllocator<void>
 	{
 		[[nodiscard]] static void* Alloc(size_t _sz, size_t _align = 8);
 		static void Free(void* _ptr) noexcept;
 	};
 
 	template <typename Ty>
-	struct DefaultAllocator<Ty[]> : DefaultAllocator<void>
+	struct _DLL_EXPORT DefaultAllocator<Ty[]> : DefaultAllocator<void>
 	{
 		using Base = DefaultAllocator<void>;
 

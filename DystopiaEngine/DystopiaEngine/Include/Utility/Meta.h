@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaHelper.h"
 
 
-namespace Utility
+namespace Ut
 {
 	struct NULL_TYPE;
 
@@ -290,8 +290,8 @@ namespace Utility
 	{
 	};
 
-	template <typename Ty>
-	using Type_t = typename Type<Ty>::type;
+	template <typename T>
+	using Type_t = typename Type<T>::type;
 }
 
 

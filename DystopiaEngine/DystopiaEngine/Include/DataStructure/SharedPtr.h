@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _SHAREDPTR_H_
 
 #include "Utility/Meta.h"		// IsSame
+#include "Globals.h"            // _DLL_EXPORT
 
 #if defined(DEBUG) | defined(_DEBUG)
 #include "Utility/DebugAssert.h"
@@ -83,7 +84,7 @@ inline SharedPtr<Type> CreateShared(Params&& ...args)
 template<typename Type, template<typename> class Nest, typename ...Params>
 inline SharedPtr<Nest<Type>> CreateShared(Params&& ...args)
 {
-	static_assert(!Utility::IsSame<Nest<Type>, SharedPtr<Type>>::value, 
+	static_assert(!Ut::IsSame<Nest<Type>, SharedPtr<Type>>::value, 
 		"SharedPtr Error: Cannot create SharedPtr to type SharedPtr.");
 
 	return SharedPtr<Type>(new Type{ static_cast<Params&&>(args)... });
@@ -99,7 +100,7 @@ inline SharedPtr<Type> CreateShared(Type* _pObj)
 template<typename Type, template<typename> class Nest>
 inline SharedPtr<Nest<Type>> CreateShared(Nest<Type>* _pObj)
 {
-	static_assert(!Utility::IsSame<Nest<Type>, SharedPtr<Type>>::value, 
+	static_assert(!Ut::IsSame<Nest<Type>, SharedPtr<Type>>::value, 
 		"SharedPtr Error: Cannot create SharedPtr to type SharedPtr.");
 
 	return SharedPtr<Nest<Type>>(_pObj);
@@ -196,14 +197,14 @@ void SharedPtr<T>::RemoveReference(void)
 
 
 template <class T>
-SharedPtr<T>& SharedPtr<T>::operator = (std::nullptr_t)
+ SharedPtr<T>& SharedPtr<T>::operator = (std::nullptr_t)
 {
 	RemoveReference();
 	return *this;
 }
 
 template <class T>
-SharedPtr<T>& SharedPtr<T>::operator = (const SharedPtr<T>& _pPointer)
+ SharedPtr<T>& SharedPtr<T>::operator = (const SharedPtr<T>& _pPointer)
 {
 	if (_pPointer.mpObj)
 		++*_pPointer.mnRefCount;
@@ -217,7 +218,7 @@ SharedPtr<T>& SharedPtr<T>::operator = (const SharedPtr<T>& _pPointer)
 }
 
 template <class T>
-SharedPtr<T>& SharedPtr<T>::operator = (SharedPtr<T>&& _pPointer) noexcept
+ SharedPtr<T>& SharedPtr<T>::operator = (SharedPtr<T>&& _pPointer) noexcept
 {
 	RemoveReference();
 

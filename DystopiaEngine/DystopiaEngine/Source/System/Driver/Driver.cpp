@@ -57,13 +57,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace
 {
 	template <typename Ty, typename ... T>
-	AutoArray<Ty> MakeAutoArray(Utility::TypeList<T...>)
+	AutoArray<Ty> MakeAutoArray(Ut::TypeList<T...>)
 	{
 		 return AutoArray<Ty>{ static_cast<Ty>(Dystopia::DefaultAllocator<T>::ConstructAlloc())...};
 	}
 
 	template <typename ... T>
-	void DeleteSubSys(AutoArray<void*>& _SubSys, Utility::TypeList<T...>)
+	void DeleteSubSys(AutoArray<void*>& _SubSys, Ut::TypeList<T...>)
 	{
 		void(*deleters[])(void*) {
 			[] (void* _p)  { Dystopia::DefaultAllocator<T>::DestructFree(static_cast<T*>(_p));  }...
@@ -112,9 +112,9 @@ Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mTime{}, mTimeFixed{}, mfAccumulatedTime{ 0 }, mMessageQueue{ 60 }, mSystemList{ Utility::SizeofList<AllSys>::value },
-	mSubSystems { MakeAutoArray<void*>(Utility::MakeTypeList_t<Utility::TypeList, SubSys>{}) },
-	mSystemTable{ MakeAutoArray<Systems*>(Utility::MakeTypeList_t<Utility::TypeList, AllSys>{}) }
+	mTime{}, mTimeFixed{}, mfAccumulatedTime{ 0 }, mMessageQueue{ 60 }, mSystemList{ Ut::SizeofList<AllSys>::value },
+	mSubSystems { MakeAutoArray<void*>(Ut::MakeTypeList_t<Ut::TypeList, SubSys>{}) },
+	mSystemTable{ MakeAutoArray<Systems*>(Ut::MakeTypeList_t<Ut::TypeList, AllSys>{}) }
 {
 	using SanityCheck = typename ErrorOnDuplicate<AllSys>::eval;
 }
@@ -196,8 +196,17 @@ void Dystopia::EngineCore::FixedUpdate(void)
 	mfAccumulatedTime += mTimeFixed.Elapsed();
 	mTimeFixed.Lap();
 
+	if (mfAccumulatedTime > 1.0f)
+	{
+		mfAccumulatedTime = 1.f / 60.f;
+	}
+
 	while (mfAccumulatedTime > _FIXED_UPDATE_DT)
 	{
+		for (auto& e : mSystemList)
+		{
+			e->PreFixedUpdate(_FIXED_UPDATE_DT);
+		}
 		for (auto& e : mSystemList)
 		{
 			e->FixedUpdate(_FIXED_UPDATE_DT);
@@ -250,7 +259,7 @@ void Dystopia::EngineCore::Shutdown(void)
 	for (auto& e : mSystemList)
 		DefaultAllocator<Systems>::DestructFree(e);
 
-	DeleteSubSys(mSubSystems, Utility::MakeTypeList_t<Utility::TypeList, SubSys>{});
+	DeleteSubSys(mSubSystems, Ut::MakeTypeList_t<Ut::TypeList, SubSys>{});
 
 	mSystemList.clear();
 	mSystemTable.clear();

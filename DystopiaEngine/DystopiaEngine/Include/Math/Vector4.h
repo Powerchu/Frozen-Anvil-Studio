@@ -21,24 +21,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _VECTOR4_H_
 
 #include "Globals.h"
+#include "Math/MathFwd.h"
+#include "Math/MathUtility.h"
+
 #include "Utility/Meta.h"	            // EnableIf
 #include "Utility/MetaAlgorithms.h"     // MetaSortV
 #include "Utility/MetaDataStructures.h" // IntegralList
-#include "Math/MathUtility.h"
 
 #if defined(DEBUG) | defined(_DEBUG)
 #include "Utility/DebugAssert.h"
 #endif // Debug only includes
 
 #if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
-#include <new>				// nothrow_t
-#include <exception>		// bad_alloc
+#include <new>		    // nothrow_t
+#include <exception>    // bad_alloc
 #endif
 
-#include <xmmintrin.h>		// SSE
-#include <emmintrin.h>		// SSE 2
-#include <tmmintrin.h>		// SSE 3
-#include <smmintrin.h>		// SSE 4.1
+#include <xmmintrin.h>  // SSE
+#include <emmintrin.h>  // SSE 2
+#include <tmmintrin.h>  // SSE 3
+#include <smmintrin.h>  // SSE 4.1
+#include <immintrin.h>  // FMA
 
 namespace Math
 {
@@ -128,11 +131,19 @@ namespace Math
 		inline bool _CALL operator!=(const Vector4& _rhs) const;
 
 		// Alternate + and -
-		// x + x , y - y , z + z , w - w
+		// x1 + x2 , y1 - y2 , z1 + z2 , w1 - w2
 		inline Vector4& _CALL AddSub(const Vector4);
 
+		// x1 + y1 , z1 + w1 , x2 + y2 , z2 + w2
 		inline Vector4& _CALL HorizontalAdd(const Vector4);
+		// x1 - y1 , z1 - w1 , x2 - y2 , z2 - w2
 		inline Vector4& _CALL HorizontalSub(const Vector4);
+
+		// this = u * v + this
+		inline Vector4& _CALL MultiplyAdd(const Vector4 u, const Vector4 v);
+
+		// this = this - u * v
+		inline Vector4& _CALL MultiplySub(const Vector4 u, const Vector4 v);
 
 #if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
 
@@ -177,7 +188,7 @@ namespace Math
 		{
 			static constexpr bool value = (X != Y) && (X != Z) && (X != W) && (Y != Z) && (Y != W) && (Z != W);
 		};
-
+		
 		// While we're at it, might as well add swizzle masks
 		// SwizzleMask  -> 1 shuffle (read)
 		// SwizzleMask -> 1 shuffle (read & write)
@@ -197,7 +208,7 @@ namespace Math
 				return *this;
 			}
 
-			template<unsigned Q, unsigned R, unsigned S, unsigned T, typename ret_t = Utility::EnableIf_t<IsLvalueSwizzle<X, Y, Z, W>::value, SwizzleMask>>
+			template<unsigned Q, unsigned R, unsigned S, unsigned T, typename ret_t = Ut::EnableIf_t<IsLvalueSwizzle<X, Y, Z, W>::value, SwizzleMask>>
 			inline ret_t& _CALL operator = (SwizzleMask<Q, R, S, T> _rhs);
 
 			inline __m128 _CALL GetRaw(void) const noexcept;
@@ -307,10 +318,12 @@ namespace Math
 	inline Vector4 _CALL operator/(const Vector4, const float);
 
 	// Alternate + and -
-	// x + x , y - y , z + z , w - w
+	// x1 + x2 , y1 - y2 , z1 + z2 , w1 - w2
 	inline Vector4 _CALL AddSub(const Vector4, const Vector4);
 
+	// x1 + y1 , z1 + w1 , x2 + y2 , z2 + w2
 	inline Vector4 _CALL HorizontalAdd(const Vector4, const Vector4);
+	// x1 - y1 , z1 - w1 , x2 - y2 , z2 - w2
 	inline Vector4 _CALL HorizontalSub(const Vector4, const Vector4);
 
 
@@ -632,7 +645,7 @@ namespace
 	struct SwizzleCompare;
 
 	template <typename T, T lhs, T rhs, T ... ls, T ... rs>
-	struct SwizzleCompare<Utility::IntegralList<T, lhs, ls...>, Utility::IntegralList<T, rhs, rs...>>
+	struct SwizzleCompare<Ut::IntegralList<T, lhs, ls...>, Ut::IntegralList<T, rhs, rs...>>
 	{
 		static constexpr bool value = lhs < rhs;
 	};
@@ -641,27 +654,27 @@ namespace
 template<unsigned X, unsigned Y, unsigned Z, unsigned W> template<unsigned Q, unsigned R, unsigned S, unsigned T, typename ret_t>
 inline ret_t& _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::operator = (SwizzleMask<Q, R, S, T> _rhs)
 {
-	using ReSwizzle_t = Utility::MetaSortT_t <SwizzleCompare, 
-		Utility::Collection<
-			Utility::IntegralList<unsigned, X, Q>, 
-			Utility::IntegralList<unsigned, Y, R>,
-			Utility::IntegralList<unsigned, Z, S>,
-			Utility::IntegralList<unsigned, W, T>
+	using ReSwizzle_t = Ut::MetaSortT_t <SwizzleCompare, 
+		Ut::Collection<
+			Ut::IntegralList<unsigned, X, Q>, 
+			Ut::IntegralList<unsigned, Y, R>,
+			Ut::IntegralList<unsigned, Z, S>,
+			Ut::IntegralList<unsigned, W, T>
 		>
 	>;
 
-	using Result_t = Utility::MetaExtract_t< 1,
-		Utility::MetaExtract_t<0, ReSwizzle_t>,
-		Utility::MetaExtract_t<1, ReSwizzle_t>,
-		Utility::MetaExtract_t<2, ReSwizzle_t>,
-		Utility::MetaExtract_t<3, ReSwizzle_t>
+	using Result_t = Ut::MetaExtract_t< 1,
+		Ut::MetaExtract_t<0, ReSwizzle_t>,
+		Ut::MetaExtract_t<1, ReSwizzle_t>,
+		Ut::MetaExtract_t<2, ReSwizzle_t>,
+		Ut::MetaExtract_t<3, ReSwizzle_t>
 	>;
 
 	using NewSwizzle_t = Math::Vector4::SwizzleMask <
-		Utility::MetaExtractV<0, Result_t>::value,
-		Utility::MetaExtractV<1, Result_t>::value,
-		Utility::MetaExtractV<2, Result_t>::value,
-		Utility::MetaExtractV<3, Result_t>::value
+		Ut::MetaExtractV<0, Result_t>::value,
+		Ut::MetaExtractV<1, Result_t>::value,
+		Ut::MetaExtractV<2, Result_t>::value,
+		Ut::MetaExtractV<3, Result_t>::value
 	>;
 
 	mData = NewSwizzle_t { _rhs._GetRawUnshuf() }.GetRaw();
@@ -796,6 +809,34 @@ inline Math::Vector4 _CALL Math::HorizontalSub(Vector4 _lhs, const Vector4 _rhs)
 	return _lhs.HorizontalSub(_rhs);
 }
 
+inline Math::Vector4& _CALL Math::Vector4::MultiplyAdd(const Vector4 u, const Vector4 v)
+{
+#if defined(_INCLUDED_IMM)
+
+	mData = _mm_fmadd_ps(u.mData, v.mData, mData);
+	return *this;
+
+#else
+
+	return *this += u * v;
+
+#endif
+}
+
+inline Math::Vector4& _CALL Math::Vector4::MultiplySub(const Vector4 u, const Vector4 v)
+{
+#if defined(_INCLUDED_IMM)
+
+	mData = _mm_fnmadd_ps(u.mData, v.mData, mData);
+	return *this;
+
+#else
+
+	return *this -= u * v;
+
+#endif
+}
+
 
 inline Math::Vector4& _CALL Math::Vector4::operator*=(const float _fScalar)
 {
@@ -803,7 +844,7 @@ inline Math::Vector4& _CALL Math::Vector4::operator*=(const float _fScalar)
 	return *this;
 }
 
-inline Math::Vector4&_CALL Math::Vector4::operator*=(const Vector4 _rhs)
+inline Math::Vector4& _CALL Math::Vector4::operator*=(const Vector4 _rhs)
 {
 	mData = _mm_mul_ps(mData, _rhs.mData);
 	return *this;

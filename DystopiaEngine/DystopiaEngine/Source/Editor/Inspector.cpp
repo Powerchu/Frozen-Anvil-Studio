@@ -17,24 +17,31 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/ScriptFormatter.h"
 #include "Editor/Commands.h"
 #include "Editor/EditorEvents.h"
-#include "Editor/EditorMetaHelpers.h"
 
 #include "Component/Camera.h"
 #include "Component/Collider.h"
+#include "Component/Circle.h"
+#include "Component/AABB.h"
+#include "Component/Convex.h"
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
 #include "Component/CharacterController.h"
 
+#include "System/Input/InputSystem.h"
+#include "System/Camera/CameraSystem.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
-#include "System/Camera/CameraSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
-#include "System/Input/InputSystem.h"
 
 #include "Utility/ComponentGUID.h"
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
+
+#include "Editor/EditorMetaHelpers.h"
+
+#include "Reflection/ReadWriteObject.h"
+#include "Reflection/ReflectionTypeErasure.h"
 
 #include <iostream>
 
@@ -42,6 +49,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 static const std::string g_bPopup = "Behaviour List";
 static const std::string g_cPopup = "Component List";
 static const std::string g_nPopup = "New Behaviour Name";
+
 
 namespace Dystopia
 {
@@ -124,7 +132,7 @@ namespace Dystopia
 				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
 				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
-			/*if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))
+			if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))
 			{
 
 			}
@@ -134,7 +142,7 @@ namespace Dystopia
 			{
 
 			}
-			EGUI::ChangeAlignmentYOffset();*/
+			EGUI::ChangeAlignmentYOffset();
 		}
 		EGUI::EndChild();
 	}
@@ -169,13 +177,22 @@ namespace Dystopia
 		}
 
 		auto& arrBehav = mpFocus->GetAllBehaviours();
-		for (const auto& c : arrBehav)
+		for (auto & c : arrBehav)
 		{
 			EGUI::Display::HorizontalSeparator();
 			if (EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } + "##" +
 				std::to_string(mpFocus->GetID())))
 			{
-				c->EditorUI();
+				auto & MetaData = c->GetMetaData();
+				if(MetaData)
+				{
+					auto Allnames =  MetaData.GetAllNames();
+					for (auto i : Allnames)
+					{
+						if(MetaData[i])
+							MetaData[i].Reflect(i, c, SuperReflectFunctor{});
+					}
+				}
 				EGUI::Display::EndTreeNode();
 			}
 		}
@@ -198,7 +215,7 @@ namespace Dystopia
 	void Inspector::ComponentsDropDownList()
 	{
 		static ListOfComponents availableComp;
-		static constexpr size_t numComponents = Utility::SizeofList<UsableComponents>::value;
+		static constexpr size_t numComponents = Ut::SizeofList<UsableComponents>::value;
 		Array<std::string, numComponents> arr;
 		ListOfComponentsName<std::make_index_sequence<numComponents>, UsableComponents>::Extract(arr);
 
@@ -214,7 +231,6 @@ namespace Dystopia
 					mpFocus->AddComponent(pComp, typename Component::TAG{});
 				}
 			}
-
 			EGUI::Display::EndPopup();
 		}
 	}

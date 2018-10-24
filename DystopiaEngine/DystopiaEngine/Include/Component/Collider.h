@@ -67,6 +67,7 @@ namespace Dystopia
 	enum class eColliderType
 	{
 		BASE = 0,
+		LINE,
 		AABB,
 		CIRCLE,			/*Status : Not Done*/
 		TRIANGLE,       /*Status : Not Done*/
@@ -111,7 +112,7 @@ namespace Dystopia
 
 		unsigned GetComponentType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllComponents>::value;
 		};
 
 
@@ -162,6 +163,7 @@ namespace Dystopia
 		virtual Math::Point3D GetGlobalPosition() const;
 		Math::Vec3D           GetOffSet()   const;
 		bool                  HasCollision() const;
+		bool				  IsTrigger() const;
 		bool				  HasCollisionWith(unsigned long long _ID) const;
 		bool				  HasCollisionWith(GameObject const * const _pointer) const;
 

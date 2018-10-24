@@ -27,9 +27,12 @@ namespace Dystopia
 		using SYSTEM = InputManager;
 		unsigned GetComponentType(void) const
 		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllComponents>::value;
 		}
-
+		unsigned GetRealComponentType(void) const
+		{
+			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, UsableComponents>::value;
+		};
 		static const std::string GetCompileName(void) { return "Character Controller"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 
@@ -54,7 +57,9 @@ namespace Dystopia
 		RigidBody * mpBody;
 		bool		mbIsFacingRight;
 		bool		mbIsGrounded;
+		bool		mbIsCeilinged;
 		float		mfCharacterSpeed;
+		float		mfJumpForce;
 	};
 }
 

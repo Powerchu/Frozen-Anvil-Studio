@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
 \file	Milestone.cpp
-\author aaron (100%)
-\par    email: m.chu\@digipen.edu
+\author keith (100%)
+\par    email: keith.goh\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -18,19 +18,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 #include "Editor/EGUI.h"
 #include "Utility/DebugAssert.h"
-#include "Object/GameObject.h"
-#include "Component/Transform.h"
-
+	
 namespace Dystopia
 {
 	Milestone::Milestone()
-	{
-        
+	{ 
 	}
 
 	Milestone::~Milestone()
 	{
-        
 	}
 
 	void Milestone::Load()
@@ -38,17 +34,15 @@ namespace Dystopia
 	}
 
 	void Milestone::Init()
-	{ 
+	{
 	}
 
 	void Milestone::Update(const float _fDeltaTime)
 	{
-        this->GetOwner()->GetComponent<Transform>()->SetScale(16, 31236, 1); 
-		//throw std::bad_alloc();		
-	}  
+	}
 
 	void Milestone::FixedUpdate(const float _fDeltaTime)
-	{
+	{   
 	}
 	
 	void Milestone::PostUpdate(void)
@@ -86,6 +80,22 @@ namespace Dystopia
 	{
 		
 		
+	}
+	
+	TypeErasure::TypeEraseMetaData Milestone::GetMetaData()
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		static MetaData<Milestone> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
+	}
+	TypeErasure::TypeEraseMetaData const Milestone::GetMetaData() const
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		MetaData<Milestone> mMetaData;
+		return TypeErasure::TypeEraseMetaData{mMetaData};
 	}
 }
 
