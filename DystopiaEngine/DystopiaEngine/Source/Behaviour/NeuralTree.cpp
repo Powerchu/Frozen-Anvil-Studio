@@ -3,8 +3,19 @@
 namespace Dystopia
 {
 	using namespace NeuralTree;
-	Node::eStatus Node::Tick(float)
+
+	Node::eStatus Node::Tick(const float _dt)
 	{
-		return Node::eStatus::Failure;
+		if (mStatus != eStatus::RUNNING) {
+			Init();
+		}
+
+		mStatus = Update(_dt);
+
+		if (mStatus != eStatus::RUNNING) {
+			Exit(mStatus);
+		}
+
+		return mStatus;
 	}
 }

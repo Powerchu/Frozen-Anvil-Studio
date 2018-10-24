@@ -783,6 +783,12 @@
     <ClInclude Include="Include\Behaviour\NeuralTree.h">
       <Filter>Game Engine\Behaviours\AI</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Behaviour\Blackboard.h">
+      <Filter>Game Engine\Behaviours\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Behaviour\Agent.h">
+      <Filter>Game Engine\Behaviours\AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
