@@ -113,7 +113,7 @@ namespace Dystopia
 		CommandHandler			*mpComdHandler;
 		GuiSystem				*mpGuiSystem;
 		Timer					*mpTimer;
-		InputManager			*mpInput;
+		//InputManager			*mpInput;
 		EditorInput				*mpEditorInput;
 
 		bool					mSceneHasChanged;

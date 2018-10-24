@@ -123,7 +123,7 @@ namespace Dystopia
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mpWin{ nullptr }, mpGfx{ nullptr },
 		mpSceneSystem{ nullptr }, mpProfiler{ nullptr }, mTempSaveFile{}, mSceneHasChanged{ true },
-		mpEditorEventSys{ new EditorEventHandler{} }, mpInput{ new InputManager{} },
+		mpEditorEventSys{ new EditorEventHandler{} }, //mpInput{ new InputManager{} },
 		mpComdHandler{ new CommandHandler{} }, mpGuiSystem{ new GuiSystem{} }, mpTimer{ new Timer{} },
 		mpClipBoard{ new Clipboard{} }, mCtrlKey{ false }, mArrSelectedObj{ 100 }, mUpdateSelection{ true },
 		mpEditorInput{ new EditorInput{}  }
@@ -177,7 +177,7 @@ namespace Dystopia
 		mpProfiler		= mpDriver->GetSystem<Profiler>();			// driver init-ed
 		mpBehaviourSys	= mpDriver->GetSystem<BehaviourSystem>();	// driver init-ed
 
-		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
+		if (!mpGuiSystem->Init(mpWin, mpGfx, mpEditorInput))
 		{
 			mCurrentState = EDITOR_EXIT;
 			return;
@@ -185,7 +185,8 @@ namespace Dystopia
 		
 		LoadDefaults();
 		LoadTabs();
-		mpInput->Init();
+
+		mpEditorInput->Init();
 		mpEditorEventSys->Init();
 		InstallHotkeys();
 		for (auto& e : mArrTabs)
@@ -196,6 +197,7 @@ namespace Dystopia
 			e->Init();
 		}
 		LoadSettings();
+
 		EGUI::SetContext(mpComdHandler);
 	}
 
@@ -205,9 +207,10 @@ namespace Dystopia
 		mDeltaTime = mpTimer->Elapsed();
 		mpTimer->Lap();
 		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow())
-			mpInput->Update(mDeltaTime);
+			mpEditorInput->Poll();
 		switch (mCurrentState)
 		{
+		case EDITOR_PROMPT_SAVE:
 		case EDITOR_MAIN:
 			mpProfiler->Update(mDeltaTime);
 			mpWin->Update(mDeltaTime);
@@ -273,6 +276,7 @@ namespace Dystopia
 
 	void Editor::EndFrame()
 	{
+		mpEditorInput->Clear();
 		if (mUpdateSelection)
 		{
 			UpdateSelections();
@@ -280,7 +284,6 @@ namespace Dystopia
 		}
 		LogTabPerformance();
 		mSceneHasChanged = (mSceneHasChanged | (&mpSceneSystem->GetCurrentScene() != &mpSceneSystem->GetActiveScene()));
-		mpInput->PostUpdate();
 		EngineCore::GetInstance()->PostUpdate();
 		mpBehaviourSys->PostUpdate();
 		if (mSceneHasChanged)
@@ -292,7 +295,6 @@ namespace Dystopia
 			mpWin->GetMainWindow().SetTitle(std::wstring{ name.begin(), name.end() });
 			mSceneHasChanged = false;
 		}
-
 		mpGuiSystem->EndFrame(); 
 		if (mCurrentState != mNextState)  UpdateState();
 	}
@@ -308,27 +310,18 @@ namespace Dystopia
 			e->Shutdown();
 			delete e;
 		}
-		mpInput->Shutdown();
 		mpEditorEventSys->Shutdown();
 		mpComdHandler->Shutdown();
 		mpGuiSystem->Shutdown();
+		mpEditorInput->Shutdown();
 		EGUI::Docking::ShutdownTabs();
 		mpClipBoard->Close();
-		delete mpInput;
 		delete mpEditorEventSys;
 		delete mpComdHandler;
 		delete mpGuiSystem;
 		delete mpTimer;
 		delete mpClipBoard;
-		mpEditorEventSys	= nullptr;
-		mpInput				= nullptr;
-		mpComdHandler		= nullptr;
-		mpGuiSystem			= nullptr;
-		mpTimer				= nullptr;
-		mpWin				= nullptr;
-		mpGfx				= nullptr;
-		mpProfiler			= nullptr;
-		mpBehaviourSys		= nullptr;
+		delete mpEditorInput;
 		mpDriver->Shutdown();
 		EGUI::RemoveContext();
 	}
@@ -608,9 +601,6 @@ namespace Dystopia
 	{
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ENTER, false);
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ESCAPE, false);
-		mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, false);
-		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, false);
-		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, false);
 		for (int i = eButton::KEYBOARD_BACKSPACE; i <= eButton::KEYBOARD_TAB; ++i)
 			mpGuiSystem->UpdateKey(i, false);
 		for (int i = eButton::KEYBOARD_SPACEBAR; i <= eButton::KEYBOARD_HOME; ++i)
@@ -620,87 +610,81 @@ namespace Dystopia
 		for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
 			mpGuiSystem->UpdateKey(i, false);
 
-		bool caps = mpInput->IsKeyPressed(eButton::KEYBOARD_LSHIFT);
-		mCtrlKey = mpInput->IsKeyPressed(eButton::KEYBOARD_LCTRL);
+		bool ctrl = mpEditorInput->Get()->IsKeyPressed(eButton::KEYBOARD_LCTRL);
+		bool shft = mpEditorInput->Get()->IsKeyPressed(eButton::KEYBOARD_LSHIFT);
+		bool alt = mpEditorInput->Get()->IsKeyPressed(eButton::KEYBOARD_LALT);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, shft);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, alt);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, ctrl);
 
-		if (!mCtrlKey)
-		{
-			const auto& queue = mpWin->GetMainWindow().GetInputQueue();
-			for (const auto& k : queue)
-			{
-				// 0 to 9
-				if (k >= eButton::KEYBOARD_0 && k <= eButton::KEYBOARD_9)
-					mpGuiSystem->UpdateChar(k);
-				// A to Z
-				else if (k >= eButton::KEYBOARD_A && k <= eButton::KEYBOARD_Z)
-					mpGuiSystem->UpdateChar(caps ? k : k + 32);
-				// numpad 0 to 9
-				else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
-					mpGuiSystem->UpdateChar(k - 48);
-				// arithmetics
-				else if (k == eButton::KEYBOARD_OEM_PERIOD)
-					mpGuiSystem->UpdateChar(46);
-				else if (k == eButton::KEYBOARD_OEM_MINUS)
-					mpGuiSystem->UpdateChar(caps ? 95 : 45);
-				else if (k == eButton::KEYBOARD_SPACEBAR)
-					mpGuiSystem->UpdateChar(32);
-				// misc keys like ctrl, del, back etc
-				else
-					mpGuiSystem->UpdateKey(k, true);
-			}
-		}
-		mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, caps);
-		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, mpInput->IsKeyPressed(eButton::KEYBOARD_ALT));
-		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, mCtrlKey);
+		if (ctrl)
+			return;
 
-		/* Editor allowed special events to run in game mode*/
-		if (mpInput->IsKeyTriggered(eButton::MOUSE_LEFT))
+		const auto& queue = mpWin->GetMainWindow().GetInputQueue();
+		for (const auto& k : queue)
 		{
-			mpGuiSystem->UpdateMouse(eButton::MOUSE_LEFT, true);
-			mpEditorEventSys->Fire(EDITOR_LCLICK);
+			if (k >= eButton::KEYBOARD_0 && k <= eButton::KEYBOARD_9)
+				mpGuiSystem->UpdateChar(k);
+			else if (k >= eButton::KEYBOARD_A && k <= eButton::KEYBOARD_Z)
+				mpGuiSystem->UpdateChar(shft ? k : k + 32);
+			else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
+				mpGuiSystem->UpdateChar(k - 48);
+			else if (k == eButton::KEYBOARD_OEM_PERIOD)
+				mpGuiSystem->UpdateChar(46);
+			else if (k == eButton::KEYBOARD_OEM_MINUS)
+				mpGuiSystem->UpdateChar(shft ? 95 : 45);
+			else if (k == eButton::KEYBOARD_SPACEBAR)
+				mpGuiSystem->UpdateChar(32);
+			else
+				mpGuiSystem->UpdateKey(k, true);
 		}
-		if (mpInput->IsKeyTriggered(eButton::MOUSE_RIGHT))
-		{
-			mpGuiSystem->UpdateMouse(eButton::MOUSE_RIGHT, true);
-			mpEditorEventSys->Fire(EDITOR_RCLICK);
-		}
-		float scrollV = mpInput->GetMouseWheel();
+		float scrollV = mpEditorInput->Get()->GetMouseWheel();
 		if (scrollV)
 		{
 			mpGuiSystem->UpdateScroll(0, scrollV);
 			mpEditorEventSys->Fire(scrollV > 0 ? EDITOR_SCROLL_UP : EDITOR_SCROLL_DOWN);
 		}
-		if (!mCtrlKey && !mpInput->IsKeyPressed(eButton::KEYBOARD_ALT))
-		{
-			if (mpInput->IsKeyTriggered(eButton::KEYBOARD_W))		mpEditorEventSys->Fire(EDITOR_W);
-			else if (mpInput->IsKeyTriggered(eButton::KEYBOARD_E))	mpEditorEventSys->Fire(EDITOR_E);
-		}
 	}
 
 	void Editor::UpdateHotkeys()
 	{
-		if (mCtrlKey)
-		{
-			auto s = mpInput->IsKeyPressed(eButton::KEYBOARD_SHIFT) ? EDITOR_HOTKEY_SAVEAS : EDITOR_HOTKEY_SAVE;
-			if (mpInput->IsKeyTriggered(eButton::KEYBOARD_Z))		mpEditorEventSys->Fire(EDITOR_HOTKEY_UNDO);
-			else if (mpInput->IsKeyTriggered(eButton::KEYBOARD_Y))	mpEditorEventSys->Fire(EDITOR_HOTKEY_REDO);
-			else if (mpInput->IsKeyTriggered(eButton::KEYBOARD_C))	mpEditorEventSys->Fire(EDITOR_HOTKEY_COPY);
-			else if (mpInput->IsKeyTriggered(eButton::KEYBOARD_X))	mpEditorEventSys->Fire(EDITOR_HOTKEY_CUT);
-			else if (mpInput->IsKeyTriggered(eButton::KEYBOARD_V))	mpEditorEventSys->Fire(EDITOR_HOTKEY_PASTE);
-			else if (mpInput->IsKeyTriggered(eButton::KEYBOARD_S))	mpEditorEventSys->Fire(s);
-			else if (mpInput->IsKeyTriggered(eButton::KEYBOARD_P))	mpEditorEventSys->Fire(EDITOR_HOTKEY_PLAY);
-			else if (mpInput->IsKeyTriggered(eButton::KEYBOARD_O))	mpEditorEventSys->Fire(EDITOR_HOTKEY_OPEN);
-			else if (mpInput->IsKeyTriggered(eButton::KEYBOARD_N))	mpEditorEventSys->Fire(EDITOR_HOTKEY_NEW);
-		}
-		else if (mpInput->IsKeyTriggered(eButton::KEYBOARD_DELETE))	
+		if (mpEditorInput->Hotkeys(Hotkey::g_KeyDelete, Hotkey::g_StateDelete, g_CountDefault))
 			mpEditorEventSys->Fire(EDITOR_HOTKEY_DELETE);
 
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyOpen, Hotkey::g_StateOpen, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_OPEN);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyUndo, Hotkey::g_StateUndo, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_UNDO);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyRedo, Hotkey::g_StateRedo, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_REDO);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyCopy, Hotkey::g_StateCopy, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_COPY);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyPaste, Hotkey::g_StatePaste, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_PASTE);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyPlayStop, Hotkey::g_StatePlayStop, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_PLAY);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeySaveAs, Hotkey::g_StateSaveAs, g_CountSaveAs))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVEAS);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeySave, Hotkey::g_StateSave, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVE);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyGizmoTrans, Hotkey::g_StateGizmoTrans, g_CountGizmo))
+			mpEditorEventSys->Fire(EDITOR_GIZMO_TRANSLATE);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyGizmoScale, Hotkey::g_StateGizmoScale, g_CountGizmo))
+			mpEditorEventSys->Fire(EDITOR_GIZMO_SCALE);
 	}
 
 	void Editor::UpdateGameModeKeys()
 	{
-		if (mpInput->IsKeyPressed(eButton::KEYBOARD_CTRL) &&
-			mpInput->IsKeyTriggered(eButton::KEYBOARD_P))
+		if (mpEditorInput->Hotkeys(Hotkey::g_KeyPlayStop, Hotkey::g_StatePlayStop, g_CountDefault))
 			mpEditorEventSys->Fire(EDITOR_HOTKEY_STOP);
 	}
 	

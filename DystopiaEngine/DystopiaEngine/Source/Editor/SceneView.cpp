@@ -73,8 +73,8 @@ namespace Dystopia
 		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Bind(&SceneView::SceneChanged, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Bind(&SceneView::ScrollOut, this);
-		GetEditorEventHND()->GetEvent(EDITOR_W)->Bind(&SceneView::SetGizmoTranslate, this);
-		GetEditorEventHND()->GetEvent(EDITOR_E)->Bind(&SceneView::SetGizmoScaler, this);
+		GetEditorEventHND()->GetEvent(EDITOR_GIZMO_TRANSLATE)->Bind(&SceneView::SetGizmoTranslate, this);
+		GetEditorEventHND()->GetEvent(EDITOR_GIZMO_SCALE)->Bind(&SceneView::SetGizmoScaler, this);
 
 		//mpSceneCamera = Factory::CreateCamera("Scene Camera");
 		//GetCurrentScene()->GetAllGameObjects().EmplaceBack(Ut::Move(*mpSceneCamera));
@@ -156,8 +156,8 @@ namespace Dystopia
 		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Unbind(this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Unbind(this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Unbind(this);
-		GetEditorEventHND()->GetEvent(EDITOR_W)->Unbind(this);
-		GetEditorEventHND()->GetEvent(EDITOR_E)->Unbind(this);
+		GetEditorEventHND()->GetEvent(EDITOR_GIZMO_TRANSLATE)->Unbind(this);
+		GetEditorEventHND()->GetEvent(EDITOR_GIZMO_SCALE)->Unbind(this);
 
 	}
 
@@ -276,7 +276,8 @@ namespace Dystopia
 
 	void SceneView::AdjustImageSize(Texture *_pTex)
 	{
-		float ix = static_cast<float>(_pTex->GetWidth());
+		static constexpr float aspect = 1.777777f;
+		float ix = static_cast<float>(aspect * _pTex->GetWidth());
 		float iy = static_cast<float>(_pTex->GetHeight());
 		float sx = Size().x;
 		float sy = Size().y - EGUI::TabsImageOffsetY;

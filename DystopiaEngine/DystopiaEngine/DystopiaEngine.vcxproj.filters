@@ -778,6 +778,7 @@
     <ClInclude Include="EditorProc.h" />
     <ClInclude Include="EditorInput.h" />
     <ClInclude Include="EditorStates.h" />
+    <ClInclude Include="EditorHotkeys.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

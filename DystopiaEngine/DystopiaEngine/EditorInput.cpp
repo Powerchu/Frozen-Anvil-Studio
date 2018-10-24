@@ -23,8 +23,7 @@ Dystopia::EditorInput::EditorInput(void)
 
 bool Dystopia::EditorInput::Init(void)
 {
-	mpInput->Init();
-	return true;
+	return mpInput->Init();
 }
 
 void Dystopia::EditorInput::Poll(void)
@@ -39,6 +38,7 @@ void Dystopia::EditorInput::Clear(void)
 void Dystopia::EditorInput::Shutdown(void)
 {
 	mpInput->Shutdown();
+	delete mpInput;
 }
 
 bool Dystopia::EditorInput::Hotkeys(const unsigned short* _arrKeys, const eHotkeyState* _arrState, unsigned int _size) const
@@ -60,9 +60,18 @@ bool Dystopia::EditorInput::Hotkeys(const unsigned short* _arrKeys, const eHotke
 			if (!mpInput->IsKeyTriggered(k))
 				return false;
 			break;
+		case eHOTKEY_NEGATE:
+			if (mpInput->IsKeyTriggered(k) || mpInput->IsKeyReleased(k) || mpInput->IsKeyPressed(k))
+				return false;
+			break;
 		}
 	}
 	return true;
+}
+
+Dystopia::InputManager* Dystopia::EditorInput::Get(void)
+{
+	return mpInput;
 }
 
 #endif //EDITOR

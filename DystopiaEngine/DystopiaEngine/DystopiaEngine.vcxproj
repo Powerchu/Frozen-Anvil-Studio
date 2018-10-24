@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="EditorHotkeys.h" />
     <ClInclude Include="EditorInput.h" />
     <ClInclude Include="EditorMain.h" />
     <ClInclude Include="EditorProc.h" />

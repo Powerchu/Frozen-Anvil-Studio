@@ -46,7 +46,7 @@ namespace Dystopia
 	class CommandHandler;
 	class WindowManager;
 	class GraphicsSystem;
-	class InputManager;
+	class EditorInput;
 	class GLState;
 	typedef unsigned int GLuint;
 }
@@ -548,7 +548,7 @@ namespace Dystopia
 		GuiSystem();
 		~GuiSystem();
 
-		bool			Init(WindowManager*, GraphicsSystem*, InputManager*, const char* = "MainDockable");
+		bool			Init(WindowManager*, GraphicsSystem*, EditorInput*, const char* = "MainDockable");
 		void			StartFrame(const float&);
 		void			EndFrame();
 		void			Shutdown();
@@ -564,7 +564,7 @@ namespace Dystopia
 		ImGuiContext	*mpCtx;
 		WindowManager	*mpWin;
 		GraphicsSystem	*mpGfx;
-		InputManager	*mpInput;
+		EditorInput		*mpInput;
 		ImDrawData		*mpDrawData;
 		GLState			*mpGLState;
 		GLuint			mFontTexture;

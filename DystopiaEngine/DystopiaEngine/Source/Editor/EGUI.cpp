@@ -24,6 +24,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <Windows.h>
 #include <windef.h>
 
+#include "../EditorInput.h"
+
 HCURSOR	gCursorTypes[8];
 
 static void SetClipBoardText(void *_pUserData, const char *_pText)
@@ -122,7 +124,7 @@ namespace Dystopia
 	GuiSystem::~GuiSystem()
 	{}
 
-	bool GuiSystem::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, InputManager *_pInput, const char *_pMainDockspaceName)
+	bool GuiSystem::Init(WindowManager *_pWin, GraphicsSystem *_pGfx, EditorInput *_pInput, const char *_pMainDockspaceName)
 	{
 		if (!_pWin || !_pGfx || !_pInput) return false;
 		mpWin = _pWin;
@@ -220,8 +222,8 @@ namespace Dystopia
 		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow()) // should check if this window is the focused window
 		{
 			float x, y;
-			x = mpInput->GetMousePosition().x;
-			y = mpInput->GetMousePosition().y;
+			x = mpInput->Get()->GetMousePosition().x;
+			y = mpInput->Get()->GetMousePosition().y;
 			io.MousePos = ImVec2{ x, y };
 		}
 		else
@@ -229,9 +231,9 @@ namespace Dystopia
 			io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 		}
 
-		io.MouseDown[0] = mMouseJustPressed[0] || mpInput->IsKeyPressed(eButton::MOUSE_LEFT);
-		io.MouseDown[1] = mMouseJustPressed[1] || mpInput->IsKeyPressed(eButton::MOUSE_RIGHT);
-		io.MouseDown[2] = mMouseJustPressed[2] || mpInput->IsKeyPressed(eButton::MOUSE_MIDDLE);
+		io.MouseDown[0] = mMouseJustPressed[0] || mpInput->Get()->IsKeyPressed(eButton::MOUSE_LEFT);
+		io.MouseDown[1] = mMouseJustPressed[1] || mpInput->Get()->IsKeyPressed(eButton::MOUSE_RIGHT);
+		io.MouseDown[2] = mMouseJustPressed[2] || mpInput->Get()->IsKeyPressed(eButton::MOUSE_MIDDLE);
 
 		mMouseJustPressed[0] = mMouseJustPressed[1] = mMouseJustPressed[2] = false;
 

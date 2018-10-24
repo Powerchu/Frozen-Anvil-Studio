@@ -13,16 +13,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _EDITOR_INPUT_H_
 #define _EDITOR_INPUT_H_
+#include "../EditorHotkeys.h"
 
 namespace Dystopia
 {
-	enum eHotkeyState
-	{
-		eHOTKEY_HOLD,
-		eHOTKEY_RELEASED,
-		eHOTKEY_TRIGGERED
-	};
-
 	class InputManager;
 	class EditorInput
 	{
@@ -41,6 +35,7 @@ namespace Dystopia
 		if (pass)
 			int i = 5;
 		*/
+		InputManager* Get(void);
 		bool Hotkeys(const unsigned short* _arrKeys, const eHotkeyState* _arrState, unsigned int _size) const;
 	private:
 		InputManager *mpInput;
