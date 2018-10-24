@@ -72,6 +72,12 @@ namespace Math
 		return _x < _y ? _y : _x;
 	}
 
+	template <typename T, typename R = float>
+	inline constexpr R Reciprocal(T _x)
+	{
+		return R(1) / _x;
+	}
+
 	template <typename T>
 	inline constexpr T Zero(void)
 	{
@@ -96,6 +102,14 @@ namespace Math
 	inline constexpr T Clamp(T _input, Ut::Type_t<T> _min, Ut::Type_t<T> _max)
 	{
 		return Max(_min, Min(_max, _input));
+	}
+
+	template <typename T>
+	inline constexpr T Wrap(T _input, Ut::Type_t<T> _min, Ut::Type_t<T> _max)
+	{
+		auto range = _max - _min;
+		_input -= size_t(_input / range) * range;
+		return _input < 0 ? _input + _max : _input + _min;
 	}
 
 	template<class T>

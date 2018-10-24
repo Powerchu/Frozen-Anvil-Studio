@@ -31,7 +31,7 @@ namespace Dystopia
 
 		virtual ~Texture(void);
 
-		void Bind(void) const noexcept;
+		void Bind(int = 0) const noexcept;
 		void Unbind(void) const noexcept;
 
 		unsigned GetWidth(void) const noexcept;

@@ -76,6 +76,11 @@ void Dystopia::TextureAtlas::SetSection(unsigned _nID, unsigned _nCol, unsigned 
 	_Active.UploadUniform("vUVBounds", uStart, vStart, uEnd, vEnd);
 }
 
+void Dystopia::TextureAtlas::SetTexture(Texture* _pTexture)
+{
+	mpTexture = _pTexture;
+}
+
 std::string Dystopia::TextureAtlas::GetName(void) const
 {
 	return mpTexture->GetName();

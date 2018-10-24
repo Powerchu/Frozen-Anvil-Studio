@@ -59,11 +59,9 @@ Dystopia::Renderer::Renderer(const Renderer& _rhs) noexcept
 
 void Dystopia::Renderer::Init(void)
 {
-	Texture *pTex {nullptr};
 	if (mTexturePath.length())
-	{		
-		pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mTexturePath);
-		SetTexture(pTex);
+	{
+		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mTexturePath);
 	}
 }
 

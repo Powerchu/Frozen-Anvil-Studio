@@ -161,7 +161,7 @@ template <typename Ty>
 inline void Dystopia::GameObject::AddComponent(ComponentTag)
 {
 	auto Comp = static_cast<ComponentDonor<Ty>*>(
-		EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()
+		EngineCore::GetInstance()->Get<typename Ty::SYSTEM>()
 		)->RequestComponent();
 
 	mComponents.Insert(Comp);

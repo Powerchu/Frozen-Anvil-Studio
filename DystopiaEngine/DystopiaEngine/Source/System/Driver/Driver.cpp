@@ -52,7 +52,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 #define SETTINGS_DIR  eFileDir::eCurrent
-#define SETTINGS_FILE "Settings.dyst" 
+#define SETTINGS_FILE "Settings.dyst"
 
 
 
@@ -202,14 +202,18 @@ void Dystopia::EngineCore::FixedUpdate(void)
 	mTimeFixed.Lap();
 
 	mAccumulatedTime += (mTimeFixed.Time() - prev).count();
-	while (mAccumulatedTime > _FIXED_UPDATE_DT)
+
+	if (mAccumulatedTime > 2000000000Ui64)
+		mAccumulatedTime = Math::Wrap(mAccumulatedTime, 0, Gbl::FIXEDUPDATE_DT + 1);
+
+	while (mAccumulatedTime > Gbl::FIXEDUPDATE_DT)
 	{
 		for (auto& e : mSystemList)
 		{
-			e->FixedUpdate(_FIXED_UPDATE_DT);
+			e->FixedUpdate(Gbl::FIXEDUPDATE_DT);
 		}
 
-		mAccumulatedTime -= _FIXED_UPDATE_DT;
+		mAccumulatedTime -= Gbl::FIXEDUPDATE_DT;
 	}
 }
 

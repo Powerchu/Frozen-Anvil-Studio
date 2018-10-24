@@ -20,6 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/MathFwd.h"
 #include "Math/Vector4.h"
 
+#include "Utility/Utility.h"
+
 #include <map>
 #include <string>
 
@@ -32,8 +34,9 @@ namespace Dystopia
 	class Window;
 	class Texture;
 	class Renderer;
+	class SpriteRenderer;
 
-	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>
+	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>, public ComponentDonor<SpriteRenderer>
 	{
 	public :
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -57,7 +60,7 @@ namespace Dystopia
 		float GetGamma(void) noexcept;
 
 		bool GetDebugDraw(void) const;
-		void ToggleDebugDraw(void);
+		void ToggleDebugDraw(bool);
 
 		// Sets up Window for openGL rendering
 		bool InitOpenGL(Window&);
@@ -72,17 +75,23 @@ namespace Dystopia
 		Texture* LoadTexture(const std::string&);
 		Shader*	 LoadShader(const std::string&);
 
+		Framebuffer& GetGameView(void) const;
+		Framebuffer& GetUIView(void) const;
+		Framebuffer* GetFramebuffer(void) const noexcept;
+
+		template <typename ...Ty>
+		Framebuffer* CreateView(Ty&&...);
+
 		static const int& GetDrawMode(void) noexcept;
 		static void SetDrawMode(int) noexcept;
 
 		// Temporary
 		std::map<std::string, Shader*> shaderlist;
 
-		Framebuffer& GetFrameBuffer();
-
 		void EditorUI(void);
 
 	private:
+
 		Math::Vector4 mvDebugColour;
 		float mfGamma;
 		float mfDebugLineWidth;
@@ -90,9 +99,8 @@ namespace Dystopia
 		void* mOpenGL; 
 		int mPixelFormat;
 		int mAvailable, mSettings;
-		Framebuffer mGameView, mUIView;
 
-		bool mbDebugDraw;
+		Ctor::MagicArrayBuilder<Framebuffer>::SetBlockLimit<1>::type mViews;
 
 		static int DRAW_MODE;
 
@@ -105,6 +113,12 @@ namespace Dystopia
 
 		bool SelectOpenGLVersion(Window&) noexcept;
 	};
+}
+
+template <typename ...Ty>
+Dystopia::Framebuffer* Dystopia::GraphicsSystem::CreateView(Ty&& ..._Args)
+{
+	return mViews.Emplace(Ut::Forward<Ty>(_Args)...);
 }
 
 

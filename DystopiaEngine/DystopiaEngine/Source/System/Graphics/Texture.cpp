@@ -40,8 +40,9 @@ Dystopia::Texture::~Texture(void)
 }
 
 
-void Dystopia::Texture::Bind(void) const noexcept
+void Dystopia::Texture::Bind(int _n) const noexcept
 {
+	glActiveTexture(GL_TEXTURE0 + _n);
 	glBindTexture(mnType, mnID);
 }
 

@@ -52,8 +52,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/ObjectFlags.h"
 #include "Component/Transform.h"
 #include "Component/Renderer.h"
+#include "Component/SpriteRenderer.h"
 #include "Component/Collider.h"
 
+#include "Globals.h"
 #include "Utility/DebugAssert.h"			// DEBUG_ASSERT
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
@@ -74,6 +76,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Commands.h"
 #endif 
 
+
 int Dystopia::GraphicsSystem::DRAW_MODE = GL_TRIANGLES;
 const int& Dystopia::GraphicsSystem::GetDrawMode(void) noexcept
 {
@@ -88,8 +91,9 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f },
-	mfDebugLineWidth{ 5.0f }, mvDebugColour{ .68f, 1.f, .278f, .65f }, mbDebugDraw{ false }
+	mfDebugLineWidth{ 5.0f }, mvDebugColour{ .68f, 1.f, .278f, .65f }
 {
+
 }
 
 Dystopia::GraphicsSystem::~GraphicsSystem(void)
@@ -107,14 +111,18 @@ float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 	return mfGamma;
 }
 
-void Dystopia::GraphicsSystem::ToggleDebugDraw(void)
+void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw)
 {
-	mbDebugDraw = !mbDebugDraw;
+	auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
+	//auto bDebugDraw = !CamSys->GetMasterCamera()->DrawDebug();
+
+	for (auto& e : CamSys->GetAllCameras())
+		e.SetDebugDraw(_bDebugDraw);
 }
 
 bool Dystopia::GraphicsSystem::GetDebugDraw(void) const
 {
-	return mbDebugDraw;
+	return EngineCore::GetInstance()->Get<CameraSystem>()->GetMasterCamera()->DrawDebug();
 }
 
 
@@ -144,8 +152,10 @@ void Dystopia::GraphicsSystem::PreInit(void)
 
 bool Dystopia::GraphicsSystem::Init(void)
 {
-	mGameView.Init(2048, 2048);
-	mUIView.Init(1024, 1024);
+	DEBUG_BREAK(mViews.size() < 3, "Graphics System Error: Graphics did not load settings properly!\n");
+
+	for (auto& e : mViews)
+		e.Init();
 
 	glLineWidth(mfDebugLineWidth);
 
@@ -155,6 +165,22 @@ bool Dystopia::GraphicsSystem::Init(void)
 void Dystopia::GraphicsSystem::PostInit(void)
 {
 
+}
+
+
+Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetGameView(void) const
+{
+	return mViews[0];
+}
+
+Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetUIView(void) const
+{
+	return mViews[1];
+}
+
+Dystopia::Framebuffer* Dystopia::GraphicsSystem::GetFramebuffer(void) const noexcept
+{
+	return &mViews[2];
 }
 
 
@@ -275,6 +301,8 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 
 	Math::Vector4 CollidingColor{1.f, 0, 0, .75f}, activeColor;
 
+	// Find out a way to allow stuff other than colliders to draw stuff
+
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
 	{
@@ -305,16 +333,53 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 #endif
 }
 
-void Dystopia::GraphicsSystem::Update(float)
+void Dystopia::GraphicsSystem::Update(float _fDT)
 {
 	StartFrame();
 
 	glClearColor(.0f, .0f, .0f, 1.f);
-	mGameView.Bind();
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 
-	glViewport(0, 0, 2048, 2048);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	/*
+	for (auto& e : mViews)
+	{
+		e.Bind();
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		e.Unbind();
+	}
+
+	// Do batching, depth sorting and grouping of translucent elements. 
+	for (auto& e : ComponentDonor<Renderer>::mComponents)
+	{
+		auto flags = e.GetFlags();
+
+#   if EDITOR
+		if (flags & eObjFlag::FLAG_EDITOR_OBJ)
+			continue;
+#   endif
+
+		if (flags & eObjFlag::FLAG_RESERVED)
+		{
+			// Remove the object from the pool
+
+			// Modify the object's status in the render pool
+			if (flags & eObjFlag::FLAG_ACTIVE)
+			{
+				// Add the object back in, into the correct spot
+			}
+		}
+	}
+	*/
+
+	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
+	{
+		auto flags = e.GetFlags();
+
+		if (flags & eObjFlag::FLAG_ACTIVE)
+		{
+			e.Update(_fDT);
+		}
+	}
 
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
@@ -329,15 +394,20 @@ void Dystopia::GraphicsSystem::Update(float)
 			Cam.SetCamera();
 			Math::Matrix4 ProjView = Cam.GetProjectionMatrix() * Cam.GetViewMatrix();
 
+			auto surface = Cam.GetSurface();
+
+			// Temporary code
+			surface->Bind();
+			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
 			DrawScene(Cam, ProjView);
 			
-			if (mbDebugDraw)
+			 if (Cam.DrawDebug())
 				DrawDebug(Cam, ProjView);
+
+			 surface->Unbind();
 		}
 	}
-
-	mGameView.Unbind();
-	// TODO: Final draw to combine layers & draw to screen
 
 	EndFrame();
 }
@@ -351,7 +421,6 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 			mComponents.Remove(&render);
 		}
 	}
-
 }
 
 
@@ -362,9 +431,30 @@ void Dystopia::GraphicsSystem::StartFrame(void)
 
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
-#if !EDITOR
+#if EDITOR
+	// TODO: Final draw to combine layers & draw to screen
 	// TODO: Draw a fullscreen quad fusing the GameView and UIView
+	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
 
+	auto fb = GetFramebuffer();
+
+	fb->Bind();
+#endif
+
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+	GetGameView().AsTexture()->Bind(0);
+	GetUIView().AsTexture()->Bind(1);
+
+	Shader* shader = shaderlist["FinalStage"];
+	shader->Bind();
+	shader->UploadUniform("Scale", 2.f);
+
+	quad->DrawMesh(GL_TRIANGLES);
+
+#if EDITOR
+	fb->Unbind();
+#else
 	SwapBuffers(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetDeviceContext());
 #endif
 }
@@ -384,6 +474,14 @@ void Dystopia::GraphicsSystem::Shutdown(void)
 
 void Dystopia::GraphicsSystem::LoadDefaults(void)
 {
+	mViews.Emplace(2048u, 2048u, true);
+	mViews.Emplace(1024u, 1024u, true);
+	mViews.Emplace(
+		static_cast<unsigned>(Gbl::SCREEN_WIDTH ), 
+		static_cast<unsigned>(Gbl::SCREEN_HEIGHT), 
+		false
+	);
+
 	DRAW_MODE = GL_TRIANGLES;
 }
 
@@ -586,10 +684,6 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 	return false;
 }
 
-Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer()
-{
-	return mGameView;
-}
 
 void Dystopia::GraphicsSystem::EditorUI(void)
 {
@@ -610,11 +704,11 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 		break;
 	}
 
-	bool tempBool = mbDebugDraw;
+	bool tempBool = GetDebugDraw();
 	if (EGUI::Display::CheckBox("Debug Draw  ", &tempBool))
 	{
-		mbDebugDraw = tempBool;
-		EGUI::GetCommandHND()->InvokeCommand<GraphicsSystem>(&mbDebugDraw, tempBool);
+		//mbDebugDraw = tempBool;
+		//EGUI::GetCommandHND()->InvokeCommand<GraphicsSystem>(&ToggleDebugDraw, this, tempBool);
 	}
 
 	auto result2 = EGUI::Display::VectorFields("Debug Color ", &mvDebugColour, 0.01f, 0.f, 1.f);

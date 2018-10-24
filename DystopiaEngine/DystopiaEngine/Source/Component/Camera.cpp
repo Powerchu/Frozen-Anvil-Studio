@@ -37,14 +37,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
 	mViewport{0, 0, _fWidth, _fHeight}, mView{}, mProjection{},
-	mInvScreen{}, mpSurface{ nullptr }
+	mInvScreen{}, mpSurface{ nullptr }, mbDebugDraw{ false }
 {
 
 }
 
 Dystopia::Camera::Camera(const Camera& _oOther) : Component{ _oOther }, 
-	mViewport{ _oOther.mViewport }, mView{ _oOther.mView }, mProjection{},
-	mInvScreen{ _oOther.mInvScreen }, mpSurface{ _oOther.mpSurface }
+	mViewport{ _oOther.mViewport }, mView{}, mProjection{ _oOther.mProjection },
+	mInvScreen{}, mpSurface{ _oOther.mpSurface }, mbDebugDraw{ _oOther.mbDebugDraw }
 {
 
 }
@@ -61,13 +61,6 @@ void Dystopia::Camera::Init(void)
 
 	SetOrthographic(800.f, 500.f, -500.f, 500.f);
 }
-
-/*
-void Dystopia::Camera::Update(const float)
-{
-
-}
-*/
 
 void Dystopia::Camera::SetMasterCamera(void)
 {
@@ -119,40 +112,6 @@ void Dystopia::Camera::SetPosition(const Math::Pt3D& _vPos)
 void Dystopia::Camera::SetPosition(const float _x, const float _y, const float _z)
 {
 	GetOwner()->GetComponent<Transform>()->SetGlobalPosition(_x, _y, _z);
-}
-
-
-/*
-void Dystopia::Camera::SetZoom(const float _fZoom)
-{
-	SetZoom(_fZoom, _fZoom);
-}
-
-void Dystopia::Camera::SetZoom(const float _fZoomX, const float _fZoomY)
-{
-	mZoom.x = _fZoomX;
-	mZoom.y = _fZoomY;
-}
-*/
-
-
-void Dystopia::Camera::SetCamera(void)
-{
-//	EngineCore::GetInstance()->GetSystem<CameraSystem>()->ApplyViewport(mViewport);
-	auto mTransform = GetOwner()->GetComponent<Transform>();
-
-	mView = mTransform->GetTransformMatrix();
-	//auto masterView = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetMasterViewport();
-
-	//mInvScreen = mView * Math::AffineInverse(mProjection) * 
-	//	Math::Mat4{
-	//		2.f / (masterView.mnWidth), .0f, -(1.f + 2.f * masterView.mnX) / masterView.mnWidth - 1.f, .0f,
-	//		.0f, 2.f / masterView.mnHeight, 1.f + (1.f + 2.f * masterView.mnY) / masterView.mnHeight, .0f,
-	//		.0f, .0f, .0f, .0f,
-	//		.0f, .0f, .0f, 1.f
-	//	}; // Screen space -> Viewport space -> projection space
-
-	mView.AffineInverse();
 }
 
 void Dystopia::Camera::SetSurface(Framebuffer* _ptr)
@@ -217,16 +176,39 @@ void Dystopia::Camera::SetOrthographic(float _fWidth, float _fHeight, float _fNe
 }
 
 
+void Dystopia::Camera::SetCamera(void)
+{
+	auto mTransform = GetOwner()->GetComponent<Transform>();
+
+	mView = mTransform->GetTransformMatrix();
+
+	//mInvScreen = mView * Math::AffineInverse(mProjection) * 
+	//	Math::Mat4{
+	//		2.f / (masterView.mnWidth), .0f, -(1.f + 2.f * masterView.mnX) / masterView.mnWidth - 1.f, .0f,
+	//		.0f, 2.f / masterView.mnHeight, 1.f + (1.f + 2.f * masterView.mnY) / masterView.mnHeight, .0f,
+	//		.0f, .0f, .0f, .0f,
+	//		.0f, .0f, .0f, 1.f
+	//	}; // Screen space -> Viewport space -> projection space
+
+	mView.AffineInverse();
+}
+
+void Dystopia::Camera::SetDebugDraw(bool _bDebugDraw) noexcept
+{
+	mbDebugDraw = _bDebugDraw;
+}
+
+bool Dystopia::Camera::DrawDebug(void) const noexcept
+{
+	return mbDebugDraw;
+}
+
+
 Math::Pt3D Dystopia::Camera::GetPosition(void) const
 {
 	return GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 }
-/*
-Math::Vec3D Dystopia::Camera::GetZoom(void) const
-{
-	return mZoom;
-}
-*/
+
 Math::Vec3D Dystopia::Camera::GetSize(void) const
 {
 	return GetOwner()->GetComponent<Transform>()->GetScale();

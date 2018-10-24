@@ -197,7 +197,7 @@ namespace Dystopia
 		// Setup display size (every frame to accommodate for window resizing)
 		int w, h, display_w, display_h;
 
-		if (Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetIfFullScreen())
+		if (Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->IsFullscreen())
 		{
 			w = display_w = mpWin->GetMainWindow().GetWidth() - GetSystemMetrics(SM_CXBORDER) + 1;
 			h = display_h = mpWin->GetMainWindow().GetHeight() - GetSystemMetrics(SM_CYSIZE) - 2 * GetSystemMetrics(SM_CXBORDER);

@@ -280,6 +280,9 @@
     <ClCompile Include="Source\Component\TextRenderer.cpp">
       <Filter>Game Engine\Components\Renderer\TextRenderer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\SpriteRenderer.cpp">
+      <Filter>Game Engine\Components\Renderer\SpriteRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -756,6 +759,9 @@
     <ClInclude Include="Include\Component\TextRenderer.h">
       <Filter>Game Engine\Components\Renderer\TextRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\SpriteRenderer.h">
+      <Filter>Game Engine\Components\Renderer\SpriteRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1102,6 +1108,9 @@
     </Filter>
     <Filter Include="Game Engine\Components\Renderer\TextRenderer">
       <UniqueIdentifier>{5c738da4-8474-45bb-86e8-79f3fdb62749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Renderer\SpriteRenderer">
+      <UniqueIdentifier>{7ef9a996-2f55-4144-a76f-b99266e3c32e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

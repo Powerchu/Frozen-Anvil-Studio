@@ -309,24 +309,24 @@ typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Insert(const Val_t& _obj)
 template <typename T, typename PP>
 typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Insert(const Val_t& _obj, const Sz_t _nIndex)
 {
-	auto& page  = mDirectory[_nIndex >> PP::shift];
+	auto& blk = mDirectory[_nIndex >> PP::shift];
 
-	if (!page.mpArray)
+	if (!blk.mpArray)
 	{
-		Allocate(page);
+		Allocate(blk);
 	}
 
 	auto offset = _nIndex & PP::offset;
-	Ptr_t ptr = page.mpArray + offset;
+	Ptr_t ptr = blk.mpArray + offset;
 
-	if (0x1 & (page.present[page.GetPresentIndex(offset)] >> (_nIndex & 63)))
+	if (0x1 & (blk.present[Block::GetPresentIndex(offset)] >> (_nIndex & 63)))
 	{
 		*ptr = _obj;
 	}
 	else
 	{
 		new (ptr) T{ _obj };
-		page.present[page.GetPresentIndex(offset)] |= 1Ui64 << (_nIndex & 63);
+		blk.present[Block::GetPresentIndex(offset)] |= 1Ui64 << (_nIndex & 63);
 	}
 
 	return ptr;
@@ -437,10 +437,11 @@ T& MagicArray<T, PP>::operator[] (Sz_t _nIndex) const noexcept
 {
 #if _DEBUG
 	/* Array index out of range */
-	auto blk = mDirectory[_nIndex >> PP::shift];
+	auto& blk = mDirectory[_nIndex >> PP::shift];
 	if (nullptr == blk.mpArray)
 		__debugbreak();
-	if (0 == (0x1 & (blk.present[page.GetPresentIndex(_nIndex & PP::offset)] >> (_nIndex & 63))))
+
+	if (0 == (0x1 & (blk.present[Block::GetPresentIndex(_nIndex & PP::offset)] >> (_nIndex & 63))))
 		__debugbreak();
 #endif
 

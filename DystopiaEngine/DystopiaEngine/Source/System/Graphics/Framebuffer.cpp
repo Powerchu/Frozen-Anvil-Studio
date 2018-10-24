@@ -20,11 +20,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 #include "IO/Image.h"
 
+#include "Utility/DebugAssert.h"
+
 #include <GL/glew.h>
 
 
 Dystopia::Framebuffer::Framebuffer(void) noexcept
-	: mpTexture{ nullptr }
+	: mpTexture{ nullptr }, mbAlpha{ false }, mnWidth{ 0 }, mnHeight{ 0 }
+{
+}
+
+Dystopia::Framebuffer::Framebuffer(unsigned _nWidth, unsigned _nHeight, bool _bAlpha) noexcept
+	: mpTexture{ nullptr }, mbAlpha{ _bAlpha }, 
+	mnWidth{ _nWidth }, mnHeight{ _nHeight }
 {
 }
 
@@ -35,18 +43,20 @@ Dystopia::Framebuffer::~Framebuffer(void) noexcept
 }
 
 
-void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha)
+void Dystopia::Framebuffer::Init(void)
 {
-	unsigned format = _bAlpha ? GL_RGBA : GL_RGB;
-	Image tmp = { false, format, format, _nWidth, _nHeight, _bAlpha ? 4u : 3u, 1u, nullptr };
+	unsigned format = mbAlpha ? GL_RGBA : GL_RGB;
+	Image tmp = { false, format, format, mnWidth, mnHeight, mbAlpha ? 4u : 3u, 1u, nullptr };
 	mpTexture = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadRaw<Texture2D>(&tmp);
+
+	DEBUG_ASSERT(!mpTexture, "Framebuffer Error: Failed to create texture!\n");
 
 	glGenFramebuffers(1, &mnID);
 	glGenRenderbuffers(1, &mDepthBuffer);
 
 	// Depth + Stencil buffer for the FrameBuffer Object
 	glBindRenderbuffer(GL_RENDERBUFFER, mDepthBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _nWidth, _nHeight);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, mnWidth, mnHeight);
 
 	// Bind the texture and stencil buffer to the FBO
 	Bind();
@@ -55,6 +65,15 @@ void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight, bool _bAlp
 
 	Unbind();
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+}
+
+void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha)
+{
+	mbAlpha = _bAlpha;
+	mnWidth = _nWidth;
+	mnHeight = _nHeight;
+
+	Init();
 }
 
 
@@ -70,12 +89,12 @@ void Dystopia::Framebuffer::Unbind(void) const noexcept
 
 unsigned Dystopia::Framebuffer::GetWidth(void) const
 {
-	return mpTexture->GetWidth();
+	return mnWidth;
 }
 
 unsigned Dystopia::Framebuffer::GetHeight(void) const
 {
-	return mpTexture->GetHeight();
+	return mnHeight;
 }
 
 

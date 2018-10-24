@@ -35,7 +35,9 @@ namespace Dystopia
 		class AABB,
 		class Convex,
 		class Circle,
-		class CharacterController
+		class CharacterController,
+		class SpriteRenderer,
+		class TextRenderer
 		//class Particle
 	>::result;
 

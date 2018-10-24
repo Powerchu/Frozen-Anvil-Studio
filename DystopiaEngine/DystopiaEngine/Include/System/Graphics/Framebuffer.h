@@ -25,12 +25,14 @@ namespace Dystopia
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		Framebuffer(void) noexcept;
+		explicit Framebuffer(unsigned _nWidth, unsigned _nHeight, bool _bAlpha) noexcept;
 
 		~Framebuffer(void) noexcept;
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
+		void Init(void);
 		void Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha = true);
 
 		void Bind(void) const noexcept;
@@ -45,6 +47,9 @@ namespace Dystopia
 
 		unsigned mnID, mDepthBuffer;
 		Texture* mpTexture;
+
+		bool mbAlpha;
+		unsigned mnWidth, mnHeight;
 	};
 }
 

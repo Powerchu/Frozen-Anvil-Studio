@@ -101,6 +101,9 @@ namespace Dystopia
 		// and calculates the camera matrices
 		void SetCamera(void);
 
+		bool DrawDebug(void) const noexcept;
+		void SetDebugDraw(bool) noexcept;
+
 		void EditorUI(void) noexcept;
 
 	private:
@@ -112,6 +115,7 @@ namespace Dystopia
 		Math::Mat4 mProjection;
 
 		Framebuffer* mpSurface;
+		bool mbDebugDraw;
 	};
 }
 

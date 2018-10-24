@@ -43,7 +43,9 @@ Dystopia::TextureAtlas* Dystopia::TextureSystem::GetAtlas(const std::string& _st
 	
 	if (it) return (&*it);
 
-	return nullptr;
+	auto tex = GetTexture(_strName);
+
+	return mAtlas.Emplace(tex);;
 }
 
 template <>
