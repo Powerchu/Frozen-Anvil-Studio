@@ -13,11 +13,10 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-
 #ifndef _BLACKBOARD_H_
 #define _BLACKBOARD_H_
 
-#include "Globals.h"
+//#include "Globals.h"
 #include <string>
 #include <unordered_map>
 #include "DataStructure/SharedPtr.h"
@@ -30,6 +29,9 @@ namespace Dystopia
 		class Blackboard
 		{
 		public:
+			/*
+			 * Bool-String Map
+			 */
 			void setBool(std::string key, bool value) { bools[key] = value; }
 			bool getBool(std::string key)
 			{
@@ -40,6 +42,9 @@ namespace Dystopia
 			}
 			bool hasBool(std::string key) const { return bools.find(key) != bools.end(); }
 
+			/*
+			* Int-String Map
+			*/
 			void setInt(std::string key, int value) { ints[key] = value; }
 			int getInt(std::string key)
 			{
@@ -50,6 +55,9 @@ namespace Dystopia
 			}
 			bool hasInt(std::string key) const { return ints.find(key) != ints.end(); }
 
+			/*
+			* Float-String Map
+			*/
 			void setFloat(std::string key, float value) { floats[key] = value; }
 			float getFloat(std::string key)
 			{
@@ -60,6 +68,9 @@ namespace Dystopia
 			}
 			bool hasFloat(std::string key) const { return floats.find(key) != floats.end(); }
 
+			/*
+			* Double-String Map
+			*/
 			void setDouble(std::string key, double value) { doubles[key] = value; }
 			double getDouble(std::string key)
 			{
@@ -70,6 +81,9 @@ namespace Dystopia
 			}
 			bool hasDouble(std::string key) const { return doubles.find(key) != doubles.end(); }
 
+			/*
+			* String-String Map
+			*/
 			void setString(std::string key, std::string value) { strings[key] = value; }
 			std::string getString(std::string key)
 			{
@@ -80,6 +94,19 @@ namespace Dystopia
 			}
 			bool hasString(std::string key) const { return strings.find(key) != strings.end(); }
 
+			/*
+			* Void*-String Map
+			*/
+			void setPointer(std::string key, void* value) { pointers[key] = value; }
+			void* getPointer(std::string key)
+			{
+				if (pointers.find(key) == pointers.end()) {
+					pointers[key] = nullptr;
+				}
+				return pointers[key];
+			}
+			bool hasPointer(std::string key) const { return pointers.find(key) != pointers.end(); }
+
 			using Ptr = SharedPtr<Blackboard>;
 
 		protected:
@@ -88,6 +115,7 @@ namespace Dystopia
 			std::unordered_map<std::string, float> floats;
 			std::unordered_map<std::string, double> doubles;
 			std::unordered_map<std::string, std::string> strings;
+			std::unordered_map<std::string, void*> pointers;
 		};
 	}
 }

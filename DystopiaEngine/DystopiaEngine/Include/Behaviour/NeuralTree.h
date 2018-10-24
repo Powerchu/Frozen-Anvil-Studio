@@ -13,19 +13,20 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-
-
 #ifndef _NEURAL_TREE_H_
 #define _NEURAL_TREE_H_
 
+#include <utility>
 #include "Globals.h"
 #include "DataStructure/MagicArray.h"
 #include "DataStructure/SharedPtr.h"
+#include "Behaviour/Blackboard.h"
 
 namespace Dystopia
 {
 	namespace NeuralTree
 	{
+		// Base Node that contains statuses
 		class Node
 		{
 		public:
@@ -44,7 +45,20 @@ namespace Dystopia
 			virtual eStatus Update(float) = 0;
 			virtual void Exit(eStatus) {};
 
-			eStatus Tick(float);
+			eStatus Tick(float dt) 
+			{
+				if (mStatus != eStatus::RUNNING) {
+					Init();
+				}
+
+				mStatus = Update(dt);
+
+				if (mStatus != eStatus::RUNNING) {
+					Exit(mStatus);
+				}
+
+				return mStatus;
+			}
 
 			bool IsSuccess() const { return mStatus == eStatus::SUCCESS; }
 			bool IsRunning() const { return mStatus == eStatus::RUNNING; }
@@ -59,37 +73,82 @@ namespace Dystopia
 			eStatus mStatus = eStatus::INVALID;
 		};
 
+/*
+ * Composite Node - A composite node is a node that can have one or more children. 
+ * They will process one or more of these children in either a first to last sequence 
+ * or random order depending on the particular composite node in question, and at some 
+ * stage will consider their processing complete and pass either success or failure to 
+ * their parent, often determined by the success or failure of the child nodes. 
+ * 
+ * During the time they are processing children, they will continue to return Running to the 
+ * parent.
+ */
 		class Composite : public Node
 		{
 		public:
-			Composite() : iter(children.begin()) {}
+			Composite() : iter(mparrChildren.begin()) {}
 			virtual ~Composite() = default;
 
-			void addChild(const Node::Ptr child) { children.Insert(child); }
-			bool hasChildren() const { return !children.IsEmpty(); }
+			void AddChild(const Node::Ptr& child) { mparrChildren.Insert(child); }
+			bool HasChildren() const { return !mparrChildren.IsEmpty(); }
 
 		protected:
-			MagicArray<Node::Ptr> children;
+			MagicArray<Node::Ptr> mparrChildren;
 			MagicArray<Node::Ptr>::Itor_t iter;
 		};
 
+/*
+ * Decorator Node - Can only have a single child node. Their function is either to 
+ * transform the result they receive from their child node's status, to terminate the 
+ * child, or repeat processing of the child, depending on the type of decorator node.
+ */
 		class Decorator : public Node
 		{
 		public:
 			virtual ~Decorator() = default;
 
-			void setChild(const Node::Ptr node) { child = node; }
-			bool hasChild() const { return child != nullptr; }
+			void SetChild(const Node::Ptr& node) { mpChild = node; }
+			bool HasChild() const { return mpChild != nullptr; }
 
 		protected:
-			Node::Ptr child;
+			Node::Ptr mpChild;
 		};
 
 
+/*
+ * Leaf Node - These are the lowest level node type, and are incapable of having any children.
+ * AI Logic must be implemented here.
+ */
+		class Leaf : public Node
+		{
+		public:
+			Leaf() = default;
+			Leaf(Blackboard::Ptr _blackboard) : mpBlackboard(std::move(_blackboard)) {}
+			virtual ~Leaf() = default;
+
+		protected:
+			Blackboard::Ptr mpBlackboard;
+		};
+
+
+		class BehaviorTree : public Node
+		{
+		public:
+			BehaviorTree() : mpBlackboard(CreateShared<Blackboard>()) {}
+			BehaviorTree(const Node::Ptr &rootNode) : BehaviorTree() { mpRoot = rootNode; }
+
+			eStatus Update(const float dt) override { return mpRoot->Tick(dt);	}
+
+			void SetRoot(const Node::Ptr &node) { mpRoot = node; }
+			Blackboard::Ptr GetBlackboard() const { return mpBlackboard; }
+
+		private:
+			Node::Ptr mpRoot;
+			Blackboard::Ptr mpBlackboard;
+		};
 
 	}
 }
 	
 
 #endif
-
