@@ -162,16 +162,14 @@ namespace Dystopia
 				break;
 			case EGUI::eDragStatus::eENTER:
 				EGUI::GetCommandHND()->EndRecording();
-				_f(Temp, _addr);
 				break;
 			case EGUI::eDragStatus::eDRAGGING:
+				_f(Temp, _addr);
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				//Is it possible to make one that does not require the BehaviourClass to be known
-				//EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfAngularDrag);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
-				EGUI::GetCommandHND()->EndRecording();
+					EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eNO_CHANGE:
 				break;
@@ -193,13 +191,15 @@ namespace Dystopia
 				break;
 			case EGUI::eDragStatus::eENTER:
 				EGUI::GetCommandHND()->EndRecording();
-				_f(Temp, _addr);
+				
 				break;
 			case EGUI::eDragStatus::eDRAGGING:
+				_f(Temp, _addr);
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
 				//Is it possible to make one that does not require the BehaviourClass to be known
 				//EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfAngularDrag);
+				//EGUI::GetCommandHND()->StartRecording(&Temp);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
