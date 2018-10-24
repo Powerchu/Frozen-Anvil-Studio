@@ -122,7 +122,7 @@ namespace Dystopia
 			}
 			bool hasVector(const std::string& key) const { return vectors.find(key) != vectors.end(); }
 
-			using Ptr = SharedPtr<Blackboard>;
+			using Ptr = std::shared_ptr<Blackboard>;
 
 		protected:
 			std::unordered_map<std::string, void*> pointers;

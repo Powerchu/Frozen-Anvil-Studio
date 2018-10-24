@@ -15,7 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _DECORATOR_H_
 #define _DECORATOR_H_
-#include "NeuralTree.h"
+#include "Behaviour/AI/NeuralTree.h"
+
 
 namespace Dystopia
 {
@@ -52,14 +53,15 @@ namespace Dystopia
 			{
 				const auto status = mpChild->Tick();
 
-				if (status == eStatus::SUCCESS) {
+				switch (status)
+				{
+				case eStatus::SUCCESS:
 					return eStatus::FAIL;
-				}
-				else if (status == eStatus::FAIL) {
+				case eStatus::FAIL:
 					return eStatus::SUCCESS;
+				default: // returns running status
+					return status;
 				}
-
-				return status;
 			}
 		};
 
@@ -96,7 +98,7 @@ namespace Dystopia
 		public:
 			eStatus Update() override
 			{
-				while (1) {
+				while (true) {
 					const auto status = mpChild->Tick();
 
 					if (status == eStatus::SUCCESS) {

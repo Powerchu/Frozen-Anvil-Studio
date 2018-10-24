@@ -22,7 +22,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/SharedPtr.h"
 
 #include "Behaviour/AI/Blackboard.h"
-#include "Behaviour/AI/TreeBuilder.h"
 
 namespace Dystopia
 {
@@ -69,7 +68,7 @@ namespace Dystopia
 
 			void Reset() { mStatus = eStatus::INVALID; }
 
-			using Ptr = SharedPtr<Node>;
+			using Ptr = std::shared_ptr<Node>;
 
 		protected:
 			eStatus mStatus = eStatus::INVALID;
@@ -91,7 +90,7 @@ namespace Dystopia
 			Composite() : iter(mparrChildren.begin()) {}
 			virtual ~Composite() = default;
 
-			void AddChild(const Node::Ptr& child) { mparrChildren.Insert(child); }
+			void AddChild(Node::Ptr child) { mparrChildren.Insert(child); }
 			bool HasChildren() const { return !mparrChildren.IsEmpty(); }
 
 		protected:
@@ -109,7 +108,7 @@ namespace Dystopia
 		public:
 			virtual ~Decorator() = default;
 
-			void SetChild(const Node::Ptr& node) { mpChild = node; }
+			void SetChild(Node::Ptr node) { mpChild = node; }
 			bool HasChild() const { return mpChild != nullptr; }
 
 		protected:
@@ -133,15 +132,15 @@ namespace Dystopia
 		};
 
 
-		class BehaviorTree : public Node
+		class BehaviourTree : public Node
 		{
 		public:
-			BehaviorTree() : mpBlackboard(CreateShared<Blackboard>()) {}
-			BehaviorTree(const Node::Ptr &rootNode) : BehaviorTree() { mpRoot = rootNode; }
+			BehaviourTree() : mpBlackboard(std::make_shared<Blackboard>()) {}
+			explicit BehaviourTree(Node::Ptr rootNode) : BehaviourTree() { mpRoot = rootNode; }
 
 			eStatus Update() override { return mpRoot->Tick();	}
 
-			void SetRoot(const Node::Ptr &node) { mpRoot = node; }
+			void SetRoot(Node::Ptr node) { mpRoot = node; }
 			Blackboard::Ptr GetBlackboard() const { return mpBlackboard; }
 
 		private:

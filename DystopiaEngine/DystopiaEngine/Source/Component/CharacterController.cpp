@@ -8,6 +8,9 @@
 #include "System/Base/ComponentDonor.h"
 #include "IO/TextSerialiser.h"
 #include "System/Scene/SceneSystem.h"
+#include "DataStructure/SharedPtr.h"
+#include "Behaviour/AI/Composite.h"
+
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
@@ -67,12 +70,20 @@ namespace Dystopia
 			tInput->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
 			tInput->MapButton("Fly", eButton::KEYBOARD_UP);
 		}
+
+		auto sequence = std::make_shared<NeuralTree::Sequence>();
+		auto sayHello = std::make_shared<SayHello>();
+		auto sayHelloAgain = std::make_shared<SayHello>();
+		sequence->AddChild(sayHello);
+		sequence->AddChild(sayHelloAgain);
+		btree.SetRoot(sequence);
 	}
 
 	void CharacterController::Update(const float _dt)
 	{
-		MovePlayer(_dt);
-		CheckGroundCeiling();
+		btree.Update();
+		//MovePlayer(_dt);
+		//CheckGroundCeiling();
 		
 	}
 

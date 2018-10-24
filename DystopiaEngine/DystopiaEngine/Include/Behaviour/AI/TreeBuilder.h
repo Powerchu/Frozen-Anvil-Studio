@@ -16,9 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TREE_BUILDER_H_
 #define _TREE_BUILDER_H_
 
-#include "Behaviour/AI/Composite.h"
-#include "Behaviour/AI/Decorator.h"
-#include "Behaviour/AI/Leaf.h"
+#include "Behaviour/AI/NeuralTree.h"
 
 #include <cassert>
 
@@ -38,7 +36,7 @@ namespace Dystopia
 			template <class NodeType, typename... Args>
 			CompositeBuilder<Parent> leaf(Args... args)
 			{
-				auto child = CreateShared<NodeType>((args)...);
+				auto child = std::make_shared<NodeType>((args)...);
 				mpNode->AddChild(child);
 				return *this;
 			}
@@ -46,7 +44,7 @@ namespace Dystopia
 			template <class CompositeType, typename... Args>
 			CompositeBuilder<CompositeBuilder<Parent>> composite(Args... args)
 			{
-				auto child = CreateShared<CompositeType>((args)...);
+				auto child = std::make_shared<CompositeType>((args)...);
 				mpNode->AddChild(child);
 				return CompositeBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.GetRaw()));
 			}
@@ -54,7 +52,7 @@ namespace Dystopia
 			template <class DecoratorType, typename... Args>
 			DecoratorBuilder<CompositeBuilder<Parent>> decorator(Args... args)
 			{
-				auto child = CreateShared<DecoratorType>((args)...);
+				auto child = std::make_shared<DecoratorType>((args)...);
 				mpNode->AddChild(child);
 				return DecoratorBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.GetRaw()));
 			}
@@ -75,7 +73,7 @@ namespace Dystopia
 			template <class NodeType, typename... Args>
 			DecoratorBuilder<Parent> leaf(Args... args)
 			{
-				auto child = CreateShared<NodeType>((args)...);
+				auto child = std::make_shared<NodeType>((args)...);
 				mpNode->SetChild(child);
 				return *this;
 			}
@@ -83,7 +81,7 @@ namespace Dystopia
 			template <class CompositeType, typename... Args>
 			CompositeBuilder<DecoratorBuilder<Parent>> composite(Args... args)
 			{
-				auto child = CreateShared<CompositeType>((args)...);
+				auto child = std::make_shared<CompositeType>((args)...);
 				mpNode->SetChild(child);
 				return CompositeBuilder<DecoratorBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.GetRaw()));
 			}
@@ -91,7 +89,7 @@ namespace Dystopia
 			template <class DecoratorType, typename... Args>
 			DecoratorBuilder<DecoratorBuilder<Parent>> decorator(Args... args)
 			{
-				auto child = CreateShared<DecoratorType>((args)...);
+				auto child = std::make_shared<DecoratorType>((args)...);
 				mpNode->SetChild(child);
 				return DecoratorBuilder<DecoratorBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.GetRaw()));
 			}
@@ -114,28 +112,28 @@ namespace Dystopia
 			template <class NodeType, typename... Args>
 			Builder leaf(Args... args)
 			{
-				mpRoot = CreateShared<NodeType>((args)...);
+				mpRoot = std::make_shared<NodeType>((args)...);
 				return *this;
 			}
 
 			template <class CompositeType, typename... Args>
 			CompositeBuilder<Builder> composite(Args... args)
 			{
-				mpRoot = CreateShared<CompositeType>((args)...);
+				mpRoot = std::make_shared<CompositeType>((args)...);
 				return CompositeBuilder<Builder>(this, reinterpret_cast<CompositeType*>(mpRoot.GetRaw()));
 			}
 
 			template <class DecoratorType, typename... Args>
 			DecoratorBuilder<Builder> decorator(Args... args)
 			{
-				mpRoot = CreateShared<DecoratorType>((args)...);
+				mpRoot = std::make_shared<DecoratorType>((args)...);
 				return DecoratorBuilder<Builder>(this, reinterpret_cast<DecoratorType*>(mpRoot.GetRaw()));
 			}
 
 			Node::Ptr Build() const
 			{
-				assert(root != nullptr && "The Behavior Tree is empty!");
-				auto tree = CreateShared<BehaviorTree>();
+				assert(mpRoot != nullptr && "The Behavior Tree is empty!");
+				auto tree = std::make_shared<BehaviourTree>();
 				tree->SetRoot(mpRoot);
 				return tree;
 			}

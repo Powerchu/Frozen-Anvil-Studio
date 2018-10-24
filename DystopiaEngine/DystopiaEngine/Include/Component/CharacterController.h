@@ -15,12 +15,24 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define CHARACTER_CONTROLLER_H
 #include "Component.h"
 #include "Component/ComponentList.h"	// CHARACTER CONTROLLER
+#include "Behaviour/AI/NeuralTree.h"
+#include "Utility/DebugAssert.h"
 
 namespace Dystopia
 {
 	class RigidBody;
 	class Collider;
 	class InputManager;
+
+	class SayHello : public NeuralTree::Node
+	{
+	public:
+		eStatus Update() override
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "Hello World!");
+			return Node::eStatus::SUCCESS;
+		}
+	};
 
 	class _DLL_EXPORT CharacterController : public Component
 	{
@@ -63,6 +75,7 @@ namespace Dystopia
 		bool		mbIsCeilinged;
 		float		mfCharacterSpeed;
 		float		mfJumpForce;
+		NeuralTree::BehaviourTree btree;
 
 		/*=================Editor Stuff=====================*/
 #if EDITOR

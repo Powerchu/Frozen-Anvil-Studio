@@ -38,7 +38,7 @@ namespace Dystopia
 
 			eStatus Update() override
 			{
-				assert(hasChildren() && "Composite has no children");
+				assert(HasChildren() && "Composite has no children");
 
 				while (iter != mparrChildren.end()) {
 					const auto status = (*iter)->Tick();
@@ -69,7 +69,7 @@ namespace Dystopia
 
 			eStatus Update() override
 			{
-				assert(hasChildren() && "Composite has no children");
+				assert(HasChildren() && "Composite has no children");
 
 				while (iter != mparrChildren.end()) {
 					const auto status = (*iter)->Tick();
@@ -95,7 +95,7 @@ namespace Dystopia
 		public:
 			eStatus Update() override
 			{
-				assert(hasChildren() && "Composite has no children");
+				assert(HasChildren() && "Composite has no children");
 
 				while (iter != mparrChildren.end()) {
 					const auto status = (*iter)->Tick();
@@ -123,7 +123,7 @@ namespace Dystopia
 		public:
 			eStatus Update() override
 			{
-				assert(hasChildren() && "Composite has no children");
+				assert(HasChildren() && "Composite has no children");
 
 				while (iter != mparrChildren.end()) {
 					const auto status = (*iter)->Tick();

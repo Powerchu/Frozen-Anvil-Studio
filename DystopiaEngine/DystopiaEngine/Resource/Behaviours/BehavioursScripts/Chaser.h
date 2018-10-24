@@ -6,7 +6,7 @@
 \brief
 INSERT BRIEF HERE
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -30,10 +30,10 @@ namespace Dystopia
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
-		unsigned GetBehaviourType(void) const
-		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllBehaviours>::value;
-		};
+		// unsigned GetBehaviourType(void) const
+		// {
+		// 	return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllBehaviours>::value;
+		// };
 
 #endif
 		virtual const std::string GetEditorName(void) const override { return "Chaser"; }
