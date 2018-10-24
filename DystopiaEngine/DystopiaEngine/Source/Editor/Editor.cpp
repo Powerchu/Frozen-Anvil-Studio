@@ -69,8 +69,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Input/XGamePad.h"
 
-#include "../EditorProc.h"
-#include "../EditorInput.h"
+#include "Editor/EditorProc.h"
+#include "Editor/EditorInput.h"
 
 namespace
 {
@@ -125,7 +125,7 @@ namespace Dystopia
 		mpSceneSystem{ nullptr }, mpProfiler{ nullptr }, mTempSaveFile{}, mSceneHasChanged{ true },
 		mpEditorEventSys{ new EditorEventHandler{} }, //mpInput{ new InputManager{} },
 		mpComdHandler{ new CommandHandler{} }, mpGuiSystem{ new GuiSystem{} }, mpTimer{ new Timer{} },
-		mpClipBoard{ new Clipboard{} }, mCtrlKey{ false }, mArrSelectedObj{ 100 }, mUpdateSelection{ true },
+		mpClipBoard{ new Clipboard{} }, mArrSelectedObj{ 100 }, mUpdateSelection{ true },
 		mpEditorInput{ new EditorInput{}  }
 	{}
 
@@ -203,7 +203,6 @@ namespace Dystopia
 
 	void Editor::StartFrame()
 	{
-		mCtrlKey = false;
 		mDeltaTime = mpTimer->Elapsed();
 		mpTimer->Lap();
 		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow())
@@ -457,10 +456,6 @@ namespace Dystopia
 			mpClipBoard->InsertData(eCLIP_GAME_OBJECT, reinterpret_cast<void*>(o), sizeof(GameObject));
 	}
 
-	void Editor::EditorCut()
-	{
-	}
-
 	void Editor::EditorPaste()
 	{
 		auto toPaste = mpClipBoard->RetrieveDatas(eCLIP_GAME_OBJECT, sizeof(GameObject));
@@ -695,7 +690,6 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_UNDO)->Bind(&Editor::EditorUndo, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_REDO)->Bind(&Editor::EditorRedo, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_COPY)->Bind(&Editor::EditorCopy, this);
-		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_CUT)->Bind(&Editor::EditorCut, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PASTE)->Bind(&Editor::EditorPaste, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DELETE)->Bind(&Editor::EditorDelete, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVE)->Bind(&Editor::SaveProc, this);
@@ -711,7 +705,6 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_UNDO)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_REDO)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_COPY)->Unbind(this);
-		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_CUT)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PASTE)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DELETE)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVE)->Unbind(this);
@@ -836,7 +829,10 @@ namespace Dystopia
 	void Editor::AddSelection(const uint64_t& _id)
 	{
 		mUpdateSelection = true;
-		mpClipBoard->InsertSelection(_id);
+		if (mpEditorInput->Get()->IsKeyPressed(eButton::KEYBOARD_LCTRL))
+			mpClipBoard->InsertSelection(_id);
+		else
+			NewSelection(_id);
 	}
 
 	void Editor::NewSelection(const uint64_t& _id)
@@ -869,11 +865,6 @@ namespace Dystopia
 			if (temp)
 				mArrSelectedObj.Insert(temp);
 		}
-	}
-
-	bool Editor::IsCtrlDown(void) const
-	{
-		return mCtrlKey;
 	}
 
 	Clipboard& Editor::GetClipboard(void)

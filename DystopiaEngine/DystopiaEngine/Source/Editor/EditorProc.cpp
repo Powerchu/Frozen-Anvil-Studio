@@ -11,7 +11,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "EditorProc.h"
+#include "Editor/EditorProc.h"
 
 /* library includes */
 #include <iostream>

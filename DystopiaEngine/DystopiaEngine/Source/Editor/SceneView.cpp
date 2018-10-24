@@ -342,11 +342,7 @@ namespace Dystopia
 			{
 				GameObject* pObj = FindMouseObject();
 				if (pObj && !mGizmoHovered)
-				{
-					auto ed = GetMainEditor();
-					if (ed->IsCtrlDown())	ed->AddSelection(pObj->GetID());
-					else					ed->NewSelection(pObj->GetID());
-				}
+					GetMainEditor()->AddSelection(pObj->GetID());
 				else
 					mClearSelection = true;
 			}

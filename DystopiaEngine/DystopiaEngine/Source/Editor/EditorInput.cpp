@@ -11,7 +11,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#include "EditorInput.h"
+#include "Editor/EditorInput.h"
 #include "Allocator/DefaultAlloc.h"
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"

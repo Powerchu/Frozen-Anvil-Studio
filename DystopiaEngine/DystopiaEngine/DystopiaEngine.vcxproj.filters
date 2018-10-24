@@ -284,8 +284,12 @@
       <Filter>DataStructures</Filter>
     </ClCompile>
     <ClCompile Include="EditorMain.cpp" />
-    <ClCompile Include="EditorProc.cpp" />
-    <ClCompile Include="EditorInput.cpp" />
+    <ClCompile Include="Source\Editor\EditorInput.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorProc.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -775,10 +779,16 @@
       <Filter>DataStructures</Filter>
     </ClInclude>
     <ClInclude Include="EditorMain.h" />
-    <ClInclude Include="EditorProc.h" />
-    <ClInclude Include="EditorInput.h" />
     <ClInclude Include="EditorStates.h" />
-    <ClInclude Include="EditorHotkeys.h" />
+    <ClInclude Include="Include\Editor\EditorHotkeys.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorInput.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorProc.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

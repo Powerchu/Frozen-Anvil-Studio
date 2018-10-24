@@ -83,14 +83,10 @@ namespace Dystopia
 
 		const AutoArray<GameObject*>&	GetSelectionObjects(void);
 
-		/* Editor Input */
-		bool			IsCtrlDown(void) const;
-
 		/* The edit functions */
 		void			EditorUndo();
 		void			EditorRedo();
 		void			EditorCopy();
-		void			EditorCut();
 		void			EditorPaste();
 		void			EditorDelete();
 
@@ -113,7 +109,6 @@ namespace Dystopia
 		CommandHandler			*mpComdHandler;
 		GuiSystem				*mpGuiSystem;
 		Timer					*mpTimer;
-		//InputManager			*mpInput;
 		EditorInput				*mpEditorInput;
 
 		bool					mSceneHasChanged;

@@ -24,7 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <Windows.h>
 #include <windef.h>
 
-#include "../EditorInput.h"
+#include "Editor/EditorInput.h"
 
 HCURSOR	gCursorTypes[8];
 
