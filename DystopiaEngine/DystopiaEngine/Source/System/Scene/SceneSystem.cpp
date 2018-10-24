@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO/TextSerialiser.h"
 #include "Utility/DebugAssert.h"
 #include "Editor/Editor.h"
+#include "System/Behaviour/BehaviourSystem.h"
 
 Dystopia::SceneSystem::SceneSystem(void) :
 	mpCurrScene{ nullptr }, mpNextScene{ nullptr }, mLastSavedData{ "" }, mNextSceneFile{ "" }
@@ -94,6 +95,7 @@ void Dystopia::SceneSystem::SceneChanged(void)
 	SerialObj.ConsumeStartBlock();
 	mpNextScene->Unserialise(SerialObj);
 	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
+	EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 	SerialObj.ConsumeEndBlock();
 	mNextSceneFile.clear();
 
@@ -113,6 +115,7 @@ void Dystopia::SceneSystem::RestartScene(void)
 		SerialObj.ConsumeStartBlock();
 		mpCurrScene->Unserialise(SerialObj);
 		SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
+		EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 		SerialObj.ConsumeEndBlock();
 		mpCurrScene->Init();
 	}
@@ -136,6 +139,7 @@ void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::s
 	SerialObj.InsertStartBlock("Scene");
 	mpCurrScene->Serialise(SerialObj);
 	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemSerialise(SerialObj);
+	EngineCore::GetInstance()->Get<BehaviourSystem>()->Serialise(SerialObj);
 	SerialObj.InsertEndBlock("Scene");
 
 	mLastSavedData = _strFile;

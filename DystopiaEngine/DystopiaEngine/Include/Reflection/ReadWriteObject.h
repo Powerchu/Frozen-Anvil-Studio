@@ -11,9 +11,9 @@
 #define _VOID_RETURN_FUNC_TYPE_(...) std::function<void(__VA_ARGS__, void *)>
 namespace Dystopia
 {
+	class TextSerialiser;
 	namespace TypeErasure
 	{
-
 		namespace HelperMeta
 		{
 
@@ -74,6 +74,7 @@ namespace Dystopia
 				virtual void Set(void *, void(*) (std::any, void*, std::any), std::any) = 0;
 				virtual void Get(void *, void (*) (std::any))                           = 0;
 				virtual void Reflect(const char *, void *, void(*) (const char *,std::any, std::any, void*)) = 0;
+				virtual void Serialise(void*, TextSerialiser&, void(*)(std::any,void*, TextSerialiser&)) const = 0;
 				virtual Concept * Duplicate() const = 0;
 				virtual ~Concept(){}
 			};
@@ -129,6 +130,12 @@ namespace Dystopia
 				{
 					_fp(_name,mObj.mGet(_Address), mObj.mSet.GetFunc(), _Address);
 				}
+
+				virtual void Serialise(void* _addr, TextSerialiser& _t, void(*_fp)(std::any, void*, TextSerialiser&)) const
+				{
+					_fp(mObj.mGet(_addr), _addr, _t);
+				}
+
 				~Wrapper(){}
 
 				T mObj;
@@ -159,10 +166,25 @@ namespace Dystopia
 				_TypeEraseRhs.mpWrapper = nullptr;
 			}
 
+			template <typename T>
+			struct TypeResolve
+			{
+				void ResolveType(std::any&)
+				{
+					// Do type resolve
+				}
+
+				void(*GetTypeResolver(void))(std::any)
+				{
+					return [=](std::any r) { this->ResolveType(r); };
+				}
+			};
+
 
 			template <typename SF>
-			void Get(void * _Address ,SF)
+			void Get(void * _Address, SF)
 			{
+				//TypeResolve<SF> x{ _sf };
 				void(*passdown)(std::any) = ResolveType<SF>;
 				mpWrapper->Get(_Address, passdown);
 			}
@@ -186,6 +208,13 @@ namespace Dystopia
 			{
 				void(*passdown)(const char *,std::any, std::any, void*) = ResolveType_Reflect<SF>;
 				mpWrapper->Reflect(_name,_Address, passdown);
+			}
+
+			template <typename SF>
+			void Serialise(void * _Address, TextSerialiser & _serialiser, SF) const
+			{
+				void(*passdown)(std::any, void*, TextSerialiser &) = ResolveType_Serialise<SF>;
+				mpWrapper->Serialise(_Address, _serialiser, passdown);
 			}
 
 			operator bool() const { return mpWrapper; }
@@ -328,6 +357,39 @@ namespace Dystopia
 				(
 					typeid(T).hash_code(),
 					[](const char * _name,std::any _a, SuperFunctor _f, std::any _set, void * _addr) {_f(_name,std::any_cast<T>(_a), std::any_cast<std::function<void (T,void*)>>(_set),_addr); }
+				)...
+			};
+			return myMap;
+		}
+
+		template<typename SuperFunctor>
+		static void ResolveType_Serialise(std::any _a, void * _addr, TextSerialiser & _serialiser)
+		{
+			using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor, TextSerialiser & , void *)>;
+			static FunctorMap MyMap = GenerateMap_Serialise<SuperFunctor>(typename HelperMeta::AllPossibleType::type{});
+
+			auto it = MyMap.find(_a.type().hash_code());
+			if (it != MyMap.end())
+			{
+				(*it).second(_a, SuperFunctor{}, _serialiser, _addr);
+			}
+			else
+			{
+				// Don't exist
+				SuperFunctor{}(std::nullptr_t{ nullptr }, _serialiser, _addr);
+			}
+		}
+
+		template<typename SuperFunctor, typename ... T>
+		static auto GenerateMap_Serialise(Variant<T...>)
+		{
+			using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor, TextSerialiser &, void*)>;
+			static FunctorMap myMap
+			{
+				std::make_pair
+				(
+					typeid(T).hash_code(),
+					[](std::any _a, SuperFunctor _f, TextSerialiser & _obj, void * _addr) {_f(std::any_cast<T>(_a),_obj,_addr); }
 				)...
 			};
 			return myMap;

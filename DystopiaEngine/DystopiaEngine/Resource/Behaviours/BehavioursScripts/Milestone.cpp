@@ -42,7 +42,7 @@ namespace Dystopia
 	}
 
 	void Milestone::FixedUpdate(const float _fDeltaTime)
-	{  
+	{   
 	}
 	
 	void Milestone::PostUpdate(void)

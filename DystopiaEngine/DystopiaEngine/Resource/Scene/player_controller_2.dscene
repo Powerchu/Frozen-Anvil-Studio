@@ -1,0 +1,279 @@
+[START_Scene]
+18446744072511553536,player_controller_2,10,[START_START_GO_DATA]
+910164992,1,Scene Camera,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1.47132,2.45221,2.93748,-43.2942,3.3816,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071644765184,1,LeftWall,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+50,1024,1,-407.01,0,0,0,0,0.173648,0.984808,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+594791424,1,RightWall,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,600,1,407,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1761128960,1,Ground,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+800,32,1,0,-195.1,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072114878976,1,Background,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+900,700,1,0,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1568010752,1,Box,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,64,1,-167.86,0,1,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071662633984,1,Box_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,64,1,-133.96,-100.6,1,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1210818560,1,Box_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,64,1,-205.16,-107.5,1,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073482942976,1,Box_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,64,1,-456.86,442.1,1,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+613081600,1,Hero,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,1,-363,274,5,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+910166016,0,910164992,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+6,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+1104521216,0,18446744072114878976,..\DystopiaEngine\Resource\Asset\guide.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073168337920,0,613081600,..\DystopiaEngine\Resource\Asset\sprite_ctr.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073356711936,0,1568010752,..\DystopiaEngine\Resource\Editor\white_box.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071662634496,0,18446744071662633984,..\DystopiaEngine\Resource\Editor\white_box.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1210819072,0,1210818560,..\DystopiaEngine\Resource\Editor\white_box.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073482943488,0,18446744073482942976,..\DystopiaEngine\Resource\Editor\white_box.png,
+[END_Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+8,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+18446744072231903744,0,613081600,0,0.999,0.5,0.5,0.1,0.1,0.1,3,10,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1576483840,0,1761128960,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072691140096,0,18446744071644765184,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072696612864,0,594791424,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072543221248,0,1568010752,0,0.7,0.2,0.5,0.5,0.7,0.3,2,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744071662635008,0,18446744071662633984,0,0.7,0.2,0.5,0.5,0.7,0.3,2,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1210819584,0,1210818560,0,0.7,0.2,0.5,0.5,0.7,0.3,2,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744073482944000,0,18446744073482942976,0,0.7,0.2,0.5,0.5,0.7,0.3,2,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+8,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+18446744073273028608,0,18446744071644765184,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+594791936,0,594791424,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744073524662784,0,1761128960,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+279869440,0,613081600,0.01,-0.11,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.25,0.7,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+92035072,0,1568010752,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744071662635520,0,18446744071662633984,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1210820096,0,1210818560,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744073482944512,0,18446744073482942976,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Character_Controller]
+1784358400,0,613081600,
+[END_Character_Controller]
+
+[END_Component End]
+[START_BEHAVIOUR_SYSTEM BLOCK]
+1,Milestone,1,[START_BEHAVIOUR BLOCK]
+613081600,[START_BEHAVIOUR MEMBER VARIABLE BLOCK]
+mFloat,[START_mFloat]
+5,
+[END_mFloat]
+mInt,[START_mInt]
+25,
+[END_mInt]
+mFloat2,[START_mFloat2]
+10,
+[END_mFloat2]
+mInt2,[START_mInt2]
+6,
+[END_mInt2]
+
+[END_BEHAVIOUR MEMBER VARIABLE BLOCK]
+
+[END_BEHAVIOUR BLOCK]
+
+[END_BEHAVIOUR_SYSTEM BLOCK]
+
+[END_Scene]

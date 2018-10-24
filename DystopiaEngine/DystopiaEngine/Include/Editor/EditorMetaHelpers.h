@@ -184,7 +184,7 @@ namespace Dystopia
 		void operator()(const char * _name, int value, std::function<void(int, void*)> _f, void*_addr)
 		{
 			int Temp = value;
-			switch (EGUI::Display::DragInt(_name, &Temp, 0.01f, 0.0f, 2.0f))
+			switch (EGUI::Display::DragInt(_name, &Temp, 0.1f, 0, 2))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
 				EGUI::GetCommandHND()->EndRecording();
@@ -214,7 +214,7 @@ namespace Dystopia
 			}
 		}
 		template<>
-		void operator()(const char *,double value, std::function<void(double, void*)> _f, void*_addr)
+		void operator()(const char *,double, std::function<void(double, void*)>, void*)
 		{
 
 		}
@@ -225,12 +225,12 @@ namespace Dystopia
 		void operator()(T value) {  }
 
 		template<>
-		void operator()(float value)
+		void operator()(float)
 		{
 
 		}
 		template<>
-		void operator()(int value)
+		void operator()(int)
 		{
 
 		}	

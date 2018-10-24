@@ -13,11 +13,75 @@
 #include "Utility/DebugAssert.h"
 #include "System/Logger/LoggerSystem.h"
 #include "System/Logger/LogPriority.h"
-
+#include "IO/TextSerialiser.h"
 #include <utility>
 
 namespace Dystopia
 {
+	namespace BehaviourHelper
+	{
+		struct SuperSerialiseFunctor
+		{
+			template<typename T>
+			void operator()(T, TextSerialiser&, void*)
+			{
+				//_obj << static_cast<T>(_v);
+			}
+
+			template<>
+			void operator()(Math::Vec3D _v, TextSerialiser& _obj, void*)
+			{
+				_obj << static_cast<float>(_v.x);
+				_obj << static_cast<float>(_v.y);
+				_obj << static_cast<float>(_v.z);
+				_obj << static_cast<float>(_v.w);
+			}
+			template<>
+			void operator()(float _v, TextSerialiser& _obj, void*)
+			{
+				_obj << static_cast<float>(_v);
+			}
+			template<>
+			void operator()(int _v, TextSerialiser& _obj, void*)
+			{
+				_obj << static_cast<int>(_v);
+			}
+			template<>
+			void operator()(double _v, TextSerialiser& _obj, void*)
+			{
+				_obj << static_cast<double>(_v);
+			}
+			template<>
+			void operator()(char _v, TextSerialiser& _obj, void*)
+			{
+				_obj << static_cast<char>(_v);
+			}
+			template<>
+			void operator()(std::string _v, TextSerialiser& _obj, void*)
+			{
+				_obj << static_cast<std::string>(_v);
+			}
+			template<>
+			void operator()(const char * _v, TextSerialiser& _obj, void*)
+			{
+				_obj << std::string{ _v };
+			}
+		};
+		struct SuperUnserialiseFunctor
+		{
+			template<typename T>
+			void operator()(void *, std::function<void(T, void*)>, TextSerialiser &) {}
+
+			template<>
+			void operator()(void * _addr, std::function<void(float, void*)> _f, TextSerialiser & _obj)
+			{
+				float Temp = 0;
+				_obj >> Temp;
+				_f(Temp, _addr);
+			}
+		};
+	}
+
 	BehaviourSystem::BehaviourSystem()
 		:mHotloader{ CreateShared<Hotloader<1>>() }
 	{
@@ -190,11 +254,8 @@ namespace Dystopia
 					wrap.mpBehaviour = (BehaviourClone());
 					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Ut::Move(wrap)));
 					AutoArray< BehaviourPair> temp;
-
 					mvBehaviours.push_back(std::make_pair(std::wstring{ DllName.begin(), DllName.end() }, temp));
 				}
-
-
 				++start;
 			}
 		}
@@ -295,6 +356,87 @@ namespace Dystopia
 	{
 	}
 
+	void Dystopia::BehaviourSystem::Serialise(TextSerialiser & _obj) const
+	{
+#if EDITOR
+		_obj.InsertStartBlock("BEHAVIOUR_SYSTEM BLOCK");
+		/*Save number of Behaviours*/
+		_obj << mvBehaviours.size();
+		for (auto & i : mvBehaviours)
+		{
+			/*Save Behaviour Name*/
+			_obj << std::string{ i.first.begin(), i.first.end() };
+			/*Save the number of Pointers*/
+			_obj << i.second.size();
+			for (auto & iter : i.second)
+			{
+				_obj.InsertStartBlock("BEHAVIOUR BLOCK");
+				/*Owner ID*/
+				_obj << iter.first;
+				/*Save the Member Data*/
+				if (iter.second)
+				{
+					auto & BehaviourMetaData = iter.second->GetMetaData();
+					if (BehaviourMetaData)
+					{
+						_obj.InsertStartBlock("BEHAVIOUR MEMBER VARIABLE BLOCK");
+						auto & AllReflectedData = BehaviourMetaData.GetAllReflectedData();
+						for (auto & elem : AllReflectedData)
+						{
+							/*Save the Member Variable Name*/
+							_obj << std::string{ elem.first };
+							_obj.InsertStartBlock(std::string{ elem.first });
+							(elem.second).Serialise(iter.second, _obj, BehaviourHelper::SuperSerialiseFunctor{});
+							_obj.InsertEndBlock(std::string{ elem.first });
+						}
+						_obj.InsertEndBlock("BEHAVIOUR MEMBER VARIABLE BLOCK");
+					}
+				}
+				_obj.InsertEndBlock("BEHAVIOUR BLOCK");
+			}
+		}
+		_obj.InsertEndBlock("BEHAVIOUR_SYSTEM BLOCK");
+#endif
+	}
+
+	void Dystopia::BehaviourSystem::Unserialise(TextSerialiser & _obj)
+	{
+#if EDITOR
+		/*Clear all current Behaviour*/
+		ClearAllBehaviours();
+		/*Consume "BEHAVIOUR_SYSTEM BLOCK"*/
+		_obj.ConsumeStartBlock();
+		/*Get Number of Behaviour Scripts*/
+		unsigned size = 0;
+		_obj >> size;
+		for (unsigned i = 0; i < size; ++i)
+		{
+			std::string BehaviourScriptName;
+			_obj >> BehaviourScriptName;
+			for (auto const & elem : mvBehaviourReferences)
+			{
+				if (elem.mName == BehaviourScriptName)
+				{
+					unsigned NumOfBehaviour = 0;
+					_obj >> NumOfBehaviour;
+					for (unsigned u = 0; u < NumOfBehaviour; ++u)
+					{
+						/*Make new Behaviour*/
+						_obj.ConsumeStartBlock();
+						uint64_t _ID = 0;
+						_obj >> _ID;
+						auto * ptr = RequestBehaviour(_ID, elem.mName);
+						ptr;
+						/*Time to Super Set Functor*/
+						_obj.ConsumeEndBlock();
+					}
+					break;
+				}
+			}
+		}
+#endif
+	}
+
 #if EDITOR
 
 	MagicArray<BehaviourWrap*> const & Dystopia::BehaviourSystem::GetDllChanges() const
@@ -327,6 +469,24 @@ namespace Dystopia
 			}
 		}
 		return nullptr;
+	}
+
+	void Dystopia::BehaviourSystem::ClearAllBehaviours()
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.second)
+				{
+					if (auto x = iter.second->GetOwner())
+						x->RemoveComponent(iter.second);
+					delete iter.second;
+					iter.second = nullptr;
+				}
+			}
+			i.second.clear();
+		}
 	}
 
 #endif
