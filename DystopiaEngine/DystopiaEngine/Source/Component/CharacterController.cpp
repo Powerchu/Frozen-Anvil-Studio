@@ -72,7 +72,7 @@ namespace Dystopia
 	void CharacterController::Update(const float _dt)
 	{
 		MovePlayer(_dt);
-
+		CheckGroundCeiling();
 		
 	}
 
@@ -117,7 +117,32 @@ namespace Dystopia
 
 	void CharacterController::CheckGroundCeiling()
 	{
+		const auto my_body = GetOwner()->GetComponent<RigidBody>();
+		const auto my_col = GetOwner()->GetComponent<Collider>();
 
+		if (nullptr != my_col)
+		{
+			if (!my_col->IsTrigger())
+			{
+				for (auto& manifold : my_col->GetCollisionEvents())
+				{
+					if (manifold.mCollidedWith->GetComponent<Collider>()->IsTrigger()) continue;
+
+					const auto dotNormal = manifold.mEdgeNormal.Dot({ 1,0,0 });
+					if (dotNormal < 0.95F &&	dotNormal > -0.95F)
+					{
+						if (my_body->GetLinearVelocity().y > 0.0F)
+						{
+							//mbIsCeilinged = true;
+						}
+						else
+						{
+							mbIsGrounded = true;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/*
@@ -154,12 +179,16 @@ namespace Dystopia
 
 		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed("Fly"))
 		{
-			mpBody->AddForce({ 0,1000 * mpBody->GetMass(),0 });
+			mpBody->AddForce({ 0,100 * mpBody->GetMass(),0 });
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered("Jump"))
+		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed("Jump"))
 		{
-			mpBody->AddLinearImpulse({ 0,mfJumpForce * mpBody->GetMass() * 10,0 });
+			if (mbIsGrounded)
+			{
+				mpBody->AddLinearImpulse({ 0,mfJumpForce * mpBody->GetMass() * 10,0 });
+				mbIsGrounded = false;
+			}
 		}
 	}
 

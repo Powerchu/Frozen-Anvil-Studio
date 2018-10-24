@@ -176,10 +176,6 @@ namespace Dystopia
 				col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 			}
 			InformOtherComponents(true, col_info);
-
-			//marr_ContactSets.push_back(col_info);
-	
-			/*Return true for collision*/
 			return true;
 		}
 			InformOtherComponents(false, col_info);
@@ -201,14 +197,16 @@ namespace Dystopia
 		return this->isColliding(*other_col);
 
 	}
-	bool Circle::isColliding(const Convex & other_col)
+	bool Circle::isColliding(Convex& other_col)
 	{
 		RigidBody* other_body{ nullptr };
 		if (other_col.GetOwner()->GetComponent<RigidBody>())
 			other_body = other_col.GetOwner()->GetComponent<RigidBody>();
 
 		CollisionEvent newEvent(this->GetOwner(), other_col.GetOwner());
+		newEvent.mEdgeNormal = Math::MakeVector3D(0, 0, 0);
 		AutoArray<Edge> const & ConvexEdges = other_col.GetConvexEdges();
+
 		bool isInside = true;
 		/*Check for Circle inside Convex*/
 		for (auto & elem : ConvexEdges)
@@ -227,6 +225,7 @@ namespace Dystopia
 			{
 				Vec3D v = elem.mVec3;
 				Vec3D w = GetGlobalPosition() - elem.mPos;
+				Vec3D norm;
 				float c1 = v.Dot((w));
 				float c2 = v.Dot(v);
 				float ratio = 0.f;
@@ -234,25 +233,28 @@ namespace Dystopia
 				if (c1 < 0)
 				{
 					distance = w.Magnitude();
+					norm = -w;
 				}
 				else if (c1 > c2)
 				{
 					distance = (GetGlobalPosition() - (elem.mPos + elem.mVec3)).Magnitude();
+					norm = -(GetGlobalPosition() - (v + elem.mPos));
 				}
 				else
 				{
 					ratio = c1 / c2;
 					PointOfImpact = elem.mPos + ratio * elem.mVec3;
 					distance = (GetGlobalPosition() - PointOfImpact).Magnitude();
+					norm = -elem.mNorm3;
 				}
 
 				if (distance < GetRadius())
 				{
 					isInside = true;
 					newEvent.mfPeneDepth     = GetRadius() - distance;
-					elem.mNorm3.z			 = 0;
-					newEvent.mEdgeNormal     = -elem.mNorm3.Normalise();
-					newEvent.mEdgeVector     = elem.mVec3;
+					elem.mNorm3.z = 0;
+					newEvent.mEdgeNormal     += norm;
+					newEvent.mEdgeVector     = Math::Vec3D{ newEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
 					newEvent.mCollisionPoint = PointOfImpact;
 					if (nullptr != other_body)
 					{
@@ -260,24 +262,32 @@ namespace Dystopia
 						newEvent.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 						newEvent.mfStaticFrictionCof  = DetermineStaticFriction(*other_body);
 					}
-					//marr_ContactSets.push_back(newEvent);
 					mbColliding = isInside  = true;
 				}
 			}
+			if (isInside)
+			{
+				newEvent.mEdgeNormal = newEvent.mEdgeNormal.Normalise();
+				InformOtherComponents(true, newEvent);
+			}
+			else
+			{
+				InformOtherComponents(true, newEvent);
+			}
+
 		}
-		if (isInside)
-		{
-			InformOtherComponents(true, newEvent);
-		}
-		else
-		{
-			InformOtherComponents(false, newEvent);
-		}
+		//if (isInside)
+		//{
+ 	//		InformOtherComponents(true, newEvent);
+		//}
+		//else
+		//{
+		//	InformOtherComponents(false, newEvent);
+		//}
 		return isInside;
 	}
 	bool Circle::isColliding(Convex * const & other_col)
 	{
-		UNUSED_PARAMETER(other_col);
 		return this->isColliding(*other_col);
 	}
 

@@ -1,0 +1,249 @@
+[START_Scene]
+18446744072511553536,for_dan_2,10,[START_START_GO_DATA]
+910164992,1,Scene Camera,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+2.19932,3.38357,3.38357,-10.8053,-68.3036,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072424082432,1,Floor,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1024,32,1,0,-276.52,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+637240320,1,BG_Guide,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+900,800,1,0,-57,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071771407360,1,LeftBoundary,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,505.4,1,-350.6,0,0,0,0,0.258819,0.965926,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1435828224,1,RightBoundary,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,1024,1,413.4,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073330887680,1,TriggerBox,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,1,0,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1807406080,1,Enemy_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,1,170,-186,1,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+731575808,1,Enemy,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,1,105,-186,2,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072245730816,1,Enemy_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,1,43,-186,3,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072606142976,1,Hero,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,1,-464,315,10,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+910166016,0,910164992,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+5,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+624909824,0,637240320,..\DystopiaEngine\Resource\Asset\guide.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072606143488,0,18446744072606142976,..\DystopiaEngine\Resource\Asset\sprite_ctr.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073102270464,0,731575808,..\DystopiaEngine\Resource\Asset\M_Basic Goblin.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072245731328,0,18446744072245730816,..\DystopiaEngine\Resource\Asset\M_Basic Goblin.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1807406592,0,1807406080,..\DystopiaEngine\Resource\Asset\M_Basic Goblin.png,
+[END_Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+7,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+1810502144,0,18446744072424082432,0,0.5,0.5,0.5,0.2,0.3,0,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072606144512,0,18446744072606142976,0,0.999,0.1,0.5,0,0.1,0,4.5,100,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+817545216,0,731575808,0,0.5,0.5,0.5,0.5,0.7,0.5,1,200,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+533455360,0,1435828224,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072484694528,0,18446744071771407360,0,0.99999,0.99999,0.5,0.5,0.7,0,0,1e+06,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072245731840,0,18446744072245730816,0,0.5,0.5,0.5,0.5,0.7,0.5,1,200,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1807407104,0,1807406080,0,0.5,0.5,0.5,0.5,0.7,0.5,1,200,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+7,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+18446744072013270016,0,18446744072424082432,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744073302287872,0,731575808,0.06,-0.25,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.2,0.4,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1711115776,0,18446744071771407360,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1435828736,0,1435828224,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744072245732352,0,18446744072245730816,0.06,-0.25,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.2,0.4,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1807407616,0,1807406080,0.06,-0.25,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.2,0.4,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744071987441664,1,18446744073330887680,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+1543352832,1,18446744072606142976,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Character_Controller]
+18446744072177823232,0,18446744072606142976,30,75,
+[END_Character_Controller]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+
+[END_Scene]

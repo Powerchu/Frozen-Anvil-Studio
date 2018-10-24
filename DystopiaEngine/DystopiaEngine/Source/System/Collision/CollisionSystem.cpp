@@ -56,7 +56,7 @@ namespace Dystopia
 	{
 		ScopedTimer<ProfilerAction> timeKeeper{ "Collision System", "Update" };
 
-		//BoundingColliderNode		mCollisionTree;
+		BoundingColliderNode		mCollisionTree;
 		static PotentialContacts	ArrayContacts[1024]{};
 		static unsigned				ContactCount;
 
@@ -96,11 +96,11 @@ namespace Dystopia
 			if (elem.GetOwner())
 			{
 				//elem.ClearCollisionEvent(); //clear collision table
-				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
+				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
-				//mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
+				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 		}
 
@@ -109,11 +109,11 @@ namespace Dystopia
 			if (elem.GetOwner())
 			{
 				//elem.ClearCollisionEvent(); //clear collision table
-				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
+				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
-				//mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
+				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 			
 		}
@@ -123,11 +123,11 @@ namespace Dystopia
 			if (elem.GetOwner())
 			{
 				//elem.ClearCollisionEvent(); //clear collision table
-				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetLocalTransformMatrix();
+				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
-				//mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
+				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 			
 		}
@@ -161,8 +161,6 @@ namespace Dystopia
 		//			if (key.first == pair_key1)
 		//			{
 		//				(this->*key.second)(bodyA, bodyB);
-		//				bodyB->SetColliding(bodyB->Collider::HasCollision());
-		//				bodyA->SetColliding(bodyA->Collider::HasCollision());
 		//				break;
 		//			}
 		//		}
@@ -171,8 +169,6 @@ namespace Dystopia
 		//			if (key.first == pair_key2)
 		//			{
 		//				(this->*key.second)(bodyB, bodyA);
-		//				bodyB->SetColliding(bodyB->Collider::HasCollision());
-		//				bodyA->SetColliding(bodyA->Collider::HasCollision());
 		//				break;
 		//			}
 		//		}
@@ -189,6 +185,11 @@ namespace Dystopia
 				const auto ownerB = bodyB->GetOwner();
 				const auto rigidA = ownerA->GetComponent<RigidBody>();
 				const auto rigidB = ownerB->GetComponent<RigidBody>();
+
+				if (rigidA == nullptr)
+					bodyA->SetTrigger(true);
+				if (rigidB == nullptr)
+					bodyB->SetTrigger(true);
 
 				if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
 				{
@@ -275,7 +276,6 @@ namespace Dystopia
 		{
 			pCircle = dynamic_cast<Circle *>(_ColB);
 			pConvex = dynamic_cast<Convex *>(_ColA);
-			return ConvexVsCircle(_ColA, _ColB);
 		}
 		bool isColliding = pCircle->isColliding((*pConvex));
 
@@ -291,7 +291,6 @@ namespace Dystopia
 		{
 			pCircle = dynamic_cast<Circle *>(_ColA);
 			pConvex = dynamic_cast<Convex *>(_ColB);
-			return CircleVsConvex(_ColA, _ColB);
 		}
 		else
 		{

@@ -39,7 +39,7 @@ do {								                      \
 		"!ERROR IN %s Line %lu, \n",                      \
 		__FUNCSIG__, __LINE__);	                          \
 		DEBUG_PRINT(eLog::ERROR, __VA_ARGS__);	          \
-		assert(true);				                      \
+		assert(false);				                      \
 	}								                      \
 } while (false)
  

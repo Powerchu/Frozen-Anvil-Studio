@@ -53,15 +53,25 @@ namespace Dystopia
 		//mfHealth = 100.0F; // "asd", 2, 'c'		
 	}
 
-	void ParentToHero::Update(const float _dt)
+	void ParentToHero::Update(const float)
 	{
 		//std::string targetName{ "Hero" };
 		const auto currPos = this->GetOwner()->GetComponent<Transform>()->GetPosition();
 		const auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-		const auto heroObj = sceneSys->FindGameObject("Hero");
-		const auto newPos = heroObj->GetComponent<Transform>()->GetPosition();
-		const auto lerp = Math::Lerp(currPos, newPos, 0.02F);
-		this->GetOwner()->GetComponent<Transform>()->SetPosition(lerp.x, lerp.y, 0);
+		auto heroObj = sceneSys->FindGameObject(18446744072606142976);
+
+		if (nullptr == heroObj)
+		{
+			heroObj = sceneSys->FindGameObject("Hero");	
+		}
+
+		if (nullptr != heroObj)
+		{
+			const auto newPos = heroObj->GetComponent<Transform>()->GetPosition();
+			const auto lerp = Math::Lerp(currPos, newPos, 0.02F);
+			this->GetOwner()->GetComponent<Transform>()->SetPosition(lerp.x, lerp.y, 0);
+		}
+		
 
 		//this->GetOwner()->GetComponent<Transform>()->SetParent(EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject("Hero")->GetComponent<Transform>());
 

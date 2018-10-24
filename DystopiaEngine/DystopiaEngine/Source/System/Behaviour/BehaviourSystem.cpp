@@ -185,7 +185,7 @@ namespace Dystopia
 
 					BehaviourWrap wrap;
 					using fpClone = Behaviour * (*) ();
-					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
+					const fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
 					wrap.mName = DllName;
 					wrap.mpBehaviour = (BehaviourClone());
 					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Ut::Move(wrap)));
@@ -225,7 +225,7 @@ namespace Dystopia
 #endif
 	}
 
-	void Dystopia::BehaviourSystem::Update(float)
+	void Dystopia::BehaviourSystem::Update(float _dt)
 	{
 		for (auto & i : mvBehaviours)
 		{
@@ -236,7 +236,7 @@ namespace Dystopia
 					if (p->GetFlag() & eObjFlag::FLAG_ACTIVE)
 					{
 						_EDITOR_START_TRY
-							iter.second->Update(0.f);
+							iter.second->Update(_dt);
 						_EDITOR_CATCH(std::exception& e)
 						{
 							_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Error: %s!", e.what()));

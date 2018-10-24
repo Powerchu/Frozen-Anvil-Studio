@@ -30,7 +30,7 @@ namespace Dystopia
 	class EditorTab
 	{
 	public:
-		EditorTab(bool _defaultOpen = false);
+		EditorTab(bool _defaultOpen = false, bool _vertClip = false);
 		virtual ~EditorTab();
 
 		/************************************************************************************************************/
@@ -66,6 +66,7 @@ namespace Dystopia
 		Math::Vec2			Size() const;
 		Math::Vec2			Position() const;
 		bool*				GetOpenedBool();
+		bool				GetVertClip(void) const;
 
 	protected:
 		Editor*				GetMainEditor()		const;
@@ -75,6 +76,7 @@ namespace Dystopia
 
 	private:
 		bool				mIsOpened;
+		bool				mVerticalClip;
 		Math::Vec2			mSize;
 		Math::Vec2			mPos;
 		CommandHandler		*mpComdHandler;

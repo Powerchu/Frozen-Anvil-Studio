@@ -227,59 +227,68 @@ namespace Dystopia
 		if(!isInside)
 		{
 			float distance = 0;
-			for(auto & elem : Edges)
+			for (auto & elem : Edges)
 			{
 				Vec3D v = elem.mVec3;
 				Vec3D w = _ColB.GetGlobalPosition() - elem.mPos;
-				const float c1 = v.Dot((w));
-				const float c2 = v.Dot(v);
+				Vec3D norm;
+				float c1 = v.Dot((w));
+				float c2 = v.Dot(v);
 				float ratio = 0.f;
 				Point3D PointOfImpact;
-				if(c1 < 0 )
+				if (c1 < 0)
 				{
 					distance = w.Magnitude();
+					norm = w;
 				}
-				else if(c1 > c2)
+				else if (c1 > c2)
 				{
-					distance =  (_ColB.GetGlobalPosition() - (elem.mPos + elem.mVec3)).Magnitude();
+					distance = (_ColB.GetGlobalPosition() - (elem.mPos + elem.mVec3)).Magnitude();
+					norm = (_ColB.GetGlobalPosition() - (v + elem.mPos));
 				}
 				else
 				{
 					ratio = c1 / c2;
 					PointOfImpact = elem.mPos + ratio * elem.mVec3;
 					distance = (_ColB.GetGlobalPosition() - PointOfImpact).Magnitude();
+					norm = elem.mNorm3;
 				}
 
 				if (distance < _ColB.GetRadius())
 				{
-					//isInside = true;
+					isInside = true;
 					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
-					newEvent.mEdgeNormal = Math::Normalise(_ColB.GetGlobalPosition() - PointOfImpact);
-					newEvent.mEdgeVector = elem.mVec3;
+					elem.mNorm3.z = 0;
+					newEvent.mEdgeNormal += norm;
+					newEvent.mEdgeVector = Math::Vec3D{ newEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
 					newEvent.mCollisionPoint = PointOfImpact;
-					newEvent.mOtherID        = _ColB.GetOwner()->GetID();
-
 					if (nullptr != other_body)
 					{
 						newEvent.mfRestitution = DetermineRestitution(*other_body);
 						newEvent.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 						newEvent.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
 					}
-
-					isInside = true;
-					mbColliding = true;
-					_ColB.SetColliding(true);
+					mbColliding = isInside = true;
 				}
 			}
+			if (isInside)
+			{
+				newEvent.mEdgeNormal = newEvent.mEdgeNormal.Normalise();
+				InformOtherComponents(true, newEvent);
+			}
+			else
+			{
+				InformOtherComponents(true, newEvent);
+			}
 		}
-		if (isInside)
-		{
-			InformOtherComponents(true, newEvent);
-		}
-		else
-		{
-			InformOtherComponents(false, newEvent);
-		}
+		//if (isInside)
+		//{
+		//	InformOtherComponents(true, newEvent);
+		//}
+		//else
+		//{
+		//	InformOtherComponents(false, newEvent);
+		//}
 		return isInside;
 	}
 
@@ -344,7 +353,7 @@ namespace Dystopia
 	AutoArray<Edge> Convex::GetConvexEdges() const
 	{
 		AutoArray<Edge> ToRet;
-		const Math::Matrix3D World = GetOwnerTransform() * Math::Translate(mv3Offset.x, mv3Offset.y, mv3Offset.z) * GetTransformationMatrix();;
+		const Math::Matrix3D World = GetWorldMatrix();
 
 		for (unsigned i = 0; i<mVertices.size(); ++i)
 		{
@@ -373,13 +382,21 @@ namespace Dystopia
 	BroadPhaseCircle Convex::GenerateBoardPhaseCircle() const
 	{
 		float LongestRadius = 0;
-		Math::Point3D MyGlobalCentre = this->GetGlobalPosition();
+		Math::Point3D MyGlobalCentre = Math::MakePoint3D(0,0,0);
+		unsigned count = 0;
 		for (auto & elem : mVertices)
 		{
-			Math::Vec3D v  = elem.mPosition - mPosition;
-			float distance = (this->GetWorldMatrix() * v).Magnitude();
+			++count;
+			MyGlobalCentre += (GetWorldMatrix() * elem.mPosition);
+		}
+		if(count)
+			MyGlobalCentre *= 1.f / count;
+		for (auto & elem : mVertices)
+		{
+			float distance = ((this->GetWorldMatrix() * elem.mPosition) - MyGlobalCentre).Magnitude();
 			LongestRadius = distance > LongestRadius ? distance : LongestRadius;
 		}
+
 		return BroadPhaseCircle{ LongestRadius, MyGlobalCentre };
 	}
 
@@ -761,15 +778,13 @@ namespace Dystopia
 			const double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
 			const double result = ProjectDis - ClosestEdge.mOrthogonalDistance;
 			/*If fail the test, expand the simplex and run the test again*/
-			if (Math::Abs(result) <= FLT_EPSILON)
+			if (Math::Abs(result) <= FLT_EPSILON*10000)
 			{
 				Math::Vec3D const & OffSetA = GetOffSet();
 				Math::Matrix3D WorldSpaceA = GetOwnerTransform() * Math::Translate(OffSetA.x, OffSetA.y, OffSetA.z)* GetTransformationMatrix();
 
 				Math::Vec3D const & OffSetB = _ColB.GetOffSet();
 				const Math::Matrix3D WorldSpaceB  = _ColB.GetOwnerTransform() * Math::Translate(OffSetB.x, OffSetB.y, OffSetB.z)* _ColB.GetTransformationMatrix();
-				
-				//bool isInsideCollider = false;
 
 				unsigned j      = Point.ColBIndex + 1 >= _ColB.mVertices.size() ? 0 : Point.ColBIndex + 1;
 				unsigned A_Next = Point.ColAIndex + 1 >=  mVertices.size() ? 0      : Point.ColAIndex + 1;
@@ -779,8 +794,9 @@ namespace Dystopia
 
 				auto start_A = WorldSpaceA * _ColB.mVertices[Point.ColAIndex].mPosition;
 				auto end_A   = WorldSpaceA * _ColB.mVertices[A_Next].mPosition;
+				if (!ClosestEdge.mNorm3.MagnitudeSqr()) __debugbreak();
 #if CLOCKWISE
-				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::Y>();
+				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : -Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::Y>();
 #else
 				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::X>();
 #endif
@@ -788,7 +804,7 @@ namespace Dystopia
 				const float BarycentricRatio   = Math::Abs(OriginVector.Dot(ClosestEdge.mVec3.Normalise()) / ClosestEdge.mVec3.Magnitude());
 				col_info.mCollisionPoint = (end_A - start_A) * BarycentricRatio + start_A;
 				col_info.mEdgeNormal     = Normal.Normalise();
-				col_info.mEdgeVector     = Normal.xyzw;
+				col_info.mEdgeVector     = Normal.yxzw;
 				col_info.mOtherID        = _ColB.GetOwner()->GetID();
 
 				col_info.mfPeneDepth     = static_cast<float>(ProjectDis);
@@ -802,10 +818,13 @@ namespace Dystopia
 
 				return col_info;
 			}
-
-			_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
-			
-
+			else
+			{
+				for (auto & elm : _Simplex)
+					if (!(elm.mPosition - Point.mPosition).Magnitude()) __debugbreak();
+				_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
+			}
+				
 		}
 		//return col_info;
 	}

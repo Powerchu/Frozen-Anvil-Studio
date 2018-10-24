@@ -145,6 +145,8 @@ namespace Dystopia
 	void Collider::InformOtherComponents(const bool _isColliding, CollisionEvent const & _Event)
 	{
 		const auto _owner = GetOwner();
+		const auto _body = _owner->GetComponent<RigidBody>();
+
 		if (_isColliding)
 		{
 			if (auto * ptr = FindCollisionEvent(_Event.mOtherID))
@@ -170,12 +172,16 @@ namespace Dystopia
 		{
 			if (FindCollisionEvent(_Event.mOtherID))
 			{
+				if (nullptr != _body)
+					_body->SetSleeping(false);
+
 				if (!mbIsTrigger)
 					_owner->OnCollisionExit(_Event);
 				else
 					_owner->OnTriggerExit(_Event.mCollidedWith);
 				
 				RemoveCollisionEvent(_Event.mOtherID);
+				
 			}
 		}
 	}
@@ -213,6 +219,11 @@ namespace Dystopia
 
 	bool Collider::IsSleeping() const
 	{
+		const auto body = GetOwner()->GetComponent<RigidBody>();
+		if (body)
+		{
+			if (body->Get_IsStaticState()) return false;
+		}
 		return mbIsSleeping;
 	}
 
@@ -224,6 +235,11 @@ namespace Dystopia
 	void Collider::SetSleeping(bool _b)
 	{
 		mbIsSleeping = _b;
+	}
+
+	void Collider::SetTrigger(bool _b)
+	{
+		mbIsTrigger = _b;
 	}
 
 	void Collider::SetLocalPosition(Math::Point3D const & _point)

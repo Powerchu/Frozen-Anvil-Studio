@@ -16,6 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/ComponentList.h"	
 #include "Component/Component.h"
 
+#include "System/Sound/SoundTypes.h"
+
 #include <string>
 
 namespace Dystopia
@@ -50,14 +52,8 @@ namespace Dystopia
 		void Load(void);
 		void Init(void);
 
-		void Update(float);
-
 		void GameObjectDestroy(void);
-		void Unload(void);
-
-		void DestroyComponent(void);
-
-		void SetOwner(GameObject*);
+		void Update(float);
 
 		AudioSource* Duplicate() const;
 
@@ -66,17 +62,43 @@ namespace Dystopia
 		void EditorUI(void) noexcept;
 
 		// =============================== SOUND SPECIFIC FUNCTIONS =============================== // 
+		
+		Sound*&		GetSound(void);
+		void		SetSound(Sound*);
+		eSoundType	GetSoundType(void) const;
+		void		SetSoundType(eSoundType);
+		Channel&	GetChannel(void);
+		void		SetChannel(Channel);
 
-		Sound* GetSound(void);
-		void SetSound(Sound*);
+		void Play(void);
+		void Pause(void);
+		void Stop(void);
+		void SetVolume(float);
 
-		unsigned GetChannel(void) const;
-		void SetChannel(unsigned);
+		bool IsReady(void) const;
+		bool IsPaused(void) const;
+		bool IsPlaying(void) const;
+		void SetReady(bool);
 
 	private:
-		unsigned mChannelID;
-		Sound *mpSound;
+		Sound		*mpSound;
+		Channel		mChannel;
+
+		/* allow UI edit */
+		eSoundType	mSoundType;
+		bool		mPlayOnStart;
+		bool		mLoop;
+		float		mVolume;
+		float		mFrequency;
+		float		mPitch;
+
+		/* no UI edit allowed*/
 		std::string mSoundName;
+		bool		mPaused;
+		bool		mIsPlaying;
+		bool		mReady;
+		bool		mChanged;
+
 	};
 }
 
