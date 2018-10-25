@@ -183,7 +183,7 @@ namespace Dystopia
 			if (EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } + "##" +
 				std::to_string(mpFocus->GetID())))
 			{
-				auto & MetaData = c->GetMetaData();
+				auto && MetaData = c->GetMetaData();
 				if(MetaData)
 				{
 					auto Allnames =  MetaData.GetAllNames();

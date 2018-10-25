@@ -73,14 +73,64 @@ namespace Dystopia
 		struct SuperUnserialiseFunctor
 		{
 			template<typename T>
-			void operator()(void *, std::function<void(T, void*)>, TextSerialiser &) {}
+			void operator()(T, std::function<void(T, void*)>,void *,TextSerialiser &) {}
 
 			template<>
-			void operator()(void * _addr, std::function<void(float, void*)> _f, TextSerialiser & _obj)
+			void operator()(float, std::function<void(float, void*)> _f, void * _addr, TextSerialiser & _obj)
 			{
 				float Temp = 0;
 				_obj >> Temp;
 				_f(Temp, _addr);
+			}
+			template<>
+			void operator()(int, std::function<void(int, void*)> _f, void * _addr, TextSerialiser & _obj)
+			{
+				int Temp = 0;
+				_obj >> Temp;
+				_f(Temp, _addr);
+			}
+			template<>
+			void operator()(double, std::function<void(double, void*)> _f, void * _addr, TextSerialiser & _obj)
+			{
+				double Temp = 0;
+				_obj >> Temp;
+				_f(Temp, _addr);
+			}
+			template<>
+			void operator()(char, std::function<void(char, void*)> _f, void * _addr, TextSerialiser & _obj)
+			{
+				char Temp = 0;
+				_obj >> Temp;
+				_f(Temp, _addr);
+			}
+			template<>
+			void operator()(short, std::function<void(short, void*)> _f, void * _addr, TextSerialiser & _obj)
+			{
+				short Temp = 0;
+				_obj >> Temp;
+				_f(Temp, _addr);
+			}
+			template<>
+			void operator()(std::string, std::function<void(std::string , void*) > _f, void * _addr, TextSerialiser & _obj)
+			{
+				std::string Temp = 0;
+				_obj >> Temp;
+				_f(Temp, _addr);
+			}
+			template<>
+			void operator()(Math::Vec3D, std::function<void(Math::Vec3D, void*)> _f, void * _addr, TextSerialiser & _obj)
+			{
+				float x, y, z, w;
+				_obj >> x;
+				_obj >> y;
+				_obj >> z;
+				_obj >> w;
+				_f(Math::MakeVector3D(x,y,z), _addr);
+			}
+
+			void operator()(std::nullptr_t)
+			{
+				/*Cannot Successfully deduce type*/
 			}
 		};
 	}
@@ -249,7 +299,6 @@ namespace Dystopia
 
 				if (!found)
 				{
-
 					BehaviourWrap wrap;
 					using fpClone = Behaviour * (*) ();
 					fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
@@ -379,18 +428,18 @@ namespace Dystopia
 				/*Save the Member Data*/
 				if (iter.second)
 				{
-					auto & BehaviourMetaData = iter.second->GetMetaData();
+					auto && BehaviourMetaData = iter.second->GetMetaData();
 					if (BehaviourMetaData)
 					{
 						_obj.InsertStartBlock("BEHAVIOUR_MEMBER_VARIABLE_BLOCK");
 						auto Allnames = BehaviourMetaData.GetAllNames();
-						for (auto i : Allnames)
+						for (auto names : Allnames)
 						{
-							if (BehaviourMetaData[i])
+							if (BehaviourMetaData[names])
 							{
-								_obj << std::string{ i };
-								_obj.InsertStartBlock(std::string{ i });
-								BehaviourMetaData[i].Serialise(iter.second, _obj, BehaviourHelper::SuperSerialiseFunctor{});
+								_obj << std::string{ names };
+								_obj.InsertStartBlock(std::string{ names });
+								BehaviourMetaData[names].Serialise(iter.second, _obj, BehaviourHelper::SuperSerialiseFunctor{});
 								_obj.InsertStartBlock("MEMBER VAR");
 							}
 						}
@@ -440,12 +489,11 @@ namespace Dystopia
 							_obj >> Var;
 							while(Var != "END")
 							{
-								bool value = BehaviourMetaData.isThereMatch(Var.c_str());
 								if (BehaviourMetaData[Var.c_str()])
 								{
 									_obj.ConsumeStartBlock();
 									/*Call Unserialise*/
-									_obj >> Var;
+									BehaviourMetaData[Var.c_str()].Unserialise(ptr, _obj, BehaviourHelper::SuperUnserialiseFunctor{});
 									_obj.ConsumeStartBlock();
 								}
 								else
@@ -463,7 +511,7 @@ namespace Dystopia
 
 						/*Insert to GameObject*/
 						auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-						if (auto x = SceneSys->FindGameObject(_ID))
+						if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
 						{
 							ptr->SetOwner(x);
 							x->AddComponent(ptr, BehaviourTag{});

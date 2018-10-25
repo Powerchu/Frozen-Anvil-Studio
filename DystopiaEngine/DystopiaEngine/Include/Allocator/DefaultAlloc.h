@@ -47,7 +47,7 @@ namespace Dystopia
 	};
 
 	template <>
-	struct _DLL_EXPORT DefaultAllocator<void>
+	struct  _DLL_EXPORT DefaultAllocator<void>
 	{
 		[[nodiscard]] static void* Alloc(size_t _sz, size_t _align = 8);
 		static void Free(void* _ptr) noexcept;

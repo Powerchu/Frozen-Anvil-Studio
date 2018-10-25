@@ -8,7 +8,7 @@
 #include "Globals.h"
 #include "DataStructure/SharedPtr.h"
 #define _ALL_TYPE_QUALIFERS_(_TYPE_) _TYPE_, const _TYPE_, _TYPE_ *, const _TYPE_ *, _TYPE_ * const, _TYPE_ const * const
-#define _VOID_RETURN_FUNC_TYPE_(...) std::function<void(__VA_ARGS__, void *)>
+#define _VOID_RETURN_FUNC_TYPE_(...) std::function<void(__VA_ARGS__)>, void (*)(__VA_ARGS__)
 namespace Dystopia
 {
 	class TextSerialiser;
@@ -32,19 +32,20 @@ namespace Dystopia
 					                   _ALL_TYPE_QUALIFERS_(unsigned long),
 									   _ALL_TYPE_QUALIFERS_(long long),
 					                   _ALL_TYPE_QUALIFERS_(unsigned long long),
-					                   _VOID_RETURN_FUNC_TYPE_(int),
-					                   _VOID_RETURN_FUNC_TYPE_(float),
-					                   _VOID_RETURN_FUNC_TYPE_(double),
-					                   _VOID_RETURN_FUNC_TYPE_(short),
-					                   _VOID_RETURN_FUNC_TYPE_(char),
-					                   _VOID_RETURN_FUNC_TYPE_(std::string),
-					                   _VOID_RETURN_FUNC_TYPE_(unsigned int),
-					                   _VOID_RETURN_FUNC_TYPE_(unsigned char),
-					                   _VOID_RETURN_FUNC_TYPE_(unsigned short),
-					                   _VOID_RETURN_FUNC_TYPE_(long),
-					                   _VOID_RETURN_FUNC_TYPE_(unsigned long),
-					                   _VOID_RETURN_FUNC_TYPE_(long long),
-					                   _VOID_RETURN_FUNC_TYPE_(unsigned long long)
+					                   
+					                   _VOID_RETURN_FUNC_TYPE_(int, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(float, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(double, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(short, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(char, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(std::string, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(unsigned int, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(unsigned char, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(unsigned short, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(long, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(unsigned long, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(long long, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(unsigned long long, void*)
 
 				>;
 			};
@@ -73,8 +74,9 @@ namespace Dystopia
 				virtual void Set(void *, void (*) (std::any, void*))                    = 0;
 				virtual void Set(void *, void(*) (std::any, void*, std::any), std::any) = 0;
 				virtual void Get(void *, void (*) (std::any))                           = 0;
-				virtual void Reflect(const char *, void *, void(*) (const char *,std::any, std::any, void*)) = 0;
+				virtual void Reflect(const char *, void *, void(*) (const char *,std::any, std::any, void*))   = 0;
 				virtual void Serialise(void*, TextSerialiser&, void(*)(std::any,void*, TextSerialiser&)) const = 0;
+				virtual void Unserialise(void*, TextSerialiser &,void(*) (std::any, std::any, void*, TextSerialiser&))                           = 0;
 				virtual Concept * Duplicate() const = 0;
 				virtual ~Concept(){}
 			};
@@ -118,7 +120,7 @@ namespace Dystopia
 					_fp(mObj.mSet.GetFunc(), _Address);
 
 				}
-				virtual void Set(void *_Address, void(*_fp) (std::any, void*, std::any), std::any _v)
+				virtual void Set(void *_Address, void(*_fp) (std::any, void*, std::any), std::any _v) override
 				{
 					_fp(mObj.mSet.GetFunc(), _Address, _v);
 				}
@@ -126,22 +128,38 @@ namespace Dystopia
 				{
 					_fp(mObj.mGet(_Address));
 				}
-				virtual void Reflect(const char * _name,void *_Address, void(*_fp) (const char *, std::any, std::any, void*))
+				virtual void Reflect(const char * _name,void *_Address, void(*_fp) (const char *, std::any, std::any, void*)) override
 				{
 					_fp(_name,mObj.mGet(_Address), mObj.mSet.GetFunc(), _Address);
 				}
 
-				virtual void Serialise(void* _addr, TextSerialiser& _t, void(*_fp)(std::any, void*, TextSerialiser&)) const
+				virtual void Serialise(void* _addr, TextSerialiser& _t, void(*_fp)(std::any, void*, TextSerialiser&)) const override
 				{
 					_fp(mObj.mGet(_addr), _addr, _t);
 				}
 
+				virtual void Unserialise(void* _addr, TextSerialiser & _serialiser,void(*_fp) (std::any, std::any, void*, TextSerialiser&)) override
+				{
+					//_fp(mObj.mGet(_addr), mObj.GetFunc(), _addr, _serialiser);
+				}
 				~Wrapper(){}
 
 				T mObj;
 			};
 
+			//template <typename T>
+			//struct TypeResolve
+			//{
+			//	void ResolveType(std::any&)
+			//	{
+			//		// Do type resolve
+			//	}
 
+			//	void(*GetTypeResolver(void))(std::any)
+			//	{
+			//		return [=](std::any r) { this->ResolveType(r); };
+			//	}
+			//};
 
 		public:
 
@@ -169,21 +187,6 @@ namespace Dystopia
 				_TypeEraseRhs.mpWrapper = nullptr;
 			}
 			ReadWriteObject& operator=(ReadWriteObject const & _rhs) = delete;
-
-			template <typename T>
-			struct TypeResolve
-			{
-				void ResolveType(std::any&)
-				{
-					// Do type resolve
-				}
-
-				void(*GetTypeResolver(void))(std::any)
-				{
-					return [=](std::any r) { this->ResolveType(r); };
-				}
-			};
-
 
 			template <typename SF>
 			void Get(void * _Address, SF)
@@ -220,6 +223,13 @@ namespace Dystopia
 			{
 				void(*passdown)(std::any, void*, TextSerialiser &) = ResolveType_Serialise<SF>;
 				mpWrapper->Serialise(_Address, _serialiser, passdown);
+			}
+
+			template<typename SF>
+			void Unserialise(void* _Address, TextSerialiser & _serialiser, SF)
+			{
+				void(*passdown)(std::any ,std::any, void*, TextSerialiser&) = ResolveType_Unserialise<SF>;
+				mpWrapper->Unserialise(_Address, _serialiser, passdown);
 			}
 
 			operator bool() const { return mpWrapper; }
@@ -332,73 +342,106 @@ namespace Dystopia
 				};
 				return myMap;
 			}
+
+			template<typename SuperFunctor>
+			static void ResolveType_Reflect(const char * _name, std::any _a, std::any _settor, void * _addr)
+			{
+				using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(const char *, std::any, SuperFunctor, std::any, void*)>;
+				static FunctorMap MyMap = GenerateMap_Reflect<SuperFunctor>(typename HelperMeta::AllPossibleType::type{});
+
+				auto it = MyMap.find(_a.type().hash_code());
+				if (it != MyMap.end())
+				{
+					(*it).second(_name, _a, SuperFunctor{}, _settor, _addr);
+				}
+				else
+				{
+					// Don't exist
+					SuperFunctor{}(_name, std::nullptr_t{ nullptr }, _settor, _addr);
+				}
+			}
+
+			template<typename SuperFunctor, typename ... T>
+			static auto GenerateMap_Reflect(Variant<T...>)
+			{
+				using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(const char *, std::any, SuperFunctor, std::any, void*)>;
+				static FunctorMap myMap
+				{
+					std::make_pair
+					(
+						typeid(T).hash_code(),
+						[](const char * _name,std::any _a, SuperFunctor _f, std::any _set, void * _addr) {_f(_name,std::any_cast<T>(_a), std::any_cast<std::function<void(T,void*)>>(_set),_addr); }
+					)...
+				};
+				return myMap;
+			}
+
+			template<typename SuperFunctor>
+			static void ResolveType_Serialise(std::any _a, void * _addr, TextSerialiser & _serialiser)
+			{
+				using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor, TextSerialiser &, void *)>;
+				static FunctorMap MyMap = GenerateMap_Serialise<SuperFunctor>(typename HelperMeta::AllPossibleType::type{});
+
+				auto it = MyMap.find(_a.type().hash_code());
+				if (it != MyMap.end())
+				{
+					(*it).second(_a, SuperFunctor{}, _serialiser, _addr);
+				}
+				else
+				{
+					// Don't exist
+					SuperFunctor{}(std::nullptr_t{ nullptr }, _serialiser, _addr);
+				}
+			}
+
+			template<typename SuperFunctor, typename ... T>
+			static auto GenerateMap_Serialise(Variant<T...>)
+			{
+				using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor, TextSerialiser &, void*)>;
+				static FunctorMap myMap
+				{
+					std::make_pair
+					(
+						typeid(T).hash_code(),
+						[](std::any _a, SuperFunctor _f, TextSerialiser & _obj, void * _addr) {_f(std::any_cast<T>(_a),_obj,_addr); }
+					)...
+				};
+				return myMap;
+			}
+
+			template<typename SuperFunctor>
+			static void ResolveType_Unserialise(std::any _a, std::any _settor,void * _addr, TextSerialiser & _serialiser)
+			{
+				using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor, std::any, void*, TextSerialiser &)>;
+				static FunctorMap MyMap = GenerateMap_Unserialise<SuperFunctor>(typename HelperMeta::AllPossibleType::type{});
+
+				auto it = MyMap.find(_a.type().hash_code());
+				if (it != MyMap.end())
+				{
+					(*it).second(_a, SuperFunctor{}, _settor, _addr, _serialiser);
+				}
+				else
+				{
+					// Don't exist
+					SuperFunctor{}(std::nullptr_t{ nullptr });
+				}
+			}
+
+			template<typename SuperFunctor, typename ... T>
+			static auto GenerateMap_Unserialise(Variant<T...>)
+			{
+				using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor, std::any, void*, TextSerialiser &)>;
+				static FunctorMap myMap
+				{
+					std::make_pair
+					(
+						typeid(T).hash_code(),
+						[](std::any _a, SuperFunctor _f, std::any _set, void * _addr, TextSerialiser & _serialiser) {_f(std::any_cast<T>(_a), std::any_cast<std::function<void(T,void*)>>(_set),_addr, _serialiser); }
+					)...
+				};
+				return myMap;
+			}
 		};
-
-		template<typename SuperFunctor>
-		static void ResolveType_Reflect(const char * _name, std::any _a, std::any _settor, void * _addr)
-		{
-			using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(const char *, std::any, SuperFunctor, std::any, void*)>;
-			static FunctorMap MyMap = GenerateMap_Reflect<SuperFunctor>(typename HelperMeta::AllPossibleType::type{});
-
-			auto it = MyMap.find(_a.type().hash_code());
-			if (it != MyMap.end())
-			{
-				(*it).second(_name,_a, SuperFunctor{}, _settor,_addr);
-			}
-			else
-			{
-				// Don't exist
-				SuperFunctor{}(_name,std::nullptr_t{ nullptr }, _settor, _addr);
-			}
-		}
-
-		template<typename SuperFunctor, typename ... T>
-		static auto GenerateMap_Reflect(Variant<T...>)
-		{
-			using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(const char *, std::any, SuperFunctor, std::any, void*)>;
-			static FunctorMap myMap
-			{
-				std::make_pair
-				(
-					typeid(T).hash_code(),
-					[](const char * _name,std::any _a, SuperFunctor _f, std::any _set, void * _addr) {_f(_name,std::any_cast<T>(_a), std::any_cast<std::function<void (T,void*)>>(_set),_addr); }
-				)...
-			};
-			return myMap;
-		}
-
-		template<typename SuperFunctor>
-		static void ResolveType_Serialise(std::any _a, void * _addr, TextSerialiser & _serialiser)
-		{
-			using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor, TextSerialiser & , void *)>;
-			static FunctorMap MyMap = GenerateMap_Serialise<SuperFunctor>(typename HelperMeta::AllPossibleType::type{});
-
-			auto it = MyMap.find(_a.type().hash_code());
-			if (it != MyMap.end())
-			{
-				(*it).second(_a, SuperFunctor{}, _serialiser, _addr);
-			}
-			else
-			{
-				// Don't exist
-				SuperFunctor{}(std::nullptr_t{ nullptr }, _serialiser, _addr);
-			}
-		}
-
-		template<typename SuperFunctor, typename ... T>
-		static auto GenerateMap_Serialise(Variant<T...>)
-		{
-			using FunctorMap = std::map<decltype(typeid(int).hash_code()), void(*)(std::any, SuperFunctor, TextSerialiser &, void*)>;
-			static FunctorMap myMap
-			{
-				std::make_pair
-				(
-					typeid(T).hash_code(),
-					[](std::any _a, SuperFunctor _f, TextSerialiser & _obj, void * _addr) {_f(std::any_cast<T>(_a),_obj,_addr); }
-				)...
-			};
-			return myMap;
-		}
 
 	}
 }
