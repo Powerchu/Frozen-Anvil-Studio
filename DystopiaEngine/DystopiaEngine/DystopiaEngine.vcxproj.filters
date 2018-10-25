@@ -283,7 +283,6 @@
     <ClCompile Include="Source\DataStructure\HashString.cpp">
       <Filter>DataStructures</Filter>
     </ClCompile>
-    <ClCompile Include="EditorMain.cpp" />
     <ClCompile Include="Source\Editor\EditorInput.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
@@ -778,8 +777,6 @@
     <ClInclude Include="Include\DataStructure\HashString.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
-    <ClInclude Include="EditorMain.h" />
-    <ClInclude Include="EditorStates.h" />
     <ClInclude Include="Include\Editor\EditorHotkeys.h">
       <Filter>Editor\Editor</Filter>
     </ClInclude>
