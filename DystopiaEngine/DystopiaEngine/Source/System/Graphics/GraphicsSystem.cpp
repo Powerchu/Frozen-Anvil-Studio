@@ -490,6 +490,7 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 			ComponentDonor<SpriteRenderer>::mComponents.Remove(&render);
 		}
 	}
+
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
 		__debugbreak();
