@@ -6,8 +6,8 @@
 #include <any>
 
 #include "Globals.h"
-#include "DataStructure/SharedPtr.h"
 #include "Math/MathLib.h"
+
 #define _ALL_TYPE_QUALIFERS_(_TYPE_) _TYPE_, const _TYPE_, _TYPE_ *, const _TYPE_ *, _TYPE_ * const, _TYPE_ const * const
 #define _VOID_RETURN_FUNC_TYPE_(...) std::function<void(__VA_ARGS__)>, void (*)(__VA_ARGS__)
 namespace Dystopia

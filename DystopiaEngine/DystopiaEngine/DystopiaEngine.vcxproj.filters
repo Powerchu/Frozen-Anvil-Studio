@@ -762,7 +762,15 @@
     <ClInclude Include="Include\Reflection\ReflectionTypeErasure.h">
       <Filter>Reflection\TypeErasure</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Reflection\ReadWriteObject.h" />
+    <ClInclude Include="Include\Reflection\ReadWriteObject.h">
+      <Filter>Reflection\TypeErasure</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
