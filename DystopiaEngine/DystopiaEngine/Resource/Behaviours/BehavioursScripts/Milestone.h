@@ -68,7 +68,7 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
-		
+		float mF     = 88.f;
 		float mFloat = 5.f;
         int   mInt   = 25;
         float mFloat2 = 10.f;
@@ -90,7 +90,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::Milestone, mFloat, mInt, mFloat2, mInt2, WeiXiang)
+PP_REFLECT(Dystopia::Milestone, mF,mFloat, mInt, mFloat2, mInt2, WeiXiang)
 
 #endif //_Milestone_H_
 
