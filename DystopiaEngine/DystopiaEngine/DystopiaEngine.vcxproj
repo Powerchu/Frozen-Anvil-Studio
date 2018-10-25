@@ -414,14 +414,14 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\freetype-2.9.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dbghelp.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -481,7 +481,7 @@
       <SDLCheck>
       </SDLCheck>
       <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -491,7 +491,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\freetype-2.9.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dbghelp.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
@@ -511,7 +511,7 @@
       <SDLCheck>
       </SDLCheck>
       <AdditionalOptions>/DEDITOR=0 /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -520,7 +520,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\freetype-2.9.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
