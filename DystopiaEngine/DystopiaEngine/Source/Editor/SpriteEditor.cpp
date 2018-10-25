@@ -67,7 +67,7 @@ void Dystopia::SpriteEditor::EditorUI(void)
 			r.Expand(1.f);
 			bool push_clip_rect = !window->ClipRect.Contains(r);
 			if (push_clip_rect) window->DrawList->PushClipRectFullScreen();
-			window->DrawList->AddRect(r.Min, r.Max, ImGui::GetColorU32(ImGuiCol_DragDropTarget), 0.0f, ~0, 2.0f);
+			window->DrawList->AddRect(r.Min, r.Max, ImGui::GetColorU32(ImGuiCol_DragDropTarget), 0.0f, ~0, 1.0f);
 			if (push_clip_rect) window->DrawList->PopClipRect();
 
 			ImGui::SetCursorScreenPos(pos);
