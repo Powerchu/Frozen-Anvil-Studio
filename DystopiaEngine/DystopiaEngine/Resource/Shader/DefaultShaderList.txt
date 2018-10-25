@@ -1,6 +1,10 @@
 [START_SHADER]
-Default Shader,Resource/Shader/DefaultVert.glsl,Resource/Shader/DefaultFrag.glsl,
+Default Shader,Resource/Shader/DefaultVert.dvert,Resource/Shader/DefaultFrag.dfrag,
 [START_SHADER]
-No Texture,Resource/Shader/DefaultVert.glsl,Resource/Shader/NoTextureFrag.glsl,
+No Texture,Resource/Shader/DefaultVert.dvert,Resource/Shader/NoTextureFrag.dfrag,
 [START_SHADER]
-Colour Shader,Resource/Shader/DefaultVert.glsl,Resource/Shader/ColourFrag.glsl,
+Colour Shader,Resource/Shader/DefaultVert.dvert,Resource/Shader/ColourFrag.dfrag,
+[START_SHADER]
+FinalStage,Resource/Shader/DefaultVert.dvert,Resource/Shader/FinalStage.dfrag,
+[START_SHADER]
+Logo Shader,Resource/Shader/DefaultVert.dvert,Resource/Shader/LogoFrag.dfrag,

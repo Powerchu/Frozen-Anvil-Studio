@@ -20,11 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/MagicArray.h"
 #include "System/Graphics/GraphicsDefs.h"
 
-#include <GL/glew.h>				// glViewport
-
 
 Dystopia::CameraSystem::CameraSystem(void) noexcept
-	: mpMasterCam{ nullptr }, mpUICam{ nullptr }, mMasterViewport{}
+	: mpMasterCam{ nullptr }, mpUICam{ nullptr }
 {
 
 }
@@ -37,8 +35,7 @@ bool Dystopia::CameraSystem::Init(void)
 
 void Dystopia::CameraSystem::PostInit(void)
 {
-	mMasterViewport.mnWidth  = 2048;
-	mMasterViewport.mnHeight = 2048;
+
 }
 
 void Dystopia::CameraSystem::Update(float)
@@ -59,31 +56,15 @@ void Dystopia::CameraSystem::SetMasterCamera(Camera* _pCamera)
 
 Dystopia::Camera* Dystopia::CameraSystem::GetMasterCamera(void) const
 {
-	return mpMasterCam;
+	if (mpMasterCam)
+		return mpMasterCam;
+
+	return &*mComponents.begin();
 }
 
 Dystopia::CameraSystem::CameraArr& Dystopia::CameraSystem::GetAllCameras(void)
 {
 	return mComponents;
-}
-
-
-void Dystopia::CameraSystem::SetMasterViewport(int _x, int _y, int _w, int _h) noexcept
-{
-	mMasterViewport.mnX = _x;
-	mMasterViewport.mnY = _y;
-	mMasterViewport.mnWidth = _w;
-	mMasterViewport.mnHeight = _h;
-}
-
-void Dystopia::CameraSystem::ApplyViewport(const Gfx::Viewport& _viewport)
-{
-	glViewport(
-		static_cast<int>(mMasterViewport.mnX + _viewport.mnX * mMasterViewport.mnWidth),
-		static_cast<int>(mMasterViewport.mnY + _viewport.mnY * mMasterViewport.mnHeight),
-		static_cast<int>(_viewport.mnWidth  * mMasterViewport.mnWidth),
-		static_cast<int>(_viewport.mnHeight * mMasterViewport.mnHeight)
-	);
 }
 
 

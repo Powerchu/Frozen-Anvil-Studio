@@ -36,8 +36,8 @@ namespace Dystopia
 		virtual void OnDestroy(void);
 		virtual void Unload(void);
 		virtual Particle* Duplicate() const;
-		virtual void Serialise(TextSerialiser&) const    override;
-		virtual void Unserialise(TextSerialiser&)        override;
+		virtual void Serialise(TextSerialiser&) const;
+		virtual void Unserialise(TextSerialiser&);
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		void Update(float _dt);
 

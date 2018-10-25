@@ -25,6 +25,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/AABB.h"
 #include "Component/Convex.h"
 #include "Component/Renderer.h"
+#include "Component/SpriteRenderer.h"
+#include "Component/TextRenderer.h"
 #include "Component/RigidBody.h"
 #include "Component/CharacterController.h"
 

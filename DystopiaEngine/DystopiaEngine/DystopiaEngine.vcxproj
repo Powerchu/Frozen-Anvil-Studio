@@ -34,6 +34,9 @@
     <ClCompile Include="Source\Editor\SpriteEditor.cpp" />
     <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
     <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
+    <ClCompile Include="Source\Component\SpriteRenderer.cpp" />
+    <ClCompile Include="Source\Component\TextRenderer.cpp" />
+    <ClCompile Include="Source\IO\Image.cpp" />
     <ClCompile Include="Source\Allocator\Allocator.cpp" />
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp" />
     <ClCompile Include="Source\Component\AudioSource.cpp" />
@@ -50,6 +53,8 @@
     <ClCompile Include="Source\Editor\ProjectSettings.cpp" />
     <ClCompile Include="Source\Editor\SpritePreviewer.cpp" />
     <ClCompile Include="Source\Editor\StyleScheme.cpp" />
+    <ClCompile Include="Source\IO\DDSParser.cpp" />
+    <ClCompile Include="Source\IO\PNGParser.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
     <ClCompile Include="Source\System\Events\Events.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
@@ -57,6 +62,7 @@
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
     <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp" />
+    <ClCompile Include="Source\System\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp" />
     <ClCompile Include="Source\System\Logger\FileLogger.cpp" />
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp" />
@@ -95,7 +101,7 @@
     <ClCompile Include="Source\Editor\HierarchyView.cpp" />
     <ClCompile Include="Source\Editor\Inspector.cpp" />
     <ClCompile Include="Source\IO\BinarySerializer.cpp" />
-    <ClCompile Include="Source\IO\ImageParser.cpp" />
+    <ClCompile Include="Source\IO\BitmapParser.cpp" />
     <ClCompile Include="Source\IO\TextSerialiser.cpp" />
     <ClCompile Include="Source\Math\Matrix4.cpp" />
     <ClCompile Include="Source\Object\GameObject.cpp" />
@@ -142,6 +148,8 @@
     <ClInclude Include="Include\Component\Circle.h" />
     <ClInclude Include="Include\Component\ColliderList.h" />
     <ClInclude Include="Include\Component\Convex.h" />
+    <ClInclude Include="Include\Component\SpriteRenderer.h" />
+    <ClInclude Include="Include\Component\TextRenderer.h" />
     <ClInclude Include="Include\Component\Triangle.h" />
     <ClInclude Include="Include\Editor\AdminCalls.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />
@@ -170,6 +178,7 @@
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />
+    <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
     <ClInclude Include="Include\Component\Collider.h" />
@@ -251,7 +260,7 @@
     <ClInclude Include="Include\System\Driver\Driver.h" />
     <ClInclude Include="Include\System\Graphics\GraphicsDefs.h" />
     <ClInclude Include="Include\System\Graphics\GraphicsSystem.h" />
-    <ClInclude Include="Include\System\Graphics\Image.h" />
+    <ClInclude Include="Include\IO\Image.h" />
     <ClInclude Include="Include\System\Graphics\Mesh.h" />
     <ClInclude Include="Include\System\Graphics\MeshSystem.h" />
     <ClInclude Include="Include\System\Graphics\RawMesh.h" />
@@ -502,7 +511,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dbghelp.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>

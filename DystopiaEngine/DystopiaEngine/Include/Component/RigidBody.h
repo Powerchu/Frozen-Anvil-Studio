@@ -64,8 +64,8 @@ namespace Dystopia
 		void Init(void) override;
 		void Unload(void) override;
 		RigidBody* Duplicate() const override;
-		void Serialise(TextSerialiser&) const override;
-		void Unserialise(TextSerialiser&) override;
+		void Serialise(TextSerialiser&) const;
+		void Unserialise(TextSerialiser&);
 
 	protected:
 		enum PhysicsType

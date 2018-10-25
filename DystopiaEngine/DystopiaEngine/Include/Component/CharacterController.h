@@ -49,8 +49,8 @@ namespace Dystopia
 
 		Component* Duplicate() const override;
 
-		void Serialise(TextSerialiser&) const override;
-		void Unserialise(TextSerialiser&) override;
+		void Serialise(TextSerialiser&) const;
+		void Unserialise(TextSerialiser&);
 		void EditorUI(void) noexcept override;
 
 		void CheckGroundCeiling(void);

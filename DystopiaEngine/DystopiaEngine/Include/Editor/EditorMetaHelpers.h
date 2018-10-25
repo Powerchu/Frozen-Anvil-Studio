@@ -53,7 +53,7 @@ namespace Dystopia
 	{
 		static Component* Extract(GameObject *_owner)
 		{
-			C* comp = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>())->RequestComponent();
+			C* comp = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent();
 			comp->SetOwner(_owner);
 			comp->SetActive(_owner->IsActive());
 			comp->Init();

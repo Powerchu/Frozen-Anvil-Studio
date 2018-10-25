@@ -1,0 +1,27 @@
+#version 330 core
+
+in vec3 vPosition;
+in vec3 vNormal;
+in vec2 vUV;
+
+layout(location = 0) out vec4 fragColor;
+
+uniform float Gamma;
+layout(location = 0)uniform sampler2D texSampler1;
+layout(location = 0)uniform sampler2D texSampler2;
+
+
+void main()
+{
+  // Ignore colour blending for now
+  vec4 color1 = texture(texSampler1, vUV);
+  vec4 color2 = texture(texSampler2, vUV);
+  
+  color1.rgb = mix(color2, color1, color2.a)
+  
+  // Gamma correction
+  color1.rgb = pow(color1.rgb, vec3(1.f / Gamma));
+  
+  fragColor = color;
+}
+

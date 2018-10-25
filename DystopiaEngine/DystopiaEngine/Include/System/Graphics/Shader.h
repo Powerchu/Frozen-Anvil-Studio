@@ -46,26 +46,26 @@ namespace Dystopia
 			const std::string& _strGeo
 		);
 
-		void UseShader(void) const;
+		void Bind(void) const;
 
 
-		void UploadUniform(const std::string&, const Math::Vector2&);
-		void UploadUniform(const std::string&, const Math::Vector4&);
-		void UploadUniform(const std::string&, const Math::Matrix2&);
-		void UploadUniform(const std::string&, const Math::Matrix4&);
-		void UploadUniform3(const std::string&, const Math::Vector4&);
+		void UploadUniform(char const*, const Math::Vector2&) const;
+		void UploadUniform(char const*, const Math::Vector4&) const;
+		void UploadUniform(char const*, const Math::Matrix2&) const;
+		void UploadUniform(char const*, const Math::Matrix4&) const;
+		void UploadUniform3(char const*, const Math::Vector4&) const;
 
-		void UploadUniform(const std::string&, float);
-		void UploadUniform(const std::string&, float, float);
-		void UploadUniform(const std::string&, float, float, float);
-		void UploadUniform(const std::string&, float, float, float, float);
+		void UploadUniform(char const*, float) const;
+		void UploadUniform(char const*, float, float) const;
+		void UploadUniform(char const*, float, float, float) const;
+		void UploadUniform(char const*, float, float, float, float) const;
 
 
 	private:
 
 		unsigned mnShaderID;
 
-		int GetUniformLocation(const std::string&);
+		int GetUniformLocation(char const*) const;
 		void LoadShader(unsigned, const std::string&);
 	};
 }

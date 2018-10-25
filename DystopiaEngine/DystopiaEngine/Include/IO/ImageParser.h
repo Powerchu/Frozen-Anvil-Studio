@@ -15,7 +15,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _IMAGE_PARSER_H_
 #define _IMAGE_PARSER_H_
 
-#include <cstdint>
 #include <string>
 
 namespace Dystopia
@@ -25,14 +24,11 @@ namespace Dystopia
 
 namespace ImageParser
 {
-	Dystopia::Image LoadBMP(const std::string&);
+	// Uses external library
+	Dystopia::Image* LoadPNG(const std::string&);
 
-	// External - Use external library, ask later
-	// too troublesome
-	Dystopia::Image LoadPNG(const std::string&);
-
-	// Not implemented - too troublesome
-	Dystopia::Image LoadJPG(const std::string&);
+	Dystopia::Image* LoadBMP(const std::string&);
+	Dystopia::Image* LoadDDS(const std::string&);
 
 	bool WriteBMP(const std::string&, void* _pImg, int _nWidth, int _nHeight);
 }

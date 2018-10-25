@@ -29,6 +29,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Convex.h"
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
+#include "Component/SpriteRenderer.h"
+#include "Component/TextRenderer.h"
 #include "Component/CharacterController.h"
 
 #include "System/Sound/SoundSystem.h"
@@ -61,7 +63,7 @@ namespace Dystopia
 			pObject->SetName(_name);
 			pObject->SetActive(true);
 			pObject->GetComponent<Transform>()->SetScale(Math::Vec3D{ 16, 16, 1 });
-			auto rend = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			auto rend = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>())->RequestComponent();
 			pObject->AddComponent(rend, typename Renderer::TAG{});
 			auto rigid = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 			pObject->AddComponent(rigid, typename RigidBody::TAG{});
@@ -104,8 +106,10 @@ namespace Dystopia
 
 		GameObject* CreateCamera(const std::string& _name)
 		{
+			auto pCore = EngineCore::GetInstance();
 			GameObject *pObject = CreateGameObj(_name);
-			auto p = EngineCore::GetInstance()->GetSystem<CameraSystem>()->RequestComponent();
+			auto p = pCore->GetSystem<CameraSystem>()->RequestComponent();
+			p->SetSurface(pCore->GetSystem<GraphicsSystem>()->GetView(4));
 			pObject->AddComponent(p, typename Camera::TAG{});
 			pObject->Identify();
 			return pObject;
@@ -120,7 +124,7 @@ namespace Dystopia
 			p->Set_IsStatic(true);
 			pObject->AddComponent(p, typename RigidBody::TAG{});
 
-			auto g = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			auto g = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>())->RequestComponent();
 			g->SetOwner(pObject);
 			pObject->AddComponent(g, typename Renderer::TAG{});
 
@@ -139,7 +143,7 @@ namespace Dystopia
 			p->Init();
 			pObject->AddComponent(p, typename RigidBody::TAG{});
 
-			auto g = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			auto g = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>())->RequestComponent();
 			g->SetOwner(pObject);
 			pObject->AddComponent(g, typename Renderer::TAG{});
 
@@ -156,7 +160,7 @@ namespace Dystopia
 			p->Init();
 			pObject->AddComponent(p, typename RigidBody::TAG{});
 
-			auto g = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			auto g = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>())->RequestComponent();
 			g->SetOwner(pObject);
 			pObject->AddComponent(g, typename Renderer::TAG{});
 

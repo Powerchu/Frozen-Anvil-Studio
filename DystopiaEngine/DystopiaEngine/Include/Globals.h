@@ -51,8 +51,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _DLL_EXPORT
 #endif
 
-#define _SAVE_VERSION			1
-#define _FIXED_UPDATE_DT		.02f
+
+namespace Gbl
+{
+	constexpr bool	FULLSCREEN      = true;
+	constexpr int   SCREEN_WIDTH    = 1600;
+	constexpr int   SCREEN_HEIGHT   =  900;
+
+	constexpr auto  FIXEDUPDATE_DT  = 20000000Ui64;
+	constexpr float FIXEDUPDATE_FDT = float(FIXEDUPDATE_DT / 1e9);
+}
 
 
 #endif		// INCLUDE GUARD

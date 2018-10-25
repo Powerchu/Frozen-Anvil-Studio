@@ -76,22 +76,22 @@ namespace Dystopia
 		GetEditorEventHND()->GetEvent(EDITOR_GIZMO_TRANSLATE)->Bind(&SceneView::SetGizmoTranslate, this);
 		GetEditorEventHND()->GetEvent(EDITOR_GIZMO_SCALE)->Bind(&SceneView::SetGizmoScaler, this);
 
-		//mpSceneCamera = Factory::CreateCamera("Scene Camera");
-		//GetCurrentScene()->GetAllGameObjects().EmplaceBack(Ut::Move(*mpSceneCamera));
-		//auto& g = GetCurrentScene()->GetAllGameObjects().back();
-		//g.GetComponent<Transform>()->SetOwner(&g);
-		//for (auto& c : g.GetAllComponents())
-		//{
-		//	c->SetOwner(&g);
-		//	c->Init();
-		//}
-		//for (auto& b : g.GetAllBehaviours())
-		//{
-		//	b->SetOwner(&g);
-		//	b->Init();
-		//}
-		//delete mpSceneCamera;
-		//mpSceneCamera = nullptr;
+		mpSceneCamera = Factory::CreateCamera("Scene Camera");
+		GetCurrentScene()->GetAllGameObjects().EmplaceBack(Ut::Move(*mpSceneCamera));
+		auto& g = GetCurrentScene()->GetAllGameObjects().back();
+		g.GetComponent<Transform>()->SetOwner(&g);
+		for (auto& c : g.GetAllComponents())
+		{
+			c->SetOwner(&g);
+			c->Init();
+		}
+		for (auto& b : g.GetAllBehaviours())
+		{
+			b->SetOwner(&g);
+			b->Init();
+		}
+		delete mpSceneCamera;
+		mpSceneCamera = nullptr;
 		SceneChanged();
 	}
 

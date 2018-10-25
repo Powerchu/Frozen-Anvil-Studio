@@ -57,13 +57,13 @@ namespace Dystopia
 
 		void DestroyComponent(void);
 
-		virtual void SetOwner(GameObject*);
+		void SetOwner(GameObject*);
 		GameObject* GetOwner(void) const;
 
 		virtual Component* Duplicate() const;
 
-		virtual void Serialise(TextSerialiser&) const = 0;
-		virtual void Unserialise(TextSerialiser&) = 0;
+		void Serialise(TextSerialiser&) const;
+		void Unserialise(TextSerialiser&);
 		virtual void EditorUI(void) noexcept;
 
 		uint64_t GetID(void) const;
