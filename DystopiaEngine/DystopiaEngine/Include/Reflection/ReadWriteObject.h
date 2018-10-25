@@ -7,6 +7,7 @@
 
 #include "Globals.h"
 #include "DataStructure/SharedPtr.h"
+#include "Math/MathLib.h"
 #define _ALL_TYPE_QUALIFERS_(_TYPE_) _TYPE_, const _TYPE_, _TYPE_ *, const _TYPE_ *, _TYPE_ * const, _TYPE_ const * const
 #define _VOID_RETURN_FUNC_TYPE_(...) std::function<void(__VA_ARGS__)>, void (*)(__VA_ARGS__)
 namespace Dystopia
@@ -32,7 +33,7 @@ namespace Dystopia
 					                   _ALL_TYPE_QUALIFERS_(unsigned long),
 									   _ALL_TYPE_QUALIFERS_(long long),
 					                   _ALL_TYPE_QUALIFERS_(unsigned long long),
-					                   
+					                   _ALL_TYPE_QUALIFERS_(Math::Vec3D),
 					                   _VOID_RETURN_FUNC_TYPE_(int, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(float, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(double, void*),
@@ -45,8 +46,8 @@ namespace Dystopia
 					                   _VOID_RETURN_FUNC_TYPE_(long, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(unsigned long, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(long long, void*),
-					                   _VOID_RETURN_FUNC_TYPE_(unsigned long long, void*)
-
+					                   _VOID_RETURN_FUNC_TYPE_(unsigned long long, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(Math::Vec3D, void*)
 				>;
 			};
 
@@ -71,12 +72,12 @@ namespace Dystopia
 
 			struct _DLL_EXPORT Concept
 			{
-				virtual void Set(void *, void (*) (std::any, void*))                    = 0;
-				virtual void Set(void *, void(*) (std::any, void*, std::any), std::any) = 0;
-				virtual void Get(void *, void (*) (std::any))                           = 0;
-				virtual void Reflect(const char *, void *, void(*) (const char *,std::any, std::any, void*))   = 0;
-				virtual void Serialise(void*, TextSerialiser&, void(*)(std::any,void*, TextSerialiser&)) const = 0;
-				virtual void Unserialise(void*, TextSerialiser &,void(*) (std::any, std::any, void*, TextSerialiser&))                           = 0;
+				virtual void Set(void *, void (*) (std::any, void*))                                                    = 0;
+				virtual void Set(void *, void(*) (std::any, void*, std::any), std::any)                                 = 0;
+				virtual void Get(void *, void (*) (std::any))                                                           = 0;
+				virtual void Reflect(const char *, void *, void(*) (const char *,std::any, std::any, void*))            = 0;
+				virtual void Serialise(void*, TextSerialiser&, void(*)(std::any,void*, TextSerialiser&)) const          = 0;
+				virtual void Unserialise(void*, TextSerialiser &,void(*) (std::any, std::any, void*, TextSerialiser&))  = 0;
 				virtual Concept * Duplicate() const = 0;
 				virtual ~Concept(){}
 			};
