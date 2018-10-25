@@ -285,11 +285,17 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 
 	for (auto& e : ComponentDonor<Renderer>::mComponents)
 	{
+#if EDITOR
+		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
 			set1.Insert(&e);
 	}
 	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
 	{
+#if EDITOR
+		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
 			set2.Insert(&e);
 	}
@@ -354,6 +360,9 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
 	{
+#if EDITOR
+		if (Obj->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		GameObject* pOwner = Obj->GetOwner();
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
 		{
@@ -427,7 +436,9 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
 	{
 		auto flags = e.GetFlags();
-
+#if EDITOR
+		if (flags & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		if (flags & eObjFlag::FLAG_ACTIVE)
 		{
 			e.Update(_fDT);
