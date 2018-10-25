@@ -140,7 +140,7 @@ namespace Dystopia
 
 				virtual void Unserialise(void* _addr, TextSerialiser & _serialiser,void(*_fp) (std::any, std::any, void*, TextSerialiser&)) override
 				{
-					//_fp(mObj.mGet(_addr), mObj.GetFunc(), _addr, _serialiser);
+					_fp(mObj.mGet(_addr), mObj.mSet.GetFunc(), _addr, _serialiser);
 				}
 				~Wrapper(){}
 
