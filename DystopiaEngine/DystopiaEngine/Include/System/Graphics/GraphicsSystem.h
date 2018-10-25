@@ -77,7 +77,7 @@ namespace Dystopia
 
 		Framebuffer& GetGameView(void) const;
 		Framebuffer& GetUIView(void) const;
-		Framebuffer* GetFramebuffer(void) const noexcept;
+		Framebuffer& GetFrameBuffer(void) const noexcept;
 
 		template <typename ...Ty>
 		Framebuffer* CreateView(Ty&&...);

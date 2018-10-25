@@ -62,6 +62,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define NOMINMAX				// Disable Window header min & max macros
 
 #include <string>
+#include <algorithm>			// TEMPORARY std::sort
 #include <windows.h>			// WinAPI
 #include <GL/glew.h>
 #include <GL/wglew.h>			// glew Windows ext
@@ -178,9 +179,9 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetUIView(void) const
 	return mViews[1];
 }
 
-Dystopia::Framebuffer* Dystopia::GraphicsSystem::GetFramebuffer(void) const noexcept
+Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer(void) const noexcept
 {
-	return &mViews[2];
+	return mViews[2];
 }
 
 
@@ -192,7 +193,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	WindowManager* pWinSys = pCore->GetSystem<WindowManager>();
 
 	Mesh*   mesh = pMeshSys->GetMesh("Quad");
-	Shader* shader = shaderlist["Default Shader"];
+	Shader* shader = shaderlist["Logo Shader"];
 	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/EditorStartup.png");
 
 	unsigned w = texture->GetWidth(), h = texture->GetHeight();
@@ -227,13 +228,36 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	);
 }
 
+namespace
+{
+	template <typename T>
+	inline void DrawRenderer(T& _renderer, Math::Mat4& _ProjView, Dystopia::Shader* s)
+	{
+		auto t = _renderer->GetTexture();
+
+		auto m = _renderer->GetOwner()->GetComponent<Dystopia::Transform>()->GetTransformMatrix();
+
+		if (t)
+			t->Bind();
+
+		s->Bind();
+
+		s->UploadUniform("ProjectViewMat", _ProjView);
+		s->UploadUniform("ModelMat", m);
+
+		_renderer->Draw();
+
+		if(t)
+			t->Unbind();
+	}
+}
+
 void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Scene Draw" };
-	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
 
-	AutoArray<Renderer> set1{ ComponentDonor<Renderer>::mComponents .size() };
-	AutoArray<SpriteRenderer> set2{ ComponentDonor<SpriteRenderer>::mComponents.size() };
+	AutoArray<Renderer*> set1{ ComponentDonor<Renderer>::mComponents .size() };
+	AutoArray<SpriteRenderer*> set2{ ComponentDonor<SpriteRenderer>::mComponents.size() };
 
 	for (auto& e : ComponentDonor<Renderer>::mComponents)
 	{
@@ -246,87 +270,37 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 			set2.Insert(&e);
 	}
 
-	// Get Camera's layer, we only want to draw inclusive stuff
-	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS;
-
-	set1.Sort([](const auto& _rhs, const auto& _lhs) {
+	std::sort(set1.begin(), set1.end(), [](const auto& _rhs, const auto& _lhs) {
 		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
-	set2.Sort([](const auto& _rhs, const auto& _lhs) {
+	std::sort(set2.begin(), set2.end(), [](const auto& _rhs, const auto& _lhs) {
 		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 
 	// Draw the game objects to screen based on the camera
+	// Get Camera's layer, we only want to draw inclusive stuff
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();
-	for (auto& e : set1)
+	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS;
+
+	for (auto& r : set1)
 	{
-		if (e.GetOwner()->GetFlags() & ActiveFlags)
+		auto s = r->GetShader();
+		s = r->GetTexture() ? s : shaderlist["No Texture"];
+
+		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
-			Shader* s =  e->GetShader();
-			Texture* t = e->GetTexture();
-
-			if (s && t)
-			{
-				s->Bind();
-
-				auto m = Obj.GetComponent<Transform>()->GetTransformMatrix();
-				auto mvp = _ProjView * m;
-
-				t->Bind();
-				s->UploadUniform("ProjectViewMat", _ProjView);
-				s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-				s->UploadUniform("Gamma", mfGamma);
-
-				r->Draw();
-
-				t->Unbind();
-			}
-			else
-			{
-				s = shaderlist["No Texture"];
-
-				s->Bind();
-				s->UploadUniform("ProjectViewMat", _ProjView);
-				s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-
-				r->Draw();
-			}
+			DrawRenderer(r, _ProjView, s);
 		}
 	}
 
-	for (auto& e : set2)
+	for (auto& r : set2)
 	{
-		if (e.GetOwner()->GetFlags() & ActiveFlags)
+		auto s = r->GetShader();
+		s = r->GetTexture() ? s : shaderlist["No Texture"];
+
+		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
-			Shader*  s = e->GetShader();
-			Texture* t = e->GetTexture();
-
-			if (s && t)
-			{
-				s->Bind();
-
-				auto m = Obj.GetComponent<Transform>()->GetTransformMatrix();
-				auto mvp = _ProjView * m;
-
-				t->Bind();
-				s->UploadUniform("ProjectViewMat", _ProjView);
-				s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-				s->UploadUniform("Gamma", mfGamma);
-
-				r->Draw();
-
-				t->Unbind();
-			}
-			else
-			{
-				s = shaderlist["No Texture"];
-
-				s->Bind();
-				s->UploadUniform("ProjectViewMat", _ProjView);
-				s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-
-				r->Draw();
-			}
+			DrawRenderer(r, _ProjView, s);
 		}
 	}
 }
@@ -464,11 +438,19 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 
 void Dystopia::GraphicsSystem::PostUpdate(void)
 {
-	for (auto& render : mComponents)
+	for (auto& render : ComponentDonor<Renderer>::mComponents)
 	{
 		if (eObjFlag::FLAG_REMOVE & render.GetFlags())
 		{
-			mComponents.Remove(&render);
+			ComponentDonor<Renderer>::mComponents.Remove(&render);
+		}
+	}
+
+	for (auto& render : ComponentDonor<SpriteRenderer>::mComponents)
+	{
+		if (eObjFlag::FLAG_REMOVE & render.GetFlags())
+		{
+			ComponentDonor<SpriteRenderer>::mComponents.Remove(&render);
 		}
 	}
 }
@@ -486,9 +468,9 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	// TODO: Draw a fullscreen quad fusing the GameView and UIView
 	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
 
-	auto fb = GetFramebuffer();
+	auto fb = GetFrameBuffer();
 
-	fb->Bind();
+	fb.Bind();
 #endif
 
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -499,11 +481,12 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	Shader* shader = shaderlist["FinalStage"];
 	shader->Bind();
 	shader->UploadUniform("Scale", 2.f);
+	shader->UploadUniform("Gamma", mfGamma);
 
 	quad->DrawMesh(GL_TRIANGLES);
 
 #if EDITOR
-	fb->Unbind();
+	fb.Unbind();
 #else
 	SwapBuffers(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetDeviceContext());
 #endif
@@ -538,11 +521,33 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 {
 	_in >> DRAW_MODE;
+
+	int n;
+	bool alpha;
+	unsigned w, h;
+
+	_in >> n;
+	for (int j = 0; j < n; ++j)
+	{
+		_in >> w;
+		_in >> h;
+		_in >> alpha;
+
+		mViews.Emplace(w, h, alpha);
+	}
 }
 
 void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 {
 	_out << DRAW_MODE;
+
+	_out << mViews.size();
+	for (auto& e : mViews)
+	{
+		_out << e.GetWidth();
+		_out << e.GetHeight();
+		_out << e.HasAlpha();
+	}
 }
 
 

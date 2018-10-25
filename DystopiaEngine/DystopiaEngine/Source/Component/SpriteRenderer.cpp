@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/SpriteRenderer.h"
 
 #include "System/Driver/Driver.h"
+#include "System/Base/ComponentDonor.h"
+#include "System/Graphics/GraphicsSystem.h"
 #include "System/Graphics/Texture.h"
 #include "System/Graphics/TextureAtlas.h"
 #include "System/Graphics/TextureSystem.h"
@@ -102,6 +104,26 @@ void Dystopia::SpriteRenderer::SetAnimation(unsigned _nID)
 	DEBUG_BREAK(_nID > mAnimations.size(), "SpriteRenderer Error: Invalid Animation!");
 
 	mnID = _nID;
+}
+
+Dystopia::SpriteRenderer* Dystopia::SpriteRenderer::Duplicate(void) const
+{
+	return static_cast<ComponentDonor<SpriteRenderer>*>(
+		EngineCore::GetInstance()->Get<GraphicsSystem>()
+	)->RequestComponent(*this);
+}
+
+void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
+{
+}
+
+void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
+{
+}
+
+void Dystopia::SpriteRenderer::EditorUI(void) noexcept
+{
+
 }
 
 

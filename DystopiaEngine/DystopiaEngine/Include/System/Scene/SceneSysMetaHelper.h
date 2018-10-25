@@ -20,6 +20,8 @@
 #include "Component/RigidBody.h"
 #include "Component/Camera.h"
 #include "Component/CharacterController.h"
+#include "Component/SpriteRenderer.h"
+#include "Component/TextRenderer.h"
 
 namespace Dystopia
 {
@@ -36,14 +38,14 @@ namespace Dystopia
 			{
 				static void Serialise(TextSerialiser & _Serialiser)
 				{
-					using System = typename C::SYSTEM;
-					static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->GetSystem<System>())->Serialise(_Serialiser);
+					using CSystem = typename C::SYSTEM;
+					static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<CSystem>())->Serialise(_Serialiser);
 				}
 
 				static void Unserialise(TextSerialiser & _Serialiser)
 				{
-					using System = typename C::SYSTEM;
-					static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->GetSystem<System>())->Unserialise(_Serialiser);
+					using CSystem = typename C::SYSTEM;
+					static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<CSystem>())->Unserialise(_Serialiser);
 				}
 			};
 

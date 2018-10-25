@@ -36,8 +36,8 @@ namespace Dystopia
 		class Convex,
 		class Circle,
 		class CharacterController,
-		class SpriteRenderer,
-		class TextRenderer
+		class SpriteRenderer
+		//class TextRenderer
 		//class Particle
 	>::result;
 

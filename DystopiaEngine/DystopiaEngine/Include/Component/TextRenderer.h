@@ -25,8 +25,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Mesh;
-	class Shader;
 	class Texture;
 	class GraphicsSystem;
 
@@ -39,7 +37,7 @@ namespace Dystopia
 		{
 			return Ut::MetaFind_t<class Renderer, AllComponents>::value;
 		};
-		static const std::string GetCompileName(void) { return "Renderer"; }
+		static const std::string GetCompileName(void) { return "Text Renderer"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 
@@ -79,7 +77,7 @@ namespace Dystopia
 
 		Shader* mpShader;
 		Texture* mpTexture;
-		std::string mFontName;
+		//std::string mFontName;
 	};
 }
 

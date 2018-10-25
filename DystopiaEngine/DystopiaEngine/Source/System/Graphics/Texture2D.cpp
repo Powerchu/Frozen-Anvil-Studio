@@ -62,6 +62,11 @@ void Dystopia::Texture2D::InitTexture(Image const* _pData)
 {
 	Bind();
 
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
+
 	auto w = _pData->mnWidth;
 	auto h = _pData->mnHeight;
 	mnWidth  = _pData->mnWidth;

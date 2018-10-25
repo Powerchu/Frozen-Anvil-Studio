@@ -27,11 +27,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Mesh;
-	class Shader;
-	class Texture;
-	class GraphicsSystem;
 	class TextureAtlas;
+	class GraphicsSystem;
 
 	class _DLL_EXPORT SpriteRenderer : public Renderer
 	{
@@ -64,7 +61,7 @@ namespace Dystopia
 		void SetAnimation(const char*);
 		void SetAnimation(unsigned);
 
-		Renderer* Duplicate(void) const;
+		SpriteRenderer* Duplicate(void) const;
 
 		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);

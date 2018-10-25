@@ -56,7 +56,10 @@ void Dystopia::CameraSystem::SetMasterCamera(Camera* _pCamera)
 
 Dystopia::Camera* Dystopia::CameraSystem::GetMasterCamera(void) const
 {
-	return mpMasterCam;
+	if (mpMasterCam)
+		return mpMasterCam;
+
+	return &*mComponents.begin();
 }
 
 Dystopia::CameraSystem::CameraArr& Dystopia::CameraSystem::GetAllCameras(void)

@@ -130,7 +130,9 @@ bool Dystopia::Renderer::HasTransparency(void) const noexcept
 
 Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 {
-	return EngineCore::GetInstance()->Get<Renderer::SYSTEM>()->RequestComponent(*this);
+	return static_cast<ComponentDonor<Renderer>*>(
+		EngineCore::GetInstance()->Get<Renderer::SYSTEM>()
+	)->RequestComponent(*this);
 }
 
 void Dystopia::Renderer::Serialise(TextSerialiser& _out) const

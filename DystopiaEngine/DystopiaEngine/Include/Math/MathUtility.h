@@ -73,7 +73,7 @@ namespace Math
 	}
 
 	template <typename T, typename R = float>
-	inline constexpr R Reciprocal(T _x)
+	inline constexpr auto Reciprocal(T _x) -> Ut::EnableIf_t<Ut::IsNumeric<T>::value, R>
 	{
 		return R(1) / _x;
 	}

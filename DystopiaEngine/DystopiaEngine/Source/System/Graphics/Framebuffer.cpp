@@ -65,6 +65,11 @@ void Dystopia::Framebuffer::Init(void)
 
 	Unbind();
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 }
 
 void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha)
@@ -85,6 +90,11 @@ void Dystopia::Framebuffer::Bind(void) const noexcept
 void Dystopia::Framebuffer::Unbind(void) const noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+}
+
+bool Dystopia::Framebuffer::HasAlpha(void) const
+{
+	return mbAlpha;
 }
 
 unsigned Dystopia::Framebuffer::GetWidth(void) const
