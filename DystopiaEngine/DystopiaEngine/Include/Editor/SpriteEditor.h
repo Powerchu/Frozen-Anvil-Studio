@@ -30,12 +30,17 @@ namespace Dystopia
 		void		Shutdown(void);
 		std::string GetLabel(void) const;
 
-		void SaveSettings(TextSerialiser& _out) const;
-		void LoadSettings(TextSerialiser& _in);
+		void SaveSettings(TextSerialiser&) const;
+		void LoadSettings(TextSerialiser&);
 
 	private:
 		SpriteEditor(void);
+
 		std::string mLabel;
+		Math::Vec2	mStartPt;
+		Math::Vec2	mEndPt;
+		bool		mStartPlotting;
+		bool		mSectionPlotted;
 	};
 }
 

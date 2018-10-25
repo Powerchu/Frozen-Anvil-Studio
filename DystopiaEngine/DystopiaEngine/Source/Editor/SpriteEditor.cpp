@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/Payloads.h"
 #include "Editor/Editor.h"
+#include "Editor/ConsoleLog.h"
 
 Dystopia::SpriteEditor* gpInstance = 0;
 Dystopia::SpriteEditor* Dystopia::SpriteEditor::GetInstance(void)
@@ -27,7 +28,11 @@ Dystopia::SpriteEditor* Dystopia::SpriteEditor::GetInstance(void)
 
 Dystopia::SpriteEditor::SpriteEditor(void)
 	: EditorTab{ false }, 
-	mLabel{ "Sprite Editor" }
+	mLabel{ "Sprite Editor" },
+	mStartPt{ 0, 0 },
+	mEndPt{ 0, 0 },
+	mStartPlotting{ false },
+	mSectionPlotted{ false }
 {
 }
 
@@ -45,6 +50,52 @@ void Dystopia::SpriteEditor::Update(const float&)
 
 void Dystopia::SpriteEditor::EditorUI(void)
 {
+	Math::Vec2 childSize = Size() - Math::Vec2{ 5, 30 };
+	if (EGUI::StartChild("Sprite Editor Child", childSize))
+	{
+		if (mStartPlotting)
+		{
+			ImGuiContext& g = *GImGui;
+			ImGuiWindow* window = g.CurrentWindow;
+			ImVec2 pos = ImGui::GetCursorScreenPos();
+			mStartPt.x = Math::Clamp(static_cast<int>(mStartPt.x), static_cast<int>(0 + pos.x), static_cast<int>(childSize.x + pos.x));
+			mStartPt.y = Math::Clamp(static_cast<int>(mStartPt.y), static_cast<int>(0 + pos.y), static_cast<int>(childSize.y + pos.y));
+			mEndPt.x = Math::Clamp(static_cast<int>(mEndPt.x), static_cast<int>(0 + pos.x), static_cast<int>(childSize.x + pos.x));
+			mEndPt.y = Math::Clamp(static_cast<int>(mEndPt.y), static_cast<int>(0 + pos.y), static_cast<int>(childSize.y + pos.y));
+			ImRect r{ mStartPt, mEndPt };
+
+			r.Expand(1.f);
+			bool push_clip_rect = !window->ClipRect.Contains(r);
+			if (push_clip_rect) window->DrawList->PushClipRectFullScreen();
+			window->DrawList->AddRect(r.Min, r.Max, ImGui::GetColorU32(ImGuiCol_DragDropTarget), 0.0f, ~0, 2.0f);
+			if (push_clip_rect) window->DrawList->PopClipRect();
+
+			ImGui::SetCursorScreenPos(pos);
+		}
+		if (!mSectionPlotted)
+		{
+			if (ImGui::IsMouseHoveringWindow())
+			{
+				if (!mStartPlotting && ImGui::IsMouseClicked(0))
+				{
+					mStartPlotting = true;
+					mStartPt = ImGui::GetMousePos();
+					PrintToConsoleLog("StartPlotting " + std::to_string(mStartPt.x) + " " + std::to_string(mStartPt.y));
+				}
+				else if (mStartPlotting && ImGui::IsMouseReleased(0))
+				{
+					mSectionPlotted = true;
+					PrintToConsoleLog("Released " + std::to_string(mEndPt.x) + " " + std::to_string(mEndPt.y));
+				}
+				else if (mStartPlotting && ImGui::IsMouseDown(0))
+				{
+					PrintToConsoleLog("Held");
+				}
+				mEndPt = ImGui::GetMousePos();
+			}
+		}
+	}
+	EGUI::EndChild();
 }
 
 void Dystopia::SpriteEditor::Shutdown(void)
