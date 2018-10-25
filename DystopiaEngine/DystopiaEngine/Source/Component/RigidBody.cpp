@@ -719,9 +719,17 @@ namespace Dystopia
 #if EDITOR
 	void RigidBody::EditorUI() noexcept
 	{
+		EGUI::PushLeftAlign(140.f);
+
 		eBodyTypeDropDown();
 		eMassField();
+
+		EGUI::PopLeftAlign();
+
 		eLinearDragField();
+
+		EGUI::PushLeftAlign(140.f);
+
 		eAngularDragField();
 		eGravityScaleField();
 		eStaticFrictionDragField();
@@ -733,6 +741,8 @@ namespace Dystopia
 		eRotationConstraintCheckBox();
 
 		eExtraInfoHeader();
+
+		EGUI::PopLeftAlign();
 	}
 
 	void RigidBody::eBodyTypeDropDown()
@@ -741,7 +751,7 @@ namespace Dystopia
 		AutoArray<std::string> arr{ std::string{" Dynamic"},
 									std::string{" Kinematic"},
 									std::string{" Static"} };
-		if (EGUI::Display::DropDownSelection("Body Type				", i_type, arr))
+		if (EGUI::Display::DropDownSelection("Body Type", i_type, arr))
 		{
 			switch (i_type)
 			{
@@ -779,32 +789,21 @@ namespace Dystopia
 	{
 		if (mPhysicsType != eStaticBody)
 		{
-			switch (EGUI::Display::DragFloat("Mass					", &mfMass, 0.05f, 0.01F, FLT_MAX))
+			switch (EGUI::Display::DragFloat("Mass", &mfMass, 0.05f, 0.01F, FLT_MAX))
 			{
-			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
-				CheckMass();
+			case EGUI::eDragStatus::eSTART_DRAG:
+				EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfMass);
 				break;
+			case EGUI::eDragStatus::eTABBED:
+			case EGUI::eDragStatus::eDEACTIVATED:
+			case EGUI::eDragStatus::eEND_DRAG:
 			case EGUI::eDragStatus::eENTER:
 				EGUI::GetCommandHND()->EndRecording();
 				CheckMass();
 				break;
-			case EGUI::eDragStatus::eDRAGGING:
-				break;
-			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfMass);
-				break;
-			case EGUI::eDragStatus::eDEACTIVATED:
-				EGUI::GetCommandHND()->EndRecording();
-				CheckMass();
-				break;
-			case EGUI::eDragStatus::eNO_CHANGE:
-				break;
-			case EGUI::eDragStatus::eTABBED:
-				EGUI::GetCommandHND()->EndRecording();
-				CheckMass();
-				break;
 			default:
+			case EGUI::eDragStatus::eNO_CHANGE:
+			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			}
 		}
@@ -842,28 +841,20 @@ namespace Dystopia
 	{
 		if (mPhysicsType != eStaticBody)
 		{
-			switch (EGUI::Display::DragFloat("Angular Drag			", &mfAngularDrag, 0.01f, 0.0F, 1.0F))
+			switch (EGUI::Display::DragFloat("Angular Drag", &mfAngularDrag, 0.01f, 0.0F, 1.0F))
 			{
+			case EGUI::eDragStatus::eTABBED:
 			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
 			case EGUI::eDragStatus::eENTER:
+			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
 				EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfAngularDrag);
 				break;
-			case EGUI::eDragStatus::eDEACTIVATED:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eNO_CHANGE:
-				break;
-			case EGUI::eDragStatus::eTABBED:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
 			default:
+			case EGUI::eDragStatus::eDRAGGING:
+			case EGUI::eDragStatus::eNO_CHANGE:
 				break;
 			}
 		}
@@ -874,28 +865,20 @@ namespace Dystopia
 	{
 		if (mPhysicsType != eStaticBody)
 		{
-			switch (EGUI::Display::DragFloat("Gravity Scale		   ", &mfGravityScale, 0.01f, -FLT_MAX, FLT_MAX))
+			switch (EGUI::Display::DragFloat("Gravity Scale", &mfGravityScale, 0.01f, -FLT_MAX, FLT_MAX))
 			{
+			case EGUI::eDragStatus::eTABBED:
+			case EGUI::eDragStatus::eDEACTIVATED:
 			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
 			case EGUI::eDragStatus::eENTER:
 				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
 				EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfGravityScale);
 				break;
-			case EGUI::eDragStatus::eDEACTIVATED:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eNO_CHANGE:
-				break;
-			case EGUI::eDragStatus::eTABBED:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
 			default:
+			case EGUI::eDragStatus::eDRAGGING:
+			case EGUI::eDragStatus::eNO_CHANGE:
 				break;
 			}
 		}
@@ -904,84 +887,60 @@ namespace Dystopia
 
 	void RigidBody::eStaticFrictionDragField()
 	{
-		switch (EGUI::Display::DragFloat("Static Friction		 ", &mfStaticFriction, 0.01f, 0.0f, 2.0f))
+		switch (EGUI::Display::DragFloat("Static Friction", &mfStaticFriction, 0.01f, 0.0f, 2.0f))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
 		case EGUI::eDragStatus::eENTER:
+		case EGUI::eDragStatus::eDEACTIVATED:
+		case EGUI::eDragStatus::eTABBED:
 			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
 			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfStaticFriction);
 			break;
-		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eNO_CHANGE:
-			break;
-		case EGUI::eDragStatus::eTABBED:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
 		default:
+		case EGUI::eDragStatus::eNO_CHANGE:
+		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		}
 	}
 
 	void RigidBody::eDynamicFrictionDragField()
 	{
-		switch (EGUI::Display::DragFloat("Dynamic Friction		", &mfDynamicFriction, 0.01f, 0.0f, 2.0f))
+		switch (EGUI::Display::DragFloat("Dynamic Friction", &mfDynamicFriction, 0.01f, 0.0f, 2.0f))
 		{
-		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
 		case EGUI::eDragStatus::eENTER:
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eDEACTIVATED:
+		case EGUI::eDragStatus::eTABBED:
 			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
 			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfDynamicFriction);
 			break;
-		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eNO_CHANGE:
-			break;
-		case EGUI::eDragStatus::eTABBED:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
 		default:
+		case EGUI::eDragStatus::eNO_CHANGE:
+		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		}
 	}
 
 	void RigidBody::eRestitutionDragField()
 	{
-		switch (EGUI::Display::DragFloat("Bounciness			  ", &mfRestitution, 0.01f, 0.0f, 2.0f))
+		switch (EGUI::Display::DragFloat("Bounciness", &mfRestitution, 0.01f, 0.0f, 2.0f))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
+		case EGUI::eDragStatus::eTABBED:
+		case EGUI::eDragStatus::eDEACTIVATED:
 		case EGUI::eDragStatus::eENTER:
 			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
 			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &RigidBody::mfRestitution);
 			break;
-		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eNO_CHANGE:
-			break;
-		case EGUI::eDragStatus::eTABBED:
-			EGUI::GetCommandHND()->EndRecording();
-			break;
 		default:
+		case EGUI::eDragStatus::eNO_CHANGE:
+		case EGUI::eDragStatus::eDRAGGING:
 			break;
 		}
 	}
@@ -991,7 +950,7 @@ namespace Dystopia
 		int i_type = 0;
 		AutoArray<std::string> arr{ std::string{ " Discrete" },
 			std::string{ " Continuous" } };
-		if (EGUI::Display::DropDownSelection("Collision Detection	  ", i_type, arr))
+		if (EGUI::Display::DropDownSelection("Collision Detection", i_type, arr))
 		{
 			switch (i_type)
 			{
@@ -1020,7 +979,7 @@ namespace Dystopia
 			AutoArray<std::string> arr{ std::string{ " Never Sleep" },
 				std::string{ " Start Awake" },
 				std::string{ " Start Asleep" } };
-			if (EGUI::Display::DropDownSelection("Sleeping Mode			", i_type, arr))
+			if (EGUI::Display::DropDownSelection("Sleeping Mode", i_type, arr))
 			{
 				switch (i_type)
 				{
@@ -1043,7 +1002,7 @@ namespace Dystopia
 	void RigidBody::eRotationConstraintCheckBox()
 	{
 		static bool toggleState = false;
-		if (EGUI::Display::CheckBox("Freeze Rotation		  ", &toggleState))
+		if (EGUI::Display::CheckBox("Freeze Rotation", &toggleState))
 		{
 			mbFixedRot = toggleState;
 		}
@@ -1070,7 +1029,7 @@ namespace Dystopia
 				float(mAngularVelocity.x),
 				float(mAngularVelocity.y),
 				float(mAngularVelocity.z));
-			std::string show = "Is Awake     :  ";
+			std::string show = "Is Awake ";
 			show += (mbIsAwake) ? "true" : "false";
 			EGUI::Display::Label(show.c_str());
 		}

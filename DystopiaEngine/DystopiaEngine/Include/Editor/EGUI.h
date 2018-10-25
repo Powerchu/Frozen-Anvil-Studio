@@ -40,6 +40,7 @@ struct ImGuiContext;
 
 static float DefaultAlighnmentOffsetY = 3.f;
 static float DefaultAlighnmentSpacing = 10.f;
+static float DefaultAlignLeft = 0.f;
 
 namespace Dystopia
 {
@@ -87,6 +88,8 @@ namespace EGUI
 	void UnIndent(float _spacing = 20.f);
 	void PushID(int);
 	void PopID();
+	void PushLeftAlign(float);
+	void PopLeftAlign();
 
 	/* =======================================================================================================================
 	Brief:	

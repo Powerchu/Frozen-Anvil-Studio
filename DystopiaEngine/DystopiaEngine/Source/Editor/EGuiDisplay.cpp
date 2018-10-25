@@ -11,15 +11,17 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#if EDITOR
 #include <Windows.h>
 #include <consoleapi2.h>
 #include <winuser.h>
-#if EDITOR
 #include "Editor/EGUI.h"
 #include "Editor/Commands.h"
 #include "Editor/CommandList.h"
+#include "DataStructure/Stack.h"
 
 Dystopia::CommandHandler *gContextComdHND = nullptr;
+Stack<float> g_StackLeftAlign{ 100 };
 
 namespace EGUI
 {
@@ -150,6 +152,17 @@ namespace EGUI
 		ImGui::PopID();
 	}
 
+	void PushLeftAlign(float _f)
+	{
+		g_StackLeftAlign.Push(_f);
+	}
+
+	void PopLeftAlign()
+	{
+		if (!g_StackLeftAlign.IsEmpty())
+			g_StackLeftAlign.Pop();
+	}
+
 	namespace Display
 	{
 		void HorizontalSeparator()
@@ -174,7 +187,7 @@ namespace EGUI
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(DefaultAlighnmentSpacing);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool b = ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags);
@@ -191,7 +204,7 @@ namespace EGUI
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(DefaultAlighnmentSpacing);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 
@@ -211,7 +224,7 @@ namespace EGUI
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(DefaultAlighnmentSpacing);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			return ImGui::Checkbox(("##CheckBox" + _label).c_str(), _outputBool);
@@ -227,7 +240,7 @@ namespace EGUI
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(DefaultAlighnmentSpacing);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool changing = false;
@@ -267,7 +280,7 @@ namespace EGUI
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(DefaultAlighnmentSpacing);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool changing = false;
@@ -290,7 +303,7 @@ namespace EGUI
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(DefaultAlighnmentSpacing);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool changing = false;
@@ -319,7 +332,7 @@ namespace EGUI
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine(DefaultAlighnmentSpacing);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 
 			Label("X:"); SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
@@ -350,7 +363,7 @@ namespace EGUI
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine(DefaultAlighnmentSpacing);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 
 			Label("X:"); SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
@@ -532,7 +545,7 @@ namespace EGUI
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine(4.f);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			bool ret = ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), static_cast<int>(arrCharPtr.size()));
 			ImGui::PopItemWidth();
