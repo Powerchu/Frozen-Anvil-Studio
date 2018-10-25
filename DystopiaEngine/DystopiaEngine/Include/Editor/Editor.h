@@ -81,7 +81,7 @@ namespace Dystopia
 		void			RemoveSelection(const uint64_t _id);
 		void			ClearSelections(void);
 
-		const AutoArray<GameObject*>&	GetSelectionObjects(void);
+		const AutoArray<GameObject*>& GetSelectionObjects(void);
 
 		/* The edit functions */
 		void			EditorUndo();

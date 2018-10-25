@@ -123,7 +123,7 @@ namespace Dystopia
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mpWin{ nullptr }, mpGfx{ nullptr },
 		mpSceneSystem{ nullptr }, mpProfiler{ nullptr }, mTempSaveFile{}, mSceneHasChanged{ true },
-		mpEditorEventSys{ new EditorEventHandler{} }, //mpInput{ new InputManager{} },
+		mpEditorEventSys{ new EditorEventHandler{} },
 		mpComdHandler{ new CommandHandler{} }, mpGuiSystem{ new GuiSystem{} }, mpTimer{ new Timer{} },
 		mpClipBoard{ new Clipboard{} }, mArrSelectedObj{ 100 }, mUpdateSelection{ true },
 		mpEditorInput{ new EditorInput{}  }
@@ -823,6 +823,7 @@ namespace Dystopia
 
 	const AutoArray<GameObject*>& Editor::GetSelectionObjects(void)
 	{
+		UpdateSelections();
 		return mArrSelectedObj;
 	}
 

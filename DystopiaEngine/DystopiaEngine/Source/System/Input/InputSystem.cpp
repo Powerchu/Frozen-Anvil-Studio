@@ -75,12 +75,14 @@ bool Dystopia::InputManager::Init(void)
 #if !EDITOR
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
 #endif 
+	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
 	LoadDefaults();
 	return true;
 }
 
 void Dystopia::InputManager::Update(const float _dt)
 {
+	mMouseInput.mnWheel = 0;
 	using Type = BYTE[256];
 	static Type storage{ 0 };
 	mGamePad.PollInputs();
