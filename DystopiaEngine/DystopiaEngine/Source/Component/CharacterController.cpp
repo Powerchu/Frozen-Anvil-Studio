@@ -8,8 +8,11 @@
 #include "System/Base/ComponentDonor.h"
 #include "IO/TextSerialiser.h"
 #include "System/Scene/SceneSystem.h"
-#include "DataStructure/SharedPtr.h"
+
+// AI Stuff
 #include "Behaviour/AI/Composite.h"
+#include "Behaviour/AI/Decorator.h"
+#include <memory>
 
 #if EDITOR
 #include "Editor/ProjectResource.h"
@@ -71,19 +74,31 @@ namespace Dystopia
 			tInput->MapButton("Fly", eButton::KEYBOARD_UP);
 		}
 
-		auto sequence = std::make_shared<NeuralTree::Sequence>();
-		auto sayHello = std::make_shared<SayHello>();
-		auto sayHelloAgain = std::make_shared<SayHello>();
-		sequence->AddChild(sayHello);
-		sequence->AddChild(sayHelloAgain);
-		btree.SetRoot(sequence);
+		//btree = NeuralTree::Builder()
+		//		.composite<NeuralTree::Sequence>()
+		//			.leaf<HungerCheck>()
+		//		.end()
+		//		.Build();
+		//		/*.composite<NeuralTree::Sequence>()
+		//			.decorator<NeuralTree::Inverter>()
+		//				.leaf<HaveFood>()
+		//			.end()
+		//			.leaf<FindFood>()
+		//		.end()
+		//		.leaf<EatFood>()
+		//		.Build();*/
+		//
+		//btree.GetBlackboard()->setFloat("Hunger", 100.0F);
+		//btree.GetBlackboard()->setInt("Food", 0);
 	}
 
 	void CharacterController::Update(const float _dt)
 	{
-		btree.Update();
-		//MovePlayer(_dt);
-		//CheckGroundCeiling();
+		/*const auto a = btree.GetBlackboard()->getFloat("Hunger");
+		btree.GetBlackboard()->setFloat("Hunger", a - 10.0F*_dt);
+		btree.Update();*/
+		MovePlayer(_dt);
+		CheckGroundCeiling();
 		
 	}
 

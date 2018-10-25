@@ -90,12 +90,12 @@ namespace Dystopia
 			Composite() : iter(mparrChildren.begin()) {}
 			virtual ~Composite() = default;
 
-			void AddChild(Node::Ptr child) { mparrChildren.Insert(child); }
-			bool HasChildren() const { return !mparrChildren.IsEmpty(); }
+			void AddChild(const Node::Ptr& child) { mparrChildren.push_back(child); }
+			bool HasChildren() const { return !mparrChildren.empty(); }
 
 		protected:
-			MagicArray<Node::Ptr> mparrChildren;
-			MagicArray<Node::Ptr>::Itor_t iter;
+			std::vector<Node::Ptr> mparrChildren;
+			std::vector<Node::Ptr>::iterator iter;
 		};
 
 /*
@@ -108,11 +108,11 @@ namespace Dystopia
 		public:
 			virtual ~Decorator() = default;
 
-			void SetChild(Node::Ptr node) { mpChild = node; }
+			void SetChild(const Node::Ptr& node) { mpChild = node; }
 			bool HasChild() const { return mpChild != nullptr; }
 
 		protected:
-			Node::Ptr mpChild;
+			Node::Ptr mpChild = nullptr;
 		};
 
 
@@ -124,8 +124,14 @@ namespace Dystopia
 		{
 		public:
 			Leaf() = default;
-			Leaf(Blackboard::Ptr _blackboard) : mpBlackboard(std::move(_blackboard)) {}
+
+			Leaf(Blackboard::Ptr _blackboard) 
+				: mpBlackboard(_blackboard)
+			{
+			
+			}
 			virtual ~Leaf() = default;
+			eStatus Update() override = 0;
 
 		protected:
 			Blackboard::Ptr mpBlackboard;
@@ -135,17 +141,32 @@ namespace Dystopia
 		class BehaviourTree : public Node
 		{
 		public:
-			BehaviourTree() : mpBlackboard(std::make_shared<Blackboard>()) {}
-			explicit BehaviourTree(Node::Ptr rootNode) : BehaviourTree() { mpRoot = rootNode; }
+			BehaviourTree() 
+				: mpBlackboard(std::make_shared<Blackboard>())
+			{
+				
+			}
+			
+			BehaviourTree(const Node::Ptr& rootNode) 
+				: BehaviourTree()
+			{
+				mpRoot = rootNode;
+			}
 
 			eStatus Update() override { return mpRoot->Tick();	}
 
-			void SetRoot(Node::Ptr node) { mpRoot = node; }
-			Blackboard::Ptr GetBlackboard() const { return mpBlackboard; }
+			void SetRoot(const Node::Ptr& node)
+			{
+				mpRoot = node;
+			}
+			Blackboard::Ptr GetBlackboard() const
+			{
+				return mpBlackboard;
+			}
 
 		private:
-			Node::Ptr mpRoot;
-			Blackboard::Ptr mpBlackboard;
+			Node::Ptr mpRoot = nullptr;
+			Blackboard::Ptr mpBlackboard = nullptr;
 		};
 
 	}

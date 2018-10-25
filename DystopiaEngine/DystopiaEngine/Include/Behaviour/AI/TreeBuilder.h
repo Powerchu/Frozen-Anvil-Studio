@@ -46,7 +46,7 @@ namespace Dystopia
 			{
 				auto child = std::make_shared<CompositeType>((args)...);
 				mpNode->AddChild(child);
-				return CompositeBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.GetRaw()));
+				return CompositeBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.get()));
 			}
 
 			template <class DecoratorType, typename... Args>
@@ -54,7 +54,7 @@ namespace Dystopia
 			{
 				auto child = std::make_shared<DecoratorType>((args)...);
 				mpNode->AddChild(child);
-				return DecoratorBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.GetRaw()));
+				return DecoratorBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.get()));
 			}
 
 			Parent& end() {	return *mpParent; }
@@ -83,7 +83,7 @@ namespace Dystopia
 			{
 				auto child = std::make_shared<CompositeType>((args)...);
 				mpNode->SetChild(child);
-				return CompositeBuilder<DecoratorBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.GetRaw()));
+				return CompositeBuilder<DecoratorBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.get()));
 			}
 
 			template <class DecoratorType, typename... Args>
@@ -91,7 +91,7 @@ namespace Dystopia
 			{
 				auto child = std::make_shared<DecoratorType>((args)...);
 				mpNode->SetChild(child);
-				return DecoratorBuilder<DecoratorBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.GetRaw()));
+				return DecoratorBuilder<DecoratorBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.get()));
 			}
 
 			Parent& end() { return *mpParent; }
@@ -120,14 +120,14 @@ namespace Dystopia
 			CompositeBuilder<Builder> composite(Args... args)
 			{
 				mpRoot = std::make_shared<CompositeType>((args)...);
-				return CompositeBuilder<Builder>(this, reinterpret_cast<CompositeType*>(mpRoot.GetRaw()));
+				return CompositeBuilder<Builder>(this, reinterpret_cast<CompositeType*>(mpRoot.get()));
 			}
 
 			template <class DecoratorType, typename... Args>
 			DecoratorBuilder<Builder> decorator(Args... args)
 			{
 				mpRoot = std::make_shared<DecoratorType>((args)...);
-				return DecoratorBuilder<Builder>(this, reinterpret_cast<DecoratorType*>(mpRoot.GetRaw()));
+				return DecoratorBuilder<Builder>(this, reinterpret_cast<DecoratorType*>(mpRoot.get()));
 			}
 
 			Node::Ptr Build() const

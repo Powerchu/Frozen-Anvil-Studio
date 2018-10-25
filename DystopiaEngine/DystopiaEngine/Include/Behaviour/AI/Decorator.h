@@ -44,8 +44,9 @@ namespace Dystopia
 			}
 		};
 
-		// The Inverter decorator inverts the mpChild node's status, i.e. failure becomes success and success becomes failure.
-		// If the mpChild runs, the Inverter returns the status that it is running too.
+		// The Inverter decorator inverts the mpChild node's status, 
+		// i.e. failure becomes success and success becomes failure.
+		// If the mpChild runs, the Inverter returns running status.
 		class Inverter : public Decorator
 		{
 		public:

@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define CHARACTER_CONTROLLER_H
 #include "Component.h"
 #include "Component/ComponentList.h"	// CHARACTER CONTROLLER
-#include "Behaviour/AI/NeuralTree.h"
+#include "Behaviour/AI/TreeBuilder.h"
 #include "Utility/DebugAssert.h"
 
 namespace Dystopia
@@ -24,13 +24,72 @@ namespace Dystopia
 	class Collider;
 	class InputManager;
 
-	class SayHello : public NeuralTree::Node
+	class HungerCheck : public NeuralTree::Leaf
 	{
 	public:
+		//HungerCheck(NeuralTree::Blackboard::Ptr _ptr) : Leaf(_ptr) {}
 		eStatus Update() override
 		{
-			DEBUG_PRINT(eLog::MESSAGE, "Hello World!");
-			return Node::eStatus::SUCCESS;
+			const auto a = mpBlackboard->getFloat("Hunger");
+			if (a < 10.0F)
+			{
+				DEBUG_PRINT(eLog::MESSAGE, "I am hungry. Hunger: %f", a);
+				return eStatus::SUCCESS;
+			}	
+			else
+			{ 
+				DEBUG_PRINT(eLog::MESSAGE, "I am not hungry. Hunger: %f", a);
+				return eStatus::FAIL;
+			}
+		}
+	};
+
+	class HaveFood : public NeuralTree::Leaf
+	{
+	public:
+		//HaveFood(NeuralTree::Blackboard::Ptr _ptr) : Leaf(_ptr) {}
+		eStatus Update() override
+		{
+			if (mpBlackboard->getInt("Food") == 0)
+			{
+				DEBUG_PRINT(eLog::MESSAGE, "I have no food.");
+				return eStatus::FAIL;
+			}
+			else
+			{
+				DEBUG_PRINT(eLog::MESSAGE, "I will eat now.");
+				return eStatus::SUCCESS;
+			}
+		}
+	};
+
+	class FindFood : public NeuralTree::Leaf
+	{
+	public:
+		//FindFood(NeuralTree::Blackboard::Ptr _ptr) : Leaf(_ptr) {}
+		eStatus Update() override
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "Finding Food");
+			const auto a = mpBlackboard->getInt("Food");
+			mpBlackboard->setInt("Food", a + 1);
+			DEBUG_PRINT(eLog::MESSAGE, "I have %d food now.", a);
+			return eStatus::SUCCESS;
+		}
+	};
+
+	class EatFood : public NeuralTree::Leaf
+	{
+	public:
+		//EatFood(NeuralTree::Blackboard::Ptr _ptr) : Leaf(_ptr) {}
+		eStatus Update() override
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "Eating food");
+			const auto a = mpBlackboard->getFloat("Hunger");
+			const auto b = mpBlackboard->getInt("Food");
+			mpBlackboard->setInt("Food", b - 1);
+			mpBlackboard->setFloat("Hunger", a + 30.0F);
+			DEBUG_PRINT(eLog::MESSAGE, "Hunger: ", a);
+			return eStatus::SUCCESS;
 		}
 	};
 
@@ -75,6 +134,7 @@ namespace Dystopia
 		bool		mbIsCeilinged;
 		float		mfCharacterSpeed;
 		float		mfJumpForce;
+
 		NeuralTree::BehaviourTree btree;
 
 		/*=================Editor Stuff=====================*/
