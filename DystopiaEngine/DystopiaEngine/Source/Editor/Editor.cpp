@@ -55,6 +55,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/StyleScheme.h"
 #include "Editor/Clipboard.h"
 #include "Editor/SpritePreviewer.h"
+#include "Editor/SpriteEditor.h"
 
 #include "Allocator/DefaultAlloc.h"
 #include "DataStructure/HashString.h"
@@ -143,6 +144,7 @@ namespace Dystopia
 		mArrTabs.push_back(ConsoleLog::GetInstance());
 		mArrTabs.push_back(PerformanceLog::GetInstance());
 		mArrTabs.push_back(SpritePreviewer::GetInstance());
+		mArrTabs.push_back(SpriteEditor::GetInstance());
 		mArrTabs.push_back(ColorScheme::GetInstance());
 		mArrTabs.push_back(StyleScheme::GetInstance());
 	}

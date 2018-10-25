@@ -123,7 +123,7 @@ HashString& HashString::operator=(const wchar_t *_s)
 	mSize = 0;
 	while (*it != '\0')
 	{
-		*buffer++ = *it++;
+		*buffer++ = static_cast<char>(*it++);
 		mSize++;
 	}
 	*buffer = '\0';

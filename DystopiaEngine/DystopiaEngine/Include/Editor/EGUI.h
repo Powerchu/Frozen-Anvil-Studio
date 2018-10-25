@@ -536,6 +536,11 @@ namespace EGUI
 		======================================================================================================================= */
 		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize = Math::Vec2{ 30, 30 }, 
 				   bool _interactive = false, bool _outlineBG = false);
+
+
+
+
+
 	}
 }
 

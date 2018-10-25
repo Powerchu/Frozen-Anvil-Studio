@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	SpritePreviewer.h
+\file	SpriteEditor.h
 \author Shannon Tan (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -11,20 +11,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#ifndef _SPRITE_PREVEIWER_H_
-#define _SPRITE_PREVEIWER_H_
+#ifndef _SPRITE_EDITOR_H_
+#define _SPRITE_EDITOR_H_
 #include "Math/Vector2.h"
 #include "Editor/EditorTab.h"
 
 namespace Dystopia
 {
-	class Texture;
-	class TextSerialiser;
-	class SpritePreviewer : public EditorTab
+	class SpriteEditor : public EditorTab
 	{
 	public:
-		static SpritePreviewer* GetInstance(void);
-		~SpritePreviewer(void);
+		static SpriteEditor* GetInstance(void);
+		~SpriteEditor(void);
 
 		void		Init(void);
 		void		Update(const float&);
@@ -36,21 +34,12 @@ namespace Dystopia
 		void LoadSettings(TextSerialiser& _in);
 
 	private:
-		SpritePreviewer(void);
-
-		Texture*	mpTargetTexture;
-		float		mImageRatio;
-		float		mImageH;
-		float		mImageW;
-		Math::Vec2  mDisplaySize;
-		std::string mTextureName;
+		SpriteEditor(void);
 		std::string mLabel;
-
-		std::string GetTextureName(void);
 	};
 }
 
 
-#endif // _SPRITE_PREVEIWER_H_
+#endif // _SPRITE_EDITOR_H_
 #endif // EDITOR
 

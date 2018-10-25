@@ -31,6 +31,7 @@
     <ClCompile Include="Source\Editor\EditorInput.cpp" />
     <ClCompile Include="Source\Editor\EditorProc.cpp" />
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
+    <ClCompile Include="Source\Editor\SpriteEditor.cpp" />
     <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
     <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
     <ClCompile Include="Source\Allocator\Allocator.cpp" />
@@ -128,6 +129,7 @@
     <ClInclude Include="Include\Editor\EditorInput.h" />
     <ClInclude Include="Include\Editor\EditorProc.h" />
     <ClInclude Include="Include\DataStructure\HashString.h" />
+    <ClInclude Include="Include\Editor\SpriteEditor.h" />
     <ClInclude Include="Include\System\Collision\BoundingColliderNode.h" />
     <ClInclude Include="Include\System\Collision\BroadPhaseCircle.h" />
     <ClInclude Include="Include\Allocator\Allocator.h" />

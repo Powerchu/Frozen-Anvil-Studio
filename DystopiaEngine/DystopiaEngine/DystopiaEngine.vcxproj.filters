@@ -245,7 +245,7 @@
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\SpritePreviewer.cpp">
-      <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+      <Filter>Editor\Editor Tabs\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Input\XGamePad.cpp">
       <Filter>Game Engine\Systems\Input</Filter>
@@ -288,6 +288,9 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\EditorProc.cpp">
       <Filter>Editor\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\SpriteEditor.cpp">
+      <Filter>Editor\Editor Tabs\Sprite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -691,7 +694,7 @@
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\SpritePreviewer.h">
-      <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+      <Filter>Editor\Editor Tabs\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Input\XGamePad.h">
       <Filter>Game Engine\Systems\Input</Filter>
@@ -785,6 +788,9 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\EditorProc.h">
       <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\SpriteEditor.h">
+      <Filter>Editor\Editor Tabs\Sprite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1067,9 +1073,6 @@
     <Filter Include="Editor\Editor Tabs\Project Settings">
       <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor Tabs\Sprite Previewer">
-      <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Math\MetaMath">
       <UniqueIdentifier>{08413c81-cbde-4575-842c-fc63e39a282d}</UniqueIdentifier>
     </Filter>
@@ -1105,6 +1108,9 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Audio">
       <UniqueIdentifier>{af08a7e0-ec45-4ccd-a2b8-08336c4d36da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Sprite">
+      <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
