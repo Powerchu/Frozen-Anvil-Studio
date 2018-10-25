@@ -210,7 +210,7 @@ void Dystopia::EngineCore::FixedUpdate(void)
 	{
 		for (auto& e : mSystemList)
 		{
-			e->FixedUpdate(Gbl::FIXEDUPDATE_DT);
+			e->FixedUpdate(Gbl::FIXEDUPDATE_FDT);
 		}
 
 		mAccumulatedTime -= Gbl::FIXEDUPDATE_DT;

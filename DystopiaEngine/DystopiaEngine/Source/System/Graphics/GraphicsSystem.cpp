@@ -231,51 +231,101 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Scene Draw" };
 	auto& AllObj = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetAllGameObjects();
-	auto ActiveFlags = _cam.GetOwner()->GetFlags();
+
+	AutoArray<Renderer> set1{ ComponentDonor<Renderer>::mComponents .size() };
+	AutoArray<SpriteRenderer> set2{ ComponentDonor<SpriteRenderer>::mComponents.size() };
+
+	for (auto& e : ComponentDonor<Renderer>::mComponents)
+	{
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
+			set1.Insert(&e);
+	}
+	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
+	{
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
+			set2.Insert(&e);
+	}
 
 	// Get Camera's layer, we only want to draw inclusive stuff
-	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
+	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS;
 
-	AllObj.Sort([](const auto& _rhs, const auto& _lhs) {
-		return _rhs.GetComponent<Transform>()->GetGlobalPosition().z < _lhs.GetComponent<Transform>()->GetGlobalPosition().z;
+	set1.Sort([](const auto& _rhs, const auto& _lhs) {
+		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
+	});
+	set2.Sort([](const auto& _rhs, const auto& _lhs) {
+		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 
 	// Draw the game objects to screen based on the camera
-	for (auto& Obj : AllObj)
+	auto ActiveFlags = _cam.GetOwner()->GetFlags();
+	for (auto& e : set1)
 	{
-		if (Obj.GetFlags() & ActiveFlags)
+		if (e.GetOwner()->GetFlags() & ActiveFlags)
 		{
-			if (Renderer* r = Obj.GetComponent<Renderer>())
+			Shader* s =  e->GetShader();
+			Texture* t = e->GetTexture();
+
+			if (s && t)
 			{
-				Shader* s = r->GetShader();
-				Texture* t = r->GetTexture();
+				s->Bind();
 
-				if (s && t)
-				{
-					s->Bind();
+				auto m = Obj.GetComponent<Transform>()->GetTransformMatrix();
+				auto mvp = _ProjView * m;
 
-					auto m = Obj.GetComponent<Transform>()->GetTransformMatrix();
-					auto mvp = _ProjView * m;
+				t->Bind();
+				s->UploadUniform("ProjectViewMat", _ProjView);
+				s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+				s->UploadUniform("Gamma", mfGamma);
 
-					t->Bind();
-					s->UploadUniform("ProjectViewMat", _ProjView);
-					s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
-					s->UploadUniform("Gamma", mfGamma);
+				r->Draw();
 
-					r->Draw();
+				t->Unbind();
+			}
+			else
+			{
+				s = shaderlist["No Texture"];
 
-					t->Unbind();
-				}
-				else
-				{
-					s = shaderlist["No Texture"];
+				s->Bind();
+				s->UploadUniform("ProjectViewMat", _ProjView);
+				s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
 
-					s->Bind();
-					s->UploadUniform("ProjectViewMat", _ProjView);
-					s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+				r->Draw();
+			}
+		}
+	}
 
-					r->Draw();
-				}
+	for (auto& e : set2)
+	{
+		if (e.GetOwner()->GetFlags() & ActiveFlags)
+		{
+			Shader*  s = e->GetShader();
+			Texture* t = e->GetTexture();
+
+			if (s && t)
+			{
+				s->Bind();
+
+				auto m = Obj.GetComponent<Transform>()->GetTransformMatrix();
+				auto mvp = _ProjView * m;
+
+				t->Bind();
+				s->UploadUniform("ProjectViewMat", _ProjView);
+				s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+				s->UploadUniform("Gamma", mfGamma);
+
+				r->Draw();
+
+				t->Unbind();
+			}
+			else
+			{
+				s = shaderlist["No Texture"];
+
+				s->Bind();
+				s->UploadUniform("ProjectViewMat", _ProjView);
+				s->UploadUniform("ModelMat", Obj.GetComponent<Transform>()->GetTransformMatrix());
+
+				r->Draw();
 			}
 		}
 	}
