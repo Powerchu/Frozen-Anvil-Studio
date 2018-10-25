@@ -18,7 +18,7 @@ void main()
   vPosition = temp.xyz;
   vNormal   = vertexNorm;
   vUV       = vUVBounds.xy + vertexUV * (vUVBounds.zw - vUVBounds.xy);
-
+  
   gl_Position = ProjectViewMat * temp;
 }
 

@@ -55,7 +55,7 @@ static const std::string g_nPopup = "New Behaviour Name";
 namespace Dystopia
 {
 	static std::string g_arr[3] = { "item1", "item2", "item3" };
-	static std::string g_arr2[3] = { "item4", "item5", "item6" };
+	static std::string g_arr2[3] = { "FLAG_LAYER_WORLD", "FLAG_LAYER_UI", "item6" };
 
 	static Inspector* gpInstance = 0;
 	Inspector* Inspector::GetInstance()
@@ -141,7 +141,17 @@ namespace Dystopia
 			EGUI::ChangeAlignmentYOffset(0);
 			if (EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80))
 			{
-
+				switch (j)
+				{
+				case 0:
+					mpFocus->RemoveFlags(FLAG_LAYER_UI);
+					mpFocus->SetFlag(FLAG_LAYER_WORLD);
+					break;
+				case 1:
+					mpFocus->RemoveFlags(FLAG_LAYER_WORLD);
+					mpFocus->SetFlag(FLAG_LAYER_UI);
+					break;
+				}
 			}
 			EGUI::ChangeAlignmentYOffset();
 		}

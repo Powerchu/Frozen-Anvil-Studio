@@ -47,7 +47,9 @@ namespace Dystopia
 		);
 
 		void Bind(void) const;
+		void Unbind(void) const;
 
+		unsigned GetID(void) const;
 
 		void UploadUniform(char const*, const Math::Vector2&) const;
 		void UploadUniform(char const*, const Math::Vector4&) const;

@@ -100,6 +100,16 @@ void Dystopia::Shader::Bind(void) const
 	glUseProgram(mnShaderID);
 }
 
+void Dystopia::Shader::Unbind(void) const
+{
+	glUseProgram(0);
+}
+
+unsigned Dystopia::Shader::GetID(void) const
+{
+	return mnShaderID;
+}
+
 void Dystopia::Shader::LoadShader(unsigned _nProg, const std::string& _path)
 {
 	std::ifstream file;
@@ -131,6 +141,10 @@ void Dystopia::Shader::LoadShader(unsigned _nProg, const std::string& _path)
 		glGetShaderInfoLog(_nProg, nStatus, &nStatus, &log[0]);
 
 		std::printf("Shader Compile Error : %s", log.c_str());
+
+#   if defined(_DEBUG) | defined(DEBUG)
+		__debugbreak();
+#   endif 
 	}
 
 #endif		//  PRINT_ERRORS

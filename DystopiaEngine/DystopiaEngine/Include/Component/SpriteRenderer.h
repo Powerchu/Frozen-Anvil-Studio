@@ -75,8 +75,8 @@ namespace Dystopia
 		struct SpriteSheet
 		{
 			std::string mstrName;
-			unsigned mnID;
-			unsigned mnCol, mnRow;
+			unsigned mnID; //section id in the atlas
+			unsigned mnCol, mnRow; 
 		};
 
 		AutoArray<SpriteSheet> mAnimations;

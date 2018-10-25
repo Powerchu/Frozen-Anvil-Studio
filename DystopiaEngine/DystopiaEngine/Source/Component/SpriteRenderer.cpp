@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::SpriteRenderer::SpriteRenderer(void) noexcept
 	: Renderer{}, mAnimations{ 1 }, mnID{ 0 }, mnCol{ 0 }, mnRow{ 0 },
-	mfFrameTime{ 0 }, mfAccTime{ 0 }
+	mfFrameTime{ 0 }, mfAccTime{ 0 }, mpAtlas{ nullptr }
 {
 
 }
@@ -31,15 +31,15 @@ Dystopia::SpriteRenderer::SpriteRenderer(void) noexcept
 Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexcept
 	: Renderer{ Ut::Move(_rhs) }, mAnimations{ Ut::Move(_rhs.mAnimations) }, 
 	mnID{ Ut::Move(_rhs.mnID) }, mnCol{ Ut::Move(_rhs.mnCol) }, mnRow{ Ut::Move(_rhs.mnRow) },
-	mfFrameTime{ Ut::Move(_rhs.mfFrameTime) }, mfAccTime{ Ut::Move(_rhs.mfAccTime) }
+	mfFrameTime{ Ut::Move(_rhs.mfFrameTime) }, mfAccTime{ Ut::Move(_rhs.mfAccTime) }, mpAtlas{ Ut::Move(_rhs.mpAtlas) }
 {
-
+	_rhs.mpAtlas = nullptr;
 }
 
 Dystopia::SpriteRenderer::SpriteRenderer(const SpriteRenderer& _rhs) noexcept
 	: Renderer{ _rhs }, mAnimations{ _rhs.mAnimations },
 	mnID{ _rhs.mnID }, mnCol{ _rhs.mnCol }, mnRow{_rhs.mnRow },
-	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }
+	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, mpAtlas{ _rhs.mpAtlas }
 {
 }
 
@@ -60,40 +60,43 @@ void Dystopia::SpriteRenderer::Draw(void) const noexcept
 		if (mpAtlas)
 		{
 			mpAtlas->SetSection(mnID, mnCol, mnRow, *shader);
-			Renderer::Draw();
 		}
+		Renderer::Draw();
 	}
 }
 
 void Dystopia::SpriteRenderer::Update(float _fDT)
 {
-	mpAtlas->SetTexture(GetTexture());
-
-	mfAccTime += _fDT;
-
-	while (mfAccTime > mfFrameTime)
+	if (mpAtlas)
 	{
-		if (++mnCol > mAnimations[mnID].mnCol)
+		mpAtlas->SetTexture(GetTexture());
+
+		mfAccTime += _fDT;
+
+		while (mfAccTime > mfFrameTime)
 		{
-			mnCol = 0;
-
-			if (++mnRow > mAnimations[mnID].mnRow)
+			if (++mnCol > mAnimations[mnID].mnCol)
 			{
-				mnRow = 0;
-			}
-		}
+				mnCol = 0;
 
-		mfAccTime -= mfFrameTime;
+				if (++mnRow > mAnimations[mnID].mnRow)
+				{
+					mnRow = 0;
+				}
+			}
+
+			mfAccTime -= mfFrameTime;
+		}
 	}
 }
 
 void Dystopia::SpriteRenderer::SetAnimation(const char* _strAnimation)
 {
-	for (auto& e : mAnimations)
+	for(unsigned n = 0; n < mAnimations.size(); ++n)
 	{
-		if (e.mstrName == _strAnimation)
+		if (mAnimations[n].mstrName == _strAnimation)
 		{
-			mnID = e.mnID;
+			mnID = n;
 			return;
 		}
 	}

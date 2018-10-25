@@ -155,23 +155,39 @@ bool Dystopia::GraphicsSystem::Init(void)
 	for (auto& e : mViews)
 		e.Init();
 
+	auto id = shaderlist["FinalStage"]->GetID();
+	auto gameView = glGetUniformLocation(id, "texGame");
+	auto uiView = glGetUniformLocation(id, "texUI");
+	shaderlist["FinalStage"]->Bind();
+	glUniform1i(gameView, 0);
+	glUniform1i(uiView, 1);
+	shaderlist["FinalStage"]->Unbind();
+
 	glLineWidth(mfDebugLineWidth);
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 
 	return true;
 }
 
 void Dystopia::GraphicsSystem::PostInit(void)
 {
-
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 }
 
 
-Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetGameView(void) const
+Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetGameView(void) const noexcept
 {
 	return mViews[0];
 }
 
-Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetUIView(void) const
+Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetUIView(void) const noexcept
 {
 	return mViews[1];
 }
@@ -179,6 +195,11 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetUIView(void) const
 Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer(void) const noexcept
 {
 	return mViews[2];
+}
+
+Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetView(int _n) const
+{
+	return mViews[_n];
 }
 
 
@@ -223,12 +244,17 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	SwapBuffers(
 		pWinSys->GetMainWindow().GetDeviceContext()
 	);
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 }
 
 namespace
 {
 	template <typename T>
-	inline void DrawRenderer(T& _renderer, Math::Mat4& _ProjView, Dystopia::Shader* s)
+	inline void DrawRenderer(T& _renderer, Math::Mat4& _ProjView, Dystopia::Shader* s, float _fGamma)
 	{
 		auto t = _renderer->GetTexture();
 
@@ -241,6 +267,7 @@ namespace
 
 		s->UploadUniform("ProjectViewMat", _ProjView);
 		s->UploadUniform("ModelMat", m);
+		s->UploadUniform("Gamma", _fGamma);
 
 		_renderer->Draw();
 
@@ -286,7 +313,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
-			DrawRenderer(r, _ProjView, s);
+			DrawRenderer(r, _ProjView, s, mfGamma);
 		}
 	}
 
@@ -297,7 +324,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
-			DrawRenderer(r, _ProjView, s);
+			DrawRenderer(r, _ProjView, s, mfGamma);
 		}
 	}
 }
@@ -330,8 +357,9 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 		GameObject* pOwner = Obj->GetOwner();
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
 		{
-			
-			s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetLocalTransformMatrix() *Math::Translate(Obj->GetOffSet().x, Obj->GetOffSet().y, Obj->GetOffSet().z)  * Obj->GetTransformationMatrix());
+			auto m = pOwner->GetComponent<Transform>()->GetLocalTransformMatrix() * Math::Translate(Obj->GetOffSet()) * Obj->GetTransformationMatrix();
+
+			s->UploadUniform("ModelMat", m);
 			
 			activeColor = Obj->HasCollision() ? CollidingColor : mvDebugColour;
 
@@ -356,6 +384,10 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 
 void Dystopia::GraphicsSystem::Update(float _fDT)
 {
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 	StartFrame();
 
 	glClearColor(.0f, .0f, .0f, 1.f);
@@ -416,6 +448,9 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			Math::Matrix4 ProjView = Cam.GetProjectionMatrix() * Cam.GetViewMatrix();
 
 			auto surface = Cam.GetSurface();
+			auto vp = Cam.GetViewport();
+
+			glViewport(vp.mnX, vp.mnY, vp.mnWidth, vp.mnHeight);
 
 			// Temporary code
 			surface->Bind();
@@ -429,6 +464,11 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			 surface->Unbind();
 		}
 	}
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 
 	EndFrame();
 }
@@ -450,6 +490,10 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 			ComponentDonor<SpriteRenderer>::mComponents.Remove(&render);
 		}
 	}
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 }
 
 
@@ -465,7 +509,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	// TODO: Draw a fullscreen quad fusing the GameView and UIView
 	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
 
-	auto fb = GetFrameBuffer();
+	auto& fb = GetFrameBuffer();
 
 	fb.Bind();
 #endif
@@ -475,10 +519,14 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	GetGameView().AsTexture()->Bind(0);
 	GetUIView().AsTexture()->Bind(1);
 
+	auto VP = Math::Mat4();
+	auto M = Math::Scale(2.f, 2.f, 1.f);
+
 	Shader* shader = shaderlist["FinalStage"];
 	shader->Bind();
-	shader->UploadUniform("Scale", 2.f);
-	shader->UploadUniform("Gamma", mfGamma);
+	shader->UploadUniform("ProjectViewMat", VP);
+	shader->UploadUniform("ModelMat", M);
+	//shader->UploadUniform("Gamma", mfGamma);
 
 	quad->DrawMesh(GL_TRIANGLES);
 
@@ -511,6 +559,10 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 		static_cast<unsigned>(Gbl::SCREEN_HEIGHT), 
 		false
 	);
+
+#if EDITOR
+	mViews.Emplace(2048u, 2048u, false);
+#endif
 
 	DRAW_MODE = GL_TRIANGLES;
 }

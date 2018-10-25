@@ -75,9 +75,10 @@ namespace Dystopia
 		Texture* LoadTexture(const std::string&);
 		Shader*	 LoadShader(const std::string&);
 
-		Framebuffer& GetGameView(void) const;
-		Framebuffer& GetUIView(void) const;
+		Framebuffer& GetGameView(void) const noexcept;
+		Framebuffer& GetUIView(void) const noexcept;
 		Framebuffer& GetFrameBuffer(void) const noexcept;
+		Framebuffer& GetView(int) const;
 
 		template <typename ...Ty>
 		Framebuffer* CreateView(Ty&&...);

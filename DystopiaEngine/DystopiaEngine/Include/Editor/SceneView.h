@@ -76,7 +76,7 @@ namespace Dystopia
 		eZoom			mToZoom;
 		std::string		mLabel;
 		GraphicsSystem	*mpGfxSys;
-		GameObject		*mpSceneCamera;
+		Camera			*mpSceneCamera;
 		Math::Vec2		mImgSize;
 		Math::Vec2		mMoveVec;
 		Math::Vec2		mImgPos;

@@ -222,7 +222,7 @@ Dystopia::Framebuffer* Dystopia::Camera::GetSurface(void) const noexcept
 
 const Dystopia::Gfx::Viewport Dystopia::Camera::GetViewport(void) const
 {
-	DEBUG_BREAK(mpSurface, "Camera Error: Camera has no surface!\n");
+	DEBUG_BREAK(!mpSurface, "Camera Error: Camera has no surface!\n");
 
 	Gfx::Viewport ret{
 		mViewport.mnX * mpSurface->GetWidth(),

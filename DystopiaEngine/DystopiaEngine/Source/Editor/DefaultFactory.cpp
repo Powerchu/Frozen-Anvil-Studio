@@ -87,7 +87,7 @@ namespace Dystopia
 			pObject->SetActive(true);
 			pObject->Init();
 			pObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 16, 16, 1 });
-			const auto rend = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->RequestComponent();
+			const auto rend = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>())->RequestComponent();
 			const auto rigid = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 			const auto col = static_cast<ComponentDonor<Convex>*> (EngineCore::GetInstance()->GetSystem<CollisionSystem>())->RequestComponent();
 			pObject->AddComponent(rend, Renderer::TAG{});
@@ -109,7 +109,7 @@ namespace Dystopia
 			auto pCore = EngineCore::GetInstance();
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = pCore->GetSystem<CameraSystem>()->RequestComponent();
-			p->SetSurface(pCore->GetSystem<GraphicsSystem>()->GetView(4));
+			p->SetSurface(& (pCore->GetSystem<GraphicsSystem>()->GetView(3)));
 			pObject->AddComponent(p, typename Camera::TAG{});
 			pObject->Identify();
 			return pObject;
