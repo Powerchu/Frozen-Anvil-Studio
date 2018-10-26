@@ -42,6 +42,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Editor/EditorMetaHelpers.h"
 
+#include "Reflection/ReadWriteObject.h"
+#include "Reflection/ReflectionTypeErasure.h"
+
 #include <iostream>
 
 
@@ -176,13 +179,22 @@ namespace Dystopia
 		}
 
 		auto& arrBehav = mpFocus->GetAllBehaviours();
-		for (const auto& c : arrBehav)
+		for (auto & c : arrBehav)
 		{
 			EGUI::Display::HorizontalSeparator();
 			if (EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } + "##" +
 				std::to_string(mpFocus->GetID())))
 			{
-				c->EditorUI();
+				auto && MetaData = c->GetMetaData();
+				if(MetaData)
+				{
+					auto Allnames =  MetaData.GetAllNames();
+					for (auto i : Allnames)
+					{
+						if(MetaData[i])
+							MetaData[i].Reflect(i, c, SuperReflectFunctor{});
+					}
+				}
 				EGUI::Display::EndTreeNode();
 			}
 		}

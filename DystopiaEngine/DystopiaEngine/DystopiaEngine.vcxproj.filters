@@ -286,6 +286,9 @@
     <ClCompile Include="Source\DataStructure\HashString.cpp">
       <Filter>DataStructures</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp">
+      <Filter>Reflection\TypeErasure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -798,6 +801,18 @@
     <ClInclude Include="Include\Behaviour\AI\TreeBuilder.h">
       <Filter>Game Engine\Behaviours\AI</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Reflection\ReflectionTypeErasure.h">
+      <Filter>Reflection\TypeErasure</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\ReadWriteObject.h">
+      <Filter>Reflection\TypeErasure</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1123,6 +1138,9 @@
     </Filter>
     <Filter Include="Game Engine\Behaviours\AI\Nodes">
       <UniqueIdentifier>{496c050c-670d-44ee-abdc-2d963842e778}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\TypeErasure">
+      <UniqueIdentifier>{ecafed53-7b83-4c71-9271-0b0e5af66397}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
 \file	Milestone.cpp
-\author aaron (100%)
-\par    email: m.chu\@digipen.edu
+\author keith (100%)
+\par    email: keith.goh\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -25,13 +25,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	Milestone::Milestone()
-	{
-        
+	{ 
 	}
 
 	Milestone::~Milestone()
 	{
-        
 	}
 
 	void Milestone::Load()
@@ -107,6 +105,22 @@ namespace Dystopia
 	{
 		
 		
+	}
+	
+	TypeErasure::TypeEraseMetaData Milestone::GetMetaData()
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		static MetaData<Milestone> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
+	}
+	TypeErasure::TypeEraseMetaData const Milestone::GetMetaData() const
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		MetaData<Milestone> mMetaData;
+		return TypeErasure::TypeEraseMetaData{mMetaData};
 	}
 }
 

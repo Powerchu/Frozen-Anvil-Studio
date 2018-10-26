@@ -69,6 +69,10 @@ namespace Dystopia
 		virtual void LoadDefaults(void);
 		virtual void LoadSettings(TextSerialiser&);
 
+		void Serialise(TextSerialiser &) const;
+
+		void Unserialise(TextSerialiser &);
+
 #if EDITOR
 
 		MagicArray<BehaviourWrap *> const & GetDllChanges() const;
@@ -93,10 +97,14 @@ namespace Dystopia
 		MagicArray<BehaviourWrap *> mvRecentChanges;
 		AutoArray< BehaviourTable > mvBehaviours;
 
+
+		/*DO NOT TOUCH MY PRIVATES*/
+		void ClearAllBehaviours();
 #endif
 	};
 
 }
+
 
 
 
