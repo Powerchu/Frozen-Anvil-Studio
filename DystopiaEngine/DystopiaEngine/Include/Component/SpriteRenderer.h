@@ -37,7 +37,11 @@ namespace Dystopia
 		using SYSTEM = GraphicsSystem;
 		unsigned GetComponentType(void) const override
 		{
-			return Ut::MetaFind_t<class Renderer, AllComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<Renderer>, AllComponents>::value;
+		};
+		unsigned GetRealComponentType(void) const
+		{
+			return Ut::MetaFind_t<Ut::Decay_t<SpriteRenderer>, UsableComponents>::value;
 		};
 		static const std::string GetCompileName(void) { return "Sprite Renderer"; }
 		const std::string GetEditorName(void) const override { return GetCompileName(); }

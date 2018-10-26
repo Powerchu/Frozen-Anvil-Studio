@@ -153,16 +153,18 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 void Dystopia::Renderer::EditorUI(void) noexcept
 {
 #if EDITOR
+	EGUI::PushLeftAlign(80);
 	TextureField();
 	MeshField();
 	ShaderField();
+	EGUI::PopLeftAlign();
 #endif
 }
 
 #if EDITOR
 void Dystopia::Renderer::TextureField()
 {
-	if (EGUI::Display::EmptyBox("Texture   ", 150, (mpTexture) ? mpTexture->GetName() : "-empty-", true))
+	if (EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName() : "-empty-", true))
 	{
 	}
 
@@ -187,8 +189,8 @@ void Dystopia::Renderer::TextureField()
 
 	if (mpTexture)
 	{
-		EGUI::Display::Label("Preview    ");
-		EGUI::SameLine();
+		EGUI::Display::Label("Preview");
+		EGUI::SameLine(DefaultAlighnmentSpacing, 80);
 		float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
 		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
 	}
@@ -196,7 +198,7 @@ void Dystopia::Renderer::TextureField()
 
 void Dystopia::Renderer::MeshField()
 {
-	if (EGUI::Display::EmptyBox("Mesh      ", 150, (mpMesh) ? mpMesh->GetName() : "", true))
+	if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName() : "", true))
 	{
 
 	}
@@ -208,7 +210,7 @@ void Dystopia::Renderer::MeshField()
 
 void Dystopia::Renderer::ShaderField()
 {
-	if (EGUI::Display::EmptyBox("Shader    ", 150, "shader has no name or id", true))
+	if (EGUI::Display::EmptyBox("Shader", 150, "shader has no name or id", true))
 	{
 
 	}

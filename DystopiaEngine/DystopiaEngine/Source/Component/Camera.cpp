@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Camera.h"		// File header
 #include "Component/Transform.h"
 
+#include "System/Graphics/GraphicsSystem.h"
 #include "System/Graphics/Framebuffer.h"
 #include "System/Camera/CameraSystem.h"
 #include "System/Driver/Driver.h"
@@ -37,14 +38,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
 	mViewport{0, 0, _fWidth, _fHeight}, mView{}, mProjection{},
-	mInvScreen{}, mpSurface{ nullptr }, mbDebugDraw{ false }
+	mInvScreen{}, mpSurface{ nullptr }, mbDebugDraw{ false }, mnSurfaceID{ 0 }
 {
 
 }
 
 Dystopia::Camera::Camera(const Camera& _oOther) : Component{ _oOther }, 
 	mViewport{ _oOther.mViewport }, mView{}, mProjection{ _oOther.mProjection },
-	mInvScreen{}, mpSurface{ _oOther.mpSurface }, mbDebugDraw{ _oOther.mbDebugDraw }
+	mInvScreen{}, mpSurface{ _oOther.mpSurface }, mbDebugDraw{ _oOther.mbDebugDraw }, 
+	mnSurfaceID{ _oOther.mnSurfaceID }
 {
 
 }
@@ -59,6 +61,7 @@ void Dystopia::Camera::Init(void)
 	if (mnFlags & eObjFlag::FLAG_RESERVED)
 		mnFlags |= eObjFlag::FLAG_ACTIVE;
 
+	SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
 	SetOrthographic(800.f, 500.f, -500.f, 500.f);
 }
 
@@ -214,7 +217,6 @@ Math::Vec3D Dystopia::Camera::GetSize(void) const
 	return GetOwner()->GetComponent<Transform>()->GetScale();
 }
 
-
 Dystopia::Framebuffer* Dystopia::Camera::GetSurface(void) const noexcept
 {
 	return mpSurface;
@@ -253,6 +255,7 @@ void Dystopia::Camera::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Camera");
 	Component::Serialise(_out);
+	_out << mnSurfaceID;
 	_out.InsertEndBlock("Camera");
 }
 
@@ -260,34 +263,13 @@ void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 {
 	_in.ConsumeStartBlock();
 	Component::Unserialise(_in);
+	_in >> mnSurfaceID;
 	_in.ConsumeEndBlock();
 }
 
 void Dystopia::Camera::EditorUI(void) noexcept
 {
 #if EDITOR
-	//Math::Vec2 viewport_xy { mViewport.mnX, mViewport.mnY };
-	//Math::Vec2 viewport_wh { mViewport.mnWidth, mViewport.mnHeight };
-
-	//switch (EGUI::Display::VectorFields("Viewport", &viewport_wh, 0.01f, 0, 1.f))
-	//{
-	//case EGUI::eDragStatus::eSTART_DRAG:
-	//	EGUI::GetCommandHND()->StartRecording<Camera>(GetOwner()->GetID(), &viewport_wh);
-	//	break;
-	//case EGUI::eDragStatus::eEND_DRAG:
-	//	EGUI::GetCommandHND()->EndRecording();
-	//	break;
-	//}
-	//
-	//switch (EGUI::Display::VectorFields("Viewport Offset", &viewport_xy, 0.01f, 0, 1.f))
-	//{
-	//case EGUI::eDragStatus::eSTART_DRAG:
-	//	EGUI::GetCommandHND()->StartRecording<Camera>(GetOwner()->GetID(), &viewport_wh);
-	//	break;
-	//case EGUI::eDragStatus::eEND_DRAG:
-	//	EGUI::GetCommandHND()->EndRecording();
-	//	break;
-	//}
 
 #endif 
 }

@@ -210,7 +210,7 @@ T* Dystopia::GameObject::GetComponent(ComponentTag) const
 		}
 		else
 		{
-			if (Ut::MetaFind_t<T, UsableComponents>::value == e->GetUsableType())
+			if (Ut::MetaFind_t<T, UsableComponents>::value == e->GetRealComponentType())
 			{
 				return static_cast<T*>(e);
 			}

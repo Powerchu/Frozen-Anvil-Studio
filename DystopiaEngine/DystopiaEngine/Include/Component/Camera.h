@@ -119,6 +119,7 @@ namespace Dystopia
 
 		Framebuffer* mpSurface;
 		bool mbDebugDraw;
+		unsigned mnSurfaceID;
 	};
 }
 

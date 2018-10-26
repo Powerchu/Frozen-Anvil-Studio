@@ -20,6 +20,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/TextureAtlas.h"
 #include "System/Graphics/TextureSystem.h"
 
+#include "Object/GameObject.h"
+
+#if EDITOR
+#include "Editor/EGUI.h"
+#include "Editor/Payloads.h"
+#include "Editor/CommandList.h"
+#include "Editor/Commands.h"
+#endif
 
 Dystopia::SpriteRenderer::SpriteRenderer(void) noexcept
 	: Renderer{}, mAnimations{ 1 }, mnID{ 0 }, mnCol{ 0 }, mnRow{ 0 },
@@ -118,15 +126,53 @@ Dystopia::SpriteRenderer* Dystopia::SpriteRenderer::Duplicate(void) const
 
 void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
 {
+	_out.InsertStartBlock("Sprite Renderer");
+	Component::Serialise(_out);
+	Renderer::Serialise(_out);
+	_out << mnID;
+	_out << mnCol;
+	_out << mnRow;
+	_out << mfFrameTime;
+	_out << mfAccTime;
+	_out.InsertEndBlock("Sprite Renderer");
 }
 
 void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 {
+	_in.ConsumeStartBlock();
+	Component::Unserialise(_in);
+	Renderer::Unserialise(_in);
+	_in >> mnID;
+	_in >> mnCol;
+	_in >> mnRow;
+	_in >> mfFrameTime;
+	_in >> mfAccTime;
+	_in.ConsumeEndBlock();
 }
 
 void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 {
-
+#if EDITOR
+	Renderer::EditorUI();
+	EGUI::PushLeftAlign(80);
+	switch (EGUI::Display::DragFloat("Speed", &mfFrameTime, 0.01f, 0.f, 1.f))
+	{
+	case EGUI::eDragStatus::eEND_DRAG:
+	case EGUI::eDragStatus::eTABBED:
+	case EGUI::eDragStatus::eDEACTIVATED:
+	case EGUI::eDragStatus::eENTER:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	case EGUI::eDragStatus::eSTART_DRAG:
+		EGUI::GetCommandHND()->StartRecording<SpriteRenderer>(mnOwner, &SpriteRenderer::mfFrameTime);
+		break;
+	default:
+	case EGUI::eDragStatus::eNO_CHANGE:
+	case EGUI::eDragStatus::eDRAGGING:
+		break;
+	}
+	EGUI::PopLeftAlign();
+#endif
 }
 
 

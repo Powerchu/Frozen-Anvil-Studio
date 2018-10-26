@@ -31,6 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Transform.h"
 #include "Component/Camera.h"
 #include "Component/Renderer.h"
+#include "Component/SpriteRenderer.h"
 #include "Behaviour/Behaviour.h"
 
 #include "Math/MathUtility.h"
@@ -80,6 +81,9 @@ namespace Dystopia
 		GetCurrentScene()->GetAllGameObjects().EmplaceBack(Ut::Move(*temp));
 		auto& g = GetCurrentScene()->GetAllGameObjects().back();
 		g.GetComponent<Transform>()->SetOwner(&g);
+		//auto sr = static_cast<ComponentDonor<SpriteRenderer>*>(EngineCore::GetInstance()->Get<typename SpriteRenderer::SYSTEM>())->RequestComponent();
+		//g.AddComponent(sr, Component::TAG{});
+		//auto s = g.GetComponent<SpriteRenderer>();
 		for (auto& c : g.GetAllComponents())
 		{
 			c->SetOwner(&g);
