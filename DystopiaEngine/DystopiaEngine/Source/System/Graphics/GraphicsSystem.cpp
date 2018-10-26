@@ -64,6 +64,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <GL/glew.h>
 #include <GL/wglew.h>			// glew Windows ext
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #undef WIN32_LEAN_AND_MEAN		// Stop defines from spilling into code
 #undef NOMINMAX
 #undef ERROR
@@ -617,6 +620,13 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _strName)
 {
 	return EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadTexture(_strName);
+}
+
+Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)
+{
+	// https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html
+	// https://github.com/TeamHypersomnia/rectpack2D#algorithm
+	return nullptr;
 }
 
 Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _filePath)
