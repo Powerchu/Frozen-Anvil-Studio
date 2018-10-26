@@ -61,11 +61,11 @@ namespace Dystopia
 		virtual Chaser * Duplicate() const;
 		
 		virtual void EditorUI(void) noexcept override;
+        
+        virtual TypeErasure::TypeEraseMetaData       GetMetaData();
+		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 	private:
-
-
-
 	};
 
 
@@ -78,6 +78,8 @@ namespace Dystopia
 		}
 	}
 }
+
+PP_REFLECT_EMPTY(Dystopia::Chaser)
 
 #endif //_Chaser_H_
 

@@ -69,6 +69,8 @@ namespace Dystopia
 		
 		virtual void EditorUI(void) noexcept override;
 
+        virtual TypeErasure::TypeEraseMetaData       GetMetaData();
+		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 	private:
 
 
@@ -85,6 +87,8 @@ namespace Dystopia
 		}
 	}
 }
+
+PP_REFLECT_EMPTY(Dystopia::ParentWithOffset)
 
 #endif //_ParentWithOffset_H_
 

@@ -30,13 +30,20 @@ struct _DLL_EXPORT CustomMetaComp
 		return strcmp(_1, _2) < 0;
 	}
 };
+
+/*
+If std::map still giving problems, use
+using Map_t = std::pair<char const*, Dystopia::TypeErasure::ReadWriteObject>[PP_VARIADIC_SIZE(__VA_ARGS__)];              
+*/
+
 #define STRINGIFY(_NAME_) #_NAME_
+
 #define PP_REFLECT(_STRUCT_, ...)                                                                                             \
 template <>                                                                                                                   \
 struct MetaData<_STRUCT_>                                                                                                     \
 {                                                                                                                             \
-																                                                              \
-	using Map_t = std::pair<char const*, Dystopia::TypeErasure::ReadWriteObject>[PP_VARIADIC_SIZE(__VA_ARGS__)];                      \
+													                                                                          \
+	using Map_t = std::map<char const*, Dystopia::TypeErasure::ReadWriteObject>;                                              \
     Map_t mMetaMap = {PP_FOREACH(REFLECT_AUX, (_STRUCT_), __VA_ARGS__)};                                                      \
 	Dystopia::TypeErasure::ReadWriteObject	operator[](const char * _name)									                  \
    {																														  \
@@ -47,7 +54,25 @@ struct MetaData<_STRUCT_>                                                       
                                                                                                                               \
    }                                                                                                                          \
 																															  \
-};                                                                                                                            \
+};
+
+#define PP_REFLECT_EMPTY(_STRUCT_)                                                                                            \
+template <>                                                                                                                   \
+struct MetaData<_STRUCT_>                                                                                                     \
+{                                                                                                                             \
+													                                                                          \
+	using Map_t = std::map<char const*, Dystopia::TypeErasure::ReadWriteObject>;                                              \
+    Map_t mMetaMap;                                                                                                           \
+	Dystopia::TypeErasure::ReadWriteObject	operator[](const char * _name)									                  \
+   {																														  \
+		for(auto & elem :  mMetaMap)  															                              \
+		   if(!strcmp(elem.first, _name)) 													                                  \
+		    	return elem.second;								                                                              \
+		return Dystopia::TypeErasure::ReadWriteObject{};																	  \
+                                                                                                                              \
+   }                                                                                                                          \
+																															  \
+};
 //MetaData<_STRUCT_>::Map_t MetaData<_STRUCT_>::mMetaMap {PP_FOREACH(REFLECT_AUX, (_STRUCT_), __VA_ARGS__)   };                 
 
 template <typename T>

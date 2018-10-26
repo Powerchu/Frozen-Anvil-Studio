@@ -132,7 +132,7 @@
     <ClInclude Include="Include\Behaviour\AI\NeuralTree.h" />
     <ClInclude Include="Include\Behaviour\AI\TreeBuilder.h" />
     <ClInclude Include="Include\DataStructure\HashString.h" />
-    <ClInclude Include="Function.h" />
+    <ClInclude Include="Include\DataStructure\Function.h" />
     <ClInclude Include="Include\Reflection\ReadWriteObject.h" />
     <ClInclude Include="Include\Reflection\ReflectionTypeErasure.h" />
     <ClInclude Include="Include\System\Collision\BoundingColliderNode.h" />
@@ -287,7 +287,7 @@
     <ClInclude Include="Include\Utility\UtilityInternals.h" />
     <ClInclude Include="Include\DataStructure\Pointer.h" />
     <ClInclude Include="Include\Math\MathFwd.h" />
-    <ClInclude Include="Map.h" />
+    <ClInclude Include="Include\DataStructure\Map.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h" />
     <ClInclude Include="Include\System\Input\XGamePad.h" />

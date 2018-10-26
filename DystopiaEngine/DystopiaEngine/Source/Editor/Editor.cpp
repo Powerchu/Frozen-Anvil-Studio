@@ -393,7 +393,7 @@ namespace Dystopia
 				mCurrentState == EDITOR_PAUSE)
 			{
 				TempLoad();
-				mpBehaviourSys->ReAttach();
+				//mpBehaviourSys->ReAttach();
 			}
 			break;
 		case EDITOR_PLAY:

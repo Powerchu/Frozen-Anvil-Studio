@@ -807,10 +807,10 @@
     <ClInclude Include="Include\Reflection\ReadWriteObject.h">
       <Filter>Reflection\TypeErasure</Filter>
     </ClInclude>
-    <ClInclude Include="Map.h">
+    <ClInclude Include="Include\DataStructure\Function.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
-    <ClInclude Include="Function.h">
+    <ClInclude Include="Include\DataStructure\Map.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
   </ItemGroup>

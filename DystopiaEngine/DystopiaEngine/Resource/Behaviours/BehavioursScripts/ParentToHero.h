@@ -67,10 +67,14 @@ namespace Dystopia
 
 		void SwingSword(float damage);
 
+        virtual TypeErasure::TypeEraseMetaData       GetMetaData();
+		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
+
+        
+        float		   mfHealth;
 	private:
 		GameObject*    mpTarget;
-		float		   mfHealth;
-		GameObject * mpOwner;
+		GameObject *    mpOwner;
 	};
 
 
@@ -84,6 +88,7 @@ namespace Dystopia
 	}
 }
 
+PP_REFLECT(Dystopia::ParentToHero, mfHealth)
 #endif //_ParentToHero_H_
 
 

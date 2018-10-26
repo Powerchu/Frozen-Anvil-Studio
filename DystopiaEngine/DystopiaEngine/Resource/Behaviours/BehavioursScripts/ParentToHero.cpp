@@ -116,6 +116,23 @@ namespace Dystopia
 		
 		
 	}
+    
+    TypeErasure::TypeEraseMetaData ParentToHero::GetMetaData()
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		static MetaData<Dystopia::ParentToHero> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
+	}
+	TypeErasure::TypeEraseMetaData const ParentToHero::GetMetaData() const
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		static MetaData<Dystopia::ParentToHero> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
+	}
 }
 
 

@@ -111,6 +111,23 @@ namespace Dystopia
 		
 		
 	}
+    
+    TypeErasure::TypeEraseMetaData ParentWithOffset::GetMetaData()
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		static MetaData<Dystopia::ParentWithOffset> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
+	}
+	TypeErasure::TypeEraseMetaData const ParentWithOffset::GetMetaData() const
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		static MetaData<Dystopia::ParentWithOffset> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
+	}
 }
 
 

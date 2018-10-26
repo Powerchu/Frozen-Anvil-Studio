@@ -39,9 +39,9 @@ namespace Dystopia
 
 	void Chaser::Init()
 	{
-		float testF = 10.0f;
-		const auto ownerName = GetOwner()->GetName().c_str();
-		LoggerSystem::ConsoleLog(eLog::MESSAGE, "gameobjectName: %s", ownerName);
+		// float testF = 10.0f;
+		// const auto ownerName = GetOwner()->GetName().c_str();
+		// LoggerSystem::ConsoleLog(eLog::MESSAGE, "gameobjectName: %s", ownerName);
 	}
 
 	void Chaser::Update(const float _fDeltaTime)
@@ -87,6 +87,23 @@ namespace Dystopia
 	{
 		
 		
+	}
+    
+    TypeErasure::TypeEraseMetaData Chaser::GetMetaData()
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		static MetaData<Dystopia::Chaser> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
+	}
+	TypeErasure::TypeEraseMetaData const Chaser::GetMetaData() const
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		static MetaData<Dystopia::Chaser> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
 	}
 }
 
