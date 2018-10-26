@@ -624,8 +624,6 @@ Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _str
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)
 {
-	// https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html
-	// https://github.com/TeamHypersomnia/rectpack2D#algorithm
 	return nullptr;
 }
 

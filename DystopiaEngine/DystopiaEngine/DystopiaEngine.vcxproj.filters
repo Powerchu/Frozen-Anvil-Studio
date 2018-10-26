@@ -133,9 +133,6 @@
     <ClCompile Include="Source\Component\Renderer.cpp">
       <Filter>Game Engine\Components\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EditorInputs.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Math\Quaternion.cpp">
       <Filter>Math\Quaternion</Filter>
     </ClCompile>
@@ -315,6 +312,9 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\SpriteEditor.cpp">
       <Filter>Editor\Editor Tabs\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\FontSystem.cpp">
+      <Filter>Game Engine\SubSystems\Font</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -825,6 +825,9 @@
     <ClInclude Include="Include\Component\SpriteRenderer.h">
       <Filter>Game Engine\Components\Renderer\SpriteRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Graphics\FontSystem.h">
+      <Filter>Game Engine\SubSystems\Font</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1177,6 +1180,9 @@
     </Filter>
     <Filter Include="Editor\Editor Tabs\Sprite">
       <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Font">
+      <UniqueIdentifier>{70c54bbb-9c90-4050-b505-d8e8fa620b70}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
