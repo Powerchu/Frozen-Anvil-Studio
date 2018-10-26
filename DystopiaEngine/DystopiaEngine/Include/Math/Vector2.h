@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vector4.h"
 #include "Math/MathUtility.h"
 
-#include <cmath>
+#undef ERROR
 
 namespace Math
 {
@@ -208,7 +208,7 @@ inline Math::Vector2& _CALL Math::Vector2::Normalise(void)
 	DEBUG_ASSERT(IsZero(Dot(*this)), "Vector2 Error: Normalising a zero vector.\n");
 #endif
 
-	float invSqrt = 1.f / MagnitudeSqr();
+	const float invSqrt = 1.f / MagnitudeSqr();
 
 	return *this *= invSqrt;
 }

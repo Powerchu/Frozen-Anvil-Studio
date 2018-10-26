@@ -34,7 +34,7 @@ namespace Dystopia
 			enum class eStatus
 			{
 				INVALID = -1,
-				READY,
+				//READY,
 				RUNNING,
 				SUCCESS,
 				FAIL
@@ -90,12 +90,12 @@ namespace Dystopia
 			Composite() : iter(mparrChildren.begin()) {}
 			virtual ~Composite() = default;
 
-			void AddChild(const Node::Ptr& child) { mparrChildren.push_back(child); }
-			bool HasChildren() const { return !mparrChildren.empty(); }
+			void AddChild(const Node::Ptr& child) { mparrChildren.Insert(child); }
+			bool HasChildren() const { return !mparrChildren.IsEmpty(); }
 
 		protected:
-			std::vector<Node::Ptr> mparrChildren;
-			std::vector<Node::Ptr>::iterator iter;
+			MagicArray<Node::Ptr> mparrChildren;
+			MagicArray<Node::Ptr>::Itor_t iter;
 		};
 
 /*
@@ -134,7 +134,7 @@ namespace Dystopia
 			eStatus Update() override = 0;
 
 		protected:
-			Blackboard::Ptr mpBlackboard;
+			Blackboard::Ptr mpBlackboard = nullptr;
 		};
 
 
@@ -153,20 +153,35 @@ namespace Dystopia
 				mpRoot = rootNode;
 			}
 
+			BehaviourTree(const Blackboard::Ptr &shared) 
+				: BehaviourTree()
+			{
+				mpSharedboard = shared;
+			}
+
 			eStatus Update() override { return mpRoot->Tick();	}
 
 			void SetRoot(const Node::Ptr& node)
 			{
 				mpRoot = node;
 			}
+
 			Blackboard::Ptr GetBlackboard() const
 			{
 				return mpBlackboard;
 			}
 
+			Blackboard::Ptr GetSharedBlackboard() const
+			{
+				return mpSharedboard;
+			}
+			void SetSharedBlackboard(const Blackboard::Ptr &shared) 
+			{ mpSharedboard = shared; }
+
 		private:
 			Node::Ptr mpRoot = nullptr;
 			Blackboard::Ptr mpBlackboard = nullptr;
+			Blackboard::Ptr mpSharedboard = nullptr;
 		};
 
 	}

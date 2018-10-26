@@ -781,25 +781,13 @@
       <Filter>DataStructures</Filter>
     </ClInclude>
     <ClInclude Include="Include\Behaviour\AI\Composite.h">
-      <Filter>Game Engine\Behaviours\AI\Nodes</Filter>
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
     </ClInclude>
     <ClInclude Include="Include\Behaviour\AI\Decorator.h">
-      <Filter>Game Engine\Behaviours\AI\Nodes</Filter>
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
     </ClInclude>
     <ClInclude Include="Include\Behaviour\AI\Leaf.h">
-      <Filter>Game Engine\Behaviours\AI\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Behaviour\AI\Agent.h">
-      <Filter>Game Engine\Behaviours\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Behaviour\AI\Blackboard.h">
-      <Filter>Game Engine\Behaviours\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Behaviour\AI\NeuralTree.h">
-      <Filter>Game Engine\Behaviours\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Behaviour\AI\TreeBuilder.h">
-      <Filter>Game Engine\Behaviours\AI</Filter>
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
     </ClInclude>
     <ClInclude Include="Include\Reflection\ReflectionTypeErasure.h">
       <Filter>Reflection\TypeErasure</Filter>
@@ -812,6 +800,18 @@
     </ClInclude>
     <ClInclude Include="Include\DataStructure\Map.h">
       <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\Agent.h">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\Blackboard.h">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\NeuralTree.h">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\TreeBuilder.h">
+      <Filter>Game Engine\Systems\AI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1133,14 +1133,14 @@
     <Filter Include="Game Engine\SubSystems\Audio">
       <UniqueIdentifier>{af08a7e0-ec45-4ccd-a2b8-08336c4d36da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Behaviours\AI">
-      <UniqueIdentifier>{6eb5917a-2187-4177-afc3-85f2e1bc3832}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\Behaviours\AI\Nodes">
-      <UniqueIdentifier>{496c050c-670d-44ee-abdc-2d963842e778}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Reflection\TypeErasure">
       <UniqueIdentifier>{ecafed53-7b83-4c71-9271-0b0e5af66397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\AI">
+      <UniqueIdentifier>{d217e002-5757-496c-b9b3-dad91e1aebde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\AI\Nodes">
+      <UniqueIdentifier>{496c050c-670d-44ee-abdc-2d963842e778}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

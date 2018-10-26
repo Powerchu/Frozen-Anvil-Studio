@@ -35,9 +35,7 @@ namespace Dystopia
 	}
 
 
-	CharacterController::~CharacterController()
-	{
-	}
+	CharacterController::~CharacterController()	= default;
 
 	void CharacterController::Load()
 	{
@@ -72,34 +70,13 @@ namespace Dystopia
 			tInput->MapButton("Run Right", eButton::KEYBOARD_RIGHT);
 			tInput->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
 			tInput->MapButton("Fly", eButton::KEYBOARD_UP);
-		}
-
-		//btree = NeuralTree::Builder()
-		//		.composite<NeuralTree::Sequence>()
-		//			.leaf<HungerCheck>()
-		//		.end()
-		//		.Build();
-		//		/*.composite<NeuralTree::Sequence>()
-		//			.decorator<NeuralTree::Inverter>()
-		//				.leaf<HaveFood>()
-		//			.end()
-		//			.leaf<FindFood>()
-		//		.end()
-		//		.leaf<EatFood>()
-		//		.Build();*/
-		//
-		//btree.GetBlackboard()->setFloat("Hunger", 100.0F);
-		//btree.GetBlackboard()->setInt("Food", 0);
+		}		
 	}
 
 	void CharacterController::Update(const float _dt)
 	{
-		/*const auto a = btree.GetBlackboard()->getFloat("Hunger");
-		btree.GetBlackboard()->setFloat("Hunger", a - 10.0F*_dt);
-		btree.Update();*/
 		MovePlayer(_dt);
 		CheckGroundCeiling();
-		
 	}
 
 	void CharacterController::Unload()

@@ -27,21 +27,22 @@ static constexpr unsigned short g_ControllerHexa[14] =
 	XINPUT_GAMEPAD_Y                
 };
 
-XGamePad::XGamePad(unsigned _id)
-	: mdwID{ static_cast<DWORD>(_id) },
-	mbConnected{ false }, 
-	mbChangeDetected{ false },
-	mpxState{ new XINPUT_STATE{}  },
-	mfDeadZoneL{ XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE }, 
-	mfDeadZoneR{ XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE }, 
-	mfMaxThumbVal{ 32767 },
-	mfTriggerThresh{ XINPUT_GAMEPAD_TRIGGER_THRESHOLD },
-	mpxVibrate{ new XINPUT_VIBRATION{}  },
+XGamePad::XGamePad(const unsigned _id)
+	:
+	mArrXBtnStates{},
 	mxLeftThumb{},
 	mxRightThumb{},
 	mcTrigger{},
 	msButtons{},
-	mArrXBtnStates{}
+	mdwID{ static_cast<DWORD>(_id) },
+	mpxState{ new XINPUT_STATE{} },
+	mbConnected{ false },
+	mbChangeDetected{ false },
+	mfDeadZoneL{ XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE }, 
+	mfDeadZoneR{ XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE }, 
+	mfTriggerThresh{ XINPUT_GAMEPAD_TRIGGER_THRESHOLD },
+	mfMaxThumbVal{ 32767 },
+	mpxVibrate{ new XINPUT_VIBRATION{} }
 {
 }
 
@@ -55,7 +56,7 @@ void XGamePad::PollInputs(void)
 {
 	DWORD prevPacket = mpxState->dwPacketNumber;
 	ZeroMemory(&*mpxState, sizeof(XINPUT_STATE));
-	mbConnected = (XInputGetState(mdwID, &*mpxState) == ERROR_SUCCESS) ? true : false ;
+	mbConnected = XInputGetState(mdwID, &*mpxState) == ERROR_SUCCESS;
 	mbChangeDetected = prevPacket != mpxState->dwPacketNumber;
 	if (mbConnected)
 	{
