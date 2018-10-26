@@ -9,11 +9,6 @@
 #include "IO/TextSerialiser.h"
 #include "System/Scene/SceneSystem.h"
 
-// AI Stuff
-#include "Behaviour/AI/Composite.h"
-#include "Behaviour/AI/Decorator.h"
-#include <memory>
-
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
