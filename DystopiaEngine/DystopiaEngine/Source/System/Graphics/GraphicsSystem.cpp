@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/MeshSystem.h"
 
 // Texture Includes
+#include "System/Graphics/FontSystem.h"
 #include "System/Graphics/TextureSystem.h"
 #include "System/Graphics/Texture.h"
 #include "System/Graphics/Texture2D.h"
@@ -213,11 +214,19 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	TextureSystem* pTexSys = pCore->GetSubSystem<TextureSystem>();
 	WindowManager* pWinSys = pCore->GetSystem<WindowManager>();
 
+	Image* x = ImageParser::LoadBMP("Resource/Editor/EditorStartup.bmp");
+	ImageParser::WriteBMP("Resource/Editor/Write.bmp", x->mpImageData, x->mnWidth, x->mnHeight);
+
 	Mesh*   mesh = pMeshSys->GetMesh("Quad");
 	Shader* shader = shaderlist["Logo Shader"];
-	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/EditorStartup.png");
+	//Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/EditorStartup.png");
+	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/Write.bmp");
 
-	unsigned w = texture->GetWidth(), h = texture->GetHeight();
+	FontSystem* pFontSys = pCore->GetSubSystem<FontSystem>();
+	Texture* font = pFontSys->LoadFont("Resource/Font/Times New Roman.ttf");
+
+	//unsigned w = texture->GetWidth(), h = texture->GetHeight();
+	unsigned w = font->GetWidth(), h = font->GetHeight();
 
 	pWinSys->GetMainWindow().SetSizeNoAdjust(w, h);
 	pWinSys->GetMainWindow().CenterWindow();
@@ -234,8 +243,8 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->Bind();
-	texture->Bind();
-
+	//texture->Bind();
+	font->Bind();
 	shader->UploadUniform("ProjectViewMat", Project * View);
 	shader->UploadUniform("ModelMat", Math::Scale(w * 1.f, h * 1.f));
 	shader->UploadUniform("Gamma", mfGamma);

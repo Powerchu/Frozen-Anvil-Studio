@@ -40,6 +40,8 @@ namespace Dystopia
 
 		template <typename Ty = Texture>
 		Ty* GetTexture(const std::string& _strName);
+
+		TextureAtlas* GenAtlas(void);
 		TextureAtlas* GetAtlas(const std::string& _strName);
 
 		template <typename Ty = Texture>

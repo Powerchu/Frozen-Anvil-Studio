@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _FONTSYS_H_
 
 #include "Utility/Utility.h"
+#include "DataStructure/AutoArray.h"
 
 #include <string>
 
@@ -35,14 +36,24 @@ namespace Dystopia
 
 		TextureAtlas* LoadFont(const std::string& _strPath);
 
+		void SetPadding(unsigned _x, unsigned _y);
+
 	private:
+
+		unsigned mnPaddingX, mnPaddingY;
 
 		using uchar = unsigned char;
 
-		void PackFont(Texture*);
-		void OutputFontmap(TextureAtlas*);
+		struct CharSpace
+		{
+			unsigned x, y;
+			unsigned mnWidth;
+			unsigned mnHeight;
+		};
 
-		void Blit(const uchar* _src, unsigned _nWidth, unsigned _nHeight, uchar* _dest);
+		CharSpace PackFont(AutoArray<CharSpace>&, uchar* dest, unsigned _nImageWidth, uchar* src, unsigned _nWidth, unsigned _nHeight);
+
+		void Blit(const uchar* _src, unsigned _nWidth, unsigned _nHeight, uchar* _dest, unsigned _nImageWidth);
 	};
 }
 

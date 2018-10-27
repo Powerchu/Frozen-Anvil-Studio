@@ -49,6 +49,7 @@ namespace Dystopia
 		using SubSys = typename Ut::MetaAutoIndexer <
 			class MeshSystem,
 			class FileSystem,
+			class FontSystem,
 			class LoggerSystem,
 			class TextureSystem
 		>::result;

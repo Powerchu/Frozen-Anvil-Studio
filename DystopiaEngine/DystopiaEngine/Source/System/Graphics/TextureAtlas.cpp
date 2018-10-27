@@ -20,8 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Math/Vector2.h"
 
-#include <GL/glew.h>
-
 
 Dystopia::TextureAtlas::TextureAtlas(Texture* _ptr) noexcept
 	: mpTexture{ _ptr }
