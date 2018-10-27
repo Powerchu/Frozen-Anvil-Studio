@@ -45,6 +45,8 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
+		void Init(void) override;
+
 		void SetGlobalPosition(const Math::Point3D&);
 		void SetGlobalPosition(const float _x, const float _y, const float _z);
 
@@ -65,8 +67,9 @@ namespace Dystopia
 		Math::Quaternion GetRotation(void) const;
 
 		void SetParent(Transform*);
-		void OnChildRemove(Transform*);
-		void OnParentRemove(Transform*);
+		void RemoveParent(void);
+		void AddChild(Transform*);
+		void RemoveChild(Transform*);
 
 		Math::Matrix4 GetTransformMatrix(void);
 		const Math::Matrix4& GetLocalTransformMatrix(void);
@@ -80,12 +83,16 @@ namespace Dystopia
 
 		Transform& operator=(const Transform& _rhs);
 
+		AutoArray<Transform*>& GetAllChild(void);
+		Transform* GetParent(void);
+
 	private:
 
 		bool mbChanged;
 
 		Transform* mpParent;
 		AutoArray<Transform*> mChildren;
+		uint64_t mnParentID;
 
 		Math::Matrix4 mMatrix;
 
@@ -93,8 +100,9 @@ namespace Dystopia
 		Math::Point3D mPosition;
 		Math::Quaternion mRotation;
 
-		void RemoveChild(Transform*);
-		void RemoveParent(void);
+		void OnChildAdd(Transform*);
+		void OnChildRemove(Transform*);
+		void OnParentRemove(Transform*);
 	};
 }
 

@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Object/GameObject.h"
 #include "Component/Camera.h"
+#include "Component/Transform.h"
 
 #include "System/Scene/Scene.h"
 #include "System/Camera/CameraSystem.h"
@@ -90,32 +91,33 @@ namespace Dystopia
 
 		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
-			auto& arrayOfGameObjects = GetCurrentScene()->GetAllGameObjects();
-			for (auto& obj : arrayOfGameObjects)
-			{
-				const auto& selections = GetMainEditor()->GetSelectionObjects();
-				bool highlight = false;
-				for (auto& elem : selections)
-				{
-					if (elem == &obj)
-					{
-						highlight = true;
-						break;
-					}
-				}
-				if (strlen(mSearchText))
-				{
-					for (auto& i : mArrSearchID)
-					{
-						if (!(obj.GetID() == i)) 
-							continue;
-						GameObjectName(obj, highlight);
-						break;
-					}
-				}
-				else
-					GameObjectName(obj, highlight);
-			}
+			ShowGameObjects();
+			//auto& arrayOfGameObjects = GetCurrentScene()->GetAllGameObjects();
+			//for (auto& obj : arrayOfGameObjects)
+			//{
+			//	const auto& selections = GetMainEditor()->GetSelectionObjects();
+			//	bool highlight = false;
+			//	for (auto& elem : selections)
+			//	{
+			//		if (elem == &obj)
+			//		{
+			//			highlight = true;
+			//			break;
+			//		}
+			//	}
+			//	if (strlen(mSearchText))
+			//	{
+			//		for (auto& i : mArrSearchID)
+			//		{
+			//			if (!(obj.GetID() == i)) 
+			//				continue;
+			//			GameObjectName(obj, highlight);
+			//			break;
+			//		}
+			//	}
+			//	else
+			//		GameObjectName(obj, highlight);
+			//}
 		}
 		EGUI::EndChild();
 	}
@@ -190,23 +192,56 @@ namespace Dystopia
 	{
 		//if (_obj.GetName() == "Scene Camera") return;
 		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
-		if (EGUI::Display::SelectableTxt(uniqueifyName, selected))
+		bool clicked = false;
+		auto& allChild = _obj.GetComponent<Transform>()->GetAllChild();
+		if (allChild.size())
 		{
-			auto ed = GetMainEditor();
-			bool exist = false;
-			for (const auto& id : ed->GetSelectionObjects())
+			if (EGUI::Display::StartTreeNode(uniqueifyName, &clicked))
 			{
-				if (id->GetID() == _obj.GetID())
+				if (clicked) SelectedObj(_obj);
+
+				for (auto& t : allChild)
 				{
-					ed->RemoveSelection(_obj.GetID());
-					exist = true;
-					break;
+
 				}
+				EGUI::Display::EndTreeNode();
 			}
-			if (!exist)
-				ed->AddSelection(_obj.GetID());
+			if (GameObject *t = EGUI::Display::StartPayloadReceiver<GameObject>(EGUI::GAME_OBJ))
+			{
+
+				EGUI::Display::EndPayloadReceiver();
+			}
+		}
+		else
+		{
+			if (EGUI::Display::SelectableTxt(uniqueifyName, selected))
+			{
+				SelectedObj(_obj);
+			}
+			if (GameObject *t = EGUI::Display::StartPayloadReceiver<GameObject>(EGUI::GAME_OBJ))
+			{
+				t->GetComponent<Transform>()->SetParent(_obj.GetComponent<Transform>());
+				EGUI::Display::EndPayloadReceiver();
+			}
 		}
 		GameObjectPopups(_obj);
+	}
+
+	void HierarchyView::SelectedObj(GameObject& _obj)
+	{
+		auto ed = GetMainEditor();
+		bool exist = false;
+		for (const auto& id : ed->GetSelectionObjects())
+		{
+			if (id->GetID() == _obj.GetID())
+			{
+				ed->RemoveSelection(_obj.GetID());
+				exist = true;
+				break;
+			}
+		}
+		if (!exist)
+			ed->AddSelection(_obj.GetID());
 	}
 
 	void HierarchyView::GameObjectPopups(GameObject& _obj)
@@ -225,9 +260,127 @@ namespace Dystopia
 			}
 			ImGui::EndPopup();
 		}
-		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &_obj, sizeof(_obj), _obj.GetName()))
+		uint64_t id = _obj.GetID();
+		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &id, sizeof(uint64_t), _obj.GetName()))
 		{
 			EGUI::Display::EndPayload();
+		}
+	}
+	
+	void HierarchyView::ShowGameObjects(void)
+	{
+		auto& arrayOfGameObjects = GetCurrentScene()->GetAllGameObjects();
+		const auto& selections = GetMainEditor()->GetSelectionObjects();
+		for (auto& obj : arrayOfGameObjects)
+		{
+			if (obj.GetComponent<Transform>()->GetParent())
+				continue;
+
+			if (obj.GetComponent<Transform>()->GetAllChild().size())
+				ShowAsParent(obj, selections);
+			else
+				ShowAsChild(obj, selections);
+		}
+
+		EGUI::Display::Dummy(Size().x, 50.f);
+		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+		{
+			GameObject *t = GetCurrentScene()->FindGameObject(*id);
+
+			auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Transform>()->GetParent());
+			auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, nullptr);
+			EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
+
+			EGUI::Display::EndPayloadReceiver();
+		}
+	}
+
+	void HierarchyView::ShowAsParent(GameObject& _obj, const AutoArray<GameObject*>& _arr)
+	{
+		bool selected = false;
+		bool clicked = false;
+		for (auto& o : _arr)
+		{
+			if (_obj.GetID() == o->GetID())
+			{
+				selected = true;
+				break;
+			}
+		}
+		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
+		bool tree = EGUI::Display::StartTreeNode(uniqueifyName, &clicked, selected);
+
+		uint64_t id = _obj.GetID();
+		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &id, sizeof(uint64_t), _obj.GetName()))
+		{
+			EGUI::Display::EndPayload();
+		}
+		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+		{
+			GameObject *t = GetCurrentScene()->FindGameObject(*id);
+
+			auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Transform>()->GetParent());
+			auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Transform>());
+			EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
+
+			EGUI::Display::EndPayloadReceiver();
+		}
+
+		if (tree)
+		{
+			if (clicked) 
+				SelectedObj(_obj);
+
+			auto& arrChild = _obj.GetComponent<Transform>()->GetAllChild();
+			for (auto& c : arrChild)
+			{
+				GameObject *childObj = c->GetOwner();
+				if (childObj)
+				{
+					EGUI::Indent(20);
+					if (c->GetAllChild().size())
+						ShowAsParent(*childObj, _arr);
+					else
+						ShowAsChild(*childObj, _arr);
+					EGUI::UnIndent(20);
+				}
+			}
+			EGUI::Display::EndTreeNode();
+		}
+		else if (clicked)
+			SelectedObj(_obj);
+	}
+
+	void HierarchyView::ShowAsChild(GameObject& _obj, const AutoArray<GameObject*>& _arr)
+	{
+		bool selected = false;
+		for (auto& o : _arr)
+		{
+			if (_obj.GetID() == o->GetID())
+			{
+				selected = true;
+				break;
+			}
+		}
+		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
+		if (EGUI::Display::SelectableTxt(uniqueifyName, selected))
+		{
+			SelectedObj(_obj);
+		}
+		uint64_t id = _obj.GetID();
+		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &id, sizeof(uint64_t), _obj.GetName()))
+		{
+			EGUI::Display::EndPayload();
+		}
+		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+		{
+			GameObject *t = GetCurrentScene()->FindGameObject(*id);
+
+			auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Transform>()->GetParent());
+			auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Transform>());
+			EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
+
+			EGUI::Display::EndPayloadReceiver();
 		}
 	}
 }

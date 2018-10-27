@@ -24,7 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Scene::Scene(void) :
-	mGameObjs{ 1000 }, mName{ "Untitled" }, mID{ GUIDGenerator::GetUniqueID() }
+	mGameObjs{ }, mName{ "Untitled" }, mID{ GUIDGenerator::GetUniqueID() }
 {
 }
 
@@ -82,14 +82,14 @@ void Dystopia::Scene::PostUpdate(void)
 
 		if (flag & eObjFlag::FLAG_REMOVE)
 		{
-			mGameObjs.FastRemove(b);
-			--e;
+			mGameObjs.Remove(&*b);
 		}
 		else if (flag & eObjFlag::FLAG_ACTIVE)
 		{
 			b->PostUpdate();
-			++b;
 		}
+
+		++b;
 	}
 }
 

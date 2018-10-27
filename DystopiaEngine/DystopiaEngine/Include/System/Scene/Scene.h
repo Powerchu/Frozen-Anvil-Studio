@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility/Utility.h"
 #include "Object/GameObject.h"
-#include "DataStructure/AutoArray.h"
+#include "DataStructure/MagicArray.h"
 
 #include <string>
 
@@ -43,7 +43,7 @@ namespace Dystopia
 		GameObject* FindGameObject(const uint64_t _nID);
 		GameObject* FindGameObject(const std::string& _strName);
 
-		inline AutoArray<GameObject>& GetAllGameObjects(void);
+		inline MagicArray<GameObject>& GetAllGameObjects(void);
 
 		void Serialise(TextSerialiser &) const;
 
@@ -59,7 +59,7 @@ namespace Dystopia
 
 		uint64_t			  mID;
 		std::string			  mName;
-		AutoArray<GameObject> mGameObjs;
+		MagicArray<GameObject> mGameObjs;
 
 		//Ctor::MagicArrayBuilder<GameObject>::SetBlockLimit<16>::SetBlockSize<256>::type mGameObjs;
 	};
@@ -77,14 +77,11 @@ namespace Dystopia
 template <typename ... Ty>
 Dystopia::GameObject* Dystopia::Scene::InsertGameObject(Ty&& ..._args)
 {
-	mGameObjs.EmplaceBack(Ut::Forward<Ty>(_args)...);
-	return &mGameObjs.back();
-
-	//return mGameObjs.Emplace(Ut::Forward<Ty>(_args)...);
+	return mGameObjs.Emplace(Ut::Forward<Ty>(_args)...);
 }
 
 
-inline AutoArray<Dystopia::GameObject>& Dystopia::Scene::GetAllGameObjects(void)
+inline MagicArray<Dystopia::GameObject>& Dystopia::Scene::GetAllGameObjects(void)
 {
 	return mGameObjs;
 }
