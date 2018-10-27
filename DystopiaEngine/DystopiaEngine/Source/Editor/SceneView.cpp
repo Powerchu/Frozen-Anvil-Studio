@@ -57,7 +57,7 @@ namespace Dystopia
 		mLabel{ "Scene View" }, mpGfxSys{ nullptr },
 		mpSceneCamera{ nullptr }, mSensitivity{ 0.1f },
 		mToZoom{ eZOOM_NONE }, mAmFocused{ false },
-		mMoveSens{ 1.f }, mPrevMovePoint{ 0,0 },
+		mMoveSens{ -1.f }, mPrevMovePoint{ 0,0 },
 		mDragging{ false }, mImgPos{}, mImgSize{},
 		mClearSelection{ false },
 		mGizmoHovered{ false }, mCurrGizTool{ eTRANSLATE }
@@ -164,6 +164,7 @@ namespace Dystopia
 			ImGui::PopStyleVar();
 
 		CheckMouseEvents();
+		mPrevMovePoint = Math::Vec2{ ImGui::GetMousePos() } -ImGui::GetItemRectMin();
 		DrawGizmos();
 
 		if (mClearSelection)
@@ -194,17 +195,20 @@ namespace Dystopia
 	{
 		if (mpSceneCamera)
 		{
-			auto vDest = GetWorldClickPos(mpSceneCamera);
-			Math::Vec2 vToMove{vDest.x - mPrevMovePoint.x, vDest.y - mPrevMovePoint.y };
+			Math::Vec2 relPos = Math::Vec2{ ImGui::GetMousePos() } - ImGui::GetItemRectMin();
+
+			Math::Vec2 vToMove{ relPos.x - mPrevMovePoint.x, relPos.y - mPrevMovePoint.y };
 			if (vToMove.MagnitudeSqr() < dragMagnitudeEpsilon)
 				return;
-			//PrintToConsoleLog(std::to_string(vToMove.x) + " | " + std::to_string(vToMove.y));
-			mPrevMovePoint = vToMove;
-			//
-			//pos.x				= pos.x - mMoveSens * vDir.x;
-			//pos.y				= pos.y - mMoveSens * vDir.y;
-			//
-			//mpSceneCamera->GetOwner()->GetComponent<Transform>()->SetPosition(pos);
+			vToMove.x -= .5f;
+			vToMove.y -= .5f;
+			vToMove.x *= 2.f;
+			vToMove.y *= -2.f;
+			PrintToConsoleLog(std::to_string(vToMove.x) + " | " + std::to_string(vToMove.y));
+
+			auto pos = mpSceneCamera->GetOwner()->GetComponent<Transform>()->GetPosition();
+
+			mpSceneCamera->GetOwner()->GetComponent<Transform>()->SetPosition(pos + Math::Pt3D{ vToMove.x * mMoveSens, vToMove.y * mMoveSens, 0.f });
 		}
 	}
 
@@ -329,7 +333,8 @@ namespace Dystopia
 
 	void SceneView::ResetMouseEvents()
 	{
-		if (mDragging && !ImGui::IsMouseDown(1))	mDragging = false;
+		if (mDragging && !ImGui::IsMouseDown(1))
+			mDragging = false;
 	}
 
 	void SceneView::CheckMouseEvents()
