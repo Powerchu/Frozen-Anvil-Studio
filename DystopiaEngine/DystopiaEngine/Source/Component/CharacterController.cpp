@@ -18,15 +18,15 @@
 namespace Dystopia
 {
 	CharacterController::CharacterController()
-		:mpBody(nullptr)
-		,mpCol(nullptr)
-		,mbIsFacingRight(true)
-		,mbIsGrounded(false)
-		,mbIsCeilinged(false)
-		,mfCharacterSpeed(30.0f)
-		,mfJumpForce(100.0F)
+		: mpBody(nullptr)
+		  , mpCol(nullptr)
+		  , mbIsFacingRight(true)
+		  , mbIsGrounded(false)
+		  , mbIsCeilinged(false)
+		  , mbIsDodging(false)
+		  , mfCharacterSpeed(30.0f)
+		  , mfJumpForce(100.0F)
 	{
-
 	}
 
 
@@ -154,25 +154,54 @@ namespace Dystopia
 
 		if (tInput->IsController())
 		{
-			const auto xMove = tInput->GetAnalogX(0);
+			const auto leftThumb = tInput->GetAnalogX(0);
+			const auto leftTriggerFloat = tInput->GetTriggers(0);
 
-			mpBody->AddLinearImpulse({ xMove * mfCharacterSpeed * mpBody->GetMass(),0,0 });
-
-			if (xMove < 0.0F) // Moving Left
+			if (leftThumb < 0.0F) // Moving Left
 			{
+				mpBody->AddLinearImpulse({ leftThumb * mfCharacterSpeed * mpBody->GetMass(),0,0 });
 				if (mbIsFacingRight)
 				{
 					GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
 					mbIsFacingRight = false;
 				}
 			}
-			else if (xMove > 0.0F)// Moving Right
+			else if (leftThumb > 0.0F)// Moving Right
 			{
+				mpBody->AddLinearImpulse({ leftThumb * mfCharacterSpeed * mpBody->GetMass(),0,0 });
 				if (!mbIsFacingRight)
 				{
 					GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
 					mbIsFacingRight = true;
 				}
+			}
+
+			const auto side = mbIsFacingRight ? 1.F : -1.F;
+
+			if (leftTriggerFloat > 0.2F && mbIsGrounded)
+			{
+				if (!mbIsDodging)
+				{
+					mbIsDodging = true;
+					mpBody->AddLinearImpulse({ side * mfCharacterSpeed * mpBody->GetMass() * 20 * leftTriggerFloat,0,0 });
+				}
+				else
+				{
+					if (Math::Abs(float(mpBody->GetLinearVelocity().x)) > 0.01F)
+					{
+						tInput->SetVibrate(Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 32000, Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 16000);
+					}
+					else
+					{
+						tInput->StopVibrate();
+					}
+				}
+				
+			}
+			else
+			{
+				mbIsDodging = false;
+				tInput->StopVibrate();
 			}
 			
 		}

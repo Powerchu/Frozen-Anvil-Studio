@@ -63,6 +63,7 @@ namespace Dystopia
 		bool		mbIsFacingRight;
 		bool		mbIsGrounded;
 		bool		mbIsCeilinged;
+		bool		mbIsDodging;
 		float		mfCharacterSpeed;
 		float		mfJumpForce;
 

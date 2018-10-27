@@ -192,7 +192,7 @@ float XGamePad::GetAnalogY(int _i) const
 
 float XGamePad::GetTriggers(int _i) const
 {
-	return (!_i) ? mcTrigger[0] : mcTrigger[1];
+	return (!_i) ? float(mcTrigger[0] / 255.f) : float(mcTrigger[1] / 255.f);
 }
 
 bool XGamePad::IsKeyPressed(eButton _btn) const
