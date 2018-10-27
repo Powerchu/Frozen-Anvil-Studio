@@ -270,21 +270,18 @@ namespace Dystopia
 			{
 				newEvent.mEdgeNormal = newEvent.mEdgeNormal.Normalise();
 				InformOtherComponents(true, newEvent);
+				return true;
 			}
 			else
 			{
-				InformOtherComponents(true, newEvent);
+				InformOtherComponents(false, newEvent);
+				return false;
 			}
 
 		}
-		//if (isInside)
-		//{
- 	//		InformOtherComponents(true, newEvent);
-		//}
-		//else
-		//{
-		//	InformOtherComponents(false, newEvent);
-		//}
+		/*No Normals will be given because i have no idea which one to give*/
+		/*Circle completely inside*/
+		InformOtherComponents(true, newEvent);
 		return isInside;
 	}
 	bool Circle::isColliding(Convex * const & other_col)
