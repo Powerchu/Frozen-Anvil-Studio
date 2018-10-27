@@ -62,6 +62,7 @@ namespace Dystopia
 		/*Duplicate the Component*/
 		virtual Circle* Duplicate() const;
 
+		//virtual Math::Matrix3D   GetTransformationMatrix() const;
 		virtual BroadPhaseCircle GenerateBoardPhaseCircle() const;
 		float GetRadius() const;
 

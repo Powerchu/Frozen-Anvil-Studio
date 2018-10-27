@@ -86,7 +86,8 @@ namespace Dystopia
 
 	float Circle::GetRadius() const
 	{
-		return Math::Abs(m_radius * mOwnerTransformation[0] * 0.5f);
+		float Scale = Math::Abs(mOwnerTransformation[0]) > Math::Abs(mOwnerTransformation[5]) ? mOwnerTransformation[0] : mOwnerTransformation[5];
+		return Math::Abs(m_radius * Scale * 0.5f);
 	}
 
 	/*Serialise and Unserialise*/
