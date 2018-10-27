@@ -26,7 +26,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility/Utility.h"
 #include "Utility/MetaAlgorithms.h"
-
+#include "Editor/EGUI.h"
+#include <functional>
 namespace Dystopia
 {
 	template<typename A, typename B>
@@ -55,6 +56,7 @@ namespace Dystopia
 		{
 			C* comp = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->GetSystem<typename C::SYSTEM>())->RequestComponent();
 			comp->SetOwner(_owner);
+			comp->SetActive(_owner->IsActive());
 			comp->Init();
 			return comp;
 		}
@@ -145,7 +147,137 @@ namespace Dystopia
 		GenerateCollection<std::make_index_sequence<size>> mCollection;
 	};
 
+	struct SuperReflectFunctor
+	{
+		template<typename T , typename Settor>
+		void operator()(const char *,T, Settor, void*) {  }
 
+		template<>
+		void operator()(const char * _name,float value, std::function<void(float, void*)> _f, void* _addr)
+		{
+			float Temp = value;
+			switch (EGUI::Display::DragFloat(_name, &Temp, 0.01f, 0.0f, 2.0f))
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				_f(Temp, _addr);
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+					EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default:
+				break;
+			}
+		}
+		template<>
+		void operator()(const char * _name, int value, std::function<void(int, void*)> _f, void*_addr)
+		{
+			int Temp = value;
+			switch (EGUI::Display::DragInt(_name, &Temp, 0.1f, 0, 2))
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				_f(Temp, _addr);
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				//Is it possible to make one that does not require the BehaviourClass to be known
+				//EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfAngularDrag);
+				//EGUI::GetCommandHND()->StartRecording(&Temp);
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default:
+				break;
+			}
+		}
+		template<>
+		void operator()(const char *,double, std::function<void(double, void*)>, void*)
+		{
+
+		}
+	};
+	struct SuperGetFunctor
+	{
+		template<typename T>
+		void operator()(T value) {  }
+
+		template<>
+		void operator()(float)
+		{
+
+		}
+		template<>
+		void operator()(int)
+		{
+
+		}	
+	};
+	struct SuperSetFunctor
+	{
+		template<typename T>
+		void operator()(T _value, void *)
+		{
+			
+		}
+
+		template<>
+		void operator()(std::function<void(float, void*)> _f, void * _addr)
+		{
+
+			float Temp;
+			switch (EGUI::Display::DragFloat("Test", &Temp, 0.01f, 0.0f, 2.0f))
+			{
+			case EGUI::eDragStatus::eEND_DRAG:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eENTER:
+				EGUI::GetCommandHND()->EndRecording();
+				_f(Temp, _addr);
+				break;
+			case EGUI::eDragStatus::eDRAGGING:
+				break;
+			case EGUI::eDragStatus::eSTART_DRAG:
+				
+				break;
+			case EGUI::eDragStatus::eDEACTIVATED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			case EGUI::eDragStatus::eNO_CHANGE:
+				_f(0, _addr);
+				break;
+			case EGUI::eDragStatus::eTABBED:
+				EGUI::GetCommandHND()->EndRecording();
+				break;
+			default:
+				break;
+			}
+		}
+
+	};
 }
 
 #endif //_AUX_META_HELPER_H_

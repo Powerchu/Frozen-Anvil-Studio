@@ -6,7 +6,7 @@
 \brief
 INSERT BRIEF HERE
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -16,7 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #define str(s) #s
 
-#include "Behaviour\Behaviour.h"
+#include "Behaviour/Behaviour.h"
+#include "Reflection/Reflection.h"
+#include "Reflection/ReflectionTypeErasure.h"
 
 #define DllExport   __declspec( dllexport )
 
@@ -30,10 +32,10 @@ namespace Dystopia
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
-		unsigned GetBehaviourType(void) const
-		{
-			return Utility::MetaFind_t<Utility::Decay_t<decltype(*this)>, AllBehaviours>::value;
-		};
+		// unsigned GetBehaviourType(void) const
+		// {
+		// 	return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllBehaviours>::value;
+		// };
 
 #endif
 		virtual const std::string GetEditorName(void) const override { return "_SF_ClassName_"; }
@@ -52,8 +54,15 @@ namespace Dystopia
 		virtual void GameObjectDestroy(void) override;
 		virtual void Unload(void) override;
 
-		virtual void Serialise(TextSerialiser&) const override;
+		virtual void OnCollisionEnter(const CollisionEvent&);
+		virtual void OnCollisionStay (const CollisionEvent&);
+		virtual void OnCollisionExit (const CollisionEvent&);
 
+		virtual void OnTriggerEnter(const GameObject *);
+		virtual void OnTriggerStay (const GameObject *);
+		virtual void OnTriggerExit (const GameObject *);
+
+		virtual void Serialise(TextSerialiser&) const override;
 		virtual void Unserialise(TextSerialiser&) override;
 
 		virtual const char * const GetBehaviourName() const;
@@ -61,14 +70,14 @@ namespace Dystopia
 		virtual _SF_ClassName_ * Duplicate() const;
 		
 		virtual void EditorUI(void) noexcept override;
+		
+		// Reflection Stuff
+		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
+		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 	private:
-
-
-
+		friend MetaData<_SF_ClassName_>;
 	};
-
-
 
 	extern "C"
 	{

@@ -2,6 +2,7 @@
 #define PHYSICS_SYSTEM_H
 #include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
+#include "DataStructure/AutoArray.h"
 
 namespace Dystopia
 {
@@ -36,6 +37,8 @@ namespace Dystopia
 		void LoadSettings(TextSerialiser&) override;
 
 		void EditorUI(void);
+
+		AutoArray<RigidBody*> GetAllBodies() const;
 
 	private:
 		void CheckSleepingBodies(float _dt);

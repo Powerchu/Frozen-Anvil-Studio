@@ -6,7 +6,7 @@
 \brief
 	Base class for all GameObjects.
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -67,6 +67,10 @@ namespace Dystopia
 		void OnCollisionEnter(const CollisionEvent&);
 		void OnCollisionStay (const CollisionEvent&);
 		void OnCollisionExit (const CollisionEvent&);
+
+		void OnTriggerEnter(const GameObject*);
+		void OnTriggerStay (const GameObject*);
+		void OnTriggerExit (const GameObject*);
 
 		template <typename T>
 		void AddComponent(void);

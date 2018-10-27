@@ -35,5 +35,8 @@
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
 
 [END_Scene]

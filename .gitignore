@@ -191,7 +191,6 @@ _pkginfo.txt
 !*.[Cc]ache/
 
 # Others
-ClientBin/
 ~$*
 *~
 *.dbmdl
@@ -291,3 +290,4 @@ __pycache__/
 /DystopiaEngine/DystopiaEngine/Resource/Temp
 /DystopiaEngine/DystopiaEngine/Resource\Asset
 *.dystor
+/DystopiaEngine/DystopiaEngine/.vscode

@@ -7,7 +7,10 @@
 
 namespace Dystopia
 {
-	
+	using AllBehaviours = Ut::MetaAutoIndexer <
+		class Milestone,
+		class ParentToHero
+	>::result;
 }
 
 

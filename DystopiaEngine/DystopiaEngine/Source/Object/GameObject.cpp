@@ -108,22 +108,22 @@ void Dystopia::GameObject::Init(void)
 	ForcePing(mBehaviours, Init);
 }
 
-void Dystopia::GameObject::Update(const float _fDeltaTime)
+void Dystopia::GameObject::Update(const float)
 {
 //	Ping(mComponents, Update, _fDeltaTime);
-	Ping(mBehaviours, Update, _fDeltaTime);
+//	Ping(mBehaviours, Update, _fDeltaTime);
 }
 
-void Dystopia::GameObject::FixedUpdate(const float _fFixedDT)
+void Dystopia::GameObject::FixedUpdate(const float)
 {
 //	Ping(mComponents, FixedUpdate, _fFixedDT);
-	Ping(mBehaviours, FixedUpdate, _fFixedDT);
+//	Ping(mBehaviours, FixedUpdate, _fFixedDT);
 }
 
 void Dystopia::GameObject::PostUpdate(void)
 {
 //	Ping(mComponents, &Component::PostUpdate);
-	Ping(mBehaviours, PostUpdate);
+//	Ping(mBehaviours, PostUpdate);
 }
 
 void Dystopia::GameObject::Destroy(void)
@@ -154,6 +154,21 @@ void Dystopia::GameObject::OnCollisionStay(const CollisionEvent& _pEvent)
 void Dystopia::GameObject::OnCollisionExit(const CollisionEvent& _pEvent)
 {
 	Ping(mBehaviours, OnCollisionExit, _pEvent);
+}
+
+void Dystopia::GameObject::OnTriggerEnter(const GameObject* _pOther)
+{
+	Ping(mBehaviours, OnTriggerEnter, _pOther);
+}
+
+void Dystopia::GameObject::OnTriggerStay(const GameObject* _pOther)
+{
+	Ping(mBehaviours, OnTriggerStay, _pOther);
+}
+
+void Dystopia::GameObject::OnTriggerExit(const GameObject* _pOther)
+{
+	Ping(mBehaviours, OnTriggerExit, _pOther);
 }
 
 void Dystopia::GameObject::PurgeComponents(void)

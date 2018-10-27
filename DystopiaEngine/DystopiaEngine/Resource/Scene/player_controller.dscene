@@ -173,5 +173,8 @@
 [END_Character_Controller]
 
 [END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
 
 [END_Scene]

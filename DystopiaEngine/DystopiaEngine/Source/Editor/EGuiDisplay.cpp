@@ -244,7 +244,8 @@ namespace EGUI
 				return eSTART_DRAG;
 			}
 
-			if (changing) return eDRAGGING;
+			if (changing)
+				return eDRAGGING;
 
 
 			if (ImGui::IsItemDeactivatedAfterChange())

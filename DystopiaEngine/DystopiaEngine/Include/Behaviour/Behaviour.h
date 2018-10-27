@@ -19,6 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Globals.h"
 #include "Component/ComponentList.h"	// eComponents
 #include "Component/Component.h"		// Component
+#include "Reflection/ReflectionTypeErasure.h"
+#include "Object/GameObject.h"
 
 namespace Dystopia
 {
@@ -51,12 +53,19 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const { return nullptr; }
 
-		void OnCollisionEnter(const CollisionEvent&);
-		void OnCollisionStay (const CollisionEvent&);
-		void OnCollisionExit (const CollisionEvent&);
+		virtual void OnCollisionEnter(const CollisionEvent&);
+		virtual void OnCollisionStay (const CollisionEvent&);
+		virtual void OnCollisionExit (const CollisionEvent&);
+
+		virtual void OnTriggerEnter(const GameObject *);
+		virtual void OnTriggerStay (const GameObject *);
+		virtual void OnTriggerExit (const GameObject *);
+
 		virtual void Serialise(TextSerialiser&) const {};
 		virtual void Unserialise(TextSerialiser&) {};
 
+		virtual TypeErasure::TypeEraseMetaData       GetMetaData()       = 0;
+		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const = 0;
 
 		virtual Behaviour * Duplicate() const;
 	};

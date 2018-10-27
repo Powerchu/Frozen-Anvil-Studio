@@ -53,7 +53,7 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
 
         mScale		= InvTrans * mScale;
         mPosition	= InvTrans * mPosition;
-        mRotation  -= mpParent->GetRotation();
+        mRotation   = mpParent->GetRotation() * mRotation;
         mbChanged	= true;
     }
 }
@@ -65,7 +65,7 @@ void Dystopia::Transform::OnParentRemove(Transform* _pParent)
 
 	mScale		= InvTrans * mScale;
 	mPosition	= InvTrans * mPosition;
-	mRotation  += _pParent->GetRotation();
+	mRotation  *= _pParent->GetRotation();
 
 	mbChanged = true;
 }
@@ -192,6 +192,7 @@ const Math::Mat4& Dystopia::Transform::GetLocalTransformMatrix(void)
 	if (mbChanged)
 	{
 		mbChanged = false;
+		mRotation.Normalise();
 		mMatrix = Math::Translate(mPosition) * mRotation.Matrix() * Math::Scale(mScale);
 	}
 

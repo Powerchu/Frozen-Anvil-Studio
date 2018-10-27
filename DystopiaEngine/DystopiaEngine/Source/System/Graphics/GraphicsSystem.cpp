@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Physics/PhysicsSystem.h"
 #include "System/Camera/CameraSystem.h"     // Camera System
 #include "System/Driver/Driver.h"			// EngineCore
 #include "System/Time/ScopedTimer.h"
@@ -255,20 +256,37 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	//s->UploadUniform("vColor", mvDebugColour);
 	s->UploadUniform("ProjectViewMat", _ProjView);
 
-	Math::Vec4 no_alpha{ mvDebugColour };
+	// TODO: Math::Vec4 no_alpha{ mvDebugColour };
 
-	Math::Vector4 CollidingColor{1.f, 0, 0, .75f}, activeColor;
+	Math::Vector4 CollidingColor{ 1.f, 0, 0, .55f }, SleepingColor{ 1.f,1.f,0,.65f }, TriggerColor{ .8f,.8f,.8f,.25f }, activeColor;
 
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
 	{
 		GameObject* pOwner = Obj->GetOwner();
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
-		{
-			
+		{			
 			s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetLocalTransformMatrix() *Math::Translate(Obj->GetOffSet().x, Obj->GetOffSet().y, Obj->GetOffSet().z)  * Obj->GetTransformationMatrix());
-			
-			activeColor = Obj->HasCollision() ? CollidingColor : mvDebugColour;
+
+			if (Obj->IsSleeping())
+			{
+				activeColor = SleepingColor;
+			}
+
+			else if (Obj->HasCollision())
+			{
+				activeColor = CollidingColor;
+			}
+
+			else if (Obj->IsTrigger())
+			{
+				activeColor = TriggerColor;
+			}
+
+			else
+			{
+				activeColor = mvDebugColour;
+			}
 
 			if (Mesh* pObjMesh = Obj->GetMesh())
 			{

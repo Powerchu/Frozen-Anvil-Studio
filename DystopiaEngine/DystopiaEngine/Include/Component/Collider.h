@@ -155,6 +155,8 @@ namespace Dystopia
 
 		// Settors
 		void SetColliding(bool _b);
+		void SetSleeping(bool _b);
+		void SetTrigger(bool _b);
 		void SetLocalPosition(Math::Point3D const & _point);
 		void ClearCollisionEvent();
 		void RemoveCollisionEvent(unsigned long long _OtherID);
@@ -164,6 +166,7 @@ namespace Dystopia
 		Math::Vec3D           GetOffSet()   const;
 		bool                  HasCollision() const;
 		bool				  IsTrigger() const;
+		bool				  IsSleeping() const;
 		bool				  HasCollisionWith(unsigned long long _ID) const;
 		bool				  HasCollisionWith(GameObject const * const _pointer) const;
 
@@ -194,6 +197,7 @@ namespace Dystopia
 
 		bool mbColliding;
 		bool mbIsTrigger;
+		bool mbIsSleeping;
 
 		Math::Point3D mPosition;
 

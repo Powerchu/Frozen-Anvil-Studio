@@ -53,7 +53,7 @@ namespace Dystopia
 	}
 
 	SceneView::SceneView()
-		: EditorTab{ false },
+		: EditorTab{ false, true },
 		mLabel{ "Scene View" }, mpGfxSys{ nullptr }, 
 		mpSceneCamera{ nullptr }, mSensitivity{ 0.1f },
 		mToZoom{ eZOOM_NONE }, mAmFocused{ false }, 
@@ -371,7 +371,7 @@ namespace Dystopia
 			GameObject* pTarget			= FindMouseObject();
 			float betterZ				= (pTarget) ? pTarget->GetComponent<Transform>()->GetPosition().z + 0.1f : 0;
 			Math::Pt3D worldClickPos	= GetWorldClickPos(pCam);
-			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ };
+			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ, 1 };
 
 			GameObject *pDupl = Factory::LoadFromPrefab("", _pFile->mPath);
 			if (pDupl)
@@ -415,8 +415,9 @@ namespace Dystopia
 			DrawGizmoMul(clipboardObjs);
 	}
 
-	Math::Vec2 SceneView::GetWorldToScreen(const Math::Pt3D& curPos) const
+	Math::Vec2 SceneView::GetWorldToScreen(const Math::Pt3D& curPos)
 	{
+		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
 		if (!mpSceneCamera) return Math::Vec2{ 0,0 };
 
 		Camera*	pCamera	= mpSceneCamera->GetComponent<Camera>();

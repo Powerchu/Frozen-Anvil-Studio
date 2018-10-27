@@ -274,6 +274,21 @@
     <ClCompile Include="Source\System\Logger\FileLogger.cpp">
       <Filter>Game Engine\SubSystems\Logger\FileLogger</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\AudioSource.cpp">
+      <Filter>Game Engine\Components\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Sound\Audio.cpp">
+      <Filter>Game Engine\SubSystems\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Sound\SoundSystem.cpp">
+      <Filter>Game Engine\Systems\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DataStructure\HashString.cpp">
+      <Filter>DataStructures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp">
+      <Filter>Reflection\TypeErasure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -756,6 +771,48 @@
     <ClInclude Include="Include\Editor\DragStatus.h">
       <Filter>Editor\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\AudioSource.h">
+      <Filter>Game Engine\Components\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Sound\Audio.h">
+      <Filter>Game Engine\SubSystems\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\HashString.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\Composite.h">
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\Decorator.h">
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\Leaf.h">
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\ReflectionTypeErasure.h">
+      <Filter>Reflection\TypeErasure</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\ReadWriteObject.h">
+      <Filter>Reflection\TypeErasure</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Function.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Map.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\Agent.h">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\Blackboard.h">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\NeuralTree.h">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\TreeBuilder.h">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1061,9 +1118,6 @@
     <Filter Include="Editor\Editor Tabs\SystemSettings">
       <UniqueIdentifier>{f494a940-4551-4291-aa92-cff931764600}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor Tabs\TagSystem">
-      <UniqueIdentifier>{717afecd-7ef3-4406-b046-fe7b2ed2f840}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Allocator\Allocator">
       <UniqueIdentifier>{9baa3d75-f8aa-4e1c-8273-18e2128a6cdc}</UniqueIdentifier>
     </Filter>
@@ -1072,6 +1126,21 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Logger\FileLogger">
       <UniqueIdentifier>{7034c117-e848-41c3-8883-3d54e3f596b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Audio">
+      <UniqueIdentifier>{ecb40fbd-9434-45dc-a5a7-1ae1e1cbac7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Audio">
+      <UniqueIdentifier>{af08a7e0-ec45-4ccd-a2b8-08336c4d36da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\TypeErasure">
+      <UniqueIdentifier>{ecafed53-7b83-4c71-9271-0b0e5af66397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\AI">
+      <UniqueIdentifier>{d217e002-5757-496c-b9b3-dad91e1aebde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\AI\Nodes">
+      <UniqueIdentifier>{496c050c-670d-44ee-abdc-2d963842e778}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

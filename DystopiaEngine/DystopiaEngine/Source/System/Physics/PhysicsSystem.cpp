@@ -1,7 +1,6 @@
 #include "Component/Collider.h"
 #include "Component/RigidBody.h"
 #include "System/Physics/PhysicsSystem.h"
-#include "System/Logger/LoggerSystem.h"
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
 #include "Object/GameObject.h"
@@ -22,9 +21,9 @@ namespace Dystopia
 		, mGravity(400.0F)
 		, mMaxVelocityConstant(1024.0F)
 		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.1F)
+		, mPenetrationEpsilon(0.05F)
 		, mVelocityIterations(8)
-		, mPositionalIterations(8)
+		, mPositionalIterations(4)
 	{
 	}
 
@@ -44,15 +43,24 @@ namespace Dystopia
 
 	void PhysicsSystem::CheckSleepingBodies(float _dt)
 	{
-		for (auto& bodies : mComponents)
+		for (auto& body : mComponents)
 		{
 #if EDITOR
-			if (bodies.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (bodies.GetOwner())
+			if (body.GetOwner())
 			{
-				if(!bodies.Get_IsStaticState())
-					bodies.CheckSleeping(_dt);
+				if (!body.Get_IsStaticState())
+				{
+					body.CheckSleeping(_dt);
+
+					const auto col = body.GetOwner()->GetComponent<Collider>();
+
+					if (nullptr != col)
+					{
+						col->SetSleeping(!body.GetIsAwake());
+					}
+				}
 			}
 		}
 	}
@@ -71,7 +79,7 @@ namespace Dystopia
 		}
 	}
 
-	void PhysicsSystem::ResolveCollision(float _dt)
+	void PhysicsSystem::ResolveCollision(const float _dt)
 	{
 		for (int i = 0; i < mVelocityIterations; ++i)
 		{
@@ -80,7 +88,7 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+				if (body.Get_IsStaticState()) continue;
 
 				const auto col = body.GetOwner()->GetComponent<Collider>();
 
@@ -94,7 +102,6 @@ namespace Dystopia
 						}
 					}
 				}
-				
 			}
 		}
 
@@ -115,8 +122,7 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
-
+				if (body.Get_IsStaticState()) continue;
 
 				const auto col = body.GetOwner()->GetComponent<Collider>();
 
@@ -151,7 +157,7 @@ namespace Dystopia
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+			if (body.Get_IsStaticState()) continue;
 
 			body.UpdateResult(_dt);
 		}
@@ -165,7 +171,8 @@ namespace Dystopia
 		{
 			if (body.GetOwner())
 			{
-				body.DebugPrint();
+				if (body.GetOwner()->GetName() == "Hero")
+					body.DebugPrint();
 			}
 		}
 	}
@@ -184,6 +191,8 @@ namespace Dystopia
 
 		// Set all objects at rest to sleeping
 		CheckSleepingBodies(_dt);
+
+
 	}
 
 	void PhysicsSystem::PreFixedUpdate(float _dt)
@@ -191,11 +200,11 @@ namespace Dystopia
 		// Integrate RigidBodies
 		IntegrateRigidBodies(_dt);
 	}
-	
+
 
 	void PhysicsSystem::FixedUpdate(float _dt)
 	{
-		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Update" };
+		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Fixed Update" };
 
 		Step(_dt);
 
@@ -207,7 +216,7 @@ namespace Dystopia
 
 	void PhysicsSystem::Update(float)
 	{
-		
+
 	}
 
 	void PhysicsSystem::PostUpdate()
@@ -245,6 +254,18 @@ namespace Dystopia
 		VelocityIterationUI();
 		PositionalIterationUI();
 #endif 
+	}
+
+	AutoArray<RigidBody*> PhysicsSystem::GetAllBodies() const
+	{
+		AutoArray<RigidBody*> ToRet;
+
+		for (auto & elem : mComponents)
+		{
+			ToRet.push_back(&elem);
+		}
+
+		return Ut::Move(ToRet);
 	}
 
 #if EDITOR

@@ -14,6 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _ENGINE_DRIVER_H_
 #define _ENGINE_DRIVER_H_
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/Queue.h"
 
@@ -36,7 +39,7 @@ namespace Dystopia
 			Ut::Indexer<eSYSTEMS::TIME_SYSTEM     , class TimeSystem     >,
 			Ut::Indexer<eSYSTEMS::INPUT_SYSTEM    , class InputManager   >,
 			Ut::Indexer<eSYSTEMS::WINDOW_SYSTEM   , class WindowManager  >,
-//			Ut::Indexer<eSYSTEMS::SOUND_SYSTEM    , class SoundSystem    >, // TODO
+			Ut::Indexer<eSYSTEMS::SOUND_SYSTEM    , class SoundSystem    >, 
 			Ut::Indexer<eSYSTEMS::SCENE_SYSTEM    , class SceneSystem    >,
 			Ut::Indexer<eSYSTEMS::CAMERA_SYSTEM   , class CameraSystem   >,
 			Ut::Indexer<eSYSTEMS::GRAPHIC_SYSTEM  , class GraphicsSystem >,
@@ -147,7 +150,7 @@ inline T* const Dystopia::EngineCore::GetSubSystem(void) const
 	return static_cast<T*>(mSubSystems[type::result::value]);
 }
 
-
+#pragma warning(pop)
 
 #endif		// INCLUDE GUARD
 

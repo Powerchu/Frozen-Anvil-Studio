@@ -24,14 +24,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	Collider::Collider()
-		: mv3Offset{0,0,0,0}, mpMesh{nullptr}, mbColliding{false}, mPosition{ Math::MakePoint3D(0.f,0.f,0.f) }, mbIsTrigger(false), mScale{1,1,1}, mBoundingCircle{ GenerateBoardPhaseCircle()}
+		: mv3Offset{0, 0, 0, 0}, mpMesh{nullptr}, mbColliding{false}, mPosition{Math::MakePoint3D(0.f, 0.f, 0.f)},
+		  mbIsTrigger(false), mbIsSleeping(false), mScale{1, 1, 1}, mBoundingCircle{GenerateBoardPhaseCircle()}
 	{
-		
 	}
-	Collider::Collider(const Math::Point3D & _offset, const Math::Point3D & _origin)
-		: mv3Offset{ _offset }, mpMesh{ nullptr }, mbColliding{ false }, mPosition{_origin}, mbIsTrigger(false), mScale{ 1,1,1 }, mBoundingCircle{ GenerateBoardPhaseCircle() }
-	{
 
+	Collider::Collider(const Math::Point3D & _offset, const Math::Point3D & _origin)
+		: mv3Offset{_offset}, mpMesh{nullptr}, mbColliding{false}, mPosition{_origin}, mbIsTrigger(false),
+		  mbIsSleeping(false), mScale{1, 1, 1}, mBoundingCircle{GenerateBoardPhaseCircle()}
+	{
 	}
 
 	void Collider::Load(void)
@@ -79,7 +80,7 @@ namespace Dystopia
 
 	float Collider::DetermineRestitution(RigidBody const & b) const
 	{
-		if (nullptr != &b && nullptr != this->GetOwner()->GetComponent<RigidBody>())
+		if (nullptr != this->GetOwner()->GetComponent<RigidBody>())
 		{
 			const float a_rest = GetOwner()->GetComponent<RigidBody>()->GetRestitution();
 			return Math::Min(a_rest, b.GetRestitution());
@@ -89,7 +90,7 @@ namespace Dystopia
 
 	float Collider::DetermineStaticFriction(RigidBody const & b) const
 	{
-		if (nullptr != &b && nullptr != this->GetOwner()->GetComponent<RigidBody>())
+		if (nullptr != this->GetOwner()->GetComponent<RigidBody>())
 		{
 			const float a_fric = GetOwner()->GetComponent<RigidBody>()->GetStaticFriction();
 			return sqrt(a_fric*b.GetStaticFriction());
@@ -129,7 +130,7 @@ namespace Dystopia
 	void Collider::RemoveCollisionEvent(unsigned long long _OtherID)
 	{
 		auto start = marr_ContactSets.begin();
-		auto end   = marr_ContactSets.end();
+		const auto end   = marr_ContactSets.end();
 		while (start != end)
 		{
 			if (*start == _OtherID)
@@ -137,25 +138,33 @@ namespace Dystopia
 				marr_ContactSets.Remove(start);
 				return;
 			}
+			++start;
 		}
 	}
 
-	void Collider::InformOtherComponents(bool _isColliding, CollisionEvent const & _Event)
+	void Collider::InformOtherComponents(const bool _isColliding, CollisionEvent const & _Event)
 	{
+		const auto _owner = GetOwner();
+		const auto _body = _owner->GetComponent<RigidBody>();
+
 		if (_isColliding)
 		{
 			if (auto * ptr = FindCollisionEvent(_Event.mOtherID))
 			{
-				auto & BehaviourList = GetOwner()->GetAllBehaviours();
-				for (auto & elem : BehaviourList)
-					elem->OnCollisionStay(_Event);
+				if (!mbIsTrigger)
+					_owner->OnCollisionStay(_Event);
+				else
+					_owner->OnTriggerStay(_Event.mCollidedWith);
+				
 				*ptr = _Event;
 			}
 			else
 			{
-				auto & BehaviourList = GetOwner()->GetAllBehaviours();
-				for (auto & elem : BehaviourList)
-					elem->OnCollisionEnter(_Event);
+				if (!mbIsTrigger)
+					_owner->OnCollisionEnter(_Event);
+				else
+					_owner->OnTriggerEnter(_Event.mCollidedWith);
+				
 				marr_ContactSets.push_back(_Event);
 			}
 		}
@@ -163,10 +172,16 @@ namespace Dystopia
 		{
 			if (FindCollisionEvent(_Event.mOtherID))
 			{
-				auto & BehaviourList = GetOwner()->GetAllBehaviours();
-				for (auto & elem : BehaviourList)
-					elem->OnCollisionExit(_Event);
+				if (nullptr != _body)
+					_body->SetSleeping(false);
+
+				if (!mbIsTrigger)
+					_owner->OnCollisionExit(_Event);
+				else
+					_owner->OnTriggerExit(_Event.mCollidedWith);
+				
 				RemoveCollisionEvent(_Event.mOtherID);
+				
 			}
 		}
 	}
@@ -202,9 +217,29 @@ namespace Dystopia
 		return mbIsTrigger;
 	}
 
+	bool Collider::IsSleeping() const
+	{
+		const auto body = GetOwner()->GetComponent<RigidBody>();
+		if (body)
+		{
+			if (body->Get_IsStaticState()) return false;
+		}
+		return mbIsSleeping;
+	}
+
 	void Collider::SetColliding(bool _b)
 	{
 		mbColliding = _b;
+	}
+
+	void Collider::SetSleeping(bool _b)
+	{
+		mbIsSleeping = _b;
+	}
+
+	void Collider::SetTrigger(bool _b)
+	{
+		mbIsTrigger = _b;
 	}
 
 	void Collider::SetLocalPosition(Math::Point3D const & _point)
