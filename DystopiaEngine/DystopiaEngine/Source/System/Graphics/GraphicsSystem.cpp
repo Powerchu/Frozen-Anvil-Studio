@@ -416,7 +416,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 #   endif 
 	StartFrame();
 
-	glClearColor(1.0f, .7f, 1.0f, 1.f);
+	glClearColor(.05f, .05f, .05f, 1.f);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 
 	/*
