@@ -215,7 +215,7 @@ namespace Dystopia
 			EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfCharacterSpeed);
+			EGUI::GetCommandHND()->StartRecording<CharacterController>(mnOwner, &CharacterController::mfCharacterSpeed);
 			break;
 		default:
 			break;
@@ -236,7 +236,7 @@ namespace Dystopia
 			EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfJumpForce);
+			EGUI::GetCommandHND()->StartRecording<CharacterController>(mnOwner, &CharacterController::mfJumpForce);
 			break;
 		default:
 			break;

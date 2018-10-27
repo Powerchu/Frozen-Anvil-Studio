@@ -52,7 +52,8 @@ namespace Dystopia
 		using SubSys = typename Ut::MetaAutoIndexer <
 			class MeshSystem,
 			class FileSystem,
-			class LoggerSystem
+			class LoggerSystem,
+			class TextureSystem
 		>::result;
 
 		static EngineCore* GetInstance(void) noexcept;
@@ -95,7 +96,7 @@ namespace Dystopia
 		AutoArray<Systems*> mSystemList;
 		AutoArray<Systems*> mSystemTable;
 
-		float mfAccumulatedTime;
+		std::int64_t mAccumulatedTime;
 
 		EngineCore(void);
 

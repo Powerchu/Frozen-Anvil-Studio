@@ -165,7 +165,7 @@ template <typename Ty>
 inline void Dystopia::GameObject::AddComponent(ComponentTag)
 {
 	auto Comp = static_cast<ComponentDonor<Ty>*>(
-		EngineCore::GetInstance()->GetSystem<typename Ty::SYSTEM>()
+		EngineCore::GetInstance()->Get<typename Ty::SYSTEM>()
 		)->RequestComponent();
 
 	mComponents.Insert(Comp);
@@ -205,9 +205,19 @@ T* Dystopia::GameObject::GetComponent(ComponentTag) const
 {
 	for (auto& e : mComponents)
 	{
-		if (Ut::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
+		if constexpr (Ut::MetaFind<T, AllComponents>::value)
 		{
-			return static_cast<T*>(e);
+			if (Ut::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
+			{
+				return static_cast<T*>(e);
+			}
+		}
+		else
+		{
+			if (Ut::MetaFind_t<T, UsableComponents>::value == e->GetRealComponentType())
+			{
+				return static_cast<T*>(e);
+			}
 		}
 	}
 
@@ -240,9 +250,19 @@ AutoArray<T*> Dystopia::GameObject::GetComponents(ComponentTag) const
 	AutoArray<T*> temp{};
 	for (Component* e : mComponents)
 	{
-		if (Ut::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
+		if constexpr (Ut::MetaFind<T, AllComponents>::value)
 		{
-			temp.Insert(static_cast<T*>(e));
+			if (Ut::MetaFind_t<T, AllComponents>::value == e->GetComponentType())
+			{
+				temp.Insert(static_cast<T*>(e));
+			}
+		}
+		else
+		{
+			if (Ut::MetaFind_t<T, UsableComponents>::value == e->GetUsableType())
+			{
+				temp.Insert(static_cast<T*>(e));
+			}
 		}
 	}
 

@@ -74,9 +74,7 @@ Dystopia::InputManager::~InputManager(void)
 
 bool Dystopia::InputManager::Init(void)
 {
-#if !EDITOR
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
-#endif 
 	LoadDefaults();
 	return true;
 }
@@ -85,6 +83,7 @@ void Dystopia::InputManager::Update(const float _dt)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Fixed Update" };
 
+	mMouseInput.mnWheel = 0;
 	using Type = BYTE[256];
 	static Type storage{ 0 };
 	mGamePad.PollInputs();

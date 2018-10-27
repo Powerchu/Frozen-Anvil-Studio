@@ -38,6 +38,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 // SubSystems
 #include "System/Graphics/MeshSystem.h"
+#include "System/Graphics/TextureSystem.h"
 #include "System/File/FileSystem.h"
 #include "System/Logger/LoggerSystem.h"
 
@@ -45,12 +46,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Time/ScopedTimer.h"
 
 // STL Includes
+#include <chrono>
 #include <string>
 #include <filesystem>
 
 
 #define SETTINGS_DIR  eFileDir::eCurrent
-#define SETTINGS_FILE "Settings.dyst" 
+#define SETTINGS_FILE "Settings.dyst"
 
 
 
@@ -112,7 +114,7 @@ Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mTime{}, mTimeFixed{}, mfAccumulatedTime{ 0 }, mMessageQueue{ 60 }, mSystemList{ Ut::SizeofList<AllSys>::value },
+	mTime{}, mTimeFixed{}, mAccumulatedTime{ 0 }, mMessageQueue{ 60 }, mSystemList{ Ut::SizeofList<AllSys>::value },
 	mSubSystems { MakeAutoArray<void*>(Ut::MakeTypeList_t<Ut::TypeList, SubSys>{}) },
 	mSystemTable{ MakeAutoArray<Systems*>(Ut::MakeTypeList_t<Ut::TypeList, AllSys>{}) }
 {
@@ -178,12 +180,15 @@ void Dystopia::EngineCore::Init(void)
 
 	mTime.Lap();
 	mTimeFixed.Lap();
-	mfAccumulatedTime = 0;
+	mAccumulatedTime = 0;
 }
 
 void Dystopia::EngineCore::Interrupt(void)
 {
-	mfAccumulatedTime += mTimeFixed.Elapsed();
+	auto prev = mTimeFixed.Time();
+	mTimeFixed.Lap();
+
+	mAccumulatedTime += (mTimeFixed.Time() - prev).count();
 }
 
 void Dystopia::EngineCore::InterruptContinue(void)
@@ -193,26 +198,26 @@ void Dystopia::EngineCore::InterruptContinue(void)
 
 void Dystopia::EngineCore::FixedUpdate(void)
 {
-	mfAccumulatedTime += mTimeFixed.Elapsed();
+	auto prev = mTimeFixed.Time();
 	mTimeFixed.Lap();
 
-	if (mfAccumulatedTime > 1.0f)
-	{
-		mfAccumulatedTime = 1.f / 60.f;
-	}
+	mAccumulatedTime += (mTimeFixed.Time() - prev).count();
 
-	while (mfAccumulatedTime > _FIXED_UPDATE_DT)
+	if (mAccumulatedTime > 2000000000Ui64)
+		mAccumulatedTime = Math::Wrap(mAccumulatedTime, 0, Gbl::FIXEDUPDATE_DT + 1);
+
+	while (mAccumulatedTime > Gbl::FIXEDUPDATE_DT)
 	{
 		for (auto& e : mSystemList)
 		{
-			e->PreFixedUpdate(_FIXED_UPDATE_DT);
+			e->PreFixedUpdate(Gbl::FIXEDUPDATE_FDT);
 		}
 		for (auto& e : mSystemList)
 		{
-			e->FixedUpdate(_FIXED_UPDATE_DT);
+			e->FixedUpdate(Gbl::FIXEDUPDATE_FDT);
 		}
 
-		mfAccumulatedTime -= _FIXED_UPDATE_DT;
+		mAccumulatedTime -= Gbl::FIXEDUPDATE_DT;
 	}
 }
 

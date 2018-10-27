@@ -25,6 +25,12 @@ namespace Math
 
 	class Radians;
 	class Degrees;
+
+	using Vec2 = Vector2;
+	using Vec4 = Vector4;
+	using Pt3D = Vector4;
+	using Mat2 = Matrix2;
+	using Mat4 = Matrix4;
 }
 
 

@@ -97,40 +97,44 @@ namespace Dystopia
 	struct ComdModifyValue<T, Comp, Ut::Type_t<Ut::EnableIf_t<std::is_base_of<Component, Comp>::value>>>
 		: Commands
 	{
-		ComdModifyValue(const uint64_t& _objID, T* _pmData, const T& _oldV, bool * _notify = nullptr)
+		ComdModifyValue(const uint64_t& _objID, T Comp::* _pmData, const T& _oldV, bool Comp::* _notify = nullptr)
 			: mID{ _objID }, mpData{ _pmData }, 
-			mNewValue{*_pmData }, mOldValue{ _oldV }, mpNotify{ _notify }
-		{}
+			mNewValue{ }, mOldValue{ _oldV }, mpNotify{ _notify }
+		{
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			Comp *pCom = pObj->GetComponent<Comp>();
+			mNewValue = pCom->*_pmData;
+		}
 
 		bool ExecuteDo() override 
 		{
-			if (!FindComponent()) return false;
-			if (mpNotify) *mpNotify = true;
-			*mpData = mNewValue;
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			if (!pObj) return false;
+			Comp *pCom = pObj->GetComponent<Comp>();
+			if (!pCom) return false;
+
+			if (mpNotify) pCom->*mpNotify = true;
+			pCom->*mpData = mNewValue;
 			return true; 
 		}
 
 		bool ExecuteUndo() override 
 		{
-			if (!FindComponent()) return false;
-			if (mpNotify) *mpNotify = true;
-			*mpData = mOldValue;
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			if (!pObj) return false;
+			Comp *pCom = pObj->GetComponent<Comp>();
+			if (!pCom) return false;
+
+			if (mpNotify) pCom->*mpNotify = true;
+			pCom->*mpData = mOldValue;
 			return true;
 		}
 
 		bool Unchanged() const { return mOldValue == mNewValue; }
 	private:
-		Comp * FindComponent()
-		{
-			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
-			if (!pObj) return nullptr;
-			Comp *pCom = pObj->GetComponent<Comp>();
-			if (!pCom) return nullptr;
-			return pCom;
-		}
-		bool *mpNotify;
+		bool Comp::* mpNotify;
 		uint64_t mID;
-		T* mpData;
+		T Comp::* mpData;
 		T mOldValue;
 		T mNewValue;
 	}; 
@@ -139,17 +143,20 @@ namespace Dystopia
 	struct ComdModifyValue<T, Sys, Ut::Type_t<Ut::EnableIf_t<std::is_base_of<Systems, Sys>::value>>>
 		: Commands
 	{
-		ComdModifyValue(const uint64_t&, T* _pData, const T& _oldV, bool * _notify = nullptr)
-			: mpData{ _pData }, mOldValue{ _oldV }, mNewValue{ *_pData }, mpNotify{ _notify }
-		{}
+		ComdModifyValue(const uint64_t&, T Sys::* _pData, const T& _oldV, bool Sys::* _notify = nullptr)
+			: mpData{ _pData }, mOldValue{ _oldV }, mNewValue{ }, mpNotify{ _notify }
+		{
+			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
+			mNewValue = pSystem->*_pData;
+		}
 
 		bool ExecuteDo() override
 		{
 			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
 			if (!pSystem) return false;
 
-			if (mpNotify) *mpNotify = true;
-			*mpData = mNewValue;
+			if (mpNotify) pSystem->*mpNotify = true;
+			pSystem->*mpData = mNewValue;
 			return true;
 		}
 
@@ -158,15 +165,15 @@ namespace Dystopia
 			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
 			if (!pSystem) return false;
 
-			if (mpNotify) *mpNotify = true;
-			*mpData = mOldValue;
+			if (mpNotify) pSystem->*mpNotify = true;
+			pSystem->*mpData = mOldValue;
 			return true;
 		}
 
 		bool Unchanged() const { return mOldValue == mNewValue; }
 	private:
-		bool *mpNotify;
-		T* mpData;
+		bool Sys::*mpNotify;
+		T Sys::* mpData;
 		T mOldValue;
 		T mNewValue;
 	};
@@ -174,32 +181,37 @@ namespace Dystopia
 	template <typename T>
 	struct ComdModifyValue<T, GameObject, GameObject> : Commands
 	{
-		ComdModifyValue(const uint64_t& _objID, T * _pmData, const T& _oldV, bool * _notify = nullptr)
+		ComdModifyValue(const uint64_t& _objID, T GameObject::* _pmData, const T& _oldV, bool GameObject::* _notify = nullptr)
 			: mID{ _objID }, mpData{ _pmData },
-			mNewValue{ *mpData }, mOldValue{ _oldV }, mpNotify{ _notify }
-		{}
+			mNewValue{ }, mOldValue{ _oldV }, mpNotify{ _notify }
+		{
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID); 
+			mNewValue = pObj->*mpData;
+		}
 
 		bool ExecuteDo() override
 		{
-			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
-			if (mpNotify) *mpNotify = true;
-			*mpData = mNewValue;
+			GmaeObject *p = Editor::GetInstance()->FindGameObject(mID);
+			if (!p) return false;
+			if (mpNotify) p->*mpNotify = true;
+			p->*mpData = mNewValue;
 			return true;
 		}
 
 		bool ExecuteUndo() override
 		{
-			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
-			if (mpNotify) *mpNotify = true;
-			*mpData = mOldValue;
+			GmaeObject *p = Editor::GetInstance()->FindGameObject(mID);
+			if (!p) return false;
+			if (mpNotify) p->*mpNotify = true;
+			p->*mpData = mOldValue;
 			return true;
 		}
 
 		bool Unchanged() const { return mOldValue == mNewValue; }
 	private:
-		bool *mpNotify;
+		bool GameObject::* mpNotify;
 		uint64_t mID;
-		T* mpData;
+		T GameObject::* mpData;
 		T mOldValue;
 		T mNewValue;
 	};
@@ -211,48 +223,61 @@ namespace Dystopia
 	struct ComdRecord<T, Comp, Ut::Type_t<Ut::EnableIf_t<std::is_base_of_v<::Dystopia::Component, Comp>>>>
 		: RecordBase
 	{
-		ComdRecord(const uint64_t& _objID, T* rhs, bool * _notify = nullptr)
-			: mpTarget{ rhs }, mOldValue{ *rhs }, 
-			mNewValue{ mOldValue }, mID{ _objID }, mpNotify{ _notify }
-		{}
+		ComdRecord(const uint64_t& _objID, T Comp::* rhs, bool Comp::* _notify = nullptr)
+			: mpTarget{ rhs }, mOldValue{}, 
+			mNewValue{}, mID{ _objID }, mpNotify{ _notify }
+		{
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			Comp *pCom = pObj->GetComponent<Comp>();
+			mNewValue = mOldValue = pCom->*rhs;
+		}
 
 		bool EndRecord()
-		{ 
-			if (!FindComponent()) return false;
-			mNewValue = *mpTarget;
+		{
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			if (!pObj) return false;
+			Comp *pCom = pObj->GetComponent<Comp>();
+			if (!pCom) return false;
+
+			mNewValue = pCom->*mpTarget;
 			return true;
 		}
 
 		bool ExecuteDo() override	
 		{
-			if (!FindComponent()) return false;
-			if (mpNotify) *mpNotify = true;
-			*mpTarget = mNewValue; 
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			if (!pObj) return false;
+			Comp *pCom = pObj->GetComponent<Comp>();
+			if (!pCom) return false;
+			if (mpNotify) pCom->*mpNotify = true;
+			pCom->*mpTarget = mNewValue;
 			return true; 
 		}
 
 		bool ExecuteUndo() override	
 		{
-			if (!FindComponent()) return false;
-			if (mpNotify) *mpNotify = true;
-			*mpTarget = mOldValue; 
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			if (!pObj) return false;
+			Comp *pCom = pObj->GetComponent<Comp>();
+			if (!pCom) return false;
+			if (mpNotify) pCom->*mpNotify = true;
+			pCom->*mpTarget = mOldValue;
 			return true; 
 		}
 
-		bool Unchanged() const { return *mpTarget == mOldValue; }
-		T* GetPointer() { return mpTarget; }
-	private:
-		Comp * FindComponent()
+		bool Unchanged() const 
 		{
 			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
-			if (!pObj) return nullptr;
+			if (!pObj) return true;
 			Comp *pCom = pObj->GetComponent<Comp>();
-			if (!pCom) return nullptr;
-			return pCom;
+			if (!pCom) return true;
+			return pCom ->*mpTarget == mOldValue;
 		}
-		bool *mpNotify;
+		T Comp::* GetPointer() { return mpTarget; }
+	private:
+		bool Comp::* mpNotify;
 		uint64_t mID;
-		T* mpTarget;
+		T Comp::* mpTarget;
 		T mOldValue;
 		T mNewValue;
 	};
@@ -261,17 +286,20 @@ namespace Dystopia
 	struct ComdRecord<T, Sys, Ut::Type_t<Ut::EnableIf_t<std::is_base_of<Systems, Sys>::value>>>
 		: RecordBase
 	{
-		ComdRecord(const uint64_t&, T* _pData, bool * _notify = nullptr)
-			: mpTarget{ _pData }, mOldValue{ *_pData },
-			mNewValue{ mOldValue }, mpNotify{ _notify }
-		{}
+		ComdRecord(const uint64_t&, T Sys::* _pData, bool Sys::* _notify = nullptr)
+			: mpTarget{ _pData }, mOldValue{},
+			mNewValue{}, mpNotify{ _notify }
+		{
+			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
+			mNewValue = mOldValue = pSystem->*_pData;
+		}
 	
 		bool EndRecord()
 		{
 			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
 			if (!pSystem) return false;
 	
-			mNewValue = *mpTarget;
+			mNewValue = pSystem ->*mpTarget;
 			return true;
 		}
 	
@@ -280,8 +308,8 @@ namespace Dystopia
 			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
 			if (!pSystem) return false;
 	
-			if (mpNotify) *mpNotify = true;
-			*mpTarget = mNewValue;
+			if (mpNotify) pSystem->*mpNotify = true;
+			pSystem->*mpTarget = mNewValue;
 			return true;
 		}
 	
@@ -290,16 +318,21 @@ namespace Dystopia
 			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
 			if (!pSystem) return false;
 	
-			if (mpNotify) *mpNotify = true;
-			*mpTarget = mOldValue;
+			if (mpNotify) pSystem->*mpNotify = true;
+			pSystem->*mpTarget = mOldValue;
 			return true;
 		}
 	
-		bool Unchanged() const { return *mpTarget == mOldValue; }
-		T* GetPointer() { return mpTarget; }
+		bool Unchanged() const 
+		{
+			Sys *pSystem = EngineCore::GetInstance()->GetSystem<Sys>();
+			if (!pSystem) return true;
+			return pSystem ->*mpTarget == mOldValue;
+		}
+		T Sys::* GetPointer() { return mpTarget; }
 	private:
-		bool *mpNotify;
-		T* mpTarget;
+		bool Sys::* mpNotify;
+		T Sys::* mpTarget;
 		T mOldValue;
 		T mNewValue;
 	};
@@ -307,40 +340,54 @@ namespace Dystopia
 	template <typename T>
 	struct ComdRecord<T, GameObject, void> : RecordBase
 	{
-		ComdRecord(const uint64_t& _objID, T* rhs, bool * _notify = nullptr)
-			: mpTarget{ rhs }, mOldValue{ *rhs }, 
+		ComdRecord(const uint64_t& _objID, T GameObject::* rhs, bool GameObject::* _notify = nullptr)
+			: mpTarget{ rhs }, mOldValue{}, 
 			mNewValue{ mOldValue }, mID{ _objID }, mpNotify{ _notify }
-		{}
+		{
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			mNewValue = pObj->*rhs;
+		}
 
 		bool EndRecord()
 		{
-			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
-			mNewValue = *mpTarget;
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			if (!pObj) return false;
+
+			mNewValue = pObj->*mpTarget;
 			return true;
 		}
 
 		bool ExecuteDo() override
 		{
-			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
-			if (mpNotify) *mpNotify = true;
-			*mpTarget = mNewValue;
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			if (!pObj) return false;
+
+			if (mpNotify) pObj->*mpNotify = true;
+			pObj->*mpTarget = mNewValue;
 			return true;
 		}
 
 		bool ExecuteUndo() override
 		{
-			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
-			if (mpNotify) *mpNotify = true;
-			*mpTarget = mOldValue;
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			if (!pObj) return false;
+
+			if (mpNotify) pObj->*mpNotify = true;
+			pObj->*mpTarget = mOldValue;
 			return true;
 		}
 
-		bool	Unchanged() const { return *mpTarget == mOldValue; }
-		T*		GetPointer() { return mpTarget; }
+		bool	Unchanged() const 
+		{
+			GameObject *pObj = Editor::GetInstance()->FindGameObject(mID);
+			if (!pObj) return true;
+			return pObj ->*mpTarget == mOldValue;
+		}
+		T GameObject::*	 GetPointer() { return mpTarget; }
 	private:
-		bool *mpNotify;
+		bool GameObject::* mpNotify;
 		uint64_t mID;
-		T* mpTarget;
+		T GameObject::* mpTarget;
 		T mOldValue;
 		T mNewValue;
 	};

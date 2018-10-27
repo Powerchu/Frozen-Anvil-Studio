@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _ARRAY_H_
 
 #pragma warning(push)
-#pragma warning(disable : 4251)
+#pragma warning(disable : 4251) // DLL interface
 
 #include "Globals.h"
 #include "Utility/Meta.h"

@@ -44,17 +44,11 @@ namespace Dystopia
 
 		inline bool IsMasterCamera(Camera const*) const;
 
-		void SetMasterViewport(int _nX, int _nY, int _nWidth, int _nHeight) noexcept;
-		inline const Gfx::AbsViewport& GetMasterViewport(void) const noexcept;
-
-		void ApplyViewport(const Gfx::Viewport&);
-
 		CameraArr& GetAllCameras(void);
 
 
 	private:
 
-		Gfx::AbsViewport mMasterViewport;
 		Camera* mpMasterCam, *mpUICam;
 	};
 }
@@ -70,11 +64,6 @@ namespace Dystopia
 inline bool Dystopia::CameraSystem::IsMasterCamera(Dystopia::Camera const*  _pCamera) const
 {
 	return mpMasterCam == _pCamera;
-}
-
-inline const Dystopia::Gfx::AbsViewport& Dystopia::CameraSystem::GetMasterViewport(void) const noexcept
-{
-	return mMasterViewport;
 }
 
 

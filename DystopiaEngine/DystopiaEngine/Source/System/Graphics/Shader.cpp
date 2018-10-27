@@ -95,9 +95,19 @@ void Dystopia::Shader::CreateShader(const std::string& _strVert, const std::stri
 	glDeleteShader(geo);
 }
 
-void Dystopia::Shader::UseShader(void) const
+void Dystopia::Shader::Bind(void) const
 {
 	glUseProgram(mnShaderID);
+}
+
+void Dystopia::Shader::Unbind(void) const
+{
+	glUseProgram(0);
+}
+
+unsigned Dystopia::Shader::GetID(void) const
+{
+	return mnShaderID;
 }
 
 void Dystopia::Shader::LoadShader(unsigned _nProg, const std::string& _path)
@@ -131,58 +141,62 @@ void Dystopia::Shader::LoadShader(unsigned _nProg, const std::string& _path)
 		glGetShaderInfoLog(_nProg, nStatus, &nStatus, &log[0]);
 
 		std::printf("Shader Compile Error : %s", log.c_str());
+
+#   if defined(_DEBUG) | defined(DEBUG)
+		__debugbreak();
+#   endif 
 	}
 
 #endif		//  PRINT_ERRORS
 }
 
-int Dystopia::Shader::GetUniformLocation(const std::string& _strName)
+int Dystopia::Shader::GetUniformLocation(char const* _strName) const
 {
-	return glGetUniformLocation(mnShaderID, _strName.c_str());
+	return glGetUniformLocation(mnShaderID, _strName);
 }
 
 
-void Dystopia::Shader::UploadUniform(const std::string& _strName, float _f)
+void Dystopia::Shader::UploadUniform(char const* _strName, float _f) const
 {
 	glUniform1f(GetUniformLocation(_strName), _f);
 }
 
-void Dystopia::Shader::UploadUniform(const std::string& _strName, float _f1, float _f2)
+void Dystopia::Shader::UploadUniform(char const* _strName, float _f1, float _f2) const
 {
 	glUniform2f(GetUniformLocation(_strName), _f1, _f2);
 }
 
-void Dystopia::Shader::UploadUniform(const std::string& _strName, float _f1, float _f2, float _f3)
+void Dystopia::Shader::UploadUniform(char const* _strName, float _f1, float _f2, float _f3) const
 {
 	glUniform3f(GetUniformLocation(_strName), _f1, _f2, _f3);
 }
 
-void Dystopia::Shader::UploadUniform(const std::string& _strName, float _f1, float _f2, float _f3, float _f4)
+void Dystopia::Shader::UploadUniform(char const* _strName, float _f1, float _f2, float _f3, float _f4) const
 {
 	glUniform4f(GetUniformLocation(_strName), _f1, _f2, _f3, _f4);
 }
 
-void Dystopia::Shader::UploadUniform(const std::string& _strName, const Math::Vector2& _v)
+void Dystopia::Shader::UploadUniform(char const * _strName, const Math::Vector2& _v) const
 {
 	glUniform2fv(GetUniformLocation(_strName), 1, reinterpret_cast<float const*>(&_v));
 }
 
-void Dystopia::Shader::UploadUniform(const std::string& _strName, const Math::Vector4& _v)
+void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Vector4& _v) const
 {
 	glUniform4fv(GetUniformLocation(_strName), 1, reinterpret_cast<float const*>(&_v));
 }
 
-void Dystopia::Shader::UploadUniform3(const std::string& _strName, const Math::Vector4& _v)
+void Dystopia::Shader::UploadUniform3(char const* _strName, const Math::Vector4& _v) const
 {
 	glUniform3fv(GetUniformLocation(_strName), 1, reinterpret_cast<float const*>(&_v));
 }
 
-void Dystopia::Shader::UploadUniform(const std::string& _strName, const Math::Matrix2& _m)
+void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Matrix2& _m) const
 {
 	glUniform4fv(GetUniformLocation(_strName), 1, reinterpret_cast<float const*>(&_m));
 }
 
-void Dystopia::Shader::UploadUniform(const std::string& _strName, const Math::Matrix4& _m)
+void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Matrix4& _m) const
 {
 	glUniformMatrix4fv(
 		GetUniformLocation(_strName), 1, GL_TRUE, reinterpret_cast<float const*>(&_m)
