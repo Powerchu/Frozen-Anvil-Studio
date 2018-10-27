@@ -7,7 +7,7 @@
 #include "System/Time/ScopedTimer.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
-#include "Behaviour/Behaviour.h"
+
 #include <utility>
 #include <map>
 #include "System/Graphics/Shader.h"
@@ -57,8 +57,8 @@ namespace Dystopia
 		ScopedTimer<ProfilerAction> timeKeeper{ "Collision System", "Update" };
 
 		BoundingColliderNode		mCollisionTree;
-		static PotentialContacts	ArrayContacts[1024]{};
-		static unsigned				ContactCount;
+		//static PotentialContacts	ArrayContacts[1024]{};
+		//static unsigned				ContactCount;
 
 		for (auto& conv : ComponentDonor<Convex>::mComponents)
 		{
@@ -100,7 +100,7 @@ namespace Dystopia
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
-				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
+				//mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 		}
 
@@ -113,7 +113,7 @@ namespace Dystopia
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
-				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
+				//mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 
 		}
@@ -127,7 +127,7 @@ namespace Dystopia
 				elem.SetOwnerTransform(gobjMatrix);
 				elem.SetColliding((false));
 				mColliders.push_back(&elem);
-				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
+				//mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
 
 		}

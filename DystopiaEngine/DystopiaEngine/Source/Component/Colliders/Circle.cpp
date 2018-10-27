@@ -267,16 +267,11 @@ namespace Dystopia
 				}
 			}
 			if (isInside)
-			{
 				newEvent.mEdgeNormal = newEvent.mEdgeNormal.Normalise();
-				InformOtherComponents(true, newEvent);
-			}
-			else
-			{
-				InformOtherComponents(true, newEvent);
-			}
+			
 
 		}
+		InformOtherComponents(isInside, newEvent);
 		//if (isInside)
 		//{
  	//		InformOtherComponents(true, newEvent);
@@ -376,11 +371,23 @@ namespace Dystopia
 		}
 	}
 
+	void Circle::eIsTriggerCheckBox()
+	{
+		bool tempBool = mbIsTrigger;
+
+		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
+		{
+			mbIsTrigger = tempBool;
+			EGUI::GetCommandHND()->InvokeCommand<Collider>(&Collider::mbIsTrigger, tempBool);
+		}
+	}
+
 	void Circle::EditorUI() noexcept
 	{
+		eAttachedBodyEmptyBox();
+		eIsTriggerCheckBox();
 		ePositionOffsetVectorFields();
 		eScaleField();
-		eAttachedBodyEmptyBox();
 		eNumberOfContactsLabel();
 	}
 #endif

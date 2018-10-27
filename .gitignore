@@ -292,7 +292,6 @@ __pycache__/
 *.dystor
 /DystopiaEngine/DystopiaEngine/.vscode
 /DystopiaEngine/DystopiaEngine/Resource/Asset/Character
-/DystopiaEngine/DystopiaEngine/Resource/Asset/Environment
 /DystopiaEngine/DystopiaEngine/Resource/Asset/Monster
 /DystopiaEngine/DystopiaEngine/Resource/Asset/NPCs
 /DystopiaEngine/DystopiaEngine/Resource/Asset/Skills

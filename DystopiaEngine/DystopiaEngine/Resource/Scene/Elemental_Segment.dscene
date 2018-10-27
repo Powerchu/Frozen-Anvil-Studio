@@ -1,5 +1,5 @@
 [START_Scene]
-367001600,Elemental_Segment,11,[START_START_GO_DATA]
+367001600,Elemental_Segment,12,[START_START_GO_DATA]
 18446744072627422720,97,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
@@ -98,6 +98,15 @@
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072777388032,65,Ball,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,8,1,0,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]
@@ -108,7 +117,7 @@
 
 [END_Component End]
 [START_ComponentDonor]
-7,
+8,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -152,8 +161,14 @@
 [END_Renderer]
 
 [END_Component End]
+[START_Component]
+[START_Renderer]
+769153536,1,18446744072777388032,..\DystopiaEngine\Resource\Editor\red_circle.png,
+[END_Renderer]
+
+[END_Component End]
 [START_ComponentDonor]
-5,
+6,
 [END_ComponentDonor End]
 [START_Component]
 [START_RigidBody]
@@ -182,6 +197,12 @@
 [START_Component]
 [START_RigidBody]
 1952528896,0,1952527872,0,0.999,0.1,0.5,0.5,0.2,0,1.3,300,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744071796971008,1,18446744072777388032,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -222,8 +243,14 @@
 
 [END_Component End]
 [START_ComponentDonor]
-0,
+1,
 [END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744072916326400,1,18446744072777388032,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]

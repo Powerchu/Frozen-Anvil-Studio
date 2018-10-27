@@ -92,6 +92,7 @@ namespace Dystopia
 		// INFO
 		void eAttachedBodyEmptyBox();
 		void eNumberOfContactsLabel();
+		void eIsTriggerCheckBox();
 
 		// Editor UI
 		void EditorUI(void) noexcept override;
