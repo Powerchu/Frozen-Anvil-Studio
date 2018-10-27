@@ -86,6 +86,9 @@ namespace Dystopia
 		AutoArray<SpriteSheet> mAnimations;
 		unsigned mnID, mnCol, mnRow;
 		float mfFrameTime, mfAccTime;
+
+		bool mbPlayAnim;
+		int mnTotalCols, mnTotalRows;
 	};
 }
 

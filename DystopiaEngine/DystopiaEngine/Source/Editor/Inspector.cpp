@@ -142,6 +142,7 @@ namespace Dystopia
 			}
 			EGUI::SameLine();
 			EGUI::ChangeAlignmentYOffset(0);
+			j = (mpFocus->GetFlags() & FLAG_LAYER_WORLD) ? 1 : (mpFocus->GetFlags() & FLAG_LAYER_UI) ? 2 : 0;
 			if (EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80))
 			{
 				switch (j)

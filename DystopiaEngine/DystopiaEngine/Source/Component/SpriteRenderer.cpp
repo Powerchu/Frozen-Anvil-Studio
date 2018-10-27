@@ -31,7 +31,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::SpriteRenderer::SpriteRenderer(void) noexcept
 	: Renderer{}, mAnimations{ 1 }, mnID{ 0 }, mnCol{ 0 }, mnRow{ 0 },
-	mfFrameTime{ 0 }, mfAccTime{ 0 }, mpAtlas{ nullptr }
+	mfFrameTime{ 0.016f }, mfAccTime{ 0 }, mpAtlas{ nullptr }, mbPlayAnim{ false },
+	mnTotalCols{ 1 }, mnTotalRows{ 1 }
 {
 
 }
@@ -39,7 +40,8 @@ Dystopia::SpriteRenderer::SpriteRenderer(void) noexcept
 Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexcept
 	: Renderer{ Ut::Move(_rhs) }, mAnimations{ Ut::Move(_rhs.mAnimations) }, 
 	mnID{ Ut::Move(_rhs.mnID) }, mnCol{ Ut::Move(_rhs.mnCol) }, mnRow{ Ut::Move(_rhs.mnRow) },
-	mfFrameTime{ Ut::Move(_rhs.mfFrameTime) }, mfAccTime{ Ut::Move(_rhs.mfAccTime) }, mpAtlas{ Ut::Move(_rhs.mpAtlas) }
+	mfFrameTime{ Ut::Move(_rhs.mfFrameTime) }, mfAccTime{ Ut::Move(_rhs.mfAccTime) }, mpAtlas{ Ut::Move(_rhs.mpAtlas) },
+	mbPlayAnim{ Ut::Move(_rhs.mbPlayAnim) }, mnTotalCols{ Ut::Move(_rhs.mnTotalCols) }, mnTotalRows{ Ut::Move(_rhs.mnTotalRows) }
 {
 	_rhs.mpAtlas = nullptr;
 }
@@ -47,7 +49,8 @@ Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexce
 Dystopia::SpriteRenderer::SpriteRenderer(const SpriteRenderer& _rhs) noexcept
 	: Renderer{ _rhs }, mAnimations{ _rhs.mAnimations },
 	mnID{ _rhs.mnID }, mnCol{ _rhs.mnCol }, mnRow{_rhs.mnRow },
-	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, mpAtlas{ _rhs.mpAtlas }
+	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, mpAtlas{ _rhs.mpAtlas },
+	mbPlayAnim{ _rhs.mbPlayAnim }, mnTotalCols{ _rhs.mnTotalCols }, mnTotalRows{ _rhs.mnTotalRows }
 {
 }
 
@@ -58,6 +61,14 @@ void Dystopia::SpriteRenderer::Init(void)
 	if (auto tex = GetTexture())
 	{
 		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(tex->GetName());
+		SpriteSheet a;
+		a.mnCol = mnTotalCols;
+		a.mnRow = mnTotalRows;
+		a.mnID = 0;
+		a.mstrName = "testing spritesheet";
+		mAnimations.Insert(a);
+		SetAnimation("testing spritesheet");
+		mpAtlas->AddSection(Math::Vec2{ 0,0 }, tex->GetWidth() / a.mnCol, tex->GetHeight() / a.mnRow);
 	}
 }
 
@@ -75,7 +86,7 @@ void Dystopia::SpriteRenderer::Draw(void) const noexcept
 
 void Dystopia::SpriteRenderer::Update(float _fDT)
 {
-	if (mpAtlas)
+	if (mpAtlas && mbPlayAnim)
 	{
 		mpAtlas->SetTexture(GetTexture());
 
@@ -83,16 +94,15 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 
 		while (mfAccTime > mfFrameTime)
 		{
-			if (++mnCol > mAnimations[mnID].mnCol)
+			if (++mnCol >= mAnimations[mnID].mnCol)
 			{
 				mnCol = 0;
 
-				if (++mnRow > mAnimations[mnID].mnRow)
+				if (++mnRow >= mAnimations[mnID].mnRow)
 				{
 					mnRow = 0;
 				}
 			}
-
 			mfAccTime -= mfFrameTime;
 		}
 	}
@@ -127,7 +137,6 @@ Dystopia::SpriteRenderer* Dystopia::SpriteRenderer::Duplicate(void) const
 void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Sprite Renderer");
-	Component::Serialise(_out);
 	Renderer::Serialise(_out);
 	_out.InsertEndBlock("Sprite Renderer");
 }
@@ -135,7 +144,6 @@ void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
 void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 {
 	_in.ConsumeStartBlock();
-	Component::Unserialise(_in);
 	Renderer::Unserialise(_in);
 	_in.ConsumeEndBlock();
 }
@@ -145,7 +153,13 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 #if EDITOR
 	Renderer::EditorUI();
 	EGUI::PushLeftAlign(80);
-	switch (EGUI::Display::DragFloat("Speed", &mfFrameTime, 0.01f, 0.f, 1.f))
+
+	if (EGUI::Display::CheckBox("Play", &mbPlayAnim))
+	{
+		EGUI::GetCommandHND()->InvokeCommand<SpriteRenderer>(mnOwner, &SpriteRenderer::mbPlayAnim, !mbPlayAnim);
+	}
+
+	switch (EGUI::Display::DragFloat("Speed", &mfFrameTime, 0.01f, 0.016f, 1.f))
 	{
 	case EGUI::eDragStatus::eEND_DRAG:
 	case EGUI::eDragStatus::eTABBED:
@@ -161,6 +175,41 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	case EGUI::eDragStatus::eDRAGGING:
 		break;
 	}
+	
+	switch (EGUI::Display::DragInt("Columns", &mnTotalCols, 1, 1, INT_MAX))
+	{
+	case EGUI::eDragStatus::eEND_DRAG:
+	case EGUI::eDragStatus::eTABBED:
+	case EGUI::eDragStatus::eDEACTIVATED:
+	case EGUI::eDragStatus::eENTER:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	case EGUI::eDragStatus::eSTART_DRAG:
+		EGUI::GetCommandHND()->StartRecording<SpriteRenderer>(mnOwner, &SpriteRenderer::mnTotalCols);
+		break;
+	default:
+	case EGUI::eDragStatus::eNO_CHANGE:
+	case EGUI::eDragStatus::eDRAGGING:
+		break;
+	}
+
+	switch (EGUI::Display::DragInt("Rows", &mnTotalRows, 1, 1, INT_MAX))
+	{
+	case EGUI::eDragStatus::eEND_DRAG:
+	case EGUI::eDragStatus::eTABBED:
+	case EGUI::eDragStatus::eDEACTIVATED:
+	case EGUI::eDragStatus::eENTER:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	case EGUI::eDragStatus::eSTART_DRAG:
+		EGUI::GetCommandHND()->StartRecording<SpriteRenderer>(mnOwner, &SpriteRenderer::mnTotalRows);
+		break;
+	default:
+	case EGUI::eDragStatus::eNO_CHANGE:
+	case EGUI::eDragStatus::eDRAGGING:
+		break;
+	}
+
 	EGUI::PopLeftAlign();
 #endif
 }
