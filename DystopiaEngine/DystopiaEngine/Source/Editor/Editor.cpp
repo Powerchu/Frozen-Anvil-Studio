@@ -32,6 +32,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/File/FileSystem.h"
 #include "System//Behaviour/BehaviourSystem.h"
 #include "System/Physics/PhysicsSystem.h"
+#include "System/Input/InputSystem.h"
 #include "IO/BinarySerializer.h"
 #include "Utility/GUID.h"
 
@@ -41,7 +42,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/Editor.h"
 #include "Editor/ProjectSettings.h"
-#include "Editor/EditorInputs.h"
 #include "Editor/EditorEvents.h"
 #include "Editor/Commands.h"
 #include "Editor/Inspector.h"
@@ -55,6 +55,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/StyleScheme.h"
 #include "Editor/Clipboard.h"
 #include "Editor/SpritePreviewer.h"
+#include "Editor/SpriteEditor.h"
 
 #include "Allocator/DefaultAlloc.h"
 #include "DataStructure/HashString.h"
@@ -68,6 +69,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <objbase.h>
 
 #include "System/Input/XGamePad.h"
+
+#include "Editor/EditorProc.h"
+#include "Editor/EditorInput.h"
 
 namespace
 {
@@ -87,39 +91,6 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-	/*const char arr[] = "Array!";
-	const char *ptr = "Ptr!";
-
-	HashString charArr{ arr };
-	HashString charPtr{ ptr };
-	HashString copyCtor{ charArr };
-	HashString moveCtor{ Ut::Move(copyCtor) };
-
-	HashString Apple{ "apple" };
-	HashString Orange = HashString{ "Orange" };
-	HashString Grapes = "Grapes";
-
-	HashString Gra{Grapes.cbegin(), Grapes.cbegin() + 3};
-
-	Grapes += Apple;
-	Orange += "Pear";
-	HashString Banana{ "Banana" };
-	Banana = "Avacado" + Grapes;
-
-	bool testEquate = Grapes == Apple;
-	bool testEquate2 = Apple == Apple;
-
-	HashString testRemove{ "Remove Something Here" };
-	testRemove.erase(6, 12);
-
-	HashString testReplace{ "dae" };
-	testReplace.replace(1, 8, Apple);
-
-	HashString testFind{ "Find me Something" };
-	size_t pos = testFind.rfind("me");
-
-	HashString subStr{ "Sub my string" };
-	HashString sub = subStr.substr(4, 6);*/
 
 	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
 	editor->Init();
@@ -153,9 +124,10 @@ namespace Dystopia
 	Editor::Editor(void)
 		: mCurrentState{ EDITOR_MAIN }, mNextState{ mCurrentState }, mpWin{ nullptr }, mpGfx{ nullptr },
 		mpSceneSystem{ nullptr }, mpProfiler{ nullptr }, mTempSaveFile{}, mSceneHasChanged{ true },
-		mpEditorEventSys{ new EditorEventHandler{} }, mpInput{ new EditorInput{} },
+		mpEditorEventSys{ new EditorEventHandler{} },
 		mpComdHandler{ new CommandHandler{} }, mpGuiSystem{ new GuiSystem{} }, mpTimer{ new Timer{} },
-		mpClipBoard{ new Clipboard{} }, mCtrlKey{ false }, mArrSelectedObj{ 100 }, mUpdateSelection{ true }
+		mpClipBoard{ new Clipboard{} }, mArrSelectedObj{ 100 }, mUpdateSelection{ true },
+		mpEditorInput{ new EditorInput{}  }
 	{}
 
 	Editor::~Editor(void)
@@ -172,6 +144,7 @@ namespace Dystopia
 		mArrTabs.push_back(ConsoleLog::GetInstance());
 		mArrTabs.push_back(PerformanceLog::GetInstance());
 		mArrTabs.push_back(SpritePreviewer::GetInstance());
+		mArrTabs.push_back(SpriteEditor::GetInstance());
 		mArrTabs.push_back(ColorScheme::GetInstance());
 		mArrTabs.push_back(StyleScheme::GetInstance());
 	}
@@ -206,7 +179,7 @@ namespace Dystopia
 		mpProfiler		= mpDriver->GetSystem<Profiler>();			// driver init-ed
 		mpBehaviourSys	= mpDriver->GetSystem<BehaviourSystem>();	// driver init-ed
 
-		if (!mpGuiSystem->Init(mpWin, mpGfx, mpInput))
+		if (!mpGuiSystem->Init(mpWin, mpGfx, mpEditorInput))
 		{
 			mCurrentState = EDITOR_EXIT;
 			return;
@@ -214,7 +187,8 @@ namespace Dystopia
 		
 		LoadDefaults();
 		LoadTabs();
-		mpInput->Init();
+
+		mpEditorInput->Init();
 		mpEditorEventSys->Init();
 		InstallHotkeys();
 		for (auto& e : mArrTabs)
@@ -225,20 +199,19 @@ namespace Dystopia
 			e->Init();
 		}
 		LoadSettings();
+
 		EGUI::SetContext(mpComdHandler);
 	}
 
 	void Editor::StartFrame()
 	{
-		mCtrlKey = false;
 		mDeltaTime = mpTimer->Elapsed();
 		mpTimer->Lap();
 		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow())
-		{
-			mpInput->Update(mDeltaTime);
-		}
+			mpEditorInput->Poll();
 		switch (mCurrentState)
 		{
+		case EDITOR_PROMPT_SAVE:
 		case EDITOR_MAIN:
 			mpProfiler->Update(mDeltaTime);
 			mpWin->Update(mDeltaTime);
@@ -304,26 +277,25 @@ namespace Dystopia
 
 	void Editor::EndFrame()
 	{
+		mpEditorInput->Clear();
 		if (mUpdateSelection)
 		{
 			UpdateSelections();
 			mUpdateSelection = false;
 		}
-
-		mSceneHasChanged = (mSceneHasChanged | (&mpSceneSystem->GetCurrentScene() != &mpSceneSystem->GetActiveScene()));
 		LogTabPerformance();
+		mSceneHasChanged = (mSceneHasChanged | (&mpSceneSystem->GetCurrentScene() != &mpSceneSystem->GetActiveScene()));
 		EngineCore::GetInstance()->PostUpdate();
 		mpBehaviourSys->PostUpdate();
 		if (mSceneHasChanged)
 		{
 			for (auto& e : mArrTabs)
 				e->SetSceneContext(&mpSceneSystem->GetActiveScene());
-			mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
+			mpEditorEventSys->Fire(EDITOR_SCENE_CHANGED);
 			auto name = mpSceneSystem->GetActiveScene().GetSceneName();
 			mpWin->GetMainWindow().SetTitle(std::wstring{ name.begin(), name.end() });
 			mSceneHasChanged = false;
 		}
-
 		mpGuiSystem->EndFrame(); 
 		if (mCurrentState != mNextState)  UpdateState();
 	}
@@ -339,27 +311,18 @@ namespace Dystopia
 			e->Shutdown();
 			delete e;
 		}
-		mpInput->Shutdown();
 		mpEditorEventSys->Shutdown();
 		mpComdHandler->Shutdown();
 		mpGuiSystem->Shutdown();
+		mpEditorInput->Shutdown();
 		EGUI::Docking::ShutdownTabs();
 		mpClipBoard->Close();
-		delete mpInput;
 		delete mpEditorEventSys;
 		delete mpComdHandler;
 		delete mpGuiSystem;
 		delete mpTimer;
 		delete mpClipBoard;
-		mpEditorEventSys	= nullptr;
-		mpInput				= nullptr;
-		mpComdHandler		= nullptr;
-		mpGuiSystem			= nullptr;
-		mpTimer				= nullptr;
-		mpWin				= nullptr;
-		mpGfx				= nullptr;
-		mpProfiler			= nullptr;
-		mpBehaviourSys		= nullptr;
+		delete mpEditorInput;
 		mpDriver->Shutdown();
 		EGUI::RemoveContext();
 	}
@@ -495,10 +458,6 @@ namespace Dystopia
 			mpClipBoard->InsertData(eCLIP_GAME_OBJECT, reinterpret_cast<void*>(o), sizeof(GameObject));
 	}
 
-	void Editor::EditorCut()
-	{
-	}
-
 	void Editor::EditorPaste()
 	{
 		auto toPaste = mpClipBoard->RetrieveDatas(eCLIP_GAME_OBJECT, sizeof(GameObject));
@@ -568,16 +527,12 @@ namespace Dystopia
 			std::wstring name{ sceneName.begin(), sceneName.end() };
 			auto pos = name.find('*.');
 			if (pos != std::string::npos)
-			{
 				name.erase(pos);
-			}
 			else
 			{
 				pos = name.find('.');
 				if (pos != std::string::npos)
-				{
 					name.erase(pos);
-				}
 			}
 			mpWin->GetMainWindow().SetTitle(name.c_str());
 		}
@@ -586,92 +541,28 @@ namespace Dystopia
 
 	void Editor::SaveAsProc()
 	{
-		HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-		if (SUCCEEDED(hr))
+		EditorProc p;
+		HashString path;
+		HashString name;
+		if (p.SaveAs(name, path, mpWin->GetMainWindow().GetWindowHandle()))
 		{
-			IFileSaveDialog *pFileSave;
-			hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL,
-				IID_IFileSaveDialog, reinterpret_cast<void**>(&pFileSave));
-			if (SUCCEEDED(hr))
-			{
-				pFileSave->SetDefaultExtension(DYSTOPIA_SCENE_EXTENSION.c_str());
-				pFileSave->SetFileTypes(1, DYSTOPIA_SCENE_FILTER_EXTENSION);
-				if (SUCCEEDED(pFileSave->Show(mpWin->GetMainWindow().GetWindowHandle())))
-				{
-					IShellItem *pItem;
-					if (SUCCEEDED(pFileSave->GetResult(&pItem)))
-					{
-						PWSTR pszFilePath, pszFileName;
-						if (SUCCEEDED(pItem->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &pszFilePath)) &&
-							SUCCEEDED(pItem->GetDisplayName(SIGDN_NORMALDISPLAY, &pszFileName)))
-						{
-							std::wstring path{ pszFilePath };
-							std::wstring name{ pszFileName };
-							auto pos = name.find('*.');
-							if (pos != std::string::npos)
-							{
-								name.erase(pos);
-							}
-							else
-							{
-								pos = name.find('.');
-								if (pos != std::string::npos)
-								{
-									name.erase(pos);
-								}
-							}
-							mpWin->GetMainWindow().SetTitle(name.c_str());
-							mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() }, 
-													 std::string{ name.begin(), name.end() });
-							mpComdHandler->SaveCallback();
-							CoTaskMemFree(pszFilePath);
-						}
-						pItem->Release();
-					}
-				}
-				pFileSave->Release();
-			}
-			CoUninitialize();
+			mpWin->GetMainWindow().SetTitle(std::wstring{name.begin(), name.end()});
+			mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() },
+				std::string{ name.begin(), name.end() });
+			mpComdHandler->SaveCallback();
 		}
 	}
 
 	void Editor::LoadProc()
 	{
-		HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-		if (SUCCEEDED(hr))
+		EditorProc p;
+		HashString path;
+		HashString name;
+		if (p.Load(path))
 		{
-			IFileOpenDialog *pFileOpen;
-			hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, 
-				IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
-			if (SUCCEEDED(hr))
-			{
-				pFileOpen->SetFileTypes(1, DYSTOPIA_SCENE_FILTER_EXTENSION);
-				if (SUCCEEDED(pFileOpen->Show(NULL)))
-				{
-					IShellItem *pItem;					
-					if (SUCCEEDED(pFileOpen->GetResult(&pItem)))
-					{
-						PWSTR pszFilePath, pszFileName;
-						hr = pItem->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &pszFilePath);
-						if (SUCCEEDED(hr) && 
-							SUCCEEDED(pItem->GetDisplayName(SIGDN_NORMALDISPLAY, &pszFileName)))
-						{
-							std::wstring path{ pszFilePath };
-							std::wstring name{ pszFileName };
-							auto pos = name.find('.');
-							if (pos != std::string::npos)
-							{
-								name.erase(pos);
-							}
-							OpenScene(path, name);
-							CoTaskMemFree(pszFilePath);
-						}
-						pItem->Release();
-					}
-				}
-				pFileOpen->Release();
-			}
-			CoUninitialize();
+			mArrSelectedObj.clear();
+			ClearSelections();
+			mpSceneSystem->LoadScene(std::string{ path.begin(), path.end() });
 		}
 	}
 
@@ -707,9 +598,6 @@ namespace Dystopia
 	{
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ENTER, false);
 		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ESCAPE, false);
-		mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, false);
-		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, false);
-		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, false);
 		for (int i = eButton::KEYBOARD_BACKSPACE; i <= eButton::KEYBOARD_TAB; ++i)
 			mpGuiSystem->UpdateKey(i, false);
 		for (int i = eButton::KEYBOARD_SPACEBAR; i <= eButton::KEYBOARD_HOME; ++i)
@@ -719,86 +607,84 @@ namespace Dystopia
 		for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
 			mpGuiSystem->UpdateKey(i, false);
 
-		bool caps = mpInput->IsKeyPressed(KEY_SHIFT);
-		mCtrlKey = mpInput->IsKeyPressed(KEY_CTRL);
-		if (!mCtrlKey)
-		{
-			const auto& queue = mpWin->GetMainWindow().GetInputQueue();
-			for (const auto& k : queue)
-			{
-				// 0 to 9
-				if (k >= eButton::KEYBOARD_0 && k <= eButton::KEYBOARD_9)
-					mpGuiSystem->UpdateChar(k);
-				// A to Z
-				else if (k >= eButton::KEYBOARD_A && k <= eButton::KEYBOARD_Z)
-					mpGuiSystem->UpdateChar(caps ? k : k + 32);
-				// numpad 0 to 9
-				else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
-					mpGuiSystem->UpdateChar(k - 48);
-				// arithmetics
-				else if (k == eButton::KEYBOARD_OEM_PERIOD)
-					mpGuiSystem->UpdateChar(46);
-				else if (k == eButton::KEYBOARD_OEM_MINUS)
-					mpGuiSystem->UpdateChar(caps ? 95 : 45);
-				else if (k == eButton::KEYBOARD_SPACEBAR)
-					mpGuiSystem->UpdateChar(32);
-				// misc keys like ctrl, del, back etc
-				else
-					mpGuiSystem->UpdateKey(k, true);
-			}
-		}
-		mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, caps);
-		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, mpInput->IsKeyPressed(KEY_ALT));
-		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, mCtrlKey);
+		bool ctrl = mpEditorInput->Get()->IsKeyPressed(eButton::KEYBOARD_LCTRL);
+		bool shft = mpEditorInput->Get()->IsKeyPressed(eButton::KEYBOARD_LSHIFT);
+		bool alt = mpEditorInput->Get()->IsKeyPressed(eButton::KEYBOARD_LALT);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_SHIFT, shft);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_ALT, alt);
+		mpGuiSystem->UpdateKey(eButton::KEYBOARD_CTRL, ctrl);
 
-		/* Editor allowed special events to run in game mode*/
-		if (mpInput->IsKeyTriggered(KEY_LMOUSE))
+		if (ctrl)
+			return;
+
+		const auto& queue = mpWin->GetMainWindow().GetInputQueue();
+		for (const auto& k : queue)
 		{
-			mpGuiSystem->UpdateMouse(KEY_LMOUSE, true);
-			mpEditorEventSys->Fire(EDITOR_LCLICK);
+			if (k >= eButton::KEYBOARD_0 && k <= eButton::KEYBOARD_9)
+				mpGuiSystem->UpdateChar(k);
+			else if (k >= eButton::KEYBOARD_A && k <= eButton::KEYBOARD_Z)
+				mpGuiSystem->UpdateChar(shft ? k : k + 32);
+			else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
+				mpGuiSystem->UpdateChar(k - 48);
+			else if (k == eButton::KEYBOARD_OEM_PERIOD)
+				mpGuiSystem->UpdateChar(46);
+			else if (k == eButton::KEYBOARD_OEM_MINUS)
+				mpGuiSystem->UpdateChar(shft ? 95 : 45);
+			else if (k == eButton::KEYBOARD_SPACEBAR)
+				mpGuiSystem->UpdateChar(32);
+			else
+				mpGuiSystem->UpdateKey(k, true);
 		}
-		if (mpInput->IsKeyTriggered(KEY_RMOUSE))
-		{
-			mpGuiSystem->UpdateMouse(KEY_RMOUSE, true);
-			mpEditorEventSys->Fire(EDITOR_RCLICK);
-		}
-		float scrollV = mpInput->GetMouseWheel();
+		float scrollV = mpEditorInput->Get()->GetMouseWheel();
 		if (scrollV)
 		{
 			mpGuiSystem->UpdateScroll(0, scrollV);
 			mpEditorEventSys->Fire(scrollV > 0 ? EDITOR_SCROLL_UP : EDITOR_SCROLL_DOWN);
 		}
-		if (!mCtrlKey && !mpInput->IsKeyPressed(KEY_ALT))
-		{
-			if (mpInput->IsKeyTriggered(KEY_W))			mpEditorEventSys->Fire(EDITOR_W);
-			else if (mpInput->IsKeyTriggered(KEY_E))	mpEditorEventSys->Fire(EDITOR_E);
-		}
 	}
 
 	void Editor::UpdateHotkeys()
 	{
-		if (mCtrlKey)
-		{
-			auto s = mpInput->IsKeyPressed(KEY_SHIFT) ? EDITOR_HOTKEY_SAVEAS : EDITOR_HOTKEY_SAVE;
-			if (mpInput->IsKeyTriggered(KEY_Z))			mpEditorEventSys->Fire(EDITOR_HOTKEY_UNDO);
-			else if (mpInput->IsKeyTriggered(KEY_Y))	mpEditorEventSys->Fire(EDITOR_HOTKEY_REDO);
-			else if (mpInput->IsKeyTriggered(KEY_C))	mpEditorEventSys->Fire(EDITOR_HOTKEY_COPY);
-			else if (mpInput->IsKeyTriggered(KEY_X))	mpEditorEventSys->Fire(EDITOR_HOTKEY_CUT);
-			else if (mpInput->IsKeyTriggered(KEY_V))	mpEditorEventSys->Fire(EDITOR_HOTKEY_PASTE);
-			else if (mpInput->IsKeyTriggered(KEY_S))	mpEditorEventSys->Fire(s);
-			else if (mpInput->IsKeyTriggered(KEY_P))	mpEditorEventSys->Fire(EDITOR_HOTKEY_PLAY);
-			else if (mpInput->IsKeyTriggered(KEY_O))	mpEditorEventSys->Fire(EDITOR_HOTKEY_OPEN);
-			else if (mpInput->IsKeyTriggered(KEY_N))	mpEditorEventSys->Fire(EDITOR_HOTKEY_NEW);
-		}
-		else if (mpInput->IsKeyTriggered(KEY_DELETE))	
+		if (mpEditorInput->Get()->IsKeyTriggered(eButton::MOUSE_LEFT))
+			mpEditorEventSys->Fire(EDITOR_LCLICK);
+
+		if (mpEditorInput->Hotkeys(Hotkey::g_KeyDelete, Hotkey::g_StateDelete, g_CountDefault))
 			mpEditorEventSys->Fire(EDITOR_HOTKEY_DELETE);
 
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyOpen, Hotkey::g_StateOpen, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_OPEN);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyUndo, Hotkey::g_StateUndo, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_UNDO);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyRedo, Hotkey::g_StateRedo, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_REDO);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyCopy, Hotkey::g_StateCopy, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_COPY);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyPaste, Hotkey::g_StatePaste, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_PASTE);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyPlayStop, Hotkey::g_StatePlayStop, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_PLAY);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeySaveAs, Hotkey::g_StateSaveAs, g_CountSaveAs))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVEAS);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeySave, Hotkey::g_StateSave, g_CountDefault))
+			mpEditorEventSys->Fire(EDITOR_HOTKEY_SAVE);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyGizmoTrans, Hotkey::g_StateGizmoTrans, g_CountGizmo))
+			mpEditorEventSys->Fire(EDITOR_GIZMO_TRANSLATE);
+
+		else if (mpEditorInput->Hotkeys(Hotkey::g_KeyGizmoScale, Hotkey::g_StateGizmoScale, g_CountGizmo))
+			mpEditorEventSys->Fire(EDITOR_GIZMO_SCALE);
 	}
 
 	void Editor::UpdateGameModeKeys()
 	{
-		if (mpInput->IsKeyPressed(KEY_CTRL) && 
-			mpInput->IsKeyTriggered(KEY_P))	
+		if (mpEditorInput->Hotkeys(Hotkey::g_KeyPlayStop, Hotkey::g_StatePlayStop, g_CountDefault))
 			mpEditorEventSys->Fire(EDITOR_HOTKEY_STOP);
 	}
 	
@@ -809,7 +695,6 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_UNDO)->Bind(&Editor::EditorUndo, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_REDO)->Bind(&Editor::EditorRedo, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_COPY)->Bind(&Editor::EditorCopy, this);
-		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_CUT)->Bind(&Editor::EditorCut, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PASTE)->Bind(&Editor::EditorPaste, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DELETE)->Bind(&Editor::EditorDelete, this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVE)->Bind(&Editor::SaveProc, this);
@@ -825,7 +710,6 @@ namespace Dystopia
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_UNDO)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_REDO)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_COPY)->Unbind(this);
-		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_CUT)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_PASTE)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_DELETE)->Unbind(this);
 		mpEditorEventSys->GetEvent(EDITOR_HOTKEY_SAVE)->Unbind(this);
@@ -944,13 +828,17 @@ namespace Dystopia
 
 	const AutoArray<GameObject*>& Editor::GetSelectionObjects(void)
 	{
+		UpdateSelections();
 		return mArrSelectedObj;
 	}
 
 	void Editor::AddSelection(const uint64_t& _id)
 	{
 		mUpdateSelection = true;
-		mpClipBoard->InsertSelection(_id);
+		if (mpEditorInput->Get()->IsKeyPressed(eButton::KEYBOARD_LCTRL))
+			mpClipBoard->InsertSelection(_id);
+		else
+			NewSelection(_id);
 	}
 
 	void Editor::NewSelection(const uint64_t& _id)
@@ -983,11 +871,6 @@ namespace Dystopia
 			if (temp)
 				mArrSelectedObj.Insert(temp);
 		}
-	}
-
-	bool Editor::IsCtrlDown(void) const
-	{
-		return mCtrlKey;
 	}
 
 	Clipboard& Editor::GetClipboard(void)

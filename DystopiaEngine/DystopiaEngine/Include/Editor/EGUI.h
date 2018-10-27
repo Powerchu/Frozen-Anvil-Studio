@@ -40,6 +40,7 @@ struct ImGuiContext;
 
 static float DefaultAlighnmentOffsetY = 3.f;
 static float DefaultAlighnmentSpacing = 10.f;
+static float DefaultAlignLeft = 0.f;
 
 namespace Dystopia
 {
@@ -87,6 +88,8 @@ namespace EGUI
 	void UnIndent(float _spacing = 20.f);
 	void PushID(int);
 	void PopID();
+	void PushLeftAlign(float);
+	void PopLeftAlign();
 
 	/* =======================================================================================================================
 	Brief:	
@@ -232,6 +235,8 @@ namespace EGUI
 		======================================================================================================================= */
 		eDragStatus DragFloat(const std::string& _label, float *_pOutFloat, float _dragSpeed = 1.0f,
 			float _min = 0.0f, float _max = 1.0f, bool _hideText = false, float _width = 100.f);
+		eDragStatus SliderFloat(const std::string& _label, float *_pOutFloat, float _min = 0.0f, float _max = 1.0f, 
+			bool _hideText = false, float _width = 100.f);
 		/* =======================================================================================================================
 		Brief:
 				Creates a draggable int editable field. Returns if the value is changed
@@ -531,6 +536,11 @@ namespace EGUI
 		======================================================================================================================= */
 		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize = Math::Vec2{ 30, 30 }, 
 				   bool _interactive = false, bool _outlineBG = false);
+
+
+
+
+
 	}
 }
 
@@ -562,7 +572,7 @@ namespace Dystopia
 		ImGuiContext	*mpCtx;
 		WindowManager	*mpWin;
 		GraphicsSystem	*mpGfx;
-		EditorInput	*mpInput;
+		EditorInput		*mpInput;
 		ImDrawData		*mpDrawData;
 		GLState			*mpGLState;
 		GLuint			mFontTexture;

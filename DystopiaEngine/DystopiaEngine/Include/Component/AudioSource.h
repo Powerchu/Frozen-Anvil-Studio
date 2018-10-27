@@ -85,7 +85,7 @@ namespace Dystopia
 		Channel		mChannel;
 
 		/* allow UI edit */
-		eSoundType	mSoundType;
+		int			mSoundType;
 		bool		mPlayOnStart;
 		bool		mLoop;
 		float		mVolume;

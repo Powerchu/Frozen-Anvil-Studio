@@ -45,15 +45,15 @@ namespace Dystopia
 		void InvokeCommandDelete(const AutoArray<GameObject*>&, Scene&, bool *_notify = nullptr);
 
 		template<class Component, typename T>
-		void InvokeCommand(const uint64_t& _id, T* _var, const T& _oldVal, bool *_notify = nullptr)
+		void InvokeCommand(const uint64_t& _id, T Component::* _var, const T& _oldVal, bool Component::*_notify = nullptr)
 		{
 			InvokeCommand(new ComdModifyValue<T, Component, void>{ _id, _var, _oldVal, _notify });
 		}
-		template<class Component, typename T>
-		void InvokeCommand(T* _var, const T& _oldVal, bool *_notify = nullptr)
+		template<class Sys, typename T>
+		void InvokeCommand(T Sys::* _var, const T& _oldVal, bool Sys::*_notify = nullptr)
 		{
 			static constexpr uint64_t invalidID = 0;
-			InvokeCommand(new ComdModifyValue<T, Component, void>{ invalidID, _var, _oldVal, _notify });
+			InvokeCommand(new ComdModifyValue<T, Sys, void>{ invalidID, _var, _oldVal, _notify });
 		}
 
 		template<class C, typename ... Params>
@@ -73,7 +73,7 @@ namespace Dystopia
 		}
 
 		template<class C, typename T>
-		void StartRecording(const uint64_t& _id, T* _target, bool *_notify = nullptr)
+		void StartRecording(const uint64_t& _id, T C::* _target, bool C::*_notify = nullptr)
 		{ 
 			if (mRecording) return;
 			mpRecorder = new ComdRecord<T, C, void>(_id, _target, _notify);
@@ -81,7 +81,7 @@ namespace Dystopia
 		}
 
 		template<class C, typename T>
-		void StartRecording(T* _target, bool *_notify = nullptr)
+		void StartRecording(T C::* _target, bool C::* _notify = nullptr)
 		{
 			if (mRecording) return;
 			static constexpr uint64_t invalidID = 0;

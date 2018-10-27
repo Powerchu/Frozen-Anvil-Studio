@@ -51,5 +51,6 @@ namespace Dystopia
 }
 
 
-#endif // _STYLE_SCHEME_H_
+#endif // _SPRITE_PREVEIWER_H_
 #endif // EDITOR
+

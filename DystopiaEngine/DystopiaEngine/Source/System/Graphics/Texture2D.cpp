@@ -12,51 +12,28 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/Texture2D.h"
-#include "System/Graphics/Image.h"
+#include "System/Graphics/Texture.h"
+
+#include "IO/Image.h"
 #include "IO/ImageParser.h"
+
 #include "Allocator/DefaultAlloc.h"
 
+#include <cstdint>
 #include <GL/glew.h>
 
-Dystopia::Texture2D::Texture2D(void) noexcept : Texture{ GL_TEXTURE_2D }, mPath{ "" }
+
+Dystopia::Texture2D::Texture2D(const std::string& _strPath) noexcept
+	: Texture{ GL_TEXTURE_2D, _strPath }
 {
+	Bind();
 
-}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-Dystopia::Texture2D::Texture2D(const std::string& _strPath, bool _bAlpha) : 
-	Texture{ GL_TEXTURE_2D }, mPath{ _strPath }
-{
-	auto fileType = (_strPath.end() - 3);
-	Image img;
-
-	if ('p' == *fileType || 'P' == *fileType)
-	{
-		img = ImageParser::LoadPNG(_strPath);
-	}
-	else if ('b' == *fileType || 'B' == *fileType)
-	{
-		img = ImageParser::LoadBMP(_strPath);
-	}
-	else if ('j' == *fileType || 'J' == *fileType)
-	{
-		img = ImageParser::LoadJPG(_strPath);
-	}
-	else
-	{
-		return;
-	}
-
-	SetWidth(img.mnWidth);
-	SetHeight(img.mnHeight);
-
-	InitTexture(img.mpImageData, _bAlpha);
-	DefaultAllocator<void>::Free(img.mpImageData);
-}
-
-Dystopia::Texture2D::Texture2D(unsigned _nWidth, unsigned _nHeight, void* _pData, bool _bAlpha) :
-	Texture{ _nWidth, _nHeight, GL_TEXTURE_2D }, mPath{ "" }
-{
-	InitTexture(_pData, _bAlpha);
+	Unbind();
 }
 
 Dystopia::Texture2D::~Texture2D(void) noexcept
@@ -65,41 +42,91 @@ Dystopia::Texture2D::~Texture2D(void) noexcept
 
 void Dystopia::Texture2D::GenerateMipmap(void) const
 {
-	BindTexture();
+	Bind();
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
-	UnbindTexture();
+	Unbind();
 }
 
-void Dystopia::Texture2D::InitTexture(void* _pData, bool _bAlpha)
+void Dystopia::Texture2D::LoadTexture(Image const * _pData)
 {
-	BindTexture();
-
-	if (_bAlpha)
-	{
-		glTexImage2D(mnType, 0, GL_SRGB_ALPHA, GetWidth(), GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, _pData);
-	}
+	if (_pData->mbCompressed)
+		InitCompressedTexture(_pData);
 	else
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, GetWidth(), GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, _pData);
-	}
-
-	if (auto err = glGetError())
-	{
-		__debugbreak();
-	}
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	UnbindTexture();
+		InitTexture(_pData);
 }
 
-std::string Dystopia::Texture2D::GetPath() const
+void Dystopia::Texture2D::InitTexture(Image const* _pData)
 {
-	return mPath;
+	Bind();
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
+
+	auto w = _pData->mnWidth;
+	auto h = _pData->mnHeight;
+	mnWidth  = _pData->mnWidth;
+	mnHeight = _pData->mnHeight;
+
+	uint8_t* data_ptr = static_cast<uint8_t*>(_pData->mpImageData);
+
+	for (unsigned n = 0; (n < _pData->mnMipMaps) && w && h; ++n)
+	{
+		glTexImage2D(mnType, n, _pData->mnRawFormat, w, h, 0, _pData->mnFormat, GL_UNSIGNED_BYTE, data_ptr);
+		data_ptr += _pData->mnChannels * w * h;
+
+		// Assume each MipMap is half of the previous
+		w >>= 1;
+		h >>= 1;
+
+#   if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#   endif 
+	}
+
+	Unbind();
 }
+
+void Dystopia::Texture2D::InitCompressedTexture(Image const* _pData)
+{
+	Bind();
+
+	unsigned blksz = _pData->mnRawFormat == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
+
+	auto w = _pData->mnWidth;
+	auto h = _pData->mnHeight;
+	mnWidth  = _pData->mnWidth;
+	mnHeight = _pData->mnHeight;
+
+	uint8_t* data_ptr = static_cast<uint8_t*>(_pData->mpImageData);
+
+	unsigned n;
+	for (n = 0; (n < _pData->mnMipMaps) && w && h; ++n)
+	{
+		auto sz = blksz * ((w + 3) >> 2) * ((h + 3) >> 2);
+
+		glCompressedTexImage2D(mnType, n, _pData->mnRawFormat, w, h, 0, sz, data_ptr);
+		data_ptr += sz;
+
+		// Assume each MipMap is half of the previous
+		w >>= 1;
+		h >>= 1;
+
+#   if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#   endif
+	}
+
+	//if(n > 1)
+	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+
+	Unbind();
+}
+
+

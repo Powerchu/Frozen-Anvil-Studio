@@ -59,11 +59,39 @@ namespace Ut
 		return _nValue && 0 == (_nValue & _nValue - 1);
 	}
 	
+
+	template <typename Itor_t, typename Obj_t>
+	Itor_t Find(const Obj_t& _obj, Itor_t _begin, Itor_t const& _end)
+	{
+		while (_end != _begin)
+		{
+			if (_obj == *_begin)
+				break;
+			++_begin;
+		}
+
+		return _begin;
+	}
+
+	template <typename Itor_t, typename Cond_t>
+	Itor_t Find(Itor_t _begin, Itor_t const& _end, Cond_t&& _cond)
+	{
+		while (_end != _begin)
+		{
+			if (_cond(*_begin))
+				break;
+			++_begin;
+		}
+
+		return _begin;
+	}
+
+
 	// Sorts a given array using insertion sort. 
 	// Defaults to sorting the array in ascending order
 	template<class Itor, class Obj = typename RemoveRef<decltype(*declval<Itor>())>::type, 
 		typename Comparator = bool(*)(const Obj&, const Obj&)>
-	void Sort(Itor _begin, Itor _end, Comparator _pTest = [](const Obj& _lhs, const Obj& _rhs)->bool { return _lhs < _rhs; })
+	void Sort(Itor const& _begin, Itor const& _end, Comparator&& _pTest = [](const Obj& _lhs, const Obj& _rhs)->bool { return _lhs < _rhs; })
 	{
 		Obj temp;
 
@@ -86,7 +114,7 @@ namespace Ut
 
 
 	template <class Itor, class Ty = Ut::Decay_t<decltype(*Ut::declval<Itor>())>>
-	Itor MoveInit(Itor _begin, const Itor _end, Itor _dest)
+	Itor& MoveInit(Itor _begin, const Itor& _end, Itor& _dest)
 	{
 		while (_begin != _end)
 		{
@@ -98,7 +126,7 @@ namespace Ut
 	}
 
 	template <class Itor, class Ty = Ut::Decay_t<decltype(*Ut::declval<Itor>())>>
-	Itor CopyInit(Itor _begin, const Itor _end, Itor _dest)
+	Itor& CopyInit(Itor _begin, const Itor& _end, Itor& _dest)
 	{
 		while(_begin != _end)
 		{

@@ -22,14 +22,8 @@
     <ClCompile Include="Source\System\Window\WindowManager.cpp">
       <Filter>Game Engine\Systems\Window\WindowMgr</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Graphics\GraphicsSystem.cpp">
-      <Filter>Game Engine\Systems\Graphic</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\Editor.cpp">
       <Filter>Editor\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\IO\ImageParser.cpp">
-      <Filter>IO\ImageParser</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\Texture2D.cpp">
       <Filter>Game Engine\SubSystems\Texture\Texture\Texture2D</Filter>
@@ -75,9 +69,6 @@
     </ClCompile>
     <ClCompile Include="Source\System\Scene\Scene.cpp">
       <Filter>Game Engine\Systems\Scene\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
-      <Filter>Game Engine\SubSystems\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Camera\CameraSystem.cpp">
       <Filter>Game Engine\Systems\Camera</Filter>
@@ -137,9 +128,6 @@
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\EditorEvents.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EditorInputs.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
     <ClCompile Include="Source\Component\Renderer.cpp">
@@ -248,7 +236,7 @@
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\SpritePreviewer.cpp">
-      <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+      <Filter>Editor\Editor Tabs\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Input\XGamePad.cpp">
       <Filter>Game Engine\Systems\Input</Filter>
@@ -274,6 +262,36 @@
     <ClCompile Include="Source\System\Logger\FileLogger.cpp">
       <Filter>Game Engine\SubSystems\Logger\FileLogger</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\Renderer.cpp">
+      <Filter>Game Engine\Components\Renderer\BaseRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\TextureAtlas.cpp">
+      <Filter>Game Engine\SubSystems\Texture\Texture\Atlas</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IO\Image.cpp">
+      <Filter>IO\ImageParser\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IO\PNGParser.cpp">
+      <Filter>IO\ImageParser\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IO\BitmapParser.cpp">
+      <Filter>IO\ImageParser\BMP</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IO\DDSParser.cpp">
+      <Filter>IO\ImageParser\DDS</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
+      <Filter>Game Engine\SubSystems\Mesh\MeshSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\GraphicsSystem.cpp">
+      <Filter>Game Engine\Systems\Graphic\GraphicSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\TextRenderer.cpp">
+      <Filter>Game Engine\Components\Renderer\TextRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\SpriteRenderer.cpp">
+      <Filter>Game Engine\Components\Renderer\SpriteRenderer</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Component\AudioSource.cpp">
       <Filter>Game Engine\Components\Audio</Filter>
     </ClCompile>
@@ -285,6 +303,15 @@
     </ClCompile>
     <ClCompile Include="Source\DataStructure\HashString.cpp">
       <Filter>DataStructures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorInput.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorProc.cpp">
+      <Filter>Editor\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\SpriteEditor.cpp">
+      <Filter>Editor\Editor Tabs\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp">
       <Filter>Reflection\TypeErasure</Filter>
@@ -354,9 +381,6 @@
     <ClInclude Include="Include\System\Window\WindowManager.h">
       <Filter>Game Engine\Systems\Window\WindowMgr</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\GraphicsSystem.h">
-      <Filter>Game Engine\Systems\Graphic</Filter>
-    </ClInclude>
     <ClInclude Include="Include\DataStructure\Queue.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
@@ -368,9 +392,6 @@
     </ClInclude>
     <ClInclude Include="Include\Math\Quaternion.h">
       <Filter>Math\Quaternion</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\Image.h">
-      <Filter>Game Engine\SubSystems\Texture\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\ImageParser.h">
       <Filter>IO\ImageParser</Filter>
@@ -453,9 +474,6 @@
     <ClInclude Include="Include\DataStructure\SharedPtr.h">
       <Filter>DataStructures\Pointers</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
-      <Filter>Game Engine\SubSystems\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Graphics\VertexDefs.h">
       <Filter>Game Engine\SubSystems\Mesh</Filter>
     </ClInclude>
@@ -513,14 +531,8 @@
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\EditorInputs.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\EditorEvents.h">
       <Filter>Editor\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Component\Renderer.h">
-      <Filter>Game Engine\Components\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Time\ScopedTimer.h">
       <Filter>Game Engine\Systems\Time\ScopedTimer</Filter>
@@ -694,7 +706,7 @@
       <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\SpritePreviewer.h">
-      <Filter>Editor\Editor Tabs\Sprite Previewer</Filter>
+      <Filter>Editor\Editor Tabs\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Input\XGamePad.h">
       <Filter>Game Engine\Systems\Input</Filter>
@@ -779,6 +791,39 @@
     </ClInclude>
     <ClInclude Include="Include\DataStructure\HashString.h">
       <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorHotkeys.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorInput.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorProc.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\SpriteEditor.h">
+      <Filter>Editor\Editor Tabs\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Renderer.h">
+      <Filter>Game Engine\Components\Renderer\BaseRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\TextureAtlas.h">
+      <Filter>Game Engine\SubSystems\Texture\Texture\Atlas</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\IO\Image.h">
+      <Filter>IO\ImageParser\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\MeshSystem.h">
+      <Filter>Game Engine\SubSystems\Mesh\MeshSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\GraphicsSystem.h">
+      <Filter>Game Engine\Systems\Graphic\GraphicSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\TextRenderer.h">
+      <Filter>Game Engine\Components\Renderer\TextRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\SpriteRenderer.h">
+      <Filter>Game Engine\Components\Renderer\SpriteRenderer</Filter>
     </ClInclude>
     <ClInclude Include="Include\Behaviour\AI\Composite.h">
       <Filter>Game Engine\Systems\AI\Nodes</Filter>
@@ -907,12 +952,6 @@
     </Filter>
     <Filter Include="IO\TextSerialiser">
       <UniqueIdentifier>{500db7cd-deed-4efd-b173-f377dfb115d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\BinarySerialiser">
-      <UniqueIdentifier>{d6c8bc2a-a1b7-4fde-9efc-c753457d7130}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\ImageParser">
-      <UniqueIdentifier>{8fc9bc42-e537-436b-9608-0fb8466bebc6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Components\Camera">
       <UniqueIdentifier>{a431a473-6a2d-4d39-8e59-fa4404bc38b4}</UniqueIdentifier>
@@ -1094,9 +1133,6 @@
     <Filter Include="Editor\Editor Tabs\Project Settings">
       <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor Tabs\Sprite Previewer">
-      <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Math\MetaMath">
       <UniqueIdentifier>{08413c81-cbde-4575-842c-fc63e39a282d}</UniqueIdentifier>
     </Filter>
@@ -1127,11 +1163,53 @@
     <Filter Include="Game Engine\SubSystems\Logger\FileLogger">
       <UniqueIdentifier>{7034c117-e848-41c3-8883-3d54e3f596b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Engine\Components\Renderer\BaseRenderer">
+      <UniqueIdentifier>{020ee904-c7d8-4c7d-b909-1b33bf5ee947}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Texture\Texture\Atlas">
+      <UniqueIdentifier>{21d68eec-32ed-4d4c-94be-94c181d2078c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\BinarySerialiser">
+      <UniqueIdentifier>{d6c8bc2a-a1b7-4fde-9efc-c753457d7130}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\ImageParser">
+      <UniqueIdentifier>{8fc9bc42-e537-436b-9608-0fb8466bebc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\ImageParser\Image">
+      <UniqueIdentifier>{4e5a18a1-9470-4410-b912-eeadf33ae0ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\ImageParser\PNG">
+      <UniqueIdentifier>{f8bbf271-1003-43a6-9c54-71af498d2fea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\ImageParser\BMP">
+      <UniqueIdentifier>{dc3c0520-38ef-4426-b7d8-3b558bff7bc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\ImageParser\DDS">
+      <UniqueIdentifier>{44ee47a8-4e3d-4d72-bbf3-9ea5914144ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Mesh\MeshSystem">
+      <UniqueIdentifier>{a96e69f4-5b52-41c9-9c07-589491f8a8df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\GraphicSystem">
+      <UniqueIdentifier>{9104936d-7b9d-40bf-914b-c215841bc815}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Graphic\Freetype">
+      <UniqueIdentifier>{b4fcfc01-af87-4fff-81f5-85b39f97969e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Renderer\TextRenderer">
+      <UniqueIdentifier>{5c738da4-8474-45bb-86e8-79f3fdb62749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Renderer\SpriteRenderer">
+      <UniqueIdentifier>{7ef9a996-2f55-4144-a76f-b99266e3c32e}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Game Engine\Components\Audio">
       <UniqueIdentifier>{ecb40fbd-9434-45dc-a5a7-1ae1e1cbac7f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\SubSystems\Audio">
       <UniqueIdentifier>{af08a7e0-ec45-4ccd-a2b8-08336c4d36da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Editor Tabs\Sprite">
+      <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Reflection\TypeErasure">
       <UniqueIdentifier>{ecafed53-7b83-4c71-9271-0b0e5af66397}</UniqueIdentifier>

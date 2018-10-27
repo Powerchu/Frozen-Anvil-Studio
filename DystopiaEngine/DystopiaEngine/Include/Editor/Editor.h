@@ -23,7 +23,7 @@ namespace Dystopia
 	class EngineCore;
 	class WindowManager;
 	class GraphicsSystem;
-	class EditorInput;
+	class InputManager;
 	class GuiSystem;
 	class CommandHandler;
 	class EditorTab;
@@ -35,6 +35,7 @@ namespace Dystopia
 	class GameObject;
 	class BehaviourSystem;
 	class Component;
+	class EditorInput;
 
 	enum ePayloadTags;
 	enum eEditorState
@@ -80,16 +81,12 @@ namespace Dystopia
 		void			RemoveSelection(const uint64_t _id);
 		void			ClearSelections(void);
 
-		const AutoArray<GameObject*>&	GetSelectionObjects(void);
-
-		/* Editor Input */
-		bool			IsCtrlDown(void) const;
+		const AutoArray<GameObject*>& GetSelectionObjects(void);
 
 		/* The edit functions */
 		void			EditorUndo();
 		void			EditorRedo();
 		void			EditorCopy();
-		void			EditorCut();
 		void			EditorPaste();
 		void			EditorDelete();
 
@@ -112,7 +109,7 @@ namespace Dystopia
 		CommandHandler			*mpComdHandler;
 		GuiSystem				*mpGuiSystem;
 		Timer					*mpTimer;
-		EditorInput				*mpInput;
+		EditorInput				*mpEditorInput;
 
 		bool					mSceneHasChanged;
 		bool					mUpdateSelection;

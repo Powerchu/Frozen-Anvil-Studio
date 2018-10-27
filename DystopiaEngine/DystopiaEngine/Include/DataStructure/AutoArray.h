@@ -15,9 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _DYNAMIC_ARRAY_
 #define _DYNAMIC_ARRAY_
 
-#if defined(DEBUG) || defined(_DEBUG)
 #include "Utility/DebugAssert.h"
-#endif // Debug only includes
 
 #include "Globals.h"
 #include "Utility/Utility.h"			// Move, CopyUninit
@@ -226,9 +224,7 @@ inline typename AutoArray<T, A>::Itor_t AutoArray<T, A>::end(void) const noexcep
 template <class T, class A>
 inline T& AutoArray<T, A>::back(void) const noexcept
 {
-#if _DEBUG
 	DEBUG_BREAK(mpArray == mpLast, "DynamicArray Error: Array is empty!\n");
-#endif
 
 	return *(mpLast - 1);
 }
@@ -321,9 +317,7 @@ void AutoArray<T, A>::Insert(const T& _obj)
 template <class T, class A>
 void AutoArray<T, A>::Insert(const T& _obj, const Sz_t _nIndex)
 {
-#if _DEBUG
 	DEBUG_BREAK(_nIndex > size(), "DynamicArray Error: Array index out of range!\n");
-#endif
 
 	if (mpLast == mpEnd)
 		GrowArray();
@@ -359,9 +353,7 @@ void AutoArray<T, A>::EmplaceBack(Args &&...args)
 template <class T, class A>
 inline void AutoArray<T, A>::Remove(void) noexcept
 {
-#if _DEBUG
 	DEBUG_BREAK(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
-#endif
 
 	--mpLast;
 	Destroy(*mpLast);
@@ -404,9 +396,7 @@ inline void AutoArray<T, A>::Remove(const Sz_t _nIndex)
 template<class T, class A>
 inline void AutoArray<T, A>::Remove(Itor_t _pObj)
 {
-#if _DEBUG
 	DEBUG_BREAK(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
-#endif
 
 	Itor_t nxt = _pObj + 1;
 	while (nxt != mpLast)
@@ -430,10 +420,8 @@ inline void AutoArray<T, A>::FastRemove(const Sz_t _nIndex)
 template<class T, class A>
 inline void AutoArray<T, A>::FastRemove(const Itor_t& _pObj)
 {
-#if _DEBUG
 	DEBUG_BREAK(mpArray == mpLast, "DynamicArray Error: Attempted remove from empty!\n");
 	DEBUG_BREAK(!(_pObj < mpLast), "AutoArray Error: Invalid Remove Index!\n");
-#endif
 
 	--mpLast;
 	Ut::Swap(*_pObj, *mpLast);
@@ -476,7 +464,7 @@ void AutoArray<T, A>::GrowArray(Sz_t _newSize)
 	Sz_t cap_new = !_newSize ? static_cast<Sz_t>(cap_old > 1 ? cap_old * Math::phi : 2) : _newSize;
 	Ptr_t pNewArray = Allocate(cap_new);
 
-	ArrayMove(mpArray, sz, pNewArray);
+	if(sz) ArrayMove(mpArray, sz, pNewArray);
 //	DestroyArray(mpArray, mpLast);
 	Deallocate(mpArray);
 
@@ -500,14 +488,12 @@ inline void AutoArray<T, A>::ArrayMove(Ptr_t _src, Sz_t _sz, Ptr_t _dest)
 template <typename T, class A>
 inline T* AutoArray<T, A>::Allocate(Sz_t _nSize)
 {
-//	return static_cast<T*>(::operator new[](_nSize * sizeof(T)));
 	return A::Alloc(_nSize);
 }
 
 template <typename T, class A>
 inline void AutoArray<T, A>::Deallocate(Itor_t _arr)
 {
-//	::operator delete[] (static_cast<void*>(_arr));
 	A::Free(_arr);
 }
 

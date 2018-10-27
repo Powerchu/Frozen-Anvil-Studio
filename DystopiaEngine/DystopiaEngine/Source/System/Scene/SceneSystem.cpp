@@ -13,10 +13,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Scene/SceneSystem.h"              // File Header
 #include "System/Scene/SceneSysMetaHelper.h"
+#include "System/SystemTypes.h"
+#include "System/Driver/Driver.h"
+#include "System/Collision/CollisionSystem.h"
+#include "System/Physics/PhysicsSystem.h"
 #include "DataStructure/Array.h"
 #include "IO/TextSerialiser.h"
 #include "Utility/DebugAssert.h"
+
+#include "Utility/Utility.h"
+#include "Editor/CommandList.h"
+#include "Editor/Commands.h"
 #include "Editor/Editor.h"
+#include "Editor/DefaultFactory.h"
+
+#include "Component/Component.h"
+#include "Component/Transform.h"
+#include "Object/GameObject.h"
 #include "System/Behaviour/BehaviourSystem.h"
 
 Dystopia::SceneSystem::SceneSystem(void) :
@@ -57,7 +70,6 @@ void Dystopia::SceneSystem::Update(float _dt)
 void Dystopia::SceneSystem::PostUpdate(void)
 {
 	mpCurrScene->PostUpdate();
-
 	if (mpCurrScene != mpNextScene)
 		SceneChanged();
 }
@@ -85,10 +97,34 @@ void Dystopia::SceneSystem::LoadSettings(TextSerialiser&)
 
 }
 
+bool Dystopia::SceneSystem::Instantiate(const std::string& _prefabName, const Math::Pt3D& _position)
+{
+	if (!mpCurrScene) return false;
+
+	GameObject *pDupl = Factory::LoadFromPrefab(_prefabName);
+	if (pDupl)
+	{
+		pDupl->GetComponent<Transform>()->SetPosition(_position);
+		mpCurrScene->GetAllGameObjects().EmplaceBack(Ut::Move(*pDupl));
+		auto& obj = mpCurrScene->GetAllGameObjects().back();
+		obj.Identify();
+		obj.Init();
+		obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+		for (auto& c : obj.GetAllComponents())
+			c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+		delete pDupl;
+		return true;
+	}
+	return false;
+}
+
 void Dystopia::SceneSystem::SceneChanged(void)
 {
 	mpCurrScene->Shutdown();
 	delete mpCurrScene;
+
+	EngineCore::GetInstance()->GetSystem<CollisionSystem>()->PostUpdate();
+	EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->PostUpdate();
 
 	mpCurrScene = mpNextScene;
 	static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
@@ -108,6 +144,8 @@ void Dystopia::SceneSystem::RestartScene(void)
 	{
 		mpCurrScene->PostUpdate();
 		mpCurrScene->Shutdown();
+
+		EngineCore::GetInstance()->PostUpdate();
 
 		static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 		auto SerialObj = TextSerialiser::OpenFile(mLastSavedData, TextSerialiser::MODE_READ);

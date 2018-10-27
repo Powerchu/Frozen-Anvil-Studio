@@ -11,16 +11,17 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#if EDITOR
 #include <Windows.h>
 #include <consoleapi2.h>
 #include <winuser.h>
-#if EDITOR
 #include "Editor/EGUI.h"
 #include "Editor/Commands.h"
 #include "Editor/CommandList.h"
-#include "Editor/EditorInputs.h"
+#include "DataStructure/Stack.h"
 
 Dystopia::CommandHandler *gContextComdHND = nullptr;
+Stack<float> g_StackLeftAlign{ 100 };
 
 namespace EGUI
 {
@@ -151,6 +152,17 @@ namespace EGUI
 		ImGui::PopID();
 	}
 
+	void PushLeftAlign(float _f)
+	{
+		g_StackLeftAlign.Push(_f);
+	}
+
+	void PopLeftAlign()
+	{
+		if (!g_StackLeftAlign.IsEmpty())
+			g_StackLeftAlign.Pop();
+	}
+
 	namespace Display
 	{
 		void HorizontalSeparator()
@@ -175,7 +187,7 @@ namespace EGUI
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(DefaultAlighnmentSpacing);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool b = ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags);
@@ -192,7 +204,7 @@ namespace EGUI
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(DefaultAlighnmentSpacing);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 
@@ -212,7 +224,7 @@ namespace EGUI
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(DefaultAlighnmentSpacing);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			return ImGui::Checkbox(("##CheckBox" + _label).c_str(), _outputBool);
@@ -228,7 +240,7 @@ namespace EGUI
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(DefaultAlighnmentSpacing);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool changing = false;
@@ -263,13 +275,36 @@ namespace EGUI
 			return eNO_CHANGE;
 		}
 
+		eDragStatus SliderFloat(const std::string& _label, float *_pOutFloat, float _min, float _max, bool _hideText, float _width)
+		{
+			if (!_hideText)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label.c_str());
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+			bool changing = false;
+			ImGui::PushItemWidth(_width);
+			changing = ImGui::SliderFloat(("###SlideFloat" + _label).c_str(), _pOutFloat, _min, _max, "%.3f");
+			ImGui::PopItemWidth();
+
+			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
+				return changing ? eINSTANT_CHANGE : eSTART_DRAG;
+			else if (ImGui::IsItemDeactivated())
+				return ImGui::IsMouseReleased(0) ? eEND_DRAG : eDEACTIVATED;
+			else if (ImGui::IsItemActive())
+				return changing ? eDRAGGING : eNO_CHANGE;
+			return eNO_CHANGE;
+		}
+
 		eDragStatus DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max, bool _hideText, float _width)
 		{
 			if (!_hideText)
 			{
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 				Label(_label.c_str());
-				SameLine(DefaultAlighnmentSpacing);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool changing = false;
@@ -280,9 +315,7 @@ namespace EGUI
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
 			if (changing) return eDRAGGING;
 			if (ImGui::IsItemDeactivatedAfterChange())
-			{
 				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
-			}
 			if (ImGui::IsItemDeactivated()) return eDEACTIVATED;
 			return eNO_CHANGE;
 		}
@@ -300,7 +333,7 @@ namespace EGUI
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine(DefaultAlighnmentSpacing);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 
 			Label("X:"); SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
@@ -331,7 +364,7 @@ namespace EGUI
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine(DefaultAlighnmentSpacing);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 
 			Label("X:"); SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
@@ -513,7 +546,7 @@ namespace EGUI
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine(4.f);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			bool ret = ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr.begin(), static_cast<int>(arrCharPtr.size()));
 			ImGui::PopItemWidth();
