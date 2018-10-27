@@ -69,12 +69,15 @@ namespace Dystopia
 		bool IsKeyPressed(eButton)   const noexcept;
 		bool IsKeyReleased(eButton)  const noexcept;
 	
-
 		bool IsKeyTriggered(std::string const & _ButtonName) const noexcept;
 		bool IsKeyPressed(std::string const & _ButtonName)   const noexcept;
 		bool IsKeyReleased(std::string const & _ButtonName)  const noexcept;
 
 		bool IsController() const;
+
+		// left is low frequency motor, right is high frequency motor
+		void SetVibrate(unsigned short _ltrg = 32000, unsigned short _rtrg = 16000); //0-65534
+		void StopVibrate();
 
 		float GetAnalogY(int) const;	//0 for left analog, all others for right
 		float GetAnalogX(int) const;	//0 for left analog, all others for right

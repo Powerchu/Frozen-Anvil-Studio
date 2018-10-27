@@ -256,6 +256,7 @@ void Dystopia::Camera::Serialise(TextSerialiser& _out) const
 	_out.InsertStartBlock("Camera");
 	Component::Serialise(_out);
 	_out << mnSurfaceID;
+	_out << mbDebugDraw;
 	_out.InsertEndBlock("Camera");
 }
 
@@ -264,6 +265,8 @@ void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 	_in.ConsumeStartBlock();
 	Component::Unserialise(_in);
 	_in >> mnSurfaceID;
+	_in >> mbDebugDraw;
+
 	_in.ConsumeEndBlock();
 }
 

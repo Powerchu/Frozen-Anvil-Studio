@@ -89,8 +89,8 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f },
-	mfDebugLineWidth{ 5.0f }, mvDebugColour{ .68f, 1.f, .278f, .65f }
+	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.0f },
+	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .68f, 1.f, .278f, .65f }
 {
 
 }
@@ -112,7 +112,7 @@ float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 
 void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw)
 {
-	auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
+	const auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
 	//auto bDebugDraw = !CamSys->GetMasterCamera()->DrawDebug();
 
 	for (auto& e : CamSys->GetAllCameras())
@@ -478,7 +478,8 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			auto surface = Cam.GetSurface();
 			auto vp = Cam.GetViewport();
 
-			glViewport(vp.mnX, vp.mnY, vp.mnWidth, vp.mnHeight);
+			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY), 
+					   static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
 
 			// Temporary code
 			surface->Bind();
@@ -809,18 +810,17 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 
 	attrbs[3] = 1;
 	mOpenGL = wglCreateContextAttribsARB(_window.GetDeviceContext(), NULL, attrbs);
-	if (mOpenGL)
-	{
-		return true;
-	}
 
-	return false;
+	return mOpenGL != nullptr;
 }
-
 
 void Dystopia::GraphicsSystem::EditorUI(void)
 {
-#if EDITOR								   
+	static bool tempBool = GetDebugDraw();
+#if EDITOR			
+	//const auto pCore = EngineCore::GetInstance();
+	//const auto pCamSys = pCore->GetSystem<CameraSystem>();
+
 	const auto result = EGUI::Display::DragFloat("Gamma       ", &mfGamma, 0.1f, 0.1f, 10.f);
 	switch (result)
 	{
@@ -837,11 +837,14 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 		break;
 	}
 
-	bool tempBool = GetDebugDraw();
+	//const auto& sceneCam = pCamSys->GetMasterCamera();
 	if (EGUI::Display::CheckBox("Debug Draw  ", &tempBool))
 	{
-		//mbDebugDraw = tempBool;
-		//EGUI::GetCommandHND()->InvokeCommand<GraphicsSystem>(&ToggleDebugDraw, this, tempBool);
+		if (!tempBool)
+			ToggleDebugDraw(false);
+		else
+			ToggleDebugDraw(true);
+		//EGUI::GetCommandHND()->InvokeCommand<Camera>(&Camera::mbDebugDraw, tempBool);
 	}
 
 	auto result2 = EGUI::Display::VectorFields("Debug Color ", &mvDebugColour, 0.01f, 0.f, 1.f);

@@ -109,6 +109,8 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept;
 
+		// TODO 
+		bool mbDebugDraw;
 	private:
 
 		Gfx::Viewport mViewport;
@@ -118,7 +120,6 @@ namespace Dystopia
 		Math::Mat4 mProjection;
 
 		Framebuffer* mpSurface;
-		bool mbDebugDraw;
 		unsigned mnSurfaceID;
 	};
 }

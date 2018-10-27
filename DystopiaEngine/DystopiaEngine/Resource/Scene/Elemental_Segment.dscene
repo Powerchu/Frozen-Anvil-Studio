@@ -1,0 +1,258 @@
+[START_Scene]
+367001600,Elemental_Segment,11,[START_START_GO_DATA]
+18446744072627422720,97,Scene Camera,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.2,0.2,1,0,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073583726080,65,Background,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+210,148.8,1,0,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072512608768,65,Foreground_Bush,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+141,37.2687,1,-52.972,-63.727,30,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072743298560,65,Foreground_Bush_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+129,34.0969,1,51,-68,29,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072102096384,65,Foreground_Bush_Flower,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+69,48.8749,1,83,-58,28,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071715173376,65,PlayerHero,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+26,26,1,-79,-10,10,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+247480832,1,LeftBoundary,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,121,1,-101,14,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072241040896,1,RightBoundary,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,121,1,101,14,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072169216000,1,LeftBoundary_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+194,7,1,0,-43,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+714105344,65,Foreground_Bush_Flower_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+69,48.8749,1,-13,-58,28,0,0,-0.0722808,0.997384,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1952527872,65,Salamander,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+128,128,1,17,21,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+18446744072627423744,0,18446744072627422720,0,0,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+7,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+18446744072828229120,1,18446744073583726080,..\DystopiaEngine\Resource\Asset\Environment\Prologue\guide.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072512609280,1,18446744072512608768,..\DystopiaEngine\Resource\Asset\Environment\Prologue\bushLong_darker.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072743299072,1,18446744072743298560,..\DystopiaEngine\Resource\Asset\Environment\Prologue\bushLong_darker.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072102096896,1,18446744072102096384,..\DystopiaEngine\Resource\Asset\Environment\Prologue\plant_06_shade.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+714105856,1,714105344,..\DystopiaEngine\Resource\Asset\Environment\Prologue\plant_06_shade.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1254639104,1,18446744071715173376,..\DystopiaEngine\Resource\Asset\sprite_ctr.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1952528384,1,1952527872,..\DystopiaEngine\Resource\Asset\salamander_ctr.png,
+[END_Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+5,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+1302871040,0,18446744071715173376,0,0.999,0.1,0.5,0.5,0.05,0,1.2,75,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744073055259136,1,247480832,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072241041920,1,18446744072241040896,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072169217024,1,18446744072169216000,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1952528896,0,1952527872,0,0.999,0.1,0.5,0.5,0.2,0,1.3,300,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+5,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+18446744072702410240,1,18446744071715173376,0,-0.151,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.231,0.626,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744073588983808,1,247480832,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744072241041408,1,18446744072241040896,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744072169216512,1,18446744072169216000,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1952529408,1,1952527872,0,-0.161,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.669,0.617,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Character_Controller]
+1302870528,1,18446744071715173376,12,16,
+[END_Character_Controller]
+
+[END_Component End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Audio]
+0,0,0,0,0,0,,0,0,0,
+[END_Audio]
+
+[END_Component End]
+[START_Component]
+[START_Audio]
+0,0,0,0,0,0,,0,0,0,
+[END_Audio]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+2,CharacterController,0,Milestone,0,
+[END_BEHAVIOUR_SYSTEM_BLOCK]
+
+[END_Scene]

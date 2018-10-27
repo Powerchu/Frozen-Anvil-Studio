@@ -415,9 +415,9 @@ namespace Dystopia
 		bool tempBool = mbIsTrigger;
 
 		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
-		{/*
+		{
 			mbIsTrigger = tempBool;
-			EGUI::GetCommandHND()->InvokeCommand<Collider>(&Collider::mbIsTrigger, tempBool);*/
+			EGUI::GetCommandHND()->InvokeCommand<Collider>(&Collider::mbIsTrigger, tempBool);
 		}
 	}
 
@@ -426,7 +426,7 @@ namespace Dystopia
 		EGUI::Display::Label("Offset");
 		auto arrResult = EGUI::Display::VectorFields("    ", &mv3Offset, 0.01f, -FLT_MAX, FLT_MAX);
 		for (auto &e : arrResult)
-		{/*
+		{
 			switch (e)
 			{
 			case EGUI::eDragStatus::eNO_CHANGE:
@@ -443,7 +443,7 @@ namespace Dystopia
 				break;
 			default:
 				break;
-			}*/
+			}
 		}
 	}
 
@@ -454,13 +454,7 @@ namespace Dystopia
 		if (EGUI::Display::CollapsingHeader("Points"))
 		{
 			switch (EGUI::Display::DragInt("	Size		", &mNumPoints, 1, 4, 32, false, 128))
-			{/*
-			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eENTER:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
+			{
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
@@ -473,7 +467,7 @@ namespace Dystopia
 				EGUI::GetCommandHND()->EndRecording();
 				break;
 			default:
-				break;*/
+				break;
 			}
 
 			while (mVertices.size() < unsigned int(mNumPoints))
@@ -493,24 +487,24 @@ namespace Dystopia
 				EGUI::Display::Label("	Vertex");
 				auto arrResult = EGUI::Display::VectorFields("	 ", &(c.mPosition), 0.01f, -FLT_MAX, FLT_MAX);
 				for (auto &e : arrResult)
-				{/*
+				{
 					switch (e)
 					{
 					case EGUI::eDragStatus::eNO_CHANGE:
 					case EGUI::eDragStatus::eDRAGGING:
 						break;
 					case EGUI::eDragStatus::eSTART_DRAG:
-						EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &(c.mPosition));
+						//EGUI::GetCommandHND()->StartRecording<Convex>(mnOwner, &(c.mPosition));
 						break;
 					case EGUI::eDragStatus::eDEACTIVATED:
 					case EGUI::eDragStatus::eEND_DRAG:
 					case EGUI::eDragStatus::eENTER:
 					case EGUI::eDragStatus::eTABBED:
-						EGUI::GetCommandHND()->EndRecording();
+						//EGUI::GetCommandHND()->EndRecording();
 						break;
 					default:
 						break;
-					}*/
+					}
 				}
 				EGUI::PopID();
 			}
@@ -523,7 +517,7 @@ namespace Dystopia
 		EGUI::Display::Label("Scale");
 		auto arrResult = EGUI::Display::VectorFields("\t", &mScale, 0.05f, -FLT_MAX, FLT_MAX);
 		for (auto &e : arrResult)
-		{/*
+		{
 			switch (e)
 			{
 			case EGUI::eDragStatus::eNO_CHANGE:
@@ -540,7 +534,7 @@ namespace Dystopia
 				break;
 			default:
 				break;
-			}*/
+			}
 		}
 	}
 

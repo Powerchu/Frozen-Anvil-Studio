@@ -81,7 +81,7 @@ bool Dystopia::InputManager::Init(void)
 
 void Dystopia::InputManager::Update(const float _dt)
 {
-	ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "Fixed Update" };
+	ScopedTimer<ProfilerAction> timeKeeper{ "Input System", "Update" };
 
 	mMouseInput.mnWheel = 0;
 	using Type = BYTE[256];
@@ -231,6 +231,16 @@ bool Dystopia::InputManager::IsKeyReleased(std::string const & _ButtonName) cons
 bool Dystopia::InputManager::IsController() const
 {
 	return mGamePad.IsConnected();
+}
+
+void Dystopia::InputManager::SetVibrate(unsigned short _ltrg, unsigned short _rtrg)
+{
+	mGamePad.Vibrate(_ltrg, _rtrg); //0-65534
+}
+
+void Dystopia::InputManager::StopVibrate()
+{
+	mGamePad.StopVibrate();
 }
 
 float Dystopia::InputManager::GetAnalogY(int _state) const

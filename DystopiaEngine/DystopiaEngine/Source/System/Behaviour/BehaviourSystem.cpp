@@ -1,13 +1,17 @@
 
+#include "Math/MathLib.h"
+
 #if EDITOR
 #include "Editor/HotLoader.h"
 #endif
 #include "System/Behaviour/BehaviourSystem.h"
+#undef ERROR
 
 #include "System/File/FileSystem.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Driver/Driver.h"
 #include "Object/GameObject.h"
+#undef ERROR
 
 #include "Globals.h"
 #include "Utility/DebugAssert.h"

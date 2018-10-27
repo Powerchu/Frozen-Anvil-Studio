@@ -180,14 +180,14 @@ void XGamePad::StopVibrate(void)
 
 float XGamePad::GetAnalogX(int _i) const
 {
-	return (!_i) ? mxLeftThumb[0].mfMagnitudeNormal : 
-				   mxRightThumb[0].mfMagnitudeNormal ;
+	return (!_i) ? mxLeftThumb[0].mfNormal : 
+				   mxRightThumb[0].mfNormal ;
 }
 
 float XGamePad::GetAnalogY(int _i) const
 {
-	return (!_i) ? mxLeftThumb[1].mfMagnitudeNormal :
-				   mxRightThumb[1].mfMagnitudeNormal ;
+	return (!_i) ? mxLeftThumb[1].mfNormal :
+				   mxRightThumb[1].mfNormal ;
 }
 
 float XGamePad::GetTriggers(int _i) const

@@ -20,8 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Math/Vector4.h"
 #include "Math/MathUtility.h"
-
-#undef ERROR
+#include <cmath>
 
 namespace Math
 {

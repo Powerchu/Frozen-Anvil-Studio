@@ -256,6 +256,7 @@ namespace Dystopia
 
 		float s = _in ? 1 - mSensitivity : 1 + mSensitivity;
 		Math::Vec4 newScalep = pObjTransform->GetScale() * s;
+		newScalep.z = 1;
 		pObjTransform->SetScale(newScalep);
 	}
 
@@ -421,7 +422,7 @@ namespace Dystopia
 
 	Math::Vec2 SceneView::GetWorldToScreen(const Math::Pt3D& curPos)
 	{
-		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera");
+		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera")->GetComponent<Camera>();
 		if (!mpSceneCamera) return Math::Vec2{ 0,0 };
 
 		auto equation1 = mpSceneCamera->GetProjectionMatrix() * (mpSceneCamera->GetViewMatrix() * curPos);
@@ -554,7 +555,7 @@ namespace Dystopia
 				for (auto& obj : _arr)
 				{
 					auto cScale = obj->GetComponent<Transform>()->GetGlobalScale();
-					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + changeY, cScale.z, cScale.w });
+					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + changeX, cScale.z, cScale.w });
 				}
 				mClearSelection = false;
 				break;
@@ -577,6 +578,7 @@ namespace Dystopia
 		Math::Vec2 screenPos = GetWorldToScreen(curPos);
 		float changeX = 0;
 		float changeY = 0;
+		static float ratio = 0;
 		switch (mCurrGizTool)
 		{
 		case eTRANSLATE:
@@ -651,11 +653,13 @@ namespace Dystopia
 			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + changeY, cScale.z, cScale.w });
+				changeX += changeY;
+				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + ratio * changeX, cScale.z, cScale.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
+				ratio = cScale.y / cScale.x;
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;

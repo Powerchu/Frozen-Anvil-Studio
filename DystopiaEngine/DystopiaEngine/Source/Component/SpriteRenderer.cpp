@@ -129,11 +129,6 @@ void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
 	_out.InsertStartBlock("Sprite Renderer");
 	Component::Serialise(_out);
 	Renderer::Serialise(_out);
-	_out << mnID;
-	_out << mnCol;
-	_out << mnRow;
-	_out << mfFrameTime;
-	_out << mfAccTime;
 	_out.InsertEndBlock("Sprite Renderer");
 }
 
@@ -142,11 +137,6 @@ void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 	_in.ConsumeStartBlock();
 	Component::Unserialise(_in);
 	Renderer::Unserialise(_in);
-	_in >> mnID;
-	_in >> mnCol;
-	_in >> mnRow;
-	_in >> mfFrameTime;
-	_in >> mfAccTime;
 	_in.ConsumeEndBlock();
 }
 
