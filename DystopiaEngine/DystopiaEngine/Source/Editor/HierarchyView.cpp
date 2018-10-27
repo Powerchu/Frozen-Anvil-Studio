@@ -200,10 +200,10 @@ namespace Dystopia
 			{
 				if (clicked) SelectedObj(_obj);
 
-				for (auto& t : allChild)
+				/*for (auto& t : allChild)
 				{
 
-				}
+				}*/
 				EGUI::Display::EndTreeNode();
 			}
 			if (GameObject *t = EGUI::Display::StartPayloadReceiver<GameObject>(EGUI::GAME_OBJ))
@@ -315,12 +315,12 @@ namespace Dystopia
 		{
 			EGUI::Display::EndPayload();
 		}
-		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+		if (uint64_t *id2 = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
-			GameObject *t = GetCurrentScene()->FindGameObject(*id);
+			GameObject *t = GetCurrentScene()->FindGameObject(*id2);
 
-			auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Transform>()->GetParent());
-			auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Transform>());
+			const auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Transform>()->GetParent());
+			const auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Transform>());
 			EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
 
 			EGUI::Display::EndPayloadReceiver();
@@ -372,12 +372,12 @@ namespace Dystopia
 		{
 			EGUI::Display::EndPayload();
 		}
-		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+		if (uint64_t *id2 = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
-			GameObject *t = GetCurrentScene()->FindGameObject(*id);
+			GameObject *t = GetCurrentScene()->FindGameObject(*id2);
 
-			auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Transform>()->GetParent());
-			auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Transform>());
+			const auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Transform>()->GetParent());
+			const auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Transform>());
 			EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
 
 			EGUI::Display::EndPayloadReceiver();

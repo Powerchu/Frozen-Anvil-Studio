@@ -106,7 +106,7 @@ void Dystopia::Transform::OnChildAdd(Transform* _pChild)
 	mChildren.Insert(_pChild);
 }
 
-void Dystopia::Transform::OnChildRemove(Transform* _pChild)
+void Dystopia::Transform::OnChildRemove(Transform*)
 {
 	// Do nothing
 }

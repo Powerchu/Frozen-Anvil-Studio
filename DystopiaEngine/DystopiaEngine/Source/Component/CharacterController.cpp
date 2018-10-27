@@ -118,6 +118,11 @@ namespace Dystopia
 		const auto my_body = GetOwner()->GetComponent<RigidBody>();
 		const auto my_col = GetOwner()->GetComponent<Collider>();
 
+		if (my_body->GetLinearVelocity().y < -0.5F)
+		{
+			mbIsGrounded = false;
+		}
+
 		if (nullptr != my_col)
 		{
 			if (!my_col->IsTrigger())
