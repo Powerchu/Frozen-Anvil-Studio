@@ -223,10 +223,10 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/Write.bmp");
 
 	FontSystem* pFontSys = pCore->GetSubSystem<FontSystem>();
-	Texture* font = pFontSys->LoadFont("Resource/Font/Times New Roman.ttf");
+	TextureAtlas* font = pFontSys->LoadFont("Resource/Font/Times New Roman.ttf");
 
-	//unsigned w = texture->GetWidth(), h = texture->GetHeight();
-	unsigned w = font->GetWidth(), h = font->GetHeight();
+	unsigned w = texture->GetWidth(), h = texture->GetHeight();
+	//unsigned w = font->GetWidth(), h = font->GetHeight();
 
 	pWinSys->GetMainWindow().SetSizeNoAdjust(w, h);
 	pWinSys->GetMainWindow().CenterWindow();

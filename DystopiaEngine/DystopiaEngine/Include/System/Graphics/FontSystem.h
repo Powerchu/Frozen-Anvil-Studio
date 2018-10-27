@@ -22,8 +22,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Texture;
-	class TextureAtlas;
+	struct Image;
+	class  Texture;
+	class  TextureAtlas;
 
 	class FontSystem
 	{
@@ -40,6 +41,7 @@ namespace Dystopia
 
 	private:
 
+		unsigned mnOutDim;
 		unsigned mnPaddingX, mnPaddingY;
 
 		using uchar = unsigned char;
@@ -51,9 +53,13 @@ namespace Dystopia
 			unsigned mnHeight;
 		};
 
-		CharSpace PackFont(AutoArray<CharSpace>&, uchar* dest, unsigned _nImageWidth, uchar* src, unsigned _nWidth, unsigned _nHeight);
+		TextureAtlas* LoadFromFont(const std::string&);
+		TextureAtlas* LoadExisting(const std::string&);
 
-		void Blit(const uchar* _src, unsigned _nWidth, unsigned _nHeight, uchar* _dest, unsigned _nImageWidth);
+		CharSpace PackFont(AutoArray<CharSpace>&, uchar* dest, uchar* src, unsigned _nWidth, unsigned _nHeight);
+		void OutputFontmap(TextureAtlas*, Image*, std::string const&);
+
+		void Blit(const uchar* _src, unsigned _nWidth, unsigned _nHeight, uchar* _dest);
 	};
 }
 

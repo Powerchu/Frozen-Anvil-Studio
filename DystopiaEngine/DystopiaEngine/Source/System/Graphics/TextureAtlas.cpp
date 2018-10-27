@@ -79,6 +79,11 @@ void Dystopia::TextureAtlas::SetTexture(Texture* _pTexture)
 	mpTexture = _pTexture;
 }
 
+AutoArray<Dystopia::TextureAtlas::SubTexture>& Dystopia::TextureAtlas::GetAllSections(void) noexcept
+{
+	return mSections;
+}
+
 std::string Dystopia::TextureAtlas::GetName(void) const
 {
 	return mpTexture->GetName();
