@@ -174,8 +174,8 @@ namespace Dystopia
 			{
 				/*Clear the simplex for the next function call*/
 				Simplex.clear();
-				if(CollisionEvent const * const ColEvent = FindCollisionEvent(_pColB.GetOwnerID()))
-					InformOtherComponents(false, *ColEvent);
+				//if(CollisionEvent const * const ColEvent = FindCollisionEvent(_pColB.GetOwnerID()))
+				//	InformOtherComponents(false, *ColEvent);
 				/*Return no collision*/
 				return false;
 			}
@@ -190,8 +190,8 @@ namespace Dystopia
 					const CollisionEvent ColEvent = GetCollisionEvent(Simplex, _pColB);
 					//marr_ContactSets.push_back(ColEvent);
 					
-					InformOtherComponents(true, ColEvent);
-					
+					//InformOtherComponents(true, ColEvent);
+					marr_CurrentContactSets.push_back(ColEvent);
 					/*Clear the simplex for the next function call*/
 					Simplex.clear();
 					
@@ -274,18 +274,20 @@ namespace Dystopia
 			{
 				newEvent.mEdgeNormal = newEvent.mEdgeNormal.Normalise();
 				newEvent.mEdgeNormal.z = 0;
-				InformOtherComponents(true, newEvent);
+				marr_CurrentContactSets.push_back(newEvent);
+				//InformOtherComponents(true, newEvent);
 				return true;
 			}
 			else
 			{
-				InformOtherComponents(false, newEvent);
+				//InformOtherComponents(false, newEvent);
 				return false;
 			}
 		}
 		/*No Normals will be given because i have no idea which one to give*/
 		/*Circle completely inside*/
-		InformOtherComponents(true, newEvent);
+		//InformOtherComponents(true, newEvent);
+		marr_CurrentContactSets.push_back(newEvent);
 		return isInside;
 	}
 

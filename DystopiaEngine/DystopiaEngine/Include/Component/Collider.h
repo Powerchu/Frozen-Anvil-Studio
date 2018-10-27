@@ -159,8 +159,10 @@ namespace Dystopia
 		void SetTrigger(bool _b);
 		void SetLocalPosition(Math::Point3D const & _point);
 		void ClearCollisionEvent();
+		void ClearCurrentCollisionEvent();
 		void RemoveCollisionEvent(unsigned long long _OtherID);
 		void InformOtherComponents(bool _isColliding, CollisionEvent const & _Event);
+		void InformOtherComponents();
 		// Gettors
 		virtual Math::Point3D GetGlobalPosition() const;
 		Math::Vec3D           GetOffSet()   const;
@@ -205,7 +207,7 @@ namespace Dystopia
 	protected:
 		/*AutoArray of collision event*/
 		AutoArray<CollisionEvent>  marr_ContactSets;
-
+		AutoArray<CollisionEvent>  marr_CurrentContactSets;
 		Math::Point3D mPosition;
 
 		AutoArray<Vertex> mDebugVertices;
