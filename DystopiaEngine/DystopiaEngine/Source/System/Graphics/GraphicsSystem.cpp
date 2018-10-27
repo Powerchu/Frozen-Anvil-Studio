@@ -373,7 +373,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 			{
 				auto pos    = pOwner->GetComponent<Transform>()->GetGlobalPosition();
 				auto scaleV = pOwner->GetComponent<Transform>()->GetScale();
-				auto LocalScale = Math::Scale(scaleV.x, scaleV.y);
+				//auto LocalScale = Math::Scale(scaleV.x, scaleV.y);
 				auto scale  = Math::Abs(scaleV[0]) > Math::Abs(scaleV[1]) ? Math::Abs(scaleV[0]) : Math::Abs(scaleV[1]);
 				auto scaleM = Math::Scale(scale, scale);
 				auto Translation = Math::Translate(pos.x, pos.y);
