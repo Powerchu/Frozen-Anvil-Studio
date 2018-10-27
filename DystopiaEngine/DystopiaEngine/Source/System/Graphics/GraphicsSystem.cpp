@@ -265,8 +265,20 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	{
 		GameObject* pOwner = Obj->GetOwner();
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
-		{			
-			s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetLocalTransformMatrix() *Math::Translate(Obj->GetOffSet().x, Obj->GetOffSet().y, Obj->GetOffSet().z)  * Obj->GetTransformationMatrix());
+		{		
+			if(Obj->GetColliderType() != eColliderType::CIRCLE)
+				s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetLocalTransformMatrix() *Math::Translate(Obj->GetOffSet().x, Obj->GetOffSet().y, Obj->GetOffSet().z)  * Obj->GetTransformationMatrix());
+			else
+			{
+				
+				auto pos    = pOwner->GetComponent<Transform>()->GetGlobalPosition();
+				auto scaleV = pOwner->GetComponent<Transform>()->GetScale();
+				auto LocalScale = Math::Scale(scaleV.x, scaleV.y);
+				auto scale  = Math::Abs(scaleV[0]) > Math::Abs(scaleV[1]) ? Math::Abs(scaleV[0]) : Math::Abs(scaleV[1]);
+				auto scaleM = Math::Scale(scale, scale);
+				auto Translation = Math::Translate(pos.x, pos.y);
+				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(scaleV.x*Obj->GetOffSet().x, scaleV.y*Obj->GetOffSet().y, Obj->GetOffSet().z) * scaleM * Obj->GetTransformationMatrix());
+			}
 
 			if (Obj->IsSleeping())
 			{

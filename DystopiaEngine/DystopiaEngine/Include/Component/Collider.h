@@ -179,7 +179,7 @@ namespace Dystopia
 		Mesh* GetMesh() const;
 
 
-		Math::Matrix3D GetTransformationMatrix() const;
+		virtual Math::Matrix3D GetTransformationMatrix() const;
 		Math::Matrix3D GetOwnerTransform()       const;
 		Math::Matrix3D GetWorldMatrix()          const;
 		void SetOwnerTransform(Math::Matrix3D const & _OwnerTransform);
