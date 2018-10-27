@@ -12,7 +12,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "_SF_ClassName_.h"
-#include "Math/Vector2.h"
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
@@ -57,30 +56,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::_SF_ClassName_::OnCollisionEnter(const CollisionEvent&)
+	void Dystopia::_SF_ClassName_::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::_SF_ClassName_::OnCollisionStay(const CollisionEvent&)
+	void Dystopia::_SF_ClassName_::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::_SF_ClassName_::OnCollisionExit(const CollisionEvent&)
+	void Dystopia::_SF_ClassName_::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::_SF_ClassName_::OnTriggerEnter(const GameObject *)
+	void Dystopia::_SF_ClassName_::OnTriggerEnter(const GameObject * _obj)
 	{
 	}
 
-	void Dystopia::_SF_ClassName_::OnTriggerStay(const GameObject *)
+	void Dystopia::_SF_ClassName_::OnTriggerStay(const GameObject * _obj)
 	{
 	}
 
-	void Dystopia::_SF_ClassName_::OnTriggerExit(const GameObject *)
+	void Dystopia::_SF_ClassName_::OnTriggerExit(const GameObject * _obj)
 	{
 	}
 

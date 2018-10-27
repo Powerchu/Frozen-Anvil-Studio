@@ -6,6 +6,7 @@
 \brief
 Builder Template Interface for all Neural Trees (Behaviour Tree). Referred to
 https://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php
+http://aigamedev.com/open/article/type-safe-tree-builder/
 for basic understanding.
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
@@ -136,6 +137,12 @@ namespace Dystopia
 				auto tree = std::make_shared<BehaviourTree>();
 				tree->SetRoot(mpRoot);
 				return tree;
+			}
+
+			void Build(BehaviourTree& _tree) const
+			{
+				assert(mpRoot != nullptr && "The Behavior Tree is empty!");
+				_tree.SetRoot(mpRoot);
 			}
 
 		private:

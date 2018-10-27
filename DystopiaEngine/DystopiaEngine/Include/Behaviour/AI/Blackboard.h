@@ -19,10 +19,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 //#include "Globals.h"
 #include <string>
 #include <unordered_map>
-#include "DataStructure/SharedPtr.h"
+//#include "DataStructure/SharedPtr.h"
 #include "Math/Vector4.h"
 
-// TODO: use our reflection stuff
+// TODO: use our reflection stuff OR use type-erasure object
 namespace Dystopia
 {
 	namespace NeuralTree
@@ -122,6 +122,19 @@ namespace Dystopia
 			}
 			bool hasVector(const std::string& key) const { return vectors.find(key) != vectors.end(); }
 
+			/*
+			* GameObject-String Map
+			*/
+			void setGameObj(const std::string& key, GameObject* value) { gObjs[key] = value; }
+			GameObject* getGameObj(const std::string& key)
+			{
+				if (gObjs.find(key) == gObjs.end()) {
+					gObjs[key] = nullptr;
+				}
+				return gObjs[key];
+			}
+			bool hasGameObj(const std::string& key) const { return gObjs.find(key) != gObjs.end(); }
+
 			using Ptr = std::shared_ptr<Blackboard>;
 
 		protected:
@@ -131,6 +144,7 @@ namespace Dystopia
 			std::unordered_map<std::string, float> floats;
 			std::unordered_map<std::string, double> doubles;
 			std::unordered_map<std::string, Math::Vector4> vectors;
+			std::unordered_map<std::string, GameObject*> gObjs;
 			std::unordered_map<std::string, std::string> strings;
 		};
 	}
