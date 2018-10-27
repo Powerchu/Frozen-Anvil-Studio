@@ -28,10 +28,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\Editor\EditorInput.cpp" />
+    <ClCompile Include="Source\Editor\EditorProc.cpp" />
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
+    <ClCompile Include="Source\Editor\SpriteEditor.cpp" />
     <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
     <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
+    <ClCompile Include="Source\Component\SpriteRenderer.cpp" />
+    <ClCompile Include="Source\Component\TextRenderer.cpp" />
+    <ClCompile Include="Source\IO\Image.cpp" />
     <ClCompile Include="Source\Allocator\Allocator.cpp" />
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp" />
     <ClCompile Include="Source\Component\AudioSource.cpp" />
@@ -48,6 +54,8 @@
     <ClCompile Include="Source\Editor\ProjectSettings.cpp" />
     <ClCompile Include="Source\Editor\SpritePreviewer.cpp" />
     <ClCompile Include="Source\Editor\StyleScheme.cpp" />
+    <ClCompile Include="Source\IO\DDSParser.cpp" />
+    <ClCompile Include="Source\IO\PNGParser.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
     <ClCompile Include="Source\System\Events\Events.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
@@ -55,6 +63,7 @@
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
     <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp" />
+    <ClCompile Include="Source\System\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp" />
     <ClCompile Include="Source\System\Logger\FileLogger.cpp" />
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp" />
@@ -73,7 +82,6 @@
     <ClCompile Include="Source\Component\RigidBody.cpp" />
     <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
     <ClCompile Include="Source\Editor\EditorEvents.cpp" />
-    <ClCompile Include="Source\Editor\EditorInputs.cpp" />
     <ClCompile Include="Source\Editor\PerformanceLog.cpp" />
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
@@ -94,7 +102,7 @@
     <ClCompile Include="Source\Editor\HierarchyView.cpp" />
     <ClCompile Include="Source\Editor\Inspector.cpp" />
     <ClCompile Include="Source\IO\BinarySerializer.cpp" />
-    <ClCompile Include="Source\IO\ImageParser.cpp" />
+    <ClCompile Include="Source\IO\BitmapParser.cpp" />
     <ClCompile Include="Source\IO\TextSerialiser.cpp" />
     <ClCompile Include="Source\Math\Matrix4.cpp" />
     <ClCompile Include="Source\Object\GameObject.cpp" />
@@ -124,6 +132,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="Include\Editor\EditorHotkeys.h" />
+    <ClInclude Include="Include\Editor\EditorInput.h" />
+    <ClInclude Include="Include\Editor\EditorProc.h" />
     <ClInclude Include="Include\Behaviour\AI\Agent.h" />
     <ClInclude Include="Include\Behaviour\AI\Blackboard.h" />
     <ClInclude Include="Include\Behaviour\AI\Composite.h" />
@@ -132,6 +143,7 @@
     <ClInclude Include="Include\Behaviour\AI\NeuralTree.h" />
     <ClInclude Include="Include\Behaviour\AI\TreeBuilder.h" />
     <ClInclude Include="Include\DataStructure\HashString.h" />
+    <ClInclude Include="Include\Editor\SpriteEditor.h" />
     <ClInclude Include="Include\DataStructure\Function.h" />
     <ClInclude Include="Include\Reflection\ReadWriteObject.h" />
     <ClInclude Include="Include\Reflection\ReflectionTypeErasure.h" />
@@ -147,6 +159,8 @@
     <ClInclude Include="Include\Component\Circle.h" />
     <ClInclude Include="Include\Component\ColliderList.h" />
     <ClInclude Include="Include\Component\Convex.h" />
+    <ClInclude Include="Include\Component\SpriteRenderer.h" />
+    <ClInclude Include="Include\Component\TextRenderer.h" />
     <ClInclude Include="Include\Component\Triangle.h" />
     <ClInclude Include="Include\Editor\AdminCalls.h" />
     <ClInclude Include="Include\Editor\Clipboard.h" />
@@ -175,6 +189,7 @@
     <ClInclude Include="Include\System\File\FileSystem.h" />
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />
+    <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
     <ClInclude Include="Include\Component\Collider.h" />
@@ -189,7 +204,6 @@
     <ClInclude Include="Include\Editor\PLogInfo.h" />
     <ClInclude Include="Include\Math\MathLib.h" />
     <ClInclude Include="Include\Editor\EditorEvents.h" />
-    <ClInclude Include="Include\Editor\EditorInputs.h" />
     <ClInclude Include="Include\Editor\PerformanceLog.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h" />
@@ -257,7 +271,7 @@
     <ClInclude Include="Include\System\Driver\Driver.h" />
     <ClInclude Include="Include\System\Graphics\GraphicsDefs.h" />
     <ClInclude Include="Include\System\Graphics\GraphicsSystem.h" />
-    <ClInclude Include="Include\System\Graphics\Image.h" />
+    <ClInclude Include="Include\IO\Image.h" />
     <ClInclude Include="Include\System\Graphics\Mesh.h" />
     <ClInclude Include="Include\System\Graphics\MeshSystem.h" />
     <ClInclude Include="Include\System\Graphics\RawMesh.h" />

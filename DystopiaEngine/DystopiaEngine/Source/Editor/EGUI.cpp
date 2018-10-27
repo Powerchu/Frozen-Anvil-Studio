@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "System/Driver/Driver.h"
 #include "Editor/EGUI.h"
-#include "Editor/EditorInputs.h"
+#include "System/Input/InputSystem.h"
 #include "System/Window/Window.h"
 #include "System/Window/WindowManager.h"
 #include "System/Graphics/GraphicsSystem.h"
@@ -23,6 +23,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <iostream>
 #include <Windows.h>
 #include <windef.h>
+
+#include "Editor/EditorInput.h"
 
 HCURSOR	gCursorTypes[8];
 
@@ -197,7 +199,7 @@ namespace Dystopia
 		// Setup display size (every frame to accommodate for window resizing)
 		int w, h, display_w, display_h;
 
-		if (Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetIfFullScreen())
+		if (Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->IsFullscreen())
 		{
 			w = display_w = mpWin->GetMainWindow().GetWidth() - GetSystemMetrics(SM_CXBORDER) + 1;
 			h = display_h = mpWin->GetMainWindow().GetHeight() - GetSystemMetrics(SM_CYSIZE) - 2 * GetSystemMetrics(SM_CXBORDER);
@@ -220,8 +222,8 @@ namespace Dystopia
 		if (mpWin->GetMainWindow().GetWindowHandle() == GetActiveWindow()) // should check if this window is the focused window
 		{
 			float x, y;
-			x = mpInput->GetMousePosition().x;
-			y = mpInput->GetMousePosition().y;
+			x = mpInput->Get()->GetMousePosition().x;
+			y = mpInput->Get()->GetMousePosition().y;
 			io.MousePos = ImVec2{ x, y };
 		}
 		else
@@ -229,11 +231,11 @@ namespace Dystopia
 			io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 		}
 
-		for (int i = 0; i < 3; i++)
-		{
-			io.MouseDown[i] = mMouseJustPressed[i] || mpInput->IsKeyPressed(static_cast<eEditorButton>(static_cast<int>(eEditorButton::KEY_LMOUSE) + i));
-			mMouseJustPressed[i] = false;
-		}
+		io.MouseDown[0] = mMouseJustPressed[0] || mpInput->Get()->IsKeyPressed(eButton::MOUSE_LEFT);
+		io.MouseDown[1] = mMouseJustPressed[1] || mpInput->Get()->IsKeyPressed(eButton::MOUSE_RIGHT);
+		io.MouseDown[2] = mMouseJustPressed[2] || mpInput->Get()->IsKeyPressed(eButton::MOUSE_MIDDLE);
+
+		mMouseJustPressed[0] = mMouseJustPressed[1] = mMouseJustPressed[2] = false;
 
 		// Update cursor icon
 		if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0 )

@@ -16,9 +16,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/SystemMessage.h"
 #include "System/Driver/Driver.h"
 #include "System/Input/MouseData.h"
-#include "IO/TextSerialiser.h"
 #include "System/Logger/LoggerSystem.h"
+
+#include "IO/TextSerialiser.h"
 #include "Editor/Editor.h"
+
+#include "Globals.h"
+#include "Utility/DebugAssert.h"
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
@@ -26,21 +30,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <windows.h>						// Windows Header
 #include <shellapi.h>
 #include "../../../resource.h"
-#include "Utility/DebugAssert.h"
 
 #undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
 #undef  NOMINMAX
 
 #define ENGINE_NAME		L"Dystopia Engine"
 
+
 namespace
 {
 	constexpr long	DEFAULT_WINDOWSTYLE		= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 	constexpr long	DEFAULT_WINDOWSTYLE_EX	= WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
 
-	constexpr bool	DEFAULT_FULLSCREEN		= true;
-	constexpr int	DEFAULT_WIDTH			= 1600;
-	constexpr int	DEFAULT_HEIGHT			= 900;
 
 	Dystopia::MouseData* pMouse = nullptr;
 
@@ -50,12 +51,11 @@ namespace
 		switch (message)
 		{
 		case WM_SETFOCUS:
-			
-			//Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(true);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_GAIN);
 			break;
+
 		case WM_KILLFOCUS:
-			
-			//Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(false);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_LOST);
 			break;
 
 		case WM_SIZE:
@@ -89,6 +89,7 @@ namespace
 		case WM_MOUSEWHEEL:
 			if (pMouse)
 				pMouse->mnWheel = GET_WHEEL_DELTA_WPARAM(wParam);
+			break;
 
 		default:
 			break;
@@ -99,7 +100,7 @@ namespace
 }
 
 Dystopia::WindowManager::WindowManager(void) : 
-	mbFullscreen{ DEFAULT_FULLSCREEN }, mHInstance { GetModuleHandle(nullptr) },
+	mbFullscreen{ Gbl::FULLSCREEN }, mHInstance { GetModuleHandle(nullptr) },
 	mWindows{ 1 }
 {
 
@@ -239,11 +240,11 @@ void Dystopia::WindowManager::Shutdown(void)
 
 void Dystopia::WindowManager::LoadDefaults(void)
 {
-	mbFullscreen	= DEFAULT_FULLSCREEN;
+	mbFullscreen	= Gbl::FULLSCREEN;
 	mWindowStyle	= DEFAULT_WINDOWSTYLE;
 	mWindowStyleEx	= DEFAULT_WINDOWSTYLE_EX;
-	mWidth			= DEFAULT_WIDTH;
-	mHeight			= DEFAULT_HEIGHT;
+	mWidth			= Gbl::SCREEN_WIDTH;
+	mHeight			= Gbl::SCREEN_HEIGHT;
 }
 
 void Dystopia::WindowManager::LoadSettings(DysSerialiser_t& _out)
@@ -260,8 +261,8 @@ void Dystopia::WindowManager::SaveSettings(DysSerialiser_t& _in)
 	_in << mbFullscreen;
 	_in << mWindowStyle;
 	_in << mWindowStyleEx;
-	_in << DEFAULT_WIDTH;
-	_in << DEFAULT_HEIGHT;
+	_in << mWidth;
+	_in << mHeight;
 }
 
 void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
@@ -297,7 +298,7 @@ void Dystopia::WindowManager::RegisterMouseData(MouseData* _pMouse)
 	pMouse = _pMouse;
 }
 
-bool Dystopia::WindowManager::GetIfFullScreen() const
+bool Dystopia::WindowManager::IsFullscreen() const
 {
 	return mbFullscreen;
 }

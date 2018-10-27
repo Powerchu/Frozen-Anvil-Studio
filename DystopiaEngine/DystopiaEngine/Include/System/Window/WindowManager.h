@@ -58,7 +58,7 @@ namespace Dystopia
 
 		void RegisterMouseData(MouseData*);
 
-		bool GetIfFullScreen() const;
+		bool IsFullscreen() const;
 
 	private:
 

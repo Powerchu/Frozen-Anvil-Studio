@@ -193,22 +193,18 @@ namespace Dystopia
 		if (EGUI::Display::SelectableTxt(uniqueifyName, selected))
 		{
 			auto ed = GetMainEditor();
-			if (ed->IsCtrlDown())
+			bool exist = false;
+			for (const auto& id : ed->GetSelectionObjects())
 			{
-				bool exist = false;
-				for (const auto& id : ed->GetSelectionObjects())
+				if (id->GetID() == _obj.GetID())
 				{
-					if (id->GetID() == _obj.GetID())
-					{
-						ed->RemoveSelection(_obj.GetID());
-						exist = true;
-					}
+					ed->RemoveSelection(_obj.GetID());
+					exist = true;
+					break;
 				}
-				if (!exist)
-					ed->AddSelection(_obj.GetID());
 			}
-			else
-				ed->NewSelection(_obj.GetID());
+			if (!exist)
+				ed->AddSelection(_obj.GetID());
 		}
 		GameObjectPopups(_obj);
 	}

@@ -19,7 +19,9 @@ namespace Dystopia
 {
 	enum class eSysMessage
 	{
-		QUIT
+		FOCUS_GAIN,
+		FOCUS_LOST,
+		QUIT,
 	};
 }
 

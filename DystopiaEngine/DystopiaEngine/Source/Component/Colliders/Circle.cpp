@@ -300,7 +300,7 @@ namespace Dystopia
 			switch (e)
 			{
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &mv3Offset);
+				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &Circle::mv3Offset);
 				break;
 			case EGUI::eDragStatus::eEND_DRAG:
 			case EGUI::eDragStatus::eENTER:
@@ -324,7 +324,7 @@ namespace Dystopia
 		switch (e)
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &m_radius);
+			EGUI::GetCommandHND()->StartRecording<Circle>(mnOwner, &Circle::m_radius);
 			break;
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:

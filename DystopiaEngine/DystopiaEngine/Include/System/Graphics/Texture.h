@@ -26,13 +26,13 @@ namespace Dystopia
 	public:
 
 		Texture(void) noexcept;
-		explicit Texture(unsigned _nType) noexcept;
+		explicit Texture(unsigned _nType, const std::string& _strPath) noexcept;
 		explicit Texture(unsigned _nWidth, unsigned _nHeight, unsigned _nType) noexcept;
 
 		virtual ~Texture(void);
 
-		void BindTexture(void) const noexcept;
-		void UnbindTexture(void) const noexcept;
+		void Bind(int = 0) const noexcept;
+		void Unbind(void) const noexcept;
 
 		unsigned GetWidth(void) const noexcept;
 		unsigned GetHeight(void) const noexcept;
@@ -43,11 +43,13 @@ namespace Dystopia
 
 		unsigned GetID(void) const noexcept;
 
-		virtual std::string GetPath() const = 0;
+		std::string GetName(void) const;
+		std::string const& GetPath(void) const noexcept;
 
 	protected:
-		unsigned mnWidth, mnHeight, mnType, mnID;
 
+		std::string mstrPath;
+		unsigned mnWidth, mnHeight, mnType, mnID;
 	};
 }
 

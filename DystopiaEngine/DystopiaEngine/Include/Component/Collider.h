@@ -191,13 +191,20 @@ namespace Dystopia
 		virtual BroadPhaseCircle GenerateBoardPhaseCircle() const;
 		virtual ~Collider();
 
-	protected:
-		/*AutoArray of collision event*/
-		AutoArray<CollisionEvent>  marr_ContactSets;
 
 		bool mbColliding;
 		bool mbIsTrigger;
 		bool mbIsSleeping;
+
+		/*Offset of the collider with respect to GameObject Transform position*/
+		Math::Vec3D mv3Offset;
+#if EDITOR
+		Math::Vec3D          mScale;
+#endif
+
+	protected:
+		/*AutoArray of collision event*/
+		AutoArray<CollisionEvent>  marr_ContactSets;
 
 		Math::Point3D mPosition;
 
@@ -206,12 +213,10 @@ namespace Dystopia
 		BroadPhaseCircle  mBoundingCircle;
 		void Triangulate();
 
-		/*Offset of the collider with respect to GameObject Transform position*/
-		Math::Vec3D mv3Offset;
+		
 		/*Matrix*/
 		Math::Matrix3D mOwnerTransformation;
 #if EDITOR
-		Math::Vec3D          mScale;
 		Math::Quaternion     mRotation;
 #endif
 

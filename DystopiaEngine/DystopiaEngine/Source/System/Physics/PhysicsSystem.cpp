@@ -281,7 +281,7 @@ namespace Dystopia
 			EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&mGravity);
+			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mGravity);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
@@ -296,7 +296,7 @@ namespace Dystopia
 		if (EGUI::Display::CheckBox("Debug Draw  ", &tempBool))
 		{
 			mbIsDebugActive = tempBool;
-			EGUI::GetCommandHND()->InvokeCommand<PhysicsSystem>(&mbIsDebugActive, tempBool);
+			EGUI::GetCommandHND()->InvokeCommand<PhysicsSystem>(&PhysicsSystem::mbIsDebugActive, tempBool);
 		}
 	}
 
@@ -312,7 +312,7 @@ namespace Dystopia
 			EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&mMaxVelocityConstant);
+			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mMaxVelocityConstant);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
@@ -333,7 +333,7 @@ namespace Dystopia
 			EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&mVelocityIterations);
+			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mVelocityIterations);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();
@@ -354,7 +354,7 @@ namespace Dystopia
 			EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&mPositionalIterations);
+			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mPositionalIterations);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();

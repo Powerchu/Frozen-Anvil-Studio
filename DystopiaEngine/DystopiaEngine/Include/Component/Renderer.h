@@ -17,10 +17,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(push)
 #pragma warning(disable : 4251)
 #include "Component/Component.h"		// Base Class
-#include "Component/ComponentList.h"	// TRANSFORM
-#include "DataStructure/AutoArray.h"	// AutoArray
-#include "Utility/MetaAlgorithms.h"		// MetaFind
-
+#include "Component/ComponentList.h"
+#include "DataStructure/AutoArray.h"
+#include "Utility/MetaAlgorithms.h"
 
 #include <string>
 
@@ -37,7 +36,7 @@ namespace Dystopia
 	public:
 
 		using SYSTEM = GraphicsSystem;
-		unsigned GetComponentType(void) const
+		unsigned GetComponentType(void) const override
 		{
 			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllComponents>::value; 
 		};
@@ -46,7 +45,7 @@ namespace Dystopia
 			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, UsableComponents>::value;
 		};
 		static const std::string GetCompileName(void) { return "Renderer"; }
-		const std::string GetEditorName(void) const { return GetCompileName(); }
+		const std::string GetEditorName(void) const override { return GetCompileName(); }
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -81,7 +80,6 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 
-		//Renderer(const Renderer&) = delete;
 	private:
 
 		unsigned mnUnique;
@@ -90,12 +88,12 @@ namespace Dystopia
 		Shader* mpShader;
 		Texture* mpTexture;
 		std::string mTexturePath;
-		std::string mTextureName;
 
+#   if EDITOR
 		void TextureField();
 		void MeshField();
 		void ShaderField();
-		std::string GetTextureName();
+#   endif
 	};
 }
 

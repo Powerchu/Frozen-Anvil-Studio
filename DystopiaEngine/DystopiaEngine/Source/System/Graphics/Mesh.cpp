@@ -17,7 +17,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <GL/glew.h>
 
-Dystopia::MeshSystem* Dystopia::Mesh::mpSystem;
 
 Dystopia::Mesh::Mesh(void) noexcept
 {
@@ -30,19 +29,14 @@ Dystopia::Mesh::Mesh(unsigned _VAO, unsigned _nVertices, size_t _nOffset) noexce
 
 }
 
-void Dystopia::Mesh::LinkSystem(MeshSystem* _pSystem)
-{
-	mpSystem = _pSystem;
-}
-
-void Dystopia::Mesh::UseMesh(int _nMode) const
+void Dystopia::Mesh::DrawMesh(int _nMode) const
 {
 	glBindVertexArray(mVAO);
 	glDrawElements(_nMode, mnVertices, GL_UNSIGNED_SHORT, mnOffset);
 	glBindVertexArray(0);
 }
 
-void Dystopia::Mesh::UseMesh(int _nMode, unsigned _nCount) const
+void Dystopia::Mesh::DrawMesh(int _nMode, unsigned _nCount) const
 {
 	glBindVertexArray(mVAO);
 	glDrawElementsInstanced(_nMode, mnVertices, GL_UNSIGNED_SHORT, mnOffset, _nCount);
