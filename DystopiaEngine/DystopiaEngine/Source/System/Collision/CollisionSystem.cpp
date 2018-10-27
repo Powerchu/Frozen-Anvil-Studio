@@ -68,9 +68,9 @@ namespace Dystopia
 			conv.Update(_dt);
 		}
 
-		using CollisionTable        = std::pair<eColliderType, eColliderType>;
+		using CollisionTable = std::pair<eColliderType, eColliderType>;
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
-		using CollisionTableMap     = std::map < CollisionTable, fpCollisionResolution>;
+		using CollisionTableMap = std::map < CollisionTable, fpCollisionResolution>;
 
 		static CollisionTableMap CollisionFuncTable = []()->CollisionTableMap
 		{
@@ -115,7 +115,7 @@ namespace Dystopia
 				mColliders.push_back(&elem);
 				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
-			
+
 		}
 
 		for (auto & elem : ComponentDonor<Circle>::mComponents)
@@ -129,7 +129,6 @@ namespace Dystopia
 				mColliders.push_back(&elem);
 				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
-			
 		}
 
 		//if (!mCollisionTree.isEmpty())
@@ -162,6 +161,7 @@ namespace Dystopia
 		//			{
 		//				(this->*key.second)(bodyA, bodyB);
 		//				bodyA->SetColliding(bodyA->Collider::HasCollision());
+
 		//				break;
 		//			}
 		//		}
@@ -171,6 +171,7 @@ namespace Dystopia
 		//			{
 		//				(this->*key.second)(bodyB, bodyA);
 		//				bodyA->SetColliding(bodyB->Collider::HasCollision());
+
 		//				break;
 		//			}
 		//		}
