@@ -127,7 +127,7 @@ namespace Dystopia
 					if (manifold.mCollidedWith->GetComponent<Collider>()->IsTrigger()) continue;
 
 					const auto dotNormal = manifold.mEdgeNormal.Dot({ 1,0,0 });
-					if (dotNormal < 0.9F && dotNormal > -0.9F)
+					if (dotNormal < 0.98F && dotNormal > -0.98F)
 					{
 						if (my_body->GetLinearVelocity().y > FLT_EPSILON)
 						{
