@@ -57,7 +57,7 @@ namespace Dystopia
 		mLabel{ "Scene View" }, mpGfxSys{ nullptr },
 		mpSceneCamera{ nullptr }, mSensitivity{ 0.1f },
 		mToZoom{ eZOOM_NONE }, mAmFocused{ false },
-		mMoveSens{ -1.f }, mPrevMovePoint{ 0,0 },
+		mMoveSens{ -0.6f }, mPrevMovePoint{ 0,0 },
 		mDragging{ false }, mImgPos{}, mImgSize{},
 		mClearSelection{ false },
 		mGizmoHovered{ false }, mCurrGizTool{ eTRANSLATE }
@@ -206,9 +206,10 @@ namespace Dystopia
 			vToMove.y *= -2.f;
 			PrintToConsoleLog(std::to_string(vToMove.x) + " | " + std::to_string(vToMove.y));
 
-			auto pos = mpSceneCamera->GetOwner()->GetComponent<Transform>()->GetPosition();
-
-			mpSceneCamera->GetOwner()->GetComponent<Transform>()->SetPosition(pos + Math::Pt3D{ vToMove.x * mMoveSens, vToMove.y * mMoveSens, 0.f });
+			const auto pos = mpSceneCamera->GetOwner()->GetComponent<Transform>()->GetPosition();
+			const auto scale = mpSceneCamera->GetOwner()->GetComponent<Transform>()->GetGlobalScale();
+		
+			mpSceneCamera->GetOwner()->GetComponent<Transform>()->SetPosition(pos + Math::Pt3D{ vToMove.x * mMoveSens * scale.x, vToMove.y * mMoveSens * scale.y, 0.f });
 		}
 	}
 
