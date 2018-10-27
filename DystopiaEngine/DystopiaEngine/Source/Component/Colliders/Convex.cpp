@@ -251,14 +251,13 @@ namespace Dystopia
 					ratio = c1 / c2;
 					PointOfImpact = elem.mPos + ratio * elem.mVec3;
 					distance = (_ColB.GetGlobalPosition() - PointOfImpact).Magnitude();
-					norm = elem.mNorm3;
+					norm = (_ColB.GetGlobalPosition() - PointOfImpact);
 				}
 
 				if (distance < _ColB.GetRadius())
 				{
 					isInside = true;
 					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
-					elem.mNorm3.z = 0;
 					newEvent.mEdgeNormal += norm;
 					newEvent.mEdgeVector = Math::Vec3D{ newEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
 					newEvent.mCollisionPoint = PointOfImpact;
@@ -274,6 +273,7 @@ namespace Dystopia
 			if (isInside)
 			{
 				newEvent.mEdgeNormal = newEvent.mEdgeNormal.Normalise();
+				newEvent.mEdgeNormal.z = 0;
 				InformOtherComponents(true, newEvent);
 				return true;
 			}
@@ -371,6 +371,9 @@ namespace Dystopia
 			e.mNorm3.Negate<Math::NegateFlag::Y>();
 
 #endif
+			e.mNorm3.z = 0;
+			e.mPos.z   = 0;
+			e.mVec3.z  = 0;
 			ToRet.push_back(e);
 		}
 		return ToRet;
@@ -816,8 +819,6 @@ namespace Dystopia
 			}
 			else
 			{
-				for (auto & elm : _Simplex)
-					if (!(elm.mPosition - Point.mPosition).Magnitude()) __debugbreak();
 				_Simplex.Insert(Point, ClosestEdge.mSimplexIndex);
 			}
 				

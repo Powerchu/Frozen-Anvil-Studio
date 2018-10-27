@@ -250,7 +250,9 @@ namespace Dystopia
 
 	Math::Point3D Collider::GetGlobalPosition() const
 	{
-		return mOwnerTransformation * Math::Translate(mv3Offset.x, mv3Offset.y , mv3Offset.z) * GetTransformationMatrix() *  mPosition;
+		auto point =  mOwnerTransformation * Math::Translate(mv3Offset.x, mv3Offset.y , mv3Offset.z) * GetTransformationMatrix() *  mPosition;
+		point.z = 0;
+		return point;
 	}
 
 	Math::Vec3D Collider::GetOffSet() const
