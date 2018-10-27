@@ -13,6 +13,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Scene/SceneSystem.h"              // File Header
 #include "System/Scene/SceneSysMetaHelper.h"
+#include "System/SystemTypes.h"
+#include "System/Driver/Driver.h"
+#include "System/Collision/CollisionSystem.h"
+#include "System/Physics/PhysicsSystem.h"
 #include "DataStructure/Array.h"
 #include "IO/TextSerialiser.h"
 #include "Utility/DebugAssert.h"
@@ -22,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Commands.h"
 #include "Editor/Editor.h"
 #include "Editor/DefaultFactory.h"
+
 #include "Component/Component.h"
 #include "Component/Transform.h"
 #include "Object/GameObject.h"
@@ -64,7 +69,6 @@ void Dystopia::SceneSystem::Update(float _dt)
 void Dystopia::SceneSystem::PostUpdate(void)
 {
 	mpCurrScene->PostUpdate();
-
 	if (mpCurrScene != mpNextScene)
 		SceneChanged();
 }
@@ -118,7 +122,8 @@ void Dystopia::SceneSystem::SceneChanged(void)
 	mpCurrScene->Shutdown();
 	delete mpCurrScene;
 
-	EngineCore::GetInstance()->PostUpdate();
+	EngineCore::GetInstance()->GetSystem<CollisionSystem>()->PostUpdate();
+	EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->PostUpdate();
 
 	static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 	auto SerialObj = TextSerialiser::OpenFile(mNextSceneFile, TextSerialiser::MODE_READ);

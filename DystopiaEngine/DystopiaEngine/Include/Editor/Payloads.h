@@ -32,6 +32,7 @@ namespace EGUI
 		COMPONENT,
 		SCENE,
 		MP3,
+		DDS,
 
 		ePAY_LOAD_LAST
 	};
@@ -48,6 +49,7 @@ namespace EGUI
 		case COMPONENT:		return "COMPONENT";
 		case SCENE:			return "SCENE";
 		case MP3:			return "MP3";
+		case DDS:			return "DDS";
 		default:			return "ePAY_LOAD_LAST";
 		}
 	}
@@ -61,6 +63,7 @@ namespace Dystopia
 	static const std::string g_PayloadBmpEx = ".bmp";
 	static const std::string g_PayloadCppEx = ".cpp";
 	static const std::string g_PayloadMp3Ex = ".mp3";
+	static const std::string g_PayloadDDSEx = ".dds";
 
 	/********************************************************************* FILE & FOLDER *********************************************************************/
 	char my_tolower(char const ch);

@@ -126,6 +126,8 @@ namespace Dystopia
 			return EGUI::ePayloadTags::SCENE;
 		else if (_name.find(g_PayloadMp3Ex) == _name.length() - 4)
 			return EGUI::ePayloadTags::MP3;
+		else if (_name.find(g_PayloadDDSEx) == _name.length() - 4)
+			return EGUI::ePayloadTags::DDS;
 		return EGUI::ePayloadTags::UNKNOWN;
 	}
 }

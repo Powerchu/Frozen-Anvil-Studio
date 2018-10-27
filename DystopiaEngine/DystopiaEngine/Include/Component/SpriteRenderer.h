@@ -88,7 +88,7 @@ namespace Dystopia
 		float mfFrameTime, mfAccTime;
 
 		bool mbPlayAnim;
-		int mnTotalCols, mnTotalRows;
+		int miTotalCols, miTotalRows, miCutOff;
 	};
 }
 
