@@ -246,14 +246,13 @@ namespace Dystopia
 					ratio = c1 / c2;
 					PointOfImpact = elem.mPos + ratio * elem.mVec3;
 					distance = (GetGlobalPosition() - PointOfImpact).Magnitude();
-					norm = -elem.mNorm3;
+					norm = -(GetGlobalPosition() - PointOfImpact);
 				}
 
 				if (distance < GetRadius())
 				{
 					isInside = true;
 					newEvent.mfPeneDepth     = GetRadius() - distance;
-					elem.mNorm3.z = 0;
 					newEvent.mEdgeNormal     += norm;
 					newEvent.mEdgeVector     = Math::Vec3D{ newEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
 					newEvent.mCollisionPoint = PointOfImpact;
@@ -267,19 +266,22 @@ namespace Dystopia
 				}
 			}
 			if (isInside)
+			{
 				newEvent.mEdgeNormal = newEvent.mEdgeNormal.Normalise();
-			
+				newEvent.mEdgeNormal.z = 0;
+				InformOtherComponents(true, newEvent);
+				return true;
+			}
+			else
+			{
+				InformOtherComponents(false, newEvent);
+				return false;
+			}
 
 		}
-		InformOtherComponents(isInside, newEvent);
-		//if (isInside)
-		//{
- 	//		InformOtherComponents(true, newEvent);
-		//}
-		//else
-		//{
-		//	InformOtherComponents(false, newEvent);
-		//}
+		/*No Normals will be given because i have no idea which one to give*/
+		/*Circle completely inside*/
+		InformOtherComponents(true, newEvent);
 		return isInside;
 	}
 	bool Circle::isColliding(Convex * const & other_col)
@@ -371,23 +373,11 @@ namespace Dystopia
 		}
 	}
 
-	void Circle::eIsTriggerCheckBox()
-	{
-		bool tempBool = mbIsTrigger;
-
-		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
-		{
-			mbIsTrigger = tempBool;
-			EGUI::GetCommandHND()->InvokeCommand<Collider>(&Collider::mbIsTrigger, tempBool);
-		}
-	}
-
 	void Circle::EditorUI() noexcept
 	{
-		eAttachedBodyEmptyBox();
-		eIsTriggerCheckBox();
 		ePositionOffsetVectorFields();
 		eScaleField();
+		eAttachedBodyEmptyBox();
 		eNumberOfContactsLabel();
 	}
 #endif

@@ -129,7 +129,6 @@ namespace Dystopia
 				mColliders.push_back(&elem);
 				//mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
-
 		}
 
 		//if (!mCollisionTree.isEmpty())
@@ -161,6 +160,8 @@ namespace Dystopia
 		//			if (key.first == pair_key1)
 		//			{
 		//				(this->*key.second)(bodyA, bodyB);
+		//				bodyA->SetColliding(bodyA->Collider::HasCollision());
+
 		//				break;
 		//			}
 		//		}
@@ -169,6 +170,8 @@ namespace Dystopia
 		//			if (key.first == pair_key2)
 		//			{
 		//				(this->*key.second)(bodyB, bodyA);
+		//				bodyA->SetColliding(bodyB->Collider::HasCollision());
+
 		//				break;
 		//			}
 		//		}
