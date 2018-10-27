@@ -36,6 +36,8 @@ namespace Dystopia
 
 		void Update(float);
 
+		void PostUpdate(void);
+
 		void Shutdown(void);
 
 

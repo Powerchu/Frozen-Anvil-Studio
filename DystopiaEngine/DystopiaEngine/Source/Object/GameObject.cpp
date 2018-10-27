@@ -104,6 +104,7 @@ void Dystopia::GameObject::Awake(void)
 
 void Dystopia::GameObject::Init(void)
 {
+	mTransform.Init();
 	ForcePing(mComponents, Init);
 	ForcePing(mBehaviours, Init);
 }

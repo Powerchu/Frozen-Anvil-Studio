@@ -104,8 +104,7 @@ bool Dystopia::SceneSystem::Instantiate(const std::string& _prefabName, const Ma
 	if (pDupl)
 	{
 		pDupl->GetComponent<Transform>()->SetPosition(_position);
-		mpCurrScene->GetAllGameObjects().EmplaceBack(Ut::Move(*pDupl));
-		auto& obj = mpCurrScene->GetAllGameObjects().back();
+		auto& obj = *mpCurrScene->GetAllGameObjects().Emplace(Ut::Move(*pDupl));
 		obj.Identify();
 		obj.Init();
 		obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);

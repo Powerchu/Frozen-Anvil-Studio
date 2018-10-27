@@ -52,8 +52,7 @@ bool Dystopia::ComdInsertObject::ExecuteDo()
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (p || !mpObj) return false;
 
-	mpScene->GetAllGameObjects().EmplaceBack(Ut::Move(*mpObj));
-	auto& obj = mpScene->GetAllGameObjects().back();
+	auto& obj = *mpScene->GetAllGameObjects().Emplace(Ut::Move(*mpObj));
 	obj.Identify();
 	obj.Init();
 	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
@@ -175,8 +174,7 @@ bool Dystopia::ComdDeleteObject::ExecuteUndo()
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (p || !mpObj) return false;
 
-	mpScene->GetAllGameObjects().EmplaceBack(Ut::Move(*mpObj));
-	auto& obj = mpScene->GetAllGameObjects().back();
+	auto& obj = *mpScene->GetAllGameObjects().Emplace(Ut::Move(*mpObj));
 	obj.Identify();
 	obj.Init();
 	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
