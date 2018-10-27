@@ -189,7 +189,8 @@ namespace Dystopia
 				{
 					if (Math::Abs(float(mpBody->GetLinearVelocity().x)) > 0.01F)
 					{
-						tInput->SetVibrate(Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 32000, Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 16000);
+						tInput->SetVibrate(static_cast<unsigned short>(Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 32000) 
+										  ,static_cast<unsigned short>(Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 16000));
 					}
 					else
 					{

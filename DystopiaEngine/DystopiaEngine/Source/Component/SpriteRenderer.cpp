@@ -108,7 +108,7 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 			mfAccTime -= mfFrameTime;
 		}
 
-		if (miCutOff && (mnCol + (miTotalCols * mnRow)) >= miCutOff)
+		if (miCutOff && (mnCol + (miTotalCols * mnRow)) >= unsigned(miCutOff))
 			mnCol = mnRow = 0;
 	}
 }
