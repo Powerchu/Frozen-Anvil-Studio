@@ -1,0 +1,21 @@
+[START_GameObject]
+1,[START_START_GO_DATA]
+18446744072666222080,1,GameObject,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GameObject]
+[START_Component]
+8,[START_Renderer]
+18446744073602601984,1,18446744072666222080,,
+[END_Renderer]
+[START_Sprite Renderer]
+1,0.016,1,1,0,
+[END_Sprite Renderer]
+
+[END_Component End]

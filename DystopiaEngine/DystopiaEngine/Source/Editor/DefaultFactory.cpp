@@ -41,6 +41,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Behaviour/BehaviourSystem.h"
 
 #include <fstream>
 #include <iostream>
@@ -168,6 +169,36 @@ namespace Dystopia
 			pObject->AddComponent(c, typename Collider::TAG{});
 			return pObject;
 		}
+
+		void SaveAsPrefab(GameObject& _obj, TextSerialiser& _out)
+		{
+			auto& allCom = _obj.GetAllComponents();
+			auto& allBehaviour = _obj.GetAllBehaviours();
+			_out.InsertStartBlock("GameObject");
+			_out << allCom.size();
+			_obj.Serialise(_out);
+			_out.InsertEndBlock("GameObject");
+
+			for (const auto& elem : allCom)
+			{
+				_out.InsertStartBlock("Component");
+				_out << elem->GetRealComponentType();
+				elem->Serialise(_out);
+				_out.InsertEndBlock("Component End");
+			}
+			//for (const auto & elem : allBehaviour)
+			//{
+			//	std::string name{ elem.BehaviourName };
+			//	_out << name;
+			//	auto Metadata = elem.GetMetaData();
+			//	auto AllNames = Metadata.GetAllNames();
+			//	for (auto const & elem : AllNames)
+			//	{
+			//		if(Metadata[elem])
+			//			Metadata[elem].Serialise()
+			//	}
+			//}
+		}
 	
 		std::string SaveAsPrefab(GameObject& _obj, const std::string& _path)
 		{
@@ -176,20 +207,8 @@ namespace Dystopia
 			if (!file.is_open())
 				__debugbreak();
 
-			auto toFile					= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_WRITE);
-			const auto& allComponents	= _obj.GetAllComponents();
-
-			toFile.InsertStartBlock("GameObject");
-			toFile << allComponents.size();
-			_obj.Serialise(toFile);
-			toFile.InsertEndBlock("GameObject");
-			for (const auto& elem : allComponents)
-			{
-				toFile.InsertStartBlock("Component");
-				toFile << elem->GetRealComponentType();
-				elem->Serialise(toFile);
-				toFile.InsertEndBlock("Component End");
-			}
+			auto toFile	= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_WRITE);
+			SaveAsPrefab(_obj, toFile);
 			return _obj.GetName() + g_PayloadPrefabEx;
 		}
 

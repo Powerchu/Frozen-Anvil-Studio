@@ -404,7 +404,8 @@ namespace Dystopia
 		EGUI::Display::Label("Offset");
 		auto arrResult = EGUI::Display::VectorFields("    ", &mv3Offset, 0.01f, -FLT_MAX, FLT_MAX);
 		for (auto &e : arrResult)
-		{/*
+		{
+			/*
 			switch (e)
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
