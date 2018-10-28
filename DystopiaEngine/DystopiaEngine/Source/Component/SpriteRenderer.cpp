@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Texture.h"
 #include "System/Graphics/TextureAtlas.h"
 #include "System/Graphics/TextureSystem.h"
+#include "System/Graphics/Shader.h"
 
 #include "Object/GameObject.h"
 
@@ -67,6 +68,10 @@ void Dystopia::SpriteRenderer::Draw(void) const noexcept
 		if (mpAtlas && mAnimations.size() && mpAtlas->GetAllSections().size())
 		{
 			mpAtlas->SetSection(mAnimations[mnID].mnID, mnCol, mnRow, *shader);
+		}
+		else
+		{
+			shader->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
 		}
 		Renderer::Draw();
 	}
@@ -142,6 +147,19 @@ void Dystopia::SpriteRenderer::LoadAnimIntoAtlas(void)
 		if (s.mnID >= mpAtlas->GetAllSections().size())
 			s.mnID = mpAtlas->AddSection(s.mUVCoord, s.mnWidth, s.mnHeight, s.mnCol, s.mnRow);
 	}
+}
+
+void Dystopia::SpriteRenderer::AddDefaultToAtlas(void)
+{
+	SpriteSheet s;
+	s.mstrName = "defualt";
+	s.mUVCoord = Math::Vec2{ 0,0 };
+	s.mnCol = s.mnRow = 1;
+	s.mnWidth = GetTexture()->GetWidth();
+	s.mnHeight = GetTexture()->GetHeight();
+	s.mnCutoff = 0;
+	s.mnID = mpAtlas->AddSection(s.mUVCoord, s.mnWidth, s.mnHeight, s.mnCol, s.mnRow);
+	mAnimations.Insert(s);
 }
 
 Dystopia::SpriteRenderer* Dystopia::SpriteRenderer::Duplicate(void) const
@@ -242,32 +260,37 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	{
 		if (EGUI::Display::Button("New Anime", Math::Vec2{ 80.f, 20.f }))
 		{
-			SpriteSheet s;
-			s.mstrName = "defualt";
-			s.mUVCoord = Math::Vec2{ 0,0 };
-			s.mnCol = s.mnRow = 1;
-			s.mnWidth = GetTexture()->GetWidth();
-			s.mnHeight = GetTexture()->GetHeight();
-			s.mnCutoff = 0;
-			s.mnID = mpAtlas->AddSection(s.mUVCoord, s.mnWidth, s.mnHeight, s.mnCol, s.mnRow);
-			mAnimations.Insert(s);
+			AddDefaultToAtlas();
 		}
 	}
 	EGUI::PopLeftAlign();
 
+	int toRemove = -1;
 	EGUI::PushLeftAlign(90);
 	for (unsigned int i = 0; i < mAnimations.size(); i++)
 	{
 		EGUI::PushID(i);
-		if (EGUI::Display::StartTreeNode("Animation_" + std::to_string(i)))
+		bool open = EGUI::Display::StartTreeNode("Animation_" + std::to_string(i));
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (EGUI::Display::SelectableTxt("Remove"))
+				toRemove = i;
+			ImGui::EndPopup();
+		}
+		if (open)
 		{
 			EGUI::Indent(20);
 			SpriteSheetUI(mAnimations[i]);
 			EGUI::UnIndent(20);
 			EGUI::Display::EndTreeNode();
 		}
-
 		EGUI::PopID();
+
+		if (toRemove == i)
+		{
+			mAnimations.FastRemove(i--);
+			toRemove = -1;
+		}
 	}
 	EGUI::PopLeftAlign();
 

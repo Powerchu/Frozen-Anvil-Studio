@@ -94,6 +94,7 @@ namespace Dystopia
 		void GetAtlas(void);
 		void RemoveAtlas(void);
 		void LoadAnimIntoAtlas(void);
+		void AddDefaultToAtlas(void);
 	};
 }
 

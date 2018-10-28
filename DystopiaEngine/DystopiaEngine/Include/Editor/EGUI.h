@@ -538,9 +538,6 @@ namespace EGUI
 				   bool _interactive = false, bool _outlineBG = false);
 
 
-
-
-
 	}
 }
 
