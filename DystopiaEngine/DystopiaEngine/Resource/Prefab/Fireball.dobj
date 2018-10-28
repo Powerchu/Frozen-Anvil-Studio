@@ -1,30 +1,36 @@
 [START_GameObject]
 3,[START_START_GO_DATA]
-1517314560,65,Fireball,
+18446744073438092800,65,Fireball,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-8,5,1,-69.3875,-31.0304,0.1,0,0,-0.0722808,0.997384,0,
+8,5,1,-51.5371,-13.1481,0.1,0,0,-0.0722808,0.997384,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 
 [END_GameObject]
 [START_Component]
+5,[START_Circle_Collider2D]
+47860224,1,18446744073438092800,0,0,0,0,0,0,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
 1,[START_Renderer]
-714105856,1,1517314560,,
+714105856,1,18446744073438092800,,
 [END_Renderer]
 
 [END_Component End]
 [START_Component]
 2,[START_RigidBody]
-1301435904,1,1517314560,0,0,0,0,0,0,0,0,100,1,0,1,1,
+1301435904,1,18446744073438092800,0,0,0,0,0,0,0,0,100,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
-[START_Component]
-5,[START_Circle_Collider2D]
-47860224,1,1517314560,0,0,0,0,0,0,1,
-[END_Circle_Collider2D]
+[START_All Behaviours Block]
+1,Fireball,[START_Behaviour Block]
+0,
+[END_Behaviour Block]
 
-[END_Component End]
+[END_All Behaviours Block]
