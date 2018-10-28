@@ -131,7 +131,7 @@ namespace Math
 		inline bool _CALL operator!=(const Vector4& _rhs) const;
 
 		// Alternate + and -
-		// x1 + x2 , y1 - y2 , z1 + z2 , w1 - w2
+		// x1 - x2 , y1 + y2 , z1 - z2 , w1 + w2
 		inline Vector4& _CALL AddSub(const Vector4);
 
 		// x1 + y1 , z1 + w1 , x2 + y2 , z2 + w2
@@ -256,16 +256,19 @@ namespace Math
 		SwizzleMask<1, 3, 1, 3> ywyw;
 		SwizzleMask<1, 3, 2, 0> ywzx;
 		SwizzleMask<2, 0, 1, 3> zxyw;
+		SwizzleMask<2, 0, 3, 1> zxwy;
 		SwizzleMask<2, 1, 2, 1> zyzy;
 		SwizzleMask<2, 2, 2, 3> zzzw;
 		SwizzleMask<2, 2, 2, 2> zzzz;
 		SwizzleMask<2, 3, 0, 0> zwxx;
 		SwizzleMask<2, 3, 0, 1> zwxy;
+		SwizzleMask<2, 3, 1, 0> zwyx;
 		SwizzleMask<2, 3, 2, 3> zwzw;
 		SwizzleMask<2, 3, 3, 2> zwwz;
 		SwizzleMask<3, 1, 2, 0> wyzx;
 		SwizzleMask<3, 2, 0, 1> wzxy;
 		SwizzleMask<3, 2, 1, 0> wzyx;
+		SwizzleMask<3, 2, 2, 3> wzzw;
 		SwizzleMask<3, 2, 3, 2> wzwz;
 		SwizzleMask<3, 3, 3, 3> wwww;
 
