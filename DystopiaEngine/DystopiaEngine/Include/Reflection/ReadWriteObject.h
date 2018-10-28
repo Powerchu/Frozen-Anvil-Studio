@@ -4,7 +4,7 @@
 
 #include <functional>
 #include <any>
-
+#include "DataStructure/HashString.h"
 #include "Globals.h"
 #include "Math/MathLib.h"
 
@@ -26,6 +26,7 @@ namespace Dystopia
 				                       _ALL_TYPE_QUALIFERS_(short),
 				                       _ALL_TYPE_QUALIFERS_(char),
 				                       _ALL_TYPE_QUALIFERS_(std::string),
+										_ALL_TYPE_QUALIFERS_(HashString),
 				                       _ALL_TYPE_QUALIFERS_(unsigned int),
 								       _ALL_TYPE_QUALIFERS_(unsigned char),
 									   _ALL_TYPE_QUALIFERS_(unsigned short),
@@ -40,6 +41,7 @@ namespace Dystopia
 					                   _VOID_RETURN_FUNC_TYPE_(short, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(char, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(std::string, void*),
+									   _VOID_RETURN_FUNC_TYPE_(HashString, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(unsigned int, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(unsigned char, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(unsigned short, void*),

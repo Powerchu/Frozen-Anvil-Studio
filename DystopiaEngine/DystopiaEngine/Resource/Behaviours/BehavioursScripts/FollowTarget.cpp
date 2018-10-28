@@ -1,0 +1,127 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	FollowTarget.cpp
+\author d (100%)
+\par    email: d\@digipen.edu
+\brief
+INSERT BRIEF HERE
+
+All Content Copyright � 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
+#include "FollowTarget.h"
+#include "System/Input/InputSystem.h"
+#include "System/Input/InputMap.h"
+#include "System/Driver/Driver.h"
+#include "Editor/EGUI.h"
+#include "Utility/DebugAssert.h"
+
+namespace Dystopia
+{
+	FollowTarget::FollowTarget()
+	{
+	}
+
+	FollowTarget::~FollowTarget()
+	{
+	}
+
+	void FollowTarget::Load()
+	{
+	}
+
+	void FollowTarget::Init()
+	{
+	}
+
+	void FollowTarget::Update(const float _fDeltaTime)
+	{
+	}
+
+	void FollowTarget::FixedUpdate(const float _fDeltaTime)
+	{
+	}
+	
+	void FollowTarget::PostUpdate(void)
+	{
+	}
+
+	void FollowTarget::GameObjectDestroy(void)
+	{
+	}
+
+	void FollowTarget::Unload(void)
+	{
+	}
+
+	void Dystopia::FollowTarget::OnCollisionEnter(const CollisionEvent& _colEvent)
+	{
+
+	}
+
+	void Dystopia::FollowTarget::OnCollisionStay(const CollisionEvent& _colEvent)
+	{
+
+	}
+
+	void Dystopia::FollowTarget::OnCollisionExit(const CollisionEvent& _colEvent)
+	{
+
+	}
+
+	void Dystopia::FollowTarget::OnTriggerEnter(const GameObject * _obj)
+	{
+	}
+
+	void Dystopia::FollowTarget::OnTriggerStay(const GameObject * _obj)
+	{
+	}
+
+	void Dystopia::FollowTarget::OnTriggerExit(const GameObject * _obj)
+	{
+	}
+
+	FollowTarget * FollowTarget::Duplicate() const
+	{
+		return new FollowTarget{};
+	}
+
+	void FollowTarget::Serialise(TextSerialiser& _ser) const
+	{
+	}
+
+	void FollowTarget::Unserialise(TextSerialiser& _ser)
+	{
+	}
+
+
+	const char * const FollowTarget::GetBehaviourName() const
+	{
+		return FollowTarget::BehaviourName;
+	}
+
+	void FollowTarget::EditorUI(void) noexcept
+	{
+		
+		
+	}
+	
+	TypeErasure::TypeEraseMetaData FollowTarget::GetMetaData()
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		return TypeErasure::TypeEraseMetaData{};
+	}
+	TypeErasure::TypeEraseMetaData const FollowTarget::GetMetaData() const
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		return TypeErasure::TypeEraseMetaData{};
+	}
+}
+
+
+
+

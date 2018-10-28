@@ -64,6 +64,11 @@ namespace Dystopia
 				_obj << static_cast<char>(_v);
 			}
 			template<>
+			void operator()(HashString _v, TextSerialiser& _obj, void*)
+			{
+				//_obj << static_cast<HashString>(_v);
+			}
+			template<>
 			void operator()(std::string _v, TextSerialiser& _obj, void*)
 			{
 				_obj << static_cast<std::string>(_v);
@@ -85,6 +90,13 @@ namespace Dystopia
 				float Temp = 0;
 				_obj >> Temp;
 				_f(Temp, _addr);
+			}
+			template<>
+			void operator()(HashString, std::function<void(HashString, void*)> _f, void * _addr, TextSerialiser & _obj)
+			{
+				//HashString Temp;
+				//_obj >> Temp;
+				//_f(Temp, _addr);
 			}
 			template<>
 			void operator()(int, std::function<void(int, void*)> _f, void * _addr, TextSerialiser & _obj)
@@ -414,7 +426,7 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::LoadDefaults(void)
 	{
-	}
+	}	
 
 	void Dystopia::BehaviourSystem::LoadSettings(TextSerialiser &)
 	{
@@ -429,7 +441,9 @@ namespace Dystopia
 		for (auto & i : mvBehaviours)
 		{
 			/*Save Behaviour Name*/
-			_obj << std::string{ i.first.begin(), i.first.end() };
+			std::string str{ i.first.begin(), i.first.end() };
+
+			_obj << str;
 			/*Save the number of Pointers*/
 			_obj << i.second.size();
 			for (auto & iter : i.second)

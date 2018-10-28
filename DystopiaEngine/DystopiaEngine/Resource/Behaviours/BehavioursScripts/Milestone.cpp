@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	Milestone::Milestone()
+	: mF{2.0f}
 	{ 
 	}
 
