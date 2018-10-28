@@ -118,11 +118,6 @@ namespace Dystopia
 		const auto my_body = GetOwner()->GetComponent<RigidBody>();
 		const auto my_col = GetOwner()->GetComponent<Collider>();
 
-		if (my_body->GetLinearVelocity().y < -0.5F)
-		{
-			mbIsGrounded = false;
-		}
-
 		if (nullptr != my_col)
 		{
 			if (!my_col->IsTrigger())
@@ -162,7 +157,7 @@ namespace Dystopia
 			const auto leftThumb = tInput->GetAnalogX(0);
 			const auto leftTriggerFloat = tInput->GetTriggers(0);
 
-			if (leftThumb < -0.8F) // Moving Left
+			if (leftThumb < -0.9F) // Moving Left
 			{
 				mpBody->AddLinearImpulse({ leftThumb * mfCharacterSpeed * mpBody->GetMass(),0,0 });
 				if (mbIsFacingRight)

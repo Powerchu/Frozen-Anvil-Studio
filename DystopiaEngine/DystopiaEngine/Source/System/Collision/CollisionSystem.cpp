@@ -153,6 +153,7 @@ namespace Dystopia
 					if (ownerA == ownerB)
 						continue;
 				}
+
 				const auto pair_key1 = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
 				const auto pair_key2 = std::make_pair(bodyB->GetColliderType(), (bodyA)->GetColliderType());
 				for (auto & key : CollisionFuncTable)
@@ -170,7 +171,7 @@ namespace Dystopia
 					if (key.first == pair_key2)
 					{
 						(this->*key.second)(bodyB, bodyA);
-						bodyA->SetColliding(bodyB->Collider::HasCollision());
+						bodyB->SetColliding(bodyB->Collider::HasCollision());
 
 						break;
 					}
