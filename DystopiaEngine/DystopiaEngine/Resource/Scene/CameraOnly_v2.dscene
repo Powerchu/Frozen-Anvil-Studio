@@ -1,0 +1,42 @@
+[START_Scene]
+18446744072887468032,CameraOnly_v2,1,[START_START_GO_DATA]
+1586496512,1,Scene Camera,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+1586497536,0,1586496512,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+
+[END_Scene]

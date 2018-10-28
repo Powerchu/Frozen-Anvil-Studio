@@ -60,6 +60,16 @@ namespace Gbl
 
 	constexpr auto  FIXEDUPDATE_DT  = 20000000Ui64;
 	constexpr float FIXEDUPDATE_FDT = float(FIXEDUPDATE_DT / 1e9);
+	
+	constexpr auto  ATLAS_EXT       = "dmap";
+	constexpr auto  FONTMAP_EXT     = ATLAS_EXT;
+	constexpr auto  SETTINGS_EXT    = "dyst";
+	constexpr auto  SCENE_EXT       = "dscene";
+	constexpr auto  PREFAB_EXT      = "dobj";
+	constexpr auto  MESH_EXT        = "dmesh";
+	constexpr auto  FRAGSHADER_EXT  = "dfrag";
+	constexpr auto  VERTSHADER_EXT  = "dvert";
+	constexpr auto  CRASHREPORT_EXT = "dystor";
 }
 
 

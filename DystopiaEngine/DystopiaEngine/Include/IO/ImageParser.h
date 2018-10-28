@@ -24,13 +24,18 @@ namespace Dystopia
 
 namespace ImageParser
 {
-	// Uses external library
-	Dystopia::Image* LoadPNG(const std::string&);
+	using Dystopia::Image;
 
-	Dystopia::Image* LoadBMP(const std::string&);
-	Dystopia::Image* LoadDDS(const std::string&);
+	// Uses external library
+	Image* LoadPNG(const std::string&);
+
+	Image* LoadBMP(const std::string&);
+	Image* LoadDDS(const std::string&);
 
 	bool WriteBMP(const std::string&, void* _pImg, int _nWidth, int _nHeight);
+	bool WriteBMP(const std::string&, Image const* _pImg);
+
+	bool WriteDDS(const std::string&, Image const* _pImg);
 }
 
 
