@@ -864,6 +864,9 @@
     <ClInclude Include="Include\System\Graphics\FontSystem.h">
       <Filter>Game Engine\Systems\Graphic\Freetype</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h">
+      <Filter>Game Engine\Systems\Behaviour</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

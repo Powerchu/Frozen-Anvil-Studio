@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
 #include "Editor/EditorMetaHelpers.h"
+#include "System/Behaviour/BehaviourSystemHelper.h"
 
 #include "Utility/GUID.h"
 #include "Utility/DebugAssert.h"
@@ -176,19 +177,35 @@ namespace Dystopia
 				elem->Serialise(_out);
 				_out.InsertEndBlock("Component End");
 			}
-			//auto& allBehaviour = _obj.GetAllBehaviours();
-			//for (const auto & elem : allBehaviour)
-			//{
-			//	std::string name{ elem.BehaviourName };
-			//	_out << name;
-			//	auto Metadata = elem.GetMetaData();
-			//	auto AllNames = Metadata.GetAllNames();
-			//	for (auto const & elem : AllNames)
-			//	{
-			//		if(Metadata[elem])
-			//			Metadata[elem].Serialise()
-			//	}
-			//}
+			_out.InsertStartBlock("All Behaviours Block");
+			auto& allBehaviour = _obj.GetAllBehaviours();
+			_out << allBehaviour.size();
+			for (const auto & elem : allBehaviour)
+			{
+				std::string name{ elem->GetBehaviourName() };
+				_out << name;
+				_out.InsertStartBlock("Behaviour Block");
+				auto Metadata = elem->GetMetaData();
+				if (Metadata)
+				{
+					auto AllNames = Metadata.GetAllNames();
+					_out << AllNames.size();
+					for (auto const & i : AllNames)
+					{
+						if (Metadata[i])
+						{
+							std::string MemVarName{ i };
+							_out << MemVarName;
+							_out.InsertStartBlock("MEMBER VAR");
+							Metadata[i].Serialise(elem, _out, Dystopia::BehaviourHelper::SuperSerialiseFunctor{});
+							_out.InsertStartBlock("MEMBER VAR END");
+						}
+
+					}
+				}
+				_out.InsertEndBlock("Behaviour Block");
+			}
+			_out.InsertEndBlock("All Behaviours Block");
 		}
 	
 		std::string SaveAsPrefab(GameObject& _obj, const std::string& _path)
@@ -212,14 +229,15 @@ namespace Dystopia
 
 			ListOfComponents availComponents;
 			unsigned	num			= 0;
+			unsigned    numBehaviour= 0;
 			unsigned	sysID		= 0;
 			auto		fromFile	= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_READ);
 
 			GameObject* pObj		= new GameObject{};
-
 			fromFile.ConsumeStartBlock();
 			fromFile >> num;
 			pObj->Unserialise(fromFile);
+			pObj->SetID(GUIDGenerator::GetUniqueID());
 			fromFile.ConsumeEndBlock();
 			for (unsigned i = 0; i < num; i++)
 			{
@@ -231,7 +249,50 @@ namespace Dystopia
 				fromFile.ConsumeEndBlock();
 			}
 
-			pObj->SetID(GUIDGenerator::GetUniqueID());
+			fromFile.ConsumeStartBlock();
+ 			fromFile >> numBehaviour;
+			for (unsigned i = 0; i < numBehaviour; i++)
+			{
+				std::string name;
+				fromFile >> name;
+				if (auto ptr = EngineCore::GetInstance()->Get<BehaviourSystem>()->RequestBehaviour(pObj->GetID(), name))
+				{
+					unsigned size = 0;
+					fromFile.ConsumeStartBlock();
+					fromFile >> size;
+					auto BehaviourMetadata = ptr->GetMetaData();
+					if (BehaviourMetadata)
+					{
+						for (unsigned u = 0; u < size; ++u)
+						{
+							std::string MemVarName;
+							fromFile >> MemVarName;
+							if (BehaviourMetadata[MemVarName.c_str()])
+							{
+								fromFile.ConsumeStartBlock();
+								/*Call Unserialise*/
+								BehaviourMetadata[MemVarName.c_str()].Unserialise(ptr, fromFile, BehaviourHelper::SuperUnserialiseFunctor{});
+								fromFile.ConsumeStartBlock();
+							}
+							else
+							{
+								fromFile.ConsumeStartBlock();
+								fromFile.ConsumeStartBlock();
+							}
+						}
+					}
+					ptr->SetOwner(pObj);
+					pObj->AddComponent(ptr, BehaviourTag{});
+					fromFile.ConsumeEndBlock();
+				}
+				else
+				{
+					fromFile.ConsumeStartBlock();
+					fromFile.ConsumeEndBlock();
+				}
+			}
+			fromFile.ConsumeEndBlock();
+			//pObj->SetID(GUIDGenerator::GetUniqueID());
 			pObj->Identify();
 			return pObj;
 		}
