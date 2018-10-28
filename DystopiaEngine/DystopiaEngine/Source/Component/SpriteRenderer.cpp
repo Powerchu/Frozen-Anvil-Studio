@@ -39,7 +39,7 @@ Dystopia::SpriteRenderer::SpriteRenderer(void) noexcept
 }
 
 Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexcept
-	: Renderer{ Ut::Move(_rhs) }, mAnimations{ Ut::Move(_rhs.mAnimations) }, 
+	: Renderer{ Ut::Move(_rhs) }, mAnimations{ /*Ut::Move(_rhs.mAnimations)*/ }, 
 	mnID{ Ut::Move(_rhs.mnID) }, mnCol{ Ut::Move(_rhs.mnCol) }, mnRow{ Ut::Move(_rhs.mnRow) },
 	mfFrameTime{ Ut::Move(_rhs.mfFrameTime) }, mfAccTime{ Ut::Move(_rhs.mfAccTime) }, mpAtlas{ Ut::Move(_rhs.mpAtlas) },
 	mbPlayAnim{ Ut::Move(_rhs.mbPlayAnim) }
@@ -48,7 +48,7 @@ Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexce
 }
 
 Dystopia::SpriteRenderer::SpriteRenderer(const SpriteRenderer& _rhs) noexcept
-	: Renderer{ _rhs }, mAnimations{ _rhs.mAnimations },
+	: Renderer{ _rhs }, mAnimations{ /*_rhs.mAnimations*/ },
 	mnID{ _rhs.mnID }, mnCol{ _rhs.mnCol }, mnRow{_rhs.mnRow },
 	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, mpAtlas{ _rhs.mpAtlas },
 	mbPlayAnim{ _rhs.mbPlayAnim }
@@ -65,16 +65,13 @@ void Dystopia::SpriteRenderer::Draw(void) const noexcept
 {
 	if (auto shader = GetShader())
 	{
-		if (mpAtlas)
+		if (mpAtlas && mAnimations.size() && mpAtlas->GetAllSections().size())
 		{
-			if (mAnimations.size() && mpAtlas->GetAllSections().size())
-			{
-				mpAtlas->SetSection(mAnimations[mnID].mnID, mnCol, mnRow, *shader);
-			}
-			else
-			{
-				shader->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
-			}
+			mpAtlas->SetSection(mAnimations[mnID].mnID, mnCol, mnRow, *shader);
+		}
+		else
+		{
+			shader->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
 		}
 		Renderer::Draw();
 	}
@@ -191,6 +188,7 @@ void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
 		_out << a.mnHeight;
 		_out << a.mnCutoff;
 	}
+	_out << mnID;
 	_out.InsertEndBlock("Sprite Renderer");
 }
 
@@ -216,6 +214,7 @@ void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 		_in >> a.mnCutoff;
 		mAnimations.Insert(a);
 	}
+	_in >> mnID;
 	_in.ConsumeEndBlock();
 	GetAtlas();
 }
@@ -231,7 +230,6 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 		RemoveAtlas();
 
 	EGUI::PushLeftAlign(90);
-
 	if (mAnimations.size())
 	{
 		EGUI::Display::Label(std::string{ "Playing - Animation_" + std::to_string(mnID) }.c_str());
@@ -244,18 +242,18 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 
 	switch (EGUI::Display::DragFloat("Speed", &mfFrameTime, 0.01f, 0.016f, 1.f))
 	{
-	case EGUI::eDragStatus::eEND_DRAG:
-	case EGUI::eDragStatus::eTABBED:
-	case EGUI::eDragStatus::eDEACTIVATED:
-	case EGUI::eDragStatus::eENTER:
-		EGUI::GetCommandHND()->EndRecording();
-		break;
 	case EGUI::eDragStatus::eSTART_DRAG:
 		EGUI::GetCommandHND()->StartRecording<SpriteRenderer>(mnOwner, &SpriteRenderer::mfFrameTime);
 		break;
 	default:
 	case EGUI::eDragStatus::eNO_CHANGE:
 	case EGUI::eDragStatus::eDRAGGING:
+		break;
+	case EGUI::eDragStatus::eEND_DRAG:
+	case EGUI::eDragStatus::eTABBED:
+	case EGUI::eDragStatus::eDEACTIVATED:
+	case EGUI::eDragStatus::eENTER:
+		EGUI::GetCommandHND()->EndRecording();
 		break;
 	}
 
@@ -288,12 +286,11 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 			EGUI::Display::EndTreeNode();
 		}
 		EGUI::PopID();
-
-		if (toRemove == static_cast<int>(i))
-		{
-			mAnimations.FastRemove(i--);
-			toRemove = -1;
-		}
+	}
+	if (toRemove != -1)
+	{
+		mAnimations.FastRemove(toRemove);
+		mnID = (mnID == toRemove) ? 0 : mnID;
 	}
 	EGUI::PopLeftAlign();
 
@@ -310,7 +307,7 @@ void Dystopia::SpriteRenderer::SpriteSheetUI(SpriteSheet& _ss)
 	{
 		_ss.mstrName = std::string{ buffer };
 	}
-	EGUI::Display::VectorFields("UV", &_ss.mUVCoord, 0.01f, 0.f, 1.f);
+	EGUI::Display::VectorFields("Coords", &_ss.mUVCoord, 0.01f, 0.f, 1.f);
 	EGUI::Display::DragInt("Width", &_ss.mnWidth, 1, 1, INT_MAX);
 	EGUI::Display::DragInt("Heigh", &_ss.mnHeight, 1, 1, INT_MAX);
 	EGUI::Display::DragInt("Column", &_ss.mnCol, 1, 1, 100);
@@ -342,6 +339,8 @@ void Dystopia::SpriteRenderer::SpriteSheetUI(SpriteSheet& _ss)
 		const float uStride = (uEnd - uStart);
 		const float vStride = (vEnd - vStart);
 		allSections[_ss.mnID] = TextureAtlas::SubTexture{ uStart, vStart, uEnd, vEnd, float(uStride / _ss.mnCol), float(vStride / _ss.mnRow) };
+		auto& temp = allSections[_ss.mnID];
+		auto a = temp;
 	}
 
 #endif //EDITOR
