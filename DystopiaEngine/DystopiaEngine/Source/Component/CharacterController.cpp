@@ -247,16 +247,29 @@ namespace Dystopia
 		/*IM SORRY AARON - FROM (KEITH)*/
 		if (tInput->IsKeyTriggered("Fireball"))
 		{
-			if(auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition()))
+			if (!mbIsFacingRight)
 			{
-				if(auto rigidptr = ptr->GetComponent<RigidBody>())
+				if (auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{-10,0,0}))
 				{
-					if (!mbIsFacingRight)
-						rigidptr->AddLinearImpulse({ -100 * rigidptr->GetMass(),0,0 });
-					else
-						rigidptr->AddLinearImpulse({ 100 * rigidptr->GetMass(),0,0 });
-				}
+					if (auto rigidptr = ptr->GetComponent<RigidBody>())
+					{
 
+						rigidptr->AddLinearImpulse({ -50 * rigidptr->GetMass(),0,0 });
+					}
+
+				}
+			}
+			else
+			{
+				if (auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 10,0,0 }))
+				{
+					if (auto rigidptr = ptr->GetComponent<RigidBody>())
+					{
+
+						rigidptr->AddLinearImpulse({ 50 * rigidptr->GetMass(),0,0 });
+					}
+
+				}
 			}
 
 		}

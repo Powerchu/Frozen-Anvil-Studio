@@ -81,7 +81,7 @@ namespace Dystopia
 
 	BroadPhaseCircle Circle::GenerateBoardPhaseCircle() const
 	{
-		return BroadPhaseCircle(GetRadius() * 2.f, GetGlobalPosition());
+		return BroadPhaseCircle(GetRadius() * 2.5f, GetGlobalPosition());
 	}
 
 	float Circle::GetRadius() const

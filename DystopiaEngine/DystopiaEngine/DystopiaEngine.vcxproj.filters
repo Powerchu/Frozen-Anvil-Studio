@@ -316,7 +316,9 @@
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp">
       <Filter>Reflection\TypeErasure</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Graphics\FontSystem.cpp" />
+    <ClCompile Include="Source\System\Graphics\FontSystem.cpp">
+      <Filter>Game Engine\Systems\Graphic\Freetype</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -859,7 +861,9 @@
     <ClInclude Include="Include\Behaviour\AI\TreeBuilder.h">
       <Filter>Game Engine\Systems\AI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\FontSystem.h" />
+    <ClInclude Include="Include\System\Graphics\FontSystem.h">
+      <Filter>Game Engine\Systems\Graphic\Freetype</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
