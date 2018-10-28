@@ -55,14 +55,17 @@ Dystopia::Camera::~Camera(void)
 {
 }
 
+void Dystopia::Camera::Awake(void)
+{
+	SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
+	SetOrthographic(800.f, 500.f, -500.f, 500.f);
+}
 
 void Dystopia::Camera::Init(void)
 {
 	if (mnFlags & eObjFlag::FLAG_RESERVED)
 		mnFlags |= eObjFlag::FLAG_ACTIVE;
 
-	SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
-	SetOrthographic(800.f, 500.f, -500.f, 500.f);
 }
 
 void Dystopia::Camera::SetMasterCamera(void)

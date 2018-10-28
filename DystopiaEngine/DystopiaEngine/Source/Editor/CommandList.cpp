@@ -53,14 +53,16 @@ bool Dystopia::ComdInsertObject::ExecuteDo()
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (p || !mpObj) return false;
 
-	auto& obj = *mpScene->GetAllGameObjects().Emplace(Ut::Move(*mpObj));
-	obj.Identify();
-	obj.Init();
+	auto& obj = *mpScene->InsertGameObject(Ut::Move(*mpObj));
+	//auto& obj = *mpScene->GetAllGameObjects().Emplace(Ut::Move(*mpObj));
 	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : obj.GetAllComponents())
 		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : obj.GetAllBehaviours())
 		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	obj.Identify();
+	obj.Awake();
+	obj.Init();
 
 	if (mFocusBack)
 	{
@@ -181,14 +183,16 @@ bool Dystopia::ComdDeleteObject::ExecuteUndo()
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (p || !mpObj) return false;
 
-	auto& obj = *mpScene->GetAllGameObjects().Emplace(Ut::Move(*mpObj));
-	obj.Identify();
-	obj.Init();
+	auto& obj = *mpScene->InsertGameObject(Ut::Move(*mpObj));
+	//*mpScene->GetAllGameObjects().Emplace();
 	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : obj.GetAllComponents())
 		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : obj.GetAllBehaviours())
 		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	obj.Identify();
+	obj.Awake();
+	obj.Init();
 
 	if (mFocusBack)
 	{

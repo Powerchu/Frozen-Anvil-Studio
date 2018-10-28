@@ -122,8 +122,9 @@ namespace Dystopia
 					{
 						auto *p = (*(Admin::g_AdminFuncs[fnName]))(var + std::to_string(i));
 						p->GetComponent<Transform>()->SetPosition(Math::Vec3D{ 20.f * i , 20.f * j, 0});
-						auto obj = GetCurrentScene()->GetAllGameObjects().Emplace(Ut::Move(*p));
+						auto obj = GetCurrentScene()->InsertGameObject(Ut::Move(*p));
 						obj->Identify();
+						obj->Awake();
 						obj->Init();
 						delete p;
 					}
