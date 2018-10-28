@@ -419,7 +419,7 @@ namespace Dystopia
 		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
 		{
 			mbIsTrigger = tempBool;
-			EGUI::GetCommandHND()->InvokeCommand<Collider>(&Collider::mbIsTrigger, tempBool);
+			EGUI::GetCommandHND()->InvokeCommand<Collider>(mnOwner, &Collider::mbIsTrigger, tempBool);
 		}
 	}
 

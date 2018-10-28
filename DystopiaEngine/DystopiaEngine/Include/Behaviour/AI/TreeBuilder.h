@@ -102,8 +102,6 @@ namespace Dystopia
 			Decorator* mpNode;
 		};
 
-
-
 		/*
 		 * The Builder
 		 */

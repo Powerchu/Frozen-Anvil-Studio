@@ -31,7 +31,7 @@ Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
 	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, mnParentID{ 0 }, 
 	Component { _pOwner }
 {
-
+	
 }
 
 Dystopia::Transform::Transform(const Transform& _oOther) :
