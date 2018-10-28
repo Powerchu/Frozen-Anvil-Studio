@@ -19,6 +19,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Behaviour/Behaviour.h"
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
+#include "DataStructure/HashString.h"
+
+#include <string>
 
 #define DllExport   __declspec( dllexport )
 
@@ -75,6 +78,8 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+		std::string targetName;
+		float targetFloat;
 	private:
 		friend MetaData<FollowTarget>;
 	};
@@ -87,6 +92,8 @@ namespace Dystopia
 		}
 	}
 }
+
+PP_REFLECT(Dystopia::FollowTarget, targetName, targetFloat)
 
 #endif //_FollowTarget_H_
 

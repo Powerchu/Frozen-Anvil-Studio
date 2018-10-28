@@ -195,17 +195,22 @@ namespace Dystopia
 		for (auto & c : arrBehav)
 		{
 			EGUI::Display::HorizontalSeparator();
-			if (EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } + "##" +
-				std::to_string(mpFocus->GetID())))
+			bool open = EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } +"##" +
+				std::to_string(mpFocus->GetID()));
+			bool show = !RemoveComponent(c);
+			if (open)
 			{
-				auto && MetaData = c->GetMetaData();
-				if(MetaData)
+				if (show)
 				{
-					auto Allnames =  MetaData.GetAllNames();
-					for (auto i : Allnames)
+					auto && MetaData = c->GetMetaData();
+					if (MetaData)
 					{
-						if(MetaData[i])
-							MetaData[i].Reflect(i, c, SuperReflectFunctor{});
+						auto Allnames = MetaData.GetAllNames();
+						for (auto i : Allnames)
+						{
+							if (MetaData[i])
+								MetaData[i].Reflect(i, c, SuperReflectFunctor{});
+						}
 					}
 				}
 				EGUI::Display::EndTreeNode();
