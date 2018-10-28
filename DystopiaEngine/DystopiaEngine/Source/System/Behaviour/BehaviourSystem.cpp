@@ -445,7 +445,7 @@ namespace Dystopia
 			std::string str;
 			while(*ptr != L'\0')
 			{
-				char c = *ptr;
+				char c = static_cast<char>(*ptr);
 				str += c;
 				++ptr;
 			}
