@@ -188,45 +188,6 @@ namespace Dystopia
 		}
 	}
 
-	void HierarchyView::GameObjectName(GameObject& _obj, bool selected)
-	{
-		//if (_obj.GetName() == "Scene Camera") return;
-		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
-		bool clicked = false;
-		auto& allChild = _obj.GetComponent<Transform>()->GetAllChild();
-		if (allChild.size())
-		{
-			if (EGUI::Display::StartTreeNode(uniqueifyName, &clicked))
-			{
-				if (clicked) SelectedObj(_obj);
-
-				for (auto& t : allChild)
-				{
-
-				}
-				EGUI::Display::EndTreeNode();
-			}
-			if (GameObject *t = EGUI::Display::StartPayloadReceiver<GameObject>(EGUI::GAME_OBJ))
-			{
-
-				EGUI::Display::EndPayloadReceiver();
-			}
-		}
-		else
-		{
-			if (EGUI::Display::SelectableTxt(uniqueifyName, selected))
-			{
-				SelectedObj(_obj);
-			}
-			if (GameObject *t = EGUI::Display::StartPayloadReceiver<GameObject>(EGUI::GAME_OBJ))
-			{
-				t->GetComponent<Transform>()->SetParent(_obj.GetComponent<Transform>());
-				EGUI::Display::EndPayloadReceiver();
-			}
-		}
-		GameObjectPopups(_obj);
-	}
-
 	void HierarchyView::SelectedObj(GameObject& _obj)
 	{
 		auto ed = GetMainEditor();
@@ -325,6 +286,7 @@ namespace Dystopia
 
 			EGUI::Display::EndPayloadReceiver();
 		}
+		GameObjectPopups(_obj);
 
 		if (tree)
 		{
@@ -382,6 +344,7 @@ namespace Dystopia
 
 			EGUI::Display::EndPayloadReceiver();
 		}
+		GameObjectPopups(_obj);
 	}
 }
 

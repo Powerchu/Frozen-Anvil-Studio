@@ -1,6 +1,6 @@
 [START_Scene]
-18446744072451784704,test,2,[START_START_GO_DATA]
-1493173760,97,Scene Camera,
+18446744072384675840,SpriteSheetTesting,3,[START_START_GO_DATA]
+1502610944,97,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
@@ -9,7 +9,16 @@
 
 [END_END_GO_TRANSFORM]
 [START_START_GO_DATA]
-18446744073517665792,65,GameObject,
+90719744,65,BG,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+300,300,1,0,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1462784000,65,SS,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
@@ -22,13 +31,19 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Camera]
-1493174784,0,1493173760,0,
+1502611968,0,1502610944,0,
 [END_Camera]
 
 [END_Component End]
 [START_ComponentDonor]
-0,
+1,
 [END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+2116608,1,90719744,,
+[END_Renderer]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
@@ -52,10 +67,10 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
-848827392,1,18446744073517665792,..\DystopiaEngine\Resource\Asset\SpriteSheet_Test.png,
+1763713024,1,1462784000,..\DystopiaEngine\Resource\Asset\SpriteSheet_Test.png,
 [END_Renderer]
 [START_Sprite Renderer]
-1,0.16,2,0,0,0,full,4,4,1024,1024,10,1,0,0,asd,1,1,1024,1024,0,
+1,0.1,1,1,0,0,defualt,4,4,1024,1024,10,
 [END_Sprite Renderer]
 
 [END_Component End]

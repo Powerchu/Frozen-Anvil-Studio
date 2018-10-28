@@ -60,7 +60,6 @@ namespace Dystopia
 		void			CreateButton();
 		void			CreatePopup();
 		void			GameObjectPopups(GameObject&);
-		void			GameObjectName(GameObject&, bool selected);
 		void			SelectedObj(GameObject&);
 
 		void			ShowGameObjects(void);

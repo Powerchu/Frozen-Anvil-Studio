@@ -249,7 +249,7 @@ inline void AutoArray<T, A>::push_back(const T& _obj)
 	Insert(_obj);
 }
 
-// Removes the last element of the array. Synonymous to RemoveLast
+// Removes the last element of the array. Synonymous to Remove
 template <class T, class A>
 inline void AutoArray<T, A>::pop_back(void) noexcept
 {

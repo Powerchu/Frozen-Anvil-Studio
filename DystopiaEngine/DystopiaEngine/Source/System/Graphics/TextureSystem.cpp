@@ -35,6 +35,11 @@ void Dystopia::TextureSystem::Shutdown(void) noexcept
 	mTextures.clear();
 }
 
+Dystopia::TextureAtlas* Dystopia::TextureSystem::GenAtlas(void)
+{
+	return mAtlas.Emplace(nullptr);
+}
+
 Dystopia::TextureAtlas* Dystopia::TextureSystem::GetAtlas(const std::string& _strName)
 {
 	auto it = Ut::Find(mAtlas.begin(), mAtlas.end(), [&_strName](const TextureAtlas& _t) {
@@ -45,7 +50,7 @@ Dystopia::TextureAtlas* Dystopia::TextureSystem::GetAtlas(const std::string& _st
 
 	auto tex = GetTexture(_strName);
 
-	return mAtlas.Emplace(tex);;
+	return mAtlas.Emplace(tex);
 }
 
 template <>
