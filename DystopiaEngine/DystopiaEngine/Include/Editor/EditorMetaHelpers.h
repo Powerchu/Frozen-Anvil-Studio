@@ -28,6 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"
 #include "Editor/EGUI.h"
 #include <functional>
+#include "DataStructure/Hashstring.h"
 namespace Dystopia
 {
 	template<typename A, typename B>
@@ -180,6 +181,11 @@ namespace Dystopia
 			default:
 				break;
 			}
+		}
+		template<>
+		void operator()(const char * _name, HashString value, std::function<void(HashString, void*)> _f, void*_addr)
+		{
+
 		}
 		template<>
 		void operator()(const char * _name, int value, std::function<void(int, void*)> _f, void*_addr)

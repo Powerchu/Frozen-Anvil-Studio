@@ -31,7 +31,7 @@ Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
 	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, mnParentID{ 0 }, 
 	Component { _pOwner }
 {
-
+	
 }
 
 Dystopia::Transform::Transform(const Transform& _oOther) :
@@ -106,7 +106,7 @@ void Dystopia::Transform::OnChildAdd(Transform* _pChild)
 	mChildren.Insert(_pChild);
 }
 
-void Dystopia::Transform::OnChildRemove(Transform* _pChild)
+void Dystopia::Transform::OnChildRemove(Transform*)
 {
 	// Do nothing
 }

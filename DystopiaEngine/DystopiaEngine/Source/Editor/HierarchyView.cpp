@@ -315,9 +315,9 @@ namespace Dystopia
 		{
 			EGUI::Display::EndPayload();
 		}
-		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+		if (uint64_t *id2 = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
-			GameObject *t = GetCurrentScene()->FindGameObject(*id);
+			GameObject *t = GetCurrentScene()->FindGameObject(*id2);
 
 			auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Transform>()->GetParent());
 			auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Transform>());
@@ -372,9 +372,9 @@ namespace Dystopia
 		{
 			EGUI::Display::EndPayload();
 		}
-		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+		if (uint64_t *id2 = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
-			GameObject *t = GetCurrentScene()->FindGameObject(*id);
+			GameObject *t = GetCurrentScene()->FindGameObject(*id2);
 
 			auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Transform>()->GetParent());
 			auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Transform>());

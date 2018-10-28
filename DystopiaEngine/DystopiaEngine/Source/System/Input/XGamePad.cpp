@@ -38,7 +38,7 @@ XGamePad::XGamePad(const unsigned _id)
 	mpxState{ new XINPUT_STATE{} },
 	mbConnected{ false },
 	mbChangeDetected{ false },
-	mfDeadZoneL{ XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE }, 
+	mfDeadZoneL{ XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE + 100.F}, 
 	mfDeadZoneR{ XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE }, 
 	mfTriggerThresh{ XINPUT_GAMEPAD_TRIGGER_THRESHOLD },
 	mfMaxThumbVal{ 32767 },
@@ -69,12 +69,12 @@ void XGamePad::PollInputs(void)
 
 void XGamePad::UpdateLeftThumb(void)
 {
-	float LX = mpxState->Gamepad.sThumbLX;
-	float LY = mpxState->Gamepad.sThumbLY;
+	const float LX = mpxState->Gamepad.sThumbLX;
+	const float LY = mpxState->Gamepad.sThumbLY;
 	float magnitude = sqrt(LX*LX + LY*LY);
-	float normLX = LX / magnitude;
-	float normLY = LY / magnitude;
-	float normMag = 0;
+	const float normLX = LX / magnitude;
+	const float normLY = LY / magnitude;
+	float normMag;
 
 	if (magnitude > mfDeadZoneL)
 	{
@@ -102,12 +102,12 @@ void XGamePad::UpdateLeftThumb(void)
 
 void XGamePad::UpdateRightThumb(void)
 {
-	float RX = mpxState->Gamepad.sThumbRX;
-	float RY = mpxState->Gamepad.sThumbRY;
+	const float RX = mpxState->Gamepad.sThumbRX;
+	const float RY = mpxState->Gamepad.sThumbRY;
 	float magnitude = sqrt(RX*RX + RY*RY);
-	float normRX = RX / magnitude;
-	float normRY = RY / magnitude;
-	float normMag = 0;
+	const float normRX = RX / magnitude;
+	const float normRY = RY / magnitude;
+	float normMag;
 
 	if (magnitude > mfDeadZoneR)
 	{
@@ -182,14 +182,14 @@ float XGamePad::GetAnalogX(int _i) const
 {
 	/*Note - Shnannon I change this (Keith) 28/10/2018*/
 	return (!_i) ? mxLeftThumb[0].mfNormal  * mxLeftThumb[0].mfMagnitudeNormal:
-				   mxRightThumb[0].mfNormal * mxLeftThumb[0].mfMagnitudeNormal;
+				   mxRightThumb[0].mfNormal * mxRightThumb[0].mfMagnitudeNormal;
 }
 
 float XGamePad::GetAnalogY(int _i) const
 {
 	/*Note - Shnannon I change this (Keith) 28/10/2018*/
 	return (!_i) ? mxLeftThumb[1].mfNormal  * mxLeftThumb[1].mfMagnitudeNormal:
-				   mxRightThumb[1].mfNormal * mxLeftThumb[1].mfMagnitudeNormal;
+				   mxRightThumb[1].mfNormal * mxRightThumb[1].mfMagnitudeNormal;
 }
 
 float XGamePad::GetTriggers(int _i) const
