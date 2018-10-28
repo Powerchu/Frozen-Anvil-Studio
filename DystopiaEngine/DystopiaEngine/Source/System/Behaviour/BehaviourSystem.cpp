@@ -441,15 +441,7 @@ namespace Dystopia
 		for (auto & i : mvBehaviours)
 		{
 			/*Save Behaviour Name*/
-
-			std::string str;
-			auto * ptr = i.first.c_str();
-			while(*ptr != L'\0')
-			{
-				char c = static_cast<char>(*ptr);
-				str += c;
-				ptr++;
-			}
+			std::string str{ i.first.begin(), i.first.end() };
 
 			_obj << str;
 			/*Save the number of Pointers*/
@@ -621,7 +613,7 @@ namespace Dystopia
 		{
 			for (auto & iter : i.second)
 			{
-				if (iter.first = _old)
+				if (iter.first == _old)
 				{
 					iter.first = _new;
 					iter.second->SetOwner(_newOwner);
