@@ -89,6 +89,9 @@ namespace Dystopia
 
 		bool mbPlayAnim;
 		int miTotalCols, miTotalRows, miCutOff;
+
+		void AddAnimation(SpriteSheet);
+		void MakeAtlas(void);
 	};
 }
 

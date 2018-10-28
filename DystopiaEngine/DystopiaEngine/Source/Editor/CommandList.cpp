@@ -98,7 +98,6 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 	mpObj = p->Duplicate();
 	mpObj->SetID(mObjID);
 	mpObj->Identify();
-	mpObj->Init();
 	mpObj->SetFlag(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : mpObj->GetAllComponents())
 		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
@@ -157,7 +156,6 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 	mpObj = p->Duplicate();
 	mpObj->SetID(mObjID);
 	mpObj->Identify();
-	mpObj->Init();
 	mpObj->SetFlag(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : mpObj->GetAllComponents())
 		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);

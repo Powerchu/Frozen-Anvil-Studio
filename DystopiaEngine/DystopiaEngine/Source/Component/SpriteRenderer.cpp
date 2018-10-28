@@ -59,19 +59,6 @@ Dystopia::SpriteRenderer::SpriteRenderer(const SpriteRenderer& _rhs) noexcept
 void Dystopia::SpriteRenderer::Init(void)
 {
 	Renderer::Init();
-
-	if (auto tex = GetTexture())
-	{
-		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(tex->GetName());
-		SpriteSheet a;
-		a.mnCol = miTotalCols;
-		a.mnRow = miTotalRows;
-		a.mnID = 0;
-		a.mstrName = "testing spritesheet";
-		mAnimations.Insert(a);
-		SetAnimation("testing spritesheet");
-		mpAtlas->AddSection(Math::Vec2{ 0,0 }, tex->GetWidth() / 2, tex->GetHeight()/2, a.mnCol, a.mnRow);
-	}
 }
 
 void Dystopia::SpriteRenderer::Draw(void) const noexcept
@@ -123,6 +110,28 @@ void Dystopia::SpriteRenderer::SetAnimation(const char* _strAnimation)
 			return;
 		}
 	}
+}
+
+void Dystopia::SpriteRenderer::AddAnimation(SpriteSheet _ss)
+{
+	mAnimation.Insert(_ss);
+	if (auto tex = GetTexture())
+	{
+		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(tex->GetName());
+		SpriteSheet a;
+		a.mnCol = miTotalCols;
+		a.mnRow = miTotalRows;
+		a.mnID = 0;
+		a.mstrName = "testing spritesheet";
+		mAnimations.Insert(a);
+		SetAnimation("testing spritesheet");
+		mpAtlas->AddSection(Math::Vec2{ 0,0 }, tex->GetWidth() / 2, tex->GetHeight() / 2, a.mnCol, a.mnRow);
+	}
+}
+
+void Dystopia::SpriteRenderer::MakeAtlas(void)
+{
+
 }
 
 void Dystopia::SpriteRenderer::SetAnimation(unsigned _nID)

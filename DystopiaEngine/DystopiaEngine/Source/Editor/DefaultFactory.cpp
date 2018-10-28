@@ -72,10 +72,6 @@ namespace Dystopia
 			pObject->AddComponent(col, typename Collider::TAG{});
 
 			pObject->Identify();
-			pObject->Init();
-			rend->Init();
-			rigid->Init();
-			col->Init();
 
 			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Editor/white_box.png"));
 			return pObject;
@@ -86,7 +82,6 @@ namespace Dystopia
 			GameObject *pObject = new GameObject{ GUIDGenerator::GetUniqueID() };
 			pObject->SetName(_name);
 			pObject->SetActive(true);
-			pObject->Init();
 			pObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 16, 16, 1 });
 			const auto rend = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>())->RequestComponent();
 			const auto rigid = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
@@ -96,12 +91,8 @@ namespace Dystopia
 			pObject->AddComponent(col, Collider::TAG{});
 			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Editor/red_box.png"));
 			rend->SetOwner(pObject);
-			rend->Init();
 			rigid->SetOwner(pObject);
-			rigid->Init();
 			col->SetOwner(pObject);
-			col->Init();
-			pObject->Init();
 			return pObject;
 		}
 
@@ -121,7 +112,6 @@ namespace Dystopia
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 			p->SetOwner(pObject);
-			p->Init();
 			p->Set_IsStatic(true);
 			pObject->AddComponent(p, typename RigidBody::TAG{});
 
@@ -141,7 +131,6 @@ namespace Dystopia
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 			p->SetOwner(pObject);
-			p->Init();
 			pObject->AddComponent(p, typename RigidBody::TAG{});
 
 			auto g = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>())->RequestComponent();
@@ -158,7 +147,6 @@ namespace Dystopia
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 			p->SetOwner(pObject);
-			p->Init();
 			pObject->AddComponent(p, typename RigidBody::TAG{});
 
 			auto g = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>())->RequestComponent();
@@ -172,13 +160,15 @@ namespace Dystopia
 
 		void SaveAsPrefab(GameObject& _obj, TextSerialiser& _out)
 		{
+			//auto& allChild = _obj.GetComponent<Transform>()->GetAllChild();
+			//for (auto& c : allChild)
+			//	SaveAsPrefab(*c->GetOwner(), _out);
+
 			auto& allCom = _obj.GetAllComponents();
-			auto& allBehaviour = _obj.GetAllBehaviours();
 			_out.InsertStartBlock("GameObject");
 			_out << allCom.size();
 			_obj.Serialise(_out);
 			_out.InsertEndBlock("GameObject");
-
 			for (const auto& elem : allCom)
 			{
 				_out.InsertStartBlock("Component");
@@ -186,6 +176,7 @@ namespace Dystopia
 				elem->Serialise(_out);
 				_out.InsertEndBlock("Component End");
 			}
+			auto& allBehaviour = _obj.GetAllBehaviours();
 			//for (const auto & elem : allBehaviour)
 			//{
 			//	std::string name{ elem.BehaviourName };
@@ -223,6 +214,7 @@ namespace Dystopia
 			unsigned	num			= 0;
 			unsigned	sysID		= 0;
 			auto		fromFile	= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_READ);
+
 			GameObject* pObj		= new GameObject{};
 
 			fromFile.ConsumeStartBlock();
