@@ -148,32 +148,32 @@ void Dystopia::GameObject::Unload(void)
 
 void Dystopia::GameObject::OnCollisionEnter(const CollisionEvent& _pEvent)
 {
-	Ping(mBehaviours, OnCollisionEnter, _pEvent);
+	ForcePing(mBehaviours, OnCollisionEnter, _pEvent);
 }
 
 void Dystopia::GameObject::OnCollisionStay(const CollisionEvent& _pEvent)
 {
-	Ping(mBehaviours, OnCollisionStay, _pEvent);
+	ForcePing(mBehaviours, OnCollisionStay, _pEvent);
 }
 
 void Dystopia::GameObject::OnCollisionExit(const CollisionEvent& _pEvent)
 {
-	Ping(mBehaviours, OnCollisionExit, _pEvent);
+	ForcePing(mBehaviours, OnCollisionExit, _pEvent);
 }
 
 void Dystopia::GameObject::OnTriggerEnter(const GameObject* _pOther)
 {
-	Ping(mBehaviours, OnTriggerEnter, _pOther);
+	ForcePing(mBehaviours, OnTriggerEnter, _pOther);
 }
 
 void Dystopia::GameObject::OnTriggerStay(const GameObject* _pOther)
 {
-	Ping(mBehaviours, OnTriggerStay, _pOther);
+	ForcePing(mBehaviours, OnTriggerStay, _pOther);
 }
 
 void Dystopia::GameObject::OnTriggerExit(const GameObject* _pOther)
 {
-	Ping(mBehaviours, OnTriggerExit, _pOther);
+	ForcePing(mBehaviours, OnTriggerExit, _pOther);
 }
 
 void Dystopia::GameObject::PurgeComponents(void)
@@ -278,6 +278,11 @@ uint64_t Dystopia::GameObject::GetID(void) const
 std::string Dystopia::GameObject::GetName(void) const
 {
 	return mName;
+}
+
+const char* Dystopia::GameObject::GetNamePtr() const
+{
+	return mName.c_str();
 }
 
 void Dystopia::GameObject::SetName(const std::string& _strName)

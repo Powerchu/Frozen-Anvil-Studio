@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorEvents.h"
 #include "Editor/DefaultFactory.h"
 
+#include "System/Scene/Scene.h"
 #include "Object/GameObject.h"
 
 #include <algorithm>
@@ -116,8 +117,9 @@ namespace Dystopia
 		{
 			auto origin = ImGui::GetCursorPos();
 			EGUI::Display::Dummy(fileWindowSize.x, fileWindowSize.y);
-			if (Dystopia::GameObject *t = EGUI::Display::StartPayloadReceiver<Dystopia::GameObject>(EGUI::GAME_OBJ))
+			if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 			{
+				GameObject *t = GetCurrentScene()->FindGameObject(*id);
 				mResetToFile = Factory::SaveAsPrefab(*t);
 				EGUI::Display::EndPayloadReceiver();
 			}

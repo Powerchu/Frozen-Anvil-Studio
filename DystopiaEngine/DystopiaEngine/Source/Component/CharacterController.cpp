@@ -65,6 +65,7 @@ namespace Dystopia
 			tInput->MapButton("Run Right", eButton::KEYBOARD_RIGHT);
 			tInput->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
 			tInput->MapButton("Fly", eButton::KEYBOARD_UP);
+			tInput->MapButton("Fireball", eButton::KEYBOARD_C);
 		}		
 	}
 
@@ -242,6 +243,22 @@ namespace Dystopia
 				mpBody->AddLinearImpulse({ 0,mfJumpForce * mpBody->GetMass() * 10,0 });
 				mbIsGrounded = false;
 			}
+		}
+		/*IM SORRY AARON - FROM (KEITH)*/
+		if (tInput->IsKeyTriggered("Fireball"))
+		{
+			if(auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition()))
+			{
+				if(auto rigidptr = ptr->GetComponent<RigidBody>())
+				{
+					if (!mbIsFacingRight)
+						rigidptr->AddLinearImpulse({ -100 * rigidptr->GetMass(),0,0 });
+					else
+						rigidptr->AddLinearImpulse({ 100 * rigidptr->GetMass(),0,0 });
+				}
+
+			}
+
 		}
 	}
 

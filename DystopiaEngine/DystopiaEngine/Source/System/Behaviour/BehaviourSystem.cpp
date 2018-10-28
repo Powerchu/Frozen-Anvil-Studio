@@ -441,7 +441,14 @@ namespace Dystopia
 		for (auto & i : mvBehaviours)
 		{
 			/*Save Behaviour Name*/
-			std::string str{ i.first.begin(), i.first.end() };
+			auto * ptr = i.first.c_str();
+			std::string str;
+			while(*ptr != L'\0')
+			{
+				char c = *ptr;
+				str += c;
+				++ptr;
+			}
 
 			_obj << str;
 			/*Save the number of Pointers*/

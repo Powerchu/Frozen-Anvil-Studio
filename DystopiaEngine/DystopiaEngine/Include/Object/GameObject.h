@@ -93,6 +93,8 @@ namespace Dystopia
 		uint64_t GetID(void) const;
 		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
+		const char * GetNamePtr(void) const;
+
 		void SetName(const std::string&);
 
 		void RemoveFlags(eObjFlag);
