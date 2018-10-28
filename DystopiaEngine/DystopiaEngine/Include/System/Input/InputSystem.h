@@ -22,7 +22,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/MouseData.h"
 #include "Component/Component.h"
 #include "System/Base/ComponentDonor.h"
+
 #include "XGamePad.h"
+#include "Globals.h"
 #include <map>
 
 
@@ -32,7 +34,7 @@ namespace Dystopia
 	class Window;
 	class TextSerialiser;
 
-	class InputManager : public Systems, public ComponentDonor<CharacterController>
+	class  InputManager : public Systems, public ComponentDonor<CharacterController>
 	{
 	public:
 
@@ -61,34 +63,34 @@ namespace Dystopia
 		void LoadDefaults(void);
 		void LoadSettings(TextSerialiser&);
 
-		void MapUserButton(eUserButton, eButton);
+		_DLL_EXPORT void  MapUserButton(eUserButton, eButton);
 
-		void MapButton(std::string const & _name, eButton _Button);
+		_DLL_EXPORT void  MapButton(std::string const & _name, eButton _Button);
 
-		bool IsKeyTriggered(eButton) const noexcept;
-		bool IsKeyPressed(eButton)   const noexcept;
-		bool IsKeyReleased(eButton)  const noexcept;
-	
-		bool IsKeyTriggered(std::string const & _ButtonName) const noexcept;
-		bool IsKeyPressed(std::string const & _ButtonName)   const noexcept;
-		bool IsKeyReleased(std::string const & _ButtonName)  const noexcept;
+		_DLL_EXPORT bool  IsKeyTriggered(eButton) const noexcept;
+		_DLL_EXPORT bool  IsKeyPressed(eButton)   const noexcept;
+		_DLL_EXPORT bool  IsKeyReleased(eButton)  const noexcept;
+				    
+		_DLL_EXPORT bool  IsKeyTriggered(std::string const & _ButtonName) const noexcept;
+		_DLL_EXPORT bool  IsKeyPressed(std::string const & _ButtonName)   const noexcept;
+		_DLL_EXPORT bool  IsKeyReleased(std::string const & _ButtonName)  const noexcept;
 
-		bool IsController() const;
+		_DLL_EXPORT bool IsController() const;
 
 		// left is low frequency motor, right is high frequency motor
-		void SetVibrate(unsigned short _ltrg = 32000, unsigned short _rtrg = 16000); //0-65534
-		void StopVibrate();
+		_DLL_EXPORT void SetVibrate(unsigned short _ltrg = 32000, unsigned short _rtrg = 16000); //0-65534
+		_DLL_EXPORT void StopVibrate();
 
-		float GetAnalogY(int) const;	//0 for left analog, all others for right
-		float GetAnalogX(int) const;	//0 for left analog, all others for right
+		_DLL_EXPORT float GetAnalogY(int) const;	//0 for left analog, all others for right
+		_DLL_EXPORT float GetAnalogX(int) const;	//0 for left analog, all others for right
 
-		float GetTriggers(int) const;	// 0 for left trigger, all others for right
+		_DLL_EXPORT float GetTriggers(int) const;	// 0 for left trigger, all others for right
 										// values returned are between: mfTriggerThresh ~ 255
 
-		Math::Vector2 GetMousePosition(void) const;
-		Math::Vector2 GetMousePosition(const Window&) const;
-		Math::Vector2 GetMouseDelta(void) const noexcept;
-		float GetMouseWheel(void) const noexcept;
+		_DLL_EXPORT Math::Vector2 GetMousePosition(void) const;
+		_DLL_EXPORT Math::Vector2 GetMousePosition(const Window&) const;
+		_DLL_EXPORT Math::Vector2 GetMouseDelta(void) const noexcept;
+		_DLL_EXPORT float GetMouseWheel(void) const noexcept;
 
 	private:
 		struct KeyBinding

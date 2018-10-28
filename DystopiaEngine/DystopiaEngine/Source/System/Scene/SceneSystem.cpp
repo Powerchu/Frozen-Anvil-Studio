@@ -97,7 +97,7 @@ void Dystopia::SceneSystem::LoadSettings(TextSerialiser&)
 
 }
 
-bool Dystopia::SceneSystem::Instantiate(const std::string& _prefabName, const Math::Pt3D& _position)
+Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const std::string& _prefabName, const Math::Pt3D& _position)
 {
 	if (!mpCurrScene) return false;
 
@@ -112,9 +112,9 @@ bool Dystopia::SceneSystem::Instantiate(const std::string& _prefabName, const Ma
 		for (auto& c : obj.GetAllComponents())
 			c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 		delete pDupl;
-		return true;
+		return &obj;
 	}
-	return false;
+	return nullptr;
 }
 
 void Dystopia::SceneSystem::SceneChanged(void)

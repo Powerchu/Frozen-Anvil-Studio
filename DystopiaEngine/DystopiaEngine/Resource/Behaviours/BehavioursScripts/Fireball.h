@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	FollowTarget.h
-\author d (100%)
-\par    email: d\@digipen.edu
+\file	Fireball.h
+\author keith.goh (100%)
+\par    email: keith.goh\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,27 +11,24 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _FollowTarget_H_
-#define _FollowTarget_H_
+#ifndef _Fireball_H_
+#define _Fireball_H_
 
 #define str(s) #s
 
 #include "Behaviour/Behaviour.h"
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
-#include "DataStructure/HashString.h"
-
-#include <string>
 
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
-	class FollowTarget : Behaviour
+	class Fireball : Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = str(FollowTarget);
+		static constexpr const char * BehaviourName = str(Fireball);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -41,11 +38,11 @@ namespace Dystopia
 		// };
 
 #endif
-		virtual const std::string GetEditorName(void) const override { return "FollowTarget"; }
-		static uint64_t constexpr mFollowTargetID = 18446744072462285312;
+		virtual const std::string GetEditorName(void) const override { return "Fireball"; }
+		static uint64_t constexpr mFireballID = 18446744073442368000;
 
-		FollowTarget();
-		~FollowTarget();
+		Fireball();
+		~Fireball();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -70,7 +67,7 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const;
 
-		virtual FollowTarget * Duplicate() const;
+		virtual Fireball * Duplicate() const;
 		
 		virtual void EditorUI(void) noexcept override;
 		
@@ -78,23 +75,20 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
-		std::string targetName;
-		float targetFloat;
 	private:
-		friend MetaData<FollowTarget>;
+		friend MetaData<Fireball>;
 	};
 
 	extern "C"
 	{
-		DllExport FollowTarget * FollowTargetClone()
+		DllExport Fireball * FireballClone()
 		{
-			return new FollowTarget;
+			return new Fireball;
 		}
 	}
 }
 
-PP_REFLECT(Dystopia::FollowTarget, targetName, targetFloat)
-
-#endif //_FollowTarget_H_
+PP_REFLECT_EMPTY(Dystopia::Fireball)
+#endif //_Fireball_H_
 
 

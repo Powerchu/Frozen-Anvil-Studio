@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	template <typename Ty, typename Settings = Ctor::MagicArrayBuilder<Ty>::SetBlockSize<64>>
-	class ComponentDonor
+	class  ComponentDonor
 	{
 	public:
 		using Component_t = Ty;

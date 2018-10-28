@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	FollowTarget.h
-\author d (100%)
-\par    email: d\@digipen.edu
+\file	Goblin.h
+\author Dan (100%)
+\par    email: Dan.Kang\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,27 +11,24 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _FollowTarget_H_
-#define _FollowTarget_H_
+#ifndef _Goblin_H_
+#define _Goblin_H_
 
 #define str(s) #s
 
 #include "Behaviour/Behaviour.h"
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
-#include "DataStructure/HashString.h"
-
-#include <string>
 
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
-	class FollowTarget : Behaviour
+	class Goblin : public Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = str(FollowTarget);
+		static constexpr const char * BehaviourName = str(Goblin);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -41,11 +38,11 @@ namespace Dystopia
 		// };
 
 #endif
-		virtual const std::string GetEditorName(void) const override { return "FollowTarget"; }
-		static uint64_t constexpr mFollowTargetID = 18446744072462285312;
+		virtual const std::string GetEditorName(void) const override { return "Goblin"; }
+		static uint64_t constexpr mGoblinID = 708352512;
 
-		FollowTarget();
-		~FollowTarget();
+		Goblin();
+		~Goblin();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -57,20 +54,20 @@ namespace Dystopia
 		virtual void GameObjectDestroy(void) override;
 		virtual void Unload(void) override;
 
-		virtual void OnCollisionEnter(const CollisionEvent&);
-		virtual void OnCollisionStay (const CollisionEvent&);
-		virtual void OnCollisionExit (const CollisionEvent&);
+		virtual void OnCollisionEnter(const CollisionEvent&) override;
+		virtual void OnCollisionStay (const CollisionEvent&) override;
+		virtual void OnCollisionExit (const CollisionEvent&) override;
 
-		virtual void OnTriggerEnter(const GameObject *);
-		virtual void OnTriggerStay (const GameObject *);
-		virtual void OnTriggerExit (const GameObject *);
+		virtual void OnTriggerEnter(const GameObject *) override;
+		virtual void OnTriggerStay (const GameObject *) override;
+		virtual void OnTriggerExit (const GameObject *) override;
 
 		virtual void Serialise(TextSerialiser&) const override;
 		virtual void Unserialise(TextSerialiser&) override;
 
 		virtual const char * const GetBehaviourName() const;
 
-		virtual FollowTarget * Duplicate() const;
+		virtual Goblin * Duplicate() const;
 		
 		virtual void EditorUI(void) noexcept override;
 		
@@ -78,23 +75,24 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
-		std::string targetName;
-		float targetFloat;
+		int mHealth = 20;
+		
+		bool isColliding = false;
 	private:
-		friend MetaData<FollowTarget>;
+		friend MetaData<Goblin>;
 	};
 
 	extern "C"
 	{
-		DllExport FollowTarget * FollowTargetClone()
+		DllExport Goblin * GoblinClone()
 		{
-			return new FollowTarget;
+			return new Goblin;
 		}
 	}
 }
 
-PP_REFLECT(Dystopia::FollowTarget, targetName, targetFloat)
+PP_REFLECT(Dystopia::Goblin, mHealth)
 
-#endif //_FollowTarget_H_
+#endif //_Goblin_H_
 
 

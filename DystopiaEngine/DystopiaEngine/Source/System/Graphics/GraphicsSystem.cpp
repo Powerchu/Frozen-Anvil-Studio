@@ -90,7 +90,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.0f },
-	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .68f, 1.f, .278f, .65f }
+	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .68f, 1.f, .278f, .35f }
 {
 
 }
@@ -354,7 +354,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 
 	// TODO: Math::Vec4 no_alpha{ mvDebugColour };
 
-	Math::Vector4 CollidingColor{ 1.f, 0, 0, .55f }, SleepingColor{ 1.f,1.f,0,.65f }, TriggerColor{ .8f,.8f,.8f,.25f }, activeColor;
+	Math::Vector4 CollidingColor{ 1.f, 0, 0, .35f }, SleepingColor{ 1.f,1.f,0,.35f }, TriggerColor{ .8f,.8f,.8f,.25f }, activeColor;
 
 	// Find out a way to allow stuff other than colliders to draw stuff
 

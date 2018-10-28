@@ -1,10 +1,10 @@
 [START_Scene]
-367001600,Elemental_Segment_3,11,[START_START_GO_DATA]
+367001600,Segment_Prototype,10,[START_START_GO_DATA]
 18446744072627422720,97,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.250622,0.250622,1,0,0,0,0,0,0,1,0,
+0.250285,0.250285,1,0,0,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -40,7 +40,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-69,48.8749,1,83,-58,28,0,0,0,1,0,
+56,39.6666,1,83,-58,28,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -81,15 +81,6 @@
 
 [END_END_GO_TRANSFORM]
 [START_START_GO_DATA]
-714105344,65,Foreground_Bush_Flower_Clone,
-[END_END_GO_DATA]
-[START_START_GO_TRANSFORM]
-[START_Transform]
-69,48.8749,1,-13,-58,28,0,0,-0.0722808,0.997384,0,
-[END_Transform]
-
-[END_END_GO_TRANSFORM]
-[START_START_GO_DATA]
 1952527872,65,Goblin,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
@@ -108,7 +99,7 @@
 
 [END_Component End]
 [START_ComponentDonor]
-7,
+6,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -131,12 +122,6 @@
 [START_Component]
 [START_Renderer]
 18446744072102096896,1,18446744072102096384,..\DystopiaEngine\Resource\Asset\Environment\Prologue\plant_06_shade.png,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-714105856,1,714105344,..\DystopiaEngine\Resource\Asset\Environment\Prologue\plant_06_shade.png,
 [END_Renderer]
 
 [END_Component End]
@@ -189,7 +174,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-6,
+5,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -218,12 +203,6 @@
 [START_Component]
 [START_Convex_Collider]
 1952529408,1,1952527872,0,-0.161,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.669,0.617,1,0,0,0,1,0,
-[END_Convex_Collider]
-
-[END_Component End]
-[START_Component]
-[START_Convex_Collider]
-18446744072458625536,1,18446744071715173376,0.5,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
 [END_Convex_Collider]
 
 [END_Component End]
@@ -258,7 +237,7 @@
 0,
 [END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-5,CharacterController,0,dsdsd,0,FollowTarget,0,Goblin,1,[START_BEHAVIOUR_BLOCK]
+5,CharacterController,0,dsdsd,0,Fireball,0,FollowTarget,0,Goblin,1,[START_BEHAVIOUR_BLOCK]
 1952527872,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
 mHealth,[START_mHealth]
 20,[START_MEMBER VAR]
@@ -266,7 +245,7 @@ END,
 [END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
 
 [END_BEHAVIOUR_BLOCK]
-Milestone,0,
+
 [END_BEHAVIOUR_SYSTEM_BLOCK]
 
 [END_Scene]

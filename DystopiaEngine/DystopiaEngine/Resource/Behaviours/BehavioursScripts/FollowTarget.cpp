@@ -112,13 +112,16 @@ namespace Dystopia
 	{
 		/*TO DO*/
 		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
-		return TypeErasure::TypeEraseMetaData{};
+		static MetaData<Dystopia::FollowTarget> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
 	}
 	TypeErasure::TypeEraseMetaData const FollowTarget::GetMetaData() const
 	{
 		/*TO DO*/
 		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
-		return TypeErasure::TypeEraseMetaData{};
+		MetaData<FollowTarget> mMetaData;
+		return TypeErasure::TypeEraseMetaData{mMetaData};
 	}
 }
 
