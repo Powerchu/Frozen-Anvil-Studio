@@ -99,14 +99,15 @@ Math::Matrix4 __vectorcall Math::Quaternion::Matrix(void) const noexcept
 Math::Quaternion _CALL Math::Quaternion::operator*(Math::Quaternion _rhs)
 {
 	Vec4 t1 = mData.wzyx;
-	Vec4 t2 = _rhs.mData.yxyx * t1;
-	Vec4 t3 = _rhs.mData.wzwz * t1;
+	Vec4 t2 = _rhs.mData.yxyx;
+	Vec4 t3 = _rhs.mData.wzwz;
 
-	t1 = AddSub(
-		// No blending function exists... 
-		Vec4{ _mm_shuffle_ps(t3.GetRaw(), t2.GetRaw(), _MM_SHUFFLE(3,2,1,0)) },
-		Vec4{ _mm_shuffle_ps(t2.GetRaw(), t3.GetRaw(), _MM_SHUFFLE(2,3,0,1)) }
-	);
+	Vec4 t4 = HorizontalSub(t2 * mData, t3 * t1);
+	Vec4 t5 = HorizontalAdd(t3 * mData, t2 * t1);
+
+	t2 = Vec4{ _mm_shuffle_ps(t4.GetRaw(), t5.GetRaw(), _MM_SHUFFLE(2, 3, 0, 1)) };
+	t3 = Vec4{ _mm_shuffle_ps(t5.GetRaw(), t4.GetRaw(), _MM_SHUFFLE(3, 2, 1, 0)) };
+	t1 = AddSub(t3, t2);
 
 	return Quaternion{ t1.xwyz.GetRaw() };
 }
