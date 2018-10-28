@@ -376,11 +376,23 @@ namespace Dystopia
 		}
 	}
 
+	void Circle::eIsTriggerCheckBox()
+	{
+		bool tempBool = mbIsTrigger;
+
+		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
+		{
+			mbIsTrigger = tempBool;
+			EGUI::GetCommandHND()->InvokeCommand<Collider>(mnOwner, &Collider::mbIsTrigger, tempBool);
+		}
+	}
+
 	void Circle::EditorUI() noexcept
 	{
+		eAttachedBodyEmptyBox();
+		eIsTriggerCheckBox();
 		ePositionOffsetVectorFields();
 		eScaleField();
-		eAttachedBodyEmptyBox();
 		eNumberOfContactsLabel();
 	}
 #endif
