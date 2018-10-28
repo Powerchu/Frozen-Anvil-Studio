@@ -402,10 +402,10 @@ namespace Dystopia
 	void Convex::ePositionOffsetVectorFields()
 	{
 		EGUI::Display::Label("Offset");
-		auto arrResult = EGUI::Display::VectorFields("    ", &mv3Offset, 0.01f, -FLT_MAX, FLT_MAX);
-		for (auto &e : arrResult)
+		/*auto arrResult =*/ EGUI::Display::VectorFields("    ", &mv3Offset, 0.01f, -FLT_MAX, FLT_MAX);
+		/*for (auto &e : arrResult)
 		{
-			/*
+			
 			switch (e)
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
@@ -429,8 +429,8 @@ namespace Dystopia
 				break;
 			default: 
 				break;
-			}*/
-		}
+			}
+		}*/
 	}
 
 	void Convex::ePointVerticesVectorArray()
@@ -439,8 +439,9 @@ namespace Dystopia
 
 		if (EGUI::Display::CollapsingHeader("Points"))
 		{
-			switch (EGUI::Display::DragInt("	Size		", &mNumPoints, 1, 4, 32, false, 128))
-			{/*
+			EGUI::Display::DragInt("	Size		", &mNumPoints, 1, 4, 32, false, 128);
+			/*switch (EGUI::Display::DragInt("	Size		", &mNumPoints, 1, 4, 32, false, 128))
+			{
 			case EGUI::eDragStatus::eEND_DRAG:
 				EGUI::GetCommandHND()->EndRecording();
 				break;
@@ -461,8 +462,8 @@ namespace Dystopia
 				EGUI::GetCommandHND()->EndRecording();
 				break;
 			default:
-				break;*/
-			}
+				break;
+			}*/
 
 			while (mVertices.size() < unsigned int(mNumPoints))
 			{
@@ -479,9 +480,9 @@ namespace Dystopia
 				auto& c = mVertices[i];
 				//Math::Vector3D* temp = &(c.mPosition);
 				EGUI::Display::Label("	Vertex");
-				auto arrResult = EGUI::Display::VectorFields("	 ", &(c.mPosition), 0.01f, -FLT_MAX, FLT_MAX);
-				for (auto &e : arrResult)
-				{/*
+				/*auto arrResult =*/ EGUI::Display::VectorFields("	 ", &(c.mPosition), 0.01f, -FLT_MAX, FLT_MAX);
+				/*for (auto &e : arrResult)
+				{
 					switch (e)
 					{
 					case EGUI::eDragStatus::eEND_DRAG:
@@ -503,8 +504,8 @@ namespace Dystopia
 					case EGUI::eDragStatus::eTABBED:
 						EGUI::GetCommandHND()->EndRecording();
 						break;
-					}*/
-				}
+					}
+				}*/
 				EGUI::PopID();
 
 			}
@@ -517,9 +518,9 @@ namespace Dystopia
 	void Convex::eSetScale()
 	{
 		EGUI::Display::Label("Scale");
-		auto arrResult = EGUI::Display::VectorFields("\t", &mScale, 0.05f, -FLT_MAX, FLT_MAX);
-		for (auto &e : arrResult)
-		{/*
+		/*auto arrResult =*/ EGUI::Display::VectorFields("\t", &mScale, 0.05f, -FLT_MAX, FLT_MAX);
+		/*for (auto &e : arrResult)
+		{
 			switch (e)
 			{
 			case EGUI::eDragStatus::eSTART_DRAG:
@@ -535,8 +536,8 @@ namespace Dystopia
 			case EGUI::eDragStatus::eTABBED:
 			default:
 				break;
-			}*/
-		}
+			}
+		}*/
 	}
 
 	void Convex::eAttachedBodyEmptyBox()

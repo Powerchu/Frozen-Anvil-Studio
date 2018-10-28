@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SCENE_SYSTEM_H_
 #define _SCENE_SYSTEM_H_
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
 #include "System/Base/Systems.h"
 #include "System/Scene/Scene.h"
 #include "Globals.h"
@@ -96,4 +98,5 @@ namespace Dystopia
 		return (mpNextScene == mpCurrScene) ? *mpCurrScene : *mpNextScene;
 	}
 }
+#pragma warning(pop)
 #endif

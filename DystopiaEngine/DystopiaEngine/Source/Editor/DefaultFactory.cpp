@@ -176,7 +176,7 @@ namespace Dystopia
 				elem->Serialise(_out);
 				_out.InsertEndBlock("Component End");
 			}
-			auto& allBehaviour = _obj.GetAllBehaviours();
+			//auto& allBehaviour = _obj.GetAllBehaviours();
 			//for (const auto & elem : allBehaviour)
 			//{
 			//	std::string name{ elem.BehaviourName };

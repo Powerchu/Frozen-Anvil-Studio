@@ -58,10 +58,10 @@ void Dystopia::SpriteEditor::EditorUI(void)
 			ImGuiContext& g = *GImGui;
 			ImGuiWindow* window = g.CurrentWindow;
 			ImVec2 pos = ImGui::GetCursorScreenPos();
-			mStartPt.x = Math::Clamp(static_cast<int>(mStartPt.x), static_cast<int>(pos.x), static_cast<int>(childSize.x + pos.x));
-			mStartPt.y = Math::Clamp(static_cast<int>(mStartPt.y), static_cast<int>(pos.y), static_cast<int>(childSize.y + pos.y));
-			mEndPt.x = Math::Clamp(static_cast<int>(mEndPt.x), static_cast<int>(pos.x), static_cast<int>(childSize.x + pos.x));
-			mEndPt.y = Math::Clamp(static_cast<int>(mEndPt.y), static_cast<int>(pos.y), static_cast<int>(childSize.y + pos.y));
+			mStartPt.x = static_cast<float>(Math::Clamp(static_cast<int>(mStartPt.x), static_cast<int>(pos.x), static_cast<int>(childSize.x + pos.x)));
+			mStartPt.y = static_cast<float>(Math::Clamp(static_cast<int>(mStartPt.y), static_cast<int>(pos.y), static_cast<int>(childSize.y + pos.y)));
+			mEndPt.x = static_cast<float>(Math::Clamp(static_cast<int>(mEndPt.x), static_cast<int>(pos.x), static_cast<int>(childSize.x + pos.x)));
+			mEndPt.y = static_cast<float>(Math::Clamp(static_cast<int>(mEndPt.y), static_cast<int>(pos.y), static_cast<int>(childSize.y + pos.y)));
 			ImRect r{ mStartPt, mEndPt };
 
 			r.Expand(1.f);

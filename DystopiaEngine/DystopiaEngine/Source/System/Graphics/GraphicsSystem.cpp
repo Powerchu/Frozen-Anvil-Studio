@@ -461,7 +461,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			auto surface = Cam.GetSurface();
 			auto vp = Cam.GetViewport();
 
-			glViewport(vp.mnX, vp.mnY, vp.mnWidth, vp.mnHeight);
+			glViewport(static_cast<GLint>(vp.mnX), static_cast<GLint>(vp.mnY), static_cast<GLsizei>(vp.mnWidth), static_cast<GLsizei>(vp.mnHeight));
 
 			// Temporary code
 			surface->Bind();
