@@ -21,7 +21,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/MeshSystem.h"
 
 // Texture Includes
-#include "System/Graphics/FontSystem.h"
 #include "System/Graphics/TextureSystem.h"
 #include "System/Graphics/Texture.h"
 #include "System/Graphics/Texture2D.h"
@@ -64,9 +63,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <windows.h>			// WinAPI
 #include <GL/glew.h>
 #include <GL/wglew.h>			// glew Windows ext
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
 
 #undef WIN32_LEAN_AND_MEAN		// Stop defines from spilling into code
 #undef NOMINMAX
@@ -214,19 +210,11 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	TextureSystem* pTexSys = pCore->GetSubSystem<TextureSystem>();
 	WindowManager* pWinSys = pCore->GetSystem<WindowManager>();
 
-	Image* x = ImageParser::LoadBMP("Resource/Editor/EditorStartup.bmp");
-	ImageParser::WriteBMP("Resource/Editor/Write.bmp", x->mpImageData, x->mnWidth, x->mnHeight);
-
 	Mesh*   mesh = pMeshSys->GetMesh("Quad");
 	Shader* shader = shaderlist["Logo Shader"];
-	//Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/EditorStartup.png");
-	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/Write.bmp");
-
-	FontSystem* pFontSys = pCore->GetSubSystem<FontSystem>();
-	TextureAtlas* font = pFontSys->LoadFont("Resource/Font/Times New Roman.ttf");
+	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/EditorStartup.png");
 
 	unsigned w = texture->GetWidth(), h = texture->GetHeight();
-	//unsigned w = font->GetWidth(), h = font->GetHeight();
 
 	pWinSys->GetMainWindow().SetSizeNoAdjust(w, h);
 	pWinSys->GetMainWindow().CenterWindow();
@@ -243,8 +231,8 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->Bind();
-	//texture->Bind();
-	font->Bind();
+	texture->Bind();
+
 	shader->UploadUniform("ProjectViewMat", Project * View);
 	shader->UploadUniform("ModelMat", Math::Scale(w * 1.f, h * 1.f));
 	shader->UploadUniform("Gamma", mfGamma);
@@ -297,11 +285,17 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 
 	for (auto& e : ComponentDonor<Renderer>::mComponents)
 	{
+#if EDITOR
+		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
 			set1.Insert(&e);
 	}
 	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
 	{
+#if EDITOR
+		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
 			set2.Insert(&e);
 	}
@@ -366,6 +360,9 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
 	{
+#if EDITOR
+		if (Obj->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		GameObject* pOwner = Obj->GetOwner();
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
 		{
@@ -402,7 +399,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 #   endif 
 	StartFrame();
 
-	glClearColor(.0f, .0f, .0f, 1.f);
+	glClearColor(1.0f, .7f, 1.0f, 1.f);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 
 	/*
@@ -439,7 +436,9 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
 	{
 		auto flags = e.GetFlags();
-
+#if EDITOR
+		if (flags & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		if (flags & eObjFlag::FLAG_ACTIVE)
 		{
 			e.Update(_fDT);
@@ -502,6 +501,7 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 			ComponentDonor<SpriteRenderer>::mComponents.Remove(&render);
 		}
 	}
+
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
 		__debugbreak();
@@ -629,11 +629,6 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _strName)
 {
 	return EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadTexture(_strName);
-}
-
-Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)
-{
-	return nullptr;
 }
 
 Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _filePath)

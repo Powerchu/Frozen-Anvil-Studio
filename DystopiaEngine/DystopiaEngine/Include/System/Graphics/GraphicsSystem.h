@@ -73,7 +73,6 @@ namespace Dystopia
 		void     LevelLoad(TextSerialiser&);
 		void     LoadMesh(const std::string&);
 		Texture* LoadTexture(const std::string&);
-		Texture* LoadFont(const std::string&);
 		Shader*	 LoadShader(const std::string&);
 
 		Framebuffer& GetGameView(void) const noexcept;
