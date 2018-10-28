@@ -105,8 +105,9 @@ Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const std::string& _pr
 	if (pDupl)
 	{
 		pDupl->GetComponent<Transform>()->SetPosition(_position);
-		auto& obj = *mpCurrScene->GetAllGameObjects().Emplace(Ut::Move(*pDupl));
+		auto& obj = *mpCurrScene->InsertGameObject(Ut::Move(*pDupl));
 		obj.Identify();
+		obj.Awake();
 		obj.Init();
 		obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 		for (auto& c : obj.GetAllComponents())
@@ -134,7 +135,9 @@ void Dystopia::SceneSystem::SceneChanged(void)
 	EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 	SerialObj.ConsumeEndBlock();
 	mNextSceneFile.clear();
-	mpCurrScene->Init();
+	auto& allObj = mpCurrScene->GetAllGameObjects();
+	for (auto& obj : allObj)
+		obj.Awake();
 }
 
 void Dystopia::SceneSystem::RestartScene(void)
@@ -153,7 +156,9 @@ void Dystopia::SceneSystem::RestartScene(void)
 		SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
 		EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 		SerialObj.ConsumeEndBlock();
-		mpCurrScene->Init();
+		auto& allObj = mpCurrScene->GetAllGameObjects();
+		for (auto& obj : allObj)
+			obj.Awake();
 	}
 }
 

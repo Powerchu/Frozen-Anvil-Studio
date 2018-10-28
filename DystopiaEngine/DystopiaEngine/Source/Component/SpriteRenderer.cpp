@@ -39,39 +39,48 @@ Dystopia::SpriteRenderer::SpriteRenderer(void) noexcept
 }
 
 Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexcept
-	: Renderer{ Ut::Move(_rhs) }, mAnimations{ /*Ut::Move(_rhs.mAnimations)*/ }, 
+	: Renderer{ Ut::Move(_rhs) }, mAnimations{ Ut::Move(_rhs.mAnimations) }, 
 	mnID{ Ut::Move(_rhs.mnID) }, mnCol{ Ut::Move(_rhs.mnCol) }, mnRow{ Ut::Move(_rhs.mnRow) },
 	mfFrameTime{ Ut::Move(_rhs.mfFrameTime) }, mfAccTime{ Ut::Move(_rhs.mfAccTime) }, mpAtlas{ Ut::Move(_rhs.mpAtlas) },
 	mbPlayAnim{ Ut::Move(_rhs.mbPlayAnim) }
 {
+	_rhs.mAnimations.clear();
 	_rhs.mpAtlas = nullptr;
 }
 
 Dystopia::SpriteRenderer::SpriteRenderer(const SpriteRenderer& _rhs) noexcept
 	: Renderer{ _rhs }, mAnimations{ /*_rhs.mAnimations*/ },
 	mnID{ _rhs.mnID }, mnCol{ _rhs.mnCol }, mnRow{_rhs.mnRow },
-	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, mpAtlas{ _rhs.mpAtlas },
+	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, mpAtlas{ /*_rhs.mpAtlas*/ },
 	mbPlayAnim{ _rhs.mbPlayAnim }
 {
+}
+
+void Dystopia::SpriteRenderer::Awake(void)
+{
+	Renderer::Awake();
+	GetAtlas();
 }
 
 void Dystopia::SpriteRenderer::Init(void)
 {
 	Renderer::Init();
-	GetAtlas();
 }
 
 void Dystopia::SpriteRenderer::Draw(void) const noexcept
 {
 	if (auto shader = GetShader())
 	{
-		if (mpAtlas && mAnimations.size() && mpAtlas->GetAllSections().size())
+		if (mpAtlas)
 		{
-			mpAtlas->SetSection(mAnimations[mnID].mnID, mnCol, mnRow, *shader);
-		}
-		else
-		{
-			shader->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
+			if (mAnimations.size() && mpAtlas->GetAllSections().size())
+			{
+				mpAtlas->SetSection(mAnimations[mnID].mnID, mnCol, mnRow, *shader);
+			}
+			else
+			{
+				shader->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
+			}
 		}
 		Renderer::Draw();
 	}
@@ -79,6 +88,12 @@ void Dystopia::SpriteRenderer::Draw(void) const noexcept
 
 void Dystopia::SpriteRenderer::Update(float _fDT)
 {
+	if (!GetTexture())
+	{
+		RemoveAtlas();
+		return;
+	}
+
 	if (mpAtlas && mbPlayAnim && mAnimations.size())
 	{
 		mpAtlas->SetTexture(GetTexture());

@@ -78,7 +78,7 @@ namespace Dystopia
 		GetEditorEventHND()->GetEvent(EDITOR_GIZMO_SCALE)->Bind(&SceneView::SetGizmoScaler, this);
 
 		GameObject * temp = Factory::CreateCamera("Scene Camera");
-		auto& g = *GetCurrentScene()->GetAllGameObjects().Emplace(Ut::Move(*temp));
+		auto& g = *GetCurrentScene()->InsertGameObject(Ut::Move(*temp));
 		g.GetComponent<Transform>()->SetOwner(&g);
 		//auto sr = static_cast<ComponentDonor<SpriteRenderer>*>(EngineCore::GetInstance()->Get<typename SpriteRenderer::SYSTEM>())->RequestComponent();
 		//g.AddComponent(sr, Component::TAG{});

@@ -100,7 +100,12 @@ void Dystopia::GameObject::Load(void)
 
 void Dystopia::GameObject::Awake(void)
 {
+	if (mnFlags & FLAG_EDITOR_OBJ)
+		return;
 
+	mTransform.Awake();
+	ForcePing(mComponents, Awake);
+	ForcePing(mBehaviours, Awake);
 }
 
 void Dystopia::GameObject::Init(void)
@@ -189,6 +194,7 @@ void Dystopia::GameObject::AddComponent(Component* _p, ComponentTag)
 {
 	mComponents.Insert(_p);
 	_p->SetOwner(this);
+	_p->Awake();
 }
 
 void Dystopia::GameObject::AddComponent(Behaviour* _p, BehaviourTag)

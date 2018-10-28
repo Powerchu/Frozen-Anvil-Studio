@@ -56,6 +56,7 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
+		void Awake(void) override;
 		void Init(void) override;
 
 		void Draw(void) const noexcept;

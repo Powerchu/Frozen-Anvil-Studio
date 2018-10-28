@@ -103,7 +103,6 @@ inline void Dystopia::ComponentDonor<Ty, Settings>::Unserialise(TextSerialiser &
 
 		Ty * pComp = RequestComponent();
 		pComp->Unserialise(_Serialiser);
-
 		_Serialiser.ConsumeEndBlock();
 	}
 
