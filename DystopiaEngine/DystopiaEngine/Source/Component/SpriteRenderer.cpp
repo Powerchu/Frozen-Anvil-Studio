@@ -65,16 +65,13 @@ void Dystopia::SpriteRenderer::Draw(void) const noexcept
 {
 	if (auto shader = GetShader())
 	{
-		if (mpAtlas)
+		if (mpAtlas && mAnimations.size() && mpAtlas->GetAllSections().size())
 		{
-			if (mAnimations.size() && mpAtlas->GetAllSections().size())
-			{
-				mpAtlas->SetSection(mAnimations[mnID].mnID, mnCol, mnRow, *shader);
-			}
-			else
-			{
-				shader->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
-			}
+			mpAtlas->SetSection(mAnimations[mnID].mnID, mnCol, mnRow, *shader);
+		}
+		else
+		{
+			shader->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
 		}
 		Renderer::Draw();
 	}
