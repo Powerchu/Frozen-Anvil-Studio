@@ -64,7 +64,7 @@ namespace Dystopia
 				_obj << static_cast<char>(_v);
 			}
 			template<>
-			void operator()(HashString _v, TextSerialiser& _obj, void*)
+			void operator()(HashString /*_v*/, TextSerialiser& /*_obj*/, void*)
 			{
 				//_obj << static_cast<HashString>(_v);
 			}
@@ -92,7 +92,7 @@ namespace Dystopia
 				_f(Temp, _addr);
 			}
 			template<>
-			void operator()(HashString, std::function<void(HashString, void*)> _f, void * _addr, TextSerialiser & _obj)
+			void operator()(HashString, std::function<void(HashString, void*)> /*_f*/, void * /*_addr*/, TextSerialiser & /*_obj*/)
 			{
 				//HashString Temp;
 				//_obj >> Temp;

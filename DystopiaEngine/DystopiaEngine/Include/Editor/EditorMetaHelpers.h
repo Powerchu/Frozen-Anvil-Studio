@@ -29,6 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include <functional>
 #include "DataStructure/Hashstring.h"
+
 namespace Dystopia
 {
 	template<typename A, typename B>
@@ -183,7 +184,7 @@ namespace Dystopia
 			}
 		}
 		template<>
-		void operator()(const char * _name, HashString value, std::function<void(HashString, void*)> _f, void*_addr)
+		void operator()(const char * /*_name*/, HashString /*value*/, std::function<void(HashString, void*)> /*_f*/, void* /*_addr*/)
 		{
 
 		}

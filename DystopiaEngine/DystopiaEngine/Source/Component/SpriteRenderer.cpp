@@ -289,7 +289,7 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 		}
 		EGUI::PopID();
 
-		if (toRemove == i)
+		if (toRemove == static_cast<int>(i))
 		{
 			mAnimations.FastRemove(i--);
 			toRemove = -1;
