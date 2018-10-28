@@ -350,6 +350,10 @@ namespace Dystopia
 			{
 				if(auto p = iter.second->GetOwner())
 				{
+					if (p->GetFlag() & eObjFlag::FLAG_EDITOR_OBJ)
+					{
+						continue;
+					}
 					if (p->GetFlag() & eObjFlag::FLAG_ACTIVE)
 					{
 						_EDITOR_START_TRY
@@ -379,10 +383,14 @@ namespace Dystopia
 		{
 			for (auto & iter : i.second)
 			{
-				if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
-				{
-					i.second.FastRemove(&iter);
-				}
+				if(iter.second != nullptr)
+					if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
+					{
+						delete iter.second;
+						iter.second = nullptr;
+						i.second.FastRemove(&iter);
+
+					}
 			}
 		}
 	}
@@ -577,6 +585,7 @@ namespace Dystopia
 				{
 					auto ptr = iter.second->Duplicate();
 					i.second.push_back(std::make_pair(_NewID, ptr));
+					iter.first = _NewID;
 					return ptr;
 				}
 			}
@@ -584,7 +593,7 @@ namespace Dystopia
 		return nullptr;
 	}
 
-	void BehaviourSystem::ReplaceID(uint64_t _old, uint64_t _new)
+	void BehaviourSystem::ReplaceID(uint64_t _old, uint64_t _new, GameObject * _newOwner)
 	{
 		for (auto & i : mvBehaviours)
 		{
@@ -593,6 +602,7 @@ namespace Dystopia
 				if (iter.first = _old)
 				{
 					iter.first = _new;
+					iter.second->SetOwner(_newOwner);
 				}
 			}
 		}
