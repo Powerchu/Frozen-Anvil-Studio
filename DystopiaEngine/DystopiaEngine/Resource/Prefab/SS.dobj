@@ -1,0 +1,21 @@
+[START_GameObject]
+1,[START_START_GO_DATA]
+1462784000,65,SS,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+300,300,1,0,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GameObject]
+[START_Component]
+8,[START_Renderer]
+1763713024,1,1462784000,..\DystopiaEngine\Resource\Asset\SpriteSheet_Test.png,
+[END_Renderer]
+[START_Sprite Renderer]
+1,0.1,1,0,0,0,defualt,4,4,1024,1024,10,
+[END_Sprite Renderer]
+
+[END_Component End]
