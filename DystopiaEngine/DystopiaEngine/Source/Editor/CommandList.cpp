@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
+#include "System/Behaviour/BehaviourSystem.h"
 #include "Object/GameObject.h"
 
 /* Insert Game Object Command  ****************************************************************************/
@@ -57,6 +58,8 @@ bool Dystopia::ComdInsertObject::ExecuteDo()
 	obj.Init();
 	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : obj.GetAllComponents())
+		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	for (auto& c : obj.GetAllBehaviours())
 		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 
 	if (mFocusBack)
@@ -96,11 +99,14 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
+	EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->ReplaceID(mpObj->GetID(), mObjID, mpObj);
 	mpObj->SetID(mObjID);
 	mpObj->Identify();
 	mpObj->Init();
 	mpObj->SetFlag(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : mpObj->GetAllComponents())
+		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	for (auto& c : mpObj->GetAllBehaviours())
 		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	p->Destroy();
 	return true;
@@ -155,11 +161,14 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
+	EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->ReplaceID(mpObj->GetID(), mObjID, mpObj);
 	mpObj->SetID(mObjID);
 	mpObj->Identify();
 	mpObj->Init();
 	mpObj->SetFlag(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : mpObj->GetAllComponents())
+		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	for (auto& c : mpObj->GetAllBehaviours())
 		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	p->Destroy();
 	return true;
@@ -179,6 +188,8 @@ bool Dystopia::ComdDeleteObject::ExecuteUndo()
 	obj.Init();
 	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : obj.GetAllComponents())
+		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	for (auto& c : obj.GetAllBehaviours())
 		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 
 	if (mFocusBack)

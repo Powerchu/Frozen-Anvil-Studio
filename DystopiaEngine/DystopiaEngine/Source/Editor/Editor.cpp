@@ -480,7 +480,6 @@ namespace Dystopia
 					}
 				}
 				pDup->Identify();
-				pDup->Init();
 				mToInsert.Insert(pDup);
 				AddSelection(pDup->GetID());
 			}

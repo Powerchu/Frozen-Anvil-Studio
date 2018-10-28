@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\Utility.h"		 // Move
 #include "IO\TextSerialiser.h"
 #include "Utility\GUID.h"			// Global UniqueID
+#include "System/Behaviour/BehaviourSystem.h"
 
 #define Ping(_ARR, _FUNC, ...)			\
 for (auto& e : _ARR)					\
@@ -104,6 +105,9 @@ void Dystopia::GameObject::Awake(void)
 
 void Dystopia::GameObject::Init(void)
 {
+	if (mnFlags & FLAG_EDITOR_OBJ)
+		return;
+
 	mTransform.Init();
 	ForcePing(mComponents, Init);
 	ForcePing(mBehaviours, Init);
@@ -254,7 +258,8 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	}
 	for (auto& b : mBehaviours)
 	{
-		p->mBehaviours.Insert(b->Duplicate());
+		Behaviour *dup = EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, p->mnID);
+		p->mBehaviours.Insert(dup);
 	}
 
 	return p;

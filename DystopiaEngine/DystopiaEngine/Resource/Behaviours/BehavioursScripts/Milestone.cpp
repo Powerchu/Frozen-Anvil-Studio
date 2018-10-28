@@ -39,6 +39,7 @@ namespace Dystopia
 	void Milestone::Init()
 	{ 
 		SetActive(true);
+
         this->GetOwner()->GetComponent<Transform>()->SetScale(32, 128, 1); 
 	}
 
