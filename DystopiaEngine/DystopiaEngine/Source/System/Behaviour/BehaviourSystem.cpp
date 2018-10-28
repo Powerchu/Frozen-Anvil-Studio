@@ -613,7 +613,7 @@ namespace Dystopia
 		{
 			for (auto & iter : i.second)
 			{
-				if (iter.first = _old)
+				if (iter.first == _old)
 				{
 					iter.first = _new;
 					iter.second->SetOwner(_newOwner);
