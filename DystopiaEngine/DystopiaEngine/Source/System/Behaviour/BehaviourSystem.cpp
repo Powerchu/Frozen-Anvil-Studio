@@ -567,6 +567,37 @@ namespace Dystopia
 		return nullptr;
 	}
 
+	Behaviour* BehaviourSystem::RequestDuplicate(Behaviour* _PtrToDup, uint64_t _NewID)
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.second == _PtrToDup)
+				{
+					auto ptr = iter.second->Duplicate();
+					i.second.push_back(std::make_pair(_NewID, ptr));
+					return ptr;
+				}
+			}
+		}
+		return nullptr;
+	}
+
+	void BehaviourSystem::ReplaceID(uint64_t _old, uint64_t _new)
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.first = _old)
+				{
+					iter.first = _new;
+				}
+			}
+		}
+	}
+
 	void Dystopia::BehaviourSystem::ClearAllBehaviours()
 	{
 		for (auto & i : mvBehaviours)
