@@ -49,9 +49,9 @@ Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexce
 }
 
 Dystopia::SpriteRenderer::SpriteRenderer(const SpriteRenderer& _rhs) noexcept
-	: Renderer{ _rhs }, mAnimations{ _rhs.mAnimations },
+	: Renderer{ _rhs }, mAnimations{ /*_rhs.mAnimations*/ },
 	mnID{ _rhs.mnID }, mnCol{ _rhs.mnCol }, mnRow{_rhs.mnRow },
-	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, mpAtlas{ _rhs.mpAtlas },
+	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, mpAtlas{ /*_rhs.mpAtlas*/ },
 	mbPlayAnim{ _rhs.mbPlayAnim }
 {
 }
@@ -90,6 +90,9 @@ void Dystopia::SpriteRenderer::Draw(void) const noexcept
 
 void Dystopia::SpriteRenderer::Update(float _fDT)
 {
+	if (!GetTexture())
+		RemoveAtlas();
+
 	if (mpAtlas && mbPlayAnim && (mnID < mAnimations.size()))
 	{
 		int endPos = mAnimations[mnID].mnCutoff ? mAnimations[mnID].mnCutoff : mAnimations[mnID].mnCol * mAnimations[mnID].mnRow;
