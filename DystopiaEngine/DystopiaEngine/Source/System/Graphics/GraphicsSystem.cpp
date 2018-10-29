@@ -372,7 +372,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
 		{		
 			if(Obj->GetColliderType() != eColliderType::CIRCLE)
-				s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetLocalTransformMatrix() * Math::Translate(Obj->GetOffSet())  * Obj->GetTransformationMatrix());
+				s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix() * Math::Translate(Obj->GetOffSet())  * Obj->GetTransformationMatrix());
 			else
 			{
 				auto pos    = pOwner->GetComponent<Transform>()->GetGlobalPosition();

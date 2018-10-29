@@ -66,6 +66,7 @@ namespace Dystopia
 			tInput->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
 			tInput->MapButton("Fly", eButton::KEYBOARD_UP);
 			tInput->MapButton("Fireball", eButton::KEYBOARD_C);
+			tInput->MapButton("Missle", eButton::KEYBOARD_V);
 		}		
 	}
 
@@ -125,7 +126,9 @@ namespace Dystopia
 			{
 				for (auto& manifold : my_col->GetCollisionEvents())
 				{
-					if (manifold.mCollidedWith->GetComponent<Collider>()->IsTrigger()) continue;
+					auto * CollidedWith = EngineCore::GetInstance()->Get<SceneSystem>()->GetActiveScene().FindGameObject(manifold.mOtherID);
+					if (nullptr == CollidedWith) continue;
+					if (CollidedWith->GetComponent<Collider>()->IsTrigger()) continue;
 
 					const auto dotNormal = manifold.mEdgeNormal.Dot({ 1,0,0 });
 					if (dotNormal < 0.98F && dotNormal > -0.98F)
@@ -254,7 +257,7 @@ namespace Dystopia
 					if (auto rigidptr = ptr->GetComponent<RigidBody>())
 					{
 
-						rigidptr->AddLinearImpulse({ -50 * rigidptr->GetMass(),0,0 });
+						rigidptr->AddLinearImpulse({ -100 * rigidptr->GetMass(),0,0 });
 					}
 
 				}
@@ -266,8 +269,34 @@ namespace Dystopia
 					if (auto rigidptr = ptr->GetComponent<RigidBody>())
 					{
 
-						rigidptr->AddLinearImpulse({ 50 * rigidptr->GetMass(),0,0 });
+						rigidptr->AddLinearImpulse({ 100 * rigidptr->GetMass(),0,0 });
 					}
+
+				}
+			}
+
+		}
+		if (tInput->IsKeyTriggered("Missle"))
+		{
+			if (!mbIsFacingRight)
+			{
+
+				if (auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Missle.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ -10,0,0 }))
+				{
+					auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+					auto x = scale.x / 2;
+					ptr->GetComponent<Transform>()->SetGlobalPosition(ptr->GetComponent<Transform>()->GetGlobalPosition() + Math::Vec3D{ -x,0,0 });
+					ptr->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z);
+				}
+			}
+			else
+			{
+				if (auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Missle.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 10,0,0 }))
+				{
+					auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+					auto x = scale.x / 2;
+					ptr->GetComponent<Transform>()->SetGlobalPosition(ptr->GetComponent<Transform>()->GetGlobalPosition() + Math::Vec3D{ x,0,0 });
+				
 
 				}
 			}

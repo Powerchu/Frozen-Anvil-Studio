@@ -11,14 +11,17 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Object\GameObject.h"		 // File Header
-#include "Component\Component.h"	 // Component
-#include "Behaviour\Behaviour.h"	 // Behaviour
-#include "Object\ObjectFlags.h"		 // eObjFlags
-#include "DataStructure\AutoArray.h" 
-#include "Utility\Utility.h"		 // Move
-#include "IO\TextSerialiser.h"
-#include "Utility\GUID.h"			// Global UniqueID
+#include "Object/GameObject.h"		 // File Header
+#include "Object/ObjectFlags.h"		 // eObjFlags
+#include "Component/Component.h"	 // Component
+#include "Behaviour/Behaviour.h"	 // Behaviour
+
+#include "Utility/GUID.h"			// Global UniqueID
+#include "Utility/Utility.h"		 // Move
+#include "Utility/DebugAssert.h"
+#include "DataStructure/AutoArray.h" 
+
+#include "IO/TextSerialiser.h"
 #include "System/Behaviour/BehaviourSystem.h"
 
 
@@ -261,7 +264,9 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 
 	for (auto& c : mComponents)
 	{
-		p->mComponents.Insert(c->Duplicate());
+		auto a = c->Duplicate();
+		DEBUG_BREAK(!a, "GameObject Error: Component duplicate fail!\n");
+		p->mComponents.Insert(a);
 	}
 	for (auto& b : mBehaviours)
 	{

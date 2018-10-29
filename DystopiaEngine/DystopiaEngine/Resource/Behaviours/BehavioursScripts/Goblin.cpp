@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/SceneSystem.h"
 #include "Object/GameObject.h"
 #include "System/Collision/CollisionEvent.h"
+#include "Component/SpriteRenderer.h"
 
 namespace Dystopia
 {
@@ -79,13 +80,18 @@ namespace Dystopia
 		{
 			//const char * name = ptr->Get
 			const char * name = ptr->GetNamePtr();
-			if(!strcmp(name,"PlayerHero"))
+			if(!strcmp(name,"PlayerAttackTrig"))
 			{
 				isColliding = true;
 			}
 			else if(!strcmp(name,"Fireball"))
 			{
 				mHealth -= 5;
+			}
+			else if(!strcmp(name,"Missle"))
+			{
+				mHealth -= 1;
+				isColliding = true;
 			}
 		}
 	}
@@ -97,8 +103,13 @@ namespace Dystopia
 		{
 			//const char * name = ptr->Get
 			const char * name = ptr->GetNamePtr();
-			if(!strcmp(name,"PlayerHero"))
+			if(!strcmp(name,"PlayerAttackTrig"))
 			{
+				isColliding = true;
+			}
+			else if(!strcmp(name,"Missle"))
+			{
+				mHealth -= 1;
 				isColliding = true;
 			}
 		}
@@ -106,25 +117,41 @@ namespace Dystopia
 
 	void Dystopia::Goblin::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
-		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_colEvent.mOtherID);
-		if(ptr)
-		{
-			isColliding = false;
-		}
+		isColliding = false;
 	}
 
 	void Dystopia::Goblin::OnTriggerEnter(const GameObject * _obj)
 	{
-		//mHealth -= 5;
+		if(_obj)
+		{
+			//const char * name = ptr->Get
+			const char * name = _obj->GetNamePtr();
+			if(!strcmp(name,"Missle"))
+			{
+				mHealth -= 1;
+				isColliding = true;
+			}	
+		}
+
 	}
 
 	void Dystopia::Goblin::OnTriggerStay(const GameObject * _obj)
 	{
-		//mHealth -= 5;
+		if(_obj)
+		{
+			//const char * name = ptr->Get
+			const char * name = _obj->GetNamePtr();
+			if(!strcmp(name,"Missle"))
+			{
+				//if(_obj->GetComponent<SpriteRenderer>()->AnimationFinished())
+				isColliding = true;
+			}	
+		}
 	}
 
 	void Dystopia::Goblin::OnTriggerExit(const GameObject * _obj)
 	{
+		isColliding = false;
 	}
 
 	Goblin * Goblin::Duplicate() const
