@@ -214,19 +214,11 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	TextureSystem* pTexSys = pCore->GetSubSystem<TextureSystem>();
 	WindowManager* pWinSys = pCore->GetSystem<WindowManager>();
 
-	Image* x = ImageParser::LoadBMP("Resource/Editor/EditorStartup.bmp");
-	ImageParser::WriteBMP("Resource/Editor/Write.bmp", x->mpImageData, x->mnWidth, x->mnHeight);
-
 	Mesh*   mesh = pMeshSys->GetMesh("Quad");
 	Shader* shader = shaderlist["Logo Shader"];
-	//Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/EditorStartup.png");
-	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/Write.bmp");
-
-	FontSystem* pFontSys = pCore->GetSubSystem<FontSystem>();
-	TextureAtlas* font = pFontSys->LoadFont("Resource/Font/Times New Roman.ttf");
+	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/EditorStartup.png");
 
 	unsigned w = texture->GetWidth(), h = texture->GetHeight();
-	//unsigned w = font->GetWidth(), h = font->GetHeight();
 
 	pWinSys->GetMainWindow().SetSizeNoAdjust(w, h);
 	pWinSys->GetMainWindow().CenterWindow();
@@ -243,8 +235,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->Bind();
-	//texture->Bind();
-	font->Bind();
+	texture->Bind();
 	shader->UploadUniform("ProjectViewMat", Project * View);
 	shader->UploadUniform("ModelMat", Math::Scale(w * 1.f, h * 1.f));
 	shader->UploadUniform("Gamma", mfGamma);
@@ -272,10 +263,7 @@ namespace
 
 		auto m = _renderer->GetOwner()->GetComponent<Dystopia::Transform>()->GetTransformMatrix();
 
-		if (t)
-			t->Bind();
-
-		s->Bind();
+		if (t) t->Bind();
 
 		s->UploadUniform("ProjectViewMat", _ProjView);
 		s->UploadUniform("ModelMat", m);
@@ -283,8 +271,7 @@ namespace
 
 		_renderer->Draw();
 
-		if(t)
-			t->Unbind();
+		if(t) t->Unbind();
 	}
 }
 
@@ -321,7 +308,17 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 	for (auto& r : set1)
 	{
 		auto s = r->GetShader();
-		s = r->GetTexture() ? s : shaderlist["No Texture"];
+		
+		if (s)
+		{
+			s->Bind();
+			s->UploadUniform("vUVBounds", 0, 0, 1, 1);
+		}
+		else
+		{
+			s = shaderlist["No Texture"];
+			s->Bind();
+		}
 
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
@@ -333,7 +330,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 	{
 		auto s = r->GetShader();
 		s = r->GetTexture() ? s : shaderlist["No Texture"];
-
+		s->Bind();
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
 			DrawRenderer(r, _ProjView, s, mfGamma);
@@ -385,13 +382,6 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 			}
 		}
 	}
-
-#if defined(EDITOR) | defined(_DEBUG) | defined(DEBUG)
-	if (glGetError() != GL_NO_ERROR)
-	{
-		__debugbreak();
-	}
-#endif
 }
 
 void Dystopia::GraphicsSystem::Update(float _fDT)

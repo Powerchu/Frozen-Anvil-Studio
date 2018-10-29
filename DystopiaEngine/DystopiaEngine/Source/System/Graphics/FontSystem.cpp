@@ -78,8 +78,8 @@ Dystopia::TextureAtlas* Dystopia::FontSystem::LoadFont(const std::string& _strPa
 
 	std::string path = _strPath.substr(0, _strPath.rfind('.') + 1);
 
-	if(pFS->CheckFileExist(path + "dmap", eFileDir::eResource))
-		return LoadExisting(path);
+	//if(pFS->CheckFileExist(path + "dmap", eFileDir::eResource))
+	//	return LoadExisting(path);
 	return LoadFromFont(_strPath);
 }
 

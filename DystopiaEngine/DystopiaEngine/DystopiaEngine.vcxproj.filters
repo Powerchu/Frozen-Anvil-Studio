@@ -1163,9 +1163,6 @@
     <Filter Include="Game Engine\Systems\Graphic\GraphicSystem">
       <UniqueIdentifier>{9104936d-7b9d-40bf-914b-c215841bc815}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Systems\Graphic\Freetype">
-      <UniqueIdentifier>{b4fcfc01-af87-4fff-81f5-85b39f97969e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Engine\Components\Renderer\TextRenderer">
       <UniqueIdentifier>{5c738da4-8474-45bb-86e8-79f3fdb62749}</UniqueIdentifier>
     </Filter>

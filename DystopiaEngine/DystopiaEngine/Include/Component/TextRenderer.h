@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/Component.h"		// Base Class
 #include "Component/Renderer.h"			// Base Class
-#include "Component/ComponentList.h"	// TRANSFORM
+#include "Component/ComponentList.h"
 #include "DataStructure/AutoArray.h"	// AutoArray
 #include "Utility/MetaAlgorithms.h"		// MetaFind
 
@@ -25,7 +25,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	class Vertex;
+	class RawMesh;
 	class Texture;
+	class TextureAtlas;
 	class GraphicsSystem;
 
 	class _DLL_EXPORT TextRenderer : public Renderer
@@ -50,30 +53,22 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
-		void Init(void) override;
+		void SetText(const char*);
+		void SetText(const std::string&);
 
-		void Draw(void) const noexcept;
-
-		void SetShader(Shader*) noexcept;
-		void SetShader(const std::string&) noexcept;
-		Shader* GetShader(void) const noexcept;
-
-		void SetTexture(Texture*) noexcept;
-		Texture* GetTexture(void) const noexcept;
-
-		bool HasTransparency(void) const noexcept;
-
-		Renderer* Duplicate(void) const;
-
-		void Serialise(TextSerialiser&) const;
-		void Unserialise(TextSerialiser&);
-
-		void EditorUI(void) noexcept override;
+		void SetFont(const char*);
+		void SetFont(const std::string&);
 
 
 	private:
 
-		
+		std::string mstrText;
+		AutoArray<Vertex> mVerts;
+
+		RawMesh* mpBaseMesh;
+		TextureAtlas* mpAtlas;
+
+		void RegenMesh(void);
 	};
 }
 

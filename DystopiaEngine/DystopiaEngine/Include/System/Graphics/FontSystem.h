@@ -26,6 +26,13 @@ namespace Dystopia
 	class  Texture;
 	class  TextureAtlas;
 
+	struct CharSpace
+	{
+		unsigned x, y;
+		unsigned mnWidth;
+		unsigned mnHeight;
+	};
+
 	class FontSystem
 	{
 	public:
@@ -45,13 +52,6 @@ namespace Dystopia
 		unsigned mnPaddingX, mnPaddingY;
 
 		using uchar = unsigned char;
-
-		struct CharSpace
-		{
-			unsigned x, y;
-			unsigned mnWidth;
-			unsigned mnHeight;
-		};
 
 		TextureAtlas* LoadFromFont(const std::string&);
 		TextureAtlas* LoadExisting(const std::string&);

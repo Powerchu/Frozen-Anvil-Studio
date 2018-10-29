@@ -59,7 +59,7 @@ void Dystopia::SpriteRenderer::Draw(void) const noexcept
 	{
 		if (mpAtlas)
 		{
-			mpAtlas->SetSection(mnID, mnCol, mnRow, *shader);
+			mpAtlas->SetSection(mAnimations[mnID].mnID, mnCol, mnRow, *shader);
 		}
 		Renderer::Draw();
 	}

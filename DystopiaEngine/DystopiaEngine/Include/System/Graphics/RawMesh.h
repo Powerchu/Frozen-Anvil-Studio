@@ -28,6 +28,7 @@ namespace Dystopia
 		void UnbindMesh(void) const;
 
 		void BuildMesh(AutoArray<Vertex>&, AutoArray<UV>&, AutoArray<short>&);
+		void SubstituteData(AutoArray<Vertex>&, AutoArray<UV>&, AutoArray<short>&);
 
 		unsigned mVAO, mVtxBuffer, mUVBuffer, mEBO;
 		unsigned short mVtxCount;

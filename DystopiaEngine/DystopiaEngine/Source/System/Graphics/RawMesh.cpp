@@ -74,4 +74,20 @@ void Dystopia::RawMesh::BuildMesh(AutoArray<Vertex>& _pVtx, AutoArray<UV>& _pUVs
 //	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void Dystopia::RawMesh::SubstituteData(AutoArray<Vertex>& _pVtx, AutoArray<UV>& _pUVs, AutoArray<short>& _nIndices)
+{
+	BindMesh();
+
+	glBindBuffer(GL_ARRAY_BUFFER, mVtxBuffer);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * _pVtx.size(), &_pVtx[0]);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mUVBuffer);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(UV) * _pUVs.size(), &_pUVs[0]);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(short) * _nIndices.size(), &_nIndices[0]);
+
+	UnbindMesh();
+}
+
 
