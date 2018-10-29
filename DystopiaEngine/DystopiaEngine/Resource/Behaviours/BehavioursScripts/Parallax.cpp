@@ -39,6 +39,8 @@ namespace Dystopia
 	void Parallax::Init()
 	{
 		mFocalTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Scene Camera");
+		mTargetNewPos = mFocalTarget->GetComponent<Transform>()->GetGlobalPosition();
+		mTargetOldPos = mTargetNewPos;
 	}
 
 	void Parallax::Update(const float _fDeltaTime)
@@ -53,13 +55,26 @@ namespace Dystopia
 			{
 				auto diff = Vector.x + mLayerDiff;
 				if(diff > 0)
-					newPos.x =  newPos.x + -(Vector.x + mLayerDiff);
+					newPos.x =  newPos.x + -(Vector.x + mLayerDiff) * mXSpeed;
 			}
 			else if(Vector.x < 0)
 			{
 				auto diff = Vector.x - mLayerDiff;
 				if(diff < 0)
-					newPos.x =  newPos.x + -(Vector.x + mLayerDiff);
+					newPos.x =  newPos.x + -(Vector.x - mLayerDiff) * mXSpeed;
+			}
+			
+			if(Vector.y > 0)
+			{
+				auto diff = Vector.y + mLayerDiff;
+				if(diff > 0)
+					newPos.y =  newPos.y + -(Vector.y + mLayerDiff) * mYSpeed;
+			}
+			else if(Vector.y < 0)
+			{
+				auto diff = Vector.y - mLayerDiff;
+				if(diff < 0) 
+					newPos.y =  newPos.y + -(Vector.y - mLayerDiff) * mYSpeed;
 			}
 			OwnerTransform->SetGlobalPosition(newPos);
 			mTargetOldPos = mTargetNewPos;

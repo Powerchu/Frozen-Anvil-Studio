@@ -77,6 +77,8 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 		
 		int mLayerDiff = 0;
+		float mXSpeed  = 1.f;
+		float mYSpeed = 1.f;
 		GameObject * mFocalTarget = nullptr;
 
 	private:
@@ -94,7 +96,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::Parallax, mLayerDiff);
+PP_REFLECT(Dystopia::Parallax, mLayerDiff, mXSpeed, mYSpeed);
 #endif //_Parallax_H_
 
 
