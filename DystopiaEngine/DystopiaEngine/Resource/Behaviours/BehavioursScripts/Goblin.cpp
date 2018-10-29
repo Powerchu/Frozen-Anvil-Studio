@@ -79,7 +79,7 @@ namespace Dystopia
 		{
 			//const char * name = ptr->Get
 			const char * name = ptr->GetNamePtr();
-			if(!strcmp(name,"PlayerHero"))
+			if(!strcmp(name,"PlayerAttackTrig"))
 			{
 				isColliding = true;
 			}
@@ -97,7 +97,7 @@ namespace Dystopia
 		{
 			//const char * name = ptr->Get
 			const char * name = ptr->GetNamePtr();
-			if(!strcmp(name,"PlayerHero"))
+			if(!strcmp(name,"PlayerAttackTrig"))
 			{
 				isColliding = true;
 			}

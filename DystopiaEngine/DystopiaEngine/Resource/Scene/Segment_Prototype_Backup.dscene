@@ -4,7 +4,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.427997,0.427997,1,0,0,0,0,0,0,1,0,
+0.353479,0.353479,1,3.61288,-7.94836,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -13,7 +13,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0,154.469,1,0,0,0,0,0,0,1,0,
+200,150,1,0,0,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -81,11 +81,11 @@
 
 [END_END_GO_TRANSFORM]
 [START_START_GO_DATA]
-1952527872,65,Goblin,
+18446744071899920384,65,Goblin,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-20,30,1,25,-11,0,0,0,0,1,0,
+20,30,1,-5.52359,-14.6361,0.1,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -108,46 +108,10 @@
 
 [END_Component End]
 [START_ComponentDonor]
-6,
+0,
 [END_ComponentDonor End]
-[START_Component]
-[START_Renderer]
-18446744072828229120,1,18446744073583726080,..\DystopiaEngine\Resource\Asset\Environment\Prologue\guide.png,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-18446744072512609280,1,18446744072512608768,..\DystopiaEngine\Resource\Asset\Environment\Prologue\bushLong_darker.png,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-18446744072743299072,1,18446744072743298560,..\DystopiaEngine\Resource\Asset\Environment\Prologue\bushLong_darker.png,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-18446744072102096896,1,18446744072102096384,..\DystopiaEngine\Resource\Asset\Environment\Prologue\plant_06_shade.png,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-1952528384,1,1952527872,..\DystopiaEngine\Resource\Asset\M_Basic Goblin.png,
-[END_Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-18446744071812873728,1,18446744071812873216,..\DystopiaEngine\Resource\Asset\Environment\Prologue\guide.png,
-[END_Renderer]
-
-[END_Component End]
 [START_ComponentDonor]
-5,
+6,
 [END_ComponentDonor End]
 [START_Component]
 [START_RigidBody]
@@ -175,7 +139,13 @@
 [END_Component End]
 [START_Component]
 [START_RigidBody]
-1952528896,0,1952527872,0,0.999,0.1,0.5,0.5,0.2,0,1.3,300,1,0,1,1,
+1952528896,0,18446744071899920384,0,0.999,0.1,0.5,0.5,0.2,0,1.3,300,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1935880192,536870912,1952527872,0,0.999,0.1,0.5,0.5,0.2,0,1.3,300,1,0,1,1,
 [END_RigidBody]
 
 [END_Component End]
@@ -183,7 +153,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-5,
+6,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -211,7 +181,13 @@
 [END_Component End]
 [START_Component]
 [START_Convex_Collider]
-1952529408,1,1952527872,0,-0.161,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.669,0.617,1,0,0,0,1,0,
+1952529408,1,18446744071899920384,0,-0.161,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.669,0.617,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1935880704,536870913,1952527872,0,-0.161,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.669,0.617,1,0,0,0,1,0,
 [END_Convex_Collider]
 
 [END_Component End]
@@ -243,7 +219,7 @@
 
 [END_Component End]
 [START_ComponentDonor]
-1,
+4,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -251,6 +227,33 @@
 [END_Renderer]
 [START_Sprite Renderer]
 0,0.016,1,0,0,0,defualt,4,4,1024,1024,10,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072160902656,1,18446744073583726080,..\DystopiaEngine\Resource\Asset\guide.png,
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,1,0,0,0,defualt,1,1,3508,2480,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072637857792,1,18446744071899920384,..\DystopiaEngine\Resource\Asset\M_Basic Goblin.png,
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1935881216,536870913,1952527872,..\DystopiaEngine\Resource\Asset\M_Basic Goblin.png,
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
 [END_Sprite Renderer]
 
 [END_Component End]
@@ -1143,7 +1146,15 @@ END,
 [END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
 
 [END_BEHAVIOUR_BLOCK]
-FollowTarget,0,Goblin,0,
+FollowTarget,0,Goblin,1,[START_BEHAVIOUR_BLOCK]
+18446744071899920384,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+mHealth,[START_mHealth]
+20,[START_MEMBER VAR]
+END,
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+
 [END_BEHAVIOUR_SYSTEM_BLOCK]
 
 [END_Scene]
