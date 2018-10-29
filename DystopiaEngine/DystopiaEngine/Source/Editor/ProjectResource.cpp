@@ -389,10 +389,10 @@ namespace Dystopia
 	{
 		if (_file == mFocusedFile) EGUI::Display::Outline(mPayloadRect.x, mPayloadRect.y);
 
-		int id = -1;
+		long id = -1;
 		if (_file->mTag == EGUI::ePayloadTags::PNG || _file->mTag == EGUI::ePayloadTags::BMP || _file->mTag == EGUI::ePayloadTags::DDS)
 		{
-			id = static_cast<int>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(_file->mPath)->GetID());
+			id = static_cast<long>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(_file->mPath)->GetID());
 		}
 
 		if (EGUI::Display::CustomPayload(("###ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 

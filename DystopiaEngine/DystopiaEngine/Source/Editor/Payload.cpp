@@ -114,19 +114,19 @@ namespace Dystopia
 
 	EGUI::ePayloadTags File::DetermineTag(const std::string& _name)
 	{
-		if (_name.find(g_PayloadPngEx) == _name.length() - 4)
+		if (_name.find(g_PayloadPngEx) == _name.length() - 3)
 			return EGUI::ePayloadTags::PNG;
-		else if (_name.find(g_PayloadBmpEx) == _name.length() - 4)
+		else if (_name.find(g_PayloadBmpEx) == _name.length() - 3)
 			return EGUI::ePayloadTags::BMP;
-		else if (_name.find(g_PayloadCppEx) == _name.length() - 4)
+		else if (_name.find(g_PayloadCppEx) == _name.length() - 3)
 			return EGUI::ePayloadTags::FILE;
-		else if (_name.find(g_PayloadPrefabEx) == _name.length() - 5)
+		else if (_name.find(g_PayloadPrefabEx) == _name.length() - 4)
 			return EGUI::ePayloadTags::PREFAB;
-		else if (_name.find(g_PayloadSceneEx) == _name.length() - 7)
+		else if (_name.find(g_PayloadSceneEx) == _name.length() - 6)
 			return EGUI::ePayloadTags::SCENE;
-		else if (_name.find(g_PayloadMp3Ex) == _name.length() - 4)
+		else if (_name.find(g_PayloadMp3Ex) == _name.length() - 3)
 			return EGUI::ePayloadTags::MP3;
-		else if (_name.find(g_PayloadDDSEx) == _name.length() - 4)
+		else if (_name.find(g_PayloadDDSEx) == _name.length() - 3)
 			return EGUI::ePayloadTags::DDS;
 		return EGUI::ePayloadTags::UNKNOWN;
 	}

@@ -16,19 +16,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Matrix4.h"
 #include "Math/Vector4.h"
 #include "IO/TextSerialiser.h"
-#include "Editor/ConsoleLog.h"
 #include "System/Driver/Driver.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
+#include "Utility/GUID.h"
 
 #if EDITOR
 #include "Editor/EGUI.h"
+#include "Editor/ConsoleLog.h"
 // #include "System/Logger/LoggerSystem.h"
 #endif 
 
 Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
 	: mRotation{ }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f, 1.f }, 
-	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, mnParentID{ 0 }, 
+	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, mnParentID{ GUIDGenerator::INVALID },
 	Component { _pOwner }
 {
 	
@@ -43,7 +44,7 @@ Dystopia::Transform::Transform(const Transform& _oOther) :
 
 void Dystopia::Transform::Awake(void) 
 {
-	if (mnParentID)
+	if (mnParentID != GUIDGenerator::INVALID && mnParentID)
 	{
 		GameObject *p = EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject(mnParentID);
 		SetParent(p->GetComponent<Transform>());

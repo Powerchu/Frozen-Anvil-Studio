@@ -58,6 +58,7 @@ namespace Dystopia
 			C* comp = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent();
 			comp->SetOwner(_owner);
 			comp->SetActive(_owner->IsActive());
+			comp->Awake();
 			comp->Init();
 			return comp;
 		}

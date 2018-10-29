@@ -70,6 +70,28 @@ void Dystopia::SpritePreviewer::EditorUI(void)
 		mImageRatio = mImageW / mImageH;
 		EGUI::Display::EndPayloadReceiver();
 	}
+	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::BMP))
+	{
+		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
+		mTextureName = GetTextureName();
+		mImageW = static_cast<float>(mpTargetTexture->GetWidth());
+		mImageH = static_cast<float>(mpTargetTexture->GetHeight());
+		mImageRatio = mImageW / mImageH;
+		EGUI::Display::EndPayloadReceiver();
+	}
+	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::DDS))
+	{
+		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
+		mTextureName = GetTextureName();
+		mImageW = static_cast<float>(mpTargetTexture->GetWidth());
+		mImageH = static_cast<float>(mpTargetTexture->GetHeight());
+		mImageRatio = mImageW / mImageH;
+		EGUI::Display::EndPayloadReceiver();
+	}
+
+	EGUI::SameLine();
+	EGUI::Display::Label("Resolution:  x[%d]   y[%d]", mpTargetTexture ? mpTargetTexture->GetWidth() : 0, 
+													   mpTargetTexture ? mpTargetTexture->GetHeight() : 0);
 
 	EGUI::Display::HorizontalSeparator();
 

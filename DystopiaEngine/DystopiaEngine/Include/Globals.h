@@ -70,6 +70,13 @@ namespace Gbl
 	constexpr auto  FRAGSHADER_EXT  = "dfrag";
 	constexpr auto  VERTSHADER_EXT  = "dvert";
 	constexpr auto  CRASHREPORT_EXT = "dystor";
+
+	constexpr auto  PNG_EXT			= "png";
+	constexpr auto  BMP_EXT			= "bmp";
+	constexpr auto  CPP_EXT			= "cpp";
+	constexpr auto  MP3_EXT			= "mp3";
+	constexpr auto  DDS_EXT			= "dds";
+
 }
 
 

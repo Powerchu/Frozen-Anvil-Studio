@@ -23,16 +23,38 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 #include "System/Scene/Scene.h"
 #include "System/Graphics/Texture2D.h"
+#include "System/Sound/SoundSystem.h"
+#include "System/Input/InputSystem.h"
 #include "System/Camera/CameraSystem.h"
+#include "System/Physics/PhysicsSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
+#include "System/Behaviour/BehaviourSystem.h"
+#include "System/Collision/CollisionSystem.h"
 
-#include "Utility/DebugAssert.h"
-#include "Object/GameObject.h"
 #include "Component/Transform.h"
+#include "Component/AudioSource.h"
 #include "Component/Camera.h"
+#include "Component/Collider.h"
+#include "Component/Circle.h"
+#include "Component/AABB.h"
+#include "Component/Convex.h"
 #include "Component/Renderer.h"
 #include "Component/SpriteRenderer.h"
+#include "Component/TextRenderer.h"
+#include "Component/RigidBody.h"
+#include "Component/CharacterController.h"
+#include "Component/ComponentList.h"
 #include "Behaviour/Behaviour.h"
+
+#include "Utility/ComponentGUID.h"
+#include "Utility/DebugAssert.h"
+#include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
+
+#include "Editor/EditorMetaHelpers.h"
+
+#include "Reflection/ReadWriteObject.h"
+#include "Reflection/ReflectionTypeErasure.h"
 
 #include "Math/MathUtility.h"
 
@@ -392,6 +414,32 @@ namespace Dystopia
 				GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
 				GetMainEditor()->NewSelection(pTarget->GetID());
 			}
+			else
+			{
+				std::string defaultName = "GameObject";
+				if (!pTarget)
+				{
+					Math::Pt3D worldClickPos = GetWorldClickPos(GetCamera());
+					Math::Pt3D spawnSite = Math::Pt3D{ worldClickPos.x, worldClickPos.y, 0.f, 1.f };
+
+					pTarget = Factory::CreateGameObj(defaultName);
+					pTarget->SetFlag(eObjFlag::FLAG_LAYER_WORLD);
+					pTarget->GetComponent<Transform>()->SetPosition(spawnSite);
+
+					GetCommandHND()->InvokeCommandInsert(*pTarget, *GetCurrentScene());
+				}
+				GameObject* pGuaranteedTarget = FindMouseObject();
+				Renderer* pNewRend = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->Get<typename Renderer::SYSTEM>())->RequestComponent();
+				pGuaranteedTarget->AddComponent(pNewRend, typename Component::TAG{});
+				pNewRend->SetTexture(mpGfxSys->LoadTexture(_pFile->mPath));
+				pNewRend->SetOwner(pGuaranteedTarget);
+				pNewRend->SetActive(pGuaranteedTarget->IsActive());
+				pNewRend->Awake();
+				if (pGuaranteedTarget->GetName() == defaultName)
+				{
+					pGuaranteedTarget->SetName(_pFile->mName);
+				}
+			}
 		}
 	}
 
@@ -438,7 +486,7 @@ namespace Dystopia
 		unsigned int size = static_cast<unsigned int>(_arr.size());
 		for (auto& obj : _arr)
 		{
-			const auto pos = obj->GetComponent<Transform>()->GetGlobalPosition();
+			const auto pos = obj->GetComponent<Transform>()->GetPosition();
 			avgPos.x = avgPos.x + pos.x;
 			avgPos.y = avgPos.y + pos.y;
 		}
@@ -456,8 +504,8 @@ namespace Dystopia
 			case EGUI::eDRAGGING:
 				for (auto& obj : _arr)
 				{
-					auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
-					obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX, cpos.y, cpos.z, cpos.w });
+					auto cpos = obj->GetComponent<Transform>()->GetPosition();
+					obj->GetComponent<Transform>()->SetPosition(Math::Pt3D{ cpos.x + changeX, cpos.y, cpos.z, cpos.w });
 				}
 				mClearSelection = false;
 				break;
@@ -473,8 +521,8 @@ namespace Dystopia
 			case EGUI::eDRAGGING:
 				for (auto& obj : _arr)
 				{
-					auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
-					obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x, cpos.y + changeY, cpos.z, cpos.w });
+					auto cpos = obj->GetComponent<Transform>()->GetPosition();
+					obj->GetComponent<Transform>()->SetPosition(Math::Pt3D{ cpos.x, cpos.y + changeY, cpos.z, cpos.w });
 				}
 				mClearSelection = false;
 				break;
@@ -490,8 +538,8 @@ namespace Dystopia
 			case EGUI::eDRAGGING:
 				for (auto& obj : _arr)
 				{
-					auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
-					obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX, cpos.y + changeY, cpos.z, cpos.w });
+					auto cpos = obj->GetComponent<Transform>()->GetPosition();
+					obj->GetComponent<Transform>()->SetPosition(Math::Pt3D{ cpos.x + changeX, cpos.y + changeY, cpos.z, cpos.w });
 				}
 				mClearSelection = false;
 				break;
@@ -563,8 +611,9 @@ namespace Dystopia
 
 	void SceneView::DrawGizmoSingle(GameObject& obj)
 	{
-		Math::Pt3D curPos = obj.GetComponent<Transform>()->GetGlobalPosition();
-		Math::Vec4 cScale = obj.GetComponent<Transform>()->GetGlobalScale();
+		Transform* trans = obj.GetComponent<Transform>();
+		Math::Pt3D curPos = trans->GetPosition();
+		Math::Vec4 cScale = trans->GetGlobalScale();
 		Math::Vec2 screenPos = GetWorldToScreen(curPos);
 		float changeX = 0;
 		float changeY = 0;
@@ -575,7 +624,7 @@ namespace Dystopia
 			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX, curPos.y, curPos.z, curPos.w });
+				trans->SetPosition(Math::Pt3D{ curPos.x + changeX, curPos.y, curPos.z, curPos.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -588,7 +637,7 @@ namespace Dystopia
 			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x, curPos.y + changeY, curPos.z, curPos.w });
+				trans->SetPosition(Math::Pt3D{ curPos.x, curPos.y + changeY, curPos.z, curPos.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -601,7 +650,7 @@ namespace Dystopia
 			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX, curPos.y + changeY, curPos.z, curPos.w });
+				trans->SetPosition(Math::Pt3D{ curPos.x + changeX, curPos.y + changeY, curPos.z, curPos.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -617,7 +666,7 @@ namespace Dystopia
 			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y, cScale.z, cScale.w });
+				trans->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y, cScale.z, cScale.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -630,7 +679,7 @@ namespace Dystopia
 			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY, cScale.z, cScale.w });
+				trans->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY, cScale.z, cScale.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -644,7 +693,7 @@ namespace Dystopia
 			{
 			case EGUI::eDRAGGING:
 				changeX += changeY;
-				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + ratio * changeX, cScale.z, cScale.w });
+				trans->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + ratio * changeX, cScale.z, cScale.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
