@@ -130,9 +130,6 @@
     <ClCompile Include="Source\Editor\EditorEvents.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Component\Renderer.cpp">
-      <Filter>Game Engine\Components\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Math\Quaternion.cpp">
       <Filter>Math\Quaternion</Filter>
     </ClCompile>
@@ -318,6 +315,9 @@
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\FontSystem.cpp">
       <Filter>Game Engine\Systems\Graphic\Freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Renderer.cpp">
+      <Filter>Game Engine\Components\Renderer\BaseRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -264,8 +264,6 @@ namespace
 		if (t)
 			t->Bind();
 
-		s->Bind();
-
 		s->UploadUniform("ProjectViewMat", _ProjView);
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);
@@ -316,14 +314,15 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 	for (auto& r : set1)
 	{
 		auto s = r->GetShader();
-		if (s)
+		if (s && r->GetTexture())
 		{
 			s->Bind();
 			s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
 		}
 		else
 		{
-			shaderlist["No Texture"]->Bind();
+			s = shaderlist["No Texture"];
+			s->Bind();
 		}
 
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
