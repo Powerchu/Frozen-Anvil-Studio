@@ -47,7 +47,7 @@ namespace Dystopia
 		{
 			mHealth -= 5;
 		}
-        if(mHealth < 0)
+        if(mHealth <= 0)
         {
             GetOwner()->Destroy();
         }

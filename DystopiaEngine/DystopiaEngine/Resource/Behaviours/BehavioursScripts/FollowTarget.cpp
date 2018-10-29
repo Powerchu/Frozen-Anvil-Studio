@@ -39,7 +39,7 @@ namespace Dystopia
 
 	void FollowTarget::Init()
 	{
-		mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("PlayerHero");
+		mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player_Hero");
 	}
 
 	void FollowTarget::Update(const float _fDeltaTime)
