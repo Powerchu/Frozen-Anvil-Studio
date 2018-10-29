@@ -1,0 +1,21 @@
+[START_GameObject]
+1,[START_START_GO_DATA]
+2113977344,65,WiloLines,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+300,300,1,0,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GameObject]
+[START_Component]
+8,[START_Renderer]
+2113977856,1,2113977344,..\DystopiaEngine\Resource\Asset\SpriteSheet_Player.png,
+[END_Renderer]
+[START_Sprite Renderer]
+1,0.16,2,0,0,0,Running,4,3,1024,768,10,1,0,0,1,0,768,Attacking,4,1,1024,256,0,1,0,3,1,
+[END_Sprite Renderer]
+
+[END_Component End]

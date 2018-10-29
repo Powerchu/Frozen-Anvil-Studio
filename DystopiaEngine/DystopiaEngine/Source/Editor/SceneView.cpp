@@ -288,7 +288,7 @@ namespace Dystopia
 
 	void SceneView::AdjustImageSize(Texture *_pTex)
 	{
-		static constexpr float aspect = 16.f / 9.f;
+		static constexpr float aspect = 16.f / 10.f;
 		float ix = static_cast<float>(aspect * _pTex->GetWidth());
 		float iy = static_cast<float>(_pTex->GetHeight());
 		float sx = Size().x;
