@@ -48,7 +48,8 @@ namespace Dystopia
 		Circle();
 		/*Constructor*/
 		Circle(float const & _radius, Math::Vec3D const & _v3Offset = { 0,0,0,0 });
-
+		
+		void Awake(void);
 		/*Load the Component*/
 		virtual void Load(void);
 		/*Initialise the Component*/

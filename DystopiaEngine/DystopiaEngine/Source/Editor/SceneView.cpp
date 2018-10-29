@@ -203,7 +203,6 @@ namespace Dystopia
 			vToMove.y -= .5f;
 			vToMove.x *= 2.f;
 			vToMove.y *= -2.f;
-			PrintToConsoleLog(std::to_string(vToMove.x) + " | " + std::to_string(vToMove.y));
 
 			const auto pos = mpSceneCamera->GetOwner()->GetComponent<Transform>()->GetPosition();
 			const auto scale = mpSceneCamera->GetOwner()->GetComponent<Transform>()->GetGlobalScale();
@@ -288,7 +287,7 @@ namespace Dystopia
 
 	void SceneView::AdjustImageSize(Texture *_pTex)
 	{
-		static constexpr float aspect = 16.f / 9.f;
+		static constexpr float aspect = 16.f / 10.f;
 		float ix = static_cast<float>(aspect * _pTex->GetWidth());
 		float iy = static_cast<float>(_pTex->GetHeight());
 		float sx = Size().x;

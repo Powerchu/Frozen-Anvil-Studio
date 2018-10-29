@@ -316,7 +316,15 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 	for (auto& r : set1)
 	{
 		auto s = r->GetShader();
-		s = r->GetTexture() ? s : shaderlist["No Texture"];
+		if (s)
+		{
+			s->Bind();
+			s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
+		}
+		else
+		{
+			shaderlist["No Texture"]->Bind();
+		}
 
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
@@ -328,7 +336,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 	{
 		auto s = r->GetShader();
 		s = r->GetTexture() ? s : shaderlist["No Texture"];
-
+		s->Bind();
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
 			DrawRenderer(r, _ProjView, s, mfGamma);

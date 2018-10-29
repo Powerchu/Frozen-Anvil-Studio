@@ -73,6 +73,8 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 
+		bool AnimationFinished(void) const;
+
 	private:
 
 		TextureAtlas* mpAtlas;
@@ -82,7 +84,8 @@ namespace Dystopia
 			unsigned mnID; //section id in the atlas
 			Math::Vec2 mUVCoord;
 			std::string mstrName;
-			int mnCol, mnRow, mnWidth, mnHeight, mnCutoff; 
+			int mnCol, mnRow, mnWidth, mnHeight, mnCutoff, mnStartAt; 
+			bool mbLoop, mbFinished;
 		};
 
 		AutoArray<SpriteSheet> mAnimations;

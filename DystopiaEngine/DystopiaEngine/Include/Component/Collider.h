@@ -129,6 +129,7 @@ namespace Dystopia
 		Collider();
 		explicit Collider(const Math::Point3D & _offset, const Math::Point3D & _origin = Math::MakePoint3D(0.f, 0.f, 0.f));
 
+		void Awake(void) override;
 		/*Load the Component*/
 		virtual void Load(void);
 		/*Initialise the Component*/
