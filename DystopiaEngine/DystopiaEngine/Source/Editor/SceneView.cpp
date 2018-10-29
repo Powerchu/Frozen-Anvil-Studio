@@ -92,6 +92,10 @@ namespace Dystopia
 
 	void SceneView::Init()
 	{
+	}
+
+	void SceneView::PostInit(void)
+	{
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
 		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Bind(&SceneView::SceneChanged, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);

@@ -188,7 +188,6 @@ namespace Dystopia
 		LoadDefaults();
 		LoadTabs();
 
-		mpEditorInput->Init();
 		mpEditorEventSys->Init();
 		InstallHotkeys();
 		for (auto& e : mArrTabs)
@@ -201,7 +200,12 @@ namespace Dystopia
 		LoadSettings();
 		mpDriver->Init();
 		mpDriver->PostInit();
+		for (auto& e : mArrTabs)
+		{
+			e->PostInit();
+		}
 
+		mpEditorInput->Init();
 		EGUI::SetContext(mpComdHandler);
 	}
 

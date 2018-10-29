@@ -76,6 +76,7 @@ namespace Gbl
 	constexpr auto  CPP_EXT			= "cpp";
 	constexpr auto  MP3_EXT			= "mp3";
 	constexpr auto  DDS_EXT			= "dds";
+	constexpr auto  WAV_EXT			= "wav";
 
 }
 

@@ -78,6 +78,7 @@ namespace Dystopia
 		bool IsReady(void) const;
 		bool IsPaused(void) const;
 		bool IsPlaying(void) const;
+		bool IsALoop(void) const;
 		void SetReady(bool);
 
 	private:
