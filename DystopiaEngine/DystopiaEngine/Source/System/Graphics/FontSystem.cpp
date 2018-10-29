@@ -74,7 +74,7 @@ void Dystopia::FontSystem::SetPadding(unsigned _x, unsigned _y)
 
 Dystopia::TextureAtlas* Dystopia::FontSystem::LoadFont(const std::string& _strPath)
 {
-	auto pFS = EngineCore::GetInstance()->Get<FileSystem>();
+	//auto pFS = EngineCore::GetInstance()->Get<FileSystem>();
 
 	std::string path = _strPath.substr(0, _strPath.rfind('.') + 1);
 
@@ -170,7 +170,7 @@ Dystopia::TextureAtlas* Dystopia::FontSystem::LoadFromFont(const std::string& _s
 	return pAtlas;
 }
 
-Dystopia::FontSystem::CharSpace Dystopia::FontSystem::PackFont(AutoArray<CharSpace>& _spaces, uchar* _dest, uchar* _src, unsigned _nWidth, unsigned _nHeight)
+Dystopia::CharSpace Dystopia::FontSystem::PackFont(AutoArray<CharSpace>& _spaces, uchar* _dest, uchar* _src, unsigned _nWidth, unsigned _nHeight)
 {
 	// Packing is done based off the algorithm described in the link below
 	// Except where we do not want to rotate anything for simplicity

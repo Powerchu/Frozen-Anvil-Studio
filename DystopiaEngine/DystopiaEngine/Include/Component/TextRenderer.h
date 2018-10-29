@@ -25,8 +25,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Vertex;
-	class RawMesh;
+	struct Vertex;
+	struct RawMesh;
 	class Texture;
 	class TextureAtlas;
 	class GraphicsSystem;
