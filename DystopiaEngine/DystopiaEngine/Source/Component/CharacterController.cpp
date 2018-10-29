@@ -66,6 +66,7 @@ namespace Dystopia
 			tInput->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
 			tInput->MapButton("Fly", eButton::KEYBOARD_UP);
 			tInput->MapButton("Fireball", eButton::KEYBOARD_C);
+			tInput->MapButton("Missle", eButton::KEYBOARD_V);
 		}		
 	}
 
@@ -270,6 +271,32 @@ namespace Dystopia
 
 						rigidptr->AddLinearImpulse({ 300 * rigidptr->GetMass(),20 * rigidptr->GetMass(),0 });
 					}
+
+				}
+			}
+
+		}
+		if (tInput->IsKeyTriggered("Missle"))
+		{
+			if (!mbIsFacingRight)
+			{
+
+				if (auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Missle.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ -10,0,0 }))
+				{
+					auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+					auto x = scale.x / 2;
+					ptr->GetComponent<Transform>()->SetGlobalPosition(ptr->GetComponent<Transform>()->GetGlobalPosition() + Math::Vec3D{ -x,0,0 });
+					ptr->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z);
+				}
+			}
+			else
+			{
+				if (auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Missle.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 10,0,0 }))
+				{
+					auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+					auto x = scale.x / 2;
+					ptr->GetComponent<Transform>()->SetGlobalPosition(ptr->GetComponent<Transform>()->GetGlobalPosition() + Math::Vec3D{ x,0,0 });
+				
 
 				}
 			}

@@ -1,10 +1,10 @@
 [START_Scene]
-367001600,Segment_Prototype_test,12,[START_START_GO_DATA]
+367001600,Segment_Prototype_test_2,11,[START_START_GO_DATA]
 18446744072627422720,97,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.267047,0.267047,1,0,0,0,0,0,0,1,0,
+0.323127,0.323127,1,0,0,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -98,15 +98,6 @@
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
-[START_START_GO_DATA]
-651716608,65,Missle,
-[END_END_GO_DATA]
-[START_START_GO_TRANSFORM]
-[START_Transform]
-100,30,1,-26,-20,0,0,0,0,1,0,
-[END_Transform]
-
-[END_END_GO_TRANSFORM]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]
@@ -192,7 +183,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-7,
+6,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -230,12 +221,6 @@
 [END_Convex_Collider]
 
 [END_Component End]
-[START_Component]
-[START_Convex_Collider]
-422604288,1,651716608,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
-[END_Convex_Collider]
-
-[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
@@ -264,19 +249,10 @@
 
 [END_Component End]
 [START_ComponentDonor]
-1,
+0,
 [END_ComponentDonor End]
-[START_Component]
-[START_Renderer]
-740847616,1,651716608,..\DystopiaEngine\Resource\Asset\SpriteSheet_ForceT3.png,
-[END_Renderer]
-[START_Sprite Renderer]
-1,0.016,1,0,0,0,Missles,7,7,4096,4096,41,0,1,0,0,
-[END_Sprite Renderer]
-
-[END_Component End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-6,[START_str]
+7,[START_str]
 CharacterController,0,[START_str]
 dsdsd,0,[START_str]
 Fireball,6,[START_BEHAVIOUR_BLOCK]
@@ -326,13 +302,8 @@ END,
 
 [END_BEHAVIOUR_BLOCK]
 [START_str]
-PlayerAttackTrigger,1,[START_BEHAVIOUR_BLOCK]
-18446744073280790528,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
-END,
-[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
-
-[END_BEHAVIOUR_BLOCK]
-
+Missle,0,[START_str]
+PlayerAttackTrigger,0,
 [END_BEHAVIOUR_SYSTEM_BLOCK]
 
 [END_Scene]
