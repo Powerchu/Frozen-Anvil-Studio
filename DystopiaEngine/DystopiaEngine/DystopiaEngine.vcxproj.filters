@@ -313,11 +313,11 @@
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp">
       <Filter>Reflection\TypeErasure</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Graphics\FontSystem.cpp">
-      <Filter>Game Engine\Systems\Graphic\Freetype</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Component\Renderer.cpp">
       <Filter>Game Engine\Components\Renderer\BaseRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\FontSystem.cpp">
+      <Filter>Game Engine\SubSystems\Font</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -861,11 +861,14 @@
     <ClInclude Include="Include\Behaviour\AI\TreeBuilder.h">
       <Filter>Game Engine\Systems\AI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\FontSystem.h">
-      <Filter>Game Engine\Systems\Graphic\Freetype</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h">
       <Filter>Game Engine\Systems\Behaviour</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\FontSystem.h">
+      <Filter>Game Engine\SubSystems\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\CharSpace.h">
+      <Filter>Game Engine\SubSystems\Font</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1225,6 +1228,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\AI\Nodes">
       <UniqueIdentifier>{496c050c-670d-44ee-abdc-2d963842e778}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Font">
+      <UniqueIdentifier>{781cc280-e96f-4ea7-8d5f-d73943eed182}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

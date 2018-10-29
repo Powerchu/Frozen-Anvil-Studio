@@ -24,6 +24,7 @@ namespace Dystopia
 {
 	class Shader;
 	class Texture;
+	class TextSerialiser;
 
 	class TextureAtlas
 	{
@@ -53,6 +54,11 @@ namespace Dystopia
 
 		std::string GetName(void) const;
 		std::string const& GetPath(void) const noexcept;
+
+		void SaveAtlas(TextSerialiser&) const noexcept;
+		void LoadAtlas(TextSerialiser&) noexcept;
+
+		Texture* GetInternal(void) const noexcept;
 
 	private:
 

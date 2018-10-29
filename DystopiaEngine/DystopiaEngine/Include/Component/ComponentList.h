@@ -38,8 +38,8 @@ namespace Dystopia
 		class Circle,
 		class CharacterController,
 		class AudioSource,
-		class SpriteRenderer
-		//class TextRenderer
+		class SpriteRenderer,
+		class TextRenderer
 		//class Particle
 	>::result;
 

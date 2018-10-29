@@ -33,6 +33,8 @@ namespace Dystopia
 		void SetName(const std::string&);
 		const std::string& GetName(void) const;
 
+		void SetIndices(unsigned, size_t);
+
 		bool IsUnique(void) const;
 
 	private:

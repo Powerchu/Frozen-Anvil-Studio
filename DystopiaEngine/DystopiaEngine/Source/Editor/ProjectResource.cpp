@@ -82,13 +82,13 @@ namespace Dystopia
 			ExitProcess(GetLastError());
 		}
 
-		for (auto& f : mArrAllFiles)
-		{
-			if (f->mTag == EGUI::ePayloadTags::PNG || f->mTag == EGUI::ePayloadTags::BMP || f->mTag == EGUI::ePayloadTags::DDS)
-			{
-				EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(f->mPath);
-			}
-		}
+		//for (auto& f : mArrAllFiles)
+		//{
+		//	if (f->mTag == EGUI::ePayloadTags::PNG || f->mTag == EGUI::ePayloadTags::BMP || f->mTag == EGUI::ePayloadTags::DDS)
+		//	{
+		//		EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(f->mPath);
+		//	}
+		//}
 	}
 
 	void ProjectResource::Update(const float& _dt)

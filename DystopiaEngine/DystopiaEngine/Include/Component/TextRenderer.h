@@ -17,19 +17,24 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Component.h"		// Base Class
 #include "Component/Renderer.h"			// Base Class
 #include "Component/ComponentList.h"
+
 #include "DataStructure/AutoArray.h"	// AutoArray
 #include "Utility/MetaAlgorithms.h"		// MetaFind
+#include "System/Graphics/CharSpace.h"
+
+#include "Math/Vector4.h"
 
 #include <string>
 
 
 namespace Dystopia
 {
+	class  Mesh;
 	struct Vertex;
-	struct RawMesh;
-	class Texture;
-	class TextureAtlas;
-	class GraphicsSystem;
+	class  Texture;
+	struct CharSpace;
+	class  TextureAtlas;
+	class  GraphicsSystem;
 
 	class _DLL_EXPORT TextRenderer : public Renderer
 	{
@@ -47,11 +52,15 @@ namespace Dystopia
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		TextRenderer(void) noexcept;
-		TextRenderer(TextRenderer&&) noexcept;
-		TextRenderer(const TextRenderer&) noexcept;
+		TextRenderer(TextRenderer&&) noexcept = default;
+		TextRenderer(const TextRenderer&) noexcept = default;
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
+
+		void Awake(void) override;
+
+		void Draw(void) const noexcept;
 
 		void SetText(const char*);
 		void SetText(const std::string&);
@@ -60,15 +69,21 @@ namespace Dystopia
 		void SetFont(const std::string&);
 
 
+		void EditorUI(void) noexcept override;
+
 	private:
 
-		std::string mstrText;
+		AutoArray<unsigned char> mText;
 		AutoArray<Vertex> mVerts;
+		AutoArray<CharSpace> mSpaces;
 
-		RawMesh* mpBaseMesh;
+		unsigned mnBaseMesh;
 		TextureAtlas* mpAtlas;
 
+		Math::Vector4 mColor;
+
 		void RegenMesh(void);
+
 	};
 }
 

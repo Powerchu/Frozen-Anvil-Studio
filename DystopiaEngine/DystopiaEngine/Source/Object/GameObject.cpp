@@ -35,7 +35,7 @@ for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
 
 Dystopia::GameObject::GameObject(void) noexcept
-	: GameObject{ Ut::Constant<decltype(mnID), ~0>::value }
+	: GameObject{ GUIDGenerator::INVALID }
 {
 
 }
@@ -58,7 +58,7 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
 
-	_obj.mnID = Ut::Constant<decltype(mnID), ~0>::value;
+	_obj.mnID = GUIDGenerator::INVALID;
 	_obj.mnFlags = FLAG_REMOVE;
 }
 
@@ -321,7 +321,7 @@ Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
 	Ut::Swap(mComponents, _rhs.mComponents);
 	Ut::Swap(mBehaviours, _rhs.mBehaviours);
 
-	_rhs.mnID = Ut::Constant<decltype(mnID), ~0>::value;
+	_rhs.mnID = GUIDGenerator::INVALID;
 
 	return *this;
 }

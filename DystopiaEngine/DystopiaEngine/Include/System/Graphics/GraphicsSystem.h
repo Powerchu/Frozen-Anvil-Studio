@@ -34,9 +34,10 @@ namespace Dystopia
 	class Window;
 	class Texture;
 	class Renderer;
+	class TextRenderer;
 	class SpriteRenderer;
 
-	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>, public ComponentDonor<SpriteRenderer>
+	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>, public ComponentDonor<SpriteRenderer>, public ComponentDonor<TextRenderer>
 	{
 	public :
 		// ====================================== CONSTRUCTORS ======================================= // 

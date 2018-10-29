@@ -43,7 +43,13 @@ namespace Dystopia
 		// Not implemented
 		void ExportMeshes(void);
 
+		Mesh* CreateMesh(RawMesh* _pRaw, unsigned _nIndices, size_t = 0);
+
 		Mesh* GetMesh(const std::string&) noexcept;
+		unsigned GenerateRaw(void) noexcept;
+
+		// Warning! Do not keep the pointer!
+		RawMesh* GetRaw(unsigned) noexcept;
 
 	private:
 

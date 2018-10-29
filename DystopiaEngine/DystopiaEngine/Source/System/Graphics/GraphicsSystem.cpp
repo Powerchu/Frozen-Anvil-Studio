@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/GraphicsSystem.h"	// File header
 #include "System/Graphics/GraphicsDefs.h"	// eGraphicSettings
+#include "System/Graphics/CharSpace.h"
 #include "System/Driver/Driver.h"			// EngineCore
 
 // Mesh Includes
@@ -51,6 +52,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/ObjectFlags.h"
 #include "Component/Transform.h"
 #include "Component/Renderer.h"
+#include "Component/TextRenderer.h"
 #include "Component/SpriteRenderer.h"
 #include "Component/Collider.h"
 
@@ -264,9 +266,19 @@ namespace
 
 		if (t) t->Bind();
 
+#   if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#   endif 
+
 		s->UploadUniform("ProjectViewMat", _ProjView);
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);
+
+#   if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#   endif 
 
 		_renderer->Draw();
 
@@ -280,6 +292,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 
 	AutoArray<Renderer*> set1{ ComponentDonor<Renderer>::mComponents .size() };
 	AutoArray<SpriteRenderer*> set2{ ComponentDonor<SpriteRenderer>::mComponents.size() };
+	AutoArray<TextRenderer*> set3{ ComponentDonor<TextRenderer>::mComponents.size() };
 
 	for (auto& e : ComponentDonor<Renderer>::mComponents)
 	{
@@ -297,11 +310,22 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
 			set2.Insert(&e);
 	}
+	for (auto& e : ComponentDonor<TextRenderer>::mComponents)
+	{
+#if EDITOR
+		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
+			set3.Insert(&e);
+	}
 
 	std::sort(set1.begin(), set1.end(), [](const auto& _rhs, const auto& _lhs) {
 		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 	std::sort(set2.begin(), set2.end(), [](const auto& _rhs, const auto& _lhs) {
+		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
+	});
+	std::sort(set3.begin(), set3.end(), [](const auto& _rhs, const auto& _lhs) {
 		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 
@@ -335,6 +359,17 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 		auto s = r->GetShader();
 		s = r->GetTexture() ? s : shaderlist["No Texture"];
 		s->Bind();
+		if (r->GetOwner()->GetFlags() & ActiveFlags)
+		{
+			DrawRenderer(r, _ProjView, s, mfGamma);
+		}
+	}
+
+	auto s = shaderlist["Font Shader"];
+	s->Bind();
+
+	for (auto& r : set3)
+	{
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
 			DrawRenderer(r, _ProjView, s, mfGamma);
@@ -418,10 +453,6 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 
 void Dystopia::GraphicsSystem::Update(float _fDT)
 {
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif 
 	StartFrame();
 
 	glClearColor(.05f, .05f, .05f, 1.f);
@@ -525,6 +556,14 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 		if (eObjFlag::FLAG_REMOVE & render.GetFlags())
 		{
 			ComponentDonor<SpriteRenderer>::mComponents.Remove(&render);
+		}
+	}
+
+	for (auto& render : ComponentDonor<TextRenderer>::mComponents)
+	{
+		if (eObjFlag::FLAG_REMOVE & render.GetFlags())
+		{
+			ComponentDonor<TextRenderer>::mComponents.Remove(&render);
 		}
 	}
 

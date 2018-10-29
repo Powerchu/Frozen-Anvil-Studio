@@ -8,3 +8,5 @@ Colour Shader,Resource/Shader/DefaultVert.dvert,Resource/Shader/ColourFrag.dfrag
 FinalStage,Resource/Shader/DefaultVert.dvert,Resource/Shader/FinalStage.dfrag,
 [START_SHADER]
 Logo Shader,Resource/Shader/DefaultVert.dvert,Resource/Shader/LogoFrag.dfrag,
+[START_SHADER]
+Font Shader,Resource/Shader/DefaultVert.dvert,Resource/Shader/FontFrag.dfrag,

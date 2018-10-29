@@ -57,6 +57,7 @@ void Dystopia::Renderer::Awake(void)
 {
 	SetMesh("Quad");
 	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
+
 	if (mTexturePath.length())
 	{
 		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mTexturePath);
