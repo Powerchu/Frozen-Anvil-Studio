@@ -175,6 +175,7 @@ namespace Dystopia
 			{
 				strcpy_s(mSearchTextPrevFrame, "");
 				GameObject* p = Factory::CreateGameObj("GameObject");
+				p->SetFlag(eObjFlag::FLAG_LAYER_WORLD);
 				GetCommandHND()->InvokeCommandInsert(*p, *GetCurrentScene());
 			}
 
