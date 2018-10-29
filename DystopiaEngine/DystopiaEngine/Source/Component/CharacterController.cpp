@@ -76,7 +76,9 @@ namespace Dystopia
 			tInput->MapButton("Fly", eButton::KEYBOARD_UP);
 			tInput->MapButton("Fireball", eButton::KEYBOARD_C);
 			tInput->MapButton("Missle", eButton::KEYBOARD_V);
-		}		
+		}
+
+		
 	}
 
 	void CharacterController::Update(const float _dt)

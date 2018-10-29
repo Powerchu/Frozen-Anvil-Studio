@@ -268,7 +268,7 @@ namespace Dystopia
 	{
 		/*Clear the recently change*/
 		mvRecentChanges.clear();
-		static AutoArray<std::pair<uint64_t, Behaviour*>*> ToRemove;
+		//static AutoArray<std::pair<uint64_t, Behaviour*>*> ToRemove;
 		for (auto & i : mvBehaviours)
 		{
 			for (auto & iter : i.second)
@@ -278,24 +278,25 @@ namespace Dystopia
 					{
 						delete iter.second;
 						iter.second = nullptr;
-						ToRemove.push_back(&iter);
+						i.second.FastRemove(&iter);
+						//ToRemove.push_back(&iter);
 					}
 			}
 		}
-		for(auto & elem : ToRemove)
-		{
-			for (auto & i : mvBehaviours)
-			{
-				auto iter = i.second.Find(*elem);
-				if(iter != i.second.end())
-				{
-					i.second.Remove(iter);
-				}
-			}
-		}
+		//for(auto & elem : ToRemove)
+		//{
+		//	for (auto & i : mvBehaviours)
+		//	{
+		//		auto iter = i.second.Find(*elem);
+		//		if(iter != i.second.end())
+		//		{
+		//			i.second.Remove(iter);
+		//		}
+		//	}
+		//}
 
 
-		ToRemove.clear();
+		//ToRemove.clear();
 	}
 
 	void Dystopia::BehaviourSystem::Shutdown(void)

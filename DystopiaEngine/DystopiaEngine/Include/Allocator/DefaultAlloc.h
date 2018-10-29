@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	template <typename Ty = void>
-	struct _DLL_EXPORT DefaultAllocator : public DefaultAllocator<void>
+	struct  DefaultAllocator : public DefaultAllocator<void>
 	{
 		using Base = DefaultAllocator<void>;
 
@@ -54,7 +54,7 @@ namespace Dystopia
 	};
 
 	template <typename Ty>
-	struct _DLL_EXPORT DefaultAllocator<Ty[]> : DefaultAllocator<void>
+	struct DefaultAllocator<Ty[]> : DefaultAllocator<void>
 	{
 		using Base = DefaultAllocator<void>;
 

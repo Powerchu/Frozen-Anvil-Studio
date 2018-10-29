@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define CHARACTER_CONTROLLER_H
 #include "Component.h"
 #include "Component/ComponentList.h"	// CHARACTER CONTROLLER
-#include "Behaviour/AI/TreeBuilder.h"
+
 #include "Utility/DebugAssert.h"
 
 namespace Dystopia
@@ -23,6 +23,9 @@ namespace Dystopia
 	class RigidBody;
 	class Collider;
 	class InputManager;
+
+	
+
 
 	class _DLL_EXPORT CharacterController : public Component
 	{
@@ -67,6 +70,7 @@ namespace Dystopia
 		bool		mbIsDodging;
 		float		mfCharacterSpeed;
 		float		mfJumpForce;
+
 
 		/*=================Editor Stuff=====================*/
 #if EDITOR

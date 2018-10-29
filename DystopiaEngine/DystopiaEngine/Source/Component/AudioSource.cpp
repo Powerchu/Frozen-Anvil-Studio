@@ -80,6 +80,8 @@ void Dystopia::AudioSource::Update(float)
 		mChannel.mpChannel->setPitch(mPitch);
 		mChanged = false;
 	}
+	if (!mIsPlaying && mLoop)
+		mReady = true;
 }
 
 void Dystopia::AudioSource::GameObjectDestroy(void)
