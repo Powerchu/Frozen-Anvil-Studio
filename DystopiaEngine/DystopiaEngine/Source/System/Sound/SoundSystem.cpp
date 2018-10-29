@@ -90,6 +90,8 @@ void Dystopia::SoundSystem::PostUpdate(void)
 	{
 		if (c.GetFlags() & FLAG_REMOVE)
 		{
+			if (c.GetChannel().mpChannel)
+				c.GetChannel().mpChannel->stop();
 			mComponents.Remove(&c);
 		}
 	}

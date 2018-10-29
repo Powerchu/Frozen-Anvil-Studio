@@ -15,9 +15,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Collision/CollisionEvent.h"
 #include "Editor/EGUI.h"
-#include "Utility/DebugAssert.h"
 
+#include "Utility/DebugAssert.h"
+#include "Math/Mathlib.h"
+
+#include "Component/Transform.h"
 namespace Dystopia
 {
 	FollowTarget::FollowTarget()
@@ -34,10 +39,15 @@ namespace Dystopia
 
 	void FollowTarget::Init()
 	{
+		mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("PlayerHero");
 	}
 
 	void FollowTarget::Update(const float _fDeltaTime)
 	{
+		const auto currPos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+		const auto newPos  = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
+		const auto lerpPos = Math::Lerp(currPos, newPos, 0.02F);
+		GetOwner()->GetComponent<Transform>()->SetGlobalPosition(lerpPos);
 	}
 
 	void FollowTarget::FixedUpdate(const float _fDeltaTime)

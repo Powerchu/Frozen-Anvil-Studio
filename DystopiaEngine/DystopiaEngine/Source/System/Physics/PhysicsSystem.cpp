@@ -17,13 +17,15 @@ namespace Dystopia
 {
 	PhysicsSystem::PhysicsSystem()
 		: mbIsDebugActive(false)
-		, mInterpolation_mode(none)
-		, mGravity(400.0F)
-		, mMaxVelocityConstant(1024.0F)
-		, mMaxVelSquared(mMaxVelocityConstant*mMaxVelocityConstant)
-		, mPenetrationEpsilon(0.05F)
-		, mVelocityIterations(8)
-		, mPositionalIterations(4)
+		  , mInterpolation_mode(none)
+		  , mGravity(400.0F)
+		  , mMaxVelocityConstant(1024.0F)
+		  , mMaxVelSquared(mMaxVelocityConstant * mMaxVelocityConstant)
+		  , mPenetrationEpsilon(0.05F)
+		  , mfSleepVelEpsilon(0.01F)
+		  , mfSleepBias(0.97F)
+		  , mVelocityIterations(5)
+		  , mPositionalIterations(4)
 	{
 	}
 
@@ -33,6 +35,8 @@ namespace Dystopia
 
 	bool PhysicsSystem::Init(void)
 	{
+		mfSleepVelEpsilon = 0.01F;
+		mfSleepBias = 0.97F;
 		return true;
 	}
 
@@ -240,9 +244,28 @@ namespace Dystopia
 
 	}
 
-	void PhysicsSystem::LoadSettings(TextSerialiser& serial)
+	void PhysicsSystem::LoadSettings(DysSerialiser_t& _in)
 	{
-		UNUSED_PARAMETER(serial);
+		_in >> mGravity;
+		_in >> mMaxVelocityConstant;
+		_in >> mPenetrationEpsilon;
+		_in >> mVelocityIterations;
+		_in >> mPositionalIterations;
+		_in >> mbIsDebugActive;
+		_in >> mfSleepVelEpsilon;
+		_in >> mfSleepBias;
+	}
+
+	void PhysicsSystem::SaveSettings(DysSerialiser_t& _out)
+	{
+		_out << mGravity;
+		_out << mMaxVelocityConstant;
+		_out << mPenetrationEpsilon;
+		_out << mVelocityIterations;
+		_out << mPositionalIterations;
+		_out << mbIsDebugActive;
+		_out << mfSleepVelEpsilon;
+		_out << mfSleepBias;
 	}
 
 	void PhysicsSystem::EditorUI(void)
@@ -251,6 +274,8 @@ namespace Dystopia
 		IsDebugUI();
 		GravityUI();
 		MaxVelocityUI();
+		SleepEpsilonUI();
+		SleepBiasUI();
 		VelocityIterationUI();
 		PositionalIterationUI();
 #endif 
@@ -355,6 +380,44 @@ namespace Dystopia
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
 			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mPositionalIterations);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		default: break;
+		}
+	}
+
+	void PhysicsSystem::SleepEpsilonUI()
+	{
+		const auto result = EGUI::Display::DragFloat("Sleep Velocity Tolerance", &mfSleepVelEpsilon, 0.001F, 0.001F, 5.0F);
+		switch (result)
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mfSleepVelEpsilon);
+			break;
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		default: break;
+		}
+	}
+
+	void PhysicsSystem::SleepBiasUI()
+	{
+		const auto result = EGUI::Display::DragFloat("Sleep Bias", &mfSleepBias, 0.01F, 0.1F, 1.0F);
+		switch (result)
+		{
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eENTER:
+			EGUI::GetCommandHND()->EndRecording();
+			break;
+		case EGUI::eDragStatus::eSTART_DRAG:
+			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mfSleepBias);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
 			EGUI::GetCommandHND()->EndRecording();

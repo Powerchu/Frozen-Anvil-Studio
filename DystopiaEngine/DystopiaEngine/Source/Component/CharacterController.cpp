@@ -251,24 +251,24 @@ namespace Dystopia
 		{
 			if (!mbIsFacingRight)
 			{
-				if (auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{-10,0,0}))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{-10,0,0}))
 				{
 					if (auto rigidptr = ptr->GetComponent<RigidBody>())
 					{
 
-						rigidptr->AddLinearImpulse({ -100 * rigidptr->GetMass(),0,0 });
+						rigidptr->AddLinearImpulse({ -300 * rigidptr->GetMass(),20*rigidptr->GetMass(),0 });
 					}
 
 				}
 			}
 			else
 			{
-				if (auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 10,0,0 }))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 10,0,0 }))
 				{
 					if (auto rigidptr = ptr->GetComponent<RigidBody>())
 					{
 
-						rigidptr->AddLinearImpulse({ 100 * rigidptr->GetMass(),0,0 });
+						rigidptr->AddLinearImpulse({ 300 * rigidptr->GetMass(),20 * rigidptr->GetMass(),0 });
 					}
 
 				}

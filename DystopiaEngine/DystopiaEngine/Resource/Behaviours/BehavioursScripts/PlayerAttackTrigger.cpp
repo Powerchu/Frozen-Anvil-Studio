@@ -41,13 +41,13 @@ namespace Dystopia
 
 	void PlayerAttackTrigger::Update(const float _fDeltaTime)
 	{
-		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("PlayerHero");
-		if(ptr)
-		{
-			auto scale = ptr->GetComponent<Transform>()->GetScale();
-			auto pos   = ptr->GetComponent<Transform>()->GetGlobalPosition();
-			GetOwner()->GetComponent<Transform>()->SetPosition(pos + Math::MakeVector3D(scale.x/2, 0,0));
-		}
+		// auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("PlayerHero");
+		// if(ptr)
+		// {
+			// auto scale = ptr->GetComponent<Transform>()->GetScale();
+			// auto pos   = ptr->GetComponent<Transform>()->GetGlobalPosition();
+			// GetOwner()->GetComponent<Transform>()->SetPosition(pos + Math::MakeVector3D(scale.x/2, 0,0));
+		// }
 	}
 
 	void PlayerAttackTrigger::FixedUpdate(const float _fDeltaTime)
