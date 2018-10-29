@@ -30,6 +30,16 @@ namespace Dystopia
 
 	}
 
+	void Convex::Awake(void)
+	{
+		mDebugVertices.clear();
+		for (auto & elem : mVertices)
+		{
+			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z });
+		}
+		Collider::Awake();
+	}
+
 	void Convex::Load()
 	{
 
@@ -37,15 +47,7 @@ namespace Dystopia
 
 	void Convex::Init()
 	{
-		mDebugVertices.clear();
-		for (auto & elem : mVertices)
-		{
-			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z});
-		}
-
-		Collider::Triangulate();
 		Collider::Init();
-
 		//mLastKnownScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 	}
 

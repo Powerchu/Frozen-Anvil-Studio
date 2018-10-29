@@ -203,7 +203,6 @@ namespace Dystopia
 			vToMove.y -= .5f;
 			vToMove.x *= 2.f;
 			vToMove.y *= -2.f;
-			PrintToConsoleLog(std::to_string(vToMove.x) + " | " + std::to_string(vToMove.y));
 
 			const auto pos = mpSceneCamera->GetOwner()->GetComponent<Transform>()->GetPosition();
 			const auto scale = mpSceneCamera->GetOwner()->GetComponent<Transform>()->GetGlobalScale();

@@ -35,13 +35,9 @@ namespace Dystopia
 	{
 	}
 
-	void Collider::Load(void)
+	void Collider::Awake(void)
 	{
-
-	}
-
-	void Collider::Init(void)
-	{
+		Triangulate();
 		if (mpMesh != nullptr || this->mDebugVertices.size() == 0 || this->mIndexBuffer.size() == 0)
 			return;
 
@@ -60,6 +56,15 @@ namespace Dystopia
 			SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
 			pMeshSys->EndMesh();
 		}
+	}
+
+	void Collider::Load(void)
+	{
+
+	}
+
+	void Collider::Init(void)
+	{
 		
 	}
 

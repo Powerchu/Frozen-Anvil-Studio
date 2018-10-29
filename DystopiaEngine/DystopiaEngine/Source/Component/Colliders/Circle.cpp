@@ -30,13 +30,7 @@ namespace Dystopia
 
 	}
 
-	/*Load the Component*/
-	void Circle::Load(void)
-	{
-		
-	}
-	/*Initialise the Component*/
-	void Circle::Init(void)
+	void Circle::Awake(void)
 	{
 		if (mDebugVertices.size() == 0)
 		{
@@ -50,11 +44,19 @@ namespace Dystopia
 				Vec3D vertex = 0.5F * Vec3D{ cosf(increment*i), sinf(increment*i), 0 };
 				Collider::mDebugVertices.push_back(Vertex{ vertex.x, vertex.y, 0 });
 			}
-
-			Collider::Triangulate();
-			Collider::Init();
+			Collider::Awake();
 		}
 		mScale[0] = mScale[1] = m_radius;
+	}
+
+	/*Load the Component*/
+	void Circle::Load(void)
+	{
+		
+	}
+	/*Initialise the Component*/
+	void Circle::Init(void)
+	{
 	}
 
 	void Circle::Update(float)
