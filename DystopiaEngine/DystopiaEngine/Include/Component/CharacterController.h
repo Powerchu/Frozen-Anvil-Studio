@@ -44,10 +44,10 @@ namespace Dystopia
 		~CharacterController();;
 
 	// ==================================== PUBLIC FUNCTIONS =======================================//
-		void Load(void) override;
-		void Init(void) override;
+		void Load(void);
+		void Init(void);
 		void Update(float _dt);
-		void Unload(void) override;
+		void Unload(void);
 
 		Component* Duplicate() const override;
 

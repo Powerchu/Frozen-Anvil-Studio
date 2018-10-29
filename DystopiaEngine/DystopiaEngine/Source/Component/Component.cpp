@@ -64,12 +64,12 @@ void Dystopia::Component::Load(void)
 
 void Dystopia::Component::Awake(void)
 {
-
+	__debugbreak();
 }
 
 void Dystopia::Component::Init(void)
 {
-
+	__debugbreak();
 }
 
 void Dystopia::Component::GameObjectDestroy(void)

@@ -97,7 +97,7 @@ void Dystopia::Transform::RemoveParent(void)
 
 		//OnParentRemove(parent);
 		parent->RemoveChild(this);
-		mnParentID = 0;
+		mnParentID = GUIDGenerator::INVALID;
 	}
 }
 

@@ -50,9 +50,9 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
-		void Init(void) override;
+		void Init(void);
 
-		void Draw(void) const noexcept;
+		void Draw(void) const;
 
 		void SetShader(Shader*) noexcept;
 		void SetShader(const std::string&) noexcept;

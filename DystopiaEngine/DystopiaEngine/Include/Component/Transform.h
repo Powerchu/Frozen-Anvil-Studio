@@ -44,8 +44,8 @@ namespace Dystopia
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
-		void Awake(void) override;
-		void Init(void) override;
+		void Awake(void);
+		void Init(void);
 
 		void SetGlobalPosition(const Math::Point3D&);
 		void SetGlobalPosition(const float _x, const float _y, const float _z);

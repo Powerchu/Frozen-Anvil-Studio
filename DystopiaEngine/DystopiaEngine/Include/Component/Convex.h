@@ -69,17 +69,17 @@ namespace Dystopia
 				mVertices.push_back(elem);
 		}
 
-		void Awake(void) override;
+		void Awake(void);
 		/*Load the Component*/
-		void Load(void) override;
+		void Load(void);
 		/*Initialise the Component*/
-		void Init(void) override;
+		void Init(void);
 
 		/* Update Check */
-		void Update(float) override;
+		void Update(float);
 
 		/*Unload the Component*/
-		void Unload(void) override;
+		void Unload(void);
 		/*Duplicate the Component*/
 		Convex* Duplicate() const override;
 
