@@ -13,6 +13,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Scene/SceneSystem.h"              // File Header
 #include "System/Scene/SceneSysMetaHelper.h"
+#include "System/SystemTypes.h"
+#include "System/Driver/Driver.h"
+#include "System/Collision/CollisionSystem.h"
+#include "System/Physics/PhysicsSystem.h"
 #include "DataStructure/Array.h"
 #include "IO/TextSerialiser.h"
 #include "Utility/DebugAssert.h"
@@ -22,9 +26,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Commands.h"
 #include "Editor/Editor.h"
 #include "Editor/DefaultFactory.h"
+
 #include "Component/Component.h"
 #include "Component/Transform.h"
 #include "Object/GameObject.h"
+#include "System/Behaviour/BehaviourSystem.h"
 
 Dystopia::SceneSystem::SceneSystem(void) :
 	mpCurrScene{ nullptr }, mpNextScene{ nullptr }, mLastSavedData{ "" }, mNextSceneFile{ "" }
@@ -64,7 +70,6 @@ void Dystopia::SceneSystem::Update(float _dt)
 void Dystopia::SceneSystem::PostUpdate(void)
 {
 	mpCurrScene->PostUpdate();
-
 	if (mpCurrScene != mpNextScene)
 		SceneChanged();
 }
@@ -92,7 +97,7 @@ void Dystopia::SceneSystem::LoadSettings(TextSerialiser&)
 
 }
 
-bool Dystopia::SceneSystem::Instantiate(const std::string& _prefabName, const Math::Pt3D& _position)
+Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const std::string& _prefabName, const Math::Pt3D& _position)
 {
 	if (!mpCurrScene) return false;
 
@@ -100,17 +105,17 @@ bool Dystopia::SceneSystem::Instantiate(const std::string& _prefabName, const Ma
 	if (pDupl)
 	{
 		pDupl->GetComponent<Transform>()->SetPosition(_position);
-		mpCurrScene->GetAllGameObjects().EmplaceBack(Ut::Move(*pDupl));
-		auto& obj = mpCurrScene->GetAllGameObjects().back();
+		auto& obj = *mpCurrScene->InsertGameObject(Ut::Move(*pDupl));
 		obj.Identify();
+		obj.Awake();
 		obj.Init();
 		obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 		for (auto& c : obj.GetAllComponents())
 			c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 		delete pDupl;
-		return true;
+		return &obj;
 	}
-	return false;
+	return nullptr;
 }
 
 void Dystopia::SceneSystem::SceneChanged(void)
@@ -118,16 +123,21 @@ void Dystopia::SceneSystem::SceneChanged(void)
 	mpCurrScene->Shutdown();
 	delete mpCurrScene;
 
+	EngineCore::GetInstance()->GetSystem<CollisionSystem>()->PostUpdate();
+	EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->PostUpdate();
+
+	mpCurrScene = mpNextScene;
 	static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 	auto SerialObj = TextSerialiser::OpenFile(mNextSceneFile, TextSerialiser::MODE_READ);
 	SerialObj.ConsumeStartBlock();
 	mpNextScene->Unserialise(SerialObj);
 	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
+	EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 	SerialObj.ConsumeEndBlock();
 	mNextSceneFile.clear();
-
-	mpCurrScene = mpNextScene;
-	mpCurrScene->Init();
+	auto& allObj = mpCurrScene->GetAllGameObjects();
+	for (auto& obj : allObj)
+		obj.Awake();
 }
 
 void Dystopia::SceneSystem::RestartScene(void)
@@ -137,13 +147,18 @@ void Dystopia::SceneSystem::RestartScene(void)
 		mpCurrScene->PostUpdate();
 		mpCurrScene->Shutdown();
 
+		EngineCore::GetInstance()->PostUpdate();
+
 		static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 		auto SerialObj = TextSerialiser::OpenFile(mLastSavedData, TextSerialiser::MODE_READ);
 		SerialObj.ConsumeStartBlock();
 		mpCurrScene->Unserialise(SerialObj);
 		SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
+		EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 		SerialObj.ConsumeEndBlock();
-		mpCurrScene->Init();
+		auto& allObj = mpCurrScene->GetAllGameObjects();
+		for (auto& obj : allObj)
+			obj.Awake();
 	}
 }
 
@@ -165,6 +180,7 @@ void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::s
 	SerialObj.InsertStartBlock("Scene");
 	mpCurrScene->Serialise(SerialObj);
 	SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemSerialise(SerialObj);
+	EngineCore::GetInstance()->Get<BehaviourSystem>()->Serialise(SerialObj);
 	SerialObj.InsertEndBlock("Scene");
 
 	mLastSavedData = _strFile;

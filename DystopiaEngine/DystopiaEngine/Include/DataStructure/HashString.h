@@ -16,10 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(push)
 #pragma warning(disable : 4251)
 
-#include <stdint.h>
+#include <cstdint>
 #include "Globals.h"
-#include "Utility/Meta.h"
-#include "Utility/Utility.h"
+
 #include "Allocator/DefaultAlloc.h"
 
 typedef uint64_t HashID;
@@ -41,7 +40,7 @@ public:
 	/* constructors */
 	HashString(void);
 	HashString(const HashString&);
-	HashString(HashString&&);
+	HashString(HashString&&) noexcept;
 	HashString(const char *);
 	HashString(const char * _start, const char* _end);
 
@@ -54,7 +53,7 @@ public:
 	template <unsigned N>
 	HashString& operator=(const char(&_s)[N]);
 	HashString& operator=(const HashString&);
-	HashString& operator=(HashString&&);
+	HashString& operator=(HashString&&) noexcept;
 	HashString& operator=(const char *);
 	HashString& operator=(const wchar_t *);
 
@@ -113,8 +112,9 @@ private:
 
 template <unsigned N>
 constexpr HashString::HashString(const char(&_s)[N])
-	: mHashedID{ StringHasher(_s) }, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(N) },
-	mSize{ N - 1 }
+	: mSize{ N - 1 }
+	, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(N) }
+    , mHashedID{ StringHasher(_s) }
 {
 }
 

@@ -44,6 +44,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Editor/EditorMetaHelpers.h"
 
+#include "Reflection/ReadWriteObject.h"
+#include "Reflection/ReflectionTypeErasure.h"
+
 #include <iostream>
 
 
@@ -55,7 +58,7 @@ static const std::string g_nPopup = "New Behaviour Name";
 namespace Dystopia
 {
 	static std::string g_arr[3] = { "item1", "item2", "item3" };
-	static std::string g_arr2[3] = { "FLAG_LAYER_WORLD", "FLAG_LAYER_UI", "item6" };
+	static std::string g_arr2[3] = { "Invalid", "World", "UI" };
 
 	static Inspector* gpInstance = 0;
 	Inspector* Inspector::GetInstance()
@@ -139,15 +142,16 @@ namespace Dystopia
 			}
 			EGUI::SameLine();
 			EGUI::ChangeAlignmentYOffset(0);
+			j = (mpFocus->GetFlags() & FLAG_LAYER_WORLD) ? 1 : (mpFocus->GetFlags() & FLAG_LAYER_UI) ? 2 : 0;
 			if (EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80))
 			{
 				switch (j)
 				{
-				case 0:
+				case 1:
 					mpFocus->RemoveFlags(FLAG_LAYER_UI);
 					mpFocus->SetFlag(FLAG_LAYER_WORLD);
 					break;
-				case 1:
+				case 2:
 					mpFocus->RemoveFlags(FLAG_LAYER_WORLD);
 					mpFocus->SetFlag(FLAG_LAYER_UI);
 					break;
@@ -188,13 +192,27 @@ namespace Dystopia
 		}
 
 		auto& arrBehav = mpFocus->GetAllBehaviours();
-		for (const auto& c : arrBehav)
+		for (auto & c : arrBehav)
 		{
 			EGUI::Display::HorizontalSeparator();
-			if (EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } + "##" +
-				std::to_string(mpFocus->GetID())))
+			bool open = EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } +"##" +
+				std::to_string(mpFocus->GetID()));
+			bool show = !RemoveComponent(c);
+			if (open)
 			{
-				c->EditorUI();
+				if (show)
+				{
+					auto && MetaData = c->GetMetaData();
+					if (MetaData)
+					{
+						auto Allnames = MetaData.GetAllNames();
+						for (auto i : Allnames)
+						{
+							if (MetaData[i])
+								MetaData[i].Reflect(i, c, SuperReflectFunctor{});
+						}
+					}
+				}
 				EGUI::Display::EndTreeNode();
 			}
 		}

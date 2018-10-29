@@ -85,8 +85,8 @@ private:
 	bool			mbChangeDetected;
 	float			mfDeadZoneL;		//0-65534
 	float			mfDeadZoneR;		//0-65534
-	float			mfMaxThumbVal;		//32767
 	float			mfTriggerThresh;	//30
+	float			mfMaxThumbVal;		//32767
 
 	XINPUT_VIBRATION *mpxVibrate;
 };

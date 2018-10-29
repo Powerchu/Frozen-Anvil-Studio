@@ -8,6 +8,7 @@
 #include "System/Base/ComponentDonor.h"
 #include "IO/TextSerialiser.h"
 #include "System/Scene/SceneSystem.h"
+
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
@@ -17,21 +18,19 @@
 namespace Dystopia
 {
 	CharacterController::CharacterController()
-		:mpBody(nullptr)
-		,mpCol(nullptr)
-		,mbIsFacingRight(true)
-		,mbIsGrounded(false)
-		,mbIsCeilinged(false)
-		,mfCharacterSpeed(30.0f)
-		,mfJumpForce(100.0F)
-	{
-
-	}
-
-
-	CharacterController::~CharacterController()
+		: mpBody(nullptr)
+		  , mpCol(nullptr)
+		  , mbIsFacingRight(true)
+		  , mbIsGrounded(false)
+		  , mbIsCeilinged(false)
+		  , mbIsDodging(false)
+		  , mfCharacterSpeed(30.0f)
+		  , mfJumpForce(100.0F)
 	{
 	}
+
+
+	CharacterController::~CharacterController()	= default;
 
 	void CharacterController::Load()
 	{
@@ -58,7 +57,7 @@ namespace Dystopia
 			tInput->MapButton("Run Left", eButton::XBUTTON_DPAD_LEFT);
 			tInput->MapButton("Run Right", eButton::XBUTTON_DPAD_RIGHT);
 			tInput->MapButton("Jump", eButton::XBUTTON_A);
-			tInput->MapButton("Fly", eButton::XBUTTON_B);
+			tInput->MapButton("Fly", eButton::XBUTTON_DPAD_UP);
 		}
 		else
 		{
@@ -66,14 +65,14 @@ namespace Dystopia
 			tInput->MapButton("Run Right", eButton::KEYBOARD_RIGHT);
 			tInput->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
 			tInput->MapButton("Fly", eButton::KEYBOARD_UP);
-		}
+			tInput->MapButton("Fireball", eButton::KEYBOARD_C);
+		}		
 	}
 
 	void CharacterController::Update(const float _dt)
 	{
 		MovePlayer(_dt);
-
-		
+		CheckGroundCeiling();
 	}
 
 	void CharacterController::Unload()
@@ -117,7 +116,32 @@ namespace Dystopia
 
 	void CharacterController::CheckGroundCeiling()
 	{
+		const auto my_body = GetOwner()->GetComponent<RigidBody>();
+		const auto my_col = GetOwner()->GetComponent<Collider>();
 
+		if (nullptr != my_col)
+		{
+			if (!my_col->IsTrigger())
+			{
+				for (auto& manifold : my_col->GetCollisionEvents())
+				{
+					if (manifold.mCollidedWith->GetComponent<Collider>()->IsTrigger()) continue;
+
+					const auto dotNormal = manifold.mEdgeNormal.Dot({ 1,0,0 });
+					if (dotNormal < 0.98F && dotNormal > -0.98F)
+					{
+						if (my_body->GetLinearVelocity().y > FLT_EPSILON)
+						{
+							//mbIsCeilinged = true;
+						}
+						else
+						{
+							mbIsGrounded = true;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/*
@@ -126,9 +150,66 @@ namespace Dystopia
 	void CharacterController::MovePlayer(float)
 	{
 		if (mpBody == nullptr) return;
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed("Run Left"))
+		const auto tInput = EngineCore::GetInstance()->GetSystem<InputManager>();
+		const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
+
+		if (tInput->IsController())
 		{
-			const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
+			const auto leftThumb = tInput->GetAnalogX(0);
+			const auto leftTriggerFloat = tInput->GetTriggers(0);
+
+			if (leftThumb < -0.1F) // Moving Left
+			{
+				mpBody->AddLinearImpulse({ leftThumb * mfCharacterSpeed * mpBody->GetMass(),0,0 });
+				if (mbIsFacingRight)
+				{
+					GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
+					mbIsFacingRight = false;
+				}
+			}
+			else if (leftThumb > 0.1F)// Moving Right
+			{
+				mpBody->AddLinearImpulse({ leftThumb * mfCharacterSpeed * mpBody->GetMass(),0,0 });
+				if (!mbIsFacingRight)
+				{
+					GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
+					mbIsFacingRight = true;
+				}
+			}
+
+			const auto side = mbIsFacingRight ? 1.F : -1.F;
+
+			if (leftTriggerFloat > 0.2F && mbIsGrounded)
+			{
+				if (!mbIsDodging)
+				{
+					mbIsDodging = true;
+					mpBody->AddLinearImpulse({ side * mfCharacterSpeed * mpBody->GetMass() * 20 * leftTriggerFloat,0,0 });
+				}
+				else
+				{
+					if (Math::Abs(float(mpBody->GetLinearVelocity().x)) > 0.01F)
+					{
+						tInput->SetVibrate(static_cast<unsigned short>(Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 32000) 
+										  ,static_cast<unsigned short>(Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 16000));
+					}
+					else
+					{
+						tInput->StopVibrate();
+					}
+				}
+				
+			}
+			else
+			{
+				mbIsDodging = false;
+				tInput->StopVibrate();
+			}
+			
+		}
+
+		if (tInput->IsKeyPressed("Run Left"))
+		{
 
 			mpBody->AddLinearImpulse({ -1 * mfCharacterSpeed * mpBody->GetMass(),0,0 });
 
@@ -139,10 +220,8 @@ namespace Dystopia
 			}
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed("Run Right"))
+		if (tInput->IsKeyPressed("Run Right"))
 		{
-			const auto tScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
-
 			mpBody->AddLinearImpulse({mfCharacterSpeed * mpBody->GetMass(),0,0 });
 
 			if (!mbIsFacingRight)
@@ -152,14 +231,47 @@ namespace Dystopia
 			}
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyPressed("Fly"))
+		if (tInput->IsKeyPressed("Fly"))
 		{
-			mpBody->AddForce({ 0,1000 * mpBody->GetMass(),0 });
+			mpBody->AddForce({ 0,100 * mpBody->GetMass(),0 });
 		}
 
-		if (EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered("Jump"))
+		if (tInput->IsKeyPressed("Jump"))
 		{
-			mpBody->AddLinearImpulse({ 0,mfJumpForce * mpBody->GetMass() * 10,0 });
+			if (mbIsGrounded)
+			{
+				mpBody->AddLinearImpulse({ 0,mfJumpForce * mpBody->GetMass() * 10,0 });
+				mbIsGrounded = false;
+			}
+		}
+		/*IM SORRY AARON - FROM (KEITH)*/
+		if (tInput->IsKeyTriggered("Fireball"))
+		{
+			if (!mbIsFacingRight)
+			{
+				if (auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{-10,0,0}))
+				{
+					if (auto rigidptr = ptr->GetComponent<RigidBody>())
+					{
+
+						rigidptr->AddLinearImpulse({ -50 * rigidptr->GetMass(),0,0 });
+					}
+
+				}
+			}
+			else
+			{
+				if (auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 10,0,0 }))
+				{
+					if (auto rigidptr = ptr->GetComponent<RigidBody>())
+					{
+
+						rigidptr->AddLinearImpulse({ 50 * rigidptr->GetMass(),0,0 });
+					}
+
+				}
+			}
+
 		}
 	}
 

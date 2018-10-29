@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/ComponentList.h"
 #include "DataStructure/AutoArray.h"   // AutoArray
 #include "Utility/MetaAlgorithms.h"	   // MetaFind
+#include "Math/Vector2.h"
 
 #include <string>
 
@@ -37,7 +38,11 @@ namespace Dystopia
 		using SYSTEM = GraphicsSystem;
 		unsigned GetComponentType(void) const override
 		{
-			return Ut::MetaFind_t<class Renderer, AllComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<Renderer>, AllComponents>::value;
+		};
+		unsigned GetRealComponentType(void) const
+		{
+			return Ut::MetaFind_t<Ut::Decay_t<SpriteRenderer>, UsableComponents>::value;
 		};
 		static const std::string GetCompileName(void) { return "Sprite Renderer"; }
 		const std::string GetEditorName(void) const override { return GetCompileName(); }
@@ -52,6 +57,7 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
+		void Awake(void) override;
 		void Init(void) override;
 
 		void Draw(void) const noexcept;
@@ -63,25 +69,36 @@ namespace Dystopia
 
 		SpriteRenderer* Duplicate(void) const;
 
-		void Serialise(TextSerialiser&) const;
-		void Unserialise(TextSerialiser&);
+		void Serialise(TextSerialiser&) const override;
+		void Unserialise(TextSerialiser&)     override;
 
 		void EditorUI(void) noexcept override;
 
+		bool AnimationFinished(void) const;
 	private:
 
 		TextureAtlas* mpAtlas;
 
 		struct SpriteSheet
 		{
-			std::string mstrName;
 			unsigned mnID; //section id in the atlas
-			unsigned mnCol, mnRow; 
+			Math::Vec2 mUVCoord;
+			std::string mstrName;
+			int mnCol, mnRow, mnWidth, mnHeight, mnCutoff, mnStartAt; 
+			bool mbLoop, mbFinished;
 		};
 
 		AutoArray<SpriteSheet> mAnimations;
-		unsigned mnID, mnCol, mnRow;
+		int mnID, mnCol, mnRow;
 		float mfFrameTime, mfAccTime;
+
+		bool mbPlayAnim;
+
+		void SpriteSheetUI(SpriteSheet&);
+		void GetAtlas(void);
+		void RemoveAtlas(void);
+		void LoadAnimIntoAtlas(void);
+		void AddDefaultToAtlas(void);
 	};
 }
 

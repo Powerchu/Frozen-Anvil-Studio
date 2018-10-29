@@ -36,8 +36,6 @@ Dystopia::Renderer::Renderer(void) noexcept
 	: Component{}, mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr },
 	mpTexture{ nullptr }, mTexturePath{""}
 {
-	SetMesh("Quad");
-	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
 }
 
 Dystopia::Renderer::Renderer(Dystopia::Renderer&& _rhs) noexcept
@@ -53,16 +51,20 @@ Dystopia::Renderer::Renderer(const Renderer& _rhs) noexcept
 	: Component{ _rhs }, mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr }, 
 	mpTexture{ nullptr }, mTexturePath{ _rhs.mTexturePath }
 {
-	SetMesh("Quad");
-	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
 }
 
-void Dystopia::Renderer::Init(void)
+void Dystopia::Renderer::Awake(void)
 {
+	SetMesh("Quad");
+	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
 	if (mTexturePath.length())
 	{
 		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mTexturePath);
 	}
+}
+
+void Dystopia::Renderer::Init(void)
+{
 }
 
 void Dystopia::Renderer::Draw(void) const noexcept
@@ -154,28 +156,41 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 void Dystopia::Renderer::EditorUI(void) noexcept
 {
 #if EDITOR
+	EGUI::PushLeftAlign(80);
+
 	TextureField();
 	MeshField();
 	ShaderField();
+
+	EGUI::PopLeftAlign();
 #endif
 }
 
 #if EDITOR
 void Dystopia::Renderer::TextureField()
 {
-	if (EGUI::Display::EmptyBox("Texture   ", 150, (mpTexture) ? mpTexture->GetName() : "-empty-", true))
-	{
-	}
+	Dystopia::File *t = nullptr;
+	EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName() : "-empty-", true);
 
-	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
+	t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG);
+	if (t)  EGUI::Display::EndPayloadReceiver();
+
+	if (!t)
+	{
+		t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::DDS);
+		if (t) EGUI::Display::EndPayloadReceiver();
+	}
+	if (!t)
+	{
+		t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::BMP);
+		if (t) EGUI::Display::EndPayloadReceiver();
+	}
+	if (t)
 	{
 		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
-
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pTex);
 		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
-
-		EGUI::Display::EndPayloadReceiver();
 	}
 
 	EGUI::SameLine();
@@ -188,8 +203,8 @@ void Dystopia::Renderer::TextureField()
 
 	if (mpTexture)
 	{
-		EGUI::Display::Label("Preview    ");
-		EGUI::SameLine();
+		EGUI::Display::Label("Preview");
+		EGUI::SameLine(DefaultAlighnmentSpacing, 80);
 		float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
 		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
 	}
@@ -197,32 +212,24 @@ void Dystopia::Renderer::TextureField()
 
 void Dystopia::Renderer::MeshField()
 {
-	if (EGUI::Display::EmptyBox("Mesh      ", 150, (mpMesh) ? mpMesh->GetName() : "", true))
+	if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName() : "", true))
 	{
 
 	}
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::FILE))
 	{
-		//Mesh *pMesh = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()-> ??? ;
-		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpMesh);
-		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pMesh);
-		//EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 		EGUI::Display::EndPayloadReceiver();
 	}
 }
 
 void Dystopia::Renderer::ShaderField()
 {
-	if (EGUI::Display::EmptyBox("Shader    ", 150, "shader has no name or id", true))
+	if (EGUI::Display::EmptyBox("Shader", 150, "shader has no name or id", true))
 	{
 
 	}
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::FILE))
 	{
-		//Shader *pShade = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()-> ??? ;
-		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpShader);
-		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pShade);
-		//EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 		EGUI::Display::EndPayloadReceiver();
 	}
 }

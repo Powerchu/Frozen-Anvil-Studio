@@ -30,13 +30,7 @@ namespace Dystopia
 
 	}
 
-	/*Load the Component*/
-	void Circle::Load(void)
-	{
-		
-	}
-	/*Initialise the Component*/
-	void Circle::Init(void)
+	void Circle::Awake(void)
 	{
 		if (mDebugVertices.size() == 0)
 		{
@@ -50,11 +44,19 @@ namespace Dystopia
 				Vec3D vertex = 0.5F * Vec3D{ cosf(increment*i), sinf(increment*i), 0 };
 				Collider::mDebugVertices.push_back(Vertex{ vertex.x, vertex.y, 0 });
 			}
-
-			Collider::Triangulate();
-			Collider::Init();
+			Collider::Awake();
 		}
 		mScale[0] = mScale[1] = m_radius;
+	}
+
+	/*Load the Component*/
+	void Circle::Load(void)
+	{
+		
+	}
+	/*Initialise the Component*/
+	void Circle::Init(void)
+	{
 	}
 
 	void Circle::Update(float)
@@ -81,12 +83,13 @@ namespace Dystopia
 
 	BroadPhaseCircle Circle::GenerateBoardPhaseCircle() const
 	{
-		return BroadPhaseCircle(GetRadius(), GetGlobalPosition());
+		return BroadPhaseCircle(GetRadius() * 2.5f, GetGlobalPosition());
 	}
 
 	float Circle::GetRadius() const
 	{
-		return Math::Abs(m_radius * mOwnerTransformation[0] * 0.5f);
+		float Scale = Math::Abs(mOwnerTransformation[0]) > Math::Abs(mOwnerTransformation[5]) ? mOwnerTransformation[0] : mOwnerTransformation[5];
+		return Math::Abs(m_radius * Scale * 0.5f);
 	}
 
 	/*Serialise and Unserialise*/
@@ -176,10 +179,7 @@ namespace Dystopia
 				col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 			}
 			//InformOtherComponents(true, col_info);
-
-			marr_ContactSets.push_back(col_info);
-	
-			/*Return true for collision*/
+			marr_CurrentContactSets.push_back(col_info);
 			return true;
 		}
 			//InformOtherComponents(false, col_info);
@@ -201,14 +201,16 @@ namespace Dystopia
 		return this->isColliding(*other_col);
 
 	}
-	bool Circle::isColliding(const Convex & other_col)
+	bool Circle::isColliding(Convex& other_col)
 	{
 		RigidBody* other_body{ nullptr };
 		if (other_col.GetOwner()->GetComponent<RigidBody>())
 			other_body = other_col.GetOwner()->GetComponent<RigidBody>();
 
 		CollisionEvent newEvent(this->GetOwner(), other_col.GetOwner());
+		newEvent.mEdgeNormal = Math::MakeVector3D(0, 0, 0);
 		AutoArray<Edge> const & ConvexEdges = other_col.GetConvexEdges();
+
 		bool isInside = true;
 		/*Check for Circle inside Convex*/
 		for (auto & elem : ConvexEdges)
@@ -227,6 +229,7 @@ namespace Dystopia
 			{
 				Vec3D v = elem.mVec3;
 				Vec3D w = GetGlobalPosition() - elem.mPos;
+				Vec3D norm;
 				float c1 = v.Dot((w));
 				float c2 = v.Dot(v);
 				float ratio = 0.f;
@@ -234,25 +237,27 @@ namespace Dystopia
 				if (c1 < 0)
 				{
 					distance = w.Magnitude();
+					norm = -w;
 				}
 				else if (c1 > c2)
 				{
 					distance = (GetGlobalPosition() - (elem.mPos + elem.mVec3)).Magnitude();
+					norm = -(GetGlobalPosition() - (v + elem.mPos));
 				}
 				else
 				{
 					ratio = c1 / c2;
 					PointOfImpact = elem.mPos + ratio * elem.mVec3;
 					distance = (GetGlobalPosition() - PointOfImpact).Magnitude();
+					norm = -(GetGlobalPosition() - PointOfImpact);
 				}
 
 				if (distance < GetRadius())
 				{
 					isInside = true;
 					newEvent.mfPeneDepth     = GetRadius() - distance;
-					elem.mNorm3.z			 = 0;
-					newEvent.mEdgeNormal     = -elem.mNorm3.Normalise();
-					newEvent.mEdgeVector     = elem.mVec3;
+					newEvent.mEdgeNormal     += norm;
+					newEvent.mEdgeVector     = Math::Vec3D{ newEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
 					newEvent.mCollisionPoint = PointOfImpact;
 					if (nullptr != other_body)
 					{
@@ -260,24 +265,32 @@ namespace Dystopia
 						newEvent.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 						newEvent.mfStaticFrictionCof  = DetermineStaticFriction(*other_body);
 					}
-					marr_ContactSets.push_back(newEvent);
 					mbColliding = isInside  = true;
 				}
 			}
+			if (isInside)
+			{
+				newEvent.mEdgeNormal = newEvent.mEdgeNormal.Normalise();
+				newEvent.mEdgeNormal.z = 0;
+				marr_CurrentContactSets.push_back(newEvent);
+				//InformOtherComponents(true, newEvent);
+				return true;
+			}
+			else
+			{
+				//InformOtherComponents(false, newEvent);
+				return false;
+			}
+
 		}
-		if (isInside)
-		{
-			//InformOtherComponents(true, newEvent);
-		}
-		else
-		{
-			//InformOtherComponents(false, newEvent);
-		}
+		/*No Normals will be given because i have no idea which one to give*/
+		/*Circle completely inside*/
+		//InformOtherComponents(true, newEvent);
+		marr_CurrentContactSets.push_back(newEvent);
 		return isInside;
 	}
 	bool Circle::isColliding(Convex * const & other_col)
 	{
-		UNUSED_PARAMETER(other_col);
 		return this->isColliding(*other_col);
 	}
 
@@ -288,7 +301,7 @@ namespace Dystopia
 		EGUI::Display::Label("Offset");
 		auto arrResult = EGUI::Display::VectorFields("    ", &mv3Offset, 0.01f, -FLT_MAX, FLT_MAX);
 		for (auto &e : arrResult)
-		{/*
+		{
 			switch (e)
 			{
 			case EGUI::eDragStatus::eSTART_DRAG:
@@ -305,7 +318,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eNO_CHANGE:
 			default:
 				break;
-			}*/
+			}
 		}
 	}
 
@@ -314,7 +327,7 @@ namespace Dystopia
 		EGUI::Display::Label("Scale");
 		const auto e = EGUI::Display::DragFloat("   ", &m_radius, 0.01f, -FLT_MAX, FLT_MAX);
 		switch (e)
-		{/*
+		{
 		case EGUI::eDragStatus::eSTART_DRAG:
 			EGUI::GetCommandHND()->StartRecording<Circle>(mnOwner, &Circle::m_radius);
 			break;
@@ -328,7 +341,7 @@ namespace Dystopia
 			break;
 		case EGUI::eDragStatus::eNO_CHANGE:
 		default:
-			break;*/
+			break;
 		}
 
 	}
@@ -365,11 +378,23 @@ namespace Dystopia
 		}
 	}
 
+	void Circle::eIsTriggerCheckBox()
+	{
+		bool tempBool = mbIsTrigger;
+
+		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
+		{
+			mbIsTrigger = tempBool;
+			EGUI::GetCommandHND()->InvokeCommand<Collider>(mnOwner, &Collider::mbIsTrigger, tempBool);
+		}
+	}
+
 	void Circle::EditorUI() noexcept
 	{
+		eAttachedBodyEmptyBox();
+		eIsTriggerCheckBox();
 		ePositionOffsetVectorFields();
 		eScaleField();
-		eAttachedBodyEmptyBox();
 		eNumberOfContactsLabel();
 	}
 #endif

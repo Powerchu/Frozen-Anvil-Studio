@@ -130,9 +130,6 @@
     <ClCompile Include="Source\Editor\EditorEvents.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Component\Renderer.cpp">
-      <Filter>Game Engine\Components\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Math\Quaternion.cpp">
       <Filter>Math\Quaternion</Filter>
     </ClCompile>
@@ -313,8 +310,14 @@
     <ClCompile Include="Source\Editor\SpriteEditor.cpp">
       <Filter>Editor\Editor Tabs\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp">
+      <Filter>Reflection\TypeErasure</Filter>
+    </ClCompile>
     <ClCompile Include="Source\System\Graphics\FontSystem.cpp">
-      <Filter>Game Engine\SubSystems\Font</Filter>
+      <Filter>Game Engine\Systems\Graphic\Freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Renderer.cpp">
+      <Filter>Game Engine\Components\Renderer\BaseRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -825,8 +828,44 @@
     <ClInclude Include="Include\Component\SpriteRenderer.h">
       <Filter>Game Engine\Components\Renderer\SpriteRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\Composite.h">
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\Decorator.h">
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\Leaf.h">
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\ReflectionTypeErasure.h">
+      <Filter>Reflection\TypeErasure</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Reflection\ReadWriteObject.h">
+      <Filter>Reflection\TypeErasure</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Function.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Map.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\Agent.h">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\Blackboard.h">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\NeuralTree.h">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\TreeBuilder.h">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
     <ClInclude Include="Include\System\Graphics\FontSystem.h">
-      <Filter>Game Engine\SubSystems\Font</Filter>
+      <Filter>Game Engine\Systems\Graphic\Freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h">
+      <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1178,8 +1217,14 @@
     <Filter Include="Editor\Editor Tabs\Sprite">
       <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\SubSystems\Font">
-      <UniqueIdentifier>{70c54bbb-9c90-4050-b505-d8e8fa620b70}</UniqueIdentifier>
+    <Filter Include="Reflection\TypeErasure">
+      <UniqueIdentifier>{ecafed53-7b83-4c71-9271-0b0e5af66397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\AI">
+      <UniqueIdentifier>{d217e002-5757-496c-b9b3-dad91e1aebde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\AI\Nodes">
+      <UniqueIdentifier>{496c050c-670d-44ee-abdc-2d963842e778}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

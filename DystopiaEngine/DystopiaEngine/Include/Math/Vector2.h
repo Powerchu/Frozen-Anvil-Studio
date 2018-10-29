@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <cmath>
 
+
 namespace Math
 {
 	#define _CALL	__vectorcall
@@ -208,7 +209,7 @@ inline Math::Vector2& _CALL Math::Vector2::Normalise(void)
 	DEBUG_ASSERT(IsZero(Dot(*this)), "Vector2 Error: Normalising a zero vector.\n");
 #endif
 
-	float invSqrt = 1.f / MagnitudeSqr();
+	const float invSqrt = 1.f / MagnitudeSqr();
 
 	return *this *= invSqrt;
 }
@@ -421,7 +422,7 @@ inline bool _CALL Math::Vector2::operator==(const Vector2 _rhs)
 {
 	return
 		ApproxEq((*this)[0], _rhs[0]) &&
-		ApproxEq((*this)[1], _rhs[1]);;
+		ApproxEq((*this)[1], _rhs[1]);
 }
 
 inline Math::Vector2 _CALL Math::operator-(Vector2 _lhs, const Vector2 _rhs)

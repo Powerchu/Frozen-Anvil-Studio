@@ -256,7 +256,8 @@ namespace EGUI
 				return eSTART_DRAG;
 			}
 
-			if (changing) return eDRAGGING;
+			if (changing)
+				return eDRAGGING;
 
 
 			if (ImGui::IsItemDeactivatedAfterChange())
@@ -471,7 +472,7 @@ namespace EGUI
 		}
 
 		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
-						   const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize)
+			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize, int _imgId)
 		{
 			ImVec2 pos = ImGui::GetCursorScreenPos();
 			ImVec2 size{ _displaytSize.x, _displaytSize.y };
@@ -487,8 +488,14 @@ namespace EGUI
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
 			ImGui::PopStyleColor();
 			if (payload) EndPayload();
+
 			ImGui::SetCursorScreenPos(posIcon);
-			IconFile(_uniqueId.c_str(), size.x, size.y);
+			if (_imgId == -1)
+				IconFile(_uniqueId.c_str(), size.x, size.y);
+			else
+			{
+				ImGui::Image(reinterpret_cast<void*>(_imgId), ImVec2{ size.x / 2, size.y / 2 });
+			}
 			ImGui::SetCursorScreenPos(posText);
 			ImGui::TextWrapped(_label.c_str());
 			return btn;

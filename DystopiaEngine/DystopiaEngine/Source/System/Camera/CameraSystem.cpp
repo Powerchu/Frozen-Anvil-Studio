@@ -43,6 +43,18 @@ void Dystopia::CameraSystem::Update(float)
 
 }
 
+void Dystopia::CameraSystem::PostUpdate(void)
+{
+	for (auto& cam : mComponents)
+	{
+		if (cam.GetFlags() & FLAG_REMOVE)
+		{
+			mComponents.Remove(&cam);
+		}
+	}
+}
+
+
 void Dystopia::CameraSystem::Shutdown(void)
 {
 	mComponents.clear();

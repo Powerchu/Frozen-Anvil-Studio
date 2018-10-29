@@ -19,6 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility\Utility.h"		 // Move
 #include "IO\TextSerialiser.h"
 #include "Utility\GUID.h"			// Global UniqueID
+#include "System/Behaviour/BehaviourSystem.h"
+
 
 #define Ping(_ARR, _FUNC, ...)			\
 for (auto& e : _ARR)					\
@@ -99,22 +101,31 @@ void Dystopia::GameObject::Load(void)
 
 void Dystopia::GameObject::Awake(void)
 {
+	if (mnFlags & FLAG_EDITOR_OBJ)
+		return;
 
+	mTransform.Awake();
+	ForcePing(mComponents, Awake);
+	ForcePing(mBehaviours, Awake);
 }
 
 void Dystopia::GameObject::Init(void)
 {
+	if (mnFlags & FLAG_EDITOR_OBJ)
+		return;
+
+	mTransform.Init();
 	ForcePing(mComponents, Init);
 	ForcePing(mBehaviours, Init);
 }
 
-void Dystopia::GameObject::Update(const float _fDeltaTime)
+void Dystopia::GameObject::Update(const float)
 {
 //	Ping(mComponents, Update, _fDeltaTime);
 //	Ping(mBehaviours, Update, _fDeltaTime);
 }
 
-void Dystopia::GameObject::FixedUpdate(const float _fFixedDT)
+void Dystopia::GameObject::FixedUpdate(const float)
 {
 //	Ping(mComponents, FixedUpdate, _fFixedDT);
 //	Ping(mBehaviours, FixedUpdate, _fFixedDT);
@@ -143,17 +154,32 @@ void Dystopia::GameObject::Unload(void)
 
 void Dystopia::GameObject::OnCollisionEnter(const CollisionEvent& _pEvent)
 {
-	Ping(mBehaviours, OnCollisionEnter, _pEvent);
+	ForcePing(mBehaviours, OnCollisionEnter, _pEvent);
 }
 
 void Dystopia::GameObject::OnCollisionStay(const CollisionEvent& _pEvent)
 {
-	Ping(mBehaviours, OnCollisionStay, _pEvent);
+	ForcePing(mBehaviours, OnCollisionStay, _pEvent);
 }
 
 void Dystopia::GameObject::OnCollisionExit(const CollisionEvent& _pEvent)
 {
-	Ping(mBehaviours, OnCollisionExit, _pEvent);
+	ForcePing(mBehaviours, OnCollisionExit, _pEvent);
+}
+
+void Dystopia::GameObject::OnTriggerEnter(const GameObject* _pOther)
+{
+	ForcePing(mBehaviours, OnTriggerEnter, _pOther);
+}
+
+void Dystopia::GameObject::OnTriggerStay(const GameObject* _pOther)
+{
+	ForcePing(mBehaviours, OnTriggerStay, _pOther);
+}
+
+void Dystopia::GameObject::OnTriggerExit(const GameObject* _pOther)
+{
+	ForcePing(mBehaviours, OnTriggerExit, _pOther);
 }
 
 void Dystopia::GameObject::PurgeComponents(void)
@@ -169,6 +195,7 @@ void Dystopia::GameObject::AddComponent(Component* _p, ComponentTag)
 {
 	mComponents.Insert(_p);
 	_p->SetOwner(this);
+	_p->Awake();
 }
 
 void Dystopia::GameObject::AddComponent(Behaviour* _p, BehaviourTag)
@@ -238,7 +265,8 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	}
 	for (auto& b : mBehaviours)
 	{
-		p->mBehaviours.Insert(b->Duplicate());
+		auto dup = EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, p->mnID);
+		p->mBehaviours.Insert(dup);
 	}
 
 	return p;
@@ -257,6 +285,11 @@ uint64_t Dystopia::GameObject::GetID(void) const
 std::string Dystopia::GameObject::GetName(void) const
 {
 	return mName;
+}
+
+const char* Dystopia::GameObject::GetNamePtr() const
+{
+	return mName.c_str();
 }
 
 void Dystopia::GameObject::SetName(const std::string& _strName)

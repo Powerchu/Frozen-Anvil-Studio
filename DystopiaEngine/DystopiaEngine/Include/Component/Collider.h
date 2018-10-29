@@ -129,6 +129,7 @@ namespace Dystopia
 		Collider();
 		explicit Collider(const Math::Point3D & _offset, const Math::Point3D & _origin = Math::MakePoint3D(0.f, 0.f, 0.f));
 
+		void Awake(void) override;
 		/*Load the Component*/
 		virtual void Load(void);
 		/*Initialise the Component*/
@@ -155,15 +156,20 @@ namespace Dystopia
 
 		// Settors
 		void SetColliding(bool _b);
+		void SetSleeping(bool _b);
+		void SetTrigger(bool _b);
 		void SetLocalPosition(Math::Point3D const & _point);
 		void ClearCollisionEvent();
+		void ClearCurrentCollisionEvent();
 		void RemoveCollisionEvent(unsigned long long _OtherID);
 		void InformOtherComponents(bool _isColliding, CollisionEvent const & _Event);
+		void InformOtherComponents();
 		// Gettors
 		virtual Math::Point3D GetGlobalPosition() const;
 		Math::Vec3D           GetOffSet()   const;
 		bool                  HasCollision() const;
 		bool				  IsTrigger() const;
+		bool				  IsSleeping() const;
 		bool				  HasCollisionWith(unsigned long long _ID) const;
 		bool				  HasCollisionWith(GameObject const * const _pointer) const;
 
@@ -176,7 +182,7 @@ namespace Dystopia
 		Mesh* GetMesh() const;
 
 
-		Math::Matrix3D GetTransformationMatrix() const;
+		virtual Math::Matrix3D GetTransformationMatrix() const;
 		Math::Matrix3D GetOwnerTransform()       const;
 		Math::Matrix3D GetWorldMatrix()          const;
 		void SetOwnerTransform(Math::Matrix3D const & _OwnerTransform);
@@ -188,13 +194,21 @@ namespace Dystopia
 		virtual BroadPhaseCircle GenerateBoardPhaseCircle() const;
 		virtual ~Collider();
 
-	protected:
-		/*AutoArray of collision event*/
-		AutoArray<CollisionEvent>  marr_ContactSets;
 
 		bool mbColliding;
 		bool mbIsTrigger;
+		bool mbIsSleeping;
 
+		/*Offset of the collider with respect to GameObject Transform position*/
+		Math::Vec3D mv3Offset;
+#if EDITOR
+		Math::Vec3D          mScale;
+#endif
+
+	protected:
+		/*AutoArray of collision event*/
+		AutoArray<CollisionEvent>  marr_ContactSets;
+		AutoArray<CollisionEvent>  marr_CurrentContactSets;
 		Math::Point3D mPosition;
 
 		AutoArray<Vertex> mDebugVertices;
@@ -202,12 +216,10 @@ namespace Dystopia
 		BroadPhaseCircle  mBoundingCircle;
 		void Triangulate();
 
-		/*Offset of the collider with respect to GameObject Transform position*/
-		Math::Vec3D mv3Offset;
+		
 		/*Matrix*/
 		Math::Matrix3D mOwnerTransformation;
 #if EDITOR
-		Math::Vec3D          mScale;
 		Math::Quaternion     mRotation;
 #endif
 

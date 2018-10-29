@@ -27,21 +27,22 @@ static constexpr unsigned short g_ControllerHexa[14] =
 	XINPUT_GAMEPAD_Y                
 };
 
-XGamePad::XGamePad(unsigned _id)
-	: mdwID{ static_cast<DWORD>(_id) },
-	mbConnected{ false }, 
-	mbChangeDetected{ false },
-	mpxState{ new XINPUT_STATE{}  },
-	mfDeadZoneL{ XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE }, 
-	mfDeadZoneR{ XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE }, 
-	mfMaxThumbVal{ 32767 },
-	mfTriggerThresh{ XINPUT_GAMEPAD_TRIGGER_THRESHOLD },
-	mpxVibrate{ new XINPUT_VIBRATION{}  },
+XGamePad::XGamePad(const unsigned _id)
+	:
+	mArrXBtnStates{},
 	mxLeftThumb{},
 	mxRightThumb{},
 	mcTrigger{},
 	msButtons{},
-	mArrXBtnStates{}
+	mdwID{ static_cast<DWORD>(_id) },
+	mpxState{ new XINPUT_STATE{} },
+	mbConnected{ false },
+	mbChangeDetected{ false },
+	mfDeadZoneL{ XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE + 100.F}, 
+	mfDeadZoneR{ XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE }, 
+	mfTriggerThresh{ XINPUT_GAMEPAD_TRIGGER_THRESHOLD },
+	mfMaxThumbVal{ 32767 },
+	mpxVibrate{ new XINPUT_VIBRATION{} }
 {
 }
 
@@ -55,7 +56,7 @@ void XGamePad::PollInputs(void)
 {
 	DWORD prevPacket = mpxState->dwPacketNumber;
 	ZeroMemory(&*mpxState, sizeof(XINPUT_STATE));
-	mbConnected = (XInputGetState(mdwID, &*mpxState) == ERROR_SUCCESS) ? true : false ;
+	mbConnected = XInputGetState(mdwID, &*mpxState) == ERROR_SUCCESS;
 	mbChangeDetected = prevPacket != mpxState->dwPacketNumber;
 	if (mbConnected)
 	{
@@ -68,12 +69,12 @@ void XGamePad::PollInputs(void)
 
 void XGamePad::UpdateLeftThumb(void)
 {
-	float LX = mpxState->Gamepad.sThumbLX;
-	float LY = mpxState->Gamepad.sThumbLY;
+	const float LX = mpxState->Gamepad.sThumbLX;
+	const float LY = mpxState->Gamepad.sThumbLY;
 	float magnitude = sqrt(LX*LX + LY*LY);
-	float normLX = LX / magnitude;
-	float normLY = LY / magnitude;
-	float normMag = 0;
+	const float normLX = LX / magnitude;
+	const float normLY = LY / magnitude;
+	float normMag;
 
 	if (magnitude > mfDeadZoneL)
 	{
@@ -101,12 +102,12 @@ void XGamePad::UpdateLeftThumb(void)
 
 void XGamePad::UpdateRightThumb(void)
 {
-	float RX = mpxState->Gamepad.sThumbRX;
-	float RY = mpxState->Gamepad.sThumbRY;
+	const float RX = mpxState->Gamepad.sThumbRX;
+	const float RY = mpxState->Gamepad.sThumbRY;
 	float magnitude = sqrt(RX*RX + RY*RY);
-	float normRX = RX / magnitude;
-	float normRY = RY / magnitude;
-	float normMag = 0;
+	const float normRX = RX / magnitude;
+	const float normRY = RY / magnitude;
+	float normMag;
 
 	if (magnitude > mfDeadZoneR)
 	{
@@ -179,19 +180,21 @@ void XGamePad::StopVibrate(void)
 
 float XGamePad::GetAnalogX(int _i) const
 {
-	return (!_i) ? mxLeftThumb[0].mfMagnitudeNormal : 
-				   mxRightThumb[0].mfMagnitudeNormal ;
+	/*Note - Shnannon I change this (Keith) 28/10/2018*/
+	return (!_i) ? mxLeftThumb[0].mfNormal  * mxLeftThumb[0].mfMagnitudeNormal:
+				   mxRightThumb[0].mfNormal * mxRightThumb[0].mfMagnitudeNormal;
 }
 
 float XGamePad::GetAnalogY(int _i) const
 {
-	return (!_i) ? mxLeftThumb[1].mfMagnitudeNormal :
-				   mxRightThumb[1].mfMagnitudeNormal ;
+	/*Note - Shnannon I change this (Keith) 28/10/2018*/
+	return (!_i) ? mxLeftThumb[1].mfNormal  * mxLeftThumb[1].mfMagnitudeNormal:
+				   mxRightThumb[1].mfNormal * mxRightThumb[1].mfMagnitudeNormal;
 }
 
 float XGamePad::GetTriggers(int _i) const
 {
-	return (!_i) ? mcTrigger[0] : mcTrigger[1];
+	return (!_i) ? float(mcTrigger[0] / 255.f) : float(mcTrigger[1] / 255.f);
 }
 
 bool XGamePad::IsKeyPressed(eButton _btn) const

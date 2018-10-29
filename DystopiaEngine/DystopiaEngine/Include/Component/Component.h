@@ -62,8 +62,8 @@ namespace Dystopia
 
 		virtual Component* Duplicate() const;
 
-		void Serialise(TextSerialiser&) const;
-		void Unserialise(TextSerialiser&);
+		virtual void Serialise(TextSerialiser&) const;
+		virtual void Unserialise(TextSerialiser&);
 		virtual void EditorUI(void) noexcept;
 
 		uint64_t GetID(void) const;

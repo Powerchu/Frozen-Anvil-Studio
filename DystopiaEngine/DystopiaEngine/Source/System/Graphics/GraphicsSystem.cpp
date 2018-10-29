@@ -39,6 +39,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Physics/PhysicsSystem.h"
 #include "System/Logger/LoggerSystem.h"
 #include "System/Logger/LogPriority.h"
 #include "System/Profiler/ProfilerAction.h"
@@ -65,9 +66,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <GL/glew.h>
 #include <GL/wglew.h>			// glew Windows ext
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
 #undef WIN32_LEAN_AND_MEAN		// Stop defines from spilling into code
 #undef NOMINMAX
 #undef ERROR
@@ -92,8 +90,8 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.2f },
-	mfDebugLineWidth{ 5.0f }, mvDebugColour{ .68f, 1.f, .278f, .65f }
+	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.0f },
+	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .68f, 1.f, .278f, .35f }
 {
 
 }
@@ -115,7 +113,7 @@ float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 
 void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw)
 {
-	auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
+	const auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
 	//auto bDebugDraw = !CamSys->GetMasterCamera()->DrawDebug();
 
 	for (auto& e : CamSys->GetAllCameras())
@@ -236,6 +234,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 
 	shader->Bind();
 	texture->Bind();
+
 	shader->UploadUniform("ProjectViewMat", Project * View);
 	shader->UploadUniform("ModelMat", Math::Scale(w * 1.f, h * 1.f));
 	shader->UploadUniform("Gamma", mfGamma);
@@ -284,11 +283,17 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 
 	for (auto& e : ComponentDonor<Renderer>::mComponents)
 	{
+#if EDITOR
+		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
 			set1.Insert(&e);
 	}
 	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
 	{
+#if EDITOR
+		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
 			set2.Insert(&e);
 	}
@@ -308,11 +313,10 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 	for (auto& r : set1)
 	{
 		auto s = r->GetShader();
-		
-		if (s)
+		if (s && r->GetTexture())
 		{
 			s->Bind();
-			s->UploadUniform("vUVBounds", 0, 0, 1, 1);
+			s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
 		}
 		else
 		{
@@ -351,26 +355,54 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	Shader* s = shaderlist["Colour Shader"];
 	
 	s->Bind();
-	//s->UploadUniform("vColor", mvDebugColour);
 	s->UploadUniform("ProjectViewMat", _ProjView);
 
-	Math::Vec4 no_alpha{ mvDebugColour };
 
-	Math::Vector4 CollidingColor{1.f, 0, 0, .75f}, activeColor;
+	Math::Vector4 CollidingColor{ 1.f, 0, 0, .35f }, SleepingColor{ 1.f,1.f,0,.35f }, TriggerColor{ .8f,.8f,.8f,.25f }, activeColor;
 
 	// Find out a way to allow stuff other than colliders to draw stuff
 
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
 	{
+#if EDITOR
+		if (Obj->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		GameObject* pOwner = Obj->GetOwner();
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
-		{
-			auto m = pOwner->GetComponent<Transform>()->GetLocalTransformMatrix() * Math::Translate(Obj->GetOffSet()) * Obj->GetTransformationMatrix();
+		{		
+			if(Obj->GetColliderType() != eColliderType::CIRCLE)
+				s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetLocalTransformMatrix() * Math::Translate(Obj->GetOffSet())  * Obj->GetTransformationMatrix());
+			else
+			{
+				auto pos    = pOwner->GetComponent<Transform>()->GetGlobalPosition();
+				auto scaleV = pOwner->GetComponent<Transform>()->GetScale();
+				//auto LocalScale = Math::Scale(scaleV.x, scaleV.y);
+				auto scale  = Math::Abs(scaleV[0]) > Math::Abs(scaleV[1]) ? Math::Abs(scaleV[0]) : Math::Abs(scaleV[1]);
+				auto scaleM = Math::Scale(scale, scale);
+				auto Translation = Math::Translate(pos.x, pos.y);
+				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(scaleV*Obj->GetOffSet()) * scaleM * Obj->GetTransformationMatrix());
+			}
 
-			s->UploadUniform("ModelMat", m);
-			
-			activeColor = Obj->HasCollision() ? CollidingColor : mvDebugColour;
+			if (Obj->IsSleeping())
+			{
+				activeColor = SleepingColor;
+			}
+
+			else if (Obj->HasCollision())
+			{
+				activeColor = CollidingColor;
+			}
+
+			else if (Obj->IsTrigger())
+			{
+				activeColor = TriggerColor;
+			}
+
+			else
+			{
+				activeColor = mvDebugColour;
+			}
 
 			if (Mesh* pObjMesh = Obj->GetMesh())
 			{
@@ -392,7 +424,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 #   endif 
 	StartFrame();
 
-	glClearColor(.0f, .0f, .0f, 1.f);
+	glClearColor(.05f, .05f, .05f, 1.f);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 
 	/*
@@ -429,7 +461,9 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
 	{
 		auto flags = e.GetFlags();
-
+#if EDITOR
+		if (flags & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		if (flags & eObjFlag::FLAG_ACTIVE)
 		{
 			e.Update(_fDT);
@@ -452,7 +486,8 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			auto surface = Cam.GetSurface();
 			auto vp = Cam.GetViewport();
 
-			glViewport(vp.mnX, vp.mnY, vp.mnWidth, vp.mnHeight);
+			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY), 
+					   static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
 
 			// Temporary code
 			surface->Bind();
@@ -492,6 +527,7 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 			ComponentDonor<SpriteRenderer>::mComponents.Remove(&render);
 		}
 	}
+
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
 		__debugbreak();
@@ -787,18 +823,18 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 
 	attrbs[3] = 1;
 	mOpenGL = wglCreateContextAttribsARB(_window.GetDeviceContext(), NULL, attrbs);
-	if (mOpenGL)
-	{
-		return true;
-	}
 
-	return false;
+	return mOpenGL != nullptr;
 }
 
 
 void Dystopia::GraphicsSystem::EditorUI(void)
 {
-#if EDITOR								   
+	static bool tempBool = GetDebugDraw();
+#if EDITOR			
+	//const auto pCore = EngineCore::GetInstance();
+	//const auto pCamSys = pCore->GetSystem<CameraSystem>();
+
 	const auto result = EGUI::Display::DragFloat("Gamma       ", &mfGamma, 0.1f, 0.1f, 10.f);
 	switch (result)
 	{
@@ -815,11 +851,14 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 		break;
 	}
 
-	bool tempBool = GetDebugDraw();
+	//const auto& sceneCam = pCamSys->GetMasterCamera();
 	if (EGUI::Display::CheckBox("Debug Draw  ", &tempBool))
 	{
-		//mbDebugDraw = tempBool;
-		//EGUI::GetCommandHND()->InvokeCommand<GraphicsSystem>(&ToggleDebugDraw, this, tempBool);
+		if (!tempBool)
+			ToggleDebugDraw(false);
+		else
+			ToggleDebugDraw(true);
+		//EGUI::GetCommandHND()->InvokeCommand<Camera>(&Camera::mbDebugDraw, tempBool);
 	}
 
 	auto result2 = EGUI::Display::VectorFields("Debug Color ", &mvDebugColour, 0.01f, 0.f, 1.f);

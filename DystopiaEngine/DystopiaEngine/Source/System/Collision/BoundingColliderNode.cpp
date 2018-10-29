@@ -139,11 +139,17 @@ namespace Dystopia
 			mCollider        = nullptr;
 			/*Recalculate this Node Bounding Circle*/
 			mBoundingCircle  = BroadPhaseCircle{_circle, mBoundingCircle};
+
+			if (mParent)
+				mParent->RecalculateBoundingCircle();
 		}
 		else if (!mCollider && (mChildrenNode[0] == nullptr && mChildrenNode[1] == nullptr))
 		{
 			mCollider       = _pCollider;
 			mBoundingCircle = _circle;
+
+			if (mParent)
+				mParent->RecalculateBoundingCircle();
 		}
 		else
 		{

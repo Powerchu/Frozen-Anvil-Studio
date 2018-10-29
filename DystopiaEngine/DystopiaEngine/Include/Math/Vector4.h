@@ -569,7 +569,7 @@ inline Math::Point3D _CALL Math::MakePoint3D(float _x, float _y, float _z)
 	return Vector4{ _x, _y, _z, 1.f };
 }
 
-inline Math::Vector3D _CALL Math::MakeVector3D(float _x, float _y, float _z)
+inline Math::Vector4 _CALL Math::MakeVector3D(float _x, float _y, float _z)
 {
 	return Vector4{ _x, _y, _z, .0f };
 }

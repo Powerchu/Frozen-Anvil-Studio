@@ -17,8 +17,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vector4.h"
 #include "IO/TextSerialiser.h"
 #include "Editor/ConsoleLog.h"
-//#include "System/Scene/SceneSystem.h"
-//#include "System/Scene/Scene.h"
+#include "System/Driver/Driver.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -27,18 +28,42 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
 	: mRotation{ }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f, 1.f }, 
-	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, Component { _pOwner }
+	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, mnParentID{ 0 }, 
+	Component { _pOwner }
 {
-
+	
 }
 
 Dystopia::Transform::Transform(const Transform& _oOther) :
 	mRotation{ _oOther.mRotation }, mScale{ _oOther.mScale }, mPosition{ _oOther.mPosition },
-	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, Component{ _oOther }
+	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, mnParentID{ _oOther.mnParentID }, Component{ _oOther }
 {
 
 }
 
+void Dystopia::Transform::Awake(void) 
+{
+	if (mnParentID)
+	{
+		GameObject *p = EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject(mnParentID);
+		SetParent(p->GetComponent<Transform>());
+	}
+}
+
+void Dystopia::Transform::Init(void)
+{
+}
+
+
+AutoArray<Dystopia::Transform*>& Dystopia::Transform::GetAllChild(void)
+{
+	return mChildren;
+}
+
+Dystopia::Transform* Dystopia::Transform::GetParent(void)
+{
+	return mpParent;
+}
 
 void Dystopia::Transform::SetParent(Transform* _pParent)
 {
@@ -55,6 +80,9 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
         mPosition	= InvTrans * mPosition;
         mRotation   = mpParent->GetRotation() * mRotation;
         mbChanged	= true;
+		mnParentID = _pParent->GetOwnerID();
+
+		mpParent->OnChildAdd(this);
     }
 }
 
@@ -77,14 +105,25 @@ void Dystopia::Transform::RemoveParent(void)
 		Transform* parent = mpParent;
 		mpParent = nullptr;
 
-		OnParentRemove(parent);
-		parent->OnChildRemove(this);
+		//OnParentRemove(parent);
+		parent->RemoveChild(this);
+		mnParentID = 0;
 	}
+}
+
+void Dystopia::Transform::AddChild(Transform* _pChild)
+{
+	_pChild->SetParent(this);
+}
+
+void Dystopia::Transform::OnChildAdd(Transform* _pChild)
+{
+	mChildren.Insert(_pChild);
 }
 
 void Dystopia::Transform::OnChildRemove(Transform*)
 {
-	// Do nothing?
+	// Do nothing
 }
 
 void Dystopia::Transform::RemoveChild(Transform* _pChild)
@@ -192,6 +231,7 @@ const Math::Mat4& Dystopia::Transform::GetLocalTransformMatrix(void)
 	if (mbChanged)
 	{
 		mbChanged = false;
+		mRotation.Normalise();
 		mMatrix = Math::Translate(mPosition) * mRotation.Matrix() * Math::Scale(mScale);
 	}
 
@@ -208,7 +248,7 @@ Math::Mat4 Dystopia::Transform::GetTransformMatrix(void)
 
 	return GetLocalTransformMatrix();
 }
-
+	
 Dystopia::Transform* Dystopia::Transform::Duplicate(void) const
 {
 	return nullptr;
@@ -217,16 +257,20 @@ Dystopia::Transform* Dystopia::Transform::Duplicate(void) const
 void Dystopia::Transform::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Transform");
-	_out << static_cast<float>(mScale.x);
-	_out << static_cast<float>(mScale.y);
-	_out << static_cast<float>(mScale.z);
-	_out << static_cast<float>(mPosition[0]);
-	_out << static_cast<float>(mPosition[1]);
-	_out << static_cast<float>(mPosition[2]);
-	_out << static_cast<float>(mRotation[0]);
-	_out << static_cast<float>(mRotation[1]);
-	_out << static_cast<float>(mRotation[2]);
-	_out << static_cast<float>(mRotation[3]);
+	auto r = GetGlobalRotation();
+	auto s = GetGlobalScale();
+	auto p = GetGlobalPosition();
+	_out << static_cast<float>(s.x);
+	_out << static_cast<float>(s.y);
+	_out << static_cast<float>(s.z);
+	_out << static_cast<float>(p[0]);
+	_out << static_cast<float>(p[1]);
+	_out << static_cast<float>(p[2]);
+	_out << static_cast<float>(r[0]);
+	_out << static_cast<float>(r[1]);
+	_out << static_cast<float>(r[2]);
+	_out << static_cast<float>(r[3]);
+	_out << mnParentID;
 	_out.InsertEndBlock("Transform");
 }
 
@@ -243,6 +287,7 @@ void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 	_in >> mRotation[1];
 	_in >> mRotation[2];
 	_in >> mRotation[3];
+	_in >> mnParentID;
 	_in.ConsumeEndBlock();
 }
 

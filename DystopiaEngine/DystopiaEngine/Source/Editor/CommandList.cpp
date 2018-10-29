@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
+#include "System/Behaviour/BehaviourSystem.h"
 #include "Object/GameObject.h"
 
 /* Insert Game Object Command  ****************************************************************************/
@@ -52,13 +53,16 @@ bool Dystopia::ComdInsertObject::ExecuteDo()
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (p || !mpObj) return false;
 
-	mpScene->GetAllGameObjects().EmplaceBack(Ut::Move(*mpObj));
-	auto& obj = mpScene->GetAllGameObjects().back();
-	obj.Identify();
-	obj.Init();
+	auto& obj = *mpScene->InsertGameObject(Ut::Move(*mpObj));
+	//auto& obj = *mpScene->GetAllGameObjects().Emplace(Ut::Move(*mpObj));
 	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : obj.GetAllComponents())
 		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	for (auto& c : obj.GetAllBehaviours())
+		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	obj.Identify();
+	obj.Awake();
+	obj.Init();
 
 	if (mFocusBack)
 	{
@@ -97,11 +101,13 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
+	EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->ReplaceID(mpObj->GetID(), mObjID, mpObj);
 	mpObj->SetID(mObjID);
 	mpObj->Identify();
-	mpObj->Init();
 	mpObj->SetFlag(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : mpObj->GetAllComponents())
+		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	for (auto& c : mpObj->GetAllBehaviours())
 		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	p->Destroy();
 	return true;
@@ -156,11 +162,13 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 
 	if (mpNotify) *mpNotify = true;
 	mpObj = p->Duplicate();
+	EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->ReplaceID(mpObj->GetID(), mObjID, mpObj);
 	mpObj->SetID(mObjID);
 	mpObj->Identify();
-	mpObj->Init();
 	mpObj->SetFlag(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : mpObj->GetAllComponents())
+		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	for (auto& c : mpObj->GetAllBehaviours())
 		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	p->Destroy();
 	return true;
@@ -175,13 +183,16 @@ bool Dystopia::ComdDeleteObject::ExecuteUndo()
 	GameObject* p = mpScene->FindGameObject(mObjID);
 	if (p || !mpObj) return false;
 
-	mpScene->GetAllGameObjects().EmplaceBack(Ut::Move(*mpObj));
-	auto& obj = mpScene->GetAllGameObjects().back();
-	obj.Identify();
-	obj.Init();
+	auto& obj = *mpScene->InsertGameObject(Ut::Move(*mpObj));
+	//*mpScene->GetAllGameObjects().Emplace();
 	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	for (auto& c : obj.GetAllComponents())
 		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	for (auto& c : obj.GetAllBehaviours())
+		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	obj.Identify();
+	obj.Awake();
+	obj.Init();
 
 	if (mFocusBack)
 	{

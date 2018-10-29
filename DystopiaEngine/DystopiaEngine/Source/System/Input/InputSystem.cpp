@@ -27,6 +27,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define WIN32_LEAN_AND_MEAN			// Exclude rare stuff from Window's header
 #include <Windows.h>
 #include "Object/ObjectFlags.h"
+#include "System/Profiler/ProfilerAction.h"
+#include "System/Time/ScopedTimer.h"
 #undef  WIN32_LEAN_AND_MEAN			// Stop define from spilling into code
 #undef NOMINMAX
 
@@ -72,9 +74,6 @@ Dystopia::InputManager::~InputManager(void)
 
 bool Dystopia::InputManager::Init(void)
 {
-#if !EDITOR
-	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
-#endif 
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
 	LoadDefaults();
 	return true;
@@ -82,6 +81,8 @@ bool Dystopia::InputManager::Init(void)
 
 void Dystopia::InputManager::Update(const float _dt)
 {
+	ScopedTimer<ProfilerAction> timeKeeper{ "Input System", "Update" };
+
 	mMouseInput.mnWheel = 0;
 	using Type = BYTE[256];
 	static Type storage{ 0 };
@@ -150,7 +151,7 @@ void Dystopia::InputManager::MapButton(std::string const &_name, eButton _button
 {
 	mButtonMapping[_name] = _button;
 }
-bool Dystopia::InputManager::IsKeyTriggered(eButton _Btn) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(eButton _Btn) const noexcept
 {
 	KeyboardState::u32int const * prev_ptr = static_cast<KeyboardState::u32int const *>(mPrevKeyBoardState);
 	KeyboardState::u32int const * curr_ptr = static_cast<KeyboardState::u32int const *>(mKeyBoardState);
@@ -163,7 +164,7 @@ bool Dystopia::InputManager::IsKeyTriggered(eButton _Btn) const noexcept
 	return prev & cur;
 }
 
-bool Dystopia::InputManager::IsKeyPressed(eButton _Btn) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::IsKeyPressed(eButton _Btn) const noexcept
 {
 	KeyboardState::u32int const * prev_ptr = static_cast<KeyboardState::u32int const *>(mPrevKeyBoardState);
 	KeyboardState::u32int const * curr_ptr = static_cast<KeyboardState::u32int const *>(mKeyBoardState);
@@ -174,7 +175,7 @@ bool Dystopia::InputManager::IsKeyPressed(eButton _Btn) const noexcept
 	return (*(prev_ptr + GrpIndex) & BitChecker) && (*(curr_ptr + GrpIndex) & BitChecker);
 }
 
-bool Dystopia::InputManager::IsKeyReleased(eButton _Btn) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::IsKeyReleased(eButton _Btn) const noexcept
 {
 	KeyboardState::u32int const * prev_ptr = static_cast<KeyboardState::u32int const *>(mPrevKeyBoardState);
 	KeyboardState::u32int const * curr_ptr = static_cast<KeyboardState::u32int const *>(mKeyBoardState);
@@ -185,7 +186,7 @@ bool Dystopia::InputManager::IsKeyReleased(eButton _Btn) const noexcept
 	return (*(prev_ptr + GrpIndex) & BitChecker) & !(*(curr_ptr + GrpIndex)) & BitChecker;
 }
 
-bool Dystopia::InputManager::IsKeyTriggered(std::string const & _ButtonName) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(std::string const & _ButtonName) const noexcept
 {
 	auto iterator = mButtonMapping.find(_ButtonName);
 	if (iterator == mButtonMapping.end())
@@ -199,7 +200,7 @@ bool Dystopia::InputManager::IsKeyTriggered(std::string const & _ButtonName) con
 	return IsKeyTriggered(iterator->second);
 }
 
-bool Dystopia::InputManager::IsKeyPressed(std::string const & _ButtonName) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::IsKeyPressed(std::string const & _ButtonName) const noexcept
 {
 	auto iterator = mButtonMapping.find(_ButtonName);
 	if (iterator == mButtonMapping.end())
@@ -213,7 +214,7 @@ bool Dystopia::InputManager::IsKeyPressed(std::string const & _ButtonName) const
 	return IsKeyPressed(iterator->second);
 }
 
-bool Dystopia::InputManager::IsKeyReleased(std::string const & _ButtonName) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::IsKeyReleased(std::string const & _ButtonName) const noexcept
 {
 	auto iterator = mButtonMapping.find(_ButtonName);
 	if (iterator == mButtonMapping.end())
@@ -230,6 +231,16 @@ bool Dystopia::InputManager::IsKeyReleased(std::string const & _ButtonName) cons
 bool Dystopia::InputManager::IsController() const
 {
 	return mGamePad.IsConnected();
+}
+
+void Dystopia::InputManager::SetVibrate(unsigned short _ltrg, unsigned short _rtrg)
+{
+	mGamePad.Vibrate(_ltrg, _rtrg); //0-65534
+}
+
+void Dystopia::InputManager::StopVibrate()
+{
+	mGamePad.StopVibrate();
 }
 
 float Dystopia::InputManager::GetAnalogY(int _state) const

@@ -1,12 +1,12 @@
 /* HEADER *********************************************************************************/
 /*!
 \file	Milestone.h
-\author aaron (100%)
-\par    email: m.chu\@digipen.edu
+\author keith (100%)
+\par    email: keith.goh\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -16,12 +16,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #define str(s) #s
 
-#include "Behaviour\Behaviour.h"
+#include "Behaviour/Behaviour.h"
+#include "Reflection/Reflection.h"
+#include "Reflection/ReflectionTypeErasure.h"
 
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
+
 	class Milestone : Behaviour
 	{
 	public:
@@ -37,7 +40,7 @@ namespace Dystopia
 
 #endif
 		virtual const std::string GetEditorName(void) const override { return "Milestone"; }
-		static uint64_t constexpr mMilestoneID = 292553728;
+		static uint64_t constexpr mMilestoneID = 18446744073591342592;
 
 		Milestone();
 		~Milestone();
@@ -48,6 +51,10 @@ namespace Dystopia
 		virtual void Update(const float _fDeltaTime) override;
 		virtual void FixedUpdate(const float _fDeltaTime) override;
 		virtual void PostUpdate(void) override;
+		
+		void OnTriggerEnter(const GameObject *) override;
+		void OnTriggerStay(const GameObject *) override;
+		void OnTriggerExit(const GameObject *) override;
 
 		virtual void GameObjectDestroy(void) override;
 		virtual void Unload(void) override;
@@ -61,14 +68,23 @@ namespace Dystopia
 		virtual Milestone * Duplicate() const;
 		
 		virtual void EditorUI(void) noexcept override;
+		
+		
+		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
+		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+		float mF     = 88.f;
+		float mFloat = 5.f;
+        int   mInt   = 25;
+        float mFloat2 = 10.f;
+        int   mInt2   = 100;
+        int   WeiXiang = 200;
+		
 	private:
 
 
 
 	};
-
-
 
 	extern "C"
 	{
@@ -78,6 +94,8 @@ namespace Dystopia
 		}
 	}
 }
+
+PP_REFLECT(Dystopia::Milestone, mF,mFloat, mInt, mFloat2, mInt2, WeiXiang)
 
 #endif //_Milestone_H_
 

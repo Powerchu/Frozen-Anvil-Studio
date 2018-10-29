@@ -17,12 +17,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _SHAREDPTR_H_
 
 #include "Utility/Meta.h"		// IsSame
+#include "Globals.h"            // _DLL_EXPORT
 
 #if defined(DEBUG) | defined(_DEBUG)
 #include "Utility/DebugAssert.h"
 
 #include <typeinfo>
 #endif // Debug only includes
+
 
 template <class T>
 class SharedPtr
@@ -196,14 +198,14 @@ void SharedPtr<T>::RemoveReference(void)
 
 
 template <class T>
-SharedPtr<T>& SharedPtr<T>::operator = (std::nullptr_t)
+ SharedPtr<T>& SharedPtr<T>::operator = (std::nullptr_t)
 {
 	RemoveReference();
 	return *this;
 }
 
 template <class T>
-SharedPtr<T>& SharedPtr<T>::operator = (const SharedPtr<T>& _pPointer)
+ SharedPtr<T>& SharedPtr<T>::operator = (const SharedPtr<T>& _pPointer)
 {
 	if (_pPointer.mpObj)
 		++*_pPointer.mnRefCount;
@@ -217,7 +219,7 @@ SharedPtr<T>& SharedPtr<T>::operator = (const SharedPtr<T>& _pPointer)
 }
 
 template <class T>
-SharedPtr<T>& SharedPtr<T>::operator = (SharedPtr<T>&& _pPointer) noexcept
+ SharedPtr<T>& SharedPtr<T>::operator = (SharedPtr<T>&& _pPointer) noexcept
 {
 	RemoveReference();
 

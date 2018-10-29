@@ -48,7 +48,8 @@ namespace Dystopia
 		Circle();
 		/*Constructor*/
 		Circle(float const & _radius, Math::Vec3D const & _v3Offset = { 0,0,0,0 });
-
+		
+		void Awake(void);
 		/*Load the Component*/
 		virtual void Load(void);
 		/*Initialise the Component*/
@@ -62,6 +63,7 @@ namespace Dystopia
 		/*Duplicate the Component*/
 		virtual Circle* Duplicate() const;
 
+		//virtual Math::Matrix3D   GetTransformationMatrix() const;
 		virtual BroadPhaseCircle GenerateBoardPhaseCircle() const;
 		float GetRadius() const;
 
@@ -78,7 +80,7 @@ namespace Dystopia
 		bool isColliding(const AABB * const & other_col);
 
 		/*Collision Check Functions*/
-		bool isColliding(const Convex & other_col);
+		bool isColliding(Convex& other_col);
 		bool isColliding(Convex * const & other_col);
 
 	private:
@@ -91,6 +93,7 @@ namespace Dystopia
 		// INFO
 		void eAttachedBodyEmptyBox();
 		void eNumberOfContactsLabel();
+		void eIsTriggerCheckBox();
 
 		// Editor UI
 		void EditorUI(void) noexcept override;

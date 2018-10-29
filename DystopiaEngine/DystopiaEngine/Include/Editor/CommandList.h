@@ -392,6 +392,47 @@ namespace Dystopia
 		T mNewValue;
 	};
 
+	template <typename T>
+	struct ComdRecord<T, void, void>
+	{
+		ComdRecord(T* rhs, bool * _notify = nullptr)
+			: mpTarget{ rhs }, mOldValue{ *rhs },
+			mNewValue{ mOldValue }, mID{ _objID }, mpNotify{ _notify }
+		{}
+
+		bool EndRecord()
+		{
+			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
+			mNewValue = *mpTarget;
+			return true;
+		}
+
+		bool ExecuteDo() override
+		{
+			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
+			if (mpNotify) *mpNotify = true;
+			*mpTarget = mNewValue;
+			return true;
+		}
+
+		bool ExecuteUndo() override
+		{
+			if (!Editor::GetInstance()->FindGameObject(mID)) return false;
+			if (mpNotify) *mpNotify = true;
+			*mpTarget = mOldValue;
+			return true;
+		}
+
+		bool	Unchanged() const { return *mpTarget == mOldValue; }
+		T*		GetPointer() { return mpTarget; }
+	private:
+		bool *mpNotify;
+		uint64_t mID;
+		T* mpTarget;
+		T mOldValue;
+		T mNewValue;
+	};
+
 	template<class Component, typename ... Params>
 	struct FunctionModWrapper
 	{

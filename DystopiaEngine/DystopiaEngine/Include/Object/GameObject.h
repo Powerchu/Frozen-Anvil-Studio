@@ -6,7 +6,7 @@
 \brief
 	Base class for all GameObjects.
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright Â© 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Globals.h"
 
 #include <string>
+
 
 namespace Dystopia
 {
@@ -68,6 +69,10 @@ namespace Dystopia
 		void OnCollisionStay (const CollisionEvent&);
 		void OnCollisionExit (const CollisionEvent&);
 
+		void OnTriggerEnter(const GameObject*);
+		void OnTriggerStay (const GameObject*);
+		void OnTriggerExit (const GameObject*);
+
 		template <typename T>
 		void AddComponent(void);
 		void AddComponent(Component*, ComponentTag);
@@ -89,6 +94,8 @@ namespace Dystopia
 		uint64_t GetID(void) const;
 		inline unsigned GetFlags(void) const;
 		std::string GetName(void) const;
+		const char * GetNamePtr(void) const;
+
 		void SetName(const std::string&);
 
 		void RemoveFlags(eObjFlag);
@@ -210,7 +217,7 @@ T* Dystopia::GameObject::GetComponent(ComponentTag) const
 		}
 		else
 		{
-			if (Ut::MetaFind_t<T, UsableComponents>::value == e->GetUsableType())
+			if (Ut::MetaFind_t<T, UsableComponents>::value == e->GetRealComponentType())
 			{
 				return static_cast<T*>(e);
 			}
@@ -255,7 +262,7 @@ AutoArray<T*> Dystopia::GameObject::GetComponents(ComponentTag) const
 		}
 		else
 		{
-			if (Ut::MetaFind_t<T, UsableComponents>::value == e->GetUsableType())
+			if (Ut::MetaFind_t<T, UsableComponents>::value == e->GetRealComponentType())
 			{
 				temp.Insert(static_cast<T*>(e));
 			}

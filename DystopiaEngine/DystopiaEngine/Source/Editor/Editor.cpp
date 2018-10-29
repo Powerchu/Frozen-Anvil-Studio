@@ -291,7 +291,7 @@ namespace Dystopia
 		{
 			for (auto& e : mArrTabs)
 				e->SetSceneContext(&mpSceneSystem->GetActiveScene());
-			mpEditorEventSys->FireNow(EDITOR_SCENE_CHANGED);
+			mpEditorEventSys->Fire(EDITOR_SCENE_CHANGED);
 			auto name = mpSceneSystem->GetActiveScene().GetSceneName();
 			mpWin->GetMainWindow().SetTitle(std::wstring{ name.begin(), name.end() });
 			mSceneHasChanged = false;
@@ -356,7 +356,7 @@ namespace Dystopia
 				mCurrentState == EDITOR_PAUSE)
 			{
 				TempLoad();
-				mpBehaviourSys->ReAttach();
+				//mpBehaviourSys->ReAttach();
 			}
 			break;
 		case EDITOR_PLAY:
@@ -480,7 +480,6 @@ namespace Dystopia
 					}
 				}
 				pDup->Identify();
-				pDup->Init();
 				mToInsert.Insert(pDup);
 				AddSelection(pDup->GetID());
 			}
@@ -645,6 +644,9 @@ namespace Dystopia
 
 	void Editor::UpdateHotkeys()
 	{
+		if (mpEditorInput->Get()->IsKeyTriggered(eButton::MOUSE_LEFT))
+			mpEditorEventSys->Fire(EDITOR_LCLICK);
+
 		if (mpEditorInput->Hotkeys(Hotkey::g_KeyDelete, Hotkey::g_StateDelete, g_CountDefault))
 			mpEditorEventSys->Fire(EDITOR_HOTKEY_DELETE);
 

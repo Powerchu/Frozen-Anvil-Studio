@@ -6,13 +6,12 @@
 \brief
 INSERT BRIEF HERE
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "_SF_ClassName_.h"
-#include "Math/Vector2.h"
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
@@ -57,6 +56,33 @@ namespace Dystopia
 	{
 	}
 
+	void Dystopia::_SF_ClassName_::OnCollisionEnter(const CollisionEvent& _colEvent)
+	{
+
+	}
+
+	void Dystopia::_SF_ClassName_::OnCollisionStay(const CollisionEvent& _colEvent)
+	{
+
+	}
+
+	void Dystopia::_SF_ClassName_::OnCollisionExit(const CollisionEvent& _colEvent)
+	{
+
+	}
+
+	void Dystopia::_SF_ClassName_::OnTriggerEnter(const GameObject * _obj)
+	{
+	}
+
+	void Dystopia::_SF_ClassName_::OnTriggerStay(const GameObject * _obj)
+	{
+	}
+
+	void Dystopia::_SF_ClassName_::OnTriggerExit(const GameObject * _obj)
+	{
+	}
+
 	_SF_ClassName_ * _SF_ClassName_::Duplicate() const
 	{
 		return new _SF_ClassName_{};
@@ -80,6 +106,19 @@ namespace Dystopia
 	{
 		
 		
+	}
+	
+	TypeErasure::TypeEraseMetaData _SF_ClassName_::GetMetaData()
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		return TypeErasure::TypeEraseMetaData{};
+	}
+	TypeErasure::TypeEraseMetaData const _SF_ClassName_::GetMetaData() const
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		return TypeErasure::TypeEraseMetaData{};
 	}
 }
 

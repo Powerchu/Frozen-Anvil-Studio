@@ -1,12 +1,12 @@
 /* HEADER *********************************************************************************/
 /*!
 \file	Milestone.cpp
-\author aaron (100%)
-\par    email: m.chu\@digipen.edu
+\author keith (100%)
+\par    email: keith.goh\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -20,18 +20,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/DebugAssert.h"
 #include "Object/GameObject.h"
 #include "Component/Transform.h"
-#include "Editor/ConsoleLog.h"
+#include "Component/RigidBody.h"
 
 namespace Dystopia
 {
 	Milestone::Milestone()
-	{
-        
+	: mF{2.0f}
+	{ 
 	}
 
 	Milestone::~Milestone()
 	{
-        
 	}
 
 	void Milestone::Load()
@@ -40,8 +39,9 @@ namespace Dystopia
 
 	void Milestone::Init()
 	{ 
-        this->GetOwner()->GetComponent<Transform>()->SetScale(16, 31236, 1); 
-        PrintToConsoleLog("Hi");
+		SetActive(true);
+
+        this->GetOwner()->GetComponent<Transform>()->SetScale(32, 128, 1); 
 	}
 
 	void Milestone::Update(const float)
@@ -54,6 +54,26 @@ namespace Dystopia
 	
 	void Milestone::PostUpdate(void)
 	{
+	} 
+	void Milestone::OnTriggerEnter(const GameObject* other)
+	{
+		DEBUG_PRINT(eLog::MESSAGE, "Entering Trigger (%zu)", other->GetID());
+	}
+
+	void Milestone::OnTriggerStay(const GameObject* other)
+	{
+		const auto body = other->GetComponent<RigidBody>();
+
+		if (nullptr != body)
+		{
+			body->AddLinearImpulse({0,500,0});
+		}
+	}
+
+	void Milestone::OnTriggerExit(const GameObject* other)
+	{
+		
+		DEBUG_PRINT(eLog::MESSAGE, "Exiting Trigger (%zu)", other->GetID());
 	}
 
 	void Milestone::GameObjectDestroy(void)
@@ -88,8 +108,21 @@ namespace Dystopia
 		
 		
 	}
+	
+	TypeErasure::TypeEraseMetaData Milestone::GetMetaData()
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		static MetaData<Milestone> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
+	}
+	TypeErasure::TypeEraseMetaData const Milestone::GetMetaData() const
+	{
+		/*TO DO*/
+		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
+		MetaData<Milestone> mMetaData;
+		return TypeErasure::TypeEraseMetaData{mMetaData};
+	}
 }
-
-
-
 

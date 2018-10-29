@@ -56,8 +56,10 @@ unsigned Dystopia::TextureAtlas::AddSection(const Math::Vec2 & _vPos, unsigned _
 	const float vStart = static_cast<float>(h * _vPos.y);
 	const float uEnd = static_cast<float>(uStart + _nWidth  * w);
 	const float vEnd = static_cast<float>(vStart + _nHeight * h);
+	const float uStride = (uEnd - uStart);
+	const float vStride = (vEnd - vStart);
 
-	mSections.EmplaceBack(uStart, vStart, uEnd, vEnd, float((_nWidth * w) / _nCols), float((_nHeight * h) / _nRows));
+	mSections.EmplaceBack(uStart, vStart, uEnd, vEnd, float(uStride / _nCols), float(vStride / _nRows));
 
 	return static_cast<unsigned>(ret);
 }
@@ -66,10 +68,10 @@ void Dystopia::TextureAtlas::SetSection(unsigned _nID, unsigned _nCol, unsigned 
 {
 	auto& section = mSections[_nID];
 
-	const float uEnd   = section.uEnd   + _nCol * section.mCol;
-	const float vEnd   = section.vEnd   + _nRow * section.mRow;
 	const float uStart = section.uStart + _nCol * section.mCol;
 	const float vStart = section.vStart + _nRow * section.mRow;
+	const float uEnd   = section.uStart + (_nCol + 1) * section.mCol;
+	const float vEnd   = section.vStart + (_nRow + 1) * section.mRow;
 
 	_Active.UploadUniform("vUVBounds", uStart, vStart, uEnd, vEnd);
 }

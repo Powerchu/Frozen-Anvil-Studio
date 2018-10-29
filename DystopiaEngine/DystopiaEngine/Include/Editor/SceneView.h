@@ -78,8 +78,8 @@ namespace Dystopia
 		GraphicsSystem	*mpGfxSys;
 		Camera			*mpSceneCamera;
 		Math::Vec2		mImgSize;
-		Math::Vec2		mMoveVec;
 		Math::Vec2		mImgPos;
+		Math::Vec2		mPrevMovePoint;
 		
 		void			ScrollIn();
 		void			ScrollOut();
@@ -92,12 +92,11 @@ namespace Dystopia
 		void			AcceptPrefab(File *t);
 		void			AcceptTexture(File *t);
 		Math::Pt3D		GetWorldClickPos(const Camera * const _cam) const;
-		Math::Vec2		FindMouseVector();
 		void			AdjustImageSize(Texture*);
 		void			AdjustDisplayPos(void);
 		Math::Vec2		GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY);
 		Math::Vec2		GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY);
-		Math::Vec2		GetWorldToScreen(const Math::Pt3D&) const;
+		Math::Vec2		GetWorldToScreen(const Math::Pt3D&);
 		Camera*			GetCamera();
 		void			DrawGizmos(void);
 		void			DrawGizmoSingle(GameObject&);

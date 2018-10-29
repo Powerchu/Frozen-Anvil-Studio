@@ -16,8 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <string>
 #include <fstream>
-
 #include "IO/Serialiser.h"
+#include "DataStructure/HashString.h"
+
 
 namespace Dystopia
 {
@@ -63,9 +64,16 @@ namespace Dystopia
 
 
 template <typename T>
-void Dystopia::TextSerialiser::ApplyWrite(const T& _rhs)
+inline void Dystopia::TextSerialiser::ApplyWrite(const T& _rhs)
 {
 	mFile << _rhs << ',';
+}
+
+template <>
+inline void Dystopia::TextSerialiser::ApplyWrite(const HashString& _rhs)
+{
+	std::string str{ _rhs.cbegin(), _rhs.cend() };
+	mFile << str << ',';
 }
 
 template <typename T>
@@ -78,6 +86,14 @@ template <>
 inline void Dystopia::TextSerialiser::ApplyRead<std::string>(std::string& _rhs)
 {
 	std::getline(mFile, _rhs, ',');
+}
+
+template <>
+inline void Dystopia::TextSerialiser::ApplyRead<HashString>(HashString& _rhs)
+{
+	std::string str;
+	std::getline(mFile, str, ',');
+	_rhs = HashString{str.c_str()};
 }
 
 template <>
