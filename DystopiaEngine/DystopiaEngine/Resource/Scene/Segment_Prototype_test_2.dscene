@@ -1,10 +1,10 @@
 [START_Scene]
-367001600,Segment_Prototype_test_2,11,[START_START_GO_DATA]
+367001600,Segment_Prototype_test_2,12,[START_START_GO_DATA]
 18446744072627422720,97,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.323127,0.323127,1,0,0,0,0,0,0,1,0,
+1.90694,1.90694,1,10,0,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -98,6 +98,15 @@
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071984959488,65,GameObject,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1009,1000,1,0,0,-20,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]
@@ -108,7 +117,7 @@
 
 [END_Component End]
 [START_ComponentDonor]
-6,
+7,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -143,6 +152,12 @@
 [START_Component]
 [START_Renderer]
 1952528384,1,1952527872,..\DystopiaEngine\Resource\Asset\M_Basic Goblin.png,
+[END_Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+741660160,1,18446744071984959488,..\DystopiaEngine\Resource\Asset\sky.png,
 [END_Renderer]
 
 [END_Component End]
@@ -252,7 +267,7 @@
 0,
 [END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-7,[START_str]
+8,[START_str]
 CharacterController,0,[START_str]
 dsdsd,0,[START_str]
 Fireball,6,[START_BEHAVIOUR_BLOCK]
@@ -303,7 +318,24 @@ END,
 [END_BEHAVIOUR_BLOCK]
 [START_str]
 Missle,0,[START_str]
-PlayerAttackTrigger,0,
+PlayerAttackTrigger,0,[START_str]
+Parallax,2,[START_BEHAVIOUR_BLOCK]
+18446744073583726080,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+mLayerDiff,[START_mLayerDiff]
+-5,[START_MEMBER VAR]
+END,
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_BEHAVIOUR_BLOCK]
+18446744071984959488,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+mLayerDiff,[START_mLayerDiff]
+-10,[START_MEMBER VAR]
+END,
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+
 [END_BEHAVIOUR_SYSTEM_BLOCK]
 
 [END_Scene]
