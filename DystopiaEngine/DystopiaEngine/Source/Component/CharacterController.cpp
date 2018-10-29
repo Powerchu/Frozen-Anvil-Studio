@@ -125,7 +125,9 @@ namespace Dystopia
 			{
 				for (auto& manifold : my_col->GetCollisionEvents())
 				{
-					if (manifold.mCollidedWith->GetComponent<Collider>()->IsTrigger()) continue;
+					auto * CollidedWith = EngineCore::GetInstance()->Get<SceneSystem>()->GetActiveScene().FindGameObject(manifold.mOtherID);
+					if (nullptr == CollidedWith) continue;
+					if (CollidedWith->GetComponent<Collider>()->IsTrigger()) continue;
 
 					const auto dotNormal = manifold.mEdgeNormal.Dot({ 1,0,0 });
 					if (dotNormal < 0.98F && dotNormal > -0.98F)
@@ -254,7 +256,7 @@ namespace Dystopia
 					if (auto rigidptr = ptr->GetComponent<RigidBody>())
 					{
 
-						rigidptr->AddLinearImpulse({ -50 * rigidptr->GetMass(),0,0 });
+						rigidptr->AddLinearImpulse({ -100 * rigidptr->GetMass(),0,0 });
 					}
 
 				}
@@ -266,7 +268,7 @@ namespace Dystopia
 					if (auto rigidptr = ptr->GetComponent<RigidBody>())
 					{
 
-						rigidptr->AddLinearImpulse({ 50 * rigidptr->GetMass(),0,0 });
+						rigidptr->AddLinearImpulse({ 100 * rigidptr->GetMass(),0,0 });
 					}
 
 				}

@@ -260,7 +260,10 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 
 	for (auto& c : mComponents)
 	{
-		p->mComponents.Insert(c->Duplicate());
+		auto a = c->Duplicate();
+		if (!a)
+			__debugbreak();
+		p->mComponents.Insert(a);
 	}
 	for (auto& b : mBehaviours)
 	{

@@ -1,0 +1,41 @@
+[START_GameObject]
+3,[START_START_GO_DATA]
+1952527872,65,Goblin,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+20,30,1,25,-11,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GameObject]
+[START_Component]
+2,[START_RigidBody]
+1952528896,0,1952527872,0,0.999,0.1,0.5,0.5,0.2,0,1.3,300,1,0,1,1,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+4,[START_Convex_Collider]
+1952529408,1,1952527872,0,-0.161,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.669,0.617,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+8,[START_Renderer]
+18446744072637857792,1,1952527872,..\DystopiaEngine\Resource\Asset\M_Basic Goblin.png,
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_All Behaviours Block]
+1,Goblin,[START_Behaviour Block]
+1,mHealth,[START_MEMBER VAR]
+20,[START_MEMBER VAR END]
+
+[END_Behaviour Block]
+
+[END_All Behaviours Block]
