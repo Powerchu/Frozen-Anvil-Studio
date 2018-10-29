@@ -50,7 +50,7 @@ namespace Dystopia
 		mLabel{ "Hierarchy" }, 
 		mSearchText{ "" }, 
 		mPopupID{ "CreateGameObjFromHierarchy" }, 
-		mSearchTextPrevFrame{ "" }, mArrSearchID{}
+		mSearchTextPrevFrame{ "" }, mArrSearchID{ 200 }
 	{
 	}
 
@@ -61,7 +61,6 @@ namespace Dystopia
 
 	void HierarchyView::Init()
 	{
-		mArrSearchID.reserve(200);
 	}
 
 	void HierarchyView::Update(const float& _dt)

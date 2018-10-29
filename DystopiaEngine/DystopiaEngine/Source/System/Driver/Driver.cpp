@@ -156,12 +156,15 @@ void Dystopia::EngineCore::LoadSettings(void)
 }
 
 
+void Dystopia::EngineCore::PreInit(void)
+{
+	for (auto& e : mSystemTable)
+		e->PreInit();
+}
+
 void Dystopia::EngineCore::Init(void)
 {
 	mTime.Lap();
-
-	for (auto& e : mSystemTable)
-		e->PreInit();
 
 	for (auto& e : mSystemTable)
 	{
@@ -176,12 +179,15 @@ void Dystopia::EngineCore::Init(void)
 		}
 	}
 
-	for (auto& e : mSystemList)
-		e->PostInit();
-
 	mTime.Lap();
 	mTimeFixed.Lap();
 	mAccumulatedTime = 0;
+}
+
+void Dystopia::EngineCore::PostInit(void)
+{
+	for (auto& e : mSystemList)
+		e->PostInit();
 }
 
 void Dystopia::EngineCore::Interrupt(void)
