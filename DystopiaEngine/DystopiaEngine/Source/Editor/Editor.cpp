@@ -171,7 +171,7 @@ namespace Dystopia
 	{
 		mpDriver		= Dystopia::EngineCore::GetInstance();
 		mpDriver->LoadSettings();
-		mpDriver->Init();
+		mpDriver->PreInit();
 
 		mpWin			= mpDriver->GetSystem<WindowManager>();		// driver init-ed
 		mpGfx			= mpDriver->GetSystem<GraphicsSystem>();	// driver init-ed
@@ -198,6 +198,8 @@ namespace Dystopia
 			e->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			e->Init();
 		}
+		mpDriver->Init();
+		mpDriver->PostInit();
 		LoadSettings();
 
 		EGUI::SetContext(mpComdHandler);

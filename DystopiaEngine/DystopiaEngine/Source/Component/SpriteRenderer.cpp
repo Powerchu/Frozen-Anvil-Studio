@@ -214,6 +214,16 @@ bool Dystopia::SpriteRenderer::AnimationFinished(void) const
 	return true;
 }
 
+void Dystopia::SpriteRenderer::SetSpeed(float _f)
+{
+	mfFrameTime = _f;
+}
+
+void Dystopia::SpriteRenderer::SetPlay(bool _b)
+{
+	mbPlayAnim = _b;
+}
+
 Dystopia::SpriteRenderer* Dystopia::SpriteRenderer::Duplicate(void) const
 {
 	return static_cast<ComponentDonor<SpriteRenderer>*>(

@@ -3,6 +3,7 @@
 #include "Object/ObjectFlags.h"
 #include "Component/RigidBody.h"
 #include "Component/Collider.h"
+#include "Component/SpriteRenderer.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Input/InputSystem.h"
 #include "System/Base/ComponentDonor.h"
@@ -49,6 +50,12 @@ namespace Dystopia
 				rb->SetOwner(GetOwner());
 				rb->Init();
 			}
+
+			auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
+			if (s_rend)
+			{
+				s_rend->SetPlay(true);
+			}
 			mpBody = GetOwner()->GetComponent<RigidBody>();
 		}
 
@@ -58,6 +65,8 @@ namespace Dystopia
 			tInput->MapButton("Run Right", eButton::XBUTTON_DPAD_RIGHT);
 			tInput->MapButton("Jump", eButton::XBUTTON_A);
 			tInput->MapButton("Fly", eButton::XBUTTON_DPAD_UP);
+			tInput->MapButton("Fireball", eButton::XBUTTON_B);
+			tInput->MapButton("Missle", eButton::XBUTTON_Y);
 		}
 		else
 		{
@@ -74,10 +83,16 @@ namespace Dystopia
 	{
 		MovePlayer(_dt);
 		CheckGroundCeiling();
+		CheckMoving();
 	}
 
 	void CharacterController::Unload()
 	{
+		auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
+		if (s_rend)
+		{
+			s_rend->SetPlay(false);
+		}
 	}
 
 	Component* CharacterController::Duplicate() const
@@ -252,11 +267,13 @@ namespace Dystopia
 		{
 			if (!mbIsFacingRight)
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{-10,0,0}))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{-40,-10,0}))
 				{
 					if (auto rigidptr = ptr->GetComponent<RigidBody>())
 					{
 
+						auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+						ptr->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z);
 						rigidptr->AddLinearImpulse({ -300 * rigidptr->GetMass(),20*rigidptr->GetMass(),0 });
 					}
 
@@ -264,7 +281,7 @@ namespace Dystopia
 			}
 			else
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 10,0,0 }))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 40,-10,0 }))
 				{
 					if (auto rigidptr = ptr->GetComponent<RigidBody>())
 					{
@@ -301,6 +318,34 @@ namespace Dystopia
 				}
 			}
 
+		}
+	}
+
+	void CharacterController::CheckMoving()
+	{
+		static bool isRunning = false;
+
+		auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
+		if( s_rend)
+		{
+			if (Math::Abs(float(mpBody->GetLinearVelocity().x)) > 0.5F) // moving
+			{
+				if (!isRunning)
+				{
+					s_rend->SetSpeed(0.080F);
+					s_rend->SetAnimation("Running");
+					isRunning = true;
+				}
+			}
+			else // idling
+			{
+				if (isRunning)
+				{
+					s_rend->SetSpeed(0.16F);
+					s_rend->SetAnimation("Idle");
+					isRunning = false;
+				}
+			}
 		}
 	}
 

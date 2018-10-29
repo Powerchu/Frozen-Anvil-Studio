@@ -1,10 +1,10 @@
 [START_GameObject]
 2,[START_START_GO_DATA]
-18446744073295992320,65,Missle,
+1946850304,65,Missle,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-100,30,1,-20.1643,-41.6978,0.1,0,0,0,1,0,
+204.6,204.6,1,-129.034,4.52879,0.099999,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,13 +12,13 @@
 [END_GameObject]
 [START_Component]
 4,[START_Convex_Collider]
-422604288,1,18446744073295992320,0.25,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.4,0.6,1,0,0,0,1,1,
+422604288,1,1946850304,0.24,-0.17,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.4,0.15,1,0,0,0,1,1,
 [END_Convex_Collider]
 
 [END_Component End]
 [START_Component]
 8,[START_Renderer]
-740847616,1,18446744073295992320,..\DystopiaEngine\Resource\Asset\SpriteSheet_ForceT3.png,
+740847616,1,1946850304,..\DystopiaEngine\Resource\Asset\SpriteSheet_ForceT3.png,
 [END_Renderer]
 [START_Sprite Renderer]
 1,0.016,1,0,0,0,Missles,7,7,4096,4096,41,0,1,0,0,

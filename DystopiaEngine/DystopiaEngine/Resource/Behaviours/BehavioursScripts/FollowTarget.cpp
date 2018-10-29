@@ -46,7 +46,10 @@ namespace Dystopia
 	{
 		const auto currPos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 		const auto newPos  = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
-		const auto lerpPos = Math::Lerp(currPos, newPos, 0.02F);
+		auto lerpPos = Math::Lerp(currPos, newPos, 0.05F);
+		
+		if ((newPos - currPos).MagnitudeSqr() < 1.0F) return;
+		
 		GetOwner()->GetComponent<Transform>()->SetGlobalPosition(lerpPos);
 	}
 

@@ -57,6 +57,7 @@ namespace Dystopia
 
 		void CheckGroundCeiling(void);
 		void MovePlayer(float _dt);
+		void CheckMoving();
 	private:
 		RigidBody * mpBody;
 		Collider  * mpCol;
