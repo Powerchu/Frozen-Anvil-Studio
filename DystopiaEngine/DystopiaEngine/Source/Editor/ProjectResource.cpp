@@ -16,9 +16,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/EditorEvents.h"
 #include "Editor/DefaultFactory.h"
+#include "Editor/Payloads.h"
 
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Graphics/Texture2D.h"
 
 #include "Object/GameObject.h"
 
@@ -77,6 +80,14 @@ namespace Dystopia
 		if (mChangeHandle[0] == INVALID_HANDLE_VALUE || !mChangeHandle[0])
 		{
 			ExitProcess(GetLastError());
+		}
+
+		for (auto& f : mArrAllFiles)
+		{
+			if (f->mTag == EGUI::ePayloadTags::PNG || f->mTag == EGUI::ePayloadTags::BMP || f->mTag == EGUI::ePayloadTags::DDS)
+			{
+				EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(f->mPath)->GetID();
+			}
 		}
 	}
 
@@ -378,8 +389,14 @@ namespace Dystopia
 	{
 		if (_file == mFocusedFile) EGUI::Display::Outline(mPayloadRect.x, mPayloadRect.y);
 
+		int id = -1;
+		if (_file->mTag == EGUI::ePayloadTags::PNG || _file->mTag == EGUI::ePayloadTags::BMP || _file->mTag == EGUI::ePayloadTags::DDS)
+		{
+			id = static_cast<int>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(_file->mPath)->GetID());
+		}
+
 		if (EGUI::Display::CustomPayload(("###ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
-			_file->mName.c_str(), mPayloadRect, _file->mTag, &(*_file), sizeof(File)))
+			_file->mName.c_str(), mPayloadRect, _file->mTag, &(*_file), sizeof(File), id))
 		{
 			mFocusedFile = _file;
 		}
