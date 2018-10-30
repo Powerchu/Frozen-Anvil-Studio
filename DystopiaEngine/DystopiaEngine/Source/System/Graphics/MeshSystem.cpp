@@ -131,6 +131,11 @@ void Dystopia::MeshSystem::ExportMeshes(void)
 
 }
 
+Dystopia::Mesh* Dystopia::MeshSystem::CreateMesh(RawMesh* _pRaw, unsigned _nIndices, size_t offset)
+{
+	return mpMeshes.Emplace(_pRaw->mVAO, _nIndices, offset);
+}
+
 Dystopia::Mesh* Dystopia::MeshSystem::GetMesh(const std::string& _strName) noexcept
 {
 	for (auto& e : mpMeshes)
@@ -138,6 +143,18 @@ Dystopia::Mesh* Dystopia::MeshSystem::GetMesh(const std::string& _strName) noexc
 			return &e;
 
 	return nullptr;
+}
+
+unsigned Dystopia::MeshSystem::GenerateRaw(void) noexcept
+{
+	auto ret = mpRawMeshes.size();
+	mpRawMeshes.EmplaceBack();
+	return static_cast<unsigned>(ret);
+}
+
+Dystopia::RawMesh* Dystopia::MeshSystem::GetRaw(unsigned _nIndex) noexcept
+{
+	return &mpRawMeshes[_nIndex];
 }
 
 

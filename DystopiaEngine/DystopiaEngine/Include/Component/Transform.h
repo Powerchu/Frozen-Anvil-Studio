@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Matrix4.h"				// Matrix4
 #include "Math/Quaternion.h"			// Quaternion
 
+
 namespace Dystopia
 {
 	class _DLL_EXPORT Transform : public Component
@@ -66,10 +67,13 @@ namespace Dystopia
 		Math::Point3D GetPosition(void) const;
 		Math::Quaternion GetRotation(void) const;
 
+		Transform* GetParent(void);
 		void SetParent(Transform*);
 		void RemoveParent(void);
+
 		void AddChild(Transform*);
 		void RemoveChild(Transform*);
+		AutoArray<Transform*>& GetAllChild(void);
 
 		Math::Matrix4 GetTransformMatrix(void);
 		const Math::Matrix4& GetLocalTransformMatrix(void);
@@ -82,9 +86,6 @@ namespace Dystopia
 		void EditorUI(void) noexcept override;
 
 		Transform& operator=(const Transform& _rhs);
-
-		AutoArray<Transform*>& GetAllChild(void);
-		Transform* GetParent(void);
 
 	private:
 

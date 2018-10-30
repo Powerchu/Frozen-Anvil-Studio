@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <typeinfo>
 #endif // Debug only includes
 
+
 template <class T>
 class SharedPtr
 {

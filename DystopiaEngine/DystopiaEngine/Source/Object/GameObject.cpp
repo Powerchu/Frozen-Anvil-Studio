@@ -11,15 +11,19 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Object\GameObject.h"		 // File Header
-#include "Component\Component.h"	 // Component
-#include "Behaviour\Behaviour.h"	 // Behaviour
-#include "Object\ObjectFlags.h"		 // eObjFlags
-#include "DataStructure\AutoArray.h" 
-#include "Utility\Utility.h"		 // Move
-#include "IO\TextSerialiser.h"
-#include "Utility\GUID.h"			// Global UniqueID
+#include "Object/GameObject.h"		 // File Header
+#include "Object/ObjectFlags.h"		 // eObjFlags
+#include "Component/Component.h"	 // Component
+#include "Behaviour/Behaviour.h"	 // Behaviour
+
+#include "Utility/GUID.h"			// Global UniqueID
+#include "Utility/Utility.h"		 // Move
+#include "Utility/DebugAssert.h"
+#include "DataStructure/AutoArray.h" 
+
+#include "IO/TextSerialiser.h"
 #include "System/Behaviour/BehaviourSystem.h"
+
 
 #define Ping(_ARR, _FUNC, ...)			\
 for (auto& e : _ARR)					\
@@ -31,7 +35,7 @@ for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
 
 Dystopia::GameObject::GameObject(void) noexcept
-	: GameObject{ Ut::Constant<decltype(mnID), ~0>::value }
+	: GameObject{ GUIDGenerator::INVALID }
 {
 
 }
@@ -54,7 +58,7 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
 
-	_obj.mnID = Ut::Constant<decltype(mnID), ~0>::value;
+	_obj.mnID = GUIDGenerator::INVALID;
 	_obj.mnFlags = FLAG_REMOVE;
 }
 
@@ -261,13 +265,12 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	for (auto& c : mComponents)
 	{
 		auto a = c->Duplicate();
-		if (!a)
-			__debugbreak();
+		DEBUG_BREAK(!a, "GameObject Error: Component duplicate fail!\n");
 		p->mComponents.Insert(a);
 	}
 	for (auto& b : mBehaviours)
 	{
-		Behaviour *dup = EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, p->mnID);
+		auto dup = EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, p->mnID);
 		p->mBehaviours.Insert(dup);
 	}
 
@@ -318,7 +321,7 @@ Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
 	Ut::Swap(mComponents, _rhs.mComponents);
 	Ut::Swap(mBehaviours, _rhs.mBehaviours);
 
-	_rhs.mnID = Ut::Constant<decltype(mnID), ~0>::value;
+	_rhs.mnID = GUIDGenerator::INVALID;
 
 	return *this;
 }

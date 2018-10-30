@@ -154,7 +154,8 @@ inline T* const Dystopia::EngineCore::GetSubSystem(void) const
 	return static_cast<T*>(mSubSystems[type::result::value]);
 }
 
-#pragma warning(pop)
 
+
+#pragma warning(pop)
 #endif		// INCLUDE GUARD
 

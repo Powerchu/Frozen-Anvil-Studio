@@ -109,7 +109,7 @@ Ty* Dystopia::TextureSystem::LoadTexture(const std::string& _strPath)
 	ret = mTextures.EmplaceAs<Ty>(_strPath);
 	ret->LoadTexture(img);
 
-	DefaultAllocator<Image>::Free(img);
+	DefaultAllocator<Image>::DestructFree(img);
 
 	return ret;
 }

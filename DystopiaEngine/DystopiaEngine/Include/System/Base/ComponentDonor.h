@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	template <typename Ty, typename Settings = Ctor::MagicArrayBuilder<Ty>::SetBlockSize<64>>
-	class  ComponentDonor
+	class ComponentDonor
 	{
 	public:
 		using Component_t = Ty;
@@ -87,20 +87,16 @@ inline void Dystopia::ComponentDonor<Ty, Settings>::Unserialise(TextSerialiser &
 {
 	/*Clear Current Components*/
 	unsigned Size = 0;
-
 	mComponents.clear();
 
 	_Serialiser.ConsumeStartBlock();
-
 	_Serialiser >> Size;
-
 	_Serialiser.ConsumeEndBlock();
 
 	
 	for (unsigned i = 0; i < Size; ++i)
 	{
 		_Serialiser.ConsumeStartBlock();
-
 		Ty * pComp = RequestComponent();
 		pComp->Unserialise(_Serialiser);
 		_Serialiser.ConsumeEndBlock();

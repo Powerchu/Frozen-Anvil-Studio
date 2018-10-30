@@ -56,6 +56,7 @@ void Dystopia::Renderer::Awake(void)
 {
 	SetMesh("Quad");
 	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
+
 	if (mTexturePath.length())
 	{
 		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mTexturePath);
@@ -73,6 +74,7 @@ void Dystopia::Renderer::Draw(void) const noexcept
 		mpMesh->DrawMesh(GraphicsSystem::GetDrawMode());
 	}
 }
+
 
 void Dystopia::Renderer::SetMesh(Mesh* _pMesh) noexcept
 {

@@ -21,9 +21,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/ComponentList.h"
 #include "DataStructure/AutoArray.h"   // AutoArray
 #include "Utility/MetaAlgorithms.h"	   // MetaFind
+#include "Math/Vector2.h"
 
 #include <string>
-#include "Math/Vector2.h"
+
 
 namespace Dystopia
 {

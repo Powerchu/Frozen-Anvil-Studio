@@ -221,6 +221,7 @@ Math::Vec3D Dystopia::Camera::GetSize(void) const
 	return GetOwner()->GetComponent<Transform>()->GetScale();
 }
 
+
 Dystopia::Framebuffer* Dystopia::Camera::GetSurface(void) const noexcept
 {
 	return mpSurface;
@@ -268,9 +269,9 @@ void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 {
 	_in.ConsumeStartBlock();
 	Component::Unserialise(_in);
+
 	_in >> mnSurfaceID;
 	_in >> mbDebugDraw;
-
 	_in.ConsumeEndBlock();
 }
 

@@ -34,9 +34,10 @@ namespace Dystopia
 	class Window;
 	class Texture;
 	class Renderer;
+	class TextRenderer;
 	class SpriteRenderer;
 
-	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>, public ComponentDonor<SpriteRenderer>
+	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>, public ComponentDonor<SpriteRenderer>, public ComponentDonor<TextRenderer>
 	{
 	public :
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -74,6 +75,7 @@ namespace Dystopia
 		void     LoadMesh(const std::string&);
 		Texture* LoadTexture(const std::string&);
 		Shader*	 LoadShader(const std::string&);
+		Texture* LoadFont(const std::string&);
 
 		Framebuffer& GetGameView(void) const noexcept;
 		Framebuffer& GetUIView(void) const noexcept;

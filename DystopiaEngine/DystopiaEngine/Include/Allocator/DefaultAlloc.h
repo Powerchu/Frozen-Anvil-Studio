@@ -15,6 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _DEFAULTALLOC_H_
 #define _DEFAULTALLOC_H_
 #include "Globals.h"
+
+
 namespace Dystopia
 {
 	template <typename Ty = void>

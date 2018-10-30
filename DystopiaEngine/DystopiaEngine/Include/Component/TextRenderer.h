@@ -16,17 +16,25 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/Component.h"		// Base Class
 #include "Component/Renderer.h"			// Base Class
-#include "Component/ComponentList.h"	// TRANSFORM
+#include "Component/ComponentList.h"
+
 #include "DataStructure/AutoArray.h"	// AutoArray
 #include "Utility/MetaAlgorithms.h"		// MetaFind
+#include "System/Graphics/CharSpace.h"
+
+#include "Math/Vector4.h"
 
 #include <string>
 
 
 namespace Dystopia
 {
-	class Texture;
-	class GraphicsSystem;
+	class  Mesh;
+	struct Vertex;
+	class  Texture;
+	struct CharSpace;
+	class  TextureAtlas;
+	class  GraphicsSystem;
 
 	class _DLL_EXPORT TextRenderer : public Renderer
 	{
@@ -44,36 +52,38 @@ namespace Dystopia
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		TextRenderer(void) noexcept;
-		TextRenderer(TextRenderer&&) noexcept;
-		TextRenderer(const TextRenderer&) noexcept;
+		TextRenderer(TextRenderer&&) noexcept = default;
+		TextRenderer(const TextRenderer&) noexcept = default;
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
-		void Init(void) override;
+		void Awake(void) override;
 
 		void Draw(void) const noexcept;
 
-		void SetShader(Shader*) noexcept;
-		void SetShader(const std::string&) noexcept;
-		Shader* GetShader(void) const noexcept;
+		void SetText(const char*);
+		void SetText(const std::string&);
 
-		void SetTexture(Texture*) noexcept;
-		Texture* GetTexture(void) const noexcept;
+		void SetFont(const char*);
+		void SetFont(const std::string&);
 
-		bool HasTransparency(void) const noexcept;
-
-		Renderer* Duplicate(void) const;
-
-		void Serialise(TextSerialiser&) const;
-		void Unserialise(TextSerialiser&);
 
 		void EditorUI(void) noexcept override;
 
-
 	private:
 
-		
+		AutoArray<unsigned char> mText;
+		AutoArray<Vertex> mVerts;
+		AutoArray<CharSpace> mSpaces;
+
+		unsigned mnBaseMesh;
+		TextureAtlas* mpAtlas;
+
+		Math::Vector4 mColor;
+
+		void RegenMesh(void);
+
 	};
 }
 

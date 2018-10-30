@@ -54,6 +54,17 @@ void Dystopia::Transform::Init(void)
 {
 }
 
+
+AutoArray<Dystopia::Transform*>& Dystopia::Transform::GetAllChild(void)
+{
+	return mChildren;
+}
+
+Dystopia::Transform* Dystopia::Transform::GetParent(void)
+{
+	return mpParent;
+}
+
 void Dystopia::Transform::SetParent(Transform* _pParent)
 {
 	if (mpParent)
@@ -238,16 +249,6 @@ Math::Mat4 Dystopia::Transform::GetTransformMatrix(void)
 	return GetLocalTransformMatrix();
 }
 	
-AutoArray<Dystopia::Transform*>& Dystopia::Transform::GetAllChild(void)
-{
-	return mChildren;
-}
-
-Dystopia::Transform* Dystopia::Transform::GetParent(void)
-{
-	return mpParent;
-}
-
 Dystopia::Transform* Dystopia::Transform::Duplicate(void) const
 {
 	return nullptr;
