@@ -330,7 +330,7 @@ namespace Dystopia
 		auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
 		if( s_rend)
 		{
-			if (Math::Abs(float(mpBody->GetLinearVelocity().x)) > 0.5F) // moving
+			if (Math::Abs(float(mpBody->GetLinearVelocity().x)) > 150.0F) // moving
 			{
 				if (!isRunning)
 				{
