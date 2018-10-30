@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _SOUND_TYPES_H_
 #define _SOUND_TYPES_H_
+#include "Globals.h"
 
 namespace FMOD
 {

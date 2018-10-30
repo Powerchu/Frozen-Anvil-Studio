@@ -207,7 +207,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 		break;
 	case EGUI::eDRAGGING:
 		PrintToConsoleLog("eDRAGGING");
-		break;
+		break;	
 	case EGUI::eDEACTIVATED:
 		PrintToConsoleLog("eDEACTIVATED");
 		break;
@@ -216,6 +216,14 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 		break;
 	}
 #endif 
+}
+
+void Dystopia::AudioSource::ChangeAudio(const char * _s)
+{
+	if (mChannel.mpChannel)
+		mChannel.mpChannel->stop();
+	SetSound(EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(_s));
+	SetReady(false);
 }
 
 Dystopia::Sound*& Dystopia::AudioSource::GetSound(void)

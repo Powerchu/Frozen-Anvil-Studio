@@ -266,19 +266,10 @@ namespace
 
 		if (t) t->Bind();
 
-#   if defined(_DEBUG) | defined(DEBUG)
-		if (auto err = glGetError())
-			__debugbreak();
-#   endif 
 
 		s->UploadUniform("ProjectViewMat", _ProjView);
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);
-
-#   if defined(_DEBUG) | defined(DEBUG)
-		if (auto err = glGetError())
-			__debugbreak();
-#   endif 
 
 		_renderer->Draw();
 
