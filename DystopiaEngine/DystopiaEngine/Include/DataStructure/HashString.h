@@ -120,6 +120,8 @@ constexpr HashString::HashString(const char(&_s)[N])
 }
 
 bool operator==(const HashString& _lhs, const HashString& _rhs);
+bool operator==(const HashString& _lhs, const char * _rhs);
+bool operator==(const char * _lhs, const HashString& _rhs);
 bool operator!=(const HashString& _lhs, const HashString& _rhs);
 HashString operator+(const HashString& _lhs, const HashString& _rhs);
 HashString operator+(const HashString& _lhs, const char*);

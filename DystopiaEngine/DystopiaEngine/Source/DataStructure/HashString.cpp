@@ -477,6 +477,16 @@ bool operator==(const HashString& _lhs, const HashString& _rhs)
 	return (_lhs.id() == _rhs.id());
 }
 
+bool operator==(const HashString& _lhs, const char * _rhs)
+{
+	return _lhs.id() == StringHasher(_rhs);
+}
+
+bool operator==(const char * _lhs, const HashString& _rhs)
+{
+	return _rhs == _lhs;
+}
+
 bool operator!=(const HashString& _lhs, const HashString& _rhs)
 {
 	return !(_lhs.id() == _rhs.id());
