@@ -171,7 +171,7 @@ namespace Dystopia
 	{
 		mpDriver		= Dystopia::EngineCore::GetInstance();
 		mpDriver->LoadSettings();
-		mpDriver->Init();
+		mpDriver->PreInit();
 
 		mpWin			= mpDriver->GetSystem<WindowManager>();		// driver init-ed
 		mpGfx			= mpDriver->GetSystem<GraphicsSystem>();	// driver init-ed
@@ -188,7 +188,6 @@ namespace Dystopia
 		LoadDefaults();
 		LoadTabs();
 
-		mpEditorInput->Init();
 		mpEditorEventSys->Init();
 		InstallHotkeys();
 		for (auto& e : mArrTabs)
@@ -198,6 +197,9 @@ namespace Dystopia
 			e->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			e->Init();
 		}
+		mpDriver->Init();
+		mpDriver->PostInit();
+		mpEditorInput->Init();
 		LoadSettings();
 
 		EGUI::SetContext(mpComdHandler);
@@ -480,7 +482,6 @@ namespace Dystopia
 					}
 				}
 				pDup->Identify();
-				pDup->Init();
 				mToInsert.Insert(pDup);
 				AddSelection(pDup->GetID());
 			}

@@ -73,11 +73,7 @@ namespace Dystopia
 
 	private:
 
-		unsigned mnUnique;
-
-		Shader* mpShader;
-		Texture* mpTexture;
-		//std::string mFontName;
+		
 	};
 }
 

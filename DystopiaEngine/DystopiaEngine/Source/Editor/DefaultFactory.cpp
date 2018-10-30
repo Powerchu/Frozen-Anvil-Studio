@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
 #include "Editor/EditorMetaHelpers.h"
+#include "System/Behaviour/BehaviourSystemHelper.h"
 
 #include "Utility/GUID.h"
 #include "Utility/DebugAssert.h"
@@ -41,6 +42,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Behaviour/BehaviourSystem.h"
 
 #include <fstream>
 #include <iostream>
@@ -71,10 +73,6 @@ namespace Dystopia
 			pObject->AddComponent(col, typename Collider::TAG{});
 
 			pObject->Identify();
-			pObject->Init();
-			rend->Init();
-			rigid->Init();
-			col->Init();
 
 			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Editor/white_box.png"));
 			return pObject;
@@ -85,7 +83,6 @@ namespace Dystopia
 			GameObject *pObject = new GameObject{ GUIDGenerator::GetUniqueID() };
 			pObject->SetName(_name);
 			pObject->SetActive(true);
-			pObject->Init();
 			pObject->GetComponent<Transform>()->SetScale(Math::Vec4{ 16, 16, 1 });
 			const auto rend = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>())->RequestComponent();
 			const auto rigid = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
@@ -95,12 +92,8 @@ namespace Dystopia
 			pObject->AddComponent(col, Collider::TAG{});
 			rend->SetTexture(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture("Resource/Editor/red_box.png"));
 			rend->SetOwner(pObject);
-			rend->Init();
 			rigid->SetOwner(pObject);
-			rigid->Init();
 			col->SetOwner(pObject);
-			col->Init();
-			pObject->Init();
 			return pObject;
 		}
 
@@ -120,7 +113,6 @@ namespace Dystopia
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 			p->SetOwner(pObject);
-			p->Init();
 			p->Set_IsStatic(true);
 			pObject->AddComponent(p, typename RigidBody::TAG{});
 
@@ -140,7 +132,6 @@ namespace Dystopia
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 			p->SetOwner(pObject);
-			p->Init();
 			pObject->AddComponent(p, typename RigidBody::TAG{});
 
 			auto g = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>())->RequestComponent();
@@ -157,7 +148,6 @@ namespace Dystopia
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
 			p->SetOwner(pObject);
-			p->Init();
 			pObject->AddComponent(p, typename RigidBody::TAG{});
 
 			auto g = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>())->RequestComponent();
@@ -168,6 +158,55 @@ namespace Dystopia
 			pObject->AddComponent(c, typename Collider::TAG{});
 			return pObject;
 		}
+
+		void SaveAsPrefab(GameObject& _obj, TextSerialiser& _out)
+		{
+			//auto& allChild = _obj.GetComponent<Transform>()->GetAllChild();
+			//for (auto& c : allChild)
+			//	SaveAsPrefab(*c->GetOwner(), _out);
+
+			auto& allCom = _obj.GetAllComponents();
+			_out.InsertStartBlock("GameObject");
+			_out << allCom.size();
+			_obj.Serialise(_out);
+			_out.InsertEndBlock("GameObject");
+			for (const auto& elem : allCom)
+			{
+				_out.InsertStartBlock("Component");
+				_out << elem->GetRealComponentType();
+				elem->Serialise(_out);
+				_out.InsertEndBlock("Component End");
+			}
+			_out.InsertStartBlock("All Behaviours Block");
+			auto& allBehaviour = _obj.GetAllBehaviours();
+			_out << allBehaviour.size();
+			for (const auto & elem : allBehaviour)
+			{
+				std::string name{ elem->GetBehaviourName() };
+				_out << name;
+				_out.InsertStartBlock("Behaviour Block");
+				auto Metadata = elem->GetMetaData();
+				if (Metadata)
+				{
+					auto AllNames = Metadata.GetAllNames();
+					_out << AllNames.size();
+					for (auto const & i : AllNames)
+					{
+						if (Metadata[i])
+						{
+							std::string MemVarName{ i };
+							_out << MemVarName;
+							_out.InsertStartBlock("MEMBER VAR");
+							Metadata[i].Serialise(elem, _out, Dystopia::BehaviourHelper::SuperSerialiseFunctor{});
+							_out.InsertStartBlock("MEMBER VAR END");
+						}
+
+					}
+				}
+				_out.InsertEndBlock("Behaviour Block");
+			}
+			_out.InsertEndBlock("All Behaviours Block");
+		}
 	
 		std::string SaveAsPrefab(GameObject& _obj, const std::string& _path)
 		{
@@ -176,20 +215,8 @@ namespace Dystopia
 			if (!file.is_open())
 				__debugbreak();
 
-			auto toFile					= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_WRITE);
-			const auto& allComponents	= _obj.GetAllComponents();
-
-			toFile.InsertStartBlock("GameObject");
-			toFile << allComponents.size();
-			_obj.Serialise(toFile);
-			toFile.InsertEndBlock("GameObject");
-			for (const auto& elem : allComponents)
-			{
-				toFile.InsertStartBlock("Component");
-				toFile << elem->GetRealComponentType();
-				elem->Serialise(toFile);
-				toFile.InsertEndBlock("Component End");
-			}
+			auto toFile	= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_WRITE);
+			SaveAsPrefab(_obj, toFile);
 			return _obj.GetName() + g_PayloadPrefabEx;
 		}
 
@@ -202,13 +229,15 @@ namespace Dystopia
 
 			ListOfComponents availComponents;
 			unsigned	num			= 0;
+			unsigned    numBehaviour= 0;
 			unsigned	sysID		= 0;
 			auto		fromFile	= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_READ);
-			GameObject* pObj		= new GameObject{};
 
+			GameObject* pObj		= new GameObject{};
 			fromFile.ConsumeStartBlock();
 			fromFile >> num;
 			pObj->Unserialise(fromFile);
+			pObj->SetID(GUIDGenerator::GetUniqueID());
 			fromFile.ConsumeEndBlock();
 			for (unsigned i = 0; i < num; i++)
 			{
@@ -220,7 +249,50 @@ namespace Dystopia
 				fromFile.ConsumeEndBlock();
 			}
 
-			pObj->SetID(GUIDGenerator::GetUniqueID());
+			fromFile.ConsumeStartBlock();
+ 			fromFile >> numBehaviour;
+			for (unsigned i = 0; i < numBehaviour; i++)
+			{
+				std::string name;
+				fromFile >> name;
+				if (auto ptr = EngineCore::GetInstance()->Get<BehaviourSystem>()->RequestBehaviour(pObj->GetID(), name))
+				{
+					unsigned size = 0;
+					fromFile.ConsumeStartBlock();
+					fromFile >> size;
+					auto BehaviourMetadata = ptr->GetMetaData();
+					if (BehaviourMetadata)
+					{
+						for (unsigned u = 0; u < size; ++u)
+						{
+							std::string MemVarName;
+							fromFile >> MemVarName;
+							if (BehaviourMetadata[MemVarName.c_str()])
+							{
+								fromFile.ConsumeStartBlock();
+								/*Call Unserialise*/
+								BehaviourMetadata[MemVarName.c_str()].Unserialise(ptr, fromFile, BehaviourHelper::SuperUnserialiseFunctor{});
+								fromFile.ConsumeStartBlock();
+							}
+							else
+							{
+								fromFile.ConsumeStartBlock();
+								fromFile.ConsumeStartBlock();
+							}
+						}
+					}
+					ptr->SetOwner(pObj);
+					pObj->AddComponent(ptr, BehaviourTag{});
+					fromFile.ConsumeEndBlock();
+				}
+				else
+				{
+					fromFile.ConsumeStartBlock();
+					fromFile.ConsumeEndBlock();
+				}
+			}
+			fromFile.ConsumeEndBlock();
+			//pObj->SetID(GUIDGenerator::GetUniqueID());
 			pObj->Identify();
 			return pObj;
 		}

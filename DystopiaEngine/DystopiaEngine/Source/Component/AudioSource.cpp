@@ -80,6 +80,8 @@ void Dystopia::AudioSource::Update(float)
 		mChannel.mpChannel->setPitch(mPitch);
 		mChanged = false;
 	}
+	if (!mIsPlaying && mLoop)
+		mReady = true;
 }
 
 void Dystopia::AudioSource::GameObjectDestroy(void)
@@ -130,6 +132,15 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	{
 		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t->mName);
 	
+		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
+		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, pSound);
+		EGUI::GetCommandHND()->InvokeCommand(mnOwner, fOld, fNew);
+		EGUI::Display::EndPayloadReceiver();
+	}
+	else if (Dystopia::File *t2 = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::WAV))
+	{
+		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t2->mName);
+
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, pSound);
 		EGUI::GetCommandHND()->InvokeCommand(mnOwner, fOld, fNew);

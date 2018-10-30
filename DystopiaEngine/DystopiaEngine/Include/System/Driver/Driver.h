@@ -52,6 +52,7 @@ namespace Dystopia
 		using SubSys = typename Ut::MetaAutoIndexer <
 			class MeshSystem,
 			class FileSystem,
+			class FontSystem,
 			class LoggerSystem,
 			class TextureSystem
 		>::result;
@@ -75,7 +76,9 @@ namespace Dystopia
 		void BroadcastMessage(const eSysMessage&);
 
 		void LoadSettings(void);
+		void PreInit(void);
 		void Init(void);
+		void PostInit(void);
 		void FixedUpdate(void);
 		void Update(void);
 		void Shutdown(void);

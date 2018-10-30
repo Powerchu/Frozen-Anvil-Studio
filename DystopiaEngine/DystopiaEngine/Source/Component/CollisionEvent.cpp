@@ -1,6 +1,7 @@
 #include "System/Collision/CollisionEvent.h"
 #include "Object/GameObject.h"
 #include "Component/RigidBody.h"
+#include "Component/Collider.h"
 
 namespace Dystopia
 {
@@ -21,8 +22,9 @@ namespace Dystopia
 		constexpr auto velLimit = 15.0F;
 		const auto bodyA = mThisCollider->GetComponent<RigidBody>();
 		const auto bodyB = mCollidedWith->GetComponent<RigidBody>();
+		const auto colB = mCollidedWith->GetComponent<Collider>();
 
-		if (nullptr == bodyA || nullptr == bodyB) return;
+		if (nullptr == bodyA || nullptr == bodyB || colB->IsTrigger()) return;
 
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
@@ -58,7 +60,7 @@ namespace Dystopia
 		if (!bodyA->Get_IsStaticState())
 			bodyA->AddLinearImpulse(-impulse);
 
-		if (!bodyB->Get_IsStaticState())
+		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger())
 			bodyB->AddLinearImpulse(impulse);
 
 		// Calculate Frictional Velocity (vec3D) after normal impulse
@@ -89,7 +91,7 @@ namespace Dystopia
 		if (!bodyA->Get_IsStaticState())
 			bodyA->AddLinearImpulse(-frictionImpulse);
 
-		if (!bodyB->Get_IsStaticState())
+		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger())
 			bodyB->AddLinearImpulse(frictionImpulse);
 	}
 
@@ -97,8 +99,9 @@ namespace Dystopia
 	{
 		const auto bodyA = mThisCollider->GetComponent<RigidBody>();
 		const auto bodyB = mCollidedWith->GetComponent<RigidBody>();
+		const auto colB = mCollidedWith->GetComponent<Collider>();
 
-		if (nullptr == bodyA || nullptr == bodyB) return;
+		if (nullptr == bodyA || nullptr == bodyB || colB->IsTrigger()) return;
 
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();

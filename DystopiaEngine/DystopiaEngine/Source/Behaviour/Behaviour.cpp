@@ -52,7 +52,7 @@ void Dystopia::Behaviour::Unload(void)
 
 void Dystopia::Behaviour::OnCollisionEnter(const CollisionEvent&)
 {
-
+	__debugbreak();
 }
 
 void Dystopia::Behaviour::OnCollisionStay(const CollisionEvent&)

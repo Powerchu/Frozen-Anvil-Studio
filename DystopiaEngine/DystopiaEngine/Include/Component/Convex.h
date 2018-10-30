@@ -69,6 +69,7 @@ namespace Dystopia
 				mVertices.push_back(elem);
 		}
 
+		void Awake(void) override;
 		/*Load the Component*/
 		void Load(void) override;
 		/*Initialise the Component*/

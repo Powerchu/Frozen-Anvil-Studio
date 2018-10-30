@@ -30,6 +30,16 @@ namespace Dystopia
 
 	}
 
+	void Convex::Awake(void)
+	{
+		mDebugVertices.clear();
+		for (auto & elem : mVertices)
+		{
+			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z });
+		}
+		Collider::Awake();
+	}
+
 	void Convex::Load()
 	{
 
@@ -37,15 +47,7 @@ namespace Dystopia
 
 	void Convex::Init()
 	{
-		mDebugVertices.clear();
-		for (auto & elem : mVertices)
-		{
-			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z});
-		}
-
-		Collider::Triangulate();
 		Collider::Init();
-
 		//mLastKnownScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 	}
 
@@ -174,8 +176,8 @@ namespace Dystopia
 			{
 				/*Clear the simplex for the next function call*/
 				Simplex.clear();
-				if(CollisionEvent const * const ColEvent = FindCollisionEvent(_pColB.GetOwnerID()))
-					InformOtherComponents(false, *ColEvent);
+				//if(CollisionEvent const * const ColEvent = FindCollisionEvent(_pColB.GetOwnerID()))
+				//	InformOtherComponents(false, *ColEvent);
 				/*Return no collision*/
 				return false;
 			}
@@ -190,8 +192,8 @@ namespace Dystopia
 					const CollisionEvent ColEvent = GetCollisionEvent(Simplex, _pColB);
 					//marr_ContactSets.push_back(ColEvent);
 					
-					InformOtherComponents(true, ColEvent);
-					
+					//InformOtherComponents(true, ColEvent);
+					marr_CurrentContactSets.push_back(ColEvent);
 					/*Clear the simplex for the next function call*/
 					Simplex.clear();
 					
@@ -274,18 +276,20 @@ namespace Dystopia
 			{
 				newEvent.mEdgeNormal = newEvent.mEdgeNormal.Normalise();
 				newEvent.mEdgeNormal.z = 0;
-				InformOtherComponents(true, newEvent);
+				marr_CurrentContactSets.push_back(newEvent);
+				//InformOtherComponents(true, newEvent);
 				return true;
 			}
 			else
 			{
-				InformOtherComponents(false, newEvent);
+				//InformOtherComponents(false, newEvent);
 				return false;
 			}
 		}
 		/*No Normals will be given because i have no idea which one to give*/
 		/*Circle completely inside*/
-		InformOtherComponents(true, newEvent);
+		//InformOtherComponents(true, newEvent);
+		marr_CurrentContactSets.push_back(newEvent);
 		return isInside;
 	}
 
@@ -397,7 +401,7 @@ namespace Dystopia
 			LongestRadius = distance > LongestRadius ? distance : LongestRadius;
 		}
 
-		return BroadPhaseCircle{ LongestRadius, MyGlobalCentre };
+		return BroadPhaseCircle{ LongestRadius * 1.5F, MyGlobalCentre };
 	}
 
 	void Convex::EditorUI() noexcept
@@ -417,7 +421,7 @@ namespace Dystopia
 		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
 		{
 			mbIsTrigger = tempBool;
-			EGUI::GetCommandHND()->InvokeCommand<Collider>(&Collider::mbIsTrigger, tempBool);
+			EGUI::GetCommandHND()->InvokeCommand<Collider>(mnOwner, &Collider::mbIsTrigger, tempBool);
 		}
 	}
 

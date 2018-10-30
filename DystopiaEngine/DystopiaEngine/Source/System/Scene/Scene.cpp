@@ -53,7 +53,7 @@ Dystopia::GameObject* Dystopia::Scene::FindGameObject(const std::string& _strNam
 void Dystopia::Scene::Init(void)
 {
 	for (auto& e : mGameObjs)
-		if (e.GetFlags())
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
 			e.Init();
 }
 

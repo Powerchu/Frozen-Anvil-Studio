@@ -53,13 +53,13 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const { return nullptr; }
 
-		virtual void OnCollisionEnter(const CollisionEvent&);
-		virtual void OnCollisionStay (const CollisionEvent&);
-		virtual void OnCollisionExit (const CollisionEvent&);
+		virtual void OnCollisionEnter(const CollisionEvent&) = 0;
+		virtual void OnCollisionStay (const CollisionEvent&) = 0;
+		virtual void OnCollisionExit (const CollisionEvent&) = 0;
 
-		virtual void OnTriggerEnter(const GameObject *);
-		virtual void OnTriggerStay (const GameObject *);
-		virtual void OnTriggerExit (const GameObject *);
+		virtual void OnTriggerEnter(const GameObject *) = 0;
+		virtual void OnTriggerStay(const GameObject *)  = 0;
+		virtual void OnTriggerExit(const GameObject *)  = 0;
 
 		virtual void Serialise(TextSerialiser&) const {};
 		virtual void Unserialise(TextSerialiser&) {};

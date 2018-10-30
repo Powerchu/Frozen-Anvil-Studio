@@ -20,8 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Math/Vector2.h"
 
-#include <GL/glew.h>
-
 
 Dystopia::TextureAtlas::TextureAtlas(Texture* _ptr) noexcept
 	: mpTexture{ _ptr }
@@ -81,6 +79,11 @@ void Dystopia::TextureAtlas::SetSection(unsigned _nID, unsigned _nCol, unsigned 
 void Dystopia::TextureAtlas::SetTexture(Texture* _pTexture)
 {
 	mpTexture = _pTexture;
+}
+
+AutoArray<Dystopia::TextureAtlas::SubTexture>& Dystopia::TextureAtlas::GetAllSections(void) noexcept
+{
+	return mSections;
 }
 
 std::string Dystopia::TextureAtlas::GetName(void) const

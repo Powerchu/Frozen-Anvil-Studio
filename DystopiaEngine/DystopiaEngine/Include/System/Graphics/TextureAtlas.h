@@ -28,6 +28,13 @@ namespace Dystopia
 	class TextureAtlas
 	{
 	public:
+		struct SubTexture
+		{
+			float uStart, vStart;
+			float uEnd, vEnd;
+
+			float mCol, mRow;
+		};
 
 		explicit TextureAtlas(Texture* = nullptr) noexcept;
 		explicit TextureAtlas(const std::string&);
@@ -42,18 +49,12 @@ namespace Dystopia
 
 		void SetTexture(Texture* _pTexture);
 
+		AutoArray<SubTexture>& GetAllSections(void) noexcept;
+
 		std::string GetName(void) const;
 		std::string const& GetPath(void) const noexcept;
 
 	private:
-
-		struct SubTexture
-		{
-			float uStart, vStart;
-			float uEnd, vEnd;
-
-			float mCol, mRow;
-		};
 
 		Texture* mpTexture;
 		AutoArray<SubTexture> mSections;

@@ -35,13 +35,9 @@ namespace Dystopia
 	{
 	}
 
-	void Collider::Load(void)
+	void Collider::Awake(void)
 	{
-
-	}
-
-	void Collider::Init(void)
-	{
+		Triangulate();
 		if (mpMesh != nullptr || this->mDebugVertices.size() == 0 || this->mIndexBuffer.size() == 0)
 			return;
 
@@ -60,6 +56,15 @@ namespace Dystopia
 			SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
 			pMeshSys->EndMesh();
 		}
+	}
+
+	void Collider::Load(void)
+	{
+
+	}
+
+	void Collider::Init(void)
+	{
 		
 	}
 
@@ -127,6 +132,13 @@ namespace Dystopia
 		marr_ContactSets.clear();
 	}
 
+	void Collider::ClearCurrentCollisionEvent()
+	{
+		marr_CurrentContactSets.clear();
+	}
+
+
+
 	void Collider::RemoveCollisionEvent(unsigned long long _OtherID)
 	{
 		auto start = marr_ContactSets.begin();
@@ -141,7 +153,44 @@ namespace Dystopia
 			++start;
 		}
 	}
+	void Collider::InformOtherComponents()
+	{
+		const auto _owner = GetOwner();
+		const auto _body = _owner->GetComponent<RigidBody>();
 
+		for (auto & elem : marr_CurrentContactSets)
+		{
+			if (auto ptr = FindCollisionEvent(elem.mOtherID))
+			{
+				if (!mbIsTrigger)
+					_owner->OnCollisionStay(elem);
+				else
+					_owner->OnTriggerStay(elem.mCollidedWith);
+				RemoveCollisionEvent(elem.mOtherID);
+			}
+			else
+			{
+				if (!mbIsTrigger)
+					_owner->OnCollisionEnter(elem);
+				else
+					_owner->OnTriggerEnter(elem.mCollidedWith);
+			}
+		}
+		for (auto & elem : marr_ContactSets)
+		{
+			if (nullptr != _body)
+				_body->SetSleeping(false);
+
+			if (!mbIsTrigger)
+				_owner->OnCollisionExit(elem);
+			else
+				_owner->OnTriggerExit(elem.mCollidedWith);
+		}
+		/*I am not sure why i need to clear it before assigning. else will have stuff inside*/
+		marr_ContactSets.clear();
+		marr_ContactSets = marr_CurrentContactSets;
+		//marr_CurrentContactSets.clear();
+	}
 	void Collider::InformOtherComponents(const bool _isColliding, CollisionEvent const & _Event)
 	{
 		const auto _owner = GetOwner();

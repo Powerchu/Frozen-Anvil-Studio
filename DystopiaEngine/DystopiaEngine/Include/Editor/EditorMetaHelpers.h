@@ -28,6 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"
 #include "Editor/EGUI.h"
 #include <functional>
+#include "DataStructure/Hashstring.h"
 namespace Dystopia
 {
 	template<typename A, typename B>
@@ -179,6 +180,26 @@ namespace Dystopia
 				break;
 			default:
 				break;
+			}
+		}
+		template<>
+		void operator()(const char * _name, std::string value, std::function<void(std::string, void*)> _f, void* _addr)
+		{
+			std::string Temp = value;
+			char buffer[1024];
+			if (EGUI::Display::TextField(_name, buffer, 1024))
+			{
+				_f(buffer, _addr);
+			}
+		}
+		template<>
+		void operator()(const char * _name, HashString value, std::function<void(HashString, void*)> _f, void*_addr)
+		{
+			char buffer[1024];
+			if (EGUI::Display::TextField(_name, buffer, 1024))
+			{
+				value = buffer;
+				_f(value, _addr);
 			}
 		}
 		template<>

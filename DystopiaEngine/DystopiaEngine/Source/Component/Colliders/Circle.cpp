@@ -30,13 +30,7 @@ namespace Dystopia
 
 	}
 
-	/*Load the Component*/
-	void Circle::Load(void)
-	{
-		
-	}
-	/*Initialise the Component*/
-	void Circle::Init(void)
+	void Circle::Awake(void)
 	{
 		if (mDebugVertices.size() == 0)
 		{
@@ -50,11 +44,19 @@ namespace Dystopia
 				Vec3D vertex = 0.5F * Vec3D{ cosf(increment*i), sinf(increment*i), 0 };
 				Collider::mDebugVertices.push_back(Vertex{ vertex.x, vertex.y, 0 });
 			}
-
-			Collider::Triangulate();
-			Collider::Init();
+			Collider::Awake();
 		}
 		mScale[0] = mScale[1] = m_radius;
+	}
+
+	/*Load the Component*/
+	void Circle::Load(void)
+	{
+		
+	}
+	/*Initialise the Component*/
+	void Circle::Init(void)
+	{
 	}
 
 	void Circle::Update(float)
@@ -81,7 +83,7 @@ namespace Dystopia
 
 	BroadPhaseCircle Circle::GenerateBoardPhaseCircle() const
 	{
-		return BroadPhaseCircle(GetRadius(), GetGlobalPosition());
+		return BroadPhaseCircle(GetRadius() * 2.5f, GetGlobalPosition());
 	}
 
 	float Circle::GetRadius() const
@@ -105,6 +107,8 @@ namespace Dystopia
 
 		/*THIS IS THE REAL VERSION*/
 		_out << float(m_radius);
+		_out << mbIsTrigger;
+
 		_out.InsertEndBlock("Circle_Collider2D");
 	}
 	void Circle::Unserialise(TextSerialiser& _in)
@@ -119,6 +123,7 @@ namespace Dystopia
 		_in >> (mPosition[1]);
 		_in >> (mPosition[2]);
 		_in >> m_radius;
+		_in >> mbIsTrigger;
 		_in.ConsumeEndBlock();
 
 		mDebugVertices.clear();
@@ -176,10 +181,11 @@ namespace Dystopia
 				col_info.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
 				col_info.mfDynamicFrictionCof = DetermineKineticFriction(*other_body);
 			}
-			InformOtherComponents(true, col_info);
+			//InformOtherComponents(true, col_info);
+			marr_CurrentContactSets.push_back(col_info);
 			return true;
 		}
-			InformOtherComponents(false, col_info);
+			//InformOtherComponents(false, col_info);
 			return false;
 	}
 
@@ -269,19 +275,21 @@ namespace Dystopia
 			{
 				newEvent.mEdgeNormal = newEvent.mEdgeNormal.Normalise();
 				newEvent.mEdgeNormal.z = 0;
-				InformOtherComponents(true, newEvent);
+				marr_CurrentContactSets.push_back(newEvent);
+				//InformOtherComponents(true, newEvent);
 				return true;
 			}
 			else
 			{
-				InformOtherComponents(false, newEvent);
+				//InformOtherComponents(false, newEvent);
 				return false;
 			}
 
 		}
 		/*No Normals will be given because i have no idea which one to give*/
 		/*Circle completely inside*/
-		InformOtherComponents(true, newEvent);
+		//InformOtherComponents(true, newEvent);
+		marr_CurrentContactSets.push_back(newEvent);
 		return isInside;
 	}
 	bool Circle::isColliding(Convex * const & other_col)
@@ -373,11 +381,23 @@ namespace Dystopia
 		}
 	}
 
+	void Circle::eIsTriggerCheckBox()
+	{
+		bool tempBool = mbIsTrigger;
+
+		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
+		{
+			mbIsTrigger = tempBool;
+			EGUI::GetCommandHND()->InvokeCommand<Collider>(mnOwner, &Collider::mbIsTrigger, tempBool);
+		}
+	}
+
 	void Circle::EditorUI() noexcept
 	{
+		eAttachedBodyEmptyBox();
+		eIsTriggerCheckBox();
 		ePositionOffsetVectorFields();
 		eScaleField();
-		eAttachedBodyEmptyBox();
 		eNumberOfContactsLabel();
 	}
 #endif

@@ -97,7 +97,12 @@ void Dystopia::SceneSystem::LoadSettings(TextSerialiser&)
 
 }
 
-bool Dystopia::SceneSystem::Instantiate(const std::string& _prefabName, const Math::Pt3D& _position)
+Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject_cstr(const char* const _str)
+{
+	return FindGameObject(std::string{ _str });
+}
+
+Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const std::string& _prefabName, const Math::Pt3D& _position)
 {
 	if (!mpCurrScene) return false;
 
@@ -105,16 +110,17 @@ bool Dystopia::SceneSystem::Instantiate(const std::string& _prefabName, const Ma
 	if (pDupl)
 	{
 		pDupl->GetComponent<Transform>()->SetPosition(_position);
-		auto& obj = *mpCurrScene->GetAllGameObjects().Emplace(Ut::Move(*pDupl));
+		auto& obj = *mpCurrScene->InsertGameObject(Ut::Move(*pDupl));
 		obj.Identify();
+		obj.Awake();
 		obj.Init();
 		obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 		for (auto& c : obj.GetAllComponents())
 			c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 		delete pDupl;
-		return true;
+		return &obj;
 	}
-	return false;
+	return nullptr;
 }
 
 void Dystopia::SceneSystem::SceneChanged(void)
@@ -134,7 +140,9 @@ void Dystopia::SceneSystem::SceneChanged(void)
 	EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 	SerialObj.ConsumeEndBlock();
 	mNextSceneFile.clear();
-	mpCurrScene->Init();
+	auto& allObj = mpCurrScene->GetAllGameObjects();
+	for (auto& obj : allObj)
+		obj.Awake();
 }
 
 void Dystopia::SceneSystem::RestartScene(void)
@@ -153,7 +161,9 @@ void Dystopia::SceneSystem::RestartScene(void)
 		SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
 		EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 		SerialObj.ConsumeEndBlock();
-		mpCurrScene->Init();
+		auto& allObj = mpCurrScene->GetAllGameObjects();
+		for (auto& obj : allObj)
+			obj.Awake();
 	}
 }
 

@@ -44,16 +44,17 @@ namespace
 	// Taken from Wikipedia
 	struct InfoBMP
 	{
-		uint32_t	mSize;
-		int32_t		mWidth;
-		int32_t		mHeight;
-		uint16_t	mPlanes;
-		uint16_t	mBits;
-		uint32_t	mCompression;
-		int32_t		mResolutionX;
-		int32_t		mResolutionY;
-		uint32_t	mNumColors;
-		uint32_t	mImptColors;
+		uint32_t mSize;
+		int32_t  mWidth;
+		int32_t  mHeight;
+		uint16_t mPlanes;
+		uint16_t mBits;
+		uint32_t mCompression;
+		uint32_t mBMPSize;
+		int32_t  mResolutionX;
+		int32_t  mResolutionY;
+		uint32_t mNumColors;
+		uint32_t mImptColors;
 	};
 
 	struct StructRGB
@@ -165,13 +166,23 @@ namespace BMP
 	void* RGBA_ColorBMP(Dystopia::BinarySerializer& _in, InfoBMP& _info)
 	{
 		ColorRGBA* data = Dystopia::DefaultAllocator<ColorRGBA[]>::Alloc(_info.mWidth * Math::Abs(_info.mHeight));
+		ColorRGBA* ptr = data + _info.mWidth * Math::Abs(_info.mHeight);
 
-		for (int n = 0; n < _info.mWidth * Math::Abs(_info.mHeight); ++n)
+		for (int n = 0; n < Math::Abs(_info.mHeight); ++n)
 		{
-			_in >> data[n].sub.b;
-			_in >> data[n].sub.g;
-			_in >> data[n].sub.r;
-			_in >> data[n].sub.a;
+			ptr = ptr - _info.mWidth;
+
+			for (int w = 0; w < _info.mWidth; ++w)
+			{
+				_in >> ptr->sub.b;
+				_in >> ptr->sub.g;
+				_in >> ptr->sub.r;
+				_in >> ptr->sub.a;
+
+				++ptr;
+			}
+
+			ptr = ptr - _info.mWidth;
 		}
 
 		return data;
@@ -203,6 +214,47 @@ namespace BMP
 
 		return data;
 	}
+
+	template <typename Ty>
+	void WriteData(Dystopia::BinarySerializer& _out, Image const* _pImg)
+	{
+		auto const stride = _pImg->mnWidth * _pImg->mnChannels;
+		auto const padding = ((stride + 1) & ~3) - stride;
+
+		if constexpr (sizeof(Ty) > 2)
+		{
+			_out.ManualEndainOverride(Dystopia::eEndianess::eENDIAN_LITTLE);
+		}
+
+		for (unsigned y = _pImg->mnHeight; y > 0;)
+		{
+			Ty* pImg = static_cast<Ty*>(_pImg->mpImageData) + --y * _pImg->mnWidth;
+
+			for (unsigned x = 0; x < _pImg->mnWidth; ++x)
+			{
+				if constexpr (Ut::IsSame<Ut::Decay_t<Ty>, ColorRGBA>::value)
+				{
+					_out << pImg->sub_c;
+					_out << pImg->sub.a;
+				}
+				else if constexpr (sizeof(Ty) == 1)
+				{
+					_out << *pImg;
+					_out << *pImg;
+					_out << *pImg;
+				}
+				else
+				{
+					_out << *pImg;
+				}
+
+				++pImg;
+			}
+
+			for (unsigned p = 0; p < padding; ++p)
+				_out << '\0';
+		}
+	}
 }
 
 Image* ImageParser::LoadBMP(const std::string& _path)
@@ -229,6 +281,7 @@ Image* ImageParser::LoadBMP(const std::string& _path)
 	file >> fileInfo.mPlanes;
 	file >> fileInfo.mBits;
 	file >> fileInfo.mCompression;
+	file >> fileInfo.mBMPSize;
 	file >> fileInfo.mResolutionX;
 	file >> fileInfo.mResolutionY;
 	file >> fileInfo.mNumColors;
@@ -263,48 +316,82 @@ Image* ImageParser::LoadBMP(const std::string& _path)
 
 bool ImageParser::WriteBMP(const std::string& _path, void* _pImg, int _nWidth, int _nHeight)
 {
-	std::ofstream file{ _path, std::ios::binary | std::ios::out };
+	Image mData{
+		false, 0u, 0u, static_cast<unsigned>(_nWidth), static_cast<unsigned>(_nHeight), 4u, 1u, _pImg
+	};
+	auto ret = WriteBMP(_path, &mData);
+	mData.mpImageData = nullptr;
 
-	if (file.fail())
+	return ret;
+}
+
+
+bool ImageParser::WriteBMP(const std::string& _path, Image const* _pImg)
+{
+	auto file = Dystopia::Serialiser::OpenFile<Dystopia::BinarySerializer>(_path, Dystopia::Serialiser::MODE_WRITE);
+
+	if (file.EndOfInput())
 		return false;
 
-	HeaderBMP head;
-	InfoBMP   info;
+	HeaderBMP head{};
+	InfoBMP   info{};
 
-	info.mWidth			= _nWidth;
-	info.mHeight		= _nHeight;
-	info.mPlanes		= 1; // Must be 1;
-	info.mBits			= 24;
-	info.mCompression	= 0;
-	info.mNumColors		= 0;
-	info.mImptColors	= 0;
+	info.mSize        = sizeof(InfoBMP);
+	info.mWidth       = _pImg->mnWidth;
+	info.mHeight      = _pImg->mnHeight;
+	info.mPlanes      = 1; // Must be 1;
+	info.mBits        = static_cast<uint16_t>(8 * (_pImg->mnChannels < 3 ? 3 : _pImg->mnChannels));
+	info.mCompression = 0;
+	info.mNumColors   = 0;
+	info.mImptColors  = 0;
+	info.mResolutionX = 0;
+	info.mResolutionY = 0;
+	info.mBMPSize     = (_pImg->mnChannels < 3 ? 3 : _pImg->mnChannels) * _pImg->mnWidth * _pImg->mnHeight;
 
-	head.mType = (L'B' << 8) + 'M';
-	head.mBytes = sizeof(HeaderBMP) + sizeof(InfoBMP);
-	head.mOffset = sizeof(HeaderBMP) + sizeof(InfoBMP);
+	head.mBytes  = sizeof(HeaderBMP) + sizeof(InfoBMP) + info.mBMPSize;
+	head.mOffset = sizeof(HeaderBMP) + sizeof(InfoBMP) - sizeof(head.mType);
 
 	// Write the header
-	file.write(reinterpret_cast<char*>(&head), sizeof(HeaderBMP));
-	
+	file << 'B';
+	file << 'M';
+	file << head.mBytes;
+	file << head.mReserved;
+	file << head.mOffset;
+
 	// Write the info section
-	file.write(reinterpret_cast<char*>(&info), sizeof(InfoBMP));
+	file << info.mSize;
+	file << info.mWidth;
+	file << info.mHeight;
+	file << info.mPlanes;
+	file << info.mBits;
+	file << info.mCompression;
+	file << info.mBMPSize;
+	file << info.mResolutionX;
+	file << info.mResolutionY;
+	file << info.mNumColors;
+	file << info.mImptColors;
 
 	// Check for failure before continue
-	if (file.fail())
+	if (file.EndOfInput())
 	{
-		// Something bad happened
-		file.close();
 		remove(_path.c_str());	// Delete the erroneous file
 		return false;
 	}
 
-	auto padding = 4 - ((_nWidth * 3) & 3);
-	int paddingBytes = { 0 };
-
-	for (int32_t n = 0; n < info.mHeight; ++n)
+	switch (_pImg->mnChannels)
 	{
-		file.write(static_cast<char*>(_pImg) + n * _nWidth, _nWidth);
-		file.write(reinterpret_cast<char*>(&paddingBytes), padding);
+	case 1:
+		BMP::WriteData<unsigned char>(file, _pImg);
+		break;
+	case 3:
+		BMP::WriteData<StructRGB>(file, _pImg);
+		break;
+	case 4:
+		BMP::WriteData<ColorRGBA>(file, _pImg);
+		break;
+	default:
+		remove(_path.c_str());	// Delete the erroneous file
+		return false;
 	}
 
 	return true;

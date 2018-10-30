@@ -31,7 +31,7 @@ Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
 	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, mnParentID{ 0 }, 
 	Component { _pOwner }
 {
-
+	
 }
 
 Dystopia::Transform::Transform(const Transform& _oOther) :
@@ -41,13 +41,17 @@ Dystopia::Transform::Transform(const Transform& _oOther) :
 
 }
 
-void Dystopia::Transform::Init(void)
+void Dystopia::Transform::Awake(void) 
 {
 	if (mnParentID)
 	{
 		GameObject *p = EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject(mnParentID);
 		SetParent(p->GetComponent<Transform>());
 	}
+}
+
+void Dystopia::Transform::Init(void)
+{
 }
 
 void Dystopia::Transform::SetParent(Transform* _pParent)
@@ -106,7 +110,7 @@ void Dystopia::Transform::OnChildAdd(Transform* _pChild)
 	mChildren.Insert(_pChild);
 }
 
-void Dystopia::Transform::OnChildRemove(Transform* _pChild)
+void Dystopia::Transform::OnChildRemove(Transform*)
 {
 	// Do nothing
 }
@@ -252,16 +256,19 @@ Dystopia::Transform* Dystopia::Transform::Duplicate(void) const
 void Dystopia::Transform::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Transform");
-	_out << static_cast<float>(mScale.x);
-	_out << static_cast<float>(mScale.y);
-	_out << static_cast<float>(mScale.z);
-	_out << static_cast<float>(mPosition[0]);
-	_out << static_cast<float>(mPosition[1]);
-	_out << static_cast<float>(mPosition[2]);
-	_out << static_cast<float>(mRotation[0]);
-	_out << static_cast<float>(mRotation[1]);
-	_out << static_cast<float>(mRotation[2]);
-	_out << static_cast<float>(mRotation[3]);
+	auto r = GetGlobalRotation();
+	auto s = GetGlobalScale();
+	auto p = GetGlobalPosition();
+	_out << static_cast<float>(s.x);
+	_out << static_cast<float>(s.y);
+	_out << static_cast<float>(s.z);
+	_out << static_cast<float>(p[0]);
+	_out << static_cast<float>(p[1]);
+	_out << static_cast<float>(p[2]);
+	_out << static_cast<float>(r[0]);
+	_out << static_cast<float>(r[1]);
+	_out << static_cast<float>(r[2]);
+	_out << static_cast<float>(r[3]);
 	_out << mnParentID;
 	_out.InsertEndBlock("Transform");
 }

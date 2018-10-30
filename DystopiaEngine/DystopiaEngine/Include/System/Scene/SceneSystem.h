@@ -58,8 +58,9 @@ namespace Dystopia
 
 		inline GameObject* FindGameObject(uint64_t _nID);
 		inline GameObject* FindGameObject(const std::string& _strName);
+		inline GameObject* FindGameObject_cstr(const char * const _str);
 
-		bool Instantiate(const std::string& _prefabName, const Math::Pt3D& _position);
+		GameObject * Instantiate(const std::string& _prefabName, const Math::Pt3D& _position);
 
 	private:
 

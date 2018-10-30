@@ -586,7 +586,7 @@ namespace Dystopia
 					OutputCommand += L" \"" + elem.GetFullPath() + L"\"";
 			}
 
-			std::wstring Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" && exit 99";
+			std::wstring Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" & exit 99";
 
 
 
@@ -602,7 +602,7 @@ namespace Dystopia
 			ExecInfo.lpFile = mCmdPath.c_str();
 			ExecInfo.lpParameters = Final_Command.c_str();
 			ExecInfo.lpDirectory = NULL;
-			ExecInfo.nShow = SW_SHOW;
+			ExecInfo.nShow = SW_SHOWMINNOACTIVE;
 			ExecInfo.hInstApp = NULL;
 
 			if (ShellExecuteEx(&ExecInfo) == false)

@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"	   // MetaFind
 
 #include <string>
-
+#include "Math/Vector2.h"
 
 namespace Dystopia
 {
@@ -56,6 +56,7 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
+		void Awake(void) override;
 		void Init(void) override;
 
 		void Draw(void) const noexcept;
@@ -67,10 +68,14 @@ namespace Dystopia
 
 		SpriteRenderer* Duplicate(void) const;
 
-		void Serialise(TextSerialiser&) const;
-		void Unserialise(TextSerialiser&);
+		void Serialise(TextSerialiser&) const override;
+		void Unserialise(TextSerialiser&)     override;
 
 		void EditorUI(void) noexcept override;
+
+		bool AnimationFinished(void) const;
+		void SetSpeed(float);
+		void SetPlay(bool);
 
 	private:
 
@@ -78,17 +83,24 @@ namespace Dystopia
 
 		struct SpriteSheet
 		{
-			std::string mstrName;
 			unsigned mnID; //section id in the atlas
-			unsigned mnCol, mnRow; 
+			Math::Vec2 mUVCoord;
+			std::string mstrName;
+			int mnCol, mnRow, mnWidth, mnHeight, mnCutoff, mnStartAt; 
+			bool mbLoop, mbFinished;
 		};
 
 		AutoArray<SpriteSheet> mAnimations;
-		unsigned mnID, mnCol, mnRow;
+		int mnID, mnCol, mnRow;
 		float mfFrameTime, mfAccTime;
 
 		bool mbPlayAnim;
-		int miTotalCols, miTotalRows, miCutOff;
+
+		void SpriteSheetUI(SpriteSheet&);
+		void GetAtlas(void);
+		void RemoveAtlas(void);
+		void LoadAnimIntoAtlas(void);
+		void AddDefaultToAtlas(void);
 	};
 }
 

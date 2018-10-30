@@ -11,6 +11,7 @@
 #include "System/Scene/SceneSystem.h"
 #include "System/Driver/Driver.h"
 #include "Object/GameObject.h"
+#include "System/Behaviour/BehaviourSystemHelper.h"
 #undef ERROR
 
 #include "Globals.h"
@@ -22,122 +23,7 @@
 
 namespace Dystopia
 {
-	namespace BehaviourHelper
-	{
-		struct SuperSerialiseFunctor
-		{
-			template<typename T>
-			void operator()(T, TextSerialiser&, void*)
-			{
-			}
-			template<>
-			void operator()(std::nullptr_t, TextSerialiser&, void*)
-			{
-				/*Failed to deduced to any known type*/
-			}
-			template<>
-			void operator()(Math::Vec3D _v, TextSerialiser& _obj, void*)
-			{
-				_obj << static_cast<float>(_v.x);
-				_obj << static_cast<float>(_v.y);
-				_obj << static_cast<float>(_v.z);
-				_obj << static_cast<float>(_v.w);
-			}
-			template<>
-			void operator()(float _v, TextSerialiser& _obj, void*)
-			{
-				_obj << static_cast<float>(_v);
-			}
-			template<>
-			void operator()(int _v, TextSerialiser& _obj, void*)
-			{
-				_obj << static_cast<int>(_v);
-			}
-			template<>
-			void operator()(double _v, TextSerialiser& _obj, void*)
-			{
-				_obj << static_cast<double>(_v);
-			}
-			template<>
-			void operator()(char _v, TextSerialiser& _obj, void*)
-			{
-				_obj << static_cast<char>(_v);
-			}
-			template<>
-			void operator()(std::string _v, TextSerialiser& _obj, void*)
-			{
-				_obj << static_cast<std::string>(_v);
-			}
-			template<>
-			void operator()(const char * _v, TextSerialiser& _obj, void*)
-			{
-				_obj << std::string{ _v };
-			}
-		};
-		struct SuperUnserialiseFunctor
-		{
-			template<typename T>
-			void operator()(T, std::function<void(T, void*)>,void *,TextSerialiser &) {}
-
-			template<>
-			void operator()(float, std::function<void(float, void*)> _f, void * _addr, TextSerialiser & _obj)
-			{
-				float Temp = 0;
-				_obj >> Temp;
-				_f(Temp, _addr);
-			}
-			template<>
-			void operator()(int, std::function<void(int, void*)> _f, void * _addr, TextSerialiser & _obj)
-			{
-				int Temp = 0;
-				_obj >> Temp;
-				_f(Temp, _addr);
-			}
-			template<>
-			void operator()(double, std::function<void(double, void*)> _f, void * _addr, TextSerialiser & _obj)
-			{
-				double Temp = 0;
-				_obj >> Temp;
-				_f(Temp, _addr);
-			}
-			template<>
-			void operator()(char, std::function<void(char, void*)> _f, void * _addr, TextSerialiser & _obj)
-			{
-				char Temp = 0;
-				_obj >> Temp;
-				_f(Temp, _addr);
-			}
-			template<>
-			void operator()(short, std::function<void(short, void*)> _f, void * _addr, TextSerialiser & _obj)
-			{
-				short Temp = 0;
-				_obj >> Temp;
-				_f(Temp, _addr);
-			}
-			template<>
-			void operator()(std::string, std::function<void(std::string , void*) > _f, void * _addr, TextSerialiser & _obj)
-			{
-				std::string Temp = 0;
-				_obj >> Temp;
-				_f(Temp, _addr);
-			}
-			template<>
-			void operator()(Math::Vec3D, std::function<void(Math::Vec3D, void*)> _f, void * _addr, TextSerialiser & _obj)
-			{
-				float x, y, z, w;
-				_obj >> x;
-				_obj >> y;
-				_obj >> z;
-				_obj >> w;
-				_f(Math::MakeVector3D(x,y,z), _addr);
-			}
-
-			void operator()(std::nullptr_t)
-			{
-				/*Cannot Successfully deduce type*/
-			}
-		};
-	}
+	
 
 	BehaviourSystem::BehaviourSystem()
 		:mHotloader{ CreateShared<Hotloader<1>>() }
@@ -348,24 +234,32 @@ namespace Dystopia
 		{
 			for (auto & iter : i.second)
 			{
-				if(auto p = iter.second->GetOwner())
+				if(iter.second)
 				{
-					if (p->GetFlag() & eObjFlag::FLAG_ACTIVE)
+					if (auto p = iter.second->GetOwner())
 					{
-						_EDITOR_START_TRY
-							iter.second->Update(_dt);
-						_EDITOR_CATCH(std::exception& e)
+						if (p->GetFlag() & eObjFlag::FLAG_EDITOR_OBJ)
 						{
-							_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Error: %s!", e.what()));
-							_EDITOR_CODE(p->RemoveComponent(iter.second));
-							_EDITOR_CODE(iter.second->DestroyComponent());
+							continue;
+						}
+						if (p->GetFlag() & eObjFlag::FLAG_ACTIVE)
+						{
+							_EDITOR_START_TRY
+								iter.second->Update(_dt);
+							_EDITOR_CATCH(std::exception& e)
+							{
+								_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Error: %s!", e.what()));
+								_EDITOR_CODE(p->RemoveComponent(iter.second));
+								_EDITOR_CODE(iter.second->DestroyComponent());
+							}
 						}
 					}
+					else
+					{
+						iter.second->DestroyComponent();
+					}
 				}
-				else
-				{
-					iter.second->DestroyComponent();
-				}
+
 			}
 		}
 	}
@@ -374,17 +268,35 @@ namespace Dystopia
 	{
 		/*Clear the recently change*/
 		mvRecentChanges.clear();
-
+		//static AutoArray<std::pair<uint64_t, Behaviour*>*> ToRemove;
 		for (auto & i : mvBehaviours)
 		{
 			for (auto & iter : i.second)
 			{
-				if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
-				{
-					i.second.FastRemove(&iter);
-				}
+				if(iter.second != nullptr)
+					if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
+					{
+						delete iter.second;
+						iter.second = nullptr;
+						i.second.FastRemove(&iter);
+						//ToRemove.push_back(&iter);
+					}
 			}
 		}
+		//for(auto & elem : ToRemove)
+		//{
+		//	for (auto & i : mvBehaviours)
+		//	{
+		//		auto iter = i.second.Find(*elem);
+		//		if(iter != i.second.end())
+		//		{
+		//			i.second.Remove(iter);
+		//		}
+		//	}
+		//}
+
+
+		//ToRemove.clear();
 	}
 
 	void Dystopia::BehaviourSystem::Shutdown(void)
@@ -406,7 +318,7 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::LoadDefaults(void)
 	{
-	}
+	}	
 
 	void Dystopia::BehaviourSystem::LoadSettings(TextSerialiser &)
 	{
@@ -421,7 +333,17 @@ namespace Dystopia
 		for (auto & i : mvBehaviours)
 		{
 			/*Save Behaviour Name*/
-			_obj << std::string{ i.first.begin(), i.first.end() };
+			auto * ptr = i.first.c_str();
+			std::string str;
+			while(*ptr != L'\0')
+			{
+				char c = static_cast<char>(*ptr);
+				str += c;
+				++ptr;
+			}
+
+			_obj.InsertStartBlock("str");
+			_obj << str;
 			/*Save the number of Pointers*/
 			_obj << i.second.size();
 			for (auto & iter : i.second)
@@ -470,6 +392,7 @@ namespace Dystopia
 		_obj >> size;
 		for (unsigned i = 0; i < size; ++i)
 		{
+			_obj.ConsumeStartBlock();
 			std::string BehaviourScriptName;
 			_obj >> BehaviourScriptName;
 			for (auto const & elem : mvBehaviourReferences)
@@ -489,6 +412,7 @@ namespace Dystopia
 						auto BehaviourMetaData = ptr->GetMetaData();
 						if (BehaviourMetaData)
 						{
+
 							std::string Var;
 							_obj >> Var;
 							while(Var != "END")
@@ -565,6 +489,39 @@ namespace Dystopia
 			}
 		}
 		return nullptr;
+	}
+
+	Behaviour* BehaviourSystem::RequestDuplicate(Behaviour* _PtrToDup, uint64_t _NewID)
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.second == _PtrToDup)
+				{
+					auto ptr = iter.second->Duplicate();
+					i.second.push_back(std::make_pair(_NewID, ptr));
+					iter.first = _NewID;
+					return ptr;
+				}
+			}
+		}
+		return nullptr;
+	}
+
+	void BehaviourSystem::ReplaceID(uint64_t _old, uint64_t _new, GameObject * _newOwner)
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.first == _old)
+				{
+					iter.first = _new;
+					iter.second->SetOwner(_newOwner);
+				}
+			}
+		}
 	}
 
 	void Dystopia::BehaviourSystem::ClearAllBehaviours()

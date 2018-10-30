@@ -3,6 +3,7 @@
 #include "Object/ObjectFlags.h"
 #include "Component/RigidBody.h"
 #include "Component/Collider.h"
+#include "Component/SpriteRenderer.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Input/InputSystem.h"
 #include "System/Base/ComponentDonor.h"
@@ -49,6 +50,12 @@ namespace Dystopia
 				rb->SetOwner(GetOwner());
 				rb->Init();
 			}
+
+			auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
+			if (s_rend)
+			{
+				s_rend->SetPlay(true);
+			}
 			mpBody = GetOwner()->GetComponent<RigidBody>();
 		}
 
@@ -58,6 +65,8 @@ namespace Dystopia
 			tInput->MapButton("Run Right", eButton::XBUTTON_DPAD_RIGHT);
 			tInput->MapButton("Jump", eButton::XBUTTON_A);
 			tInput->MapButton("Fly", eButton::XBUTTON_DPAD_UP);
+			tInput->MapButton("Fireball", eButton::XBUTTON_B);
+			tInput->MapButton("Missle", eButton::XBUTTON_Y);
 		}
 		else
 		{
@@ -65,17 +74,27 @@ namespace Dystopia
 			tInput->MapButton("Run Right", eButton::KEYBOARD_RIGHT);
 			tInput->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
 			tInput->MapButton("Fly", eButton::KEYBOARD_UP);
-		}		
+			tInput->MapButton("Fireball", eButton::KEYBOARD_C);
+			tInput->MapButton("Missle", eButton::KEYBOARD_V);
+		}
+
+		
 	}
 
 	void CharacterController::Update(const float _dt)
 	{
 		MovePlayer(_dt);
 		CheckGroundCeiling();
+		CheckMoving();
 	}
 
 	void CharacterController::Unload()
 	{
+		auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
+		if (s_rend)
+		{
+			s_rend->SetPlay(false);
+		}
 	}
 
 	Component* CharacterController::Duplicate() const
@@ -124,7 +143,9 @@ namespace Dystopia
 			{
 				for (auto& manifold : my_col->GetCollisionEvents())
 				{
-					if (manifold.mCollidedWith->GetComponent<Collider>()->IsTrigger()) continue;
+					auto * CollidedWith = EngineCore::GetInstance()->Get<SceneSystem>()->GetActiveScene().FindGameObject(manifold.mOtherID);
+					if (nullptr == CollidedWith) continue;
+					if (CollidedWith->GetComponent<Collider>()->IsTrigger()) continue;
 
 					const auto dotNormal = manifold.mEdgeNormal.Dot({ 1,0,0 });
 					if (dotNormal < 0.98F && dotNormal > -0.98F)
@@ -157,7 +178,7 @@ namespace Dystopia
 			const auto leftThumb = tInput->GetAnalogX(0);
 			const auto leftTriggerFloat = tInput->GetTriggers(0);
 
-			if (leftThumb < 0.0F) // Moving Left
+			if (leftThumb < -0.1F) // Moving Left
 			{
 				mpBody->AddLinearImpulse({ leftThumb * mfCharacterSpeed * mpBody->GetMass(),0,0 });
 				if (mbIsFacingRight)
@@ -166,7 +187,7 @@ namespace Dystopia
 					mbIsFacingRight = false;
 				}
 			}
-			else if (leftThumb > 0.0F)// Moving Right
+			else if (leftThumb > 0.1F)// Moving Right
 			{
 				mpBody->AddLinearImpulse({ leftThumb * mfCharacterSpeed * mpBody->GetMass(),0,0 });
 				if (!mbIsFacingRight)
@@ -241,6 +262,91 @@ namespace Dystopia
 			{
 				mpBody->AddLinearImpulse({ 0,mfJumpForce * mpBody->GetMass() * 10,0 });
 				mbIsGrounded = false;
+			}
+		}
+		/*IM SORRY AARON - FROM (KEITH)*/
+		if (tInput->IsKeyTriggered("Fireball"))
+		{
+			if (!mbIsFacingRight)
+			{
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{-40,-10,0}))
+				{
+					if (auto rigidptr = ptr->GetComponent<RigidBody>())
+					{
+
+						auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+						ptr->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z);
+						rigidptr->AddLinearImpulse({ -300 * rigidptr->GetMass(),20*rigidptr->GetMass(),0 });
+					}
+
+				}
+			}
+			else
+			{
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 40,-10,0 }))
+				{
+					if (auto rigidptr = ptr->GetComponent<RigidBody>())
+					{
+
+						rigidptr->AddLinearImpulse({ 300 * rigidptr->GetMass(),20 * rigidptr->GetMass(),0 });
+					}
+
+				}
+			}
+
+		}
+		if (tInput->IsKeyTriggered("Missle"))
+		{
+			if (!mbIsFacingRight)
+			{
+
+				if (auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Missle.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ -10,0,0 }))
+				{
+					auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+					auto x = scale.x / 2;
+					ptr->GetComponent<Transform>()->SetGlobalPosition(ptr->GetComponent<Transform>()->GetGlobalPosition() + Math::Vec3D{ -x,0,0 });
+					ptr->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z);
+				}
+			}
+			else
+			{
+				if (auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Missle.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 10,0,0 }))
+				{
+					auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+					auto x = scale.x / 2;
+					ptr->GetComponent<Transform>()->SetGlobalPosition(ptr->GetComponent<Transform>()->GetGlobalPosition() + Math::Vec3D{ x,0,0 });
+				
+
+				}
+			}
+
+		}
+	}
+
+	void CharacterController::CheckMoving()
+	{
+		static bool isRunning = false;
+
+		auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
+		if( s_rend)
+		{
+			if (Math::Abs(float(mpBody->GetLinearVelocity().x)) > 0.5F) // moving
+			{
+				if (!isRunning)
+				{
+					s_rend->SetSpeed(0.080F);
+					s_rend->SetAnimation("Running");
+					isRunning = true;
+				}
+			}
+			else // idling
+			{
+				if (isRunning)
+				{
+					s_rend->SetSpeed(0.16F);
+					s_rend->SetAnimation("Idle");
+					isRunning = false;
+				}
 			}
 		}
 	}
