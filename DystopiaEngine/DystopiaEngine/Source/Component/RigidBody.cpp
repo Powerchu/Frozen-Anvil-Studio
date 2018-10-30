@@ -317,6 +317,7 @@ namespace Dystopia
 		_out << mbIsStatic;				// Static State
 		_out << mbIsAwake;				// Awake State
 		_out << mbCanSleep;				// Can Sleep Boolean
+		_out << mPhysicsType;
 		_out.InsertEndBlock("RigidBody");
 	}
 
@@ -338,6 +339,7 @@ namespace Dystopia
 		_in >> mbIsStatic;				// Static State
 		_in >> mbIsAwake;				// Awake State
 		_in >> mbCanSleep;				// Can Sleep Boolean
+		_in >> mPhysicsType;
 		_in.ConsumeEndBlock();
 
 	}
