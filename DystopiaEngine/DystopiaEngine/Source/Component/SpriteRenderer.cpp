@@ -127,18 +127,39 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 			//		if (!mAnimations[mnID].mbLoop)
 			//			mAnimations[mnID].mbFinished = true;
 			//}
+			if (++mnCol >= mAnimations[mnID].mnCol)
+			{
+				mnCol = startCol;
+				if (++mnRow > mAnimations[mnID].mnRow)
+				{
+					mnRow = startRow;
+				}
+			}
 			mfAccTime -= mfFrameTime;
 		}
 
-		if (mAnimations[mnID].mbLoop)
+		if ((mnCol + (mAnimations[mnID].mnCol * mnRow)) >= endPos)
 		{
-			//mAnimations[mnID].mbFinished = false;
-			if ((mnCol + (mAnimations[mnID].mnCol * mnRow)) >= endPos)
+			if (mAnimations[mnID].mbLoop)
 			{
 				mnCol = startCol;
 				mnRow = startRow;
 			}
+			else
+			{
+				mnCol = endPos % mAnimations[mnID].mnCol;
+				mnRow = endPos / mAnimations[mnID].mnCol;;
+			}
 		}
+		//if (mAnimations[mnID].mbLoop)
+		//{
+		//	//mAnimations[mnID].mbFinished = false;
+		//	if ((mnCol + (mAnimations[mnID].mnCol * mnRow)) >= endPos)
+		//	{
+		//		mnCol = startCol;
+		//		mnRow = startRow;
+		//	}
+		//}
 	}
 }
 
@@ -247,7 +268,7 @@ void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
 		_out << a.mnID;
 		//_out << static_cast<float>(a.mUVCoord.x);
 		//_out << static_cast<float>(a.mUVCoord.y);
-		_out << a.mstrName.c_str();
+		_out << a.mstrName;
 		_out << a.mnCol;
 		_out << a.mnRow;
 		//_out << a.mnWidth;
@@ -275,7 +296,7 @@ void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 		_in >> a.mnID;
 		//_in >> a.mUVCoord[0];
 		//_in >> a.mUVCoord[1];
-		_in >> a.mstrName.c_str();
+		_in >> a.mstrName;
 		_in >> a.mnCol;
 		_in >> a.mnRow;
 		//_in >> a.mnWidth;
@@ -476,7 +497,11 @@ void Dystopia::SpriteRenderer::CheckAtlas(void)
 	if (!GetTexture() && mpAtlas)
 		mpAtlas = nullptr;
 	else if (GetTexture() && !mpAtlas)
+	{
 		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(GetTexture()->GetName());
+		if (!mpAtlas->GetAllSections().size())
+			mpAtlas->AddSection(Math::Vec2{ 0,0 }, GetTexture()->GetWidth(), GetTexture()->GetHeight());
+	}
 }
 
 

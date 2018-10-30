@@ -14,7 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Utility.h"
 #include "Utility/DebugAssert.h"
 
-
 HashID StringHasher(const char* _s)
 {
 	HashID hash = OFFSET_BASIS;
@@ -510,3 +509,13 @@ HashString operator+(const char* _s, const HashString& _rhs)
 	HashString s{ _s };
 	return s + _rhs;
 }
+
+std::ostream& operator<<(std::ostream& _os, const HashString& _rhs)
+{
+	_os << _rhs.c_str();
+	return _os;
+}
+
+
+
+

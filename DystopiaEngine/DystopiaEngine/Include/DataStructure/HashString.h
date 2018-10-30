@@ -17,8 +17,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(disable : 4251)
 
 #include <cstdint>
+#include <iostream>
 #include "Globals.h"
-
 #include "Allocator/DefaultAlloc.h"
 
 typedef uint64_t HashID;
@@ -123,6 +123,8 @@ bool operator==(const HashString& _lhs, const HashString& _rhs);
 bool operator==(const HashString& _lhs, const char * _rhs);
 bool operator==(const char * _lhs, const HashString& _rhs);
 bool operator!=(const HashString& _lhs, const HashString& _rhs);
+std::ostream& operator<<(std::ostream& _os, const HashString& _rhs);
+
 HashString operator+(const HashString& _lhs, const HashString& _rhs);
 HashString operator+(const HashString& _lhs, const char*);
 HashString operator+(const char*, const HashString& _rhs);

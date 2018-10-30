@@ -73,9 +73,15 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 
-		//bool AnimationFinished(void) const;
-		//void SetSpeed(float);
-		//void SetPlay(bool);
+		bool AnimationFinished(void) const { return false; }
+		//void SetSpeed(float) {}
+		void SetPlay(bool) {}
+
+		unsigned GetPlayingFrame(void) const;
+		bool IsAnimPlaying(void) const;
+		void PlayAnim(void);
+		void StopAnim(void);
+		void SetSpeed(float);
 
 	private:
 
@@ -102,11 +108,6 @@ namespace Dystopia
 		//void LoadAnimIntoAtlas(void);
 		//void AddDefaultToAtlas(void);
 
-		unsigned GetPlayingFrame(void) const;
-		bool IsAnimPlaying(void) const;
-		void PlayAnim(void);
-		void StopAnim(void);
-		void SetSpeed(float);
 		void CheckAtlas(void);
 
 		struct SpriteSheet
