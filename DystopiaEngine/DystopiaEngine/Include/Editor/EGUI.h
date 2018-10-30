@@ -327,7 +327,7 @@ namespace EGUI
 				Very specific as of creation date.
 		======================================================================================================================= */
 		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
-			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize, long _imgId = -1);
+			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize, int _imgId = -1);
 		/* =======================================================================================================================
 		Brief:
 				Sets the previos UI widget/item to be a payload type. Preferably call according to the usage please.

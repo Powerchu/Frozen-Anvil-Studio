@@ -199,10 +199,7 @@ namespace Dystopia
 		}
 		mpDriver->Init();
 		mpDriver->PostInit();
-		mpEditorInput->Init();
 		LoadSettings();
-		mpDriver->Init();
-		mpDriver->PostInit();
 		for (auto& e : mArrTabs)
 		{
 			e->PostInit();

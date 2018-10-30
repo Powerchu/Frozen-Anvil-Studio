@@ -72,6 +72,10 @@ namespace Dystopia
 
 	void SceneView::Init()
 	{
+	}
+
+	void SceneView::PostInit(void)
+	{
 		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
 		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Bind(&SceneView::SceneChanged, this);
 		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);
@@ -82,9 +86,6 @@ namespace Dystopia
 		GameObject * temp = Factory::CreateCamera("Scene Camera");
 		auto& g = *GetCurrentScene()->InsertGameObject(Ut::Move(*temp));
 		g.GetComponent<Transform>()->SetOwner(&g);
-		//auto sr = static_cast<ComponentDonor<SpriteRenderer>*>(EngineCore::GetInstance()->Get<typename SpriteRenderer::SYSTEM>())->RequestComponent();
-		//g.AddComponent(sr, Component::TAG{});
-		//auto s = g.GetComponent<SpriteRenderer>();
 		for (auto& c : g.GetAllComponents())
 		{
 			c->SetOwner(&g);
