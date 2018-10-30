@@ -197,6 +197,9 @@ namespace Dystopia
 			e->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 			e->Init();
 		}
+		mpDriver->Init();
+		mpDriver->PostInit();
+		mpEditorInput->Init();
 		LoadSettings();
 		mpDriver->Init();
 		mpDriver->PostInit();

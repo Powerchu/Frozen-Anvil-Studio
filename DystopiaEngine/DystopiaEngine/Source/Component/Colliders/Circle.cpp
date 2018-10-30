@@ -107,6 +107,8 @@ namespace Dystopia
 
 		/*THIS IS THE REAL VERSION*/
 		_out << float(m_radius);
+		_out << mbIsTrigger;
+
 		_out.InsertEndBlock("Circle_Collider2D");
 	}
 	void Circle::Unserialise(TextSerialiser& _in)
@@ -121,6 +123,7 @@ namespace Dystopia
 		_in >> (mPosition[1]);
 		_in >> (mPosition[2]);
 		_in >> m_radius;
+		_in >> mbIsTrigger;
 		_in.ConsumeEndBlock();
 
 		mDebugVertices.clear();

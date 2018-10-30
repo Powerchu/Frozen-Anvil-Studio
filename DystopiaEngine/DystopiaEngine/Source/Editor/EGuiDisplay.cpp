@@ -472,7 +472,7 @@ namespace EGUI
 		}
 
 		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
-			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize, long _imgId)
+			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize, int _imgId)
 		{
 			ImVec2 pos = ImGui::GetCursorScreenPos();
 			ImVec2 size{ _displaytSize.x, _displaytSize.y };
@@ -494,8 +494,7 @@ namespace EGUI
 				IconFile(_uniqueId.c_str(), size.x, size.y);
 			else
 			{
-				size_t iid = static_cast<size_t>(_imgId);
-				ImGui::Image(reinterpret_cast<void*>(iid), ImVec2{ size.x / 2, size.y / 2 });
+				ImGui::Image(reinterpret_cast<void*>(static_cast<size_t>(_imgId)), ImVec2{ size.x / 2, size.y / 2 });
 			}
 			ImGui::SetCursorScreenPos(posText);
 			ImGui::TextWrapped(_label.c_str());

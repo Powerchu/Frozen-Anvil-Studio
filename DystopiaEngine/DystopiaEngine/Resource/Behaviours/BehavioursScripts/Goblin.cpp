@@ -16,10 +16,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
 #include "Editor/EGUI.h"
-#include "Utility/DebugAssert.h"
+
 #include "System/Scene/SceneSystem.h"
 #include "Object/GameObject.h"
 #include "System/Collision/CollisionEvent.h"
+#include "Component/SpriteRenderer.h"
 
 namespace Dystopia
 {
@@ -37,16 +38,55 @@ namespace Dystopia
 
 	void Goblin::Init()
 	{
+		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
+		const auto blackboard = bTree.GetBlackboard();
+		Math::Vector4 vectorT;
+		if (mpTarget)
+		{
+			vectorT = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
+		}
+		blackboard->setVector("Target", vectorT);
+		blackboard->setVector("Owner", GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+		blackboard->setGameObj("Owner", GetOwner());
+		blackboard->setInt("Health", mHealth);
+		NeuralTree::Builder()
+			.composite<NeuralTree::Sequence>()
+				.leaf<CheckDistNode>(blackboard)
+				.decorator<NeuralTree::Inverter>()
+					.composite<NeuralTree::Sequence>()
+						.leaf<CheckHealth>(blackboard)
+						.leaf<ChaseEnemy>(blackboard)
+					.end()
+				.end()
+				.leaf<RunAway>(blackboard)
+			.end()
+		.Build(bTree);
 	}
 
 	void Goblin::Update(const float _fDeltaTime)
 	{
-		//mHealth -=5;
+		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
+		const auto blackboard = bTree.GetBlackboard();
+		Math::Vector4 vectorT;
+		if (mpTarget)
+		{
+			vectorT = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
+		}
+		blackboard->setVector("Target", vectorT);
+		blackboard->setVector("Owner", GetOwner()->GetComponent<Transform>()->GetPosition());
+		blackboard->setInt("Health", mHealth);
+		
+		bTree.Update();
+		
 		if(EngineCore::GetInstance()->Get<InputManager>()->IsKeyTriggered(eButton::KEYBOARD_X) && isColliding)
 		{
 			mHealth -= 5;
 		}
-        if(mHealth < 0)
+		else if(EngineCore::GetInstance()->Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_X) && isColliding)
+		{
+			mHealth -= 5;
+		}
+        if(mHealth <= 0)
         {
             GetOwner()->Destroy();
         }
@@ -79,13 +119,18 @@ namespace Dystopia
 		{
 			//const char * name = ptr->Get
 			const char * name = ptr->GetNamePtr();
-			if(!strcmp(name,"PlayerHero"))
+			if(!strcmp(name,"PlayerAttackTrig"))
 			{
 				isColliding = true;
 			}
 			else if(!strcmp(name,"Fireball"))
 			{
 				mHealth -= 5;
+			}
+			else if(!strcmp(name,"Missle"))
+			{
+				mHealth -= 1;
+				isColliding = true;
 			}
 		}
 	}
@@ -97,8 +142,13 @@ namespace Dystopia
 		{
 			//const char * name = ptr->Get
 			const char * name = ptr->GetNamePtr();
-			if(!strcmp(name,"PlayerHero"))
+			if(!strcmp(name,"PlayerAttackTrig"))
 			{
+				isColliding = true;
+			}
+			else if(!strcmp(name,"Missle"))
+			{
+				mHealth -= 1;
 				isColliding = true;
 			}
 		}
@@ -106,25 +156,40 @@ namespace Dystopia
 
 	void Dystopia::Goblin::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
-		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_colEvent.mOtherID);
-		if(ptr)
-		{
-			isColliding = false;
-		}
+		isColliding = false;
 	}
 
 	void Dystopia::Goblin::OnTriggerEnter(const GameObject * _obj)
 	{
-		//mHealth -= 5;
+		if(_obj)
+		{
+			//const char * name = ptr->Get
+			const char * name = _obj->GetNamePtr();
+			if(!strcmp(name,"Missle"))
+			{
+				mHealth -= 1;
+				isColliding = true;
+			}	
+		}
 	}
 
 	void Dystopia::Goblin::OnTriggerStay(const GameObject * _obj)
 	{
-		//mHealth -= 5;
+		if(_obj)
+		{
+			//const char * name = ptr->Get
+			const char * name = _obj->GetNamePtr();
+			if(!strcmp(name,"Missle"))
+			{
+				//if(_obj->GetComponent<SpriteRenderer>()->AnimationFinished())
+				isColliding = true;
+			}
+		}
 	}
 
 	void Dystopia::Goblin::OnTriggerExit(const GameObject * _obj)
 	{
+		isColliding = false;
 	}
 
 	Goblin * Goblin::Duplicate() const

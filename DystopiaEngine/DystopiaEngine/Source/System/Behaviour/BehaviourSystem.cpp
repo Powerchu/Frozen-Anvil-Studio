@@ -234,28 +234,32 @@ namespace Dystopia
 		{
 			for (auto & iter : i.second)
 			{
-				if(auto p = iter.second->GetOwner())
+				if(iter.second)
 				{
-					if (p->GetFlag() & eObjFlag::FLAG_EDITOR_OBJ)
+					if (auto p = iter.second->GetOwner())
 					{
-						continue;
-					}
-					if (p->GetFlag() & eObjFlag::FLAG_ACTIVE)
-					{
-						_EDITOR_START_TRY
-							iter.second->Update(_dt);
-						_EDITOR_CATCH(std::exception& e)
+						if (p->GetFlag() & eObjFlag::FLAG_EDITOR_OBJ)
 						{
-							_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Error: %s!", e.what()));
-							_EDITOR_CODE(p->RemoveComponent(iter.second));
-							_EDITOR_CODE(iter.second->DestroyComponent());
+							continue;
+						}
+						if (p->GetFlag() & eObjFlag::FLAG_ACTIVE)
+						{
+							_EDITOR_START_TRY
+								iter.second->Update(_dt);
+							_EDITOR_CATCH(std::exception& e)
+							{
+								_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Error: %s!", e.what()));
+								_EDITOR_CODE(p->RemoveComponent(iter.second));
+								_EDITOR_CODE(iter.second->DestroyComponent());
+							}
 						}
 					}
+					else
+					{
+						iter.second->DestroyComponent();
+					}
 				}
-				else
-				{
-					iter.second->DestroyComponent();
-				}
+
 			}
 		}
 	}
@@ -264,7 +268,7 @@ namespace Dystopia
 	{
 		/*Clear the recently change*/
 		mvRecentChanges.clear();
-
+		//static AutoArray<std::pair<uint64_t, Behaviour*>*> ToRemove;
 		for (auto & i : mvBehaviours)
 		{
 			for (auto & iter : i.second)
@@ -275,10 +279,24 @@ namespace Dystopia
 						delete iter.second;
 						iter.second = nullptr;
 						i.second.FastRemove(&iter);
-
+						//ToRemove.push_back(&iter);
 					}
 			}
 		}
+		//for(auto & elem : ToRemove)
+		//{
+		//	for (auto & i : mvBehaviours)
+		//	{
+		//		auto iter = i.second.Find(*elem);
+		//		if(iter != i.second.end())
+		//		{
+		//			i.second.Remove(iter);
+		//		}
+		//	}
+		//}
+
+
+		//ToRemove.clear();
 	}
 
 	void Dystopia::BehaviourSystem::Shutdown(void)
@@ -324,6 +342,7 @@ namespace Dystopia
 				++ptr;
 			}
 
+			_obj.InsertStartBlock("str");
 			_obj << str;
 			/*Save the number of Pointers*/
 			_obj << i.second.size();
@@ -373,6 +392,7 @@ namespace Dystopia
 		_obj >> size;
 		for (unsigned i = 0; i < size; ++i)
 		{
+			_obj.ConsumeStartBlock();
 			std::string BehaviourScriptName;
 			_obj >> BehaviourScriptName;
 			for (auto const & elem : mvBehaviourReferences)
@@ -392,6 +412,7 @@ namespace Dystopia
 						auto BehaviourMetaData = ptr->GetMetaData();
 						if (BehaviourMetaData)
 						{
+
 							std::string Var;
 							_obj >> Var;
 							while(Var != "END")

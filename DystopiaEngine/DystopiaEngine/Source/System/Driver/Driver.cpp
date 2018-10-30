@@ -155,7 +155,6 @@ void Dystopia::EngineCore::LoadSettings(void)
 		e->LoadDefaults();
 }
 
-
 void Dystopia::EngineCore::PreInit(void)
 {
 	for (auto& e : mSystemTable)
@@ -178,6 +177,7 @@ void Dystopia::EngineCore::Init(void)
 			e = nullptr;
 		}
 	}
+
 
 	mTime.Lap();
 	mTimeFixed.Lap();

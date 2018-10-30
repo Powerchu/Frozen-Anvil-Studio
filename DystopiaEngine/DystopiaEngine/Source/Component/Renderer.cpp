@@ -20,8 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Shader.h"
 #include "System/Graphics/Texture2D.h"
 #include "System/Driver/Driver.h"
-#include "System/Scene/SceneSystem.h"
-#include "System/Scene/Scene.h"
 
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
@@ -207,11 +205,12 @@ void Dystopia::Renderer::TextureField()
 		EGUI::SameLine(DefaultAlighnmentSpacing, 80);
 		float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
 		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
+
 		EGUI::SameLine();
 		if (EGUI::Display::Button("Auto", Math::Vec2{ 35, 15 }))
 		{
 			auto w = static_cast<float>(mpTexture->GetWidth());
-			auto h = static_cast<float>(mpTexture->GetHeight()); 
+			auto h = static_cast<float>(mpTexture->GetHeight());
 			w /= 10;
 			h /= 10;
 			GetOwner()->GetComponent<Transform>()->SetScale(Math::Vec4{ w, h, 1.f });

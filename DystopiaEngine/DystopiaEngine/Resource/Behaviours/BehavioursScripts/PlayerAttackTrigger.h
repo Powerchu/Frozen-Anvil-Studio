@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	FollowTarget.h
-\author d (100%)
-\par    email: d\@digipen.edu
+\file	PlayerAttackTrigger.h
+\author keith (100%)
+\par    email: keith.goh\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,28 +11,24 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _FollowTarget_H_
-#define _FollowTarget_H_
+#ifndef _PlayerAttackTrigger_H_
+#define _PlayerAttackTrigger_H_
 
 #define str(s) #s
 
 #include "Behaviour/Behaviour.h"
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
-#include "DataStructure/HashString.h"
-#include "Object/GameObject.h"
-
-#include <string>
 
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
-	class FollowTarget : Behaviour
+	class PlayerAttackTrigger : Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = str(FollowTarget);
+		static constexpr const char * BehaviourName = str(PlayerAttackTrigger);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -42,11 +38,11 @@ namespace Dystopia
 		// };
 
 #endif
-		virtual const std::string GetEditorName(void) const override { return "FollowTarget"; }
-		static uint64_t constexpr mFollowTargetID = 18446744072462285312;
+		virtual const std::string GetEditorName(void) const override { return "PlayerAttackTrigger"; }
+		static uint64_t constexpr mPlayerAttackTriggerID = 18446744073118535168;
 
-		FollowTarget();
-		~FollowTarget();
+		PlayerAttackTrigger();
+		~PlayerAttackTrigger();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -71,7 +67,7 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const;
 
-		virtual FollowTarget * Duplicate() const;
+		virtual PlayerAttackTrigger * Duplicate() const;
 		
 		virtual void EditorUI(void) noexcept override;
 		
@@ -80,21 +76,19 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 	private:
-		GameObject* mpTarget = nullptr;
-		friend MetaData<FollowTarget>;
+		friend MetaData<PlayerAttackTrigger>;
 	};
 
 	extern "C"
 	{
-		DllExport FollowTarget * FollowTargetClone()
+		DllExport PlayerAttackTrigger * PlayerAttackTriggerClone()
 		{
-			return new FollowTarget;
+			return new PlayerAttackTrigger;
 		}
 	}
 }
 
-PP_REFLECT_EMPTY(Dystopia::FollowTarget)
-
-#endif //_FollowTarget_H_
+PP_REFLECT_EMPTY(Dystopia::PlayerAttackTrigger)
+#endif //_PlayerAttackTrigger_H_
 
 

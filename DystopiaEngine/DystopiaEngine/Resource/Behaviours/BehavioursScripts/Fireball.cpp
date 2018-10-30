@@ -65,7 +65,8 @@ namespace Dystopia
 		{
 			//const char * name = ptr->Get
 			const char * name = ptr->GetNamePtr();
-			if(!strcmp(name,"Goblin"))
+			if(strcmp(name,"PlayerAttackTrig") &&
+			   strcmp(name, "Fireball")&& strcmp(name, "Missle"))
 			{
 				GetOwner()->Destroy();
 			}
@@ -79,7 +80,8 @@ namespace Dystopia
 		{
 			//const char * name = ptr->Get
 			const char * name = ptr->GetNamePtr();
-			if(!strcmp(name,"Goblin"))
+			if(strcmp(name,"PlayerAttackTrig") &&
+			   strcmp(name, "Fireball") && strcmp(name, "Missle"))
 			{
 				GetOwner()->Destroy();
 			}
@@ -98,7 +100,8 @@ namespace Dystopia
 		{
 			//const char * name = ptr->Get
 			const char * name = ptr->GetNamePtr();
-			if(!strcmp(name,"Goblin"))
+			if(strcmp(name,"PlayerAttackTrig") &&
+			   strcmp(name, "Fireball")&& strcmp(name, "Missle"))
 			{
 				GetOwner()->Destroy();
 			}
@@ -112,7 +115,8 @@ namespace Dystopia
 		{
 			//const char * name = ptr->Get
 			const char * name = ptr->GetNamePtr();
-			if(!strcmp(name,"Goblin"))
+			if(strcmp(name,"PlayerAttackTrig") &&
+			   strcmp(name, "Fireball")&& strcmp(name, "Missle"))
 			{
 				GetOwner()->Destroy();
 			}

@@ -234,18 +234,15 @@ namespace Dystopia
 	void RigidBody::CheckSleeping(const float _dt)
 	{
 		UNUSED_PARAMETER(_dt); // dt is fixed, so it doesnt matter anyway
-		constexpr const auto SLEEP_EPSILON = 0.01F;
-
+		
 		//mfWeightedMotion is the average kinetic energy over a given set of frames
-
-		const float bias = 0.99F; //std::pow(0.96F, _dt);
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
-		mfWeightedMotion = bias * mfWeightedMotion + (1 - bias)*currentMotion;
+		mfWeightedMotion = mpPhysSys->mfSleepBias * mfWeightedMotion + (1 - mpPhysSys->mfSleepBias)*currentMotion;
 
 		// TODO change to global sleep epsilon
 
 
-		if (mfWeightedMotion < SLEEP_EPSILON)
+		if (mfWeightedMotion < mpPhysSys->mfSleepVelEpsilon)
 		{
 			mbIsAwake = false;
 			mLinearAcceleration = { 0,0,0 };
@@ -253,9 +250,9 @@ namespace Dystopia
 			mAngularVelocity = { 0,0,0 };
 		}
 
-		else if (mfWeightedMotion > 10 * SLEEP_EPSILON)
+		else if (mfWeightedMotion > 10 * mpPhysSys->mfSleepVelEpsilon)
 		{
-			mfWeightedMotion = 10 * SLEEP_EPSILON;
+			mfWeightedMotion = 10 * mpPhysSys->mfSleepVelEpsilon;
 			mbIsAwake = true;
 		}
 

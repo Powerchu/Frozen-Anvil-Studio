@@ -19,11 +19,174 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Behaviour/Behaviour.h"
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
+#include "Behaviour/AI/AISystem.h"
+#include "Math/Vector4.h"
+#include "Object/GameObject.h"
+#include "Component/RigidBody.h"
+#include "Utility/DebugAssert.h"
 
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
+	class CheckDistNode : public NeuralTree::Leaf
+	{
+	public:
+		CheckDistNode(NeuralTree::Blackboard::Ptr _bb)
+			: Leaf(_bb)
+		{
+			
+		}
+
+		void Init() override
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "CheckDist");
+			mTarget = mpBlackboard->getVector("Target");
+			mOwner = mpBlackboard->getVector("Owner");
+			mpOwnerObj = mpBlackboard->getGameObj("Owner");
+		}
+
+		eStatus Update() override
+		{
+			Math::Vec4 own_Scale;
+			if (mpOwnerObj)
+			{
+				own_Scale = mpOwnerObj->GetComponent<Transform>()->GetScale();
+			}
+
+			const float dist = (mTarget - mOwner).Magnitude();
+
+			if (dist < 220.0F)
+			{
+				if (mpOwnerObj)
+				{
+					if ((mOwner.x-mTarget.x) > 0.0F) // player is left
+					{
+						if (isFacingRight)
+						{
+							mpOwnerObj->GetComponent<Transform>()->SetScale(-own_Scale.x, own_Scale.y, own_Scale.z);
+							isFacingRight = false;
+						}
+					}
+					else // player is right
+					{
+						if (!isFacingRight)
+						{
+							mpOwnerObj->GetComponent<Transform>()->SetScale(-own_Scale.x, own_Scale.y, own_Scale.z);
+							isFacingRight = true;
+						}
+					}
+				}
+				mpBlackboard->setBool("IsFacingRight", isFacingRight);
+				return eStatus::SUCCESS;
+			}
+			mpBlackboard->setBool("IsFacingRight", isFacingRight);
+			return eStatus::FAIL;
+		}
+
+		Math::Vec3D mTarget;
+		Math::Vec3D mOwner;
+		GameObject* mpOwnerObj = nullptr;
+		bool isFacingRight = false;
+	};
+
+	class CheckHealth : public NeuralTree::Leaf
+	{
+	public:
+		CheckHealth(NeuralTree::Blackboard::Ptr _bb)
+			: Leaf(_bb)
+		{
+
+		}
+
+		void Init() override
+		{
+			mfHealth = mpBlackboard->getInt("Health");
+			DEBUG_PRINT(eLog::MESSAGE, "CheckHealth");
+		}
+
+		eStatus Update() override
+		{
+			if (mfHealth > 25.0F)
+			{
+				return eStatus::SUCCESS;
+			}
+			return eStatus::FAIL;
+		}
+
+		int mfHealth;
+	};
+
+	class ChaseEnemy : public NeuralTree::Leaf
+	{
+	public:
+		ChaseEnemy(NeuralTree::Blackboard::Ptr _bb)
+			: Leaf(_bb)
+		{
+
+		}
+
+		void Init() override
+		{
+			mbIsFacingRight = mpBlackboard->getBool("IsFacingRight");
+			myRigid = mpBlackboard->getGameObj("Owner")->GetComponent<RigidBody>();
+			DEBUG_PRINT(eLog::MESSAGE, "ChaseEnemy");
+		}
+
+		eStatus Update() override
+		{
+			if (mbIsFacingRight)
+			{
+				myRigid->AddLinearImpulse({ 15 * myRigid->GetMass(),0,0 });
+			}
+			else
+			{
+				myRigid->AddLinearImpulse({ -15 * myRigid->GetMass(),0,0 });
+			}
+
+			return eStatus::SUCCESS;
+		}
+
+		bool mbIsFacingRight = false;
+		RigidBody* myRigid = nullptr;
+	};
+
+	class RunAway : public NeuralTree::Leaf
+	{
+	public:
+		RunAway(NeuralTree::Blackboard::Ptr _bb)
+			: Leaf(_bb)
+		{
+
+		}
+
+		void Init() override
+		{
+			mTarget = mpBlackboard->getVector("Target");
+			mOwner = mpBlackboard->getVector("Owner");
+			my_rigid = mpBlackboard->getGameObj("Owner")->GetComponent<RigidBody>();
+			DEBUG_PRINT(eLog::MESSAGE, "RunAway");
+		}
+
+		eStatus Update() override
+		{
+			if ((mOwner.x - mTarget.x) > 0.0F) // player is left
+			{
+				my_rigid->AddLinearImpulse({ 15 * my_rigid->GetMass(),0,0 });
+			}
+			else // player is right
+			{
+				my_rigid->AddLinearImpulse({ -15 * my_rigid->GetMass(),0,0 });
+			}
+			return eStatus::SUCCESS;
+
+		}
+
+		Math::Vec3D mTarget;
+		Math::Vec3D mOwner;
+		RigidBody* my_rigid = nullptr;
+	};
+	
 	class Goblin : public Behaviour
 	{
 	public:
@@ -75,9 +238,10 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
-		int mHealth = 20;
+		int mHealth = 50;
 		
 		bool isColliding = false;
+		NeuralTree::BehaviourTree bTree;
 	private:
 		friend MetaData<Goblin>;
 	};

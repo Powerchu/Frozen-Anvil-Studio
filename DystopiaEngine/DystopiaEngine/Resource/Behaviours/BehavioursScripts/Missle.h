@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	dsdsd.h
-\author sd (100%)
-\par    email: s\@digipen.edu
+\file	Missle.h
+\author keith.goh (100%)
+\par    email: keith.goh\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _dsdsd_H_
-#define _dsdsd_H_
+#ifndef _Missle_H_
+#define _Missle_H_
 
 #define str(s) #s
 
@@ -24,11 +24,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class dsdsd : Behaviour
+	class Missle : Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = str(dsdsd);
+		static constexpr const char * BehaviourName = str(Missle);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -38,11 +38,11 @@ namespace Dystopia
 		// };
 
 #endif
-		virtual const std::string GetEditorName(void) const override { return "dsdsd"; }
-		static uint64_t constexpr mdsdsdID = 18446744072570281984;
+		virtual const std::string GetEditorName(void) const override { return "Missle"; }
+		static uint64_t constexpr mMissleID = 18446744072780316160;
 
-		dsdsd();
-		~dsdsd();
+		Missle();
+		~Missle();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -67,7 +67,7 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const;
 
-		virtual dsdsd * Duplicate() const;
+		virtual Missle * Duplicate() const;
 		
 		virtual void EditorUI(void) noexcept override;
 		
@@ -76,18 +76,20 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 	private:
-		friend MetaData<dsdsd>;
+	    bool isColliding = false;
+		friend MetaData<Missle>;
 	};
 
 	extern "C"
 	{
-		DllExport dsdsd * dsdsdClone()
+		DllExport Missle * MissleClone()
 		{
-			return new dsdsd;
+			return new Missle;
 		}
 	}
 }
 
-#endif //_dsdsd_H_
+PP_REFLECT_EMPTY(Dystopia::Missle)
+#endif //_Missle_H_
 
 

@@ -90,8 +90,8 @@ void Dystopia::SpritePreviewer::EditorUI(void)
 	}
 
 	EGUI::SameLine();
-	EGUI::Display::Label("Resolution:  x[%d]   y[%d]", mpTargetTexture ? mpTargetTexture->GetWidth() : 0, 
-													   mpTargetTexture ? mpTargetTexture->GetHeight() : 0);
+	EGUI::Display::Label("Resolution:  x[%d]  y[%d]", mpTargetTexture ? mpTargetTexture->GetWidth() : 0,
+													  mpTargetTexture ? mpTargetTexture->GetHeight() : 0);
 
 	EGUI::Display::HorizontalSeparator();
 
