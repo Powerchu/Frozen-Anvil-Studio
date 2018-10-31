@@ -17,6 +17,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Editor.h"
 #include "Editor/ConsoleLog.h"
 
+#include "Component/SpriteRenderer.h"
+#include "System/Driver/Driver.h"
+#include "System/Graphics/Texture2D.h"
+#include "System/Graphics/TextureAtlas.h"
+#include "System/Graphics/TextureSystem.h"
+#include "System/Graphics/GraphicsSystem.h"
+
 Dystopia::SpriteEditor* gpInstance = 0;
 Dystopia::SpriteEditor* Dystopia::SpriteEditor::GetInstance(void)
 {
@@ -28,11 +35,7 @@ Dystopia::SpriteEditor* Dystopia::SpriteEditor::GetInstance(void)
 
 Dystopia::SpriteEditor::SpriteEditor(void)
 	: EditorTab{ false }, 
-	mLabel{ "Sprite Editor" },
-	mStartPt{ 0, 0 },
-	mEndPt{ 0, 0 },
-	mStartPlotting{ false },
-	mSectionPlotted{ false }
+	mLabel{ "Sprite Editor" }
 {
 }
 
@@ -50,52 +53,30 @@ void Dystopia::SpriteEditor::Update(const float&)
 
 void Dystopia::SpriteEditor::EditorUI(void)
 {
-	Math::Vec2 childSize = Size() - Math::Vec2{ 5, 30 };
-	if (EGUI::StartChild("Sprite Editor Child", childSize))
+	EGUI::Display::EmptyBox("Sprite Sheet", 150, mpTexture ? mpTexture->GetName() : "");
+	if (Dystopia::File *t1 = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
 	{
-		if (mStartPlotting)
-		{
-			ImGuiContext& g = *GImGui;
-			ImGuiWindow* window = g.CurrentWindow;
-			ImVec2 pos	= ImGui::GetCursorScreenPos();
-			mStartPt.x	= static_cast<float>(Math::Clamp(static_cast<int>(mStartPt.x),	static_cast<int>(pos.x), static_cast<int>(childSize.x + pos.x)));
-			mStartPt.y	= static_cast<float>(Math::Clamp(static_cast<int>(mStartPt.y),	static_cast<int>(pos.y), static_cast<int>(childSize.y + pos.y)));
-			mEndPt.x	= static_cast<float>(Math::Clamp(static_cast<int>(mEndPt.x),	static_cast<int>(pos.x), static_cast<int>(childSize.x + pos.x)));
-			mEndPt.y	= static_cast<float>(Math::Clamp(static_cast<int>(mEndPt.y),	static_cast<int>(pos.y), static_cast<int>(childSize.y + pos.y)));
-			ImRect r{ mStartPt, mEndPt };
-
-			r.Expand(1.f);
-			bool push_clip_rect = !window->ClipRect.Contains(r);
-			if (push_clip_rect) window->DrawList->PushClipRectFullScreen();
-			window->DrawList->AddRect(r.Min, r.Max, ImGui::GetColorU32(ImGuiCol_DragDropTarget), 0.0f, ~0, 1.0f);
-			if (push_clip_rect) window->DrawList->PopClipRect();
-
-			ImGui::SetCursorScreenPos(pos);
-		}
-		if (!mSectionPlotted)
-		{
-			if (ImGui::IsMouseHoveringWindow())
-			{
-				if (!mStartPlotting && ImGui::IsMouseClicked(0))
-				{
-					mStartPlotting = true;
-					mStartPt = ImGui::GetMousePos();
-					PrintToConsoleLog("StartPlotting " + std::to_string(mStartPt.x) + " " + std::to_string(mStartPt.y));
-				}
-				else if (mStartPlotting && ImGui::IsMouseReleased(0))
-				{
-					mSectionPlotted = true;
-					PrintToConsoleLog("Released " + std::to_string(mEndPt.x) + " " + std::to_string(mEndPt.y));
-				}
-				else if (mStartPlotting && ImGui::IsMouseDown(0))
-				{
-					PrintToConsoleLog("Held");
-				}
-				mEndPt = ImGui::GetMousePos();
-			}
-		}
+		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t1->mPath);
+		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(mpTexture->GetName());
+		EGUI::Display::EndPayloadReceiver();
 	}
-	EGUI::EndChild();
+	if (Dystopia::File *t2 = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::BMP))
+	{
+		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t2->mPath);
+		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(mpTexture->GetName());
+		EGUI::Display::EndPayloadReceiver();
+	}
+	if (Dystopia::File *t3 = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::DDS))
+	{
+		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t3->mPath);
+		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(mpTexture->GetName());
+		EGUI::Display::EndPayloadReceiver();
+	}
+
+	if (!mpAtlas) return;
+
+	EGUI::Display::HorizontalSeparator();
+
 }
 
 void Dystopia::SpriteEditor::Shutdown(void)

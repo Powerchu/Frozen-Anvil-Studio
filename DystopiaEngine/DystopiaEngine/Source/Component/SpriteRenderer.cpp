@@ -556,7 +556,6 @@ void Dystopia::SpriteRenderer::StopAnim(void)
 		mnRow = mAnimations[mnID].mnStartAt ? static_cast<int>((mAnimations[mnID].mnStartAt) / mAnimations[mnID].mnCol) : 0;
 		return;
 	}
-
 	mnCol = 0;
 	mnRow = 0;
 }

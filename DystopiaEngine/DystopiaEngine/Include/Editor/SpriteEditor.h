@@ -13,11 +13,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _SPRITE_EDITOR_H_
 #define _SPRITE_EDITOR_H_
+#include "DataStructure/HashString.h"
 #include "Math/Vector2.h"
 #include "Editor/EditorTab.h"
 
 namespace Dystopia
 {
+	class Texture;
+	class TextureAtlas;
 	class SpriteEditor : public EditorTab
 	{
 	public:
@@ -36,11 +39,10 @@ namespace Dystopia
 	private:
 		SpriteEditor(void);
 
+		TextureAtlas *mpAtlas;
+		Texture		 *mpTexture;
+
 		std::string mLabel;
-		Math::Vec2	mStartPt;
-		Math::Vec2	mEndPt;
-		bool		mStartPlotting;
-		bool		mSectionPlotted;
 	};
 }
 
