@@ -325,29 +325,26 @@ namespace Dystopia
 
 	void CharacterController::CheckMoving()
 	{
-		static bool isRunning = false;
+		const auto tInput = EngineCore::GetInstance()->GetSystem<InputManager>();
 
 		auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
 		if( s_rend)
 		{
-			if (Math::Abs(float(mpBody->GetLinearVelocity().x)) > 150.0F) // moving
+			if (mpBody->GetLinearVelocity().MagnitudeSqr() > 100.0F) // moving
 			{
-				if (!isRunning)
+				if (tInput->IsKeyTriggered("Run Left") || tInput->IsKeyTriggered("Run Right"))
 				{
+				
 					s_rend->SetSpeed(0.080F);
 					s_rend->SetAnimation("Running");
-					isRunning = true;
 				}
 			}
-			else // idling
+
+			if (tInput->IsKeyReleased("Run Left") || tInput->IsKeyReleased("Run Right"))
 			{
-				if (isRunning)
-				{
 					s_rend->SetSpeed(0.16F);
-					s_rend->SetAnimation("Idle");
-					isRunning = false;
-				}
-			}
+					s_rend->SetAnimation("Idle");		
+			}			
 		}
 	}
 

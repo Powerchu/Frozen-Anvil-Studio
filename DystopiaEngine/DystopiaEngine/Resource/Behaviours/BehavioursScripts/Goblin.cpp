@@ -82,10 +82,7 @@ namespace Dystopia
 		{
 			mHealth -= 5;
 		}
-		else if(EngineCore::GetInstance()->Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_X) && isColliding)
-		{
-			mHealth -= 5;
-		}
+
         if(mHealth <= 0)
         {
             GetOwner()->Destroy();

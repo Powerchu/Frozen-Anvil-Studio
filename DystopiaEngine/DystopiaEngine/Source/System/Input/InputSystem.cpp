@@ -183,12 +183,12 @@ _DLL_EXPORT bool Dystopia::InputManager::IsKeyReleased(eButton _Btn) const noexc
 	KeyboardState::u32int BitChecker = (0x00000001ui32 << _Btn % (sizeof(KeyboardState::u32int) * 8));
 	KeyboardState::u32int GrpIndex = _Btn / (sizeof(KeyboardState::u32int) * 8);
 
-	return (*(prev_ptr + GrpIndex) & BitChecker) & !(*(curr_ptr + GrpIndex)) & BitChecker;
+	return ((*(prev_ptr + GrpIndex) & BitChecker) && !(*(curr_ptr + GrpIndex) & BitChecker));
 }
 
 _DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(std::string const & _ButtonName) const noexcept
 {
-	auto iterator = mButtonMapping.find(_ButtonName);
+	const auto iterator = mButtonMapping.find(_ButtonName);
 	if (iterator == mButtonMapping.end())
 	{
 		return false;
@@ -202,7 +202,7 @@ _DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(std::string const & _But
 
 _DLL_EXPORT bool Dystopia::InputManager::IsKeyPressed(std::string const & _ButtonName) const noexcept
 {
-	auto iterator = mButtonMapping.find(_ButtonName);
+	const auto iterator = mButtonMapping.find(_ButtonName);
 	if (iterator == mButtonMapping.end())
 	{
 		return false;
@@ -216,7 +216,7 @@ _DLL_EXPORT bool Dystopia::InputManager::IsKeyPressed(std::string const & _Butto
 
 _DLL_EXPORT bool Dystopia::InputManager::IsKeyReleased(std::string const & _ButtonName) const noexcept
 {
-	auto iterator = mButtonMapping.find(_ButtonName);
+	const auto iterator = mButtonMapping.find(_ButtonName);
 	if (iterator == mButtonMapping.end())
 	{
 		return false;
