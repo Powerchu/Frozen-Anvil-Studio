@@ -144,11 +144,6 @@ namespace Dystopia
 			const auto rigidA = ownerA->GetComponent<RigidBody>();
 			const auto rigidB = ownerB->GetComponent<RigidBody>();
 
-			if (rigidA == nullptr)
-				bodyA->SetTrigger(true);
-			if (rigidB == nullptr)
-				bodyB->SetTrigger(true);
-
 			if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
 			{
 				if (rigidA && rigidB)
@@ -226,9 +221,13 @@ namespace Dystopia
 		//}
 
 		for (auto & elem : mColliders)
-			elem->InformOtherComponents();
-		return;
+		{
+			const auto rigid = elem->GetOwner()->GetComponent<RigidBody>();
+			if (rigid == nullptr)
+				elem->SetTrigger(true);
 
+			elem->InformOtherComponents();
+		}
 	}
 
 	void CollisionSystem::Shutdown()
@@ -276,9 +275,6 @@ namespace Dystopia
 
 	bool CollisionSystem::CircleVsConvex(Collider * const & _ColA, Collider * const & _ColB) const
 	{
-		UNUSED_PARAMETER(_ColA);
-		UNUSED_PARAMETER(_ColB);
-
 		Circle   * pCircle;
 		Convex   * pConvex;
 

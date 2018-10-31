@@ -330,11 +330,10 @@ namespace Dystopia
 		auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
 		if( s_rend)
 		{
-			if (mpBody->GetLinearVelocity().MagnitudeSqr() > 100.0F) // moving
+			if (tInput->IsKeyTriggered("Run Left") || tInput->IsKeyTriggered("Run Right"))
 			{
-				if (tInput->IsKeyTriggered("Run Left") || tInput->IsKeyTriggered("Run Right"))
-				{
-				
+				if (mpBody->GetLinearVelocity().Magnitude() > 50.0F) // moving
+				{	
 					s_rend->SetSpeed(0.080F);
 					s_rend->SetAnimation("Running");
 				}
