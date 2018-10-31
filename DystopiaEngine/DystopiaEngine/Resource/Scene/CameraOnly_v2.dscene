@@ -1,10 +1,10 @@
 [START_Scene]
 18446744072887468032,CameraOnly_v2,1,[START_START_GO_DATA]
-1586496512,1,Scene Camera,
+1586496512,65,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,0,0,0,0,0,0,1,
+0.700274,0.700274,1,-7.1428,71.8482,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -13,8 +13,17 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Camera]
-1586497536,0,1586496512,
+1586497536,0,1586496512,0,0,
 [END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+1583297024,536870913,18446744071869242368,..\DystopiaEngine\Resource\Editor\red_circle.png,
+[END_Renderer]
 
 [END_Component End]
 [START_ComponentDonor]
@@ -38,5 +47,19 @@
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+8,[START_str]
+ChangeAudio,0,[START_str]
+CharacterController,0,[START_str]
+Fireball,0,[START_str]
+FollowTarget,0,[START_str]
+Goblin,0,[START_str]
+Missle,0,[START_str]
+Parallax,0,[START_str]
+PlayerAttackTrigger,0,
+[END_BEHAVIOUR_SYSTEM_BLOCK]
 
 [END_Scene]

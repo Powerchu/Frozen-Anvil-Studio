@@ -332,11 +332,9 @@ namespace Dystopia
 		{
 			if (tInput->IsKeyTriggered("Run Left") || tInput->IsKeyTriggered("Run Right"))
 			{
-				if (mpBody->GetLinearVelocity().Magnitude() > 50.0F) // moving
-				{	
-					s_rend->SetSpeed(0.080F);
-					s_rend->SetAnimation("Running");
-				}
+				s_rend->SetSpeed(0.080F);
+				s_rend->SetAnimation("Running");
+				
 			}
 
 			if (tInput->IsKeyReleased("Run Left") || tInput->IsKeyReleased("Run Right"))

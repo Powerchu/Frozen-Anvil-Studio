@@ -317,12 +317,13 @@ namespace Dystopia
 		_out << mbIsStatic;				// Static State
 		_out << mbIsAwake;				// Awake State
 		_out << mbCanSleep;				// Can Sleep Boolean
-		_out << mPhysicsType;
+		_out << static_cast<int>(mPhysicsType);
 		_out.InsertEndBlock("RigidBody");
 	}
 
 	void RigidBody::Unserialise(TextSerialiser & _in)
 	{
+		int type;
 		//int physicsType;
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
@@ -339,9 +340,10 @@ namespace Dystopia
 		_in >> mbIsStatic;				// Static State
 		_in >> mbIsAwake;				// Awake State
 		_in >> mbCanSleep;				// Can Sleep Boolean
-		_in >> mPhysicsType;
+		_in >> type;
 		_in.ConsumeEndBlock();
 
+		mPhysicsType = static_cast<PhysicsType>(type);
 	}
 
 	void RigidBody::DebugPrint()

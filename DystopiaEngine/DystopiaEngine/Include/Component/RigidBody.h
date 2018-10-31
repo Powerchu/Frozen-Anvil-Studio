@@ -70,8 +70,8 @@ namespace Dystopia
 		enum PhysicsType
 		{
 			eDynamicBody = 0,		// fixed timestep frame checking for collision
-			eKinematicBody,		// dynamic objects that will not be pushed around
-			eStaticBody	// continuous checking for collision
+			eKinematicBody,			// dynamic objects that will not be pushed around
+			eStaticBody				// continuous checking for collision
 		};
 		//~RigidBody(void);
 
