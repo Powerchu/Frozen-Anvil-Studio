@@ -40,7 +40,6 @@ namespace Dystopia
 
 		void Init() override
 		{
-			DEBUG_PRINT(eLog::MESSAGE, "CheckDist");
 			mTarget = mpBlackboard->getVector("Target");
 			mOwner = mpBlackboard->getVector("Owner");
 			mpOwnerObj = mpBlackboard->getGameObj("Owner");
@@ -102,7 +101,7 @@ namespace Dystopia
 		void Init() override
 		{
 			mfHealth = mpBlackboard->getInt("Health");
-			DEBUG_PRINT(eLog::MESSAGE, "CheckHealth");
+			//DEBUG_PRINT(eLog::MESSAGE, "CheckHealth");
 		}
 
 		eStatus Update() override
@@ -130,7 +129,7 @@ namespace Dystopia
 		{
 			mbIsFacingRight = mpBlackboard->getBool("IsFacingRight");
 			myRigid = mpBlackboard->getGameObj("Owner")->GetComponent<RigidBody>();
-			DEBUG_PRINT(eLog::MESSAGE, "ChaseEnemy");
+			//DEBUG_PRINT(eLog::MESSAGE, "ChaseEnemy");
 		}
 
 		eStatus Update() override
@@ -165,7 +164,7 @@ namespace Dystopia
 			mTarget = mpBlackboard->getVector("Target");
 			mOwner = mpBlackboard->getVector("Owner");
 			my_rigid = mpBlackboard->getGameObj("Owner")->GetComponent<RigidBody>();
-			DEBUG_PRINT(eLog::MESSAGE, "RunAway");
+			//DEBUG_PRINT(eLog::MESSAGE, "RunAway");
 		}
 
 		eStatus Update() override

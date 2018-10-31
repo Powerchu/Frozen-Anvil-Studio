@@ -60,7 +60,7 @@ namespace Dystopia
 				.end()
 				.leaf<RunAway>(blackboard)
 			.end()
-		.Build(bTree);
+		.Build(bTree); 
 	}
 
 	void Goblin::Update(const float _fDeltaTime)

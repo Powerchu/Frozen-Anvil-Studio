@@ -469,6 +469,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eENTER:
 			case EGUI::eDragStatus::eTABBED:
 				EGUI::GetCommandHND()->EndRecording();
+				Awake();
 				break;
 			default:
 				break;
@@ -489,7 +490,7 @@ namespace Dystopia
 				auto& c = mVertices[i];
 
 				EGUI::Display::Label("	Vertex");
-				auto arrResult = EGUI::Display::VectorFields("	 ", &(c.mPosition), 0.01f, -FLT_MAX, FLT_MAX);
+				auto arrResult = EGUI::Display::VectorFields("	 ", &mVertices[i].mPosition, 0.01f, -FLT_MAX, FLT_MAX);
 				for (auto &e : arrResult)
 				{
 					switch (e)
@@ -498,13 +499,14 @@ namespace Dystopia
 					case EGUI::eDragStatus::eDRAGGING:
 						break;
 					case EGUI::eDragStatus::eSTART_DRAG:
-						//EGUI::GetCommandHND()->StartRecording<Convex>(mnOwner, &(c.mPosition));
+						//EGUI::GetCommandHND()->StartRecording<Convex>(mnOwner, &Convex::mVertices[i].mPosition);
 						break;
 					case EGUI::eDragStatus::eDEACTIVATED:
 					case EGUI::eDragStatus::eEND_DRAG:
 					case EGUI::eDragStatus::eENTER:
 					case EGUI::eDragStatus::eTABBED:
 						//EGUI::GetCommandHND()->EndRecording();
+						Awake();
 						break;
 					default:
 						break;

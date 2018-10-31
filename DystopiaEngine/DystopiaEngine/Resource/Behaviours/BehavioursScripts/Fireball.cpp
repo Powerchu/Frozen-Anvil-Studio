@@ -66,7 +66,8 @@ namespace Dystopia
 			//const char * name = ptr->Get
 			const char * name = ptr->GetNamePtr();
 			if(strcmp(name,"PlayerAttackTrig") &&
-			   strcmp(name, "Fireball")&& strcmp(name, "Missle"))
+			   strcmp(name, "Fireball")&& strcmp(name, "Missle")
+			   && strcmp(name, "AudioTrig"))
 			{
 				GetOwner()->Destroy();
 			}
@@ -75,17 +76,7 @@ namespace Dystopia
 
 	void Dystopia::Fireball::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
-		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_colEvent.mOtherID);
-		if(ptr)
-		{
-			//const char * name = ptr->Get
-			const char * name = ptr->GetNamePtr();
-			if(strcmp(name,"PlayerAttackTrig") &&
-			   strcmp(name, "Fireball") && strcmp(name, "Missle"))
-			{
-				GetOwner()->Destroy();
-			}
-		}
+	
 	}
 
 	void Dystopia::Fireball::OnCollisionExit(const CollisionEvent& _colEvent)
@@ -101,7 +92,8 @@ namespace Dystopia
 			//const char * name = ptr->Get
 			const char * name = ptr->GetNamePtr();
 			if(strcmp(name,"PlayerAttackTrig") &&
-			   strcmp(name, "Fireball")&& strcmp(name, "Missle"))
+			   strcmp(name, "Fireball")&& strcmp(name, "Missle")
+			   && strcmp(name, "AudioTrig"))
 			{
 				GetOwner()->Destroy();
 			}
@@ -110,17 +102,7 @@ namespace Dystopia
 
 	void Dystopia::Fireball::OnTriggerStay(const GameObject * _obj)
 	{
-		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_obj->GetID());
-		if(ptr)
-		{
-			//const char * name = ptr->Get
-			const char * name = ptr->GetNamePtr();
-			if(strcmp(name,"PlayerAttackTrig") &&
-			   strcmp(name, "Fireball")&& strcmp(name, "Missle"))
-			{
-				GetOwner()->Destroy();
-			}
-		}
+	
 	}
 
 	void Dystopia::Fireball::OnTriggerExit(const GameObject * _obj)

@@ -19,7 +19,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/DebugAssert.h"
 
 #include "Component/AudioSource.h"
+#include "Component/CharacterController.h"
 #include "Object/GameObject.h"
+
 
 namespace Dystopia
 {
@@ -76,12 +78,15 @@ namespace Dystopia
 
 	void Dystopia::ChangeAudio::OnTriggerEnter(const GameObject * _obj)
 	{
+		if (_obj->GetComponent<CharacterController>() == nullptr)
+			return;
+		
 		auto audioSrc = GetOwner()->GetComponent<AudioSource>();
 		if (audioSrc)
-		{
+		{  
 			audioSrc->ChangeAudio("Attack On Titan OP 1.mp3");
 			audioSrc->Play();
-		}
+		} 
 	}
 
 	void Dystopia::ChangeAudio::OnTriggerStay(const GameObject * _obj)
@@ -90,6 +95,8 @@ namespace Dystopia
 
 	void Dystopia::ChangeAudio::OnTriggerExit(const GameObject * _obj)
 	{
+		if (_obj->GetComponent<CharacterController>() == nullptr)
+			return;
 		auto audioSrc = GetOwner()->GetComponent<AudioSource>();
 		if (audioSrc)
 		{

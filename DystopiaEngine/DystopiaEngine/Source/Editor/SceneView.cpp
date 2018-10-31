@@ -466,7 +466,7 @@ namespace Dystopia
 		unsigned int size = static_cast<unsigned int>(_arr.size());
 		for (auto& obj : _arr)
 		{
-			const auto pos = obj->GetComponent<Transform>()->GetPosition();
+			const auto pos = obj->GetComponent<Transform>()->GetGlobalPosition();
 			avgPos.x = avgPos.x + pos.x;
 			avgPos.y = avgPos.y + pos.y;
 		}
@@ -481,7 +481,7 @@ namespace Dystopia
 		switch (mCurrGizTool)
 		{
 		case eTRANSLATE:
-			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 0.5f, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (auto& obj : _arr)
@@ -498,7 +498,7 @@ namespace Dystopia
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 0.5f, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (auto& obj : _arr)
@@ -515,7 +515,7 @@ namespace Dystopia
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 0.5f, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (auto& obj : _arr)
@@ -535,13 +535,13 @@ namespace Dystopia
 			break;
 
 		case eSCALE:
-			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 0.5f, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (auto& obj : _arr)
 				{
 					auto cScale = obj->GetComponent<Transform>()->GetGlobalScale();
-					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y, cScale.z, cScale.w });
+					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX*scale.x, cScale.y, cScale.z, cScale.w });
 				}
 				mClearSelection = false;
 				break;
@@ -552,13 +552,13 @@ namespace Dystopia
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.5f, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (auto& obj : _arr)
 				{
 					auto cScale = obj->GetComponent<Transform>()->GetGlobalScale();
-					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY, cScale.z, cScale.w });
+					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY*scale.y, cScale.z, cScale.w });
 				}
 				mClearSelection = false;
 				break;
@@ -569,13 +569,13 @@ namespace Dystopia
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 0.5f, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (auto& obj : _arr)
 				{
 					auto cScale = obj->GetComponent<Transform>()->GetGlobalScale();
-					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + changeX, cScale.z, cScale.w });
+					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX * scale.x, cScale.y + changeX * scale.y, cScale.z, cScale.w });
 				}
 				mClearSelection = false;
 				break;
@@ -593,9 +593,11 @@ namespace Dystopia
 
 	void SceneView::DrawGizmoSingle(GameObject& obj)
 	{
-		Math::Pt3D curPos = obj.GetComponent<Transform>()->GetPosition();
-		Math::Vec4 cScale = obj.GetComponent<Transform>()->GetGlobalScale();
-		Math::Vec2 screenPos = GetWorldToScreen(curPos);
+		const Math::Pt3D curPos = obj.GetComponent<Transform>()->GetGlobalPosition();
+		const Math::Pt3D curPosLocal = obj.GetComponent<Transform>()->GetPosition();
+		const Math::Vec4 cScale = obj.GetComponent<Transform>()->GetGlobalScale();
+		const Math::Vec4 cScaleLocal = obj.GetComponent<Transform>()->GetScale();
+		const Math::Vec2 screenPos = GetWorldToScreen(curPos);
 		float changeX = 0;
 		float changeY = 0;
 		static float ratio = 0;
@@ -605,10 +607,10 @@ namespace Dystopia
 		switch (mCurrGizTool)
 		{
 		case eTRANSLATE:
-			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 0.5F, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX * scale.x, curPos.y, curPos.z, curPos.w });
+				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPosLocal.x + changeX * scale.x, curPosLocal.y, curPosLocal.z, curPosLocal.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -618,10 +620,10 @@ namespace Dystopia
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 0.5F, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x, curPos.y + changeY * scale.y, curPos.z, curPos.w });
+				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPosLocal.x, curPosLocal.y + changeY * scale.y, curPosLocal.z, curPosLocal.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -631,10 +633,10 @@ namespace Dystopia
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 0.5, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX * scale.x, curPos.y + changeY * scale.y, curPos.z, curPos.w });
+				obj.GetComponent<Transform>()->SetPosition(Math::Pt3D{ curPosLocal.x + changeX * scale.x, curPosLocal.y + changeY * scale.y, curPosLocal.z, curPosLocal.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -647,10 +649,10 @@ namespace Dystopia
 			break;
 
 		case eSCALE:
-			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 0.5, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y, cScale.z, cScale.w });
+				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScaleLocal.x + changeX* scale.x, cScaleLocal.y, cScaleLocal.z, cScaleLocal.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -660,10 +662,10 @@ namespace Dystopia
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.5, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY, cScale.z, cScale.w });
+				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScaleLocal.x, cScaleLocal.y + changeY* scale.y, cScaleLocal.z, cScaleLocal.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -673,11 +675,11 @@ namespace Dystopia
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 0.5, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				changeX += changeY;
-				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + ratio * changeX, cScale.z, cScale.w });
+				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScaleLocal.x + changeX* scale.x, cScaleLocal.y + ratio * changeX*scale.x, cScaleLocal.z, cScaleLocal.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
