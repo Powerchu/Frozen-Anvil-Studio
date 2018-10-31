@@ -207,7 +207,7 @@ void Dystopia::Renderer::TextureField()
 		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
 
 		EGUI::SameLine();
-		if (EGUI::Display::Button("Auto", Math::Vec2{ 35, 15 }))
+		if (EGUI::Display::Button("Auto", Math::Vec2{ 35, 20 }))
 		{
 			auto w = static_cast<float>(mpTexture->GetWidth());
 			auto h = static_cast<float>(mpTexture->GetHeight());

@@ -74,6 +74,7 @@ void Dystopia::SpriteRenderer::Awake(void)
 void Dystopia::SpriteRenderer::Init(void)
 {
 	Renderer::Init();
+	CheckAtlas();
 }
 
 void Dystopia::SpriteRenderer::Draw(void) const noexcept
@@ -99,6 +100,8 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 {
 	//if (!GetTexture())
 	//	RemoveAtlas();
+
+	CheckAtlas();
 
 	if (mpAtlas && mbPlay && (mnID < mAnimations.size()))
 	{
@@ -387,6 +390,77 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	}
 	EGUI::PopLeftAlign();
 	*/
+	EGUI::PushLeftAlign(80);
+	if (EGUI::Display::CheckBox("Play", &mbPlay))
+	{
+		EGUI::GetCommandHND()->InvokeCommand<SpriteRenderer>(mnOwner, &SpriteRenderer::mbPlay, !mbPlay);
+	}
+	switch (EGUI::Display::DragFloat("Speed", &mfFrameTime, 0.01f, 0.016f, 1.f))
+	{
+	case EGUI::eDragStatus::eSTART_DRAG:
+		EGUI::GetCommandHND()->StartRecording<SpriteRenderer>(mnOwner, &SpriteRenderer::mfFrameTime);
+		break;
+	default:
+	case EGUI::eDragStatus::eNO_CHANGE:
+	case EGUI::eDragStatus::eDRAGGING:
+		break;
+	case EGUI::eDragStatus::eEND_DRAG:
+	case EGUI::eDragStatus::eTABBED:
+	case EGUI::eDragStatus::eDEACTIVATED:
+	case EGUI::eDragStatus::eENTER:
+		EGUI::GetCommandHND()->EndRecording();
+		break;
+	}
+	if (EGUI::Display::Button("Add Anim", Math::Vec2{ 80.f, 20.f }))
+	{
+		AddDefaultAnim();
+	}
+
+	int toRemove = -1;
+	for (unsigned int i = 0; i < mAnimations.size(); i++)
+	{
+		EGUI::PushID(i);
+		bool open = EGUI::Display::StartTreeNode("Animation_" + std::to_string(i));
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (EGUI::Display::SelectableTxt("Remove"))
+				toRemove = i;
+			ImGui::EndPopup();
+		}
+		if (open)
+		{
+			EGUI::Indent(20);
+			EditAnim(mAnimations[i]);
+			EGUI::UnIndent(20);
+			EGUI::Display::EndTreeNode();
+		}
+		EGUI::PopID();
+	}
+	if (toRemove != -1)
+	{
+		mAnimations.FastRemove(toRemove);
+		mnID = (mnID == toRemove) ? 0 : mnID;
+	}
+	EGUI::PopLeftAlign();
+#endif
+}
+
+void Dystopia::SpriteRenderer::EditAnim(SpriteSheet& _ss)
+{
+#if EDITOR
+	EGUI::Display::HorizontalSeparator();
+	static constexpr size_t SIZE = 256;
+	char buffer[SIZE];
+	strcpy_s(buffer, _ss.mstrName.c_str());
+	if (EGUI::Display::TextField("Name", buffer, SIZE) && strlen(buffer))
+	{
+		_ss.mstrName = buffer;
+	}
+	EGUI::Display::CheckBox("Loop", &_ss.mbLoop);
+	EGUI::Display::DragInt("Column", &_ss.mnCol, 1, 1, 100);
+	EGUI::Display::DragInt("Rows", &_ss.mnRow, 1, 1, 100);
+	EGUI::Display::DragInt("Start", &_ss.mnStartAt, 0, 1, _ss.mnRow * _ss.mnCol);
+	EGUI::Display::DragInt("End", &_ss.mnCutoff, 0, 1, _ss.mnRow * _ss.mnCol);
 #endif
 }
 
@@ -494,7 +568,9 @@ void Dystopia::SpriteRenderer::SetSpeed(float _speed)
 
 void Dystopia::SpriteRenderer::CheckAtlas(void)
 {
-	if (!GetTexture() && mpAtlas)
+	if (GetTexture() && mpAtlas)
+		return;
+	else if (!GetTexture() && mpAtlas)
 		mpAtlas = nullptr;
 	else if (GetTexture() && !mpAtlas)
 	{
@@ -502,6 +578,18 @@ void Dystopia::SpriteRenderer::CheckAtlas(void)
 		if (!mpAtlas->GetAllSections().size())
 			mpAtlas->AddSection(Math::Vec2{ 0,0 }, GetTexture()->GetWidth(), GetTexture()->GetHeight());
 	}
+}
+
+void Dystopia::SpriteRenderer::AddDefaultAnim(void)
+{
+	SpriteSheet s;
+	s.mstrName = "defualt";
+	s.mnCol = s.mnRow = 1;
+	s.mnCutoff = 0;
+	s.mnStartAt = 0;
+	s.mbLoop = true;
+	s.mnID = 0;
+	mAnimations.Insert(s);
 }
 
 

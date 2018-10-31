@@ -108,8 +108,6 @@ namespace Dystopia
 		//void LoadAnimIntoAtlas(void);
 		//void AddDefaultToAtlas(void);
 
-		void CheckAtlas(void);
-
 		struct SpriteSheet
 		{
 			HashString mstrName;
@@ -122,6 +120,10 @@ namespace Dystopia
 		int mnID, mnCol, mnRow;
 		float mfFrameTime, mfAccTime;
 		bool mbPlay;
+
+		void CheckAtlas(void);
+		void AddDefaultAnim(void);
+		void EditAnim(SpriteSheet&);
 
 	};
 }
