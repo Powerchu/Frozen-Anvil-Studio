@@ -138,11 +138,17 @@ void Dystopia::InputManager::LoadDefaults(void)
 	LoadDefaultUserKeys();
 }
 
-void Dystopia::InputManager::LoadSettings(TextSerialiser&)
+void Dystopia::InputManager::LoadSettings(DysSerialiser_t& _in)
 {
+
 }
 
-void Dystopia::InputManager::MapUserButton(eUserButton , eButton )
+void Dystopia::InputManager::SaveSettings(DysSerialiser_t& _out)
+{
+
+}
+
+void Dystopia::InputManager::MapUserButton(eUserButton _eUserBtn, eButton _button)
 {
 	
 }
@@ -156,11 +162,11 @@ _DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(eButton _Btn) const noex
 	KeyboardState::u32int const * prev_ptr = static_cast<KeyboardState::u32int const *>(mPrevKeyBoardState);
 	KeyboardState::u32int const * curr_ptr = static_cast<KeyboardState::u32int const *>(mKeyBoardState);
 
-	KeyboardState::u32int BitChecker = (0x00000001ui32 << _Btn % (sizeof(KeyboardState::u32int) * 8));
-	KeyboardState::u32int GrpIndex   = _Btn / (sizeof(KeyboardState::u32int) * 8);
+	const KeyboardState::u32int BitChecker = (0x00000001ui32 << _Btn % (sizeof(KeyboardState::u32int) * 8));
+	const KeyboardState::u32int GrpIndex   = _Btn / (sizeof(KeyboardState::u32int) * 8);
 
-	bool prev = !(*(prev_ptr + GrpIndex) & BitChecker);
-	bool cur  = (*(curr_ptr  + GrpIndex) & BitChecker);
+	const bool prev = !(*(prev_ptr + GrpIndex) & BitChecker);
+	const bool cur  = (*(curr_ptr  + GrpIndex) & BitChecker);
 	return prev & cur;
 }
 
@@ -169,8 +175,8 @@ _DLL_EXPORT bool Dystopia::InputManager::IsKeyPressed(eButton _Btn) const noexce
 	KeyboardState::u32int const * prev_ptr = static_cast<KeyboardState::u32int const *>(mPrevKeyBoardState);
 	KeyboardState::u32int const * curr_ptr = static_cast<KeyboardState::u32int const *>(mKeyBoardState);
 
-	KeyboardState::u32int BitChecker = (0x00000001ui32 << _Btn % (sizeof(KeyboardState::u32int) * 8));
-	KeyboardState::u32int GrpIndex   = _Btn / (sizeof(KeyboardState::u32int) * 8);
+	const KeyboardState::u32int BitChecker = (0x00000001ui32 << _Btn % (sizeof(KeyboardState::u32int) * 8));
+	const KeyboardState::u32int GrpIndex   = _Btn / (sizeof(KeyboardState::u32int) * 8);
 
 	return (*(prev_ptr + GrpIndex) & BitChecker) && (*(curr_ptr + GrpIndex) & BitChecker);
 }
@@ -180,8 +186,8 @@ _DLL_EXPORT bool Dystopia::InputManager::IsKeyReleased(eButton _Btn) const noexc
 	KeyboardState::u32int const * prev_ptr = static_cast<KeyboardState::u32int const *>(mPrevKeyBoardState);
 	KeyboardState::u32int const * curr_ptr = static_cast<KeyboardState::u32int const *>(mKeyBoardState);
 
-	KeyboardState::u32int BitChecker = (0x00000001ui32 << _Btn % (sizeof(KeyboardState::u32int) * 8));
-	KeyboardState::u32int GrpIndex = _Btn / (sizeof(KeyboardState::u32int) * 8);
+	const KeyboardState::u32int BitChecker = (0x00000001ui32 << _Btn % (sizeof(KeyboardState::u32int) * 8));
+	const KeyboardState::u32int GrpIndex = _Btn / (sizeof(KeyboardState::u32int) * 8);
 
 	return ((*(prev_ptr + GrpIndex) & BitChecker) && !(*(curr_ptr + GrpIndex) & BitChecker));
 }
@@ -287,6 +293,10 @@ Math::Vector2 Dystopia::InputManager::GetMouseDelta(void) const noexcept
 float Dystopia::InputManager::GetMouseWheel(void) const noexcept
 {
 	return mMouseInput.mnWheel * MOUSEWHEEL_SCALE;
+}
+
+void Dystopia::InputManager::EditorUI()
+{
 }
 
 Dystopia::InputManager::KeyBinding& Dystopia::InputManager::KeyBinding::operator = (eButton _nBtn)

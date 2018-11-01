@@ -60,8 +60,9 @@ namespace Dystopia
 
 		void PostUpdate() override;
 
-		void LoadDefaults(void);
-		void LoadSettings(TextSerialiser&);
+		void LoadDefaults(void) override;
+		void LoadSettings(DysSerialiser_t&) override;
+		void SaveSettings(DysSerialiser_t&) override;
 
 		_DLL_EXPORT void  MapUserButton(eUserButton, eButton);
 
@@ -91,6 +92,8 @@ namespace Dystopia
 		_DLL_EXPORT Math::Vector2 GetMousePosition(const Window&) const;
 		_DLL_EXPORT Math::Vector2 GetMouseDelta(void) const noexcept;
 		_DLL_EXPORT float GetMouseWheel(void) const noexcept;
+
+		void EditorUI(void);
 
 	private:
 		struct KeyBinding

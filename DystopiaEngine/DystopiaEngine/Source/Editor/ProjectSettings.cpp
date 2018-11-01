@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Physics/PhysicsSystem.h"
+#include "System/Input/InputSystem.h"
 
 
 Dystopia::ProjectSettings* gpInstance = 0;
@@ -28,10 +29,11 @@ Dystopia::ProjectSettings* Dystopia::ProjectSettings::GetInstance(void)
 }
 
 Dystopia::ProjectSettings::ProjectSettings(void)
-	: EditorTab{ false },
-	mLabel{ "Project Settings" },
-	mpGfxSys{ nullptr },
-	mpPhySys{ nullptr }
+	: EditorTab{false},
+	  mLabel{"Project Settings"},
+	  mpGfxSys{nullptr},
+	  mpPhySys{nullptr}, 
+	  mpInputSys{nullptr}
 {
 }
 
@@ -43,6 +45,7 @@ void Dystopia::ProjectSettings::Init(void)
 {
 	mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
 	mpPhySys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
+	mpInputSys = EngineCore::GetInstance()->GetSystem<InputManager>();
 }
 
 void Dystopia::ProjectSettings::Update(const float&)

@@ -55,7 +55,7 @@ namespace Dystopia
 
 		void Update(float) override;		// Draws the currently bounded window
 		void PostUpdate(void) override;
-		void Shutdown(void);
+		void Shutdown(void) override;
 
 		void SetGamma(float) noexcept;
 		float GetGamma(void) noexcept;
