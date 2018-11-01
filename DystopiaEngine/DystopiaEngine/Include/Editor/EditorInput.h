@@ -14,13 +14,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_INPUT_H_
 #define _EDITOR_INPUT_H_
 #include "EditorHotkeys.h"
+#include "../EditorSystem.h"
 
 namespace Dystopia
 {
 	class InputManager;
-	class EditorInput
+	class EditorInput : ::Editor::EditorSystem
 	{
 	public:
+		void Load(void) override;
+		void StartFrame(void) override;
+		void Update(float) override;
+		void EndFrame(void) override;
+		void Message(::Editor::eEMessage) override;
+		void SaveSettings(Dystopia::TextSerialiser& _out) const override;
+		void LoadSettings(Dystopia::TextSerialiser& _in) override;
+
 		EditorInput(void);
 		bool Init(void);
 		void Poll(void);

@@ -16,6 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 
+#include "IO/TextSerialiser.h"
+
 Dystopia::EditorInput::EditorInput(void)
 	: mpInput{ new InputManager }
 {
@@ -73,5 +75,41 @@ Dystopia::InputManager* Dystopia::EditorInput::Get(void)
 {
 	return mpInput;
 }
+
+void Dystopia::EditorInput::Load(void)
+{
+
+}
+
+void Dystopia::EditorInput::StartFrame(void)
+{
+
+}
+
+void Dystopia::EditorInput::Update(float)
+{
+
+}
+
+void Dystopia::EditorInput::EndFrame(void)
+{
+
+}
+
+void Dystopia::EditorInput::Message(Editor::eEMessage)
+{
+
+}
+
+void Dystopia::EditorInput::SaveSettings(Dystopia::TextSerialiser& _out) const
+{
+
+}
+
+void Dystopia::EditorInput::LoadSettings(Dystopia::TextSerialiser& _in)
+{
+
+}
+
 
 #endif //EDITOR

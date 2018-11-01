@@ -28,6 +28,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="EditorMain.cpp" />
+    <ClCompile Include="EInput.cpp" />
     <ClCompile Include="Source\Editor\EditorInput.cpp" />
     <ClCompile Include="Source\Editor\EditorProc.cpp" />
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
@@ -133,6 +135,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="EditorMain.h" />
+    <ClInclude Include="EditorMessages.h" />
+    <ClInclude Include="EditorPanel.h" />
+    <ClInclude Include="EditorStates.h" />
+    <ClInclude Include="EditorSystem.h" />
+    <ClInclude Include="EInput.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h" />
     <ClInclude Include="Include\Editor\EditorHotkeys.h" />

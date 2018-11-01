@@ -14,7 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_PROCESS_H_
 #define _EDITOR_PROCESS_H_
 #include "DataStructure/HashString.h"
-#include "DataStructure/AutoArray.h"
 
 typedef struct HWND__* HWND;
 namespace Dystopia

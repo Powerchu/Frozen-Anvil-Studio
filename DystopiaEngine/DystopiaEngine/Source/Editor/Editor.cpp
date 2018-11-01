@@ -73,6 +73,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorProc.h"
 #include "Editor/EditorInput.h"
 
+#include "../EditorMain.h"
+#include "../EInput.h"
+
 namespace
 {
 	static const std::string DYSTOPIA_EDITOR_SETTINGS = "EditorSettings.dyst";
@@ -92,18 +95,29 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
-	editor->Init();
-	while (!editor->IsClosing())
+	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
+	pMain->Init();
+	auto p = pMain->GetSystem<Editor::EInput>();
+	while (!pMain->IsClosing())
 	{
-		editor->StartFrame();
-	
-		editor->UpdateFrame(editor->GetDeltaTime());
-		
-		editor->EndFrame();
+		pMain->StartFrame();
+		pMain->Update();
+		pMain->EndFrame();
 	}
-	editor->Shutdown();
-	delete editor;
+	pMain->Shutdown();
+
+	//Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
+	//editor->Init();
+	//while (!editor->IsClosing())
+	//{
+	//	editor->StartFrame();
+	//
+	//	editor->UpdateFrame(editor->GetDeltaTime());
+	//	
+	//	editor->EndFrame();
+	//}
+	//editor->Shutdown();
+	//delete editor;
 	return 0;
 }
 
