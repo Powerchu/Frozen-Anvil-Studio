@@ -1,9 +1,22 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	EInput.h
+\author Digipen (100%)
+\par    email: t.shannon\@digipen.edu
+\brief
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
+#if EDITOR
 #ifndef _E_INPUT_H_
 #define _E_INPUT_H_
 #include "DataStructure/AutoArray.h"
 
-#include "../EditorSystem.h"
-#include "../EHotkey.h"
+#include "Editor/EditorSystem.h"
+#include "Editor/EHotkey.h"
 
 namespace Dystopia
 {
@@ -107,11 +120,10 @@ bool Editor::EInput::HKDerived<N>::Occured(Dystopia::InputManager *mpInputMgr) c
 	}
 	return true;
 }
-
-
-
-
 #endif //_E_INPUT_H_
+#endif
+
+
 
 
 

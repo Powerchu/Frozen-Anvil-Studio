@@ -316,14 +316,14 @@
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp">
       <Filter>Editor\Main\Scripts</Filter>
     </ClCompile>
-    <ClCompile Include="EInput.cpp">
-      <Filter>Editor\Main\Systems\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="EditorMain.cpp">
-      <Filter>Editor\Main</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\EditorInput.cpp">
       <Filter>Editor\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorMain.cpp">
+      <Filter>Editor\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EInput.cpp">
+      <Filter>Editor\Main\Systems\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -870,32 +870,32 @@
     <ClInclude Include="Include\Editor\ScriptFormatter.h">
       <Filter>Editor\Main\Scripts</Filter>
     </ClInclude>
-    <ClInclude Include="EditorSystem.h">
-      <Filter>Editor\Main\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="EditorPanel.h">
-      <Filter>Editor\Main\Tabs</Filter>
-    </ClInclude>
-    <ClInclude Include="EditorStates.h">
-      <Filter>Editor\Main\States</Filter>
-    </ClInclude>
-    <ClInclude Include="EditorMessages.h">
-      <Filter>Editor\Main\Message</Filter>
-    </ClInclude>
-    <ClInclude Include="EInput.h">
-      <Filter>Editor\Main\Systems\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="EditorMain.h">
-      <Filter>Editor\Main</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\EditorHotkeys.h">
       <Filter>Editor\Editor</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\EditorInput.h">
       <Filter>Editor\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="EHotkey.h">
+    <ClInclude Include="Include\Editor\EditorStates.h">
+      <Filter>Editor\Main\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorPanel.h">
+      <Filter>Editor\Main\Tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorMain.h">
+      <Filter>Editor\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorMessages.h">
+      <Filter>Editor\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EInput.h">
       <Filter>Editor\Main\Systems\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EHotkey.h">
+      <Filter>Editor\Main\Systems\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorSystem.h">
+      <Filter>Editor\Main\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,27 @@
-#include "EInput.h"
+/* HEADER *********************************************************************************/
+/*!
+\file	EInput.cpp
+\author Digipen (100%)
+\par    email: t.shannon\@digipen.edu
+\brief
 
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
+#if EDITOR
+#include "Editor/EInput.h"
+#include "Editor/EditorMain.h"
+
+#include "System/Driver/Driver.h"
 #include "System/Input/InputSystem.h"
+#include "System/Window/Window.h"
+#include "System/Window/WindowManager.h"
+
+#include "Utility/DebugAssert.h"
+
+#include <Windows.h>
 
 Editor::EInput::EInput(void)
 	: mpInputMgr{ static_cast<Dystopia::InputManager*>(Dystopia::DefaultAllocator<Dystopia::InputManager>::ConstructAlloc()) }
@@ -23,7 +44,8 @@ bool Editor::EInput::Init(void)
 
 void Editor::EInput::StartFrame(void)
 {
-	mpInputMgr->Update(0.016f);
+	if (IsIconic(Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetWindowHandle()))
+		mpInputMgr->Update(0.016f);
 }
 
 void Editor::EInput::Update(float _f)
@@ -67,10 +89,9 @@ Dystopia::InputManager * const Editor::EInput::GetInputManager(void) const
 
 bool Editor::EInput::IsHotkeyTriggered(size_t _id) const
 {
-	DEBUG_ASSERT(_id >= mArrHotkeyPtrs.size(), "Out of range");
-
 	return mArrHotkeyPtrs[_id]->Occured(mpInputMgr);
 }
 
+#endif
 
 

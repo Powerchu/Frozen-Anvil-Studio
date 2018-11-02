@@ -28,10 +28,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
-    <ClCompile Include="EditorMain.cpp" />
-    <ClCompile Include="EInput.cpp" />
     <ClCompile Include="Source\Editor\EditorInput.cpp" />
+    <ClCompile Include="Source\Editor\EditorMain.cpp" />
     <ClCompile Include="Source\Editor\EditorProc.cpp" />
+    <ClCompile Include="Source\Editor\EInput.cpp" />
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
     <ClCompile Include="Source\Editor\SpriteEditor.cpp" />
@@ -135,14 +135,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
-    <ClInclude Include="EditorMain.h" />
-    <ClInclude Include="EditorMessages.h" />
-    <ClInclude Include="EditorPanel.h" />
-    <ClInclude Include="EditorStates.h" />
-    <ClInclude Include="EditorSystem.h" />
-    <ClInclude Include="EHotkey.h" />
-    <ClInclude Include="EInput.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
+    <ClInclude Include="Include\Editor\EditorMain.h" />
+    <ClInclude Include="Include\Editor\EditorMessages.h" />
+    <ClInclude Include="Include\Editor\EditorPanel.h" />
+    <ClInclude Include="Include\Editor\EditorStates.h" />
+    <ClInclude Include="Include\Editor\EditorSystem.h" />
+    <ClInclude Include="Include\Editor\EHotkey.h" />
+    <ClInclude Include="Include\Editor\EInput.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h" />
     <ClInclude Include="Include\Editor\EditorHotkeys.h" />
     <ClInclude Include="Include\Editor\EditorInput.h" />

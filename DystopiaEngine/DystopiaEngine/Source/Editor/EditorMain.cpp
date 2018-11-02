@@ -1,6 +1,18 @@
-#include "EditorMain.h"
+/* HEADER *********************************************************************************/
+/*!
+\file	EditorMain.cpp
+\author Digipen (100%)
+\par    email: t.shannon\@digipen.edu
+\brief
 
-#include "EInput.h"
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
+#if EDITOR
+#include "Editor/EditorMain.h"
+#include "Editor/EInput.h"
 
 #include "Allocator/DefaultAlloc.h"
 
@@ -59,14 +71,14 @@ void Editor::EditorMain::StartFrame(void)
 	mDelta = mTimer.Elapsed();
 	mTimer.Lap();
 
+	StateSpecifics(mCurState);
+
 	for (auto& s : mArrSystems)
 		s->StartFrame();
 }
 
 void Editor::EditorMain::Update(void)
 {
-	StateSpecifics(mCurState);
-
 	for (auto& s : mArrSystems)
 		s->Update(mDelta);
 
@@ -139,6 +151,10 @@ void Editor::EditorMain::StateSpecifics(eState _s)
 {
 	switch (_s)
 	{
+	case eState::LAUNCHER:
+		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->Update(mDelta);
+		break;
+
 	case eState::MAIN :
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->Update(mDelta);
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::Profiler>()->Update(mDelta);
@@ -150,3 +166,9 @@ void Editor::EditorMain::StateSpecifics(eState _s)
 		break;
 	}
 }
+#endif
+
+
+
+
+

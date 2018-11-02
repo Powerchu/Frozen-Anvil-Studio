@@ -1,3 +1,16 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	EditorMain.h
+\author Digipen (100%)
+\par    email: t.shannon\@digipen.edu
+\brief
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
+#if EDITOR
 #ifndef _EDITOR_MAIN_H_
 #define _EDITOR_MAIN_H_
 #include "Globals.h"
@@ -9,9 +22,9 @@
 
 #include "System/Time/Timer.h"
 
-#include "EditorStates.h"
-#include "EditorSystem.h"
-#include "EditorPanel.h"
+#include "Editor/EditorStates.h"
+#include "Editor/EditorSystem.h"
+#include "Editor/EditorPanel.h"
 
 namespace Editor
 {
@@ -80,7 +93,7 @@ inline T* const Editor::EditorMain::GetPanel(void) const
 	return static_cast<T*>(mArrPanels[type::result::value]);
 }
 
-
+#endif
 #endif 
 
 
