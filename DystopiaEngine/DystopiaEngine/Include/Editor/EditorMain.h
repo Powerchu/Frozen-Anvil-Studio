@@ -1,9 +1,13 @@
 #ifndef _EDITOR_MAIN_H_
 #define _EDITOR_MAIN_H_
+#include "Globals.h"
+
 #include "DataStructure/AutoArray.h"
+
 #include "Utility/Meta.h"
 #include "Utility/MetaAlgorithms.h"
-#include "Globals.h"
+
+#include "System/Time/Timer.h"
 
 #include "EditorStates.h"
 #include "EditorSystem.h"
@@ -45,6 +49,7 @@ namespace Editor
 
 	private:
 		EditorMain(void);
+		void StateSpecifics(eState);
 
 		AutoArray<EditorSystem*> mArrSystems;
 		AutoArray<EditorPanel*> mArrPanels;
@@ -52,6 +57,8 @@ namespace Editor
 		eState	mCurState;
 		eState  mNextState;
 		float	mDelta;
+
+		Dystopia::Timer mTimer;
 	};
 }
 

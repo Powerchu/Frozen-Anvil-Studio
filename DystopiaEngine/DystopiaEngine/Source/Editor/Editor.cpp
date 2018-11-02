@@ -73,8 +73,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorProc.h"
 #include "Editor/EditorInput.h"
 
-#include "../EditorMain.h"
-#include "../EInput.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EInput.h"
 
 namespace
 {
@@ -101,7 +101,9 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	while (!pMain->IsClosing())
 	{
 		pMain->StartFrame();
+	
 		pMain->Update();
+	
 		pMain->EndFrame();
 	}
 	pMain->Shutdown();

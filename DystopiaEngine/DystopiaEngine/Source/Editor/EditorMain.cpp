@@ -1,6 +1,14 @@
 #include "EditorMain.h"
+
 #include "EInput.h"
+
 #include "Allocator/DefaultAlloc.h"
+
+#include "System/Driver/Driver.h"
+#include "System/Logger/LoggerSystem.h"
+#include "System/Window/WindowManager.h"
+#include "System/Profiler/Profiler.h"
+#include "System/Behaviour/BehaviourSystem.h"
 
 namespace
 {
@@ -19,7 +27,7 @@ Editor::EditorMain* Editor::EditorMain::GetInstance(void)
 
 Editor::EditorMain::EditorMain(void)
 	: mArrSystems{ MakeAutoArray<EditorSystem*>(Ut::MakeTypeList_t<Ut::TypeList, ESystems>{}) },
-	  mArrPanels {}
+	  mArrPanels { MakeAutoArray<EditorPanel*>(Ut::MakeTypeList_t<Ut::TypeList, EPanels>{}) }
 {
 }
 
@@ -29,25 +37,36 @@ Editor::EditorMain::~EditorMain(void)
 
 void Editor::EditorMain::Init(void)
 {
+	Dystopia::EngineCore::GetInstance()->LoadSettings();
+	Dystopia::EngineCore::GetInstance()->PreInit();
+
 	for (auto& s : mArrSystems)
 		s->Load();
-	for (auto& s : mArrSystems)
-		s->Init();
-
 	for (auto& p : mArrPanels)
 		p->Load();
+
+	Dystopia::EngineCore::GetInstance()->Init();
+	Dystopia::EngineCore::GetInstance()->PostInit();
+
+	for (auto& s : mArrSystems)
+		s->Init();
 	for (auto& p : mArrPanels)
 		p->Init();
 }
 
 void Editor::EditorMain::StartFrame(void)
 {
+	mDelta = mTimer.Elapsed();
+	mTimer.Lap();
+
 	for (auto& s : mArrSystems)
 		s->StartFrame();
 }
 
 void Editor::EditorMain::Update(void)
 {
+	StateSpecifics(mCurState);
+
 	for (auto& s : mArrSystems)
 		s->Update(mDelta);
 
@@ -71,6 +90,8 @@ void Editor::EditorMain::EndFrame(void)
 		for (auto& p : mArrPanels)
 			p->Message(eEMessage::STATE_CHANGED);
 	}
+
+	Dystopia::EngineCore::GetInstance()->PostUpdate();
 }
 
 void Editor::EditorMain::Shutdown(void)
@@ -80,6 +101,18 @@ void Editor::EditorMain::Shutdown(void)
 
 	for (auto& p : mArrPanels)
 		p->Shutdown();
+
+	for (auto& s : mArrSystems)
+		Dystopia::DefaultAllocator<EditorSystem>::DestructFree(s);
+
+	for (auto& p : mArrPanels)
+		Dystopia::DefaultAllocator<EditorPanel>::DestructFree(p);
+
+	mArrSystems.clear();
+	mArrPanels.clear();
+
+	Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::LoggerSystem>()->RedirectOutput(nullptr);
+	Dystopia::EngineCore::GetInstance()->Shutdown();
 }
 
 void Editor::EditorMain::ChangeState(eState e)
@@ -100,4 +133,20 @@ Editor::eState Editor::EditorMain::GetCurState(void) const
 bool Editor::EditorMain::IsClosing(void)
 {
 	return mCurState == eState::EXIT;
+}
+
+void Editor::EditorMain::StateSpecifics(eState _s)
+{
+	switch (_s)
+	{
+	case eState::MAIN :
+		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->Update(mDelta);
+		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::Profiler>()->Update(mDelta);
+		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::BehaviourSystem>()->PollChanges();
+			break;
+	case eState::PLAY:
+		Dystopia::EngineCore::GetInstance()->FixedUpdate();
+		Dystopia::EngineCore::GetInstance()->Update();
+		break;
+	}
 }

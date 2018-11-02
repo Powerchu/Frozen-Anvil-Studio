@@ -316,14 +316,14 @@
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp">
       <Filter>Editor\Main\Scripts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EditorInput.cpp">
-      <Filter>Editor\Main\Systems\Input</Filter>
-    </ClCompile>
     <ClCompile Include="EInput.cpp">
       <Filter>Editor\Main\Systems\Input</Filter>
     </ClCompile>
     <ClCompile Include="EditorMain.cpp">
       <Filter>Editor\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorInput.cpp">
+      <Filter>Editor\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -870,12 +870,6 @@
     <ClInclude Include="Include\Editor\ScriptFormatter.h">
       <Filter>Editor\Main\Scripts</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\EditorInput.h">
-      <Filter>Editor\Main\Systems\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EditorHotkeys.h">
-      <Filter>Editor\Main\Systems\Input</Filter>
-    </ClInclude>
     <ClInclude Include="EditorSystem.h">
       <Filter>Editor\Main\Systems</Filter>
     </ClInclude>
@@ -893,6 +887,15 @@
     </ClInclude>
     <ClInclude Include="EditorMain.h">
       <Filter>Editor\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorHotkeys.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorInput.h">
+      <Filter>Editor\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="EHotkey.h">
+      <Filter>Editor\Main\Systems\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -140,6 +140,7 @@
     <ClInclude Include="EditorPanel.h" />
     <ClInclude Include="EditorStates.h" />
     <ClInclude Include="EditorSystem.h" />
+    <ClInclude Include="EHotkey.h" />
     <ClInclude Include="EInput.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h" />
