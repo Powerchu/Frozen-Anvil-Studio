@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	EditorStates.h
+\file	EditorMain.h
 \author Digipen (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -11,18 +11,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#ifndef _EDITOR_STATE_H_
-#define _EDITOR_STATE_H_
-#include "Editor/EditorStatesTypes.h"
+#ifndef _EDITOR_UI_H_
+#define _EDITOR_UI_H_
 #include "Editor/EditorSystem.h"
+#include "Editor/EditorGLState.h"
+
+#include "DataStructure/HashString.h"
 
 namespace Editor
 {
-	class EditorStates : public EditorSystem
+	class EditorUI : public EditorSystem
 	{
 	public:
-		EditorStates(void);
-		~EditorStates(void);
+		EditorUI(void);
+		~EditorUI(void);
 		void Load(void);
 		bool Init(void);
 		void StartFrame(void);
@@ -34,11 +36,32 @@ namespace Editor
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 
 	private:
-		eState mState;
+		GLState			mGLState;
+		HashString		mGlslVersion;
+		bool			mMouseJustPressed[3];
+		int				mShaderHandle;
+		int				mVertHandle;
+		int				mFragHandle;
+		int				mAttribLocationTex;
+		int				mAttribLocationProjMtx;
+		int				mAttribLocationPosition;
+		int				mAttribLocationUV;
+		int				mAttribLocationColor;
+		unsigned int	mVboHandle;
+		unsigned int	mElementsHandle;
+		unsigned int    mFont;
+
+
+		void StartDock(void);
+		void EndDock(void);
+		void DefaultFont(void);
 	};
 
 }
+
 #endif
 #endif
+
+
 
 

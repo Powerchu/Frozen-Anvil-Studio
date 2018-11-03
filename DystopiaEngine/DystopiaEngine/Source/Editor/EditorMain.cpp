@@ -13,6 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/EditorMain.h"
 #include "Editor/EInput.h"
+#include "Editor/EditorStates.h"
+#include "Editor/EditorUI.h"
 
 #include "Allocator/DefaultAlloc.h"
 
@@ -61,17 +63,18 @@ void Editor::EditorMain::Init(void)
 	Dystopia::EngineCore::GetInstance()->PostInit();
 
 	for (auto& s : mArrSystems)
-		s->Init();
+		if (!s->Init())
+			__debugbreak();
+		
 	for (auto& p : mArrPanels)
-		p->Init();
+		if (!p->Init())
+			__debugbreak();
 }
 
 void Editor::EditorMain::StartFrame(void)
 {
 	mDelta = mTimer.Elapsed();
 	mTimer.Lap();
-
-	StateSpecifics(mCurState);
 
 	for (auto& s : mArrSystems)
 		s->StartFrame();
@@ -147,25 +150,6 @@ bool Editor::EditorMain::IsClosing(void)
 	return mCurState == eState::EXIT;
 }
 
-void Editor::EditorMain::StateSpecifics(eState _s)
-{
-	switch (_s)
-	{
-	case eState::LAUNCHER:
-		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->Update(mDelta);
-		break;
-
-	case eState::MAIN :
-		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->Update(mDelta);
-		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::Profiler>()->Update(mDelta);
-		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::BehaviourSystem>()->PollChanges();
-			break;
-	case eState::PLAY:
-		Dystopia::EngineCore::GetInstance()->FixedUpdate();
-		Dystopia::EngineCore::GetInstance()->Update();
-		break;
-	}
-}
 #endif
 
 

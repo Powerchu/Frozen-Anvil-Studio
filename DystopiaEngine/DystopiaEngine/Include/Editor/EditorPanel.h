@@ -23,7 +23,7 @@ namespace Editor
 	{
 	public:
 		virtual void Load(void) = 0;
-		virtual void Init(void) = 0;
+		virtual bool Init(void) = 0;
 		virtual void Update(float) = 0;
 		virtual void EditorUI(void) = 0;
 		virtual void Shutdown(void) = 0;

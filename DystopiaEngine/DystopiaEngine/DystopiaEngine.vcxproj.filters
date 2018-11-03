@@ -38,13 +38,13 @@
       <Filter>Game Engine\Components\Transform</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependancies\ImGui\imgui.cpp">
-      <Filter>Editor\Main\UI\IMGUI</Filter>
+      <Filter>Editor\Main\Systems\UI\IMGUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependancies\ImGui\imgui_demo.cpp">
-      <Filter>Editor\Main\UI\IMGUI</Filter>
+      <Filter>Editor\Main\Systems\UI\IMGUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependancies\ImGui\imgui_draw.cpp">
-      <Filter>Editor\Main\UI\IMGUI</Filter>
+      <Filter>Editor\Main\Systems\UI\IMGUI</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Window\Window.cpp">
       <Filter>Game Engine\Systems\Window\Window</Filter>
@@ -325,6 +325,15 @@
     <ClCompile Include="Source\Editor\EInput.cpp">
       <Filter>Editor\Main\Systems\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\EditorStates.cpp">
+      <Filter>Editor\Main\Systems\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorUI.cpp">
+      <Filter>Editor\Main\Systems\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorGLState.cpp">
+      <Filter>Editor\Main\Systems\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -415,13 +424,13 @@
       <Filter>Game Engine\Components\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependancies\ImGui\imconfig.h">
-      <Filter>Editor\Main\UI\IMGUI</Filter>
+      <Filter>Editor\Main\Systems\UI\IMGUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependancies\ImGui\imgui.h">
-      <Filter>Editor\Main\UI\IMGUI</Filter>
+      <Filter>Editor\Main\Systems\UI\IMGUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependancies\ImGui\imgui_internal.h">
-      <Filter>Editor\Main\UI\IMGUI</Filter>
+      <Filter>Editor\Main\Systems\UI\IMGUI</Filter>
     </ClInclude>
     <ClInclude Include="Include\Object\ObjectFlags.h">
       <Filter>Game Engine\Objects</Filter>
@@ -877,7 +886,7 @@
       <Filter>Editor\Editor</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\EditorStates.h">
-      <Filter>Editor\Main\States</Filter>
+      <Filter>Editor\Main\Systems\States</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\EditorPanel.h">
       <Filter>Editor\Main\Tabs</Filter>
@@ -896,6 +905,15 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\EditorSystem.h">
       <Filter>Editor\Main\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorStatesTypes.h">
+      <Filter>Editor\Main\Systems\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorUI.h">
+      <Filter>Editor\Main\Systems\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorGLState.h">
+      <Filter>Editor\Main\Systems\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1277,12 +1295,6 @@
     <Filter Include="Editor\Main\Systems\Admin">
       <UniqueIdentifier>{6629f816-ff64-45c9-b0b2-b3319d6f29e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Main\UI">
-      <UniqueIdentifier>{e5be29d1-3ba0-4e7b-bfb8-796caf454a35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Main\UI\IMGUI">
-      <UniqueIdentifier>{adfd2fea-e1aa-4980-9366-739bf3f0446f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\Main\Tabs">
       <UniqueIdentifier>{8c401a85-5a7c-4863-a633-200176588279}</UniqueIdentifier>
     </Filter>
@@ -1298,8 +1310,14 @@
     <Filter Include="Editor\Main\Message">
       <UniqueIdentifier>{f3bc4504-a540-4705-8b9e-75a3355fa867}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Main\States">
+    <Filter Include="Editor\Main\Systems\States">
       <UniqueIdentifier>{e7ce7abf-48db-454e-a9e5-407045757558}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Systems\UI">
+      <UniqueIdentifier>{4f25d49b-e6b4-41cd-9cbd-85c8a23f1e52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Systems\UI\IMGUI">
+      <UniqueIdentifier>{adfd2fea-e1aa-4980-9366-739bf3f0446f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

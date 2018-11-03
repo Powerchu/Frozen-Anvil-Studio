@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Time/Timer.h"
 
-#include "Editor/EditorStates.h"
+#include "Editor/EditorStatesTypes.h"
 #include "Editor/EditorSystem.h"
 #include "Editor/EditorPanel.h"
 
@@ -32,7 +32,9 @@ namespace Editor
 	{
 	public:
 		using ESystems = Ut::MetaSortT_t < Ut::MetaLessThan, Ut::Collection <
-			Ut::Indexer<0u, class EInput>
+			Ut::Indexer<0u, class EditorStates>,
+			Ut::Indexer<1u, class EInput>,
+			Ut::Indexer<2u, class EditorUI>
 		>>;
 
 		using EPanels = Ut::MetaSortT_t<Ut::MetaLessThan, Ut::Collection<
@@ -62,7 +64,6 @@ namespace Editor
 
 	private:
 		EditorMain(void);
-		void StateSpecifics(eState);
 
 		AutoArray<EditorSystem*> mArrSystems;
 		AutoArray<EditorPanel*> mArrPanels;

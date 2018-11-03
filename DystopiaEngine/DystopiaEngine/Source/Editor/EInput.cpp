@@ -48,7 +48,7 @@ void Editor::EInput::StartFrame(void)
 		mpInputMgr->Update(0.016f);
 }
 
-void Editor::EInput::Update(float _f)
+void Editor::EInput::Update(float)
 {
 }
 
@@ -67,17 +67,17 @@ void Editor::EInput::Shutdown(void)
 	Dystopia::DefaultAllocator<Dystopia::InputManager>::DestructFree(mpInputMgr);
 }
 
-void Editor::EInput::Message(Editor::eEMessage _msg)
+void Editor::EInput::Message(Editor::eEMessage)
 {
 
 }
 
-void Editor::EInput::SaveSettings(Dystopia::TextSerialiser& _out) const
+void Editor::EInput::SaveSettings(Dystopia::TextSerialiser&) const
 {
 
 }
 
-void Editor::EInput::LoadSettings(Dystopia::TextSerialiser& _in)
+void Editor::EInput::LoadSettings(Dystopia::TextSerialiser&)
 {
 
 }
