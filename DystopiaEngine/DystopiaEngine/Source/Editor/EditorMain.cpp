@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EInput.h"
 #include "Editor/EditorStates.h"
 #include "Editor/EditorUI.h"
+#include "Editor/EditorClipboard.h"
 
 #include "Allocator/DefaultAlloc.h"
 

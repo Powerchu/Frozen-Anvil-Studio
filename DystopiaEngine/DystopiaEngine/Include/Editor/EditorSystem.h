@@ -31,6 +31,9 @@ namespace Editor
 		virtual void SaveSettings(Dystopia::TextSerialiser& _out) const = 0;
 		virtual void LoadSettings(Dystopia::TextSerialiser& _in) = 0;
 		virtual ~EditorSystem(void) {}
+
+	protected :
+		static constexpr size_t nPos = -1;
 	};
 }
 #endif

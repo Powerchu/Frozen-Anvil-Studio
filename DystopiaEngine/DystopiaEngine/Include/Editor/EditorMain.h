@@ -34,7 +34,8 @@ namespace Editor
 		using ESystems = Ut::MetaSortT_t < Ut::MetaLessThan, Ut::Collection <
 			Ut::Indexer<0u, class EditorStates>,
 			Ut::Indexer<1u, class EInput>,
-			Ut::Indexer<2u, class EditorUI>
+			Ut::Indexer<2u, class EditorUI>,
+			Ut::Indexer<3u, class EditorClipboard>
 		>>;
 
 		using EPanels = Ut::MetaSortT_t<Ut::MetaLessThan, Ut::Collection<
@@ -60,7 +61,6 @@ namespace Editor
 
 		template<typename T>
 		T* const GetPanel(void) const;
-
 
 	private:
 		EditorMain(void);

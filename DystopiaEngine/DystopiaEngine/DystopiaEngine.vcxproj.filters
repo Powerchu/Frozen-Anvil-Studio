@@ -334,6 +334,15 @@
     <ClCompile Include="Source\Editor\EditorGLState.cpp">
       <Filter>Editor\Main\Systems\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\EditorCommands.cpp">
+      <Filter>Editor\Main\Systems\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorClipboard.cpp">
+      <Filter>Editor\Main\Systems\Clipboard</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\CommandTypes.cpp">
+      <Filter>Editor\Main\Systems\Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -889,7 +898,7 @@
       <Filter>Editor\Main\Systems\States</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\EditorPanel.h">
-      <Filter>Editor\Main\Tabs</Filter>
+      <Filter>Editor\Main\Panels</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\EditorMain.h">
       <Filter>Editor\Main</Filter>
@@ -914,6 +923,15 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\EditorGLState.h">
       <Filter>Editor\Main\Systems\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorCommands.h">
+      <Filter>Editor\Main\Systems\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorClipboard.h">
+      <Filter>Editor\Main\Systems\Clipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\CommandTypes.h">
+      <Filter>Editor\Main\Systems\Commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1295,9 +1313,6 @@
     <Filter Include="Editor\Main\Systems\Admin">
       <UniqueIdentifier>{6629f816-ff64-45c9-b0b2-b3319d6f29e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Main\Tabs">
-      <UniqueIdentifier>{8c401a85-5a7c-4863-a633-200176588279}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\Main\Auxiliary">
       <UniqueIdentifier>{10df821e-f3e6-42d8-a4ef-6b6bb30fb9a2}</UniqueIdentifier>
     </Filter>
@@ -1318,6 +1333,9 @@
     </Filter>
     <Filter Include="Editor\Main\Systems\UI\IMGUI">
       <UniqueIdentifier>{adfd2fea-e1aa-4980-9366-739bf3f0446f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Panels">
+      <UniqueIdentifier>{8c401a85-5a7c-4863-a633-200176588279}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
