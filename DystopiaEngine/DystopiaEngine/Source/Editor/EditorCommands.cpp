@@ -122,8 +122,16 @@ void Editor::EditorCommands::RemoveStray(std::deque<Command*>& _targetDeque)
 }
 
 
-
 #endif
+
+
+
+
+
+
+
+
+
 
 
 
