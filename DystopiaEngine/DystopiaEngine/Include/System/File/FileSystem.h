@@ -7,10 +7,14 @@
 #include <string>
 
 #include "System/Base/Systems.h"
-
+#include "DataStructure/MagicArray.h"
 
 namespace Dystopia
 {
+	/*Predeclaration*/
+	struct DetectionInfo;
+
+
 
 	typedef enum class eFileDirectories : unsigned
 	{
@@ -24,12 +28,13 @@ namespace Dystopia
 
 	} eFileDir;
 
+
 	class FileSystem
 	{
 	public:
 
 		FileSystem();
-
+		~FileSystem();
 		std::string GetFullPath(std::string const & _FileName, eFileDir _ParentDirectory);
 
 		bool CreateFiles(std::string const & _FileName, eFileDir _Directory);
@@ -42,12 +47,15 @@ namespace Dystopia
 
 		bool CheckFileExist(std::string const & _FileName, eFileDir _Directory = eFileDir::eRoot);
 
+		bool DetectFileChanges(std::string _FilePath, std::string * _ChangesBuffer, size_t _size);
+
 	private:
 
 		using PathTable = std::map<eFileDir, std::string>;
 
 		/*Static Members*/
-		static PathTable        mPathTable;
+		static PathTable            mPathTable;
+		MagicArray<DetectionInfo *> mDetectionFiles;
 		
 	};
 
