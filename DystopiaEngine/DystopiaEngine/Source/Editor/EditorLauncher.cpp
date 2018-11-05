@@ -42,19 +42,20 @@ Editor::EditorLauncher::~EditorLauncher(void)
 
 void Editor::EditorLauncher::Init(void)
 {
-	auto wmgr = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>();
-	wmgr->GetMainWindow().SetSizeNoAdjust(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
-	wmgr->GetMainWindow().CenterWindow();
+	// auto wmgr = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>();
+	// wmgr->GetMainWindow().SetSizeNoAdjust(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
+	// wmgr->GetMainWindow().CenterWindow();
+
 }
 
 void Editor::EditorLauncher::StartFrame(void)
 {
-	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->Update(0.016f);
-	EditorMain::GetInstance()->GetSystem<EInput>()->Update(0.016f);
-
-	glViewport(0, 0, LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
-	glClearColor(0.2f, 0.3f, 0.3f, 1.f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	// Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->Update(0.016f);
+	// EditorMain::GetInstance()->GetSystem<EInput>()->Update(0.016f);
+	// 
+	// glViewport(0, 0, LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
+	// glClearColor(0.2f, 0.3f, 0.3f, 1.f);
+	// glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Editor::EditorLauncher::Update(float _f)
@@ -63,9 +64,9 @@ void Editor::EditorLauncher::Update(float _f)
 
 void Editor::EditorLauncher::EndFrame(void)
 {
-	auto& win = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow();
-	win.Show();
-	SwapBuffers(win.GetDeviceContext());
+	// auto& win = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow();
+	// win.Show();
+	// SwapBuffers(win.GetDeviceContext());
 }
 
 bool Editor::EditorLauncher::IsClosing(void) const
