@@ -35,6 +35,7 @@
     <ClCompile Include="Source\Editor\EditorInput.cpp" />
     <ClCompile Include="Source\Editor\EditorMain.cpp" />
     <ClCompile Include="Source\Editor\EditorProc.cpp" />
+    <ClCompile Include="Source\Editor\EditorResource.cpp" />
     <ClCompile Include="Source\Editor\EditorStates.cpp" />
     <ClCompile Include="Source\Editor\EditorUI.cpp" />
     <ClCompile Include="Source\Editor\EInput.cpp" />
@@ -142,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
+    <ClInclude Include="Include\Editor\EditorResource.h" />
     <ClInclude Include="Include\Editor\CommandTypes.h" />
     <ClInclude Include="Include\Editor\EditorClipboard.h" />
     <ClInclude Include="Include\Editor\EditorCommands.h" />

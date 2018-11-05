@@ -44,7 +44,7 @@ namespace Editor
 	class ModifyValue<C, T, Ut::Type_t<Ut::EnableIf_t<std::is_base_of<Dystopia::Component, C>::value>>> : public Command
 	{
 	public:
-		ModifiyValue(T C::* _ptrToMemVar, const T& _oldVal, const T& _newVal, bool C::* _ptrUndoNotify = nullptr)
+		ModifyValue(T C::* _ptrToMemVar, const T& _oldVal, const T& _newVal, bool C::* _ptrUndoNotify = nullptr)
 			: mpMemVar{ _ptrToMemVar }, mOldV{ _oldVal }, mNewV{ _newVal }, mpUndoNotify{ _ptrUndoNotify }
 		{}
 
@@ -74,7 +74,7 @@ namespace Editor
 	class ModifyValue<S, T, Ut::Type_t<Ut::EnableIf_t<std::is_base_of<Dystopia::Systems, S>::value>>> : public Command
 	{
 	public:
-		ModifiyValue(T S::* _ptrToMemVar, const T& _oldVal, const T& _newVal, bool S::* _ptrUndoNotify = nullptr)
+		ModifyValue(T S::* _ptrToMemVar, const T& _oldVal, const T& _newVal, bool S::* _ptrUndoNotify = nullptr)
 			: mpMemVar{ _ptrToMemVar }, mOldV{ _oldVal }, mNewV{ _newVal }, mpUndoNotify{ _ptrUndoNotify }
 		{}
 
@@ -104,7 +104,7 @@ namespace Editor
 	class ModifyValue<Dystopia::GameObject, T, Dystopia::GameObject> : public Command
 	{
 	public:
-		ModifiyValue(T Dystopia::GameObject::* _ptrToMemVar, const T& _oldVal, const T& _newVal, bool Dystopia::GameObject::* _ptrUndoNotify = nullptr)
+		ModifyValue(T Dystopia::GameObject::* _ptrToMemVar, const T& _oldVal, const T& _newVal, bool Dystopia::GameObject::* _ptrUndoNotify = nullptr)
 			: mpMemVar{ _ptrToMemVar }, mOldV{ _oldVal }, mNewV{ _newVal }, mpUndoNotify{ _ptrUndoNotify }
 		{}
 

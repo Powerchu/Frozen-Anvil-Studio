@@ -87,10 +87,10 @@ void Editor::EditorClipboard::Shutdown(void)
 void Editor::EditorClipboard::Message(eEMessage)
 {}
 
-void Editor::EditorClipboard::SaveSettings(Dystopia::TextSerialiser& _out) const
+void Editor::EditorClipboard::SaveSettings(Dystopia::TextSerialiser&) const
 {}
 
-void Editor::EditorClipboard::LoadSettings(Dystopia::TextSerialiser& _in)
+void Editor::EditorClipboard::LoadSettings(Dystopia::TextSerialiser&)
 {}
 
 void Editor::EditorClipboard::AddGameObject(const uint64_t& _id)

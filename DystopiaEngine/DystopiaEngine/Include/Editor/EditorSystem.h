@@ -33,7 +33,7 @@ namespace Editor
 		virtual ~EditorSystem(void) {}
 
 	protected :
-		static constexpr size_t nPos = -1;
+		static constexpr size_t nPos = static_cast<size_t>(-1);
 	};
 }
 #endif

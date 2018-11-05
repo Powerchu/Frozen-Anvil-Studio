@@ -70,10 +70,10 @@ void Editor::EditorCommands::Shutdown(void)
 void Editor::EditorCommands::Message(eEMessage)
 {}
 
-void Editor::EditorCommands::SaveSettings(Dystopia::TextSerialiser& _out) const
+void Editor::EditorCommands::SaveSettings(Dystopia::TextSerialiser&) const
 {}
 
-void Editor::EditorCommands::LoadSettings(Dystopia::TextSerialiser& _in)
+void Editor::EditorCommands::LoadSettings(Dystopia::TextSerialiser&)
 {}
 
 void Editor::EditorCommands::SavedChanges(void)
