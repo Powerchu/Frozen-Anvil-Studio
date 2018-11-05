@@ -28,7 +28,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"
 #include "Editor/EGUI.h"
 #include <functional>
-#include "DataStructure/Hashstring.h"
+#include "DataStructure/HashString.h"
+
 namespace Dystopia
 {
 	template<typename A, typename B>
@@ -150,31 +151,28 @@ namespace Dystopia
 
 	struct SuperReflectFunctor
 	{
-		template<typename T , typename Settor>
-		void operator()(const char *,T, Settor, void*) {  }
+		template<typename T, typename Settor>
+		void operator()(const char *, T, Settor, void*) {  }
 
+		/*
+		 * Drag-field for Float Values (default)
+		 */
 		template<>
-		void operator()(const char * _name,float value, std::function<void(float, void*)> _f, void* _addr)
+		void operator()( const char * _name, float value, std::function<void(float, void*)> _f, void* _addr)
 		{
 			float Temp = value;
-			switch (EGUI::Display::DragFloat(_name, &Temp, 0.01f, 0.0f, 2.0f))
+			switch (EGUI::Display::DragFloat(_name, &Temp, 0.01f, -FLT_MAX, FLT_MAX))
 			{
-			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eENTER:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
 			case EGUI::eDragStatus::eDRAGGING:
 				_f(Temp, _addr);
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
 				break;
-			case EGUI::eDragStatus::eDEACTIVATED:
-					EGUI::GetCommandHND()->EndRecording();
-				break;
 			case EGUI::eDragStatus::eNO_CHANGE:
 				break;
+			case EGUI::eDragStatus::eEND_DRAG:
+			case EGUI::eDragStatus::eENTER:
+			case EGUI::eDragStatus::eDEACTIVATED:
 			case EGUI::eDragStatus::eTABBED:
 				EGUI::GetCommandHND()->EndRecording();
 				break;
@@ -182,16 +180,23 @@ namespace Dystopia
 				break;
 			}
 		}
+
+		/*
+		 * Text-Field (std::string)
+		 */
 		template<>
 		void operator()(const char * _name, std::string value, std::function<void(std::string, void*)> _f, void* _addr)
 		{
-			std::string Temp = value;
 			char buffer[1024];
 			if (EGUI::Display::TextField(_name, buffer, 1024))
 			{
 				_f(buffer, _addr);
 			}
 		}
+
+		/*
+		 * Text-Field (HashString)
+		 */
 		template<>
 		void operator()(const char * _name, HashString value, std::function<void(HashString, void*)> _f, void*_addr)
 		{
@@ -202,19 +207,16 @@ namespace Dystopia
 				_f(value, _addr);
 			}
 		}
+
+		/*
+		 * Int Field 
+		 */
 		template<>
 		void operator()(const char * _name, int value, std::function<void(int, void*)> _f, void*_addr)
 		{
 			int Temp = value;
-			switch (EGUI::Display::DragInt(_name, &Temp, 0.1f, 0, 2))
+			switch (EGUI::Display::DragInt(_name, &Temp, 0.1f, INT16_MIN, INT16_MAX))
 			{
-			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
-			case EGUI::eDragStatus::eENTER:
-				EGUI::GetCommandHND()->EndRecording();
-				
-				break;
 			case EGUI::eDragStatus::eDRAGGING:
 				_f(Temp, _addr);
 				break;
@@ -222,12 +224,11 @@ namespace Dystopia
 				//Is it possible to make one that does not require the BehaviourClass to be known
 				//EGUI::GetCommandHND()->StartRecording<RigidBody>(mnOwner, &mfAngularDrag);
 				//EGUI::GetCommandHND()->StartRecording(&Temp);
-				break;
-			case EGUI::eDragStatus::eDEACTIVATED:
-				EGUI::GetCommandHND()->EndRecording();
-				break;
 			case EGUI::eDragStatus::eNO_CHANGE:
 				break;
+			case EGUI::eDragStatus::eEND_DRAG:
+			case EGUI::eDragStatus::eENTER:
+			case EGUI::eDragStatus::eDEACTIVATED:
 			case EGUI::eDragStatus::eTABBED:
 				EGUI::GetCommandHND()->EndRecording();
 				break;
@@ -236,9 +237,22 @@ namespace Dystopia
 			}
 		}
 		template<>
-		void operator()(const char *,double, std::function<void(double, void*)>, void*)
+		void operator()(const char *, double, std::function<void(double, void*)> , void*)
 		{
 
+		}
+
+		/*
+		 * Bool Checkbox
+		 */
+		template<>
+		void operator()(const char * _name, bool _val, std::function<void(bool, void*)> _f, void* _addr)
+		{
+			bool toggleState = _val;
+			if (EGUI::Display::CheckBox(_name, &toggleState))
+			{
+				_f(toggleState, _addr);
+			}
 		}
 	};
 	struct SuperGetFunctor
@@ -282,7 +296,6 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 				EGUI::GetCommandHND()->EndRecording();
@@ -303,3 +316,4 @@ namespace Dystopia
 
 #endif //_AUX_META_HELPER_H_
 #endif //EDITOR
+

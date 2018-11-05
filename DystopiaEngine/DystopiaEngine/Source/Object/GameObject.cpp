@@ -205,6 +205,7 @@ void Dystopia::GameObject::AddComponent(Behaviour* _p, BehaviourTag)
 {
 	mBehaviours.Insert(_p);
 	_p->SetOwner(this);
+	_p->Awake();
 }
 
 void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)

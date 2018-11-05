@@ -1019,7 +1019,7 @@ namespace Dystopia
 
 	void RigidBody::eRotationConstraintCheckBox()
 	{
-		static bool toggleState = false;
+		static bool toggleState = mbFixedRot;
 		if (EGUI::Display::CheckBox("Freeze Rotation", &toggleState))
 		{
 			mbFixedRot = toggleState;
