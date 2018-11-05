@@ -97,7 +97,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 
 	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
 	pMain->Init();
-	auto p = pMain->GetSystem<Editor::EInput>();
+	pMain->ProjectLauncher();
 	while (!pMain->IsClosing())
 	{
 		pMain->StartFrame();

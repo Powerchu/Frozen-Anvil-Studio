@@ -18,6 +18,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorClipboard.h"
 #include "Editor/EditorResource.h"
 
+#include "Editor/EditorLauncher.h"
+
+#include "DataStructure/HashString.h"
+
 #include "Allocator/DefaultAlloc.h"
 
 #include "System/Driver/Driver.h"
@@ -71,6 +75,19 @@ void Editor::EditorMain::Init(void)
 	for (auto& p : mArrPanels)
 		if (!p->Init())
 			__debugbreak();
+}
+
+void Editor::EditorMain::ProjectLauncher(void)
+{
+	EditorLauncher launcher;
+	launcher.Init();
+	while (!launcher.IsClosing())
+	{
+		launcher.StartFrame();
+		launcher.Update(0.016f);
+		launcher.EndFrame();
+	}
+	HashString projectPath = launcher.GetProjectPath();
 }
 
 void Editor::EditorMain::StartFrame(void)

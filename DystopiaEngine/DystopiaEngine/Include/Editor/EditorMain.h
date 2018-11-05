@@ -46,6 +46,9 @@ namespace Editor
 		~EditorMain(void);
 
 		void Init(void);
+
+		void ProjectLauncher(void);
+
 		void StartFrame(void);
 		void Update(void);
 		void EndFrame(void);

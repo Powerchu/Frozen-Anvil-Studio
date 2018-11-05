@@ -346,6 +346,9 @@
     <ClCompile Include="Source\Editor\EditorResource.cpp">
       <Filter>Editor\Main\Systems\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\EditorLauncher.cpp">
+      <Filter>Editor\Main\Launcher</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -939,6 +942,9 @@
     <ClInclude Include="Include\Editor\EditorResource.h">
       <Filter>Editor\Main\Systems\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\EditorLauncher.h">
+      <Filter>Editor\Main\Launcher</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1342,6 +1348,9 @@
     </Filter>
     <Filter Include="Editor\Main\Panels">
       <UniqueIdentifier>{8c401a85-5a7c-4863-a633-200176588279}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Launcher">
+      <UniqueIdentifier>{6ddb93ff-2f1e-494e-8391-73a6bd07dfc8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

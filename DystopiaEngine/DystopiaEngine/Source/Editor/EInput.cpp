@@ -34,7 +34,6 @@ Editor::EInput::~EInput(void)
 
 void Editor::EInput::Load(void)
 {
-	mpInputMgr->LoadDefaults();
 }
 
 bool Editor::EInput::Init(void)
@@ -44,7 +43,8 @@ bool Editor::EInput::Init(void)
 
 void Editor::EInput::StartFrame(void)
 {
-	if (IsIconic(Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetWindowHandle()))
+	const auto myWinHND = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetWindowHandle();
+	if (myWinHND == GetForegroundWindow())
 		mpInputMgr->Update(0.016f);
 }
 
