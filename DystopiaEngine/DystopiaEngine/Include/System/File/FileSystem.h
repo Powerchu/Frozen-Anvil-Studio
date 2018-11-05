@@ -14,8 +14,6 @@ namespace Dystopia
 	/*Predeclaration*/
 	struct DetectionInfo;
 
-
-
 	typedef enum class eFileDirectories : unsigned
 	{
 		eHeader,
@@ -27,6 +25,16 @@ namespace Dystopia
 		eTotalFilePath
 
 	} eFileDir;
+
+	typedef enum class eFileSystemError : unsigned
+	{
+		NONE,
+		SUCCESS,
+		CREATE_HANDLE_ERROR,
+		CREATE_OVERLAP_ERROR,
+		READ_DIRECTORY_ERROR,
+
+	} FileErrorCode;
 
 
 	class FileSystem
@@ -47,7 +55,20 @@ namespace Dystopia
 
 		bool CheckFileExist(std::string const & _FileName, eFileDir _Directory = eFileDir::eRoot);
 
-		bool DetectFileChanges(std::string _FilePath, std::string * _ChangesBuffer, size_t _size);
+		/*
+		  Detect changes in the file path provided. 
+		  The FilesNames return is relative to the _FilePath provided.
+		  DetectFileChanges will return 0 when
+		  1. There is no changes detected
+		  2. There is a error in the function
+
+		  DetectFileChanges will return a number when 
+		  1. There is files changes
+		  The number will reflect the number of changes detected
+		*/
+		unsigned DetectFileChanges(std::string _FilePath, std::string * _ChangesBuffer, size_t _size);
+
+		FileErrorCode GetLastKnownError() const;
 
 	private:
 
@@ -56,7 +77,13 @@ namespace Dystopia
 		/*Static Members*/
 		static PathTable            mPathTable;
 		MagicArray<DetectionInfo *> mDetectionFiles;
-		
+		/*Private Members*/
+		eFileSystemError            mLastKnownError;
+
+
+
+		/*Private Function*/
+		unsigned GetChangesInfo(DetectionInfo & _DetectionInfo, std::string * _ChangesBuffer, size_t _size);
 	};
 
 
