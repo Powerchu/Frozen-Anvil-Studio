@@ -32,10 +32,13 @@ HashString::HashString(void)
 {}
 
 HashString::HashString(const HashString& _rhs)
-	: mHashedID{ _rhs.mHashedID }, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(_rhs.mSize + 1) },
+	: mHashedID{ _rhs.mHashedID }, mCharBuffer{ _rhs.mSize ? Dystopia::DefaultAllocator<char[]>::Alloc(_rhs.mSize + 1) : nullptr },
 	mSize{ _rhs.mSize }
 {
-	strcpy_s(mCharBuffer, _rhs.mSize + 1, _rhs.mCharBuffer);
+	if (mSize)
+	{
+		strcpy_s(mCharBuffer, _rhs.mSize + 1, _rhs.mCharBuffer);
+	}
 }
 
 HashString::HashString(HashString&& _rhs) noexcept

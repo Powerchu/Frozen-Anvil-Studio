@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_LAUNCHER_H_
 #define _EDITOR_LAUNCHER_H_
 #include "DataStructure/HashString.h"
+#include "DataStructure/AutoArray.h"
 
 namespace Editor
 {
@@ -34,13 +35,19 @@ namespace Editor
 		HashString GetProjectPath(void) const;
 
 	private:
+		AutoArray<HashString> mArrProjectFolders;
 		HashString mProjectSelected;
-		bool mbLaunch;
+		bool mbClosing;
 		unsigned long mOriginStyle;
 		unsigned long mOriginStyleEx;
 		int mOriginSizeX;
 		int mOriginSizeY;
+		int mCurrentlySelected;
 
+		void SetWindowOptions(void);
+		void RemoveWindowOptions(void);
+		void FindAllProjects(void);
+		void ProjectDetails(void);
 	};
 
 }
