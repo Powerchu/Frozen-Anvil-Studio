@@ -148,9 +148,11 @@ namespace Dystopia
 			{
 				if (rigidA && rigidB)
 				{
-					if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState())
+					// if both bodies are static, continue
+					if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState()) 
 						continue;
-					if (ownerA == ownerB)
+					// If the colliders belong to the same owner, continue
+					if (ownerA == ownerB) 
 						continue;
 				}
 

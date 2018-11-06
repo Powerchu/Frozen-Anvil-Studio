@@ -22,8 +22,8 @@ namespace Dystopia
 		  , mMaxVelocityConstant(1024.0F)
 		  , mMaxVelSquared(mMaxVelocityConstant * mMaxVelocityConstant)
 		  , mPenetrationEpsilon(0.05F)
-		  , mfSleepVelEpsilon(0.01F)
-		  , mfSleepBias(0.97F)
+		  , mfSleepVelEpsilon(0.100F)
+		  , mfSleepBias(0.98F)
 		  , mVelocityIterations(5)
 		  , mPositionalIterations(4)
 	{
@@ -85,6 +85,13 @@ namespace Dystopia
 
 	void PhysicsSystem::ResolveCollision(const float _dt)
 	{
+		for (auto& body : mComponents)
+		{
+			if (!body.GetOwner()->IsActive())
+			{
+				return;
+			}
+		}
 		for (int i = 0; i < mVelocityIterations; ++i)
 		{
 			for (auto& body : mComponents)
@@ -94,9 +101,7 @@ namespace Dystopia
 #endif 
 				if (body.Get_IsStaticState()) continue;
 
-				const auto col = body.GetOwner()->GetComponent<Collider>();
-
-				if (nullptr != col)
+				for (auto col : body.mparrCol)
 				{
 					if (!col->IsTrigger())
 					{
@@ -106,6 +111,19 @@ namespace Dystopia
 						}
 					}
 				}
+
+				//const auto col = body.GetOwner()->GetComponent<Collider>();
+
+				//if (nullptr != col)
+				//{
+				//	if (!col->IsTrigger())
+				//	{
+				//		for (auto& manifold : col->GetCollisionEvents())
+				//		{
+				//			manifold.ApplyImpulse();
+				//		}
+				//	}
+				//}
 			}
 		}
 
@@ -128,7 +146,28 @@ namespace Dystopia
 #endif 
 				if (body.Get_IsStaticState()) continue;
 
-				const auto col = body.GetOwner()->GetComponent<Collider>();
+				for (auto col : body.mparrCol)
+				{
+					if (!col->IsTrigger())
+					{
+						auto worstPene = mPenetrationEpsilon;
+						for (auto& manifold : col->GetCollisionEvents())
+						{
+							if (manifold.mfPeneDepth > worstPene)
+							{
+								const auto worstContact = &manifold;
+								worstPene = manifold.mfPeneDepth;
+
+								if (nullptr != worstContact)
+								{
+									worstContact->ApplyPenetrationCorrection(mPositionalIterations);
+								}
+							}
+						}
+					}
+				}
+
+				/*const auto col = body.GetOwner()->GetComponent<Collider>();
 
 				if (nullptr != col)
 				{
@@ -149,7 +188,7 @@ namespace Dystopia
 							}
 						}
 					}
-				}
+				}*/
 			}
 		}
 	}

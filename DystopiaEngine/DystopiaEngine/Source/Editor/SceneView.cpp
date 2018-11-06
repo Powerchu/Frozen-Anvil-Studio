@@ -472,7 +472,7 @@ namespace Dystopia
 		}
 		avgPos.x = avgPos.x / size;
 		avgPos.y = avgPos.y / size;
-		Math::Vec2 screenPos = GetWorldToScreen(avgPos);
+		const Math::Vec2 screenPos = GetWorldToScreen(avgPos);
 		float changeX = 0;
 		float changeY = 0;
 
@@ -493,9 +493,17 @@ namespace Dystopia
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
+				for (auto& obj : _arr)
+				{
+					obj->SetActive(false);
+				}
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
+				for (auto& obj : _arr)
+				{
+					obj->SetActive(true);
+				}
 				break;
 			}
 			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 0.5f, greenColor, &mGizmoHovered))
@@ -510,9 +518,17 @@ namespace Dystopia
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
+				for (auto& obj : _arr)
+				{
+					obj->SetActive(false);
+				}
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
+				for (auto& obj : _arr)
+				{
+					obj->SetActive(true);
+				}
 				break;
 			}
 			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 0.5f, blueColor, &mGizmoHovered))
@@ -527,9 +543,17 @@ namespace Dystopia
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
+				for (auto& obj : _arr)
+				{
+					obj->SetActive(false);
+				}
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
+				for (auto& obj : _arr)
+				{
+					obj->SetActive(true);
+				}
 				break;
 			}
 			break;
@@ -547,9 +571,17 @@ namespace Dystopia
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
+				for (auto& obj : _arr)
+				{
+					obj->SetActive(false);
+				}
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
+				for (auto& obj : _arr)
+				{
+					obj->SetActive(true);
+				}
 				break;
 			}
 			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.5f, greenColor, &mGizmoHovered))
@@ -564,9 +596,17 @@ namespace Dystopia
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
+				for (auto& obj : _arr)
+				{
+					obj->SetActive(false);
+				}
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
+				for (auto& obj : _arr)
+				{
+					obj->SetActive(true);
+				}
 				break;
 			}
 			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 0.5f, blueColor, &mGizmoHovered))
@@ -581,9 +621,17 @@ namespace Dystopia
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
+				for (auto& obj : _arr)
+				{
+					obj->SetActive(false);
+				}
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
+				for (auto& obj : _arr)
+				{
+					obj->SetActive(true);
+				}
 				break;
 			}
 			break;
@@ -615,9 +663,11 @@ namespace Dystopia
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
+				obj.SetActive(false);
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
+				obj.SetActive(true);
 				break;
 			}
 			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 0.5F, greenColor, &mGizmoHovered))
@@ -628,9 +678,11 @@ namespace Dystopia
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
+				obj.SetActive(false);
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
+				obj.SetActive(true);
 				break;
 			}
 			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 0.5, blueColor, &mGizmoHovered))
@@ -641,9 +693,11 @@ namespace Dystopia
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
+				obj.SetActive(false);
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
+				obj.SetActive(true);
 				break;
 			}
 			break;
@@ -657,9 +711,11 @@ namespace Dystopia
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
+				obj.SetActive(false);
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
+				obj.SetActive(true);
 				break;
 			}
 			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.5, greenColor, &mGizmoHovered))
@@ -670,9 +726,11 @@ namespace Dystopia
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
+				obj.SetActive(false);
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
+				obj.SetActive(true);
 				break;
 			}
 			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 0.5, blueColor, &mGizmoHovered))
@@ -685,11 +743,17 @@ namespace Dystopia
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
 				ratio = cScale.y / cScale.x;
+				obj.SetActive(false);
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
+				obj.SetActive(true);
 				break;
 			}
+			break;
+		case eROTATE: 
+			break;
+		default: 
 			break;
 		}
 	}

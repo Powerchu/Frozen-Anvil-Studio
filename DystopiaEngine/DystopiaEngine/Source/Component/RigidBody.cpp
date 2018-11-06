@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Component/RigidBody.h"
+#include "Component/Collider.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
@@ -28,7 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <cmath>
 
-#define P_TX					mpOwnerTransform
+#define P_TX mpOwnerTransform
 
 namespace Dystopia
 {
@@ -47,7 +48,6 @@ namespace Dystopia
 		, mfInertia(mfMass)
 		, mfInvInertia(0.01F)
 		, mfWeightedMotion(0.0F)
-		, mOwnerIsActive(true)
 		, mbHasGravity(true)
 		, mbIsStatic(false)
 		, mbIsAwake(true)
@@ -77,7 +77,6 @@ namespace Dystopia
 		, mfInertia(mfMass)
 		, mfInvInertia(0.01F)
 		, mfWeightedMotion(0.0F)
-		, mOwnerIsActive(true)
 		, mbHasGravity(_gravityState)
 		, mbIsStatic(_staticState)
 		, mbIsAwake(true)
@@ -100,9 +99,17 @@ namespace Dystopia
 		{
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
-			mOwnerIsActive = GetOwner()->IsActive();
 			mPrevPosition = mPosition = mpOwnerTransform->GetGlobalPosition();
+			const auto ColComponents = GetOwner()->GetComponents<Collider>();
+			
+			AutoArray<Collider*> ToRet;
 
+			for (auto elem : ColComponents)
+			{
+				ToRet.push_back(elem);
+			}
+
+			mparrCol = Ut::Move(ToRet);
 			mInverseOrientation = Math::Inverse(mOrientation);
 		}
 
@@ -112,6 +119,9 @@ namespace Dystopia
 			mfInvMass = 1.0F / mfMass;
 			mfInertia = mfMass;
 			mfInvInertia = mfInvMass;
+
+			mbIsStatic = false;
+			mPhysicsType = eDynamicBody;
 		}
 		else //if mfMass <= 0
 		{
@@ -138,26 +148,23 @@ namespace Dystopia
 			mPhysicsType = eDynamicBody;
 		}
 
-		mLocalCentroid = mPosition;
-		mLocalCentroid *= mfInvMass;
+		mLocalCentroid = mPosition * mfInvMass;
+		//mLocalCentroid *= mfInvMass;
 
 		//// compute local inertia tensor
 		Mat3D localInertiaTensor{ { 1, 0, 0, 0 },{ 0, 1, 0, 0 },{ 0, 0, 1, 0 },{ 0, 0, 0, 1 } };
 
-		mLocalInvInertiaTensor = localInertiaTensor.Inverse();
+		mLocalInvInertiaTensor = localInertiaTensor.AffineInverse();
 	}
 
 	void RigidBody::Integrate(float _dt)
 	{
 		constexpr const auto VEL_EPSILON = 0.001F;
 
-		if (!GetOwner()->IsActive() || mbIsStatic || !mbIsAwake)
+		if (mbIsStatic || !mbIsAwake)
 		{
 			return; // don't integrate when body is static
 		}
-
-		mGlobalInvInertiaTensor =
-			mOrientation * mLocalInvInertiaTensor.AffineInverse() * (mOrientation.AffineInverse());
 
 		/*********************************************************************
 		 *  Physics 2.0
@@ -165,6 +172,16 @@ namespace Dystopia
 		 ********************************************************************/
 		 //Store previous Position
 		mPrevPosition = mPosition = P_TX->GetGlobalPosition();
+
+		// Store Rotational Tensors
+		mGlobalInvInertiaTensor =
+			mOrientation * mLocalInvInertiaTensor.AffineInverse() * (mOrientation.AffineInverse());
+
+
+		if (!GetOwner()->IsActive())
+		{
+			return;
+		}
 
 		if (mbHasGravity)
 		{
@@ -234,13 +251,16 @@ namespace Dystopia
 	void RigidBody::CheckSleeping(const float _dt)
 	{
 		UNUSED_PARAMETER(_dt); // dt is fixed, so it doesnt matter anyway
+
+		if (!GetOwner()->IsActive())
+		{
+			mbIsAwake = true;
+			return;
+		}
 		
 		//mfWeightedMotion is the average kinetic energy over a given set of frames
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
 		mfWeightedMotion = mpPhysSys->mfSleepBias * mfWeightedMotion + (1 - mpPhysSys->mfSleepBias)*currentMotion;
-
-		// TODO change to global sleep epsilon
-
 
 		if (mfWeightedMotion < mpPhysSys->mfSleepVelEpsilon)
 		{
@@ -260,16 +280,24 @@ namespace Dystopia
 		{
 			mbIsAwake = true;
 		}
+
+		for (auto elem : mparrCol)
+		{
+			if (!elem->GetCollisionEvents().IsEmpty())
+			{
+				return;
+			}
+		}
+
+		mbIsAwake = true;
 	}
 
 	void RigidBody::PreUpdatePosition(float _dt)
 	{
 		mPosition += mLinearVelocity * _dt;
-		//mPosition += (mLinearVelocity + mLinearAcceleration * _dt * 0.5F)  * _dt;
-		//mPosition += (mLinearVelocity + mLinearAcceleration * _dt * 0.5F)  * _dt;
 	}
 
-	void RigidBody::UpdateResult(float)
+	void RigidBody::UpdateResult(float) const
 	{
 		// Update Position
 		P_TX->SetGlobalPosition(mPosition);
@@ -287,7 +315,12 @@ namespace Dystopia
 
 	void RigidBody::Unload(void)
 	{
-		//mpPrimitiveShape = nullptr;
+		for (auto& elem : mparrCol)
+		{
+			UNUSED_PARAMETER(elem);
+			mparrCol.pop_back();
+		}
+
 		mpOwnerTransform = nullptr;
 		mpPhysSys = nullptr;
 	}
