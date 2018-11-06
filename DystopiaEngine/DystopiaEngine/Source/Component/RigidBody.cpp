@@ -183,6 +183,7 @@ namespace Dystopia
 			return;
 		}
 
+
 		if (mbHasGravity)
 		{
 			mLinearAcceleration = Vec3D{ 0, -mpPhysSys->mGravity*mfGravityScale,0 };
@@ -196,13 +197,13 @@ namespace Dystopia
 		mLinearVelocity += mLinearAcceleration * _dt;
 		mAngularVelocity += mAngularAcceleration * _dt;
 
-		const Vec3D new_accel = mCumulativeForce * mfInvMass + mLinearAcceleration;
-		const Vec3D new_ang_accel = mGlobalInvInertiaTensor * mCumulativeTorque + mAngularAcceleration;
+	//	const Vec3D new_accel = mCumulativeForce * mfInvMass + mLinearAcceleration;
+	//	const Vec3D new_ang_accel = mGlobalInvInertiaTensor * mCumulativeTorque + mAngularAcceleration;
 
 		//Integrate the velocity
-		mLinearVelocity += (new_accel - mLinearAcceleration) * 0.5f * _dt;
+		//mLinearVelocity += (new_accel - mLinearAcceleration) * 0.5f * _dt;
 		//Integrate angular velocity
-		mAngularVelocity += (new_ang_accel - mAngularAcceleration) * 0.5f * _dt;
+		//mAngularVelocity += (new_ang_accel - mAngularAcceleration) * 0.5f * _dt;
 
 		// Linear Damping (Drag)
 		mLinearVelocity.x = mLinearVelocity.x * std::pow(1.0F - mLinearDamping.x, _dt); // x vector
@@ -241,6 +242,7 @@ namespace Dystopia
 		}
 
 		
+
 		//*Reset Cumulative Force*/
 		ResetCumulative();
 	}

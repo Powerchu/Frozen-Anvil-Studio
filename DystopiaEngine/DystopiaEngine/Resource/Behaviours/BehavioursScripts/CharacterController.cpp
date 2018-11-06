@@ -123,17 +123,11 @@ namespace Dystopia
 
 	void Dystopia::CharacterController::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
-		const auto dotNormal = _colEvent.mEdgeNormal.Dot({ 1,0,0 });
-		if (dotNormal < 0.98F && dotNormal > -0.98F)
+		const float dotNormal = _colEvent.mEdgeNormal.Dot({ 0.0F,-1.0F,0.0F });
+		//DEBUG_PRINT(eLog::MESSAGE, "DotNormal: %f", dotNormal);	
+		if (dotNormal > 0.65F && dotNormal < 1.1F)
 		{
-			if (mpBody->GetLinearVelocity().y > FLT_EPSILON)
-			{
-				//mbIsCeilinged = true;
-			}
-			else
-			{
-				mbIsGrounded = true;
-			}
+			mbIsGrounded = true;	
 		}
 	}
 
@@ -144,14 +138,9 @@ namespace Dystopia
 
 	void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
-		const auto dotNormal = _colEvent.mEdgeNormal.Dot({ 1,0,0 });
-		if (dotNormal < 0.98F && dotNormal > -0.98F)
-		{
-			if (mpBody->GetLinearVelocity().y < 0.0F)
-			{
-				mbIsGrounded = false;
-			}
-		}
+		
+		
+		
 	}
 
 	void Dystopia::CharacterController::OnTriggerEnter(const GameObject * _obj)
@@ -252,22 +241,22 @@ namespace Dystopia
 			}
 		} // Controller Scheme end
 
-		if (mpInputSys->IsKeyPressed("Run Left"))
+		if (mpInputSys->IsKeyPressed("Run Left") && !mpInputSys->IsKeyPressed("Run Right"))
 		{			
 			mpBody->AddLinearImpulse({ -1 * CharacterSpeed * mpBody->GetMass(),0,0 });
 
-			if (mbIsFacingRight)
+			if (mbIsFacingRight && Math::Abs(static_cast<float>(mpBody->GetLinearVelocity().x)) > 5.0F)
 			{
 				mbIsFacingRight = false;
 				GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
 			}
 		}
 
-		if (mpInputSys->IsKeyPressed("Run Right"))
+		if (mpInputSys->IsKeyPressed("Run Right") && !mpInputSys->IsKeyPressed("Run Left"))
 		{
 			mpBody->AddLinearImpulse({CharacterSpeed * mpBody->GetMass(),0,0 });
 
-			if (!mbIsFacingRight)
+			if (!mbIsFacingRight && Math::Abs(static_cast<float>(mpBody->GetLinearVelocity().x)) > 5.0F)
 			{
 				mbIsFacingRight = true;
 				GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
@@ -283,7 +272,7 @@ namespace Dystopia
 		{
 			if (mbIsGrounded)
 			{
-				mpBody->AddLinearImpulse({ 0,JumpForce * mpBody->GetMass() * 10,0 });
+				mpBody->AddLinearImpulse({ 0,JumpForce * mpBody->GetMass() * 10 + mpBody->GetLinearVelocity().y, 0 });
 				mbIsGrounded = false;
 			}
 		}
@@ -351,8 +340,8 @@ namespace Dystopia
 
 			if (mpInputSys->IsKeyReleased("Run Left") || mpInputSys->IsKeyReleased("Run Right"))
 			{
-					s_rend->SetSpeed(0.16F);
-					s_rend->SetAnimation("Idle");		
+				s_rend->SetSpeed(0.16F);
+				s_rend->SetAnimation("Idle");		
 			}			
 		}
 	}
