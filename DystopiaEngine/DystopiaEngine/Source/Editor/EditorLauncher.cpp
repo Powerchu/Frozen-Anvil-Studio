@@ -34,7 +34,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define LAUNCHER_HEIGHT 600
 #define LAUNCHER_WIDTH 1240
 
-static constexpr unsigned long LauncherStyle = WS_CAPTION | WS_POPUP | WS_SYSMENU | WS_MINIMIZEBOX;
+static constexpr unsigned long LauncherStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 static constexpr unsigned long LauncherStyleEx = WS_EX_APPWINDOW;
 
 Editor::EditorLauncher::EditorLauncher(void)
@@ -47,15 +47,21 @@ Editor::EditorLauncher::~EditorLauncher(void)
 
 void Editor::EditorLauncher::Init(void)
 {
-	auto wmgr = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>();
+	const auto& wmgr = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>();
+	auto& win = wmgr->GetMainWindow();
 	mOriginStyle = wmgr->GetStyle();
 	mOriginStyleEx = wmgr->GetStyleEx();
 	mOriginSizeX = wmgr->GetScreenWidth();
 	mOriginSizeY = wmgr->GetScreenHeight();
-
-	wmgr->GetMainWindow().SetStyle(LauncherStyle, LauncherStyleEx);
-	wmgr->GetMainWindow().SetSizeNoAdjust(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
-	wmgr->GetMainWindow().CenterWindow();
+	win.Hide();
+	win.SetStyle(LauncherStyle, LauncherStyleEx);
+	win.SetSize(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
+	win.CenterWindow();
+	win.SetSizeNoAdjust(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
+	win.CenterWindow();
+	win.Show();
+	wmgr->mWidth = GetSystemMetrics(SM_CXSCREEN);
+	wmgr->mHeight = GetSystemMetrics(SM_CYSCREEN);
 
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->SetLauncherMode(true);
 }
@@ -63,28 +69,38 @@ void Editor::EditorLauncher::Init(void)
 void Editor::EditorLauncher::StartFrame(void)
 {
 	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->Update(0.016f);
-	EditorMain::GetInstance()->GetSystem<EInput>()->Update(0.016f);
+	EditorMain::GetInstance()->GetSystem<EInput>()->StartFrame();
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->StartFrame();
+	ImGui::SetNextWindowPos(ImVec2{ 0,0 });
 }
 
 void Editor::EditorLauncher::Update(float)
 {
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->Update(0.016f);
-	ImGui::Button("HELLO", ImVec2{ 400, 200 });
+
+	ImGui::Begin("Gello");
+	ImGui::Button("Button", ImVec2{1100, 500});
+	ImGui::End();
 }
 
 void Editor::EditorLauncher::EndFrame(void)
 {
+	EditorMain::GetInstance()->GetSystem<EInput>()->EndFrame();
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->EndFrame();
 }
 
 void Editor::EditorLauncher::Shutdown(void)
 {
-	auto wmgr = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>();
-	wmgr->GetMainWindow().SetStyle(mOriginStyle, mOriginStyleEx);
-	wmgr->GetMainWindow().SetSize(mOriginSizeX, mOriginSizeY);
-	wmgr->GetMainWindow().CenterWindow();
-
+	const auto& wmgr = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>();
+	auto& win = wmgr->GetMainWindow();
+	win.Hide();
+	win.SetStyle(mOriginStyle, mOriginStyleEx);
+	win.SetSize(mOriginSizeX, mOriginSizeY);
+	win.CenterWindow();
+	win.Show();
+	wmgr->mWidth = GetSystemMetrics(SM_CXSCREEN);
+	wmgr->mHeight = GetSystemMetrics(SM_CYSCREEN);
+	
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->SetLauncherMode(false);
 }
 
