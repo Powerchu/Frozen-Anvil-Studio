@@ -60,6 +60,9 @@ namespace Dystopia
 
 		bool IsFullscreen() const;
 
+		unsigned long GetStyle(void) const;
+		unsigned long GetStyleEx(void) const;
+
 	private:
 
 		std::wstring mTitle;

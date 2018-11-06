@@ -36,7 +36,7 @@ const char* const g_mainDockName = "MainDock";
 Editor::EditorUI::EditorUI(void)
 	: mGLState{}, mMouseJustPressed{ false, false ,false }, mShaderHandle{}, mVertHandle{}, mFragHandle{}, 
 	mAttribLocationTex{}, mAttribLocationProjMtx{}, mAttribLocationPosition{}, mAttribLocationUV{}, 
-	mAttribLocationColor{}, mVboHandle{}, mElementsHandle{}, mFont{}
+	mAttribLocationColor{}, mVboHandle{}, mElementsHandle{}, mFont{}, mbLauncherMode{ false }
 {
 }
 
@@ -166,7 +166,9 @@ void Editor::EditorUI::StartFrame(void)
 	}
 
 	// Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
-	StartDock();
+	ImGui::NewFrame();
+	if (!mbLauncherMode)
+		StartDock();
 	glViewport(0, 0, display_w, display_h);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -206,7 +208,9 @@ void Editor::EditorUI::Update(float)
 
 void Editor::EditorUI::EndFrame(void)
 {
-	EndDock();
+	if (!mbLauncherMode)
+		EndDock();
+	ImGui::Render();
 	ImDrawData *mpDrawData = ImGui::GetDrawData();
 
 	// Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
@@ -333,7 +337,6 @@ void Editor::EditorUI::LoadSettings(Dystopia::TextSerialiser&)
 
 void Editor::EditorUI::StartDock(void)
 {
-	ImGui::NewFrame();
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoInputs;
@@ -351,7 +354,6 @@ void Editor::EditorUI::EndDock(void)
 {
 	EGUI::Docking::EndDockableSpace();
 	ImGui::End();
-	ImGui::Render();
 }
 
 void Editor::EditorUI::DefaultFont(void)
@@ -438,6 +440,11 @@ void Editor::EditorUI::DefaultFont(void)
 	glBindTexture(GL_TEXTURE_2D, last_texture);
 	glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
 	glBindVertexArray(last_vertex_array);
+}
+
+void Editor::EditorUI::SetLauncherMode(bool _b)
+{
+	mbLauncherMode = _b;
 }
 
 #endif 

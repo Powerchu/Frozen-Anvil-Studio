@@ -87,6 +87,7 @@ void Editor::EditorMain::ProjectLauncher(void)
 		launcher.Update(0.016f);
 		launcher.EndFrame();
 	}
+	launcher.Shutdown();
 	HashString projectPath = launcher.GetProjectPath();
 }
 

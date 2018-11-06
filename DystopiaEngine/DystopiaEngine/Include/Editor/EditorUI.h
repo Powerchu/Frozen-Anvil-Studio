@@ -35,6 +35,8 @@ namespace Editor
 		void SaveSettings(Dystopia::TextSerialiser& _out) const;
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 
+		void SetLauncherMode(bool);
+
 	private:
 		GLState			mGLState;
 		HashString		mGlslVersion;
@@ -51,6 +53,7 @@ namespace Editor
 		unsigned int	mElementsHandle;
 		unsigned int    mFont;
 
+		bool mbLauncherMode;
 
 		void StartDock(void);
 		void EndDock(void);

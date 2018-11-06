@@ -27,6 +27,7 @@ namespace Editor
 		void StartFrame(void);
 		void Update(float);
 		void EndFrame(void);
+		void Shutdown(void);
 
 		bool IsClosing(void) const;
 
@@ -35,6 +36,10 @@ namespace Editor
 	private:
 		HashString mProjectSelected;
 		bool mbLaunch;
+		unsigned long mOriginStyle;
+		unsigned long mOriginStyleEx;
+		int mOriginSizeX;
+		int mOriginSizeY;
 
 	};
 
