@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EInput.h"
 #include "Editor/EditorUI.h"
 #include "Editor/EditorGLState.h"
+#include "Editor/EditorProc.h"
 
 #include "GL/glew.h"
 
@@ -78,31 +79,32 @@ void Editor::EditorLauncher::Update(float)
 	float height2 = height1 - btnY - (ImGui::GetStyle().WindowPadding.y);
 	ImGui::SetNextWindowPos(ImVec2{ 0,0 });
 	ImGui::SetNextWindowSize(ImVec2{ LAUNCHER_WIDTH, LAUNCHER_HEIGHT });
+
 	ImGui::Begin("Projects", nullptr, flag);
 	{
 		ImGui::BeginChild("Segment1", ImVec2{ width1, height1 }, true);
 		for (auto& p : mArrProjectFolders)
-		{
-			ImGui::Selectable(p.c_str());
-		}
+			ProjectDetails(p);
 		ImGui::EndChild();
 
 		ImGui::SameLine(0);
 
 		ImGui::BeginChild("Segment2", ImVec2{ width2 , height1 });
 			ImGui::BeginChild("Segment3", ImVec2{ width2 , height2 });
-				if (ImGui::Button("New Project", ImVec2{ btnX, btnY }))
+				if (ImGui::Button("New", ImVec2{ btnX, btnY }))
 				{
 				}
-				if (ImGui::Button("Button2", ImVec2{ btnX, btnY }))
+				if (ImGui::Button("Open", ImVec2{ btnX, btnY }))
 				{
 				}
 			ImGui::EndChild();
+			EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFont(1);
 			ImGui::BeginChild("Segment4", ImVec2{ width2, btnY });
-			if (ImGui::Button("Launch", ImVec2{ btnX, btnY }))
+				if (ImGui::Button("Launch", ImVec2{ btnX, btnY }))
 				{
 				}
 			ImGui::EndChild();
+			EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFont();
 		ImGui::EndChild();
 
 	}
@@ -188,7 +190,7 @@ void Editor::EditorLauncher::FindAllProjects(void)
 	}
 }
 
-void Editor::EditorLauncher::ProjectDetails(void)
+void Editor::EditorLauncher::ProjectDetails(const HashString& _path)
 {
 
 }

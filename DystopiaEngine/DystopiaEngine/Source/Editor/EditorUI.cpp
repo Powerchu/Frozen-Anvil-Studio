@@ -30,8 +30,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <windef.h>
 #include <WinUser.h>
 
+#define FONT_LARGE 64
+#define FONT_MEDIUM 32
+#define FONT_SMALL 16
+
 HCURSOR g_CursorTypes[8];
 const char* const g_mainDockName = "MainDock";
+const char* const g_fontType = "../Dependancies/ImGui/Fonts/RalewayLight.ttf";
 
 Editor::EditorUI::EditorUI(void)
 	: mGLState{}, mMouseJustPressed{ false, false ,false }, mShaderHandle{}, mVertHandle{}, mFragHandle{}, 
@@ -411,11 +416,13 @@ void Editor::EditorUI::DefaultFont(void)
 	glGenBuffers(1, &mVboHandle);
 	glGenBuffers(1, &mElementsHandle);
 
-	/* create font */
 	// Build texture atlas
 	ImGuiIO& io = ImGui::GetIO();
 	unsigned char* pixels;
 	int width, height;
+	io.Fonts->AddFontFromFileTTF(g_fontType, FONT_SMALL);
+	io.Fonts->AddFontFromFileTTF(g_fontType, FONT_MEDIUM);
+	io.Fonts->AddFontFromFileTTF(g_fontType, FONT_LARGE);
 	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);		// Load as RGBA 32-bits (75% of the memory is wasted, but default font is so small) because it is 
 																// more likely to be compatible with user's existing shaders. If your ImTextureId represent a higher-level 
 																// concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
@@ -445,6 +452,16 @@ void Editor::EditorUI::DefaultFont(void)
 void Editor::EditorUI::SetLauncherMode(bool _b)
 {
 	mbLauncherMode = _b;
+}
+
+void Editor::EditorUI::PushFont(unsigned _i)
+{
+	ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[_i]);
+}
+
+void Editor::EditorUI::PopFont(void)
+{
+	ImGui::PopFont();
 }
 
 #endif 

@@ -36,6 +36,9 @@ namespace Editor
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 
 		void SetLauncherMode(bool);
+		// 0 small, 1 medium, 2 large
+		void PushFont(unsigned); 
+		void PopFont(void);
 
 	private:
 		GLState			mGLState;

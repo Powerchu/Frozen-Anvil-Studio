@@ -47,7 +47,7 @@ namespace Editor
 		void SetWindowOptions(void);
 		void RemoveWindowOptions(void);
 		void FindAllProjects(void);
-		void ProjectDetails(void);
+		void ProjectDetails(const HashString&);
 	};
 
 }
