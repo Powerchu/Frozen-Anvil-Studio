@@ -26,7 +26,7 @@ namespace Dystopia
 	
 
 	BehaviourSystem::BehaviourSystem()
-		:mHotloader{ CreateShared<Hotloader<1>>() }
+		:mHotloader{ Ctor::CreateShared<Hotloader<1>>() }
 	{
 
 	}
