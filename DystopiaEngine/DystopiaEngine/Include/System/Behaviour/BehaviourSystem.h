@@ -89,7 +89,7 @@ namespace Dystopia
 		void ReAttach(void);
 
 		template<typename ... Ts>
-		void SendInternalMessage(Behaviour * const _Behaviour, const char * const _FuncName, Ts&& ... _FuncParams);
+		void SendInternalMessage(Behaviour * const _Behaviour, const char * const _FuncName, Ts ... _FuncParams);
 
 
 		template<typename ... Ts>
@@ -117,6 +117,23 @@ namespace Dystopia
 		void ClearAllBehaviours();
 #endif
 	};
+
+	template<typename ...Ts>
+	inline void BehaviourSystem::SendInternalMessage(Behaviour * const _Behaviour, const char * const _FuncName, Ts  ..._FuncParams)
+	{
+		if (_Behaviour)
+		{
+			auto pGameObject = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_Behaviour->GetOwnerID());
+			if (pGameObject)
+			{
+				auto AllBehaviours = pGameObject->GetAllBehaviours();
+				for (auto & BehaveElem : AllBehaviours)
+					BehaveElem->ReceiveMessage(_FuncName, BehaviourMessage{ _FuncParams... });
+			}
+		}
+
+
+	}
 
 }
 

@@ -75,6 +75,13 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+        virtual void ReceiveMessage(const char * const _FuncName, BehaviourMessage _msg);
+        
+        void TEST(float)
+        {
+
+        }
+        
 	private:
 		friend MetaData<Fireball>;
 	};

@@ -20,6 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/SceneSystem.h"
 #include "Object/GameObject.h"
 #include "System/Collision/CollisionEvent.h"
+#include "System/Behaviour/BehaviourSystem.h"
+
 namespace Dystopia
 {
 	Fireball::Fireball()
@@ -32,6 +34,7 @@ namespace Dystopia
 
 	void Fireball::Load()
 	{
+        
 	}
 
 	void Fireball::Init()
@@ -40,6 +43,7 @@ namespace Dystopia
 
 	void Fireball::Update(const float _fDeltaTime)
 	{
+        EngineCore::GetInstance()->Get<BehaviourSystem>()->SendInternalMessage(this, "TEST", 10.f);
 	}
 
 	void Fireball::FixedUpdate(const float _fDeltaTime)
@@ -148,6 +152,15 @@ namespace Dystopia
 		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
 		return TypeErasure::TypeEraseMetaData{};
 	}
+    
+    void Fireball::ReceiveMessage(const char * const _FuncName, BehaviourMessage _msg)
+    {
+
+        if(!std::strcmp(_FuncName, "TEST"))
+        {
+            _msg(*this, &Fireball::TEST);
+        }
+    }
 }
 
 

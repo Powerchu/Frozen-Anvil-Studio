@@ -12,6 +12,7 @@
 #include "System/Driver/Driver.h"
 #include "Object/GameObject.h"
 #include "System/Behaviour/BehaviourSystemHelper.h"
+#include "System/Behaviour/BehaviourMessage.h"
 #undef ERROR
 
 #include "Globals.h"

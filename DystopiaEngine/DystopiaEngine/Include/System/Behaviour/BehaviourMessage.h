@@ -18,7 +18,7 @@ namespace Dystopia
 		};
 
 		template<typename T>
-		struct Wrapper
+		struct Wrapper : Concept
 		{
 			Wrapper* Clone() const override
 			{
@@ -27,7 +27,7 @@ namespace Dystopia
 		};
 
 		template<typename ... T>
-		struct Wrapper<Tuple<T...>>
+		struct Wrapper<Tuple<T...>> : Concept
 		{
 			template<typename ... Ts>
 			Wrapper(Ts&& ... params)
@@ -52,7 +52,7 @@ namespace Dystopia
 
 		template<typename ... Ts, typename SFINAE = Ut::EnableIf_t<!(Ut::IsSame<Ut::Decay_t<Ts>, BehaviourMessage>::value || ...)>>
 		BehaviourMessage(Ts&& ... _FuncParams)
-			:mpWrapper{new Wrapper<Tuple<Ut::Decay_t<Ts>...>>{ Ut::Decay_t<Ts>{ Ut::Forward<Ts>( _FuncParams)  ...}}}
+			:mpWrapper{new Wrapper<Tuple<Ut::Decay_t<Ts>...>>{  Ut::Forward<Ts>( _FuncParams)  ...}}
 		{
 
 		}
@@ -90,11 +90,12 @@ namespace Dystopia
 		}
 
 		template<typename Behaviour_t, typename RetType, typename ... Params>
-		bool operator()(Behaviour_t & Behaviour, RetType(Behaviour_t::*_Memptr)(Params...))
+		bool operator()(Behaviour_t & Behaviour_Obj, RetType(Behaviour_t::*_Memptr)(Params...))
 		{
-			if ((auto ptr = dynamic_cast<Wrapper<Tuple<Ut::Decay_t<Params>...>>>(Concept)) != nullptr)
+			auto * ptr = dynamic_cast<Wrapper<Tuple<Ut::Decay_t<Params>...>> *>(mpWrapper);
+			if (ptr != nullptr)
 			{
-				Invoke(Behaviour, _Memptr, ptr->Get());
+				Invoke(Behaviour_Obj, _Memptr, ptr->Get());
 				return true;
 			}
 
@@ -111,7 +112,7 @@ namespace Dystopia
 		template<typename Behaviour_t, typename MemPtr_t, typename ... Ts, size_t ... Indices>
 		void InvokeAux(Behaviour_t & _Behaviour, MemPtr_t _MemPtr, Tuple<Ts...> _ParamTypes, std::index_sequence<Indices...> _Indices)
 		{
-			(_Behaviour.*_MemPtr)(_ParamTypes.get<Indices>() ...);
+			(_Behaviour.*_MemPtr)(_ParamTypes.Get<Indices>() ...);
 		}
 
 
