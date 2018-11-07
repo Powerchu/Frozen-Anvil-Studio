@@ -78,6 +78,10 @@ void Dystopia::Behaviour::OnTriggerExit(const GameObject *)
 {
 }
 
+void Dystopia::Behaviour::ReceiveMessage(const char * const , BehaviourMessage)
+{
+}
+
 Dystopia::Behaviour * Dystopia::Behaviour::Duplicate() const
 {
 	return nullptr;

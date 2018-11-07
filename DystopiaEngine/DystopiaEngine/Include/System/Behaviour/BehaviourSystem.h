@@ -11,6 +11,7 @@
 #include "Behaviour/Behaviour.h"
 #include "System/File/FileSystem.h"
 
+
 #include <memory>
 
 
@@ -39,6 +40,8 @@ namespace Dystopia
 		Behaviour * mpBehaviour;
 		//std::shared_ptr<Behaviour> mpBehaviour;   /*SharedPtr to Behaviour Component*/
 	};
+
+
 
 
 #endif
@@ -85,6 +88,15 @@ namespace Dystopia
 
 		void ReAttach(void);
 
+		template<typename ... Ts>
+		void SendInternalMessage(Behaviour * const _Behaviour, const char * const _FuncName, Ts&& ... _FuncParams);
+
+
+		template<typename ... Ts>
+		void SendMessage(uint64_t _ObjectID, const char * const _FuncName, Ts&& ... _FuncParams);
+
+		template<typename ... Ts>
+		void SendMessage(const char * const _FuncName, Ts&& ... _FuncParams);
 #endif
 
 	private:

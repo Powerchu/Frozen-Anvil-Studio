@@ -873,6 +873,9 @@
     <ClInclude Include="Include\Behaviour\AI\AISystem.h">
       <Filter>Game Engine\Systems\AI</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Behaviour\BehaviourMessage.h">
+      <Filter>Game Engine\Systems\Behaviour</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
