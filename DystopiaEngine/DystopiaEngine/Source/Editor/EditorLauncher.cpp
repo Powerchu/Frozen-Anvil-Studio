@@ -139,35 +139,35 @@ HashString Editor::EditorLauncher::GetProjectPath(void) const
 void Editor::EditorLauncher::TopBar(float _w, float _h)
 {
 	float spacing = _w / 40;
-	float subHeight = _h * 0.85f;
+	float subHeight = (_h * 0.85f);
 	float offsetY = 5.f;
+	float w1 = 130;
+	float w2 = 160.f;
 
 	ImGui::BeginChild("Top Bar", ImVec2{ _w, _h }, true);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,0 });
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + subHeight * 0.3f);
 
-	ImGui::BeginChild("SubButton1", ImVec2{ 132 , subHeight }, true);
-	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + subHeight / 2.5f);
-	if (InvisibleBtn("Projects", 130, (subHeight * 0.85f) / 2, mbProjectView))
+
+	ImGui::BeginChild("SubButton1", ImVec2{ w1 + 2.f , subHeight * 0.7f }, true);
+	if (InvisibleBtn("Projects", w1, subHeight * 0.6f, mbProjectView))
 	{
 		mbProjectView = true;
 	}
-	auto p = ImGui::GetCursorPos();
-	p.y += offsetY;
-	ImGui::GetWindowDrawList()->AddLine(p, ImVec2{ p.x + 130, p.y }, ImGui::GetColorU32(ImGuiCol_Text), 3.f);
 	ImGui::EndChild();
 
 	ImGui::SameLine(0, spacing);
 
-	ImGui::BeginChild("SubButton2", ImVec2{ 162 ,subHeight }, true);
-	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + subHeight / 2.5f);
-	if (InvisibleBtn("Get Started", 160, (subHeight * 0.85f) / 2, !mbProjectView))
+	ImGui::BeginChild("SubButton2", ImVec2{ w2 + 2.f , subHeight * 0.7f }, true);
+	if (InvisibleBtn("Get Started", w2, subHeight * 0.6f, !mbProjectView))
 	{
 		mbProjectView = false;
 	}
-	auto p = ImGui::GetCursorPos();
-	p.y += offsetY;
-	ImGui::GetWindowDrawList()->AddLine(p, ImVec2{ p.x + 160, p.y }, ImGui::GetColorU32(ImGuiCol_Text), 3.f);
 	ImGui::EndChild();
 
+
+	ImGui::PopStyleVar(2);
 	ImGui::EndChild();
 }
 
@@ -206,12 +206,13 @@ bool Editor::EditorLauncher::InvisibleBtn(const char* _btn, float _x, float _y, 
 	if (pressed)
 		ImGui::MarkItemValueChanged(id);
 	const ImU32 col = ImGui::GetColorU32(_highlight ? ImGuiCol_Text : hovered ? ImGuiCol_TextSelectedBg : ImGuiCol_TextDisabled);
-	ImGui::PushStyleColor(ImGuiCol_Text, col);
+	ImGui::PushStyleColor(ImGuiCol_Text, col); 
 	ImGui::RenderTextClipped(ImVec2{ bb.Min.x + style.FramePadding.x, bb.Min.y + style.FramePadding.y }, 
 							 ImVec2{ bb.Max.x - style.FramePadding.x, bb.Max.y - style.FramePadding.y },
 							_btn, NULL, &label_size, style.ButtonTextAlign, &bb);
-	ImGui::PopStyleColor();
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFont();
+	auto p = ImGui::GetCursorScreenPos();
+	ImGui::GetWindowDrawList()->AddLine(p, ImVec2{ p.x + _x, p.y }, ImGui::GetColorU32(ImGuiCol_Text), 2.f);
 	return pressed;
 }
 
