@@ -38,14 +38,20 @@ namespace Editor
 		AutoArray<HashString> mArrProjectFolders;
 		HashString mProjectSelected;
 		bool mbClosing;
+		bool mbProjectView;
 		unsigned long mOriginStyle;
 		unsigned long mOriginStyleEx;
 		int mOriginSizeX;
 		int mOriginSizeY;
 		int mCurrentlySelected;
 
+		void TopBar(float, float);
+		void MainBody(float, float);
+		bool InvisibleBtn(const char*, float, float, bool = false);
 		void SetWindowOptions(void);
 		void RemoveWindowOptions(void);
+		void SetWindowStyles(void);
+		void RemoveWindowStyles(void);
 		void FindAllProjects(void);
 		void ProjectDetails(const HashString&);
 	};
