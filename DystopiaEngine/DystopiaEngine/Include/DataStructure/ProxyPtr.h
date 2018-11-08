@@ -21,33 +21,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"
 #include "Allocator/DefaultAlloc.h"	// DefaultAllocator
 
+#include <exception>
+
+
 template <class T>
 class ProxyPtr
 {
 public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
-	template <typename ... Ps, typename 
-		= Ut::EnableIf_t<!Ut::MetaFind<Pointer, Ut::Decay_t<Ps>...>::value>>
-	ProxyPtr(Ps&& ...);
-	constexpr explicit ProxyPtr(T* const _pObj) noexcept;
-	ProxyPtr(ProxyPtr&& _pPointer) noexcept;
-
-	~ProxyPtr(void);
+	constexpr ProxyPtr(T*) noexcept;
+	ProxyPtr(ProxyPtr&&) noexcept;
+	ProxyPtr(const ProxyPtr&) noexcept;
 
 
 	// ======================================== OPERATORS ======================================== // 
 
 	ProxyPtr& operator=(std::nullptr_t);
-	ProxyPtr& operator=(ProxyPtr&& _pPointer) noexcept;
+	ProxyPtr& operator=(ProxyPtr&&) noexcept;
+	ProxyPtr& operator=(const ProxyPtr&) noexcept;
 
-	T& operator*  (void) { return *mpObj; }
-	T* operator-> (void) { return  mpObj; }
-	T& operator[] (long long _nI) { return mpObj[_nI]; }
+	T& operator*  (void) { Check(); return *mpObj; }
+	T* operator-> (void) { Check(); return  mpObj; }
+	T& operator[] (long long _nI) { Check();  return mpObj[_nI]; }
 
-	const T& operator*  (void) const { return *mpObj; }
-	const T* operator-> (void) const { return  mpObj; }
-	const T& operator[] (long long _nI) const { return mpObj[_nI]; }
+	const T& operator*  (void) const { Check(); return *mpObj; }
+	const T* operator-> (void) const { Check(); return  mpObj; }
+	const T& operator[] (long long _nI) const { Check(); return mpObj[_nI]; }
 
 	inline explicit operator bool(void) const { return !!mpObj; }
 
@@ -57,6 +57,7 @@ private:
 
 	T* mpObj;
 
+	void Check(void) const;
 	ProxyPtr(const ProxyPtr&) = delete;
 };
 
@@ -68,45 +69,39 @@ private:
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
-/*!
-  \warning
-    The default constructor allocates
-*/
-template <class T> template <typename ... Ps, typename>
-ProxyPtr<T>::ProxyPtr(Ps&& ... _Args)
-	: mpObj{ A::ConstructAlloc(Ut::Forward<Ps>(_Args)...) }
+template <class T>
+constexpr ProxyPtr<T>::ProxyPtr(T* _p) noexcept
+	: mpObj{ _p }
 {
 
 }
 
-template <class T, class A>
-ProxyPtr<T>::ProxyPtr(ProxyPtr&& _pPointer) noexcept
-	: ProxyPtr{ _pPointer.mpObj }
+template <class T>
+ProxyPtr<T>::ProxyPtr(ProxyPtr&& _p) noexcept
+	: ProxyPtr{ _p.mpObj }
 {
-	_pPointer.mpObj = nullptr;
+	_p.mpObj = nullptr;
 }
 
-template <class T, class A>
-constexpr ProxyPtr<T, A>::ProxyPtr(T* _pObj) noexcept
-	: mpObj{ _pObj }
+template <class T>
+ProxyPtr<T>::ProxyPtr(const ProxyPtr& _p) noexcept
+	: ProxyPtr{ _p.mpObj }
 {
 
 }
 
-template <class T, class A>
-ProxyPtr<T, A>::~ProxyPtr(void)
-{
-	if (mpObj)
-	{
-		A::DestructFree(mpObj);
-		mpObj = nullptr;
-	}
-}
 
-template <class T, class A>
-inline T* ProxyPtr<T, A>::GetRaw(void) const
+template <class T>
+inline T* ProxyPtr<T>::GetRaw(void) const
 {
 	return mpObj;
+}
+
+template<class T>
+inline void ProxyPtr<T>::Check(void) const
+{
+	if (nullptr == mpObj)
+		throw std::exception("Null pointer exception!");
 }
 
 
@@ -114,17 +109,24 @@ inline T* ProxyPtr<T, A>::GetRaw(void) const
 // ============================================ OPERATOR OVERLOADING ============================================ // 
 
 
-template <class T, class A>
-ProxyPtr<T>& ProxyPtr<T, A>::operator = (std::nullptr_t)
+template <class T>
+ProxyPtr<T>& ProxyPtr<T>::operator = (std::nullptr_t)
 {
 	~ProxyPtr();
 	return *this;
 }
 
 template <class T>
-ProxyPtr<T>& ProxyPtr<T>::operator = (ProxyPtr<T>&& _ptr) noexcept
+ProxyPtr<T>& ProxyPtr<T>::operator = (ProxyPtr<T>&& _p) noexcept
 {
-	Ut::Swap(mpObj, _ptr.mpObj);
+	Ut::Swap(mpObj, _p.mpObj);
+	return *this;
+}
+
+template <class T>
+ProxyPtr<T>& ProxyPtr<T>::operator = (const ProxyPtr<T>& _p) noexcept
+{
+	mpObj = _p;
 	return *this;
 }
 
@@ -160,7 +162,7 @@ inline bool operator == (const ProxyPtr<Ty1>& _pL, const ProxyPtr<Ty2>& _pR)
 template <typename Ty1, typename Ty2>
 inline bool operator != (const ProxyPtr<Ty1>& _pL, const ProxyPtr<Ty2>& _pR)
 {
-	return  false;
+	return !(_pL == _pR);
 }
 
 template <typename Ty>
