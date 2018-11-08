@@ -106,6 +106,7 @@ namespace Dystopia
 		Ctor::MagicArrayBuilder<Framebuffer>::SetBlockLimit<1>::type mViews;
 
 		static int DRAW_MODE;
+		static bool  mbDebugDrawCheckBox = false;
 
 		void StartFrame(void);
 		void EndFrame(void);

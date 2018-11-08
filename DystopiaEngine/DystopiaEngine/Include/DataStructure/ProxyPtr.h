@@ -31,18 +31,18 @@ public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
 	constexpr ProxyPtr(T*) noexcept;
-	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>>>
+	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>::value>>
 	ProxyPtr(ProxyPtr<U>&&) noexcept;
-	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>>>
+	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>::value>>
 	ProxyPtr(const ProxyPtr<U>&) noexcept;
 
 
 	// ======================================== OPERATORS ======================================== // 
 
 	ProxyPtr& operator=(std::nullptr_t);
-	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>>>
+	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>::value>>
 	ProxyPtr& operator=(ProxyPtr<U>&&) noexcept;
-	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>>>
+	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>::value>>
 	ProxyPtr& operator=(const ProxyPtr<U>&) noexcept;
 
 	T& operator*  (void) { Check(); return *mpObj; }

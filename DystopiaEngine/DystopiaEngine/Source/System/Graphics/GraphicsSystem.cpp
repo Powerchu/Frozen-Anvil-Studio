@@ -874,8 +874,6 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 
 void Dystopia::GraphicsSystem::EditorUI(void)
 {
-	static bool  mbDebugDrawCheckBox = false;
-
 	mbDebugDrawCheckBox = GetDebugDraw();
 #if EDITOR			
 	//const auto pCore = EngineCore::GetInstance();

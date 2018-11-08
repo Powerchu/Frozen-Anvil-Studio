@@ -85,6 +85,12 @@ namespace
 	};
 }
 
+template <typename ... T>
+constexpr bool FoldExpr(void)
+{
+	return !(Ut::IsSame<T, int>::value || ...);
+}
+
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
