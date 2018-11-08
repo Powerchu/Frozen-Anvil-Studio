@@ -97,7 +97,7 @@ private:
 	};
 
 
-	template <typename ...P> SharedPtr(P&& ...);
+	template <typename ...P> SharedPtr(void(*)(void*), P&& ...);
 	template <typename U> explicit SharedPtr(const SharedPtr<U>&) noexcept;
 
 
@@ -167,8 +167,8 @@ SharedPtr<Ty>::SharedPtr(const SharedPtr<U>& _pPtr) noexcept
 }
 
 template <class Ty> template <typename ... P>
-SharedPtr<Ty>::SharedPtr(P&& ... _args) :
-	mpCtrl{ Alloc_t<ControlAux<Ty>>::ConstructAlloc([](void* _p){ static_cast<Ty*>(_p)->~Ty() }), Ut::Forward<P>(_args)... },
+SharedPtr<Ty>::SharedPtr(void(*_del)(void*), P&& ... _args) :
+	mpCtrl{ Alloc_t<ControlAux<Ty>>::ConstructAlloc(_del), Ut::Forward<P>(_args)... },
 	mpObj{ &(static_cast<ControlAux<Ty>*>(mpCtrl)->mObj) }
 {
 
@@ -277,7 +277,7 @@ inline bool operator! (const SharedPtr<Ty>& _pL)
 template<typename T, typename ... P>
 inline SharedPtr<T> Ctor::CreateShared(P&& ..._args)
 {
-	return SharedPtr<T>{ Ut::Forward<P>(_args)... };
+	return SharedPtr<T>{ [](void* _p) { static_cast<T*>(_p)->~T(); }, Ut::Forward<P>(_args)... };
 }
 
 template<typename T, template<typename> class Nest, typename ... P>
