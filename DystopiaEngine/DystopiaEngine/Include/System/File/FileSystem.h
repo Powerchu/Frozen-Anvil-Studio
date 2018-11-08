@@ -7,6 +7,7 @@
 #include <string>
 
 #include "System/Base/Systems.h"
+#include "DataStructure/HashString.h"
 
 
 namespace Dystopia
@@ -41,6 +42,11 @@ namespace Dystopia
 		T RemoveFileExtension(T const & _File);
 
 		bool CheckFileExist(std::string const & _FileName, eFileDir _Directory = eFileDir::eRoot);
+
+		bool CheckFolderExist(const HashString& _folderName, const HashString& _path) const;
+		bool CheckPathExist(const HashString& _path) const;
+
+		bool CreateFolder(const HashString& _name, const HashString& _path);
 
 	private:
 

@@ -75,6 +75,8 @@ public:
 	template<unsigned N>
 	HashString& operator+=(const char (&_s)[N]);
 	HashString& operator+=(const char *);
+	HashString& operator+=(const char);
+	HashString& operator+=(unsigned);
 	HashString& operator+=(const HashString&);
 	HashString& erase(size_t _pos, size_t _len = -1);
 	HashString& replace(size_t _pos, size_t _len, const HashString&);

@@ -18,6 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorGLState.h"
 #include "Editor/EditorProc.h"
 
+#include "Editor/EGUI.h"
+
 #include "GL/glew.h"
 
 #include "../../Dependancies/ImGui/imgui.h"
@@ -27,6 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Window/WindowManager.h"
 #include "System/Window/Window.h"
 #include "System/Input/InputSystem.h"
+#include "System/File/FileSystem.h"
 
 #include <Windows.h>
 #include <windef.h>
@@ -34,13 +37,28 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #define LAUNCHER_HEIGHT 590
 #define LAUNCHER_WIDTH 1010
+#define SUBFOLDER_COUNT 11
 
 static constexpr unsigned long LauncherStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 static constexpr unsigned long LauncherStyleEx = WS_EX_APPWINDOW;
+static const char* g_SubFolders[11]=
+{
+	"Asset",
+	"Audio",
+	"BehaviourFormat",
+	"Behaviours",
+	"Editor",
+	"Font",
+	"Meshes",
+	"Prefab",
+	"Scene",
+	"Shader",
+	"Temp"
+};
 
 Editor::EditorLauncher::EditorLauncher(void)
 	: mProjectSelected{}, mbClosing{ false }, mbProjectView{ true }, mOriginStyle {}, mOriginStyleEx{}, mOriginSizeX{}, mOriginSizeY{}, mArrProjectFolders{},
-	mCurrentlySelected{ 0 }
+	mCurrentlySelected{ 0 }, mNameBuffer{}, mLocBuffer{}, mArrKnownProjects{}
 {}
 
 Editor::EditorLauncher::~EditorLauncher(void)
@@ -65,52 +83,29 @@ void Editor::EditorLauncher::StartFrame(void)
 void Editor::EditorLauncher::Update(float)
 {
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->Update(0.016f);
+
 	static constexpr ImGuiWindowFlags flag = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
 											 ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar |
 											 ImGuiWindowFlags_NoSavedSettings;
-	float height1 = LAUNCHER_HEIGHT - (7 * ImGui::GetStyle().WindowPadding.y);
-	float width2 = (LAUNCHER_WIDTH / 3) - (7 * ImGui::GetStyle().WindowPadding.x);
-	float width1 = (LAUNCHER_WIDTH - width2) - (7 * ImGui::GetStyle().WindowPadding.x);
-	float btnX = width2;
-	float btnY = 50;
-	float height2 = height1 - btnY - (ImGui::GetStyle().WindowPadding.y);
+	
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.3f,0.3f,0.3f, 1.f });
 	ImGui::SetNextWindowPos(ImVec2{ 0,0 });
 	ImGui::SetNextWindowSize(ImVec2{ LAUNCHER_WIDTH, LAUNCHER_HEIGHT });
 	ImGui::Begin("Projects", nullptr, flag);
 	{
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.3f,0.3f,0.3f, 1.f });
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1, 1, 1, 1 });
 		float width = LAUNCHER_WIDTH - (4 * ImGui::GetStyle().WindowPadding.y);
 		float ht = LAUNCHER_HEIGHT - (7 * ImGui::GetStyle().WindowPadding.x);
-		float height = ht / 5;
+		float height = ht / 6;
 		TopBar(width, height);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.f);
 		MainBody(width, ht - height);
-		//ImGui::BeginChild("Segment1", ImVec2{ width1, height1 }, true);
-		//for (auto& p : mArrProjectFolders)
-		//	ProjectDetails(p);
-		//ImGui::EndChild();
-		//
-		//ImGui::SameLine(0);
-		//
-		//ImGui::BeginChild("Segment2", ImVec2{ width2 , height1 });
-		//	ImGui::BeginChild("Segment3", ImVec2{ width2 , height2 });
-		//		if (ImGui::Button("New Project", ImVec2{ btnX, btnY }))
-		//		{
-		//		}
-		//		if (ImGui::Button("Add Existing", ImVec2{ btnX, btnY }))
-		//		{
-		//		}
-		//	ImGui::EndChild();
-		//	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFont(1);
-		//	ImGui::BeginChild("Segment4", ImVec2{ width2, btnY });
-		//		if (ImGui::ButtonEx("Launch Editor", ImVec2{ btnX, btnY }, (mCurrentlySelected != - 1) ? ImGuiButtonFlags_Disabled : 0))
-		//		{
-		//			mbClosing = true;
-		//		}
-		//	ImGui::EndChild();
-		//	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFont();
-		//ImGui::EndChild();
-
+		ImGui::PopStyleColor(3);
 	}
 	ImGui::End();
+	ImGui::PopStyleColor();
 }
 
 void Editor::EditorLauncher::EndFrame(void)
@@ -126,6 +121,38 @@ void Editor::EditorLauncher::Shutdown(void)
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->SetLauncherMode(false);
 }
 
+void Editor::EditorLauncher::SaveSettings(Dystopia::TextSerialiser& _out)
+{
+	const auto& fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	for (size_t i = 0; i < mArrKnownProjects.size(); ++i)
+	{
+		if (!fs->CheckPathExist(mArrKnownProjects[i]))
+		{
+			mArrKnownProjects.FastRemove(i);
+			--i;
+		}
+	}
+	_out.InsertStartBlock("EditorLauncher");
+	_out << mArrKnownProjects.size();
+	for (auto& p : mArrKnownProjects)
+		_out << p.c_str();
+	_out.InsertEndBlock("EditorLauncher");
+}
+
+void Editor::EditorLauncher::LoadSettings(Dystopia::TextSerialiser& _in)
+{
+	_in.ConsumeStartBlock();
+	unsigned s = 0;
+	_in >> s;
+	for (unsigned i = 0; i < s; ++i)
+	{
+		HashString temp;
+		_in >> temp;
+		mArrKnownProjects.push_back(temp);
+	}
+	_in.ConsumeEndBlock();
+}
+
 bool Editor::EditorLauncher::IsClosing(void) const
 {
 	return mbClosing;
@@ -136,25 +163,32 @@ HashString Editor::EditorLauncher::GetProjectPath(void) const
 	return mProjectSelected;
 }
 
+
+
+/****************************************************************** Private Functions *********************************************************************/
+
+
 void Editor::EditorLauncher::TopBar(float _w, float _h)
 {
 	float spacing = _w / 40;
 	float subHeight = (_h * 0.85f);
-	float offsetY = 5.f;
 	float w1 = 130;
 	float w2 = 160.f;
 
-	ImGui::BeginChild("Top Bar", ImVec2{ _w, _h }, true);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,0 });
-	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + subHeight * 0.3f);
-
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ ImGui::GetStyle().WindowPadding.x ,0 });
+	ImGui::BeginChild("Top Bar", ImVec2{ _w, _h }, true);
+	ImGui::PopStyleVar();
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + subHeight * 0.5f);
 
 	ImGui::BeginChild("SubButton1", ImVec2{ w1 + 2.f , subHeight * 0.7f }, true);
 	if (InvisibleBtn("Projects", w1, subHeight * 0.6f, mbProjectView))
 	{
 		mbProjectView = true;
 	}
+	if (ImGui::IsItemHovered())
+		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 	ImGui::EndChild();
 
 	ImGui::SameLine(0, spacing);
@@ -164,11 +198,12 @@ void Editor::EditorLauncher::TopBar(float _w, float _h)
 	{
 		mbProjectView = false;
 	}
+	if (ImGui::IsItemHovered())
+		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 	ImGui::EndChild();
 
-
+	ImGui::EndChild();
 	ImGui::PopStyleVar(2);
-	ImGui::EndChild();
 }
 
 void Editor::EditorLauncher::MainBody(float _w, float _h)
@@ -176,43 +211,59 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 	ImGui::BeginChild("Main Body", ImVec2{ _w, _h }, true);
 	if (mbProjectView)
 	{
+		ImGui::BeginChild("ListOfRecentProjects", ImVec2{ _w - (2 * ImGui::GetStyle().WindowPadding.x), _h - (2 * ImGui::GetStyle().WindowPadding.y) }, true );
 
+		ImGui::EndChild();
 	}
 	else
 	{
+		float w = _w - (2 * ImGui::GetStyle().WindowPadding.x);
+		float h = _h - (2 * ImGui::GetStyle().WindowPadding.y);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ (w / 2) - (w / 3), h / 5 });
+		ImGui::BeginChild("CreatingProject", ImVec2{ w, h }, true);
+		CreateFields(w, h);
+		ImGui::EndChild();
+		ImGui::PopStyleVar();
 	}
 	ImGui::EndChild();
 }
 
 bool Editor::EditorLauncher::InvisibleBtn(const char* _btn, float _x, float _y, bool _highlight)
 {
+	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(1);
+
 	ImVec2 btnSize{ _x, _y };
-	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFont(1);
 	ImGuiWindow* window = ImGui::GetCurrentWindow();
-	if (window->SkipItems)
-		return false;
+	if (window->SkipItems) return false;
 	ImGuiContext& g = *GImGui;
 	const ImGuiStyle& style = g.Style;
 	const ImGuiID id = window->GetID(_btn);
 	const ImVec2 label_size = ImGui::CalcTextSize(_btn, NULL, true);
 	ImVec2 pos = window->DC.CursorPos;
-	ImVec2 size = ImGui::CalcItemSize(btnSize, label_size.x + style.FramePadding.x * 2.0f, label_size.y + style.FramePadding.y * 2.0f);
+	ImVec2 size = ImGui::CalcItemSize(btnSize, label_size.x, label_size.y);
 	const ImRect bb(pos, ImVec2{ pos.x + size.x, pos.y + size.y });
 	ImGui::ItemSize(bb, style.FramePadding.y);
-	if (!ImGui::ItemAdd(bb, id))
-		return false;
+	if (!ImGui::ItemAdd(bb, id)) return false;
 	bool hovered, held;
 	bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held);
-	if (pressed)
-		ImGui::MarkItemValueChanged(id);
-	const ImU32 col = ImGui::GetColorU32(_highlight ? ImGuiCol_Text : hovered ? ImGuiCol_TextSelectedBg : ImGuiCol_TextDisabled);
+	if (pressed) ImGui::MarkItemValueChanged(id);
+	const ImU32 col = ImGui::GetColorU32(_highlight ? ImGuiCol_Text : ImGuiCol_TextDisabled);
+
 	ImGui::PushStyleColor(ImGuiCol_Text, col); 
-	ImGui::RenderTextClipped(ImVec2{ bb.Min.x + style.FramePadding.x, bb.Min.y + style.FramePadding.y }, 
-							 ImVec2{ bb.Max.x - style.FramePadding.x, bb.Max.y - style.FramePadding.y },
-							_btn, NULL, &label_size, style.ButtonTextAlign, &bb);
-	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFont();
-	auto p = ImGui::GetCursorScreenPos();
-	ImGui::GetWindowDrawList()->AddLine(p, ImVec2{ p.x + _x, p.y }, ImGui::GetColorU32(ImGuiCol_Text), 2.f);
+	ImGui::RenderTextClipped(bb.Min, bb.Max,_btn, NULL, &label_size, style.ButtonTextAlign, &bb);
+	if (_highlight)
+	{
+		auto p = ImGui::GetCursorScreenPos();
+		ImGui::GetWindowDrawList()->AddLine(p, ImVec2{ p.x + _x, p.y }, ImGui::GetColorU32(ImGuiCol_Text), 2.f);
+	}
+	else if (hovered)
+	{
+		auto p = ImGui::GetCursorScreenPos();
+		ImGui::GetWindowDrawList()->AddLine(p, ImVec2{ p.x + _x, p.y }, ImGui::GetColorU32(ImGuiCol_TextDisabled), 2.f);
+	}
+	ImGui::PopStyleColor();
+
+	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
 	return pressed;
 }
 
@@ -287,7 +338,100 @@ void Editor::EditorLauncher::FindAllProjects(void)
 
 void Editor::EditorLauncher::ProjectDetails(const HashString& _path)
 {
+}
 
+void Editor::EditorLauncher::CreateFields(float _x, float _y)
+{
+	ImGuiInputTextFlags flags = ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue;
+	float itemWidth = _x / 1.5f;
+	float btnX = _x * 0.2f;
+	float btnY = _y * 0.1f;
+	float folderX = 30.f;
+	static constexpr float offsetX = 6.f;
+
+	ImGui::Text("Project Name");
+	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(1);
+	ImGui::PushItemWidth(itemWidth);
+	ImGui::InputText("###Project Name", mNameBuffer, bufSize, flags);
+	ImGui::PopItemWidth();
+	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
+
+	ImGui::Text("Location");
+	ImGui::PushItemWidth(itemWidth - folderX - offsetX - 13.f);
+	auto linePos = ImGui::GetCursorPos();
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 10,10 });
+	ImGui::InputText("###Location", mLocBuffer, bufSize, ImGuiInputTextFlags_ReadOnly);
+	ImGui::PopStyleVar();
+	ImGui::PopItemWidth();
+	ImGui::SameLine();
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 10.f);
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
+	ImGui::BeginChild("Emptiness", ImVec2{ 10.f, 40.f});
+	ImGui::EndChild();
+	ImGui::PopStyleColor();
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + itemWidth - folderX - offsetX + 3.f);
+	ImGui::SetCursorPosY(linePos.y + 6.f); 
+	if (EGUI::Display::IconFolder("Browse", folderX, 18.f, true))
+	{
+		HashString folder;
+		if (Browse(folder))
+		{
+			strcpy_s(mLocBuffer, folder.c_str());
+		}
+	}
+	if (ImGui::IsItemHovered())
+		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+
+	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(1);
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.863f, 0.088f, 0.294f, 1.f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (itemWidth / 2) - (btnX / 2));
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetTextLineHeightWithSpacing());
+	if (ImGui::ButtonEx("Create", ImVec2{ btnX, btnY }, (strlen(mNameBuffer) && strlen(mLocBuffer)) ? 0 : ImGuiButtonFlags_Disabled))
+	{
+		const auto& fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+		bool firstF = true;
+		unsigned failCount = 1;
+		HashString tempName = mNameBuffer;
+		while (!(fs->CreateFolder(mNameBuffer, mLocBuffer)))
+		{
+			if (firstF)
+			{
+				tempName += failCount;
+				firstF = false;
+			}
+			// TODO
+		}
+
+		mProjectSelected = mLocBuffer;
+		mProjectSelected += "/";
+		mProjectSelected += mNameBuffer;
+		size_t p = mProjectSelected.find('\\');
+		while (p != HashString::nPos)
+		{
+			mProjectSelected[p] = '/';
+			p = mProjectSelected.find('\\');
+		}
+
+		for (unsigned i = 0; i < SUBFOLDER_COUNT; ++i)
+			fs->CreateFolder(g_SubFolders[i], mProjectSelected);
+
+		mbClosing = true;
+		mArrKnownProjects.push_back(mProjectSelected);
+	}
+	if (ImGui::IsItemHovered() && (strlen(mNameBuffer) && strlen(mLocBuffer)))
+		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
+	ImGui::PopStyleColor(3);
+	ImGui::PopStyleVar();
+}
+
+bool Editor::EditorLauncher::Browse(HashString& _outFolder)
+{
+	Dystopia::EditorProc p;
+	return p.BrowseFolder(_outFolder, Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetWindowHandle());
 }
 #endif
 

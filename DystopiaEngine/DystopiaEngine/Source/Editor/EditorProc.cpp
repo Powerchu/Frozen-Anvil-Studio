@@ -66,6 +66,40 @@ bool Dystopia::EditorProc::Load(HashString& _outPath)
 	return result;
 }
 
+bool Dystopia::EditorProc::BrowseFolder(HashString& _outPath, HWND)
+{
+	bool result = false;
+	HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+	if (SUCCEEDED(hr))
+	{
+		IFileOpenDialog *pFileOpen;
+		hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+		if (SUCCEEDED(hr))
+		{
+			pFileOpen->SetOptions(FOS_PICKFOLDERS);
+			if (SUCCEEDED(pFileOpen->Show(NULL)))
+			{
+				IShellItem *pItem;
+				if (SUCCEEDED(pFileOpen->GetResult(&pItem)))
+				{
+					PWSTR pszFilePath;
+					hr = pItem->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &pszFilePath);
+					if (SUCCEEDED(hr))
+					{
+						_outPath = std::wstring{ pszFilePath }.c_str();
+						result = true;
+						CoTaskMemFree(pszFilePath);
+					}
+					pItem->Release();
+				}
+			}
+			pFileOpen->Release();
+		}
+		CoUninitialize();
+	}
+	return result;
+}
+
 bool Dystopia::EditorProc::SaveAs(HashString& _outName, HashString& _outPath, HWND _win)
 {
 	bool result = false;

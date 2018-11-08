@@ -30,9 +30,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <windef.h>
 #include <WinUser.h>
 
-#define FONT_LARGE 64
-#define FONT_MEDIUM 32
-#define FONT_SMALL 16
+#define FONT_LARGE 68
+#define FONT_MEDIUM 34
+#define FONT_SMALL 20
 
 HCURSOR g_CursorTypes[8];
 const char* const g_mainDockName = "MainDock";
@@ -181,11 +181,22 @@ void Editor::EditorUI::StartFrame(void)
 
 void Editor::EditorUI::Update(float)
 {
+	ImGuiIO&	io			= ImGui::GetIO();
 	auto		input		=	EditorMain::GetInstance()->GetSystem<EInput>();
 	const auto&	iquene		=	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetInputQueue();
-	ImGuiIO&	io			=	ImGui::GetIO();
 	bool		shft		=	input->GetInputManager()->IsKeyPressed(eButton::KEYBOARD_SHIFT);
 	float		scrollV		=	input->GetInputManager()->GetMouseWheel();
+
+	io.KeysDown[eButton::KEYBOARD_ENTER] = false;
+	io.KeysDown[eButton::KEYBOARD_ESCAPE] = false;
+	for (int i = eButton::KEYBOARD_BACKSPACE; i <= eButton::KEYBOARD_TAB; ++i)
+		io.KeysDown[i] = false;
+	for (int i = eButton::KEYBOARD_SPACEBAR; i <= eButton::KEYBOARD_HOME; ++i)
+		io.KeysDown[i] = false;
+	for (int i = eButton::KEYBOARD_LEFT; i <= eButton::KEYBOARD_DOWN; ++i)
+		io.KeysDown[i] = false;
+	for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
+		io.KeysDown[i] = false;
 
 	io.MouseWheel			+=	scrollV;
 	io.KeyShift				=	shft;
@@ -454,12 +465,12 @@ void Editor::EditorUI::SetLauncherMode(bool _b)
 	mbLauncherMode = _b;
 }
 
-void Editor::EditorUI::PushFont(unsigned _i)
+void Editor::EditorUI::PushFontSize(unsigned _i)
 {
 	ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[_i]);
 }
 
-void Editor::EditorUI::PopFont(void)
+void Editor::EditorUI::PopFontSize(void)
 {
 	ImGui::PopFont();
 }

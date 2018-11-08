@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_LAUNCHER_H_
 #include "DataStructure/HashString.h"
 #include "DataStructure/AutoArray.h"
-
+#include "IO/TextSerialiser.h"
 namespace Editor
 {
 	class EditorLauncher
@@ -30,12 +30,18 @@ namespace Editor
 		void EndFrame(void);
 		void Shutdown(void);
 
+		void SaveSettings(Dystopia::TextSerialiser&);
+		void LoadSettings(Dystopia::TextSerialiser&);
+
 		bool IsClosing(void) const;
 
 		HashString GetProjectPath(void) const;
 
 	private:
+		static constexpr unsigned bufSize = 256;
+
 		AutoArray<HashString> mArrProjectFolders;
+		AutoArray<HashString> mArrKnownProjects;
 		HashString mProjectSelected;
 		bool mbClosing;
 		bool mbProjectView;
@@ -44,6 +50,8 @@ namespace Editor
 		int mOriginSizeX;
 		int mOriginSizeY;
 		int mCurrentlySelected;
+		char mNameBuffer[bufSize];
+		char mLocBuffer[bufSize];
 
 		void TopBar(float, float);
 		void MainBody(float, float);
@@ -54,6 +62,8 @@ namespace Editor
 		void RemoveWindowStyles(void);
 		void FindAllProjects(void);
 		void ProjectDetails(const HashString&);
+		void CreateFields(float, float);
+		bool Browse(HashString&);
 	};
 
 }

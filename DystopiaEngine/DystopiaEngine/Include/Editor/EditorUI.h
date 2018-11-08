@@ -37,8 +37,8 @@ namespace Editor
 
 		void SetLauncherMode(bool);
 		// 0 small, 1 medium, 2 large
-		void PushFont(unsigned); 
-		void PopFont(void);
+		void PushFontSize(unsigned); 
+		void PopFontSize(void);
 
 	private:
 		GLState			mGLState;

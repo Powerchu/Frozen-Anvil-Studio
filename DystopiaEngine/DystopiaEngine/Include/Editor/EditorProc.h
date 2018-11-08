@@ -21,6 +21,7 @@ namespace Dystopia
 	struct EditorProc
 	{
 		bool Load(HashString& _outPath);
+		bool BrowseFolder(HashString& _outPath, HWND _win);
 		bool SaveAs(HashString& _outName, HashString& _outPath, HWND _win);
 	};
 }

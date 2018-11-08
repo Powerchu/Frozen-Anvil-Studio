@@ -211,6 +211,31 @@ HashString& HashString::operator+=(const HashString& _rhs)
 	return operator+=(_rhs.mCharBuffer);
 }
 
+HashString& HashString::operator+=(const char _c)
+{
+	size_t i = 0;
+	size_t j = 0;
+	char* buffer = Dystopia::DefaultAllocator<char[]>::Alloc(mSize + 2);
+	while (i < mSize)
+	{
+		buffer[i] = mCharBuffer[i];
+		++i;
+	}
+	buffer[mSize] = _c;
+	buffer[1 + mSize] = '\0';
+	mSize += 1;
+	Dystopia::DefaultAllocator<char[]>::Free(mCharBuffer);
+	mCharBuffer = buffer;
+	mHashedID = StringHasher(mCharBuffer);
+	return *this;
+}
+
+HashString& HashString::operator+=(unsigned _i)
+{
+
+	return *this;
+}
+
 HashString& HashString::erase(size_t _pos, size_t _len)
 {
 	DEBUG_ASSERT(_pos >= mSize, "Hash String Earse _pos out of range");
