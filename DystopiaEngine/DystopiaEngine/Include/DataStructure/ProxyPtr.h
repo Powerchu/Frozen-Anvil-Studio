@@ -100,7 +100,7 @@ inline T* ProxyPtr<T>::GetRaw(void) const
 template<class T>
 inline void ProxyPtr<T>::Check(void) const
 {
-#if defined(SAFE_PTR)
+#if defined(SAFE_PTRS)
 	if (nullptr == mpObj)
 		throw std::exception("Null pointer exception!");
 #endif
