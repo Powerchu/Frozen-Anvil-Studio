@@ -202,6 +202,10 @@ namespace Dystopia
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
 
+#if EDITOR
+		Math::Vec3D          mScale;
+#endif
+
 	protected:
 		/*AutoArray of collision event*/
 		AutoArray<CollisionEvent>  marr_ContactSets;
@@ -218,7 +222,6 @@ namespace Dystopia
 		Math::Matrix3D mOwnerTransformation;
 #if EDITOR
 		Math::Quaternion     mRotation;
-		Math::Vec3D          mScale;
 #endif
 
 	private:
