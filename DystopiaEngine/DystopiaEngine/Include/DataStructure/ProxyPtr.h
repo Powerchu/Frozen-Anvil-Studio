@@ -31,15 +31,19 @@ public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
 	constexpr ProxyPtr(T*) noexcept;
-	ProxyPtr(ProxyPtr&&) noexcept;
-	ProxyPtr(const ProxyPtr&) noexcept;
+	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>>>
+	ProxyPtr(ProxyPtr<U>&&) noexcept;
+	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>>>
+	ProxyPtr(const ProxyPtr<U>&) noexcept;
 
 
 	// ======================================== OPERATORS ======================================== // 
 
 	ProxyPtr& operator=(std::nullptr_t);
-	ProxyPtr& operator=(ProxyPtr&&) noexcept;
-	ProxyPtr& operator=(const ProxyPtr&) noexcept;
+	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>>>
+	ProxyPtr& operator=(ProxyPtr<U>&&) noexcept;
+	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>>>
+	ProxyPtr& operator=(const ProxyPtr<U>&) noexcept;
 
 	T& operator*  (void) { Check(); return *mpObj; }
 	T* operator-> (void) { Check(); return  mpObj; }
@@ -76,16 +80,16 @@ constexpr ProxyPtr<T>::ProxyPtr(T* _p) noexcept
 
 }
 
-template <class T>
-ProxyPtr<T>::ProxyPtr(ProxyPtr&& _p) noexcept
-	: ProxyPtr{ _p.mpObj }
+template <class T> template <class U, typename>
+ProxyPtr<T>::ProxyPtr(ProxyPtr<U>&& _p) noexcept
+	: ProxyPtr{ static_cast<T*>(_p.mpObj) }
 {
 	_p.mpObj = nullptr;
 }
 
-template <class T>
-ProxyPtr<T>::ProxyPtr(const ProxyPtr& _p) noexcept
-	: ProxyPtr{ _p.mpObj }
+template <class T> template <class U, typename>
+ProxyPtr<T>::ProxyPtr(const ProxyPtr<U>& _p) noexcept
+	: ProxyPtr{ static_cast<T*>(_p.mpObj) }
 {
 
 }
@@ -118,17 +122,17 @@ ProxyPtr<T>& ProxyPtr<T>::operator = (std::nullptr_t)
 	return *this;
 }
 
-template <class T>
-ProxyPtr<T>& ProxyPtr<T>::operator = (ProxyPtr<T>&& _p) noexcept
+template <class T> template <class U, typename>
+ProxyPtr<T>& ProxyPtr<T>::operator = (ProxyPtr<U>&& _p) noexcept
 {
-	Ut::Swap(mpObj, _p.mpObj);
+	mpObj = static_cast<T*>(_p.mpObj);
 	return *this;
 }
 
-template <class T>
-ProxyPtr<T>& ProxyPtr<T>::operator = (const ProxyPtr<T>& _p) noexcept
+template <class T> template <class U, typename>
+ProxyPtr<T>& ProxyPtr<T>::operator = (const ProxyPtr<U>& _p) noexcept
 {
-	mpObj = _p;
+	mpObj = static_cast<T*>(_p.mpObj);
 	return *this;
 }
 
