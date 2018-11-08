@@ -87,19 +87,25 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
-			if (!body.GetOwner()->IsActive())
+			if (body.GetOwner())
 			{
-				return;
+				if (!body.GetOwner()->IsActive())
+				{
+					return;
+				}
 			}
+			
 		}
 		for (int i = 0; i < mVelocityIterations; ++i)
 		{
 			for (auto& body : mComponents)
 			{
+				if (body.GetOwner() == nullptr) return;
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 				if (body.Get_IsStaticState()) continue;
+
 
 				for (auto col : body.mparrCol)
 				{
@@ -129,6 +135,7 @@ namespace Dystopia
 
 		for (auto& body : mComponents)
 		{
+			if (body.GetOwner() == nullptr) return;
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -141,6 +148,7 @@ namespace Dystopia
 		{
 			for (auto& body : mComponents)
 			{
+				if (body.GetOwner() == nullptr) return;
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -197,6 +205,7 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
+			if (body.GetOwner() == nullptr) return;
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -214,8 +223,7 @@ namespace Dystopia
 		{
 			if (body.GetOwner())
 			{
-				if (body.GetOwner()->GetName() == "Hero")
-					body.DebugPrint();
+				body.DebugPrint();
 			}
 		}
 	}
@@ -240,6 +248,7 @@ namespace Dystopia
 
 	void PhysicsSystem::PreFixedUpdate(float _dt)
 	{
+		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "PreFixed Update" };
 		// Integrate RigidBodies
 		IntegrateRigidBodies(_dt);
 	}

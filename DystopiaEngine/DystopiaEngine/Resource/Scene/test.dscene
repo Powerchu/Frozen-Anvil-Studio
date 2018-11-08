@@ -1,10 +1,10 @@
 [START_Scene]
-52428800,test,19,[START_START_GO_DATA]
+52428800,test,20,[START_START_GO_DATA]
 18446744072925217280,97,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.378368,0.378368,1,-68.4843,11.6931,0,0,0,0,1,0,
+0.300379,0.300379,1,-68.4843,11.6931,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -18,11 +18,11 @@
 
 [END_END_GO_TRANSFORM]
 [START_START_GO_DATA]
-1300766720,65,PlayerHero,
+1300766720,65,Player,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-33.6183,33.6183,1,-36.783,14.068,5,0,0,0,1,0,
+33.6183,33.6183,1,-92.3532,-3.50418,5,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -167,6 +167,15 @@
 [START_START_GO_TRANSFORM]
 [START_Transform]
 13.2747,20,1,52.5817,-30.2989,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+60340736,65,AudioTrig,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,-54.9694,-7.35929,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -405,7 +414,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-18,
+19,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -515,6 +524,12 @@
 [END_Convex_Collider]
 
 [END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744071765016576,1,60340736,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component End]
 [START_ComponentDonor]
 6,
 [END_ComponentDonor End]
@@ -555,8 +570,14 @@
 
 [END_Component End]
 [START_ComponentDonor]
-0,
+1,
 [END_ComponentDonor End]
+[START_Component]
+[START_Audio]
+965790208,1,60340736,0,1,1,wilomenu.wav,1,1,1,
+[END_Audio]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
@@ -564,7 +585,7 @@
 0,
 [END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-6,[START_str]
+7,[START_str]
 CharacterController,1,[START_BEHAVIOUR_BLOCK]
 1300766720,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
 IsDodging,[START_IsDodging]
@@ -582,7 +603,14 @@ Fireball,0,[START_str]
 FollowTarget,0,[START_str]
 Goblin,0,[START_str]
 Missle,0,[START_str]
-Parallax,0,
+Parallax,0,[START_str]
+ChangeAudio,1,[START_BEHAVIOUR_BLOCK]
+60340736,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+END,
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+
 [END_BEHAVIOUR_SYSTEM_BLOCK]
 
 [END_Scene]

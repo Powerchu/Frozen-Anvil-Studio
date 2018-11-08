@@ -310,7 +310,7 @@ inline SharedPtr<T> DynamicPtrCast(const SharedPtr<U>& _pPtr) noexcept
 {
 	if (auto = dynamic_cast<T>(_pPtr.GetRaw()))
 	{
-		return SharedPtr<T> { _pPtr }
+		return SharedPtr<T> { _pPtr };
 	}
 
 	return SharedPtr<T>{};

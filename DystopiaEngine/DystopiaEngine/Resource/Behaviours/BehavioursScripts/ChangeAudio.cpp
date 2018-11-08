@@ -19,7 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/DebugAssert.h"
 
 #include "Component/AudioSource.h"
-#include "Component/CharacterController.h"
 #include "Object/GameObject.h"
 
 
@@ -78,8 +77,16 @@ namespace Dystopia
 
 	void Dystopia::ChangeAudio::OnTriggerEnter(const GameObject * _obj)
 	{
-		if (_obj->GetComponent<CharacterController>() == nullptr)
+		if (_obj->GetNamePtr() == nullptr)
 			return;
+		else
+		{
+			const char * name = _obj->GetNamePtr();
+			if(strcmp(name,"Player"))
+			{
+				return;
+			}
+		}
 		
 		auto audioSrc = GetOwner()->GetComponent<AudioSource>();
 		if (audioSrc)
@@ -90,13 +97,22 @@ namespace Dystopia
 	}
 
 	void Dystopia::ChangeAudio::OnTriggerStay(const GameObject * _obj)
-	{
+	{ 
 	}
 
 	void Dystopia::ChangeAudio::OnTriggerExit(const GameObject * _obj)
 	{
-		if (_obj->GetComponent<CharacterController>() == nullptr)
+		if (_obj->GetNamePtr() == nullptr)
 			return;
+		else
+		{
+			const char * name = _obj->GetNamePtr();
+			if(strcmp(name,"Player"))
+			{
+				return;
+			}
+		}  
+	
 		auto audioSrc = GetOwner()->GetComponent<AudioSource>();
 		if (audioSrc)
 		{

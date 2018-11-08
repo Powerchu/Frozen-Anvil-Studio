@@ -68,7 +68,7 @@ namespace Dystopia
 
 			void Reset() { mStatus = eStatus::INVALID; }
 
-			using Ptr = std::shared_ptr<Node>;
+			using Ptr = SharedPtr<Node>;
 
 		protected:
 			eStatus mStatus = eStatus::INVALID;
@@ -112,7 +112,7 @@ namespace Dystopia
 			bool HasChild() const { return mpChild != nullptr; }
 
 		protected:
-			Node::Ptr mpChild = nullptr;
+			Node::Ptr mpChild;
 		};
 
 
@@ -142,7 +142,7 @@ namespace Dystopia
 		{
 		public:
 			BehaviourTree() 
-				: mpBlackboard(std::make_shared<Blackboard>())
+				: mpBlackboard(Ctor::CreateShared<Blackboard>())
 			{
 				
 			}
@@ -179,9 +179,9 @@ namespace Dystopia
 			{ mpSharedboard = shared; }
 
 		private:
-			Node::Ptr mpRoot = nullptr;
-			Blackboard::Ptr mpBlackboard = nullptr;
-			Blackboard::Ptr mpSharedboard = nullptr;
+			Node::Ptr mpRoot;
+			Blackboard::Ptr mpBlackboard;
+			Blackboard::Ptr mpSharedboard;
 		};
 
 	}
