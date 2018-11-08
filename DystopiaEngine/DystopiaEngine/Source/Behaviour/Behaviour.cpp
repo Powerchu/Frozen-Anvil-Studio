@@ -23,6 +23,10 @@ void Dystopia::Behaviour::Load(void)
 {
 }
 
+void Dystopia::Behaviour::Awake(void)
+{
+}
+
 void Dystopia::Behaviour::Init(void)
 {
 }

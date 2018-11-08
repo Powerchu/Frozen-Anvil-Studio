@@ -75,6 +75,9 @@ namespace Dystopia
 		void EditorUI(void) noexcept override;
 
 		bool AnimationFinished(void) const;
+		void SetSpeed(float);
+		void SetPlay(bool);
+
 	private:
 
 		TextureAtlas* mpAtlas;

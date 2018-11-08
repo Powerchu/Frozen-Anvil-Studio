@@ -233,8 +233,8 @@ namespace EGUI
 		eDragStatus DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText, float _width)
 		{
 			static POINT p;
-			static const int xPos = (GetSystemMetrics(SM_CXSCREEN)) / 2;
-			static const int yPos = (GetSystemMetrics(SM_CYSCREEN)) / 2;
+			//static const int xPos = (GetSystemMetrics(SM_CXSCREEN)) / 2;
+			//static const int yPos = (GetSystemMetrics(SM_CYSCREEN)) / 2;
 
 			if (!_hideText)
 			{
@@ -494,7 +494,7 @@ namespace EGUI
 				IconFile(_uniqueId.c_str(), size.x, size.y);
 			else
 			{
-				ImGui::Image(reinterpret_cast<void*>(_imgId), ImVec2{ size.x / 2, size.y / 2 });
+				ImGui::Image(reinterpret_cast<void*>(static_cast<size_t>(_imgId)), ImVec2{ size.x / 2, size.y / 2 });
 			}
 			ImGui::SetCursorScreenPos(posText);
 			ImGui::TextWrapped(_label.c_str());

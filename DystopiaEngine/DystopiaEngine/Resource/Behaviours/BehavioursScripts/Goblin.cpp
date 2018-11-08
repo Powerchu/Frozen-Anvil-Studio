@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
 #include "Editor/EGUI.h"
-#include "Utility/DebugAssert.h"
+
 #include "System/Scene/SceneSystem.h"
 #include "Object/GameObject.h"
 #include "System/Collision/CollisionEvent.h"
@@ -38,16 +38,52 @@ namespace Dystopia
 
 	void Goblin::Init()
 	{
+		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
+		const auto blackboard = bTree.GetBlackboard();
+		Math::Vector4 vectorT;
+		if (mpTarget)
+		{
+			vectorT = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
+		}
+		blackboard->setVector("Target", vectorT);
+		blackboard->setVector("Owner", GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
+		blackboard->setGameObj("Owner", GetOwner());
+		blackboard->setInt("Health", mHealth);
+		NeuralTree::Builder()
+			.composite<NeuralTree::Sequence>()
+				.leaf<CheckDistNode>(blackboard)
+				.decorator<NeuralTree::Inverter>()
+					.composite<NeuralTree::Sequence>()
+						.leaf<CheckHealth>(blackboard)
+						.leaf<ChaseEnemy>(blackboard)
+					.end()
+				.end()
+				.leaf<RunAway>(blackboard)
+			.end()
+		.Build(bTree); 
 	}
 
 	void Goblin::Update(const float _fDeltaTime)
 	{
-		//mHealth -=5;
+		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
+		const auto blackboard = bTree.GetBlackboard();
+		Math::Vector4 vectorT;
+		if (mpTarget)
+		{
+			vectorT = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
+		}
+		blackboard->setVector("Target", vectorT);
+		blackboard->setVector("Owner", GetOwner()->GetComponent<Transform>()->GetPosition());
+		blackboard->setInt("Health", mHealth);
+		
+		bTree.Update();
+		
 		if(EngineCore::GetInstance()->Get<InputManager>()->IsKeyTriggered(eButton::KEYBOARD_X) && isColliding)
 		{
 			mHealth -= 5;
 		}
-        if(mHealth < 0)
+
+        if(mHealth <= 0)
         {
             GetOwner()->Destroy();
         }
@@ -132,7 +168,6 @@ namespace Dystopia
 				isColliding = true;
 			}	
 		}
-
 	}
 
 	void Dystopia::Goblin::OnTriggerStay(const GameObject * _obj)
@@ -145,7 +180,7 @@ namespace Dystopia
 			{
 				//if(_obj->GetComponent<SpriteRenderer>()->AnimationFinished())
 				isColliding = true;
-			}	
+			}
 		}
 	}
 

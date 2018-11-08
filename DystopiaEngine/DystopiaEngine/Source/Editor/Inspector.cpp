@@ -195,9 +195,9 @@ namespace Dystopia
 		for (auto & c : arrBehav)
 		{
 			EGUI::Display::HorizontalSeparator();
-			bool open = EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } +"##" +
+			const bool open = EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } +"##" +
 				std::to_string(mpFocus->GetID()));
-			bool show = !RemoveComponent(c);
+			const bool show = !RemoveComponent(c);
 			if (open)
 			{
 				if (show)

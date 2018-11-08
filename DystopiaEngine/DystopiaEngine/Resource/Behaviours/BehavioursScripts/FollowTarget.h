@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
 #include "DataStructure/HashString.h"
+#include "Object/GameObject.h"
 
 #include <string>
 
@@ -78,9 +79,8 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
-		std::string targetName;
-		float targetFloat;
 	private:
+		GameObject* mpTarget = nullptr;
 		friend MetaData<FollowTarget>;
 	};
 
@@ -93,7 +93,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::FollowTarget, targetName, targetFloat)
+PP_REFLECT_EMPTY(Dystopia::FollowTarget)
 
 #endif //_FollowTarget_H_
 

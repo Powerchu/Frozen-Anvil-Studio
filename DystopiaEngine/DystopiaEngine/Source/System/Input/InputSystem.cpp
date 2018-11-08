@@ -79,7 +79,7 @@ bool Dystopia::InputManager::Init(void)
 	return true;
 }
 
-void Dystopia::InputManager::Update(const float _dt)
+void Dystopia::InputManager::Update(const float)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Input System", "Update" };
 
@@ -93,19 +93,11 @@ void Dystopia::InputManager::Update(const float _dt)
 		KeyboardState::u32int count = 0;
 		for(auto const & elem : storage)
 		{
-			unsigned GroupIndex  = count / (sizeof(KeyboardState::u32int) * 8);
-			unsigned BitShiftAmt = count % (sizeof(KeyboardState::u32int) * 8);
+			const unsigned GroupIndex  = count / (sizeof(KeyboardState::u32int) * 8);
+			const unsigned BitShiftAmt = count % (sizeof(KeyboardState::u32int) * 8);
 			/*Generate the Input Keypress Flags*/
 			*(ptr + GroupIndex) |= static_cast<bool>(elem & 0x80) ? (0x00000001ui32) << BitShiftAmt: 0;
 			++count;
-		}
-	}
-
-	for (auto& control : mComponents)
-	{
-		if (control.GetOwner())
-		{
-			control.Update(_dt);
 		}
 	}
 
@@ -120,14 +112,6 @@ void Dystopia::InputManager::Shutdown(void)
 
 void Dystopia::InputManager::PostUpdate()
 {
-	for (auto& control : mComponents)
-	{
-		if (control.GetFlags() & FLAG_REMOVE)
-		{
-			mComponents.Remove(&control);
-		}
-	}
-
 	mPrevKeyBoardState = mKeyBoardState;
 	for (auto & elem : mKeyBoardState.mKeyPressFlags)
 		elem = 0;
@@ -147,7 +131,7 @@ void Dystopia::InputManager::MapUserButton(eUserButton , eButton )
 	
 }
 
-void Dystopia::InputManager::MapButton(std::string const &_name, eButton _button)
+void Dystopia::InputManager::MapButton(const char* _name, eButton _button)
 {
 	mButtonMapping[_name] = _button;
 }
@@ -183,12 +167,12 @@ _DLL_EXPORT bool Dystopia::InputManager::IsKeyReleased(eButton _Btn) const noexc
 	KeyboardState::u32int BitChecker = (0x00000001ui32 << _Btn % (sizeof(KeyboardState::u32int) * 8));
 	KeyboardState::u32int GrpIndex = _Btn / (sizeof(KeyboardState::u32int) * 8);
 
-	return (*(prev_ptr + GrpIndex) & BitChecker) & !(*(curr_ptr + GrpIndex)) & BitChecker;
+	return ((*(prev_ptr + GrpIndex) & BitChecker) && !(*(curr_ptr + GrpIndex) & BitChecker));
 }
 
-_DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(std::string const & _ButtonName) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(const char* _ButtonName) const noexcept
 {
-	auto iterator = mButtonMapping.find(_ButtonName);
+	const auto iterator = mButtonMapping.find(_ButtonName);
 	if (iterator == mButtonMapping.end())
 	{
 		return false;
@@ -200,9 +184,9 @@ _DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(std::string const & _But
 	return IsKeyTriggered(iterator->second);
 }
 
-_DLL_EXPORT bool Dystopia::InputManager::IsKeyPressed(std::string const & _ButtonName) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::IsKeyPressed(const char* _ButtonName) const noexcept
 {
-	auto iterator = mButtonMapping.find(_ButtonName);
+	const auto iterator = mButtonMapping.find(_ButtonName);
 	if (iterator == mButtonMapping.end())
 	{
 		return false;
@@ -214,9 +198,9 @@ _DLL_EXPORT bool Dystopia::InputManager::IsKeyPressed(std::string const & _Butto
 	return IsKeyPressed(iterator->second);
 }
 
-_DLL_EXPORT bool Dystopia::InputManager::IsKeyReleased(std::string const & _ButtonName) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::IsKeyReleased(const char* _ButtonName) const noexcept
 {
-	auto iterator = mButtonMapping.find(_ButtonName);
+	const auto iterator = mButtonMapping.find(_ButtonName);
 	if (iterator == mButtonMapping.end())
 	{
 		return false;

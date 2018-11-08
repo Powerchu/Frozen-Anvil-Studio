@@ -31,7 +31,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/Array.h"
 #endif
 
-
 Dystopia::SpriteRenderer::SpriteRenderer(void) noexcept
 	: Renderer{}, mAnimations{ 1 }, mnID{ 0 }, mnCol{ 0 }, mnRow{ 0 },
 	mfFrameTime{ 0.016f }, mfAccTime{ 0 }, mpAtlas{ nullptr }, mbPlayAnim{ false }
@@ -215,6 +214,15 @@ bool Dystopia::SpriteRenderer::AnimationFinished(void) const
 	return true;
 }
 
+void Dystopia::SpriteRenderer::SetSpeed(float _f)
+{
+	mfFrameTime = _f;
+}
+
+void Dystopia::SpriteRenderer::SetPlay(bool _b)
+{
+	mbPlayAnim = _b;
+}
 
 Dystopia::SpriteRenderer* Dystopia::SpriteRenderer::Duplicate(void) const
 {

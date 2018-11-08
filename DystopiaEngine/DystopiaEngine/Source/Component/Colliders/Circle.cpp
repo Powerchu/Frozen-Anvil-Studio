@@ -346,7 +346,8 @@ namespace Dystopia
 		default:
 			break;
 		}
-
+		mScale.x = m_radius;
+		mScale.y = m_radius;
 	}
 
 	void Circle::eAttachedBodyEmptyBox()

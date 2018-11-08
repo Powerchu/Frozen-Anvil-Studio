@@ -34,7 +34,8 @@ namespace Dystopia
 		void Shutdown(void) override;
 
 		void LoadDefaults(void) override;
-		void LoadSettings(TextSerialiser&) override;
+		void LoadSettings(DysSerialiser_t&) override;
+		void SaveSettings(DysSerialiser_t&) override;
 
 		void EditorUI(void);
 
@@ -54,6 +55,8 @@ namespace Dystopia
 		void MaxVelocityUI(void);
 		void VelocityIterationUI(void);
 		void PositionalIterationUI(void);
+		void SleepEpsilonUI(void);
+		void SleepBiasUI(void);
 #endif 
 
 		bool  mbIsDebugActive;
@@ -69,6 +72,12 @@ namespace Dystopia
 
 		// Position Correction Tolerance
 		float mPenetrationEpsilon;
+
+		// Sleep Velocity Tolerance
+		float mfSleepVelEpsilon;
+
+		// Sleep Time Bias;
+		float mfSleepBias;
 
 		// Velocity Iterations For Resolution;
 		int mVelocityIterations;

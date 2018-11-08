@@ -24,6 +24,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	class RigidBody;
+	class InputManager;
+
 	class CharacterController : Behaviour
 	{
 	public:
@@ -39,12 +42,13 @@ namespace Dystopia
 
 #endif
 		virtual const std::string GetEditorName(void) const override { return "CharacterController"; }
-		static uint64_t constexpr mCharacterControllerID = 18446744072215185920;
+		static uint64_t constexpr mCharacterControllerID = 1496323584;
 
 		CharacterController();
 		~CharacterController();
 		
 		virtual void Load(void) override;
+		virtual void Awake(void) override;
 		virtual void Init(void) override;
 
 		virtual void Update(const float _fDeltaTime) override;
@@ -75,8 +79,25 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+		// Member Functions
+		void CheckMoving();
+		void MovePlayer(float);
+
 	private:
 		friend MetaData<CharacterController>;
+
+	// Member Variables
+	public: 
+		bool IsDodging;
+		float CharacterSpeed;
+		float JumpForce;
+	private:
+		bool mbIsGrounded;
+		bool mbIsCeilinged;
+		bool mbIsFacingRight;
+
+		RigidBody * mpBody;
+		InputManager * mpInputSys;
 	};
 
 	extern "C"
@@ -87,6 +108,8 @@ namespace Dystopia
 		}
 	}
 }
+
+PP_REFLECT(Dystopia::CharacterController, IsDodging, CharacterSpeed, JumpForce);
 
 #endif //_CharacterController_H_
 

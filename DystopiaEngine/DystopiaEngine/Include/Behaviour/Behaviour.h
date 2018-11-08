@@ -42,6 +42,7 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
 		virtual void Load(void);
+		virtual void Awake(void);
 		virtual void Init(void);
 
 		virtual void Update(const float _fDeltaTime);

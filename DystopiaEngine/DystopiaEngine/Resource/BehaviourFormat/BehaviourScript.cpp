@@ -15,6 +15,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Collision/CollisionEvent.h"
+#include "System/Collision/CollisionSystem.h"
+
+#include "Object/ObjectFlags.h"
+#include "Object/GameObject.h"
+
 #include "Editor/EGUI.h"
 #include "Utility/DebugAssert.h"
 
@@ -29,6 +36,10 @@ namespace Dystopia
 	}
 
 	void _SF_ClassName_::Load()
+	{
+	}
+
+	void _SF_ClassName_::Awake()
 	{
 	}
 

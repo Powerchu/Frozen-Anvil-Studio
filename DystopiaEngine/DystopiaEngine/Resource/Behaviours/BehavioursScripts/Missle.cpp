@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
 \file	Missle.cpp
-\author keith.goh (100%)
-\par    email: keith.goh\@digipen.edu
+\author DAN (100%)
+\par    email: dan\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -48,10 +48,17 @@ namespace Dystopia
 		{
 
 		}
-		if(GetOwner()->GetComponent<SpriteRenderer>()->AnimationFinished())
+		if (GetOwner())
 		{
-			GetOwner()->Destroy();
+			if(GetOwner()->GetComponent<SpriteRenderer>())
+			{
+				if(GetOwner()->GetComponent<SpriteRenderer>()->AnimationFinished())
+				{
+					GetOwner()->Destroy();
+				}
+			}
 		}
+		
 	}
 
 	void Missle::FixedUpdate(const float _fDeltaTime)

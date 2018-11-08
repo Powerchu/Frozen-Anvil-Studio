@@ -93,7 +93,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.0f },
-	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .68f, 1.f, .278f, .35f }
+	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .68f, 1.f, .278f, .1f }
 {
 
 }
@@ -266,19 +266,10 @@ namespace
 
 		if (t) t->Bind();
 
-#   if defined(_DEBUG) | defined(DEBUG)
-		if (auto err = glGetError())
-			__debugbreak();
-#   endif 
 
 		s->UploadUniform("ProjectViewMat", _ProjView);
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);
-
-#   if defined(_DEBUG) | defined(DEBUG)
-		if (auto err = glGetError())
-			__debugbreak();
-#   endif 
 
 		_renderer->Draw();
 
@@ -393,7 +384,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	s->UploadUniform("ProjectViewMat", _ProjView);
 
 
-	Math::Vector4 CollidingColor{ 1.f, 0, 0, .35f }, SleepingColor{ 1.f,1.f,0,.35f }, TriggerColor{ .8f,.8f,.8f,.25f }, activeColor;
+	Math::Vector4 CollidingColor{ 1.f, 0, 0, .1f }, SleepingColor{ 1.f,1.f,0,.1f }, TriggerColor{ .8f,.8f,.8f,.1f }, activeColor;
 
 	// Find out a way to allow stuff other than colliders to draw stuff
 
@@ -441,6 +432,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 
 			if (Mesh* pObjMesh = Obj->GetMesh())
 			{
+				activeColor.w = 0.1f;
 				s->UploadUniform("vColor", activeColor);
 				pObjMesh->DrawMesh(GetDrawMode());
 				activeColor.w = 1.f;
@@ -661,6 +653,12 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 
 		mViews.Emplace(w, h, alpha);
 	}
+	_in >> mbDebugDrawCheckBox;
+	_in >> mfDebugLineWidth;
+	_in >> mvDebugColour[0];
+	_in >> mvDebugColour[1];
+	_in >> mvDebugColour[2];
+	_in >> mvDebugColour[3];
 }
 
 void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
@@ -674,6 +672,13 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 		_out << e.GetHeight();
 		_out << e.HasAlpha();
 	}
+
+	_out << mbDebugDrawCheckBox;
+	_out << mfDebugLineWidth;
+	_out << static_cast<float>(mvDebugColour.x);
+	_out << static_cast<float>(mvDebugColour.y);
+	_out << static_cast<float>(mvDebugColour.z);
+	_out << static_cast<float>(mvDebugColour.w);
 }
 
 
@@ -869,7 +874,9 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 
 void Dystopia::GraphicsSystem::EditorUI(void)
 {
-	static bool tempBool = GetDebugDraw();
+	static bool  mbDebugDrawCheckBox = false;
+
+	mbDebugDrawCheckBox = GetDebugDraw();
 #if EDITOR			
 	//const auto pCore = EngineCore::GetInstance();
 	//const auto pCamSys = pCore->GetSystem<CameraSystem>();
@@ -891,9 +898,9 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	}
 
 	//const auto& sceneCam = pCamSys->GetMasterCamera();
-	if (EGUI::Display::CheckBox("Debug Draw  ", &tempBool))
+	if (EGUI::Display::CheckBox("Debug Draw  ", &mbDebugDrawCheckBox))
 	{
-		if (!tempBool)
+		if (!mbDebugDrawCheckBox)
 			ToggleDebugDraw(false);
 		else
 			ToggleDebugDraw(true);
