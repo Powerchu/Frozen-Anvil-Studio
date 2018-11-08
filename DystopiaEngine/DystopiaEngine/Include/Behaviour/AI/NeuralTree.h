@@ -134,7 +134,7 @@ namespace Dystopia
 			eStatus Update() override = 0;
 
 		protected:
-			Blackboard::Ptr mpBlackboard = nullptr;
+			Blackboard::Ptr mpBlackboard;
 		};
 
 

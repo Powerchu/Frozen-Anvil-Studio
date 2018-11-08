@@ -864,7 +864,6 @@
     <ClInclude Include="Include\System\Graphics\CharSpace.h">
       <Filter>Game Engine\SubSystems\Font</Filter>
     </ClInclude>
-<<<<<<<<< Temporary merge branch 1
     <ClInclude Include="Include\Behaviour\AI\AISystem.h">
       <Filter>Game Engine\Systems\AI</Filter>
     </ClInclude>
