@@ -5,7 +5,7 @@
 \par    email: t.jieweijacky\@digipen.edu
 \brief
 	Step 1: Use CreateShared to make a new pointer to type
-	Eg. CreateShared<GameObject>();
+	Eg. Ctor::CreateShared<GameObject>();
 	Step 2: Use as if it is a normal pointer
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
@@ -16,23 +16,36 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SHAREDPTR_H_
 #define _SHAREDPTR_H_
 
-#include "Utility/Meta.h"		// IsSame
-#include "Globals.h"            // _DLL_EXPORT
-
-#if defined(DEBUG) | defined(_DEBUG)
+#include "Globals.h"              // _DLL_EXPORT
+#include "Utility/Meta.h"		  // IsSame
 #include "Utility/DebugAssert.h"
-
-#include <typeinfo>
-#endif // Debug only includes
+#include "Allocator/DefaultAlloc.h"
 
 
-template <class T>
+template <class Ty>
+class SharedPtr;
+
+namespace Ctor
+{
+	template<typename T>
+	SharedPtr<T> CreateShared(T*, void(*)(void*) = [](void* _p) { delete static_cast<T*>(_p); });
+	template<typename T, typename ... P>
+	SharedPtr<T> CreateShared(P&& ...);
+	template<typename T, template<typename> class Nest>
+	SharedPtr<Nest<T>> CreateShared(Nest<T>* _pObj, void(*)(void*) = [](void* _p) { delete static_cast<Nest<T>*>(_p); });
+	template<typename T, template<typename> class Nest, typename ... P>
+	SharedPtr<Nest<T>> CreateShared(P&& ...);
+}
+
+
+template <class Ty>
 class SharedPtr
 {
 public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
 	constexpr SharedPtr(void) noexcept;
+	explicit SharedPtr(Ty*, void(*)(void*) = [](void* _p) { delete static_cast<Ty*>(_p); });
 	SharedPtr(const SharedPtr& _pPointer) noexcept;
 	SharedPtr(SharedPtr&& _pPointer) noexcept;
 
@@ -41,86 +54,71 @@ public:
 
 	// ======================================== OPERATORS ======================================== // 
 
-	SharedPtr& operator=(std::nullptr_t);
-	SharedPtr& operator=(const SharedPtr<T>& _pPointer);
-	SharedPtr& operator=(SharedPtr<T>&& _pPointer) noexcept;
+	SharedPtr& operator = (std::nullptr_t) noexcept;
+	SharedPtr& operator = (const SharedPtr<Ty>& _pPointer) noexcept;
+	SharedPtr& operator = (SharedPtr<Ty>&& _pPointer) noexcept;
 
-	T& operator*  (void) { return *mpObj; }
-	T* operator-> (void) { return  mpObj; }
-	const T& operator*  (void) const { return *mpObj; }
-	const T* operator-> (void) const { return  mpObj; }
+	Ty& operator*  (void) { return *mpObj; }
+	Ty* operator-> (void) noexcept { return  mpObj; }
+	const Ty& operator*  (void) const { return *mpObj; }
+	const Ty* operator-> (void) const noexcept { return  mpObj; }
 
-	inline explicit operator bool(void) const { return !!mpObj; }
+	inline explicit operator bool(void) const noexcept { return !!mpObj; }
 
-	inline T* GetRaw(void) const;
+	inline Ty* GetRaw(void) const noexcept;
 
 private:
 
-	SharedPtr(T* _pObj);
+	template <typename T>
+	using Alloc_t = Dystopia::DefaultAllocator<T>;
 
-	void RemoveReference(void);
+	struct Control
+	{
+		size_t mnRefs;
+		void (*mpDeleter)(void*);
+
+		Control(void(*_pDeleter)(void*)) :
+			mnRefs{ 1 }, mpDeleter{ _pDeleter }
+		{}
+
+		void AddRef(void) noexcept;
+		void RemoveRef(void*) noexcept;
+	};
+
+	template <typename T>
+	struct ControlAux : Control
+	{
+		T mObj;
+
+		template <typename ... U>
+		explicit ControlAux(void(*_p)(void*), U&& ..._args) :
+			Control{ _p }, mObj{ Ut::Forward<U>(_args)... }
+		{}
+	};
+
+
+	template <typename ...P> SharedPtr(P&& ...);
+	template <typename U> explicit SharedPtr(const SharedPtr<U>&) noexcept;
+
+
+	void RemoveReference(void) noexcept;
+
 
 	template <typename T, typename U>
-	friend SharedPtr<T> DynamicPtrCast(const SharedPtr<U>&);
+	friend SharedPtr<T> DynamicPtrCast(const SharedPtr<U>&) noexcept;
 
-	template<typename Type>
-	friend SharedPtr<Type> CreateShared(Type*);
-	template<typename Type, template<typename> class Nest>
-	friend SharedPtr<Nest<Type>> CreateShared(Nest<Type>* _pObj);
-	template<typename Type, typename ...Params>
-	friend SharedPtr<Type> CreateShared(Params&& ...);
-	template<typename Type, template<typename> class Nest, typename ...Params>
-	friend SharedPtr<Nest<Type>> CreateShared(Params&& ...);
+	template<typename T, typename ... P>
+	friend SharedPtr<T> Ctor::CreateShared(P&& ...);
+	template<typename T, template<typename> class Nest, typename ... P>
+	friend SharedPtr<Nest<T>> Ctor::CreateShared(P&& ...);
+	template<typename T>
+	friend SharedPtr<T> Ctor::CreateShared(T*, void(*)(void*));
+	template<typename T, template<typename> class Nest>
+	friend SharedPtr<Nest<T>> Ctor::CreateShared(Nest<T>* _pObj, void(*)(void*));
 
-	T* mpObj;
-	unsigned* mnRefCount;
+	Control* mpCtrl;
+	Ty* mpObj;
 };
-
-template<typename Type, typename ...Params>
-inline SharedPtr<Type> CreateShared(Params&& ...args)
-{
-	return SharedPtr<Type>(new Type{ static_cast<Params&&>(args)... });
-}
-
-template<typename Type, template<typename> class Nest, typename ...Params>
-inline SharedPtr<Nest<Type>> CreateShared(Params&& ...args)
-{
-	static_assert(!Ut::IsSame<Nest<Type>, SharedPtr<Type>>::value, 
-		"SharedPtr Error: Cannot create SharedPtr to type SharedPtr.");
-
-	return SharedPtr<Type>(new Type{ static_cast<Params&&>(args)... });
-}
-
-
-template<typename Type>
-inline SharedPtr<Type> CreateShared(Type* _pObj)
-{
-	return SharedPtr<Type>(_pObj);
-}
-
-template<typename Type, template<typename> class Nest>
-inline SharedPtr<Nest<Type>> CreateShared(Nest<Type>* _pObj)
-{
-	static_assert(!Ut::IsSame<Nest<Type>, SharedPtr<Type>>::value, 
-		"SharedPtr Error: Cannot create SharedPtr to type SharedPtr.");
-
-	return SharedPtr<Nest<Type>>(_pObj);
-}
-
-template <typename T, typename U>
-inline SharedPtr<T> DynamicPtrCast(const SharedPtr<U>& _pPtr)
-{
-	SharedPtr<T> ret{};
-
-	ret.mpObj = dynamic_cast<T>(_pPtr.GetRaw());
-
-	if (ret.mpObj)
-	{
-		ret.mnRefCount = _pPtr.mnRefCount;
-	}
-
-	return ret;
-}
 
 
 
@@ -130,66 +128,72 @@ inline SharedPtr<T> DynamicPtrCast(const SharedPtr<U>& _pPtr)
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
-template <class T>
-constexpr SharedPtr<T>::SharedPtr (void) noexcept
-	: mpObj{ nullptr }, mnRefCount{ nullptr }
+template <class Ty>
+constexpr SharedPtr<Ty>::SharedPtr(void) noexcept
+	: mpCtrl{ nullptr }, mpObj{ nullptr }
 {
 
 }
 
-template <class T>
-SharedPtr<T>::SharedPtr(const SharedPtr& _pPointer) noexcept
-	: mpObj{ _pPointer.mpObj }, mnRefCount{ _pPointer.mnRefCount }
+template <class Ty>
+SharedPtr<Ty>::SharedPtr(const SharedPtr& _pPtr) noexcept
+	: mpCtrl{ _pPtr.mpCtrl }, mpObj{ _pPtr.mpObj }
 {
-	if (_pPointer.mpObj)
-		++*mnRefCount;
+	if (_pPtr.mpCtrl)
+		mpCtrl->AddRef();
 }
 
-template <class T>
-SharedPtr<T>::SharedPtr(SharedPtr&& _pPointer) noexcept
-	: mpObj{ _pPointer.mpObj }, mnRefCount{ _pPointer.mnRefCount }
+template <class Ty>
+SharedPtr<Ty>::SharedPtr(SharedPtr&& _pPtr) noexcept
+	: mpCtrl{ _pPtr.mpCtrl }, mpObj{ _pPtr.mpObj }
 {
-	_pPointer.mpObj = nullptr;
-	_pPointer.mnRefCount = nullptr;
+	_pPtr.mpObj  = nullptr;
+	_pPtr.mpCtrl = nullptr;
 }
 
-template <class T>
-SharedPtr<T>::SharedPtr(T* _pObj) :
-	mpObj(_pObj), mnRefCount(new unsigned{ 1 })
+template <class Ty>
+SharedPtr<Ty>::SharedPtr(Ty* _pObj, void(*_del)(void*)) :
+	mpCtrl{ Alloc_t<ControlAux<Ty*>>::ConstructAlloc(_del, _pObj) },
+	mpObj{ _pObj }
 {
 
 }
 
-template <class T>
-SharedPtr<T>::~SharedPtr(void)
+template <class Ty> template <class U>
+SharedPtr<Ty>::SharedPtr(const SharedPtr<U>& _pPtr) noexcept
+	: mpCtrl{ _pPtr.mpCtrl }, mpObj{ static_cast<Ty*>(_pPtr.mpObj) }
+{
+
+}
+
+template <class Ty> template <typename ... P>
+SharedPtr<Ty>::SharedPtr(P&& ... _args) :
+	mpCtrl{ Alloc_t<ControlAux<Ty>>::ConstructAlloc([](void* _p){ static_cast<Ty*>(_p)->~Ty() }), Ut::Forward<P>(_args)... },
+	mpObj{ &(static_cast<ControlAux<Ty>*>(mpCtrl)->mObj) }
+{
+
+}
+
+template <class Ty>
+SharedPtr<Ty>::~SharedPtr(void)
 {
 	RemoveReference();
 }
 
-template <class T>
-inline T* SharedPtr<T>::GetRaw(void) const
+
+template <class Ty>
+inline Ty* SharedPtr<Ty>::GetRaw(void) const noexcept
 {
 	return mpObj;
 }
 
-template <class T>
-void SharedPtr<T>::RemoveReference(void)
+template <class Ty>
+inline void SharedPtr<Ty>::RemoveReference(void) noexcept
 {
-	if (mpObj)
-	{
-		if (0 == --*mnRefCount)
-		{
-		#if _DEBUG
-			DEBUG_LOG(mpObj, "SharedPtr freeing object \"%s\".\n", typeid(mpObj).name());
-		#endif
+	if (mpCtrl) mpCtrl->RemoveRef(mpObj);
 
-			delete mpObj;
-			delete mnRefCount;
-		}
-
-		mpObj = nullptr;
-		mnRefCount = nullptr;
-	}
+	mpObj  = nullptr;
+	mpCtrl = nullptr;
 }
 
 
@@ -197,80 +201,141 @@ void SharedPtr<T>::RemoveReference(void)
 // ============================================ OPERATOR OVERLOADING ============================================ // 
 
 
-template <class T>
- SharedPtr<T>& SharedPtr<T>::operator = (std::nullptr_t)
+template <class Ty>
+ SharedPtr<Ty>& SharedPtr<Ty>::operator = (std::nullptr_t) noexcept
 {
-	RemoveReference();
-	return *this;
+	 RemoveReference();
+	 return *this;
 }
 
-template <class T>
- SharedPtr<T>& SharedPtr<T>::operator = (const SharedPtr<T>& _pPointer)
+template <class Ty>
+ SharedPtr<Ty>& SharedPtr<Ty>::operator = (const SharedPtr<Ty>& _p) noexcept
 {
-	if (_pPointer.mpObj)
-		++*_pPointer.mnRefCount;
+	if (_p.mpCtrl)
+		_p.mpCtrl->AddRef();
 
 	RemoveReference();
-
-	mpObj = _pPointer.mpObj;
-	mnRefCount = _pPointer.mnRefCount;
-
-	return *this;
-}
-
-template <class T>
- SharedPtr<T>& SharedPtr<T>::operator = (SharedPtr<T>&& _pPointer) noexcept
-{
-	RemoveReference();
-
-	mpObj = _pPointer.mpObj;
-	mnRefCount = _pPointer.mnRefCount;
-
-	_pPointer.mpObj = nullptr;
-	_pPointer.mnRefCount = nullptr;
+	mpObj  = _p.mpObj;
+	mpCtrl = _p.mpCtrl;
 
 	return *this;
 }
 
-template <typename Type>
-inline bool operator== (const SharedPtr<Type>& _p, std::nullptr_t)
+template <class Ty>
+ SharedPtr<Ty>& SharedPtr<Ty>::operator = (SharedPtr<Ty>&& _p) noexcept
+{
+	 Ut::Swap(mpObj, _p.mpObj);
+	 Ut::Swap(mpCtrl, _p.mpCtrl);
+}
+
+template <typename Ty>
+inline bool operator == (const SharedPtr<Ty>& _p, std::nullptr_t) noexcept
 {
 	return nullptr == _p.GetRaw();
 }
 
-template <typename Type>
-inline bool operator== (std::nullptr_t, const SharedPtr<Type>& _p)
+template <typename Ty>
+inline bool operator == (std::nullptr_t, const SharedPtr<Ty>& _p) noexcept
 {
 	return _p == nullptr;
 }
 
-template <typename Type>
-inline bool operator!= (const SharedPtr<Type>& _p, std::nullptr_t)
+template <typename Ty>
+inline bool operator != (const SharedPtr<Ty>& _p, std::nullptr_t) noexcept
 {
 	return _p.GetRaw() != nullptr;
 }
-template <typename Type>
-inline bool operator!= (std::nullptr_t, const SharedPtr<Type>& _p)
+template <typename Ty>
+inline bool operator != (std::nullptr_t, const SharedPtr<Ty>& _p) noexcept
 {
 	return _p != nullptr;
 }
 
-template <typename TypeA, typename TypeB>
-inline bool operator== (const SharedPtr<TypeA>& _pL, const SharedPtr<TypeB>& _pR)
+template <typename LHS, typename RHS>
+inline bool operator == (const SharedPtr<LHS>& _pL, const SharedPtr<RHS>& _pR) noexcept
 {
 	return _pL.GetRaw() == _pR.GetRaw();
 }
 
-template <typename TypeA, typename TypeB>
-inline bool operator!= (const SharedPtr<TypeA>& _pL, const SharedPtr<TypeB>& _pR)
+template <typename LHS, typename RHS>
+inline bool operator != (const SharedPtr<LHS>& _pL, const SharedPtr<RHS>& _pR) noexcept
 {
 	return _pL.GetRaw() != _pR.GetRaw();
 }
 
-template <typename Type>
-inline bool operator! (const SharedPtr<Type>& _pL)
+template <typename Ty>
+inline bool operator! (const SharedPtr<Ty>& _pL)
 {
 	return !_pL.GetRaw();
+}
+
+
+
+// ============================================ SHARED POINTER MAKER ============================================ // 
+
+
+template<typename T, typename ... P>
+inline SharedPtr<T> Ctor::CreateShared(P&& ..._args)
+{
+	return SharedPtr<T>{ Ut::Forward<P>(_args)... };
+}
+
+template<typename T, template<typename> class Nest, typename ... P>
+inline SharedPtr<Nest<T>> Ctor::CreateShared(P&& ..._args)
+{
+	static_assert(!Ut::IsSame<Nest<T>, SharedPtr<T>>::value,
+		"SharedPtr Error: Cannot create SharedPtr to type SharedPtr.");
+
+	return SharedPtr<T>{ Ut::Forward<P>(_args)... };
+}
+
+
+template<typename T>
+inline SharedPtr<T> Ctor::CreateShared(T* _pObj, void(*_del)(void*))
+{
+	return SharedPtr<T>{ _pObj, _del };
+}
+
+template<typename Type, template<typename> class Nest>
+inline SharedPtr<Nest<Type>> Ctor::CreateShared(Nest<Type>* _pObj, void(*_del)(void*))
+{
+	static_assert(!Ut::IsSame<Nest<Type>, SharedPtr<Type>>::value,
+		"SharedPtr Error: Cannot create SharedPtr to type SharedPtr.");
+
+	return SharedPtr<Nest<Type>>{ _pObj, _del };
+}
+
+template <typename T, typename U>
+inline SharedPtr<T> DynamicPtrCast(const SharedPtr<U>& _pPtr) noexcept
+{
+	if (auto = dynamic_cast<T>(_pPtr.GetRaw()))
+	{
+		return SharedPtr<T> { _pPtr }
+	}
+
+	return SharedPtr<T>{};
+}
+
+
+
+// ================================================ NESTED TYPES ================================================ // 
+
+
+template<class Ty>
+inline void SharedPtr<Ty>::Control::AddRef(void) noexcept
+{
+	++mnRefs;
+}
+
+template<class Ty>
+inline void SharedPtr<Ty>::Control::RemoveRef(void* _p) noexcept
+{
+	if (!--mnRefs)
+	{
+		if (mpDeleter) mpDeleter(_p);
+
+		Dystopia::DefaultAllocator<void>::Free(this);
+	}
 }
 
 
