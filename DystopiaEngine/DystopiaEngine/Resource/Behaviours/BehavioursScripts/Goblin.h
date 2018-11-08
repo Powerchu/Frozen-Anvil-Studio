@@ -24,6 +24,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/GameObject.h"
 #include "Component/RigidBody.h"
 #include "Utility/DebugAssert.h"
+#include <map>
+#include "Behaviour/BehaviourMemberFunc.h"
 
 #define DllExport   __declspec( dllexport )
 
@@ -233,6 +235,24 @@ namespace Dystopia
 		
 		virtual void EditorUI(void) noexcept override;
 		
+		void TEST(float _dmg)
+        {
+			mHealth -= _dmg;
+        }
+		
+		void TEST2(int, int)
+		{
+			
+		}
+		void TEST2(int, int, float)
+		{
+			
+		}
+		void TEST2(int, int) const
+		{
+			
+		}
+		
 		// Reflection Stuff
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
@@ -241,6 +261,9 @@ namespace Dystopia
 		
 		bool isColliding = false;
 		NeuralTree::BehaviourTree bTree;
+		
+		PP_MEMBERFUNC(Dystopia::Goblin, TEST, TEST2)
+		
 	private:
 		friend MetaData<Goblin>;
 	};

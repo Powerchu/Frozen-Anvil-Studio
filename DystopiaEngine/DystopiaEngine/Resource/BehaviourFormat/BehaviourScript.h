@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Behaviour/Behaviour.h"
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
+#include "Behaviour/BehaviourMemberFunc.h"
 
 #define DllExport   __declspec( dllexport )
 

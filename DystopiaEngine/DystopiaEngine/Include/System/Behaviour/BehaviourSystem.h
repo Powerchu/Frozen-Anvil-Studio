@@ -93,10 +93,10 @@ namespace Dystopia
 
 
 		template<typename ... Ts>
-		void SendMessage(uint64_t _ObjectID, const char * const _FuncName, Ts&& ... _FuncParams);
+		void SendExternalMessage(uint64_t _ObjectID, const char * const _FuncName, Ts&& ... _FuncParams);
 
 		template<typename ... Ts>
-		void SendMessage(const char * const _FuncName, Ts&& ... _FuncParams);
+		void SendAllMessage(const char * const _FuncName, Ts&& ... _FuncParams);
 #endif
 
 	private:
@@ -128,13 +128,71 @@ namespace Dystopia
 			{
 				auto AllBehaviours = pGameObject->GetAllBehaviours();
 				for (auto & BehaveElem : AllBehaviours)
-					BehaveElem->ReceiveMessage(_FuncName, BehaviourMessage{ _FuncParams... });
+				{
+					BehaviourMessage Message( _FuncParams... );
+					/*Try to send Message to other components*/
+					_EDITOR_START_TRY
+						BehaveElem->ReceiveMessage(_FuncName, Message);
+					/*If behaviour throws, remove it from game object*/
+					_EDITOR_CATCH(std::exception& e)
+					{
+						_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+						_EDITOR_CODE(pGameObject->RemoveComponent(BehaveElem));
+						_EDITOR_CODE(BehaveElem->DestroyComponent());
+					}
+				}
+
 			}
 		}
 
 
 	}
 
+	template <typename ... Ts>
+	inline void BehaviourSystem::SendExternalMessage(uint64_t _ObjectID, const char* const _FuncName, Ts&&... _FuncParams)
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.first == _ObjectID && iter.second)
+				{
+					_EDITOR_START_TRY
+						iter.second->ReceiveMessage(_FuncName, Message);
+					/*If behaviour throws, remove it from game object*/
+					_EDITOR_CATCH(std::exception& e)
+					{
+						_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+						_EDITOR_CODE(pGameObject->RemoveComponent(iter.second));
+						_EDITOR_CODE(iter.second->DestroyComponent());
+					}
+				}
+			}
+		}
+	}
+
+	template <typename ... Ts>
+	inline void BehaviourSystem::SendAllMessage(const char* const _FuncName, Ts&&... _FuncParams)
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.second)
+				{
+					_EDITOR_START_TRY
+						iter.second->ReceiveMessage(_FuncName, Message);
+					/*If behaviour throws, remove it from game object*/
+					_EDITOR_CATCH(std::exception& e)
+					{
+						_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+						_EDITOR_CODE(pGameObject->RemoveComponent(iter.second));
+						_EDITOR_CODE(iter.second->DestroyComponent());
+					}
+				}
+			}
+		}
+	}
 }
 
 

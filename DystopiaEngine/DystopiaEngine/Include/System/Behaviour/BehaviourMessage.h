@@ -48,10 +48,19 @@ namespace Dystopia
 			Tuple<T...> mtParams;
 		};
 
+		template<typename ... T>
+		struct isFirstSame;
+
+		template<typename Comp, typename T, typename ... Ts>
+		struct isFirstSame<Comp, T, Ts...>
+		{
+			static constexpr bool value = Ut::IsSame<Ut::Decay_t<T>, Comp>::value;
+		};
+
 	public:
 
-		template<typename ... Ts, typename SFINAE = Ut::EnableIf_t<!(Ut::IsSame<Ut::Decay_t<Ts>, BehaviourMessage>::value || ...)>>
-		BehaviourMessage(Ts&& ... _FuncParams)
+		template<typename ... Ts, typename SFINAE = typename Ut::EnableIf<sizeof...(Ts) == 0 || !isFirstSame<BehaviourMessage, Ts...>::value>::type>
+		BehaviourMessage(Ts ... _FuncParams)
 			:mpWrapper{new Wrapper<Tuple<Ut::Decay_t<Ts>...>>{  Ut::Forward<Ts>( _FuncParams)  ...}}
 		{
 
@@ -83,7 +92,7 @@ namespace Dystopia
 			Ut::Swap(mpWrapper, _rhs.mpWrapper);
 			return *this;
 		}
-		BehaviourMessage()
+		~BehaviourMessage()
 		{
 			delete mpWrapper;
 			mpWrapper = nullptr;
