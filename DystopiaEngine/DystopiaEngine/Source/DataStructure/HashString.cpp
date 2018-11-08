@@ -214,7 +214,6 @@ HashString& HashString::operator+=(const HashString& _rhs)
 HashString& HashString::operator+=(const char _c)
 {
 	size_t i = 0;
-	size_t j = 0;
 	char* buffer = Dystopia::DefaultAllocator<char[]>::Alloc(mSize + 2);
 	while (i < mSize)
 	{
@@ -232,6 +231,19 @@ HashString& HashString::operator+=(const char _c)
 
 HashString& HashString::operator+=(unsigned _i)
 {
+	unsigned remainder = _i % 10;
+	unsigned divided = _i / 10;
+	_i /= 10;
+	char c = remainder + '0';
+	HashString a;
+	a += c;
+	while (divided)
+	{
+		c = remainder + '0';
+		a += c;
+		remainder = divided % 10;
+		divided /= 10;
+	}
 
 	return *this;
 }

@@ -395,14 +395,21 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 		bool firstF = true;
 		unsigned failCount = 1;
 		HashString tempName = mNameBuffer;
+		size_t pos = tempName.size() - 1;
 		while (!(fs->CreateFolder(mNameBuffer, mLocBuffer)))
 		{
 			if (firstF)
 			{
 				tempName += failCount;
+				pos = tempName.size() - 1;
 				firstF = false;
 			}
-			// TODO
+			else
+			{
+				tempName.erase(pos);
+				tempName += failCount;
+			}
+			failCount++;
 		}
 
 		mProjectSelected = mLocBuffer;
