@@ -4,12 +4,11 @@
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Step 1: Use CreateShared to make a new pointer to type
-	Eg. Ctor::CreateShared<GameObject>();
-	Step 2: Use as if it is a normal pointer
-
+Step 1: Use CreateShared to make a new pointer to type
+Eg. Ctor::CreateShared<GameObject>();
+Step 2: Use as if it is a normal pointer
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
-Reproduction or disclosure of this file or its contents without the 
+Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
@@ -37,6 +36,21 @@ namespace Ctor
 	SharedPtr<Nest<T>> CreateShared(P&& ...);
 }
 
+namespace
+{
+	struct Control
+	{
+		size_t mnRefs;
+		void(*mpDeleter)(void*);
+
+		Control(void(*_pDeleter)(void*)) :
+			mnRefs{ 1 }, mpDeleter{ _pDeleter }
+		{}
+
+		void AddRef(void) noexcept;
+		void RemoveRef(void*) noexcept;
+	};
+}
 
 template <class Ty>
 class SharedPtr
@@ -46,10 +60,10 @@ public:
 
 	constexpr SharedPtr(void) noexcept;
 	explicit SharedPtr(Ty*, void(*)(void*) = [](void* _p) { delete static_cast<Ty*>(_p); });
-	
-	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>::value>>
+
+	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, Ty*>::value>>
 	SharedPtr(const SharedPtr<U>&) noexcept;
-	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>::value>>
+	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, Ty*>::value>>
 	SharedPtr(SharedPtr<U>&&) noexcept;
 
 	SharedPtr(SharedPtr&&) noexcept;
@@ -62,8 +76,10 @@ public:
 
 	SharedPtr& operator = (std::nullptr_t) noexcept;
 	SharedPtr& operator = (SharedPtr&&) noexcept;
-	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>::value>>
+	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, Ty*>::value>>
 	SharedPtr& operator = (const SharedPtr<U>&) noexcept;
+
+	SharedPtr& operator = (const SharedPtr&) noexcept;
 
 	Ty& operator*  (void) { return *mpObj; }
 	Ty* operator-> (void) noexcept { return  mpObj; }
@@ -73,24 +89,15 @@ public:
 	inline explicit operator bool(void) const noexcept { return !!mpObj; }
 
 	inline Ty* GetRaw(void) const noexcept;
+	inline Control* GetCtrl(void) const noexcept;
+
+	inline void _Clean(void) noexcept;
 
 private:
 
 	template <typename T>
 	using Alloc_t = Dystopia::DefaultAllocator<T>;
 
-	struct Control
-	{
-		size_t mnRefs;
-		void (*mpDeleter)(void*);
-
-		Control(void(*_pDeleter)(void*)) :
-			mnRefs{ 1 }, mpDeleter{ _pDeleter }
-		{}
-
-		void AddRef(void) noexcept;
-		void RemoveRef(void*) noexcept;
-	};
 
 	template <typename T>
 	struct ControlAux : Control
@@ -122,6 +129,7 @@ private:
 	template<typename T, template<typename> class Nest>
 	friend SharedPtr<Nest<T>> Ctor::CreateShared(Nest<T>* _pObj, void(*)(void*));
 
+
 	Control* mpCtrl;
 	Ty* mpObj;
 };
@@ -151,7 +159,7 @@ SharedPtr<Ty>::SharedPtr(Ty* _pObj, void(*_del)(void*)) :
 
 template <class Ty> template <class U, typename>
 SharedPtr<Ty>::SharedPtr(const SharedPtr<U>& _p) noexcept
-	: mpCtrl{ _p.mpCtrl }, mpObj{ static_cast<Ty*>(_p.mpObj) }
+	: mpCtrl{ _p.GetCtrl() }, mpObj{ static_cast<Ty*>(_p.GetRaw()) }
 {
 	mpCtrl->AddRef();
 }
@@ -164,10 +172,9 @@ SharedPtr<Ty>::SharedPtr(const SharedPtr& _p) noexcept
 
 template <class Ty> template <class U, typename>
 SharedPtr<Ty>::SharedPtr(SharedPtr<U>&& _p) noexcept
-	: mpCtrl{ _p.mpCtrl }, mpObj{ static_cast<Ty*>(_p.mpObj) }
+	: mpCtrl{ _p.GetCtrl() }, mpObj{ static_cast<Ty*>(_p.GetRaw()) }
 {
-	_p.mpObj  = nullptr;
-	_p.mpCtrl = nullptr;
+	_p._Clean();
 }
 
 template <class Ty>
@@ -180,7 +187,7 @@ SharedPtr<Ty>::SharedPtr(SharedPtr&& _p) noexcept
 
 template <class Ty> template <typename ... P>
 SharedPtr<Ty>::SharedPtr(void(*_del)(void*), P&& ... _args) :
-	mpCtrl{ Alloc_t<ControlAux<Ty>>::ConstructAlloc(_del), Ut::Forward<P>(_args)... },
+	mpCtrl{ Alloc_t<ControlAux<Ty>>::ConstructAlloc(_del, Ut::Forward<P>(_args)...) },
 	mpObj{ &(static_cast<ControlAux<Ty>*>(mpCtrl)->mObj) }
 {
 
@@ -197,6 +204,18 @@ template <class Ty>
 inline Ty* SharedPtr<Ty>::GetRaw(void) const noexcept
 {
 	return mpObj;
+}
+
+template<class Ty>
+inline Control* SharedPtr<Ty>::GetCtrl(void) const noexcept
+{
+	return mpCtrl;
+}
+
+template<class Ty>
+inline void SharedPtr<Ty>::_Clean(void) noexcept
+{
+	RemoveReference();
 }
 
 template <class Ty>
@@ -216,28 +235,43 @@ inline void SharedPtr<Ty>::RemoveReference(void) noexcept
 template <class Ty>
 SharedPtr<Ty>& SharedPtr<Ty>::operator = (std::nullptr_t) noexcept
 {
-	 RemoveReference();
-	 return *this;
+	RemoveReference();
+	return *this;
 }
 
- template <class Ty> template <class U, typename>
+template <class Ty> template <class U, typename>
 SharedPtr<Ty>& SharedPtr<Ty>::operator = (const SharedPtr<U>& _p) noexcept
+{
+	if (_p.GetCtrl())
+		_p.GetCtrl()->AddRef();
+
+	RemoveReference();
+	mpObj = static_cast<Ty*>(_p.GetRaw());
+	mpCtrl = _p.GetCtrl();
+
+	return *this;
+}
+
+template <class Ty>
+SharedPtr<Ty>& SharedPtr<Ty>::operator = (const SharedPtr<Ty>& _p) noexcept
 {
 	if (_p.mpCtrl)
 		_p.mpCtrl->AddRef();
 
 	RemoveReference();
-	mpObj  = static_cast<Ty*>(_p.mpObj);
+	mpObj  = _p.mpObj;
 	mpCtrl = _p.mpCtrl;
 
 	return *this;
 }
 
- template <class Ty>
+template <class Ty>
 SharedPtr<Ty>& SharedPtr<Ty>::operator = (SharedPtr<Ty>&& _p) noexcept
 {
-	 Ut::Swap(mpObj, _p.mpObj);
-	 Ut::Swap(mpCtrl, _p.mpCtrl);
+	Ut::Swap(mpObj, _p.mpObj);
+	Ut::Swap(mpCtrl, _p.mpCtrl);
+
+	return *this;
 }
 
 template <typename Ty>
@@ -333,14 +367,12 @@ inline SharedPtr<T> DynamicPtrCast(const SharedPtr<U>& _pPtr) noexcept
 // ================================================ NESTED TYPES ================================================ // 
 
 
-template<class Ty>
-inline void SharedPtr<Ty>::Control::AddRef(void) noexcept
+inline void Control::AddRef(void) noexcept
 {
 	++mnRefs;
 }
 
-template<class Ty>
-inline void SharedPtr<Ty>::Control::RemoveRef(void* _p) noexcept
+inline void Control::RemoveRef(void* _p) noexcept
 {
 	if (!--mnRefs)
 	{
@@ -353,4 +385,3 @@ inline void SharedPtr<Ty>::Control::RemoveRef(void* _p) noexcept
 
 
 #endif		// INCLUDE GUARD
-
