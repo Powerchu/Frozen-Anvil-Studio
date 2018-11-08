@@ -57,7 +57,7 @@ static const char* g_SubFolders[11]=
 };
 
 Editor::EditorLauncher::EditorLauncher(void)
-	: mProjectSelected{}, mbClosing{ false }, mbProjectView{ true }, mOriginStyle {}, mOriginStyleEx{}, mOriginSizeX{}, mOriginSizeY{}, mArrProjectFolders{},
+	: mProjectSelected{}, mbClosing{ false }, mbProjectView{ true }, mOriginStyle {}, mOriginStyleEx{}, mOriginSizeX{}, mOriginSizeY{},
 	mCurrentlySelected{ 0 }, mNameBuffer{}, mLocBuffer{}, mArrKnownProjects{}
 {}
 
@@ -67,7 +67,6 @@ Editor::EditorLauncher::~EditorLauncher(void)
 
 void Editor::EditorLauncher::Init(void)
 {
-	FindAllProjects();
 	SetWindowOptions();
 	SetWindowStyles();
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->SetLauncherMode(true);
@@ -212,7 +211,8 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 	if (mbProjectView)
 	{
 		ImGui::BeginChild("ListOfRecentProjects", ImVec2{ _w - (2 * ImGui::GetStyle().WindowPadding.x), _h - (2 * ImGui::GetStyle().WindowPadding.y) }, true );
-
+		for (auto& p : mArrKnownProjects)
+			ProjectDetails(p);
 		ImGui::EndChild();
 	}
 	else
@@ -313,31 +313,10 @@ void Editor::EditorLauncher::RemoveWindowStyles(void)
 	ImGui::PopStyleColor(2);
 }
 
-void Editor::EditorLauncher::FindAllProjects(void)
-{
-	WIN32_FIND_DATAA data;
-	static const HashString projFolder = "Projects/*";
-	HANDLE hfind = FindFirstFileA(projFolder.c_str(), &data);
-	if (hfind != INVALID_HANDLE_VALUE)
-	{
-		do
-		{
-			if (strcmp(data.cFileName, ".") && strcmp(data.cFileName, "..") && data.dwFileAttributes != FILE_ATTRIBUTE_HIDDEN)
-			{
-				if (data.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
-				{
-					HashString path{ "/Projects/" };
-					path += data.cFileName;
-					mArrProjectFolders.push_back(path);
-				}
-			}
-		} while (FindNextFileA(hfind, &data));
-		FindClose(hfind);
-	}
-}
-
 void Editor::EditorLauncher::ProjectDetails(const HashString& _path)
 {
+
+
 }
 
 void Editor::EditorLauncher::CreateFields(float _x, float _y)
@@ -351,24 +330,31 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 
 	ImGui::Text("Project Name");
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(1);
-	ImGui::PushItemWidth(itemWidth);
-	ImGui::InputText("###Project Name", mNameBuffer, bufSize, flags);
-	ImGui::PopItemWidth();
+	{
+		ImGui::PushItemWidth(itemWidth);
+		ImGui::InputText("###Project Name", mNameBuffer, bufSize, flags);
+		ImGui::PopItemWidth(); 
+	}
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
 
 	ImGui::Text("Location");
-	ImGui::PushItemWidth(itemWidth - folderX - offsetX - 13.f);
 	auto linePos = ImGui::GetCursorPos();
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 10,10 });
-	ImGui::InputText("###Location", mLocBuffer, bufSize, ImGuiInputTextFlags_ReadOnly);
-	ImGui::PopStyleVar();
-	ImGui::PopItemWidth();
+	{
+		ImGui::PushItemWidth(itemWidth - folderX - offsetX - 13.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 10,10 });
+		ImGui::InputText("###Location", mLocBuffer, bufSize, ImGuiInputTextFlags_ReadOnly);
+		ImGui::PopStyleVar();
+		ImGui::PopItemWidth();
+	}
 	ImGui::SameLine();
-	ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 10.f);
-	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
-	ImGui::BeginChild("Emptiness", ImVec2{ 10.f, 40.f});
-	ImGui::EndChild();
-	ImGui::PopStyleColor();
+	{
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 10.f);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
+		ImGui::BeginChild("Emptiness", ImVec2{ 10.f, 40.f});
+		ImGui::EndChild();
+		ImGui::PopStyleColor();
+	}
+
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + itemWidth - folderX - offsetX + 3.f);
 	ImGui::SetCursorPosY(linePos.y + 6.f); 
 	if (EGUI::Display::IconFolder("Browse", folderX, 18.f, true))
@@ -383,56 +369,67 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(1);
-	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
-	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.863f, 0.088f, 0.294f, 1.f });
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
-	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (itemWidth / 2) - (btnX / 2));
-	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetTextLineHeightWithSpacing());
-	if (ImGui::ButtonEx("Create", ImVec2{ btnX, btnY }, (strlen(mNameBuffer) && strlen(mLocBuffer)) ? 0 : ImGuiButtonFlags_Disabled))
 	{
-		const auto& fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
-		bool firstF = true;
-		unsigned failCount = 1;
-		HashString tempName = mNameBuffer;
-		size_t pos = tempName.size() - 1;
-		while (!(fs->CreateFolder(mNameBuffer, mLocBuffer)))
 		{
-			if (firstF)
-			{
-				tempName += failCount;
-				pos = tempName.size() - 1;
-				firstF = false;
-			}
-			else
-			{
-				tempName.erase(pos);
-				tempName += failCount;
-			}
-			failCount++;
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.863f, 0.088f, 0.294f, 1.f });
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (itemWidth / 2) - (btnX / 2));
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetTextLineHeightWithSpacing());
 		}
 
-		mProjectSelected = mLocBuffer;
-		mProjectSelected += "/";
-		mProjectSelected += mNameBuffer;
-		size_t p = mProjectSelected.find('\\');
-		while (p != HashString::nPos)
+		if (ImGui::ButtonEx("Create", ImVec2{ btnX, btnY }, (strlen(mNameBuffer) && strlen(mLocBuffer)) ? 0 : ImGuiButtonFlags_Disabled))
 		{
-			mProjectSelected[p] = '/';
-			p = mProjectSelected.find('\\');
+			const auto& fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+			bool firstF = true;
+			unsigned failCount = 1;
+			HashString tempName = mNameBuffer;
+			size_t pos = tempName.size() - 1;
+			while (!(fs->CreateFolder(tempName, mLocBuffer)))
+			{
+				if (firstF)
+				{
+					tempName += failCount;
+					pos = tempName.size() - 1;
+					firstF = false;
+				}
+				else
+				{
+					tempName.erase(pos);
+					tempName += failCount;
+				}
+				failCount++;
+			}
+
+			mProjectSelected = mLocBuffer;
+			mProjectSelected += "/";
+			mProjectSelected += mNameBuffer;
+			size_t p = mProjectSelected.find('\\');
+			while (p != HashString::nPos)
+			{
+				mProjectSelected[p] = '/';
+				p = mProjectSelected.find('\\');
+			}
+
+			for (unsigned i = 0; i < SUBFOLDER_COUNT; ++i)
+				fs->CreateFolder(g_SubFolders[i], mProjectSelected);
+
+			mbClosing = true;
+			mArrKnownProjects.push_back(mProjectSelected);
+		}
+		if (ImGui::IsItemHovered() && (strlen(mNameBuffer) && strlen(mLocBuffer)))
+		{
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 
-		for (unsigned i = 0; i < SUBFOLDER_COUNT; ++i)
-			fs->CreateFolder(g_SubFolders[i], mProjectSelected);
-
-		mbClosing = true;
-		mArrKnownProjects.push_back(mProjectSelected);
+		{
+			ImGui::PopStyleColor(3);
+			ImGui::PopStyleVar(); 
+		}
 	}
-	if (ImGui::IsItemHovered() && (strlen(mNameBuffer) && strlen(mLocBuffer)))
-		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
-	ImGui::PopStyleColor(3);
-	ImGui::PopStyleVar();
+
 }
 
 bool Editor::EditorLauncher::Browse(HashString& _outFolder)

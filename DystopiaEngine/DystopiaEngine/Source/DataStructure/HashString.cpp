@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Utility.h"
 #include "Utility/DebugAssert.h"
 
+#include <stdlib.h>
+
 HashID StringHasher(const char* _s)
 {
 	HashID hash = OFFSET_BASIS;
@@ -231,20 +233,11 @@ HashString& HashString::operator+=(const char _c)
 
 HashString& HashString::operator+=(unsigned _i)
 {
-	unsigned remainder = _i % 10;
-	unsigned divided = _i / 10;
-	_i /= 10;
-	char c = remainder + '0';
-	HashString a;
-	a += c;
-	while (divided)
+	char buffer[11];
+	if (!_itoa_s(_i, buffer, 11, 10))
 	{
-		c = remainder + '0';
-		a += c;
-		remainder = divided % 10;
-		divided /= 10;
+		return operator+=(buffer);
 	}
-
 	return *this;
 }
 

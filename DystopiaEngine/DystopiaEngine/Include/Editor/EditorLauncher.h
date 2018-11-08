@@ -40,7 +40,6 @@ namespace Editor
 	private:
 		static constexpr unsigned bufSize = 256;
 
-		AutoArray<HashString> mArrProjectFolders;
 		AutoArray<HashString> mArrKnownProjects;
 		HashString mProjectSelected;
 		bool mbClosing;
@@ -60,7 +59,6 @@ namespace Editor
 		void RemoveWindowOptions(void);
 		void SetWindowStyles(void);
 		void RemoveWindowStyles(void);
-		void FindAllProjects(void);
 		void ProjectDetails(const HashString&);
 		void CreateFields(float, float);
 		bool Browse(HashString&);
