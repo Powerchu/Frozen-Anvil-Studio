@@ -98,6 +98,10 @@ namespace Dystopia
 			mpWrapper = nullptr;
 		}
 
+		operator bool() const
+		{
+			return mpWrapper;
+		}
 		template<typename Behaviour_t, typename RetType, typename ... Params>
 		bool operator()(Behaviour_t & Behaviour_Obj, RetType(Behaviour_t::*_Memptr)(Params...))
 		{
@@ -123,7 +127,6 @@ namespace Dystopia
 		{
 			(_Behaviour.*_MemPtr)(_ParamTypes.Get<Indices>() ...);
 		}
-
 
 		Concept * mpWrapper = nullptr;
 	};

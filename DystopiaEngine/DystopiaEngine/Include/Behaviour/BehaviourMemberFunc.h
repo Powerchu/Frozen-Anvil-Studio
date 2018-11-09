@@ -106,6 +106,10 @@ namespace Dystopia
 			mpWrapper->Invoke(_ptr, _Message);
 		}
 
+		operator bool() const
+		{
+			return mpWrapper;
+		}
 	private:
 		Concept * mpWrapper = nullptr;
 	};
