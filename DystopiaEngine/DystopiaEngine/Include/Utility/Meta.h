@@ -36,6 +36,8 @@ namespace Ut
 	struct Constant
 	{
 		static constexpr T value = _value;
+
+		constexpr operator T () { return value; }
 	};
 
 
@@ -292,6 +294,65 @@ namespace Ut
 
 	template <typename T>
 	using Type_t = typename Type<T>::type;
+
+
+	// ConvertType	   
+	// ============ ========================================================
+
+	template <typename T, typename ... Ty>
+	struct ConvertType : public Type <decltype(Helper::ConversionSelector<Ty...>{}(declval<Ut::Decay_t<T>>()))>
+	{
+
+	};
+
+	template <typename T, typename ... Ty>
+	using ConvertType_t = typename ConvertType<T, Ty...>::type;
+
+
+	// IsConvertible	   
+	// ============== ======================================================
+
+	template <typename From, typename To>
+	struct IsConvertible
+	{
+	private:
+		static int  Converter(To);
+		static int (&(Converter(...)))[999];
+
+	public:
+		static constexpr bool value = sizeof(decltype(Converter(declval<From>()))) == sizeof(int);
+	};
+
+
+	// TryCast	   
+	// ============== ======================================================
+
+	template <typename Result_t>
+	struct TryCaster
+	{
+		constexpr auto operator() (...)      { return Constant<bool, false>{}; };
+		constexpr auto operator() (Result_t) { return Constant<bool, true>{};  };
+	};
+
+#pragma warning(push)
+#pragma warning(disable : 4244)
+	template <typename Ty, typename U>
+	constexpr bool TryCast(U&&) { return decltype(TryCaster<Ty>{}(Ut::declval<U>()))::value; }
+#pragma warning(pop)
+
+
+	// IsEmptyClass	   
+	// ============== ======================================================
+
+	template <typename T>
+	struct IsEmptyClass
+	{
+	private:
+		struct Base : T { char dummy[1]; };
+
+	public:
+		constexpr static bool value = sizeof(Base) == sizeof(T);
+	};
 }
 
 

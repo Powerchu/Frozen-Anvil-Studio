@@ -19,8 +19,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 //#include "Globals.h"
 #include <string>
 #include <unordered_map>
-//#include "DataStructure/SharedPtr.h"
+#include "DataStructure/SharedPtr.h"
 #include "Math/Vector4.h"
+#include "Object/GameObject.h"
 
 // TODO: use our reflection stuff OR use type-erasure object
 namespace Dystopia
@@ -135,7 +136,7 @@ namespace Dystopia
 			}
 			bool hasGameObj(const std::string& key) const { return gObjs.find(key) != gObjs.end(); }
 
-			using Ptr = std::shared_ptr<Blackboard>;
+			using Ptr = SharedPtr<Blackboard>;
 
 		protected:
 			std::unordered_map<std::string, void*> pointers;

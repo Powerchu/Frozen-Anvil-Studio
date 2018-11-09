@@ -98,7 +98,6 @@ namespace Dystopia
 		Math::Vector4 mvDebugColour;
 		float mfGamma;
 		float mfDebugLineWidth;
-		bool  mbDebugDrawCheckBox = false;
 
 		void* mOpenGL; 
 		int mPixelFormat;
@@ -107,6 +106,7 @@ namespace Dystopia
 		Ctor::MagicArrayBuilder<Framebuffer>::SetBlockLimit<1>::type mViews;
 
 		static int DRAW_MODE;
+		bool  mbDebugDrawCheckBox = false;
 
 		void StartFrame(void);
 		void EndFrame(void);

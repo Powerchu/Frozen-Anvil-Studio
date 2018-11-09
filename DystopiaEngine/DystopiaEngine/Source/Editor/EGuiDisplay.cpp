@@ -233,8 +233,8 @@ namespace EGUI
 		eDragStatus DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText, float _width)
 		{
 			static POINT p;
-			static const int xPos = (GetSystemMetrics(SM_CXSCREEN)) / 2;
-			static const int yPos = (GetSystemMetrics(SM_CYSCREEN)) / 2;
+			//static const int xPos = (GetSystemMetrics(SM_CXSCREEN)) / 2;
+			//static const int yPos = (GetSystemMetrics(SM_CYSCREEN)) / 2;
 
 			if (!_hideText)
 			{

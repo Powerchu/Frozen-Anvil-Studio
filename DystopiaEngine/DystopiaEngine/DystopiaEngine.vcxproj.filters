@@ -298,9 +298,6 @@
     <ClCompile Include="Source\System\Sound\SoundSystem.cpp">
       <Filter>Game Engine\Systems\Sound</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DataStructure\HashString.cpp">
-      <Filter>DataStructures</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\EditorInput.cpp">
       <Filter>Editor\Editor</Filter>
     </ClCompile>
@@ -318,6 +315,9 @@
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\FontSystem.cpp">
       <Filter>Game Engine\SubSystems\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DataStructure\HashString.cpp">
+      <Filter>DataStructures\HashString</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -470,9 +470,6 @@
     </ClInclude>
     <ClInclude Include="Include\DataStructure\MagicArray.h">
       <Filter>DataStructures\Arrays</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\DataStructure\Pointer.h">
-      <Filter>DataStructures\Pointers</Filter>
     </ClInclude>
     <ClInclude Include="Include\DataStructure\SharedPtr.h">
       <Filter>DataStructures\Pointers</Filter>
@@ -792,9 +789,6 @@
     <ClInclude Include="Include\System\Sound\Audio.h">
       <Filter>Game Engine\SubSystems\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DataStructure\HashString.h">
-      <Filter>DataStructures</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\EditorHotkeys.h">
       <Filter>Editor\Editor</Filter>
     </ClInclude>
@@ -872,6 +866,15 @@
     </ClInclude>
     <ClInclude Include="Include\Behaviour\AI\AISystem.h">
       <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\HashString.h">
+      <Filter>DataStructures\HashString</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\ProxyPtr.h">
+      <Filter>DataStructures\Pointers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\UniquePtr.h">
+      <Filter>DataStructures\Pointers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1234,6 +1237,9 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Font">
       <UniqueIdentifier>{781cc280-e96f-4ea7-8d5f-d73943eed182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataStructures\HashString">
+      <UniqueIdentifier>{17203e54-439a-42c5-b604-0e6de859022d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
