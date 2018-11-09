@@ -12,10 +12,25 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Time/TimeSystem.h"		// File Header
+#include "System/Driver/Driver.h"
+
+#include "Utility/Meta.h"
+#include "Utility/MetaDataStructures.h"
+
+
+Dystopia::TimeSystem::TimeSystem(void) :
+	mTimeKeep{}, mTimeZones{ Ut::SizeofList<EngineCore::AllSys>::value }, mPQueue{}
+{
+}
 
 bool Dystopia::TimeSystem::Init(void)
 {
 	return true;
+}
+
+void Dystopia::TimeSystem::PostInit(void)
+{
+
 }
 
 void Dystopia::TimeSystem::Update(float)
