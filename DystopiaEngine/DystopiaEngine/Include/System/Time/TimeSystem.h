@@ -59,8 +59,11 @@ namespace Dystopia
 
 		struct TimeZone
 		{
-
+			float mTimeScale;
 		};
+
+		unsigned mFixedUpdateFPS;
+		int64_t mFixedDT;
 
 		Timer mTimeKeep;
 		AutoArray<TimeZone> mTimeZones;
