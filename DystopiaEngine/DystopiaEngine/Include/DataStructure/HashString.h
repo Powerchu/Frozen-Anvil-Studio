@@ -43,7 +43,7 @@ public:
 	HashString(const HashString&);
 	HashString(HashString&&) noexcept;
 	HashString(const char *);
-	HashString(const char * _start, const char* _end);
+	HashString(const char * const _start, const char* const _end);
 
 	template <unsigned N>
 	constexpr HashString(const char(&s)[N]);
@@ -98,12 +98,12 @@ public:
 	size_t		find_last_of(const char* _s, size_t _pos = -1) const;
 	HashString	substr(size_t _pos, size_t _len = -1) const;
 
-	const char* cbegin(void) const;
-	char*		begin(void);
-	const char* cend(void) const;
-	char*		end(void);
-	const char* clast(void) const;
-	char*		last(void);
+	const char* const cbegin(void) const;
+	char*		const begin(void);
+	const char* const cend(void) const;
+	char*		const end(void);
+	const char* const clast(void) const;
+	char*		const last(void);
 
 	HashID		id(void) const;
 

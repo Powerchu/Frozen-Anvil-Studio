@@ -211,8 +211,14 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 	if (mbProjectView)
 	{
 		ImGui::BeginChild("ListOfRecentProjects", ImVec2{ _w - (2 * ImGui::GetStyle().WindowPadding.x), _h - (2 * ImGui::GetStyle().WindowPadding.y) }, true );
-		for (auto& p : mArrKnownProjects)
-			ProjectDetails(p);
+		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4{ 0,0,0,0 });
+		for (size_t i = 0; i < mArrKnownProjects.size(); ++i)
+		{
+			ImGui::PushID(static_cast<int>(i));
+			ProjectDetails(mArrKnownProjects[i], _w, _h);
+			ImGui::PopID();
+		}
+		ImGui::PopStyleColor();
 		ImGui::EndChild();
 	}
 	else
@@ -313,10 +319,24 @@ void Editor::EditorLauncher::RemoveWindowStyles(void)
 	ImGui::PopStyleColor(2);
 }
 
-void Editor::EditorLauncher::ProjectDetails(const HashString& _path)
+void Editor::EditorLauncher::ProjectDetails(const HashString& _path, float _w, float)
 {
-
-
+	static constexpr float fixedH = 80;
+	size_t pos = _path.rfind('/');
+	HashString path{ _path.cbegin(), _path.cbegin() + pos };
+	HashString name{ _path.cbegin() + pos + 1, _path.cend() };
+	ImGui::BeginChild(_path.c_str(), ImVec2{ _w * 0.9f, fixedH });
+	{
+		EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(1); 
+		ImGui::Text(name.c_str());
+		EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
+		ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImGuiCol_TextDisabled));
+		ImGui::Text("Path: ");
+		ImGui::SameLine();
+		ImGui::Text(path.c_str());
+		ImGui::PopStyleColor();
+	}
+	ImGui::EndChild();
 }
 
 void Editor::EditorLauncher::CreateFields(float _x, float _y)
@@ -388,18 +408,19 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 			size_t pos = tempName.size() - 1;
 			while (!(fs->CreateFolder(tempName, mLocBuffer)))
 			{
-				if (firstF)
-				{
-					tempName += failCount;
-					pos = tempName.size() - 1;
-					firstF = false;
-				}
-				else
-				{
-					tempName.erase(pos);
-					tempName += failCount;
-				}
-				failCount++;
+				__debugbreak();
+				//if (firstF)
+				//{
+				//	tempName += failCount;
+				//	pos = tempName.size() - 1;
+				//	firstF = false;
+				//}
+				//else
+				//{
+				//	tempName.erase(pos);
+				//	tempName += failCount;
+				//}
+				//failCount++;
 			}
 
 			mProjectSelected = mLocBuffer;
@@ -415,7 +436,7 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 			for (unsigned i = 0; i < SUBFOLDER_COUNT; ++i)
 				fs->CreateFolder(g_SubFolders[i], mProjectSelected);
 
-			mbClosing = true;
+			//mbClosing = true;
 			mArrKnownProjects.push_back(mProjectSelected);
 		}
 		if (ImGui::IsItemHovered() && (strlen(mNameBuffer) && strlen(mLocBuffer)))

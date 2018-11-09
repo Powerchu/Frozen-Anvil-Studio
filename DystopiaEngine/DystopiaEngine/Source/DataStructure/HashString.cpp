@@ -58,8 +58,8 @@ HashString::HashString(const char * _s)
 	strcpy_s(mCharBuffer, mSize + 1, _s);
 }
 
-HashString::HashString(const char * _start, const char* _end)
-	: mHashedID{ 0 }, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(_start - _end + 1) },
+HashString::HashString(const char * const _start, const char* const _end)
+	: mHashedID{ 0 }, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(_end - _start + 1) },
 	mSize{ static_cast<size_t>(_end - _start) }
 {
 	size_t i = 0;
@@ -469,32 +469,32 @@ HashString HashString::substr(size_t _pos, size_t _len) const
 	return HashString{ cbegin() + _pos,  ending };
 }
 
-const char* HashString::cbegin(void) const
+const char* const HashString::cbegin(void) const
 {
 	return mCharBuffer;
 }
 
-char* HashString::begin(void)
+char* const HashString::begin(void)
 {
 	return mCharBuffer;
 }
 
-const char* HashString::cend(void) const
+const char* const HashString::cend(void) const
 {
 	return mCharBuffer + mSize;
 }
 
-char* HashString::end(void)
+char* const HashString::end(void)
 {
 	return mCharBuffer + mSize;
 }
 
-const char* HashString::clast(void) const
+const char* const HashString::clast(void) const
 {
 	return mCharBuffer + mSize -1;
 }
 
-char* HashString::last(void)
+char* const HashString::last(void)
 {
 	return mCharBuffer + mSize -1;
 }

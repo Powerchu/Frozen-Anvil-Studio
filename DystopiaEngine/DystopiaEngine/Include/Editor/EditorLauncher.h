@@ -59,7 +59,7 @@ namespace Editor
 		void RemoveWindowOptions(void);
 		void SetWindowStyles(void);
 		void RemoveWindowStyles(void);
-		void ProjectDetails(const HashString&);
+		void ProjectDetails(const HashString&, float, float);
 		void CreateFields(float, float);
 		bool Browse(HashString&);
 	};
