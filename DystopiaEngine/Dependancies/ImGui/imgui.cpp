@@ -8213,6 +8213,9 @@ bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags
     // Automatically close popups
     //if (pressed && !(flags & ImGuiButtonFlags_DontClosePopups) && (window->Flags & ImGuiWindowFlags_Popup))
     //    CloseCurrentPopup();
+	
+	if (hovered)
+		SetMouseCursor(ImGuiMouseCursor_Hand);
 
     return pressed;
 }

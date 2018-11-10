@@ -62,6 +62,7 @@ namespace Editor
 		void ProjectDetails(const HashString&, float, float);
 		void CreateFields(float, float);
 		bool Browse(HashString&);
+		void LaunchField(float, float);
 	};
 
 }

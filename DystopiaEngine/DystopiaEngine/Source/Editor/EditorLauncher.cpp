@@ -207,24 +207,36 @@ void Editor::EditorLauncher::TopBar(float _w, float _h)
 
 void Editor::EditorLauncher::MainBody(float _w, float _h)
 {
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.863f, 0.088f, 0.294f, 1.f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
+
+	float w = _w - (2 * ImGui::GetStyle().WindowPadding.x);
+	float h = _h - (2 * ImGui::GetStyle().WindowPadding.y);
 	ImGui::BeginChild("Main Body", ImVec2{ _w, _h }, true);
 	if (mbProjectView)
 	{
-		ImGui::BeginChild("ListOfRecentProjects", ImVec2{ _w - (2 * ImGui::GetStyle().WindowPadding.x), _h - (2 * ImGui::GetStyle().WindowPadding.y) }, true );
+		float sectionW = w * 0.75f;
+		float sectionH = h;
+		ImGui::BeginChild("ListOfRecentProjects", ImVec2{ sectionW , sectionH }, true );
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4{ 0,0,0,0 });
 		for (size_t i = 0; i < mArrKnownProjects.size(); ++i)
 		{
 			ImGui::PushID(static_cast<int>(i));
-			ProjectDetails(mArrKnownProjects[i], _w, _h);
+			ProjectDetails(mArrKnownProjects[i], sectionW, sectionH);
 			ImGui::PopID();
 		}
 		ImGui::PopStyleColor();
 		ImGui::EndChild();
+
+		ImGui::SameLine();
+		float leftSectionW = w * 0.25f - ImGui::GetStyle().WindowPadding.x;
+		ImGui::BeginChild("Launch", ImVec2{ leftSectionW, sectionH }, true);
+		LaunchField(leftSectionW, sectionH);
+		ImGui::EndChild();
 	}
 	else
 	{
-		float w = _w - (2 * ImGui::GetStyle().WindowPadding.x);
-		float h = _h - (2 * ImGui::GetStyle().WindowPadding.y);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ (w / 2) - (w / 3), h / 5 });
 		ImGui::BeginChild("CreatingProject", ImVec2{ w, h }, true);
 		CreateFields(w, h);
@@ -232,6 +244,8 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 		ImGui::PopStyleVar();
 	}
 	ImGui::EndChild();
+
+	ImGui::PopStyleColor(3);
 }
 
 bool Editor::EditorLauncher::InvisibleBtn(const char* _btn, float _x, float _y, bool _highlight)
@@ -321,22 +335,45 @@ void Editor::EditorLauncher::RemoveWindowStyles(void)
 
 void Editor::EditorLauncher::ProjectDetails(const HashString& _path, float _w, float)
 {
-	static constexpr float fixedH = 80;
+	static constexpr float fixedH = 70;
+	float width = _w - (2*ImGui::GetStyle().WindowPadding.x);
 	size_t pos = _path.rfind('/');
 	HashString path{ _path.cbegin(), _path.cbegin() + pos };
 	HashString name{ _path.cbegin() + pos + 1, _path.cend() };
-	ImGui::BeginChild(_path.c_str(), ImVec2{ _w * 0.9f, fixedH });
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+	ImGui::BeginChild(_path.c_str(), ImVec2{ width, fixedH }, true);
 	{
+		auto p = ImGui::GetCursorPos();
+		ImGui::PopStyleVar();
+
 		EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(1); 
 		ImGui::Text(name.c_str());
 		EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
+
 		ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImGuiCol_TextDisabled));
 		ImGui::Text("Path: ");
 		ImGui::SameLine();
 		ImGui::Text(path.c_str());
 		ImGui::PopStyleColor();
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.646f, 0.129f, 0.225f, 0.f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.863f, 0.088f, 0.294f, 0.5f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.646f, 0.129f, 0.225f, 0.6f });
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+		ImGui::SetCursorPos(p);
+
+		HashString btn{"##"};
+		btn += _path;
+		if (ImGui::Button(btn.c_str(), ImVec2{ _w, fixedH }))
+		{
+
+		}
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor(3);
 	}
 	ImGui::EndChild();
+
 }
 
 void Editor::EditorLauncher::CreateFields(float _x, float _y)
@@ -390,14 +427,9 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(1);
 	{
-		{
-			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.863f, 0.088f, 0.294f, 1.f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (itemWidth / 2) - (btnX / 2));
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetTextLineHeightWithSpacing());
-		}
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (itemWidth / 2) - (btnX / 2));
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetTextLineHeightWithSpacing());
 
 		if (ImGui::ButtonEx("Create", ImVec2{ btnX, btnY }, (strlen(mNameBuffer) && strlen(mLocBuffer)) ? 0 : ImGuiButtonFlags_Disabled))
 		{
@@ -444,19 +476,32 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 
-		{
-			ImGui::PopStyleColor(3);
-			ImGui::PopStyleVar(); 
-		}
+		ImGui::PopStyleVar();
 	}
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
-
 }
 
 bool Editor::EditorLauncher::Browse(HashString& _outFolder)
 {
 	Dystopia::EditorProc p;
 	return p.BrowseFolder(_outFolder, Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetWindowHandle());
+}
+
+void Editor::EditorLauncher::LaunchField(float _w, float _h)
+{
+	static constexpr float btnH = 50;
+	float offset = btnH + (2*ImGui::GetStyle().WindowPadding.y);
+
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + _h - offset);
+
+	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(1);
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
+	if (ImGui::Button("Launch Editor", ImVec2{_w - (2*ImGui::GetStyle().WindowPadding.x), btnH }))
+	{
+
+	}
+	ImGui::PopStyleVar();
+	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
 }
 #endif
 
