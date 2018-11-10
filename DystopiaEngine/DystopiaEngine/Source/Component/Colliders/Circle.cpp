@@ -88,7 +88,7 @@ namespace Dystopia
 
 	float Circle::GetRadius() const
 	{
-		float Scale = Math::Abs(mOwnerTransformation[0]) > Math::Abs(mOwnerTransformation[5]) ? mOwnerTransformation[0] : mOwnerTransformation[5];
+		const float Scale = Math::Abs(mOwnerTransformation[0]) > Math::Abs(mOwnerTransformation[5]) ? mOwnerTransformation[0] : mOwnerTransformation[5];
 		return Math::Abs(m_radius * Scale * 0.5f);
 	}
 
@@ -221,7 +221,6 @@ namespace Dystopia
 			if (elem.mNorm3.Dot(elem.mPos - GetGlobalPosition()) < 0)
 			{
 				isInside = false;
-				break;
 			}
 		}
 
@@ -233,8 +232,8 @@ namespace Dystopia
 				Vec3D v = elem.mVec3;
 				Vec3D w = GetGlobalPosition() - elem.mPos;
 				Vec3D norm;
-				float c1 = v.Dot((w));
-				float c2 = v.Dot(v);
+				const float c1 = v.Dot(w);
+				const float c2 = v.Dot(v);
 				float ratio = 0.f;
 				Point3D PointOfImpact;
 				if (c1 < 0)
@@ -244,7 +243,7 @@ namespace Dystopia
 				}
 				else if (c1 > c2)
 				{
-					distance = (GetGlobalPosition() - (elem.mPos + elem.mVec3)).Magnitude();
+					distance = (GetGlobalPosition() - (v + elem.mPos)).Magnitude();
 					norm = -(GetGlobalPosition() - (v + elem.mPos));
 				}
 				else
@@ -255,9 +254,8 @@ namespace Dystopia
 					norm = -(GetGlobalPosition() - PointOfImpact);
 				}
 
-				if (distance < GetRadius())
+				if (distance <= GetRadius())
 				{
-					isInside = true;
 					newEvent.mfPeneDepth     = GetRadius() - distance;
 					newEvent.mEdgeNormal     += norm;
 					newEvent.mEdgeVector     = Math::Vec3D{ newEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
@@ -279,17 +277,32 @@ namespace Dystopia
 				//InformOtherComponents(true, newEvent);
 				return true;
 			}
-			else
+			return false;
+		}
+
+		/*Circle completely inside*/
+		float currPene = newEvent.mfPeneDepth = FLT_MAX;
+
+		for (auto & elem : ConvexEdges)
+		{
+			Vec3D v = elem.mVec3;
+			Vec3D w = GetGlobalPosition() - elem.mPos;
+			const float c1 = v.Dot(w);
+			const float c2 = v.Dot(v);
+			const float ratio = c1 / c2;
+			const Point3D PointOfImpact = elem.mPos + ratio * elem.mVec3;
+			if (w.Magnitude() < newEvent.mfPeneDepth)
 			{
-				//InformOtherComponents(false, newEvent);
-				return false;
+				currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
+				newEvent.mEdgeNormal = (GetGlobalPosition() - PointOfImpact);
+				newEvent.mfPeneDepth =  currPene - GetRadius();
+				
 			}
 
 		}
-		/*No Normals will be given because i have no idea which one to give*/
-		/*Circle completely inside*/
-		//InformOtherComponents(true, newEvent);
+		
 		marr_CurrentContactSets.push_back(newEvent);
+		mbColliding = isInside;
 		return isInside;
 	}
 	bool Circle::isColliding(Convex * const & other_col)
