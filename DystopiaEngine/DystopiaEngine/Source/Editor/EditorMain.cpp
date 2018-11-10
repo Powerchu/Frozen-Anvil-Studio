@@ -29,7 +29,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Window/WindowManager.h"
 #include "System/Profiler/Profiler.h"
 #include "System/Behaviour/BehaviourSystem.h"
+#include "System/File/FileSystem.h"
 
+static const char * g_ProjectLauncherSave = "KnownProjects";
 namespace
 {
 	template <typename Ty, typename ... T>
@@ -47,7 +49,8 @@ Editor::EditorMain* Editor::EditorMain::GetInstance(void)
 
 Editor::EditorMain::EditorMain(void)
 	: mArrSystems{ MakeAutoArray<EditorSystem*>(Ut::MakeTypeList_t<Ut::TypeList, ESystems>{}) },
-	  mArrPanels { MakeAutoArray<EditorPanel*>(Ut::MakeTypeList_t<Ut::TypeList, EPanels>{}) }
+	  mArrPanels { MakeAutoArray<EditorPanel*>(Ut::MakeTypeList_t<Ut::TypeList, EPanels>{}) },
+	mCurState{}, mNextState{}, mDelta{}, mProjectPath{}, mTimer{}
 {
 }
 
@@ -79,16 +82,35 @@ void Editor::EditorMain::Init(void)
 
 void Editor::EditorMain::ProjectLauncher(void)
 {
+	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+
+	HashString fileName = g_ProjectLauncherSave;
+	fileName += ".";
+	fileName += Gbl::SETTINGS_EXT;
+
+	HashString fullPath = (fs->GetFullPath("Dystopia", Dystopia::eFileDir::eAppData)).c_str();
+	fullPath += "\\";
+	fullPath += fileName;
+	
+	FILE *pFile;
+	fopen_s(&pFile, fullPath.c_str(), "a");
+	fclose(pFile);
+
 	EditorLauncher launcher;
 	launcher.Init();
+	auto serialR = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_READ);
+	launcher.LoadSettings(serialR);
 	while (!launcher.IsClosing())
 	{
 		launcher.StartFrame();
 		launcher.Update(0.016f);
 		launcher.EndFrame();
 	}
+	auto serialW = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
+	launcher.SaveSettings(serialW);
 	launcher.Shutdown();
-	HashString projectPath = launcher.GetProjectPath();
+
+	mProjectPath = launcher.GetProjectPath();
 }
 
 void Editor::EditorMain::StartFrame(void)
@@ -168,6 +190,11 @@ Editor::eState Editor::EditorMain::GetCurState(void) const
 bool Editor::EditorMain::IsClosing(void)
 {
 	return mCurState == eState::EXIT;
+}
+
+HashString Editor::EditorMain::GetCurProjectFullPath(void) const
+{
+	return mProjectPath;
 }
 
 #endif

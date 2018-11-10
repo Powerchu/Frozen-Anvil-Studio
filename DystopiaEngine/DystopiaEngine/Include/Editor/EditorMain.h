@@ -66,6 +66,8 @@ namespace Editor
 		template<typename T>
 		T* const GetPanel(void) const;
 
+		HashString GetCurProjectFullPath(void) const;
+
 	private:
 		EditorMain(void);
 
@@ -75,6 +77,8 @@ namespace Editor
 		eState	mCurState;
 		eState  mNextState;
 		float	mDelta;
+
+		HashString mProjectPath;
 
 		Dystopia::Timer mTimer;
 	};

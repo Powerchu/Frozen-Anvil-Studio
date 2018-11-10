@@ -59,10 +59,11 @@ namespace Editor
 		void RemoveWindowOptions(void);
 		void SetWindowStyles(void);
 		void RemoveWindowStyles(void);
-		void ProjectDetails(const HashString&, float, float);
+		bool ProjectDetails(const HashString&, float, float, bool = false);
 		void CreateFields(float, float);
 		bool Browse(HashString&);
 		void LaunchField(float, float);
+		bool SelectableProjects(const char*, float, float, bool = false);
 	};
 
 }
