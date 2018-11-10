@@ -35,8 +35,6 @@ namespace Dystopia
 
 	bool PhysicsSystem::Init(void)
 	{
-		mfSleepVelEpsilon = 0.01F;
-		mfSleepBias = 0.97F;
 		return true;
 	}
 
