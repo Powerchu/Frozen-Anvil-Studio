@@ -69,7 +69,7 @@ namespace Gbl
 	constexpr auto  MESH_EXT        = "dmesh";
 	constexpr auto  FRAGSHADER_EXT  = "dfrag";
 	constexpr auto  VERTSHADER_EXT  = "dvert";
-	constexpr auto  CRASHREPORT_EXT = "dystor";
+	constexpr auto  CRASHREPORT_EXT = "dlog";
 }
 
 

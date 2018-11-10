@@ -38,6 +38,8 @@ namespace Dystopia
 		static void WriteFreeMemory(FileLogger&);
 		static void WriteActiveAllocations(FileLogger&);
 
+		static constexpr uint32_t CAP = 512u * 1048576u;
+
 	private:
 		std::byte* mpBlock;
 		std::byte* mpFree;

@@ -72,8 +72,7 @@ inline void Dystopia::TextSerialiser::ApplyWrite(const T& _rhs)
 template <>
 inline void Dystopia::TextSerialiser::ApplyWrite(const HashString& _rhs)
 {
-	std::string str{ _rhs.cbegin(), _rhs.cend() };
-	mFile << str << ',';
+	mFile << "\"" << _rhs.c_str() << "\",";
 }
 
 template <typename T>
@@ -85,15 +84,20 @@ void Dystopia::TextSerialiser::ApplyRead(T& _rhs)
 template <>
 inline void Dystopia::TextSerialiser::ApplyRead<std::string>(std::string& _rhs)
 {
-	std::getline(mFile, _rhs, ',');
+	if (mFile.peek() == '"')
+	{
+		mFile.ignore(1);
+		std::getline(mFile, _rhs, '"');
+	}
 }
 
 template <>
 inline void Dystopia::TextSerialiser::ApplyRead<HashString>(HashString& _rhs)
 {
 	std::string str;
-	std::getline(mFile, str, ',');
-	_rhs = HashString{str.c_str()};
+	*this >> str;
+
+	_rhs = HashString{ str.c_str() };
 }
 
 template <>

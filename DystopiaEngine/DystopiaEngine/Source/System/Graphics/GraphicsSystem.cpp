@@ -93,7 +93,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.0f },
-	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .68f, 1.f, .278f, .1f }
+	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .68f, 1.f, .278f, .1f }, mbVsync{ false }
 {
 
 }
@@ -111,6 +111,16 @@ void Dystopia::GraphicsSystem::SetGamma(float _fGamma) noexcept
 float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 {
 	return mfGamma;
+}
+
+void Dystopia::GraphicsSystem::ToggleVsync(bool b) noexcept
+{
+	mSettings |= b * eGfxSettings::GRAPHICS_VSYNC;
+
+	if (mAvailable & eGfxSettings::GRAPHICS_VSYNC)
+	{
+		wglSwapIntervalEXT(b ? -1 : 0);
+	}
 }
 
 void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw)
@@ -573,11 +583,11 @@ void Dystopia::GraphicsSystem::StartFrame(void)
 
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
-#if EDITOR
 	// TODO: Final draw to combine layers & draw to screen
 	// TODO: Draw a fullscreen quad fusing the GameView and UIView
 	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
 
+#if EDITOR
 	auto& fb = GetFrameBuffer();
 
 	fb.Bind();
@@ -896,12 +906,15 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	}
 
 	//const auto& sceneCam = pCamSys->GetMasterCamera();
+	if (EGUI::Display::CheckBox("V Sync      ", &mbVsync))
+	{
+		ToggleVsync(mbVsync);
+	}
+
+	//const auto& sceneCam = pCamSys->GetMasterCamera();
 	if (EGUI::Display::CheckBox("Debug Draw  ", &mbDebugDrawCheckBox))
 	{
-		if (!mbDebugDrawCheckBox)
-			ToggleDebugDraw(false);
-		else
-			ToggleDebugDraw(true);
+		ToggleDebugDraw(mbDebugDrawCheckBox);
 		//EGUI::GetCommandHND()->InvokeCommand<Camera>(&Camera::mbDebugDraw, tempBool);
 	}
 

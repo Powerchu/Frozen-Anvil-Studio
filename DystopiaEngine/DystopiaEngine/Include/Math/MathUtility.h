@@ -150,6 +150,20 @@ namespace Math
 	};
 }
 
+namespace Ut
+{
+	using Math::Abs;
+	using Math::Min;
+	using Math::Max;
+	using Math::Wrap;
+	using Math::Clamp;
+	using Math::Power;
+	using Math::IsZero;
+	using Math::ApproxEq;
+
+	using Math::Log;
+}
+
 
 
 #endif		// INCLUDE GUARD

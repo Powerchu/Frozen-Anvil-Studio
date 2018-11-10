@@ -30,6 +30,7 @@
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Source\Editor\EditorInput.cpp" />
     <ClCompile Include="Source\Editor\EditorProc.cpp" />
+    <ClCompile Include="Source\Lib\GraphicsLib.cpp" />
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
     <ClCompile Include="Source\Editor\SpriteEditor.cpp" />
@@ -135,6 +136,7 @@
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
     <ClInclude Include="Include\DataStructure\ProxyPtr.h" />
+    <ClInclude Include="Include\Lib\GraphicsLib.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h" />
     <ClInclude Include="Include\Editor\EditorHotkeys.h" />
     <ClInclude Include="Include\Editor\EditorInput.h" />
@@ -454,6 +456,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

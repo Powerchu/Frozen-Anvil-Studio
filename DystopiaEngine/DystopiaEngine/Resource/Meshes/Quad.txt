@@ -4,5 +4,5 @@
 [START_INDICES]
 0,1,2,0,2,3
 [START_NAME]
-Quad,
+"Quad",
 [END_MESH]

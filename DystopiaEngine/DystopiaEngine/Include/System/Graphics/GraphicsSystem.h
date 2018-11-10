@@ -60,6 +60,8 @@ namespace Dystopia
 		void SetGamma(float) noexcept;
 		float GetGamma(void) noexcept;
 
+		void ToggleVsync(bool) noexcept;
+
 		bool GetDebugDraw(void) const;
 		void ToggleDebugDraw(bool);
 
@@ -107,6 +109,7 @@ namespace Dystopia
 
 		static int DRAW_MODE;
 		bool mbDebugDrawCheckBox = false;
+		bool mbVsync = false;
 
 		void StartFrame(void);
 		void EndFrame(void);

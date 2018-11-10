@@ -30,9 +30,17 @@ namespace Dystopia
 
 		bool Init(void) override;
 		void PostInit(void) override;
-
+		
 		void Update(float) override;
 		void Shutdown(void) override;
+
+		float GetDeltaTime(void) const noexcept;
+		float GetFixedDeltaTime(void) const noexcept;
+
+		void StopTime(void) noexcept;
+		void ResumeTime(void) noexcept;
+		void AdvanceTime(void) noexcept;
+		bool ConsumeFixedDT(void) noexcept;
 
 		void FlushQueue(void);
 
@@ -62,8 +70,12 @@ namespace Dystopia
 			float mTimeScale;
 		};
 
-		unsigned mFixedUpdateFPS;
+		bool mbSimulateTime;
+		float mfSimulatedDT;
+		int64_t mSimulatedDT;
+
 		int64_t mFixedDT;
+		int64_t mAccumulatedDT;
 
 		Timer mTimeKeep;
 		AutoArray<TimeZone> mTimeZones;
