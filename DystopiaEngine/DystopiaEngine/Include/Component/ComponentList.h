@@ -25,7 +25,6 @@ namespace Dystopia
 		class Renderer,
 		class RigidBody,
 		class Collider,
-		class CharacterController,
 		class AudioSource
 	>::result;
 
@@ -36,7 +35,6 @@ namespace Dystopia
 		class AABB,
 		class Convex,
 		class Circle,
-		class CharacterController,
 		class AudioSource,
 		class SpriteRenderer,
 		class TextRenderer

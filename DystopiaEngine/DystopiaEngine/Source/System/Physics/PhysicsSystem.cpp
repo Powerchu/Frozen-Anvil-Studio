@@ -22,8 +22,8 @@ namespace Dystopia
 		  , mMaxVelocityConstant(1024.0F)
 		  , mMaxVelSquared(mMaxVelocityConstant * mMaxVelocityConstant)
 		  , mPenetrationEpsilon(0.05F)
-		  , mfSleepVelEpsilon(0.01F)
-		  , mfSleepBias(0.97F)
+		  , mfSleepVelEpsilon(0.100F)
+		  , mfSleepBias(0.98F)
 		  , mVelocityIterations(5)
 		  , mPositionalIterations(4)
 	{
@@ -85,18 +85,29 @@ namespace Dystopia
 
 	void PhysicsSystem::ResolveCollision(const float _dt)
 	{
+		for (auto& body : mComponents)
+		{
+			if (body.GetOwner())
+			{
+				if (!body.GetOwner()->IsActive())
+				{
+					return;
+				}
+			}
+			
+		}
 		for (int i = 0; i < mVelocityIterations; ++i)
 		{
 			for (auto& body : mComponents)
 			{
+				if (body.GetOwner() == nullptr) return;
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 				if (body.Get_IsStaticState()) continue;
 
-				const auto col = body.GetOwner()->GetComponent<Collider>();
 
-				if (nullptr != col)
+				for (auto col : body.mparrCol)
 				{
 					if (!col->IsTrigger())
 					{
@@ -106,11 +117,25 @@ namespace Dystopia
 						}
 					}
 				}
+
+				//const auto col = body.GetOwner()->GetComponent<Collider>();
+
+				//if (nullptr != col)
+				//{
+				//	if (!col->IsTrigger())
+				//	{
+				//		for (auto& manifold : col->GetCollisionEvents())
+				//		{
+				//			manifold.ApplyImpulse();
+				//		}
+				//	}
+				//}
 			}
 		}
 
 		for (auto& body : mComponents)
 		{
+			if (body.GetOwner() == nullptr) return;
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -123,12 +148,34 @@ namespace Dystopia
 		{
 			for (auto& body : mComponents)
 			{
+				if (body.GetOwner() == nullptr) return;
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 				if (body.Get_IsStaticState()) continue;
 
-				const auto col = body.GetOwner()->GetComponent<Collider>();
+				for (auto col : body.mparrCol)
+				{
+					if (!col->IsTrigger())
+					{
+						auto worstPene = mPenetrationEpsilon;
+						for (auto& manifold : col->GetCollisionEvents())
+						{
+							if (manifold.mfPeneDepth > worstPene)
+							{
+								const auto worstContact = &manifold;
+								worstPene = manifold.mfPeneDepth;
+
+								if (nullptr != worstContact)
+								{
+									worstContact->ApplyPenetrationCorrection(mPositionalIterations);
+								}
+							}
+						}
+					}
+				}
+
+				/*const auto col = body.GetOwner()->GetComponent<Collider>();
 
 				if (nullptr != col)
 				{
@@ -149,7 +196,7 @@ namespace Dystopia
 							}
 						}
 					}
-				}
+				}*/
 			}
 		}
 	}
@@ -158,6 +205,7 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
+			if (body.GetOwner() == nullptr) return;
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -175,8 +223,7 @@ namespace Dystopia
 		{
 			if (body.GetOwner())
 			{
-				if (body.GetOwner()->GetName() == "Hero")
-					body.DebugPrint();
+				body.DebugPrint();
 			}
 		}
 	}
@@ -201,6 +248,7 @@ namespace Dystopia
 
 	void PhysicsSystem::PreFixedUpdate(float _dt)
 	{
+		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "PreFixed Update" };
 		// Integrate RigidBodies
 		IntegrateRigidBodies(_dt);
 	}

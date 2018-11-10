@@ -39,7 +39,7 @@ namespace Dystopia
 	void Goblin::Init()
 	{
 		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
-		const auto blackboard = bTree.GetBlackboard();
+		auto blackboard = bTree.GetBlackboard();
 		Math::Vector4 vectorT;
 		if (mpTarget)
 		{
@@ -66,7 +66,7 @@ namespace Dystopia
 	void Goblin::Update(const float _fDeltaTime)
 	{
 		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
-		const auto blackboard = bTree.GetBlackboard();
+		auto blackboard = bTree.GetBlackboard();
 		Math::Vector4 vectorT;
 		if (mpTarget)
 		{

@@ -57,31 +57,32 @@ namespace Math
 			}
 		};
 
-		template<typename T, bool IsNeg, int E>
-		struct PowerCalc
+		template <typename T, auto E>
+		struct PowerCalcHelper
 		{
 			static constexpr int half = E >> 1;
-			inline constexpr static T Power(T obj)
+
+			inline constexpr static T Power(T _obj)
 			{
-				return PowerCalc<T, IsNeg, half>::Power(obj) * PowerCalc<T, IsNeg, E - half>::Power(obj);
+				return PowerCalcHelper<T, half>::Power(_obj) * PowerCalcHelper<T, E - half>::Power(_obj);
+			}
+		};
+		template <typename T>
+		struct PowerCalcHelper<T, 1>
+		{
+			inline constexpr static T Power(T _obj)
+			{
+				return _obj;
 			}
 		};
 
-		template<typename T>
-		struct PowerCalc<T, false, 1>
+		template<typename T, bool IsNeg, auto E>
+		struct PowerCalc
 		{
-			inline constexpr static T Power(T obj)
+			inline constexpr static auto Power(T _obj)
 			{
-				return obj;
-			}
-		};
-
-		template<typename T>
-		struct PowerCalc<T, true, 1>
-		{
-			inline constexpr static T Power(T obj)
-			{
-				return 1 / obj;
+				auto result = PowerCalcHelper<T, E>::Power(_obj);
+				return IsNeg ? T(1) / result : result;
 			}
 		};
 
@@ -90,7 +91,7 @@ namespace Math
 		{
 			inline constexpr static T Power(T)
 			{
-				return 1;
+				return T(1);
 			}
 		};
 	}

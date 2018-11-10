@@ -10,6 +10,7 @@
 
 #define _ALL_TYPE_QUALIFERS_(_TYPE_) _TYPE_, const _TYPE_, _TYPE_ *, const _TYPE_ *, _TYPE_ * const, _TYPE_ const * const
 #define _VOID_RETURN_FUNC_TYPE_(...) std::function<void(__VA_ARGS__)>, void (*)(__VA_ARGS__)
+
 namespace Dystopia
 {
 	class TextSerialiser;
@@ -25,6 +26,7 @@ namespace Dystopia
 				                       _ALL_TYPE_QUALIFERS_(double),
 				                       _ALL_TYPE_QUALIFERS_(short),
 				                       _ALL_TYPE_QUALIFERS_(char),
+				                       _ALL_TYPE_QUALIFERS_(bool),
 				                       _ALL_TYPE_QUALIFERS_(std::string),
 										_ALL_TYPE_QUALIFERS_(HashString),
 				                       _ALL_TYPE_QUALIFERS_(unsigned int),
@@ -40,6 +42,7 @@ namespace Dystopia
 					                   _VOID_RETURN_FUNC_TYPE_(double, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(short, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(char, void*),
+					                   _VOID_RETURN_FUNC_TYPE_(bool, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(std::string, void*),
 									   _VOID_RETURN_FUNC_TYPE_(HashString, void*),
 					                   _VOID_RETURN_FUNC_TYPE_(unsigned int, void*),
@@ -449,7 +452,6 @@ namespace Dystopia
 	}
 }
 
-
-
-
 #endif
+
+

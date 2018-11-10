@@ -432,6 +432,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 
 			if (Mesh* pObjMesh = Obj->GetMesh())
 			{
+				activeColor.w = 0.1f;
 				s->UploadUniform("vColor", activeColor);
 				pObjMesh->DrawMesh(GetDrawMode());
 				activeColor.w = 1.f;

@@ -319,6 +319,19 @@ namespace Dystopia
 		return mIndexBuffer;
 	}
 
+	AutoArray<GameObject*> Collider::GetCollidingObjects() const
+	{
+		AutoArray<GameObject*> ret;
+
+		for (auto& elem : marr_ContactSets)
+		{
+			
+		}
+
+
+		return Ut::Move(ret);
+	}
+
 	void Collider::SetMesh(Mesh * _ptr)
 	{
 		mpMesh = _ptr;
