@@ -256,9 +256,8 @@ namespace Dystopia
 					norm = (_ColB.GetGlobalPosition() - PointOfImpact);
 				}
 
-				if (distance < _ColB.GetRadius())
+				if (distance <= _ColB.GetRadius())
 				{
-					isInside = true;
 					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
 					newEvent.mEdgeNormal += norm;
 					newEvent.mEdgeVector = Math::Vec3D{ newEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
@@ -280,16 +279,13 @@ namespace Dystopia
 				//InformOtherComponents(true, newEvent);
 				return true;
 			}
-			else
-			{
-				//InformOtherComponents(false, newEvent);
-				return false;
-			}
+			return false;
 		}
 		/*No Normals will be given because i have no idea which one to give*/
 		/*Circle completely inside*/
 		//InformOtherComponents(true, newEvent);
 		marr_CurrentContactSets.push_back(newEvent);
+		mbColliding = isInside;
 		return isInside;
 	}
 

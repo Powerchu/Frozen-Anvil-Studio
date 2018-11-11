@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Fireball.h
-\author keith.goh (100%)
-\par    email: keith.goh\@digipen.edu
+\file	dsds.h
+\author sds (100%)
+\par    email: d\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,26 +11,25 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _Fireball_H_
-#define _Fireball_H_
+#ifndef _dsds_H_
+#define _dsds_H_
 
 #define str(s) #s
 
 #include "Behaviour/Behaviour.h"
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
-#include <map>
 #include "Behaviour/BehaviourMemberFunc.h"
-#include "Utility/DebugAssert.h"
+
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
-	class Fireball : Behaviour
+	class dsds : Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = str(Fireball);
+		static constexpr const char * BehaviourName = str(dsds);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -40,11 +39,11 @@ namespace Dystopia
 		// };
 
 #endif
-		virtual const std::string GetEditorName(void) const override { return "Fireball"; }
-		static uint64_t constexpr mFireballID = 18446744073442368000;
+		virtual const std::string GetEditorName(void) const override { return "dsds"; }
+		static uint64_t constexpr mdsdsID = 18446744071882949120;
 
-		Fireball();
-		~Fireball();
+		dsds();
+		~dsds();
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
@@ -69,7 +68,7 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const;
 
-		virtual Fireball * Duplicate() const;
+		virtual dsds * Duplicate() const;
 		
 		virtual void EditorUI(void) noexcept override;
 		
@@ -77,24 +76,19 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
-        virtual void ReceiveMessage(const char * const _FuncName, BehaviourMessage _msg);
-        
-		std::map<const char *, BehaviourMemberFunc<Fireball>> mMemberFunc;
-		
 	private:
-		friend MetaData<Fireball>;
+		friend MetaData<dsds>;
 	};
 
 	extern "C"
 	{
-		DllExport Fireball * FireballClone()
+		DllExport dsds * dsdsClone()
 		{
-			return new Fireball;
+			return new dsds;
 		}
 	}
 }
 
-PP_REFLECT_EMPTY(Dystopia::Fireball)
-#endif //_Fireball_H_
+#endif //_dsds_H_
 
 

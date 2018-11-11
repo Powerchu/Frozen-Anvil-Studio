@@ -21,9 +21,9 @@ namespace Dystopia
 		  , mGravity(400.0F)
 		  , mMaxVelocityConstant(1024.0F)
 		  , mMaxVelSquared(mMaxVelocityConstant * mMaxVelocityConstant)
-		  , mPenetrationEpsilon(0.05F)
-		  , mfSleepVelEpsilon(0.100F)
-		  , mfSleepBias(0.98F)
+		  , mPenetrationEpsilon(0.10F)
+		  , mfSleepVelEpsilon(1.000F)
+		  , mfSleepBias(0.97F)
 		  , mVelocityIterations(5)
 		  , mPositionalIterations(4)
 	{
@@ -35,8 +35,6 @@ namespace Dystopia
 
 	bool PhysicsSystem::Init(void)
 	{
-		mfSleepVelEpsilon = 0.01F;
-		mfSleepBias = 0.97F;
 		return true;
 	}
 
@@ -58,11 +56,12 @@ namespace Dystopia
 				{
 					body.CheckSleeping(_dt);
 
-					const auto col = body.GetOwner()->GetComponent<Collider>();
-
-					if (nullptr != col)
+					for (auto col : body.mparrCol)
 					{
-						col->SetSleeping(!body.GetIsAwake());
+						if (nullptr != col)
+						{
+							col->SetSleeping(!body.GetIsAwake());
+						}
 					}
 				}
 			}
@@ -76,6 +75,8 @@ namespace Dystopia
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
+			if (!body.GetOwner()->IsActive()) continue;
+
 			if (!body.Get_IsStaticState() && body.GetIsAwake())
 			{
 				body.Integrate(_dt);
@@ -85,17 +86,6 @@ namespace Dystopia
 
 	void PhysicsSystem::ResolveCollision(const float _dt)
 	{
-		for (auto& body : mComponents)
-		{
-			if (body.GetOwner())
-			{
-				if (!body.GetOwner()->IsActive())
-				{
-					return;
-				}
-			}
-			
-		}
 		for (int i = 0; i < mVelocityIterations; ++i)
 		{
 			for (auto& body : mComponents)
@@ -106,6 +96,7 @@ namespace Dystopia
 #endif 
 				if (body.Get_IsStaticState()) continue;
 
+				if (!body.GetOwner()->IsActive()) continue;
 
 				for (auto col : body.mparrCol)
 				{
@@ -141,6 +132,8 @@ namespace Dystopia
 #endif 
 			if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
 
+			if (!body.GetOwner()->IsActive()) continue;
+
 			body.PreUpdatePosition(_dt);
 		}
 
@@ -153,6 +146,8 @@ namespace Dystopia
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 				if (body.Get_IsStaticState()) continue;
+
+				if (!body.GetOwner()->IsActive()) continue;
 
 				for (auto col : body.mparrCol)
 				{
@@ -210,6 +205,8 @@ namespace Dystopia
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 			if (body.Get_IsStaticState()) continue;
+
+			if (!body.GetOwner()->IsActive()) continue;
 
 			body.UpdateResult(_dt);
 		}

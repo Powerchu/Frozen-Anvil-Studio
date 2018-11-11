@@ -37,7 +37,7 @@ namespace Dystopia
 		, mbIsCeilinged(false)
 		, IsDodging(false)
 		, CharacterSpeed(25.0f)
-		, JumpForce(50.0F)
+		, JumpForce(60.0F)
 		, mpBody(nullptr)
 		, mpInputSys(nullptr)
 	{
