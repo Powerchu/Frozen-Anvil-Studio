@@ -237,6 +237,8 @@ namespace Dystopia
 
 		float					mSleepTime;
 
+		size_t					mContactsNo;
+
 		PhysicsType				mPhysicsType;
 
 		//// m_flags

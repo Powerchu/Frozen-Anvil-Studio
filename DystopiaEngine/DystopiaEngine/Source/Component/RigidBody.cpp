@@ -35,28 +35,28 @@ namespace Dystopia
 {
 	RigidBody::RigidBody(void)
 		: mpOwnerTransform(nullptr)
-		, mpPhysSys(nullptr)
-		, mfAngleDeg(0.0F)
-		, mLinearDamping(0.5, 0.5)
-		, mfAngularDrag(0.5F)
-		, mfStaticFriction(0.5F)
-		, mfDynamicFriction(0.7F)
-		, mfRestitution(0.5F)
-		, mfGravityScale(1.0F)
-		, mfMass(100.0F)
-		, mfInvMass(0.01F)
-		, mfInertia(mfMass)
-		, mfInvInertia(0.01F)
-		, mfWeightedMotion(0.0F)
-		, mbHasGravity(true)
-		, mbIsStatic(false)
-		, mbIsAwake(true)
-		, mbCanSleep(true)
-		, mbFixedRot(false)
-		, mSleepTime(0.00F)
-		, mPhysicsType(eDynamicBody)
+		  , mpPhysSys(nullptr)
+		  , mfAngleDeg(0.0F)
+		  , mLinearDamping(0.5, 0.5)
+		  , mfAngularDrag(0.5F)
+		  , mfStaticFriction(0.5F)
+		  , mfDynamicFriction(0.7F)
+		  , mfRestitution(0.5F)
+		  , mfGravityScale(1.0F)
+		  , mfMass(100.0F)
+		  , mfInvMass(0.01F)
+		  , mfInertia(mfMass)
+		  , mfInvInertia(0.01F)
+		  , mfWeightedMotion(0.0F)
+		  , mbHasGravity(true)
+		  , mbIsStatic(false)
+		  , mbIsAwake(true)
+		  , mbCanSleep(true)
+		  , mbFixedRot(false)
+		  , mSleepTime(0.00F)
+		  , mContactsNo(0)
+		  , mPhysicsType(eDynamicBody)
 	{
-
 	}
 
 	RigidBody::RigidBody(float _linearDrag, float _angularDrag,
@@ -64,28 +64,28 @@ namespace Dystopia
 		float _gravityScale, float _mass,
 		bool _gravityState, bool _staticState)
 		: mpOwnerTransform(nullptr)
-		, mpPhysSys(nullptr)
-		, mfAngleDeg(0.0F)
-		, mLinearDamping(_linearDrag, _linearDrag)
-		, mfAngularDrag(_angularDrag)
-		, mfStaticFriction(_friction)
-		, mfDynamicFriction(_friction)
-		, mfRestitution(_elasticity)
-		, mfGravityScale(_gravityScale)
-		, mfMass(_mass)
-		, mfInvMass(1 / _mass)
-		, mfInertia(mfMass)
-		, mfInvInertia(0.01F)
-		, mfWeightedMotion(0.0F)
-		, mbHasGravity(_gravityState)
-		, mbIsStatic(_staticState)
-		, mbIsAwake(true)
-		, mbCanSleep(true)
-		, mbFixedRot(false)
-		, mSleepTime(0.00F)
-		, mPhysicsType(eDynamicBody)
+		  , mpPhysSys(nullptr)
+		  , mfAngleDeg(0.0F)
+		  , mLinearDamping(_linearDrag, _linearDrag)
+		  , mfAngularDrag(_angularDrag)
+		  , mfStaticFriction(_friction)
+		  , mfDynamicFriction(_friction)
+		  , mfRestitution(_elasticity)
+		  , mfGravityScale(_gravityScale)
+		  , mfMass(_mass)
+		  , mfInvMass(1 / _mass)
+		  , mfInertia(mfMass)
+		  , mfInvInertia(0.01F)
+		  , mfWeightedMotion(0.0F)
+		  , mbHasGravity(_gravityState)
+		  , mbIsStatic(_staticState)
+		  , mbIsAwake(true)
+		  , mbCanSleep(true)
+		  , mbFixedRot(false)
+		  , mSleepTime(0.00F)
+		  , mContactsNo(0)
+	      , mPhysicsType(eDynamicBody)
 	{
-
 	}
 
 	void RigidBody::Load(void)
@@ -254,11 +254,43 @@ namespace Dystopia
 	{
 		UNUSED_PARAMETER(_dt); // dt is fixed, so it doesnt matter anyway
 
+		size_t tempContacts = 0;
+		bool hasChanged = false;
+
 		if (!GetOwner()->IsActive())
 		{
 			mbIsAwake = true;
 			return;
 		}
+
+		for (auto elem : mparrCol)
+		{
+			for (const auto& count : elem->GetCollisionEvents())
+			{
+				UNUSED_PARAMETER(count);
+				tempContacts += 1;
+			}
+		}
+
+		// Colliders have lost a contact
+		if (tempContacts != mContactsNo)
+		{
+			mbIsAwake = true;
+			hasChanged = true;
+		}
+
+		mContactsNo = 0;
+
+		for (auto elem : mparrCol)
+		{
+			for (const auto& count : elem->GetCollisionEvents())
+			{
+				UNUSED_PARAMETER(count);
+				mContactsNo += 1;
+			}
+		}
+
+		if (hasChanged) return;
 		
 		//mfWeightedMotion is the average kinetic energy over a given set of frames
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
@@ -282,16 +314,6 @@ namespace Dystopia
 		{
 			mbIsAwake = true;
 		}
-
-		for (auto elem : mparrCol)
-		{
-			if (!elem->GetCollisionEvents().IsEmpty())
-			{
-				return;
-			}
-		}
-
-		mbIsAwake = true;
 	}
 
 	void RigidBody::PreUpdatePosition(float _dt)
