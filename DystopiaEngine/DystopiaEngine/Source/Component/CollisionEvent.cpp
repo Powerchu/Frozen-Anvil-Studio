@@ -58,12 +58,12 @@ namespace Dystopia
 		const Vec3D impulse = tmpJ * mEdgeNormal;
 
 		if (!bodyA->Get_IsStaticState())
-			//bodyA->AddLinearImpulse(-impulse);
-			bodyA->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
+			bodyA->AddLinearImpulse(-impulse);
+			//bodyA->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
 
 		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger())
-			//bodyB->AddLinearImpulse(impulse);
-			bodyB->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
+			bodyB->AddLinearImpulse(impulse);
+			//bodyB->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
 
 		// Calculate Frictional Velocity (vec3D) after normal impulse
 		rv = bodyB->GetLinearVelocity() - bodyA->GetLinearVelocity();

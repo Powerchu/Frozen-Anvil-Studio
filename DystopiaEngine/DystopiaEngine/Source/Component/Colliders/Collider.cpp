@@ -324,11 +324,10 @@ namespace Dystopia
 	{
 		AutoArray<GameObject*> ret;
 
-		for (auto& elem : marr_ContactSets)
+		for (const auto& elem : marr_ContactSets)
 		{
-			
+			ret.push_back(const_cast<GameObject*>(elem.mCollidedWith));
 		}
-
 
 		return Ut::Move(ret);
 	}
