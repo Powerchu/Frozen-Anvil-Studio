@@ -93,11 +93,11 @@ namespace Dystopia
 			e->Fire();
 	}
 
-	void Event::Bind(void(&_fn)(void))
-	{
-		EventCallback *p = new EventCallback{ _fn };
-		mArrEventCallbacks.push_back(p);
-	}
+	//void Event::Bind(void(&_fn)(void))
+	//{
+	//	CallBackEvent *p = new CallBackEvent{ _fn };
+	//	mArrEventCallbacks.push_back(p);
+	//}
 
 	void Event::UnbindAll()
 	{

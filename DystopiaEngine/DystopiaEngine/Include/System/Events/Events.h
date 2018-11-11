@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EVENTS_H_
 #define _EVENTS_H_
 #include "DataStructure/AutoArray.h"
+#include "System/Events/Event.h"
 #include "Utility/MetaAlgorithms.h"
 
 namespace Dystopia
@@ -119,13 +120,21 @@ namespace Dystopia
 
 		EventID			GetID()	const;
 		void			Fire()	const;
-		void			Bind(void(&_fn)(void));
+		
+		//void			Bind(void(&_fn)(void));
 		void			UnbindAll();
 
-		template<class Caller>
-		void Bind(void(Caller::*_fn)(void), Caller * const _user)
+		template<typename Ret_t, typename ... Params_t>
+		void Bind(Ret_t(*_fn)(Params_t...))
 		{
-			EventCallback *p = new EventCallback{ _fn, _user };
+			CallBackEvent *p = new CallBackEvent{_fn };
+			mArrEventCallbacks.push_back(p);
+		}
+
+		template<class Caller, typename Ret_t, typename ... Params_t>
+		void Bind(Ret_t(Caller::*_fn)(Params_t...), Caller * const _user)
+		{
+			CallBackEvent *p = new CallBackEvent{ _user,_fn };
 			mArrEventCallbacks.push_back(p);
 		}
 
@@ -134,7 +143,7 @@ namespace Dystopia
 		{
 			for (unsigned int i = 0; i < mArrEventCallbacks.size(); ++i)
 			{
-				EventCallback* e = mArrEventCallbacks[i];
+				CallBackEvent* e = mArrEventCallbacks[i];
 				if (e->IsBindedTo(_user))
 				{
 					mArrEventCallbacks.Remove(i);
@@ -144,7 +153,7 @@ namespace Dystopia
 		}
 	private:
 		EventID						mID;
-		AutoArray<EventCallback*>	mArrEventCallbacks;
+		AutoArray<CallBackEvent*>	mArrEventCallbacks;
 	};
 
 }

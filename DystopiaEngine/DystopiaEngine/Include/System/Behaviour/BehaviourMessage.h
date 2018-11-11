@@ -114,6 +114,18 @@ namespace Dystopia
 
 			return false;
 		}
+		template<typename RetType, typename ... Params>
+		bool operator()(RetType(*ptr)(Params...))
+		{
+			auto * ptr = dynamic_cast<Wrapper<Tuple<Ut::Decay_t<Params>...>> *>(mpWrapper);
+			if (ptr != nullptr)
+			{
+				Invoke(ptr, ptr->Get());
+				return true;
+			}
+
+			return false;
+		}
 
 	private:
 
@@ -126,6 +138,17 @@ namespace Dystopia
 		void InvokeAux(Behaviour_t & _Behaviour, MemPtr_t _MemPtr, Tuple<Ts...> _ParamTypes, std::index_sequence<Indices...> _Indices)
 		{
 			(_Behaviour.*_MemPtr)(_ParamTypes.Get<Indices>() ...);
+		}
+
+		template<typename MemPtr_t, typename ... Ts>
+		void Invoke(MemPtr_t _MemPtr, Tuple<Ts...> _ParamTypes)
+		{
+			InvokeAux(_Behaviour, _MemPtr, _ParamTypes, std::make_index_sequence<sizeof...(Ts)>{});
+		}
+		template<typename MemPtr_t, typename ... Ts, size_t ... Indices>
+		void InvokeAux(MemPtr_t _MemPtr, Tuple<Ts...> _ParamTypes, std::index_sequence<Indices...> _Indices)
+		{
+			(*_MemPtr)(_ParamTypes.Get<Indices>() ...);
 		}
 
 		Concept * mpWrapper = nullptr;
