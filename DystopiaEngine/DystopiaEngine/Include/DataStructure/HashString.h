@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	HashString.h
+\file   HashString.h
 \author Shannon Tan (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -17,8 +17,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(disable : 4251)
 
 #include <cstdint>
+#include <iostream>
 #include "Globals.h"
-
 #include "Allocator/DefaultAlloc.h"
 
 typedef uint64_t HashID;
@@ -31,6 +31,7 @@ constexpr HashID StringHasher(const char(&_s)[N], unsigned int I = N)
 	return I == 1 ? (OFFSET_BASIS ^ _s[0]) * FNV_PRIME :
 		(StringHasher(_s, I - 1) ^ (_s[I - 1])) * FNV_PRIME;
 }
+
 HashID StringHasher(const char* _s);
 
 class _DLL_EXPORT_ONLY HashString
@@ -42,7 +43,7 @@ public:
 	HashString(const HashString&);
 	HashString(HashString&&) noexcept;
 	HashString(const char *);
-	HashString(const char * _start, const char* _end);
+	HashString(const char * const _start, const char* const _end);
 
 	template <unsigned N>
 	constexpr HashString(const char(&s)[N]);
@@ -58,22 +59,24 @@ public:
 	HashString& operator=(const wchar_t *);
 
 	/* capacity */
-	size_t		size(void) const;
-	size_t		length(void) const;
-	void		clear(void);
+	size_t      size(void) const;
+	size_t      length(void) const;
+	void        clear(void);
 
 	/* element access */
-	char&		operator[](size_t _pos);
+	char&       operator[](size_t _pos);
 	const char& operator[](size_t _pos) const;
-	char&		back(void);
+	char&       back(void);
 	const char& back(void) const;
-	char&		front(void);
+	char&       front(void);
 	const char& front(void) const;
 
 	/* modifiers */
 	template<unsigned N>
-	HashString& operator+=(const char (&_s)[N]);
+	HashString& operator+=(const char(&_s)[N]);
 	HashString& operator+=(const char *);
+	HashString& operator+=(const char);
+	HashString& operator+=(unsigned);
 	HashString& operator+=(const HashString&);
 	HashString& erase(size_t _pos, size_t _len = -1);
 	HashString& replace(size_t _pos, size_t _len, const HashString&);
@@ -81,28 +84,28 @@ public:
 
 	/* operations */
 	const char* c_str(void) const;
-	size_t		find(const HashString&, size_t _pos = 0) const;
-	size_t		find(const char* _s, size_t _pos = 0) const;
-	size_t		find(char _c, size_t _pos = 0) const;
-	size_t		rfind(const HashString&, size_t _pos = -1) const;
-	size_t		rfind(const char* _s, size_t _pos = -1) const;
-	size_t		rfind(char _c, size_t _pos = -1) const;
-	bool		compare(const HashString&) const;
-	bool		compare(const char* _s) const;
-	size_t		find_first_of(const HashString&, size_t _pos = 0) const;
-	size_t		find_first_of(const char* _s, size_t _pos = 0) const;
-	size_t		find_last_of(const HashString&, size_t _pos = -1) const;
-	size_t		find_last_of(const char* _s, size_t _pos = -1) const;
-	HashString	substr(size_t _pos, size_t _len = -1) const;
+	size_t      find(const HashString&, size_t _pos = 0) const;
+	size_t      find(const char* _s, size_t _pos = 0) const;
+	size_t      find(char _c, size_t _pos = 0) const;
+	size_t      rfind(const HashString&, size_t _pos = -1) const;
+	size_t      rfind(const char* _s, size_t _pos = -1) const;
+	size_t      rfind(char _c, size_t _pos = -1) const;
+	bool        compare(const HashString&) const;
+	bool        compare(const char* _s) const;
+	size_t      find_first_of(const HashString&, size_t _pos = 0) const;
+	size_t      find_first_of(const char* _s, size_t _pos = 0) const;
+	size_t      find_last_of(const HashString&, size_t _pos = -1) const;
+	size_t      find_last_of(const char* _s, size_t _pos = -1) const;
+	HashString  substr(size_t _pos, size_t _len = -1) const;
 
-	const char* cbegin(void) const;
-	char*		begin(void);
-	const char* cend(void) const;
-	char*		end(void);
-	const char* clast(void) const;
-	char*		last(void);
+	const char* const cbegin(void) const;
+	char*       const begin(void);
+	const char* const cend(void) const;
+	char*       const end(void);
+	const char* const clast(void) const;
+	char*       const last(void);
 
-	HashID		id(void) const;
+	HashID      id(void) const;
 
 private:
 	size_t mSize;
@@ -114,12 +117,16 @@ template <unsigned N>
 constexpr HashString::HashString(const char(&_s)[N])
 	: mSize{ N - 1 }
 	, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(N) }
-    , mHashedID{ StringHasher(_s) }
+	, mHashedID{ StringHasher(_s) }
 {
 }
 
 bool operator==(const HashString& _lhs, const HashString& _rhs);
+bool operator==(const HashString& _lhs, const char * _rhs);
+bool operator==(const char * _lhs, const HashString& _rhs);
 bool operator!=(const HashString& _lhs, const HashString& _rhs);
+std::ostream& operator<<(std::ostream& _os, const HashString& _rhs);
+
 HashString operator+(const HashString& _lhs, const HashString& _rhs);
 HashString operator+(const HashString& _lhs, const char*);
 HashString operator+(const char*, const HashString& _rhs);
@@ -173,5 +180,8 @@ HashString& HashString::operator+=(const char(&_s)[N])
 	return *this;
 }
 
+#endif
 
-#endif //_HASH_STRING_H_
+
+
+

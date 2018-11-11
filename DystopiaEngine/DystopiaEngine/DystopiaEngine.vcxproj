@@ -133,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="Include\System\Events\Event.h" />
     <ClInclude Include="Include\Behaviour\BehaviourMemberFunc.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourMessage.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
