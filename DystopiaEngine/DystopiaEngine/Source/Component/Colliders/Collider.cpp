@@ -38,6 +38,7 @@ namespace Dystopia
 	void Collider::Awake(void)
 	{
 		Triangulate();
+
 		if (mpMesh != nullptr || this->mDebugVertices.size() == 0 || this->mIndexBuffer.size() == 0)
 			return;
 
@@ -48,7 +49,7 @@ namespace Dystopia
 			pMeshSys->StartMesh();
 
 			auto const & arr = GetVertexBuffer();
-			for (auto i : arr)
+			for (const auto& i : arr)
 			{
 				pMeshSys->AddVertex(i.x, i.y, i.z);
 			}

@@ -1,6 +1,8 @@
 #include "System/Collision/CollisionSystem.h"
 #include "System/Collision/CollisionEvent.h"
 #include "System/Scene/SceneSystem.h"
+#include "System/Graphics/VertexDefs.h"
+#include "System/Graphics/MeshSystem.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
 #include "Math/Vector4.h"
@@ -32,21 +34,46 @@ namespace Dystopia
 
 	void Circle::Awake(void)
 	{
-		if (mDebugVertices.size() == 0)
+		static Mesh * Mesh = nullptr;
+
+		mScale[0] = mScale[1] = m_radius;
+
+		if(!Mesh)
 		{
+			mDebugVertices.clear();
+
 			const unsigned numberOfSegments = 25;
 			const float increment = 2.0f * Math::pi / float(numberOfSegments);
-
-			const float theta = 0.0f;
 
 			for (unsigned i = 0; i < numberOfSegments; ++i)
 			{
 				Vec3D vertex = 0.5F * Vec3D{ cosf(increment*i), sinf(increment*i), 0 };
-				Collider::mDebugVertices.push_back(Vertex{ vertex.x, vertex.y, 0 });
+				mDebugVertices.push_back(Vertex{ vertex.x, vertex.y, 0 });
 			}
-			Collider::Awake();
+
+			Triangulate();
+
+			if (this->mDebugVertices.size() == 0 || this->mIndexBuffer.size() == 0)
+				throw;
+
+			auto * pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
+			if (pMeshSys)
+			{
+				/*Create Mesh*/
+				pMeshSys->StartMesh();
+
+				auto const & arr = GetVertexBuffer();
+				for (const auto& i : arr)
+				{
+					pMeshSys->AddVertex(i.x, i.y, i.z);
+				}
+
+				SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
+				pMeshSys->EndMesh();
+			}
+			Mesh = GetMesh();
 		}
-		mScale[0] = mScale[1] = m_radius;
+		mpMesh = Mesh;
 	}
 
 	/*Load the Component*/
@@ -83,7 +110,7 @@ namespace Dystopia
 
 	BroadPhaseCircle Circle::GenerateBoardPhaseCircle() const
 	{
-		return BroadPhaseCircle(GetRadius() * 2.5f, GetGlobalPosition());
+		return BroadPhaseCircle(GetRadius(), GetGlobalPosition());
 	}
 
 	float Circle::GetRadius() const
@@ -281,7 +308,7 @@ namespace Dystopia
 		}
 
 		/*Circle completely inside*/
-		float currPene = newEvent.mfPeneDepth = FLT_MAX;
+		newEvent.mfPeneDepth = FLT_MAX;
 
 		for (auto & elem : ConvexEdges)
 		{

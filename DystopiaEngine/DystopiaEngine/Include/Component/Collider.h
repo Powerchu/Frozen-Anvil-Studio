@@ -207,6 +207,10 @@ namespace Dystopia
 #endif
 
 	protected:
+
+		// Collider Mesh for debug drawing
+		Mesh * mpMesh;
+
 		/*AutoArray of collision event*/
 		AutoArray<CollisionEvent>  marr_ContactSets;
 		AutoArray<CollisionEvent>  marr_CurrentContactSets;
@@ -225,8 +229,7 @@ namespace Dystopia
 #endif
 
 	private:
-		// Collider Mesh for debug drawing
-		Mesh * mpMesh;
+
 
 	};
 }

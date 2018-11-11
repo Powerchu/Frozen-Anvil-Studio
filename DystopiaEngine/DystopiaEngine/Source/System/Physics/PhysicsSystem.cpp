@@ -24,7 +24,7 @@ namespace Dystopia
 		  , mPenetrationEpsilon(0.10F)
 		  , mfSleepVelEpsilon(1.000F)
 		  , mfSleepBias(0.97F)
-		  , mVelocityIterations(5)
+		  , mVelocityIterations(4)
 		  , mPositionalIterations(4)
 	{
 	}

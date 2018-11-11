@@ -397,7 +397,7 @@ namespace Dystopia
 			LongestRadius = distance > LongestRadius ? distance : LongestRadius;
 		}
 
-		return BroadPhaseCircle{ LongestRadius * 1.5F, MyGlobalCentre };
+		return BroadPhaseCircle{ LongestRadius, MyGlobalCentre};
 	}
 
 	void Convex::EditorUI() noexcept

@@ -1,0 +1,266 @@
+[START_Scene]
+18446744072887468032,test333,11,[START_START_GO_DATA]
+1586496512,65,Scene Camera,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.700274,0.700274,1,0,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073463769088,65,Ball,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,8,1,0,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071939142656,65,Ball_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,8,1,11.5545,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072761228800,65,Ball_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,8,1,24.8597,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073304393728,65,Ball_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,8,1,37.4647,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+171561472,65,Ball_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,8,1,50.0696,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+758766592,65,Ball_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,8,1,63.7249,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1465509376,65,Ball_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,8,1,75.2795,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071677014016,65,Ball_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,8,1,85.7836,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073581230592,65,Ball_Clone_Clone_Clone_Clone_Clone_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,8,1,98.7386,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+649724928,65,Floor,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+687.403,8,1,0,-39.9156,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+1586497536,0,1586496512,0,1,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+10,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+18446744071985278464,1,18446744073463769088,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744071939143168,1,18446744071939142656,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744072761229312,1,18446744072761228800,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744073304394240,1,18446744073304393728,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+171561984,1,171561472,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+758767104,1,758766592,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1465509888,1,1465509376,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744071677014528,1,18446744071677014016,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744073581231104,1,18446744073581230592,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+649725440,1,649724928,0,0.5,0.5,0.5,0.5,0.7,0,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+840567808,1,649724928,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+9,
+[END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+1853468672,1,18446744073463769088,0,0,0,0,0,0,1,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744071939143680,1,18446744071939142656,0,0,0,0,0,0,1,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744072761229824,1,18446744072761228800,0,0,0,0,0,0,1,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744073304394752,1,18446744073304393728,0,0,0,0,0,0,1,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+171562496,1,171561472,0,0,0,0,0,0,1,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+758767616,1,758766592,0,0,0,0,0,0,1,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+1465510400,1,1465509376,0,0,0,0,0,0,1,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744071677015040,1,18446744071677014016,0,0,0,0,0,0,1,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744073581231616,1,18446744073581230592,0,0,0,0,0,0,1,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+8,[START_str]
+ChangeAudio,0,[START_str]
+CharacterController,0,[START_str]
+dsds,0,[START_str]
+Fireball,0,[START_str]
+FollowTarget,0,[START_str]
+Goblin,0,[START_str]
+Missle,0,[START_str]
+Parallax,0,
+[END_BEHAVIOUR_SYSTEM_BLOCK]
+
+[END_Scene]
