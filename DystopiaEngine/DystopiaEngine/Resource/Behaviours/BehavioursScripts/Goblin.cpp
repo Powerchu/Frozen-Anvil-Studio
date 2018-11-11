@@ -26,7 +26,7 @@ namespace Dystopia
 {
 	
 	namespace Goblin_MSG
-	{
+	{ 
 		template<typename ... Ts>
 		void SendInternalMessage(Behaviour * ptr, const char * _FuncName, Ts ... _Params)
 		{

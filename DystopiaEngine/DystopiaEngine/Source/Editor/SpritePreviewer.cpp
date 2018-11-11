@@ -63,7 +63,7 @@ void Dystopia::SpritePreviewer::EditorUI(void)
 
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
 	{
-		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
+		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
 		mTextureName = GetTextureName();
 		mImageW = static_cast<float>(mpTargetTexture->GetWidth());
 		mImageH = static_cast<float>(mpTargetTexture->GetHeight());
@@ -72,7 +72,7 @@ void Dystopia::SpritePreviewer::EditorUI(void)
 	}
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::BMP))
 	{
-		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
+		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
 		mTextureName = GetTextureName();
 		mImageW = static_cast<float>(mpTargetTexture->GetWidth());
 		mImageH = static_cast<float>(mpTargetTexture->GetHeight());
@@ -81,7 +81,7 @@ void Dystopia::SpritePreviewer::EditorUI(void)
 	}
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::DDS))
 	{
-		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath);
+		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
 		mTextureName = GetTextureName();
 		mImageW = static_cast<float>(mpTargetTexture->GetWidth());
 		mImageH = static_cast<float>(mpTargetTexture->GetHeight());

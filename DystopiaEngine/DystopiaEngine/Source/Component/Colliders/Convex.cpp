@@ -546,14 +546,14 @@ namespace Dystopia
 
 	void Convex::eAttachedBodyEmptyBox()
 	{
-		std::string bodyAttached;
+		HashString bodyAttached;
 		if (GetOwner()->GetComponent<RigidBody>())
 			bodyAttached = GetOwner()->GetName();
 		else
 			bodyAttached = "None";
 
 		EGUI::Display::Label("Attached Body");
-		EGUI::Display::EmptyBox("		", 180.f, bodyAttached, false, true);
+		EGUI::Display::EmptyBox("		", 180.f, bodyAttached.c_str(), false, true);
 	}
 
 	void Convex::eNumberOfContactsLabel()
@@ -564,8 +564,8 @@ namespace Dystopia
 			{
 				EGUI::PushID(i);
 				auto& c = marr_ContactSets[i];
-				std::string name = c.mCollidedWith->GetName();
-				EGUI::Display::EmptyBox("		", 180.f, name, false, true);
+				HashString name = c.mCollidedWith->GetName();
+				EGUI::Display::EmptyBox("		", 180.f, name.c_str(), false, true);
 				EGUI::PopID();
 			}
 

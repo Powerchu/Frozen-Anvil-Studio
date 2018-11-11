@@ -370,7 +370,7 @@ namespace Dystopia
 			Math::Pt3D worldClickPos	= GetWorldClickPos(pCam);
 			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ, 1.f };
 
-			GameObject *pDupl = Factory::LoadFromPrefab("", _pFile->mPath);
+			GameObject *pDupl = Factory::LoadFromPrefab("", _pFile->mPath.c_str());
 			if (pDupl)
 			{
 				pDupl->GetComponent<Transform>()->SetPosition(spawnSite);
@@ -390,13 +390,13 @@ namespace Dystopia
 				auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture,
 					pRend->GetTexture());
 				auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture,
-					mpGfxSys->LoadTexture(_pFile->mPath));
+					mpGfxSys->LoadTexture(_pFile->mPath.c_str()));
 				GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
 				GetMainEditor()->NewSelection(pTarget->GetID());
 			}
 			else
 			{
-				std::string defaultName = "GameObject";
+				HashString defaultName = "GameObject";
 				if (!pTarget)
 				{
 					Math::Pt3D worldClickPos = GetWorldClickPos(GetCamera());
@@ -411,7 +411,7 @@ namespace Dystopia
 				GameObject* pGuaranteedTarget = FindMouseObject();
 				Renderer* pNewRend = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->Get<typename Renderer::SYSTEM>())->RequestComponent();
 				pGuaranteedTarget->AddComponent(pNewRend, typename Component::TAG{});
-				pNewRend->SetTexture(mpGfxSys->LoadTexture(_pFile->mPath));
+				pNewRend->SetTexture(mpGfxSys->LoadTexture(_pFile->mPath.c_str()));
 				pNewRend->SetOwner(pGuaranteedTarget);
 				pNewRend->SetActive(pGuaranteedTarget->IsActive());
 				pNewRend->Awake();

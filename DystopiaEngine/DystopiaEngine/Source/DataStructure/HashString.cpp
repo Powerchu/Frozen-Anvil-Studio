@@ -51,7 +51,7 @@ HashString::HashString(HashString&& _rhs) noexcept
 	_rhs.mSize = 0;
 }
 
-HashString::HashString(const char * _s)
+HashString::HashString(const char * const _s)
 	: mHashedID{ StringHasher(_s) }, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(strlen(_s) + 1) },
 	mSize{ strlen(_s) }
 {
@@ -547,4 +547,14 @@ std::ostream& operator<<(std::ostream& _os, const HashString& _rhs)
 {
 	_os << _rhs.c_str();
 	return _os;
+}
+
+bool operator<(const HashString& _lhs, const HashString& _rhs)
+{
+	return std::strcmp(_lhs.c_str(), _rhs.c_str()) < 0;
+}
+
+bool operator>(const HashString& _lhs, const HashString& _rhs)
+{
+	return std::strcmp(_lhs.c_str(), _rhs.c_str()) > 0;
 }

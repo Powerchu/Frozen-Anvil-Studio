@@ -122,7 +122,7 @@ namespace Dystopia
 		static int j = 0;
 
 		char buffer[MAX_SEARCH * 2] = "";
-		std::string name = mpFocus->GetName();
+		HashString name = mpFocus->GetName();
 		strcpy_s(buffer, name.c_str());
 
 		EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
@@ -133,7 +133,7 @@ namespace Dystopia
 			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 223.f) && strlen(buffer))
 			{
 				auto f_Old = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, mpFocus->GetName());
-				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
+				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, HashString{ buffer });
 				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
 			if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))

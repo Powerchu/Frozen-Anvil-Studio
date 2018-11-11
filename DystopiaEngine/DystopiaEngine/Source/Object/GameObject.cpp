@@ -287,7 +287,7 @@ uint64_t Dystopia::GameObject::GetID(void) const
 	return mnID;
 }
 
-std::string Dystopia::GameObject::GetName(void) const
+HashString Dystopia::GameObject::GetName(void) const
 {
 	return mName;
 }
@@ -297,7 +297,7 @@ const char* Dystopia::GameObject::GetNamePtr() const
 	return mName.c_str();
 }
 
-void Dystopia::GameObject::SetName(const std::string& _strName)
+void Dystopia::GameObject::SetName(const HashString& _strName)
 {
 	mName = _strName;
 }

@@ -99,10 +99,10 @@ void Dystopia::SceneSystem::LoadSettings(TextSerialiser&)
 
 Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject_cstr(const char* const _str)
 {
-	return FindGameObject(std::string{ _str });
+	return FindGameObject(HashString{ _str });
 }
 
-Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const std::string& _prefabName, const Math::Pt3D& _position)
+Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const HashString& _prefabName, const Math::Pt3D& _position)
 {
 	if (!mpCurrScene) return false;
 

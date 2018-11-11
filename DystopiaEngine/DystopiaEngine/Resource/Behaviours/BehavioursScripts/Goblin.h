@@ -244,15 +244,6 @@ namespace Dystopia
 		{
 			
 		}
-		void TEST2(int, int, float)
-		{
-			
-		}
-		void TEST2(int, int) const
-		{
-			
-		}
-		
 		// Reflection Stuff
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;

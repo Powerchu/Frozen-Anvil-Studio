@@ -42,7 +42,7 @@ public:
 	HashString(void);
 	HashString(const HashString&);
 	HashString(HashString&&) noexcept;
-	HashString(const char *);
+	HashString(const char * const);
 	HashString(const char * const _start, const char* const _end);
 
 	template <unsigned N>
@@ -125,6 +125,8 @@ bool operator==(const HashString& _lhs, const HashString& _rhs);
 bool operator==(const HashString& _lhs, const char * _rhs);
 bool operator==(const char * _lhs, const HashString& _rhs);
 bool operator!=(const HashString& _lhs, const HashString& _rhs);
+bool operator<(const HashString& _lhs, const HashString& _rhs);
+bool operator>(const HashString& _lhs, const HashString& _rhs);
 std::ostream& operator<<(std::ostream& _os, const HashString& _rhs);
 
 HashString operator+(const HashString& _lhs, const HashString& _rhs);
