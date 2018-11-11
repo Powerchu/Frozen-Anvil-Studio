@@ -180,5 +180,9 @@ HashString& HashString::operator+=(const char(&_s)[N])
 	return *this;
 }
 
-
 #endif //_HASH_STRING_H_
+
+
+
+
+

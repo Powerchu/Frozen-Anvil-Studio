@@ -34,6 +34,7 @@ Editor::EInput::~EInput(void)
 
 void Editor::EInput::Load(void)
 {
+	mpInputMgr->Init();
 }
 
 bool Editor::EInput::Init(void)

@@ -37,7 +37,11 @@ namespace Editor
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 
 		void SavedChanges(void);
-		
+		bool HasChanges(void) const;
+
+		void Undo(void);
+		void Redo(void);
+
 	private:
 
 		std::deque<Command*> mDeqRedo;
@@ -46,8 +50,6 @@ namespace Editor
 		size_t mnUndo;
 		size_t mnRedo;
 
-		void Undo(void);
-		void Redo(void);
 		void RemoveStray(std::deque<Command*>&);
 	};
 }

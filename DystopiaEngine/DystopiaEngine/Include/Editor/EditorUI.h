@@ -36,7 +36,7 @@ namespace Editor
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 
 		void SetLauncherMode(bool);
-		// 0 small, 1 medium, 2 large
+		// 0 mini, 1 small, 2 medium, 3 large, 
 		void PushFontSize(unsigned); 
 		void PopFontSize(void);
 

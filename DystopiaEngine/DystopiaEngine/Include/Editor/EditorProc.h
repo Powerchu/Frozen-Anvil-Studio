@@ -16,13 +16,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/HashString.h"
 
 typedef struct HWND__* HWND;
+
+enum eFileTypes : unsigned
+{
+	eATLAS = 0,
+	eSETTINGS,
+	eSCENE,
+	ePREFABS,
+	eMESH,
+	eFRAG_S,
+	eVERT_S,
+	eCRASH,
+	eLAST
+};
+
 namespace Dystopia
 {
 	struct EditorProc
 	{
-		bool Load(HashString& _outPath);
-		bool BrowseFolder(HashString& _outPath, HWND _win);
-		bool SaveAs(HashString& _outName, HashString& _outPath, HWND _win);
+		bool Load(HashString& _outPath, eFileTypes);
+		bool BrowseFolder(HashString& _outPath);
+		bool SaveAs(HashString& _outName, HashString& _outPath, HWND _win, eFileTypes);
 	};
 }
 

@@ -131,5 +131,23 @@ namespace Dystopia
 		return CreateDirectoryA(temp.c_str(), nullptr);
 	}
 
+	void FileSystem::ChangeDirPath(eFileDir _dirToChange, const HashString& _newPath)
+	{
+		mPathTable[_dirToChange] = _newPath.c_str();
+	}
+
+	HashString FileSystem::FindFilePath(const HashString& _file, eFileDir _parentDir)
+	{
+		for (auto& p : std::filesystem::recursive_directory_iterator(mPathTable[_parentDir]))
+		{
+			HashString temp{ p.path().filename().string().c_str() };
+			if (temp == _file)
+			{
+				return temp;
+			}
+		}
+		return HashString{};
+	}
 }
+
 

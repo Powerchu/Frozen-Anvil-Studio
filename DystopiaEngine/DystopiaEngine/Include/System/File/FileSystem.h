@@ -48,6 +48,9 @@ namespace Dystopia
 
 		bool CreateFolder(const HashString& _name, const HashString& _path);
 
+		void ChangeDirPath(eFileDir _dirToChange, const HashString& _newPath);
+		HashString FindFilePath(const HashString& _file, eFileDir _parentDir);
+
 	private:
 
 		using PathTable = std::map<eFileDir, std::string>;
@@ -76,10 +79,23 @@ namespace Dystopia
 		case eFileDir::eSource:
 		{
 			if constexpr (std::is_same_v<T, std::string>)
-				retString = std::filesystem::current_path().string() + '/' + mPathTable[_ParentDirectory];
-			else
-			if constexpr (std::is_same_v<T, std::wstring>)
-				retString = std::filesystem::current_path().wstring() + L'/' + std::wstring{ mPathTable[_ParentDirectory].begin(), mPathTable[_ParentDirectory].end() };
+			{
+				std::filesystem::path DirPath{ mPathTable[_ParentDirectory] };
+				if (DirPath.has_root_path())
+					retString = mPathTable[_ParentDirectory];
+				else
+					retString = std::filesystem::current_path().string() + '/' + mPathTable[_ParentDirectory];
+			}
+
+			else if constexpr (std::is_same_v<T, std::wstring>)
+			{
+				std::filesystem::path DirPath{ mPathTable[_ParentDirectory] };
+				if (DirPath.has_root_path())
+					retString = std::wstring{ mPathTable[_ParentDirectory].begin(), mPathTable[_ParentDirectory].end() };
+				else
+					retString = std::filesystem::current_path().wstring() + L'/' + std::wstring{ mPathTable[_ParentDirectory].begin(), mPathTable[_ParentDirectory].end() };
+			}
+
 		}
 			break;
 		case eFileDir::eCurrent:

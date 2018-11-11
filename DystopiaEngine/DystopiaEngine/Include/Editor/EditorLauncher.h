@@ -35,13 +35,17 @@ namespace Editor
 
 		bool IsClosing(void) const;
 
-		HashString GetProjectPath(void) const;
+		HashString GetProjFolder(void) const;
+		HashString GetProjFile(void) const;
 
 	private:
 		static constexpr unsigned bufSize = 256;
 
-		AutoArray<HashString> mArrKnownProjects;
-		HashString mProjectSelected;
+		AutoArray<HashString> mArrProjFolders;
+
+		HashString mProjFolderSelected;
+		HashString mProjFileSelected;
+
 		bool mbClosing;
 		bool mbProjectView;
 		unsigned long mOriginStyle;
@@ -62,7 +66,8 @@ namespace Editor
 		bool ProjectDetails(const HashString&, float, float, bool = false);
 		void CreateFields(float, float);
 		bool Browse(HashString&);
-		void LaunchField(float, float);
+		void OpenProject(float, float);
+		void BrowseProject(float, float);
 		bool SelectableProjects(const char*, float, float, bool = false);
 	};
 

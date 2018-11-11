@@ -81,6 +81,11 @@ void Editor::EditorCommands::SavedChanges(void)
 	mbChangesMade = false;
 }
 
+bool Editor::EditorCommands::HasChanges(void) const
+{
+	return mbChangesMade;
+}
+
 void Editor::EditorCommands::Undo(void)
 {
 	//EndRecording();

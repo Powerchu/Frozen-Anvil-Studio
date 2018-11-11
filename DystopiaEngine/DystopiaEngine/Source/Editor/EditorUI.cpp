@@ -33,6 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define FONT_LARGE 68
 #define FONT_MEDIUM 34
 #define FONT_SMALL 20
+#define FONT_MINI 16
 
 HCURSOR g_CursorTypes[8];
 const char* const g_mainDockName = "MainDock";
@@ -51,47 +52,41 @@ Editor::EditorUI::~EditorUI(void)
 
 void Editor::EditorUI::Load(void)
 {
-}
-
-bool Editor::EditorUI::Init(void)
-{
-	//if (!_pWin || !_pGfx || !_pInput) return false;
-	//mpWin = _pWin;
-	//mpGfx = _pGfx;
-	//mpInput = _pInput;
-	//mpMainDockspace = _pMainDockspaceName;
-
-	//mpGLState = new GLState{};
-	/*mpCtx =*/ ImGui::CreateContext();
+	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
 
-	// Store GL version string so we can refer to it later in case we recreate shaders.
 	mGlslVersion = "#version 150\n";
 
-	// Setup back-end capabilities flags
+	// Load cursors
+	g_CursorTypes[ImGuiMouseCursor_Arrow] = LoadCursor(NULL, IDC_ARROW);
+	g_CursorTypes[ImGuiMouseCursor_TextInput] = LoadCursor(NULL, IDC_IBEAM);
+	g_CursorTypes[ImGuiMouseCursor_ResizeAll] = LoadCursor(NULL, IDC_SIZEALL);
+	g_CursorTypes[ImGuiMouseCursor_ResizeNS] = LoadCursor(NULL, IDC_SIZENS);
+	g_CursorTypes[ImGuiMouseCursor_ResizeEW] = LoadCursor(NULL, IDC_SIZEWE);
+	g_CursorTypes[ImGuiMouseCursor_ResizeNESW] = LoadCursor(NULL, IDC_SIZENESW);
+	g_CursorTypes[ImGuiMouseCursor_ResizeNWSE] = LoadCursor(NULL, IDC_SIZENWSE);
+	g_CursorTypes[ImGuiMouseCursor_Hand] = LoadCursor(NULL, IDC_HAND);
+
 	ImGuiIO& io = ImGui::GetIO();
 	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;   // We can honor GetMouseCursor() values (optional)
 	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;    // We can honor io.WantSetMousePos requests (optional, rarely used)
 															// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
 
-	io.KeyMap[ImGuiKey_Backspace]	= static_cast<int>(eButton::KEYBOARD_BACKSPACE);
-	io.KeyMap[ImGuiKey_Tab]			= static_cast<int>(eButton::KEYBOARD_TAB);
-	io.KeyMap[ImGuiKey_Enter]		= static_cast<int>(eButton::KEYBOARD_ENTER);
-	io.KeyMap[ImGuiKey_Escape]		= static_cast<int>(eButton::KEYBOARD_ESCAPE);
-	io.KeyMap[ImGuiKey_Space]		= static_cast<int>(eButton::KEYBOARD_SPACEBAR);
-	io.KeyMap[ImGuiKey_PageUp]		= static_cast<int>(eButton::KEYBOARD_PAGEUP);
-	io.KeyMap[ImGuiKey_PageDown]	= static_cast<int>(eButton::KEYBOARD_PAGEDOWN);
-	io.KeyMap[ImGuiKey_End]			= static_cast<int>(eButton::KEYBOARD_END);
-	io.KeyMap[ImGuiKey_Home]		= static_cast<int>(eButton::KEYBOARD_HOME);
-	io.KeyMap[ImGuiKey_LeftArrow]	= static_cast<int>(eButton::KEYBOARD_LEFT);
-	io.KeyMap[ImGuiKey_UpArrow]		= static_cast<int>(eButton::KEYBOARD_UP);
-	io.KeyMap[ImGuiKey_RightArrow]	= static_cast<int>(eButton::KEYBOARD_RIGHT);
-	io.KeyMap[ImGuiKey_DownArrow]	= static_cast<int>(eButton::KEYBOARD_DOWN);
-	io.KeyMap[ImGuiKey_Insert]		= static_cast<int>(eButton::KEYBOARD_INSERT);
-	io.KeyMap[ImGuiKey_Delete]		= static_cast<int>(eButton::KEYBOARD_DELETE);
-
-	//io.SetClipboardTextFn = SetClipBoardText;
-	//io.GetClipboardTextFn = GetClipBoardText;
+	io.KeyMap[ImGuiKey_Backspace] = static_cast<int>(eButton::KEYBOARD_BACKSPACE);
+	io.KeyMap[ImGuiKey_Tab] = static_cast<int>(eButton::KEYBOARD_TAB);
+	io.KeyMap[ImGuiKey_Enter] = static_cast<int>(eButton::KEYBOARD_ENTER);
+	io.KeyMap[ImGuiKey_Escape] = static_cast<int>(eButton::KEYBOARD_ESCAPE);
+	io.KeyMap[ImGuiKey_Space] = static_cast<int>(eButton::KEYBOARD_SPACEBAR);
+	io.KeyMap[ImGuiKey_PageUp] = static_cast<int>(eButton::KEYBOARD_PAGEUP);
+	io.KeyMap[ImGuiKey_PageDown] = static_cast<int>(eButton::KEYBOARD_PAGEDOWN);
+	io.KeyMap[ImGuiKey_End] = static_cast<int>(eButton::KEYBOARD_END);
+	io.KeyMap[ImGuiKey_Home] = static_cast<int>(eButton::KEYBOARD_HOME);
+	io.KeyMap[ImGuiKey_LeftArrow] = static_cast<int>(eButton::KEYBOARD_LEFT);
+	io.KeyMap[ImGuiKey_UpArrow] = static_cast<int>(eButton::KEYBOARD_UP);
+	io.KeyMap[ImGuiKey_RightArrow] = static_cast<int>(eButton::KEYBOARD_RIGHT);
+	io.KeyMap[ImGuiKey_DownArrow] = static_cast<int>(eButton::KEYBOARD_DOWN);
+	io.KeyMap[ImGuiKey_Insert] = static_cast<int>(eButton::KEYBOARD_INSERT);
+	io.KeyMap[ImGuiKey_Delete] = static_cast<int>(eButton::KEYBOARD_DELETE);
 
 	auto& win = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow();
 
@@ -99,20 +94,13 @@ bool Editor::EditorUI::Init(void)
 #ifdef _WIN32
 	io.ImeWindowHandle = win.GetWindowHandle();
 #endif
-	// Load cursors
-	g_CursorTypes[ImGuiMouseCursor_Arrow]		= LoadCursor(NULL, IDC_ARROW);
-	g_CursorTypes[ImGuiMouseCursor_TextInput]	= LoadCursor(NULL, IDC_IBEAM);
-	g_CursorTypes[ImGuiMouseCursor_ResizeAll]	= LoadCursor(NULL, IDC_SIZEALL);
-	g_CursorTypes[ImGuiMouseCursor_ResizeNS]	= LoadCursor(NULL, IDC_SIZENS);
-	g_CursorTypes[ImGuiMouseCursor_ResizeEW]	= LoadCursor(NULL, IDC_SIZEWE);
-	g_CursorTypes[ImGuiMouseCursor_ResizeNESW]	= LoadCursor(NULL, IDC_SIZENESW);
-	g_CursorTypes[ImGuiMouseCursor_ResizeNWSE]	= LoadCursor(NULL, IDC_SIZENWSE);
-	g_CursorTypes[ImGuiMouseCursor_Hand]		= LoadCursor(NULL, IDC_HAND);
 
 	DefaultFont();
-	//DefaultColorSettings();
+}
+
+bool Editor::EditorUI::Init(void)
+{
 	EGUI::Docking::InitTabs();
-	//ImGui::SetCurrentContext(mpCtx);
 	return true;
 }
 
@@ -431,6 +419,7 @@ void Editor::EditorUI::DefaultFont(void)
 	ImGuiIO& io = ImGui::GetIO();
 	unsigned char* pixels;
 	int width, height;
+	io.Fonts->AddFontFromFileTTF(g_fontType, FONT_MINI);
 	io.Fonts->AddFontFromFileTTF(g_fontType, FONT_SMALL);
 	io.Fonts->AddFontFromFileTTF(g_fontType, FONT_MEDIUM);
 	io.Fonts->AddFontFromFileTTF(g_fontType, FONT_LARGE);

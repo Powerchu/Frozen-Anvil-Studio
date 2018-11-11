@@ -54,14 +54,14 @@ void Editor::EditorResource::Message(eEMessage)
 void Editor::EditorResource::SaveSettings(Dystopia::TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Editor Resource");
-	_out << mCurrProjectPath.c_str();
+	//_out << mCurrProjectPath.c_str();
 	_out.InsertEndBlock("Editor Resource");
 }
 
 void Editor::EditorResource::LoadSettings(Dystopia::TextSerialiser& _in)
 {
 	_in.ConsumeStartBlock();
-	_in >> mCurrProjectPath;
+	//_in >> mCurrProjectPath;
 	_in.ConsumeEndBlock();
 }
 

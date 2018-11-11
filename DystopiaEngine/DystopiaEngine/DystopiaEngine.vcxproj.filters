@@ -289,9 +289,6 @@
     <ClCompile Include="Source\Component\AudioSource.cpp">
       <Filter>Game Engine\Components\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Sound\Audio.cpp">
-      <Filter>Game Engine\SubSystems\Audio</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Sound\SoundSystem.cpp">
       <Filter>Game Engine\Systems\Sound</Filter>
     </ClCompile>
@@ -816,9 +813,6 @@
     <ClInclude Include="Include\Component\AudioSource.h">
       <Filter>Game Engine\Components\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Sound\Audio.h">
-      <Filter>Game Engine\SubSystems\Audio</Filter>
-    </ClInclude>
     <ClInclude Include="Include\DataStructure\HashString.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
@@ -1285,9 +1279,6 @@
     </Filter>
     <Filter Include="Game Engine\Components\Audio">
       <UniqueIdentifier>{ecb40fbd-9434-45dc-a5a7-1ae1e1cbac7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\SubSystems\Audio">
-      <UniqueIdentifier>{af08a7e0-ec45-4ccd-a2b8-08336c4d36da}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Editor Tabs\Sprite">
       <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>

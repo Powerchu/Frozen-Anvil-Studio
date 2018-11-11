@@ -55,11 +55,13 @@ static const std::string g_cPopup = "Component List";
 static const std::string g_nPopup = "New Behaviour Name";
 
 
-namespace Dystopia
+namespace Editor //Dystopia
 {
+	using namespace Dystopia;
 	static std::string g_arr[3] = { "item1", "item2", "item3" };
 	static std::string g_arr2[3] = { "Invalid", "World", "UI" };
 
+	/*
 	static Inspector* gpInstance = 0;
 	Inspector* Inspector::GetInstance()
 	{
@@ -68,21 +70,22 @@ namespace Dystopia
 		gpInstance = new Inspector{};
 		return gpInstance;
 	}
+	*/
 
-	Inspector::Inspector()
-		: EditorTab{ false },
+	Inspector::Inspector(void)
+		: //EditorTab{ false },
 		mpFocus{ nullptr }, mLabel{ "Inspector" }, mShowListOfComponents{ false },
 		mpBehaviourSys{ nullptr }, mPromptNewBehaviour{ false }, mPromptCreateBehaviour{ false },
 		mBufferInput{}, mBufferCreator{}, mBufferLogin{}
 	{
 	}
 
-	Inspector::~Inspector()
+	Inspector::~Inspector(void)
 	{
-		gpInstance = nullptr;
+		//gpInstance = nullptr;
 	}
 
-	void Inspector::Init()
+	/*void Inspector::Init()
 	{
 		mpBehaviourSys = EngineCore::GetInstance()->GetSystem<BehaviourSystem>();
 	}
@@ -116,6 +119,70 @@ namespace Dystopia
 		mpFocus = nullptr;
 	}
 
+	std::string Inspector::GetLabel() const
+	{
+		return mLabel;
+	}
+	*/
+
+
+	void Inspector::Load(void)
+	{
+	}
+
+	bool Inspector::Init(void)
+	{
+		mpBehaviourSys = Dystopia::EngineCore::GetInstance()->GetSystem<BehaviourSystem>();
+		return true;
+	}
+
+	void Inspector::Update(float)
+	{
+	}
+
+	void Inspector::EditorUI(void)
+	{
+		//auto& allObj = GetMainEditor()->GetSelectionObjects();
+		//mpFocus = (allObj.size() == 1) ? *allObj.begin() : nullptr;
+		if (!mpFocus) return;
+		
+		static constexpr Math::Vec2 btnSize{ 270, 20 };
+		const float mid = Size().x / 2;
+		float inde = mid - (btnSize.x / 2);
+		
+		GameObjectDetails();
+		GameObjectComponents();
+		EGUI::Display::HorizontalSeparator();
+		EGUI::Indent(inde);
+		AddComponentButton(btnSize);
+		AddBehaviourButton(btnSize);
+		EGUI::UnIndent(inde);
+	}
+
+	void Inspector::Shutdown(void)
+	{
+		mpFocus = nullptr;
+	}
+
+	void Inspector::Message(eEMessage)
+	{
+
+	}
+
+	void Inspector::SaveSettings(Dystopia::TextSerialiser&) const
+	{
+	}
+
+	void Inspector::LoadSettings(Dystopia::TextSerialiser&)
+	{
+	}
+
+	HashString Inspector::GetLabel(void) const
+	{
+		return "Inspector";
+	}
+
+
 	void Inspector::GameObjectDetails()
 	{
 		static int i = 0;
@@ -132,9 +199,9 @@ namespace Dystopia
 			EGUI::SameLine();
 			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 223.f) && strlen(buffer))
 			{
-				auto f_Old = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, mpFocus->GetName());
-				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
-				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
+				//auto f_Old = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, mpFocus->GetName());
+				//auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
+				//GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
 			if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))
 			{
@@ -216,11 +283,6 @@ namespace Dystopia
 				EGUI::Display::EndTreeNode();
 			}
 		}
-	}
-
-	std::string Inspector::GetLabel() const
-	{
-		return mLabel;
 	}
 
 	void Inspector::AddComponentButton(const Math::Vec2& _btnSize)

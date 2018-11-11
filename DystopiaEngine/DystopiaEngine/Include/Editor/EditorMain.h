@@ -36,10 +36,12 @@ namespace Editor
 			Ut::Indexer<1u, class EInput>,
 			Ut::Indexer<2u, class EditorUI>,
 			Ut::Indexer<3u, class EditorClipboard>,
-			Ut::Indexer<4u, class EditorResource>
+			Ut::Indexer<4u, class EditorResource>,
+			Ut::Indexer<5u, class EditorCommands>
 		>>;
 
 		using EPanels = Ut::MetaSortT_t<Ut::MetaLessThan, Ut::Collection<
+			Ut::Indexer<0u, class Inspector>
 			>>;
 
 		static EditorMain* GetInstance(void);
@@ -47,14 +49,13 @@ namespace Editor
 
 		void Init(void);
 
-		void ProjectLauncher(void);
-
 		void StartFrame(void);
 		void Update(void);
 		void EndFrame(void);
 		void Shutdown(void);
 
 		void ChangeState(eState);
+		void Broadcast(eEMessage) const;
 
 		float GetDeltaTime(void) const;
 		eState GetCurState(void) const;
@@ -66,10 +67,18 @@ namespace Editor
 		template<typename T>
 		T* const GetPanel(void) const;
 
-		HashString GetCurProjectFullPath(void) const;
+		HashString GetCurProjFolder(void) const;
+		HashString GetCurProjFile(void) const;
+
+		AutoArray<EditorSystem*>& GetAllSystems(void);
+		AutoArray<EditorPanel*>& GetAllPanels(void);
 
 	private:
 		EditorMain(void);
+
+		void ProjectLauncher(void);
+		void UpdatePaths(void);
+		void LoadProjSettings(void);
 
 		AutoArray<EditorSystem*> mArrSystems;
 		AutoArray<EditorPanel*> mArrPanels;
@@ -78,7 +87,8 @@ namespace Editor
 		eState  mNextState;
 		float	mDelta;
 
-		HashString mProjectPath;
+		HashString mProjFolder;
+		HashString mProjFile;
 
 		Dystopia::Timer mTimer;
 	};

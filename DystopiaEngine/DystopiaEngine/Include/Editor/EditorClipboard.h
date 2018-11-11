@@ -37,6 +37,11 @@ namespace Editor
 		void AddGameObject(const uint64_t&);
 		void ClearAll(void);
 
+		void Copy(void);
+		void Delete(void);
+		void Duplicate(void);
+		void Paste(void);
+
 	private:
 
 		AutoArray<uint64_t> mArrSelectedIDs;
@@ -46,11 +51,6 @@ namespace Editor
 		size_t mnPasteID;
 		size_t mnDeleteID;
 		size_t mnDupliID;
-
-		void Copy(void);
-		void Delete(void);
-		void Duplicate(void);
-		void Paste(void);
 	};
 }
 

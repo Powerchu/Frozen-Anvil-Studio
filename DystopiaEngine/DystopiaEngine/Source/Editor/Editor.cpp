@@ -97,7 +97,6 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 
 	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
 	pMain->Init();
-	pMain->ProjectLauncher();
 	while (!pMain->IsClosing())
 	{
 		pMain->StartFrame();
@@ -152,17 +151,17 @@ namespace Dystopia
 
 	void Editor::LoadTabs()
 	{
-		mArrTabs.push_back(Inspector::GetInstance());
-		mArrTabs.push_back(ProjectResource::GetInstance());
-		mArrTabs.push_back(HierarchyView::GetInstance());
-		mArrTabs.push_back(SceneView::GetInstance());
-		mArrTabs.push_back(ProjectSettings::GetInstance());
-		mArrTabs.push_back(ConsoleLog::GetInstance());
-		mArrTabs.push_back(PerformanceLog::GetInstance());
-		mArrTabs.push_back(SpritePreviewer::GetInstance());
-		mArrTabs.push_back(SpriteEditor::GetInstance());
-		mArrTabs.push_back(ColorScheme::GetInstance());
-		mArrTabs.push_back(StyleScheme::GetInstance());
+		//mArrTabs.push_back(Inspector::GetInstance());
+		//mArrTabs.push_back(ProjectResource::GetInstance());
+		//mArrTabs.push_back(HierarchyView::GetInstance());
+		//mArrTabs.push_back(SceneView::GetInstance());
+		//mArrTabs.push_back(ProjectSettings::GetInstance());
+		//mArrTabs.push_back(ConsoleLog::GetInstance());
+		//mArrTabs.push_back(PerformanceLog::GetInstance());
+		//mArrTabs.push_back(SpritePreviewer::GetInstance());
+		//mArrTabs.push_back(SpriteEditor::GetInstance());
+		//mArrTabs.push_back(ColorScheme::GetInstance());
+		//mArrTabs.push_back(StyleScheme::GetInstance());
 	}
 
 	void Editor::LoadDefaults()
@@ -565,7 +564,7 @@ namespace Dystopia
 		EditorProc p;
 		HashString path;
 		HashString name;
-		if (p.SaveAs(name, path, mpWin->GetMainWindow().GetWindowHandle()))
+		if (p.SaveAs(name, path, mpWin->GetMainWindow().GetWindowHandle(), eFileTypes::eSCENE))
 		{
 			mpWin->GetMainWindow().SetTitle(std::wstring{name.begin(), name.end()});
 			mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() },
@@ -579,7 +578,7 @@ namespace Dystopia
 		EditorProc p;
 		HashString path;
 		HashString name;
-		if (p.Load(path))
+		if (p.Load(path, eFileTypes::eSCENE))
 		{
 			mArrSelectedObj.clear();
 			ClearSelections();

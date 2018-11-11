@@ -89,6 +89,14 @@ namespace Dystopia
 			mRecording = true;
 		}
 
+		template<typename T>
+		void StartRecording(T* _target, bool * _notify = nullptr)
+		{
+			if (mRecording) return;
+			mpRecorder = new ComdRecord<T, void, void>(_target, _notify);
+			mRecording = true;
+		}
+
 		std::deque<Commands*>& GetDeqRedo(void);
 		std::deque<Commands*>& GetDeqUndo(void);
 

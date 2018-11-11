@@ -63,7 +63,8 @@ namespace Dystopia
 		unsigned long GetStyle(void) const;
 		unsigned long GetStyleEx(void) const;
 
-		int mWidth, mHeight;
+		void DestroySplash(void);
+
 	private:
 
 		std::wstring mTitle;
@@ -71,12 +72,12 @@ namespace Dystopia
 
 		HINSTANCE mHInstance;
 
+		int mWidth, mHeight;
 
 		unsigned long mWindowStyle;
 		unsigned long mWindowStyleEx;
 		bool mbFullscreen;
 
-		void DestroySplash(void);
 		void HandleFileInput(uint64_t);
 	};
 }

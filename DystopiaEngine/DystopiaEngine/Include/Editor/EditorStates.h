@@ -35,6 +35,27 @@ namespace Editor
 
 	private:
 		eState mState;
+
+		void ToolBar(void);
+		void Save(void);
+		void LoadScene(void);
+		void SaveAs(void);
+		void New(void);
+		void Play(void);
+		void Stop(void);
+
+		void PromptSaveN(void);
+		void PromptSaveQ(void);
+
+		bool mbQuitAttempt;
+		bool mbNewAttempt;
+		size_t mnPlay;
+		size_t mnNew;
+		size_t mnOpen;
+		size_t mnSave;
+		size_t mnSaveAs;
+		size_t mnQuit;
+
 	};
 
 }

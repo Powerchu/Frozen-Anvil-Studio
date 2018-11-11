@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/HashString.h"
 #include "Editor/EditorMessages.h"
 #include "IO/TextSerialiser.h"
+#include "Math/Vector2.h"
 
 namespace Editor
 {
@@ -31,8 +32,21 @@ namespace Editor
 		virtual void SaveSettings(Dystopia::TextSerialiser& _out) const = 0;
 		virtual void LoadSettings(Dystopia::TextSerialiser& _in) = 0;
 		virtual HashString GetLabel(void) const = 0;
-
 		virtual ~EditorPanel(void) {}
+
+		bool IsOpened(void) const { return mbOpened; }
+		void SetOpened(bool _b) { mbOpened = _b; }
+		bool& GetOpenedBool(void) { return mbOpened; }
+
+		void SetSize(const Math::Vec2& _s) { mSize = _s; }
+		void SetPosition(const Math::Vec2& _p) { mPos = _p; }
+		Math::Vec2 Size() const { return mSize; }
+		Math::Vec2 Position() const { return mPos; }
+
+	private:
+		bool mbOpened = false;
+		Math::Vec2 mSize;
+		Math::Vec2 mPos;
 	};
 	
 }
