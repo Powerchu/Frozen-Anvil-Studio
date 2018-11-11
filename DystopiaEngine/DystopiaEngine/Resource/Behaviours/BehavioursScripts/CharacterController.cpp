@@ -243,8 +243,8 @@ namespace Dystopia
 
 		if (mpInputSys->IsKeyPressed("Run Left") && !mpInputSys->IsKeyPressed("Run Right"))
 		{			
-			mpBody->AddLinearImpulse({ -1 * CharacterSpeed * mpBody->GetMass(),0,0 });
-
+			//mpBody->AddLinearImpulse({ -1 * CharacterSpeed * mpBody->GetMass(),0,0 });
+			mpBody->AddTorque({0, 0,1 * CharacterSpeed});
 			if (mbIsFacingRight && Math::Abs(static_cast<float>(mpBody->GetLinearVelocity().x)) > 5.0F)
 			{
 				mbIsFacingRight = false;
@@ -254,8 +254,8 @@ namespace Dystopia
 
 		if (mpInputSys->IsKeyPressed("Run Right") && !mpInputSys->IsKeyPressed("Run Left"))
 		{
-			mpBody->AddLinearImpulse({CharacterSpeed * mpBody->GetMass(),0,0 });
-
+			//mpBody->AddLinearImpulse({CharacterSpeed * mpBody->GetMass(),0,0 });
+			mpBody->AddTorque({0, 0,-1 * CharacterSpeed}); 
 			if (!mbIsFacingRight && Math::Abs(static_cast<float>(mpBody->GetLinearVelocity().x)) > 5.0F)
 			{
 				mbIsFacingRight = true;

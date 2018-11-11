@@ -314,10 +314,7 @@ namespace Dystopia
 		{
 			Vec3D v = elem.mVec3;
 			Vec3D w = GetGlobalPosition() - elem.mPos;
-			const float c1 = v.Dot(w);
-			const float c2 = v.Dot(v);
-			const float ratio = c1 / c2;
-			const Point3D PointOfImpact = elem.mPos + ratio * elem.mVec3;
+
 			if (Math::Abs( w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
 			{
 				//currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
@@ -325,7 +322,6 @@ namespace Dystopia
 				newEvent.mfPeneDepth = Math::Abs(w.Dot(elem.mNorm3.Normalise())) +  GetRadius();
 				
 			}
-
 		}
 		
 		marr_CurrentContactSets.push_back(newEvent);

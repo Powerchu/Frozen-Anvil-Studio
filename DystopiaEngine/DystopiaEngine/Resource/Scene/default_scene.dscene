@@ -1,5 +1,5 @@
 [START_Scene]
-18446744072887468032,default_scene,1,[START_START_GO_DATA]
+18446744072887468032,default_scene,4,[START_START_GO_DATA]
 1586496512,65,Scene Camera,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
@@ -8,13 +8,103 @@
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+966025728,65,Box_Clone_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,51.4701,53.5709,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1103875072,65,Box_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+800,32,1,0,-43.0669,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1289494528,65,Box_Clone_Clone,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,40.6159,10.1539,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]
 [START_Component]
 [START_Camera]
-1586497536,0,1586496512,0,0,
+1586497536,0,1586496512,0,1,
 [END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+4,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+966026240,1,966025728,0,0.5,0.5,0.999,0.5,0.7,0,1,10,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1103876096,1,1103875072,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1289495040,1,1289494528,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+300702720,536870913,18446744071867449344,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+3,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+1103875584,1,1103875072,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1289495552,1,1289494528,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+966026752,1,966025728,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+300703232,536870913,18446744071867449344,0,0,0,0,0,0,1,0,
+[END_Circle_Collider2D]
 
 [END_Component End]
 [START_ComponentDonor]
@@ -26,27 +116,11 @@
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-6,[START_str]
+8,[START_str]
 ChangeAudio,0,[START_str]
+CharacterController,0,[START_str]
+dsds,0,[START_str]
 Fireball,0,[START_str]
 FollowTarget,0,[START_str]
 Goblin,0,[START_str]
