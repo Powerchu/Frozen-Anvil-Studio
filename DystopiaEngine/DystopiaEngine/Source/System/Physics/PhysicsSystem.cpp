@@ -90,7 +90,7 @@ namespace Dystopia
 		{
 			for (auto& body : mComponents)
 			{
-				if (body.GetOwner() == nullptr) return;
+				if (body.GetOwner() == nullptr) continue;
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -113,7 +113,7 @@ namespace Dystopia
 
 		for (auto& body : mComponents)
 		{
-			if (body.GetOwner() == nullptr) return;
+			if (body.GetOwner() == nullptr) continue;
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -128,7 +128,7 @@ namespace Dystopia
 		{
 			for (auto& body : mComponents)
 			{
-				if (body.GetOwner() == nullptr) return;
+				if (body.GetOwner() == nullptr) continue;
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -164,7 +164,7 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
-			if (body.GetOwner() == nullptr) return;
+			if (body.GetOwner() == nullptr) continue;
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 

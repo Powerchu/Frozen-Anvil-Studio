@@ -58,12 +58,12 @@ namespace Dystopia
 		const Vec3D impulse = tmpJ * mEdgeNormal;
 
 		if (!bodyA->Get_IsStaticState())
-			bodyA->AddLinearImpulse(-impulse);
-			//bodyA->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
+			//bodyA->AddLinearImpulse(-impulse);
+			bodyA->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
 
 		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger() && mCollidedWith->IsActive())
-			bodyB->AddLinearImpulse(impulse);
-			//bodyB->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
+			//bodyB->AddLinearImpulse(impulse);
+			bodyB->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
 
 		// Calculate Frictional Velocity (vec3D) after normal impulse
 		rv = bodyB->GetLinearVelocity() - bodyA->GetLinearVelocity();
@@ -90,17 +90,17 @@ namespace Dystopia
 		else
 			frictionImpulse = -tmpJ * tangent * mfDynamicFrictionCof;
 
-		if (!bodyA->Get_IsStaticState())
+		/*if (!bodyA->Get_IsStaticState())
 			bodyA->AddLinearImpulse(-frictionImpulse);
 
 		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger() && mCollidedWith->IsActive())
-			bodyB->AddLinearImpulse(frictionImpulse);
+			bodyB->AddLinearImpulse(frictionImpulse);*/
 
-		/*if (!bodyA->Get_IsStaticState())
+		if (!bodyA->Get_IsStaticState())
 			bodyA->AddLinearImpulseWithOrigin(-frictionImpulse, mCollisionPoint);
 
 		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger())
-			bodyB->AddLinearImpulseWithOrigin(frictionImpulse, mCollisionPoint);*/
+			bodyB->AddLinearImpulseWithOrigin(frictionImpulse, mCollisionPoint);
 	}
 
 	void CollisionEvent::ApplyPenetrationCorrection(const int iter) const
