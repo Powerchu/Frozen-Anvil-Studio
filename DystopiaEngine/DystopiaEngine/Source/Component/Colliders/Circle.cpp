@@ -291,11 +291,11 @@ namespace Dystopia
 			const float c2 = v.Dot(v);
 			const float ratio = c1 / c2;
 			const Point3D PointOfImpact = elem.mPos + ratio * elem.mVec3;
-			if (w.Magnitude() < newEvent.mfPeneDepth)
+			if (Math::Abs( w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
 			{
-				currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
-				newEvent.mEdgeNormal = (GetGlobalPosition() - PointOfImpact);
-				newEvent.mfPeneDepth =  currPene - GetRadius();
+				//currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
+				newEvent.mEdgeNormal = -elem.mNorm3;
+				newEvent.mfPeneDepth = Math::Abs(w.Dot(elem.mNorm3.Normalise())) +  GetRadius();
 				
 			}
 
