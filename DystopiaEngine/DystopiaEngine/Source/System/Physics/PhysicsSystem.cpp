@@ -108,19 +108,6 @@ namespace Dystopia
 						}
 					}
 				}
-
-				//const auto col = body.GetOwner()->GetComponent<Collider>();
-
-				//if (nullptr != col)
-				//{
-				//	if (!col->IsTrigger())
-				//	{
-				//		for (auto& manifold : col->GetCollisionEvents())
-				//		{
-				//			manifold.ApplyImpulse();
-				//		}
-				//	}
-				//}
 			}
 		}
 
@@ -169,29 +156,6 @@ namespace Dystopia
 						}
 					}
 				}
-
-				/*const auto col = body.GetOwner()->GetComponent<Collider>();
-
-				if (nullptr != col)
-				{
-					if (!col->IsTrigger())
-					{
-						auto worstPene = mPenetrationEpsilon;
-						for (auto& manifold : col->GetCollisionEvents())
-						{
-							if (manifold.mfPeneDepth > worstPene)
-							{
-								const auto worstContact = &manifold;
-								worstPene = manifold.mfPeneDepth;
-
-								if (nullptr != worstContact)
-								{
-									worstContact->ApplyPenetrationCorrection(mPositionalIterations);
-								}
-							}
-						}
-					}
-				}*/
 			}
 		}
 	}

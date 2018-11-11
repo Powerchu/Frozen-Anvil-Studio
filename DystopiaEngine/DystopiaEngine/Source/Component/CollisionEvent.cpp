@@ -61,7 +61,7 @@ namespace Dystopia
 			bodyA->AddLinearImpulse(-impulse);
 			//bodyA->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
 
-		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger())
+		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger() && mCollidedWith->IsActive())
 			bodyB->AddLinearImpulse(impulse);
 			//bodyB->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
 
@@ -93,7 +93,7 @@ namespace Dystopia
 		if (!bodyA->Get_IsStaticState())
 			bodyA->AddLinearImpulse(-frictionImpulse);
 
-		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger())
+		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger() && mCollidedWith->IsActive())
 			bodyB->AddLinearImpulse(frictionImpulse);
 
 		/*if (!bodyA->Get_IsStaticState())
@@ -121,7 +121,7 @@ namespace Dystopia
 
 		if (!bodyA->Get_IsStaticState() && bodyA->GetIsAwake())
 			bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
-		if (!bodyB->Get_IsStaticState() && bodyB->GetIsAwake())
+		if (!bodyB->Get_IsStaticState() && bodyB->GetIsAwake() && mCollidedWith->IsActive() && !colB->IsTrigger())
 			bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);
 	}
 

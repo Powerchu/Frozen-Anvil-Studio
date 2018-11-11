@@ -1,5 +1,5 @@
 [START_Scene]
-18446744071747141632,"CollisionTesting",3,[START_START_GO_DATA]
+18446744071747141632,"CollisionTesting",5,[START_START_GO_DATA]
 1735393792,97,"Scene Camera",
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
@@ -26,6 +26,24 @@
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1350066176,65,"GameObject_Clone_Clone",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,0,70,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+2093509120,65,"GameObject_Clone_Clone_Clone",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,0,109.5,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
 [START_ComponentDonor]
 1,
 [END_ComponentDonor End]
@@ -39,7 +57,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-2,
+4,
 [END_ComponentDonor End]
 [START_Component]
 [START_RigidBody]
@@ -53,11 +71,23 @@
 [END_RigidBody]
 
 [END_Component End]
+[START_Component]
+[START_RigidBody]
+1350066688,1,1350066176,0,0.5,0.5,0.5,0.5,0.7,0,1,5,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+2093509632,1,2093509120,0,0.5,0.5,0.5,0.5,0.7,0,1,2,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-2,
+4,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -68,6 +98,18 @@
 [START_Component]
 [START_Convex_Collider]
 1252009984,1,1252009472,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1350067200,1,1350066176,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+2093510144,1,2093509120,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
 [END_Convex_Collider]
 
 [END_Component End]
