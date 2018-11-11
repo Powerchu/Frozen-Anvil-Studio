@@ -38,31 +38,48 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
+	using SymCleanup_t    = decltype(SymCleanup)*;
+	using SymFromAddr_t   = decltype(SymFromAddr)*;
+	using SymInitialize_t = decltype(SymInitialize)*;
+	using SymSetOptions_t = decltype(SymSetOptions)*;
+
 	void WriteCallStack(Dystopia::FileLogger& _out, unsigned nNumSkip)
 	{
-		SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
-		if (SymInitialize(GetCurrentProcess(), NULL, TRUE))
+		auto lib = LoadLibrary(L"dbghelp.dll");
+
+		SymCleanup_t    CleanupF  = reinterpret_cast<SymCleanup_t   >(GetProcAddress(lib, "SymCleanup")   );
+		SymFromAddr_t   FromAddrF = reinterpret_cast<SymFromAddr_t  >(GetProcAddress(lib, "SymFromAddr")  );
+		SymInitialize_t InitF     = reinterpret_cast<SymInitialize_t>(GetProcAddress(lib, "SymInitialize"));
+		SymSetOptions_t SetOptF   = reinterpret_cast<SymSetOptions_t>(GetProcAddress(lib, "SymSetOptions"));
+
+		if (CleanupF && FromAddrF && InitF && SetOptF)
 		{
-			void* data[STACKFRAMES];
-			int nFrames = CaptureStackBackTrace(nNumSkip, STACKFRAMES, data, NULL);
-			char strBuffer[1023 + sizeof(SYMBOL_INFO)]{};
-			SYMBOL_INFO* symbol = reinterpret_cast<SYMBOL_INFO*>(strBuffer);\
-
-			symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-			symbol->MaxNameLen = 1024;
-
-			for (int n = 0; n < nFrames; ++n)
+			SetOptF(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
+			if (InitF(GetCurrentProcess(), NULL, TRUE))
 			{
-				SymFromAddr(GetCurrentProcess(), reinterpret_cast<DWORD64>(data[n]), NULL, symbol);
+				void* data[STACKFRAMES];
+				int nFrames = CaptureStackBackTrace(nNumSkip, STACKFRAMES, data, NULL);
+				char strBuffer[1023 + sizeof(SYMBOL_INFO)]{};
+				SYMBOL_INFO* symbol = reinterpret_cast<SYMBOL_INFO*>(strBuffer);
 
-				if (symbol->NameLen)
-					_out.Write("%s (%p)\n", symbol->Name, data[n]);
-				else
-					_out.Write("Function %p\n", data[n]);
+				symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+				symbol->MaxNameLen = 1024;
+
+				for (int n = 0; n < nFrames; ++n)
+				{
+					FromAddrF(GetCurrentProcess(), reinterpret_cast<DWORD64>(data[n]), NULL, symbol);
+
+					if (symbol->NameLen)
+						_out.Write("%s (%p)\n", symbol->Name, data[n]);
+					else
+						_out.Write("Function %p\n", data[n]);
+				}
+
+				CleanupF(GetCurrentProcess());
 			}
-
-			SymCleanup(GetCurrentProcess());
 		}
+
+		if (lib) FreeLibrary(lib);
 	}
 
 	[[noreturn]] void ProgramTerminate(void)

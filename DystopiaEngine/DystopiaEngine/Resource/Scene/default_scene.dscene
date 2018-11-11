@@ -1,10 +1,10 @@
 [START_Scene]
-18446744072887468032,default_scene,1,[START_START_GO_DATA]
-1586496512,65,Scene Camera,
+18446744072887468032,"default_scene",1,[START_START_GO_DATA]
+1586496512,65,"Scene Camera",
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.700274,0.700274,1,0,0,0,0,0,0,1,0,
+1,1,1,0,0,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -41,17 +41,8 @@
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-6,[START_str]
-ChangeAudio,0,[START_str]
-Fireball,0,[START_str]
-FollowTarget,0,[START_str]
-Goblin,0,[START_str]
-Missle,0,[START_str]
-Parallax,0,
+0,
 [END_BEHAVIOUR_SYSTEM_BLOCK]
 
 [END_Scene]

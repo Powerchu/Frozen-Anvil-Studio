@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Physics/PhysicsSystem.h"
+#include "System/Time/TimeSystem.h"
 
 
 Dystopia::ProjectSettings* gpInstance = 0;
@@ -63,6 +64,14 @@ void Dystopia::ProjectSettings::EditorUI(void)
 		mpPhySys->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
+	auto mpTimeSys = EngineCore::GetInstance()->GetSystem<TimeSystem>();
+	EGUI::Display::HorizontalSeparator();
+	if (EGUI::Display::StartTreeNode("Time Settings"))
+	{
+		mpTimeSys->EditorUI();
+		EGUI::Display::EndTreeNode();
+	}
+
 }
 
 void Dystopia::ProjectSettings::Shutdown(void)

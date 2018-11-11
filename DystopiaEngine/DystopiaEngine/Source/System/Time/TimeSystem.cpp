@@ -19,11 +19,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Math/MathUtility.h"
 
+#include "IO/TextSerialiser.h"
+
+#include "Editor/EGUI.h"
+
 
 Dystopia::TimeSystem::TimeSystem(void) :
-	mTimeKeep{}, mTimeZones{ Ut::SizeofList<EngineCore::AllSys>::value }, mPQueue{},
-	mbSimulateTime{ false }, mfSimulatedDT{ 1.f / 60.f }, mSimulatedDT{ 16666666667ll }, 
-	mFixedDT{ 20000000ll }, mAccumulatedDT{ 0 }
+	mTimeKeep{}, mPQueue{}, mAccumulatedDT{ 0 }
 {
 }
 
@@ -55,7 +57,7 @@ void Dystopia::TimeSystem::AdvanceTime(void) noexcept
 	mTimeKeep.Lap();
 
 	auto additionalDT = mbSimulateTime ? mSimulatedDT : (mTimeKeep.Time() - prevTime).count();
-	mAccumulatedDT += (additionalDT < 1000000000ll) * additionalDT;
+	mAccumulatedDT += (additionalDT < 1000000001ll) * additionalDT;
 }
 
 bool Dystopia::TimeSystem::ConsumeFixedDT(void) noexcept
@@ -101,5 +103,68 @@ float Dystopia::TimeSystem::GetFixedDeltaTime(void) const noexcept
 void Dystopia::TimeSystem::FlushQueue(void)
 {
 	mPQueue.Clear();
+}
+
+void Dystopia::TimeSystem::LoadDefaults(void)
+{
+	mbSimulateTime = true;
+
+	mFixedDT = 20000000ll;
+	mSimulatedDT  = 16666667ll;
+	mfSimulatedDT = 1.f / 60.f;
+}
+
+void Dystopia::TimeSystem::LoadSettings(DysSerialiser_t&)
+{
+	LoadDefaults();
+}
+
+void Dystopia::TimeSystem::SaveSettings(DysSerialiser_t& _out)
+{
+	_out << mFixedDT;
+	_out << mSimulatedDT;
+	_out << mfSimulatedDT;
+}
+
+void Dystopia::TimeSystem::EditorUI(void)
+{
+	static float fixedDT = 0.02f;
+
+	EGUI::Display::CheckBox("Simulate Time", &mbSimulateTime);
+
+	if (mbSimulateTime)
+	{
+		switch (EGUI::Display::DragFloat("Simulated Timestep ", &mfSimulatedDT, .01f, .0001f, 1.f))
+		{
+		case EGUI::eDragStatus::eSTART_DRAG:
+			//EGUI::GetCommandHND()->Make_FunctionModWrapper()
+			break;
+		case EGUI::eDragStatus::eDRAGGING:
+			mSimulatedDT = static_cast<int64_t>(mfSimulatedDT * 1e9f);
+			break;
+		case EGUI::eDragStatus::eENTER:
+		case EGUI::eDragStatus::eTABBED:
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eDEACTIVATED:
+			EGUI::GetCommandHND()->EndRecording();
+		case EGUI::eDragStatus::eNO_CHANGE:
+			break;
+		}
+	}
+
+	switch (EGUI::Display::DragFloat("Fixed Timestep ", &fixedDT, .01f, .0001f, 1.f))
+	{
+	case EGUI::eDragStatus::eSTART_DRAG:
+		break;
+	case EGUI::eDragStatus::eDRAGGING:
+	case EGUI::eDragStatus::eENTER:
+	case EGUI::eDragStatus::eTABBED:
+	case EGUI::eDragStatus::eEND_DRAG:
+	case EGUI::eDragStatus::eDEACTIVATED:
+		mFixedDT = static_cast<int64_t>(fixedDT * 1e9f);
+		mAccumulatedDT = 0;
+	case EGUI::eDragStatus::eNO_CHANGE:
+		break;
+	}
 }
 

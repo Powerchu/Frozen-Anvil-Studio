@@ -44,6 +44,12 @@ namespace Dystopia
 
 		void FlushQueue(void);
 
+		void LoadDefaults(void);
+		void LoadSettings(DysSerialiser_t&) override;
+		void SaveSettings(DysSerialiser_t&) override;
+
+		void EditorUI(void);
+
 	private:
 
 		struct QueueObject
@@ -65,11 +71,6 @@ namespace Dystopia
 			~InvokeMe() = default;
 		};
 
-		struct TimeZone
-		{
-			float mTimeScale;
-		};
-
 		bool mbSimulateTime;
 		float mfSimulatedDT;
 		int64_t mSimulatedDT;
@@ -78,7 +79,6 @@ namespace Dystopia
 		int64_t mAccumulatedDT;
 
 		Timer mTimeKeep;
-		AutoArray<TimeZone> mTimeZones;
 
 		Heap<QueueObject*> mPQueue;
 
