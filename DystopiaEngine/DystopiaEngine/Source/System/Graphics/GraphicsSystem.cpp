@@ -93,7 +93,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.0f },
-	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .68f, 1.f, .278f, .1f }, mbVsync{ false }
+	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .0f, 1.f, .0f, .1f }, mbVsync{ false }
 {
 
 }
