@@ -319,6 +319,9 @@
     <ClCompile Include="Source\DataStructure\HashString.cpp">
       <Filter>DataStructures\HashString</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Lib\GraphicsLib.cpp">
+      <Filter>Lib\GraphicsLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -882,6 +885,9 @@
     <ClInclude Include="Include\DataStructure\UniquePtr.h">
       <Filter>DataStructures\Pointers</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Lib\GraphicsLib.h">
+      <Filter>Lib\GraphicsLib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1246,6 +1252,12 @@
     </Filter>
     <Filter Include="DataStructures\HashString">
       <UniqueIdentifier>{17203e54-439a-42c5-b604-0e6de859022d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{ef5c3e6b-ceae-4858-86e3-e9a776d451db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\GraphicsLib">
+      <UniqueIdentifier>{e7a040d4-daaf-41bc-8530-1062480d5e84}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

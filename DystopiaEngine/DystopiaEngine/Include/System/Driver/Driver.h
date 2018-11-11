@@ -90,16 +90,11 @@ namespace Dystopia
 
 	private:
 
-		Timer mTime;
-		Timer mTimeFixed;
-
 		Queue<eSysMessage> mMessageQueue;
 
 		AutoArray<void*>	mSubSystems;
 		AutoArray<Systems*> mSystemList;
 		AutoArray<Systems*> mSystemTable;
-
-		std::int64_t mAccumulatedTime;
 
 		EngineCore(void);
 

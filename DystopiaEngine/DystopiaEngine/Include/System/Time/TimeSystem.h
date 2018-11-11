@@ -14,10 +14,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TIME_SYSTEM_H_
 #define _TIME_SYSTEM_H_
 
-#include "System/Base/Systems.h"	// Base class
-#include "System/Time/Timer.h"		// Timer
-#include "DataStructure/Heap.h"		// Heap
-#include "Utility/Utility.h"		// Forward
+#include "System/Base/Systems.h"	 // Base class
+#include "System/Time/Timer.h"
+#include "DataStructure/Heap.h"
+#include "DataStructure/AutoArray.h"
+#include "Utility/Utility.h"		 // Forward
 
 namespace Dystopia
 {
@@ -25,11 +26,29 @@ namespace Dystopia
 	{
 	public:
 
-		bool Init(void);
-		void Update(float);
-		void Shutdown(void);
+		TimeSystem(void);
+
+		bool Init(void) override;
+		void PostInit(void) override;
+		
+		void Update(float) override;
+		void Shutdown(void) override;
+
+		float GetDeltaTime(void) const noexcept;
+		float GetFixedDeltaTime(void) const noexcept;
+
+		void StopTime(void) noexcept;
+		void ResumeTime(void) noexcept;
+		void AdvanceTime(void) noexcept;
+		bool ConsumeFixedDT(void) noexcept;
 
 		void FlushQueue(void);
+
+		void LoadDefaults(void);
+		void LoadSettings(DysSerialiser_t&) override;
+		void SaveSettings(DysSerialiser_t&) override;
+
+		void EditorUI(void);
 
 	private:
 
@@ -51,6 +70,15 @@ namespace Dystopia
 
 			~InvokeMe() = default;
 		};
+
+		bool mbSimulateTime;
+		float mfSimulatedDT;
+		int64_t mSimulatedDT;
+
+		int64_t mFixedDT;
+		int64_t mAccumulatedDT;
+
+		Timer mTimeKeep;
 
 		Heap<QueueObject*> mPQueue;
 

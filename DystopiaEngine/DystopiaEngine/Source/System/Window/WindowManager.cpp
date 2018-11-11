@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Logger/LoggerSystem.h"
 
 #include "IO/TextSerialiser.h"
+#include "DataStructure/HashString.h"
 #include "Editor/Editor.h"
 
 #include "Globals.h"
@@ -325,7 +326,22 @@ void Dystopia::WindowManager::DestroySplash(void)
 void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 {
 	HDROP handle = reinterpret_cast<HDROP>(_wParam);
-	int files = DragQueryFile(handle, 0xFFFFFFFF, 0, 0);
+	int files = DragQueryFile(handle, 0xFFFFFFFFu, 0, 0);
+
+	/*
+	AutoArray<wchar_t> buf;
+	AutoArray<HashString> paths{ files };
+
+	for (int n = 0; n < files; ++n)
+	{
+		paths.EmplaceBack();
+
+		buf.reserve(DragQueryFile(handle, n, 0, 0) + 1);
+		DragQueryFile(handle, 0, buf.begin(), static_cast<unsigned>(buf.Cap()));
+
+		paths.back() = buf.begin();
+	}
+	*/
 
 	// For now only handle single file drop
 	if (1 == files)

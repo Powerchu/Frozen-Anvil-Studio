@@ -1,12 +1,12 @@
 [START_SHADER]
-Default Shader,Resource/Shader/DefaultVert.dvert,Resource/Shader/DefaultFrag.dfrag,
+"Default Shader","Resource/Shader/DefaultVert.dvert","Resource/Shader/DefaultFrag.dfrag",
 [START_SHADER]
-No Texture,Resource/Shader/DefaultVert.dvert,Resource/Shader/NoTextureFrag.dfrag,
+"No Texture","Resource/Shader/DefaultVert.dvert","Resource/Shader/NoTextureFrag.dfrag",
 [START_SHADER]
-Colour Shader,Resource/Shader/DefaultVert.dvert,Resource/Shader/ColourFrag.dfrag,
+"Colour Shader","Resource/Shader/DefaultVert.dvert","Resource/Shader/ColourFrag.dfrag",
 [START_SHADER]
-FinalStage,Resource/Shader/DefaultVert.dvert,Resource/Shader/FinalStage.dfrag,
+"FinalStage","Resource/Shader/DefaultVert.dvert","Resource/Shader/FinalStage.dfrag",
 [START_SHADER]
-Logo Shader,Resource/Shader/DefaultVert.dvert,Resource/Shader/LogoFrag.dfrag,
+"Logo Shader","Resource/Shader/DefaultVert.dvert","Resource/Shader/LogoFrag.dfrag",
 [START_SHADER]
-Font Shader,Resource/Shader/DefaultVert.dvert,Resource/Shader/FontFrag.dfrag,
+"Font Shader","Resource/Shader/DefaultVert.dvert","Resource/Shader/FontFrag.dfrag",

@@ -60,6 +60,8 @@ namespace Dystopia
 		void SetGamma(float) noexcept;
 		float GetGamma(void) noexcept;
 
+		void ToggleVsync(bool) noexcept;
+
 		bool GetDebugDraw(void) const;
 		void ToggleDebugDraw(bool);
 
@@ -106,7 +108,8 @@ namespace Dystopia
 		Ctor::MagicArrayBuilder<Framebuffer>::SetBlockLimit<1>::type mViews;
 
 		static int DRAW_MODE;
-		bool  mbDebugDrawCheckBox = false;
+		bool mbDebugDrawCheckBox = false;
+		bool mbVsync = false;
 
 		void StartFrame(void);
 		void EndFrame(void);
