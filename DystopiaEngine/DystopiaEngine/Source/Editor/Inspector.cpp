@@ -78,6 +78,7 @@ namespace Editor //Dystopia
 		mpBehaviourSys{ nullptr }, mPromptNewBehaviour{ false }, mPromptCreateBehaviour{ false },
 		mBufferInput{}, mBufferCreator{}, mBufferLogin{}
 	{
+		EditorPanel::SetOpened(true);
 	}
 
 	Inspector::~Inspector(void)
@@ -179,7 +180,7 @@ namespace Editor //Dystopia
 
 	HashString Inspector::GetLabel(void) const
 	{
-		return "Inspector";
+		return mLabel;
 	}
 
 

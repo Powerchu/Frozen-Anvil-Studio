@@ -41,7 +41,8 @@ namespace Editor
 		>>;
 
 		using EPanels = Ut::MetaSortT_t<Ut::MetaLessThan, Ut::Collection<
-			Ut::Indexer<0u, class Inspector>
+			Ut::Indexer<0u, class Inspector>,
+			Ut::Indexer<1u, class ConsoleLog>
 			>>;
 
 		static EditorMain* GetInstance(void);
@@ -85,7 +86,8 @@ namespace Editor
 
 		eState	mCurState;
 		eState  mNextState;
-		float	mDelta;
+		float	mfDelta;
+		float	mfOverlayAlpha;
 
 		HashString mProjFolder;
 		HashString mProjFile;

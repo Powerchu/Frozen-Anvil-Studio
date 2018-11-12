@@ -15,41 +15,54 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _CONSOLE_LOG_H_
 #define _CONSOLE_LOG_H_
 #include "Globals.h"
-#include "EditorTab.h"
+//#include "EditorTab.h"
+#include "Editor/EditorPanel.h"
 #include "DataStructure/Array.h"
+#include "DataStructure/HashString.h"
+#define MAX_CLOG 50
 
-namespace Dystopia
+void _DLL_EXPORT PrintToConsoleLog(const std::string& _text);
+void _DLL_EXPORT PrintToConsoleLog(const HashString& _text);
+void _DLL_EXPORT PrintToConsoleLog(const char* _text);
+
+namespace Editor//Dystopia
 {
-	void _DLL_EXPORT PrintToConsoleLog(const std::string& _text);
-	void _DLL_EXPORT PrintToConsoleLog(const char* _text);
-
-	class ConsoleLog : public EditorTab
+	class ConsoleLog : public EditorPanel //EditorTab
 	{
 	public:
-		static ConsoleLog* GetInstance();
-		~ConsoleLog();
+		//static ConsoleLog* GetInstance();
+		//~ConsoleLog();
 
-		void			Init()						override;
-		void			Update(const float&)		override;
-		void			EditorUI()					override;
-		void			Shutdown()					override;
-		std::string		GetLabel() const			override;
+		//void			Init()						override;
+		//void			Update(const float&)		override;
+		//void			EditorUI()					override;
+		//void			Shutdown()					override;
+		//std::string		GetLabel() const			override;
 
-		void			Debug(const std::string&);
-		void			Clear();
+		ConsoleLog(void);
+		~ConsoleLog(void);
+		void Load(void);
+		bool Init(void);
+		void Update(float);
+		void EditorUI(void);
+		void Shutdown(void);
+		void Message(eEMessage);
+		void SaveSettings(Dystopia::TextSerialiser& _out) const;
+		void LoadSettings(Dystopia::TextSerialiser& _in);
+		HashString GetLabel(void) const;
+
+		void			Debug(const HashString&);
+		void			Clear(void);
 
 	private:
-		ConsoleLog(void);
+		void PrintLogs(void);
+		void AdminInput(void);
 
-		void PrintLogs();
-		void AdminInput();
-
-		static constexpr unsigned int	maxLog = 50;
-		unsigned int					mLoggingIndex;
-		unsigned int					mRecordIndex;
-		std::string						mLabel;
+		unsigned int					mnLoggingIndex;
+		unsigned int					mnRecordIndex;
+		HashString						mLabel;
 		char							mAdminCommands[MAX_SEARCH];
-		Array<std::string, maxLog>		mArrDebugTexts;
+		Array<HashString, MAX_CLOG>		mArrDebugTexts;
 	};
 }
 

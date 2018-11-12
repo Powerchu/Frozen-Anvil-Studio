@@ -14,8 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _INSPECTOR_H_
 #define _INSPECTOR_H_
-#include "EditorTab.h"
+//#include "EditorTab.h"
 #include "Editor/EditorPanel.h"
+#include "DataStructure/HashString.h"
 
 namespace Dystopia
 {
@@ -55,7 +56,7 @@ namespace Editor //Dystopia
 		Dystopia::BehaviourSystem	*mpBehaviourSys;
 		Dystopia::GameObject		*mpFocus;
 
-		std::string		mLabel;
+		HashString		mLabel;
 		bool			mShowListOfComponents;
 		bool			mPromptNewBehaviour;
 		bool			mPromptCreateBehaviour;

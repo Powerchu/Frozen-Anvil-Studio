@@ -217,6 +217,7 @@ void Editor::EditorStates::ToolBar(void)
 				else
 					EGUI::Display::Dummy(icon, icon);
 
+				EGUI::SameLine();
 				if (EGUI::StartMenuBody(p->GetLabel().c_str()))
 					p->SetOpened(!(p->IsOpened()));
 			}

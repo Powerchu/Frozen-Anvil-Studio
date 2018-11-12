@@ -24,6 +24,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorLauncher.h"
 
 #include "Editor/Inspector.h"
+//#include "Editor/HierarchyView.h"
+//#include "Editor/ProjectSettings.h"
+//#include "Editor/ProjectResource.h"
+//#include "Editor/SceneView.h"
+#include "Editor/ConsoleLog.h"
+//#include "Editor/PerformanceLog.h"
+//#include "Editor/PLogger.h"
+//#include "Editor/ColorScheme.h"
+//#include "Editor/StyleScheme.h"
+//#include "Editor/SpritePreviewer.h"
+//#include "Editor/SpriteEditor.h"
 
 #include "DataStructure/HashString.h"
 
@@ -62,7 +73,7 @@ Editor::EditorMain* Editor::EditorMain::GetInstance(void)
 Editor::EditorMain::EditorMain(void)
 	: mArrSystems{ MakeAutoArray<EditorSystem*>(Ut::MakeTypeList_t<Ut::TypeList, ESystems>{}) },
 	  mArrPanels { MakeAutoArray<EditorPanel*>(Ut::MakeTypeList_t<Ut::TypeList, EPanels>{}) },
-	mCurState{}, mNextState{}, mDelta{}, mProjFolder{}, mTimer{}
+	mCurState{}, mNextState{}, mfDelta{}, mProjFolder{}, mTimer{}, mfOverlayAlpha{ 1.f }
 {
 }
 
@@ -101,7 +112,7 @@ void Editor::EditorMain::Init(void)
 
 void Editor::EditorMain::StartFrame(void)
 {
-	mDelta = mTimer.Elapsed();
+	mfDelta = mTimer.Elapsed();
 	mTimer.Lap();
 
 	for (auto& s : mArrSystems)
@@ -111,11 +122,9 @@ void Editor::EditorMain::StartFrame(void)
 void Editor::EditorMain::Update(void)
 {
 	for (auto& s : mArrSystems)
-		s->Update(mDelta);
+		s->Update(mfDelta);
 
-	if (mCurState == eState::PLAY)
-		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.4f);
-
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, mfOverlayAlpha);
 	for (unsigned int i = 0; i < mArrPanels.size(); ++i)
 	{
 		EGUI::PushID(i);
@@ -124,13 +133,13 @@ void Editor::EditorMain::Update(void)
 		p->SetPosition(EGUI::Docking::GetTabPosition(p->GetLabel().c_str()));
 		//p->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 		{
-			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scopeT{ p->GetLabel().c_str(), "Update" };
-			p->Update(mDelta);
+			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scopeT{ p->GetLabel().c_str(), "Update" };
+			p->Update(mfDelta);
 		}
 		{
-			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scopeT{ p->GetLabel().c_str(), "Editor UI" };
-			//ImGuiWindowFlags f = p->GetVertClip() ? ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar : ImGuiWindowFlags_None;
-			if (EGUI::StartTab(p->GetLabel().c_str(), &p->GetOpenedBool()/*, f*/))
+			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scopeT{ p->GetLabel().c_str(), "Editor UI" };
+			ImGuiWindowFlags f = p->IsScrollEnabled() ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar;
+			if (EGUI::StartTab(p->GetLabel().c_str(), &p->GetOpenedBool(), f))
 			{
 				EGUI::Indent(4);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
@@ -142,9 +151,7 @@ void Editor::EditorMain::Update(void)
 		EGUI::EndTab();
 		EGUI::PopID();
 	}
-
-	if (mCurState == eState::PLAY)
-		ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
 }
 
 void Editor::EditorMain::EndFrame(void)
@@ -154,6 +161,7 @@ void Editor::EditorMain::EndFrame(void)
 
 	if (mCurState != mNextState)
 	{
+		mfOverlayAlpha = (mNextState == eState::PLAY) ? 0.4f : 1.f;
 		mCurState = mNextState;
 		for (auto& s : mArrSystems)
 			s->Message(eEMessage::STATE_CHANGED);
@@ -222,7 +230,7 @@ void Editor::EditorMain::Broadcast(eEMessage _msg) const
 
 float Editor::EditorMain::GetDeltaTime(void) const
 {
-	return mDelta;
+	return mfDelta;
 }
 
 Editor::eState Editor::EditorMain::GetCurState(void) const
@@ -248,6 +256,8 @@ HashString Editor::EditorMain::GetCurProjFile(void) const
 void Editor::EditorMain::ProjectLauncher(void)
 {
 	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	fs->CreateFiles("Dystopia/ProjectDLL", Dystopia::eFileDir::eAppData);
+	fs->CheckFileExist("AHA", Dystopia::eFileDir::eAppData);
 
 	HashString fileName = g_ProjectLauncherSave;
 	fileName += ".";
@@ -282,7 +292,10 @@ void Editor::EditorMain::ProjectLauncher(void)
 void Editor::EditorMain::UpdatePaths(void)
 {
 	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	//HashString fullPath = (fs->GetFullPath("Dystopia\\ProjectDLL", Dystopia::eFileDir::eAppData)).c_str();
+
 	fs->ChangeDirPath(Dystopia::eFileDir::eResource, mProjFolder);
+	//fs->ChangeDirPath(Dystopia::eFileDir::eAppData, fullPath);
 }
 
 void Editor::EditorMain::LoadProjSettings(void)
