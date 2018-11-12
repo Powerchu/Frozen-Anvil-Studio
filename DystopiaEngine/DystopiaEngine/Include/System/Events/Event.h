@@ -554,6 +554,16 @@ public:
 		return false;
 	}
 
+
+	bool Fire(EventParams _param)
+	{
+		if (mpWrapper)
+		{
+			return mpWrapper->Fire(_param);
+
+		}
+		return false;
+	}
 	template<typename ... Param_Ts>
 	bool operator()(Param_Ts &&... _param)
 	{
@@ -563,6 +573,16 @@ public:
 			{
 				return mpWrapper->Fire(EventParams{ _param ... });
 			}
+		}
+
+		return false;
+	}
+
+	bool operator()(EventParams _param)
+	{
+		if (mpWrapper)
+		{
+			return mpWrapper->Fire(_param );
 		}
 
 		return false;

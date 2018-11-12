@@ -87,11 +87,7 @@ namespace Dystopia
 		return mID;
 	}
 
-	void Event::Fire() const
-	{
-		for (auto& e : mArrEventCallbacks)
-			e->Fire();
-	}
+
 
 	//void Event::Bind(void(&_fn)(void))
 	//{

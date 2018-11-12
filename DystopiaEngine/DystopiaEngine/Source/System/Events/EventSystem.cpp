@@ -71,37 +71,7 @@ namespace Dystopia
 		return id;
 	}
 
-	void EventSystem::Fire(EventID _byID)
-	{
-		mArrPendingFireIDs.push_back(_byID);
-	}
 
-	void EventSystem::Fire(const char* _byName)
-	{
-		Fire(EventHash(_byName));
-	}
-
-	void EventSystem::FireAllPending()
-	{
-		for (auto& e : mArrPendingFireIDs)
-		{
-			FireNow(e);
-		}
-		mArrPendingFireIDs.clear();
-	}
-
-	void EventSystem::FireNow(EventID _byID) const
-	{
-		for (auto& e : mArrEvents)
-		{
-			if (_byID == e->GetID()) e->Fire();
-		}
-	}
-
-	void EventSystem::FireNow(const char* _byName) const
-	{
-		FireNow(EventHash(_byName));
-	}
 
 	Event* EventSystem::GetEvent(EventID _byID) const
 	{
@@ -128,19 +98,6 @@ namespace Dystopia
 		return false;
 	}
 
-	bool EventSystem::BindToEvent(const char* _byName, void(&_fn)(void))
-	{
-		EventID id = EventHash(_byName);
-		for (auto& e : mArrAllIDs)
-		{
-			if (id == e)
-			{
-				return BindToEvent(id, _fn);
-			}
-		}
-		CreateEvent(_byName);
-		return BindToEvent(id, _fn);
-	}
 
 	void EventSystem::UnBindAllFromEvent(EventID _byID) const
 	{

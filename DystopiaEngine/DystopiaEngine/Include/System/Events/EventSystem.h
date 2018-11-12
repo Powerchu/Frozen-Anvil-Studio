@@ -48,6 +48,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EVENTSYSTEM_H_
 #include "System/Events/Events.h"
 #include "System/Base/Systems.h"
+#include <utility>
 
 namespace Dystopia
 {
@@ -69,21 +70,41 @@ namespace Dystopia
 		void		LoadSettings(TextSerialiser&);
 
 		EventID		CreateEvent(const char* _eventName);
-		void		Fire(EventID _byID);
-		void		Fire(const char* _byName);
-		void		FireAllPending();
-		bool		BindToEvent(const char* _byName, void(&_fn)(void));
 
-		void		FireNow(EventID _byID)								const;
-		void		FireNow(const char* _byName)						const;
+		template<typename ... Ts>
+		void		Fire(EventID _byID, Ts&& ...);
+		template<typename ... Ts>
+		void		Fire(const char* _byName, Ts&& ...);
+		void		FireAllPending();
+		
+		template<typename ... Ts>
+		void		FireNow(EventID _byID, Ts&& ...)					const;
+		template<typename ... Ts>
+		void		FireNow(const char* _byName, Ts&& ...)				const;
+
 		Event*		GetEvent(EventID _byID)								const;
 		Event*		GetEvent(const char* _byName)						const;
 		bool		BindToEvent(EventID _byID, void(&_fn)(void))		const;
 		void		UnBindAllFromEvent(EventID _byID)					const;
 		void		UnBindAllFromEvent(const char* _byName)				const;
 
-		template<class Caller>
-		bool BindToEvent(EventID _byID, void(Caller::*_fn)(void), Caller* const _user) const
+		template<typename Ret_t, typename ...params_t>
+		bool BindToEvent(const char* _byName, Ret_t(&_fn)(params_t...))
+		{
+			EventID id = EventHash(_byName);
+			for (auto& e : mArrAllIDs)
+			{
+				if (id == e)
+				{
+					return BindToEvent(id, _fn);
+				}
+			}
+			CreateEvent(_byName);
+			return BindToEvent(id, _fn);
+		}
+
+		template<class Caller, typename Ret_t, typename ...params_t>
+		bool BindToEvent(EventID _byID, Ret_t(Caller::*_fn)(params_t...), Caller* const _user) const
 		{
 			Event* p = GetEvent(_byID);
 			if (p)
@@ -94,8 +115,8 @@ namespace Dystopia
 			return false;
 		}
 
-		template<class Caller>
-		bool BindToEvent(const char* _byName, void(Caller::*_fn)(void), Caller* const _user)
+		template<class Caller, typename Ret_t, typename ...params_t>
+		bool BindToEvent(const char* _byName, Ret_t(Caller::*_fn)(params_t...), Caller* const _user)
 		{
 			EventID id = EventHash(_byName);
 			for (auto& e : mArrAllIDs)
@@ -128,10 +149,50 @@ namespace Dystopia
 		}
 
 	private:
+
+		using EventInfo = std::pair<EventID, EventParams>;
+
+
 		AutoArray<Event*>	mArrEvents;
 		AutoArray<EventID>	mArrAllIDs;
-		AutoArray<EventID>	mArrPendingFireIDs;
+		//AutoArray<EventID>	mArrPendingFireIDs;
+		AutoArray<EventInfo> mArrPendingFireIDs;
 	};
+
+
+	template<typename ... Ts>
+	inline void EventSystem::Fire(EventID _byID, Ts&& ... _params)
+	{
+		mArrPendingFireIDs.push_back(std::make_pair(_byID, EventParams{ _params... }));
+	}
+
+	template<typename ... Ts>
+	inline void EventSystem::Fire(const char* _byName, Ts&& ... _params)
+	{
+		Fire(EventHash(_byName), Ut::Forward<Ts>(_params)...);
+	}
+
+	inline void EventSystem::FireAllPending()
+	{
+		for (auto& e : mArrPendingFireIDs)
+		{
+			FireNow(e.first, e.second);
+		}
+		mArrPendingFireIDs.clear();
+	}
+	template<typename ... Ts>
+	inline void EventSystem::FireNow(EventID _byID, Ts&& ... _params) const
+	{
+		for (auto& e : mArrEvents)
+		{
+			if (_byID == e->GetID()) e->Fire(_params...);
+		}
+	}
+	template<typename ... Ts>
+	inline void EventSystem::FireNow(const char* _byName, Ts&& ... _params) const
+	{
+		FireNow(EventHash(_byName), Ut::Forward<Ts>(_params)...);
+	}
 }
 
 

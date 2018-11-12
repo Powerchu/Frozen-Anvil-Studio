@@ -119,10 +119,17 @@ namespace Dystopia
 		~Event();
 
 		EventID			GetID()	const;
-		void			Fire()	const;
+
 		
 		//void			Bind(void(&_fn)(void));
 		void			UnbindAll();
+
+		template<typename ... Ts>
+		void Fire(Ts&& ... _params) const
+		{
+			for (auto& e : mArrEventCallbacks)
+				e->Fire(_params...);
+		}
 
 		template<typename Ret_t, typename ... Params_t>
 		void Bind(Ret_t(*_fn)(Params_t...))
