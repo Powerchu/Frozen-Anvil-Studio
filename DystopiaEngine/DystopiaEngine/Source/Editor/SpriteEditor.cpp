@@ -56,19 +56,19 @@ void Dystopia::SpriteEditor::EditorUI(void)
 	EGUI::Display::EmptyBox("Sprite Sheet", 150, mpTexture ? mpTexture->GetName() : "");
 	if (Dystopia::File *t1 = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
 	{
-		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t1->mPath);
+		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t1->mPath.c_str());
 		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(mpTexture->GetName());
 		EGUI::Display::EndPayloadReceiver();
 	}
 	if (Dystopia::File *t2 = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::BMP))
 	{
-		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t2->mPath);
+		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t2->mPath.c_str());
 		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(mpTexture->GetName());
 		EGUI::Display::EndPayloadReceiver();
 	}
 	if (Dystopia::File *t3 = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::DDS))
 	{
-		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t3->mPath);
+		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t3->mPath.c_str());
 		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(mpTexture->GetName());
 		EGUI::Display::EndPayloadReceiver();
 	}

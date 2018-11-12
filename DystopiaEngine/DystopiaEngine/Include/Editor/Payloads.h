@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _PAYLOADS_H_
 #include "Globals.h"
 #include "DataStructure/AutoArray.h"
-#include <string>
+#include "DataStructure/HashString.h"
 
 namespace EGUI
 {
@@ -74,31 +74,31 @@ namespace Dystopia
 
 	struct CrawlItem
 	{
-		CrawlItem(const std::string& _name, const std::string& _path);
-		std::string mName;
-		std::string mPath;
-		std::string mLowerCaseName;
+		CrawlItem(const HashString& _name, const HashString& _path);
+		HashString mName;
+		HashString mPath;
+		HashString mLowerCaseName;
 	};
 
 	struct Folder;
 	struct File : CrawlItem
 	{
-		File(const std::string& _name, const std::string& _path, Folder * const _parent);
+		File(const HashString& _name, const HashString& _path, Folder * const _parent);
 		~File();
 		bool operator<(const File&);
-		static EGUI::ePayloadTags DetermineTag(const std::string& _name);
+		static EGUI::ePayloadTags DetermineTag(const HashString& _name);
 		EGUI::ePayloadTags mTag;
 		Folder*	mpParentFolder;
 	};
 
 	struct Folder : CrawlItem
 	{
-		Folder(const std::string& _name, const std::string& _path, Folder * const _parent);
+		Folder(const HashString& _name, const HashString& _path, Folder * const _parent);
 		~Folder();
 
 		void				Crawl();
 		void				ClearFolder();
-		Folder*				FindFolder(const std::string& _name);
+		Folder*				FindFolder(const HashString& _name);
 
 		Folder*				mpParentFolder;
 		AutoArray<File*>	mArrPtrFiles;

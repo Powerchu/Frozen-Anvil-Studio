@@ -89,13 +89,13 @@
       <Filter>Editor\UI</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\HierarchyView.cpp">
-      <Filter>Editor\Editor Tabs\Hierarchy View</Filter>
+      <Filter>Editor\Main\Panels\Hierarchy View</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Inspector.cpp">
       <Filter>Editor\Main\Panels\Inspector</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\ProjectResource.cpp">
-      <Filter>Editor\Editor Tabs\Project Resource</Filter>
+      <Filter>Editor\Main\Panels\Project Resource</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\SceneView.cpp">
       <Filter>Editor\Editor Tabs\Scene View</Filter>
@@ -203,10 +203,10 @@
       <Filter>Editor\Gizmo</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\ColorScheme.cpp">
-      <Filter>Editor\Editor Tabs\SchemeColor</Filter>
+      <Filter>Editor\Main\Panels\SchemeColor</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\StyleScheme.cpp">
-      <Filter>Editor\Editor Tabs\SchemeStyle</Filter>
+      <Filter>Editor\Main\Panels\SchemeStyle</Filter>
     </ClCompile>
     <ClCompile Include="Source\Component\CollisionEvent.cpp">
       <Filter>Game Engine\Systems\Collision</Filter>
@@ -526,13 +526,13 @@
       <Filter>Editor\UI</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\HierarchyView.h">
-      <Filter>Editor\Editor Tabs\Hierarchy View</Filter>
+      <Filter>Editor\Main\Panels\Hierarchy View</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\Inspector.h">
       <Filter>Editor\Main\Panels\Inspector</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\ProjectResource.h">
-      <Filter>Editor\Editor Tabs\Project Resource</Filter>
+      <Filter>Editor\Main\Panels\Project Resource</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\SceneView.h">
       <Filter>Editor\Editor Tabs\Scene View</Filter>
@@ -697,10 +697,10 @@
       <Filter>Editor\Gizmo</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\ColorScheme.h">
-      <Filter>Editor\Editor Tabs\SchemeColor</Filter>
+      <Filter>Editor\Main\Panels\SchemeColor</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\StyleScheme.h">
-      <Filter>Editor\Editor Tabs\SchemeStyle</Filter>
+      <Filter>Editor\Main\Panels\SchemeStyle</Filter>
     </ClInclude>
     <ClInclude Include="Include\Component\CharacterController.h">
       <Filter>Game Engine\Components\Physics\Character Controller</Filter>
@@ -1121,14 +1121,8 @@
     <Filter Include="Editor\Editor Tabs\Performance">
       <UniqueIdentifier>{c047ceb5-275e-45b0-90de-511a03bb9780}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor Tabs\Project Resource">
-      <UniqueIdentifier>{c5ac7258-cd5b-41a2-aa35-e58dbae20806}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\Editor Tabs\Scene View">
       <UniqueIdentifier>{71a85056-a560-4672-bf11-af0a4c971ad1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Editor Tabs\Hierarchy View">
-      <UniqueIdentifier>{a885b5ac-c2be-42de-9871-dadd13992aac}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Systems\Profiler">
       <UniqueIdentifier>{c8dea79e-90fb-4f6f-ab66-dec8db735338}</UniqueIdentifier>
@@ -1186,12 +1180,6 @@
     </Filter>
     <Filter Include="Editor\Gizmo">
       <UniqueIdentifier>{c678684a-2024-498c-b278-53911ea1ab17}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Editor Tabs\SchemeColor">
-      <UniqueIdentifier>{505d9276-8eac-401b-a286-9d084f3f8461}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Editor Tabs\SchemeStyle">
-      <UniqueIdentifier>{e2a99798-5b6a-4bf2-a471-a415c2452e05}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Components\Physics\Character Controller">
       <UniqueIdentifier>{dc0c52cd-8f25-4932-a9fd-7d1916f1378d}</UniqueIdentifier>
@@ -1342,6 +1330,18 @@
     </Filter>
     <Filter Include="Editor\Main\Panels\Console">
       <UniqueIdentifier>{24e718b4-19d5-461a-b934-7fa561a0580b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Panels\Hierarchy View">
+      <UniqueIdentifier>{a885b5ac-c2be-42de-9871-dadd13992aac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Panels\SchemeColor">
+      <UniqueIdentifier>{505d9276-8eac-401b-a286-9d084f3f8461}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Panels\SchemeStyle">
+      <UniqueIdentifier>{e2a99798-5b6a-4bf2-a471-a415c2452e05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Panels\Project Resource">
+      <UniqueIdentifier>{c5ac7258-cd5b-41a2-aa35-e58dbae20806}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

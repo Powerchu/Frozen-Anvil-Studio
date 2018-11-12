@@ -130,7 +130,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	EGUI::Display::EmptyBox("Audio        ", 150, (mpSound) ? mSoundName : "-empty-", true);
 	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::MP3))
 	{
-		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t->mName);
+		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t->mName.c_str());
 	
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, pSound);
@@ -139,7 +139,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	}
 	if (Dystopia::File *t2 = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::WAV))
 	{
-		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t2->mName);
+		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t2->mName.c_str());
 
 		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, pSound);

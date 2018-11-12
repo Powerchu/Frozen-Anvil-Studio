@@ -123,8 +123,8 @@ namespace Editor //Dystopia
 		{
 			for (unsigned int i = 0; i < mnLoggingIndex; ++i)
 				EGUI::Display::Label(mArrDebugTexts[i].c_str());
-			EGUI::EndChild();
 		}
+		EGUI::EndChild();
 		EGUI::Display::HorizontalSeparator();
 	}
 

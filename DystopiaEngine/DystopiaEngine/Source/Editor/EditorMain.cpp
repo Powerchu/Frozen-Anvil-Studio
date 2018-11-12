@@ -24,15 +24,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorLauncher.h"
 
 #include "Editor/Inspector.h"
-//#include "Editor/HierarchyView.h"
+#include "Editor/HierarchyView.h"
 //#include "Editor/ProjectSettings.h"
-//#include "Editor/ProjectResource.h"
+#include "Editor/ProjectResource.h"
 //#include "Editor/SceneView.h"
 #include "Editor/ConsoleLog.h"
 //#include "Editor/PerformanceLog.h"
 //#include "Editor/PLogger.h"
-//#include "Editor/ColorScheme.h"
-//#include "Editor/StyleScheme.h"
+#include "Editor/ColorScheme.h"
+#include "Editor/StyleScheme.h"
 //#include "Editor/SpritePreviewer.h"
 //#include "Editor/SpriteEditor.h"
 
@@ -88,11 +88,11 @@ void Editor::EditorMain::Init(void)
 	for (auto& s : mArrSystems)
 		s->Load();
 
-	for (auto& p : mArrPanels)
-		p->Load();
-
 	ProjectLauncher();
 	UpdatePaths();
+
+	for (auto& p : mArrPanels)
+		p->Load();
 
 	Dystopia::EngineCore::GetInstance()->LoadSettings();
 	Dystopia::EngineCore::GetInstance()->Init();
@@ -121,15 +121,19 @@ void Editor::EditorMain::StartFrame(void)
 
 void Editor::EditorMain::Update(void)
 {
-	for (auto& s : mArrSystems)
-		s->Update(mfDelta);
+	for (unsigned int i = 0; i < mArrSystems.size(); ++i)
+	{
+		EGUI::PushID(i);
+		mArrSystems[i]->Update(mfDelta);
+		EGUI::PopID();
+	}
 
 	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, mfOverlayAlpha);
 	for (unsigned int i = 0; i < mArrPanels.size(); ++i)
 	{
 		EGUI::PushID(i);
 		EditorPanel *p = mArrPanels[i];
-		p->SetSize(EGUI::Docking::GetTabSize(p->GetLabel().c_str()) - Math::Vec2{ 8, 4 });
+		p->SetSize(EGUI::Docking::GetTabSize(p->GetLabel().c_str()) - Math::Vec2{ 8, 12 });
 		p->SetPosition(EGUI::Docking::GetTabPosition(p->GetLabel().c_str()));
 		//p->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 		{
@@ -147,8 +151,8 @@ void Editor::EditorMain::Update(void)
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 4);
 				EGUI::UnIndent(4);
 			}
+			EGUI::EndTab();
 		}
-		EGUI::EndTab();
 		EGUI::PopID();
 	}
 	ImGui::PopStyleVar();
@@ -256,8 +260,7 @@ HashString Editor::EditorMain::GetCurProjFile(void) const
 void Editor::EditorMain::ProjectLauncher(void)
 {
 	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
-	fs->CreateFiles("Dystopia/ProjectDLL", Dystopia::eFileDir::eAppData);
-	fs->CheckFileExist("AHA", Dystopia::eFileDir::eAppData);
+	fs->CreateFiles("Dystopia", Dystopia::eFileDir::eAppData);
 
 	HashString fileName = g_ProjectLauncherSave;
 	fileName += ".";
@@ -292,10 +295,20 @@ void Editor::EditorMain::ProjectLauncher(void)
 void Editor::EditorMain::UpdatePaths(void)
 {
 	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
-	//HashString fullPath = (fs->GetFullPath("Dystopia\\ProjectDLL", Dystopia::eFileDir::eAppData)).c_str();
+
+	HashString subFolder = mProjFile;
+	size_t pos = subFolder.find_last_of(".");
+	subFolder.erase(pos);
+	subFolder += "DLL";
+	HashString dllFolder{ "Dystopia" };
+	dllFolder += "\\";
+	dllFolder += subFolder;
+
+	fs->CreateFiles(dllFolder.c_str(), Dystopia::eFileDir::eAppData);
+	HashString fullPath = (fs->GetFullPath(subFolder.c_str(), Dystopia::eFileDir::eAppData)).c_str();
 
 	fs->ChangeDirPath(Dystopia::eFileDir::eResource, mProjFolder);
-	//fs->ChangeDirPath(Dystopia::eFileDir::eAppData, fullPath);
+	fs->ChangeDirPath(Dystopia::eFileDir::eAppData, fullPath);
 }
 
 void Editor::EditorMain::LoadProjSettings(void)

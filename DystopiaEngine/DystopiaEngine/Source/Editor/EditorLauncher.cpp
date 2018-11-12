@@ -30,6 +30,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Window/Window.h"
 #include "System/Input/InputSystem.h"
 #include "System/File/FileSystem.h"
+#include "System/Graphics/GraphicsSystem.h"
 
 #include <Windows.h>
 #include <windef.h>
@@ -329,10 +330,12 @@ void Editor::EditorLauncher::SetWindowOptions(void)
 	const auto& wmgr = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>();
 	auto& win = wmgr->GetMainWindow();
 	wmgr->DestroySplash();
+
 	mOriginStyle = wmgr->GetStyle();
 	mOriginStyleEx = wmgr->GetStyleEx();
-	mOriginSizeX = GetSystemMetrics(SM_CXSCREEN);
-	mOriginSizeY = GetSystemMetrics(SM_CYSCREEN);
+	mOriginSizeX = win.GetWidth();
+	mOriginSizeY = win.GetHeight();
+
 	win.Hide();
 	win.SetStyle(LauncherStyle, LauncherStyleEx);
 	win.SetSize(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
@@ -340,19 +343,25 @@ void Editor::EditorLauncher::SetWindowOptions(void)
 	win.SetSizeNoAdjust(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
 	win.CenterWindow();
 	win.Show();
+
 	//wmgr->mWidth = GetSystemMetrics(SM_CXSCREEN);
 	//wmgr->mHeight = GetSystemMetrics(SM_CYSCREEN);
 }
 
 void Editor::EditorLauncher::RemoveWindowOptions(void)
 {
+	const auto& gfx = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>();
 	const auto& wmgr = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>();
 	auto& win = wmgr->GetMainWindow();
-	win.Hide();
-	win.SetStyle(mOriginStyle, mOriginStyleEx);
-	win.SetSize(mOriginSizeX, mOriginSizeY);
-	win.CenterWindow();
-	win.Show();
+	win.SetStyle(WS_POPUP, WS_EX_APPWINDOW);
+	gfx->DrawSplash();
+	//win.Hide();
+	//win.SetStyle(mOriginStyle, mOriginStyleEx);
+	//win.SetSize(mOriginSizeX, mOriginSizeY);
+	//win.CenterWindow();
+	//win.SetSizeNoAdjust(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
+	//win.CenterWindow();
+	//win.Show();
 	//wmgr->mWidth = GetSystemMetrics(SM_CXSCREEN);
 	//wmgr->mHeight = GetSystemMetrics(SM_CYSCREEN);
 }

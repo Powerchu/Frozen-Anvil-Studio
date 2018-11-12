@@ -83,7 +83,7 @@ public:
 	HashString& replace(size_t _pos, size_t _len, const char * _s);
 
 	/* operations */
-	const char* c_str(void) const;
+	const char* const c_str(void) const;
 	size_t		find(const HashString&, size_t _pos = 0) const;
 	size_t		find(const char* _s, size_t _pos = 0) const;
 	size_t		find(char _c, size_t _pos = 0) const;

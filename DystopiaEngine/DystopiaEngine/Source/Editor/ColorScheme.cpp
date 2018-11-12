@@ -17,81 +17,83 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../../Dependancies/ImGui/imgui.h"
 
 static constexpr unsigned int dimensions = 4;
-namespace Dystopia
-{
-	static ColorScheme* gpInstance = 0;
+//namespace Dystopia
+//{
+//	static ColorScheme* gpInstance = 0;
+//
+//	ColorScheme* ColorScheme::GetInstance()
+//	{
+//		if (gpInstance) return gpInstance;
+//
+//		gpInstance = new ColorScheme{};
+//		return gpInstance;
+//	}
+//}
 
-	ColorScheme* ColorScheme::GetInstance()
-	{
-		if (gpInstance) return gpInstance;
-
-		gpInstance = new ColorScheme{};
-		return gpInstance;
-	}
-}
-
-Dystopia::ColorScheme::ColorScheme()
-	: EditorTab{ false },
+Editor::ColorScheme::ColorScheme(void)
+	: //EditorTab{ false },
 	mLabel{ "Color Scheme" },
 	mArrColors{ Math::Vec4{0,0,0,0} }, mAlignment{ 150 }, mBarSize{ 500 }
 {}
 
-Dystopia::ColorScheme::~ColorScheme()
+Editor::ColorScheme::~ColorScheme(void)
 {}
 
-void Dystopia::ColorScheme::Init()
+void Editor::ColorScheme::Load(void)
+{
+
+}
+
+bool Editor::ColorScheme::Init(void)
 {
 	auto& style = ImGui::GetStyle();
 	auto arrayOfColors = style.Colors;
 
-	mArrColors[eCOLOR_DATA_Text]				 = arrayOfColors[ImGuiCol_Text];				
-	mArrColors[eCOLOR_DATA_TextDisabled]		 = arrayOfColors[ImGuiCol_TextDisabled];		
-	mArrColors[eCOLOR_DATA_TextSelected]		 = arrayOfColors[ImGuiCol_WindowBg];			
-	mArrColors[eCOLOR_DATA_WindowBG]			 = arrayOfColors[ImGuiCol_ChildBg];				
-	mArrColors[eCOLOR_DATA_ChildWindowBG]		 = arrayOfColors[ImGuiCol_PopupBg];				
-	mArrColors[eCOLOR_DATA_PopupBG]				 = arrayOfColors[ImGuiCol_Border];				
-	mArrColors[eCOLOR_DATA_Border]				 = arrayOfColors[ImGuiCol_BorderShadow];		
-	mArrColors[eCOLOR_DATA_BorderShadow]		 = arrayOfColors[ImGuiCol_FrameBg];				
-	mArrColors[eCOLOR_DATA_Widget]				 = arrayOfColors[ImGuiCol_FrameBgHovered];		
-	mArrColors[eCOLOR_DATA_WidgetHovered]		 = arrayOfColors[ImGuiCol_FrameBgActive];		
-	mArrColors[eCOLOR_DATA_WidgetActive]		 = arrayOfColors[ImGuiCol_TitleBg];				
-	mArrColors[eCOLOR_DATA_Title]				 = arrayOfColors[ImGuiCol_TitleBgActive];		
-	mArrColors[eCOLOR_DATA_TitleHovered]		 = arrayOfColors[ImGuiCol_TitleBgCollapsed];	
-	mArrColors[eCOLOR_DATA_TitleActive]			 = arrayOfColors[ImGuiCol_MenuBarBg];			
-	mArrColors[eCOLOR_DATA_MenuBar]				 = arrayOfColors[ImGuiCol_ScrollbarBg];			
-	mArrColors[eCOLOR_DATA_ScrollBG]			 = arrayOfColors[ImGuiCol_ScrollbarGrab];		
-	mArrColors[eCOLOR_DATA_Scroll]				 = arrayOfColors[ImGuiCol_ScrollbarGrabHovered];
-	mArrColors[eCOLOR_DATA_ScrollHovered]		 = arrayOfColors[ImGuiCol_ScrollbarGrabActive];	
-	mArrColors[eCOLOR_DATA_ScrollActive]		 = arrayOfColors[ImGuiCol_CheckMark];			
-	mArrColors[eCOLOR_DATA_CheckMark]			 = arrayOfColors[ImGuiCol_SliderGrab];			
-	mArrColors[eCOLOR_DATA_Slider]				 = arrayOfColors[ImGuiCol_SliderGrabActive];	
-	mArrColors[eCOLOR_DATA_SliderActive]		 = arrayOfColors[ImGuiCol_Button];				
-	mArrColors[eCOLOR_DATA_Button]				 = arrayOfColors[ImGuiCol_ButtonHovered];		
-	mArrColors[eCOLOR_DATA_ButtonHovered]		 = arrayOfColors[ImGuiCol_ButtonActive];		
-	mArrColors[eCOLOR_DATA_ButtonActive]		 = arrayOfColors[ImGuiCol_Header];				
-	mArrColors[eCOLOR_DATA_Header]				 = arrayOfColors[ImGuiCol_HeaderHovered];		
-	mArrColors[eCOLOR_DATA_HeaderHovered]		 = arrayOfColors[ImGuiCol_HeaderActive];		
-	mArrColors[eCOLOR_DATA_HeaderActive]		 = arrayOfColors[ImGuiCol_Separator];			
-	mArrColors[eCOLOR_DATA_Separator]			 = arrayOfColors[ImGuiCol_SeparatorHovered];	
-	mArrColors[eCOLOR_DATA_SeparatorHovered]	 = arrayOfColors[ImGuiCol_SeparatorActive];		
-	mArrColors[eCOLOR_DATA_SeparatorActive]		 = arrayOfColors[ImGuiCol_ResizeGrip];			
-	mArrColors[eCOLOR_DATA_Resizer]				 = arrayOfColors[ImGuiCol_ResizeGripHovered];	
-	mArrColors[eCOLOR_DATA_ResizerHovered]		 = arrayOfColors[ImGuiCol_ResizeGripActive];	
-	mArrColors[eCOLOR_DATA_ResizerActive]		 = arrayOfColors[ImGuiCol_PlotLines];			
-	mArrColors[eCOLOR_DATA_Graph]				 = arrayOfColors[ImGuiCol_PlotLinesHovered];	
-	mArrColors[eCOLOR_DATA_GraphHovered]		 = arrayOfColors[ImGuiCol_TextSelectedBg];		
-	mArrColors[eCOLOR_DATA_Payload]				 = arrayOfColors[ImGuiCol_DragDropTarget];	
+	mArrColors[eCOLOR_DATA_Text] = arrayOfColors[ImGuiCol_Text];
+	mArrColors[eCOLOR_DATA_TextDisabled] = arrayOfColors[ImGuiCol_TextDisabled];
+	mArrColors[eCOLOR_DATA_TextSelected] = arrayOfColors[ImGuiCol_WindowBg];
+	mArrColors[eCOLOR_DATA_WindowBG] = arrayOfColors[ImGuiCol_ChildBg];
+	mArrColors[eCOLOR_DATA_ChildWindowBG] = arrayOfColors[ImGuiCol_PopupBg];
+	mArrColors[eCOLOR_DATA_PopupBG] = arrayOfColors[ImGuiCol_Border];
+	mArrColors[eCOLOR_DATA_Border] = arrayOfColors[ImGuiCol_BorderShadow];
+	mArrColors[eCOLOR_DATA_BorderShadow] = arrayOfColors[ImGuiCol_FrameBg];
+	mArrColors[eCOLOR_DATA_Widget] = arrayOfColors[ImGuiCol_FrameBgHovered];
+	mArrColors[eCOLOR_DATA_WidgetHovered] = arrayOfColors[ImGuiCol_FrameBgActive];
+	mArrColors[eCOLOR_DATA_WidgetActive] = arrayOfColors[ImGuiCol_TitleBg];
+	mArrColors[eCOLOR_DATA_Title] = arrayOfColors[ImGuiCol_TitleBgActive];
+	mArrColors[eCOLOR_DATA_TitleHovered] = arrayOfColors[ImGuiCol_TitleBgCollapsed];
+	mArrColors[eCOLOR_DATA_TitleActive] = arrayOfColors[ImGuiCol_MenuBarBg];
+	mArrColors[eCOLOR_DATA_MenuBar] = arrayOfColors[ImGuiCol_ScrollbarBg];
+	mArrColors[eCOLOR_DATA_ScrollBG] = arrayOfColors[ImGuiCol_ScrollbarGrab];
+	mArrColors[eCOLOR_DATA_Scroll] = arrayOfColors[ImGuiCol_ScrollbarGrabHovered];
+	mArrColors[eCOLOR_DATA_ScrollHovered] = arrayOfColors[ImGuiCol_ScrollbarGrabActive];
+	mArrColors[eCOLOR_DATA_ScrollActive] = arrayOfColors[ImGuiCol_CheckMark];
+	mArrColors[eCOLOR_DATA_CheckMark] = arrayOfColors[ImGuiCol_SliderGrab];
+	mArrColors[eCOLOR_DATA_Slider] = arrayOfColors[ImGuiCol_SliderGrabActive];
+	mArrColors[eCOLOR_DATA_SliderActive] = arrayOfColors[ImGuiCol_Button];
+	mArrColors[eCOLOR_DATA_Button] = arrayOfColors[ImGuiCol_ButtonHovered];
+	mArrColors[eCOLOR_DATA_ButtonHovered] = arrayOfColors[ImGuiCol_ButtonActive];
+	mArrColors[eCOLOR_DATA_ButtonActive] = arrayOfColors[ImGuiCol_Header];
+	mArrColors[eCOLOR_DATA_Header] = arrayOfColors[ImGuiCol_HeaderHovered];
+	mArrColors[eCOLOR_DATA_HeaderHovered] = arrayOfColors[ImGuiCol_HeaderActive];
+	mArrColors[eCOLOR_DATA_HeaderActive] = arrayOfColors[ImGuiCol_Separator];
+	mArrColors[eCOLOR_DATA_Separator] = arrayOfColors[ImGuiCol_SeparatorHovered];
+	mArrColors[eCOLOR_DATA_SeparatorHovered] = arrayOfColors[ImGuiCol_SeparatorActive];
+	mArrColors[eCOLOR_DATA_SeparatorActive] = arrayOfColors[ImGuiCol_ResizeGrip];
+	mArrColors[eCOLOR_DATA_Resizer] = arrayOfColors[ImGuiCol_ResizeGripHovered];
+	mArrColors[eCOLOR_DATA_ResizerHovered] = arrayOfColors[ImGuiCol_ResizeGripActive];
+	mArrColors[eCOLOR_DATA_ResizerActive] = arrayOfColors[ImGuiCol_PlotLines];
+	mArrColors[eCOLOR_DATA_Graph] = arrayOfColors[ImGuiCol_PlotLinesHovered];
+	mArrColors[eCOLOR_DATA_GraphHovered] = arrayOfColors[ImGuiCol_TextSelectedBg];
+	mArrColors[eCOLOR_DATA_Payload] = arrayOfColors[ImGuiCol_DragDropTarget];
+	return true;
 }
 
-void Dystopia::ColorScheme::Update(const float&)
+void Editor::ColorScheme::Update(float)
 {}
 
-void Dystopia::ColorScheme::EditorUI()
+void Editor::ColorScheme::EditorUI(void)
 {
-	//if (EGUI::Display::Button("Apply"))
-	//{
-	//	Apply();
-	//}
 	ImGui::PushItemWidth(static_cast<float>(mBarSize));
 	for (unsigned int i = 0; i < mArrColors.size(); ++i)
 	{
@@ -105,15 +107,49 @@ void Dystopia::ColorScheme::EditorUI()
 	ImGui::PopItemWidth();
 }
 
-void Dystopia::ColorScheme::Shutdown()
+void Editor::ColorScheme::Shutdown(void)
 {}
 
-std::string Dystopia::ColorScheme::GetLabel() const
+void Editor::ColorScheme::Message(eEMessage)
+{}
+
+void Editor::ColorScheme::SaveSettings(Dystopia::TextSerialiser& _out) const
+{
+	_out.InsertStartBlock("Color");
+	_out << mArrColors.size();
+	for (auto& e : mArrColors)
+	{
+		for (unsigned int i = 0; i < dimensions; ++i)
+		{
+			_out << e[i];
+		}
+	}
+	_out.InsertEndBlock("Color");
+}
+
+void Editor::ColorScheme::LoadSettings(Dystopia::TextSerialiser& _in)
+{
+	size_t size;
+	_in.ConsumeStartBlock();
+	_in >> size;
+	for (unsigned int k = 0; k < size; k++)
+	{
+		for (unsigned int i = 0; i < dimensions; ++i)
+		{
+			_in >> mArrColors[k][i];
+		}
+	}
+	_in.ConsumeEndBlock();
+	Apply();
+}
+
+HashString Editor::ColorScheme::GetLabel(void) const
 {
 	return mLabel;
 }
 
-void Dystopia::ColorScheme::Apply()const
+
+void Editor::ColorScheme::Apply(void)const
 {
 	auto& style = ImGui::GetStyle();
 	auto arrayOfColors = style.Colors;
@@ -157,42 +193,12 @@ void Dystopia::ColorScheme::Apply()const
     arrayOfColors[ImGuiCol_DragDropTarget]			= mArrColors[eCOLOR_DATA_Payload];			
 }
 
-void Dystopia::ColorScheme::Remove() const
+void Editor::ColorScheme::Remove(void) const
 {
 	ImGui::StyleColorsDark();
 }
 
-void Dystopia::ColorScheme::SaveSettings(Dystopia::TextSerialiser& _out) const
-{
-	_out.InsertStartBlock("Color");
-	_out << mArrColors.size();
-	for (auto& e : mArrColors)
-	{
-		for (unsigned int i = 0; i < dimensions; ++i)
-		{
-			_out << e[i];
-		}
-	}
-	_out.InsertEndBlock("Color");
-}
-
-void Dystopia::ColorScheme::LoadSettings(Dystopia::TextSerialiser& _in)
-{
-	size_t size;
-	_in.ConsumeStartBlock();
-	_in >> size;
-	for (unsigned int k = 0; k < size; k ++)
-	{
-		for (unsigned int i = 0; i < dimensions; ++i)
-		{
-			_in >> mArrColors[k][i];
-		}
-	}
-	_in.ConsumeEndBlock();
-	Apply();
-}
-
-std::string Dystopia::ColorScheme::ToName(eColorData _i)
+HashString Editor::ColorScheme::ToName(eColorData _i)
 {
 	switch (_i)
 	{

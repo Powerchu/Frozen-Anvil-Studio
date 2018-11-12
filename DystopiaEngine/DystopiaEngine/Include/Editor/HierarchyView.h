@@ -14,57 +14,54 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _HIERARCHY_H_
 #define _HIERARCHY_H_
-#include "EditorTab.h"
+//#include "EditorTab.h"
+#include "Editor/EditorPanel.h"
 #include "DataStructure/AutoArray.h"
 
 namespace Dystopia
 {
 	class GameObject;
 	class Scene;
-	class HierarchyView : public EditorTab
+}
+
+namespace Editor//Dystopia
+{
+	class HierarchyView : public EditorPanel//EditorTab
 	{
 	public:
-		static HierarchyView* GetInstance();
-		~HierarchyView();
+		//static HierarchyView* GetInstance();
 
-		/* Init() is called immediately after the creation of the object */
-		virtual void Init() override;
+		HierarchyView(void);
+		~HierarchyView(void);
 
-		/* Update() is called before Window(), so alter most variables (frame based) here to be printed in Window() later */
-		virtual void Update(const float&) override;
-
-		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
-		virtual void EditorUI() override;
-
-		/* Shutdown() is called right before deleting this object */
-		virtual void Shutdown() override;
-
-		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
-		virtual std::string GetLabel() const override;
-
-		//virtual void SetFocus(GameObject&) override final;
-		//
-		//virtual void RemoveFocus() override final;
+		void Load(void);
+		bool Init(void);
+		void Update(float);
+		void EditorUI(void);
+		void Shutdown(void);
+		void Message(eEMessage);
+		void SaveSettings(Dystopia::TextSerialiser& _out) const;
+		void LoadSettings(Dystopia::TextSerialiser& _in);
+		HashString GetLabel(void) const;
 
 	private:
-		HierarchyView(void);
 
 		char						mSearchText[MAX_SEARCH];
 		char						mSearchTextPrevFrame[MAX_SEARCH];
-		std::string					mLabel;
-		std::string					mPopupID;
+		HashString					mLabel;
+		HashString					mPopupID;
 		AutoArray<uint64_t>			mArrSearchID;
 
 		void			SearchBar();
 		void			UpdateSearch();
 		void			CreateButton();
 		void			CreatePopup();
-		void			GameObjectPopups(GameObject&);
-		void			SelectedObj(GameObject&);
+		void			GameObjectPopups(Dystopia::GameObject&);
+		void			SelectedObj(Dystopia::GameObject&);
 
 		void			ShowGameObjects(void);
-		void			ShowAsParent(GameObject&, const AutoArray<GameObject*>&);
-		void			ShowAsChild(GameObject&, const AutoArray<GameObject*>&);
+		void			ShowAsParent(Dystopia::GameObject&, const AutoArray<Dystopia::GameObject*>&);
+		void			ShowAsChild(Dystopia::GameObject&, const AutoArray<Dystopia::GameObject*>&);
 	};
 }
 

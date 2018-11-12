@@ -246,13 +246,14 @@ HashString& HashString::erase(size_t _pos, size_t _len)
 	DEBUG_ASSERT(_pos >= mSize, "Hash String Earse _pos out of range");
 	if (!_len) 
 		return *this;
-	size_t pad = _len;
+	size_t pad = 0;
 	char *start = begin() + _pos;
 	char *it = start;
 	while (it < end() && _len)
 	{
 		*it++ = '\0';
 		_len--;
+		pad++;
 	}
 	if (!_len)
 	{
@@ -316,7 +317,7 @@ HashString& HashString::replace(size_t _pos, size_t _len, const char * _s)
 }
 
 /* operations */
-const char* HashString::c_str(void) const
+const char* const HashString::c_str(void) const
 {
 	return mCharBuffer;
 }

@@ -14,16 +14,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/EGUI.h"
 #include "Editor/HierarchyView.h"
-#include "Editor/EditorEvents.h"
-#include "Editor/Editor.h"
-#include "Editor/DefaultFactory.h"
+//#include "Editor/EditorEvents.h"
+//#include "Editor/Editor.h"
+//#include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
+#include "Editor/EditorMain.h"
 
 #include "Object/GameObject.h"
 #include "Component/Camera.h"
 #include "Component/Transform.h"
 
 #include "System/Scene/Scene.h"
+#include "System/Scene/SceneSystem.h"
 #include "System/Camera/CameraSystem.h"
 #include "System/Driver/Driver.h"
 
@@ -34,8 +36,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 constexpr float DEFAULT_WIDTH = 300;
 constexpr float DEFAULT_HEIGHT = 300;
 
-namespace Dystopia
+namespace Editor
 {
+	/*
 	static HierarchyView* gpInstance = 0;
 	HierarchyView* HierarchyView::GetInstance()
 	{
@@ -44,40 +47,34 @@ namespace Dystopia
 		gpInstance = new HierarchyView{};
 		return gpInstance;
 	}
+	*/
 
 	HierarchyView::HierarchyView()
-		: EditorTab{ false },
+		: //EditorTab{ false },
 		mLabel{ "Hierarchy" }, 
 		mSearchText{ "" }, 
 		mPopupID{ "CreateGameObjFromHierarchy" }, 
 		mSearchTextPrevFrame{ "" }, mArrSearchID{ 200 }
 	{
+		EditorPanel::SetOpened(true);
 	}
 
 	HierarchyView::~HierarchyView()
 	{
-		gpInstance = nullptr;
+		//gpInstance = nullptr;
 	}
 
-	void HierarchyView::Init()
+	void HierarchyView::Load(void)
+	{}
+
+	bool HierarchyView::Init(void)
 	{
+		return true;
 	}
 
-	void HierarchyView::Update(const float& _dt)
+	void HierarchyView::Update(float)
 	{
-		_dt;
-
 		UpdateSearch();
-	}
-
-	void HierarchyView::Shutdown()
-	{
-		mArrSearchID.clear();
-	}
-
-	std::string HierarchyView::GetLabel() const
-	{
-		return mLabel;
 	}
 
 	void HierarchyView::EditorUI()
@@ -121,12 +118,31 @@ namespace Dystopia
 		EGUI::EndChild();
 	}
 
+	void HierarchyView::Shutdown(void)
+	{
+		mArrSearchID.clear();
+	}
+
+	void HierarchyView::Message(eEMessage)
+	{}
+
+	void HierarchyView::SaveSettings(Dystopia::TextSerialiser&) const
+	{}
+
+	void HierarchyView::LoadSettings(Dystopia::TextSerialiser&)
+	{}
+
+	HashString HierarchyView::GetLabel() const
+	{
+		return mLabel;
+	}
+
 	void HierarchyView::CreateButton()
 	{
 		EGUI::Indent(5);
-		if (EGUI::Display::Button("Create", Math::Vec2{ 50, 22 }))
+		if (EGUI::Display::Button("Create"))
 		{
-			EGUI::Display::OpenPopup(mPopupID);
+			EGUI::Display::OpenPopup(mPopupID.c_str());
 		}
 		EGUI::UnIndent(5);
 		CreatePopup();
@@ -144,11 +160,13 @@ namespace Dystopia
 
 	void HierarchyView::UpdateSearch()
 	{
+		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		std::string toBeSearched{ mSearchText };
 		if (toBeSearched != std::string{ mSearchTextPrevFrame })
 		{
 			mArrSearchID.clear();
-			for (auto& e : GetCurrentScene()->GetAllGameObjects())
+			auto allObj = ss->GetCurrentScene().GetAllGameObjects();
+			for (auto& e : allObj)
 			{
 				std::string item{ e.GetName() };
 				auto it = std::search(item.begin(), item.end(), toBeSearched.begin(), toBeSearched.end(),
@@ -168,56 +186,57 @@ namespace Dystopia
 
 	void HierarchyView::CreatePopup()
 	{
-		if (EGUI::Display::StartPopup(mPopupID))
+		if (EGUI::Display::StartPopup(mPopupID.c_str()))
 		{
 			if (EGUI::Display::SelectableTxt("GameObject"))
 			{
 				strcpy_s(mSearchTextPrevFrame, "");
-				GameObject* p = Factory::CreateGameObj("GameObject");
-				p->SetFlag(eObjFlag::FLAG_LAYER_WORLD);
-				GetCommandHND()->InvokeCommandInsert(*p, *GetCurrentScene());
+				//Dystopia::GameObject* p = Dystopia::Factory::CreateGameObj("GameObject");
+				//p->SetFlag(Dystopia::eObjFlag::FLAG_LAYER_WORLD);
+				//GetCommandHND()->InvokeCommandInsert(*p, *GetCurrentScene());
 			}
 
-			if (EGUI::Display::SelectableTxt("Camera"))
-			{
-				//strcpy_s(mSearchTextPrevFrame, "");
-				//GameObject* p = Factory::CreateCamera("Camera");
-				//GetCommandHND()->InvokeCommand(new ComdInsertObject{ p, GetCurrentScene() });
-			}
+			//if (EGUI::Display::SelectableTxt("Camera"))
+			//{
+			//	//strcpy_s(mSearchTextPrevFrame, "");
+			//	//GameObject* p = Factory::CreateCamera("Camera");
+			//	//GetCommandHND()->InvokeCommand(new ComdInsertObject{ p, GetCurrentScene() });
+			//}
 			EGUI::Display::EndPopup();
 		}
 	}
 
-	void HierarchyView::SelectedObj(GameObject& _obj)
+	void HierarchyView::SelectedObj(Dystopia::GameObject& _obj)
 	{
-		auto ed = GetMainEditor();
+		auto ed = EditorMain::GetInstance();// GetMainEditor();
 		bool exist = false;
-		for (const auto& id : ed->GetSelectionObjects())
-		{
-			if (id->GetID() == _obj.GetID())
-			{
-				ed->RemoveSelection(_obj.GetID());
-				exist = true;
-				break;
-			}
-		}
-		if (!exist)
-			ed->AddSelection(_obj.GetID());
+		//for (const auto& id : ed->GetSelectionObjects())
+		//{
+		//	if (id->GetID() == _obj.GetID())
+		//	{
+		//		ed->RemoveSelection(_obj.GetID());
+		//		exist = true;
+		//		break;
+		//	}
+		//}
+		//if (!exist)
+		//	ed->AddSelection(_obj.GetID());
 	}
 
-	void HierarchyView::GameObjectPopups(GameObject& _obj)
+	void HierarchyView::GameObjectPopups(Dystopia::GameObject& _obj)
 	{
 		if (ImGui::BeginPopupContextItem())
 		{
-			GetMainEditor()->NewSelection(_obj.GetID());
+			auto ed = EditorMain::GetInstance();// GetMainEditor();
+			//ed->NewSelection(_obj.GetID());
 			if (EGUI::Display::SelectableTxt("Duplicate"))
 			{
-				GetMainEditor()->EditorCopy();
-				GetMainEditor()->EditorPaste();
+				//ed->EditorCopy();
+				//ed->EditorPaste();
 			}
 			if (EGUI::Display::SelectableTxt("Delete"))
 			{
-				GetCommandHND()->InvokeCommandDelete(_obj, *GetCurrentScene());
+				//GetCommandHND()->InvokeCommandDelete(_obj, *GetCurrentScene());
 			}
 			ImGui::EndPopup();
 		}
@@ -230,34 +249,38 @@ namespace Dystopia
 	
 	void HierarchyView::ShowGameObjects(void)
 	{
-		auto& arrayOfGameObjects = GetCurrentScene()->GetAllGameObjects();
-		const auto& selections = GetMainEditor()->GetSelectionObjects();
+		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
+		auto& arrayOfGameObjects = ss->GetCurrentScene().GetAllGameObjects();// GetCurrentScene()->GetAllGameObjects();
+
+		auto ed = EditorMain::GetInstance(); // GetMainEditor();
+		//const auto& selections = ed->GetSelectionObjects();
 		for (auto& obj : arrayOfGameObjects)
 		{
-			if (obj.GetComponent<Transform>()->GetParent())
+			if (obj.GetComponent<Dystopia::Transform>()->GetParent())
 				continue;
 
-			if (obj.GetComponent<Transform>()->GetAllChild().size())
-				ShowAsParent(obj, selections);
+			if (obj.GetComponent<Dystopia::Transform>()->GetAllChild().size())
+				;// ShowAsParent(obj, selections);
 			else
-				ShowAsChild(obj, selections);
+				;// ShowAsChild(obj, selections);
 		}
 
 		EGUI::Display::Dummy(Size().x, 50.f);
 		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
-			GameObject *t = GetCurrentScene()->FindGameObject(*id);
+			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id);
 
-			auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Transform>()->GetParent());
-			auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, nullptr);
-			EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
+			//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
+			//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, nullptr);
+			//EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
 
 			EGUI::Display::EndPayloadReceiver();
 		}
 	}
 
-	void HierarchyView::ShowAsParent(GameObject& _obj, const AutoArray<GameObject*>& _arr)
+	void HierarchyView::ShowAsParent(Dystopia::GameObject& _obj, const AutoArray<Dystopia::GameObject*>& _arr)
 	{
+		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		bool selected = false;
 		bool clicked = false;
 		for (auto& o : _arr)
@@ -278,11 +301,11 @@ namespace Dystopia
 		}
 		if (uint64_t *id2 = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
-			GameObject *t = GetCurrentScene()->FindGameObject(*id2);
+			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id2);
 
-			auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Transform>()->GetParent());
-			auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Transform>());
-			EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
+			//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
+			//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>());
+			//EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
 
 			EGUI::Display::EndPayloadReceiver();
 		}
@@ -293,10 +316,10 @@ namespace Dystopia
 			if (clicked) 
 				SelectedObj(_obj);
 
-			auto& arrChild = _obj.GetComponent<Transform>()->GetAllChild();
+			auto& arrChild = _obj.GetComponent<Dystopia::Transform>()->GetAllChild();
 			for (auto& c : arrChild)
 			{
-				GameObject *childObj = c->GetOwner();
+				Dystopia::GameObject *childObj = c->GetOwner();
 				if (childObj)
 				{
 					EGUI::Indent(20);
@@ -313,8 +336,9 @@ namespace Dystopia
 			SelectedObj(_obj);
 	}
 
-	void HierarchyView::ShowAsChild(GameObject& _obj, const AutoArray<GameObject*>& _arr)
+	void HierarchyView::ShowAsChild(Dystopia::GameObject& _obj, const AutoArray<Dystopia::GameObject*>& _arr)
 	{
+		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		bool selected = false;
 		for (auto& o : _arr)
 		{
@@ -336,11 +360,11 @@ namespace Dystopia
 		}
 		if (uint64_t *id2 = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
-			GameObject *t = GetCurrentScene()->FindGameObject(*id2);
+			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id2);
 
-			auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Transform>()->GetParent());
-			auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Transform>());
-			EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
+			//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
+			//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>());
+			//EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
 
 			EGUI::Display::EndPayloadReceiver();
 		}

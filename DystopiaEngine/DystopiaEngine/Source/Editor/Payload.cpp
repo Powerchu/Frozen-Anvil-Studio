@@ -28,13 +28,13 @@ namespace Dystopia
 		return static_cast<unsigned char>(::tolower(static_cast<unsigned char>(ch)));
 	}
 
-	CrawlItem::CrawlItem(const std::string& _name, const std::string& _path)
+	CrawlItem::CrawlItem(const HashString& _name, const HashString& _path)
 		: mName{ _name }, mPath{ _path }, mLowerCaseName{ mName }
 	{
 		std::transform(mLowerCaseName.begin(), mLowerCaseName.end(), mLowerCaseName.begin(), my_tolower);
 	}
 
-	Folder::Folder(const std::string& _name, const std::string& _path, Folder * const _parent)
+	Folder::Folder(const HashString& _name, const HashString& _path, Folder * const _parent)
 		: CrawlItem{ _name, _path }, mpParentFolder{ _parent }, mArrPtrFiles{}, mArrPtrFolders{}
 	{
 	}
@@ -48,7 +48,7 @@ namespace Dystopia
 	void Folder::Crawl()
 	{
 		WIN32_FIND_DATAA data;
-		std::string pathBuffer = mPath + "\\*";
+		HashString pathBuffer = mPath + "\\*";
 		HANDLE hfind = FindFirstFileA(pathBuffer.c_str(), &data);
 		if (hfind != INVALID_HANDLE_VALUE)
 		{
@@ -82,7 +82,7 @@ namespace Dystopia
 		mArrPtrFolders.clear();
 	}
 
-	Folder* Folder::FindFolder(const std::string& _name)
+	Folder* Folder::FindFolder(const HashString& _name)
 	{
 		Folder* temp = nullptr;
 		if (mName == _name) 
@@ -98,7 +98,7 @@ namespace Dystopia
 		return nullptr;
 	}
 
-	File::File(const std::string& _name, const std::string& _path, Folder * const _parent)
+	File::File(const HashString& _name, const HashString& _path, Folder * const _parent)
 		: CrawlItem{ _name, _path }, mpParentFolder{ _parent }, mTag{ DetermineTag(_name) }
 	{}
 
@@ -112,23 +112,23 @@ namespace Dystopia
 		return mName.compare(rhs.mName) <= 0;
 	}
 
-	EGUI::ePayloadTags File::DetermineTag(const std::string& _name)
+	EGUI::ePayloadTags File::DetermineTag(const HashString& _name)
 	{
-		if (_name.find(g_PayloadPngEx) == _name.length() - 3)
+		if (_name.find(g_PayloadPngEx.c_str()) == _name.length() - 3)
 			return EGUI::ePayloadTags::PNG;
-		else if (_name.find(g_PayloadBmpEx) == _name.length() - 3)
+		else if (_name.find(g_PayloadBmpEx.c_str()) == _name.length() - 3)
 			return EGUI::ePayloadTags::BMP;
-		else if (_name.find(g_PayloadCppEx) == _name.length() - 3)
+		else if (_name.find(g_PayloadCppEx.c_str()) == _name.length() - 3)
 			return EGUI::ePayloadTags::FILE;
-		else if (_name.find(g_PayloadPrefabEx) == _name.length() - 4)
+		else if (_name.find(g_PayloadPrefabEx.c_str()) == _name.length() - 4)
 			return EGUI::ePayloadTags::PREFAB;
-		else if (_name.find(g_PayloadSceneEx) == _name.length() - 6)
+		else if (_name.find(g_PayloadSceneEx.c_str()) == _name.length() - 6)
 			return EGUI::ePayloadTags::SCENE;
-		else if (_name.find(g_PayloadMp3Ex) == _name.length() - 3)
+		else if (_name.find(g_PayloadMp3Ex.c_str()) == _name.length() - 3)
 			return EGUI::ePayloadTags::MP3;
-		else if (_name.find(g_PayloadDDSEx) == _name.length() - 3)
+		else if (_name.find(g_PayloadDDSEx.c_str()) == _name.length() - 3)
 			return EGUI::ePayloadTags::DDS;
-		else if (_name.find(g_PayloadWavEx) == _name.length() - 3)
+		else if (_name.find(g_PayloadWavEx.c_str()) == _name.length() - 3)
 			return EGUI::ePayloadTags::WAV; 
 		return EGUI::ePayloadTags::UNKNOWN;
 	}

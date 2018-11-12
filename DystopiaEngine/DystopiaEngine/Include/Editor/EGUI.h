@@ -432,7 +432,7 @@ namespace EGUI
 		Usage:
 				EGUI::Display::Button("Demo", ImVec2{ 200, 20 });
 		======================================================================================================================= */
-		bool Button(const std::string& _label, const Math::Vec2& _size = Math::Vec2{ 50,18 });
+		bool Button(const std::string& _label, const Math::Vec2& _size = Math::Vec2{ 50, 24 });
 		/* =======================================================================================================================
 		Brief:
 				Creates a dummy area. Used only to offset ImGui stuff. Does absolutely nothing except for manipulating UI

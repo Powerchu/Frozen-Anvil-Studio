@@ -114,6 +114,7 @@ void Editor::EditorStates::StartFrame(void)
 		Save();
 	else if (input->IsHotkeyTriggered(mnQuit))
 		mbQuitAttempt = true;
+
 }
 
 void Editor::EditorStates::Update(float)

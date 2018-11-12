@@ -325,6 +325,7 @@ void Editor::EditorUI::Shutdown(void)
 		mFont = 0;
 	}
 	ImGui::DestroyContext(ImGui::GetCurrentContext());
+	EGUI::Docking::ShutdownTabs();
 }
 
 void Editor::EditorUI::Message(eEMessage)
