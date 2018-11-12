@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/ComponentList.h"
 
 #include "DataStructure/AutoArray.h"	// AutoArray
+#include "DataStructure/HashString.h"
 #include "Utility/MetaAlgorithms.h"		// MetaFind
 #include "System/Graphics/CharSpace.h"
 
@@ -68,12 +69,15 @@ namespace Dystopia
 		void SetFont(const char*);
 		void SetFont(const std::string&);
 
+		//TextRenderer* Duplicate(void) const;
+		void Serialise(TextSerialiser&) const;
+		void Unserialise(TextSerialiser&);
 
 		void EditorUI(void) noexcept override;
 
 	private:
 
-		AutoArray<unsigned char> mText;
+		HashString mText;
 		AutoArray<Vertex> mVerts;
 		AutoArray<CharSpace> mSpaces;
 

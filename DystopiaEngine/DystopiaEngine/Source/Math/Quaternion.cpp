@@ -66,12 +66,42 @@ Math::Vector4 _CALL Math::Quaternion::ToEuler(void) const
 	};
 }
 
-
-Math::Vector4 _CALL Math::Quaternion::Rotate(Vector4 _v) const noexcept
+Math::Quaternion __vectorcall Math::Slerp(Quaternion _q1, const Quaternion _q2, float _fRatio)
 {
-	const Vec4 temp = 2 * Math::Cross(mData, _v);
-	return _v + mData.wwww * temp + Math::Cross(mData, temp);
+	float c = Math::Dot(_q1, _q2);
+
+	if (c < .0f)
+	{
+		c = -c;
+		_q1 = Math::Negate<Math::NegateFlag::XYZW>(_q1);
+		// Ensure shortest path by negating the quaternion
+	}
+
+	// Too close
+	if (c > .9995f)
+		return Math::Lerp(_q1, _q2, _fRatio).Normalise();
+
+	float const angle = std::acosf(c);
+	float const s1 = std::sinf(angle);
+	float const s2 = 1.f / std::sinf(angle * _fRatio);
+
+	return ((std::cosf(angle * _fRatio) - c * s1 * s2) * _q1 + (s1 * s2) * _q2).Normalise();
 }
+
+Math::Quaternion __vectorcall Math::nLerp(const Quaternion _q1, const Quaternion _q2, float _fRatio)
+{
+	// Do spline interpolation to correct speed
+	// Reference https://www.gamedevs.org/uploads/orientation-representation.pdf slide 46
+	// Reference http://number-none.com/product/Hacking%20Quaternions/
+	float factor = 1.f - .7878088f * (Math::Dot(_q1, _q2));
+	factor *= factor;
+
+	float const C = .5069269f * factor;
+	float const t = (_fRatio * C) * (2 * _fRatio - 3.f) + (1.f + C);
+
+	return Math::Lerp(_q1, _q2, t).Normalise();
+}
+
 
 Math::Matrix4 __vectorcall Math::Quaternion::Matrix(void) const noexcept
 {

@@ -107,11 +107,12 @@ void Dystopia::TextureAtlas::SaveAtlas(Dystopia::TextSerialiser& _out) const noe
 		_out << e.uStart;
 		_out << e.vStart;
 		_out << e.uEnd;
-		_out << e.uEnd;
+		_out << e.vEnd;
 		_out << e.mRow;
 		_out << e.mCol;
 		_out.InsertEndBlock("SECTION");
 	}
+	_out.InsertStartBlock("DUMMY");
 }
 
 void Dystopia::TextureAtlas::LoadAtlas(Dystopia::TextSerialiser& _in) noexcept
@@ -128,10 +129,9 @@ void Dystopia::TextureAtlas::LoadAtlas(Dystopia::TextSerialiser& _in) noexcept
 		mSections.EmplaceBack();
 
 		_in >> mSections.back().uStart;
-		_in >> mSections.back().uStart;
 		_in >> mSections.back().vStart;
 		_in >> mSections.back().uEnd;
-		_in >> mSections.back().uEnd;
+		_in >> mSections.back().vEnd;
 		_in >> mSections.back().mRow;
 		_in >> mSections.back().mCol;
 		_in.ConsumeStartBlock();

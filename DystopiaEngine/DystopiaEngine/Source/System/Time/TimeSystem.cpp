@@ -91,12 +91,18 @@ void Dystopia::TimeSystem::Shutdown(void)
 
 float Dystopia::TimeSystem::GetDeltaTime(void) const noexcept
 {
-	return mbSimulateTime ? mfSimulatedDT : mTimeKeep.Elapsed();
+	return mfTimeScale * mbSimulateTime ? mfSimulatedDT : mTimeKeep.Elapsed();
 }
 
 float Dystopia::TimeSystem::GetFixedDeltaTime(void) const noexcept
 {
-	return mFixedDT * 1e-9f;
+	return mfTimeScale * mFixedDT * 1e-9f;
+}
+
+
+void Dystopia::TimeSystem::SetTimeScale(float _fTimeScale) noexcept
+{
+	mfTimeScale = _fTimeScale;
 }
 
 
@@ -109,7 +115,8 @@ void Dystopia::TimeSystem::LoadDefaults(void)
 {
 	mbSimulateTime = true;
 
-	mFixedDT = 20000000ll;
+	mfTimeScale   = 1.f;
+	mFixedDT      = 20000000ll;
 	mSimulatedDT  = 16666667ll;
 	mfSimulatedDT = 1.f / 60.f;
 }
@@ -121,6 +128,8 @@ void Dystopia::TimeSystem::LoadSettings(DysSerialiser_t&)
 
 void Dystopia::TimeSystem::SaveSettings(DysSerialiser_t& _out)
 {
+	_out << mbSimulateTime;
+	_out << mfTimeScale;
 	_out << mFixedDT;
 	_out << mSimulatedDT;
 	_out << mfSimulatedDT;
@@ -134,7 +143,7 @@ void Dystopia::TimeSystem::EditorUI(void)
 
 	if (mbSimulateTime)
 	{
-		switch (EGUI::Display::DragFloat("Simulated Timestep ", &mfSimulatedDT, .01f, .0001f, 1.f))
+		switch (EGUI::Display::DragFloat("Simulated Timestep ", &mfSimulatedDT, .001f, .0001f, 1.f))
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
 			//EGUI::GetCommandHND()->Make_FunctionModWrapper()
@@ -152,7 +161,7 @@ void Dystopia::TimeSystem::EditorUI(void)
 		}
 	}
 
-	switch (EGUI::Display::DragFloat("Fixed Timestep ", &fixedDT, .01f, .0001f, 1.f))
+	switch (EGUI::Display::DragFloat("Fixed Timestep     ", &fixedDT, .001f, .0001f, 1.f))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
 		break;
@@ -163,6 +172,21 @@ void Dystopia::TimeSystem::EditorUI(void)
 	case EGUI::eDragStatus::eDEACTIVATED:
 		mFixedDT = static_cast<int64_t>(fixedDT * 1e9f);
 		mAccumulatedDT = 0;
+	case EGUI::eDragStatus::eNO_CHANGE:
+		break;
+	}
+
+	switch (EGUI::Display::DragFloat("Time Scale         ", &mfTimeScale, .01f, .0001f, 10.f))
+	{
+	case EGUI::eDragStatus::eSTART_DRAG:
+		EGUI::GetCommandHND()->StartRecording(&TimeSystem::mfTimeScale);
+		break;
+	case EGUI::eDragStatus::eENTER:
+	case EGUI::eDragStatus::eTABBED:
+	case EGUI::eDragStatus::eEND_DRAG:
+	case EGUI::eDragStatus::eDEACTIVATED:
+		EGUI::GetCommandHND()->EndRecording();
+	case EGUI::eDragStatus::eDRAGGING:
 	case EGUI::eDragStatus::eNO_CHANGE:
 		break;
 	}

@@ -167,7 +167,7 @@ void Dystopia::SpriteRenderer::GetAtlas(void)
 {
 	if (auto tex = GetTexture())
 	{
-		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(tex->GetName());
+		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GenAtlas(tex);
 		LoadAnimIntoAtlas();
 	}
 }

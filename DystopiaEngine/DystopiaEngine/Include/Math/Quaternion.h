@@ -53,12 +53,14 @@ namespace Math
 		inline float _CALL Magnitude(void) const;
 		inline float _CALL MagnitudeSqr(void) const;
 
-		inline Quaternion& _CALL Conjugate(void) noexcept;
+		inline float _CALL Dot(const Quaternion);
 
 		template <NegateFlag FLAGS>
 		inline Quaternion& _CALL Negate(void) noexcept;
+		inline Quaternion& _CALL Conjugate(void) noexcept;
 
-		Vector4 _CALL Rotate(Vector4) const noexcept;
+		inline Vector4 _CALL Rotate (Vector4) const noexcept;
+		inline Vector4 _CALL Reflect(Vector4) const noexcept;
 
 		Matrix4 _CALL Matrix(void) const noexcept;
 
@@ -95,7 +97,7 @@ namespace Math
 	inline Quaternion _CALL Normalise(const Quaternion);
 
 	// Computes the dot product of two Quaternions
-	//inline float _CALL Dot(const Quaternion, const Quaternion);
+	inline float _CALL Dot(const Quaternion, const Quaternion);
 
 	// Computes the cross product of two Quaternions
 	//inline Quaternion _CALL Cross(const Quaternion, const Quaternion);
@@ -103,9 +105,15 @@ namespace Math
 	// Projects lhs onto rhs
 	//inline Quaternion _CALL Project(const Quaternion, const Quaternion);
 
+	template <NegateFlag FLAGS>
+	inline Quaternion _CALL Negate(const Quaternion) noexcept;
 	inline Quaternion _CALL Conjugate(const Quaternion);
 
-	inline Vector4 _CALL Reflect(const Vector4, const Quaternion);
+	Quaternion _CALL Slerp(const Quaternion, const Quaternion, float _fRatio);
+	Quaternion _CALL nLerp(const Quaternion, const Quaternion, float _fRatio);
+
+	inline Vector4 _CALL Rotate (const Vector4, const Quaternion);
+	//inline Vector4 _CALL Reflect(const Vector4, const Quaternion);
 
 	inline Matrix4 _CALL Matrix(const Quaternion) noexcept;
 
@@ -171,6 +179,20 @@ inline Math::Quaternion _CALL Math::Normalise(Quaternion _Q)
 	return _Q.Normalise();
 }
 
+
+template <Math::NegateFlag FLAGS>
+inline Math::Quaternion& _CALL Math::Quaternion::Negate(void) noexcept
+{
+	mData.Negate<FLAGS>();
+	return *this;
+}
+
+template <Math::NegateFlag FLAGS>
+inline Math::Quaternion _CALL Math::Negate(Quaternion _Q) noexcept
+{
+	return _Q.Negate<FLAGS>();
+}
+
 inline Math::Quaternion& _CALL Math::Quaternion::Conjugate(void) noexcept
 {
 	mData.Negate<NegateFlag::XYZ>();
@@ -193,17 +215,44 @@ inline float _CALL Math::Quaternion::MagnitudeSqr(void) const
 	return mData.MagnitudeSqr();
 }
 
-template <Math::NegateFlag FLAGS>
-inline Math::Quaternion& _CALL Math::Quaternion::Negate(void) noexcept
+inline float _CALL Math::Quaternion::Dot(const Quaternion _Q)
 {
-	mData.Negate<FLAGS>();
-	return *this;
+	return mData.Dot(_Q.mData);
 }
+
+inline float _CALL Math::Dot(Quaternion _lhs, const Quaternion _rhs)
+{
+	return _lhs.Dot(_rhs);
+}
+
 
 inline Math::Matrix4 _CALL Math::Matrix(const Quaternion _Q) noexcept
 {
 	return _Q.Matrix();
 }
+
+
+inline Math::Vector4 _CALL Math::Quaternion::Rotate(Vector4 _v) const noexcept
+{
+	const Vec4 temp = 2 * Math::Cross(mData, _v);
+	return _v + mData.wwww * temp + Math::Cross(mData, temp);
+}
+
+inline Math::Vector4 _CALL Math::Rotate(const Vector4 _v, const Quaternion _Q)
+{
+	return _Q.Rotate(_v);
+}
+
+//inline Math::Vector4 _CALL Math::Quaternion::Reflect(Vector4 _v) const noexcept
+//{
+//	const Vec4 temp = 2 * Math::Cross(mData, _v);
+//	return _v + mData.wwww * temp + Math::Cross(mData, temp);
+//}
+//
+//inline Math::Vector4 _CALL Math::Reflect(const Vector4 _v, const Quaternion _Q)
+//{
+//	return _Q.Rotate(_v);
+//}
 
 
 

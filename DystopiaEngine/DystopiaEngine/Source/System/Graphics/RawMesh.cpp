@@ -58,16 +58,16 @@ void Dystopia::RawMesh::BuildMesh(AutoArray<Vertex>& _pVtx, AutoArray<UV>& _pUVs
 	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, mVtxBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _pVtx.size(), &_pVtx[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _pVtx.size(), _pVtx.begin(), GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex) * 2, 0);						                    // Vertices
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex) * 2, static_cast<char*>(0) + sizeof(Vertex));	// Normals
 
 	glBindBuffer(GL_ARRAY_BUFFER, mUVBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(UV) * _pUVs.size(), &_pUVs[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(UV) * _pUVs.size(), _pUVs.begin(), GL_STATIC_DRAW);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(UV), 0);												// UV
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(short) * _nIndices.size(), &_nIndices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(short) * _nIndices.size(), _nIndices.begin(), GL_STATIC_DRAW);
 
 	UnbindMesh();
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

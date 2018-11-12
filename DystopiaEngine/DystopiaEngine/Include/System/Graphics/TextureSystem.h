@@ -39,16 +39,18 @@ namespace Dystopia
 		void Shutdown(void) noexcept;
 
 		template <typename Ty = Texture>
-		Ty* GetTexture(const std::string& _strName);
+		Ty* GetTexture(std::string const& _strName);
 
-		TextureAtlas* GenAtlas(void);
-		TextureAtlas* GetAtlas(const std::string& _strName);
+		TextureAtlas* GenAtlas(Texture* = nullptr);
+		TextureAtlas* GetAtlas(std::string const& _strName);
 
 		template <typename Ty = Texture>
-		Ty* LoadTexture(const std::string&);
+		Ty* LoadTexture(std::string const&);
 
 		template <typename Ty>
-		Ty* LoadRaw(Image const *);
+		Ty* LoadRaw(Image const*);
+		template <typename Ty>
+		Ty* LoadRaw(Image const*, std::string const&);
 
 	private:
 
@@ -66,19 +68,19 @@ namespace Dystopia
 
 
 template <typename Ty>
-Ty* Dystopia::TextureSystem::GetTexture(const std::string& _strName)
+Ty* Dystopia::TextureSystem::GetTexture(std::string const& _strName)
 {
 	auto it = Ut::Find(mTextures.begin(), mTextures.end(), [&_strName](const Texture& _t) {
 		return _strName == _t.GetName();
 	});
 
-	if (it) return static_cast<Ty*>(&*it);
+	if (it != mTextures.end()) return static_cast<Ty*>(&*it);
 	
 	return nullptr;
 }
 
 template<typename Ty>
-Ty* Dystopia::TextureSystem::LoadTexture(const std::string& _strPath)
+Ty* Dystopia::TextureSystem::LoadTexture(std::string const& _strPath)
 {
 	auto it = Ut::Find(mTextures.begin(), mTextures.end(), [&_strPath](const Texture& _t) {
 		return _strPath == _t.GetPath();
@@ -115,12 +117,22 @@ Ty* Dystopia::TextureSystem::LoadTexture(const std::string& _strPath)
 }
 
 template <>
-Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(const std::string&);
+Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(std::string const&);
 
 template<typename Ty>
 Ty* Dystopia::TextureSystem::LoadRaw(Image const *_ptr)
 {
 	auto ret = mTextures.EmplaceAs<Ty>(std::to_string(reinterpret_cast<uintptr_t>(_ptr)));
+
+	ret->LoadTexture(_ptr);
+
+	return ret;
+}
+
+template<typename Ty>
+Ty* Dystopia::TextureSystem::LoadRaw(Image const *_ptr, std::string const& _strName)
+{
+	auto ret = mTextures.EmplaceAs<Ty>(_strName);
 
 	ret->LoadTexture(_ptr);
 
