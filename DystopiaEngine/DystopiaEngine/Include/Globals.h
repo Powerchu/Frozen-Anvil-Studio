@@ -44,7 +44,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_START_TRY	
 #define _EDITOR_CATCH(_X_)	
 #define _EDITOR_END_TRY		
-#define _EDITOR_THROW(_X_)	
+#define _EDITOR_THROW(_X_)
 #define _EDITOR_CODE(_X_)
 #define _GAME_NOEXCEPT		noexcept
 

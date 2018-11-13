@@ -23,14 +23,14 @@ namespace
 	template <typename T, typename U>
 	struct _DLL_EXPORT TupleBase;
 
-	template <typename T>
+	template <unsigned, typename T>
 	struct _DLL_EXPORT TupleLeaf
 	{
 		T value;
 	};
 
 	template <template <unsigned ...> class R, unsigned ... Ns, template <typename ...> class T, typename ... Ty>
-	struct _DLL_EXPORT TupleBase <R<Ns...>, T<Ty...>> : public TupleLeaf<Ty> ...
+	struct _DLL_EXPORT TupleBase <R<Ns...>, T<Ty...>> : public TupleLeaf<Ns, Ty> ...
 	{};
 }
 
@@ -60,7 +60,7 @@ template <typename ... T> template <unsigned _Index>
 inline decltype(auto) Tuple<T...>::Get(void) noexcept
 {
 	static_assert(_Index < sizeof...(T), "Tuple: Get Index out of Range!");
-	return (static_cast<TupleLeaf<Ut::MetaExtract_t<_Index, Tuple<T...>>>&>(*this).value);
+	return (static_cast<TupleLeaf<_Index, Ut::MetaExtract_t<_Index, Tuple<T...>>>&>(*this).value);
 }
 
 
