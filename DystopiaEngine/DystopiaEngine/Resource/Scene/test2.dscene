@@ -1,19 +1,19 @@
 [START_Scene]
-174587904,test2,2,[START_START_GO_DATA]
-18446744072565031424,97,Scene Camera,
+18446744073487777792,"test2",2,[START_START_GO_DATA]
+18446744072832942592,97,"Scene Camera",
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.703684,0.703684,1,16.1089,42.0506,0,0,0,0,1,0,
+1,1,1,0,0,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 [START_START_GO_DATA]
-490214400,65,Floor,
+18446744072201177600,65,"GameObject",
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-153.4,20.4,1,-98.6217,-21.5224,0,0,0,0,1,0,
+100,100,1,-143.5,-20.5,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -22,7 +22,7 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Camera]
-18446744072565032448,0,18446744072565031424,0,1,
+18446744072832943616,0,18446744072832942592,0,0,
 [END_Camera]
 
 [END_Component End]
@@ -30,26 +30,17 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-1,
+0,
 [END_ComponentDonor End]
-[START_Component]
-[START_RigidBody]
-749215232,1,490214400,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
-[END_RigidBody]
-
-[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-1,
+0,
 [END_ComponentDonor End]
-[START_Component]
-[START_Convex_Collider]
-1127226368,1,490214400,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.966,1,1,0,0,0,1,0,
-[END_Convex_Collider]
-
-[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
@@ -60,24 +51,10 @@
 1,
 [END_ComponentDonor End]
 [START_Component]
-[START_Renderer]
-18446744073387121152,1,490214400,..\DystopiaEngine\Resource\Asset\Environment\Prologue\bridge_ledge.png,
-[END_Renderer]
-[START_Sprite Renderer]
-0,0.016,0,0,
-[END_Sprite Renderer]
-
+18446744073593163776,1,18446744072201177600,"Times New Roman.ttf","Haha",
 [END_Component End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-5,[START_str]
-CharacterController,0,[START_str]
-Fireball,0,[START_str]
-FollowTarget,0,[START_str]
-Missle,0,[START_str]
-Parallax,0,
+0,
 [END_BEHAVIOUR_SYSTEM_BLOCK]
 
 [END_Scene]
