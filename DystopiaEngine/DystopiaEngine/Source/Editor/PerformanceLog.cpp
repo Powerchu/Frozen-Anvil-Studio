@@ -124,10 +124,10 @@ namespace Editor //Dystopia
 	void PerformanceLog::Message(eEMessage)
 	{}
 
-	void PerformanceLog::SaveSettings(Dystopia::TextSerialiser& _out) const
+	void PerformanceLog::SaveSettings(Dystopia::TextSerialiser&) const
 	{}
 
-	void PerformanceLog::LoadSettings(Dystopia::TextSerialiser& _in)
+	void PerformanceLog::LoadSettings(Dystopia::TextSerialiser&)
 	{}
 
 	HashString PerformanceLog::GetLabel(void) const

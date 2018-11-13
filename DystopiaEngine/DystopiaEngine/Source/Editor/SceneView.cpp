@@ -196,10 +196,10 @@ namespace Editor //Dystopia
 	void SceneView::Message(eEMessage)
 	{}
 
-	void SceneView::SaveSettings(Dystopia::TextSerialiser& _out) const
+	void SceneView::SaveSettings(Dystopia::TextSerialiser&) const
 	{}
 
-	void SceneView::LoadSettings(Dystopia::TextSerialiser& _in)
+	void SceneView::LoadSettings(Dystopia::TextSerialiser&)
 	{}
 
 	HashString SceneView::GetLabel(void) const

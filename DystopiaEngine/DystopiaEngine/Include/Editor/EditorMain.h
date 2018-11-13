@@ -32,9 +32,9 @@ namespace Editor
 	{
 	public:
 		using ESystems = Ut::MetaSortT_t < Ut::MetaLessThan, Ut::Collection <
-			Ut::Indexer<0u, class EInput>,
-			Ut::Indexer<1u, class EditorUI>,
-			Ut::Indexer<2u, class EditorStates>,
+			Ut::Indexer<0u, class EditorStates>,
+			Ut::Indexer<1u, class EInput>,
+			Ut::Indexer<2u, class EditorUI>,
 			Ut::Indexer<3u, class EditorClipboard>,
 			Ut::Indexer<4u, class EditorResource>,
 			Ut::Indexer<5u, class EditorCommands>

@@ -168,53 +168,7 @@ void Editor::EditorUI::StartFrame(void)
 }
 
 void Editor::EditorUI::Update(float)
-{
-	ImGuiIO&	io			=	ImGui::GetIO();
-	auto		input		=	EditorMain::GetInstance()->GetSystem<EInput>();
-	const auto&	iquene		=	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetInputQueue();
-	bool		shft		=	input->GetInputManager()->IsKeyPressed(eButton::KEYBOARD_SHIFT);
-	float		scrollV		=	input->GetInputManager()->GetMouseWheel();
-	if (scrollV)
-		int i = 5;
-	io.KeysDown[eButton::KEYBOARD_ENTER] = false;
-	io.KeysDown[eButton::KEYBOARD_ESCAPE] = false;
-	for (int i = eButton::KEYBOARD_BACKSPACE; i <= eButton::KEYBOARD_TAB; ++i)
-		io.KeysDown[i] = false;
-	for (int i = eButton::KEYBOARD_SPACEBAR; i <= eButton::KEYBOARD_HOME; ++i)
-		io.KeysDown[i] = false;
-	for (int i = eButton::KEYBOARD_LEFT; i <= eButton::KEYBOARD_DOWN; ++i)
-		io.KeysDown[i] = false;
-	for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
-		io.KeysDown[i] = false;
-
-	if (scrollV)
-	{
-		io.MouseWheelH += 0;
-		io.MouseWheel += scrollV;
-	}
-
-	io.KeyShift				=	shft;
-	io.KeyAlt				=	input->GetInputManager()->IsKeyPressed(eButton::KEYBOARD_ALT);
-	io.KeyCtrl				=	input->GetInputManager()->IsKeyPressed(eButton::KEYBOARD_CTRL);
-
-	for (const auto& k : iquene)
-	{
-		if (k >= eButton::KEYBOARD_0 && k <= eButton::KEYBOARD_9)
-			io.AddInputCharacter(k);
-		else if (k >= eButton::KEYBOARD_A && k <= eButton::KEYBOARD_Z)
-			io.AddInputCharacter(shft ? k : k + 32);
-		else if (k >= eButton::KEYBOARD_NUMPAD_0 && k <= eButton::KEYBOARD_NUMPAD_9)
-			io.AddInputCharacter(k - 48);
-		else if (k == eButton::KEYBOARD_OEM_PERIOD)
-			io.AddInputCharacter(46);
-		else if (k == eButton::KEYBOARD_OEM_MINUS)
-			io.AddInputCharacter(shft ? 95 : 45);
-		else if (k == eButton::KEYBOARD_SPACEBAR)
-			io.AddInputCharacter(32);
-		else
-			io.KeysDown[k] = true;
-	}
-}
+{}
 
 void Editor::EditorUI::EndFrame(void)
 {

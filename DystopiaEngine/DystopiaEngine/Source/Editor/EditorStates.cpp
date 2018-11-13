@@ -82,6 +82,8 @@ bool Editor::EditorStates::Init(void)
 
 void Editor::EditorStates::StartFrame(void)
 {
+	/******************************** NO UI TO BE CALLED HERE ********************************/
+
 	float dt = Editor::EditorMain::GetInstance()->GetDeltaTime();
 	switch (mState)
 	{
@@ -115,6 +117,7 @@ void Editor::EditorStates::StartFrame(void)
 	else if (input->IsHotkeyTriggered(mnQuit))
 		mbQuitAttempt = true;
 
+	/******************************** NO UI TO BE CALLED HERE ********************************/
 }
 
 void Editor::EditorStates::Update(float)
