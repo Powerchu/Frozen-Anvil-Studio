@@ -138,6 +138,25 @@ namespace Ut
 		return _dest;
 	}
 
+	template <class OutIt, class InIt, class = EnableIf_t<
+		IsConvertible<Decay_t<decltype(*declval<OutIt>())>, Decay_t<decltype(*declval<InIt>())>>::value>>
+	InIt Copy(OutIt _begin, const OutIt& _end, InIt _dest)
+	{
+		while (_begin != _end)
+		{
+			*_dest = *_begin;
+			++_dest; ++_begin;
+		}
+
+		return _dest;
+	}
+
+	template <class Container, class It>
+	RemoveRef_t<It> Copy(Container&& _container, It&& _dest)
+	{
+		return Copy(_container.begin(), _container.end(), Forward<It>(_dest));
+	}
+
 
 	// Swaps lhs with rhs
 	template<typename T>

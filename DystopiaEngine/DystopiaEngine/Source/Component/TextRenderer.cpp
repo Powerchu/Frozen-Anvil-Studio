@@ -23,8 +23,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Shader.h"
 #include "System/Graphics/GraphicsSystem.h"
 
+#include "Object/GameObject.h"
+
 #if EDITOR
 #include "Editor/EGUI.h"
+#include "Editor/Payloads.h"
 #endif
 
 #include <GL/glew.h>
@@ -171,13 +174,36 @@ void Dystopia::TextRenderer::Unserialise(TextSerialiser& _in)
 
 void Dystopia::TextRenderer::EditorUI(void) noexcept
 {
-	static char strText[256];
-	if (EGUI::Display::TextField("Text", strText, 256))
+	char buf[256]{ };
+
+	Ut::Copy(mText, &buf[0]);
+	if (EGUI::Display::TextField("Text ", buf, 256, true, 225))
 	{
 		mText.clear();
-		mText = strText;
+		mText = buf;
 
 		RegenMesh();
+	}
+	EGUI::Display::EmptyBox("Font ", 200, (mpAtlas) ? mpAtlas->GetName() : "-empty-", true);
+
+	Dystopia::File* t = nullptr;
+	if (auto i = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::TTF))
+	{
+		t = i;
+		EGUI::Display::EndPayloadReceiver();
+	}
+
+	if (t)
+	{
+		SetFont(t->mName);
+	}
+
+	EGUI::SameLine();
+	if (EGUI::Display::IconCross("Clear", 8.f))
+	{
+		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(static_cast<void(TextRenderer::*)(const char*)>(&TextRenderer::SetFont), mpAtlas->GetName().c_str());
+		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(static_cast<void(TextRenderer::*)(const char*)>(&TextRenderer::SetFont), "");
+		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 	}
 }
 
