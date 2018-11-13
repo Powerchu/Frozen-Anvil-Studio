@@ -14,7 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EDITOR_RESOURCE_H_
 #define _EDITOR_RESOURCE_H_
 #include "Editor/EditorSystem.h"
-
 #include "DataStructure/HashString.h"
 
 namespace Editor

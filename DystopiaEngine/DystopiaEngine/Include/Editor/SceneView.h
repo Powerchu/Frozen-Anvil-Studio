@@ -25,6 +25,7 @@ namespace Dystopia
 	class GameObject;
 	class Camera;
 	class Texture;
+	class SceneSystem;
 }
 
 namespace Editor
@@ -45,7 +46,7 @@ namespace Editor
 		void SaveSettings(Dystopia::TextSerialiser& _out) const;
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 		HashString GetLabel(void) const;
-		~SceneView(void)
+		~SceneView(void);
 
 		void SetSensitivity(float);
 		float GetSensitivity(void) const;
@@ -65,44 +66,46 @@ namespace Editor
 			eZOOM_NONE
 		};
 
-		eGizTool		mCurrGizTool;
-		bool			mGizmoHovered;
-		bool			mClearSelection;
-		bool			mDragging;
-		bool			mAmFocused;
-		float			mSensitivity;
-		float			mMoveSens;
-		eZoom			mToZoom;
-		HashString		mLabel;
-		Dystopia::GraphicsSystem *mpGfxSys;
-		Dystopia::Camera *mpSceneCamera;
-		Math::Vec2		mImgSize;
-		Math::Vec2		mImgPos;
-		Math::Vec2		mPrevMovePoint;
-		
-		void			ScrollIn();
-		void			ScrollOut();
-		void			SceneChanged();
-		void			Zoom(bool);
-		void			Move();
-		Dystopia::GameObject* FindMouseObject();
-		void			ResetMouseEvents();
-		void			CheckMouseEvents();
-		void			AcceptPrefab(::Editor::File *t);
-		void			AcceptTexture(::Editor::File *t);
-		Math::Pt3D		GetWorldClickPos(const Dystopia::Camera * const _cam) const;
-		void			AdjustImageSize(Dystopia::Texture*);
-		void			AdjustDisplayPos(void);
-		Math::Vec2		GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY);
-		Math::Vec2		GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY);
-		Math::Vec2		GetWorldToScreen(const Math::Pt3D&);
-		Dystopia::Camera* GetCamera();
-		void			DrawGizmos(void);
-		void			DrawGizmoSingle(Dystopia::GameObject&);
-		void			DrawGizmoMul(const AutoArray<Dystopia::GameObject*>&);
+		bool		mGizmoHovered;
+		bool		mClearSelection;
+		bool		mDragging;
+		bool		mAmFocused;
+		float		mSensitivity;
+		float		mMoveSens;
+		eZoom		mToZoom;
+		eGizTool	mCurrGizTool;
+		HashString	mLabel;
+		Math::Vec2	mImgSize;
+		Math::Vec2	mImgPos;
+		Math::Vec2	mPrevMovePoint;
 
-		void			SetGizmoTranslate(void);
-		void			SetGizmoScaler(void);
+		Dystopia::Camera			*mpSceneCamera;
+		Dystopia::GraphicsSystem	*mpGfxSys;
+		Dystopia::SceneSystem		*mpSceneSys;
+
+		Dystopia::GameObject*	FindMouseObject();
+		Dystopia::Camera*		GetCamera();
+
+		Math::Pt3D	GetWorldClickPos(const Dystopia::Camera * const _cam) const;
+		Math::Vec2	GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY);
+		Math::Vec2	GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY);
+		Math::Vec2	GetWorldToScreen(const Math::Pt3D&);
+		void		ScrollIn();
+		void		ScrollOut();
+		void		SceneChanged();
+		void		Zoom(bool);
+		void		Move();
+		void		ResetMouseEvents();
+		void		CheckMouseEvents();
+		void		AcceptPrefab(::Editor::File *t);
+		void		AcceptTexture(::Editor::File *t);
+		void		AdjustImageSize(Dystopia::Texture*);
+		void		AdjustDisplayPos(void);
+		void		DrawGizmos(void);
+		void		DrawGizmoSingle(Dystopia::GameObject&);
+		void		DrawGizmoMul(const AutoArray<Dystopia::GameObject*>&);
+		void		SetGizmoTranslate(void);
+		void		SetGizmoScaler(void);
 	};
 
 }

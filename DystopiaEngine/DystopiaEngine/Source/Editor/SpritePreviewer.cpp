@@ -19,20 +19,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Driver/Driver.h"
 
-Dystopia::SpritePreviewer* gpInstance = 0;
+//Dystopia::SpritePreviewer* gpInstance = 0;
+//
+//Dystopia::SpritePreviewer* Dystopia::SpritePreviewer::GetInstance(void)
+//{
+//	if (gpInstance) return gpInstance;
+//
+//	gpInstance = new SpritePreviewer{};
+//	return gpInstance;
+//}
 
-Dystopia::SpritePreviewer* Dystopia::SpritePreviewer::GetInstance(void)
-{
-	if (gpInstance) return gpInstance;
-
-	gpInstance = new SpritePreviewer{};
-	return gpInstance;
-}
-
-Dystopia::SpritePreviewer::SpritePreviewer(void)
-	: EditorTab{ false },
+Editor::SpritePreviewer::SpritePreviewer(void)
+	: //EditorTab{ false },
 	mLabel{ "Previewer" },
-	mpTargetTexture{ nullptr },
+	mpTargetTexture{ nullptr }, 
+	mpGfxSys{ nullptr },
 	mDisplaySize{ Math::Vec2{0,0} },
 	mTextureName{},
 	mImageRatio{ 0 },
@@ -41,29 +42,30 @@ Dystopia::SpritePreviewer::SpritePreviewer(void)
 {
 }
 
-Dystopia::SpritePreviewer::~SpritePreviewer(void)
+Editor::SpritePreviewer::~SpritePreviewer(void)
+{}
+
+void Editor::SpritePreviewer::Load(void)
+{}
+
+bool Editor::SpritePreviewer::Init(void)
 {
+	mpGfxSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>();
+	return true;
 }
 
-void Dystopia::SpritePreviewer::Init(void)
+void Editor::SpritePreviewer::Update(float)
+{}
+
+void Editor::SpritePreviewer::EditorUI(void)
 {
-
-}
-
-void Dystopia::SpritePreviewer::Update(const float&)
-{
-
-}
-
-void Dystopia::SpritePreviewer::EditorUI(void)
-{
-	if (EGUI::Display::EmptyBox("Previewing  ", 150, (mpTargetTexture) ? mTextureName : "-empty-", true))
+	if (EGUI::Display::EmptyBox("Previewing  ", 150, (mpTargetTexture) ? mTextureName.c_str() : "-empty-", true))
 	{
 	}
 
 	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
 	{
-		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
+		mpTargetTexture = mpGfxSys->LoadTexture(t->mPath.c_str());
 		mTextureName = GetTextureName();
 		mImageW = static_cast<float>(mpTargetTexture->GetWidth());
 		mImageH = static_cast<float>(mpTargetTexture->GetHeight());
@@ -72,7 +74,7 @@ void Dystopia::SpritePreviewer::EditorUI(void)
 	}
 	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP))
 	{
-		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
+		mpTargetTexture = mpGfxSys->LoadTexture(t->mPath.c_str());
 		mTextureName = GetTextureName();
 		mImageW = static_cast<float>(mpTargetTexture->GetWidth());
 		mImageH = static_cast<float>(mpTargetTexture->GetHeight());
@@ -81,7 +83,7 @@ void Dystopia::SpritePreviewer::EditorUI(void)
 	}
 	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS))
 	{
-		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
+		mpTargetTexture = mpGfxSys->LoadTexture(t->mPath.c_str());
 		mTextureName = GetTextureName();
 		mImageW = static_cast<float>(mpTargetTexture->GetWidth());
 		mImageH = static_cast<float>(mpTargetTexture->GetHeight());
@@ -91,47 +93,44 @@ void Dystopia::SpritePreviewer::EditorUI(void)
 
 	EGUI::SameLine();
 	EGUI::Display::Label("Resolution:  x[%d]  y[%d]", mpTargetTexture ? mpTargetTexture->GetWidth() : 0,
-													  mpTargetTexture ? mpTargetTexture->GetHeight() : 0);
+		mpTargetTexture ? mpTargetTexture->GetHeight() : 0);
 
 	EGUI::Display::HorizontalSeparator();
 
 	if (mpTargetTexture)
 	{
-		float sw		= Size().x - 6.f;
-		float sh		= Size().y - (2*EGUI::TabsImageOffsetY) - 4.f;
-		float sratio	= sw / sh;
-		mDisplaySize	= sratio > mImageRatio ? Math::Vec2{ mImageW * (sh / mImageH), sh } :
-												 Math::Vec2{ sw, mImageH * (sw / mImageW) };
+		float sw = Size().x - 6.f;
+		float sh = Size().y - (2 * EGUI::TabsImageOffsetY) - 4.f;
+		float sratio = sw / sh;
+		mDisplaySize = sratio > mImageRatio ? Math::Vec2{ mImageW * (sh / mImageH), sh } :
+											  Math::Vec2{ sw, mImageH * (sw / mImageW) };
 		EGUI::Display::Image(mpTargetTexture->GetID(), mDisplaySize, false, true);
 	}
 }
 
-void Dystopia::SpritePreviewer::Shutdown(void)
-{
+void Editor::SpritePreviewer::Shutdown(void)
+{}
 
-}
+void Editor::SpritePreviewer::Message(eEMessage)
+{}
 
-std::string Dystopia::SpritePreviewer::GetLabel(void) const
+void Editor::SpritePreviewer::SaveSettings(Dystopia::TextSerialiser&) const
+{}
+
+void Editor::SpritePreviewer::LoadSettings(Dystopia::TextSerialiser&)
+{}
+
+HashString Editor::SpritePreviewer::GetLabel(void) const
 {
 	return mLabel;
 }
 
-void Dystopia::SpritePreviewer::SaveSettings(TextSerialiser& /*_out*/) const
+HashString Editor::SpritePreviewer::GetTextureName(void)
 {
-
-}
-
-void Dystopia::SpritePreviewer::LoadSettings(TextSerialiser& /*_in*/)
-{
-
-}
-
-std::string Dystopia::SpritePreviewer::GetTextureName(void)
-{
-	std::string path = mpTargetTexture->GetPath();
+	HashString path{ mpTargetTexture->GetPath().c_str() };
 	size_t pos = path.find_last_of("/\\") + 1;
 	if (pos < path.length())
-		return std::string{ path.begin() + pos, path.end() };
+		return HashString{ path.begin() + pos, path.end() };
 	return "";
 }
 

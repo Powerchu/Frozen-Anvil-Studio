@@ -19,8 +19,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 //#include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
 #include "Editor/EditorMain.h"
+#include "Editor/EditorClipboard.h"
 
 #include "Object/GameObject.h"
+
 #include "Component/Camera.h"
 #include "Component/Transform.h"
 
@@ -208,31 +210,32 @@ namespace Editor
 
 	void HierarchyView::SelectedObj(Dystopia::GameObject& _obj)
 	{
-		auto ed = EditorMain::GetInstance();// GetMainEditor();
+		auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
 		bool exist = false;
-		//for (const auto& id : ed->GetSelectionObjects())
-		//{
-		//	if (id->GetID() == _obj.GetID())
-		//	{
-		//		ed->RemoveSelection(_obj.GetID());
-		//		exist = true;
-		//		break;
-		//	}
-		//}
-		//if (!exist)
-		//	ed->AddSelection(_obj.GetID());
+		for (const auto& id : ed->GetSelectedIDs())
+		{
+			if (id == _obj.GetID())
+			{
+				ed->RemoveGameObject(_obj.GetID());
+				exist = true;
+				break;
+			}
+		}
+		if (!exist)
+			ed->AddGameObject(_obj.GetID());
 	}
 
 	void HierarchyView::GameObjectPopups(Dystopia::GameObject& _obj)
 	{
 		if (ImGui::BeginPopupContextItem())
 		{
-			auto ed = EditorMain::GetInstance();// GetMainEditor();
-			//ed->NewSelection(_obj.GetID());
+			auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
+			ed->ClearAll();
+			ed->AddGameObject(_obj.GetID());
 			if (EGUI::Display::SelectableTxt("Duplicate"))
 			{
-				//ed->EditorCopy();
-				//ed->EditorPaste();
+				ed->Copy();
+				ed->Paste();
 			}
 			if (EGUI::Display::SelectableTxt("Delete"))
 			{
@@ -250,19 +253,19 @@ namespace Editor
 	void HierarchyView::ShowGameObjects(void)
 	{
 		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
-		auto& arrayOfGameObjects = ss->GetCurrentScene().GetAllGameObjects();// GetCurrentScene()->GetAllGameObjects();
+		auto& arrayOfGameObjects = ss->GetCurrentScene().GetAllGameObjects(); // GetCurrentScene()->GetAllGameObjects();
 
-		auto ed = EditorMain::GetInstance(); // GetMainEditor();
-		//const auto& selections = ed->GetSelectionObjects();
+		auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
+		const auto& selections = ed->GetSelectedIDs();
 		for (auto& obj : arrayOfGameObjects)
 		{
 			if (obj.GetComponent<Dystopia::Transform>()->GetParent())
 				continue;
 
 			if (obj.GetComponent<Dystopia::Transform>()->GetAllChild().size())
-				;// ShowAsParent(obj, selections);
+				ShowAsParent(obj, selections);
 			else
-				;// ShowAsChild(obj, selections);
+				ShowAsChild(obj, selections);
 		}
 
 		EGUI::Display::Dummy(Size().x, 50.f);
@@ -278,14 +281,14 @@ namespace Editor
 		}
 	}
 
-	void HierarchyView::ShowAsParent(Dystopia::GameObject& _obj, const AutoArray<Dystopia::GameObject*>& _arr)
+	void HierarchyView::ShowAsParent(Dystopia::GameObject& _obj, const AutoArray<uint64_t>& _arr)
 	{
 		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		bool selected = false;
 		bool clicked = false;
 		for (auto& o : _arr)
 		{
-			if (_obj.GetID() == o->GetID())
+			if (_obj.GetID() == o)
 			{
 				selected = true;
 				break;
@@ -336,13 +339,13 @@ namespace Editor
 			SelectedObj(_obj);
 	}
 
-	void HierarchyView::ShowAsChild(Dystopia::GameObject& _obj, const AutoArray<Dystopia::GameObject*>& _arr)
+	void HierarchyView::ShowAsChild(Dystopia::GameObject& _obj, const AutoArray<uint64_t>& _arr)
 	{
 		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		bool selected = false;
 		for (auto& o : _arr)
 		{
-			if (_obj.GetID() == o->GetID())
+			if (_obj.GetID() == o)
 			{
 				selected = true;
 				break;

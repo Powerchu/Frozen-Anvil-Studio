@@ -96,11 +96,11 @@ void Editor::EditorUI::Load(void)
 #endif
 
 	DefaultFont();
+	EGUI::Docking::InitTabs();
 }
 
 bool Editor::EditorUI::Init(void)
 {
-	EGUI::Docking::InitTabs();
 	return true;
 }
 
@@ -169,12 +169,13 @@ void Editor::EditorUI::StartFrame(void)
 
 void Editor::EditorUI::Update(float)
 {
-	ImGuiIO&	io			= ImGui::GetIO();
+	ImGuiIO&	io			=	ImGui::GetIO();
 	auto		input		=	EditorMain::GetInstance()->GetSystem<EInput>();
 	const auto&	iquene		=	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetInputQueue();
 	bool		shft		=	input->GetInputManager()->IsKeyPressed(eButton::KEYBOARD_SHIFT);
 	float		scrollV		=	input->GetInputManager()->GetMouseWheel();
-
+	if (scrollV)
+		int i = 5;
 	io.KeysDown[eButton::KEYBOARD_ENTER] = false;
 	io.KeysDown[eButton::KEYBOARD_ESCAPE] = false;
 	for (int i = eButton::KEYBOARD_BACKSPACE; i <= eButton::KEYBOARD_TAB; ++i)
@@ -186,7 +187,12 @@ void Editor::EditorUI::Update(float)
 	for (int i = eButton::KEYBOARD_INSERT; i <= eButton::KEYBOARD_DELETE; ++i)
 		io.KeysDown[i] = false;
 
-	io.MouseWheel			+=	scrollV;
+	if (scrollV)
+	{
+		io.MouseWheelH += 0;
+		io.MouseWheel += scrollV;
+	}
+
 	io.KeyShift				=	shft;
 	io.KeyAlt				=	input->GetInputManager()->IsKeyPressed(eButton::KEYBOARD_ALT);
 	io.KeyCtrl				=	input->GetInputManager()->IsKeyPressed(eButton::KEYBOARD_CTRL);

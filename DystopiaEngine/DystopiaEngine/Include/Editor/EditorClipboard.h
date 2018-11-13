@@ -35,12 +35,15 @@ namespace Editor
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 
 		void AddGameObject(const uint64_t&);
+		void RemoveGameObject(const uint64_t&);
 		void ClearAll(void);
 
 		void Copy(void);
 		void Delete(void);
 		void Duplicate(void);
 		void Paste(void);
+
+		AutoArray<uint64_t>& GetSelectedIDs(void);
 
 	private:
 

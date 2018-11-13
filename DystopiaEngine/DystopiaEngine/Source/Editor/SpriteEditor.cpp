@@ -24,52 +24,61 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/TextureSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
 
-Dystopia::SpriteEditor* gpInstance = 0;
-Dystopia::SpriteEditor* Dystopia::SpriteEditor::GetInstance(void)
-{
-	if (gpInstance) return gpInstance;
+//Dystopia::SpriteEditor* gpInstance = 0;
+//Dystopia::SpriteEditor* Dystopia::SpriteEditor::GetInstance(void)
+//{
+//	if (gpInstance) return gpInstance;
+//
+//	gpInstance = new SpriteEditor{};
+//	return gpInstance;
+//}
 
-	gpInstance = new SpriteEditor{};
-	return gpInstance;
-}
-
-Dystopia::SpriteEditor::SpriteEditor(void)
-	: EditorTab{ false }, 
-	mLabel{ "Sprite Editor" }
-{
-}
-
-Dystopia::SpriteEditor::~SpriteEditor(void)
-{
-}
-
-void Dystopia::SpriteEditor::Init(void)
+Editor::SpriteEditor::SpriteEditor(void)
+	: //EditorTab{ false }, 
+	mLabel{ "Sprite Editor" }, 
+	mpAtlas{ nullptr },
+	mpGfxSys{ nullptr },
+	mpTextSys{ nullptr },
+	mpTexture{ nullptr }
 {
 }
 
-void Dystopia::SpriteEditor::Update(const float&)
+Editor::SpriteEditor::~SpriteEditor(void)
 {
 }
 
-void Dystopia::SpriteEditor::EditorUI(void)
+void Editor::SpriteEditor::Load(void)
+{}
+
+bool Editor::SpriteEditor::Init(void)
+{
+	mpGfxSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>();
+	mpTextSys = Dystopia::EngineCore::GetInstance()->Get<Dystopia::TextureSystem>();
+	return true;
+}
+
+void Editor::SpriteEditor::Update(float)
+{}
+
+void Editor::SpriteEditor::EditorUI(void)
 {
 	EGUI::Display::EmptyBox("Sprite Sheet", 150, mpTexture ? mpTexture->GetName() : "");
 	if (::Editor::File *t1 = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
 	{
-		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t1->mPath.c_str());
-		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(mpTexture->GetName());
+		mpTexture = mpGfxSys->LoadTexture(t1->mPath.c_str());
+		mpAtlas = mpTextSys->GetAtlas(mpTexture->GetName());
 		EGUI::Display::EndPayloadReceiver();
 	}
 	if (::Editor::File *t2 = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP))
 	{
-		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t2->mPath.c_str());
-		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(mpTexture->GetName());
+		mpTexture = mpGfxSys->LoadTexture(t2->mPath.c_str());
+		mpAtlas = mpTextSys->GetAtlas(mpTexture->GetName());
 		EGUI::Display::EndPayloadReceiver();
 	}
 	if (::Editor::File *t3 = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS))
 	{
-		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t3->mPath.c_str());
-		mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GetAtlas(mpTexture->GetName());
+		mpTexture = mpGfxSys->LoadTexture(t3->mPath.c_str());
+		mpAtlas = mpTextSys->GetAtlas(mpTexture->GetName());
 		EGUI::Display::EndPayloadReceiver();
 	}
 
@@ -79,25 +88,39 @@ void Dystopia::SpriteEditor::EditorUI(void)
 
 }
 
-void Dystopia::SpriteEditor::Shutdown(void)
-{
-}
+void Editor::SpriteEditor::Shutdown(void)
+{}
 
-std::string Dystopia::SpriteEditor::GetLabel(void) const
+void Editor::SpriteEditor::Message(eEMessage)
+{}
+
+void Editor::SpriteEditor::SaveSettings(Dystopia::TextSerialiser&) const
+{}
+
+void Editor::SpriteEditor::LoadSettings(Dystopia::TextSerialiser&)
+{}
+
+HashString Editor::SpriteEditor::GetLabel(void) const
 {
 	return mLabel;
 }
 
-void Dystopia::SpriteEditor::SaveSettings(Dystopia::TextSerialiser& /*_out*/) const
-{
-}
-
-void Dystopia::SpriteEditor::LoadSettings(Dystopia::TextSerialiser& /*_in*/)
-{
-}
-
-
-
-
 
 #endif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

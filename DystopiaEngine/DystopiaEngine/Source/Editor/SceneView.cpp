@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Driver/Driver.h"
 #include "System/Scene/Scene.h"
+#include "System/Scene/SceneSystem.h"
 #include "System/Graphics/Texture2D.h"
 #include "System/Camera/CameraSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
@@ -64,7 +65,7 @@ namespace Editor //Dystopia
 		mMoveSens{ -0.6f }, mPrevMovePoint{ 0,0 },
 		mDragging{ false }, mImgPos{}, mImgSize{},
 		mClearSelection{ false },
-		mGizmoHovered{ false }, mCurrGizTool{ eTRANSLATE }
+		mGizmoHovered{ false }, mCurrGizTool{ eTRANSLATE }, mpSceneSys{ nullptr }
 	{
 		EditorPanel::SetOpened(true);
 	}
@@ -80,6 +81,7 @@ namespace Editor //Dystopia
 	bool SceneView::Init(void)
 	{
 		mpGfxSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>();
+		mpSceneSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		//GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Bind(&SceneView::SceneChanged, this);
 		//GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);
 		//GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Bind(&SceneView::ScrollOut, this);
@@ -87,21 +89,21 @@ namespace Editor //Dystopia
 		//GetEditorEventHND()->GetEvent(EDITOR_GIZMO_SCALE)->Bind(&SceneView::SetGizmoScaler, this);
 
 		Dystopia::GameObject * temp = Dystopia::Factory::CreateCamera("Scene Camera");
-		auto& g = *GetCurrentScene()->InsertGameObject(Ut::Move(*temp));
-		g.GetComponent<Dystopia::Transform>()->SetOwner(&g);
-		for (auto& c : g.GetAllComponents())
+		auto g = mpSceneSys->GetCurrentScene().InsertGameObject(Ut::Move(*temp));
+		g->GetComponent<Dystopia::Transform>()->SetOwner(g);
+		for (auto& c : g->GetAllComponents())
 		{
-			c->SetOwner(&g);
+			c->SetOwner(g);
 			c->Init();
 		}
-		for (auto& b : g.GetAllBehaviours())
+		for (auto& b : g->GetAllBehaviours())
 		{
-			b->SetOwner(&g);
+			b->SetOwner(g);
 			b->Init();
 		}
-		mpSceneCamera = g.GetComponent<Dystopia::Camera>();
-		g.SetActive(true);
-		g.SetFlag(FLAG_ALL_LAYERS);
+		mpSceneCamera = g->GetComponent<Dystopia::Camera>();
+		g->SetActive(true);
+		g->SetFlag(Dystopia::eObjFlag::FLAG_ALL_LAYERS);
 		delete temp;
 		SceneChanged();
 		return true;
@@ -109,10 +111,10 @@ namespace Editor //Dystopia
 
 	void SceneView::Update(float _dt)
 	{
-		Dystopia::GameObject *temp = GetCurrentScene()->FindGameObject("Scene Camera");
+		Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera");
 		if (temp)
 			mpSceneCamera = temp->GetComponent<Dystopia::Camera>();
-		if (GetMainEditor()->CurrentState() == EDITOR_MAIN)
+		if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
 			mpGfxSys->Update(_dt);
 	}
 
@@ -120,7 +122,7 @@ namespace Editor //Dystopia
 	{
 		ResetMouseEvents();
 		EGUI::UnIndent(2);
-		if (GetMainEditor()->CurrentState() == EDITOR_PLAY)
+		if (EditorMain::GetInstance()->GetCurState() == eState::PLAY)
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 
 		Dystopia::Texture *pTex = mpGfxSys->GetFrameBuffer().AsTexture();
@@ -138,7 +140,7 @@ namespace Editor //Dystopia
 		else
 			mAmFocused = false;
 		ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
-		if (GetCurrentScene()->FindGameObject("Scene Camera"))
+		if (mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera"))
 		{
 			if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PREFAB))
 			{
@@ -163,10 +165,10 @@ namespace Editor //Dystopia
 		}
 		if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::SCENE))
 		{
-			GetMainEditor()->OpenScene(std::wstring{ t->mPath.begin(), t->mPath.end() }, std::wstring{ t->mName.begin(), t->mName.end() });
+			//EditorMain::GetInstance()->OpenScene(std::wstring{ t->mPath.begin(), t->mPath.end() }, std::wstring{ t->mName.begin(), t->mName.end() });
 			EGUI::Display::EndPayloadReceiver();
 		}
-		if (GetMainEditor()->CurrentState() == EDITOR_PLAY)
+		if (EditorMain::GetInstance()->GetCurState() == eState::PLAY)
 			ImGui::PopStyleVar();
 
 		CheckMouseEvents();
@@ -176,7 +178,7 @@ namespace Editor //Dystopia
 		if (mClearSelection)
 		{
 			mClearSelection = false;
-			GetMainEditor()->ClearSelections();
+			//EditorMain::GetInstance()->ClearSelections();
 		}
 		EGUI::Indent(2);
 	}
@@ -233,7 +235,8 @@ namespace Editor //Dystopia
 		{
 			Math::Pt3D worldClickPos = GetWorldClickPos(pCam);
 			float vLength = FLT_MAX;
-			for (auto& obj : GetCurrentScene()->GetAllGameObjects())
+			const auto& allObj = mpSceneSys->GetCurrentScene().GetAllGameObjects();
+			for (auto& obj : allObj)
 			{
 				if (&obj == mpSceneCamera->GetOwner()) continue;
 
@@ -297,7 +300,7 @@ namespace Editor //Dystopia
 
 	void SceneView::SceneChanged()
 	{
- 		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
+ 		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
 	}
 
 	void SceneView::AdjustImageSize(Dystopia::Texture *_pTex)
@@ -357,9 +360,9 @@ namespace Editor //Dystopia
 		{
 			if (ImGui::IsMouseClicked(0))
 			{
-				GameObject* pObj = FindMouseObject();
+				Dystopia::GameObject* pObj = FindMouseObject();
 				if (pObj && !mGizmoHovered)
-					GetMainEditor()->AddSelection(pObj->GetID());
+					;// EditorMain::GetInstance()->AddSelection(pObj->GetID());
 				else
 					mClearSelection = true;
 			}
@@ -387,7 +390,7 @@ namespace Editor //Dystopia
 			if (pDupl)
 			{
 				pDupl->GetComponent<Dystopia::Transform>()->SetPosition(spawnSite);
-				GetCommandHND()->InvokeCommandInsert(*pDupl, *GetCurrentScene());
+				//GetCommandHND()->InvokeCommandInsert(*pDupl, *GetCurrentScene());
 			}
 		}
 	}
@@ -404,8 +407,8 @@ namespace Editor //Dystopia
 					pRend->GetTexture());
 				auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture,
 					mpGfxSys->LoadTexture(_pFile->mPath.c_str()));
-				GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
-				GetMainEditor()->NewSelection(pTarget->GetID());
+				//GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
+				//EditorMain::GetInstance()->NewSelection(pTarget->GetID());
 			}
 			else
 			{
@@ -415,11 +418,11 @@ namespace Editor //Dystopia
 					Math::Pt3D worldClickPos = GetWorldClickPos(GetCamera());
 					Math::Pt3D spawnSite = Math::Pt3D{ worldClickPos.x, worldClickPos.y, 0.f, 1.f };
 
-					pTarget = Factory::CreateGameObj(defaultName);
-					pTarget->SetFlag(eObjFlag::FLAG_LAYER_WORLD);
+					pTarget = Dystopia::Factory::CreateGameObj(defaultName);
+					pTarget->SetFlag(Dystopia::eObjFlag::FLAG_LAYER_WORLD);
 					pTarget->GetComponent<Dystopia::Transform>()->SetPosition(spawnSite);
 
-					GetCommandHND()->InvokeCommandInsert(*pTarget, *GetCurrentScene());
+					//GetCommandHND()->InvokeCommandInsert(*pTarget, *GetCurrentScene());
 				}
 				Dystopia::GameObject* pGuaranteedTarget = FindMouseObject();
 				Dystopia::Renderer* pNewRend = static_cast<Dystopia::ComponentDonor<Dystopia::Renderer>*>(Dystopia::EngineCore::GetInstance()->Get<typename Dystopia::Renderer::SYSTEM>())->RequestComponent();
@@ -438,22 +441,22 @@ namespace Editor //Dystopia
 
 	void SceneView::DrawGizmos()
 	{
-		mGizmoHovered = false; 
-		auto& clipboardObjs = GetMainEditor()->GetSelectionObjects();
-		if (!clipboardObjs.size())
-			return;
-		else if (clipboardObjs.size() == 1)
-		{
-			auto& obj = **clipboardObjs.begin();
-			DrawGizmoSingle(obj);
-		}
-		else
-			DrawGizmoMul(clipboardObjs);
+		//mGizmoHovered = false; 
+		//auto& clipboardObjs = GetMainEditor()->GetSelectionObjects();
+		//if (!clipboardObjs.size())
+		//	return;
+		//else if (clipboardObjs.size() == 1)
+		//{
+		//	auto& obj = **clipboardObjs.begin();
+		//	DrawGizmoSingle(obj);
+		//}
+		//else
+		//	DrawGizmoMul(clipboardObjs);
 	}
 
 	Math::Vec2 SceneView::GetWorldToScreen(const Math::Pt3D& curPos)
 	{
-		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
+		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
 		if (!mpSceneCamera) return Math::Vec2{ 0,0 };
 
 		auto equation1 = mpSceneCamera->GetProjectionMatrix() * (mpSceneCamera->GetViewMatrix() * curPos);
@@ -604,7 +607,7 @@ namespace Editor //Dystopia
 	
 	}
 
-	void SceneView::DrawGizmoSingle(GameObject& obj)
+	void SceneView::DrawGizmoSingle(Dystopia::GameObject& obj)
 	{
 		Math::Pt3D curPos = obj.GetComponent<Dystopia::Transform>()->GetPosition();
 		Math::Vec4 cScale = obj.GetComponent<Dystopia::Transform>()->GetGlobalScale();

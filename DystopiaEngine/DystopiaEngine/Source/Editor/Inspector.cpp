@@ -15,34 +15,40 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/Inspector.h"
 #include "Editor/ScriptFormatter.h"
-#include "Editor/Commands.h"
-#include "Editor/EditorEvents.h"
+//#include "Editor/Commands.h"
+//#include "Editor/EditorEvents.h"
 
-#include "Component/AudioSource.h"
-#include "Component/Camera.h"
-#include "Component/Collider.h"
-#include "Component/Circle.h"
-#include "Component/AABB.h"
-#include "Component/Convex.h"
-#include "Component/Renderer.h"
-#include "Component/SpriteRenderer.h"
-#include "Component/TextRenderer.h"
-#include "Component/RigidBody.h"
-#include "Component/CharacterController.h"
+#include "Editor/EditorMain.h"
+#include "Editor/RuntimeMeta.h"
+#include "Editor/EditorClipboard.h"
 
-#include "System/Sound/SoundSystem.h"
-#include "System/Input/InputSystem.h"
-#include "System/Camera/CameraSystem.h"
-#include "System/Physics/PhysicsSystem.h"
-#include "System/Graphics/GraphicsSystem.h"
-#include "System/Behaviour/BehaviourSystem.h"
-#include "System/Collision/CollisionSystem.h"
+//#include "Component/AudioSource.h"
+//#include "Component/Camera.h"
+//#include "Component/Collider.h"
+//#include "Component/Circle.h"
+//#include "Component/AABB.h"
+//#include "Component/Convex.h"
+//#include "Component/Renderer.h"
+//#include "Component/SpriteRenderer.h"
+//#include "Component/TextRenderer.h"
+//#include "Component/RigidBody.h"
+//#include "Component/CharacterController.h"
+//
+//#include "System/Sound/SoundSystem.h"
+//#include "System/Input/InputSystem.h"
+//#include "System/Camera/CameraSystem.h"
+//#include "System/Physics/PhysicsSystem.h"
+//#include "System/Graphics/GraphicsSystem.h"
+//#include "System/Behaviour/BehaviourSystem.h"
+//#include "System/Collision/CollisionSystem.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
 
-#include "Utility/ComponentGUID.h"
-#include "Object/ObjectFlags.h"
-#include "Object/GameObject.h"
+//#include "Utility/ComponentGUID.h"
+//#include "Object/ObjectFlags.h"
+//#include "Object/GameObject.h"
 
-#include "Editor/EditorMetaHelpers.h"
+//#include "Editor/EditorMetaHelpers.h"
 
 #include "Reflection/ReadWriteObject.h"
 #include "Reflection/ReflectionTypeErasure.h"
@@ -82,54 +88,10 @@ namespace Editor //Dystopia
 	}
 
 	Inspector::~Inspector(void)
-	{
-		//gpInstance = nullptr;
-	}
-
-	/*void Inspector::Init()
-	{
-		mpBehaviourSys = EngineCore::GetInstance()->GetSystem<BehaviourSystem>();
-	}
-
-	void Inspector::Update(const float& _dt)
-	{
-		_dt;
-	}
-
-	void Inspector::EditorUI()
-	{
-		auto& allObj = GetMainEditor()->GetSelectionObjects();
-		mpFocus = (allObj.size() == 1) ? *allObj.begin() : nullptr;
-		if (!mpFocus) return;
-
-		static constexpr Math::Vec2 btnSize{ 270, 20 };
-		const float mid = Size().x / 2;
-		float inde = mid - (btnSize.x / 2);
-
-		GameObjectDetails();
-		GameObjectComponents();
-		EGUI::Display::HorizontalSeparator();
-		EGUI::Indent(inde);
-		AddComponentButton(btnSize);
-		AddBehaviourButton(btnSize);
-		EGUI::UnIndent(inde);
-	}
-
-	void Inspector::Shutdown()
-	{
-		mpFocus = nullptr;
-	}
-
-	std::string Inspector::GetLabel() const
-	{
-		return mLabel;
-	}
-	*/
-
+	{}
 
 	void Inspector::Load(void)
-	{
-	}
+	{}
 
 	bool Inspector::Init(void)
 	{
@@ -138,14 +100,21 @@ namespace Editor //Dystopia
 	}
 
 	void Inspector::Update(float)
-	{
-	}
+	{}
 
 	void Inspector::EditorUI(void)
 	{
-		//auto& allObj = GetMainEditor()->GetSelectionObjects();
-		//mpFocus = (allObj.size() == 1) ? *allObj.begin() : nullptr;
-		if (!mpFocus) return;
+		const auto& allSelectedIDs = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetSelectedIDs();
+		if (allSelectedIDs.size() == 1)
+		{
+			auto& scene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+			mpFocus = scene.FindGameObject(*allSelectedIDs.begin());
+		}
+		else
+		{
+			mpFocus = nullptr;
+			return;
+		}
 		
 		static constexpr Math::Vec2 btnSize{ 270, 20 };
 		const float mid = Size().x / 2;
@@ -166,24 +135,19 @@ namespace Editor //Dystopia
 	}
 
 	void Inspector::Message(eEMessage)
-	{
-
-	}
+	{}
 
 	void Inspector::SaveSettings(Dystopia::TextSerialiser&) const
-	{
-	}
+	{}
 
 	void Inspector::LoadSettings(Dystopia::TextSerialiser&)
-	{
-	}
+	{}
 
 	HashString Inspector::GetLabel(void) const
 	{
 		return mLabel;
 	}
-
-
+	
 	void Inspector::GameObjectDetails()
 	{
 		static int i = 0;
@@ -195,7 +159,7 @@ namespace Editor //Dystopia
 
 		EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
 		EGUI::SameLine(10);
-		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 50 }, false, Math::Vec4{ 0,0,0,0 }))
+		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 60 }, false, Math::Vec4{ 0,0,0,0 }))
 		{
 			EGUI::SameLine();
 			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 223.f) && strlen(buffer))
@@ -277,7 +241,7 @@ namespace Editor //Dystopia
 						for (auto i : Allnames)
 						{
 							if (MetaData[i])
-								MetaData[i].Reflect(i, c, SuperReflectFunctor{});
+								MetaData[i].Reflect(i, c, Dystopia::SuperReflectFunctor{});
 						}
 					}
 				}
@@ -297,10 +261,10 @@ namespace Editor //Dystopia
 
 	void Inspector::ComponentsDropDownList()
 	{
-		static ListOfComponents availableComp;
-		static constexpr size_t numComponents = Ut::SizeofList<UsableComponents>::value;
-		Array<std::string, numComponents> arr;
-		ListOfComponentsName<std::make_index_sequence<numComponents>, UsableComponents>::Extract(arr);
+		static Dystopia::ComponentList availableComp;
+		static constexpr size_t numComponents = Ut::SizeofList<Dystopia::UsableComponents>::value;
+		static Array<std::string, numComponents> arr;
+		Dystopia::MakeArrayOfNames<std::make_index_sequence<numComponents>, Dystopia::UsableComponents>::Make(arr);
 
 		if (EGUI::Display::StartPopup(g_cPopup))
 		{
@@ -310,8 +274,8 @@ namespace Editor //Dystopia
 				const auto& e = arr[i];
 				if (EGUI::Display::SelectableTxt(e, false))
 				{
-					Component* pComp = availableComp.Get(i, mpFocus);
-					mpFocus->AddComponent(pComp, typename Component::TAG{});
+					Dystopia::Component* pComp = availableComp.GetComponent(i, mpFocus);
+					mpFocus->AddComponent(pComp, typename Dystopia::Component::TAG{});
 				}
 			}
 			EGUI::Display::EndPopup();
@@ -339,7 +303,7 @@ namespace Editor //Dystopia
 				if (EGUI::Display::SelectableTxt(elem.mName))
 				{
 					auto ptr = mpBehaviourSys->RequestBehaviour(mpFocus->GetID(), elem.mName);
-					if (ptr) mpFocus->AddComponent(ptr, BehaviourTag{});
+					if (ptr) mpFocus->AddComponent(ptr, Dystopia::BehaviourTag{});
 				}
 			}
 
@@ -399,7 +363,7 @@ namespace Editor //Dystopia
 		mBufferInput[0] = mBufferCreator[0] = mBufferLogin[0] = '\0';
 	}
 
-	bool Inspector::RemoveComponent(Component* _pCom)
+	bool Inspector::RemoveComponent(Dystopia::Component* _pCom)
 	{
 		bool ret = false;
 		if (ImGui::BeginPopupContextItem())

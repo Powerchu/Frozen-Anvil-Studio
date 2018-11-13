@@ -294,6 +294,7 @@ void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 void Dystopia::Transform::EditorUI(void) noexcept
 {
 #if EDITOR
+	EGUI::PushLeftAlign(80);
 	auto arrResult = EGUI::Display::VectorFields("Position", &mPosition, 0.01f, -FLT_MAX, FLT_MAX);
 	for (auto &e : arrResult)
 	{
@@ -313,7 +314,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		}
 	}
 
-	arrResult = EGUI::Display::VectorFields("Scale   ", &mScale, 0.01f, -FLT_MAX, FLT_MAX);
+	arrResult = EGUI::Display::VectorFields("Scale", &mScale, 0.01f, -FLT_MAX, FLT_MAX);
 	for (auto &e : arrResult)
 	{
 		switch (e)
@@ -356,7 +357,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 			break;
 		}
 	}
-
+	EGUI::PopLeftAlign();
 #endif 
 }
 

@@ -227,10 +227,10 @@
       <Filter>Editor\Admin</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\ProjectSettings.cpp">
-      <Filter>Editor\Editor Tabs\Engine Settings</Filter>
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\SpritePreviewer.cpp">
-      <Filter>Editor\Editor Tabs\Sprite</Filter>
+      <Filter>Editor\Main\Panels\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Input\XGamePad.cpp">
       <Filter>Game Engine\Systems\Input</Filter>
@@ -296,7 +296,7 @@
       <Filter>DataStructures</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\SpriteEditor.cpp">
-      <Filter>Editor\Editor Tabs\Sprite</Filter>
+      <Filter>Editor\Main\Panels\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp">
       <Filter>Reflection\TypeErasure</Filter>
@@ -345,6 +345,9 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\EditorLauncher.cpp">
       <Filter>Editor\Main\Launcher</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorFactory.cpp">
+      <Filter>Editor\Main\Systems\Factory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -730,10 +733,10 @@
       <Filter>Editor\Admin</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\ProjectSettings.h">
-      <Filter>Editor\Editor Tabs\Engine Settings</Filter>
+      <Filter>Editor\Editor Tabs\Project Settings</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\SpritePreviewer.h">
-      <Filter>Editor\Editor Tabs\Sprite</Filter>
+      <Filter>Editor\Main\Panels\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Input\XGamePad.h">
       <Filter>Game Engine\Systems\Input</Filter>
@@ -817,7 +820,7 @@
       <Filter>DataStructures</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\SpriteEditor.h">
-      <Filter>Editor\Editor Tabs\Sprite</Filter>
+      <Filter>Editor\Main\Panels\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="Include\Component\Renderer.h">
       <Filter>Game Engine\Components\Renderer\BaseRenderer</Filter>
@@ -903,9 +906,6 @@
     <ClInclude Include="Include\Editor\EditorMain.h">
       <Filter>Editor\Main</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\EditorMessages.h">
-      <Filter>Editor\Main</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\EInput.h">
       <Filter>Editor\Main\Systems\Input</Filter>
     </ClInclude>
@@ -938,6 +938,15 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\EditorLauncher.h">
       <Filter>Editor\Main\Launcher</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\RuntimeMeta.h">
+      <Filter>Editor\Main\Auxiliary</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorFactory.h">
+      <Filter>Editor\Main\Systems\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EditorMessages.h">
+      <Filter>Editor\Main\Message</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1181,6 +1190,9 @@
     <Filter Include="Editor\Admin">
       <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Editor\Editor Tabs\Project Settings">
+      <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Math\MetaMath">
       <UniqueIdentifier>{08413c81-cbde-4575-842c-fc63e39a282d}</UniqueIdentifier>
     </Filter>
@@ -1253,9 +1265,6 @@
     <Filter Include="Game Engine\Components\Audio">
       <UniqueIdentifier>{ecb40fbd-9434-45dc-a5a7-1ae1e1cbac7f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor Tabs\Sprite">
-      <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Reflection\TypeErasure">
       <UniqueIdentifier>{ecafed53-7b83-4c71-9271-0b0e5af66397}</UniqueIdentifier>
     </Filter>
@@ -1316,17 +1325,14 @@
     <Filter Include="Editor\Main\Launcher">
       <UniqueIdentifier>{6ddb93ff-2f1e-494e-8391-73a6bd07dfc8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Editor\Main\Panels\Inspector">
+      <UniqueIdentifier>{35530ff6-5930-4a89-b8db-49dcc15bfdda}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Editor\Main\Panels\Console">
       <UniqueIdentifier>{24e718b4-19d5-461a-b934-7fa561a0580b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Main\Panels\Hierarchy View">
       <UniqueIdentifier>{a885b5ac-c2be-42de-9871-dadd13992aac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Main\Panels\Inspector">
-      <UniqueIdentifier>{35530ff6-5930-4a89-b8db-49dcc15bfdda}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Main\Panels\Project Resource">
-      <UniqueIdentifier>{c5ac7258-cd5b-41a2-aa35-e58dbae20806}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Main\Panels\SchemeColor">
       <UniqueIdentifier>{505d9276-8eac-401b-a286-9d084f3f8461}</UniqueIdentifier>
@@ -1334,14 +1340,17 @@
     <Filter Include="Editor\Main\Panels\SchemeStyle">
       <UniqueIdentifier>{e2a99798-5b6a-4bf2-a471-a415c2452e05}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Main\Panels\Performance">
-      <UniqueIdentifier>{c047ceb5-275e-45b0-90de-511a03bb9780}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Editor Tabs\Engine Settings">
-      <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
+    <Filter Include="Editor\Main\Panels\Project Resource">
+      <UniqueIdentifier>{c5ac7258-cd5b-41a2-aa35-e58dbae20806}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Main\Panels\Scene View">
       <UniqueIdentifier>{71a85056-a560-4672-bf11-af0a4c971ad1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Panels\Performance">
+      <UniqueIdentifier>{c047ceb5-275e-45b0-90de-511a03bb9780}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Panels\Sprite">
+      <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

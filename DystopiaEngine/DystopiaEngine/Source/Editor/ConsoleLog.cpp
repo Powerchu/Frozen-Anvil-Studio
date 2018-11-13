@@ -144,13 +144,13 @@ namespace Editor //Dystopia
 		//		{
 		//			for (int j = 0; i < count; ++j)
 		//			{
-		//				//auto *p = (*(Dystopia::Admin::g_AdminFuncs[fnName]))(var + std::to_string(i));
-		//				//p->GetComponent<Dystopia::Transform>()->SetPosition(Math::Vec3D{ 20.f * i , 20.f * j, 0});
-		//				//auto obj = GetCurrentScene()->InsertGameObject(Ut::Move(*p));
-		//				//obj->Identify();
-		//				//obj->Awake();
-		//				//obj->Init();
-		//				//delete p;
+		//				auto *p = (*(Dystopia::Admin::g_AdminFuncs[fnName]))(var + std::to_string(i));
+		//				p->GetComponent<Dystopia::Transform>()->SetPosition(Math::Vec3D{ 20.f * i , 20.f * j, 0});
+		//				auto obj = GetCurrentScene()->InsertGameObject(Ut::Move(*p));
+		//				obj->Identify();
+		//				obj->Awake();
+		//				obj->Init();
+		//				delete p;
 		//			}
 		//		}
 		//	}

@@ -101,6 +101,18 @@ void Editor::EditorClipboard::AddGameObject(const uint64_t& _id)
 	mArrSelectedIDs.Insert(_id);
 }
 
+void Editor::EditorClipboard::RemoveGameObject(const uint64_t& _id)
+{
+	for (unsigned int i = 0; i < mArrSelectedIDs.size(); ++i)
+	{
+		if (mArrSelectedIDs[i] == _id)
+		{
+			mArrSelectedIDs.FastRemove(i);
+			return;
+		}
+	}
+}
+
 void Editor::EditorClipboard::ClearAll(void)
 {
 	mArrSelectedIDs.clear();
@@ -126,6 +138,11 @@ void Editor::EditorClipboard::Duplicate(void)
 void Editor::EditorClipboard::Paste(void)
 {
 
+}
+
+AutoArray<uint64_t>& Editor::EditorClipboard::GetSelectedIDs(void)
+{
+	return mArrSelectedIDs;
 }
 
 #endif

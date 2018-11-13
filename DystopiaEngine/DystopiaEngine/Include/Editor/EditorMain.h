@@ -47,7 +47,10 @@ namespace Editor
 			Ut::Indexer<3u, class ColorScheme>,
 			Ut::Indexer<4u, class StyleScheme>,
 			Ut::Indexer<5u, class ProjectResource>,
-			Ut::Indexer<6u, class PerformanceLog>
+			Ut::Indexer<6u, class PerformanceLog>,
+			Ut::Indexer<7u, class SceneView>,
+			Ut::Indexer<8u, class SpritePreviewer>,
+			Ut::Indexer<9u, class SpriteEditor>
 			>>;
 
 		static EditorMain* GetInstance(void);
