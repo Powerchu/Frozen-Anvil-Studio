@@ -20,8 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <Windows.h>
 #include <cstdlib>
 #include <tchar.h>
+#include <string>
 
-namespace Dystopia
+namespace Editor//Dystopia::
 {
 	char my_tolower(char const ch)
 	{
@@ -31,7 +32,10 @@ namespace Dystopia
 	CrawlItem::CrawlItem(const HashString& _name, const HashString& _path)
 		: mName{ _name }, mPath{ _path }, mLowerCaseName{ mName }
 	{
-		std::transform(mLowerCaseName.begin(), mLowerCaseName.end(), mLowerCaseName.begin(), my_tolower);
+		std::string temp{ mLowerCaseName.cbegin(), mLowerCaseName.cend() };
+		std::string temp2 = temp;
+		std::transform(temp.begin(), temp.end(), temp2.begin(), my_tolower);
+		mLowerCaseName = temp2.c_str();
 	}
 
 	Folder::Folder(const HashString& _name, const HashString& _path, Folder * const _parent)
@@ -109,7 +113,8 @@ namespace Dystopia
 
 	bool File::operator<(const File& rhs)
 	{
-		return mName.compare(rhs.mName) <= 0;
+		std::string temp{ mName.c_str() };
+		return temp.compare(rhs.mName.c_str()) <= 0;
 	}
 
 	EGUI::ePayloadTags File::DetermineTag(const HashString& _name)

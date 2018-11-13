@@ -167,20 +167,20 @@ void Dystopia::Renderer::EditorUI(void) noexcept
 #if EDITOR
 void Dystopia::Renderer::TextureField()
 {
-	Dystopia::File *t = nullptr;
+	::Editor::File *t = nullptr;
 	EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName() : "-empty-", true);
 
-	t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG);
+	t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
 	if (t)  EGUI::Display::EndPayloadReceiver();
 
 	if (!t)
 	{
-		t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::DDS);
+		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS);
 		if (t) EGUI::Display::EndPayloadReceiver();
 	}
 	if (!t)
 	{
-		t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::BMP);
+		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP);
 		if (t) EGUI::Display::EndPayloadReceiver();
 	}
 	if (t)
@@ -224,7 +224,7 @@ void Dystopia::Renderer::MeshField()
 	{
 
 	}
-	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::FILE))
+	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
 	{
 		EGUI::Display::EndPayloadReceiver();
 	}
@@ -236,7 +236,7 @@ void Dystopia::Renderer::ShaderField()
 	{
 
 	}
-	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::FILE))
+	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
 	{
 		EGUI::Display::EndPayloadReceiver();
 	}

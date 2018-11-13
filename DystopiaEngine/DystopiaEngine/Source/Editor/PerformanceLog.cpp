@@ -15,46 +15,52 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/PLogger.h"
 #include "Editor/PerformanceLog.h"
 #include "Editor/EGUI.h"
-#include "Math/MathUtility.h"
-#include <algorithm>
+#include "Editor/EditorMain.h"
 
-namespace Dystopia
+#include "Math/MathUtility.h"
+
+#include <algorithm>
+#include <string>
+
+namespace Editor //Dystopia
 {
-	static PerformanceLog* gpInstance = 0; // singleton
+	//static PerformanceLog* gpInstance = 0; // singleton
 	namespace Performance
 	{
 		/* ===================================================== Performance Logger definitions ===================================================== */
-		void LogDataS(const std::string& _category, const std::string& _graphLabel,
+		void LogDataS(const HashString& _category, const HashString& _graphLabel,
 			float _val)
 		{
+			auto gpInstance = EditorMain::GetInstance()->GetPanel<PerformanceLog>();
 			if (gpInstance)
 				gpInstance->LogData(_category, _graphLabel, _val, false);
 		}
 
-		void LogDataG(const std::string& _catMainGraph, float _val)
+		void LogDataG(const HashString& _catMainGraph, float _val)
 		{
+			auto gpInstance = EditorMain::GetInstance()->GetPanel<PerformanceLog>();
 			if (gpInstance)
 				gpInstance->LogData(_catMainGraph, _val, true);
 		}
 
 		void LogTaskMgr(const PLogTaskManager& _data)
 		{
+			auto gpInstance = EditorMain::GetInstance()->GetPanel<PerformanceLog>();
 			if (gpInstance)
 				gpInstance->LogTaskMgr(_data);
 		}
 	}
 
 	/* ===================================================== The Performance Logger for handling items/datas ===================================================== */
-	PerformanceLog* PerformanceLog::GetInstance()
-	{
-		if (gpInstance) return gpInstance;
-
-		gpInstance = new PerformanceLog{};
-		return gpInstance;
-	}
-
-	PerformanceLog::PerformanceLog()
-		: EditorTab{ false },
+	//PerformanceLog* PerformanceLog::GetInstance()
+	//{
+	//	if (gpInstance) return gpInstance;
+	//
+	//	gpInstance = new PerformanceLog{};
+	//	return gpInstance;
+	//}
+	PerformanceLog::PerformanceLog(void)
+		: //EditorTab{ false },
 		mLabel{ "Performance" },
 		mGraphSizeB{ Math::Vec2{0,0} },
 		mGraphSizeS{ Math::Vec2{0,0} },
@@ -64,34 +70,37 @@ namespace Dystopia
 		mTaskMgrDetails{}
 	{}
 
-	PerformanceLog::~PerformanceLog()
+	PerformanceLog::~PerformanceLog(void)
 	{
-		gpInstance = nullptr;
+		//gpInstance = nullptr;
 	}
 
-	void PerformanceLog::Init()
+	void PerformanceLog::Load(void)
+	{}
+
+	bool PerformanceLog::Init(void)
 	{
+		return true;
 	}
 
-	void PerformanceLog::Update(const float& _dt)
+	void PerformanceLog::Update(float)
 	{
-		UNUSED_PARAMETER(_dt);
-		static constexpr float offset	= -80.f;
-		mGraphSizeB.x					= Math::Clamp(Size().x + offset, 50.f, Size().x);
-		mGraphSizeS.x					= mGraphSizeB.x;
-		mGraphSizeS.x					= Math::Clamp<float>(mGraphSizeS.x, 50.f, Size().x -120.f);
+		static constexpr float offset = -80.f;
+		mGraphSizeB.x = Math::Clamp(Size().x + offset, 50.f, Size().x);
+		mGraphSizeS.x = mGraphSizeB.x;
+		mGraphSizeS.x = Math::Clamp<float>(mGraphSizeS.x, 50.f, Size().x - 120.f);
 	}
 
-	void PerformanceLog::EditorUI()
+	void PerformanceLog::EditorUI(void)
 	{
 		ShowTaskMgrBreakdown();
 		for (const auto& item : mArrLoggedData)
 		{
-			if (item.mShowGeneric && EGUI::Display::StartTreeNode(item.mGenericOverview.mLabel))
+			if (item.mShowGeneric && EGUI::Display::StartTreeNode(item.mGenericOverview.mLabel.c_str()))
 			{
 				EGUI::Indent(10);
 				ShowLog(item.mGenericOverview, mGraphSizeB);
-				if (item.mData.size() && EGUI::Display::StartTreeNode(item.mLabel, nullptr, false, false, false))
+				if (item.mData.size() && EGUI::Display::StartTreeNode(item.mLabel.c_str(), nullptr, false, false, false))
 				{
 					for (unsigned int i = 0; i < item.mData.size(); ++i)
 					{
@@ -107,17 +116,26 @@ namespace Dystopia
 		}
 	}
 
-	void PerformanceLog::Shutdown()
+	void PerformanceLog::Shutdown(void)
 	{
 		mArrLoggedData.clear();
 	}
 
-	std::string PerformanceLog::GetLabel() const
+	void PerformanceLog::Message(eEMessage)
+	{}
+
+	void PerformanceLog::SaveSettings(Dystopia::TextSerialiser& _out) const
+	{}
+
+	void PerformanceLog::LoadSettings(Dystopia::TextSerialiser& _in)
+	{}
+
+	HashString PerformanceLog::GetLabel(void) const
 	{
 		return mLabel;
 	}
 
-	void PerformanceLog::LogData(const std::string& _cat, const std::string& _label, float _val, bool _bigGraph)
+	void PerformanceLog::LogData(const HashString& _cat, const HashString& _label, float _val, bool _bigGraph)
 	{
 		for (auto& item : mArrLoggedData)
 		{
@@ -134,7 +152,7 @@ namespace Dystopia
 		SortLogs();
 	}
 
-	void PerformanceLog::LogData(const std::string& _catMainGraph, float _val, bool _bigGraph)
+	void PerformanceLog::LogData(const HashString& _catMainGraph, float _val, bool _bigGraph)
 	{
 		for (auto& item : mArrLoggedData)
 		{
@@ -154,9 +172,9 @@ namespace Dystopia
 		mTaskMgrDetails = _data;
 	}
 
-	void PerformanceLog::SortLogs()
+	void PerformanceLog::SortLogs(void)
 	{
-		mArrLoggedData.Sort([](const PLogItem& p1, const PLogItem& p2) { return p1.mLabel < p2.mLabel; });
+		mArrLoggedData.Sort([](const PLogItem& p1, const PLogItem& p2) { return std::string{p1.mLabel.c_str()} < std::string{ p2.mLabel.c_str() }; });
 	}
 
 	void PerformanceLog::ShowLog(const PLogData& _log, Math::Vec2 _size)
@@ -166,7 +184,7 @@ namespace Dystopia
 								 std::to_string(static_cast<int>(_log.mArrValues[_log.mCurrentIndex])));
 	}
 
-	void PerformanceLog::ShowTaskMgrBreakdown()
+	void PerformanceLog::ShowTaskMgrBreakdown(void)
 	{
 		static constexpr float sizeY = 170;
 		Math::Vec2 size{Size().x - 7.f, sizeY };

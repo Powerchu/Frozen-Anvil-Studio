@@ -46,7 +46,8 @@ namespace Editor
 			Ut::Indexer<2u, class HierarchyView>,
 			Ut::Indexer<3u, class ColorScheme>,
 			Ut::Indexer<4u, class StyleScheme>,
-			Ut::Indexer<5u, class ProjectResource>
+			Ut::Indexer<5u, class ProjectResource>,
+			Ut::Indexer<6u, class PerformanceLog>
 			>>;
 
 		static EditorMain* GetInstance(void);

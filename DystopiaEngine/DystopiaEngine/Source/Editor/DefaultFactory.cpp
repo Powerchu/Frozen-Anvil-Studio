@@ -210,21 +210,21 @@ namespace Dystopia
 	
 		std::string SaveAsPrefab(GameObject& _obj, const std::string& _path)
 		{
-			std::string fileName = _path + "\\" + _obj.GetName() + g_PayloadPrefabEx;
+			std::string fileName = _path + "\\" + _obj.GetName() + ::Editor::g_PayloadPrefabEx;
 			std::ofstream file{ fileName, std::ios::out };
 			if (!file.is_open())
 				__debugbreak();
 
 			auto toFile	= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_WRITE);
 			SaveAsPrefab(_obj, toFile);
-			return _obj.GetName() + g_PayloadPrefabEx;
+			return _obj.GetName() + ::Editor::g_PayloadPrefabEx;
 		}
 
 		GameObject* LoadFromPrefab(std::string _gameObjName, const std::string& _path)
 		{
 			std::string fileName = _gameObjName.length() ? _path + "\\" + _gameObjName : _path;
 
-			if (fileName.find(Dystopia::g_PayloadPrefabEx) == std::string::npos)
+			if (fileName.find(::Editor::g_PayloadPrefabEx) == std::string::npos)
 				return nullptr;
 
 			ListOfComponents availComponents;

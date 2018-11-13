@@ -34,6 +34,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <Windows.h>
 #include <cstdlib>
 #include <tchar.h>
+#include <string>
 
 //static const HashString DEFAULT_PATH = "..\\DystopiaEngine\\Resource";
 //static const HashString DEFAULT_NAME = "Resource";
@@ -80,8 +81,8 @@ namespace Editor //Dystopia
 		mResourcePath = HashString{ resFolder.c_str() };
 		mResourceName = HashString{ resFolder.c_str() + pos + 1, resFolder.c_str() + resFolder.size() };
 
-		auto buf = Dystopia::DefaultAllocator<Dystopia::Folder>::Alloc();
-		mpRootFolder = new (buf) Dystopia::Folder{ mResourceName , mResourcePath, nullptr }; //new Dystopia::Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };
+		auto buf = Dystopia::DefaultAllocator<Editor::Folder>::Alloc();
+		mpRootFolder = new (buf) Editor::Folder{ mResourceName , mResourcePath, nullptr }; //new Editor::Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };
 
 		mpCurrentFolder = mpRootFolder;
 		FullCrawl(mpRootFolder);
@@ -172,7 +173,7 @@ namespace Editor //Dystopia
 		mArrFilesSearchedThisFrame.clear();
 		mArrFilesSearchedLastFrame.clear();
 		mArrAllFiles.clear();
-		Dystopia::DefaultAllocator<Dystopia::Folder>::DestructFree(mpRootFolder);
+		Dystopia::DefaultAllocator<Editor::Folder>::DestructFree(mpRootFolder);
 		//delete mpRootFolder;
 		mFocusedFile = nullptr;
 		mpRootFolder = nullptr;
@@ -251,7 +252,7 @@ namespace Editor //Dystopia
 		EGUI::Display::HorizontalSeparator();
 		for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
 		{
-			Dystopia::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
+			Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
 			HashString id = "ProjectResourceFileWindow" + pFile->mName;
 			id  += i;
 			if (i % columns) EGUI::SameLine();
@@ -280,7 +281,7 @@ namespace Editor //Dystopia
 		{
 			for (unsigned int i = 0; i < size; ++i)
 			{
-				Dystopia::File* pFile = mArrFilesSearchedThisFrame[i];
+				Editor::File* pFile = mArrFilesSearchedThisFrame[i];
 				HashString id = "ProjectResourceSearchResultWindow" + pFile->mName;
 				id += i;
 				if (i % columns) EGUI::SameLine();
@@ -314,10 +315,10 @@ namespace Editor //Dystopia
 		mArrFilesSearchedThisFrame.clear();
 		mArrFilesSearchedLastFrame.clear();
 
-		Dystopia::DefaultAllocator<Dystopia::Folder>::DestructFree(mpRootFolder); //delete mpRootFolder;
+		Dystopia::DefaultAllocator<Editor::Folder>::DestructFree(mpRootFolder); //delete mpRootFolder;
 
-		auto buf = Dystopia::DefaultAllocator<Dystopia::Folder>::Alloc();
-		mpRootFolder = new (buf) Dystopia::Folder{ mResourceName , mResourcePath, nullptr }; //new Dystopia::Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };
+		auto buf = Dystopia::DefaultAllocator<Editor::Folder>::Alloc();
+		mpRootFolder = new (buf) Editor::Folder{ mResourceName , mResourcePath, nullptr }; //new Editor::Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };
 
 		FullCrawl(mpRootFolder);
 		GetAllFiles(mArrAllFiles, mpRootFolder);
@@ -348,18 +349,18 @@ namespace Editor //Dystopia
 		mFocusedFile = nullptr;
 	}
 
-	Dystopia::Folder* ProjectResource::FindFolder(const HashString& _name)
+	Editor::Folder* ProjectResource::FindFolder(const HashString& _name)
 	{
 		if (_name.length())
 		{
-			Dystopia::Folder* pFound = mpRootFolder->FindFolder(_name);
+			Editor::Folder* pFound = mpRootFolder->FindFolder(_name);
 			if (pFound) 
 				return pFound;
 		}	
 		return mpRootFolder;
 	}
 
-	void ProjectResource::FindFile(AutoArray<Dystopia::File*>& _outResult, HashString& _item, const AutoArray<Dystopia::File*>& _fromArr)
+	void ProjectResource::FindFile(AutoArray<Editor::File*>& _outResult, HashString& _item, const AutoArray<Editor::File*>& _fromArr)
 	{
 		MakeStringLower(_item);
 		for (auto& e : _fromArr)
@@ -369,7 +370,7 @@ namespace Editor //Dystopia
 		}
 	}
 
-	bool ProjectResource::FindFirstOne(AutoArray<Dystopia::File*>& _outResult, const HashString& _item)
+	bool ProjectResource::FindFirstOne(AutoArray<Editor::File*>& _outResult, const HashString& _item)
 	{
 		for (auto& e : mArrAllFiles)
 		{
@@ -382,7 +383,7 @@ namespace Editor //Dystopia
 		return false;
 	}
 
-	void ProjectResource::GetAllFiles(AutoArray<Dystopia::File*>& _outResult, Dystopia::Folder* _folder)
+	void ProjectResource::GetAllFiles(AutoArray<Editor::File*>& _outResult, Editor::Folder* _folder)
 	{
 		for (auto& e : _folder->mArrPtrFiles)
 			_outResult.push_back(e);
@@ -390,12 +391,12 @@ namespace Editor //Dystopia
 			GetAllFiles(_outResult, e);
 	}
 
-	void ProjectResource::SortAllFiles(AutoArray<Dystopia::File*>& _outResult)
+	void ProjectResource::SortAllFiles(AutoArray<Editor::File*>& _outResult)
 	{
-		_outResult.Sort([](Dystopia::File* lhs, Dystopia::File* rhs)->bool { return *lhs < *rhs; });
+		_outResult.Sort([](Editor::File* lhs, Editor::File* rhs)->bool { return *lhs < *rhs; });
 	}
 
-	void ProjectResource::FolderUI(Dystopia::Folder* _folder)
+	void ProjectResource::FolderUI(Editor::Folder* _folder)
 	{
 		bool clickedThisFrame = false;
 		bool clickedFolderIcon = false;
@@ -420,7 +421,7 @@ namespace Editor //Dystopia
 		}
 	}
 
-	void ProjectResource::FileUI(Dystopia::File* _file)
+	void ProjectResource::FileUI(Editor::File* _file)
 	{
 		if (_file == mFocusedFile) EGUI::Display::Outline(mPayloadRect.x, mPayloadRect.y);
 
@@ -431,13 +432,13 @@ namespace Editor //Dystopia
 		}
 
 		if (EGUI::Display::CustomPayload(("###ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
-			_file->mName.c_str(), mPayloadRect, _file->mTag, &(*_file), sizeof(Dystopia::File), id))
+			_file->mName.c_str(), mPayloadRect, _file->mTag, &(*_file), sizeof(Editor::File), id))
 		{
 			mFocusedFile = _file;
 		}
 	}
 
-	void ProjectResource::FullCrawl(Dystopia::Folder* _folder)
+	void ProjectResource::FullCrawl(Editor::Folder* _folder)
 	{
 		_folder->Crawl();
 		for (auto& e : _folder->mArrPtrFolders)
@@ -446,7 +447,10 @@ namespace Editor //Dystopia
 
 	void ProjectResource::MakeStringLower(HashString& _transformMe)
 	{
-		std::transform(_transformMe.begin(), _transformMe.end(), _transformMe.begin(), Dystopia::my_tolower);
+		std::string temp{ _transformMe.cbegin(), _transformMe.cend() };
+		std::string temp2 = temp;
+		std::transform(temp.begin(), temp.end(), temp2.begin(), my_tolower);
+		_transformMe = temp2.c_str();
 	}
 
 }

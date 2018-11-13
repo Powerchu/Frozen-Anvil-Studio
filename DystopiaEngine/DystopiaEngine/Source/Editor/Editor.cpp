@@ -745,35 +745,35 @@ namespace Dystopia
 
 	void Editor::LogTabPerformance()
 	{
-		static constexpr float intervalS = 0.1f;
-		static float deltaAccu = 0.f;
-		deltaAccu += GetDeltaTime();
-		if (deltaAccu > intervalS)
-		{
-			deltaAccu = 0;
-			auto data = mpProfiler->GetInfo();
-			for (const auto& d : data)
-			{
-				auto info = d.second.mTimes;
-				for (const auto& i : info)
-				{
-					Performance::LogDataS(d.first, i.first, static_cast<float>(info[i.first]));
-					Performance::LogDataG(d.first, static_cast<float>(d.second.mTotal));
-				}
-			}
-			PLogTaskManager p;
-			p.mFrameRate	= mDeltaTime;
-			p.mCPUIdle		= mpProfiler->GetCPUPercentageIdle();
-			p.mCPUBusy		= mpProfiler->GetCPUPercentageBusy();
-			p.mCPUOS		= mpProfiler->GetCPUPercentageOS();
-			p.mCPUProc		= mpProfiler->GetCPUPercentageProcess();
-			p.mPageFaults	= mpProfiler->GetNumPageFaults();
-			p.mMemUsed		= mpProfiler->GetUsedMemory();
-			p.mRamUsed		= mpProfiler->GetUsedPhysicalMemory();
-			p.mMemAvail		= mpProfiler->GetAvailablePhysicalMemory();
-			p.mMemLoad		= mpProfiler->GetSystemMemoryLoad();
-			Performance::LogTaskMgr(p);
-		}
+		//static constexpr float intervalS = 0.1f;
+		//static float deltaAccu = 0.f;
+		//deltaAccu += GetDeltaTime();
+		//if (deltaAccu > intervalS)
+		//{
+		//	deltaAccu = 0;
+		//	auto data = mpProfiler->GetInfo();
+		//	for (const auto& d : data)
+		//	{
+		//		auto info = d.second.mTimes;
+		//		for (const auto& i : info)
+		//		{
+		//			Performance::LogDataS(d.first, i.first, static_cast<float>(info[i.first]));
+		//			Performance::LogDataG(d.first, static_cast<float>(d.second.mTotal));
+		//		}
+		//	}
+		//	PLogTaskManager p;
+		//	p.mFrameRate	= mDeltaTime;
+		//	p.mCPUIdle		= mpProfiler->GetCPUPercentageIdle();
+		//	p.mCPUBusy		= mpProfiler->GetCPUPercentageBusy();
+		//	p.mCPUOS		= mpProfiler->GetCPUPercentageOS();
+		//	p.mCPUProc		= mpProfiler->GetCPUPercentageProcess();
+		//	p.mPageFaults	= mpProfiler->GetNumPageFaults();
+		//	p.mMemUsed		= mpProfiler->GetUsedMemory();
+		//	p.mRamUsed		= mpProfiler->GetUsedPhysicalMemory();
+		//	p.mMemAvail		= mpProfiler->GetAvailablePhysicalMemory();
+		//	p.mMemLoad		= mpProfiler->GetSystemMemoryLoad();
+		//	Performance::LogTaskMgr(p);
+		//}
 	}
 
 	void Editor::ReAttachComponent(Component* _pComponent)

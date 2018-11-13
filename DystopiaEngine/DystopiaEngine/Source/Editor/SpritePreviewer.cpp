@@ -61,7 +61,7 @@ void Dystopia::SpritePreviewer::EditorUI(void)
 	{
 	}
 
-	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
+	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
 	{
 		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
 		mTextureName = GetTextureName();
@@ -70,7 +70,7 @@ void Dystopia::SpritePreviewer::EditorUI(void)
 		mImageRatio = mImageW / mImageH;
 		EGUI::Display::EndPayloadReceiver();
 	}
-	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::BMP))
+	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP))
 	{
 		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
 		mTextureName = GetTextureName();
@@ -79,7 +79,7 @@ void Dystopia::SpritePreviewer::EditorUI(void)
 		mImageRatio = mImageW / mImageH;
 		EGUI::Display::EndPayloadReceiver();
 	}
-	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::DDS))
+	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS))
 	{
 		mpTargetTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
 		mTextureName = GetTextureName();

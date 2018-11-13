@@ -128,7 +128,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 {
 #if EDITOR
 	EGUI::Display::EmptyBox("Audio        ", 150, (mpSound) ? mSoundName : "-empty-", true);
-	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::MP3))
+	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::MP3))
 	{
 		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t->mName.c_str());
 	
@@ -137,7 +137,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 		EGUI::GetCommandHND()->InvokeCommand(mnOwner, fOld, fNew);
 		EGUI::Display::EndPayloadReceiver();
 	}
-	if (Dystopia::File *t2 = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::WAV))
+	if (::Editor::File *t2 = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::WAV))
 	{
 		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t2->mName.c_str());
 

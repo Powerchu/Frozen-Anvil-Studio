@@ -47,16 +47,16 @@ namespace Editor
 
 	private:
 
-		const Dystopia::File*		mFocusedFile;
-		AutoArray<Dystopia::File*>	mArrAllFiles;
-		AutoArray<Dystopia::File*>	mArrFilesSearchedThisFrame;
-		AutoArray<Dystopia::File*>	mArrFilesSearchedLastFrame;
+		const Editor::File*		mFocusedFile;
+		AutoArray<Editor::File*>	mArrAllFiles;
+		AutoArray<Editor::File*>	mArrFilesSearchedThisFrame;
+		AutoArray<Editor::File*>	mArrFilesSearchedLastFrame;
 		HashString			mLabel;
 		HashString			mResetToFile;
 		char				mSearchText[MAX_SEARCH];
 		char				mSearchTextLastFrame[MAX_SEARCH];
-		Dystopia::Folder	*mpRootFolder;
-		Dystopia::Folder	*mpCurrentFolder;
+		Editor::Folder	*mpRootFolder;
+		Editor::Folder	*mpCurrentFolder;
 		HANDLE				mChangeHandle[1];
 		DWORD				mWaitStatus;
 		DWORD				mWaitFlags;
@@ -64,14 +64,14 @@ namespace Editor
 		HashString			mResourcePath;
 		HashString			mResourceName;
 
-		bool				FindFirstOne(AutoArray<Dystopia::File*>& _outResult, const HashString& _item);
-		void				FindFile(AutoArray<Dystopia::File*>& _outResult, HashString& _item, const AutoArray<Dystopia::File*>& _fromArr);
-		void				GetAllFiles(AutoArray<Dystopia::File*>& _outResult, Dystopia::Folder*);
-		void				SortAllFiles(AutoArray<Dystopia::File*>& _outResult);
-		Dystopia::Folder*   FindFolder(const HashString& _name);
-		void				FullCrawl(Dystopia::Folder*);
-		void				FolderUI(Dystopia::Folder*);
-		void				FileUI(Dystopia::File*);
+		bool				FindFirstOne(AutoArray<Editor::File*>& _outResult, const HashString& _item);
+		void				FindFile(AutoArray<Editor::File*>& _outResult, HashString& _item, const AutoArray<Editor::File*>& _fromArr);
+		void				GetAllFiles(AutoArray<Editor::File*>& _outResult, Editor::Folder*);
+		void				SortAllFiles(AutoArray<Editor::File*>& _outResult);
+		Editor::Folder*   FindFolder(const HashString& _name);
+		void				FullCrawl(Editor::Folder*);
+		void				FolderUI(Editor::Folder*);
+		void				FileUI(Editor::File*);
 		void				SearchWindow();
 		void				FolderWindow();
 		void				FileWindow(const Math::Vec2& _mySize);
