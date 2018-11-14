@@ -42,7 +42,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
-#include "System/Behaviour/BehaviourSystem.h"
 
 #include <fstream>
 #include <iostream>

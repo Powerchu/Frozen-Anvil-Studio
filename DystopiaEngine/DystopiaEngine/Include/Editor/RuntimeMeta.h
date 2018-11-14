@@ -17,6 +17,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <functional>
 #include <string>
 
+#include "Editor/EGUI.h"
+
 #include "DataStructure/Array.h"
 
 #include "Object/ObjectFlags.h"
@@ -28,18 +30,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/Component.h"
 #include "Component/ComponentList.h"
+#include "Component/BehaviourList.h"
 
+#include "Component/AABB.h"
 #include "Component/AudioSource.h"
 #include "Component/Camera.h"
-#include "Component/Collider.h"
 #include "Component/Circle.h"
-#include "Component/AABB.h"
 #include "Component/Convex.h"
-#include "Component/Renderer.h"
-#include "Component/SpriteRenderer.h"
-#include "Component/TextRenderer.h"
-#include "Component/RigidBody.h"
+#include "Component/Collider.h"
 #include "Component/CharacterController.h"
+#include "Component/Renderer.h"
+#include "Component/RigidBody.h"
+#include "Component/SpriteRenderer.h"
+#include "Component/Transform.h"
+#include "Component/TextRenderer.h"
 
 #include "IO/TextSerialiser.h"
 

@@ -186,7 +186,7 @@ namespace Editor //Dystopia
 
 	void PerformanceLog::ShowTaskMgrBreakdown(void)
 	{
-		static constexpr float sizeY = 170;
+		static constexpr float sizeY = 200;
 		Math::Vec2 size{Size().x - 7.f, sizeY };
 		if (EGUI::StartChild("Task Manager Breakdown", size))
 		{
