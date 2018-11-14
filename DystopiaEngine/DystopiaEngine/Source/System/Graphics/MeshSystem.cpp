@@ -42,17 +42,18 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 	TextSerialiser input = Serialiser::OpenFile<TextSerialiser>(_strPath, Serialiser::MODE_READ);
 
 	unsigned short nVtxCount = 0;
-	input.Read(nVtxCount);
+	input >> nVtxCount;
 
-	mUVs.reserve(nVtxCount * 2);
-	mVtx.reserve(nVtxCount * 6);
-	mIndex.reserve(nVtxCount * 3);
+	mUVBuffer.reserve(nVtxCount);
+	mVtxBuffer.reserve(nVtxCount);
+	mNormalBuffer.reserve(nVtxCount);
+	mIndexBuffer.reserve(nVtxCount * 3);
 
 	input.ConsumeStartBlock();
 
-	Vertex vtxBuf;
-	Vertex normBuf;
-	UV uvBuf;
+	Gfx::Vertex vtxBuf;
+	Gfx::Vertex normBuf;
+	Gfx::UV uvBuf;
 
 	for (unsigned short n = 0; n < nVtxCount; ++n)
 	{
@@ -60,9 +61,9 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 		input >> normBuf;
 		input >> uvBuf;
 
-		mVtx.EmplaceBack(vtxBuf);
-		mVtx.EmplaceBack(normBuf);
-		mUVs.EmplaceBack(uvBuf);
+		mVtxBuffer.EmplaceBack(vtxBuf);
+		mNormalBuffer.EmplaceBack(normBuf);
+		mUVBuffer.EmplaceBack(uvBuf);
 	}
 
 	CurrentMesh.mVtxCount += nVtxCount;
@@ -89,21 +90,18 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 	} while (!input.EndOfInput());
 }
 
-void Dystopia::MeshSystem::AddVertex(float x, float y, float z, float u, float v)
+void Dystopia::MeshSystem::AddVertex(float x, float y, float z)
 {
-	mVtx.EmplaceBack(x, y, z);
-	mVtx.EmplaceBack(.0f, .0f, .1f);
-	mUVs.EmplaceBack(u, v);
-	++(mpRawMeshes.back().mVtxCount);
+	mVtxBuffer.EmplaceBack(x, y, z);
 }
 
 Dystopia::Mesh* Dystopia::MeshSystem::AddIndices(const std::string& _strName, const AutoArray<short>& _indices)
 {
 	RawMesh& CurrentMesh = mpRawMeshes.back();
-	size_t nCurrOffset = mIndex.size();
+	size_t nCurrOffset = mIndexBuffer.size();
 
 	for (auto& e : _indices)
-		mIndex.push_back(e);
+		mIndexBuffer.push_back(e);
 
 	auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, static_cast<unsigned>(_indices.size()), nCurrOffset);
 	pCurrMesh->SetName(_strName);
@@ -113,11 +111,12 @@ Dystopia::Mesh* Dystopia::MeshSystem::AddIndices(const std::string& _strName, co
 
 void Dystopia::MeshSystem::EndMesh(void)
 {
-	mpRawMeshes.back().BuildMesh(mVtx, mUVs, mIndex);
+	mpRawMeshes.back().Build(mVtxBuffer, mNormalBuffer, mUVBuffer, mIndexBuffer);
 	
-	mVtx.clear();
-	mUVs.clear();
-	mIndex.clear();
+	mVtxBuffer.clear();
+	mNormalBuffer.clear();
+	mUVBuffer.clear();
+	mIndexBuffer.clear();
 }
 
 void Dystopia::MeshSystem::FreeMeshes(void)

@@ -59,9 +59,4 @@ void Dystopia::Mesh::SetIndices(unsigned _nIndices, size_t _nOffset)
 	mnOffset = reinterpret_cast<void*>(_nOffset);
 }
 
-bool Dystopia::Mesh::IsUnique(void) const
-{
-	return mbUnique;
-}
-
 

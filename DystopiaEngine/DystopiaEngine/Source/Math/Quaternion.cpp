@@ -88,12 +88,20 @@ Math::Quaternion __vectorcall Math::Slerp(Quaternion _q1, const Quaternion _q2, 
 	return ((std::cosf(angle * _fRatio) - c * s1 * s2) * _q1 + (s1 * s2) * _q2).Normalise();
 }
 
-Math::Quaternion __vectorcall Math::nLerp(const Quaternion _q1, const Quaternion _q2, float _fRatio)
+Math::Quaternion __vectorcall Math::nLerp(Quaternion _q1, const Quaternion _q2, float _fRatio)
 {
 	// Do spline interpolation to correct speed
 	// Reference https://www.gamedevs.org/uploads/orientation-representation.pdf slide 46
 	// Reference http://number-none.com/product/Hacking%20Quaternions/
-	float factor = 1.f - .7878088f * (Math::Dot(_q1, _q2));
+	float dp = Math::Dot(_q1, _q2);
+
+	if (dp < .0f)
+	{
+		dp = -dp;
+		_q1 = Math::Negate<Math::NegateFlag::XYZW>(_q1);
+	}
+
+	float factor = 1.f - .7878088f * dp;
 	factor *= factor;
 
 	float const C = .5069269f * factor;
