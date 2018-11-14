@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorClipboard.h"
 #include "Editor/EditorResource.h"
 #include "Editor/EditorCommands.h"
+#include "Editor/EditorFactory.h"
 
 #include "Editor/EGUI.h"
 

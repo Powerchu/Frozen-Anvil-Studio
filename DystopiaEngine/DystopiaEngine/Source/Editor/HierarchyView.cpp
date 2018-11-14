@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Payloads.h"
 #include "Editor/EditorMain.h"
 #include "Editor/EditorClipboard.h"
+#include "Editor/EditorCommands.h"
 
 #include "Object/GameObject.h"
 
@@ -196,6 +197,7 @@ namespace Editor
 				//Dystopia::GameObject* p = Dystopia::Factory::CreateGameObj("GameObject");
 				//p->SetFlag(Dystopia::eObjFlag::FLAG_LAYER_WORLD);
 				//GetCommandHND()->InvokeCommandInsert(*p, *GetCurrentScene());
+				EditorMain::GetInstance()->GetSystem<EditorCommands>()->InsertNewGameObject();
 			}
 
 			//if (EGUI::Display::SelectableTxt("Camera"))

@@ -16,12 +16,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EInput.h"
 #include "Editor/EHotkey.h"
 
+#include "System/Driver/Driver.h"
+#include "System/Scene/Scene.h"
+#include "System/Scene/SceneSystem.h"
 #include "System/Input/InputSystem.h"
+
+#include "Allocator/DefaultAlloc.h"
+
+#include "Utility/GUID.h"
 
 #include "DataStructure/Array.h"
 
 Editor::EditorCommands::EditorCommands(void)
-	: mDeqRedo{}, mDeqUndo{}, mbChangesMade{ false }, mnUndo{ nPos }, mnRedo{ nPos }
+	: mDeqRedo{}, mDeqUndo{}, mbChangesMade{ false }, mbDisableCommands{ false }, mnUndo{ nPos }, mnRedo{ nPos }
 {}
 
 Editor::EditorCommands::~EditorCommands(void)
@@ -67,8 +74,13 @@ void Editor::EditorCommands::EndFrame(void)
 void Editor::EditorCommands::Shutdown(void)
 {}
 
-void Editor::EditorCommands::Message(eEMessage)
-{}
+void Editor::EditorCommands::Message(eEMessage _msg)
+{
+	if (eEMessage::STATE_CHANGED == _msg)
+	{
+		mbDisableCommands = (EditorMain::GetInstance()->GetCurState() == eState::PLAY);
+	}
+}
 
 void Editor::EditorCommands::SaveSettings(Dystopia::TextSerialiser&) const
 {}
@@ -117,6 +129,30 @@ void Editor::EditorCommands::Redo(void)
 
 	mDeqUndo.push_back(mDeqRedo.back());
 	mDeqRedo.pop_back();
+}
+
+void Editor::EditorCommands::InsertNewGameObject(void)
+{
+	if (mbDisableCommands)
+		return;
+
+	Command *pCommand = Dystopia::DefaultAllocator<InsertGameObject>::ConstructAlloc(Dystopia::GUIDGenerator::GetUniqueID());
+	if (pCommand->Do())
+		mDeqUndo.push_back(pCommand);
+	else
+		Dystopia::DefaultAllocator<Command>::DestructFree(pCommand);
+}
+
+void Editor::EditorCommands::RemoveGameObject(const uint64_t& _objID)
+{
+	if (mbDisableCommands)
+		return;
+
+	Command *pCommand = Dystopia::DefaultAllocator<DeleteGameObject>::ConstructAlloc(_objID);
+	if (pCommand->Do())
+		mDeqUndo.push_back(pCommand);
+	else
+		Dystopia::DefaultAllocator<Command>::DestructFree(pCommand);
 }
 
 void Editor::EditorCommands::RemoveStray(std::deque<Command*>& _targetDeque)

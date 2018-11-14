@@ -42,11 +42,15 @@ namespace Editor
 		void Undo(void);
 		void Redo(void);
 
+		void InsertNewGameObject(void);
+		void RemoveGameObject(const uint64_t&);
+
 	private:
 
 		std::deque<Command*> mDeqRedo;
 		std::deque<Command*> mDeqUndo;
 		bool mbChangesMade;
+		bool mbDisableCommands;
 		size_t mnUndo;
 		size_t mnRedo;
 

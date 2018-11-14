@@ -47,7 +47,8 @@ void Dystopia::Transform::Awake(void)
 	if (mnParentID != GUIDGenerator::INVALID && mnParentID)
 	{
 		GameObject *p = EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject(mnParentID);
-		SetParent(p->GetComponent<Transform>());
+		if (p)
+			SetParent(p->GetComponent<Transform>());
 	}
 }
 
@@ -370,4 +371,11 @@ Dystopia::Transform& Dystopia::Transform::operator=(const Dystopia::Transform& _
 	mRotation	= _rhs.mRotation;
 	return *this;
 }
+
+uint64_t Dystopia::Transform::GetParentID(void) const
+{
+	return mnParentID;
+}
+
+
 

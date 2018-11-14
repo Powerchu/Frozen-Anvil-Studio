@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_FACTORY_H_
 #include "DataStructure/HashString.h"
 #include "DataStructure/AutoArray.h"
+#include "DataStructure/MagicArray.h"
 #include "Editor/EditorSystem.h"
 
 namespace Dystopia
@@ -44,9 +45,11 @@ namespace Editor
 		void LoadSettings(Dystopia::TextSerialiser&);
 
 		bool SaveAsPrefab(const uint64_t& _objID, Dystopia::TextSerialiser&);
-		bool LoadFromPrefab(Dystopia::GameObject&, Dystopia::TextSerialiser&);
+		bool LoadFromPrefab(Dystopia::TextSerialiser&);
 
 	private:
+		void SaveChild(Dystopia::GameObject&, Dystopia::TextSerialiser&);
+		void LoadChild(Dystopia::GameObject&, Dystopia::TextSerialiser&);
 		bool SavePrefab(const uint64_t& _objID, Dystopia::TextSerialiser&);
 		bool LoadPrefab(Dystopia::GameObject&, Dystopia::TextSerialiser&);
 
@@ -58,7 +61,9 @@ namespace Editor
 		void LoadSegmentC(Dystopia::GameObject&, unsigned, Dystopia::TextSerialiser&);
 		void LoadSegmentB(Dystopia::GameObject&, Dystopia::TextSerialiser&);
 
-		AutoArray<Dystopia::GameObject> mArrFactoryObj;
+		void RecursiveCounter(Dystopia::GameObject&, unsigned&);
+
+		MagicArray<Dystopia::GameObject> mArrFactoryObj;
 
 		Dystopia::SceneSystem *mpSceneSys;
 	};

@@ -37,7 +37,8 @@ namespace Editor
 			Ut::Indexer<2u, class EditorUI>,
 			Ut::Indexer<3u, class EditorClipboard>,
 			Ut::Indexer<4u, class EditorResource>,
-			Ut::Indexer<5u, class EditorCommands>
+			Ut::Indexer<5u, class EditorCommands>,
+			Ut::Indexer<6u, class EditorFactory>
 		>>;
 
 		using EPanels = Ut::MetaSortT_t<Ut::MetaLessThan, Ut::Collection<

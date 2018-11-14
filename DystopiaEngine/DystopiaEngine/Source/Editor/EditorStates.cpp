@@ -311,7 +311,7 @@ void Editor::EditorStates::Stop(void)
 void Editor::EditorStates::PromptSaveN(void)
 {
 	EGUI::Display::OpenPopup("Creating new scene");
-	if (EGUI::Display::StartPopupModal("Creating new scene", "There are unsaved changes, would you like to save them?"))
+	if (EGUI::Display::StartPopupModal("Creating new scene", "There are unsaved changes!"))
 	{
 		if (EGUI::Display::Button("Save"))
 		{
@@ -340,7 +340,7 @@ void Editor::EditorStates::PromptSaveN(void)
 void Editor::EditorStates::PromptSaveQ(void)
 {
 	EGUI::Display::OpenPopup("Exiting");
-	if (EGUI::Display::StartPopupModal("Exiting", "There are unsaved changes, would you like to save them?"))
+	if (EGUI::Display::StartPopupModal("Exiting", "There are unsaved changes!"))
 	{
 		if (EGUI::Display::Button("Save"))
 		{

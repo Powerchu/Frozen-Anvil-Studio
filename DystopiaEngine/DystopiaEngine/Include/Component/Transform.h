@@ -86,6 +86,8 @@ namespace Dystopia
 		AutoArray<Transform*>& GetAllChild(void);
 		Transform* GetParent(void);
 
+		uint64_t GetParentID(void) const;
+
 	private:
 
 		bool mbChanged;

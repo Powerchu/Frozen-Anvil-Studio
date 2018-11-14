@@ -12,7 +12,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/CommandTypes.h"
+
 #include "Allocator/DefaultAlloc.h"
+
+#include "System/Driver/Driver.h"
+#include "System/Scene/Scene.h"
+#include "System/Scene/SceneSystem.h"
+
+#include "Object/ObjectFlags.h"
+#include "Object/GameObject.h"
+
+#include "Component/Component.h"
+
+#include "DataStructure/HashString.h"
 
 Editor::InsertGameObject::InsertGameObject(uint64_t _id)
 	: mnObjID{ _id }
@@ -20,12 +32,38 @@ Editor::InsertGameObject::InsertGameObject(uint64_t _id)
 
 bool Editor::InsertGameObject::Do(void)
 {
-	return true;
+	if (auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().InsertGameObject(mnObjID))
+	{
+		HashString name{ "Game Object" };
+		size_t endP = name.size() - 1;
+		unsigned counter = 1;
+		const auto& allObj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().GetAllGameObjects();
+		for (const auto& obj : allObj)
+		{
+			HashString tempName{ obj.GetNamePtr() };
+			if (tempName == name)
+			{
+				if (endP + 1 < name.size())
+					name.erase(endP + 1);
+				name += counter++;
+			}
+		}
+		o->SetFlag(Dystopia::eObjFlag::FLAG_LAYER_WORLD);
+		o->SetName(name.c_str());
+		return true;
+	}
+	return false;
 }
 
 bool Editor::InsertGameObject::Undo(void)
 {
-	return true;
+	auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(mnObjID);
+	if (obj)
+	{
+		obj->Destroy();
+		return true;
+	}
+	return false;
 }
 
 bool Editor::InsertGameObject::Unchanged(void) const
@@ -33,14 +71,22 @@ bool Editor::InsertGameObject::Unchanged(void) const
 	return false;
 }
 
-
 Editor::DeleteGameObject::DeleteGameObject(uint64_t _id)
 	: mnObjID{ _id }
 {}
 
 bool Editor::DeleteGameObject::Do(void)
 {
-	return true;
+	if (auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(mnObjID))
+	{
+
+
+
+		o->Destroy();
+
+		return true;
+	}
+	return false;
 }
 
 bool Editor::DeleteGameObject::Undo(void)

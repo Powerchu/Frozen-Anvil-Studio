@@ -141,7 +141,6 @@ namespace Editor
 
 	private:
 		uint64_t mnObjID;
-
 	};
 
 	class DeleteGameObject : public Command

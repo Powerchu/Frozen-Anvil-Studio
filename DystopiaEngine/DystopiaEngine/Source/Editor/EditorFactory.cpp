@@ -68,12 +68,86 @@ void Editor::EditorFactory::LoadSettings(Dystopia::TextSerialiser&)
 
 bool Editor::EditorFactory::SaveAsPrefab(const uint64_t& _objID, Dystopia::TextSerialiser& _out)
 {
+	Dystopia::GameObject *pObject = mpSceneSys->GetCurrentScene().FindGameObject(_objID);
+
+	if (pObject)
+	{
+		if (SavePrefab(_objID, _out))
+		{
+			unsigned childCounter = 0;
+			auto& allChild = pObject->GetComponent<Dystopia::Transform>()->GetAllChild();
+
+			for (auto& c : allChild)
+				if (c->GetOwner())
+					RecursiveCounter(*c->GetOwner(), childCounter);
+
+			_out.InsertStartBlock("Recursion Counter");
+			_out << childCounter;
+			_out.InsertEndBlock("Recursion Counter");
+
+			for (auto& c : allChild)
+				if (c->GetOwner())
+					SaveChild(*c->GetOwner(), _out);
+
+			return true;
+		}
+	}
 	return false;
 }
 
-bool Editor::EditorFactory::LoadFromPrefab(Dystopia::GameObject&, Dystopia::TextSerialiser&)
+bool Editor::EditorFactory::LoadFromPrefab(Dystopia::TextSerialiser& _in)
 {
+	size_t currentIndex = mArrFactoryObj.size();
+	auto& obj = *mArrFactoryObj.Emplace(Dystopia::GUIDGenerator::GetUniqueID());
+	if (LoadPrefab(obj, _in))
+	{
+		unsigned childCounter = 0;
+		_in.ConsumeStartBlock();
+		_in >> childCounter;
+		_in.ConsumeEndBlock();
+
+		for (unsigned i = 0; i < childCounter; ++i)
+		{
+			auto& childObj = *mArrFactoryObj.Emplace(Dystopia::GUIDGenerator::GetUniqueID());
+			LoadChild(childObj, _in);
+		}
+
+		for (size_t index = currentIndex; index < mArrFactoryObj.size(); ++index)
+		{
+			auto transform = mArrFactoryObj[index].GetComponent<Dystopia::Transform>();
+			uint64_t parentID = transform->GetParentID();
+
+			for (size_t subIndex = currentIndex; subIndex < mArrFactoryObj.size(); ++subIndex)
+			{
+				if (parentID == mArrFactoryObj[subIndex].GetID())
+				{
+					transform->SetParent(mArrFactoryObj[subIndex].GetComponent<Dystopia::Transform>());
+					break;
+				}
+			}
+		}
+		return true;
+	}
 	return false;
+}
+
+void Editor::EditorFactory::SaveChild(Dystopia::GameObject& _obj, Dystopia::TextSerialiser& _out)
+{
+	const auto& allComponents = _obj.GetAllComponents();
+	const auto& allBehaviours = _obj.GetAllBehaviours();
+	SaveSegment(_obj, _out);
+	SaveSegment(allComponents, _out);
+	SaveSegment(allBehaviours, _out);
+
+	auto& allChild = _obj.GetComponent<Dystopia::Transform>()->GetAllChild();
+	for (auto& c : allChild)
+		if (c->GetOwner())
+			SaveChild(*c->GetOwner(), _out);
+}
+
+void Editor::EditorFactory::LoadChild(Dystopia::GameObject& _obj, Dystopia::TextSerialiser& _in)
+{
+	LoadPrefab(_obj, _in);
 }
 
 bool Editor::EditorFactory::SavePrefab(const uint64_t& _objID, Dystopia::TextSerialiser& _out)
@@ -229,7 +303,15 @@ void Editor::EditorFactory::LoadSegmentB(Dystopia::GameObject& _obj, Dystopia::T
 	_obj.Identify();
 }
 
+void Editor::EditorFactory::RecursiveCounter(Dystopia::GameObject& _obj, unsigned& _counter)
+{
+	_counter++;
 
+	auto& allChild = _obj.GetComponent<Dystopia::Transform>()->GetAllChild();
+	for (auto& c : allChild)
+		if (c->GetOwner())
+			RecursiveCounter(*c->GetOwner(), _counter);
+}
 
 
 
