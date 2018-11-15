@@ -19,11 +19,38 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Scene/SceneSystem.h"
 #include "Object/GameObject.h"
-#include "System/Collision/CollisionEvent.h"
+#include "System/Collision/CollisionEvent.h" 
 #include "Component/SpriteRenderer.h"
 
 namespace Dystopia
 {
+	
+	namespace Goblin_MSG
+	{ 
+		template<typename ... Ts>
+		void SendInternalMessage(Behaviour * ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendInternalMessage(ptr, _FuncName, _Params...);
+		}
+		template<typename ... Ts>
+		void SendExternalMessage(uint64_t _ObjectID, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
+		}
+		
+		template<typename ... Ts>
+		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
+		
+		template<typename ... Ts>
+		void SendAllMessage(const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
+		}
+	}
+	
 	Goblin::Goblin()
 	{
 	}
@@ -39,7 +66,7 @@ namespace Dystopia
 	void Goblin::Init()
 	{
 		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
-		const auto blackboard = bTree.GetBlackboard();
+		auto blackboard = bTree.GetBlackboard();
 		Math::Vector4 vectorT;
 		if (mpTarget)
 		{
@@ -61,12 +88,13 @@ namespace Dystopia
 				.leaf<RunAway>(blackboard)
 			.end()
 		.Build(bTree); 
-	}
+	} 
 
 	void Goblin::Update(const float _fDeltaTime)
 	{
+		return;
 		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
-		const auto blackboard = bTree.GetBlackboard();
+		auto blackboard = bTree.GetBlackboard();
 		Math::Vector4 vectorT;
 		if (mpTarget)
 		{
@@ -191,7 +219,7 @@ namespace Dystopia
 
 	Goblin * Goblin::Duplicate() const
 	{
-		return new Goblin{};
+		return new Goblin{}; 
 	}
 
 	void Goblin::Serialise(TextSerialiser& _ser) const
@@ -228,6 +256,17 @@ namespace Dystopia
 		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
 		return TypeErasure::TypeEraseMetaData{};
 	}
+	
+	// void Goblin::ReceiveMessage(const char * const _FuncName, BehaviourMessage _msg)
+    // {
+		// for(auto & elem : mMemberFunc)
+		// {
+			// if(!std::strcmp(elem.first, _FuncName))
+			// { 
+				// elem.second.Invoke(this, _msg); 
+			// }
+		// }
+    // }
 }
 
 

@@ -21,10 +21,10 @@ namespace Dystopia
 		  , mGravity(400.0F)
 		  , mMaxVelocityConstant(1024.0F)
 		  , mMaxVelSquared(mMaxVelocityConstant * mMaxVelocityConstant)
-		  , mPenetrationEpsilon(0.05F)
-		  , mfSleepVelEpsilon(0.100F)
-		  , mfSleepBias(0.98F)
-		  , mVelocityIterations(5)
+		  , mPenetrationEpsilon(0.10F)
+		  , mfSleepVelEpsilon(1.000F)
+		  , mfSleepBias(0.97F)
+		  , mVelocityIterations(4)
 		  , mPositionalIterations(4)
 	{
 	}
@@ -35,8 +35,6 @@ namespace Dystopia
 
 	bool PhysicsSystem::Init(void)
 	{
-		mfSleepVelEpsilon = 0.01F;
-		mfSleepBias = 0.97F;
 		return true;
 	}
 
@@ -58,11 +56,12 @@ namespace Dystopia
 				{
 					body.CheckSleeping(_dt);
 
-					const auto col = body.GetOwner()->GetComponent<Collider>();
-
-					if (nullptr != col)
+					for (auto col : body.mparrCol)
 					{
-						col->SetSleeping(!body.GetIsAwake());
+						if (nullptr != col)
+						{
+							col->SetSleeping(!body.GetIsAwake());
+						}
 					}
 				}
 			}
@@ -76,6 +75,8 @@ namespace Dystopia
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
+			if (!body.GetOwner()->IsActive()) continue;
+
 			if (!body.Get_IsStaticState() && body.GetIsAwake())
 			{
 				body.Integrate(_dt);
@@ -85,21 +86,17 @@ namespace Dystopia
 
 	void PhysicsSystem::ResolveCollision(const float _dt)
 	{
-		for (auto& body : mComponents)
-		{
-			if (!body.GetOwner()->IsActive())
-			{
-				return;
-			}
-		}
 		for (int i = 0; i < mVelocityIterations; ++i)
 		{
 			for (auto& body : mComponents)
 			{
+				if (body.GetOwner() == nullptr) continue;
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 				if (body.Get_IsStaticState()) continue;
+
+				if (!body.GetOwner()->IsActive()) continue;
 
 				for (auto col : body.mparrCol)
 				{
@@ -111,28 +108,18 @@ namespace Dystopia
 						}
 					}
 				}
-
-				//const auto col = body.GetOwner()->GetComponent<Collider>();
-
-				//if (nullptr != col)
-				//{
-				//	if (!col->IsTrigger())
-				//	{
-				//		for (auto& manifold : col->GetCollisionEvents())
-				//		{
-				//			manifold.ApplyImpulse();
-				//		}
-				//	}
-				//}
 			}
 		}
 
 		for (auto& body : mComponents)
 		{
+			if (body.GetOwner() == nullptr) continue;
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 			if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+
+			if (!body.GetOwner()->IsActive()) continue;
 
 			body.PreUpdatePosition(_dt);
 		}
@@ -141,10 +128,13 @@ namespace Dystopia
 		{
 			for (auto& body : mComponents)
 			{
+				if (body.GetOwner() == nullptr) continue;
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 				if (body.Get_IsStaticState()) continue;
+
+				if (!body.GetOwner()->IsActive()) continue;
 
 				for (auto col : body.mparrCol)
 				{
@@ -166,29 +156,6 @@ namespace Dystopia
 						}
 					}
 				}
-
-				/*const auto col = body.GetOwner()->GetComponent<Collider>();
-
-				if (nullptr != col)
-				{
-					if (!col->IsTrigger())
-					{
-						auto worstPene = mPenetrationEpsilon;
-						for (auto& manifold : col->GetCollisionEvents())
-						{
-							if (manifold.mfPeneDepth > worstPene)
-							{
-								const auto worstContact = &manifold;
-								worstPene = manifold.mfPeneDepth;
-
-								if (nullptr != worstContact)
-								{
-									worstContact->ApplyPenetrationCorrection(mPositionalIterations);
-								}
-							}
-						}
-					}
-				}*/
 			}
 		}
 	}
@@ -197,10 +164,13 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
+			if (body.GetOwner() == nullptr) continue;
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 			if (body.Get_IsStaticState()) continue;
+
+			if (!body.GetOwner()->IsActive()) continue;
 
 			body.UpdateResult(_dt);
 		}
@@ -214,8 +184,7 @@ namespace Dystopia
 		{
 			if (body.GetOwner())
 			{
-				if (body.GetOwner()->GetName() == "Hero")
-					body.DebugPrint();
+				body.DebugPrint();
 			}
 		}
 	}
@@ -240,6 +209,7 @@ namespace Dystopia
 
 	void PhysicsSystem::PreFixedUpdate(float _dt)
 	{
+		ScopedTimer<ProfilerAction> timeKeeper{ "Physics System", "PreFixed Update" };
 		// Integrate RigidBodies
 		IntegrateRigidBodies(_dt);
 	}

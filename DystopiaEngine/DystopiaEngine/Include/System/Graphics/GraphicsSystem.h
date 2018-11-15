@@ -55,7 +55,7 @@ namespace Dystopia
 
 		void Update(float) override;		// Draws the currently bounded window
 		void PostUpdate(void) override;
-		void Shutdown(void);
+		void Shutdown(void) override;
 
 		void SetGamma(float) noexcept;
 		float GetGamma(void) noexcept;
@@ -115,8 +115,8 @@ namespace Dystopia
 		void EndFrame(void);
 
 		void DrawSplash(void);
-		void DrawScene(Camera&, Math::Matrix4&);
-		void DrawDebug(Camera&, Math::Matrix4&);
+		void DrawScene(Camera&, Math::Matrix4&, Math::Matrix4&);
+		void DrawDebug(Camera&, Math::Matrix4&, Math::Matrix4&);
 
 		bool SelectOpenGLVersion(Window&) noexcept;
 	};

@@ -196,7 +196,7 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 
 	if (t)
 	{
-		SetFont(t->mName);
+		SetFont(t->mName.c_str());
 	}
 
 	EGUI::SameLine();

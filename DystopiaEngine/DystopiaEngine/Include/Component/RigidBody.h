@@ -209,7 +209,7 @@ namespace Dystopia
 		Vec3D					mGlobalCentroid;
 		Vec3D					mLocalCentroid;
 
-		float					mfAngleDeg;					/* Anticlockwise Direction: Angles in Degrees*/
+		float					mfAngleDegZ;				/* Anticlockwise Direction: Angles in Degrees*/
 
 		Math::Vector2			mLinearDamping;				/* Linear Damping in the X and Y axis */
 		float					mfAngularDrag;				/* Coefficient of angular drag. */
@@ -236,6 +236,8 @@ namespace Dystopia
 		bool					mbFixedRot;
 
 		float					mSleepTime;
+
+		size_t					mContactsNo;
 
 		PhysicsType				mPhysicsType;
 

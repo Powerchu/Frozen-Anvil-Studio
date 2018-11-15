@@ -31,8 +31,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <cstdlib>
 #include <tchar.h>
 
-static const std::string DEFAULT_PATH = "..\\DystopiaEngine\\Resource";
-static const std::string DEFAULT_NAME = "Resource";
+static const HashString DEFAULT_PATH = "..\\DystopiaEngine\\Resource";
+static const HashString DEFAULT_NAME = "Resource";
 static float delay = 5;
 
 namespace Dystopia
@@ -74,8 +74,8 @@ namespace Dystopia
 		SortAllFiles(mArrAllFiles);
 
 		GetEditorEventHND()->GetEvent(eEditorEvents::EDITOR_LCLICK)->Bind(&ProjectResource::RemoveFocusOnFile, this);
-
-		std::wstring wPath{ DEFAULT_PATH.begin(), DEFAULT_PATH.end() };
+		std::string path{ DEFAULT_PATH.c_str() };
+		std::wstring wPath{ path.begin(), path.end() };
 		mChangeHandle[0] = FindFirstChangeNotification(wPath.c_str(), true, mWaitFlags);
 		if (mChangeHandle[0] == INVALID_HANDLE_VALUE || !mChangeHandle[0])
 		{
@@ -86,7 +86,7 @@ namespace Dystopia
 		{
 			if (f->mTag == EGUI::ePayloadTags::PNG || f->mTag == EGUI::ePayloadTags::BMP || f->mTag == EGUI::ePayloadTags::DDS)
 			{
-				EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(f->mPath);
+				EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(f->mPath.c_str());
 			}
 		}
 	}
@@ -115,7 +115,7 @@ namespace Dystopia
 	{
 		if (mResetToFile.length())
 		{
-			FocusOnFile(mResetToFile);
+			FocusOnFile(mResetToFile.c_str());
 			mResetToFile.clear();
 		}
 
@@ -133,7 +133,7 @@ namespace Dystopia
 			if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 			{
 				GameObject *t = GetCurrentScene()->FindGameObject(*id);
-				mResetToFile = Factory::SaveAsPrefab(*t);
+				mResetToFile = Factory::SaveAsPrefab(*t).c_str();
 				EGUI::Display::EndPayloadReceiver();
 			}
 			ImGui::SetCursorPos(origin);
@@ -161,8 +161,8 @@ namespace Dystopia
 
 	void ProjectResource::UpdateSearch()
 	{
-		std::string currentSearch = mSearchText;
-		std::string previousSearch = mSearchTextLastFrame;
+		HashString currentSearch = mSearchText;
+		HashString previousSearch = mSearchTextLastFrame;
 		if (currentSearch.length() && currentSearch != previousSearch)
 		{
 			mArrFilesSearchedThisFrame.clear();
@@ -216,7 +216,7 @@ namespace Dystopia
 		for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
 		{
 			File* pFile = mpCurrentFolder->mArrPtrFiles[i];
-			std::string id = "ProjectResourceFileWindow" + pFile->mName + std::to_string(i);
+			HashString id = "ProjectResourceFileWindow" + pFile->mName + HashString{ std::to_string(i).c_str() };
 			if (i % columns) EGUI::SameLine();
 			if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{ 0,0,0,0 }))
 			{
@@ -244,7 +244,7 @@ namespace Dystopia
 			for (unsigned int i = 0; i < size; ++i)
 			{
 				File* pFile = mArrFilesSearchedThisFrame[i];
-				const std::string id = "ProjectResourceSearchResultWindow" + pFile->mName + std::to_string(i);
+				const HashString id = "ProjectResourceSearchResultWindow" + pFile->mName + HashString{ std::to_string(i).c_str() };
 				if (i % columns) EGUI::SameLine();
 				if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{ 0,0,0,0 }))
 				{
@@ -270,7 +270,7 @@ namespace Dystopia
 			strcpy_s(mSearchText, "");
 			strcpy_s(mSearchTextLastFrame, "");
 		}
-		std::string currentSelectionName = mpCurrentFolder ? mpCurrentFolder->mName : "";
+		HashString currentSelectionName = mpCurrentFolder ? mpCurrentFolder->mName : "";
 
 		mArrAllFiles.clear();
 		mArrFilesSearchedThisFrame.clear();
@@ -285,7 +285,7 @@ namespace Dystopia
 		mpCurrentFolder = FindFolder(currentSelectionName);
 	}
 
-	void ProjectResource::FocusOnFile(const std::string& _fileName)
+	void ProjectResource::FocusOnFile(const HashString& _fileName)
 	{
 		strcpy_s(mSearchText, ""); 
 		strcpy_s(mSearchTextLastFrame, "");
@@ -313,7 +313,7 @@ namespace Dystopia
 		return mLabel;
 	}
 
-	Folder* ProjectResource::FindFolder(const std::string& _name)
+	Folder* ProjectResource::FindFolder(const HashString& _name)
 	{
 		if (_name.length())
 		{
@@ -324,7 +324,7 @@ namespace Dystopia
 		return mpRootFolder;
 	}
 
-	void ProjectResource::FindFile(AutoArray<File*>& _outResult, std::string& _item, const AutoArray<File*>& _fromArr)
+	void ProjectResource::FindFile(AutoArray<File*>& _outResult, HashString& _item, const AutoArray<File*>& _fromArr)
 	{
 		MakeStringLower(_item);
 		for (auto& e : _fromArr)
@@ -334,7 +334,7 @@ namespace Dystopia
 		}
 	}
 
-	bool ProjectResource::FindFirstOne(AutoArray<File*>& _outResult, const std::string& _item)
+	bool ProjectResource::FindFirstOne(AutoArray<File*>& _outResult, const HashString& _item)
 	{
 		for (auto& e : mArrAllFiles)
 		{
@@ -366,7 +366,7 @@ namespace Dystopia
 		bool clickedFolderIcon = false;
 		bool flagIt = (mpCurrentFolder == _folder) ? true : false;
 		bool hideArrow = _folder->mArrPtrFolders.size() ? false : true;
-		if (EGUI::Display::IconFolder(_folder->mLowerCaseName, 15, 9, flagIt))
+		if (EGUI::Display::IconFolder(_folder->mLowerCaseName.c_str(), 15, 9, flagIt))
 		{
 			clickedFolderIcon = true;
 			EGUI::Display::OpenTreeNode();
@@ -392,7 +392,7 @@ namespace Dystopia
 		int id = -1;
 		if (_file->mTag == EGUI::ePayloadTags::PNG || _file->mTag == EGUI::ePayloadTags::BMP || _file->mTag == EGUI::ePayloadTags::DDS)
 		{
-			id = static_cast<int>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(_file->mPath)->GetID());
+			id = static_cast<int>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(_file->mPath.c_str())->GetID());
 		}
 
 		if (EGUI::Display::CustomPayload(("###ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
@@ -409,9 +409,15 @@ namespace Dystopia
 			FullCrawl(e);
 	}
 
-	void ProjectResource::MakeStringLower(std::string& _transformMe)
+	void ProjectResource::MakeStringLower(HashString& _transformMe)
 	{
-		std::transform(_transformMe.begin(), _transformMe.end(), _transformMe.begin(), my_tolower);
+		//std::transform(_transformMe.begin(), _transformMe.end(), _transformMe.begin(), my_tolower);
+		auto start = _transformMe.begin();
+		for (auto const & elem : _transformMe)
+		{
+			*start = my_tolower(elem);
+			start++;
+		}
 	}
 
 }

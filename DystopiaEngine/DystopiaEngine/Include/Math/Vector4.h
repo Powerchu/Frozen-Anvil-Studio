@@ -37,6 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <exception>    // bad_alloc
 #endif
 
+#include <iostream>
 #include <xmmintrin.h>  // SSE
 #include <emmintrin.h>  // SSE 2
 #include <tmmintrin.h>  // SSE 3

@@ -51,7 +51,7 @@ namespace Dystopia
 		void SaveSettings(TextSerialiser&);
 
 		void ReceiveMessage(const eSysMessage&);
-		Sound* LoadSound(const std::string& _file);
+		Sound* LoadSound(const HashString& _file);
 
 	private:
 		float mMasterVol;

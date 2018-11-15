@@ -312,7 +312,7 @@ namespace EGUI
 		======================================================================================================================= */
 		// Start a tree node 
 		bool StartTreeNode(const std::string& _label, bool* _outClicked = nullptr, bool _highlighted = false,
-			bool _noArrow = false, bool _defaultOpen = true);
+		                   bool _noArrow = false, bool _defaultOpen = true);
 		// Set a specific tree node to be collapsed (closed) or not
 		void OpenTreeNode(const std::string& _label, bool _open);
 		// opens the next tree node
@@ -339,7 +339,7 @@ namespace EGUI
 					EGUI::Display::EndPayload();
 				}
 		======================================================================================================================= */
-		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const std::string& _toolTip);
+		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const HashString& _toolTip);
 		// Call EndPayLoad at the end of StartPayLoad return true. See StartPayLoad usage
 		void EndPayload();
 		/* =======================================================================================================================

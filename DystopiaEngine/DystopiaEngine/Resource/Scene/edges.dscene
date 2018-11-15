@@ -1,0 +1,63 @@
+[START_Scene]
+18446744071747141632,"edges",2,[START_START_GO_DATA]
+1735393792,97,"Scene Camera",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.199709,0.199709,1,0.510707,0.35626,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1911560192,65,"GameObject",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+100,100,1,0,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+1735394816,0,1735393792,0,1,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744072733859328,1,1911560192,0,0,0,0,0,0,1,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+0,
+[END_BEHAVIOUR_SYSTEM_BLOCK]
+
+[END_Scene]

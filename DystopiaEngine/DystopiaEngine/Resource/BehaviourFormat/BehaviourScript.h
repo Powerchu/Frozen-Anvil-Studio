@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Behaviour/Behaviour.h"
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
+#include "Behaviour/BehaviourMemberFunc.h"
 
 #define DllExport   __declspec( dllexport )
 
@@ -106,6 +107,14 @@ namespace Dystopia
 		}
 	}
 }
+
+/*Keep this if you do not want to show anything in Editor*/
+PP_REFLECT_EMPTY(Dystopia::_SF_ClassName_)
+/*
+  Uncomment the line PP_REFLECT and add in the names of the variable you want to show
+  Comment out PP_REFLECT_EMPTY.
+*/
+//PP_REFLECT(Dystopia::_SF_ClassName_)
 
 #endif //_SF_DefineScriptName_H_
 

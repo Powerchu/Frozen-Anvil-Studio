@@ -322,7 +322,9 @@
     <ClCompile Include="Source\Lib\GraphicsLib.cpp">
       <Filter>Lib\GraphicsLib</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Graphics\MeshBuilder.cpp" />
+    <ClCompile Include="Source\System\Graphics\MeshBuilder.cpp">
+      <Filter>Game Engine\SubSystems\Mesh\MeshBuilder</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -868,6 +870,15 @@
     <ClInclude Include="Include\Behaviour\AI\AISystem.h">
       <Filter>Game Engine\Systems\AI</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Behaviour\BehaviourMessage.h">
+      <Filter>Game Engine\Systems\Behaviour</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\BehaviourMemberFunc.h">
+      <Filter>Game Engine\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Events\Event.h">
+      <Filter>Game Engine\Systems\Event</Filter>
+    </ClInclude>
     <ClInclude Include="Include\DataStructure\HashString.h">
       <Filter>DataStructures\HashString</Filter>
     </ClInclude>
@@ -892,7 +903,9 @@
     <ClInclude Include="Include\Math\Geometery\Box.h">
       <Filter>Math\Geo</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\MeshBuilder.h" />
+    <ClInclude Include="Include\System\Graphics\MeshBuilder.h">
+      <Filter>Game Engine\SubSystems\Mesh\MeshBuilder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1266,6 +1279,9 @@
     </Filter>
     <Filter Include="Math\Geo">
       <UniqueIdentifier>{83d13544-6880-4b8f-93ca-6c0aa0c54910}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Mesh\MeshBuilder">
+      <UniqueIdentifier>{bee9a1c6-1b77-42b7-b131-2ac4dd1a757b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

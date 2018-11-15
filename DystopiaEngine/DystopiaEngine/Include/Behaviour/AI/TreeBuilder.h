@@ -37,7 +37,7 @@ namespace Dystopia
 			template <class NodeType, typename... Args>
 			CompositeBuilder<Parent> leaf(Args... args)
 			{
-				auto child = std::make_shared<NodeType>((args)...);
+				auto child = Ctor::CreateShared<NodeType>((args)...);
 				mpNode->AddChild(child);
 				return *this;
 			}
@@ -45,17 +45,17 @@ namespace Dystopia
 			template <class CompositeType, typename... Args>
 			CompositeBuilder<CompositeBuilder<Parent>> composite(Args... args)
 			{
-				auto child = std::make_shared<CompositeType>((args)...);
+				auto child = Ctor::CreateShared<CompositeType>((args)...);
 				mpNode->AddChild(child);
-				return CompositeBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.get()));
+				return CompositeBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.GetRaw()));
 			}
 
 			template <class DecoratorType, typename... Args>
 			DecoratorBuilder<CompositeBuilder<Parent>> decorator(Args... args)
 			{
-				auto child = std::make_shared<DecoratorType>((args)...);
+				auto child = Ctor::CreateShared<DecoratorType>((args)...);
 				mpNode->AddChild(child);
-				return DecoratorBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.get()));
+				return DecoratorBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.GetRaw()));
 			}
 
 			Parent& end() {	return *mpParent; }
@@ -74,7 +74,7 @@ namespace Dystopia
 			template <class NodeType, typename... Args>
 			DecoratorBuilder<Parent> leaf(Args... args)
 			{
-				auto child = std::make_shared<NodeType>((args)...);
+				auto child = Ctor::CreateShared<NodeType>((args)...);
 				mpNode->SetChild(child);
 				return *this;
 			}
@@ -82,17 +82,17 @@ namespace Dystopia
 			template <class CompositeType, typename... Args>
 			CompositeBuilder<DecoratorBuilder<Parent>> composite(Args... args)
 			{
-				auto child = std::make_shared<CompositeType>((args)...);
+				auto child = Ctor::CreateShared<CompositeType>((args)...);
 				mpNode->SetChild(child);
-				return CompositeBuilder<DecoratorBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.get()));
+				return CompositeBuilder<DecoratorBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.GetRaw()));
 			}
 
 			template <class DecoratorType, typename... Args>
 			DecoratorBuilder<DecoratorBuilder<Parent>> decorator(Args... args)
 			{
-				auto child = std::make_shared<DecoratorType>((args)...);
+				auto child = Ctor::CreateShared<DecoratorType>((args)...);
 				mpNode->SetChild(child);
-				return DecoratorBuilder<DecoratorBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.get()));
+				return DecoratorBuilder<DecoratorBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.GetRaw()));
 			}
 
 			Parent& end() { return *mpParent; }
@@ -111,28 +111,28 @@ namespace Dystopia
 			template <class NodeType, typename... Args>
 			Builder leaf(Args... args)
 			{
-				mpRoot = std::make_shared<NodeType>((args)...);
+				mpRoot = Ctor::CreateShared<NodeType>((args)...);
 				return *this;
 			}
 
 			template <class CompositeType, typename... Args>
 			CompositeBuilder<Builder> composite(Args... args)
 			{
-				mpRoot = std::make_shared<CompositeType>((args)...);
-				return CompositeBuilder<Builder>(this, reinterpret_cast<CompositeType*>(mpRoot.get()));
+				mpRoot = Ctor::CreateShared<CompositeType>((args)...);
+				return CompositeBuilder<Builder>(this, reinterpret_cast<CompositeType*>(mpRoot.GetRaw()));
 			}
 
 			template <class DecoratorType, typename... Args>
 			DecoratorBuilder<Builder> decorator(Args... args)
 			{
-				mpRoot = std::make_shared<DecoratorType>((args)...);
-				return DecoratorBuilder<Builder>(this, reinterpret_cast<DecoratorType*>(mpRoot.get()));
+				mpRoot = Ctor::CreateShared<DecoratorType>((args)...);
+				return DecoratorBuilder<Builder>(this, reinterpret_cast<DecoratorType*>(mpRoot.GetRaw()));
 			}
 
 			Node::Ptr Build() const
 			{
 				assert(mpRoot != nullptr && "The Behavior Tree is empty!");
-				auto tree = std::make_shared<BehaviourTree>();
+				auto tree = Ctor::CreateShared<BehaviourTree>();
 				tree->SetRoot(mpRoot);
 				return tree;
 			}

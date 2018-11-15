@@ -82,6 +82,20 @@ void Dystopia::Behaviour::OnTriggerExit(const GameObject *)
 {
 }
 
+Dystopia::TypeErasure::TypeEraseMetaData Dystopia::Behaviour::GetMetaData()
+{
+	return TypeErasure::TypeEraseMetaData{};
+}
+
+Dystopia::TypeErasure::TypeEraseMetaData const Dystopia::Behaviour::GetMetaData() const
+{
+	return TypeErasure::TypeEraseMetaData{};
+}
+
+void Dystopia::Behaviour::ReceiveMessage(const char * const , BehaviourMessage)
+{
+}
+
 Dystopia::Behaviour * Dystopia::Behaviour::Duplicate() const
 {
 	return nullptr;

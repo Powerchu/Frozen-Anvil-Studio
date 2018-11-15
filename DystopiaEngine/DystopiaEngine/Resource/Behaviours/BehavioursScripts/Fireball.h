@@ -19,7 +19,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Behaviour/Behaviour.h"
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
-
+#include <map>
+#include "Behaviour/BehaviourMemberFunc.h"
+#include "Utility/DebugAssert.h"
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
@@ -75,6 +77,10 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+        virtual void ReceiveMessage(const char * const _FuncName, BehaviourMessage _msg);
+        
+		std::map<const char *, BehaviourMemberFunc<Fireball>> mMemberFunc;
+		
 	private:
 		friend MetaData<Fireball>;
 	};

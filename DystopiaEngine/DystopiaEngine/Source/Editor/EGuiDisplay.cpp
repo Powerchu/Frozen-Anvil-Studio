@@ -412,7 +412,7 @@ namespace EGUI
 			return false;
 		}
 
-		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow, bool _defaultOpen)
+		bool StartTreeNode(const std::string& _label, bool* _outClicked, bool _highlighted, bool _noArrow, bool _defaultOpen)
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 			flags = _highlighted ? flags | ImGuiTreeNodeFlags_Selected : flags;
@@ -450,7 +450,7 @@ namespace EGUI
 			ImGui::TreePop();
 		}
 
-		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const std::string& _toolTip)
+		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const HashString& _toolTip)
 		{
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 			{
@@ -485,7 +485,7 @@ namespace EGUI
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), size);
-			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
+			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip.c_str());
 			ImGui::PopStyleColor();
 			if (payload) EndPayload();
 

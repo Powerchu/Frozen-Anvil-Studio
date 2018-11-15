@@ -23,7 +23,7 @@ namespace
 	template <typename T, typename U>
 	struct _DLL_EXPORT TupleBase;
 
-	template <unsigned, typename T>
+	template <auto, typename T>
 	struct _DLL_EXPORT TupleLeaf
 	{
 		T value;
