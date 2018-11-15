@@ -34,7 +34,7 @@ namespace Dystopia
 			const AutoArray<short>&
 		);
 
-		unsigned mVAO, mVtxBuffer, mUVBuffer, mEBO;
+		unsigned mVAO, mVtxBuffer, mNmlBuffer, mUVBuffer, mEBO;
 		unsigned mVtxCount, mRefCount;
 	};
 }

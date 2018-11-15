@@ -39,6 +39,8 @@ namespace Dystopia
 
 			const float theta = 0.0f;
 
+			Collider::mDebugVertices.push_back(Gfx::Vertex{ 0,0,0 });
+
 			for (unsigned i = 0; i < numberOfSegments; ++i)
 			{
 				Vec3D vertex = 0.5F * Vec3D{ cosf(increment*i), sinf(increment*i), 0 };

@@ -388,7 +388,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
 
 	glClear(GL_DEPTH_BUFFER_BIT);
-	Shader* s = shaderlist["Colour Shader"];
+	Shader* s = shaderlist["Collider Shader"];
 	
 	s->Bind();
 	s->UploadUniform("ProjectViewMat", _ProjView);
@@ -442,12 +442,8 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 
 			if (Mesh* pObjMesh = Obj->GetMesh())
 			{
-				activeColor.w = 0.1f;
 				s->UploadUniform("vColor", activeColor);
 				pObjMesh->DrawMesh(GetDrawMode());
-				activeColor.w = 1.f;
-				s->UploadUniform("vColor", activeColor);
-				pObjMesh->DrawMesh(GL_LINE_LOOP);
 			}
 		}
 	}

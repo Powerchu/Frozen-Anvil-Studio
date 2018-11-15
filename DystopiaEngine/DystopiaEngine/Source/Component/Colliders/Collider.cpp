@@ -48,7 +48,11 @@ namespace Dystopia
 			pMeshSys->StartMesh();
 
 			auto const & arr = GetVertexBuffer();
-			for (auto i : arr)
+
+			pMeshSys->AddVertex(0, 0, 0);
+			pMeshSys->AddNormal(0, 0, 1);
+
+			for (auto i : Ut::Range(arr.begin() + 1, arr.end()))
 			{
 				pMeshSys->AddVertex(i.x, i.y, i.z);
 				pMeshSys->AddNormal(i.x, i.y, i.z);
