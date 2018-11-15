@@ -51,6 +51,7 @@ namespace Dystopia
 			for (auto i : arr)
 			{
 				pMeshSys->AddVertex(i.x, i.y, i.z);
+				pMeshSys->AddNormal(i.x, i.y, i.z);
 			}
 
 			SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));

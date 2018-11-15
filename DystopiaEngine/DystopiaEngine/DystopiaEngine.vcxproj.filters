@@ -322,6 +322,7 @@
     <ClCompile Include="Source\Lib\GraphicsLib.cpp">
       <Filter>Lib\GraphicsLib</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Graphics\MeshBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -714,9 +715,6 @@
     <ClInclude Include="Include\System\Input\XGamePad.h">
       <Filter>Game Engine\Systems\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Math\MetaFloat.h">
-      <Filter>Math\MetaMath</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Reflection\Reflection.h">
       <Filter>Reflection</Filter>
     </ClInclude>
@@ -882,6 +880,19 @@
     <ClInclude Include="Include\Lib\GraphicsLib.h">
       <Filter>Lib\GraphicsLib</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Math\MetaMath\MetaFloat.h">
+      <Filter>Math\MetaMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Geometery\Sphere.h">
+      <Filter>Math\Geo</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Geometery\CoordinateSystems.h">
+      <Filter>Math\Geo</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Geometery\Box.h">
+      <Filter>Math\Geo</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\MeshBuilder.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1252,6 +1263,9 @@
     </Filter>
     <Filter Include="IO\ImageParser\lodepng">
       <UniqueIdentifier>{447b179b-b152-4f92-9cc2-48eb8f301131}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Geo">
+      <UniqueIdentifier>{83d13544-6880-4b8f-93ca-6c0aa0c54910}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

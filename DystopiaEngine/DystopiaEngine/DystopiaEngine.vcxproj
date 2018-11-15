@@ -64,6 +64,7 @@
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\FontSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
+    <ClCompile Include="Source\System\Graphics\MeshBuilder.cpp" />
     <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp" />
@@ -137,6 +138,9 @@
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
     <ClInclude Include="Include\DataStructure\ProxyPtr.h" />
     <ClInclude Include="Include\Lib\GraphicsLib.h" />
+    <ClInclude Include="Include\Math\Geometery\Box.h" />
+    <ClInclude Include="Include\Math\Geometery\CoordinateSystems.h" />
+    <ClInclude Include="Include\Math\Geometery\Sphere.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h" />
     <ClInclude Include="Include\Editor\EditorHotkeys.h" />
     <ClInclude Include="Include\Editor\EditorInput.h" />
@@ -176,7 +180,7 @@
     <ClInclude Include="Include\Editor\ProjectSettings.h" />
     <ClInclude Include="Include\Editor\SpritePreviewer.h" />
     <ClInclude Include="Include\Editor\StyleScheme.h" />
-    <ClInclude Include="Include\Math\MetaFloat.h" />
+    <ClInclude Include="Include\Math\MetaMath\MetaFloat.h" />
     <ClInclude Include="Include\Reflection\MetaData.h" />
     <ClInclude Include="Include\Reflection\PPConcat.h" />
     <ClInclude Include="Include\Reflection\PPExtract.h" />
@@ -197,6 +201,7 @@
     <ClInclude Include="Include\Component\Primitive.h" />
     <ClInclude Include="Include\System\Graphics\CharSpace.h" />
     <ClInclude Include="Include\System\Graphics\FontSystem.h" />
+    <ClInclude Include="Include\System\Graphics\MeshBuilder.h" />
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
