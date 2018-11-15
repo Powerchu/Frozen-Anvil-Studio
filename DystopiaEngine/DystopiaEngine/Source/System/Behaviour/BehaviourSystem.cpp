@@ -370,7 +370,7 @@ namespace Dystopia
 								_obj.InsertStartBlock("MEMBER VAR");
 							}
 						}
-						_obj << "END";
+						_obj << "\"END\"";
 						_obj.InsertEndBlock("BEHAVIOUR_MEMBER_VARIABLE_BLOCK");
 					}
 				}

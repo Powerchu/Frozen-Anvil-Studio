@@ -1069,8 +1069,9 @@ namespace Dystopia
 		{
 			int i_type = 0;
 			AutoArray<std::string> arr{ std::string{ " Never Sleep" },
-				std::string{ " Start Awake" },
-				std::string{ " Start Asleep" } };
+										std::string{ " Start Awake" },
+										std::string{ " Start Asleep" } 
+									};
 			if (EGUI::Display::DropDownSelection("Sleeping Mode", i_type, arr))
 			{
 				switch (i_type)
