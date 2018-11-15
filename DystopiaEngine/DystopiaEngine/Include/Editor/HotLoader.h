@@ -555,7 +555,7 @@ namespace Dystopia
 			std::wstring OutputCommand;
 
 
-			CmdArgument += mVcvarPath + L" && " + mVcvarName + L" " + mVcvarBuildEnv + L" && cd \"" + wstrDll_Folder_Name.c_str() + L"\" && ";
+			CmdArgument += L"\"" +  mVcvarPath + L"\" && " + mVcvarName + L" " + mVcvarBuildEnv + L" && cd \"" + wstrDll_Folder_Name.c_str() + L"\" && ";
 
 			OutputCommand += L'\"' + wstrFolder_Name + L"/";
 			OutputCommand += FileName + L'\"';
