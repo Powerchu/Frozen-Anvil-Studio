@@ -174,9 +174,9 @@ void Dystopia::TextRenderer::Unserialise(TextSerialiser& _in)
 
 void Dystopia::TextRenderer::EditorUI(void) noexcept
 {
-	char buf[256]{ };
+	static char buf[512]{ };
 
-	Ut::Copy(mText, &buf[0]);
+	*(Ut::Copy(mText, &buf[0])) = '\0';
 	if (EGUI::Display::TextField("Text ", buf, 256, true, 225))
 	{
 		mText.clear();
