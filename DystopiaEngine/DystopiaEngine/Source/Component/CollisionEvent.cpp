@@ -19,7 +19,7 @@ namespace Dystopia
 
 	void CollisionEvent::ApplyImpulse()
 	{
-		constexpr auto velLimit = 15.0F;
+		constexpr auto velLimit = 50.0F;
 		const auto bodyA = mThisCollider->GetComponent<RigidBody>();
 		const auto bodyB = mCollidedWith->GetComponent<RigidBody>();
 		const auto colB = mCollidedWith->GetComponent<Collider>();
@@ -114,8 +114,8 @@ namespace Dystopia
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
 
-		const float perc = 0.44F / iter;
-		const float slop = 0.15F;
+		const float perc = 0.48F / iter;
+		const float slop = 0.01F;
 
 		const Vec3D correction = Math::Max(Math::Abs(mfPeneDepth) - slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 

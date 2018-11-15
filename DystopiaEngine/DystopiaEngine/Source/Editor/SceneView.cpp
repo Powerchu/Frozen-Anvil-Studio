@@ -34,6 +34,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Camera.h"
 #include "Component/Renderer.h"
 #include "Component/SpriteRenderer.h"
+#include "Component/RigidBody.h"
 #include "Behaviour/Behaviour.h"
 
 #include "Math/MathUtility.h"
@@ -516,7 +517,8 @@ namespace Dystopia
 				{
 					const auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
 					obj->GetComponent<Transform>()->SetPosition(Math::Pt3D{ cpos.x, cpos.y + changeY * scale.y, cpos.z, cpos.w });
-					obj->SetActive(false);
+					if (obj->GetComponent<RigidBody>())
+						obj->SetActive(false);
 				}
 				mClearSelection = false;
 				break;
@@ -524,7 +526,8 @@ namespace Dystopia
 				mClearSelection = false;
 				for (auto& obj : _arr)
 				{
-					obj->SetActive(false);
+					if (obj->GetComponent<RigidBody>())
+						obj->SetActive(false);
 				}
 				break;
 			case EGUI::eEND_DRAG:
@@ -542,7 +545,8 @@ namespace Dystopia
 				{
 					const auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
 					obj->GetComponent<Transform>()->SetPosition(Math::Pt3D{ cpos.x + changeX * scale.x, cpos.y + changeY * scale.y, cpos.z, cpos.w });
-					obj->SetActive(false);
+					if (obj->GetComponent<RigidBody>())
+						obj->SetActive(false);
 				}
 				mClearSelection = false;
 				break;
@@ -550,7 +554,8 @@ namespace Dystopia
 				mClearSelection = false;
 				for (auto& obj : _arr)
 				{
-					obj->SetActive(false);
+					if (obj->GetComponent<RigidBody>())
+						obj->SetActive(false);
 				}
 				break;
 			case EGUI::eEND_DRAG:
@@ -571,7 +576,8 @@ namespace Dystopia
 				{
 					const auto cScale = obj->GetComponent<Transform>()->GetScale();
 					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX*scale.x, cScale.y, cScale.z, cScale.w });
-					obj->SetActive(false);
+					if (obj->GetComponent<RigidBody>())
+						obj->SetActive(false);
 				}
 				mClearSelection = false;
 				break;
@@ -579,14 +585,16 @@ namespace Dystopia
 				mClearSelection = false;
 				for (auto& obj : _arr)
 				{
-					obj->SetActive(false);
+					if (obj->GetComponent<RigidBody>())
+						obj->SetActive(false);
 				}
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
 				for (auto& obj : _arr)
 				{
-					obj->SetActive(true);
+					if (obj->GetComponent<RigidBody>())
+						obj->SetActive(true);
 				}
 				break;
 			}
@@ -597,7 +605,8 @@ namespace Dystopia
 				{
 					const auto cScale = obj->GetComponent<Transform>()->GetScale();
 					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY*scale.y, cScale.z, cScale.w });
-					obj->SetActive(false);
+					if (obj->GetComponent<RigidBody>())
+						obj->SetActive(false);
 				}
 				mClearSelection = false;
 				break;
@@ -605,7 +614,8 @@ namespace Dystopia
 				mClearSelection = false;
 				for (auto& obj : _arr)
 				{
-					obj->SetActive(false);
+					if (obj->GetComponent<RigidBody>())
+						obj->SetActive(false);
 				}
 				break;
 			case EGUI::eEND_DRAG:
@@ -623,7 +633,8 @@ namespace Dystopia
 				{
 					const auto cScale = obj->GetComponent<Transform>()->GetScale();
 					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX * scale.x, cScale.y + changeX * scale.y, cScale.z, cScale.w });
-					obj->SetActive(false);
+					if (obj->GetComponent<RigidBody>())
+						obj->SetActive(false);
 				}
 				mClearSelection = false;
 				break;
@@ -631,7 +642,8 @@ namespace Dystopia
 				mClearSelection = false;
 				for (auto& obj : _arr)
 				{
-					obj->SetActive(false);
+					if (obj->GetComponent<RigidBody>())
+						obj->SetActive(false);
 				}
 				break;
 			case EGUI::eEND_DRAG:
@@ -669,11 +681,13 @@ namespace Dystopia
 			case EGUI::eDRAGGING:
 				obj.GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ curPos.x + changeX * scale.x, curPos.y, curPos.z, curPos.w });
 				mClearSelection = false;
-				obj.SetActive(false);
+				if (obj.GetComponent<RigidBody>())
+					obj.SetActive(false);
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
-				obj.SetActive(false);
+				if (obj.GetComponent<RigidBody>())
+					obj.SetActive(false);
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
@@ -685,11 +699,13 @@ namespace Dystopia
 			case EGUI::eDRAGGING:
 				obj.GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ curPos.x, curPos.y + changeY * scale.y, curPos.z, curPos.w });
 				mClearSelection = false;
-				obj.SetActive(false);
+				if (obj.GetComponent<RigidBody>())
+					obj.SetActive(false);
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
-				obj.SetActive(false);
+				if (obj.GetComponent<RigidBody>())
+					obj.SetActive(false);
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
@@ -701,11 +717,13 @@ namespace Dystopia
 			case EGUI::eDRAGGING:
 				obj.GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ curPos.x + changeX * scale.x, curPos.y + changeY * scale.y, curPos.z, curPos.w });
 				mClearSelection = false;
-				obj.SetActive(false);
+				if (obj.GetComponent<RigidBody>())
+					obj.SetActive(false);
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
-				obj.SetActive(false);
+				if (obj.GetComponent<RigidBody>())
+					obj.SetActive(false);
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
@@ -720,11 +738,13 @@ namespace Dystopia
 			case EGUI::eDRAGGING:
 				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScaleLocal.x + changeX * scale.x, cScaleLocal.y, cScaleLocal.z, cScaleLocal.w });
 				mClearSelection = false;
-				obj.SetActive(false);
+				if (obj.GetComponent<RigidBody>())
+					obj.SetActive(false);
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
-				obj.SetActive(false);
+				if (obj.GetComponent<RigidBody>())
+					obj.SetActive(false);
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
@@ -736,11 +756,13 @@ namespace Dystopia
 			case EGUI::eDRAGGING:
 				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScaleLocal.x, cScaleLocal.y + changeY * scale.y, cScaleLocal.z, cScaleLocal.w });
 				mClearSelection = false;
-				obj.SetActive(false);
+				if (obj.GetComponent<RigidBody>())
+					obj.SetActive(false);
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
-				obj.SetActive(false);
+				if (obj.GetComponent<RigidBody>())
+					obj.SetActive(false);
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
@@ -753,12 +775,14 @@ namespace Dystopia
 				changeX += changeY;
 				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScaleLocal.x + changeX * scale.x, cScaleLocal.y + ratio * changeX *scale.x, cScaleLocal.z, cScaleLocal.w });
 				mClearSelection = false;
-				obj.SetActive(false);
+				if (obj.GetComponent<RigidBody>())
+					obj.SetActive(false);
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
 				ratio = cScaleLocal.y / cScaleLocal.x;
-				obj.SetActive(false);
+				if (obj.GetComponent<RigidBody>())
+					obj.SetActive(false);
 				break;
 			case EGUI::eEND_DRAG:
 				mClearSelection = false;
