@@ -122,17 +122,17 @@ void Dystopia::InputManager::LoadDefaults(void)
 	LoadDefaultUserKeys();
 }
 
-void Dystopia::InputManager::LoadSettings(DysSerialiser_t& _in)
+void Dystopia::InputManager::LoadSettings(DysSerialiser_t&)
 {
 
 }
 
-void Dystopia::InputManager::SaveSettings(DysSerialiser_t& _out)
+void Dystopia::InputManager::SaveSettings(DysSerialiser_t&)
 {
 
 }
 
-void Dystopia::InputManager::MapUserButton(eUserButton _eUserBtn, eButton _button)
+void Dystopia::InputManager::MapUserButton(eUserButton, eButton )
 {
 	
 }
