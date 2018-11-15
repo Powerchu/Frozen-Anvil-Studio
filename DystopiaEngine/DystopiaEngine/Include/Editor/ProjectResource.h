@@ -45,7 +45,7 @@ namespace Dystopia
 		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
 		virtual std::string GetLabel() const override;
 
-		void FocusOnFile(const std::string& _fileName);
+		void FocusOnFile(const HashString& _fileName);
 		void RemoveFocusOnFile();
 
 	private:
@@ -66,11 +66,11 @@ namespace Dystopia
 		DWORD				mWaitFlags;
 		Math::Vec2			mPayloadRect;
 
-		bool				FindFirstOne(AutoArray<File*>& _outResult, const std::string& _item);
-		void				FindFile(AutoArray<File*>& _outResult, std::string& _item, const AutoArray<File*>& _fromArr);
+		bool				FindFirstOne(AutoArray<File*>& _outResult, const HashString& _item);
+		void				FindFile(AutoArray<File*>& _outResult, HashString& _item, const AutoArray<File*>& _fromArr);
 		void				GetAllFiles(AutoArray<File*>& _outResult, Folder*);
 		void				SortAllFiles(AutoArray<File*>& _outResult);
-		Folder*				FindFolder(const std::string& _name);
+		Folder*				FindFolder(const HashString& _name);
 		void				FullCrawl(Folder*);
 		void				FolderUI(Folder*);
 		void				FileUI(File*);
@@ -78,7 +78,7 @@ namespace Dystopia
 		void				FolderWindow();
 		void				FileWindow(const Math::Vec2& _mySize);
 		void				SearchResultWindow(const Math::Vec2& _mySize);
-		void				MakeStringLower(std::string& _transformMe);
+		void				MakeStringLower(HashString& _transformMe);
 		void				UpdateSearch();
 		void				RefreshResourceFolder();
 	};

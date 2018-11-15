@@ -876,6 +876,9 @@
     <ClInclude Include="Include\Behaviour\BehaviourMemberFunc.h">
       <Filter>Game Engine\Behaviours</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Events\Event.h">
+      <Filter>Game Engine\Systems\Event</Filter>
+    </ClInclude>
     <ClInclude Include="Include\DataStructure\HashString.h">
       <Filter>DataStructures\HashString</Filter>
     </ClInclude>
