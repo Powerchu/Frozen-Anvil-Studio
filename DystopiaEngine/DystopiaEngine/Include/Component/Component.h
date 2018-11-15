@@ -75,7 +75,7 @@ namespace Dystopia
 	protected:
 		uint64_t mID;
 		unsigned mnFlags;
-		uint64_t mnOwner;
+		GameObject* mpOwner;
 
 	private:
 	};

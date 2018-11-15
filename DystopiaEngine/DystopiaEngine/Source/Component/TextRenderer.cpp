@@ -89,8 +89,9 @@ void Dystopia::TextRenderer::SetFont(const std::string& _strPath)
 
 void Dystopia::TextRenderer::RegenMesh(void)
 {
-	AutoArray<Vertex> verts;
-	AutoArray<UV> uvs;
+	AutoArray<Gfx::Vertex> verts;
+	AutoArray<Gfx::Vertex> norms;
+	AutoArray<Gfx::UV> uvs;
 	AutoArray<short> indices;
 
 	auto& atlas = mpAtlas->GetAllSections();
@@ -98,7 +99,7 @@ void Dystopia::TextRenderer::RegenMesh(void)
 	short index = 0;
 
 	float x = .0f, y =.0f;
-	constexpr float scale = 1.f / 100.f;
+	constexpr float scale = 1.f / 140.f;
 	for (auto& e : mText)
 	{
 		auto const n = e - ' ';
@@ -110,13 +111,13 @@ void Dystopia::TextRenderer::RegenMesh(void)
 		float const w  = ch.mnWidth * scale + dx;
 		
 		verts.EmplaceBack(x + dx, y, .0f);
-		verts.EmplaceBack(.0f, .0f, 1.f);
+		norms.EmplaceBack(.0f, .0f, 1.f);
 		verts.EmplaceBack(x + dx, dy, .0f);
-		verts.EmplaceBack(.0f, .0f, 1.f);
+		norms.EmplaceBack(.0f, .0f, 1.f);
 		verts.EmplaceBack(x + w, dy, .0f);
-		verts.EmplaceBack(.0f, .0f, 1.f);
+		norms.EmplaceBack(.0f, .0f, 1.f);
 		verts.EmplaceBack(x + w, y, .0f);
-		verts.EmplaceBack(.0f, .0f, 1.f);
+		norms.EmplaceBack(.0f, .0f, 1.f);
 
 		uvs.EmplaceBack(atlas[n].uStart, atlas[n].vStart);
 		uvs.EmplaceBack(atlas[n].uStart, atlas[n].vEnd);
@@ -134,7 +135,7 @@ void Dystopia::TextRenderer::RegenMesh(void)
 		x += ch.mnAdvance * scale;
 	}
 
-	EngineCore::GetInstance()->Get<MeshSystem>()->GetRaw(mnBaseMesh)->BuildMesh(verts, uvs, indices);
+	EngineCore::GetInstance()->Get<MeshSystem>()->GetRaw(mnBaseMesh)->Build(verts, norms, uvs, indices);
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())

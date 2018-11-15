@@ -68,7 +68,7 @@ void Dystopia::RawMesh::Build(
 
 	glBindBuffer(GL_ARRAY_BUFFER, mUVBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Gfx::UV) * _pUVs.size(), _pUVs.begin(), GL_STATIC_DRAW);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(UV), 0);												// UV
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Gfx::UV), 0);												// UV
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(short) * _nIndices.size(), _nIndices.begin(), GL_STATIC_DRAW);

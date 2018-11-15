@@ -35,7 +35,7 @@ namespace Dystopia
 		);
 
 		unsigned mVAO, mVtxBuffer, mUVBuffer, mEBO;
-		unsigned short mVtxCount;
+		unsigned mVtxCount, mRefCount;
 	};
 }
 

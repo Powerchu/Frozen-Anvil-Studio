@@ -30,8 +30,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	namespace Gfx
+	{
+		struct Vertex;
+	}
+
 	class  Mesh;
-	struct Vertex;
 	class  Texture;
 	struct CharSpace;
 	class  TextureAtlas;
@@ -78,7 +82,7 @@ namespace Dystopia
 	private:
 
 		HashString mText;
-		AutoArray<Vertex> mVerts;
+		AutoArray<Gfx::Vertex> mVerts;
 		AutoArray<CharSpace> mSpaces;
 
 		unsigned mnBaseMesh;

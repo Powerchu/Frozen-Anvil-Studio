@@ -310,7 +310,7 @@ namespace Dystopia
 		return this->mv3Offset;
 	}
 
-	AutoArray<Vertex> Collider::GetVertexBuffer() const
+	AutoArray<Gfx::Vertex> Collider::GetVertexBuffer() const
 	{
 		return mDebugVertices;
 	}

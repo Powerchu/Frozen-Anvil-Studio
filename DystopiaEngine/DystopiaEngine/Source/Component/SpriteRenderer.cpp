@@ -305,13 +305,13 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	if (EGUI::Display::CheckBox("Play Anim", &mbPlayAnim))
 	{
 		GetAtlas();
-		EGUI::GetCommandHND()->InvokeCommand<SpriteRenderer>(mnOwner, &SpriteRenderer::mbPlayAnim, !mbPlayAnim);
+		EGUI::GetCommandHND()->InvokeCommand<SpriteRenderer>(GetOwnerID(), &SpriteRenderer::mbPlayAnim, !mbPlayAnim);
 	}
 
 	switch (EGUI::Display::DragFloat("Speed", &mfFrameTime, 0.01f, 0.016f, 1.f))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<SpriteRenderer>(mnOwner, &SpriteRenderer::mfFrameTime);
+		EGUI::GetCommandHND()->StartRecording<SpriteRenderer>(GetOwnerID(), &SpriteRenderer::mfFrameTime);
 		break;
 	default:
 	case EGUI::eDragStatus::eNO_CHANGE:

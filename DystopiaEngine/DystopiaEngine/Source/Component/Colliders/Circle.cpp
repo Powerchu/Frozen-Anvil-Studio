@@ -42,7 +42,7 @@ namespace Dystopia
 			for (unsigned i = 0; i < numberOfSegments; ++i)
 			{
 				Vec3D vertex = 0.5F * Vec3D{ cosf(increment*i), sinf(increment*i), 0 };
-				Collider::mDebugVertices.push_back(Vertex{ vertex.x, vertex.y, 0 });
+				Collider::mDebugVertices.push_back(Gfx::Vertex{ vertex.x, vertex.y, 0 });
 			}
 			Collider::Awake();
 		}
@@ -308,7 +308,7 @@ namespace Dystopia
 			switch (e)
 			{
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &Circle::mv3Offset);
+				EGUI::GetCommandHND()->StartRecording<Collider>(GetOwnerID(), &Circle::mv3Offset);
 				break;
 			case EGUI::eDragStatus::eEND_DRAG:
 			case EGUI::eDragStatus::eENTER:
@@ -332,7 +332,7 @@ namespace Dystopia
 		switch (e)
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Circle>(mnOwner, &Circle::m_radius);
+			EGUI::GetCommandHND()->StartRecording<Circle>(GetOwnerID(), &Circle::m_radius);
 			break;
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
@@ -389,7 +389,7 @@ namespace Dystopia
 		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
 		{
 			mbIsTrigger = tempBool;
-			EGUI::GetCommandHND()->InvokeCommand<Collider>(mnOwner, &Collider::mbIsTrigger, tempBool);
+			EGUI::GetCommandHND()->InvokeCommand<Collider>(GetOwnerID(), &Collider::mbIsTrigger, tempBool);
 		}
 	}
 

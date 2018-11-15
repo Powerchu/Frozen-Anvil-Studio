@@ -71,11 +71,11 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 
 	do
 	{
-		unsigned nNumIndices = 0, nCurrOffset = static_cast<unsigned>(mIndex.size());
+		unsigned nNumIndices = 0, nCurrOffset = static_cast<unsigned>(mIndexBuffer.size());
 		while (!input.EndOfInput())
 		{
-			mIndex.EmplaceBack();
-			input >> mIndex.back();
+			mIndexBuffer.EmplaceBack();
+			input >> mIndexBuffer.back();
 
 			++nNumIndices;
 		}

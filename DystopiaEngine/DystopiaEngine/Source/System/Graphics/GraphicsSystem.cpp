@@ -665,10 +665,7 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 	}
 	_in >> mbDebugDrawCheckBox;
 	_in >> mfDebugLineWidth;
-	_in >> mvDebugColour[0];
-	_in >> mvDebugColour[1];
-	_in >> mvDebugColour[2];
-	_in >> mvDebugColour[3];
+	_in >> mvDebugColour;
 }
 
 void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
@@ -685,10 +682,7 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 
 	_out << mbDebugDrawCheckBox;
 	_out << mfDebugLineWidth;
-	_out << static_cast<float>(mvDebugColour.x);
-	_out << static_cast<float>(mvDebugColour.y);
-	_out << static_cast<float>(mvDebugColour.z);
-	_out << static_cast<float>(mvDebugColour.w);
+	_out << mvDebugColour;
 }
 
 

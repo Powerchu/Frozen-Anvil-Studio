@@ -26,18 +26,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif
 
 Dystopia::Component::Component(void) noexcept
-	: mnFlags{ FLAG_NONE }, mnOwner{ Ut::Constant<decltype(mnOwner), -1>::value }, mID{ GUIDGenerator::GetUniqueID() }
+	: mnFlags{ FLAG_NONE }, mpOwner{ nullptr }, mID{ GUIDGenerator::GetUniqueID() }
 {
 
 }
 
 Dystopia::Component::Component(GameObject * _pOwner) noexcept
-	: mnFlags{ FLAG_NONE }, mnOwner{ _pOwner->GetID() }, mID{ GUIDGenerator::GetUniqueID() }
+	: mnFlags{ FLAG_NONE }, mpOwner{ _pOwner }, mID{ GUIDGenerator::GetUniqueID() }
 {
 }
 
 Dystopia::Component::Component(const Component& _rhs) noexcept
-	: mnFlags{ _rhs.mnFlags }, mnOwner{ Ut::Constant<decltype(mnOwner), -1>::value }, mID{ GUIDGenerator::GetUniqueID() }
+	: mnFlags{ _rhs.mnFlags }, mpOwner{ nullptr }, mID{ GUIDGenerator::GetUniqueID() }
 {
 }
 
@@ -91,18 +91,18 @@ void Dystopia::Component::DestroyComponent(void)
 
 void Dystopia::Component::SetOwner(GameObject* _pOwner)
 {
-	mnOwner = _pOwner->GetID();
-	//mID = _pOwner->GetID();
+	mpOwner = _pOwner;
 }
 
 Dystopia::GameObject* Dystopia::Component::GetOwner(void) const
 {
-	return EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject(mnOwner);
+	return mpOwner;
 }
 
 uint64_t Dystopia::Component::GetOwnerID(void) const
 {
-	return mnOwner;
+	if (mpOwner) return mpOwner->GetID();
+	return GUIDGenerator::INVALID;
 }
 
 
@@ -140,17 +140,18 @@ void Dystopia::Component::Serialise(TextSerialiser& _out) const
 {
 	_out << mID;
 	_out << mnFlags;
-	_out << mnOwner;
+	_out << GetOwnerID();
 }
 
 void Dystopia::Component::Unserialise(TextSerialiser& _in)
 {
+	uint64_t nOwner;
 	_in >> mID;
 	_in >> mnFlags;
-	_in >> mnOwner;
+	_in >> nOwner;
 
 	auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-	GameObject* owner = sceneSys->GetActiveScene().FindGameObject(mnOwner);
+	GameObject* owner = sceneSys->GetActiveScene().FindGameObject(nOwner);
 
 	if (owner)
 	{
@@ -164,3 +165,4 @@ void Dystopia::Component::Unserialise(TextSerialiser& _in)
 	}
 #endif 
 }
+
