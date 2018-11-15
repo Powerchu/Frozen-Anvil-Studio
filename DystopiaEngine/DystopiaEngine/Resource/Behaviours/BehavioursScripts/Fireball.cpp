@@ -148,7 +148,7 @@ namespace Dystopia
 			if(!strcmp(name,"Goblin"))
 			{
 				ptr->GetID();
-				Fireball_MSG::SendExternalMessage(ptr->GetID(),"TEST", 1000.f);  
+				Fireball_MSG::SendExternalMessage(ptr,"TEST", 1000.f);  
 			}
 		}
 	}

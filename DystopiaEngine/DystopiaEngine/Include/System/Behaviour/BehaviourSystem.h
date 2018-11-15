@@ -94,12 +94,12 @@ namespace Dystopia
 			if (_Behaviour)
 			{
 				auto pGameObject = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_Behaviour->GetOwnerID());
+				BehaviourMessage Message(_FuncParams...);
 				if (pGameObject)
 				{
 					auto AllBehaviours = pGameObject->GetAllBehaviours();
 					for (auto & BehaveElem : AllBehaviours)
 					{
-						BehaviourMessage Message(_FuncParams...);
 						/*Try to send Message to other components*/
 						_EDITOR_START_TRY
 							BehaveElem->ReceiveMessage(_FuncName, Message);
@@ -127,31 +127,20 @@ namespace Dystopia
 			BehaviourMessage Message(_FuncParams...);
 
 			auto Array = pGameObject->GetAllBehaviours();
-			for(auto & elem : Array)
+			for(auto & BehaveElem : Array)
 			{
-				elem->ReceiveMessage(_FuncName, Message);
-			}
+				/*Try to send Message to other components*/
+				_EDITOR_START_TRY
+					BehaveElem->ReceiveMessage(_FuncName, Message);
+				/*If behaviour throws, remove it from game object*/
+				_EDITOR_CATCH(std::exception& e)
+				{
+					_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+					_EDITOR_CODE(pGameObject->RemoveComponent(BehaveElem));
+					_EDITOR_CODE(BehaveElem->DestroyComponent());
+				}
 				
-
-			//for (auto & i : mvBehaviours)
-			//{
-			//	unsigned size = i.second.size();
-			//	for (auto & iter : i.second)
-			//	{
-			//		if (iter.first == _ObjectID && iter.second)
-			//		{
-			//			//_EDITOR_START_TRY
-			//			//iter.second->ReceiveMessage(_FuncName, Message);
-			//			/*If behaviour throws, remove it from game object*/
-			//			//_EDITOR_CATCH(std::exception& e)
-			//			//{
-			//			//	_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
-			//			//	_EDITOR_CODE(pGameObject->RemoveComponent(iter.second));
-			//			//	_EDITOR_CODE(iter.second->DestroyComponent());
-			//			//}
-			//		}
-			//	}
-			//}
+			}
 		}
 
 		template<typename ... Ts>
@@ -164,28 +153,20 @@ namespace Dystopia
 			BehaviourMessage Message(_FuncParams...);
 
 			auto Array = _GameObj->GetAllBehaviours();
-			for (auto & elem : Array)
+			for (auto & BehaveElem : Array)
 			{
-				elem->ReceiveMessage(_FuncName, Message);
+				/*Try to send Message to other components*/
+				_EDITOR_START_TRY
+					BehaveElem->ReceiveMessage(_FuncName, Message);
+				/*If behaviour throws, remove it from game object*/
+				_EDITOR_CATCH(std::exception& e)
+				{
+					_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+					_EDITOR_CODE(_GameObj->RemoveComponent(BehaveElem));
+					_EDITOR_CODE(BehaveElem->DestroyComponent());
+				}
+
 			}
-			//for (auto & i : mvBehaviours)
-			//{
-			//	for (auto & iter : i.second)
-			//	{
-			//		if (iter.first == _ID && iter.second)
-			//		{
-			//			_EDITOR_START_TRY
-			//				iter.second->ReceiveMessage(_FuncName, Message);
-			//			/*If behaviour throws, remove it from game object*/
-			//			_EDITOR_CATCH(std::exception& e)
-			//			{
-			//				_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
-			//				_EDITOR_CODE(_GameObj->RemoveComponent(iter.second));
-			//				_EDITOR_CODE(iter.second->DestroyComponent());
-			//			}
-			//		}
-			//	}
-			//}
 		}
 
 		template<typename ... Ts>
@@ -198,51 +179,44 @@ namespace Dystopia
 			BehaviourMessage Message(_FuncParams...);
 
 			auto Array = _GameObj->GetAllBehaviours();
-			for (auto & elem : Array)
+			for (auto & BehaveElem : Array)
 			{
-				elem->ReceiveMessage(_FuncName, Message);
-			}
+				/*Try to send Message to other components*/
+				_EDITOR_START_TRY
+					BehaveElem->ReceiveMessage(_FuncName, Message);
+				/*If behaviour throws, remove it from game object*/
+				_EDITOR_CATCH(std::exception& e)
+				{
+					_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+					_EDITOR_CODE(const_cast<GameObject *>(_GameObj)->RemoveComponent(iter.second));
+					_EDITOR_CODE(BehaveElem->DestroyComponent());
+				}
 
-			//for (auto & i : mvBehaviours)
-			//{
-			//	for (auto & iter : i.second)
-			//	{
-			//		if (iter.first == _ID && iter.second)
-			//		{
-			//			_EDITOR_START_TRY
-			//				iter.second->ReceiveMessage(_FuncName, Message);
-			//			/*If behaviour throws, remove it from game object*/
-			//			_EDITOR_CATCH(std::exception& e)
-			//			{
-			//				_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
-			//				_EDITOR_CODE(const_cast<GameObject *>(_GameObj)->RemoveComponent(iter.second));
-			//				_EDITOR_CODE(iter.second->DestroyComponent());
-			//			}
-			//		}
-			//	}
-			//}
+			}
 		}
 
 		template<typename ... Ts>
 		void SendAllMessage(const char * const _FuncName, Ts&& ... _FuncParams)
 		{
+
 			BehaviourMessage Message(_FuncParams...);
-			for (auto & i : mvBehaviours)
+			auto & Array = EngineCore::GetInstance()->Get<SceneSystem>()->GetActiveScene().GetAllGameObjects();
+			for (auto & elem : Array)
 			{
-				for (auto & iter : i.second)
+				auto BehaviourArray = elem.GetAllBehaviours();
+				for (auto & BehaveElem : BehaviourArray)
 				{
-					if (iter.second)
+					/*Try to send Message to other components*/
+					_EDITOR_START_TRY
+						BehaveElem->ReceiveMessage(_FuncName, Message);
+					/*If behaviour throws, remove it from game object*/
+					_EDITOR_CATCH(std::exception& e)
 					{
-						_EDITOR_START_TRY
-							iter.second->ReceiveMessage(_FuncName, Message);
-						/*If behaviour throws, remove it from game object*/
-						_EDITOR_CATCH(std::exception& e)
-						{
-							_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
-							_EDITOR_CODE(pGameObject->RemoveComponent(iter.second));
-							_EDITOR_CODE(iter.second->DestroyComponent());
-						}
+						_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+						_EDITOR_CODE(const_cast<GameObject *>(_GameObj)->RemoveComponent(iter.second));
+						_EDITOR_CODE(BehaveElem->DestroyComponent());
 					}
+
 				}
 			}
 		}
