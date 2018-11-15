@@ -96,6 +96,12 @@ namespace Dystopia
 		void SendExternalMessage(uint64_t _ObjectID, const char * const _FuncName, Ts&& ... _FuncParams);
 
 		template<typename ... Ts>
+		void SendExternalMessage(GameObject * const _GameObj, const char * const _FuncName, Ts&& ... _FuncParams);
+
+		template<typename ... Ts>
+		void SendExternalMessage(GameObject const * const _GameObj, const char * const _FuncName, Ts&& ... _FuncParams);
+
+		template<typename ... Ts>
 		void SendAllMessage(const char * const _FuncName, Ts&& ... _FuncParams);
 #endif
 
@@ -149,8 +155,65 @@ namespace Dystopia
 	}
 
 	template <typename ... Ts>
+	inline void BehaviourSystem::SendExternalMessage(GameObject * const _GameObj, const char* const _FuncName, Ts&&... _FuncParams)
+	{
+		if (!_GameObj)
+			return;
+
+		uint64_t _ID = _GameObj->GetID();
+		BehaviourMessage Message(_FuncParams...);
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.first == _ID && iter.second)
+				{
+					_EDITOR_START_TRY
+						iter.second->ReceiveMessage(_FuncName, Message);
+					/*If behaviour throws, remove it from game object*/
+					_EDITOR_CATCH(std::exception& e)
+					{
+						_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+						_EDITOR_CODE(_GameObj->RemoveComponent(iter.second));
+						_EDITOR_CODE(iter.second->DestroyComponent());
+					}
+				}
+			}
+		}
+	}
+
+	template <typename ... Ts>
+	inline void BehaviourSystem::SendExternalMessage(GameObject const * const _GameObj, const char* const _FuncName, Ts&&... _FuncParams)
+	{
+		if (!_GameObj)
+			return;
+
+		uint64_t _ID = _GameObj->GetID();
+		BehaviourMessage Message(_FuncParams...);
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.first == _ID && iter.second)
+				{
+					_EDITOR_START_TRY
+						iter.second->ReceiveMessage(_FuncName, Message);
+					/*If behaviour throws, remove it from game object*/
+					_EDITOR_CATCH(std::exception& e)
+					{
+						_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+						_EDITOR_CODE(const_cast<GameObject *>(_GameObj)->RemoveComponent(iter.second));
+						_EDITOR_CODE(iter.second->DestroyComponent());
+					}
+				}
+			}
+		}
+	}
+
+	template <typename ... Ts>
 	inline void BehaviourSystem::SendExternalMessage(uint64_t _ObjectID, const char* const _FuncName, Ts&&... _FuncParams)
 	{
+		BehaviourMessage Message(_FuncParams...);
 		for (auto & i : mvBehaviours)
 		{
 			for (auto & iter : i.second)
@@ -174,6 +237,7 @@ namespace Dystopia
 	template <typename ... Ts>
 	inline void BehaviourSystem::SendAllMessage(const char* const _FuncName, Ts&&... _FuncParams)
 	{
+		BehaviourMessage Message(_FuncParams...);
 		for (auto & i : mvBehaviours)
 		{
 			for (auto & iter : i.second)
