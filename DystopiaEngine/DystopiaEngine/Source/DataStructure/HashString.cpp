@@ -146,8 +146,11 @@ size_t HashString::length(void) const
 
 void HashString::clear(void)
 {
-	if (mCharBuffer)
-		mCharBuffer[0] = '\0';
+	Dystopia::DefaultAllocator<char[]>::Free(mCharBuffer);
+	mCharBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(1);
+	*mCharBuffer = '\0';
+	mSize = 0;
+	mHashedID = StringHasher(mCharBuffer);
 }
 
 /* element access */
@@ -518,6 +521,16 @@ bool operator==(const HashString& _lhs, const char * _rhs)
 bool operator==(const char * _lhs, const HashString& _rhs)
 {
 	return _rhs == _lhs;
+}
+
+bool operator==(HashID _id, const HashString& _rhs)
+{
+	return _rhs.id() == _id;
+}
+
+bool operator==(const HashString& _lhs, HashID _id)
+{
+	return _lhs.id() == _id;
 }
 
 bool operator!=(const HashString& _lhs, const HashString& _rhs)

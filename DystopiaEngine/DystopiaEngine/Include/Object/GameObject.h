@@ -99,6 +99,7 @@ namespace Dystopia
 
 		void RemoveFlags(eObjFlag);
 		void SetFlag(eObjFlag);
+		void ReplaceFlag(unsigned);
 		unsigned GetFlag() const;
 
 		template<class T>
@@ -109,7 +110,6 @@ namespace Dystopia
 
 		inline const AutoArray<Component*>& GetAllComponents(void) const noexcept;
 		inline const AutoArray<Behaviour*>& GetAllBehaviours(void) const noexcept;
-
 
 		// ======================================== OPERATORS ======================================== // 
 

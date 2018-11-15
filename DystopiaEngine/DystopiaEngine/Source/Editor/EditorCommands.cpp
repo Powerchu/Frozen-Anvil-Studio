@@ -21,8 +21,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/SceneSystem.h"
 #include "System/Input/InputSystem.h"
 
-#include "Allocator/DefaultAlloc.h"
-
 #include "Utility/GUID.h"
 
 #include "DataStructure/Array.h"
@@ -72,7 +70,12 @@ void Editor::EditorCommands::EndFrame(void)
 {}
 
 void Editor::EditorCommands::Shutdown(void)
-{}
+{
+	for (auto& r : mDeqRedo)
+		Dystopia::DefaultAllocator<Command>::DestructFree(r);
+	for (auto& u : mDeqUndo)
+		Dystopia::DefaultAllocator<Command>::DestructFree(u);
+}
 
 void Editor::EditorCommands::Message(eEMessage _msg)
 {

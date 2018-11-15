@@ -14,15 +14,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
-#include "Editor/EditorEvents.h"
-#include "Editor/DefaultFactory.h"
+//#include "Editor/EditorEvents.h"
+//#include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
+#include "Editor/EInput.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorFactory.h"
 
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Graphics/Texture2D.h"
 #include "System/File/FileSystem.h"
+#include "System/Input/InputSystem.h"
 
 #include "Object/GameObject.h"
 
@@ -40,19 +44,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 //static const HashString DEFAULT_NAME = "Resource";
 //static float delay = 5;
 
-namespace Editor //Dystopia
+namespace Editor 
 {
-	//static ProjectResource* gpInstance = 0;
-	//ProjectResource* ProjectResource::GetInstance()
-	//{
-	//	if (gpInstance) return gpInstance;
-	//
-	//	gpInstance = new ProjectResource{};
-	//	return gpInstance;
-	//}
-
 	ProjectResource::ProjectResource(void)
-		: //EditorTab{ false },
+		: 
 		mLabel{ "Project" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
 		mpCurrentFolder{ nullptr }, mArrAllFiles{100}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
 		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 90 },
@@ -63,7 +58,6 @@ namespace Editor //Dystopia
 
 	ProjectResource::~ProjectResource(void)
 	{
-		//gpInstance = nullptr;
 	}
 
 	void ProjectResource::Load(void)
@@ -82,7 +76,7 @@ namespace Editor //Dystopia
 		mResourceName = HashString{ resFolder.c_str() + pos + 1, resFolder.c_str() + resFolder.size() };
 
 		auto buf = Dystopia::DefaultAllocator<Editor::Folder>::Alloc();
-		mpRootFolder = new (buf) Editor::Folder{ mResourceName , mResourcePath, nullptr }; //new Editor::Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };
+		mpRootFolder = new (buf) Editor::Folder{ mResourceName , mResourcePath, nullptr }; 
 
 		mpCurrentFolder = mpRootFolder;
 		FullCrawl(mpRootFolder);
@@ -90,8 +84,6 @@ namespace Editor //Dystopia
 		mArrAllFiles.clear();
 		GetAllFiles(mArrAllFiles, mpRootFolder);
 		SortAllFiles(mArrAllFiles);
-
-		//GetEditorEventHND()->GetEvent(eEditorEvents::EDITOR_LCLICK)->Bind(&ProjectResource::RemoveFocusOnFile, this);
 
 		std::wstring wPath{ resFolder.cbegin(), resFolder.cend() };
 		mChangeHandle[0] = FindFirstChangeNotification(wPath.c_str(), true, mWaitFlags);
@@ -116,6 +108,13 @@ namespace Editor //Dystopia
 
 	void ProjectResource::Update(float)
 	{
+		auto input = EditorMain::GetInstance()->GetSystem<EInput>();
+		if (input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_LEFT) ||
+			input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_RIGHT))
+		{
+			RemoveFocusOnFile();
+		}
+
 		mWaitStatus = WaitForMultipleObjects(1, mChangeHandle, false, 0);
 		switch (mWaitStatus)
 		{
@@ -155,7 +154,24 @@ namespace Editor //Dystopia
 			if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 			{
 				Dystopia::GameObject *t = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(*id);
-				mResetToFile = Dystopia::Factory::SaveAsPrefab(*t).c_str();
+				HashString fullPath = mpCurrentFolder->mPath;
+				fullPath += "\\";
+
+				HashString fileName = t->GetName().c_str();
+				fileName += ".";
+				fileName += Gbl::PREFAB_EXT;
+
+				fullPath += fileName;
+
+				FILE *pFile;
+				fopen_s(&pFile, fullPath.c_str(), "a");
+				fclose(pFile);
+
+				auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
+				if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
+				{
+					mResetToFile = fileName;
+				}
 				EGUI::Display::EndPayloadReceiver();
 			}
 			ImGui::SetCursorPos(origin);
@@ -174,12 +190,9 @@ namespace Editor //Dystopia
 		mArrFilesSearchedLastFrame.clear();
 		mArrAllFiles.clear();
 		Dystopia::DefaultAllocator<Editor::Folder>::DestructFree(mpRootFolder);
-		//delete mpRootFolder;
 		mFocusedFile = nullptr;
 		mpRootFolder = nullptr;
 		mpCurrentFolder = nullptr;
-
-		//GetEditorEventHND()->GetEvent(eEditorEvents::EDITOR_LCLICK)->Unbind(this);
 	}
 
 	void ProjectResource::Message(eEMessage)
@@ -315,10 +328,8 @@ namespace Editor //Dystopia
 		mArrFilesSearchedThisFrame.clear();
 		mArrFilesSearchedLastFrame.clear();
 
-		Dystopia::DefaultAllocator<Editor::Folder>::DestructFree(mpRootFolder); //delete mpRootFolder;
-
-		auto buf = Dystopia::DefaultAllocator<Editor::Folder>::Alloc();
-		mpRootFolder = new (buf) Editor::Folder{ mResourceName , mResourcePath, nullptr }; //new Editor::Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };
+		Dystopia::DefaultAllocator<Editor::Folder>::DestructFree(mpRootFolder); 
+		mpRootFolder = Dystopia::DefaultAllocator<Editor::Folder>::ConstructAlloc(mResourceName, mResourcePath, nullptr);  
 
 		FullCrawl(mpRootFolder);
 		GetAllFiles(mArrAllFiles, mpRootFolder);

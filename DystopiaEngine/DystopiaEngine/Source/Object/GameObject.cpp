@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO\TextSerialiser.h"
 #include "Utility\GUID.h"			// Global UniqueID
 #include "System/Behaviour/BehaviourSystem.h"
+#include "Allocator/DefaultAlloc.h"
 
 #define Ping(_ARR, _FUNC, ...)			\
 for (auto& e : _ARR)					\
@@ -80,6 +81,11 @@ void Dystopia::GameObject::SetActive(const bool _bEnable)
 void Dystopia::GameObject::SetFlag(eObjFlag _flag)
 {
 	mnFlags |= _flag;
+}
+
+void Dystopia::GameObject::ReplaceFlag(unsigned _fullFlag)
+{
+	mnFlags = _fullFlag;
 }
 
 void Dystopia::GameObject::RemoveFlags(eObjFlag _flags)
@@ -252,7 +258,7 @@ void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 
 Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 {
-	GameObject *p = new GameObject{};
+	GameObject *p = new GameObject{}; 
 	p->mnID = GUIDGenerator::GetUniqueID();
 	p->mnFlags = mnFlags;
 	p->mName = mName;
@@ -261,8 +267,6 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	for (auto& c : mComponents)
 	{
 		auto a = c->Duplicate();
-		if (!a)
-			__debugbreak();
 		p->mComponents.Insert(a);
 	}
 	for (auto& b : mBehaviours)

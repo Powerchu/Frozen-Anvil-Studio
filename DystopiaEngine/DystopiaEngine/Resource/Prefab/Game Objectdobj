@@ -1,0 +1,15 @@
+[START_GameObject]
+0,[START_START_GO_DATA]
+1889536512,64,Game Object,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GameObject]
+[START_All Behaviours Block]
+0,
+[END_All Behaviours Block]

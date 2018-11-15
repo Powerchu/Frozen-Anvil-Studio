@@ -16,6 +16,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/AutoArray.h"
 #include "Editor/EditorSystem.h"
 
+namespace Dystopia
+{
+	class GameObject;
+}
+
 namespace Editor
 {
 	class EditorClipboard : public EditorSystem
@@ -46,9 +51,7 @@ namespace Editor
 		AutoArray<uint64_t>& GetSelectedIDs(void);
 
 	private:
-
 		AutoArray<uint64_t> mArrSelectedIDs;
-		AutoArray<uint64_t> mArrCopied;
 
 		size_t mnCopyID;
 		size_t mnPasteID;

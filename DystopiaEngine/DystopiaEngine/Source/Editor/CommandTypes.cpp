@@ -12,17 +12,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/CommandTypes.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorClipboard.h"
+#include "Editor/EditorFactory.h"
 
 #include "Allocator/DefaultAlloc.h"
 
-#include "System/Driver/Driver.h"
-#include "System/Scene/Scene.h"
-#include "System/Scene/SceneSystem.h"
-
 #include "Object/ObjectFlags.h"
-#include "Object/GameObject.h"
-
-#include "Component/Component.h"
 
 #include "DataStructure/HashString.h"
 
@@ -61,6 +57,7 @@ bool Editor::InsertGameObject::Undo(void)
 	if (obj)
 	{
 		obj->Destroy();
+		EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(obj->GetID());
 		return true;
 	}
 	return false;
@@ -83,7 +80,6 @@ bool Editor::DeleteGameObject::Do(void)
 
 
 		o->Destroy();
-
 		return true;
 	}
 	return false;

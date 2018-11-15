@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
 #include "Editor/EditorSystem.h"
+#include "Math/Vector4.h"
 
 namespace Dystopia
 {
@@ -44,8 +45,12 @@ namespace Editor
 		void SaveSettings(Dystopia::TextSerialiser&) const;
 		void LoadSettings(Dystopia::TextSerialiser&);
 
+		void DefaultSceneCamera(void);
+
+		bool InsertPrefab(const HashString&, const Math::Pt3D& = Math::Pt3D{ 0,0,1.f });
+
 		bool SaveAsPrefab(const uint64_t& _objID, Dystopia::TextSerialiser&);
-		bool LoadFromPrefab(Dystopia::TextSerialiser&);
+		bool LoadAsPrefab(Dystopia::TextSerialiser&);
 
 	private:
 		void SaveChild(Dystopia::GameObject&, Dystopia::TextSerialiser&);
@@ -63,8 +68,11 @@ namespace Editor
 
 		void RecursiveCounter(Dystopia::GameObject&, unsigned&);
 
-		MagicArray<Dystopia::GameObject> mArrFactoryObj;
+		void PutToScene(size_t _startIndex, size_t _endIndex);
 
+		MagicArray<Dystopia::GameObject> mArrFactoryObj;
+		AutoArray<uint64_t> mArrLoadedPrefabID;
+		AutoArray<uint64_t> mArrInsertedID;
 		Dystopia::SceneSystem *mpSceneSys;
 	};
 

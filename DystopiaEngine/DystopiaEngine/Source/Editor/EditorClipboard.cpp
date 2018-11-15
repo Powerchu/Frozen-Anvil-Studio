@@ -19,14 +19,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputSystem.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
+#include "System/Driver/Driver.h"
 
+#include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
+
+#include "Utility/Utility.h"
 #include "Utility/GUID.h"
+#include "Utility/DebugAssert.h"
 
 #include "DataStructure/Array.h"
 
 Editor::EditorClipboard::EditorClipboard(void)
-	: mArrSelectedIDs{ 100 }, mnCopyID{ nPos }, mnDeleteID{ nPos }, mnPasteID{ nPos }, mnDupliID{ nPos },
-	mArrCopied{ 100 }
+	: mArrSelectedIDs{ }, mnCopyID{ nPos }, mnDeleteID{ nPos }, mnPasteID{ nPos }, mnDupliID{ nPos }
 {}
 
 Editor::EditorClipboard::~EditorClipboard(void)
@@ -76,7 +81,8 @@ void Editor::EditorClipboard::StartFrame(void)
 }
 
 void Editor::EditorClipboard::Update(float)
-{}
+{
+}
 
 void Editor::EditorClipboard::EndFrame(void)
 {}
@@ -120,9 +126,20 @@ void Editor::EditorClipboard::ClearAll(void)
 
 void Editor::EditorClipboard::Copy(void)
 {
-	mArrCopied.clear();
-	for (auto& id : mArrSelectedIDs)
-		mArrCopied.Insert(id);
+	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	for (size_t i = 0; i < mArrSelectedIDs.size(); ++i)
+	{
+		auto pObj = curScene.FindGameObject(mArrSelectedIDs[i]);
+		if (pObj)
+		{
+
+		}
+		else
+		{
+			mArrSelectedIDs.FastRemove(i);
+			--i;
+		}
+	}
 }
 
 void Editor::EditorClipboard::Delete(void)
@@ -144,6 +161,7 @@ AutoArray<uint64_t>& Editor::EditorClipboard::GetSelectedIDs(void)
 {
 	return mArrSelectedIDs;
 }
+
 
 #endif
 

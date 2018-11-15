@@ -50,6 +50,7 @@ namespace Dystopia
 		void SetGlobalPosition(const Math::Point3D&);
 		void SetGlobalPosition(const float _x, const float _y, const float _z);
 
+		void SetRotation(const Math::Quaternion&);
 		void SetRotation(const Math::Angle _x, const Math::Angle _y = Math::Radians{ 0 }, const Math::Angle _z = Math::Radians{ 0 });
 
 		void SetScale(const Math::Vec4& _vScale);
@@ -87,6 +88,7 @@ namespace Dystopia
 		Transform* GetParent(void);
 
 		uint64_t GetParentID(void) const;
+		void SetParentID(uint64_t);
 
 	private:
 

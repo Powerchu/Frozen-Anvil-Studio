@@ -177,6 +177,11 @@ void Dystopia::Transform::SetRotation(const Math::Angle _x, const Math::Angle _y
 	mRotation = mRotation.FromEuler(_x, _y, _z);
 }
 
+void Dystopia::Transform::SetRotation(const Math::Quaternion& _q)
+{
+	mRotation = _q;
+}
+
 Math::Quaternion Dystopia::Transform::GetGlobalRotation(void) const
 {
 	if (mpParent)
@@ -295,7 +300,7 @@ void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 void Dystopia::Transform::EditorUI(void) noexcept
 {
 #if EDITOR
-	EGUI::PushLeftAlign(80);
+	EGUI::PushLeftAlign(70);
 	auto arrResult = EGUI::Display::VectorFields("Position", &mPosition, 0.01f, -FLT_MAX, FLT_MAX);
 	for (auto &e : arrResult)
 	{
@@ -377,5 +382,9 @@ uint64_t Dystopia::Transform::GetParentID(void) const
 	return mnParentID;
 }
 
+void Dystopia::Transform::SetParentID(uint64_t _id)
+{
+	mnParentID = _id;
+}
 
 

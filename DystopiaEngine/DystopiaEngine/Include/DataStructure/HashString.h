@@ -124,6 +124,8 @@ constexpr HashString::HashString(const char(&_s)[N])
 bool operator==(const HashString& _lhs, const HashString& _rhs);
 bool operator==(const HashString& _lhs, const char * _rhs);
 bool operator==(const char * _lhs, const HashString& _rhs);
+bool operator==(HashID _id, const HashString& _rhs);
+bool operator==(const HashString& _lhs, HashID _id);
 bool operator!=(const HashString& _lhs, const HashString& _rhs);
 std::ostream& operator<<(std::ostream& _os, const HashString& _rhs);
 

@@ -16,6 +16,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorSystem.h"
 #include "Editor/CommandTypes.h"
 
+#include "Allocator/DefaultAlloc.h"
+
+#include "Utility//Utility.h"
+
 #include <deque>
 
 namespace Editor
@@ -45,6 +49,13 @@ namespace Editor
 		void InsertNewGameObject(void);
 		void RemoveGameObject(const uint64_t&);
 
+		template <class Component, typename ... Ts>
+		void FunctionCommand(const uint64_t& _objID, const ComponentFunction<Component, Ts ...>& _oldFn, 
+													 const ComponentFunction<Component, Ts ...>& _newFn);
+
+		template<class Component, typename ... Ts>
+		auto MakeFnCommand(void(Component::*_function)(Ts...), const Ut::RemoveRef_t<Ts>& ... _params);
+
 	private:
 
 		std::deque<Command*> mDeqRedo;
@@ -56,6 +67,31 @@ namespace Editor
 
 		void RemoveStray(std::deque<Command*>&);
 	};
+}
+
+
+/***************************************************************** Template Function Definitions *****************************************************************/
+
+template <class Component, typename ... Ts>
+inline void Editor::EditorCommands::FunctionCommand(const uint64_t& _objID, const ComponentFunction<Component, Ts ...>& _oldFn, 
+																			const ComponentFunction<Component, Ts ...>& _newFn)
+{
+	using fnType = FunctionComd<ComponentFunction<Component, Ts ...>, ComponentFunction<Component, Ts ...>>;
+	if (mbDisableCommands)
+		return;
+
+	Command *pCommand = Dystopia::DefaultAllocator<fnType>::ConstructAlloc(_objID, _newFn, _oldFn);
+
+	if (pCommand->Do())
+		mDeqUndo.push_back(pCommand);
+	else
+		Dystopia::DefaultAllocator<Command>::DestructFree(pCommand);
+}
+
+template<class Component, typename ... Ts>
+inline auto Editor::EditorCommands::MakeFnCommand(void (Component::*_function)(Ts...), const Ut::RemoveRef_t<Ts>& ... _params)
+{
+	return ComponentFunction<Component, Ts...>{ _function, _params ... };
 }
 
 #endif

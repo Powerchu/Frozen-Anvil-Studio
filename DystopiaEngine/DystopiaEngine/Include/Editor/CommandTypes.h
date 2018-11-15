@@ -17,8 +17,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 
 #include "Component/Component.h"
-#include "System/Base/Systems.h"
+
+#include "System/Driver/Driver.h"
+#include "System/Scene/Scene.h"
+#include "System/Scene/SceneSystem.h"
+
 #include "Object/GameObject.h"
+
 #include "Utility/Meta.h"
 
 #include "DataStructure/AutoArray.h"
@@ -191,10 +196,10 @@ namespace Editor
 			void Execute(C * const _toMod) const;
 			ComponentFunction<C, Ts...> &mParent;
 		};
-
+		
+		std::tuple<std::remove_reference_t<Ts>...> mTupleParams;
 	private:
 		void (C::* mpComponentFn)(Ts...);
-		std::tuple<std::remove_reference<Ts>...> mTupleParams;
 		AuxEx<std::make_index_sequence<sizeof...(Ts)>> mAuxCaller;
 	};
 
@@ -235,24 +240,27 @@ namespace Editor
 
 }
 
+
+/***************************************************************** Template Function Definitions *****************************************************************/
+
 template<class C, typename ... Ts>
-Editor::ComponentFunction<C, Ts...>::ComponentFunction(void(C::*_fnptr)(Ts ...), std::remove_reference_t<Ts> ... params)
+::Editor::ComponentFunction<C, Ts...>::ComponentFunction(void(C::*_fnptr)(Ts ...), std::remove_reference_t<Ts> ... params)
 	: mpComponentFn{ _fnptr }, mTupleParams{ params... }, mAuxCaller{ *this }
 {}
 
 template<class C, typename ... Ts>
-Editor::ComponentFunction<C, Ts...>::ComponentFunction(const Editor::ComponentFunction<C, Ts...>& _rhs)
+::Editor::ComponentFunction<C, Ts...>::ComponentFunction(const ::Editor::ComponentFunction<C, Ts...>& _rhs)
 	: mpComponentFn{ _rhs.mpComponentFn }, mTupleParams{ _rhs.mTupleParams }, mAuxCaller{ *this }
 {}
 
 template<class C, typename ... Ts>
-void Editor::ComponentFunction<C, Ts...>::Execute(C * const _toMod) const
+void ::Editor::ComponentFunction<C, Ts...>::Execute(C * const _toMod) const
 {
 	mAuxCaller.Execute(_toMod);
 }
 
 template<class C, typename ... Ts>
-Editor::ComponentFunction<C, Ts...>& Editor::ComponentFunction<C, Ts...>::operator=(const Editor::ComponentFunction<C, Ts...>& _rhs)
+::Editor::ComponentFunction<C, Ts...>& ::Editor::ComponentFunction<C, Ts...>::operator=(const ::Editor::ComponentFunction<C, Ts...>& _rhs)
 {
 	mpComponentFn = _rhs.mpComponentFn;
 	mTupleParams = _rhs.mTupleParams;
@@ -260,71 +268,117 @@ Editor::ComponentFunction<C, Ts...>& Editor::ComponentFunction<C, Ts...>::operat
 
 template<class C, typename ... Ts>
 template<size_t ... Ns>
-Editor::ComponentFunction<C, Ts...>::AuxEx<std::index_sequence<Ns ...>>::AuxEx(ComponentFunction<C, Ts...>& _p)
+::Editor::ComponentFunction<C, Ts...>::AuxEx<std::index_sequence<Ns ...>>::AuxEx(ComponentFunction<C, Ts...>& _p)
 	: mParent{ _p }
 {}
 
 template<class C, typename ... Ts>
 template<size_t ... Ns>
-void Editor::ComponentFunction<C, Ts...>::AuxEx<std::index_sequence<Ns ...>>::Execute(C * const _toMod) const
+void ::Editor::ComponentFunction<C, Ts...>::AuxEx<std::index_sequence<Ns ...>>::Execute(C * const _toMod) const
 {
 	(_toMod->*(mParent.mpComponentFn))(std::get<Ns>(mParent.mTupleParams) ...);
 }
 
 template<class C, typename ... T1s, typename ... T2s >
-Editor::FunctionComd<Editor::ComponentFunction<C, T1s...>, 
-					 Editor::ComponentFunction<C, T2s...>>::
+::Editor::FunctionComd<::Editor::ComponentFunction<C, T1s...>, 
+					 ::Editor::ComponentFunction<C, T2s...>>::
 	FunctionComd(const uint64_t& _objID, const ComponentFunction<C, T1s ...>& _do, const ComponentFunction<C, T2s ...>& _undo)
 	: mUnDoFunc{ _undo }, mDoFunc{ _do }, mID{ _objID }
 {}
 
 template<class C, typename ... T1s, typename ... T2s >
-bool Editor::FunctionComd<Editor::ComponentFunction<C, T1s...>,
-						  Editor::ComponentFunction<C, T2s...>>::Do(void)
+bool ::Editor::FunctionComd<::Editor::ComponentFunction<C, T1s...>,
+						  ::Editor::ComponentFunction<C, T2s...>>::Do(void)
 {
-	return true;
-}
+	if (Unchanged())
+		return false;
 
-template<class C, typename ... T1s, typename ... T2s >
-bool Editor::FunctionComd<Editor::ComponentFunction<C, T1s...>,
-						  Editor::ComponentFunction<C, T2s...>>::Undo(void)
-{
-	return true;
-}
-
-template<class C, typename ... T1s, typename ... T2s >
-bool Editor::FunctionComd<Editor::ComponentFunction<C, T1s...>,
-						  Editor::ComponentFunction<C, T2s...>>::Unchanged(void) const
-{
+	Dystopia::GameObject* pObj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(mID);
+	if (pObj)
+	{
+		C* pComponent = pObj->GetComponent<C>();
+		if (pComponent)
+		{
+			mDoFunc.Execute(pComponent);
+			return true;
+		}
+		return false;
+	}
 	return false;
 }
 
+template<class C, typename ... T1s, typename ... T2s >
+bool ::Editor::FunctionComd<::Editor::ComponentFunction<C, T1s...>,
+						  ::Editor::ComponentFunction<C, T2s...>>::Undo(void)
+{
+	if (Unchanged())
+		return false;
+
+	Dystopia::GameObject* pObj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(mID);
+	if (pObj)
+	{
+		C* pComponent = pObj->GetComponent<C>();
+		if (pComponent)
+		{
+			mUnDoFunc.Execute(pComponent);
+			return true;
+		}
+		return false;
+	}
+	return false;
+}
+
+template<class C, typename ... T1s, typename ... T2s >
+bool ::Editor::FunctionComd<::Editor::ComponentFunction<C, T1s...>,
+						  ::Editor::ComponentFunction<C, T2s...>>::Unchanged(void) const
+{
+	return mDoFunc.mTupleParams == mUnDoFunc.mTupleParams;;
+}
+
 template<typename ... T1s, typename ... T2s >
-Editor::FunctionComd<Editor::ComponentFunction<Dystopia::GameObject, T1s...>,
-					 Editor::ComponentFunction<Dystopia::GameObject, T2s...>>::
+::Editor::FunctionComd<::Editor::ComponentFunction<Dystopia::GameObject, T1s...>,
+					 ::Editor::ComponentFunction<Dystopia::GameObject, T2s...>>::
 	FunctionComd(const uint64_t& _objID, const ComponentFunction<Dystopia::GameObject, T1s ...>& _do, const ComponentFunction<Dystopia::GameObject, T2s ...>& _undo)
 	: mUnDoFunc{ _undo }, mDoFunc{ _do }, mID{ _objID }
 {}
 
 template<typename ... T1s, typename ... T2s >
-bool Editor::FunctionComd<Editor::ComponentFunction<Dystopia::GameObject, T1s...>,
-						  Editor::ComponentFunction<Dystopia::GameObject, T2s...>>::Do(void)
+bool ::Editor::FunctionComd<::Editor::ComponentFunction<Dystopia::GameObject, T1s...>,
+						  ::Editor::ComponentFunction<Dystopia::GameObject, T2s...>>::Do(void)
 {
-	return true;
-}
+	if (Unchanged())
+		return false;
 
-template<typename ... T1s, typename ... T2s >
-bool Editor::FunctionComd<Editor::ComponentFunction<Dystopia::GameObject, T1s...>,
-						  Editor::ComponentFunction<Dystopia::GameObject, T2s...>>::Undo(void)
-{
-	return true;
-}
-
-template<typename ... T1s, typename ... T2s >
-bool Editor::FunctionComd<Editor::ComponentFunction<Dystopia::GameObject, T1s...>,
-						  Editor::ComponentFunction<Dystopia::GameObject, T2s...>>::Unchanged(void) const
-{
+	Dystopia::GameObject* pObj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(mID);
+	if (pObj)
+	{
+		mDoFunc.Execute(pObj);
+		return true;
+	}
 	return false;
+}
+
+template<typename ... T1s, typename ... T2s >
+bool ::Editor::FunctionComd<::Editor::ComponentFunction<Dystopia::GameObject, T1s...>,
+						  ::Editor::ComponentFunction<Dystopia::GameObject, T2s...>>::Undo(void)
+{
+	if (Unchanged())
+		return false;
+
+	Dystopia::GameObject* pObj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(mID);
+	if (pObj)
+	{
+		mUnDoFunc.Execute(pObj);
+		return true;
+	}
+	return false;
+}
+
+template<typename ... T1s, typename ... T2s >
+bool ::Editor::FunctionComd<::Editor::ComponentFunction<Dystopia::GameObject, T1s...>,
+						  ::Editor::ComponentFunction<Dystopia::GameObject, T2s...>>::Unchanged(void) const
+{
+	return mDoFunc.mTupleParams == mUnDoFunc.mTupleParams;;
 }
 
 

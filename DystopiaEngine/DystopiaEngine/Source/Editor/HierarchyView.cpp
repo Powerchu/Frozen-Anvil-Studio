@@ -14,9 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/EGUI.h"
 #include "Editor/HierarchyView.h"
-//#include "Editor/EditorEvents.h"
-//#include "Editor/Editor.h"
-//#include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
 #include "Editor/EditorMain.h"
 #include "Editor/EditorClipboard.h"
@@ -41,19 +38,8 @@ constexpr float DEFAULT_HEIGHT = 300;
 
 namespace Editor
 {
-	/*
-	static HierarchyView* gpInstance = 0;
-	HierarchyView* HierarchyView::GetInstance()
-	{
-		if (gpInstance) return gpInstance;
-
-		gpInstance = new HierarchyView{};
-		return gpInstance;
-	}
-	*/
-
 	HierarchyView::HierarchyView()
-		: //EditorTab{ false },
+		: 
 		mLabel{ "Hierarchy" }, 
 		mSearchText{ "" }, 
 		mPopupID{ "CreateGameObjFromHierarchy" }, 
@@ -64,7 +50,6 @@ namespace Editor
 
 	HierarchyView::~HierarchyView()
 	{
-		//gpInstance = nullptr;
 	}
 
 	void HierarchyView::Load(void)
@@ -241,6 +226,7 @@ namespace Editor
 			}
 			if (EGUI::Display::SelectableTxt("Delete"))
 			{
+				EditorMain::GetInstance()->GetSystem<EditorCommands>()->RemoveGameObject(_obj.GetID());
 				//GetCommandHND()->InvokeCommandDelete(_obj, *GetCurrentScene());
 			}
 			ImGui::EndPopup();
@@ -274,6 +260,10 @@ namespace Editor
 		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
 			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id);
+			auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
+			auto oFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
+			auto nFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, nullptr);
+			cmd->FunctionCommand(t->GetID(), oFn, nFn);
 
 			//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
 			//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, nullptr);
@@ -307,6 +297,11 @@ namespace Editor
 		if (uint64_t *id2 = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
 			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id2);
+
+			auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
+			auto oFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
+			auto nFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>());
+			cmd->FunctionCommand(t->GetID(), oFn, nFn);
 
 			//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
 			//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>());
@@ -366,6 +361,11 @@ namespace Editor
 		if (uint64_t *id2 = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
 			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id2);
+
+			auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
+			auto oFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
+			auto nFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>());
+			cmd->FunctionCommand(t->GetID(), oFn, nFn);
 
 			//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
 			//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>());

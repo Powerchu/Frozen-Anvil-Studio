@@ -103,7 +103,7 @@ namespace Editor
 		void		AdjustDisplayPos(void);
 		void		DrawGizmos(void);
 		void		DrawGizmoSingle(Dystopia::GameObject&);
-		void		DrawGizmoMul(const AutoArray<Dystopia::GameObject*>&);
+		void		DrawGizmoMul(const AutoArray<uint64_t>&);
 		void		SetGizmoTranslate(void);
 		void		SetGizmoScaler(void);
 	};

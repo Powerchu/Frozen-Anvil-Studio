@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 #include "Editor/RuntimeMeta.h"
 #include "Editor/EditorClipboard.h"
+#include "Editor/EditorCommands.h"
 
 //#include "Component/AudioSource.h"
 //#include "Component/Camera.h"
@@ -46,7 +47,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 //#include "Utility/ComponentGUID.h"
 //#include "Object/ObjectFlags.h"
-//#include "Object/GameObject.h"
+#include "Object/GameObject.h"
 
 //#include "Editor/EditorMetaHelpers.h"
 
@@ -61,25 +62,14 @@ static const std::string g_cPopup = "Component List";
 static const std::string g_nPopup = "New Behaviour Name";
 
 
-namespace Editor //Dystopia
+namespace Editor
 {
 	using namespace Dystopia;
 	static std::string g_arr[3] = { "item1", "item2", "item3" };
 	static std::string g_arr2[3] = { "Invalid", "World", "UI" };
 
-	/*
-	static Inspector* gpInstance = 0;
-	Inspector* Inspector::GetInstance()
-	{
-		if (gpInstance) return gpInstance;
-
-		gpInstance = new Inspector{};
-		return gpInstance;
-	}
-	*/
-
 	Inspector::Inspector(void)
-		: //EditorTab{ false },
+		: 
 		mpFocus{ nullptr }, mLabel{ "Inspector" }, mShowListOfComponents{ false },
 		mpBehaviourSys{ nullptr }, mPromptNewBehaviour{ false }, mPromptCreateBehaviour{ false },
 		mBufferInput{}, mBufferCreator{}, mBufferLogin{}
@@ -115,7 +105,8 @@ namespace Editor //Dystopia
 			mpFocus = nullptr;
 			return;
 		}
-		
+		if (!mpFocus) return;
+
 		static constexpr Math::Vec2 btnSize{ 270, 20 };
 		const float mid = Size().x / 2;
 		float inde = mid - (btnSize.x / 2);
@@ -164,6 +155,10 @@ namespace Editor //Dystopia
 			EGUI::SameLine();
 			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 223.f) && strlen(buffer))
 			{
+				auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
+				auto oFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, mpFocus->GetName());
+				auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, std::string{ buffer });
+				cmd->FunctionCommand(mpFocus->GetID(), oFn, nFn);
 				//auto f_Old = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, mpFocus->GetName());
 				//auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
 				//GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
