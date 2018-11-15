@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <string>
 
+
 namespace Dystopia
 {
 	class MeshSystem;
@@ -25,7 +26,7 @@ namespace Dystopia
 	public:
 
 		Mesh(void) noexcept;
-		Mesh(unsigned, unsigned, size_t) noexcept;
+		explicit Mesh(unsigned, unsigned, size_t) noexcept;
 
 		void DrawMesh(int _nMode) const;
 		void DrawMesh(int _nMode, unsigned _nCount) const;
@@ -35,11 +36,8 @@ namespace Dystopia
 
 		void SetIndices(unsigned, size_t);
 
-		bool IsUnique(void) const;
-
 	private:
 
-		bool mbUnique;
 		unsigned mVAO, mnVertices;
 		void* mnOffset;
 		

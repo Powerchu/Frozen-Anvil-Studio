@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/VertexDefs.h"
 #include "System/Graphics/Mesh.h"
 #include "System/Graphics/RawMesh.h"
+#include "System/Graphics/MeshBuilder.h"
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
 
@@ -34,9 +35,16 @@ namespace Dystopia
 
 		void StartMesh(void);
 		void LoadMesh(const std::string&);
-		void AddVertex(float x, float y, float z, float u = 0, float v = 0);
+		void AddVertex(const Gfx::Vertex&);
+		void AddVertex(float x, float y, float z);
+		void AddNormal(const Gfx::Normal&);
+		void AddNormal(float x, float y, float z);
+		void AddUV(float u, float v);
+		void AddUV(const Gfx::UV&);
 		Mesh* AddIndices(const std::string& _strName, const AutoArray<short>&);
 		void EndMesh(void);
+
+		MeshBuilder BuildMesh(void);
 
 		void FreeMeshes(void);
 
@@ -53,9 +61,10 @@ namespace Dystopia
 
 	private:
 
-		AutoArray<UV>      mUVs;
-		AutoArray<Vertex>  mVtx;
-		AutoArray<short>   mIndex;
+		AutoArray<Gfx::UV>      mUVBuffer;
+		AutoArray<Gfx::Vertex>  mVtxBuffer;
+		AutoArray<Gfx::Normal>  mNormalBuffer;
+		AutoArray<short>   mIndexBuffer;
 
 		MagicArray<Mesh>   mpMeshes;
 		AutoArray<RawMesh> mpRawMeshes;
