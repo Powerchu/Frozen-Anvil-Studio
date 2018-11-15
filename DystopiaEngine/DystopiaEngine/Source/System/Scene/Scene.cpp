@@ -41,7 +41,7 @@ Dystopia::GameObject* Dystopia::Scene::FindGameObject(const uint64_t _id)
 	return nullptr;
 }
 
-Dystopia::GameObject* Dystopia::Scene::FindGameObject(const std::string& _strName)
+Dystopia::GameObject* Dystopia::Scene::FindGameObject(const HashString& _strName)
 {
 	for (auto& e : mGameObjs)
 		if (_strName == e.GetName())

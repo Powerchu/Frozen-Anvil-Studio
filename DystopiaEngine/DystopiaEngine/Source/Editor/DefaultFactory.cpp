@@ -51,7 +51,7 @@ namespace Dystopia
 {
 	namespace Factory
 	{
-		GameObject* CreateGameObj(const std::string& _name)
+		GameObject* CreateGameObj(const HashString& _name)
 		{
 			GameObject *pObject = new GameObject{ GUIDGenerator::GetUniqueID() };
 			pObject->SetName(_name);
@@ -59,7 +59,7 @@ namespace Dystopia
 			return pObject;
 		}
 
-		GameObject* CreatePerformanceObj(const std::string& _name)
+		GameObject* CreatePerformanceObj(const HashString& _name)
 		{
 			GameObject *pObject = new GameObject{ GUIDGenerator::GetUniqueID() };
 			pObject->SetName(_name);
@@ -78,7 +78,7 @@ namespace Dystopia
 			return pObject;
 		}
 
-		GameObject* CreatePerformanceObjCol(const std::string& _name)
+		GameObject* CreatePerformanceObjCol(const HashString& _name)
 		{
 			GameObject *pObject = new GameObject{ GUIDGenerator::GetUniqueID() };
 			pObject->SetName(_name);
@@ -97,7 +97,7 @@ namespace Dystopia
 			return pObject;
 		}
 
-		GameObject* CreateCamera(const std::string& _name)
+		GameObject* CreateCamera(const HashString& _name)
 		{
 			auto pCore = EngineCore::GetInstance();
 			GameObject *pObject = CreateGameObj(_name);
@@ -108,7 +108,7 @@ namespace Dystopia
 			return pObject;
 		}
 
-		GameObject* CreateStaticBox(const std::string& _name)
+		GameObject* CreateStaticBox(const HashString& _name)
 		{
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
@@ -127,7 +127,7 @@ namespace Dystopia
 			return pObject;
 		}
 
-		GameObject* CreateBox(const std::string& _name)
+		GameObject* CreateBox(const HashString& _name)
 		{
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
@@ -143,7 +143,7 @@ namespace Dystopia
 			return pObject;
 		}
 
-		GameObject * CreateCircle(const std::string & _name)
+		GameObject * CreateCircle(const HashString& _name)
 		{
 			GameObject *pObject = CreateGameObj(_name);
 			auto p = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent();
@@ -207,31 +207,31 @@ namespace Dystopia
 			}
 			_out.InsertEndBlock("All Behaviours Block");
 		}
-	
-		std::string SaveAsPrefab(GameObject& _obj, const std::string& _path)
+
+		HashString SaveAsPrefab(GameObject& _obj, const HashString& _path)
 		{
-			std::string fileName = _path + "\\" + _obj.GetName() + g_PayloadPrefabEx;
-			std::ofstream file{ fileName, std::ios::out };
+			HashString fileName = _path + "\\" + _obj.GetName() + g_PayloadPrefabEx.c_str();
+			std::ofstream file{ fileName.c_str(), std::ios::out };
 			if (!file.is_open())
 				__debugbreak();
 
-			auto toFile	= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_WRITE);
+			auto toFile	= TextSerialiser::OpenFile(fileName.c_str(), TextSerialiser::MODE_WRITE);
 			SaveAsPrefab(_obj, toFile);
-			return _obj.GetName() + g_PayloadPrefabEx;
+			return _obj.GetName() + g_PayloadPrefabEx.c_str();
 		}
 
-		GameObject* LoadFromPrefab(std::string _gameObjName, const std::string& _path)
+		GameObject* LoadFromPrefab(HashString _gameObjName, const HashString& _path)
 		{
-			std::string fileName = _gameObjName.length() ? _path + "\\" + _gameObjName : _path;
+			HashString fileName = _gameObjName.length() ? _path + "\\" + _gameObjName : _path;
 
-			if (fileName.find(Dystopia::g_PayloadPrefabEx) == std::string::npos)
+			if (fileName.find(Dystopia::g_PayloadPrefabEx.c_str()) == std::string::npos)
 				return nullptr;
 
 			ListOfComponents availComponents;
 			unsigned	num			= 0;
 			unsigned    numBehaviour= 0;
 			unsigned	sysID		= 0;
-			auto		fromFile	= TextSerialiser::OpenFile(fileName, TextSerialiser::MODE_READ);
+			auto		fromFile	= TextSerialiser::OpenFile(fileName.c_str(), TextSerialiser::MODE_READ);
 
 			GameObject* pObj		= new GameObject{};
 			fromFile.ConsumeStartBlock();

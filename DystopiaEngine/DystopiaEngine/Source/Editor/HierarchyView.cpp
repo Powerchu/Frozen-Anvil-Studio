@@ -151,7 +151,7 @@ namespace Dystopia
 			mArrSearchID.clear();
 			for (auto& e : GetCurrentScene()->GetAllGameObjects())
 			{
-				std::string item{ e.GetName() };
+				HashString item{ e.GetName() };
 				auto it = std::search(item.begin(), item.end(), toBeSearched.begin(), toBeSearched.end(),
 									  [](char c1, char c2) { return std::toupper(c1) == std::toupper(c2); });
 				if (it == item.begin())
@@ -269,8 +269,8 @@ namespace Dystopia
 				break;
 			}
 		}
-		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
-		bool tree = EGUI::Display::StartTreeNode(uniqueifyName, &clicked, selected);
+		HashString uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID()).c_str();
+		bool tree = EGUI::Display::StartTreeNode(uniqueifyName.c_str(), &clicked, selected);
 
 		uint64_t id = _obj.GetID();
 		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &id, sizeof(uint64_t), _obj.GetName()))
@@ -325,8 +325,8 @@ namespace Dystopia
 				break;
 			}
 		}
-		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
-		if (EGUI::Display::SelectableTxt(uniqueifyName, selected))
+		HashString uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID()).c_str();
+		if (EGUI::Display::SelectableTxt(uniqueifyName.c_str(), selected))
 		{
 			SelectedObj(_obj);
 		}

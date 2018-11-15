@@ -41,7 +41,7 @@ namespace Dystopia
 		GameObject* InsertGameObject(Ty&& ...);
 
 		GameObject* FindGameObject(const uint64_t _nID);
-		GameObject* FindGameObject(const std::string& _strName);
+		GameObject* FindGameObject(const HashString& _strName);
 
 		inline MagicArray<GameObject>& GetAllGameObjects(void);
 

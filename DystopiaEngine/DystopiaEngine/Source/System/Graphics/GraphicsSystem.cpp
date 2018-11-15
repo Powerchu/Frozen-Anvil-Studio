@@ -669,6 +669,7 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 	_in >> mvDebugColour[1];
 	_in >> mvDebugColour[2];
 	_in >> mvDebugColour[3];
+	_in >> mbVsync;
 }
 
 void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
@@ -689,6 +690,7 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 	_out << static_cast<float>(mvDebugColour.y);
 	_out << static_cast<float>(mvDebugColour.z);
 	_out << static_cast<float>(mvDebugColour.w);
+	_out << mbVsync;
 }
 
 

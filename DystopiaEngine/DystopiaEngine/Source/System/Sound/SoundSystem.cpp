@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <Windows.h>
 
-static const std::string g_GroupNames[Dystopia::eSOUND_LAST] =
+static const HashString g_GroupNames[Dystopia::eSOUND_LAST] =
 {
 	"BGM",
 	"FX",
@@ -134,16 +134,16 @@ void Dystopia::SoundSystem::ReceiveMessage(const eSysMessage&)
 {
 }
 
-Dystopia::Sound* Dystopia::SoundSystem::LoadSound(const std::string& _file)
+Dystopia::Sound* Dystopia::SoundSystem::LoadSound(const HashString& _file)
 {
-	size_t pos = _file.find_last_of('/');
-	std::string path = mDefaultSoundFolder + _file;
-	std::string soundName = _file;
+	size_t pos = _file.find_last_of("/");
+	std::string path = mDefaultSoundFolder + _file.c_str();
+	std::string soundName = _file.c_str();
 
-	if (pos != std::string::npos)
+	if (pos != HashString::nPos)
 	{
-		path = std::string{ _file.begin(), _file.end() };
-		soundName = std::string{ _file.begin() + pos + 1, _file.end() };
+		path = std::string{ _file.c_str() };
+		soundName = std::string{ _file.c_str() + pos + 1 };
 	}
 
 	if (mMapOfSounds.find(soundName) != mMapOfSounds.end())

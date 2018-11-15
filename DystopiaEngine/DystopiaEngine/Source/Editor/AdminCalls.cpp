@@ -18,10 +18,10 @@ namespace Dystopia
 {
 	namespace Admin
 	{
-		bool ValidCommand(const std::string& _toValidate, int& _outCount, std::string& _outParam, std::string& _outAdminFuncName)
+		bool ValidCommand(const HashString& _toValidate, int& _outCount, HashString& _outParam, HashString& _outAdminFuncName)
 		{
 			static std::regex adminFormat{ "(.*)\\s(.*)\\s(.*)" };
-			std::string parse{ _toValidate };
+			std::string parse{ _toValidate.c_str() };
 			std::smatch match;
 			int failPass = 3, iterations = 0, counter = -1;
 			std::string var = "";
@@ -32,9 +32,9 @@ namespace Dystopia
 					switch (counter)
 					{
 					case 0:
-						if (g_AdminFuncs.find(std::string{ e }) != g_AdminFuncs.end())
+						if (g_AdminFuncs.find(HashString{ std::string{ e }.c_str() }) != g_AdminFuncs.end())
 						{
-							_outAdminFuncName = e;
+							_outAdminFuncName = HashString{ std::string{ e }.c_str() };
 							failPass--;
 						}
 						break;
@@ -64,7 +64,7 @@ namespace Dystopia
 			}
 
 			_outCount = iterations;
-			_outParam = var;
+			_outParam = var.c_str();
 			return true;
 		}
 	}

@@ -17,10 +17,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Globals.h"
 #include "EditorTab.h"
 #include "DataStructure/Array.h"
-
+#include "DataStructure/HashString.h"
 namespace Dystopia
 {
 	void _DLL_EXPORT PrintToConsoleLog(const std::string& _text);
+	void _DLL_EXPORT PrintToConsoleLog(const HashString& _text);
 	void _DLL_EXPORT PrintToConsoleLog(const char* _text);
 
 	class ConsoleLog : public EditorTab

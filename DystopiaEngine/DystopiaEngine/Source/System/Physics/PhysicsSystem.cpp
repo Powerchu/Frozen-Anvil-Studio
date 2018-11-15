@@ -90,7 +90,7 @@ namespace Dystopia
 		{
 			for (auto& body : mComponents)
 			{
-				if (body.GetOwner() == nullptr) return;
+				if (body.GetOwner() == nullptr) continue;
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -108,25 +108,12 @@ namespace Dystopia
 						}
 					}
 				}
-
-				//const auto col = body.GetOwner()->GetComponent<Collider>();
-
-				//if (nullptr != col)
-				//{
-				//	if (!col->IsTrigger())
-				//	{
-				//		for (auto& manifold : col->GetCollisionEvents())
-				//		{
-				//			manifold.ApplyImpulse();
-				//		}
-				//	}
-				//}
 			}
 		}
 
 		for (auto& body : mComponents)
 		{
-			if (body.GetOwner() == nullptr) return;
+			if (body.GetOwner() == nullptr) continue;
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -141,7 +128,7 @@ namespace Dystopia
 		{
 			for (auto& body : mComponents)
 			{
-				if (body.GetOwner() == nullptr) return;
+				if (body.GetOwner() == nullptr) continue;
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -169,29 +156,6 @@ namespace Dystopia
 						}
 					}
 				}
-
-				/*const auto col = body.GetOwner()->GetComponent<Collider>();
-
-				if (nullptr != col)
-				{
-					if (!col->IsTrigger())
-					{
-						auto worstPene = mPenetrationEpsilon;
-						for (auto& manifold : col->GetCollisionEvents())
-						{
-							if (manifold.mfPeneDepth > worstPene)
-							{
-								const auto worstContact = &manifold;
-								worstPene = manifold.mfPeneDepth;
-
-								if (nullptr != worstContact)
-								{
-									worstContact->ApplyPenetrationCorrection(mPositionalIterations);
-								}
-							}
-						}
-					}
-				}*/
 			}
 		}
 	}
@@ -200,7 +164,7 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
-			if (body.GetOwner() == nullptr) return;
+			if (body.GetOwner() == nullptr) continue;
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 

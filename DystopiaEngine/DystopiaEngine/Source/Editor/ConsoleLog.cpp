@@ -44,6 +44,11 @@ namespace Dystopia
 		ConsoleLog::GetInstance()->Debug(_text);
 	}
 
+	void PrintToConsoleLog(const HashString& _text)
+	{
+		ConsoleLog::GetInstance()->Debug(_text.c_str());
+	}
+
 	void _DLL_EXPORT PrintToConsoleLog(const char* _text)
 	{
 		ConsoleLog::GetInstance()->Debug(_text);
@@ -109,8 +114,8 @@ namespace Dystopia
 		if (EGUI::Display::TextField("AdminText", mAdminCommands, MAX_SEARCH, false, Size().x - 6.f))
 		{
 			int count	= 0;
-			std::string var = "";
-			std::string fnName = "";
+			HashString var = "";
+			HashString fnName = "";
 			PrintToConsoleLog(std::string{ mAdminCommands });
 			if (!Admin::ValidCommand(mAdminCommands, count, var, fnName))
 				PrintToConsoleLog("Invalid Command");
@@ -120,7 +125,8 @@ namespace Dystopia
 				{
 					for (int j = 0; i < count; ++j)
 					{
-						auto *p = (*(Admin::g_AdminFuncs[fnName]))(var + std::to_string(i));
+						
+						auto *p = (*(Admin::g_AdminFuncs[fnName]))(var + HashString{ std::to_string(i).c_str() });
 						p->GetComponent<Transform>()->SetPosition(Math::Vec3D{ 20.f * i , 20.f * j, 0});
 						auto obj = GetCurrentScene()->InsertGameObject(Ut::Move(*p));
 						obj->Identify();

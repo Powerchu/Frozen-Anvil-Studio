@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	HashString.cpp
+\file   HashString.cpp
 \author Shannon Tan (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Utility.h"
 #include "Utility/DebugAssert.h"
 
+#include <stdlib.h>
 
 HashID StringHasher(const char* _s)
 {
@@ -33,10 +34,13 @@ HashString::HashString(void)
 {}
 
 HashString::HashString(const HashString& _rhs)
-	: mHashedID{ _rhs.mHashedID }, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(_rhs.mSize + 1) },
+	: mHashedID{ _rhs.mHashedID }, mCharBuffer{ _rhs.mSize ? Dystopia::DefaultAllocator<char[]>::Alloc(_rhs.mSize + 1) : nullptr },
 	mSize{ _rhs.mSize }
 {
-	strcpy_s(mCharBuffer, _rhs.mSize + 1, _rhs.mCharBuffer);
+	if (mSize)
+	{
+		strcpy_s(mCharBuffer, _rhs.mSize + 1, _rhs.mCharBuffer);
+	}
 }
 
 HashString::HashString(HashString&& _rhs) noexcept
@@ -47,15 +51,15 @@ HashString::HashString(HashString&& _rhs) noexcept
 	_rhs.mSize = 0;
 }
 
-HashString::HashString(const char * _s)
+HashString::HashString(const char * const _s)
 	: mHashedID{ StringHasher(_s) }, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(strlen(_s) + 1) },
 	mSize{ strlen(_s) }
 {
 	strcpy_s(mCharBuffer, mSize + 1, _s);
 }
 
-HashString::HashString(const char * _start, const char* _end)
-	: mHashedID{ 0 }, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(_start - _end + 1) },
+HashString::HashString(const char * const _start, const char* const _end)
+	: mHashedID{ 0 }, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(_end - _start + 1) },
 	mSize{ static_cast<size_t>(_end - _start) }
 {
 	size_t i = 0;
@@ -209,10 +213,38 @@ HashString& HashString::operator+=(const HashString& _rhs)
 	return operator+=(_rhs.mCharBuffer);
 }
 
+HashString& HashString::operator+=(const char _c)
+{
+	size_t i = 0;
+	char* buffer = Dystopia::DefaultAllocator<char[]>::Alloc(mSize + 2);
+	while (i < mSize)
+	{
+		buffer[i] = mCharBuffer[i];
+		++i;
+	}
+	buffer[mSize] = _c;
+	buffer[1 + mSize] = '\0';
+	mSize += 1;
+	Dystopia::DefaultAllocator<char[]>::Free(mCharBuffer);
+	mCharBuffer = buffer;
+	mHashedID = StringHasher(mCharBuffer);
+	return *this;
+}
+
+HashString& HashString::operator+=(unsigned _i)
+{
+	char buffer[11];
+	if (!_itoa_s(_i, buffer, 11, 10))
+	{
+		return operator+=(buffer);
+	}
+	return *this;
+}
+
 HashString& HashString::erase(size_t _pos, size_t _len)
 {
 	DEBUG_ASSERT(_pos >= mSize, "Hash String Earse _pos out of range");
-	if (!_len) 
+	if (!_len)
 		return *this;
 	size_t pad = _len;
 	char *start = begin() + _pos;
@@ -335,7 +367,7 @@ size_t HashString::rfind(const HashString& _rhs, size_t _pos) const
 {
 	return rfind(_rhs.c_str(), _pos);
 }
- 
+
 size_t HashString::rfind(const char* _s, size_t _pos) const
 {
 	const char *searchPos = (cbegin() + _pos < cend() && _pos != HashString::nPos) ? cbegin() + _pos : cend();
@@ -437,34 +469,34 @@ HashString HashString::substr(size_t _pos, size_t _len) const
 	return HashString{ cbegin() + _pos,  ending };
 }
 
-const char* HashString::cbegin(void) const
+const char* const HashString::cbegin(void) const
 {
 	return mCharBuffer;
 }
 
-char* HashString::begin(void)
+char* const HashString::begin(void)
 {
 	return mCharBuffer;
 }
 
-const char* HashString::cend(void) const
+const char* const HashString::cend(void) const
 {
 	return mCharBuffer + mSize;
 }
 
-char* HashString::end(void)
+char* const HashString::end(void)
 {
 	return mCharBuffer + mSize;
 }
 
-const char* HashString::clast(void) const
+const char* const HashString::clast(void) const
 {
-	return mCharBuffer + mSize -1;
+	return mCharBuffer + mSize - 1;
 }
 
-char* HashString::last(void)
+char* const HashString::last(void)
 {
-	return mCharBuffer + mSize -1;
+	return mCharBuffer + mSize - 1;
 }
 
 HashID HashString::id(void) const
@@ -475,6 +507,16 @@ HashID HashString::id(void) const
 bool operator==(const HashString& _lhs, const HashString& _rhs)
 {
 	return (_lhs.id() == _rhs.id());
+}
+
+bool operator==(const HashString& _lhs, const char * _rhs)
+{
+	return _lhs.id() == StringHasher(_rhs);
+}
+
+bool operator==(const char * _lhs, const HashString& _rhs)
+{
+	return _rhs == _lhs;
 }
 
 bool operator!=(const HashString& _lhs, const HashString& _rhs)
@@ -499,4 +541,20 @@ HashString operator+(const char* _s, const HashString& _rhs)
 {
 	HashString s{ _s };
 	return s + _rhs;
+}
+
+std::ostream& operator<<(std::ostream& _os, const HashString& _rhs)
+{
+	_os << _rhs.c_str();
+	return _os;
+}
+
+bool operator<(const HashString& _lhs, const HashString& _rhs)
+{
+	return std::strcmp(_lhs.c_str(), _rhs.c_str()) < 0;
+}
+
+bool operator>(const HashString& _lhs, const HashString& _rhs)
+{
+	return std::strcmp(_lhs.c_str(), _rhs.c_str()) > 0;
 }

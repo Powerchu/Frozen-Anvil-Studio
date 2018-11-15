@@ -198,19 +198,24 @@ namespace Dystopia
 
 		//Integrate the velocity
 		mLinearVelocity += mLinearAcceleration * _dt;
-		mAngularVelocity += mAngularAcceleration * _dt;
+
+		if (!mbFixedRot)
+			mAngularVelocity += mAngularAcceleration * _dt;
 
 		const Vec3D new_accel = mCumulativeForce * mfInvMass + mLinearAcceleration;
 		const Vec3D new_ang_accel = mGlobalInvInertiaTensor * mCumulativeTorque + mAngularAcceleration;
 
 		//Integrate the velocity
 		mLinearVelocity += (new_accel - mLinearAcceleration) * 0.5f * _dt;
+
 		//Integrate angular velocity
-		mAngularVelocity += (new_ang_accel - mAngularAcceleration) * 0.5f * _dt;
+		if (!mbFixedRot)
+			mAngularVelocity += (new_ang_accel - mAngularAcceleration) * 0.5f * _dt;
 
 		// Linear Damping (Drag)
 		mLinearVelocity.x = mLinearVelocity.x * std::pow(1.0F - mLinearDamping.x, _dt); // x vector
 		mLinearVelocity.y = mLinearVelocity.y * std::pow(1.0F - mLinearDamping.y, _dt); // y vector
+
 
 		mAngularVelocity *= std::pow(1.0F - mfAngularDrag, _dt);
 
@@ -322,7 +327,9 @@ namespace Dystopia
 	void RigidBody::PreUpdatePosition(float _dt)
 	{
 		mPosition += mLinearVelocity * _dt;
-		mfAngleDegZ += static_cast<float> (0.5 * Math::Radians{ mAngularVelocity.z }.Degrees() * _dt);
+
+		if (!mbFixedRot)
+			mfAngleDegZ += Math::Radians{ mAngularVelocity.Magnitude() }.Degrees() * _dt;
 
 		if (mfAngleDegZ < 0.0F) mfAngleDegZ = 360.0F;
 		if (mfAngleDegZ > 360.0F) mfAngleDegZ = 0.0F;
@@ -539,7 +546,9 @@ namespace Dystopia
 			//SetSleeping(false);
 		}
 		mLinearVelocity += _impul * mfInvMass;
-		mAngularVelocity += mfInvInertia * (_point - _origin).Cross(_impul);
+
+		if (!mbFixedRot)
+			mAngularVelocity += mfInvInertia * (_point - _origin).Cross(_impul);
 	}
 
 	void RigidBody::AddLinearImpulseWithOrigin(Vec3D const & _impul, Point3D const & _point)
@@ -1060,8 +1069,9 @@ namespace Dystopia
 		{
 			int i_type = 0;
 			AutoArray<std::string> arr{ std::string{ " Never Sleep" },
-				std::string{ " Start Awake" },
-				std::string{ " Start Asleep" } };
+										std::string{ " Start Awake" },
+										std::string{ " Start Asleep" } 
+									};
 			if (EGUI::Display::DropDownSelection("Sleeping Mode", i_type, arr))
 			{
 				switch (i_type)
@@ -1088,6 +1098,7 @@ namespace Dystopia
 		if (EGUI::Display::CheckBox("Freeze Rotation", &toggleState))
 		{
 			mbFixedRot = toggleState;
+			mfAngleDegZ = 0;
 		}
 	}
 
