@@ -62,7 +62,10 @@ namespace Dystopia
 	void Goblin::Load()
 	{
 	}
-
+    void Goblin::Awake(void)
+	{
+		SetFlags(FLAG_ACTIVE);
+	}
 	void Goblin::Init()
 	{
 		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
@@ -87,7 +90,9 @@ namespace Dystopia
 				.end()
 				.leaf<RunAway>(blackboard)
 			.end()
-		.Build(bTree); 
+		.Build(bTree);
+		
+		SetFlags(FLAG_ACTIVE);
 	} 
 
 	void Goblin::Update(const float _fDeltaTime)

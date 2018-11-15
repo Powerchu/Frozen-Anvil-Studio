@@ -210,7 +210,8 @@ namespace Dystopia
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
-
+		virtual void Awake(void) override;
+		
 		virtual void Update(const float _fDeltaTime) override;
 		virtual void FixedUpdate(const float _fDeltaTime) override;
 		virtual void PostUpdate(void) override;
