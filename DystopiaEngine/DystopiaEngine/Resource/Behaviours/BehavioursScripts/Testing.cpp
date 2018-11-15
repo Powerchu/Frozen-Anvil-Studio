@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	_SF_ClassName_.cpp
-\author _SF_CreatorName_ (100%)
-\par    email: _SF_CreatorLogin_\@digipen.edu
+\file	Testing.cpp
+\author a (100%)
+\par    email: a\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "_SF_ClassName_.h"
+#include "Testing.h"
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
@@ -31,7 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	namespace _SF_ClassName__MSG
+	namespace Testing_MSG
 	{
 		template<typename ... Ts>
 		void SendInternalMessage(Behaviour * _ptr, const char * _FuncName, Ts ... _Params)
@@ -51,107 +51,107 @@ namespace Dystopia
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
 		}
 	}
-	_SF_ClassName_::_SF_ClassName_()
+	Testing::Testing()
 	{
 	}
 
-	_SF_ClassName_::~_SF_ClassName_()
+	Testing::~Testing()
 	{
 	}
 
-	void _SF_ClassName_::Load()
+	void Testing::Load()
 	{
 	}
 
-	void _SF_ClassName_::Awake()
+	void Testing::Awake()
 	{
 	}
 
-	void _SF_ClassName_::Init()
+	void Testing::Init()
 	{
 	}
 
-	void _SF_ClassName_::Update(const float _fDeltaTime)
+	void Testing::Update(const float _fDeltaTime)
 	{
 	}
 
-	void _SF_ClassName_::FixedUpdate(const float _fDeltaTime)
+	void Testing::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
-	void _SF_ClassName_::PostUpdate(void)
+	void Testing::PostUpdate(void)
 	{
 	}
 
-	void _SF_ClassName_::GameObjectDestroy(void)
+	void Testing::GameObjectDestroy(void)
 	{
 	}
 
-	void _SF_ClassName_::Unload(void)
+	void Testing::Unload(void)
 	{
 	}
 
-	void Dystopia::_SF_ClassName_::OnCollisionEnter(const CollisionEvent& _colEvent)
-	{
-
-	}
-
-	void Dystopia::_SF_ClassName_::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::Testing::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::_SF_ClassName_::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::Testing::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::_SF_ClassName_::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::Testing::OnCollisionExit(const CollisionEvent& _colEvent)
+	{
+
+	}
+
+	void Dystopia::Testing::OnTriggerEnter(const GameObject * _obj)
 	{
 	}
 
-	void Dystopia::_SF_ClassName_::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::Testing::OnTriggerStay(const GameObject * _obj)
 	{
 	}
 
-	void Dystopia::_SF_ClassName_::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::Testing::OnTriggerExit(const GameObject * _obj)
 	{
 	}
 
-	_SF_ClassName_ * _SF_ClassName_::Duplicate() const
+	Testing * Testing::Duplicate() const
 	{
-		return new _SF_ClassName_{};
+		return new Testing{};
 	}
 
-	void _SF_ClassName_::Serialise(TextSerialiser& _ser) const
-	{
-	}
-
-	void _SF_ClassName_::Unserialise(TextSerialiser& _ser)
+	void Testing::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-
-	const char * const _SF_ClassName_::GetBehaviourName() const
+	void Testing::Unserialise(TextSerialiser& _ser)
 	{
-		return _SF_ClassName_::BehaviourName;
 	}
 
-	void _SF_ClassName_::EditorUI(void) noexcept
+
+	const char * const Testing::GetBehaviourName() const
+	{
+		return Testing::BehaviourName;
+	}
+
+	void Testing::EditorUI(void) noexcept
 	{
 		
 		
 	}
 	
-	TypeErasure::TypeEraseMetaData _SF_ClassName_::GetMetaData()
+	TypeErasure::TypeEraseMetaData Testing::GetMetaData()
 	{
-		static MetaData<Dystopia::_SF_ClassName_> mMetaData;
+		static MetaData<Dystopia::Testing> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
 		return mReturn;
 	}
-	TypeErasure::TypeEraseMetaData const _SF_ClassName_::GetMetaData() const
+	TypeErasure::TypeEraseMetaData const Testing::GetMetaData() const
 	{
-		static MetaData<Dystopia::_SF_ClassName_> mMetaData;
+		static MetaData<Dystopia::Testing> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
 		return mReturn;
 	}
