@@ -56,6 +56,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Clipboard.h"
 #include "Editor/SpritePreviewer.h"
 #include "Editor/SpriteEditor.h"
+#include "Editor/EditorTab.h"
 
 #include "Allocator/DefaultAlloc.h"
 #include "DataStructure/HashString.h"

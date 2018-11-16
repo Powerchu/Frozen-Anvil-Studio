@@ -393,12 +393,12 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	EGUI::PushLeftAlign(80);
 	if (EGUI::Display::CheckBox("Play", &mbPlay))
 	{
-		EGUI::GetCommandHND()->InvokeCommand<SpriteRenderer>(mnOwner, &SpriteRenderer::mbPlay, !mbPlay);
+		//EGUI::GetCommandHND()->InvokeCommand<SpriteRenderer>(mnOwner, &SpriteRenderer::mbPlay, !mbPlay);
 	}
 	switch (EGUI::Display::DragFloat("Speed", &mfFrameTime, 0.01f, 0.016f, 1.f))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<SpriteRenderer>(mnOwner, &SpriteRenderer::mfFrameTime);
+		//EGUI::GetCommandHND()->StartRecording<SpriteRenderer>(mnOwner, &SpriteRenderer::mfFrameTime);
 		break;
 	default:
 	case EGUI::eDragStatus::eNO_CHANGE:
@@ -408,7 +408,7 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	case EGUI::eDragStatus::eTABBED:
 	case EGUI::eDragStatus::eDEACTIVATED:
 	case EGUI::eDragStatus::eENTER:
-		EGUI::GetCommandHND()->EndRecording();
+		//EGUI::GetCommandHND()->EndRecording();
 		break;
 	}
 	if (EGUI::Display::Button("Add Anim", Math::Vec2{ 80.f, 20.f }))

@@ -227,7 +227,7 @@
       <Filter>Editor\Admin</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\ProjectSettings.cpp">
-      <Filter>Editor\Editor Tabs\Project Settings</Filter>
+      <Filter>Editor\Main\Panels\Project Settings</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\SpritePreviewer.cpp">
       <Filter>Editor\Main\Panels\Sprite</Filter>
@@ -733,7 +733,7 @@
       <Filter>Editor\Admin</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\ProjectSettings.h">
-      <Filter>Editor\Editor Tabs\Project Settings</Filter>
+      <Filter>Editor\Main\Panels\Project Settings</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\SpritePreviewer.h">
       <Filter>Editor\Main\Panels\Sprite</Filter>
@@ -1190,9 +1190,6 @@
     <Filter Include="Editor\Admin">
       <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor Tabs\Project Settings">
-      <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Math\MetaMath">
       <UniqueIdentifier>{08413c81-cbde-4575-842c-fc63e39a282d}</UniqueIdentifier>
     </Filter>
@@ -1351,6 +1348,9 @@
     </Filter>
     <Filter Include="Editor\Main\Panels\Sprite">
       <UniqueIdentifier>{9f6b67e6-2bcd-47b4-9345-903be7a1f3cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Panels\Project Settings">
+      <UniqueIdentifier>{608c0546-3238-4c9f-965b-30f57bb031b2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

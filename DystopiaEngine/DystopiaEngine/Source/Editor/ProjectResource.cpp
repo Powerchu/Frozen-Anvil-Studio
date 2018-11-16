@@ -103,6 +103,13 @@ namespace Editor
 
 	bool ProjectResource::Init(void)
 	{
+		for (auto& f : mArrAllFiles)
+		{
+			if (f->mTag == EGUI::ePayloadTags::PREFAB)
+			{
+				EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mPath);
+			}
+		}
 		return true;
 	}
 

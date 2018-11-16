@@ -39,7 +39,8 @@ namespace EGUI
 
 	Dystopia::CommandHandler* GetCommandHND()
 	{
-		return gContextComdHND;
+		//return gContextComdHND;
+		return nullptr;
 	}
 
 	void RemoveContext()

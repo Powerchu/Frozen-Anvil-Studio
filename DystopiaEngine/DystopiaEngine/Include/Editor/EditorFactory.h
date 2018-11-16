@@ -47,12 +47,23 @@ namespace Editor
 
 		void DefaultSceneCamera(void);
 
-		bool InsertPrefab(const HashString&, const Math::Pt3D& = Math::Pt3D{ 0,0,1.f });
+		bool SpawnPrefab(const HashString&, const Math::Pt3D& = Math::Pt3D{ 0,0,1.f });
 
 		bool SaveAsPrefab(const uint64_t& _objID, Dystopia::TextSerialiser&);
-		bool LoadAsPrefab(Dystopia::TextSerialiser&);
+		bool LoadAsPrefab(const HashString& _path);
 
 	private:
+		struct PrefabData
+		{
+			PrefabData(const HashString&, size_t, size_t);
+
+			HashString mPrefabFile;
+			size_t mnStart;
+			size_t mnEnd;
+
+			AutoArray<AutoArray<uint64_t>> mArrInstanced;
+		};
+
 		void SaveChild(Dystopia::GameObject&, Dystopia::TextSerialiser&);
 		void LoadChild(Dystopia::GameObject&, Dystopia::TextSerialiser&);
 		bool SavePrefab(const uint64_t& _objID, Dystopia::TextSerialiser&);
@@ -68,9 +79,13 @@ namespace Editor
 
 		void RecursiveCounter(Dystopia::GameObject&, unsigned&);
 
-		void PutToScene(size_t _startIndex, size_t _endIndex);
+		void PutToScene(const HashString&, const Math::Pt3D&);
+		void PutToScene(PrefabData&, const Math::Pt3D&);
+
 
 		MagicArray<Dystopia::GameObject> mArrFactoryObj;
+		MagicArray<PrefabData> mArrPrefabData;
+
 		AutoArray<uint64_t> mArrLoadedPrefabID;
 		AutoArray<uint64_t> mArrInsertedID;
 		Dystopia::SceneSystem *mpSceneSys;

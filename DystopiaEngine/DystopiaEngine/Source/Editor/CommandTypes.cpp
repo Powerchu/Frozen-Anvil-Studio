@@ -45,6 +45,7 @@ bool Editor::InsertGameObject::Do(void)
 			}
 		}
 		o->SetFlag(Dystopia::eObjFlag::FLAG_LAYER_WORLD);
+		o->SetFlag(Dystopia::eObjFlag::FLAG_ACTIVE);
 		o->SetName(name.c_str());
 		return true;
 	}

@@ -20,11 +20,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 //#include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
 
+#include "Editor/EInput.h"
 #include "Editor/EditorMain.h"
 #include "Editor/EditorCommands.h"
 #include "Editor/EditorClipboard.h"
 #include "Editor/EditorFactory.h"
 
+#include "System/Input/InputSystem.h"
 #include "System/Driver/Driver.h"
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
@@ -90,6 +92,16 @@ namespace Editor
 			mpSceneCamera = temp->GetComponent<Dystopia::Camera>();
 		if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
 			mpGfxSys->Update(_dt);
+
+		float scroll = EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->GetMouseWheel();
+		if (scroll)
+		{
+			if (scroll > 0)
+				ScrollIn();
+			else
+				ScrollOut();
+		}
+			
 	}
 
 	void SceneView::EditorUI(void)
@@ -359,8 +371,7 @@ namespace Editor
 			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ, 1.f };
 			
 			//EditorMain::GetInstance()->GetSystem<EditorFactory>()->InsertPrefab(_pFile->mName, spawnSite);
-			auto serial = Dystopia::TextSerialiser::OpenFile(_pFile->mPath.c_str(), Dystopia::TextSerialiser::MODE_READ);
-			EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(serial);
+			EditorMain::GetInstance()->GetSystem<EditorFactory>()->SpawnPrefab(_pFile->mName, spawnSite);
 
 			//auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
 			//Dystopia::GameObject *pDupl = Dystopia::Factory::LoadFromPrefab("", _pFile->mPath.c_str());

@@ -70,7 +70,7 @@ namespace EGUI
 	static constexpr float TabsImageOffsetY = 27.f;
 
 	void SetContext(Dystopia::CommandHandler *_pContext);
-	Dystopia::CommandHandler* GetCommandHND();
+	//Dystopia::CommandHandler* GetCommandHND();
 	void RemoveContext();
 	void ChangeLabelSpacing(float _amount);
 	void ChangeLabelSpacing();

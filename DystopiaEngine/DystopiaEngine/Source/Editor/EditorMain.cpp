@@ -26,7 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Editor/Inspector.h"
 #include "Editor/HierarchyView.h"
-//#include "Editor/ProjectSettings.h"
+#include "Editor/ProjectSettings.h"
 #include "Editor/ProjectResource.h"
 #include "Editor/SceneView.h"
 #include "Editor/ConsoleLog.h"

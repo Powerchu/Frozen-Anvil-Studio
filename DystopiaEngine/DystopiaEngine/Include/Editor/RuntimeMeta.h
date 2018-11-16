@@ -171,10 +171,10 @@ namespace Dystopia
 			switch (EGUI::Display::DragFloat(_name, &Temp, 0.01f, 0.0f, 2.0f))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eENTER:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eDRAGGING:
 				_f(Temp, _addr);
@@ -182,12 +182,12 @@ namespace Dystopia
 			case EGUI::eDragStatus::eSTART_DRAG:
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eNO_CHANGE:
 				break;
 			case EGUI::eDragStatus::eTABBED:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			default:
 				break;
@@ -220,10 +220,10 @@ namespace Dystopia
 			switch (EGUI::Display::DragInt(_name, &Temp, 0.1f, 0, 2))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eENTER:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 
 				break;
 			case EGUI::eDragStatus::eDRAGGING:
@@ -235,12 +235,12 @@ namespace Dystopia
 				//EGUI::GetCommandHND()->StartRecording(&Temp);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eNO_CHANGE:
 				break;
 			case EGUI::eDragStatus::eTABBED:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			default:
 				break;
@@ -284,10 +284,10 @@ namespace Dystopia
 			switch (EGUI::Display::DragFloat("Test", &Temp, 0.01f, 0.0f, 2.0f))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eENTER:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				_f(Temp, _addr);
 				break;
 			case EGUI::eDragStatus::eDRAGGING:
@@ -296,13 +296,13 @@ namespace Dystopia
 
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eNO_CHANGE:
 				_f(0, _addr);
 				break;
 			case EGUI::eDragStatus::eTABBED:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			default:
 				break;
