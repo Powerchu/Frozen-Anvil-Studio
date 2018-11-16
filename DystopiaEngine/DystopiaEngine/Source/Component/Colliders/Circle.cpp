@@ -383,7 +383,7 @@ namespace Dystopia
 
 	void Circle::eIsTriggerCheckBox()
 	{
-		bool tempBool = mbIsTrigger;
+		//bool tempBool = mbIsTrigger;
 
 		if (EGUI::Display::CheckBox("Is Trigger		  ", &mbIsTrigger))
 		{
