@@ -99,7 +99,7 @@ namespace Dystopia
 
 		Math::Vector4 mvDebugColour;
 		float mfGamma;
-		float mfDebugLineWidth;
+		float mfDebugLineThreshold;
 
 		void* mOpenGL; 
 		int mPixelFormat;

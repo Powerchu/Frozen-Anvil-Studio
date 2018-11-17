@@ -93,7 +93,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.0f },
-	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .0f, 1.f, .0f, .1f }, mbVsync{ false }
+	mfDebugLineThreshold{ 0.958f }, mvDebugColour{ .0f, 1.f, .0f, .1f }, mbVsync{ false }
 {
 
 }
@@ -176,8 +176,6 @@ bool Dystopia::GraphicsSystem::Init(void)
 	glUniform1i(gameView, 0);
 	glUniform1i(uiView, 1);
 	shaderlist["FinalStage"]->Unbind();
-
-	glLineWidth(mfDebugLineWidth);
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
@@ -398,7 +396,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 	s->Bind();
 	s->UploadUniform("ViewMat", _View);
 	s->UploadUniform("ProjectMat", _Proj);
-
+	s->UploadUniform("threshold", mfDebugLineThreshold);
 
 	Math::Vector4 CollidingColor{ 1.f, 0, 0, .1f }, SleepingColor{ 1.f,1.f,0,.1f }, TriggerColor{ .8f,.8f,.8f,.1f }, activeColor;
 
@@ -670,7 +668,7 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 		mViews.Emplace(w, h, alpha);
 	}
 	_in >> mbDebugDrawCheckBox;
-	_in >> mfDebugLineWidth;
+	_in >> mfDebugLineThreshold;
 	_in >> mvDebugColour;
 	_in >> mbVsync;
 
@@ -690,7 +688,7 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 	}
 
 	_out << mbDebugDrawCheckBox;
-	_out << mfDebugLineWidth;
+	_out << mfDebugLineThreshold;
 	_out << mvDebugColour;
 	_out << mbVsync;
 }
@@ -941,12 +939,12 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 		}
 	}
 
-	const auto result3 = EGUI::Display::DragFloat("Debug Line Width", &mfDebugLineWidth, 0.01F, 0.F, 10.F);
+	const auto result3 = EGUI::Display::DragFloat("Debug Line Threshold", &mfDebugLineThreshold, 0.01F, 0.F, 10.F);
 
 	switch (result3)
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mfDebugLineWidth);
+		EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mfDebugLineThreshold);
 		break;
 	case EGUI::eDragStatus::eENTER:
 	case EGUI::eDragStatus::eEND_DRAG:
