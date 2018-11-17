@@ -129,8 +129,8 @@ void Dystopia::EngineCore::LoadSettings(void)
 	if (GetSubSystem<FileSystem>()->CheckFileExist(SETTINGS_FILE, SETTINGS_DIR))
 	{
 		auto file = Serialiser::OpenFile<TextSerialiser>(
-			GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
-			SETTINGS_FILE
+			(GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
+			SETTINGS_FILE).c_str()
 		);
 
 		HashString sentry;
@@ -236,8 +236,8 @@ void Dystopia::EngineCore::Shutdown(void)
 {
 	GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
 	auto s = Serialiser::OpenFile<DysSerialiser_t>(
-		GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
-		SETTINGS_FILE,
+		(GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
+		SETTINGS_FILE).c_str(),
 		DysSerialiser_t::MODE_WRITE
 	);
 

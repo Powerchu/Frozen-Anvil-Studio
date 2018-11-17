@@ -720,7 +720,7 @@ Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)
 
 Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _filePath)
 {
-	auto file = Serialiser::OpenFile<TextSerialiser>(_filePath, Serialiser::MODE_READ);
+	auto file = Serialiser::OpenFile<TextSerialiser>(_filePath.c_str(), Serialiser::MODE_READ);
 	std::string strName, strVert, strGeo, strFrag;
 
 	file.ConsumeStartBlock();

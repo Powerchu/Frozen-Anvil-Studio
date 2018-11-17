@@ -18,6 +18,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Image::~Image(void) noexcept
 {
-	DefaultAllocator<void>::Free(mpImageData);
+	//DefaultAllocator<void>::Free(mpImageData);
+}
+
+void Dystopia::Image::OnEditorUI(void)
+{
+
 }
 

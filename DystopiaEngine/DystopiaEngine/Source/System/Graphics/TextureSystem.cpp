@@ -19,6 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "DataStructure/MagicArray.h"
 
+#include "Globals.h"
+#include "IO/TextSerialiser.h"
 
 Dystopia::TextureSystem::TextureSystem(void) noexcept
 	: mTextures{}
@@ -64,4 +66,22 @@ Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(const std::string& _strP
 	return LoadTexture<Texture2D>(_strPath);
 }
 
+Dystopia::Image* Dystopia::TextureSystem::ImportImage(const HashString& _strPath)
+{
+	auto meta     = _strPath + Gbl::METADATA_EXT;
+	auto metaFile = Serialiser::OpenFile<TextSerialiser>(meta.c_str());
+
+	if (!metaFile.EndOfInput())
+	{
+		Image* p = DefaultAllocator<Image>::ConstructAlloc();
+
+		metaFile.ConsumeStartBlock();
+		metaFile >> p->mstrName;
+		metaFile >> p->mbCompressed;
+		metaFile >> p->mnRawFormat;
+		metaFile >> p->mnFormat;
+	}
+
+	return nullptr;
+}
 

@@ -99,9 +99,9 @@ public:
 	HashString  substr(size_t _pos, size_t _len = -1) const;
 
 	const char* const cbegin(void) const;
-	char*       const begin(void);
+	char*       const begin(void) const;
 	const char* const cend(void) const;
-	char*       const end(void);
+	char*       const end(void) const;
 	const char* const clast(void) const;
 	char*       const last(void);
 

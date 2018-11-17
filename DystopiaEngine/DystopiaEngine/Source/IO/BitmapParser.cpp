@@ -259,7 +259,7 @@ namespace BMP
 
 Image* ImageParser::LoadBMP(const std::string& _path)
 {
-	auto file = Dystopia::Serialiser::OpenFile<Dystopia::BinarySerializer>(_path);
+	auto file = Dystopia::Serialiser::OpenFile<Dystopia::BinarySerializer>(_path.c_str());
 
 	HeaderBMP fileHeader;
 	InfoBMP fileInfo{};

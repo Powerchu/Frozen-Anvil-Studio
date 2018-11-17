@@ -36,10 +36,10 @@ void Dystopia::MeshSystem::StartMesh(void)
 	mpRawMeshes.EmplaceBack();
 }
 
-void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
+void Dystopia::MeshSystem::LoadMesh(std::string const& _strPath)
 {
 	RawMesh& CurrentMesh = mpRawMeshes.back();
-	TextSerialiser input = Serialiser::OpenFile<TextSerialiser>(_strPath, Serialiser::MODE_READ);
+	TextSerialiser input = Serialiser::OpenFile<TextSerialiser>(_strPath.c_str(), Serialiser::MODE_READ);
 
 	unsigned short nVtxCount = 0;
 	input >> nVtxCount;
@@ -66,7 +66,7 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 		mUVBuffer.EmplaceBack(uvBuf);
 	}
 
-	CurrentMesh.mVtxCount += nVtxCount;
+	CurrentMesh.mnVtxCount += nVtxCount;
 	input.ConsumeStartBlock();
 
 	do
@@ -84,6 +84,7 @@ void Dystopia::MeshSystem::LoadMesh(const std::string& _strPath)
 
 		input.ConsumeStartBlock();
 
+		CurrentMesh.IncRef();
 		input >> const_cast<std::string&>(pCurrMesh->GetName());
 
 		input.ConsumeStartBlock();
@@ -114,6 +115,7 @@ Dystopia::Mesh* Dystopia::MeshSystem::AddIndices(const std::string& _strName, co
 {
 	RawMesh& CurrentMesh = mpRawMeshes.back();
 	size_t nCurrOffset = mIndexBuffer.size();
+	++CurrentMesh.mnRefCount;
 
 	for (auto& e : _indices)
 		mIndexBuffer.push_back(e);

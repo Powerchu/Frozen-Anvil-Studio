@@ -14,13 +14,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TEXTURESYS_H_
 #define _TEXTURESYS_H_
 
+#include "Utility/Utility.h"
 #include "Allocator/DefaultAlloc.h"
 #include "DataStructure/MagicArray.h"
-#include "Utility/Utility.h"
+#include "DataStructure/HashString.h"
 
 #include "IO/Image.h"
 #include "IO/ImageParser.h"
 
+#include <map>
 #include <string>
 
 
@@ -38,6 +40,8 @@ namespace Dystopia
 
 		void Shutdown(void) noexcept;
 
+		Image* ImportImage(const HashString&);
+
 		template <typename Ty = Texture>
 		Ty* GetTexture(std::string const& _strName);
 
@@ -54,6 +58,7 @@ namespace Dystopia
 
 	private:
 
+		std::map<HashString, Image> mImageData;
 		MagicArray<Texture> mTextures;
 		MagicArray<TextureAtlas> mAtlas;
 	};
@@ -91,27 +96,27 @@ Ty* Dystopia::TextureSystem::LoadTexture(std::string const& _strPath)
 		return static_cast<Ty*>(&*it);
 	}
 
-	auto fileType = (_strPath.end() - 3);
-	Ty*    ret = nullptr;
-	Image* img = nullptr;
+	Image* img = ImportImage(_strPath.c_str());
+	auto fileType = _strPath[_strPath.rfind('.') + 1];
 
-	if ('p' == *fileType || 'P' == *fileType)
+	if ('p' == fileType || 'P' == fileType)
 	{
-		img = ImageParser::LoadPNG(_strPath);
+		img = ImageParser::LoadPNG(_strPath, &img);
 	}
-	else if ('b' == *fileType || 'B' == *fileType)
+	else if ('b' == fileType || 'B' == fileType)
 	{
-		img = ImageParser::LoadBMP(_strPath);
+		img = ImageParser::LoadBMP(_strPath, &img);
 	}
-	else if ('d' == *fileType || 'D' == *fileType)
+	else if ('d' == fileType || 'D' == fileType)
 	{
-		img = ImageParser::LoadDDS(_strPath);
+		img = ImageParser::LoadDDS(_strPath, &img);
 	}
 
-	ret = mTextures.EmplaceAs<Ty>(_strPath);
+	auto ret = mTextures.EmplaceAs<Ty>(_strPath);
 	ret->LoadTexture(img);
 
-	DefaultAllocator<Image>::DestructFree(img);
+	img->mpImageData = nullptr;
+	mImageData.insert(HashString{ _strPath.begin(), _strPath.end() }, *img);
 
 	return ret;
 }

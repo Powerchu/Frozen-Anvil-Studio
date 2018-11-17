@@ -95,7 +95,7 @@ Dystopia::TextureAtlas* Dystopia::FontSystem::LoadExisting(const std::string& _s
 
 	pAtlas->SetTexture(pTexture);
 
-	auto in = Serialiser::OpenFile<TextSerialiser>(_strPath + "." + Gbl::FONTMAP_EXT);
+	auto in = Serialiser::OpenFile<TextSerialiser>((_strPath + "." + Gbl::FONTMAP_EXT).c_str());
 
 	size_t sz;
 	in >> sz;
@@ -125,7 +125,7 @@ Dystopia::TextureAtlas* Dystopia::FontSystem::LoadFromFont(const std::string& _s
 
 	FT_Face pFontFace;
 	Image charMap{
-		false, 0x1903, 0x1903,
+		false, true, 0x1903, 0x1903,
 		mnOutDim, mnOutDim, 1, 1, DefaultAllocator<char[]>::Alloc(mnOutDim * mnOutDim)
 	};
 
@@ -241,7 +241,7 @@ void Dystopia::FontSystem::OutputFontmap(TextureAtlas* _pMap, Image* _pData, Aut
 {
 	ImageParser::WriteBMP(_strPath + ".bmp", _pData);
 
-	auto out = Serialiser::OpenFile<TextSerialiser>(_strPath + "." + Gbl::FONTMAP_EXT, Serialiser::MODE_WRITE);
+	auto out = Serialiser::OpenFile<TextSerialiser>((_strPath + "." + Gbl::FONTMAP_EXT).c_str(), Serialiser::MODE_WRITE);
 
 	out << _ch.size();
 	out.InsertStartBlock("FONT_DATA");

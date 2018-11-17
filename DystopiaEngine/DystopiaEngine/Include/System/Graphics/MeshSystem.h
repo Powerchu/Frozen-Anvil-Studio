@@ -34,7 +34,7 @@ namespace Dystopia
 		void Shutdown(void) noexcept;
 
 		void StartMesh(void);
-		void LoadMesh(const std::string&);
+		void LoadMesh(std::string const&);
 		void AddVertex(const Gfx::Vertex&);
 		void AddVertex(float x, float y, float z);
 		void AddNormal(const Gfx::Normal&);

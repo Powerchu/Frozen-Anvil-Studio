@@ -70,6 +70,7 @@ namespace Gbl
 	constexpr auto  FRAGSHADER_EXT  = "dfrag";
 	constexpr auto  VERTSHADER_EXT  = "dvert";
 	constexpr auto  CRASHREPORT_EXT = "dlog";
+	constexpr auto  METADATA_EXT    = "dmeta";
 }
 
 

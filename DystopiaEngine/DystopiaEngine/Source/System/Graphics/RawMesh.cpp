@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::RawMesh::RawMesh(void) noexcept
-	: mVtxCount{ 0 }
+	: mnVtxCount{ 0 }, mnRefCount{ 0 }
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(4, &mVtxBuffer);
@@ -75,10 +75,31 @@ void Dystopia::RawMesh::Build(
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(short) * _nIndices.size(), _nIndices.begin(), GL_STATIC_DRAW);
-
+	
 	UnbindMesh();
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 //	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+
+void Dystopia::RawMesh::IncRef(void)
+{
+	++mnRefCount;
+}
+
+void Dystopia::RawMesh::DecRef(void)
+{
+	--mnRefCount;
+}
+
+unsigned Dystopia::RawMesh::GetVAO(void)
+{
+	return mVAO;
+}
+
+unsigned Dystopia::RawMesh::GetVtxCount(void)
+{
+	return mnVtxCount;
 }
 
 

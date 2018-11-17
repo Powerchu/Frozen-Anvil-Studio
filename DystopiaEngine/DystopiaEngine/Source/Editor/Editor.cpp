@@ -160,7 +160,7 @@ namespace Dystopia
 		struct stat buffer;
 		if (stat(DYSTOPIA_EDITOR_SETTINGS.c_str(), &buffer) == 0)
 		{
-			auto serial = TextSerialiser::OpenFile(DYSTOPIA_EDITOR_SETTINGS, TextSerialiser::MODE_READ);
+			auto serial = TextSerialiser::OpenFile(DYSTOPIA_EDITOR_SETTINGS.c_str(), TextSerialiser::MODE_READ);
 			for (auto& e : mArrTabs)
 				e->LoadSettings(serial);
 		}
@@ -306,7 +306,7 @@ namespace Dystopia
 	{
 		UnInstallHotkeys();
 		mpDriver->GetSubSystem<LoggerSystem>()->RedirectOutput(nullptr);
-		auto serial = TextSerialiser::OpenFile(DYSTOPIA_EDITOR_SETTINGS, TextSerialiser::MODE_WRITE);
+		auto serial = TextSerialiser::OpenFile(DYSTOPIA_EDITOR_SETTINGS.c_str(), TextSerialiser::MODE_WRITE);
 		for (auto& e : mArrTabs)
 		{
 			e->SaveSettings(serial);

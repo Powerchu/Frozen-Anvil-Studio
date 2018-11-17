@@ -30,7 +30,7 @@ namespace Dystopia
 		TextSerialiser(TextSerialiser&&) = default;
 		~TextSerialiser(void);
 
-		static TextSerialiser OpenFile(const std::string&, int = MODE_READ);
+		static TextSerialiser OpenFile(char const*, int = MODE_READ);
 
 
 	private:
@@ -43,8 +43,8 @@ namespace Dystopia
 		void ReadEndBlock(void);
 		bool ReadStartBlock(void);
 
-		void WriteEndBlock(const std::string&);
-		void WriteStartBlock(const std::string&);
+		void WriteEndBlock  (char const*);
+		void WriteStartBlock(char const*);
 
 		template <typename T>
 		void ApplyRead(T&);
