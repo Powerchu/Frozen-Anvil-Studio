@@ -54,7 +54,20 @@ struct MetaData<_STRUCT_>                                                       
                                                                                                                               \
    }                                                                                                                          \
 																															  \
-};
+};																															  \
+
+		//inline Dystopia::TypeErasure::TypeEraseMetaData _STRUCT_::GetMetaData()											  \
+		//{																													  \
+		//	static MetaData<Dystopia::_STRUCT_> mMetaData;																	  \
+		//	static auto mReturn = TypeErasure::TypeEraseMetaData{ mMetaData };												  \
+		//	return mReturn;																									  \
+		//}																													  \
+		//inline Dystopia::TypeErasure::TypeEraseMetaData const _STRUCT_::GetMetaData() const							      \
+		//{																													  \
+		//	static MetaData<Dystopia::_STRUCT_> mMetaData;																	  \
+		//	static auto mReturn = TypeErasure::TypeEraseMetaData{ mMetaData };												  \
+		//	return mReturn;																									  \
+		//}																													  \
 
 #define PP_REFLECT_EMPTY(_STRUCT_)                                                                                            \
 template <>                                                                                                                   \
@@ -72,7 +85,21 @@ struct MetaData<_STRUCT_>                                                       
                                                                                                                               \
    }                                                                                                                          \
 																															  \
-};
+};                                                                                                                            \
+
+		//inline Dystopia::TypeErasure::TypeEraseMetaData _STRUCT_::GetMetaData()											  \
+		//{																													  \
+		//	static MetaData<Dystopia::_STRUCT_> mMetaData;																	  \
+		//	static auto mReturn = TypeErasure::TypeEraseMetaData{ mMetaData };												  \
+		//	return mReturn;																									  \
+		//}																													  \
+		//inline Dystopia::TypeErasure::TypeEraseMetaData const _STRUCT_::GetMetaData() const								  \
+		//{																													  \
+		//	static MetaData<Dystopia::_STRUCT_> mMetaData;																	  \
+		//	static auto mReturn = TypeErasure::TypeEraseMetaData{ mMetaData };												  \
+		//	return mReturn;																									  \
+		//}																													  \
+
 //MetaData<_STRUCT_>::Map_t MetaData<_STRUCT_>::mMetaMap {PP_FOREACH(REFLECT_AUX, (_STRUCT_), __VA_ARGS__)   };                 
 
 template <typename T>

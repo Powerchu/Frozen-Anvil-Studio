@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	_SF_ClassName_.h
-\author _SF_CreatorName_ (100%)
-\par    email: _SF_CreatorLogin_\@digipen.edu
+\file	GoblinCombat.h
+\author Dan Kang (100%)
+\par    email: dan.kang\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _SF_DefineScriptName_H_
-#define _SF_DefineScriptName_H_
+#ifndef _GoblinCombat_H_
+#define _GoblinCombat_H_
 
 #define str(s) #s
 
@@ -25,10 +25,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class _SF_ClassName_ : Behaviour
+	class GoblinCombat : Behaviour
 	{
 	public:
-		static constexpr const char * BehaviourName = str(_SF_ClassName_);
+		static constexpr const char * BehaviourName = str(GoblinCombat);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -38,13 +38,13 @@ namespace Dystopia
 		// };
 
 #endif
-		virtual const std::string GetEditorName(void) const override { return "_SF_ClassName_"; }
-		static uint64_t constexpr m_SF_ClassName_ID = _SF_UID_;
+		virtual const std::string GetEditorName(void) const override { return "GoblinCombat"; }
+		static uint64_t constexpr mGoblinCombatID = 18446744073248796160;
 
 		// Default Constructor for this Behaviour - init your variables here
-		_SF_ClassName_();
+		GoblinCombat();
 		// Default Destructor for this Behaviour - don't touch if you dk, else ask the tech team
-		~_SF_ClassName_();
+		~GoblinCombat();
 
 		// Load will never be called
 		virtual void Load(void) override; 
@@ -85,7 +85,7 @@ namespace Dystopia
 		virtual const char * const GetBehaviourName() const;
 
 		// Don't touch
-		virtual _SF_ClassName_ * Duplicate() const;
+		virtual GoblinCombat * Duplicate() const;
 
 		// Don't touch
 		virtual void EditorUI(void) noexcept override;
@@ -96,26 +96,18 @@ namespace Dystopia
 
 	private:
 		// Don't touch
-		friend MetaData<_SF_ClassName_>;
+		friend MetaData<GoblinCombat>;
 	};
 
 	extern "C"
 	{
-		DllExport _SF_ClassName_ * _SF_ClassName_Clone()
+		DllExport GoblinCombat * GoblinCombatClone()
 		{
-			return new _SF_ClassName_;
+			return new GoblinCombat;
 		}
 	}
 }
 
-/*Keep this if you do not want to show anything in Editor*/
-PP_REFLECT_EMPTY(Dystopia::_SF_ClassName_)
-/*
-  Uncomment the line PP_REFLECT and add in the names of the variable you want to show
-  Comment out PP_REFLECT_EMPTY.
-*/
-//PP_REFLECT(Dystopia::_SF_ClassName_)
-
-#endif //_SF_DefineScriptName_H_
+#endif //_GoblinCombat_H_
 
 

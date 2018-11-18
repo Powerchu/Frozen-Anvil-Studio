@@ -1,0 +1,107 @@
+[START_Scene]
+18446744071747141632,"Test",3,[START_START_GO_DATA]
+1735393792,97,"Scene Camera",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+59779584,65,"Goblin",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,64,1,0,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071849915392,65,"Fireball",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,1,1,0,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+1735394816,0,1735393792,0,1,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+18446744071924366848,1,18446744071849915392,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+18446744073189470208,1,59779584,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+1243102208,1,18446744071849915392,0,0,0,0,0,0,1,1,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+9,[START_str]
+"ChangeAudio",0,[START_str]
+"CharacterController",0,[START_str]
+"dsds",0,[START_str]
+"Fireball",1,[START_BEHAVIOUR_BLOCK]
+18446744071849915392,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"FollowTarget",0,[START_str]
+"Goblin",1,[START_BEHAVIOUR_BLOCK]
+59779584,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"mHealth",[START_mHealth]
+50,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"Missle",0,[START_str]
+"Parallax",0,[START_str]
+"Testing",0,
+[END_BEHAVIOUR_SYSTEM_BLOCK]
+
+[END_Scene]

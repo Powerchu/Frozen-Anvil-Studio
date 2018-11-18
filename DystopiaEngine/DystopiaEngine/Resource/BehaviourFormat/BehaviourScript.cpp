@@ -44,6 +44,17 @@ namespace Dystopia
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
 		}
+		template<typename ... Ts>
+		void SendExternalMessage(const GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
+		
+		template<typename ... Ts>
+		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
 		
 		template<typename ... Ts>
 		void SendAllMessage(const char * _FuncName, Ts ... _Params)
@@ -145,15 +156,15 @@ namespace Dystopia
 	
 	TypeErasure::TypeEraseMetaData _SF_ClassName_::GetMetaData()
 	{
-		/*TO DO*/
-		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
-		return TypeErasure::TypeEraseMetaData{};
+		static MetaData<Dystopia::_SF_ClassName_> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
 	}
 	TypeErasure::TypeEraseMetaData const _SF_ClassName_::GetMetaData() const
 	{
-		/*TO DO*/
-		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
-		return TypeErasure::TypeEraseMetaData{};
+		static MetaData<Dystopia::_SF_ClassName_> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
 	}
 }
 
