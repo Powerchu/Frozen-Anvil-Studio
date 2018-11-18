@@ -26,7 +26,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/Array.h"
 
 Editor::EditorCommands::EditorCommands(void)
-	: mDeqRedo{}, mDeqUndo{}, mbChangesMade{ false }, mbDisableCommands{ false }, mnUndo{ nPos }, mnRedo{ nPos }
+	: mDeqRedo{}, mDeqUndo{}, mbChangesMade{ false }, mbDisableCommands{ false }, mnUndo{ nPos }, mnRedo{ nPos },
+	mpRecordingVal{ nullptr }, mArrMultiRec{}, mArrMultiCommands{}
 {}
 
 Editor::EditorCommands::~EditorCommands(void)
@@ -75,6 +76,14 @@ void Editor::EditorCommands::Shutdown(void)
 		Dystopia::DefaultAllocator<Command>::DestructFree(r);
 	for (auto& u : mDeqUndo)
 		Dystopia::DefaultAllocator<Command>::DestructFree(u);
+	for (auto& c : mArrMultiCommands)
+		Dystopia::DefaultAllocator<Command>::DestructFree(c);
+
+	for (auto& b : mArrMultiRec)
+		Dystopia::DefaultAllocator<Recordings>::DestructFree(b);
+
+	if (mpRecordingVal)
+		Dystopia::DefaultAllocator<Recordings>::DestructFree(mpRecordingVal);
 }
 
 void Editor::EditorCommands::Message(eEMessage _msg)
@@ -103,8 +112,7 @@ bool Editor::EditorCommands::HasChanges(void) const
 
 void Editor::EditorCommands::Undo(void)
 {
-	//EndRecording();
-	if (!mDeqUndo.size()) return;
+	if (mpRecordingVal || !mDeqUndo.size()) return;
 
 	if (!mDeqUndo.back()->Undo())
 	{
@@ -119,8 +127,7 @@ void Editor::EditorCommands::Undo(void)
 
 void Editor::EditorCommands::Redo(void)
 {
-	//EndRecording();
-	if (!mDeqRedo.size()) return;
+	if (mpRecordingVal ||  !mDeqRedo.size()) return;
 
 	if (!mDeqRedo.back()->Do())
 	{
@@ -139,11 +146,7 @@ void Editor::EditorCommands::InsertNewGameObject(void)
 	if (mbDisableCommands)
 		return;
 
-	Command *pCommand = Dystopia::DefaultAllocator<InsertGameObject>::ConstructAlloc(Dystopia::GUIDGenerator::GetUniqueID());
-	if (pCommand->Do())
-		mDeqUndo.push_back(pCommand);
-	else
-		Dystopia::DefaultAllocator<Command>::DestructFree(pCommand);
+	ExecuteDo(Dystopia::DefaultAllocator<InsertGameObject>::ConstructAlloc(Dystopia::GUIDGenerator::GetUniqueID()));
 }
 
 void Editor::EditorCommands::RemoveGameObject(const uint64_t& _objID)
@@ -151,11 +154,7 @@ void Editor::EditorCommands::RemoveGameObject(const uint64_t& _objID)
 	if (mbDisableCommands)
 		return;
 
-	Command *pCommand = Dystopia::DefaultAllocator<DeleteGameObject>::ConstructAlloc(_objID);
-	if (pCommand->Do())
-		mDeqUndo.push_back(pCommand);
-	else
-		Dystopia::DefaultAllocator<Command>::DestructFree(pCommand);
+	ExecuteDo(Dystopia::DefaultAllocator<DeleteGameObject>::ConstructAlloc(_objID));
 }
 
 void Editor::EditorCommands::RemoveStray(std::deque<Command*>& _targetDeque)
@@ -165,7 +164,30 @@ void Editor::EditorCommands::RemoveStray(std::deque<Command*>& _targetDeque)
 	Dystopia::DefaultAllocator<Command>::DestructFree(pTemp);
 }
 
+void Editor::EditorCommands::ExecuteDo(Command* _pCommand)
+{
+	if (mbDisableCommands)
+		return;
 
+	if (_pCommand->Do())
+	{
+		mDeqUndo.push_back(_pCommand);
+		for (auto& r : mDeqRedo)
+			Dystopia::DefaultAllocator<Command>::DestructFree(r);
+		mDeqRedo.clear();
+	}
+	else
+		Dystopia::DefaultAllocator<Command>::DestructFree(_pCommand);
+}
+
+void Editor::EditorCommands::ExecuteMultiRec(void)
+{
+	if (mbDisableCommands)
+		return;
+
+	ExecuteDo(Dystopia::DefaultAllocator<BatchExecute>::ConstructAlloc(mArrMultiCommands));
+	mArrMultiCommands.clear();
+}
 #endif
 
 

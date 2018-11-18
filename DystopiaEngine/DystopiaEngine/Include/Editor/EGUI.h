@@ -28,7 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/DragStatus.h"
 #include "Editor/Dock.h"
 #include "Editor/Payloads.h"
-#include "Editor/Commands.h"
+//#include "Editor/Commands.h"
 #include "Editor/Gizmo.h"
 #include "../../Dependancies/ImGui/imgui.h"
 #include "../../Dependancies/ImGui/imgui_internal.h"

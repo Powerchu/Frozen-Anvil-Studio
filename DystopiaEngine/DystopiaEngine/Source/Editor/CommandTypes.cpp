@@ -58,7 +58,7 @@ bool Editor::InsertGameObject::Undo(void)
 	if (obj)
 	{
 		obj->Destroy();
-		EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(obj->GetID());
+		EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(mnObjID);
 		return true;
 	}
 	return false;
@@ -81,6 +81,7 @@ bool Editor::DeleteGameObject::Do(void)
 
 
 		o->Destroy();
+		EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(mnObjID);
 		return true;
 	}
 	return false;
@@ -97,16 +98,14 @@ bool Editor::DeleteGameObject::Unchanged(void) const
 }
 
 
-Editor::BatchExecute::BatchExecute(AutoArray<Command*>&& _arr)
-	: mArrCommands{ _arr }
+Editor::BatchExecute::BatchExecute(AutoArray<Command*>& _arr)
+	: mArrCommands{ Ut::Move(_arr) }
 {}
 
 Editor::BatchExecute::~BatchExecute(void)
 {
 	for (auto& elem : mArrCommands)
-	{
 		Dystopia::DefaultAllocator<Editor::Command>::DestructFree(elem);
-	}
 }
 
 bool Editor::BatchExecute::Do(void)
@@ -114,10 +113,8 @@ bool Editor::BatchExecute::Do(void)
 	bool pass = true;
 
 	for (auto& c : mArrCommands)
-	{
 		if (!c->Do())
 			pass = false;
-	}
 	return pass;
 }
 
@@ -126,10 +123,8 @@ bool Editor::BatchExecute::Undo(void)
 	bool pass = true;
 
 	for (auto& c : mArrCommands)
-	{
 		if (!c->Undo())
 			pass = false;
-	}
 	return pass;
 }
 

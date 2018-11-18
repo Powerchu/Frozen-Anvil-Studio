@@ -57,7 +57,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ArrowLeft(const std::string& _uniqueID, float& 
 	bool released = ImGui::ButtonBehavior(bb, id, &hovered, &held);
 	bool amActive = g.ActiveId == window->DC.LastItemId;
 	if (hovered &&_pHovered) *_pHovered = true;
-	if (released)
+	if (released || (g.ActiveIdPreviousFrame == window->DC.LastItemId && g.IO.MouseReleased[0]))
 		status = EGUI::eEND_DRAG;
 	else if (amActive)
 	{
@@ -120,7 +120,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ArrowUp(const std::string& _uniqueID, float& _o
 	bool released = ImGui::ButtonBehavior(bb, id, &hovered, &held);
 	bool amActive = g.ActiveId == window->DC.LastItemId;
 	if (hovered &&_pHovered) *_pHovered = true;
-	if (released)
+	if (released || (g.ActiveIdPreviousFrame == window->DC.LastItemId && g.IO.MouseReleased[0]))
 		status = EGUI::eEND_DRAG;
 	else if (amActive)
 	{
@@ -165,7 +165,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ScalerLeft(const std::string& _uniqueID, float&
 		ImVec2{ pos.x + _len * 1.3f , pos.y + _thickness	  },
 		ImVec2{ pos.x + _len		, pos.y + _thickness	  },
 		ImVec2{ pos.x + _len		, pos.y + halfThick + 1.f },
-		ImVec2{ pos.x				, pos.y + halfThick + 1.f },
+		ImVec2{ pos.x				, pos.y + halfThick + 1.f }, 
 		ImVec2{ pos.x				, pos.y + halfThick - 1.f }
 	};
 	ImGui::SetItemAllowOverlap();
@@ -185,7 +185,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ScalerLeft(const std::string& _uniqueID, float&
 	bool released = ImGui::ButtonBehavior(bb, id, &hovered, &held);
 	bool amActive = g.ActiveId == window->DC.LastItemId;
 	if (hovered &&_pHovered) *_pHovered = true;
-	if (released)
+	if (released || (g.ActiveIdPreviousFrame == window->DC.LastItemId && g.IO.MouseReleased[0]))
 		status = EGUI::eEND_DRAG;
 	else if (amActive)
 	{
@@ -249,7 +249,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ScalerUp(const std::string& _uniqueID, float& _
 	bool released = ImGui::ButtonBehavior(bb, id, &hovered, &held);
 	bool amActive = g.ActiveId == window->DC.LastItemId;
 	if (hovered &&_pHovered) *_pHovered = true;
-	if (released)
+	if (released || (g.ActiveIdPreviousFrame == window->DC.LastItemId && g.IO.MouseReleased[0]))
 		status = EGUI::eEND_DRAG;
 	else if (amActive)
 	{
@@ -301,7 +301,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::Box(const std::string& _uniqueID, float& _outpu
 	bool released = ImGui::ButtonBehavior(bb, id, &hovered, &held);
 	bool amActive = g.ActiveId == window->DC.LastItemId;
 	if (hovered &&_pHovered) *_pHovered = true;
-	if (released)
+	if (released || (g.ActiveIdPreviousFrame == window->DC.LastItemId && g.IO.MouseReleased[0]))
 		status = EGUI::eEND_DRAG;
 	else if (amActive)
 	{

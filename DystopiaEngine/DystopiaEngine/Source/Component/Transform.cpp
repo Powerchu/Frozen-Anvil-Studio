@@ -24,6 +24,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/EGUI.h"
 #include "Editor/ConsoleLog.h"
+#include "Editor/EditorCommands.h"
+#include "Editor/EditorMain.h"
+#include "Editor/CommandTypes.h"
 // #include "System/Logger/LoggerSystem.h"
 #endif 
 
@@ -302,6 +305,8 @@ void Dystopia::Transform::EditorUI(void) noexcept
 #if EDITOR
 	EGUI::PushLeftAlign(70);
 	auto arrResult = EGUI::Display::VectorFields("Position", &mPosition, 0.01f, -FLT_MAX, FLT_MAX);
+
+	auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 	for (auto &e : arrResult)
 	{
 		switch (e)
@@ -310,12 +315,14 @@ void Dystopia::Transform::EditorUI(void) noexcept
 			mbChanged = true;
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			//EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &Transform::mPosition, &Transform::mbChanged);
+			cmd->StartRec<Transform, const Math::Pt3D&>(&Transform::SetPosition, mPosition);
+			//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->StartRec(&Transform::mPosition, this);
 			break;
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
-			//EGUI::GetCommandHND()->EndRecording();
+			cmd->EndRec<Transform, const Math::Pt3D&>(mnOwner, &Transform::SetPosition, mPosition);
+			//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->EndRec(&Transform::mPosition, this, &Transform::mbChanged);
 			break;
 		}
 	}
@@ -326,7 +333,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		switch (e)
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
-			//EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &Transform::mScale, &Transform::mbChanged);
+			cmd->StartRec<Transform, const Math::Vec4&>(&Transform::SetScale, mScale);
 			break;
 		case EGUI::eDragStatus::eDRAGGING:
 			mbChanged = true;
@@ -334,7 +341,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
-			//EGUI::GetCommandHND()->EndRecording();
+			cmd->EndRec<Transform, const Math::Vec4&>(mnOwner, &Transform::SetScale, mScale);
 			break;
 		}
 	}
@@ -346,6 +353,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		switch (e)
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
+			cmd->StartRec<Transform, const Math::Quaternion&>(&Transform::SetRotation, mRotation);
 			//EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &Transform::mRotation, &Transform::mbChanged);
 			break;
 		case EGUI::eDragStatus::eDRAGGING:
@@ -359,6 +367,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
 		case EGUI::eDragStatus::eEND_DRAG:
+			cmd->EndRec<Transform, const Math::Quaternion&>(mnOwner, &Transform::SetRotation, mRotation);
 			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		}

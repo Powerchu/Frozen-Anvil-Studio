@@ -17,8 +17,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 
 #include "Component/Component.h"
+#include "Behaviour/Behaviour.h"
 
 #include "System/Driver/Driver.h"
+#include "System/Base/Systems.h"
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
 
@@ -49,18 +51,36 @@ namespace Editor
 	class ModifyValue<C, T, Ut::Type_t<Ut::EnableIf_t<std::is_base_of<Dystopia::Component, C>::value>>> : public Command
 	{
 	public:
-		ModifyValue(T C::* _ptrToMemVar, const T& _oldVal, const T& _newVal, bool C::* _ptrUndoNotify = nullptr)
-			: mpMemVar{ _ptrToMemVar }, mOldV{ _oldVal }, mNewV{ _newVal }, mpUndoNotify{ _ptrUndoNotify }
+		ModifyValue(const uint64_t& _id, T C::* _ptrToMemVar, const T& _oldVal, const T& _newVal, bool C::* _ptrChangesNotify = nullptr)
+			: mnID{ _id }, mpMemVar{ _ptrToMemVar }, mOldV{ _oldVal }, mNewV{ _newVal }, mpNotify{ _ptrChangesNotify }
 		{}
+
+		~ModifyValue(void) {}
 
 		bool Do(void)
 		{
-			return true;
+			auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+			if (auto obj = curScene.FindGameObject(mnID))
+			{
+				obj->GetComponent<C>()->*mpMemVar = mNewV;
+				if (mpNotify)
+					obj->GetComponent<C>()->*mpNotify = true;
+				return true;
+			}
+			return false;
 		}
 
 		bool Undo(void)
 		{
-			return true;
+			auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+			if (auto obj = curScene.FindGameObject(mnID))
+			{
+				obj->GetComponent<C>()->*mpMemVar = mOldV;
+				if (mpNotify)
+					obj->GetComponent<C>()->*mpNotify = true;
+				return true;
+			}
+			return false;
 		}
 
 		bool Unchanged(void) const
@@ -69,30 +89,47 @@ namespace Editor
 		}
 
 	private:
+		uint64_t mnID;
 		T C::* mpMemVar;
 		T mOldV;
 		T mNewV;
-		bool C::* mpUndoNotify;
+		bool C::* mpNotify;
 	};
 
 	template<class S, typename T>
 	class ModifyValue<S, T, Ut::Type_t<Ut::EnableIf_t<std::is_base_of<Dystopia::Systems, S>::value>>> : public Command
 	{
 	public:
-		ModifyValue(T S::* _ptrToMemVar, const T& _oldVal, const T& _newVal, bool S::* _ptrUndoNotify = nullptr)
-			: mpMemVar{ _ptrToMemVar }, mOldV{ _oldVal }, mNewV{ _newVal }, mpUndoNotify{ _ptrUndoNotify }
+		ModifyValue(T S::* _ptrToMemVar, const T& _oldVal, const T& _newVal, bool S::* _ptrChangesNotify = nullptr)
+			: mpMemVar{ _ptrToMemVar }, mOldV{ _oldVal }, mNewV{ _newVal }, mpNotify{ _ptrChangesNotify }
 		{}
+
+		~ModifyValue(void) {}
 
 		bool Do(void)
 		{
-			return true;
+			if (auto sys = Dystopia::EngineCore::GetInstance()->GetSystem<S>())
+			{
+				sys->*mpMemVar = mNewV;
+				if (mpNotify)
+					sys->*mpNotify = true;
+				return true;
+			}
+			return false;
 		}
 
 		bool Undo(void)
 		{
-			return true;
+			if (auto sys = Dystopia::EngineCore::GetInstance()->GetSystem<S>())
+			{
+				sys->*mpMemVar = mOldV;
+				if (mpNotify)
+					sys->*mpNotify = true;
+				return true;
+			}
+			return false;
 		}
-		 
+
 		bool Unchanged(void) const
 		{
 			return mOldV == mNewV;
@@ -102,25 +139,43 @@ namespace Editor
 		T S::* mpMemVar;
 		T mOldV;
 		T mNewV;
-		bool S::* mpUndoNotify;
+		bool S::* mpNotify;
 	};
 
 	template<typename T>
 	class ModifyValue<Dystopia::GameObject, T, Dystopia::GameObject> : public Command
 	{
 	public:
-		ModifyValue(T Dystopia::GameObject::* _ptrToMemVar, const T& _oldVal, const T& _newVal, bool Dystopia::GameObject::* _ptrUndoNotify = nullptr)
-			: mpMemVar{ _ptrToMemVar }, mOldV{ _oldVal }, mNewV{ _newVal }, mpUndoNotify{ _ptrUndoNotify }
+		ModifyValue(const uint64_t& _id, T Dystopia::GameObject::* _ptrToMemVar, const T& _oldVal, const T& _newVal, bool Dystopia::GameObject::* _ptrChangesNotify = nullptr)
+			: mnID{ _id }, mpMemVar { _ptrToMemVar }, mOldV{ _oldVal }, mNewV{ _newVal }, mpNotify{ _ptrChangesNotify }
 		{}
+
+		~ModifyValue(void) {}
 
 		bool Do(void)
 		{
-			return true;
+			auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+			if (auto obj = curScene.FindGameObject(mnID))
+			{
+				obj->*mpMemVar = mNewV;
+				if (mpNotify)
+					sys->*mpNotify = true;
+				return true;
+			}
+			return false;
 		}
 
 		bool Undo(void)
 		{
-			return true;
+			auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+			if (auto obj = curScene.FindGameObject(mnID))
+			{
+				obj->*mpMemVar = mOldV;
+				if (mpNotify)
+					obj->*mpNotify = true;
+				return true;
+			}
+			return false;
 		}
 
 		bool Unchanged(void) const
@@ -129,10 +184,11 @@ namespace Editor
 		}
 
 	private:
+		uint64_t mnID;
 		T Dystopia::GameObject::* mpMemVar;
 		T mOldV;
 		T mNewV;
-		bool Dystopia::GameObject::* mpUndoNotify;
+		bool Dystopia::GameObject::* mpNotify;
 	};
 
 	class InsertGameObject : public Command
@@ -164,7 +220,7 @@ namespace Editor
 	class BatchExecute : public Command
 	{
 	public:
-		BatchExecute(AutoArray<Command*>&& _arr);
+		BatchExecute(AutoArray<Command*>& _arr);
 		~BatchExecute(void);
 
 		bool Do(void);
@@ -197,7 +253,8 @@ namespace Editor
 			ComponentFunction<C, Ts...> &mParent;
 		};
 		
-		std::tuple<std::remove_reference_t<Ts>...> mTupleParams;
+		std::tuple<std::remove_const_t<std::remove_reference_t<Ts>>...> mTupleParams;
+
 	private:
 		void (C::* mpComponentFn)(Ts...);
 		AuxEx<std::make_index_sequence<sizeof...(Ts)>> mAuxCaller;
@@ -238,6 +295,39 @@ namespace Editor
 		uint64_t mID;
 	};
 
+	class Recordings
+	{
+	public:
+		virtual void GetValue(void*) = 0;
+		~Recordings(void) {}
+	};
+
+	template<typename ... Ts>
+	class RecordValue;
+
+	template<typename T>
+	class RecordValue<T> : public Recordings
+	{
+	public:
+		RecordValue(T _val);
+		~RecordValue(void);
+		void GetValue(void*);
+
+	private:
+		T mStoredValue;
+	}; 
+
+	template<class C, typename ... Ts>
+	class RecordValue<ComponentFunction<C, Ts...>> : public Recordings
+	{
+	public:
+		RecordValue(const ComponentFunction<C, Ts ...>& _val);
+		~RecordValue(void);
+		void GetValue(void*);
+
+	private:
+		ComponentFunction<C, Ts ...> mStoredValue;
+	};
 }
 
 
@@ -264,6 +354,7 @@ template<class C, typename ... Ts>
 {
 	mpComponentFn = _rhs.mpComponentFn;
 	mTupleParams = _rhs.mTupleParams;
+	return *this;
 }
 
 template<class C, typename ... Ts>
@@ -332,7 +423,7 @@ template<class C, typename ... T1s, typename ... T2s >
 bool ::Editor::FunctionComd<::Editor::ComponentFunction<C, T1s...>,
 						  ::Editor::ComponentFunction<C, T2s...>>::Unchanged(void) const
 {
-	return mDoFunc.mTupleParams == mUnDoFunc.mTupleParams;;
+	return mDoFunc.mTupleParams == mUnDoFunc.mTupleParams;
 }
 
 template<typename ... T1s, typename ... T2s >
@@ -381,9 +472,35 @@ bool ::Editor::FunctionComd<::Editor::ComponentFunction<Dystopia::GameObject, T1
 	return mDoFunc.mTupleParams == mUnDoFunc.mTupleParams;;
 }
 
+template<typename T>
+::Editor::RecordValue<T>::RecordValue(T _val)
+	: mStoredValue{ _val }
+{}
 
+template<typename T>
+::Editor::RecordValue<T>::~RecordValue(void)
+{}
 
+template<typename T>
+void ::Editor::RecordValue<T>::GetValue(void* _outPtr)
+{
+	*(static_cast<T*>(_outPtr)) = mStoredValue;
+}
 
+template<class C, typename ... Ts>
+::Editor::RecordValue<::Editor::ComponentFunction<C, Ts...>>::RecordValue(const ::Editor::ComponentFunction<C, Ts ...>& _val)
+	: mStoredValue{ _val }
+{}
+
+template<class C, typename ... Ts>
+::Editor::RecordValue<::Editor::ComponentFunction<C, Ts...>>::~RecordValue(void)
+{}
+
+template<class C, typename ... Ts>
+void ::Editor::RecordValue<::Editor::ComponentFunction<C, Ts...>>::GetValue(void* _outPtr)
+{
+	*(static_cast<::Editor::ComponentFunction<C, Ts ...>*>(_outPtr)) = mStoredValue;
+}
 #endif
 #endif
 

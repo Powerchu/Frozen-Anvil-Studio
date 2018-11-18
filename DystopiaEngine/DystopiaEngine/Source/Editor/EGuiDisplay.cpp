@@ -16,11 +16,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <consoleapi2.h>
 #include <winuser.h>
 #include "Editor/EGUI.h"
-#include "Editor/Commands.h"
-#include "Editor/CommandList.h"
+//#include "Editor/Commands.h"
+//#include "Editor/CommandList.h"
+#include "Editor/EditorCommands.h"
+#include "Editor/CommandTypes.h"
+
 #include "DataStructure/Stack.h"
 
-Dystopia::CommandHandler *gContextComdHND = nullptr;
+//Dystopia::CommandHandler *gContextComdHND = nullptr;
 Stack<float> g_StackLeftAlign{ 100 };
 
 namespace EGUI
@@ -32,9 +35,9 @@ namespace EGUI
 		return false;
 	}
 
-	void SetContext(Dystopia::CommandHandler *_pContext)
+	void SetContext(Dystopia::CommandHandler*)
 	{
-		gContextComdHND = _pContext;
+		//gContextComdHND = _pContext;
 	}
 
 	Dystopia::CommandHandler* GetCommandHND()
@@ -45,7 +48,7 @@ namespace EGUI
 
 	void RemoveContext()
 	{
-		gContextComdHND = nullptr;
+		//gContextComdHND = nullptr;
 	}
 
 	void ChangeLabelSpacing(float _amount)
