@@ -1,10 +1,10 @@
 [START_Scene]
-18446744072887468032,default_scene,1,[START_START_GO_DATA]
-1586496512,65,Scene Camera,
+18446744071747141632,"default_scene",1,[START_START_GO_DATA]
+1735393792,97,"Scene Camera",
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.700274,0.700274,1,0,0,0,0,0,0,1,0,
+1,1,1,0,0,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -13,8 +13,44 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Camera]
-1586497536,0,1586496512,0,0,
+1735394816,0,1735393792,0,1,
 [END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+18446744073506669056,536870913,1252009472,0,0.5,0.5,0.5,0.5,0.7,0,1,10,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+294823936,536870913,621975552,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+18446744073506669568,536870913,1252009472,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+294823424,536870913,621975552,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
 
 [END_Component End]
 [START_ComponentDonor]
@@ -29,29 +65,16 @@
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
-[START_ComponentDonor]
-0,
-[END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-6,[START_str]
-ChangeAudio,0,[START_str]
-Fireball,0,[START_str]
-FollowTarget,0,[START_str]
-Goblin,0,[START_str]
-Missle,0,[START_str]
-Parallax,0,
+8,[START_str]
+"ChangeAudio",0,[START_str]
+"CharacterController",0,[START_str]
+"dsds",0,[START_str]
+"Fireball",0,[START_str]
+"FollowTarget",0,[START_str]
+"Goblin",0,[START_str]
+"Missle",0,[START_str]
+"Parallax",0,
 [END_BEHAVIOUR_SYSTEM_BLOCK]
 
 [END_Scene]

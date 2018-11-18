@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/Array.h"
 #include "DataStructure/Queue.h"
 #include "DataStructure/AutoArray.h"
+#include "DataStructure/HashString.h"
 #include "Allocator/DefaultAlloc.h"
 
 // Systems
@@ -115,7 +116,7 @@ Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mTime{}, mTimeFixed{}, mAccumulatedTime{ 0 }, mMessageQueue{ 60 }, mSystemList{ Ut::SizeofList<AllSys>::value },
+	mMessageQueue{ 60 }, mSystemList{ Ut::SizeofList<AllSys>::value },
 	mSubSystems { MakeAutoArray<void*>(Ut::MakeTypeList_t<Ut::TypeList, SubSys>{}) },
 	mSystemTable{ MakeAutoArray<Systems*>(Ut::MakeTypeList_t<Ut::TypeList, AllSys>{}) }
 {
@@ -130,9 +131,9 @@ void Dystopia::EngineCore::LoadSettings(void)
 		auto file = Serialiser::OpenFile<TextSerialiser>(
 			GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
 			SETTINGS_FILE
-			);
+		);
 
-		std::string sentry;
+		HashString sentry;
 
 		file >> sentry;
 		file.ConsumeStartBlock();
@@ -163,8 +164,6 @@ void Dystopia::EngineCore::PreInit(void)
 
 void Dystopia::EngineCore::Init(void)
 {
-	mTime.Lap();
-
 	for (auto& e : mSystemTable)
 	{
 		if (e->Init())
@@ -177,11 +176,6 @@ void Dystopia::EngineCore::Init(void)
 			e = nullptr;
 		}
 	}
-
-
-	mTime.Lap();
-	mTimeFixed.Lap();
-	mAccumulatedTime = 0;
 }
 
 void Dystopia::EngineCore::PostInit(void)
@@ -192,52 +186,42 @@ void Dystopia::EngineCore::PostInit(void)
 
 void Dystopia::EngineCore::Interrupt(void)
 {
-	auto prev = mTimeFixed.Time();
-	mTimeFixed.Lap();
-
-	mAccumulatedTime += (mTimeFixed.Time() - prev).count();
+	GetSystem<TimeSystem>()->StopTime();
 }
 
 void Dystopia::EngineCore::InterruptContinue(void)
 {
-	mTimeFixed.Lap();
+	GetSystem<TimeSystem>()->ResumeTime();
 }
 
 void Dystopia::EngineCore::FixedUpdate(void)
 {
-	auto prev = mTimeFixed.Time();
-	mTimeFixed.Lap();
+	auto TimeSys = GetSystem<TimeSystem>();
+	auto FixedDT = TimeSys->GetFixedDeltaTime();
 
-	mAccumulatedTime += (mTimeFixed.Time() - prev).count();
-
-	if (mAccumulatedTime > 2000000000Ui64)
-		mAccumulatedTime = Math::Wrap(mAccumulatedTime, 0, Gbl::FIXEDUPDATE_DT + 1);
-
-	while (mAccumulatedTime > Gbl::FIXEDUPDATE_DT)
+	while (TimeSys->ConsumeFixedDT())
 	{
 		for (auto& e : mSystemList)
 		{
-			e->PreFixedUpdate(Gbl::FIXEDUPDATE_FDT);
+			e->PreFixedUpdate(FixedDT);
 		}
 		for (auto& e : mSystemList)
 		{
-			e->FixedUpdate(Gbl::FIXEDUPDATE_FDT);
+			e->FixedUpdate(FixedDT);
 		}
-
-		mAccumulatedTime -= Gbl::FIXEDUPDATE_DT;
 	}
 }
 
 void Dystopia::EngineCore::Update(void)
 {
-	float dt = mTime.Elapsed();
-	mTime.Lap();
+	auto TimeSys = GetSystem<TimeSystem>();
+	TimeSys->AdvanceTime();
 
+	float dt = TimeSys->GetDeltaTime();
 	for (auto& e : mSystemList)
 	{
 		e->Update(dt);
 	}
-
 }
 
 void Dystopia::EngineCore::PostUpdate(void)

@@ -93,7 +93,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.0f },
-	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .68f, 1.f, .278f, .1f }
+	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .0f, 1.f, .0f, .1f }, mbVsync{ false }
 {
 
 }
@@ -111,6 +111,16 @@ void Dystopia::GraphicsSystem::SetGamma(float _fGamma) noexcept
 float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 {
 	return mfGamma;
+}
+
+void Dystopia::GraphicsSystem::ToggleVsync(bool b) noexcept
+{
+	mSettings |= b * eGfxSettings::GRAPHICS_VSYNC;
+
+	if (mAvailable & eGfxSettings::GRAPHICS_VSYNC)
+	{
+		wglSwapIntervalEXT(b ? -1 : 0);
+	}
 }
 
 void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw)
@@ -432,6 +442,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 
 			if (Mesh* pObjMesh = Obj->GetMesh())
 			{
+				activeColor.w = 0.1f;
 				s->UploadUniform("vColor", activeColor);
 				pObjMesh->DrawMesh(GetDrawMode());
 				activeColor.w = 1.f;
@@ -572,11 +583,11 @@ void Dystopia::GraphicsSystem::StartFrame(void)
 
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
-#if EDITOR
 	// TODO: Final draw to combine layers & draw to screen
 	// TODO: Draw a fullscreen quad fusing the GameView and UIView
 	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
 
+#if EDITOR
 	auto& fb = GetFrameBuffer();
 
 	fb.Bind();
@@ -658,6 +669,7 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 	_in >> mvDebugColour[1];
 	_in >> mvDebugColour[2];
 	_in >> mvDebugColour[3];
+	_in >> mbVsync;
 }
 
 void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
@@ -678,6 +690,7 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 	_out << static_cast<float>(mvDebugColour.y);
 	_out << static_cast<float>(mvDebugColour.z);
 	_out << static_cast<float>(mvDebugColour.w);
+	_out << mbVsync;
 }
 
 
@@ -895,12 +908,15 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	}
 
 	//const auto& sceneCam = pCamSys->GetMasterCamera();
+	if (EGUI::Display::CheckBox("V Sync      ", &mbVsync))
+	{
+		ToggleVsync(mbVsync);
+	}
+
+	//const auto& sceneCam = pCamSys->GetMasterCamera();
 	if (EGUI::Display::CheckBox("Debug Draw  ", &mbDebugDrawCheckBox))
 	{
-		if (!mbDebugDrawCheckBox)
-			ToggleDebugDraw(false);
-		else
-			ToggleDebugDraw(true);
+		ToggleDebugDraw(mbDebugDrawCheckBox);
 		//EGUI::GetCommandHND()->InvokeCommand<Camera>(&Camera::mbDebugDraw, tempBool);
 	}
 

@@ -39,6 +39,12 @@ namespace Dystopia
 		}
 		
 		template<typename ... Ts>
+		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
+		
+		template<typename ... Ts>
 		void SendAllMessage(const char * _FuncName, Ts ... _Params)
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
@@ -60,7 +66,7 @@ namespace Dystopia
 	void Goblin::Init()
 	{
 		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
-		const auto blackboard = bTree.GetBlackboard();
+		auto blackboard = bTree.GetBlackboard();
 		Math::Vector4 vectorT;
 		if (mpTarget)
 		{
@@ -88,7 +94,7 @@ namespace Dystopia
 	{
 		return;
 		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
-		const auto blackboard = bTree.GetBlackboard();
+		auto blackboard = bTree.GetBlackboard();
 		Math::Vector4 vectorT;
 		if (mpTarget)
 		{

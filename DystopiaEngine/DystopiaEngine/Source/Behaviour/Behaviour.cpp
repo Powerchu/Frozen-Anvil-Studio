@@ -23,6 +23,10 @@ void Dystopia::Behaviour::Load(void)
 {
 }
 
+void Dystopia::Behaviour::Awake(void)
+{
+}
+
 void Dystopia::Behaviour::Init(void)
 {
 }
@@ -76,6 +80,16 @@ void Dystopia::Behaviour::OnTriggerStay(const GameObject *)
 
 void Dystopia::Behaviour::OnTriggerExit(const GameObject *)
 {
+}
+
+Dystopia::TypeErasure::TypeEraseMetaData Dystopia::Behaviour::GetMetaData()
+{
+	return TypeErasure::TypeEraseMetaData{};
+}
+
+Dystopia::TypeErasure::TypeEraseMetaData const Dystopia::Behaviour::GetMetaData() const
+{
+	return TypeErasure::TypeEraseMetaData{};
 }
 
 void Dystopia::Behaviour::ReceiveMessage(const char * const , BehaviourMessage)

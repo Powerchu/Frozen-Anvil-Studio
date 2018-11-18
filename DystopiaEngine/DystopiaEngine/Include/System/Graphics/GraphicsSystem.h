@@ -55,10 +55,12 @@ namespace Dystopia
 
 		void Update(float) override;		// Draws the currently bounded window
 		void PostUpdate(void) override;
-		void Shutdown(void);
+		void Shutdown(void) override;
 
 		void SetGamma(float) noexcept;
 		float GetGamma(void) noexcept;
+
+		void ToggleVsync(bool) noexcept;
 
 		bool GetDebugDraw(void) const;
 		void ToggleDebugDraw(bool);
@@ -98,7 +100,6 @@ namespace Dystopia
 		Math::Vector4 mvDebugColour;
 		float mfGamma;
 		float mfDebugLineWidth;
-		bool  mbDebugDrawCheckBox = false;
 
 		void* mOpenGL; 
 		int mPixelFormat;
@@ -107,6 +108,8 @@ namespace Dystopia
 		Ctor::MagicArrayBuilder<Framebuffer>::SetBlockLimit<1>::type mViews;
 
 		static int DRAW_MODE;
+		bool mbDebugDrawCheckBox = false;
+		bool mbVsync = false;
 
 		void StartFrame(void);
 		void EndFrame(void);

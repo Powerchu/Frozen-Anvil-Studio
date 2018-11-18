@@ -181,17 +181,6 @@ namespace Ut
 	{
 		static constexpr T value = _val;
 	};
-
-
-	// ============================================= ConvertType ============================================== //
-
-
-	// TODO: SFINAE Friendly?
-	template <typename T, typename ... Ty>
-	struct ConvertType : public Type<decltype(Helper::ConversionSelector<Ty...>{}(declval<Ut::Decay_t<T>>()))>
-	{
-
-	};
 }
 
 

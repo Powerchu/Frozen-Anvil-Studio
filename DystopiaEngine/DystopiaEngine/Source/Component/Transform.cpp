@@ -183,7 +183,7 @@ void Dystopia::Transform::SetGlobalPosition(const float _x, const float _y, cons
 
 void Dystopia::Transform::SetRotation(const Math::Angle _x, const Math::Angle _y, const Math::Angle _z)
 {
-	mRotation = mRotation.FromEuler(_x, _y, _z);
+	mRotation = Math::Quaternion::FromEuler(_x, _y, _z);
 }
 
 Math::Quaternion Dystopia::Transform::GetGlobalRotation(void) const

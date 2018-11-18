@@ -36,7 +36,16 @@ namespace Dystopia
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
 		}
-		
+		template<typename ... Ts>
+		void SendExternalMessage(const GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
+		template<typename ... Ts>
+		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
 		template<typename ... Ts>
 		void SendAllMessage(const char * _FuncName, Ts ... _Params)
 		{
@@ -120,6 +129,10 @@ namespace Dystopia
 			   && strcmp(name, "AudioTrig"))
 			{
 				GetOwner()->Destroy();
+			}
+			if(!strcmp(name,"Goblin"))
+			{
+				Fireball_MSG::SendExternalMessage(ptr,"TEST", 1000.f); 
 			}
 		}
 	}

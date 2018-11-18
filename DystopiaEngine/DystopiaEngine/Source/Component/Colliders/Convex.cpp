@@ -256,9 +256,8 @@ namespace Dystopia
 					norm = (_ColB.GetGlobalPosition() - PointOfImpact);
 				}
 
-				if (distance < _ColB.GetRadius())
+				if (distance <= _ColB.GetRadius())
 				{
-					isInside = true;
 					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
 					newEvent.mEdgeNormal += norm;
 					newEvent.mEdgeVector = Math::Vec3D{ newEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
@@ -280,16 +279,27 @@ namespace Dystopia
 				//InformOtherComponents(true, newEvent);
 				return true;
 			}
-			else
+			return false;
+		}
+		/*Circle completely inside*/
+		newEvent.mfPeneDepth = FLT_MAX;
+
+		for (auto & elem : Edges)
+		{
+			Vec3D v = elem.mVec3;
+			Vec3D w = GetGlobalPosition() - elem.mPos;
+
+			if (Math::Abs(w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
 			{
-				//InformOtherComponents(false, newEvent);
-				return false;
+				//currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
+				newEvent.mEdgeNormal = -elem.mNorm3;
+				newEvent.mfPeneDepth = Math::Abs(w.Dot(elem.mNorm3.Normalise())) + _ColB.GetRadius();
+
 			}
 		}
-		/*No Normals will be given because i have no idea which one to give*/
-		/*Circle completely inside*/
-		//InformOtherComponents(true, newEvent);
+
 		marr_CurrentContactSets.push_back(newEvent);
+		mbColliding = isInside;
 		return isInside;
 	}
 
@@ -401,7 +411,7 @@ namespace Dystopia
 			LongestRadius = distance > LongestRadius ? distance : LongestRadius;
 		}
 
-		return BroadPhaseCircle{ LongestRadius * 1.5F, MyGlobalCentre };
+		return BroadPhaseCircle{ LongestRadius, MyGlobalCentre};
 	}
 
 	void Convex::EditorUI() noexcept

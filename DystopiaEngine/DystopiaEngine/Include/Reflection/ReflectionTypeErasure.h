@@ -36,7 +36,7 @@ namespace Dystopia
 
 
 				virtual bool isThereMatch(const char * _name) = 0;
-				virtual ~Concept() {}
+				virtual ~Concept() = default;
 			};
 
 			template<typename T>

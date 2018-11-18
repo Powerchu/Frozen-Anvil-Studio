@@ -1,6 +1,8 @@
 #include "System/Collision/CollisionSystem.h"
 #include "System/Collision/CollisionEvent.h"
 #include "System/Scene/SceneSystem.h"
+#include "System/Graphics/VertexDefs.h"
+#include "System/Graphics/MeshSystem.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
 #include "Math/Vector4.h"
@@ -32,21 +34,46 @@ namespace Dystopia
 
 	void Circle::Awake(void)
 	{
-		if (mDebugVertices.size() == 0)
+		static Mesh * Mesh = nullptr;
+
+		mScale[0] = mScale[1] = m_radius;
+
+		if(!Mesh)
 		{
+			mDebugVertices.clear();
+
 			const unsigned numberOfSegments = 25;
 			const float increment = 2.0f * Math::pi / float(numberOfSegments);
-
-			const float theta = 0.0f;
 
 			for (unsigned i = 0; i < numberOfSegments; ++i)
 			{
 				Vec3D vertex = 0.5F * Vec3D{ cosf(increment*i), sinf(increment*i), 0 };
-				Collider::mDebugVertices.push_back(Vertex{ vertex.x, vertex.y, 0 });
+				mDebugVertices.push_back(Vertex{ vertex.x, vertex.y, 0 });
 			}
-			Collider::Awake();
+
+			Triangulate();
+
+			if (this->mDebugVertices.size() == 0 || this->mIndexBuffer.size() == 0)
+				throw;
+
+			auto * pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
+			if (pMeshSys)
+			{
+				/*Create Mesh*/
+				pMeshSys->StartMesh();
+
+				auto const & arr = GetVertexBuffer();
+				for (const auto& i : arr)
+				{
+					pMeshSys->AddVertex(i.x, i.y, i.z);
+				}
+
+				SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
+				pMeshSys->EndMesh();
+			}
+			Mesh = GetMesh();
 		}
-		mScale[0] = mScale[1] = m_radius;
+		mpMesh = Mesh;
 	}
 
 	/*Load the Component*/
@@ -83,12 +110,12 @@ namespace Dystopia
 
 	BroadPhaseCircle Circle::GenerateBoardPhaseCircle() const
 	{
-		return BroadPhaseCircle(GetRadius() * 2.5f, GetGlobalPosition());
+		return BroadPhaseCircle(GetRadius(), GetGlobalPosition());
 	}
 
 	float Circle::GetRadius() const
 	{
-		float Scale = Math::Abs(mOwnerTransformation[0]) > Math::Abs(mOwnerTransformation[5]) ? mOwnerTransformation[0] : mOwnerTransformation[5];
+		const float Scale = Math::Abs(mOwnerTransformation[0]) > Math::Abs(mOwnerTransformation[5]) ? mOwnerTransformation[0] : mOwnerTransformation[5];
 		return Math::Abs(m_radius * Scale * 0.5f);
 	}
 
@@ -221,7 +248,6 @@ namespace Dystopia
 			if (elem.mNorm3.Dot(elem.mPos - GetGlobalPosition()) < 0)
 			{
 				isInside = false;
-				break;
 			}
 		}
 
@@ -233,8 +259,8 @@ namespace Dystopia
 				Vec3D v = elem.mVec3;
 				Vec3D w = GetGlobalPosition() - elem.mPos;
 				Vec3D norm;
-				float c1 = v.Dot((w));
-				float c2 = v.Dot(v);
+				const float c1 = v.Dot(w);
+				const float c2 = v.Dot(v);
 				float ratio = 0.f;
 				Point3D PointOfImpact;
 				if (c1 < 0)
@@ -244,7 +270,7 @@ namespace Dystopia
 				}
 				else if (c1 > c2)
 				{
-					distance = (GetGlobalPosition() - (elem.mPos + elem.mVec3)).Magnitude();
+					distance = (GetGlobalPosition() - (v + elem.mPos)).Magnitude();
 					norm = -(GetGlobalPosition() - (v + elem.mPos));
 				}
 				else
@@ -255,9 +281,8 @@ namespace Dystopia
 					norm = -(GetGlobalPosition() - PointOfImpact);
 				}
 
-				if (distance < GetRadius())
+				if (distance <= GetRadius())
 				{
-					isInside = true;
 					newEvent.mfPeneDepth     = GetRadius() - distance;
 					newEvent.mEdgeNormal     += norm;
 					newEvent.mEdgeVector     = Math::Vec3D{ newEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
@@ -279,17 +304,28 @@ namespace Dystopia
 				//InformOtherComponents(true, newEvent);
 				return true;
 			}
-			else
-			{
-				//InformOtherComponents(false, newEvent);
-				return false;
-			}
-
+			return false;
 		}
-		/*No Normals will be given because i have no idea which one to give*/
+
 		/*Circle completely inside*/
-		//InformOtherComponents(true, newEvent);
+		newEvent.mfPeneDepth = FLT_MAX;
+
+		for (auto & elem : ConvexEdges)
+		{
+			Vec3D v = elem.mVec3;
+			Vec3D w = GetGlobalPosition() - elem.mPos;
+
+			if (Math::Abs( w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
+			{
+				//currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
+				newEvent.mEdgeNormal = -elem.mNorm3;
+				newEvent.mfPeneDepth = Math::Abs(w.Dot(elem.mNorm3.Normalise())) +  GetRadius();
+				
+			}
+		}
+		
 		marr_CurrentContactSets.push_back(newEvent);
+		mbColliding = isInside;
 		return isInside;
 	}
 	bool Circle::isColliding(Convex * const & other_col)

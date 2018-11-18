@@ -21,6 +21,7 @@ namespace Dystopia
 	class TextSerialiser;
 	class GraphicsSystem;
 	class PhysicsSystem;
+	class InputManager;
 
 	class ProjectSettings : public EditorTab
 	{
@@ -44,6 +45,8 @@ namespace Dystopia
 
 		GraphicsSystem	*mpGfxSys;
 		PhysicsSystem	*mpPhySys;
+		InputManager     *mpInputSys;
+
 
 	};
 

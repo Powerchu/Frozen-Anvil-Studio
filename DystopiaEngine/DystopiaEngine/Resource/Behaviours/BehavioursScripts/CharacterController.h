@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	dsds.h
-\author sds (100%)
-\par    email: d\@digipen.edu
+\file	CharacterController.h
+\author Aaron Chu (100%)
+\par    email: m.chu\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,25 +11,27 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _dsds_H_
-#define _dsds_H_
+#ifndef _CharacterController_H_
+#define _CharacterController_H_
 
 #define str(s) #s
 
 #include "Behaviour/Behaviour.h"
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
-#include "Behaviour/BehaviourMemberFunc.h"
 
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
-	class dsds : Behaviour
+	class RigidBody;
+	class InputManager;
+
+	class CharacterController : Behaviour
 	{
 	public:
 
-		static constexpr const char * BehaviourName = str(dsds);
+		static constexpr const char * BehaviourName = str(CharacterController);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -39,13 +41,14 @@ namespace Dystopia
 		// };
 
 #endif
-		virtual const std::string GetEditorName(void) const override { return "dsds"; }
-		static uint64_t constexpr mdsdsID = 18446744071882949120;
+		virtual const std::string GetEditorName(void) const override { return "CharacterController"; }
+		static uint64_t constexpr mCharacterControllerID = 1496323584;
 
-		dsds();
-		~dsds();
+		CharacterController();
+		~CharacterController();
 		
 		virtual void Load(void) override;
+		virtual void Awake(void) override;
 		virtual void Init(void) override;
 
 		virtual void Update(const float _fDeltaTime) override;
@@ -68,7 +71,7 @@ namespace Dystopia
 
 		virtual const char * const GetBehaviourName() const;
 
-		virtual dsds * Duplicate() const;
+		virtual CharacterController * Duplicate() const;
 		
 		virtual void EditorUI(void) noexcept override;
 		
@@ -76,19 +79,38 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+		// Member Functions
+		void CheckMoving();
+		void MovePlayer(float);
+
 	private:
-		friend MetaData<dsds>;
+		friend MetaData<CharacterController>;
+
+	// Member Variables
+	public: 
+		bool IsDodging;
+		float CharacterSpeed;
+		float JumpForce;
+	private:
+		bool mbIsGrounded;
+		bool mbIsCeilinged;
+		bool mbIsFacingRight;
+
+		RigidBody * mpBody;
+		InputManager * mpInputSys;
 	};
 
 	extern "C"
 	{
-		DllExport dsds * dsdsClone()
+		DllExport CharacterController * CharacterControllerClone()
 		{
-			return new dsds;
+			return new CharacterController;
 		}
 	}
 }
 
-#endif //_dsds_H_
+PP_REFLECT(Dystopia::CharacterController, IsDodging, CharacterSpeed, JumpForce);
+
+#endif //_CharacterController_H_
 
 

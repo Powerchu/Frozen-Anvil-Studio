@@ -27,7 +27,7 @@ namespace Dystopia
 	
 
 	BehaviourSystem::BehaviourSystem()
-		:mHotloader{ CreateShared<Hotloader<1>>() }
+		:mHotloader{ Ctor::CreateShared<Hotloader<1>>() }
 	{
 
 	}
@@ -370,7 +370,7 @@ namespace Dystopia
 								_obj.InsertStartBlock("MEMBER VAR");
 							}
 						}
-						_obj << "END";
+						_obj << "\"END\"";
 						_obj.InsertEndBlock("BEHAVIOUR_MEMBER_VARIABLE_BLOCK");
 					}
 				}
