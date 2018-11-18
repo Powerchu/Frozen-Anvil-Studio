@@ -19,6 +19,8 @@
 #include "Utility/DebugAssert.h"
 #include "System/Logger/LoggerSystem.h"
 #include "System/Logger/LogPriority.h"
+#include "System/Window/WindowManager.h"
+#include "System/Window/Window.h"
 #include "IO/TextSerialiser.h"
 #include <utility>
 
@@ -54,7 +56,7 @@ namespace Dystopia
 #else
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine_Editor.lib", eCompile);
 #endif
-
+		mHotloader->SetParentHWND(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetWindowHandle());
 		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL", eFileDir::eAppData));
 		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));

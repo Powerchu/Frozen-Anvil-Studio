@@ -236,9 +236,10 @@ namespace Dystopia
 	template <unsigned TOTAL_FILE_DIRECTORIES>
 	struct Hotloader
 	{
-		Hotloader()
+		Hotloader(HWND _ParentHandle = NULL)
 			:marraOverlapped{ 0 },
-			marrFileHandles{ INVALID_HANDLE_VALUE }
+			marrFileHandles{ INVALID_HANDLE_VALUE },
+			mParentHandle{ _ParentHandle }
 		{
 
 
@@ -264,6 +265,11 @@ namespace Dystopia
 		void ReloadModifiedDll(DLLWrapper * _DllToReload)
 		{
 			_DllToReload->ReloadDll();
+		}
+
+		void SetParentHWND(HWND _Hwnd)
+		{
+			mParentHandle = _Hwnd;
 		}
 
 		bool InitFileDirectory(unsigned _Index)
@@ -536,6 +542,7 @@ namespace Dystopia
 
 		void CompileFiles(unsigned _Index, std::wstring const & _FileName, bool _totemp = false)
 		{
+			static char buffer[1024];
 			/*Search for exisiting opened DLL and close them to allow cl.exe to override*/
 			//SearchAndReplaceDll(GenerateDllName(_FileName));
 
@@ -586,18 +593,18 @@ namespace Dystopia
 					OutputCommand += L" \"" + elem.GetFullPath() + L"\"";
 			}
 
-			std::wstring Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" && exit 99";
-
-
-
+			std::wstring Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" | \"C:/Users/keith.goh/source/repos/Frozen-Anvil-Studio/DystopiaEngine/DystopiaEngine/Resource/Editor/exe/BehaviourPiping.exe\" & exit";
 			std::string cFinal_Command{ Final_Command.begin(),Final_Command.end() };
 			std::string cCmdPath{ mCmdPath.begin(), mCmdPath.end() };
+
+
+			CreateNamedPipeA("DystopiaPipe", PIPE_ACCESS_INBOUND, FILE_FLAG_FIRST_PIPE_INSTANCE | PIPE_TYPE_BYTE | PIPE_WAIT | PIPE_ACCEPT_REMOTE_CLIENTS, PIPE_UNLIMITED_INSTANCES, 5000, 5000, 0, NULL);
 
 			LPDWORD lpExitCode = new DWORD;
 			SHELLEXECUTEINFO ExecInfo{ 0 };
 			ExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
 			ExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-			ExecInfo.hwnd = NULL;
+			ExecInfo.hwnd = mParentHandle;
 			ExecInfo.lpVerb = NULL;
 			ExecInfo.lpFile = mCmdPath.c_str();
 			ExecInfo.lpParameters = Final_Command.c_str();
@@ -901,7 +908,7 @@ namespace Dystopia
 		std::filesystem::recursive_directory_iterator	 mIterator;
 
 
-
+		HWND mParentHandle;
 
 
 

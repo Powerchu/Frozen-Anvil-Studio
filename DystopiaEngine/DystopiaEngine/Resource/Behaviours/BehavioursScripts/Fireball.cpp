@@ -102,7 +102,7 @@ namespace Dystopia
 			   strcmp(name, "Fireball")&& strcmp(name, "Missle")
 			   && strcmp(name, "AudioTrig")) 
 			{
-				GetOwner()->Destroy();
+				GetOwner()->Destroy()
 			}
 		}
 	}
