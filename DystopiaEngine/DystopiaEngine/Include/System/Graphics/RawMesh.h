@@ -27,37 +27,74 @@ namespace Dystopia
 	using UVBuffer     = Ut::Indexer<2, Gfx::UV>;
 	using IndexBuffer  = Ut::Indexer<3, short>;
 
-	struct RawMesh
+	class RawMesh
 	{
+	public:
 		RawMesh(void) noexcept;
 		~RawMesh(void);
 
 		void BindMesh  (void) const;
 		void UnbindMesh(void) const;
 
-		unsigned RequestDuplicate(unsigned _nVtxCount, void* _nOffset);
+		RawMesh* RequestDuplicate(unsigned _nVtxCount, size_t _nOffset);
 
 		void Build(
-			const AutoArray<Gfx::Vertex>&,
-			const AutoArray<Gfx::Normal>&,
-			const AutoArray<Gfx::UV>&,
-			const AutoArray<short>&
+			const AutoArray<VertexBuffer::type>&,
+			const AutoArray<NormalBuffer::type>&,
+			const AutoArray<UVBuffer::type>&,
+			const AutoArray<IndexBuffer::type>&
 		);
 
 		template <typename T>
-		void UpdateBuffer(typename AutoArray<typename T::type> const&);
+		void UpdateBuffer(AutoArray<typename T::type> const&);
 		template <typename T>
-		void UpdateBufferRange(typename AutoArray<typename T::type> const&, void* _nOffset);
+		void UpdateBufferRange(AutoArray<typename T::type> const&, ptrdiff_t _nOffset);
 
 		void IncRef(void);
 		void DecRef(void);
 		unsigned GetVAO(void);
 		unsigned GetVtxCount(void);
 		unsigned GetRefCount(void);
+		void AppendVertexCount(unsigned);
+
+	private:
 
 		unsigned mVAO, mVtxBuffer, mNmlBuffer, mUVBuffer, mEBO;
 		unsigned mnVtxCount, mnRefCount;
+
+		void UpdateBuffer(unsigned, unsigned, void*, ptrdiff_t sz);
+		void UpdateBufferRange(unsigned, unsigned, void*, ptrdiff_t sz, ptrdiff_t _offset);
 	};
+}
+
+template <typename T>
+void UpdateBuffer(AutoArray<typename T::type> const& _arr)
+{
+	if constexpr (T::value == 3)
+	{
+		// GL_ELEMENT_ARRAY_BUFFER
+		UpdateBuffer(0x8893, T::value, _arr.begin(), _arr.size())
+	}
+	else
+	{
+		// GL_ARRAY_BUFFER
+		UpdateBuffer(0x8892, T::value, _arr.begin(), _arr.size())
+	}
+}
+
+template <typename T>
+void UpdateBufferRange(AutoArray<typename T::type> const&, ptrdiff_t _nOffset)
+{
+	if constexpr (T::value == 3)
+	{
+		// GL_ELEMENT_ARRAY_BUFFER
+		UpdateBufferRange(0x8893, T::value, _arr.begin(), _arr.size(), _nOffset)
+	}
+	else
+	{
+		// GL_ARRAY_BUFFER
+		UpdateBufferRange(0x8892, T::value, _arr.begin(), _arr.size(), _nOffset)
+	}
 }
 
 

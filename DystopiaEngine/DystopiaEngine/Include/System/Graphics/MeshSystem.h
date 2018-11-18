@@ -44,7 +44,7 @@ namespace Dystopia
 		Mesh* AddIndices(const std::string& _strName, const AutoArray<short>&);
 		void EndMesh(void);
 
-		MeshBuilder BuildMesh(void);
+		//MeshBuilder BuildMesh(void);
 
 		void FreeMeshes(void);
 
@@ -58,6 +58,8 @@ namespace Dystopia
 
 		// Warning! Do not keep the pointer!
 		RawMesh* GetRaw(unsigned) noexcept;
+		// Warning! Do not keep the pointer!
+		RawMesh* GetRawFromBuffer(unsigned) noexcept;
 
 	private:
 

@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	struct RawMesh;
+	class RawMesh;
 
 	class MeshBuilder
 	{

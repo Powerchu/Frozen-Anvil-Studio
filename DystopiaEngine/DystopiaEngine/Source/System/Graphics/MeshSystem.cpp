@@ -66,7 +66,7 @@ void Dystopia::MeshSystem::LoadMesh(std::string const& _strPath)
 		mUVBuffer.EmplaceBack(uvBuf);
 	}
 
-	CurrentMesh.mnVtxCount += nVtxCount;
+	CurrentMesh.AppendVertexCount(nVtxCount);
 	input.ConsumeStartBlock();
 
 	do
@@ -80,7 +80,7 @@ void Dystopia::MeshSystem::LoadMesh(std::string const& _strPath)
 			++nNumIndices;
 		}
 
-		auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, nNumIndices, nCurrOffset);
+		auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.GetVAO(), nNumIndices, nCurrOffset);
 
 		input.ConsumeStartBlock();
 
@@ -115,12 +115,12 @@ Dystopia::Mesh* Dystopia::MeshSystem::AddIndices(const std::string& _strName, co
 {
 	RawMesh& CurrentMesh = mpRawMeshes.back();
 	size_t nCurrOffset = mIndexBuffer.size();
-	++CurrentMesh.mnRefCount;
+	CurrentMesh.IncRef();
 
 	for (auto& e : _indices)
 		mIndexBuffer.push_back(e);
 
-	auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.mVAO, static_cast<unsigned>(_indices.size()), nCurrOffset);
+	auto pCurrMesh = mpMeshes.Emplace(CurrentMesh.GetVAO(), static_cast<unsigned>(_indices.size()), nCurrOffset);
 	pCurrMesh->SetName(_strName);
 
 	return pCurrMesh;
@@ -149,7 +149,7 @@ void Dystopia::MeshSystem::ExportMeshes(void)
 
 Dystopia::Mesh* Dystopia::MeshSystem::CreateMesh(RawMesh* _pRaw, unsigned _nIndices, size_t offset)
 {
-	return mpMeshes.Emplace(_pRaw->mVAO, _nIndices, offset);
+	return mpMeshes.Emplace(_pRaw->GetVAO(), _nIndices, offset);
 }
 
 Dystopia::Mesh* Dystopia::MeshSystem::GetMesh(const std::string& _strName) noexcept
@@ -171,6 +171,15 @@ unsigned Dystopia::MeshSystem::GenerateRaw(void) noexcept
 Dystopia::RawMesh* Dystopia::MeshSystem::GetRaw(unsigned _nIndex) noexcept
 {
 	return &mpRawMeshes[_nIndex];
+}
+
+Dystopia::RawMesh* Dystopia::MeshSystem::GetRawFromBuffer(unsigned _VAO) noexcept
+{
+	for (auto& e : mpRawMeshes)
+		if (_VAO == e.GetVAO())
+			return &e;
+
+	return nullptr;
 }
 
 
