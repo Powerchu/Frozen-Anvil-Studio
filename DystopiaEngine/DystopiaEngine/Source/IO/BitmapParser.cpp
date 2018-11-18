@@ -328,7 +328,7 @@ bool ImageParser::WriteBMP(const std::string& _path, void* _pImg, int _nWidth, i
 
 bool ImageParser::WriteBMP(const std::string& _path, Image const* _pImg)
 {
-	auto file = Dystopia::Serialiser::OpenFile<Dystopia::BinarySerializer>(_path, Dystopia::Serialiser::MODE_WRITE);
+	auto file = Dystopia::Serialiser::OpenFile<Dystopia::BinarySerializer>(_path.c_str(), Dystopia::Serialiser::MODE_WRITE);
 
 	if (file.EndOfInput())
 		return false;

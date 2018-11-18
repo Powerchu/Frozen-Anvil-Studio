@@ -116,7 +116,7 @@ Ty* Dystopia::TextureSystem::LoadTexture(std::string const& _strPath)
 	ret->LoadTexture(img);
 
 	img->mpImageData = nullptr;
-	mImageData.insert(HashString{ _strPath.begin(), _strPath.end() }, *img);
+	mImageData.emplace(HashString{ _strPath.c_str() }, *img);
 
 	return ret;
 }

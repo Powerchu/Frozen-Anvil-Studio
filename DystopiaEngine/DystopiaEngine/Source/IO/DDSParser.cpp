@@ -71,7 +71,7 @@ namespace
 
 Image* ImageParser::LoadDDS(const std::string& _path)
 {
-	auto file = Dystopia::Serialiser::OpenFile<Dystopia::BinarySerializer>(_path);
+	auto file = Dystopia::Serialiser::OpenFile<Dystopia::BinarySerializer>(_path.c_str());
 	Image* img = Dystopia::DefaultAllocator<Image>::Alloc();
 
 	HeaderDDS headerInfo;

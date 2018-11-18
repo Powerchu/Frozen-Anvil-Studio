@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _MESH_H_
 #define _MESH_H_
 
+#include "System/Graphics/RawMesh.h"
+
 #include <string>
 
 
@@ -36,6 +38,11 @@ namespace Dystopia
 
 		void SetIndices(unsigned, size_t);
 
+		template <typename T>
+		void UpdateBuffer(AutoArray<typename T::type> const&);
+		template <typename T>
+		void UpdateBufferRange(AutoArray<typename T::type> const&, void* _nOffset);
+
 	private:
 
 		unsigned mVAO, mnVertices;
@@ -43,6 +50,36 @@ namespace Dystopia
 		
 		std::string mName;
 	};
+}
+
+
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+template <typename T>
+void Dystopia::Mesh::UpdateBuffer(AutoArray<typename T::type> const& _buf)
+{
+	auto pRaw = EngineCore::GetInstance()->Get<MeshSystem>()->GetRaw(mVAO);
+
+	if (1 < pRaw->GetRefCount())
+		pRaw = pRaw->RequestDuplicate(mnVertices, mnOffset);
+
+	pRaw->UpdateBuffer<T>(_buf);
+}
+
+template <typename T>
+void Dystopia::Mesh::UpdateBufferRange(AutoArray<typename T::type> const& _buf, void* _nOffset)
+{
+	auto pRaw = EngineCore::GetInstance()->Get<MeshSystem>()->GetRaw(mVAO);
+
+	if (1 < pRaw->GetRefCount())
+		pRaw = pRaw->RequestDuplicate(mnVertices, mnOffset);
+
+	pRaw->UpdateBufferRange<T>(_buf, _nOffset);
 }
 
 

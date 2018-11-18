@@ -49,6 +49,11 @@ void Dystopia::RawMesh::UnbindMesh(void) const
 	glBindVertexArray(0);
 }
 
+unsigned Dystopia::RawMesh::RequestDuplicate(unsigned _nVtxCount, void * _nOffset)
+{
+	return 0;
+}
+
 void Dystopia::RawMesh::Build(
 	const AutoArray<Gfx::Vertex>& _pVtx, 
 	const AutoArray<Gfx::Normal>& _pNml, 
@@ -100,6 +105,11 @@ unsigned Dystopia::RawMesh::GetVAO(void)
 unsigned Dystopia::RawMesh::GetVtxCount(void)
 {
 	return mnVtxCount;
+}
+
+unsigned Dystopia::RawMesh::GetRefCount(void)
+{
+	return mnRefCount;
 }
 
 

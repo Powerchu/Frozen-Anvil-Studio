@@ -364,8 +364,8 @@ namespace Dystopia
 						{
 							if (BehaviourMetaData[names])
 							{
-								_obj << std::string{ names };
-								_obj.InsertStartBlock(std::string{ names });
+								_obj << names;
+								_obj.InsertStartBlock(names);
 								BehaviourMetaData[names].Serialise(iter.second, _obj, BehaviourHelper::SuperSerialiseFunctor{});
 								_obj.InsertStartBlock("MEMBER VAR");
 							}
