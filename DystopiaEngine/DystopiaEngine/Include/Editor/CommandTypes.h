@@ -231,6 +231,21 @@ namespace Editor
 		AutoArray<Command*> mArrCommands;
 	};
 
+	template<typename C>
+	class AddComponent : public Command
+	{
+	public:
+		AddComponent(const uint64_t& _ownerID, C* _pComToAdd);
+		bool Do(void);
+		bool Undo(void);
+		bool Unchanged(void) const;
+		~AddComponent(void) {}
+
+	private:
+		uint64_t mnID;
+		C* mpComponent;
+	};
+
 	template<class C, typename ... Ts>
 	class ComponentFunction
 	{
@@ -329,7 +344,6 @@ namespace Editor
 		ComponentFunction<C, Ts ...> mStoredValue;
 	};
 }
-
 
 /***************************************************************** Template Function Definitions *****************************************************************/
 
@@ -501,6 +515,47 @@ void ::Editor::RecordValue<::Editor::ComponentFunction<C, Ts...>>::GetValue(void
 {
 	*(static_cast<::Editor::ComponentFunction<C, Ts ...>*>(_outPtr)) = mStoredValue;
 }
+
+template<typename C>
+::Editor::AddComponent<C>::AddComponent(const uint64_t& _ownerID, C* _pComToAdd)
+	: mnID{ _ownerID }, mpComponent{ _pComToAdd }
+{}
+
+template<typename C>
+bool ::Editor::AddComponent<C>::Do(void)
+{
+	auto& curScene = Dystopia::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	if (auto obj = curScene.FindGameObject(mnID))
+	{
+		mpComponent->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+		obj->AddComponent(mpComponent, typename Dystopia::Component::TAG{});
+		return true;
+	}
+	return false;
+}
+
+template<typename C>
+bool ::Editor::AddComponent<C>::Undo(void)
+{
+	auto& curScene = Dystopia::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	if (auto obj = curScene.FindGameObject(mnID))
+	{
+		mpComponent = obj->GetComponent<C>();
+		mpComponent->SetFlag(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+		obj->RemoveComponent(mpComponent);
+		return true;
+	}
+	return false;
+}
+
+template<typename C>
+bool ::Editor::AddComponent<C>::Unchanged(void) const
+{
+	return false;
+}
+
+
+
 #endif
 #endif
 

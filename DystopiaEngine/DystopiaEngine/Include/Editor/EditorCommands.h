@@ -54,7 +54,6 @@ namespace Editor
 
 
 
-
 		template <class Component, typename ... Ts>
 		void FunctionCommand(const uint64_t& _objID, const ComponentFunction<Component, Ts ...>& _oldFn, 
 													 const ComponentFunction<Component, Ts ...>& _newFn);
@@ -96,6 +95,14 @@ namespace Editor
 		template<class C, typename ... Ts>
 		void EndMultiRec(const uint64_t& _id, void(C::*_function)(Ts...), const Ut::RemoveRef_t<Ts>& ... _params);
 		void ExecuteMultiRec(void);
+
+
+
+
+		template<typename C>
+		void AddComponent(const uint64_t& _id, C * _pComponent);
+		template<typename C>
+		void RemoveComponent(const uint64_t& _id, C * _pComponent);
 
 	private:
 		std::deque<Command*> mDeqRedo;
@@ -267,6 +274,21 @@ void Editor::EditorCommands::EndMultiRec(const uint64_t& _id, void(C::*_function
 	mArrMultiCommands.push_back(Dystopia::DefaultAllocator<FunctionComd<ComponentFunction<C, Ts ...>, ComponentFunction<C, Ts ...>>>::ConstructAlloc(_id, nFn, oFn));
 }
 
+template<typename C>
+void Editor::EditorCommands::AddComponent(const uint64_t& _id, C * _pComponent)
+{
+	if (mbDisableCommands)
+		return;
+
+}
+
+template<typename C>
+void Editor::EditorCommands::RemoveComponent(const uint64_t& _id, C * _pComponent)
+{
+	if (mbDisableCommands)
+		return;
+
+}
 #endif
 #endif 
 

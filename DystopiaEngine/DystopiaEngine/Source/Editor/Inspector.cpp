@@ -15,33 +15,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/Inspector.h"
 #include "Editor/ScriptFormatter.h"
-//#include "Editor/Commands.h"
-//#include "Editor/EditorEvents.h"
 
 #include "Editor/EditorMain.h"
 #include "Editor/RuntimeMeta.h"
 #include "Editor/EditorClipboard.h"
 #include "Editor/EditorCommands.h"
 
-//#include "Component/AudioSource.h"
-//#include "Component/Camera.h"
-//#include "Component/Collider.h"
-//#include "Component/Circle.h"
-//#include "Component/AABB.h"
-//#include "Component/Convex.h"
-//#include "Component/Renderer.h"
-//#include "Component/SpriteRenderer.h"
-//#include "Component/TextRenderer.h"
-//#include "Component/RigidBody.h"
-//#include "Component/CharacterController.h"
-//
-//#include "System/Sound/SoundSystem.h"
-//#include "System/Input/InputSystem.h"
-//#include "System/Camera/CameraSystem.h"
-//#include "System/Physics/PhysicsSystem.h"
-//#include "System/Graphics/GraphicsSystem.h"
-//#include "System/Behaviour/BehaviourSystem.h"
-//#include "System/Collision/CollisionSystem.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
 
@@ -159,9 +138,6 @@ namespace Editor
 				auto oFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, mpFocus->GetName());
 				auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, std::string{ buffer });
 				cmd->FunctionCommand(mpFocus->GetID(), oFn, nFn);
-				//auto f_Old = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, mpFocus->GetName());
-				//auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, std::string{ buffer });
-				//GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
 			if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))
 			{
@@ -269,8 +245,9 @@ namespace Editor
 				const auto& e = arr[i];
 				if (EGUI::Display::SelectableTxt(e, false))
 				{
-					Dystopia::Component* pComp = availableComp.GetComponent(i, mpFocus);
-					mpFocus->AddComponent(pComp, typename Dystopia::Component::TAG{});
+					//Dystopia::Component* pComp = availableComp.GetComponent(i, mpFocus);
+					//mpFocus->AddComponent(pComp, typename Dystopia::Component::TAG{});
+					EditorMain::GetInstance()->GetSystem<EditorCommands>()->AddComponent(mpFocus->GetID(), availableComp.GetComponent(i, mpFocus));
 				}
 			}
 			EGUI::Display::EndPopup();
@@ -365,7 +342,8 @@ namespace Editor
 		{
 			if (EGUI::Display::SelectableTxt("Remove"))
 			{
-				mpFocus->RemoveComponent(_pCom);
+				//mpFocus->RemoveComponent(_pCom);
+				EditorMain::GetInstance()->GetSystem<EditorCommands>()->RemoveComponent(mpFocus->GetID(), _pCom);
 				ret = true;
 			}
 			ImGui::EndPopup();
