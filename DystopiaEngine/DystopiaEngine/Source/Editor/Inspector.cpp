@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/ScriptFormatter.h"
 #include "Editor/Commands.h"
 #include "Editor/EditorEvents.h"
+#include "Editor/EditorMetaHelpers.h"
 
 #include "Component/AudioSource.h"
 #include "Component/Camera.h"
@@ -28,7 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/SpriteRenderer.h"
 #include "Component/TextRenderer.h"
 #include "Component/RigidBody.h"
-#include "Component/CharacterController.h"
+#include "Component/AiController.h"
 
 #include "System/Sound/SoundSystem.h"
 #include "System/Input/InputSystem.h"
@@ -37,12 +38,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/AI/AISystem.h"
 
 #include "Utility/ComponentGUID.h"
+
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
 
-#include "Editor/EditorMetaHelpers.h"
 
 #include "Reflection/ReadWriteObject.h"
 #include "Reflection/ReflectionTypeErasure.h"

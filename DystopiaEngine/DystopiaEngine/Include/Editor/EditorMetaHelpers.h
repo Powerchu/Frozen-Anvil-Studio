@@ -27,9 +27,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Utility.h"
 #include "Utility/MetaAlgorithms.h"
 #include "Editor/EGUI.h"
-#include <functional>
 #include "DataStructure/HashString.h"
 
+#include <functional>
 namespace Dystopia
 {
 	template<typename A, typename B>

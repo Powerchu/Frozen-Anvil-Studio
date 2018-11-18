@@ -214,9 +214,6 @@
     <ClCompile Include="Source\Component\CollisionEvent.cpp">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Component\CharacterController.cpp">
-      <Filter>Game Engine\Components\Physics\Character Controller</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Math\Vector4.cpp">
       <Filter>Math\Vector</Filter>
     </ClCompile>
@@ -321,6 +318,12 @@
     </ClCompile>
     <ClCompile Include="Source\Lib\GraphicsLib.cpp">
       <Filter>Lib\GraphicsLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\AI\AISystem.cpp">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\AiController.cpp">
+      <Filter>Game Engine\Components\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -678,9 +681,6 @@
     <ClInclude Include="Include\Editor\StyleScheme.h">
       <Filter>Editor\Editor Tabs\SchemeStyle</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\CharacterController.h">
-      <Filter>Game Engine\Components\Physics\Character Controller</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Utility\GUID.h">
       <Filter>Utility\GUID</Filter>
     </ClInclude>
@@ -825,15 +825,6 @@
     <ClInclude Include="Include\Component\SpriteRenderer.h">
       <Filter>Game Engine\Components\Renderer\SpriteRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Behaviour\AI\Composite.h">
-      <Filter>Game Engine\Systems\AI\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Behaviour\AI\Decorator.h">
-      <Filter>Game Engine\Systems\AI\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Behaviour\AI\Leaf.h">
-      <Filter>Game Engine\Systems\AI\Nodes</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Reflection\ReflectionTypeErasure.h">
       <Filter>Reflection\TypeErasure</Filter>
     </ClInclude>
@@ -846,18 +837,6 @@
     <ClInclude Include="Include\DataStructure\Map.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Behaviour\AI\Agent.h">
-      <Filter>Game Engine\Systems\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Behaviour\AI\Blackboard.h">
-      <Filter>Game Engine\Systems\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Behaviour\AI\NeuralTree.h">
-      <Filter>Game Engine\Systems\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Behaviour\AI\TreeBuilder.h">
-      <Filter>Game Engine\Systems\AI</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClInclude>
@@ -866,9 +845,6 @@
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\CharSpace.h">
       <Filter>Game Engine\SubSystems\Font</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Behaviour\AI\AISystem.h">
-      <Filter>Game Engine\Systems\AI</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Behaviour\BehaviourMessage.h">
       <Filter>Game Engine\Systems\Behaviour</Filter>
@@ -890,6 +866,33 @@
     </ClInclude>
     <ClInclude Include="Include\Lib\GraphicsLib.h">
       <Filter>Lib\GraphicsLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\AI\AISystem.h">
+      <Filter>Game Engine\Systems\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\AI\Blackboard.h">
+      <Filter>Game Engine\Systems\AI\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\AI\NeuralTree.h">
+      <Filter>Game Engine\Systems\AI\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\AI\TreeBuilder.h">
+      <Filter>Game Engine\Systems\AI\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\AI\Composite.h">
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\AI\Decorator.h">
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\AiController.h">
+      <Filter>Game Engine\Components\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\AI\Task.h">
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\NodeList.h">
+      <Filter>Game Engine\Systems\AI\Nodes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1157,9 +1160,6 @@
     <Filter Include="Editor\Editor Tabs\SchemeStyle">
       <UniqueIdentifier>{e2a99798-5b6a-4bf2-a471-a415c2452e05}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Components\Physics\Character Controller">
-      <UniqueIdentifier>{dc0c52cd-8f25-4932-a9fd-7d1916f1378d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\Admin">
       <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
     </Filter>
@@ -1261,6 +1261,12 @@
     </Filter>
     <Filter Include="Lib\GraphicsLib">
       <UniqueIdentifier>{e7a040d4-daaf-41bc-8530-1062480d5e84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\AI\Tree">
+      <UniqueIdentifier>{3ffcc155-d017-4f93-a1ae-f4f6218daac0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\AI">
+      <UniqueIdentifier>{695cd54f-1b97-44eb-8804-4a45aafc03a2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

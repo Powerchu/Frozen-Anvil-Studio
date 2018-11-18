@@ -28,12 +28,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\Component\AiController.cpp" />
     <ClCompile Include="Source\Editor\EditorInput.cpp" />
     <ClCompile Include="Source\Editor\EditorProc.cpp" />
     <ClCompile Include="Source\Lib\GraphicsLib.cpp" />
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
     <ClCompile Include="Source\Editor\SpriteEditor.cpp" />
+    <ClCompile Include="Source\System\AI\AISystem.cpp" />
     <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
     <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
     <ClCompile Include="Source\Component\SpriteRenderer.cpp" />
@@ -42,7 +44,6 @@
     <ClCompile Include="Source\Allocator\Allocator.cpp" />
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp" />
     <ClCompile Include="Source\Component\AudioSource.cpp" />
-    <ClCompile Include="Source\Component\CharacterController.cpp" />
     <ClCompile Include="Source\Component\CollisionEvent.cpp" />
     <ClCompile Include="Source\Editor\AdminCalls.cpp" />
     <ClCompile Include="Source\Editor\Clipboard.cpp" />
@@ -134,23 +135,24 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="Include\Component\AiController.h" />
+    <ClInclude Include="Include\Component\NodeList.h" />
+    <ClInclude Include="Include\System\AI\AISystem.h" />
+    <ClInclude Include="Include\System\AI\Blackboard.h" />
+    <ClInclude Include="Include\System\AI\Composite.h" />
+    <ClInclude Include="Include\System\AI\Decorator.h" />
+    <ClInclude Include="Include\System\AI\Task.h" />
+    <ClInclude Include="Include\System\AI\NeuralTree.h" />
+    <ClInclude Include="Include\System\AI\TreeBuilder.h" />
     <ClInclude Include="Include\System\Events\Event.h" />
     <ClInclude Include="Include\Behaviour\BehaviourMemberFunc.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourMessage.h" />
-    <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
     <ClInclude Include="Include\DataStructure\ProxyPtr.h" />
     <ClInclude Include="Include\Lib\GraphicsLib.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h" />
     <ClInclude Include="Include\Editor\EditorHotkeys.h" />
     <ClInclude Include="Include\Editor\EditorInput.h" />
     <ClInclude Include="Include\Editor\EditorProc.h" />
-    <ClInclude Include="Include\Behaviour\AI\Agent.h" />
-    <ClInclude Include="Include\Behaviour\AI\Blackboard.h" />
-    <ClInclude Include="Include\Behaviour\AI\Composite.h" />
-    <ClInclude Include="Include\Behaviour\AI\Decorator.h" />
-    <ClInclude Include="Include\Behaviour\AI\Leaf.h" />
-    <ClInclude Include="Include\Behaviour\AI\NeuralTree.h" />
-    <ClInclude Include="Include\Behaviour\AI\TreeBuilder.h" />
     <ClInclude Include="Include\DataStructure\HashString.h" />
     <ClInclude Include="Include\Editor\SpriteEditor.h" />
     <ClInclude Include="Include\DataStructure\Function.h" />
@@ -164,7 +166,6 @@
     <ClInclude Include="Include\Component\AABB.h" />
     <ClInclude Include="Include\Component\AudioSource.h" />
     <ClInclude Include="Include\Component\BehaviourList.h" />
-    <ClInclude Include="Include\Component\CharacterController.h" />
     <ClInclude Include="Include\Component\Circle.h" />
     <ClInclude Include="Include\Component\ColliderList.h" />
     <ClInclude Include="Include\Component\Convex.h" />

@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _DECORATOR_H_
 #define _DECORATOR_H_
-#include "Behaviour/AI/NeuralTree.h"
+#include "System/AI/NeuralTree.h"
 
 
 namespace Dystopia

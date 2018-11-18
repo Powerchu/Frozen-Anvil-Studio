@@ -32,7 +32,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/RigidBody.h"
 #include "Component/SpriteRenderer.h"
 #include "Component/TextRenderer.h"
-#include "Component/CharacterController.h"
+#include "Component/AiController.h"
 
 #include "System/Sound/SoundSystem.h"
 #include "System/Driver/Driver.h"
@@ -43,6 +43,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
+#include "System/AI/AISystem.h"
 
 #include <fstream>
 #include <iostream>

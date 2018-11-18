@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/MagicArray.h"
 #include "DataStructure/SharedPtr.h"
 
-#include "Behaviour/AI/Blackboard.h"
+#include "System/AI/Blackboard.h"
 
 namespace Dystopia
 {
@@ -72,6 +72,8 @@ namespace Dystopia
 
 		protected:
 			eStatus mStatus = eStatus::INVALID;
+		private:
+			uint64_t mnID = 0;
 		};
 
 /*
@@ -113,40 +115,44 @@ namespace Dystopia
 
 		protected:
 			Node::Ptr mpChild;
+		private:
+			uint64_t mnParentID{};
 		};
 
 
 /*
- * Leaf Node - These are the lowest level node type, and are incapable of having any children.
+ * Task Node - These are the lowest level node type, and are incapable of having any children.
  * AI Logic must be implemented here.
  */
-		class Leaf : public Node
+		class Task : public Node
 		{
 		public:
-			Leaf() = default;
+			Task() = default;
 
-			Leaf(Blackboard::Ptr _blackboard) 
+			Task(Blackboard::Ptr _blackboard) 
 				: mpBlackboard(_blackboard)
 			{
 			
 			}
-			virtual ~Leaf() = default;
+			virtual ~Task() = default;
 			eStatus Update() override = 0;
 
 		protected:
 			Blackboard::Ptr mpBlackboard;
+		private:
+			uint64_t mnParentID{};
 		};
 
 
 		class BehaviourTree : public Node
 		{
 		public:
-			BehaviourTree() 
+			BehaviourTree()
 				: mpBlackboard(Ctor::CreateShared<Blackboard>())
+				, mnID(0)
 			{
-				
 			}
-			
+
 			BehaviourTree(const Node::Ptr& rootNode) 
 				: BehaviourTree()
 			{
@@ -175,13 +181,23 @@ namespace Dystopia
 			{
 				return mpSharedboard;
 			}
-			void SetSharedBlackboard(const Blackboard::Ptr &shared) 
-			{ mpSharedboard = shared; }
+			
+			void SetSharedBlackboard(const Blackboard::Ptr &shared)
+			{
+				mpSharedboard = shared;
+			}
+
+			void SetBlackboard(const Blackboard::Ptr &blackboard)
+			{
+				mpBlackboard = blackboard;
+			}
 
 		private:
 			Node::Ptr mpRoot;
 			Blackboard::Ptr mpBlackboard;
 			Blackboard::Ptr mpSharedboard;
+
+			uint64_t mnID;
 		};
 
 	}

@@ -22,13 +22,13 @@ namespace Dystopia
 {
 	namespace NeuralTree
 	{
-		class HungerCheck : public NeuralTree::Leaf
+		class HungerCheck : public Task
 		{
 		public:
-			HungerCheck(NeuralTree::Blackboard::Ptr _ptr) : Leaf(_ptr) {}
+			HungerCheck(Blackboard::Ptr _ptr) : Task(_ptr) {}
 			eStatus Update() override
 			{
-				const auto a = mpBlackboard->getFloat("Hunger");
+				const auto a = mpBlackboard->GetFloat("Hunger");
 				if (a < 10.0F)
 				{
 					DEBUG_PRINT(eLog::MESSAGE, "I am hungry. Hunger: %f", a);
@@ -42,13 +42,13 @@ namespace Dystopia
 			}
 		};
 
-		class HaveFood : public NeuralTree::Leaf
+		class HaveFood : public Task
 		{
 		public:
-			HaveFood(NeuralTree::Blackboard::Ptr _ptr) : Leaf(_ptr) {}
+			HaveFood(Blackboard::Ptr _ptr) : Task(_ptr) {}
 			eStatus Update() override
 			{
-				if (mpBlackboard->getInt("Food") == 0)
+				if (mpBlackboard->GetInt("Food") == 0)
 				{
 					DEBUG_PRINT(eLog::MESSAGE, "I have no food.");
 					return eStatus::FAIL;
@@ -61,32 +61,32 @@ namespace Dystopia
 			}
 		};
 
-		class FindFood : public NeuralTree::Leaf
+		class FindFood : public Task
 		{
 		public:
-			FindFood(NeuralTree::Blackboard::Ptr _ptr) : Leaf(_ptr) {}
+			FindFood(Blackboard::Ptr _ptr) : Task(_ptr) {}
 			eStatus Update() override
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "Finding Food");
-				const auto a = mpBlackboard->getInt("Food") + 3;
-				mpBlackboard->setInt("Food", a);
+				const auto a = mpBlackboard->GetInt("Food") + 3;
+				mpBlackboard->SetInt("Food", a);
 				DEBUG_PRINT(eLog::MESSAGE, "I have %d food now.", a);
 				return eStatus::SUCCESS;
 			}
 		};
 
-		class EatFood : public NeuralTree::Leaf
+		class EatFood : public Task
 		{
 		public:
-			EatFood(NeuralTree::Blackboard::Ptr _ptr) : Leaf(_ptr) {}
+			EatFood(NeuralTree::Blackboard::Ptr _ptr) : Task(_ptr) {}
 			eStatus Update() override
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "Eating food");
-				const auto a = mpBlackboard->getFloat("Hunger") + 15.0F;
-				const auto b = mpBlackboard->getInt("Food") - 1;
+				const auto a = mpBlackboard->GetFloat("Hunger") + 15.0F;
+				const auto b = mpBlackboard->GetInt("Food") - 1;
 
-				mpBlackboard->setInt("Food", b);
-				mpBlackboard->setFloat("Hunger", a);
+				mpBlackboard->SetInt("Food", b);
+				mpBlackboard->SetFloat("Hunger", a);
 				DEBUG_PRINT(eLog::MESSAGE, "Hunger: %f", a);
 
 				return eStatus::SUCCESS;

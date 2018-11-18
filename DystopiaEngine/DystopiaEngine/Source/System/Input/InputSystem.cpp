@@ -16,7 +16,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Window/WindowManager.h"
 #include "System/Window/Window.h"
 #include "System/Driver/Driver.h"
-#include "Component/CharacterController.h"
 
 #include "Math/Vector2.h"
 #include "Math/Vector4.h"

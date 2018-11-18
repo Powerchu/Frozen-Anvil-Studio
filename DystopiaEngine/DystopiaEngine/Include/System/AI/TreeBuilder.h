@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TREE_BUILDER_H_
 #define _TREE_BUILDER_H_
 
-#include "Behaviour/AI/NeuralTree.h"
+#include "System/AI/NeuralTree.h"
 
 #include <cassert>
 

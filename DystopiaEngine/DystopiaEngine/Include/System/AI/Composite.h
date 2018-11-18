@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _COMPOSITE_H_
 #define _COMPOSITE_H_
-#include "Behaviour/AI/NeuralTree.h"
+#include "System/AI/NeuralTree.h"
 #include <cassert>
 
 
@@ -27,6 +27,7 @@ namespace Dystopia
 		*  If a child succeeds or runs, the selector returns the same status.
 		*  In the next tick, it will try to run each child in order again.
 		*  If all children fails, only then does the selector fail.
+		*  Stops when SUCCESS
 		*/
 		class Selector : public Composite
 		{
@@ -46,10 +47,8 @@ namespace Dystopia
 					if (status != eStatus::FAIL) {
 						return status;
 					}
-
 					++iter;
 				}
-
 				return eStatus::FAIL;
 			}
 		};
@@ -58,6 +57,7 @@ namespace Dystopia
 		 * If a child fails or runs, the sequence returns the same status.
 		 * In the next tick, it will try to run each child in order again.
 		 * If all children succeeds, only then does the sequence succeed.
+		 * Stops when FAIL
 		*/
 		class Sequence : public Composite
 		{
@@ -147,3 +147,4 @@ namespace Dystopia
 
 
 #endif
+
