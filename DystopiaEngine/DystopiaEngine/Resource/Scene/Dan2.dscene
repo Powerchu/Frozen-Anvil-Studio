@@ -1,0 +1,406 @@
+[START_Scene]
+2126512128,"Dan2",21,[START_START_GO_DATA]
+18446744071834698240,97,"Scene Camera",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.217882,0.217882,1,0.608024,28.5208,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+2145555456,65,"Environment",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1364892160,65,"Layer 1",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,2145555456,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072275284480,65,"Floor ",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,0,0,0,0,0,0,1,1364892160,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073539880448,65,"Floor 2",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,48.0033,0,0,0,0,0,1,1364892160,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1390612480,65,"Floor 3",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,95.976,0,0,0,0,0,1,1364892160,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1572552192,65,"Floor 4",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,-47.9906,3.06219e-06,0,0,0,0,1,1364892160,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+222524928,65,"Layer 0",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,2145555456,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072999894016,65,"FG Bush",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,-55.8961,-8.75273,0,0,0,0,1,222524928,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073156136960,65,"FG Bush 2",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,-15.0341,-7.878,0,0,0,0,1,222524928,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1189844992,65,"FG Bush 3",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,24.5784,-10.2523,0,0,0,-0.0539917,0.998541,222524928,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1634443264,65,"FG Bush 4",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,66.4401,-10.2523,0,0,0,0,1,222524928,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072400122880,65,"Tree",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,-60.9729,20.4633,-0.01,0,0,0,1,1364892160,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1986250752,65,"BG Bush",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,-48.0979,2.78731,-0.02,0,0,0,1,272883200,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+603180544,65,"Tree 2",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,48,1,-39.9843,26.9871,-0.01,0,0,0,1,1364892160,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073370588672,65,"Tree 3",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,48,1,-14.1009,26.4534,-0.01,0,0,0,1,1364892160,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+272883200,65,"Layer 2",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,-0.02,0,0,0,1,2145555456,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+134997504,65,"BG Bush 2",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,-0.325097,2.78731,-0.02,0,0,0,1,272883200,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072094450176,65,"BG Bush 3",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,47.3755,2.78731,-0.019999,0,0,0,1,272883200,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071957088768,65,"BG Bush 4",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,95.0761,2.78731,-0.019999,0,0,0,1,272883200,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1395367424,65,"Layer 3",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+18446744071834699264,0,18446744071834698240,0,1,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+4,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+1655374336,1,18446744072275284480,0,-0.2,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,0.6,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744073539881472,1,18446744073539880448,0,-0.2,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,0.6,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1390613504,1,1390612480,0,-0.2,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,0.6,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1572553216,1,1572552192,0,-0.2,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,0.6,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+16,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+18446744072239644672,1,18446744072275284480,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\floor_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073539880960,1,18446744073539880448,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\floor_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1390612992,1,1390612480,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\floor_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1572552704,1,1572552192,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\floor_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1032555520,1,18446744072999894016,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\bushLong_darker.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073156137472,1,18446744073156136960,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\bushLong_darker.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1189845504,1,1189844992,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\bushLong_darker.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1634443776,1,1634443264,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\bushLong_darker.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072173107712,1,18446744072400122880,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_02.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+440654848,1,1986250752,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\floor_02.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+603181056,1,603180544,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073370589184,1,18446744073370588672,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_02.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+134998016,1,134997504,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\floor_02.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072094450688,1,18446744072094450176,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\floor_02.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071957089280,1,18446744071957088768,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\floor_02.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1977850880,536870913,691769856,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\floor_02.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+10,[START_str]
+"ChangeAudio",0,[START_str]
+"CharacterController",0,[START_str]
+"Fireball",0,[START_str]
+"FollowTarget",0,[START_str]
+"Goblin",0,[START_str]
+"GoblinCombat",0,[START_str]
+"Missle",0,[START_str]
+"NewTest",0,[START_str]
+"Parallax",0,[START_str]
+"Testing",0,
+[END_BEHAVIOUR_SYSTEM_BLOCK]
+
+[END_Scene]
