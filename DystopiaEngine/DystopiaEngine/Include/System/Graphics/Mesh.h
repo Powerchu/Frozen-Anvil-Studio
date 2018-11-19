@@ -39,7 +39,7 @@ namespace Dystopia
 		void SetIndices(unsigned, size_t);
 
 		template <typename T>
-		void UpdateBuffer(AutoArray<typename T::type> const&);
+		void UpdateBuffer(AutoArray<typename T::type> const&, bool _bFreq = false);
 		template <typename T>
 		void UpdateBufferRange(AutoArray<typename T::type> const&, void* _nOffset);
 
@@ -49,6 +49,8 @@ namespace Dystopia
 		void* mnOffset;
 		
 		std::string mName;
+
+		void UpdateMesh(RawMesh*);
 	};
 }
 
@@ -61,17 +63,18 @@ namespace Dystopia
 
 
 template <typename T>
-void Dystopia::Mesh::UpdateBuffer(AutoArray<typename T::type> const& _buf)
+void Dystopia::Mesh::UpdateBuffer(AutoArray<typename T::type> const& _buf, bool _bFreq)
 {
 	auto pRaw = EngineCore::GetInstance()->Get<MeshSystem>()->GetRawFromBuffer(mVAO);
 
 	if (1 < pRaw->GetRefCount())
 	{
-		pRaw = pRaw->RequestDuplicate(mnVertices, mnOffset);
+		pRaw->DecRef();
+		pRaw = pRaw->RequestDuplicate(mnVertices, mnOffset, T::value);
 		UpdateMesh(pRaw);
 	}
 
-	pRaw->UpdateBuffer<T>(_buf);
+	pRaw->UpdateBuffer<T>(_buf, _bFreq);
 }
 
 template <typename T>
@@ -82,12 +85,12 @@ void Dystopia::Mesh::UpdateBufferRange(AutoArray<typename T::type> const& _buf, 
 
 	if (1 < pRaw->GetRefCount())
 	{
-		pRaw = pRaw->RequestDuplicate(mnVertices, mnOffset);
+		pRaw->DecRef();
+		pRaw = pRaw->RequestDuplicate(mnVertices, mnOffset, T::value);
 		UpdateMesh(pRaw);
 	}
 
 	pRaw->UpdateBufferRange<T>(_buf, _nOffset);
-	UpdateMesh(pRaw);
 }
 
 

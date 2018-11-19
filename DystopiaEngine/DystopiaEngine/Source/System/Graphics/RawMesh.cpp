@@ -63,17 +63,17 @@ void Dystopia::RawMesh::DecRef(void)
 	--mnRefCount;
 }
 
-unsigned Dystopia::RawMesh::GetVAO(void)
+unsigned Dystopia::RawMesh::GetVAO(void) const
 {
 	return mVAO;
 }
 
-unsigned Dystopia::RawMesh::GetVtxCount(void)
+unsigned Dystopia::RawMesh::GetVtxCount(void) const
 {
 	return mnVtxCount;
 }
 
-unsigned Dystopia::RawMesh::GetRefCount(void)
+unsigned Dystopia::RawMesh::GetRefCount(void) const
 {
 	return mnRefCount;
 }
@@ -84,7 +84,7 @@ void Dystopia::RawMesh::AppendVertexCount(unsigned _nVtxs)
 }
 
 
-Dystopia::RawMesh* Dystopia::RawMesh::RequestDuplicate(unsigned _nVtxCount, size_t _nOffset)
+Dystopia::RawMesh* Dystopia::RawMesh::RequestDuplicate(unsigned _nVtxCount, size_t _nOffset, unsigned _nSkip) const
 {
 	auto pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
 	auto pRet = pMeshSys->GetRaw(pMeshSys->GenerateRaw());
@@ -95,28 +95,40 @@ Dystopia::RawMesh* Dystopia::RawMesh::RequestDuplicate(unsigned _nVtxCount, size
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 
-	glBindBuffer(GL_COPY_READ_BUFFER, mVtxBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, pRet->mVtxBuffer);
 	glBufferData(GL_ARRAY_BUFFER, _nVtxCount * sizeof(VertexBuffer::type), nullptr, GL_STATIC_DRAW);
-	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_ARRAY_BUFFER, _nOffset, 0, _nVtxCount * sizeof(VertexBuffer::type));
+	if (_nSkip != VertexBuffer::value)
+	{
+		glBindBuffer(GL_COPY_READ_BUFFER, mVtxBuffer);
+		glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_ARRAY_BUFFER, _nOffset, 0, _nVtxCount * sizeof(VertexBuffer::type));
+	}
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0); // Vertices
 
-	glBindBuffer(GL_COPY_READ_BUFFER, mNmlBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, pRet->mNmlBuffer);
 	glBufferData(GL_ARRAY_BUFFER, _nVtxCount * sizeof(NormalBuffer::type), nullptr, GL_STATIC_DRAW);
-	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_ARRAY_BUFFER, _nOffset, 0, _nVtxCount * sizeof(NormalBuffer::type));
+	if (_nSkip != NormalBuffer::value)
+	{
+		glBindBuffer(GL_COPY_READ_BUFFER, mNmlBuffer);
+		glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_ARRAY_BUFFER, _nOffset, 0, _nVtxCount * sizeof(NormalBuffer::type));
+	}
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0); // Normals
 
-	glBindBuffer(GL_COPY_READ_BUFFER, mUVBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, pRet->mUVBuffer);
 	glBufferData(GL_ARRAY_BUFFER, _nVtxCount * sizeof(UVBuffer::type), nullptr, GL_STATIC_DRAW);
-	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_ARRAY_BUFFER, _nOffset, 0, _nVtxCount * sizeof(UVBuffer::type));
+	if (_nSkip != UVBuffer::value)
+	{
+		glBindBuffer(GL_COPY_READ_BUFFER, mUVBuffer);
+		glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_ARRAY_BUFFER, _nOffset, 0, _nVtxCount * sizeof(UVBuffer::type));
+	}
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0); // UV
 
-	glBindBuffer(GL_COPY_READ_BUFFER, mEBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pRet->mEBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _nVtxCount * sizeof(IndexBuffer::type), nullptr, GL_STATIC_DRAW);
-	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_ELEMENT_ARRAY_BUFFER, _nOffset, 0, _nVtxCount * sizeof(IndexBuffer::type));
+	if (_nSkip != IndexBuffer::value)
+	{
+		glBindBuffer(GL_COPY_READ_BUFFER, mEBO);
+		glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_ELEMENT_ARRAY_BUFFER, _nOffset, 0, _nVtxCount * sizeof(IndexBuffer::type));
+	}
 
 	pRet->UnbindMesh();
 	glBindBuffer(GL_COPY_READ_BUFFER, 0);
@@ -156,12 +168,12 @@ void Dystopia::RawMesh::Build(
 }
 
 
-void Dystopia::RawMesh::UpdateBuffer(unsigned _target, unsigned _nBuffer, void* _pData, ptrdiff_t _sz)
+void Dystopia::RawMesh::UpdateBuffer(unsigned _target, unsigned _nBuffer, void* _pData, ptrdiff_t _sz, bool _bFreq)
 {
 	BindMesh();
 
 	glBindBuffer(_target, _nBuffer);
-	glBufferData(_target, _sz, _pData, GL_STATIC_DRAW);
+	glBufferData(_target, _sz, _pData, _bFreq ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
 	UnbindMesh();
 }

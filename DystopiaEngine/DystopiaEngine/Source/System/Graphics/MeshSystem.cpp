@@ -96,7 +96,7 @@ void Dystopia::MeshSystem::AddVertex(float x, float y, float z)
 	mVtxBuffer.EmplaceBack(x, y, z);
 }
 
-void Dystopia::MeshSystem::AddVertex(const Gfx::Vertex& _v)
+void Dystopia::MeshSystem::AddVertex(Gfx::Vertex const& _v)
 {
 	mVtxBuffer.EmplaceBack(_v);
 }
@@ -106,9 +106,19 @@ void Dystopia::MeshSystem::AddNormal(float x, float y, float z)
 	mNormalBuffer.EmplaceBack(x, y, z);
 }
 
-void Dystopia::MeshSystem::AddNormal(const Gfx::Vertex& _v)
+void Dystopia::MeshSystem::AddNormal(Gfx::Normal const& _v)
 {
 	mNormalBuffer.EmplaceBack(_v);
+}
+
+void Dystopia::MeshSystem::AddUV(float u, float v)
+{
+	mUVBuffer.EmplaceBack(u, v);
+}
+
+void Dystopia::MeshSystem::AddUV(Gfx::UV const & _v)
+{
+	mUVBuffer.EmplaceBack(_v);
 }
 
 Dystopia::Mesh* Dystopia::MeshSystem::AddIndices(const std::string& _strName, const AutoArray<short>& _indices)

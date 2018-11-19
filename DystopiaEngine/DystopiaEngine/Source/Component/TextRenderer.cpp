@@ -35,7 +35,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::TextRenderer::TextRenderer(void) noexcept
 	: Renderer{}, mText {}, mnBaseMesh{ Ut::Constant<decltype(mnBaseMesh), -1>::value }, mColor{ 1.f, 1.f, 1.f },
-	mpAtlas{ nullptr }
+	mData{ nullptr }
 {
 }
 
@@ -51,7 +51,7 @@ void Dystopia::TextRenderer::Awake(void)
 		);
 	}
 
-	if (!mpAtlas)
+	if (!mData)
 		SetFont("Times New Roman.ttf");
 
 	RegenMesh();
@@ -83,18 +83,17 @@ void Dystopia::TextRenderer::SetFont(const char* _strPath)
 
 void Dystopia::TextRenderer::SetFont(const std::string& _strPath)
 {
-	mpAtlas = EngineCore::GetInstance()->Get<FontSystem>()->LoadFont(_strPath, mSpaces);
-	mpTexture = mpAtlas->GetInternal();
+	mData = EngineCore::GetInstance()->Get<FontSystem>()->LoadFont(_strPath);
+	mpTexture = mData->mpAtlas->GetInternal();
 }
 
 void Dystopia::TextRenderer::RegenMesh(void)
 {
 	AutoArray<Gfx::Vertex> verts;
-	AutoArray<Gfx::Vertex> norms;
 	AutoArray<Gfx::UV> uvs;
 	AutoArray<short> indices;
 
-	auto& atlas = mpAtlas->GetAllSections();
+	auto& atlas = mData->mpAtlas->GetAllSections();
 
 	short index = 0;
 
@@ -103,7 +102,7 @@ void Dystopia::TextRenderer::RegenMesh(void)
 	for (auto& e : mText)
 	{
 		auto const n = e - ' ';
-		auto& ch = mSpaces[n];
+		auto& ch = mData->mSpaces[n];
 
 		y = ch.mnBearingY * scale;
 		float const dx = ch.mnBearingX * scale;
@@ -111,13 +110,9 @@ void Dystopia::TextRenderer::RegenMesh(void)
 		float const w  = ch.mnWidth * scale + dx;
 		
 		verts.EmplaceBack(x + dx, y, .0f);
-		norms.EmplaceBack(.0f, .0f, 1.f);
 		verts.EmplaceBack(x + dx, dy, .0f);
-		norms.EmplaceBack(.0f, .0f, 1.f);
 		verts.EmplaceBack(x + w, dy, .0f);
-		norms.EmplaceBack(.0f, .0f, 1.f);
 		verts.EmplaceBack(x + w, y, .0f);
-		norms.EmplaceBack(.0f, .0f, 1.f);
 
 		uvs.EmplaceBack(atlas[n].uStart, atlas[n].vStart);
 		uvs.EmplaceBack(atlas[n].uStart, atlas[n].vEnd);
@@ -135,7 +130,10 @@ void Dystopia::TextRenderer::RegenMesh(void)
 		x += ch.mnAdvance * scale;
 	}
 
-	EngineCore::GetInstance()->Get<MeshSystem>()->GetRaw(mnBaseMesh)->Build(verts, norms, uvs, indices);
+	auto pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
+	mpMesh->UpdateBuffer<VertexBuffer>(verts);
+	mpMesh->UpdateBuffer<UVBuffer>(uvs);
+	mpMesh->UpdateBuffer<IndexBuffer>(indices);
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
@@ -150,16 +148,16 @@ void Dystopia::TextRenderer::RegenMesh(void)
 }
 
 
-//Dystopia::TextRenderer* Dystopia::TextRenderer::Duplicate(void) const
-//{
-//	return nullptr;
-//}
+Dystopia::TextRenderer* Dystopia::TextRenderer::Duplicate(void) const
+{
+	return nullptr;
+}
 
 void Dystopia::TextRenderer::Serialise(TextSerialiser& _out) const
 {
 	Component::Serialise(_out);
 
-	_out << mpAtlas->GetName();
+	_out << mData->mstrName;
 	_out << mText;
 }
 
@@ -185,7 +183,7 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 
 		RegenMesh();
 	}
-	EGUI::Display::EmptyBox("Font ", 200, (mpAtlas) ? mpAtlas->GetName() : "-empty-", true);
+	EGUI::Display::EmptyBox("Font ", 200, (mData) ? mData->mstrName.c_str() : "-empty-", true);
 
 	Dystopia::File* t = nullptr;
 	if (auto i = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::TTF))

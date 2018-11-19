@@ -36,7 +36,7 @@ namespace Dystopia
 		void BindMesh  (void) const;
 		void UnbindMesh(void) const;
 
-		RawMesh* RequestDuplicate(unsigned _nVtxCount, size_t _nOffset);
+		RawMesh* RequestDuplicate(unsigned _nVtxCount, size_t _nOffset, unsigned _nSkip = -1) const;
 
 		void Build(
 			const AutoArray<VertexBuffer::type>&,
@@ -46,15 +46,15 @@ namespace Dystopia
 		);
 
 		template <typename T>
-		void UpdateBuffer(AutoArray<typename T::type> const&);
+		void UpdateBuffer(AutoArray<typename T::type> const&, bool _bFreq = false);
 		template <typename T>
 		void UpdateBufferRange(AutoArray<typename T::type> const&, ptrdiff_t _nOffset);
 
 		void IncRef(void);
 		void DecRef(void);
-		unsigned GetVAO(void);
-		unsigned GetVtxCount(void);
-		unsigned GetRefCount(void);
+		unsigned GetVAO(void) const;
+		unsigned GetVtxCount(void) const;
+		unsigned GetRefCount(void) const;
 		void AppendVertexCount(unsigned);
 
 	private:
@@ -62,23 +62,23 @@ namespace Dystopia
 		unsigned mVAO, mVtxBuffer, mNmlBuffer, mUVBuffer, mEBO;
 		unsigned mnVtxCount, mnRefCount;
 
-		void UpdateBuffer(unsigned, unsigned, void*, ptrdiff_t sz);
+		void UpdateBuffer(unsigned, unsigned, void*, ptrdiff_t sz, bool _bFreq);
 		void UpdateBufferRange(unsigned, unsigned, void*, ptrdiff_t sz, ptrdiff_t _offset);
 	};
 }
 
 template <typename T>
-void UpdateBuffer(AutoArray<typename T::type> const& _arr)
+void UpdateBuffer(AutoArray<typename T::type> const& _arr, bool _bFreq)
 {
 	if constexpr (T::value == 3)
 	{
 		// GL_ELEMENT_ARRAY_BUFFER
-		UpdateBuffer(0x8893, T::value, _arr.begin(), _arr.size())
+		UpdateBuffer(0x8893, T::value, _arr.begin(), _arr.size(), _bFreq)
 	}
 	else
 	{
 		// GL_ARRAY_BUFFER
-		UpdateBuffer(0x8892, T::value, _arr.begin(), _arr.size())
+		UpdateBuffer(0x8892, T::value, _arr.begin(), _arr.size(), _bFreq)
 	}
 }
 

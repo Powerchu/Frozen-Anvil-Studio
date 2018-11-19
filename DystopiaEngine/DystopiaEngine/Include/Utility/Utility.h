@@ -87,6 +87,12 @@ namespace Ut
 		return _begin;
 	}
 
+	template <typename Container_t, typename Cond_t>
+	inline auto Find(Container_t const& _arr, Cond_t&& _cond)
+	{
+		return Find(_arr.begin(), _arr.end(), Ut::Forward<Cond_t>(_cond));
+	}
+
 
 	// Sorts a given array using insertion sort. 
 	// Defaults to sorting the array in ascending order

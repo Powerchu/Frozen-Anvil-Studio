@@ -203,6 +203,7 @@
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />
     <ClInclude Include="Include\System\Graphics\CharSpace.h" />
+    <ClInclude Include="Include\System\Graphics\Font.h" />
     <ClInclude Include="Include\System\Graphics\FontSystem.h" />
     <ClInclude Include="Include\System\Graphics\MeshBuilder.h" />
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />

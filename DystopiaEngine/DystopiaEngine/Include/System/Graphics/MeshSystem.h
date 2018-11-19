@@ -35,12 +35,12 @@ namespace Dystopia
 
 		void StartMesh(void);
 		void LoadMesh(std::string const&);
-		void AddVertex(const Gfx::Vertex&);
+		void AddVertex(Gfx::Vertex const&);
 		void AddVertex(float x, float y, float z);
-		void AddNormal(const Gfx::Normal&);
+		void AddNormal(Gfx::Normal const&);
 		void AddNormal(float x, float y, float z);
 		void AddUV(float u, float v);
-		void AddUV(const Gfx::UV&);
+		void AddUV(Gfx::UV const&);
 		Mesh* AddIndices(const std::string& _strName, const AutoArray<short>&);
 		void EndMesh(void);
 

@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/AutoArray.h"	// AutoArray
 #include "DataStructure/HashString.h"
 #include "Utility/MetaAlgorithms.h"		// MetaFind
-#include "System/Graphics/CharSpace.h"
+#include "System/Graphics/Font.h"
 
 #include "Math/Vector4.h"
 
@@ -73,7 +73,7 @@ namespace Dystopia
 		void SetFont(const char*);
 		void SetFont(const std::string&);
 
-		//TextRenderer* Duplicate(void) const;
+		TextRenderer* Duplicate(void) const;
 		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
 
@@ -81,12 +81,11 @@ namespace Dystopia
 
 	private:
 
+		Font* mData;
 		HashString mText;
 		AutoArray<Gfx::Vertex> mVerts;
-		AutoArray<CharSpace> mSpaces;
 
 		unsigned mnBaseMesh;
-		TextureAtlas* mpAtlas;
 
 		Math::Vector4 mColor;
 
@@ -96,5 +95,6 @@ namespace Dystopia
 }
 
 
-#endif
+
+#endif		// INCLUDE GUARD
 
