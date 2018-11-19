@@ -51,8 +51,8 @@ namespace Dystopia
 
 		using uchar = unsigned char;
 
-		Font* LoadFromFont(const HashString&);
-		Font* LoadExisting(const HashString&);
+		Font* LoadFromFont(const HashString&, Font* _out);
+		Font* LoadExisting(const HashString&, Font* _out);
 
 		CharSpace PackFont(AutoArray<CharSpace>&, uchar* dest, uchar* src, unsigned _nWidth, unsigned _nHeight);
 		void OutputFontmap(Image*, Font const*, HashString const&);
