@@ -105,6 +105,21 @@ namespace Dystopia
 		return std::string{};
 	}
 
+	std::wstring FileSystem::GetFullPath_w(std::wstring const& _FileName, eFileDir _ParentDirectory)
+	{
+		std::filesystem::path DirPath{ GetProjectFolders<std::string>(_ParentDirectory) };
+		std::error_code error;
+		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
+
+		for (auto const & elem : DirIter)
+		{
+			if (elem.path().filename().wstring() == _FileName)
+				return elem.path().wstring();
+		}
+
+		return std::wstring{};
+	}
+
 	bool FileSystem::CreateFiles(std::string const & _FileName, eFileDir _Directory)
 	{
 		std::filesystem::path _FilePath{ mPathTable[_Directory] + '/' + _FileName };

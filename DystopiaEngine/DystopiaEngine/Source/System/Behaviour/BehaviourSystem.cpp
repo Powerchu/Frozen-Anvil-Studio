@@ -45,6 +45,7 @@ namespace Dystopia
 		FileSys->CreateFiles("Dystopia/BehaviourDLL", eFileDir::eAppData);
 		FileSys->CreateFiles("Dystopia/Temp", eFileDir::eAppData);
 		FileSys->CreateFiles("Behaviours/BehavioursScripts", eFileDir::eResource);
+		mHotloader->SetPipeExePath(FileSys->GetFullPath_w(L"BehaviourPiping.exe", eFileDir::eResource));
 
 #if _DEBUG
 

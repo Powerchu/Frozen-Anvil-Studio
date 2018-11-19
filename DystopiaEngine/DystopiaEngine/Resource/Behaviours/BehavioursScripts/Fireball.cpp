@@ -59,7 +59,7 @@ namespace Dystopia
 
 	Fireball::~Fireball()
 	{
-	}
+	} 
 
 	void Fireball::Load()
 	{
@@ -72,8 +72,9 @@ namespace Dystopia
 
 	void Fireball::Update(const float _fDeltaTime)
 	{
+		
         Fireball_MSG::SendInternalMessage(this,"TEST", 10.f);
-	}
+	} 
 
 	void Fireball::FixedUpdate(const float _fDeltaTime)
 	{
@@ -102,7 +103,7 @@ namespace Dystopia
 			   strcmp(name, "Fireball")&& strcmp(name, "Missle")
 			   && strcmp(name, "AudioTrig")) 
 			{
-				GetOwner()->Destroy()
+				GetOwner()->Destroy();
 			}
 		}
 	}

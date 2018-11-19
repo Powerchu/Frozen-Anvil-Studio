@@ -43,7 +43,8 @@ namespace Dystopia
 
 		FileSystem();
 		~FileSystem();
-		std::string GetFullPath(std::string const & _FileName, eFileDir _ParentDirectory);
+		std::string  GetFullPath (std::string const & _FileName, eFileDir _ParentDirectory);
+		std::wstring GetFullPath_w(std::wstring const & _FileName, eFileDir _ParentDirectory);
 
 		bool CreateFiles(std::string const & _FileName, eFileDir _Directory);
 
