@@ -43,6 +43,8 @@ namespace Editor
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 
 		/****************************************** Actual commands ******************************************/
+		void ClearAllCommmands(void);
+
 		void SavedChanges(void);
 		bool HasChanges(void) const;
 

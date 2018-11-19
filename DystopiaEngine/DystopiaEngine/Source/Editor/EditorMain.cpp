@@ -175,6 +175,14 @@ void Editor::EditorMain::EndFrame(void)
 	auto sceneSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 	bool sceneChanged = (&sceneSys->GetCurrentScene() != &sceneSys->GetNextScene());
 
+	if (sceneChanged)
+	{
+		for (auto& s : mArrSystems)
+			s->Message(eEMessage::SCENE_ABOUT_TO_CHANGE);
+		for (auto& p : mArrPanels)
+			p->Message(eEMessage::SCENE_ABOUT_TO_CHANGE);
+	}
+
 	Dystopia::EngineCore::GetInstance()->PostUpdate();
 
 	if (sceneChanged)
@@ -322,7 +330,7 @@ void Editor::EditorMain::UpdatePaths(void)
 void Editor::EditorMain::LoadProjSettings(void)
 {
 	HashString fp = mProjFolder;
-	fp += "\\";
+	fp += "/";
 	fp += mProjFile;
 	auto projSerial = Dystopia::TextSerialiser::OpenFile(fp.c_str(), Dystopia::TextSerialiser::MODE_READ);
 	for (auto& s : mArrSystems)

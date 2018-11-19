@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/EditorClipboard.h"
 #include "Editor/EditorMain.h"
+#include "Editor/EditorResource.h"
 #include "Editor/EInput.h"
 #include "Editor/EHotkey.h"
 

@@ -95,6 +95,15 @@ namespace Dystopia
 			//pComponent->Awake();
 			return pComponent;
 		}
+		static Component* GetA(GameObject* _pRequester)
+		{
+			C* pComponent = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent();
+			//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->AddComponent<C>(_pRequester->GetID(), pComponent);
+			pComponent->SetOwner(_pRequester);
+			pComponent->SetActive(_pRequester->IsActive());
+			pComponent->Awake();
+			return pComponent;
+		}
 	};
 
 	struct ComponentList
@@ -113,11 +122,22 @@ namespace Dystopia
 					return mData[_i](_owner);
 				return nullptr;
 			}
+			Component* GetA(unsigned int _i, GameObject *_owner)
+			{
+				static auto mData = Ctor::MakeArray<Component*(*)(GameObject *)>(RequestComponent<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::GetA...);
+				if (_i < size || _i >= 0)
+					return mData[_i](_owner);
+				return nullptr;
+			}
 		};
 
 		Component* GetComponent(unsigned int _i, GameObject *_owner)
 		{
 			return mCollection.Get(_i, _owner);
+		}
+		Component* GetComponentA(unsigned int _i, GameObject *_owner)
+		{
+			return mCollection.GetA(_i, _owner);
 		}
 
 		Collection<std::make_index_sequence<size>> mCollection;

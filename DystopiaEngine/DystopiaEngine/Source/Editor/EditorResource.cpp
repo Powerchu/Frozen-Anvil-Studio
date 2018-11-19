@@ -12,9 +12,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/EditorResource.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorFactory.h"
+#include "Editor/EditorClipboard.h"
+#include "Component/Component.h"
 
 Editor::EditorResource::EditorResource(void)
-	: mCurrProjectPath{ "" }
+	: mCurrProjectPath{ "" }, mArrComponentResource{}
 {
 }
 
@@ -41,14 +45,24 @@ void Editor::EditorResource::Update(float)
 
 void Editor::EditorResource::EndFrame(void)
 {
+	for (size_t i = 0; i < mArrComponentResource.size(); ++i)
+	{
+		if (mArrComponentResource[i]->GetFlags() & Dystopia::eObjFlag::FLAG_REMOVE)
+		{
+			mArrComponentResource.FastRemove(i);
+			--i;
+		}
+	}
 }
 
 void Editor::EditorResource::Shutdown(void)
 {
 }
 
-void Editor::EditorResource::Message(eEMessage)
+void Editor::EditorResource::Message(eEMessage _msg)
 {
+	if (_msg == eEMessage::SCENE_ABOUT_TO_CHANGE)
+		mArrComponentResource.clear();
 }
 
 void Editor::EditorResource::SaveSettings(Dystopia::TextSerialiser& _out) const
@@ -63,6 +77,33 @@ void Editor::EditorResource::LoadSettings(Dystopia::TextSerialiser& _in)
 	_in.ConsumeStartBlock();
 	//_in >> mCurrProjectPath;
 	_in.ConsumeEndBlock();
+}
+
+void Editor::EditorResource::AddComponent(Dystopia::Component* _p)
+{
+	mArrComponentResource.Insert(_p);
+	EditorMain::GetInstance()->GetSystem<EditorFactory>()->ReattachToPrefab(_p);
+}
+
+void Editor::EditorResource::RemoveComponent(const uint64_t& _cID)
+{
+	for (size_t i = 0; i < mArrComponentResource.size(); ++i)
+	{
+		if (mArrComponentResource[i]->GetID() == _cID)
+		{
+			mArrComponentResource.FastRemove(i);
+			return;
+		}
+	}
+}
+
+Dystopia::Component* Editor::EditorResource::GetComponent(const uint64_t& _cID)
+{
+	for (auto c : mArrComponentResource)
+		if (c->GetID() == _cID)
+			return c;
+
+	return nullptr;
 }
 
 HashString Editor::EditorResource::GetCurrProjectPath(void) const

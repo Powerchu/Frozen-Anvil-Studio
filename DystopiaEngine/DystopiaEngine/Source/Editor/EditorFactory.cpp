@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/EditorFactory.h"
 #include "Editor/EditorMain.h"
+#include "Editor/EditorResource.h"
 #include "Editor/RuntimeMeta.h"
 
 #include "System/Driver/Driver.h"
@@ -67,14 +68,51 @@ void Editor::EditorFactory::EndFrame(void)
 void Editor::EditorFactory::Shutdown(void)
 {}
 
-void Editor::EditorFactory::Message(eEMessage)
-{}
+void Editor::EditorFactory::Message(eEMessage _msg)
+{
+	auto& sceneSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	if (_msg == eEMessage::SCENE_CHANGED)
+	{
+		for (auto &data : mArrPrefabData)
+		{
+			for (size_t j = 0; j < data.mArrInstanced.size(); j++)
+			{
+				bool remove = false;
+				for (size_t i = 0; i < data.mArrInstanced[j].size(); ++i)
+				{
+					if (!sceneSys.FindGameObject(data.mArrInstanced[j][i]))
+					{
+						remove = true;
+						break;
+					}
+				}
+				if (remove)
+				{
+					data.mArrInstanced.FastRemove(j);
+					j--;
+				}
+			}
+		}
+	}
+}
 
 void Editor::EditorFactory::SaveSettings(Dystopia::TextSerialiser&) const
 {}
 
 void Editor::EditorFactory::LoadSettings(Dystopia::TextSerialiser&)
 {}
+
+void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p)
+{
+	for (auto& object : mArrFactoryObj)
+	{
+		if (_p->GetOwnerID() == object.GetID())
+		{
+			object.AddComponent(_p, Dystopia::Component::TAG{});
+			return;
+		}
+	}
+}
 
 void Editor::EditorFactory::DefaultSceneCamera(void)
 {
@@ -301,7 +339,7 @@ void Editor::EditorFactory::LoadSegmentC(Dystopia::GameObject& _obj, unsigned _c
 	{
 		_in.ConsumeStartBlock();
 		_in >> sysID;
-		Dystopia::Component *pComponent = cList.GetComponent(sysID, &_obj);
+		Dystopia::Component *pComponent = cList.GetComponentA(sysID, &_obj);
 		_obj.AddComponent(pComponent, typename Dystopia::Component::TAG{});
 		pComponent->Unserialise(_in);
 		_in.ConsumeEndBlock();

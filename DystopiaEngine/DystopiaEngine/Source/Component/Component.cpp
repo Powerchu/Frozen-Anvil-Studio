@@ -22,7 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #if EDITOR
 #include "Editor/EGUI.h"
-#include "Editor/Editor.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorResource.h"
 #endif
 
 Dystopia::Component::Component(void) noexcept
@@ -153,14 +154,12 @@ void Dystopia::Component::Unserialise(TextSerialiser& _in)
 	GameObject* owner = sceneSys->GetActiveScene().FindGameObject(mnOwner);
 
 	if (owner)
-	{
-		// dont need init cuz next scene will get init-ed when the scene inits
 		owner->AddComponent(this, Component::TAG{});
-	}
 #if EDITOR
 	else if (mnFlags & eObjFlag::FLAG_EDITOR_OBJ)
 	{
 		//Editor::GetInstance()->ReAttachComponent(this);
+		::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorResource>()->AddComponent(this);
 	}
 #endif 
 }

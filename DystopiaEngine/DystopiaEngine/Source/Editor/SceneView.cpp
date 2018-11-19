@@ -173,8 +173,16 @@ namespace Editor
 		mpGfxSys = nullptr;
 	}
 
-	void SceneView::Message(eEMessage)
-	{}
+	void SceneView::Message(eEMessage _msg)
+	{
+		if (_msg == eEMessage::SCENE_CHANGED)
+		{
+			if (!Dystopia::EngineCore::GetInstance()->GetSystem < Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject("Scene Camera"))
+			{
+				EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultSceneCamera();
+			}
+		}
+	}
 
 	void SceneView::SaveSettings(Dystopia::TextSerialiser&) const
 	{}

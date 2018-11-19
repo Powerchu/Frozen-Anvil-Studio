@@ -306,10 +306,14 @@ void Editor::EditorStates::New(void)
 	auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
 
 	HashString file{ fp.c_str() };
-	file += "\\";
+	file += "/";
 	file += Dystopia::GUIDGenerator::GetUniqueID();
 	file += ".";
 	file += Gbl::SCENE_EXT;
+
+	FILE *pfile;
+	if (!fopen_s(&pfile, file.c_str(), "w"))
+		fclose(pfile);
 
 	sceneSystem->LoadScene(std::string{ file.begin(), file.end() });
 }

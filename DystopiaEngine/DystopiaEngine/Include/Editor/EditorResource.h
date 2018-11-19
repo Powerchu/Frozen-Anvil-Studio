@@ -15,6 +15,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_RESOURCE_H_
 #include "Editor/EditorSystem.h"
 #include "DataStructure/HashString.h"
+#include "DataStructure/AutoArray.h"
+
+namespace Dystopia
+{
+	class Component;
+}
 
 namespace Editor
 {
@@ -34,11 +40,16 @@ namespace Editor
 		void SaveSettings(Dystopia::TextSerialiser& _out) const;
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 
+		void AddComponent(Dystopia::Component* _p);
+		void RemoveComponent(const uint64_t&);
+		Dystopia::Component* GetComponent(const uint64_t&);
+
 		HashString GetCurrProjectPath(void) const;
 
 	private:
 
 		HashString mCurrProjectPath;
+		AutoArray<Dystopia::Component*> mArrComponentResource;
 
 	};
 

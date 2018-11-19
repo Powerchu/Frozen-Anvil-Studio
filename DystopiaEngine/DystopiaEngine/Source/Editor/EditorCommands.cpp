@@ -72,18 +72,7 @@ void Editor::EditorCommands::EndFrame(void)
 
 void Editor::EditorCommands::Shutdown(void)
 {
-	for (auto& r : mDeqRedo)
-		Dystopia::DefaultAllocator<Command>::DestructFree(r);
-	for (auto& u : mDeqUndo)
-		Dystopia::DefaultAllocator<Command>::DestructFree(u);
-	for (auto& c : mArrMultiCommands)
-		Dystopia::DefaultAllocator<Command>::DestructFree(c);
-
-	for (auto& b : mArrMultiRec)
-		Dystopia::DefaultAllocator<Recordings>::DestructFree(b);
-
-	if (mpRecordingVal)
-		Dystopia::DefaultAllocator<Recordings>::DestructFree(mpRecordingVal);
+	ClearAllCommmands();
 }
 
 void Editor::EditorCommands::Message(eEMessage _msg)
@@ -99,6 +88,22 @@ void Editor::EditorCommands::SaveSettings(Dystopia::TextSerialiser&) const
 
 void Editor::EditorCommands::LoadSettings(Dystopia::TextSerialiser&)
 {}
+
+void Editor::EditorCommands::ClearAllCommmands(void)
+{
+	for (auto& r : mDeqRedo)
+		Dystopia::DefaultAllocator<Command>::DestructFree(r);
+	for (auto& u : mDeqUndo)
+		Dystopia::DefaultAllocator<Command>::DestructFree(u);
+	for (auto& c : mArrMultiCommands)
+		Dystopia::DefaultAllocator<Command>::DestructFree(c);
+
+	for (auto& b : mArrMultiRec)
+		Dystopia::DefaultAllocator<Recordings>::DestructFree(b);
+
+	if (mpRecordingVal)
+		Dystopia::DefaultAllocator<Recordings>::DestructFree(mpRecordingVal);
+}
 
 void Editor::EditorCommands::SavedChanges(void)
 {

@@ -19,7 +19,8 @@ namespace Editor
 	enum eEMessage : unsigned
 	{
 		STATE_CHANGED = 0,
-		SCENE_CHANGED
+		SCENE_CHANGED,
+		SCENE_ABOUT_TO_CHANGE
 	};
 }
 #endif 

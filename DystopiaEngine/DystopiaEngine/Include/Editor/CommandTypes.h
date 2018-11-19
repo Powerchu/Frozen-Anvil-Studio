@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _COMMAND_TYPES_H_
 #define _COMMAND_TYPES_H_
 #include "Editor/EditorMain.h"
+#include "Editor/EditorResource.h"
 
 #include "Component/Component.h"
 #include "Behaviour/Behaviour.h"
@@ -520,14 +521,14 @@ void ::Editor::RecordValue<::Editor::ComponentFunction<C, Ts...>>::GetValue(void
 
 template<typename C>
 ::Editor::AddComponent<C>::AddComponent(const uint64_t& _ownerID, C* _pComToAdd)
-	: mnID{ _ownerID }, mpComponent{ _pComToAdd }, mnCID{ _pComToAdd->GetID() }
-{}
+	: mnID{ _ownerID }, mnCID{ _pComToAdd->GetID() }
+{
+	EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(_pComToAdd);
+}
 
 template<typename C>
 ::Editor::AddComponent<C>::~AddComponent(void)
 {
-	if (mpComponent)
-		mpComponent->DestroyComponent();
 }
 
 template<typename C>
@@ -536,14 +537,14 @@ bool ::Editor::AddComponent<C>::Do(void)
 	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
 	if (auto obj = curScene.FindGameObject(mnID))
 	{
-		if (mpComponent)
+		if (auto c = EditorMain::GetInstance()->GetSystem<EditorResource>()->GetComponent(mnCID))
 		{
-			obj->AddComponent(mpComponent, typename Dystopia::Component::TAG{});
-			mpComponent->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-			mpComponent->SetOwner(obj);
-			mpComponent->SetActive(obj->IsActive());
-			mpComponent->Awake();
-			mpComponent = nullptr;
+			EditorMain::GetInstance()->GetSystem<EditorResource>()->RemoveComponent(mnCID);
+			obj->AddComponent(c, typename Dystopia::Component::TAG{});
+			c->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+			c->SetOwner(obj);
+			c->SetActive(obj->IsActive());
+			c->Awake();
 			return true;
 		}
 		return false;
@@ -559,11 +560,12 @@ bool ::Editor::AddComponent<C>::Undo(void)
 	{
 		if (obj->GetComponent<C>())
 		{
-			mpComponent = obj->GetComponent<C>()->Duplicate();
-			mnCID = mpComponent->GetID();
-			mpComponent->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-			mpComponent->SetOwner(obj);
-			mpComponent->SetActive(false);
+			auto c = obj->GetComponent<C>()->Duplicate();
+			mnCID = c->GetID();
+			c->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+			c->SetOwner(obj);
+			c->SetActive(false);
+			EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(c);
 			obj->RemoveComponent(obj->GetComponent<C>());
 			return true;
 		}
@@ -579,9 +581,13 @@ bool ::Editor::AddComponent<C>::Unchanged(void) const
 }
 
 
+#endif
+#endif
 
-#endif
-#endif
+
+
+
+
 
 
 
