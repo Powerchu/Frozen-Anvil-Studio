@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_STATE_H_
 #include "Editor/EditorStatesTypes.h"
 #include "Editor/EditorSystem.h"
+#include "DataStructure/AutoArray.h"
 #include "DataStructure/HashString.h"
 
 namespace Editor
@@ -34,6 +35,8 @@ namespace Editor
 		void SaveSettings(Dystopia::TextSerialiser& _out) const;
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 
+		void OpenScene(const HashString& _path);
+
 	private:
 		eState mState;
 
@@ -46,12 +49,15 @@ namespace Editor
 		void Stop(void);
 		void TempSave(void);
 		void TempLoad(void);
+		void PromptSaveO(void);
 
 		void PromptSaveN(void);
 		void PromptSaveQ(void);
 
 		bool mbQuitAttempt;
 		bool mbNewAttempt;
+		bool mbLoadAttempt;
+		HashString mPendingLoad;
 		size_t mnPlay;
 		size_t mnNew;
 		size_t mnOpen;
@@ -59,7 +65,7 @@ namespace Editor
 		size_t mnSaveAs;
 		size_t mnQuit;
 
-		HashString mTempFile;
+		AutoArray<HashString> mArrTempFile;
 	};
 
 }

@@ -72,6 +72,8 @@ namespace Editor//Dystopia
 	/********************************************************************* FILE & FOLDER *********************************************************************/
 	char my_tolower(char const ch);
 
+	EGUI::ePayloadTags DeterminePathType(const HashString&);
+
 	struct CrawlItem
 	{
 		CrawlItem(const HashString& _name, const HashString& _path);

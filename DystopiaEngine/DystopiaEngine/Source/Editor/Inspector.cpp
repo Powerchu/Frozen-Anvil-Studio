@@ -339,12 +339,14 @@ namespace Editor
 	bool Inspector::RemoveComponent(Dystopia::Component* _pCom)
 	{
 		bool ret = false;
+		static Dystopia::ComponentList availableComp;
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (EGUI::Display::SelectableTxt("Remove"))
 			{
 				//mpFocus->RemoveComponent(_pCom);
 				//EditorMain::GetInstance()->GetSystem<EditorCommands>()->RemoveComponent(mpFocus->GetID(), _pCom);
+				availableComp.RemoveComponentCommand(_pCom->GetRealComponentType(), mpFocus);
 				ret = true;
 			}
 			ImGui::EndPopup();

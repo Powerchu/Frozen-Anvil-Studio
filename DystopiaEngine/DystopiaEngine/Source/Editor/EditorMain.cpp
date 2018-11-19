@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorResource.h"
 #include "Editor/EditorCommands.h"
 #include "Editor/EditorFactory.h"
+#include "Editor/Payloads.h"
 
 #include "Editor/EGUI.h"
 
@@ -358,7 +359,31 @@ void Editor::EditorMain::ExternalFile(const wchar_t* const _p)
 
 void Editor::EditorMain::ExternalFile(const HashString& _p)
 {
-
+	switch (DeterminePathType(_p))
+	{
+	case EGUI::ePayloadTags::FILE:
+		break;
+	case EGUI::ePayloadTags::PNG:
+		break;
+	case EGUI::ePayloadTags::BMP:
+		break;
+	case EGUI::ePayloadTags::PREFAB:
+		break;
+	case EGUI::ePayloadTags::GAME_OBJ:
+		break;
+	case EGUI::ePayloadTags::COMPONENT:
+		break;
+	case EGUI::ePayloadTags::SCENE:
+		break;
+	case EGUI::ePayloadTags::MP3:
+		break;
+	case EGUI::ePayloadTags::DDS:
+		break;
+	case EGUI::ePayloadTags::WAV:
+		break;
+	default:
+		break;
+	}
 }
 
 #endif

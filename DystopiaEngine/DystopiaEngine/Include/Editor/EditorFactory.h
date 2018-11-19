@@ -51,8 +51,12 @@ namespace Editor
 		bool SpawnPrefab(const HashString&, const Math::Pt3D& = Math::Pt3D{ 0,0,1.f });
 
 		bool SaveAsPrefab(const uint64_t& _objID, Dystopia::TextSerialiser&);
+
+		// for factory only
 		bool LoadAsPrefab(const HashString& _path);
 
+		// for undo redo only
+		void LoadIntoScene(Dystopia::TextSerialiser&);
 
 	private:
 		struct PrefabData

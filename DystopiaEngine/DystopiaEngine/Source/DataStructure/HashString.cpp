@@ -250,7 +250,7 @@ HashString& HashString::operator+=(unsigned _i)
 HashString& HashString::operator+=(unsigned long long _u)
 {
 	char buffer[ULL_BUFFER_SIZE];
-	if (!_itoa_s(_u, buffer, ULL_BUFFER_SIZE, 10))
+	if (!_i64toa_s(_u, buffer, ULL_BUFFER_SIZE, 10))
 	{
 		return operator+=(buffer);
 	}

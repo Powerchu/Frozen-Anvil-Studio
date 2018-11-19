@@ -217,6 +217,55 @@ bool Editor::EditorFactory::LoadAsPrefab(const HashString& _path)
 	return false;
 }
 
+void Editor::EditorFactory::LoadIntoScene(Dystopia::TextSerialiser& _in)
+{
+	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	size_t currentIndex = curScene.GetAllGameObjects().size();
+
+	auto& obj = *curScene.InsertGameObject();
+	unsigned count = LoadSegment(obj, _in);
+	LoadSegmentC(obj, count, _in);
+	LoadSegmentB(obj, _in);
+
+	obj.RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+	for (auto& c : obj.GetAllComponents())
+		c->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+	for (auto& b : obj.GetAllBehaviours())
+		b->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+
+	unsigned childCounter = 0;
+	_in.ConsumeStartBlock();
+	_in >> childCounter;
+	_in.ConsumeEndBlock();
+
+	for (unsigned i = 0; i < childCounter; ++i)
+	{
+		auto& childObj = *curScene.InsertGameObject();
+		LoadSegmentC(childObj, LoadSegment(childObj, _in), _in);
+		LoadSegmentB(childObj, _in);
+
+		childObj.RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+		for (auto& c : childObj.GetAllComponents())
+			c->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+		for (auto& b : childObj.GetAllBehaviours())
+			b->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+	}
+
+	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
+	{
+		auto transform = curScene.GetAllGameObjects()[index].GetComponent<Dystopia::Transform>();
+		uint64_t parentID = transform->GetParentID();
+		for (size_t subIndex = currentIndex; subIndex < curScene.GetAllGameObjects().size(); ++subIndex)
+		{
+			if (parentID == curScene.GetAllGameObjects()[subIndex].GetID())
+			{
+				transform->SetParent(curScene.GetAllGameObjects()[subIndex].GetComponent<Dystopia::Transform>());
+				break;
+			}
+		}
+	}
+}
+
 void Editor::EditorFactory::SaveChild(Dystopia::GameObject& _obj, Dystopia::TextSerialiser& _out)
 {
 	const auto& allComponents = _obj.GetAllComponents();
@@ -340,7 +389,6 @@ void Editor::EditorFactory::LoadSegmentC(Dystopia::GameObject& _obj, unsigned _c
 		_in.ConsumeStartBlock();
 		_in >> sysID;
 		Dystopia::Component *pComponent = cList.GetComponentA(sysID, &_obj);
-		_obj.AddComponent(pComponent, typename Dystopia::Component::TAG{});
 		pComponent->Unserialise(_in);
 		_in.ConsumeEndBlock();
 	}

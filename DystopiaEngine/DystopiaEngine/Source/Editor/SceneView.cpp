@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/ConsoleLog.h"
 //#include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
+#include "Editor/EditorStates.h"
 
 #include "Editor/EInput.h"
 #include "Editor/EditorMain.h"
@@ -150,7 +151,7 @@ namespace Editor
 		}
 		if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::SCENE))
 		{
-			//EditorMain::GetInstance()->OpenScene(std::wstring{ t->mPath.begin(), t->mPath.end() }, std::wstring{ t->mName.begin(), t->mName.end() });
+			EditorMain::GetInstance()->GetSystem<EditorStates>()->OpenScene(t->mPath);
 			EGUI::Display::EndPayloadReceiver();
 		}
 		if (EditorMain::GetInstance()->GetCurState() == eState::PLAY)

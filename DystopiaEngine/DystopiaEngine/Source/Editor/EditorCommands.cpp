@@ -53,6 +53,9 @@ bool Editor::EditorCommands::Init(void)
 
 void Editor::EditorCommands::StartFrame(void)
 {
+	if (EditorMain::GetInstance()->GetCurState() != eState::MAIN)
+		return;
+
 	auto input = EditorMain::GetInstance()->GetSystem<EInput>();
 	if (input->IsHotkeyTriggered(mnUndo))
 	{
@@ -93,16 +96,20 @@ void Editor::EditorCommands::ClearAllCommmands(void)
 {
 	for (auto& r : mDeqRedo)
 		Dystopia::DefaultAllocator<Command>::DestructFree(r);
+	mDeqRedo.clear();
 	for (auto& u : mDeqUndo)
 		Dystopia::DefaultAllocator<Command>::DestructFree(u);
+	mDeqUndo.clear();
 	for (auto& c : mArrMultiCommands)
 		Dystopia::DefaultAllocator<Command>::DestructFree(c);
-
+	mArrMultiCommands.clear();
 	for (auto& b : mArrMultiRec)
 		Dystopia::DefaultAllocator<Recordings>::DestructFree(b);
-
+	mArrMultiRec.clear();
 	if (mpRecordingVal)
 		Dystopia::DefaultAllocator<Recordings>::DestructFree(mpRecordingVal);
+	mpRecordingVal = nullptr;
+	mbChangesMade = false;
 }
 
 void Editor::EditorCommands::SavedChanges(void)
@@ -180,6 +187,7 @@ void Editor::EditorCommands::ExecuteDo(Command* _pCommand)
 		for (auto& r : mDeqRedo)
 			Dystopia::DefaultAllocator<Command>::DestructFree(r);
 		mDeqRedo.clear();
+		mbChangesMade = true;
 	}
 	else
 		Dystopia::DefaultAllocator<Command>::DestructFree(_pCommand);

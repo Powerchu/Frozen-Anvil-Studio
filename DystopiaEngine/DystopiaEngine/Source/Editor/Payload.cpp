@@ -24,6 +24,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Editor//Dystopia::
 {
+	EGUI::ePayloadTags DeterminePathType(const HashString& _path)
+	{
+		if (_path.find(g_PayloadPngEx.c_str()) == _path.length() - 3)
+			return EGUI::ePayloadTags::PNG;
+		else if (_path.find(g_PayloadBmpEx.c_str()) == _path.length() - 3)
+			return EGUI::ePayloadTags::BMP;
+		else if (_path.find(g_PayloadCppEx.c_str()) == _path.length() - 3)
+			return EGUI::ePayloadTags::FILE;
+		else if (_path.find(g_PayloadPrefabEx.c_str()) == _path.length() - 4)
+			return EGUI::ePayloadTags::PREFAB;
+		else if (_path.find(g_PayloadSceneEx.c_str()) == _path.length() - 6)
+			return EGUI::ePayloadTags::SCENE;
+		else if (_path.find(g_PayloadMp3Ex.c_str()) == _path.length() - 3)
+			return EGUI::ePayloadTags::MP3;
+		else if (_path.find(g_PayloadDDSEx.c_str()) == _path.length() - 3)
+			return EGUI::ePayloadTags::DDS;
+		else if (_path.find(g_PayloadWavEx.c_str()) == _path.length() - 3)
+			return EGUI::ePayloadTags::WAV;
+		return EGUI::ePayloadTags::UNKNOWN;
+	}
+
 	char my_tolower(char const ch)
 	{
 		return static_cast<unsigned char>(::tolower(static_cast<unsigned char>(ch)));
@@ -119,23 +140,7 @@ namespace Editor//Dystopia::
 
 	EGUI::ePayloadTags File::DetermineTag(const HashString& _name)
 	{
-		if (_name.find(g_PayloadPngEx.c_str()) == _name.length() - 3)
-			return EGUI::ePayloadTags::PNG;
-		else if (_name.find(g_PayloadBmpEx.c_str()) == _name.length() - 3)
-			return EGUI::ePayloadTags::BMP;
-		else if (_name.find(g_PayloadCppEx.c_str()) == _name.length() - 3)
-			return EGUI::ePayloadTags::FILE;
-		else if (_name.find(g_PayloadPrefabEx.c_str()) == _name.length() - 4)
-			return EGUI::ePayloadTags::PREFAB;
-		else if (_name.find(g_PayloadSceneEx.c_str()) == _name.length() - 6)
-			return EGUI::ePayloadTags::SCENE;
-		else if (_name.find(g_PayloadMp3Ex.c_str()) == _name.length() - 3)
-			return EGUI::ePayloadTags::MP3;
-		else if (_name.find(g_PayloadDDSEx.c_str()) == _name.length() - 3)
-			return EGUI::ePayloadTags::DDS;
-		else if (_name.find(g_PayloadWavEx.c_str()) == _name.length() - 3)
-			return EGUI::ePayloadTags::WAV; 
-		return EGUI::ePayloadTags::UNKNOWN;
+		return DeterminePathType(_name);
 	}
 }
 

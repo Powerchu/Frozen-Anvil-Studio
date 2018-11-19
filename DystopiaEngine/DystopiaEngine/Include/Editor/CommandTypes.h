@@ -214,9 +214,11 @@ namespace Editor
 		bool Do(void);
 		bool Undo(void);
 		bool Unchanged(void) const;
+		~DeleteGameObject(void);
 
 	private:
 		uint64_t mnObjID;
+		uint64_t mnTempFileID;
 	};
 
 	class BatchExecute : public Command
@@ -246,7 +248,21 @@ namespace Editor
 	private:
 		uint64_t mnID;
 		uint64_t mnCID;
-		C* mpComponent;
+	};
+
+	template<typename C>
+	class RemoveComponent : public Command
+	{
+	public:
+		RemoveComponent(const uint64_t& _ownerID, C* _pComToAdd);
+		bool Do(void);
+		bool Undo(void);
+		bool Unchanged(void) const;
+		~RemoveComponent(void);
+
+	private:
+		uint64_t mnID;
+		uint64_t mnCID;
 	};
 
 	template<class C, typename ... Ts>
@@ -529,6 +545,7 @@ template<typename C>
 template<typename C>
 ::Editor::AddComponent<C>::~AddComponent(void)
 {
+	EditorMain::GetInstance()->GetSystem<EditorResource>()->RemoveComponent(mnCID);
 }
 
 template<typename C>
@@ -537,7 +554,7 @@ bool ::Editor::AddComponent<C>::Do(void)
 	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
 	if (auto obj = curScene.FindGameObject(mnID))
 	{
-		if (auto c = EditorMain::GetInstance()->GetSystem<EditorResource>()->GetComponent(mnCID))
+		if (auto c = static_cast<C*>(EditorMain::GetInstance()->GetSystem<EditorResource>()->GetComponent(mnCID)))
 		{
 			EditorMain::GetInstance()->GetSystem<EditorResource>()->RemoveComponent(mnCID);
 			obj->AddComponent(c, typename Dystopia::Component::TAG{});
@@ -579,6 +596,68 @@ bool ::Editor::AddComponent<C>::Unchanged(void) const
 {
 	return false;
 }
+
+template<typename C>
+::Editor::RemoveComponent<C>::RemoveComponent(const uint64_t& _ownerID, C* _pComToAdd)
+	: mnID{ _ownerID }, mnCID{ _pComToAdd->GetID() }
+{
+	//EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(_pComToAdd);
+}
+
+template<typename C>
+::Editor::RemoveComponent<C>::~RemoveComponent(void)
+{
+	EditorMain::GetInstance()->GetSystem<EditorResource>()->RemoveComponent(mnCID);
+}
+
+template<typename C>
+bool ::Editor::RemoveComponent<C>::Do(void)
+{
+	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	if (auto obj = curScene.FindGameObject(mnID))
+	{
+		if (obj->GetComponent<C>())
+		{
+			auto c = obj->GetComponent<C>()->Duplicate();
+			mnCID = c->GetID();
+			c->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+			c->SetOwner(obj);
+			c->SetActive(false);
+			EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(c);
+			obj->RemoveComponent(obj->GetComponent<C>());
+			return true;
+		}
+		return false;
+	}
+	return false;
+}
+
+template<typename C>
+bool ::Editor::RemoveComponent<C>::Undo(void)
+{
+	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	if (auto obj = curScene.FindGameObject(mnID))
+	{
+		if (auto c = static_cast<C*>(EditorMain::GetInstance()->GetSystem<EditorResource>()->GetComponent(mnCID)))
+		{
+			EditorMain::GetInstance()->GetSystem<EditorResource>()->RemoveComponent(mnCID);
+			obj->AddComponent(c, typename Dystopia::Component::TAG{});
+			c->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+			c->SetOwner(obj);
+			c->SetActive(obj->IsActive());
+			c->Awake();
+			return true;
+		}
+	}
+	return false;
+}
+
+template<typename C>
+bool ::Editor::RemoveComponent<C>::Unchanged(void) const
+{
+	return false;
+}
+
 
 
 #endif

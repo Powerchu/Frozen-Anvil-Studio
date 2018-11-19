@@ -70,7 +70,7 @@ void Dystopia::Component::Awake(void)
 
 void Dystopia::Component::Init(void)
 {
-	//__debugbreak();
+	__debugbreak();
 }
 
 void Dystopia::Component::GameObjectDestroy(void)
@@ -150,13 +150,16 @@ void Dystopia::Component::Unserialise(TextSerialiser& _in)
 	_in >> mnFlags;
 	_in >> mnOwner;
 
-	auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-	GameObject* owner = sceneSys->GetActiveScene().FindGameObject(mnOwner);
+	if (!(mnFlags & eObjFlag::FLAG_EDITOR_OBJ))
+	{
+		auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+		GameObject* owner = sceneSys->GetActiveScene().FindGameObject(mnOwner);
 
-	if (owner)
-		owner->AddComponent(this, Component::TAG{});
+		if (owner)
+			owner->AddComponent(this, Component::TAG{});
+	}
 #if EDITOR
-	else if (mnFlags & eObjFlag::FLAG_EDITOR_OBJ)
+	else
 	{
 		//Editor::GetInstance()->ReAttachComponent(this);
 		::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorResource>()->AddComponent(this);

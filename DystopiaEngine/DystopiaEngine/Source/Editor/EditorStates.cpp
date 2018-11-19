@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/EditorPanel.h"
 #include "Editor/EditorProc.h"
+#include "Editor/RuntimeMeta.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Logger/LoggerSystem.h"
@@ -35,7 +36,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Editor::EditorStates::EditorStates(void)
 	: mState{ eState::LAUNCHER }, mbQuitAttempt{ false }, mbNewAttempt{ false },
-	mnPlay{}, mnNew{}, mnOpen{}, mnSave{}, mnSaveAs{}, mnQuit{}, mTempFile{}
+	mnPlay{}, mnNew{}, mnOpen{}, mnSave{}, mnSaveAs{}, mnQuit{}, mArrTempFile{}, mbLoadAttempt{false},
+	mPendingLoad{}
 {
 }
 
@@ -100,6 +102,18 @@ void Editor::EditorStates::StartFrame(void)
 		break;
 	}
 
+	auto& win = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow();
+	if (EditorMain::GetInstance()->GetSystem<EditorCommands>()->HasChanges())
+	{
+		if (win.GetTitle().back() != '*')
+		{
+			auto sceneSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
+			HashString name{ sceneSystem->GetCurrentScene().GetSceneName().c_str() };
+			name += '*';
+			win.SetTitle(std::wstring{ name.begin(), name.end() });
+		}
+	}
+
 	/******************************** NO UI TO BE CALLED HERE ********************************/
 }
 
@@ -113,16 +127,21 @@ void Editor::EditorStates::Update(float)
 		else if (mState == eState::PLAY)
 			Stop();
 	}
-	else if (input->IsHotkeyTriggered(mnNew))
-		mbNewAttempt = true;
-	else if (input->IsHotkeyTriggered(mnOpen))
-		LoadScene();
-	else if (input->IsHotkeyTriggered(mnSaveAs))
-		SaveAs();
-	else if (input->IsHotkeyTriggered(mnSave))
-		Save();
-	else if (input->IsHotkeyTriggered(mnQuit))
-		mbQuitAttempt = true;
+
+	if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
+	{
+
+		if (input->IsHotkeyTriggered(mnNew))
+			mbNewAttempt = true;
+		else if (input->IsHotkeyTriggered(mnOpen))
+			LoadScene();
+		else if (input->IsHotkeyTriggered(mnSaveAs))
+			SaveAs();
+		else if (input->IsHotkeyTriggered(mnSave))
+			Save();
+		else if (input->IsHotkeyTriggered(mnQuit))
+			mbQuitAttempt = true;
+	}
 
 	switch (mState)
 	{
@@ -133,6 +152,10 @@ void Editor::EditorStates::Update(float)
 	}
 
 	ToolBar();
+}
+
+void Editor::EditorStates::EndFrame(void)
+{
 	bool changes = EditorMain::GetInstance()->GetSystem<EditorCommands>()->HasChanges();
 	if (mbNewAttempt)
 	{
@@ -146,16 +169,35 @@ void Editor::EditorStates::Update(float)
 		if (changes)
 			PromptSaveQ();
 		else
+		{
 			EditorMain::GetInstance()->ChangeState(eState::EXIT);
+			mbQuitAttempt = false;
+		}
 	}
-}
-
-void Editor::EditorStates::EndFrame(void)
-{
+	else if (mbLoadAttempt)
+	{
+		if (changes)
+			PromptSaveO();
+		else
+		{
+			if (mPendingLoad.size())
+			{
+				Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene(std::string{ mPendingLoad.cbegin(), mPendingLoad.cend() });
+				EditorMain::GetInstance()->GetSystem<EditorCommands>()->ClearAllCommmands();
+				mPendingLoad.clear();
+			}
+			else
+				LoadScene();
+			mbLoadAttempt = false;
+		}
+	}
 }
 
 void Editor::EditorStates::Shutdown(void)
 {
+	for (auto& e : mArrTempFile)
+		remove(e.c_str());
+	mArrTempFile.clear();
 }
 
 void Editor::EditorStates::Message(eEMessage _msg)
@@ -175,6 +217,10 @@ void Editor::EditorStates::Message(eEMessage _msg)
 		auto& win = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow();
 		HashString name{ sceneSystem->GetCurrentScene().GetSceneName().c_str() };
 		win.SetTitle(std::wstring{ name.begin(), name.end() });
+
+		for (auto& e : mArrTempFile)
+			remove(e.c_str());
+		mArrTempFile.clear();
 	}
 }
 
@@ -262,13 +308,19 @@ void Editor::EditorStates::Save(void)
 		auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
 		auto fp = fs->FindFilePath(sceneFile, Dystopia::eFileDir::eResource);
 
-		HashString file{ EditorMain::GetInstance()->GetCurProjFolder() + "\\" + fp };
-		
-		sceneSystem->SaveScene(file.c_str(), sceneName.c_str());
+		sceneSystem->SaveScene(fp.c_str(), sceneName.c_str());
 
 		EditorMain::GetInstance()->GetSystem<EditorCommands>()->SavedChanges();
+		auto& win = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow();
+		win.SetTitle(std::wstring{ sceneName.begin(), sceneName.end() });
 	}
 	else SaveAs();
+}
+
+void Editor::EditorStates::OpenScene(const HashString& _path)
+{
+	mPendingLoad = _path;
+	mbLoadAttempt = true;
 }
 
 void Editor::EditorStates::LoadScene(void)
@@ -279,6 +331,7 @@ void Editor::EditorStates::LoadScene(void)
 	if (p.Load(path, eFileTypes::eSCENE))
 	{
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene(std::string{ path.begin(), path.end() });
+		EditorMain::GetInstance()->GetSystem<EditorCommands>()->ClearAllCommmands();
 	}
 }
 
@@ -316,12 +369,16 @@ void Editor::EditorStates::New(void)
 		fclose(pfile);
 
 	sceneSystem->LoadScene(std::string{ file.begin(), file.end() });
+	EditorMain::GetInstance()->GetSystem<EditorCommands>()->ClearAllCommmands();
+	mbNewAttempt = false;
 }
 
 void Editor::EditorStates::Play(void)
 {
 	EditorMain::GetInstance()->ChangeState(eState::PLAY);
 	Dystopia::EngineCore::GetInstance()->InterruptContinue();
+
+	Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors();
 }
 
 void Editor::EditorStates::Stop(void)
@@ -342,17 +399,13 @@ void Editor::EditorStates::TempSave(void)
 	file += Gbl::SCENE_EXT;
 
 	sceneSystem->SaveScene(file.c_str(), sceneSystem->GetCurrentScene().GetSceneName());
-	mTempFile = file;
+	mArrTempFile.Insert(file);
 }
 
 void Editor::EditorStates::TempLoad(void)
 {
 	auto sceneSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
-
 	sceneSystem->RestartScene();
-	remove(mTempFile.c_str());
-	mTempFile.clear();
-	EditorMain::GetInstance()->Broadcast(eEMessage::SCENE_CHANGED);
 }
 
 void Editor::EditorStates::PromptSaveN(void)
@@ -412,6 +465,48 @@ void Editor::EditorStates::PromptSaveQ(void)
 	}
 }
 
+void Editor::EditorStates::PromptSaveO(void)
+{
+	EGUI::Display::OpenPopup("Loading");
+	if (EGUI::Display::StartPopupModal("Loading", "There are unsaved changes!"))
+	{
+		if (EGUI::Display::Button("Save"))
+		{
+			Save();
+			mbLoadAttempt = false;
+			if (mPendingLoad.size())
+			{
+				Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene(std::string{ mPendingLoad.cbegin(), mPendingLoad.cend() });
+				EditorMain::GetInstance()->GetSystem<EditorCommands>()->ClearAllCommmands();
+				mPendingLoad.clear();
+			}
+			else
+				LoadScene();
+			EGUI::Display::CloseCurrentPopup();
+		}
+		EGUI::SameLine();
+		if (EGUI::Display::Button("Don't Save"))
+		{
+			mbLoadAttempt = false;
+			if (mPendingLoad.size())
+			{
+				Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene(std::string{ mPendingLoad.cbegin(), mPendingLoad.cend() });
+				EditorMain::GetInstance()->GetSystem<EditorCommands>()->ClearAllCommmands();
+				mPendingLoad.clear();
+			}
+			else
+				LoadScene();
+			EGUI::Display::CloseCurrentPopup();
+		}
+		EGUI::SameLine();
+		if (EGUI::Display::Button("Cancel"))
+		{
+			mbLoadAttempt = false;
+			EGUI::Display::CloseCurrentPopup();
+		}
+		EGUI::Display::EndPopup();
+	}
+}
 
 #endif
 

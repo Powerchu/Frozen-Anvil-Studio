@@ -62,6 +62,9 @@ bool Editor::EditorClipboard::Init(void)
 
 void Editor::EditorClipboard::StartFrame(void)
 {
+	if (EditorMain::GetInstance()->GetCurState() != eState::MAIN)
+		return;
+
 	auto input = EditorMain::GetInstance()->GetSystem<EInput>();
 	if (input->IsHotkeyTriggered(mnCopyID))
 	{
@@ -91,8 +94,21 @@ void Editor::EditorClipboard::EndFrame(void)
 void Editor::EditorClipboard::Shutdown(void)
 {}
 
-void Editor::EditorClipboard::Message(eEMessage)
-{}
+void Editor::EditorClipboard::Message(eEMessage _msg)
+{
+	if (_msg == eEMessage::SCENE_CHANGED)
+	{
+		auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+		for (size_t i = 0; i < mArrSelectedIDs.size(); i++)
+		{
+			if (!curScene.FindGameObject(mArrSelectedIDs[i]))
+			{
+				mArrSelectedIDs.FastRemove(i);
+				--i;
+			}
+		}
+	}
+}
 
 void Editor::EditorClipboard::SaveSettings(Dystopia::TextSerialiser&) const
 {}

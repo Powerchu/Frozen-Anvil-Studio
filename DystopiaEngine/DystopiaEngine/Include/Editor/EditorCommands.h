@@ -296,7 +296,7 @@ void Editor::EditorCommands::RemoveComponent(const uint64_t& _id, C * _pComponen
 
 	if (auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(_id))
 	{
-
+		ExecuteDo(Dystopia::DefaultAllocator<::Editor::RemoveComponent<C>>::ConstructAlloc(_id, _pComponent));
 	}
 }
 #endif

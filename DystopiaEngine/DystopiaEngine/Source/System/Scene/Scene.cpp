@@ -117,6 +117,11 @@ void Dystopia::Scene::Unserialise(TextSerialiser & _TextUnserialiser)
 	_TextUnserialiser >> mName;
 	_TextUnserialiser.Read(Size);
 
+	if (!mID)
+		mID = GUIDGenerator::GetUniqueID();
+	if (!mName.size())
+		mName = "Untitled";
+
 	for (int i = 0; i < Size; ++i)
 	{
 		auto pGameObj = InsertGameObject();

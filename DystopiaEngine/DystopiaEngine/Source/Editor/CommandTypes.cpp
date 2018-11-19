@@ -10,6 +10,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#include "Utility/GUID.h"
 #if EDITOR
 #include "Editor/CommandTypes.h"
 #include "Editor/EditorMain.h"
@@ -21,6 +22,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/ObjectFlags.h"
 
 #include "DataStructure/HashString.h"
+
+#include "IO/TextSerialiser.h"
+
+#include "System/File/FileSystem.h"
 
 Editor::InsertGameObject::InsertGameObject(uint64_t _id, const Math::Pt3D& _pos)
 	: mnObjID{ _id }, mSpawnPt{ _pos }
@@ -71,15 +76,35 @@ bool Editor::InsertGameObject::Unchanged(void) const
 }
 
 Editor::DeleteGameObject::DeleteGameObject(uint64_t _id)
-	: mnObjID{ _id }
-{}
+	: mnObjID{ _id }, mnTempFileID { Dystopia::GUIDGenerator::GetUniqueID() }
+{
+}
+
+Editor::DeleteGameObject::~DeleteGameObject(void)
+{
+	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
+	HashString file{ fp.c_str() };
+	file += "\\";
+	file += mnTempFileID;
+	file += ".";
+	file += Gbl::PREFAB_EXT;
+	remove(file.c_str());
+}
 
 bool Editor::DeleteGameObject::Do(void)
 {
 	if (auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(mnObjID))
 	{
-
-
+		auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+		auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
+		HashString file{ fp.c_str() };
+		file += "\\";
+		file += mnTempFileID;
+		file += ".";
+		file += Gbl::PREFAB_EXT;
+		auto serial = Dystopia::TextSerialiser::OpenFile(file.c_str(), Dystopia::Serialiser::MODE_WRITE);
+		EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(mnObjID, serial);
 
 		o->Destroy();
 		EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(mnObjID);
@@ -90,7 +115,20 @@ bool Editor::DeleteGameObject::Do(void)
 
 bool Editor::DeleteGameObject::Undo(void)
 {
-	return true;
+	if (!Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(mnObjID))
+	{
+		auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+		auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
+		HashString file{ fp.c_str() };
+		file += "\\";
+		file += mnTempFileID;
+		file += ".";
+		file += Gbl::PREFAB_EXT;
+		auto serial = Dystopia::TextSerialiser::OpenFile(file.c_str(), Dystopia::Serialiser::MODE_READ);
+		EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadIntoScene(serial);
+		return true;
+	}
+	return false;
 }
 
 bool Editor::DeleteGameObject::Unchanged(void) const

@@ -143,7 +143,7 @@ namespace Dystopia
 			HashString temp{ p.path().filename().string().c_str() };
 			if (temp == _file)
 			{
-				return temp;
+				return HashString{ p.path().generic_string().c_str() };
 			}
 		}
 		return HashString{};

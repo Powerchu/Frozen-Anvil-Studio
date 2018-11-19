@@ -99,10 +99,26 @@ namespace Dystopia
 		{
 			C* pComponent = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent();
 			//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->AddComponent<C>(_pRequester->GetID(), pComponent);
-			pComponent->SetOwner(_pRequester);
+			//pComponent->SetOwner(_pRequester);
 			pComponent->SetActive(_pRequester->IsActive());
 			pComponent->Awake();
 			return pComponent;
+		}
+
+		static bool RemoveC(GameObject* _pOwner)
+		{
+			//C* pComponent = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent();
+			//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->AddComponent<C>(_pRequester->GetID(), pComponent);
+			//pComponent->SetOwner(_pRequester);
+			//pComponent->SetActive(_pRequester->IsActive());
+			//pComponent->Awake();
+
+			C* pComponent = _pOwner->GetComponent<C>();
+			if (!pComponent)
+				return false;
+
+			::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->RemoveComponent<C>(_pOwner->GetID(), pComponent);
+			return true;
 		}
 	};
 
@@ -129,6 +145,14 @@ namespace Dystopia
 					return mData[_i](_owner);
 				return nullptr;
 			}
+
+			bool RemoveCommand(unsigned int _i, GameObject *_owner)
+			{
+				static auto mData = Ctor::MakeArray<bool(*)(GameObject *)>(RequestComponent<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::RemoveC...);
+				if (_i < size || _i >= 0)
+					return mData[_i](_owner);
+				return false;
+			}
 		};
 
 		Component* GetComponent(unsigned int _i, GameObject *_owner)
@@ -138,6 +162,11 @@ namespace Dystopia
 		Component* GetComponentA(unsigned int _i, GameObject *_owner)
 		{
 			return mCollection.GetA(_i, _owner);
+		}
+
+		bool RemoveComponentCommand(unsigned int _i, GameObject *_owner)
+		{ 
+			return mCollection.RemoveCommand(_i, _owner);
 		}
 
 		Collection<std::make_index_sequence<size>> mCollection;
@@ -161,7 +190,21 @@ namespace Dystopia
 			{
 				static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->Unserialise(_in);
 			}
+
+			static void InitDonor(void)
+			{
+				static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->InitComponents();
+			}
 		};
+
+		static void InitDonors(void)
+		{
+			static auto SystemArray = Ctor::MakeArray<void(*)(void)>(
+				static_cast<void(*)(void)>(&SystemFunction<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::InitDonor) ...);
+
+			for (size_t i = 0; i < sizeof...(Ns); ++i)
+				SystemArray[i]();
+		}
 
 		static void Serialise(TextSerialiser& _out)
 		{
@@ -181,6 +224,7 @@ namespace Dystopia
 				SystemArray[i](_in);
 		}
 	};
+
 
 	struct SuperReflectFunctor
 	{

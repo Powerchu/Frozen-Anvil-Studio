@@ -148,6 +148,9 @@ void Dystopia::GameObject::Destroy(void)
 	ForcePing(mBehaviours, GameObjectDestroy);
 
 	mnFlags = FLAG_REMOVE;
+
+	for (auto& c : mTransform.GetAllChild())
+		c->GetOwner()->Destroy();
 }
 
 void Dystopia::GameObject::Unload(void)
