@@ -141,12 +141,12 @@ void Editor::EditorCommands::Redo(void)
 	mDeqRedo.pop_back();
 }
 
-void Editor::EditorCommands::InsertNewGameObject(void)
+void Editor::EditorCommands::InsertNewGameObject(const Math::Pt3D& _pos)
 {
 	if (mbDisableCommands)
 		return;
 
-	ExecuteDo(Dystopia::DefaultAllocator<InsertGameObject>::ConstructAlloc(Dystopia::GUIDGenerator::GetUniqueID()));
+	ExecuteDo(Dystopia::DefaultAllocator<InsertGameObject>::ConstructAlloc(Dystopia::GUIDGenerator::GetUniqueID(), _pos));
 }
 
 void Editor::EditorCommands::RemoveGameObject(const uint64_t& _objID)

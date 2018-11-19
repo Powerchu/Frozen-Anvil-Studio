@@ -22,8 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "DataStructure/HashString.h"
 
-Editor::InsertGameObject::InsertGameObject(uint64_t _id)
-	: mnObjID{ _id }
+Editor::InsertGameObject::InsertGameObject(uint64_t _id, const Math::Pt3D& _pos)
+	: mnObjID{ _id }, mSpawnPt{ _pos }
 {}
 
 bool Editor::InsertGameObject::Do(void)
@@ -47,6 +47,7 @@ bool Editor::InsertGameObject::Do(void)
 		o->SetFlag(Dystopia::eObjFlag::FLAG_LAYER_WORLD);
 		o->SetFlag(Dystopia::eObjFlag::FLAG_ACTIVE);
 		o->SetName(name.c_str());
+		o->GetComponent<Dystopia::Transform>()->SetPosition(mSpawnPt);
 		return true;
 	}
 	return false;

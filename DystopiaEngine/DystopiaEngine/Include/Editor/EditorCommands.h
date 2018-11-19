@@ -49,7 +49,7 @@ namespace Editor
 		void Undo(void);
 		void Redo(void);
 
-		void InsertNewGameObject(void);
+		void InsertNewGameObject(const Math::Pt3D& = Math::Pt3D{ 0, 0, 0 });
 		void RemoveGameObject(const uint64_t&);
 
 

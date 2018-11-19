@@ -411,11 +411,7 @@ namespace Editor
 				{
 					Math::Pt3D worldClickPos = GetWorldClickPos(GetCamera());
 					Math::Pt3D spawnSite = Math::Pt3D{ worldClickPos.x, worldClickPos.y, 0.f, 1.f };
-
-					// pTarget = Dystopia::Factory::CreateGameObj(defaultName);
-					// pTarget->SetFlag(Dystopia::eObjFlag::FLAG_LAYER_WORLD);
-					// pTarget->GetComponent<Dystopia::Transform>()->SetPosition(spawnSite);
-					// GetCommandHND()->InvokeCommandInsert(*pTarget, *GetCurrentScene());
+					EditorMain::GetInstance()->GetSystem<EditorCommands>()->InsertNewGameObject(spawnSite);
 				}
 				Dystopia::GameObject* pGuaranteedTarget = FindMouseObject();
 				Dystopia::Renderer* pNewRend = static_cast<Dystopia::ComponentDonor<Dystopia::Renderer>*>(Dystopia::EngineCore::GetInstance()->Get<typename Dystopia::Renderer::SYSTEM>())->RequestComponent();
@@ -425,9 +421,7 @@ namespace Editor
 				pNewRend->SetActive(pGuaranteedTarget->IsActive());
 				pNewRend->Awake();
 				if (pGuaranteedTarget->GetName() == defaultName)
-				{
 					pGuaranteedTarget->SetName(_pFile->mName.c_str());
-				}
 			}
 		}
 	}

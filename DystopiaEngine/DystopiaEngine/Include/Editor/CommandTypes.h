@@ -194,7 +194,7 @@ namespace Editor
 	class InsertGameObject : public Command
 	{
 	public:
-		InsertGameObject(uint64_t _id);
+		InsertGameObject(uint64_t _id, const Math::Pt3D& = Math::Pt3D{ 0,0,0 });
 
 		bool Do(void);
 		bool Undo(void);
@@ -202,6 +202,7 @@ namespace Editor
 
 	private:
 		uint64_t mnObjID;
+		Math::Pt3D mSpawnPt;
 	};
 
 	class DeleteGameObject : public Command
