@@ -18,6 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <string>
 
 #include "Editor/EGUI.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorCommands.h"
 
 #include "DataStructure/Array.h"
 
@@ -87,9 +89,10 @@ namespace Dystopia
 		static Component* Get(GameObject* _pRequester)
 		{
 			C* pComponent = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent(); 
-			pComponent->SetOwner(_pRequester);
-			pComponent->SetActive(_pRequester->IsActive());
-			pComponent->Awake();
+			::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->AddComponent<C>(_pRequester->GetID(), pComponent);
+			//pComponent->SetOwner(_pRequester);
+			//pComponent->SetActive(_pRequester->IsActive());
+			//pComponent->Awake();
 			return pComponent;
 		}
 	};

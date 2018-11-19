@@ -247,7 +247,8 @@ namespace Editor
 				{
 					//Dystopia::Component* pComp = availableComp.GetComponent(i, mpFocus);
 					//mpFocus->AddComponent(pComp, typename Dystopia::Component::TAG{});
-					EditorMain::GetInstance()->GetSystem<EditorCommands>()->AddComponent(mpFocus->GetID(), availableComp.GetComponent(i, mpFocus));
+					availableComp.GetComponent(i, mpFocus);
+					//EditorMain::GetInstance()->GetSystem<EditorCommands>()->AddComponent(mpFocus->GetID(), availableComp.GetComponent(i, mpFocus));
 				}
 			}
 			EGUI::Display::EndPopup();
@@ -343,7 +344,7 @@ namespace Editor
 			if (EGUI::Display::SelectableTxt("Remove"))
 			{
 				//mpFocus->RemoveComponent(_pCom);
-				EditorMain::GetInstance()->GetSystem<EditorCommands>()->RemoveComponent(mpFocus->GetID(), _pCom);
+				//EditorMain::GetInstance()->GetSystem<EditorCommands>()->RemoveComponent(mpFocus->GetID(), _pCom);
 				ret = true;
 			}
 			ImGui::EndPopup();

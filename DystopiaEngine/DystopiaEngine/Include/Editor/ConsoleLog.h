@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorPanel.h"
 #include "DataStructure/Array.h"
 #include "DataStructure/HashString.h"
-#define MAX_CLOG 50
+#define MAX_CLOG 100
 
 void _DLL_EXPORT PrintToConsoleLog(const std::string& _text);
 void _DLL_EXPORT PrintToConsoleLog(const HashString& _text);

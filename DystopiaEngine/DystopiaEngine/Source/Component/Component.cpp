@@ -160,7 +160,7 @@ void Dystopia::Component::Unserialise(TextSerialiser& _in)
 #if EDITOR
 	else if (mnFlags & eObjFlag::FLAG_EDITOR_OBJ)
 	{
-		Editor::GetInstance()->ReAttachComponent(this);
+		//Editor::GetInstance()->ReAttachComponent(this);
 	}
 #endif 
 }

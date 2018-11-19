@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_MAIN_H_
 #include "Globals.h"
 
+#include "DataStructure/HashString.h"
 #include "DataStructure/AutoArray.h"
 
 #include "Utility/Meta.h"
@@ -66,7 +67,7 @@ namespace Editor
 		void Shutdown(void);
 
 		void ChangeState(eState);
-		void Broadcast(eEMessage) const;
+		void Broadcast(eEMessage);
 
 		float GetDeltaTime(void) const;
 		eState GetCurState(void) const;
@@ -83,6 +84,9 @@ namespace Editor
 
 		AutoArray<EditorSystem*>& GetAllSystems(void);
 		AutoArray<EditorPanel*>& GetAllPanels(void);
+
+		void ExternalFile(const wchar_t* const _p);
+		void ExternalFile(const HashString&);
 
 	private:
 		EditorMain(void);
@@ -103,6 +107,8 @@ namespace Editor
 		HashString mProjFile;
 
 		Dystopia::Timer mTimer;
+
+		AutoArray<eEMessage> mMsgPending;
 	};
 }
 

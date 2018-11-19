@@ -16,6 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <stdlib.h>
 
+#define U_BUFFER_SIZE  11
+#define ULL_BUFFER_SIZE 16
+
 HashID StringHasher(const char* _s)
 {
 	HashID hash = OFFSET_BASIS;
@@ -236,8 +239,18 @@ HashString& HashString::operator+=(const char _c)
 
 HashString& HashString::operator+=(unsigned _i)
 {
-	char buffer[11];
-	if (!_itoa_s(_i, buffer, 11, 10))
+	char buffer[U_BUFFER_SIZE];
+	if (!_itoa_s(_i, buffer, U_BUFFER_SIZE, 10))
+	{
+		return operator+=(buffer);
+	}
+	return *this;
+}
+
+HashString& HashString::operator+=(unsigned long long _u)
+{
+	char buffer[ULL_BUFFER_SIZE];
+	if (!_itoa_s(_u, buffer, ULL_BUFFER_SIZE, 10))
 	{
 		return operator+=(buffer);
 	}
@@ -320,6 +333,7 @@ HashString& HashString::replace(size_t _pos, size_t _len, const char * _s)
 }
 
 /* operations */
+
 const char* const HashString::c_str(void) const
 {
 	return mCharBuffer;

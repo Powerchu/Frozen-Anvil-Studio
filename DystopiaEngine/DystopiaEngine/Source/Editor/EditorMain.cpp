@@ -37,8 +37,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/SpritePreviewer.h"
 #include "Editor/SpriteEditor.h"
 
-#include "DataStructure/HashString.h"
-
 #include "Allocator/DefaultAlloc.h"
 
 #include "System/Driver/Driver.h"
@@ -186,6 +184,18 @@ void Editor::EditorMain::EndFrame(void)
 		for (auto& p : mArrPanels)
 			p->Message(eEMessage::SCENE_CHANGED);
 	}
+
+	if (mMsgPending.size())
+	{
+		for (auto& m : mMsgPending)
+		{
+			for (auto& s : mArrSystems)
+				s->Message(m);
+			for (auto& p : mArrPanels)
+				p->Message(m);
+		}
+		mMsgPending.clear();
+	}
 }
 
 void Editor::EditorMain::Shutdown(void)
@@ -225,12 +235,9 @@ void Editor::EditorMain::ChangeState(eState e)
 	mNextState = e;
 }
 
-void Editor::EditorMain::Broadcast(eEMessage _msg) const
+void Editor::EditorMain::Broadcast(eEMessage _msg)
 {
-	for (auto& s : mArrSystems)
-		s->Message(_msg);
-	for (auto& p : mArrPanels)
-		p->Message(_msg);
+	mMsgPending.push_back(_msg);
 }
 
 float Editor::EditorMain::GetDeltaTime(void) const
@@ -332,6 +339,18 @@ AutoArray<Editor::EditorSystem*>& Editor::EditorMain::GetAllSystems(void)
 AutoArray<Editor::EditorPanel*>& Editor::EditorMain::GetAllPanels(void)
 {
 	return mArrPanels;
+}
+
+void Editor::EditorMain::ExternalFile(const wchar_t* const _p)
+{
+	HashString a; 
+	a = _p;
+	ExternalFile(a);
+}
+
+void Editor::EditorMain::ExternalFile(const HashString& _p)
+{
+
 }
 
 #endif

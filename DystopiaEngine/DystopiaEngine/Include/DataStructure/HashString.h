@@ -78,6 +78,7 @@ public:
 	HashString& operator+=(const char);
 	HashString& operator+=(unsigned);
 	HashString& operator+=(const HashString&);
+	HashString& operator+=(unsigned long long);
 	HashString& erase(size_t _pos, size_t _len = -1);
 	HashString& replace(size_t _pos, size_t _len, const HashString&);
 	HashString& replace(size_t _pos, size_t _len, const char * _s);

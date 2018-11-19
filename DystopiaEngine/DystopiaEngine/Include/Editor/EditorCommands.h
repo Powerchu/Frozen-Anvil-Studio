@@ -279,7 +279,11 @@ void Editor::EditorCommands::AddComponent(const uint64_t& _id, C * _pComponent)
 {
 	if (mbDisableCommands)
 		return;
-
+	
+	if (auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(_id))
+	{
+		ExecuteDo(Dystopia::DefaultAllocator<::Editor::AddComponent<C>>::ConstructAlloc(_id, _pComponent));
+	}
 }
 
 template<typename C>
@@ -288,6 +292,10 @@ void Editor::EditorCommands::RemoveComponent(const uint64_t& _id, C * _pComponen
 	if (mbDisableCommands)
 		return;
 
+	if (auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(_id))
+	{
+
+	}
 }
 #endif
 #endif 

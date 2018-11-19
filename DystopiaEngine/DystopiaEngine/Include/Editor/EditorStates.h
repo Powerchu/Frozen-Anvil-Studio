@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_STATE_H_
 #include "Editor/EditorStatesTypes.h"
 #include "Editor/EditorSystem.h"
+#include "DataStructure/HashString.h"
 
 namespace Editor
 {
@@ -43,6 +44,8 @@ namespace Editor
 		void New(void);
 		void Play(void);
 		void Stop(void);
+		void TempSave(void);
+		void TempLoad(void);
 
 		void PromptSaveN(void);
 		void PromptSaveQ(void);
@@ -56,6 +59,7 @@ namespace Editor
 		size_t mnSaveAs;
 		size_t mnQuit;
 
+		HashString mTempFile;
 	};
 
 }

@@ -122,7 +122,7 @@ namespace Editor //Dystopia
 		if (EGUI::StartChild("##DetailLog", Math::Vec2{Size().x - 2.f, Size().y - 85.f}, false))
 		{
 			for (unsigned int i = 0; i < mnLoggingIndex; ++i)
-				EGUI::Display::Label(mArrDebugTexts[i].c_str());
+				ImGui::TextWrapped(mArrDebugTexts[i].c_str());
 		}
 		EGUI::EndChild();
 		EGUI::Display::HorizontalSeparator();

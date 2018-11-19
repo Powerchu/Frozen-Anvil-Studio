@@ -97,7 +97,7 @@ namespace Dystopia
 		}
 	}
 
-	Component* CharacterController::Duplicate() const
+	CharacterController* CharacterController::Duplicate() const
 	{
 		const auto cc = EngineCore::GetInstance()->GetSystem<InputManager>()->RequestComponent();
 		cc->SetOwner(GetOwner());

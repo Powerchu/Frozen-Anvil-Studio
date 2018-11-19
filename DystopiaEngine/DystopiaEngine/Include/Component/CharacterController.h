@@ -52,7 +52,7 @@ namespace Dystopia
 		void Update(float _dt);
 		void Unload(void);
 
-		Component* Duplicate() const override;
+		CharacterController* Duplicate() const override;
 
 		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);

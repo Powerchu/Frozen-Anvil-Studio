@@ -31,9 +31,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/File/FileSystem.h"
 #include "System/Input/InputSystem.h"
 
+#include "Utility/GUID.h"
+
 Editor::EditorStates::EditorStates(void)
 	: mState{ eState::LAUNCHER }, mbQuitAttempt{ false }, mbNewAttempt{ false },
-	mnPlay{}, mnNew{}, mnOpen{}, mnSave{}, mnSaveAs{}, mnQuit{}
+	mnPlay{}, mnNew{}, mnOpen{}, mnSave{}, mnSaveAs{}, mnQuit{}, mTempFile{}
 {
 }
 
@@ -98,6 +100,11 @@ void Editor::EditorStates::StartFrame(void)
 		break;
 	}
 
+	/******************************** NO UI TO BE CALLED HERE ********************************/
+}
+
+void Editor::EditorStates::Update(float)
+{
 	auto input = EditorMain::GetInstance()->GetSystem<EInput>();
 	if (input->IsHotkeyTriggered(mnPlay))
 	{
@@ -117,11 +124,6 @@ void Editor::EditorStates::StartFrame(void)
 	else if (input->IsHotkeyTriggered(mnQuit))
 		mbQuitAttempt = true;
 
-	/******************************** NO UI TO BE CALLED HERE ********************************/
-}
-
-void Editor::EditorStates::Update(float)
-{
 	switch (mState)
 	{
 	case eState::PLAY:
@@ -159,7 +161,14 @@ void Editor::EditorStates::Shutdown(void)
 void Editor::EditorStates::Message(eEMessage _msg)
 {
 	if (_msg == eEMessage::STATE_CHANGED)
+	{
+		auto oldState = mState;
 		mState = Editor::EditorMain::GetInstance()->GetCurState();
+		if (oldState == eState::MAIN && mState == eState::PLAY)
+			TempSave();
+		else if (oldState == eState::PLAY && mState == eState::MAIN)
+			TempLoad();
+	}
 	else if (_msg == eEMessage::SCENE_CHANGED)
 	{
 		auto sceneSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
@@ -171,12 +180,10 @@ void Editor::EditorStates::Message(eEMessage _msg)
 
 void Editor::EditorStates::SaveSettings(Dystopia::TextSerialiser&) const
 {
-
 }
 
 void Editor::EditorStates::LoadSettings(Dystopia::TextSerialiser&)
 {
-
 }
 
 void Editor::EditorStates::ToolBar(void)
@@ -294,7 +301,17 @@ void Editor::EditorStates::SaveAs(void)
 
 void Editor::EditorStates::New(void)
 {
+	auto sceneSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
+	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
 
+	HashString file{ fp.c_str() };
+	file += "\\";
+	file += Dystopia::GUIDGenerator::GetUniqueID();
+	file += ".";
+	file += Gbl::SCENE_EXT;
+
+	sceneSystem->LoadScene(std::string{ file.begin(), file.end() });
 }
 
 void Editor::EditorStates::Play(void)
@@ -306,6 +323,32 @@ void Editor::EditorStates::Play(void)
 void Editor::EditorStates::Stop(void)
 {
 	EditorMain::GetInstance()->ChangeState(eState::MAIN);
+}
+
+void Editor::EditorStates::TempSave(void)
+{
+	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
+	auto sceneSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
+
+	HashString file{ fp.c_str() };
+	file += "\\";
+	file += Dystopia::GUIDGenerator::GetUniqueID();
+	file += ".";
+	file += Gbl::SCENE_EXT;
+
+	sceneSystem->SaveScene(file.c_str(), sceneSystem->GetCurrentScene().GetSceneName());
+	mTempFile = file;
+}
+
+void Editor::EditorStates::TempLoad(void)
+{
+	auto sceneSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
+
+	sceneSystem->RestartScene();
+	remove(mTempFile.c_str());
+	mTempFile.clear();
+	EditorMain::GetInstance()->Broadcast(eEMessage::SCENE_CHANGED);
 }
 
 void Editor::EditorStates::PromptSaveN(void)
