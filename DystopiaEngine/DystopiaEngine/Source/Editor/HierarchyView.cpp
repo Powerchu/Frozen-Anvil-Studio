@@ -198,17 +198,18 @@ namespace Editor
 	void HierarchyView::SelectedObj(Dystopia::GameObject& _obj)
 	{
 		auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
-		ed->AddGameObject(_obj.GetID());
-		//bool exist = false;
-		//for (const auto& id : ed->GetSelectedIDs())
-		//{
-		//	if (id == _obj.GetID())
-		//	{
-		//		exist = true;
-		//		break;
-		//	}
-		//}
-		//if (!exist)
+		bool exist = false;
+		for (const auto& id : ed->GetSelectedIDs())
+		{
+			if (id == _obj.GetID())
+			{
+				exist = true;
+				ed->RemoveGameObject(_obj.GetID());
+				break;
+			}
+		}
+		if (!exist)
+			ed->AddGameObject(_obj.GetID());
 	}
 
 	void HierarchyView::GameObjectPopups(Dystopia::GameObject& _obj)

@@ -137,6 +137,18 @@ void Editor::EditorClipboard::RemoveGameObject(const uint64_t& _id)
 	}
 }
 
+void Editor::EditorClipboard::RemoveGameObjectP(const uint64_t& _objID)
+{
+	RemoveGameObject(_objID);
+	auto& scene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	if (auto o = scene.FindGameObject(_objID))
+	{
+		auto& childrens = o->GetComponent<Dystopia::Transform>()->GetAllChild();
+		for (auto& c : childrens)
+			RemoveGameObjectP(c->GetOwnerID());
+	}
+}
+
 void Editor::EditorClipboard::ClearAll(void)
 {
 	mArrSelectedIDs.clear();

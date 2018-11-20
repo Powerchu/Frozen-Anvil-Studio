@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/EditorCommands.h"
+#include "Editor/EditorFactory.h"
 #include "Editor/EditorMain.h"
 #include "Editor/EInput.h"
 #include "Editor/EHotkey.h"
@@ -187,6 +188,14 @@ void Editor::EditorCommands::RemoveGameObject(AutoArray<uint64_t>& _arrIDs)
 	ExecuteDo(Dystopia::DefaultAllocator<BatchExecute>::ConstructAlloc(mArrComds));
 }
 
+void Editor::EditorCommands::InstantiatePrefab(const HashString& _prefab, const Math::Pt3D& _spawnPt)
+{
+	if (mbDisableCommands)
+		return;
+
+	ExecuteDo(Dystopia::DefaultAllocator<SpawnPrefab>::ConstructAlloc(_prefab, _spawnPt));
+}
+
 void Editor::EditorCommands::RemoveStray(std::deque<Command*>& _targetDeque)
 {
 	Command *pTemp = _targetDeque.back();
@@ -206,6 +215,7 @@ void Editor::EditorCommands::ExecuteDo(Command* _pCommand)
 			Dystopia::DefaultAllocator<Command>::DestructFree(r);
 		mDeqRedo.clear();
 		mbChangesMade = true;
+		EditorMain::GetInstance()->GetSystem<EditorFactory>()->ValidatePrefabInstances();
 	}
 	else
 		Dystopia::DefaultAllocator<Command>::DestructFree(_pCommand);

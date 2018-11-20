@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _COMMAND_TYPES_H_
 #include "Editor/EditorMain.h"
 #include "Editor/EditorResource.h"
+#include "Editor/EditorFactory.h"
 
 #include "Component/Component.h"
 #include "Behaviour/Behaviour.h"
@@ -245,6 +246,7 @@ namespace Editor
 		bool Unchanged(void) const;
 
 	private:
+		uint64_t mnID;
 		HashString mPrefab;
 		Math::Pt3D mSpawnPt;
 	};
@@ -576,6 +578,7 @@ bool ::Editor::AddComponent<C>::Do(void)
 			c->SetOwner(obj);
 			c->SetActive(obj->IsActive());
 			c->Awake();
+			EditorMain::GetInstance()->GetSystem<EditorFactory>()->DettachPrefab(mnID);
 			return true;
 		}
 		return false;
@@ -639,6 +642,7 @@ bool ::Editor::RemoveComponent<C>::Do(void)
 			c->SetActive(false);
 			EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(c);
 			obj->RemoveComponent(obj->GetComponent<C>());
+			EditorMain::GetInstance()->GetSystem<EditorFactory>()->DettachPrefab(mnID);
 			return true;
 		}
 		return false;

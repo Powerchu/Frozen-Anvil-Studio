@@ -41,6 +41,7 @@ namespace Editor
 
 		void AddGameObject(const uint64_t&);
 		void RemoveGameObject(const uint64_t&);
+		void RemoveGameObjectP(const uint64_t&);
 		void ClearAll(void);
 
 		void Copy(void);

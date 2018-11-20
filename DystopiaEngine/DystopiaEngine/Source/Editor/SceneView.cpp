@@ -375,8 +375,7 @@ namespace Editor
 			Math::Pt3D worldClickPos	= GetWorldClickPos(pCam);
 			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ, 1.f };
 			
-			//EditorMain::GetInstance()->GetSystem<EditorFactory>()->InsertPrefab(_pFile->mName, spawnSite);
-			EditorMain::GetInstance()->GetSystem<EditorFactory>()->SpawnPrefab(_pFile->mName, spawnSite);
+			EditorMain::GetInstance()->GetSystem<EditorCommands>()->InstantiatePrefab(_pFile->mName, spawnSite);
 
 			//auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
 			//Dystopia::GameObject *pDupl = Dystopia::Factory::LoadFromPrefab("", _pFile->mPath.c_str());
@@ -478,7 +477,7 @@ namespace Editor
 		for (const auto& id : _arrIDs)
 		{
 			auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
-			const auto pos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
+			const auto pos = obj->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
 			avgPos.x = avgPos.x + pos.x;
 			avgPos.y = avgPos.y + pos.y;
 		}
@@ -690,7 +689,7 @@ namespace Editor
 	{
 		auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 
-		Math::Pt3D curPos = obj.GetComponent<Dystopia::Transform>()->GetPosition();
+		Math::Pt3D curPos = obj.GetComponent<Dystopia::Transform>()->GetGlobalPosition();
 		Math::Vec4 cScale = obj.GetComponent<Dystopia::Transform>()->GetGlobalScale();
 		Math::Vec2 screenPos = GetWorldToScreen(curPos);
 

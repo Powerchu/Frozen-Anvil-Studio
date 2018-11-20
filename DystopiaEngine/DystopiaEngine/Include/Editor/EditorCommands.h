@@ -54,6 +54,7 @@ namespace Editor
 		void InsertNewGameObject(const Math::Pt3D& = Math::Pt3D{ 0, 0, 0 });
 		void RemoveGameObject(const uint64_t&);
 		void RemoveGameObject(AutoArray<uint64_t>&);
+		void InstantiatePrefab(const HashString&, const Math::Pt3D& = Math::Pt3D{ 0, 0, 0, 1.f });
 
 
 
@@ -125,7 +126,6 @@ namespace Editor
 	};
 }
 
-
 /***************************************************************** Template Function Definitions *****************************************************************/
 
 template <class C, typename ... Ts>
@@ -184,7 +184,7 @@ void Editor::EditorCommands::StartRec(void(C::*_function)(Ts...), const Ut::Remo
 		return;
 
 	if (mpRecordingVal)
-		__debugbreak();
+		return;//__debugbreak();
 
 	mpRecordingVal = Dystopia::DefaultAllocator<RecordValue<CFn>>::ConstructAlloc(CFn{ _function, _params ... });
 }
@@ -198,7 +198,7 @@ void Editor::EditorCommands::EndRec(const uint64_t _id, void(C::*_function)(Ts..
 		return;
 
 	if (!mpRecordingVal)
-		__debugbreak();
+		return; //__debugbreak();
 
 	auto oFn = MakeFnCommand(_function, _params ...);
 	auto nFn = MakeFnCommand(_function, _params ...);

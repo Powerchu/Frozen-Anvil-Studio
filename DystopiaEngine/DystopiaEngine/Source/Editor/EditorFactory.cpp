@@ -70,29 +70,21 @@ void Editor::EditorFactory::Shutdown(void)
 
 void Editor::EditorFactory::Message(eEMessage _msg)
 {
-	auto& sceneSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
-	if (_msg == eEMessage::SCENE_CHANGED)
+	if (_msg == eEMessage::SCENE_ABOUT_TO_CHANGE)
 	{
-		for (auto &data : mArrPrefabData)
+		for (auto& object : mArrFactoryObj)
 		{
-			for (size_t j = 0; j < data.mArrInstanced.size(); j++)
-			{
-				bool remove = false;
-				for (size_t i = 0; i < data.mArrInstanced[j].size(); ++i)
-				{
-					if (!sceneSys.FindGameObject(data.mArrInstanced[j][i]))
-					{
-						remove = true;
-						break;
-					}
-				}
-				if (remove)
-				{
-					data.mArrInstanced.FastRemove(j);
-					j--;
-				}
-			}
+			auto& allC = object.GetAllComponents();
+			for (auto& c : allC)
+				object.RemoveComponent(c);
+			auto& allB = object.GetAllBehaviours();
+			for (auto& b : allB)
+				object.RemoveComponent(b);
 		}
+	}
+	else if (_msg == eEMessage::SCENE_CHANGED)
+	{
+		ValidatePrefabInstances();
 	}
 }
 
@@ -101,6 +93,22 @@ void Editor::EditorFactory::SaveSettings(Dystopia::TextSerialiser&) const
 
 void Editor::EditorFactory::LoadSettings(Dystopia::TextSerialiser&)
 {}
+
+void Editor::EditorFactory::DefaultSceneCamera(void)
+{
+	auto pCore = Dystopia::EngineCore::GetInstance();
+	auto& scene = pCore->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	auto cam = pCore->GetSystem<Dystopia::CameraSystem>()->RequestComponent();
+	cam->SetSurface(&(pCore->GetSystem<Dystopia::GraphicsSystem>()->GetView(3)));
+
+	Dystopia::GameObject *pObject = scene.InsertGameObject(Dystopia::GUIDGenerator::GetUniqueID());
+	pObject->SetName("Scene Camera");
+	pObject->SetActive(true);
+	pObject->AddComponent(cam, typename Dystopia::Camera::TAG{});
+	pObject->Identify();
+	pObject->SetFlag(Dystopia::eObjFlag::FLAG_ALL_LAYERS);
+	cam->Awake();
+}
 
 void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p)
 {
@@ -114,23 +122,7 @@ void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p)
 	}
 }
 
-void Editor::EditorFactory::DefaultSceneCamera(void)
-{
-	auto pCore = Dystopia::EngineCore::GetInstance();
-	auto& scene = pCore->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
-	auto cam = pCore->GetSystem<Dystopia::CameraSystem>()->RequestComponent();
-	cam->SetSurface(&(pCore->GetSystem<Dystopia::GraphicsSystem>()->GetView(3)));
-	
-	Dystopia::GameObject *pObject = scene.InsertGameObject(Dystopia::GUIDGenerator::GetUniqueID());
-	pObject->SetName("Scene Camera");
-	pObject->SetActive(true);
-	pObject->AddComponent(cam, typename Dystopia::Camera::TAG{});
-	pObject->Identify();
-	pObject->SetFlag(Dystopia::eObjFlag::FLAG_ALL_LAYERS);
-	cam->Awake();
-}
-
-bool Editor::EditorFactory::SpawnPrefab(const HashString& _prefName, const Math::Pt3D& _pos)
+bool Editor::EditorFactory::SpawnPrefab(const HashString& _prefName, const Math::Pt3D& _pos, uint64_t& _outRootObjID)
 {
 	HashString check{ _prefName };
 	size_t pos = check.rfind(".");
@@ -139,7 +131,7 @@ bool Editor::EditorFactory::SpawnPrefab(const HashString& _prefName, const Math:
 	{
 		if (p.mPrefabFile == _prefName)
 		{
-			PutToScene(_prefName, _pos);
+			_outRootObjID = PutToScene(_prefName, _pos);
 			return true;
 		}
 	}
@@ -179,6 +171,56 @@ bool Editor::EditorFactory::SaveAsPrefabTemp(const uint64_t& _objID, Dystopia::T
 	return SaveAsPrefab(_objID, _out, true);
 }
 
+bool Editor::EditorFactory::DettachPrefab(const uint64_t& _relatedObj)
+{
+	for (auto &data : mArrPrefabData)
+	{
+		for (size_t j = 0; j < data.mArrInstanced.size(); j++)
+		{
+			bool remove = false;
+			for (size_t i = 0; i < data.mArrInstanced[j].size(); ++i)
+			{
+				if (data.mArrInstanced[j][i] == _relatedObj)
+				{
+					remove = true;
+					break;
+				}
+			}
+			if (remove)
+			{
+				data.mArrInstanced.FastRemove(j);
+				j--;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void Editor::EditorFactory::ValidatePrefabInstances(void)
+{
+	auto& sceneSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	for (auto &data : mArrPrefabData)
+	{
+		for (size_t j = 0; j < data.mArrInstanced.size(); j++)
+		{
+			bool remove = false;
+			for (size_t i = 0; i < data.mArrInstanced[j].size(); ++i)
+			{
+				if (!sceneSys.FindGameObject(data.mArrInstanced[j][i]))
+				{
+					remove = true;
+					break;
+				}
+			}
+			if (remove)
+			{
+				data.mArrInstanced.FastRemove(j);
+				j--;
+			}
+		}
+	}
+}
 
 bool Editor::EditorFactory::LoadAsPrefab(const HashString& _path)
 {
@@ -272,21 +314,7 @@ void Editor::EditorFactory::LoadIntoScene(Dystopia::TextSerialiser& _in)
 	}
 }
 
-void Editor::EditorFactory::DettachPrefab(const uint64_t&)
-{
-	
-}
-
-
-
-
-
-
-
-
-
-
-
+/********************************************** Private Fn Definition **********************************************/
 
 void Editor::EditorFactory::SaveChild(Dystopia::GameObject& _obj, Dystopia::TextSerialiser& _out, bool _temp)
 {
@@ -513,20 +541,19 @@ void Editor::EditorFactory::RecursiveCounter(Dystopia::GameObject& _obj, unsigne
 			RecursiveCounter(*c->GetOwner(), _counter);
 }
 
-void Editor::EditorFactory::PutToScene(const HashString& _fileName, const Math::Pt3D& _pos)
+uint64_t Editor::EditorFactory::PutToScene(const HashString& _fileName, const Math::Pt3D& _pos)
 {
 	for (auto& p : mArrPrefabData)
 	{
 		if (p.mPrefabFile == _fileName)
 		{
 			p.mArrInstanced.push_back(AutoArray<uint64_t>{});
-			PutToScene(p, _pos);
-			break;
+			return PutToScene(p, _pos);
 		}
 	}
 }
 
-void Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D& _pos)
+uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D& _pos)
 {
 	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
 	auto& arrInstance = _prefab.mArrInstanced.back();
@@ -580,6 +607,8 @@ void Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D& _p
 			}
 		}
 	}
+	DEBUG_ASSERT(!arrInstance.size(), "Error at spawning prefab");
+	return arrInstance[0];
 }
 
 Editor::EditorFactory::PrefabData::PrefabData(const HashString& _fileName, size_t _start, size_t _end)

@@ -63,8 +63,8 @@ bool Editor::InsertGameObject::Undo(void)
 	auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(mnObjID);
 	if (obj)
 	{
+		EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObjectP(mnObjID);
 		obj->Destroy();
-		EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(mnObjID);
 		return true;
 	}
 	return false;
@@ -104,10 +104,10 @@ bool Editor::DeleteGameObject::Do(void)
 		file += ".";
 		file += Gbl::PREFAB_EXT;
 		auto serial = Dystopia::TextSerialiser::OpenFile(file.c_str(), Dystopia::Serialiser::MODE_WRITE);
+		EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObjectP(mnObjID);
 		EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefabTemp(mnObjID, serial);
-
+		EditorMain::GetInstance()->GetSystem<EditorFactory>()->DettachPrefab(mnObjID);
 		o->Destroy();
-		EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(mnObjID);
 		return true;
 	}
 	return false;
@@ -173,16 +173,26 @@ bool Editor::BatchExecute::Unchanged(void) const
 }
 
 Editor::SpawnPrefab::SpawnPrefab(const HashString& _prefab, const Math::Pt3D& _spawn)
-	: mPrefab{_prefab}, mSpawnPt{_spawn}
+	: mPrefab{ _prefab }, mSpawnPt{ _spawn }, mnID{ Dystopia::GUIDGenerator::INVALID }
 {}
 
 bool Editor::SpawnPrefab::Do(void)
 {
-	return EditorMain::GetInstance()->GetSystem<EditorFactory>()->SpawnPrefab(mPrefab, mSpawnPt);
+	return EditorMain::GetInstance()->GetSystem<EditorFactory>()->SpawnPrefab(mPrefab, mSpawnPt, mnID);
 }
 
 bool Editor::SpawnPrefab::Undo(void)
 {
+	if (auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(mnID))
+	{
+		if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->DettachPrefab(mnID))
+		{
+			EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObjectP(mnID);
+			obj->Destroy();
+			return true;
+		}
+		return false;
+	}
 	return false;
 }
 
