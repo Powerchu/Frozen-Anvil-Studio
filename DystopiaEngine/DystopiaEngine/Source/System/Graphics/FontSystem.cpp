@@ -94,8 +94,8 @@ Dystopia::Font* Dystopia::FontSystem::LoadFont(const std::string& _strName)
 
 Dystopia::Font* Dystopia::FontSystem::LoadExisting(const HashString& _strPath, Font* _out)
 {
-	Image* fontAtlas = ImageParser::LoadBMP((_strPath + ".bmp").c_str());
-	auto pTexture = EngineCore::GetInstance()->Get<TextureSystem>()->LoadRaw<Texture2D>(fontAtlas, _strPath.c_str());
+	//Image* fontAtlas = ImageParser::LoadBMP((_strPath + ".bmp").c_str());
+	auto pTexture = EngineCore::GetInstance()->Get<TextureSystem>()->LoadTexture<Texture2D>(_strPath.c_str());
 	_out->mpAtlas = EngineCore::GetInstance()->Get<TextureSystem>()->GenAtlas();
 	_out->mpAtlas->SetTexture(pTexture);
 

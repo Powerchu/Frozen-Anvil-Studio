@@ -17,10 +17,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Texture2D.h"
 #include "System/Graphics/TextureAtlas.h"
 
+#include "System/Driver/Driver.h"
+#include "System/File/FileSystem.h"
+
 #include "DataStructure/MagicArray.h"
 
 #include "Globals.h"
 #include "IO/TextSerialiser.h"
+
+#include <GL\glew.h>
+
 
 Dystopia::TextureSystem::TextureSystem(void) noexcept
 	: mTextures{}
@@ -30,6 +36,25 @@ Dystopia::TextureSystem::TextureSystem(void) noexcept
 Dystopia::TextureSystem::~TextureSystem(void) noexcept
 {
 	Shutdown();
+}
+
+void Dystopia::TextureSystem::EditorUpdate(void) noexcept
+{
+	auto pFileSys = EngineCore::GetInstance()->Get<FileSystem>();
+
+	for (auto& e : mTextures)
+	{
+		if (auto n = pFileSys->DetectFileChanges(e.GetPath(), nullptr, 0))
+		{
+			if (Image* pImg = LoadImage(e.GetPath()))
+			{
+				e.Bind();
+
+
+				e.Unbind();
+			}
+		}
+	}
 }
 
 void Dystopia::TextureSystem::Shutdown(void) noexcept
@@ -68,21 +93,70 @@ Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(const std::string& _strP
 
 Dystopia::Image* Dystopia::TextureSystem::ImportImage(const HashString& _strPath)
 {
-	auto meta     = _strPath + Gbl::METADATA_EXT;
-	auto metaFile = Serialiser::OpenFile<TextSerialiser>(meta.c_str());
+	Image* pImg = nullptr;
+	auto meta = _strPath + "." + Gbl::METADATA_EXT;
+
+	// TODO
+	if (EngineCore::GetInstance()->Get<FileSystem>()->CheckFileExist(_strPath.c_str(), eFileDir::eResource))
+	{
+		auto metaFile = Serialiser::OpenFile<TextSerialiser>(meta.c_str());
+
+		if (!metaFile.EndOfInput())
+		{
+			pImg = DefaultAllocator<Image>::ConstructAlloc();
+
+			metaFile.ConsumeStartBlock();
+			metaFile >> pImg->mstrName;
+			metaFile >> pImg->mbCompressed;
+			metaFile >> pImg->mbRGB;
+			metaFile >> pImg->mnRawFormat;
+			metaFile >> pImg->mnFormat;
+		}
+	}
+
+	return pImg;
+}
+
+Dystopia::Image* Dystopia::TextureSystem::LoadImage(std::string const& _strPath)
+{
+	Image *loaded = nullptr, *img = ImportImage(_strPath.c_str());
+	auto fileType = _strPath[_strPath.rfind('.') + 1];
+
+	if ('p' == fileType || 'P' == fileType)
+	{
+		loaded = ImageParser::LoadPNG(_strPath, img);
+	}
+	else if ('b' == fileType || 'B' == fileType)
+	{
+		loaded = ImageParser::LoadBMP(_strPath, img);
+	}
+	else if ('d' == fileType || 'D' == fileType)
+	{
+		loaded = ImageParser::LoadDDS(_strPath, img);
+	}
+
+	if (nullptr == loaded)
+	{
+		SaveTextureSetting(loaded);
+	}
+
+	return loaded;
+}
+
+void Dystopia::TextureSystem::SaveTextureSetting(Image* _pImg)
+{
+	auto path = EngineCore::GetInstance()->Get<FileSystem>()->GetFullPath(_pImg->mstrName.c_str(), eFileDir::eResource) + Gbl::METADATA_EXT;
+	auto metaFile = Serialiser::OpenFile<TextSerialiser>(path.c_str());
 
 	if (!metaFile.EndOfInput())
 	{
-		Image* p = DefaultAllocator<Image>::ConstructAlloc();
-
-		metaFile.ConsumeStartBlock();
-		metaFile >> p->mstrName;
-		metaFile >> p->mbCompressed;
-		metaFile >> p->mbRGB;
-		metaFile >> p->mnRawFormat;
-		metaFile >> p->mnFormat;
+		metaFile.InsertStartBlock();
+		metaFile << _pImg->mstrName;
+		metaFile << _pImg->mbCompressed;
+		metaFile << _pImg->mbRGB;
+		metaFile << _pImg->mnRawFormat;
+		metaFile << _pImg->mnFormat;
 	}
-
-	return nullptr;
 }
+
 

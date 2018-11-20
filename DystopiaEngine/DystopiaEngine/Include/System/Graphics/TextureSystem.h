@@ -40,6 +40,8 @@ namespace Dystopia
 
 		void Shutdown(void) noexcept;
 
+		void EditorUpdate(void) noexcept;
+
 		Image* ImportImage(const HashString&);
 
 		template <typename Ty = Texture>
@@ -62,6 +64,7 @@ namespace Dystopia
 		MagicArray<Texture> mTextures;
 		MagicArray<TextureAtlas> mAtlas;
 
+		Image* LoadImage(std::string const& _strPath);
 		void SaveTextureSetting(Image*);
 	};
 }
@@ -98,34 +101,21 @@ Ty* Dystopia::TextureSystem::LoadTexture(std::string const& _strPath)
 		return static_cast<Ty*>(&*it);
 	}
 
-	Image* img = ImportImage(_strPath.c_str()), *loaded;
-	auto fileType = _strPath[_strPath.rfind('.') + 1];
+	auto loaded = LoadImage(_strPath);
 
-	if ('p' == fileType || 'P' == fileType)
+	if (loaded)
 	{
-		loaded = ImageParser::LoadPNG(_strPath, img);
-	}
-	else if ('b' == fileType || 'B' == fileType)
-	{
-		loaded = ImageParser::LoadBMP(_strPath, img);
-	}
-	else if ('d' == fileType || 'D' == fileType)
-	{
-		loaded = ImageParser::LoadDDS(_strPath, img);
+		auto ret = mTextures.EmplaceAs<Ty>(_strPath);
+		ret->LoadTexture(loaded);
+
+		DefaultAllocator<void>::Free(loaded->mpImageData);
+		loaded->mpImageData = nullptr;
+		mImageData.emplace(HashString{ _strPath.c_str() }, Ut::Move(*loaded));
+		return ret;
 	}
 
-	auto ret = mTextures.EmplaceAs<Ty>(_strPath);
-	ret->LoadTexture(loaded);
-
-	if (nullptr == img)
-	{
-		SaveTextureSetting(loaded);
-	}
-
-	loaded->mpImageData = nullptr;
-	mImageData.emplace(HashString{ _strPath.c_str() }, Ut::Move(*loaded));
-
-	return ret;
+	DEBUG_BREAK(!loaded, "Texture System Error: Failed to load texture \"%s\"", _strPath.c_str());
+	return nullptr;
 }
 
 template <>

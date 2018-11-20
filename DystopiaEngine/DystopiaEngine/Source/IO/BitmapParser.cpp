@@ -319,8 +319,8 @@ Image* ImageParser::LoadBMP(const std::string& _path, Image* _pImage)
 bool ImageParser::WriteBMP(const std::string& _path, void* _pImg, int _nWidth, int _nHeight)
 {
 	Image mData{
-		_path.substr(_path.find_last_of("/\\") + 1).c_str(), 
-		false, 0u, 0u, static_cast<unsigned>(_nWidth), static_cast<unsigned>(_nHeight), 4u, 1u, _pImg
+		_path.substr(_path.find_last_of("/\\") + 1).c_str(), false, false,
+		0u, 0u, static_cast<unsigned>(_nWidth), static_cast<unsigned>(_nHeight), 4u, 1u, _pImg
 	};
 
 	auto ret = WriteBMP(_path, &mData);
