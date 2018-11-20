@@ -81,11 +81,9 @@ namespace Dystopia
 
 	private:
 
-		Font* mData;
+		Font* mpData;
 		HashString mText;
 		AutoArray<Gfx::Vertex> mVerts;
-
-		unsigned mnBaseMesh;
 
 		Math::Vector4 mColor;
 

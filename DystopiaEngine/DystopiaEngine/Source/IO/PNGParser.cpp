@@ -46,22 +46,25 @@ namespace
 	};
 }
 
-Image* ImageParser::LoadPNG(const std::string& _strName)
+Image* ImageParser::LoadPNG(const std::string& _strName, Image* _pImage)
 {
 	std::vector<unsigned char> buf;
 
-	Image* fileData = Dystopia::DefaultAllocator<Image>::ConstructAlloc(
-		false,
-		unsigned(GL_SRGB_ALPHA), unsigned(GL_RGBA),
-		0u, 0u, 4u, 1u, nullptr
-	);
-	
-	lodepng::decode(buf, fileData->mnWidth, fileData->mnHeight, _strName.c_str());
+	if (!_pImage)
+	{
+		_pImage = Dystopia::DefaultAllocator<Image>::ConstructAlloc(
+			_strName.substr(_strName.find_last_of("/\\") + 1).c_str(),
+			false, false, unsigned(GL_SRGB_ALPHA), unsigned(GL_RGBA),
+			0u, 0u, 4u, 1u, nullptr
+		);
+	}
 
-	fileData->mpImageData = Dystopia::DefaultAllocator<void>::Alloc(buf.size());
-	std::memcpy(fileData->mpImageData, &buf[0], buf.size());
+	lodepng::decode(buf, _pImage->mnWidth, _pImage->mnHeight, _strName.c_str());
 
-	return fileData;
+	_pImage->mpImageData = Dystopia::DefaultAllocator<void>::Alloc(buf.size());
+	std::memcpy(_pImage->mpImageData, &buf[0], buf.size());
+
+	return _pImage;
 }
 
 

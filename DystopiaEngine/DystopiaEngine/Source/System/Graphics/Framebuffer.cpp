@@ -46,7 +46,7 @@ Dystopia::Framebuffer::~Framebuffer(void) noexcept
 void Dystopia::Framebuffer::Init(void)
 {
 	unsigned format = mbAlpha ? GL_RGBA : GL_RGB;
-	Image tmp = { false, format, format, mnWidth, mnHeight, mbAlpha ? 4u : 3u, 1u, nullptr };
+	Image tmp = { "", false, format, format, mnWidth, mnHeight, mbAlpha ? 4u : 3u, 1u, nullptr };
 	mpTexture = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadRaw<Texture2D>(&tmp);
 
 	DEBUG_ASSERT(!mpTexture, "Framebuffer Error: Failed to create texture!\n");

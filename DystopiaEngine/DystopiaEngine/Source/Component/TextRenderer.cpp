@@ -34,8 +34,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::TextRenderer::TextRenderer(void) noexcept
-	: Renderer{}, mText {}, mnBaseMesh{ Ut::Constant<decltype(mnBaseMesh), -1>::value }, mColor{ 1.f, 1.f, 1.f },
-	mData{ nullptr }
+	: Renderer{}, mText {}, mColor{ 1.f, 1.f, 1.f },
+	mpData{ nullptr }
 {
 }
 
@@ -45,13 +45,16 @@ void Dystopia::TextRenderer::Awake(void)
 
 	if (!mpMesh)
 	{
-		mnBaseMesh = EngineCore::GetInstance()->Get<MeshSystem>()->GenerateRaw();
+		auto pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
+		auto pBaseMesh = pMeshSys->GetRaw(pMeshSys->GenerateRaw());
 		mpMesh = EngineCore::GetInstance()->Get<MeshSystem>()->CreateMesh(
-			EngineCore::GetInstance()->Get<MeshSystem>()->GetRaw(mnBaseMesh), 0
+			pBaseMesh, 0
 		);
+
+		pBaseMesh->BuildEmpty<VertexBuffer, UVBuffer, IndexBuffer>();
 	}
 
-	if (!mData)
+	if (!mpData)
 		SetFont("Times New Roman.ttf");
 
 	RegenMesh();
@@ -83,8 +86,8 @@ void Dystopia::TextRenderer::SetFont(const char* _strPath)
 
 void Dystopia::TextRenderer::SetFont(const std::string& _strPath)
 {
-	mData = EngineCore::GetInstance()->Get<FontSystem>()->LoadFont(_strPath);
-	mpTexture = mData->mpAtlas->GetInternal();
+	mpData = EngineCore::GetInstance()->Get<FontSystem>()->LoadFont(_strPath);
+	mpTexture = mpData->mpAtlas->GetInternal();
 }
 
 void Dystopia::TextRenderer::RegenMesh(void)
@@ -93,7 +96,7 @@ void Dystopia::TextRenderer::RegenMesh(void)
 	AutoArray<Gfx::UV> uvs;
 	AutoArray<short> indices;
 
-	auto& atlas = mData->mpAtlas->GetAllSections();
+	auto& atlas = mpData->mpAtlas->GetAllSections();
 
 	short index = 0;
 
@@ -102,7 +105,7 @@ void Dystopia::TextRenderer::RegenMesh(void)
 	for (auto& e : mText)
 	{
 		auto const n = e - ' ';
-		auto& ch = mData->mSpaces[n];
+		auto& ch = mpData->mSpaces[n];
 
 		y = ch.mnBearingY * scale;
 		float const dx = ch.mnBearingX * scale;
@@ -130,7 +133,6 @@ void Dystopia::TextRenderer::RegenMesh(void)
 		x += ch.mnAdvance * scale;
 	}
 
-	auto pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
 	mpMesh->UpdateBuffer<VertexBuffer>(verts);
 	mpMesh->UpdateBuffer<UVBuffer>(uvs);
 	mpMesh->UpdateBuffer<IndexBuffer>(indices);
@@ -157,7 +159,7 @@ void Dystopia::TextRenderer::Serialise(TextSerialiser& _out) const
 {
 	Component::Serialise(_out);
 
-	_out << mData->mstrName;
+	_out << mpData->mstrName;
 	_out << mText;
 }
 
@@ -183,7 +185,7 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 
 		RegenMesh();
 	}
-	EGUI::Display::EmptyBox("Font ", 200, (mData) ? mData->mstrName.c_str() : "-empty-", true);
+	EGUI::Display::EmptyBox("Font ", 200, (mpData) ? mpData->mstrName.c_str() : "-empty-", true);
 
 	Dystopia::File* t = nullptr;
 	if (auto i = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::TTF))
@@ -200,7 +202,7 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 	EGUI::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 	{
-		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(static_cast<void(TextRenderer::*)(const char*)>(&TextRenderer::SetFont), mpAtlas->GetName().c_str());
+		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(static_cast<void(TextRenderer::*)(const char*)>(&TextRenderer::SetFont), mpData->mpAtlas->GetName().c_str());
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(static_cast<void(TextRenderer::*)(const char*)>(&TextRenderer::SetFont), "");
 		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 	}

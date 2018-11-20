@@ -188,31 +188,20 @@ namespace BMP
 		return data;
 	}
 
-	Image* ReadData(Dystopia::BinarySerializer& _in, InfoBMP& _info, ColorRGBA(&_palette)[256])
+	void ReadData(Dystopia::BinarySerializer& _in, InfoBMP& _info, ColorRGBA(&_palette)[256], Image* _pImage)
 	{
-		Image* data = Dystopia::DefaultAllocator<Image>::ConstructAlloc(
-			false,
-			static_cast<unsigned>(GL_SRGB_ALPHA), static_cast<unsigned>(GL_RGBA),
-			static_cast<unsigned>(_info.mWidth ), 
-			static_cast<unsigned>(_info.mHeight),
-			4u, 1u,
-			nullptr
-		);
-
 		switch (_info.mBits)
 		{
 		case 8:
-			data->mpImageData = Palette_ColorBMP(_in, _info, _palette);
+			_pImage->mpImageData = Palette_ColorBMP(_in, _info, _palette);
 			break;
 		case 24:
-			data->mpImageData = RGB_ColorBMP(_in, _info);
+			_pImage->mpImageData = RGB_ColorBMP(_in, _info);
 			break;
 		case 32:
-			data->mpImageData = RGBA_ColorBMP(_in, _info);
+			_pImage->mpImageData = RGBA_ColorBMP(_in, _info);
 			break;
 		}
-
-		return data;
 	}
 
 	template <typename Ty>
@@ -257,7 +246,7 @@ namespace BMP
 	}
 }
 
-Image* ImageParser::LoadBMP(const std::string& _path)
+Image* ImageParser::LoadBMP(const std::string& _path, Image* _pImage)
 {
 	auto file = Dystopia::Serialiser::OpenFile<Dystopia::BinarySerializer>(_path.c_str());
 
@@ -309,19 +298,35 @@ Image* ImageParser::LoadBMP(const std::string& _path)
 	if ( fileHeader.mOffset > sizeof(HeaderBMP) + fileInfo.mSize)
 		file.Skip(fileHeader.mOffset - (sizeof(HeaderBMP) + fileInfo.mSize));
 
-	auto fileData = BMP::ReadData(file, fileInfo, mPalette);
+	if (!_pImage)
+	{
+		// We don't know what to set it to
+		// Default to something and allow change later
+		_pImage = Dystopia::DefaultAllocator<Image>::ConstructAlloc(
+			_path.substr(_path.find_last_of("/\\") + 1).c_str(), false, false,
+			static_cast<unsigned>(GL_SRGB_ALPHA), static_cast<unsigned>(GL_RGBA),
+			static_cast<unsigned>(fileInfo.mWidth),
+			static_cast<unsigned>(fileInfo.mHeight),
+			4u, 1u,
+			nullptr
+		);
+	}
 
-	return fileData;
+	BMP::ReadData(file, fileInfo, mPalette, _pImage);
+	return _pImage;
 }
 
 bool ImageParser::WriteBMP(const std::string& _path, void* _pImg, int _nWidth, int _nHeight)
 {
 	Image mData{
+		_path.substr(_path.find_last_of("/\\") + 1).c_str(), 
 		false, 0u, 0u, static_cast<unsigned>(_nWidth), static_cast<unsigned>(_nHeight), 4u, 1u, _pImg
 	};
-	auto ret = WriteBMP(_path, &mData);
-	mData.mpImageData = nullptr;
 
+	auto ret = WriteBMP(_path, &mData);
+
+	// We're not responsible for freeing it
+	mData.mpImageData = nullptr; 
 	return ret;
 }
 

@@ -70,7 +70,7 @@ void Dystopia::Mesh::UpdateBuffer(AutoArray<typename T::type> const& _buf, bool 
 	if (1 < pRaw->GetRefCount())
 	{
 		pRaw->DecRef();
-		pRaw = pRaw->RequestDuplicate(mnVertices, mnOffset, T::value);
+		pRaw = pRaw->RequestDuplicate(mnVertices, reinterpret_cast<uintptr_t>(mnOffset), T::value);
 		UpdateMesh(pRaw);
 	}
 

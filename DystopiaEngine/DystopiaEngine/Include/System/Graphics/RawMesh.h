@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/VertexDefs.h"
 
 #include "DataStructure/AutoArray.h"
+#include "Utility/Utility.h"
 #include "Utility/MetaDataStructures.h"
 
 
@@ -45,6 +46,9 @@ namespace Dystopia
 			const AutoArray<IndexBuffer::type>&
 		);
 
+		template <typename ... T>
+		void BuildEmpty(void);
+
 		template <typename T>
 		void UpdateBuffer(AutoArray<typename T::type> const&, bool _bFreq = false);
 		template <typename T>
@@ -64,36 +68,49 @@ namespace Dystopia
 
 		void UpdateBuffer(unsigned, unsigned, void*, ptrdiff_t sz, bool _bFreq);
 		void UpdateBufferRange(unsigned, unsigned, void*, ptrdiff_t sz, ptrdiff_t _offset);
+
+		void InitBuffersEmpty(bool, bool, bool, bool);
 	};
 }
 
+template <typename ... T>
+void Dystopia::RawMesh::BuildEmpty(void)
+{
+	InitBuffersEmpty(
+		Ut::MetaFind<VertexBuffer, T...>::value,
+		Ut::MetaFind<NormalBuffer, T...>::value,
+		Ut::MetaFind<UVBuffer    , T...>::value,
+		Ut::MetaFind<IndexBuffer , T...>::value
+	);
+}
+
 template <typename T>
-void UpdateBuffer(AutoArray<typename T::type> const& _arr, bool _bFreq)
+void Dystopia::RawMesh::UpdateBuffer(AutoArray<typename T::type> const& _arr, bool _bFreq)
 {
 	if constexpr (T::value == 3)
 	{
 		// GL_ELEMENT_ARRAY_BUFFER
-		UpdateBuffer(0x8893, T::value, _arr.begin(), _arr.size(), _bFreq)
+		UpdateBuffer(0x8893, (&mVtxBuffer)[T::value], _arr.begin(), _arr.size(), _bFreq);
 	}
 	else
 	{
 		// GL_ARRAY_BUFFER
-		UpdateBuffer(0x8892, T::value, _arr.begin(), _arr.size(), _bFreq)
+		UpdateBuffer(0x8892, (&mVtxBuffer)[T::value], _arr.begin(), _arr.size(), _bFreq);
 	}
 }
 
 template <typename T>
-void UpdateBufferRange(AutoArray<typename T::type> const&, ptrdiff_t _nOffset)
+void  Dystopia::RawMesh::UpdateBufferRange(AutoArray<typename T::type> const&, ptrdiff_t _nOffset)
 {
 	if constexpr (T::value == 3)
 	{
 		// GL_ELEMENT_ARRAY_BUFFER
-		UpdateBufferRange(0x8893, T::value, _arr.begin(), _arr.size(), _nOffset)
+		UpdateBufferRange(0x8893, (&mVtxBuffer)[T::value], _arr.begin(), _arr.size(), _nOffset);
 	}
 	else
 	{
 		// GL_ARRAY_BUFFER
-		UpdateBufferRange(0x8892, T::value, _arr.begin(), _arr.size(), _nOffset)
+		UpdateBufferRange(0x8892, (&mVtxBuffer)[T::value], _arr.begin(), _arr.size(), _nOffset);
 	}
 }
 

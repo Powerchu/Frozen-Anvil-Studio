@@ -22,7 +22,7 @@ namespace Dystopia
 	struct Image
 	{
 		HashString mstrName;
-		bool mbCompressed;
+		bool mbCompressed, mbRGB;
 		unsigned mnRawFormat, mnFormat;
 		unsigned mnWidth, mnHeight;
 		unsigned mnChannels, mnMipMaps;

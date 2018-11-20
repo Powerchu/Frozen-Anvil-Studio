@@ -78,6 +78,7 @@ Dystopia::Image* Dystopia::TextureSystem::ImportImage(const HashString& _strPath
 		metaFile.ConsumeStartBlock();
 		metaFile >> p->mstrName;
 		metaFile >> p->mbCompressed;
+		metaFile >> p->mbRGB;
 		metaFile >> p->mnRawFormat;
 		metaFile >> p->mnFormat;
 	}

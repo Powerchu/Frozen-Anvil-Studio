@@ -129,7 +129,7 @@ Dystopia::Font* Dystopia::FontSystem::LoadFromFont(const HashString& _strPath, F
 
 	FT_Face pFontFace;
 	Image charMap{
-		_out->mstrName, false, 0x1903, 0x1903,
+		_out->mstrName, false, true, 0x1903, 0x1903,
 		mnOutDim, mnOutDim, 1, 1, DefaultAllocator<char[]>::Alloc(mnOutDim * mnOutDim)
 	};
 

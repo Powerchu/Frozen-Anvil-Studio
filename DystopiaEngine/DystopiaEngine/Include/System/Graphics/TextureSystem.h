@@ -61,6 +61,8 @@ namespace Dystopia
 		std::map<HashString, Image> mImageData;
 		MagicArray<Texture> mTextures;
 		MagicArray<TextureAtlas> mAtlas;
+
+		void SaveTextureSetting(Image*);
 	};
 }
 
@@ -96,27 +98,32 @@ Ty* Dystopia::TextureSystem::LoadTexture(std::string const& _strPath)
 		return static_cast<Ty*>(&*it);
 	}
 
-	Image* img = ImportImage(_strPath.c_str());
+	Image* img = ImportImage(_strPath.c_str()), *loaded;
 	auto fileType = _strPath[_strPath.rfind('.') + 1];
 
 	if ('p' == fileType || 'P' == fileType)
 	{
-		img = ImageParser::LoadPNG(_strPath, &img);
+		loaded = ImageParser::LoadPNG(_strPath, img);
 	}
 	else if ('b' == fileType || 'B' == fileType)
 	{
-		img = ImageParser::LoadBMP(_strPath, &img);
+		loaded = ImageParser::LoadBMP(_strPath, img);
 	}
 	else if ('d' == fileType || 'D' == fileType)
 	{
-		img = ImageParser::LoadDDS(_strPath, &img);
+		loaded = ImageParser::LoadDDS(_strPath, img);
 	}
 
 	auto ret = mTextures.EmplaceAs<Ty>(_strPath);
-	ret->LoadTexture(img);
+	ret->LoadTexture(loaded);
 
-	img->mpImageData = nullptr;
-	mImageData.emplace(HashString{ _strPath.c_str() }, *img);
+	if (nullptr == img)
+	{
+		SaveTextureSetting(loaded);
+	}
+
+	loaded->mpImageData = nullptr;
+	mImageData.emplace(HashString{ _strPath.c_str() }, Ut::Move(*loaded));
 
 	return ret;
 }

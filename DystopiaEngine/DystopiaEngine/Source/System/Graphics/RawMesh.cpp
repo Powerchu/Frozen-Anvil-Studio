@@ -188,4 +188,39 @@ void Dystopia::RawMesh::UpdateBufferRange(unsigned _target, unsigned _nBuffer, v
 	UnbindMesh();
 }
 
+void Dystopia::RawMesh::InitBuffersEmpty(bool _bVtx, bool _bNml, bool _bUV, bool _bIndex)
+{
+	BindMesh();
+
+	if (_bVtx)
+	{
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, mVtxBuffer);
+		glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0); // Vertices
+	}
+	if (_bNml)
+	{
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, mNmlBuffer);
+		glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0); // Normals
+	}
+	if (_bUV)
+	{
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, mUVBuffer);
+		glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0); // UV
+	}
+	if (_bIndex)
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
+	}
+
+	UnbindMesh();
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 
