@@ -53,6 +53,7 @@ namespace Editor
 
 		void InsertNewGameObject(const Math::Pt3D& = Math::Pt3D{ 0, 0, 0 });
 		void RemoveGameObject(const uint64_t&);
+		void RemoveGameObject(AutoArray<uint64_t>&);
 
 
 

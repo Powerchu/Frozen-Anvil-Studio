@@ -14,10 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/SceneView.h"
 #include "Editor/EGUI.h"
-//#include "Editor/Editor.h"
-//#include "Editor/EditorEvents.h"
 #include "Editor/ConsoleLog.h"
-//#include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
 #include "Editor/EditorStates.h"
 
@@ -441,7 +438,8 @@ namespace Editor
 		const auto& selectedIDs = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetSelectedIDs();
 		if (!selectedIDs.size())
 			return;
-		else if (selectedIDs.size() == 1)
+		
+		if (selectedIDs.size() == 1)
 		{
 			auto& obj = *(Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(selectedIDs[0]));
 			DrawGizmoSingle(obj);

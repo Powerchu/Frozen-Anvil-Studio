@@ -171,7 +171,7 @@ namespace Editor
 
 		Transform& tempTransform = *mpFocus->GetComponent<Transform>();
 		if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName() + "##" +
-			std::to_string(mpFocus->GetID())))
+			std::to_string(mpFocus->GetID()), nullptr, false, false, true, true))
 		{
 			tempTransform.EditorUI();
 			EGUI::Display::EndTreeNode();
@@ -182,8 +182,7 @@ namespace Editor
 		{
 			EGUI::PushID(i);
 			EGUI::Display::HorizontalSeparator();
-			bool open = EGUI::Display::StartTreeNode(arrComp[i]->GetEditorName() + "##" +
-				std::to_string(mpFocus->GetID()));
+			bool open = EGUI::Display::StartTreeNode(arrComp[i]->GetEditorName() + "##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(arrComp[i]);
 			if (open)
 			{
@@ -198,8 +197,7 @@ namespace Editor
 		for (auto & c : arrBehav)
 		{
 			EGUI::Display::HorizontalSeparator();
-			bool open = EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } +"##" +
-				std::to_string(mpFocus->GetID()));
+			bool open = EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } +"##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(c);
 			if (open)
 			{

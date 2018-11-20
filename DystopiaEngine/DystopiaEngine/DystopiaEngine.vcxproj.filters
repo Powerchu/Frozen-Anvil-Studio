@@ -82,12 +82,6 @@
     <ClCompile Include="Source\Editor\Dock.cpp">
       <Filter>Editor\Docking</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EGUI.cpp">
-      <Filter>Editor\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EGuiDisplay.cpp">
-      <Filter>Editor\UI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\HierarchyView.cpp">
       <Filter>Editor\Main\Panels\Hierarchy View</Filter>
     </ClCompile>
@@ -349,6 +343,12 @@
     <ClCompile Include="Source\Editor\EditorFactory.cpp">
       <Filter>Editor\Main\Systems\Factory</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\EGUI.cpp">
+      <Filter>Editor\Main\Systems\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EGuiDisplay.cpp">
+      <Filter>Editor\Main\Systems\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -524,9 +524,6 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\Dock.h">
       <Filter>Editor\Docking</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EGUI.h">
-      <Filter>Editor\UI</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\HierarchyView.h">
       <Filter>Editor\Main\Panels\Hierarchy View</Filter>
@@ -810,9 +807,6 @@
     <ClInclude Include="Include\System\Events\Events.h">
       <Filter>Game Engine\Systems\Event</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\DragStatus.h">
-      <Filter>Editor\UI</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Component\AudioSource.h">
       <Filter>Game Engine\Components\Audio</Filter>
     </ClInclude>
@@ -947,6 +941,12 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\EditorMessages.h">
       <Filter>Editor\Main\Message</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\DragStatus.h">
+      <Filter>Editor\Main\Systems\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\EGUI.h">
+      <Filter>Editor\Main\Systems\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1093,9 +1093,6 @@
     </Filter>
     <Filter Include="Editor\Commands">
       <UniqueIdentifier>{573a6f53-0ee9-4c6b-bda7-2e8af2e8b43c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\UI">
-      <UniqueIdentifier>{f31040be-52b0-48eb-96d0-207560e3376d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Payload">
       <UniqueIdentifier>{618f59c4-4557-4253-8ca9-16e74a8be22a}</UniqueIdentifier>

@@ -16,14 +16,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <consoleapi2.h>
 #include <winuser.h>
 #include "Editor/EGUI.h"
-//#include "Editor/Commands.h"
-//#include "Editor/CommandList.h"
 #include "Editor/EditorCommands.h"
 #include "Editor/CommandTypes.h"
 
+#include "System/Driver/Driver.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Graphics/Texture.h"
+
 #include "DataStructure/Stack.h"
 
-//Dystopia::CommandHandler *gContextComdHND = nullptr;
 Stack<float> g_StackLeftAlign{ 100 };
 
 namespace EGUI
@@ -182,10 +183,19 @@ namespace EGUI
 			va_end(args);
 		}
 
-		bool TextField(const std::string& _label, char* _outputbuffer, size_t _size, bool _showLabel, float _width)
+		void LabelWrapped(const char *_formatLabel, ...)
 		{
-			ImGuiInputTextFlags flags = ImGuiInputTextFlags_AutoSelectAll | 
-										ImGuiInputTextFlags_EnterReturnsTrue;
+			va_list args;
+			va_start(args, _formatLabel);
+			ImGui::TextWrappedV(_formatLabel, args);
+			va_end(args);
+		}
+
+		bool TextField(const std::string& _label, char* _outputbuffer, size_t _size, bool _showLabel, float _width, bool _onlyEnterReturnsTrue)
+		{
+			ImGuiInputTextFlags flags = ImGuiInputTextFlags_AutoSelectAll;
+			if (_onlyEnterReturnsTrue)
+				flags |= ImGuiInputTextFlags_EnterReturnsTrue;
 			ImGui::PushItemWidth(_width);
 			if (_showLabel)
 			{
@@ -410,11 +420,13 @@ namespace EGUI
 			return false;
 		}
 
-		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow, bool _defaultOpen)
+		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow, bool _defaultOpen, bool _singleClickOpen)
 		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
 			flags = _highlighted ? flags | ImGuiTreeNodeFlags_Selected : flags;
 			flags = _noArrow ? flags | ImGuiTreeNodeFlags_Leaf : flags;
+			flags = _singleClickOpen ? flags : flags | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
 
 			if (_highlighted)
 				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
@@ -469,11 +481,83 @@ namespace EGUI
 			ImGui::EndDragDropTarget();
 		}
 
-		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
-			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize, int _imgId)
+		bool PrefabPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
+			const Math::Vec2& _displaySize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize)
 		{
+			auto originalPos = ImGui::GetCursorPos();
+			ImVec2 size{ _displaySize.x * 0.9f, _displaySize.y * 0.75f };
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
+			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), _displaySize);
+			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
+			ImGui::PopStyleColor();
+			ImGui::PopStyleVar();
+			if (payload) EndPayload();
+
+			ImGui::SetCursorPos(ImVec2{ originalPos.x + _displaySize.x * 0.05f, originalPos.y + size.y*0.1f});
+			IconGameObj(_uniqueId.c_str(), size.x, size.y);
+			ImGui::SetCursorPos(ImVec2{ originalPos.x + 1, originalPos.y + size.y});
+			ImGui::TextWrapped(_label.c_str());
+			return btn;
+		}
+
+		bool ImagePayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
+			const Math::Vec2& _displaySize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize)
+		{
+			auto originalPos = ImGui::GetCursorPos();
+
+			auto img = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>()->LoadTexture(static_cast<Editor::File*>(_pData)->mPath.c_str());
+			size_t id = static_cast<size_t>(img->GetID());
+			float imageMaxHeight = _displaySize.y * 0.75f;
+			float imageMaxWidth = _displaySize.x * 0.9f;
+			float aspect = imageMaxWidth / imageMaxHeight;
+			float ix = static_cast<float>(aspect * img->GetWidth());
+			float iy = static_cast<float>(img->GetHeight());
+			float sx = imageMaxWidth;
+			float sy = imageMaxHeight;
+			auto mImgSize = (sx / sy) > (ix / iy) ? Math::Vec2{ ix * (sy / iy), sy } :
+													Math::Vec2{ sx, iy * (sx / ix) };
+
+			auto posImage = Math::Vec2{ (sx - mImgSize.x) / 2, (sy - mImgSize.y) / 2 };
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
+			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), _displaySize);
+			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
+			ImGui::PopStyleColor();
+			ImGui::PopStyleVar();
+			if (payload) EndPayload();
+
+			ImGui::SetCursorPos(ImVec2{ originalPos.x + posImage.x + _displaySize.x * 0.05f, originalPos.y + posImage.y });
+			ImGui::Image(reinterpret_cast<void*>(id), ImVec2{ mImgSize.x, mImgSize.y});
+			ImGui::SetCursorPos(ImVec2{ originalPos.x + 1, originalPos.y + imageMaxHeight });
+			ImGui::TextWrapped(_label.c_str());
+			return btn;
+		}
+
+		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
+			const Math::Vec2& _displaySize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize)
+		{
+			switch (_tagLoad)
+			{
+				//	FILE,
+				//	COMPONENT,
+			case SCENE:
+				return false;
+			case MP3:
+			case WAV:
+				return false;
+			case PREFAB:
+				return PrefabPayload(_uniqueId, _label, _tooltip, _displaySize, _tagLoad, _pData, _dataSize);
+			case BMP:
+			case PNG:
+			case DDS:
+				return ImagePayload(_uniqueId, _label, _tooltip, _displaySize, _tagLoad, _pData, _dataSize);
+			}
+
 			ImVec2 pos = ImGui::GetCursorScreenPos();
-			ImVec2 size{ _displaytSize.x, _displaytSize.y };
+			ImVec2 size{ _displaySize.x, _displaySize.y };
 			const float iconWidth = size.x / 2;
 			const float iconHeight = size.y / 2;
 			const float offsetX = iconWidth / 2;
@@ -488,12 +572,7 @@ namespace EGUI
 			if (payload) EndPayload();
 
 			ImGui::SetCursorScreenPos(posIcon);
-			if (_imgId == -1)
-				IconFile(_uniqueId.c_str(), size.x, size.y);
-			else
-			{
-				ImGui::Image(reinterpret_cast<void*>(static_cast<size_t>(_imgId)), ImVec2{ size.x / 2, size.y / 2 });
-			}
+			IconFile(_uniqueId.c_str(), size.x, size.y);
 			ImGui::SetCursorScreenPos(posText);
 			ImGui::TextWrapped(_label.c_str());
 			return btn;

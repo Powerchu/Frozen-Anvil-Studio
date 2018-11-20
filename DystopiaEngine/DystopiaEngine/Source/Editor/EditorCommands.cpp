@@ -169,6 +169,24 @@ void Editor::EditorCommands::RemoveGameObject(const uint64_t& _objID)
 	ExecuteDo(Dystopia::DefaultAllocator<DeleteGameObject>::ConstructAlloc(_objID));
 }
 
+void Editor::EditorCommands::RemoveGameObject(AutoArray<uint64_t>& _arrIDs)
+{
+	if (mbDisableCommands)
+		return;
+
+	if (_arrIDs.size() == 1)
+	{
+		RemoveGameObject(_arrIDs[0]);
+		return;
+	}
+
+	AutoArray<::Editor::Command*> mArrComds;
+	for (const auto& id : _arrIDs)
+		mArrComds.push_back(Dystopia::DefaultAllocator<DeleteGameObject>::ConstructAlloc(id));
+
+	ExecuteDo(Dystopia::DefaultAllocator<BatchExecute>::ConstructAlloc(mArrComds));
+}
+
 void Editor::EditorCommands::RemoveStray(std::deque<Command*>& _targetDeque)
 {
 	Command *pTemp = _targetDeque.back();

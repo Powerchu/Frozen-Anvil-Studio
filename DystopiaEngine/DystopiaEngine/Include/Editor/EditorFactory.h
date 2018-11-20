@@ -50,13 +50,16 @@ namespace Editor
 
 		bool SpawnPrefab(const HashString&, const Math::Pt3D& = Math::Pt3D{ 0,0,1.f });
 
-		bool SaveAsPrefab(const uint64_t& _objID, Dystopia::TextSerialiser&);
+		bool SaveAsPrefab(const uint64_t& _objID, Dystopia::TextSerialiser&, bool _temp = false);
+		bool SaveAsPrefabTemp(const uint64_t& _objID, Dystopia::TextSerialiser&);
 
 		// for factory only
 		bool LoadAsPrefab(const HashString& _path);
 
 		// for undo redo only
 		void LoadIntoScene(Dystopia::TextSerialiser&);
+
+		void DettachPrefab(const uint64_t&);
 
 	private:
 		struct PrefabData
@@ -70,13 +73,13 @@ namespace Editor
 			AutoArray<AutoArray<uint64_t>> mArrInstanced;
 		};
 
-		void SaveChild(Dystopia::GameObject&, Dystopia::TextSerialiser&);
+		void SaveChild(Dystopia::GameObject&, Dystopia::TextSerialiser&, bool _temp = false);
 		void LoadChild(Dystopia::GameObject&, Dystopia::TextSerialiser&);
-		bool SavePrefab(const uint64_t& _objID, Dystopia::TextSerialiser&);
+		bool SavePrefab(const uint64_t& _objID, Dystopia::TextSerialiser&, bool _temp = false);
 		bool LoadPrefab(Dystopia::GameObject&, Dystopia::TextSerialiser&);
 
 		void SaveSegment(Dystopia::GameObject&, Dystopia::TextSerialiser&);
-		void SaveSegment(const AutoArray<Dystopia::Component*>&, Dystopia::TextSerialiser&);
+		void SaveSegment(Dystopia::GameObject&, const AutoArray<Dystopia::Component*>&, Dystopia::TextSerialiser&);
 		void SaveSegment(const AutoArray<Dystopia::Behaviour*>&, Dystopia::TextSerialiser&);
 		
 		unsigned LoadSegment(Dystopia::GameObject&, Dystopia::TextSerialiser&);

@@ -120,6 +120,22 @@ namespace Dystopia
 			::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->RemoveComponent<C>(_pOwner->GetID(), pComponent);
 			return true;
 		}
+
+		static bool IsolateSerialise(GameObject* _pOwner, TextSerialiser& _out)
+		{
+			C* pComponent = _pOwner->GetComponent<C>();
+			if (!pComponent)
+				return false;
+			pComponent->Serialise(_out);
+			return true;
+		}
+
+		static bool IsolateUnserialise(Component* _pCom, TextSerialiser& _in)
+		{
+			static_cast<C*>(_pCom)->Unserialise(_in);
+			static_cast<C*>(_pCom)->Awake();
+			return true;
+		}
 	};
 
 	struct ComponentList
@@ -153,6 +169,22 @@ namespace Dystopia
 					return mData[_i](_owner);
 				return false;
 			}
+
+			bool IsolateSerialise(unsigned int _i, GameObject *_owner, TextSerialiser& _out)
+			{
+				static auto mData = Ctor::MakeArray<bool(*)(GameObject *, TextSerialiser&)>(RequestComponent<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::IsolateSerialise...);
+				if (_i < size || _i >= 0)
+					return mData[_i](_owner, _out);
+				return false;
+			}
+
+			bool IsolateUnserialise(unsigned int _i, Component* _pCom, TextSerialiser& _in)
+			{
+				static auto mData = Ctor::MakeArray<bool(*)(Component*, TextSerialiser&)>(RequestComponent<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::IsolateUnserialise...);
+				if (_i < size || _i >= 0)
+					return mData[_i](_pCom, _in);
+				return false;
+			}
 		};
 
 		Component* GetComponent(unsigned int _i, GameObject *_owner)
@@ -167,6 +199,16 @@ namespace Dystopia
 		bool RemoveComponentCommand(unsigned int _i, GameObject *_owner)
 		{ 
 			return mCollection.RemoveCommand(_i, _owner);
+		}
+
+		bool IsolateSerialise(unsigned int _i, GameObject *_owner, TextSerialiser& _out)
+		{
+			return mCollection.IsolateSerialise(_i, _owner, _out);
+		}
+
+		bool IsolateUnserialise(Component *_pCom, TextSerialiser& _in)
+		{
+			return mCollection.IsolateUnserialise(_pCom->GetRealComponentType(), _pCom, _in);
 		}
 
 		Collection<std::make_index_sequence<size>> mCollection;

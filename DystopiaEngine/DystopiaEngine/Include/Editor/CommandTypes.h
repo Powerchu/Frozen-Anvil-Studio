@@ -235,6 +235,20 @@ namespace Editor
 		AutoArray<Command*> mArrCommands;
 	};
 
+	class SpawnPrefab : public Command
+	{
+	public:
+		SpawnPrefab(const HashString& _prefab, const Math::Pt3D& = Math::Pt3D{ 0,0,0,1 });
+
+		bool Do(void);
+		bool Undo(void);
+		bool Unchanged(void) const;
+
+	private:
+		HashString mPrefab;
+		Math::Pt3D mSpawnPt;
+	};
+
 	template<typename C>
 	class AddComponent : public Command
 	{

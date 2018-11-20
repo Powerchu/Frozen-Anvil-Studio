@@ -52,7 +52,7 @@ bool Editor::InsertGameObject::Do(void)
 		o->SetFlag(Dystopia::eObjFlag::FLAG_LAYER_WORLD);
 		o->SetFlag(Dystopia::eObjFlag::FLAG_ACTIVE);
 		o->SetName(name.c_str());
-		o->GetComponent<Dystopia::Transform>()->SetPosition(mSpawnPt);
+		o->GetComponent<Dystopia::Transform>()->SetGlobalPosition(mSpawnPt);
 		return true;
 	}
 	return false;
@@ -104,7 +104,7 @@ bool Editor::DeleteGameObject::Do(void)
 		file += ".";
 		file += Gbl::PREFAB_EXT;
 		auto serial = Dystopia::TextSerialiser::OpenFile(file.c_str(), Dystopia::Serialiser::MODE_WRITE);
-		EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(mnObjID, serial);
+		EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefabTemp(mnObjID, serial);
 
 		o->Destroy();
 		EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(mnObjID);
@@ -168,6 +168,25 @@ bool Editor::BatchExecute::Undo(void)
 }
 
 bool Editor::BatchExecute::Unchanged(void) const
+{
+	return false;
+}
+
+Editor::SpawnPrefab::SpawnPrefab(const HashString& _prefab, const Math::Pt3D& _spawn)
+	: mPrefab{_prefab}, mSpawnPt{_spawn}
+{}
+
+bool Editor::SpawnPrefab::Do(void)
+{
+	return EditorMain::GetInstance()->GetSystem<EditorFactory>()->SpawnPrefab(mPrefab, mSpawnPt);
+}
+
+bool Editor::SpawnPrefab::Undo(void)
+{
+	return false;
+}
+
+bool Editor::SpawnPrefab::Unchanged(void) const
 {
 	return false;
 }
