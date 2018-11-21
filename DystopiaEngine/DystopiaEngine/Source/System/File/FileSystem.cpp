@@ -120,7 +120,7 @@ namespace Dystopia
 		for (auto const & elem : DirIter)
 		{
 			std::wstring filename = elem.path().filename().wstring();
-			if (filename == wstrFileName)
+			if (filename == wstrFileName || std::filesystem::equivalent(elem,_FileName))
 				return true;
 		}
 
