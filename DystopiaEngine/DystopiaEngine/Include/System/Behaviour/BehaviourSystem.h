@@ -31,9 +31,9 @@ namespace Dystopia
 
 	struct BehaviourWrap
 	{
-		BehaviourWrap(){}
+		BehaviourWrap() {}
 		BehaviourWrap(std::string const & _name, Behaviour *  _pointer)
-			:mName{_name}, mpBehaviour{ _pointer }
+			:mName{ _name }, mpBehaviour{ _pointer }
 		{
 		}
 		std::string mName;					      /*Name of BehaviourScript*/
@@ -46,13 +46,13 @@ namespace Dystopia
 
 #endif
 
-	class BehaviourSystem 
-	: public Systems
+	class BehaviourSystem
+		: public Systems
 	{
-	public :
+	public:
 #if !EDITOR
-		using AllBehaviour = 
-			Ut::MetaSortT_t <Ut::MetaLessThan, Ut::Collection 
+		using AllBehaviour =
+			Ut::MetaSortT_t <Ut::MetaLessThan, Ut::Collection
 			<
 
 			>>;
@@ -83,7 +83,7 @@ namespace Dystopia
 		MagicArray<BehaviourWrap> & GetAllBehaviour();
 		Behaviour * RequestBehaviour(uint64_t const & _ID, std::string const & _name);
 		Behaviour * RequestDuplicate(Behaviour * _PtrToDup, uint64_t _NewID);
-		
+
 		void ReplaceID(uint64_t _old, uint64_t _new, GameObject * _newOwner);
 
 		void ReAttach(void);
@@ -127,7 +127,7 @@ namespace Dystopia
 			BehaviourMessage Message(_FuncParams...);
 
 			auto Array = pGameObject->GetAllBehaviours();
-			for(auto & BehaveElem : Array)
+			for (auto & BehaveElem : Array)
 			{
 				/*Try to send Message to other components*/
 				_EDITOR_START_TRY
@@ -139,7 +139,7 @@ namespace Dystopia
 					_EDITOR_CODE(pGameObject->RemoveComponent(BehaveElem));
 					_EDITOR_CODE(BehaveElem->DestroyComponent());
 				}
-				
+
 			}
 		}
 
