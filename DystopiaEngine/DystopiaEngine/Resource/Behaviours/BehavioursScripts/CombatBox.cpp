@@ -143,6 +143,10 @@ namespace Dystopia
 
 	void Dystopia::CombatBox::OnTriggerExit(const GameObject * _obj)
 	{
+		if (!strcmp(name, _obj->GetNamePtr()))
+		{
+			targetViable = false;
+		}
 	}
 
 	CombatBox * CombatBox::Duplicate() const

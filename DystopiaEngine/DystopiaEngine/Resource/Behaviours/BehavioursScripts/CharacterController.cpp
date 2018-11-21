@@ -109,9 +109,11 @@ namespace Dystopia
 			mpInputSys->MapButton("Run Right", eButton::XBUTTON_DPAD_RIGHT);
 			mpInputSys->MapButton("Jump", eButton::XBUTTON_A);
 			mpInputSys->MapButton("Fly", eButton::XBUTTON_DPAD_UP);
-			mpInputSys->MapButton("Fireball", eButton::XBUTTON_B);
-			mpInputSys->MapButton("Missile", eButton::XBUTTON_Y);
+			mpInputSys->MapButton("Skill B", eButton::XBUTTON_B);
+			mpInputSys->MapButton("Skill Y", eButton::XBUTTON_Y);
 			mpInputSys->MapButton("Attack", eButton::XBUTTON_X);
+			mpInputSys->MapButton("SetForm", eButton::XBUTTON_LEFT_SHOULDER);
+			mpInputSys->MapButton("SetForce", eButton::XBUTTON_RIGHT_SHOULDER);
 		}
 		else
 		{
@@ -119,8 +121,8 @@ namespace Dystopia
 			mpInputSys->MapButton("Run Right", eButton::KEYBOARD_RIGHT);
 			mpInputSys->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
 			mpInputSys->MapButton("Fly", eButton::KEYBOARD_UP);
-			mpInputSys->MapButton("Fireball", eButton::KEYBOARD_C);
-			mpInputSys->MapButton("Missile", eButton::KEYBOARD_V);
+			mpInputSys->MapButton("Skill B", eButton::KEYBOARD_C);
+			mpInputSys->MapButton("Skill Y", eButton::KEYBOARD_V);
 		}
 
 		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
@@ -361,6 +363,8 @@ namespace Dystopia
 				}
 			}
 		}
+
+
 
 		if (mpInputSys->IsKeyTriggered("Attack"))
 		{
