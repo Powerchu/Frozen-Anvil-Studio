@@ -294,6 +294,7 @@ namespace Dystopia
 						newEvent.mfStaticFrictionCof  = DetermineStaticFriction(*other_body);
 					}
 					mbColliding = isInside  = true;
+					break;
 				}
 			}
 			if (isInside)
