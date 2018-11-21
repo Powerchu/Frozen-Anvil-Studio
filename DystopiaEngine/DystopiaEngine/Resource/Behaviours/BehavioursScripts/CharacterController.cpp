@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Collision/CollisionEvent.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Behaviour/BehaviourSystem.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Driver/Driver.h"
 #include "Editor/EGUI.h"
@@ -31,6 +32,32 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	namespace CharacterController_MSG
+	{
+		template<typename ... Ts>
+		void SendInternalMessage(Behaviour * ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendInternalMessage(ptr, _FuncName, _Params...);
+		}
+		template<typename ... Ts>
+		void SendExternalMessage(uint64_t _ObjectID, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
+		}
+
+		template<typename ... Ts>
+		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
+
+		template<typename ... Ts>
+		void SendAllMessage(const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
+		}
+	}
+
 	CharacterController::CharacterController()
 		: mbIsFacingRight(true)
 		, mbIsGrounded(false)
@@ -95,11 +122,13 @@ namespace Dystopia
 			mpInputSys->MapButton("Fireball", eButton::KEYBOARD_C);
 			mpInputSys->MapButton("Missile", eButton::KEYBOARD_V);
 		}
+
+		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
 	}
 
 	void CharacterController::Init()
 	{ 
-		
+		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
 	}
 
 	void CharacterController::Update(const float _fDeltaTime)
@@ -107,11 +136,11 @@ namespace Dystopia
 		MovePlayer(_fDeltaTime);
 		CheckMoving();
 		//CheckAttack();
+		attackDelay = attackDelay + _fDeltaTime;
 	}
 
 	void CharacterController::FixedUpdate(const float _fDeltaTime)
 	{
-		attackDelay = attackDelay + _fDeltaTime;
 	}
 	
 	void CharacterController::PostUpdate(void)
@@ -129,7 +158,7 @@ namespace Dystopia
 	void Dystopia::CharacterController::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 		const float dotNormal = _colEvent.mEdgeNormal.Dot({ 0.0F,-1.0F,0.0F });
-		//DEBUG_PRINT(eLog::MESSAGE, "DotNormal: %f", dotNormal);	
+		DEBUG_PRINT(eLog::MESSAGE, "DotNormal: %f", dotNormal);
 		if (dotNormal > 0.65F && dotNormal < 1.1F)
 		{
 			mbIsGrounded = true;	
@@ -346,6 +375,12 @@ namespace Dystopia
 				{
 
 				}
+
+				if (combatName)
+					CharacterController_MSG::SendExternalMessage(combatName, "DealDamage", 10);
+				else
+					DEBUG_PRINT(eLog::MESSAGE, "Combat Box not found");
+				
 
 				if (attackCount < 3)
 				{

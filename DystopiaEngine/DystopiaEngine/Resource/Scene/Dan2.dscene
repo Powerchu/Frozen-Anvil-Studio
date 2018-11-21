@@ -1,10 +1,10 @@
 [START_Scene]
-2126512128,"Dan2",40,[START_START_GO_DATA]
+2126512128,"Dan2",41,[START_START_GO_DATA]
 18446744071834698240,97,"Scene Camera",
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.0918465,0.0918465,1,-32.4316,15.136,0,0,0,0,1,0,
+0.0520625,0.0520625,1,-46.6346,10.2828,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -229,7 +229,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-16,16,1,-52.8916,9.15825,0,0,0,0,1,0,
+24,24,1,-52.8916,17.3825,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -346,7 +346,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-4,6,0.99,-49.2432,6.39952,0,0,0,0,1,525898752,
+6,9,0.99,-47.419,13.2444,0,0,0,0,1,525898752,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -355,7 +355,16 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-8,8,1,-47.9695,7.73007,0,0,0,0,1,0,
+16,16,1,-31.5724,9.29324,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073650254848,65,"Wall",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,30,1,-72.0936,16.562,0,0,0,0,1,1364892160,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -372,7 +381,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-3,
+7,
 [END_ComponentDonor End]
 [START_Component]
 [START_RigidBody]
@@ -392,11 +401,35 @@
 [END_RigidBody]
 
 [END_Component End]
+[START_Component]
+[START_RigidBody]
+1583107584,1,18446744072275284480,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+558649344,1,18446744073539880448,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744073366426112,1,1390612480,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1220492800,1,18446744073650254848,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-6,
+8,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -434,6 +467,18 @@
 [END_Convex_Collider]
 
 [END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1869036544,1,18446744073650254848,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+953776640,536870913,18446744071897550336,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,4,1,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component End]
 [START_ComponentDonor]
 2,
 [END_ComponentDonor End]
@@ -453,7 +498,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-33,
+34,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -752,11 +797,20 @@
 [END_Sprite Renderer]
 
 [END_Component End]
+[START_Component]
+[START_Renderer]
+394213888,1,18446744073650254848,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\rock_03.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-11,[START_str]
+12,[START_str]
 "ChangeAudio",0,[START_str]
 "CharacterController",1,[START_BEHAVIOUR_BLOCK]
 525898752,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
@@ -764,6 +818,8 @@
 0,[START_MEMBER VAR]
 "CharacterSpeed",[START_CharacterSpeed]
 25,[START_MEMBER VAR]
+"mbIsGrounded",[START_mbIsGrounded]
+0,[START_MEMBER VAR]
 "JumpForce",[START_JumpForce]
 60,[START_MEMBER VAR]
 "attackCount",[START_attackCount]
@@ -775,7 +831,13 @@
 
 [END_BEHAVIOUR_BLOCK]
 [START_str]
-"CombatBox",0,[START_str]
+"CombatBox",1,[START_BEHAVIOUR_BLOCK]
+2001255936,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
 "Fireball",0,[START_str]
 "FollowTarget",0,[START_str]
 "Goblin",1,[START_BEHAVIOUR_BLOCK]
@@ -791,7 +853,20 @@
 "Missle",0,[START_str]
 "NewTest",0,[START_str]
 "Parallax",0,[START_str]
-"Testing",0,
+"Testing",0,[START_str]
+"FloorChecker",2,[START_BEHAVIOUR_BLOCK]
+18446744071897550336,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_BEHAVIOUR_BLOCK]
+18446744071897550336,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+
 [END_BEHAVIOUR_SYSTEM_BLOCK]
 
 [END_Scene]

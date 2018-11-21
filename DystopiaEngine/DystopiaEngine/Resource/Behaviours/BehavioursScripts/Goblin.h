@@ -236,10 +236,7 @@ namespace Dystopia
 		
 		virtual void EditorUI(void) noexcept override;
 		
-		void TEST(float _dmg)
-        {
-			mHealth -= _dmg;
-        }
+		void TakeDamage(int _dmg);
 		
 		// Reflection Stuff
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
@@ -250,7 +247,7 @@ namespace Dystopia
 		bool isColliding = false;
 		NeuralTree::BehaviourTree bTree;
 		
-		PP_MEMBERFUNC(Dystopia::Goblin, TEST)
+		PP_MEMBERFUNC(Dystopia::Goblin, TakeDamage)
 		
 	private:
 		friend MetaData<Goblin>;

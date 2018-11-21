@@ -94,8 +94,9 @@ namespace Dystopia
 		float JumpForce;
 		int attackCount;
 		float attackDelay;
-	private:
+		GameObject * combatName;
 		bool mbIsGrounded;
+	private:
 		bool mbIsCeilinged;
 		bool mbIsFacingRight;
 		bool isAttacking;
@@ -113,7 +114,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::CharacterController, IsDodging, CharacterSpeed, JumpForce, attackCount, attackDelay);
+PP_REFLECT(Dystopia::CharacterController, IsDodging, CharacterSpeed, mbIsGrounded, JumpForce, attackCount, attackDelay);
 
 #endif //_CharacterController_H_
 

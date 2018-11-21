@@ -247,6 +247,11 @@ namespace Dystopia
 		
 	}
 	
+	void Goblin::TakeDamage(int _dmg)
+	{
+		mHealth -= _dmg;
+	}
+
 	TypeErasure::TypeEraseMetaData Goblin::GetMetaData()
 	{
 		/*TO DO*/

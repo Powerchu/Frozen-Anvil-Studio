@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	CombatBox.h
+\file	FloorChecker.h
 \author Dan Kang (100%)
 \par    email: dan.kang\@digipen.edu
 \brief
@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _CombatBox_H_
-#define _CombatBox_H_
+#ifndef _FloorChecker_H_
+#define _FloorChecker_H_
 
 #define str(s) #s
 
@@ -25,10 +25,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class CombatBox : Behaviour
+	class FloorChecker : Behaviour
 	{
 	public:
-		static constexpr const char * BehaviourName = str(CombatBox);
+		static constexpr const char * BehaviourName = str(FloorChecker);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -38,13 +38,13 @@ namespace Dystopia
 		// };
 
 #endif
-		virtual const std::string GetEditorName(void) const override { return "CombatBox"; }
-		static uint64_t constexpr mCombatBoxID = 18446744072566657024;
+		virtual const std::string GetEditorName(void) const override { return "FloorChecker"; }
+		static uint64_t constexpr mFloorCheckerID = 1612650496;
 
 		// Default Constructor for this Behaviour - init your variables here
-		CombatBox();
+		FloorChecker();
 		// Default Destructor for this Behaviour - don't touch if you dk, else ask the tech team
-		~CombatBox();
+		~FloorChecker();
 
 		// Load will never be called
 		virtual void Load(void) override; 
@@ -85,47 +85,37 @@ namespace Dystopia
 		virtual const char * const GetBehaviourName() const;
 
 		// Don't touch
-		virtual CombatBox * Duplicate() const;
+		virtual FloorChecker * Duplicate() const;
 
 		// Don't touch
 		virtual void EditorUI(void) noexcept override;
-
-		void DealDamage(int _damage);
 		
 		// Reflection Stuff - Don't Touch
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
-
-		PP_MEMBERFUNC(Dystopia::CombatBox, DealDamage)
-
 	private:
 		// Don't touch
-		friend MetaData<CombatBox>;
-
-	public:
-		bool targetViable;
-		const char * name;
-
+		friend MetaData<FloorChecker>;
 	};
 
 	extern "C"
 	{
-		DllExport CombatBox * CombatBoxClone()
+		DllExport FloorChecker * FloorCheckerClone()
 		{
-			return new CombatBox;
+			return new FloorChecker;
 		}
 	}
 }
 
 /*Keep this if you do not want to show anything in Editor*/
-PP_REFLECT_EMPTY(Dystopia::CombatBox)
+PP_REFLECT_EMPTY(Dystopia::FloorChecker)
 /*
   Uncomment the line PP_REFLECT and add in the names of the variable you want to show
   Comment out PP_REFLECT_EMPTY.
 */
-//PP_REFLECT(Dystopia::CombatBox)
+//PP_REFLECT(Dystopia::FloorChecker)
 
-#endif //_CombatBox_H_
+#endif //_FloorChecker_H_
 
 
