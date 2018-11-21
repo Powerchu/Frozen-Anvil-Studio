@@ -1,10 +1,10 @@
 [START_Scene]
-2126512128,"Dan2",21,[START_START_GO_DATA]
+2126512128,"Dan2",40,[START_START_GO_DATA]
 18446744071834698240,97,"Scene Camera",
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.217882,0.217882,1,0.608024,28.5208,0,0,0,0,1,0,
+0.0918465,0.0918465,1,-32.4316,15.136,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -67,7 +67,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,0,0,0,0,0,0,1,2145555456,
+1,1,1,0,0,0.01,0,0,0,1,2145555456,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -76,7 +76,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-48,16,1,-55.8961,-8.75273,0,0,0,0,1,222524928,
+48,16,1,-55.8961,-8.75273,0.01,0,0,0,1,222524928,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -85,7 +85,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-48,16,1,-15.0341,-7.878,0,0,0,0,1,222524928,
+48,16,1,-15.0341,-7.878,0.01,0,0,0,1,222524928,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -94,7 +94,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-48,16,1,24.5784,-10.2523,0,0,0,-0.0539917,0.998541,222524928,
+48,16,1,24.5784,-10.2523,0.01,0,0,-0.0539917,0.998541,222524928,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -103,7 +103,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-48,16,1,66.4401,-10.2523,0,0,0,0,1,222524928,
+48,16,1,66.4401,-10.2523,0.01,0,0,0,1,222524928,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -121,7 +121,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-48,16,1,-48.0979,2.78731,-0.02,0,0,0,1,272883200,
+48,16,1,-48.0979,2.78731,-0.01,0,0,0,1,272883200,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -130,7 +130,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-32,48,1,-39.9843,26.9871,-0.01,0,0,0,1,1364892160,
+32,48,1,-37.3977,28.6733,-0.001,0,0,0,1,1364892160,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -139,7 +139,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-32,48,1,-14.1009,26.4534,-0.01,0,0,0,1,1364892160,
+32,48,1,-11.1386,28.98,-0.001,0,0,0,1,1364892160,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -148,7 +148,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,0,0,-0.02,0,0,0,1,2145555456,
+1,1,1,0,0,-0.01,0,0,0,1,2145555456,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -157,7 +157,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-48,16,1,-0.325097,2.78731,-0.02,0,0,0,1,272883200,
+48,16,1,-0.325097,2.78731,-0.01,0,0,0,1,272883200,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -166,7 +166,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-48,16,1,47.3755,2.78731,-0.019999,0,0,0,1,272883200,
+48,16,1,47.3755,2.78731,-0.009999,0,0,0,1,272883200,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -175,7 +175,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-48,16,1,95.0761,2.78731,-0.019999,0,0,0,1,272883200,
+48,16,1,95.0761,2.78731,-0.009999,0,0,0,1,272883200,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -184,7 +184,178 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,0,0,0,0,0,0,1,0,
+1,1,1,0,0,-0.02,0,0,0,1,2145555456,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072871769600,65,"FG Bush 5",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,16,1,97.0505,-8.91246,0.01,0,0,0.0353356,0.999375,222524928,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071780204032,65,"Tree 4",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,48,1,25.8307,28.8648,0,0,0,0,1,1364892160,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071988360704,65,"Tree 1",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,48,1,-46.2407,29.7106,-0.020007,0,0,0,1,1395367424,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073379286528,65,"Tree 2",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,48,1,9.34582,29.7106,-0.02,0,0,0,1,1395367424,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+525898752,65,"Player",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-52.8916,9.15825,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+2093051392,65,"Tree 3",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,48,1,53.8127,29.1749,-0.02,0,0,0,1,1395367424,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+694777344,65,"Tree 4",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,48,1,103.101,28.532,-0.02,0,0,0,1,1395367424,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073417096192,65,"Layer 4",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,-0.03,0,0,0,1,2145555456,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+871465984,65,"Tree 5",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,48,1,79.026,28.8738,0,0,0,0,1,1364892160,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073470524416,65,"Tree 1",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,48,1,-25.3968,28.8854,-0.0300007,0,0,0,1,18446744073417096192,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1190184448,65,"Tree 2",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,48,1,-60.2825,30.839,-0.0299987,0,0,0,1,18446744073417096192,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072019824128,65,"Tree 3",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,9.74246,23.1077,-0.0299971,0,0,0,1,18446744073417096192,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072404653568,65,"Tree 4",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,48,1,48.4389,30.0457,-0.0299923,0,0,0,1,18446744073417096192,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073626246656,65,"Tree 5",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,32,1,89.6504,24.2804,-0.0299887,0,0,0,1,18446744073417096192,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+515957760,65,"Bush",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+12,8,1,-44.0611,9.57116,-0.0005,0,0,0,1,1364892160,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071837380096,65,"Long Bush",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+32,8,1,-25.5951,10.2305,-0.0001,0,0,0,1,1364892160,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1086911488,65,"Rock",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,8,1,-52.1385,7.47523,-0.001,0,0,0,1,1364892160,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+2001255936,65,"Combat Box",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+4,6,0.99,-49.2432,6.39952,0,0,0,0,1,525898752,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073453749760,65,"Goblin",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+8,8,1,-47.9695,7.73007,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -201,13 +372,31 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-0,
+3,
 [END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+18446744071608240640,1,525898752,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1012464128,1,1572552192,0,0.5,0.5,0.5,0.5,0.7,0,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1938959872,1,18446744073453749760,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-4,
+6,
 [END_ComponentDonor End]
 [START_Component]
 [START_Convex_Collider]
@@ -233,14 +422,38 @@
 [END_Convex_Collider]
 
 [END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744073692827136,1,2001255936,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744073148616192,1,18446744073453749760,0.05,-0.2,0,4,0.5,0.5,0,-0.5,0.5,0,0.5,-0.5,0,-0.5,-0.5,0,0.45,0.5,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744072379991552,1,525898752,0,-0.08,0,0,0,0,0.2,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+1142458368,1,525898752,0,-0.28,0,0,0,0,0.2,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-0,
-[END_ComponentDonor End]
-[START_ComponentDonor]
-16,
+33,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -379,7 +592,160 @@
 [END_Component End]
 [START_Component]
 [START_Renderer]
-1977850880,536870913,691769856,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\floor_02.png",
+18446744072871770112,1,18446744072871769600,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\bushLong_darker.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071780204544,1,18446744071780204032,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_06.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072019824640,1,18446744072019824128,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_farthest_02.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073379287040,1,18446744073379286528,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_back_05.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+529570304,1,525898752,"..\DystopiaEngine\Resource\Asset\Spritesheet\SpriteSheet_Wilo_Run&Idle.png",
+[END_Renderer]
+[START_Sprite Renderer]
+1,0.09,2,0,0,0,"Idle",4,4,1024,1024,16,1,0,13,1,0,0,"Running",4,4,1024,1024,12,1,0,1,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+2093051904,1,2093051392,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_back_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+694777856,1,694777344,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_back_04.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+871466496,1,871465984,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_03.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072404654080,1,18446744072404653568,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_farthest_06.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071988361216,1,18446744071988360704,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_back_05.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+2030092800,1,18446744073470524416,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_farthest_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1190184960,1,1190184448,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_farthest_05.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073626247168,1,18446744073626246656,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\tree_farthest_05.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072411474432,1,515957760,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\bush_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071837380608,1,18446744071837380096,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\bushLong.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072583444992,1,1086911488,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\rock_01_shade.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073613132800,1,2001255936,"..\DystopiaEngine\Resource\Asset\fireball.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+2126564352,1,18446744073453749760,"..\DystopiaEngine\Resource\Asset\M_Basic Goblin.png",
 [END_Renderer]
 [START_Sprite Renderer]
 0,0.016,0,0,
@@ -390,12 +756,37 @@
 0,
 [END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-10,[START_str]
+11,[START_str]
 "ChangeAudio",0,[START_str]
-"CharacterController",0,[START_str]
+"CharacterController",1,[START_BEHAVIOUR_BLOCK]
+525898752,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"IsDodging",[START_IsDodging]
+0,[START_MEMBER VAR]
+"CharacterSpeed",[START_CharacterSpeed]
+25,[START_MEMBER VAR]
+"JumpForce",[START_JumpForce]
+60,[START_MEMBER VAR]
+"attackCount",[START_attackCount]
+0,[START_MEMBER VAR]
+"attackDelay",[START_attackDelay]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"CombatBox",0,[START_str]
 "Fireball",0,[START_str]
 "FollowTarget",0,[START_str]
-"Goblin",0,[START_str]
+"Goblin",1,[START_BEHAVIOUR_BLOCK]
+18446744073453749760,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"mHealth",[START_mHealth]
+50,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
 "GoblinCombat",0,[START_str]
 "Missle",0,[START_str]
 "NewTest",0,[START_str]

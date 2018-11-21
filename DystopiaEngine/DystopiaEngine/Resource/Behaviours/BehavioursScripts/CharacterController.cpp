@@ -40,6 +40,8 @@ namespace Dystopia
 		, JumpForce(60.0F)
 		, mpBody(nullptr)
 		, mpInputSys(nullptr)
+		, attackCount(0)
+		, attackDelay(0.0f)
 	{
 	}
 
@@ -82,6 +84,7 @@ namespace Dystopia
 			mpInputSys->MapButton("Fly", eButton::XBUTTON_DPAD_UP);
 			mpInputSys->MapButton("Fireball", eButton::XBUTTON_B);
 			mpInputSys->MapButton("Missile", eButton::XBUTTON_Y);
+			mpInputSys->MapButton("Attack", eButton::XBUTTON_X);
 		}
 		else
 		{
@@ -103,10 +106,12 @@ namespace Dystopia
 	{
 		MovePlayer(_fDeltaTime);
 		CheckMoving();
+		//CheckAttack();
 	}
 
 	void CharacterController::FixedUpdate(const float _fDeltaTime)
 	{
+		attackDelay = attackDelay + _fDeltaTime;
 	}
 	
 	void CharacterController::PostUpdate(void)
@@ -270,6 +275,8 @@ namespace Dystopia
 
 		if (mpInputSys->IsKeyPressed("Jump"))
 		{
+			DEBUG_PRINT(eLog::MESSAGE, "Jumping");	
+	
 			if (mbIsGrounded)
 			{
 				mpBody->AddLinearImpulse({ 0,JumpForce * mpBody->GetMass() * 10 + mpBody->GetLinearVelocity().y, 0 });
@@ -323,6 +330,63 @@ namespace Dystopia
 					auto x = scale.x / 2;
 					ptr->GetComponent<Transform>()->SetGlobalPosition(ptr->GetComponent<Transform>()->GetGlobalPosition() + Math::Vec3D{ x,0,0 });
 				}
+			}
+		}
+
+		if (mpInputSys->IsKeyTriggered("Attack"))
+		{
+			if (attackDelay > 1.0f)
+			{
+				if (!mbIsFacingRight)
+				{
+					
+				}
+
+				else
+				{
+
+				}
+
+				if (attackCount < 3)
+				{
+					attackCount++;
+					DEBUG_PRINT(eLog::MESSAGE, "Attacking");
+				}
+
+				else
+				{
+					attackCount = 1;
+				}
+
+				attackDelay = 0.0f;
+			}
+		}
+	}
+
+	void CharacterController::CheckAttack()
+	{
+		auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
+
+		if (s_rend && attackDelay < 1.0f)
+		{
+			if (attackCount == 1)
+			{
+				s_rend->SetAnimation("AttackOne");
+			}
+
+			if (attackCount == 2)
+			{
+				s_rend->SetAnimation("AttackTwo");
+			}
+
+			if (attackCount == 3)
+			{
+				s_rend->SetAnimation("AttackThree");
+			}
+
+			if (attackCount == 0)
+			{
+				
 			}
 		}
 	}

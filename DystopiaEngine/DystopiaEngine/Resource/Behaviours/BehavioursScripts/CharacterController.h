@@ -81,6 +81,7 @@ namespace Dystopia
 
 		// Member Functions
 		void CheckMoving();
+		void CheckAttack();
 		void MovePlayer(float);
 
 	private:
@@ -91,10 +92,13 @@ namespace Dystopia
 		bool IsDodging;
 		float CharacterSpeed;
 		float JumpForce;
+		int attackCount;
+		float attackDelay;
 	private:
 		bool mbIsGrounded;
 		bool mbIsCeilinged;
 		bool mbIsFacingRight;
+		bool isAttacking;
 
 		RigidBody * mpBody;
 		InputManager * mpInputSys;
@@ -109,7 +113,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::CharacterController, IsDodging, CharacterSpeed, JumpForce);
+PP_REFLECT(Dystopia::CharacterController, IsDodging, CharacterSpeed, JumpForce, attackCount, attackDelay);
 
 #endif //_CharacterController_H_
 
