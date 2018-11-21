@@ -220,6 +220,33 @@ namespace Dystopia
 				}
 			}
 		}
+		template<typename ... Ts>
+		void SendMessageToTags(HashString const & _Tags, Ts && ... _FuncParams)
+		{
+			BehaviourMessage Message(_FuncParams...);
+			auto & Array = EngineCore::GetInstance()->Get<SceneSystem>()->GetActiveScene().GetAllGameObjects();
+			for (auto & elem : Array)
+			{
+				auto BehaviourArray = elem.GetAllBehaviours();
+				for (auto & BehaveElem : BehaviourArray)
+				{
+					/*Try to send Message to other components*/
+					if (!BehaveElem->GetOwner()->HasTag(_Tags))
+						continue;
+
+					_EDITOR_START_TRY
+						BehaveElem->ReceiveMessage(_FuncName, Message);
+					/*If behaviour throws, remove it from game object*/
+					_EDITOR_CATCH(std::exception& e)
+					{
+						_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+						_EDITOR_CODE(const_cast<GameObject *>(_GameObj)->RemoveComponent(iter.second));
+						_EDITOR_CODE(BehaveElem->DestroyComponent());
+					}
+
+				}
+			}
+		}
 #endif
 
 	private:

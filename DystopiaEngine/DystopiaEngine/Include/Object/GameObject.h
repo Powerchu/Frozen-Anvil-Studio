@@ -102,6 +102,11 @@ namespace Dystopia
 		void SetFlag(eObjFlag);
 		unsigned GetFlag() const;
 
+		void AddTag(HashString const & _hash);
+		bool HasTag(HashString const & _hash) const;
+		void RemoveTag(HashString const & _hash);
+
+
 		template<class T>
 		T* GetComponent(void) const;
 
@@ -126,6 +131,7 @@ namespace Dystopia
 
 		AutoArray<Component*> mComponents;
 		AutoArray<Behaviour*> mBehaviours;
+		AutoArray<HashID>   mTags;
 
 		GameObject(const GameObject&) = delete;
 
