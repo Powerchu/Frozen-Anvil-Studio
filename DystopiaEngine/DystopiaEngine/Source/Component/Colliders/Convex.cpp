@@ -295,7 +295,7 @@ namespace Dystopia
 				if (Math::Abs(w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
 				{
 					//currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
-					newEvent.mEdgeNormal = -elem.mNorm3;
+					newEvent.mEdgeNormal = elem.mNorm3;
 					newEvent.mfPeneDepth = Math::Abs(w.Dot(elem.mNorm3.Normalise())) + _ColB.GetRadius();
 
 				}
