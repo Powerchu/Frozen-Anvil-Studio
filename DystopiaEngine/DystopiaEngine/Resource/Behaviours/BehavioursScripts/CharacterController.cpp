@@ -186,15 +186,15 @@ namespace Dystopia
 		
 	}
 
-	void Dystopia::CharacterController::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::CharacterController::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::CharacterController::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::CharacterController::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::CharacterController::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::CharacterController::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
@@ -441,7 +441,7 @@ namespace Dystopia
 				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 0);
 
 			else if (_skill == 1)
-				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 1);
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 1); 
 
 			else if (_skill == 2)
 				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 2);
@@ -509,7 +509,7 @@ namespace Dystopia
 		}
 	}
 
-	void CharacterController::DealDamage(int _dmg)
+	void CharacterController::TakeDamage(int _dmg)
 	{
 		playerHealth -= _dmg;
 

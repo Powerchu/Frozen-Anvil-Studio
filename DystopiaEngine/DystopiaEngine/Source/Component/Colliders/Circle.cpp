@@ -307,25 +307,28 @@ namespace Dystopia
 			}
 			return false;
 		}
-
-		/*Circle completely inside*/
-		newEvent.mfPeneDepth = FLT_MAX;
-
-		for (auto & elem : ConvexEdges)
+		else
 		{
-			Vec3D v = elem.mVec3;
-			Vec3D w = GetGlobalPosition() - elem.mPos;
+			/*Circle completely inside*/
+			newEvent.mfPeneDepth = FLT_MAX;
 
-			if (Math::Abs( w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
+			for (auto & elem : ConvexEdges)
 			{
-				//currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
-				newEvent.mEdgeNormal = -elem.mNorm3;
-				newEvent.mfPeneDepth = Math::Abs(w.Dot(elem.mNorm3.Normalise())) +  GetRadius();
-				
+				Vec3D v = elem.mVec3;
+				Vec3D w = GetGlobalPosition() - elem.mPos;
+
+				if (Math::Abs(w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
+				{
+					//currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
+					newEvent.mEdgeNormal = -elem.mNorm3;
+					newEvent.mfPeneDepth = Math::Abs(w.Dot(elem.mNorm3.Normalise())) + GetRadius();
+
+				}
 			}
+
+			marr_CurrentContactSets.push_back(newEvent);
 		}
-		
-		marr_CurrentContactSets.push_back(newEvent);
+
 		mbColliding = isInside;
 		return isInside;
 	}

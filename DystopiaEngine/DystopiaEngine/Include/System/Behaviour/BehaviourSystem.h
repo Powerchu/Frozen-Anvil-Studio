@@ -106,7 +106,7 @@ namespace Dystopia
 						/*If behaviour throws, remove it from game object*/
 						_EDITOR_CATCH(std::exception& e)
 						{
-							_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+							//_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
 							_EDITOR_CODE(pGameObject->RemoveComponent(BehaveElem));
 							_EDITOR_CODE(BehaveElem->DestroyComponent());
 						}
@@ -144,7 +144,7 @@ namespace Dystopia
 		}
 
 		template<typename ... Ts>
-		void SendExternalMessage(GameObject * const _GameObj, const char * const _FuncName, Ts&& ... _FuncParams)
+		void SendExternalMessage(GameObject * _GameObj, const char * const _FuncName, Ts&& ... _FuncParams)
 		{
 			if (!_GameObj)
 				return;
@@ -170,7 +170,7 @@ namespace Dystopia
 		}
 
 		template<typename ... Ts>
-		void SendExternalMessage(GameObject const * const _GameObj, const char * const _FuncName, Ts&& ... _FuncParams)
+		void SendExternalMessage(GameObject const *  _GameObj, const char * const _FuncName, Ts&& ... _FuncParams)
 		{
 			if (!_GameObj)
 				return;

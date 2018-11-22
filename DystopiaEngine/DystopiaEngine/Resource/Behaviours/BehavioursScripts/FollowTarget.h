@@ -62,9 +62,9 @@ namespace Dystopia
 		virtual void OnCollisionStay (const CollisionEvent&);
 		virtual void OnCollisionExit (const CollisionEvent&);
 
-		virtual void OnTriggerEnter(const GameObject *);
-		virtual void OnTriggerStay (const GameObject *);
-		virtual void OnTriggerExit (const GameObject *);
+		virtual void OnTriggerEnter(GameObject * const);
+		virtual void OnTriggerStay (GameObject * const);
+		virtual void OnTriggerExit (GameObject * const);
 
 		virtual void Serialise(TextSerialiser&) const override;
 		virtual void Unserialise(TextSerialiser&) override;

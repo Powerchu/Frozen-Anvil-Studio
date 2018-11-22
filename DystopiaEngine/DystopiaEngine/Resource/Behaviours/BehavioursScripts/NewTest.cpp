@@ -45,7 +45,7 @@ namespace Dystopia
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
 		}
 		template<typename ... Ts>
-		void SendExternalMessage(const GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		void SendExternalMessage(GameObject const *  _ptr, const char * _FuncName, Ts ... _Params)
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
 		}
@@ -120,15 +120,15 @@ namespace Dystopia
 
 	}
 
-	void Dystopia::NewTest::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::NewTest::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::NewTest::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::NewTest::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::NewTest::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::NewTest::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 

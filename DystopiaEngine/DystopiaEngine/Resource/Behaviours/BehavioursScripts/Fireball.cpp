@@ -38,14 +38,14 @@ namespace Dystopia
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
 		}
 		template<typename ... Ts>
-		void SendExternalMessage(const GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		void SendExternalMessage(GameObject * const _ptr, const char * _FuncName, Ts ... _Params)
 		{
 			//if(!_ptr) return;
 			if(auto ptr = EngineCore::GetInstance()->Get<BehaviourSystem>())
 				ptr->SendExternalMessage(_ptr, _FuncName, _Params...);
 		}
 		template<typename ... Ts>
-		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		void SendExternalMessage(GameObject const * _ptr, const char * _FuncName, Ts ... _Params)
 		{
 			//if(!_ptr) return;
 			if(auto ptr = EngineCore::GetInstance()->Get<BehaviourSystem>())
@@ -128,7 +128,7 @@ namespace Dystopia
 
 	}
 
-	void Dystopia::Fireball::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::Fireball::OnTriggerEnter(GameObject * const _obj)
 	{
 		if(!_obj) 
 			return;
@@ -153,12 +153,12 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::Fireball::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::Fireball::OnTriggerStay(GameObject * const _obj)
 	{
 	
 	}
 
-	void Dystopia::Fireball::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::Fireball::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 

@@ -45,13 +45,13 @@ namespace Dystopia
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
 		}
 		template<typename ... Ts>
-		void SendExternalMessage(const GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		void SendExternalMessage(GameObject * const _ptr, const char * _FuncName, Ts ... _Params)
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
 		}
 		
 		template<typename ... Ts>
-		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		void SendExternalMessage(GameObject const * _ptr, const char * _FuncName, Ts ... _Params)
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
 		}
@@ -119,11 +119,8 @@ namespace Dystopia
 
 	}
 
-	void Dystopia::CombatBox::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::CombatBox::OnTriggerEnter(GameObject * const _obj)
 	{
-		if (!_obj)
-			return;
-
 		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_obj->GetID());
 
 		if (ptr)
@@ -137,11 +134,11 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::CombatBox::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::CombatBox::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::CombatBox::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::CombatBox::OnTriggerExit(GameObject * const _obj)
 	{
 		if (!strcmp(name, _obj->GetNamePtr()))
 		{

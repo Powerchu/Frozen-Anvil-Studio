@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Behaviour/Behaviour.h"
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
+#include "Behaviour/BehaviourMemberFunc.h"
 
 #define DllExport   __declspec( dllexport )
 
@@ -62,9 +63,9 @@ namespace Dystopia
 		virtual void OnCollisionStay (const CollisionEvent&);
 		virtual void OnCollisionExit (const CollisionEvent&);
 
-		virtual void OnTriggerEnter(const GameObject *);
-		virtual void OnTriggerStay (const GameObject *);
-		virtual void OnTriggerExit (const GameObject *);
+		virtual void OnTriggerEnter(GameObject * const);
+		virtual void OnTriggerStay (GameObject * const);
+		virtual void OnTriggerExit (GameObject * const);
 
 		virtual void Serialise(TextSerialiser&) const override;
 		virtual void Unserialise(TextSerialiser&) override;
@@ -86,10 +87,11 @@ namespace Dystopia
 		void CastLinked(int, bool);
 		void TakeDamage(int _dmg);
 
+		PP_MEMBERFUNC(Dystopia::CharacterController, TakeDamage)
 	private:
 		friend MetaData<CharacterController>;
 
-		PP_MEMBERFUNC(Dystopia::CharacterController, TakeDamage)
+
 
 	// Member Variables
 	public: 
@@ -121,7 +123,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::playerHealth, CharacterController, IsDodging, CharacterSpeed, JumpForce, attackCount, attackDelay);
+PP_REFLECT(Dystopia::CharacterController, playerHealth, IsDodging, CharacterSpeed, JumpForce, attackCount, attackDelay);
 
 #endif //_CharacterController_H_
 

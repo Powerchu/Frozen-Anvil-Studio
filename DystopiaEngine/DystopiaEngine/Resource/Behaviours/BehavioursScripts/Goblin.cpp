@@ -190,7 +190,7 @@ namespace Dystopia
 		isColliding = false;
 	}
 
-	void Dystopia::Goblin::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::Goblin::OnTriggerEnter(GameObject * const _obj)
 	{
 		if(_obj)
 		{
@@ -204,7 +204,7 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::Goblin::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::Goblin::OnTriggerStay(GameObject * const _obj)
 	{
 		if(_obj)
 		{
@@ -218,7 +218,7 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::Goblin::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::Goblin::OnTriggerExit(GameObject * const _obj)
 	{
 		isColliding = false;
 	}

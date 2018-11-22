@@ -84,15 +84,15 @@ namespace Dystopia
 
 	}
 
-	void Dystopia::FollowTarget::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::FollowTarget::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::FollowTarget::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::FollowTarget::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::FollowTarget::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::FollowTarget::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
