@@ -126,14 +126,15 @@ Dystopia::EngineCore::EngineCore(void) :
 
 void Dystopia::EngineCore::LoadSettings(void)
 {
-	if (GetSubSystem<FileSystem>()->CheckFileExist(SETTINGS_FILE, SETTINGS_DIR))
+	auto pFileSys = Get<FileSystem>();
+	if (pFileSys->CheckFileExist(SETTINGS_FILE, SETTINGS_DIR))
 	{
 		auto file = Serialiser::OpenFile<TextSerialiser>(
-			(GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
+			(pFileSys->GetProjectFolders<std::string>(SETTINGS_DIR) +
 			SETTINGS_FILE).c_str()
 		);
 
-		HashString sentry;
+		std::string sentry;
 
 		file >> sentry;
 		file.ConsumeStartBlock();
@@ -186,17 +187,17 @@ void Dystopia::EngineCore::PostInit(void)
 
 void Dystopia::EngineCore::Interrupt(void)
 {
-	GetSystem<TimeSystem>()->StopTime();
+	Get<TimeSystem>()->StopTime();
 }
 
 void Dystopia::EngineCore::InterruptContinue(void)
 {
-	GetSystem<TimeSystem>()->ResumeTime();
+	Get<TimeSystem>()->ResumeTime();
 }
 
 void Dystopia::EngineCore::FixedUpdate(void)
 {
-	auto TimeSys = GetSystem<TimeSystem>();
+	auto TimeSys = Get<TimeSystem>();
 	auto FixedDT = TimeSys->GetFixedDeltaTime();
 
 	while (TimeSys->ConsumeFixedDT())
@@ -234,9 +235,9 @@ void Dystopia::EngineCore::PostUpdate(void)
 
 void Dystopia::EngineCore::Shutdown(void)
 {
-	GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
+	//Get<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
 	auto s = Serialiser::OpenFile<DysSerialiser_t>(
-		(GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
+		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
 		SETTINGS_FILE).c_str(),
 		DysSerialiser_t::MODE_WRITE
 	);
