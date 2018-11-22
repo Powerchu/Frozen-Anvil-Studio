@@ -40,9 +40,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define LAUNCHER_WIDTH 1010
 #define SUBFOLDER_COUNT 11
 
-static constexpr unsigned long LauncherStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+static constexpr unsigned long LauncherStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MAXIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 static constexpr unsigned long LauncherStyleEx = WS_EX_APPWINDOW;
-static const char* g_SubFolders[11]=
+static const char* g_SubFolders[SUBFOLDER_COUNT]=
 {
 	"Asset",
 	"Audio",
@@ -92,7 +92,7 @@ void Editor::EditorLauncher::Update(float)
 
 	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0,0,0,0 });
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.3f,0.3f,0.3f, 1.f });
-	ImGui::SetNextWindowPos(ImVec2{ 0,0 });
+	ImGui::SetNextWindowPos(ImVec2{ 0, 0 });
 	ImGui::SetNextWindowSize(ImVec2{ LAUNCHER_WIDTH, LAUNCHER_HEIGHT });
 	ImGui::Begin("Projects", nullptr, flag);
 	{
@@ -170,6 +170,11 @@ HashString Editor::EditorLauncher::GetProjFolder(void) const
 HashString Editor::EditorLauncher::GetProjFile(void) const
 {
 	return mProjFileSelected;
+}
+
+bool Editor::EditorLauncher::IsExit(void) const
+{
+	return false;
 }
 
 

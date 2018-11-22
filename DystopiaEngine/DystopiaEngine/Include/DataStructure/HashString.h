@@ -130,7 +130,7 @@ bool operator==(const HashString& _lhs, HashID _id);
 bool operator!=(const HashString& _lhs, const HashString& _rhs);
 bool operator<(const HashString& _lhs, const HashString& _rhs);
 bool operator>(const HashString& _lhs, const HashString& _rhs);
-std::ostream& operator<<(std::ostream& _os, const HashString& _rhs);
+//std::ostream& operator<<(std::ostream& _os, const HashString& _rhs);
 
 HashString operator+(const HashString& _lhs, const HashString& _rhs);
 HashString operator+(const HashString& _lhs, const char*);
