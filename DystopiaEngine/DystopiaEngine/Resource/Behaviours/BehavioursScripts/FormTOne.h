@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	FloorChecker.h
+\file	FormTOne.h
 \author Dan Kang (100%)
 \par    email: dan.kang\@digipen.edu
 \brief
@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _FloorChecker_H_
-#define _FloorChecker_H_
+#ifndef _FormTOne_H_
+#define _FormTOne_H_
 
 #define str(s) #s
 
@@ -25,10 +25,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class FloorChecker : Behaviour
+	class FormTOne : Behaviour
 	{
 	public:
-		static constexpr const char * BehaviourName = str(FloorChecker);
+		static constexpr const char * BehaviourName = str(FormTOne);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -38,13 +38,13 @@ namespace Dystopia
 		// };
 
 #endif
-		virtual const std::string GetEditorName(void) const override { return "FloorChecker"; }
-		static uint64_t constexpr mFloorCheckerID = 1612650496;
+		virtual const std::string GetEditorName(void) const override { return "FormTOne"; }
+		static uint64_t constexpr mFormTOneID = 1169804288;
 
 		// Default Constructor for this Behaviour - init your variables here
-		FloorChecker();
+		FormTOne();
 		// Default Destructor for this Behaviour - don't touch if you dk, else ask the tech team
-		~FloorChecker();
+		~FormTOne();
 
 		// Load will never be called
 		virtual void Load(void) override; 
@@ -85,7 +85,7 @@ namespace Dystopia
 		virtual const char * const GetBehaviourName() const;
 
 		// Don't touch
-		virtual FloorChecker * Duplicate() const;
+		virtual FormTOne * Duplicate() const;
 
 		// Don't touch
 		virtual void EditorUI(void) noexcept override;
@@ -96,26 +96,30 @@ namespace Dystopia
 
 	private:
 		// Don't touch
-		friend MetaData<FloorChecker>;
+		friend MetaData<FormTOne>;
+
+	public:
+		bool targetViable;
+		const char * name;
 	};
 
 	extern "C"
 	{
-		DllExport FloorChecker * FloorCheckerClone()
+		DllExport FormTOne * FormTOneClone()
 		{
-			return new FloorChecker;
+			return new FormTOne;
 		}
 	}
 }
 
 /*Keep this if you do not want to show anything in Editor*/
-PP_REFLECT_EMPTY(Dystopia::FloorChecker)
+PP_REFLECT_EMPTY(Dystopia::FormTOne)
 /*
   Uncomment the line PP_REFLECT and add in the names of the variable you want to show
   Comment out PP_REFLECT_EMPTY.
 */
-//PP_REFLECT(Dystopia::FloorChecker)
+//PP_REFLECT(Dystopia::FormTOne)
 
-#endif //_FloorChecker_H_
+#endif //_FormTOne_H_
 
 

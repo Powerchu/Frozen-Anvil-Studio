@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	FloorChecker.cpp
+\file	FormTOne.cpp
 \author Dan Kang (100%)
 \par    email: dan.kang\@digipen.edu
 \brief
@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "FloorChecker.h"
+#include "FormTOne.h"
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
@@ -31,7 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	namespace FloorChecker_MSG
+	namespace FormTOne_MSG
 	{
 		template<typename ... Ts>
 		void SendInternalMessage(Behaviour * _ptr, const char * _FuncName, Ts ... _Params)
@@ -45,7 +45,7 @@ namespace Dystopia
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
 		}
 		template<typename ... Ts>
-		void SendExternalMessage(GameObject const *  _ptr, const char * _FuncName, Ts ... _Params)
+		void SendExternalMessage(const GameObject * _ptr, const char * _FuncName, Ts ... _Params)
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
 		}
@@ -62,107 +62,121 @@ namespace Dystopia
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
 		}
 	}
-	FloorChecker::FloorChecker()
+	FormTOne::FormTOne()
 	{
 	}
 
-	FloorChecker::~FloorChecker()
+	FormTOne::~FormTOne()
 	{
 	}
 
-	void FloorChecker::Load()
+	void FormTOne::Load()
 	{
 	}
 
-	void FloorChecker::Awake()
+	void FormTOne::Awake()
+	{
+		SetFlags(FLAG_ACTIVE);
+	}
+
+	void FormTOne::Init()
+	{
+		SetFlags(FLAG_ACTIVE);
+	}
+
+	void FormTOne::Update(const float _fDeltaTime)
 	{
 	}
 
-	void FloorChecker::Init()
-	{
-	}
-
-	void FloorChecker::Update(const float _fDeltaTime)
-	{
-	}
-
-	void FloorChecker::FixedUpdate(const float _fDeltaTime)
+	void FormTOne::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
-	void FloorChecker::PostUpdate(void)
+	void FormTOne::PostUpdate(void)
 	{
 	}
 
-	void FloorChecker::GameObjectDestroy(void)
+	void FormTOne::GameObjectDestroy(void)
 	{
 	}
 
-	void FloorChecker::Unload(void)
+	void FormTOne::Unload(void)
 	{
 	}
 
-	void Dystopia::FloorChecker::OnCollisionEnter(const CollisionEvent& _colEvent)
-	{
-
-	}
-
-	void Dystopia::FloorChecker::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::FormTOne::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::FloorChecker::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::FormTOne::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::FloorChecker::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::FormTOne::OnCollisionExit(const CollisionEvent& _colEvent)
+	{
+
+	}
+
+	void Dystopia::FormTOne::OnTriggerEnter(GameObject * const _obj)
+	{
+		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_obj->GetID());
+
+		if (ptr)
+		{
+			name = ptr->GetNamePtr();
+
+			if (!strcmp(name, "Goblin"))
+			{
+				DEBUG_PRINT(eLog::MESSAGE, "KNOCK!");
+				FormTOne_MSG::SendExternalMessage(_obj, "KnockUp", 300);
+			}
+		}
+	}
+
+	void Dystopia::FormTOne::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::FloorChecker::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::FormTOne::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::FloorChecker::OnTriggerExit(GameObject * const _obj)
+	FormTOne * FormTOne::Duplicate() const
+	{
+		return new FormTOne{};
+	}
+
+	void FormTOne::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-	FloorChecker * FloorChecker::Duplicate() const
-	{
-		return new FloorChecker{};
-	}
-
-	void FloorChecker::Serialise(TextSerialiser& _ser) const
-	{
-	}
-
-	void FloorChecker::Unserialise(TextSerialiser& _ser)
+	void FormTOne::Unserialise(TextSerialiser& _ser)
 	{
 	}
 
 
-	const char * const FloorChecker::GetBehaviourName() const
+	const char * const FormTOne::GetBehaviourName() const
 	{
-		return FloorChecker::BehaviourName;
+		return FormTOne::BehaviourName;
 	}
 
-	void FloorChecker::EditorUI(void) noexcept
+	void FormTOne::EditorUI(void) noexcept
 	{
 		
 		
 	}
 	
-	TypeErasure::TypeEraseMetaData FloorChecker::GetMetaData()
+	TypeErasure::TypeEraseMetaData FormTOne::GetMetaData()
 	{
-		static MetaData<Dystopia::FloorChecker> mMetaData;
+		static MetaData<Dystopia::FormTOne> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
 		return mReturn;
 	}
-	TypeErasure::TypeEraseMetaData const FloorChecker::GetMetaData() const
+	TypeErasure::TypeEraseMetaData const FormTOne::GetMetaData() const
 	{
-		static MetaData<Dystopia::FloorChecker> mMetaData;
+		static MetaData<Dystopia::FormTOne> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
 		return mReturn;
 	}

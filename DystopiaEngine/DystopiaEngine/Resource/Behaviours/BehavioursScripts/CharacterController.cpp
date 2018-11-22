@@ -29,6 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/RigidBody.h"
 #include "Component/SpriteRenderer.h"
 #include "Component/Transform.h"
+#include "Component/Collider.h"
 
 namespace Dystopia
 {
@@ -166,9 +167,10 @@ namespace Dystopia
 
 	void Dystopia::CharacterController::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
+		const auto colBTrigger = _colEvent.mCollidedWith->GetComponent<Collider>()->IsTrigger();
 		const float dotNormal = _colEvent.mEdgeNormal.Dot({ 0.0F,-1.0F,0.0F });
-		//DEBUG_PRINT(eLog::MESSAGE, "DotNormal: %f", dotNormal);
-		if (dotNormal > 0.65F && dotNormal < 1.1F)
+		DEBUG_PRINT(eLog::MESSAGE, "DotNormal: %f && Trigger?: %d", dotNormal, colBTrigger);
+		if (dotNormal > 0.65F && dotNormal < 1.1F && !colBTrigger)
 		{
 			mbIsGrounded = true;	
 		}

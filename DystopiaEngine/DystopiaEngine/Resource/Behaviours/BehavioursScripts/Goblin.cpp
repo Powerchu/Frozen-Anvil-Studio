@@ -64,6 +64,8 @@ namespace Dystopia
 	}
     void Goblin::Awake(void)
 	{
+		rBody = GetOwner()->GetComponent<RigidBody>();
+		mass = rBody->GetMass();
 		SetFlags(FLAG_ACTIVE);
 	}
 	void Goblin::Init()
@@ -93,6 +95,7 @@ namespace Dystopia
 		.Build(bTree);
 		
 		rBody = GetOwner()->GetComponent<RigidBody>();
+		mass = rBody->GetMass();
 		SetFlags(FLAG_ACTIVE);
 	} 
 
@@ -255,13 +258,16 @@ namespace Dystopia
 		if (mHealth < 0)
 		GetOwner()->Destroy();
 
-		auto mass = rBody->GetMass();
-
 		if (_isFacingRight)
-			rBody->AddLinearImpulse({1 * mass,0,0});
+			rBody->AddLinearImpulse({30 * mass,0,0});
 		else
-			rBody->AddLinearImpulse({-1 * mass,0,0});
+			rBody->AddLinearImpulse({-30 * mass,0,0});
+	}
 
+	void Goblin::KnockUp(int _amt)
+	{
+		DEBUG_PRINT(eLog::MESSAGE, "received Knock");
+		rBody->AddLinearImpulse({0, _amt * mass, 0});
 	}
 
 	TypeErasure::TypeEraseMetaData Goblin::GetMetaData()

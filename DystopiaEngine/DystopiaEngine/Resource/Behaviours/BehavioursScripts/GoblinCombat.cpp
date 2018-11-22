@@ -86,7 +86,6 @@ namespace Dystopia
 
 	void GoblinCombat::Update(const float _fDeltaTime)
 	{
-		DealDamage(10);
 	}
 
 	void GoblinCombat::FixedUpdate(const float _fDeltaTime)
