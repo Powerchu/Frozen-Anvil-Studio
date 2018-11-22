@@ -236,13 +236,14 @@ namespace Dystopia
 		
 		virtual void EditorUI(void) noexcept override;
 		
-		void TakeDamage(int _dmg);
+		void TakeDamage(int _dmg, bool _isFacingRight);
 		
 		// Reflection Stuff
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 		int mHealth = 50;
+		RigidBody * rBody;
 		
 		bool isColliding = false;
 		NeuralTree::BehaviourTree bTree;

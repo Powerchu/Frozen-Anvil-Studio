@@ -174,14 +174,14 @@ namespace Dystopia
 		
 	}
 	
-	void CombatBox::DealDamage(int _damage)
+	void CombatBox::DealDamage(int _damage, bool _isFacingRight)
 	{
 		if (targetViable)
 		{
 			if (auto target = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr(name))
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "Doing Damange to Goblin");	
-				CombatBox_MSG::SendExternalMessage(target, "TakeDamage", 10);
+				CombatBox_MSG::SendExternalMessage(target, "TakeDamage", 10, _isFacingRight);
 			}
 
 		}

@@ -4,7 +4,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.16419,0.16419,1,-20.6347,15.3585,0,0,0,0,1,0,
+0.0785315,0.0785315,1,-7.66652,16.9634,0,0,0,0,1,0,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -802,7 +802,7 @@
 "IsDodging",[START_IsDodging]
 0,[START_MEMBER VAR]
 "CharacterSpeed",[START_CharacterSpeed]
-25,[START_MEMBER VAR]
+5,[START_MEMBER VAR]
 "JumpForce",[START_JumpForce]
 60,[START_MEMBER VAR]
 "attackCount",[START_attackCount]

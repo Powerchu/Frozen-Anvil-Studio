@@ -83,18 +83,24 @@ namespace Dystopia
 		void CheckMoving();
 		void CheckAttack();
 		void MovePlayer(float);
+		void CastLinked(int, bool);
+		void TakeDamage(int _dmg);
 
 	private:
 		friend MetaData<CharacterController>;
 
+		PP_MEMBERFUNC(Dystopia::CharacterController, TakeDamage)
+
 	// Member Variables
 	public: 
+		int playerHealth;
 		bool IsDodging;
 		float CharacterSpeed;
 		float JumpForce;
 		int attackCount;
 		float attackDelay;
 		GameObject * combatName;
+		GameObject * sManagerName;
 	private:
 		bool mbIsGrounded;
 		bool mbIsCeilinged;
@@ -115,7 +121,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::CharacterController, IsDodging, CharacterSpeed, JumpForce, attackCount, attackDelay);
+PP_REFLECT(Dystopia::playerHealth, CharacterController, IsDodging, CharacterSpeed, JumpForce, attackCount, attackDelay);
 
 #endif //_CharacterController_H_
 

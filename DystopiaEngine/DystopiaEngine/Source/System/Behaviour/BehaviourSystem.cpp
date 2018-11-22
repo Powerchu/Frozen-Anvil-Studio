@@ -202,6 +202,7 @@ namespace Dystopia
 				++start;
 			}
 		}
+		
 		for (auto & elem : mvRecentChanges)
 		{
 			std::wstring strName{ elem->mName.begin(), elem->mName.end() };
@@ -223,7 +224,8 @@ namespace Dystopia
 				}
 			}
 		}
-
+		if (hasChange)
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->RestartScene();
 		vTempFileName.clear();
 		mvRecentChanges.clear();
 #endif

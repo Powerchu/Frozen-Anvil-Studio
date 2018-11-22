@@ -92,6 +92,7 @@ namespace Dystopia
 			.end()
 		.Build(bTree);
 		
+		rBody = GetOwner()->GetComponent<RigidBody>();
 		SetFlags(FLAG_ACTIVE);
 	} 
 
@@ -247,9 +248,20 @@ namespace Dystopia
 		
 	}
 	
-	void Goblin::TakeDamage(int _dmg)
+	void Goblin::TakeDamage(int _dmg, bool _isFacingRight)
 	{
 		mHealth -= _dmg;
+
+		if (mHealth < 0)
+		GetOwner()->Destroy();
+
+		auto mass = rBody->GetMass();
+
+		if (_isFacingRight)
+			rBody->AddLinearImpulse({1 * mass,0,0});
+		else
+			rBody->AddLinearImpulse({-1 * mass,0,0});
+
 	}
 
 	TypeErasure::TypeEraseMetaData Goblin::GetMetaData()

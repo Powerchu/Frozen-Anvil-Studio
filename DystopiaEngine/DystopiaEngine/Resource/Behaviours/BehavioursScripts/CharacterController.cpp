@@ -69,6 +69,7 @@ namespace Dystopia
 		, mpInputSys(nullptr)
 		, attackCount(0)
 		, attackDelay(0.0f)
+		, isAttacking(false)
 	{
 	}
 
@@ -126,18 +127,24 @@ namespace Dystopia
 		}
 
 		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
+		sManagerName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("SkillManager");
+
+		playerHealth = 100;
+		SetFlags(FLAG_ACTIVE);
 	}
 
 	void CharacterController::Init()
 	{ 
 		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
+		sManagerName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("SkillManager");
+		SetFlags(FLAG_ACTIVE);  
 	}
 
 	void CharacterController::Update(const float _fDeltaTime)
 	{
 		MovePlayer(_fDeltaTime);
 		CheckMoving();
-		//CheckAttack();
+		CheckAttack();
 		attackDelay = attackDelay + _fDeltaTime;
 	}
 
@@ -160,7 +167,7 @@ namespace Dystopia
 	void Dystopia::CharacterController::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 		const float dotNormal = _colEvent.mEdgeNormal.Dot({ 0.0F,-1.0F,0.0F });
-		DEBUG_PRINT(eLog::MESSAGE, "DotNormal: %f", dotNormal);
+		//DEBUG_PRINT(eLog::MESSAGE, "DotNormal: %f", dotNormal);
 		if (dotNormal > 0.65F && dotNormal < 1.1F)
 		{
 			mbIsGrounded = true;	
@@ -364,24 +371,44 @@ namespace Dystopia
 			}
 		}
 
+		if (mpInputSys->IsKeyTriggered("Skill Y"))
+		{
+			CharacterController::CastLinked(1, currentType);
+		}
 
+		if (mpInputSys->IsKeyTriggered("Skill B"))
+		{
+			CharacterController::CastLinked(2, currentType);
+		}
+
+		if (mpInputSys->IsKeyTriggered("SetForm"))
+		{
+			currentType = true;
+			DEBUG_PRINT(eLog::MESSAGE, "Form!");
+		}
+
+		if (mpInputSys->IsKeyTriggered("SetForce"))
+		{
+			currentType = false;
+			DEBUG_PRINT(eLog::MESSAGE, "Force!");
+		}
 
 		if (mpInputSys->IsKeyTriggered("Attack"))
 		{
-			if (attackDelay > 1.0f)
+		    if (attackDelay > 0.5f)
 			{
-				if (!mbIsFacingRight)
-				{
-					
-				}
-
-				else
-				{
-
-				}
-
 				if (combatName)
-					CharacterController_MSG::SendExternalMessage(combatName, "DealDamage", 10);
+				{
+					if (!mbIsFacingRight)
+					{
+						CharacterController_MSG::SendExternalMessage(combatName, "DealDamage", 10, mbIsFacingRight);
+					}
+
+					else
+					{
+						CharacterController_MSG::SendExternalMessage(combatName, "DealDamage", 10, mbIsFacingRight);
+					}
+				}
 				else
 					DEBUG_PRINT(eLog::MESSAGE, "Combat Box not found");
 				
@@ -394,21 +421,59 @@ namespace Dystopia
 
 				else
 				{
-					attackCount = 1;
+					attackCount = 0;
 				}
+
+				//use linked skill
+				if (attackCount == 0)
+					CharacterController::CastLinked(0, currentType);
 
 				attackDelay = 0.0f;
 			}
 		}
 	}
 
+	void Dystopia::CharacterController::CastLinked(int _skill, bool _isForm)
+	{
+		if (_isForm)
+		{
+			if (_skill == 0)
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 0);
+
+			else if (_skill == 1)
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 1);
+
+			else if (_skill == 2)
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 2);
+		}
+
+		else 
+		{
+			if (_skill == 0)
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForce", 0);
+
+			else if (_skill == 1)
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForce", 1);
+
+			else if (_skill == 2)
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForce", 2);
+		}
+			
+	}
+
 	void CharacterController::CheckAttack()
 	{
 		auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
 
+		if (attackDelay > 1.5f)
+		{
+			attackCount = 0;
+			attackDelay = 0.5f;
+		}
+
 		if (s_rend && attackDelay < 1.0f)
 		{
-			if (attackCount == 1)
+			/*if (attackCount == 1)
 			{
 				s_rend->SetAnimation("AttackOne");
 			}
@@ -421,12 +486,7 @@ namespace Dystopia
 			if (attackCount == 3)
 			{
 				s_rend->SetAnimation("AttackThree");
-			}
-
-			if (attackCount == 0)
-			{
-				
-			}
+			}*/
 		}
 	}
 
@@ -446,6 +506,16 @@ namespace Dystopia
 				s_rend->SetSpeed(0.16F);
 				s_rend->SetAnimation("Idle");		
 			}			
+		}
+	}
+
+	void CharacterController::DealDamage(int _dmg)
+	{
+		playerHealth -= _dmg;
+
+		if (playerHealth < 0)
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "YOU DIED!");
 		}
 	}
 	

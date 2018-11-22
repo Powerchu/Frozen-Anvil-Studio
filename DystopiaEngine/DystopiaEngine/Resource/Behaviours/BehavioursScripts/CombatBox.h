@@ -90,7 +90,7 @@ namespace Dystopia
 		// Don't touch
 		virtual void EditorUI(void) noexcept override;
 
-		void DealDamage(int _damage);
+		void DealDamage(int _damage, bool _isFacingRight);
 		
 		// Reflection Stuff - Don't Touch
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();

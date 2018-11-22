@@ -90,13 +90,21 @@ namespace Dystopia
 		// Don't touch
 		virtual void EditorUI(void) noexcept override;
 		
+		void DealDamage(int _damage);
+
 		// Reflection Stuff - Don't Touch
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
-		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
+i		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 	private:
 		// Don't touch
-		friend MetaData<GoblinCombat>;
+		friend MetaData<GoblnCombat>;
+
+		PP_MEMBERFUNC(Dystopia::GoblinCombat, DealDamage)
+
+	public:
+		bool targetViable;
+		const char * name;
 	};
 
 	extern "C"

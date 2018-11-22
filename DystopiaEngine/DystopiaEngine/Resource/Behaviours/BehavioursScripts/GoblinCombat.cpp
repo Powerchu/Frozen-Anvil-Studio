@@ -108,6 +108,17 @@ namespace Dystopia
 
 	void Dystopia::GoblinCombat::OnTriggerEnter(const GameObject * _obj)
 	{
+		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_obj->GetID());
+
+		if (ptr)
+		{
+			name = ptr->GetNamePtr();
+
+			if (!strcmp(name, "Player"))
+			{
+				targetViable = true;
+			}
+		}
 	}
 
 	void Dystopia::GoblinCombat::OnTriggerStay(const GameObject * _obj)
@@ -116,6 +127,7 @@ namespace Dystopia
 
 	void Dystopia::GoblinCombat::OnTriggerExit(const GameObject * _obj)
 	{
+
 	}
 
 	GoblinCombat * GoblinCombat::Duplicate() const
@@ -143,6 +155,16 @@ namespace Dystopia
 		
 	}
 	
+	void GoblinCombat::DealDamage(int _dmg)
+	{
+		if (targetViable)
+		{
+			auto target = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr(name)
+
+			GoblinCombat_MSG::SendExternalMessage(target, "TakeDamage". 10)
+		}
+	}
+
 	TypeErasure::TypeEraseMetaData GoblinCombat::GetMetaData()
 	{
 		/*TO DO*/
