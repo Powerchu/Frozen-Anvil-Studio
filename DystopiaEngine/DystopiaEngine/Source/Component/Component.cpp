@@ -17,7 +17,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
-#include "Utility/Utility.h"
 #include "Utility/GUID.h"
 
 #if EDITOR

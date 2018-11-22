@@ -154,11 +154,10 @@ void Dystopia::GameObject::Destroy(void)
 
 	mnFlags = FLAG_REMOVE;
 
+	mTransform.RemoveParent();
+
 	for (auto& c : mTransform.GetAllChild())
 		c->GetOwner()->Destroy();
-
-	if (auto o = mTransform.GetParent())
-		o->RemoveChild(&mTransform);
 }
 
 void Dystopia::GameObject::Unload(void)
@@ -275,11 +274,14 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 
 	DEBUG_ASSERT(!curScene.FindGameObject(mnID), "Should not duplicate object not in scene");
 
-	GameObject *p	= curScene.InsertGameObject(GUIDGenerator::GetUniqueID());
+	auto id = GUIDGenerator::GetUniqueID();
+	GameObject *p	= curScene.InsertGameObject(id);
 	p->mnFlags		= mnFlags;
 	p->mName		= mName;
 	p->mName		+= "_clone";
 	p->mTransform	= mTransform;
+
+	p->mTransform.SetOwner(p);
 
 	for (auto& c : mComponents)
 		p->mComponents.Insert(c->Duplicate());
