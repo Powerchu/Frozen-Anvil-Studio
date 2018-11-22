@@ -152,6 +152,7 @@ void Dystopia::GameObject::PostUpdate(void)
 
 void Dystopia::GameObject::Destroy(void)
 {
+	auto& children = mTransform.GetAllChild();
 	for (auto& c : mTransform.GetAllChild())
 		c->GetOwner()->Destroy();
 
