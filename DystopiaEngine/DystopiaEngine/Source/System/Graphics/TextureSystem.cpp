@@ -53,15 +53,10 @@ void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 			{
 				Texture* pTex = LoadRaw<Texture2D>(pImg, e.GetPath().c_str());
 				
+				e.Unbind();
 				Ut::Swap(e, *pTex);
 				mTextures.Remove(pTex);
 			}
-
-			e.Bind();
-#			if defined(_DEBUG) | defined(DEBUG)
-				if (auto err = glGetError())
-					__debugbreak();
-#			endif 
 		}
 	}
 

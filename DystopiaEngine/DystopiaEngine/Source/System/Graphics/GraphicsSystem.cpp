@@ -275,22 +275,12 @@ namespace
 
 		if (t) t->Bind();
 
-#   if defined(_DEBUG) | defined(DEBUG)
-		if (auto err = glGetError())
-			__debugbreak();
-#   endif 
-
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);
 
 		_renderer->Draw();
 
 		if(t) t->Unbind();
-
-#   if defined(_DEBUG) | defined(DEBUG)
-		if (auto err = glGetError())
-			__debugbreak();
-#   endif 
 	}
 }
 
@@ -352,11 +342,6 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		if (s && r->GetTexture())
 		{
 			s->Bind();
-
-#   if defined(_DEBUG) | defined(DEBUG)
-			if (auto err = glGetError())
-				__debugbreak();
-#   endif 
 			s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
 		}
 		else
@@ -365,18 +350,9 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 			s->Bind();
 		}
 
-#   if defined(_DEBUG) | defined(DEBUG)
-		if (auto err = glGetError())
-			__debugbreak();
-#   endif 
-
 		s->UploadUniform("ProjectMat", _Proj);
 		s->UploadUniform("ViewMat", _View);
 
-#   if defined(_DEBUG) | defined(DEBUG)
-		if (auto err = glGetError())
-			__debugbreak();
-#   endif 
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
 			DrawRenderer(r, s, mfGamma);
