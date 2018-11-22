@@ -34,7 +34,6 @@
     <ClCompile Include="Source\Editor\EditorFactory.cpp" />
     <ClCompile Include="Source\Editor\EditorGLState.cpp" />
     <ClCompile Include="Source\Component\AiController.cpp" />
-    <ClCompile Include="Source\Editor\EditorInput.cpp" />
     <ClCompile Include="Source\Editor\EditorLauncher.cpp" />
     <ClCompile Include="Source\Editor\EditorMain.cpp" />
     <ClCompile Include="Source\Editor\EditorProc.cpp" />
@@ -56,12 +55,8 @@
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp" />
     <ClCompile Include="Source\Component\AudioSource.cpp" />
     <ClCompile Include="Source\Component\CollisionEvent.cpp" />
-    <ClCompile Include="Source\Editor\AdminCalls.cpp" />
-    <ClCompile Include="Source\Editor\Clipboard.cpp" />
     <ClCompile Include="Source\Component\Colliders\Circle.cpp" />
     <ClCompile Include="Source\Editor\ColorScheme.cpp" />
-    <ClCompile Include="Source\Editor\CommandList.cpp" />
-    <ClCompile Include="Source\Editor\DefaultFactory.cpp" />
     <ClCompile Include="Source\Editor\Gizmo.cpp" />
     <ClCompile Include="Source\Editor\Payload.cpp" />
     <ClCompile Include="Source\Editor\ProjectSettings.cpp" />
@@ -95,7 +90,6 @@
     <ClCompile Include="Source\Component\Colliders\Convex.cpp" />
     <ClCompile Include="Source\Component\RigidBody.cpp" />
     <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
-    <ClCompile Include="Source\Editor\EditorEvents.cpp" />
     <ClCompile Include="Source\Editor\PerformanceLog.cpp" />
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
@@ -107,11 +101,8 @@
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
     <ClCompile Include="Source\Component\Component.cpp" />
     <ClCompile Include="Source\Component\Transform.cpp" />
-    <ClCompile Include="Source\Editor\Commands.cpp" />
     <ClCompile Include="Source\Editor\Dock.cpp" />
     <ClCompile Include="Source\Editor\Editor.cpp" />
-    <ClCompile Include="Source\Editor\EditorTab.cpp" />
-    <ClCompile Include="Source\Editor\EGUI.cpp" />
     <ClCompile Include="Source\Editor\EGuiDisplay.cpp" />
     <ClCompile Include="Source\Editor\HierarchyView.cpp" />
     <ClCompile Include="Source\Editor\Inspector.cpp" />
@@ -177,8 +168,6 @@
     <ClInclude Include="Include\DataStructure\ProxyPtr.h" />
     <ClInclude Include="Include\Lib\GraphicsLib.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h" />
-    <ClInclude Include="Include\Editor\EditorHotkeys.h" />
-    <ClInclude Include="Include\Editor\EditorInput.h" />
     <ClInclude Include="Include\Editor\EditorProc.h" />
     <ClInclude Include="Include\DataStructure\HashString.h" />
     <ClInclude Include="Include\Editor\SpriteEditor.h" />
@@ -199,8 +188,6 @@
     <ClInclude Include="Include\Component\SpriteRenderer.h" />
     <ClInclude Include="Include\Component\TextRenderer.h" />
     <ClInclude Include="Include\Component\Triangle.h" />
-    <ClInclude Include="Include\Editor\AdminCalls.h" />
-    <ClInclude Include="Include\Editor\Clipboard.h" />
     <ClInclude Include="Include\Editor\ColorScheme.h" />
     <ClInclude Include="Include\Editor\DragStatus.h" />
     <ClInclude Include="Include\Editor\Gizmo.h" />
@@ -220,7 +207,6 @@
     <ClInclude Include="Include\Reflection\PPVariadicSize.h" />
     <ClInclude Include="Include\Reflection\ReflectedData.h" />
     <ClInclude Include="Include\Reflection\Reflection.h" />
-    <ClInclude Include="Include\Editor\SystemSettings.h" />
     <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
     <ClInclude Include="Include\System\Events\Events.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
@@ -236,13 +222,10 @@
     <ClInclude Include="Include\Component\RigidBody.h" />
     <ClInclude Include="Include\DataStructure\Tuple.h" />
     <ClInclude Include="Include\DataStructure\Variant.h" />
-    <ClInclude Include="Include\Editor\DefaultFactory.h" />
-    <ClInclude Include="Include\Editor\EditorMetaHelpers.h" />
     <ClInclude Include="Include\Editor\HotLoader.h" />
     <ClInclude Include="Include\Editor\PLogger.h" />
     <ClInclude Include="Include\Editor\PLogInfo.h" />
     <ClInclude Include="Include\Math\MathLib.h" />
-    <ClInclude Include="Include\Editor\EditorEvents.h" />
     <ClInclude Include="Include\Editor\PerformanceLog.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h" />
@@ -275,12 +258,8 @@
     <ClInclude Include="Include\DataStructure\Queue.h" />
     <ClInclude Include="Include\DataStructure\SharedPtr.h" />
     <ClInclude Include="Include\DataStructure\Stack.h" />
-    <ClInclude Include="Include\Editor\CommandList.h" />
-    <ClInclude Include="Include\Editor\Commands.h" />
     <ClInclude Include="Include\Editor\ConsoleLog.h" />
     <ClInclude Include="Include\Editor\Dock.h" />
-    <ClInclude Include="Include\Editor\Editor.h" />
-    <ClInclude Include="Include\Editor\EditorTab.h" />
     <ClInclude Include="Include\Editor\EGUI.h" />
     <ClInclude Include="Include\Editor\HierarchyView.h" />
     <ClInclude Include="Include\Editor\Inspector.h" />

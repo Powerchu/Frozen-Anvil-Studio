@@ -156,7 +156,7 @@ namespace Editor
 			auto allObj = ss->GetCurrentScene().GetAllGameObjects();
 			for (auto& e : allObj)
 			{
-				std::string item{ e.GetName() };
+				std::string item{ e.GetName().c_str() };
 				auto it = std::search(item.begin(), item.end(), toBeSearched.begin(), toBeSearched.end(),
 									  [](char c1, char c2) { return std::toupper(c1) == std::toupper(c2); });
 				if (it == item.begin())
@@ -230,7 +230,7 @@ namespace Editor
 		}
 
 		uint64_t id = _obj.GetID();
-		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &id, sizeof(uint64_t), _obj.GetName()))
+		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &id, sizeof(uint64_t), _obj.GetName().c_str()))
 		{
 			EGUI::Display::EndPayload();
 		}
@@ -303,7 +303,7 @@ namespace Editor
 				break;
 			}
 		}
-		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
+		std::string uniqueifyName = std::string{ _obj.GetName().c_str() } +"##" + std::to_string(_obj.GetID());
 		bool tree = EGUI::Display::StartTreeNode(uniqueifyName, &clicked, selected);
 		GameObjectPayload(_obj);
 		GameObjectPopups(_obj);
@@ -344,7 +344,7 @@ namespace Editor
 				break;
 			}
 		}
-		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
+		std::string uniqueifyName = std::string{_obj.GetName().c_str()} + "##" + std::to_string(_obj.GetID());
 		if (EGUI::Display::SelectableTxt(uniqueifyName, selected))
 		{
 			SelectedObj(_obj);

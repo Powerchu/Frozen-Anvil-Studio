@@ -20,11 +20,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/CommandTypes.h"
 #include "Editor/EditorMain.h"
 #include "Editor/EditorClipboard.h"
+#include "Editor/Payloads.h"
 
-#include "System/Driver/Driver.h"
-#include "System/Graphics/GraphicsSystem.h"
 #include "System/Graphics/Texture.h"
-#include "System/Scene/SceneSystem.h"
+#include "System/Graphics/GraphicsSystem.h"
 #include "System/Scene/Scene.h"
 
 #include "DataStructure/Stack.h"
@@ -558,7 +557,7 @@ namespace EGUI
 		{
 			auto originalPos = ImGui::GetCursorPos();
 
-			auto img = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>()->LoadTexture(static_cast<Editor::File*>(_pData)->mPath.c_str());
+			auto img = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>()->LoadTexture(static_cast<::Editor::File*>(_pData)->mPath.c_str());
 			size_t id = static_cast<size_t>(img->GetID());
 			float imageMaxHeight = _displaySize.y * 0.75f;
 			float imageMaxWidth = _displaySize.x * 0.9f;

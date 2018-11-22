@@ -74,8 +74,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #if EDITOR
 #include "Editor/EGUI.h"
-#include "Editor/CommandList.h"
-#include "Editor/Commands.h"
 #endif 
 
 

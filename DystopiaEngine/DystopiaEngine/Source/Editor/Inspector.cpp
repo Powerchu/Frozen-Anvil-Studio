@@ -124,7 +124,7 @@ namespace Editor
 		static int j = 0;
 
 		char buffer[MAX_SEARCH * 2] = "";
-		std::string name = mpFocus->GetName();
+		std::string name = mpFocus->GetName().c_str();
 		strcpy_s(buffer, name.c_str());
 
 		EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
@@ -136,7 +136,7 @@ namespace Editor
 			{
 				auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
 				auto oFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, mpFocus->GetName());
-				auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, std::string{ buffer });
+				auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, HashString{ buffer });
 				cmd->FunctionCommand(mpFocus->GetID(), oFn, nFn);
 			}
 			if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))

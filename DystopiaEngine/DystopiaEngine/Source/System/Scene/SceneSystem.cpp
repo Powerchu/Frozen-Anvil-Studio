@@ -12,25 +12,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Scene/SceneSystem.h"              // File Header
-#include "System/Scene/SceneSysMetaHelper.h"
+
 #include "System/SystemTypes.h"
+#include "System/Scene/SceneSysMetaHelper.h"
 #include "System/Driver/Driver.h"
 #include "System/Collision/CollisionSystem.h"
 #include "System/Physics/PhysicsSystem.h"
-#include "DataStructure/Array.h"
-#include "IO/TextSerialiser.h"
-#include "Utility/DebugAssert.h"
+#include "System/Behaviour/BehaviourSystem.h"
 
+#include "IO/TextSerialiser.h"
+
+#include "Utility/DebugAssert.h"
 #include "Utility/Utility.h"
-#include "Editor/CommandList.h"
-#include "Editor/Commands.h"
-#include "Editor/Editor.h"
-#include "Editor/DefaultFactory.h"
+
+//#include "Editor/CommandList.h"
+//#include "Editor/Commands.h"
+//#include "Editor/Editor.h"
+//#include "Editor/DefaultFactory.h"
 
 #include "Component/Component.h"
 #include "Component/Transform.h"
 #include "Object/GameObject.h"
-#include "System/Behaviour/BehaviourSystem.h"
 
 Dystopia::SceneSystem::SceneSystem(void) :
 	mpCurrScene{ nullptr }, mpNextScene{ nullptr }, mLastSavedData{ "" }, mNextSceneFile{ "" }, mbRestartScene { false }
@@ -106,20 +108,20 @@ Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const HashString& _pre
 {
 	if (!mpCurrScene) return false;
 
-	GameObject *pDupl = Factory::LoadFromPrefab(_prefabName);
-	if (pDupl)
-	{
-		pDupl->GetComponent<Transform>()->SetPosition(_position);
-		auto& obj = *mpCurrScene->InsertGameObject(Ut::Move(*pDupl));
-		obj.Identify();
-		obj.Awake();
-		obj.Init();
-		obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
-		for (auto& c : obj.GetAllComponents())
-			c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
-		delete pDupl;
-		return &obj;
-	}
+	//GameObject *pDupl = Factory::LoadFromPrefab(_prefabName);
+	//if (pDupl)
+	//{
+	//	pDupl->GetComponent<Transform>()->SetPosition(_position);
+	//	auto& obj = *mpCurrScene->InsertGameObject(Ut::Move(*pDupl));
+	//	obj.Identify();
+	//	obj.Awake();
+	//	obj.Init();
+	//	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	//	for (auto& c : obj.GetAllComponents())
+	//		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	//	delete pDupl;
+	//	return &obj;
+	//}
 	return nullptr;
 }
 

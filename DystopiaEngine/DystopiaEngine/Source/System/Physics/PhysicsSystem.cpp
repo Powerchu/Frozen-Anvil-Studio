@@ -9,8 +9,6 @@
 
 #if EDITOR
 #include "Editor/EGUI.h"
-#include "Editor/CommandList.h"
-#include "Editor/Commands.h"
 #endif 
 
 namespace Dystopia

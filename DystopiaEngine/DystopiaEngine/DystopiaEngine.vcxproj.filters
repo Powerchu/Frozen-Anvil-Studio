@@ -73,9 +73,6 @@
     <ClCompile Include="Source\System\Camera\CameraSystem.cpp">
       <Filter>Game Engine\Systems\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\Commands.cpp">
-      <Filter>Editor\Commands</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\ConsoleLog.cpp">
       <Filter>Editor\Main\Panels\Console</Filter>
     </ClCompile>
@@ -118,9 +115,6 @@
     <ClCompile Include="Source\Component\Colliders\Convex.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EditorEvents.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Math\Quaternion.cpp">
       <Filter>Math\Quaternion</Filter>
     </ClCompile>
@@ -132,9 +126,6 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\PerformanceLog.cpp">
       <Filter>Editor\Main\Panels\Performance</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EditorTab.cpp">
-      <Filter>Editor\Editor Tabs</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Profiler\ProfilerAction.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerAction</Filter>
@@ -151,17 +142,8 @@
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\DefaultFactory.cpp">
-      <Filter>Editor\Factory</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\CommandList.cpp">
-      <Filter>Editor\Commands</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp">
       <Filter>Game Engine\Systems\Graphic\Framebuffer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Clipboard.cpp">
-      <Filter>Editor\Clipboard</Filter>
     </ClCompile>
     <ClCompile Include="Source\Component\Particle.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
@@ -213,9 +195,6 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\Payload.cpp">
       <Filter>Editor\Payload</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\AdminCalls.cpp">
-      <Filter>Editor\Admin</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\ProjectSettings.cpp">
       <Filter>Editor\Main\Panels\Project Settings</Filter>
@@ -282,12 +261,6 @@
     </ClCompile>
     <ClCompile Include="Source\System\Sound\SoundSystem.cpp">
       <Filter>Game Engine\Systems\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EditorInput.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EditorProc.cpp">
-      <Filter>Editor\Editor</Filter>
     </ClCompile>
     <ClCompile Include="Source\DataStructure\HashString.cpp">
       <Filter>DataStructures</Filter>
@@ -358,11 +331,11 @@
     <ClCompile Include="Source\Editor\EditorFactory.cpp">
       <Filter>Editor\Main\Systems\Factory</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EGUI.cpp">
-      <Filter>Editor\Main\Systems\UI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\EGuiDisplay.cpp">
       <Filter>Editor\Main\Systems\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorProc.cpp">
+      <Filter>Editor\Main\Process</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -525,12 +498,6 @@
     <ClInclude Include="Include\System\Camera\CameraSystem.h">
       <Filter>Game Engine\Systems\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\CommandList.h">
-      <Filter>Editor\Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\Commands.h">
-      <Filter>Editor\Commands</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\ConsoleLog.h">
       <Filter>Editor\Main\Panels\Console</Filter>
     </ClInclude>
@@ -570,9 +537,6 @@
     <ClInclude Include="Include\System\Physics\PhysicsSystem.h">
       <Filter>Game Engine\Systems\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\EditorEvents.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Time\ScopedTimer.h">
       <Filter>Game Engine\Systems\Time\ScopedTimer</Filter>
     </ClInclude>
@@ -581,12 +545,6 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\PerformanceLog.h">
       <Filter>Editor\Main\Panels\Performance</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\Editor.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EditorTab.h">
-      <Filter>Editor\Editor Tabs</Filter>
     </ClInclude>
     <ClInclude Include="Include\DataStructure\Variant.h">
       <Filter>DataStructures</Filter>
@@ -638,15 +596,6 @@
     </ClInclude>
     <ClInclude Include="Include\System\Input\MouseData.h">
       <Filter>Game Engine\Systems\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EditorMetaHelpers.h">
-      <Filter>Editor\AuxMetaHelpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\DefaultFactory.h">
-      <Filter>Editor\Factory</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\Clipboard.h">
-      <Filter>Editor\Clipboard</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Logger\LogPriority.h">
       <Filter>Game Engine\SubSystems\Logger</Filter>
@@ -735,9 +684,6 @@
     <ClInclude Include="Include\System\Collision\CollisionEvent.h">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\AdminCalls.h">
-      <Filter>Editor\Admin</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\ProjectSettings.h">
       <Filter>Editor\Main\Panels\Project Settings</Filter>
     </ClInclude>
@@ -795,9 +741,6 @@
     <ClInclude Include="Include\Allocator\ProxyAlloc.h">
       <Filter>Allocator\ProxyAllocator</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\SystemSettings.h">
-      <Filter>Editor\Editor Tabs\SystemSettings</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Allocator\Allocator.h">
       <Filter>Allocator\Allocator</Filter>
     </ClInclude>
@@ -818,18 +761,6 @@
     </ClInclude>
     <ClInclude Include="Include\Component\AudioSource.h">
       <Filter>Game Engine\Components\Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Sound\Audio.h">
-      <Filter>Game Engine\SubSystems\Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EditorHotkeys.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EditorInput.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EditorProc.h">
-      <Filter>Editor\Editor</Filter>
     </ClInclude>
     <ClInclude Include="Include\DataStructure\HashString.h">
       <Filter>DataStructures</Filter>
@@ -995,6 +926,10 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\EGUI.h">
       <Filter>Editor\Main\Systems\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
+    <ClInclude Include="Include\Editor\EditorProc.h">
+      <Filter>Editor\Main\Process</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1229,12 +1164,6 @@
     <Filter Include="Editor\Gizmo">
       <UniqueIdentifier>{c678684a-2024-498c-b278-53911ea1ab17}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor Tabs\SchemeColor">
-      <UniqueIdentifier>{505d9276-8eac-401b-a286-9d084f3f8461}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Editor Tabs\SchemeStyle">
-      <UniqueIdentifier>{e2a99798-5b6a-4bf2-a471-a415c2452e05}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\Admin">
       <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
     </Filter>
@@ -1255,9 +1184,6 @@
     </Filter>
     <Filter Include="Allocator\ProxyAllocator">
       <UniqueIdentifier>{4ffb5d1f-2ca0-4a43-917c-a699ba07a0da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Editor Tabs\SystemSettings">
-      <UniqueIdentifier>{f494a940-4551-4291-aa92-cff931764600}</UniqueIdentifier>
     </Filter>
     <Filter Include="Allocator\Allocator">
       <UniqueIdentifier>{9baa3d75-f8aa-4e1c-8273-18e2128a6cdc}</UniqueIdentifier>

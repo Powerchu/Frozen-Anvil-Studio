@@ -20,10 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
-#include "Editor/Editor.h"
 #include "Editor/Payloads.h"
-#include "Editor/Commands.h"
-#include "Editor/CommandList.h"
 #include "Editor/ConsoleLog.h"
 #endif 
 

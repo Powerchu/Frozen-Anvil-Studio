@@ -24,7 +24,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
-#include "Editor/Editor.h"
 #endif 
 
 #include <cmath>

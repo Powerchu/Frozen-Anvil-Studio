@@ -146,7 +146,7 @@ void Dystopia::TimeSystem::EditorUI(void)
 		case EGUI::eDragStatus::eTABBED:
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 		case EGUI::eDragStatus::eNO_CHANGE:
 			break;
 		}

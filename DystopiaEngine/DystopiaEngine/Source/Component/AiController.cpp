@@ -25,7 +25,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #if EDITOR
 #include "Editor/EGUI.h"
-#include "Editor/Editor.h"
 #endif
 
 namespace Dystopia

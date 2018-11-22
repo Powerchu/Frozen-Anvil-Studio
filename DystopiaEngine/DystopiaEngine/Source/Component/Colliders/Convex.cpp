@@ -12,7 +12,6 @@
 
 #include <vector>
 #if EDITOR
-#include "Editor/Editor.h"
 #include "Editor/EGUI.h"
 #endif
 

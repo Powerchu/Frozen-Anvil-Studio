@@ -59,7 +59,7 @@ namespace EGUI
 	}
 }
 
-namespace Editor//Dystopia
+namespace Editor //Dystopia
 {
 	static const std::string g_PayloadSceneEx = Gbl::SCENE_EXT;
 	static const std::string g_PayloadPrefabEx = Gbl::PREFAB_EXT;

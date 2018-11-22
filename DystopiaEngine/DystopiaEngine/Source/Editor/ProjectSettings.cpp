@@ -59,7 +59,7 @@ void Editor::ProjectSettings::EditorUI(void)
 		mpPhySys->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
-	auto mpTimeSys = EngineCore::GetInstance()->GetSystem<TimeSystem>();
+	auto mpTimeSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::TimeSystem>();
 	EGUI::Display::HorizontalSeparator();
 	if (EGUI::Display::StartTreeNode("Time Settings"))
 	{

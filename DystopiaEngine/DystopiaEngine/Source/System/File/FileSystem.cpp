@@ -312,7 +312,6 @@ namespace Dystopia
 		return 0;
 	}
 
-}
 	bool FileSystem::CheckFolderExist(const HashString& _folderName, const HashString& _path) const
 	{
 		if (CheckPathExist(_path))
