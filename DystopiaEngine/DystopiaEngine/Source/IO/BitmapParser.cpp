@@ -311,6 +311,13 @@ Image* ImageParser::LoadBMP(const std::string& _path, Image* _pImage)
 			nullptr
 		);
 	}
+	else
+	{
+		_pImage->mnWidth    = static_cast<unsigned>(fileInfo.mWidth);
+		_pImage->mnHeight   = static_cast<unsigned>(fileInfo.mHeight);
+		_pImage->mnMipMaps  = 1;
+		_pImage->mnChannels = 4;
+	}
 
 	BMP::ReadData(file, fileInfo, mPalette, _pImage);
 	return _pImage;

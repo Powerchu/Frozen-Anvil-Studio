@@ -196,12 +196,6 @@
     <ClCompile Include="Source\System\Graphics\Shader.cpp">
       <Filter>Game Engine\SubSystems\Shader\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp">
-      <Filter>Game Engine\SubSystems\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\Graphics\TextureSystem.cpp">
-      <Filter>Game Engine\SubSystems\Texture</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\Gizmo.cpp">
       <Filter>Editor\Gizmo</Filter>
     </ClCompile>
@@ -324,6 +318,12 @@
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\FontSystem.cpp">
       <Filter>Game Engine\SubSystems\Font\FontSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp">
+      <Filter>Game Engine\SubSystems\Shader\ShaderSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\TextureSystem.cpp">
+      <Filter>Game Engine\SubSystems\Texture\TextureSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -621,12 +621,6 @@
     <ClInclude Include="resource.h">
       <Filter>Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\TextureSystem.h">
-      <Filter>Game Engine\SubSystems\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\ShaderSystem.h">
-      <Filter>Game Engine\SubSystems\Shader</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Component\Particle.h">
       <Filter>Game Engine\Components\Physics</Filter>
     </ClInclude>
@@ -911,6 +905,12 @@
     </ClInclude>
     <ClInclude Include="Include\IO\XMLParser.h">
       <Filter>IO\XMLParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\ShaderSystem.h">
+      <Filter>Game Engine\SubSystems\Shader\ShaderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\TextureSystem.h">
+      <Filter>Game Engine\SubSystems\Texture\TextureSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1300,6 +1300,12 @@
     </Filter>
     <Filter Include="IO\XMLParser">
       <UniqueIdentifier>{637d81a6-d5ee-481d-8157-d3acba2c19d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Shader\ShaderSystem">
+      <UniqueIdentifier>{f0232027-e837-4efa-8240-b5ba0faa7a63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Texture\TextureSystem">
+      <UniqueIdentifier>{965b4010-0eb6-428e-9e33-48386538f41c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

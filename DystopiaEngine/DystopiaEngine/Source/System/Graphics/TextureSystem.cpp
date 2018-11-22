@@ -31,7 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 Dystopia::TextureSystem::TextureSystem(void) noexcept
 	: mTextures{}
 {
-}
+}	
 
 Dystopia::TextureSystem::~TextureSystem(void) noexcept
 {
@@ -45,15 +45,14 @@ void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 
 	for (auto& e : mTextures)
 	{
-		if (auto n = pFileSys->DetectFileChanges(e.GetPath()))
+		if (pFileSys->DetectFileChanges(e.GetPath()))
 		{
-			while (n = pFileSys->DetectFileChanges(e.GetPath()));
+			while (pFileSys->DetectFileChanges(e.GetPath()));
 
 			if (Image* pImg = LoadImage(e.GetPath()))
 			{
 				Texture* pTex = LoadRaw<Texture2D>(pImg, e.GetPath().c_str());
 				
-				e.Unbind();
 				Ut::Swap(e, *pTex);
 				mTextures.Remove(pTex);
 			}

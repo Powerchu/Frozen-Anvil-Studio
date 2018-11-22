@@ -34,9 +34,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::TextRenderer::TextRenderer(void) noexcept
-	: Renderer{}, mText {}, mColor{ 1.f, 1.f, 1.f },
+	: Renderer{}, mText {}, mColor{ 1.f, 1.f, 1.f, 1.f },
 	mpData{ nullptr }
 {
+}
+
+Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
+	: Renderer{ _rhs }, mText{ _rhs.mText }, mColor{ _rhs.mColor },
+	mpData{ _rhs.mpData } 
+{
+	mpTexture = _rhs.mpTexture;
 }
 
 void Dystopia::TextRenderer::Awake(void)
@@ -136,11 +143,6 @@ void Dystopia::TextRenderer::RegenMesh(void)
 	mpMesh->UpdateBuffer<VertexBuffer>(verts);
 	mpMesh->UpdateBuffer<UVBuffer>(uvs);
 	mpMesh->UpdateBuffer<IndexBuffer>(indices);
-
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif 
 	mpMesh->SetIndices(static_cast<unsigned>(indices.size()), 0);
 
 #   if defined(_DEBUG) | defined(DEBUG)
@@ -152,7 +154,9 @@ void Dystopia::TextRenderer::RegenMesh(void)
 
 Dystopia::TextRenderer* Dystopia::TextRenderer::Duplicate(void) const
 {
-	return nullptr;
+	return static_cast<ComponentDonor<TextRenderer>*>(
+		EngineCore::GetInstance()->Get<GraphicsSystem>()
+	)->RequestComponent(*this);
 }
 
 void Dystopia::TextRenderer::Serialise(TextSerialiser& _out) const

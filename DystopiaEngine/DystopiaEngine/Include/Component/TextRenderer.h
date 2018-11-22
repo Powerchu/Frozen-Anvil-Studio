@@ -58,7 +58,7 @@ namespace Dystopia
 
 		TextRenderer(void) noexcept;
 		TextRenderer(TextRenderer&&) noexcept = default;
-		TextRenderer(const TextRenderer&) noexcept = default;
+		TextRenderer(const TextRenderer&) noexcept;
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 

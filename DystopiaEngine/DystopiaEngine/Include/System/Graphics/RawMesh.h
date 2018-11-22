@@ -77,25 +77,26 @@ template <typename ... T>
 void Dystopia::RawMesh::BuildEmpty(void)
 {
 	InitBuffersEmpty(
-		Ut::MetaFind<VertexBuffer, T...>::value,
-		Ut::MetaFind<NormalBuffer, T...>::value,
-		Ut::MetaFind<UVBuffer    , T...>::value,
-		Ut::MetaFind<IndexBuffer , T...>::value
+		Ut::MetaFind<Ut::Type<VertexBuffer>, Ut::Type<T>...>::value,
+		Ut::MetaFind<Ut::Type<NormalBuffer>, Ut::Type<T>...>::value,
+		Ut::MetaFind<Ut::Type<UVBuffer    >, Ut::Type<T>...>::value,
+		Ut::MetaFind<Ut::Type<IndexBuffer >, Ut::Type<T>...>::value
 	);
 }
 
 template <typename T>
 void Dystopia::RawMesh::UpdateBuffer(AutoArray<typename T::type> const& _arr, bool _bFreq)
 {
+	using Real_t = typename T::type;
 	if constexpr (T::value == 3)
 	{
 		// GL_ELEMENT_ARRAY_BUFFER
-		UpdateBuffer(0x8893, (&mVtxBuffer)[T::value], _arr.begin(), _arr.size(), _bFreq);
+		UpdateBuffer(0x8893, (&mVtxBuffer)[T::value], _arr.begin(), _arr.size() * sizeof(Real_t), _bFreq);
 	}
 	else
 	{
 		// GL_ARRAY_BUFFER
-		UpdateBuffer(0x8892, (&mVtxBuffer)[T::value], _arr.begin(), _arr.size(), _bFreq);
+		UpdateBuffer(0x8892, (&mVtxBuffer)[T::value], _arr.begin(), _arr.size() * sizeof(Real_t), _bFreq);
 	}
 }
 

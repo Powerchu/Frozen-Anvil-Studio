@@ -327,10 +327,6 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif 
 	// Draw the game objects to screen based on the camera
 	// Get Camera's layer, we only want to draw inclusive stuff
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();
