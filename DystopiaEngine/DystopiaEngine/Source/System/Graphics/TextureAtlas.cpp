@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 
 #include "Math/Vector2.h"
+#include "IO/TextSerialiser.h"
 
 
 Dystopia::TextureAtlas::TextureAtlas(Texture* _ptr) noexcept
@@ -94,6 +95,52 @@ std::string Dystopia::TextureAtlas::GetName(void) const
 const std::string& Dystopia::TextureAtlas::GetPath(void) const noexcept
 {
 	return mpTexture->GetPath();
+}
+
+void Dystopia::TextureAtlas::SaveAtlas(Dystopia::TextSerialiser& _out) const noexcept
+{
+	_out << mSections.size();
+
+	for (auto const& e : mSections)
+	{
+		_out.InsertStartBlock("SECTION");
+		_out << e.uStart;
+		_out << e.vStart;
+		_out << e.uEnd;
+		_out << e.uEnd;
+		_out << e.mRow;
+		_out << e.mCol;
+		_out.InsertEndBlock("SECTION");
+	}
+}
+
+void Dystopia::TextureAtlas::LoadAtlas(Dystopia::TextSerialiser& _in) noexcept
+{
+	size_t sz;
+	_in >> sz;
+
+	mSections.clear();
+	mSections.reserve(sz);
+
+	_in.ConsumeStartBlock();
+	while (sz-- && !_in.EndOfInput())
+	{
+		mSections.EmplaceBack();
+
+		_in >> mSections.back().uStart;
+		_in >> mSections.back().uStart;
+		_in >> mSections.back().vStart;
+		_in >> mSections.back().uEnd;
+		_in >> mSections.back().uEnd;
+		_in >> mSections.back().mRow;
+		_in >> mSections.back().mCol;
+		_in.ConsumeStartBlock();
+	}
+}
+
+Dystopia::Texture* Dystopia::TextureAtlas::GetInternal(void) const noexcept
+{
+	return mpTexture;
 }
 
 

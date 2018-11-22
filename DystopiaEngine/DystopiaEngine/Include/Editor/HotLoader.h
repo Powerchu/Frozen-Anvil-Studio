@@ -586,7 +586,7 @@ namespace Dystopia
 					OutputCommand += L" \"" + elem.GetFullPath() + L"\"";
 			}
 
-			std::wstring Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" & exit 99";
+			std::wstring Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" && exit 99";
 
 
 

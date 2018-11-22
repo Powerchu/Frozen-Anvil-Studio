@@ -18,8 +18,23 @@
 #include "Utility/Meta.h"		// EnableIf, IsNumeric
 #include "Math/MathInternal.h"
 
+#include <cstdint>
+
+
 namespace Math
 {
+	template<typename Num>
+	inline constexpr typename Ut::EnableIf<Ut::IsNumeric<Num>::value, Num>::type Abs(const Num _x)
+	{
+		return _x < 0 ? -_x : _x;
+	}
+
+	template<int64_t exponent, class T>
+	inline constexpr T Power(T _x)
+	{
+		return Internal::PowerCalc<T, (exponent < 0), Abs(exponent)>::Power(_x);
+	}
+
 	namespace C
 	{
 		template <typename Ty>
@@ -32,7 +47,10 @@ namespace Math
 		constexpr Ty phi   = Ty(1.6180339887498948482045868343656L);
 
 		template <typename Ty>
-		constexpr Ty sqrt2 = Ty(1.4142135623730950488016887242096f);
+		constexpr Ty sqrt2 = Ty(1.4142135623730950488016887242096L);
+
+		template <typename Ty>
+		constexpr Ty epsilon = Power<1 - sizeof(Ty) * 2, Ty>(10);
 	}
 
 	// Exponential Constant
@@ -46,14 +64,9 @@ namespace Math
 	// Sqrt of 2
 	constexpr float sqrt2 = C::sqrt2<float>;
 	// Floating point error tolerance
-	constexpr float epsilon = 0.0000001f;
+	constexpr float epsilon = C::epsilon<float>;
 
 
-	template<typename Num>
-	inline constexpr typename Ut::EnableIf<Ut::IsNumeric<Num>::value, Num>::type Abs(const Num _x)
-	{
-		return _x < 0 ? -_x : _x;
-	}
 
 	inline constexpr bool IsZero(float _fScalar)
 	{
@@ -79,14 +92,15 @@ namespace Math
 	}
 
 	template <typename T>
-	inline constexpr T Zero(void)
+	inline constexpr auto Zero(void)
 	{
 		return T{ };
 	}
 
 	// Checks if two floats are approximately equal
 	// Returns false if one of the numbers is zero
-	inline bool ApproxEq(float _lhs, float _rhs)
+	template <typename T>
+	inline constexpr auto ApproxEq(T _lhs, T _rhs) -> Ut::EnableIf_t<Ut::IsFloatType<T>::value, bool>
 	{
 		float diff = Abs(_lhs - _rhs);
 
@@ -94,10 +108,9 @@ namespace Math
 		_rhs = Abs(_rhs);
 
 		float scale = Max(_lhs, _rhs);
-		return diff <= (scale * epsilon);
+		return diff <= (scale * C::epsilon<T>);
 	}
 
-	// Prevent deduction on Min and Max types
 	template <typename T>
 	inline constexpr T Clamp(T _input, Ut::Type_t<T> _min, Ut::Type_t<T> _max)
 	{
@@ -118,12 +131,6 @@ namespace Math
 		return _start + _fRatio * (_end - _start);
 	}
 
-	template<int exponent, class T>
-	inline constexpr T Power(T _x)
-	{
-		return Internal::PowerCalc<T, exponent <0, Abs(exponent)>::Power(_x);
-	}
-
 	template <size_t _val, size_t _Base = 2>
 	struct Log
 	{
@@ -141,6 +148,20 @@ namespace Math
 	{
 		
 	};
+}
+
+namespace Ut
+{
+	using Math::Abs;
+	using Math::Min;
+	using Math::Max;
+	using Math::Wrap;
+	using Math::Clamp;
+	using Math::Power;
+	using Math::IsZero;
+	using Math::ApproxEq;
+
+	using Math::Log;
 }
 
 

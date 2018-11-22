@@ -11,14 +11,17 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Object\GameObject.h"		 // File Header
-#include "Component\Component.h"	 // Component
-#include "Behaviour\Behaviour.h"	 // Behaviour
-#include "Object\ObjectFlags.h"		 // eObjFlags
-#include "DataStructure\AutoArray.h" 
-#include "Utility\Utility.h"		 // Move
-#include "IO\TextSerialiser.h"
-#include "Utility\GUID.h"			// Global UniqueID
+#include "Object/GameObject.h"		 // File Header
+#include "Object/ObjectFlags.h"		 // eObjFlags
+#include "Component/Component.h"	 // Component
+#include "Behaviour/Behaviour.h"	 // Behaviour
+
+#include "Utility/GUID.h"			// Global UniqueID
+#include "Utility/Utility.h"		 // Move
+#include "Utility/DebugAssert.h"
+#include "DataStructure/AutoArray.h" 
+
+#include "IO/TextSerialiser.h"
 #include "System/Behaviour/BehaviourSystem.h"
 
 //duplicate should immediately put into scene
@@ -37,7 +40,7 @@ for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
 
 Dystopia::GameObject::GameObject(void) noexcept
-	: GameObject{ Ut::Constant<decltype(mnID), ~0>::value }
+	: GameObject{ GUIDGenerator::INVALID }
 {
 
 }
@@ -60,7 +63,7 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
 
-	_obj.mnID = Ut::Constant<decltype(mnID), ~0>::value;
+	_obj.mnID = GUIDGenerator::INVALID;
 	_obj.mnFlags = FLAG_REMOVE;
 }
 
@@ -215,6 +218,7 @@ void Dystopia::GameObject::AddComponent(Behaviour* _p, BehaviourTag)
 {
 	mBehaviours.Insert(_p);
 	_p->SetOwner(this);
+	_p->Awake();
 }
 
 void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)
@@ -307,7 +311,7 @@ uint64_t Dystopia::GameObject::GetID(void) const
 	return mnID;
 }
 
-std::string Dystopia::GameObject::GetName(void) const
+HashString Dystopia::GameObject::GetName(void) const
 {
 	return mName;
 }
@@ -317,7 +321,7 @@ const char* Dystopia::GameObject::GetNamePtr() const
 	return mName.c_str();
 }
 
-void Dystopia::GameObject::SetName(const std::string& _strName)
+void Dystopia::GameObject::SetName(const HashString& _strName)
 {
 	mName = _strName;
 }
@@ -341,7 +345,7 @@ Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
 	Ut::Swap(mComponents, _rhs.mComponents);
 	Ut::Swap(mBehaviours, _rhs.mBehaviours);
 
-	_rhs.mnID = Ut::Constant<decltype(mnID), ~0>::value;
+	_rhs.mnID = GUIDGenerator::INVALID;
 
 	return *this;
 }

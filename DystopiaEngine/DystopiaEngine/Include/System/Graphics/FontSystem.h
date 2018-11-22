@@ -24,6 +24,7 @@ namespace Dystopia
 {
 	struct Image;
 	class  Texture;
+	struct CharSpace;
 	class  TextureAtlas;
 
 	class FontSystem
@@ -35,7 +36,7 @@ namespace Dystopia
 
 		void Init(void);
 
-		TextureAtlas* LoadFont(const std::string& _strPath);
+		TextureAtlas* LoadFont(const std::string& _strPath, AutoArray<CharSpace>& _outCoords);
 
 		void SetPadding(unsigned _x, unsigned _y);
 
@@ -46,18 +47,11 @@ namespace Dystopia
 
 		using uchar = unsigned char;
 
-		struct CharSpace
-		{
-			unsigned x, y;
-			unsigned mnWidth;
-			unsigned mnHeight;
-		};
-
-		TextureAtlas* LoadFromFont(const std::string&);
-		TextureAtlas* LoadExisting(const std::string&);
+		TextureAtlas* LoadFromFont(const std::string&, AutoArray<CharSpace>&);
+		TextureAtlas* LoadExisting(const std::string&, AutoArray<CharSpace>&);
 
 		CharSpace PackFont(AutoArray<CharSpace>&, uchar* dest, uchar* src, unsigned _nWidth, unsigned _nHeight);
-		void OutputFontmap(TextureAtlas*, Image*, std::string const&);
+		void OutputFontmap(TextureAtlas*, Image*, AutoArray<CharSpace> const&, std::string const&);
 
 		void Blit(const uchar* _src, unsigned _nWidth, unsigned _nHeight, uchar* _dest);
 	};

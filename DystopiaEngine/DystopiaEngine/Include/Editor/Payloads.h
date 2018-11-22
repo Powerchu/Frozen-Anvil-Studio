@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Globals.h"
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/HashString.h"
+#include <string>
 
 namespace EGUI
 {
@@ -58,7 +59,7 @@ namespace EGUI
 	}
 }
 
-namespace Editor//Dystopia
+namespace Editor //Dystopia
 {
 	static const std::string g_PayloadSceneEx = Gbl::SCENE_EXT;
 	static const std::string g_PayloadPrefabEx = Gbl::PREFAB_EXT;

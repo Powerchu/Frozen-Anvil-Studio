@@ -12,7 +12,6 @@
 
 #include <vector>
 #if EDITOR
-#include "Editor/Editor.h"
 #include "Editor/EGUI.h"
 #endif
 
@@ -256,9 +255,8 @@ namespace Dystopia
 					norm = (_ColB.GetGlobalPosition() - PointOfImpact);
 				}
 
-				if (distance < _ColB.GetRadius())
+				if (distance <= _ColB.GetRadius())
 				{
-					isInside = true;
 					newEvent.mfPeneDepth = _ColB.GetRadius() - distance;
 					newEvent.mEdgeNormal += norm;
 					newEvent.mEdgeVector = Math::Vec3D{ newEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
@@ -280,16 +278,27 @@ namespace Dystopia
 				//InformOtherComponents(true, newEvent);
 				return true;
 			}
-			else
+			return false;
+		}
+		/*Circle completely inside*/
+		newEvent.mfPeneDepth = FLT_MAX;
+
+		for (auto & elem : Edges)
+		{
+			Vec3D v = elem.mVec3;
+			Vec3D w = GetGlobalPosition() - elem.mPos;
+
+			if (Math::Abs(w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
 			{
-				//InformOtherComponents(false, newEvent);
-				return false;
+				//currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
+				newEvent.mEdgeNormal = -elem.mNorm3;
+				newEvent.mfPeneDepth = Math::Abs(w.Dot(elem.mNorm3.Normalise())) + _ColB.GetRadius();
+
 			}
 		}
-		/*No Normals will be given because i have no idea which one to give*/
-		/*Circle completely inside*/
-		//InformOtherComponents(true, newEvent);
+
 		marr_CurrentContactSets.push_back(newEvent);
+		mbColliding = isInside;
 		return isInside;
 	}
 
@@ -401,7 +410,7 @@ namespace Dystopia
 			LongestRadius = distance > LongestRadius ? distance : LongestRadius;
 		}
 
-		return BroadPhaseCircle{ LongestRadius * 1.5F, MyGlobalCentre };
+		return BroadPhaseCircle{ LongestRadius, MyGlobalCentre};
 	}
 
 	void Convex::EditorUI() noexcept
@@ -468,7 +477,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eEND_DRAG:
 			case EGUI::eDragStatus::eENTER:
 			case EGUI::eDragStatus::eTABBED:
-				//EGUI::GetCommandHND()->EndRecording();
+				Awake();
 				break;
 			default:
 				break;
@@ -486,10 +495,10 @@ namespace Dystopia
 			for (unsigned int i = 0; i < mVertices.size(); ++i)
 			{
 				EGUI::PushID(i);
-				auto& c = mVertices[i];
+				//auto& c = mVertices[i];
 
 				EGUI::Display::Label("	Vertex");
-				auto arrResult = EGUI::Display::VectorFields("	 ", &(c.mPosition), 0.01f, -FLT_MAX, FLT_MAX);
+				auto arrResult = EGUI::Display::VectorFields("	 ", &mVertices[i].mPosition, 0.01f, -FLT_MAX, FLT_MAX);
 				for (auto &e : arrResult)
 				{
 					switch (e)
@@ -498,13 +507,14 @@ namespace Dystopia
 					case EGUI::eDragStatus::eDRAGGING:
 						break;
 					case EGUI::eDragStatus::eSTART_DRAG:
-						//EGUI::GetCommandHND()->StartRecording<Convex>(mnOwner, &(c.mPosition));
+						//EGUI::GetCommandHND()->StartRecording<Convex>(mnOwner, &Convex::mVertices[i].mPosition);
 						break;
 					case EGUI::eDragStatus::eDEACTIVATED:
 					case EGUI::eDragStatus::eEND_DRAG:
 					case EGUI::eDragStatus::eENTER:
 					case EGUI::eDragStatus::eTABBED:
 						//EGUI::GetCommandHND()->EndRecording();
+						Awake();
 						break;
 					default:
 						break;
@@ -544,14 +554,14 @@ namespace Dystopia
 
 	void Convex::eAttachedBodyEmptyBox()
 	{
-		std::string bodyAttached;
+		HashString bodyAttached;
 		if (GetOwner()->GetComponent<RigidBody>())
 			bodyAttached = GetOwner()->GetName();
 		else
 			bodyAttached = "None";
 
 		EGUI::Display::Label("Attached Body");
-		EGUI::Display::EmptyBox("		", 180.f, bodyAttached, false, true);
+		EGUI::Display::EmptyBox("		", 180.f, bodyAttached.c_str(), false, true);
 	}
 
 	void Convex::eNumberOfContactsLabel()
@@ -562,8 +572,8 @@ namespace Dystopia
 			{
 				EGUI::PushID(i);
 				auto& c = marr_ContactSets[i];
-				std::string name = c.mCollidedWith->GetName();
-				EGUI::Display::EmptyBox("		", 180.f, name, false, true);
+				HashString name = c.mCollidedWith->GetName();
+				EGUI::Display::EmptyBox("		", 180.f, name.c_str(), false, true);
 				EGUI::PopID();
 			}
 

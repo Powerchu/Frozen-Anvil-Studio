@@ -53,6 +53,12 @@ const std::string& Dystopia::Mesh::GetName(void) const
 	return mName;
 }
 
+void Dystopia::Mesh::SetIndices(unsigned _nIndices, size_t _nOffset)
+{
+	mnVertices = _nIndices;
+	mnOffset = reinterpret_cast<void*>(_nOffset);
+}
+
 bool Dystopia::Mesh::IsUnique(void) const
 {
 	return mbUnique;

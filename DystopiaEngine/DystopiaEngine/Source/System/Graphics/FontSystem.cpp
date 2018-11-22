@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/FontSystem.h"
+#include "System/Graphics/CharSpace.h"
 #include "System/Graphics/Texture.h"
 #include "System/Graphics/Texture2D.h"
 #include "System/Graphics/TextureAtlas.h"
@@ -72,18 +73,18 @@ void Dystopia::FontSystem::SetPadding(unsigned _x, unsigned _y)
 	mnPaddingY = _y;
 }
 
-Dystopia::TextureAtlas* Dystopia::FontSystem::LoadFont(const std::string& _strPath)
+Dystopia::TextureAtlas* Dystopia::FontSystem::LoadFont(const std::string& _strPath, AutoArray<CharSpace>& _outCoords)
 {
-	auto pFS = EngineCore::GetInstance()->Get<FileSystem>();
+	//auto pFileSys = EngineCore::GetInstance()->Get<FileSystem>();
 
 	std::string path = _strPath.substr(0, _strPath.rfind('.') + 1);
 
-	if(pFS->CheckFileExist(path + "dmap", eFileDir::eResource))
-		return LoadExisting(path);
-	return LoadFromFont(_strPath);
+	//if(pFileSys->CheckFileExist(path + Gbl::FONTMAP_EXT, eFileDir::eResource))
+	//	return LoadExisting(path, _outCoords);
+	return LoadFromFont(_strPath, _outCoords);
 }
 
-Dystopia::TextureAtlas* Dystopia::FontSystem::LoadExisting(const std::string& _strPath)
+Dystopia::TextureAtlas* Dystopia::FontSystem::LoadExisting(const std::string& _strPath, AutoArray<CharSpace>& _outCoords)
 {
 	Image* fontAtlas = ImageParser::LoadBMP(_strPath + "bmp");
 	fontAtlas->mnRawFormat = fontAtlas->mnFormat; // Remove sRGB
@@ -94,31 +95,33 @@ Dystopia::TextureAtlas* Dystopia::FontSystem::LoadExisting(const std::string& _s
 	pAtlas->SetTexture(pTexture);
 
 	auto in = Serialiser::OpenFile<TextSerialiser>(_strPath + Gbl::FONTMAP_EXT);
+
 	size_t sz;
-
 	in >> sz;
-	auto sections = pAtlas->GetAllSections();
-
-	sections.reserve(sz);
-
 	in.ConsumeStartBlock();
-	while (!in.EndOfInput())
+	while (sz--)
 	{
-		sections.EmplaceBack();
+		_outCoords.EmplaceBack();
+		auto& e = _outCoords.back();
 
-		in >> sections.back().uStart;
-		in >> sections.back().uStart;
-		in >> sections.back().vStart;
-		in >> sections.back().uEnd;
-		in >> sections.back().uEnd;
-		in >> sections.back().mRow;
-		in >> sections.back().mCol;
+		in >> e.x;
+		in >> e.y;
+		in >> e.mnWidth;
+		in >> e.mnHeight;
+		in >> e.mnBearingX;
+		in >> e.mnBearingY;
+		in >> e.u;
+		in >> e.v;
+		in >> e.s;
+		in >> e.t;
+		in.ConsumeStartBlock();
 	}
 
-	return nullptr;
+	pAtlas->LoadAtlas(in);
+	return pAtlas;
 }
 
-Dystopia::TextureAtlas* Dystopia::FontSystem::LoadFromFont(const std::string& _strPath)
+Dystopia::TextureAtlas* Dystopia::FontSystem::LoadFromFont(const std::string& _strPath, AutoArray<CharSpace>& _outCoords)
 {
 	// https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html
 
@@ -135,21 +138,23 @@ Dystopia::TextureAtlas* Dystopia::FontSystem::LoadFromFont(const std::string& _s
 	FT_CHECK_ERR(FT_New_Face(mpLibFT, _strPath.c_str(), 0, &pFontFace));
 	FT_CHECK_ERR(FT_Set_Pixel_Sizes(pFontFace, 0, 140));
 
-	AutoArray<CharSpace> mSetSpace;
 	AutoArray<CharSpace> mFreeSpace;
-
 	mFreeSpace.EmplaceBack(0u, 0u, charMap.mnWidth, charMap.mnHeight);
 
-	for (unsigned char c = '!'; c < 0x7F; ++c)
+	for (unsigned char c = ' '; c < 0x7F; ++c)
 	{
 		if (!FT_Load_Char(pFontFace, c, FT_LOAD_RENDER))
 		{
 			auto& FontBmp = pFontFace->glyph->bitmap;
 
-			mSetSpace.Insert(PackFont(
+			_outCoords.Insert(PackFont(
 				mFreeSpace, static_cast<uchar*>(charMap.mpImageData),
 				FontBmp.buffer, FontBmp.width, FontBmp.rows
 			));
+
+			_outCoords.back().mnAdvance = pFontFace->glyph->advance.x >> 6;
+			_outCoords.back().mnBearingX = pFontFace->glyph->bitmap_left;
+			_outCoords.back().mnBearingY = pFontFace->glyph->bitmap_top;
 		}
 
 #       if WRITE_STEP
@@ -162,15 +167,22 @@ Dystopia::TextureAtlas* Dystopia::FontSystem::LoadFromFont(const std::string& _s
 	TextureAtlas* pAtlas = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GenAtlas();
 	pAtlas->SetTexture(EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadRaw<Texture2D>(&charMap));
 
-	for (auto& e : mSetSpace)
+	for (auto& e : _outCoords)
+	{
 		pAtlas->AddSection(Math::Vec2{ float(e.x), float(e.y) }, e.mnWidth, e.mnHeight);
 
-	OutputFontmap(pAtlas, &charMap, _strPath);
+		e.u = pAtlas->GetAllSections().back().uStart;
+		e.v = pAtlas->GetAllSections().back().vStart;
+		e.s = pAtlas->GetAllSections().back().uEnd;
+		e.t = pAtlas->GetAllSections().back().vEnd;
+	}
+
+	OutputFontmap(pAtlas, &charMap, _outCoords, _strPath);
 
 	return pAtlas;
 }
 
-Dystopia::FontSystem::CharSpace Dystopia::FontSystem::PackFont(AutoArray<CharSpace>& _spaces, uchar* _dest, uchar* _src, unsigned _nWidth, unsigned _nHeight)
+Dystopia::CharSpace Dystopia::FontSystem::PackFont(AutoArray<CharSpace>& _spaces, uchar* _dest, uchar* _src, unsigned _nWidth, unsigned _nHeight)
 {
 	// Packing is done based off the algorithm described in the link below
 	// Except where we do not want to rotate anything for simplicity
@@ -232,25 +244,31 @@ Dystopia::FontSystem::CharSpace Dystopia::FontSystem::PackFont(AutoArray<CharSpa
 	return CharSpace{};
 }
 
-void Dystopia::FontSystem::OutputFontmap(TextureAtlas* _pMap, Image* _pData, std::string const& _strPath)
+void Dystopia::FontSystem::OutputFontmap(TextureAtlas* _pMap, Image* _pData, AutoArray<CharSpace> const& _ch, std::string const& _strPath)
 {
 	std::string path = _strPath.substr(0, _strPath.rfind('.') + 1);
 	ImageParser::WriteBMP(path + "bmp", _pData);
 
 	auto out = Serialiser::OpenFile<TextSerialiser>(path + Gbl::FONTMAP_EXT, Serialiser::MODE_WRITE);
-	auto const& data = _pMap->GetAllSections();
 
-	out << data.size();
-	for (auto const& e : data)
+	out << _ch.size();
+	out.InsertStartBlock("FONT_DATA");
+	for (auto& e : _ch)
 	{
-		out.InsertStartBlock("SECTION");
-		out << e.uStart;
-		out << e.vStart;
-		out << e.uEnd;
-		out << e.uEnd;
-		out << e.mRow;
-		out << e.mCol;
+		out << e.x;
+		out << e.y;
+		out << e.mnWidth;
+		out << e.mnHeight;
+		out << e.mnBearingX;
+		out << e.mnBearingY;
+		out << e.u;
+		out << e.v;
+		out << e.s;
+		out << e.t;
+		out.InsertStartBlock("PARTITION");
 	}
+
+	_pMap->SaveAtlas(out);
 }
 
 void Dystopia::FontSystem::Blit(const uchar* _src, unsigned _nWidth, unsigned _nHeight, uchar* _dest)

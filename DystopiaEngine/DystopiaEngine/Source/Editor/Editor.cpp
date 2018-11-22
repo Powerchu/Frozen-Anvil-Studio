@@ -11,6 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+
 #if EDITOR
 #define _CRTDBG_MAP_ALLOC
 #include <cstdlib>
@@ -19,75 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
-#include <memory>
-/* System includes */
-#include "System/Window/WindowManager.h"
-#include "System/Window/Window.h"
-#include "System/Graphics/GraphicsSystem.h"
-#include "System/Scene/SceneSystem.h"
-#include "System/Driver/Driver.h"
-#include "System/Profiler/Profiler.h"
-#include "System/Profiler/ProfilerAction.h"
-#include "System/Time/ScopedTimer.h"
-#include "System/File/FileSystem.h"
-#include "System//Behaviour/BehaviourSystem.h"
-#include "System/Physics/PhysicsSystem.h"
-#include "System/Input/InputSystem.h"
-#include "IO/BinarySerializer.h"
-#include "Utility/GUID.h"
-
-#include "Component/Component.h"
-
-/* Editor includes */
-#include "Editor/EGUI.h"
-#include "Editor/Editor.h"
-#include "Editor/ProjectSettings.h"
-#include "Editor/EditorEvents.h"
-#include "Editor/Commands.h"
-#include "Editor/Inspector.h"
-#include "Editor/HierarchyView.h"
-#include "Editor/ProjectResource.h"
-#include "Editor/SceneView.h"
-#include "Editor/ConsoleLog.h"
-#include "Editor/PerformanceLog.h"
-#include "Editor/PLogger.h"
-#include "Editor/ColorScheme.h"
-#include "Editor/StyleScheme.h"
-#include "Editor/Clipboard.h"
-#include "Editor/SpritePreviewer.h"
-#include "Editor/SpriteEditor.h"
-#include "Editor/EditorTab.h"
-
-#include "Allocator/DefaultAlloc.h"
-#include "DataStructure/HashString.h"
-
-/* library includes */
-#include <iostream>
-#include <windows.h>
-#include <bitset>
-#include <ShlObj_core.h>
-#include <tchar.h>
-#include <objbase.h>
-
-#include "System/Input/XGamePad.h"
-
-#include "Editor/EditorProc.h"
-#include "Editor/EditorInput.h"
-
 #include "Editor/EditorMain.h"
-#include "Editor/EInput.h"
-
-namespace
-{
-	static const std::string DYSTOPIA_EDITOR_SETTINGS = "EditorSettings.dyst";
-	static const std::string DYSTOPIA_SCENE_LOAD = "Resource/Scene/";
-	static const std::string DYSTOPIA_SCENE_TEMP = "Resource/Temp/";
-	static const std::wstring DYSTOPIA_SCENE_EXTENSION = L"dscene";
-	static constexpr COMDLG_FILTERSPEC DYSTOPIA_SCENE_FILTER_EXTENSION[1] =
-	{
-		{ L"DystopiaScene", L"*.dscene" }
-	};
-}
+#include "System/Window/WindowManager.h"
 
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
@@ -107,25 +41,12 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 		pMain->EndFrame();
 	}
 	pMain->Shutdown();
-
-	//Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
-	//editor->Init();
-	//while (!editor->IsClosing())
-	//{
-	//	editor->StartFrame();
-	//
-	//	editor->UpdateFrame(editor->GetDeltaTime());
-	//	
-	//	editor->EndFrame();
-	//}
-	//editor->Shutdown();
-	//delete editor;
 	return 0;
 }
 
 
 /*///////////////////////////////////////////////////////////////////// EDITOR CLASS ////////////////////////////////////////////////////////////////////////////////*/
-
+/*
 namespace Dystopia
 {
 	static Editor* gpInstance = 0;
@@ -587,7 +508,7 @@ namespace Dystopia
 		}
 	}
 
-	void Editor::OpenScene(const std::wstring& _path, const std::wstring& /*_name*/)
+	void Editor::OpenScene(const std::wstring& _path, const std::wstring&)
 	{
 		mArrSelectedObj.clear();
 		ClearSelections();
@@ -899,5 +820,5 @@ namespace Dystopia
 		return *mpClipBoard;
 	}
 }
-
+*/
 #endif		// EDITOR ONLY

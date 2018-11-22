@@ -38,6 +38,7 @@ namespace Dystopia
 	void Collider::Awake(void)
 	{
 		Triangulate();
+
 		if (mpMesh != nullptr || this->mDebugVertices.size() == 0 || this->mIndexBuffer.size() == 0)
 			return;
 
@@ -48,7 +49,7 @@ namespace Dystopia
 			pMeshSys->StartMesh();
 
 			auto const & arr = GetVertexBuffer();
-			for (auto i : arr)
+			for (const auto& i : arr)
 			{
 				pMeshSys->AddVertex(i.x, i.y, i.z);
 			}
@@ -317,6 +318,18 @@ namespace Dystopia
 	AutoArray<short> Collider::GetIndexBuffer() const
 	{
 		return mIndexBuffer;
+	}
+
+	AutoArray<GameObject*> Collider::GetCollidingObjects() const
+	{
+		AutoArray<GameObject*> ret;
+
+		for (const auto& elem : marr_ContactSets)
+		{
+			ret.push_back(const_cast<GameObject*>(elem.mCollidedWith));
+		}
+
+		return Ut::Move(ret);
 	}
 
 	void Collider::SetMesh(Mesh * _ptr)

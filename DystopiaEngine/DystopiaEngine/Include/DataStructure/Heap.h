@@ -4,7 +4,7 @@
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Implementation of a Heap defaulted to using AutoArray.
+	Implementation of a Binary Heap defaulted to using AutoArray.
 
 	You can replace the default container with any container, hopefully, that 
 	returns a RandomAccessIterator and supports the following functions:

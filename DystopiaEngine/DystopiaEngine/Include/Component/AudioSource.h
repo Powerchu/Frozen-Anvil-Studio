@@ -13,18 +13,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _AUDIO_SOURCE_H_
 #define _AUDIO_SOURCE_H_
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
 #include "Component/ComponentList.h"	
 #include "Component/Component.h"
 
 #include "System/Sound/SoundTypes.h"
 
 #include <string>
+#include "Utility/MetaAlgorithms.h"
 
 namespace Dystopia
 {
 	class Sound;
 	class SoundSystem;
-	class AudioSource : public Component
+	class _DLL_EXPORT AudioSource : public Component
 	{
 	public:
 		using SYSTEM = SoundSystem;
@@ -74,6 +77,7 @@ namespace Dystopia
 		void Pause(void);
 		void Stop(void);
 		void SetVolume(float);
+		void ChangeAudio(const char * _s);
 
 		bool IsReady(void) const;
 		bool IsPaused(void) const;
@@ -103,6 +107,8 @@ namespace Dystopia
 	};
 }
 
-
+#pragma warning(pop)
 #endif	// _AUDIO_SOURCE_H_
+
+
 

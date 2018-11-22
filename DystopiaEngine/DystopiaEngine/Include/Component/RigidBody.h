@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vector4.h"
 #include "Math/Matrix4.h"
 #include "Math/Vector2.h"
+#include "DataStructure/AutoArray.h"
 
 //#include "Math/Quaternion.h"
 //#include "Math/Angles.h"
@@ -32,6 +33,7 @@ namespace Dystopia
 	// Forward Declarations
 	class Transform;
 	class PhysicsSystem;
+	class Collider;
 
 	// Rigidbody physics component for 2D sprites.
 	class _DLL_EXPORT RigidBody : public Component
@@ -63,15 +65,15 @@ namespace Dystopia
 		void Init(void);
 		void Unload(void);
 		RigidBody* Duplicate() const override;
-		void Serialise(TextSerialiser&) const;
-		void Unserialise(TextSerialiser&);
+		void Serialise(TextSerialiser&) const override;
+		void Unserialise(TextSerialiser&) override;
 
 	protected:
 		enum PhysicsType
 		{
 			eDynamicBody = 0,		// fixed timestep frame checking for collision
-			eKinematicBody,		// dynamic objects that will not be pushed around
-			eStaticBody	// continuous checking for collision
+			eKinematicBody,			// dynamic objects that will not be pushed around
+			eStaticBody				// continuous checking for collision
 		};
 		//~RigidBody(void);
 
@@ -80,7 +82,7 @@ namespace Dystopia
 		void Integrate(float _dt);
 		void CheckSleeping(float _dt);
 		void PreUpdatePosition(float _dt);
-		void UpdateResult(float _dt);
+		void UpdateResult(float _dt) const;
 
 		// void Update(float _dt);
 		// void LateUpdate(float _dt);
@@ -183,6 +185,7 @@ namespace Dystopia
 		/// Get the local position of the center of mass.
 		const Vec3D& GetLocalCenter() const;
 
+		AutoArray<Collider*>    mparrCol;
 	private:
 		Transform*				mpOwnerTransform;			/* Used for accessing position and GameObject World orientation*/
 		PhysicsSystem*			mpPhysSys;					/* A pointer to Physics System to get global constants (i.e. Gravity)*/
@@ -206,7 +209,7 @@ namespace Dystopia
 		Vec3D					mGlobalCentroid;
 		Vec3D					mLocalCentroid;
 
-		float					mfAngleDeg;					/* Anticlockwise Direction: Angles in Degrees*/
+		float					mfAngleDegZ;				/* Anticlockwise Direction: Angles in Degrees*/
 
 		Math::Vector2			mLinearDamping;				/* Linear Damping in the X and Y axis */
 		float					mfAngularDrag;				/* Coefficient of angular drag. */
@@ -225,7 +228,6 @@ namespace Dystopia
 
 		float					mfWeightedMotion;
 
-		bool					mOwnerIsActive;				/* Check if owner is active*/
 		bool					mbHasGravity;				/* If it has no gravity, do not provide acceleration due to gravity*/
 		bool					mbIsStatic;					/* Static bodies do not need to be integrated/updated*/
 
@@ -234,6 +236,8 @@ namespace Dystopia
 		bool					mbFixedRot;
 
 		float					mSleepTime;
+
+		size_t					mContactsNo;
 
 		PhysicsType				mPhysicsType;
 

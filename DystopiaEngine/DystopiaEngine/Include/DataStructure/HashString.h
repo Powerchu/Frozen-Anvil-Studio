@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	HashString.h
+\file   HashString.h
 \author Shannon Tan (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -59,21 +59,21 @@ public:
 	HashString& operator=(const wchar_t *);
 
 	/* capacity */
-	size_t		size(void) const;
-	size_t		length(void) const;
-	void		clear(void);
+	size_t      size(void) const;
+	size_t      length(void) const;
+	void        clear(void);
 
 	/* element access */
-	char&		operator[](size_t _pos);
+	char&       operator[](size_t _pos);
 	const char& operator[](size_t _pos) const;
-	char&		back(void);
+	char&       back(void);
 	const char& back(void) const;
-	char&		front(void);
+	char&       front(void);
 	const char& front(void) const;
 
 	/* modifiers */
 	template<unsigned N>
-	HashString& operator+=(const char (&_s)[N]);
+	HashString& operator+=(const char(&_s)[N]);
 	HashString& operator+=(const char *);
 	HashString& operator+=(const char);
 	HashString& operator+=(unsigned);
@@ -106,7 +106,7 @@ public:
 	const char* const clast(void) const;
 	char*		const last(void);
 
-	HashID		id(void) const;
+	HashID      id(void) const;
 
 private:
 	size_t mSize;
@@ -118,7 +118,7 @@ template <unsigned N>
 constexpr HashString::HashString(const char(&_s)[N])
 	: mSize{ N - 1 }
 	, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(N) }
-    , mHashedID{ StringHasher(_s) }
+	, mHashedID{ StringHasher(_s) }
 {
 }
 
@@ -128,6 +128,8 @@ bool operator==(const char * _lhs, const HashString& _rhs);
 bool operator==(HashID _id, const HashString& _rhs);
 bool operator==(const HashString& _lhs, HashID _id);
 bool operator!=(const HashString& _lhs, const HashString& _rhs);
+bool operator<(const HashString& _lhs, const HashString& _rhs);
+bool operator>(const HashString& _lhs, const HashString& _rhs);
 std::ostream& operator<<(std::ostream& _os, const HashString& _rhs);
 
 HashString operator+(const HashString& _lhs, const HashString& _rhs);

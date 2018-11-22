@@ -230,6 +230,12 @@ namespace Ut
 			using result = Set<T, val>;
 		};
 
+		template <typename Ty>
+		struct MetaExtractor <0, Ty>
+		{
+			using result = Ty;
+		};
+
 		template <unsigned N, typename T>
 		struct MetaExtractorV;
 

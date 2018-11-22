@@ -81,7 +81,7 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 
-	private:
+	protected:
 
 		unsigned mnUnique;
 

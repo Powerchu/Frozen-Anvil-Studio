@@ -8,10 +8,12 @@
 
 #include "System/Base/Systems.h"
 #include "DataStructure/HashString.h"
-
+#include "DataStructure/MagicArray.h"
 
 namespace Dystopia
 {
+	/*Predeclaration*/
+	struct DetectionInfo;
 
 	typedef enum class eFileDirectories : unsigned
 	{
@@ -25,12 +27,23 @@ namespace Dystopia
 
 	} eFileDir;
 
+	typedef enum class eFileSystemError : unsigned
+	{
+		NONE,
+		SUCCESS,
+		CREATE_HANDLE_ERROR,
+		CREATE_OVERLAP_ERROR,
+		READ_DIRECTORY_ERROR,
+
+	} FileErrorCode;
+
+
 	class FileSystem
 	{
 	public:
 
 		FileSystem();
-
+		~FileSystem();
 		std::string GetFullPath(std::string const & _FileName, eFileDir _ParentDirectory);
 
 		bool CreateFiles(std::string const & _FileName, eFileDir _Directory);
@@ -42,6 +55,21 @@ namespace Dystopia
 		T RemoveFileExtension(T const & _File);
 
 		bool CheckFileExist(std::string const & _FileName, eFileDir _Directory = eFileDir::eRoot);
+
+		/*
+		  Detect changes in the file path provided. 
+		  The FilesNames return is relative to the _FilePath provided.
+		  DetectFileChanges will return 0 when
+		  1. There is no changes detected
+		  2. There is a error in the function
+
+		  DetectFileChanges will return a number when 
+		  1. There is files changes
+		  The number will reflect the number of changes detected
+		*/
+		unsigned DetectFileChanges(std::string _FilePath, std::string * _ChangesBuffer, size_t _size);
+
+		FileErrorCode GetLastKnownError() const;
 
 		bool CheckFolderExist(const HashString& _folderName, const HashString& _path) const;
 		bool CheckPathExist(const HashString& _path) const;
@@ -56,8 +84,15 @@ namespace Dystopia
 		using PathTable = std::map<eFileDir, std::string>;
 
 		/*Static Members*/
-		static PathTable        mPathTable;
-		
+		static PathTable            mPathTable;
+		MagicArray<DetectionInfo *> mDetectionFiles;
+		/*Private Members*/
+		eFileSystemError            mLastKnownError;
+
+
+
+		/*Private Function*/
+		unsigned GetChangesInfo(DetectionInfo & _DetectionInfo, std::string * _ChangesBuffer, size_t _size);
 	};
 
 

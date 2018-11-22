@@ -34,7 +34,7 @@ namespace Dystopia
 	class Window;
 	class TextSerialiser;
 
-	class  InputManager : public Systems, public ComponentDonor<CharacterController>
+	class  InputManager : public Systems
 	{
 	public:
 
@@ -60,20 +60,21 @@ namespace Dystopia
 
 		void PostUpdate() override;
 
-		void LoadDefaults(void);
-		void LoadSettings(TextSerialiser&);
+		void LoadDefaults(void) override;
+		void LoadSettings(DysSerialiser_t&) override;
+		void SaveSettings(DysSerialiser_t&) override;
 
 		_DLL_EXPORT void  MapUserButton(eUserButton, eButton);
 
-		_DLL_EXPORT void  MapButton(std::string const & _name, eButton _Button);
+		_DLL_EXPORT void  MapButton(const char* _name, eButton _Button);
 
 		_DLL_EXPORT bool  IsKeyTriggered(eButton) const noexcept;
 		_DLL_EXPORT bool  IsKeyPressed(eButton)   const noexcept;
 		_DLL_EXPORT bool  IsKeyReleased(eButton)  const noexcept;
 				    
-		_DLL_EXPORT bool  IsKeyTriggered(std::string const & _ButtonName) const noexcept;
-		_DLL_EXPORT bool  IsKeyPressed(std::string const & _ButtonName)   const noexcept;
-		_DLL_EXPORT bool  IsKeyReleased(std::string const & _ButtonName)  const noexcept;
+		_DLL_EXPORT bool  IsKeyTriggered(const char* _ButtonName) const noexcept;
+		_DLL_EXPORT bool  IsKeyPressed(const char* _ButtonName)   const noexcept;
+		_DLL_EXPORT bool  IsKeyReleased(const char* _ButtonName)  const noexcept;
 
 		_DLL_EXPORT bool IsController() const;
 
@@ -91,6 +92,8 @@ namespace Dystopia
 		_DLL_EXPORT Math::Vector2 GetMousePosition(const Window&) const;
 		_DLL_EXPORT Math::Vector2 GetMouseDelta(void) const noexcept;
 		_DLL_EXPORT float GetMouseWheel(void) const noexcept;
+
+		void EditorUI(void);
 
 	private:
 		struct KeyBinding

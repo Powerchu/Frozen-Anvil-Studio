@@ -12,6 +12,7 @@
 #include "System/Driver/Driver.h"
 #include "Object/GameObject.h"
 #include "System/Behaviour/BehaviourSystemHelper.h"
+#include "System/Behaviour/BehaviourMessage.h"
 #undef ERROR
 
 #include "Globals.h"
@@ -26,7 +27,7 @@ namespace Dystopia
 	
 
 	BehaviourSystem::BehaviourSystem()
-		:mHotloader{ CreateShared<Hotloader<1>>() }
+		:mHotloader{ Ctor::CreateShared<Hotloader<1>>() }
 	{
 
 	}
@@ -369,7 +370,7 @@ namespace Dystopia
 								_obj.InsertStartBlock("MEMBER VAR");
 							}
 						}
-						_obj << "END";
+						_obj << "\"END\"";
 						_obj.InsertEndBlock("BEHAVIOUR_MEMBER_VARIABLE_BLOCK");
 					}
 				}

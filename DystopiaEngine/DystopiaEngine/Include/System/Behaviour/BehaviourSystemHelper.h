@@ -50,6 +50,11 @@ namespace Dystopia
 				_obj << static_cast<char>(_v);
 			}
 			template<>
+			void operator()(bool _v, TextSerialiser& _obj, void*)
+			{
+				_obj << static_cast<bool>(_v);
+			}
+			template<>
 			void operator()(HashString /*_v*/, TextSerialiser& /*_obj*/, void*)
 			{
 				//_obj << static_cast<HashString>(_v);
@@ -102,6 +107,13 @@ namespace Dystopia
 			void operator()(char, std::function<void(char, void*)> _f, void * _addr, TextSerialiser & _obj)
 			{
 				char Temp = 0;
+				_obj >> Temp;
+				_f(Temp, _addr);
+			}
+			template<>
+			void operator()(bool, std::function<void(bool, void*)> _f, void * _addr, TextSerialiser & _obj)
+			{
+				bool Temp = false;
 				_obj >> Temp;
 				_f(Temp, _addr);
 			}

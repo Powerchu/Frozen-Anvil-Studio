@@ -92,6 +92,12 @@ inline Dystopia::ProxyAlloc<Alloc_t>::~ProxyAlloc(void) noexcept
 template <typename A>
 [[nodiscard]] void* Dystopia::ProxyAlloc<A>::Allocate(size_t _sz, size_t _align)
 {
+	if (_sz > A::CAP)
+	{
+		DEBUG_PRINT(eLog::WARNING, "Allocator Warning: Attempted to allocate invalid size!\n");
+		return nullptr;
+	}
+
 	if (void* ptr = mAlloc.Allocate(_sz, _align))
 	{
 		_sz = Math::Max(_sz, A::MIN_SIZE);

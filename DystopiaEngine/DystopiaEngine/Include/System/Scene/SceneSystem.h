@@ -57,10 +57,10 @@ namespace Dystopia
 		inline Scene& GetActiveScene(void) const;
 
 		inline GameObject* FindGameObject(uint64_t _nID);
-		inline GameObject* FindGameObject(const std::string& _strName);
+		inline GameObject* FindGameObject(const HashString& _strName);
 		inline GameObject* FindGameObject_cstr(const char * const _str);
 
-		GameObject * Instantiate(const std::string& _prefabName, const Math::Pt3D& _position);
+		GameObject* Instantiate(const HashString& _prefabName, const Math::Pt3D& _position);
 
 	private:
 
@@ -87,7 +87,7 @@ namespace Dystopia
 		return mpCurrScene->FindGameObject(_nID);
 	}
 
-	inline GameObject* Dystopia::SceneSystem::FindGameObject(const std::string& _strName)
+	inline GameObject* Dystopia::SceneSystem::FindGameObject(const HashString& _strName)
 	{
 		return mpCurrScene->FindGameObject(_strName);
 	}

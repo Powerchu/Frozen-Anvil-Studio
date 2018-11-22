@@ -20,10 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
-#include "Editor/Editor.h"
 #include "Editor/Payloads.h"
-#include "Editor/Commands.h"
-#include "Editor/CommandList.h"
 #include "Editor/ConsoleLog.h"
 #endif 
 
@@ -63,7 +60,7 @@ void Dystopia::AudioSource::Load(void)
 
 void Dystopia::AudioSource::Init(void)
 {
-	SetSound(EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(mSoundName));
+	SetSound(EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(HashString{ mSoundName.c_str() }));
 	mReady = mPlayOnStart;
 }
 
@@ -208,7 +205,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 		break;
 	case EGUI::eDRAGGING:
 		PrintToConsoleLog("eDRAGGING");
-		break;
+		break;	
 	case EGUI::eDEACTIVATED:
 		PrintToConsoleLog("eDEACTIVATED");
 		break;
@@ -217,6 +214,14 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 		break;
 	}
 #endif 
+}
+
+void Dystopia::AudioSource::ChangeAudio(const char * _s)
+{
+	if (mChannel.mpChannel)
+		mChannel.mpChannel->stop();
+	SetSound(EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(_s));
+	SetReady(false);
 }
 
 Dystopia::Sound*& Dystopia::AudioSource::GetSound(void)

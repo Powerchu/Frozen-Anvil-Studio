@@ -42,6 +42,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Camera.h"
 #include "Component/Renderer.h"
 #include "Component/SpriteRenderer.h"
+#include "Component/RigidBody.h"
 #include "Behaviour/Behaviour.h"
 
 
@@ -411,7 +412,7 @@ namespace Editor
 			}
 			else
 			{
-				std::string defaultName = "GameObject";
+				HashString defaultName = "GameObject";
 				if (!pTarget)
 				{
 					Math::Pt3D worldClickPos = GetWorldClickPos(GetCamera());
@@ -485,7 +486,7 @@ namespace Editor
 		}
 		avgPos.x = avgPos.x / size;
 		avgPos.y = avgPos.y / size;
-		Math::Vec2 screenPos = GetWorldToScreen(avgPos);
+		const Math::Vec2 screenPos = GetWorldToScreen(avgPos);
 		float changeX = 0;
 		float changeY = 0;
 
@@ -494,14 +495,14 @@ namespace Editor
 		switch (mCurrGizTool)
 		{
 		case eTRANSLATE:
-			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 0.5f, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (const auto& id : _arrIDs)
 				{
 					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
-					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
-					obj->GetComponent<Dystopia::Transform>()->SetPosition(Math::Pt3D{ cpos.x + changeX * scale.x, cpos.y, cpos.z, cpos.w });
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					obj->GetComponent<Dystopia::Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX * scale.x, cpos.y, cpos.z, cpos.w });
 				}
 				mClearSelection = false;
 				break;
@@ -525,7 +526,7 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 0.5f, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (const auto& id : _arrIDs)
@@ -556,7 +557,7 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 0.5f, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (const auto& id : _arrIDs)
@@ -590,7 +591,7 @@ namespace Editor
 			break;
 
 		case eSCALE:
-			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 0.5f, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (const auto& id : _arrIDs)
@@ -621,7 +622,7 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.5f, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (const auto& id : _arrIDs)
@@ -652,7 +653,7 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 0.5f, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (const auto& id : _arrIDs)
@@ -692,7 +693,7 @@ namespace Editor
 		auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 
 		Math::Pt3D curPos = obj.GetComponent<Dystopia::Transform>()->GetGlobalPosition();
-		Math::Vec4 cScale = obj.GetComponent<Dystopia::Transform>()->GetGlobalScale();
+		Math::Vec4 cScale = obj.GetComponent<Dystopia::Transform>()->GetScale();
 		Math::Vec2 screenPos = GetWorldToScreen(curPos);
 
 		float changeX = 0;
@@ -704,10 +705,10 @@ namespace Editor
 		switch (mCurrGizTool)
 		{
 		case eTRANSLATE:
-			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 0.5F, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Dystopia::Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX * scale.x, curPos.y, curPos.z, curPos.w });
+				obj.GetComponent<Dystopia::Transform>()->SetGlobalPosition(Math::Pt3D{ curPos.x + changeX * scale.x, curPos.y, curPos.z, curPos.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -719,10 +720,10 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 0.5F, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Dystopia::Transform>()->SetPosition(Math::Pt3D{ curPos.x, curPos.y + changeY * scale.y, curPos.z, curPos.w });
+				obj.GetComponent<Dystopia::Transform>()->SetGlobalPosition(Math::Pt3D{ curPos.x, curPos.y + changeY * scale.y, curPos.z, curPos.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -734,10 +735,10 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 0.5, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Dystopia::Transform>()->SetPosition(Math::Pt3D{ curPos.x + changeX * scale.x, curPos.y + changeY * scale.y, curPos.z, curPos.w });
+				obj.GetComponent<Dystopia::Transform>()->SetGlobalPosition(Math::Pt3D{ curPos.x + changeX * scale.x, curPos.y + changeY * scale.y, curPos.z, curPos.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -752,10 +753,10 @@ namespace Editor
 			break;
 
 		case eSCALE:
-			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 1.f, redColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 0.5, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y, cScale.z, cScale.w });
+				obj.GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ scale.x + changeX * scale.x, scale.y, scale.z, scale.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -767,10 +768,10 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 1.f, greenColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.5, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY, cScale.z, cScale.w });
+				obj.GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ scale.x, scale.y + changeY * scale.y, scale.z, scale.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
@@ -782,11 +783,11 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 1.f, blueColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 0.5, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				changeX += changeY;
-				obj.GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + ratio * changeX, cScale.z, cScale.w });
+				obj.GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ scale.x + changeX * scale.x, scale.y + ratio * changeX *scale.x, scale.z, scale.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:

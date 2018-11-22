@@ -1,7 +1,7 @@
 /* HEADER *********************************************************************************/
 /*!
 \file	ComponentList.h
-\author Floating Point
+\author Jacky Tan
 \brief
 	Enum listing all existing components. Please create an enum for new components and 
 	set the component to the corresponding enum so that the search function
@@ -25,8 +25,8 @@ namespace Dystopia
 		class Renderer,
 		class RigidBody,
 		class Collider,
-		class CharacterController,
-		class AudioSource
+		class AudioSource,
+		class AiController
 	>::result;
 
 	using UsableComponents = Ut::MetaAutoIndexer <
@@ -36,10 +36,10 @@ namespace Dystopia
 		class AABB,
 		class Convex,
 		class Circle,
-		class CharacterController,
 		class AudioSource,
-		class SpriteRenderer
-		//class TextRenderer
+		class SpriteRenderer,
+		class TextRenderer,
+		class AiController
 		//class Particle
 	>::result;
 

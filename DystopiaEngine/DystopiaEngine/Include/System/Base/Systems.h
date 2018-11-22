@@ -32,7 +32,7 @@ namespace Dystopia
 		virtual bool Init(void)						    = 0;
 		virtual void PostInit(void)					    { };
 													    
-		virtual void PreFixedUpdate(float)					{ };
+		virtual void PreFixedUpdate(float)				{ };
 		virtual void FixedUpdate(float)				    { };
 		virtual void Update(float)					    = 0;
 		virtual void PostUpdate(void)				    { };

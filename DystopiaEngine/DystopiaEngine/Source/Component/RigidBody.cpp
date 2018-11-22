@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Component/RigidBody.h"
+#include "Component/Collider.h"
 #include "System/Physics/PhysicsSystem.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
@@ -23,40 +24,38 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
-#include "Editor/Editor.h"
 #endif 
 
 #include <cmath>
 
-#define P_TX					mpOwnerTransform
+#define P_TX mpOwnerTransform
 
 namespace Dystopia
 {
 	RigidBody::RigidBody(void)
 		: mpOwnerTransform(nullptr)
-		, mpPhysSys(nullptr)
-		, mfAngleDeg(0.0F)
-		, mLinearDamping(0.5, 0.5)
-		, mfAngularDrag(0.5F)
-		, mfStaticFriction(0.5F)
-		, mfDynamicFriction(0.7F)
-		, mfRestitution(0.5F)
-		, mfGravityScale(1.0F)
-		, mfMass(100.0F)
-		, mfInvMass(0.01F)
-		, mfInertia(mfMass)
-		, mfInvInertia(0.01F)
-		, mfWeightedMotion(0.0F)
-		, mOwnerIsActive(true)
-		, mbHasGravity(true)
-		, mbIsStatic(false)
-		, mbIsAwake(true)
-		, mbCanSleep(true)
-		, mbFixedRot(false)
-		, mSleepTime(0.00F)
-		, mPhysicsType(eDynamicBody)
+		  , mpPhysSys(nullptr)
+		  , mfAngleDegZ(0.0F)
+		  , mLinearDamping(0.5, 0.5)
+		  , mfAngularDrag(0.5F)
+		  , mfStaticFriction(0.5F)
+		  , mfDynamicFriction(0.7F)
+		  , mfRestitution(0.5F)
+		  , mfGravityScale(1.0F)
+		  , mfMass(100.0F)
+		  , mfInvMass(0.01F)
+		  , mfInertia(mfMass)
+		  , mfInvInertia(0.01F)
+		  , mfWeightedMotion(0.0F)
+		  , mbHasGravity(true)
+		  , mbIsStatic(false)
+		  , mbIsAwake(true)
+		  , mbCanSleep(true)
+		  , mbFixedRot(false)
+		  , mSleepTime(0.00F)
+		  , mContactsNo(0)
+		  , mPhysicsType(eDynamicBody)
 	{
-
 	}
 
 	RigidBody::RigidBody(float _linearDrag, float _angularDrag,
@@ -64,29 +63,28 @@ namespace Dystopia
 		float _gravityScale, float _mass,
 		bool _gravityState, bool _staticState)
 		: mpOwnerTransform(nullptr)
-		, mpPhysSys(nullptr)
-		, mfAngleDeg(0.0F)
-		, mLinearDamping(_linearDrag, _linearDrag)
-		, mfAngularDrag(_angularDrag)
-		, mfStaticFriction(_friction)
-		, mfDynamicFriction(_friction)
-		, mfRestitution(_elasticity)
-		, mfGravityScale(_gravityScale)
-		, mfMass(_mass)
-		, mfInvMass(1 / _mass)
-		, mfInertia(mfMass)
-		, mfInvInertia(0.01F)
-		, mfWeightedMotion(0.0F)
-		, mOwnerIsActive(true)
-		, mbHasGravity(_gravityState)
-		, mbIsStatic(_staticState)
-		, mbIsAwake(true)
-		, mbCanSleep(true)
-		, mbFixedRot(false)
-		, mSleepTime(0.00F)
-		, mPhysicsType(eDynamicBody)
+		  , mpPhysSys(nullptr)
+		  , mfAngleDegZ(0.0F)
+		  , mLinearDamping(_linearDrag, _linearDrag)
+		  , mfAngularDrag(_angularDrag)
+		  , mfStaticFriction(_friction)
+		  , mfDynamicFriction(_friction)
+		  , mfRestitution(_elasticity)
+		  , mfGravityScale(_gravityScale)
+		  , mfMass(_mass)
+		  , mfInvMass(1 / _mass)
+		  , mfInertia(mfMass)
+		  , mfInvInertia(0.01F)
+		  , mfWeightedMotion(0.0F)
+		  , mbHasGravity(_gravityState)
+		  , mbIsStatic(_staticState)
+		  , mbIsAwake(true)
+		  , mbCanSleep(true)
+		  , mbFixedRot(false)
+		  , mSleepTime(0.00F)
+		  , mContactsNo(0)
+	      , mPhysicsType(eDynamicBody)
 	{
-
 	}
 
 	void RigidBody::Load(void)
@@ -100,10 +98,20 @@ namespace Dystopia
 		{
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
-			mOwnerIsActive = GetOwner()->IsActive();
 			mPrevPosition = mPosition = mpOwnerTransform->GetGlobalPosition();
+			const auto ColComponents = GetOwner()->GetComponents<Collider>();
+			
+			AutoArray<Collider*> ToRet;
 
-			mInverseOrientation = Math::Inverse(mOrientation);
+			for (auto elem : ColComponents)
+			{
+				ToRet.push_back(elem);
+			}
+
+			mparrCol = Ut::Move(ToRet);
+			mOrientation = Math::RotateZ(Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z });
+			mInverseOrientation = Math::AffineInverse(mOrientation);
+			mfAngleDegZ = Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z }.Radians();
 		}
 
 		// If mass is zero, object is interpreted to be static
@@ -112,6 +120,9 @@ namespace Dystopia
 			mfInvMass = 1.0F / mfMass;
 			mfInertia = mfMass;
 			mfInvInertia = mfInvMass;
+
+			mbIsStatic = false;
+			mPhysicsType = eDynamicBody;
 		}
 		else //if mfMass <= 0
 		{
@@ -138,26 +149,23 @@ namespace Dystopia
 			mPhysicsType = eDynamicBody;
 		}
 
-		mLocalCentroid = mPosition;
-		mLocalCentroid *= mfInvMass;
+		mLocalCentroid = mPosition * mfInvMass;
+		//mLocalCentroid *= mfInvMass;
 
 		//// compute local inertia tensor
 		Mat3D localInertiaTensor{ { 1, 0, 0, 0 },{ 0, 1, 0, 0 },{ 0, 0, 1, 0 },{ 0, 0, 0, 1 } };
 
-		mLocalInvInertiaTensor = localInertiaTensor.Inverse();
+		mLocalInvInertiaTensor = localInertiaTensor.AffineInverse();
 	}
 
 	void RigidBody::Integrate(float _dt)
 	{
 		constexpr const auto VEL_EPSILON = 0.001F;
 
-		if (!GetOwner()->IsActive() || mbIsStatic || !mbIsAwake)
+		if (mbIsStatic || !mbIsAwake)
 		{
 			return; // don't integrate when body is static
 		}
-
-		mGlobalInvInertiaTensor =
-			mOrientation * mLocalInvInertiaTensor.AffineInverse() * (mOrientation.AffineInverse());
 
 		/*********************************************************************
 		 *  Physics 2.0
@@ -165,6 +173,18 @@ namespace Dystopia
 		 ********************************************************************/
 		 //Store previous Position
 		mPrevPosition = mPosition = P_TX->GetGlobalPosition();
+		//mfAngleDegZ = Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z }.Radians();
+
+		// Store Rotational Tensors
+		mGlobalInvInertiaTensor =
+			mOrientation * mLocalInvInertiaTensor.AffineInverse() * (mInverseOrientation);
+
+
+		if (!GetOwner()->IsActive())
+		{
+			return;
+		}
+
 
 		if (mbHasGravity)
 		{
@@ -177,19 +197,24 @@ namespace Dystopia
 
 		//Integrate the velocity
 		mLinearVelocity += mLinearAcceleration * _dt;
-		mAngularVelocity += mAngularAcceleration * _dt;
+
+		if (!mbFixedRot)
+			mAngularVelocity += mAngularAcceleration * _dt;
 
 		const Vec3D new_accel = mCumulativeForce * mfInvMass + mLinearAcceleration;
 		const Vec3D new_ang_accel = mGlobalInvInertiaTensor * mCumulativeTorque + mAngularAcceleration;
 
 		//Integrate the velocity
 		mLinearVelocity += (new_accel - mLinearAcceleration) * 0.5f * _dt;
+
 		//Integrate angular velocity
-		mAngularVelocity += (new_ang_accel - mAngularAcceleration) * 0.5f * _dt;
+		if (!mbFixedRot)
+			mAngularVelocity += (new_ang_accel - mAngularAcceleration) * 0.5f * _dt;
 
 		// Linear Damping (Drag)
 		mLinearVelocity.x = mLinearVelocity.x * std::pow(1.0F - mLinearDamping.x, _dt); // x vector
 		mLinearVelocity.y = mLinearVelocity.y * std::pow(1.0F - mLinearDamping.y, _dt); // y vector
+
 
 		mAngularVelocity *= std::pow(1.0F - mfAngularDrag, _dt);
 
@@ -217,13 +242,12 @@ namespace Dystopia
 		}
 
 		//Clamp to velocity max for numerical stability
-		if (Dot(mAngularVelocity, mAngularVelocity) > mpPhysSys->mMaxVelSquared)
+		if (Dot(mAngularVelocity, mAngularVelocity) > mpPhysSys->mMaxVelSquared * 0.5F)
 		{
 			mAngularVelocity = Math::Normalise(mAngularVelocity);
-			mAngularVelocity *= mpPhysSys->mMaxVelocityConstant;
+			mAngularVelocity *= mpPhysSys->mMaxVelocityConstant * 0.5F;
 		}
 
-		
 		//*Reset Cumulative Force*/
 		ResetCumulative();
 	}
@@ -234,13 +258,48 @@ namespace Dystopia
 	void RigidBody::CheckSleeping(const float _dt)
 	{
 		UNUSED_PARAMETER(_dt); // dt is fixed, so it doesnt matter anyway
+
+		size_t tempContacts = 0;
+		bool hasChanged = false;
+
+		if (!GetOwner()->IsActive())
+		{
+			mbIsAwake = true;
+			return;
+		}
+
+		for (auto elem : mparrCol)
+		{
+			for (const auto& count : elem->GetCollisionEvents())
+			{
+				UNUSED_PARAMETER(count);
+				tempContacts += 1;
+			}
+		}
+
+		// Colliders have lost a contact
+		if (tempContacts != mContactsNo)
+		{
+			mbIsAwake = true;
+			hasChanged = true;
+		}
+
+		mContactsNo = 0;
+
+		for (auto elem : mparrCol)
+		{
+			for (const auto& count : elem->GetCollisionEvents())
+			{
+				UNUSED_PARAMETER(count);
+				mContactsNo += 1;
+			}
+		}
+
+		if (hasChanged) return;
 		
 		//mfWeightedMotion is the average kinetic energy over a given set of frames
 		const auto currentMotion = mLinearVelocity.MagnitudeSqr() + mAngularVelocity.MagnitudeSqr();
 		mfWeightedMotion = mpPhysSys->mfSleepBias * mfWeightedMotion + (1 - mpPhysSys->mfSleepBias)*currentMotion;
-
-		// TODO change to global sleep epsilon
-
 
 		if (mfWeightedMotion < mpPhysSys->mfSleepVelEpsilon)
 		{
@@ -248,6 +307,8 @@ namespace Dystopia
 			mLinearAcceleration = { 0,0,0 };
 			mLinearVelocity = { 0,0,0 };
 			mAngularVelocity = { 0,0,0 };
+			mCumulativeTorque = { 0,0,0 };
+			mCumulativeForce = { 0,0,0 };
 		}
 
 		else if (mfWeightedMotion > 10 * mpPhysSys->mfSleepVelEpsilon)
@@ -265,14 +326,19 @@ namespace Dystopia
 	void RigidBody::PreUpdatePosition(float _dt)
 	{
 		mPosition += mLinearVelocity * _dt;
-		//mPosition += (mLinearVelocity + mLinearAcceleration * _dt * 0.5F)  * _dt;
-		//mPosition += (mLinearVelocity + mLinearAcceleration * _dt * 0.5F)  * _dt;
+
+		if (!mbFixedRot)
+			mfAngleDegZ += Math::Radians{ mAngularVelocity.Magnitude() }.Degrees() * _dt;
+
+		if (mfAngleDegZ < 0.0F) mfAngleDegZ = 360.0F;
+		if (mfAngleDegZ > 360.0F) mfAngleDegZ = 0.0F;
 	}
 
-	void RigidBody::UpdateResult(float)
+	void RigidBody::UpdateResult(float) const
 	{
 		// Update Position
 		P_TX->SetGlobalPosition(mPosition);
+		P_TX->SetRotation(Math::Radians{ 0 }, Math::Radians{ 0 }, Math::Degrees{ mfAngleDegZ });
 	}
 
 	/*void RigidBody::Update(float _dt)
@@ -287,7 +353,12 @@ namespace Dystopia
 
 	void RigidBody::Unload(void)
 	{
-		//mpPrimitiveShape = nullptr;
+		for (auto& elem : mparrCol)
+		{
+			UNUSED_PARAMETER(elem);
+			mparrCol.pop_back();
+		}
+
 		mpOwnerTransform = nullptr;
 		mpPhysSys = nullptr;
 	}
@@ -304,7 +375,7 @@ namespace Dystopia
 	{
 		_out.InsertStartBlock("RigidBody");
 		Component::Serialise(_out);
-		_out << mfAngleDeg;				// Angle in degrees
+		_out << mfAngleDegZ;				// Angle in degrees
 		_out << static_cast<float>(mLinearDamping.x);		// Linear Drag X
 		_out << static_cast<float>(mLinearDamping.y);		// Linear Drag y
 		_out << mfAngularDrag;			// Angular Drag
@@ -317,15 +388,17 @@ namespace Dystopia
 		_out << mbIsStatic;				// Static State
 		_out << mbIsAwake;				// Awake State
 		_out << mbCanSleep;				// Can Sleep Boolean
+		_out << static_cast<int>(mPhysicsType);
 		_out.InsertEndBlock("RigidBody");
 	}
 
 	void RigidBody::Unserialise(TextSerialiser & _in)
 	{
+		int type;
 		//int physicsType;
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
-		_in >> mfAngleDeg;				// Angle in degrees
+		_in >> mfAngleDegZ;				// Angle in degrees
 		_in >> mLinearDamping.x;			// Linear Drag
 		_in >> mLinearDamping.y;			// Linear Drag
 		_in >> mfAngularDrag;			// Angular Drag
@@ -338,8 +411,10 @@ namespace Dystopia
 		_in >> mbIsStatic;				// Static State
 		_in >> mbIsAwake;				// Awake State
 		_in >> mbCanSleep;				// Can Sleep Boolean
+		_in >> type;
 		_in.ConsumeEndBlock();
 
+		mPhysicsType = static_cast<PhysicsType>(type);
 	}
 
 	void RigidBody::DebugPrint()
@@ -470,7 +545,9 @@ namespace Dystopia
 			//SetSleeping(false);
 		}
 		mLinearVelocity += _impul * mfInvMass;
-		mAngularVelocity += mfInvInertia * (_point - _origin).Cross(_impul);
+
+		if (!mbFixedRot)
+			mAngularVelocity += mfInvInertia * (_point - _origin).Cross(_impul);
 	}
 
 	void RigidBody::AddLinearImpulseWithOrigin(Vec3D const & _impul, Point3D const & _point)
@@ -642,7 +719,7 @@ namespace Dystopia
 
 	float RigidBody::GetAngle() const
 	{
-		return mfAngleDeg;
+		return mfAngleDegZ;
 	}
 	float RigidBody::GetStaticFriction() const
 	{
@@ -991,8 +1068,9 @@ namespace Dystopia
 		{
 			int i_type = 0;
 			AutoArray<std::string> arr{ std::string{ " Never Sleep" },
-				std::string{ " Start Awake" },
-				std::string{ " Start Asleep" } };
+										std::string{ " Start Awake" },
+										std::string{ " Start Asleep" } 
+									};
 			if (EGUI::Display::DropDownSelection("Sleeping Mode", i_type, arr))
 			{
 				switch (i_type)
@@ -1015,10 +1093,11 @@ namespace Dystopia
 
 	void RigidBody::eRotationConstraintCheckBox()
 	{
-		static bool toggleState = false;
+		static bool toggleState = mbFixedRot;
 		if (EGUI::Display::CheckBox("Freeze Rotation", &toggleState))
 		{
 			mbFixedRot = toggleState;
+			mfAngleDegZ = 0;
 		}
 	}
 
@@ -1034,7 +1113,7 @@ namespace Dystopia
 				float(mPrevPosition.x),
 				float(mPrevPosition.y),
 				float(mPrevPosition.z));
-			EGUI::Display::Label("Angle Degree : %.2f", mfAngleDeg);
+			EGUI::Display::Label("Angle Degree : %.2f", mfAngleDegZ);
 			EGUI::Display::Label("Linear Vel.  : x[%.2f], y[%.2f], z[%.2f]",
 				float(mLinearVelocity.x),
 				float(mLinearVelocity.y),

@@ -24,6 +24,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"	   // MetaFind
 
 #include "Math/Vector2.h"
+#include <string>
+
 
 namespace Dystopia
 {

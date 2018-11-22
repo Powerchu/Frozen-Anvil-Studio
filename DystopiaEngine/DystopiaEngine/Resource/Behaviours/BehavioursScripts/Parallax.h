@@ -42,7 +42,7 @@ namespace Dystopia
 		virtual const std::string GetEditorName(void) const override { return "Parallax"; }
 		static uint64_t constexpr mParallaxID = 18446744071816374272;
 
-		Parallax();
+		Parallax();   
 		~Parallax();
 		
 		virtual void Load(void) override;

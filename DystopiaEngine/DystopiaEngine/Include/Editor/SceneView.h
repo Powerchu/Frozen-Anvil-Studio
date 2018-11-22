@@ -32,7 +32,7 @@ namespace Editor
 {
 	struct File;
 
-	class SceneView : public EditorPanel//EditorTab
+	class SceneView : public EditorPanel //EditorTab
 	{
 	public:
 		//static SceneView* GetInstance();

@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Component.h"		// Component
 #include "Reflection/ReflectionTypeErasure.h"
 #include "Object/GameObject.h"
+#include "System/Behaviour/BehaviourMessage.h"
 
 namespace Dystopia
 {
@@ -42,6 +43,7 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
 		virtual void Load(void);
+		virtual void Awake(void);
 		virtual void Init(void);
 
 		virtual void Update(const float _fDeltaTime);
@@ -64,8 +66,10 @@ namespace Dystopia
 		virtual void Serialise(TextSerialiser&) const {};
 		virtual void Unserialise(TextSerialiser&) {};
 
-		virtual TypeErasure::TypeEraseMetaData       GetMetaData()       = 0;
-		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const = 0;
+		virtual TypeErasure::TypeEraseMetaData       GetMetaData()       ;
+		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const ;
+
+		virtual void ReceiveMessage(const char * const _FuncName, BehaviourMessage _msg);
 
 		virtual Behaviour * Duplicate() const;
 	};

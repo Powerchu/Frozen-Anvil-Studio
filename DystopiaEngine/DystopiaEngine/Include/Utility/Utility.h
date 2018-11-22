@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _UTILITY_H_
 
 #include "Utility/Meta.h"
+#include "Math/MathUtility.h"
 #include "Utility/UtilityInternals.h"
 
 namespace Ut
@@ -91,7 +92,7 @@ namespace Ut
 	// Defaults to sorting the array in ascending order
 	template<class Itor, class Obj = typename RemoveRef<decltype(*declval<Itor>())>::type, 
 		typename Comparator = bool(*)(const Obj&, const Obj&)>
-	void Sort(Itor const& _begin, Itor const& _end, Comparator&& _pTest = [](const Obj& _lhs, const Obj& _rhs)->bool { return _lhs < _rhs; })
+	void InsertionSort(Itor const& _begin, Itor const& _end, Comparator&& _pTest = [](const Obj& _lhs, const Obj& _rhs)->bool { return _lhs < _rhs; })
 	{
 		Obj temp;
 

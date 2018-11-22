@@ -69,7 +69,6 @@ namespace Gbl
 	constexpr auto  MESH_EXT        = "dmesh";
 	constexpr auto  FRAGSHADER_EXT  = "dfrag";
 	constexpr auto  VERTSHADER_EXT  = "dvert";
-	constexpr auto  CRASHREPORT_EXT = "dystor";
 
 	constexpr auto  PNG_EXT			= "png";
 	constexpr auto  BMP_EXT			= "bmp";
@@ -78,6 +77,7 @@ namespace Gbl
 	constexpr auto  DDS_EXT			= "dds";
 	constexpr auto  WAV_EXT			= "wav";
 
+	constexpr auto  CRASHREPORT_EXT = "dlog";
 }
 
 

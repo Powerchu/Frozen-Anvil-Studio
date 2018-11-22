@@ -19,8 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Utility.h"
 #include "Math/MathUtility.h"
 
-#include "DataStructure/Array.h"
 #include "Allocator/DefaultAlloc.h"
+#include "DataStructure/AutoArray.h"
 
 #include <intrin.h>			// _BitScanForward64
 #include <initializer_list> // init-list
@@ -97,7 +97,7 @@ public:
 	inline Itor_t end(void) const noexcept;
 
 	inline Sz_t size(void) const noexcept;
-	constexpr inline Sz_t Cap(void) const noexcept;
+	inline Sz_t Cap(void) const noexcept;
 
 	void clear(void) noexcept;
 
@@ -138,7 +138,7 @@ private:
 		static constexpr uint64_t Range = Params::blk_sz > 63 ? ~(0Ui64) : (Math::Power<Params::blk_sz>(2Ui64) - 1);
 
 		T* mpArray;
-		uint64_t present[Params::blk_sz > 63 ? Params::blk_sz >> 6 : 1]{ ~Range };
+		uint64_t present[Params::blk_sz > 63 ? Params::blk_sz >> 6 : 1];
 
 		static inline uint64_t GetPresentIndex(uint64_t);
 
@@ -151,7 +151,8 @@ private:
 		Ty* EmplaceNextEmptyAs(Ps&& ...);
 		Ptr_t InsertNextEmpty(const Val_t& _obj);
 
-		Block(void) noexcept = default;
+		Block(void) noexcept;
+		~Block(void);
 	};
 
 	struct _DLL_EXPORT_ONLY Iterator
@@ -161,7 +162,7 @@ private:
 		Ptr_t mpAt;
 		Sz_t mnIndex;
 
-		Iterator(Array<Block, Params::blk_max> const&, const Ptr_t&, Sz_t);
+		Iterator(AutoArray<Block> const&, const Ptr_t&, Sz_t);
 
 		Itor_t operator++(int) noexcept;
 		Itor_t& operator++(void) noexcept;
@@ -179,7 +180,7 @@ private:
 	void Allocate(Block&);
 	void Destroy(Val_t&) noexcept;
 
-	Array<Block, Params::blk_max> mDirectory;
+	AutoArray<Block> mDirectory;
 };
 
 
@@ -192,9 +193,9 @@ private:
 
 template <typename T, typename PP>
 MagicArray<T, PP>::MagicArray(void) noexcept
-	: mDirectory{}
+	: mDirectory{ PP::blk_max }
 {
-
+	mDirectory.EmplaceBack();
 }
 
 template <typename T, typename PP>
@@ -208,19 +209,14 @@ template <typename T, typename PP>
 MagicArray<T, PP>::MagicArray(MagicArray&& _other) noexcept
 	: mDirectory{ Ut::Move(_other.mDirectory) }
 {
-	std::memset(_other.mDirectory, 0, sizeof(_other.mDirectory));
+	_other.mDirectory.clear();
 }
 
 template <typename T, typename PP>
 MagicArray<T, PP>::~MagicArray(void)
 {
 	clear();
-
-	for (auto& e : mDirectory)
-	{
-		PP::Alloc_t::Free(e.mpArray);
-		e.mpArray = nullptr;
-	}
+	mDirectory.clear();
 }
 
 template <typename T, typename PP>
@@ -237,7 +233,7 @@ inline typename MagicArray<T, PP>::Itor_t MagicArray<T, PP>::begin(void) const n
 template <typename T, typename PP>
 inline typename MagicArray<T, PP>::Itor_t MagicArray<T, PP>::end(void) const noexcept
 {
-	return MagicArray<T, PP>::Itor_t{ nullptr, nullptr, 0 };
+	return MagicArray<T, PP>::Itor_t{ mDirectory, nullptr, 0 };
 }
 
 template <typename T, typename PP>
@@ -259,9 +255,9 @@ inline typename MagicArray<T, PP>::Sz_t MagicArray<T, PP>::size(void) const noex
 }
 
 template <typename T, typename PP>
-constexpr inline typename MagicArray<T, PP>::Sz_t MagicArray<T, PP>::Cap(void) const noexcept
+inline typename MagicArray<T, PP>::Sz_t MagicArray<T, PP>::Cap(void) const noexcept
 {
-	return PP::blk_sz * PP::blk_max;
+	return PP::blk_sz * mDirectory.size();
 }
 
 template <typename T, typename PP>
@@ -303,7 +299,9 @@ typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Insert(const Val_t& _obj)
 			return ptr;
 	}
 
-	return nullptr;
+	mDirectory.EmplaceBack();
+	Allocate(mDirectory.back());
+	return mDirectory.back().InsertNextEmpty(_obj);
 }
 
 template <typename T, typename PP>
@@ -344,7 +342,9 @@ typename MagicArray<T, PP>::Ptr_t MagicArray<T, PP>::Emplace(Ps&& ...args)
 			return ptr;
 	}
 
-	return nullptr;
+	mDirectory.EmplaceBack();
+	Allocate(mDirectory.back());
+	return mDirectory.back().EmplaceNextEmpty(Ut::Forward<Ps>(args)...);
 }
 
 template<typename T, typename PP> template<typename Ty, typename ...Ps>
@@ -359,7 +359,9 @@ Ty* MagicArray<T, PP>::EmplaceAs(Ps&& ...args)
 			return ptr;
 	}
 
-	return nullptr;
+	mDirectory.EmplaceBack();
+	Allocate(mDirectory.back());
+	return mDirectory.back().EmplaceNextEmptyAs<Ty>(Ut::Forward<Ps>(args)...);
 }
 
 template<typename T, typename PP>
@@ -473,6 +475,20 @@ MagicArray<T, PP>& MagicArray<T, PP>::operator= (MagicArray<T, PP>&& _other) noe
 // =============================================== NESTED CLASSES =============================================== // 
 
 
+template<typename T, typename PP>
+inline MagicArray<T, PP>::Block::Block(void) noexcept
+	: mpArray{ nullptr }, present{ ~Block::Range }
+{
+
+}
+
+template<typename T, typename PP>
+inline MagicArray<T, PP>::Block::~Block(void)
+{
+	PP::Alloc_t::Free(mpArray);
+	mpArray = nullptr;
+}
+
 template<typename T, typename Params>
 inline typename uint64_t MagicArray<T, Params>::Block::GetPresentIndex(uint64_t _nIndex)
 {
@@ -554,7 +570,7 @@ inline void MagicArray<T, Params>::Destroy(Val_t& it) noexcept
 }
 
 template<typename T, typename Params>
-inline MagicArray<T, Params>::Iterator::Iterator(Array<Block, Params::blk_max> const& _dir, const Ptr_t& _pAt, Sz_t _nIndex) :
+inline MagicArray<T, Params>::Iterator::Iterator(AutoArray<Block> const& _dir, const Ptr_t& _pAt, Sz_t _nIndex) :
 	mpBlock{ _dir.begin() }, mpEnd{ _dir.end() }, mpAt{ _pAt }, mnIndex{ _nIndex }
 {
 }

@@ -46,7 +46,8 @@ namespace Dystopia
 			Ut::Indexer<eSYSTEMS::EVENT_SYSTEM    , class EventSystem    >,
 			Ut::Indexer<eSYSTEMS::COLLISION_SYSTEM, class CollisionSystem>,
 			Ut::Indexer<eSYSTEMS::PHYSICS_SYSTEM  , class PhysicsSystem  >,
-			Ut::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >
+			Ut::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >,
+			Ut::Indexer<eSYSTEMS::AI_SYSTEM		  , class AISystem		 >
 		>>;
 
 		using SubSys = typename Ut::MetaAutoIndexer <
@@ -90,16 +91,11 @@ namespace Dystopia
 
 	private:
 
-		Timer mTime;
-		Timer mTimeFixed;
-
 		Queue<eSysMessage> mMessageQueue;
 
 		AutoArray<void*>	mSubSystems;
 		AutoArray<Systems*> mSystemList;
 		AutoArray<Systems*> mSystemTable;
-
-		std::int64_t mAccumulatedTime;
 
 		EngineCore(void);
 
@@ -154,7 +150,8 @@ inline T* const Dystopia::EngineCore::GetSubSystem(void) const
 	return static_cast<T*>(mSubSystems[type::result::value]);
 }
 
-#pragma warning(pop)
 
+
+#pragma warning(pop)
 #endif		// INCLUDE GUARD
 

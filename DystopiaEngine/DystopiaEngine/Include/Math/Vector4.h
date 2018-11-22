@@ -331,7 +331,7 @@ namespace Math
 
 
 	using Vec4		= Vector4;
-	using Vector4	= Vector4;
+	using Vector3D	= Vector4;
 	using Vec3D		= Vector4;
 	using Point3D	= Vector4;
 	using Pt3D		= Vector4;

@@ -24,6 +24,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/GameObject.h"
 #include "Component/RigidBody.h"
 #include "Utility/DebugAssert.h"
+#include <map>
+#include "Behaviour/BehaviourMemberFunc.h"
 
 #define DllExport   __declspec( dllexport )
 
@@ -40,7 +42,6 @@ namespace Dystopia
 
 		void Init() override
 		{
-			DEBUG_PRINT(eLog::MESSAGE, "CheckDist");
 			mTarget = mpBlackboard->getVector("Target");
 			mOwner = mpBlackboard->getVector("Owner");
 			mpOwnerObj = mpBlackboard->getGameObj("Owner");
@@ -102,7 +103,7 @@ namespace Dystopia
 		void Init() override
 		{
 			mfHealth = mpBlackboard->getInt("Health");
-			DEBUG_PRINT(eLog::MESSAGE, "CheckHealth");
+			//DEBUG_PRINT(eLog::MESSAGE, "CheckHealth");
 		}
 
 		eStatus Update() override
@@ -130,7 +131,7 @@ namespace Dystopia
 		{
 			mbIsFacingRight = mpBlackboard->getBool("IsFacingRight");
 			myRigid = mpBlackboard->getGameObj("Owner")->GetComponent<RigidBody>();
-			DEBUG_PRINT(eLog::MESSAGE, "ChaseEnemy");
+			//DEBUG_PRINT(eLog::MESSAGE, "ChaseEnemy");
 		}
 
 		eStatus Update() override
@@ -165,7 +166,7 @@ namespace Dystopia
 			mTarget = mpBlackboard->getVector("Target");
 			mOwner = mpBlackboard->getVector("Owner");
 			my_rigid = mpBlackboard->getGameObj("Owner")->GetComponent<RigidBody>();
-			DEBUG_PRINT(eLog::MESSAGE, "RunAway");
+			//DEBUG_PRINT(eLog::MESSAGE, "RunAway");
 		}
 
 		eStatus Update() override
@@ -234,6 +235,11 @@ namespace Dystopia
 		
 		virtual void EditorUI(void) noexcept override;
 		
+		void TEST(float _dmg)
+        {
+			mHealth -= _dmg;
+        }
+		
 		// Reflection Stuff
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
@@ -242,6 +248,9 @@ namespace Dystopia
 		
 		bool isColliding = false;
 		NeuralTree::BehaviourTree bTree;
+		
+		PP_MEMBERFUNC(Dystopia::Goblin, TEST)
+		
 	private:
 		friend MetaData<Goblin>;
 	};

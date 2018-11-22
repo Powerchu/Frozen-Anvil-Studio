@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/EditorMain.h"
 #include "Editor/EditorCommands.h"
+#include "EGUI.h"
 
 #include "DataStructure/Array.h"
 
@@ -34,13 +35,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/ComponentList.h"
 #include "Component/BehaviourList.h"
 
+#include "Component/AiController.h"
 #include "Component/AABB.h"
 #include "Component/AudioSource.h"
 #include "Component/Camera.h"
 #include "Component/Circle.h"
 #include "Component/Convex.h"
 #include "Component/Collider.h"
-#include "Component/CharacterController.h"
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
 #include "Component/SpriteRenderer.h"
@@ -53,6 +54,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Base/ComponentDonor.h"
 #include "System/Driver/Driver.h"
 
+#include "System/AI/AISystem.h"
 #include "System/Sound/SoundSystem.h"
 #include "System/Input/InputSystem.h"
 #include "System/Camera/CameraSystem.h"

@@ -19,7 +19,7 @@ namespace Dystopia
 
 	void CollisionEvent::ApplyImpulse()
 	{
-		constexpr auto velLimit = 15.0F;
+		constexpr auto velLimit = 50.0F;
 		const auto bodyA = mThisCollider->GetComponent<RigidBody>();
 		const auto bodyB = mCollidedWith->GetComponent<RigidBody>();
 		const auto colB = mCollidedWith->GetComponent<Collider>();
@@ -59,9 +59,11 @@ namespace Dystopia
 
 		if (!bodyA->Get_IsStaticState())
 			bodyA->AddLinearImpulse(-impulse);
+			//bodyA->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
 
-		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger())
+		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger() && mCollidedWith->IsActive())
 			bodyB->AddLinearImpulse(impulse);
+			//bodyB->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
 
 		// Calculate Frictional Velocity (vec3D) after normal impulse
 		rv = bodyB->GetLinearVelocity() - bodyA->GetLinearVelocity();
@@ -91,8 +93,14 @@ namespace Dystopia
 		if (!bodyA->Get_IsStaticState())
 			bodyA->AddLinearImpulse(-frictionImpulse);
 
-		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger())
+		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger() && mCollidedWith->IsActive())
 			bodyB->AddLinearImpulse(frictionImpulse);
+
+		/*if (!bodyA->Get_IsStaticState())
+			bodyA->AddLinearImpulseWithOrigin(-frictionImpulse, mCollisionPoint);
+
+		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger())
+			bodyB->AddLinearImpulseWithOrigin(frictionImpulse, mCollisionPoint);*/
 	}
 
 	void CollisionEvent::ApplyPenetrationCorrection(const int iter) const
@@ -106,14 +114,14 @@ namespace Dystopia
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
 
-		const float perc = 0.44F / iter;
-		const float slop = 0.15F;
+		const float perc = 0.48F / iter;
+		const float slop = 0.01F;
 
 		const Vec3D correction = Math::Max(Math::Abs(mfPeneDepth) - slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 
 		if (!bodyA->Get_IsStaticState() && bodyA->GetIsAwake())
 			bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
-		if (!bodyB->Get_IsStaticState() && bodyB->GetIsAwake())
+		if (!bodyB->Get_IsStaticState() && bodyB->GetIsAwake() && mCollidedWith->IsActive() && !colB->IsTrigger())
 			bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);
 	}
 

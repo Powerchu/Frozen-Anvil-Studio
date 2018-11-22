@@ -25,7 +25,6 @@ namespace Dystopia
 
 namespace Editor
 {
-
 	class ProjectSettings : public EditorPanel//EditorTab
 	{
 	public:

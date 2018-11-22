@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	HashString.cpp
+\file   HashString.cpp
 \author Shannon Tan (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -54,7 +54,7 @@ HashString::HashString(HashString&& _rhs) noexcept
 	_rhs.mSize = 0;
 }
 
-HashString::HashString(const char * _s)
+HashString::HashString(const char * const _s)
 	: mHashedID{ StringHasher(_s) }, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(strlen(_s) + 1) },
 	mSize{ strlen(_s) }
 {
@@ -260,7 +260,7 @@ HashString& HashString::operator+=(unsigned long long _u)
 HashString& HashString::erase(size_t _pos, size_t _len)
 {
 	DEBUG_ASSERT(_pos >= mSize, "Hash String Earse _pos out of range");
-	if (!_len) 
+	if (!_len)
 		return *this;
 	size_t pad = 0;
 	char *start = begin() + _pos;
@@ -385,7 +385,7 @@ size_t HashString::rfind(const HashString& _rhs, size_t _pos) const
 {
 	return rfind(_rhs.c_str(), _pos);
 }
- 
+
 size_t HashString::rfind(const char* _s, size_t _pos) const
 {
 	const char *searchPos = (cbegin() + _pos < cend() && _pos != HashString::nPos) ? cbegin() + _pos : cend();
@@ -509,12 +509,12 @@ char* const HashString::end(void)
 
 const char* const HashString::clast(void) const
 {
-	return mCharBuffer + mSize -1;
+	return mCharBuffer + mSize - 1;
 }
 
 char* const HashString::last(void)
 {
-	return mCharBuffer + mSize -1;
+	return mCharBuffer + mSize - 1;
 }
 
 HashID HashString::id(void) const
@@ -577,5 +577,12 @@ std::ostream& operator<<(std::ostream& _os, const HashString& _rhs)
 	return _os;
 }
 
+bool operator<(const HashString& _lhs, const HashString& _rhs)
+{
+	return std::strcmp(_lhs.c_str(), _rhs.c_str()) < 0;
+}
 
-
+bool operator>(const HashString& _lhs, const HashString& _rhs)
+{
+	return std::strcmp(_lhs.c_str(), _rhs.c_str()) > 0;
+}

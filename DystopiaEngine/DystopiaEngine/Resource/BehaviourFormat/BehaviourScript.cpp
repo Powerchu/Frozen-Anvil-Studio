@@ -15,11 +15,53 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
+#include "System/Behaviour/BehaviourSystem.h"
+
+#include "System/Scene/SceneSystem.h"
+#include "System/Collision/CollisionEvent.h"
+#include "System/Collision/CollisionSystem.h"
+
+#include "Object/ObjectFlags.h"
+#include "Object/GameObject.h"
+
 #include "Editor/EGUI.h"
 #include "Utility/DebugAssert.h"
 
+
+
 namespace Dystopia
 {
+	namespace _SF_ClassName__MSG
+	{
+		template<typename ... Ts>
+		void SendInternalMessage(Behaviour * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendInternalMessage(_ptr, _FuncName, _Params...);
+		}
+		
+		template<typename ... Ts>
+		void SendExternalMessage(uint64_t _ObjectID, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
+		}
+		template<typename ... Ts>
+		void SendExternalMessage(const GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
+		
+		template<typename ... Ts>
+		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
+		
+		template<typename ... Ts>
+		void SendAllMessage(const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
+		}
+	}
 	_SF_ClassName_::_SF_ClassName_()
 	{
 	}
@@ -29,6 +71,10 @@ namespace Dystopia
 	}
 
 	void _SF_ClassName_::Load()
+	{
+	}
+
+	void _SF_ClassName_::Awake()
 	{
 	}
 
@@ -110,15 +156,15 @@ namespace Dystopia
 	
 	TypeErasure::TypeEraseMetaData _SF_ClassName_::GetMetaData()
 	{
-		/*TO DO*/
-		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
-		return TypeErasure::TypeEraseMetaData{};
+		static MetaData<Dystopia::_SF_ClassName_> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
 	}
 	TypeErasure::TypeEraseMetaData const _SF_ClassName_::GetMetaData() const
 	{
-		/*TO DO*/
-		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
-		return TypeErasure::TypeEraseMetaData{};
+		static MetaData<Dystopia::_SF_ClassName_> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
 	}
 }
 

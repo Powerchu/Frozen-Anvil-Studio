@@ -6,7 +6,7 @@
 \brief
 	Base class for all GameObjects.
 
-All Content Copyright � 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Globals.h"
 
 #include <string>
+
 
 namespace Dystopia
 {
@@ -92,10 +93,10 @@ namespace Dystopia
 		void SetID(const uint64_t&); //explicit purposes only
 		uint64_t GetID(void) const;
 		inline unsigned GetFlags(void) const;
-		std::string GetName(void) const;
+		HashString GetName(void) const;
 		const char * GetNamePtr(void) const;
 
-		void SetName(const std::string&);
+		void SetName(const HashString&);
 
 		void RemoveFlags(eObjFlag);
 		void SetFlag(eObjFlag);
@@ -119,7 +120,7 @@ namespace Dystopia
 
 		uint64_t mnID;
 		unsigned mnFlags;
-		std::string mName;
+		HashString mName;
 
 		Transform mTransform;
 
@@ -261,7 +262,7 @@ AutoArray<T*> Dystopia::GameObject::GetComponents(ComponentTag) const
 		}
 		else
 		{
-			if (Ut::MetaFind_t<T, UsableComponents>::value == e->GetUsableType())
+			if (Ut::MetaFind_t<T, UsableComponents>::value == e->GetRealComponentType())
 			{
 				temp.Insert(static_cast<T*>(e));
 			}

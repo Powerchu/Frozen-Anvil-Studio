@@ -34,9 +34,10 @@ namespace Dystopia
 	class Window;
 	class Texture;
 	class Renderer;
+	class TextRenderer;
 	class SpriteRenderer;
 
-	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>, public ComponentDonor<SpriteRenderer>
+	class GraphicsSystem : public Systems, public ComponentDonor<Renderer>, public ComponentDonor<SpriteRenderer>, public ComponentDonor<TextRenderer>
 	{
 	public :
 		// ====================================== CONSTRUCTORS ======================================= // 
@@ -54,10 +55,12 @@ namespace Dystopia
 
 		void Update(float) override;		// Draws the currently bounded window
 		void PostUpdate(void) override;
-		void Shutdown(void);
+		void Shutdown(void) override;
 
 		void SetGamma(float) noexcept;
 		float GetGamma(void) noexcept;
+
+		void ToggleVsync(bool) noexcept;
 
 		bool GetDebugDraw(void) const;
 		void ToggleDebugDraw(bool);
@@ -74,6 +77,7 @@ namespace Dystopia
 		void     LoadMesh(const std::string&);
 		Texture* LoadTexture(const std::string&);
 		Shader*	 LoadShader(const std::string&);
+		Texture* LoadFont(const std::string&);
 
 		Framebuffer& GetGameView(void) const noexcept;
 		Framebuffer& GetUIView(void) const noexcept;
@@ -97,7 +101,6 @@ namespace Dystopia
 		Math::Vector4 mvDebugColour;
 		float mfGamma;
 		float mfDebugLineWidth;
-		bool  mbDebugDrawCheckBox = false;
 
 		void* mOpenGL; 
 		int mPixelFormat;
@@ -106,6 +109,8 @@ namespace Dystopia
 		Ctor::MagicArrayBuilder<Framebuffer>::SetBlockLimit<1>::type mViews;
 
 		static int DRAW_MODE;
+		bool mbDebugDrawCheckBox = false;
+		bool mbVsync = false;
 
 		void StartFrame(void);
 		void EndFrame(void);

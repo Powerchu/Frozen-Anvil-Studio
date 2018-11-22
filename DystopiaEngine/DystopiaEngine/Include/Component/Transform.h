@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Matrix4.h"				// Matrix4
 #include "Math/Quaternion.h"			// Quaternion
 
+
 namespace Dystopia
 {
 	class _DLL_EXPORT Transform : public Component
@@ -69,6 +70,7 @@ namespace Dystopia
 
 		void SetParent(Transform*);
 		void RemoveParent(void);
+
 		void AddChild(Transform*);
 		void RemoveChild(Transform*);
 

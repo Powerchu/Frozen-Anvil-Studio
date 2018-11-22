@@ -1,0 +1,147 @@
+[START_Scene]
+18446744072084258816,"dan_stageAgain",4,[START_START_GO_DATA]
+18446744071564689920,97,"Scene Camera",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.0135455,0.0135455,1,0.779547,0.0844942,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072718654464,65,"Player",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0.0498501,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+2013277696,65,"Floor",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+3,1,1,0,-0.448234,-0.1,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073584262656,65,"Floor_Clone",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+3,1,1,3.00034,-0.448234,-0.1,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+18446744071564690944,0,18446744071564689920,0,1,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+18446744071614506496,1,18446744072718654464,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+3,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+18446744071591439360,1,18446744072718654464,0,-0.16,0,4,0.5,0.5,0,0,0,0,0,0,0,0,0,0,0.3,0.6,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744072702409216,1,2013277696,0,-0.25,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,0.5,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744073584263680,1,18446744073584262656,0,-0.25,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,0.5,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+3,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+560472576,1,18446744072718654464,"..\DystopiaEngine\Resource\Asset\sprite_ctr.png",
+[END_Renderer]
+[START_Sprite Renderer]
+1,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073396564992,1,2013277696,"..\DystopiaEngine\Resource\Asset\floor_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073584263168,1,18446744073584262656,"..\DystopiaEngine\Resource\Asset\floor_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+9,[START_str]
+"ChangeAudio",0,[START_str]
+"CharacterController",1,[START_BEHAVIOUR_BLOCK]
+18446744072718654464,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"IsDodging",[START_IsDodging]
+0,[START_MEMBER VAR]
+"CharacterSpeed",[START_CharacterSpeed]
+25,[START_MEMBER VAR]
+"JumpForce",[START_JumpForce]
+60,[START_MEMBER VAR]
+END,
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"dsds",0,[START_str]
+"Fireball",0,[START_str]
+"FollowTarget",0,[START_str]
+"Goblin",0,[START_str]
+"GoblinCombat",0,[START_str]
+"Missle",0,[START_str]
+"Parallax",0,
+[END_BEHAVIOUR_SYSTEM_BLOCK]
+
+[END_Scene]
