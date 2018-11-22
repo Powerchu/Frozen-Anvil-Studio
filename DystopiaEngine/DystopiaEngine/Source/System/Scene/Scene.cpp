@@ -82,6 +82,7 @@ void Dystopia::Scene::PostUpdate(void)
 
 		if (flag & eObjFlag::FLAG_REMOVE)
 		{
+			b->GetComponent<Transform>()->RemoveParent();
 			mGameObjs.Remove(&*b);
 		}
 		else if (flag & eObjFlag::FLAG_ACTIVE)

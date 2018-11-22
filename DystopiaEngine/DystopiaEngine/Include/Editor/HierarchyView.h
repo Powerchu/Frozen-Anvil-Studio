@@ -62,6 +62,8 @@ namespace Editor//Dystopia
 		void			ShowGameObjects(void);
 		void			ShowAsParent(Dystopia::GameObject&, const AutoArray<uint64_t>&);
 		void			ShowAsChild(Dystopia::GameObject&, const AutoArray<uint64_t>&);
+
+		void			GameObjectPayload(Dystopia::GameObject&);
 	};
 }
 

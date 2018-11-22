@@ -18,10 +18,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/EditorCommands.h"
 #include "Editor/CommandTypes.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorClipboard.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Graphics/Texture.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
 
 #include "DataStructure/Stack.h"
 
@@ -395,29 +399,52 @@ namespace EGUI
 
 		bool SelectableTxt(const std::string& _label, bool _highlight)
 		{
-			if (_highlight) ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
+			if (_highlight)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+				ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+			}
 			bool ret = ImGui::Selectable(_label.c_str(), _highlight);
-			if (_highlight) ImGui::PopStyleColor();
+			if (_highlight) ImGui::PopStyleColor(2);
 			return ret;
 		}
 
 		bool SelectableTxt(const std::string& _label, bool* _outputBool)
 		{
-			return (ImGui::Selectable(_label.c_str(), _outputBool));
+			if (*_outputBool)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+				ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+			}
+			bool ret = (ImGui::Selectable(_label.c_str(), _outputBool));
+			if (*_outputBool) ImGui::PopStyleColor(2);
+			return ret;
 		}
 
 		bool SelectableTxtDouble(const std::string& _label, bool _highlight)
 		{
-			return (ImGui::Selectable(_label.c_str(), _highlight, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0);
+			if (_highlight)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+				ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+			}
+			bool ret = (ImGui::Selectable(_label.c_str(), _highlight, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0);
+			if (_highlight) ImGui::PopStyleColor(2);
+
+			return ret;
 		}
 
 		bool SelectableTxtDouble(const std::string& _label, bool* _outputBool)
 		{
-			if ((ImGui::Selectable(_label.c_str(), _outputBool, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0))
-				return true;
-			else
-				*_outputBool = false;
-			return false;
+			if (*_outputBool)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+				ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+			}
+			bool ret = (ImGui::Selectable(_label.c_str(), _outputBool, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0);
+			if (*_outputBool) ImGui::PopStyleColor(2);
+			*_outputBool = ret;
+			return ret;
 		}
 
 		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow, bool _defaultOpen, bool _singleClickOpen)
@@ -427,15 +454,18 @@ namespace EGUI
 			flags = _noArrow ? flags | ImGuiTreeNodeFlags_Leaf : flags;
 			flags = _singleClickOpen ? flags : flags | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-
 			if (_highlighted)
-				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
+			{
+				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+				ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+			}
+
 			if (_defaultOpen)
 				flags |= ImGuiTreeNodeFlags_DefaultOpen;
 			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, flags);
 
 			if (_highlighted)
-				ImGui::PopStyleColor();
+				ImGui::PopStyleColor(2);
 
 			return ret;
 		}
@@ -464,8 +494,29 @@ namespace EGUI
 		{
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 			{
+				std::string show = _toolTip;
+				if (_tagLoad == ePayloadTags::GAME_OBJ)
+				{
+					bool exist = false;
+					auto& selection = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorClipboard>()->GetSelectedIDs();
+					uint64_t id = *static_cast<uint64_t*>(_pData);
+					for (const auto& i : selection)
+					{
+						if (id == i)
+						{
+							exist = true;
+							break;
+						}
+					}
+					if (!exist)
+						::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorClipboard>()->AddGameObject(id);
+
+					if (selection.size() > 1)
+						show = "multiple ...";
+				}
+
 				ImGui::SetDragDropPayload(EGUI::GetPayloadString(_tagLoad), _pData, _dataSize);
-				ImGui::Text("%s", _toolTip.c_str());
+				ImGui::Text("%s", show.c_str());
 				return true;
 			}
 			return false;

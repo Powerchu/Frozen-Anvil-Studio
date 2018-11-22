@@ -170,7 +170,8 @@ void Editor::EditorClipboard::Delete(void)
 
 void Editor::EditorClipboard::Duplicate(void)
 {
-
+	Copy();
+	Paste();
 }
 
 void Editor::EditorClipboard::Paste(void)

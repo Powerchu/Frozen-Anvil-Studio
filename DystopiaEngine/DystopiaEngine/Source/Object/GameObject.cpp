@@ -149,15 +149,14 @@ void Dystopia::GameObject::PostUpdate(void)
 
 void Dystopia::GameObject::Destroy(void)
 {
+	auto& children = mTransform.GetAllChild();
+	for (auto& c : mTransform.GetAllChild())
+		c->GetOwner()->Destroy();
+
 	ForcePing(mComponents, GameObjectDestroy);
 	ForcePing(mBehaviours, GameObjectDestroy);
 
 	mnFlags = FLAG_REMOVE;
-
-	mTransform.RemoveParent();
-
-	for (auto& c : mTransform.GetAllChild())
-		c->GetOwner()->Destroy();
 }
 
 void Dystopia::GameObject::Unload(void)

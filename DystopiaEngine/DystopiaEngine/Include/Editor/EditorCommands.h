@@ -59,12 +59,14 @@ namespace Editor
 		void DuplicateGameObject(AutoArray<uint64_t>&);
 
 
-		template <class Component, typename ... Ts>
-		void FunctionCommand(const uint64_t& _objID, const ComponentFunction<Component, Ts ...>& _oldFn, 
-													 const ComponentFunction<Component, Ts ...>& _newFn);
+		template <class C, typename ... Ts>
+		void FunctionCommand(const uint64_t& _objID, const ComponentFunction<C, Ts ...>& _oldFn, 
+													 const ComponentFunction<C, Ts ...>& _newFn);
 		template<class C, typename ... Ts>
 		auto MakeFnCommand(void(C::*_function)(Ts...), const Ut::RemoveRef_t<Ts>& ... _params);
-	
+		template <class C, typename ... Ts>
+		void FunctionCommand(const AutoArray<uint64_t>& _arrIDs, const AutoArray<ComponentFunction<C, Ts ...>>& _arrOldFn,
+																 const AutoArray<ComponentFunction<C, Ts ...>>& _arrNewFn);
 
 
 
@@ -144,6 +146,30 @@ template<class C, typename ... Ts>
 inline auto Editor::EditorCommands::MakeFnCommand(void (C::*_function)(Ts...), const Ut::RemoveRef_t<Ts>& ... _params)
 {
 	return ComponentFunction<C, Ts...>{ _function, _params ... };
+}
+
+template <class C, typename ... Ts>
+void Editor::EditorCommands::FunctionCommand(const AutoArray<uint64_t>& _arrIDs, const AutoArray<ComponentFunction<C, Ts ...>>& _arrOldFn,
+																				 const AutoArray<ComponentFunction<C, Ts ...>>& _arrNewFn)
+{
+	using fnType = FunctionComd<ComponentFunction<C, Ts ...>, ComponentFunction<C, Ts ...>>;
+	if (mbDisableCommands)
+		return;
+	size_t count = _arrIDs.size();
+	if (count == _arrOldFn.size() && count == _arrNewFn.size())
+	{
+		if (count == 1)
+		{
+			FunctionCommand(_arrIDs[0], _arrNewFn[0], _arrOldFn[0]);
+		}
+		else
+		{
+			AutoArray<Command*> mArrCmd;
+			for (unsigned i = 0; i < _arrIDs.size(); ++i)
+				mArrCmd.push_back(Dystopia::DefaultAllocator<fnType>::ConstructAlloc(_arrIDs[i], _arrNewFn[i], _arrOldFn[i]));
+			ExecuteDo(Dystopia::DefaultAllocator<BatchExecute>::ConstructAlloc(mArrCmd));
+		}
+	}
 }
 
 template<class C, typename T>

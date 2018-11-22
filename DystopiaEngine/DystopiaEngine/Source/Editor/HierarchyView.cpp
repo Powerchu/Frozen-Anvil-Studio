@@ -214,9 +214,9 @@ namespace Editor
 
 	void HierarchyView::GameObjectPopups(Dystopia::GameObject& _obj)
 	{
+		auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
 		if (ImGui::BeginPopupContextItem())
 		{
-			auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
 			ed->ClearAll();
 			ed->AddGameObject(_obj.GetID());
 			if (EGUI::Display::SelectableTxt("Duplicate"))
@@ -225,12 +225,11 @@ namespace Editor
 				ed->Paste();
 			}
 			if (EGUI::Display::SelectableTxt("Delete"))
-			{
 				EditorMain::GetInstance()->GetSystem<EditorCommands>()->RemoveGameObject(_obj.GetID());
-				//GetCommandHND()->InvokeCommandDelete(_obj, *GetCurrentScene());
-			}
 			ImGui::EndPopup();
 		}
+
+		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		uint64_t id = _obj.GetID();
 		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &id, sizeof(uint64_t), _obj.GetName()))
 		{
@@ -244,7 +243,7 @@ namespace Editor
 		auto& arrayOfGameObjects = ss->GetCurrentScene().GetAllGameObjects(); // GetCurrentScene()->GetAllGameObjects();
 
 		auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
-		const auto& selections = ed->GetSelectedIDs();
+		auto& selections = ed->GetSelectedIDs();
 		for (auto& obj : arrayOfGameObjects)
 		{
 			if (obj.GetComponent<Dystopia::Transform>()->GetParent())
@@ -260,22 +259,42 @@ namespace Editor
 		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
 			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id);
-			auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
-			auto oFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
-			auto nFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, nullptr);
-			cmd->FunctionCommand(t->GetID(), oFn, nFn);
-
-			//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
-			//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, nullptr);
-			//EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
-
+			if (t)
+			{
+				auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
+				if (selections.size() > 1)
+				{
+					AutoArray<ComponentFunction<Dystopia::Transform, Dystopia::Transform*>> oldFns;
+					AutoArray<ComponentFunction<Dystopia::Transform, Dystopia::Transform*>> newFns;
+					for (size_t i = 0; i < selections.size(); ++i)
+					{
+						if (const auto o = ss->GetCurrentScene().FindGameObject(selections[i]))
+						{
+							oldFns.push_back(cmd->MakeFnCommand(&Dystopia::Transform::SetParent, o->GetComponent<Dystopia::Transform>()->GetParent()));
+							newFns.push_back(cmd->MakeFnCommand(&Dystopia::Transform::SetParent, nullptr));
+						}
+						else
+						{
+							selections.FastRemove(i);
+							i--;
+						}
+					}
+					cmd->FunctionCommand(selections, oldFns, newFns);
+				}
+				else
+				{
+					auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
+					auto oFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
+					auto nFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, nullptr);
+					cmd->FunctionCommand(t->GetID(), oFn, nFn);
+				}
+			}
 			EGUI::Display::EndPayloadReceiver();
 		}
 	}
 
 	void HierarchyView::ShowAsParent(Dystopia::GameObject& _obj, const AutoArray<uint64_t>& _arr)
 	{
-		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		bool selected = false;
 		bool clicked = false;
 		for (auto& o : _arr)
@@ -288,27 +307,7 @@ namespace Editor
 		}
 		std::string uniqueifyName = _obj.GetName() + "##" + std::to_string(_obj.GetID());
 		bool tree = EGUI::Display::StartTreeNode(uniqueifyName, &clicked, selected);
-
-		uint64_t id = _obj.GetID();
-		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &id, sizeof(uint64_t), _obj.GetName()))
-		{
-			EGUI::Display::EndPayload();
-		}
-		if (uint64_t *id2 = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
-		{
-			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id2);
-
-			auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
-			auto oFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
-			auto nFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>());
-			cmd->FunctionCommand(t->GetID(), oFn, nFn);
-
-			//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
-			//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>());
-			//EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
-
-			EGUI::Display::EndPayloadReceiver();
-		}
+		GameObjectPayload(_obj);
 		GameObjectPopups(_obj);
 
 		if (tree)
@@ -338,7 +337,6 @@ namespace Editor
 
 	void HierarchyView::ShowAsChild(Dystopia::GameObject& _obj, const AutoArray<uint64_t>& _arr)
 	{
-		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		bool selected = false;
 		for (auto& o : _arr)
 		{
@@ -352,28 +350,27 @@ namespace Editor
 		if (EGUI::Display::SelectableTxt(uniqueifyName, selected))
 		{
 			SelectedObj(_obj);
-		}
-		uint64_t id = _obj.GetID();
-		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &id, sizeof(uint64_t), _obj.GetName()))
-		{
-			EGUI::Display::EndPayload();
-		}
-		if (uint64_t *id2 = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
-		{
-			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id2);
+		}	
+		GameObjectPayload(_obj);
+		GameObjectPopups(_obj);
+	}
 
+	void HierarchyView::GameObjectPayload(Dystopia::GameObject& _obj)
+	{
+		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
+		auto allSelected = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetSelectedIDs();
+
+		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+		{
+			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id);
+		
 			auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
 			auto oFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
 			auto nFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>());
 			cmd->FunctionCommand(t->GetID(), oFn, nFn);
-
-			//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
-			//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>());
-			//EGUI::GetCommandHND()->InvokeCommand(t->GetID(), fOld, fNew);
-
+		
 			EGUI::Display::EndPayloadReceiver();
 		}
-		GameObjectPopups(_obj);
 	}
 }
 
