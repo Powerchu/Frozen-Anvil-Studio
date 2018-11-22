@@ -280,11 +280,11 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 	}
 	else
 	{
-		//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ (w / 2) - (w / 3), h / 5 });
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ (w / 2) - (w / 3), h / 5 });
 		ImGui::BeginChild("CreatingProject", ImVec2{ w, h }, true);
 		CreateFields(w, h);
 		ImGui::EndChild();
-		//ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
 	}
 	ImGui::EndChild();
 
