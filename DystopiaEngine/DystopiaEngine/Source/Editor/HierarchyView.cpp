@@ -229,7 +229,6 @@ namespace Editor
 			ImGui::EndPopup();
 		}
 
-		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		uint64_t id = _obj.GetID();
 		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &id, sizeof(uint64_t), _obj.GetName()))
 		{
@@ -283,7 +282,6 @@ namespace Editor
 				}
 				else
 				{
-					auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
 					auto oFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
 					auto nFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, nullptr);
 					cmd->FunctionCommand(t->GetID(), oFn, nFn);
@@ -360,15 +358,42 @@ namespace Editor
 		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		auto allSelected = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetSelectedIDs();
 
+		for (auto& id : allSelected)
+			if (_obj.GetID() == id)
+				return;
+
 		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
 			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id);
-		
-			auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
-			auto oFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
-			auto nFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>());
-			cmd->FunctionCommand(t->GetID(), oFn, nFn);
-		
+			if (t)
+			{
+				auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
+				if (allSelected.size() > 1)
+				{
+					AutoArray<ComponentFunction<Dystopia::Transform, Dystopia::Transform*>> oldFns;
+					AutoArray<ComponentFunction<Dystopia::Transform, Dystopia::Transform*>> newFns;
+					for (size_t i = 0; i < allSelected.size(); ++i)
+					{
+						if (const auto o = ss->GetCurrentScene().FindGameObject(allSelected[i]))
+						{
+							oldFns.push_back(cmd->MakeFnCommand(&Dystopia::Transform::SetParent, o->GetComponent<Dystopia::Transform>()->GetParent()));
+							newFns.push_back(cmd->MakeFnCommand(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>()));
+						}
+						else
+						{
+							allSelected.FastRemove(i);
+							i--;
+						}
+					}
+					cmd->FunctionCommand(allSelected, oldFns, newFns);
+				}
+				else
+				{
+					auto oFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, t->GetComponent<Dystopia::Transform>()->GetParent());
+					auto nFn = cmd->MakeFnCommand(&Dystopia::Transform::SetParent, _obj.GetComponent<Dystopia::Transform>());
+					cmd->FunctionCommand(t->GetID(), oFn, nFn);
+				}
+			}
 			EGUI::Display::EndPayloadReceiver();
 		}
 	}

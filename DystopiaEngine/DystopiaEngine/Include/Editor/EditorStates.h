@@ -64,6 +64,7 @@ namespace Editor
 		size_t mnSave;
 		size_t mnSaveAs;
 		size_t mnQuit;
+		size_t mnClear;
 
 		AutoArray<HashString> mArrTempFile;
 	};

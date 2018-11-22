@@ -108,6 +108,7 @@ namespace Dystopia
 		void OnChildAdd(Transform*);
 		void OnChildRemove(Transform*);
 		void OnParentRemove(Transform*);
+		bool IsDescendant(Transform*);
 	};
 }
 

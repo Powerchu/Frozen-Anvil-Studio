@@ -486,7 +486,7 @@ namespace Dystopia
 		if (!toPaste.size()) return;
 
 		AutoArray<GameObject*> mToInsert{ toPaste.size() };
-		auto& existingObj = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
+		//auto& existingObj = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
 		ClearSelections();
 		for (auto& elem : toPaste)
 		{

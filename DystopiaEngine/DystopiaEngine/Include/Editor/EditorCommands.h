@@ -44,6 +44,7 @@ namespace Editor
 
 		/****************************************** Actual commands ******************************************/
 		void ClearAllCommmands(void);
+		size_t ComdSize(void) const;
 
 		void SavedChanges(void);
 		bool HasChanges(void) const;

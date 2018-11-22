@@ -63,7 +63,8 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
 {
 	if (mpParent)
 		RemoveParent();
-
+	if (IsDescendant(_pParent))
+		return;
 	mpParent = _pParent;
     if (mpParent)
     {
@@ -402,4 +403,15 @@ void Dystopia::Transform::SetParentID(uint64_t _id)
 	mnParentID = _id;
 }
 
+bool Dystopia::Transform::IsDescendant(Transform* _toBeParent)
+{
+	for (auto& child : mChildren)
+	{
+		if (child == _toBeParent)
+			return true;
 
+		if (child->IsDescendant(_toBeParent))
+			return true;
+	}
+	return false;
+}

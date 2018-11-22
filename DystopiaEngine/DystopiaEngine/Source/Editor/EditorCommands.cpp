@@ -93,6 +93,11 @@ void Editor::EditorCommands::SaveSettings(Dystopia::TextSerialiser&) const
 void Editor::EditorCommands::LoadSettings(Dystopia::TextSerialiser&)
 {}
 
+size_t Editor::EditorCommands::ComdSize(void) const
+{
+	return mDeqUndo.size() >= mDeqRedo.size() ? mDeqUndo.size() : mDeqRedo.size();
+}
+
 void Editor::EditorCommands::ClearAllCommmands(void)
 {
 	for (auto& r : mDeqRedo)

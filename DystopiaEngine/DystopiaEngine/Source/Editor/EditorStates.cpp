@@ -37,7 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 Editor::EditorStates::EditorStates(void)
 	: mState{ eState::LAUNCHER }, mbQuitAttempt{ false }, mbNewAttempt{ false },
 	mnPlay{}, mnNew{}, mnOpen{}, mnSave{}, mnSaveAs{}, mnQuit{}, mArrTempFile{}, mbLoadAttempt{false},
-	mPendingLoad{}
+	mPendingLoad{}, mnClear{}
 {
 }
 
@@ -73,6 +73,9 @@ bool Editor::EditorStates::Init(void)
 	Hotkey<3> quit{ Array<eButton, 3>{ eButton::KEYBOARD_CTRL, eButton::KEYBOARD_ALT, eButton::KEYBOARD_Q },
 					Array<eHKState, 3>{ eHKState::eHK_HOLD, eHKState::eHK_HOLD, eHKState::eHK_TRIGGERED } };
 
+	Hotkey<2> clear{ Array<eButton, 2>{ eButton::KEYBOARD_CTRL, eButton::KEYBOARD_1},
+					Array<eHKState, 2>{ eHKState::eHK_HOLD, eHKState::eHK_TRIGGERED } };
+
 	auto input = EditorMain::GetInstance()->GetSystem<EInput>();
 	mnPlay	= input->RegisterHotkey(toggle);
 	mnNew	= input->RegisterHotkey(newScene);
@@ -80,6 +83,7 @@ bool Editor::EditorStates::Init(void)
 	mnSave	= input->RegisterHotkey(save);
 	mnSaveAs = input->RegisterHotkey(saveAs);
 	mnQuit	= input->RegisterHotkey(quit);
+	mnClear = input->RegisterHotkey(clear);
 
 	return true;
 }
@@ -141,6 +145,8 @@ void Editor::EditorStates::Update(float)
 			Save();
 		else if (input->IsHotkeyTriggered(mnQuit))
 			mbQuitAttempt = true;
+		else if (input->IsHotkeyTriggered(mnClear))
+			EditorMain::GetInstance()->GetSystem<EditorCommands>()->ClearAllCommmands();
 	}
 
 	switch (mState)
@@ -261,6 +267,12 @@ void Editor::EditorStates::ToolBar(void)
 				EditorMain::GetInstance()->GetSystem<EditorClipboard>()->Copy(); 
 			if (EGUI::StartMenuBody("Paste ", "Ctrl + V"))	
 				EditorMain::GetInstance()->GetSystem<EditorClipboard>()->Paste();
+			auto command = EditorMain::GetInstance()->GetSystem<EditorCommands>();
+			HashString clearString = "Clear (";
+			clearString += command->ComdSize();
+			clearString += ")";
+			if (EGUI::StartMenuBody(clearString.c_str(), "Ctrl + 1"))
+				command->ClearAllCommmands();
 			EGUI::EndMenuHeader();
 		}
 		static constexpr float icon = 10.f;
