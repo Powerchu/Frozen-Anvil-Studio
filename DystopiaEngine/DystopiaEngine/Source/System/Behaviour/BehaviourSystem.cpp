@@ -114,8 +114,15 @@ namespace Dystopia
 		mHotloader->Update();
 		mHotloader->ChangesInTempFolder(vTempFileName);
 		bool hasChange = false;
+		if(vTempFileName.size() > 0)
+		{
+			std::string SceneName = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName();
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->SaveScene(FileSys->GetFullPath(SceneName + ".dscene", eFileDir::eResource), SceneName);
+		}
 		for (auto const & elem : vTempFileName)
 		{
+			hasChange = true;
+
 			for (auto & i : mvBehaviourReferences)
 			{
 				std::wstring name{ i.mName.begin() , i.mName.end() };
@@ -143,11 +150,14 @@ namespace Dystopia
 					}
 				}
 			}
-			hasChange = true;
+
 		}
 
 		if (hasChange)
+		{
 			mHotloader->InitialiseTransfer();
+		}
+
 
 		DLLWrapper * arr[100]{ nullptr };
 
@@ -202,8 +212,10 @@ namespace Dystopia
 				++start;
 			}
 		}
+
 		for (auto & elem : mvRecentChanges)
 		{
+
 			std::wstring strName{ elem->mName.begin(), elem->mName.end() };
 			for (auto & i : mvBehaviours)
 			{
@@ -223,6 +235,9 @@ namespace Dystopia
 				}
 			}
 		}
+
+		if (hasChange)
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->LoadScene(FileSys->GetFullPath(EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName() + ".dscene", eFileDir::eResource));
 
 		vTempFileName.clear();
 		mvRecentChanges.clear();
