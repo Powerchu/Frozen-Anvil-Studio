@@ -322,6 +322,7 @@
     <ClCompile Include="Source\Lib\GraphicsLib.cpp">
       <Filter>Lib\GraphicsLib</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Tag\TagSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -891,6 +892,8 @@
     <ClInclude Include="Include\Lib\GraphicsLib.h">
       <Filter>Lib\GraphicsLib</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Tag\TagSystem.h" />
+    <ClInclude Include="Include\System\Tag\Tags.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

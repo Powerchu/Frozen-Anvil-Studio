@@ -96,28 +96,6 @@ unsigned Dystopia::GameObject::GetFlag() const
 	return mnFlags;
 }
 
-void Dystopia::GameObject::AddTag(HashString const & _hash)
-{
-	if (!mTags.Find(_hash.id))
-	{
-		mTags.Insert(_hash.id);
-	}
-}
-
-bool Dystopia::GameObject::HasTag(HashString const & _hash) const
-{
-	for (auto const & elem : mTags)
-		if (elem == _hash.id())
-			return true;
-	return false;
-}
-
-
-void Dystopia::GameObject::RemoveTag(HashString const & _hash)
-{
-	if(auto iter = mTags.Find(_hash.id))
-		mTags.FastRemove(iter);
-}
 
 void Dystopia::GameObject::Load(void)
 {

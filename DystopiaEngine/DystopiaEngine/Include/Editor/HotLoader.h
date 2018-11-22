@@ -631,7 +631,7 @@ namespace Dystopia
 				if(ConnectNamedPipe(mPipeHandle, NULL) != false)
 				{
 					//WaitNamedPipeA("\\\\.\\pipe\\DystopiaPipe", NMPWAIT_WAIT_FOREVER);
-					DWORD numofbytes;
+					//DWORD numofbytes;
 					char outbuffer[mPipeBuffSize]{0};
 					while (ReadFile(mPipeHandle, outbuffer, mPipeBuffSize, NULL, NULL))
 					{

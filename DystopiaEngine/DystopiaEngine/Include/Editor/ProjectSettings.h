@@ -22,6 +22,7 @@ namespace Dystopia
 	class GraphicsSystem;
 	class PhysicsSystem;
 	class InputManager;
+	class TagSystem;
 
 	class ProjectSettings : public EditorTab
 	{
@@ -45,7 +46,8 @@ namespace Dystopia
 
 		GraphicsSystem	*mpGfxSys;
 		PhysicsSystem	*mpPhySys;
-		InputManager     *mpInputSys;
+		InputManager    *mpInputSys;
+		TagSystem       *mpTagSystem;
 
 
 	};
