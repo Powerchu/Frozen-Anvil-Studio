@@ -104,7 +104,7 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 	}
 
 	if (mpNotify) *mpNotify = true;
-	mpObj = p->Duplicate();
+	//mpObj = p->Duplicate();
 	EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->ReplaceID(mpObj->GetID(), mObjID, mpObj);
 	mpObj->SetID(mObjID);
 	mpObj->Identify();
@@ -171,7 +171,7 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 	}
 
 	if (mpNotify) *mpNotify = true;
-	mpObj = p->Duplicate();
+	//mpObj = p->Duplicate();
 	EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->ReplaceID(mpObj->GetID(), mObjID, mpObj);
 	mpObj->SetID(mObjID);
 	mpObj->Identify();

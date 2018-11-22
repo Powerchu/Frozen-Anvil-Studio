@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 #include "Editor/EditorCommands.h"
 #include "Editor/EditorResource.h"
+#include "Editor/EditorFactory.h"
 #include "Editor/EInput.h"
 #include "Editor/EHotkey.h"
 
@@ -22,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
 #include "System/Driver/Driver.h"
+#include "System/File/FileSystem.h"
 
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
@@ -33,7 +35,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/Array.h"
 
 Editor::EditorClipboard::EditorClipboard(void)
-	: mArrSelectedIDs{ }, mnCopyID{ nPos }, mnDeleteID{ nPos }, mnPasteID{ nPos }, mnDupliID{ nPos }
+	: mArrSelectedIDs{}, mArrCopiedBufer{}, mnCopyID{ nPos }, mnDeleteID{ nPos }, mnPasteID{ nPos }, mnDupliID{ nPos }
 {}
 
 Editor::EditorClipboard::~EditorClipboard(void)
@@ -156,20 +158,9 @@ void Editor::EditorClipboard::ClearAll(void)
 
 void Editor::EditorClipboard::Copy(void)
 {
-	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
-	for (size_t i = 0; i < mArrSelectedIDs.size(); ++i)
-	{
-		auto pObj = curScene.FindGameObject(mArrSelectedIDs[i]);
-		if (pObj)
-		{
-
-		}
-		else
-		{
-			mArrSelectedIDs.FastRemove(i);
-			--i;
-		}
-	}
+	mArrCopiedBufer.clear();
+	for (const auto& id : mArrSelectedIDs)
+		mArrCopiedBufer.push_back(id);
 }
 
 void Editor::EditorClipboard::Delete(void)
@@ -184,7 +175,16 @@ void Editor::EditorClipboard::Duplicate(void)
 
 void Editor::EditorClipboard::Paste(void)
 {
-
+	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	for (size_t i = 0; i < mArrCopiedBufer.size(); ++i)
+	{
+		if (!curScene.FindGameObject(mArrCopiedBufer[i]))
+		{
+			mArrCopiedBufer.FastRemove(i);
+			i--;
+		}
+	}
+	EditorMain::GetInstance()->GetSystem<EditorCommands>()->DuplicateGameObject(mArrCopiedBufer);
 }
 
 AutoArray<uint64_t>& Editor::EditorClipboard::GetSelectedIDs(void)

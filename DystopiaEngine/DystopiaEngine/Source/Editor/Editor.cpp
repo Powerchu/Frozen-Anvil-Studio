@@ -492,18 +492,18 @@ namespace Dystopia
 		{
 			if (mpSceneSystem->GetCurrentScene().FindGameObject(static_cast<GameObject*>(elem)->GetID()))
 			{
-				GameObject *pDup = static_cast<GameObject*>(elem)->Duplicate();
-				for (const auto& o : existingObj)
-				{
-					if (o.GetName() == pDup->GetName())
-					{
-						pDup->SetName(pDup->GetName() + "_Clone");
-						break;
-					}
-				}
-				pDup->Identify();
-				mToInsert.Insert(pDup);
-				AddSelection(pDup->GetID());
+				//GameObject *pDup = static_cast<GameObject*>(elem)->Duplicate();
+				//for (const auto& o : existingObj)
+				//{
+				//	if (o.GetName() == pDup->GetName())
+				//	{
+				//		pDup->SetName(pDup->GetName() + "_Clone");
+				//		break;
+				//	}
+				//}
+				//pDup->Identify();
+				//mToInsert.Insert(pDup);
+				//AddSelection(pDup->GetID());
 			}
 		}
 

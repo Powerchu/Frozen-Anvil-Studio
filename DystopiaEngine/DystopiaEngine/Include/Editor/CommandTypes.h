@@ -251,6 +251,21 @@ namespace Editor
 		Math::Pt3D mSpawnPt;
 	};
 
+	class DuplicateGameObject : public Command
+	{
+	public:
+		DuplicateGameObject(uint64_t _id);
+		~DuplicateGameObject(void);
+
+		bool Do(void);
+		bool Undo(void);
+		bool Unchanged(void) const;
+
+	private:
+		uint64_t mnObjID;
+		uint64_t mnDupedID;
+	};
+
 	template<typename C>
 	class AddComponent : public Command
 	{
@@ -349,7 +364,7 @@ namespace Editor
 	{
 	public:
 		virtual void GetValue(void*) = 0;
-		~Recordings(void) {}
+		~Recordings(void){}
 	};
 
 	template<typename ... Ts>

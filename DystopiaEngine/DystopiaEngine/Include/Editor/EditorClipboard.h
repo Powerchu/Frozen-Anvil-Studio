@@ -53,6 +53,7 @@ namespace Editor
 
 	private:
 		AutoArray<uint64_t> mArrSelectedIDs;
+		AutoArray<uint64_t> mArrCopiedBufer;
 
 		size_t mnCopyID;
 		size_t mnPasteID;

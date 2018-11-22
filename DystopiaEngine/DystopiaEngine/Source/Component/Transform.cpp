@@ -253,6 +253,11 @@ AutoArray<Dystopia::Transform*>& Dystopia::Transform::GetAllChild(void)
 	return mChildren;
 }
 
+const AutoArray<Dystopia::Transform*>& Dystopia::Transform::GetAllChild(void) const
+{
+	return mChildren;
+}
+
 Dystopia::Transform* Dystopia::Transform::GetParent(void)
 {
 	return mpParent;
@@ -383,6 +388,7 @@ Dystopia::Transform& Dystopia::Transform::operator=(const Dystopia::Transform& _
 	mScale		= _rhs.mScale;
 	mPosition	= _rhs.mPosition;
 	mRotation	= _rhs.mRotation;
+	mnParentID	= _rhs.mnParentID;
 	return *this;
 }
 

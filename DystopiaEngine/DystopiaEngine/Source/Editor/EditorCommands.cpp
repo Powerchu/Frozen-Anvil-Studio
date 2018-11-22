@@ -188,6 +188,32 @@ void Editor::EditorCommands::RemoveGameObject(AutoArray<uint64_t>& _arrIDs)
 	ExecuteDo(Dystopia::DefaultAllocator<BatchExecute>::ConstructAlloc(mArrComds));
 }
 
+void Editor::EditorCommands::DuplicateGameObject(const uint64_t& _id)
+{
+	if (mbDisableCommands)
+		return;
+
+	ExecuteDo(Dystopia::DefaultAllocator<Editor::DuplicateGameObject>::ConstructAlloc(_id));
+}
+
+void Editor::EditorCommands::DuplicateGameObject(AutoArray<uint64_t>& _arrIDs)
+{
+	if (mbDisableCommands)
+		return;
+
+	if (_arrIDs.size() == 1)
+	{
+		DuplicateGameObject(_arrIDs[0]);
+		return;
+	}
+
+	AutoArray<::Editor::Command*> mArrComds;
+	for (const auto& id : _arrIDs)
+		mArrComds.push_back(Dystopia::DefaultAllocator<Editor::DuplicateGameObject>::ConstructAlloc(id));
+
+	ExecuteDo(Dystopia::DefaultAllocator<BatchExecute>::ConstructAlloc(mArrComds));
+}
+
 void Editor::EditorCommands::InstantiatePrefab(const HashString& _prefab, const Math::Pt3D& _spawnPt)
 {
 	if (mbDisableCommands)

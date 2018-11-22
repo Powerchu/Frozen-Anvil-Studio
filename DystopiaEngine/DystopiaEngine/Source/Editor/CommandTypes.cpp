@@ -27,6 +27,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/File/FileSystem.h"
 
+#include "Utility/GUID.h"
+
 Editor::InsertGameObject::InsertGameObject(uint64_t _id, const Math::Pt3D& _pos)
 	: mnObjID{ _id }, mSpawnPt{ _pos }
 {}
@@ -197,6 +199,45 @@ bool Editor::SpawnPrefab::Undo(void)
 }
 
 bool Editor::SpawnPrefab::Unchanged(void) const
+{
+	return false;
+}
+
+Editor::DuplicateGameObject::DuplicateGameObject(uint64_t _id)
+	: mnObjID{_id}, mnDupedID{Dystopia::GUIDGenerator::INVALID}
+{}
+
+Editor::DuplicateGameObject::~DuplicateGameObject(void)
+{}
+
+bool Editor::DuplicateGameObject::Do(void)
+{
+	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	if (auto obj = curScene.FindGameObject(mnObjID))
+	{
+		mnDupedID = obj->Duplicate()->GetID();
+		return true;
+	}
+	return false;
+}
+
+bool Editor::DuplicateGameObject::Undo(void)
+{
+	if (mnDupedID == Dystopia::GUIDGenerator::INVALID)
+		return false;
+
+	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	if (auto obj = curScene.FindGameObject(mnDupedID))
+	{
+		EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObjectP(mnDupedID);
+		mnDupedID = Dystopia::GUIDGenerator::INVALID;
+		obj->Destroy();
+		return true;
+	}
+	return false;
+}
+
+bool Editor::DuplicateGameObject::Unchanged(void) const
 {
 	return false;
 }

@@ -20,7 +20,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO\TextSerialiser.h"
 #include "Utility\GUID.h"			// Global UniqueID
 #include "System/Behaviour/BehaviourSystem.h"
-#include "Allocator/DefaultAlloc.h"
+
+//duplicate should immediately put into scene
+#include "Component/Transform.h"
+#include "System/Driver/Driver.h"		
+#include "System/Scene/SceneSystem.h"   
+#include "System/Scene/Scene.h"
 
 #define Ping(_ARR, _FUNC, ...)			\
 for (auto& e : _ARR)					\
@@ -151,6 +156,9 @@ void Dystopia::GameObject::Destroy(void)
 
 	for (auto& c : mTransform.GetAllChild())
 		c->GetOwner()->Destroy();
+
+	if (auto o = mTransform.GetParent())
+		o->RemoveChild(&mTransform);
 }
 
 void Dystopia::GameObject::Unload(void)
@@ -261,23 +269,31 @@ void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 
 Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 {
-	GameObject *p = new GameObject{}; 
-	p->mnID = GUIDGenerator::GetUniqueID();
-	p->mnFlags = mnFlags;
-	p->mName = mName;
-	p->mTransform = mTransform;
+	DEBUG_ASSERT((mnFlags & FLAG_EDITOR_OBJ), "Should not duplicate editor objects");
+
+	auto& curScene = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene();
+
+	DEBUG_ASSERT(!curScene.FindGameObject(mnID), "Should not duplicate object not in scene");
+
+	GameObject *p	= curScene.InsertGameObject(GUIDGenerator::GetUniqueID());
+	p->mnFlags		= mnFlags;
+	p->mName		= mName;
+	p->mName		+= "_clone";
+	p->mTransform	= mTransform;
 
 	for (auto& c : mComponents)
-	{
-		auto a = c->Duplicate();
-		p->mComponents.Insert(a);
-	}
+		p->mComponents.Insert(c->Duplicate());
 	for (auto& b : mBehaviours)
-	{
-		Behaviour *dup = EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, p->mnID);
-		p->mBehaviours.Insert(dup);
-	}
+		p->mBehaviours.Insert(EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, p->mnID));
 
+	const auto& children = mTransform.GetAllChild();
+	for (const auto& child : children)
+	{
+		auto o = child->GetOwner()->Duplicate();
+		o->mTransform.SetParentID(p->GetID());
+		o->Awake();
+	}
+	p->Awake();
 	return p;
 }
 

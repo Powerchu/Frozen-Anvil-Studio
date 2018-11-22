@@ -85,6 +85,7 @@ namespace Dystopia
 		Transform& operator=(const Transform& _rhs);
 
 		AutoArray<Transform*>& GetAllChild(void);
+		const AutoArray<Transform*>& GetAllChild(void) const;
 		Transform* GetParent(void);
 
 		uint64_t GetParentID(void) const;

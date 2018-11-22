@@ -312,6 +312,7 @@ void Editor::EditorFactory::LoadIntoScene(Dystopia::TextSerialiser& _in)
 			}
 		}
 	}
+	obj.Awake();
 }
 
 /********************************************** Private Fn Definition **********************************************/
@@ -551,6 +552,7 @@ uint64_t Editor::EditorFactory::PutToScene(const HashString& _fileName, const Ma
 			return PutToScene(p, _pos);
 		}
 	}
+	return Dystopia::GUIDGenerator::INVALID;
 }
 
 uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D& _pos)

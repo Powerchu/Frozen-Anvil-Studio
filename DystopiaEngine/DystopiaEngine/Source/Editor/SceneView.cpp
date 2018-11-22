@@ -440,8 +440,10 @@ namespace Editor
 		
 		if (selectedIDs.size() == 1)
 		{
-			auto& obj = *(Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(selectedIDs[0]));
-			DrawGizmoSingle(obj);
+			if (auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(selectedIDs[0]))
+				DrawGizmoSingle(*o);
+			else
+				EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(selectedIDs[0]);
 		}
 		else
 			DrawGizmoMul(selectedIDs);
