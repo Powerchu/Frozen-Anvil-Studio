@@ -34,6 +34,11 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::PreInit(void)
 	{
+	}
+
+	bool Dystopia::BehaviourSystem::Init(void)
+	{
+		/*Init Hotloader*/
 #if EDITOR
 
 		FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
@@ -46,7 +51,7 @@ namespace Dystopia
 
 #if _DEBUG
 
-		
+
 		//std::string strDystopia_Lib{ FileSys->GetFullPath("DystopiaEngine_D.lib",eFileDir::eCurrent) };
 		//InterestedFiles Dystopia_Lib{  ,eCompile };
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine_D.lib", eCompile);
@@ -64,11 +69,6 @@ namespace Dystopia
 #else
 
 #endif
-	}
-
-	bool Dystopia::BehaviourSystem::Init(void)
-	{
-		/*Init Hotloader*/
 #if EDITOR
 
 		mHotloader->Init();

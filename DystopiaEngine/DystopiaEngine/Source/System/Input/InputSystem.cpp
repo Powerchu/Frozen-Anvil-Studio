@@ -81,8 +81,6 @@ bool Dystopia::InputManager::Init(void)
 void Dystopia::InputManager::Update(const float)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Input System", "Update" };
-
-	mMouseInput.mnWheel = 0;
 	using Type = BYTE[256];
 	static Type storage{ 0 };
 	mGamePad.PollInputs();
@@ -114,6 +112,7 @@ void Dystopia::InputManager::PostUpdate()
 	mPrevKeyBoardState = mKeyBoardState;
 	for (auto & elem : mKeyBoardState.mKeyPressFlags)
 		elem = 0;
+	mMouseInput.mnWheel = 0;
 }
 
 void Dystopia::InputManager::LoadDefaults(void)

@@ -169,36 +169,38 @@ void Dystopia::Renderer::EditorUI(void) noexcept
 #if EDITOR
 void Dystopia::Renderer::TextureField()
 {
-	Dystopia::File *t = nullptr;
+	::Editor::File *t = nullptr;
 	EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName() : "-empty-", true);
 
-	t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG);
+	t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
 	if (t)  EGUI::Display::EndPayloadReceiver();
 
 	if (!t)
 	{
-		t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::DDS);
+		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS);
 		if (t) EGUI::Display::EndPayloadReceiver();
 	}
 	if (!t)
 	{
-		t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::BMP);
+		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP);
 		if (t) EGUI::Display::EndPayloadReceiver();
 	}
 	if (t)
 	{
 		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
-		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
-		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pTex);
-		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+		SetTexture(pTex);
+		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
+		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pTex);
+		//EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 	}
 
 	EGUI::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 	{
-		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
-		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, nullptr);
-		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+		SetTexture(nullptr);
+		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
+		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, nullptr);
+		//EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 	}
 
 	if (mpTexture)
@@ -209,7 +211,7 @@ void Dystopia::Renderer::TextureField()
 		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
 
 		EGUI::SameLine();
-		if (EGUI::Display::Button("Auto", Math::Vec2{ 35, 15 }))
+		if (EGUI::Display::Button("Auto", Math::Vec2{ 35, 20 }))
 		{
 			auto w = static_cast<float>(mpTexture->GetWidth());
 			auto h = static_cast<float>(mpTexture->GetHeight());
@@ -226,7 +228,7 @@ void Dystopia::Renderer::MeshField()
 	{
 
 	}
-	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::FILE))
+	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
 	{
 		EGUI::Display::EndPayloadReceiver();
 	}
@@ -238,7 +240,7 @@ void Dystopia::Renderer::ShaderField()
 	{
 
 	}
-	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::FILE))
+	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
 	{
 		EGUI::Display::EndPayloadReceiver();
 	}

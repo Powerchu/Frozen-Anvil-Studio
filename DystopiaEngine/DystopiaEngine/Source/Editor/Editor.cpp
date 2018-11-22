@@ -56,6 +56,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Clipboard.h"
 #include "Editor/SpritePreviewer.h"
 #include "Editor/SpriteEditor.h"
+#include "Editor/EditorTab.h"
 
 #include "Allocator/DefaultAlloc.h"
 #include "DataStructure/HashString.h"
@@ -72,6 +73,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Editor/EditorProc.h"
 #include "Editor/EditorInput.h"
+
+#include "Editor/EditorMain.h"
+#include "Editor/EInput.h"
 
 namespace
 {
@@ -92,18 +96,30 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
-	editor->Init();
-	while (!editor->IsClosing())
+	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
+	pMain->Init();
+	while (!pMain->IsClosing())
 	{
-		editor->StartFrame();
+		pMain->StartFrame();
 	
-		editor->UpdateFrame(editor->GetDeltaTime());
-		
-		editor->EndFrame();
+		pMain->Update();
+	
+		pMain->EndFrame();
 	}
-	editor->Shutdown();
-	delete editor;
+	pMain->Shutdown();
+
+	//Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
+	//editor->Init();
+	//while (!editor->IsClosing())
+	//{
+	//	editor->StartFrame();
+	//
+	//	editor->UpdateFrame(editor->GetDeltaTime());
+	//	
+	//	editor->EndFrame();
+	//}
+	//editor->Shutdown();
+	//delete editor;
 	return 0;
 }
 
@@ -136,17 +152,17 @@ namespace Dystopia
 
 	void Editor::LoadTabs()
 	{
-		mArrTabs.push_back(Inspector::GetInstance());
-		mArrTabs.push_back(ProjectResource::GetInstance());
-		mArrTabs.push_back(HierarchyView::GetInstance());
-		mArrTabs.push_back(SceneView::GetInstance());
-		mArrTabs.push_back(ProjectSettings::GetInstance());
-		mArrTabs.push_back(ConsoleLog::GetInstance());
-		mArrTabs.push_back(PerformanceLog::GetInstance());
-		mArrTabs.push_back(SpritePreviewer::GetInstance());
-		mArrTabs.push_back(SpriteEditor::GetInstance());
-		mArrTabs.push_back(ColorScheme::GetInstance());
-		mArrTabs.push_back(StyleScheme::GetInstance());
+		//mArrTabs.push_back(Inspector::GetInstance());
+		//mArrTabs.push_back(ProjectResource::GetInstance());
+		//mArrTabs.push_back(HierarchyView::GetInstance());
+		//mArrTabs.push_back(SceneView::GetInstance());
+		//mArrTabs.push_back(ProjectSettings::GetInstance());
+		//mArrTabs.push_back(ConsoleLog::GetInstance());
+		//mArrTabs.push_back(PerformanceLog::GetInstance());
+		//mArrTabs.push_back(SpritePreviewer::GetInstance());
+		//mArrTabs.push_back(SpriteEditor::GetInstance());
+		//mArrTabs.push_back(ColorScheme::GetInstance());
+		//mArrTabs.push_back(StyleScheme::GetInstance());
 	}
 
 	void Editor::LoadDefaults()
@@ -184,7 +200,7 @@ namespace Dystopia
 			mCurrentState = EDITOR_EXIT;
 			return;
 		}
-		
+
 		LoadDefaults();
 		LoadTabs();
 
@@ -199,9 +215,13 @@ namespace Dystopia
 		}
 		mpDriver->Init();
 		mpDriver->PostInit();
-		mpEditorInput->Init();
 		LoadSettings();
+		for (auto& e : mArrTabs)
+		{
+			e->PostInit();
+		}
 
+		mpEditorInput->Init();
 		EGUI::SetContext(mpComdHandler);
 	}
 
@@ -466,24 +486,24 @@ namespace Dystopia
 		if (!toPaste.size()) return;
 
 		AutoArray<GameObject*> mToInsert{ toPaste.size() };
-		auto& existingObj = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
+		//auto& existingObj = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
 		ClearSelections();
 		for (auto& elem : toPaste)
 		{
 			if (mpSceneSystem->GetCurrentScene().FindGameObject(static_cast<GameObject*>(elem)->GetID()))
 			{
-				GameObject *pDup = static_cast<GameObject*>(elem)->Duplicate();
-				for (const auto& o : existingObj)
-				{
-					if (o.GetName() == pDup->GetName())
-					{
-						pDup->SetName(pDup->GetName() + "_Clone");
-						break;
-					}
-				}
-				pDup->Identify();
-				mToInsert.Insert(pDup);
-				AddSelection(pDup->GetID());
+				//GameObject *pDup = static_cast<GameObject*>(elem)->Duplicate();
+				//for (const auto& o : existingObj)
+				//{
+				//	if (o.GetName() == pDup->GetName())
+				//	{
+				//		pDup->SetName(pDup->GetName() + "_Clone");
+				//		break;
+				//	}
+				//}
+				//pDup->Identify();
+				//mToInsert.Insert(pDup);
+				//AddSelection(pDup->GetID());
 			}
 		}
 
@@ -545,7 +565,7 @@ namespace Dystopia
 		EditorProc p;
 		HashString path;
 		HashString name;
-		if (p.SaveAs(name, path, mpWin->GetMainWindow().GetWindowHandle()))
+		if (p.SaveAs(name, path, mpWin->GetMainWindow().GetWindowHandle(), eFileTypes::eSCENE))
 		{
 			mpWin->GetMainWindow().SetTitle(std::wstring{name.begin(), name.end()});
 			mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() },
@@ -559,7 +579,7 @@ namespace Dystopia
 		EditorProc p;
 		HashString path;
 		HashString name;
-		if (p.Load(path))
+		if (p.Load(path, eFileTypes::eSCENE))
 		{
 			mArrSelectedObj.clear();
 			ClearSelections();
@@ -726,35 +746,35 @@ namespace Dystopia
 
 	void Editor::LogTabPerformance()
 	{
-		static constexpr float intervalS = 0.1f;
-		static float deltaAccu = 0.f;
-		deltaAccu += GetDeltaTime();
-		if (deltaAccu > intervalS)
-		{
-			deltaAccu = 0;
-			auto data = mpProfiler->GetInfo();
-			for (const auto& d : data)
-			{
-				auto info = d.second.mTimes;
-				for (const auto& i : info)
-				{
-					Performance::LogDataS(d.first, i.first, static_cast<float>(info[i.first]));
-					Performance::LogDataG(d.first, static_cast<float>(d.second.mTotal));
-				}
-			}
-			PLogTaskManager p;
-			p.mFrameRate	= mDeltaTime;
-			p.mCPUIdle		= mpProfiler->GetCPUPercentageIdle();
-			p.mCPUBusy		= mpProfiler->GetCPUPercentageBusy();
-			p.mCPUOS		= mpProfiler->GetCPUPercentageOS();
-			p.mCPUProc		= mpProfiler->GetCPUPercentageProcess();
-			p.mPageFaults	= mpProfiler->GetNumPageFaults();
-			p.mMemUsed		= mpProfiler->GetUsedMemory();
-			p.mRamUsed		= mpProfiler->GetUsedPhysicalMemory();
-			p.mMemAvail		= mpProfiler->GetAvailablePhysicalMemory();
-			p.mMemLoad		= mpProfiler->GetSystemMemoryLoad();
-			Performance::LogTaskMgr(p);
-		}
+		//static constexpr float intervalS = 0.1f;
+		//static float deltaAccu = 0.f;
+		//deltaAccu += GetDeltaTime();
+		//if (deltaAccu > intervalS)
+		//{
+		//	deltaAccu = 0;
+		//	auto data = mpProfiler->GetInfo();
+		//	for (const auto& d : data)
+		//	{
+		//		auto info = d.second.mTimes;
+		//		for (const auto& i : info)
+		//		{
+		//			Performance::LogDataS(d.first, i.first, static_cast<float>(info[i.first]));
+		//			Performance::LogDataG(d.first, static_cast<float>(d.second.mTotal));
+		//		}
+		//	}
+		//	PLogTaskManager p;
+		//	p.mFrameRate	= mDeltaTime;
+		//	p.mCPUIdle		= mpProfiler->GetCPUPercentageIdle();
+		//	p.mCPUBusy		= mpProfiler->GetCPUPercentageBusy();
+		//	p.mCPUOS		= mpProfiler->GetCPUPercentageOS();
+		//	p.mCPUProc		= mpProfiler->GetCPUPercentageProcess();
+		//	p.mPageFaults	= mpProfiler->GetNumPageFaults();
+		//	p.mMemUsed		= mpProfiler->GetUsedMemory();
+		//	p.mRamUsed		= mpProfiler->GetUsedPhysicalMemory();
+		//	p.mMemAvail		= mpProfiler->GetAvailablePhysicalMemory();
+		//	p.mMemLoad		= mpProfiler->GetSystemMemoryLoad();
+		//	Performance::LogTaskMgr(p);
+		//}
 	}
 
 	void Editor::ReAttachComponent(Component* _pComponent)

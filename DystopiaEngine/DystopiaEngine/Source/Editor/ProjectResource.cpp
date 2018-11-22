@@ -14,58 +14,70 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
-#include "Editor/EditorEvents.h"
-#include "Editor/DefaultFactory.h"
+//#include "Editor/EditorEvents.h"
+//#include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
+#include "Editor/EInput.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorFactory.h"
 
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Graphics/Texture2D.h"
+#include "System/File/FileSystem.h"
+#include "System/Input/InputSystem.h"
 
 #include "Object/GameObject.h"
 
+#include "Allocator/DefaultAlloc.h"
+
+#include <filesystem>
 #include <algorithm>
 #include <iostream>
 #include <Windows.h>
 #include <cstdlib>
 #include <tchar.h>
+#include <string>
 
-static const HashString DEFAULT_PATH = "..\\DystopiaEngine\\Resource";
-static const HashString DEFAULT_NAME = "Resource";
-static float delay = 5;
+//static const HashString DEFAULT_PATH = "..\\DystopiaEngine\\Resource";
+//static const HashString DEFAULT_NAME = "Resource";
+//static float delay = 5;
 
-namespace Dystopia
+namespace Editor 
 {
-	static ProjectResource* gpInstance = 0;
-	ProjectResource* ProjectResource::GetInstance()
-	{
-		if (gpInstance) return gpInstance;
-
-		gpInstance = new ProjectResource{};
-		return gpInstance;
-	}
-
-	ProjectResource::ProjectResource()
-		: EditorTab{ false },
+	ProjectResource::ProjectResource(void)
+		: 
 		mLabel{ "Project" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
 		mpCurrentFolder{ nullptr }, mArrAllFiles{100}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
 		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 90 },
-		mResetToFile{}
-	{}
-
-	ProjectResource::~ProjectResource()
+		mResetToFile{}, mResourcePath{}, mResourceName{}
 	{
-		gpInstance = nullptr;
+		EditorPanel::SetOpened(true);
 	}
 
-	void ProjectResource::Init()
+	ProjectResource::~ProjectResource(void)
 	{
-		mWaitFlags = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | 
-					 FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE | 
-					 FILE_NOTIFY_CHANGE_LAST_WRITE;
+	}
 
-		mpRootFolder = new Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };
+	void ProjectResource::Load(void)
+	{
+		mWaitFlags = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME |
+			FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE |
+			FILE_NOTIFY_CHANGE_LAST_WRITE;
+
+		auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+		auto resFolder = fs->GetProjectFolders<std::string>(Dystopia::eFileDir::eResource);
+		size_t pos = resFolder.rfind("\\");
+		if (pos == std::string::npos)
+			pos = resFolder.rfind("/");
+
+		mResourcePath = HashString{ resFolder.c_str() };
+		mResourceName = HashString{ resFolder.c_str() + pos + 1, resFolder.c_str() + resFolder.size() };
+
+		auto buf = Dystopia::DefaultAllocator<Editor::Folder>::Alloc();
+		mpRootFolder = new (buf) Editor::Folder{ mResourceName , mResourcePath, nullptr }; 
+
 		mpCurrentFolder = mpRootFolder;
 		FullCrawl(mpRootFolder);
 
@@ -73,27 +85,39 @@ namespace Dystopia
 		GetAllFiles(mArrAllFiles, mpRootFolder);
 		SortAllFiles(mArrAllFiles);
 
-		GetEditorEventHND()->GetEvent(eEditorEvents::EDITOR_LCLICK)->Bind(&ProjectResource::RemoveFocusOnFile, this);
-		std::string path{ DEFAULT_PATH.c_str() };
-		std::wstring wPath{ path.begin(), path.end() };
+		std::wstring wPath{ resFolder.cbegin(), resFolder.cend() };
 		mChangeHandle[0] = FindFirstChangeNotification(wPath.c_str(), true, mWaitFlags);
 		if (mChangeHandle[0] == INVALID_HANDLE_VALUE || !mChangeHandle[0])
 		{
 			ExitProcess(GetLastError());
 		}
 
-		for (auto& f : mArrAllFiles)
-		{
-			if (f->mTag == EGUI::ePayloadTags::PNG || f->mTag == EGUI::ePayloadTags::BMP || f->mTag == EGUI::ePayloadTags::DDS)
-			{
-				EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(f->mPath.c_str());
-			}
-		}
+		//for (auto& f : mArrAllFiles)
+		//{
+		//	if (f->mTag == EGUI::ePayloadTags::PNG || f->mTag == EGUI::ePayloadTags::BMP || f->mTag == EGUI::ePayloadTags::DDS)
+		//	{
+		//		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>()->LoadTexture(f->mPath.c_str());
+		//	}
+		//}
 	}
 
-	void ProjectResource::Update(const float& _dt)
+	bool ProjectResource::Init(void)
 	{
-		_dt;
+		for (auto& f : mArrAllFiles)
+			if (!(HashString::nPos == f->mPath.find("Temp")) && f->mTag == EGUI::ePayloadTags::PREFAB)
+				EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mPath);
+		return true;
+	}
+
+	void ProjectResource::Update(float)
+	{
+		auto input = EditorMain::GetInstance()->GetSystem<EInput>();
+		if (input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_LEFT) ||
+			input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_RIGHT))
+		{
+			RemoveFocusOnFile();
+		}
+
 		mWaitStatus = WaitForMultipleObjects(1, mChangeHandle, false, 0);
 		switch (mWaitStatus)
 		{
@@ -111,11 +135,11 @@ namespace Dystopia
 		UpdateSearch();
 	}
 
-	void ProjectResource::EditorUI()
+	void ProjectResource::EditorUI(void)
 	{
 		if (mResetToFile.length())
 		{
-			FocusOnFile(mResetToFile.c_str());
+			FocusOnFile(mResetToFile);
 			mResetToFile.clear();
 		}
 
@@ -132,8 +156,25 @@ namespace Dystopia
 			EGUI::Display::Dummy(fileWindowSize.x, fileWindowSize.y);
 			if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 			{
-				GameObject *t = GetCurrentScene()->FindGameObject(*id);
-				mResetToFile = Factory::SaveAsPrefab(*t).c_str();
+				Dystopia::GameObject *t = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(*id);
+				HashString fullPath = mpCurrentFolder->mPath;
+				fullPath += "\\";
+
+				HashString fileName = t->GetName().c_str();
+				fileName += ".";
+				fileName += Gbl::PREFAB_EXT;
+
+				fullPath += fileName;
+
+				FILE *pFile;
+				fopen_s(&pFile, fullPath.c_str(), "a");
+				fclose(pFile);
+
+				auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
+				if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
+				{
+					mResetToFile = fileName;
+				}
 				EGUI::Display::EndPayloadReceiver();
 			}
 			ImGui::SetCursorPos(origin);
@@ -146,20 +187,32 @@ namespace Dystopia
 		ImGui::PopStyleColor();
 	}
 
-	void ProjectResource::Shutdown()
+	void ProjectResource::Shutdown(void)
 	{
 		mArrFilesSearchedThisFrame.clear();
 		mArrFilesSearchedLastFrame.clear();
 		mArrAllFiles.clear();
-		delete mpRootFolder;
+		Dystopia::DefaultAllocator<Editor::Folder>::DestructFree(mpRootFolder);
 		mFocusedFile = nullptr;
 		mpRootFolder = nullptr;
 		mpCurrentFolder = nullptr;
-
-		GetEditorEventHND()->GetEvent(eEditorEvents::EDITOR_LCLICK)->Unbind(this);
 	}
 
-	void ProjectResource::UpdateSearch()
+	void ProjectResource::Message(eEMessage)
+	{}
+
+	void ProjectResource::SaveSettings(Dystopia::TextSerialiser&) const
+	{}
+
+	void ProjectResource::LoadSettings(Dystopia::TextSerialiser&)
+	{}
+
+	HashString ProjectResource::GetLabel(void) const
+	{
+		return mLabel;
+	}
+
+	void ProjectResource::UpdateSearch(void)
 	{
 		HashString currentSearch = mSearchText;
 		HashString previousSearch = mSearchTextLastFrame;
@@ -168,7 +221,7 @@ namespace Dystopia
 			mArrFilesSearchedThisFrame.clear();
 			MakeStringLower(currentSearch);
 			MakeStringLower(previousSearch);
-			if ((currentSearch.find(previousSearch) != std::string::npos) && mArrFilesSearchedLastFrame.size())
+			if ((currentSearch.find(previousSearch) != HashString::nPos) && mArrFilesSearchedLastFrame.size())
 			{
 				FindFile(mArrFilesSearchedThisFrame, currentSearch, mArrFilesSearchedLastFrame);
 			}
@@ -186,7 +239,7 @@ namespace Dystopia
 		}
 	}
 
-	void ProjectResource::SearchWindow()
+	void ProjectResource::SearchWindow(void)
 	{
 		float width = Size().x - 20;
 		width = (width < 20) ? 20 : width;
@@ -198,7 +251,7 @@ namespace Dystopia
 		EGUI::Display::HorizontalSeparator();
 	}
 
-	void ProjectResource::FolderWindow()
+	void ProjectResource::FolderWindow(void)
 	{
 		EGUI::StartChild("FolderWindow", Math::Vec2{ 200, Size().y - 55 });
 		FolderUI(mpRootFolder);
@@ -215,8 +268,9 @@ namespace Dystopia
 		EGUI::Display::HorizontalSeparator();
 		for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
 		{
-			File* pFile = mpCurrentFolder->mArrPtrFiles[i];
-			HashString id = "ProjectResourceFileWindow" + pFile->mName + HashString{ std::to_string(i).c_str() };
+			Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
+			HashString id = "ProjectResourceFileWindow" + pFile->mName;
+			id  += i;
 			if (i % columns) EGUI::SameLine();
 			if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{ 0,0,0,0 }))
 			{
@@ -243,8 +297,9 @@ namespace Dystopia
 		{
 			for (unsigned int i = 0; i < size; ++i)
 			{
-				File* pFile = mArrFilesSearchedThisFrame[i];
-				const HashString id = "ProjectResourceSearchResultWindow" + pFile->mName + HashString{ std::to_string(i).c_str() };
+				Editor::File* pFile = mArrFilesSearchedThisFrame[i];
+				HashString id = "ProjectResourceSearchResultWindow" + pFile->mName;
+				id += i;
 				if (i % columns) EGUI::SameLine();
 				if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{ 0,0,0,0 }))
 				{
@@ -263,7 +318,7 @@ namespace Dystopia
 		}
 	}
 
-	void ProjectResource::RefreshResourceFolder()
+	void ProjectResource::RefreshResourceFolder(void)
 	{
 		if (strlen(mSearchText))
 		{
@@ -276,8 +331,8 @@ namespace Dystopia
 		mArrFilesSearchedThisFrame.clear();
 		mArrFilesSearchedLastFrame.clear();
 
-		delete mpRootFolder;
-		mpRootFolder = new Folder{ DEFAULT_NAME , DEFAULT_PATH, nullptr };;
+		Dystopia::DefaultAllocator<Editor::Folder>::DestructFree(mpRootFolder); 
+		mpRootFolder = Dystopia::DefaultAllocator<Editor::Folder>::ConstructAlloc(mResourceName, mResourcePath, nullptr);  
 
 		FullCrawl(mpRootFolder);
 		GetAllFiles(mArrAllFiles, mpRootFolder);
@@ -303,28 +358,23 @@ namespace Dystopia
 		}
 	}
 
-	void ProjectResource::RemoveFocusOnFile()
+	void ProjectResource::RemoveFocusOnFile(void)
 	{
 		mFocusedFile = nullptr;
 	}
 
-	std::string ProjectResource::GetLabel() const
-	{
-		return mLabel;
-	}
-
-	Folder* ProjectResource::FindFolder(const HashString& _name)
+	Editor::Folder* ProjectResource::FindFolder(const HashString& _name)
 	{
 		if (_name.length())
 		{
-			Folder* pFound = mpRootFolder->FindFolder(_name);
+			Editor::Folder* pFound = mpRootFolder->FindFolder(_name);
 			if (pFound) 
 				return pFound;
 		}	
 		return mpRootFolder;
 	}
 
-	void ProjectResource::FindFile(AutoArray<File*>& _outResult, HashString& _item, const AutoArray<File*>& _fromArr)
+	void ProjectResource::FindFile(AutoArray<Editor::File*>& _outResult, HashString& _item, const AutoArray<Editor::File*>& _fromArr)
 	{
 		MakeStringLower(_item);
 		for (auto& e : _fromArr)
@@ -334,7 +384,7 @@ namespace Dystopia
 		}
 	}
 
-	bool ProjectResource::FindFirstOne(AutoArray<File*>& _outResult, const HashString& _item)
+	bool ProjectResource::FindFirstOne(AutoArray<Editor::File*>& _outResult, const HashString& _item)
 	{
 		for (auto& e : mArrAllFiles)
 		{
@@ -347,7 +397,7 @@ namespace Dystopia
 		return false;
 	}
 
-	void ProjectResource::GetAllFiles(AutoArray<File*>& _outResult, Folder* _folder)
+	void ProjectResource::GetAllFiles(AutoArray<Editor::File*>& _outResult, Editor::Folder* _folder)
 	{
 		for (auto& e : _folder->mArrPtrFiles)
 			_outResult.push_back(e);
@@ -355,12 +405,12 @@ namespace Dystopia
 			GetAllFiles(_outResult, e);
 	}
 
-	void ProjectResource::SortAllFiles(AutoArray<File*>& _outResult)
+	void ProjectResource::SortAllFiles(AutoArray<Editor::File*>& _outResult)
 	{
-		_outResult.Sort([](File* lhs, File* rhs)->bool { return *lhs < *rhs; });
+		_outResult.Sort([](Editor::File* lhs, Editor::File* rhs)->bool { return *lhs < *rhs; });
 	}
 
-	void ProjectResource::FolderUI(Folder* _folder)
+	void ProjectResource::FolderUI(Editor::Folder* _folder)
 	{
 		bool clickedThisFrame = false;
 		bool clickedFolderIcon = false;
@@ -385,24 +435,18 @@ namespace Dystopia
 		}
 	}
 
-	void ProjectResource::FileUI(File* _file)
+	void ProjectResource::FileUI(Editor::File* _file)
 	{
 		if (_file == mFocusedFile) EGUI::Display::Outline(mPayloadRect.x, mPayloadRect.y);
 
-		int id = -1;
-		if (_file->mTag == EGUI::ePayloadTags::PNG || _file->mTag == EGUI::ePayloadTags::BMP || _file->mTag == EGUI::ePayloadTags::DDS)
-		{
-			id = static_cast<int>(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(_file->mPath.c_str())->GetID());
-		}
-
 		if (EGUI::Display::CustomPayload(("###ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
-			_file->mName.c_str(), mPayloadRect, _file->mTag, &(*_file), sizeof(File), id))
+			_file->mName.c_str(), mPayloadRect, _file->mTag, &(*_file), sizeof(Editor::File)))
 		{
 			mFocusedFile = _file;
 		}
 	}
 
-	void ProjectResource::FullCrawl(Folder* _folder)
+	void ProjectResource::FullCrawl(Editor::Folder* _folder)
 	{
 		_folder->Crawl();
 		for (auto& e : _folder->mArrPtrFolders)
@@ -411,13 +455,10 @@ namespace Dystopia
 
 	void ProjectResource::MakeStringLower(HashString& _transformMe)
 	{
-		//std::transform(_transformMe.begin(), _transformMe.end(), _transformMe.begin(), my_tolower);
-		auto start = _transformMe.begin();
-		for (auto const & elem : _transformMe)
-		{
-			*start = my_tolower(elem);
-			start++;
-		}
+		std::string temp{ _transformMe.cbegin(), _transformMe.cend() };
+		std::string temp2 = temp;
+		std::transform(temp.begin(), temp.end(), temp2.begin(), my_tolower);
+		_transformMe = temp2.c_str();
 	}
 
 }

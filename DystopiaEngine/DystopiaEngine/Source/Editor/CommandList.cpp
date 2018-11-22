@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/CommandList.h"
 #include "Editor/Editor.h"
 #include "Editor/Clipboard.h"
+#include "Component/Transform.h"
 
 #include "Behaviour/Behaviour.h"
 #include "System/Scene/Scene.h"
@@ -40,6 +41,9 @@ Dystopia::ComdInsertObject::~ComdInsertObject()
 	if (mpObj)
 	{
 		mpObj->Destroy();
+		auto& childs = mpObj->GetComponent<Transform>()->GetAllChild();
+		for (auto& c : childs)
+			c->RemoveParent();
 		delete mpObj;
 	}
 }
@@ -100,7 +104,7 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 	}
 
 	if (mpNotify) *mpNotify = true;
-	mpObj = p->Duplicate();
+	//mpObj = p->Duplicate();
 	EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->ReplaceID(mpObj->GetID(), mObjID, mpObj);
 	mpObj->SetID(mObjID);
 	mpObj->Identify();
@@ -110,6 +114,9 @@ bool Dystopia::ComdInsertObject::ExecuteUndo()
 	for (auto& c : mpObj->GetAllBehaviours())
 		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	p->Destroy();
+	auto& childs = p->GetComponent<Transform>()->GetAllChild();
+	for (auto& c : childs)
+		c->RemoveParent();
 	return true;
 }
 
@@ -135,6 +142,9 @@ Dystopia::ComdDeleteObject::~ComdDeleteObject()
 	if (mpObj)
 	{
 		mpObj->Destroy();
+		auto& childs = mpObj->GetComponent<Transform>()->GetAllChild();
+		for (auto& c : childs)
+			c->RemoveParent();
 		delete mpObj;
 	}
 }
@@ -161,7 +171,7 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 	}
 
 	if (mpNotify) *mpNotify = true;
-	mpObj = p->Duplicate();
+	//mpObj = p->Duplicate();
 	EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->ReplaceID(mpObj->GetID(), mObjID, mpObj);
 	mpObj->SetID(mObjID);
 	mpObj->Identify();
@@ -171,6 +181,9 @@ bool Dystopia::ComdDeleteObject::ExecuteDo()
 	for (auto& c : mpObj->GetAllBehaviours())
 		c->SetFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	p->Destroy();
+	auto& childs = p->GetComponent<Transform>()->GetAllChild();
+	for (auto& c : childs)
+		c->RemoveParent();
 	return true;
 }
 

@@ -16,6 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <stdlib.h>
 
+#define U_BUFFER_SIZE  11
+#define ULL_BUFFER_SIZE 16
+
 HashID StringHasher(const char* _s)
 {
 	HashID hash = OFFSET_BASIS;
@@ -146,8 +149,11 @@ size_t HashString::length(void) const
 
 void HashString::clear(void)
 {
-	if (mCharBuffer)
-		mCharBuffer[0] = '\0';
+	Dystopia::DefaultAllocator<char[]>::Free(mCharBuffer);
+	mCharBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(1);
+	*mCharBuffer = '\0';
+	mSize = 0;
+	mHashedID = StringHasher(mCharBuffer);
 }
 
 /* element access */
@@ -233,8 +239,18 @@ HashString& HashString::operator+=(const char _c)
 
 HashString& HashString::operator+=(unsigned _i)
 {
-	char buffer[11];
-	if (!_itoa_s(_i, buffer, 11, 10))
+	char buffer[U_BUFFER_SIZE];
+	if (!_itoa_s(_i, buffer, U_BUFFER_SIZE, 10))
+	{
+		return operator+=(buffer);
+	}
+	return *this;
+}
+
+HashString& HashString::operator+=(unsigned long long _u)
+{
+	char buffer[ULL_BUFFER_SIZE];
+	if (!_i64toa_s(_u, buffer, ULL_BUFFER_SIZE, 10))
 	{
 		return operator+=(buffer);
 	}
@@ -246,13 +262,14 @@ HashString& HashString::erase(size_t _pos, size_t _len)
 	DEBUG_ASSERT(_pos >= mSize, "Hash String Earse _pos out of range");
 	if (!_len)
 		return *this;
-	size_t pad = _len;
+	size_t pad = 0;
 	char *start = begin() + _pos;
 	char *it = start;
 	while (it < end() && _len)
 	{
 		*it++ = '\0';
 		_len--;
+		pad++;
 	}
 	if (!_len)
 	{
@@ -316,7 +333,8 @@ HashString& HashString::replace(size_t _pos, size_t _len, const char * _s)
 }
 
 /* operations */
-const char* HashString::c_str(void) const
+
+const char* const HashString::c_str(void) const
 {
 	return mCharBuffer;
 }
@@ -517,6 +535,16 @@ bool operator==(const HashString& _lhs, const char * _rhs)
 bool operator==(const char * _lhs, const HashString& _rhs)
 {
 	return _rhs == _lhs;
+}
+
+bool operator==(HashID _id, const HashString& _rhs)
+{
+	return _rhs.id() == _id;
+}
+
+bool operator==(const HashString& _lhs, HashID _id)
+{
+	return _lhs.id() == _id;
 }
 
 bool operator!=(const HashString& _lhs, const HashString& _rhs)

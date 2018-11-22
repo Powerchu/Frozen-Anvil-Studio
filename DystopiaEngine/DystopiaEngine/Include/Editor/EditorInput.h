@@ -21,6 +21,7 @@ namespace Dystopia
 	class EditorInput
 	{
 	public:
+
 		EditorInput(void);
 		bool Init(void);
 		void Poll(void);

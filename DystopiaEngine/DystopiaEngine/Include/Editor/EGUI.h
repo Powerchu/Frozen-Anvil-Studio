@@ -28,7 +28,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/DragStatus.h"
 #include "Editor/Dock.h"
 #include "Editor/Payloads.h"
-#include "Editor/Commands.h"
 #include "Editor/Gizmo.h"
 #include "../../Dependancies/ImGui/imgui.h"
 #include "../../Dependancies/ImGui/imgui_internal.h"
@@ -70,7 +69,7 @@ namespace EGUI
 	static constexpr float TabsImageOffsetY = 27.f;
 
 	void SetContext(Dystopia::CommandHandler *_pContext);
-	Dystopia::CommandHandler* GetCommandHND();
+	//Dystopia::CommandHandler* GetCommandHND();
 	void RemoveContext();
 	void ChangeLabelSpacing(float _amount);
 	void ChangeLabelSpacing();
@@ -159,6 +158,7 @@ namespace EGUI
 				EGUI::Display::Label("hello world %d %f", 10, 0.63f);
 		======================================================================================================================= */
 		void Label(const char *_label, ...);
+		void LabelWrapped(const char *_label, ...);
 		/* =======================================================================================================================
 		Brief:
 				Creates a editable text field with a label to the left of the text field. If edited, the _pOutText will be changed
@@ -167,7 +167,7 @@ namespace EGUI
 				char buffer[size];
 				EGUI::Display::TextField("This is an editable text field: ", &buffer, size);
 		======================================================================================================================= */
-		bool TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true, float _width = 250);
+		bool TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true, float _width = 250, bool _onlyEnterReturnsTrue = true);
 		/* =======================================================================================================================
 		Brief:
 				Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked.
@@ -312,7 +312,7 @@ namespace EGUI
 		======================================================================================================================= */
 		// Start a tree node 
 		bool StartTreeNode(const std::string& _label, bool* _outClicked = nullptr, bool _highlighted = false,
-		                   bool _noArrow = false, bool _defaultOpen = true);
+			bool _noArrow = false, bool _defaultOpen = true, bool _singleClickOpen = false);
 		// Set a specific tree node to be collapsed (closed) or not
 		void OpenTreeNode(const std::string& _label, bool _open);
 		// opens the next tree node
@@ -327,19 +327,20 @@ namespace EGUI
 				Very specific as of creation date.
 		======================================================================================================================= */
 		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
-			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize, int _imgId = -1);
+			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize);
 		/* =======================================================================================================================
 		Brief:
 				Sets the previos UI widget/item to be a payload type. Preferably call according to the usage please.
 				Usage shows that button will have additional of being a payload type.
 		Usage:
 				EGUI::Button("Hello", Math::Vec2{ 200, 20 } );
-				if (EGUI::Display::StartPayload(EGUI::FILE, &(*_file), sizeof(File), "Hello"))
+				if (EGUI::Display::StartPay
+				EGUI::FILE, &(*_file), sizeof(File), "Hello"))
 				{
 					EGUI::Display::EndPayload();
 				}
 		======================================================================================================================= */
-		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const HashString& _toolTip);
+		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const std::string& _toolTip);
 		// Call EndPayLoad at the end of StartPayLoad return true. See StartPayLoad usage
 		void EndPayload();
 		/* =======================================================================================================================
@@ -431,7 +432,7 @@ namespace EGUI
 		Usage:
 				EGUI::Display::Button("Demo", ImVec2{ 200, 20 });
 		======================================================================================================================= */
-		bool Button(const std::string& _label, const Math::Vec2& _size = Math::Vec2{ 50,18 });
+		bool Button(const std::string& _label, const Math::Vec2& _size = Math::Vec2{ 50, 24 });
 		/* =======================================================================================================================
 		Brief:
 				Creates a dummy area. Used only to offset ImGui stuff. Does absolutely nothing except for manipulating UI

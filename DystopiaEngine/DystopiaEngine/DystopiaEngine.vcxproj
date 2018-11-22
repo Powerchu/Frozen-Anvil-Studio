@@ -28,9 +28,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\Editor\CommandTypes.cpp" />
+    <ClCompile Include="Source\Editor\EditorClipboard.cpp" />
+    <ClCompile Include="Source\Editor\EditorCommands.cpp" />
+    <ClCompile Include="Source\Editor\EditorFactory.cpp" />
+    <ClCompile Include="Source\Editor\EditorGLState.cpp" />
     <ClCompile Include="Source\Component\AiController.cpp" />
     <ClCompile Include="Source\Editor\EditorInput.cpp" />
+    <ClCompile Include="Source\Editor\EditorLauncher.cpp" />
+    <ClCompile Include="Source\Editor\EditorMain.cpp" />
     <ClCompile Include="Source\Editor\EditorProc.cpp" />
+    <ClCompile Include="Source\Editor\EditorResource.cpp" />
+    <ClCompile Include="Source\Editor\EditorStates.cpp" />
+    <ClCompile Include="Source\Editor\EditorUI.cpp" />
+    <ClCompile Include="Source\Editor\EInput.cpp" />
     <ClCompile Include="Source\Lib\GraphicsLib.cpp" />
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
@@ -123,7 +134,6 @@
     <ClCompile Include="Source\System\Profiler\ProfilerAction.cpp" />
     <ClCompile Include="Source\System\Scene\Scene.cpp" />
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
-    <ClCompile Include="Source\System\Sound\Audio.cpp" />
     <ClCompile Include="Source\System\Sound\SoundSystem.cpp" />
     <ClCompile Include="Source\System\Time\ScopedTimer.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
@@ -135,6 +145,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
+    <ClInclude Include="Include\Editor\EditorFactory.h" />
+    <ClInclude Include="Include\Editor\EditorLauncher.h" />
+    <ClInclude Include="Include\Editor\EditorResource.h" />
+    <ClInclude Include="Include\Editor\CommandTypes.h" />
+    <ClInclude Include="Include\Editor\EditorClipboard.h" />
+    <ClInclude Include="Include\Editor\EditorCommands.h" />
+    <ClInclude Include="Include\Editor\EditorGLState.h" />
+    <ClInclude Include="Include\Editor\EditorMain.h" />
+    <ClInclude Include="Include\Editor\EditorMessages.h" />
+    <ClInclude Include="Include\Editor\EditorPanel.h" />
+    <ClInclude Include="Include\Editor\EditorStates.h" />
+    <ClInclude Include="Include\Editor\EditorStatesTypes.h" />
+    <ClInclude Include="Include\Editor\EditorSystem.h" />
+    <ClInclude Include="Include\Editor\EditorUI.h" />
+    <ClInclude Include="Include\Editor\EHotkey.h" />
+    <ClInclude Include="Include\Editor\EInput.h" />
     <ClInclude Include="Include\Component\AiController.h" />
     <ClInclude Include="Include\Component\NodeList.h" />
     <ClInclude Include="Include\System\AI\AISystem.h" />
@@ -230,7 +257,6 @@
     <ClInclude Include="Include\System\Profiler\ProfileInfo.h" />
     <ClInclude Include="Include\System\Profiler\Profiler.h" />
     <ClInclude Include="Include\System\Profiler\ProfilerAction.h" />
-    <ClInclude Include="Include\System\Sound\Audio.h" />
     <ClInclude Include="Include\System\SystemMessage.h" />
     <ClInclude Include="Include\System\Time\ScopedTimer.h" />
     <ClInclude Include="Include\System\Time\TimeDefs.h" />
@@ -317,6 +343,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h" />
     <ClInclude Include="Include\System\Input\XGamePad.h" />
+    <ClInclude Include="Include\Editor\RuntimeMeta.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />

@@ -45,6 +45,10 @@ namespace Dystopia
 	//{
 	//	// do nothing
 	//}
+	void EditorTab::PostInit(void)	
+	{
+
+	}
 
 	void EditorTab::SetSize(const Math::Vec2& _size)
 	{

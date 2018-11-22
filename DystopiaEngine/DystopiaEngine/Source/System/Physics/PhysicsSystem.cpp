@@ -309,16 +309,16 @@ namespace Dystopia
 		switch (result)
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mGravity);
+			//EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mGravity);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		default: break;
 		}
@@ -326,11 +326,11 @@ namespace Dystopia
 
 	void PhysicsSystem::IsDebugUI(void)
 	{
-		bool tempBool = mbIsDebugActive;
-		if (EGUI::Display::CheckBox("Debug Draw  ", &tempBool))
+		//bool tempBool = mbIsDebugActive;
+		if (EGUI::Display::CheckBox("Debug Draw  ", &mbIsDebugActive))
 		{
-			mbIsDebugActive = tempBool;
-			EGUI::GetCommandHND()->InvokeCommand<PhysicsSystem>(&PhysicsSystem::mbIsDebugActive, tempBool);
+			//mbIsDebugActive = tempBool;
+			//EGUI::GetCommandHND()->InvokeCommand<PhysicsSystem>(&PhysicsSystem::mbIsDebugActive, tempBool);
 		}
 	}
 
@@ -340,16 +340,16 @@ namespace Dystopia
 		switch (result)
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mMaxVelocityConstant);
+			//EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mMaxVelocityConstant);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		default: break;
 		}
@@ -361,16 +361,16 @@ namespace Dystopia
 		switch (result)
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mVelocityIterations);
+			//EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mVelocityIterations);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		default: break;
 		}
@@ -382,16 +382,16 @@ namespace Dystopia
 		switch (result)
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mPositionalIterations);
+			//EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mPositionalIterations);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		default: break;
 		}
@@ -404,13 +404,13 @@ namespace Dystopia
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mfSleepVelEpsilon);
+			//EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mfSleepVelEpsilon);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		default: break;
 		}
@@ -423,13 +423,13 @@ namespace Dystopia
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mfSleepBias);
+			//EGUI::GetCommandHND()->StartRecording<PhysicsSystem>(&PhysicsSystem::mfSleepBias);
 			break;
 		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		default: break;
 		}

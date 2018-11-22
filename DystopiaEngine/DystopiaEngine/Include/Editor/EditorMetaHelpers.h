@@ -59,6 +59,7 @@ namespace Dystopia
 			C* comp = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent();
 			comp->SetOwner(_owner);
 			comp->SetActive(_owner->IsActive());
+			comp->Awake();
 			comp->Init();
 			return comp;
 		}
@@ -230,7 +231,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eENTER:
 			case EGUI::eDragStatus::eDEACTIVATED:
 			case EGUI::eDragStatus::eTABBED:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			default:
 				break;
@@ -287,10 +288,10 @@ namespace Dystopia
 			switch (EGUI::Display::DragFloat("Test", &Temp, 0.01f, 0.0f, 2.0f))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eENTER:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				_f(Temp, _addr);
 				break;
 			case EGUI::eDragStatus::eDRAGGING:
@@ -298,13 +299,13 @@ namespace Dystopia
 			case EGUI::eDragStatus::eSTART_DRAG:
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eNO_CHANGE:
 				_f(0, _addr);
 				break;
 			case EGUI::eDragStatus::eTABBED:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			default:
 				break;

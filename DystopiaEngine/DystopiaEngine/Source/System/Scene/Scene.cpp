@@ -82,6 +82,7 @@ void Dystopia::Scene::PostUpdate(void)
 
 		if (flag & eObjFlag::FLAG_REMOVE)
 		{
+			b->GetComponent<Transform>()->RemoveParent();
 			mGameObjs.Remove(&*b);
 		}
 		else if (flag & eObjFlag::FLAG_ACTIVE)
@@ -104,7 +105,7 @@ void Dystopia::Scene::Serialise(TextSerialiser & _TextSerialiser) const
 {
 	_TextSerialiser << mID;
 	_TextSerialiser << mName;
-	_TextSerialiser << mGameObjs.size();
+	_TextSerialiser.Write(std::to_string(mGameObjs.size()));
 
 	for (auto & elem : mGameObjs)
 		elem.Serialise(_TextSerialiser);
@@ -115,9 +116,14 @@ void Dystopia::Scene::Unserialise(TextSerialiser & _TextUnserialiser)
 	size_t Size;
 	_TextUnserialiser >> mID;
 	_TextUnserialiser >> mName;
-	_TextUnserialiser >> Size;
+	_TextUnserialiser.Read(Size);
 
-	for (size_t i = 0; i < Size; ++i)
+	if (!mID)
+		mID = GUIDGenerator::GetUniqueID();
+	if (!mName.size())
+		mName = "Untitled";
+
+	for (int i = 0; i < Size; ++i)
 	{
 		auto pGameObj = InsertGameObject();
 		pGameObj->Unserialise(_TextUnserialiser);

@@ -51,13 +51,13 @@ namespace Dystopia
 		AABB(float const & _width, float const & _height, Math::Vec3D const & _v3Offset = { 0,0,0,0 });
 
 		/*Load the Component*/
-		virtual void Load(void);
+		void Load(void);
 		/*Initialise the Component*/
-		virtual void Init(void);
+		void Init(void);
 		/*OnDestroy*/
-		virtual void OnDestroy(void);
+		void OnDestroy(void);
 		/*Unload the Component*/
-		virtual void Unload(void);
+		void Unload(void);
 		/*Duplicate the Component*/
 		virtual AABB* Duplicate() const;
 

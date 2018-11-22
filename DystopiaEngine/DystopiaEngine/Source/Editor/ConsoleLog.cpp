@@ -14,9 +14,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Utility/DebugAssert.h"
 
+#include "Editor/EditorMain.h"
+
 #include "Editor/ConsoleLog.h"
 #include "Editor/EGUI.h"
-#include "Editor/AdminCalls.h"
+//#include "Editor/AdminCalls.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Scene/Scene.h"
@@ -28,8 +30,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/GameObject.h"
 #include <algorithm>
 
-namespace Dystopia
+
+void _DLL_EXPORT PrintToConsoleLog(const std::string& _text)
 {
+	PrintToConsoleLog(_text.c_str());
+}
+
+void _DLL_EXPORT PrintToConsoleLog(const HashString& _text)
+{
+	//Editor::ConsoleLog::GetInstance()->Debug(_text);
+	Editor::EditorMain::GetInstance()->GetPanel<Editor::ConsoleLog>()->Debug(_text);
+}
+
+void _DLL_EXPORT PrintToConsoleLog(const char* _text)
+{
+	//Editor::ConsoleLog::GetInstance()->Debug(_text);
+	Editor::EditorMain::GetInstance()->GetPanel<Editor::ConsoleLog>()->Debug(_text);
+}
+
+namespace Editor //Dystopia
+{
+	/*
 	static ConsoleLog* gpConsoleInst = 0;
 	ConsoleLog* ConsoleLog::GetInstance()
 	{
@@ -38,47 +59,38 @@ namespace Dystopia
 		gpConsoleInst = new ConsoleLog{};
 		return gpConsoleInst;
 	}
+	*/
 
-	void _DLL_EXPORT PrintToConsoleLog(const std::string& _text)
-	{
-		ConsoleLog::GetInstance()->Debug(_text);
-	}
 
-	void PrintToConsoleLog(const HashString& _text)
-	{
-		ConsoleLog::GetInstance()->Debug(_text.c_str());
-	}
-
-	void _DLL_EXPORT PrintToConsoleLog(const char* _text)
-	{
-		ConsoleLog::GetInstance()->Debug(_text);
-	}
-
-	ConsoleLog::ConsoleLog()
-		: EditorTab{ false },
+	ConsoleLog::ConsoleLog(void)
+		: //EditorTab{ false },
 		mLabel{ "Console" },
 		mArrDebugTexts{ "" },
-		mLoggingIndex{ 0 },
-		mRecordIndex{ 0 },
+		mnLoggingIndex{ 0 },
+		mnRecordIndex{ 0 },
 		mAdminCommands{ "" }
-	{}
+	{
+		EditorPanel::SetOpened(true);
+	}
 
 	ConsoleLog::~ConsoleLog()
 	{
-		gpConsoleInst = nullptr;
+		//gpConsoleInst = nullptr;
 	}
-	
-	void ConsoleLog::Init()
+
+	void ConsoleLog::Load(void)
+	{}
+
+	bool ConsoleLog::Init(void)
 	{
-		EngineCore::GetInstance()->GetSubSystem<LoggerSystem>()->RedirectOutput(PrintToConsoleLog);
+		Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::LoggerSystem>()->RedirectOutput(PrintToConsoleLog);
+		return true;
 	}
 
-	void ConsoleLog::Update(const float&)
-	{
+	void ConsoleLog::Update(float)
+	{}
 
-	}
-
-	void ConsoleLog::EditorUI()
+	void ConsoleLog::EditorUI(void)
 	{
 		EGUI::Indent(5);
 		if (EGUI::Display::Button("Clear")) Clear();
@@ -88,81 +100,87 @@ namespace Dystopia
 		AdminInput();
 	}
 
-	void ConsoleLog::Shutdown()
-	{
+	void ConsoleLog::Shutdown(void)
+	{}
 
-	}
+	void ConsoleLog::Message(eEMessage)
+	{}
+	
+	void ConsoleLog::SaveSettings(Dystopia::TextSerialiser&) const
+	{}
 
-	std::string ConsoleLog::GetLabel() const
+	void ConsoleLog::LoadSettings(Dystopia::TextSerialiser&)
+	{}
+
+	HashString ConsoleLog::GetLabel(void) const
 	{
 		return mLabel;
 	}
 
-	void ConsoleLog::PrintLogs()
+	void ConsoleLog::PrintLogs(void)
 	{
 		if (EGUI::StartChild("##DetailLog", Math::Vec2{Size().x - 2.f, Size().y - 85.f}, false))
 		{
-			for (unsigned int i = 0; i < mLoggingIndex; ++i)
-				EGUI::Display::Label(mArrDebugTexts[i].c_str());
-			EGUI::EndChild();
+			for (unsigned int i = 0; i < mnLoggingIndex; ++i)
+				ImGui::TextWrapped(mArrDebugTexts[i].c_str());
 		}
+		EGUI::EndChild();
 		EGUI::Display::HorizontalSeparator();
 	}
 
-	void ConsoleLog::AdminInput()
+	void ConsoleLog::AdminInput(void)
 	{
-		if (EGUI::Display::TextField("AdminText", mAdminCommands, MAX_SEARCH, false, Size().x - 6.f))
-		{
-			int count	= 0;
-			HashString var = "";
-			HashString fnName = "";
-			PrintToConsoleLog(std::string{ mAdminCommands });
-			if (!Admin::ValidCommand(mAdminCommands, count, var, fnName))
-				PrintToConsoleLog("Invalid Command");
-			else
-			{
-				for (int i = 0; i < count; ++i)
-				{
-					for (int j = 0; i < count; ++j)
-					{
-						
-						auto *p = (*(Admin::g_AdminFuncs[fnName]))(var + HashString{ std::to_string(i).c_str() });
-						p->GetComponent<Transform>()->SetPosition(Math::Vec3D{ 20.f * i , 20.f * j, 0});
-						auto obj = GetCurrentScene()->InsertGameObject(Ut::Move(*p));
-						obj->Identify();
-						obj->Awake();
-						obj->Init();
-						delete p;
-					}
-				}
-			}
-
-			int i = MAX_SEARCH - 1;
-			while (i > -1)
-			{
-				mAdminCommands[i] = '\0';
-				--i;
-			}
-		}
+		//if (EGUI::Display::TextField("AdminText", mAdminCommands, MAX_SEARCH, false, Size().x - 6.f))
+		//{
+		//	int count	= 0;
+		//	std::string var = "";
+		//	std::string fnName = "";
+		//	PrintToConsoleLog(std::string{ mAdminCommands });
+		//	if (!Dystopia::Admin::ValidCommand(mAdminCommands, count, var, fnName))
+		//		PrintToConsoleLog("Invalid Command");
+		//	else
+		//	{
+		//		for (int i = 0; i < count; ++i)
+		//		{
+		//			for (int j = 0; i < count; ++j)
+		//			{
+		//				auto *p = (*(Dystopia::Admin::g_AdminFuncs[fnName]))(var + std::to_string(i));
+		//				p->GetComponent<Dystopia::Transform>()->SetPosition(Math::Vec3D{ 20.f * i , 20.f * j, 0});
+		//				auto obj = GetCurrentScene()->InsertGameObject(Ut::Move(*p));
+		//				obj->Identify();
+		//				obj->Awake();
+		//				obj->Init();
+		//				delete p;
+		//			}
+		//		}
+		//	}
+		//
+		//	int i = MAX_SEARCH - 1;
+		//	while (i > -1)
+		//	{
+		//		mAdminCommands[i] = '\0';
+		//		--i;
+		//	}
+		//}
 	}
 
-	void ConsoleLog::Debug(const std::string& _text)
+	void ConsoleLog::Debug(const HashString& _text)
 	{
-		if (mLoggingIndex == maxLog)
+		if (mnLoggingIndex == MAX_CLOG)
 		{
 			std::rotate(mArrDebugTexts.begin(), mArrDebugTexts.begin() + 1, mArrDebugTexts.end());
-			mArrDebugTexts[maxLog - 1] = _text.c_str();
+			mArrDebugTexts[MAX_CLOG - 1] = _text.c_str();
 		}
-		else mArrDebugTexts[mLoggingIndex++] = _text.c_str();
-		mRecordIndex++;
+		else mArrDebugTexts[mnLoggingIndex++] = _text.c_str();
+		mnRecordIndex++;
 	}
 	
-	void ConsoleLog::Clear()
+	void ConsoleLog::Clear(void)
 	{
 		for (auto& e : mArrDebugTexts)
 			e.clear();
-		mLoggingIndex = 0;
-		mRecordIndex = 0;
+		mnLoggingIndex = 0;
+		mnRecordIndex = 0;
 	}
 }
 

@@ -380,4 +380,19 @@ void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 	DragFinish(handle);
 }
 
+unsigned long Dystopia::WindowManager::GetStyle(void) const
+{
+	return mWindowStyle;
+}
+
+unsigned long Dystopia::WindowManager::GetStyleEx(void) const
+{
+	return mWindowStyleEx;
+}
+
+
+
+
+
+
 

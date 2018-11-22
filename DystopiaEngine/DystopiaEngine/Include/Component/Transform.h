@@ -45,12 +45,13 @@ namespace Dystopia
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
-		void Awake(void) override;
-		void Init(void) override;
+		void Awake(void);
+		void Init(void);
 
 		void SetGlobalPosition(const Math::Point3D&);
 		void SetGlobalPosition(const float _x, const float _y, const float _z);
 
+		void SetRotation(const Math::Quaternion&);
 		void SetRotation(const Math::Angle _x, const Math::Angle _y = Math::Radians{ 0 }, const Math::Angle _z = Math::Radians{ 0 });
 
 		void SetScale(const Math::Vec4& _vScale);
@@ -87,6 +88,13 @@ namespace Dystopia
 
 		Transform& operator=(const Transform& _rhs);
 
+		AutoArray<Transform*>& GetAllChild(void);
+		const AutoArray<Transform*>& GetAllChild(void) const;
+		Transform* GetParent(void);
+
+		uint64_t GetParentID(void) const;
+		void SetParentID(uint64_t);
+
 	private:
 
 		bool mbChanged;
@@ -104,6 +112,7 @@ namespace Dystopia
 		void OnChildAdd(Transform*);
 		void OnChildRemove(Transform*);
 		void OnParentRemove(Transform*);
+		bool IsDescendant(Transform*);
 	};
 }
 

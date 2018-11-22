@@ -52,7 +52,7 @@ namespace Dystopia
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
-		void Awake(void) override;
+		void Awake(void);
 		void Init(void);
 		/*
 		void Update(const float dt);

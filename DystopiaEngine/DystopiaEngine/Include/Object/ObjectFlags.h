@@ -25,7 +25,7 @@ namespace Dystopia
 		FLAG_LAYER_UI		= 1u << 5,
 		FLAG_LAYER_WORLD	= 1u << 6,
 
-
+		
 		FLAG_EDITOR_OBJ		= 1u << 29,
 		FLAG_RESERVED		= 1u << 30,
 		FLAG_REMOVE			= 1u << 31,

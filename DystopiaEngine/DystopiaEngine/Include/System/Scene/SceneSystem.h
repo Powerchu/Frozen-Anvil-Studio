@@ -66,6 +66,7 @@ namespace Dystopia
 
 		Scene *mpNextScene;
 		Scene *mpCurrScene;
+		bool mbRestartScene;
 
 		std::string mLastSavedData;
 		std::string	mNextSceneFile;

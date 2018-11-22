@@ -35,6 +35,7 @@ namespace Dystopia
 
 		void Unserialise(TextSerialiser &);
 
+		void InitComponents(void);
 
 	protected:
 
@@ -104,6 +105,14 @@ inline void Dystopia::ComponentDonor<Ty, Settings>::Unserialise(TextSerialiser &
 
 }
 
+template<typename Ty, typename Settings>
+inline void Dystopia::ComponentDonor<Ty, Settings>::InitComponents(void)
+{
+	for (auto& elem : mComponents)
+	{
+		elem.Init();
+	}
+}
 
 #endif		// INCLUDE GUARD
 

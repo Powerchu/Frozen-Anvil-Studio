@@ -14,36 +14,38 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _STYLE_SCHEME_H_
 #define _STYLE_SCHEME_H_
 #include "Math/Vector2.h"
-#include "Editor/EditorTab.h"
+//#include "Editor/EditorTab.h"
+#include "Editor/EditorPanel.h"
 
 namespace Dystopia
 {
 	class TextSerialiser;
-	class StyleScheme : public EditorTab
+}
+
+
+namespace Editor
+{
+	class TextSerialiser;
+	class StyleScheme : public EditorPanel//EditorTab
 	{
 	public:
-		static StyleScheme* GetInstance();
-		~StyleScheme();
+		//static StyleScheme* GetInstance();
+		StyleScheme(void);
+		~StyleScheme(void);
 
-		/* Init() is called immediately after the creation of the object */
-		void		Init();
-		/* Update() is called before Window(), so alter most variables (frame based) here to be printed in Window() later */
-		void		Update(const float&);
-		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
-		void		EditorUI();
-		/* Shutdown() is called right before deleting this object */
-		void		Shutdown();
-		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
-		std::string GetLabel() const;
+		void Load(void);
+		bool Init(void);
+		void Update(float);
+		void EditorUI(void);
+		void Shutdown(void);
+		void Message(eEMessage);
+		void SaveSettings(Dystopia::TextSerialiser& _out) const;
+		void LoadSettings(Dystopia::TextSerialiser& _in);
+		HashString GetLabel(void) const;
 
-		void SaveSettings(TextSerialiser& _out) const;
-		void LoadSettings(TextSerialiser& _in);
-
-		void Apply() const;
-		void Remove() const;
+		void Apply(void) const;
 
 	private:
-		StyleScheme();
 		enum eStyleDataVectors
 		{  
 			eWINDOW_PADDING,         
@@ -98,12 +100,12 @@ namespace Dystopia
 			float mMax;
 		};
 
-		std::string								mLabel;
+		HashString								mLabel;
 		Array<StyleVarsV, eSTYLE_DATA_V_LAST>	mArrVecData;
 		Array<StyleVarsF, eSTYLE_DATA_F_LAST>	mArrFData;
 
-		std::string ToName(eStyleDataFloats);
-		std::string ToName(eStyleDataVectors);
+		HashString ToName(eStyleDataFloats);
+		HashString ToName(eStyleDataVectors);
 	};
 }
 
