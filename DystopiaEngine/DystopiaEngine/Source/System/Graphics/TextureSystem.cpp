@@ -41,20 +41,34 @@ Dystopia::TextureSystem::~TextureSystem(void) noexcept
 void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 {
 	auto pFileSys = EngineCore::GetInstance()->Get<FileSystem>();
+	std::string buf;
 
 	for (auto& e : mTextures)
 	{
-		if (auto n = pFileSys->DetectFileChanges(e.GetPath(), nullptr, 0))
+		if (auto n = pFileSys->DetectFileChanges(e.GetPath()))
 		{
+			while (n = pFileSys->DetectFileChanges(e.GetPath()));
+
 			if (Image* pImg = LoadImage(e.GetPath()))
 			{
-				e.Bind();
-
-
-				e.Unbind();
+				Texture* pTex = LoadRaw<Texture2D>(pImg, e.GetPath().c_str());
+				
+				Ut::Swap(e, *pTex);
+				mTextures.Remove(pTex);
 			}
+
+			e.Bind();
+#			if defined(_DEBUG) | defined(DEBUG)
+				if (auto err = glGetError())
+					__debugbreak();
+#			endif 
 		}
 	}
+
+#	if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#	endif 
 }
 
 void Dystopia::TextureSystem::Shutdown(void) noexcept
@@ -97,7 +111,7 @@ Dystopia::Image* Dystopia::TextureSystem::ImportImage(const HashString& _strPath
 	auto meta = _strPath + "." + Gbl::METADATA_EXT;
 
 	// TODO
-	if (EngineCore::GetInstance()->Get<FileSystem>()->CheckFileExist(_strPath.c_str(), eFileDir::eResource))
+	if (EngineCore::GetInstance()->Get<FileSystem>()->CheckFileExist(meta.c_str(), eFileDir::eResource))
 	{
 		auto metaFile = Serialiser::OpenFile<TextSerialiser>(meta.c_str());
 
@@ -135,7 +149,7 @@ Dystopia::Image* Dystopia::TextureSystem::LoadImage(std::string const& _strPath)
 		loaded = ImageParser::LoadDDS(_strPath, img);
 	}
 
-	if (nullptr == loaded)
+	if (nullptr == img)
 	{
 		SaveTextureSetting(loaded);
 	}
@@ -145,8 +159,8 @@ Dystopia::Image* Dystopia::TextureSystem::LoadImage(std::string const& _strPath)
 
 void Dystopia::TextureSystem::SaveTextureSetting(Image* _pImg)
 {
-	auto path = EngineCore::GetInstance()->Get<FileSystem>()->GetFullPath(_pImg->mstrName.c_str(), eFileDir::eResource) + Gbl::METADATA_EXT;
-	auto metaFile = Serialiser::OpenFile<TextSerialiser>(path.c_str());
+	auto path = EngineCore::GetInstance()->Get<FileSystem>()->GetFullPath(_pImg->mstrName.c_str(), eFileDir::eResource) + "." + Gbl::METADATA_EXT;
+	auto metaFile = Serialiser::OpenFile<TextSerialiser>(path.c_str(), Serialiser::MODE_WRITE);
 
 	if (!metaFile.EndOfInput())
 	{

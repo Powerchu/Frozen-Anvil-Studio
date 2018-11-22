@@ -275,12 +275,22 @@ namespace
 
 		if (t) t->Bind();
 
+#   if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#   endif 
+
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);
 
 		_renderer->Draw();
 
 		if(t) t->Unbind();
+
+#   if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#   endif 
 	}
 }
 
@@ -327,6 +337,10 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 	// Draw the game objects to screen based on the camera
 	// Get Camera's layer, we only want to draw inclusive stuff
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();
@@ -338,6 +352,11 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		if (s && r->GetTexture())
 		{
 			s->Bind();
+
+#   if defined(_DEBUG) | defined(DEBUG)
+			if (auto err = glGetError())
+				__debugbreak();
+#   endif 
 			s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
 		}
 		else
@@ -346,8 +365,18 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 			s->Bind();
 		}
 
+#   if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#   endif 
+
 		s->UploadUniform("ProjectMat", _Proj);
 		s->UploadUniform("ViewMat", _View);
+
+#   if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#   endif 
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
 			DrawRenderer(r, s, mfGamma);
@@ -379,6 +408,11 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 			DrawRenderer(r, s, mfGamma);
 		}
 	}
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 }
 
 void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::Mat4& _Proj)
@@ -454,10 +488,27 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 			}
 		}
 	}
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 }
 
 void Dystopia::GraphicsSystem::Update(float _fDT)
 {
+#   if defined(EDITOR)
+	{
+		ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Editor Update" };
+		EngineCore::GetInstance()->Get<TextureSystem>()->EditorUpdate();
+
+#		if defined(_DEBUG) | defined(DEBUG)
+			if (auto err = glGetError())
+				__debugbreak();
+#		endif 
+	}
+#   endif
+
 	StartFrame();
 
 	glClearColor(.05f, .05f, .05f, 1.f);

@@ -909,6 +909,9 @@
     <ClInclude Include="Include\System\Graphics\Font.h">
       <Filter>Game Engine\SubSystems\Font\FontData</Filter>
     </ClInclude>
+    <ClInclude Include="Include\IO\XMLParser.h">
+      <Filter>IO\XMLParser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1294,6 +1297,9 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Font\FontData">
       <UniqueIdentifier>{baba61c1-0814-46a9-ac90-88e65658f6ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\XMLParser">
+      <UniqueIdentifier>{637d81a6-d5ee-481d-8157-d3acba2c19d6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

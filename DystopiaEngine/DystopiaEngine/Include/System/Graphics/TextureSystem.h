@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TEXTURESYS_H_
 #define _TEXTURESYS_H_
 
+#include "System/File/FileSystem.h"
+
 #include "Utility/Utility.h"
 #include "Allocator/DefaultAlloc.h"
 #include "DataStructure/MagicArray.h"
@@ -92,8 +94,9 @@ Ty* Dystopia::TextureSystem::GetTexture(std::string const& _strName)
 template<typename Ty>
 Ty* Dystopia::TextureSystem::LoadTexture(std::string const& _strPath)
 {
-	auto it = Ut::Find(mTextures.begin(), mTextures.end(), [&_strPath](const Texture& _t) {
-		return _strPath == _t.GetPath();
+	auto pFileSys = EngineCore::GetInstance()->Get<FileSystem>();
+	auto it = Ut::Find(mTextures.begin(), mTextures.end(), [&](const Texture& _t) {
+		return pFileSys->IsSameFile(_strPath, _t.GetPath()) || (_strPath == _t.GetPath());
 	});
 
 	if (it != mTextures.end())

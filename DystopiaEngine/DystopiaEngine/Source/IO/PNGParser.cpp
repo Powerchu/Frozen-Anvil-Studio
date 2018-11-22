@@ -59,6 +59,8 @@ Image* ImageParser::LoadPNG(const std::string& _strName, Image* _pImage)
 		);
 	}
 
+	_pImage->mnChannels = 4;
+	_pImage->mnMipMaps  = 1;
 	lodepng::decode(buf, _pImage->mnWidth, _pImage->mnHeight, _strName.c_str());
 
 	_pImage->mpImageData = Dystopia::DefaultAllocator<void>::Alloc(buf.size());

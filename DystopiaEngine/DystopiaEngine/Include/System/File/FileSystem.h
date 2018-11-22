@@ -55,6 +55,8 @@ namespace Dystopia
 
 		bool CheckFileExist(std::string const & _FileName, eFileDir _Directory = eFileDir::eRoot);
 
+		bool IsSameFile(std::string const& _lhs, std::string const& _rhs);
+
 		/*
 		  Detect changes in the file path provided. 
 		  The FilesNames return is relative to the _FilePath provided.
@@ -66,8 +68,8 @@ namespace Dystopia
 		  1. There is files changes
 		  The number will reflect the number of changes detected
 		*/
-		unsigned DetectFileChanges(std::string _FilePath, std::string * _ChangesBuffer, size_t _size);
-
+		unsigned DetectDirectoryChanges(std::string _FilePath, std::string * _ChangesBuffer, size_t _size);
+		bool     DetectFileChanges(std::string _FilePath, eFileDir _ParentDirectory = eFileDir::eResource);
 		FileErrorCode GetLastKnownError() const;
 
 	private:
