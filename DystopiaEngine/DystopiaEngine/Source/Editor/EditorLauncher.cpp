@@ -40,7 +40,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define LAUNCHER_WIDTH 1010
 #define SUBFOLDER_COUNT 11
 
-static constexpr unsigned long LauncherStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MAXIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+static constexpr unsigned long LauncherStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 static constexpr unsigned long LauncherStyleEx = WS_EX_APPWINDOW;
 static const char* g_SubFolders[SUBFOLDER_COUNT]=
 {
@@ -90,25 +90,25 @@ void Editor::EditorLauncher::Update(float)
 											 ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar |
 											 ImGuiWindowFlags_NoSavedSettings;
 
-	//ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0,0,0,0 });
-	//ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.3f,0.3f,0.3f, 1.f });
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0,0,0,0 });
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.3f,0.3f,0.3f, 1.f });
 	ImGui::SetNextWindowPos(ImVec2{ 0, 0 });
 	ImGui::SetNextWindowSize(ImVec2{ LAUNCHER_WIDTH, LAUNCHER_HEIGHT });
 	ImGui::Begin("Projects", nullptr, flag);
 	{
-		//ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.3f,0.3f,0.3f, 1.f });
-		//ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
-		//ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1, 1, 1, 1 });
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.3f,0.3f,0.3f, 1.f });
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1, 1, 1, 1 });
 		float width = LAUNCHER_WIDTH - (4 * ImGui::GetStyle().WindowPadding.y);
 		float ht = LAUNCHER_HEIGHT - (7 * ImGui::GetStyle().WindowPadding.x);
 		float height = ht / 6;
 		TopBar(width, height);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.f);
 		MainBody(width, ht - height);
-		//ImGui::PopStyleColor(3);
+		ImGui::PopStyleColor(3);
 	}
 	ImGui::End();
-	//ImGui::PopStyleColor(2);
+	ImGui::PopStyleColor(2);
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
 }
 
@@ -188,12 +188,12 @@ void Editor::EditorLauncher::TopBar(float _w, float _h)
 	float w1 = 130;
 	float w2 = 160.f;
 
-	//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,0 });
-	//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ ImGui::GetStyle().WindowPadding.x ,0 });
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,0 });
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ ImGui::GetStyle().WindowPadding.x ,0 });
 	ImGui::BeginChild("Top Bar", ImVec2{ _w, _h }, true);
-	//ImGui::PopStyleVar();
-	//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + subHeight * 0.5f);
+	ImGui::PopStyleVar();
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + subHeight * 0.45f);
 
 	ImGui::BeginChild("SubButton1", ImVec2{ w1 + 2.f , subHeight * 0.7f }, true);
 	if (InvisibleBtn("Projects", w1, subHeight * 0.6f, mbProjectView))
@@ -216,14 +216,14 @@ void Editor::EditorLauncher::TopBar(float _w, float _h)
 	ImGui::EndChild();
 
 	ImGui::EndChild();
-	//ImGui::PopStyleVar(2);
+	ImGui::PopStyleVar(2);
 }
 
 void Editor::EditorLauncher::MainBody(float _w, float _h)
 {
-	//ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
-	//ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.863f, 0.088f, 0.294f, 1.f });
-	//ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.863f, 0.088f, 0.294f, 1.f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
 
 	float w = _w - (2 * ImGui::GetStyle().WindowPadding.x);
 	float h = _h - (2 * ImGui::GetStyle().WindowPadding.y);
@@ -242,7 +242,7 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 
 		float sectionW = w * 0.75f;
 		float sectionH = h;
-		//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::BeginChild("ListOfRecentProjects", ImVec2{ sectionW , sectionH }, true );
 		//ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4{ 0,0,0,0 });
 		for (size_t i = 0; i < mArrProjFolders.size(); ++i)
@@ -269,7 +269,7 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 		}
 		//ImGui::PopStyleColor();
 		ImGui::EndChild();
-		//ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
 
 		ImGui::SameLine();
 		float leftSectionW = w * 0.25f - ImGui::GetStyle().WindowPadding.x;
@@ -288,7 +288,7 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 	}
 	ImGui::EndChild();
 
-	//ImGui::PopStyleColor(3);
+	ImGui::PopStyleColor(3);
 }
 
 bool Editor::EditorLauncher::InvisibleBtn(const char* _btn, float _x, float _y, bool _highlight)
@@ -312,7 +312,7 @@ bool Editor::EditorLauncher::InvisibleBtn(const char* _btn, float _x, float _y, 
 	if (pressed) ImGui::MarkItemValueChanged(id);
 	const ImU32 col = ImGui::GetColorU32(_highlight ? ImGuiCol_Text : ImGuiCol_TextDisabled);
 
-	//ImGui::PushStyleColor(ImGuiCol_Text, col); 
+	ImGui::PushStyleColor(ImGuiCol_Text, col); 
 	ImGui::RenderTextClipped(bb.Min, bb.Max,_btn, NULL, &label_size, style.ButtonTextAlign, &bb);
 	if (_highlight)
 	{
@@ -324,7 +324,7 @@ bool Editor::EditorLauncher::InvisibleBtn(const char* _btn, float _x, float _y, 
 		auto p = ImGui::GetCursorScreenPos();
 		ImGui::GetWindowDrawList()->AddLine(p, ImVec2{ p.x + _x, p.y }, ImGui::GetColorU32(ImGuiCol_TextDisabled), 2.f);
 	}
-	//ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
 
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
 	return pressed;
@@ -373,16 +373,16 @@ void Editor::EditorLauncher::RemoveWindowOptions(void)
 
 void Editor::EditorLauncher::SetWindowStyles(void)
 {
-	//ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-	//ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-	//ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 1.f, 1.f, 1.f, 1.f });
-	//ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0, 0, 0, 1.f });
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 1.f, 1.f, 1.f, 1.f });
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0, 0, 0, 1.f });
 }
 
 void Editor::EditorLauncher::RemoveWindowStyles(void)
 {
-	//ImGui::PopStyleVar(2);
-	//ImGui::PopStyleColor(2);
+	ImGui::PopStyleVar(2);
+	ImGui::PopStyleColor(2);
 }
 
 bool Editor::EditorLauncher::ProjectDetails(const HashString& _path, float _w, float, bool _highlight)
@@ -410,12 +410,12 @@ bool Editor::EditorLauncher::ProjectDetails(const HashString& _path, float _w, f
 		EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(2);
 		ImGui::Text(name.c_str());
 		EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
-		//ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImGuiCol_TextDisabled));
+		ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImGuiCol_TextDisabled));
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7.f);
 		ImGui::Text("Path: ");
 		ImGui::SameLine();
 		ImGui::Text(path.c_str());
-		//ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
 	}
 	ImGui::EndChild();
 	return ret;
@@ -433,28 +433,28 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 	ImGui::Text("Project Name");
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(2);
 	{
-		//ImGui::PushItemWidth(itemWidth);
+		ImGui::PushItemWidth(itemWidth);
 		ImGui::InputText("###Project Name", mNameBuffer, bufSize, flags);
-		//ImGui::PopItemWidth(); 
+		ImGui::PopItemWidth(); 
 	}
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
 
 	ImGui::Text("Location");
 	auto linePos = ImGui::GetCursorPos();
 	{
-		//ImGui::PushItemWidth(itemWidth - folderX - offsetX - 13.f);
-		//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 10,10 });
+		ImGui::PushItemWidth(itemWidth - folderX - offsetX - 13.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 10,10 });
 		ImGui::InputText("###Location", mLocBuffer, bufSize, ImGuiInputTextFlags_ReadOnly);
-		//ImGui::PopStyleVar();
-		//ImGui::PopItemWidth();
+		ImGui::PopStyleVar();
+		ImGui::PopItemWidth();
 	}
 	ImGui::SameLine();
 	{
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 10.f);
-		//ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 20.f);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
 		ImGui::BeginChild("Emptiness", ImVec2{ 10.f, 40.f});
 		ImGui::EndChild();
-		//ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
 	}
 
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + itemWidth - folderX - offsetX + 3.f);
@@ -473,12 +473,12 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 	bool active = (strlen(mNameBuffer) && strlen(mLocBuffer));
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(2);
 	{
-		//ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (itemWidth / 2) - (btnX / 2));
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetTextLineHeightWithSpacing());
 
-		//if (!active)
-			//ImGui::PushStyleVar(ImGuiStyleVar_Alpha, g_inactiveAlpha);
+		if (!active)
+			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, g_inactiveAlpha);
 
 		if (ImGui::ButtonEx("Create", ImVec2{ btnX, btnY }, active ? 0 : ImGuiButtonFlags_Disabled))
 		{
@@ -533,7 +533,7 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 		if (ImGui::IsItemHovered() && (strlen(mNameBuffer) && strlen(mLocBuffer)))
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
-		//ImGui::PopStyleVar((!active) ? 2 : 1);
+		ImGui::PopStyleVar((!active) ? 2 : 1);
 	}
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
 }
@@ -566,10 +566,10 @@ bool Editor::EditorLauncher::SelectableProjects(const char* _btn, float _x, floa
 		ImGui::MarkItemValueChanged(id);
 	ImVec4 defCol = ImGui::GetStyleColorVec4(ImGuiCol_Button);
 	defCol.w = _highlight ? defCol.w : 0.f;
-	//ImGui::PushStyleColor(ImGuiCol_Button, defCol);
+	ImGui::PushStyleColor(ImGuiCol_Button, defCol);
 	const ImU32 col = ImGui::GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
 	ImGui::RenderFrame(bb.Min, bb.Max, col);
-	//ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
 	if (hovered)
 		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 	return pressed;
@@ -579,9 +579,9 @@ void Editor::EditorLauncher::OpenProject(float _w, float)
 {
 	static constexpr float btnH = 30;
 	bool active = (mCurrentlySelected != -1);
-	//if (!active)
-		//ImGui::PushStyleVar(ImGuiStyleVar_Alpha, g_inactiveAlpha);
-	//ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
+	if (!active)
+		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, g_inactiveAlpha);
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
 	if (ImGui::ButtonEx("Open", ImVec2{ _w - (2 * ImGui::GetStyle().WindowPadding.x), btnH }, active ? 0 : ImGuiButtonFlags_Disabled))
 	{
 		mProjFolderSelected = mArrProjFolders[mCurrentlySelected];
@@ -596,7 +596,7 @@ void Editor::EditorLauncher::OpenProject(float _w, float)
 	}
 	if (ImGui::IsItemHovered() && active)
 		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-	//ImGui::PopStyleVar((!active) ? 2 : 1);
+	ImGui::PopStyleVar((!active) ? 2 : 1);
 }
 
 void Editor::EditorLauncher::BrowseProject(float _w, float _h)
@@ -606,7 +606,7 @@ void Editor::EditorLauncher::BrowseProject(float _w, float _h)
 
 	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + _h - offset);
 
-	//ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
 	if (ImGui::ButtonEx("Browse...", ImVec2{ _w - (2 * ImGui::GetStyle().WindowPadding.x), btnH }))
 	{
 		Dystopia::EditorProc p;
@@ -639,7 +639,7 @@ void Editor::EditorLauncher::BrowseProject(float _w, float _h)
 	}
 	if (ImGui::IsItemHovered())
 		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-	//ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
 }
 #endif
 

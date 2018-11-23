@@ -114,7 +114,6 @@ void Editor::EditorUI::StartFrame(void)
 	auto winMgr = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>();
 	auto& win	= winMgr->GetMainWindow();
 
-
 	if (winMgr->IsFullscreen())
 	{
 		w = display_w = win.GetWidth() - GetSystemMetrics(SM_CXBORDER) + 1;
@@ -126,7 +125,6 @@ void Editor::EditorUI::StartFrame(void)
 		w = display_w = win.GetWidth() - t;
 		h = display_h = win.GetHeight() - GetSystemMetrics(SM_CYSIZE) + 3 * GetSystemMetrics(SM_CYEDGE) - GetSystemMetrics(SM_CYCAPTION);
 	}
-
 	io.DisplaySize = ImVec2{ static_cast<float>(w), static_cast<float>(h) };
 	io.DisplayFramebufferScale = ImVec2{ w > 0 ? static_cast<float>(display_w / w) : 0,
 										 h > 0 ? static_cast<float>(display_h / h) : 0 };
