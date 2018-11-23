@@ -84,7 +84,7 @@ namespace Dystopia
 		Font* mpData;
 		HashString mText;
 		AutoArray<Gfx::Vertex> mVerts;
-		int mnAlignX, mnAlignY;
+		int mnAnchorX, mnAnchorY;
 
 		Math::Vector4 mColor;
 

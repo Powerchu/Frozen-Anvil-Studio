@@ -35,13 +35,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::TextRenderer::TextRenderer(void) noexcept
 	: Renderer{}, mText {}, mColor{ 1.f, 1.f, 1.f, 1.f },
-	mpData{ nullptr }, mnAlignX{ 0 }, mnAlignY{ 0 }
+	mpData{ nullptr }, mnAnchorX{ 0 }, mnAnchorY{ 0 }
 {
 }
 
 Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
 	: Renderer{ _rhs }, mText{ _rhs.mText }, mColor{ _rhs.mColor },
-	mpData{ _rhs.mpData }, mnAlignX{ _rhs.mnAlignX }, mnAlignY{ _rhs.mnAlignY }
+	mpData{ _rhs.mpData }, mnAnchorX{ _rhs.mnAnchorX }, mnAnchorY{ _rhs.mnAnchorY }
 {
 	mpTexture = _rhs.mpTexture;
 }
@@ -164,8 +164,8 @@ void Dystopia::TextRenderer::RegenMesh(void)
 	};
 
 	mx = Ut::Max(x, mx);
-	x = alignOp[mnAlignX](mx);
-	y = alignOp[mnAlignY](y);
+	x = alignOp[mnAnchorX](mx);
+	y = alignOp[mnAnchorY](y);
 	for (auto& e : verts)
 	{
 		e.x -= x;
@@ -198,8 +198,8 @@ void Dystopia::TextRenderer::Serialise(TextSerialiser& _out) const
 	_out << mpData->mstrName;
 	_out << mText;
 	_out << mColor;
-	_out << mnAlignX;
-	_out << mnAlignY;
+	_out << mnAnchorX;
+	_out << mnAnchorY;
 }
 
 void Dystopia::TextRenderer::Unserialise(TextSerialiser& _in)
@@ -210,8 +210,8 @@ void Dystopia::TextRenderer::Unserialise(TextSerialiser& _in)
 	_in >> font;
 	_in >> mText;
 	_in >> mColor;
-	_in >> mnAlignX;
-	_in >> mnAlignY;
+	_in >> mnAnchorX;
+	_in >> mnAnchorY;
 }
 
 
@@ -219,15 +219,15 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 {
 	bool bRegenMesh = false;
 	static char buf[512]{ };
-	static std::string alignX[3]{ "Left", "Center", "Right" };
-	static std::string alignY[3]{ "Top", "Center", "Bottom" };
+	static std::string anchorX[3]{ "Left", "Center", "Right" };
+	static std::string anchorY[3]{ "Top", "Center", "Bottom" };
 	namespace UI = EGUI::Display;
 
-	if (UI::DropDownSelection("Alignment X", mnAlignX, alignX, 100))
+	if (UI::DropDownSelection("Anchor X", mnAnchorX, anchorX, 100))
 	{
 		bRegenMesh = true;
 	}
-	if (UI::DropDownSelection("Alignment Y", mnAlignY, alignY, 100))
+	if (UI::DropDownSelection("Anchor Y", mnAnchorY, anchorY, 100))
 	{
 		bRegenMesh = true;
 	}
