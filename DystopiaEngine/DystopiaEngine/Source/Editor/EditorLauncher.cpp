@@ -379,6 +379,7 @@ bool Editor::EditorLauncher::ProjectDetails(const HashString& _path, float _w, f
 		pos = _path.rfind("\\");
 	HashString path{ _path.cbegin(), _path.cbegin() + pos };
 	HashString name{ _path.cbegin() + pos + 1, _path.cend() };
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 5.f,0 });
 	ImGui::BeginChild(_path.c_str(), ImVec2{ width, fixedH }, true);
 	{
 		auto startingPos = ImGui::GetCursorPos();
@@ -402,6 +403,7 @@ bool Editor::EditorLauncher::ProjectDetails(const HashString& _path, float _w, f
 		ImGui::PopStyleColor();
 	}
 	ImGui::EndChild();
+	ImGui::PopStyleVar();
 	return ret;
 }
 
