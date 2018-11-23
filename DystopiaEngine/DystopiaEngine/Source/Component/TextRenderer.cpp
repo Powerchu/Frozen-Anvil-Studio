@@ -35,13 +35,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::TextRenderer::TextRenderer(void) noexcept
 	: Renderer{}, mText {}, mColor{ 1.f, 1.f, 1.f, 1.f },
-	mpData{ nullptr }
+	mpData{ nullptr }, mnAlignX{ 0 }, mnAlignY{ 0 }
 {
 }
 
 Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
 	: Renderer{ _rhs }, mText{ _rhs.mText }, mColor{ _rhs.mColor },
-	mpData{ _rhs.mpData } 
+	mpData{ _rhs.mpData }, mnAlignX{ _rhs.mnAlignX }, mnAlignY{ _rhs.mnAlignY }
 {
 	mpTexture = _rhs.mpTexture;
 }
@@ -107,22 +107,39 @@ void Dystopia::TextRenderer::RegenMesh(void)
 
 	short index = 0;
 
-	float x = .0f, y =.0f;
-	constexpr float scale = 1.f / 140.f;
-	for (auto& e : mText)
+	float x = .0f, y =-1.0f, mx = .0f;
+	constexpr float scale = 1.f / 100.f;
+	for (auto b = mText.begin(), e = mText.end(); b != e; ++b)
 	{
-		auto const n = e - ' ';
+		if (*b == '\\')
+		{
+			if (++b == e)
+				break;
+
+			if (*b == 'n')
+			{
+				mx = Ut::Max(x, mx);
+				x = .0f;
+				y -= 1.1f;
+				continue;
+			}
+
+			if (*b != '\\')
+				continue;
+		}
+
+		auto const n = *b - ' ';
 		auto& ch = mpData->mSpaces[n];
 
-		y = ch.mnBearingY * scale;
+		float const dy = ch.mnBearingY * scale;
 		float const dx = ch.mnBearingX * scale;
-		float const dy = y - ch.mnHeight * scale;
 		float const w  = ch.mnWidth * scale + dx;
+		float const h  = dy - ch.mnHeight * scale;
 		
-		verts.EmplaceBack(x + dx, y, .0f);
-		verts.EmplaceBack(x + dx, dy, .0f);
-		verts.EmplaceBack(x + w, dy, .0f);
-		verts.EmplaceBack(x + w, y, .0f);
+		verts.EmplaceBack(x + dx, y + dy, .0f);
+		verts.EmplaceBack(x + dx, y + h, .0f);
+		verts.EmplaceBack(x + w , y + h, .0f);
+		verts.EmplaceBack(x + w , y + dy, .0f);
 
 		uvs.EmplaceBack(atlas[n].uStart, atlas[n].vStart);
 		uvs.EmplaceBack(atlas[n].uStart, atlas[n].vEnd);
@@ -138,6 +155,21 @@ void Dystopia::TextRenderer::RegenMesh(void)
 
 		index += 4;
 		x += ch.mnAdvance * scale;
+	}
+
+	float(*alignOp[])(float) {
+		[](float) { return .0f; },
+		[](float x) { return x * .5f; },
+		[](float x) { return x; }
+	};
+
+	mx = Ut::Max(x, mx);
+	x = alignOp[mnAlignX](mx);
+	y = alignOp[mnAlignY](y);
+	for (auto& e : verts)
+	{
+		e.x -= x;
+		e.y -= y;
 	}
 
 	mpMesh->UpdateBuffer<VertexBuffer>(verts);
@@ -165,6 +197,9 @@ void Dystopia::TextRenderer::Serialise(TextSerialiser& _out) const
 
 	_out << mpData->mstrName;
 	_out << mText;
+	_out << mColor;
+	_out << mnAlignX;
+	_out << mnAlignY;
 }
 
 void Dystopia::TextRenderer::Unserialise(TextSerialiser& _in)
@@ -174,12 +209,28 @@ void Dystopia::TextRenderer::Unserialise(TextSerialiser& _in)
 
 	_in >> font;
 	_in >> mText;
+	_in >> mColor;
+	_in >> mnAlignX;
+	_in >> mnAlignY;
 }
 
 
 void Dystopia::TextRenderer::EditorUI(void) noexcept
 {
+	bool bRegenMesh = false;
 	static char buf[512]{ };
+	static std::string alignX[3]{ "Left", "Center", "Right" };
+	static std::string alignY[3]{ "Top", "Center", "Bottom" };
+	namespace UI = EGUI::Display;
+
+	if (UI::DropDownSelection("Alignment X", mnAlignX, alignX, 100))
+	{
+		bRegenMesh = true;
+	}
+	if (UI::DropDownSelection("Alignment Y", mnAlignY, alignY, 100))
+	{
+		bRegenMesh = true;
+	}
 
 	*(Ut::Copy(mText, &buf[0])) = '\0';
 	if (EGUI::Display::TextField("Text ", buf, 256, true, 225))
@@ -187,7 +238,7 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 		mText.clear();
 		mText = buf;
 
-		RegenMesh();
+		bRegenMesh = true;
 	}
 	EGUI::Display::EmptyBox("Font ", 200, (mpData) ? mpData->mstrName.c_str() : "-empty-", true);
 
@@ -210,6 +261,14 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(static_cast<void(TextRenderer::*)(const char*)>(&TextRenderer::SetFont), "");
 		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 	}
+
+	if (ImGui::ColorPicker4("Color", &mColor[0]))
+	{
+
+	}
+
+	if (bRegenMesh)
+		RegenMesh();
 }
 
 
