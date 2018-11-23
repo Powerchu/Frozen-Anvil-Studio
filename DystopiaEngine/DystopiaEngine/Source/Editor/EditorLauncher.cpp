@@ -241,10 +241,9 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 		}
 
 		float sectionW = w * 0.75f;
-		float sectionH = h;
+		float sectionH = h * 0.92f;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::BeginChild("ListOfRecentProjects", ImVec2{ sectionW , sectionH }, true );
-		//ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4{ 0,0,0,0 });
 		for (size_t i = 0; i < mArrProjFolders.size(); ++i)
 		{
 			ImGui::PushID(static_cast<int>(i));
@@ -267,12 +266,11 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 			ImGui::Separator();
 			ImGui::PopID();
 		}
-		//ImGui::PopStyleColor();
 		ImGui::EndChild();
 		ImGui::PopStyleVar();
 
 		ImGui::SameLine();
-		float leftSectionW = w * 0.25f - ImGui::GetStyle().WindowPadding.x;
+		float leftSectionW = w * 0.23f - ImGui::GetStyle().WindowPadding.x;
 		ImGui::BeginChild("Launch", ImVec2{ leftSectionW, sectionH }, true);
 		BrowseProject(leftSectionW, sectionH);
 		OpenProject(leftSectionW, sectionH);
@@ -280,7 +278,7 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 	}
 	else
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ (w / 2) - (w / 3), h / 5 });
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ (w / 2.1f) - (w / 3), h / 5.2f });
 		ImGui::BeginChild("CreatingProject", ImVec2{ w, h }, true);
 		CreateFields(w, h);
 		ImGui::EndChild();
