@@ -99,8 +99,8 @@ void Editor::EditorLauncher::Update(float)
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.3f,0.3f,0.3f, 1.f });
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1, 1, 1, 1 });
-		float width = LAUNCHER_WIDTH - (4 * ImGui::GetStyle().WindowPadding.y);
-		float ht = LAUNCHER_HEIGHT - (7 * ImGui::GetStyle().WindowPadding.x);
+		float width = LAUNCHER_WIDTH - (4 * ImGui::GetStyle().WindowPadding.x);
+		float ht = LAUNCHER_HEIGHT - (7 * ImGui::GetStyle().WindowPadding.y);
 		float height = ht / 6;
 		TopBar(width, height);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.f);
@@ -458,6 +458,7 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 
 	bool active = (strlen(mNameBuffer) && strlen(mLocBuffer));
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(2);
+
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (itemWidth / 2) - (btnX / 2));
