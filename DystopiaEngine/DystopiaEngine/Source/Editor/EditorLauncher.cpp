@@ -99,8 +99,8 @@ void Editor::EditorLauncher::Update(float)
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.3f,0.3f,0.3f, 1.f });
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1, 1, 1, 1 });
-		float width = LAUNCHER_WIDTH - (4 * ImGui::GetStyle().WindowPadding.y);
-		float ht = LAUNCHER_HEIGHT - (7 * ImGui::GetStyle().WindowPadding.x);
+		float width = LAUNCHER_WIDTH - (4 * ImGui::GetStyle().WindowPadding.x);
+		float ht = LAUNCHER_HEIGHT - (7 * ImGui::GetStyle().WindowPadding.y);
 		float height = ht / 6;
 		TopBar(width, height);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.f);
@@ -222,6 +222,7 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 
 	float w = _w - (2 * ImGui::GetStyle().WindowPadding.x);
 	float h = _h - (2 * ImGui::GetStyle().WindowPadding.y);
+
 	ImGui::BeginChild("Main Body", ImVec2{ _w, _h }, true);
 	if (mbProjectView)
 	{
