@@ -248,21 +248,7 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 		{
 			ImGui::PushID(static_cast<int>(i));
 			if (ProjectDetails(mArrProjFolders[i], sectionW, sectionH, mCurrentlySelected == static_cast<int>(i)))
-			{
 				mCurrentlySelected = static_cast<int>(i);
-				if (ImGui::IsMouseDoubleClicked(0))
-				{
-					mProjFolderSelected = mArrProjFolders[i];
-
-					size_t pos = mProjFolderSelected.find_last_of("\\");
-					if (pos == HashString::nPos)
-						pos = mProjFolderSelected.find_last_of("/");
-					mProjFileSelected = HashString{ mProjFileSelected.cbegin() + 1 + pos, mProjFolderSelected.cend() };
-					mProjFileSelected += ".dyst";
-
-					mbClosing = true;
-				}
-			}
 			ImGui::Separator();
 			ImGui::PopID();
 		}

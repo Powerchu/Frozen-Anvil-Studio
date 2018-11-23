@@ -43,12 +43,15 @@ bool Editor::InsertGameObject::Do(void)
 		const auto& allObj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().GetAllGameObjects();
 		for (const auto& obj : allObj)
 		{
-			HashString tempName{ obj.GetNamePtr() };
-			if (tempName == name)
+			if (o != &obj)
 			{
-				if (endP + 1 < name.size())
-					name.erase(endP + 1);
-				name += counter++;
+				HashString tempName{ obj.GetName() };
+				if (tempName == name)
+				{
+					if (endP + 1 < name.size())
+						name.erase(endP + 1);
+					name += counter++;
+				}
 			}
 		}
 		o->SetFlag(Dystopia::eObjFlag::FLAG_LAYER_WORLD);
