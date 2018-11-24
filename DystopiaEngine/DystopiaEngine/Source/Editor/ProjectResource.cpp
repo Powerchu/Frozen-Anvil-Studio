@@ -104,8 +104,9 @@ namespace Editor
 	bool ProjectResource::Init(void)
 	{
 		for (auto& f : mArrAllFiles)
-			if (!(HashString::nPos == f->mPath.find("Temp")) && f->mTag == EGUI::ePayloadTags::PREFAB)
-				EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mPath);
+			if (f->mTag == EGUI::ePayloadTags::PREFAB)
+				if (f->mPath.find("Temp") == HashString::nPos)
+					EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mPath);
 		return true;
 	}
 

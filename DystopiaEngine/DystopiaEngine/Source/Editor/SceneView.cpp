@@ -87,14 +87,6 @@ namespace Editor
 
 	void SceneView::Update(float _dt)
 	{
-		if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_W))
-		{
-			SetGizmoTranslate();
-		}
-		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_E))
-		{
-			SetGizmoScaler();
-		}
 		Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera");
 		if (temp)
 			mpSceneCamera = temp->GetComponent<Dystopia::Camera>();

@@ -189,7 +189,7 @@ void Editor::EditorLauncher::TopBar(float _w, float _h)
 	float w2 = 160.f;
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,0 });
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ ImGui::GetStyle().WindowPadding.x ,0 });
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ /*ImGui::GetStyle().WindowPadding.x*/20 ,0 });
 	ImGui::BeginChild("Top Bar", ImVec2{ _w, _h }, true);
 	ImGui::PopStyleVar();
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
