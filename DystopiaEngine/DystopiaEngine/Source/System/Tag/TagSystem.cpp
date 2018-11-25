@@ -8,6 +8,14 @@ namespace Dystopia
 
 	}
 
+	void TagSystem::MapNameToTag(HashString const& _name, Tags _TagsNum)
+	{
+		if(mTags.find(_TagsNum) != mTags.end())
+		{
+			mTags[_TagsNum] = _name;
+		}
+	}
+
 	Tags TagSystem::GetTag(HashString const& _TagName) const
 	{
 		for (auto & elem : mTags)
@@ -15,6 +23,11 @@ namespace Dystopia
 				return elem.first;
 
 		return Tags(0);
+	}
+
+	void TagSystem::RemoveTag(HashString const& _TagName) const
+	{
+
 	}
 
 	AutoArray < std::string > TagSystem::GetAllTagsName() const
