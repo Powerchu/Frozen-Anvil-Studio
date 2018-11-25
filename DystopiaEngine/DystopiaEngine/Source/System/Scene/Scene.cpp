@@ -105,7 +105,7 @@ void Dystopia::Scene::Serialise(TextSerialiser & _TextSerialiser) const
 {
 	_TextSerialiser << mID;
 	_TextSerialiser << mName;
-	_TextSerialiser.Write(std::to_string(mGameObjs.size()));
+	_TextSerialiser.Write((mGameObjs.size()));
 
 	for (auto & elem : mGameObjs)
 		elem.Serialise(_TextSerialiser);

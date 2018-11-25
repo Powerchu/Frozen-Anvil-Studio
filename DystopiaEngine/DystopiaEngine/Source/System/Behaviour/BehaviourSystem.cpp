@@ -53,23 +53,20 @@ namespace Dystopia
 		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
 
 #if _DEBUG
-		FileSys->CreateFiles("BehaviourDLL", eFileDir::eAppData);
+		FileSys->CreateFiles("BehaviourDLL",         eFileDir::eAppData);
 #else
 		FileSys->CreateFiles("BehaviourDLL_Release", eFileDir::eAppData);
 #endif
 
 		FileSys->CreateFiles("Dystopia/Temp", eFileDir::eAppData);
 		FileSys->CreateFiles("Behaviours/BehavioursScripts", eFileDir::eResource);
-		mHotloader->SetPipeExePath(FileSys->GetFullPath_w(L"BehaviourPiping.exe", eFileDir::eResource));
+		std::string PipePath = FileSys->GetProjectFolders<std::string>(eFileDir::eCurrent) + "\\Resource\\Piping\\BehaviourPiping.exe";
+		mHotloader->SetPipeExePath(std::wstring{PipePath.begin(), PipePath.end()});
 
 #if _DEBUG
-
-
-		//std::string strDystopia_Lib{ FileSys->GetFullPath("DystopiaEngine_D.lib",eFileDir::eCurrent) };
-		//InterestedFiles Dystopia_Lib{  ,eCompile };
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine_D.lib", eCompile);
 		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL", eFileDir::eAppData));
-		//mHotloader->AddAdditionalSourcePath(std::wstring{ strDystopia_Lib.begin(),strDystopia_Lib.end() });
+
 #else
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine_Editor.lib", eCompile);
 		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL_Release", eFileDir::eAppData));
