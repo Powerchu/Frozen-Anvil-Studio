@@ -295,9 +295,6 @@
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp">
       <Filter>Editor\Main\Scripts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EditorInput.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\EditorMain.cpp">
       <Filter>Editor\Main</Filter>
     </ClCompile>
@@ -336,6 +333,9 @@
     </ClCompile>
     <ClCompile Include="Source\Editor\EditorProc.cpp">
       <Filter>Editor\Main\Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp">
+      <Filter>Editor\Main\Panels\Behaviour Tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -864,12 +864,6 @@
     <ClInclude Include="Include\Editor\ScriptFormatter.h">
       <Filter>Editor\Main\Scripts</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\EditorHotkeys.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EditorInput.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\EditorStates.h">
       <Filter>Editor\Main\Systems\States</Filter>
     </ClInclude>
@@ -930,6 +924,9 @@
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
     <ClInclude Include="Include\Editor\EditorProc.h">
       <Filter>Editor\Main\Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\BehaviourTreeEditor.h">
+      <Filter>Editor\Main\Panels\Behaviour Tree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1340,6 +1337,9 @@
     </Filter>
     <Filter Include="Game Engine\Components\AI">
       <UniqueIdentifier>{695cd54f-1b97-44eb-8804-4a45aafc03a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Panels\Behaviour Tree">
+      <UniqueIdentifier>{903fdd85-b40e-44db-89dd-1fa3d058f796}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

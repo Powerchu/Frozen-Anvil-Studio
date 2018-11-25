@@ -37,6 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/StyleScheme.h"
 #include "Editor/SpritePreviewer.h"
 #include "Editor/SpriteEditor.h"
+#include "Editor/BehaviourTreeEditor.h"
 
 #include "Allocator/DefaultAlloc.h"
 
