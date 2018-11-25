@@ -793,6 +793,7 @@ namespace Dystopia
 	/****************************************************************
 	* EDITOR GUI STUFF
 	****************************************************************/
+#if EDITOR
 	void RigidBody::CheckMass()
 	{
 		if (mfMass)
@@ -807,7 +808,7 @@ namespace Dystopia
 		}
 	}
 
-#if EDITOR
+
 	void RigidBody::EditorUI() noexcept
 	{
 		EGUI::PushLeftAlign(140.f);

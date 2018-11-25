@@ -412,7 +412,7 @@ namespace Dystopia
 
 		return BroadPhaseCircle{ LongestRadius, MyGlobalCentre};
 	}
-
+#if EDITOR
 	void Convex::EditorUI() noexcept
 	{
 		eAttachedBodyEmptyBox();
@@ -588,6 +588,8 @@ namespace Dystopia
 	{
 
 	}
+
+#endif
 
 	bool Convex::ContainOrigin(AutoArray<SimplexVertex> & _Simplex,
 							   Math::Vec3D & _v3Dir)

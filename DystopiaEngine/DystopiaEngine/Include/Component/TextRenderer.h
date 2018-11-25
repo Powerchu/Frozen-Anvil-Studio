@@ -68,8 +68,9 @@ namespace Dystopia
 		void SetFont(const char*);
 		void SetFont(const std::string&);
 
-
+#if EDITOR
 		void EditorUI(void) noexcept override;
+#endif
 
 	private:
 

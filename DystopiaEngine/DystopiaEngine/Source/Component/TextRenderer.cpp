@@ -136,6 +136,7 @@ void Dystopia::TextRenderer::RegenMesh(void)
 #   endif 
 }
 
+#if EDITOR
 void Dystopia::TextRenderer::EditorUI(void) noexcept
 {
 	static char strText[256];
@@ -150,5 +151,6 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 		RegenMesh();
 	}
 }
+#endif
 
 

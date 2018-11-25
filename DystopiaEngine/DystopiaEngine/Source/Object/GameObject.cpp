@@ -341,8 +341,10 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 
 	for (auto& c : mComponents)
 		p->AddComponent(c->Duplicate(), Component::TAG{});
+#if EDITOR
 	for (auto& b : mBehaviours)
 		p->AddComponent(EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, p->mnID), Behaviour::TAG{});
+#endif
 
 	const auto& children = mTransform.GetAllChild();
 	for (const auto& child : children)

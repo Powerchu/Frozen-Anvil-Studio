@@ -104,9 +104,13 @@ namespace
 
 
 Dystopia::LoggerSystem::LoggerSystem(void) noexcept
+#if EDITOR
 	: mpOut{ PrintToConsoleLog }, mActiveFlags{ eLog::DEFAULT }
+#endif
 {
+#if EDITOR
 	std::set_terminate(ProgramTerminate);
+#endif
 
 #if defined(COMMANDPROMPT)
 

@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#if EDITOR
+
 #ifndef _EVENTS_H_
 #define _EVENTS_H_
 #include "DataStructure/AutoArray.h"
@@ -229,6 +229,6 @@ auto Bind(ReturnType(C::*f)(Args...), C* user)
 
 
 
-#endif 
+
 #endif 
 

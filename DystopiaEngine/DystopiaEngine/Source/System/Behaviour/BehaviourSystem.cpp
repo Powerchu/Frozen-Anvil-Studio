@@ -29,14 +29,18 @@ namespace Dystopia
 	
 
 	BehaviourSystem::BehaviourSystem()
+#if EDITOR
 		:mHotloader{ new Hotloader<1>() }
+#endif
 	{
 
 	}
 
 	BehaviourSystem::~BehaviourSystem()
 	{
+#if EDITOR
 		delete mHotloader;
+#endif
 	}
 
 	void Dystopia::BehaviourSystem::PreInit(void)
@@ -243,6 +247,7 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::Update(float _dt)
 	{
+#if EDITOR
 		for (auto & i : mvBehaviours)
 		{
 			for (auto & iter : i.second)
@@ -275,10 +280,13 @@ namespace Dystopia
 
 			}
 		}
+#endif
 	}
 
 	void Dystopia::BehaviourSystem::PostUpdate(void)
 	{
+#if EDITOR
+
 		/*Clear the recently change*/
 		mvRecentChanges.clear();
 		//static AutoArray<std::pair<uint64_t, Behaviour*>*> ToRemove;
@@ -310,6 +318,7 @@ namespace Dystopia
 
 
 		//ToRemove.clear();
+#endif
 	}
 
 	void Dystopia::BehaviourSystem::Shutdown(void)
