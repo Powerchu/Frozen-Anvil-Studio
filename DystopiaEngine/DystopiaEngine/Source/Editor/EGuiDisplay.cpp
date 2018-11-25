@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <Windows.h>
 #include <consoleapi2.h>
 #include <winuser.h>
+
 #include "Editor/EGUI.h"
 #include "Editor/EditorCommands.h"
 #include "Editor/CommandTypes.h"
@@ -24,14 +25,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Graphics/Texture.h"
 #include "System/Graphics/GraphicsSystem.h"
-#include "System/Scene/Scene.h"
 
-#include "DataStructure/Stack.h"
-
-Stack<float> g_StackLeftAlign{ 100 };
+#include "../../Dependancies/ImGui/imgui_internal.h"
 
 namespace EGUI
 {
+	Stack<float> g_StackLeftAlign{ 100 };
+
 	static bool IsItemActiveLastFrame()
 	{
 		ImGuiContext g = *GImGui;
@@ -39,12 +39,17 @@ namespace EGUI
 		return false;
 	}
 
-	void SetContext(Dystopia::CommandHandler*)
+	Stack<float>& GetLeftAlignStack(void)
+	{
+		return g_StackLeftAlign;
+	}
+
+	void SetContext(DysPeekia::CommandHandler*)
 	{
 		//gContextComdHND = _pContext;
 	}
 
-	Dystopia::CommandHandler* GetCommandHND()
+	DysPeekia::CommandHandler* GetCommandHND()
 	{
 		//return gContextComdHND;
 		return nullptr;
@@ -208,6 +213,26 @@ namespace EGUI
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool b = ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags);
+			ImGui::PopItemWidth();
+			return b;
+		}
+
+		bool TextField(const HashString& _label, HashString& _out, bool _showLabel, float _width, bool _onlyEnterReturnsTrue)
+		{
+			ImGuiInputTextFlags flags = ImGuiInputTextFlags_AutoSelectAll;
+			if (_onlyEnterReturnsTrue)
+				flags |= ImGuiInputTextFlags_EnterReturnsTrue;
+			ImGui::PushItemWidth(_width);
+			if (_showLabel)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label.c_str());
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+			HashString inviLabel{ "##" };
+			inviLabel += _label;
+			bool b = ImGui::InputText(inviLabel.c_str(), _out.begin(), _out.size(), flags);
 			ImGui::PopItemWidth();
 			return b;
 		}
@@ -446,7 +471,7 @@ namespace EGUI
 			return ret;
 		}
 
-		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow, bool _defaultOpen, bool _singleClickOpen)
+		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow, bool _defaulPeeken, bool _singleClickOpen)
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
 			flags = _highlighted ? flags | ImGuiTreeNodeFlags_Selected : flags;
@@ -459,7 +484,7 @@ namespace EGUI
 				ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
 			}
 
-			if (_defaultOpen)
+			if (_defaulPeeken)
 				flags |= ImGuiTreeNodeFlags_DefaultOpen;
 			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, flags);
 
@@ -718,23 +743,23 @@ namespace EGUI
 			const ImU32		col32Dull	= static_cast<ImColor>(ImVec4{ _colour.x - 0.2f, _colour.y - 0.2f, _colour.z - 0.2f, _colour.w });
 			const float iconWidth = (width * 0.8f);
 			const float offset = (height * 0.2f);
-			ImVec2 topLeft{ pos.x, pos.y + offset };
-			ImVec2 botLeft{ pos.x, topLeft.y + height - 1 };
-			ImVec2 topRight{ pos.x + iconWidth, topLeft.y + (height / 6.f) };
-			ImVec2 botRight{ topRight.x, botLeft.y };
-			ImVec2 tabTop{ pos.x + (width * 0.3f), topLeft.y };
-			ImVec2 tabBot{ pos.x + (width * 0.4f), topRight.y };
+			ImVec2 PeekLeft{ pos.x, pos.y + offset };
+			ImVec2 botLeft{ pos.x, PeekLeft.y + height - 1 };
+			ImVec2 PeekRight{ pos.x + iconWidth, PeekLeft.y + (height / 6.f) };
+			ImVec2 botRight{ PeekRight.x, botLeft.y };
+			ImVec2 tabPeek{ pos.x + (width * 0.3f), PeekLeft.y };
+			ImVec2 tabBot{ pos.x + (width * 0.4f), PeekRight.y };
 
 			if (!_open)
 			{
-				ImVec2 inside{ topLeft.x, topRight.y + (height * 0.1f) };
+				ImVec2 inside{ PeekLeft.x, PeekRight.y + (height * 0.1f) };
 				pCanvas->PathClear();
-				pCanvas->PathLineTo(topLeft);
+				pCanvas->PathLineTo(PeekLeft);
 				pCanvas->PathLineTo(inside);
 				pCanvas->PathLineTo(ImVec2{ inside.x + iconWidth, inside.y });
-				pCanvas->PathLineTo(topRight);
+				pCanvas->PathLineTo(PeekRight);
 				pCanvas->PathLineTo(tabBot);
-				pCanvas->PathLineTo(tabTop);
+				pCanvas->PathLineTo(tabPeek);
 				pCanvas->PathStroke(col32, true);
 
 				pCanvas->PathClear();
@@ -746,14 +771,14 @@ namespace EGUI
 			}
 			else
 			{
-				ImVec2 inside{ topLeft.x + (0.2f * width), topLeft.y + (height * 0.4f) };
+				ImVec2 inside{ PeekLeft.x + (0.2f * width), PeekLeft.y + (height * 0.4f) };
 				pCanvas->PathClear();
 				pCanvas->PathLineTo(botLeft);
-				pCanvas->PathLineTo(topLeft);
-				pCanvas->PathLineTo(tabTop);
+				pCanvas->PathLineTo(PeekLeft);
+				pCanvas->PathLineTo(tabPeek);
 				pCanvas->PathLineTo(tabBot);
-				pCanvas->PathLineTo(topRight);
-				pCanvas->PathLineTo(ImVec2{ topRight.x, topLeft.y + (height * 0.4f) });
+				pCanvas->PathLineTo(PeekRight);
+				pCanvas->PathLineTo(ImVec2{ PeekRight.x, PeekLeft.y + (height * 0.4f) });
 				pCanvas->PathStroke(col32, true);
 
 				pCanvas->PathClear();
@@ -807,16 +832,16 @@ namespace EGUI
 			const ImU32		col32B = static_cast<ImColor>(ImVec4{ 0,0,1,1 });
 			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
 			ImVec2			pos		= ImGui::GetCursorScreenPos();
-			ImVec2 midTop{ pos.x + (_width/2), pos.y };
-			ImVec2 mid{ midTop.x, midTop.y + (_width /3) };
-			ImVec2 midBot{ mid.x, midTop.y + (_height * 0.8f) };
-			ImVec2 midLeft{ pos.x + (_width * 0.1f), (midTop.y + mid.y) / 2 };
+			ImVec2 midPeek{ pos.x + (_width/2), pos.y };
+			ImVec2 mid{ midPeek.x, midPeek.y + (_width /3) };
+			ImVec2 midBot{ mid.x, midPeek.y + (_height * 0.8f) };
+			ImVec2 midLeft{ pos.x + (_width * 0.1f), (midPeek.y + mid.y) / 2 };
 			ImVec2 midRight{ pos.x + (_width * 0.9f), midLeft.y };
-			ImVec2 botLeft{ midLeft.x + (_width / 8), midTop.y + (3 * (_height /5))};
+			ImVec2 botLeft{ midLeft.x + (_width / 8), midPeek.y + (3 * (_height /5))};
 			ImVec2 botRight{ midRight.x - (_width / 8), botLeft.y };
 
 			pCanvas->PathClear();
-			pCanvas->PathLineTo(midTop);
+			pCanvas->PathLineTo(midPeek);
 			pCanvas->PathLineTo(midLeft);
 			pCanvas->PathLineTo(mid);
 			pCanvas->PathLineTo(midRight);
@@ -890,6 +915,6 @@ namespace EGUI
 			return ret;
 		}
 	}
-}	// NAMESPACE DYSTOPIA::EGUI::DISPLAY
+}	// NAMESPACE DYSPeekIA::EGUI::DISPLAY
 #endif // EDITOR
 
