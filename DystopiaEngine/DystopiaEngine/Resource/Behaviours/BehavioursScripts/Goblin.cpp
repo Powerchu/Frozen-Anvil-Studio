@@ -264,10 +264,18 @@ namespace Dystopia
 			rBody->AddLinearImpulse({-30 * mass,0,0});
 	}
 
-	void Goblin::KnockUp(int _amt)
+	void Goblin::Knock(int _amt, int _direction)
 	{
 		DEBUG_PRINT(eLog::MESSAGE, "received Knock");
-		rBody->AddLinearImpulse({0, _amt * mass, 0});
+		
+		if (_direction == 0) //knock up
+			rBody->AddLinearImpulse({0, _amt * mass, 0});
+
+		if (_direction == 1) //knock left
+			rBody->AddLinearImpulse({ -(_amt * mass), 0, 0 });
+		
+		if (_direction == 2) //knock right
+			rBody->AddLinearImpulse({ _amt * mass, 0, 0 });
 	}
 
 	TypeErasure::TypeEraseMetaData Goblin::GetMetaData()

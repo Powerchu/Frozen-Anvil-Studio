@@ -84,9 +84,8 @@ namespace Dystopia
 		void CheckMoving();
 		void CheckAttack();
 		void MovePlayer(float);
-		void CastLinked(int, bool);
+		void CastLinked(int _skill, bool _isForm, float x, float y, float z);
 		void TakeDamage(int _dmg);
-		void CheckSpawn();
 
 		PP_MEMBERFUNC(Dystopia::CharacterController, TakeDamage)
 	private:
@@ -104,16 +103,12 @@ namespace Dystopia
 		float attackDelay;
 		GameObject * combatName;
 		GameObject * sManagerName;
-		float spawnCount;
 	private:
 		bool mbIsGrounded;
 		bool mbIsCeilinged;
 		bool mbIsFacingRight;
 		bool isAttacking;
 		bool currentType;
-		bool spawningSpike;
-		bool oneSpawned;
-		bool twoSpawned;
 
 		RigidBody * mpBody;
 		InputManager * mpInputSys;
@@ -128,7 +123,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::CharacterController, playerHealth, IsDodging, CharacterSpeed, JumpForce, attackCount, spawnCount);
+PP_REFLECT(Dystopia::CharacterController, playerHealth, IsDodging, CharacterSpeed, JumpForce, attackCount);
 
 #endif //_CharacterController_H_
 

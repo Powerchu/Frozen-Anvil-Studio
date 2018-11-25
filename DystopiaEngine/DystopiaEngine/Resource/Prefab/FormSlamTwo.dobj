@@ -1,0 +1,39 @@
+[START_GameObject]
+3,[START_START_GO_DATA]
+18446744072029808128,65,"FormSlamTwo",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+10,10,1,-25.8504,5.8194,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GameObject]
+[START_Component]
+2,[START_RigidBody]
+18446744073314840576,1,18446744072029808128,0,0.5,0.5,0.5,0.5,0.7,0.5,1,75,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+4,[START_Convex_Collider]
+18446744073571216896,1,18446744072029808128,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.8,0.6,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+7,[START_Renderer]
+18446744073094114304,1,18446744072029808128,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\rock_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_All Behaviours Block]
+1,"FormTTwo",[START_Behaviour Block]
+0,
+[END_Behaviour Block]
+
+[END_All Behaviours Block]

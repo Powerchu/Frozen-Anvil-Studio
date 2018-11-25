@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	FormTOne.cpp
+\file	ForceTOne.cpp
 \author Dan Kang (100%)
 \par    email: dan.kang\@digipen.edu
 \brief
@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "FormTOne.h"
+#include "ForceTOne.h"
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
@@ -31,7 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	namespace FormTOne_MSG
+	namespace ForceTOne_MSG
 	{
 		template<typename ... Ts>
 		void SendInternalMessage(Behaviour * _ptr, const char * _FuncName, Ts ... _Params)
@@ -62,64 +62,65 @@ namespace Dystopia
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
 		}
 	}
-	FormTOne::FormTOne()
+	ForceTOne::ForceTOne()
+		: firingDirection(0)
 	{
 	}
 
-	FormTOne::~FormTOne()
+	ForceTOne::~ForceTOne()
 	{
 	}
 
-	void FormTOne::Load()
+	void ForceTOne::Load()
 	{
 	}
 
-	void FormTOne::Awake()
-	{
-		SetFlags(FLAG_ACTIVE);
-	}
-
-	void FormTOne::Init()
+	void ForceTOne::Awake()
 	{
 		SetFlags(FLAG_ACTIVE);
 	}
 
-	void FormTOne::Update(const float _fDeltaTime)
+	void ForceTOne::Init()
+	{
+		SetFlags(FLAG_ACTIVE);
+	}
+
+	void ForceTOne::Update(const float _fDeltaTime)
 	{
 	}
 
-	void FormTOne::FixedUpdate(const float _fDeltaTime)
+	void ForceTOne::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
-	void FormTOne::PostUpdate(void)
+	void ForceTOne::PostUpdate(void)
 	{
 	}
 
-	void FormTOne::GameObjectDestroy(void)
+	void ForceTOne::GameObjectDestroy(void)
 	{
 	}
 
-	void FormTOne::Unload(void)
+	void ForceTOne::Unload(void)
 	{
 	}
 
-	void Dystopia::FormTOne::OnCollisionEnter(const CollisionEvent& _colEvent)
-	{
-
-	}
-
-	void Dystopia::FormTOne::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::ForceTOne::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::FormTOne::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::ForceTOne::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::FormTOne::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::ForceTOne::OnCollisionExit(const CollisionEvent& _colEvent)
+	{
+
+	}
+
+	void Dystopia::ForceTOne::OnTriggerEnter(GameObject * const _obj)
 	{
 		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_obj->GetID());
 
@@ -127,59 +128,65 @@ namespace Dystopia
 		{
 			name = ptr->GetNamePtr();
 
+
 			if (!strcmp(name, "Goblin"))
 			{
-				DEBUG_PRINT(eLog::MESSAGE, "KNOCK!");
-				FormTOne_MSG::SendExternalMessage(_obj, "TakeDamage", 10);
-				FormTOne_MSG::SendExternalMessage(_obj, "Knock", 150, 0);
+				DEBUG_PRINT(eLog::MESSAGE, "Flamestrike");
+				ForceTOne_MSG::SendExternalMessage(_obj, "TakeDamage", 10);
+				ForceTOne_MSG::SendExternalMessage(_obj, "Knock", 150, firingDirection);
 			}
 		}
 	}
 
-	void Dystopia::FormTOne::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::ForceTOne::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::FormTOne::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::ForceTOne::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
-	FormTOne * FormTOne::Duplicate() const
+	ForceTOne * ForceTOne::Duplicate() const
 	{
-		return new FormTOne{};
+		return new ForceTOne{};
 	}
 
-	void FormTOne::Serialise(TextSerialiser& _ser) const
-	{
-	}
-
-	void FormTOne::Unserialise(TextSerialiser& _ser)
+	void ForceTOne::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-
-	const char * const FormTOne::GetBehaviourName() const
+	void ForceTOne::Unserialise(TextSerialiser& _ser)
 	{
-		return FormTOne::BehaviourName;
 	}
 
-	void FormTOne::EditorUI(void) noexcept
+
+	const char * const ForceTOne::GetBehaviourName() const
+	{
+		return ForceTOne::BehaviourName;
+	}
+
+	void ForceTOne::EditorUI(void) noexcept
 	{
 		
 		
 	}
-	
-	TypeErasure::TypeEraseMetaData FormTOne::GetMetaData()
+
+	TypeErasure::TypeEraseMetaData ForceTOne::GetMetaData()
 	{
-		static MetaData<Dystopia::FormTOne> mMetaData;
+		static MetaData<Dystopia::ForceTOne> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
 		return mReturn;
 	}
-	TypeErasure::TypeEraseMetaData const FormTOne::GetMetaData() const
+	TypeErasure::TypeEraseMetaData const ForceTOne::GetMetaData() const
 	{
-		static MetaData<Dystopia::FormTOne> mMetaData;
+		static MetaData<Dystopia::ForceTOne> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
 		return mReturn;
+	}
+
+	void ForceTOne::SetDirection(int _directionToSet)
+	{
+		firingDirection = _directionToSet;
 	}
 }
 

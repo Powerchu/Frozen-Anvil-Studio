@@ -99,8 +99,7 @@ namespace Dystopia
 		friend MetaData<FormTOne>;
 
 	public:
-		bool targetViable;
-		const char * name;
+		const char * name = nullptr;
 	};
 
 	extern "C"

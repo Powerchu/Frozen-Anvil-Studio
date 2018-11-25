@@ -86,8 +86,7 @@ namespace
 }
 
 // Entry point for editor
-int WinMain(HINSTANCE, HINSTANCE, char *, int)
-{
+int WinMain(HINSTANCE, HINSTANCE, char *, int){
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif

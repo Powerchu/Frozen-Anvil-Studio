@@ -237,7 +237,7 @@ namespace Dystopia
 		virtual void EditorUI(void) noexcept override;
 		
 		void TakeDamage(int _dmg, bool _isFacingRight);
-		void KnockUp(int _amt);
+		void Knock(int _amt, int _direction);
 		
 		// Reflection Stuff
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
@@ -250,7 +250,7 @@ namespace Dystopia
 		bool isColliding = false;
 		NeuralTree::BehaviourTree bTree;
 		
-		PP_MEMBERFUNC(Dystopia::Goblin, TakeDamage, KnockUp)
+		PP_MEMBERFUNC(Dystopia::Goblin, TakeDamage, Knock)
 		
 	private:
 		friend MetaData<Goblin>;

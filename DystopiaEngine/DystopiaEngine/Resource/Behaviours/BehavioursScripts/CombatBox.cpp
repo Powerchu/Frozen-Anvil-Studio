@@ -63,6 +63,7 @@ namespace Dystopia
 		}
 	}
 	CombatBox::CombatBox()
+		: targetViable(false)
 	{
 	}
 
@@ -140,9 +141,13 @@ namespace Dystopia
 
 	void Dystopia::CombatBox::OnTriggerExit(GameObject * const _obj)
 	{
-		if (!strcmp(name, _obj->GetNamePtr()))
+		if (_obj != nullptr && name != nullptr)
 		{
-			targetViable = false;
+			if (!strcmp(name, _obj->GetNamePtr()))
+			{
+				targetViable = false;
+				name = nullptr;
+			}
 		}
 	}
 

@@ -192,8 +192,9 @@ namespace Dystopia
 		}
 
 		auto& arrBehav = mpFocus->GetAllBehaviours();
-		for (auto & c : arrBehav)
+		for (unsigned i = 0; i < arrBehav.size(); i++)
 		{
+			auto & c = arrBehav[i];
 			EGUI::Display::HorizontalSeparator();
 			const bool open = EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } +"##" +
 				std::to_string(mpFocus->GetID()));
@@ -214,6 +215,12 @@ namespace Dystopia
 					}
 				}
 				EGUI::Display::EndTreeNode();
+			}
+
+			if(!show)
+			{
+				mpFocus->RemoveComponent(c);
+				i--;
 			}
 		}
 	}
@@ -343,7 +350,6 @@ namespace Dystopia
 		{
 			if (EGUI::Display::SelectableTxt("Remove"))
 			{
-				mpFocus->RemoveComponent(_pCom);
 				ret = true;
 			}
 			ImGui::EndPopup();

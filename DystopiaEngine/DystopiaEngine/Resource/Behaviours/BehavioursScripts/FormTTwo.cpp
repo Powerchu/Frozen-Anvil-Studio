@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	FormTOne.cpp
+\file	FormTTwo.cpp
 \author Dan Kang (100%)
 \par    email: dan.kang\@digipen.edu
 \brief
@@ -11,11 +11,12 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "FormTOne.h"
+#include "FormTTwo.h"
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
 #include "System/Behaviour/BehaviourSystem.h"
+#include "System/Physics/PhysicsSystem.h"
 
 #include "System/Scene/SceneSystem.h"
 #include "System/Collision/CollisionEvent.h"
@@ -24,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
 
+#include "Component/RigidBody.h"
 #include "Editor/EGUI.h"
 #include "Utility/DebugAssert.h"
 
@@ -31,7 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	namespace FormTOne_MSG
+	namespace FormTTwo_MSG
 	{
 		template<typename ... Ts>
 		void SendInternalMessage(Behaviour * _ptr, const char * _FuncName, Ts ... _Params)
@@ -62,124 +64,137 @@ namespace Dystopia
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
 		}
 	}
-	FormTOne::FormTOne()
+	FormTTwo::FormTTwo()
+		: rBody(nullptr)
 	{
 	}
 
-	FormTOne::~FormTOne()
+	FormTTwo::~FormTTwo()
 	{
 	}
 
-	void FormTOne::Load()
+	void FormTTwo::Load()
 	{
 	}
 
-	void FormTOne::Awake()
-	{
-		SetFlags(FLAG_ACTIVE);
-	}
-
-	void FormTOne::Init()
+	void FormTTwo::Awake()
 	{
 		SetFlags(FLAG_ACTIVE);
+		//rBody = GetOwner()->GetComponent<RigidBody>();
 	}
 
-	void FormTOne::Update(const float _fDeltaTime)
+	void FormTTwo::Init()
+	{
+		SetFlags(FLAG_ACTIVE);
+		//rBody = GetOwner()->GetComponent<RigidBody>();
+	}
+
+	void FormTTwo::Update(const float _fDeltaTime)
 	{
 	}
 
-	void FormTOne::FixedUpdate(const float _fDeltaTime)
+	void FormTTwo::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
-	void FormTOne::PostUpdate(void)
+	void FormTTwo::PostUpdate(void)
 	{
 	}
 
-	void FormTOne::GameObjectDestroy(void)
+	void FormTTwo::GameObjectDestroy(void)
 	{
 	}
 
-	void FormTOne::Unload(void)
+	void FormTTwo::Unload(void)
 	{
 	}
 
-	void Dystopia::FormTOne::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::FormTTwo::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
-
-	}
-
-	void Dystopia::FormTOne::OnCollisionStay(const CollisionEvent& _colEvent)
-	{
-
-	}
-
-	void Dystopia::FormTOne::OnCollisionExit(const CollisionEvent& _colEvent)
-	{
-
-	}
-
-	void Dystopia::FormTOne::OnTriggerEnter(GameObject * const _obj)
-	{
-		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_obj->GetID());
-
-		if (ptr)
+		/*if (_colEvent.mCollidedWith !=)
 		{
-			name = ptr->GetNamePtr();
+			name = _colEvent.mCollidedWith->GetNamePtr();
 
 			if (!strcmp(name, "Goblin"))
 			{
-				DEBUG_PRINT(eLog::MESSAGE, "KNOCK!");
-				FormTOne_MSG::SendExternalMessage(_obj, "TakeDamage", 10);
-				FormTOne_MSG::SendExternalMessage(_obj, "Knock", 150, 0);
+				DEBUG_PRINT(eLog::MESSAGE, "Flamestrike");
+				FormTTwo_MSG::SendExternalMessage(_obj, "TakeDamage", 10);
+				FormTTwo_MSG::SendExternalMessage(_obj, "Knock", 150, firingDirection);
 			}
-		}
+		}*/
 	}
 
-	void Dystopia::FormTOne::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::FormTTwo::OnCollisionStay(const CollisionEvent& _colEvent)
+	{
+
+	}
+
+	void Dystopia::FormTTwo::OnCollisionExit(const CollisionEvent& _colEvent)
+	{
+
+	}
+
+	void Dystopia::FormTTwo::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::FormTOne::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::FormTTwo::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	FormTOne * FormTOne::Duplicate() const
-	{
-		return new FormTOne{};
-	}
-
-	void FormTOne::Serialise(TextSerialiser& _ser) const
+	void Dystopia::FormTTwo::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
-	void FormTOne::Unserialise(TextSerialiser& _ser)
+	FormTTwo * FormTTwo::Duplicate() const
+	{
+		return new FormTTwo{};
+	}
+
+	void FormTTwo::Serialise(TextSerialiser& _ser) const
+	{
+	}
+
+	void FormTTwo::Unserialise(TextSerialiser& _ser)
 	{
 	}
 
 
-	const char * const FormTOne::GetBehaviourName() const
+	const char * const FormTTwo::GetBehaviourName() const
 	{
-		return FormTOne::BehaviourName;
+		return FormTTwo::BehaviourName;
 	}
 
-	void FormTOne::EditorUI(void) noexcept
+	void FormTTwo::EditorUI(void) noexcept
 	{
 		
 		
 	}
 	
-	TypeErasure::TypeEraseMetaData FormTOne::GetMetaData()
+	TypeErasure::TypeEraseMetaData FormTTwo::GetMetaData()
 	{
-		static MetaData<Dystopia::FormTOne> mMetaData;
+		static MetaData<Dystopia::FormTTwo> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
 		return mReturn;
 	}
-	TypeErasure::TypeEraseMetaData const FormTOne::GetMetaData() const
+	TypeErasure::TypeEraseMetaData const FormTTwo::GetMetaData() const
 	{
-		static MetaData<Dystopia::FormTOne> mMetaData;
+		static MetaData<Dystopia::FormTTwo> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
 		return mReturn;
+	}
+
+	void FormTTwo::SetDirection(int _direction)
+	{
+		if (_direction == 1)
+		{
+			//rBody->AddLinearImpulse({ -50 * rBody->GetMass(), 10 * rBody->GetMass(), 0 });
+		}
+
+		else
+		{
+			//rBody->AddLinearImpulse({ 50 * rBody->GetMass(), 10 * rBody->GetMass(), 0 });
+		}
 	}
 }
 

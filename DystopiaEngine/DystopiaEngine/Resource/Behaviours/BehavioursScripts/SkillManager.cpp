@@ -63,6 +63,13 @@ namespace Dystopia
 		}
 	}
 	SkillManager::SkillManager()
+		: spawnCount(0.0f)
+		, spawningSpike(false)
+		, oneSpawned(false)
+		, twoSpawned(false)
+		, currX(0.0f)
+		, currY(0.0f)
+		, currZ(0.0f)
 	{
 	}
 
@@ -86,6 +93,11 @@ namespace Dystopia
 
 	void SkillManager::Update(const float _fDeltaTime)
 	{
+		if (spawningSpike)
+		{
+			spawnCount = spawnCount + _fDeltaTime;
+			CheckSpawn();
+		}
 	}
 
 	void SkillManager::FixedUpdate(const float _fDeltaTime)
@@ -168,15 +180,94 @@ namespace Dystopia
 		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
 		return mReturn;
 	}
-	void SkillManager::CastForm(int _skillNum, bool isFacingRight)
+
+	void SkillManager::CastForm(int _skillNum, bool isFacingRight, float x, float y, float z)
+	{
+		currX = x;
+		currY = y;
+		currZ = z;
+
+		if (_skillNum == 0)
+			spawningSpike = true;
+
+		if (_skillNum == 1)
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "DEAD");
+
+			if (isFacingRight)
+			{
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSlamTwo.dobj", Math::Vec3D{x, y, z} + Math::Vec3D{-7, -4, 0}))
+				{
+					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 2);
+				}
+			}
+
+			else
+			{
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSlamTwo.dobj", Math::Vec3D{ x, y, z } +Math::Vec3D{ 7, -4, 0 }))
+				{
+					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
+				}
+			}
+		}
+	}
+
+	void SkillManager::CastForce(int _skillNum, bool isFacingRight, float x, float y, float z)
 	{
 		if (_skillNum == 0)
 		{
-			DEBUG_PRINT(eLog::MESSAGE, "CAST SPIKES");
+			if (isFacingRight)
+			{
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceFlameOne.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ 15, -2,0 }))
+				{
+					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 2);
+				}
+			}
+			
+			else
+			{
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceFlameOne.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ -15, -2,0 }))
+				{
+					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
+				}
+			}
 		}
+
 	}
-	void SkillManager::CastForce(int _skillNum, bool isFacingRight)
+
+	void SkillManager::CheckSpawn()
 	{
+		if (spawnCount > 0.25f && !oneSpawned)
+		{
+			oneSpawned = true;
+			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", Math::Vec3D{ currX, currY, currZ } +Math::Vec3D{ 12,-6.5,0 }))
+			{
+				
+			}
+		}
+
+		else if (spawnCount > 0.5f && !twoSpawned)
+		{
+			twoSpawned = true;
+			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", Math::Vec3D{ currX, currY, currZ } + Math::Vec3D{ 20,-4,0 }))
+			{
+				auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+				ptr->GetComponent<Transform>()->SetScale(scale.x, scale.y * 2, scale.z);
+			}
+		}
+
+		else if (spawnCount > 0.75f)
+		{
+			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", Math::Vec3D{ currX, currY, currZ } + Math::Vec3D{ 30,-2.5,0 }))
+			{
+				auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+				ptr->GetComponent<Transform>()->SetScale(scale.x * 1.5f, scale.y * 2.5f, scale.z);
+				spawningSpike = false;
+				spawnCount = 0.0f;
+				oneSpawned = false;
+				twoSpawned = false;
+			}
+		}
 	}
 }
 

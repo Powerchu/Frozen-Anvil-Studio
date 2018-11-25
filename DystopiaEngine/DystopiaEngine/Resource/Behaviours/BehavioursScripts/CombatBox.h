@@ -105,7 +105,7 @@ namespace Dystopia
 
 	public:
 		bool targetViable;
-		const char * name;
+		const char * name = nullptr;
 
 	};
 

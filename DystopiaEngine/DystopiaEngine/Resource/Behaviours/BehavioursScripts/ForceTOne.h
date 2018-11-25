@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	SkillManager.h
+\file	ForceTOne.h
 \author Dan Kang (100%)
 \par    email: dan.kang\@digipen.edu
 \brief
@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _SkillManager_H_
-#define _SkillManager_H_
+#ifndef _ForceTOne_H_
+#define _ForceTOne_H_
 
 #define str(s) #s
 
@@ -20,16 +20,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
 #include "Behaviour/BehaviourMemberFunc.h"
-#include "Math/MathLib.h"
 
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
-	class SkillManager : Behaviour
+	class ForceTOne : Behaviour
 	{
 	public:
-		static constexpr const char * BehaviourName = str(SkillManager);
+		static constexpr const char * BehaviourName = str(ForceTOne);
 #if !EDITOR
 		
 		using SYSTEM = BehaviourSystem;
@@ -39,13 +38,13 @@ namespace Dystopia
 		// };
 
 #endif
-		virtual const std::string GetEditorName(void) const override { return "SkillManager"; }
-		static uint64_t constexpr mSkillManagerID = 18446744072287745024;
+		virtual const std::string GetEditorName(void) const override { return "ForceTOne"; }
+		static uint64_t constexpr mForceTOneID = 18446744071849729024;
 
 		// Default Constructor for this Behaviour - init your variables here
-		SkillManager();
+		ForceTOne();
 		// Default Destructor for this Behaviour - don't touch if you dk, else ask the tech team
-		~SkillManager();
+		~ForceTOne();
 
 		// Load will never be called
 		virtual void Load(void) override; 
@@ -86,55 +85,46 @@ namespace Dystopia
 		virtual const char * const GetBehaviourName() const;
 
 		// Don't touch
-		virtual SkillManager * Duplicate() const;
+		virtual ForceTOne * Duplicate() const;
 
 		// Don't touch
 		virtual void EditorUI(void) noexcept override;
 
-		void CastForm(int _skillNum, bool isFacingRight, float spawnX, float spawnY, float spawnZ);
-		void CastForce(int _skillNum, bool isFacingRight, float spawnX, float spawnY, float spawnZ);
-		void CheckSpawn();
-		
+		void SetDirection(int _directionToSet);
+
 		// Reflection Stuff - Don't Touch
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 
-		PP_MEMBERFUNC(Dystopia::SkillManager, CastForm, CastForce)
+		PP_MEMBERFUNC(Dystopia::ForceTOne, SetDirection)
 
 	private:
 		// Don't touch
-		friend MetaData<SkillManager>;
-	
-	//member variables
+		friend MetaData<ForceTOne>;
+
 	public:
-		float spawnCount;
-		float currX;
-		float currY;
-		float currZ;
-	private:
-		bool spawningSpike;
-		bool oneSpawned;
-		bool twoSpawned;
+		const char * name = nullptr;
+		int firingDirection;
 	};
 
 	extern "C"
 	{
-		DllExport SkillManager * SkillManagerClone()
+		DllExport ForceTOne * ForceTOneClone()
 		{
-			return new SkillManager;
+			return new ForceTOne;
 		}
 	}
 }
 
 /*Keep this if you do not want to show anything in Editor*/
-PP_REFLECT_EMPTY(Dystopia::SkillManager)
+PP_REFLECT_EMPTY(Dystopia::ForceTOne)
 /*
   Uncomment the line PP_REFLECT and add in the names of the variable you want to show
   Comment out PP_REFLECT_EMPTY.
 */
-//PP_REFLECT(Dystopia::SkillManager)
+//PP_REFLECT(Dystopia::ForceTOne)
 
-#endif //_SkillManager_H_
+#endif //_ForceTOne_H_
 
 
