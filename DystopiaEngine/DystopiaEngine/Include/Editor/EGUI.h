@@ -378,17 +378,14 @@ namespace EGUI
 						DEBUG_ASSERT(payload2->DataSize != sizeof(Specified), "Error at EGUI");
 						return static_cast<Specified*>(payload3->Data);
 					}
-					else
-						ImGui::EndDragDropTarget();
 				default:
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GetPayloadString(_tagLoad)))
 					{
 						DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
 						return static_cast<Specified*>(payload->Data);
 					}
-					else
-						ImGui::EndDragDropTarget();
 				}
+				ImGui::EndDragDropTarget();
 			}
 			return nullptr;
 		}
