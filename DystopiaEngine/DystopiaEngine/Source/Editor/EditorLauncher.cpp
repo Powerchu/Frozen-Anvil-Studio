@@ -172,11 +172,6 @@ HashString Editor::EditorLauncher::GetProjFile(void) const
 	return mProjFileSelected;
 }
 
-bool Editor::EditorLauncher::IsExit(void) const
-{
-	return false;
-}
-
 
 /****************************************************************** Private Functions *********************************************************************/
 

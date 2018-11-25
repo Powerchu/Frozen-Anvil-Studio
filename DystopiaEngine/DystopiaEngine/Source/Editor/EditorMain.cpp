@@ -135,6 +135,7 @@ void Editor::EditorMain::Update(void)
 		EditorPanel *p = mArrPanels[i];
 		p->SetSize(EGUI::Docking::GetTabSize(p->GetLabel().c_str()) - Math::Vec2{ 8, 12 });
 		p->SetPosition(EGUI::Docking::GetTabPosition(p->GetLabel().c_str()));
+		//p->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 		{
 			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scopeT{ p->GetLabel().c_str(), "Update" };
 			p->Update(mfDelta);
@@ -303,9 +304,6 @@ void Editor::EditorMain::ProjectLauncher(void)
 	auto serialW = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
 	launcher.SaveSettings(serialW);
 	launcher.Shutdown();
-
-	if (launcher.IsExit())
-		ChangeState(eState::EXIT);
 
 	mProjFolder = launcher.GetProjFolder();
 	mProjFile = launcher.GetProjFile();
