@@ -42,7 +42,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 static constexpr unsigned long LauncherStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 static constexpr unsigned long LauncherStyleEx = WS_EX_APPWINDOW;
-static const char* g_SubFolders[11]=
+static const char* g_SubFolders[SUBFOLDER_COUNT]=
 {
 	"Asset",
 	"Audio",
@@ -92,7 +92,7 @@ void Editor::EditorLauncher::Update(float)
 
 	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0,0,0,0 });
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.3f,0.3f,0.3f, 1.f });
-	ImGui::SetNextWindowPos(ImVec2{ 0,0 });
+	ImGui::SetNextWindowPos(ImVec2{ 0, 0 });
 	ImGui::SetNextWindowSize(ImVec2{ LAUNCHER_WIDTH, LAUNCHER_HEIGHT });
 	ImGui::Begin("Projects", nullptr, flag);
 	{
@@ -172,6 +172,11 @@ HashString Editor::EditorLauncher::GetProjFile(void) const
 	return mProjFileSelected;
 }
 
+bool Editor::EditorLauncher::IsExit(void) const
+{
+	return false;
+}
+
 
 /****************************************************************** Private Functions *********************************************************************/
 
@@ -188,7 +193,7 @@ void Editor::EditorLauncher::TopBar(float _w, float _h)
 	ImGui::BeginChild("Top Bar", ImVec2{ _w, _h }, true);
 	ImGui::PopStyleVar();
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + subHeight * 0.5f);
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + subHeight * 0.45f);
 
 	ImGui::BeginChild("SubButton1", ImVec2{ w1 + 2.f , subHeight * 0.7f }, true);
 	if (InvisibleBtn("Projects", w1, subHeight * 0.6f, mbProjectView))
@@ -237,38 +242,22 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 		}
 
 		float sectionW = w * 0.75f;
-		float sectionH = h;
+		float sectionH = h * 0.92f;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::BeginChild("ListOfRecentProjects", ImVec2{ sectionW , sectionH }, true );
-		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4{ 0,0,0,0 });
 		for (size_t i = 0; i < mArrProjFolders.size(); ++i)
 		{
 			ImGui::PushID(static_cast<int>(i));
 			if (ProjectDetails(mArrProjFolders[i], sectionW, sectionH, mCurrentlySelected == static_cast<int>(i)))
-			{
 				mCurrentlySelected = static_cast<int>(i);
-				if (ImGui::IsMouseDoubleClicked(0))
-				{
-					mProjFolderSelected = mArrProjFolders[i];
-
-					size_t pos = mProjFolderSelected.find_last_of("\\");
-					if (pos == HashString::nPos)
-						pos = mProjFolderSelected.find_last_of("/");
-					mProjFileSelected = HashString{ mProjFileSelected.cbegin() + 1 + pos, mProjFolderSelected.cend() };
-					mProjFileSelected += ".dyst";
-
-					mbClosing = true;
-				}
-			}
 			ImGui::Separator();
 			ImGui::PopID();
 		}
-		ImGui::PopStyleColor();
 		ImGui::EndChild();
 		ImGui::PopStyleVar();
 
 		ImGui::SameLine();
-		float leftSectionW = w * 0.25f - ImGui::GetStyle().WindowPadding.x;
+		float leftSectionW = w * 0.23f - ImGui::GetStyle().WindowPadding.x;
 		ImGui::BeginChild("Launch", ImVec2{ leftSectionW, sectionH }, true);
 		BrowseProject(leftSectionW, sectionH);
 		OpenProject(leftSectionW, sectionH);
@@ -276,7 +265,7 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 	}
 	else
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ (w / 2) - (w / 3), h / 5 });
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ (w / 2.1f) - (w / 3), h / 5.2f });
 		ImGui::BeginChild("CreatingProject", ImVec2{ w, h }, true);
 		CreateFields(w, h);
 		ImGui::EndChild();
@@ -391,6 +380,7 @@ bool Editor::EditorLauncher::ProjectDetails(const HashString& _path, float _w, f
 		pos = _path.rfind("\\");
 	HashString path{ _path.cbegin(), _path.cbegin() + pos };
 	HashString name{ _path.cbegin() + pos + 1, _path.cend() };
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 5.f,0 });
 	ImGui::BeginChild(_path.c_str(), ImVec2{ width, fixedH }, true);
 	{
 		auto startingPos = ImGui::GetCursorPos();
@@ -414,6 +404,7 @@ bool Editor::EditorLauncher::ProjectDetails(const HashString& _path, float _w, f
 		ImGui::PopStyleColor();
 	}
 	ImGui::EndChild();
+	ImGui::PopStyleVar();
 	return ret;
 }
 
@@ -446,7 +437,7 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 	}
 	ImGui::SameLine();
 	{
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 10.f);
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 20.f);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
 		ImGui::BeginChild("Emptiness", ImVec2{ 10.f, 40.f});
 		ImGui::EndChild();
@@ -468,6 +459,7 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 
 	bool active = (strlen(mNameBuffer) && strlen(mLocBuffer));
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(2);
+
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (itemWidth / 2) - (btnX / 2));

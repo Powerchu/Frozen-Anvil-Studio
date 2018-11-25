@@ -295,9 +295,6 @@
     <ClCompile Include="Source\Editor\ScriptFormatter.cpp">
       <Filter>Editor\Main\Scripts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EditorInput.cpp">
-      <Filter>Editor\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\EditorMain.cpp">
       <Filter>Editor\Main</Filter>
     </ClCompile>
@@ -864,12 +861,6 @@
     <ClInclude Include="Include\Editor\ScriptFormatter.h">
       <Filter>Editor\Main\Scripts</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Editor\EditorHotkeys.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Editor\EditorInput.h">
-      <Filter>Editor\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\EditorStates.h">
       <Filter>Editor\Main\Systems\States</Filter>
     </ClInclude>
@@ -1074,9 +1065,6 @@
     <Filter Include="Editor\Docking">
       <UniqueIdentifier>{06af060e-209f-4067-a5e6-2f4b596f578b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Commands">
-      <UniqueIdentifier>{573a6f53-0ee9-4c6b-bda7-2e8af2e8b43c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor\Payload">
       <UniqueIdentifier>{618f59c4-4557-4253-8ca9-16e74a8be22a}</UniqueIdentifier>
     </Filter>
@@ -1104,9 +1092,6 @@
     <Filter Include="Utility\GUID">
       <UniqueIdentifier>{e32cb155-6561-4a7a-9a47-96058953c24c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\Editor Tabs">
-      <UniqueIdentifier>{c13e922e-c5d1-472d-af5f-95bb50e4100a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Engine\Systems\Profiler">
       <UniqueIdentifier>{c8dea79e-90fb-4f6f-ab66-dec8db735338}</UniqueIdentifier>
     </Filter>
@@ -1131,15 +1116,6 @@
     <Filter Include="Game Engine\SubSystems\Logger">
       <UniqueIdentifier>{7c6d8c15-bbec-4123-aaf7-2edb432d219b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editor\AuxMetaHelpers">
-      <UniqueIdentifier>{c891734a-f64c-422c-9326-4d11d5d8b6f2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Factory">
-      <UniqueIdentifier>{3c1970b5-39ed-4b21-846a-39fb24566cc5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Clipboard">
-      <UniqueIdentifier>{cf5b3310-da32-4143-84b9-30e7d09b1840}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Engine\Systems\Graphic\Framebuffer">
       <UniqueIdentifier>{65da04fa-f08d-4a05-8517-ee74099485c3}</UniqueIdentifier>
     </Filter>
@@ -1163,9 +1139,6 @@
     </Filter>
     <Filter Include="Editor\Gizmo">
       <UniqueIdentifier>{c678684a-2024-498c-b278-53911ea1ab17}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Editor\Admin">
-      <UniqueIdentifier>{7051bdf2-210a-46b3-92f9-3074c29460c6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Math\MetaMath">
       <UniqueIdentifier>{08413c81-cbde-4575-842c-fc63e39a282d}</UniqueIdentifier>

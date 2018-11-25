@@ -46,46 +46,49 @@ void Editor::ColorScheme::Load(void)
 
 bool Editor::ColorScheme::Init(void)
 {
+	ImGui::StyleColorsDark();
 	auto& style = ImGui::GetStyle();
-	auto arrayOfColors = style.Colors;
 
-	mArrColors[eCOLOR_DATA_Text] = arrayOfColors[ImGuiCol_Text];
-	mArrColors[eCOLOR_DATA_TextDisabled] = arrayOfColors[ImGuiCol_TextDisabled];
-	mArrColors[eCOLOR_DATA_TextSelected] = arrayOfColors[ImGuiCol_WindowBg];
-	mArrColors[eCOLOR_DATA_WindowBG] = arrayOfColors[ImGuiCol_ChildBg];
-	mArrColors[eCOLOR_DATA_ChildWindowBG] = arrayOfColors[ImGuiCol_PopupBg];
-	mArrColors[eCOLOR_DATA_PopupBG] = arrayOfColors[ImGuiCol_Border];
-	mArrColors[eCOLOR_DATA_Border] = arrayOfColors[ImGuiCol_BorderShadow];
-	mArrColors[eCOLOR_DATA_BorderShadow] = arrayOfColors[ImGuiCol_FrameBg];
-	mArrColors[eCOLOR_DATA_Widget] = arrayOfColors[ImGuiCol_FrameBgHovered];
-	mArrColors[eCOLOR_DATA_WidgetHovered] = arrayOfColors[ImGuiCol_FrameBgActive];
-	mArrColors[eCOLOR_DATA_WidgetActive] = arrayOfColors[ImGuiCol_TitleBg];
-	mArrColors[eCOLOR_DATA_Title] = arrayOfColors[ImGuiCol_TitleBgActive];
-	mArrColors[eCOLOR_DATA_TitleHovered] = arrayOfColors[ImGuiCol_TitleBgCollapsed];
-	mArrColors[eCOLOR_DATA_TitleActive] = arrayOfColors[ImGuiCol_MenuBarBg];
-	mArrColors[eCOLOR_DATA_MenuBar] = arrayOfColors[ImGuiCol_ScrollbarBg];
-	mArrColors[eCOLOR_DATA_ScrollBG] = arrayOfColors[ImGuiCol_ScrollbarGrab];
-	mArrColors[eCOLOR_DATA_Scroll] = arrayOfColors[ImGuiCol_ScrollbarGrabHovered];
-	mArrColors[eCOLOR_DATA_ScrollHovered] = arrayOfColors[ImGuiCol_ScrollbarGrabActive];
-	mArrColors[eCOLOR_DATA_ScrollActive] = arrayOfColors[ImGuiCol_CheckMark];
-	mArrColors[eCOLOR_DATA_CheckMark] = arrayOfColors[ImGuiCol_SliderGrab];
-	mArrColors[eCOLOR_DATA_Slider] = arrayOfColors[ImGuiCol_SliderGrabActive];
-	mArrColors[eCOLOR_DATA_SliderActive] = arrayOfColors[ImGuiCol_Button];
-	mArrColors[eCOLOR_DATA_Button] = arrayOfColors[ImGuiCol_ButtonHovered];
-	mArrColors[eCOLOR_DATA_ButtonHovered] = arrayOfColors[ImGuiCol_ButtonActive];
-	mArrColors[eCOLOR_DATA_ButtonActive] = arrayOfColors[ImGuiCol_Header];
-	mArrColors[eCOLOR_DATA_Header] = arrayOfColors[ImGuiCol_HeaderHovered];
-	mArrColors[eCOLOR_DATA_HeaderHovered] = arrayOfColors[ImGuiCol_HeaderActive];
-	mArrColors[eCOLOR_DATA_HeaderActive] = arrayOfColors[ImGuiCol_Separator];
-	mArrColors[eCOLOR_DATA_Separator] = arrayOfColors[ImGuiCol_SeparatorHovered];
-	mArrColors[eCOLOR_DATA_SeparatorHovered] = arrayOfColors[ImGuiCol_SeparatorActive];
-	mArrColors[eCOLOR_DATA_SeparatorActive] = arrayOfColors[ImGuiCol_ResizeGrip];
-	mArrColors[eCOLOR_DATA_Resizer] = arrayOfColors[ImGuiCol_ResizeGripHovered];
-	mArrColors[eCOLOR_DATA_ResizerHovered] = arrayOfColors[ImGuiCol_ResizeGripActive];
-	mArrColors[eCOLOR_DATA_ResizerActive] = arrayOfColors[ImGuiCol_PlotLines];
-	mArrColors[eCOLOR_DATA_Graph] = arrayOfColors[ImGuiCol_PlotLinesHovered];
-	mArrColors[eCOLOR_DATA_GraphHovered] = arrayOfColors[ImGuiCol_TextSelectedBg];
-	mArrColors[eCOLOR_DATA_Payload] = arrayOfColors[ImGuiCol_DragDropTarget];
+	const auto arrayOfColors = style.Colors;
+
+	mArrColors[eCOLOR_DATA_Text]				= arrayOfColors[ImGuiCol_Text];
+	mArrColors[eCOLOR_DATA_TextDisabled]		= arrayOfColors[ImGuiCol_TextDisabled];
+	mArrColors[eCOLOR_DATA_TextSelected]		= arrayOfColors[ImGuiCol_WindowBg];
+	mArrColors[eCOLOR_DATA_WindowBG]			= arrayOfColors[ImGuiCol_ChildBg];
+	mArrColors[eCOLOR_DATA_ChildWindowBG]		= arrayOfColors[ImGuiCol_PopupBg];
+	mArrColors[eCOLOR_DATA_PopupBG]				= arrayOfColors[ImGuiCol_Border];
+	mArrColors[eCOLOR_DATA_Border]				= arrayOfColors[ImGuiCol_BorderShadow];
+	mArrColors[eCOLOR_DATA_BorderShadow]		= arrayOfColors[ImGuiCol_FrameBg];
+	mArrColors[eCOLOR_DATA_Widget]				= arrayOfColors[ImGuiCol_FrameBgHovered];
+	mArrColors[eCOLOR_DATA_WidgetHovered]		= arrayOfColors[ImGuiCol_FrameBgActive];
+	mArrColors[eCOLOR_DATA_WidgetActive]		= arrayOfColors[ImGuiCol_TitleBg];
+	mArrColors[eCOLOR_DATA_Title]				= arrayOfColors[ImGuiCol_TitleBgActive];
+	mArrColors[eCOLOR_DATA_TitleHovered]		= arrayOfColors[ImGuiCol_TitleBgCollapsed];
+	mArrColors[eCOLOR_DATA_TitleActive]			= arrayOfColors[ImGuiCol_MenuBarBg];
+	mArrColors[eCOLOR_DATA_MenuBar]				= arrayOfColors[ImGuiCol_ScrollbarBg];
+	mArrColors[eCOLOR_DATA_ScrollBG]			= arrayOfColors[ImGuiCol_ScrollbarGrab];
+	mArrColors[eCOLOR_DATA_Scroll]				= arrayOfColors[ImGuiCol_ScrollbarGrabHovered];
+	mArrColors[eCOLOR_DATA_ScrollHovered]		= arrayOfColors[ImGuiCol_ScrollbarGrabActive];
+	mArrColors[eCOLOR_DATA_ScrollActive]		= arrayOfColors[ImGuiCol_CheckMark];
+	mArrColors[eCOLOR_DATA_CheckMark]			= arrayOfColors[ImGuiCol_SliderGrab];
+	mArrColors[eCOLOR_DATA_Slider]				= arrayOfColors[ImGuiCol_SliderGrabActive];
+	mArrColors[eCOLOR_DATA_SliderActive]		= arrayOfColors[ImGuiCol_Button];
+	mArrColors[eCOLOR_DATA_Button]				= arrayOfColors[ImGuiCol_ButtonHovered];
+	mArrColors[eCOLOR_DATA_ButtonHovered]		= arrayOfColors[ImGuiCol_ButtonActive];
+	mArrColors[eCOLOR_DATA_ButtonActive]		= arrayOfColors[ImGuiCol_Header];
+	mArrColors[eCOLOR_DATA_Header]				= arrayOfColors[ImGuiCol_HeaderHovered];
+	mArrColors[eCOLOR_DATA_HeaderHovered]		= arrayOfColors[ImGuiCol_HeaderActive];
+	mArrColors[eCOLOR_DATA_HeaderActive]		= arrayOfColors[ImGuiCol_Separator];
+	mArrColors[eCOLOR_DATA_Separator]			= arrayOfColors[ImGuiCol_SeparatorHovered];
+	mArrColors[eCOLOR_DATA_SeparatorHovered]	= arrayOfColors[ImGuiCol_SeparatorActive];
+	mArrColors[eCOLOR_DATA_SeparatorActive]		= arrayOfColors[ImGuiCol_ResizeGrip];
+	mArrColors[eCOLOR_DATA_Resizer]				= arrayOfColors[ImGuiCol_ResizeGripHovered];
+	mArrColors[eCOLOR_DATA_ResizerHovered]		= arrayOfColors[ImGuiCol_ResizeGripActive];
+	mArrColors[eCOLOR_DATA_ResizerActive]		= arrayOfColors[ImGuiCol_PlotLines];
+	mArrColors[eCOLOR_DATA_Graph]				= arrayOfColors[ImGuiCol_PlotLinesHovered];
+	mArrColors[eCOLOR_DATA_GraphHovered]		= arrayOfColors[ImGuiCol_TextSelectedBg];
+	mArrColors[eCOLOR_DATA_Payload]				= arrayOfColors[ImGuiCol_DragDropTarget];
+
 	return true;
 }
 
@@ -100,7 +103,7 @@ void Editor::ColorScheme::EditorUI(void)
 		EGUI::PushID(i);
 		EGUI::Display::Label(ToName(static_cast<eColorData>(i)).c_str());
 		ImGui::SameLine(static_cast<float>(mAlignment));
-		if (ImGui::ColorEdit4("MyColor##2f", (float*)&mArrColors[i], ImGuiColorEditFlags_Float))
+		if (ImGui::ColorEdit4("MyColor##2f", (float*)&mArrColors[i], ImGuiColorEditFlags_PickerHueBar))
 			Apply();
 		EGUI::PopID();
 	}

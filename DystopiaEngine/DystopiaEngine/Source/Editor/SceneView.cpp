@@ -31,6 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Texture2D.h"
 #include "System/Camera/CameraSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
+#include "System/Input/InputMap.h"
 
 #include "Utility/GUID.h"
 #include "Utility/DebugAssert.h"
@@ -86,6 +87,14 @@ namespace Editor
 
 	void SceneView::Update(float _dt)
 	{
+		if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_W))
+		{
+			SetGizmoTranslate();
+		}
+		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_E))
+		{
+			SetGizmoScaler();
+		}
 		Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera");
 		if (temp)
 			mpSceneCamera = temp->GetComponent<Dystopia::Camera>();
@@ -452,10 +461,13 @@ namespace Editor
 
 	Math::Vec2 SceneView::GetWorldToScreen(const Math::Pt3D& curPos)
 	{
+		auto pos = curPos;
+		pos.z = static_cast<float>(1.f);
+		pos.w = 1.f;
 		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
 		if (!mpSceneCamera) return Math::Vec2{ 0,0 };
 
-		auto equation1 = mpSceneCamera->GetProjectionMatrix() * (mpSceneCamera->GetViewMatrix() * curPos);
+		auto equation1 = mpSceneCamera->GetProjectionMatrix() * (Math::Inverse(mpSceneCamera->GetViewMatrix()) * pos);
 
 
 		return Math::Vec2{ (equation1.x * (mImgSize.x / 2)) + (Size().x / 2),
@@ -693,7 +705,7 @@ namespace Editor
 		auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 
 		Math::Pt3D curPos = obj.GetComponent<Dystopia::Transform>()->GetGlobalPosition();
-		Math::Vec4 cScale = obj.GetComponent<Dystopia::Transform>()->GetScale();
+		Math::Vec4 cScale = obj.GetComponent<Dystopia::Transform>()->GetGlobalScale();
 		Math::Vec2 screenPos = GetWorldToScreen(curPos);
 
 		float changeX = 0;
