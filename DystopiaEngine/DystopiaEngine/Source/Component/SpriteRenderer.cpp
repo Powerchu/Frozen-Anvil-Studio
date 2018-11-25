@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Component/SpriteRenderer.h"
+#include "Component/Transform.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Base/ComponentDonor.h"
@@ -20,11 +21,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/TextureAtlas.h"
 #include "System/Graphics/TextureSystem.h"
 #include "System/Graphics/Shader.h"
+#include "System/Graphics/Mesh.h"
 
 #include "Object/GameObject.h"
 
 #if EDITOR
 #include "Editor/EGUI.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorCommands.h"
 #endif
 
 Dystopia::SpriteRenderer::SpriteRenderer(void) noexcept
@@ -183,75 +187,106 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 
 	TextureFields();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	if (mpAtlas && mpTexture)
+	{
+		for (size_t i = 0; i < mAnimations.size(); ++i)
+		{
+			EGUI::PushID(i);
+			SpriteSheetFields(i);
+			EGUI::PopID();
+		}
+	}
 
 	EGUI::PopLeftAlign();
 #endif
+}
+
+void Dystopia::SpriteRenderer::SetTexture(Texture* _pTexture) noexcept
+{
+	Renderer::SetTexture(_pTexture);
+	mpAtlas = _pTexture ? EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GetAtlas(_pTexture->GetName()) : nullptr;
 }
 
 void Dystopia::SpriteRenderer::TextureFields(void)
 {
 #if EDITOR
 
+	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 	EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName() : "-empty-", true);
-	if (auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
+	if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
 	{
+		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&SpriteRenderer::SetTexture, mpTexture), 
+										   cmd->MakeFnCommand(&SpriteRenderer::SetTexture, 
+															  EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str())
+															  ));
 		EGUI::Display::EndPayloadReceiver();
-	}
-
-	if (t)
-	{
-		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
-		SetTexture(pTex);
-		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
-		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pTex);
-		//EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 	}
 
 	EGUI::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 	{
-		SetTexture(nullptr);
-		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
-		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, nullptr);
-		//EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&SpriteRenderer::SetTexture, mpTexture), 
+										   cmd->MakeFnCommand(&SpriteRenderer::SetTexture, nullptr));
 	}
 
 	if (mpTexture)
 	{
 		EGUI::Display::Label("Preview");
 		EGUI::SameLine(DefaultAlighnmentSpacing, 80);
-		float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
+		const float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
 		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
 
 		EGUI::SameLine();
 		if (EGUI::Display::Button("Auto", Math::Vec2{ 35, 20 }))
 		{
-			auto w = static_cast<float>(mpTexture->GetWidth());
-			auto h = static_cast<float>(mpTexture->GetHeight());
-			w /= 10;
-			h /= 10;
-			GetOwner()->GetComponent<Transform>()->SetScale(Math::Vec4{ w, h, 1.f });
+			auto scale = GetOwner()->GetComponent<Transform>()->GetScale();
+			auto nScale = scale;
+			nScale.x = static_cast<float>(mpTexture->GetWidth()) / 10;
+			nScale.y = static_cast<float>(mpTexture->GetHeight()) / 10;
+			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, scale),
+											   cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, nScale));
 		}
 	}
 
+	if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName() : "-no mesh-", true))
+	{
 
+	}
+	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
+	{
+		EGUI::Display::EndPayloadReceiver();
+	}
 
+	if (EGUI::Display::EmptyBox("Shader", 150, "shader has no name or id", true))
+	{
+
+	}
+	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
+	{
+		EGUI::Display::EndPayloadReceiver();
+	}
+
+#endif
+}
+
+void Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
+{
+#if EDITOR
+	auto& anim = mAnimations[_i];
+	HashString identifier{ "Animation" };
+	identifier += _i;
+	if (EGUI::Display::StartTreeNode(identifier.c_str()))
+	{
+		static constexpr int maxSize = 256;
+		char buffer[maxSize];
+		strcpy_s(buffer, 256, anim.mstrName.c_str());
+		if (EGUI::Display::TextField("Name", buffer, maxSize))
+		{
+			
+		}
+
+		EGUI::Display::EndTreeNode();
+	}
 
 #endif
 }

@@ -75,6 +75,8 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 
+		void SetTexture(Texture* _pTexture) noexcept;
+
 	private:
 
 		TextureAtlas* mpAtlas;
@@ -92,7 +94,7 @@ namespace Dystopia
 
 
 		void TextureFields(void);
-
+		void SpriteSheetFields(const size_t&);
 
 	};
 }
