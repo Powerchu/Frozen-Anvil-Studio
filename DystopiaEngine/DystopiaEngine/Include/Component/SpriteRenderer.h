@@ -75,57 +75,24 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 
-		bool AnimationFinished(void) const { return false; }
-		//void SetSpeed(float) {}
-		void SetPlay(bool) {}
-
-		unsigned GetPlayingFrame(void) const;
-		bool IsAnimPlaying(void) const;
-		void PlayAnim(void);
-		void StopAnim(void);
-		void SetSpeed(float);
-
 	private:
 
 		TextureAtlas* mpAtlas;
-
-		//struct SpriteSheet
-		//{
-		//	unsigned mnID; //section id in the atlas
-		//	Math::Vec2 mUVCoord;
-		//	std::string mstrName;
-		//	int mnCol, mnRow, mnWidth, mnHeight, mnCutoff, mnStartAt; 
-		//	bool mbLoop, mbFinished;
-		//};
-		//
-		//AutoArray<SpriteSheet> mAnimations;
-		//int mnID, mnCol, mnRow;
-		//float mfFrameTime, mfAccTime;
-		//
-		//bool mbPlayAnim;
-		//
-		//void SpriteSheetUI(SpriteSheet&);
-		//void GetAtlas(void);
-		//void RemoveAtlas(void);
-		//void LoadAnimIntoAtlas(void);
-		//void AddDefaultToAtlas(void);
-
 		struct SpriteSheet
 		{
 			HashString mstrName;
-			unsigned mnID; //atlas id  
-			int mnCol, mnRow, mnCutoff, mnStartAt;
+			unsigned mnID; 
+			int mnCol, mnRow;
 			bool mbLoop;
 		};
 
 		AutoArray<SpriteSheet> mAnimations;
 		int mnID, mnCol, mnRow;
 		float mfFrameTime, mfAccTime;
-		bool mbPlay;
 
-		void CheckAtlas(void);
-		void AddDefaultAnim(void);
-		void EditAnim(SpriteSheet&);
+
+		void TextureFields(void);
+
 
 	};
 }

@@ -360,13 +360,35 @@ namespace EGUI
 		{
 			if (ImGui::BeginDragDropTarget())
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EGUI::GetPayloadString(_tagLoad)))
+				switch (_tagLoad)
 				{
-					DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
-					return static_cast<Specified*>(payload->Data);
+				case ALL_IMG:
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GetPayloadString(ePayloadTags::PNG)))
+					{
+						DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
+						return static_cast<Specified*>(payload->Data);
+					}
+					else if (const ImGuiPayload* payload2 = ImGui::AcceptDragDropPayload(GetPayloadString(ePayloadTags::DDS)))
+					{
+						DEBUG_ASSERT(payload2->DataSize != sizeof(Specified), "Error at EGUI");
+						return static_cast<Specified*>(payload2->Data);
+					}
+					else if (const ImGuiPayload* payload3 = ImGui::AcceptDragDropPayload(GetPayloadString(ePayloadTags::BMP)))
+					{
+						DEBUG_ASSERT(payload2->DataSize != sizeof(Specified), "Error at EGUI");
+						return static_cast<Specified*>(payload3->Data);
+					}
+					else
+						ImGui::EndDragDropTarget();
+				default:
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GetPayloadString(_tagLoad)))
+					{
+						DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
+						return static_cast<Specified*>(payload->Data);
+					}
+					else
+						ImGui::EndDragDropTarget();
 				}
-				else
-					ImGui::EndDragDropTarget();
 			}
 			return nullptr;
 		}

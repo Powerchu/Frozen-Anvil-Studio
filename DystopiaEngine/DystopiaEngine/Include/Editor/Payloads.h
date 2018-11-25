@@ -36,6 +36,7 @@ namespace EGUI
 		MP3,
 		DDS,
 		WAV,
+		ALL_IMG,
 
 		ePAY_LOAD_LAST
 	};
@@ -54,6 +55,7 @@ namespace EGUI
 		case MP3:			return "MP3";
 		case DDS:			return "DDS";
 		case WAV:			return "WAV";
+		case ALL_IMG:		return "A_IMG";
 		default:			return "ePAY_LOAD_LAST";
 		}
 	}
