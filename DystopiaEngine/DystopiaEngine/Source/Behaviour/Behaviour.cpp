@@ -48,6 +48,7 @@ void Dystopia::Behaviour::PostUpdate(void)
 
 void Dystopia::Behaviour::GameObjectDestroy(void)
 {
+	Component::GameObjectDestroy();
 }
 
 void Dystopia::Behaviour::Unload(void)
