@@ -71,6 +71,11 @@ namespace Dystopia
 		, attackCount(0)
 		, attackDelay(0.0f)
 		, isAttacking(false)
+		, currentType(true)
+		, spawnCount(0.0f)
+		, spawningSpike(false)
+		, oneSpawned(false)
+		, twoSpawned(false)
 	{
 	}
 
@@ -146,7 +151,14 @@ namespace Dystopia
 		MovePlayer(_fDeltaTime);
 		CheckMoving();
 		CheckAttack();
+
 		attackDelay = attackDelay + _fDeltaTime;
+
+		if (spawningSpike)
+		{
+			spawnCount = spawnCount + _fDeltaTime;
+			CheckSpawn();
+		}
 	}
 
 	void CharacterController::FixedUpdate(const float _fDeltaTime)
@@ -324,29 +336,27 @@ namespace Dystopia
 			}
 		}
 		
-		if (mpInputSys->IsKeyTriggered("Fireball"))
+		if (mpInputSys->IsKeyTriggered("Skill Y"))
 		{
+			spawningSpike = true;
+			const Math::Pt3D& spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
+
 			if (!mbIsFacingRight)
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{-40,-10,0}))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{-20,-7,0}))
 				{
-					if (auto rigidptr = ptr->GetComponent<RigidBody>())
+					/*if (auto rigidptr = ptr->GetComponent<RigidBody>())
 					{
 						auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
 						ptr->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z);
 						rigidptr->AddLinearImpulse({ -300 * rigidptr->GetMass(),20*rigidptr->GetMass(),0 });
-					}
+					}*/
 				}
 			}
 			else
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 40,-10,0 }))
-				{
-					if (auto rigidptr = ptr->GetComponent<RigidBody>())
-					{
-						rigidptr->AddLinearImpulse({ 300 * rigidptr->GetMass(),20 * rigidptr->GetMass(),0 });
-					}
-				}
+				
+
 			}
 		}
 
@@ -428,9 +438,46 @@ namespace Dystopia
 
 				//use linked skill
 				if (attackCount == 0)
+				{
+					DEBUG_PRINT(eLog::MESSAGE, "SENT");
 					CharacterController::CastLinked(0, currentType);
+				}
 
 				attackDelay = 0.0f;
+			}
+		}
+	}
+
+	void CharacterController::CheckSpawn()
+	{
+		if (spawnCount > 0.25f && !oneSpawned)
+		{
+			oneSpawned = true;
+			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 12,-6.5,0 }))
+			{
+			}
+		}
+
+		else if (spawnCount > 0.75f && !twoSpawned)
+		{
+			twoSpawned = true;
+			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 20,-4,0 }))
+			{
+				auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+				ptr->GetComponent<Transform>()->SetScale(scale.x, scale.y * 2, scale.z);
+			}
+		}
+
+		else if (spawnCount > 1.25f)
+		{
+			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 30,-2.5,0 }))
+			{
+				auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+				ptr->GetComponent<Transform>()->SetScale(scale.x * 1.5f, scale.y * 2.5f, scale.z);
+				spawningSpike = false;
+				spawnCount = 0.0f;
+				oneSpawned = false;
+				twoSpawned = false;
 			}
 		}
 	}

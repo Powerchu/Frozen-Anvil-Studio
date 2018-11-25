@@ -1,0 +1,38 @@
+[START_GameObject]
+2,[START_START_GO_DATA]
+18446744072797405184,65,"FormSpikeOne",
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+5,5,1,-36.329,5.06734,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GameObject]
+[START_Component]
+4,[START_Convex_Collider]
+646564352,1,18446744072797405184,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+7,[START_Renderer]
+1154598400,1,18446744072797405184,"..\DystopiaEngine\Resource\Asset\Environment\Prologue\rune_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0,0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_All Behaviours Block]
+2,"FormTOne",[START_Behaviour Block]
+0,
+[END_Behaviour Block]
+"DeleteSelf",[START_Behaviour Block]
+1,"destroyCount",[START_MEMBER VAR]
+0,[START_MEMBER VAR END]
+
+[END_Behaviour Block]
+
+[END_All Behaviours Block]
