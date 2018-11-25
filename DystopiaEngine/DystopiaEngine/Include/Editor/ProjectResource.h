@@ -14,66 +14,64 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR 
 #ifndef _PROJECT_RESOURCE_H_
 #define _PROJECT_RESOURCE_H_
-#include "EditorTab.h"
+//#include "EditorTab.h"
 #include "Editor/Payloads.h"
+#include "Editor/EditorPanel.h"
 
 typedef void *HANDLE;
 typedef unsigned long DWORD;
 
-namespace Dystopia
+namespace Editor
 {
 	/****************************************************************** PROJECT RESOURCE ********************************************************************/
 
-	class ProjectResource : public EditorTab
+	class ProjectResource : public EditorPanel //EditorTab
 	{
 	public:
-		static ProjectResource* GetInstance();
-		~ProjectResource();
+		//static ProjectResource* GetInstance();
+		ProjectResource(void);
+		~ProjectResource(void);
 
-		/* Init() is called immediately after the creation of the object */
-		virtual void Init() override;
-
-		/* Update() is called before Window(), so alter most variables (frame based) here to be printed in Window() later */
-		virtual void Update(const float&) override;
-
-		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
-		virtual void EditorUI() override;
-
-		/* Shutdown() is called right before deleting this object */
-		virtual void Shutdown() override;
-
-		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
-		virtual std::string GetLabel() const override;
+		void Load(void);
+		bool Init(void);
+		void Update(float);
+		void EditorUI(void);
+		void Shutdown(void);
+		void Message(eEMessage);
+		void SaveSettings(Dystopia::TextSerialiser& _out) const;
+		void LoadSettings(Dystopia::TextSerialiser& _in);
+		HashString GetLabel(void) const;
 
 		void FocusOnFile(const HashString& _fileName);
 		void RemoveFocusOnFile();
 
 	private:
-		ProjectResource(void);
 
-		const File*			mFocusedFile;
-		AutoArray<File*>	mArrAllFiles;
-		AutoArray<File*>	mArrFilesSearchedThisFrame;
-		AutoArray<File*>	mArrFilesSearchedLastFrame;
-		std::string			mLabel;
-		std::string			mResetToFile;
+		const Editor::File*		mFocusedFile;
+		AutoArray<Editor::File*>	mArrAllFiles;
+		AutoArray<Editor::File*>	mArrFilesSearchedThisFrame;
+		AutoArray<Editor::File*>	mArrFilesSearchedLastFrame;
+		HashString			mLabel;
+		HashString			mResetToFile;
 		char				mSearchText[MAX_SEARCH];
 		char				mSearchTextLastFrame[MAX_SEARCH];
-		Folder				*mpRootFolder;
-		Folder				*mpCurrentFolder;
+		Editor::Folder	*mpRootFolder;
+		Editor::Folder	*mpCurrentFolder;
 		HANDLE				mChangeHandle[1];
 		DWORD				mWaitStatus;
 		DWORD				mWaitFlags;
 		Math::Vec2			mPayloadRect;
+		HashString			mResourcePath;
+		HashString			mResourceName;
 
-		bool				FindFirstOne(AutoArray<File*>& _outResult, const HashString& _item);
-		void				FindFile(AutoArray<File*>& _outResult, HashString& _item, const AutoArray<File*>& _fromArr);
-		void				GetAllFiles(AutoArray<File*>& _outResult, Folder*);
-		void				SortAllFiles(AutoArray<File*>& _outResult);
-		Folder*				FindFolder(const HashString& _name);
-		void				FullCrawl(Folder*);
-		void				FolderUI(Folder*);
-		void				FileUI(File*);
+		bool				FindFirstOne(AutoArray<Editor::File*>& _outResult, const HashString& _item);
+		void				FindFile(AutoArray<Editor::File*>& _outResult, HashString& _item, const AutoArray<Editor::File*>& _fromArr);
+		void				GetAllFiles(AutoArray<Editor::File*>& _outResult, Editor::Folder*);
+		void				SortAllFiles(AutoArray<Editor::File*>& _outResult);
+		Editor::Folder*   FindFolder(const HashString& _name);
+		void				FullCrawl(Editor::Folder*);
+		void				FolderUI(Editor::Folder*);
+		void				FileUI(Editor::File*);
 		void				SearchWindow();
 		void				FolderWindow();
 		void				FileWindow(const Math::Vec2& _mySize);

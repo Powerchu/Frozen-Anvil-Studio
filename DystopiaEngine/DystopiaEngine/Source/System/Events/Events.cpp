@@ -11,9 +11,10 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#if EDITOR
+
 #include "System/Events/Events.h"
 #include "Utility/Utility.h"
+#include <cstdlib>
 
 namespace Dystopia
 {
@@ -104,7 +105,3 @@ namespace Dystopia
 
 }
 
-
-
-
-#endif 

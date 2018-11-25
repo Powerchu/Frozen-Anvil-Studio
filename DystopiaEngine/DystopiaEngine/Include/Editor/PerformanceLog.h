@@ -14,50 +14,45 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _PERFORMANCE_LOG_H_
 #define _PERFORMANCE_LOG_H_
-#include "Editor/EditorTab.h"
+//#include "Editor/EditorTab.h"
+#include "Editor/EditorPanel.h"
 #include "Editor/PLogInfo.h"
 
-namespace Dystopia
+namespace Editor//Dystopia
 {
 	struct PLogTaskManager;
 
-	class PerformanceLog : public EditorTab
+	class PerformanceLog : public EditorPanel//EditorTab
 	{
 	public:
-		static PerformanceLog* GetInstance();
-		~PerformanceLog();
+		//static PerformanceLog* GetInstance();
+		PerformanceLog(void);
+		~PerformanceLog(void);
 
-		/* Init() is called immediately after the creation of the object */
-		virtual void Init() override;
+		void Load(void);
+		bool Init(void);
+		void Update(float);
+		void EditorUI(void);
+		void Shutdown(void);
+		void Message(eEMessage);
+		void SaveSettings(Dystopia::TextSerialiser& _out) const;
+		void LoadSettings(Dystopia::TextSerialiser& _in);
+		HashString GetLabel(void) const;
 
-		/* Update() is called before Window(), so alter most variables (frame based) here to be printed in Window() later */
-		virtual void Update(const float&) override;
 
-		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
-		virtual void EditorUI() override;
-
-		/* Shutdown() is called right before deleting this object */
-		virtual void Shutdown() override;
-
-		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
-		virtual std::string GetLabel() const override;
-
-		void LogData(const std::string& _category, const std::string& _graphLabel,
-			 		float _val, bool _bigGraph = false);
-		void LogData(const std::string& _catMainGraph, float _val,
-			 		bool _bigGraph = false);
+		void LogData(const HashString& _category, const HashString& _graphLabel, float _val, bool _bigGraph = false);
+		void LogData(const HashString& _catMainGraph, float _val, bool _bigGraph = false);
 		void LogTaskMgr(const PLogTaskManager&);
 
 	private:
-		PerformanceLog();
 
-		void					SortLogs();
+		void					SortLogs(void);
 		void					ShowLog(const PLogData&, Math::Vec2);
-		void					ShowTaskMgrBreakdown();
+		void					ShowTaskMgrBreakdown(void);
 
 		PLogTaskManager			mTaskMgrDetails;
 		AutoArray<PLogItem>		mArrLoggedData;
-		std::string				mLabel;
+		HashString				mLabel;
 		Math::Vec2				mGraphSizeB;
 		Math::Vec2				mGraphSizeS;
 		float					mGraphBigY;

@@ -105,6 +105,21 @@ namespace Dystopia
 		return std::string{};
 	}
 
+	std::wstring FileSystem::GetFullPath_w(std::wstring const& _FileName, eFileDir _ParentDirectory)
+	{
+		std::filesystem::path DirPath{ GetProjectFolders<std::string>(_ParentDirectory) };
+		std::error_code error;
+		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
+
+		for (auto const & elem : DirIter)
+		{
+			if (elem.path().filename().wstring() == _FileName)
+				return elem.path().wstring();
+		}
+
+		return std::wstring{};
+	}
+
 	bool FileSystem::CreateFiles(std::string const & _FileName, eFileDir _Directory)
 	{
 		std::filesystem::path _FilePath{ mPathTable[_Directory] + '/' + _FileName };
@@ -120,7 +135,7 @@ namespace Dystopia
 		for (auto const & elem : DirIter)
 		{
 			std::wstring filename = elem.path().filename().wstring();
-			if (filename == wstrFileName)
+			if (filename == wstrFileName || std::filesystem::equivalent(elem, _FileName))
 				return true;
 		}
 
@@ -312,5 +327,65 @@ namespace Dystopia
 		return 0;
 	}
 
+	bool FileSystem::CheckFolderExist(const HashString& _folderName, const HashString& _path) const
+	{
+		if (CheckPathExist(_path))
+		{
+			WIN32_FIND_DATAA data;
+			HashString pathBuffer = _path + "/" + _folderName;
+			HANDLE hfind = FindFirstFileA(pathBuffer.c_str(), &data);
+			if (hfind != INVALID_HANDLE_VALUE)
+			{
+				do
+				{
+					if (strcmp(data.cFileName, ".") && strcmp(data.cFileName, "..") && data.dwFileAttributes != FILE_ATTRIBUTE_HIDDEN)
+					{
+						if (data.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
+							return true;
+					}
+				} while (FindNextFileA(hfind, &data));
+				FindClose(hfind);
+			}
+		}
+		return false;
+	}
+
+	bool FileSystem::CheckPathExist(const HashString& _path) const
+	{
+		DWORD result = GetFileAttributesA(_path.c_str());
+		if (result == INVALID_FILE_ATTRIBUTES)
+			return false;
+		else if (result & FILE_ATTRIBUTE_DIRECTORY)
+			return true;
+		return false;
+	}
+
+	bool FileSystem::CreateFolder(const HashString& _name, const HashString& _path)
+	{
+		HashString temp = _path;
+		if (!(*_path.clast() == '/'))
+			temp += '/';
+		temp += _name;
+		return CreateDirectoryA(temp.c_str(), nullptr);
+	}
+
+	void FileSystem::ChangeDirPath(eFileDir _dirToChange, const HashString& _newPath)
+	{
+		mPathTable[_dirToChange] = _newPath.c_str();
+	}
+
+	HashString FileSystem::FindFilePath(const HashString& _file, eFileDir _parentDir)
+	{
+		for (auto& p : std::filesystem::recursive_directory_iterator(mPathTable[_parentDir]))
+		{
+			HashString temp{ p.path().filename().string().c_str() };
+			if (temp == _file)
+			{
+				return HashString{ p.path().generic_string().c_str() };
+			}
+		}
+		return HashString{};
+	}
 }
+
 

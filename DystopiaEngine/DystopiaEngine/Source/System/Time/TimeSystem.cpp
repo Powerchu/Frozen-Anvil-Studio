@@ -126,6 +126,7 @@ void Dystopia::TimeSystem::SaveSettings(DysSerialiser_t& _out)
 	_out << mfSimulatedDT;
 }
 
+#if EDITOR
 void Dystopia::TimeSystem::EditorUI(void)
 {
 	static float fixedDT = 0.02f;
@@ -146,7 +147,7 @@ void Dystopia::TimeSystem::EditorUI(void)
 		case EGUI::eDragStatus::eTABBED:
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 		case EGUI::eDragStatus::eNO_CHANGE:
 			break;
 		}
@@ -167,4 +168,4 @@ void Dystopia::TimeSystem::EditorUI(void)
 		break;
 	}
 }
-
+#endif 

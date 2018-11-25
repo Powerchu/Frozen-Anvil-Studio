@@ -371,7 +371,7 @@ inline void MagicArray<T, PP>::Remove(const Sz_t _nIndex)
 	auto offset = _nIndex & PP::offset;
 
 #if _DEBUG
-	if (0x1 & (page.present[blk.GetPresentIndex(offset)] >> (_nIndex & 63)))
+	if (0x1 & (blk.present[blk.GetPresentIndex(offset)] >> (_nIndex & 63)))
 	{
 		__debugbreak();
 	}
@@ -379,7 +379,7 @@ inline void MagicArray<T, PP>::Remove(const Sz_t _nIndex)
 
 
 	Destroy(blk.mpArray[offset]);
-	page.present[page.GetPresentIndex(offset)] &= ~(1Ui64 << (_nIndex & 63));
+	blk.present[blk.GetPresentIndex(offset)] &= ~(1Ui64 << (_nIndex & 63));
 }
 
 template<typename T, typename PP>

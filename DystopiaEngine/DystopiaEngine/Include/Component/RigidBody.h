@@ -61,9 +61,9 @@ namespace Dystopia
 				  bool _gravityState, bool _staticState);
 
 		// ================================VIRTUAL MEMBER FUNCTIONS ================================== // 
-		void Load(void) override;
-		void Init(void) override;
-		void Unload(void) override;
+		void Load(void);
+		void Init(void);
+		void Unload(void);
 		RigidBody* Duplicate() const override;
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;
@@ -91,8 +91,9 @@ namespace Dystopia
 		void DebugPrint();
 
 		// Editor UI
+#if EDITOR
 		void EditorUI(void) noexcept override;
-
+#endif
 		void GlobalCentroidFromPosition(void);
 		void PositionFromGlobalCentroid(void);
 

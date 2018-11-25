@@ -16,12 +16,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/MathLib.h"
 #include "Utility/Utility.h"
 #include <algorithm>
+#include <string>
 
-namespace Dystopia
+namespace Editor//Dystopia
 {
 	static constexpr int def_max = 100;
 	/* ===================================================== A single log's Data ===================================================== */
-	PLogData::PLogData(const std::string& _name, bool _big)
+	PLogData::PLogData(const HashString& _name, bool _big)
 		: mLabel{ _name }, mArrValues{ 0.f }, mCurrentIndex{ 0 }, mIsBigGraph{ _big }, 
 		mMax{ def_max }
 	{}
@@ -78,7 +79,7 @@ namespace Dystopia
 	}
 
 	/* ===================================================== A log's item for category ===================================================== */
-	PLogItem::PLogItem(const std::string& _cat)
+	PLogItem::PLogItem(const HashString& _cat)
 		: mLabel{ _cat + " Details" }, mData{}, mGenericOverview{ _cat, true }, mShowGeneric{ false }
 	{}
 
@@ -96,14 +97,14 @@ namespace Dystopia
 		Ut::Swap(mShowGeneric, _rhs.mShowGeneric);
 	}
 
-	PLogItem::~PLogItem()
+	PLogItem::~PLogItem(void)
 	{
 		mData.clear();
 	}
 
-	void PLogItem::SortLogs()
+	void PLogItem::SortLogs(void)
 	{
-		mData.Sort([](const PLogData& p1, const PLogData& p2) { return p1.mLabel < p2.mLabel; });
+		mData.Sort([](const PLogData& p1, const PLogData& p2) { return std::string{ p1.mLabel.c_str() } < std::string{ p2.mLabel.c_str() }; });
 	}
 
 	void PLogItem::InsertLog(const PLogData& _graph)
@@ -118,7 +119,7 @@ namespace Dystopia
 		mGenericOverview.UpdateLog(_val);
 	}
 
-	void PLogItem::UpdateLog(const std::string& _graph, float _val, bool _bigGraph)
+	void PLogItem::UpdateLog(const HashString& _graph, float _val, bool _bigGraph)
 	{
 		for (auto& e : mData)
 		{

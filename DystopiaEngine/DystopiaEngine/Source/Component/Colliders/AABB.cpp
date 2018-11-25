@@ -8,7 +8,6 @@
 #include "IO/TextSerialiser.h"
 
 #if EDITOR
-#include "Editor/Editor.h"
 #endif 
 
 namespace Dystopia

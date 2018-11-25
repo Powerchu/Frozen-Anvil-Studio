@@ -13,6 +13,7 @@
 #include "System/Camera/CameraSystem.h"
 #include "System/Input/InputSystem.h"
 #include "System/Sound/SoundSystem.h"
+#include "System/AI/AISystem.h"
 
 #include "Component/ComponentList.h"
 #include "Component/Component.h"
@@ -20,7 +21,7 @@
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
 #include "Component/Camera.h"
-#include "Component/CharacterController.h"
+#include "Component/AiController.h"
 #include "Component/SpriteRenderer.h"
 #include "Component/TextRenderer.h"
 #include "Component/AudioSource.h"

@@ -14,44 +14,49 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _INSPECTOR_H_
 #define _INSPECTOR_H_
-#include "EditorTab.h"
+//#include "EditorTab.h"
+#include "Editor/EditorPanel.h"
+#include "DataStructure/HashString.h"
 
 namespace Dystopia
 {
 	class GameObject;
 	class BehaviourSystem;
 	class Component;
+}
+
+namespace Editor //Dystopia
+{
 	static constexpr size_t MAX_BUFFER_SIZE = 128;
-	class Inspector : public EditorTab
+	class Inspector : public EditorPanel //public EditorTab
 	{
 	public:
-		static Inspector* GetInstance();
-		~Inspector();
+		//static Inspector* GetInstance();
+		Inspector(void);
+		~Inspector(void);
 
-		/* Init() is called immediately after the creation of the object */
-		virtual void Init() override;
-		
-		/* Update() is called before Window(), so alter most variables (frame based) here to be printed in Window() later */
-		virtual void Update(const float&) override;
+		//virtual void Init() override;
+		//virtual void Update(const float&) override;
+		//virtual void EditorUI() override;
+		//virtual void Shutdown() override;
+		//virtual std::string GetLabel() const override;
 
-		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
-		virtual void EditorUI() override;
-
-		/* Shutdown() is called right before deleting this object */
-		virtual void Shutdown() override;
-
-		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
-		virtual std::string GetLabel() const override;
-
-		//void	SetFocus(GameObject&) override final;
-		//void	RemoveFocus() override final;
+		void Load(void);
+		bool Init(void);
+		void Update(float);
+		void EditorUI(void);
+		void Shutdown(void);
+		void Message(eEMessage);
+		void SaveSettings(Dystopia::TextSerialiser& _out) const;
+		void LoadSettings(Dystopia::TextSerialiser& _in);
+		HashString GetLabel(void) const;
 
 	private:
-		Inspector();
 
-		BehaviourSystem	*mpBehaviourSys;
-		GameObject		*mpFocus;
-		std::string		mLabel;
+		Dystopia::BehaviourSystem	*mpBehaviourSys;
+		Dystopia::GameObject		*mpFocus;
+
+		HashString		mLabel;
 		bool			mShowListOfComponents;
 		bool			mPromptNewBehaviour;
 		bool			mPromptCreateBehaviour;
@@ -68,7 +73,10 @@ namespace Dystopia
 		void			PromptCreateBehaviour();
 		void			ConfirmCreateBehaviour();
 		void			ResetBehaviourCreation();
-		bool			RemoveComponent(Component*);
+		bool			RemoveComponent(Dystopia::Component*);
+
+		void			AddTagButton(const Math::Vec2&);
+		void			TagsDropDownList();
 	};
 }
 

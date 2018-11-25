@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO/TextSerialiser.h"
 #include "Object/ObjectFlags.h"
 #include "Globals.h"
+#include "System/Tag/Tags.h"
 
 #include <string>
 
@@ -100,7 +101,20 @@ namespace Dystopia
 
 		void RemoveFlags(eObjFlag);
 		void SetFlag(eObjFlag);
+		void ReplaceFlag(unsigned);
 		unsigned GetFlag() const;
+
+		unsigned GetTags() const;
+		AutoArray<Tags>        GetAllTags()         const;
+		AutoArray<HashString>  GetAllTags_Hashstr() const;
+		AutoArray<std::string> GetAllTags_str()     const;
+		void AddTag(HashString const & _TagName);
+		void AddTag(Tags _tag);
+		void AddTag(std::string const & _TagName);
+		void AddTag(const char * _TagName);
+		void RemoveTag(Tags _Tag);
+		void ClearTags();
+
 
 		template<class T>
 		T* GetComponent(void) const;
@@ -111,7 +125,6 @@ namespace Dystopia
 		inline const AutoArray<Component*>& GetAllComponents(void) const noexcept;
 		inline const AutoArray<Behaviour*>& GetAllBehaviours(void) const noexcept;
 
-
 		// ======================================== OPERATORS ======================================== // 
 
 		GameObject& operator = (GameObject&&);
@@ -119,6 +132,7 @@ namespace Dystopia
 		bool mbIsStatic;					/* Static bodies do not need to be integrated/updated*/
 
 		uint64_t mnID;
+		unsigned mTags;
 		unsigned mnFlags;
 		HashString mName;
 
@@ -126,6 +140,7 @@ namespace Dystopia
 
 		AutoArray<Component*> mComponents;
 		AutoArray<Behaviour*> mBehaviours;
+
 
 		GameObject(const GameObject&) = delete;
 

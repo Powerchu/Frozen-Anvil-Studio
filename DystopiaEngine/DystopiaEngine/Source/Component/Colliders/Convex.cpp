@@ -12,7 +12,6 @@
 
 #include <vector>
 #if EDITOR
-#include "Editor/Editor.h"
 #include "Editor/EGUI.h"
 #endif
 
@@ -418,7 +417,7 @@ namespace Dystopia
 
 		return BroadPhaseCircle{ LongestRadius, MyGlobalCentre};
 	}
-
+#if EDITOR
 	void Convex::EditorUI() noexcept
 	{
 		eAttachedBodyEmptyBox();
@@ -431,12 +430,12 @@ namespace Dystopia
 
 	void Convex::eIsTriggerCheckBox()
 	{
-		bool tempBool = mbIsTrigger;
+		//bool tempBool = mbIsTrigger;
 
-		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
+		if (EGUI::Display::CheckBox("Is Trigger		  ", &mbIsTrigger))
 		{
-			mbIsTrigger = tempBool;
-			EGUI::GetCommandHND()->InvokeCommand<Collider>(mnOwner, &Collider::mbIsTrigger, tempBool);
+			//mbIsTrigger = tempBool;
+			//EGUI::GetCommandHND()->InvokeCommand<Collider>(mnOwner, &Collider::mbIsTrigger, tempBool);
 		}
 	}
 
@@ -452,13 +451,13 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &Collider::mv3Offset);
+				//EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &Collider::mv3Offset);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 			case EGUI::eDragStatus::eEND_DRAG:
 			case EGUI::eDragStatus::eENTER:
 			case EGUI::eDragStatus::eTABBED:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			default:
 				break;
@@ -477,13 +476,12 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Convex>(mnOwner, &Convex::mNumPoints);
+				//EGUI::GetCommandHND()->StartRecording<Convex>(mnOwner, &Convex::mNumPoints);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 			case EGUI::eDragStatus::eEND_DRAG:
 			case EGUI::eDragStatus::eENTER:
 			case EGUI::eDragStatus::eTABBED:
-				EGUI::GetCommandHND()->EndRecording();
 				Awake();
 				break;
 			default:
@@ -545,13 +543,13 @@ namespace Dystopia
 			case EGUI::eDragStatus::eDRAGGING:
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &Collider::mScale);
+				//EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &Collider::mScale);
 				break;
 			case EGUI::eDragStatus::eDEACTIVATED:
 			case EGUI::eDragStatus::eEND_DRAG:
 			case EGUI::eDragStatus::eENTER:
 			case EGUI::eDragStatus::eTABBED:
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			default:
 				break;
@@ -595,6 +593,8 @@ namespace Dystopia
 	{
 
 	}
+
+#endif
 
 	bool Convex::ContainOrigin(AutoArray<SimplexVertex> & _Simplex,
 							   Math::Vec3D & _v3Dir)

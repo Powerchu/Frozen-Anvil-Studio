@@ -129,7 +129,7 @@ namespace Dystopia
 		Collider();
 		explicit Collider(const Math::Point3D & _offset, const Math::Point3D & _origin = Math::MakePoint3D(0.f, 0.f, 0.f));
 
-		void Awake(void) override;
+		void Awake(void);
 		/*Load the Component*/
 		virtual void Load(void);
 		/*Initialise the Component*/
@@ -201,9 +201,9 @@ namespace Dystopia
 
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
-
+		Math::Vec3D mScale;
 #if EDITOR
-		Math::Vec3D          mScale;
+
 #endif
 
 	protected:
@@ -224,8 +224,9 @@ namespace Dystopia
 		
 		/*Matrix*/
 		Math::Matrix3D mOwnerTransformation;
-#if EDITOR
 		Math::Quaternion     mRotation;
+#if EDITOR
+
 #endif
 
 	private:

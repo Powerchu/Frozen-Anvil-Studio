@@ -47,8 +47,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_THROW(_X_)	
 #define _EDITOR_CODE(_X_)
 #define _GAME_NOEXCEPT		noexcept
+#define UNUSED_PARAMETER(_X_)       static_cast<void>(_X_);
 
-#define _DLL_EXPORT
+#ifdef  EXPORT
+#define _DLL_EXPORT   __declspec( dllexport )
+#else 
+#define _DLL_EXPORT   __declspec( dllimport )
+#endif
+
+
+#define _DLL_EXPORT_ONLY  __declspec( dllexport )
+
 #endif
 
 
@@ -69,6 +78,14 @@ namespace Gbl
 	constexpr auto  MESH_EXT        = "dmesh";
 	constexpr auto  FRAGSHADER_EXT  = "dfrag";
 	constexpr auto  VERTSHADER_EXT  = "dvert";
+
+	constexpr auto  PNG_EXT			= "png";
+	constexpr auto  BMP_EXT			= "bmp";
+	constexpr auto  CPP_EXT			= "cpp";
+	constexpr auto  MP3_EXT			= "mp3";
+	constexpr auto  DDS_EXT			= "dds";
+	constexpr auto  WAV_EXT			= "wav";
+
 	constexpr auto  CRASHREPORT_EXT = "dlog";
 }
 

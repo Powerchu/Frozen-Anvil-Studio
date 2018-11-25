@@ -74,8 +74,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #if EDITOR
 #include "Editor/EGUI.h"
-#include "Editor/CommandList.h"
-#include "Editor/Commands.h"
 #endif 
 
 
@@ -895,12 +893,12 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	switch (result)
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mfGamma);
+		//EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mfGamma);
 		break;
 	case EGUI::eDragStatus::eENTER:
 	case EGUI::eDragStatus::eEND_DRAG:
 	case EGUI::eDragStatus::eDEACTIVATED:
-		EGUI::GetCommandHND()->EndRecording();
+		//EGUI::GetCommandHND()->EndRecording();
 		break;
 	case EGUI::eDragStatus::eDRAGGING:
 	default:
@@ -926,12 +924,12 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 		switch (elem)
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mvDebugColour);
+			//EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mvDebugColour);
 			break;
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eDRAGGING:
 		default:
@@ -944,12 +942,12 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	switch (result3)
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mfDebugLineWidth);
+		//EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mfDebugLineWidth);
 		break;
 	case EGUI::eDragStatus::eENTER:
 	case EGUI::eDragStatus::eEND_DRAG:
 	case EGUI::eDragStatus::eDEACTIVATED:
-		EGUI::GetCommandHND()->EndRecording();
+		//EGUI::GetCommandHND()->EndRecording();
 		break;
 	case EGUI::eDragStatus::eDRAGGING:
 	default:

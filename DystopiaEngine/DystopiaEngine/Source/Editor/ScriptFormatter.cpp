@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "DataStructure\AutoArray.h"
 #include "Editor\ScriptFormatter.h"
+#include "System/Driver/Driver.h"
+#include "System/File/FileSystem.h"
 #include "Utility/GUID.h"
 #include <algorithm>
 #include <fstream>
@@ -23,8 +25,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 static const std::string ProjectFolder = "..\\DystopiaEngine";
 static const std::string ResourceFolder = "Resource";
 static const std::string BehavioursFolder = "Behaviours\\BehavioursScripts";
-static const std::string Default_Creation_Folder = ProjectFolder + "\\" + ResourceFolder + "\\" + BehavioursFolder;
-static const std::string TemplateBodyPath = ProjectFolder + "\\" + ResourceFolder + "\\BehaviourFormat\\BehaviourScript.cpp";
+static const std::string Default_Creation_Folder = "\\" + BehavioursFolder;
+static const std::string TemplateBodyPath   = ProjectFolder + "\\" + ResourceFolder + "\\BehaviourFormat\\BehaviourScript.cpp";
 static const std::string TemplateHeaderPath = ProjectFolder + "\\" + ResourceFolder + "\\BehaviourFormat\\BehaviourScript.h";
 static constexpr int tokenCount = 5;
 static const std::string TokensToReplace[tokenCount] =
@@ -87,7 +89,7 @@ namespace Dystopia
 
 		//if (!MakeFolder(folder))  return false;	//Early out for already existing
 
-		std::string filePath = newFolderPath + "\\" + _className;
+		std::string filePath = EngineCore::GetInstance()->Get<FileSystem>()->GetProjectFolders<std::string>(eFileDir::eResource)  + newFolderPath + "\\" + _className;
 		std::ofstream osFileC = MakeFile(filePath + ".cpp");
 		std::ofstream osFileH = MakeFile(filePath + ".h");
 
