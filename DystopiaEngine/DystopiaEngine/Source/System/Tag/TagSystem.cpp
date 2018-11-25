@@ -25,7 +25,7 @@ namespace Dystopia
 		return Tags(0);
 	}
 
-	void TagSystem::RemoveTag(HashString const& _TagName) const
+	void TagSystem::RemoveTag(HashString const&) const
 	{
 
 	}

@@ -369,7 +369,7 @@ namespace Dystopia
 		{
 			EGUI::Display::Dummy(235, 2);
 
-			auto& list = EngineCore::GetInstance()->Get<TagSystem>()->GetAllTagsName();
+			auto && list = EngineCore::GetInstance()->Get<TagSystem>()->GetAllTagsName();
 			for (auto& elem : list)
 			{
 				if (EGUI::Display::SelectableTxt(elem))
