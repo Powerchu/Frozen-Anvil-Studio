@@ -26,6 +26,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Tag/TagSystem.h"
 #include "Editor/Payloads.h"
 
+//duplicate should immediately put into scene
+#include "Component/Transform.h"
+#include "System/Driver/Driver.h"		
+#include "System/Scene/SceneSystem.h"   
+#include "System/Scene/Scene.h"
 
 #define Ping(_ARR, _FUNC, ...)			\
 for (auto& e : _ARR)					\
@@ -87,6 +92,11 @@ void Dystopia::GameObject::SetActive(const bool _bEnable)
 void Dystopia::GameObject::SetFlag(eObjFlag _flag)
 {
 	mnFlags |= _flag;
+}
+
+void Dystopia::GameObject::ReplaceFlag(unsigned _fullFlag)
+{
+	mnFlags = _fullFlag;
 }
 
 void Dystopia::GameObject::RemoveFlags(eObjFlag _flags)
@@ -196,6 +206,9 @@ void Dystopia::GameObject::PostUpdate(void)
 
 void Dystopia::GameObject::Destroy(void)
 {
+	for (auto& c : mTransform.GetAllChild())
+		c->GetOwner()->Destroy();
+
 	ForcePing(mComponents, GameObjectDestroy);
 	ForcePing(mBehaviours, GameObjectDestroy);
 
@@ -311,24 +324,34 @@ void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 
 Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 {
-	GameObject *p = new GameObject{};
-	p->mnID = GUIDGenerator::GetUniqueID();
-	p->mnFlags = mnFlags;
-	p->mName = mName;
-	p->mTransform = mTransform;
+	DEBUG_ASSERT((mnFlags & FLAG_EDITOR_OBJ), "Should not duplicate editor objects");
+
+	auto& curScene = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene();
+
+	DEBUG_ASSERT(!curScene.FindGameObject(mnID), "Should not duplicate object not in scene");
+
+	auto id = GUIDGenerator::GetUniqueID();
+	GameObject *p	= curScene.InsertGameObject(id);
+	p->mnFlags		= mnFlags;
+	p->mName		= mName;
+	p->mName		+= "_clone";
+	p->mTransform	= mTransform;
+
+	p->mTransform.SetOwner(p);
 
 	for (auto& c : mComponents)
-	{
-		auto a = c->Duplicate();
-		DEBUG_BREAK(!a, "GameObject Error: Component duplicate fail!\n");
-		p->mComponents.Insert(a);
-	}
+		p->AddComponent(c->Duplicate(), Component::TAG{});
 	for (auto& b : mBehaviours)
-	{
-		auto dup = EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, p->mnID);
-		p->mBehaviours.Insert(dup);
-	}
+		p->AddComponent(EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, p->mnID), Behaviour::TAG{});
 
+	const auto& children = mTransform.GetAllChild();
+	for (const auto& child : children)
+	{
+		auto o = child->GetOwner()->Duplicate();
+		o->mTransform.SetParentID(p->GetID());
+		o->Awake();
+	}
+	p->Awake();
 	return p;
 }
 

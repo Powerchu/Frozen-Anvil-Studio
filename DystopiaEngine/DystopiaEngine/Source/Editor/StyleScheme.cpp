@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO/TextSerialiser.h"
 #include "../../Dependancies/ImGui/imgui.h"
 
-namespace Dystopia
+/*namespace Dystopia
 {
 	static StyleScheme* gpInstance = 0;
 
@@ -27,56 +27,58 @@ namespace Dystopia
 		gpInstance = new StyleScheme{};
 		return gpInstance;
 	}
-}
+}*/
+
 
 static constexpr float gGenericMax = 10.f;
-Dystopia::StyleScheme::StyleScheme()
-	: EditorTab{ false },
+
+Editor::StyleScheme::StyleScheme(void)
+	: //EditorTab{ false },
 	mLabel{ "Style Scheme" },
 	mArrVecData{}, mArrFData{}
 {}
 
 
-Dystopia::StyleScheme::~StyleScheme()
+Editor::StyleScheme::~StyleScheme(void)
 {}
 
-void Dystopia::StyleScheme::Init()
+void Editor::StyleScheme::Load(void)
+{}
+
+bool Editor::StyleScheme::Init(void)
 {
 	auto& style = ImGui::GetStyle();
 
-	mArrVecData[eWINDOW_PADDING]		 = Dystopia::StyleScheme::StyleVarsV{ ImVec2{ 8, 10 }, 0.1f, gGenericMax };
-	mArrVecData[eWINDOW_MIN_SIZE]		 = Dystopia::StyleScheme::StyleVarsV{ style.WindowMinSize, 0.1f, gGenericMax };
-	mArrVecData[eWINDOW_TITLE_ALIGNMENT] = Dystopia::StyleScheme::StyleVarsV{ style.WindowTitleAlign, 0.1f, gGenericMax };
-	mArrVecData[eFRAME_PADDING]			 = Dystopia::StyleScheme::StyleVarsV{ style.FramePadding, 0.1f, gGenericMax };
-	mArrVecData[eITEM_SPACING]			 = Dystopia::StyleScheme::StyleVarsV{ style.ItemSpacing, 0.1f, gGenericMax };
-	mArrVecData[eITEM_SPACING_INNER]	 = Dystopia::StyleScheme::StyleVarsV{ style.ItemInnerSpacing, 0.1f, gGenericMax };
-	mArrVecData[eBUTTON_TEXT_ALIGNMENT]  = Dystopia::StyleScheme::StyleVarsV{ style.ButtonTextAlign, 0.1f, gGenericMax };
+	mArrVecData[eWINDOW_PADDING] = Editor::StyleScheme::StyleVarsV{ ImVec2{ 8, 10 }, 0.1f, gGenericMax };
+	mArrVecData[eWINDOW_MIN_SIZE] = Editor::StyleScheme::StyleVarsV{ style.WindowMinSize, 0.1f, gGenericMax };
+	mArrVecData[eWINDOW_TITLE_ALIGNMENT] = Editor::StyleScheme::StyleVarsV{ style.WindowTitleAlign, 0.1f, gGenericMax };
+	mArrVecData[eFRAME_PADDING] = Editor::StyleScheme::StyleVarsV{ style.FramePadding, 0.1f, gGenericMax };
+	mArrVecData[eITEM_SPACING] = Editor::StyleScheme::StyleVarsV{ style.ItemSpacing, 0.1f, gGenericMax };
+	mArrVecData[eITEM_SPACING_INNER] = Editor::StyleScheme::StyleVarsV{ style.ItemInnerSpacing, 0.1f, gGenericMax };
+	mArrVecData[eBUTTON_TEXT_ALIGNMENT] = Editor::StyleScheme::StyleVarsV{ style.ButtonTextAlign, 0.1f, gGenericMax };
 
-	mArrFData[eALPHA]					 = Dystopia::StyleScheme::StyleVarsF{style.Alpha, 0.1f, 1.0f};
-	mArrFData[eWINDOW_ROUNDING]			 = Dystopia::StyleScheme::StyleVarsF{style.WindowRounding, 0.f, gGenericMax };
-	mArrFData[eWINDOW_BORDER]			 = Dystopia::StyleScheme::StyleVarsF{style.WindowBorderSize, 0.f, gGenericMax };
-	mArrFData[eCHILD_ROUNDING]			 = Dystopia::StyleScheme::StyleVarsF{style.ChildRounding, 0.f, gGenericMax};
-	mArrFData[eCHILD_BORDER]			 = Dystopia::StyleScheme::StyleVarsF{style.ChildBorderSize, 0.f, gGenericMax};
-	mArrFData[ePOPUP_ROUNDING]			 = Dystopia::StyleScheme::StyleVarsF{style.PopupRounding, 0.f, gGenericMax};
-	mArrFData[ePOPUP_BORDER]			 = Dystopia::StyleScheme::StyleVarsF{style.PopupBorderSize, 0.f, gGenericMax};
-	mArrFData[eFRAME_ROUNDING]			 = Dystopia::StyleScheme::StyleVarsF{style.FrameRounding, 0.f, gGenericMax };
-	mArrFData[eFRAME_BORDER]			 = Dystopia::StyleScheme::StyleVarsF{style.FrameBorderSize, 0.f, gGenericMax};
-	mArrFData[eINDENT_SPACE]			 = Dystopia::StyleScheme::StyleVarsF{style.IndentSpacing, 0.f,gGenericMax};
-	mArrFData[eSCROLL_SIZE]				 = Dystopia::StyleScheme::StyleVarsF{style.ScrollbarSize, 0.f, gGenericMax};
-	mArrFData[eSCROLL_ROUNDING]			 = Dystopia::StyleScheme::StyleVarsF{style.ScrollbarRounding, 0.f, gGenericMax};
-	mArrFData[eGRAB_SIZE]				 = Dystopia::StyleScheme::StyleVarsF{style.GrabMinSize, 0.f, gGenericMax};
-	mArrFData[eGRAB_ROUNDING]			 = Dystopia::StyleScheme::StyleVarsF{style.GrabRounding, 0.f, gGenericMax};
+	mArrFData[eALPHA] = Editor::StyleScheme::StyleVarsF{ style.Alpha, 0.1f, 1.0f };
+	mArrFData[eWINDOW_ROUNDING] = Editor::StyleScheme::StyleVarsF{ style.WindowRounding, 0.f, gGenericMax };
+	mArrFData[eWINDOW_BORDER] = Editor::StyleScheme::StyleVarsF{ style.WindowBorderSize, 0.f, gGenericMax };
+	mArrFData[eCHILD_ROUNDING] = Editor::StyleScheme::StyleVarsF{ style.ChildRounding, 0.f, gGenericMax };
+	mArrFData[eCHILD_BORDER] = Editor::StyleScheme::StyleVarsF{ style.ChildBorderSize, 0.f, gGenericMax };
+	mArrFData[ePOPUP_ROUNDING] = Editor::StyleScheme::StyleVarsF{ style.PopupRounding, 0.f, gGenericMax };
+	mArrFData[ePOPUP_BORDER] = Editor::StyleScheme::StyleVarsF{ style.PopupBorderSize, 0.f, gGenericMax };
+	mArrFData[eFRAME_ROUNDING] = Editor::StyleScheme::StyleVarsF{ style.FrameRounding, 0.f, gGenericMax };
+	mArrFData[eFRAME_BORDER] = Editor::StyleScheme::StyleVarsF{ style.FrameBorderSize, 0.f, gGenericMax };
+	mArrFData[eINDENT_SPACE] = Editor::StyleScheme::StyleVarsF{ style.IndentSpacing, 0.f,gGenericMax };
+	mArrFData[eSCROLL_SIZE] = Editor::StyleScheme::StyleVarsF{ style.ScrollbarSize, 0.f, gGenericMax };
+	mArrFData[eSCROLL_ROUNDING] = Editor::StyleScheme::StyleVarsF{ style.ScrollbarRounding, 0.f, gGenericMax };
+	mArrFData[eGRAB_SIZE] = Editor::StyleScheme::StyleVarsF{ style.GrabMinSize, 0.f, gGenericMax };
+	mArrFData[eGRAB_ROUNDING] = Editor::StyleScheme::StyleVarsF{ style.GrabRounding, 0.f, gGenericMax };
+	return true;
 }
 
-void Dystopia::StyleScheme::Update(const float&)
+void Editor::StyleScheme::Update(float)
 {}
 
-void Dystopia::StyleScheme::EditorUI()
+void Editor::StyleScheme::EditorUI(void)
 {
-	//if (EGUI::Display::Button("Apply"))
-	//{
-	//	Apply();
-	//}
 	for (unsigned int i = 0; i < mArrFData.size(); ++i)
 	{
 		EGUI::PushID(i);
@@ -95,7 +97,7 @@ void Dystopia::StyleScheme::EditorUI()
 		{
 			switch (e)
 			{
-			case EGUI::eDragStatus::eNO_CHANGE: 
+			case EGUI::eDragStatus::eNO_CHANGE:
 				break;
 			default: Apply(); break;
 			}
@@ -105,15 +107,59 @@ void Dystopia::StyleScheme::EditorUI()
 	}
 }
 
-void Dystopia::StyleScheme::Shutdown()
+void Editor::StyleScheme::Shutdown(void)
 {}
 
-std::string Dystopia::StyleScheme::GetLabel() const
+void Editor::StyleScheme::Message(eEMessage)
+{}
+
+void Editor::StyleScheme::SaveSettings(Dystopia::TextSerialiser& _out) const
+{
+	_out.InsertStartBlock("Style");
+	_out << mArrFData.size();
+	_out << mArrVecData.size();
+	for (auto& e : mArrFData)
+	{
+		_out << e.mValue;
+	}
+	for (auto& e : mArrVecData)
+	{
+		for (unsigned int i = 0; i < 2; ++i)
+		{
+			_out << e.mValue[i];
+		}
+	}
+	_out.InsertEndBlock("Style");
+}
+
+void Editor::StyleScheme::LoadSettings(Dystopia::TextSerialiser& _in)
+{
+	_in.ConsumeStartBlock();
+	size_t size1;
+	size_t size2;
+	_in >> size1;
+	_in >> size2;
+	for (unsigned int i = 0; i < size1; ++i)
+	{
+		_in >> mArrFData[i].mValue;
+	}
+	for (unsigned int i = 0; i < size2; ++i)
+	{
+		for (unsigned int j = 0; j < 2; ++j)
+		{
+			_in >> mArrVecData[i].mValue[j];
+		}
+	}
+	_in.ConsumeEndBlock();
+	Apply();
+}
+
+HashString Editor::StyleScheme::GetLabel(void) const
 {
 	return mLabel;
 }
 
-void Dystopia::StyleScheme::Apply() const
+void Editor::StyleScheme::Apply(void) const
 {
 	auto& style = ImGui::GetStyle();
 	
@@ -141,52 +187,7 @@ void Dystopia::StyleScheme::Apply() const
 	style.GrabRounding 			 =	mArrFData[eGRAB_ROUNDING].mValue;
 }
 
-void Dystopia::StyleScheme::Remove() const
-{
-}
-
-void Dystopia::StyleScheme::SaveSettings(Dystopia::TextSerialiser& _out) const
-{
-	_out.InsertStartBlock("Style");
-	_out << mArrFData.size();
-	_out << mArrVecData.size();
-	for (auto& e : mArrFData)
-	{
-		_out << e.mValue;
-	}
-	for (auto& e : mArrVecData)
-	{
-		for (unsigned int i = 0; i < 2; ++i)
-		{
-			_out << e.mValue[i];
-		}
-	}
-	_out.InsertEndBlock("Style");
-}
-
-void Dystopia::StyleScheme::LoadSettings(Dystopia::TextSerialiser& _in)
-{
-	_in.ConsumeStartBlock();
-	size_t size1;
-	size_t size2;
-	_in >> size1;
-	_in >> size2;
-	for (unsigned int i = 0; i < size1; ++i)
-	{
-		_in >> mArrFData[i].mValue;
-	}
-	for (unsigned int i = 0; i < size2; ++i)
-	{
-		for (unsigned int j = 0; j < 2; ++j)
-		{
-			_in >> mArrVecData[i].mValue[j];
-		}
-	}
-	_in.ConsumeEndBlock();
-	Apply();
-}
-
-std::string Dystopia::StyleScheme::ToName(eStyleDataVectors _i)
+HashString Editor::StyleScheme::ToName(eStyleDataVectors _i)
 {
 	switch (_i)
 	{
@@ -201,7 +202,7 @@ std::string Dystopia::StyleScheme::ToName(eStyleDataVectors _i)
 	}
 }
 
-std::string Dystopia::StyleScheme::ToName(eStyleDataFloats _i)
+HashString Editor::StyleScheme::ToName(eStyleDataFloats _i)
 {
 	switch (_i)
 	{

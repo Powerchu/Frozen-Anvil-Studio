@@ -11,6 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+
 #if EDITOR
 #define _CRTDBG_MAP_ALLOC
 #include <cstdlib>
@@ -19,71 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
-#include <memory>
-/* System includes */
+#include "Editor/EditorMain.h"
 #include "System/Window/WindowManager.h"
-#include "System/Window/Window.h"
-#include "System/Graphics/GraphicsSystem.h"
-#include "System/Scene/SceneSystem.h"
-#include "System/Driver/Driver.h"
-#include "System/Profiler/Profiler.h"
-#include "System/Profiler/ProfilerAction.h"
-#include "System/Time/ScopedTimer.h"
-#include "System/File/FileSystem.h"
-#include "System//Behaviour/BehaviourSystem.h"
-#include "System/Physics/PhysicsSystem.h"
-#include "System/Input/InputSystem.h"
-#include "IO/BinarySerializer.h"
-#include "Utility/GUID.h"
-
-#include "Component/Component.h"
-
-/* Editor includes */
-#include "Editor/EGUI.h"
-#include "Editor/Editor.h"
-#include "Editor/ProjectSettings.h"
-#include "Editor/EditorEvents.h"
-#include "Editor/Commands.h"
-#include "Editor/Inspector.h"
-#include "Editor/HierarchyView.h"
-#include "Editor/ProjectResource.h"
-#include "Editor/SceneView.h"
-#include "Editor/ConsoleLog.h"
-#include "Editor/PerformanceLog.h"
-#include "Editor/PLogger.h"
-#include "Editor/ColorScheme.h"
-#include "Editor/StyleScheme.h"
-#include "Editor/Clipboard.h"
-#include "Editor/SpritePreviewer.h"
-#include "Editor/SpriteEditor.h"
-
-#include "Allocator/DefaultAlloc.h"
-#include "DataStructure/HashString.h"
-
-/* library includes */
-#include <iostream>
-#include <windows.h>
-#include <bitset>
-#include <ShlObj_core.h>
-#include <tchar.h>
-#include <objbase.h>
-
-#include "System/Input/XGamePad.h"
-
-#include "Editor/EditorProc.h"
-#include "Editor/EditorInput.h"
-
-namespace
-{
-	static const std::string DYSTOPIA_EDITOR_SETTINGS = "EditorSettings.dyst";
-	static const std::string DYSTOPIA_SCENE_LOAD = "Resource/Scene/";
-	static const std::string DYSTOPIA_SCENE_TEMP = "Resource/Temp/";
-	static const std::wstring DYSTOPIA_SCENE_EXTENSION = L"dscene";
-	static constexpr COMDLG_FILTERSPEC DYSTOPIA_SCENE_FILTER_EXTENSION[1] =
-	{
-		{ L"DystopiaScene", L"*.dscene" }
-	};
-}
 
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
@@ -92,24 +30,23 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	Dystopia::Editor *editor = Dystopia::Editor::GetInstance();
-	editor->Init();
-	while (!editor->IsClosing())
+	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
+	pMain->Init();
+	while (!pMain->IsClosing())
 	{
-		editor->StartFrame();
+		pMain->StartFrame();
 	
-		editor->UpdateFrame(editor->GetDeltaTime());
-		
-		editor->EndFrame();
+		pMain->Update();
+	
+		pMain->EndFrame();
 	}
-	editor->Shutdown();
-	delete editor;
+	pMain->Shutdown();
 	return 0;
 }
 
 
 /*///////////////////////////////////////////////////////////////////// EDITOR CLASS ////////////////////////////////////////////////////////////////////////////////*/
-
+/*
 namespace Dystopia
 {
 	static Editor* gpInstance = 0;
@@ -136,17 +73,17 @@ namespace Dystopia
 
 	void Editor::LoadTabs()
 	{
-		mArrTabs.push_back(Inspector::GetInstance());
-		mArrTabs.push_back(ProjectResource::GetInstance());
-		mArrTabs.push_back(HierarchyView::GetInstance());
-		mArrTabs.push_back(SceneView::GetInstance());
-		mArrTabs.push_back(ProjectSettings::GetInstance());
-		mArrTabs.push_back(ConsoleLog::GetInstance());
-		mArrTabs.push_back(PerformanceLog::GetInstance());
-		mArrTabs.push_back(SpritePreviewer::GetInstance());
-		mArrTabs.push_back(SpriteEditor::GetInstance());
-		mArrTabs.push_back(ColorScheme::GetInstance());
-		mArrTabs.push_back(StyleScheme::GetInstance());
+		//mArrTabs.push_back(Inspector::GetInstance());
+		//mArrTabs.push_back(ProjectResource::GetInstance());
+		//mArrTabs.push_back(HierarchyView::GetInstance());
+		//mArrTabs.push_back(SceneView::GetInstance());
+		//mArrTabs.push_back(ProjectSettings::GetInstance());
+		//mArrTabs.push_back(ConsoleLog::GetInstance());
+		//mArrTabs.push_back(PerformanceLog::GetInstance());
+		//mArrTabs.push_back(SpritePreviewer::GetInstance());
+		//mArrTabs.push_back(SpriteEditor::GetInstance());
+		//mArrTabs.push_back(ColorScheme::GetInstance());
+		//mArrTabs.push_back(StyleScheme::GetInstance());
 	}
 
 	void Editor::LoadDefaults()
@@ -184,7 +121,7 @@ namespace Dystopia
 			mCurrentState = EDITOR_EXIT;
 			return;
 		}
-		
+
 		LoadDefaults();
 		LoadTabs();
 
@@ -199,9 +136,13 @@ namespace Dystopia
 		}
 		mpDriver->Init();
 		mpDriver->PostInit();
-		mpEditorInput->Init();
 		LoadSettings();
+		for (auto& e : mArrTabs)
+		{
+			e->PostInit();
+		}
 
+		mpEditorInput->Init();
 		EGUI::SetContext(mpComdHandler);
 	}
 
@@ -466,24 +407,24 @@ namespace Dystopia
 		if (!toPaste.size()) return;
 
 		AutoArray<GameObject*> mToInsert{ toPaste.size() };
-		auto& existingObj = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
+		//auto& existingObj = mpSceneSystem->GetCurrentScene().GetAllGameObjects();
 		ClearSelections();
 		for (auto& elem : toPaste)
 		{
 			if (mpSceneSystem->GetCurrentScene().FindGameObject(static_cast<GameObject*>(elem)->GetID()))
 			{
-				GameObject *pDup = static_cast<GameObject*>(elem)->Duplicate();
-				for (const auto& o : existingObj)
-				{
-					if (o.GetName() == pDup->GetName())
-					{
-						pDup->SetName(pDup->GetName() + "_Clone");
-						break;
-					}
-				}
-				pDup->Identify();
-				mToInsert.Insert(pDup);
-				AddSelection(pDup->GetID());
+				//GameObject *pDup = static_cast<GameObject*>(elem)->Duplicate();
+				//for (const auto& o : existingObj)
+				//{
+				//	if (o.GetName() == pDup->GetName())
+				//	{
+				//		pDup->SetName(pDup->GetName() + "_Clone");
+				//		break;
+				//	}
+				//}
+				//pDup->Identify();
+				//mToInsert.Insert(pDup);
+				//AddSelection(pDup->GetID());
 			}
 		}
 
@@ -545,7 +486,7 @@ namespace Dystopia
 		EditorProc p;
 		HashString path;
 		HashString name;
-		if (p.SaveAs(name, path, mpWin->GetMainWindow().GetWindowHandle()))
+		if (p.SaveAs(name, path, mpWin->GetMainWindow().GetWindowHandle(), eFileTypes::eSCENE))
 		{
 			mpWin->GetMainWindow().SetTitle(std::wstring{name.begin(), name.end()});
 			mpSceneSystem->SaveScene(std::string{ path.begin(), path.end() },
@@ -559,7 +500,7 @@ namespace Dystopia
 		EditorProc p;
 		HashString path;
 		HashString name;
-		if (p.Load(path))
+		if (p.Load(path, eFileTypes::eSCENE))
 		{
 			mArrSelectedObj.clear();
 			ClearSelections();
@@ -567,7 +508,7 @@ namespace Dystopia
 		}
 	}
 
-	void Editor::OpenScene(const std::wstring& _path, const std::wstring& /*_name*/)
+	void Editor::OpenScene(const std::wstring& _path, const std::wstring&)
 	{
 		mArrSelectedObj.clear();
 		ClearSelections();
@@ -726,35 +667,35 @@ namespace Dystopia
 
 	void Editor::LogTabPerformance()
 	{
-		static constexpr float intervalS = 0.1f;
-		static float deltaAccu = 0.f;
-		deltaAccu += GetDeltaTime();
-		if (deltaAccu > intervalS)
-		{
-			deltaAccu = 0;
-			auto data = mpProfiler->GetInfo();
-			for (const auto& d : data)
-			{
-				auto info = d.second.mTimes;
-				for (const auto& i : info)
-				{
-					Performance::LogDataS(d.first, i.first, static_cast<float>(info[i.first]));
-					Performance::LogDataG(d.first, static_cast<float>(d.second.mTotal));
-				}
-			}
-			PLogTaskManager p;
-			p.mFrameRate	= mDeltaTime;
-			p.mCPUIdle		= mpProfiler->GetCPUPercentageIdle();
-			p.mCPUBusy		= mpProfiler->GetCPUPercentageBusy();
-			p.mCPUOS		= mpProfiler->GetCPUPercentageOS();
-			p.mCPUProc		= mpProfiler->GetCPUPercentageProcess();
-			p.mPageFaults	= mpProfiler->GetNumPageFaults();
-			p.mMemUsed		= mpProfiler->GetUsedMemory();
-			p.mRamUsed		= mpProfiler->GetUsedPhysicalMemory();
-			p.mMemAvail		= mpProfiler->GetAvailablePhysicalMemory();
-			p.mMemLoad		= mpProfiler->GetSystemMemoryLoad();
-			Performance::LogTaskMgr(p);
-		}
+		//static constexpr float intervalS = 0.1f;
+		//static float deltaAccu = 0.f;
+		//deltaAccu += GetDeltaTime();
+		//if (deltaAccu > intervalS)
+		//{
+		//	deltaAccu = 0;
+		//	auto data = mpProfiler->GetInfo();
+		//	for (const auto& d : data)
+		//	{
+		//		auto info = d.second.mTimes;
+		//		for (const auto& i : info)
+		//		{
+		//			Performance::LogDataS(d.first, i.first, static_cast<float>(info[i.first]));
+		//			Performance::LogDataG(d.first, static_cast<float>(d.second.mTotal));
+		//		}
+		//	}
+		//	PLogTaskManager p;
+		//	p.mFrameRate	= mDeltaTime;
+		//	p.mCPUIdle		= mpProfiler->GetCPUPercentageIdle();
+		//	p.mCPUBusy		= mpProfiler->GetCPUPercentageBusy();
+		//	p.mCPUOS		= mpProfiler->GetCPUPercentageOS();
+		//	p.mCPUProc		= mpProfiler->GetCPUPercentageProcess();
+		//	p.mPageFaults	= mpProfiler->GetNumPageFaults();
+		//	p.mMemUsed		= mpProfiler->GetUsedMemory();
+		//	p.mRamUsed		= mpProfiler->GetUsedPhysicalMemory();
+		//	p.mMemAvail		= mpProfiler->GetAvailablePhysicalMemory();
+		//	p.mMemLoad		= mpProfiler->GetSystemMemoryLoad();
+		//	Performance::LogTaskMgr(p);
+		//}
 	}
 
 	void Editor::ReAttachComponent(Component* _pComponent)
@@ -879,5 +820,5 @@ namespace Dystopia
 		return *mpClipBoard;
 	}
 }
-
+*/
 #endif		// EDITOR ONLY

@@ -60,6 +60,11 @@ namespace Dystopia
 
 		bool IsFullscreen() const;
 
+		unsigned long GetStyle(void) const;
+		unsigned long GetStyleEx(void) const;
+
+		void DestroySplash(void);
+
 	private:
 
 		std::wstring mTitle;
@@ -73,7 +78,6 @@ namespace Dystopia
 		unsigned long mWindowStyleEx;
 		bool mbFullscreen;
 
-		void DestroySplash(void);
 		void HandleFileInput(uint64_t);
 	};
 }

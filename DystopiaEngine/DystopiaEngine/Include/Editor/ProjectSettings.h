@@ -13,8 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _PROJ_SETTINGS_H_
 #define _PROJ_SETTINGS_H_
-
-#include "Editor/EditorTab.h"
+#include "Editor/EditorPanel.h"
+//#include "Editor/EditorTab.h"
 
 namespace Dystopia
 {
@@ -23,26 +23,32 @@ namespace Dystopia
 	class PhysicsSystem;
 	class InputManager;
 	class TagSystem;
+}
 
-	class ProjectSettings : public EditorTab
+namespace Editor
+{
+	class ProjectSettings : public EditorPanel//EditorTab
 	{
 	public:
-		static ProjectSettings* GetInstance(void);
+		//static ProjectSettings* GetInstance(void);
+		ProjectSettings(void);
 		~ProjectSettings(void);
 
-		void		Init(void);
-		void		Update(const float&);
-		void		EditorUI(void);
-		void		Shutdown(void);
-		std::string GetLabel(void) const;
-
-		void		SaveSettings(TextSerialiser& _out) const;
-		void		LoadSettings(TextSerialiser& _in);
+		void Load(void);
+		bool Init(void);
+		void Update(float);
+		void EditorUI(void);
+		void Shutdown(void);
+		void Message(eEMessage);
+		void SaveSettings(Dystopia::TextSerialiser&) const;
+		void LoadSettings(Dystopia::TextSerialiser&);
+		HashString GetLabel(void) const;
 
 	private:
-		ProjectSettings(void);
+		HashString		mLabel;
 
-		std::string		mLabel;
+		Dystopia::GraphicsSystem *mpGfxSys;
+		Dystopia::PhysicsSystem	 *mpPhySys;
 
 		GraphicsSystem	*mpGfxSys;
 		PhysicsSystem	*mpPhySys;
@@ -56,3 +62,17 @@ namespace Dystopia
 
 #endif //_PROJ_SETTINGS_H_
 #endif //EDITOR
+
+
+
+
+
+
+
+
+
+
+
+
+
+

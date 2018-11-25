@@ -14,39 +14,46 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SPRITE_PREVEIWER_H_
 #define _SPRITE_PREVEIWER_H_
 #include "Math/Vector2.h"
-#include "Editor/EditorTab.h"
-
+#include "DataStructure/HashString.h"
+//#include "Editor/EditorTab.h"
+#include "Editor/EditorPanel.h"
 namespace Dystopia
 {
 	class Texture;
 	class TextSerialiser;
-	class SpritePreviewer : public EditorTab
+	class GraphicsSystem;
+}
+namespace Editor
+{
+	class SpritePreviewer : public EditorPanel//EditorTab
 	{
 	public:
-		static SpritePreviewer* GetInstance(void);
+		//static SpritePreviewer* GetInstance(void);
+		SpritePreviewer(void);
 		~SpritePreviewer(void);
 
-		void		Init(void);
-		void		Update(const float&);
-		void		EditorUI(void);
-		void		Shutdown(void);
-		std::string GetLabel(void) const;
-
-		void SaveSettings(TextSerialiser& _out) const;
-		void LoadSettings(TextSerialiser& _in);
+		void Load(void);
+		bool Init(void);
+		void Update(float);
+		void EditorUI(void);
+		void Shutdown(void);
+		void Message(eEMessage);
+		void SaveSettings(Dystopia::TextSerialiser& _out) const;
+		void LoadSettings(Dystopia::TextSerialiser& _in);
+		HashString GetLabel(void) const;
 
 	private:
-		SpritePreviewer(void);
+		Dystopia::Texture* mpTargetTexture;
+		Dystopia::GraphicsSystem* mpGfxSys;
 
-		Texture*	mpTargetTexture;
 		float		mImageRatio;
 		float		mImageH;
 		float		mImageW;
 		Math::Vec2  mDisplaySize;
-		std::string mTextureName;
-		std::string mLabel;
+		HashString  mTextureName;
+		HashString  mLabel;
 
-		std::string GetTextureName(void);
+		HashString  GetTextureName(void);
 	};
 }
 

@@ -49,11 +49,11 @@ namespace Dystopia
 		void SetActive(const bool _bEnable);
 
 		virtual void Awake(void);
-		virtual void Load(void);
+		void Load(void);
 		virtual void Init(void);
 
 		void GameObjectDestroy(void);
-		virtual void Unload(void);
+		void Unload(void);
 
 		void DestroyComponent(void);
 

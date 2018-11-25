@@ -20,9 +20,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Component.h"
 #include "Component/ComponentList.h"
 #include "DataStructure/AutoArray.h"   // AutoArray
+#include "DataStructure/HashString.h"
 #include "Utility/MetaAlgorithms.h"	   // MetaFind
-#include "Math/Vector2.h"
 
+#include "Math/Vector2.h"
 #include <string>
 
 
@@ -57,8 +58,8 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
-		void Awake(void) override;
-		void Init(void) override;
+		void Awake(void);
+		void Init(void);
 
 		void Draw(void) const noexcept;
 
@@ -74,34 +75,25 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 
-		bool AnimationFinished(void) const;
-		void SetSpeed(float);
-		void SetPlay(bool);
-
 	private:
 
 		TextureAtlas* mpAtlas;
-
 		struct SpriteSheet
 		{
-			unsigned mnID; //section id in the atlas
-			Math::Vec2 mUVCoord;
-			std::string mstrName;
-			int mnCol, mnRow, mnWidth, mnHeight, mnCutoff, mnStartAt; 
-			bool mbLoop, mbFinished;
+			HashString mstrName;
+			unsigned mnID; 
+			int mnCol, mnRow;
+			bool mbLoop;
 		};
 
 		AutoArray<SpriteSheet> mAnimations;
 		int mnID, mnCol, mnRow;
 		float mfFrameTime, mfAccTime;
 
-		bool mbPlayAnim;
 
-		void SpriteSheetUI(SpriteSheet&);
-		void GetAtlas(void);
-		void RemoveAtlas(void);
-		void LoadAnimIntoAtlas(void);
-		void AddDefaultToAtlas(void);
+		void TextureFields(void);
+
+
 	};
 }
 

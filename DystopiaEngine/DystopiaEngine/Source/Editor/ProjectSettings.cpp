@@ -10,6 +10,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#if EDITOR
 #include "Editor/ProjectSettings.h"
 #include "Editor/EGUI.h"
 
@@ -20,41 +21,32 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Time/TimeSystem.h"
 
 
-Dystopia::ProjectSettings* gpInstance = 0;
-Dystopia::ProjectSettings* Dystopia::ProjectSettings::GetInstance(void)
-{
-	if (gpInstance) return gpInstance;
-
-	gpInstance = new Dystopia::ProjectSettings{};
-	return gpInstance;
-}
-
-Dystopia::ProjectSettings::ProjectSettings(void)
-	: EditorTab{false},
-	  mLabel{"Project Settings"},
-	  mpGfxSys{nullptr},
-	  mpPhySys{nullptr}, 
-	  mpInputSys{nullptr}
+Editor::ProjectSettings::ProjectSettings(void)
+	:
+	mLabel{ "Project Settings" },
+	mpGfxSys{ nullptr },
+	mpPhySys{ nullptr }
 {
 }
 
-Dystopia::ProjectSettings::~ProjectSettings(void)
+Editor::ProjectSettings::~ProjectSettings(void)
 {
 }
 
-void Dystopia::ProjectSettings::Init(void)
+void Editor::ProjectSettings::Load(void)
+{}
+
+bool Editor::ProjectSettings::Init(void)
 {
-	mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
-	mpPhySys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
-	mpInputSys = EngineCore::GetInstance()->GetSystem<InputManager>();
+	mpGfxSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>();
+	mpPhySys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::PhysicsSystem>();
+	return true;
 }
 
-void Dystopia::ProjectSettings::Update(const float&)
-{
+void Editor::ProjectSettings::Update(float)
+{}
 
-}
-
-void Dystopia::ProjectSettings::EditorUI(void)
+void Editor::ProjectSettings::EditorUI(void)
 {
 	if (EGUI::Display::StartTreeNode("Graphics Settings"))
 	{
@@ -67,7 +59,7 @@ void Dystopia::ProjectSettings::EditorUI(void)
 		mpPhySys->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
-	auto mpTimeSys = EngineCore::GetInstance()->GetSystem<TimeSystem>();
+	auto mpTimeSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::TimeSystem>();
 	EGUI::Display::HorizontalSeparator();
 	if (EGUI::Display::StartTreeNode("Time Settings"))
 	{
@@ -77,24 +69,27 @@ void Dystopia::ProjectSettings::EditorUI(void)
 
 }
 
-void Dystopia::ProjectSettings::Shutdown(void)
-{
+void Editor::ProjectSettings::Shutdown(void)
+{}
 
-}
+void Editor::ProjectSettings::Message(eEMessage)
+{}
 
-std::string Dystopia::ProjectSettings::GetLabel(void) const
+void Editor::ProjectSettings::SaveSettings(Dystopia::TextSerialiser&) const
+{}
+
+void Editor::ProjectSettings::LoadSettings(Dystopia::TextSerialiser&)
+{}
+
+HashString Editor::ProjectSettings::GetLabel(void) const
 {
 	return mLabel;
 }
 
-void Dystopia::ProjectSettings::SaveSettings(TextSerialiser& /*_out*/) const
-{
+#endif
 
-}
 
-void Dystopia::ProjectSettings::LoadSettings(TextSerialiser& /*_in*/)
-{
 
-}
+
 
 

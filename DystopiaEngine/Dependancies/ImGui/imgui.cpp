@@ -956,7 +956,7 @@ ImGuiStyle::ImGuiStyle()
     WindowMinSize           = ImVec2(300,300);    // Minimum window size
     WindowTitleAlign        = ImVec2(0.04f,0.5f);// Alignment for title bar text
     ChildRounding           = 0.0f;             // Radius of child window corners rounding. Set to 0.0f to have rectangular child windows
-    ChildBorderSize         = 0.0f;             // Thickness of border around child windows. Generally set to 0.0f or 1.0f. Other values not well tested.
+    ChildBorderSize         = 1.0f;             // Thickness of border around child windows. Generally set to 0.0f or 1.0f. Other values not well tested.
     PopupRounding           = 0.0f;             // Radius of popup window corners rounding. Set to 0.0f to have rectangular child windows
     PopupBorderSize         = 0.0f;             // Thickness of border around popup or tooltip windows. Generally set to 0.0f or 1.0f. Other values not well tested.
     FramePadding            = ImVec2(2,4);      // Padding within a framed rectangle (used by most widgets)
@@ -3886,44 +3886,48 @@ void ImGui::NewFrame()
     g.PlatformImePos = ImVec2(1.0f, 1.0f); // OS Input Method Editor showing on top-left of our window by default
 
     // Mouse wheel scrolling, scale
-    if (g.HoveredWindow && !g.HoveredWindow->Collapsed && (g.IO.MouseWheel != 0.0f || g.IO.MouseWheelH != 0.0f))
+    if (g.HoveredWindow && !g.HoveredWindow->Collapsed )
     {
-        // If a child window has the ImGuiWindowFlags_NoScrollWithMouse flag, we give a chance to scroll its parent (unless either ImGuiWindowFlags_NoInputs or ImGuiWindowFlags_NoScrollbar are also set).
-        ImGuiWindow* window = g.HoveredWindow;
-        ImGuiWindow* scroll_window = window;
-        while ((scroll_window->Flags & ImGuiWindowFlags_ChildWindow) && (scroll_window->Flags & ImGuiWindowFlags_NoScrollWithMouse) && !(scroll_window->Flags & ImGuiWindowFlags_NoScrollbar) && !(scroll_window->Flags & ImGuiWindowFlags_NoInputs) && scroll_window->ParentWindow)
-            scroll_window = scroll_window->ParentWindow;
-        const bool scroll_allowed = !(scroll_window->Flags & ImGuiWindowFlags_NoScrollWithMouse) && !(scroll_window->Flags & ImGuiWindowFlags_NoInputs);
+		if (g.IO.MouseWheel != 0.0f || g.IO.MouseWheelH != 0.0f)
+		{
+			// If a child window has the ImGuiWindowFlags_NoScrollWithMouse flag, we give a chance to scroll its parent (unless either ImGuiWindowFlags_NoInputs or ImGuiWindowFlags_NoScrollbar are also set).
+			ImGuiWindow* window = g.HoveredWindow;
+			ImGuiWindow* scroll_window = window;
+			while ((scroll_window->Flags & ImGuiWindowFlags_ChildWindow) && (scroll_window->Flags & ImGuiWindowFlags_NoScrollWithMouse) && !(scroll_window->Flags & ImGuiWindowFlags_NoScrollbar) && !(scroll_window->Flags & ImGuiWindowFlags_NoInputs) && scroll_window->ParentWindow)
+				scroll_window = scroll_window->ParentWindow;
+			const bool scroll_allowed = !(scroll_window->Flags & ImGuiWindowFlags_NoScrollWithMouse) && !(scroll_window->Flags & ImGuiWindowFlags_NoInputs);
 
-        if (g.IO.MouseWheel != 0.0f)
-        {
-            if (g.IO.KeyCtrl && g.IO.FontAllowUserScaling)
-            {
-                // Zoom / Scale window
-                const float new_font_scale = ImClamp(window->FontWindowScale + g.IO.MouseWheel * 0.10f, 0.50f, 2.50f);
-                const float scale = new_font_scale / window->FontWindowScale;
-                window->FontWindowScale = new_font_scale;
+			if (g.IO.MouseWheel != 0.0f)
+			{
+				if (g.IO.KeyCtrl && g.IO.FontAllowUserScaling)
+				{
+					// Zoom / Scale window
+					const float new_font_scale = ImClamp(window->FontWindowScale + g.IO.MouseWheel * 0.10f, 0.50f, 2.50f);
+					const float scale = new_font_scale / window->FontWindowScale;
+					window->FontWindowScale = new_font_scale;
 
-                const ImVec2 offset = window->Size * (1.0f - scale) * (g.IO.MousePos - window->Pos) / window->Size;
-                window->Pos += offset;
-                window->Size *= scale;
-                window->SizeFull *= scale;
-            }
-            else if (!g.IO.KeyCtrl && scroll_allowed)
-            {
-                // Mouse wheel vertical scrolling
-                float scroll_amount = 5 * scroll_window->CalcFontSize();
-                scroll_amount = (float)(int)ImMin(scroll_amount, (scroll_window->ContentsRegionRect.GetHeight() + scroll_window->WindowPadding.y * 2.0f) * 0.67f);
-                SetWindowScrollY(scroll_window, scroll_window->Scroll.y - g.IO.MouseWheel * scroll_amount);
-            }
-        }
-        if (g.IO.MouseWheelH != 0.0f && scroll_allowed)
-        {
-            // Mouse wheel horizontal scrolling (for hardware that supports it)
-            float scroll_amount = scroll_window->CalcFontSize();
-            if (!g.IO.KeyCtrl && !(window->Flags & ImGuiWindowFlags_NoScrollWithMouse))
-                SetWindowScrollX(window, window->Scroll.x - g.IO.MouseWheelH * scroll_amount);
-        }
+					const ImVec2 offset = window->Size * (1.0f - scale) * (g.IO.MousePos - window->Pos) / window->Size;
+					window->Pos += offset;
+					window->Size *= scale;
+					window->SizeFull *= scale;
+				}
+				else if (!g.IO.KeyCtrl && scroll_allowed)
+				{
+					// Mouse wheel vertical scrolling
+					float scroll_amount = 5 * scroll_window->CalcFontSize();
+					scroll_amount = (float)(int)ImMin(scroll_amount, (scroll_window->ContentsRegionRect.GetHeight() + scroll_window->WindowPadding.y * 2.0f) * 0.67f);
+					SetWindowScrollY(scroll_window, scroll_window->Scroll.y - g.IO.MouseWheel * scroll_amount);
+				}
+			}
+			if (g.IO.MouseWheelH != 0.0f && scroll_allowed)
+			{
+				// Mouse wheel horizontal scrolling (for hardware that supports it)
+				float scroll_amount = scroll_window->CalcFontSize();
+				if (!g.IO.KeyCtrl && !(window->Flags & ImGuiWindowFlags_NoScrollWithMouse))
+					SetWindowScrollX(window, window->Scroll.x - g.IO.MouseWheelH * scroll_amount);
+			}
+		}
+
     }
 
     // Pressing TAB activate widget focus
@@ -8078,7 +8082,7 @@ bool ImGui::ButtonBehavior(const ImRect& bb, ImGuiID id, bool* out_hovered, bool
     // Mouse
     if (hovered)
     {
-        if (!(flags & ImGuiButtonFlags_NoKeyModifiers) || (!g.IO.KeyCtrl && !g.IO.KeyShift && !g.IO.KeyAlt))
+        if (!(flags & ImGuiButtonFlags_NoKeyModifiers) || (/*!g.IO.KeyCtrl &&*/ !g.IO.KeyShift && !g.IO.KeyAlt))
         {
             //                        | CLICKING        | HOLDING with ImGuiButtonFlags_Repeat
             // PressedOnClickRelease  |  <on release>*  |  <on repeat> <on repeat> .. (NOT on release)  <-- MOST COMMON! (*) only if both click/release were over bounds
@@ -8570,7 +8574,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
 
     // For regular tree nodes, we arbitrary allow to click past 2 worth of ItemSpacing
     // (Ideally we'd want to add a flag for the user to specify if we want the hit test to be done up to the right side of the content or not)
-    const ImRect interact_bb = display_frame ? frame_bb : ImRect(frame_bb.Min.x, frame_bb.Min.y, frame_bb.Min.x + text_width + style.ItemSpacing.x*2, frame_bb.Max.y);
+    const ImRect interact_bb = display_frame ? frame_bb : ImRect(frame_bb.Min.x, frame_bb.Min.y, frame_bb.Max.x /*+ text_width + style.ItemSpacing.x*2*/, frame_bb.Max.y);
     bool is_open = TreeNodeBehaviorIsOpen(id, flags);
 
     // Store a flag for the current depth to tell if we will allow closing this node when navigating one of its child.

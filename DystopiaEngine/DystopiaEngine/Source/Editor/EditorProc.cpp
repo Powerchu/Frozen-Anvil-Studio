@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/EditorProc.h"
+#include "Globals.h"
 
 /* library includes */
 #include <iostream>
@@ -25,14 +26,32 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Defaults
 {
-	static const std::wstring g_Ext = L"dscene";
-	static constexpr COMDLG_FILTERSPEC g_Filter[1] =
+	static const std::wstring g_DefaultExt[eFileTypes::eLAST] =
 	{
-		{ L"DystopiaScene", L"*.dscene" }
+		L"dmap",
+		L"dyst",
+		L"dscene",
+		L"dobj",
+		L"dmesh",
+		L"dfrag",
+		L"dvert",
+		L"dystor"
+	};
+
+	static constexpr COMDLG_FILTERSPEC g_Filter[eFileTypes::eLAST] =
+	{
+		{ L"DystopiaAtlas"		, L"*.dmap"		},
+		{ L"DystopiaSettings"	, L"*.dyst"		},
+		{ L"DystopiaScene"		, L"*.dscene"	},
+		{ L"DystopiaPrefab"		, L"*.dobj"		},
+		{ L"DystopiaMesh"		, L"*.dmesh"	},
+		{ L"DystopiaFragS"		, L"*.dfrag"	},
+		{ L"DystopiaVertS"		, L"*.dvert"	},
+		{ L"DystopiaCrash"		, L"*.dystor"	},
 	};
 }
 
-bool Dystopia::EditorProc::Load(HashString& _outPath)
+bool Dystopia::EditorProc::Load(HashString& _outPath, eFileTypes _type)
 {
 	bool result = false;
 	HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -42,7 +61,8 @@ bool Dystopia::EditorProc::Load(HashString& _outPath)
 		hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
 		if (SUCCEEDED(hr))
 		{
-			pFileOpen->SetFileTypes(1, Defaults::g_Filter);
+			COMDLG_FILTERSPEC p[1] = { Defaults::g_Filter[_type] };
+			pFileOpen->SetFileTypes(1, p);
 			if (SUCCEEDED(pFileOpen->Show(NULL)))
 			{
 				IShellItem *pItem;
@@ -66,7 +86,41 @@ bool Dystopia::EditorProc::Load(HashString& _outPath)
 	return result;
 }
 
-bool Dystopia::EditorProc::SaveAs(HashString& _outName, HashString& _outPath, HWND _win)
+bool Dystopia::EditorProc::BrowseFolder(HashString& _outPath)
+{
+	bool result = false;
+	HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+	if (SUCCEEDED(hr))
+	{
+		IFileOpenDialog *pFileOpen;
+		hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+		if (SUCCEEDED(hr))
+		{
+			pFileOpen->SetOptions(FOS_PICKFOLDERS);
+			if (SUCCEEDED(pFileOpen->Show(NULL)))
+			{
+				IShellItem *pItem;
+				if (SUCCEEDED(pFileOpen->GetResult(&pItem)))
+				{
+					PWSTR pszFilePath;
+					hr = pItem->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &pszFilePath);
+					if (SUCCEEDED(hr))
+					{
+						_outPath = std::wstring{ pszFilePath }.c_str();
+						result = true;
+						CoTaskMemFree(pszFilePath);
+					}
+					pItem->Release();
+				}
+			}
+			pFileOpen->Release();
+		}
+		CoUninitialize();
+	}
+	return result;
+}
+
+bool Dystopia::EditorProc::SaveAs(HashString& _outName, HashString& _outPath, HWND _win, eFileTypes _type)
 {
 	bool result = false;
 	HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -76,8 +130,9 @@ bool Dystopia::EditorProc::SaveAs(HashString& _outName, HashString& _outPath, HW
 		hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL, IID_IFileSaveDialog, reinterpret_cast<void**>(&pFileSave));
 		if (SUCCEEDED(hr))
 		{
-			pFileSave->SetDefaultExtension(Defaults::g_Ext.c_str());
-			pFileSave->SetFileTypes(1, Defaults::g_Filter);
+			pFileSave->SetDefaultExtension(Defaults::g_DefaultExt[_type].c_str());
+			COMDLG_FILTERSPEC p[1] = { Defaults::g_Filter[_type] };
+			pFileSave->SetFileTypes(1, p);
 			if (SUCCEEDED(pFileSave->Show(_win)))
 			{
 				IShellItem *pItem;

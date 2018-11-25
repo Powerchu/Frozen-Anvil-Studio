@@ -13,38 +13,58 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _SPRITE_EDITOR_H_
 #define _SPRITE_EDITOR_H_
+#include "DataStructure/HashString.h"
 #include "Math/Vector2.h"
-#include "Editor/EditorTab.h"
+//#include "Editor/EditorTab.h"
+#include "Editor/EditorPanel.h"
 
 namespace Dystopia
 {
-	class SpriteEditor : public EditorTab
+	class Texture;
+	class TextureAtlas;
+	class GraphicsSystem;
+	class TextureSystem;
+}
+
+namespace Editor
+{
+	class SpriteEditor : public EditorPanel//EditorTab
 	{
 	public:
-		static SpriteEditor* GetInstance(void);
+		//static SpriteEditor* GetInstance(void);
+		SpriteEditor(void);
 		~SpriteEditor(void);
 
-		void		Init(void);
-		void		Update(const float&);
-		void		EditorUI(void);
-		void		Shutdown(void);
-		std::string GetLabel(void) const;
-
-		void SaveSettings(TextSerialiser&) const;
-		void LoadSettings(TextSerialiser&);
+		void Load(void);
+		bool Init(void);
+		void Update(float);
+		void EditorUI(void);
+		void Shutdown(void);
+		void Message(eEMessage);
+		void SaveSettings(Dystopia::TextSerialiser& _out) const;
+		void LoadSettings(Dystopia::TextSerialiser& _in);
+		HashString GetLabel(void) const;
 
 	private:
-		SpriteEditor(void);
 
-		std::string mLabel;
-		Math::Vec2	mStartPt;
-		Math::Vec2	mEndPt;
-		bool		mStartPlotting;
-		bool		mSectionPlotted;
+		Dystopia::TextureAtlas *mpAtlas;
+		Dystopia::Texture *mpTexture;
+		Dystopia::GraphicsSystem *mpGfxSys;
+		Dystopia::TextureSystem *mpTextSys;
+
+		HashString mLabel;
 	};
 }
 
 
 #endif // _SPRITE_EDITOR_H_
 #endif // EDITOR
+
+
+
+
+
+
+
+
 

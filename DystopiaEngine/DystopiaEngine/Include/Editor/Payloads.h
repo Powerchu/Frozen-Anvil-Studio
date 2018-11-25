@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _PAYLOADS_H_
 #define _PAYLOADS_H_
+#include "Globals.h"
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/HashString.h"
 #include <string>
@@ -35,6 +36,7 @@ namespace EGUI
 		MP3,
 		DDS,
 		WAV,
+		ALL_IMG,
 
 		ePAY_LOAD_LAST
 	};
@@ -53,24 +55,27 @@ namespace EGUI
 		case MP3:			return "MP3";
 		case DDS:			return "DDS";
 		case WAV:			return "WAV";
+		case ALL_IMG:		return "A_IMG";
 		default:			return "ePAY_LOAD_LAST";
 		}
 	}
 }
 
-namespace Dystopia
+namespace Editor //Dystopia
 {
-	static const  std::string g_PayloadSceneEx = ".dscene";
-	static const  std::string g_PayloadPrefabEx = ".dobj";
-	static const  std::string g_PayloadPngEx = ".png";
-	static const  std::string g_PayloadBmpEx = ".bmp";
-	static const  std::string g_PayloadCppEx = ".cpp";
-	static const  std::string g_PayloadMp3Ex = ".mp3";
-	static const  std::string g_PayloadDDSEx = ".dds";
-	static const  std::string g_PayloadWavEx = ".wav";
+	static const std::string g_PayloadSceneEx = Gbl::SCENE_EXT;
+	static const std::string g_PayloadPrefabEx = Gbl::PREFAB_EXT;
+	static const std::string g_PayloadPngEx = Gbl::PNG_EXT;
+	static const std::string g_PayloadBmpEx = Gbl::BMP_EXT;
+	static const std::string g_PayloadCppEx = Gbl::CPP_EXT;
+	static const std::string g_PayloadMp3Ex = Gbl::MP3_EXT;
+	static const std::string g_PayloadDDSEx = Gbl::DDS_EXT;
+	static const std::string g_PayloadWavEx = Gbl::WAV_EXT;
 
 	/********************************************************************* FILE & FOLDER *********************************************************************/
 	char my_tolower(char const ch);
+
+	EGUI::ePayloadTags DeterminePathType(const HashString&);
 
 	struct CrawlItem
 	{

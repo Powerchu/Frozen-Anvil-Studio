@@ -14,8 +14,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _SCENE_VIEW_H_
 #define _SCENE_VIEW_H_
-#include "EditorTab.h"
+//#include "EditorTab.h"
+#include "Editor/EditorPanel.h"
 #include "DataStructure/AutoArray.h"
+#include "DataStructure/HashString.h"
 
 namespace Dystopia
 {
@@ -23,35 +25,33 @@ namespace Dystopia
 	class GameObject;
 	class Camera;
 	class Texture;
+	class SceneSystem;
+}
+
+namespace Editor
+{
 	struct File;
 
-	class SceneView : public EditorTab
+	class SceneView : public EditorPanel //EditorTab
 	{
 	public:
-		static SceneView* GetInstance();
-		~SceneView();
-
-		/* Init() is called immediately after the creation of the object */
-		virtual void Init();
-
-		/* Update() is called before Window(), so alter most variables (frame based) here to be printed in Window() later */
-		virtual void Update(const float&);
-
-		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
-		virtual void EditorUI();
-
-		/* Shutdown() is called right before deleting this object */
-		virtual void Shutdown();
-
-		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
-		virtual std::string GetLabel() const;
+		//static SceneView* GetInstance();
+		SceneView(void);
+		void Load(void);
+		bool Init(void);
+		void Update(float);
+		void EditorUI(void);
+		void Shutdown(void);
+		void Message(eEMessage);
+		void SaveSettings(Dystopia::TextSerialiser& _out) const;
+		void LoadSettings(Dystopia::TextSerialiser& _in);
+		HashString GetLabel(void) const;
+		~SceneView(void);
 
 		void SetSensitivity(float);
-		float GetSensitivity() const;
+		float GetSensitivity(void) const;
 
 	private:
-		SceneView(void);
-
 		enum eGizTool
 		{
 			eTRANSLATE,
@@ -66,44 +66,46 @@ namespace Dystopia
 			eZOOM_NONE
 		};
 
-		eGizTool		mCurrGizTool;
-		bool			mGizmoHovered;
-		bool			mClearSelection;
-		bool			mDragging;
-		bool			mAmFocused;
-		float			mSensitivity;
-		float			mMoveSens;
-		eZoom			mToZoom;
-		std::string		mLabel;
-		GraphicsSystem	*mpGfxSys;
-		Camera			*mpSceneCamera;
-		Math::Vec2		mImgSize;
-		Math::Vec2		mImgPos;
-		Math::Vec2		mPrevMovePoint;
-		
-		void			ScrollIn();
-		void			ScrollOut();
-		void			SceneChanged();
-		void			Zoom(bool);
-		void			Move();
-		GameObject*		FindMouseObject();
-		void			ResetMouseEvents();
-		void			CheckMouseEvents();
-		void			AcceptPrefab(File *t);
-		void			AcceptTexture(File *t);
-		Math::Pt3D		GetWorldClickPos(const Camera * const _cam) const;
-		void			AdjustImageSize(Texture*);
-		void			AdjustDisplayPos(void);
-		Math::Vec2		GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY);
-		Math::Vec2		GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY);
-		Math::Vec2		GetWorldToScreen(const Math::Pt3D&);
-		Camera*			GetCamera();
-		void			DrawGizmos(void);
-		void			DrawGizmoSingle(GameObject&);
-		void			DrawGizmoMul(const AutoArray<GameObject*>&);
+		bool		mGizmoHovered;
+		bool		mClearSelection;
+		bool		mDragging;
+		bool		mAmFocused;
+		float		mSensitivity;
+		float		mMoveSens;
+		eZoom		mToZoom;
+		eGizTool	mCurrGizTool;
+		HashString	mLabel;
+		Math::Vec2	mImgSize;
+		Math::Vec2	mImgPos;
+		Math::Vec2	mPrevMovePoint;
 
-		void			SetGizmoTranslate(void);
-		void			SetGizmoScaler(void);
+		Dystopia::Camera			*mpSceneCamera;
+		Dystopia::GraphicsSystem	*mpGfxSys;
+		Dystopia::SceneSystem		*mpSceneSys;
+
+		Dystopia::GameObject*	FindMouseObject();
+		Dystopia::Camera*		GetCamera();
+
+		Math::Pt3D	GetWorldClickPos(const Dystopia::Camera * const _cam) const;
+		Math::Vec2	GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY);
+		Math::Vec2	GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY);
+		Math::Vec2	GetWorldToScreen(const Math::Pt3D&);
+		void		ScrollIn();
+		void		ScrollOut();
+		void		SceneChanged();
+		void		Zoom(bool);
+		void		Move();
+		void		ResetMouseEvents();
+		void		CheckMouseEvents();
+		void		AcceptPrefab(::Editor::File *t);
+		void		AcceptTexture(::Editor::File *t);
+		void		AdjustImageSize(Dystopia::Texture*);
+		void		AdjustDisplayPos(void);
+		void		DrawGizmos(void);
+		void		DrawGizmoSingle(Dystopia::GameObject&);
+		void		DrawGizmoMul(const AutoArray<uint64_t>&);
+		void		SetGizmoTranslate(void);
+		void		SetGizmoScaler(void);
 	};
 
 }

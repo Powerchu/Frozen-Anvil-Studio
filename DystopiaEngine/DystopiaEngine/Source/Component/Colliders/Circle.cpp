@@ -344,7 +344,7 @@ namespace Dystopia
 			switch (e)
 			{
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &Circle::mv3Offset);
+				//EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &Circle::mv3Offset);
 				break;
 			case EGUI::eDragStatus::eEND_DRAG:
 			case EGUI::eDragStatus::eENTER:
@@ -352,7 +352,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eTABBED:
 			case EGUI::eDragStatus::eDEACTIVATED:
 				Init();
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eNO_CHANGE:
 			default:
@@ -368,7 +368,7 @@ namespace Dystopia
 		switch (e)
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Circle>(mnOwner, &Circle::m_radius);
+			//EGUI::GetCommandHND()->StartRecording<Circle>(mnOwner, &Circle::m_radius);
 			break;
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
@@ -376,7 +376,7 @@ namespace Dystopia
 		case EGUI::eDragStatus::eTABBED:
 		case EGUI::eDragStatus::eDEACTIVATED:
 			Init();
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eNO_CHANGE:
 		default:
@@ -420,12 +420,12 @@ namespace Dystopia
 
 	void Circle::eIsTriggerCheckBox()
 	{
-		bool tempBool = mbIsTrigger;
+		//bool tempBool = mbIsTrigger;
 
-		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
+		if (EGUI::Display::CheckBox("Is Trigger		  ", &mbIsTrigger))
 		{
-			mbIsTrigger = tempBool;
-			EGUI::GetCommandHND()->InvokeCommand<Collider>(mnOwner, &Collider::mbIsTrigger, tempBool);
+			//mbIsTrigger = tempBool;
+			//EGUI::GetCommandHND()->InvokeCommand<Collider>(mnOwner, &Collider::mbIsTrigger, tempBool);
 		}
 	}
 
