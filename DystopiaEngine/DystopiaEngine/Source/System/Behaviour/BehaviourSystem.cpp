@@ -52,7 +52,12 @@ namespace Dystopia
 
 		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
 
-		FileSys->CreateFiles("Dystopia/BehaviourDLL", eFileDir::eAppData);
+#if _DEBUG
+		FileSys->CreateFiles("BehaviourDLL", eFileDir::eAppData);
+#else
+		FileSys->CreateFiles("BehaviourDLL_Release", eFileDir::eAppData);
+#endif
+
 		FileSys->CreateFiles("Dystopia/Temp", eFileDir::eAppData);
 		FileSys->CreateFiles("Behaviours/BehavioursScripts", eFileDir::eResource);
 		mHotloader->SetPipeExePath(FileSys->GetFullPath_w(L"BehaviourPiping.exe", eFileDir::eResource));

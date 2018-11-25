@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 static const std::string ProjectFolder = "..\\DystopiaEngine";
 static const std::string ResourceFolder = "Resource";
 static const std::string BehavioursFolder = "Behaviours\\BehavioursScripts";
-static const std::string Default_Creation_Folder = ProjectFolder + "\\" + ResourceFolder + "\\" + BehavioursFolder;
+static const std::string Default_Creation_Folder = ProjectFolder + "\\" + BehavioursFolder;
 static const std::string TemplateBodyPath = ProjectFolder + "\\" + ResourceFolder + "\\BehaviourFormat\\BehaviourScript.cpp";
 static const std::string TemplateHeaderPath = ProjectFolder + "\\" + ResourceFolder + "\\BehaviourFormat\\BehaviourScript.h";
 static constexpr int tokenCount = 5;

@@ -23,12 +23,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
-
-//#include "Utility/ComponentGUID.h"
-//#include "Object/ObjectFlags.h"
+#include "System/Driver/Driver.h"
+#include "System/Tag/TagSystem.h"
 #include "Object/GameObject.h"
 
-//#include "Editor/EditorMetaHelpers.h"
 
 #include "Reflection/ReadWriteObject.h"
 #include "Reflection/ReflectionTypeErasure.h"
@@ -369,7 +367,7 @@ namespace Editor
 		{
 			EGUI::Display::Dummy(235, 2);
 
-			auto && list = EngineCore::GetInstance()->Get<TagSystem>()->GetAllTagsName();
+			auto && list = Dystopia::EngineCore::GetInstance()->Get<Dystopia::TagSystem>()->GetAllTagsName();
 			for (auto& elem : list)
 			{
 				if (EGUI::Display::SelectableTxt(elem))

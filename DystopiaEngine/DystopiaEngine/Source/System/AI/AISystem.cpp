@@ -53,7 +53,7 @@ namespace Dystopia
 	{
 	}
 
-	void AISystem::LoadSettings(DysSerialiser_t& _in)
+	void AISystem::LoadSettings(DysSerialiser_t& )
 	{
 	}
 

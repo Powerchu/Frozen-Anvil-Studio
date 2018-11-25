@@ -14,7 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _PROJ_SETTINGS_H_
 #define _PROJ_SETTINGS_H_
 #include "Editor/EditorPanel.h"
-//#include "Editor/EditorTab.h"
 
 namespace Dystopia
 {
@@ -49,11 +48,8 @@ namespace Editor
 
 		Dystopia::GraphicsSystem *mpGfxSys;
 		Dystopia::PhysicsSystem	 *mpPhySys;
-
-		GraphicsSystem	*mpGfxSys;
-		PhysicsSystem	*mpPhySys;
-		InputManager    *mpInputSys;
-		TagSystem       *mpTagSystem;
+		Dystopia::InputManager    *mpInputSys;
+		Dystopia::TagSystem       *mpTagSystem;
 
 
 	};
