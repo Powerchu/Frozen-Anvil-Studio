@@ -172,6 +172,7 @@ void Editor::EditorUI::EndFrame(void)
 {
 	if (!mbLauncherMode)
 		EndDock();
+
 	ImGui::Render();
 	ImDrawData *mpDrawData = ImGui::GetDrawData();
 

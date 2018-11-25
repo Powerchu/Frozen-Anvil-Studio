@@ -199,7 +199,8 @@ void ImGui::StyleColorsDark(ImGuiStyle* dst)
 }
 
 void ImGui::StyleColorsClassic(ImGuiStyle* dst)
-{ImGuiStyle* style = dst ? dst : &ImGui::GetStyle();
+{
+	ImGuiStyle* style = dst ? dst : &ImGui::GetStyle();
     ImVec4* colors = style->Colors;
 
     colors[ImGuiCol_Text]                   = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
