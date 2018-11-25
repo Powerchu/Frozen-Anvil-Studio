@@ -54,6 +54,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 static const std::string g_bPopup = "Behaviour List";
 static const std::string g_cPopup = "Component List";
 static const std::string g_nPopup = "New Behaviour Name";
+static const std::string g_tPopip = "Tag List";
 
 
 namespace Dystopia
@@ -109,6 +110,7 @@ namespace Dystopia
 		EGUI::Indent(inde);
 		AddComponentButton(btnSize);
 		AddBehaviourButton(btnSize);
+		AddTagButton(btnSize);
 		EGUI::UnIndent(inde);
 	}
 
@@ -137,7 +139,7 @@ namespace Dystopia
 				auto f_New = GetCommandHND()->Make_FunctionModWrapper(&GameObject::SetName, HashString{ buffer });
 				GetCommandHND()->InvokeCommand(mpFocus->GetID(), f_Old, f_New);
 			}
-			if (EGUI::Display::DropDownSelection("Tag", i,EngineCore::GetInstance()->Get<TagSystem>()->GetAllTagsName(), 32))
+			if (EGUI::Display::DropDownSelection("Tag", i, mpFocus->GetAllTags_str(), 32))
 			{
 
 			}
@@ -350,6 +352,34 @@ namespace Dystopia
 			ImGui::EndPopup();
 		}
 		return ret;
+	}
+
+	void Inspector::AddTagButton(const Math::Vec2& _btnSize)
+	{
+		if (EGUI::Display::Button("Add Tag", _btnSize))
+		{
+			EGUI::Display::OpenPopup(g_tPopip, false);
+		}
+		TagsDropDownList();
+	}
+
+	void Inspector::TagsDropDownList()
+	{
+		if (EGUI::Display::StartPopup(g_tPopip))
+		{
+			EGUI::Display::Dummy(235, 2);
+
+			auto& list = EngineCore::GetInstance()->Get<TagSystem>()->GetAllTagsName();
+			for (auto& elem : list)
+			{
+				if (EGUI::Display::SelectableTxt(elem))
+				{
+					mpFocus->AddTag(elem);
+				}
+			}
+
+			EGUI::Display::EndPopup();
+		}
 	}
 }
 

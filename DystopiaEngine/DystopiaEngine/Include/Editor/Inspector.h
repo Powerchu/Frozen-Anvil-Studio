@@ -69,6 +69,9 @@ namespace Dystopia
 		void			ConfirmCreateBehaviour();
 		void			ResetBehaviourCreation();
 		bool			RemoveComponent(Component*);
+
+		void			AddTagButton(const Math::Vec2&);
+		void			TagsDropDownList();
 	};
 }
 

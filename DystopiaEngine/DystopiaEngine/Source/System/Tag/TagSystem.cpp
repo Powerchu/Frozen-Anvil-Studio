@@ -7,6 +7,16 @@ namespace Dystopia
 	{
 
 	}
+
+	Tags TagSystem::GetTag(HashString const& _TagName) const
+	{
+		for (auto & elem : mTags)
+			if (elem.second == _TagName)
+				return elem.first;
+
+		return Tags(0);
+	}
+
 	AutoArray < std::string > TagSystem::GetAllTagsName() const
 	{
 		AutoArray < std::string > toRet;
@@ -15,6 +25,45 @@ namespace Dystopia
 			toRet.push_back(elem.second.c_str());
 		}
 
+		return Ut::Move(toRet);
+	}
+
+	AutoArray<HashString> TagSystem::ConvertTagsToHash(Tags _Tag) const
+	{
+		AutoArray <HashString> toRet;
+		for (auto & elem : mTags)
+		{
+			if(static_cast<unsigned>(elem.first) & static_cast<unsigned>(_Tag))
+			{
+				toRet.push_back(elem.second);
+			}
+		}
+		return Ut::Move(toRet);
+	}
+
+	AutoArray<std::string> TagSystem::ConvertTagsToString(Tags _Tag) const
+	{
+		AutoArray <std::string> toRet;
+		for (auto & elem : mTags)
+		{
+			if (static_cast<unsigned>(elem.first) & static_cast<unsigned>(_Tag))
+			{
+				toRet.push_back(elem.second.c_str());
+			}
+		}
+		return Ut::Move(toRet);
+	}
+
+	AutoArray<Tags> TagSystem::GetTagsAsArray(Tags _Tag) const
+	{
+		AutoArray <Tags> toRet;
+		for (auto & elem : mTags)
+		{
+			if (static_cast<unsigned>(elem.first) & static_cast<unsigned>(_Tag))
+			{
+				toRet.push_back(elem.first);
+			}
+		}
 		return Ut::Move(toRet);
 	}
 }

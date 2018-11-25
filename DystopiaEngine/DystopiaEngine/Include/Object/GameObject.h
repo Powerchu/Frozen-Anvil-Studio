@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO/TextSerialiser.h"
 #include "Object/ObjectFlags.h"
 #include "Globals.h"
+#include "System/Tag/Tags.h"
 
 #include <string>
 
@@ -102,7 +103,16 @@ namespace Dystopia
 		void SetFlag(eObjFlag);
 		unsigned GetFlag() const;
 
-
+		unsigned GetTags() const;
+		AutoArray<Tags>        GetAllTags()         const;
+		AutoArray<HashString>  GetAllTags_Hashstr() const;
+		AutoArray<std::string> GetAllTags_str()     const;
+		void AddTag(HashString const & _TagName);
+		void AddTag(Tags _tag);
+		void AddTag(std::string const & _TagName);
+		void AddTag(const char * _TagName);
+		void RemoveTag(Tags _Tag);
+		void ClearTags();
 
 
 		template<class T>
@@ -122,6 +132,7 @@ namespace Dystopia
 		bool mbIsStatic;					/* Static bodies do not need to be integrated/updated*/
 
 		uint64_t mnID;
+		unsigned mTags;
 		unsigned mnFlags;
 		HashString mName;
 
@@ -129,7 +140,7 @@ namespace Dystopia
 
 		AutoArray<Component*> mComponents;
 		AutoArray<Behaviour*> mBehaviours;
-		AutoArray<HashID>   mTags;
+
 
 		GameObject(const GameObject&) = delete;
 

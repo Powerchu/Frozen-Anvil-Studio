@@ -23,8 +23,9 @@
 
 namespace Dystopia
 {
-	struct TagSystem
+	class TagSystem
 	{
+	public:
 		TagSystem();
 
 
@@ -35,6 +36,10 @@ namespace Dystopia
 		void RemoveTag(HashString const & _TagName) const;
 
 		AutoArray < std::string > GetAllTagsName() const;
+
+		AutoArray<HashString>  ConvertTagsToHash  (Tags _Tag) const;
+		AutoArray<std::string> ConvertTagsToString(Tags _Tag) const;
+		AutoArray<Tags>        GetTagsAsArray(Tags _Tag)    const;
 
 		using TagTable = std::map<Tags, HashString>;
 

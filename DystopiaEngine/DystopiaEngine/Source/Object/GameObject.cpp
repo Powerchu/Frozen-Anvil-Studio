@@ -23,6 +23,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "IO/TextSerialiser.h"
 #include "System/Behaviour/BehaviourSystem.h"
+#include "System/Tag/TagSystem.h"
+#include "Editor/Payloads.h"
 
 
 #define Ping(_ARR, _FUNC, ...)			\
@@ -43,7 +45,7 @@ Dystopia::GameObject::GameObject(void) noexcept
 Dystopia::GameObject::GameObject(uint64_t _ID) noexcept
 	: mnID{ _ID }, mnFlags{ FLAG_NONE },
 	mTransform{ this }, mComponents{}, mBehaviours{}
-	,mbIsStatic(false)
+	,mbIsStatic(false), mTags{0}
 {
 
 }
@@ -53,7 +55,8 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	mComponents{ Ut::Move(_obj.mComponents) },
 	mBehaviours{ Ut::Move(_obj.mBehaviours) },
 	mTransform{ _obj.mTransform }
-	, mbIsStatic(false)
+	, mbIsStatic(false),
+	mTags(0)
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
@@ -94,6 +97,56 @@ void Dystopia::GameObject::RemoveFlags(eObjFlag _flags)
 unsigned Dystopia::GameObject::GetFlag() const
 {
 	return mnFlags;
+}
+
+unsigned Dystopia::GameObject::GetTags() const
+{
+	return mTags;
+}
+
+AutoArray<Tags> Dystopia::GameObject::GetAllTags() const
+{
+	return EngineCore::GetInstance()->Get<TagSystem>()->GetTagsAsArray(static_cast<Tags>(mTags));
+}
+
+AutoArray<HashString> Dystopia::GameObject::GetAllTags_Hashstr() const
+{
+	return EngineCore::GetInstance()->Get<TagSystem>()->ConvertTagsToHash(static_cast<Tags>(mTags));
+}
+
+AutoArray<std::string> Dystopia::GameObject::GetAllTags_str() const
+{
+	return EngineCore::GetInstance()->Get<TagSystem>()->ConvertTagsToString(static_cast<Tags>(mTags));
+}
+
+void Dystopia::GameObject::AddTag(HashString const& _TagName)
+{
+	mTags |= static_cast<unsigned>(EngineCore::GetInstance()->Get<TagSystem>()->GetTag(_TagName));
+}
+
+void Dystopia::GameObject::AddTag(Tags _tag)
+{
+	mTags |= static_cast<unsigned>(_tag);
+}
+
+void Dystopia::GameObject::AddTag(std::string const& _TagName)
+{
+	mTags |= static_cast<unsigned>(EngineCore::GetInstance()->Get<TagSystem>()->GetTag(HashString{ _TagName.c_str() }));
+}
+
+void Dystopia::GameObject::AddTag(const char* _TagName)
+{
+	mTags |= static_cast<unsigned>(EngineCore::GetInstance()->Get<TagSystem>()->GetTag(_TagName));
+}
+
+void Dystopia::GameObject::RemoveTag(Tags _Tag)
+{
+	mTags &= ~static_cast<unsigned>(_Tag);
+}
+
+void Dystopia::GameObject::ClearTags()
+{
+	mTags = 0;
 }
 
 
@@ -236,7 +289,7 @@ void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)
 void Dystopia::GameObject::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("START_GO_DATA");
-	_out << mnID << mnFlags << mName;
+	_out << mnID << mnFlags << mName << mTags;
 	_out.InsertEndBlock("END_GO_DATA");
 
 	_out.InsertStartBlock("START_GO_TRANSFORM");
@@ -247,7 +300,7 @@ void Dystopia::GameObject::Serialise(TextSerialiser& _out) const
 void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 {
 	_in.ConsumeStartBlock();
-	_in >> mnID >> mnFlags >> mName;
+	_in >> mnID >> mnFlags >> mName >> mTags;
 	_in.ConsumeEndBlock();
 
 	_in.ConsumeStartBlock();
