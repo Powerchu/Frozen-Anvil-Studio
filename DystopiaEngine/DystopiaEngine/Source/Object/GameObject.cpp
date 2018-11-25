@@ -286,9 +286,9 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	p->mTransform.SetOwner(p);
 
 	for (auto& c : mComponents)
-		p->mComponents.Insert(c->Duplicate());
+		p->AddComponent(c->Duplicate(), Component::TAG{});
 	for (auto& b : mBehaviours)
-		p->mBehaviours.Insert(EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, p->mnID));
+		p->AddComponent(EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, p->mnID), Behaviour::TAG{});
 
 	const auto& children = mTransform.GetAllChild();
 	for (const auto& child : children)
