@@ -236,10 +236,10 @@ namespace Dystopia
 	template <unsigned TOTAL_FILE_DIRECTORIES>
 	struct Hotloader
 	{
-		Hotloader(HWND _ParentHandle = NULL)
+		Hotloader()
 			:marraOverlapped{ 0 },
 			marrFileHandles{ INVALID_HANDLE_VALUE },
-			mParentHandle{ _ParentHandle }
+			mPipeHandle{INVALID_HANDLE_VALUE}
 		{
 			
 
@@ -265,11 +265,6 @@ namespace Dystopia
 		void ReloadModifiedDll(DLLWrapper * _DllToReload)
 		{
 			_DllToReload->ReloadDll();
-		}
-
-		void SetParentHWND(HWND _Hwnd)
-		{
-			mParentHandle = _Hwnd;
 		}
 
 		bool InitFileDirectory(unsigned _Index)
@@ -610,7 +605,7 @@ namespace Dystopia
 			SHELLEXECUTEINFO ExecInfo{ 0 };
 			ExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
 			ExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-			ExecInfo.hwnd = mParentHandle;
+			ExecInfo.hwnd   = NULL;
 			ExecInfo.lpVerb = NULL;
 			ExecInfo.lpFile = mCmdPath.c_str();
 			ExecInfo.lpParameters = Final_Command.c_str();
@@ -622,9 +617,6 @@ namespace Dystopia
 			{
 				std::cout << "ShellExecuteA Failed" << std::endl;
 			}
-
-
-
 
 			if (mPipeHandle != INVALID_HANDLE_VALUE)
 			{
@@ -952,9 +944,6 @@ namespace Dystopia
 		MagicArray<DLLWrapper>                           mvDLL;
 
 		std::filesystem::recursive_directory_iterator	 mIterator;
-
-
-		HWND mParentHandle;
 
 		static constexpr size_t mPipeBuffSize = 128000;
 
