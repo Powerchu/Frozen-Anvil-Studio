@@ -99,8 +99,8 @@ void Editor::EditorLauncher::Update(float)
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.3f,0.3f,0.3f, 1.f });
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1, 1, 1, 1 });
-		float width = LAUNCHER_WIDTH - (4 * ImGui::GetStyle().WindowPadding.x);
-		float ht = LAUNCHER_HEIGHT - (7 * ImGui::GetStyle().WindowPadding.y);
+		float width = LAUNCHER_WIDTH - (4 * ImGui::GetStyle().WindowPadding.y);
+		float ht = LAUNCHER_HEIGHT - (7 * ImGui::GetStyle().WindowPadding.x);
 		float height = ht / 6;
 		TopBar(width, height);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.f);
@@ -220,8 +220,8 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.863f, 0.088f, 0.294f, 1.f });
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.646f, 0.129f, 0.225f, 1.f });
 
-	float w = _w - (2 * ImGui::GetStyle().WindowPadding.x);
-	float h = _h - (2 * ImGui::GetStyle().WindowPadding.y);
+	float w = _w - (2 * ImGui::GetStyle().WindowPadding.y);
+	float h = _h - (2 * ImGui::GetStyle().WindowPadding.x);
 
 	ImGui::BeginChild("Main Body", ImVec2{ _w, _h }, true);
 	if (mbProjectView)
