@@ -98,7 +98,7 @@ namespace Dystopia
 
 		for (auto const & elem : DirIter)
 		{
-			if (elem.path().filename().string() == _FileName)
+			if (elem.path().filename().string() == _FileName || std::filesystem::equivalent(_FileName,elem,error))
 				return elem.path().string();
 		}
 

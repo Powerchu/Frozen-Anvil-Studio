@@ -58,6 +58,7 @@ namespace Dystopia
 			mDllFileName{ _DllFileName },
 			mDllModule{ _DllModule },
 			mDllFullPath{ _DllPathName + L"/" + _DllFileName }
+
 		{
 
 		}
@@ -236,10 +237,10 @@ namespace Dystopia
 	template <unsigned TOTAL_FILE_DIRECTORIES>
 	struct Hotloader
 	{
-		Hotloader(HWND _ParentHandle = NULL)
+		Hotloader()
 			:marraOverlapped{ 0 },
 			marrFileHandles{ INVALID_HANDLE_VALUE },
-			mParentHandle{ _ParentHandle }
+			mPipeHandle{INVALID_HANDLE_VALUE}
 		{
 			
 
@@ -267,10 +268,6 @@ namespace Dystopia
 			_DllToReload->ReloadDll();
 		}
 
-		void SetParentHWND(HWND _Hwnd)
-		{
-			mParentHandle = _Hwnd;
-		}
 
 		bool InitFileDirectory(unsigned _Index)
 		{
@@ -562,7 +559,7 @@ namespace Dystopia
 			std::wstring OutputCommand;
 
 
-			CmdArgument += mVcvarPath + L" && " + mVcvarName + L" " + mVcvarBuildEnv + L" && cd \"" + wstrDll_Folder_Name.c_str() + L"\" && ";
+			CmdArgument += L"\"" +  mVcvarPath + L"\" && " + mVcvarName + L" " + mVcvarBuildEnv + L" && cd \"" + wstrDll_Folder_Name.c_str() + L"\" && ";
 
 			OutputCommand += L'\"' + wstrFolder_Name + L"/";
 			OutputCommand += FileName + L'\"';
@@ -610,7 +607,7 @@ namespace Dystopia
 			SHELLEXECUTEINFO ExecInfo{ 0 };
 			ExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
 			ExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-			ExecInfo.hwnd = mParentHandle;
+			ExecInfo.hwnd = NULL;
 			ExecInfo.lpVerb = NULL;
 			ExecInfo.lpFile = mCmdPath.c_str();
 			ExecInfo.lpParameters = Final_Command.c_str();
@@ -891,22 +888,22 @@ namespace Dystopia
 		{
 
 			if(mDll_Handle != INVALID_HANDLE_VALUE)
-			CloseHandle(mDll_Handle);
+				CloseHandle(mDll_Handle);
+
 			if (mDll_Overlap.hEvent != INVALID_HANDLE_VALUE)
-			CloseHandle(mDll_Overlap.hEvent);
+				CloseHandle(mDll_Overlap.hEvent);
 
 			if (mTempDll_Handle != INVALID_HANDLE_VALUE)
 				CloseHandle(mTempDll_Handle);
+
 			if (mTempDll_Overlap.hEvent != INVALID_HANDLE_VALUE)
 				CloseHandle(mTempDll_Overlap.hEvent);
 
 			for (auto & elem : marrFileHandles)
 				CloseHandle(elem);
+
 			for (auto & elem : marraOverlapped)
 				CloseHandle(elem.hEvent);
-
-			if (mPipeHandle != INVALID_HANDLE_VALUE)
-				CloseHandle(mPipeHandle);
 		}
 
 		void SetPipeExePath(std::wstring const & _path)

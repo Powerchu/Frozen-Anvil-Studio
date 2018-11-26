@@ -21,8 +21,6 @@
 #include "Utility/DebugAssert.h"
 #include "System/Logger/LoggerSystem.h"
 #include "System/Logger/LogPriority.h"
-#include "System/Window/WindowManager.h"
-#include "System/Window/Window.h"
 #include "IO/TextSerialiser.h"
 #include <utility>
 
@@ -58,27 +56,22 @@ namespace Dystopia
 
 		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
 
-#if _DEBUG
-		FileSys->CreateFiles("BehaviourDLL",         eFileDir::eAppData);
-#else
-		FileSys->CreateFiles("BehaviourDLL_Release", eFileDir::eAppData);
-#endif
-
+		FileSys->CreateFiles("Dystopia/BehaviourDLL", eFileDir::eAppData);
 		FileSys->CreateFiles("Dystopia/Temp", eFileDir::eAppData);
 		FileSys->CreateFiles("Behaviours/BehavioursScripts", eFileDir::eResource);
-		std::string PipePath = FileSys->GetProjectFolders<std::string>(eFileDir::eCurrent) + "\\Resource\\Piping\\BehaviourPiping.exe";
-		mHotloader->SetPipeExePath(std::wstring{PipePath.begin(), PipePath.end()});
 
 #if _DEBUG
-		mHotloader->AddFilesToCrawl(L"DystopiaEngine_D.lib", eCompile);
-		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL", eFileDir::eAppData));
 
+
+		//std::string strDystopia_Lib{ FileSys->GetFullPath("DystopiaEngine_D.lib",eFileDir::eCurrent) };
+		//InterestedFiles Dystopia_Lib{  ,eCompile };
+		mHotloader->AddFilesToCrawl(L"DystopiaEngine_D.lib", eCompile);
+		//mHotloader->AddAdditionalSourcePath(std::wstring{ strDystopia_Lib.begin(),strDystopia_Lib.end() });
 #else
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine_Editor.lib", eCompile);
-		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL_Release", eFileDir::eAppData));
 #endif
-		mHotloader->SetParentHWND(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetWindowHandle());
-		
+
+		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL", eFileDir::eAppData));
 		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
 
@@ -265,7 +258,6 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::Update(float _dt)
 	{
-#if EDITOR
 		for (auto & i : mvBehaviours)
 		{
 			for (auto & iter : i.second)
@@ -298,13 +290,10 @@ namespace Dystopia
 
 			}
 		}
-#endif
 	}
 
 	void Dystopia::BehaviourSystem::PostUpdate(void)
 	{
-#if EDITOR
-
 		/*Clear the recently change*/
 		mvRecentChanges.clear();
 		//static AutoArray<std::pair<uint64_t, Behaviour*>*> ToRemove;
@@ -315,7 +304,7 @@ namespace Dystopia
 				if(iter.second != nullptr)
 					if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
 					{
-						//delete iter.second;
+						delete iter.second;
 						iter.second = nullptr;
 						i.second.FastRemove(&iter);
 						//ToRemove.push_back(&iter);
@@ -336,7 +325,6 @@ namespace Dystopia
 
 
 		//ToRemove.clear();
-#endif
 	}
 
 	void Dystopia::BehaviourSystem::Shutdown(void)

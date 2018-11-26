@@ -59,6 +59,7 @@ namespace Dystopia
 #endif 
 		BehaviourSystem();
 		~BehaviourSystem();
+
 		virtual void PreInit(void);
 		virtual bool Init(void);
 		virtual void PostInit(void);
@@ -106,7 +107,7 @@ namespace Dystopia
 						/*If behaviour throws, remove it from game object*/
 						_EDITOR_CATCH(std::exception& e)
 						{
-							_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+							//_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
 							_EDITOR_CODE(pGameObject->RemoveComponent(BehaveElem));
 							_EDITOR_CODE(BehaveElem->DestroyComponent());
 						}
@@ -144,7 +145,7 @@ namespace Dystopia
 		}
 
 		template<typename ... Ts>
-		void SendExternalMessage(GameObject * const _GameObj, const char * const _FuncName, Ts&& ... _FuncParams)
+		void SendExternalMessage(GameObject * _GameObj, const char * const _FuncName, Ts&& ... _FuncParams)
 		{
 			if (!_GameObj)
 				return;
@@ -170,7 +171,7 @@ namespace Dystopia
 		}
 
 		template<typename ... Ts>
-		void SendExternalMessage(GameObject const * const _GameObj, const char * const _FuncName, Ts&& ... _FuncParams)
+		void SendExternalMessage(GameObject const *  _GameObj, const char * const _FuncName, Ts&& ... _FuncParams)
 		{
 			if (!_GameObj)
 				return;
@@ -256,7 +257,7 @@ namespace Dystopia
 #if EDITOR
 		using BehaviourPair = std::pair<uint64_t, Behaviour *>;
 		using BehaviourTable = std::pair<std::wstring, AutoArray<BehaviourPair>>;
-		Hotloader<1> * mHotloader;
+		Hotloader<1>* mHotloader;
 		/*A reference copy of all the available Behaviour Component created from a List of Dlls*/
 		MagicArray<BehaviourWrap>   mvBehaviourReferences;
 		MagicArray<BehaviourWrap *> mvRecentChanges;

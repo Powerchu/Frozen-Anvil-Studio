@@ -172,11 +172,6 @@ HashString Editor::EditorLauncher::GetProjFile(void) const
 	return mProjFileSelected;
 }
 
-bool Editor::EditorLauncher::IsExit(void) const
-{
-	return false;
-}
-
 
 /****************************************************************** Private Functions *********************************************************************/
 
@@ -359,13 +354,14 @@ void Editor::EditorLauncher::SetWindowStyles(void)
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+	ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0F);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 1.f, 1.f, 1.f, 1.f });
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0, 0, 0, 1.f });
 }
 
 void Editor::EditorLauncher::RemoveWindowStyles(void)
 {
-	ImGui::PopStyleVar(2);
+	ImGui::PopStyleVar(3);
 	ImGui::PopStyleColor(2);
 }
 

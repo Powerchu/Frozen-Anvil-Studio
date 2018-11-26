@@ -501,6 +501,7 @@ void Editor::EditorFactory::LoadSegmentC(Dystopia::GameObject& _obj, unsigned _c
 	{
 		_in.ConsumeStartBlock();
 		_in >> sysID;
+		
 		Dystopia::Component *pComponent = cList.GetComponentA(sysID, &_obj);
 		/*pComponent->Unserialise(_in);*/
 		cList.IsolateUnserialise(pComponent, _in);
