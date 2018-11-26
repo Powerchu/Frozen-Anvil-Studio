@@ -452,14 +452,17 @@ namespace Editor
 
 	Math::Vec2 SceneView::GetWorldToScreen(const Math::Pt3D& curPos)
 	{
+		auto pos = curPos;
+		pos.z = static_cast<float>(1.f);
+		pos.w = 1.f;
 		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
 		if (!mpSceneCamera) return Math::Vec2{ 0,0 };
 
-		auto equation1 = mpSceneCamera->GetProjectionMatrix() * (mpSceneCamera->GetViewMatrix() * curPos);
+		auto equation1 = mpSceneCamera->GetProjectionMatrix() * (Math::Inverse(mpSceneCamera->GetViewMatrix()) * pos);
 
 
 		return Math::Vec2{ (equation1.x * (mImgSize.x / 2)) + (Size().x / 2),
-						   (equation1.y * (mImgSize.y / 2)) + (Size().y / 2) };
+			(equation1.y * (mImgSize.y / 2)) + (Size().y / 2) };
 	}
 
 	void SceneView::SetGizmoTranslate(void)

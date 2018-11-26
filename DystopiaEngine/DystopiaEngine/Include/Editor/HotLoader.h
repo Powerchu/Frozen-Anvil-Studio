@@ -593,9 +593,9 @@ namespace Dystopia
 			std::wstring Final_Command;
 
 			if(mPipeExePath != L"")
-				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" | \"" + mPipeExePath + L"\" & exit 99";
+				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" | \"" + mPipeExePath + L"\" && exit 99";
 			else
-				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" & exit 99";
+				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" && exit 99";
 
 			std::string cFinal_Command{ Final_Command.begin(),Final_Command.end() };
 			std::string cCmdPath{ mCmdPath.begin(), mCmdPath.end() };
@@ -612,7 +612,7 @@ namespace Dystopia
 			ExecInfo.lpFile = mCmdPath.c_str();
 			ExecInfo.lpParameters = Final_Command.c_str();
 			ExecInfo.lpDirectory = NULL;
-			ExecInfo.nShow = SW_HIDE;
+			ExecInfo.nShow = SW_SHOW;
 			ExecInfo.hInstApp = NULL;
 
 			if (ShellExecuteEx(&ExecInfo) == false)
