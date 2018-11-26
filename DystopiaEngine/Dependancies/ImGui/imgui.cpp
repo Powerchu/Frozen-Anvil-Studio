@@ -2091,7 +2091,7 @@ ImGuiWindow::ImGuiWindow(ImGuiContext* context, const char* name)
     Pos = ImVec2(0.0f, 0.0f);
     Size = SizeFull = ImVec2(0.0f, 0.0f);
     SizeContents = SizeContentsExplicit = ImVec2(0.0f, 0.0f);
-    WindowPadding = ImVec2(0.0f, 0.0f);
+    WindowPadding = ImVec2(1.0f, 0.0f);
     WindowRounding = 0.0f;
     WindowBorderSize = 0.0f;
     MoveId = GetID("#MOVE");
