@@ -139,12 +139,28 @@ namespace Dystopia
 		std::filesystem::path DirPath{ mPathTable[_ParentDirectory] };
 		std::error_code error;
 		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
-		for (auto const & elem : DirIter)
+		std::filesystem::path ParentPath{ _FullPath };
+		std::string Path;
+	
+		auto begin = ParentPath.begin();
+		auto end   = ParentPath.end();
+		Path       = (*begin).string();
+		while (begin != end)
 		{
-			if (std::filesystem::equivalent(DirPath, elem))
-				return { elem.path().string() };
-		}
+			if (std::filesystem::equivalent(Path, DirPath))
+			{
+				std::string toRet;
+				while (++begin != end)
+				{
 
+					toRet += "/" + (begin)->string();
+				}
+				return toRet;
+			}
+
+			if(++begin != end)
+				Path += '/' + (*(begin)).string();
+		}
 		return std::string {};
 	}
 
