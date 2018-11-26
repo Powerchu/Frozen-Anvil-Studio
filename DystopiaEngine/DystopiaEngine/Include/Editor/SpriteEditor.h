@@ -15,7 +15,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _SPRITE_EDITOR_H_
 #include "DataStructure/HashString.h"
 #include "Math/Vector2.h"
-//#include "Editor/EditorTab.h"
 #include "Editor/EditorPanel.h"
 
 namespace Dystopia
@@ -28,7 +27,7 @@ namespace Dystopia
 
 namespace Editor
 {
-	class SpriteEditor : public EditorPanel//EditorTab
+	class SpriteEditor : public EditorPanel 
 	{
 	public:
 		//static SpriteEditor* GetInstance(void);
@@ -53,6 +52,28 @@ namespace Editor
 		Dystopia::TextureSystem *mpTextSys;
 
 		HashString mLabel;
+		Math::Vec2 mSettingsArea;;
+		Math::Vec2 mPreviewArea;
+		Math::Vec2 mSectionEditArea;
+
+		int mnSelectedSection;
+		Math::Vec2 mSectionPos;
+		Math::Vec2 mSectionSize;
+		Math::Vec2 mSectionDime;
+
+
+
+		void AtlasArea(float,float);
+		void SettingsArea(float, float);
+		void PreviewArea(float, float);
+
+		Math::Vec2 AdjustAspectSize(float, float, float , float);
+
+		void FieldTexture(void);
+		void FieldAtlas(void);
+
+		void DrawSelectedGrid(float, float, float, float);
+		void DrawTempGrid(float, float, float, float);
 	};
 }
 

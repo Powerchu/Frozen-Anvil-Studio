@@ -24,15 +24,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility/DebugAssert.h"
 #include "Utility/Utility.h"
-
-//#include "Editor/CommandList.h"
-//#include "Editor/Commands.h"
-//#include "Editor/Editor.h"
-//#include "Editor/DefaultFactory.h"
+#include "Utility/GUID.h"
 
 #include "Component/Component.h"
 #include "Component/Transform.h"
 #include "Object/GameObject.h"
+
+#include "Factory/Factory.h"
 
 Dystopia::SceneSystem::SceneSystem(void) :
 	mpCurrScene{ nullptr }, mpNextScene{ nullptr }, mLastSavedData{ "" }, mNextSceneFile{ "" }, mbRestartScene { false }
@@ -106,23 +104,7 @@ Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject_cstr(const char* con
 
 Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const HashString& _prefabName, const Math::Pt3D& _position)
 {
-	if (!mpCurrScene) return false;
-
-	//GameObject *pDupl = Factory::LoadFromPrefab(_prefabName);
-	//if (pDupl)
-	//{
-	//	pDupl->GetComponent<Transform>()->SetPosition(_position);
-	//	auto& obj = *mpCurrScene->InsertGameObject(Ut::Move(*pDupl));
-	//	obj.Identify();
-	//	obj.Awake();
-	//	obj.Init();
-	//	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
-	//	for (auto& c : obj.GetAllComponents())
-	//		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
-	//	delete pDupl;
-	//	return &obj;
-	//}
-	return nullptr;
+	return EngineCore::GetInstance()->GetSubSystem<Factory>()->SpawnPrefab(_prefabName, _position);
 }
 
 void Dystopia::SceneSystem::SceneChanged(void)
