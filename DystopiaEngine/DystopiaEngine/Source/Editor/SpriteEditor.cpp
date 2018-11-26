@@ -107,9 +107,9 @@ void Editor::SpriteEditor::AtlasArea(float _x, float _y)
 										static_cast<float>(mpTexture->GetHeight()),
 										_x - 1, _y - 1);
 
-	float xDiff = _sX - _iX;
-	float yDiff = _sY - _iY;
-	return Math::Vec2{ xDiff / 2, yDiff / 2 };
+	//float xDiff = _sX - _iX;
+	//float yDiff = _sY - _iY;
+	//return Math::Vec2{ xDiff / 2, yDiff / 2 };
 
 	EGUI::Display::Image(mpTexture->GetID(), fSize);
 }
