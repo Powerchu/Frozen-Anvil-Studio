@@ -47,7 +47,7 @@ namespace Editor
 
 		void DefaultSceneCamera(void);
 
-		void ReattachToPrefab(Dystopia::Component* _p);
+		void ReattachToPrefab(Dystopia::Component* _p, uint64_t c = 0);
 		bool SpawnPrefab(const HashString&, const Math::Pt3D&, uint64_t& _outRootObjID);
 		bool SaveAsPrefab(const uint64_t& _objID, Dystopia::TextSerialiser&, bool _temp = false);
 		bool SaveAsPrefabTemp(const uint64_t& _objID, Dystopia::TextSerialiser&);

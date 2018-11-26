@@ -58,6 +58,7 @@ namespace Dystopia
 			>>;
 #endif 
 		BehaviourSystem();
+		~BehaviourSystem();
 
 		virtual void PreInit(void);
 		virtual bool Init(void);
