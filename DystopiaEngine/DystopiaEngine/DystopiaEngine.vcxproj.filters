@@ -334,6 +334,9 @@
     <ClCompile Include="Source\DataStructure\HashString.cpp">
       <Filter>DataStructures\HashString</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Factory\Factory.cpp">
+      <Filter>Game Engine\SubSystems\Factory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -922,6 +925,9 @@
     <ClInclude Include="Include\DataStructure\HashString.h">
       <Filter>DataStructures\HashString</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Factory\Factory.h">
+      <Filter>Game Engine\SubSystems\Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1313,6 +1319,9 @@
     </Filter>
     <Filter Include="Game Engine\Components\AI">
       <UniqueIdentifier>{695cd54f-1b97-44eb-8804-4a45aafc03a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Factory">
+      <UniqueIdentifier>{27de6ba2-f9b9-4828-a0cc-809fcef7c950}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

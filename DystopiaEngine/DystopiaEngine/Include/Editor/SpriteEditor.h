@@ -51,11 +51,17 @@ namespace Editor
 		Dystopia::GraphicsSystem *mpGfxSys;
 		Dystopia::TextureSystem *mpTextSys;
 
-		int mnSelectedSection;
 		HashString mLabel;
 		Math::Vec2 mSettingsArea;;
 		Math::Vec2 mPreviewArea;
 		Math::Vec2 mSectionEditArea;
+
+		int mnSelectedSection;
+		Math::Vec2 mSectionPos;
+		Math::Vec2 mSectionSize;
+		Math::Vec2 mSectionDime;
+
+
 
 		void AtlasArea(float,float);
 		void SettingsArea(float, float);
@@ -65,6 +71,8 @@ namespace Editor
 
 		void FieldTexture(void);
 		void FieldAtlas(void);
+
+		void DrawGrid(float, float, float, float);
 	};
 }
 
