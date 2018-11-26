@@ -58,6 +58,7 @@ namespace Dystopia
 			mDllFileName{ _DllFileName },
 			mDllModule{ _DllModule },
 			mDllFullPath{ _DllPathName + L"/" + _DllFileName }
+
 		{
 
 		}
@@ -239,7 +240,8 @@ namespace Dystopia
 		Hotloader(HWND _ParentHandle = NULL)
 			:marraOverlapped{ 0 },
 			marrFileHandles{ INVALID_HANDLE_VALUE },
-			mParentHandle{ _ParentHandle }
+			mParentHandle{ _ParentHandle },
+			mPipeHandle{INVALID_HANDLE_VALUE}
 		{
 			
 
