@@ -58,7 +58,7 @@ namespace Dystopia
 			>>;
 #endif 
 		BehaviourSystem();
-		~BehaviourSystem();
+
 		virtual void PreInit(void);
 		virtual bool Init(void);
 		virtual void PostInit(void);
@@ -256,7 +256,7 @@ namespace Dystopia
 #if EDITOR
 		using BehaviourPair = std::pair<uint64_t, Behaviour *>;
 		using BehaviourTable = std::pair<std::wstring, AutoArray<BehaviourPair>>;
-		Hotloader<1> * mHotloader;
+		SharedPtr< Hotloader<1> > mHotloader;
 		/*A reference copy of all the available Behaviour Component created from a List of Dlls*/
 		MagicArray<BehaviourWrap>   mvBehaviourReferences;
 		MagicArray<BehaviourWrap *> mvRecentChanges;

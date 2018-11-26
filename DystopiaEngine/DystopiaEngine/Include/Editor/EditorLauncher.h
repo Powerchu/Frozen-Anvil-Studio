@@ -34,10 +34,10 @@ namespace Editor
 		void LoadSettings(Dystopia::TextSerialiser&);
 
 		bool IsClosing(void) const;
-		bool IsExit(void) const;
 
 		HashString GetProjFolder(void) const;
 		HashString GetProjFile(void) const;
+
 
 	private:
 		static constexpr unsigned bufSize = 256;
