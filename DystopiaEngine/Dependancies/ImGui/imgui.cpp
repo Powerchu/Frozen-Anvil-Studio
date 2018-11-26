@@ -956,7 +956,7 @@ ImGuiStyle::ImGuiStyle()
     WindowMinSize           = ImVec2(300,300);    // Minimum window size
     WindowTitleAlign        = ImVec2(0.04f,0.5f);// Alignment for title bar text
     ChildRounding           = 0.0f;             // Radius of child window corners rounding. Set to 0.0f to have rectangular child windows
-    ChildBorderSize         = 0.0f;             // Thickness of border around child windows. Generally set to 0.0f or 1.0f. Other values not well tested.
+    ChildBorderSize         = 1.0f;             // Thickness of border around child windows. Generally set to 0.0f or 1.0f. Other values not well tested.
     PopupRounding           = 0.0f;             // Radius of popup window corners rounding. Set to 0.0f to have rectangular child windows
     PopupBorderSize         = 0.0f;             // Thickness of border around popup or tooltip windows. Generally set to 0.0f or 1.0f. Other values not well tested.
     FramePadding            = ImVec2(2,4);      // Padding within a framed rectangle (used by most widgets)

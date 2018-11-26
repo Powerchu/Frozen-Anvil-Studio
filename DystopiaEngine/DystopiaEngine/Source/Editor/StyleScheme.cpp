@@ -79,10 +79,6 @@ void Editor::StyleScheme::Update(float)
 
 void Editor::StyleScheme::EditorUI(void)
 {
-	//if (EGUI::Display::Button("Apply"))
-	//{
-	//	Apply();
-	//}
 	for (unsigned int i = 0; i < mArrFData.size(); ++i)
 	{
 		EGUI::PushID(i);

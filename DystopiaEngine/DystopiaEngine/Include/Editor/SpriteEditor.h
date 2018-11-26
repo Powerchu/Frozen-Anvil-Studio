@@ -56,7 +56,12 @@ namespace Editor
 		Math::Vec2 mPreviewArea;
 		Math::Vec2 mSectionEditArea;
 
-		void AtlasEditing(float,float);
+		void AtlasArea(float,float);
+		void SettingsArea(float, float);
+		void PreviewArea(float, float);
+
+		Math::Vec2 AdjustAspectSize(float, float, float , float);
+
 	};
 }
 
