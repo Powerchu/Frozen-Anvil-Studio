@@ -891,17 +891,20 @@ namespace Dystopia
 		{
 
 			if(mDll_Handle != INVALID_HANDLE_VALUE)
-			CloseHandle(mDll_Handle);
+				CloseHandle(mDll_Handle);
+
 			if (mDll_Overlap.hEvent != INVALID_HANDLE_VALUE)
-			CloseHandle(mDll_Overlap.hEvent);
+				CloseHandle(mDll_Overlap.hEvent);
 
 			if (mTempDll_Handle != INVALID_HANDLE_VALUE)
 				CloseHandle(mTempDll_Handle);
+
 			if (mTempDll_Overlap.hEvent != INVALID_HANDLE_VALUE)
 				CloseHandle(mTempDll_Overlap.hEvent);
 
 			for (auto & elem : marrFileHandles)
 				CloseHandle(elem);
+
 			for (auto & elem : marraOverlapped)
 				CloseHandle(elem.hEvent);
 
