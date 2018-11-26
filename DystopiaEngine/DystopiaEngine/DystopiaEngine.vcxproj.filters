@@ -262,9 +262,6 @@
     <ClCompile Include="Source\System\Sound\SoundSystem.cpp">
       <Filter>Game Engine\Systems\Sound</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DataStructure\HashString.cpp">
-      <Filter>DataStructures</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\SpriteEditor.cpp">
       <Filter>Editor\Main\Panels\Sprite</Filter>
     </ClCompile>
@@ -337,6 +334,9 @@
     <ClCompile Include="Source\System\Tag\TagSystem.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp">
       <Filter>Editor\Main\Panels\Behaviour Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DataStructure\HashString.cpp">
+      <Filter>DataStructures\HashString</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -763,9 +763,6 @@
     <ClInclude Include="Include\Component\AudioSource.h">
       <Filter>Game Engine\Components\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DataStructure\HashString.h">
-      <Filter>DataStructures</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Editor\SpriteEditor.h">
       <Filter>Editor\Main\Panels\Sprite</Filter>
     </ClInclude>
@@ -930,6 +927,9 @@
     <ClInclude Include="Include\System\Tag\Tags.h" />
     <ClInclude Include="Include\Editor\BehaviourTreeEditor.h">
       <Filter>Editor\Main\Panels\Behaviour Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\HashString.h">
+      <Filter>DataStructures\HashString</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

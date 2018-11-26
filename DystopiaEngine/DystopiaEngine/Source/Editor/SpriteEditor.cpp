@@ -23,28 +23,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/TextureSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
 
-//Dystopia::SpriteEditor* gpInstance = 0;
-//Dystopia::SpriteEditor* Dystopia::SpriteEditor::GetInstance(void)
-//{
-//	if (gpInstance) return gpInstance;
-//
-//	gpInstance = new SpriteEditor{};
-//	return gpInstance;
-//}
-
 Editor::SpriteEditor::SpriteEditor(void)
 	: //EditorTab{ false }, 
 	mLabel{ "Sprite Editor" }, 
 	mpAtlas{ nullptr },
 	mpGfxSys{ nullptr },
 	mpTextSys{ nullptr },
-	mpTexture{ nullptr }
-{
-}
+	mpTexture{ nullptr },
+	mSectionEditArea{ 1.f, 0.7f},
+	mSettingsArea{ 0.7f, 0.3f },
+	mPreviewArea{ 0.3f, 0.3f }
+{}
 
 Editor::SpriteEditor::~SpriteEditor(void)
-{
-}
+{}
 
 void Editor::SpriteEditor::Load(void)
 {}
@@ -57,34 +49,45 @@ bool Editor::SpriteEditor::Init(void)
 }
 
 void Editor::SpriteEditor::Update(float)
-{}
+{
+	static constexpr float halfhori = 0.7f;
+	static constexpr float halfvert = 0.7f;
+	const auto size = Size();
+
+	mSectionEditArea = Math::Vec2{size.x, size.y * halfhori };
+	mSettingsArea = Math::Vec2{ size.x * halfvert, size.y * (1 - halfhori) };
+	mPreviewArea = Math::Vec2{ size.x* (1 - halfvert), size.y * (1 - halfhori) };
+}
 
 void Editor::SpriteEditor::EditorUI(void)
 {
+	EGUI::StartChild("Section Edit Area", mSectionEditArea);
+
+	EGUI::EndChild();
+
+	EGUI::StartChild("Section Edit Area", mSettingsArea);
+
+	EGUI::EndChild();
+	ImGui::SameLine();
+	EGUI::StartChild("Section Edit Area", mPreviewArea);
+
+	EGUI::EndChild();
+
+
+	const float sx = Size().x;
+	const float sy = (Size().y - EGUI::TabsImageOffsetY) * 0.75f;
+	if (mpTexture && mpAtlas)
+		AtlasEditing(sx, sy);
+
+	EGUI::Display::HorizontalSeparator();
+
 	EGUI::Display::EmptyBox("Sprite Sheet", 150, mpTexture ? mpTexture->GetName() : "");
-	if (::Editor::File *t1 = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
+	if (::Editor::File *t1 = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
 	{
 		mpTexture = mpGfxSys->LoadTexture(t1->mPath.c_str());
 		mpAtlas = mpTextSys->GetAtlas(mpTexture->GetName());
 		EGUI::Display::EndPayloadReceiver();
 	}
-	if (::Editor::File *t2 = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP))
-	{
-		mpTexture = mpGfxSys->LoadTexture(t2->mPath.c_str());
-		mpAtlas = mpTextSys->GetAtlas(mpTexture->GetName());
-		EGUI::Display::EndPayloadReceiver();
-	}
-	if (::Editor::File *t3 = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS))
-	{
-		mpTexture = mpGfxSys->LoadTexture(t3->mPath.c_str());
-		mpAtlas = mpTextSys->GetAtlas(mpTexture->GetName());
-		EGUI::Display::EndPayloadReceiver();
-	}
-
-	if (!mpAtlas) return;
-
-	EGUI::Display::HorizontalSeparator();
-
 }
 
 void Editor::SpriteEditor::Shutdown(void)
@@ -104,6 +107,16 @@ HashString Editor::SpriteEditor::GetLabel(void) const
 	return mLabel;
 }
 
+void Editor::SpriteEditor::AtlasEditing(float sx, float sy)
+{
+	const float ix = static_cast<float>(mpTexture->GetWidth());
+	const float iy = static_cast<float>(mpTexture->GetHeight());
+	const float iRatio = ix / iy;
+	const float sRatio = sx / sy;
+	const auto fSize = sRatio > iRatio ? Math::Vec2{ ix * (sy / iy), sy } : Math::Vec2{ sx, iy * (sx / ix) };
+
+	EGUI::Display::Image(mpTexture->GetID(), fSize);
+}
 
 #endif 
 

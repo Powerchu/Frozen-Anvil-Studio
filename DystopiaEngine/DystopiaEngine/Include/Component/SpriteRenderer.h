@@ -77,29 +77,34 @@ namespace Dystopia
 
 		void SetTexture(Texture* _pTexture) noexcept;
 
-	private:
-
-		TextureAtlas* mpAtlas;
 		struct SpriteSheet
 		{
 			HashString mstrName;
-			unsigned mnID; 
+			unsigned mnID;
 			int mnCol, mnRow;
 			bool mbLoop;
 		};
 
+	private:
+
+		TextureAtlas* mpAtlas;
 		AutoArray<SpriteSheet> mAnimations;
 		int mnID, mnCol, mnRow;
 		float mfFrameTime, mfAccTime;
-
+		Math::Vec2 mNextSectionPos;
 
 		void TextureFields(void);
-		void SpriteSheetFields(const size_t&);
-
+		void AtlasFields(void);
+		void AddAnimations(void);
+		bool SpriteSheetFields(const size_t&);
 	};
 }
 
-
+/**************************** Helper Func *******************************/
+inline bool operator==(const Dystopia::SpriteRenderer::SpriteSheet& _lhs, const Dystopia::SpriteRenderer::SpriteSheet& _rhs)
+{
+	return _lhs.mstrName == _rhs.mstrName && _lhs.mnID == _rhs.mnID && _lhs.mnCol == _rhs.mnRow && _lhs.mbLoop == _rhs.mbLoop;
+}
 #pragma warning(pop)
 #endif
 
