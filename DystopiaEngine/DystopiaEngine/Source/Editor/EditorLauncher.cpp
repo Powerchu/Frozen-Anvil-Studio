@@ -42,7 +42,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 static constexpr unsigned long LauncherStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 static constexpr unsigned long LauncherStyleEx = WS_EX_APPWINDOW;
-static const char* g_SubFolders[SUBFOLDER_COUNT]=
+static const char* g_SubFolders[SUBFOLDER_COUNT] =
 {
 	"Asset",
 	"Audio",
@@ -59,7 +59,7 @@ static const char* g_SubFolders[SUBFOLDER_COUNT]=
 static constexpr float g_inactiveAlpha = 0.3f;
 
 Editor::EditorLauncher::EditorLauncher(void)
-	: mProjFolderSelected{}, mProjFileSelected{}, mbClosing{ false }, mbProjectView{ true }, mOriginStyle {}, mOriginStyleEx{}, mOriginSizeX{}, mOriginSizeY{},
+	: mProjFolderSelected{}, mProjFileSelected{}, mbClosing{ false }, mbProjectView{ true }, mOriginStyle{}, mOriginStyleEx{}, mOriginSizeX{}, mOriginSizeY{},
 	mCurrentlySelected{ -1 }, mNameBuffer{}, mLocBuffer{}, mArrProjFolders{}
 {}
 
@@ -87,8 +87,8 @@ void Editor::EditorLauncher::Update(float)
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(1);
 
 	static constexpr ImGuiWindowFlags flag = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-											 ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar |
-											 ImGuiWindowFlags_NoSavedSettings;
+		ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoSavedSettings;
 
 	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 0,0,0,0 });
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.3f,0.3f,0.3f, 1.f });
@@ -239,7 +239,7 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 		float sectionW = w * 0.75f;
 		float sectionH = h * 0.92f;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
-		ImGui::BeginChild("ListOfRecentProjects", ImVec2{ sectionW , sectionH }, true );
+		ImGui::BeginChild("ListOfRecentProjects", ImVec2{ sectionW , sectionH }, true);
 		for (size_t i = 0; i < mArrProjFolders.size(); ++i)
 		{
 			ImGui::PushID(static_cast<int>(i));
@@ -292,8 +292,8 @@ bool Editor::EditorLauncher::InvisibleBtn(const char* _btn, float _x, float _y, 
 	if (pressed) ImGui::MarkItemValueChanged(id);
 	const ImU32 col = ImGui::GetColorU32(_highlight ? ImGuiCol_Text : ImGuiCol_TextDisabled);
 
-	ImGui::PushStyleColor(ImGuiCol_Text, col); 
-	ImGui::RenderTextClipped(bb.Min, bb.Max,_btn, NULL, &label_size, style.ButtonTextAlign, &bb);
+	ImGui::PushStyleColor(ImGuiCol_Text, col);
+	ImGui::RenderTextClipped(bb.Min, bb.Max, _btn, NULL, &label_size, style.ButtonTextAlign, &bb);
 	if (_highlight)
 	{
 		auto p = ImGui::GetCursorScreenPos();
@@ -369,7 +369,7 @@ bool Editor::EditorLauncher::ProjectDetails(const HashString& _path, float _w, f
 {
 	bool ret = false;
 	static constexpr float fixedH = 70;
-	float width = _w - (2*ImGui::GetStyle().WindowPadding.x);
+	float width = _w - (2 * ImGui::GetStyle().WindowPadding.x);
 	size_t pos = _path.rfind('/');
 	if (pos == HashString::nPos)
 		pos = _path.rfind("\\");
@@ -417,7 +417,7 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 	{
 		ImGui::PushItemWidth(itemWidth);
 		ImGui::InputText("###Project Name", mNameBuffer, bufSize, flags);
-		ImGui::PopItemWidth(); 
+		ImGui::PopItemWidth();
 	}
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
 
@@ -434,13 +434,13 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 	{
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 20.f);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
-		ImGui::BeginChild("Emptiness", ImVec2{ 10.f, 40.f});
+		ImGui::BeginChild("Emptiness", ImVec2{ 10.f, 40.f });
 		ImGui::EndChild();
 		ImGui::PopStyleColor();
 	}
 
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + itemWidth - folderX - offsetX + 3.f);
-	ImGui::SetCursorPosY(linePos.y + 6.f); 
+	ImGui::SetCursorPosY(linePos.y + 6.f);
 	if (EGUI::Display::IconFolder("BrowseDir", folderX, 18.f, true))
 	{
 		HashString folder;
@@ -585,7 +585,7 @@ void Editor::EditorLauncher::OpenProject(float _w, float)
 void Editor::EditorLauncher::BrowseProject(float _w, float _h)
 {
 	static constexpr float btnH = 30;
-	float offset = (2*btnH) + (4 * ImGui::GetStyle().WindowPadding.y);
+	float offset = (2 * btnH) + (4 * ImGui::GetStyle().WindowPadding.y);
 
 	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + _h - offset);
 
