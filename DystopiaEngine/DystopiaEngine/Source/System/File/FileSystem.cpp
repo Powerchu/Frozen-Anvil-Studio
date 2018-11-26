@@ -96,9 +96,9 @@ namespace Dystopia
 		std::error_code error; 
 		std::filesystem::recursive_directory_iterator DirIter { DirPath, std::filesystem::directory_options::skip_permission_denied, error };
 
-		for (auto const & elem : DirIter)
+		for (auto const & elem : DirIter )
 		{
-			if (elem.path().filename().string() == _FileName || std::filesystem::equivalent(_FileName,elem,error))
+			if (elem.path().filename().string() == _FileName || std::filesystem::equivalent(mPathTable[_ParentDirectory] + _FileName,elem,error))
 				return elem.path().string();
 		}
 
@@ -118,6 +118,34 @@ namespace Dystopia
 		}
 
 		return std::wstring{};
+	}
+
+	HashString FileSystem::ConvertToRelative(HashString const & _FullPath, eFileDir _ParentDirectory) const
+	{
+		std::filesystem::path DirPath{ mPathTable[_ParentDirectory] };
+		std::error_code error;
+		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
+		for (auto const & elem : DirIter)
+		{
+			if (std::filesystem::equivalent(DirPath, elem))
+				return HashString{ elem.path().string().c_str() };
+		}
+
+		return HashString{};
+	}
+
+	std::string FileSystem::ConvertToRelative(std::string const & _FullPath, eFileDir _ParentDirectory) const
+	{
+		std::filesystem::path DirPath{ mPathTable[_ParentDirectory] };
+		std::error_code error;
+		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
+		for (auto const & elem : DirIter)
+		{
+			if (std::filesystem::equivalent(DirPath, elem))
+				return { elem.path().string() };
+		}
+
+		return std::string {};
 	}
 
 	bool FileSystem::CreateFiles(std::string const & _FileName, eFileDir _Directory)

@@ -47,7 +47,8 @@ namespace Dystopia
 		~FileSystem();
 		std::string  GetFullPath (std::string const & _FileName, eFileDir _ParentDirectory);
 		std::wstring GetFullPath_w(std::wstring const & _FileName, eFileDir _ParentDirectory);
-
+		HashString    ConvertToRelative(HashString const & _FullPath, eFileDir _ParentDirectory = eFileDir::eResource) const; 
+		std::string   ConvertToRelative(std::string const & _FullPath, eFileDir _ParentDirectory = eFileDir::eResource) const;
 		bool CreateFiles(std::string const & _FileName, eFileDir _Directory);
 
 		template<typename T, typename U = std::enable_if_t< std::is_same_v< T, std::string> || std::is_same_v<T, std::wstring>>>
