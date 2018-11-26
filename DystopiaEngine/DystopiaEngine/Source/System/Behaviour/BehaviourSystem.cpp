@@ -126,12 +126,23 @@ namespace Dystopia
 	{
 #if EDITOR
 
-
+		bool hasChange   = false;
+		bool hasSaveFile = false;
 		/*Update Hotloader*/
 		std::vector<std::wstring> vTempFileName;
 		mHotloader->Update();
 		mHotloader->ChangesInTempFolder(vTempFileName);
-		bool hasChange = false;
+		if (vTempFileName.size() > 0)
+		{
+			std::string SceneName = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName();
+			if (FileSys->GetFullPath(SceneName + ".dscene", eFileDir::eResource) != "")
+			{
+				EngineCore::GetInstance()->GetSystem<SceneSystem>()->SaveScene(FileSys->GetFullPath(SceneName + ".dscene", eFileDir::eResource), SceneName);
+				hasSaveFile = true;
+			}
+
+		}
+		
 		for (auto const & elem : vTempFileName)
 		{
 			for (auto & i : mvBehaviourReferences)
@@ -242,8 +253,13 @@ namespace Dystopia
 			}
 		}
 
+		
+
 		vTempFileName.clear();
 		mvRecentChanges.clear();
+
+		if (hasSaveFile)
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->LoadScene(FileSys->GetFullPath(EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName() + ".dscene", eFileDir::eResource));
 #endif
 	}
 
