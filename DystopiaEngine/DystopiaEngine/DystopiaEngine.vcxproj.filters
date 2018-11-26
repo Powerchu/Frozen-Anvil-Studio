@@ -338,7 +338,7 @@
       <Filter>Editor\Main\Panels\Behaviour Tree</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Tag\TagSystem.cpp">
-      <Filter>Game Engine\Systems\Tagging</Filter>
+      <Filter>Game Engine\SubSystems\Tag</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -934,10 +934,10 @@
       <Filter>Game Engine\Systems\AI</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Tag\Tags.h">
-      <Filter>Game Engine\Systems\Tagging</Filter>
+      <Filter>Game Engine\SubSystems\Tag</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Tag\TagSystem.h">
-      <Filter>Game Engine\Systems\Tagging</Filter>
+      <Filter>Game Engine\SubSystems\Tag</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1349,11 +1349,11 @@
     <Filter Include="Game Engine\Components\AI">
       <UniqueIdentifier>{695cd54f-1b97-44eb-8804-4a45aafc03a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Engine\SubSystems\Tag">
+      <UniqueIdentifier>{6e2c5293-0716-4775-84ea-ac23183adee9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Editor\Main\Panels\Behaviour Tree">
       <UniqueIdentifier>{903fdd85-b40e-44db-89dd-1fa3d058f796}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\Systems\Tagging">
-      <UniqueIdentifier>{32fd740c-fd33-4fe5-abc8-533c7be7a8cd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
