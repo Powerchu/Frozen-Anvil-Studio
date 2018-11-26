@@ -53,7 +53,8 @@ namespace Editor
 			Ut::Indexer<7u, class SceneView>,
 			Ut::Indexer<8u, class SpritePreviewer>,
 			Ut::Indexer<9u, class SpriteEditor>,
-			Ut::Indexer<10u, class ProjectSettings>
+			Ut::Indexer<10u, class ProjectSettings>,
+			Ut::Indexer<11u, class BehaviourTreeEditor>
 			>>;
 
 		static EditorMain* GetInstance(void);

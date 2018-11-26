@@ -268,6 +268,7 @@ namespace Dystopia
 						newEvent.mfStaticFrictionCof = DetermineStaticFriction(*other_body);
 					}
 					mbColliding = isInside = true;
+					break;
 				}
 			}
 			if (isInside)
@@ -280,22 +281,26 @@ namespace Dystopia
 			}
 			return false;
 		}
-		/*Circle completely inside*/
-		newEvent.mfPeneDepth = FLT_MAX;
-
-		for (auto & elem : Edges)
+		else
 		{
-			Vec3D v = elem.mVec3;
-			Vec3D w = GetGlobalPosition() - elem.mPos;
+			/*Circle completely inside*/
+			newEvent.mfPeneDepth = FLT_MAX;
 
-			if (Math::Abs(w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
+			for (auto & elem : Edges)
 			{
-				//currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
-				newEvent.mEdgeNormal = -elem.mNorm3;
-				newEvent.mfPeneDepth = Math::Abs(w.Dot(elem.mNorm3.Normalise())) + _ColB.GetRadius();
+				Vec3D v = elem.mVec3;
+				Vec3D w = GetGlobalPosition() - elem.mPos;
 
+				if (Math::Abs(w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
+				{
+					//currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
+					newEvent.mEdgeNormal = elem.mNorm3;
+					newEvent.mfPeneDepth = Math::Abs(w.Dot(elem.mNorm3.Normalise())) + _ColB.GetRadius();
+
+				}
 			}
 		}
+
 
 		marr_CurrentContactSets.push_back(newEvent);
 		mbColliding = isInside;

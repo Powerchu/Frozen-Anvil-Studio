@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
     <ClCompile Include="Source\Editor\CommandTypes.cpp" />
     <ClCompile Include="Source\Editor\EditorClipboard.cpp" />
     <ClCompile Include="Source\Editor\EditorCommands.cpp" />
@@ -138,6 +139,7 @@
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
+    <ClInclude Include="Include\Editor\BehaviourTreeEditor.h" />
     <ClInclude Include="Include\Editor\EditorFactory.h" />
     <ClInclude Include="Include\Editor\EditorLauncher.h" />
     <ClInclude Include="Include\Editor\EditorResource.h" />

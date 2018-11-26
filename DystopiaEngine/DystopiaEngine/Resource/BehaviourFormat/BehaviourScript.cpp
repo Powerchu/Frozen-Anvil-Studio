@@ -113,15 +113,15 @@ namespace Dystopia
 
 	}
 
-	void Dystopia::_SF_ClassName_::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::_SF_ClassName_::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::_SF_ClassName_::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::_SF_ClassName_::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::_SF_ClassName_::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::_SF_ClassName_::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 

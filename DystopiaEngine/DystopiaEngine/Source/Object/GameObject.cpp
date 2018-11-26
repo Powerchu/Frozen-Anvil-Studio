@@ -224,32 +224,35 @@ void Dystopia::GameObject::Unload(void)
 
 void Dystopia::GameObject::OnCollisionEnter(const CollisionEvent& _pEvent)
 {
-	ForcePing(mBehaviours, OnCollisionEnter, _pEvent);
+	Ping(mBehaviours, OnCollisionEnter, _pEvent);
 }
 
 void Dystopia::GameObject::OnCollisionStay(const CollisionEvent& _pEvent)
 {
-	ForcePing(mBehaviours, OnCollisionStay, _pEvent);
+	Ping(mBehaviours, OnCollisionStay, _pEvent);
 }
 
 void Dystopia::GameObject::OnCollisionExit(const CollisionEvent& _pEvent)
 {
-	ForcePing(mBehaviours, OnCollisionExit, _pEvent);
+	Ping(mBehaviours, OnCollisionExit, _pEvent);
 }
 
-void Dystopia::GameObject::OnTriggerEnter(const GameObject* _pOther)
+void Dystopia::GameObject::OnTriggerEnter(GameObject* const _pOther)
 {
-	ForcePing(mBehaviours, OnTriggerEnter, _pOther);
+	if (!_pOther) return;
+	Ping(mBehaviours, OnTriggerEnter, _pOther);
 }
 
-void Dystopia::GameObject::OnTriggerStay(const GameObject* _pOther)
+void Dystopia::GameObject::OnTriggerStay(GameObject* const _pOther)
 {
-	ForcePing(mBehaviours, OnTriggerStay, _pOther);
+	if (!_pOther) return;
+	Ping(mBehaviours, OnTriggerStay, _pOther);
 }
 
-void Dystopia::GameObject::OnTriggerExit(const GameObject* _pOther)
+void Dystopia::GameObject::OnTriggerExit(GameObject* const _pOther)
 {
-	ForcePing(mBehaviours, OnTriggerExit, _pOther);
+	if (!_pOther) return;
+	Ping(mBehaviours, OnTriggerExit, _pOther);
 }
 
 void Dystopia::GameObject::PurgeComponents(void)

@@ -571,11 +571,11 @@ HashString operator+(const char* _s, const HashString& _rhs)
 	return s + _rhs;
 }
 
-//std::ostream& operator<<(std::ostream& _os, const HashString& _rhs)
-//{
-//	_os << _rhs.c_str();
-//	return _os;
-//}
+std::ostream& operator<<(std::ostream& _os, const HashString& _rhs)
+{
+	_os << _rhs.c_str();
+	return _os;
+}
 
 bool operator<(const HashString& _lhs, const HashString& _rhs)
 {

@@ -70,9 +70,9 @@ namespace Dystopia
 		void OnCollisionStay (const CollisionEvent&);
 		void OnCollisionExit (const CollisionEvent&);
 
-		void OnTriggerEnter(const GameObject*);
-		void OnTriggerStay (const GameObject*);
-		void OnTriggerExit (const GameObject*);
+		void OnTriggerEnter(GameObject* const);
+		void OnTriggerStay (GameObject* const);
+		void OnTriggerExit (GameObject* const);
 
 		template <typename T>
 		void AddComponent(void);

@@ -70,11 +70,11 @@ namespace Dystopia
 		virtual void OnCollisionExit (const CollisionEvent&);
 
 		// If Owner has a Trigger, and enters another trigger, this occurs
-		virtual void OnTriggerEnter(const GameObject *);
+		virtual void OnTriggerEnter(GameObject * const);
 		// If Owner has a Trigger, and stays in another trigger, this occurs
-		virtual void OnTriggerStay (const GameObject *);
+		virtual void OnTriggerStay (GameObject * const);
 		// If Owner has a Trigger, and exit another trigger, this occurs
-		virtual void OnTriggerExit (const GameObject *);
+		virtual void OnTriggerExit (GameObject * const);
 
 		virtual void Serialise(TextSerialiser&) const override;
 		virtual void Unserialise(TextSerialiser&) override;
