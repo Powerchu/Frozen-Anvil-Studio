@@ -334,7 +334,9 @@
     <ClCompile Include="Source\Editor\EditorProc.cpp">
       <Filter>Editor\Main\Process</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Tag\TagSystem.cpp" />
+    <ClCompile Include="Source\System\Tag\TagSystem.cpp">
+      <Filter>Game Engine\SubSystems\Tag</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -923,8 +925,12 @@
     <ClInclude Include="Include\Editor\EditorProc.h">
       <Filter>Editor\Main\Process</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Tag\TagSystem.h" />
-    <ClInclude Include="Include\System\Tag\Tags.h" />
+    <ClInclude Include="Include\System\Tag\Tags.h">
+      <Filter>Game Engine\SubSystems\Tag</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Tag\TagSystem.h">
+      <Filter>Game Engine\SubSystems\Tag</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1316,6 +1322,9 @@
     </Filter>
     <Filter Include="Game Engine\Components\AI">
       <UniqueIdentifier>{695cd54f-1b97-44eb-8804-4a45aafc03a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Tag">
+      <UniqueIdentifier>{6e2c5293-0716-4775-84ea-ac23183adee9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

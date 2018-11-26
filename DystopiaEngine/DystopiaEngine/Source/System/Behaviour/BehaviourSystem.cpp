@@ -3,6 +3,8 @@
 
 #if EDITOR
 #include "Editor/HotLoader.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorFactory.h"
 #endif
 #include "System/Behaviour/BehaviourSystem.h"
 #undef ERROR
@@ -470,6 +472,7 @@ namespace Dystopia
 						{
 							/*GameObject with ID that was serialise could not be found*/
 							/*Remove and delete the Behaviour from mvBehaviourReferences*/
+							::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID);
 						}
 					}
 					break;
@@ -504,6 +507,7 @@ namespace Dystopia
 					if (i.first == std::wstring{ _name.begin(), _name.end() })
 					{
 						auto * ptr = elem.mpBehaviour->Duplicate();
+
 						i.second.push_back(std::make_pair(_ID, ptr));
 						return ptr;
 					}
@@ -519,11 +523,11 @@ namespace Dystopia
 		{
 			for (auto & iter : i.second)
 			{
-				if (iter.second == _PtrToDup)
+				if (iter.second == _PtrToDup || (iter.first == _PtrToDup->GetOwnerID() && !std::strcmp(iter.second->GetBehaviourName(), _PtrToDup->GetBehaviourName())))
 				{
 					auto ptr = iter.second->Duplicate();
 					i.second.push_back(std::make_pair(_NewID, ptr));
-					iter.first = _NewID;
+					//iter.first = _NewID;
 					return ptr;
 				}
 			}
