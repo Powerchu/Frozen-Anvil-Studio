@@ -193,7 +193,7 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	EGUI::PushLeftAlign(80);
 
 	TextureFields();
-	AtlasFields();
+	AnimFields();
 	AddAnimations();
 
 	EGUI::PushLeftAlign(110);
@@ -267,16 +267,13 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 
 	if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName() : "-no mesh-", true))
 	{
-
 	}
 	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
 	{
 		EGUI::Display::EndPayloadReceiver();
 	}
-
 	if (EGUI::Display::EmptyBox("Shader", 150, "shader has no name or id", true))
 	{
-
 	}
 	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
 	{
@@ -286,12 +283,22 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 #endif
 }
 
-void Dystopia::SpriteRenderer::AtlasFields(void)
+void Dystopia::SpriteRenderer::AnimFields(void)
 {
 #if EDITOR
 
-
-
+	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
+	switch (EGUI::Display::DragFloat("Frame time", &mfFrameTime, 0.01f, 0.016f, 10.f))
+	{
+	case EGUI::eDragStatus::eSTART_DRAG:
+		cmd->StartRec(&SpriteRenderer::mfFrameTime, this);
+		break;
+	case EGUI::eDragStatus::eEND_DRAG:
+	case EGUI::eDragStatus::eDEACTIVATED:
+	case EGUI::eDragStatus::eENTER:
+		cmd->EndRec(&SpriteRenderer::mfFrameTime, this);
+		break;
+	}
 #endif
 }
 
@@ -344,7 +351,10 @@ bool Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
 		/******** Section ID *******/
 		auto sID = static_cast<int>(anim.mnID);
 		auto max = static_cast<unsigned>(mpAtlas->GetAllSections().size());
-		EGUI::Display::DropDownSelection<21>("Section", sID, max);
+		if (EGUI::Display::DropDownSelection<21>("Section", sID, max))
+		{
+			anim.mnID = sID;
+		}
 
 		/********** Loop **********/
 		EGUI::Display::CheckBox("Loop", &anim.mbLoop);
