@@ -180,7 +180,7 @@ void Editor::SpriteEditor::FieldTexture(void)
 	if (auto t = EGUI::Display::StartPayloadReceiver<Editor::File>(EGUI::ePayloadTags::ALL_IMG))
 	{
 		mpTexture = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>()->LoadTexture(t->mPath.c_str());
-		mpAtlas = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::TextureSystem>()->GetAtlas(t->mPath.c_str());
+		mpAtlas = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::TextureSystem>()->GetAtlas(t->mName.c_str());
 		mpAtlas->SetTexture(mpTexture);
 		mnSelectedSection = 0;
 		if (!mpAtlas->GetAllSections().size())
@@ -216,7 +216,8 @@ void Editor::SpriteEditor::FieldAtlas(void)
 	{
 		mnSelectedSection = mpAtlas->AddSection(Math::Vec2{mSectionPos.x * static_cast<float>(mpTexture->GetWidth()), mSectionPos.y * static_cast<float>(mpTexture->GetHeight()) },
 												static_cast<unsigned>(mSectionSize.x * static_cast<float>(mpTexture->GetWidth())),
-												static_cast<unsigned>(mSectionSize.y * static_cast<float>(mpTexture->GetHeight())));
+												static_cast<unsigned>(mSectionSize.y * static_cast<float>(mpTexture->GetHeight())),
+												static_cast<unsigned>(mSectionDime.x), static_cast<unsigned>(mSectionDime.y));
 		mSectionPos = Math::Vec2{ 0, 0 };
 		mSectionSize = Math::Vec2{ 0, 0 };
 		mSectionDime = Math::Vec2{ 1, 1 };

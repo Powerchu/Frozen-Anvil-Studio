@@ -239,7 +239,7 @@ void Editor::EditorCommands::ExecuteDo(Command* _pCommand)
 	if (mbDisableCommands)
 		return;
 
-	if (_pCommand->Unchanged() && _pCommand->Do())
+	if (!_pCommand->Unchanged() && _pCommand->Do())
 	{
 		mDeqUndo.push_back(_pCommand);
 		for (auto& r : mDeqRedo)

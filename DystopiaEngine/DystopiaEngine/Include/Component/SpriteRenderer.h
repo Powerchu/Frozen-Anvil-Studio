@@ -82,7 +82,7 @@ namespace Dystopia
 		{
 			HashString mstrName;
 			unsigned mnID;
-			int mnCol, mnRow;
+			int mnCol, mnRow, mnStart, mnEnd;
 			bool mbLoop;
 		};
 
