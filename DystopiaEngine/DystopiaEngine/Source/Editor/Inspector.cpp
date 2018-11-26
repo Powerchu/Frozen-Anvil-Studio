@@ -139,10 +139,13 @@ namespace Editor
 				auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, HashString{ buffer });
 				cmd->FunctionCommand(mpFocus->GetID(), oFn, nFn);
 			}
+
+			//TODO:
 			if (EGUI::Display::DropDownSelection("Tag", i, mpFocus->GetAllTags_str(), 32))
 			{
 
 			}
+
 			EGUI::SameLine();
 			EGUI::ChangeAlignmentYOffset(0);
 			j = (mpFocus->GetFlags() & FLAG_LAYER_WORLD) ? 1 : (mpFocus->GetFlags() & FLAG_LAYER_UI) ? 2 : 0;
