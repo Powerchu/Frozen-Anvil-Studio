@@ -141,18 +141,19 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Renderer");
 	Component::Serialise(_out);
-	_out << EngineCore::GetInstance()->Get<FileSystem>()->ConvertToRelative(mTexturePath);
+	_out << mTexturePath;
+	// EngineCore::GetInstance()->Get<FileSystem>()->ConvertToRelative(mTexturePath);
 	_out.InsertEndBlock("Renderer");
 }
 
 void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 {
-	std::string path;
+	//std::string path;
 	_in.ConsumeStartBlock();
 	Component::Unserialise(_in);
-	_in >> path;
+	_in >> mTexturePath;
 	_in.ConsumeEndBlock();
-	mTexturePath = EngineCore::GetInstance()->Get<FileSystem>()->GetFullPath(path, eFileDir::eResource);
+	//mTexturePath = EngineCore::GetInstance()->Get<FileSystem>()->GetFullPath(path, eFileDir::eResource);
 }
 
 void Dystopia::Renderer::EditorUI(void) noexcept
