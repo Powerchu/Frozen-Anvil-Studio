@@ -54,7 +54,6 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 	unsigned count = LoadSegment(obj, _in);
 	LoadSegmentC(obj, count, _in);
 	LoadSegmentB(obj, _in);
-	obj.GetComponent<Transform>()->SetGlobalPosition(_pos);
 
 	unsigned childCounter = 0;
 	_in.ConsumeStartBlock();
@@ -82,6 +81,7 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 		}
 	}
 	obj.Awake();
+	obj.GetComponent<Transform>()->SetGlobalPosition(_pos);
 	return &obj;
 }
 
@@ -105,6 +105,11 @@ void Dystopia::Factory::LoadSegmentC(GameObject& _obj, unsigned _count, Dystopia
 		_in >> sysID;
 		Component *pComponent = cList.GetComponentA(sysID, &_obj);
 		cList.IsolateUnserialise(pComponent, _in);
+
+		pComponent->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+		auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+		sceneSys->GetCurrentScene().FindGameObject(pComponent->GetOwnerID())->AddComponent(pComponent, Component::TAG{});
+
 		_in.ConsumeEndBlock();
 	}
 }
@@ -133,7 +138,6 @@ void Dystopia::Factory::LoadSegmentB(GameObject& _obj, Dystopia::TextSerialiser&
 					if (BehaviourMetadata[MemVarName.c_str()])
 					{
 						_in.ConsumeStartBlock();
-						/*Call Unserialise*/
 						BehaviourMetadata[MemVarName.c_str()].Unserialise(ptr, _in, Dystopia::BehaviourHelper::SuperUnserialiseFunctor{});
 						_in.ConsumeEndBlock();
 					}
@@ -144,6 +148,7 @@ void Dystopia::Factory::LoadSegmentB(GameObject& _obj, Dystopia::TextSerialiser&
 					}
 				}
 			}
+			ptr->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 			ptr->SetOwner(&_obj);
 			_obj.AddComponent(ptr, Dystopia::BehaviourTag{});
 			_in.ConsumeEndBlock();
