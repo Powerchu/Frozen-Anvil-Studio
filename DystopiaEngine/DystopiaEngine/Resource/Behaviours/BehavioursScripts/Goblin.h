@@ -210,7 +210,8 @@ namespace Dystopia
 		
 		virtual void Load(void) override;
 		virtual void Init(void) override;
-
+		virtual void Awake(void) override;
+		
 		virtual void Update(const float _fDeltaTime) override;
 		virtual void FixedUpdate(const float _fDeltaTime) override;
 		virtual void PostUpdate(void) override;
@@ -222,9 +223,9 @@ namespace Dystopia
 		virtual void OnCollisionStay (const CollisionEvent&) override;
 		virtual void OnCollisionExit (const CollisionEvent&) override;
 
-		virtual void OnTriggerEnter(const GameObject *) override;
-		virtual void OnTriggerStay (const GameObject *) override;
-		virtual void OnTriggerExit (const GameObject *) override;
+		virtual void OnTriggerEnter(GameObject * const) override;
+		virtual void OnTriggerStay (GameObject * const) override;
+		virtual void OnTriggerExit (GameObject * const) override;
 
 		virtual void Serialise(TextSerialiser&) const override;
 		virtual void Unserialise(TextSerialiser&) override;
@@ -235,21 +236,21 @@ namespace Dystopia
 		
 		virtual void EditorUI(void) noexcept override;
 		
-		void TEST(float _dmg)
-        {
-			mHealth -= _dmg;
-        }
+		void TakeDamage(int _dmg, bool _isFacingRight);
+		void Knock(int _amt, int _direction);
 		
 		// Reflection Stuff
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 		int mHealth = 50;
+		RigidBody * rBody;
+		float mass;
 		
 		bool isColliding = false;
 		NeuralTree::BehaviourTree bTree;
 		
-		PP_MEMBERFUNC(Dystopia::Goblin, TEST)
+		PP_MEMBERFUNC(Dystopia::Goblin, TakeDamage, Knock)
 		
 	private:
 		friend MetaData<Goblin>;

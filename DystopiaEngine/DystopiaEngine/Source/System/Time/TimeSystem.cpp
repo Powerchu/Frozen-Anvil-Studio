@@ -126,6 +126,7 @@ void Dystopia::TimeSystem::SaveSettings(DysSerialiser_t& _out)
 	_out << mfSimulatedDT;
 }
 
+#if EDITOR
 void Dystopia::TimeSystem::EditorUI(void)
 {
 	static float fixedDT = 0.02f;
@@ -167,4 +168,4 @@ void Dystopia::TimeSystem::EditorUI(void)
 		break;
 	}
 }
-
+#endif 

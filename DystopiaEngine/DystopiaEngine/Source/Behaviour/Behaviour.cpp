@@ -48,6 +48,7 @@ void Dystopia::Behaviour::PostUpdate(void)
 
 void Dystopia::Behaviour::GameObjectDestroy(void)
 {
+	Component::GameObjectDestroy();
 }
 
 void Dystopia::Behaviour::Unload(void)
@@ -69,16 +70,16 @@ void Dystopia::Behaviour::OnCollisionExit(const CollisionEvent&)
 
 }
 
-void Dystopia::Behaviour::OnTriggerEnter(const GameObject *)
+void Dystopia::Behaviour::OnTriggerEnter(GameObject * const)
 {
 	
 }
 
-void Dystopia::Behaviour::OnTriggerStay(const GameObject *)
+void Dystopia::Behaviour::OnTriggerStay(GameObject * const)
 {
 }
 
-void Dystopia::Behaviour::OnTriggerExit(const GameObject *)
+void Dystopia::Behaviour::OnTriggerExit(GameObject * const)
 {
 }
 

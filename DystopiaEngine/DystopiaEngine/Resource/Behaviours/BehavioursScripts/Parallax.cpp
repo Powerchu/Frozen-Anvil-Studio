@@ -119,15 +119,15 @@ namespace Dystopia
 
 	}
 
-	void Dystopia::Parallax::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::Parallax::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::Parallax::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::Parallax::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::Parallax::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::Parallax::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 

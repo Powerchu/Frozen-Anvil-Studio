@@ -127,6 +127,7 @@
     <ClCompile Include="Source\System\Scene\Scene.cpp" />
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
     <ClCompile Include="Source\System\Sound\SoundSystem.cpp" />
+    <ClCompile Include="Source\System\Tag\TagSystem.cpp" />
     <ClCompile Include="Source\System\Time\ScopedTimer.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
@@ -243,6 +244,8 @@
     <ClInclude Include="Include\System\Profiler\Profiler.h" />
     <ClInclude Include="Include\System\Profiler\ProfilerAction.h" />
     <ClInclude Include="Include\System\SystemMessage.h" />
+    <ClInclude Include="Include\System\Tag\Tags.h" />
+    <ClInclude Include="Include\System\Tag\TagSystem.h" />
     <ClInclude Include="Include\System\Time\ScopedTimer.h" />
     <ClInclude Include="Include\System\Time\TimeDefs.h" />
     <ClInclude Include="Include\System\Events\EventSystem.h" />
@@ -562,7 +565,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalOptions>/DEDITOR=0 /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER /DSAFE_PTRS</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR=0 /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER /DSAFE_PTRS /DEXPORT</AdditionalOptions>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>

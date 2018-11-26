@@ -75,7 +75,7 @@ namespace Dystopia
 
 	}
 
-	void Dystopia::ChangeAudio::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::ChangeAudio::OnTriggerEnter(GameObject * const _obj)
 	{
 		if (_obj->GetNamePtr() == nullptr)
 			return;
@@ -96,11 +96,11 @@ namespace Dystopia
 		} 
 	}
 
-	void Dystopia::ChangeAudio::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::ChangeAudio::OnTriggerStay(GameObject * const _obj)
 	{ 
 	}
 
-	void Dystopia::ChangeAudio::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::ChangeAudio::OnTriggerExit(GameObject * const _obj)
 	{
 		if (_obj->GetNamePtr() == nullptr)
 			return;

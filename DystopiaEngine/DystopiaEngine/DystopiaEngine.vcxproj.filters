@@ -334,6 +334,7 @@
     <ClCompile Include="Source\Editor\EditorProc.cpp">
       <Filter>Editor\Main\Process</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Tag\TagSystem.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp">
       <Filter>Editor\Main\Panels\Behaviour Tree</Filter>
     </ClCompile>
@@ -925,6 +926,8 @@
     <ClInclude Include="Include\Editor\EditorProc.h">
       <Filter>Editor\Main\Process</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Tag\TagSystem.h" />
+    <ClInclude Include="Include\System\Tag\Tags.h" />
     <ClInclude Include="Include\Editor\BehaviourTreeEditor.h">
       <Filter>Editor\Main\Panels\Behaviour Tree</Filter>
     </ClInclude>

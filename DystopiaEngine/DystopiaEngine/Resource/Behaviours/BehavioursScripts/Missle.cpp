@@ -92,15 +92,15 @@ namespace Dystopia
 
 	}
 
-	void Dystopia::Missle::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::Missle::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::Missle::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::Missle::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::Missle::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::Missle::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 

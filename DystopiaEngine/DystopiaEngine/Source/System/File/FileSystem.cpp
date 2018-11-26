@@ -98,11 +98,26 @@ namespace Dystopia
 
 		for (auto const & elem : DirIter)
 		{
-			if (elem.path().filename().string() == _FileName)
+			if (elem.path().filename().string() == _FileName || std::filesystem::equivalent(_FileName,elem,error))
 				return elem.path().string();
 		}
 
 		return std::string{};
+	}
+
+	std::wstring FileSystem::GetFullPath_w(std::wstring const& _FileName, eFileDir _ParentDirectory)
+	{
+		std::filesystem::path DirPath{ GetProjectFolders<std::string>(_ParentDirectory) };
+		std::error_code error;
+		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
+
+		for (auto const & elem : DirIter)
+		{
+			if (elem.path().filename().wstring() == _FileName)
+				return elem.path().wstring();
+		}
+
+		return std::wstring{};
 	}
 
 	bool FileSystem::CreateFiles(std::string const & _FileName, eFileDir _Directory)
@@ -120,7 +135,7 @@ namespace Dystopia
 		for (auto const & elem : DirIter)
 		{
 			std::wstring filename = elem.path().filename().wstring();
-			if (filename == wstrFileName)
+			if (filename == wstrFileName || std::filesystem::equivalent(elem, _FileName))
 				return true;
 		}
 

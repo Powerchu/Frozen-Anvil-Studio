@@ -5,6 +5,7 @@
 
 #include <map>
 #include <string>
+#include <filesystem>
 
 #include "System/Base/Systems.h"
 #include "DataStructure/HashString.h"
@@ -44,7 +45,8 @@ namespace Dystopia
 
 		FileSystem();
 		~FileSystem();
-		std::string GetFullPath(std::string const & _FileName, eFileDir _ParentDirectory);
+		std::string  GetFullPath (std::string const & _FileName, eFileDir _ParentDirectory);
+		std::wstring GetFullPath_w(std::wstring const & _FileName, eFileDir _ParentDirectory);
 
 		bool CreateFiles(std::string const & _FileName, eFileDir _Directory);
 
@@ -140,6 +142,8 @@ namespace Dystopia
 			else
 			if constexpr (std::is_same_v<T, std::wstring>)
 				retString = std::filesystem::current_path().wstring();
+
+			break;
 		}
 		default:
 		{

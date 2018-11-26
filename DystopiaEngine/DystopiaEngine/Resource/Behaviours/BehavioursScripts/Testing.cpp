@@ -106,15 +106,15 @@ namespace Dystopia
 
 	}
 
-	void Dystopia::Testing::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::Testing::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::Testing::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::Testing::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::Testing::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::Testing::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 

@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Physics/PhysicsSystem.h"
 #include "System/Collision/CollisionEvent.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Behaviour/BehaviourSystem.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Driver/Driver.h"
 #include "Editor/EGUI.h"
@@ -28,9 +29,36 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/RigidBody.h"
 #include "Component/SpriteRenderer.h"
 #include "Component/Transform.h"
+#include "Component/Collider.h"
 
 namespace Dystopia
 {
+	namespace CharacterController_MSG
+	{
+		template<typename ... Ts>
+		void SendInternalMessage(Behaviour * ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendInternalMessage(ptr, _FuncName, _Params...);
+		}
+		template<typename ... Ts>
+		void SendExternalMessage(uint64_t _ObjectID, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
+		}
+
+		template<typename ... Ts>
+		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
+
+		template<typename ... Ts>
+		void SendAllMessage(const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
+		}
+	}
+
 	CharacterController::CharacterController()
 		: mbIsFacingRight(true)
 		, mbIsGrounded(false)
@@ -40,6 +68,10 @@ namespace Dystopia
 		, JumpForce(60.0F)
 		, mpBody(nullptr)
 		, mpInputSys(nullptr)
+		, attackCount(0)
+		, attackDelay(0.0f)
+		, isAttacking(false)
+		, currentType(true)
 	{
 	}
 
@@ -80,8 +112,11 @@ namespace Dystopia
 			mpInputSys->MapButton("Run Right", eButton::XBUTTON_DPAD_RIGHT);
 			mpInputSys->MapButton("Jump", eButton::XBUTTON_A);
 			mpInputSys->MapButton("Fly", eButton::XBUTTON_DPAD_UP);
-			mpInputSys->MapButton("Fireball", eButton::XBUTTON_B);
-			mpInputSys->MapButton("Missile", eButton::XBUTTON_Y);
+			mpInputSys->MapButton("Skill B", eButton::XBUTTON_B);
+			mpInputSys->MapButton("Skill Y", eButton::XBUTTON_Y);
+			mpInputSys->MapButton("Attack", eButton::XBUTTON_X);
+			mpInputSys->MapButton("SetForm", eButton::XBUTTON_LEFT_SHOULDER);
+			mpInputSys->MapButton("SetForce", eButton::XBUTTON_RIGHT_SHOULDER);
 		}
 		else
 		{
@@ -89,20 +124,31 @@ namespace Dystopia
 			mpInputSys->MapButton("Run Right", eButton::KEYBOARD_RIGHT);
 			mpInputSys->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
 			mpInputSys->MapButton("Fly", eButton::KEYBOARD_UP);
-			mpInputSys->MapButton("Fireball", eButton::KEYBOARD_C);
-			mpInputSys->MapButton("Missile", eButton::KEYBOARD_V);
+			mpInputSys->MapButton("Skill B", eButton::KEYBOARD_C);
+			mpInputSys->MapButton("Skill Y", eButton::KEYBOARD_V);
 		}
+
+		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
+		sManagerName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("SkillManager");
+
+		playerHealth = 100;
+		SetFlags(FLAG_ACTIVE);
 	}
 
 	void CharacterController::Init()
 	{ 
-		
+		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
+		sManagerName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("SkillManager");
+		SetFlags(FLAG_ACTIVE);  
 	}
 
 	void CharacterController::Update(const float _fDeltaTime)
 	{
 		MovePlayer(_fDeltaTime);
 		CheckMoving();
+		CheckAttack();
+
+		attackDelay = attackDelay + _fDeltaTime;
 	}
 
 	void CharacterController::FixedUpdate(const float _fDeltaTime)
@@ -123,9 +169,10 @@ namespace Dystopia
 
 	void Dystopia::CharacterController::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
+		const auto colBTrigger = _colEvent.mCollidedWith->GetComponent<Collider>()->IsTrigger();
 		const float dotNormal = _colEvent.mEdgeNormal.Dot({ 0.0F,-1.0F,0.0F });
-		//DEBUG_PRINT(eLog::MESSAGE, "DotNormal: %f", dotNormal);	
-		if (dotNormal > 0.65F && dotNormal < 1.1F)
+		DEBUG_PRINT(eLog::MESSAGE, "DotNormal: %f && Trigger?: %d", dotNormal, colBTrigger);
+		if (dotNormal > 0.65F && dotNormal < 1.1F && !colBTrigger)
 		{
 			mbIsGrounded = true;	
 		}
@@ -143,15 +190,15 @@ namespace Dystopia
 		
 	}
 
-	void Dystopia::CharacterController::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::CharacterController::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::CharacterController::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::CharacterController::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::CharacterController::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::CharacterController::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
@@ -276,32 +323,6 @@ namespace Dystopia
 				mbIsGrounded = false;
 			}
 		}
-		
-		if (mpInputSys->IsKeyTriggered("Fireball"))
-		{
-			if (!mbIsFacingRight)
-			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{-40,-10,0}))
-				{
-					if (auto rigidptr = ptr->GetComponent<RigidBody>())
-					{
-						auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
-						ptr->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z);
-						rigidptr->AddLinearImpulse({ -300 * rigidptr->GetMass(),20*rigidptr->GetMass(),0 });
-					}
-				}
-			}
-			else
-			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("Fireball.dobj", GetOwner()->GetComponent<Transform>()->GetPosition() + Math::Vec3D{ 40,-10,0 }))
-				{
-					if (auto rigidptr = ptr->GetComponent<RigidBody>())
-					{
-						rigidptr->AddLinearImpulse({ 300 * rigidptr->GetMass(),20 * rigidptr->GetMass(),0 });
-					}
-				}
-			}
-		}
 
 		if (mpInputSys->IsKeyTriggered("Missile"))
 		{
@@ -325,6 +346,129 @@ namespace Dystopia
 				}
 			}
 		}
+
+		if (mpInputSys->IsKeyTriggered("Skill Y") || mpInputSys->IsKeyTriggered("Skill B"))
+		{
+			const Math::Vec3D spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
+
+			CharacterController::CastLinked(1, currentType, float(spawnLocation.x), float(spawnLocation.y), float(spawnLocation.z));
+		}
+
+		if (mpInputSys->IsKeyTriggered("SetForm"))
+		{
+			currentType = true;
+			DEBUG_PRINT(eLog::MESSAGE, "Form!");
+		}
+
+		if (mpInputSys->IsKeyTriggered("SetForce"))
+		{
+			currentType = false;
+			DEBUG_PRINT(eLog::MESSAGE, "Force!");
+		}
+
+		if (mpInputSys->IsKeyTriggered("Attack"))
+		{
+			const Math::Vec3D spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
+
+		    if (attackDelay > 0.5f)
+			{
+				if (combatName)
+				{
+					if (!mbIsFacingRight)
+					{
+						CharacterController_MSG::SendExternalMessage(combatName, "DealDamage", 10, mbIsFacingRight);
+					}
+
+					else
+					{
+						CharacterController_MSG::SendExternalMessage(combatName, "DealDamage", 10, mbIsFacingRight);
+					}
+				}
+				else
+					DEBUG_PRINT(eLog::MESSAGE, "Combat Box not found");
+				
+
+				if (attackCount < 3)
+				{
+					attackCount++;
+					DEBUG_PRINT(eLog::MESSAGE, "Attacking");
+				}
+
+				else
+				{
+					attackCount = 0;
+				}
+
+				//use linked skill
+				if (attackCount == 0)
+				{
+					CharacterController::CastLinked(0, currentType, float(spawnLocation.x), float(spawnLocation.y), float(spawnLocation.z));
+				}
+
+				attackDelay = 0.0f;
+			}
+		}
+	}
+
+	void Dystopia::CharacterController::CastLinked(int _skill, bool _isForm, float x, float y, float z)
+	{
+		if (_isForm)
+		{
+			if (_skill == 0)
+			{
+				DEBUG_PRINT(eLog::MESSAGE, "Sending to SManager FORM");
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 0, mbIsFacingRight, x, y, z);
+			}
+
+			else if (_skill == 1)
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 1, mbIsFacingRight, x, y, z);
+
+			/*else if (_skill == 2)
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 2);*/
+		}
+
+		else
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "Sending to SManager FORCE");
+			if (_skill == 0)
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForce", 0, mbIsFacingRight, x, y, z);
+
+			/*else if (_skill == 1)
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForce", 1);
+
+			else if (_skill == 2)
+				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForce", 2);*/
+		}
+			
+	}
+
+	void CharacterController::CheckAttack()
+	{
+		auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
+
+		if (attackDelay > 1.5f)
+		{
+			attackCount = 0;
+			attackDelay = 0.5f;
+		}
+
+		if (s_rend && attackDelay < 1.0f)
+		{
+			/*if (attackCount == 1)
+			{
+				s_rend->SetAnimation("AttackOne");
+			}
+
+			if (attackCount == 2)
+			{
+				s_rend->SetAnimation("AttackTwo");
+			}
+
+			if (attackCount == 3)
+			{
+				s_rend->SetAnimation("AttackThree");
+			}*/
+		}
 	}
 
 	void CharacterController::CheckMoving()
@@ -343,6 +487,16 @@ namespace Dystopia
 				s_rend->SetSpeed(0.16F);
 				s_rend->SetAnimation("Idle");		
 			}			
+		}
+	}
+
+	void CharacterController::TakeDamage(int _dmg)
+	{
+		playerHealth -= _dmg;
+
+		if (playerHealth < 0)
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "YOU DIED!");
 		}
 	}
 	

@@ -62,7 +62,12 @@ namespace Dystopia
 	void Goblin::Load()
 	{
 	}
-
+    void Goblin::Awake(void)
+	{
+		rBody = GetOwner()->GetComponent<RigidBody>();
+		mass = rBody->GetMass();
+		SetFlags(FLAG_ACTIVE);
+	}
 	void Goblin::Init()
 	{
 		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
@@ -87,7 +92,11 @@ namespace Dystopia
 				.end()
 				.leaf<RunAway>(blackboard)
 			.end()
-		.Build(bTree); 
+		.Build(bTree);
+		
+		rBody = GetOwner()->GetComponent<RigidBody>();
+		mass = rBody->GetMass();
+		SetFlags(FLAG_ACTIVE);
 	} 
 
 	void Goblin::Update(const float _fDeltaTime)
@@ -184,7 +193,7 @@ namespace Dystopia
 		isColliding = false;
 	}
 
-	void Dystopia::Goblin::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::Goblin::OnTriggerEnter(GameObject * const _obj)
 	{
 		if(_obj)
 		{
@@ -198,7 +207,7 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::Goblin::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::Goblin::OnTriggerStay(GameObject * const _obj)
 	{
 		if(_obj)
 		{
@@ -212,7 +221,7 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::Goblin::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::Goblin::OnTriggerExit(GameObject * const _obj)
 	{
 		isColliding = false;
 	}
@@ -242,6 +251,33 @@ namespace Dystopia
 		
 	}
 	
+	void Goblin::TakeDamage(int _dmg, bool _isFacingRight)
+	{
+		mHealth -= _dmg;
+
+		if (mHealth < 0)
+		GetOwner()->Destroy();
+
+		if (_isFacingRight)
+			rBody->AddLinearImpulse({30 * mass,0,0});
+		else
+			rBody->AddLinearImpulse({-30 * mass,0,0});
+	}
+
+	void Goblin::Knock(int _amt, int _direction)
+	{
+		DEBUG_PRINT(eLog::MESSAGE, "received Knock");
+		
+		if (_direction == 0) //knock up
+			rBody->AddLinearImpulse({0, _amt * mass, 0});
+
+		if (_direction == 1) //knock left
+			rBody->AddLinearImpulse({ -(_amt * mass), 0, 0 });
+		
+		if (_direction == 2) //knock right
+			rBody->AddLinearImpulse({ _amt * mass, 0, 0 });
+	}
+
 	TypeErasure::TypeEraseMetaData Goblin::GetMetaData()
 	{
 		/*TO DO*/

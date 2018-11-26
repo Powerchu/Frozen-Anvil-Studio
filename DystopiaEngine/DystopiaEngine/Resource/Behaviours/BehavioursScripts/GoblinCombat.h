@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	class GameObject;
 	class GoblinCombat : Behaviour
 	{
 	public:
@@ -73,11 +74,11 @@ namespace Dystopia
 		virtual void OnCollisionExit (const CollisionEvent&);
 
 		// If Owner has a Trigger, and enters another trigger, this occurs
-		virtual void OnTriggerEnter(const GameObject *);
+		virtual void OnTriggerEnter(GameObject * const);
 		// If Owner has a Trigger, and stays in another trigger, this occurs
-		virtual void OnTriggerStay (const GameObject *);
+		virtual void OnTriggerStay (GameObject * const);
 		// If Owner has a Trigger, and exit another trigger, this occurs
-		virtual void OnTriggerExit (const GameObject *);
+		virtual void OnTriggerExit (GameObject * const);
 
 		virtual void Serialise(TextSerialiser&) const override;
 		virtual void Unserialise(TextSerialiser&) override;
@@ -90,24 +91,38 @@ namespace Dystopia
 		// Don't touch
 		virtual void EditorUI(void) noexcept override;
 		
+		void DealDamage(int _damage);
+
 		// Reflection Stuff - Don't Touch
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+		PP_MEMBERFUNC(Dystopia::GoblinCombat, DealDamage)
 	private:
 		// Don't touch
 		friend MetaData<GoblinCombat>;
+
+	public:
+		bool targetViable;
+		const char * name;
+		GameObject* mp_target = nullptr;
 	};
 
 	extern "C"
 	{
 		DllExport GoblinCombat * GoblinCombatClone()
 		{
-			return new GoblinCombat;
+			return new GoblinCombat{};
 		}
 	}
 }
-
+/*Keep this if you do not want to show anything in Editor*/
+PP_REFLECT_EMPTY(Dystopia::GoblinCombat)
+/*
+  Uncomment the line PP_REFLECT and add in the names of the variable you want to show
+  Comment out PP_REFLECT_EMPTY.
+*/
+//PP_REFLECT(Dystopia::GoblinCombat)
 #endif //_GoblinCombat_H_
 
 

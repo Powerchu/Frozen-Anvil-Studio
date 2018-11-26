@@ -44,6 +44,17 @@ namespace Dystopia
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
 		}
+		// template<typename ... Ts>
+		// void SendExternalMessage(GameObject const *  _ptr, const char * _FuncName, Ts ... _Params)
+		// {
+		// 	EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		// }
+		
+		template<typename ... Ts>
+		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
 		
 		template<typename ... Ts>
 		void SendAllMessage(const char * _FuncName, Ts ... _Params)
@@ -65,10 +76,12 @@ namespace Dystopia
 
 	void GoblinCombat::Awake()
 	{
+		SetFlags(FLAG_ACTIVE);
 	}
 
 	void GoblinCombat::Init()
 	{
+		SetFlags(FLAG_ACTIVE);
 	}
 
 	void GoblinCombat::Update(const float _fDeltaTime)
@@ -106,16 +119,34 @@ namespace Dystopia
 
 	}
 
-	void Dystopia::GoblinCombat::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::GoblinCombat::OnTriggerEnter(GameObject * const _obj)
+	{
+		if (_obj)
+		{
+			name = _obj->GetNamePtr(); 
+ 
+			if (!strcmp(name, "Player"))
+			{
+				mp_target = (_obj);
+			}
+		}
+	}
+
+	void Dystopia::GoblinCombat::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::GoblinCombat::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::GoblinCombat::OnTriggerExit(GameObject * const _obj)
 	{
-	}
+		if (_obj)
+		{
+			name = _obj->GetNamePtr();
 
-	void Dystopia::GoblinCombat::OnTriggerExit(const GameObject * _obj)
-	{
+			if (!strcmp(name, "Player"))
+			{
+				mp_target = nullptr;
+			}
+		}
 	}
 
 	GoblinCombat * GoblinCombat::Duplicate() const
@@ -143,17 +174,29 @@ namespace Dystopia
 		
 	}
 	
+	void GoblinCombat::DealDamage(int _dmg)
+	{
+		if (mp_target)
+		{
+			GoblinCombat_MSG::SendExternalMessage(mp_target, "TakeDamage", 10);	
+		}
+	}
+
 	TypeErasure::TypeEraseMetaData GoblinCombat::GetMetaData()
 	{
 		/*TO DO*/
 		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
-		return TypeErasure::TypeEraseMetaData{};
+		static MetaData<Dystopia::GoblinCombat> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
 	}
 	TypeErasure::TypeEraseMetaData const GoblinCombat::GetMetaData() const
 	{
 		/*TO DO*/
 		/*REMEMBER TO RETURN YOUR REFLECTED DATA HERE*/
-		return TypeErasure::TypeEraseMetaData{};
+		static MetaData<Dystopia::GoblinCombat> mMetaData;
+		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		return mReturn;
 	}
 }
 

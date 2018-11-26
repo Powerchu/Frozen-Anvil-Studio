@@ -360,13 +360,30 @@ namespace EGUI
 		{
 			if (ImGui::BeginDragDropTarget())
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EGUI::GetPayloadString(_tagLoad)))
+				const ImGuiPayload* payload = nullptr;
+				switch (_tagLoad)
 				{
-					DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
-					return static_cast<Specified*>(payload->Data);
+				case ALL_IMG:
+					payload = ImGui::AcceptDragDropPayload(GetPayloadString(ePayloadTags::PNG));
+					if (!payload)
+						payload = ImGui::AcceptDragDropPayload(GetPayloadString(ePayloadTags::DDS));
+					if (!payload)
+						payload = ImGui::AcceptDragDropPayload(GetPayloadString(ePayloadTags::BMP));
+
+					if (payload)
+					{
+						DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
+						return static_cast<Specified*>(payload->Data);
+					}
+				default:
+					payload = ImGui::AcceptDragDropPayload(GetPayloadString(_tagLoad));
+					if (payload)
+					{
+						DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
+						return static_cast<Specified*>(payload->Data);
+					}
 				}
-				else
-					ImGui::EndDragDropTarget();
+				ImGui::EndDragDropTarget();
 			}
 			return nullptr;
 		}

@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/GameObject.h"
 #include "System/Collision/CollisionEvent.h"
 #include "System/Behaviour/BehaviourSystem.h"
+#include <cstdint>
 
 namespace Dystopia
 {
@@ -37,14 +38,18 @@ namespace Dystopia
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
 		}
 		template<typename ... Ts>
-		void SendExternalMessage(const GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		void SendExternalMessage(GameObject * const _ptr, const char * _FuncName, Ts ... _Params)
 		{
-			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+			//if(!_ptr) return;
+			if(auto ptr = EngineCore::GetInstance()->Get<BehaviourSystem>())
+				ptr->SendExternalMessage(_ptr, _FuncName, _Params...);
 		}
 		template<typename ... Ts>
-		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		void SendExternalMessage(GameObject const * _ptr, const char * _FuncName, Ts ... _Params)
 		{
-			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+			//if(!_ptr) return;
+			if(auto ptr = EngineCore::GetInstance()->Get<BehaviourSystem>())
+				ptr->SendExternalMessage(_ptr, _FuncName, _Params...);
 		}
 		template<typename ... Ts>
 		void SendAllMessage(const char * _FuncName, Ts ... _Params)
@@ -59,21 +64,28 @@ namespace Dystopia
 
 	Fireball::~Fireball()
 	{
-	}
+	} 
 
 	void Fireball::Load()
 	{
         
 	}
+	
+	void Fireball::Awake()
+	{
+		SetFlags(FLAG_ACTIVE);
+	}
 
 	void Fireball::Init()
 	{
+		SetFlags(FLAG_ACTIVE);
 	}
 
 	void Fireball::Update(const float _fDeltaTime)
 	{
+		
         Fireball_MSG::SendInternalMessage(this,"TEST", 10.f);
-	}
+	} 
 
 	void Fireball::FixedUpdate(const float _fDeltaTime)
 	{
@@ -117,8 +129,11 @@ namespace Dystopia
 
 	}
 
-	void Dystopia::Fireball::OnTriggerEnter(const GameObject * _obj)
+	void Dystopia::Fireball::OnTriggerEnter(GameObject * const _obj)
 	{
+		if(!_obj) 
+			return;
+		
 		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_obj->GetID());
 		if(ptr)
 		{
@@ -128,21 +143,23 @@ namespace Dystopia
 			   strcmp(name, "Fireball")&& strcmp(name, "Missle")
 			   && strcmp(name, "AudioTrig"))
 			{
-				GetOwner()->Destroy();
+				if(GetOwner())
+					GetOwner()->Destroy();
 			}
 			if(!strcmp(name,"Goblin"))
 			{
-				Fireball_MSG::SendExternalMessage(ptr,"TEST", 1000.f); 
+				ptr->GetID();
+				Fireball_MSG::SendExternalMessage(ptr,"TEST", 1000.f);  
 			}
 		}
 	}
 
-	void Dystopia::Fireball::OnTriggerStay(const GameObject * _obj)
+	void Dystopia::Fireball::OnTriggerStay(GameObject * const _obj)
 	{
 	
 	}
 
-	void Dystopia::Fireball::OnTriggerExit(const GameObject * _obj)
+	void Dystopia::Fireball::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 

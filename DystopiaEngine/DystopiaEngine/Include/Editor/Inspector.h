@@ -74,6 +74,9 @@ namespace Editor //Dystopia
 		void			ConfirmCreateBehaviour();
 		void			ResetBehaviourCreation();
 		bool			RemoveComponent(Dystopia::Component*);
+
+		void			AddTagButton(const Math::Vec2&);
+		void			TagsDropDownList();
 	};
 }
 

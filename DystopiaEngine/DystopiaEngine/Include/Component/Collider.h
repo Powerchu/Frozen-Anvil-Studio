@@ -201,9 +201,9 @@ namespace Dystopia
 
 		/*Offset of the collider with respect to GameObject Transform position*/
 		Math::Vec3D mv3Offset;
-
+		Math::Vec3D mScale;
 #if EDITOR
-		Math::Vec3D          mScale;
+
 #endif
 
 	protected:
@@ -224,8 +224,9 @@ namespace Dystopia
 		
 		/*Matrix*/
 		Math::Matrix3D mOwnerTransformation;
-#if EDITOR
 		Math::Quaternion     mRotation;
+#if EDITOR
+
 #endif
 
 	private:
