@@ -72,7 +72,8 @@ namespace Editor
 		void FieldTexture(void);
 		void FieldAtlas(void);
 
-		void DrawGrid(float, float, float, float);
+		void DrawSelectedGrid(float, float, float, float);
+		void DrawTempGrid(float, float, float, float);
 	};
 }
 

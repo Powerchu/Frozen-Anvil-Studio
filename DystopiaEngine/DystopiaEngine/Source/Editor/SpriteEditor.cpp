@@ -41,7 +41,7 @@ Editor::SpriteEditor::SpriteEditor(void)
 	mnSelectedSection{ 0 },
 	mSectionPos{ 0,0 },
 	mSectionSize{ 0,0 },
-	mSectionDime{ 0,0 }
+	mSectionDime{ 1, 1}
 {}
 
 Editor::SpriteEditor::~SpriteEditor(void)
@@ -138,7 +138,8 @@ void Editor::SpriteEditor::AtlasArea(float _x, float _y)
 
 	if (!mpAtlas) return;
 
-	DrawGrid(originPos.x, originPos.y, fSize.x, fSize.y);
+	DrawSelectedGrid(originPos.x, originPos.y, fSize.x, fSize.y);
+	DrawTempGrid(originPos.x, originPos.y, fSize.x, fSize.y);
 }
 
 void Editor::SpriteEditor::SettingsArea(float _x, float _y)
@@ -187,6 +188,11 @@ void Editor::SpriteEditor::FieldTexture(void)
 			mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
 		EGUI::Display::EndPayloadReceiver();
 	}
+
+	if (!mpTexture) return;
+
+	ImGui::SameLine();
+	EGUI::Display::Label("Resolution:   < %d x >   < %d  y>", mpTexture->GetWidth(), mpTexture->GetHeight());
 }
 
 void Editor::SpriteEditor::FieldAtlas(void)
@@ -205,7 +211,7 @@ void Editor::SpriteEditor::FieldAtlas(void)
 
 	EGUI::Display::VectorFields("Start Pos", &mSectionPos, .1f, 0.f, INT_MAX, itemWidth);
 	EGUI::Display::VectorFieldsInt("Size", &mSectionSize, 1.f, 0.f, INT_MAX, itemWidth);
-	EGUI::Display::VectorFieldsInt("Col & Row", &mSectionDime, 1.f, 0.f, INT_MAX, itemWidth);
+	EGUI::Display::VectorFieldsInt("Col & Row", &mSectionDime, 1.f, 1.f, INT_MAX, itemWidth);
 
 	if (EGUI::Display::Button("Add New Section", Math::Vec2{150, 24}))
 	{
@@ -214,14 +220,58 @@ void Editor::SpriteEditor::FieldAtlas(void)
 	}
 }
 
-void Editor::SpriteEditor::DrawGrid(float _ox, float _oy, float _ix, float _y)
+void Editor::SpriteEditor::DrawSelectedGrid(float _ox, float _oy, float _ix, float _iy)
 {
-	ImGui::SetCursorPos(ImVec2{ _ox, _oy });
-
-	auto screenOrigin = ImGui::GetCursorScreenPos();
 	auto pCanvas = ImGui::GetWindowDrawList();
-	auto screenEndPt = ImVec2{ screenOrigin.x + 10 , screenOrigin.y + 10};
-	pCanvas->AddRect(screenOrigin, screenEndPt, ImGui::GetColorU32(ImVec4{ 1,1,1,1 }));
+	auto& section = mpAtlas->GetAllSections()[mnSelectedSection];
+
+	ImGui::SetCursorPos(ImVec2{ _ox, _oy });
+	auto screenOrigin = ImGui::GetCursorScreenPos();
+
+	unsigned col = static_cast<unsigned>(section.mCol);
+	unsigned row = static_cast<unsigned>(section.mRow);
+	unsigned total = col * row;
+	float xLen = (section.uEnd - section.uStart) / col;
+	float yLen = (section.vEnd - section.vStart) / row;
+
+	for (unsigned i = 0; i < total; ++i)
+	{
+		Math::Vec2 rectMin{ screenOrigin.x + (((i % col) * xLen) * _ix), 
+							screenOrigin.y + (((i / row) * yLen) * _iy) };
+		Math::Vec2 rectMax{ rectMin.x + (xLen * _ix),
+							rectMin.y + (yLen * _iy) };
+		pCanvas->AddRect(rectMin, rectMax, ImGui::GetColorU32(ImVec4{ 1,1,1,1 }));
+	}
+}
+
+void Editor::SpriteEditor::DrawTempGrid(float _ox, float _oy, float _ix, float _iy)
+{
+	auto pCanvas = ImGui::GetWindowDrawList();
+	float ratioX = mSectionSize.x / mpTexture->GetWidth();
+	float ratioY = mSectionSize.y / mpTexture->GetHeight();
+	float ratioPx = mSectionPos.x / mpTexture->GetWidth();
+	float ratioPy = mSectionPos.y / mpTexture->GetHeight();
+
+	ImGui::SetCursorPos(ImVec2{ _ox, _oy });
+	auto screenOrigin = ImGui::GetCursorScreenPos();
+
+	Math::Vec2 iStart{ screenOrigin.x + (_ix * ratioPx), screenOrigin.y + (_iy * ratioPy) };
+	Math::Vec2 iEnd{ iStart.x + (_ix * ratioX), iStart.y + (_iy * ratioY) };;
+
+	unsigned col = static_cast<unsigned>(mSectionDime.x);
+	unsigned row = static_cast<unsigned>(mSectionDime.y);
+	unsigned total = col * row;
+	float xLen = (iEnd.x - iStart.x) / col;
+	float yLen = (iEnd.y - iStart.y) / row;
+
+	for (unsigned i = 0; i < total; ++i)
+	{
+		Math::Vec2 rectMin{ screenOrigin.x + (_ix * ratioPx) + (((i % col) * xLen)),
+							screenOrigin.y + (_iy * ratioPy) + (((i / row) * yLen)) };
+		Math::Vec2 rectMax{ rectMin.x + xLen,
+							rectMin.y + yLen };
+		pCanvas->AddRect(rectMin, rectMax, ImGui::GetColorU32(ImVec4{ 1,0 , 0,1 }));
+	}
 }
 
 #endif 
