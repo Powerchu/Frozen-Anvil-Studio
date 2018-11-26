@@ -33,7 +33,8 @@ Editor::SpriteEditor::SpriteEditor(void)
 	mpTexture{ nullptr },
 	mSectionEditArea{ 1.f, 0.7f},
 	mSettingsArea{ 0.7f, 0.3f },
-	mPreviewArea{ 0.3f, 0.3f }
+	mPreviewArea{ 0.3f, 0.3f },
+	mnSelectedSection{ 0 }
 {}
 
 Editor::SpriteEditor::~SpriteEditor(void)
@@ -61,14 +62,17 @@ void Editor::SpriteEditor::Update(float)
 	mSectionEditArea = Math::Vec2{size.x - sides, (size.y - tops) * halfhori };
 	mSettingsArea = Math::Vec2{ (size.x- sides) * halfvert, (size.y - tops) * (1 - halfhori) };
 	mPreviewArea = Math::Vec2{ (size.x - sides) * (1 - halfvert), (size.y - tops) * (1 - halfhori) };
+
 }
 
 void Editor::SpriteEditor::EditorUI(void)
 {
+	ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4{ 0.2f, 0.2f, 0.2f, 1});
 	EGUI::StartChild("Section Area", mSectionEditArea);
 	if (mpTexture)
 		AtlasArea(mSectionEditArea.x, mSectionEditArea.y);
 	EGUI::EndChild();
+	ImGui::PopStyleColor();
 
 	EGUI::Display::HorizontalSeparator();
 
@@ -103,25 +107,25 @@ HashString Editor::SpriteEditor::GetLabel(void) const
 
 void Editor::SpriteEditor::AtlasArea(float _x, float _y)
 {
+	_x -= 1;
+	_y -= 1;
 	const auto fSize = AdjustAspectSize(static_cast<float>(mpTexture->GetWidth()),
 										static_cast<float>(mpTexture->GetHeight()),
-										_x - 1, _y - 1);
+										_x, _y);
 
-	float xDiff = _sX - _iX;
-	float yDiff = _sY - _iY;
-	return Math::Vec2{ xDiff / 2, yDiff / 2 };
-
+	float xDiff = _x - fSize.x;
+	float yDiff = _y - fSize.y;
+	Math::Vec2 diff{ xDiff / 2, yDiff / 2 - 1 };
+	ImGui::SetCursorPos(ImGui::GetCursorPos() + diff);
 	EGUI::Display::Image(mpTexture->GetID(), fSize);
 }
 
 void Editor::SpriteEditor::SettingsArea(float _x, float _y)
 {
-	EGUI::Display::EmptyBox("Sprite Sheet", 150, mpTexture ? mpTexture->GetName() : "-empty-");
-	if (auto t = EGUI::Display::StartPayloadReceiver<Editor::File>(EGUI::ePayloadTags::ALL_IMG))
-	{
-		mpTexture = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>()->LoadTexture(t->mPath.c_str());
-		EGUI::Display::EndPayloadReceiver();
-	}
+	EGUI::PushLeftAlign(200);
+	FieldTexture();
+	FieldAtlas();
+	EGUI::PopLeftAlign();
 }
 
 void Editor::SpriteEditor::PreviewArea(float _x, float _y)
@@ -134,6 +138,33 @@ Math::Vec2 Editor::SpriteEditor::AdjustAspectSize(float _imgX, float _imgY, floa
 	const float sRatio = _canvasX / _canvasY;
 	return  sRatio > iRatio ? Math::Vec2{ _imgX * (_canvasY / _imgY), _canvasY }: 
 							  Math::Vec2{ _canvasX, _imgY * (_canvasX / _imgX) };
+}
+
+void Editor::SpriteEditor::FieldTexture(void)
+{
+	EGUI::Display::EmptyBox("Sprite Sheet", 120, mpTexture ? mpTexture->GetName() : "-empty-");
+	if (auto t = EGUI::Display::StartPayloadReceiver<Editor::File>(EGUI::ePayloadTags::ALL_IMG))
+	{
+		mpTexture = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>()->LoadTexture(t->mPath.c_str());
+		mpAtlas = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::TextureSystem>()->GetAtlas(t->mPath.c_str());
+		mpAtlas->SetTexture(mpTexture);
+		mnSelectedSection = 0;
+		if (!mpAtlas->GetAllSections().size())
+			mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
+		EGUI::Display::EndPayloadReceiver();
+	}
+}
+
+void Editor::SpriteEditor::FieldAtlas(void)
+{
+	if (!mpAtlas) return;
+
+	const auto& allSections = mpAtlas->GetAllSections();
+
+	if (EGUI::Display::DropDownSelection<21>("Available Sections", mnSelectedSection, allSections.size(), 120))
+	{
+
+	}
 }
 
 #endif 

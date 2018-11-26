@@ -51,6 +51,7 @@ namespace Editor
 		Dystopia::GraphicsSystem *mpGfxSys;
 		Dystopia::TextureSystem *mpTextSys;
 
+		int mnSelectedSection;
 		HashString mLabel;
 		Math::Vec2 mSettingsArea;;
 		Math::Vec2 mPreviewArea;
@@ -62,6 +63,8 @@ namespace Editor
 
 		Math::Vec2 AdjustAspectSize(float, float, float , float);
 
+		void FieldTexture(void);
+		void FieldAtlas(void);
 	};
 }
 
