@@ -236,9 +236,9 @@ void Dystopia::EngineCore::PostUpdate(void)
 
 void Dystopia::EngineCore::Shutdown(void)
 {
-	GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
+	//GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
 	auto s = Serialiser::OpenFile<DysSerialiser_t>(
-		GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
+		GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) + '/' +
 		SETTINGS_FILE,
 		DysSerialiser_t::MODE_WRITE
 	);

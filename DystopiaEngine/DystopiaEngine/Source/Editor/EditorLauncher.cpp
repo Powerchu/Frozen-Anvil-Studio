@@ -498,8 +498,12 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 				p = mProjFolderSelected.find('\\');
 			}
 
+			fs->CreateFolder("Resource", mProjFolderSelected);
+			HashString resFolder = mProjFolderSelected;
+			resFolder += "/";
+			resFolder += "Resource";
 			for (unsigned i = 0; i < SUBFOLDER_COUNT; ++i)
-				fs->CreateFolder(g_SubFolders[i], mProjFolderSelected);
+				fs->CreateFolder(g_SubFolders[i], resFolder);
 
 			mArrProjFolders.push_back(mProjFolderSelected);
 
