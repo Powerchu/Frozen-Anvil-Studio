@@ -63,6 +63,13 @@ namespace
 			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::ACTIVATE);
 			break;
 
+		case WM_SYSKEYUP:
+			if (wParam == VK_F4)
+				SendMessage(hWnd, WM_CLOSE, 0, 0);
+
+		case WM_SYSKEYDOWN:
+			return 0;
+
 		case WM_SIZE:
 			if(SIZE_MAXIMIZED == wParam)
 			{
