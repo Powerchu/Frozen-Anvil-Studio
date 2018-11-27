@@ -14,18 +14,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _IMAGE_H_
 #define _IMAGE_H_
 
+#include "DataStructure/HashString.h"
+
+
 namespace Dystopia
 {
 	struct Image
 	{
-		bool mbCompressed;
+		HashString mstrName;
+		bool mbCompressed, mbRGB;
 		unsigned mnRawFormat, mnFormat;
 		unsigned mnWidth, mnHeight;
-		unsigned mnChannels;
-		unsigned mnMipMaps;
+		unsigned mnChannels, mnMipMaps;
 		void* mpImageData;
 
 		~Image(void) noexcept;
+
+		void OnEditorUI(void);
 	};
 }
 

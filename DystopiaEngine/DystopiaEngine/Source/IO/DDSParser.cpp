@@ -69,10 +69,9 @@ namespace
 	};
 }
 
-Image* ImageParser::LoadDDS(const std::string& _path)
+Image* ImageParser::LoadDDS(const std::string& _path, Image* _pImage)
 {
-	auto file = Dystopia::Serialiser::OpenFile<Dystopia::BinarySerializer>(_path);
-	Image* img = Dystopia::DefaultAllocator<Image>::Alloc();
+	auto file = Dystopia::Serialiser::OpenFile<Dystopia::BinarySerializer>(_path.c_str());
 
 	HeaderDDS headerInfo;
 	PixelFormatDDS pixelFormat;
@@ -84,9 +83,25 @@ Image* ImageParser::LoadDDS(const std::string& _path)
 	if (headerInfo.mMagic != ' SDD')
 	{
 		DEBUG_BREAK(true, "ImageLoader Error: File %s is not a dds image!\n", _path.c_str());
-		Dystopia::DefaultAllocator<Image>::Free(img);
+		Dystopia::DefaultAllocator<Image>::Free(_pImage);
 
 		return nullptr;
+	}
+
+	if (_pImage)
+	{
+		_pImage->mnWidth   = headerInfo.mWidth;
+		_pImage->mnHeight  = headerInfo.mHeight;
+		_pImage->mnMipMaps = headerInfo.mMipMaps;
+	}
+	else
+	{
+		_pImage = Dystopia::DefaultAllocator<Image>::ConstructAlloc(
+			_path.substr(_path.find_last_of("/\\") + 1).c_str(), false, false,
+			0u, 0u, headerInfo.mWidth, headerInfo.mHeight,
+			4u, headerInfo.mMipMaps,
+			nullptr
+		);
 	}
 
 	file >> pixelFormat;
@@ -96,76 +111,72 @@ Image* ImageParser::LoadDDS(const std::string& _path)
 	// Check if the magic number is valid
 	if (pixelFormat.mFlags & 0x4)
 	{
-		img->mbCompressed = true;
+		_pImage->mbCompressed = true;
 		switch (pixelFormat.mMagic)
 		{
 		case '1TXD':
-			img->mnRawFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
-			img->mnChannels  = 4;
+			_pImage->mnRawFormat = _pImage->mbRGB ? GL_COMPRESSED_RGBA_S3TC_DXT1_EXT : GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+			_pImage->mnChannels  = 4;
 			blksz            = 8;
 			break;
 		case '3TXD':
-			img->mnRawFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
-			img->mnChannels  = 4;
+			_pImage->mnRawFormat = _pImage->mbRGB ? GL_COMPRESSED_RGBA_S3TC_DXT3_EXT : GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+			_pImage->mnChannels  = 4;
 			blksz            = 16;
 			break;
 		case '5TXD':
-			img->mnRawFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
-			img->mnChannels  = 4;
+			_pImage->mnRawFormat = _pImage->mbRGB ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+			_pImage->mnChannels  = 4;
 			blksz            = 16;
 			break;
 		case '01XD':
 			file >> extra;
 		default:
 			DEBUG_LOG(true, "ImageLoader Warning: File %s is an unknown DDS format!\n", _path.c_str());
-			Dystopia::DefaultAllocator<Image>::Free(img);
+			Dystopia::DefaultAllocator<Image>::Free(_pImage);
 			return nullptr;
 			break;
 		}
 
-		img->mnFormat = GL_RGBA;
+		_pImage->mnFormat = GL_RGBA;
 	}
 	else
 	{
 		// Assume uncompressed
-		img->mbCompressed = false;
+		_pImage->mbCompressed = false;
 
 		if (pixelFormat.mBitCount == 32)
 		{
-			img->mnRawFormat = GL_RGBA;
-			img->mnFormat    = GL_RGBA;
-			img->mnChannels  = 4;
+			_pImage->mnRawFormat = GL_RGBA;
+			_pImage->mnFormat    = GL_RGBA;
+			_pImage->mnChannels  = 4;
 		}
 		else if (pixelFormat.mBitCount == 24)
 		{
-			img->mnRawFormat = GL_RGB;
-			img->mnFormat    = GL_RGB;
-			img->mnChannels  = 3;
+			_pImage->mnRawFormat = GL_RGB;
+			_pImage->mnFormat    = GL_RGB;
+			_pImage->mnChannels  = 3;
 		}
 		else if (pixelFormat.mBitCount == 8)
 		{
-			img->mnRawFormat = GL_LUMINANCE;
-			img->mnFormat    = GL_RED;
-			img->mnChannels  = 1;
+			_pImage->mnRawFormat = GL_LUMINANCE;
+			_pImage->mnFormat    = GL_RED;
+			_pImage->mnChannels  = 1;
 		}
 		else
 		{
 			DEBUG_LOG(true, "ImageLoader Warning: File %s is an unknown DDS format!\n", _path.c_str());
-			Dystopia::DefaultAllocator<Image>::Free(img);
+			Dystopia::DefaultAllocator<Image>::Free(_pImage);
 			return nullptr;
 		}
 	}
-
-	img->mnWidth   = headerInfo.mWidth;
-	img->mnHeight  = headerInfo.mHeight;
-	img->mnMipMaps = headerInfo.mMipMaps;
 
 	auto sz = 16 * ((headerInfo.mWidth + 3) >> 2) * ((headerInfo.mHeight + 3) >> 2);
 	sz = sz + (sz << 1);
 
 	// Minimum of 64 bit blocks so we should be safe copying 64bits at a time
 	uint64_t *buf = static_cast<uint64_t*>(Dystopia::DefaultAllocator<void>::Alloc(sz));
-	img->mpImageData = buf;
+	_pImage->mpImageData = buf;
 
 	while (!file.EndOfInput())
 	{
@@ -173,7 +184,7 @@ Image* ImageParser::LoadDDS(const std::string& _path)
 		++buf;
 	}
 
-	return img;
+	return _pImage;
 }
 
 

@@ -37,6 +37,8 @@ namespace Dystopia
 		float GetDeltaTime(void) const noexcept;
 		float GetFixedDeltaTime(void) const noexcept;
 
+		void SetTimeScale(float) noexcept;
+
 		void StopTime(void) noexcept;
 		void ResumeTime(void) noexcept;
 		void AdvanceTime(void) noexcept;
@@ -72,6 +74,7 @@ namespace Dystopia
 		};
 
 		bool mbSimulateTime;
+		float mfTimeScale;
 		float mfSimulatedDT;
 		int64_t mSimulatedDT;
 

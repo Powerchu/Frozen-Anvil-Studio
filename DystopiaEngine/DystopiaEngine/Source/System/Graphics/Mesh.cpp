@@ -33,14 +33,14 @@ void Dystopia::Mesh::DrawMesh(int _nMode) const
 {
 	glBindVertexArray(mVAO);
 	glDrawElements(_nMode, mnVertices, GL_UNSIGNED_SHORT, mnOffset);
-	glBindVertexArray(0);
+//	glBindVertexArray(0);
 }
 
 void Dystopia::Mesh::DrawMesh(int _nMode, unsigned _nCount) const
 {
 	glBindVertexArray(mVAO);
 	glDrawElementsInstanced(_nMode, mnVertices, GL_UNSIGNED_SHORT, mnOffset, _nCount);
-	glBindVertexArray(0);
+//	glBindVertexArray(0);
 }
 
 void Dystopia::Mesh::SetName(const std::string& _strName)
@@ -59,9 +59,14 @@ void Dystopia::Mesh::SetIndices(unsigned _nIndices, size_t _nOffset)
 	mnOffset = reinterpret_cast<void*>(_nOffset);
 }
 
-bool Dystopia::Mesh::IsUnique(void) const
+void Dystopia::Mesh::UpdateMesh(RawMesh* _pMesh)
 {
-	return mbUnique;
+	if (_pMesh->GetVAO() != mVAO)
+	{
+		mVAO = _pMesh->GetVAO();
+		_pMesh->IncRef();
+		mnOffset = 0;
+	}
 }
 
 

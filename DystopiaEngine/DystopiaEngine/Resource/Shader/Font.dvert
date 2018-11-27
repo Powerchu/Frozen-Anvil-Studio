@@ -18,7 +18,7 @@ void main()
   mat4 modelView = ViewMat * ModelMat;
   vec4 temp = modelView * vec4(vertexPos, 1.f);
   vPosition = temp.xyz;
-  vNormal   = (transpose(inverse(modelView)) * vec4(vertexNorm, .0f)).xyz;
+  vNormal   = vec3(.0f, .0f, 1.f);
   vUV       = vUVBounds.xy + vertexUV * (vUVBounds.zw - vUVBounds.xy);
   
   gl_Position = ProjectMat * temp;

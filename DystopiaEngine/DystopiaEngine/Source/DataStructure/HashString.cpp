@@ -492,7 +492,7 @@ const char* const HashString::cbegin(void) const
 	return mCharBuffer;
 }
 
-char* const HashString::begin(void)
+char* const HashString::begin(void) const
 {
 	return mCharBuffer;
 }
@@ -502,7 +502,7 @@ const char* const HashString::cend(void) const
 	return mCharBuffer + mSize;
 }
 
-char* const HashString::end(void)
+char* const HashString::end(void) const
 {
 	return mCharBuffer + mSize;
 }

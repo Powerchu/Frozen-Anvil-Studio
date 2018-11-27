@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _GENERICPOINTER_H_
 #define _GENERICPOINTER_H_
 
+#include "Globals.h"
 #include "Utility/Utility.h"
 #include "Utility/MetaAlgorithms.h"
 #include "Allocator/DefaultAlloc.h"	// DefaultAllocator
@@ -127,10 +128,8 @@ inline T* ProxyPtr<T>::GetRaw(void) const noexcept
 template<class T>
 inline void ProxyPtr<T>::Check(void) const
 {
-#if defined(SAFE_PTRS)
 	if (nullptr == mpObj)
-		throw std::exception("Null pointer exception!");
-#endif
+		_EDITOR_THROW(std::exception("Null pointer exception!"));
 }
 
 

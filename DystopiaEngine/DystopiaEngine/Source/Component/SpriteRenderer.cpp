@@ -24,7 +24,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Mesh.h"
 
 #include "Object/GameObject.h"
-#include <fmod.h>
 
 #if EDITOR
 #include "Editor/EGUI.h"

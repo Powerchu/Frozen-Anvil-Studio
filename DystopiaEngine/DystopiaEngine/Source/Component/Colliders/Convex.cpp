@@ -34,7 +34,7 @@ namespace Dystopia
 		mDebugVertices.clear();
 		for (auto & elem : mVertices)
 		{
-			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z });
+			Collider::mDebugVertices.push_back(Gfx::Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z });
 		}
 		Collider::Awake();
 	}

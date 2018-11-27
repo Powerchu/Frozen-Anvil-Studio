@@ -1,34 +1,24 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	CharSpace.h
+\file	MeshBuilder.cpp
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Definition for struct containing font size info
+	Proxy class that uses the builder pattern to create a mesh
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _CHARSPACE_H_
-#define _CHARSPACE_H_
+#include "System/Graphics/MeshBuilder.h"
+#include "System/Graphics/RawMesh.h"
 
-namespace Dystopia
+
+Dystopia::MeshBuilder::MeshBuilder(Dystopia::RawMesh& _mesh) noexcept
+	: mMesh{ _mesh }
 {
-	struct CharSpace
-	{
-		unsigned x, y;
-		unsigned mnWidth;
-		unsigned mnHeight;
-		int mnBearingX;
-		int mnBearingY;
 
-		unsigned mnAdvance;
-	};
 }
 
-
-
-#endif		// INCLUDE GUARD
 

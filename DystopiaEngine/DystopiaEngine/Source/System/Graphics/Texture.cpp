@@ -13,6 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/Texture.h"
 
+#include "Utility/Utility.h"
+
 #include <GL/glew.h>
 
 
@@ -34,9 +36,17 @@ Dystopia::Texture::Texture(unsigned _nWidth, unsigned _nHeight, unsigned _nType)
 	glGenTextures(1, &mnID);
 }
 
+Dystopia::Texture::Texture(Texture&& _other) noexcept :
+	mnWidth{ _other.mnWidth }, mnHeight{ _other.mnHeight }, mnType{ _other.mnType }, mnID{ _other.mnID }
+{
+	_other.mnID = 0;
+}
+
 Dystopia::Texture::~Texture(void)
 {
 	glDeleteTextures(1, &mnID);
+
+	mnID = 0;
 }
 
 
@@ -92,6 +102,16 @@ std::string Dystopia::Texture::GetName(void) const
 std::string const& Dystopia::Texture::GetPath(void) const noexcept
 {
 	return mstrPath;
+}
+
+Dystopia::Texture& Dystopia::Texture::operator=(Texture&& _rhs) noexcept
+{
+	Ut::Swap(mnID, _rhs.mnID);
+	Ut::Swap(mnType, _rhs.mnType);
+	Ut::Swap(mnWidth, _rhs.mnWidth);
+	Ut::Swap(mnHeight, _rhs.mnHeight);
+
+	return *this;
 }
 
 

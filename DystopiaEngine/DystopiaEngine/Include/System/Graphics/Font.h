@@ -1,28 +1,36 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Image.cpp
+\file	TextRenderer.h
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Class to hold raw image data loaded into memory
+Renders text
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "IO/Image.h"
+#ifndef _FONTDATA_H_
+#define _FONTDATA_H_
 
-#include "Allocator/DefaultAlloc.h"
+#include "DataStructure/HashString.h"
+
+#include "System/Graphics/TextureAtlas.h"
+#include "System/Graphics/CharSpace.h"
 
 
-Dystopia::Image::~Image(void) noexcept
+namespace Dystopia
 {
-	//DefaultAllocator<void>::Free(mpImageData);
+	struct Font
+	{
+		HashString mstrName;
+		TextureAtlas* mpAtlas;
+		AutoArray<CharSpace> mSpaces;
+	};
 }
 
-void Dystopia::Image::OnEditorUI(void)
-{
 
-}
+
+#endif		// INCLUDE GUARD
 
