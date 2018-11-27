@@ -99,31 +99,30 @@ const std::string& Dystopia::TextureAtlas::GetPath(void) const noexcept
 
 void Dystopia::TextureAtlas::SaveAtlas(Dystopia::TextSerialiser& _out) const noexcept
 {
+	_out.InsertStartBlock("ATLAS");
 	_out << mSections.size();
 
 	for (auto const& e : mSections)
 	{
-		_out.InsertStartBlock("SECTION");
 		_out << e.uStart;
 		_out << e.vStart;
 		_out << e.uEnd;
 		_out << e.vEnd;
 		_out << e.mRow;
 		_out << e.mCol;
-		_out.InsertEndBlock("SECTION");
 	}
-	_out.InsertStartBlock("DUMMY");
+	_out.InsertEndBlock("ATLAS");
 }
 
 void Dystopia::TextureAtlas::LoadAtlas(Dystopia::TextSerialiser& _in) noexcept
 {
+	_in.ConsumeStartBlock();
 	size_t sz;
 	_in >> sz;
 
 	mSections.clear();
 	mSections.reserve(sz);
 
-	_in.ConsumeStartBlock();
 	while (sz-- && !_in.EndOfInput())
 	{
 		mSections.EmplaceBack();
@@ -134,8 +133,8 @@ void Dystopia::TextureAtlas::LoadAtlas(Dystopia::TextSerialiser& _in) noexcept
 		_in >> mSections.back().vEnd;
 		_in >> mSections.back().mRow;
 		_in >> mSections.back().mCol;
-		_in.ConsumeStartBlock();
 	}
+	_in.ConsumeStartBlock();
 }
 
 Dystopia::Texture* Dystopia::TextureAtlas::GetInternal(void) const noexcept

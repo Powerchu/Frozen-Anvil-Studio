@@ -67,12 +67,15 @@ void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 
 void Dystopia::TextureSystem::Shutdown(void) noexcept
 {
-	mImageData.clear();
+	for (auto& elem : mAtlas)
+	{
+		auto t = elem.GetInternal();
 
+		if (!t)
+			__debugbreak(); //something went wrong, atlas has no texture tied to it
 
-
-
-
+		auto fp = EngineCore::Get<FileSystem>()->FindFilePath(t->GetName().c_str(), eFileDir::eCurrent);
+	}
 	mTextures.clear();
 }
 

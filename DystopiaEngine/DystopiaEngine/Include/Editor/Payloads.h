@@ -37,7 +37,9 @@ namespace EGUI
 		DDS,
 		WAV,
 		TTF,
+
 		ALL_IMG,
+		ALL_AUDIO,
 
 		ePAY_LOAD_LAST
 	};
@@ -58,7 +60,8 @@ namespace EGUI
 		case WAV:			return "WAV";
 		case TTF:			return "TTF";
 		case ALL_IMG:		return "A_IMG";
-		default:			return "ePAY_LOAD_LAST";
+		case ALL_AUDIO:		return "A_AUDIO";
+		default:			return "UNKNOWN";
 		}
 	}
 }

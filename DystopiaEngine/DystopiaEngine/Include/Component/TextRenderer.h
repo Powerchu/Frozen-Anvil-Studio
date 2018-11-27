@@ -50,6 +50,10 @@ namespace Dystopia
 		{
 			return Ut::MetaFind_t<class Renderer, AllComponents>::value;
 		};
+		unsigned GetRealComponentType(void) const
+		{
+			return Ut::MetaFind_t<Ut::Decay_t<TextRenderer>, UsableComponents>::value;
+		};
 		static const std::string GetCompileName(void) { return "Text Renderer"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 

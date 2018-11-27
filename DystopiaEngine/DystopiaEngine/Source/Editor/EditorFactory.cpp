@@ -403,7 +403,6 @@ bool Editor::EditorFactory::LoadPrefab(Dystopia::GameObject& _obj, Dystopia::Tex
 {
 	unsigned count = LoadSegment(_obj, _in);
 	LoadSegmentC(_obj, count, _in);
-	return false;
 	LoadSegmentB(_obj, _in);
 
 	_obj.SetFlag(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);

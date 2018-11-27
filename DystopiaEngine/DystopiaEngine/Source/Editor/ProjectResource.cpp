@@ -14,8 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
-//#include "Editor/EditorEvents.h"
-//#include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
 #include "Editor/EInput.h"
 #include "Editor/EditorMain.h"
@@ -39,10 +37,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <cstdlib>
 #include <tchar.h>
 #include <string>
-
-//static const HashString DEFAULT_PATH = "..\\DystopiaEngine\\Resource";
-//static const HashString DEFAULT_NAME = "Resource";
-//static float delay = 5;
 
 namespace Editor 
 {
@@ -158,7 +152,7 @@ namespace Editor
 			{
 				Dystopia::GameObject *t = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(*id);
 				HashString fullPath = mpCurrentFolder->mPath;
-				fullPath += "\\";
+				fullPath += "/";
 
 				HashString fileName = t->GetName().c_str();
 				fileName += ".";

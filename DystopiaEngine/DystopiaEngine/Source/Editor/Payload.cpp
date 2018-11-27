@@ -75,7 +75,7 @@ namespace Editor//Dystopia::
 	void Folder::Crawl()
 	{
 		WIN32_FIND_DATAA data;
-		HashString pathBuffer = mPath + "\\*";
+		HashString pathBuffer = mPath + "/*";
 		HANDLE hfind = FindFirstFileA(pathBuffer.c_str(), &data);
 		if (hfind != INVALID_HANDLE_VALUE)
 		{
@@ -84,9 +84,14 @@ namespace Editor//Dystopia::
 				if (strcmp(data.cFileName, ".") && strcmp(data.cFileName, "..") && data.dwFileAttributes != FILE_ATTRIBUTE_HIDDEN)
 				{
 					if (data.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
-						mArrPtrFolders.push_back(new Folder{ data.cFileName , mPath + "\\" + data.cFileName, this });
+						mArrPtrFolders.push_back(new Folder{ data.cFileName , mPath + "/" + data.cFileName, this });
 					else
-						mArrPtrFiles.push_back(new File{ data.cFileName, mPath + "\\" + data.cFileName, this });
+					{
+						if (DeterminePathType(data.cFileName) != EGUI::ePayloadTags::UNKNOWN)
+						{
+							mArrPtrFiles.push_back(new File{ data.cFileName, mPath + "/" + data.cFileName, this });
+						}
+					}
 				}
 			} while (FindNextFileA(hfind, &data));
 			FindClose(hfind);
