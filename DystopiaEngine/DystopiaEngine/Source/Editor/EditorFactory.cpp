@@ -34,8 +34,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/GUID.h"
 #include "Utility/DebugAssert.h"
 
-#include "Allocator/DefaultAlloc.h"
-
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -405,6 +403,7 @@ bool Editor::EditorFactory::LoadPrefab(Dystopia::GameObject& _obj, Dystopia::Tex
 {
 	unsigned count = LoadSegment(_obj, _in);
 	LoadSegmentC(_obj, count, _in);
+	return false;
 	LoadSegmentB(_obj, _in);
 
 	_obj.SetFlag(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
@@ -434,7 +433,6 @@ void Editor::EditorFactory::SaveSegment(Dystopia::GameObject& _obj, const AutoAr
 		_out.InsertStartBlock("Component");
 		_out << c->GetRealComponentType();
 		cList.IsolateSerialise(c->GetRealComponentType(), &_obj, _out);
-		//c->Serialise(_out);
 		_out.InsertEndBlock("Component");
 	}
 }
@@ -501,7 +499,6 @@ void Editor::EditorFactory::LoadSegmentC(Dystopia::GameObject& _obj, unsigned _c
 		_in >> sysID;
 		
 		Dystopia::Component *pComponent = cList.GetComponentA(sysID, &_obj);
-		/*pComponent->Unserialise(_in);*/
 		cList.IsolateUnserialise(pComponent, _in);
 		_in.ConsumeEndBlock();
 	}

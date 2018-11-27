@@ -65,9 +65,6 @@ namespace Dystopia
 		~EngineCore(void) = default;
 
 		template <class T>
-		T* const Get(void) const;
-
-		template <class T>
 		T* const GetSystem(void) const;
 
 		template <unsigned N, class T = typename Ut::MetaExtract_t<N, AllSys>::type>
@@ -77,7 +74,7 @@ namespace Dystopia
 		T* const GetSubSystem(void) const;
 
 		template <class T>
-		static inline T* const GetSys(void);
+		static inline T* const Get(void);
 
 		void BroadcastMessage(const eSysMessage&);
 
@@ -119,22 +116,16 @@ namespace Dystopia
 
 
 template <class T>
-inline T* const Dystopia::EngineCore::Get(void) const
+inline T* const Dystopia::EngineCore::Get(void)
 {
 	if constexpr (Ut::MetaFind<T, AllSys>::value)
 	{
-		return GetSystem<T>();
+		return GetInstance()->GetSystem<T>();
 	}
 	else
 	{
-		return GetSubSystem<T>();
+		return GetInstance()->GetSubSystem<T>();
 	}
-}
-
-template <class T>
-inline T* const Dystopia::EngineCore::GetSys(void)
-{
-	return GetInstance()->Get<T>();
 }
 
 template <class T>

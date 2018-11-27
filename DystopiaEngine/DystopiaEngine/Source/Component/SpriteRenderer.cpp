@@ -242,9 +242,9 @@ void Dystopia::SpriteRenderer::SetTexture(Texture* _pTexture) noexcept
 	mpAtlas = nullptr;
 	if (_pTexture)
 	{
-		mpAtlas = EngineCore::GetSys<TextureSystem>()->GetAtlas(_pTexture->GetName());
+		mpAtlas = EngineCore::Get<TextureSystem>()->GetAtlas(_pTexture->GetName());
 		if (!mpAtlas)
-			mpAtlas = EngineCore::GetSys<TextureSystem>()->GenAtlas(_pTexture);
+			mpAtlas = EngineCore::Get<TextureSystem>()->GenAtlas(_pTexture);
 	}
 	if (mpTexture && mpAtlas && !mpAtlas->GetAllSections().size())
 		mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());

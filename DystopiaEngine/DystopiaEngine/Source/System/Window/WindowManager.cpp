@@ -78,14 +78,14 @@ namespace
 				oldsz.first = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetWidth();
 				oldsz.second = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetHeight();
 
-				Dystopia::EngineCore::GetSys<Dystopia::WindowManager>()->GetMainWindow().
+				Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().
 					SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
 				if (oldsz.first)
 				{
-					Dystopia::EngineCore::GetSys<Dystopia::WindowManager>()->GetMainWindow().SetSize(oldsz.first, oldsz.second, false);
+					Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().SetSize(oldsz.first, oldsz.second, false);
 					oldsz.first = 0; oldsz.second = 0;
 				}
 			}

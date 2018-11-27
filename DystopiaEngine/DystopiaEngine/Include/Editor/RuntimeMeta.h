@@ -97,6 +97,7 @@ namespace Dystopia
 #endif 
 			return pComponent;
 		}
+
 		static Component* GetA(GameObject* _pRequester)
 		{
 			C* pComponent = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent();

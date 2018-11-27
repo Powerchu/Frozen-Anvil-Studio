@@ -180,12 +180,12 @@ void Editor::SpriteEditor::FieldTexture(void)
 	if (auto t = EGUI::Display::StartPayloadReceiver<Editor::File>(EGUI::ePayloadTags::ALL_IMG))
 	{
 		mpAtlas = nullptr;
-		mpTexture = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>()->LoadTexture(t->mPath.c_str());
+		mpTexture = Dystopia::EngineCore::Get<Dystopia::GraphicsSystem>()->LoadTexture(t->mPath.c_str());
 		if (mpTexture)
 		{
-			mpAtlas = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::TextureSystem>()->GetAtlas(t->mName.c_str());
+			mpAtlas = Dystopia::EngineCore::Get<Dystopia::TextureSystem>()->GetAtlas(t->mName.c_str());
 			if (!mpAtlas)
-				mpAtlas = Dystopia::EngineCore::GetSys<Dystopia::TextureSystem>()->GenAtlas(mpTexture);
+				mpAtlas = Dystopia::EngineCore::Get<Dystopia::TextureSystem>()->GenAtlas(mpTexture);
 
 			mnSelectedSection = 0;
 			if (!mpAtlas->GetAllSections().size())
