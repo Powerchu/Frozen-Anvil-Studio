@@ -93,6 +93,7 @@ namespace Dystopia
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 			if (elem.GetOwner())
 			{
 				elem.ClearCurrentCollisionEvent(); //clear collision table
@@ -106,6 +107,7 @@ namespace Dystopia
 
 		for (auto & elem : ComponentDonor<AABB>::mComponents)
 		{
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 			if (elem.GetOwner())
 			{
 				elem.ClearCurrentCollisionEvent(); //clear collision table
@@ -120,6 +122,7 @@ namespace Dystopia
 
 		for (auto & elem : ComponentDonor<Circle>::mComponents)
 		{
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 			if (elem.GetOwner())
 			{
 				elem.ClearCurrentCollisionEvent(); //clear collision table

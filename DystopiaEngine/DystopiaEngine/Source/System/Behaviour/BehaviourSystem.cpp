@@ -272,6 +272,7 @@ namespace Dystopia
 			{
 				if(iter.second)
 				{
+					iter.first = iter.second->GetOwnerID();
 					if (auto p = iter.second->GetOwner())
 					{
 						if (p->GetFlag() & eObjFlag::FLAG_EDITOR_OBJ)
@@ -409,7 +410,7 @@ namespace Dystopia
 								_obj.InsertStartBlock("MEMBER VAR");
 							}
 						}
-						_obj << "\"END\"";
+						_obj << "END";
 						_obj.InsertEndBlock("BEHAVIOUR_MEMBER_VARIABLE_BLOCK");
 					}
 				}

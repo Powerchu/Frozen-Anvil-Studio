@@ -87,8 +87,9 @@ namespace Dystopia
 	{
 	}
 
-	void RigidBody::Load(void)
+	void RigidBody::Awake(void)
 	{
+		
 	}
 
 	void RigidBody::Init(void)
@@ -99,8 +100,9 @@ namespace Dystopia
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
 			mPrevPosition = mPosition = mpOwnerTransform->GetGlobalPosition();
+
 			const auto ColComponents = GetOwner()->GetComponents<Collider>();
-			
+
 			AutoArray<Collider*> ToRet;
 
 			for (auto elem : ColComponents)
@@ -109,6 +111,7 @@ namespace Dystopia
 			}
 
 			mparrCol = Ut::Move(ToRet);
+
 			mOrientation = Math::RotateZ(Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z });
 			mInverseOrientation = Math::AffineInverse(mOrientation);
 			mfAngleDegZ = Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z }.Radians();
@@ -351,7 +354,7 @@ namespace Dystopia
 
 	}*/
 
-	void RigidBody::Unload(void)
+	/*void RigidBody::Unload(void)
 	{
 		for (auto& elem : mparrCol)
 		{
@@ -361,7 +364,7 @@ namespace Dystopia
 
 		mpOwnerTransform = nullptr;
 		mpPhysSys = nullptr;
-	}
+	}*/
 
 	RigidBody * RigidBody::Duplicate() const
 	{

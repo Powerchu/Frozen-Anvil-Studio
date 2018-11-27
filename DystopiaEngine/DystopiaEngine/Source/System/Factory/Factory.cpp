@@ -50,10 +50,15 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
 	size_t currentIndex = curScene.GetAllGameObjects().size();
 
+	AutoArray<uint64_t> oldIDs;
+
 	auto& obj = *curScene.InsertGameObject();
 	unsigned count = LoadSegment(obj, _in);
 	LoadSegmentC(obj, count, _in);
 	LoadSegmentB(obj, _in);
+
+	oldIDs.push_back(obj.GetID());
+	obj.SetID(GUIDGenerator::GetUniqueID());
 
 	unsigned childCounter = 0;
 	_in.ConsumeStartBlock();
@@ -65,17 +70,23 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 		auto& childObj = *curScene.InsertGameObject();
 		LoadSegmentC(childObj, LoadSegment(childObj, _in), _in);
 		LoadSegmentB(childObj, _in);
+
+		oldIDs.push_back(childObj.GetID());
+		obj.SetID(GUIDGenerator::GetUniqueID());
 	}
 
-	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
+	auto& allGameObject = curScene.GetAllGameObjects();
+	for (size_t index = currentIndex; index < allGameObject.size(); ++index)
 	{
-		auto transform = curScene.GetAllGameObjects()[index].GetComponent<Dystopia::Transform>();
+		auto transform = allGameObject[index].GetComponent<Dystopia::Transform>();
 		uint64_t parentID = transform->GetParentID();
-		for (size_t subIndex = currentIndex; subIndex < curScene.GetAllGameObjects().size(); ++subIndex)
+
+		for (size_t subIndex = currentIndex; subIndex < allGameObject.size(); ++subIndex)
 		{
-			if (parentID == curScene.GetAllGameObjects()[subIndex].GetID())
+			if (parentID == oldIDs[subIndex-currentIndex])
 			{
-				transform->SetParent(curScene.GetAllGameObjects()[subIndex].GetComponent<Dystopia::Transform>());
+				transform->SetParentID(allGameObject[subIndex].GetID());
+				transform->SetParent(allGameObject[subIndex].GetComponent<Dystopia::Transform>());
 				break;
 			}
 		}
@@ -109,8 +120,12 @@ void Dystopia::Factory::LoadSegmentC(GameObject& _obj, unsigned _count, Dystopia
 		pComponent->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 		auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
 		sceneSys->GetCurrentScene().FindGameObject(pComponent->GetOwnerID())->AddComponent(pComponent, Component::TAG{});
-
 		_in.ConsumeEndBlock();
+	}
+
+	for (auto& c : _obj.GetAllComponents())
+	{
+		c->Init();
 	}
 }
 
@@ -119,25 +134,39 @@ void Dystopia::Factory::LoadSegmentB(GameObject& _obj, Dystopia::TextSerialiser&
 	unsigned num;
 	_in.ConsumeStartBlock();
 	_in >> num;
+	_in.ConsumeEndBlock();
+
 	for (unsigned i = 0; i < num; ++i)
 	{
 		HashString name;
+
+		_in.ConsumeStartBlock();
 		_in >> name;
-		if (auto ptr = Dystopia::EngineCore::GetInstance()->Get<BehaviourSystem>()->RequestBehaviour(_obj.GetID(), name.c_str()))
+		_in.ConsumeEndBlock();
+
+		if (auto ptr = Dystopia::EngineCore::GetInstance()->Get<Dystopia::BehaviourSystem>()->RequestBehaviour(_obj.GetID(), name.c_str()))
 		{
 			unsigned size = 0;
+
 			_in.ConsumeStartBlock();
 			_in >> size;
+			_in.ConsumeEndBlock();
+
 			auto BehaviourMetadata = ptr->GetMetaData();
 			if (BehaviourMetadata)
 			{
 				for (unsigned u = 0; u < size; ++u)
 				{
 					std::string MemVarName;
+
+					_in.ConsumeStartBlock();
 					_in >> MemVarName;
+					_in.ConsumeEndBlock();
+
 					if (BehaviourMetadata[MemVarName.c_str()])
 					{
 						_in.ConsumeStartBlock();
+						/*Call Unserialise*/
 						BehaviourMetadata[MemVarName.c_str()].Unserialise(ptr, _in, Dystopia::BehaviourHelper::SuperUnserialiseFunctor{});
 						_in.ConsumeEndBlock();
 					}
@@ -148,18 +177,11 @@ void Dystopia::Factory::LoadSegmentB(GameObject& _obj, Dystopia::TextSerialiser&
 					}
 				}
 			}
-			ptr->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 			ptr->SetOwner(&_obj);
 			_obj.AddComponent(ptr, Dystopia::BehaviourTag{});
-			_in.ConsumeEndBlock();
-		}
-		else
-		{
-			_in.ConsumeStartBlock();
-			_in.ConsumeEndBlock();
 		}
 	}
-	_in.ConsumeEndBlock();
+
 	_obj.Identify();
 }
 
