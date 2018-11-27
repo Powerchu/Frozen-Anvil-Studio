@@ -801,12 +801,6 @@
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\FontSystem.h">
-      <Filter>Game Engine\SubSystems\Font</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\CharSpace.h">
-      <Filter>Game Engine\SubSystems\Font</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Behaviour\AI\AISystem.h">
       <Filter>Game Engine\Systems\AI</Filter>
     </ClInclude>
@@ -941,6 +935,39 @@
     </ClInclude>
     <ClInclude Include="Include\Factory\Factory.h">
       <Filter>Game Engine\SubSystems\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Geometery\Box.h">
+      <Filter>Math\Geo</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Geometery\Sphere.h">
+      <Filter>Math\Geo</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Geometery\CoordinateSystems.h">
+      <Filter>Math\Geo</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\MetaMath\MetaFloat.h">
+      <Filter>Math\MetaMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\Font.h">
+      <Filter>Game Engine\SubSystems\Font\FontData</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\CharSpace.h">
+      <Filter>Game Engine\SubSystems\Font\CharSpace</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\FontSystem.h">
+      <Filter>Game Engine\SubSystems\Font\FontSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\IO\XMLParser.h">
+      <Filter>IO\XMLParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\ShaderSystem.h">
+      <Filter>Game Engine\SubSystems\Shader\ShaderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\TextureSystem.h">
+      <Filter>Game Engine\SubSystems\Texture\TextureSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\MeshBuilder.h">
+      <Filter>Game Engine\SubSystems\Mesh\MeshBuilder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

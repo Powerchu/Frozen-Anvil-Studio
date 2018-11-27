@@ -28,6 +28,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/EGUI.h"
 #include "Editor/Payloads.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorCommands.h"
 #endif
 
 #include <GL/glew.h>
@@ -217,6 +219,9 @@ void Dystopia::TextRenderer::Unserialise(TextSerialiser& _in)
 #if EDITOR
 void Dystopia::TextRenderer::EditorUI(void) noexcept
 {
+
+	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
+
 	bool bRegenMesh = false;
 	static char buf[512]{ };
 	static std::string anchorX[3]{ "Left", "Center", "Right" };
@@ -242,8 +247,8 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 	}
 	EGUI::Display::EmptyBox("Font ", 200, (mpData) ? mpData->mstrName.c_str() : "-empty-", true);
 
-	Dystopia::File* t = nullptr;
-	if (auto i = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::TTF))
+	::Editor::File* t = nullptr;
+	if (auto i = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::TTF))
 	{
 		t = i;
 		EGUI::Display::EndPayloadReceiver();
@@ -257,9 +262,11 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 	EGUI::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 	{
-		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(static_cast<void(TextRenderer::*)(const char*)>(&TextRenderer::SetFont), mpData->mpAtlas->GetName().c_str());
-		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(static_cast<void(TextRenderer::*)(const char*)>(&TextRenderer::SetFont), "");
-		EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(static_cast<void(TextRenderer::*)(const char*)>(&TextRenderer::SetFont), mpData->mpAtlas->GetName().c_str());
+		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(static_cast<void(TextRenderer::*)(const char*)>(&TextRenderer::SetFont), "");
+		//EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<TextRenderer, const char*>(&TextRenderer::SetFont, mpData->mpAtlas->GetName().c_str()),
+										   cmd->MakeFnCommand<TextRenderer, const char*>(&TextRenderer::SetFont, ""));
 	}
 
 	if (ImGui::ColorPicker4("Color", &mColor[0]))
@@ -269,7 +276,6 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 
 	if (bRegenMesh)
 		RegenMesh();
-	}
 }
 #endif
 

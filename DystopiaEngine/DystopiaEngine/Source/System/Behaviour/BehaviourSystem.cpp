@@ -488,7 +488,7 @@ namespace Dystopia
 						{
 							/*GameObject with ID that was serialise could not be found*/
 							/*Remove and delete the Behaviour from mvBehaviourReferences*/
-							::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID);
+							::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID, false);
 						}
 					}
 					break;

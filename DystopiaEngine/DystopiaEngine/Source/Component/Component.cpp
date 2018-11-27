@@ -162,7 +162,7 @@ void Dystopia::Component::Unserialise(TextSerialiser& _in)
 	else
 	{
 		//Editor::GetInstance()->ReAttachComponent(this);
-		::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorResource>()->AddComponent(this);
+		::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorResource>()->AddComponent(this, nOwner, true);
 	}
 #endif 
 }

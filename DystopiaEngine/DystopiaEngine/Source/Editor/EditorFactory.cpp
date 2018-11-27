@@ -110,13 +110,13 @@ void Editor::EditorFactory::DefaultSceneCamera(void)
 	cam->Awake();
 }
 
-void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p, uint64_t c)
+void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p, uint64_t c, bool _amComponent)
 {
 	for (auto& object : mArrFactoryObj)
 	{
-		if (c == 0)
+		if (_amComponent)
 		{
-			if (_p->GetOwnerID() == object.GetID())
+			if (c == object.GetID())
 			{
 				object.AddComponent(_p, Dystopia::Component::TAG{});
 				return;
@@ -126,9 +126,7 @@ void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p, uint64_t c
 		{
 			if (c == object.GetID())
 			{
-				auto b = dynamic_cast<Dystopia::Behaviour*>(_p);
-				if (!b)
-					__debugbreak();
+				auto b = static_cast<Dystopia::Behaviour*>(_p);
 				object.AddComponent(b, Dystopia::Behaviour::TAG{});
 				return;
 			}
@@ -469,9 +467,9 @@ void Editor::EditorFactory::SaveSegment(const AutoArray<Dystopia::Behaviour*>& _
 				{
 					std::string memVarName{ n };
 
-					_out.InsertStartBlock(memVarName);
+					_out.InsertStartBlock(memVarName.c_str());
 					_out << memVarName;
-					_out.InsertEndBlock(memVarName);
+					_out.InsertEndBlock(memVarName.c_str());
 
 					_out.InsertStartBlock("Member Variable");
 					metaData[n].Serialise(b, _out, Dystopia::BehaviourHelper::SuperSerialiseFunctor{});
