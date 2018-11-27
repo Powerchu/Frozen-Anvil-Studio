@@ -34,7 +34,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::SpriteRenderer::SpriteRenderer(void) noexcept
 	: Renderer{}, mAnimations{ 1 }, mnID{ 0 }, mnCol{ 0 }, mnRow{ 0 },
-	mfFrameTime{ 0.016f }, mfAccTime{ 0 }, mpAtlas{ nullptr }, mNextSectionPos{0,0}
+	mfFrameTime{ 0.016f }, mfAccTime{ 0 }, mpAtlas{ nullptr }, mNextSectionPos{ 0,0 }, mbPlayOnStart{ false }, mbPlay{ false }
 {
 
 }
@@ -43,7 +43,7 @@ Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexce
 	: Renderer{ Ut::Move(_rhs) }, mAnimations{ Ut::Move(_rhs.mAnimations) },
 	mnID{ Ut::Move(_rhs.mnID) }, mnCol{ Ut::Move(_rhs.mnCol) }, mnRow{ Ut::Move(_rhs.mnRow) },
 	mfFrameTime{ Ut::Move(_rhs.mfFrameTime) }, mfAccTime{ Ut::Move(_rhs.mfAccTime) }, mpAtlas{ Ut::Move(_rhs.mpAtlas) }, 
-	mNextSectionPos{ Ut::Move(_rhs.mNextSectionPos) }
+	mNextSectionPos{ Ut::Move(_rhs.mNextSectionPos) }, mbPlayOnStart{ Ut::Move(_rhs.mbPlayOnStart) }, mbPlay{ Ut::Move(_rhs.mbPlay) }
 {
 	_rhs.mAnimations.clear();
 	_rhs.mpAtlas = nullptr;
@@ -52,7 +52,8 @@ Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexce
 Dystopia::SpriteRenderer::SpriteRenderer(const SpriteRenderer& _rhs) noexcept
 	: Renderer{ _rhs }, mAnimations{ _rhs.mAnimations },
 	mnID{ _rhs.mnID }, mnCol{ _rhs.mnCol }, mnRow{_rhs.mnRow },
-	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, mpAtlas{ _rhs.mpAtlas }, mNextSectionPos{ _rhs.mNextSectionPos }
+	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, mpAtlas{ _rhs.mpAtlas }, 
+	mNextSectionPos{ _rhs.mNextSectionPos }, mbPlayOnStart{ _rhs.mbPlayOnStart }, mbPlay{ _rhs.mbPlay }
 {
 }
 
@@ -70,6 +71,8 @@ void Dystopia::SpriteRenderer::Init(void)
 	Renderer::Init();
 	if (mpTexture && mpAtlas && !mpAtlas->GetAllSections().size())
 		mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
+
+	mbPlay = mbPlayOnStart;
 }
 
 void Dystopia::SpriteRenderer::Draw(void) const noexcept
@@ -96,8 +99,8 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 	if (mpAtlas && mnID < mAnimations.size())
 	{
 		int endIndex = mAnimations[mnID].mnEnd ? mAnimations[mnID].mnEnd : mAnimations[mnID].mnCol * mAnimations[mnID].mnRow;
-		int startCol = mAnimations[mnID].mnStart ? (mAnimations[mnID].mnStart % mAnimations[mnID].mnCol) : 0;
-		int startRow = mAnimations[mnID].mnStart ? static_cast<int>(mAnimations[mnID].mnStart / mAnimations[mnID].mnCol) : 0;
+		int startCol = GetStartCol();
+		int startRow = GetStartRow();
 
 		mpAtlas->SetTexture(GetTexture());
 
@@ -136,8 +139,8 @@ void Dystopia::SpriteRenderer::SetAnimation(const char* _strAnimation)
 		if (mAnimations[n].mstrName == _strAnimation)
 		{
 			mnID = n;
-			mnCol = 0;
-			mnRow = 0;
+			mnCol = GetStartCol();
+			mnRow = GetStartRow();
 			return;
 		}
 	}
@@ -148,8 +151,8 @@ void Dystopia::SpriteRenderer::SetAnimation(unsigned _nID)
 	DEBUG_BREAK(_nID > mAnimations.size(), "SpriteRenderer Error: Invalid Animation!");
 
 	mnID = _nID;
-	mnCol = 0;
-	mnRow = 0;
+	mnCol = GetStartCol();
+	mnRow = GetStartRow();
 }
 
 Dystopia::SpriteRenderer* Dystopia::SpriteRenderer::Duplicate(void) const
@@ -176,6 +179,7 @@ void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
 		_out << a.mnEnd;
 	}
 	_out << mnID;
+	_out << mbPlayOnStart;
 	_out.InsertEndBlock("Sprite Renderer");
 }
 
@@ -199,6 +203,7 @@ void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 		mAnimations.Insert(a);
 	}
 	_in >> mnID;
+	_in >> mbPlayOnStart;
 	_in.ConsumeEndBlock();
 }
 
@@ -238,6 +243,53 @@ void Dystopia::SpriteRenderer::SetTexture(Texture* _pTexture) noexcept
 	mpAtlas = _pTexture ? EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GetAtlas(_pTexture->GetName()) : nullptr;
 	if (mpTexture && mpAtlas && !mpAtlas->GetAllSections().size())
 		mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
+
+	if (!mpTexture && !mpAtlas)
+		mnID = mnRow = mnCol = 0;
+}
+
+HashString Dystopia::SpriteRenderer::GetCurrentAnimation(void) const
+{
+	if (!mAnimations.size())
+		return HashString{ "" };
+
+	return mAnimations[mnID].mstrName;
+}
+
+unsigned Dystopia::SpriteRenderer::GetCurrentIndex(void) const
+{
+	if (!mAnimations.size())
+		return 0;
+
+	return mnCol + (mnRow * mAnimations[mnID].mnCol);
+}
+
+bool Dystopia::SpriteRenderer::IsPlaying(void) const
+{
+	if (!mAnimations.size())
+		return false;
+
+	return mbPlay;
+}
+
+void Dystopia::SpriteRenderer::Play(void)
+{
+	if (!mAnimations.size())
+		return;
+
+	mbPlay = true;
+	mnCol = GetStartCol();
+	mnRow = GetStartRow();
+}
+
+void Dystopia::SpriteRenderer::Stop(void)
+{
+	mbPlay = false;
+}
+
+void Dystopia::SpriteRenderer::SetSpeed(float _s)
+{
+	mfFrameTime = _s;
 }
 
 void Dystopia::SpriteRenderer::TextureFields(void)
@@ -304,6 +356,10 @@ void Dystopia::SpriteRenderer::AnimFields(void)
 #if EDITOR
 
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
+
+	if (EGUI::Display::CheckBox("On Awake", &mbPlayOnStart))
+		cmd->ChangeValue(GetOwnerID(), &SpriteRenderer::mbPlayOnStart, !mbPlayOnStart, mbPlayOnStart);
+
 	switch (EGUI::Display::DragFloat("Frame time", &mfFrameTime, 0.01f, 0.016f, 10.f))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
@@ -315,15 +371,15 @@ void Dystopia::SpriteRenderer::AnimFields(void)
 		cmd->EndRec(&SpriteRenderer::mfFrameTime, this);
 		break;
 	}
+
+
 #endif
 }
 
 void Dystopia::SpriteRenderer::AddAnimations(void)
 {
 #if EDITOR
-	EGUI::Display::Label("Animations");
-	EGUI::SameLine(DefaultAlighnmentSpacing, 80);
-	if (EGUI::Display::Button("Add", Math::Vec2{90, 24}))
+	if (EGUI::Display::Button("Add Anim", Math::Vec2{150, 20}))
 	{
 		SpriteSheet ss;
 		ss.mstrName = "Rename this";
@@ -382,85 +438,25 @@ bool Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
 		int maxC = static_cast<int>((curSec.uEnd - curSec.uStart) / curSec.mCol);
 		auto col = anim.mnCol;
 		EGUI::Display::SliderInt("Columns", &col, 1, maxC);
-		anim.mnCol = col;
-		//switch ()
-		//{
-		//case EGUI::eDragStatus::eDRAGGING:
-		//	anim.mnCol = col;
-		//	break;
-		//case EGUI::eDragStatus::eSTART_DRAG:
-		//case EGUI::eDragStatus::eEND_DRAG:
-		//case EGUI::eDragStatus::eENTER:
-		//case EGUI::eDragStatus::eTABBED:
-		//case EGUI::eDragStatus::eDEACTIVATED:
-		//case EGUI::eDragStatus::eNO_CHANGE:
-		//default:
-		//	anim.mnCol = Math::Clamp(anim.mnCol, 1, maxC);
-		//	break;
-		//}
+		anim.mnCol = Math::Clamp(col, 1, maxC);
 
 		/********* Rows *********/
 		auto row = anim.mnRow;
 		int maxR = static_cast<int>((curSec.vEnd - curSec.vStart) / curSec.mRow);
 		EGUI::Display::SliderInt("Rows", &row, 1, maxR);
-		anim.mnRow = row;
-		//switch (EGUI::Display::DragInt("Rows", &row, 0.1f, 1, maxR))
-		//{
-		//case EGUI::eDragStatus::eDRAGGING:
-		//	anim.mnRow = row;
-		//	break;
-		//case EGUI::eDragStatus::eSTART_DRAG:
-		//case EGUI::eDragStatus::eEND_DRAG:
-		//case EGUI::eDragStatus::eENTER:
-		//case EGUI::eDragStatus::eTABBED:
-		//case EGUI::eDragStatus::eDEACTIVATED:
-		//case EGUI::eDragStatus::eNO_CHANGE:
-		//default:
-		//	anim.mnRow = Math::Clamp(anim.mnRow, 1, maxR);
-		//	break;
-		//}
+		anim.mnRow = Math::Clamp(row, 1, maxR);
 
 		/******** Start *********/
 		auto start = anim.mnStart;
 		int maxStart = static_cast<int>(anim.mnCol * anim.mnRow) - 1;
 		EGUI::Display::SliderInt("Start", &start, 0, maxStart);
-		anim.mnStart = start;
-		//switch (EGUI::Display::DragInt("Start", &start, 0.1f, 0, maxStart))
-		//{
-		//case EGUI::eDragStatus::eDRAGGING:
-		//	anim.mnStart = start;
-		//	break;
-		//case EGUI::eDragStatus::eSTART_DRAG:
-		//case EGUI::eDragStatus::eEND_DRAG:
-		//case EGUI::eDragStatus::eENTER:
-		//case EGUI::eDragStatus::eTABBED:
-		//case EGUI::eDragStatus::eDEACTIVATED:
-		//case EGUI::eDragStatus::eNO_CHANGE:
-		//default:
-		//	anim.mnStart = Math::Clamp(anim.mnStart, 0, maxStart);
-		//	break;
-		//}
+		anim.mnStart = Math::Clamp(start, 0, maxStart);
 
 		/******** End *********/
 		auto end = anim.mnEnd;
 		int maxEnd = static_cast<int>(anim.mnCol * anim.mnRow) - 1;
 		EGUI::Display::SliderInt("End", &end, 0, maxEnd);
-		anim.mnEnd = end;
-		//switch (EGUI::Display::DragInt("End", &end, 0.1f, 0, maxEnd))
-		//{
-		//case EGUI::eDragStatus::eDRAGGING:
-		//	anim.mnEnd = end;
-		//	break;
-		//case EGUI::eDragStatus::eSTART_DRAG:
-		//case EGUI::eDragStatus::eEND_DRAG:
-		//case EGUI::eDragStatus::eENTER:
-		//case EGUI::eDragStatus::eTABBED:
-		//case EGUI::eDragStatus::eDEACTIVATED:
-		//case EGUI::eDragStatus::eNO_CHANGE:
-		//default:
-		//	anim.mnEnd = Math::Clamp(anim.mnEnd, 0, maxEnd);
-		//	break;
-		//}
+		anim.mnEnd = Math::Clamp(end, 0, maxEnd);
 
 		EGUI::UnIndent();
 		EGUI::Display::EndTreeNode();
@@ -470,6 +466,15 @@ bool Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
 #endif
 }
 
+int Dystopia::SpriteRenderer::GetStartCol(void) const
+{
+	return mAnimations[mnID].mnStart ? (mAnimations[mnID].mnStart % mAnimations[mnID].mnCol) : 0;
+}
+
+int Dystopia::SpriteRenderer::GetStartRow(void) const
+{
+	return mAnimations[mnID].mnStart ? static_cast<int>(mAnimations[mnID].mnStart / mAnimations[mnID].mnCol) : 0;
+}
 
 
 

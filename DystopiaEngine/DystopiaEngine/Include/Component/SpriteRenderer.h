@@ -77,6 +77,15 @@ namespace Dystopia
 
 		void SetTexture(Texture* _pTexture) noexcept;
 
+
+		HashString GetCurrentAnimation(void) const;
+		unsigned GetCurrentIndex(void) const;
+		bool IsPlaying(void) const;
+
+		void Play(void);
+		void Stop(void);
+		void SetSpeed(float);
+
 	private:
 		struct SpriteSheet
 		{
@@ -91,11 +100,17 @@ namespace Dystopia
 		int mnID, mnCol, mnRow;
 		float mfFrameTime, mfAccTime;
 		Math::Vec2 mNextSectionPos;
+		bool mbPlayOnStart;
+
+		bool mbPlay;	// dont need serialise
 
 		void TextureFields(void);
 		void AnimFields(void);
 		void AddAnimations(void);
 		bool SpriteSheetFields(const size_t&);
+
+		int GetStartCol(void) const;
+		int GetStartRow(void) const;
 	};
 }
 
