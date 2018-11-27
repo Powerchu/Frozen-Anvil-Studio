@@ -80,7 +80,7 @@ namespace Math
 		inline Quaternion& _CALL operator/=(const float);
 		inline Quaternion& _CALL operator+=(const Quaternion);
 		inline Quaternion& _CALL operator-=(const Quaternion);
-		inline bool _CALL operator==(const Quaternion);
+		inline bool _CALL operator==(const Quaternion) const;
 
 		
 		// ================================= QUATERNION GENERATORS ================================= // 
@@ -327,7 +327,7 @@ inline float _CALL Math::Quaternion::operator[](unsigned _nIndex) const
 	return mData[_nIndex];
 }
 
-inline bool _CALL Math::Quaternion::operator==(const Quaternion _rhs)
+inline bool _CALL Math::Quaternion::operator==(const Quaternion _rhs) const
 {
 	return mData == _rhs.mData;
 }

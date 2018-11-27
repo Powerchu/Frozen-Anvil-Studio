@@ -135,6 +135,7 @@ void Dystopia::TimeSystem::SaveSettings(DysSerialiser_t& _out)
 	_out << mfSimulatedDT;
 }
 
+#if EDITOR
 void Dystopia::TimeSystem::EditorUI(void)
 {
 	static float fixedDT = 0.02f;
@@ -155,7 +156,7 @@ void Dystopia::TimeSystem::EditorUI(void)
 		case EGUI::eDragStatus::eTABBED:
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 		case EGUI::eDragStatus::eNO_CHANGE:
 			break;
 		}
@@ -179,16 +180,16 @@ void Dystopia::TimeSystem::EditorUI(void)
 	switch (EGUI::Display::DragFloat("Time Scale         ", &mfTimeScale, .01f, .0001f, 10.f))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording(&TimeSystem::mfTimeScale);
+		//EGUI::GetCommandHND()->StartRecording(&TimeSystem::mfTimeScale);
 		break;
 	case EGUI::eDragStatus::eENTER:
 	case EGUI::eDragStatus::eTABBED:
 	case EGUI::eDragStatus::eEND_DRAG:
 	case EGUI::eDragStatus::eDEACTIVATED:
-		EGUI::GetCommandHND()->EndRecording();
+		//EGUI::GetCommandHND()->EndRecording();
 	case EGUI::eDragStatus::eDRAGGING:
 	case EGUI::eDragStatus::eNO_CHANGE:
 		break;
 	}
 }
-
+#endif 

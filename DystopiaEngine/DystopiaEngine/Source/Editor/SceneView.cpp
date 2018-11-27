@@ -14,19 +14,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/SceneView.h"
 #include "Editor/EGUI.h"
-#include "Editor/Editor.h"
-#include "Editor/EditorEvents.h"
 #include "Editor/ConsoleLog.h"
-#include "Editor/DefaultFactory.h"
 #include "Editor/Payloads.h"
+#include "Editor/EditorStates.h"
 
+#include "Editor/EInput.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorCommands.h"
+#include "Editor/EditorClipboard.h"
+#include "Editor/EditorFactory.h"
+
+#include "System/Input/InputSystem.h"
 #include "System/Driver/Driver.h"
 #include "System/Scene/Scene.h"
+#include "System/Scene/SceneSystem.h"
 #include "System/Graphics/Texture2D.h"
 #include "System/Camera/CameraSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
 
+#include "Utility/GUID.h"
 #include "Utility/DebugAssert.h"
+
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
 
@@ -34,91 +42,74 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Camera.h"
 #include "Component/Renderer.h"
 #include "Component/SpriteRenderer.h"
+#include "Component/RigidBody.h"
 #include "Behaviour/Behaviour.h"
+
 
 #include "Math/MathUtility.h"
 
-namespace Dystopia
+namespace Editor
 {
 	static const Math::Vec4 redColor = Math::Vec4{ 1.f,0.f,0.f,1.f };
 	static const Math::Vec4 greenColor = Math::Vec4{ 0.f,1.f,0.f,1.f };
 	static const Math::Vec4 blueColor = Math::Vec4{ 0.f,0.f,1.f,1.f };
 	static constexpr float dragMagnitudeEpsilon = 0.001f;
 
-	static SceneView* gpInstance = 0;
-	SceneView* SceneView::GetInstance()
-	{
-		if (gpInstance) return gpInstance;
-
-		gpInstance = new SceneView{};
-		return gpInstance;
-	}
-
-	SceneView::SceneView()
-		: EditorTab{ false, true },
+	SceneView::SceneView(void)
+		:
 		mLabel{ "Scene View" }, mpGfxSys{ nullptr },
 		mpSceneCamera{ nullptr }, mSensitivity{ 0.1f },
 		mToZoom{ eZOOM_NONE }, mAmFocused{ false },
 		mMoveSens{ -0.6f }, mPrevMovePoint{ 0,0 },
 		mDragging{ false }, mImgPos{}, mImgSize{},
 		mClearSelection{ false },
-		mGizmoHovered{ false }, mCurrGizTool{ eTRANSLATE }
+		mGizmoHovered{ false }, mCurrGizTool{ eTRANSLATE }, mpSceneSys{ nullptr }
+	{
+		EditorPanel::SetOpened(true);
+	}
+
+	SceneView::~SceneView(void)
+	{
+	}
+
+	void SceneView::Load(void)
 	{}
 
-	SceneView::~SceneView()
+	bool SceneView::Init(void)
 	{
-		gpInstance = nullptr;
-	}
-
-	void SceneView::Init()
-	{
-		mpGfxSys = EngineCore::GetInstance()->GetSystem<GraphicsSystem>();
-		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Bind(&SceneView::SceneChanged, this);
-		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Bind(&SceneView::ScrollIn, this);
-		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Bind(&SceneView::ScrollOut, this);
-		GetEditorEventHND()->GetEvent(EDITOR_GIZMO_TRANSLATE)->Bind(&SceneView::SetGizmoTranslate, this);
-		GetEditorEventHND()->GetEvent(EDITOR_GIZMO_SCALE)->Bind(&SceneView::SetGizmoScaler, this);
-
-		GameObject * temp = Factory::CreateCamera("Scene Camera");
-		auto& g = *GetCurrentScene()->InsertGameObject(Ut::Move(*temp));
-		g.GetComponent<Transform>()->SetOwner(&g);
-		//auto sr = static_cast<ComponentDonor<SpriteRenderer>*>(EngineCore::GetInstance()->Get<typename SpriteRenderer::SYSTEM>())->RequestComponent();
-		//g.AddComponent(sr, Component::TAG{});
-		//auto s = g.GetComponent<SpriteRenderer>();
-		for (auto& c : g.GetAllComponents())
-		{
-			c->SetOwner(&g);
-			c->Init();
-		}
-		for (auto& b : g.GetAllBehaviours())
-		{
-			b->SetOwner(&g);
-			b->Init();
-		}
-		mpSceneCamera = g.GetComponent<Camera>();
-		g.SetActive(true);
-		g.SetFlag(FLAG_ALL_LAYERS);
-		delete temp;
+		mpGfxSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>();
+		mpSceneSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
+		EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultSceneCamera();
 		SceneChanged();
+		return true;
 	}
 
-	void SceneView::Update(const float& _dt)
+	void SceneView::Update(float _dt)
 	{
-		GameObject *temp = GetCurrentScene()->FindGameObject("Scene Camera");
+		Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera");
 		if (temp)
-			mpSceneCamera = temp->GetComponent<Camera>();
-		if (GetMainEditor()->CurrentState() == EDITOR_MAIN)
+			mpSceneCamera = temp->GetComponent<Dystopia::Camera>();
+		if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
 			mpGfxSys->Update(_dt);
+
+		float scroll = EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->GetMouseWheel();
+		if (scroll)
+		{
+			if (scroll > 0)
+				ScrollIn();
+			else
+				ScrollOut();
+		}
 	}
 
-	void SceneView::EditorUI()
+	void SceneView::EditorUI(void)
 	{
 		ResetMouseEvents();
 		EGUI::UnIndent(2);
-		if (GetMainEditor()->CurrentState() == EDITOR_PLAY)
+		if (EditorMain::GetInstance()->GetCurState() == eState::PLAY)
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 
-		Texture *pTex = mpGfxSys->GetFrameBuffer().AsTexture();
+		Dystopia::Texture *pTex = mpGfxSys->GetFrameBuffer().AsTexture();
 		if (mpSceneCamera)
 			pTex = mpSceneCamera->GetSurface()->AsTexture();
 
@@ -133,35 +124,35 @@ namespace Dystopia
 		else
 			mAmFocused = false;
 		ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
-		if (GetCurrentScene()->FindGameObject("Scene Camera"))
+		if (mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera"))
 		{
-			if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PREFAB))
+			if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PREFAB))
 			{
 				AcceptPrefab(t);
 				EGUI::Display::EndPayloadReceiver();
 			}
-			if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::PNG))
+			if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
 			{
 				AcceptTexture(t);
 				EGUI::Display::EndPayloadReceiver();
 			}
-			if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::DDS))
+			if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS))
 			{
 				AcceptTexture(t);
 				EGUI::Display::EndPayloadReceiver();
 			}
-			if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::BMP))
+			if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP))
 			{
 				AcceptTexture(t);
 				EGUI::Display::EndPayloadReceiver();
 			}
 		}
-		if (File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::SCENE))
+		if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::SCENE))
 		{
-			GetMainEditor()->OpenScene(std::wstring{ t->mPath.begin(), t->mPath.end() }, std::wstring{ t->mName.begin(), t->mName.end() });
+			EditorMain::GetInstance()->GetSystem<EditorStates>()->OpenScene(t->mPath);
 			EGUI::Display::EndPayloadReceiver();
 		}
-		if (GetMainEditor()->CurrentState() == EDITOR_PLAY)
+		if (EditorMain::GetInstance()->GetCurState() == eState::PLAY)
 			ImGui::PopStyleVar();
 
 		CheckMouseEvents();
@@ -171,23 +162,34 @@ namespace Dystopia
 		if (mClearSelection)
 		{
 			mClearSelection = false;
-			GetMainEditor()->ClearSelections();
+			//EditorMain::GetInstance()->ClearSelections();
 		}
 		EGUI::Indent(2);
 	}
 
-	void SceneView::Shutdown()
+	void SceneView::Shutdown(void)
 	{
 		mpGfxSys = nullptr;
-		GetEditorEventHND()->GetEvent(EDITOR_SCENE_CHANGED)->Unbind(this);
-		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_UP)->Unbind(this);
-		GetEditorEventHND()->GetEvent(EDITOR_SCROLL_DOWN)->Unbind(this);
-		GetEditorEventHND()->GetEvent(EDITOR_GIZMO_TRANSLATE)->Unbind(this);
-		GetEditorEventHND()->GetEvent(EDITOR_GIZMO_SCALE)->Unbind(this);
-
 	}
 
-	std::string SceneView::GetLabel() const
+	void SceneView::Message(eEMessage _msg)
+	{
+		if (_msg == eEMessage::SCENE_CHANGED)
+		{
+			if (!Dystopia::EngineCore::GetInstance()->GetSystem < Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject("Scene Camera"))
+			{
+				EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultSceneCamera();
+			}
+		}
+	}
+
+	void SceneView::SaveSettings(Dystopia::TextSerialiser&) const
+	{}
+
+	void SceneView::LoadSettings(Dystopia::TextSerialiser&)
+	{}
+
+	HashString SceneView::GetLabel(void) const
 	{
 		return mLabel;
 	}
@@ -206,28 +208,29 @@ namespace Dystopia
 			vToMove.x *= 2.f;
 			vToMove.y *= -2.f;
 
-			const auto pos = mpSceneCamera->GetOwner()->GetComponent<Transform>()->GetPosition();
-			const auto scale = mpSceneCamera->GetOwner()->GetComponent<Transform>()->GetGlobalScale();
+			const auto pos = mpSceneCamera->GetOwner()->GetComponent<Dystopia::Transform>()->GetPosition();
+			const auto scale = mpSceneCamera->GetOwner()->GetComponent<Dystopia::Transform>()->GetGlobalScale();
 		
-			mpSceneCamera->GetOwner()->GetComponent<Transform>()->SetPosition(pos + Math::Pt3D{ vToMove.x * mMoveSens * scale.x, vToMove.y * mMoveSens * scale.y, 0.f });
+			mpSceneCamera->GetOwner()->GetComponent<Dystopia::Transform>()->SetPosition(pos + Math::Pt3D{ vToMove.x * mMoveSens * scale.x, vToMove.y * mMoveSens * scale.y, 0.f });
 		}
 	}
 
-	GameObject* SceneView::FindMouseObject()
+	Dystopia::GameObject* SceneView::FindMouseObject()
 	{
-		GameObject* pTarget = nullptr;
-		if (Camera* pCam = GetCamera())
+		Dystopia::GameObject* pTarget = nullptr;
+		if (Dystopia::Camera* pCam = GetCamera())
 		{
 			Math::Pt3D worldClickPos = GetWorldClickPos(pCam);
 			float vLength = FLT_MAX;
-			for (auto& obj : GetCurrentScene()->GetAllGameObjects())
+			const auto& allObj = mpSceneSys->GetCurrentScene().GetAllGameObjects();
+			for (auto& obj : allObj)
 			{
 				if (&obj == mpSceneCamera->GetOwner()) continue;
 
-				Math::Pt3D objPos	= obj.GetComponent<Transform>()->GetGlobalPosition();
+				Math::Pt3D objPos	= obj.GetComponent<Dystopia::Transform>()->GetGlobalPosition();
 				Math::Vec4 distV	= objPos - worldClickPos;
 				Math::Vec2 flatVec	= { distV.x, distV.y };
-				const auto& trans	= obj.GetComponent<Transform>();
+				const auto& trans	= obj.GetComponent<Dystopia::Transform>();
 				Math::Vec4 scale	= trans->GetGlobalScale();
 				Math::Pt3D pos		= trans->GetGlobalPosition();
 
@@ -253,7 +256,7 @@ namespace Dystopia
 		mToZoom = eZOOM_NONE;
 		if (!mpSceneCamera) return;
 
-		Transform *pObjTransform = mpSceneCamera->GetOwner()->GetComponent<Transform>();
+		Dystopia::Transform *pObjTransform = mpSceneCamera->GetOwner()->GetComponent<Dystopia::Transform>();
 		if (!pObjTransform) return;
 
 		float s = _in ? 1 - mSensitivity : 1 + mSensitivity;
@@ -284,10 +287,10 @@ namespace Dystopia
 
 	void SceneView::SceneChanged()
 	{
- 		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera")->GetComponent<Camera>();
+ 		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
 	}
 
-	void SceneView::AdjustImageSize(Texture *_pTex)
+	void SceneView::AdjustImageSize(Dystopia::Texture *_pTex)
 	{
 		static constexpr float aspect = 16.f / 10.f;
 		float ix = static_cast<float>(aspect * _pTex->GetWidth());
@@ -317,7 +320,7 @@ namespace Dystopia
 		return Math::Vec2{ xDiff / 2, yDiff / 2};
 	}
 
-	Math::Pt3D SceneView::GetWorldClickPos(const Camera * const _cam) const
+	Math::Pt3D SceneView::GetWorldClickPos(const Dystopia::Camera * const _cam) const
 	{
 		Math::Vec2 mousePos = ImGui::GetMousePos();
 		Math::Vec2 relPos = mousePos - ImGui::GetItemRectMin();
@@ -327,7 +330,7 @@ namespace Dystopia
 		return worldPos;
 	}
 
-	Camera* SceneView::GetCamera()
+	Dystopia::Camera* SceneView::GetCamera()
 	{
 		return mpSceneCamera;
 	}
@@ -344,9 +347,12 @@ namespace Dystopia
 		{
 			if (ImGui::IsMouseClicked(0))
 			{
-				GameObject* pObj = FindMouseObject();
+				Dystopia::GameObject* pObj = FindMouseObject();
 				if (pObj && !mGizmoHovered)
-					GetMainEditor()->AddSelection(pObj->GetID());
+				{
+					EditorMain::GetInstance()->GetSystem<EditorClipboard>()->ClearAll();
+					EditorMain::GetInstance()->GetSystem<EditorClipboard>()->AddGameObject(pObj->GetID());
+				}
 				else
 					mClearSelection = true;
 			}
@@ -361,38 +367,48 @@ namespace Dystopia
 		mToZoom = eZOOM_NONE;
 	}
 
-	void SceneView::AcceptPrefab(File* _pFile)
+	void SceneView::AcceptPrefab(::Editor::File* _pFile)
 	{
-		if (Camera* pCam = GetCamera())
+		if (Dystopia::Camera* pCam = GetCamera())
 		{
-			GameObject* pTarget			= FindMouseObject();
-			float betterZ				= (pTarget) ? pTarget->GetComponent<Transform>()->GetPosition().z + 0.1f : 0;
+			Dystopia::GameObject* pTarget = FindMouseObject();
+			float betterZ				= (pTarget) ? pTarget->GetComponent<Dystopia::Transform>()->GetPosition().z + 0.1f : 0;
 			Math::Pt3D worldClickPos	= GetWorldClickPos(pCam);
 			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ, 1.f };
-
-			GameObject *pDupl = Factory::LoadFromPrefab("", _pFile->mPath.c_str());
-			if (pDupl)
-			{
-				pDupl->GetComponent<Transform>()->SetPosition(spawnSite);
-				GetCommandHND()->InvokeCommandInsert(*pDupl, *GetCurrentScene());
-			}
+			
+			EditorMain::GetInstance()->GetSystem<EditorCommands>()->InstantiatePrefab(_pFile->mName, spawnSite);
+			//Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->Instantiate(_pFile->mName, spawnSite);
+			//auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
+			//Dystopia::GameObject *pDupl = Dystopia::Factory::LoadFromPrefab("", _pFile->mPath.c_str());
+			//if (pDupl)
+			//{
+			//	pDupl->GetComponent<Dystopia::Transform>()->SetPosition(spawnSite);
+			//	//GetCommandHND()->InvokeCommandInsert(*pDupl, *GetCurrentScene());
+			//}
 		}
 	}
 
-	void SceneView::AcceptTexture(File* _pFile)
+	void SceneView::AcceptTexture(::Editor::File* _pFile)
 	{
-		if (Camera* pCam = GetCamera())
+		if (Dystopia::Camera* pCam = GetCamera())
 		{
-			GameObject* pTarget = FindMouseObject();
-			Renderer *pRend = pTarget ? pTarget->GetComponent<Renderer>() : nullptr;
+			Dystopia::GameObject* pTarget = FindMouseObject();
+			Dystopia::Renderer *pRend = pTarget ? pTarget->GetComponent<Dystopia::Renderer>() : nullptr;
 			if (pRend)
 			{
-				auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture,
-					pRend->GetTexture());
-				auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture,
-					mpGfxSys->LoadTexture(_pFile->mPath.c_str()));
-				GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
-				GetMainEditor()->NewSelection(pTarget->GetID());
+				//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture,
+				//	pRend->GetTexture());
+				//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture,
+				//	mpGfxSys->LoadTexture(_pFile->mPath.c_str()));
+				//GetCommandHND()->InvokeCommand(pTarget->GetID(), fOld, fNew);
+				auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
+				auto oFn = cmd->MakeFnCommand(&Dystopia::Renderer::SetTexture, pRend->GetTexture());
+				auto nFn = cmd->MakeFnCommand(&Dystopia::Renderer::SetTexture, mpGfxSys->LoadTexture(_pFile->mPath.c_str()));
+				cmd->FunctionCommand(pTarget->GetID(), oFn, nFn);
+
+				//EditorMain::GetInstance()->NewSelection(pTarget->GetID());
+				EditorMain::GetInstance()->GetSystem<EditorClipboard>()->ClearAll();
+				EditorMain::GetInstance()->GetSystem<EditorClipboard>()->AddGameObject(pTarget->GetID());
 			}
 			else
 			{
@@ -401,24 +417,17 @@ namespace Dystopia
 				{
 					Math::Pt3D worldClickPos = GetWorldClickPos(GetCamera());
 					Math::Pt3D spawnSite = Math::Pt3D{ worldClickPos.x, worldClickPos.y, 0.f, 1.f };
-
-					pTarget = Factory::CreateGameObj(defaultName);
-					pTarget->SetFlag(eObjFlag::FLAG_LAYER_WORLD);
-					pTarget->GetComponent<Transform>()->SetPosition(spawnSite);
-
-					GetCommandHND()->InvokeCommandInsert(*pTarget, *GetCurrentScene());
+					EditorMain::GetInstance()->GetSystem<EditorCommands>()->InsertNewGameObject(spawnSite);
 				}
-				GameObject* pGuaranteedTarget = FindMouseObject();
-				Renderer* pNewRend = static_cast<ComponentDonor<Renderer>*>(EngineCore::GetInstance()->Get<typename Renderer::SYSTEM>())->RequestComponent();
-				pGuaranteedTarget->AddComponent(pNewRend, typename Component::TAG{});
+				Dystopia::GameObject* pGuaranteedTarget = FindMouseObject();
+				Dystopia::Renderer* pNewRend = static_cast<Dystopia::ComponentDonor<Dystopia::Renderer>*>(Dystopia::EngineCore::GetInstance()->Get<typename Dystopia::Renderer::SYSTEM>())->RequestComponent();
+				pGuaranteedTarget->AddComponent(pNewRend, typename Dystopia::Component::TAG{});
 				pNewRend->SetTexture(mpGfxSys->LoadTexture(_pFile->mPath.c_str()));
 				pNewRend->SetOwner(pGuaranteedTarget);
 				pNewRend->SetActive(pGuaranteedTarget->IsActive());
 				pNewRend->Awake();
 				if (pGuaranteedTarget->GetName() == defaultName)
-				{
-					pGuaranteedTarget->SetName(_pFile->mName);
-				}
+					pGuaranteedTarget->SetName(_pFile->mName.c_str());
 			}
 		}
 	}
@@ -426,28 +435,34 @@ namespace Dystopia
 	void SceneView::DrawGizmos()
 	{
 		mGizmoHovered = false; 
-		auto& clipboardObjs = GetMainEditor()->GetSelectionObjects();
-		if (!clipboardObjs.size())
+		const auto& selectedIDs = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetSelectedIDs();
+		if (!selectedIDs.size())
 			return;
-		else if (clipboardObjs.size() == 1)
+		
+		if (selectedIDs.size() == 1)
 		{
-			auto& obj = **clipboardObjs.begin();
-			DrawGizmoSingle(obj);
+			if (auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(selectedIDs[0]))
+				DrawGizmoSingle(*o);
+			else
+				EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(selectedIDs[0]);
 		}
 		else
-			DrawGizmoMul(clipboardObjs);
+			DrawGizmoMul(selectedIDs);
 	}
 
 	Math::Vec2 SceneView::GetWorldToScreen(const Math::Pt3D& curPos)
 	{
-		mpSceneCamera = GetCurrentScene()->FindGameObject("Scene Camera")->GetComponent<Camera>();
+		auto pos = curPos;
+		pos.z = static_cast<float>(1.f);
+		pos.w = 1.f;
+		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
 		if (!mpSceneCamera) return Math::Vec2{ 0,0 };
 
-		auto equation1 = mpSceneCamera->GetProjectionMatrix() * (mpSceneCamera->GetViewMatrix() * curPos);
+		auto equation1 = mpSceneCamera->GetProjectionMatrix() * (Math::Inverse(mpSceneCamera->GetViewMatrix()) * pos);
 
 
 		return Math::Vec2{ (equation1.x * (mImgSize.x / 2)) + (Size().x / 2),
-						   (equation1.y * (mImgSize.y / 2)) + (Size().y / 2) };
+			(equation1.y * (mImgSize.y / 2)) + (Size().y / 2) };
 	}
 
 	void SceneView::SetGizmoTranslate(void)
@@ -460,15 +475,19 @@ namespace Dystopia
 		mCurrGizTool = eGizTool::eSCALE;
 	}
 
-	void SceneView::DrawGizmoMul(const AutoArray<GameObject*>& _arr)
+	void SceneView::DrawGizmoMul(const AutoArray<uint64_t>& _arrIDs)
 	{
+		bool objIsActive;
+		auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 		Math::Pt3D avgPos{ 0, 0, 0, 1.f };
-		Math::Point3D pos{};
-		const auto size = static_cast<unsigned int>(_arr.size());
-		for (auto& obj : _arr)
+		unsigned int size = static_cast<unsigned int>(_arrIDs.size());
+		for (const auto& id : _arrIDs)
 		{
-			obj->SetActive(true);
-			pos = obj->GetComponent<Transform>()->GetGlobalPosition();
+			auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+			objIsActive = obj->IsActive();
+			obj->SetActive(objIsActive);
+
+			const auto pos = obj->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
 			avgPos.x = avgPos.x + pos.x;
 			avgPos.y = avgPos.y + pos.y;
 		}
@@ -478,7 +497,7 @@ namespace Dystopia
 		float changeX = 0;
 		float changeY = 0;
 
-		const auto scale = mpSceneCamera->GetOwner()->GetComponent<Transform>()->GetGlobalScale();
+		const auto scale = mpSceneCamera->GetOwner()->GetComponent<Dystopia::Transform>()->GetGlobalScale();
 
 		switch (mCurrGizTool)
 		{
@@ -486,79 +505,124 @@ namespace Dystopia
 			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 0.5f, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					const auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
-					obj->GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX*scale.x, cpos.y, cpos.z, cpos.w });
-					obj->SetActive(false);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					obj->GetComponent<Dystopia::Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX * scale.x, cpos.y, cpos.z, cpos.w });
 				}
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
-				mClearSelection = false;
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					obj->SetActive(false);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					objIsActive = obj->IsActive();
+					if (objIsActive)
+					{
+						obj->SetActive(false);
+					}
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
+					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetPosition, cpos);
 				}
+				mClearSelection = false;
 				break;
 			case EGUI::eEND_DRAG:
-				mClearSelection = false;
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					obj->SetActive(true);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					objIsActive = obj->IsActive();
+					if (!objIsActive)
+					{
+						obj->SetActive(true);
+					}
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
+					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetPosition, cpos);
 				}
+				cmd->ExecuteMultiRec();
+				mClearSelection = false;
 				break;
 			}
 			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 0.5f, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					const auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
-					obj->GetComponent<Transform>()->SetPosition(Math::Pt3D{ cpos.x, cpos.y + changeY * scale.y, cpos.z, cpos.w });
-					obj->SetActive(false);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
+					obj->GetComponent<Dystopia::Transform>()->SetPosition(Math::Pt3D{ cpos.x, cpos.y + changeY * scale.y, cpos.z, cpos.w });
 				}
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
-				mClearSelection = false;
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					obj->SetActive(false);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					objIsActive = obj->IsActive();
+					if (objIsActive)
+					{
+						obj->SetActive(false);
+					}
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
+					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetPosition, cpos);
 				}
+				mClearSelection = false;
 				break;
 			case EGUI::eEND_DRAG:
-				mClearSelection = false;
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					obj->SetActive(true);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					objIsActive = obj->IsActive();
+					if (!objIsActive)
+					{
+						obj->SetActive(true);
+					}
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
+					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetPosition, cpos);
 				}
+				cmd->ExecuteMultiRec();
+				mClearSelection = false;
 				break;
 			}
 			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 0.5f, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					const auto cpos = obj->GetComponent<Transform>()->GetGlobalPosition();
-					obj->GetComponent<Transform>()->SetPosition(Math::Pt3D{ cpos.x + changeX * scale.x, cpos.y + changeY * scale.y, cpos.z, cpos.w });
-					obj->SetActive(false);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
+					obj->GetComponent<Dystopia::Transform>()->SetPosition(Math::Pt3D{ cpos.x + changeX * scale.x, cpos.y + changeY * scale.y, cpos.z, cpos.w });
 				}
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
-				mClearSelection = false;
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					obj->SetActive(false);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					objIsActive = obj->IsActive();
+					if (objIsActive)
+					{
+						obj->SetActive(false);
+					}
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
+					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetPosition, cpos);
 				}
+				mClearSelection = false;
 				break;
 			case EGUI::eEND_DRAG:
-				mClearSelection = false;
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					obj->SetActive(true);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					objIsActive = obj->IsActive();
+					if (!objIsActive)
+					{
+						obj->SetActive(true);
+					}
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
+					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetPosition, cpos);
 				}
+				cmd->ExecuteMultiRec();
+				mClearSelection = false;
 				break;
 			}
 			break;
@@ -567,99 +631,150 @@ namespace Dystopia
 			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 0.5f, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					const auto cScale = obj->GetComponent<Transform>()->GetScale();
-					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX*scale.x, cScale.y, cScale.z, cScale.w });
-					obj->SetActive(false);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
+					obj->GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y, cScale.z, cScale.w });
 				}
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
-				mClearSelection = false;
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					obj->SetActive(false);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					objIsActive = obj->IsActive();
+					if (objIsActive)
+					{
+						obj->SetActive(false);
+					}
+					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
+					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetScale, cScale);
 				}
+				mClearSelection = false;
 				break;
 			case EGUI::eEND_DRAG:
-				mClearSelection = false;
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					obj->SetActive(true);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					objIsActive = obj->IsActive();
+					if (!objIsActive)
+					{
+						obj->SetActive(true);
+					}
+					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
+
+					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetScale, cScale);
 				}
+				cmd->ExecuteMultiRec();
+				mClearSelection = false;
 				break;
 			}
 			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.5f, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					const auto cScale = obj->GetComponent<Transform>()->GetScale();
-					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY*scale.y, cScale.z, cScale.w });
-					obj->SetActive(false);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
+					obj->GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY, cScale.z, cScale.w });
 				}
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
-				mClearSelection = false;
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					obj->SetActive(false);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					objIsActive = obj->IsActive();
+					if (objIsActive)
+					{
+						obj->SetActive(false);
+					}
+					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
+					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetScale, cScale);
 				}
+				mClearSelection = false;
 				break;
 			case EGUI::eEND_DRAG:
-				mClearSelection = false;
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					obj->SetActive(true);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					objIsActive = obj->IsActive();
+					if (!objIsActive)
+					{
+						obj->SetActive(true);
+					}
+					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
+					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetScale, cScale);
 				}
+				cmd->ExecuteMultiRec();
+				mClearSelection = false;
 				break;
 			}
 			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 0.5f, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					const auto cScale = obj->GetComponent<Transform>()->GetScale();
-					obj->GetComponent<Transform>()->SetScale(Math::Vec4{ cScale.x + changeX * scale.x, cScale.y + changeX * scale.y, cScale.z, cScale.w });
-					obj->SetActive(false);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
+					obj->GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + changeX, cScale.z, cScale.w });
 				}
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
-				mClearSelection = false;
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					obj->SetActive(false);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					objIsActive = obj->IsActive();
+					if (objIsActive)
+					{
+						obj->SetActive(false);
+					}
+					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
+					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetScale, cScale);
 				}
+				mClearSelection = false;
 				break;
 			case EGUI::eEND_DRAG:
-				mClearSelection = false;
-				for (auto& obj : _arr)
+				for (const auto& id : _arrIDs)
 				{
-					obj->SetActive(true);
+					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
+					objIsActive = obj->IsActive();
+					if (!objIsActive)
+					{
+						obj->SetActive(true);
+					}
+					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
+					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetScale, cScale);
 				}
+				cmd->ExecuteMultiRec();
+				mClearSelection = false;
 				break;
 			}
 			break;
 		}
-	
 	}
 
-	void SceneView::DrawGizmoSingle(GameObject& obj)
+	void SceneView::DrawGizmoSingle(Dystopia::GameObject& obj)
 	{
-		obj.SetActive(true);
-		const Math::Pt3D curPos = obj.GetComponent<Transform>()->GetGlobalPosition();
-		//const Math::Pt3D curPosLocal = obj.GetComponent<Transform>()->GetPosition();
-		//const Math::Vec4 cScale = obj.GetComponent<Transform>()->GetGlobalScale();
-		const Math::Vec4 cScaleLocal = obj.GetComponent<Transform>()->GetScale();
-		const Math::Vec2 screenPos = GetWorldToScreen(curPos);
+		auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
+
+		Math::Pt3D curPos = obj.GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+		Math::Vec4 cScale = obj.GetComponent<Dystopia::Transform>()->GetGlobalScale();
+		Math::Vec2 screenPos = GetWorldToScreen(curPos);
+
 		float changeX = 0;
 		float changeY = 0;
 		static float ratio = 0;
 
-		const auto scale = mpSceneCamera->GetOwner()->GetComponent<Transform>()->GetGlobalScale();
+		const auto scale = mpSceneCamera->GetOwner()->GetComponent<Dystopia::Transform>()->GetGlobalScale();
+
+		auto objIsActive = obj.IsActive();
+		if (!objIsActive)
+		{
+			obj.SetActive(true);
+		}
 
 		switch (mCurrGizTool)
 		{
@@ -667,49 +782,76 @@ namespace Dystopia
 			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 0.5F, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ curPos.x + changeX * scale.x, curPos.y, curPos.z, curPos.w });
+				obj.GetComponent<Dystopia::Transform>()->SetGlobalPosition(Math::Pt3D{ curPos.x + changeX * scale.x, curPos.y, curPos.z, curPos.w });
 				mClearSelection = false;
-				obj.SetActive(false);
 				break;
 			case EGUI::eSTART_DRAG:
+				cmd->StartRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetPosition, obj.GetComponent<Dystopia::Transform>()->GetPosition());
 				mClearSelection = false;
-				obj.SetActive(false);
+				objIsActive = obj.IsActive();
+				if (objIsActive)
+				{
+					obj.SetActive(false);
+				}
 				break;
 			case EGUI::eEND_DRAG:
+				cmd->EndRec<Dystopia::Transform, const Math::Pt3D&>(obj.GetID(), &Dystopia::Transform::SetPosition, obj.GetComponent<Dystopia::Transform>()->GetPosition());
 				mClearSelection = false;
-				obj.SetActive(true);
+				objIsActive = obj.IsActive();
+				if (!objIsActive)
+				{
+					obj.SetActive(true);
+				}
 				break;
 			}
 			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 0.5F, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ curPos.x, curPos.y + changeY * scale.y, curPos.z, curPos.w });
+				obj.GetComponent<Dystopia::Transform>()->SetGlobalPosition(Math::Pt3D{ curPos.x, curPos.y + changeY * scale.y, curPos.z, curPos.w });
 				mClearSelection = false;
-				obj.SetActive(false);
 				break;
 			case EGUI::eSTART_DRAG:
+				cmd->StartRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetPosition, obj.GetComponent<Dystopia::Transform>()->GetPosition());
 				mClearSelection = false;
-				obj.SetActive(false);
+				objIsActive = obj.IsActive();
+				if (objIsActive)
+				{
+					obj.SetActive(false);
+				}
 				break;
 			case EGUI::eEND_DRAG:
+				cmd->EndRec<Dystopia::Transform, const Math::Pt3D&>(obj.GetID(), &Dystopia::Transform::SetPosition, obj.GetComponent<Dystopia::Transform>()->GetPosition());
 				mClearSelection = false;
-				obj.SetActive(true);
+				objIsActive = obj.IsActive();
+				if (!objIsActive)
+				{
+					obj.SetActive(true);
+				}
 				break;
 			}
 			switch (EGUI::Gizmo2D::Box("##BothArrow", changeX, changeY, screenPos, 0.5, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetGlobalPosition(Math::Pt3D{ curPos.x + changeX * scale.x, curPos.y + changeY * scale.y, curPos.z, curPos.w });
+				obj.GetComponent<Dystopia::Transform>()->SetGlobalPosition(Math::Pt3D{ curPos.x + changeX * scale.x, curPos.y + changeY * scale.y, curPos.z, curPos.w });
 				mClearSelection = false;
-				obj.SetActive(false);
 				break;
 			case EGUI::eSTART_DRAG:
+				cmd->StartRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetPosition, obj.GetComponent<Dystopia::Transform>()->GetPosition());
 				mClearSelection = false;
-				obj.SetActive(false);
+				objIsActive = obj.IsActive();
+				if (objIsActive)
+				{
+					obj.SetActive(false);
+				}
 				break;
 			case EGUI::eEND_DRAG:
+				cmd->EndRec<Dystopia::Transform, const Math::Pt3D&>(obj.GetID(), &Dystopia::Transform::SetPosition, obj.GetComponent<Dystopia::Transform>()->GetPosition());
 				mClearSelection = false;
-				obj.SetActive(true);
+				objIsActive = obj.IsActive();
+				if (!objIsActive)
+				{
+					obj.SetActive(true);
+				}
 				break;
 			}
 			break;
@@ -718,57 +860,80 @@ namespace Dystopia
 			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 0.5, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScaleLocal.x + changeX * scale.x, cScaleLocal.y, cScaleLocal.z, cScaleLocal.w });
+				obj.GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ scale.x + changeX * scale.x, scale.y, scale.z, scale.w });
 				mClearSelection = false;
-				obj.SetActive(false);
 				break;
 			case EGUI::eSTART_DRAG:
+				cmd->StartRec<Dystopia::Transform, const Math::Vec4&>(&Dystopia::Transform::SetScale, obj.GetComponent<Dystopia::Transform>()->GetScale());
 				mClearSelection = false;
-				obj.SetActive(false);
+				objIsActive = obj.IsActive();
+				if (objIsActive)
+				{
+					obj.SetActive(false);
+				}
 				break;
 			case EGUI::eEND_DRAG:
+				cmd->EndRec<Dystopia::Transform, const Math::Vec4&>(obj.GetID(), &Dystopia::Transform::SetScale, obj.GetComponent<Dystopia::Transform>()->GetScale());
 				mClearSelection = false;
-				obj.SetActive(true);
+				objIsActive = obj.IsActive();
+				if (!objIsActive)
+				{
+					obj.SetActive(true);
+				}
 				break;
 			}
 			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.5, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScaleLocal.x, cScaleLocal.y + changeY * scale.y, cScaleLocal.z, cScaleLocal.w });
+				obj.GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ scale.x, scale.y + changeY * scale.y, scale.z, scale.w });
 				mClearSelection = false;
-				obj.SetActive(false);
 				break;
 			case EGUI::eSTART_DRAG:
+				cmd->StartRec<Dystopia::Transform, const Math::Vec4&>(&Dystopia::Transform::SetScale, obj.GetComponent<Dystopia::Transform>()->GetScale());
 				mClearSelection = false;
-				obj.SetActive(false);
+				objIsActive = obj.IsActive();
+				if (objIsActive)
+				{
+					obj.SetActive(false);
+				}
 				break;
 			case EGUI::eEND_DRAG:
+				cmd->EndRec<Dystopia::Transform, const Math::Vec4&>(obj.GetID(), &Dystopia::Transform::SetScale, obj.GetComponent<Dystopia::Transform>()->GetScale());
 				mClearSelection = false;
-				obj.SetActive(true);
+				objIsActive = obj.IsActive();
+				if (!objIsActive)
+				{
+					obj.SetActive(true);
+				}
 				break;
 			}
 			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 0.5, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				changeX += changeY;
-				obj.GetComponent<Transform>()->SetScale(Math::Vec4{ cScaleLocal.x + changeX * scale.x, cScaleLocal.y + ratio * changeX *scale.x, cScaleLocal.z, cScaleLocal.w });
+				obj.GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ scale.x + changeX * scale.x, scale.y + ratio * changeX *scale.x, scale.z, scale.w });
 				mClearSelection = false;
-				obj.SetActive(false);
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
-				ratio = cScaleLocal.y / cScaleLocal.x;
-				obj.SetActive(false);
+				ratio = cScale.y / cScale.x;
+				cmd->StartRec<Dystopia::Transform, const Math::Vec4&>(&Dystopia::Transform::SetScale, obj.GetComponent<Dystopia::Transform>()->GetScale());
+				objIsActive = obj.IsActive();
+				if (objIsActive)
+				{
+					obj.SetActive(false);
+				}
 				break;
 			case EGUI::eEND_DRAG:
+				cmd->EndRec<Dystopia::Transform, const Math::Vec4&>(obj.GetID(), &Dystopia::Transform::SetScale, obj.GetComponent<Dystopia::Transform>()->GetScale());
 				mClearSelection = false;
-				obj.SetActive(true);
+				objIsActive = obj.IsActive();
+				if (!objIsActive)
+				{
+					obj.SetActive(true);
+				}
 				break;
 			}
-			break;
-		case eROTATE: 
-			break;
-		default: 
 			break;
 		}
 	}

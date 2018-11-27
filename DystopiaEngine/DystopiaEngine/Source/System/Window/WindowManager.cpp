@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "IO/TextSerialiser.h"
 #include "DataStructure/HashString.h"
-#include "Editor/Editor.h"
+//#include "Editor/Editor.h"
 
 #include "Globals.h"
 #include "Utility/DebugAssert.h"
@@ -78,14 +78,14 @@ namespace
 				oldsz.first = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetWidth();
 				oldsz.second = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetHeight();
 
-				Dystopia::EngineCore::GetSys<Dystopia::WindowManager>()->GetMainWindow().
+				Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().
 					SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
 				if (oldsz.first)
 				{
-					Dystopia::EngineCore::GetSys<Dystopia::WindowManager>()->GetMainWindow().SetSize(oldsz.first, oldsz.second, false);
+					Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().SetSize(oldsz.first, oldsz.second, false);
 					oldsz.first = 0; oldsz.second = 0;
 				}
 			}
@@ -357,7 +357,7 @@ void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 		pos = name.find_last_of(L'.');
 		if ((name.npos != pos) && (L"dscene" == name.substr(pos + 1)))
 		{
-			Editor::GetInstance()->OpenScene(path, name);
+			//Editor::GetInstance()->OpenScene(path, name);
 		}
 		else
 		{
@@ -371,5 +371,20 @@ void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 
 	DragFinish(handle);
 }
+
+unsigned long Dystopia::WindowManager::GetStyle(void) const
+{
+	return mWindowStyle;
+}
+
+unsigned long Dystopia::WindowManager::GetStyleEx(void) const
+{
+	return mWindowStyleEx;
+}
+
+
+
+
+
 
 

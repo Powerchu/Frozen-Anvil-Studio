@@ -10,41 +10,41 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#if EDITOR
 #ifndef _COLOR_SCHEME_H_
 #define _COLOR_SCHEME_H_
-#if EDITOR
 #include "Math/Vector4.h"
 #include "DataStructure/Array.h"
-#include "Editor/EditorTab.h"
+#include "Editor/EditorPanel.h"
 
 namespace Dystopia
 {
 	class TextSerialiser;
-	class ColorScheme : public EditorTab
+}
+
+namespace Editor
+{
+	class ColorScheme : public EditorPanel//EditorTab
 	{
 	public:
-		static ColorScheme* GetInstance();
-		~ColorScheme();
+		//static ColorScheme* GetInstance();
+		ColorScheme(void);
+		~ColorScheme(void);
 
-		/* Init() is called immediately after the creation of the object */
-		void		Init();
-		/* Update() is called before Window(), so alter most variables (frame based) here to be printed in Window() later */
-		void		Update(const float&);
-		/* Window() is where you do the EGUI/IMGUI functions. GUI variable changes will be recorded here */
-		void		EditorUI();
-		/* Shutdown() is called right before deleting this object */
-		void		Shutdown();
-		/* GetLabel() returns the string to identify this class. EditorTab requires this to create a tab for you using the label */
-		std::string GetLabel() const;
+		void Load(void);
+		bool Init(void);
+		void Update(float);
+		void EditorUI(void);
+		void Shutdown(void);
+		void Message(eEMessage);
+		void SaveSettings(Dystopia::TextSerialiser& _out) const;
+		void LoadSettings(Dystopia::TextSerialiser& _in);
+		HashString GetLabel(void) const;
 
-		void SaveSettings(TextSerialiser& _out) const;
-		void LoadSettings(TextSerialiser& _in);
-
-		void Apply() const;
-		void Remove() const;
+		void Apply(void) const;
+		void Remove(void) const;
 
 	private:
-		ColorScheme();
 		enum eColorData : unsigned int
 		{
 			eCOLOR_DATA_Text = 0,
@@ -90,10 +90,10 @@ namespace Dystopia
 
 		float								mBarSize;
 		float								mAlignment;
-		std::string							mLabel;
+		HashString							mLabel;
 		Array<Math::Vec4, eCOLOR_DATA_Last> mArrColors;
 
-		std::string ToName(eColorData);
+		HashString ToName(eColorData);
 	};
 }
 

@@ -16,19 +16,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Matrix4.h"
 #include "Math/Vector4.h"
 #include "IO/TextSerialiser.h"
-#include "Editor/ConsoleLog.h"
 #include "System/Driver/Driver.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
+#include "Utility/GUID.h"
 
 #if EDITOR
 #include "Editor/EGUI.h"
+#include "Editor/ConsoleLog.h"
+#include "Editor/EditorCommands.h"
+#include "Editor/EditorMain.h"
+#include "Editor/CommandTypes.h"
 // #include "System/Logger/LoggerSystem.h"
 #endif 
 
 Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
 	: mRotation{ }, mScale{ 1.f, 1.f, 1.f }, mPosition{ .0f, .0f, .0f, 1.f }, 
-	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, mnParentID{ 0 }, 
+	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, mnParentID{ GUIDGenerator::INVALID },
 	Component { _pOwner }
 {
 	
@@ -43,10 +47,11 @@ Dystopia::Transform::Transform(const Transform& _oOther) :
 
 void Dystopia::Transform::Awake(void) 
 {
-	if (mnParentID)
+	if (mnParentID != GUIDGenerator::INVALID && mnParentID)
 	{
 		GameObject *p = EngineCore::GetInstance()->GetSystem<SceneSystem>()->FindGameObject(mnParentID);
-		SetParent(p->GetComponent<Transform>());
+		if (p)
+			SetParent(p->GetComponent<Transform>());
 	}
 }
 
@@ -54,22 +59,12 @@ void Dystopia::Transform::Init(void)
 {
 }
 
-
-AutoArray<Dystopia::Transform*>& Dystopia::Transform::GetAllChild(void)
-{
-	return mChildren;
-}
-
-Dystopia::Transform* Dystopia::Transform::GetParent(void)
-{
-	return mpParent;
-}
-
 void Dystopia::Transform::SetParent(Transform* _pParent)
 {
 	if (mpParent)
 		RemoveParent();
-
+	if (IsDescendant(_pParent))
+		return;
 	mpParent = _pParent;
     if (mpParent)
     {
@@ -107,7 +102,7 @@ void Dystopia::Transform::RemoveParent(void)
 
 		//OnParentRemove(parent);
 		parent->RemoveChild(this);
-		mnParentID = 0;
+		mnParentID = GUIDGenerator::INVALID;
 	}
 }
 
@@ -183,7 +178,12 @@ void Dystopia::Transform::SetGlobalPosition(const float _x, const float _y, cons
 
 void Dystopia::Transform::SetRotation(const Math::Angle _x, const Math::Angle _y, const Math::Angle _z)
 {
-	mRotation = Math::Quaternion::FromEuler(_x, _y, _z);
+	mRotation = mRotation.FromEuler(_x, _y, _z);
+}
+
+void Dystopia::Transform::SetRotation(const Math::Quaternion& _q)
+{
+	mRotation = _q;
 }
 
 Math::Quaternion Dystopia::Transform::GetGlobalRotation(void) const
@@ -249,6 +249,21 @@ Math::Mat4 Dystopia::Transform::GetTransformMatrix(void)
 	return GetLocalTransformMatrix();
 }
 	
+AutoArray<Dystopia::Transform*>& Dystopia::Transform::GetAllChild(void)
+{
+	return mChildren;
+}
+
+const AutoArray<Dystopia::Transform*>& Dystopia::Transform::GetAllChild(void) const
+{
+	return mChildren;
+}
+
+Dystopia::Transform* Dystopia::Transform::GetParent(void)
+{
+	return mpParent;
+}
+
 Dystopia::Transform* Dystopia::Transform::Duplicate(void) const
 {
 	return nullptr;
@@ -294,7 +309,10 @@ void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 void Dystopia::Transform::EditorUI(void) noexcept
 {
 #if EDITOR
+	EGUI::PushLeftAlign(70);
 	auto arrResult = EGUI::Display::VectorFields("Position", &mPosition, 0.01f, -FLT_MAX, FLT_MAX);
+
+	auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 	for (auto &e : arrResult)
 	{
 		switch (e)
@@ -303,23 +321,25 @@ void Dystopia::Transform::EditorUI(void) noexcept
 			mbChanged = true;
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Transform>(GetOwnerID(), &Transform::mPosition, &Transform::mbChanged);
+			cmd->StartRec<Transform, const Math::Pt3D&>(&Transform::SetPosition, mPosition);
+			//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->StartRec(&Transform::mPosition, this);
 			break;
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
+			cmd->EndRec<Transform, const Math::Pt3D&>(GetOwnerID(), &Transform::SetPosition, mPosition);
+			//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->EndRec(&Transform::mPosition, this, &Transform::mbChanged);
 			break;
 		}
 	}
 
-	arrResult = EGUI::Display::VectorFields("Scale   ", &mScale, 0.01f, -FLT_MAX, FLT_MAX);
+	arrResult = EGUI::Display::VectorFields("Scale", &mScale, 0.01f, -FLT_MAX, FLT_MAX);
 	for (auto &e : arrResult)
 	{
 		switch (e)
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Transform>(GetOwnerID(), &Transform::mScale, &Transform::mbChanged);
+			cmd->StartRec<Transform, const Math::Vec4&>(&Transform::SetScale, mScale);
 			break;
 		case EGUI::eDragStatus::eDRAGGING:
 			mbChanged = true;
@@ -327,7 +347,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
-			EGUI::GetCommandHND()->EndRecording();
+			cmd->EndRec<Transform, const Math::Vec4&>(GetOwnerID(), &Transform::SetScale, mScale);
 			break;
 		}
 	}
@@ -339,7 +359,8 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		switch (e)
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Transform>(GetOwnerID(), &Transform::mRotation, &Transform::mbChanged);
+			cmd->StartRec<Transform, const Math::Quaternion&>(&Transform::SetRotation, mRotation);
+			//EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &Transform::mRotation, &Transform::mbChanged);
 			break;
 		case EGUI::eDragStatus::eDRAGGING:
 			mbChanged = true;
@@ -352,11 +373,12 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
 		case EGUI::eDragStatus::eEND_DRAG:
-			EGUI::GetCommandHND()->EndRecording();
+			cmd->EndRec<Transform, const Math::Quaternion&>(GetOwnerID(), &Transform::SetRotation, mRotation);
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		}
 	}
-
+	EGUI::PopLeftAlign();
 #endif 
 }
 
@@ -367,6 +389,29 @@ Dystopia::Transform& Dystopia::Transform::operator=(const Dystopia::Transform& _
 	mScale		= _rhs.mScale;
 	mPosition	= _rhs.mPosition;
 	mRotation	= _rhs.mRotation;
+	mnParentID	= _rhs.mnParentID;
 	return *this;
 }
 
+uint64_t Dystopia::Transform::GetParentID(void) const
+{
+	return mnParentID;
+}
+
+void Dystopia::Transform::SetParentID(uint64_t _id)
+{
+	mnParentID = _id;
+}
+
+bool Dystopia::Transform::IsDescendant(Transform* _toBeParent)
+{
+	for (auto& child : mChildren)
+	{
+		if (child == _toBeParent)
+			return true;
+
+		if (child->IsDescendant(_toBeParent))
+			return true;
+	}
+	return false;
+}

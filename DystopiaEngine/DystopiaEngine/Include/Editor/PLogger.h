@@ -16,17 +16,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _P_LOGGER_H_
 #include "Editor/PLogInfo.h"
 
-namespace Dystopia
+namespace Editor//Dystopia
 {
 	namespace Performance
 	{
 
 		// use LogDataS for sub graphs
-		void LogDataS(const std::string& _category, const std::string& _graphLabel, float _val);
+		void LogDataS(const HashString& _category, const HashString& _graphLabel, float _val);
 
 		// use LogDataG for a general graph, the _catMainGraph is also the category. Meaning calling LogDataS with a _category same
 		// as this _catMainGraph, will result in them being a sub graph of this
-		void LogDataG(const std::string& _catMainGraph, float _val);
+		void LogDataG(const HashString& _catMainGraph, float _val);
 
 		void LogTaskMgr(const PLogTaskManager&);
 	}

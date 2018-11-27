@@ -16,10 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _PLOG_INFO_H_
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/Array.h"
+#include "DataStructure/HashString.h"
 
-#include <string>
-
-namespace Dystopia
+namespace Editor// Dystopia
 {
 	struct PLogTaskManager
 	{
@@ -39,8 +38,8 @@ namespace Dystopia
 	struct PLogData
 	{
 		static constexpr int maxLogs = 60;
-		PLogData() {}
-		PLogData(const std::string&, bool);
+		PLogData(void) {}
+		PLogData(const HashString&, bool);
 		PLogData(const PLogData&);
 		PLogData(PLogData&&);
 		PLogData& operator=(const PLogData&);
@@ -49,7 +48,7 @@ namespace Dystopia
 		void					UpdateLog(float _val);
 
 		Array<float, maxLogs>	mArrValues;
-		std::string				mLabel;
+		HashString				mLabel;
 		int						mCurrentIndex;
 		bool					mIsBigGraph;
 		int						mMax;
@@ -57,23 +56,23 @@ namespace Dystopia
 
 	struct PLogItem
 	{
-		PLogItem() {}
-		PLogItem(const std::string&);
+		PLogItem(void) {}
+		PLogItem(const HashString&);
 		PLogItem(const PLogItem&);
 		PLogItem(PLogItem&&);
 		PLogItem& operator=(const PLogItem&);
 		PLogItem& operator=(PLogItem&&);
-		~PLogItem();
+		~PLogItem(void);
 
 		void					UpdateG(float _val, bool);
-		void					UpdateLog(const std::string&, float _val, bool);
+		void					UpdateLog(const HashString&, float _val, bool);
 		void					InsertLog(const PLogData&);
-		void					SortLogs();
+		void					SortLogs(void);
 
 		bool					mShowGeneric;
 		PLogData				mGenericOverview;
 		AutoArray<PLogData>		mData;
-		std::string				mLabel;
+		HashString				mLabel;
 	};
 }
 

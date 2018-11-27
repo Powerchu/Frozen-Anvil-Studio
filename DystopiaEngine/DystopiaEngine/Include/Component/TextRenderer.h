@@ -77,7 +77,9 @@ namespace Dystopia
 		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
 
+#if EDITOR
 		void EditorUI(void) noexcept override;
+#endif
 
 	private:
 

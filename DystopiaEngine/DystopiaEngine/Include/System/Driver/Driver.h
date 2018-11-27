@@ -46,7 +46,8 @@ namespace Dystopia
 			Ut::Indexer<eSYSTEMS::EVENT_SYSTEM    , class EventSystem    >,
 			Ut::Indexer<eSYSTEMS::COLLISION_SYSTEM, class CollisionSystem>,
 			Ut::Indexer<eSYSTEMS::PHYSICS_SYSTEM  , class PhysicsSystem  >,
-			Ut::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >
+			Ut::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >,
+			Ut::Indexer<eSYSTEMS::AI_SYSTEM		  , class AISystem		 >
 		>>;
 
 		using SubSys = typename Ut::MetaAutoIndexer <
@@ -54,15 +55,14 @@ namespace Dystopia
 			class FileSystem,
 			class FontSystem,
 			class LoggerSystem,
-			class TextureSystem
+			class TextureSystem,
+			class TagSystem,
+			class Factory
 		>::result;
 
 		static EngineCore* GetInstance(void) noexcept;
 
 		~EngineCore(void) = default;
-
-		template <class T>
-		T* const Get(void) const;
 
 		template <class T>
 		T* const GetSystem(void) const;
@@ -74,7 +74,7 @@ namespace Dystopia
 		T* const GetSubSystem(void) const;
 
 		template <class T>
-		static inline T* const GetSys(void);
+		static inline T* const Get(void);
 
 		void BroadcastMessage(const eSysMessage&);
 
@@ -116,22 +116,16 @@ namespace Dystopia
 
 
 template <class T>
-inline T* const Dystopia::EngineCore::Get(void) const
+inline T* const Dystopia::EngineCore::Get(void)
 {
 	if constexpr (Ut::MetaFind<T, AllSys>::value)
 	{
-		return GetSystem<T>();
+		return GetInstance()->GetSystem<T>();
 	}
 	else
 	{
-		return GetSubSystem<T>();
+		return GetInstance()->GetSubSystem<T>();
 	}
-}
-
-template <class T>
-inline T* const Dystopia::EngineCore::GetSys(void)
-{
-	return GetInstance()->Get<T>();
 }
 
 template <class T>

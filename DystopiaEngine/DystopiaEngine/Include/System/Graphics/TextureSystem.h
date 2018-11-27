@@ -94,7 +94,7 @@ Ty* Dystopia::TextureSystem::GetTexture(std::string const& _strName)
 template<typename Ty>
 Ty* Dystopia::TextureSystem::LoadTexture(std::string const& _strPath)
 {
-	auto pFileSys = EngineCore::GetInstance()->Get<FileSystem>();
+	auto pFileSys = EngineCore::Get<FileSystem>();
 	auto it = Ut::Find(mTextures.begin(), mTextures.end(), [&](const Texture& _t) {
 		return pFileSys->IsSameFile(_strPath, _t.GetPath()) || (_strPath == _t.GetPath());
 	});
@@ -114,6 +114,7 @@ Ty* Dystopia::TextureSystem::LoadTexture(std::string const& _strPath)
 		DefaultAllocator<void>::Free(loaded->mpImageData);
 		loaded->mpImageData = nullptr;
 		mImageData.emplace(HashString{ _strPath.c_str() }, Ut::Move(*loaded));
+		DefaultAllocator<Image>::DestructFree(loaded);
 		return ret;
 	}
 

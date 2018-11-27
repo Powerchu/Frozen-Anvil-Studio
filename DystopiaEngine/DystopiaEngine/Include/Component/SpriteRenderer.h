@@ -20,9 +20,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Component.h"
 #include "Component/ComponentList.h"
 #include "DataStructure/AutoArray.h"   // AutoArray
+#include "DataStructure/HashString.h"
 #include "Utility/MetaAlgorithms.h"	   // MetaFind
-#include "Math/Vector2.h"
 
+#include "Math/Vector2.h"
 #include <string>
 
 
@@ -57,8 +58,8 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
-		void Awake(void) override;
-		void Init(void) override;
+		void Awake(void);
+		void Init(void);
 
 		void Draw(void) const noexcept;
 
@@ -74,38 +75,47 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 
-		bool AnimationFinished(void) const;
+		void SetTexture(Texture* _pTexture) noexcept;
+
+
+		HashString GetCurrentAnimation(void) const;
+		unsigned GetCurrentIndex(void) const;
+		bool IsPlaying(void) const;
+
+		void Play(void);
+		void Stop(void);
 		void SetSpeed(float);
-		void SetPlay(bool);
 
 	private:
-
-		TextureAtlas* mpAtlas;
-
 		struct SpriteSheet
 		{
-			unsigned mnID; //section id in the atlas
-			Math::Vec2 mUVCoord;
-			std::string mstrName;
-			int mnCol, mnRow, mnWidth, mnHeight, mnCutoff, mnStartAt; 
-			bool mbLoop, mbFinished;
+			HashString mstrName;
+			unsigned mnID;
+			int mnCol, mnRow, mnStart, mnEnd;
+			bool mbLoop;
 		};
 
+		TextureAtlas* mpAtlas;
 		AutoArray<SpriteSheet> mAnimations;
 		int mnID, mnCol, mnRow;
 		float mfFrameTime, mfAccTime;
+		Math::Vec2 mNextSectionPos;
+		bool mbPlayOnStart;
 
-		bool mbPlayAnim;
+		bool mbPlay;	// dont need serialise
 
-		void SpriteSheetUI(SpriteSheet&);
-		void GetAtlas(void);
-		void RemoveAtlas(void);
-		void LoadAnimIntoAtlas(void);
-		void AddDefaultToAtlas(void);
+		void TextureFields(void);
+		void AnimFields(void);
+		void AddAnimations(void);
+		bool SpriteSheetFields(const size_t&);
+
+		int GetStartCol(void) const;
+		int GetStartRow(void) const;
 	};
 }
 
-
 #pragma warning(pop)
 #endif
+
+
 

@@ -83,7 +83,7 @@ Image* ImageParser::LoadDDS(const std::string& _path, Image* _pImage)
 	if (headerInfo.mMagic != ' SDD')
 	{
 		DEBUG_BREAK(true, "ImageLoader Error: File %s is not a dds image!\n", _path.c_str());
-		Dystopia::DefaultAllocator<Image>::Free(_pImage);
+		Dystopia::DefaultAllocator<Image>::DestructFree(_pImage);
 
 		return nullptr;
 	}
@@ -133,7 +133,7 @@ Image* ImageParser::LoadDDS(const std::string& _path, Image* _pImage)
 			file >> extra;
 		default:
 			DEBUG_LOG(true, "ImageLoader Warning: File %s is an unknown DDS format!\n", _path.c_str());
-			Dystopia::DefaultAllocator<Image>::Free(_pImage);
+			Dystopia::DefaultAllocator<Image>::DestructFree(_pImage);
 			return nullptr;
 			break;
 		}
@@ -166,7 +166,7 @@ Image* ImageParser::LoadDDS(const std::string& _path, Image* _pImage)
 		else
 		{
 			DEBUG_LOG(true, "ImageLoader Warning: File %s is an unknown DDS format!\n", _path.c_str());
-			Dystopia::DefaultAllocator<Image>::Free(_pImage);
+			Dystopia::DefaultAllocator<Image>::DestructFree(_pImage);
 			return nullptr;
 		}
 	}

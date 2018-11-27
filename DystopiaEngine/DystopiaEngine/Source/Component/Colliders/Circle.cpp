@@ -300,6 +300,7 @@ namespace Dystopia
 						newEvent.mfStaticFrictionCof  = DetermineStaticFriction(*other_body);
 					}
 					mbColliding = isInside  = true;
+					break;
 				}
 			}
 			if (isInside)
@@ -312,25 +313,28 @@ namespace Dystopia
 			}
 			return false;
 		}
-
-		/*Circle completely inside*/
-		newEvent.mfPeneDepth = FLT_MAX;
-
-		for (auto & elem : ConvexEdges)
+		else
 		{
-			Vec3D v = elem.mVec3;
-			Vec3D w = GetGlobalPosition() - elem.mPos;
+			/*Circle completely inside*/
+			newEvent.mfPeneDepth = FLT_MAX;
 
-			if (Math::Abs( w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
+			for (auto & elem : ConvexEdges)
 			{
-				//currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
-				newEvent.mEdgeNormal = -elem.mNorm3;
-				newEvent.mfPeneDepth = Math::Abs(w.Dot(elem.mNorm3.Normalise())) +  GetRadius();
-				
+				Vec3D v = elem.mVec3;
+				Vec3D w = GetGlobalPosition() - elem.mPos;
+
+				if (Math::Abs(w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
+				{
+					//currPene = (GetGlobalPosition() - PointOfImpact).Magnitude();
+					newEvent.mEdgeNormal = -elem.mNorm3;
+					newEvent.mfPeneDepth = Math::Abs(w.Dot(elem.mNorm3.Normalise())) + GetRadius();
+
+				}
 			}
+
+			marr_CurrentContactSets.push_back(newEvent);
 		}
-		
-		marr_CurrentContactSets.push_back(newEvent);
+
 		mbColliding = isInside;
 		return isInside;
 	}
@@ -350,7 +354,7 @@ namespace Dystopia
 			switch (e)
 			{
 			case EGUI::eDragStatus::eSTART_DRAG:
-				EGUI::GetCommandHND()->StartRecording<Collider>(GetOwnerID(), &Circle::mv3Offset);
+				//EGUI::GetCommandHND()->StartRecording<Collider>(mnOwner, &Circle::mv3Offset);
 				break;
 			case EGUI::eDragStatus::eEND_DRAG:
 			case EGUI::eDragStatus::eENTER:
@@ -358,7 +362,7 @@ namespace Dystopia
 			case EGUI::eDragStatus::eTABBED:
 			case EGUI::eDragStatus::eDEACTIVATED:
 				Init();
-				EGUI::GetCommandHND()->EndRecording();
+				//EGUI::GetCommandHND()->EndRecording();
 				break;
 			case EGUI::eDragStatus::eNO_CHANGE:
 			default:
@@ -374,7 +378,7 @@ namespace Dystopia
 		switch (e)
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
-			EGUI::GetCommandHND()->StartRecording<Circle>(GetOwnerID(), &Circle::m_radius);
+			//EGUI::GetCommandHND()->StartRecording<Circle>(mnOwner, &Circle::m_radius);
 			break;
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
@@ -382,7 +386,7 @@ namespace Dystopia
 		case EGUI::eDragStatus::eTABBED:
 		case EGUI::eDragStatus::eDEACTIVATED:
 			Init();
-			EGUI::GetCommandHND()->EndRecording();
+			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		case EGUI::eDragStatus::eNO_CHANGE:
 		default:
@@ -426,12 +430,12 @@ namespace Dystopia
 
 	void Circle::eIsTriggerCheckBox()
 	{
-		bool tempBool = mbIsTrigger;
+		//bool tempBool = mbIsTrigger;
 
-		if (EGUI::Display::CheckBox("Is Trigger		  ", &tempBool))
+		if (EGUI::Display::CheckBox("Is Trigger		  ", &mbIsTrigger))
 		{
-			mbIsTrigger = tempBool;
-			EGUI::GetCommandHND()->InvokeCommand<Collider>(GetOwnerID(), &Collider::mbIsTrigger, tempBool);
+			//mbIsTrigger = tempBool;
+			//EGUI::GetCommandHND()->InvokeCommand<Collider>(mnOwner, &Collider::mbIsTrigger, tempBool);
 		}
 	}
 

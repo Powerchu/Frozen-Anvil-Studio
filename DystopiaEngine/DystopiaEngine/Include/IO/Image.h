@@ -28,6 +28,10 @@ namespace Dystopia
 		unsigned mnChannels, mnMipMaps;
 		void* mpImageData;
 
+		Image(void) noexcept;
+		Image(const HashString&, bool, bool, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, void*) noexcept;
+		//Image(const Image&);
+		Image(Image&&) noexcept;
 		~Image(void) noexcept;
 
 		void OnEditorUI(void);

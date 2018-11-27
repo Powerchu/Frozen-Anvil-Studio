@@ -28,12 +28,25 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
-    <ClCompile Include="Source\Editor\EditorInput.cpp" />
+    <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
+    <ClCompile Include="Source\Editor\CommandTypes.cpp" />
+    <ClCompile Include="Source\Editor\EditorClipboard.cpp" />
+    <ClCompile Include="Source\Editor\EditorCommands.cpp" />
+    <ClCompile Include="Source\Editor\EditorFactory.cpp" />
+    <ClCompile Include="Source\Editor\EditorGLState.cpp" />
+    <ClCompile Include="Source\Component\AiController.cpp" />
+    <ClCompile Include="Source\Editor\EditorLauncher.cpp" />
+    <ClCompile Include="Source\Editor\EditorMain.cpp" />
     <ClCompile Include="Source\Editor\EditorProc.cpp" />
+    <ClCompile Include="Source\Editor\EditorResource.cpp" />
+    <ClCompile Include="Source\Editor\EditorStates.cpp" />
+    <ClCompile Include="Source\Editor\EditorUI.cpp" />
+    <ClCompile Include="Source\Editor\EInput.cpp" />
     <ClCompile Include="Source\Lib\GraphicsLib.cpp" />
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
     <ClCompile Include="Source\Editor\SpriteEditor.cpp" />
+    <ClCompile Include="Source\System\AI\AISystem.cpp" />
     <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
     <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
     <ClCompile Include="Source\Component\SpriteRenderer.cpp" />
@@ -42,14 +55,9 @@
     <ClCompile Include="Source\Allocator\Allocator.cpp" />
     <ClCompile Include="Source\Allocator\DefaultAlloc.cpp" />
     <ClCompile Include="Source\Component\AudioSource.cpp" />
-    <ClCompile Include="Source\Component\CharacterController.cpp" />
     <ClCompile Include="Source\Component\CollisionEvent.cpp" />
-    <ClCompile Include="Source\Editor\AdminCalls.cpp" />
-    <ClCompile Include="Source\Editor\Clipboard.cpp" />
     <ClCompile Include="Source\Component\Colliders\Circle.cpp" />
     <ClCompile Include="Source\Editor\ColorScheme.cpp" />
-    <ClCompile Include="Source\Editor\CommandList.cpp" />
-    <ClCompile Include="Source\Editor\DefaultFactory.cpp" />
     <ClCompile Include="Source\Editor\Gizmo.cpp" />
     <ClCompile Include="Source\Editor\Payload.cpp" />
     <ClCompile Include="Source\Editor\ProjectSettings.cpp" />
@@ -59,6 +67,7 @@
     <ClCompile Include="Source\IO\PNGParser.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
     <ClCompile Include="Source\System\Events\Events.cpp" />
+    <ClCompile Include="Source\System\Factory\Factory.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
@@ -84,7 +93,6 @@
     <ClCompile Include="Source\Component\Colliders\Convex.cpp" />
     <ClCompile Include="Source\Component\RigidBody.cpp" />
     <ClCompile Include="Source\Editor\ConsoleLog.cpp" />
-    <ClCompile Include="Source\Editor\EditorEvents.cpp" />
     <ClCompile Include="Source\Editor\PerformanceLog.cpp" />
     <ClCompile Include="Source\Editor\ProjectResource.cpp" />
     <ClCompile Include="Source\Editor\SceneView.cpp" />
@@ -96,11 +104,8 @@
     <ClCompile Include="Source\Behaviour\Behaviour.cpp" />
     <ClCompile Include="Source\Component\Component.cpp" />
     <ClCompile Include="Source\Component\Transform.cpp" />
-    <ClCompile Include="Source\Editor\Commands.cpp" />
     <ClCompile Include="Source\Editor\Dock.cpp" />
     <ClCompile Include="Source\Editor\Editor.cpp" />
-    <ClCompile Include="Source\Editor\EditorTab.cpp" />
-    <ClCompile Include="Source\Editor\EGUI.cpp" />
     <ClCompile Include="Source\Editor\EGuiDisplay.cpp" />
     <ClCompile Include="Source\Editor\HierarchyView.cpp" />
     <ClCompile Include="Source\Editor\Inspector.cpp" />
@@ -123,8 +128,8 @@
     <ClCompile Include="Source\System\Profiler\ProfilerAction.cpp" />
     <ClCompile Include="Source\System\Scene\Scene.cpp" />
     <ClCompile Include="Source\System\Scene\SceneSystem.cpp" />
-    <ClCompile Include="Source\System\Sound\Audio.cpp" />
     <ClCompile Include="Source\System\Sound\SoundSystem.cpp" />
+    <ClCompile Include="Source\System\Tag\TagSystem.cpp" />
     <ClCompile Include="Source\System\Time\ScopedTimer.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
@@ -135,26 +140,44 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
+    <ClInclude Include="Include\Editor\BehaviourTreeEditor.h" />
+    <ClInclude Include="Include\Editor\EditorFactory.h" />
+    <ClInclude Include="Include\Editor\EditorLauncher.h" />
+    <ClInclude Include="Include\Editor\EditorResource.h" />
+    <ClInclude Include="Include\Editor\CommandTypes.h" />
+    <ClInclude Include="Include\Editor\EditorClipboard.h" />
+    <ClInclude Include="Include\Editor\EditorCommands.h" />
+    <ClInclude Include="Include\Editor\EditorGLState.h" />
+    <ClInclude Include="Include\Editor\EditorMain.h" />
+    <ClInclude Include="Include\Editor\EditorMessages.h" />
+    <ClInclude Include="Include\Editor\EditorPanel.h" />
+    <ClInclude Include="Include\Editor\EditorStates.h" />
+    <ClInclude Include="Include\Editor\EditorStatesTypes.h" />
+    <ClInclude Include="Include\Editor\EditorSystem.h" />
+    <ClInclude Include="Include\Editor\EditorUI.h" />
+    <ClInclude Include="Include\Editor\EHotkey.h" />
+    <ClInclude Include="Include\Editor\EInput.h" />
+    <ClInclude Include="Include\Component\AiController.h" />
+    <ClInclude Include="Include\Component\NodeList.h" />
+    <ClInclude Include="Include\Factory\Factory.h" />
+    <ClInclude Include="Include\System\AI\AISystem.h" />
+    <ClInclude Include="Include\System\AI\Blackboard.h" />
+    <ClInclude Include="Include\System\AI\Composite.h" />
+    <ClInclude Include="Include\System\AI\Decorator.h" />
+    <ClInclude Include="Include\System\AI\Task.h" />
+    <ClInclude Include="Include\System\AI\NeuralTree.h" />
+    <ClInclude Include="Include\System\AI\TreeBuilder.h" />
     <ClInclude Include="Include\System\Events\Event.h" />
     <ClInclude Include="Include\Behaviour\BehaviourMemberFunc.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourMessage.h" />
-    <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
     <ClInclude Include="Include\DataStructure\ProxyPtr.h" />
     <ClInclude Include="Include\Lib\GraphicsLib.h" />
     <ClInclude Include="Include\Math\Geometery\Box.h" />
     <ClInclude Include="Include\Math\Geometery\CoordinateSystems.h" />
     <ClInclude Include="Include\Math\Geometery\Sphere.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h" />
-    <ClInclude Include="Include\Editor\EditorHotkeys.h" />
-    <ClInclude Include="Include\Editor\EditorInput.h" />
     <ClInclude Include="Include\Editor\EditorProc.h" />
-    <ClInclude Include="Include\Behaviour\AI\Agent.h" />
-    <ClInclude Include="Include\Behaviour\AI\Blackboard.h" />
-    <ClInclude Include="Include\Behaviour\AI\Composite.h" />
-    <ClInclude Include="Include\Behaviour\AI\Decorator.h" />
-    <ClInclude Include="Include\Behaviour\AI\Leaf.h" />
-    <ClInclude Include="Include\Behaviour\AI\NeuralTree.h" />
-    <ClInclude Include="Include\Behaviour\AI\TreeBuilder.h" />
     <ClInclude Include="Include\DataStructure\HashString.h" />
     <ClInclude Include="Include\Editor\SpriteEditor.h" />
     <ClInclude Include="Include\DataStructure\Function.h" />
@@ -168,15 +191,12 @@
     <ClInclude Include="Include\Component\AABB.h" />
     <ClInclude Include="Include\Component\AudioSource.h" />
     <ClInclude Include="Include\Component\BehaviourList.h" />
-    <ClInclude Include="Include\Component\CharacterController.h" />
     <ClInclude Include="Include\Component\Circle.h" />
     <ClInclude Include="Include\Component\ColliderList.h" />
     <ClInclude Include="Include\Component\Convex.h" />
     <ClInclude Include="Include\Component\SpriteRenderer.h" />
     <ClInclude Include="Include\Component\TextRenderer.h" />
     <ClInclude Include="Include\Component\Triangle.h" />
-    <ClInclude Include="Include\Editor\AdminCalls.h" />
-    <ClInclude Include="Include\Editor\Clipboard.h" />
     <ClInclude Include="Include\Editor\ColorScheme.h" />
     <ClInclude Include="Include\Editor\DragStatus.h" />
     <ClInclude Include="Include\Editor\Gizmo.h" />
@@ -196,7 +216,6 @@
     <ClInclude Include="Include\Reflection\PPVariadicSize.h" />
     <ClInclude Include="Include\Reflection\ReflectedData.h" />
     <ClInclude Include="Include\Reflection\Reflection.h" />
-    <ClInclude Include="Include\Editor\SystemSettings.h" />
     <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
     <ClInclude Include="Include\System\Events\Events.h" />
     <ClInclude Include="Include\System\File\FileSystem.h" />
@@ -214,13 +233,10 @@
     <ClInclude Include="Include\Component\RigidBody.h" />
     <ClInclude Include="Include\DataStructure\Tuple.h" />
     <ClInclude Include="Include\DataStructure\Variant.h" />
-    <ClInclude Include="Include\Editor\DefaultFactory.h" />
-    <ClInclude Include="Include\Editor\EditorMetaHelpers.h" />
     <ClInclude Include="Include\Editor\HotLoader.h" />
     <ClInclude Include="Include\Editor\PLogger.h" />
     <ClInclude Include="Include\Editor\PLogInfo.h" />
     <ClInclude Include="Include\Math\MathLib.h" />
-    <ClInclude Include="Include\Editor\EditorEvents.h" />
     <ClInclude Include="Include\Editor\PerformanceLog.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystem.h" />
     <ClInclude Include="Include\System\Base\ComponentDonor.h" />
@@ -235,8 +251,9 @@
     <ClInclude Include="Include\System\Profiler\ProfileInfo.h" />
     <ClInclude Include="Include\System\Profiler\Profiler.h" />
     <ClInclude Include="Include\System\Profiler\ProfilerAction.h" />
-    <ClInclude Include="Include\System\Sound\Audio.h" />
     <ClInclude Include="Include\System\SystemMessage.h" />
+    <ClInclude Include="Include\System\Tag\Tags.h" />
+    <ClInclude Include="Include\System\Tag\TagSystem.h" />
     <ClInclude Include="Include\System\Time\ScopedTimer.h" />
     <ClInclude Include="Include\System\Time\TimeDefs.h" />
     <ClInclude Include="Include\System\Events\EventSystem.h" />
@@ -254,12 +271,8 @@
     <ClInclude Include="Include\DataStructure\Queue.h" />
     <ClInclude Include="Include\DataStructure\SharedPtr.h" />
     <ClInclude Include="Include\DataStructure\Stack.h" />
-    <ClInclude Include="Include\Editor\CommandList.h" />
-    <ClInclude Include="Include\Editor\Commands.h" />
     <ClInclude Include="Include\Editor\ConsoleLog.h" />
     <ClInclude Include="Include\Editor\Dock.h" />
-    <ClInclude Include="Include\Editor\Editor.h" />
-    <ClInclude Include="Include\Editor\EditorTab.h" />
     <ClInclude Include="Include\Editor\EGUI.h" />
     <ClInclude Include="Include\Editor\HierarchyView.h" />
     <ClInclude Include="Include\Editor\Inspector.h" />
@@ -323,6 +336,7 @@
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h" />
     <ClInclude Include="Include\System\Input\XGamePad.h" />
     <ClInclude Include="Include\IO\XMLParser.h" />
+    <ClInclude Include="Include\Editor\RuntimeMeta.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />
@@ -560,7 +574,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalOptions>/DEDITOR=0 /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR=0 /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER /DSAFE_PTRS /DEXPORT</AdditionalOptions>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>

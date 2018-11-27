@@ -42,7 +42,7 @@ public:
 	HashString(void);
 	HashString(const HashString&);
 	HashString(HashString&&) noexcept;
-	HashString(const char * const);
+	HashString(const char *);
 	HashString(const char * const _start, const char* const _end);
 
 	template <unsigned N>
@@ -78,32 +78,33 @@ public:
 	HashString& operator+=(const char);
 	HashString& operator+=(unsigned);
 	HashString& operator+=(const HashString&);
+	HashString& operator+=(unsigned long long);
 	HashString& erase(size_t _pos, size_t _len = -1);
 	HashString& replace(size_t _pos, size_t _len, const HashString&);
 	HashString& replace(size_t _pos, size_t _len, const char * _s);
 
 	/* operations */
-	const char* c_str(void) const;
-	size_t      find(const HashString&, size_t _pos = 0) const;
-	size_t      find(const char* _s, size_t _pos = 0) const;
-	size_t      find(char _c, size_t _pos = 0) const;
-	size_t      rfind(const HashString&, size_t _pos = -1) const;
-	size_t      rfind(const char* _s, size_t _pos = -1) const;
-	size_t      rfind(char _c, size_t _pos = -1) const;
-	bool        compare(const HashString&) const;
-	bool        compare(const char* _s) const;
-	size_t      find_first_of(const HashString&, size_t _pos = 0) const;
-	size_t      find_first_of(const char* _s, size_t _pos = 0) const;
-	size_t      find_last_of(const HashString&, size_t _pos = -1) const;
-	size_t      find_last_of(const char* _s, size_t _pos = -1) const;
-	HashString  substr(size_t _pos, size_t _len = -1) const;
+	const char* const c_str(void) const;
+	size_t		find(const HashString&, size_t _pos = 0) const;
+	size_t		find(const char* _s, size_t _pos = 0) const;
+	size_t		find(char _c, size_t _pos = 0) const;
+	size_t		rfind(const HashString&, size_t _pos = -1) const;
+	size_t		rfind(const char* _s, size_t _pos = -1) const;
+	size_t		rfind(char _c, size_t _pos = -1) const;
+	bool		compare(const HashString&) const;
+	bool		compare(const char* _s) const;
+	size_t		find_first_of(const HashString&, size_t _pos = 0) const;
+	size_t		find_first_of(const char* _s, size_t _pos = 0) const;
+	size_t		find_last_of(const HashString&, size_t _pos = -1) const;
+	size_t		find_last_of(const char* _s, size_t _pos = -1) const;
+	HashString	substr(size_t _pos, size_t _len = -1) const;
 
 	const char* const cbegin(void) const;
-	char*       const begin(void) const;
+	char*		const begin(void);
 	const char* const cend(void) const;
-	char*       const end(void) const;
+	char*		const end(void);
 	const char* const clast(void) const;
-	char*       const last(void);
+	char*		const last(void);
 
 	HashID      id(void) const;
 
@@ -124,6 +125,8 @@ constexpr HashString::HashString(const char(&_s)[N])
 bool operator==(const HashString& _lhs, const HashString& _rhs);
 bool operator==(const HashString& _lhs, const char * _rhs);
 bool operator==(const char * _lhs, const HashString& _rhs);
+bool operator==(HashID _id, const HashString& _rhs);
+bool operator==(const HashString& _lhs, HashID _id);
 bool operator!=(const HashString& _lhs, const HashString& _rhs);
 bool operator<(const HashString& _lhs, const HashString& _rhs);
 bool operator>(const HashString& _lhs, const HashString& _rhs);
@@ -182,7 +185,8 @@ HashString& HashString::operator+=(const char(&_s)[N])
 	return *this;
 }
 
-#endif
+#endif //_HASH_STRING_H_
+
 
 
 

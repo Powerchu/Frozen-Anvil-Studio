@@ -95,6 +95,7 @@ namespace Dystopia
 
 		void EditorUI(void);
 
+		void DrawSplash(void);
 	private:
 
 		Math::Vector4 mvDebugColour;
@@ -114,7 +115,6 @@ namespace Dystopia
 		void StartFrame(void);
 		void EndFrame(void);
 
-		void DrawSplash(void);
 		void DrawScene(Camera&, Math::Matrix4&, Math::Matrix4&);
 		void DrawDebug(Camera&, Math::Matrix4&, Math::Matrix4&);
 

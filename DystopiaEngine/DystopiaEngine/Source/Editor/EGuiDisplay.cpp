@@ -15,16 +15,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <Windows.h>
 #include <consoleapi2.h>
 #include <winuser.h>
-#include "Editor/EGUI.h"
-#include "Editor/Commands.h"
-#include "Editor/CommandList.h"
-#include "DataStructure/Stack.h"
 
-Dystopia::CommandHandler *gContextComdHND = nullptr;
-Stack<float> g_StackLeftAlign{ 100 };
+#include "Editor/EGUI.h"
+#include "Editor/EditorCommands.h"
+#include "Editor/CommandTypes.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorClipboard.h"
+#include "Editor/Payloads.h"
+
+#include "System/Graphics/Texture.h"
+#include "System/Graphics/GraphicsSystem.h"
+
+#include "../../Dependancies/ImGui/imgui_internal.h"
 
 namespace EGUI
 {
+	Stack<float> g_StackLeftAlign{ 100 };
+
 	static bool IsItemActiveLastFrame()
 	{
 		ImGuiContext g = *GImGui;
@@ -32,19 +39,25 @@ namespace EGUI
 		return false;
 	}
 
-	void SetContext(Dystopia::CommandHandler *_pContext)
+	Stack<float>& GetLeftAlignStack(void)
 	{
-		gContextComdHND = _pContext;
+		return g_StackLeftAlign;
 	}
 
-	Dystopia::CommandHandler* GetCommandHND()
+	void SetContext(DysPeekia::CommandHandler*)
 	{
-		return gContextComdHND;
+		//gContextComdHND = _pContext;
+	}
+
+	DysPeekia::CommandHandler* GetCommandHND()
+	{
+		//return gContextComdHND;
+		return nullptr;
 	}
 
 	void RemoveContext()
 	{
-		gContextComdHND = nullptr;
+		//gContextComdHND = nullptr;
 	}
 
 	void ChangeLabelSpacing(float _amount)
@@ -178,10 +191,19 @@ namespace EGUI
 			va_end(args);
 		}
 
-		bool TextField(const std::string& _label, char* _outputbuffer, size_t _size, bool _showLabel, float _width)
+		void LabelWrapped(const char *_formatLabel, ...)
 		{
-			ImGuiInputTextFlags flags = ImGuiInputTextFlags_AutoSelectAll | 
-										ImGuiInputTextFlags_EnterReturnsTrue;
+			va_list args;
+			va_start(args, _formatLabel);
+			ImGui::TextWrappedV(_formatLabel, args);
+			va_end(args);
+		}
+
+		bool TextField(const std::string& _label, char* _outputbuffer, size_t _size, bool _showLabel, float _width, bool _onlyEnterReturnsTrue)
+		{
+			ImGuiInputTextFlags flags = ImGuiInputTextFlags_AutoSelectAll;
+			if (_onlyEnterReturnsTrue)
+				flags |= ImGuiInputTextFlags_EnterReturnsTrue;
 			ImGui::PushItemWidth(_width);
 			if (_showLabel)
 			{
@@ -191,6 +213,26 @@ namespace EGUI
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 			bool b = ImGui::InputText(("###TextField" + _label).c_str(), _outputbuffer, _size, flags);
+			ImGui::PopItemWidth();
+			return b;
+		}
+
+		bool TextField(const HashString& _label, HashString& _out, bool _showLabel, float _width, bool _onlyEnterReturnsTrue)
+		{
+			ImGuiInputTextFlags flags = ImGuiInputTextFlags_AutoSelectAll;
+			if (_onlyEnterReturnsTrue)
+				flags |= ImGuiInputTextFlags_EnterReturnsTrue;
+			ImGui::PushItemWidth(_width);
+			if (_showLabel)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label.c_str());
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+			HashString inviLabel{ "##" };
+			inviLabel += _label;
+			bool b = ImGui::InputText(inviLabel.c_str(), _out.begin(), _out.size(), flags);
 			ImGui::PopItemWidth();
 			return b;
 		}
@@ -233,8 +275,8 @@ namespace EGUI
 		eDragStatus DragFloat(const std::string& _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText, float _width)
 		{
 			static POINT p;
-			//static const int xPos = (GetSystemMetrics(SM_CXSCREEN)) / 2;
-			//static const int yPos = (GetSystemMetrics(SM_CYSCREEN)) / 2;
+			static const int xPos = (GetSystemMetrics(SM_CXSCREEN)) / 2;
+			static const int yPos = (GetSystemMetrics(SM_CYSCREEN)) / 2;
 
 			if (!_hideText)
 			{
@@ -250,9 +292,6 @@ namespace EGUI
 
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
 			{
-				//GetCursorPos(&p);
-				//SetCursorPos(xPos, yPos);
-				//ShowCursor(false);
 				return eSTART_DRAG;
 			}
 
@@ -262,14 +301,11 @@ namespace EGUI
 
 			if (ImGui::IsItemDeactivatedAfterChange())
 			{
-				//SetCursorPos(p.x, p.y);
-				//ShowCursor(true);
 				return (ImGui::IsMouseReleased(0)) ? eEND_DRAG : eENTER;
 			}
 
-			if (ImGui::IsItemDeactivated()) {
-				//SetCursorPos(p.x, p.y);
-				//ShowCursor(true);
+			if (ImGui::IsItemDeactivated()) 
+			{
 				return eDEACTIVATED;
 			}
 			return eNO_CHANGE;
@@ -289,6 +325,31 @@ namespace EGUI
 			changing = ImGui::SliderFloat(("###SlideFloat" + _label).c_str(), _pOutFloat, _min, _max, "%.3f");
 			ImGui::PopItemWidth();
 
+			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
+				return changing ? eINSTANT_CHANGE : eSTART_DRAG;
+			else if (ImGui::IsItemDeactivated())
+				return ImGui::IsMouseReleased(0) ? eEND_DRAG : eDEACTIVATED;
+			else if (ImGui::IsItemActive())
+				return changing ? eDRAGGING : eNO_CHANGE;
+			return eNO_CHANGE;
+		}
+		
+		eDragStatus SliderInt(const HashString& _label, int *_pOutInt, int _min, int _max, bool _hideText, float _width)
+		{
+			if (!_hideText)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label.c_str());
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+			bool changing = false;
+			ImGui::PushItemWidth(_width);
+			HashString inviLabel{ "##" };
+			inviLabel += _label;
+			changing = ImGui::SliderInt(inviLabel.c_str(), _pOutInt, _min, _max);
+			ImGui::PopItemWidth();
+			
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
 				return changing ? eINSTANT_CHANGE : eSTART_DRAG;
 			else if (ImGui::IsItemDeactivated())
@@ -368,12 +429,40 @@ namespace EGUI
 
 			Label("X:"); SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
-			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true);
+			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true, _width);
 			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = x;
 
 			SameLine(); Label("Y:"); SameLine();
-			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true);
+			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true, _width);
 			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
+
+			ImGui::PopItemWidth();
+
+			return Array<eDragStatus, 2>{statX, statY};
+		}
+
+		Array<eDragStatus, 2> VectorFieldsInt(const char *_label, Math::Vector2 *_outputVec, int _dragSpeed, int _min, int _max, float _width)
+		{
+			std::string field1 = "##VecFieldX", field2 = "##VecFieldY";
+			int x, y;
+			x = static_cast<int>(_outputVec->x);
+			y = static_cast<int>(_outputVec->y);
+			field1 += _label;
+			field2 += _label;
+
+			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+
+			Label("X:"); SameLine();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			eDragStatus statX = EGUI::Display::DragInt(field1.c_str(), &x, static_cast<float>(_dragSpeed), _min, _max, true, _width);
+			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = static_cast<float>(x);
+
+			SameLine(); Label("Y:"); SameLine();
+			eDragStatus statY = EGUI::Display::DragInt(field2.c_str(), &y, static_cast<float>(_dragSpeed), _min, _max, true, _width);
+			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = static_cast<float>(y);
 
 			ImGui::PopItemWidth();
 
@@ -387,45 +476,73 @@ namespace EGUI
 
 		bool SelectableTxt(const std::string& _label, bool _highlight)
 		{
-			if (_highlight) ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
+			if (_highlight)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+				ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+			}
 			bool ret = ImGui::Selectable(_label.c_str(), _highlight);
-			if (_highlight) ImGui::PopStyleColor();
+			if (_highlight) ImGui::PopStyleColor(2);
 			return ret;
 		}
 
 		bool SelectableTxt(const std::string& _label, bool* _outputBool)
 		{
-			return (ImGui::Selectable(_label.c_str(), _outputBool));
+			if (*_outputBool)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+				ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+			}
+			bool ret = (ImGui::Selectable(_label.c_str(), _outputBool));
+			if (*_outputBool) ImGui::PopStyleColor(2);
+			return ret;
 		}
 
 		bool SelectableTxtDouble(const std::string& _label, bool _highlight)
 		{
-			return (ImGui::Selectable(_label.c_str(), _highlight, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0);
+			if (_highlight)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+				ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+			}
+			bool ret = (ImGui::Selectable(_label.c_str(), _highlight, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0);
+			if (_highlight) ImGui::PopStyleColor(2);
+
+			return ret;
 		}
 
 		bool SelectableTxtDouble(const std::string& _label, bool* _outputBool)
 		{
-			if ((ImGui::Selectable(_label.c_str(), _outputBool, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0))
-				return true;
-			else
-				*_outputBool = false;
-			return false;
+			if (*_outputBool)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+				ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+			}
+			bool ret = (ImGui::Selectable(_label.c_str(), _outputBool, ImGuiSelectableFlags_AllowDoubleClick)) && ImGui::IsMouseDoubleClicked(0);
+			if (*_outputBool) ImGui::PopStyleColor(2);
+			*_outputBool = ret;
+			return ret;
 		}
 
-		bool StartTreeNode(const std::string& _label, bool* _outClicked, bool _highlighted, bool _noArrow, bool _defaultOpen)
+		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow, bool _defaulPeeken, bool _singleClickOpen)
 		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
 			flags = _highlighted ? flags | ImGuiTreeNodeFlags_Selected : flags;
 			flags = _noArrow ? flags | ImGuiTreeNodeFlags_Leaf : flags;
+			flags = _singleClickOpen ? flags : flags | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
 			if (_highlighted)
-				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
-			if (_defaultOpen)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+				ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+			}
+
+			if (_defaulPeeken)
 				flags |= ImGuiTreeNodeFlags_DefaultOpen;
 			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, flags);
 
 			if (_highlighted)
-				ImGui::PopStyleColor();
+				ImGui::PopStyleColor(2);
 
 			return ret;
 		}
@@ -450,12 +567,33 @@ namespace EGUI
 			ImGui::TreePop();
 		}
 
-		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const HashString& _toolTip)
+		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const std::string& _toolTip)
 		{
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 			{
+				std::string show = _toolTip;
+				if (_tagLoad == ePayloadTags::GAME_OBJ)
+				{
+					bool exist = false;
+					auto& selection = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorClipboard>()->GetSelectedIDs();
+					uint64_t id = *static_cast<uint64_t*>(_pData);
+					for (const auto& i : selection)
+					{
+						if (id == i)
+						{
+							exist = true;
+							break;
+						}
+					}
+					if (!exist)
+						::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorClipboard>()->AddGameObject(id);
+
+					if (selection.size() > 1)
+						show = "multiple ...";
+				}
+
 				ImGui::SetDragDropPayload(EGUI::GetPayloadString(_tagLoad), _pData, _dataSize);
-				ImGui::Text("%s", _toolTip.c_str());
+				ImGui::Text("%s", show.c_str());
 				return true;
 			}
 			return false;
@@ -471,11 +609,83 @@ namespace EGUI
 			ImGui::EndDragDropTarget();
 		}
 
-		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
-			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize, int _imgId)
+		bool PrefabPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
+			const Math::Vec2& _displaySize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize)
 		{
+			auto originalPos = ImGui::GetCursorPos();
+			ImVec2 size{ _displaySize.x * 0.9f, _displaySize.y * 0.75f };
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
+			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), _displaySize);
+			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
+			ImGui::PopStyleColor();
+			ImGui::PopStyleVar();
+			if (payload) EndPayload();
+
+			ImGui::SetCursorPos(ImVec2{ originalPos.x + _displaySize.x * 0.05f, originalPos.y + size.y*0.1f});
+			IconGameObj(_uniqueId.c_str(), size.x, size.y);
+			ImGui::SetCursorPos(ImVec2{ originalPos.x + 1, originalPos.y + size.y});
+			ImGui::TextWrapped(_label.c_str());
+			return btn;
+		}
+
+		bool ImagePayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
+			const Math::Vec2& _displaySize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize)
+		{
+			auto originalPos = ImGui::GetCursorPos();
+
+			auto img = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>()->LoadTexture(static_cast<::Editor::File*>(_pData)->mPath.c_str());
+			size_t id = static_cast<size_t>(img->GetID());
+			float imageMaxHeight = _displaySize.y * 0.75f;
+			float imageMaxWidth = _displaySize.x * 0.9f;
+			float aspect = imageMaxWidth / imageMaxHeight;
+			float ix = static_cast<float>(aspect * img->GetWidth());
+			float iy = static_cast<float>(img->GetHeight());
+			float sx = imageMaxWidth;
+			float sy = imageMaxHeight;
+			auto mImgSize = (sx / sy) > (ix / iy) ? Math::Vec2{ ix * (sy / iy), sy } :
+													Math::Vec2{ sx, iy * (sx / ix) };
+
+			auto posImage = Math::Vec2{ (sx - mImgSize.x) / 2, (sy - mImgSize.y) / 2 };
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
+			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), _displaySize);
+			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
+			ImGui::PopStyleColor();
+			ImGui::PopStyleVar();
+			if (payload) EndPayload();
+
+			ImGui::SetCursorPos(ImVec2{ originalPos.x + posImage.x + _displaySize.x * 0.05f, originalPos.y + posImage.y });
+			ImGui::Image(reinterpret_cast<void*>(id), ImVec2{ mImgSize.x, mImgSize.y});
+			ImGui::SetCursorPos(ImVec2{ originalPos.x + 1, originalPos.y + imageMaxHeight });
+			ImGui::TextWrapped(_label.c_str());
+			return btn;
+		}
+
+		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
+			const Math::Vec2& _displaySize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize)
+		{
+			switch (_tagLoad)
+			{
+				//	FILE,
+				//	COMPONENT,
+			case SCENE:
+				return false;
+			case MP3:
+			case WAV:
+				return false;
+			case PREFAB:
+				return PrefabPayload(_uniqueId, _label, _tooltip, _displaySize, _tagLoad, _pData, _dataSize);
+			case BMP:
+			case PNG:
+			case DDS:
+				return ImagePayload(_uniqueId, _label, _tooltip, _displaySize, _tagLoad, _pData, _dataSize);
+			}
+
 			ImVec2 pos = ImGui::GetCursorScreenPos();
-			ImVec2 size{ _displaytSize.x, _displaytSize.y };
+			ImVec2 size{ _displaySize.x, _displaySize.y };
 			const float iconWidth = size.x / 2;
 			const float iconHeight = size.y / 2;
 			const float offsetX = iconWidth / 2;
@@ -485,17 +695,12 @@ namespace EGUI
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 			bool btn = ImGui::Button(("###CustomPayload" + _uniqueId).c_str(), size);
-			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip.c_str());
+			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
 			ImGui::PopStyleColor();
 			if (payload) EndPayload();
 
 			ImGui::SetCursorScreenPos(posIcon);
-			if (_imgId == -1)
-				IconFile(_uniqueId.c_str(), size.x, size.y);
-			else
-			{
-				ImGui::Image(reinterpret_cast<void*>(static_cast<size_t>(_imgId)), ImVec2{ size.x / 2, size.y / 2 });
-			}
+			IconFile(_uniqueId.c_str(), size.x, size.y);
 			ImGui::SetCursorScreenPos(posText);
 			ImGui::TextWrapped(_label.c_str());
 			return btn;
@@ -591,23 +796,23 @@ namespace EGUI
 			const ImU32		col32Dull	= static_cast<ImColor>(ImVec4{ _colour.x - 0.2f, _colour.y - 0.2f, _colour.z - 0.2f, _colour.w });
 			const float iconWidth = (width * 0.8f);
 			const float offset = (height * 0.2f);
-			ImVec2 topLeft{ pos.x, pos.y + offset };
-			ImVec2 botLeft{ pos.x, topLeft.y + height - 1 };
-			ImVec2 topRight{ pos.x + iconWidth, topLeft.y + (height / 6.f) };
-			ImVec2 botRight{ topRight.x, botLeft.y };
-			ImVec2 tabTop{ pos.x + (width * 0.3f), topLeft.y };
-			ImVec2 tabBot{ pos.x + (width * 0.4f), topRight.y };
+			ImVec2 PeekLeft{ pos.x, pos.y + offset };
+			ImVec2 botLeft{ pos.x, PeekLeft.y + height - 1 };
+			ImVec2 PeekRight{ pos.x + iconWidth, PeekLeft.y + (height / 6.f) };
+			ImVec2 botRight{ PeekRight.x, botLeft.y };
+			ImVec2 tabPeek{ pos.x + (width * 0.3f), PeekLeft.y };
+			ImVec2 tabBot{ pos.x + (width * 0.4f), PeekRight.y };
 
 			if (!_open)
 			{
-				ImVec2 inside{ topLeft.x, topRight.y + (height * 0.1f) };
+				ImVec2 inside{ PeekLeft.x, PeekRight.y + (height * 0.1f) };
 				pCanvas->PathClear();
-				pCanvas->PathLineTo(topLeft);
+				pCanvas->PathLineTo(PeekLeft);
 				pCanvas->PathLineTo(inside);
 				pCanvas->PathLineTo(ImVec2{ inside.x + iconWidth, inside.y });
-				pCanvas->PathLineTo(topRight);
+				pCanvas->PathLineTo(PeekRight);
 				pCanvas->PathLineTo(tabBot);
-				pCanvas->PathLineTo(tabTop);
+				pCanvas->PathLineTo(tabPeek);
 				pCanvas->PathStroke(col32, true);
 
 				pCanvas->PathClear();
@@ -619,14 +824,14 @@ namespace EGUI
 			}
 			else
 			{
-				ImVec2 inside{ topLeft.x + (0.2f * width), topLeft.y + (height * 0.4f) };
+				ImVec2 inside{ PeekLeft.x + (0.2f * width), PeekLeft.y + (height * 0.4f) };
 				pCanvas->PathClear();
 				pCanvas->PathLineTo(botLeft);
-				pCanvas->PathLineTo(topLeft);
-				pCanvas->PathLineTo(tabTop);
+				pCanvas->PathLineTo(PeekLeft);
+				pCanvas->PathLineTo(tabPeek);
 				pCanvas->PathLineTo(tabBot);
-				pCanvas->PathLineTo(topRight);
-				pCanvas->PathLineTo(ImVec2{ topRight.x, topLeft.y + (height * 0.4f) });
+				pCanvas->PathLineTo(PeekRight);
+				pCanvas->PathLineTo(ImVec2{ PeekRight.x, PeekLeft.y + (height * 0.4f) });
 				pCanvas->PathStroke(col32, true);
 
 				pCanvas->PathClear();
@@ -680,16 +885,16 @@ namespace EGUI
 			const ImU32		col32B = static_cast<ImColor>(ImVec4{ 0,0,1,1 });
 			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
 			ImVec2			pos		= ImGui::GetCursorScreenPos();
-			ImVec2 midTop{ pos.x + (_width/2), pos.y };
-			ImVec2 mid{ midTop.x, midTop.y + (_width /3) };
-			ImVec2 midBot{ mid.x, midTop.y + (_height * 0.8f) };
-			ImVec2 midLeft{ pos.x + (_width * 0.1f), (midTop.y + mid.y) / 2 };
+			ImVec2 midPeek{ pos.x + (_width/2), pos.y };
+			ImVec2 mid{ midPeek.x, midPeek.y + (_width /3) };
+			ImVec2 midBot{ mid.x, midPeek.y + (_height * 0.8f) };
+			ImVec2 midLeft{ pos.x + (_width * 0.1f), (midPeek.y + mid.y) / 2 };
 			ImVec2 midRight{ pos.x + (_width * 0.9f), midLeft.y };
-			ImVec2 botLeft{ midLeft.x + (_width / 8), midTop.y + (3 * (_height /5))};
+			ImVec2 botLeft{ midLeft.x + (_width / 8), midPeek.y + (3 * (_height /5))};
 			ImVec2 botRight{ midRight.x - (_width / 8), botLeft.y };
 
 			pCanvas->PathClear();
-			pCanvas->PathLineTo(midTop);
+			pCanvas->PathLineTo(midPeek);
 			pCanvas->PathLineTo(midLeft);
 			pCanvas->PathLineTo(mid);
 			pCanvas->PathLineTo(midRight);
@@ -763,6 +968,6 @@ namespace EGUI
 			return ret;
 		}
 	}
-}	// NAMESPACE DYSTOPIA::EGUI::DISPLAY
+}	// NAMESPACE DYSPeekIA::EGUI::DISPLAY
 #endif // EDITOR
 

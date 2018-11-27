@@ -78,10 +78,9 @@
 0,
 [END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-9,[START_str]
+8,[START_str]
 "ChangeAudio",0,[START_str]
 "CharacterController",0,[START_str]
-"dsds",0,[START_str]
 "Fireball",1,[START_BEHAVIOUR_BLOCK]
 18446744071849915392,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
 "END",

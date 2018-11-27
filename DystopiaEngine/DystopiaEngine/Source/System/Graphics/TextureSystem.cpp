@@ -40,7 +40,7 @@ Dystopia::TextureSystem::~TextureSystem(void) noexcept
 
 void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 {
-	auto pFileSys = EngineCore::GetInstance()->Get<FileSystem>();
+	auto pFileSys = EngineCore::Get<FileSystem>();
 	std::string buf;
 
 	for (auto& e : mTextures)
@@ -67,6 +67,12 @@ void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 
 void Dystopia::TextureSystem::Shutdown(void) noexcept
 {
+	mImageData.clear();
+
+
+
+
+
 	mTextures.clear();
 }
 

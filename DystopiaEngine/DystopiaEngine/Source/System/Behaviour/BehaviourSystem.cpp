@@ -3,6 +3,8 @@
 
 #if EDITOR
 #include "Editor/HotLoader.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorFactory.h"
 #endif
 #include "System/Behaviour/BehaviourSystem.h"
 #undef ERROR
@@ -19,6 +21,8 @@
 #include "Utility/DebugAssert.h"
 #include "System/Logger/LoggerSystem.h"
 #include "System/Logger/LogPriority.h"
+#include "System/Window/WindowManager.h"
+#include "System/Window/Window.h"
 #include "IO/TextSerialiser.h"
 #include <utility>
 
@@ -27,35 +31,54 @@ namespace Dystopia
 	
 
 	BehaviourSystem::BehaviourSystem()
-		:mHotloader{ Ctor::CreateShared<Hotloader<1>>() }
+#if EDITOR
+		:mHotloader{ new Hotloader<1>() }
+#endif
 	{
 
 	}
 
+	BehaviourSystem::~BehaviourSystem()
+	{
+#if EDITOR
+		delete mHotloader;
+#endif
+	}
+
 	void Dystopia::BehaviourSystem::PreInit(void)
 	{
+	}
+
+	bool Dystopia::BehaviourSystem::Init(void)
+	{
+		/*Init Hotloader*/
 #if EDITOR
 
 		FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
 
 		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
 
-		FileSys->CreateFiles("Dystopia/BehaviourDLL", eFileDir::eAppData);
-		FileSys->CreateFiles("Dystopia/Temp", eFileDir::eAppData);
-		FileSys->CreateFiles("Behaviours/BehavioursScripts", eFileDir::eResource);
-
 #if _DEBUG
-
-		
-		//std::string strDystopia_Lib{ FileSys->GetFullPath("DystopiaEngine_D.lib",eFileDir::eCurrent) };
-		//InterestedFiles Dystopia_Lib{  ,eCompile };
-		mHotloader->AddFilesToCrawl(L"DystopiaEngine_D.lib", eCompile);
-		//mHotloader->AddAdditionalSourcePath(std::wstring{ strDystopia_Lib.begin(),strDystopia_Lib.end() });
+		FileSys->CreateFiles("BehaviourDLL",         eFileDir::eAppData);
 #else
-		mHotloader->AddFilesToCrawl(L"DystopiaEngine_Editor.lib", eCompile);
+		FileSys->CreateFiles("BehaviourDLL_Release", eFileDir::eAppData);
 #endif
 
+		FileSys->CreateFiles("Dystopia/Temp", eFileDir::eAppData);
+		FileSys->CreateFiles("Behaviours/BehavioursScripts", eFileDir::eResource);
+		std::string PipePath = FileSys->GetProjectFolders<std::string>(eFileDir::eCurrent) + "\\Resource\\Piping\\BehaviourPiping.exe";
+		mHotloader->SetPipeExePath(std::wstring{PipePath.begin(), PipePath.end()});
+
+#if _DEBUG
+		mHotloader->AddFilesToCrawl(L"DystopiaEngine_D.lib", eCompile);
 		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL", eFileDir::eAppData));
+
+#else
+		mHotloader->AddFilesToCrawl(L"DystopiaEngine_Editor.lib", eCompile);
+		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL_Release", eFileDir::eAppData));
+#endif
+		//mHotloader->SetParentHWND(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetWindowHandle());
+		
 		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
 
@@ -64,11 +87,6 @@ namespace Dystopia
 #else
 
 #endif
-	}
-
-	bool Dystopia::BehaviourSystem::Init(void)
-	{
-		/*Init Hotloader*/
 #if EDITOR
 
 		mHotloader->Init();
@@ -108,12 +126,23 @@ namespace Dystopia
 	{
 #if EDITOR
 
-
+		bool hasChange   = false;
+		bool hasSaveFile = false;
 		/*Update Hotloader*/
 		std::vector<std::wstring> vTempFileName;
 		mHotloader->Update();
 		mHotloader->ChangesInTempFolder(vTempFileName);
-		bool hasChange = false;
+		if (vTempFileName.size() > 0)
+		{
+			std::string SceneName = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName();
+			if (FileSys->GetFullPath(SceneName + ".dscene", eFileDir::eResource) != "")
+			{
+				EngineCore::GetInstance()->GetSystem<SceneSystem>()->SaveScene(FileSys->GetFullPath(SceneName + ".dscene", eFileDir::eResource), SceneName);
+				hasSaveFile = true;
+			}
+
+		}
+		
 		for (auto const & elem : vTempFileName)
 		{
 			for (auto & i : mvBehaviourReferences)
@@ -224,13 +253,19 @@ namespace Dystopia
 			}
 		}
 
+		
+
 		vTempFileName.clear();
 		mvRecentChanges.clear();
+
+		if (hasSaveFile)
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->LoadScene(FileSys->GetFullPath(EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName() + ".dscene", eFileDir::eResource));
 #endif
 	}
 
 	void Dystopia::BehaviourSystem::Update(float _dt)
 	{
+#if EDITOR
 		for (auto & i : mvBehaviours)
 		{
 			for (auto & iter : i.second)
@@ -263,10 +298,13 @@ namespace Dystopia
 
 			}
 		}
+#endif
 	}
 
 	void Dystopia::BehaviourSystem::PostUpdate(void)
 	{
+#if EDITOR
+
 		/*Clear the recently change*/
 		mvRecentChanges.clear();
 		//static AutoArray<std::pair<uint64_t, Behaviour*>*> ToRemove;
@@ -277,7 +315,7 @@ namespace Dystopia
 				if(iter.second != nullptr)
 					if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
 					{
-						delete iter.second;
+						//delete iter.second;
 						iter.second = nullptr;
 						i.second.FastRemove(&iter);
 						//ToRemove.push_back(&iter);
@@ -298,6 +336,7 @@ namespace Dystopia
 
 
 		//ToRemove.clear();
+#endif
 	}
 
 	void Dystopia::BehaviourSystem::Shutdown(void)
@@ -449,6 +488,7 @@ namespace Dystopia
 						{
 							/*GameObject with ID that was serialise could not be found*/
 							/*Remove and delete the Behaviour from mvBehaviourReferences*/
+							::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID, false);
 						}
 					}
 					break;
@@ -483,6 +523,7 @@ namespace Dystopia
 					if (i.first == std::wstring{ _name.begin(), _name.end() })
 					{
 						auto * ptr = elem.mpBehaviour->Duplicate();
+
 						i.second.push_back(std::make_pair(_ID, ptr));
 						return ptr;
 					}
@@ -498,11 +539,11 @@ namespace Dystopia
 		{
 			for (auto & iter : i.second)
 			{
-				if (iter.second == _PtrToDup)
+				if (iter.second == _PtrToDup || (iter.first == _PtrToDup->GetOwnerID() && !std::strcmp(iter.second->GetBehaviourName(), _PtrToDup->GetBehaviourName())))
 				{
 					auto ptr = iter.second->Duplicate();
 					i.second.push_back(std::make_pair(_NewID, ptr));
-					iter.first = _NewID;
+					//iter.first = _NewID;
 					return ptr;
 				}
 			}

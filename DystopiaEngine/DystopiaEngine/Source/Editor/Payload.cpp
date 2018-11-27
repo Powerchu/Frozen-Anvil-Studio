@@ -20,9 +20,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <Windows.h>
 #include <cstdlib>
 #include <tchar.h>
+#include <string>
 
-namespace Dystopia
+namespace Editor//Dystopia::
 {
+	EGUI::ePayloadTags DeterminePathType(const HashString& _path)
+	{
+		if (_path.find(g_PayloadPngEx.c_str()) == _path.length() - 3)
+			return EGUI::ePayloadTags::PNG;
+		else if (_path.find(g_PayloadBmpEx.c_str()) == _path.length() - 3)
+			return EGUI::ePayloadTags::BMP;
+		else if (_path.find(g_PayloadCppEx.c_str()) == _path.length() - 3)
+			return EGUI::ePayloadTags::FILE;
+		else if (_path.find(g_PayloadPrefabEx.c_str()) == _path.length() - 4)
+			return EGUI::ePayloadTags::PREFAB;
+		else if (_path.find(g_PayloadSceneEx.c_str()) == _path.length() - 6)
+			return EGUI::ePayloadTags::SCENE;
+		else if (_path.find(g_PayloadMp3Ex.c_str()) == _path.length() - 3)
+			return EGUI::ePayloadTags::MP3;
+		else if (_path.find(g_PayloadDDSEx.c_str()) == _path.length() - 3)
+			return EGUI::ePayloadTags::DDS;
+		else if (_path.find(g_PayloadWavEx.c_str()) == _path.length() - 3)
+			return EGUI::ePayloadTags::WAV;
+		else if (_path.find(g_PayloadTTFEx.c_str()) == _path.length() - 4)
+			return EGUI::ePayloadTags::TTF;
+		return EGUI::ePayloadTags::UNKNOWN;
+	}
+
 	char my_tolower(char const ch)
 	{
 		return static_cast<unsigned char>(::tolower(static_cast<unsigned char>(ch)));
@@ -31,13 +55,10 @@ namespace Dystopia
 	CrawlItem::CrawlItem(const HashString& _name, const HashString& _path)
 		: mName{ _name }, mPath{ _path }, mLowerCaseName{ mName }
 	{
-		//std::transform(mLowerCaseName.cbegin(), mLowerCaseName.cend(), mLowerCaseName.begin(), my_tolower);
-		auto start = mLowerCaseName.begin();
-		for(auto const & elem : mLowerCaseName)
-		{
-			*start = my_tolower(elem);
-			start++;
-		}
+		std::string temp{ mLowerCaseName.cbegin(), mLowerCaseName.cend() };
+		std::string temp2 = temp;
+		std::transform(temp.begin(), temp.end(), temp2.begin(), my_tolower);
+		mLowerCaseName = temp2.c_str();
 	}
 
 	Folder::Folder(const HashString& _name, const HashString& _path, Folder * const _parent)
@@ -115,30 +136,13 @@ namespace Dystopia
 
 	bool File::operator<(const File& rhs)
 	{
-		return mName<(rhs.mName);
+		std::string temp{ mName.c_str() };
+		return temp.compare(rhs.mName.c_str()) <= 0;
 	}
 
 	EGUI::ePayloadTags File::DetermineTag(const HashString& _name)
 	{
-		if (_name.find(g_PayloadPngEx.c_str()) == _name.length() - 4)
-			return EGUI::ePayloadTags::PNG;
-		else if (_name.find(g_PayloadBmpEx.c_str()) == _name.length() - 4)
-			return EGUI::ePayloadTags::BMP;
-		else if (_name.find(g_PayloadCppEx.c_str()) == _name.length() - 4)
-			return EGUI::ePayloadTags::FILE;
-		else if (_name.find(g_PayloadPrefabEx.c_str()) == _name.length() - 5)
-			return EGUI::ePayloadTags::PREFAB;
-		else if (_name.find(g_PayloadSceneEx.c_str()) == _name.length() - 7)
-			return EGUI::ePayloadTags::SCENE;
-		else if (_name.find(g_PayloadMp3Ex.c_str()) == _name.length() - 4)
-			return EGUI::ePayloadTags::MP3;
-		else if (_name.find(g_PayloadDDSEx.c_str()) == _name.length() - 4)
-			return EGUI::ePayloadTags::DDS;
-		else if (_name.find(g_PayloadWavEx.c_str()) == _name.length() - 4)
-			return EGUI::ePayloadTags::WAV;
-		else if (_name.find(g_PayloadTTFEx.c_str()) == _name.length() - 4)
-			return EGUI::ePayloadTags::TTF;
-		return EGUI::ePayloadTags::UNKNOWN;
+		return DeterminePathType(_name);
 	}
 }
 

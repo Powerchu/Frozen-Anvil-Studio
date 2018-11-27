@@ -5,8 +5,10 @@
 
 #include <map>
 #include <string>
+#include <filesystem>
 
 #include "System/Base/Systems.h"
+#include "DataStructure/HashString.h"
 #include "DataStructure/MagicArray.h"
 
 namespace Dystopia
@@ -43,8 +45,10 @@ namespace Dystopia
 
 		FileSystem();
 		~FileSystem();
-		std::string GetFullPath(std::string const & _FileName, eFileDir _ParentDirectory);
-
+		std::string  GetFullPath (std::string const & _FileName, eFileDir _ParentDirectory);
+		std::wstring GetFullPath_w(std::wstring const & _FileName, eFileDir _ParentDirectory);
+		HashString    ConvertToRelative(HashString const & _FullPath, eFileDir _ParentDirectory = eFileDir::eResource) const; 
+		std::string   ConvertToRelative(std::string const & _FullPath, eFileDir _ParentDirectory = eFileDir::eResource) const;
 		bool CreateFiles(std::string const & _FileName, eFileDir _Directory);
 
 		template<typename T, typename U = std::enable_if_t< std::is_same_v< T, std::string> || std::is_same_v<T, std::wstring>>>
@@ -71,6 +75,14 @@ namespace Dystopia
 		unsigned DetectDirectoryChanges(std::string _FilePath, std::string * _ChangesBuffer, size_t _size);
 		bool     DetectFileChanges(std::string _FilePath, eFileDir _ParentDirectory = eFileDir::eResource);
 		FileErrorCode GetLastKnownError() const;
+
+		bool CheckFolderExist(const HashString& _folderName, const HashString& _path) const;
+		bool CheckPathExist(const HashString& _path) const;
+
+		bool CreateFolder(const HashString& _name, const HashString& _path);
+
+		void ChangeDirPath(eFileDir _dirToChange, const HashString& _newPath);
+		HashString FindFilePath(const HashString& _file, eFileDir _parentDir);
 
 	private:
 
@@ -107,10 +119,23 @@ namespace Dystopia
 		case eFileDir::eSource:
 		{
 			if constexpr (std::is_same_v<T, std::string>)
-				retString = std::filesystem::current_path().string() + '/' + mPathTable[_ParentDirectory];
-			else
-			if constexpr (std::is_same_v<T, std::wstring>)
-				retString = std::filesystem::current_path().wstring() + L'/' + std::wstring{ mPathTable[_ParentDirectory].begin(), mPathTable[_ParentDirectory].end() };
+			{
+				std::filesystem::path DirPath{ mPathTable[_ParentDirectory] };
+				if (DirPath.has_root_path())
+					retString = mPathTable[_ParentDirectory];
+				else
+					retString = std::filesystem::current_path().string() + '/' + mPathTable[_ParentDirectory];
+			}
+
+			else if constexpr (std::is_same_v<T, std::wstring>)
+			{
+				std::filesystem::path DirPath{ mPathTable[_ParentDirectory] };
+				if (DirPath.has_root_path())
+					retString = std::wstring{ mPathTable[_ParentDirectory].begin(), mPathTable[_ParentDirectory].end() };
+				else
+					retString = std::filesystem::current_path().wstring() + L'/' + std::wstring{ mPathTable[_ParentDirectory].begin(), mPathTable[_ParentDirectory].end() };
+			}
+
 		}
 			break;
 		case eFileDir::eCurrent:
@@ -120,6 +145,8 @@ namespace Dystopia
 			else
 			if constexpr (std::is_same_v<T, std::wstring>)
 				retString = std::filesystem::current_path().wstring();
+
+			break;
 		}
 		default:
 		{

@@ -36,6 +36,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Events/EventSystem.h"
 #include "System/Profiler/Profiler.h"
 #include "System/Behaviour/BehaviourSystem.h"
+#include "System/AI/AISystem.h"
 
 // SubSystems
 #include "System/Graphics/MeshSystem.h"
@@ -43,6 +44,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/TextureSystem.h"
 #include "System/File/FileSystem.h"
 #include "System/Logger/LoggerSystem.h"
+#include "System/Tag/TagSystem.h"
+#include "Factory/Factory.h"
 
 #include "System/Time/Timer.h"
 #include "System/Time/ScopedTimer.h"
@@ -128,7 +131,7 @@ void Dystopia::EngineCore::LoadSettings(void)
 	if (pFileSys->CheckFileExist(SETTINGS_FILE, SETTINGS_DIR))
 	{
 		auto file = Serialiser::OpenFile<DysSerialiser_t>(
-			(pFileSys->GetProjectFolders<std::string>(SETTINGS_DIR) +
+			(pFileSys->GetProjectFolders<std::string>(SETTINGS_DIR) + '/' +
 			SETTINGS_FILE).c_str()
 		);
 
@@ -233,9 +236,9 @@ void Dystopia::EngineCore::PostUpdate(void)
 
 void Dystopia::EngineCore::Shutdown(void)
 {
-	//Get<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
+	//GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
 	auto s = Serialiser::OpenFile<DysSerialiser_t>(
-		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
+		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) + '/' +
 		SETTINGS_FILE).c_str(),
 		DysSerialiser_t::MODE_WRITE
 	);

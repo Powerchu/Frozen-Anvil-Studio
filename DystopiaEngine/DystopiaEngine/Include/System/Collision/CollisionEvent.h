@@ -17,7 +17,7 @@ namespace Dystopia
 
 	struct CollisionEvent
 	{
-		using mpcGobj = GameObject const *;
+		using mpcGobj = GameObject * ;
 		using u64int  = unsigned long long;
 		CollisionEvent(GameObject* _Self, GameObject * _Target);
 
@@ -40,6 +40,8 @@ namespace Dystopia
 		bool operator==(CollisionEvent const & _rhs)         const;
 		bool operator==(unsigned long long _mCollidedWithID) const;
 		bool operator==(mpcGobj _pCollidedWith)              const;
+		bool operator==(const GameObject * const _pCollidedWith) const;
+
 	private:
 		Math::Vec3D			mCumulativeImpulse;
 	};

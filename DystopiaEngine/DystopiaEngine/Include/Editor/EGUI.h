@@ -24,14 +24,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_GUI_H_
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/Array.h"
+#include "DataStructure/Stack.h"
+
 #include "Utility/DebugAssert.h"
+
 #include "Editor/DragStatus.h"
 #include "Editor/Dock.h"
 #include "Editor/Payloads.h"
-#include "Editor/Commands.h"
 #include "Editor/Gizmo.h"
+
 #include "../../Dependancies/ImGui/imgui.h"
-#include "../../Dependancies/ImGui/imgui_internal.h"
 #include <string>
 
 /* forward declare just becuz */
@@ -42,7 +44,7 @@ static float DefaultAlighnmentOffsetY = 3.f;
 static float DefaultAlighnmentSpacing = 10.f;
 static float DefaultAlignLeft = 0.f;
 
-namespace Dystopia
+namespace DysPeekia
 {
 	class CommandHandler;
 	class WindowManager;
@@ -67,10 +69,17 @@ namespace Dystopia
 ======================================================================================================================= */
 namespace EGUI
 {
+	inline const Array<const char*, 21> g_ArrIndexName =
+	{
+		"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13" , "14", "15", "16", "17", "18", "19", "20"
+	};
+
 	static constexpr float TabsImageOffsetY = 27.f;
 
-	void SetContext(Dystopia::CommandHandler *_pContext);
-	Dystopia::CommandHandler* GetCommandHND();
+	Stack<float>& GetLeftAlignStack(void);
+
+	void SetContext(DysPeekia::CommandHandler *_pContext);
+	//DysPeekia::CommandHandler* GetCommandHND();
 	void RemoveContext();
 	void ChangeLabelSpacing(float _amount);
 	void ChangeLabelSpacing();
@@ -159,6 +168,7 @@ namespace EGUI
 				EGUI::Display::Label("hello world %d %f", 10, 0.63f);
 		======================================================================================================================= */
 		void Label(const char *_label, ...);
+		void LabelWrapped(const char *_label, ...);
 		/* =======================================================================================================================
 		Brief:
 				Creates a editable text field with a label to the left of the text field. If edited, the _pOutText will be changed
@@ -167,7 +177,8 @@ namespace EGUI
 				char buffer[size];
 				EGUI::Display::TextField("This is an editable text field: ", &buffer, size);
 		======================================================================================================================= */
-		bool TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true, float _width = 250);
+		bool TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true, float _width = 250, bool _onlyEnterReturnsTrue = true);
+		bool TextField(const HashString& _label, HashString& _out, bool _showLabel = true, float _width = 250, bool _onlyEnterReturnsTrue = true);
 		/* =======================================================================================================================
 		Brief:
 				Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked.
@@ -208,6 +219,8 @@ namespace EGUI
 			float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
 		Array<eDragStatus, 2> VectorFields(const std::string& _label, Math::Vector2 *_outputVec, float _dragSpeed = 1.0f,
 			float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
+		Array<eDragStatus, 2> VectorFieldsInt(const char *_label, Math::Vector2 *_outputVec, int _dragSpeed = 1,
+			int _min = 0, int _max = 1, float _width = 50.f);
 		/* =======================================================================================================================
 		Brief:
 				Creats a check box for a boolean variable. Returns true when the check box is clicked, toggles the _pOutBool
@@ -236,6 +249,8 @@ namespace EGUI
 		eDragStatus DragFloat(const std::string& _label, float *_pOutFloat, float _dragSpeed = 1.0f,
 			float _min = 0.0f, float _max = 1.0f, bool _hideText = false, float _width = 100.f);
 		eDragStatus SliderFloat(const std::string& _label, float *_pOutFloat, float _min = 0.0f, float _max = 1.0f, 
+			bool _hideText = false, float _width = 100.f);
+		eDragStatus SliderInt(const HashString& _label, int *_pOutInt, int _min = 0, int _max = 1,
 			bool _hideText = false, float _width = 100.f);
 		/* =======================================================================================================================
 		Brief:
@@ -312,7 +327,7 @@ namespace EGUI
 		======================================================================================================================= */
 		// Start a tree node 
 		bool StartTreeNode(const std::string& _label, bool* _outClicked = nullptr, bool _highlighted = false,
-		                   bool _noArrow = false, bool _defaultOpen = true);
+			bool _noArrow = false, bool _defaulPeeken = true, bool _singleClickOpen = false);
 		// Set a specific tree node to be collapsed (closed) or not
 		void OpenTreeNode(const std::string& _label, bool _open);
 		// opens the next tree node
@@ -327,19 +342,20 @@ namespace EGUI
 				Very specific as of creation date.
 		======================================================================================================================= */
 		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
-			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize, int _imgId = -1);
+			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize);
 		/* =======================================================================================================================
 		Brief:
 				Sets the previos UI widget/item to be a payload type. Preferably call according to the usage please.
 				Usage shows that button will have additional of being a payload type.
 		Usage:
 				EGUI::Button("Hello", Math::Vec2{ 200, 20 } );
-				if (EGUI::Display::StartPayload(EGUI::FILE, &(*_file), sizeof(File), "Hello"))
+				if (EGUI::Display::StartPay
+				EGUI::FILE, &(*_file), sizeof(File), "Hello"))
 				{
 					EGUI::Display::EndPayload();
 				}
 		======================================================================================================================= */
-		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const HashString& _toolTip);
+		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const std::string& _toolTip);
 		// Call EndPayLoad at the end of StartPayLoad return true. See StartPayLoad usage
 		void EndPayload();
 		/* =======================================================================================================================
@@ -359,13 +375,30 @@ namespace EGUI
 		{
 			if (ImGui::BeginDragDropTarget())
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EGUI::GetPayloadString(_tagLoad)))
+				const ImGuiPayload* payload = nullptr;
+				switch (_tagLoad)
 				{
-					DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
-					return static_cast<Specified*>(payload->Data);
+				case ALL_IMG:
+					payload = ImGui::AcceptDragDropPayload(GetPayloadString(ePayloadTags::PNG));
+					if (!payload)
+						payload = ImGui::AcceptDragDropPayload(GetPayloadString(ePayloadTags::DDS));
+					if (!payload)
+						payload = ImGui::AcceptDragDropPayload(GetPayloadString(ePayloadTags::BMP));
+
+					if (payload)
+					{
+						DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
+						return static_cast<Specified*>(payload->Data);
+					}
+				default:
+					payload = ImGui::AcceptDragDropPayload(GetPayloadString(_tagLoad));
+					if (payload)
+					{
+						DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
+						return static_cast<Specified*>(payload->Data);
+					}
 				}
-				else
-					ImGui::EndDragDropTarget();
+				ImGui::EndDragDropTarget();
 			}
 			return nullptr;
 		}
@@ -410,6 +443,22 @@ namespace EGUI
 		======================================================================================================================= */
 		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width = 100);
 		template<unsigned N>
+		bool DropDownSelection(const HashString& _label, int& _currentIndex, unsigned _under21, float _width = 100)
+		{
+			static_assert(N >= 21, "Under 21");
+
+			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label.c_str());
+			SameLine(DefaultAlighnmentSpacing, GetLeftAlignStack().IsEmpty() ? DefaultAlignLeft : GetLeftAlignStack().Peek());
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			HashString inviLabel{ "##" };
+			inviLabel += _label;
+			const bool ret = ImGui::Combo(inviLabel.c_str(), &_currentIndex, g_ArrIndexName.begin(), Math::Min(_under21, N));
+			ImGui::PopItemWidth();
+			return ret;
+		}
+		template<unsigned N>
 		bool DropDownSelection(const std::string& _label, int& _currentIndex, const std::string(&_arrOfItems)[N], float _width)
 		{
 			const char* arrCharPtr[N];
@@ -419,7 +468,7 @@ namespace EGUI
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
 			Label(_label.c_str());
-			SameLine(4.f);
+			SameLine(DefaultAlighnmentSpacing, GetLeftAlignStack().IsEmpty() ? DefaultAlignLeft : GetLeftAlignStack().Peek());
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			bool ret = ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr, N);
 			ImGui::PopItemWidth();
@@ -431,7 +480,7 @@ namespace EGUI
 		Usage:
 				EGUI::Display::Button("Demo", ImVec2{ 200, 20 });
 		======================================================================================================================= */
-		bool Button(const std::string& _label, const Math::Vec2& _size = Math::Vec2{ 50,18 });
+		bool Button(const std::string& _label, const Math::Vec2& _size = Math::Vec2{ 50, 24 });
 		/* =======================================================================================================================
 		Brief:
 				Creates a dummy area. Used only to offset ImGui stuff. Does absolutely nothing except for manipulating UI
@@ -544,8 +593,8 @@ namespace EGUI
 /*========================================================================================================================================================*/
 /*====================================================================== GUI SYSTEM ======================================================================*/
 /*========================================================================================================================================================*/
-
-namespace Dystopia
+/*
+namespace DysPeekia
 {
 	class GuiSystem
 	{
@@ -593,7 +642,7 @@ namespace Dystopia
 		void			DefaultColorSettings();
 	};
 }
-
+*/
 #endif // !_EDITOR_GUI_H_
 #endif // EDITOR ONLY
 

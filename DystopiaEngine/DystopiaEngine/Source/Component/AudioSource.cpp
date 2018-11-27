@@ -20,10 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EGUI.h"
-#include "Editor/Editor.h"
 #include "Editor/Payloads.h"
-#include "Editor/Commands.h"
-#include "Editor/CommandList.h"
 #include "Editor/ConsoleLog.h"
 #endif 
 
@@ -74,12 +71,12 @@ void Dystopia::AudioSource::Update(float)
 	mChannel.mpChannel->isPlaying(&mIsPlaying);
 	if (mChanged)
 	{
-		mChannel.mpChannel->setLoopCount(mLoop ? -1 : 0);
 		mChannel.mpChannel->setVolume(mVolume);
 		mChannel.mpChannel->setFrequency(FREQUENCY * mFrequency);
 		mChannel.mpChannel->setPitch(mPitch);
 		mChanged = false;
 	}
+
 	if (!mIsPlaying && mLoop)
 		mReady = true;
 }
@@ -128,49 +125,50 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 {
 #if EDITOR
 	EGUI::Display::EmptyBox("Audio        ", 150, (mpSound) ? mSoundName : "-empty-", true);
-	if (Dystopia::File *t = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::MP3))
+	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::MP3))
 	{
-		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t->mName);
-	
-		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
-		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, pSound);
-		EGUI::GetCommandHND()->InvokeCommand(GetOwnerID(), fOld, fNew);
+		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t->mName.c_str());
+		SetSound(pSound);
+		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
+		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, pSound);
+		//EGUI::GetCommandHND()->InvokeCommand(mnOwner, fOld, fNew);
 		EGUI::Display::EndPayloadReceiver();
 	}
-	else if (Dystopia::File *t2 = EGUI::Display::StartPayloadReceiver<Dystopia::File>(EGUI::WAV))
+	if (::Editor::File *t2 = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::WAV))
 	{
-		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t2->mName);
-
-		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
-		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, pSound);
-		EGUI::GetCommandHND()->InvokeCommand(GetOwnerID(), fOld, fNew);
+		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t2->mName.c_str());
+		SetSound(pSound);
+		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
+		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, pSound);
+		//EGUI::GetCommandHND()->InvokeCommand(mnOwner, fOld, fNew);
 		EGUI::Display::EndPayloadReceiver();
 	}
 	EGUI::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 	{
-		auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
-		auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, nullptr);
-		EGUI::GetCommandHND()->InvokeCommand(GetOwnerID(), fOld, fNew);
+		SetSound(nullptr);
+		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
+		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, nullptr);
+		//EGUI::GetCommandHND()->InvokeCommand(mnOwner, fOld, fNew);
 	}
-	int old = mSoundType;
+	//int old = mSoundType;
 	if (EGUI::Display::DropDownSelection("Category      ", mSoundType, g_AudioCategory, 150))
 	{
-		EGUI::GetCommandHND()->InvokeCommand<AudioSource>(GetOwnerID(), &AudioSource::mSoundType, old);
+		//EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, &AudioSource::mSoundType, old);
 	}
 	if (EGUI::Display::CheckBox("Play On Start", &mPlayOnStart))
 	{
-		EGUI::GetCommandHND()->InvokeCommand<AudioSource>(GetOwnerID(), &AudioSource::mPlayOnStart, !mPlayOnStart);
+		//EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, &AudioSource::mPlayOnStart, !mPlayOnStart);
 	}
 	if (EGUI::Display::CheckBox("Loop         ", &mLoop))
 	{
-		EGUI::GetCommandHND()->InvokeCommand<AudioSource>(GetOwnerID(), &AudioSource::mLoop, !mLoop, &AudioSource::mChanged);
+		//EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, &AudioSource::mLoop, !mLoop, &AudioSource::mChanged);
 		mChanged = true;
 	}
 	switch (EGUI::Display::SliderFloat("Volume       ", &mVolume, 0.f, MAX_VOLUME))
 	{
 	case EGUI::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<AudioSource>(GetOwnerID(), &AudioSource::mVolume, &AudioSource::mChanged);
+		//EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, &AudioSource::mVolume, &AudioSource::mChanged);
 		break;
 	case EGUI::eDRAGGING:
 		mChanged = true;
@@ -179,13 +177,13 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	case EGUI::eENTER:
 	case EGUI::eDEACTIVATED:
 	case EGUI::eTABBED:
-		EGUI::GetCommandHND()->EndRecording();
+		//EGUI::GetCommandHND()->EndRecording();
 		break;
 	}
 	switch (EGUI::Display::SliderFloat("Frequency    ", &mFrequency, 0.f, MAX_CAP_SCALE))
 	{
 	case EGUI::eSTART_DRAG:
-		EGUI::GetCommandHND()->StartRecording<AudioSource>(GetOwnerID(), &AudioSource::mFrequency, &AudioSource::mChanged);
+		//EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, &AudioSource::mFrequency, &AudioSource::mChanged);
 		break;
 	case EGUI::eDRAGGING:
 		mChanged = true;
@@ -194,7 +192,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	case EGUI::eENTER:
 	case EGUI::eDEACTIVATED:
 	case EGUI::eTABBED:
-		EGUI::GetCommandHND()->EndRecording();
+		//EGUI::GetCommandHND()->EndRecording();
 		break;
 	}
 	switch (EGUI::Display::SliderFloat("Pitch        ", &mPitch, 0.f, MAX_CAP_SCALE))
@@ -308,3 +306,7 @@ void Dystopia::AudioSource::SetReady(bool _b)
 	mReady = mIsPlaying ? false : _b;
 }
 
+bool Dystopia::AudioSource::IsALoop(void) const
+{
+	return mLoop;
+}
