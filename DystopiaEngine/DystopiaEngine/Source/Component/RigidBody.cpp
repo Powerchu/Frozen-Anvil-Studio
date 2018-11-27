@@ -366,8 +366,8 @@ namespace Dystopia
 	RigidBody * RigidBody::Duplicate() const
 	{
 		const auto cc = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent(*this);
-		cc->SetOwner(GetOwner());
-		cc->Init();
+		//cc->SetOwner(GetOwner());
+		//cc->Init();
 		return cc;
 	}
 

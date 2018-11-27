@@ -58,7 +58,6 @@ namespace Dystopia
 			mDllFileName{ _DllFileName },
 			mDllModule{ _DllModule },
 			mDllFullPath{ _DllPathName + L"/" + _DllFileName }
-
 		{
 
 		}
@@ -267,7 +266,6 @@ namespace Dystopia
 		{
 			_DllToReload->ReloadDll();
 		}
-
 
 		bool InitFileDirectory(unsigned _Index)
 		{
@@ -559,7 +557,7 @@ namespace Dystopia
 			std::wstring OutputCommand;
 
 
-			CmdArgument += L"\"" +  mVcvarPath + L"\" && " + mVcvarName + L" " + mVcvarBuildEnv + L" && cd \"" + wstrDll_Folder_Name.c_str() + L"\" && ";
+			CmdArgument += mVcvarPath + L" && " + mVcvarName + L" " + mVcvarBuildEnv + L" && cd \"" + wstrDll_Folder_Name.c_str() + L"\" && ";
 
 			OutputCommand += L'\"' + wstrFolder_Name + L"/";
 			OutputCommand += FileName + L'\"';
@@ -593,9 +591,9 @@ namespace Dystopia
 			std::wstring Final_Command;
 
 			if(mPipeExePath != L"")
-				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" | \"" + mPipeExePath + L"\" & exit 99";
+				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" | \"" + mPipeExePath + L"\" && exit 99";
 			else
-				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" & exit 99";
+				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" && exit 99";
 
 			std::string cFinal_Command{ Final_Command.begin(),Final_Command.end() };
 			std::string cCmdPath{ mCmdPath.begin(), mCmdPath.end() };
@@ -607,21 +605,18 @@ namespace Dystopia
 			SHELLEXECUTEINFO ExecInfo{ 0 };
 			ExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
 			ExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-			ExecInfo.hwnd = NULL;
+			ExecInfo.hwnd   = NULL;
 			ExecInfo.lpVerb = NULL;
 			ExecInfo.lpFile = mCmdPath.c_str();
 			ExecInfo.lpParameters = Final_Command.c_str();
 			ExecInfo.lpDirectory = NULL;
-			ExecInfo.nShow = SW_HIDE;
+			ExecInfo.nShow = SW_SHOW;
 			ExecInfo.hInstApp = NULL;
 
 			if (ShellExecuteEx(&ExecInfo) == false)
 			{
 				std::cout << "ShellExecuteA Failed" << std::endl;
 			}
-
-
-
 
 			if (mPipeHandle != INVALID_HANDLE_VALUE)
 			{
@@ -888,22 +883,22 @@ namespace Dystopia
 		{
 
 			if(mDll_Handle != INVALID_HANDLE_VALUE)
-				CloseHandle(mDll_Handle);
-
+			CloseHandle(mDll_Handle);
 			if (mDll_Overlap.hEvent != INVALID_HANDLE_VALUE)
-				CloseHandle(mDll_Overlap.hEvent);
+			CloseHandle(mDll_Overlap.hEvent);
 
 			if (mTempDll_Handle != INVALID_HANDLE_VALUE)
 				CloseHandle(mTempDll_Handle);
-
 			if (mTempDll_Overlap.hEvent != INVALID_HANDLE_VALUE)
 				CloseHandle(mTempDll_Overlap.hEvent);
 
 			for (auto & elem : marrFileHandles)
 				CloseHandle(elem);
-
 			for (auto & elem : marraOverlapped)
 				CloseHandle(elem.hEvent);
+
+			if (mPipeHandle != INVALID_HANDLE_VALUE)
+				CloseHandle(mPipeHandle);
 		}
 
 		void SetPipeExePath(std::wstring const & _path)
@@ -949,9 +944,6 @@ namespace Dystopia
 		MagicArray<DLLWrapper>                           mvDLL;
 
 		std::filesystem::recursive_directory_iterator	 mIterator;
-
-
-		HWND mParentHandle;
 
 		static constexpr size_t mPipeBuffSize = 128000;
 
