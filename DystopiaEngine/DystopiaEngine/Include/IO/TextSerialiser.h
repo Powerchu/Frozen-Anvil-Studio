@@ -66,7 +66,14 @@ namespace Dystopia
 template <typename T>
 inline void Dystopia::TextSerialiser::ApplyWrite(const T& _rhs)
 {
-	mFile << _rhs << ',';
+	if constexpr (Ut::IsCString<T>::value)
+	{
+		mFile << "\"" << _rhs << "\",";
+	}
+	else
+	{
+		mFile << _rhs << ',';
+	}
 }
 
 template <>

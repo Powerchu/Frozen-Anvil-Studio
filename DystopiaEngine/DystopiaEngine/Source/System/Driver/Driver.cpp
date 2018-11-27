@@ -52,10 +52,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <string>
 #include <filesystem>
 
-
 #define SETTINGS_DIR  eFileDir::eCurrent
 #define SETTINGS_FILE "Settings.dyst"
-
 
 
 namespace
@@ -129,7 +127,7 @@ void Dystopia::EngineCore::LoadSettings(void)
 	auto pFileSys = Get<FileSystem>();
 	if (pFileSys->CheckFileExist(SETTINGS_FILE, SETTINGS_DIR))
 	{
-		auto file = Serialiser::OpenFile<TextSerialiser>(
+		auto file = Serialiser::OpenFile<DysSerialiser_t>(
 			(pFileSys->GetProjectFolders<std::string>(SETTINGS_DIR) +
 			SETTINGS_FILE).c_str()
 		);

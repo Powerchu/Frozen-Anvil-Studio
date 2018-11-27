@@ -59,6 +59,10 @@ namespace
 			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_LOST);
 			break;
 
+		case WM_ACTIVATE:
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::ACTIVATE);
+			break;
+
 		case WM_SIZE:
 			if(SIZE_MAXIMIZED == wParam)
 			{
@@ -69,8 +73,6 @@ namespace
 
 				Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().
 					SetSize(scr.right - scr.left, scr.bottom - scr.top);
-
-				Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(true);
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
@@ -78,7 +80,6 @@ namespace
 				{
 					Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().SetSize(oldsz.first, oldsz.second);
 					oldsz.first = 0; oldsz.second = 0;
-					Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(false);
 				}
 			}
 			break;
@@ -272,7 +273,6 @@ void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
 
 	if (mbFullscreen)
 	{
-		/*
 		DEVMODE mode{};
 		mode.dmSize = sizeof(DEVMODE);
 		mode.dmPelsWidth  = mWidth;
@@ -280,11 +280,10 @@ void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
 		mode.dmBitsPerPel = 32;
 		mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
 		ChangeDisplaySettings(&mode, 0);
-		*/
 	}
 	else
 	{
-		//ChangeDisplaySettings(nullptr, 0);
+		ChangeDisplaySettings(nullptr, 0);
 	}
 }
 

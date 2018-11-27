@@ -135,6 +135,37 @@ namespace Ut
 	using Decay_t = typename Decay<T>::type;
 
 
+	// ElemType
+	// ========== ==========================================================
+
+	template <typename T>
+	struct ElemType
+	{
+		using type = T;
+	};
+
+	template <typename T>
+	struct ElemType<T&>
+	{
+		using type = typename ElemType<RemoveRef_t<T>>::type;
+	};
+
+	template <typename T>
+	struct ElemType<T*>
+	{
+		using type = typename ElemType<T>::type;
+	};
+
+	template <typename T>
+	struct ElemType<T[]>
+	{
+		using type = T;
+	};
+
+	template <typename T>
+	using ElemType_t = typename ElemType<T>::type;
+
+
 	// EnableIf
 	// ========= ===========================================================
 
@@ -262,6 +293,26 @@ namespace Ut
 	template <typename T>
 	struct IsReference<T&&> : Constant <bool, true>
 	{};
+
+
+	// Is C String
+	// ============== ======================================================
+
+	template <typename T>
+	struct IsCString : Constant <bool,
+		IsSame<ElemType_t<RemoveConst_t<T>>, char>::value
+	>
+	{
+
+	};
+
+	template <typename T>
+	struct IsWString : Constant <bool, 
+		IsSame<ElemType_t<RemoveConst_t<T>>, wchar_t>::value
+	>
+	{
+
+	};
 
 
 	// Force Evaulate	   Warning: May cause the compiler to crash
