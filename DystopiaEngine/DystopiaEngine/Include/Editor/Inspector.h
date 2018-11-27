@@ -22,6 +22,7 @@ namespace Dystopia
 {
 	class GameObject;
 	class BehaviourSystem;
+	class Behaviour;
 	class Component;
 }
 
@@ -31,15 +32,8 @@ namespace Editor //Dystopia
 	class Inspector : public EditorPanel //public EditorTab
 	{
 	public:
-		//static Inspector* GetInstance();
 		Inspector(void);
 		~Inspector(void);
-
-		//virtual void Init() override;
-		//virtual void Update(const float&) override;
-		//virtual void EditorUI() override;
-		//virtual void Shutdown() override;
-		//virtual std::string GetLabel() const override;
 
 		void Load(void);
 		bool Init(void);
@@ -74,6 +68,10 @@ namespace Editor //Dystopia
 		void			ConfirmCreateBehaviour();
 		void			ResetBehaviourCreation();
 		bool			RemoveComponent(Dystopia::Component*);
+		bool			RemoveComponent(Dystopia::Behaviour*);
+
+		void			AddTagButton(const Math::Vec2&);
+		void			TagsDropDownList();
 	};
 }
 

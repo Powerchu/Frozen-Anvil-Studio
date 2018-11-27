@@ -44,6 +44,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/TextureSystem.h"
 #include "System/File/FileSystem.h"
 #include "System/Logger/LoggerSystem.h"
+#include "System/Tag/TagSystem.h"
 #include "Factory/Factory.h"
 
 #include "System/Time/Timer.h"

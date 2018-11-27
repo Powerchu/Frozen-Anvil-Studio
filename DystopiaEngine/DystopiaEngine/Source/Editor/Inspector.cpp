@@ -23,12 +23,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
-
-//#include "Utility/ComponentGUID.h"
-//#include "Object/ObjectFlags.h"
+#include "System/Driver/Driver.h"
+#include "System/Tag/TagSystem.h"
 #include "Object/GameObject.h"
 
-//#include "Editor/EditorMetaHelpers.h"
 
 #include "Reflection/ReadWriteObject.h"
 #include "Reflection/ReflectionTypeErasure.h"
@@ -39,6 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 static const std::string g_bPopup = "Behaviour List";
 static const std::string g_cPopup = "Component List";
 static const std::string g_nPopup = "New Behaviour Name";
+static const std::string g_tPopip = "Tag List";
 
 
 namespace Editor
@@ -96,6 +95,7 @@ namespace Editor
 		EGUI::Indent(inde);
 		AddComponentButton(btnSize);
 		AddBehaviourButton(btnSize);
+		AddTagButton(btnSize);
 		EGUI::UnIndent(inde);
 	}
 
@@ -139,7 +139,7 @@ namespace Editor
 				auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, HashString{ buffer });
 				cmd->FunctionCommand(mpFocus->GetID(), oFn, nFn);
 			}
-			if (EGUI::Display::DropDownSelection("Tag", i, g_arr, 80))
+			if (EGUI::Display::DropDownSelection("Tag", i, mpFocus->GetAllTags_str(), 32))
 			{
 
 			}
@@ -197,6 +197,8 @@ namespace Editor
 		for (auto & c : arrBehav)
 		{
 			EGUI::Display::HorizontalSeparator();
+			if (!c)
+				continue;
 			bool open = EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } +"##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(c);
 			if (open)
@@ -350,6 +352,50 @@ namespace Editor
 			ImGui::EndPopup();
 		}
 		return ret;
+	}
+
+	bool Inspector::RemoveComponent(Dystopia::Behaviour* _pCom)
+	{
+		bool ret = false;
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (EGUI::Display::SelectableTxt("Remove"))
+			{
+				auto owner = _pCom->GetOwner();
+				owner->RemoveComponent(_pCom);
+				ret = true;
+			}
+			ImGui::EndPopup();
+		}
+		return ret;
+	}
+
+	void Inspector::AddTagButton(const Math::Vec2& _btnSize)
+	{
+		if (EGUI::Display::Button("Add Tag", _btnSize))
+		{
+			EGUI::Display::OpenPopup(g_tPopip, false);
+		}
+		TagsDropDownList();
+	}
+
+	void Inspector::TagsDropDownList()
+	{
+		if (EGUI::Display::StartPopup(g_tPopip))
+		{
+			EGUI::Display::Dummy(235, 2);
+
+			auto && list = Dystopia::EngineCore::GetInstance()->Get<Dystopia::TagSystem>()->GetAllTagsName();
+			for (auto& elem : list)
+			{
+				if (EGUI::Display::SelectableTxt(elem))
+				{
+					mpFocus->AddTag(elem);
+				}
+			}
+
+			EGUI::Display::EndPopup();
+		}
 	}
 }
 

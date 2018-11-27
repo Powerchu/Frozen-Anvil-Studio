@@ -238,9 +238,10 @@ namespace Dystopia
 	{
 		Hotloader()
 			:marraOverlapped{ 0 },
-			marrFileHandles{ INVALID_HANDLE_VALUE }
+			marrFileHandles{ INVALID_HANDLE_VALUE },
+			mPipeHandle{INVALID_HANDLE_VALUE}
 		{
-
+			
 
 		}
 
@@ -536,6 +537,7 @@ namespace Dystopia
 
 		void CompileFiles(unsigned _Index, std::wstring const & _FileName, bool _totemp = false)
 		{
+			static char buffer[1024];
 			/*Search for exisiting opened DLL and close them to allow cl.exe to override*/
 			//SearchAndReplaceDll(GenerateDllName(_FileName));
 
@@ -586,28 +588,52 @@ namespace Dystopia
 					OutputCommand += L" \"" + elem.GetFullPath() + L"\"";
 			}
 
-			std::wstring Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" && exit 99";
+			std::wstring Final_Command;
 
-
+			if(mPipeExePath != L"")
+				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" | \"" + mPipeExePath + L"\" && exit 99";
+			else
+				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" && exit 99";
 
 			std::string cFinal_Command{ Final_Command.begin(),Final_Command.end() };
 			std::string cCmdPath{ mCmdPath.begin(), mCmdPath.end() };
+
+
+			
 
 			LPDWORD lpExitCode = new DWORD;
 			SHELLEXECUTEINFO ExecInfo{ 0 };
 			ExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
 			ExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-			ExecInfo.hwnd = NULL;
+			ExecInfo.hwnd   = NULL;
 			ExecInfo.lpVerb = NULL;
 			ExecInfo.lpFile = mCmdPath.c_str();
 			ExecInfo.lpParameters = Final_Command.c_str();
 			ExecInfo.lpDirectory = NULL;
-			ExecInfo.nShow = SW_SHOWMINNOACTIVE;
+			ExecInfo.nShow = SW_SHOW;
 			ExecInfo.hInstApp = NULL;
 
 			if (ShellExecuteEx(&ExecInfo) == false)
 			{
 				std::cout << "ShellExecuteA Failed" << std::endl;
+			}
+
+			if (mPipeHandle != INVALID_HANDLE_VALUE)
+			{
+				if(ConnectNamedPipe(mPipeHandle, NULL) != false)
+				{
+					//WaitNamedPipeA("\\\\.\\pipe\\DystopiaPipe", NMPWAIT_WAIT_FOREVER);
+					//DWORD numofbytes;
+					char outbuffer[mPipeBuffSize]{0};
+					while (ReadFile(mPipeHandle, outbuffer, mPipeBuffSize, NULL, NULL))
+					{
+
+						DEBUG_PRINT(eLog::WARNING, outbuffer);
+					}
+
+					
+				}
+				DisconnectNamedPipe(mPipeHandle);
 			}
 
 			WaitForSingleObject(ExecInfo.hProcess, INFINITE);
@@ -630,6 +656,17 @@ namespace Dystopia
 
 		bool Init()
 		{
+			/*Create Pipe*/
+			if(mPipeExePath != L"")
+			{
+				
+				mPipeHandle = CreateNamedPipeA("\\\\.\\pipe\\DystopiaPipe", PIPE_ACCESS_INBOUND | FILE_FLAG_FIRST_PIPE_INSTANCE , PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,1, mPipeBuffSize, mPipeBuffSize, 0, NULL);
+				if (mPipeHandle == INVALID_HANDLE_VALUE)
+				{
+					return false;
+				}
+			}
+
 			LocateAndLoadCompiler();
 
 			for (unsigned i = 0; i < TOTAL_FILE_DIRECTORIES; ++i)
@@ -859,8 +896,15 @@ namespace Dystopia
 				CloseHandle(elem);
 			for (auto & elem : marraOverlapped)
 				CloseHandle(elem.hEvent);
+
+			if (mPipeHandle != INVALID_HANDLE_VALUE)
+				CloseHandle(mPipeHandle);
 		}
 
+		void SetPipeExePath(std::wstring const & _path)
+		{
+			mPipeExePath = _path;
+		}
 	private:
 
 		static constexpr unsigned NumOfFileInfo = 256;
@@ -884,7 +928,8 @@ namespace Dystopia
 		std::wstring  mVcvarBuildEnv;
 
 		std::wstring  mCompilerFlags;
-
+		std::wstring  mPipeExePath;
+		HANDLE		  mPipeHandle;
 
 		std::array<HANDLE,      TOTAL_FILE_DIRECTORIES>  marrFileHandles;
 		std::array<FileInfo,    TOTAL_FILE_DIRECTORIES>  marrFileInfo;
@@ -900,9 +945,7 @@ namespace Dystopia
 
 		std::filesystem::recursive_directory_iterator	 mIterator;
 
-
-
-
+		static constexpr size_t mPipeBuffSize = 128000;
 
 
 

@@ -14,13 +14,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _PROJ_SETTINGS_H_
 #define _PROJ_SETTINGS_H_
 #include "Editor/EditorPanel.h"
-//#include "Editor/EditorTab.h"
 
 namespace Dystopia
 {
 	class TextSerialiser;
 	class GraphicsSystem;
 	class PhysicsSystem;
+	class InputManager;
+	class TagSystem;
 }
 
 namespace Editor
@@ -47,6 +48,9 @@ namespace Editor
 
 		Dystopia::GraphicsSystem *mpGfxSys;
 		Dystopia::PhysicsSystem	 *mpPhySys;
+		Dystopia::InputManager    *mpInputSys;
+		Dystopia::TagSystem       *mpTagSystem;
+
 
 	};
 

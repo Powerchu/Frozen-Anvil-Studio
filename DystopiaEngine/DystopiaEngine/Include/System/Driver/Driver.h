@@ -56,6 +56,7 @@ namespace Dystopia
 			class FontSystem,
 			class LoggerSystem,
 			class TextureSystem,
+			class TagSystem
 			class Factory
 		>::result;
 

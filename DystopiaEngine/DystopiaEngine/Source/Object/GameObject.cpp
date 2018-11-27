@@ -23,6 +23,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "IO/TextSerialiser.h"
 #include "System/Behaviour/BehaviourSystem.h"
+#include "System/Tag/TagSystem.h"
+#include "Editor/Payloads.h"
 
 //duplicate should immediately put into scene
 #include "Component/Transform.h"
@@ -48,7 +50,7 @@ Dystopia::GameObject::GameObject(void) noexcept
 Dystopia::GameObject::GameObject(uint64_t _ID) noexcept
 	: mnID{ _ID }, mnFlags{ FLAG_NONE },
 	mTransform{ this }, mComponents{}, mBehaviours{}
-	,mbIsStatic(false)
+	,mbIsStatic(false), mTags{0}
 {
 
 }
@@ -58,7 +60,8 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	mComponents{ Ut::Move(_obj.mComponents) },
 	mBehaviours{ Ut::Move(_obj.mBehaviours) },
 	mTransform{ _obj.mTransform }
-	, mbIsStatic(false)
+	, mbIsStatic(false),
+	mTags(0)
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
@@ -105,6 +108,57 @@ unsigned Dystopia::GameObject::GetFlag() const
 {
 	return mnFlags;
 }
+
+unsigned Dystopia::GameObject::GetTags() const
+{
+	return mTags;
+}
+
+AutoArray<Tags> Dystopia::GameObject::GetAllTags() const
+{
+	return EngineCore::GetInstance()->Get<TagSystem>()->GetTagsAsArray(static_cast<Tags>(mTags));
+}
+
+AutoArray<HashString> Dystopia::GameObject::GetAllTags_Hashstr() const
+{
+	return EngineCore::GetInstance()->Get<TagSystem>()->ConvertTagsToHash(static_cast<Tags>(mTags));
+}
+
+AutoArray<std::string> Dystopia::GameObject::GetAllTags_str() const
+{
+	return EngineCore::GetInstance()->Get<TagSystem>()->ConvertTagsToString(static_cast<Tags>(mTags));
+}
+
+void Dystopia::GameObject::AddTag(HashString const& _TagName)
+{
+	mTags |= static_cast<unsigned>(EngineCore::GetInstance()->Get<TagSystem>()->GetTag(_TagName));
+}
+
+void Dystopia::GameObject::AddTag(Tags _tag)
+{
+	mTags |= static_cast<unsigned>(_tag);
+}
+
+void Dystopia::GameObject::AddTag(std::string const& _TagName)
+{
+	mTags |= static_cast<unsigned>(EngineCore::GetInstance()->Get<TagSystem>()->GetTag(HashString{ _TagName.c_str() }));
+}
+
+void Dystopia::GameObject::AddTag(const char* _TagName)
+{
+	mTags |= static_cast<unsigned>(EngineCore::GetInstance()->Get<TagSystem>()->GetTag(_TagName));
+}
+
+void Dystopia::GameObject::RemoveTag(Tags _Tag)
+{
+	mTags &= ~static_cast<unsigned>(_Tag);
+}
+
+void Dystopia::GameObject::ClearTags()
+{
+	mTags = 0;
+}
+
 
 void Dystopia::GameObject::Load(void)
 {
@@ -170,32 +224,35 @@ void Dystopia::GameObject::Unload(void)
 
 void Dystopia::GameObject::OnCollisionEnter(const CollisionEvent& _pEvent)
 {
-	ForcePing(mBehaviours, OnCollisionEnter, _pEvent);
+	Ping(mBehaviours, OnCollisionEnter, _pEvent);
 }
 
 void Dystopia::GameObject::OnCollisionStay(const CollisionEvent& _pEvent)
 {
-	ForcePing(mBehaviours, OnCollisionStay, _pEvent);
+	Ping(mBehaviours, OnCollisionStay, _pEvent);
 }
 
 void Dystopia::GameObject::OnCollisionExit(const CollisionEvent& _pEvent)
 {
-	ForcePing(mBehaviours, OnCollisionExit, _pEvent);
+	Ping(mBehaviours, OnCollisionExit, _pEvent);
 }
 
-void Dystopia::GameObject::OnTriggerEnter(const GameObject* _pOther)
+void Dystopia::GameObject::OnTriggerEnter(GameObject* const _pOther)
 {
-	ForcePing(mBehaviours, OnTriggerEnter, _pOther);
+	if (!_pOther) return;
+	Ping(mBehaviours, OnTriggerEnter, _pOther);
 }
 
-void Dystopia::GameObject::OnTriggerStay(const GameObject* _pOther)
+void Dystopia::GameObject::OnTriggerStay(GameObject* const _pOther)
 {
-	ForcePing(mBehaviours, OnTriggerStay, _pOther);
+	if (!_pOther) return;
+	Ping(mBehaviours, OnTriggerStay, _pOther);
 }
 
-void Dystopia::GameObject::OnTriggerExit(const GameObject* _pOther)
+void Dystopia::GameObject::OnTriggerExit(GameObject* const _pOther)
 {
-	ForcePing(mBehaviours, OnTriggerExit, _pOther);
+	if (!_pOther) return;
+	Ping(mBehaviours, OnTriggerExit, _pOther);
 }
 
 void Dystopia::GameObject::PurgeComponents(void)
@@ -248,7 +305,7 @@ void Dystopia::GameObject::RemoveComponent(Component* const _pComponent)
 void Dystopia::GameObject::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("START_GO_DATA");
-	_out << mnID << mnFlags << mName;
+	_out << mnID << mnFlags << mName << mTags;
 	_out.InsertEndBlock("END_GO_DATA");
 
 	_out.InsertStartBlock("START_GO_TRANSFORM");
@@ -259,7 +316,7 @@ void Dystopia::GameObject::Serialise(TextSerialiser& _out) const
 void Dystopia::GameObject::Unserialise(TextSerialiser& _in)
 {
 	_in.ConsumeStartBlock();
-	_in >> mnID >> mnFlags >> mName;
+	_in >> mnID >> mnFlags >> mName >> mTags;
 	_in.ConsumeEndBlock();
 
 	_in.ConsumeStartBlock();
@@ -287,8 +344,10 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	
 	for (auto& c : mComponents)
 		p->AddComponent(c->Duplicate(), Component::TAG{});
+#if EDITOR
 	for (auto& b : mBehaviours)
 		p->AddComponent(EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, p->mnID), Behaviour::TAG{});
+#endif
 
 	const auto& children = mTransform.GetAllChild();
 	for (const auto& child : children)

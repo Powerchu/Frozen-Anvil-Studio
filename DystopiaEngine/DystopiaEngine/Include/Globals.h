@@ -47,8 +47,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_THROW(_X_)	
 #define _EDITOR_CODE(_X_)
 #define _GAME_NOEXCEPT		noexcept
+#define UNUSED_PARAMETER(_X_)       static_cast<void>(_X_);
 
-#define _DLL_EXPORT
+#ifdef  EXPORT
+#define _DLL_EXPORT   __declspec( dllexport )
+#else 
+#define _DLL_EXPORT   __declspec( dllimport )
+#endif
+
+
+#define _DLL_EXPORT_ONLY  __declspec( dllexport )
+
 #endif
 
 

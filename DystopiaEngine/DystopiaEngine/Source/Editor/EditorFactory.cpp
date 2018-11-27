@@ -75,11 +75,11 @@ void Editor::EditorFactory::Message(eEMessage _msg)
 		for (auto& object : mArrFactoryObj)
 		{
 			auto& allC = object.GetAllComponents();
-			for (auto& c : allC)
-				object.RemoveComponent(c);
+			for (unsigned n = 0; n < allC.size(); n++)
+				object.RemoveComponent(allC[n--]);
 			auto& allB = object.GetAllBehaviours();
-			for (auto& b : allB)
-				object.RemoveComponent(b);
+			for (unsigned n = 0; n < allB.size(); n++)
+				object.RemoveComponent(allB[n--]);
 		}
 	}
 	else if (_msg == eEMessage::SCENE_CHANGED)
@@ -110,14 +110,28 @@ void Editor::EditorFactory::DefaultSceneCamera(void)
 	cam->Awake();
 }
 
-void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p)
+void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p, uint64_t c)
 {
 	for (auto& object : mArrFactoryObj)
 	{
-		if (_p->GetOwnerID() == object.GetID())
+		if (c == 0)
 		{
-			object.AddComponent(_p, Dystopia::Component::TAG{});
-			return;
+			if (_p->GetOwnerID() == object.GetID())
+			{
+				object.AddComponent(_p, Dystopia::Component::TAG{});
+				return;
+			}
+		}
+		else
+		{
+			if (c == object.GetID())
+			{
+				auto b = dynamic_cast<Dystopia::Behaviour*>(_p);
+				if (!b)
+					__debugbreak();
+				object.AddComponent(b, Dystopia::Behaviour::TAG{});
+				return;
+			}
 		}
 	}
 }
@@ -429,33 +443,44 @@ void Editor::EditorFactory::SaveSegment(Dystopia::GameObject& _obj, const AutoAr
 
 void Editor::EditorFactory::SaveSegment(const AutoArray<Dystopia::Behaviour*>& _arrBehaviours, Dystopia::TextSerialiser& _out)
 {
-	_out.InsertStartBlock("All Behaviours Block");
+	_out.InsertStartBlock("Number of Behaviours");
 	_out << _arrBehaviours.size();
+	_out.InsertEndBlock("Number of Behaviours");
+
 	for (const auto& b : _arrBehaviours)
 	{
+		_out.InsertStartBlock("Behaviour Names");
 		HashString name{ b->GetBehaviourName() };
 		_out << name;
-		_out.InsertStartBlock("Behaviour Block");
+		_out.InsertEndBlock("Behaviour Names");
+
 		auto metaData = b->GetMetaData();
 		if (metaData)
 		{
 			auto allNames = metaData.GetAllNames();
+
+			_out.InsertStartBlock("Behaviour Meta Count");
 			_out << allNames.size();
+			_out.InsertEndBlock("Behaviour  Meta Count");
+
 			for (const auto& n : allNames)
 			{
 				if (metaData[n])
 				{
 					std::string memVarName{ n };
+
+					_out.InsertStartBlock(memVarName);
 					_out << memVarName;
+					_out.InsertEndBlock(memVarName);
+
 					_out.InsertStartBlock("Member Variable");
 					metaData[n].Serialise(b, _out, Dystopia::BehaviourHelper::SuperSerialiseFunctor{});
 					_out.InsertEndBlock("Member Variable");
+					
 				}
 			}
 		}
-		_out.InsertEndBlock("Behaviour Block");
 	}
-	_out.InsertEndBlock("All Behaviours Block");
 }
 
 unsigned Editor::EditorFactory::LoadSegment(Dystopia::GameObject& _obj, Dystopia::TextSerialiser& _in)
@@ -476,6 +501,7 @@ void Editor::EditorFactory::LoadSegmentC(Dystopia::GameObject& _obj, unsigned _c
 	{
 		_in.ConsumeStartBlock();
 		_in >> sysID;
+		
 		Dystopia::Component *pComponent = cList.GetComponentA(sysID, &_obj);
 		/*pComponent->Unserialise(_in);*/
 		cList.IsolateUnserialise(pComponent, _in);
@@ -488,22 +514,35 @@ void Editor::EditorFactory::LoadSegmentB(Dystopia::GameObject& _obj, Dystopia::T
 	unsigned num;
 	_in.ConsumeStartBlock();
 	_in >> num;
+	_in.ConsumeEndBlock();
+
 	for (unsigned i = 0; i < num; ++i)
 	{
 		HashString name;
+
+		_in.ConsumeStartBlock();
 		_in >> name;
+		_in.ConsumeEndBlock();
+
 		if (auto ptr = Dystopia::EngineCore::GetInstance()->Get<Dystopia::BehaviourSystem>()->RequestBehaviour(_obj.GetID(), name.c_str()))
 		{
 			unsigned size = 0;
+
 			_in.ConsumeStartBlock();
 			_in >> size;
+			_in.ConsumeEndBlock();
+
 			auto BehaviourMetadata = ptr->GetMetaData();
 			if (BehaviourMetadata)
 			{
 				for (unsigned u = 0; u < size; ++u)
 				{
 					std::string MemVarName;
+
+					_in.ConsumeStartBlock();
 					_in >> MemVarName;
+					_in.ConsumeEndBlock();
+
 					if (BehaviourMetadata[MemVarName.c_str()])
 					{
 						_in.ConsumeStartBlock();
@@ -520,15 +559,9 @@ void Editor::EditorFactory::LoadSegmentB(Dystopia::GameObject& _obj, Dystopia::T
 			}
 			ptr->SetOwner(&_obj);
 			_obj.AddComponent(ptr, Dystopia::BehaviourTag{});
-			_in.ConsumeEndBlock();
-		}
-		else
-		{
-			_in.ConsumeStartBlock();
-			_in.ConsumeEndBlock();
 		}
 	}
-	_in.ConsumeEndBlock();
+
 	_obj.Identify();
 }
 

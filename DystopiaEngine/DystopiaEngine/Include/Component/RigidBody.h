@@ -91,8 +91,9 @@ namespace Dystopia
 		void DebugPrint();
 
 		// Editor UI
+#if EDITOR
 		void EditorUI(void) noexcept override;
-
+#endif
 		void GlobalCentroidFromPosition(void);
 		void PositionFromGlobalCentroid(void);
 

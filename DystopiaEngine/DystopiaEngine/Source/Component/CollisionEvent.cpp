@@ -140,5 +140,10 @@ namespace Dystopia
 		return mCollidedWith == _pCollidedWith;
 	}
 
+	bool CollisionEvent::operator==(const GameObject * const _pCollidedWith) const
+	{
+		return mCollidedWith == _pCollidedWith;
+	}
+
 }
 

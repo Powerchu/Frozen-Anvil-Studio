@@ -366,8 +366,8 @@ namespace Dystopia
 	RigidBody * RigidBody::Duplicate() const
 	{
 		const auto cc = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent(*this);
-		cc->SetOwner(GetOwner());
-		cc->Init();
+		//cc->SetOwner(GetOwner());
+		//cc->Init();
 		return cc;
 	}
 
@@ -793,6 +793,7 @@ namespace Dystopia
 	/****************************************************************
 	* EDITOR GUI STUFF
 	****************************************************************/
+#if EDITOR
 	void RigidBody::CheckMass()
 	{
 		if (mfMass)
@@ -807,7 +808,7 @@ namespace Dystopia
 		}
 	}
 
-#if EDITOR
+
 	void RigidBody::EditorUI() noexcept
 	{
 		EGUI::PushLeftAlign(140.f);
