@@ -41,6 +41,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Transform.h"
 #include "Component/Camera.h"
 #include "Component/Renderer.h"
+#include "Component/AABB.h"
 #include "Component/SpriteRenderer.h"
 #include "Component/RigidBody.h"
 #include "Behaviour/Behaviour.h"
@@ -92,7 +93,7 @@ namespace Editor
 		if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
 			mpGfxSys->Update(_dt);
 
-		float scroll = EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->GetMouseWheel();
+		const float scroll = EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->GetMouseWheel();
 		if (scroll)
 		{
 			if (scroll > 0)
@@ -116,7 +117,7 @@ namespace Editor
 		AdjustImageSize(pTex);
 		AdjustDisplayPos();
 
-		auto orig = ImGui::GetCursorPos();
+		const auto orig = ImGui::GetCursorPos();
 		ImGui::SetCursorPos(ImVec2{ orig.x + mImgPos.x, orig.y + mImgPos.y - 1.f });
 		EGUI::Display::Image(pTex->GetID(), mImgSize);
 		if (ImGui::IsItemHovered())
@@ -124,34 +125,36 @@ namespace Editor
 		else
 			mAmFocused = false;
 		ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
+
 		if (mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera"))
 		{
-			if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PREFAB))
+			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PREFAB))
 			{
 				AcceptPrefab(t);
 				EGUI::Display::EndPayloadReceiver();
 			}
-			if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
+			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
 			{
 				AcceptTexture(t);
 				EGUI::Display::EndPayloadReceiver();
 			}
-			if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS))
+			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS))
 			{
 				AcceptTexture(t);
 				EGUI::Display::EndPayloadReceiver();
 			}
-			if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP))
+			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP))
 			{
 				AcceptTexture(t);
 				EGUI::Display::EndPayloadReceiver();
 			}
 		}
-		if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::SCENE))
+		if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::SCENE))
 		{
 			EditorMain::GetInstance()->GetSystem<EditorStates>()->OpenScene(t->mPath);
 			EGUI::Display::EndPayloadReceiver();
 		}
+
 		if (EditorMain::GetInstance()->GetCurState() == eState::PLAY)
 			ImGui::PopStyleVar();
 
@@ -201,8 +204,10 @@ namespace Editor
 			Math::Vec2 relPos = Math::Vec2{ ImGui::GetMousePos() } - ImGui::GetItemRectMin();
 
 			Math::Vec2 vToMove{ relPos.x - mPrevMovePoint.x, relPos.y - mPrevMovePoint.y };
+
 			if (vToMove.MagnitudeSqr() < dragMagnitudeEpsilon)
 				return;
+
 			vToMove.x -= .5f;
 			vToMove.y -= .5f;
 			vToMove.x *= 2.f;
@@ -218,34 +223,48 @@ namespace Editor
 	Dystopia::GameObject* SceneView::FindMouseObject()
 	{
 		Dystopia::GameObject* pTarget = nullptr;
+
 		if (Dystopia::Camera* pCam = GetCamera())
 		{
-			Math::Pt3D worldClickPos = GetWorldClickPos(pCam);
-			float vLength = FLT_MAX;
+			const Math::Pt3D worldClickPos = GetWorldClickPos(pCam);
+			//float vLength = FLT_MAX;
+
 			const auto& allObj = mpSceneSys->GetCurrentScene().GetAllGameObjects();
+
 			for (auto& obj : allObj)
 			{
 				if (&obj == mpSceneCamera->GetOwner()) continue;
 
-				Math::Pt3D objPos	= obj.GetComponent<Dystopia::Transform>()->GetGlobalPosition();
-				Math::Vec4 distV	= objPos - worldClickPos;
-				Math::Vec2 flatVec	= { distV.x, distV.y };
-				const auto& trans	= obj.GetComponent<Dystopia::Transform>();
-				Math::Vec4 scale	= trans->GetGlobalScale();
-				Math::Pt3D pos		= trans->GetGlobalPosition();
+				const auto trans		= obj.GetComponent<Dystopia::Transform>();
+				const Math::Vec4 scale		= trans->GetGlobalScale();
 
-				if (worldClickPos.x >= (pos.x - (scale.x / 2)) &&
-					worldClickPos.x <= (pos.x + (scale.x / 2)) &&
-					worldClickPos.y >= (pos.y - (scale.y / 2)) &&
-					worldClickPos.y <= (pos.y + (scale.y / 2)))
+				// AABB Collision
+				Dystopia::AABB tempAABB{ scale.x,scale.y };
+				tempAABB.SetOwnerTransform(trans->GetTransformMatrix());
+				tempAABB.SetRotation(trans->GetGlobalRotation());
+
+				tempAABB.Recompute();
+
+				if (tempAABB.isColliding(worldClickPos))
 				{
-					float lSquared = flatVec.MagnitudeSqr();
-					if (lSquared < vLength)
-					{
-						vLength = lSquared;
-						pTarget = &obj;
-					}
+					pTarget = &obj;
 				}
+
+
+				//if (worldClickPos.x >= (pos.x - (scale.x / 2)) &&
+				//	worldClickPos.x <= (pos.x + (scale.x / 2)) &&
+				//	worldClickPos.y >= (pos.y - (scale.y / 2)) &&
+				//	worldClickPos.y <= (pos.y + (scale.y / 2)))
+				//{
+				//	const float lSquared = flatVec.MagnitudeSqr();
+
+				//	//Mouse is inside AABB
+				//	if (lSquared < vLength)
+				//	{
+				//		vLength = lSquared;
+				//		pTarget = &obj;
+				//	}
+				//}
 			}
 		}
 		return pTarget;

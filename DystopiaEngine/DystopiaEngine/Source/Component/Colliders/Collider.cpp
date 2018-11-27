@@ -298,11 +298,21 @@ namespace Dystopia
 		mBoundingCircle = GenerateBoardPhaseCircle();
 	}
 
+	void Collider::SetRotation(Math::Quaternion const& _rot)
+	{
+		mRotation = _rot;
+	}
+
 	Math::Point3D Collider::GetGlobalPosition() const
 	{
 		auto point =  mOwnerTransformation * Math::Translate(mv3Offset.x, mv3Offset.y , mv3Offset.z) * GetTransformationMatrix() *  mPosition;
 		point.z = 0;
 		return point;
+	}
+
+	Math::Quaternion Collider::GetGlobalRotation() const
+	{
+		return mRotation;
 	}
 
 	Math::Vec3D Collider::GetOffSet() const
