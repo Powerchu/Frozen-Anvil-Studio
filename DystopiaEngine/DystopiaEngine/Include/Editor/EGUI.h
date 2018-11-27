@@ -250,6 +250,8 @@ namespace EGUI
 			float _min = 0.0f, float _max = 1.0f, bool _hideText = false, float _width = 100.f);
 		eDragStatus SliderFloat(const std::string& _label, float *_pOutFloat, float _min = 0.0f, float _max = 1.0f, 
 			bool _hideText = false, float _width = 100.f);
+		eDragStatus SliderInt(const HashString& _label, int *_pOutInt, int _min = 0, int _max = 1,
+			bool _hideText = false, float _width = 100.f);
 		/* =======================================================================================================================
 		Brief:
 				Creates a draggable int editable field. Returns if the value is changed

@@ -381,78 +381,86 @@ bool Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
 		auto& curSec = mpAtlas->GetAllSections()[anim.mnID];
 		int maxC = static_cast<int>((curSec.uEnd - curSec.uStart) / curSec.mCol);
 		auto col = anim.mnCol;
-		switch (EGUI::Display::DragInt("Columns", &col, 0.1f, 1, maxC))
-		{
-		case EGUI::eDragStatus::eDRAGGING:
-			anim.mnCol = col;
-			break;
-		case EGUI::eDragStatus::eSTART_DRAG:
-		case EGUI::eDragStatus::eEND_DRAG:
-		case EGUI::eDragStatus::eENTER:
-		case EGUI::eDragStatus::eTABBED:
-		case EGUI::eDragStatus::eDEACTIVATED:
-		case EGUI::eDragStatus::eNO_CHANGE:
-		default:
-			anim.mnCol = Math::Clamp(anim.mnCol, 1, maxC);
-			break;
-		}
+		EGUI::Display::SliderInt("Columns", &col, 1, maxC);
+		anim.mnCol = col;
+		//switch ()
+		//{
+		//case EGUI::eDragStatus::eDRAGGING:
+		//	anim.mnCol = col;
+		//	break;
+		//case EGUI::eDragStatus::eSTART_DRAG:
+		//case EGUI::eDragStatus::eEND_DRAG:
+		//case EGUI::eDragStatus::eENTER:
+		//case EGUI::eDragStatus::eTABBED:
+		//case EGUI::eDragStatus::eDEACTIVATED:
+		//case EGUI::eDragStatus::eNO_CHANGE:
+		//default:
+		//	anim.mnCol = Math::Clamp(anim.mnCol, 1, maxC);
+		//	break;
+		//}
 
 		/********* Rows *********/
 		auto row = anim.mnRow;
 		int maxR = static_cast<int>((curSec.vEnd - curSec.vStart) / curSec.mRow);
-		switch (EGUI::Display::DragInt("Rows", &row, 0.1f, 1, maxR))
-		{
-		case EGUI::eDragStatus::eDRAGGING:
-			anim.mnRow = row;
-			break;
-		case EGUI::eDragStatus::eSTART_DRAG:
-		case EGUI::eDragStatus::eEND_DRAG:
-		case EGUI::eDragStatus::eENTER:
-		case EGUI::eDragStatus::eTABBED:
-		case EGUI::eDragStatus::eDEACTIVATED:
-		case EGUI::eDragStatus::eNO_CHANGE:
-		default:
-			anim.mnRow = Math::Clamp(anim.mnRow, 1, maxR);
-			break;
-		}
+		EGUI::Display::SliderInt("Rows", &row, 1, maxR);
+		anim.mnRow = row;
+		//switch (EGUI::Display::DragInt("Rows", &row, 0.1f, 1, maxR))
+		//{
+		//case EGUI::eDragStatus::eDRAGGING:
+		//	anim.mnRow = row;
+		//	break;
+		//case EGUI::eDragStatus::eSTART_DRAG:
+		//case EGUI::eDragStatus::eEND_DRAG:
+		//case EGUI::eDragStatus::eENTER:
+		//case EGUI::eDragStatus::eTABBED:
+		//case EGUI::eDragStatus::eDEACTIVATED:
+		//case EGUI::eDragStatus::eNO_CHANGE:
+		//default:
+		//	anim.mnRow = Math::Clamp(anim.mnRow, 1, maxR);
+		//	break;
+		//}
 
 		/******** Start *********/
 		auto start = anim.mnStart;
 		int maxStart = static_cast<int>(anim.mnCol * anim.mnRow) - 1;
-		switch (EGUI::Display::DragInt("Start", &start, 0.1f, 0, maxStart))
-		{
-		case EGUI::eDragStatus::eDRAGGING:
-			anim.mnStart = start;
-			break;
-		case EGUI::eDragStatus::eSTART_DRAG:
-		case EGUI::eDragStatus::eEND_DRAG:
-		case EGUI::eDragStatus::eENTER:
-		case EGUI::eDragStatus::eTABBED:
-		case EGUI::eDragStatus::eDEACTIVATED:
-		case EGUI::eDragStatus::eNO_CHANGE:
-		default:
-			anim.mnStart = Math::Clamp(anim.mnStart, 0, maxStart);
-			break;
-		}
+		EGUI::Display::SliderInt("Start", &start, 0, maxStart);
+		anim.mnStart = start;
+		//switch (EGUI::Display::DragInt("Start", &start, 0.1f, 0, maxStart))
+		//{
+		//case EGUI::eDragStatus::eDRAGGING:
+		//	anim.mnStart = start;
+		//	break;
+		//case EGUI::eDragStatus::eSTART_DRAG:
+		//case EGUI::eDragStatus::eEND_DRAG:
+		//case EGUI::eDragStatus::eENTER:
+		//case EGUI::eDragStatus::eTABBED:
+		//case EGUI::eDragStatus::eDEACTIVATED:
+		//case EGUI::eDragStatus::eNO_CHANGE:
+		//default:
+		//	anim.mnStart = Math::Clamp(anim.mnStart, 0, maxStart);
+		//	break;
+		//}
 
 		/******** End *********/
 		auto end = anim.mnEnd;
 		int maxEnd = static_cast<int>(anim.mnCol * anim.mnRow) - 1;
-		switch (EGUI::Display::DragInt("End", &end, 0.1f, 0, maxEnd))
-		{
-		case EGUI::eDragStatus::eDRAGGING:
-			anim.mnEnd = end;
-			break;
-		case EGUI::eDragStatus::eSTART_DRAG:
-		case EGUI::eDragStatus::eEND_DRAG:
-		case EGUI::eDragStatus::eENTER:
-		case EGUI::eDragStatus::eTABBED:
-		case EGUI::eDragStatus::eDEACTIVATED:
-		case EGUI::eDragStatus::eNO_CHANGE:
-		default:
-			anim.mnEnd = Math::Clamp(anim.mnEnd, 0, maxEnd);
-			break;
-		}
+		EGUI::Display::SliderInt("End", &end, 0, maxEnd);
+		anim.mnEnd = end;
+		//switch (EGUI::Display::DragInt("End", &end, 0.1f, 0, maxEnd))
+		//{
+		//case EGUI::eDragStatus::eDRAGGING:
+		//	anim.mnEnd = end;
+		//	break;
+		//case EGUI::eDragStatus::eSTART_DRAG:
+		//case EGUI::eDragStatus::eEND_DRAG:
+		//case EGUI::eDragStatus::eENTER:
+		//case EGUI::eDragStatus::eTABBED:
+		//case EGUI::eDragStatus::eDEACTIVATED:
+		//case EGUI::eDragStatus::eNO_CHANGE:
+		//default:
+		//	anim.mnEnd = Math::Clamp(anim.mnEnd, 0, maxEnd);
+		//	break;
+		//}
 
 		EGUI::UnIndent();
 		EGUI::Display::EndTreeNode();

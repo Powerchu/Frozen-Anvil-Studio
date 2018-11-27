@@ -60,7 +60,7 @@ bool Editor::SpriteEditor::Init(void)
 void Editor::SpriteEditor::Update(float)
 {
 	static constexpr float halfY = 0.7f;
-	static constexpr float halfX = 0.5f;
+	static constexpr float halfX = 0.7f;
 	const float sides = 5;
 	const float tops = 3;
 	auto size = Size();
@@ -141,7 +141,7 @@ void Editor::SpriteEditor::AtlasArea(float _x, float _y)
 	DrawTempGrid(originPos.x, originPos.y, fSize.x, fSize.y);
 }
 
-void Editor::SpriteEditor::SettingsArea(float _x, float _y)
+void Editor::SpriteEditor::SettingsArea(float, float)
 {
 	EGUI::PushLeftAlign(80);
 	FieldTexture();
@@ -238,7 +238,7 @@ void Editor::SpriteEditor::DrawSelectedGrid(float _ox, float _oy, float _ix, flo
 	unsigned total = col * row;
 	float xLen = ratioW / col;
 	float yLen = ratioH / row;
-	
+
 	for (unsigned i = 0; i < total; ++i)
 	{
 		Math::Vec2 rectMin{ screenOrigin.x + (((i % col) * xLen) * _ix) + (section.uStart * _ix),
@@ -246,6 +246,9 @@ void Editor::SpriteEditor::DrawSelectedGrid(float _ox, float _oy, float _ix, flo
 		Math::Vec2 rectMax{ rectMin.x + (xLen * _ix),
 							rectMin.y + (yLen * _iy) };
 		pCanvas->AddRect(rectMin, rectMax, ImGui::GetColorU32(ImVec4{ 1,1,1,1}));
+		ImGui::SetCursorScreenPos(rectMin + ImVec2{ 1,1 });
+		EGUI::Display::Label("%d", i);
+		ImGui::SetCursorScreenPos(screenOrigin);
 	}
 }
 
@@ -255,6 +258,7 @@ void Editor::SpriteEditor::DrawTempGrid(float _ox, float _oy, float _ix, float _
 		return;
 
 	auto pCanvas = ImGui::GetWindowDrawList();
+	static const ImVec4 red{ 1, 0, 0, 1 };
 
 	ImGui::SetCursorPos(ImVec2{ _ox, _oy });
 	auto screenOrigin = ImGui::GetCursorScreenPos();
@@ -268,14 +272,19 @@ void Editor::SpriteEditor::DrawTempGrid(float _ox, float _oy, float _ix, float _
 	float xLen = (iEnd.x - iStart.x) / col;
 	float yLen = (iEnd.y - iStart.y) / row;
 
+	ImGui::PushStyleColor(ImGuiCol_Text, red);
 	for (unsigned i = 0; i < total; ++i)
 	{
 		Math::Vec2 rectMin{ screenOrigin.x + (_ix * mSectionPos.x) + (((i % col) * xLen)),
 							screenOrigin.y + (_iy * mSectionPos.y) + (((i / col) * yLen)) };
 		Math::Vec2 rectMax{ rectMin.x + xLen,
 							rectMin.y + yLen };
-		pCanvas->AddRect(rectMin, rectMax, ImGui::GetColorU32(ImVec4{ 1,0 , 0,1 }));
+		pCanvas->AddRect(rectMin, rectMax, ImGui::GetColorU32(red));
+		ImGui::SetCursorScreenPos(rectMin + ImVec2{ 1,1 });
+		EGUI::Display::Label("%d", i);
+		ImGui::SetCursorScreenPos(screenOrigin);
 	}
+	ImGui::PopStyleColor();
 }
 
 #endif 

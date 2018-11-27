@@ -139,7 +139,8 @@ namespace Editor
 				auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, HashString{ buffer });
 				cmd->FunctionCommand(mpFocus->GetID(), oFn, nFn);
 			}
-			if (EGUI::Display::DropDownSelection("Tag", i, mpFocus->GetAllTags_str(), 32))
+			auto arr = mpFocus->GetAllTags_str();
+			if (EGUI::Display::DropDownSelection("Tag", i, arr, 32))
 			{
 
 			}

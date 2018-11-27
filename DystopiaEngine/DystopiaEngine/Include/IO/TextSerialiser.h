@@ -50,6 +50,7 @@ namespace Dystopia
 		void ApplyRead(T&);
 		template <typename T>
 		void ApplyWrite(const T&);
+		void ApplyWrite(const char* _rhs);
 
 		bool Validate(void);
 	};
@@ -79,6 +80,11 @@ template <>
 inline void Dystopia::TextSerialiser::ApplyWrite(const HashString& _rhs)
 {
 	mFile << "\"" << _rhs.c_str() << "\",";
+}
+
+inline void Dystopia::TextSerialiser::ApplyWrite(const char* _rhs)
+{
+	mFile << "\"" << _rhs << "\",";
 }
 
 template <typename T>
