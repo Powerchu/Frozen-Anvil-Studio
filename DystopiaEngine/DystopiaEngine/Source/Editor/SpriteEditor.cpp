@@ -141,7 +141,7 @@ void Editor::SpriteEditor::AtlasArea(float _x, float _y)
 	DrawTempGrid(originPos.x, originPos.y, fSize.x, fSize.y);
 }
 
-void Editor::SpriteEditor::SettingsArea(float _x, float _y)
+void Editor::SpriteEditor::SettingsArea(float, float)
 {
 	EGUI::PushLeftAlign(80);
 	FieldTexture();

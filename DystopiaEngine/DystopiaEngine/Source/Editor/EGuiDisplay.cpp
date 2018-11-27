@@ -333,6 +333,30 @@ namespace EGUI
 				return changing ? eDRAGGING : eNO_CHANGE;
 			return eNO_CHANGE;
 		}
+		
+		eDragStatus SliderInt(const HashString& _label, int *_pOutInt, int _min, int _max, bool _hideText, float _width)
+		{
+			//if (!_hideText)
+			//{
+			//	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			//	Label(_label.c_str());
+			//	SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+			//	ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			//}
+			//bool changing = false;
+			//ImGui::PushItemWidth(_width);
+			//changing = ImGui::SliderInt(("###SlideFloat" + _label).c_str(), _pOutFloat, _min, _max, "%.3f");
+			//ImGui::PopItemWidth();
+			//
+			//if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
+			//	return changing ? eINSTANT_CHANGE : eSTART_DRAG;
+			//else if (ImGui::IsItemDeactivated())
+			//	return ImGui::IsMouseReleased(0) ? eEND_DRAG : eDEACTIVATED;
+			//else if (ImGui::IsItemActive())
+			//	return changing ? eDRAGGING : eNO_CHANGE;
+			//return eNO_CHANGE;
+			return eNO_CHANGE;
+		}
 
 		eDragStatus DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max, bool _hideText, float _width)
 		{
