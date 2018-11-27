@@ -184,7 +184,7 @@ void Editor::EditorLauncher::TopBar(float _w, float _h)
 	float w2 = 160.f;
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,0 });
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ ImGui::GetStyle().WindowPadding.x ,0 });
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ /*ImGui::GetStyle().WindowPadding.x*/20 ,0 });
 	ImGui::BeginChild("Top Bar", ImVec2{ _w, _h }, true);
 	ImGui::PopStyleVar();
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
@@ -494,8 +494,12 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 				p = mProjFolderSelected.find('\\');
 			}
 
+			fs->CreateFolder("Resource", mProjFolderSelected);
+			HashString resFolder = mProjFolderSelected;
+			resFolder += "/";
+			resFolder += "Resource";
 			for (unsigned i = 0; i < SUBFOLDER_COUNT; ++i)
-				fs->CreateFolder(g_SubFolders[i], mProjFolderSelected);
+				fs->CreateFolder(g_SubFolders[i], resFolder);
 
 			mArrProjFolders.push_back(mProjFolderSelected);
 

@@ -50,6 +50,8 @@ namespace Editor
 
 		void SetSensitivity(float);
 		float GetSensitivity(void) const;
+		void SetGizmoTranslate(void);
+		void SetGizmoScaler(void);
 
 	private:
 		enum eGizTool
@@ -104,8 +106,6 @@ namespace Editor
 		void		DrawGizmos(void);
 		void		DrawGizmoSingle(Dystopia::GameObject&);
 		void		DrawGizmoMul(const AutoArray<uint64_t>&);
-		void		SetGizmoTranslate(void);
-		void		SetGizmoScaler(void);
 	};
 
 }

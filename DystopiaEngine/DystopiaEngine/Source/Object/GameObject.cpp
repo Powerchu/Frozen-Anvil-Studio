@@ -341,7 +341,7 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	p->mTransform	= mTransform;
 
 	p->mTransform.SetOwner(p);
-
+	
 	for (auto& c : mComponents)
 		p->AddComponent(c->Duplicate(), Component::TAG{});
 #if EDITOR

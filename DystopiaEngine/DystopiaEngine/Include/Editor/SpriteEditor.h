@@ -56,12 +56,24 @@ namespace Editor
 		Math::Vec2 mPreviewArea;
 		Math::Vec2 mSectionEditArea;
 
+		int mnSelectedSection;
+		Math::Vec2 mSectionPos;
+		Math::Vec2 mSectionSize;
+		Math::Vec2 mSectionDime;
+
+
+
 		void AtlasArea(float,float);
 		void SettingsArea(float, float);
 		void PreviewArea(float, float);
 
 		Math::Vec2 AdjustAspectSize(float, float, float , float);
 
+		void FieldTexture(void);
+		void FieldAtlas(void);
+
+		void DrawSelectedGrid(float, float, float, float);
+		void DrawTempGrid(float, float, float, float);
 	};
 }
 

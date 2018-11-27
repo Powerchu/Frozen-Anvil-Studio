@@ -334,6 +334,9 @@
     <ClCompile Include="Source\DataStructure\HashString.cpp">
       <Filter>DataStructures\HashString</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Factory\Factory.cpp">
+      <Filter>Game Engine\SubSystems\Factory</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp">
       <Filter>Editor\Main\Panels\Behaviour Tree</Filter>
     </ClCompile>
@@ -939,6 +942,9 @@
     <ClInclude Include="Include\System\Tag\TagSystem.h">
       <Filter>Game Engine\SubSystems\Tag</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Factory\Factory.h">
+      <Filter>Game Engine\SubSystems\Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1354,6 +1360,9 @@
     </Filter>
     <Filter Include="Editor\Main\Panels\Behaviour Tree">
       <UniqueIdentifier>{903fdd85-b40e-44db-89dd-1fa3d058f796}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Factory">
+      <UniqueIdentifier>{27de6ba2-f9b9-4828-a0cc-809fcef7c950}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

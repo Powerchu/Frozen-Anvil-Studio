@@ -404,12 +404,40 @@ namespace EGUI
 
 			Label("X:"); SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
-			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true);
+			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true, _width);
 			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = x;
 
 			SameLine(); Label("Y:"); SameLine();
-			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true);
+			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true, _width);
 			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
+
+			ImGui::PopItemWidth();
+
+			return Array<eDragStatus, 2>{statX, statY};
+		}
+
+		Array<eDragStatus, 2> VectorFieldsInt(const char *_label, Math::Vector2 *_outputVec, int _dragSpeed, int _min, int _max, float _width)
+		{
+			std::string field1 = "##VecFieldX", field2 = "##VecFieldY";
+			int x, y;
+			x = static_cast<int>(_outputVec->x);
+			y = static_cast<int>(_outputVec->y);
+			field1 += _label;
+			field2 += _label;
+
+			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+
+			Label("X:"); SameLine();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			eDragStatus statX = EGUI::Display::DragInt(field1.c_str(), &x, static_cast<float>(_dragSpeed), _min, _max, true, _width);
+			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = static_cast<float>(x);
+
+			SameLine(); Label("Y:"); SameLine();
+			eDragStatus statY = EGUI::Display::DragInt(field2.c_str(), &y, static_cast<float>(_dragSpeed), _min, _max, true, _width);
+			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = static_cast<float>(y);
 
 			ImGui::PopItemWidth();
 

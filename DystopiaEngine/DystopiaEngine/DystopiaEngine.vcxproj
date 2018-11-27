@@ -67,6 +67,7 @@
     <ClCompile Include="Source\IO\PNGParser.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
     <ClCompile Include="Source\System\Events\Events.cpp" />
+    <ClCompile Include="Source\System\Factory\Factory.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="Include\Editor\EInput.h" />
     <ClInclude Include="Include\Component\AiController.h" />
     <ClInclude Include="Include\Component\NodeList.h" />
+    <ClInclude Include="Include\Factory\Factory.h" />
     <ClInclude Include="Include\System\AI\AISystem.h" />
     <ClInclude Include="Include\System\AI\Blackboard.h" />
     <ClInclude Include="Include\System\AI\Composite.h" />

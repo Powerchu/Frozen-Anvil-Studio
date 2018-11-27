@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorPanel.h"
 #include "Editor/EditorProc.h"
 #include "Editor/RuntimeMeta.h"
+#include "Editor/SceneView.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Logger/LoggerSystem.h"
@@ -134,7 +135,6 @@ void Editor::EditorStates::Update(float)
 
 	if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
 	{
-
 		if (input->IsHotkeyTriggered(mnNew))
 			mbNewAttempt = true;
 		else if (input->IsHotkeyTriggered(mnOpen))
@@ -147,6 +147,11 @@ void Editor::EditorStates::Update(float)
 			mbQuitAttempt = true;
 		else if (input->IsHotkeyTriggered(mnClear))
 			EditorMain::GetInstance()->GetSystem<EditorCommands>()->ClearAllCommmands();
+
+		if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_W))
+			EditorMain::GetInstance()->GetPanel<SceneView>()->SetGizmoTranslate();
+		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_E))
+			EditorMain::GetInstance()->GetPanel<SceneView>()->SetGizmoScaler();
 	}
 
 	switch (mState)
