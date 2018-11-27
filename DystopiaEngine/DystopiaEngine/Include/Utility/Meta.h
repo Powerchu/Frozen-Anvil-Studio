@@ -153,11 +153,11 @@ namespace Ut
 	template <typename T>
 	struct ElemType<T*>
 	{
-		using type = typename ElemType<T>::type;
+		using type = T;
 	};
 
-	template <typename T>
-	struct ElemType<T[]>
+	template <typename T, unsigned N>
+	struct ElemType<T[N]>
 	{
 		using type = T;
 	};
@@ -300,7 +300,7 @@ namespace Ut
 
 	template <typename T>
 	struct IsCString : Constant <bool,
-		IsSame<ElemType_t<RemoveConst_t<T>>, char>::value
+		IsSame<RemoveConst_t<ElemType_t<T>>, char>::value
 	>
 	{
 
@@ -308,7 +308,7 @@ namespace Ut
 
 	template <typename T>
 	struct IsWString : Constant <bool, 
-		IsSame<ElemType_t<RemoveConst_t<T>>, wchar_t>::value
+		IsSame<RemoveConst_t<ElemType_t<T>>, wchar_t>::value
 	>
 	{
 

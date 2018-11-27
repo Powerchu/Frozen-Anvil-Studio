@@ -104,7 +104,6 @@ Dystopia::Image* Dystopia::TextureSystem::ImportImage(const HashString& _strPath
 	Image* pImg = nullptr;
 	auto meta = _strPath + "." + Gbl::METADATA_EXT;
 
-	// TODO
 	if (EngineCore::GetInstance()->Get<FileSystem>()->CheckFileExist(meta.c_str(), eFileDir::eResource))
 	{
 		auto metaFile = Serialiser::OpenFile<TextSerialiser>(meta.c_str());

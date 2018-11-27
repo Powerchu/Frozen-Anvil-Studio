@@ -73,6 +73,9 @@ namespace Dystopia
 		template <class T>
 		T* const GetSubSystem(void) const;
 
+		template <class T>
+		static inline T* const GetSys(void);
+
 		void BroadcastMessage(const eSysMessage&);
 
 		void LoadSettings(void);
@@ -123,6 +126,12 @@ inline T* const Dystopia::EngineCore::Get(void) const
 	{
 		return GetSubSystem<T>();
 	}
+}
+
+template <class T>
+inline T* const Dystopia::EngineCore::GetSys(void)
+{
+	return GetInstance()->Get<T>();
 }
 
 template <class T>

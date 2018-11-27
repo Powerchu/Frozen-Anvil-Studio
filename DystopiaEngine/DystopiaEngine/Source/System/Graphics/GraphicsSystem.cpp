@@ -288,7 +288,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Scene Draw" };
 
-	AutoArray<Renderer*> set1{ ComponentDonor<Renderer>::mComponents .size() };
+	AutoArray<Renderer*> set1{ ComponentDonor<Renderer>::mComponents.size() };
 	AutoArray<SpriteRenderer*> set2{ ComponentDonor<SpriteRenderer>::mComponents.size() };
 	AutoArray<TextRenderer*> set3{ ComponentDonor<TextRenderer>::mComponents.size() };
 
@@ -661,8 +661,8 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 	mViews.Emplace(2048u, 2048u, true);
 	mViews.Emplace(1024u, 1024u, true);
 	mViews.Emplace(
-		static_cast<unsigned>(Gbl::SCREEN_WIDTH ), 
-		static_cast<unsigned>(Gbl::SCREEN_HEIGHT), 
+		static_cast<unsigned>(Gbl::WINDOW_WIDTH),
+		static_cast<unsigned>(Gbl::WINDOW_HEIGHT),
 		false
 	);
 
