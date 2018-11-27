@@ -172,6 +172,8 @@ void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
 		_out << a.mnCol;
 		_out << a.mnRow;
 		_out << a.mbLoop;
+		_out << a.mnStart;
+		_out << a.mnEnd;
 	}
 	_out << mnID;
 	_out.InsertEndBlock("Sprite Renderer");
@@ -192,6 +194,8 @@ void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 		_in >> a.mnCol;
 		_in >> a.mnRow;
 		_in >> a.mbLoop;
+		_in >> a.mnStart;
+		_in >> a.mnEnd;
 		mAnimations.Insert(a);
 	}
 	_in >> mnID;
