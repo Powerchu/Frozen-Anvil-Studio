@@ -489,6 +489,7 @@ bool Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
 	return toRemove;
 
 #endif
+	return false;
 }
 
 int Dystopia::SpriteRenderer::GetStartCol(void) const

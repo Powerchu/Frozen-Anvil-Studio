@@ -132,7 +132,11 @@ void Dystopia::SceneSystem::SceneChanged(void)
 			SerialObj.ConsumeEndBlock();
 			auto& allObj = mpCurrScene->GetAllGameObjects();
 			for (auto& obj : allObj)
+			{
+				obj.SetFlag(eObjFlag::FLAG_ACTIVE);
 				obj.Awake();
+			}
+
 		}
 	}
 	else
@@ -154,7 +158,11 @@ void Dystopia::SceneSystem::SceneChanged(void)
 		mNextSceneFile.clear();
 		auto& allObj = mpCurrScene->GetAllGameObjects();
 		for (auto& obj : allObj)
+		{
+			obj.SetFlag(eObjFlag::FLAG_ACTIVE);
 			obj.Awake();
+		}
+			
 	}
 }
 

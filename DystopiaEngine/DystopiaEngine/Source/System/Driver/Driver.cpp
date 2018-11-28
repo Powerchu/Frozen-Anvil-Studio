@@ -291,8 +291,22 @@ void Dystopia::EngineCore::ParseMessage(const eSysMessage&)
 
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
+	
 	auto CORE = Dystopia::EngineCore::GetInstance();
+	
+	Dystopia::EngineCore::GetInstance()->LoadSettings();
+	Dystopia::EngineCore::GetInstance()->PreInit();
+	Dystopia::EngineCore::GetInstance()->Init();
 
+	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene("Resource/Scene/Dan2.dscene");
+
+	while (true)
+	{
+		Dystopia::EngineCore::GetInstance()->FixedUpdate();
+		Dystopia::EngineCore::GetInstance()->Update();
+		Dystopia::EngineCore::GetInstance()->PostUpdate();
+	}
+	Dystopia::EngineCore::GetInstance()->Shutdown();
 	/*
 	CORE->ExecuteGame();
 	*/

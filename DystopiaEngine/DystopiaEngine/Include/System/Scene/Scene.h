@@ -55,6 +55,12 @@ namespace Dystopia
 
 		std::string GetSceneName(void) const;
 
+		void SetAllActive() 
+		{
+			for (auto & e : mGameObjs)
+				e.SetFlag(eObjFlag::FLAG_ACTIVE);
+		}
+
 	private:
 
 		uint64_t			  mID;

@@ -138,7 +138,7 @@ bool Dystopia::GraphicsSystem::GetDebugDraw(void) const
 
 void Dystopia::GraphicsSystem::PreInit(void)
 {
-	Window& window = EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow();
+	Window& window = EngineCore::Get<WindowManager>()->GetMainWindow();
 	InitOpenGL(window);
 	BindOpenGL(window);
 
@@ -156,8 +156,11 @@ void Dystopia::GraphicsSystem::PreInit(void)
 		pMeshSys->LoadMesh(MeshPath);
 	}
 	pMeshSys->EndMesh();
-
+#if EDITOR
 	DrawSplash();
+#else
+	window.Show();
+#endif
 }
 
 bool Dystopia::GraphicsSystem::Init(void)
@@ -396,6 +399,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 
 void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::Mat4& _Proj)
 {
+
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Debug Draw" };
 	auto AllObj = EngineCore::GetInstance()->GetSystem<CollisionSystem>()->GetAllColliders();
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();

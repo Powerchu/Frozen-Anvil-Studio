@@ -94,6 +94,10 @@ namespace Dystopia
 	{
 	}
 
+	void _SF_ClassName_::GameObjectDestroy(void)
+	{
+	}
+
 	void _SF_ClassName_::Unload(void)
 	{
 	}

@@ -1,0 +1,129 @@
+[START_GO_PREFAB]
+4,[START_START_GO_DATA]
+525898752,536870977,"Player",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-42.6319,10.4158,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+2,[START_RigidBody]
+18446744071608240640,536870913,525898752,0,0.999,0.5,0.5,0.5,0,0,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component]
+[START_Component]
+5,[START_Circle_Collider2D]
+18446744072379991552,536870913,525898752,0,-0.02,0,0,0,0,0.3,0,
+[END_Circle_Collider2D]
+
+[END_Component]
+[START_Component]
+5,[START_Circle_Collider2D]
+18446744072379991552,536870913,525898752,0,-0.02,0,0,0,0,0.3,0,
+[END_Circle_Collider2D]
+
+[END_Component]
+[START_Component]
+7,[START_Renderer]
+1603585024,536870913,525898752,"/Asset/sprite_ctr.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"CharacterController",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+5,
+[END_Behaviour  Meta Count]
+[START_playerHealth]
+"playerHealth",
+[END_playerHealth]
+[START_Member Variable]
+100,
+[END_Member Variable]
+[START_IsDodging]
+"IsDodging",
+[END_IsDodging]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_CharacterSpeed]
+"CharacterSpeed",
+[END_CharacterSpeed]
+[START_Member Variable]
+5,
+[END_Member Variable]
+[START_JumpForce]
+"JumpForce",
+[END_JumpForce]
+[START_Member Variable]
+15,
+[END_Member Variable]
+[START_attackCount]
+"attackCount",
+[END_attackCount]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_Recursion Counter]
+2,
+[END_Recursion Counter]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1498475520,536870977,"Combat Box",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.8,0.96,1,-37.8097,7.66602,0,0,0,0,1,525898752,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+4,[START_Convex_Collider]
+437318144,536870913,1498475520,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,6,9,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"CombatBox",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+0,
+[END_Behaviour  Meta Count]
+[START_GO_PREFAB]
+0,[START_START_GO_DATA]
+1606531584,536870977,"SkillManager",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.666667,0.666667,1,-42.627,10.4158,0,0,0,0,1,525898752,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"SkillManager",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+0,
+[END_Behaviour  Meta Count]

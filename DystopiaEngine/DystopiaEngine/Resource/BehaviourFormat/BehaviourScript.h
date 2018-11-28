@@ -59,6 +59,9 @@ namespace Dystopia
 		virtual void FixedUpdate(const float _fDeltaTime) override; 
 		// PostUpdate occurs after the above two updates
 		virtual void PostUpdate(void) override;
+
+		// GameObjectDestroy occurs when the gameobject is destroyed
+		virtual void GameObjectDestroy(void) override;
 		// Unload will never occur
 		virtual void Unload(void) override;
 

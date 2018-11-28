@@ -1,0 +1,121 @@
+[START_Scene]
+18446744073389211648,"fyc",2,[START_START_GO_DATA]
+451425280,97,"Scene Camera",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072198043648,65,"FormSpikeOne",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+100.1,66,1,-154.145,-49.8705,0,0,0,0,1,0,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+451424768,0,451425280,0,0,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+2140158464,536870913,2140157440,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744072198044672,1,18446744072198043648,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+2140158976,536870913,2140157440,"D:\watff_episode\Asset\Environment\Prologue\rune_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072198045184,1,18446744072198043648,"D:\watff_episode\Asset\Environment\Prologue\rune_01.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+15,[START_str]
+"ChangeAudio",0,[START_str]
+"CharacterController",0,[START_str]
+"CombatBox",0,[START_str]
+"DeleteSelf",2,[START_BEHAVIOUR_BLOCK]
+2140157440,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"destroyCount",[START_destroyCount]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_BEHAVIOUR_BLOCK]
+18446744072198043648,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"destroyCount",[START_destroyCount]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"Fireball",0,[START_str]
+"FollowTarget",0,[START_str]
+"ForceTOne",0,[START_str]
+"FormTOne",0,[START_str]
+"FormTTwo",0,[START_str]
+"Goblin",0,[START_str]
+"GoblinCombat",0,[START_str]
+"NewTest",0,[START_str]
+"Parallax",0,[START_str]
+"SkillManager",0,[START_str]
+"Testing",0,
+[END_BEHAVIOUR_SYSTEM_BLOCK]
+
+[END_Scene]

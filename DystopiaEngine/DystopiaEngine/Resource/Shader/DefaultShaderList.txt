@@ -9,6 +9,6 @@
 [START_SHADER]
 "Logo Shader","Resource/Shader/DefaultVert.dvert","Resource/Shader/LogoFrag.dfrag",
 [START_SHADER]
-"Font Shader","Resource/Shader/Font.dvert","Resource/Shader/FontFrag.dfrag",
+"Font Shader","Resource/Shader/DefaultVert.dvert","Resource/Shader/FontFrag.dfrag",
 [START_SHADER]
-"Collider Shader","Resource/Shader/DefaultVert.dvert","Resource/Shader/Collider.dfrag",
+"Collider Shader","Resource/Shader/DefaultVert.dvert","Resource/Shader/DefaultFrag.dfrag",
