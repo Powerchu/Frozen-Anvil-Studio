@@ -301,7 +301,7 @@ namespace Dystopia
 			for (auto & elem : Edges)
 			{
 				Vec3D v = elem.mVec3;
-				Vec3D w = GetGlobalPosition() - elem.mPos;
+				Vec3D w = _ColB.GetGlobalPosition() - elem.mPos;
 
 				if (Math::Abs(w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
 				{
