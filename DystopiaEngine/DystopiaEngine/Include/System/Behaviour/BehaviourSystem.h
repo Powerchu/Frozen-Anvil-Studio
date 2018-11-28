@@ -79,6 +79,8 @@ namespace Dystopia
 
 		void ReAttach(void);
 
+
+#else
 		template<typename ... Ts>
 		void SendInternalMessage(Behaviour * const _Behaviour, const char * const _FuncName, Ts ... _FuncParams)
 		{
@@ -273,9 +275,8 @@ namespace Dystopia
 #endif
 
 				}
-			}
-		}
-#else
+	}
+}
 		MagicArray<BehaviourWrap> & GetAllBehaviour();
 		Behaviour * RequestBehaviour(uint64_t const & _ID, std::string const & _name);
 		Behaviour * RequestDuplicate(Behaviour * _PtrToDup, uint64_t _NewID);
@@ -304,6 +305,7 @@ namespace Dystopia
 		MagicArray<BehaviourWrap>    mvBehaviourReferences;
 		AutoArray< BehaviourTable >  mvBehaviours;
 		MagicArray<DLLWrapper *>     mvDllInstance;
+		Hotloader<1>* mHotloader;
 #endif
 
 		void ClearAllBehaviours();

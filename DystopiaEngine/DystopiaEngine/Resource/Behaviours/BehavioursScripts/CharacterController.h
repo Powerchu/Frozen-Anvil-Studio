@@ -73,8 +73,9 @@ namespace Dystopia
 		virtual const char * const GetBehaviourName() const;
 
 		virtual CharacterController * Duplicate() const;
-		
+#if EDITOR
 		virtual void EditorUI(void) noexcept override;
+#endif
 		
 		// Reflection Stuff
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();

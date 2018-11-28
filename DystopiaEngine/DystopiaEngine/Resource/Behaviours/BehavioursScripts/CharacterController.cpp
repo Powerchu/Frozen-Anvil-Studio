@@ -20,7 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Driver/Driver.h"
+#if EDITOR
 #include "Editor/EGUI.h"
+#endif
 #include "Utility/DebugAssert.h"
 #include "Math/MathLib.h"
 
@@ -221,13 +223,13 @@ namespace Dystopia
 	{
 		return CharacterController::BehaviourName;
 	}
-
+#if EDITOR
 	void CharacterController::EditorUI(void) noexcept
 	{
 		
 		
 	}
-
+#endif
 	/*
 	 * Helper Functions
 	 */

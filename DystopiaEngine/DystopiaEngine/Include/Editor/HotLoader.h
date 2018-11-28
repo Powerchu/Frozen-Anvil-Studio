@@ -610,7 +610,7 @@ namespace Dystopia
 			ExecInfo.lpFile = mCmdPath.c_str();
 			ExecInfo.lpParameters = Final_Command.c_str();
 			ExecInfo.lpDirectory = NULL;
-			ExecInfo.nShow = SW_HIDE;
+			ExecInfo.nShow = SW_SHOW;
 			ExecInfo.hInstApp = NULL;
 
 			if (ShellExecuteEx(&ExecInfo) == false)

@@ -27,6 +27,22 @@
 #include <utility>
 #include "Editor/HotLoader.h"
 
+#if !EDITOR
+//#include "../Resource/Behaviours/BehavioursScripts/ChangeAudio.h"
+//#include "../Resource/Behaviours/BehavioursScripts/CharacterController.h"
+//#include "../Resource/Behaviours/BehavioursScripts/CombatBox.h"
+//#include "../Resource/Behaviours/BehavioursScripts/DeleteSelf.h"
+//#include "../Resource/Behaviours/BehavioursScripts/FollowTarget.h"
+//#include "../Resource/Behaviours/BehavioursScripts/ForceTOne.h"
+//#include "../Resource/Behaviours/BehavioursScripts/ForceTTwo.h"
+//#include "../Resource/Behaviours/BehavioursScripts/FormTTwo.h"
+//#include "../Resource/Behaviours/BehavioursScripts/FormTOne.h"
+//#include "../Resource/Behaviours/BehavioursScripts/Goblin.h"
+//#include "../Resource/Behaviours/BehavioursScripts/GoblinCombat.h"
+//#include "../Resource/Behaviours/BehavioursScripts/Parallax.h"
+//#include "../Resource/Behaviours/BehavioursScripts/SkillManager.h"
+#endif
+
 namespace Dystopia
 {
 	
@@ -34,6 +50,8 @@ namespace Dystopia
 	BehaviourSystem::BehaviourSystem()
 #if EDITOR
 		:mHotloader{ new Hotloader<1>() }
+#else
+		: mHotloader{ new Hotloader<1>() }
 #endif
 	{
 
@@ -86,34 +104,66 @@ namespace Dystopia
 		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
 
 #else
-		std::filesystem::path DllPath{ FileSys->GetProjectFolders<std::string>(eFileDir::eResource) + "/BehaviourDll/" };
-		std::error_code error;
-		std::filesystem::directory_iterator iter{ DllPath, std::filesystem::directory_options::skip_permission_denied, error };
-		for (auto & DllFile : iter)
+
+		FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
+		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
+		mHotloader->AddFilesToCrawl(L"DystopiaEngine.lib", eCompile);
+		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDll", eFileDir::eResource));
+		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
+		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
+
+		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
+
+		mHotloader->Init();
+		auto const & ArrayDlls = mHotloader->GetDlls();
+		for (auto & elem : ArrayDlls)
 		{
-			auto Handle = LoadLibrary(DllFile.path().wstring().c_str());
+			using fpClone = Behaviour * (*) ();
 
-			if (Handle)
+			fpClone BehaviourClone = elem.GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>(elem.GetDllName()) + L"Clone");
+
+			if (BehaviourClone)
 			{
-
-				std::wstring DllNamew = (FileSys->RemoveFileExtension<std::wstring>(DllFile.path().wstring()));
-				auto DllPtr = new DLLWrapper{ DllFile.path().wstring(), DllNamew, DllFile.path().wstring(), std::move(Handle) };
-				DLLWrapper ** ptr = mvDllInstance.Emplace(DllPtr);
-				using fpClone = Behaviour * (*) ();
-				fpClone BehaviourClone = (*ptr)->GetDllFunc<Behaviour *>(DllNamew + L"Clone");
-
-				if (BehaviourClone)
-				{
-
-					std::string DllName = (FileSys->RemoveFileExtension<std::string>(DllFile.path().string()));
-					mvBehaviourReferences.Emplace(BehaviourWrap{ DllName, BehaviourClone()});
-					mvBehaviours.push_back(std::make_pair(DllName, AutoArray<BehaviourPair>{}));
-				}
-
-				if (Handle)
-					FreeLibrary(Handle);
+				BehaviourWrap wrap;
+				std::wstring name   = FileSys->RemoveFileExtension<std::wstring>(elem.GetDllName());
+				std::string name_s  = FileSys->RemoveFileExtension<std::string> (std::string{ name.begin(), name.end() });
+				wrap.mName = std::string{ name_s };
+				wrap.mpBehaviour = (BehaviourClone());
+				mvBehaviourReferences.Emplace(Ut::Move(wrap));
+				mvBehaviours.push_back(std::make_pair(name_s, AutoArray<BehaviourPair>{}));
 			}
+			//mvBehaviourReferences.Emplace(BehaviourClone());
 		}
+
+		//std::filesystem::path DllPath{ FileSys->GetProjectFolders<std::string>(eFileDir::eResource) + "/BehaviourDll/" };
+		//std::error_code error;
+		//std::filesystem::directory_iterator iter{ DllPath, std::filesystem::directory_options::skip_permission_denied, error };
+		//for (auto & DllFile : iter)
+		//{
+		//	std::wstring DllPathW = DllFile.path().wstring();
+		//	auto Handle = LoadLibrary(DllPathW.c_str());
+
+		//	if (Handle)
+		//	{
+
+		//		std::wstring DllNamew = (FileSys->RemoveFileExtension<std::wstring>(DllFile.path().wstring()));
+		//		auto DllPtr = new DLLWrapper{ DllFile.path().wstring(), DllNamew, DllFile.path().wstring(), std::move(Handle) };
+		//		DLLWrapper ** ptr = mvDllInstance.Emplace(DllPtr);
+		//		using fpClone = Behaviour * (*) ();
+		//		fpClone BehaviourClone = (*ptr)->GetDllFunc<Behaviour *>(DllNamew + L"Clone");
+
+		//		if (BehaviourClone)
+		//		{
+
+		//			std::string DllName = (FileSys->RemoveFileExtension<std::string>(DllFile.path().string()));
+		//			mvBehaviourReferences.Emplace(BehaviourWrap{ DllName, BehaviourClone()});
+		//			mvBehaviours.push_back(std::make_pair(DllName, AutoArray<BehaviourPair>{}));
+		//		}
+
+		//		//if (Handle)
+		//		//	FreeLibrary(Handle);
+		//	}
+		//}
 #endif
 #if EDITOR
 
