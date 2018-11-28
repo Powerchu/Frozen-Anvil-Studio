@@ -19,12 +19,16 @@ namespace Dystopia
 
 	void CollisionEvent::ApplyImpulse()
 	{
+		//if (mCollidedWith->GetName() == "Game Object_clone_clone_clone") __debugbreak();
+
 		constexpr auto velLimit = 50.0F;
 		const auto bodyA = mThisCollider->GetComponent<RigidBody>();
 		const auto bodyB = mCollidedWith->GetComponent<RigidBody>();
 		const auto colB = mCollidedWith->GetComponent<Collider>();
 
-		if (nullptr == bodyA || nullptr == bodyB || colB->IsTrigger()) return;
+		if (nullptr == bodyA || nullptr == bodyB) return;
+
+		if (colB->IsTrigger()) return;
 
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
@@ -61,7 +65,7 @@ namespace Dystopia
 			bodyA->AddLinearImpulse(-impulse);
 			//bodyA->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
 
-		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger() && mCollidedWith->IsActive())
+		if (!bodyB->Get_IsStaticState() && mCollidedWith->IsActive())
 			bodyB->AddLinearImpulse(impulse);
 			//bodyB->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
 
@@ -93,7 +97,7 @@ namespace Dystopia
 		if (!bodyA->Get_IsStaticState())
 			bodyA->AddLinearImpulse(-frictionImpulse);
 
-		if (!bodyB->Get_IsStaticState() && !colB->IsTrigger() && mCollidedWith->IsActive())
+		if (!bodyB->Get_IsStaticState() && mCollidedWith->IsActive())
 			bodyB->AddLinearImpulse(frictionImpulse);
 
 		/*if (!bodyA->Get_IsStaticState())
@@ -105,11 +109,15 @@ namespace Dystopia
 
 	void CollisionEvent::ApplyPenetrationCorrection(const int iter) const
 	{
+	//	if (mCollidedWith->GetName() == "Game Object_clone_clone_clone") __debugbreak();
+
 		const auto bodyA = mThisCollider->GetComponent<RigidBody>();
 		const auto bodyB = mCollidedWith->GetComponent<RigidBody>();
 		const auto colB = mCollidedWith->GetComponent<Collider>();
 
-		if (nullptr == bodyA || nullptr == bodyB || colB->IsTrigger()) return;
+		if (nullptr == bodyA || nullptr == bodyB) return;
+
+		if (colB->IsTrigger()) return;
 
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
@@ -121,7 +129,7 @@ namespace Dystopia
 
 		if (!bodyA->Get_IsStaticState() && bodyA->GetIsAwake())
 			bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
-		if (!bodyB->Get_IsStaticState() && bodyB->GetIsAwake() && mCollidedWith->IsActive() && !colB->IsTrigger())
+		if (!bodyB->Get_IsStaticState() && bodyB->GetIsAwake() && mCollidedWith->IsActive())
 			bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);
 	}
 

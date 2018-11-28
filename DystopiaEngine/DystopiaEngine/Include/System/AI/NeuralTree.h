@@ -31,10 +31,12 @@ namespace Dystopia
 		class Node
 		{
 		public:
+			using Ptr = SharedPtr<Node>;
+
 			enum class eStatus
 			{
 				INVALID = -1,
-				//READY,
+				CANCELLED,
 				RUNNING,
 				SUCCESS,
 				FAIL
@@ -68,12 +70,20 @@ namespace Dystopia
 
 			void Reset() { mStatus = eStatus::INVALID; }
 
-			using Ptr = SharedPtr<Node>;
+			//For Hotloading TODO
+			Node::Ptr CloneNode()
+			{
+				//return std::nullptr_t{};
+			}
 
 		protected:
 			eStatus mStatus = eStatus::INVALID;
 		private:
-			uint64_t mnID = 0;
+			uint64_t mnID{};
+			uint64_t mnParentID{};
+			HashString mnName;
+
+			SharedPtr<Node> mAssignedTree;
 		};
 
 /*
@@ -115,8 +125,6 @@ namespace Dystopia
 
 		protected:
 			Node::Ptr mpChild;
-		private:
-			uint64_t mnParentID{};
 		};
 
 
@@ -139,8 +147,6 @@ namespace Dystopia
 
 		protected:
 			Blackboard::Ptr mpBlackboard;
-		private:
-			uint64_t mnParentID{};
 		};
 
 

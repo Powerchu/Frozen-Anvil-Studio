@@ -145,6 +145,25 @@ void Dystopia::Transform::SetScale(const float _fScaleX, const float _fScaleY, c
 	SetScale(Math::Vec3D{ _fScaleX, _fScaleY, _fScaleZ });
 }
 
+void Dystopia::Transform::SetGlobalScale(const Math::Vec4& _vScale)
+{
+	mbChanged = true;
+
+	if (mpParent)
+	{
+		mScale = Math::AffineInverse(mpParent->GetTransformMatrix()) * _vScale;
+	}
+	else
+	{
+		mScale = _vScale;
+	}
+}
+
+void Dystopia::Transform::SetGlobalScale(const float _fScaleX, const float _fScaleY, const float _fScaleZ)
+{
+	SetGlobalScale(Math::Vec3D{ _fScaleX, _fScaleY, _fScaleZ });
+}
+
 void Dystopia::Transform::SetPosition(const Math::Point3D& _vPos)
 {
 	mbChanged = true;

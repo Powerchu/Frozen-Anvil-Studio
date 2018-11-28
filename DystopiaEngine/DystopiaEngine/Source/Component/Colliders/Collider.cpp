@@ -17,7 +17,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/RigidBody.h"
 #include "Behaviour/Behaviour.h"
 #include "Object/GameObject.h"
-#include "System/Graphics/VertexDefs.h"
 #include "System/Graphics/MeshSystem.h"
 
 
@@ -50,7 +49,7 @@ namespace Dystopia
 
 			auto const & arr = GetVertexBuffer();
 
-			for (auto i : arr)
+			for (const auto& i : arr)
 			{
 				pMeshSys->AddVertex(i.x, i.y, i.z);
 				pMeshSys->AddNormal(i.x, i.y, i.z);
@@ -159,7 +158,7 @@ namespace Dystopia
 	void Collider::InformOtherComponents()
 	{
 		const auto _owner = GetOwner();
-		const auto _body = _owner->GetComponent<RigidBody>();
+		//const auto _body = _owner->GetComponent<RigidBody>();
 
 		for (auto & elem : marr_CurrentContactSets)
 		{
@@ -179,16 +178,15 @@ namespace Dystopia
 					_owner->OnTriggerEnter(elem.mCollidedWith);
 			}
 		}
+
 		for (auto & elem : marr_ContactSets)
 		{
-			if (nullptr != _body)
-				_body->SetSleeping(false);
-
 			if (!mbIsTrigger)
 				_owner->OnCollisionExit(elem);
 			else
 				_owner->OnTriggerExit(elem.mCollidedWith);
 		}
+
 		/*I am not sure why i need to clear it before assigning. else will have stuff inside*/
 		marr_ContactSets.clear();
 		marr_ContactSets = marr_CurrentContactSets;
@@ -300,11 +298,21 @@ namespace Dystopia
 		mBoundingCircle = GenerateBoardPhaseCircle();
 	}
 
+	void Collider::SetRotation(Math::Quaternion const& _rot)
+	{
+		mRotation = _rot;
+	}
+
 	Math::Point3D Collider::GetGlobalPosition() const
 	{
 		auto point =  mOwnerTransformation * Math::Translate(mv3Offset.x, mv3Offset.y , mv3Offset.z) * GetTransformationMatrix() *  mPosition;
 		point.z = 0;
 		return point;
+	}
+
+	Math::Quaternion Collider::GetGlobalRotation() const
+	{
+		return mRotation;
 	}
 
 	Math::Vec3D Collider::GetOffSet() const

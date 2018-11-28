@@ -49,10 +49,10 @@ namespace Dystopia
 		AiController(void);
 
 		// ================================ VIRTUAL FUNCTIONS ================================== // 
-		void Load(void);
+		//void Load(void);
 		void Awake() override;
 		void Init(void) override;
-		void Unload(void);
+		//void Unload(void);
 		AiController* Duplicate() const override;
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;
