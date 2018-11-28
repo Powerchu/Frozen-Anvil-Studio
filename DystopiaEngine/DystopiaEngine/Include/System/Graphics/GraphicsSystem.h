@@ -100,7 +100,7 @@ namespace Dystopia
 
 		Math::Vector4 mvDebugColour;
 		float mfGamma;
-		float mfDebugLineWidth;
+		float mfDebugLineThreshold;
 
 		void* mOpenGL; 
 		int mPixelFormat;
@@ -115,8 +115,8 @@ namespace Dystopia
 		void StartFrame(void);
 		void EndFrame(void);
 
-		void DrawScene(Camera&, Math::Matrix4&);
-		void DrawDebug(Camera&, Math::Matrix4&);
+		void DrawScene(Camera&, Math::Matrix4&, Math::Matrix4&);
+		void DrawDebug(Camera&, Math::Matrix4&, Math::Matrix4&);
 
 		bool SelectOpenGLVersion(Window&) noexcept;
 	};

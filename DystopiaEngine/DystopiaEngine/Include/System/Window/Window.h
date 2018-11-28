@@ -43,21 +43,23 @@ namespace Dystopia
 
 		void SetTitle(const std::wstring&);
 		std::wstring GetTitle(void) const noexcept;
-		void SetStyle(long _nStyle, long _nStyleEx);
-		void SetSize(int _nWidth, int _nHeight);
-		void SetSizeNoAdjust(int _nWidth, int _nHeight);
 
+		void SetStyle(long _nStyle, long _nStyleEx) noexcept;
+
+		void SetSize(int _nWidth, int _nHeight, bool = true) noexcept;
+		void SetSizeNoAdjust(int _nWidth, int _nHeight, bool = true) noexcept;
 		void CenterWindow(void) noexcept;
 
-		void ShowCursor(int _bShow) const;
+		void ShowCursor(int _bShow) const noexcept;
 
 		void Show(void) const noexcept;
-		void ShowMax(void) const noexcept;
 		void Hide(void) const noexcept;
+
+		void ToggleFullscreen(bool _bFullscreen) noexcept;
 
 		void SetAcceptFiles(bool) const noexcept;
 
-		Window& operator= (Window&&) = default;
+		Window& operator = (Window&&) = default;
 
 	private:
 
@@ -66,12 +68,16 @@ namespace Dystopia
 
 		int mnWidth, mnHeight;
 		int mnFWidth, mnFHeight;
-		unsigned long mStyle, mStyleEx;
+		long mStyle, mStyleEx;
+
+		void PushSize(int w, int h) const noexcept;
+		void PushSize(int x, int y, int w, int h) const noexcept;
+		void PushStyle(long, long) const noexcept;
 
 		Queue<eButton> mInputQueue;
 	};
 
-	bool operator== (const Window&, const Window&);
+	bool operator == (const Window&, const Window&);
 }
 
 

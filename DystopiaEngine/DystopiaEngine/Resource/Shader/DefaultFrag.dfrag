@@ -6,14 +6,14 @@ in vec2 vUV;
 
 layout(location = 0) out vec4 fragColor;
 
+uniform vec4 vColor = vec4(1,1,1,1);
 uniform sampler2D texSampler;
 
 uniform float Gamma;
 
 void main()
 {
-  // Ignore colour blending for now
-  vec4 color = texture(texSampler, vUV);
+  vec4 color = texture(texSampler, vUV) * vColor;
   
   if (color.a < 0.003f)
     discard;

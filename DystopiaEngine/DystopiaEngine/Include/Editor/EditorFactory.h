@@ -32,6 +32,17 @@ namespace Editor
 	class EditorFactory : public EditorSystem
 	{
 	public:
+		struct PrefabData
+		{
+			PrefabData(const HashString&, size_t, size_t);
+
+			HashString mPrefabFile;
+			size_t mnStart;
+			size_t mnEnd;
+
+			AutoArray<AutoArray<uint64_t>> mArrInstanced;
+		};
+
 		EditorFactory(void);
 		~EditorFactory(void);
 
@@ -47,7 +58,7 @@ namespace Editor
 
 		void DefaultSceneCamera(void);
 
-		void ReattachToPrefab(Dystopia::Component* _p, uint64_t c = 0);
+		void ReattachToPrefab(Dystopia::Component* _p, uint64_t c, bool _amComponent = true);
 		bool SpawnPrefab(const HashString&, const Math::Pt3D&, uint64_t& _outRootObjID);
 		bool SaveAsPrefab(const uint64_t& _objID, Dystopia::TextSerialiser&, bool _temp = false);
 		bool SaveAsPrefabTemp(const uint64_t& _objID, Dystopia::TextSerialiser&);
@@ -57,17 +68,12 @@ namespace Editor
 		bool LoadAsPrefab(const HashString& _path);
 		void LoadIntoScene(Dystopia::TextSerialiser&);
 
+		bool FindMasterPrefab(const HashString& _prefabName, int& _outID);
+
+		MagicArray<Dystopia::GameObject>& GetAllFactoryObjects(void);
+		PrefabData* GetPrefabData(const int&);
+
 	private:
-		struct PrefabData
-		{
-			PrefabData(const HashString&, size_t, size_t);
-
-			HashString mPrefabFile;
-			size_t mnStart;
-			size_t mnEnd;
-
-			AutoArray<AutoArray<uint64_t>> mArrInstanced;
-		};
 
 		void SaveChild(Dystopia::GameObject&, Dystopia::TextSerialiser&, bool _temp = false);
 		void LoadChild(Dystopia::GameObject&, Dystopia::TextSerialiser&);

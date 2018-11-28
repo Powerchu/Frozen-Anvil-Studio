@@ -28,8 +28,8 @@ Dystopia::Texture2D::Texture2D(const std::string& _strPath) noexcept
 {
 	Bind();
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -67,11 +67,8 @@ void Dystopia::Texture2D::InitTexture(Image const* _pData)
 		__debugbreak();
 #   endif 
 
-	auto w = _pData->mnWidth;
-	auto h = _pData->mnHeight;
-	mnWidth  = _pData->mnWidth;
-	mnHeight = _pData->mnHeight;
-
+	auto w = mnWidth  = _pData->mnWidth;
+	auto h = mnHeight = _pData->mnHeight;
 	uint8_t* data_ptr = static_cast<uint8_t*>(_pData->mpImageData);
 
 	for (unsigned n = 0; (n < _pData->mnMipMaps) && w && h; ++n)
@@ -98,11 +95,8 @@ void Dystopia::Texture2D::InitCompressedTexture(Image const* _pData)
 
 	unsigned blksz = _pData->mnRawFormat == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
 
-	auto w = _pData->mnWidth;
-	auto h = _pData->mnHeight;
-	mnWidth  = _pData->mnWidth;
-	mnHeight = _pData->mnHeight;
-
+	auto w = mnWidth  = _pData->mnWidth;
+	auto h = mnHeight = _pData->mnHeight;
 	uint8_t* data_ptr = static_cast<uint8_t*>(_pData->mpImageData);
 
 	unsigned n;

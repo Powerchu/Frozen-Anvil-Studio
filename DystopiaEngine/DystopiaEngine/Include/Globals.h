@@ -44,7 +44,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_START_TRY	
 #define _EDITOR_CATCH(_X_)	
 #define _EDITOR_END_TRY		
-#define _EDITOR_THROW(_X_)	
+#define _EDITOR_THROW(_X_)
 #define _EDITOR_CODE(_X_)
 #define _GAME_NOEXCEPT		noexcept
 #define UNUSED_PARAMETER(_X_)       static_cast<void>(_X_);
@@ -64,8 +64,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Gbl
 {
 	constexpr bool	FULLSCREEN      = true;
-	constexpr int   SCREEN_WIDTH    = 1600;
-	constexpr int   SCREEN_HEIGHT   =  900;
+	constexpr int   WINDOW_WIDTH    = 1600;
+	constexpr int   WINDOW_HEIGHT   = 1000;
 
 	constexpr auto  FIXEDUPDATE_DT  = 20000000Ui64;
 	constexpr float FIXEDUPDATE_FDT = float(FIXEDUPDATE_DT / 1e9);
@@ -87,6 +87,7 @@ namespace Gbl
 	constexpr auto  WAV_EXT			= "wav";
 
 	constexpr auto  CRASHREPORT_EXT = "dlog";
+	constexpr auto  METADATA_EXT    = "dmeta";
 }
 
 

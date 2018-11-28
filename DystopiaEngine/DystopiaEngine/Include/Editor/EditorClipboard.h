@@ -23,6 +23,8 @@ namespace Dystopia
 
 namespace Editor
 {
+	struct File;
+
 	class EditorClipboard : public EditorSystem
 	{
 	public:
@@ -51,9 +53,15 @@ namespace Editor
 
 		AutoArray<uint64_t>& GetSelectedIDs(void);
 
+		int AddPrefab(File*);
+		int GetPrefab(void) const;
+		void RemovePrefab(void);
+
 	private:
 		AutoArray<uint64_t> mArrSelectedIDs;
 		AutoArray<uint64_t> mArrCopiedBufer;
+
+		int mnPrefabFocus;
 
 		size_t mnCopyID;
 		size_t mnPasteID;

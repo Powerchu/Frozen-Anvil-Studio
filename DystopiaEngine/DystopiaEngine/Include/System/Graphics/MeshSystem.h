@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/VertexDefs.h"
 #include "System/Graphics/Mesh.h"
 #include "System/Graphics/RawMesh.h"
+#include "System/Graphics/MeshBuilder.h"
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
 
@@ -33,10 +34,17 @@ namespace Dystopia
 		void Shutdown(void) noexcept;
 
 		void StartMesh(void);
-		void LoadMesh(const std::string&);
-		void AddVertex(float x, float y, float z, float u = 0, float v = 0);
+		void LoadMesh(std::string const&);
+		void AddVertex(Gfx::Vertex const&);
+		void AddVertex(float x, float y, float z);
+		void AddNormal(Gfx::Normal const&);
+		void AddNormal(float x, float y, float z);
+		void AddUV(float u, float v);
+		void AddUV(Gfx::UV const&);
 		Mesh* AddIndices(const std::string& _strName, const AutoArray<short>&);
 		void EndMesh(void);
+
+		//MeshBuilder BuildMesh(void);
 
 		void FreeMeshes(void);
 
@@ -50,12 +58,15 @@ namespace Dystopia
 
 		// Warning! Do not keep the pointer!
 		RawMesh* GetRaw(unsigned) noexcept;
+		// Warning! Do not keep the pointer!
+		RawMesh* GetRawFromBuffer(unsigned) noexcept;
 
 	private:
 
-		AutoArray<UV>      mUVs;
-		AutoArray<Vertex>  mVtx;
-		AutoArray<short>   mIndex;
+		AutoArray<Gfx::UV>      mUVBuffer;
+		AutoArray<Gfx::Vertex>  mVtxBuffer;
+		AutoArray<Gfx::Normal>  mNormalBuffer;
+		AutoArray<short>   mIndexBuffer;
 
 		MagicArray<Mesh>   mpMeshes;
 		AutoArray<RawMesh> mpRawMeshes;

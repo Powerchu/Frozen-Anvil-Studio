@@ -19,8 +19,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/ComponentList.h"
 
 #include "DataStructure/AutoArray.h"	// AutoArray
+#include "DataStructure/HashString.h"
 #include "Utility/MetaAlgorithms.h"		// MetaFind
-#include "System/Graphics/CharSpace.h"
+#include "System/Graphics/Font.h"
 
 #include "Math/Vector4.h"
 
@@ -29,8 +30,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	namespace Gfx
+	{
+		struct Vertex;
+	}
+
 	class  Mesh;
-	struct Vertex;
 	class  Texture;
 	struct CharSpace;
 	class  TextureAtlas;
@@ -45,6 +50,10 @@ namespace Dystopia
 		{
 			return Ut::MetaFind_t<class Renderer, AllComponents>::value;
 		};
+		unsigned GetRealComponentType(void) const
+		{
+			return Ut::MetaFind_t<Ut::Decay_t<TextRenderer>, UsableComponents>::value;
+		};
 		static const std::string GetCompileName(void) { return "Text Renderer"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 
@@ -53,7 +62,7 @@ namespace Dystopia
 
 		TextRenderer(void) noexcept;
 		TextRenderer(TextRenderer&&) noexcept = default;
-		TextRenderer(const TextRenderer&) noexcept = default;
+		TextRenderer(const TextRenderer&) noexcept;
 
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
@@ -68,18 +77,20 @@ namespace Dystopia
 		void SetFont(const char*);
 		void SetFont(const std::string&);
 
+		TextRenderer* Duplicate(void) const;
+		void Serialise(TextSerialiser&) const;
+		void Unserialise(TextSerialiser&);
+
 #if EDITOR
 		void EditorUI(void) noexcept override;
 #endif
 
 	private:
 
-		AutoArray<unsigned char> mText;
-		AutoArray<Vertex> mVerts;
-		AutoArray<CharSpace> mSpaces;
-
-		unsigned mnBaseMesh;
-		TextureAtlas* mpAtlas;
+		Font* mpData;
+		HashString mText;
+		AutoArray<Gfx::Vertex> mVerts;
+		int mnAnchorX, mnAnchorY;
 
 		Math::Vector4 mColor;
 
@@ -89,5 +100,6 @@ namespace Dystopia
 }
 
 
-#endif
+
+#endif		// INCLUDE GUARD
 

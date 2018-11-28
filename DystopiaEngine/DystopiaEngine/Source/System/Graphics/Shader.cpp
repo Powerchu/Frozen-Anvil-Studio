@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Shader.h"		// File Header
 
 #include "Math/MathLib.h"
+#include "Utility/DebugAssert.h"
 
 #include <GL/glew.h>
 #include <GL/GL.h>
@@ -140,7 +141,7 @@ void Dystopia::Shader::LoadShader(unsigned _nProg, const std::string& _path)
 
 		glGetShaderInfoLog(_nProg, nStatus, &nStatus, &log[0]);
 
-		std::printf("Shader Compile Error : %s", log.c_str());
+		DEBUG_PRINT(eLog::ERROR, "Shader Compile Error : %s", log.c_str());
 
 #   if defined(_DEBUG) | defined(DEBUG)
 		__debugbreak();

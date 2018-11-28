@@ -31,7 +31,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <algorithm>
 #include <cctype>
-#include <iostream>
 
 constexpr float DEFAULT_WIDTH = 300;
 constexpr float DEFAULT_HEIGHT = 300;

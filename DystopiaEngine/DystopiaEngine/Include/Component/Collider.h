@@ -178,7 +178,7 @@ namespace Dystopia
 
 		BroadPhaseCircle      GetBroadPhaseCircle() const;
 
-		AutoArray<Vertex> GetVertexBuffer() const;
+		AutoArray<Gfx::Vertex> GetVertexBuffer() const;
 		AutoArray<short>  GetIndexBuffer()  const;
 		AutoArray<GameObject*> GetCollidingObjects() const;
 
@@ -219,7 +219,7 @@ namespace Dystopia
 		AutoArray<CollisionEvent>  marr_CurrentContactSets;
 		Math::Point3D mPosition;
 
-		AutoArray<Vertex> mDebugVertices;
+		AutoArray<Gfx::Vertex> mDebugVertices;
 		AutoArray<short>  mIndexBuffer;
 		BroadPhaseCircle  mBoundingCircle;
 		void Triangulate();

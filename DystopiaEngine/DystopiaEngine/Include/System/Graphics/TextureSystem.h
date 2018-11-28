@@ -14,13 +14,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TEXTURESYS_H_
 #define _TEXTURESYS_H_
 
+#include "System/File/FileSystem.h"
+
+#include "Utility/Utility.h"
 #include "Allocator/DefaultAlloc.h"
 #include "DataStructure/MagicArray.h"
-#include "Utility/Utility.h"
+#include "DataStructure/HashString.h"
 
 #include "IO/Image.h"
 #include "IO/ImageParser.h"
 
+#include <map>
 #include <string>
 
 
@@ -38,22 +42,32 @@ namespace Dystopia
 
 		void Shutdown(void) noexcept;
 
-		template <typename Ty = Texture>
-		Ty* GetTexture(const std::string& _strName);
+		void EditorUpdate(void) noexcept;
 
-		TextureAtlas* GenAtlas(void);
-		TextureAtlas* GetAtlas(const std::string& _strName);
+		Image* ImportImage(const HashString&);
 
 		template <typename Ty = Texture>
-		Ty* LoadTexture(const std::string&);
+		Ty* GetTexture(std::string const& _strName);
+
+		TextureAtlas* GenAtlas(Texture* = nullptr);
+		TextureAtlas* GetAtlas(std::string const& _strName);
+
+		template <typename Ty = Texture>
+		Ty* LoadTexture(std::string const&);
 
 		template <typename Ty>
-		Ty* LoadRaw(Image const *);
+		Ty* LoadRaw(Image const*);
+		template <typename Ty>
+		Ty* LoadRaw(Image const*, std::string const&);
 
 	private:
 
+		std::map<HashString, Image> mImageData;
 		MagicArray<Texture> mTextures;
 		MagicArray<TextureAtlas> mAtlas;
+
+		Image* LoadImage(std::string const& _strPath);
+		void SaveTextureSetting(Image*);
 	};
 }
 
@@ -66,22 +80,23 @@ namespace Dystopia
 
 
 template <typename Ty>
-Ty* Dystopia::TextureSystem::GetTexture(const std::string& _strName)
+Ty* Dystopia::TextureSystem::GetTexture(std::string const& _strName)
 {
 	auto it = Ut::Find(mTextures.begin(), mTextures.end(), [&_strName](const Texture& _t) {
 		return _strName == _t.GetName();
 	});
 
-	if (it) return static_cast<Ty*>(&*it);
+	if (it != mTextures.end()) return static_cast<Ty*>(&*it);
 	
 	return nullptr;
 }
 
 template<typename Ty>
-Ty* Dystopia::TextureSystem::LoadTexture(const std::string& _strPath)
+Ty* Dystopia::TextureSystem::LoadTexture(std::string const& _strPath)
 {
-	auto it = Ut::Find(mTextures.begin(), mTextures.end(), [&_strPath](const Texture& _t) {
-		return _strPath == _t.GetPath();
+	auto pFileSys = EngineCore::Get<FileSystem>();
+	auto it = Ut::Find(mTextures.begin(), mTextures.end(), [&](const Texture& _t) {
+		return pFileSys->IsSameFile(_strPath, _t.GetPath()) || (_strPath == _t.GetPath());
 	});
 
 	if (it != mTextures.end())
@@ -89,38 +104,41 @@ Ty* Dystopia::TextureSystem::LoadTexture(const std::string& _strPath)
 		return static_cast<Ty*>(&*it);
 	}
 
-	auto fileType = (_strPath.end() - 3);
-	Ty*    ret = nullptr;
-	Image* img = nullptr;
+	auto loaded = LoadImage(_strPath);
 
-	if ('p' == *fileType || 'P' == *fileType)
+	if (loaded)
 	{
-		img = ImageParser::LoadPNG(_strPath);
-	}
-	else if ('b' == *fileType || 'B' == *fileType)
-	{
-		img = ImageParser::LoadBMP(_strPath);
-	}
-	else if ('d' == *fileType || 'D' == *fileType)
-	{
-		img = ImageParser::LoadDDS(_strPath);
+		auto ret = mTextures.EmplaceAs<Ty>(_strPath);
+		ret->LoadTexture(loaded);
+
+		DefaultAllocator<void>::Free(loaded->mpImageData);
+		loaded->mpImageData = nullptr;
+		mImageData.emplace(HashString{ _strPath.c_str() }, Ut::Move(*loaded));
+		DefaultAllocator<Image>::DestructFree(loaded);
+		return ret;
 	}
 
-	ret = mTextures.EmplaceAs<Ty>(_strPath);
-	ret->LoadTexture(img);
-
-	DefaultAllocator<Image>::DestructFree(img);
-
-	return ret;
+	DEBUG_BREAK(!loaded, "Texture System Error: Failed to load texture \"%s\"", _strPath.c_str());
+	return nullptr;
 }
 
 template <>
-Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(const std::string&);
+Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(std::string const&);
 
 template<typename Ty>
 Ty* Dystopia::TextureSystem::LoadRaw(Image const *_ptr)
 {
 	auto ret = mTextures.EmplaceAs<Ty>(std::to_string(reinterpret_cast<uintptr_t>(_ptr)));
+
+	ret->LoadTexture(_ptr);
+
+	return ret;
+}
+
+template<typename Ty>
+Ty* Dystopia::TextureSystem::LoadRaw(Image const *_ptr, std::string const& _strName)
+{
+	auto ret = mTextures.EmplaceAs<Ty>(_strName);
 
 	ret->LoadTexture(_ptr);
 

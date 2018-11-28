@@ -49,9 +49,11 @@ namespace Dystopia
 			pMeshSys->StartMesh();
 
 			auto const & arr = GetVertexBuffer();
-			for (const auto& i : arr)
+
+			for (auto i : arr)
 			{
 				pMeshSys->AddVertex(i.x, i.y, i.z);
+				pMeshSys->AddNormal(i.x, i.y, i.z);
 			}
 
 			SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
@@ -319,7 +321,7 @@ namespace Dystopia
 		return this->mv3Offset;
 	}
 
-	AutoArray<Vertex> Collider::GetVertexBuffer() const
+	AutoArray<Gfx::Vertex> Collider::GetVertexBuffer() const
 	{
 		return mDebugVertices;
 	}

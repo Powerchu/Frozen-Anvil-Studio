@@ -17,33 +17,86 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Texture2D.h"
 #include "System/Graphics/TextureAtlas.h"
 
+#include "System/Driver/Driver.h"
+#include "System/File/FileSystem.h"
+
 #include "DataStructure/MagicArray.h"
+
+#include "Globals.h"
+#include "IO/TextSerialiser.h"
+
+#include <GL\glew.h>
 
 
 Dystopia::TextureSystem::TextureSystem(void) noexcept
 	: mTextures{}
 {
-}
+}	
 
 Dystopia::TextureSystem::~TextureSystem(void) noexcept
 {
 	Shutdown();
 }
 
+void Dystopia::TextureSystem::EditorUpdate(void) noexcept
+{
+	auto pFileSys = EngineCore::Get<FileSystem>();
+	std::string buf;
+
+	for (auto& e : mTextures)
+	{
+		if (pFileSys->DetectFileChanges(e.GetPath()))
+		{
+			while (pFileSys->DetectFileChanges(e.GetPath()));
+
+			if (Image* pImg = LoadImage(e.GetPath()))
+			{
+				Texture* pTex = LoadRaw<Texture2D>(pImg, e.GetPath().c_str());
+				
+				Ut::Swap(e, *pTex);
+				mTextures.Remove(pTex);
+			}
+		}
+	}
+
+#	if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#	endif 
+}
+
 void Dystopia::TextureSystem::Shutdown(void) noexcept
 {
-
-
-
-
-
+	for (auto& a : mAtlas)
+	{
+		auto fp = EngineCore::Get<FileSystem>()->FindFilePath(a.GetName().c_str(), eFileDir::eCurrent);
+		HashString folder{ fp };
+		folder += '.';
+		folder += Gbl::ATLAS_EXT;
+		auto serial = TextSerialiser::OpenFile(folder.c_str(), TextSerialiser::MODE_WRITE);
+		a.SaveAtlas(serial);
+	}
 
 	mTextures.clear();
 }
 
-Dystopia::TextureAtlas* Dystopia::TextureSystem::GenAtlas(void)
+Dystopia::TextureAtlas* Dystopia::TextureSystem::GenAtlas(Texture* _pTex)
 {
-	return mAtlas.Emplace(nullptr);
+	if (_pTex) if (auto p = GetAtlas(_pTex->GetName()))
+		return p;
+
+	auto pAtlas = mAtlas.Emplace(_pTex);
+
+	HashString file{ pAtlas->GetName().c_str() };
+	file += '.';
+	file += Gbl::ATLAS_EXT;
+	auto find = EngineCore::Get<FileSystem>()->FindFilePath(file.c_str(), eFileDir::eCurrent);
+	if (find.size())
+	{
+		auto serial = TextSerialiser::OpenFile(find.c_str(), TextSerialiser::MODE_READ);
+		pAtlas->LoadAtlas(serial);
+	}
+	return pAtlas;
 }
 
 Dystopia::TextureAtlas* Dystopia::TextureSystem::GetAtlas(const std::string& _strName)
@@ -52,11 +105,9 @@ Dystopia::TextureAtlas* Dystopia::TextureSystem::GetAtlas(const std::string& _st
 		return _strName == _t.GetName();
 	});
 	
-	if (it) return (&*it);
+	if (it != mAtlas.end()) return (&*it);
 
-	auto tex = GetTexture(_strName);
-
-	return mAtlas.Emplace(tex);
+	return nullptr;
 }
 
 template <>
@@ -67,6 +118,73 @@ Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(const std::string& _strP
 	// We can allow the user to change it later
 
 	return LoadTexture<Texture2D>(_strPath);
+}
+
+Dystopia::Image* Dystopia::TextureSystem::ImportImage(const HashString& _strPath)
+{
+	Image* pImg = nullptr;
+	auto meta = _strPath + "." + Gbl::METADATA_EXT;
+
+	if (EngineCore::GetInstance()->Get<FileSystem>()->CheckFileExist(meta.c_str(), eFileDir::eResource))
+	{
+		auto metaFile = Serialiser::OpenFile<TextSerialiser>(meta.c_str());
+
+		if (!metaFile.EndOfInput())
+		{
+			pImg = DefaultAllocator<Image>::ConstructAlloc();
+
+			metaFile.ConsumeStartBlock();
+			metaFile >> pImg->mstrName;
+			metaFile >> pImg->mbCompressed;
+			metaFile >> pImg->mbRGB;
+			metaFile >> pImg->mnRawFormat;
+			metaFile >> pImg->mnFormat;
+		}
+	}
+
+	return pImg;
+}
+
+Dystopia::Image* Dystopia::TextureSystem::LoadImage(std::string const& _strPath)
+{
+	Image *loaded = nullptr, *img = ImportImage(_strPath.c_str());
+	auto fileType = _strPath[_strPath.rfind('.') + 1];
+
+	if ('p' == fileType || 'P' == fileType)
+	{
+		loaded = ImageParser::LoadPNG(_strPath, img);
+	}
+	else if ('b' == fileType || 'B' == fileType)
+	{
+		loaded = ImageParser::LoadBMP(_strPath, img);
+	}
+	else if ('d' == fileType || 'D' == fileType)
+	{
+		loaded = ImageParser::LoadDDS(_strPath, img);
+	}
+
+	if (nullptr == img)
+	{
+		SaveTextureSetting(loaded);
+	}
+
+	return loaded;
+}
+
+void Dystopia::TextureSystem::SaveTextureSetting(Image* _pImg)
+{
+	auto path = EngineCore::GetInstance()->Get<FileSystem>()->GetFullPath(_pImg->mstrName.c_str(), eFileDir::eResource) + "." + Gbl::METADATA_EXT;
+	auto metaFile = Serialiser::OpenFile<TextSerialiser>(path.c_str(), Serialiser::MODE_WRITE);
+
+	if (!metaFile.EndOfInput())
+	{
+		metaFile.InsertStartBlock();
+		metaFile << _pImg->mstrName;
+		metaFile << _pImg->mbCompressed;
+		metaFile << _pImg->mbRGB;
+		metaFile << _pImg->mnRawFormat;
+		metaFile << _pImg->mnFormat;
+	}
 }
 
 

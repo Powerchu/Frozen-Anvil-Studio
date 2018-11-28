@@ -37,6 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <exception>    // bad_alloc
 #endif
 
+#include <iostream>
 #include <xmmintrin.h>  // SSE
 #include <emmintrin.h>  // SSE 2
 #include <tmmintrin.h>  // SSE 3
@@ -922,6 +923,23 @@ inline bool _CALL Math::Vector4::operator==(const Math::Vector4& _rhs) const
 inline bool _CALL Math::Vector4::operator!=(const Math::Vector4& _rhs) const
 {
 	return !(*this == _rhs);
+}
+
+inline std::istream& operator >> (std::istream& _lhs, Math::Vector4& _rhs)
+{
+	_lhs >> _rhs[0];
+	_lhs.ignore(1) >> _rhs[1];
+	_lhs.ignore(1) >> _rhs[2];
+	_lhs.ignore(1) >> _rhs[3];
+
+	return _lhs;
+}
+
+inline std::ostream& operator << (std::ostream& _lhs, const Math::Vector4& _rhs)
+{
+	_lhs << _rhs[0] << "," << _rhs[1] << "," << _rhs[2] << "," << _rhs[3];
+
+	return _lhs;
 }
 
 //inline void* Math::Vector4::operator new (std::size_t _sz)

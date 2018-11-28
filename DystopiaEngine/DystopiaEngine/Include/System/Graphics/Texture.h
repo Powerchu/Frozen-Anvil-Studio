@@ -29,6 +29,8 @@ namespace Dystopia
 		explicit Texture(unsigned _nType, const std::string& _strPath) noexcept;
 		explicit Texture(unsigned _nWidth, unsigned _nHeight, unsigned _nType) noexcept;
 
+		Texture(Texture&&) noexcept;
+
 		virtual ~Texture(void);
 
 		void Bind(int = 0) const noexcept;
@@ -45,6 +47,8 @@ namespace Dystopia
 
 		std::string GetName(void) const;
 		std::string const& GetPath(void) const noexcept;
+
+		Texture& operator= (Texture&&) noexcept;
 
 	protected:
 

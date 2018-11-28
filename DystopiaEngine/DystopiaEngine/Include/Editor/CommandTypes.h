@@ -570,7 +570,7 @@ template<typename C>
 ::Editor::AddComponent<C>::AddComponent(const uint64_t& _ownerID, C* _pComToAdd)
 	: mnID{ _ownerID }, mnCID{ _pComToAdd->GetID() }
 {
-	EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(_pComToAdd);
+	EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(_pComToAdd, _ownerID, Ut::IsSame<typename C::TAG, typename Dystopia::Component::TAG>::value);
 }
 
 template<typename C>
@@ -614,7 +614,7 @@ bool ::Editor::AddComponent<C>::Undo(void)
 			c->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 			c->SetOwner(obj);
 			c->SetActive(false);
-			EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(c);
+			EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(c, mnID, Ut::IsSame<typename C::TAG, typename Dystopia::Component::TAG>::value);
 			obj->RemoveComponent(obj->GetComponent<C>());
 			return true;
 		}
@@ -655,7 +655,7 @@ bool ::Editor::RemoveComponent<C>::Do(void)
 			c->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 			c->SetOwner(obj);
 			c->SetActive(false);
-			EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(c);
+			EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(c, mnID, Ut::IsSame<typename C::TAG, typename Dystopia::Component::TAG>::value);
 			obj->RemoveComponent(obj->GetComponent<C>());
 			EditorMain::GetInstance()->GetSystem<EditorFactory>()->DettachPrefab(mnID);
 			return true;

@@ -36,11 +36,14 @@ namespace EGUI
 		MP3,
 		DDS,
 		WAV,
+		TTF,
+
 		ALL_IMG,
+		ALL_AUDIO,
 
 		ePAY_LOAD_LAST
 	};
-
+	
 	inline const char* GetPayloadString(ePayloadTags _tag)
 	{
 		switch (_tag)
@@ -55,8 +58,10 @@ namespace EGUI
 		case MP3:			return "MP3";
 		case DDS:			return "DDS";
 		case WAV:			return "WAV";
+		case TTF:			return "TTF";
 		case ALL_IMG:		return "A_IMG";
-		default:			return "ePAY_LOAD_LAST";
+		case ALL_AUDIO:		return "A_AUDIO";
+		default:			return "UNKNOWN";
 		}
 	}
 }
@@ -71,6 +76,7 @@ namespace Editor //Dystopia
 	static const std::string g_PayloadMp3Ex = Gbl::MP3_EXT;
 	static const std::string g_PayloadDDSEx = Gbl::DDS_EXT;
 	static const std::string g_PayloadWavEx = Gbl::WAV_EXT;
+	static const std::string g_PayloadTTFEx = ".ttf";
 
 	/********************************************************************* FILE & FOLDER *********************************************************************/
 	char my_tolower(char const ch);

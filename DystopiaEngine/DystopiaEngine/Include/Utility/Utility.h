@@ -87,6 +87,12 @@ namespace Ut
 		return _begin;
 	}
 
+	template <typename Container_t, typename Cond_t>
+	inline auto Find(Container_t const& _arr, Cond_t&& _cond)
+	{
+		return Find(_arr.begin(), _arr.end(), Ut::Forward<Cond_t>(_cond));
+	}
+
 
 	// Sorts a given array using insertion sort. 
 	// Defaults to sorting the array in ascending order
@@ -136,6 +142,25 @@ namespace Ut
 		}
 
 		return _dest;
+	}
+
+	template <class OutIt, class InIt, class = EnableIf_t<
+		IsConvertible<Decay_t<decltype(*declval<OutIt>())>, Decay_t<decltype(*declval<InIt>())>>::value>>
+	InIt Copy(OutIt _begin, const OutIt& _end, InIt _dest)
+	{
+		while (_begin != _end)
+		{
+			*_dest = *_begin;
+			++_dest; ++_begin;
+		}
+
+		return _dest;
+	}
+
+	template <class Container, class It>
+	RemoveRef_t<It> Copy(Container&& _container, It&& _dest)
+	{
+		return Copy(_container.begin(), _container.end(), Forward<It>(_dest));
 	}
 
 
