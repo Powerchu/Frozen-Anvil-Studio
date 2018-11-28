@@ -434,17 +434,18 @@ namespace Editor
 			}
 			EGUI::EndChild();
 
-			EGUI::Display::HorizontalSeparator();
-
-			if (EGUI::Display::Button("Apply to all", Math::Vec2{ 100, 24 }))
-			{
-				mnConfirmations = 2;
-			}
-			EGUI::SameLine();
 			if (allInstances.size())
-				if (EGUI::Display::Button("Detach all", Math::Vec2{ 100, 24 }))
 			{
-				mnConfirmations = 1;
+				EGUI::Display::HorizontalSeparator();
+				if (EGUI::Display::Button("Apply to all", Math::Vec2{ 100, 24 }))
+				{
+					mnConfirmations = 2;
+				}
+				EGUI::SameLine();
+				if (EGUI::Display::Button("Detach all", Math::Vec2{ 100, 24 }))
+				{
+					mnConfirmations = 1;
+				}
 			}
 
 			EGUI::Display::HorizontalSeparator();

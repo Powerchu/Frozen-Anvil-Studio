@@ -22,6 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/Payloads.h"
 #include "Editor/ConsoleLog.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorCommands.h"
 #endif 
 
 #define MAX_VOLUME 3
@@ -69,13 +71,9 @@ void Dystopia::AudioSource::Update(float)
 	if (!mChannel.mpChannel || !mpSound) return;
 
 	mChannel.mpChannel->isPlaying(&mIsPlaying);
-	if (mChanged)
-	{
-		mChannel.mpChannel->setVolume(mVolume);
-		mChannel.mpChannel->setFrequency(FREQUENCY * mFrequency);
-		mChannel.mpChannel->setPitch(mPitch);
-		mChanged = false;
-	}
+	mChannel.mpChannel->setVolume(mVolume);
+	mChannel.mpChannel->setFrequency(FREQUENCY * mFrequency);
+	mChannel.mpChannel->setPitch(mPitch);
 
 	if (!mIsPlaying && mLoop)
 		mReady = true;
@@ -124,95 +122,84 @@ void Dystopia::AudioSource::Unserialise(TextSerialiser& _in)
 void Dystopia::AudioSource::EditorUI(void) noexcept
 {
 #if EDITOR
-	EGUI::Display::EmptyBox("Audio        ", 150, (mpSound) ? mSoundName : "-empty-", true);
-	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::MP3))
+
+	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
+	EGUI::PushLeftAlign(80);
+	EGUI::PushID(1);
+
+	EGUI::Display::EmptyBox("Audio", 150, (mpSound) ? mSoundName : "-empty-", true);
+	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_AUDIO))
 	{
 		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t->mName.c_str());
-		SetSound(pSound);
-		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
-		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, pSound);
-		//EGUI::GetCommandHND()->InvokeCommand(mnOwner, fOld, fNew);
-		EGUI::Display::EndPayloadReceiver();
-	}
-	if (::Editor::File *t2 = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::WAV))
-	{
-		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t2->mName.c_str());
-		SetSound(pSound);
-		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
-		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, pSound);
-		//EGUI::GetCommandHND()->InvokeCommand(mnOwner, fOld, fNew);
+		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&AudioSource::SetSound, mpSound),
+										   cmd->MakeFnCommand(&AudioSource::SetSound, pSound));
 		EGUI::Display::EndPayloadReceiver();
 	}
 	EGUI::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 	{
-		SetSound(nullptr);
-		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, mpSound);
-		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&AudioSource::SetSound, nullptr);
-		//EGUI::GetCommandHND()->InvokeCommand(mnOwner, fOld, fNew);
+		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&AudioSource::SetSound, mpSound),
+										   cmd->MakeFnCommand(&AudioSource::SetSound, nullptr));
 	}
-	//int old = mSoundType;
-	if (EGUI::Display::DropDownSelection("Category      ", mSoundType, g_AudioCategory, 150))
+	int old = mSoundType;
+	if (EGUI::Display::DropDownSelection("Category", mSoundType, g_AudioCategory, 150))
 	{
-		//EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, &AudioSource::mSoundType, old);
+		cmd->ChangeValue(GetOwnerID(), &AudioSource::mSoundType, old, mSoundType);
 	}
-	if (EGUI::Display::CheckBox("Play On Start", &mPlayOnStart))
+	if (EGUI::Display::CheckBox("On Awake", &mPlayOnStart))
 	{
-		//EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, &AudioSource::mPlayOnStart, !mPlayOnStart);
+		cmd->ChangeValue(GetOwnerID(), &AudioSource::mPlayOnStart, !mPlayOnStart, mPlayOnStart);
 	}
-	if (EGUI::Display::CheckBox("Loop         ", &mLoop))
+	if (EGUI::Display::CheckBox("Loop", &mLoop))
 	{
-		//EGUI::GetCommandHND()->InvokeCommand<AudioSource>(mnOwner, &AudioSource::mLoop, !mLoop, &AudioSource::mChanged);
+		cmd->ChangeValue(GetOwnerID(), &AudioSource::mLoop, !mLoop, mLoop);
 		mChanged = true;
 	}
-	switch (EGUI::Display::SliderFloat("Volume       ", &mVolume, 0.f, MAX_VOLUME))
+	switch (EGUI::Display::DragFloat("Volume", &mVolume, 0.1f, 0.f, MAX_VOLUME))
 	{
 	case EGUI::eSTART_DRAG:
-		//EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, &AudioSource::mVolume, &AudioSource::mChanged);
+		cmd->StartRec(&AudioSource::mVolume, this);
 		break;
 	case EGUI::eDRAGGING:
-		mChanged = true;
 		break;
 	case EGUI::eEND_DRAG:
 	case EGUI::eENTER:
 	case EGUI::eDEACTIVATED:
 	case EGUI::eTABBED:
-		//EGUI::GetCommandHND()->EndRecording();
+		cmd->EndRec(&AudioSource::mVolume, this);
 		break;
 	}
-	switch (EGUI::Display::SliderFloat("Frequency    ", &mFrequency, 0.f, MAX_CAP_SCALE))
+	switch (EGUI::Display::DragFloat("Frequency", &mFrequency, 0.1f, 0.f, MAX_CAP_SCALE))
 	{
 	case EGUI::eSTART_DRAG:
-		//EGUI::GetCommandHND()->StartRecording<AudioSource>(mnOwner, &AudioSource::mFrequency, &AudioSource::mChanged);
+		cmd->StartRec(&AudioSource::mFrequency, this);
 		break;
 	case EGUI::eDRAGGING:
-		mChanged = true;
 		break;
 	case EGUI::eEND_DRAG:
 	case EGUI::eENTER:
 	case EGUI::eDEACTIVATED:
 	case EGUI::eTABBED:
-		//EGUI::GetCommandHND()->EndRecording();
+		cmd->EndRec(&AudioSource::mFrequency, this);
 		break;
 	}
-	switch (EGUI::Display::SliderFloat("Pitch        ", &mPitch, 0.f, MAX_CAP_SCALE))
+	switch (EGUI::Display::DragFloat("Pitch", &mPitch, 0.1f, 0.f, MAX_CAP_SCALE))
 	{
-	case EGUI::eINSTANT_CHANGE:
-		PrintToConsoleLog("eINSTANT_CHANGE");
-		break;
 	case EGUI::eSTART_DRAG:
-		PrintToConsoleLog("eSTART_DRAG");
+		cmd->StartRec(&AudioSource::mPitch, this);
 		break;
 	case EGUI::eDRAGGING:
-		PrintToConsoleLog("eDRAGGING");
-		break;	
-	case EGUI::eDEACTIVATED:
-		PrintToConsoleLog("eDEACTIVATED");
 		break;
 	case EGUI::eEND_DRAG:
-		PrintToConsoleLog("eEND_DRAG");
+	case EGUI::eENTER:
+	case EGUI::eDEACTIVATED:
+	case EGUI::eTABBED:
+		cmd->EndRec(&AudioSource::mPitch, this);
 		break;
 	}
+	EGUI::PopID();
+	EGUI::PopLeftAlign();
+
 #endif 
 }
 

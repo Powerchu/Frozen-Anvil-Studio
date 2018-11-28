@@ -27,6 +27,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO/TextSerialiser.h"
 #if EDITOR
 #include "Editor/ProjectResource.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorCommands.h"
 #include "Editor/EGUI.h"
 #endif 
 
@@ -173,7 +175,7 @@ void Dystopia::Renderer::TextureField()
 {
 	::Editor::File *t = nullptr;
 	EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName() : "-empty-", true);
-
+	auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 	t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
 	if (t)  EGUI::Display::EndPayloadReceiver();
 
@@ -190,19 +192,15 @@ void Dystopia::Renderer::TextureField()
 	if (t)
 	{
 		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
-		SetTexture(pTex);
-		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
-		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, pTex);
-		//EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture),
+										   cmd->MakeFnCommand(&Renderer::SetTexture, pTex));
 	}
 
 	EGUI::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 	{
-		SetTexture(nullptr);
-		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, mpTexture);
-		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(&Dystopia::Renderer::SetTexture, nullptr);
-		//EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
+		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture),
+										   cmd->MakeFnCommand(&Renderer::SetTexture, nullptr));
 	}
 
 	if (mpTexture)
@@ -219,7 +217,8 @@ void Dystopia::Renderer::TextureField()
 			auto h = static_cast<float>(mpTexture->GetHeight());
 			w /= 10;
 			h /= 10;
-			GetOwner()->GetComponent<Transform>()->SetScale(Math::Vec4{ w, h, 1.f });
+			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, GetOwner()->GetComponent<Transform>()->GetScale()),
+											   cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, Math::Vec4{ w, h, 1.f }));
 		}
 	}
 }
