@@ -57,6 +57,7 @@ namespace Editor //Dystopia
 		char			mBufferInput[MAX_BUFFER_SIZE];
 		char			mBufferCreator[MAX_BUFFER_SIZE];
 		char			mBufferLogin[MAX_BUFFER_SIZE];
+		int				mnConfirmations;
 
 		void			GameObjectDetails();
 		void			GameObjectComponents();

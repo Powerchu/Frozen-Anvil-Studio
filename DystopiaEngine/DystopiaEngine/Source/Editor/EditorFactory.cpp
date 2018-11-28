@@ -688,6 +688,33 @@ uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D
 	return arrInstance[0];
 }
 
+void Editor::EditorFactory::ApplyChanges(Editor::EditorFactory::PrefabData* _p)
+{
+	if (!_p) return;
+
+	auto& curScene = Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene();
+	auto& arrInstances = _p->mArrInstanced;
+
+
+	for (auto& instArr : arrInstances)
+	{
+		for (size_t i = 0; i < instArr.size(); ++i)
+		{
+			auto pObj = curScene.FindGameObject(instArr[i]);
+
+			if (!pObj) break;
+
+			if (_p->mnStart + i < _p->mnEnd)
+			{
+				auto& facVersion= mArrFactoryObj[_p->mnStart + i];
+				*pObj = facVersion;
+			}
+			else
+				__debugbreak();
+		}
+	}
+}
+
 Editor::EditorFactory::PrefabData::PrefabData(const HashString& _fileName, size_t _start, size_t _end)
 	: mPrefabFile{ _fileName }, mnStart{ _start }, mnEnd{ _end }
 {}
