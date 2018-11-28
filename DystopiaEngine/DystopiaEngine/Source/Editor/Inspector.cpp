@@ -19,7 +19,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 #include "Editor/RuntimeMeta.h"
 #include "Editor/EditorClipboard.h"
+#include "Editor/EditorFactory.h"
 #include "Editor/EditorCommands.h"
+#include "Editor/ProjectResource.h"
 
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
@@ -79,24 +81,27 @@ namespace Editor
 			mpFocus = scene.FindGameObject(*allSelectedIDs.begin());
 		}
 		else
-		{
 			mpFocus = nullptr;
-			return;
-		}
-		if (!mpFocus) return;
 
-		static constexpr Math::Vec2 btnSize{ 270, 20 };
-		const float mid = Size().x / 2;
-		float inde = mid - (btnSize.x / 2);
-		
-		GameObjectDetails();
-		GameObjectComponents();
-		EGUI::Display::HorizontalSeparator();
-		EGUI::Indent(inde);
-		AddComponentButton(btnSize);
-		AddBehaviourButton(btnSize);
-		AddTagButton(btnSize);
-		EGUI::UnIndent(inde);
+		if (mpFocus)
+		{
+			static constexpr Math::Vec2 btnSize{ 270, 20 };
+			const float mid = Size().x / 2;
+			float inde = mid - (btnSize.x / 2);
+
+			GameObjectDetails();
+			GameObjectComponents();
+			EGUI::Display::HorizontalSeparator();
+			EGUI::Indent(inde);
+			AddComponentButton(btnSize);
+			AddBehaviourButton(btnSize);
+			AddTagButton(btnSize);
+			EGUI::UnIndent(inde);
+		}
+		else
+		{
+			PrefabObject();
+		}
 	}
 
 	void Inspector::Shutdown(void)
@@ -398,8 +403,83 @@ namespace Editor
 			EGUI::Display::EndPopup();
 		}
 	}
+
+	void Inspector::PrefabObject(void)
+	{
+		auto clip = EditorMain::GetInstance()->GetSystem<EditorClipboard>();
+		auto fac = EditorMain::GetInstance()->GetSystem<EditorFactory>();
+		const auto index = clip->GetPrefab();
+		if (index > -1)
+		{
+			auto pPrefabData = fac->GetPrefabData(index);
+			auto& allFac = fac->GetAllFactoryObjects();
+			auto& prefObj = allFac[pPrefabData->mnStart];
+
+			EGUI::StartChild("Archetype Edit", Math::Vec2{ Size().x - 60, 120 }, false, Math::Vec4{ 0,0,0,0 });
+			EGUI::Display::Label("No. of Instance: %d", pPrefabData->mArrInstanced.size());
+			if (EGUI::Display::Button("Apply to all", Math::Vec2{ 100, 24 }))
+			{
+
+			}
+			EGUI::SameLine();
+			if (EGUI::Display::Button("Detach all", Math::Vec2{ 100, 24 }))
+			{
+				EGUI::Display::OpenPopup("Confirm Detach");
+			}
+			EGUI::EndChild();
+			EGUI::Display::HorizontalSeparator();
+			EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
+			EGUI::SameLine(10);
+			if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 60 }, false, Math::Vec4{ 0,0,0,0 }))
+			{
+				EGUI::SameLine();
+				EGUI::Display::Label("PREFAB %s", pPrefabData->mPrefabFile.c_str());
+				auto arr = prefObj.GetAllTags_str();
+				int selected = 0;
+				EGUI::Display::DropDownSelection("Tag", selected, arr, 50);
+
+				EGUI::SameLine();
+				EGUI::ChangeAlignmentYOffset(0);
+				int j = (prefObj.GetFlags() & FLAG_LAYER_WORLD) ? 1 : (prefObj.GetFlags() & FLAG_LAYER_UI) ? 2 : 0;
+				if (EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80))
+				{
+					switch (j)
+					{
+					case 1:
+						break;
+					case 2: 
+						break;
+					}
+				}
+				EGUI::ChangeAlignmentYOffset();
+			}
+			EGUI::EndChild();
+			Confirmations(static_cast<void*>(pPrefabData));
+		}
+	}
+
+	void Inspector::Confirmations(void* _gPtr)
+	{
+		if (EGUI::Display::StartPopupModal("Confirm Detach", "WARNING!"))
+		{
+			if (ImGui::Button("DETACH", ImVec2{ 100,60 }))
+			{
+				static_cast<EditorFactory::PrefabData*>(_gPtr)->mArrInstanced.clear();
+				EGUI::Display::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("cancel", ImVec2{ 100,60 }))
+			{
+				EGUI::Display::CloseCurrentPopup();
+			}
+			EGUI::Display::EndPopup();
+		}
+	}
 }
 
 #endif // EDITOR 
+
+
+
 
 

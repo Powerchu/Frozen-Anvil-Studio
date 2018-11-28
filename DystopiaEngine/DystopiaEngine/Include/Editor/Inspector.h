@@ -72,6 +72,8 @@ namespace Editor //Dystopia
 
 		void			AddTagButton(const Math::Vec2&);
 		void			TagsDropDownList();
+		void			PrefabObject(void);
+		void			Confirmations(void*);
 	};
 }
 
