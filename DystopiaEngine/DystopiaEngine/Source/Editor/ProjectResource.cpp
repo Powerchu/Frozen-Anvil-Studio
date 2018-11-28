@@ -106,7 +106,12 @@ namespace Editor
 			if (index >= 0)
 			{
 				auto data = EditorMain::GetInstance()->GetSystem<EditorFactory>()->GetPrefabData(index);
-				if (!data)
+				if (data && mFocusedFile)
+				{
+					if (mFocusedFile->mName != data->mPrefabFile)
+						RemoveFocusOnFile();
+				}
+				else
 					RemoveFocusOnFile();
 			}
 			else
@@ -127,6 +132,7 @@ namespace Editor
 			ExitProcess(GetLastError());
 			break;
 		}
+
 		UpdateSearch();
 	}
 
