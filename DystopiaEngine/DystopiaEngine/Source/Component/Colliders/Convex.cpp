@@ -46,8 +46,9 @@ namespace Dystopia
 
 		for (auto & elem : mVertices)
 		{
-			Collider::mDebugVertices.push_back(Gfx::Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z });
+			Collider::mDebugVertices.EmplaceBack(elem.mPosition.x, elem.mPosition.y, elem.mPosition.z);
 		}
+
 		Collider::Awake();
 	}
 
@@ -64,7 +65,7 @@ namespace Dystopia
 
 	void Convex::Update(float)
 	{
-		mRotation = GetOwner()->GetComponent<Transform>()->GetGlobalRotation();
+		//mRotation = GetOwner()->GetComponent<Transform>()->GetGlobalRotation();
 	}
 
 	void Convex::Unload()
