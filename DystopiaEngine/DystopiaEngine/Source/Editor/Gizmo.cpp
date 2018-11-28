@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../../ImGui/imgui.h"
 #include "../../ImGui/imgui_internal.h"
 
-static ImVec4 yellow{ 1.f, 1.f,0.f ,1.f };
+static ImVec4 yellow{ 1.f, 1.f,0.f ,0.9f };
 static constexpr int sizeGizA = 7;
 static constexpr int sizeGizS = 8;
 
