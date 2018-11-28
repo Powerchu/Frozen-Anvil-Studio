@@ -113,6 +113,7 @@ namespace Dystopia
 
 		int GetStartCol(void) const;
 		int GetStartRow(void) const;
+		void ResetFrames(void);
 	};
 }
 

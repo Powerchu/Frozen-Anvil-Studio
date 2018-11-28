@@ -71,13 +71,7 @@ void Dystopia::SpriteRenderer::Awake(void)
 		else
 			mpAtlas = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GenAtlas(mpTexture);
 	}
-	if (mnID < mAnimations.size())
-	{
-		mnCol = GetStartCol();
-		mnRow = GetStartRow();
-	}
-	else
-		mnID = mnCol = mnRow = 0;
+	ResetFrames();
 }
 
 void Dystopia::SpriteRenderer::Init(void)
@@ -94,13 +88,7 @@ void Dystopia::SpriteRenderer::Init(void)
 		else
 			mpAtlas = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GenAtlas(mpTexture);
 	}
-	if (mnID < mAnimations.size())
-	{
-		mnCol = GetStartCol();
-		mnRow = GetStartRow();
-	}
-	else
-		mnID = mnCol = mnRow = 0;
+	ResetFrames();
 	mbPlay = mbPlayOnStart;
 }
 
@@ -189,6 +177,7 @@ void Dystopia::SpriteRenderer::SetAnimation(const char* _strAnimation)
 		if (mAnimations[n].mstrName == _strAnimation)
 		{
 			mnID = n;
+			mfAccTime = 0;
 			mnCol = GetStartCol();
 			mnRow = GetStartRow();
 			return;
@@ -201,6 +190,7 @@ void Dystopia::SpriteRenderer::SetAnimation(unsigned _nID)
 	DEBUG_BREAK(_nID > mAnimations.size(), "SpriteRenderer Error: Invalid Animation!");
 
 	mnID = _nID;
+	mfAccTime = 0;
 	mnCol = GetStartCol();
 	mnRow = GetStartRow();
 }
@@ -459,7 +449,7 @@ void Dystopia::SpriteRenderer::AnimFields(void)
 
 	if (mAnimations.size())
 	{
-		switch (EGUI::Display::DragInt("Using Anim", &mnID, 0.1f, 0, mAnimations.size() - 1))
+		switch (EGUI::Display::DragInt("Using Anim", &mnID, 0.1f, 0, static_cast<int>(mAnimations.size()) - 1))
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
 			cmd->StartRec(&SpriteRenderer::mnID, this);
@@ -574,6 +564,22 @@ int Dystopia::SpriteRenderer::GetStartRow(void) const
 {
 	return mAnimations[mnID].mnStart ? static_cast<int>(mAnimations[mnID].mnStart / mAnimations[mnID].mnCol) : 0;
 }
+
+void Dystopia::SpriteRenderer::ResetFrames(void)
+{
+	if (mnID < mAnimations.size())
+	{
+		mnCol = GetStartCol();
+		mnRow = GetStartRow();
+	}
+	else
+		mnID = mnCol = mnRow = 0;
+
+	mfAccTime = 0;
+}
+
+
+
 
 
 
