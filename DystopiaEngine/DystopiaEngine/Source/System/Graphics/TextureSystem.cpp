@@ -99,6 +99,7 @@ Dystopia::TextureAtlas* Dystopia::TextureSystem::GenAtlas(Texture* _pTex)
 			pAtlas->LoadAtlas(serial);
 		}
 	}
+
 	return pAtlas;
 }
 

@@ -328,10 +328,11 @@ void Editor::EditorLauncher::SetWindowOptions(void)
 
 	win.Hide();
 	win.SetStyle(LauncherStyle, LauncherStyleEx);
-	win.SetSize(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
+	//win.SetSize(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
+	//win.CenterWindow();
+	win.SetSizeNoAdjust(LAUNCHER_WIDTH, LAUNCHER_HEIGHT, false);
 	win.CenterWindow();
-	win.SetSizeNoAdjust(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
-	win.CenterWindow();
+	win.PushToFront();
 	win.Show();
 
 	//wmgr->mWidth = GetSystemMetrics(SM_CXSCREEN);

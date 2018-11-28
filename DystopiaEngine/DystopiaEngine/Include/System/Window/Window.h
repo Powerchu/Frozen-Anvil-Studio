@@ -49,6 +49,7 @@ namespace Dystopia
 		void SetSize(int _nWidth, int _nHeight, bool = true) noexcept;
 		void SetSizeNoAdjust(int _nWidth, int _nHeight, bool = true) noexcept;
 		void CenterWindow(void) noexcept;
+		void PushToFront(void) noexcept;
 
 		void ShowCursor(int _bShow) const noexcept;
 
