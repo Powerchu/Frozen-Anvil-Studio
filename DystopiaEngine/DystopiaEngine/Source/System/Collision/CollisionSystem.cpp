@@ -60,14 +60,6 @@ namespace Dystopia
 		PotentialContacts	        ArrayContacts[1024];
 		unsigned				    ContactCount = 0;
 
-		for (auto& conv : ComponentDonor<Convex>::mComponents)
-		{
-#if EDITOR
-			if (conv.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-#endif 
-			conv.Update(_dt);
-		}
-
 		using CollisionTable = std::pair<eColliderType, eColliderType>;
 		using fpCollisionResolution = bool(CollisionSystem::*)(Collider  * const &, Collider  * const &)const;
 		using CollisionTableMap = std::map < CollisionTable, fpCollisionResolution>;
@@ -93,12 +85,16 @@ namespace Dystopia
 
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 			if (elem.GetOwner())
 			{
+				elem.Update(_dt);
 				elem.ClearCurrentCollisionEvent(); //clear collision table
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
-				elem.SetColliding((false));
+				elem.SetColliding(false);
 				mColliders.push_back(&elem);
 				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
@@ -106,12 +102,16 @@ namespace Dystopia
 
 		for (auto & elem : ComponentDonor<AABB>::mComponents)
 		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 			if (elem.GetOwner())
 			{
+				//elem.Recompute();
 				elem.ClearCurrentCollisionEvent(); //clear collision table
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
-				elem.SetColliding((false));
+				elem.SetColliding(false);
 				mColliders.push_back(&elem);
 				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
@@ -120,12 +120,15 @@ namespace Dystopia
 
 		for (auto & elem : ComponentDonor<Circle>::mComponents)
 		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 			if (elem.GetOwner())
 			{
 				elem.ClearCurrentCollisionEvent(); //clear collision table
 				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
 				elem.SetOwnerTransform(gobjMatrix);
-				elem.SetColliding((false));
+				elem.SetColliding(false);
 				mColliders.push_back(&elem);
 				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
 			}
@@ -290,7 +293,7 @@ namespace Dystopia
 			pCircle = dynamic_cast<Circle *>(_ColB);
 			pConvex = dynamic_cast<Convex *>(_ColA);
 		}
-		bool isColliding = pCircle->isColliding((*pConvex));
+		const bool isColliding = pCircle->isColliding((*pConvex));
 
 		return isColliding;
 	}
@@ -311,7 +314,7 @@ namespace Dystopia
 			pConvex = dynamic_cast<Convex *>(_ColA);
 
 		}
-		bool isColliding = pConvex->isColliding((*pCircle));
+		const bool isColliding = pConvex->isColliding((*pCircle));
 
 		return isColliding;
 	}

@@ -86,6 +86,8 @@ namespace Dystopia
 		void Stop(void);
 		void SetSpeed(float);
 
+		Math::Vec2 Resized(void) const;
+
 	private:
 		struct SpriteSheet
 		{

@@ -234,6 +234,11 @@ namespace Dystopia
 			{
 				static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->InitComponents();
 			}
+
+			static void InitDonor(const uint64_t& _object)
+			{
+				static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->InitComponent(_object);
+			}
 		};
 
 		static void InitDonors(void)
@@ -243,6 +248,15 @@ namespace Dystopia
 
 			for (size_t i = 0; i < sizeof...(Ns); ++i)
 				SystemArray[i]();
+		}
+
+		static void InitDonors(const uint64_t& _object)
+		{
+			static auto SystemArray = Ctor::MakeArray<void(*)(const uint64_t&)>(
+				static_cast<void(*)(const uint64_t&)>(&SystemFunction<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::InitDonor) ...);
+
+			for (size_t i = 0; i < sizeof...(Ns); ++i)
+				SystemArray[i](_object);
 		}
 
 		static void Serialise(TextSerialiser& _out)

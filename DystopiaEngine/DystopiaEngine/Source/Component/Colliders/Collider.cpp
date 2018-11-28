@@ -17,7 +17,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/RigidBody.h"
 #include "Behaviour/Behaviour.h"
 #include "Object/GameObject.h"
-#include "System/Graphics/VertexDefs.h"
 #include "System/Graphics/MeshSystem.h"
 
 
@@ -50,11 +49,17 @@ namespace Dystopia
 
 			auto const & arr = GetVertexBuffer();
 
-			for (auto i : arr)
+			/*Add centroid vertex and {0,0,1} normal*/
+			pMeshSys->AddVertex(0, 0, 0);
+			pMeshSys->AddNormal(0, 0, 1);
+
+			for (const auto& i : arr)
 			{
 				pMeshSys->AddVertex(i.x, i.y, i.z);
 				pMeshSys->AddNormal(i.x, i.y, i.z);
 			}
+
+
 
 			SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
 			pMeshSys->EndMesh();
@@ -159,7 +164,7 @@ namespace Dystopia
 	void Collider::InformOtherComponents()
 	{
 		const auto _owner = GetOwner();
-		const auto _body = _owner->GetComponent<RigidBody>();
+		//const auto _body = _owner->GetComponent<RigidBody>();
 
 		for (auto & elem : marr_CurrentContactSets)
 		{
@@ -179,16 +184,15 @@ namespace Dystopia
 					_owner->OnTriggerEnter(elem.mCollidedWith);
 			}
 		}
+
 		for (auto & elem : marr_ContactSets)
 		{
-			if (nullptr != _body)
-				_body->SetSleeping(false);
-
 			if (!mbIsTrigger)
 				_owner->OnCollisionExit(elem);
 			else
 				_owner->OnTriggerExit(elem.mCollidedWith);
 		}
+
 		/*I am not sure why i need to clear it before assigning. else will have stuff inside*/
 		marr_ContactSets.clear();
 		marr_ContactSets = marr_CurrentContactSets;
@@ -300,11 +304,21 @@ namespace Dystopia
 		mBoundingCircle = GenerateBoardPhaseCircle();
 	}
 
+	void Collider::SetRotation(Math::Quaternion const& _rot)
+	{
+		mRotation = _rot;
+	}
+
 	Math::Point3D Collider::GetGlobalPosition() const
 	{
 		auto point =  mOwnerTransformation * Math::Translate(mv3Offset.x, mv3Offset.y , mv3Offset.z) * GetTransformationMatrix() *  mPosition;
 		point.z = 0;
 		return point;
+	}
+
+	Math::Quaternion Collider::GetGlobalRotation() const
+	{
+		return mRotation;
 	}
 
 	Math::Vec3D Collider::GetOffSet() const
@@ -384,20 +398,24 @@ namespace Dystopia
 		
 		mIndexBuffer.clear();
 
-		auto const start = mDebugVertices.begin();
-
-		const auto  first   = mDebugVertices.begin();
-		auto  second  = first+1;
-		auto  third   = second+1;
+		const auto  first   = mDebugVertices.begin() - 1;
+		auto		second  = first + 1;
+		auto		third   = second + 1;
 		do
 		{
-		  mIndexBuffer.push_back(static_cast<const short>(first  - start));
-		  mIndexBuffer.push_back(static_cast<const short>(second - start));
-		  mIndexBuffer.push_back(static_cast<const short>(third - start));
+		  mIndexBuffer.push_back(static_cast<const short>(0));
+		  mIndexBuffer.push_back(static_cast<const short>(second - first));
+		  mIndexBuffer.push_back(static_cast<const short>(third - first));
 
-		  const auto copy = third++;
-		  second    = copy;
+		  second = third++;
 
 		} while (third != mDebugVertices.end());
+
+		mIndexBuffer.push_back(static_cast<const short>(0));
+		mIndexBuffer.push_back(static_cast<const short>(second - first));
+		mIndexBuffer.push_back(static_cast<const short>(1));
+
+
+
 	}
 }

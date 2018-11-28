@@ -67,11 +67,15 @@ void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 
 void Dystopia::TextureSystem::Shutdown(void) noexcept
 {
-	mImageData.clear();
-
-
-
-
+	for (auto& a : mAtlas)
+	{
+		auto fp = EngineCore::Get<FileSystem>()->FindFilePath(a.GetName().c_str(), eFileDir::eCurrent);
+		HashString folder{ fp };
+		folder += '.';
+		folder += Gbl::ATLAS_EXT;
+		auto serial = TextSerialiser::OpenFile(folder.c_str(), TextSerialiser::MODE_WRITE);
+		a.SaveAtlas(serial);
+	}
 
 	mTextures.clear();
 }
@@ -81,7 +85,18 @@ Dystopia::TextureAtlas* Dystopia::TextureSystem::GenAtlas(Texture* _pTex)
 	if (_pTex) if (auto p = GetAtlas(_pTex->GetName()))
 		return p;
 
-	return mAtlas.Emplace(_pTex);
+	auto pAtlas = mAtlas.Emplace(_pTex);
+
+	HashString file{ pAtlas->GetName().c_str() };
+	file += '.';
+	file += Gbl::ATLAS_EXT;
+	auto find = EngineCore::Get<FileSystem>()->FindFilePath(file.c_str(), eFileDir::eCurrent);
+	if (find.size())
+	{
+		auto serial = TextSerialiser::OpenFile(find.c_str(), TextSerialiser::MODE_READ);
+		pAtlas->LoadAtlas(serial);
+	}
+	return pAtlas;
 }
 
 Dystopia::TextureAtlas* Dystopia::TextureSystem::GetAtlas(const std::string& _strName)

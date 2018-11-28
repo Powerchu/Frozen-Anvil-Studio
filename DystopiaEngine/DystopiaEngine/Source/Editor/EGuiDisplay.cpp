@@ -671,11 +671,11 @@ namespace EGUI
 			{
 				//	FILE,
 				//	COMPONENT,
-			case SCENE:
-				return false;
-			case MP3:
-			case WAV:
-				return false;
+			//case SCENE:
+			//	return false;
+			//case MP3:
+			//case WAV:
+			//	return false;
 			case PREFAB:
 				return PrefabPayload(_uniqueId, _label, _tooltip, _displaySize, _tagLoad, _pData, _dataSize);
 			case BMP:

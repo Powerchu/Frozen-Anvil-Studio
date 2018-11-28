@@ -145,6 +145,25 @@ void Dystopia::Transform::SetScale(const float _fScaleX, const float _fScaleY, c
 	SetScale(Math::Vec3D{ _fScaleX, _fScaleY, _fScaleZ });
 }
 
+void Dystopia::Transform::SetGlobalScale(const Math::Vec4& _vScale)
+{
+	mbChanged = true;
+
+	if (mpParent)
+	{
+		mScale = Math::AffineInverse(mpParent->GetTransformMatrix()) * _vScale;
+	}
+	else
+	{
+		mScale = _vScale;
+	}
+}
+
+void Dystopia::Transform::SetGlobalScale(const float _fScaleX, const float _fScaleY, const float _fScaleZ)
+{
+	SetGlobalScale(Math::Vec3D{ _fScaleX, _fScaleY, _fScaleZ });
+}
+
 void Dystopia::Transform::SetPosition(const Math::Point3D& _vPos)
 {
 	mbChanged = true;
@@ -352,13 +371,15 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		}
 	}
 
-	Math::Vector4 eulerAngle = mRotation.ToEuler();
+	static bool convertEuler = true;
+	static Math::Vector4 eulerAngle;
 	arrResult = EGUI::Display::VectorFields("Rotation", &eulerAngle, 0.01f, -FLT_MAX, FLT_MAX);
 	for (auto& e : arrResult)
 	{
 		switch (e)
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
+			convertEuler = false;
 			cmd->StartRec<Transform, const Math::Quaternion&>(&Transform::SetRotation, mRotation);
 			//EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &Transform::mRotation, &Transform::mbChanged);
 			break;
@@ -373,11 +394,16 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
 		case EGUI::eDragStatus::eEND_DRAG:
+			convertEuler = true;
 			cmd->EndRec<Transform, const Math::Quaternion&>(GetOwnerID(), &Transform::SetRotation, mRotation);
 			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		}
 	}
+
+	if(convertEuler)
+		eulerAngle = mRotation.ToEuler();
+
 	EGUI::PopLeftAlign();
 #endif 
 }

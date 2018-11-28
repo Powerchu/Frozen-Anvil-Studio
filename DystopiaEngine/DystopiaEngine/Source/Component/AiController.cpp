@@ -31,11 +31,12 @@ namespace Dystopia
 {
 	AiController::AiController(void)
 	{
+
 	}
 
-	void AiController::Load()
+	/*void AiController::Load()
 	{
-	}
+	}*/
 
 	void AiController::Awake()
 	{
@@ -45,9 +46,9 @@ namespace Dystopia
 	{
 	}
 
-	void AiController::Unload()
+	/*void AiController::Unload()
 	{
-	}
+	}*/
 
 	AiController* AiController::Duplicate() const
 	{
