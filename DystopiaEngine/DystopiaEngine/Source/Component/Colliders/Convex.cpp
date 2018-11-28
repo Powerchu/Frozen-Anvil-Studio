@@ -64,7 +64,7 @@ namespace Dystopia
 
 	void Convex::Update(float)
 	{
-		mRotation = GetOwner()->GetComponent<Transform>()->GetGlobalRotation();
+		//mRotation = GetOwner()->GetComponent<Transform>()->GetGlobalRotation();
 	}
 
 	void Convex::Unload()

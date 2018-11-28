@@ -131,6 +131,8 @@ namespace Dystopia
 			bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
 		if (!bodyB->Get_IsStaticState() && bodyB->GetIsAwake() && mCollidedWith->IsActive())
 			bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);
+
+		//if (bodyA->GetPosition().x == 0.f || bodyB->GetPosition().x == 0.f) __debugbreak();
 	}
 
 	bool CollisionEvent::operator==(CollisionEvent const & _rhs) const
