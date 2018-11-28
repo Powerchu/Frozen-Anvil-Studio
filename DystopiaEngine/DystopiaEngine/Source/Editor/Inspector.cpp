@@ -183,8 +183,14 @@ namespace Editor
 		{
 			EGUI::PushID(i);
 			EGUI::Display::HorizontalSeparator();
+
+			//bool test = true;
+			//EGUI::Display::CheckBox("Component Active", &test, false);
+
 			bool open = EGUI::Display::StartTreeNode(arrComp[i]->GetEditorName() + "##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(arrComp[i]);
+
+
 			if (open)
 			{
 				if (show)	

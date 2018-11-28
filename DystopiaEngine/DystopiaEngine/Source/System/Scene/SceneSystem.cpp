@@ -104,7 +104,9 @@ Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject_cstr(const char* con
 
 Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const HashString& _prefabName, const Math::Pt3D& _position)
 {
-	return EngineCore::GetInstance()->GetSubSystem<Factory>()->SpawnPrefab(_prefabName, _position);
+	auto obj = EngineCore::GetInstance()->GetSubSystem<Factory>()->SpawnPrefab(_prefabName, _position);
+	obj->GetComponent<Transform>()->SetGlobalPosition(_position);
+	return obj;
 }
 
 void Dystopia::SceneSystem::SceneChanged(void)

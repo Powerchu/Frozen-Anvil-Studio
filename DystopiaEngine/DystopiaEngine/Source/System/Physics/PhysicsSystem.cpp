@@ -122,6 +122,7 @@ namespace Dystopia
 			if (!body.GetOwner()->IsActive()) continue;
 
 			body.PreUpdatePosition(_dt);
+
 		}
 
 		for (int i = 0; i < mPositionalIterations; ++i)
@@ -135,6 +136,7 @@ namespace Dystopia
 				//if (body.Get_IsStaticState()) continue;
 
 				if (!body.GetOwner()->IsActive()) continue;
+
 
 				for (auto col : body.mparrCol)
 				{
@@ -161,8 +163,11 @@ namespace Dystopia
 						}
 					}
 				}
+				//if (body.GetPosition().x == 0.f) __debugbreak();
 			}
 		}
+
+
 	}
 
 	void PhysicsSystem::UpdateResults(float _dt)
