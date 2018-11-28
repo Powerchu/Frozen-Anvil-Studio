@@ -81,6 +81,21 @@ void Editor::EditorFactory::Message(eEMessage _msg)
 	else if (_msg == eEMessage::SCENE_CHANGED)
 	{
 		ValidatePrefabInstances();
+		for (size_t i = 0; i < mArrPrefabData.size(); ++i)
+		{
+			if (!mArrPrefabData[i].mArrInstanced.size())
+			{
+				HashString prefName{ mArrPrefabData[i].mPrefabFile };
+
+				for (size_t j = mArrPrefabData[i].mnStart; j < mArrPrefabData[i].mnEnd; j++)
+					mArrFactoryObj.Remove(&mArrFactoryObj[j]);
+
+				mArrPrefabData.Remove(&mArrPrefabData[i]);
+
+				auto fp = Dystopia::EngineCore::Get<Dystopia::FileSystem>()->FindFilePath(prefName.c_str(), Dystopia::eFileDir::eCurrent);
+				LoadAsPrefab(fp.c_str());
+			}
+		}
 	}
 }
 
@@ -613,6 +628,7 @@ uint64_t Editor::EditorFactory::PutToScene(const HashString& _fileName, const Ma
 uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D& _pos)
 {
 	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	auto initalIndex = curScene.GetAllGameObjects().size();
 	auto& arrInstance = _prefab.mArrInstanced.back();
 	for (size_t i = _prefab.mnStart; i < _prefab.mnEnd; ++i)
 	{
@@ -625,7 +641,7 @@ uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D
 		auto loadedTransform = loadedO.GetComponent<Dystopia::Transform>();
 		auto insertedTransform = insertedO.GetComponent<Dystopia::Transform>();
 		insertedTransform->SetScale(loadedTransform->GetGlobalScale());
-		insertedTransform->SetPosition(_pos);
+		insertedTransform->SetPosition(loadedTransform->GetGlobalPosition());
 		insertedTransform->SetRotation(loadedTransform->GetGlobalRotation());
 		insertedO.ReplaceFlag(loadedO.GetFlag());
 		insertedTransform->SetParentID(loadedTransform->GetParentID());
@@ -664,6 +680,10 @@ uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D
 			}
 		}
 	}
+	
+	if (initalIndex < curScene.GetAllGameObjects().size())
+		curScene.GetAllGameObjects()[initalIndex].GetComponent<Dystopia::Transform>()->SetGlobalPosition(_pos);
+
 	DEBUG_ASSERT(!arrInstance.size(), "Error at spawning prefab");
 	return arrInstance[0];
 }
