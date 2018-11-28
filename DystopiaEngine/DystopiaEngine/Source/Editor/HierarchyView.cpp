@@ -303,7 +303,7 @@ namespace Editor
 			}
 		}
 		std::string uniqueifyName = std::string{ _obj.GetName().c_str() } +"##" + std::to_string(_obj.GetID());
-		bool tree = EGUI::Display::StartTreeNode(uniqueifyName, &clicked, selected);
+		bool tree = EGUI::Display::StartTreeNode(uniqueifyName, &clicked, selected, false, true, false);
 		GameObjectPayload(_obj);
 		GameObjectPopups(_obj);
 

@@ -249,6 +249,9 @@ namespace Editor
 			EGUI::Display::Dummy(235, 2);
 			for (unsigned int i = 0; i < numComponents; ++i)
 			{
+				// If Renderer, skip
+				if (i == 1) continue;
+
 				const auto& e = arr[i];
 				if (EGUI::Display::SelectableTxt(e, false))
 				{

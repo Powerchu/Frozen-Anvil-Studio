@@ -87,14 +87,17 @@ Dystopia::TextureAtlas* Dystopia::TextureSystem::GenAtlas(Texture* _pTex)
 
 	auto pAtlas = mAtlas.Emplace(_pTex);
 
-	HashString file{ pAtlas->GetName().c_str() };
-	file += '.';
-	file += Gbl::ATLAS_EXT;
-	auto find = EngineCore::Get<FileSystem>()->FindFilePath(file.c_str(), eFileDir::eCurrent);
-	if (find.size())
+	if (_pTex)
 	{
-		auto serial = TextSerialiser::OpenFile(find.c_str(), TextSerialiser::MODE_READ);
-		pAtlas->LoadAtlas(serial);
+		HashString file{ pAtlas->GetName().c_str() };
+		file += '.';
+		file += Gbl::ATLAS_EXT;
+		auto find = EngineCore::Get<FileSystem>()->FindFilePath(file.c_str(), eFileDir::eCurrent);
+		if (find.size())
+		{
+			auto serial = TextSerialiser::OpenFile(find.c_str(), TextSerialiser::MODE_READ);
+			pAtlas->LoadAtlas(serial);
+		}
 	}
 	return pAtlas;
 }

@@ -867,8 +867,17 @@ namespace Dystopia
 
 		eAngularDragField();
 		eGravityScaleField();
+		EGUI::PopLeftAlign();
+
+		EGUI::Display::HorizontalSeparator();
+
+		EGUI::Display::LabelWrapped("Friction");
 		eStaticFrictionDragField();
+		EGUI::SameLine(25);
 		eDynamicFrictionDragField();
+
+		EGUI::PushLeftAlign(140.f);
+
 		eRestitutionDragField();
 
 		eCollisionDetectionField();
@@ -1022,7 +1031,7 @@ namespace Dystopia
 
 	void RigidBody::eStaticFrictionDragField()
 	{
-		switch (EGUI::Display::DragFloat("Static Friction", &mfStaticFriction, 0.01f, 0.0f, 2.0f))
+		switch (EGUI::Display::DragFloat("Static", &mfStaticFriction, 0.01f, 0.0f, 2.0f, false, 60.f))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
@@ -1042,7 +1051,7 @@ namespace Dystopia
 
 	void RigidBody::eDynamicFrictionDragField()
 	{
-		switch (EGUI::Display::DragFloat("Dynamic Friction", &mfDynamicFriction, 0.01f, 0.0f, 2.0f))
+		switch (EGUI::Display::DragFloat("Dynamic", &mfDynamicFriction, 0.01f, 0.0f, 2.0f, false, 60.f))
 		{
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eEND_DRAG:

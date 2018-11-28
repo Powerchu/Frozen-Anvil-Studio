@@ -158,13 +158,13 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 void Dystopia::Renderer::EditorUI(void) noexcept
 {
 #if EDITOR
-	EGUI::PushLeftAlign(80);
+	/*EGUI::PushLeftAlign(80);
 
 	TextureField();
 	MeshField();
 	ShaderField();
 
-	EGUI::PopLeftAlign();
+	EGUI::PopLeftAlign();*/
 #endif
 }
 

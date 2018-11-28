@@ -316,7 +316,7 @@ namespace Dystopia
 				if(iter.second != nullptr)
 					if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
 					{
-						//delete iter.second;
+						delete iter.second;
 						iter.second = nullptr;
 						i.second.FastRemove(&iter);
 						//ToRemove.push_back(&iter);

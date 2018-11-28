@@ -409,15 +409,15 @@ namespace Editor
 	{
 		bool clickedThisFrame = false;
 		bool clickedFolderIcon = false;
-		bool flagIt = (mpCurrentFolder == _folder) ? true : false;
-		bool hideArrow = _folder->mArrPtrFolders.size() ? false : true;
+		const bool flagIt = mpCurrentFolder == _folder;
+		const bool hideArrow = _folder->mArrPtrFolders.size() == 0;
 		if (EGUI::Display::IconFolder(_folder->mLowerCaseName.c_str(), 15, 9, flagIt))
 		{
 			clickedFolderIcon = true;
 			EGUI::Display::OpenTreeNode();
 		}
 		EGUI::SameLine();
-		if (EGUI::Display::StartTreeNode(_folder->mName.c_str(), &clickedThisFrame, flagIt, hideArrow))
+		if (EGUI::Display::StartTreeNode(_folder->mName.c_str(), &clickedThisFrame, flagIt, hideArrow,true,true))
 		{
 			for (auto& e : _folder->mArrPtrFolders)
 				FolderUI(e);

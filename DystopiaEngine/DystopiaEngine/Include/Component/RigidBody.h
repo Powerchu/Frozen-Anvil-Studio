@@ -48,7 +48,8 @@ namespace Dystopia
 		{
 			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, UsableComponents>::value;
 		};
-		static const std::string GetCompileName(void) { return "RigidBody"; }
+
+		static const std::string GetCompileName(void) { return "RigidBody 2D"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 
@@ -63,7 +64,7 @@ namespace Dystopia
 		// ================================VIRTUAL MEMBER FUNCTIONS ================================== // 
 		//void Load(void);
 		void Awake(void) override;
-		void Init(void);
+		void Init(void) override;
 		// Unload(void);
 		RigidBody* Duplicate() const override;
 		void Serialise(TextSerialiser&) const override;

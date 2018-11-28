@@ -112,6 +112,7 @@ namespace Editor
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 
 		Dystopia::Texture *pTex = mpGfxSys->GetFrameBuffer().AsTexture();
+
 		if (mpSceneCamera)
 			pTex = mpSceneCamera->GetSurface()->AsTexture();
 

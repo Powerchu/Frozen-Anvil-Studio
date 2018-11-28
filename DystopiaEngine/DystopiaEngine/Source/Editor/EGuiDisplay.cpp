@@ -529,7 +529,7 @@ namespace EGUI
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_AllowItemOverlap;
 			flags = _highlighted ? flags | ImGuiTreeNodeFlags_Selected : flags;
 			flags = _noArrow ? flags | ImGuiTreeNodeFlags_Leaf : flags;
-			flags = _singleClickOpen ? flags : flags | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			flags = _singleClickOpen ? flags : flags | ImGuiTreeNodeFlags_OpenOnDoubleClick|ImGuiTreeNodeFlags_OpenOnArrow;
 
 			if (_highlighted)
 			{
