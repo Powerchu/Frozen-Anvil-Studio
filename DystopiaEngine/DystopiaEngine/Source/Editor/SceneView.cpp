@@ -541,8 +541,8 @@ namespace Editor
 					{
 						obj->SetActive(false);
 					}
-					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
-					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetPosition, cpos);
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetGlobalPosition, cpos);
 				}
 				mClearSelection = false;
 				break;
@@ -555,8 +555,8 @@ namespace Editor
 					{
 						obj->SetActive(true);
 					}
-					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
-					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetPosition, cpos);
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetGlobalPosition, cpos);
 				}
 				cmd->ExecuteMultiRec();
 				mClearSelection = false;
@@ -568,8 +568,8 @@ namespace Editor
 				for (const auto& id : _arrIDs)
 				{
 					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
-					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
-					obj->GetComponent<Dystopia::Transform>()->SetPosition(Math::Pt3D{ cpos.x, cpos.y + changeY * scale.y, cpos.z, cpos.w });
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					obj->GetComponent<Dystopia::Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x, cpos.y + changeY * scale.y, cpos.z, cpos.w });
 				}
 				mClearSelection = false;
 				break;
@@ -582,8 +582,8 @@ namespace Editor
 					{
 						obj->SetActive(false);
 					}
-					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
-					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetPosition, cpos);
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetGlobalPosition, cpos);
 				}
 				mClearSelection = false;
 				break;
@@ -596,8 +596,8 @@ namespace Editor
 					{
 						obj->SetActive(true);
 					}
-					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
-					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetPosition, cpos);
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetGlobalPosition, cpos);
 				}
 				cmd->ExecuteMultiRec();
 				mClearSelection = false;
@@ -609,8 +609,8 @@ namespace Editor
 				for (const auto& id : _arrIDs)
 				{
 					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
-					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
-					obj->GetComponent<Dystopia::Transform>()->SetPosition(Math::Pt3D{ cpos.x + changeX * scale.x, cpos.y + changeY * scale.y, cpos.z, cpos.w });
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					obj->GetComponent<Dystopia::Transform>()->SetGlobalPosition(Math::Pt3D{ cpos.x + changeX * scale.x, cpos.y + changeY * scale.y, cpos.z, cpos.w });
 				}
 				mClearSelection = false;
 				break;
@@ -623,8 +623,8 @@ namespace Editor
 					{
 						obj->SetActive(false);
 					}
-					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
-					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetPosition, cpos);
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetGlobalPosition, cpos);
 				}
 				mClearSelection = false;
 				break;
@@ -637,8 +637,8 @@ namespace Editor
 					{
 						obj->SetActive(true);
 					}
-					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetPosition();
-					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetPosition, cpos);
+					auto cpos = obj->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetGlobalPosition, cpos);
 				}
 				cmd->ExecuteMultiRec();
 				mClearSelection = false;
@@ -654,7 +654,7 @@ namespace Editor
 				{
 					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
 					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
-					obj->GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y, cScale.z, cScale.w });
+					obj->GetComponent<Dystopia::Transform>()->SetGlobalScale(Math::Vec4{ cScale.x + changeX, cScale.y, cScale.z, cScale.w });
 				}
 				mClearSelection = false;
 				break;
@@ -668,7 +668,7 @@ namespace Editor
 						obj->SetActive(false);
 					}
 					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
-					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetScale, cScale);
+					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetGlobalScale, cScale);
 				}
 				mClearSelection = false;
 				break;
@@ -683,7 +683,7 @@ namespace Editor
 					}
 					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
 
-					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetScale, cScale);
+					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetGlobalScale, cScale);
 				}
 				cmd->ExecuteMultiRec();
 				mClearSelection = false;
@@ -696,7 +696,7 @@ namespace Editor
 				{
 					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
 					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
-					obj->GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ cScale.x, cScale.y + changeY, cScale.z, cScale.w });
+					obj->GetComponent<Dystopia::Transform>()->SetGlobalScale(Math::Vec4{ cScale.x, cScale.y + changeY, cScale.z, cScale.w });
 				}
 				mClearSelection = false;
 				break;
@@ -710,7 +710,7 @@ namespace Editor
 						obj->SetActive(false);
 					}
 					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
-					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetScale, cScale);
+					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetGlobalScale, cScale);
 				}
 				mClearSelection = false;
 				break;
@@ -724,7 +724,7 @@ namespace Editor
 						obj->SetActive(true);
 					}
 					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
-					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetScale, cScale);
+					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetGlobalScale, cScale);
 				}
 				cmd->ExecuteMultiRec();
 				mClearSelection = false;
@@ -737,7 +737,7 @@ namespace Editor
 				{
 					auto obj = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(id);
 					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
-					obj->GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ cScale.x + changeX, cScale.y + changeX, cScale.z, cScale.w });
+					obj->GetComponent<Dystopia::Transform>()->SetGlobalScale(Math::Vec4{ cScale.x + changeX, cScale.y + changeX, cScale.z, cScale.w });
 				}
 				mClearSelection = false;
 				break;
@@ -751,7 +751,7 @@ namespace Editor
 						obj->SetActive(false);
 					}
 					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
-					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetScale, cScale);
+					cmd->StartMultiRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetGlobalScale, cScale);
 				}
 				mClearSelection = false;
 				break;
@@ -765,7 +765,7 @@ namespace Editor
 						obj->SetActive(true);
 					}
 					auto cScale = obj->GetComponent<Dystopia::Transform>()->GetGlobalScale();
-					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetScale, cScale);
+					cmd->EndMultiRec<Dystopia::Transform, const Math::Pt3D&>(id, &Dystopia::Transform::SetGlobalScale, cScale);
 				}
 				cmd->ExecuteMultiRec();
 				mClearSelection = false;
@@ -805,7 +805,7 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
-				cmd->StartRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetPosition, obj.GetComponent<Dystopia::Transform>()->GetPosition());
+				cmd->StartRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetGlobalPosition, obj.GetComponent<Dystopia::Transform>()->GetGlobalPosition());
 				mClearSelection = false;
 				objIsActive = obj.IsActive();
 				if (objIsActive)
@@ -814,7 +814,7 @@ namespace Editor
 				}
 				break;
 			case EGUI::eEND_DRAG:
-				cmd->EndRec<Dystopia::Transform, const Math::Pt3D&>(obj.GetID(), &Dystopia::Transform::SetPosition, obj.GetComponent<Dystopia::Transform>()->GetPosition());
+				cmd->EndRec<Dystopia::Transform, const Math::Pt3D&>(obj.GetID(), &Dystopia::Transform::SetGlobalPosition, obj.GetComponent<Dystopia::Transform>()->GetGlobalPosition());
 				mClearSelection = false;
 				objIsActive = obj.IsActive();
 				if (!objIsActive)
@@ -830,7 +830,7 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
-				cmd->StartRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetPosition, obj.GetComponent<Dystopia::Transform>()->GetPosition());
+				cmd->StartRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetGlobalPosition, obj.GetComponent<Dystopia::Transform>()->GetGlobalPosition());
 				mClearSelection = false;
 				objIsActive = obj.IsActive();
 				if (objIsActive)
@@ -839,7 +839,7 @@ namespace Editor
 				}
 				break;
 			case EGUI::eEND_DRAG:
-				cmd->EndRec<Dystopia::Transform, const Math::Pt3D&>(obj.GetID(), &Dystopia::Transform::SetPosition, obj.GetComponent<Dystopia::Transform>()->GetPosition());
+				cmd->EndRec<Dystopia::Transform, const Math::Pt3D&>(obj.GetID(), &Dystopia::Transform::SetGlobalPosition, obj.GetComponent<Dystopia::Transform>()->GetGlobalPosition());
 				mClearSelection = false;
 				objIsActive = obj.IsActive();
 				if (!objIsActive)
@@ -855,7 +855,7 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
-				cmd->StartRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetPosition, obj.GetComponent<Dystopia::Transform>()->GetPosition());
+				cmd->StartRec<Dystopia::Transform, const Math::Pt3D&>(&Dystopia::Transform::SetGlobalPosition, obj.GetComponent<Dystopia::Transform>()->GetGlobalPosition());
 				mClearSelection = false;
 				objIsActive = obj.IsActive();
 				if (objIsActive)
@@ -864,7 +864,7 @@ namespace Editor
 				}
 				break;
 			case EGUI::eEND_DRAG:
-				cmd->EndRec<Dystopia::Transform, const Math::Pt3D&>(obj.GetID(), &Dystopia::Transform::SetPosition, obj.GetComponent<Dystopia::Transform>()->GetPosition());
+				cmd->EndRec<Dystopia::Transform, const Math::Pt3D&>(obj.GetID(), &Dystopia::Transform::SetGlobalPosition, obj.GetComponent<Dystopia::Transform>()->GetGlobalPosition());
 				mClearSelection = false;
 				objIsActive = obj.IsActive();
 				if (!objIsActive)
@@ -879,11 +879,11 @@ namespace Editor
 			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 0.5, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ scale.x + changeX * scale.x, scale.y, scale.z, scale.w });
+				obj.GetComponent<Dystopia::Transform>()->SetGlobalScale(Math::Vec4{ scale.x + changeX * scale.x, scale.y, scale.z, scale.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
-				cmd->StartRec<Dystopia::Transform, const Math::Vec4&>(&Dystopia::Transform::SetScale, obj.GetComponent<Dystopia::Transform>()->GetScale());
+				cmd->StartRec<Dystopia::Transform, const Math::Vec4&>(&Dystopia::Transform::SetGlobalScale, obj.GetComponent<Dystopia::Transform>()->GetGlobalScale());
 				mClearSelection = false;
 				objIsActive = obj.IsActive();
 				if (objIsActive)
@@ -892,7 +892,7 @@ namespace Editor
 				}
 				break;
 			case EGUI::eEND_DRAG:
-				cmd->EndRec<Dystopia::Transform, const Math::Vec4&>(obj.GetID(), &Dystopia::Transform::SetScale, obj.GetComponent<Dystopia::Transform>()->GetScale());
+				cmd->EndRec<Dystopia::Transform, const Math::Vec4&>(obj.GetID(), &Dystopia::Transform::SetGlobalScale, obj.GetComponent<Dystopia::Transform>()->GetGlobalScale());
 				mClearSelection = false;
 				objIsActive = obj.IsActive();
 				if (!objIsActive)
@@ -904,11 +904,11 @@ namespace Editor
 			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.5, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
-				obj.GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ scale.x, scale.y + changeY * scale.y, scale.z, scale.w });
+				obj.GetComponent<Dystopia::Transform>()->SetGlobalScale(Math::Vec4{ scale.x, scale.y + changeY * scale.y, scale.z, scale.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
-				cmd->StartRec<Dystopia::Transform, const Math::Vec4&>(&Dystopia::Transform::SetScale, obj.GetComponent<Dystopia::Transform>()->GetScale());
+				cmd->StartRec<Dystopia::Transform, const Math::Vec4&>(&Dystopia::Transform::SetGlobalScale, obj.GetComponent<Dystopia::Transform>()->GetGlobalScale());
 				mClearSelection = false;
 				objIsActive = obj.IsActive();
 				if (objIsActive)
@@ -917,7 +917,7 @@ namespace Editor
 				}
 				break;
 			case EGUI::eEND_DRAG:
-				cmd->EndRec<Dystopia::Transform, const Math::Vec4&>(obj.GetID(), &Dystopia::Transform::SetScale, obj.GetComponent<Dystopia::Transform>()->GetScale());
+				cmd->EndRec<Dystopia::Transform, const Math::Vec4&>(obj.GetID(), &Dystopia::Transform::SetGlobalScale, obj.GetComponent<Dystopia::Transform>()->GetGlobalScale());
 				mClearSelection = false;
 				objIsActive = obj.IsActive();
 				if (!objIsActive)
@@ -930,13 +930,13 @@ namespace Editor
 			{
 			case EGUI::eDRAGGING:
 				changeX += changeY;
-				obj.GetComponent<Dystopia::Transform>()->SetScale(Math::Vec4{ scale.x + changeX * scale.x, scale.y + ratio * changeX *scale.x, scale.z, scale.w });
+				obj.GetComponent<Dystopia::Transform>()->SetGlobalScale(Math::Vec4{ scale.x + changeX * scale.x, scale.y + ratio * changeX *scale.x, scale.z, scale.w });
 				mClearSelection = false;
 				break;
 			case EGUI::eSTART_DRAG:
 				mClearSelection = false;
 				ratio = cScale.y / cScale.x;
-				cmd->StartRec<Dystopia::Transform, const Math::Vec4&>(&Dystopia::Transform::SetScale, obj.GetComponent<Dystopia::Transform>()->GetScale());
+				cmd->StartRec<Dystopia::Transform, const Math::Vec4&>(&Dystopia::Transform::SetGlobalScale, obj.GetComponent<Dystopia::Transform>()->GetGlobalScale());
 				objIsActive = obj.IsActive();
 				if (objIsActive)
 				{
@@ -944,7 +944,7 @@ namespace Editor
 				}
 				break;
 			case EGUI::eEND_DRAG:
-				cmd->EndRec<Dystopia::Transform, const Math::Vec4&>(obj.GetID(), &Dystopia::Transform::SetScale, obj.GetComponent<Dystopia::Transform>()->GetScale());
+				cmd->EndRec<Dystopia::Transform, const Math::Vec4&>(obj.GetID(), &Dystopia::Transform::SetGlobalScale, obj.GetComponent<Dystopia::Transform>()->GetGlobalScale());
 				mClearSelection = false;
 				objIsActive = obj.IsActive();
 				if (!objIsActive)
