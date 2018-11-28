@@ -80,7 +80,13 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 			}
 		}
 	}
-	obj.Awake();
+
+	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
+		curScene.GetAllGameObjects()[index].Awake();
+
+	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
+		Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors(curScene.GetAllGameObjects()[index].GetID());
+
 	obj.GetComponent<Transform>()->SetGlobalPosition(_pos);
 	return &obj;
 }

@@ -35,8 +35,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/DebugAssert.h"
 
 #include <string>
-#include <fstream>
-#include <iostream>
 
 Editor::EditorFactory::EditorFactory(void)
 	: mpSceneSys{ nullptr }, mArrFactoryObj{}
@@ -308,21 +306,51 @@ void Editor::EditorFactory::LoadIntoScene(Dystopia::TextSerialiser& _in)
 		for (auto& b : childObj.GetAllBehaviours())
 			b->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 	}
-
-	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
+	auto& allObj = curScene.GetAllGameObjects();
+	for (size_t index = currentIndex; index < allObj.size(); ++index)
 	{
-		auto transform = curScene.GetAllGameObjects()[index].GetComponent<Dystopia::Transform>();
+		auto transform = allObj[index].GetComponent<Dystopia::Transform>();
 		uint64_t parentID = transform->GetParentID();
-		for (size_t subIndex = currentIndex; subIndex < curScene.GetAllGameObjects().size(); ++subIndex)
+		for (size_t subIndex = currentIndex; subIndex < allObj.size(); ++subIndex)
 		{
-			if (parentID == curScene.GetAllGameObjects()[subIndex].GetID())
+			if (parentID == allObj[subIndex].GetID())
 			{
-				transform->SetParent(curScene.GetAllGameObjects()[subIndex].GetComponent<Dystopia::Transform>());
+				transform->SetParent(allObj[subIndex].GetComponent<Dystopia::Transform>());
 				break;
 			}
 		}
 	}
-	obj.Awake();
+
+	for (size_t index = currentIndex; index < allObj.size(); ++index)
+		allObj[index].Awake();
+}
+
+bool Editor::EditorFactory::FindMasterPrefab(const HashString& _prefabName, int& _outID)
+{
+	for (auto& prefData : mArrPrefabData)
+	{
+		if (prefData.mPrefabFile == _prefabName)
+		{
+			_outID = static_cast<int>(prefData.mnStart);
+			return true;
+		}
+	}
+	return false;
+}
+
+MagicArray<Dystopia::GameObject>& Editor::EditorFactory::GetAllFactoryObjects(void)
+{
+	return mArrFactoryObj;
+}
+
+Editor::EditorFactory::PrefabData* Editor::EditorFactory::GetPrefabData(const int& _id)
+{
+	for (auto& data : mArrPrefabData)
+	{
+		if (data.mnStart == _id)
+			return &data;
+	}
+	return nullptr;
 }
 
 /********************************************** Private Fn Definition **********************************************/

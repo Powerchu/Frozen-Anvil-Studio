@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Payloads.h"
 #include "Editor/EInput.h"
 #include "Editor/EditorMain.h"
+#include "Editor/EditorClipboard.h"
 #include "Editor/EditorFactory.h"
 
 #include "System/Scene/Scene.h"
@@ -85,14 +86,6 @@ namespace Editor
 		{
 			ExitProcess(GetLastError());
 		}
-
-		//for (auto& f : mArrAllFiles)
-		//{
-		//	if (f->mTag == EGUI::ePayloadTags::PNG || f->mTag == EGUI::ePayloadTags::BMP || f->mTag == EGUI::ePayloadTags::DDS)
-		//	{
-		//		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>()->LoadTexture(f->mPath.c_str());
-		//	}
-		//}
 	}
 
 	bool ProjectResource::Init(void)
@@ -109,7 +102,15 @@ namespace Editor
 		if (input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_LEFT) ||
 			input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_RIGHT))
 		{
-			RemoveFocusOnFile();
+			auto index = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetPrefab();
+			if (index >= 0)
+			{
+				auto data = EditorMain::GetInstance()->GetSystem<EditorFactory>()->GetPrefabData(index);
+				if (!data)
+					RemoveFocusOnFile();
+			}
+			else
+				RemoveFocusOnFile();
 		}
 
 		mWaitStatus = WaitForMultipleObjects(1, mChangeHandle, false, 0);
@@ -426,6 +427,7 @@ namespace Editor
 		{
 			mFocusedFile = nullptr;
 			mpCurrentFolder = _folder;
+			EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemovePrefab();
 		}
 	}
 
@@ -437,6 +439,8 @@ namespace Editor
 			_file->mName.c_str(), mPayloadRect, _file->mTag, &(*_file), sizeof(Editor::File)))
 		{
 			mFocusedFile = _file;
+			if (_file->mTag == EGUI::ePayloadTags::PREFAB)
+				EditorMain::GetInstance()->GetSystem<EditorClipboard>()->AddPrefab(_file);
 		}
 	}
 

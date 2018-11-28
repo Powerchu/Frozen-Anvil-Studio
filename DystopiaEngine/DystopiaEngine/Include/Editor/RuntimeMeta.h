@@ -252,7 +252,7 @@ namespace Dystopia
 
 		static void InitDonors(const uint64_t& _object)
 		{
-			static auto SystemArray = Ctor::MakeArray<void(*)(void)>(
+			static auto SystemArray = Ctor::MakeArray<void(*)(const uint64_t&)>(
 				static_cast<void(*)(const uint64_t&)>(&SystemFunction<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::InitDonor) ...);
 
 			for (size_t i = 0; i < sizeof...(Ns); ++i)

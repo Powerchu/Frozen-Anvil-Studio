@@ -297,6 +297,25 @@ void Dystopia::SpriteRenderer::SetSpeed(float _s)
 	mfFrameTime = _s;
 }
 
+Math::Vec2 Dystopia::SpriteRenderer::Resized(void) const
+{
+	if (mpTexture)
+	{
+		auto nScale = GetOwner()->GetComponent<Transform>()->GetScale();
+		nScale.x = static_cast<float>(mpTexture->GetWidth()) * 0.1f;
+		nScale.y = static_cast<float>(mpTexture->GetHeight()) * 0.1f;
+
+		if (mpAtlas && mnID < mAnimations.size())
+		{
+			auto& cur = mpAtlas->GetAllSections()[mAnimations[mnID].mnID];
+			nScale.x = nScale.x * cur.mCol;
+			nScale.y = nScale.y * cur.mRow;
+		}
+		return Math::Vec2{ nScale.x, nScale.y };
+	}
+	return Math::Vec2{};
+}
+
 void Dystopia::SpriteRenderer::TextureFields(void)
 {
 #if EDITOR
@@ -329,10 +348,11 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 		EGUI::SameLine();
 		if (EGUI::Display::Button("Auto", Math::Vec2{ 35, 30 }))
 		{
+			auto size = Resized();
 			auto scale = GetOwner()->GetComponent<Transform>()->GetScale();
-			auto nScale = scale;
-			nScale.x = static_cast<float>(mpTexture->GetWidth()) / 10;
-			nScale.y = static_cast<float>(mpTexture->GetHeight()) / 10;
+			auto nScale = GetOwner()->GetComponent<Transform>()->GetScale();
+			nScale.x = size.x;
+			nScale.y = size.y;
 			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, scale),
 											   cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, nScale));
 		}
