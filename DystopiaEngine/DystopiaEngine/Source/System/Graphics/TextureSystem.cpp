@@ -32,6 +32,12 @@ Dystopia::TextureSystem::~TextureSystem(void) noexcept
 
 void Dystopia::TextureSystem::Shutdown(void) noexcept
 {
+
+
+
+
+
+
 	mTextures.clear();
 }
 

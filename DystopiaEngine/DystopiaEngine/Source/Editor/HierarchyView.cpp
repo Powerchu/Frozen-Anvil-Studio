@@ -62,7 +62,7 @@ namespace Editor
 
 	void HierarchyView::Update(float)
 	{
-		UpdateSearch();
+		//UpdateSearch();
 	}
 
 	void HierarchyView::EditorUI()

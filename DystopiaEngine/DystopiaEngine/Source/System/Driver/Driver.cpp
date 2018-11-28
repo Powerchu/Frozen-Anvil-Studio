@@ -45,6 +45,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/File/FileSystem.h"
 #include "System/Logger/LoggerSystem.h"
 #include "System/Tag/TagSystem.h"
+#include "Factory/Factory.h"
 
 #include "System/Time/Timer.h"
 #include "System/Time/ScopedTimer.h"
@@ -131,7 +132,7 @@ void Dystopia::EngineCore::LoadSettings(void)
 	if (GetSubSystem<FileSystem>()->CheckFileExist(SETTINGS_FILE, SETTINGS_DIR))
 	{
 		auto file = Serialiser::OpenFile<TextSerialiser>(
-			GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) + "/" +
+			GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) + '/' +
 			SETTINGS_FILE
 		);
 
@@ -236,9 +237,9 @@ void Dystopia::EngineCore::PostUpdate(void)
 
 void Dystopia::EngineCore::Shutdown(void)
 {
-	GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
+	//GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
 	auto s = Serialiser::OpenFile<DysSerialiser_t>(
-		GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) +
+		GetSubSystem<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) + '/' +
 		SETTINGS_FILE,
 		DysSerialiser_t::MODE_WRITE
 	);

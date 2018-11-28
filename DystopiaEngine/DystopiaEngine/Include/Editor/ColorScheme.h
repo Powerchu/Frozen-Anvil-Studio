@@ -15,7 +15,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _COLOR_SCHEME_H_
 #include "Math/Vector4.h"
 #include "DataStructure/Array.h"
-//#include "Editor/EditorTab.h"
 #include "Editor/EditorPanel.h"
 
 namespace Dystopia

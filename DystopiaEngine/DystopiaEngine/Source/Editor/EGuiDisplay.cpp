@@ -333,6 +333,31 @@ namespace EGUI
 				return changing ? eDRAGGING : eNO_CHANGE;
 			return eNO_CHANGE;
 		}
+		
+		eDragStatus SliderInt(const HashString& _label, int *_pOutInt, int _min, int _max, bool _hideText, float _width)
+		{
+			if (!_hideText)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label.c_str());
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+			bool changing = false;
+			ImGui::PushItemWidth(_width);
+			HashString inviLabel{ "##" };
+			inviLabel += _label;
+			changing = ImGui::SliderInt(inviLabel.c_str(), _pOutInt, _min, _max);
+			ImGui::PopItemWidth();
+			
+			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
+				return changing ? eINSTANT_CHANGE : eSTART_DRAG;
+			else if (ImGui::IsItemDeactivated())
+				return ImGui::IsMouseReleased(0) ? eEND_DRAG : eDEACTIVATED;
+			else if (ImGui::IsItemActive())
+				return changing ? eDRAGGING : eNO_CHANGE;
+			return eNO_CHANGE;
+		}
 
 		eDragStatus DragInt(const std::string& _label, int* _outputInt, float _dragSpeed, int _min, int _max, bool _hideText, float _width)
 		{
@@ -404,12 +429,40 @@ namespace EGUI
 
 			Label("X:"); SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
-			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true);
+			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true, _width);
 			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = x;
 
 			SameLine(); Label("Y:"); SameLine();
-			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true);
+			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true, _width);
 			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
+
+			ImGui::PopItemWidth();
+
+			return Array<eDragStatus, 2>{statX, statY};
+		}
+
+		Array<eDragStatus, 2> VectorFieldsInt(const char *_label, Math::Vector2 *_outputVec, int _dragSpeed, int _min, int _max, float _width)
+		{
+			std::string field1 = "##VecFieldX", field2 = "##VecFieldY";
+			int x, y;
+			x = static_cast<int>(_outputVec->x);
+			y = static_cast<int>(_outputVec->y);
+			field1 += _label;
+			field2 += _label;
+
+			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+
+			Label("X:"); SameLine();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			eDragStatus statX = EGUI::Display::DragInt(field1.c_str(), &x, static_cast<float>(_dragSpeed), _min, _max, true, _width);
+			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = static_cast<float>(x);
+
+			SameLine(); Label("Y:"); SameLine();
+			eDragStatus statY = EGUI::Display::DragInt(field2.c_str(), &y, static_cast<float>(_dragSpeed), _min, _max, true, _width);
+			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = static_cast<float>(y);
 
 			ImGui::PopItemWidth();
 
@@ -618,11 +671,11 @@ namespace EGUI
 			{
 				//	FILE,
 				//	COMPONENT,
-			case SCENE:
-				return false;
-			case MP3:
-			case WAV:
-				return false;
+			//case SCENE:
+			//	return false;
+			//case MP3:
+			//case WAV:
+			//	return false;
 			case PREFAB:
 				return PrefabPayload(_uniqueId, _label, _tooltip, _displaySize, _tagLoad, _pData, _dataSize);
 			case BMP:

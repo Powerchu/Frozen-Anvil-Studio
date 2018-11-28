@@ -396,7 +396,7 @@ namespace Editor
 			Math::Pt3D spawnSite		= Math::Pt3D{ worldClickPos.x, worldClickPos.y, betterZ, 1.f };
 			
 			EditorMain::GetInstance()->GetSystem<EditorCommands>()->InstantiatePrefab(_pFile->mName, spawnSite);
-
+			//Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->Instantiate(_pFile->mName, spawnSite);
 			//auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
 			//Dystopia::GameObject *pDupl = Dystopia::Factory::LoadFromPrefab("", _pFile->mPath.c_str());
 			//if (pDupl)

@@ -95,9 +95,9 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 {
 	if (mpAtlas && mnID < mAnimations.size())
 	{
-		//int endPos = mAnimations[mnID].mnCutoff ? mAnimations[mnID].mnCutoff : mAnimations[mnID].mnCol * mAnimations[mnID].mnRow;
-		//int startCol = mAnimations[mnID].mnStartAt ? (mAnimations[mnID].mnStartAt % mAnimations[mnID].mnCol) : 0;
-		//int startRow = mAnimations[mnID].mnStartAt ? static_cast<int>((mAnimations[mnID].mnStartAt) / mAnimations[mnID].mnCol) : 0;
+		int endIndex = mAnimations[mnID].mnEnd ? mAnimations[mnID].mnEnd : mAnimations[mnID].mnCol * mAnimations[mnID].mnRow;
+		int startCol = mAnimations[mnID].mnStart ? (mAnimations[mnID].mnStart % mAnimations[mnID].mnCol) : 0;
+		int startRow = mAnimations[mnID].mnStart ? static_cast<int>(mAnimations[mnID].mnStart / mAnimations[mnID].mnCol) : 0;
 
 		mpAtlas->SetTexture(GetTexture());
 
@@ -108,11 +108,22 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 			if (++mnCol >= mAnimations[mnID].mnCol)
 			{
 				mnCol = 0;
-				if (++mnRow > mAnimations[mnID].mnRow)
+				if (++mnRow >= mAnimations[mnID].mnRow)
 				{
 					mnRow = 0;
 				}
 			}
+			if (!(mnCol + mnRow) || (mAnimations[mnID].mnEnd && (mAnimations[mnID].mnEnd == mAnimations[mnID].mnStart)))
+			{
+				mnCol = startCol;
+				mnRow = startRow;
+			}
+			if (endIndex && ((mnRow * mAnimations[mnID].mnCol) + mnCol > endIndex))
+			{
+				mnCol = startCol;
+				mnRow = startRow;
+			}
+
 			mfAccTime -= mfFrameTime;
 		}
 	}
@@ -161,6 +172,8 @@ void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
 		_out << a.mnCol;
 		_out << a.mnRow;
 		_out << a.mbLoop;
+		_out << a.mnStart;
+		_out << a.mnEnd;
 	}
 	_out << mnID;
 	_out.InsertEndBlock("Sprite Renderer");
@@ -181,6 +194,8 @@ void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 		_in >> a.mnCol;
 		_in >> a.mnRow;
 		_in >> a.mbLoop;
+		_in >> a.mnStart;
+		_in >> a.mnEnd;
 		mAnimations.Insert(a);
 	}
 	_in >> mnID;
@@ -193,12 +208,13 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	EGUI::PushLeftAlign(80);
 
 	TextureFields();
-	AtlasFields();
-	AddAnimations();
+	AnimFields();
 
-	EGUI::PushLeftAlign(110);
 	if (mpAtlas && mpTexture)
 	{
+		AddAnimations();
+
+		EGUI::PushLeftAlign(110);
 		for (auto& elem : mAnimations)
 			if (elem.mnID >= mpAtlas->GetAllSections().size())
 				elem.mnID = 0;
@@ -210,8 +226,8 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 				mAnimations.FastRemove(i--);
 			EGUI::PopID();
 		}
+		EGUI::PopLeftAlign();
 	}
-	EGUI::PopLeftAlign();
 	EGUI::PopLeftAlign();
 #endif
 }
@@ -267,16 +283,13 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 
 	if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName() : "-no mesh-", true))
 	{
-
 	}
 	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
 	{
 		EGUI::Display::EndPayloadReceiver();
 	}
-
 	if (EGUI::Display::EmptyBox("Shader", 150, "shader has no name or id", true))
 	{
-
 	}
 	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
 	{
@@ -286,12 +299,22 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 #endif
 }
 
-void Dystopia::SpriteRenderer::AtlasFields(void)
+void Dystopia::SpriteRenderer::AnimFields(void)
 {
 #if EDITOR
 
-
-
+	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
+	switch (EGUI::Display::DragFloat("Frame time", &mfFrameTime, 0.01f, 0.016f, 10.f))
+	{
+	case EGUI::eDragStatus::eSTART_DRAG:
+		cmd->StartRec(&SpriteRenderer::mfFrameTime, this);
+		break;
+	case EGUI::eDragStatus::eEND_DRAG:
+	case EGUI::eDragStatus::eDEACTIVATED:
+	case EGUI::eDragStatus::eENTER:
+		cmd->EndRec(&SpriteRenderer::mfFrameTime, this);
+		break;
+	}
 #endif
 }
 
@@ -305,9 +328,11 @@ void Dystopia::SpriteRenderer::AddAnimations(void)
 		SpriteSheet ss;
 		ss.mstrName = "Rename this";
 		ss.mbLoop = false;
-		ss.mnCol = 0;
-		ss.mnRow = 0;
+		ss.mnCol = 1;
+		ss.mnRow = 1;
 		ss.mnID = 0;
+		ss.mnStart = 0;
+		ss.mnEnd = 0;
 		mAnimations.Insert(Ut::Move(ss));
 	}
 #endif 
@@ -344,44 +369,98 @@ bool Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
 		/******** Section ID *******/
 		auto sID = static_cast<int>(anim.mnID);
 		auto max = static_cast<unsigned>(mpAtlas->GetAllSections().size());
-		EGUI::Display::DropDownSelection<21>("Section", sID, max);
+		if (EGUI::Display::DropDownSelection<21>("Section", sID, max))
+		{
+			anim.mnID = sID;
+		}
 
 		/********** Loop **********/
 		EGUI::Display::CheckBox("Loop", &anim.mbLoop);
 
 		/******** Columns *********/
-		auto col = static_cast<int>(anim.mnCol);
-		switch (EGUI::Display::DragInt("Columns", &col, 1.f, 0, INT_MAX))
-		{
-		case EGUI::eDragStatus::eDRAGGING:
-			anim.mnCol = static_cast<unsigned>(col);
-			break;
-		case EGUI::eDragStatus::eSTART_DRAG:
-		case EGUI::eDragStatus::eEND_DRAG:
-		case EGUI::eDragStatus::eENTER:
-		case EGUI::eDragStatus::eTABBED:
-		case EGUI::eDragStatus::eDEACTIVATED:
-		case EGUI::eDragStatus::eNO_CHANGE:
-		default:
-			break;
-		}
+		auto& curSec = mpAtlas->GetAllSections()[anim.mnID];
+		int maxC = static_cast<int>((curSec.uEnd - curSec.uStart) / curSec.mCol);
+		auto col = anim.mnCol;
+		EGUI::Display::SliderInt("Columns", &col, 1, maxC);
+		anim.mnCol = col;
+		//switch ()
+		//{
+		//case EGUI::eDragStatus::eDRAGGING:
+		//	anim.mnCol = col;
+		//	break;
+		//case EGUI::eDragStatus::eSTART_DRAG:
+		//case EGUI::eDragStatus::eEND_DRAG:
+		//case EGUI::eDragStatus::eENTER:
+		//case EGUI::eDragStatus::eTABBED:
+		//case EGUI::eDragStatus::eDEACTIVATED:
+		//case EGUI::eDragStatus::eNO_CHANGE:
+		//default:
+		//	anim.mnCol = Math::Clamp(anim.mnCol, 1, maxC);
+		//	break;
+		//}
 
 		/********* Rows *********/
-		auto row = static_cast<int>(anim.mnRow);
-		switch (EGUI::Display::DragInt("Rows", &row, 1.f, 0, INT_MAX))
-		{
-		case EGUI::eDragStatus::eDRAGGING:
-			anim.mnRow = static_cast<unsigned>(row);
-			break;
-		case EGUI::eDragStatus::eSTART_DRAG:
-		case EGUI::eDragStatus::eEND_DRAG:
-		case EGUI::eDragStatus::eENTER:
-		case EGUI::eDragStatus::eTABBED:
-		case EGUI::eDragStatus::eDEACTIVATED:
-		case EGUI::eDragStatus::eNO_CHANGE:
-		default:
-			break;
-		}
+		auto row = anim.mnRow;
+		int maxR = static_cast<int>((curSec.vEnd - curSec.vStart) / curSec.mRow);
+		EGUI::Display::SliderInt("Rows", &row, 1, maxR);
+		anim.mnRow = row;
+		//switch (EGUI::Display::DragInt("Rows", &row, 0.1f, 1, maxR))
+		//{
+		//case EGUI::eDragStatus::eDRAGGING:
+		//	anim.mnRow = row;
+		//	break;
+		//case EGUI::eDragStatus::eSTART_DRAG:
+		//case EGUI::eDragStatus::eEND_DRAG:
+		//case EGUI::eDragStatus::eENTER:
+		//case EGUI::eDragStatus::eTABBED:
+		//case EGUI::eDragStatus::eDEACTIVATED:
+		//case EGUI::eDragStatus::eNO_CHANGE:
+		//default:
+		//	anim.mnRow = Math::Clamp(anim.mnRow, 1, maxR);
+		//	break;
+		//}
+
+		/******** Start *********/
+		auto start = anim.mnStart;
+		int maxStart = static_cast<int>(anim.mnCol * anim.mnRow) - 1;
+		EGUI::Display::SliderInt("Start", &start, 0, maxStart);
+		anim.mnStart = start;
+		//switch (EGUI::Display::DragInt("Start", &start, 0.1f, 0, maxStart))
+		//{
+		//case EGUI::eDragStatus::eDRAGGING:
+		//	anim.mnStart = start;
+		//	break;
+		//case EGUI::eDragStatus::eSTART_DRAG:
+		//case EGUI::eDragStatus::eEND_DRAG:
+		//case EGUI::eDragStatus::eENTER:
+		//case EGUI::eDragStatus::eTABBED:
+		//case EGUI::eDragStatus::eDEACTIVATED:
+		//case EGUI::eDragStatus::eNO_CHANGE:
+		//default:
+		//	anim.mnStart = Math::Clamp(anim.mnStart, 0, maxStart);
+		//	break;
+		//}
+
+		/******** End *********/
+		auto end = anim.mnEnd;
+		int maxEnd = static_cast<int>(anim.mnCol * anim.mnRow) - 1;
+		EGUI::Display::SliderInt("End", &end, 0, maxEnd);
+		anim.mnEnd = end;
+		//switch (EGUI::Display::DragInt("End", &end, 0.1f, 0, maxEnd))
+		//{
+		//case EGUI::eDragStatus::eDRAGGING:
+		//	anim.mnEnd = end;
+		//	break;
+		//case EGUI::eDragStatus::eSTART_DRAG:
+		//case EGUI::eDragStatus::eEND_DRAG:
+		//case EGUI::eDragStatus::eENTER:
+		//case EGUI::eDragStatus::eTABBED:
+		//case EGUI::eDragStatus::eDEACTIVATED:
+		//case EGUI::eDragStatus::eNO_CHANGE:
+		//default:
+		//	anim.mnEnd = Math::Clamp(anim.mnEnd, 0, maxEnd);
+		//	break;
+		//}
 
 		EGUI::UnIndent();
 		EGUI::Display::EndTreeNode();

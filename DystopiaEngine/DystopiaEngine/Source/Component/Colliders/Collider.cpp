@@ -177,16 +177,15 @@ namespace Dystopia
 					_owner->OnTriggerEnter(elem.mCollidedWith);
 			}
 		}
+
 		for (auto & elem : marr_ContactSets)
 		{
-			if (nullptr != _body)
-				_body->SetSleeping(false);
-
 			if (!mbIsTrigger)
 				_owner->OnCollisionExit(elem);
 			else
 				_owner->OnTriggerExit(elem.mCollidedWith);
 		}
+
 		/*I am not sure why i need to clear it before assigning. else will have stuff inside*/
 		marr_ContactSets.clear();
 		marr_ContactSets = marr_CurrentContactSets;

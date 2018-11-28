@@ -120,7 +120,7 @@ namespace Dystopia
 		return std::wstring{};
 	}
 
-	HashString FileSystem::ConvertToRelative(HashString const & _FullPath, eFileDir _ParentDirectory) const
+	HashString FileSystem::ConvertToRelative(HashString const &, eFileDir _ParentDirectory) const
 	{
 		std::filesystem::path DirPath{ mPathTable[_ParentDirectory] };
 		std::error_code error;
