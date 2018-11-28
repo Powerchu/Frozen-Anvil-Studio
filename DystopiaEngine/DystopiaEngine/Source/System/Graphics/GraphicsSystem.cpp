@@ -298,7 +298,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 #if EDITOR
 		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
 			set1.Insert(&e);
 	}
 	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
@@ -306,7 +306,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 #if EDITOR
 		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
 			set2.Insert(&e);
 	}
 	for (auto& e : ComponentDonor<TextRenderer>::mComponents)
@@ -314,7 +314,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 #if EDITOR
 		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
 			set3.Insert(&e);
 	}
 
@@ -335,6 +335,9 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 
 	for (auto& r : set1)
 	{
+#if EDITOR
+		if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		auto s = r->GetShader();
 		if (s && r->GetTexture())
 		{
@@ -355,6 +358,9 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 
 	for (auto& r : set2)
 	{
+#if EDITOR
+		if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		auto s = r->GetShader();
 		s = r->GetTexture() ? s : shaderlist["No Texture"];
 		s->Bind();
@@ -369,6 +375,9 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 
 	for (auto& r : set3)
 	{
+#if EDITOR
+		if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
 			DrawRenderer(r, _ProjView, s, mfGamma);

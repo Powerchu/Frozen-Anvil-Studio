@@ -19,7 +19,7 @@ namespace Dystopia
 		  , mGravity(400.0F)
 		  , mMaxVelocityConstant(1024.0F)
 		  , mMaxVelSquared(mMaxVelocityConstant * mMaxVelocityConstant)
-		  , mPenetrationEpsilon(0.50F)
+		  , mPenetrationEpsilon(0.01F)
 		  , mfSleepVelEpsilon(1.000F)
 		  , mfSleepBias(0.97F)
 		  , mVelocityIterations(4)
@@ -71,6 +71,7 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
+			if (nullptr == body.GetOwner())	continue;
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
