@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "IO/TextSerialiser.h"		// File Header
 #include "Utility/Utility.h"
+#include "DataStructure/HashString.h"
 
 #include <limits>		// numeric_limit
 #include <string>		// string
@@ -37,15 +38,17 @@ Dystopia::TextSerialiser::~TextSerialiser(void)
 	mFile.close();
 }
 
-void Dystopia::TextSerialiser::WriteEndBlock(const std::string& _strName)
+
+void Dystopia::TextSerialiser::WriteEndBlock(char const* _strName)
 {
 	mFile << "\n[END_" << _strName << "]\n";
 }
 
-void Dystopia::TextSerialiser::WriteStartBlock(const std::string& _strName)
+void Dystopia::TextSerialiser::WriteStartBlock(char const* _strName)
 {
 	mFile << "[START_" << _strName << "]\n";
 }
+
 
 bool Dystopia::TextSerialiser::ReadStartBlock(void)
 {
@@ -83,7 +86,8 @@ bool Dystopia::TextSerialiser::Validate(void)
 	return mFile.peek() != '\n' && mFile.good();
 }
 
-Dystopia::TextSerialiser Dystopia::TextSerialiser::OpenFile(const std::string& _strFilename, int _nMode)
+
+Dystopia::TextSerialiser Dystopia::TextSerialiser::OpenFile(char const* _strFilename, int _nMode)
 {
 	std::fstream file;
 

@@ -134,7 +134,7 @@
       <Filter>Game Engine\Systems\Profiler\ProfileInfo</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp">
-      <Filter>IO\TextSerialiser\lodepng</Filter>
+      <Filter>IO\ImageParser\lodepng</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Main\Panels\Performance</Filter>
@@ -168,12 +168,6 @@
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\Shader.cpp">
       <Filter>Game Engine\SubSystems\Shader\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp">
-      <Filter>Game Engine\SubSystems\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\System\Graphics\TextureSystem.cpp">
-      <Filter>Game Engine\SubSystems\Texture</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Gizmo.cpp">
       <Filter>Editor\Gizmo</Filter>
@@ -271,9 +265,6 @@
     <ClCompile Include="Source\Component\Renderer.cpp">
       <Filter>Game Engine\Components\Renderer\BaseRenderer</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Graphics\FontSystem.cpp">
-      <Filter>Game Engine\SubSystems\Font</Filter>
-    </ClCompile>
     <ClCompile Include="Source\DataStructure\HashString.cpp">
       <Filter>DataStructures\HashString</Filter>
     </ClCompile>
@@ -342,6 +333,18 @@
     </ClCompile>
     <ClCompile Include="Source\System\Factory\Factory.cpp">
       <Filter>Game Engine\SubSystems\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\MeshBuilder.cpp">
+      <Filter>Game Engine\SubSystems\Mesh\MeshBuilder</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\FontSystem.cpp">
+      <Filter>Game Engine\SubSystems\Font\FontSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp">
+      <Filter>Game Engine\SubSystems\Shader\ShaderSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\TextureSystem.cpp">
+      <Filter>Game Engine\SubSystems\Texture\TextureSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -574,7 +577,7 @@
       <Filter>Game Engine\Systems\Profiler\ProfileInfo</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h">
-      <Filter>IO\TextSerialiser\lodepng</Filter>
+      <Filter>IO\ImageParser\lodepng</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\PLogInfo.h">
       <Filter>Editor\Main\Panels\Performance</Filter>
@@ -608,12 +611,6 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\TextureSystem.h">
-      <Filter>Game Engine\SubSystems\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\ShaderSystem.h">
-      <Filter>Game Engine\SubSystems\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Include\Component\Particle.h">
       <Filter>Game Engine\Components\Physics</Filter>
@@ -698,9 +695,6 @@
     </ClInclude>
     <ClInclude Include="Include\System\Input\XGamePad.h">
       <Filter>Game Engine\Systems\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Math\MetaFloat.h">
-      <Filter>Math\MetaMath</Filter>
     </ClInclude>
     <ClInclude Include="Include\Reflection\Reflection.h">
       <Filter>Reflection</Filter>
@@ -807,11 +801,8 @@
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h">
       <Filter>Game Engine\Systems\Behaviour</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Graphics\FontSystem.h">
-      <Filter>Game Engine\SubSystems\Font</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\System\Graphics\CharSpace.h">
-      <Filter>Game Engine\SubSystems\Font</Filter>
+    <ClInclude Include="Include\Behaviour\AI\AISystem.h">
+      <Filter>Game Engine\Systems\AI</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Behaviour\BehaviourMessage.h">
       <Filter>Game Engine\Systems\Behaviour</Filter>
@@ -944,6 +935,39 @@
     </ClInclude>
     <ClInclude Include="Include\Factory\Factory.h">
       <Filter>Game Engine\SubSystems\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Geometery\Box.h">
+      <Filter>Math\Geo</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Geometery\Sphere.h">
+      <Filter>Math\Geo</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Geometery\CoordinateSystems.h">
+      <Filter>Math\Geo</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\MetaMath\MetaFloat.h">
+      <Filter>Math\MetaMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\Font.h">
+      <Filter>Game Engine\SubSystems\Font\FontData</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\CharSpace.h">
+      <Filter>Game Engine\SubSystems\Font\CharSpace</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\FontSystem.h">
+      <Filter>Game Engine\SubSystems\Font\FontSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\IO\XMLParser.h">
+      <Filter>IO\XMLParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\ShaderSystem.h">
+      <Filter>Game Engine\SubSystems\Shader\ShaderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\TextureSystem.h">
+      <Filter>Game Engine\SubSystems\Texture\TextureSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\MeshBuilder.h">
+      <Filter>Game Engine\SubSystems\Mesh\MeshBuilder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1126,9 +1150,6 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Profiler\ProfileInfo">
       <UniqueIdentifier>{786f882b-e4f0-4e3c-b000-a421b1059b0b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\TextSerialiser\lodepng">
-      <UniqueIdentifier>{447b179b-b152-4f92-9cc2-48eb8f301131}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Systems\Camera">
       <UniqueIdentifier>{c6d69b09-93e3-434e-a4bc-e25fb0c06c6d}</UniqueIdentifier>
@@ -1330,6 +1351,33 @@
     </Filter>
     <Filter Include="Lib\GraphicsLib">
       <UniqueIdentifier>{e7a040d4-daaf-41bc-8530-1062480d5e84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\ImageParser\lodepng">
+      <UniqueIdentifier>{447b179b-b152-4f92-9cc2-48eb8f301131}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Geo">
+      <UniqueIdentifier>{83d13544-6880-4b8f-93ca-6c0aa0c54910}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Mesh\MeshBuilder">
+      <UniqueIdentifier>{bee9a1c6-1b77-42b7-b131-2ac4dd1a757b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Font\CharSpace">
+      <UniqueIdentifier>{be5de532-a865-4511-b6b2-f3828f4de80a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Font\FontSystem">
+      <UniqueIdentifier>{c2aa02c5-51e7-4a9e-8fb9-0e54acc4b658}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Font\FontData">
+      <UniqueIdentifier>{baba61c1-0814-46a9-ac90-88e65658f6ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\XMLParser">
+      <UniqueIdentifier>{637d81a6-d5ee-481d-8157-d3acba2c19d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Shader\ShaderSystem">
+      <UniqueIdentifier>{f0232027-e837-4efa-8240-b5ba0faa7a63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Texture\TextureSystem">
+      <UniqueIdentifier>{965b4010-0eb6-428e-9e33-48386538f41c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Systems\AI\Tree">
       <UniqueIdentifier>{3ffcc155-d017-4f93-a1ae-f4f6218daac0}</UniqueIdentifier>

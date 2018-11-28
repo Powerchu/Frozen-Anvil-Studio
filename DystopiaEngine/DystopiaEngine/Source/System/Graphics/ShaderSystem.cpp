@@ -19,4 +19,9 @@ Dystopia::ShaderSystem::~ShaderSystem(void) noexcept
 {
 }
 
+void Dystopia::ShaderSystem::EditorUpdate(void)
+{
+
+}
+
 

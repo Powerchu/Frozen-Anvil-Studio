@@ -179,12 +179,18 @@ void Editor::SpriteEditor::FieldTexture(void)
 	EGUI::Display::EmptyBox("Sprite Sheet", FIELD_SIZE, mpTexture ? mpTexture->GetName() : "-empty-");
 	if (auto t = EGUI::Display::StartPayloadReceiver<Editor::File>(EGUI::ePayloadTags::ALL_IMG))
 	{
-		mpTexture = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>()->LoadTexture(t->mPath.c_str());
-		mpAtlas = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::TextureSystem>()->GetAtlas(t->mName.c_str());
-		mpAtlas->SetTexture(mpTexture);
-		mnSelectedSection = 0;
-		if (!mpAtlas->GetAllSections().size())
-			mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
+		mpAtlas = nullptr;
+		mpTexture = Dystopia::EngineCore::Get<Dystopia::GraphicsSystem>()->LoadTexture(t->mPath.c_str());
+		if (mpTexture)
+		{
+			mpAtlas = Dystopia::EngineCore::Get<Dystopia::TextureSystem>()->GetAtlas(t->mName.c_str());
+			if (!mpAtlas)
+				mpAtlas = Dystopia::EngineCore::Get<Dystopia::TextureSystem>()->GenAtlas(mpTexture);
+
+			mnSelectedSection = 0;
+			if (!mpAtlas->GetAllSections().size())
+				mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
+		}
 		EGUI::Display::EndPayloadReceiver();
 	}
 
@@ -246,7 +252,7 @@ void Editor::SpriteEditor::DrawSelectedGrid(float _ox, float _oy, float _ix, flo
 		Math::Vec2 rectMax{ rectMin.x + (xLen * _ix),
 							rectMin.y + (yLen * _iy) };
 		pCanvas->AddRect(rectMin, rectMax, ImGui::GetColorU32(ImVec4{ 1,1,1,1}));
-		ImGui::SetCursorScreenPos(rectMin + ImVec2{ 1,1 });
+		ImGui::SetCursorScreenPos(rectMin + ImVec2{ 2,1 });
 		EGUI::Display::Label("%d", i);
 		ImGui::SetCursorScreenPos(screenOrigin);
 	}
@@ -280,7 +286,7 @@ void Editor::SpriteEditor::DrawTempGrid(float _ox, float _oy, float _ix, float _
 		Math::Vec2 rectMax{ rectMin.x + xLen,
 							rectMin.y + yLen };
 		pCanvas->AddRect(rectMin, rectMax, ImGui::GetColorU32(red));
-		ImGui::SetCursorScreenPos(rectMin + ImVec2{ 1,1 });
+		ImGui::SetCursorScreenPos(rectMin + ImVec2{ 2,1 });
 		EGUI::Display::Label("%d", i);
 		ImGui::SetCursorScreenPos(screenOrigin);
 	}

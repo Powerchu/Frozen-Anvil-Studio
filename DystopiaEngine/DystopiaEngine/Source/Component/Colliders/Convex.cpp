@@ -46,7 +46,7 @@ namespace Dystopia
 
 		for (auto & elem : mVertices)
 		{
-			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z });
+			Collider::mDebugVertices.push_back(Gfx::Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z });
 		}
 		Collider::Awake();
 	}
@@ -301,7 +301,7 @@ namespace Dystopia
 			for (auto & elem : Edges)
 			{
 				Vec3D v = elem.mVec3;
-				Vec3D w = GetGlobalPosition() - elem.mPos;
+				Vec3D w = _ColB.GetGlobalPosition() - elem.mPos;
 
 				if (Math::Abs(w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
 				{

@@ -179,14 +179,130 @@ namespace Dystopia
 		for (auto const & elem : DirIter)
 		{
 			std::wstring filename = elem.path().filename().wstring();
-			if (filename == wstrFileName || std::filesystem::equivalent(elem, _FileName))
+			if (filename == wstrFileName || std::filesystem::equivalent(elem,_FileName, error))
 				return true;
 		}
 
 		return false;
 	}
 
-	unsigned FileSystem::DetectFileChanges(std::string _FilePath, std::string * _ChangesBuffer, size_t _size)
+	bool FileSystem::IsSameFile(std::string const & _lhs, std::string const & _rhs)
+	{
+		std::error_code err;
+		return std::filesystem::equivalent(_lhs, _rhs, err);
+	}
+
+	bool FileSystem::DetectFileChanges(std::string _FilePath, eFileDir _ParentDirectory)
+	{
+		static std::string _ChangesBuffer[100];
+		size_t _size = 100;
+		DetectionInfo * pDetectionInfo = nullptr;
+
+		std::filesystem::path DirPath{ _FilePath };
+		std::error_code error;
+
+		/*Find for existing Files*/
+		for (auto const & elem : mDetectionFiles)
+		{
+			if (elem->mFileName == _FilePath)
+			{
+				pDetectionInfo = elem;
+				break;
+			}
+
+		}
+
+		if (!pDetectionInfo)
+		{
+			HANDLE hand = CreateFileA(mPathTable[_ParentDirectory].c_str(),
+				FILE_LIST_DIRECTORY,
+				FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+				NULL,
+				OPEN_EXISTING,
+				FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
+				NULL);
+
+			if (hand != INVALID_HANDLE_VALUE)
+			{
+				_OVERLAPPED _overlapObj;
+				DWORD       byte_read;
+				_overlapObj.hEvent = CreateEventA(NULL, true, false, _FilePath.c_str());
+
+				if (_overlapObj.hEvent == INVALID_HANDLE_VALUE)
+				{
+					/*Failed to create a Event/_OVERLAPPED*/
+					CloseHandle(hand);
+					mLastKnownError = eFileSystemError::CREATE_OVERLAP_ERROR;
+					return 0;
+				}
+
+				DetectionInfo ** ptr = mDetectionFiles.Emplace(new DetectionInfo{ _FilePath, hand, _overlapObj });
+
+				if (ReadDirectoryChangesW((*ptr)->mFileHandle,
+					&(*ptr)->mFileInfo.front(),
+					static_cast<DWORD>((*ptr)->mFileInfo.size()),
+					true,
+					FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+					&byte_read,
+					&(*ptr)->mOverlappedInfo,
+					NULL))
+
+				{
+					/*Success*/
+					mLastKnownError = eFileSystemError::NONE;
+				}
+				if (GetLastError() == ERROR_NOTIFY_ENUM_DIR || byte_read == 0)
+				{
+					/*Failed to read directory successfully*/
+					mLastKnownError = eFileSystemError::READ_DIRECTORY_ERROR;
+					CloseHandle((*ptr)->mFileHandle);
+					CloseHandle((*ptr)->mOverlappedInfo.hEvent);
+					(*ptr)->mOverlappedInfo.hEvent = (*ptr)->mFileHandle = INVALID_HANDLE_VALUE;
+					return 0;
+				}
+
+				/*Detect and store file changes. If false, means no changes. If true means there is changes*/
+				if (auto count = GetChangesInfo(**ptr, _ChangesBuffer, _size))
+				{
+					
+					for (unsigned i = 0; i < count; ++i)
+					{
+						//std::filesystem::path DirPath2{ _ChangesBuffer[i] };
+						if (IsSameFile(_FilePath, GetFullPath(mPathTable[_ParentDirectory] + "/" + _ChangesBuffer[i], _ParentDirectory)))
+						{
+							return true;
+						}
+					}
+				}
+			}
+			else
+			{
+				/*Failed to create a valid handle*/
+				mLastKnownError = eFileSystemError::CREATE_HANDLE_ERROR;
+				return 0;
+			}
+		}
+		else
+		{
+			/*Detect and store file changes. If false, means no changes. If true means there is changes*/
+			if (auto count = GetChangesInfo(*pDetectionInfo, _ChangesBuffer, _size))
+			{
+
+				for (unsigned i = 0; i < count; ++i)
+				{
+					//std::filesystem::path DirPath2{ _ChangesBuffer[i] };
+					if (IsSameFile(_FilePath, GetFullPath( mPathTable[_ParentDirectory] + "/" + _ChangesBuffer[i], _ParentDirectory)))
+					{
+						return true;
+					}
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	unsigned FileSystem::DetectDirectoryChanges(std::string _FilePath, std::string * _ChangesBuffer, size_t _size)
 	{
 		DetectionInfo * pDetectionInfo = nullptr;
 		/*Find for existing Files*/
@@ -278,6 +394,9 @@ namespace Dystopia
 		unsigned count = 0;
 		DWORD byte_read;
 
+		if (_DetectionInfo.mFileHandle == INVALID_HANDLE_VALUE || _DetectionInfo.mOverlappedInfo.hEvent == INVALID_HANDLE_VALUE)
+			return count;
+
 		while (GetOverlappedResult(_DetectionInfo.mFileHandle, &_DetectionInfo.mOverlappedInfo, &byte_read, false))
 		{
 			for (FILE_NOTIFY_INFORMATION * pstart = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(&_DetectionInfo.mFileInfo.front());
@@ -300,7 +419,7 @@ namespace Dystopia
 					std::string name{ FileName.begin(),FileName.end() };
 					for (unsigned i = 0; i < count; ++i)
 					{
-						if (_ChangesBuffer[i] == name)
+						if ( IsSameFile(name, _ChangesBuffer[i]))
 						{
 							_ChangesBuffer[i] = std::string{ FileName.begin(),FileName.end() };
 							found = true;
@@ -332,7 +451,7 @@ namespace Dystopia
 					std::string name{ FileName.begin(),FileName.end() };
 					for (unsigned i = 0; i < count; ++i)
 					{
-						if (_ChangesBuffer[i] == name)
+						if (IsSameFile(name, _ChangesBuffer[i]))
 						{
 							_ChangesBuffer[i] = "";
 							break;
@@ -356,7 +475,7 @@ namespace Dystopia
 
 			{
 				/*Success*/
-				return count;
+ 				return count;
 			}
 			if (GetLastError() == ERROR_NOTIFY_ENUM_DIR || byte_read == 0)
 			{

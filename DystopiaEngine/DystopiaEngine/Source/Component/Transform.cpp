@@ -346,7 +346,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
-			cmd->EndRec<Transform, const Math::Pt3D&>(mnOwner, &Transform::SetPosition, mPosition);
+			cmd->EndRec<Transform, const Math::Pt3D&>(GetOwnerID(), &Transform::SetPosition, mPosition);
 			//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->EndRec(&Transform::mPosition, this, &Transform::mbChanged);
 			break;
 		}
@@ -366,7 +366,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
-			cmd->EndRec<Transform, const Math::Vec4&>(mnOwner, &Transform::SetScale, mScale);
+			cmd->EndRec<Transform, const Math::Vec4&>(GetOwnerID(), &Transform::SetScale, mScale);
 			break;
 		}
 	}
@@ -392,7 +392,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
 		case EGUI::eDragStatus::eEND_DRAG:
-			cmd->EndRec<Transform, const Math::Quaternion&>(mnOwner, &Transform::SetRotation, mRotation);
+			cmd->EndRec<Transform, const Math::Quaternion&>(GetOwnerID(), &Transform::SetRotation, mRotation);
 			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		}

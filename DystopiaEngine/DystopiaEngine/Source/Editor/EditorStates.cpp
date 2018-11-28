@@ -258,7 +258,7 @@ void Editor::EditorStates::ToolBar(void)
 				Save();
 			if (EGUI::StartMenuBody("Save As..", "Ctrl + Shift + S"))
 				SaveAs(); 
-			if (EGUI::StartMenuBody("Quit", "Ctrl + Shift + Q"))
+			if (EGUI::StartMenuBody("Quit", "Ctrl + Alt + Q"))
 				mbQuitAttempt = true; 
 			EGUI::EndMenuHeader();
 		}

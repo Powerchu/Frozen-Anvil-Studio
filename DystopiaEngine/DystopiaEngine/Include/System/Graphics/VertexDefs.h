@@ -16,12 +16,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "IO/Serialiser.h"
 
-namespace Dystopia
+namespace Dystopia::Gfx
 {
 	struct Vertex
 	{
 		float x, y, z;
 	};
+
+	using Normal = Vertex;
 
 	struct UV
 	{
@@ -29,7 +31,7 @@ namespace Dystopia
 	};
 }
 
-inline std::fstream& operator >> (std::fstream& _lhs, Dystopia::Vertex& _rhs)
+inline std::fstream& operator >> (std::fstream& _lhs, Dystopia::Gfx::Vertex& _rhs)
 {
 	_lhs >> _rhs.x;
 	_lhs.ignore(1) >> _rhs.y;
@@ -38,7 +40,7 @@ inline std::fstream& operator >> (std::fstream& _lhs, Dystopia::Vertex& _rhs)
 	return _lhs;
 }
 
-inline std::fstream& operator >> (std::fstream& _lhs, Dystopia::UV& _rhs)
+inline std::fstream& operator >> (std::fstream& _lhs, Dystopia::Gfx::UV& _rhs)
 {
 	_lhs >> _rhs.u;
 	_lhs.ignore(1) >> _rhs.v;
@@ -46,14 +48,14 @@ inline std::fstream& operator >> (std::fstream& _lhs, Dystopia::UV& _rhs)
 	return _lhs;
 }
 
-inline std::fstream& operator << (std::fstream& _lhs, Dystopia::Vertex& _rhs)
+inline std::fstream& operator << (std::fstream& _lhs, Dystopia::Gfx::Vertex& _rhs)
 {
 	_lhs << _rhs.x << ',' << _rhs.y << ',' << _rhs.z;
 
 	return _lhs;
 }
 
-inline std::fstream& operator << (std::fstream& _lhs, Dystopia::UV& _rhs)
+inline std::fstream& operator << (std::fstream& _lhs, Dystopia::Gfx::UV& _rhs)
 {
 	_lhs << _rhs.u << ',' << _rhs.v;
 

@@ -175,14 +175,14 @@ namespace Ut
 	// MakeRange
 	// =========== ===============================
 
-	template <unsigned limit>
+	template <auto limit, auto start = 0>
 	struct MetaMakeRange
 	{
 	private:
 		template <unsigned ... Vals>
 		struct Range;
 
-		template <unsigned min, unsigned max>
+		template <auto min, auto max, auto range>
 		struct RangeBuilder
 		{
 		private:
@@ -190,39 +190,42 @@ namespace Ut
 
 		public:
 			using result = MetaConcat_t<
-				typename RangeBuilder<min, midpt>::result,
-				typename RangeBuilder<midpt+1, max>::result
+				typename RangeBuilder<min, midpt, midpt - min>::result,
+				typename RangeBuilder<midpt, max, max - midpt>::result
 			>;
 		};
 
-		template <unsigned x>
-		struct RangeBuilder<x, x>
+		template <auto x, auto y>
+		struct RangeBuilder<x, y, 1>
 		{
 			using result = Range<x>;
 		};
 
+		template <auto x>
+		struct RangeBuilder<x, x, 0>
+		{
+			using result = Range<>;
+		};
+
 	public:
-		using result = typename RangeBuilder<0, limit - 1>::result;
+		using result = typename RangeBuilder<start, limit, limit - start>::result;
 	};
 
-	template <unsigned limit>
-	using MetaMakeRange_t = typename MetaMakeRange<limit>::result;
+	template <auto limit, auto start = 0>
+	using MetaMakeRange_t = typename MetaMakeRange<limit, start>::result;
 
 
-	// To Tuple
+	// Group
 	// ========== ================================
 
-	template <template <typename...> class Tuple, typename Ty>
-	struct MetaToTuple;
-
-	//template <template <typename ...> class Set, typename ... Tys>
-	//struct MetaToTuple<Set<Tys...>>
-	//{
-	//	using type = Tuple<Tys...>;
-	//};
+	template <template <typename...> class Tuple, typename ... Ty>
+	struct MetaGroup
+	{
+		using type = Tuple<Ty...>;
+	};
 
 	template <template <typename...> class Tuple, template <typename ...> class Set, unsigned ... Ns, typename ... Tys>
-	struct MetaToTuple<Tuple, Set<Indexer<Ns, Tys>...>>
+	struct MetaGroup<Tuple, Set<Indexer<Ns, Tys>...>>
 	{
 		using type = Tuple<Tys...>;
 	};

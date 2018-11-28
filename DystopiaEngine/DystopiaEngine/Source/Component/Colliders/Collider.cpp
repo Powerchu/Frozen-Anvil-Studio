@@ -17,7 +17,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/RigidBody.h"
 #include "Behaviour/Behaviour.h"
 #include "Object/GameObject.h"
-#include "System/Graphics/VertexDefs.h"
 #include "System/Graphics/MeshSystem.h"
 
 
@@ -49,9 +48,11 @@ namespace Dystopia
 			pMeshSys->StartMesh();
 
 			auto const & arr = GetVertexBuffer();
+
 			for (const auto& i : arr)
 			{
 				pMeshSys->AddVertex(i.x, i.y, i.z);
+				pMeshSys->AddNormal(i.x, i.y, i.z);
 			}
 
 			SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
@@ -157,7 +158,7 @@ namespace Dystopia
 	void Collider::InformOtherComponents()
 	{
 		const auto _owner = GetOwner();
-		const auto _body = _owner->GetComponent<RigidBody>();
+		//const auto _body = _owner->GetComponent<RigidBody>();
 
 		for (auto & elem : marr_CurrentContactSets)
 		{
@@ -319,7 +320,7 @@ namespace Dystopia
 		return this->mv3Offset;
 	}
 
-	AutoArray<Vertex> Collider::GetVertexBuffer() const
+	AutoArray<Gfx::Vertex> Collider::GetVertexBuffer() const
 	{
 		return mDebugVertices;
 	}

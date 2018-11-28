@@ -7,6 +7,7 @@
 #include "Object/ObjectFlags.h"
 #include "IO/TextSerialiser.h"
 #include "Editor/EGUI.h"
+#include "System/Graphics/VertexDefs.h"
 
 #if EDITOR
 #endif 
@@ -77,7 +78,7 @@ namespace Dystopia
 		{
 			elem.mPosition = ColAWorldMatrix * elem.mPosition;
 
-			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z });
+			Collider::mDebugVertices.push_back(Dystopia::Gfx::Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z });
 		}
 
 		mMin = &this->mVertices[0];

@@ -40,7 +40,7 @@ namespace Editor
 		void SaveSettings(Dystopia::TextSerialiser& _out) const;
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 
-		void AddComponent(Dystopia::Component* _p);
+		void AddComponent(Dystopia::Component* _p, const uint64_t&, bool);
 		void RemoveComponent(const uint64_t&);
 		Dystopia::Component* GetComponent(const uint64_t&);
 
