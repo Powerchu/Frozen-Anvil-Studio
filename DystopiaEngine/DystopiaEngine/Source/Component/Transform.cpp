@@ -69,12 +69,12 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
     if (mpParent)
     {
 		// Convert our data to the parent's local coordinates
-        Math::Mat4 InvTrans = Math::AffineInverse(mpParent->GetTransformMatrix());
+        Math::Mat4 const InvTrans = Math::AffineInverse(mpParent->GetTransformMatrix());
 
-        mScale		= InvTrans * mScale;
+        mScale		= mpParent->GetGlobalScale().Reciprocal() * mScale;
         mPosition	= InvTrans * mPosition;
-        mRotation   = mpParent->GetRotation() * mRotation;
-        mbChanged	= true;
+		mRotation   = mpParent->GetGlobalRotation().Conjugate() * mRotation;
+		mbChanged	= true;
 		mnParentID = _pParent->GetOwnerID();
 
 		mpParent->OnChildAdd(this);
@@ -84,11 +84,11 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
 void Dystopia::Transform::OnParentRemove(Transform* _pParent)
 {
 	// Convert our data to world coordinates
-	Math::Mat4 InvTrans = _pParent->GetTransformMatrix();
+	Math::Mat4 const Trans = _pParent->GetTransformMatrix();
 
 	mScale		= _pParent->GetGlobalScale() * mScale;
-	mPosition	= InvTrans * mPosition;
-	mRotation  *= _pParent->GetRotation();
+	mPosition	= Trans * mPosition;
+	mRotation   = _pParent->GetGlobalRotation() * mRotation;
 
 	mbChanged = true;
 }
