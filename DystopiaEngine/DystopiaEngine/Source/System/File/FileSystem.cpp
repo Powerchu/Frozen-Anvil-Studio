@@ -394,6 +394,9 @@ namespace Dystopia
 		unsigned count = 0;
 		DWORD byte_read;
 
+		if (_DetectionInfo.mFileHandle == INVALID_HANDLE_VALUE || _DetectionInfo.mOverlappedInfo.hEvent == INVALID_HANDLE_VALUE)
+			return count;
+
 		while (GetOverlappedResult(_DetectionInfo.mFileHandle, &_DetectionInfo.mOverlappedInfo, &byte_read, false))
 		{
 			for (FILE_NOTIFY_INFORMATION * pstart = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(&_DetectionInfo.mFileInfo.front());
