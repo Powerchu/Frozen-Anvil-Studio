@@ -50,7 +50,7 @@ namespace Dystopia
 
 			auto const & arr = GetVertexBuffer();
 
-			for (auto i : arr)
+			for (const auto& i : arr)
 			{
 				pMeshSys->AddVertex(i.x, i.y, i.z);
 				pMeshSys->AddNormal(i.x, i.y, i.z);
