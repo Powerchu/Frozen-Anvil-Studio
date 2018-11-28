@@ -21,11 +21,10 @@ namespace Dystopia
 		unsigned x, y;
 		unsigned mnWidth;
 		unsigned mnHeight;
-		unsigned mnBearingX;
-		unsigned mnBearingY;
+		int mnBearingX;
+		int mnBearingY;
 
 		unsigned mnAdvance;
-		float u, v, s, t;
 	};
 }
 

@@ -79,10 +79,10 @@ void Editor::EditorResource::LoadSettings(Dystopia::TextSerialiser& _in)
 	_in.ConsumeEndBlock();
 }
 
-void Editor::EditorResource::AddComponent(Dystopia::Component* _p)
+void Editor::EditorResource::AddComponent(Dystopia::Component* _p, const uint64_t& _nID, bool _amComponent)
 {
 	mArrComponentResource.Insert(_p);
-	EditorMain::GetInstance()->GetSystem<EditorFactory>()->ReattachToPrefab(_p);
+	EditorMain::GetInstance()->GetSystem<EditorFactory>()->ReattachToPrefab(_p, _nID, _amComponent);
 }
 
 void Editor::EditorResource::RemoveComponent(const uint64_t& _cID)

@@ -67,11 +67,13 @@
     <ClCompile Include="Source\IO\PNGParser.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
     <ClCompile Include="Source\System\Events\Events.cpp" />
+    <ClCompile Include="Source\System\Factory\Factory.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
     <ClCompile Include="Source\Editor\PLogInfo.cpp" />
     <ClCompile Include="Source\System\Behaviour\BehaviourSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\FontSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
+    <ClCompile Include="Source\System\Graphics\MeshBuilder.cpp" />
     <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp" />
@@ -158,6 +160,7 @@
     <ClInclude Include="Include\Editor\EInput.h" />
     <ClInclude Include="Include\Component\AiController.h" />
     <ClInclude Include="Include\Component\NodeList.h" />
+    <ClInclude Include="Include\Factory\Factory.h" />
     <ClInclude Include="Include\System\AI\AISystem.h" />
     <ClInclude Include="Include\System\AI\Blackboard.h" />
     <ClInclude Include="Include\System\AI\Composite.h" />
@@ -170,6 +173,9 @@
     <ClInclude Include="Include\System\Behaviour\BehaviourMessage.h" />
     <ClInclude Include="Include\DataStructure\ProxyPtr.h" />
     <ClInclude Include="Include\Lib\GraphicsLib.h" />
+    <ClInclude Include="Include\Math\Geometery\Box.h" />
+    <ClInclude Include="Include\Math\Geometery\CoordinateSystems.h" />
+    <ClInclude Include="Include\Math\Geometery\Sphere.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourSystemHelper.h" />
     <ClInclude Include="Include\Editor\EditorProc.h" />
     <ClInclude Include="Include\DataStructure\HashString.h" />
@@ -197,7 +203,7 @@
     <ClInclude Include="Include\Editor\ProjectSettings.h" />
     <ClInclude Include="Include\Editor\SpritePreviewer.h" />
     <ClInclude Include="Include\Editor\StyleScheme.h" />
-    <ClInclude Include="Include\Math\MetaFloat.h" />
+    <ClInclude Include="Include\Math\MetaMath\MetaFloat.h" />
     <ClInclude Include="Include\Reflection\MetaData.h" />
     <ClInclude Include="Include\Reflection\PPConcat.h" />
     <ClInclude Include="Include\Reflection\PPExtract.h" />
@@ -216,7 +222,9 @@
     <ClInclude Include="Include\Component\Particle.h" />
     <ClInclude Include="Include\Component\Primitive.h" />
     <ClInclude Include="Include\System\Graphics\CharSpace.h" />
+    <ClInclude Include="Include\System\Graphics\Font.h" />
     <ClInclude Include="Include\System\Graphics\FontSystem.h" />
+    <ClInclude Include="Include\System\Graphics\MeshBuilder.h" />
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
@@ -327,6 +335,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h" />
     <ClInclude Include="Include\System\Input\XGamePad.h" />
+    <ClInclude Include="Include\IO\XMLParser.h" />
     <ClInclude Include="Include\Editor\RuntimeMeta.h" />
   </ItemGroup>
   <ItemGroup>
@@ -467,7 +476,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC /DSAFE_PTRS</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC</AdditionalOptions>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -535,7 +544,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DSAFE_PTRS</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT</AdditionalOptions>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>

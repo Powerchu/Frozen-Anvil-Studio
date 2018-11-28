@@ -325,7 +325,12 @@ void Editor::EditorMain::UpdatePaths(void)
 	fs->CreateFiles(dllFolder.c_str(), Dystopia::eFileDir::eAppData);
 	HashString fullPath = (fs->GetFullPath(subFolder.c_str(), Dystopia::eFileDir::eAppData)).c_str();
 
-	fs->ChangeDirPath(Dystopia::eFileDir::eResource, mProjFolder);
+	fs->ChangeDirPath(Dystopia::eFileDir::eCurrent, mProjFolder);
+
+	HashString resFolder{ mProjFolder };
+	resFolder += "/";
+	resFolder += "Resource";
+	fs->ChangeDirPath(Dystopia::eFileDir::eResource, resFolder);
 	fs->ChangeDirPath(Dystopia::eFileDir::eAppData, fullPath);
 }
 

@@ -139,7 +139,8 @@ namespace Editor
 				auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, HashString{ buffer });
 				cmd->FunctionCommand(mpFocus->GetID(), oFn, nFn);
 			}
-			if (EGUI::Display::DropDownSelection("Tag", i, mpFocus->GetAllTags_str(), 32))
+			auto arr = mpFocus->GetAllTags_str();
+			if (EGUI::Display::DropDownSelection("Tag", i, arr, 32))
 			{
 
 			}
@@ -182,8 +183,14 @@ namespace Editor
 		{
 			EGUI::PushID(i);
 			EGUI::Display::HorizontalSeparator();
+
+			//bool test = true;
+			//EGUI::Display::CheckBox("Component Active", &test, false);
+
 			bool open = EGUI::Display::StartTreeNode(arrComp[i]->GetEditorName() + "##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(arrComp[i]);
+
+
 			if (open)
 			{
 				if (show)	
@@ -197,6 +204,8 @@ namespace Editor
 		for (auto & c : arrBehav)
 		{
 			EGUI::Display::HorizontalSeparator();
+			if (!c)
+				continue;
 			bool open = EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } +"##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(c);
 			if (open)
@@ -345,6 +354,22 @@ namespace Editor
 				//mpFocus->RemoveComponent(_pCom);
 				//EditorMain::GetInstance()->GetSystem<EditorCommands>()->RemoveComponent(mpFocus->GetID(), _pCom);
 				availableComp.RemoveComponentCommand(_pCom->GetRealComponentType(), mpFocus);
+				ret = true;
+			}
+			ImGui::EndPopup();
+		}
+		return ret;
+	}
+
+	bool Inspector::RemoveComponent(Dystopia::Behaviour* _pCom)
+	{
+		bool ret = false;
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (EGUI::Display::SelectableTxt("Remove"))
+			{
+				auto owner = _pCom->GetOwner();
+				owner->RemoveComponent(_pCom);
 				ret = true;
 			}
 			ImGui::EndPopup();

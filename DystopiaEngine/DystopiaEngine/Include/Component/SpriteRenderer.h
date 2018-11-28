@@ -77,34 +77,47 @@ namespace Dystopia
 
 		void SetTexture(Texture* _pTexture) noexcept;
 
+
+		HashString GetCurrentAnimation(void) const;
+		unsigned GetCurrentIndex(void) const;
+		bool IsPlaying(void) const;
+
+		void Play(void);
+		void Stop(void);
+		void SetSpeed(float);
+
+		Math::Vec2 Resized(void) const;
+
+	private:
 		struct SpriteSheet
 		{
 			HashString mstrName;
 			unsigned mnID;
-			int mnCol, mnRow;
+			int mnCol, mnRow, mnStart, mnEnd;
 			bool mbLoop;
 		};
-
-	private:
 
 		TextureAtlas* mpAtlas;
 		AutoArray<SpriteSheet> mAnimations;
 		int mnID, mnCol, mnRow;
 		float mfFrameTime, mfAccTime;
 		Math::Vec2 mNextSectionPos;
+		bool mbPlayOnStart;
+
+		bool mbPlay;	// dont need serialise
 
 		void TextureFields(void);
-		void AtlasFields(void);
+		void AnimFields(void);
 		void AddAnimations(void);
 		bool SpriteSheetFields(const size_t&);
+
+		int GetStartCol(void) const;
+		int GetStartRow(void) const;
 	};
 }
 
-/**************************** Helper Func *******************************/
-inline bool operator==(const Dystopia::SpriteRenderer::SpriteSheet& _lhs, const Dystopia::SpriteRenderer::SpriteSheet& _rhs)
-{
-	return _lhs.mstrName == _rhs.mstrName && _lhs.mnID == _rhs.mnID && _lhs.mnCol == _rhs.mnRow && _lhs.mbLoop == _rhs.mbLoop;
-}
 #pragma warning(pop)
 #endif
+
+
 

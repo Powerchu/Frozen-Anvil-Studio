@@ -61,9 +61,10 @@ namespace Dystopia
 				  bool _gravityState, bool _staticState);
 
 		// ================================VIRTUAL MEMBER FUNCTIONS ================================== // 
-		void Load(void);
+		//void Load(void);
+		void Awake(void) override;
 		void Init(void);
-		void Unload(void);
+		// Unload(void);
 		RigidBody* Duplicate() const override;
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;

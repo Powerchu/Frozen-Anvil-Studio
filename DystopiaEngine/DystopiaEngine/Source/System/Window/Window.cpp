@@ -11,9 +11,13 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System/Window/Window.h"		// File Header
-#include "DataStructure/Queue.h"		// Queue
-#include "System/Input/InputMap.h"		// eButton
+#include "System/Window/Window.h"		 // File Header
+#include "System/Window/WindowManager.h"
+#include "System/Input/InputMap.h"		 // eButton
+#include "System/Driver/Driver.h"
+
+#include "DataStructure/Queue.h"		 // Queue
+
 
 #define WIN32_LEAN_AND_MEAN					// Exclude rarely used stuff from Windows headers
 #define NOMINMAX							// Disable window's min & max macros
@@ -43,6 +47,7 @@ HDC Dystopia::Window::GetDeviceContext(void) const noexcept
 	return mDeviceContext;
 }
 
+
 int Dystopia::Window::GetWidth(void) const noexcept
 {
 	return mnWidth;
@@ -63,10 +68,12 @@ int Dystopia::Window::GetFullHeight(void) const noexcept
 	return mnFHeight;
 }
 
+
 const Queue<eButton>& Dystopia::Window::GetInputQueue(void) const noexcept
 {
 	return mInputQueue;
 }
+
 
 void Dystopia::Window::SetTitle(const std::wstring& _strTitle)
 {
@@ -82,47 +89,68 @@ std::wstring Dystopia::Window::GetTitle(void) const noexcept
 	return std::wstring{ s.begin(), s.end() };
 }
 
-void Dystopia::Window::SetStyle(long _nStyle, long _nStyleEx)
+
+void Dystopia::Window::SetStyle(long _nStyle, long _nStyleEx) noexcept
 {
-	mStyle = _nStyle;
-	mStyleEx = _nStyleEx;
-	SetWindowLong(mHandle, GWL_STYLE, mStyle);
-	SetWindowLong(mHandle, GWL_EXSTYLE, mStyleEx);
+	PushStyle(mStyle = _nStyle, mStyleEx = _nStyleEx);
 }
 
-void Dystopia::Window::SetSize(int _nWidth, int _nHeight)
+void Dystopia::Window::PushStyle(long _nStyle, long _nStyleEx) const noexcept
 {
-	mnWidth = _nWidth;
+	SetWindowLong(mHandle, GWL_STYLE, _nStyle);
+	SetWindowLong(mHandle, GWL_EXSTYLE, _nStyleEx);
+}
+
+
+void Dystopia::Window::SetSize(int _nWidth, int _nHeight, bool _bPush) noexcept
+{
+	mnWidth  = _nWidth;
 	mnHeight = _nHeight;
 
 	RECT WindowRect{ 0, 0, _nWidth, _nHeight };
-	AdjustWindowRect(&WindowRect, mStyle, FALSE);
+	AdjustWindowRectEx(&WindowRect, mStyle, FALSE, mStyleEx);
 
-	mnFWidth  = WindowRect.right - WindowRect.left;
+	mnFWidth  = WindowRect.right  - WindowRect.left;
 	mnFHeight = WindowRect.bottom - WindowRect.top;
+
+	if (_bPush) PushSize(mnFWidth, mnFHeight);
 }
 
-void Dystopia::Window::SetSizeNoAdjust(int _nWidth, int _nHeight)
+void Dystopia::Window::SetSizeNoAdjust(int _nWidth, int _nHeight, bool _bPush) noexcept
 {
-	mnFWidth = mnWidth = _nWidth;
+	mnFWidth  = mnWidth  = _nWidth;
 	mnFHeight = mnHeight = _nHeight;
+
+	if (_bPush) PushSize(mnFWidth, mnFHeight);
 }
 
 void Dystopia::Window::CenterWindow(void) noexcept
 {
 	const int 
-		left = (GetSystemMetrics(SM_CXSCREEN) - mnWidth) >> 1,
-		top  = (GetSystemMetrics(SM_CYSCREEN) - mnHeight) >> 1;
+		left = (GetSystemMetrics(SM_CXSCREEN) - mnFWidth)  >> 1,
+		top  = (GetSystemMetrics(SM_CYSCREEN) - mnFHeight) >> 1;
 
 	// center the window
+	PushSize(left, top, mnFWidth, mnFHeight);
+}
+
+void Dystopia::Window::PushSize(int w, int h) const noexcept
+{
+	RECT wr;
+	GetWindowRect(GetWindowHandle(), &wr);
+	PushSize(wr.left, wr.top, w, h);
+}
+
+void Dystopia::Window::PushSize(int x, int y, int w, int h) const noexcept
+{
 	SetWindowPos(GetWindowHandle(), NULL,
-		left, top, mnWidth, mnHeight,
+		x, y, w, h,
 		SWP_NOZORDER | SWP_NOACTIVATE
 	);
 }
 
 
-void Dystopia::Window::ShowCursor(int _bShow) const
+void Dystopia::Window::ShowCursor(int _bShow) const noexcept
 {
 	::ShowCursor(_bShow);
 }
@@ -132,15 +160,36 @@ void Dystopia::Window::Show(void) const noexcept
 	ShowWindow(GetWindowHandle(), SW_SHOW);
 }
 
-void Dystopia::Window::ShowMax(void) const noexcept
-{
-	ShowWindow(GetWindowHandle(), SW_MAXIMIZE);
-}
-
 void Dystopia::Window::Hide(void) const noexcept
 {
 	ShowWindow(GetWindowHandle(), SW_HIDE);
 }
+
+
+void Dystopia::Window::ToggleFullscreen(bool _bFullscreen) noexcept
+{
+	if (_bFullscreen)
+	{
+#       if !defined(EDITOR)
+			PushStyle(
+				mStyle & Ut::Constant<long, ~(WS_CAPTION | WS_SIZEBOX)>::value,
+				mStyleEx & Ut::Constant<long, ~(WS_EX_WINDOWEDGE)>::value
+			);
+#       endif
+
+		ShowWindow(GetWindowHandle(), SW_MAXIMIZE);
+	}
+	else
+	{
+#       if !defined(EDITOR)
+			PushStyle(mStyle, mStyleEx);
+			SetSize(mnWidth, mnHeight, true);
+#       endif
+
+		Show();
+	}
+}
+
 
 void Dystopia::Window::SetAcceptFiles(bool _bAccept) const noexcept
 {
@@ -148,7 +197,7 @@ void Dystopia::Window::SetAcceptFiles(bool _bAccept) const noexcept
 }
 
 
-bool Dystopia::operator== (const Window& _lhs, const Window& _rhs)
+bool Dystopia::operator == (const Window& _lhs, const Window& _rhs)
 {
 	return _lhs.GetWindowHandle() == _rhs.GetWindowHandle();
 }

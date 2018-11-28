@@ -9,8 +9,8 @@
 #include "Component/Circle.h"
 #include "Component/Transform.h"
 #include "Math/Quaternion.h"
+#include "Editor/EditorCommands.h"
 
-#include <vector>
 #if EDITOR
 #include "Editor/EGUI.h"
 #endif
@@ -31,11 +31,24 @@ namespace Dystopia
 
 	void Convex::Awake(void)
 	{
+		mVertices.clear();
+
+		mVertices = {
+			Vertice{ Math::MakePoint3D(.5f,.5f,0) },
+			Vertice{ Math::MakePoint3D(-.5f,.5f,0) },
+			Vertice{ Math::MakePoint3D(-.5f,-.5f,0) },
+			Vertice{ Math::MakePoint3D(.5f,-.5f,0) }
+		};
+
+		mNumPoints = 4;
+
 		mDebugVertices.clear();
+
 		for (auto & elem : mVertices)
 		{
-			Collider::mDebugVertices.push_back(Vertex{ elem.mPosition.x, elem.mPosition.y, elem.mPosition.z });
+			Collider::mDebugVertices.EmplaceBack(elem.mPosition.x, elem.mPosition.y, elem.mPosition.z);
 		}
+
 		Collider::Awake();
 	}
 
@@ -52,7 +65,7 @@ namespace Dystopia
 
 	void Convex::Update(float)
 	{
-
+		//mRotation = GetOwner()->GetComponent<Transform>()->GetGlobalRotation();
 	}
 
 	void Convex::Unload()
@@ -289,7 +302,7 @@ namespace Dystopia
 			for (auto & elem : Edges)
 			{
 				Vec3D v = elem.mVec3;
-				Vec3D w = GetGlobalPosition() - elem.mPos;
+				Vec3D w = _ColB.GetGlobalPosition() - elem.mPos;
 
 				if (Math::Abs(w.Dot(elem.mNorm3.Normalise())) < newEvent.mfPeneDepth)
 				{
@@ -423,18 +436,21 @@ namespace Dystopia
 		eAttachedBodyEmptyBox();
 		eIsTriggerCheckBox();
 		ePositionOffsetVectorFields();
-		eSetScale();
+		eSetScale(); 
 		ePointVerticesVectorArray();
 		eNumberOfContactsLabel();
 	}
 
 	void Convex::eIsTriggerCheckBox()
 	{
-		//bool tempBool = mbIsTrigger;
+		auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
+		bool tempBool = mbIsTrigger;
 
 		if (EGUI::Display::CheckBox("Is Trigger		  ", &mbIsTrigger))
 		{
 			//mbIsTrigger = tempBool;
+			//cmd->ChangeValue(&Convex::SetTrigger, mbIsTrigger, tempBool);
+			//cmd->StartRec<Convex, bool>(&Convex::SetTrigger, mbIsTrigger);
 			//EGUI::GetCommandHND()->InvokeCommand<Collider>(mnOwner, &Collider::mbIsTrigger, tempBool);
 		}
 	}

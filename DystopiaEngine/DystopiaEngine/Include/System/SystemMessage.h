@@ -21,6 +21,9 @@ namespace Dystopia
 	{
 		FOCUS_GAIN,
 		FOCUS_LOST,
+		MAXIMIZE,
+		MINIMIZE,
+		ACTIVATE,
 		QUIT,
 	};
 }

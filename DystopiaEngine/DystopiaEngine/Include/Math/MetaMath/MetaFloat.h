@@ -16,15 +16,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Math
 {
-	template <char SIGN, int EXP, unsigned long long MANTISA>
+	using ui64_t = unsigned long long;
+
+	template <char SIGN, int EXP, ui64_t MANTISA1, ui64_t MANTISA2>
 	struct MetaFloat
 	{
 		static constexpr int sign = int(SIGN / SIGN);
 
-
-		static constexpr long double LDouble = sign * .0l;
-		static constexpr double      Double  = double(LDouble);
-		static constexpr float       Float   = float(LDouble);
+		template <typename T>
+		static constexpr T As = T(sign * .0lL);
 	};
 }
 

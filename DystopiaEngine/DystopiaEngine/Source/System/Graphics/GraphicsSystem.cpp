@@ -91,7 +91,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.0f },
-	mfDebugLineWidth{ 3.0f }, mvDebugColour{ .0f, 1.f, .0f, .1f }, mbVsync{ false }
+	mfDebugLineThreshold{ 0.958f }, mvDebugColour{ .0f, 1.f, .0f, .1f }, mbVsync{ false }
 {
 
 }
@@ -175,8 +175,6 @@ bool Dystopia::GraphicsSystem::Init(void)
 	glUniform1i(uiView, 1);
 	shaderlist["FinalStage"]->Unbind();
 
-	glLineWidth(mfDebugLineWidth);
-
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
 		__debugbreak();
@@ -245,7 +243,8 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	shader->Bind();
 	texture->Bind();
 
-	shader->UploadUniform("ProjectViewMat", Project * View);
+	shader->UploadUniform("ViewMat", View);
+	shader->UploadUniform("ProjectMat", Project);
 	shader->UploadUniform("ModelMat", Math::Scale(w * 1.f, h * 1.f));
 	shader->UploadUniform("Gamma", mfGamma);
 
@@ -266,7 +265,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 namespace
 {
 	template <typename T>
-	inline void DrawRenderer(T& _renderer, Math::Mat4& _ProjView, Dystopia::Shader* s, float _fGamma)
+	inline void DrawRenderer(T& _renderer, Dystopia::Shader* s, float _fGamma)
 	{
 		auto t = _renderer->GetTexture();
 
@@ -274,8 +273,6 @@ namespace
 
 		if (t) t->Bind();
 
-
-		s->UploadUniform("ProjectViewMat", _ProjView);
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);
 
@@ -285,11 +282,11 @@ namespace
 	}
 }
 
-void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
+void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::Mat4& _Proj)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Scene Draw" };
 
-	AutoArray<Renderer*> set1{ ComponentDonor<Renderer>::mComponents .size() };
+	AutoArray<Renderer*> set1{ ComponentDonor<Renderer>::mComponents.size() };
 	AutoArray<SpriteRenderer*> set2{ ComponentDonor<SpriteRenderer>::mComponents.size() };
 	AutoArray<TextRenderer*> set3{ ComponentDonor<TextRenderer>::mComponents.size() };
 
@@ -298,7 +295,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 #if EDITOR
 		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
 			set1.Insert(&e);
 	}
 	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
@@ -306,7 +303,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 #if EDITOR
 		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
 			set2.Insert(&e);
 	}
 	for (auto& e : ComponentDonor<TextRenderer>::mComponents)
@@ -314,7 +311,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 #if EDITOR
 		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
 			set3.Insert(&e);
 	}
 
@@ -335,6 +332,9 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 
 	for (auto& r : set1)
 	{
+#if EDITOR
+		if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		auto s = r->GetShader();
 		if (s && r->GetTexture())
 		{
@@ -347,36 +347,54 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _ProjView)
 			s->Bind();
 		}
 
+		s->UploadUniform("ProjectMat", _Proj);
+		s->UploadUniform("ViewMat", _View);
+
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
-			DrawRenderer(r, _ProjView, s, mfGamma);
+			DrawRenderer(r, s, mfGamma);
 		}
 	}
 
 	for (auto& r : set2)
 	{
+#if EDITOR
+		if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		auto s = r->GetShader();
 		s = r->GetTexture() ? s : shaderlist["No Texture"];
 		s->Bind();
+		s->UploadUniform("ProjectMat", _Proj);
+		s->UploadUniform("ViewMat", _View);
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
-			DrawRenderer(r, _ProjView, s, mfGamma);
+			DrawRenderer(r, s, mfGamma);
 		}
 	}
 
 	auto s = shaderlist["Font Shader"];
 	s->Bind();
+	s->UploadUniform("ProjectMat", _Proj);
+	s->UploadUniform("ViewMat", _View);
 
 	for (auto& r : set3)
 	{
+#if EDITOR
+		if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
-			DrawRenderer(r, _ProjView, s, mfGamma);
+			DrawRenderer(r, s, mfGamma);
 		}
 	}
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 }
 
-void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
+void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::Mat4& _Proj)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Debug Draw" };
 	auto AllObj = EngineCore::GetInstance()->GetSystem<CollisionSystem>()->GetAllColliders();
@@ -386,11 +404,12 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
 
 	glClear(GL_DEPTH_BUFFER_BIT);
-	Shader* s = shaderlist["Colour Shader"];
+	Shader* s = shaderlist["Collider Shader"];
 	
 	s->Bind();
-	s->UploadUniform("ProjectViewMat", _ProjView);
-
+	s->UploadUniform("ViewMat", _View);
+	s->UploadUniform("ProjectMat", _Proj);
+	s->UploadUniform("threshold", mfDebugLineThreshold);
 
 	Math::Vector4 CollidingColor{ 1.f, 0, 0, .1f }, SleepingColor{ 1.f,1.f,0,.1f }, TriggerColor{ .8f,.8f,.8f,.1f }, activeColor;
 
@@ -440,19 +459,35 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _ProjView)
 
 			if (Mesh* pObjMesh = Obj->GetMesh())
 			{
-				activeColor.w = 0.1f;
 				s->UploadUniform("vColor", activeColor);
 				pObjMesh->DrawMesh(GetDrawMode());
-				activeColor.w = 1.f;
-				s->UploadUniform("vColor", activeColor);
-				pObjMesh->DrawMesh(GL_LINE_LOOP);
+				//activeColor.w = .0f;
+				//s->UploadUniform("vColor", activeColor);
+				//pObjMesh->DrawMesh(GL_LINE_LOOP);
 			}
 		}
 	}
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 }
 
 void Dystopia::GraphicsSystem::Update(float _fDT)
 {
+#   if defined(EDITOR)
+	{
+		ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Editor Update" };
+		EngineCore::GetInstance()->Get<TextureSystem>()->EditorUpdate();
+
+#		if defined(_DEBUG) | defined(DEBUG)
+			if (auto err = glGetError())
+				__debugbreak();
+#		endif 
+	}
+#   endif
+
 	StartFrame();
 
 	glClearColor(.05f, .05f, .05f, 1.f);
@@ -512,7 +547,8 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
 			Cam.SetCamera();
-			Math::Matrix4 ProjView = Cam.GetProjectionMatrix() * Cam.GetViewMatrix();
+			Math::Matrix4 View = Cam.GetViewMatrix();
+			Math::Matrix4 Proj = Cam.GetProjectionMatrix();
 
 			auto surface = Cam.GetSurface();
 			auto vp = Cam.GetViewport();
@@ -524,10 +560,10 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			surface->Bind();
 			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-			DrawScene(Cam, ProjView);
+			DrawScene(Cam, View, Proj);
 			
 			 if (Cam.DrawDebug())
-				DrawDebug(Cam, ProjView);
+				DrawDebug(Cam, View, Proj);
 
 			 surface->Unbind();
 		}
@@ -632,8 +668,8 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 	mViews.Emplace(2048u, 2048u, true);
 	mViews.Emplace(1024u, 1024u, true);
 	mViews.Emplace(
-		static_cast<unsigned>(Gbl::SCREEN_WIDTH ), 
-		static_cast<unsigned>(Gbl::SCREEN_HEIGHT), 
+		static_cast<unsigned>(Gbl::WINDOW_WIDTH),
+		static_cast<unsigned>(Gbl::WINDOW_HEIGHT),
 		false
 	);
 
@@ -662,12 +698,11 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 		mViews.Emplace(w, h, alpha);
 	}
 	_in >> mbDebugDrawCheckBox;
-	_in >> mfDebugLineWidth;
-	_in >> mvDebugColour[0];
-	_in >> mvDebugColour[1];
-	_in >> mvDebugColour[2];
-	_in >> mvDebugColour[3];
+	_in >> mfDebugLineThreshold;
+	_in >> mvDebugColour;
 	_in >> mbVsync;
+
+	ToggleVsync(mbVsync);
 }
 
 void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
@@ -683,11 +718,8 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 	}
 
 	_out << mbDebugDrawCheckBox;
-	_out << mfDebugLineWidth;
-	_out << static_cast<float>(mvDebugColour.x);
-	_out << static_cast<float>(mvDebugColour.y);
-	_out << static_cast<float>(mvDebugColour.z);
-	_out << static_cast<float>(mvDebugColour.w);
+	_out << mfDebugLineThreshold;
+	_out << mvDebugColour;
 	_out << mbVsync;
 }
 
@@ -718,7 +750,7 @@ Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)
 
 Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _filePath)
 {
-	auto file = Serialiser::OpenFile<TextSerialiser>(_filePath, Serialiser::MODE_READ);
+	auto file = Serialiser::OpenFile<TextSerialiser>(_filePath.c_str(), Serialiser::MODE_READ);
 	std::string strName, strVert, strGeo, strFrag;
 
 	file.ConsumeStartBlock();
@@ -937,12 +969,12 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 		}
 	}
 
-	const auto result3 = EGUI::Display::DragFloat("Debug Line Width", &mfDebugLineWidth, 0.01F, 0.F, 10.F);
+	const auto result3 = EGUI::Display::DragFloat("Debug Line Threshold", &mfDebugLineThreshold, 0.01F, 0.F, 10.F);
 
 	switch (result3)
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
-		//EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mfDebugLineWidth);
+		// EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mfDebugLineThreshold);
 		break;
 	case EGUI::eDragStatus::eENTER:
 	case EGUI::eDragStatus::eEND_DRAG:

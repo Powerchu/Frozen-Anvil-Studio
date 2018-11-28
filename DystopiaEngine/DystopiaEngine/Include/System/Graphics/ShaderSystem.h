@@ -16,6 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "DataStructure/MagicArray.h"
 
+#include <map>
+
 
 namespace Dystopia
 {
@@ -26,6 +28,8 @@ namespace Dystopia
 	public:
 
 		~ShaderSystem(void) noexcept;
+
+		void EditorUpdate(void);
 
 
 	private:

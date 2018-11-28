@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Math/Vector4.h"
 #include "Math/MathUtility.h"
+#include "IO/Serialiser.h"
 
 #include <cmath>
 
@@ -453,6 +454,21 @@ inline Math::Vector2 _CALL Math::operator*(Vector2 _lhs, const float _rhs)
 inline Math::Vector2 _CALL Math::operator/(Vector2 _lhs, const float _rhs)
 {
 	return _lhs /= _rhs;
+}
+
+inline std::istream& operator >> (std::istream& _lhs, Math::Vector2& _rhs)
+{
+	_lhs >> _rhs.x;
+	_lhs.ignore(1) >> _rhs.y;
+
+	return _lhs;
+}
+
+inline std::ostream& operator << (std::ostream& _lhs, const Math::Vector2& _rhs)
+{
+	_lhs << _rhs[0] << "," << _rhs[1];
+
+	return _lhs;
 }
 
 

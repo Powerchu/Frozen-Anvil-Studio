@@ -87,20 +87,21 @@ namespace Dystopia
 	{
 	}
 
-	void RigidBody::Load(void)
-	{
-	}
-
-	void RigidBody::Init(void)
+	void RigidBody::Awake(void)
 	{
 		// Get Owner's Transform Component as pointer
 		if (nullptr != GetOwner())
 		{
+			mPrevPosition = mPosition = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+
+			if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
 			mPrevPosition = mPosition = mpOwnerTransform->GetGlobalPosition();
+
 			const auto ColComponents = GetOwner()->GetComponents<Collider>();
-			
+
 			AutoArray<Collider*> ToRet;
 
 			for (auto elem : ColComponents)
@@ -109,12 +110,43 @@ namespace Dystopia
 			}
 
 			mparrCol = Ut::Move(ToRet);
+
+			mOrientation = Math::RotateZ(Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z });
+			mInverseOrientation = Math::AffineInverse(mOrientation);
+			mfAngleDegZ = Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z }.Radians();
+		}
+	}
+
+	void RigidBody::Init(void)
+	{
+		// If mass is zero, object is interpreted to be static
+		// Get Owner's Transform Component as pointer
+		if (nullptr != GetOwner())
+		{
+			mPrevPosition = mPosition = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+
+			if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+
+			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
+			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
+
+
+			const auto ColComponents = GetOwner()->GetComponents<Collider>();
+
+			AutoArray<Collider*> ToRet;
+
+			for (auto elem : ColComponents)
+			{
+				ToRet.push_back(elem);
+			}
+
+			mparrCol = Ut::Move(ToRet);
+
 			mOrientation = Math::RotateZ(Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z });
 			mInverseOrientation = Math::AffineInverse(mOrientation);
 			mfAngleDegZ = Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z }.Radians();
 		}
 
-		// If mass is zero, object is interpreted to be static
 		if (mfMass > 0.0F)
 		{
 			mfInvMass = 1.0F / mfMass;
@@ -167,12 +199,15 @@ namespace Dystopia
 			return; // don't integrate when body is static
 		}
 
+		if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+
+
 		/*********************************************************************
 		 *  Physics 2.0
 		 *  Verlet/Leapfrog method, 2nd order integration
 		 ********************************************************************/
 		 //Store previous Position
-		mPrevPosition = mPosition = P_TX->GetGlobalPosition();
+		mPrevPosition = mPosition = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 		//mfAngleDegZ = Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z }.Radians();
 
 		// Store Rotational Tensors
@@ -257,6 +292,8 @@ namespace Dystopia
 	 */
 	void RigidBody::CheckSleeping(const float _dt)
 	{
+		if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+
 		UNUSED_PARAMETER(_dt); // dt is fixed, so it doesnt matter anyway
 
 		size_t tempContacts = 0;
@@ -325,6 +362,8 @@ namespace Dystopia
 
 	void RigidBody::PreUpdatePosition(float _dt)
 	{
+		if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+
 		mPosition += mLinearVelocity * _dt;
 
 		if (!mbFixedRot)
@@ -336,9 +375,11 @@ namespace Dystopia
 
 	void RigidBody::UpdateResult(float) const
 	{
+		//if (mPosition.x == 0.f)
+			//__debugbreak();
 		// Update Position
-		P_TX->SetGlobalPosition(mPosition);
-		P_TX->SetRotation(Math::Radians{ 0 }, Math::Radians{ 0 }, Math::Degrees{ mfAngleDegZ });
+		GetOwner()->GetComponent<Transform>()->SetGlobalPosition(mPosition);
+		GetOwner()->GetComponent<Transform>()->SetRotation(Math::Radians{ 0 }, Math::Radians{ 0 }, Math::Degrees{ mfAngleDegZ });
 	}
 
 	/*void RigidBody::Update(float _dt)
@@ -351,7 +392,7 @@ namespace Dystopia
 
 	}*/
 
-	void RigidBody::Unload(void)
+	/*void RigidBody::Unload(void)
 	{
 		for (auto& elem : mparrCol)
 		{
@@ -361,13 +402,13 @@ namespace Dystopia
 
 		mpOwnerTransform = nullptr;
 		mpPhysSys = nullptr;
-	}
+	}*/
 
 	RigidBody * RigidBody::Duplicate() const
 	{
 		const auto cc = EngineCore::GetInstance()->GetSystem<PhysicsSystem>()->RequestComponent(*this);
-		cc->SetOwner(GetOwner());
-		cc->Init();
+		//cc->SetOwner(GetOwner());
+		//cc->Init();
 		return cc;
 	}
 
@@ -419,6 +460,8 @@ namespace Dystopia
 
 	void RigidBody::DebugPrint()
 	{
+		if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+
 		if (!mbIsStatic)
 			LoggerSystem::ConsoleLog(eLog::MESSAGE, "transform: (%f,%f) \n X vel: %f, Y vel: %f \n Awake: %i", float(mPosition.x), float(mPosition.y), float(mLinearVelocity.x), float(mLinearVelocity.y), mbIsAwake);
 	}

@@ -19,7 +19,7 @@ namespace Dystopia
 		  , mGravity(400.0F)
 		  , mMaxVelocityConstant(1024.0F)
 		  , mMaxVelSquared(mMaxVelocityConstant * mMaxVelocityConstant)
-		  , mPenetrationEpsilon(0.10F)
+		  , mPenetrationEpsilon(0.01F)
 		  , mfSleepVelEpsilon(1.000F)
 		  , mfSleepBias(0.97F)
 		  , mVelocityIterations(4)
@@ -58,7 +58,8 @@ namespace Dystopia
 					{
 						if (nullptr != col)
 						{
-							col->SetSleeping(!body.GetIsAwake());
+							if (!col->IsTrigger())
+								col->SetSleeping(!body.GetIsAwake());
 						}
 					}
 				}
@@ -70,6 +71,7 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
+			if (nullptr == body.GetOwner())	continue;
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
@@ -92,7 +94,7 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				if (body.Get_IsStaticState()) continue;
+				//if (body.Get_IsStaticState()) continue;
 
 				if (!body.GetOwner()->IsActive()) continue;
 
@@ -120,6 +122,7 @@ namespace Dystopia
 			if (!body.GetOwner()->IsActive()) continue;
 
 			body.PreUpdatePosition(_dt);
+
 		}
 
 		for (int i = 0; i < mPositionalIterations; ++i)
@@ -130,17 +133,22 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				if (body.Get_IsStaticState()) continue;
+				//if (body.Get_IsStaticState()) continue;
 
 				if (!body.GetOwner()->IsActive()) continue;
+
 
 				for (auto col : body.mparrCol)
 				{
 					if (!col->IsTrigger())
 					{
 						auto worstPene = mPenetrationEpsilon;
+
 						for (auto& manifold : col->GetCollisionEvents())
 						{
+							if (manifold.mCollidedWith->GetComponent<Collider>()->IsTrigger())
+								continue;
+
 							if (manifold.mfPeneDepth > worstPene)
 							{
 								const auto worstContact = &manifold;
@@ -148,14 +156,18 @@ namespace Dystopia
 
 								if (nullptr != worstContact)
 								{
+									//manifold.ApplyPenetrationCorrection(mPositionalIterations);
 									worstContact->ApplyPenetrationCorrection(mPositionalIterations);
 								}
 							}
 						}
 					}
 				}
+				//if (body.GetPosition().x == 0.f) __debugbreak();
 			}
 		}
+
+
 	}
 
 	void PhysicsSystem::UpdateResults(float _dt)

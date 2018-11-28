@@ -272,6 +272,7 @@ namespace Dystopia
 			{
 				if(iter.second)
 				{
+					iter.first = iter.second->GetOwnerID();
 					if (auto p = iter.second->GetOwner())
 					{
 						if (p->GetFlag() & eObjFlag::FLAG_EDITOR_OBJ)
@@ -403,13 +404,13 @@ namespace Dystopia
 						{
 							if (BehaviourMetaData[names])
 							{
-								_obj << std::string{ names };
-								_obj.InsertStartBlock(std::string{ names });
+								_obj << names;
+								_obj.InsertStartBlock(names);
 								BehaviourMetaData[names].Serialise(iter.second, _obj, BehaviourHelper::SuperSerialiseFunctor{});
 								_obj.InsertStartBlock("MEMBER VAR");
 							}
 						}
-						_obj << "\"END\"";
+						_obj << "END";
 						_obj.InsertEndBlock("BEHAVIOUR_MEMBER_VARIABLE_BLOCK");
 					}
 				}
@@ -488,7 +489,7 @@ namespace Dystopia
 						{
 							/*GameObject with ID that was serialise could not be found*/
 							/*Remove and delete the Behaviour from mvBehaviourReferences*/
-							::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID);
+							::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID, false);
 						}
 					}
 					break;

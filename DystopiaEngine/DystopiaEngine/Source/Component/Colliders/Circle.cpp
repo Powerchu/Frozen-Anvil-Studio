@@ -42,13 +42,13 @@ namespace Dystopia
 		{
 			mDebugVertices.clear();
 
-			const unsigned numberOfSegments = 25;
+			const unsigned numberOfSegments = 31;
 			const float increment = 2.0f * Math::pi / float(numberOfSegments);
 
 			for (unsigned i = 0; i < numberOfSegments; ++i)
 			{
 				Vec3D vertex = 0.5F * Vec3D{ cosf(increment*i), sinf(increment*i), 0 };
-				mDebugVertices.push_back(Vertex{ vertex.x, vertex.y, 0 });
+				mDebugVertices.EmplaceBack(vertex.x, vertex.y, 0.f);
 			}
 
 			Triangulate();
@@ -61,11 +61,16 @@ namespace Dystopia
 			{
 				/*Create Mesh*/
 				pMeshSys->StartMesh();
-
+				
 				auto const & arr = GetVertexBuffer();
-				for (const auto& i : arr)
+
+				pMeshSys->AddVertex(0,0,0);
+				pMeshSys->AddNormal(0,0,1);
+
+				for (auto i : arr)
 				{
 					pMeshSys->AddVertex(i.x, i.y, i.z);
+					pMeshSys->AddNormal(i.x, i.y, i.z);
 				}
 
 				SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));

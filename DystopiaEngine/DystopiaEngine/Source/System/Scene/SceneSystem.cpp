@@ -24,15 +24,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility/DebugAssert.h"
 #include "Utility/Utility.h"
-
-//#include "Editor/CommandList.h"
-//#include "Editor/Commands.h"
-//#include "Editor/Editor.h"
-//#include "Editor/DefaultFactory.h"
+#include "Utility/GUID.h"
 
 #include "Component/Component.h"
 #include "Component/Transform.h"
 #include "Object/GameObject.h"
+
+#include "Factory/Factory.h"
 
 Dystopia::SceneSystem::SceneSystem(void) :
 	mpCurrScene{ nullptr }, mpNextScene{ nullptr }, mLastSavedData{ "" }, mNextSceneFile{ "" }, mbRestartScene { false }
@@ -106,23 +104,9 @@ Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject_cstr(const char* con
 
 Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const HashString& _prefabName, const Math::Pt3D& _position)
 {
-	if (!mpCurrScene) return false;
-
-	//GameObject *pDupl = Factory::LoadFromPrefab(_prefabName);
-	//if (pDupl)
-	//{
-	//	pDupl->GetComponent<Transform>()->SetPosition(_position);
-	//	auto& obj = *mpCurrScene->InsertGameObject(Ut::Move(*pDupl));
-	//	obj.Identify();
-	//	obj.Awake();
-	//	obj.Init();
-	//	obj.RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
-	//	for (auto& c : obj.GetAllComponents())
-	//		c->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
-	//	delete pDupl;
-	//	return &obj;
-	//}
-	return nullptr;
+	auto obj = EngineCore::GetInstance()->GetSubSystem<Factory>()->SpawnPrefab(_prefabName, _position);
+	obj->GetComponent<Transform>()->SetGlobalPosition(_position);
+	return obj;
 }
 
 void Dystopia::SceneSystem::SceneChanged(void)
@@ -140,7 +124,7 @@ void Dystopia::SceneSystem::SceneChanged(void)
 			EngineCore::GetInstance()->PostUpdate();
 
 			static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
-			auto SerialObj = TextSerialiser::OpenFile(mLastSavedData, TextSerialiser::MODE_READ);
+			auto SerialObj = TextSerialiser::OpenFile(mLastSavedData.c_str(), TextSerialiser::MODE_READ);
 			SerialObj.ConsumeStartBlock();
 			mpCurrScene->Unserialise(SerialObj);
 			SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
@@ -161,7 +145,7 @@ void Dystopia::SceneSystem::SceneChanged(void)
 
 		mpCurrScene = mpNextScene;
 		static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
-		auto SerialObj = TextSerialiser::OpenFile(mNextSceneFile, TextSerialiser::MODE_READ);
+		auto SerialObj = TextSerialiser::OpenFile(mNextSceneFile.c_str(), TextSerialiser::MODE_READ);
 		SerialObj.ConsumeStartBlock();
 		mpNextScene->Unserialise(SerialObj);
 		SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
@@ -182,7 +166,7 @@ void Dystopia::SceneSystem::RestartScene(void)
 
 void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 {
-	TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_READ); // just to check if file valid
+	TextSerialiser::OpenFile(_strFile.c_str(), TextSerialiser::MODE_READ); // just to check if file valid
 
 	mNextSceneFile = _strFile;
 	mpNextScene = new Scene{};
@@ -193,7 +177,7 @@ void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::s
 	static constexpr size_t size = Ut::SizeofList<UsableComponents>::value;
 
 	mpCurrScene->SetSceneName(_strSceneName);
-	auto SerialObj = TextSerialiser::OpenFile(_strFile, TextSerialiser::MODE_WRITE);
+	auto SerialObj = TextSerialiser::OpenFile(_strFile.c_str(), TextSerialiser::MODE_WRITE);
 
 	SerialObj.InsertStartBlock("Scene");
 	mpCurrScene->Serialise(SerialObj);

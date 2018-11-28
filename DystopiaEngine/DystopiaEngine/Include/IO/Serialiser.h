@@ -15,8 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SERIALISER_BASE_H_
 #define _SERIALISER_BASE_H_
 
+#include "DataStructure/HashString.h"
+
 #include <string>
 #include <fstream>
+
 
 namespace Dystopia
 {
@@ -30,7 +33,7 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
 		template <class T>
-		inline static T OpenFile(const std::string&, int = MODE_READ);
+		inline static T OpenFile(const char*, int = MODE_READ);
 
 		virtual ~Serialiser(void) {};
 
@@ -48,8 +51,8 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
-		void InsertEndBlock  (const std::string& = "");
-		void InsertStartBlock(const std::string& = "");
+		void InsertEndBlock  (const char* = "");
+		void InsertStartBlock(const char* = "");
 
 		void ConsumeEndBlock  (void);
 		void ConsumeStartBlock(void);
@@ -73,8 +76,8 @@ namespace Dystopia
 
 		void ReadEndBlock   (void);
 		bool ReadStartBlock (void);
-		void WriteEndBlock  (const std::string&);
-		void WriteStartBlock(const std::string&);
+		void WriteEndBlock  (char const*);
+		void WriteStartBlock(char const*);
 
 		template <typename T>
 		void ApplyRead(T&);
@@ -109,19 +112,19 @@ Serialiser_t& operator >> (Dystopia::SerialiserBase<Serialiser_t>& _file, const 
 
 
 template <class T>
-inline T Dystopia::Serialiser::OpenFile(const std::string& _strFile, int _nFlags)
+inline T Dystopia::Serialiser::OpenFile(const char* _strFile, int _nFlags)
 {
 	return T::OpenFile(_strFile, _nFlags);
 }
 
 template<class Serialiser_t>
-inline void Dystopia::SerialiserBase<Serialiser_t>::InsertEndBlock(const std::string& _strBlockName)
+inline void Dystopia::SerialiserBase<Serialiser_t>::InsertEndBlock(char const* _strBlockName)
 {
 	GetType().WriteEndBlock(_strBlockName);
 }
 
 template<class Serialiser_t>
-inline void Dystopia::SerialiserBase<Serialiser_t>::InsertStartBlock(const std::string& _strBlockName)
+inline void Dystopia::SerialiserBase<Serialiser_t>::InsertStartBlock(char const* _strBlockName)
 {
 	GetType().WriteStartBlock(_strBlockName);
 }
@@ -184,12 +187,12 @@ inline bool Dystopia::SerialiserBase<Serialiser_t>::ReadStartBlock(void)
 }
 
 template<class Serialiser_t>
-inline void Dystopia::SerialiserBase<Serialiser_t>::WriteEndBlock(const std::string &)
+inline void Dystopia::SerialiserBase<Serialiser_t>::WriteEndBlock(char const*)
 {
 }
 
 template<class Serialiser_t>
-inline void Dystopia::SerialiserBase<Serialiser_t>::WriteStartBlock(const std::string &)
+inline void Dystopia::SerialiserBase<Serialiser_t>::WriteStartBlock(char const*)
 {
 }
 

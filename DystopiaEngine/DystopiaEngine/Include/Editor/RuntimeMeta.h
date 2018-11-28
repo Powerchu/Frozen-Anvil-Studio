@@ -10,17 +10,18 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#if EDITOR
 #ifndef _RUNTIME_META_H_
 #define _RUNTIME_META_H_
 
 #include <functional>
 #include <string>
 
+#if EDITOR
 #include "Editor/EGUI.h"
 #include "Editor/EditorMain.h"
 #include "Editor/EditorCommands.h"
 #include "EGUI.h"
+#endif
 
 #include "DataStructure/Array.h"
 
@@ -91,17 +92,15 @@ namespace Dystopia
 		static Component* Get(GameObject* _pRequester)
 		{
 			C* pComponent = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent(); 
+#if EDITOR
 			::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->AddComponent<C>(_pRequester->GetID(), pComponent);
-			//pComponent->SetOwner(_pRequester);
-			//pComponent->SetActive(_pRequester->IsActive());
-			//pComponent->Awake();
+#endif 
 			return pComponent;
 		}
+
 		static Component* GetA(GameObject* _pRequester)
 		{
 			C* pComponent = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent();
-			//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->AddComponent<C>(_pRequester->GetID(), pComponent);
-			//pComponent->SetOwner(_pRequester);
 			pComponent->SetActive(_pRequester->IsActive());
 			pComponent->Awake();
 			return pComponent;
@@ -109,17 +108,13 @@ namespace Dystopia
 
 		static bool RemoveC(GameObject* _pOwner)
 		{
-			//C* pComponent = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent();
-			//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->AddComponent<C>(_pRequester->GetID(), pComponent);
-			//pComponent->SetOwner(_pRequester);
-			//pComponent->SetActive(_pRequester->IsActive());
-			//pComponent->Awake();
-
 			C* pComponent = _pOwner->GetComponent<C>();
 			if (!pComponent)
 				return false;
 
+#if EDITOR
 			::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->RemoveComponent<C>(_pOwner->GetID(), pComponent);
+#endif 
 			return true;
 		}
 
@@ -239,6 +234,11 @@ namespace Dystopia
 			{
 				static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->InitComponents();
 			}
+
+			static void InitDonor(const uint64_t& _object)
+			{
+				static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->InitComponent(_object);
+			}
 		};
 
 		static void InitDonors(void)
@@ -248,6 +248,15 @@ namespace Dystopia
 
 			for (size_t i = 0; i < sizeof...(Ns); ++i)
 				SystemArray[i]();
+		}
+
+		static void InitDonors(const uint64_t& _object)
+		{
+			static auto SystemArray = Ctor::MakeArray<void(*)(const uint64_t&)>(
+				static_cast<void(*)(const uint64_t&)>(&SystemFunction<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::InitDonor) ...);
+
+			for (size_t i = 0; i < sizeof...(Ns); ++i)
+				SystemArray[i](_object);
 		}
 
 		static void Serialise(TextSerialiser& _out)
@@ -270,6 +279,7 @@ namespace Dystopia
 	};
 
 
+#if EDITOR
 	struct SuperReflectFunctor
 	{
 		template<typename T, typename Settor>
@@ -421,12 +431,11 @@ namespace Dystopia
 		}
 
 	};
+#endif
 }
 
 
 #endif
-#endif
-
 
 
 
