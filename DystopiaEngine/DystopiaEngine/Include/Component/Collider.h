@@ -159,13 +159,16 @@ namespace Dystopia
 		void SetSleeping(bool _b);
 		void SetTrigger(bool _b);
 		void SetLocalPosition(Math::Point3D const & _point);
+		void SetRotation(Math::Quaternion const & _rot);
 		void ClearCollisionEvent();
 		void ClearCurrentCollisionEvent();
 		void RemoveCollisionEvent(unsigned long long _OtherID);
 		void InformOtherComponents(bool _isColliding, CollisionEvent const & _Event);
 		void InformOtherComponents();
+
 		// Gettors
 		virtual Math::Point3D GetGlobalPosition() const;
+		virtual Math::Quaternion GetGlobalRotation() const;
 		Math::Vec3D           GetOffSet()   const;
 		bool                  HasCollision() const;
 		bool				  IsTrigger() const;
@@ -223,8 +226,8 @@ namespace Dystopia
 
 		
 		/*Matrix*/
-		Math::Matrix3D mOwnerTransformation;
-		Math::Quaternion     mRotation;
+		Math::Matrix3D		mOwnerTransformation;
+		Math::Quaternion    mRotation;
 #if EDITOR
 
 #endif

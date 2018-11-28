@@ -124,6 +124,14 @@ namespace Dystopia
 				}
 			}
 		};
+
+		class Limiter : public Decorator
+		{
+		public:
+
+		private:
+			unsigned maxCount;
+		};
 	}
 }
 

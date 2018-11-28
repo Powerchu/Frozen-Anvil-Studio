@@ -140,19 +140,23 @@ namespace Dystopia
 					if (!col->IsTrigger())
 					{
 						auto worstPene = mPenetrationEpsilon;
+
 						for (auto& manifold : col->GetCollisionEvents())
 						{
-							//if (manifold.mfPeneDepth > worstPene)
-							//{
-								//const auto worstContact = &manifold;
-								//worstPene = manifold.mfPeneDepth;
+							if (manifold.mCollidedWith->GetComponent<Collider>()->IsTrigger())
+								continue;
 
-								//if (nullptr != worstContact)
-								//{
-									manifold.ApplyPenetrationCorrection(mPositionalIterations);
-									//worstContact->ApplyPenetrationCorrection(mPositionalIterations);
-								//}
-							//}
+							if (manifold.mfPeneDepth > worstPene)
+							{
+								const auto worstContact = &manifold;
+								worstPene = manifold.mfPeneDepth;
+
+								if (nullptr != worstContact)
+								{
+									//manifold.ApplyPenetrationCorrection(mPositionalIterations);
+									worstContact->ApplyPenetrationCorrection(mPositionalIterations);
+								}
+							}
 						}
 					}
 				}

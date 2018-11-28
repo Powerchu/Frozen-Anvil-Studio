@@ -50,30 +50,46 @@ namespace Dystopia
 		/*Constructor*/
 		AABB(float const & _width, float const & _height, Math::Vec3D const & _v3Offset = { 0,0,0,0 });
 
-		/*Load the Component*/
-		void Load(void);
+		void Awake() override;
 		/*Initialise the Component*/
-		void Init(void);
+		void Init(void) override;
+		/*Update Frame*/
+		void Update(float) override;
+
+		void EditorUI() noexcept override final ;
+
 		/*OnDestroy*/
-		void OnDestroy(void);
-		/*Unload the Component*/
-		void Unload(void);
+		void OnDestroy(void) override;
+
 		/*Duplicate the Component*/
-		virtual AABB* Duplicate() const;
+		AABB* Duplicate() const override;
 
 		/*Serialise and Unserialise*/
 		void Serialise(TextSerialiser&) const override;
-		void Unserialise(TextSerialiser& override);
+		void Unserialise(TextSerialiser& _in) override;
+
+		void Recompute();
 
 		/*Collision Check Functions*/
-		bool isColliding(AABB & other_col);
-		bool isColliding(AABB * const & other_col);
+
+		/* AABB - AABB Collision*/
+		bool isColliding(AABB & _ColB);
+		bool isColliding(AABB * const & _ColB);
+
+		/* AABB - Point Collision*/
+		bool isColliding(const Math::Pt3D& _point);
+		bool isColliding(Math::Pt3D * const & _point);
+		bool isColliding(const Math::Mat3D _ownerTrans, const Math::Mat3D _transMat,
+						 const Math::Vec3D _offset, const Math::Pt3D _point);
+
 
 		/* Gettors */
 		float GetWidth() const;
 		float GetHeight() const;
 		float GetHalfWidth() const;
 		float GetHalfHeight() const;
+		void eIsTriggerCheckBox();
+		void ePositionOffsetVectorFields();
 
 	private:
 		float mfWidth;

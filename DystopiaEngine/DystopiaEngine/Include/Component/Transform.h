@@ -57,6 +57,9 @@ namespace Dystopia
 		void SetScale(const Math::Vec4& _vScale);
 		void SetScale(const float _fScaleX, const float _fScaleY, const float _fScaleZ);
 
+		void SetGlobalScale(const Math::Vec4 & _vScale);
+		void SetGlobalScale(const float _fScaleX, const float _fScaleY, const float _fScaleZ);
+
 		void SetPosition(const Math::Point3D&);
 		void SetPosition(const float _x, const float _y, const float _z);
 
