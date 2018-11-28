@@ -539,6 +539,7 @@ namespace EGUI
 
 			if (_defaulPeeken)
 				flags |= ImGuiTreeNodeFlags_DefaultOpen;
+
 			bool ret = ImGui::TreeNode(_label.c_str(), _outClicked, flags);
 
 			if (_highlighted)

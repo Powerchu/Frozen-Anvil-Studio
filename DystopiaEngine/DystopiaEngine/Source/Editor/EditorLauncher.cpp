@@ -190,6 +190,7 @@ void Editor::EditorLauncher::TopBar(float _w, float _h)
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + subHeight * 0.45f);
 
+
 	ImGui::BeginChild("SubButton1", ImVec2{ w1 + 2.f , subHeight * 0.7f }, true);
 	if (InvisibleBtn("Projects", w1, subHeight * 0.6f, mbProjectView))
 	{
@@ -209,6 +210,11 @@ void Editor::EditorLauncher::TopBar(float _w, float _h)
 	if (ImGui::IsItemHovered())
 		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 	ImGui::EndChild();
+
+	ImGui::SameLine(0, spacing * 18.f);
+
+	ImGui::TextColored({ 1.f,1.f,1.f,1.f }, "DYSTOPIA ENGINE");
+
 
 	ImGui::EndChild();
 	ImGui::PopStyleVar(2);
@@ -251,7 +257,7 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 		ImGui::PopStyleVar();
 
 		ImGui::SameLine();
-		float leftSectionW = w * 0.23f - ImGui::GetStyle().WindowPadding.x;
+		float leftSectionW = w * 0.22f - ImGui::GetStyle().WindowPadding.x;
 		ImGui::BeginChild("Launch", ImVec2{ leftSectionW, sectionH }, true);
 		BrowseProject(leftSectionW, sectionH);
 		OpenProject(leftSectionW, sectionH);
@@ -376,6 +382,7 @@ bool Editor::EditorLauncher::ProjectDetails(const HashString& _path, float _w, f
 	HashString path{ _path.cbegin(), _path.cbegin() + pos };
 	HashString name{ _path.cbegin() + pos + 1, _path.cend() };
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 5.f,0 });
+
 	ImGui::BeginChild(_path.c_str(), ImVec2{ width, fixedH }, true);
 	{
 		auto startingPos = ImGui::GetCursorPos();
@@ -391,7 +398,7 @@ bool Editor::EditorLauncher::ProjectDetails(const HashString& _path, float _w, f
 		EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(2);
 		ImGui::Text(name.c_str());
 		EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
-		ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImGuiCol_TextDisabled));
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.6f,0.6f,0.6f,1.0f });
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7.f);
 		ImGui::Text("Path: ");
 		ImGui::SameLine();
@@ -453,6 +460,7 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
 	bool active = (strlen(mNameBuffer) && strlen(mLocBuffer));
+
 	EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(2);
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
@@ -462,8 +470,12 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 		if (!active)
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, g_inactiveAlpha);
 
+		EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(1);
+
 		if (ImGui::ButtonEx("Create", ImVec2{ btnX, btnY }, active ? 0 : ImGuiButtonFlags_Disabled))
 		{
+			EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
+
 			const auto& fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
 			bool firstF = true;
 			unsigned failCount = 1;
@@ -553,8 +565,10 @@ bool Editor::EditorLauncher::SelectableProjects(const char* _btn, float _x, floa
 	ImVec4 defCol = ImGui::GetStyleColorVec4(ImGuiCol_Button);
 	defCol.w = _highlight ? defCol.w : 0.f;
 	ImGui::PushStyleColor(ImGuiCol_Button, defCol);
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.4f,0.05f,0.05f,0.75f });
 	const ImU32 col = ImGui::GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
 	ImGui::RenderFrame(bb.Min, bb.Max, col);
+	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
 	if (hovered)
 		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -564,11 +578,13 @@ bool Editor::EditorLauncher::SelectableProjects(const char* _btn, float _x, floa
 void Editor::EditorLauncher::OpenProject(float _w, float)
 {
 	static constexpr float btnH = 30;
+	float offsetX = (4 * ImGui::GetStyle().WindowPadding.x);
+
 	bool active = (mCurrentlySelected != -1);
 	if (!active)
 		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, g_inactiveAlpha);
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
-	if (ImGui::ButtonEx("Open", ImVec2{ _w - (2 * ImGui::GetStyle().WindowPadding.x), btnH }, active ? 0 : ImGuiButtonFlags_Disabled))
+	if (ImGui::ButtonEx("Open", ImVec2{ _w - (2 * ImGui::GetStyle().WindowPadding.x) - offsetX, btnH }, active ? 0 : ImGuiButtonFlags_Disabled))
 	{
 		mProjFolderSelected = mArrProjFolders[mCurrentlySelected];
 
@@ -587,13 +603,16 @@ void Editor::EditorLauncher::OpenProject(float _w, float)
 
 void Editor::EditorLauncher::BrowseProject(float _w, float _h)
 {
-	static constexpr float btnH = 30;
-	float offset = (2*btnH) + (4 * ImGui::GetStyle().WindowPadding.y);
+	static constexpr float btnH = 35;
+	float offsetY = (2*btnH) + (4 * ImGui::GetStyle().WindowPadding.y);
+	float offsetX = (4 * ImGui::GetStyle().WindowPadding.x);
 
-	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + _h - offset);
+
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + _h - offsetY);
+	//ImGui::SetCursorPosX(ImGui::GetCursorPosX() - offsetX);
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
-	if (ImGui::ButtonEx("Browse...", ImVec2{ _w - (2 * ImGui::GetStyle().WindowPadding.x), btnH }))
+	if (ImGui::ButtonEx("Browse...", ImVec2{ _w - (2 * ImGui::GetStyle().WindowPadding.x) - offsetX, btnH }))
 	{
 		Dystopia::EditorProc p;
 		HashString projectLoaded;

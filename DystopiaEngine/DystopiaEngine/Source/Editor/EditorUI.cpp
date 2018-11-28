@@ -38,6 +38,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 HCURSOR g_CursorTypes[8];
 const char* const g_mainDockName = "MainDock";
 const char* const g_fontType = "../Dependancies/ImGui/Fonts/RalewayLight.ttf";
+const char* const g_fontType_alt = "../Dependancies/ImGui/Fonts/Montserrat.ttf";
+const char* const g_fontType_mono = "../Dependancies/ImGui/Fonts/RobotoMono-Regular.ttf";
 
 Editor::EditorUI::EditorUI(void)
 	: mGLState{}, mMouseJustPressed{ false, false ,false }, mShaderHandle{}, mVertHandle{}, mFragHandle{}, 
@@ -378,8 +380,8 @@ void Editor::EditorUI::DefaultFont(void)
 	ImGuiIO& io = ImGui::GetIO();
 	unsigned char* pixels;
 	int width, height;
-	io.Fonts->AddFontFromFileTTF(g_fontType, FONT_MINI);
-	io.Fonts->AddFontFromFileTTF(g_fontType, FONT_SMALL);
+	io.Fonts->AddFontFromFileTTF(g_fontType_mono, FONT_MINI);
+	io.Fonts->AddFontFromFileTTF(g_fontType_alt, FONT_SMALL);
 	io.Fonts->AddFontFromFileTTF(g_fontType, FONT_MEDIUM);
 	io.Fonts->AddFontFromFileTTF(g_fontType, FONT_LARGE);
 	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);		// Load as RGBA 32-bits (75% of the memory is wasted, but default font is so small) because it is 

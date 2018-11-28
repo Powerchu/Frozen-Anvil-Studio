@@ -182,9 +182,15 @@ namespace Editor
 		for (unsigned int i = 0; i < arrComp.size(); ++i)
 		{
 			EGUI::PushID(i);
+
 			EGUI::Display::HorizontalSeparator();
-			bool open = EGUI::Display::StartTreeNode(arrComp[i]->GetEditorName() + "##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, true);
+
+			//bool test = true;
+			//EGUI::Display::CheckBox("Component Active", &test, false);
+
+			bool open = EGUI::Display::StartTreeNode(arrComp[i]->GetEditorName() + "##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, false);
 			bool show = !RemoveComponent(arrComp[i]);
+
 			if (open)
 			{
 				if (show)	
@@ -200,7 +206,7 @@ namespace Editor
 			EGUI::Display::HorizontalSeparator();
 			if (!c)
 				continue;
-			bool open = EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } +"##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, true);
+			bool open = EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } +"##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, false);
 			bool show = !RemoveComponent(c);
 			if (open)
 			{
