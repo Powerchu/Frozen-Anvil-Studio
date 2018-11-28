@@ -526,7 +526,7 @@ namespace EGUI
 
 		bool StartTreeNode(const std::string&_label, bool* _outClicked, bool _highlighted, bool _noArrow, bool _defaulPeeken, bool _singleClickOpen)
 		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_AllowItemOverlap;
 			flags = _highlighted ? flags | ImGuiTreeNodeFlags_Selected : flags;
 			flags = _noArrow ? flags | ImGuiTreeNodeFlags_Leaf : flags;
 			flags = _singleClickOpen ? flags : flags | ImGuiTreeNodeFlags_OpenOnDoubleClick;
