@@ -128,8 +128,6 @@ namespace Editor
 
 	void ProjectResource::EditorUI(void)
 	{
-		Dystopia::ScopedTimer<Dystopia::ProfilerAction> scopeT{ "Project Resource", "Editor UI" };
-
 		if (mResetToFile.length())
 		{
 			FocusOnFile(mResetToFile);
@@ -257,8 +255,6 @@ namespace Editor
 
 	void ProjectResource::FileWindow(const Math::Vec2& _mySize)
 	{
-		Dystopia::ScopedTimer<Dystopia::ProfilerAction> scopeT{ "Project Resource", "FileWindow" };
-
 		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.5f };
 		unsigned int columns = static_cast<unsigned int>(_mySize.x / buffedSize.x);
 		columns = columns ? columns : 1 ;

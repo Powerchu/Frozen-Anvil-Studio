@@ -22,6 +22,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <tchar.h>
 #include <string>
 
+#include "System/Graphics/Texture.h"
+#include "System/Graphics/GraphicsSystem.h"
+#include "System/Driver/Driver.h"
+
 namespace Editor//Dystopia::
 {
 	EGUI::ePayloadTags DeterminePathType(const HashString& _path)
@@ -53,7 +57,7 @@ namespace Editor//Dystopia::
 	}
 
 	CrawlItem::CrawlItem(const HashString& _name, const HashString& _path)
-		: mName{ _name }, mPath{ _path }, mLowerCaseName{ mName }
+		: mName{ _name }, mPath{ _path }, mLowerCaseName{ mName }, mpImgData{nullptr}
 	{
 		std::string temp{ mLowerCaseName.cbegin(), mLowerCaseName.cend() };
 		std::string temp2 = temp;
@@ -130,7 +134,8 @@ namespace Editor//Dystopia::
 
 	File::File(const HashString& _name, const HashString& _path, Folder * const _parent)
 		: CrawlItem{ _name, _path }, mpParentFolder{ _parent }, mTag{ DetermineTag(_name) }
-	{}
+	{
+	}
 
 	File::~File()
 	{

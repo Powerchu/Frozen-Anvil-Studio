@@ -89,6 +89,7 @@ namespace Editor //Dystopia
 		HashString mName;
 		HashString mPath;
 		HashString mLowerCaseName;
+		void* mpImgData;
 	};
 
 	struct Folder;

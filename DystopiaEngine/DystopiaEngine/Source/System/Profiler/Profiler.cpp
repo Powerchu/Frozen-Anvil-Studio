@@ -146,7 +146,10 @@ void Dystopia::Profiler::Update(float)
 void Dystopia::Profiler::PostUpdate(void)
 {
 	for (auto& e : mData)
+	{
+		e.second.mTotal = 0;
 		e.second.Clear();
+	}
 }
 
 void Dystopia::Profiler::Shutdown(void)

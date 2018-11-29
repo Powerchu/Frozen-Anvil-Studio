@@ -26,6 +26,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Texture.h"
 #include "System/Graphics/GraphicsSystem.h"
 
+#include "System/Time/ScopedTimer.h"
+#include "System/Profiler/Profiler.h"
+#include "System/Profiler/ProfilerAction.h"
+
 #include "../../Dependancies/ImGui/imgui_internal.h"
 
 namespace EGUI
@@ -641,7 +645,13 @@ namespace EGUI
 		{
 			auto originalPos = ImGui::GetCursorPos();
 
-			auto img = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>()->LoadTexture(static_cast<::Editor::File*>(_pData)->mPath.c_str());
+			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope{ "FULL ", "0" };
+
+			auto pFile = static_cast<::Editor::File*>(_pData);
+			if (!pFile->mpImgData)
+				pFile->mpImgData = static_cast<void*>(Dystopia::EngineCore::Get<Dystopia::GraphicsSystem>()->LoadTexture(pFile->mPath.c_str()));
+			auto img = static_cast<Dystopia::Texture*>(pFile->mpImgData);
+
 			size_t id = static_cast<size_t>(img->GetID());
 			float imageMaxHeight = _displaySize.y * 0.75f;
 			float imageMaxWidth = _displaySize.x * 0.9f;
@@ -652,13 +662,22 @@ namespace EGUI
 			float sy = imageMaxHeight;
 			auto mImgSize = (sx / sy) > (ix / iy) ? Math::Vec2{ ix * (sy / iy), sy } :
 													Math::Vec2{ sx, iy * (sx / ix) };
-
 			auto posImage = Math::Vec2{ (sx - mImgSize.x) / 2, (sy - mImgSize.y) / 2 };
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
+
+			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope1{ "FIRST ", "1" };
+
 			HashString invi{ "##CPLBtnI" };
-			invi += _uniqueId;
+
+			{
+				Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope2{ "+=", "2" };
+				invi += _uniqueId;
+			}
+
+			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope3{ "THIRD", "3" };
+
 			bool btn = ImGui::Button(invi.c_str(), _displaySize);
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
 			ImGui::PopStyleColor();
@@ -666,7 +685,7 @@ namespace EGUI
 			if (payload) EndPayload();
 
 			ImGui::SetCursorPos(ImVec2{ originalPos.x + posImage.x + _displaySize.x * 0.05f, originalPos.y + posImage.y });
-			ImGui::Image(reinterpret_cast<void*>(id), ImVec2{ mImgSize.x, mImgSize.y});
+			ImGui::Image(reinterpret_cast<void*>(id), ImVec2{ mImgSize.x, mImgSize.y });
 			ImGui::SetCursorPos(ImVec2{ originalPos.x + 1, originalPos.y + imageMaxHeight });
 			ImGui::TextWrapped(_label);
 			return btn;

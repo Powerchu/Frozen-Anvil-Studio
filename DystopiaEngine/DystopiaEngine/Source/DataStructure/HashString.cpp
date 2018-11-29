@@ -21,6 +21,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 HashID StringHasher(const char* _s)
 {
+	if (!_s)
+		return 0;
+
 	HashID hash = OFFSET_BASIS;
 	size_t len = strlen(_s) + 1;
 	for (size_t i = 0; i < len; ++i)
@@ -33,44 +36,49 @@ HashID StringHasher(const char* _s)
 
 /* constructors */
 HashString::HashString(void)
-	: mHashedID{ 0 }, mCharBuffer{ nullptr }, mSize{ 0 }
+	: mHashedID{ 0 }, mCharBuffer{ nullptr }, mSize{ 0 }, mbRehash{false}
 {}
 
 HashString::HashString(const HashString& _rhs)
 	: mHashedID{ _rhs.mHashedID }, mCharBuffer{ _rhs.mSize ? Dystopia::DefaultAllocator<char[]>::Alloc(_rhs.mSize + 1) : nullptr },
-	mSize{ _rhs.mSize }
+	mSize{ _rhs.mSize }, mbRehash{ false }
 {
 	if (mSize)
 	{
 		strcpy_s(mCharBuffer, _rhs.mSize + 1, _rhs.mCharBuffer);
+		mbRehash = true;
 	}
 }
 
 HashString::HashString(HashString&& _rhs) noexcept
-	: mHashedID{ _rhs.mHashedID }, mCharBuffer{ _rhs.mCharBuffer }, mSize{ _rhs.mSize }
+	: mHashedID{ _rhs.mHashedID }, mCharBuffer{ _rhs.mCharBuffer }, mSize{ _rhs.mSize }, mbRehash{ _rhs.mbRehash }
 {
 	_rhs.mHashedID = 0;
 	_rhs.mCharBuffer = nullptr;
 	_rhs.mSize = 0;
+	_rhs.mbRehash = true;
 }
 
 HashString::HashString(const char * const _s)
-	: mHashedID{ _s ? StringHasher(_s) : 0 }, mCharBuffer{ _s ? Dystopia::DefaultAllocator<char[]>::Alloc(strlen(_s) + 1) : nullptr },
-	mSize{ _s ? strlen(_s) : 0 }
+	: mHashedID{/* _s ? StringHasher(_s) :*/ 0 }, mCharBuffer{ _s ? Dystopia::DefaultAllocator<char[]>::Alloc(strlen(_s) + 1) : nullptr },
+	mSize{ _s ? strlen(_s) : 0 }, mbRehash{ false } 
 {
 	if (_s)
+	{
 		strcpy_s(mCharBuffer, mSize + 1, _s);
+		mbRehash = true;
+	}
 }
 
 HashString::HashString(const char * const _start, const char* const _end)
 	: mHashedID{ 0 }, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(_end - _start + 1) },
-	mSize{ static_cast<size_t>(_end - _start) }
+	mSize{ static_cast<size_t>(_end - _start) }, mbRehash{ true }
 {
 	size_t i = 0;
 	while (i < mSize)
 		mCharBuffer[i++] = *(_start + i);
 	mCharBuffer[i] = '\0';
-	mHashedID = StringHasher(mCharBuffer);
+	//mHashedID = StringHasher(mCharBuffer);
 }
 
 HashString::~HashString(void)
@@ -87,6 +95,7 @@ HashString& HashString::operator=(const HashString& _rhs)
 	mCharBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(_rhs.mSize + 1);
 	strcpy_s(mCharBuffer, _rhs.mSize + 1, _rhs.mCharBuffer);
 	mSize = _rhs.mSize;
+	mbRehash = _rhs.mbRehash;
 	return *this;
 }
 
@@ -95,6 +104,7 @@ HashString& HashString::operator=(HashString&& _rhs) noexcept
 	Ut::Swap(mCharBuffer, _rhs.mCharBuffer);
 	Ut::Swap(mHashedID, _rhs.mHashedID);
 	Ut::Swap(mSize, _rhs.mSize);
+	Ut::Swap(mbRehash, _rhs.mbRehash);
 	return *this;
 }
 
@@ -106,6 +116,7 @@ HashString& HashString::operator=(const char * _s)
 	mCharBuffer = temp.mCharBuffer;
 	mSize = temp.mSize;
 	mHashedID = temp.mHashedID;
+	mbRehash = temp.mbRehash;
 	temp.mCharBuffer = nullptr;
 	return *this;
 }
@@ -133,7 +144,8 @@ HashString& HashString::operator=(const wchar_t *_s)
 		mSize++;
 	}
 	*buffer = '\0';
-	mHashedID = StringHasher(mCharBuffer);
+	mbRehash = true;
+	//mHashedID = StringHasher(mCharBuffer);
 	return *this;
 }
 
@@ -154,7 +166,8 @@ void HashString::clear(void)
 	mCharBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(1);
 	*mCharBuffer = '\0';
 	mSize = 0;
-	mHashedID = StringHasher(mCharBuffer);
+	mbRehash = true;
+	//mHashedID = StringHasher(mCharBuffer);
 }
 
 /* element access */
@@ -211,7 +224,8 @@ HashString& HashString::operator+=(const char * _s)
 	mSize += otherSize;
 	Dystopia::DefaultAllocator<char[]>::Free(mCharBuffer);
 	mCharBuffer = buffer;
-	mHashedID = StringHasher(mCharBuffer);
+	mbRehash = true;
+	//mHashedID = StringHasher(mCharBuffer);
 	return *this;
 }
 
@@ -234,7 +248,8 @@ HashString& HashString::operator+=(const char _c)
 	mSize += 1;
 	Dystopia::DefaultAllocator<char[]>::Free(mCharBuffer);
 	mCharBuffer = buffer;
-	mHashedID = StringHasher(mCharBuffer);
+	mbRehash = true;
+	//mHashedID = StringHasher(mCharBuffer);
 	return *this;
 }
 
@@ -283,7 +298,8 @@ HashString& HashString::erase(size_t _pos, size_t _len)
 		}
 	}
 	mSize -= pad;
-	mHashedID = StringHasher(mCharBuffer);
+	mbRehash = true;
+	//mHashedID = StringHasher(mCharBuffer);
 	return *this;
 }
 
@@ -323,7 +339,9 @@ HashString& HashString::replace(size_t _pos, size_t _len, const HashString& _rhs
 	char *it = mCharBuffer;
 	while (*it++ != '\0')
 		mSize++;
-	mHashedID = StringHasher(mCharBuffer);
+
+	mbRehash = true;
+	//mHashedID = StringHasher(mCharBuffer);
 	return *this;
 }
 
@@ -424,11 +442,17 @@ size_t HashString::rfind(char _c, size_t _pos) const
 
 bool HashString::compare(const HashString& _rhs) const
 {
+	if (_rhs.mbRehash)
+		const_cast<HashString*>(&_rhs)->Rehash();
+	if (mbRehash)
+		const_cast<HashString*>(this)->Rehash();
 	return (mHashedID == _rhs.mHashedID);
 }
 
 bool HashString::compare(const char* _s) const
 {
+	if (mbRehash)
+		const_cast<HashString*>(this)->Rehash();
 	return (mHashedID == StringHasher(_s));
 }
 
@@ -520,7 +544,20 @@ char* const HashString::last(void)
 
 HashID HashString::id(void) const
 {
+	if (mbRehash)
+		const_cast<HashString*>(this)->Rehash();
 	return mHashedID;
+}
+
+bool HashString::NeedRehash(void) const
+{
+	return mbRehash;
+}
+
+void HashString::Rehash(void) const
+{
+	const_cast<HashString*>(this)->mbRehash = false;
+	const_cast<HashString*>(this)->mHashedID = StringHasher(mCharBuffer);
 }
 
 bool operator==(const HashString& _lhs, const HashString& _rhs)
@@ -546,6 +583,21 @@ bool operator==(HashID _id, const HashString& _rhs)
 bool operator==(const HashString& _lhs, HashID _id)
 {
 	return _lhs.id() == _id;
+}
+
+bool operator==(HashString&& _lhs, HashString&& _rhs)
+{
+	return _lhs.id() == _rhs.id();
+}
+
+bool operator==(const HashString& _lhs, HashString&& _rhs)
+{
+	return _lhs.id() == _rhs.id();
+}
+
+bool operator==(HashString&& _lhs, const HashString& _rhs)
+{
+	return _lhs.id() == _rhs.id();
 }
 
 bool operator!=(const HashString& _lhs, const HashString& _rhs)
