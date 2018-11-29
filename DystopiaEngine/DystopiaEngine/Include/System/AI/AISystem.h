@@ -48,8 +48,6 @@ namespace Dystopia
 		void LoadSettings(DysSerialiser_t&) override;
 		void SaveSettings(DysSerialiser_t&) override;
 
-		void ReceiveMessage(const eSysMessage&) override;
-
 		void EditorUI(void);
 
 #if EDITOR

@@ -61,11 +61,6 @@ namespace Dystopia
 	{
 	}
 
-	void AISystem::ReceiveMessage(const eSysMessage& _msg)
-	{
-
-	}
-
 	void AISystem::EditorUI()
 	{
 

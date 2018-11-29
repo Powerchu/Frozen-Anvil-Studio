@@ -392,6 +392,12 @@ void Editor::EditorMain::ExternalFile(const HashString& _p)
 	}
 }
 
+void Editor::EditorMain::ExternalFile(const AutoArray<HashString>& _arr)
+{
+	for (auto& e : _arr)
+		ExternalFile(e);
+}
+
 #endif
 
 

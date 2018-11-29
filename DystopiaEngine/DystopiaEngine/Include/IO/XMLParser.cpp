@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	XMLParser.h
+\file	XMLParser.cpp
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
@@ -11,47 +11,32 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _TEXT_SERIALISER_H_
-#define _TEXT_SERIALISER_H_
+#include "XMLParser.h"
+#include "Allocator/DefaultAlloc.h"
 
-#include "IO/Serialiser.h"
-#include "DataStructure/AutoArray.h"
+#include <fstream>
 
 
-namespace Dystopia
+void Dystopia::XMLParser::Parse(char const* _strFile)
 {
-	class NodeXML
+	using ios = std::ios;
+	using Alloc_t = Dystopia::DefaultAllocator<char[]>;
+	std::basic_ifstream<char> file{ _strFile, ios::binary };
+
+	if (file.bad())
 	{
-	public:
+		__debugbreak();
+		return;
+	}
 
+	file.seekg(0, ios::end);
+	auto sz = static_cast<size_t>(file.tellg());
+	char* buf = Alloc_t::Alloc(1 + sz);
 
-	private:
-		AutoArray<NodeXML> children;
-	};
+	file.seekg(0);
+	file.read(buf, sz);
+	buf[sz] = '\0';
 
-	class XMLParser
-	{
-	public:
-
-		static void Parse(const char*);
-
-	private:
-
-		explicit XMLParser(const char*);
-
-	};
+	file.close();
 }
-
-
-
-
-
-
-// ============================================ FUNCTION DEFINITIONS ============================================ // 
-
-
-// Here
-
-
-#endif		// INCLUDE GUARD
 
