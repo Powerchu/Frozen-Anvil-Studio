@@ -55,10 +55,11 @@ HashString::HashString(HashString&& _rhs) noexcept
 }
 
 HashString::HashString(const char * const _s)
-	: mHashedID{ StringHasher(_s) }, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(strlen(_s) + 1) },
-	mSize{ strlen(_s) }
+	: mHashedID{ _s ? StringHasher(_s) : 0 }, mCharBuffer{ _s ? Dystopia::DefaultAllocator<char[]>::Alloc(strlen(_s) + 1) : nullptr },
+	mSize{ _s ? strlen(_s) : 0 }
 {
-	strcpy_s(mCharBuffer, mSize + 1, _s);
+	if (_s)
+		strcpy_s(mCharBuffer, mSize + 1, _s);
 }
 
 HashString::HashString(const char * const _start, const char* const _end)

@@ -174,7 +174,7 @@ void Dystopia::Renderer::EditorUI(void) noexcept
 void Dystopia::Renderer::TextureField()
 {
 	::Editor::File *t = nullptr;
-	EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName() : "-empty-", true);
+	EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
 	auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 	t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
 	if (t)  EGUI::Display::EndPayloadReceiver();
@@ -225,7 +225,7 @@ void Dystopia::Renderer::TextureField()
 
 void Dystopia::Renderer::MeshField()
 {
-	if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName() : "", true))
+	if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName().c_str() : "", true))
 	{
 
 	}

@@ -134,7 +134,7 @@ namespace Editor
 
 		EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
 		EGUI::SameLine(10);
-		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 60 }, false, Math::Vec4{ 0,0,0,0 }))
+		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 60 }, false))
 		{
 			EGUI::SameLine();
 			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 223.f) && strlen(buffer))
@@ -176,8 +176,10 @@ namespace Editor
 		EGUI::Display::HorizontalSeparator();
 
 		Dystopia::Transform& tempTransform = *mpFocus->GetComponent<Dystopia::Transform>();
-		if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName() + "##" +
-			std::to_string(mpFocus->GetID()), nullptr, false, false, true, true))
+		HashString uID{ tempTransform.GetEditorName().c_str() };
+		uID += "##";
+		uID += mpFocus->GetID();
+		if (EGUI::Display::StartTreeNode(uID.c_str(), nullptr, false, false, true, true))
 		{
 			tempTransform.EditorUI();
 			EGUI::Display::EndTreeNode();
@@ -187,8 +189,11 @@ namespace Editor
 		for (unsigned int i = 0; i < arrComp.size(); ++i)
 		{
 			EGUI::PushID(i);
-			EGUI::Display::HorizontalSeparator();
-			bool open = EGUI::Display::StartTreeNode(arrComp[i]->GetEditorName() + "##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, true);
+			EGUI::Display::HorizontalSeparator(); 
+			HashString uID2{ arrComp[i]->GetEditorName().c_str() };
+			uID2 += "##";
+			uID2 += mpFocus->GetID();
+			bool open = EGUI::Display::StartTreeNode(uID2.c_str(), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(arrComp[i]);
 			if (open)
 			{
@@ -203,9 +208,13 @@ namespace Editor
 		for (auto & c : arrBehav)
 		{
 			EGUI::Display::HorizontalSeparator();
-			if (!c)
-				continue;
-			bool open = EGUI::Display::StartTreeNode(std::string{ c->GetBehaviourName() } +"##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, true);
+			if (!c) continue;
+
+			HashString uID3{ c->GetBehaviourName() };
+			uID3 += "##";
+			uID3 += mpFocus->GetID();
+
+			bool open = EGUI::Display::StartTreeNode(uID3.c_str(), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(c);
 			if (open)
 			{
@@ -231,7 +240,7 @@ namespace Editor
 	{
 		if (EGUI::Display::Button("Add Component", _btnSize))
 		{
-			EGUI::Display::OpenPopup(g_cPopup, false);
+			EGUI::Display::OpenPopup(g_cPopup.c_str() , false);
 		}
 		ComponentsDropDownList();
 	}
@@ -243,13 +252,13 @@ namespace Editor
 		static Array<std::string, numComponents> arr;
 		Dystopia::MakeArrayOfNames<std::make_index_sequence<numComponents>, Dystopia::UsableComponents>::Make(arr);
 
-		if (EGUI::Display::StartPopup(g_cPopup))
+		if (EGUI::Display::StartPopup(g_cPopup.c_str()))
 		{
 			EGUI::Display::Dummy(235, 2);
 			for (unsigned int i = 0; i < numComponents; ++i)
 			{
 				const auto& e = arr[i];
-				if (EGUI::Display::SelectableTxt(e, false))
+				if (EGUI::Display::SelectableTxt(e.c_str(), false))
 				{
 					//Dystopia::Component* pComp = availableComp.GetComponent(i, mpFocus);
 					//mpFocus->AddComponent(pComp, typename Dystopia::Component::TAG{});
@@ -265,21 +274,21 @@ namespace Editor
 	{
 		if (EGUI::Display::Button("Add Behaviour", _btnSize))
 		{
-			EGUI::Display::OpenPopup(g_bPopup, false);
+			EGUI::Display::OpenPopup(g_bPopup.c_str(), false);
 		}
 		BehaviourDropDownList();
 	}
 
 	void Inspector::BehaviourDropDownList()
 	{
-		if (EGUI::Display::StartPopup(g_bPopup))
+		if (EGUI::Display::StartPopup(g_bPopup.c_str()))
 		{
 			EGUI::Display::Dummy(235, 2);
 
 			auto& list = mpBehaviourSys->GetAllBehaviour();
 			for (auto& elem : list)
 			{
-				if (EGUI::Display::SelectableTxt(elem.mName))
+				if (EGUI::Display::SelectableTxt(elem.mName.c_str()))
 				{
 					auto ptr = mpBehaviourSys->RequestBehaviour(mpFocus->GetID(), elem.mName);
 					if (ptr) mpFocus->AddComponent(ptr, Dystopia::BehaviourTag{});
@@ -298,7 +307,7 @@ namespace Editor
 	{
 		if (mPromptNewBehaviour)
 		{
-			EGUI::Display::OpenPopup(g_nPopup);
+			EGUI::Display::OpenPopup(g_nPopup.c_str());
 			mPromptNewBehaviour = false;
 		}
 		if (EGUI::Display::StartPopupModal(g_nPopup.c_str(), "Creating New Behaviour"))
@@ -380,21 +389,21 @@ namespace Editor
 	{
 		if (EGUI::Display::Button("Add Tag", _btnSize))
 		{
-			EGUI::Display::OpenPopup(g_tPopip, false);
+			EGUI::Display::OpenPopup(g_tPopip.c_str(), false);
 		}
 		TagsDropDownList();
 	}
 
 	void Inspector::TagsDropDownList()
 	{
-		if (EGUI::Display::StartPopup(g_tPopip))
+		if (EGUI::Display::StartPopup(g_tPopip.c_str()))
 		{
 			EGUI::Display::Dummy(235, 2);
 
 			auto && list = Dystopia::EngineCore::GetInstance()->Get<Dystopia::TagSystem>()->GetAllTagsName();
 			for (auto& elem : list)
 			{
-				if (EGUI::Display::SelectableTxt(elem))
+				if (EGUI::Display::SelectableTxt(elem.c_str()))
 				{
 					mpFocus->AddTag(elem);
 				}
@@ -419,7 +428,7 @@ namespace Editor
 			auto& allInstances = pPrefabData->mArrInstanced;
 			auto& curScene = Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene();
 
-			EGUI::StartChild("Archetype Edit", Math::Vec2{ Size().x - 60, 100 }, false, Math::Vec4{ 0,0,0,0 });
+			EGUI::StartChild("Archetype Edit", Math::Vec2{ Size().x - 60, 100 }, false);
 			EGUI::Display::Label("Has childrens:   %s", pPrefabData->mnEnd - pPrefabData->mnStart ? "True" : "False");
 			EGUI::Display::Label("No. of Instance: %d", allInstances.size());
 			for (size_t i = 0; i < allInstances.size(); i++)
@@ -452,7 +461,7 @@ namespace Editor
 
 			EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
 			EGUI::SameLine(10);
-			if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 60 }, false, Math::Vec4{ 0,0,0,0 }))
+			if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 60 }, false))
 			{
 				EGUI::SameLine();
 				EGUI::Display::Label("PREFAB %s", pPrefabData->mPrefabFile.c_str());
@@ -483,7 +492,7 @@ namespace Editor
 			EGUI::Display::HorizontalSeparator();
 
 			Dystopia::Transform& tempTransform = *prefObj.GetComponent<Dystopia::Transform>();
-			if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName(), nullptr, false, false, true, true))
+			if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName().c_str(), nullptr, false, false, true, true))
 			{
 				tempTransform.EditorUI();
 				EGUI::Display::EndTreeNode();
@@ -494,7 +503,7 @@ namespace Editor
 			{
 				EGUI::PushID(i);
 				EGUI::Display::HorizontalSeparator();
-				bool open = EGUI::Display::StartTreeNode(arrComp[i]->GetEditorName(), nullptr, false, false, true, true);
+				bool open = EGUI::Display::StartTreeNode(arrComp[i]->GetEditorName().c_str(), nullptr, false, false, true, true);
 				bool show = true;//!RemoveComponent(arrComp[i]);
 				if (open)
 				{

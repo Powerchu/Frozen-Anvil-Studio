@@ -95,6 +95,7 @@ namespace Editor
 		void ProjectLauncher(void);
 		void UpdatePaths(void);
 		void LoadProjSettings(void);
+		void LogPerformance(void);
 
 		AutoArray<EditorSystem*> mArrSystems;
 		AutoArray<EditorPanel*> mArrPanels;

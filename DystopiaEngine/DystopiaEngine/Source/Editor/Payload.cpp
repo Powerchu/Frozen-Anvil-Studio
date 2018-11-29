@@ -88,9 +88,7 @@ namespace Editor//Dystopia::
 					else
 					{
 						if (DeterminePathType(data.cFileName) != EGUI::ePayloadTags::UNKNOWN)
-						{
 							mArrPtrFiles.push_back(new File{ data.cFileName, mPath + "/" + data.cFileName, this });
-						}
 					}
 				}
 			} while (FindNextFileA(hfind, &data));

@@ -122,12 +122,12 @@ void Dystopia::AudioSource::Unserialise(TextSerialiser& _in)
 void Dystopia::AudioSource::EditorUI(void) noexcept
 {
 #if EDITOR
-
+	
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 	EGUI::PushLeftAlign(80);
 	EGUI::PushID(1);
 
-	EGUI::Display::EmptyBox("Audio", 150, (mpSound) ? mSoundName : "-empty-", true);
+	EGUI::Display::EmptyBox("Audio", 150, (mpSound) ? mSoundName.c_str() : "-empty-", true);
 	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_AUDIO))
 	{
 		Sound *pSound = EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(t->mName.c_str());
