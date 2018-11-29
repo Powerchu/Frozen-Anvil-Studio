@@ -26,7 +26,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/ConsoleLog.h"
 #include "Editor/EditorCommands.h"
 #include "Editor/EditorMain.h"
-#include "Editor/CommandTypes.h"
 // #include "System/Logger/LoggerSystem.h"
 #endif 
 
@@ -346,13 +345,11 @@ void Dystopia::Transform::EditorUI(void) noexcept
 			break;
 		case EGUI::eDragStatus::eSTART_DRAG:
 			cmd->StartRec<Transform, const Math::Pt3D&>(&Transform::SetPosition, mPosition);
-			//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->StartRec(&Transform::mPosition, this);
 			break;
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
 			cmd->EndRec<Transform, const Math::Pt3D&>(GetOwnerID(), &Transform::SetPosition, mPosition);
-			//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->EndRec(&Transform::mPosition, this, &Transform::mbChanged);
 			break;
 		}
 	}
@@ -392,7 +389,6 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		case EGUI::eDragStatus::eSTART_DRAG:
 			convertEuler = false;
 			cmd->StartRec<Transform, const Math::Quaternion&>(&Transform::SetRotation, mRotation);
-			//EGUI::GetCommandHND()->StartRecording<Transform>(mnOwner, &Transform::mRotation, &Transform::mbChanged);
 			break;
 		case EGUI::eDragStatus::eDRAGGING:
 			mbChanged = true;
@@ -407,7 +403,6 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		case EGUI::eDragStatus::eEND_DRAG:
 			convertEuler = true;
 			cmd->EndRec<Transform, const Math::Quaternion&>(GetOwnerID(), &Transform::SetRotation, mRotation);
-			//EGUI::GetCommandHND()->EndRecording();
 			break;
 		}
 	}

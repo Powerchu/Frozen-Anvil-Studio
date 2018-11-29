@@ -102,7 +102,7 @@ namespace Dystopia
 		int mnID, mnCol, mnRow;
 		float mfFrameTime, mfAccTime;
 		Math::Vec2 mNextSectionPos;
-		bool mbPlayOnStart;
+		bool mbPlayOnStart, mbSimulate;
 
 		bool mbPlay;	// dont need serialise
 
@@ -113,6 +113,7 @@ namespace Dystopia
 
 		int GetStartCol(void) const;
 		int GetStartRow(void) const;
+		void ResetFrames(void);
 	};
 }
 

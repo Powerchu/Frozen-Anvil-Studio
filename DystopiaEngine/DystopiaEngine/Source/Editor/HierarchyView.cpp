@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 #include "Editor/EditorClipboard.h"
 #include "Editor/EditorCommands.h"
+#include "Editor/ProjectResource.h"
 
 #include "Object/GameObject.h"
 
@@ -208,7 +209,10 @@ namespace Editor
 			}
 		}
 		if (!exist)
+		{
+			EditorMain::GetInstance()->GetPanel<ProjectResource>()->RemoveFocusOnFile();
 			ed->AddGameObject(_obj.GetID());
+		}
 	}
 
 	void HierarchyView::GameObjectPopups(Dystopia::GameObject& _obj)
@@ -216,6 +220,7 @@ namespace Editor
 		auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
 		if (ImGui::BeginPopupContextItem())
 		{
+			EditorMain::GetInstance()->GetPanel<ProjectResource>()->RemoveFocusOnFile();
 			ed->ClearAll();
 			ed->AddGameObject(_obj.GetID());
 			if (EGUI::Display::SelectableTxt("Duplicate"))

@@ -19,7 +19,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 #include "Editor/RuntimeMeta.h"
 #include "Editor/EditorClipboard.h"
+#include "Editor/EditorFactory.h"
 #include "Editor/EditorCommands.h"
+#include "Editor/ProjectResource.h"
 
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
@@ -50,7 +52,7 @@ namespace Editor
 		: 
 		mpFocus{ nullptr }, mLabel{ "Inspector" }, mShowListOfComponents{ false },
 		mpBehaviourSys{ nullptr }, mPromptNewBehaviour{ false }, mPromptCreateBehaviour{ false },
-		mBufferInput{}, mBufferCreator{}, mBufferLogin{}
+		mBufferInput{}, mBufferCreator{}, mBufferLogin{}, mnConfirmations{ 0 }
 	{
 		EditorPanel::SetOpened(true);
 	}
@@ -79,24 +81,27 @@ namespace Editor
 			mpFocus = scene.FindGameObject(*allSelectedIDs.begin());
 		}
 		else
-		{
 			mpFocus = nullptr;
-			return;
-		}
-		if (!mpFocus) return;
 
-		static constexpr Math::Vec2 btnSize{ 270, 20 };
-		const float mid = Size().x / 2;
-		float inde = mid - (btnSize.x / 2);
-		
-		GameObjectDetails();
-		GameObjectComponents();
-		EGUI::Display::HorizontalSeparator();
-		EGUI::Indent(inde);
-		AddComponentButton(btnSize);
-		AddBehaviourButton(btnSize);
-		AddTagButton(btnSize);
-		EGUI::UnIndent(inde);
+		if (mpFocus)
+		{
+			static constexpr Math::Vec2 btnSize{ 270, 20 };
+			const float mid = Size().x / 2;
+			float inde = mid - (btnSize.x / 2);
+
+			GameObjectDetails();
+			GameObjectComponents();
+			EGUI::Display::HorizontalSeparator();
+			EGUI::Indent(inde);
+			AddComponentButton(btnSize);
+			AddBehaviourButton(btnSize);
+			AddTagButton(btnSize);
+			EGUI::UnIndent(inde);
+		}
+		else
+		{
+			PrefabObject();
+		}
 	}
 
 	void Inspector::Shutdown(void)
@@ -170,7 +175,7 @@ namespace Editor
 	{
 		EGUI::Display::HorizontalSeparator();
 
-		Transform& tempTransform = *mpFocus->GetComponent<Transform>();
+		Dystopia::Transform& tempTransform = *mpFocus->GetComponent<Dystopia::Transform>();
 		if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName() + "##" +
 			std::to_string(mpFocus->GetID()), nullptr, false, false, true, true))
 		{
@@ -407,8 +412,193 @@ namespace Editor
 			EGUI::Display::EndPopup();
 		}
 	}
+
+	void Inspector::PrefabObject(void)
+	{
+		auto clip = EditorMain::GetInstance()->GetSystem<EditorClipboard>();
+		auto fac = EditorMain::GetInstance()->GetSystem<EditorFactory>();
+		const auto index = clip->GetPrefab();
+		if (index > -1)
+		{
+			auto pPrefabData = fac->GetPrefabData(index);
+			if (!pPrefabData) return;
+
+			auto& allFac = fac->GetAllFactoryObjects();
+			auto& prefObj = allFac[pPrefabData->mnStart];
+			auto& allInstances = pPrefabData->mArrInstanced;
+			auto& curScene = Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene();
+
+			EGUI::StartChild("Archetype Edit", Math::Vec2{ Size().x - 60, 100 }, false, Math::Vec4{ 0,0,0,0 });
+			EGUI::Display::Label("Has childrens:   %s", pPrefabData->mnEnd - pPrefabData->mnStart ? "True" : "False");
+			EGUI::Display::Label("No. of Instance: %d", allInstances.size());
+			for (size_t i = 0; i < allInstances.size(); i++)
+			{
+				auto& instArr = allInstances[i];
+				for (auto& inst : instArr)
+				{
+					auto instObj = curScene.FindGameObject(inst);
+					if (instObj)
+						EGUI::Display::Label("%d] %s", i, instObj->GetName().c_str());
+				}
+			}
+			EGUI::EndChild();
+
+			if (allInstances.size())
+			{
+				EGUI::Display::HorizontalSeparator();
+				if (EGUI::Display::Button("Apply to all", Math::Vec2{ 100, 24 }))
+				{
+					mnConfirmations = 2;
+				}
+				EGUI::SameLine();
+				if (EGUI::Display::Button("Detach all", Math::Vec2{ 100, 24 }))
+				{
+					mnConfirmations = 1;
+				}
+			}
+
+			EGUI::Display::HorizontalSeparator();
+
+			EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
+			EGUI::SameLine(10);
+			if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 60 }, false, Math::Vec4{ 0,0,0,0 }))
+			{
+				EGUI::SameLine();
+				EGUI::Display::Label("PREFAB %s", pPrefabData->mPrefabFile.c_str());
+				auto arr = prefObj.GetAllTags_str();
+				int selected = 0;
+				EGUI::Display::DropDownSelection("Tag", selected, arr, 50);
+
+				EGUI::SameLine();
+				EGUI::ChangeAlignmentYOffset(0);
+				int j = (prefObj.GetFlags() & FLAG_LAYER_WORLD) ? 1 : (prefObj.GetFlags() & FLAG_LAYER_UI) ? 2 : 0;
+				if (EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80))
+				{
+					switch (j)
+					{
+					case 1:
+						prefObj.RemoveFlags(FLAG_LAYER_UI);
+						prefObj.SetFlag(FLAG_LAYER_WORLD);
+						break;
+					case 2:
+						prefObj.RemoveFlags(FLAG_LAYER_WORLD);
+						prefObj.SetFlag(FLAG_LAYER_UI);
+					}
+				}
+				EGUI::ChangeAlignmentYOffset();
+			}
+			EGUI::EndChild();
+
+			EGUI::Display::HorizontalSeparator();
+
+			Dystopia::Transform& tempTransform = *prefObj.GetComponent<Dystopia::Transform>();
+			if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName(), nullptr, false, false, true, true))
+			{
+				tempTransform.EditorUI();
+				EGUI::Display::EndTreeNode();
+			}
+
+			auto& arrComp = prefObj.GetAllComponents();
+			for (unsigned int i = 0; i < arrComp.size(); ++i)
+			{
+				EGUI::PushID(i);
+				EGUI::Display::HorizontalSeparator();
+				bool open = EGUI::Display::StartTreeNode(arrComp[i]->GetEditorName(), nullptr, false, false, true, true);
+				bool show = true;//!RemoveComponent(arrComp[i]);
+				if (open)
+				{
+					if (show)
+						arrComp[i]->EditorUI();
+					EGUI::Display::EndTreeNode();
+				}
+				EGUI::PopID();
+			}
+
+			auto& arrBehav = prefObj.GetAllBehaviours();
+			for (auto & c : arrBehav)
+			{
+				EGUI::Display::HorizontalSeparator();
+				if (!c)
+					continue;
+				bool open = EGUI::Display::StartTreeNode(c->GetBehaviourName(), nullptr, false, false, true, true);
+				bool show = true;//!RemoveComponent(c);
+				if (open)
+				{
+					if (show)
+					{
+						auto && MetaData = c->GetMetaData();
+						if (MetaData)
+						{
+							auto Allnames = MetaData.GetAllNames();
+							for (auto i : Allnames)
+							{
+								if (MetaData[i])
+									MetaData[i].Reflect(i, c, Dystopia::SuperReflectFunctor{});
+							}
+						}
+					}
+					EGUI::Display::EndTreeNode();
+				}
+			}
+
+			Confirmations(static_cast<void*>(pPrefabData));
+		}
+	}
+
+	void Inspector::Confirmations(void* _gPtr)
+	{
+		switch (mnConfirmations)
+		{
+		case 1:
+			EGUI::Display::OpenPopup("Confirm Detach");
+			if (EGUI::Display::StartPopupModal("Confirm Detach", "WARNING!"))
+			{
+				EGUI::Display::Label("CHANGES ARE PERMANENT!");
+				if (ImGui::Button("DETACH", ImVec2{ 100, 40 }))
+				{
+					static_cast<EditorFactory::PrefabData*>(_gPtr)->mArrInstanced.clear();
+					EGUI::Display::CloseCurrentPopup();
+					mnConfirmations = 0;
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("cancel", ImVec2{ 100, 40 }))
+				{
+					EGUI::Display::CloseCurrentPopup();
+					mnConfirmations = 0;
+				}
+				EGUI::Display::EndPopup();
+			}
+			break;
+
+		case 2:
+			EGUI::Display::OpenPopup("Confirm Apply");
+			if (EGUI::Display::StartPopupModal("Confirm Apply", "WARNING!"))
+			{
+				EGUI::Display::Label("CHANGES ARE PERMANENT!");
+				if (ImGui::Button("APPLY", ImVec2{ 100, 40 }))
+				{
+					EditorMain::GetInstance()->GetSystem<EditorFactory>()->ApplyChanges(static_cast<EditorFactory::PrefabData*>(_gPtr));
+					EGUI::Display::CloseCurrentPopup();
+					mnConfirmations = 0;
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("cancel", ImVec2{ 100, 40 }))
+				{
+					EGUI::Display::CloseCurrentPopup();
+					mnConfirmations = 0;
+				}
+				EGUI::Display::EndPopup();
+			}
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 #endif // EDITOR 
+
+
+
 
 

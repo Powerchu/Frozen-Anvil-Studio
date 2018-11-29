@@ -33,7 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::SpriteRenderer::SpriteRenderer(void) noexcept
 	: Renderer{}, mAnimations{ 1 }, mnID{ 0 }, mnCol{ 0 }, mnRow{ 0 },
-	mfFrameTime{ 0.016f }, mfAccTime{ 0 }, mpAtlas{ nullptr }, mNextSectionPos{ 0,0 }, mbPlayOnStart{ false }, mbPlay{ false }
+	mfFrameTime{ 0.016f }, mfAccTime{ 0 }, mpAtlas{ nullptr }, mNextSectionPos{ 0,0 }, mbPlayOnStart{ false }, mbPlay{ false }, mbSimulate{false}
 {
 
 }
@@ -42,7 +42,8 @@ Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexce
 	: Renderer{ Ut::Move(_rhs) }, mAnimations{ Ut::Move(_rhs.mAnimations) },
 	mnID{ Ut::Move(_rhs.mnID) }, mnCol{ Ut::Move(_rhs.mnCol) }, mnRow{ Ut::Move(_rhs.mnRow) },
 	mfFrameTime{ Ut::Move(_rhs.mfFrameTime) }, mfAccTime{ Ut::Move(_rhs.mfAccTime) }, mpAtlas{ Ut::Move(_rhs.mpAtlas) }, 
-	mNextSectionPos{ Ut::Move(_rhs.mNextSectionPos) }, mbPlayOnStart{ Ut::Move(_rhs.mbPlayOnStart) }, mbPlay{ Ut::Move(_rhs.mbPlay) }
+	mNextSectionPos{ Ut::Move(_rhs.mNextSectionPos) }, mbPlayOnStart{ Ut::Move(_rhs.mbPlayOnStart) }, mbPlay{ Ut::Move(_rhs.mbPlay) }, 
+mbSimulate{ Ut::Move(_rhs.mbSimulate) }
 {
 	_rhs.mAnimations.clear();
 	_rhs.mpAtlas = nullptr;
@@ -52,25 +53,42 @@ Dystopia::SpriteRenderer::SpriteRenderer(const SpriteRenderer& _rhs) noexcept
 	: Renderer{ _rhs }, mAnimations{ _rhs.mAnimations },
 	mnID{ _rhs.mnID }, mnCol{ _rhs.mnCol }, mnRow{_rhs.mnRow },
 	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, mpAtlas{ _rhs.mpAtlas }, 
-	mNextSectionPos{ _rhs.mNextSectionPos }, mbPlayOnStart{ _rhs.mbPlayOnStart }, mbPlay{ _rhs.mbPlay }
+	mNextSectionPos{ _rhs.mNextSectionPos }, mbPlayOnStart{ _rhs.mbPlayOnStart }, mbPlay{ _rhs.mbPlay }, mbSimulate{ _rhs.mbSimulate }
 {
 }
 
 void Dystopia::SpriteRenderer::Awake(void)
 {
 	Renderer::Awake();
-	mpAtlas = mpTexture ? EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GetAtlas(mpTexture->GetName()) : nullptr;
-	mnID = mnCol = mnRow = 0;
-	if (mpAtlas && !mpAtlas->GetAllSections().size())
-		mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
+	if (mpTexture)
+	{
+		mpAtlas = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GetAtlas(mpTexture->GetName());
+		if (mpAtlas)
+		{
+			if (!mpAtlas->GetAllSections().size())
+				mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
+		}
+		else
+			mpAtlas = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GenAtlas(mpTexture);
+	}
+	ResetFrames();
 }
 
 void Dystopia::SpriteRenderer::Init(void)
 {
 	Renderer::Init();
-	if (mpTexture && mpAtlas && !mpAtlas->GetAllSections().size())
-		mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
-
+	if (mpTexture)
+	{
+		mpAtlas = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GetAtlas(mpTexture->GetName());
+		if (mpAtlas)
+		{
+			if (!mpAtlas->GetAllSections().size())
+				mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
+		}
+		else
+			mpAtlas = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GenAtlas(mpTexture);
+	}
+	ResetFrames();
 	mbPlay = mbPlayOnStart;
 }
 
@@ -95,7 +113,7 @@ void Dystopia::SpriteRenderer::Draw(void) const noexcept
 
 void Dystopia::SpriteRenderer::Update(float _fDT)
 {
-	if (mpAtlas && mnID < mAnimations.size())
+	if (mpAtlas && mnID < mAnimations.size() && mbPlay)
 	{
 		int endIndex = mAnimations[mnID].mnEnd ? mAnimations[mnID].mnEnd : mAnimations[mnID].mnCol * mAnimations[mnID].mnRow;
 		int startCol = GetStartCol();
@@ -115,15 +133,36 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 					mnRow = 0;
 				}
 			}
-			if (!(mnCol + mnRow) || (mAnimations[mnID].mnEnd && (mAnimations[mnID].mnEnd == mAnimations[mnID].mnStart)))
+
+			auto currIndex = (mnRow * mAnimations[mnID].mnCol) + mnCol;
+			if (mAnimations[mnID].mbLoop)
 			{
-				mnCol = startCol;
-				mnRow = startRow;
+				if (!currIndex || (mAnimations[mnID].mnEnd && (mAnimations[mnID].mnEnd == mAnimations[mnID].mnStart)))
+				{
+					mnCol = startCol;
+					mnRow = startRow;
+				}
+
+				if (endIndex && currIndex >= (endIndex - 1))
+				{
+					mnCol = startCol;
+					mnRow = startRow;
+				}
 			}
-			if (endIndex && ((mnRow * mAnimations[mnID].mnCol) + mnCol > endIndex))
+			else
 			{
-				mnCol = startCol;
-				mnRow = startRow;
+				if (endIndex && currIndex >= (endIndex-1))
+				{
+					mnRow = endIndex / mAnimations[mnID].mnCol;
+					mnCol = endIndex - (mAnimations[mnID].mnCol * mnRow);
+					Stop();
+				}
+				else if (currIndex >= ( mAnimations[mnID].mnRow * mAnimations[mnID].mnCol) - 1)
+				{
+					mnRow = mAnimations[mnID].mnRow - 1;
+					mnCol = mAnimations[mnID].mnCol - 1;
+					Stop();
+				}
 			}
 
 			mfAccTime -= mfFrameTime;
@@ -138,6 +177,7 @@ void Dystopia::SpriteRenderer::SetAnimation(const char* _strAnimation)
 		if (mAnimations[n].mstrName == _strAnimation)
 		{
 			mnID = n;
+			mfAccTime = 0;
 			mnCol = GetStartCol();
 			mnRow = GetStartRow();
 			return;
@@ -150,6 +190,7 @@ void Dystopia::SpriteRenderer::SetAnimation(unsigned _nID)
 	DEBUG_BREAK(_nID > mAnimations.size(), "SpriteRenderer Error: Invalid Animation!");
 
 	mnID = _nID;
+	mfAccTime = 0;
 	mnCol = GetStartCol();
 	mnRow = GetStartRow();
 }
@@ -209,6 +250,7 @@ void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 {
 #if EDITOR
+
 	EGUI::PushLeftAlign(80);
 
 	TextureFields();
@@ -289,6 +331,7 @@ void Dystopia::SpriteRenderer::Play(void)
 
 void Dystopia::SpriteRenderer::Stop(void)
 {
+	mfAccTime = 0;
 	mbPlay = false;
 }
 
@@ -382,6 +425,13 @@ void Dystopia::SpriteRenderer::AnimFields(void)
 
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 
+	if (EGUI::Display::CheckBox("Simulate", &mbPlay))
+	{
+		cmd->ChangeValue(GetOwnerID(), &SpriteRenderer::mbPlay, !mbPlay, mbPlay);
+		if (mbPlay) Play();
+		else Stop();
+	}
+
 	if (EGUI::Display::CheckBox("On Awake", &mbPlayOnStart))
 		cmd->ChangeValue(GetOwnerID(), &SpriteRenderer::mbPlayOnStart, !mbPlayOnStart, mbPlayOnStart);
 
@@ -397,6 +447,20 @@ void Dystopia::SpriteRenderer::AnimFields(void)
 		break;
 	}
 
+	if (mAnimations.size())
+	{
+		switch (EGUI::Display::DragInt("Using Anim", &mnID, 0.1f, 0, static_cast<int>(mAnimations.size()) - 1))
+		{
+		case EGUI::eDragStatus::eSTART_DRAG:
+			cmd->StartRec(&SpriteRenderer::mnID, this);
+			break;
+		case EGUI::eDragStatus::eEND_DRAG:
+		case EGUI::eDragStatus::eDEACTIVATED:
+		case EGUI::eDragStatus::eENTER:
+			cmd->EndRec(&SpriteRenderer::mnID, this);
+			break;
+		}
+	}
 
 #endif
 }
@@ -500,6 +564,22 @@ int Dystopia::SpriteRenderer::GetStartRow(void) const
 {
 	return mAnimations[mnID].mnStart ? static_cast<int>(mAnimations[mnID].mnStart / mAnimations[mnID].mnCol) : 0;
 }
+
+void Dystopia::SpriteRenderer::ResetFrames(void)
+{
+	if (mnID < mAnimations.size())
+	{
+		mnCol = GetStartCol();
+		mnRow = GetStartRow();
+	}
+	else
+		mnID = mnCol = mnRow = 0;
+
+	mfAccTime = 0;
+}
+
+
+
 
 
 

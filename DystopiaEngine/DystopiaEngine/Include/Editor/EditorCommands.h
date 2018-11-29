@@ -180,7 +180,7 @@ void Editor::EditorCommands::StartRec(T C::* _ptrMemVar, C* _obj)
 		return;
 
 	if (mpRecordingVal)
-		__debugbreak();
+		return;// __debugbreak();
 
 	mpRecordingVal = Dystopia::DefaultAllocator<RecordValue<T>>::ConstructAlloc(_obj->*_ptrMemVar);
 }
@@ -192,7 +192,7 @@ void Editor::EditorCommands::EndRec(T C::* _ptrMemVar, C* _obj, bool C::* _ptrNo
 		return;
 
 	if (!mpRecordingVal)
-		__debugbreak();
+		return; //__debugbreak();
 
 	T oldValue;
 	mpRecordingVal->GetValue(static_cast<void*>(&oldValue));

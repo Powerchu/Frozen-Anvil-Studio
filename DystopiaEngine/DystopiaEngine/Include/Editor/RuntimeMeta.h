@@ -106,6 +106,7 @@ namespace Dystopia
 			return pComponent;
 		}
 
+
 		static bool RemoveC(GameObject* _pOwner)
 		{
 			C* pComponent = _pOwner->GetComponent<C>();
@@ -158,7 +159,6 @@ namespace Dystopia
 					return mData[_i](_owner);
 				return nullptr;
 			}
-
 			bool RemoveCommand(unsigned int _i, GameObject *_owner)
 			{
 				static auto mData = Ctor::MakeArray<bool(*)(GameObject *)>(RequestComponent<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::RemoveC...);

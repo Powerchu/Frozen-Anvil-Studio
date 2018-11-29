@@ -127,7 +127,10 @@ namespace Dystopia
 
 		// ======================================== OPERATORS ======================================== // 
 
+#if EDITOR
 		GameObject& operator = (GameObject&&);
+		GameObject& operator=(const GameObject&);
+#endif
 	private:
 		bool mbIsStatic;					/* Static bodies do not need to be integrated/updated*/
 

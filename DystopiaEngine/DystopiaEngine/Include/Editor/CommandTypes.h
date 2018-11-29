@@ -30,6 +30,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility/Meta.h"
 
+#include "DataStructure/MagicArray.h"
 #include "DataStructure/AutoArray.h"
 
 #include <utility>
@@ -161,7 +162,7 @@ namespace Editor
 			{
 				obj->*mpMemVar = mNewV;
 				if (mpNotify)
-					sys->*mpNotify = true;
+					obj->*mpNotify = true;
 				return true;
 			}
 			return false;

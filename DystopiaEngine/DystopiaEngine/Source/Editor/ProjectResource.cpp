@@ -102,15 +102,7 @@ namespace Editor
 		if (input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_LEFT) ||
 			input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_RIGHT))
 		{
-			auto index = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetPrefab();
-			if (index >= 0)
-			{
-				auto data = EditorMain::GetInstance()->GetSystem<EditorFactory>()->GetPrefabData(index);
-				if (!data)
-					RemoveFocusOnFile();
-			}
-			else
-				RemoveFocusOnFile();
+			RemoveFocusOnFile();
 		}
 
 		mWaitStatus = WaitForMultipleObjects(1, mChangeHandle, false, 0);
@@ -127,6 +119,7 @@ namespace Editor
 			ExitProcess(GetLastError());
 			break;
 		}
+
 		UpdateSearch();
 	}
 
@@ -427,7 +420,6 @@ namespace Editor
 		{
 			mFocusedFile = nullptr;
 			mpCurrentFolder = _folder;
-			EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemovePrefab();
 		}
 	}
 

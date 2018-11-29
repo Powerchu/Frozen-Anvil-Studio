@@ -73,6 +73,8 @@ namespace Editor
 		MagicArray<Dystopia::GameObject>& GetAllFactoryObjects(void);
 		PrefabData* GetPrefabData(const int&);
 
+		void ApplyChanges(PrefabData*);
+
 	private:
 
 		void SaveChild(Dystopia::GameObject&, Dystopia::TextSerialiser&, bool _temp = false);

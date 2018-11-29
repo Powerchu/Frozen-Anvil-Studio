@@ -390,13 +390,23 @@ namespace EGUI
 						DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
 						return static_cast<Specified*>(payload->Data);
 					}
-				default:
-					payload = ImGui::AcceptDragDropPayload(GetPayloadString(_tagLoad));
+					break;
+				case ALL_AUDIO:
+					payload = ImGui::AcceptDragDropPayload(GetPayloadString(ePayloadTags::WAV));
+					if (!payload)
+						payload = ImGui::AcceptDragDropPayload(GetPayloadString(ePayloadTags::MP3));
 					if (payload)
 					{
 						DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
 						return static_cast<Specified*>(payload->Data);
 					}
+					break;
+				}
+				payload = ImGui::AcceptDragDropPayload(GetPayloadString(_tagLoad));
+				if (payload)
+				{
+					DEBUG_ASSERT(payload->DataSize != sizeof(Specified), "Error at EGUI");
+					return static_cast<Specified*>(payload->Data);
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -459,7 +469,7 @@ namespace EGUI
 			return ret;
 		}
 		template<unsigned N>
-		bool DropDownSelection(const std::string& _label, int& _currentIndex, const std::string(&_arrOfItems)[N], float _width)
+		bool DropDownSelection(const std::string& _label, int& _currentIndex, const std::string(&_arrOfItems)[N], float _width = 100)
 		{
 			const char* arrCharPtr[N];
 			for (unsigned i = 0; i < N; ++i)

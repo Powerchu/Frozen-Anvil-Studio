@@ -256,6 +256,8 @@ void Editor::SpriteEditor::DrawSelectedGrid(float _ox, float _oy, float _ix, flo
 		EGUI::Display::Label("%d", i);
 		ImGui::SetCursorScreenPos(screenOrigin);
 	}
+
+	//ImGui::GetWindowDrawList()->AddRect(rectMin, rectMax, ImGui::GetColorU32(ImVec4{ 1,1,1,1 }));
 }
 
 void Editor::SpriteEditor::DrawTempGrid(float _ox, float _oy, float _ix, float _iy)

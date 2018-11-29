@@ -256,15 +256,13 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 
 	if (t)
 	{
-		SetFont(t->mName.c_str());
+		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<TextRenderer, const char*>(&TextRenderer::SetFont, mpData->mpAtlas->GetName().c_str()),
+										   cmd->MakeFnCommand<TextRenderer, const char*>(&TextRenderer::SetFont, t->mName.c_str()));
 	}
 
 	EGUI::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 	{
-		//auto fOld = EGUI::GetCommandHND()->Make_FunctionModWrapper(static_cast<void(TextRenderer::*)(const char*)>(&TextRenderer::SetFont), mpData->mpAtlas->GetName().c_str());
-		//auto fNew = EGUI::GetCommandHND()->Make_FunctionModWrapper(static_cast<void(TextRenderer::*)(const char*)>(&TextRenderer::SetFont), "");
-		//EGUI::GetCommandHND()->InvokeCommand(GetOwner()->GetID(), fOld, fNew);
 		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<TextRenderer, const char*>(&TextRenderer::SetFont, mpData->mpAtlas->GetName().c_str()),
 										   cmd->MakeFnCommand<TextRenderer, const char*>(&TextRenderer::SetFont, ""));
 	}

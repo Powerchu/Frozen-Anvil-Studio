@@ -57,6 +57,7 @@ namespace Editor //Dystopia
 		char			mBufferInput[MAX_BUFFER_SIZE];
 		char			mBufferCreator[MAX_BUFFER_SIZE];
 		char			mBufferLogin[MAX_BUFFER_SIZE];
+		int				mnConfirmations;
 
 		void			GameObjectDetails();
 		void			GameObjectComponents();
@@ -72,6 +73,8 @@ namespace Editor //Dystopia
 
 		void			AddTagButton(const Math::Vec2&);
 		void			TagsDropDownList();
+		void			PrefabObject(void);
+		void			Confirmations(void*);
 	};
 }
 
