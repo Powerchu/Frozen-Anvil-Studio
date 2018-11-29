@@ -38,10 +38,13 @@ public:
 private:
 	static constexpr size_t shortArr = 8;
 
+	//update new full size before calling this
+	void MyStrCopy(const char *_toCopyFrom, const size_t& _newCurSize);
+	void Realloc(size_t _newBufferSize);
 	void Rehash(void);
 
 	size_t		mnCurSize;			// 8 bytes
-	size_t		mnFullSize;			// 8 bytes
+	size_t		mnBufferSize;		// 8 bytes
 	HashID		mnID;				// 8 bytes
 	const char	*mpLiteral;			// 8 bytes
 	char		*mpCharBuffer;		// 8 bytes
@@ -50,27 +53,27 @@ private:
 
 template<size_t N>
 inline OString::OString(char const (&_literal)[N])
-	: mnCurSize{ N - 1 }, mnFullSize{ N }, mnID{ StringHasher(_literal) }, mpLiteral{ &_literal[0] },
+	: mnCurSize{ N - 1 }, mnBufferSize{ 0 }, mnID{ StringHasher(_literal) }, mpLiteral{ &_literal[0] },
 	mpCharBuffer{ nullptr }, mbRehash{ false }
 {}
 
 template<typename T>
 inline OString::OString(T _str)
 {
-	static_assert("Not accepted");
+	static_assert(false, "Not accepted");
 }
 
 template<>
 inline OString::OString(const char * _cstr)
-	: mnCurSize{ strlen(_cstr) }, mnFullSize{ mnCurSize + 1 }, mnID{ 0 }, mpLiteral{ nullptr },
-	mpCharBuffer{ /*/ new char[mnFullSize] /*/ Dystopia::DefaultAllocator<char[]>::Alloc(mnFullSize) /**/ }, mbRehash{ true }
+	: mnCurSize{ strlen(_cstr) }, mnBufferSize{ mnCurSize + 1 }, mnID{ 0 }, mpLiteral{ nullptr },
+	mpCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(mnBufferSize) }, mbRehash{ true }
 {
 	if (mpCharBuffer)
 	{
 		size_t i = 0;
 		for (; i < mnCurSize; ++i)
 			mpCharBuffer[i] = _cstr[i];
-		for (; i < mnFullSize; ++i)
+		for (; i < mnBufferSize; ++i)
 			mpCharBuffer[i] = '\0';
 	}
 }
@@ -78,13 +81,16 @@ inline OString::OString(const char * _cstr)
 template <unsigned N>
 inline OString& OString::operator=(const char(&_s)[N])
 {
+	mnCurSize = N - 1;
+	mbRehash = true;
+	mpLiteral = &_s[0];
 	return *this;
 }
 
 template<typename T>
 inline OString& OString::operator=(T _str)
 {
-	static_assert("Not accepted");
+	static_assert(false, "Not accepted");
 	return *this;
 }
 
@@ -92,31 +98,26 @@ template<>
 inline OString& OString::operator=(const char * _str)
 {
 	const size_t newSize = strlen(_str);
-
 	if (mpLiteral)
 	{
-		mpCharBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(mnFullSize > newSize ? mnFullSize : newSize);
-		strcpy_s(mpCharBuffer, newSize, _str);
-		if (mnFullSize <= newSize)
-			mnFullSize = newSize + 1;
+		if (mpCharBuffer)
+		{
+			if (mnBufferSize <= newSize)
+				Realloc(newSize + 1);
+		}
+		else
+		{
+			mnBufferSize = newSize + 1;
+			mpCharBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(mnBufferSize);
+		}
 		mpLiteral = nullptr;
 	}
 	else
 	{
-		size_t i = 0;
-		if (mnFullSize <= newSize)
-		{
-			Dystopia::DefaultAllocator<char[]>::Free(mpCharBuffer);
-			mnFullSize = newSize + 1;
-			mpCharBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(mnFullSize);
-		}
-		for (; i < newSize; ++i)
-			mpCharBuffer[i] = _str[i];
-		for (; i < mnFullSize; ++i)
-			mpCharBuffer[i] = '\0';
+		if (mnBufferSize <= newSize)
+			Realloc(newSize + 1);
 	}
-	mnCurSize = newSize;
-	mbRehash = true;
+	MyStrCopy(_str, newSize);
 	return *this;
 }
 

@@ -46,28 +46,51 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 		//SetConsoleTitle(L"Dystopia Engine");
 	}
 
+	unsigned long long times[20];
 	Dystopia::Timer x;
-	x.Lap();
-	auto t0 = x.Time();
-	OString a{ "HELLO" };
-	x.Lap();
-	auto t1 = (x.Time() - t0).count();
-	std::cout << t1 << '\n';
-	x.Lap();
-	t0 = x.Time();
-	OString b{ a };
-	x.Lap();
-	auto t2 = (x.Time() - t0).count();
-	std::cout << t2 << '\n';
-	x.Lap();
-	t0 = x.Time();
-	OString c = a.c_str();
-	x.Lap();
-	auto t3 = (x.Time() - t0).count();
-	std::cout << t3 << '\n';
+	const OString literal{ "Am a const literal" };
+
 	while (1)
 	{
-		;
+		int i = 0;
+
+		x.Lap();
+		auto t0 = x.Time();
+		OString literalCtor{ "Literal constructed" };
+		x.Lap();
+		times[i++] = (x.Time() - t0).count();
+
+		OString emptyCtored{ "" };
+		x.Lap();
+		t0 = x.Time();
+		emptyCtored = literalCtor.c_str();
+		x.Lap();
+		times[i++] = (x.Time() - t0).count();
+
+		x.Lap();
+		t0 = x.Time();
+		emptyCtored = "Reassigned with literal";
+		x.Lap();
+		times[i++] = (x.Time() - t0).count();
+
+		OString temp{ "Reassign with lval bigger than before" };
+		x.Lap();
+		t0 = x.Time();
+		emptyCtored = temp.c_str();
+		x.Lap();
+		times[i++] = (x.Time() - t0).count();
+
+		OString assignToLiteral{"Assign into a literal ctored "};
+		x.Lap();
+		t0 = x.Time();
+		emptyCtored = assignToLiteral.c_str();
+		x.Lap();
+		times[i++] = (x.Time() - t0).count();
+
+		for (int j = 0; j < i; ++j)
+			std::cout << times[j] << std::endl;
+
+		system("CLS");
 	}
 
 	//Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
