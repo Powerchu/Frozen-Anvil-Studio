@@ -346,6 +346,7 @@
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp">
       <Filter>Game Engine\SubSystems\Texture\TextureSystem</Filter>
     </ClCompile>
+    <ClCompile Include="OString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -969,6 +970,7 @@
     <ClInclude Include="Include\System\Graphics\MeshBuilder.h">
       <Filter>Game Engine\SubSystems\Mesh\MeshBuilder</Filter>
     </ClInclude>
+    <ClInclude Include="OString.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

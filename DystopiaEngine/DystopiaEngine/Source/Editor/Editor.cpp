@@ -20,8 +20,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
+#include "System/Time/Timer.h"
+
 #include "Editor/EditorMain.h"
 #include "System/Window/WindowManager.h"
+#include "DataStructure/HashString.h"
+#include "../../OString.h"
+#include <iostream>
+#include <Windows.h>						// Windows Header
 
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int){
@@ -29,17 +35,52 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
-	pMain->Init();
-	while (!pMain->IsClosing())
+	if (AllocConsole())
 	{
-		pMain->StartFrame();
-	
-		pMain->Update();
-	
-		pMain->EndFrame();
+		FILE* file;
+
+		freopen_s(&file, "CONOUT$", "wt", stdout);
+		freopen_s(&file, "CONOUT$", "wt", stderr);
+		//		freopen_s(&file, "CONOUT$", "wt", stdin);
+
+		//SetConsoleTitle(L"Dystopia Engine");
 	}
-	pMain->Shutdown();
+
+	Dystopia::Timer x;
+	x.Lap();
+	auto t0 = x.Time();
+	OString a{ "HELLO" };
+	x.Lap();
+	auto t1 = (x.Time() - t0).count();
+	std::cout << t1 << '\n';
+	x.Lap();
+	t0 = x.Time();
+	OString b{ a };
+	x.Lap();
+	auto t2 = (x.Time() - t0).count();
+	std::cout << t2 << '\n';
+	x.Lap();
+	t0 = x.Time();
+	OString c = a.c_str();
+	x.Lap();
+	auto t3 = (x.Time() - t0).count();
+	std::cout << t3 << '\n';
+	while (1)
+	{
+		;
+	}
+
+	//Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
+	//pMain->Init();
+	//while (!pMain->IsClosing())
+	//{
+	//	pMain->StartFrame();
+	//
+	//	pMain->Update();
+	//
+	//	pMain->EndFrame();
+	//}
+	//pMain->Shutdown();
 	return 0;
 }
 
