@@ -26,7 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class GameObject;
-	class GoblinCombat : Behaviour
+	class GoblinCombat : public Behaviour
 	{
 	public:
 		static constexpr const char * BehaviourName = str(GoblinCombat);
@@ -110,7 +110,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport GoblinCombat * GoblinCombatClone()
+		inline DllExport GoblinCombat * GoblinCombatClone()
 		{
 			return new GoblinCombat{};
 		}

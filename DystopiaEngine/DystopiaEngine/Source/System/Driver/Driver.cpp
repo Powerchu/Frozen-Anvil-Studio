@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Driver/Driver.h"
+#include "System/SystemMessage.h"
 
 #include "Globals.h"
 #include "IO/TextSerialiser.h"
@@ -117,7 +118,7 @@ Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mMessageQueue{ 60 }, mSystemList{ Ut::SizeofList<AllSys>::value },
+	mbQuit{ false }, mMessageQueue{ 60 }, mSystemList{ Ut::SizeofList<AllSys>::value },
 	mSubSystems { MakeAutoArray<void*>(Ut::MakeTypeList_t<Ut::TypeList, SubSys>{}) },
 	mSystemTable{ MakeAutoArray<Systems*>(Ut::MakeTypeList_t<Ut::TypeList, AllSys>{}) }
 {
@@ -234,6 +235,16 @@ void Dystopia::EngineCore::PostUpdate(void)
 	}
 }
 
+void Dystopia::EngineCore::Quit()
+{
+	mbQuit = true;
+}
+
+bool Dystopia::EngineCore::GetQuitState() const
+{
+	return mbQuit;
+}
+
 void Dystopia::EngineCore::Shutdown(void)
 {
 	//GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
@@ -282,8 +293,12 @@ void Dystopia::EngineCore::SendMessage(void)
 	mMessageQueue.clear();
 }
 
-void Dystopia::EngineCore::ParseMessage(const eSysMessage&)
+void Dystopia::EngineCore::ParseMessage(const eSysMessage& msg)
 {
+	if (eSysMessage::QUIT == msg)
+	{
+		mbQuit = true;
+	}
 }
 
 
@@ -297,10 +312,11 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 	Dystopia::EngineCore::GetInstance()->LoadSettings();
 	Dystopia::EngineCore::GetInstance()->PreInit();
 	Dystopia::EngineCore::GetInstance()->Init();
+	Dystopia::EngineCore::GetInstance()->PostInit();
 
 	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene("Resource/Scene/Dan2.dscene");
 
-	while (true)
+	while (!Dystopia::EngineCore::GetInstance()->GetQuitState())
 	{
 		Dystopia::EngineCore::GetInstance()->FixedUpdate();
 		Dystopia::EngineCore::GetInstance()->Update();

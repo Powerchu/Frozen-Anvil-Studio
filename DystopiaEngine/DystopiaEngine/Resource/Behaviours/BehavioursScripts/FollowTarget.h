@@ -28,7 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class FollowTarget : Behaviour
+	class FollowTarget : public Behaviour
 	{
 	public:
 
@@ -86,7 +86,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport FollowTarget * FollowTargetClone()
+		inline DllExport FollowTarget * FollowTargetClone()
 		{
 			return new FollowTarget;
 		}

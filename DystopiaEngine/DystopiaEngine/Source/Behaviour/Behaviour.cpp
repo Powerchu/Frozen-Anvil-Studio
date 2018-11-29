@@ -102,3 +102,9 @@ Dystopia::Behaviour * Dystopia::Behaviour::Duplicate() const
 	return nullptr;
 }
 
+void Dystopia::Behaviour::BehaviourDestroy()
+{
+	Component::GameObjectDestroy();
+	GameObjectDestroy();
+}
+

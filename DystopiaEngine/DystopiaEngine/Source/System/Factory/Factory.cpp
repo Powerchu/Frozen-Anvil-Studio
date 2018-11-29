@@ -127,7 +127,7 @@ void Dystopia::Factory::LoadSegmentC(GameObject& _obj, unsigned _count, Dystopia
 
 		pComponent->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 		auto sceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-		sceneSys->GetCurrentScene().FindGameObject(pComponent->GetOwnerID())->AddComponent(pComponent, Component::TAG{});
+		sceneSys->GetCurrentScene().FindGameObject(_obj.GetID())->AddComponent(pComponent, Component::TAG{});
 		_in.ConsumeEndBlock();
 	}
 

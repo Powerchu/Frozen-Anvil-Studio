@@ -72,6 +72,10 @@ namespace Dystopia
 		virtual void ReceiveMessage(const char * const _FuncName, BehaviourMessage _msg);
 
 		virtual Behaviour * Duplicate() const;
+
+
+		/*Non virtual*/
+		void BehaviourDestroy();
 	};
 }
 

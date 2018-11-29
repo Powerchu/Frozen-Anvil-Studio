@@ -399,7 +399,6 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 
 void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::Mat4& _Proj)
 {
-
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Debug Draw" };
 	auto AllObj = EngineCore::GetInstance()->GetSystem<CollisionSystem>()->GetAllColliders();
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();
@@ -494,7 +493,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 
 	StartFrame();
 
-	glClearColor(.05f, .05f, .05f, 1.f);
+	glClearColor(.05f, .05f, .05f, .0f);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 
 	/*
@@ -569,7 +568,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			 if (Cam.DrawDebug())
 				DrawDebug(Cam, View, Proj);
 
-			 surface->Unbind();
+			// surface->Unbind();
 		}
 	}
 
@@ -624,11 +623,15 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	// TODO: Final draw to combine layers & draw to screen
 	// TODO: Draw a fullscreen quad fusing the GameView and UIView
 	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
+	auto& w = EngineCore::Get<WindowManager>()->GetMainWindow();
 
-#if EDITOR
 	auto& fb = GetFrameBuffer();
 
+#if EDITOR
 	fb.Bind();
+#else
+	fb.Unbind();
+	glViewport(0, 0, w.GetFullWidth(), w.GetFullHeight());
 #endif
 
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -636,12 +639,13 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	GetGameView().AsTexture()->Bind(0);
 	GetUIView().AsTexture()->Bind(1);
 
-	auto VP = Math::Mat4();
-	auto M = Math::Scale(2.f, 2.f, 1.f);
+	auto const VP = Math::Mat4();
+	auto const M = Math::Scale(2.f, 2.f, 1.f);
 
 	Shader* shader = shaderlist["FinalStage"];
 	shader->Bind();
-	shader->UploadUniform("ProjectViewMat", VP);
+	shader->UploadUniform("ProjectMat", VP);
+	shader->UploadUniform("ViewMat", VP);
 	shader->UploadUniform("ModelMat", M);
 	//shader->UploadUniform("Gamma", mfGamma);
 
@@ -650,7 +654,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 #if EDITOR
 	fb.Unbind();
 #else
-	SwapBuffers(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetDeviceContext());
+	SwapBuffers(w.GetDeviceContext());
 #endif
 }
 

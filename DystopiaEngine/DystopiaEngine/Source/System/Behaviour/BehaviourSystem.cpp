@@ -5,7 +5,11 @@
 
 #include "Editor/EditorMain.h"
 #include "Editor/EditorFactory.h"
+#else
+#include "System/Behaviour/BehaviourList.h"
+
 #endif
+
 #include "System/Behaviour/BehaviourSystem.h"
 #undef ERROR
 
@@ -22,36 +26,104 @@
 #include "System/Logger/LoggerSystem.h"
 #include "System/Logger/LogPriority.h"
 #include "System/Window/WindowManager.h"
-#include "System/Window/Window.h"
-#include "IO/TextSerialiser.h"
-#include <utility>
-#include "Editor/HotLoader.h"
 
-#if !EDITOR
-//#include "../Resource/Behaviours/BehavioursScripts/ChangeAudio.h"
-//#include "../Resource/Behaviours/BehavioursScripts/CharacterController.h"
-//#include "../Resource/Behaviours/BehavioursScripts/CombatBox.h"
-//#include "../Resource/Behaviours/BehavioursScripts/DeleteSelf.h"
-//#include "../Resource/Behaviours/BehavioursScripts/FollowTarget.h"
-//#include "../Resource/Behaviours/BehavioursScripts/ForceTOne.h"
-//#include "../Resource/Behaviours/BehavioursScripts/ForceTTwo.h"
-//#include "../Resource/Behaviours/BehavioursScripts/FormTTwo.h"
-//#include "../Resource/Behaviours/BehavioursScripts/FormTOne.h"
-//#include "../Resource/Behaviours/BehavioursScripts/Goblin.h"
-//#include "../Resource/Behaviours/BehavioursScripts/GoblinCombat.h"
-//#include "../Resource/Behaviours/BehavioursScripts/Parallax.h"
-//#include "../Resource/Behaviours/BehavioursScripts/SkillManager.h"
-#endif
+#include "IO/TextSerialiser.h"
+
+#include "Editor/HotLoader.h"
+#include "Utility/Meta.h"
+#include "Utility/Utility.h"
+#include <utility>
+#include "DataStructure/Array.h"
 
 namespace Dystopia
 {
-	
+
+#if EDITOR
+
+
+#else
+	namespace BehaviourSystemHelper
+	{
+		template<typename T>
+		struct BehaviourSystemFunction;
+
+		template<unsigned ... Seq>
+		struct BehaviourSystemFunction<std::index_sequence<Seq...>>
+		{
+			template<typename C>
+			struct BehaviourFunctionHelper
+			{
+				static void Insert()
+				{
+					C * ptr = new C;
+					Dystopia::BehaviourWrap wrap;
+
+					wrap.mName = ptr->GetBehaviourName();
+					wrap.mpBehaviour = ptr;
+					EngineCore::GetInstance()->Get<BehaviourSystem>()->NewBehaviourReference(wrap);
+				}
+			};
+
+			template<bool, typename T>
+			struct RemoveRepeatAux
+			{
+				using type = typename Ut::TypeList<T>;
+				static constexpr bool value = true;
+			};
+			template<typename T>
+			struct RemoveRepeatAux<false, T>
+			{
+				using type = typename Ut::TypeList<>;
+				static constexpr bool value = false;
+			};
+
+			template<bool ... Bools>
+			struct isAllTrue
+			{
+				static constexpr bool value = (Bools & ...);
+			};
+			template <typename ... Ts>
+			struct RemoveRepeat;
+
+			template<typename Head, typename ... Rest>
+			struct RemoveRepeat<Head, Rest...>
+			{
+				//using type = typename RemoveRepeat<Rest...>::type;
+				using type = typename Ut::MetaConcat< typename RemoveRepeatAux< (isAllTrue<Ut::IsSame<Head, Rest>::value...>::value), Rest ...>::type, typename RemoveRepeat<Rest...>::type >::type;
+				static constexpr unsigned Size = (Ut::IsSame<Head, Rest>::value ? 1 : 0) + RemoveRepeat<Rest...>::Size;
+			};
+
+			template<typename Head>
+			struct RemoveRepeat<Head>
+			{
+				using type = typename Ut::TypeList<Head>;
+				static constexpr unsigned Size = 1;
+			};
+
+			static void Insert()
+			{
+				using pLoadFunc = void(*)();
+
+				static auto SysArray = Ctor::MakeArray<pLoadFunc>
+					    (
+							static_cast<pLoadFunc>(&BehaviourFunctionHelper<typename Ut::MetaExtract<Seq, BehaviourList>::result::type>::Insert) ...
+						);
+
+				for (unsigned i = 0; i < sizeof...(Seq); ++i)
+				{
+					SysArray[i]();
+				}
+			}
+		};
+	}
+
+#endif
 
 	BehaviourSystem::BehaviourSystem()
 #if EDITOR
 		:mHotloader{ new Hotloader<1>() }
 #else
-		: mHotloader{ new Hotloader<1>() }
+
 #endif
 	{
 
@@ -96,76 +168,10 @@ namespace Dystopia
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine_Editor.lib", eCompile);
 		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL_Release", eFileDir::eAppData));
 #endif
-		//mHotloader->SetParentHWND(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetWindowHandle());
-		
 		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
-
 		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
 
-#else
-
-		FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
-		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
-		mHotloader->AddFilesToCrawl(L"DystopiaEngine.lib", eCompile);
-		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDll", eFileDir::eResource));
-		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
-		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
-
-		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
-
-		mHotloader->Init();
-		auto const & ArrayDlls = mHotloader->GetDlls();
-		for (auto & elem : ArrayDlls)
-		{
-			using fpClone = Behaviour * (*) ();
-
-			fpClone BehaviourClone = elem.GetDllFunc<Behaviour *>(FileSys->RemoveFileExtension<std::wstring>(elem.GetDllName()) + L"Clone");
-
-			if (BehaviourClone)
-			{
-				BehaviourWrap wrap;
-				std::wstring name   = FileSys->RemoveFileExtension<std::wstring>(elem.GetDllName());
-				std::string name_s  = FileSys->RemoveFileExtension<std::string> (std::string{ name.begin(), name.end() });
-				wrap.mName = std::string{ name_s };
-				wrap.mpBehaviour = (BehaviourClone());
-				mvBehaviourReferences.Emplace(Ut::Move(wrap));
-				mvBehaviours.push_back(std::make_pair(name_s, AutoArray<BehaviourPair>{}));
-			}
-			//mvBehaviourReferences.Emplace(BehaviourClone());
-		}
-
-		//std::filesystem::path DllPath{ FileSys->GetProjectFolders<std::string>(eFileDir::eResource) + "/BehaviourDll/" };
-		//std::error_code error;
-		//std::filesystem::directory_iterator iter{ DllPath, std::filesystem::directory_options::skip_permission_denied, error };
-		//for (auto & DllFile : iter)
-		//{
-		//	std::wstring DllPathW = DllFile.path().wstring();
-		//	auto Handle = LoadLibrary(DllPathW.c_str());
-
-		//	if (Handle)
-		//	{
-
-		//		std::wstring DllNamew = (FileSys->RemoveFileExtension<std::wstring>(DllFile.path().wstring()));
-		//		auto DllPtr = new DLLWrapper{ DllFile.path().wstring(), DllNamew, DllFile.path().wstring(), std::move(Handle) };
-		//		DLLWrapper ** ptr = mvDllInstance.Emplace(DllPtr);
-		//		using fpClone = Behaviour * (*) ();
-		//		fpClone BehaviourClone = (*ptr)->GetDllFunc<Behaviour *>(DllNamew + L"Clone");
-
-		//		if (BehaviourClone)
-		//		{
-
-		//			std::string DllName = (FileSys->RemoveFileExtension<std::string>(DllFile.path().string()));
-		//			mvBehaviourReferences.Emplace(BehaviourWrap{ DllName, BehaviourClone()});
-		//			mvBehaviours.push_back(std::make_pair(DllName, AutoArray<BehaviourPair>{}));
-		//		}
-
-		//		//if (Handle)
-		//		//	FreeLibrary(Handle);
-		//	}
-		//}
-#endif
-#if EDITOR
 
 		mHotloader->Init();
 		auto const & ArrayDlls = mHotloader->GetDlls();
@@ -184,8 +190,16 @@ namespace Dystopia
 				mvBehaviourReferences.Emplace(Ut::Move(wrap));
 				mvBehaviours.push_back(std::make_pair(name, AutoArray<BehaviourPair>{}));
 			}
-			//mvBehaviourReferences.Emplace(BehaviourClone());
+
 		}
+#else
+		static constexpr size_t size = Ut::SizeofList<BehaviourList>::value;
+		BehaviourSystemHelper::BehaviourSystemFunction<std::make_index_sequence< size >>::Insert();
+
+#endif
+
+#if EDITOR
+
 
 #endif
 
@@ -227,8 +241,6 @@ namespace Dystopia
 #if EDITOR
 	void Dystopia::BehaviourSystem::PollChanges(void)
 	{
-
-
 		bool hasChange   = false;
 		bool hasSaveFile = false;
 		/*Update Hotloader*/
@@ -564,7 +576,7 @@ namespace Dystopia
 		}
 		_obj.InsertEndBlock("BEHAVIOUR_SYSTEM_BLOCK");
 #else
-				_obj.InsertStartBlock("BEHAVIOUR_SYSTEM_BLOCK");
+		_obj.InsertStartBlock("BEHAVIOUR_SYSTEM_BLOCK");
 		/*Save number of Behaviours*/
 		_obj << mvBehaviours.size();
 		for (auto & i : mvBehaviours)
@@ -770,7 +782,31 @@ namespace Dystopia
 #endif
 	}
 
-Behaviour * BehaviourSystem::RequestBehaviour(uint64_t const & _ID, std::string const & _name)
+	void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
+	{
+#if EDITOR
+
+#else
+		mvBehaviourReferences.Emplace(_BWrap);
+		mvBehaviours.push_back(std::make_pair(_BWrap.mName, AutoArray<BehaviourPair>{}));
+#endif
+	}
+
+	void BehaviourSystem::InitAllBehaviours()
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.second)
+				{
+					iter.second->Init();
+				}
+			}
+		}
+	}
+
+	Behaviour * BehaviourSystem::RequestBehaviour(uint64_t const & _ID, std::string const & _name)
 {
 #if EDITOR
 	for (auto & elem : mvBehaviourReferences)

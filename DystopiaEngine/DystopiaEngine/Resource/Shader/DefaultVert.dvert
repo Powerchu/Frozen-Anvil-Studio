@@ -1,6 +1,7 @@
 #version 330 core
 
-uniform mat4 ProjectViewMat;
+uniform mat4 ProjectMat;
+uniform mat4 ViewMat;
 uniform mat4 ModelMat;
 uniform vec4 vUVBounds = vec4(0, 0, 1, 1);
 
@@ -14,11 +15,12 @@ out vec2 vUV;
 
 void main()
 {
-  vec4 temp = ModelMat * vec4(vertexPos, 1.f);
+  mat4 modelView = ViewMat * ModelMat;
+  vec4 temp = modelView * vec4(vertexPos, 1.f);
   vPosition = temp.xyz;
-  vNormal   = vertexNorm;
+  vNormal   = (transpose(inverse(modelView)) * vec4(vertexNorm, .0f)).xyz;
   vUV       = vUVBounds.xy + vertexUV * (vUVBounds.zw - vUVBounds.xy);
   
-  gl_Position = ProjectViewMat * temp;
+  gl_Position = ProjectMat * temp;
 }
 

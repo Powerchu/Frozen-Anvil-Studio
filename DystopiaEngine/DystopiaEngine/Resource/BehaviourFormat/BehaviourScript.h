@@ -25,7 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class _SF_ClassName_ : Behaviour
+	class _SF_ClassName_ : public Behaviour
 	{
 	public:
 		static constexpr const char * BehaviourName = str(_SF_ClassName_);
@@ -101,7 +101,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport _SF_ClassName_ * _SF_ClassName_Clone()
+		inline DllExport _SF_ClassName_ * _SF_ClassName_Clone()
 		{
 			return new _SF_ClassName_;
 		}

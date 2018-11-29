@@ -28,7 +28,7 @@ namespace Dystopia
 	class RigidBody;
 	class InputManager;
 
-	class CharacterController : Behaviour
+	class CharacterController : public Behaviour
 	{
 	public:
 
@@ -117,7 +117,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport CharacterController * CharacterControllerClone()
+		inline DllExport CharacterController * CharacterControllerClone()
 		{
 			return new CharacterController;
 		}

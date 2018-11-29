@@ -25,7 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class CombatBox : Behaviour
+	class CombatBox : public Behaviour
 	{
 	public:
 		static constexpr const char * BehaviourName = str(CombatBox);
@@ -111,7 +111,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport CombatBox * CombatBoxClone()
+		inline DllExport CombatBox * CombatBoxClone()
 		{
 			return new CombatBox;
 		}

@@ -258,7 +258,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport Goblin * GoblinClone()
+		inline DllExport Goblin * GoblinClone()
 		{
 			return new Goblin;
 		}

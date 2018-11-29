@@ -56,7 +56,7 @@ Dystopia::Camera::~Camera(void)
 
 void Dystopia::Camera::Awake(void)
 {
-	SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
+	SetSurface(&EngineCore::Get<GraphicsSystem>()->GetView(mnSurfaceID));
 	SetOrthographic(800.f, 500.f, -500.f, 500.f);
 }
 

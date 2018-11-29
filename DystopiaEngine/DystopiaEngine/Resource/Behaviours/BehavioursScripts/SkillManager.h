@@ -26,7 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class SkillManager : Behaviour
+	class SkillManager : public Behaviour
 	{
 	public:
 		static constexpr const char * BehaviourName = str(SkillManager);
@@ -120,7 +120,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport SkillManager * SkillManagerClone()
+		inline DllExport SkillManager * SkillManagerClone()
 		{
 			return new SkillManager;
 		}

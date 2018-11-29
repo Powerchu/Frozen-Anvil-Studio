@@ -25,7 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class FormTOne : Behaviour
+	class FormTOne : public Behaviour
 	{
 	public:
 		static constexpr const char * BehaviourName = str(FormTOne);
@@ -104,7 +104,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport FormTOne * FormTOneClone()
+		inline DllExport FormTOne * FormTOneClone()
 		{
 			return new FormTOne;
 		}

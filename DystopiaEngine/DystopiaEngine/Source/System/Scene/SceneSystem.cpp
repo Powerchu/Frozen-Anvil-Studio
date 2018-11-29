@@ -31,6 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/GameObject.h"
 
 #include "Factory/Factory.h"
+#include "Editor/RuntimeMeta.h"
 
 Dystopia::SceneSystem::SceneSystem(void) :
 	mpCurrScene{ nullptr }, mpNextScene{ nullptr }, mLastSavedData{ "" }, mNextSceneFile{ "" }, mbRestartScene { false }
@@ -133,7 +134,6 @@ void Dystopia::SceneSystem::SceneChanged(void)
 			auto& allObj = mpCurrScene->GetAllGameObjects();
 			for (auto& obj : allObj)
 			{
-				obj.SetFlag(eObjFlag::FLAG_ACTIVE);
 				obj.Awake();
 			}
 
@@ -159,11 +159,18 @@ void Dystopia::SceneSystem::SceneChanged(void)
 		auto& allObj = mpCurrScene->GetAllGameObjects();
 		for (auto& obj : allObj)
 		{
-			obj.SetFlag(eObjFlag::FLAG_ACTIVE);
 			obj.Awake();
 		}
 			
 	}
+#if !EDITOR
+
+	//SystemList<std::make_index_sequence< Ut::SizeofList<UsableComponents>::value >>::InitDonors();
+	//EngineCore::Get<BehaviourSystem>()->InitAllBehaviours();
+	if (mpCurrScene)
+		mpCurrScene->Init();
+
+#endif
 }
 
 void Dystopia::SceneSystem::RestartScene(void)

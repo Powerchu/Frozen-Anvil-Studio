@@ -346,6 +346,19 @@
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp">
       <Filter>Game Engine\SubSystems\Texture\TextureSystem</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\CharacterController.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\CombatBox.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FollowTarget.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ForceTOne.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ForceTTwo.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FormTOne.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FormTTwo.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\Goblin.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\GoblinCombat.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\Parallax.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SkillManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -969,6 +982,20 @@
     <ClInclude Include="Include\System\Graphics\MeshBuilder.h">
       <Filter>Game Engine\SubSystems\Mesh\MeshBuilder</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\CharacterController.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\CombatBox.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FollowTarget.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ForceTOne.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ForceTTwo.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FormTOne.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FormTTwo.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\Goblin.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\GoblinCombat.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\Parallax.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SkillManager.h" />
+    <ClInclude Include="Include\System\Behaviour\BehaviourList.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

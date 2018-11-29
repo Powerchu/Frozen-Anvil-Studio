@@ -25,7 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class ForceTTwo : Behaviour
+	class ForceTTwo : public Behaviour
 	{
 	public:
 		static constexpr const char * BehaviourName = str(ForceTTwo);
@@ -106,7 +106,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport ForceTTwo * ForceTTwoClone()
+		inline DllExport ForceTTwo * ForceTTwoClone()
 		{
 			return new ForceTTwo;
 		}

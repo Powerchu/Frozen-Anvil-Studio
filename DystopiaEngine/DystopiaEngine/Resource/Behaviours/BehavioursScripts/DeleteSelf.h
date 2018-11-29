@@ -25,7 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class DeleteSelf : Behaviour
+	class DeleteSelf : public Behaviour
 	{
 	public:
 		static constexpr const char * BehaviourName = str(DeleteSelf);
@@ -105,7 +105,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport DeleteSelf * DeleteSelfClone()
+		inline DllExport DeleteSelf * DeleteSelfClone()
 		{
 			return new DeleteSelf;
 		}

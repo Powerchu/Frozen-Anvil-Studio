@@ -25,7 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Parallax : Behaviour
+	class Parallax : public Behaviour
 	{
 	public:
 
@@ -89,7 +89,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport Parallax * ParallaxClone()
+		inline DllExport Parallax * ParallaxClone()
 		{
 			return new Parallax;
 		}

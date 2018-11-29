@@ -45,6 +45,13 @@ namespace Dystopia
 		: public Systems
 	{
 	public:
+#if EDITOR
+		using BehaviourPair = std::pair<uint64_t, Behaviour *>;
+		using BehaviourTable = std::pair<std::wstring, AutoArray<BehaviourPair>>;
+#else
+		using BehaviourPair = std::pair<uint64_t, Behaviour *>;
+		using BehaviourTable = std::pair<std::string, AutoArray<BehaviourPair>>;
+#endif
 
 		BehaviourSystem();
 		~BehaviourSystem();
@@ -66,6 +73,9 @@ namespace Dystopia
 
 		void Unserialise(TextSerialiser &);
 
+		void NewBehaviourReference(BehaviourWrap _BWrap);
+		void InitAllBehaviours();
+
 #if EDITOR
 
 		void PollChanges(void);
@@ -81,6 +91,11 @@ namespace Dystopia
 
 
 #else
+		MagicArray<BehaviourWrap> & GetAllBehaviour();
+		Behaviour * RequestBehaviour(uint64_t const & _ID, std::string const & _name);
+		Behaviour * RequestDuplicate(Behaviour * _PtrToDup, uint64_t _NewID);
+
+#endif
 		template<typename ... Ts>
 		void SendInternalMessage(Behaviour * const _Behaviour, const char * const _FuncName, Ts ... _FuncParams)
 		{
@@ -275,22 +290,12 @@ namespace Dystopia
 #endif
 
 				}
-	}
-}
-		MagicArray<BehaviourWrap> & GetAllBehaviour();
-		Behaviour * RequestBehaviour(uint64_t const & _ID, std::string const & _name);
-		Behaviour * RequestDuplicate(Behaviour * _PtrToDup, uint64_t _NewID);
-
-#endif
-
+			}
+		}
 
 	private:
-		/*Array of Behaviours components*/
-		//MagicArray< SharedPtr<Behaviour> > mBehaviours;
 		FileSystem * FileSys;
 #if EDITOR
-		using BehaviourPair  = std::pair<uint64_t, Behaviour *>;
-		using BehaviourTable = std::pair<std::wstring, AutoArray<BehaviourPair>>;
 		Hotloader<1>* mHotloader;
 		/*A reference copy of all the available Behaviour Component created from a List of Dlls*/
 		MagicArray<BehaviourWrap>   mvBehaviourReferences;
@@ -300,8 +305,6 @@ namespace Dystopia
 
 		/*DO NOT TOUCH MY PRIVATES*/
 #else
-		using BehaviourPair = std::pair<uint64_t, Behaviour *>;
-		using BehaviourTable = std::pair<std::string, AutoArray<BehaviourPair>>;
 		MagicArray<BehaviourWrap>    mvBehaviourReferences;
 		AutoArray< BehaviourTable >  mvBehaviours;
 		MagicArray<DLLWrapper *>     mvDllInstance;

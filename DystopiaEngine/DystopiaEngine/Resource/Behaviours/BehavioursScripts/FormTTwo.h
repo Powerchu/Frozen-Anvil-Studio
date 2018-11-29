@@ -27,7 +27,7 @@ namespace Dystopia
 {
 	class RigidBody;
 
-	class FormTTwo : Behaviour
+	class FormTTwo : public Behaviour
 	{
 	public:
 		static constexpr const char * BehaviourName = str(FormTTwo);
@@ -113,7 +113,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport FormTTwo * FormTTwoClone()
+		inline DllExport FormTTwo * FormTTwoClone()
 		{
 			return new FormTTwo;
 		}

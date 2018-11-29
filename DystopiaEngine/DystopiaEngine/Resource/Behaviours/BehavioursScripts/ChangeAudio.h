@@ -24,7 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class ChangeAudio : Behaviour
+	class ChangeAudio : public Behaviour
 	{
 	public:
 
@@ -81,7 +81,7 @@ namespace Dystopia
 
 	extern "C"
 	{
-		DllExport ChangeAudio * ChangeAudioClone()
+		inline DllExport ChangeAudio * ChangeAudioClone()
 		{
 			return new ChangeAudio;
 		}

@@ -28,6 +28,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\CharacterController.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\CombatBox.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FollowTarget.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ForceTOne.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ForceTTwo.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FormTOne.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FormTTwo.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\Goblin.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\GoblinCombat.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\Parallax.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SkillManager.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
     <ClCompile Include="Source\Editor\CommandTypes.cpp" />
     <ClCompile Include="Source\Editor\EditorClipboard.cpp" />
@@ -168,6 +181,7 @@
     <ClInclude Include="Include\System\AI\Task.h" />
     <ClInclude Include="Include\System\AI\NeuralTree.h" />
     <ClInclude Include="Include\System\AI\TreeBuilder.h" />
+    <ClInclude Include="Include\System\Behaviour\BehaviourList.h" />
     <ClInclude Include="Include\System\Events\Event.h" />
     <ClInclude Include="Include\Behaviour\BehaviourMemberFunc.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourMessage.h" />
@@ -337,6 +351,19 @@
     <ClInclude Include="Include\System\Input\XGamePad.h" />
     <ClInclude Include="Include\IO\XMLParser.h" />
     <ClInclude Include="Include\Editor\RuntimeMeta.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\CharacterController.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\CombatBox.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FollowTarget.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ForceTOne.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ForceTTwo.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FormTOne.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FormTTwo.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\Goblin.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\GoblinCombat.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\Parallax.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SkillManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />

@@ -74,18 +74,19 @@ namespace
 			if(SIZE_MAXIMIZED == wParam)
 			{
 				RECT scr;
-				SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
-				oldsz.first = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetWidth();
-				oldsz.second = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetHeight();
+				auto const pWinSys = Dystopia::EngineCore::Get<Dystopia::WindowManager>();
 
-				Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().
-					SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
+				SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
+				oldsz.first  = pWinSys->GetMainWindow().GetWidth();
+				oldsz.second = pWinSys->GetMainWindow().GetHeight();
+
+				pWinSys->GetMainWindow().SetSizeNoAdjust(scr.right - scr.left, scr.bottom - scr.top, false);
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
 				if (oldsz.first)
 				{
-					Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().SetSize(oldsz.first, oldsz.second, false);
+					Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().SetSizeNoAdjust(oldsz.first, oldsz.second, false);
 					oldsz.first = 0; oldsz.second = 0;
 				}
 			}

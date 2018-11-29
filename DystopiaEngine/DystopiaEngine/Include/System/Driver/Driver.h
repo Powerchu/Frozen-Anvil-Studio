@@ -91,8 +91,12 @@ namespace Dystopia
 
 		void PostUpdate(void);
 
+		void Quit();
+		bool GetQuitState() const;
+
 	private:
 
+		bool mbQuit;
 		Queue<eSysMessage> mMessageQueue;
 
 		AutoArray<void*>	mSubSystems;

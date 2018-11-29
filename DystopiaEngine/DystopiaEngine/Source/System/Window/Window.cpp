@@ -170,7 +170,7 @@ void Dystopia::Window::ToggleFullscreen(bool _bFullscreen) noexcept
 {
 	if (_bFullscreen)
 	{
-#       if !defined(EDITOR)
+#       if !EDITOR
 			PushStyle(
 				mStyle & Ut::Constant<long, ~(WS_CAPTION | WS_SIZEBOX)>::value,
 				mStyleEx & Ut::Constant<long, ~(WS_EX_WINDOWEDGE)>::value
@@ -181,7 +181,7 @@ void Dystopia::Window::ToggleFullscreen(bool _bFullscreen) noexcept
 	}
 	else
 	{
-#       if !defined(EDITOR)
+#       if !EDITOR
 			PushStyle(mStyle, mStyleEx);
 			SetSize(mnWidth, mnHeight, true);
 #       endif
