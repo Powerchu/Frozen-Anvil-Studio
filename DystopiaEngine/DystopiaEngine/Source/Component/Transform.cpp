@@ -62,9 +62,15 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
 {
 	if (mpParent)
 		RemoveParent();
+
 	if (IsDescendant(_pParent))
 		return;
+
+	if (_pParent == this)
+		__debugbreak();
+
 	mpParent = _pParent;
+
     if (mpParent)
     {
 		// Convert our data to the parent's local coordinates
@@ -74,7 +80,7 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
         mPosition	= InvTrans * mPosition;
 		mRotation   = mpParent->GetGlobalRotation().Conjugate() * mRotation;
 		mbChanged	= true;
-		mnParentID = _pParent->GetOwnerID();
+		mnParentID = mpParent->GetOwnerID();
 
 		mpParent->OnChildAdd(this);
     }

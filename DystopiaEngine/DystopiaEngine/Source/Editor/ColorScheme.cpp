@@ -39,8 +39,8 @@ bool Editor::ColorScheme::Init(void)
 	mArrColors[eCOLOR_DATA_WindowBG]  = Math::Vec4{ 0.211f, 0.211f, 0.211f, 1 };
 	mArrColors[eCOLOR_DATA_ChildWindowBG]  = Math::Vec4{ 0.146f, 0.146f, 0.146f, 1 };
 	mArrColors[eCOLOR_DATA_PopupBG]  = Math::Vec4{ 0.112f, 0.112f, 0.112f, 0.843f };
-	mArrColors[eCOLOR_DATA_Border]  = Math::Vec4{ 0.548f, 0.548f, 0.548f, 1 };
-	mArrColors[eCOLOR_DATA_BorderShadow]  = Math::Vec4{ 1, 1, 1, 1 };
+	mArrColors[eCOLOR_DATA_Border]  = Math::Vec4{ 0.3f, 0.3f, 0.3f, .8f };
+	mArrColors[eCOLOR_DATA_BorderShadow]  = Math::Vec4{ 1, 1, 1, 0 };
 	mArrColors[eCOLOR_DATA_Widget]  = Math::Vec4{ 0.314f, 0.314f, 0.314f, 1 };
 	mArrColors[eCOLOR_DATA_WidgetHovered]  = Math::Vec4{ 1, 0.121f, 0.33f, 0.75f };
 	mArrColors[eCOLOR_DATA_WidgetActive]  = Math::Vec4{ 0.881f, 0.125f, 0.125f, 0.75f };
@@ -65,8 +65,8 @@ bool Editor::ColorScheme::Init(void)
 	mArrColors[eCOLOR_DATA_SeparatorHovered]  = Math::Vec4{ 0.1f, 0.4f, 0.75f, 0 };
 	mArrColors[eCOLOR_DATA_SeparatorActive]  = Math::Vec4{ 0.1f, 0.4f, 0.75f, 0 };
 	mArrColors[eCOLOR_DATA_Resizer]  = Math::Vec4{ 0.26f, 0.59f, 0.98f, 0 };
-	mArrColors[eCOLOR_DATA_ResizerHovered]  = Math::Vec4{ 0.26f, 0.59f, 0.98f, 0 };
-	mArrColors[eCOLOR_DATA_ResizerActive]  = Math::Vec4{ 0.26f, 0.59f, 0.98f, 0 };
+	mArrColors[eCOLOR_DATA_ResizerHovered]  = Math::Vec4{ 0.36f, 0.36f, 0.36f, 1 };
+	mArrColors[eCOLOR_DATA_ResizerActive]  = Math::Vec4{ 0.26f, 0.26f, 0.26f, 1 };
 	mArrColors[eCOLOR_DATA_Graph]  = Math::Vec4{ 0.142f, 1, 0.95f, 1 };
 	mArrColors[eCOLOR_DATA_GraphHovered]  = Math::Vec4{ 1, 0.132f, 0.34f, 1 };
 	mArrColors[eCOLOR_DATA_Payload]  = Math::Vec4{ 1, 0.166f, 0.368f, 0.95f };
@@ -137,7 +137,7 @@ HashString Editor::ColorScheme::GetLabel(void) const
 void Editor::ColorScheme::Apply(void)const
 {
 	auto& style = ImGui::GetStyle();
-	auto arrayOfColors = style.Colors;
+	const auto arrayOfColors = style.Colors;
 
     arrayOfColors[ImGuiCol_Text]					= mArrColors[eCOLOR_DATA_Text];			
     arrayOfColors[ImGuiCol_TextDisabled]			= mArrColors[eCOLOR_DATA_TextDisabled];	

@@ -237,10 +237,28 @@ namespace EGUI
 			return b;
 		}
 
+		//// Helper operator for ImVec2
+		//ImVec2&& operator+(const ImVec2& lhs, const ImVec2& rhs)
+		//{
+		//	return ImVec2{ lhs.x + rhs.x, lhs.y + rhs.y };
+		//}
+
+		//bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size)
+		//{
+		//	using namespace ImGui;
+		//	ImGuiContext& g = *GImGui;
+		//	ImGuiWindow* window = g.CurrentWindow;
+		//	const ImGuiID id = window->GetID("##Splitter");
+		//	ImRect bb;
+		//	bb.Min = window->DC.CursorPos + (split_vertically ? ImVec2(*size1, 0.0f) : ImVec2(0.0f, *size1));
+		//	bb.Max = bb.Min + CalcItemSize(split_vertically ? ImVec2(thickness, splitter_long_axis_size) : ImVec2(splitter_long_axis_size, thickness), 0.0f, 0.0f);
+		//	return SplitterBehavior(id, bb, split_vertically ? ImGuiAxis_X : ImGuiAxis_Y, size1, size2, min_size1, min_size2, 0.0f);
+		//}
+
 		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside, bool _iteractive, bool _showLabel)
 		{
 			bool clicked = false;
-			bool show = _iteractive ? true : false;
+			const bool show = _iteractive;
 
 			if (_showLabel)
 			{

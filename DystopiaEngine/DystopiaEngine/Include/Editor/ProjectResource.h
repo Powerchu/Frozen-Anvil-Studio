@@ -68,7 +68,7 @@ namespace Editor
 		void				FindFile(AutoArray<Editor::File*>& _outResult, HashString& _item, const AutoArray<Editor::File*>& _fromArr);
 		void				GetAllFiles(AutoArray<Editor::File*>& _outResult, Editor::Folder*);
 		void				SortAllFiles(AutoArray<Editor::File*>& _outResult);
-		Editor::Folder*   FindFolder(const HashString& _name);
+		Editor::Folder*		FindFolder(const HashString& _name);
 		void				FullCrawl(Editor::Folder*);
 		void				FolderUI(Editor::Folder*);
 		void				FileUI(Editor::File*);

@@ -270,6 +270,9 @@ bool Editor::EditorFactory::LoadAsPrefab(const HashString& _path)
 
 			for (size_t subIndex = currentIndex; subIndex < mArrFactoryObj.size(); ++subIndex)
 			{
+				if (subIndex == index)
+					continue;
+
 				if (parentID == mArrFactoryObj[subIndex].GetID())
 				{
 					transform->SetParent(mArrFactoryObj[subIndex].GetComponent<Dystopia::Transform>());

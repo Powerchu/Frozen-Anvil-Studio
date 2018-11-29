@@ -181,6 +181,17 @@ namespace EGUI
 		bool TextField(const HashString& _label, HashString& _out, bool _showLabel = true, float _width = 250, bool _onlyEnterReturnsTrue = true);
 		/* =======================================================================================================================
 		Brief:
+				Creates a vertical or horizontal selectable splitter (like a separator), allows you to drag child windows.
+				Created by Aaron.
+		Usage:
+				float h = 200;
+				static float sz1 = 300;
+				static float sz2 = 300;
+				EGUI::Display::Splitter(true, 8.0f, &sz1, &sz2, 8, 8, h);
+		======================================================================================================================= */
+		// bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f);
+		/* =======================================================================================================================
+		Brief:
 				Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked.
 				If the last bool param is false, hovering wont show and clicking wont return true
 		Usage:
