@@ -437,14 +437,14 @@ void Editor::EditorStates::PromptSaveN(void)
 			mbNewAttempt = false;
 			EGUI::Display::CloseCurrentPopup();
 		}
-		EGUI::SameLine();
+		EGUI::SameLine(15);
 		if (EGUI::Display::Button("Don't save"))
 		{
 			New();
 			mbNewAttempt = false;
 			EGUI::Display::CloseCurrentPopup();
 		}
-		EGUI::SameLine();
+		EGUI::SameLine(15);
 		if (EGUI::Display::Button("Cancel"))
 		{
 			mbNewAttempt = false;
@@ -465,13 +465,13 @@ void Editor::EditorStates::PromptSaveQ(void)
 			mbQuitAttempt = false;
 			EGUI::Display::CloseCurrentPopup();
 		}
-		EGUI::SameLine();
+		EGUI::SameLine(15);
 		if (EGUI::Display::Button("Cancel"))
 		{
 			mbQuitAttempt = false;
 			EGUI::Display::CloseCurrentPopup();
 		}
-		EGUI::SameLine();
+		EGUI::SameLine(15);
 		if (EGUI::Display::Button("Exit"))
 		{
 			mbQuitAttempt = false;
@@ -501,7 +501,7 @@ void Editor::EditorStates::PromptSaveO(void)
 				LoadScene();
 			EGUI::Display::CloseCurrentPopup();
 		}
-		EGUI::SameLine();
+		EGUI::SameLine(15);
 		if (EGUI::Display::Button("Don't Save"))
 		{
 			mbLoadAttempt = false;
@@ -515,7 +515,7 @@ void Editor::EditorStates::PromptSaveO(void)
 				LoadScene();
 			EGUI::Display::CloseCurrentPopup();
 		}
-		EGUI::SameLine();
+		EGUI::SameLine(15);
 		if (EGUI::Display::Button("Cancel"))
 		{
 			mbLoadAttempt = false;

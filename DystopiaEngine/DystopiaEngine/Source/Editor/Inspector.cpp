@@ -45,7 +45,7 @@ static const std::string g_tPopip = "Tag List";
 namespace Editor
 {
 	using namespace Dystopia;
-	static std::string g_arr[3] = { "item1", "item2", "item3" };
+	//static std::string g_arr[3] = { "item1", "item2", "item3" };
 	static std::string g_arr2[3] = { "Invalid", "World", "UI" };
 
 	Inspector::Inspector(void)
@@ -87,7 +87,7 @@ namespace Editor
 		{
 			static constexpr Math::Vec2 btnSize{ 270, 20 };
 			const float mid = Size().x / 2;
-			float inde = mid - (btnSize.x / 2);
+			const float inde = mid - (btnSize.x / 2);
 
 			GameObjectDetails();
 			GameObjectComponents();
@@ -132,20 +132,28 @@ namespace Editor
 		std::string name = mpFocus->GetName().c_str();
 		strcpy_s(buffer, name.c_str());
 
+		EGUI::Display::Dummy(0.f,5.f);
 		EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
 		EGUI::SameLine(10);
 		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 60 }, false, Math::Vec4{ 0,0,0,0 }))
 		{
+			auto activeState = mpFocus->IsActive();
 			EGUI::SameLine();
-			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 223.f) && strlen(buffer))
+			if (EGUI::Display::CheckBox("Active", &activeState, false))
+			{
+				mpFocus->SetActive(activeState);
+			};
+
+			EGUI::SameLine(5, 0);
+			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 190.f) && strlen(buffer))
 			{
 				auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
-				auto oFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, mpFocus->GetName());
-				auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, HashString{ buffer });
+				const auto oFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, mpFocus->GetName());
+				const auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, HashString{ buffer });
 				cmd->FunctionCommand(mpFocus->GetID(), oFn, nFn);
 			}
 			auto arr = mpFocus->GetAllTags_str();
-			if (EGUI::Display::DropDownSelection("Tag", i, arr, 32))
+			if (EGUI::Display::DropDownSelection("Tag", i, arr, 80))
 			{
 
 			}
@@ -176,25 +184,35 @@ namespace Editor
 		EGUI::Display::HorizontalSeparator();
 
 		Dystopia::Transform& tempTransform = *mpFocus->GetComponent<Dystopia::Transform>();
+		EGUI::Display::Dummy(0.f, 25.f);
+		EGUI::SameLine(0, 0);
+		EGUI::ChangeAlignmentYOffset(5);
 		if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName() + "##" +
 			std::to_string(mpFocus->GetID()), nullptr, false, false, true, true))
 		{
 			tempTransform.EditorUI();
 			EGUI::Display::EndTreeNode();
 		}
+		EGUI::ChangeAlignmentYOffset();
 
 		auto& arrComp = mpFocus->GetAllComponents();
 		for (unsigned int i = 0; i < arrComp.size(); ++i)
 		{
+			auto activeState = arrComp[i]->IsActive();
 			EGUI::PushID(i);
+			EGUI::Display::Dummy(4.f, 2.f);
 			EGUI::Display::HorizontalSeparator();
 
 			//bool test = true;
-			//EGUI::Display::CheckBox("Component Active", &test, false);
+			if (EGUI::Display::CheckBox("Active", &activeState, false))
+			{
+				arrComp[i]->SetActive(activeState);
+			};
 
+			EGUI::SameLine(5, 0);
 			bool open = EGUI::Display::StartTreeNode(arrComp[i]->GetEditorName() + "##" + std::to_string(mpFocus->GetID()), nullptr, false, false, true, true);
-			bool show = !RemoveComponent(arrComp[i]);
 
+			bool show = !RemoveComponent(arrComp[i]);
 
 			if (open)
 			{
@@ -202,6 +220,7 @@ namespace Editor
 					arrComp[i]->EditorUI();
 				EGUI::Display::EndTreeNode();
 			}
+
 			EGUI::PopID();
 		}
 

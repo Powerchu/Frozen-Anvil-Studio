@@ -238,7 +238,7 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 	}
 
 	*(Ut::Copy(mText, &buf[0])) = '\0';
-	if (EGUI::Display::TextField("Text ", buf, 256, true, 225))
+	if (EGUI::Display::TextField("Text ", buf, 256, true, 225, false))
 	{
 		mText.clear();
 		mText = buf;

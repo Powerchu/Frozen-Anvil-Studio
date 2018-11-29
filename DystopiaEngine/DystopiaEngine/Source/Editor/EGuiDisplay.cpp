@@ -487,9 +487,12 @@ namespace EGUI
 			return Array<eDragStatus, 2>{statX, statY};
 		}
 
-		bool CollapsingHeader(const std::string& _label)
+		bool CollapsingHeader(const std::string& _label, bool defaultOpen)
 		{
-			return ImGui::CollapsingHeader(_label.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+			if (defaultOpen)
+				return ImGui::CollapsingHeader(_label.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+			//else
+			return ImGui::CollapsingHeader(_label.c_str(), ImGuiTreeNodeFlags_Bullet);
 		}
 
 		bool SelectableTxt(const std::string& _label, bool _highlight)

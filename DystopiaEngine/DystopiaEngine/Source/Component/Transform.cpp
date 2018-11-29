@@ -224,7 +224,7 @@ Math::Vec3D Dystopia::Transform::GetGlobalScale(void) const
 	if (mpParent)
 		return mpParent->GetTransformMatrix() * GetScale();
 
-	return GetScale();
+	return GetRotation().Matrix() * GetScale();
 }
 
 Math::Pt3D Dystopia::Transform::GetGlobalPosition(void) const
@@ -335,11 +335,11 @@ void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 void Dystopia::Transform::EditorUI(void) noexcept
 {
 #if EDITOR
-	EGUI::PushLeftAlign(30);
+	EGUI::PushLeftAlign(20);
 	
 	EGUI::PushID(0);
 	EGUI::Display::LabelWrapped("Position");
-	auto arrResult = EGUI::Display::VectorFields("", &mPosition, 0.01f, -FLT_MAX, FLT_MAX);
+	auto arrResult = EGUI::Display::VectorFields("", &mPosition, 0.01f, -FLT_MAX, FLT_MAX, 60.f);
 
 	auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 	for (auto &e : arrResult)
@@ -363,7 +363,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 
 	EGUI::PushID(1);
 	EGUI::Display::LabelWrapped("Scale");
-	arrResult = EGUI::Display::VectorFields("", &mScale, 0.01f, -FLT_MAX, FLT_MAX);
+	arrResult = EGUI::Display::VectorFields("", &mScale, 0.01f, -FLT_MAX, FLT_MAX, 60.f);
 	for (auto &e : arrResult)
 	{
 		switch (e)
@@ -387,7 +387,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 	EGUI::Display::LabelWrapped("Rotation");
 	static bool convertEuler = true;
 	static Math::Vector4 eulerAngle;
-	arrResult = EGUI::Display::VectorFields("", &eulerAngle, 0.01f, -FLT_MAX, FLT_MAX);
+	arrResult = EGUI::Display::VectorFields("", &eulerAngle, 0.01f, -FLT_MAX, FLT_MAX, 60.f);
 	for (auto& e : arrResult)
 	{
 		switch (e)

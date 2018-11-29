@@ -209,7 +209,7 @@ namespace EGUI
 					// EGUI::Display::Label("Things inside this header");
 				}
 		======================================================================================================================= */
-		bool CollapsingHeader(const std::string& _label);
+		bool CollapsingHeader(const std::string& _label, bool defaultOpen = true);
 		/* =======================================================================================================================
 		Brief:
 				Creates an editable vector field that is pre-arranged for you. Returns true if any of the variable is changed.

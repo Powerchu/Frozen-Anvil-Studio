@@ -20,6 +20,12 @@
                      _TAG_GENERATOR_(18), _TAG_GENERATOR_(19), _TAG_GENERATOR_(20), _TAG_GENERATOR_(21), _TAG_GENERATOR_(22), _TAG_GENERATOR_(23)  , \
                      _TAG_GENERATOR_(24), _TAG_GENERATOR_(25), _TAG_GENERATOR_(26), _TAG_GENERATOR_(27), _TAG_GENERATOR_(28), _TAG_GENERATOR_(29)  , \
                      _TAG_GENERATOR_(30), _TAG_GENERATOR_(31)
+#define _TAGAUX_27() _TAG_GENERATOR_(5)																												, \
+				     _TAG_GENERATOR_(6), _TAG_GENERATOR_(7), _TAG_GENERATOR_(8), _TAG_GENERATOR_(9), _TAG_GENERATOR_(10), _TAG_GENERATOR_(11)      , \
+					 _TAG_GENERATOR_(12), _TAG_GENERATOR_(13), _TAG_GENERATOR_(14), _TAG_GENERATOR_(15), _TAG_GENERATOR_(16), _TAG_GENERATOR_(17)  , \
+                     _TAG_GENERATOR_(18), _TAG_GENERATOR_(19), _TAG_GENERATOR_(20), _TAG_GENERATOR_(21), _TAG_GENERATOR_(22), _TAG_GENERATOR_(23)  , \
+                     _TAG_GENERATOR_(24), _TAG_GENERATOR_(25), _TAG_GENERATOR_(26), _TAG_GENERATOR_(27), _TAG_GENERATOR_(28), _TAG_GENERATOR_(29)  , \
+                     _TAG_GENERATOR_(30), _TAG_GENERATOR_(31)
 
 namespace Dystopia
 {
@@ -27,7 +33,6 @@ namespace Dystopia
 	{
 	public:
 		TagSystem();
-
 
 		void MapNameToTag(HashString const & _name, Tags _TagsNum);
 		 

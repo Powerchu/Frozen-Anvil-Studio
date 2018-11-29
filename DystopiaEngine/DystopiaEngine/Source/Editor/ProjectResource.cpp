@@ -410,7 +410,7 @@ namespace Editor
 			EGUI::Display::OpenTreeNode();
 		}
 		EGUI::SameLine();
-		if (EGUI::Display::StartTreeNode(_folder->mName.c_str(), &clickedThisFrame, flagIt, hideArrow,true,true))
+		if (EGUI::Display::StartTreeNode(_folder->mName.c_str(), &clickedThisFrame, flagIt, hideArrow,true,false))
 		{
 			for (auto& e : _folder->mArrPtrFolders)
 				FolderUI(e);

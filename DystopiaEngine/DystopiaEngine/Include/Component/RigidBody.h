@@ -179,6 +179,7 @@ namespace Dystopia
 		float GetInverseInertia() const;
 		bool  Get_HasGravityState() const;
 		bool  Get_IsStaticState() const;
+		bool  Get_IsKinematic() const;
 		bool GetIsAwake() const;
 
 		// Does this body have fixed rotation?
@@ -212,7 +213,7 @@ namespace Dystopia
 		Vec3D					mGlobalCentroid;
 		Vec3D					mLocalCentroid;
 
-		float					mfAngleDegZ;				/* Anticlockwise Direction: Angles in Degrees*/
+		float					mfZAngleDeg;				/* Anticlockwise Direction: Angles in Degrees*/
 
 		Math::Vector2			mLinearDamping;				/* Linear Damping in the X and Y axis */
 		float					mfAngularDrag;				/* Coefficient of angular drag. */
@@ -238,11 +239,13 @@ namespace Dystopia
 		bool					mbCanSleep;
 		bool					mbFixedRot;
 
+		int						EditorCanSleepInt = 1;		/*Start Awake*/
+
 		float					mSleepTime;
-
-		size_t					mContactsNo;
-
 		PhysicsType				mPhysicsType;
+
+		size_t					mContactsNo = 0;
+
 
 		//// m_flags
 		//enum
@@ -254,8 +257,6 @@ namespace Dystopia
 		//	eFixedRotationFlag = 0x0010,
 		//	eActiveFlag = 0x0020,
 		//};
-
-		/*Quaternion if needed*/
 
 		/*=================Editor Stuff=====================*/
 #if EDITOR
@@ -271,7 +272,7 @@ namespace Dystopia
 
 		void eCollisionDetectionField();
 		void eSleepingModeDropdown();
-		void eRotationConstraintCheckBox();
+		void eRotGravConstraintCheckBox();
 
 		void eExtraInfoHeader();
 

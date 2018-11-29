@@ -50,7 +50,7 @@ namespace Dystopia
 #endif 
 			if (body.GetOwner())
 			{
-				if (!body.Get_IsStaticState())
+				if (!body.Get_IsStaticState() && !body.Get_IsKinematic())
 				{
 					body.CheckSleeping(_dt);
 
@@ -117,7 +117,7 @@ namespace Dystopia
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+			if (body.Get_IsStaticState() || !body.GetIsAwake() || body.Get_IsKinematic()) continue;
 
 			if (!body.GetOwner()->IsActive()) continue;
 
@@ -133,8 +133,6 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				//if (body.Get_IsStaticState()) continue;
-
 				if (!body.GetOwner()->IsActive()) continue;
 
 
@@ -163,7 +161,6 @@ namespace Dystopia
 						}
 					}
 				}
-				//if (body.GetPosition().x == 0.f) __debugbreak();
 			}
 		}
 
@@ -178,7 +175,7 @@ namespace Dystopia
 #if EDITOR
 			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (body.Get_IsStaticState()) continue;
+			if (body.Get_IsStaticState() || body.Get_IsKinematic()) continue;
 
 			if (!body.GetOwner()->IsActive()) continue;
 
