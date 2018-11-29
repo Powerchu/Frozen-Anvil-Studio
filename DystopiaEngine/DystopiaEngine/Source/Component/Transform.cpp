@@ -224,7 +224,7 @@ Math::Vec3D Dystopia::Transform::GetGlobalScale(void) const
 	if (mpParent)
 		return mpParent->GetTransformMatrix() * GetScale();
 
-	return GetRotation().Matrix() * GetScale();
+	return GetScale();
 }
 
 Math::Pt3D Dystopia::Transform::GetGlobalPosition(void) const
