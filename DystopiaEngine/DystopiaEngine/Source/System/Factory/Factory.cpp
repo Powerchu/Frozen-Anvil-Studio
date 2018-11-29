@@ -48,7 +48,7 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 	auto _in = Dystopia::TextSerialiser::OpenFile(file.c_str(), Dystopia::Serialiser::MODE_READ);
 
 	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
-	size_t currentIndex = curScene.GetAllGameObjects().size();
+	const size_t currentIndex = curScene.GetAllGameObjects().size();
 
 	AutoArray<uint64_t> oldIDs;
 
@@ -83,7 +83,7 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 
 		for (size_t subIndex = currentIndex; subIndex < allGameObject.size(); ++subIndex)
 		{
-			if (parentID == oldIDs[subIndex-currentIndex])
+			if (parentID == oldIDs[subIndex - currentIndex])
 			{
 				transform->SetParentID(allGameObject[subIndex].GetID());
 				transform->SetParent(allGameObject[subIndex].GetComponent<Dystopia::Transform>());
@@ -91,13 +91,16 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 			}
 		}
 	}
-	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
+	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index) 
+	{
 		curScene.GetAllGameObjects()[index].Awake();
+	}
 
 	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
 	{
 		curScene.GetAllGameObjects()[index].RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 		Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors(curScene.GetAllGameObjects()[index].GetID());
+	}
 
 	obj.GetComponent<Transform>()->SetGlobalPosition(_pos);
 	return &obj;
