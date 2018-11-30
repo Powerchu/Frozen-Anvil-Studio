@@ -151,7 +151,6 @@ namespace Dystopia
 				{
 					delete i.mpBehaviour;
 					i.mpBehaviour = nullptr;
-					hasChange = true;
 				}
 			}
 			for (auto & i : mvBehaviours)
@@ -172,6 +171,7 @@ namespace Dystopia
 					}
 				}
 			}
+			hasChange = true;
 		}
 
 		if (hasChange)

@@ -46,6 +46,7 @@ namespace Dystopia
 		for (auto& body : mComponents)
 		{
 #if EDITOR
+			if (nullptr == body.GetOwner())	continue;
 			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 			if (body.GetOwner())
@@ -249,6 +250,8 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
+			if (nullptr == body.GetOwner()) continue;
+
 			if (body.GetOwner()->GetFlags() & FLAG_REMOVE)
 			{
 				mComponents.Remove(&body);

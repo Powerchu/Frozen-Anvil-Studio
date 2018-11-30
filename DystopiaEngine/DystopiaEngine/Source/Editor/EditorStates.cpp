@@ -229,9 +229,6 @@ void Editor::EditorStates::Message(eEMessage _msg)
 		HashString name{ sceneSystem->GetCurrentScene().GetSceneName().c_str() };
 		win.SetTitle(std::wstring{ name.begin(), name.end() });
 
-		for (auto& e : mArrTempFile)
-			remove(e.c_str());
-		mArrTempFile.clear();
 	}
 }
 

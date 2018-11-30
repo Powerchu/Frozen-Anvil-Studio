@@ -417,9 +417,10 @@ namespace Dystopia
 			for (auto const & elem: mvTempFilesName)
 			{
 				SearchAndReplaceDll(GenerateDllName(elem));
-				
+				std::error_code err;
 				std::wstring wstrFolderName{ mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
-				std::filesystem::copy(mTempDllFile + L'/' + elem, wstrFolderName, std::filesystem::copy_options::overwrite_existing);
+				if (std::filesystem::exists((mTempDllFile + L'/' + elem, wstrFolderName).c_str(), err) )
+					std::filesystem::copy(mTempDllFile + L'/' + elem, wstrFolderName, std::filesystem::copy_options::overwrite_existing);
 				
 			}
 			mvTempFilesName.clear();
@@ -591,9 +592,9 @@ namespace Dystopia
 			std::wstring Final_Command;
 
 			if(mPipeExePath != L"")
-				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" | \"" + mPipeExePath + L"\" && exit 99";
+				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" | \"" + mPipeExePath + L"\" & exit 99";
 			else
-				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" && exit 99";
+				Final_Command = CmdArgument + mCompilerFlags + L" " + OutputCommand + L" & exit 99";
 
 			std::string cFinal_Command{ Final_Command.begin(),Final_Command.end() };
 			std::string cCmdPath{ mCmdPath.begin(), mCmdPath.end() };
