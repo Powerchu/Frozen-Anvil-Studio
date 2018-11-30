@@ -63,27 +63,30 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 		OString emptyCtored{ "" };
 		x.Lap();
 		t0 = x.Time();
-		emptyCtored = literalCtor.c_str();
+		emptyCtored = literalCtor;
 		x.Lap();
 		times[i++] = (x.Time() - t0).count();
 
-		x.Lap();
-		t0 = x.Time();
 		emptyCtored = "Reassigned with literal";
 		x.Lap();
+		t0 = x.Time();
+		const char a = emptyCtored.front();
+		x.Lap();
 		times[i++] = (x.Time() - t0).count();
 
-		OString temp{ "Reassign with lval bigger than before" };
-		x.Lap();
-		t0 = x.Time();
+		OString temp{ "Apple" };
 		emptyCtored = temp.c_str();
+		emptyCtored = "reliteral";
+		x.Lap();
+		t0 = x.Time();
+		emptyCtored += " Orange";
 		x.Lap();
 		times[i++] = (x.Time() - t0).count();
 
-		OString assignToLiteral{"Assign into a literal ctored "};
+		OString assignToLiteral{"Pear "};
 		x.Lap();
 		t0 = x.Time();
-		emptyCtored = assignToLiteral.c_str();
+		assignToLiteral += "Literal";
 		x.Lap();
 		times[i++] = (x.Time() - t0).count();
 
