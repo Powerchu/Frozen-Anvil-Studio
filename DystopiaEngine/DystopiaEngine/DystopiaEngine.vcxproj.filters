@@ -347,6 +347,9 @@
       <Filter>Game Engine\SubSystems\Texture\TextureSystem</Filter>
     </ClCompile>
     <ClCompile Include="OString.cpp" />
+    <ClCompile Include="Include\IO\XMLParser.cpp">
+      <Filter>IO\XMLParser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">

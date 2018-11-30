@@ -195,6 +195,8 @@ namespace Editor
 			uID2 += mpFocus->GetID();
 			bool open = EGUI::Display::StartTreeNode(uID2.c_str(), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(arrComp[i]);
+
+
 			if (open)
 			{
 				if (show)	

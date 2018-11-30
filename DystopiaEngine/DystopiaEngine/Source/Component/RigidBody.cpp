@@ -94,6 +94,8 @@ namespace Dystopia
 		// Get Owner's Transform Component as pointer
 		if (nullptr != GetOwner())
 		{
+			mPrevPosition = mPosition = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+
 			if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
 
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
@@ -120,6 +122,33 @@ namespace Dystopia
 	void RigidBody::Init(void)
 	{
 		// If mass is zero, object is interpreted to be static
+		// Get Owner's Transform Component as pointer
+		if (nullptr != GetOwner())
+		{
+			mPrevPosition = mPosition = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+
+			if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+
+			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
+			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
+
+
+			const auto ColComponents = GetOwner()->GetComponents<Collider>();
+
+			AutoArray<Collider*> ToRet;
+
+			for (auto elem : ColComponents)
+			{
+				ToRet.push_back(elem);
+			}
+
+			mparrCol = Ut::Move(ToRet);
+
+			mOrientation = Math::RotateZ(Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z });
+			mInverseOrientation = Math::AffineInverse(mOrientation);
+			mfAngleDegZ = Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z }.Radians();
+		}
+
 		if (mfMass > 0.0F)
 		{
 			mfInvMass = 1.0F / mfMass;
@@ -348,6 +377,8 @@ namespace Dystopia
 
 	void RigidBody::UpdateResult(float) const
 	{
+		//if (mPosition.x == 0.f)
+			//__debugbreak();
 		// Update Position
 		GetOwner()->GetComponent<Transform>()->SetGlobalPosition(mPosition);
 		GetOwner()->GetComponent<Transform>()->SetRotation(Math::Radians{ 0 }, Math::Radians{ 0 }, Math::Degrees{ mfAngleDegZ });

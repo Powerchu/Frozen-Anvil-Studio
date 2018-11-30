@@ -128,10 +128,6 @@ void Dystopia::Factory::LoadSegmentC(GameObject& _obj, unsigned _count, Dystopia
 		_in.ConsumeEndBlock();
 	}
 
-	for (auto& c : _obj.GetAllComponents())
-	{
-		c->Init();
-	}
 }
 
 void Dystopia::Factory::LoadSegmentB(GameObject& _obj, Dystopia::TextSerialiser& _in)

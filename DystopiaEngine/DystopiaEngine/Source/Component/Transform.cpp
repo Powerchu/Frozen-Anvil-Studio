@@ -368,13 +368,15 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		}
 	}
 
-	Math::Vector4 eulerAngle = mRotation.ToEuler();
+	static bool convertEuler = true;
+	static Math::Vector4 eulerAngle;
 	arrResult = EGUI::Display::VectorFields("Rotation", &eulerAngle, 0.01f, -FLT_MAX, FLT_MAX);
 	for (auto& e : arrResult)
 	{
 		switch (e)
 		{
 		case EGUI::eDragStatus::eSTART_DRAG:
+			convertEuler = false;
 			cmd->StartRec<Transform, const Math::Quaternion&>(&Transform::SetRotation, mRotation);
 			break;
 		case EGUI::eDragStatus::eDRAGGING:
@@ -388,10 +390,15 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		case EGUI::eDragStatus::eENTER:
 		case EGUI::eDragStatus::eDEACTIVATED:
 		case EGUI::eDragStatus::eEND_DRAG:
+			convertEuler = true;
 			cmd->EndRec<Transform, const Math::Quaternion&>(GetOwnerID(), &Transform::SetRotation, mRotation);
 			break;
 		}
 	}
+
+	if(convertEuler)
+		eulerAngle = mRotation.ToEuler();
+
 	EGUI::PopLeftAlign();
 #endif 
 }

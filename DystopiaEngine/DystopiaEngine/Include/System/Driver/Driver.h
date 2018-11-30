@@ -76,7 +76,7 @@ namespace Dystopia
 		template <class T>
 		static inline T* const Get(void);
 
-		void BroadcastMessage(const eSysMessage&);
+		void BroadcastMessage(const eSysMessage&, int _nParam);
 
 		void LoadSettings(void);
 		void PreInit(void);

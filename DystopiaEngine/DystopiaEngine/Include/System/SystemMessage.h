@@ -24,6 +24,7 @@ namespace Dystopia
 		MAXIMIZE,
 		MINIMIZE,
 		ACTIVATE,
+		SYSKEY,
 		QUIT,
 	};
 }

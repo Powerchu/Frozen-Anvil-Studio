@@ -49,11 +49,17 @@ namespace Dystopia
 
 			auto const & arr = GetVertexBuffer();
 
+			/*Add centroid vertex and {0,0,1} normal*/
+			pMeshSys->AddVertex(0, 0, 0);
+			pMeshSys->AddNormal(0, 0, 1);
+
 			for (const auto& i : arr)
 			{
 				pMeshSys->AddVertex(i.x, i.y, i.z);
 				pMeshSys->AddNormal(i.x, i.y, i.z);
 			}
+
+
 
 			SetMesh(pMeshSys->AddIndices("Collider Mesh", GetIndexBuffer()));
 			pMeshSys->EndMesh();
@@ -392,20 +398,24 @@ namespace Dystopia
 		
 		mIndexBuffer.clear();
 
-		auto const start = mDebugVertices.begin();
-
-		const auto  first   = mDebugVertices.begin();
-		auto  second  = first+1;
-		auto  third   = second+1;
+		const auto  first   = mDebugVertices.begin() - 1;
+		auto		second  = first + 1;
+		auto		third   = second + 1;
 		do
 		{
-		  mIndexBuffer.push_back(static_cast<const short>(first  - start));
-		  mIndexBuffer.push_back(static_cast<const short>(second - start));
-		  mIndexBuffer.push_back(static_cast<const short>(third - start));
+		  mIndexBuffer.push_back(static_cast<const short>(0));
+		  mIndexBuffer.push_back(static_cast<const short>(second - first));
+		  mIndexBuffer.push_back(static_cast<const short>(third - first));
 
-		  const auto copy = third++;
-		  second    = copy;
+		  second = third++;
 
 		} while (third != mDebugVertices.end());
+
+		mIndexBuffer.push_back(static_cast<const short>(0));
+		mIndexBuffer.push_back(static_cast<const short>(second - first));
+		mIndexBuffer.push_back(static_cast<const short>(1));
+
+
+
 	}
 }

@@ -264,7 +264,7 @@ void Dystopia::EngineCore::Shutdown(void)
 }
 
 
-void Dystopia::EngineCore::BroadcastMessage(const eSysMessage& _Message)
+void Dystopia::EngineCore::BroadcastMessage(const eSysMessage& _Message, int _nParam)
 {
 	mMessageQueue.Insert(_Message);
 }
@@ -273,10 +273,10 @@ void Dystopia::EngineCore::SendMessage(void)
 {
 	for (auto& m : mMessageQueue)
 	{
-		ParseMessage(m);
+		ParseMessage(m, _nParam);
 
 		for (auto& e : mSystemList)
-			e->ReceiveMessage(m);
+			e->ReceiveMessage(m, _nParam);
 	}
 
 	mMessageQueue.clear();
