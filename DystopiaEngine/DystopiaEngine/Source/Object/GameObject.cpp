@@ -218,7 +218,7 @@ void Dystopia::GameObject::Destroy(void)
 		c->GetOwner()->Destroy();
 
 	ForcePing(mComponents, GameObjectDestroy);
-	ForcePing(mBehaviours, GameObjectDestroy);
+	ForcePing(mBehaviours, BehaviourDestroy);
 
 	mnFlags = FLAG_REMOVE;
 }
