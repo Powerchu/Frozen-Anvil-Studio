@@ -27,6 +27,13 @@ namespace
 			return _buf[0] == '-' && _buf[1] == '-' && _buf[2] == '>';
 		}
 	};
+	struct SkipCData
+	{
+		static inline bool f(char const* _buf)
+		{
+			return _buf[0] == ']' && _buf[1] == ']' && _buf[2] == '>';
+		}
+	};
 	struct SkipMeta
 	{
 		static inline bool f(char const* _buf)
@@ -76,16 +83,37 @@ Dystopia::NodeXML* Dystopia::XMLParser::Parse(char const* _strFile)
 	return ActuallyParse(buf);
 }
 
+Dystopia::NodeXML* Dystopia::XMLParser::ParseNode(const char *& _buf, NodeXML* _curr)
+{
+	using Alloc_t = Dystopia::DefaultAllocator<NodeXML>;
+
+	while (*_buf)
+	{
+		switch (*_buf)
+		{
+		case '"':
+			break;
+		case '=':
+			break;
+		case '/':
+			return _curr->GetParent();
+		case '>':
+			auto child = Alloc_t::ConstructAlloc();
+			child = 
+		}
+	}
+
+	return _curr;
+}
+
 Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char const* _buf)
 {
 	using Alloc_t = Dystopia::DefaultAllocator<NodeXML>;
 	NodeXML* root = Alloc_t::ConstructAlloc();
 	NodeXML* curr = root;
 
-	if (!root)
-		return root;
-
-	while (*_buf)
+	root->mpParent = nullptr;
+	while (curr && *_buf)
 	{
 		_buf = Skip<WhiteSpace>(_buf);
 
@@ -109,7 +137,8 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char const* _buf)
 				}
 				else if ('[' == *_buf)
 				{
-
+					_buf = Skip<SkipCData>(_buf + 7);
+					_buf += 3; // Skip "]]>"
 				}
 				else // Don't know what on earth is it
 				{
@@ -118,22 +147,34 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char const* _buf)
 						return root;
 					
 					++_buf; // Skip ">"
-					break;
 				}
-				break;
 			}
-			
+			break;
+
 			case '?': // XML Decl or PI node
 			{
-				_buf = Skip<SkipMeta>(_buf);
+				_buf = Skip<SkipMeta>(_buf + 1);
 				if (!*_buf)
 					return root;
 				
 				_buf += 2; // Skip "?>"
-				break;
 			}
+			break;
+
+			case '/': // End of tag
+			{
+				_buf = Skip<SkipToEnd>(_buf + 1);
+				++_buf; // Skip '>'
+
+				curr = root->GetParent();
+			}
+			break;
+
 			default:
-				break;
+			{
+				curr = ParseNode(_buf, curr);
+			}
+			break;
 			}
 		}
 	}

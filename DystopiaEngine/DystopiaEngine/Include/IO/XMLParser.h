@@ -47,6 +47,7 @@ namespace Dystopia
 
 	private:
 
+		static NodeXML* ParseNode(const char *&, NodeXML*);
 		static NodeXML* ActuallyParse(const char *);
 
 		template <typename Pred>
