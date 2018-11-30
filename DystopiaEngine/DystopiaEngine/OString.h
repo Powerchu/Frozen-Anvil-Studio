@@ -239,12 +239,6 @@ inline OString& OString::operator+=(T _element)
 }
 
 template<>
-inline OString& OString::operator+=(T _element)
-{
-	
-}
-
-template<>
 inline OString& OString::operator+=(const char * _str)
 {
 	size_t i = 0, j = 0;
