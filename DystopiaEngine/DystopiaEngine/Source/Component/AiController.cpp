@@ -53,8 +53,8 @@ namespace Dystopia
 	AiController* AiController::Duplicate() const
 	{
 		const auto cc = EngineCore::GetInstance()->GetSystem<AISystem>()->RequestComponent(*this);
-		cc->SetOwner(GetOwner());
-		cc->Init();
+		//cc->SetOwner(GetOwner());
+		//cc->Init();
 		return cc;
 	}
 

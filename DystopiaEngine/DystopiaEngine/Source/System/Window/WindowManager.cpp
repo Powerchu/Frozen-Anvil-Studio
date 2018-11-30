@@ -80,6 +80,9 @@ namespace
 
 				Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().
 					SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
+
+				Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(true);
+
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
@@ -88,6 +91,7 @@ namespace
 					Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().SetSize(oldsz.first, oldsz.second, false);
 					oldsz.first = 0; oldsz.second = 0;
 				}
+				Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(false);
 			}
 			return 0;
 
