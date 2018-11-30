@@ -238,7 +238,7 @@ namespace EGUI
 			}
 			HashString inviLabel{ "##" };
 			inviLabel += _label;
-			bool b = ImGui::InputText(inviLabel.c_str(), _out.begin(), _out.size(), flags);
+			bool b = ImGui::InputText(inviLabel.c_str(), _out.access_c(), _out.size(), flags);
 			ImGui::PopItemWidth();
 			return b;
 		}

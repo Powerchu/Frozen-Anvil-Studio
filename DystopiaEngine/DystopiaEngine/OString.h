@@ -2,11 +2,31 @@
 #ifndef _O_STRING_H_
 #define _O_STRING_H_
 
+#define U_BUFSIZE  11
+#define ULL_BUFSIZE 16
+
+#include <cstdint>
+#include <iostream>
+#include "Globals.h"
+#include "Utility/Utility.h"
+
 #include "Allocator/DefaultAlloc.h"
 #include "System/Time/Timer.h"
-#include "DataStructure/HashString.h"
 
-class OString
+typedef uint64_t HashID;
+
+static constexpr HashID FNV_PRIME = 1099511628211u;
+static constexpr HashID OFFSET_BASIS = 0xcbf29ce484222325;
+template<unsigned int N>
+constexpr HashID StringHasher(const char(&_s)[N], unsigned int I = N)
+{
+	return I == 1 ? (OFFSET_BASIS ^ _s[0]) * FNV_PRIME :
+		(StringHasher(_s, I - 1) ^ (_s[I - 1])) * FNV_PRIME;
+}
+
+HashID StringHasher(const char* _s);
+
+class _DLL_EXPORT_ONLY OString
 {
 public:
 	static constexpr size_t nPos = static_cast<size_t>(-1);
@@ -44,6 +64,13 @@ public:
 	char	back(void) const;
 	char&   front(void);
 	char	front(void) const;
+	const char* cbegin(void) const;
+	const char*	begin(void);
+	const char* cend(void) const;
+	const char*	end(void);
+	const char* clast(void) const;
+	const char*	last(void);
+	char * access_c(void);
 
 	/* modifiers */
 
@@ -53,14 +80,28 @@ public:
 	OString& operator+=(T);
 	OString& operator+=(const OString&);
 	OString& erase(size_t _pos, size_t _len = nPos);
-	OString& replace(size_t _pos, size_t _len, const OString&);
-	OString& replace(size_t _pos, size_t _len, const char * _s);
 
+
+	/* useful functions */
+
+	size_t		find(const OString&, size_t _pos = 0) const;
+	size_t		find(const char* _s, size_t _pos = 0) const;
+	size_t		find(char _c, size_t _pos = 0) const;
+	size_t		rfind(const OString&, size_t _pos = nPos) const;
+	size_t		rfind(const char* _s, size_t _pos = nPos) const;
+	size_t		rfind(char _c, size_t _pos = nPos) const;
+	bool		compare(const OString&) const;
+	bool		compare(const char* _s) const;
+	size_t		find_first_of(const OString&, size_t _pos = 0) const;
+	size_t		find_first_of(const char* _s, size_t _pos = 0) const;
+	size_t		find_last_of(const OString&, size_t _pos = nPos) const;
+	size_t		find_last_of(const char* _s, size_t _pos = nPos) const;
+	OString		substr(size_t _pos, size_t _len = nPos) const;
 
 	/* get functions */
 
 	size_t			bufferSize(void) const;
-	size_t			len(void) const;
+	size_t			length(void) const;
 	size_t			size(void) const;
 	const char *	c_str(void) const;
 	HashID			id(void) const;
@@ -69,8 +110,6 @@ public:
 	void Rehash(void);
 
 private:
-	static constexpr size_t shortArr = 8;
-
 	//update new full size before calling this
 	void MyStrCopy(const char *_toCopyFrom, const size_t& _newCurSize);
 	void Realloc(size_t _newBufferSize);
@@ -83,7 +122,29 @@ private:
 	const char	*mpLiteral;			// 8 bytes
 	char		*mpCharBuffer;		// 8 bytes
 	bool		mbRehash;			// 2 bytes
+
 };
+
+bool operator==(const OString& _lhs, const OString& _rhs);
+bool operator==(const OString& _lhs, const char * _rhs);
+bool operator==(const char * _lhs, const OString& _rhs);
+bool operator==(HashID _id, const OString& _rhs);
+bool operator==(const OString& _lhs, HashID _id);
+bool operator==(OString&& _lhs, OString&& _rhs);
+bool operator==(const OString& _lhs, OString&& _rhs);
+bool operator==(OString&& _lhs, const OString& _rhs);
+bool operator!=(const OString& _lhs, const OString& _rhs);
+bool operator<(const OString& _lhs, const OString& _rhs);
+bool operator>(const OString& _lhs, const OString& _rhs);
+std::ostream& operator<<(std::ostream& _os, const OString& _rhs);
+
+OString operator+(const OString& _lhs, const OString& _rhs);
+OString operator+(const OString& _lhs, const char*);
+OString operator+(const char*, const OString& _rhs);
+
+
+
+/******************************************************* template function definition *******************************************************/
 
 template<size_t N>
 inline OString::OString(char const (&_literal)[N])
@@ -128,6 +189,7 @@ inline OString& OString::operator=(T _str)
 	return *this;
 }
 
+
 template<>
 inline OString& OString::operator=(const char * _str)
 {
@@ -168,6 +230,7 @@ inline OString& OString::operator=(const wchar_t * _str)
 	mbRehash = true;
 	return *this;
 }
+
 
 template<unsigned N>
 inline OString& OString::operator+=(const char(&_s)[N])
@@ -241,51 +304,144 @@ inline OString& OString::operator+=(T _element)
 template<>
 inline OString& OString::operator+=(const char * _str)
 {
-	size_t i = 0, j = 0;
-	const size_t otherSize = strlen(_str);
-	const size_t newSize = mnCurSize + otherSize;
+	const size_t newSize = mnCurSize + strlen(_str);
 
 	if (mpLiteral)
 	{
-
+		if (mpCharBuffer && mnBufferSize > newSize)
+		{
+			CopyFromLiteral();
+			size_t i = mnCurSize;
+			for (; i < newSize; i++)
+				mpCharBuffer[i] = _str[i - mnCurSize];
+			for (; i < mnBufferSize; i++)
+				mpCharBuffer[i] = '\0';
+		}
+		else
+		{
+			Alloc(newSize);
+			CopyFromLiteral();
+			for (size_t k = mnCurSize; k < mnBufferSize; k++)
+				mpCharBuffer[k] = _str[k - mnCurSize];
+			mpCharBuffer[newSize] = '\0';
+		}
 	}
+	else
+	{
+		if (mpCharBuffer)
+		{
+			if (mnBufferSize <= newSize)
+			{
+				char *tempBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(newSize + 1);
+				size_t i = 0, j = 0;
+				for (; i < mnCurSize; ++i)
+					tempBuffer[i] = mpCharBuffer[i];
+				for (; j < strlen(_str); j++)
+					tempBuffer[i + j] = _str[j];
 
-	//char* buffer = Dystopia::DefaultAllocator<char[]>::Alloc(otherSize + mSize + 1);
-	//while (i < mSize)
-	//{
-	//	buffer[i] = mCharBuffer[i];
-	//	++i;
-	//}
-	//while (j < otherSize)
-	//{
-	//	buffer[i + j] = *(_s + j);
-	//	++j;
-	//}
-	//buffer[otherSize + mSize] = '\0';
-	//mSize += otherSize;
-	//Dystopia::DefaultAllocator<char[]>::Free(mCharBuffer);
-	//mCharBuffer = buffer;
-	//mbRehash = true;
-
+				tempBuffer[newSize] = '\0';
+				Dystopia::DefaultAllocator<char[]>::Free(mpCharBuffer);
+				mpCharBuffer = tempBuffer;
+				mnBufferSize = newSize + 1;
+			}
+			else
+			{
+				size_t i = mnCurSize;
+				for (; i < newSize; ++i)
+					mpCharBuffer[i] = _str[i - mnCurSize];
+				mpCharBuffer[newSize] = '\0';
+			}
+		}
+		else
+		{
+			Alloc(newSize);
+			size_t i = 0;
+			for (; i < strlen(_str); ++i)
+				mpCharBuffer[i] = _str[i];
+		}
+	}
+	mnCurSize = newSize;
+	mbRehash = true;
 	return *this;
 }
 
 template<>
 inline OString& OString::operator+=(const char _c)
 {
+	const size_t newSize = mnCurSize + 1;
+	if (mpLiteral)
+	{
+		if (!mpCharBuffer ||  mnBufferSize <= newSize)
+		{
+			Alloc(newSize);
+		}
+		CopyFromLiteral();
+		mpCharBuffer[mnCurSize] = _c;
+		mpCharBuffer[newSize] = '\0';
+	}
+	else
+	{
+		if (mpCharBuffer)
+		{
+			if (mnBufferSize <= newSize)
+			{
+				char *tempBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(newSize + 1);
+				size_t i = 0;
+				for (; i < mnCurSize; ++i)
+					tempBuffer[i] = mpCharBuffer[i];
+				tempBuffer[mnCurSize] = _c;
+				tempBuffer[newSize] = '\0';
+				Dystopia::DefaultAllocator<char[]>::Free(mpCharBuffer);
+				mpCharBuffer = tempBuffer;
+				mnBufferSize = newSize + 1;
+			}
+			else
+			{
+				mpCharBuffer[mnCurSize] = _c;
+				mpCharBuffer[newSize] = '\0';
+			}
+		}
+		else
+		{
+			Alloc(1);
+			mpCharBuffer[0] = _c;
+		}
+	}
+	mnCurSize++;
+	mbRehash = true;
 	return *this;
 }
 
 template<>
 inline OString& OString::operator+=(unsigned _n)
 {
+	char buffer[U_BUFSIZE];
+	if (!_itoa_s(_n, buffer, U_BUFSIZE, 10))
+		return operator+=(buffer);
 	return *this;
 }
 
 template<>
 inline OString& OString::operator+=(unsigned long long _ull)
 {
+	char buffer[ULL_BUFSIZE];
+	if (!_i64toa_s(_ull, buffer, ULL_BUFSIZE, 10))
+		return operator+=(buffer);
 	return *this;
+}
+
+template <unsigned N>
+inline OString operator+(const char(&_s)[N], const OString& _rhs)
+{
+	OString s{ _s };
+	return s + _rhs;
+}
+
+template <unsigned N>
+inline OString operator+(const OString& _lhs, const char(&_s)[N])
+{
+	OString s{ _s };
+	return _lhs + s;
 }
 
 #endif 

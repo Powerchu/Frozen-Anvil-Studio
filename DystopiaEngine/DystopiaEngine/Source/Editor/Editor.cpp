@@ -35,6 +35,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
+	/*
 	if (AllocConsole())
 	{
 		FILE* file;
@@ -68,6 +69,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 		times[i++] = (x.Time() - t0).count();
 
 		emptyCtored = "Reassigned with literal";
+		emptyCtored.erase(2, 23);
 		x.Lap();
 		t0 = x.Time();
 		const char a = emptyCtored.front();
@@ -83,10 +85,20 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 		x.Lap();
 		times[i++] = (x.Time() - t0).count();
 
-		OString assignToLiteral{"Pear "};
+		OString assignToLiteral{"Pera "};
 		x.Lap();
 		t0 = x.Time();
 		assignToLiteral += "Literal";
+		x.Lap();
+		times[i++] = (x.Time() - t0).count();
+
+		OString asda{ "asd " };
+		asda = emptyCtored.c_str();
+		x.Lap();
+		t0 = x.Time();
+		asda += assignToLiteral.c_str();
+		size_t p = asda.find("era");
+		size_t q = asda.rfind("era");
 		x.Lap();
 		times[i++] = (x.Time() - t0).count();
 
@@ -95,18 +107,19 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 
 		system("CLS");
 	}
+	*/
 
-	//Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
-	//pMain->Init();
-	//while (!pMain->IsClosing())
-	//{
-	//	pMain->StartFrame();
-	//
-	//	pMain->Update();
-	//
-	//	pMain->EndFrame();
-	//}
-	//pMain->Shutdown();
+	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
+	pMain->Init();
+	while (!pMain->IsClosing())
+	{
+		pMain->StartFrame();
+	
+		pMain->Update();
+	
+		pMain->EndFrame();
+	}
+	pMain->Shutdown();
 	return 0;
 }
 

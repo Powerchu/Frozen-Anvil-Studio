@@ -16,15 +16,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(push)
 #pragma warning(disable : 4251)
 
-#include <cstdint>
-#include <iostream>
-#include "Globals.h"
-#include "Utility/Utility.h"
+//#include <cstdint>
+//#include <iostream>
+//#include "Globals.h"
+//#include "Utility/Utility.h"
+//
+//#include "Allocator/DefaultAlloc.h"
+//#include "System/Time/Timer.h"
+#include "../../OString.h"
 
-#include "Allocator/DefaultAlloc.h"
-#include "System/Time/Timer.h"
-#include "DataStructure/HashString.h"
+using HashString = OString;
 
+#if !EDITOR
 
 typedef uint64_t HashID;
 
@@ -38,7 +41,6 @@ constexpr HashID StringHasher(const char(&_s)[N], unsigned int I = N)
 }
 
 HashID StringHasher(const char* _s);
-
 
 /*************************************************************************************************************/
 
@@ -212,9 +214,9 @@ HashString& HashString::operator+=(const char(&_s)[N])
 
 	return *this;
 }
+#endif
 
 #endif //_HASH_STRING_H_
-
 
 
 

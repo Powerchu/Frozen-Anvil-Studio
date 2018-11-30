@@ -19,6 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define U_BUFFER_SIZE  11
 #define ULL_BUFFER_SIZE 16
 
+#if !EDITOR 
+
 HashID StringHasher(const char* _s)
 {
 	if (!_s)
@@ -659,3 +661,11 @@ bool operator>(const HashString& _lhs, const HashString& _rhs)
 {
 	return std::strcmp(_lhs.c_str(), _rhs.c_str()) > 0;
 }
+#endif 
+
+
+
+
+
+
+
