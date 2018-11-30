@@ -540,7 +540,7 @@ namespace Editor
 		switch (mCurrGizTool)
 		{
 		case eTRANSLATE:
-			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 0.612525F, redColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ArrowLeft("##LeftArrow", changeX, screenPos, 0.6125f, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (const auto& id : _arrIDs)
@@ -578,7 +578,7 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 0.612525F, greenColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ArrowUp("##UpArrow", changeY, screenPos, 0.6125f, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (const auto& id : _arrIDs)
@@ -657,7 +657,7 @@ namespace Editor
 			break;
 
 		case eSCALE:
-			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 0.5f, redColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 0.6125f, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (const auto& id : _arrIDs)
@@ -696,7 +696,7 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.5f, greenColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.6125f, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (const auto& id : _arrIDs)
@@ -734,7 +734,7 @@ namespace Editor
 				mClearSelection = false;
 				break;
 			}
-			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 0.5f, blueColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 0.6125f, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				for (const auto& id : _arrIDs)
@@ -866,7 +866,7 @@ namespace Editor
 			break;
 
 		case eSCALE:
-			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 0.5F, redColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ScalerLeft("##LeftScaler", changeX, screenPos, 0.6125f, redColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				obj.GetComponent<Dystopia::Transform>()->SetGlobalScale(Math::Vec4{ cScale.x + changeX * scale.x, cScale.y, cScale.z, cScale.w });
@@ -888,7 +888,7 @@ namespace Editor
 
 				break;
 			}
-			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.5, greenColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::ScalerUp("##UpScaler", changeY, screenPos, 0.6125f, greenColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				obj.GetComponent<Dystopia::Transform>()->SetGlobalScale(Math::Vec4{ cScale.x, cScale.y + changeY * scale.y, cScale.z, cScale.w });
@@ -910,7 +910,7 @@ namespace Editor
 
 				break;
 			}
-			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 0.5, blueColor, &mGizmoHovered))
+			switch (EGUI::Gizmo2D::Box("##BothScaler", changeX, changeY, screenPos, 0.6125f, blueColor, &mGizmoHovered))
 			{
 			case EGUI::eDRAGGING:
 				changeX += changeY;

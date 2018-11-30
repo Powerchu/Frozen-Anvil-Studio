@@ -11,6 +11,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include <string>
+#include "Editor/EGUI.h"
 #if EDITOR
 #include "Editor/Gizmo.h"
 #include "../../ImGui/imgui.h"
@@ -19,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 static ImVec4 yellow{ 1.f, 1.f,0.f ,0.9f };
 static constexpr int sizeGizA = 7;
 static constexpr int sizeGizS = 8;
+static constexpr float speedMult = 1.375f;
 
 EGUI::eDragStatus EGUI::Gizmo2D::ArrowLeft(const std::string& _uniqueID, float& _outputValX, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, bool* _pHovered, float _len, float _thickness)
 {
@@ -68,7 +70,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ArrowLeft(const std::string& _uniqueID, float& 
 			float adjust = 0;
 			status = EGUI::eDRAGGING;
 			if (g.ActiveIdSource == ImGuiInputSource_Mouse && ImGui::IsMousePosValid() && g.IO.MouseDragMaxDistanceSqr[0] > 1.0f*1.0f)
-				adjust = g.IO.MouseDelta.x * _vSpeed;
+				adjust = g.IO.MouseDelta.x * _vSpeed * speedMult;
 			_outputValX += adjust;
 		}
 	}
@@ -131,7 +133,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ArrowUp(const std::string& _uniqueID, float& _o
 			float adjust = 0;
 			status = EGUI::eDRAGGING;
 			if (g.ActiveIdSource == ImGuiInputSource_Mouse && ImGui::IsMousePosValid() && g.IO.MouseDragMaxDistanceSqr[0] > 1.0f*1.0f)
-				adjust = g.IO.MouseDelta.y * _vSpeed;
+				adjust = g.IO.MouseDelta.y * _vSpeed * speedMult;
 			_outputValY -= adjust;
 		}
 	}
@@ -196,7 +198,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ScalerLeft(const std::string& _uniqueID, float&
 			float adjust = 0;
 			status = EGUI::eDRAGGING;
 			if (g.ActiveIdSource == ImGuiInputSource_Mouse && ImGui::IsMousePosValid() && g.IO.MouseDragMaxDistanceSqr[0] > 1.0f*1.0f)
-				adjust = g.IO.MouseDelta.x * _vSpeed;
+				adjust = g.IO.MouseDelta.x * _vSpeed * speedMult;
 			_outputValX += adjust;
 		}
 	}
@@ -260,7 +262,7 @@ EGUI::eDragStatus EGUI::Gizmo2D::ScalerUp(const std::string& _uniqueID, float& _
 			float adjust = 0;
 			status = EGUI::eDRAGGING;
 			if (g.ActiveIdSource == ImGuiInputSource_Mouse && ImGui::IsMousePosValid() && g.IO.MouseDragMaxDistanceSqr[0] > 1.0f*1.0f)
-				adjust = g.IO.MouseDelta.y * _vSpeed;
+				adjust = g.IO.MouseDelta.y * _vSpeed * speedMult;
 			_outputValY -= adjust;
 		}
 	}
@@ -314,8 +316,8 @@ EGUI::eDragStatus EGUI::Gizmo2D::Box(const std::string& _uniqueID, float& _outpu
 			status = EGUI::eDRAGGING;
 			if (g.ActiveIdSource == ImGuiInputSource_Mouse && ImGui::IsMousePosValid() && g.IO.MouseDragMaxDistanceSqr[0] > 1.0f*1.0f)
 			{
-				adjustX = g.IO.MouseDelta.x * _vSpeed;
-				adjustY = g.IO.MouseDelta.y * _vSpeed;
+				adjustX = g.IO.MouseDelta.x * _vSpeed * speedMult;
+				adjustY = g.IO.MouseDelta.y * _vSpeed * speedMult;
 			}
 			_outputValY -= adjustY;
 			_outputValX += adjustX;
