@@ -264,25 +264,25 @@ void Dystopia::EngineCore::Shutdown(void)
 }
 
 
-void Dystopia::EngineCore::BroadcastMessage(const eSysMessage& _Message, int _nParam)
+void Dystopia::EngineCore::BroadcastMessage(const eSysMessage& _Message, size_t _nParam)
 {
-	mMessageQueue.Insert(_Message);
+	mMessageQueue.EmplaceBack(_Message, _nParam);
 }
 
 void Dystopia::EngineCore::SendMessage(void)
 {
 	for (auto& m : mMessageQueue)
 	{
-		ParseMessage(m, _nParam);
+		ParseMessage(m.mMsg, m.mParam);
 
 		for (auto& e : mSystemList)
-			e->ReceiveMessage(m, _nParam);
+			e->ReceiveMessage(m.mMsg, m.mParam);
 	}
 
 	mMessageQueue.clear();
 }
 
-void Dystopia::EngineCore::ParseMessage(const eSysMessage&)
+void Dystopia::EngineCore::ParseMessage(const eSysMessage&, size_t)
 {
 }
 

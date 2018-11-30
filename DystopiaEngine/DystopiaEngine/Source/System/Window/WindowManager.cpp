@@ -68,7 +68,7 @@ namespace
 
 		case WM_SYSKEYUP:
 			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::SYSKEY, wParam);
-			return;
+			return 0;
 
 		case WM_SYSKEYDOWN:
 			return 0;
@@ -87,10 +87,10 @@ namespace
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
-				auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
-
 				if (oldsz.first)
 				{
+					auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
+
 					w.SetSize(oldsz.first, oldsz.second, false);
 					oldsz.first = 0; oldsz.second = 0;
 				}
@@ -324,7 +324,7 @@ void Dystopia::WindowManager::DestroySplash(void)
 void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 {
 	HDROP handle = reinterpret_cast<HDROP>(_wParam);
-	int files = DragQueryFile(handle, 0xFFFFFFFFu, 0, 0);
+	size_t files = DragQueryFile(handle, 0xFFFFFFFFu, 0, 0);
 
 	AutoArray<wchar_t> buf;
 	AutoArray<HashString> paths{ files };

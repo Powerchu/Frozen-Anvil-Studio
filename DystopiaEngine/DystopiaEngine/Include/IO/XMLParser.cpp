@@ -73,7 +73,7 @@ namespace
 	struct WhiteSpace {
 		static inline bool f(char const* _buf)
 		{
-			return std::isspace(*_buf);
+			return !std::isspace(*_buf);
 		}
 	};
 }
@@ -85,7 +85,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::Parse(char const* _strFile)
 	using Alloc_t = Dystopia::DefaultAllocator<char[]>;
 	std::basic_ifstream<char> file{ _strFile, ios::binary };
 
-	if (file.bad())
+	if (!file.good())
 	{
 		__debugbreak();
 		return nullptr;
@@ -111,6 +111,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ParseNode(char *& _buf, NodeXML* _curr)
 
 	_curr->mstrName = _buf;
 	_buf = Skip<Not<WhiteSpace>>(_buf);
+	*_buf++ = '\0';
 
 	while (*_buf)
 	{
@@ -133,8 +134,8 @@ Dystopia::NodeXML* Dystopia::XMLParser::ParseNode(char *& _buf, NodeXML* _curr)
 			*_buf++ = '\0';
 			_buf += '"' == *_buf;
 			_curr->mFields.EmplaceBack(name, _buf);
-			_buf = Skip<Or<FindChar<'"'>, WhiteSpace>>(_buf);
-			*_buf++ = '\0';
+			_buf = Skip<Or<FindChar<'"'>, Not<WhiteSpace>>>(_buf);
+			*_buf = '\0';
 			break;
 		}
 
@@ -213,7 +214,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 				auto temp = Alloc_t::ConstructAlloc();
 				curr->mChildren.Insert(temp);
 				temp->mpParent = curr;
-				curr = ParseNode(_buf, temp);
+				curr = ParseNode(++_buf, temp);
 			}
 			break;
 			}

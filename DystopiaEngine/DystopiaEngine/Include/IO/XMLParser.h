@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _TEXT_SERIALISER_H_
-#define _TEXT_SERIALISER_H_
+#ifndef _XMLPARSER_H_
+#define _XMLPARSER_H_
 
 #include "IO/Serialiser.h"
 #include "DataStructure/AutoArray.h"
@@ -53,6 +53,7 @@ namespace Dystopia
 		template <typename Pred>
 		static char* Skip(char*);
 
+		XMLParser(void) = delete;
 	};
 }
 
