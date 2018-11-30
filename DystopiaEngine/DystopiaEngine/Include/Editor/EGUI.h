@@ -89,8 +89,8 @@ namespace EGUI
 	float GetLabelSpacing();
 
 	bool StartMainMenuBar();
-	bool StartMenuHeader(const std::string&, bool _enabled = true);
-	bool StartMenuBody(const std::string&, const std::string& _shortcut="", bool _enabled = true);
+	bool StartMenuHeader(const char * _p, bool _enabled = true);
+	bool StartMenuBody(const char * _p, const char * _shortcut = "", bool _enabled = true);
 	void EndMainMenuBar();
 	void EndMenuHeader();
 	void Indent(float _spacing = 20.f);
@@ -115,7 +115,7 @@ namespace EGUI
 			EndTab();
 	======================================================================================================================= */
 	// Call to Start a new Tab
-	bool StartTab(const std::string&, bool* = nullptr, ImGuiWindowFlags = 0);
+	bool StartTab(const char*, bool* = nullptr, ImGuiWindowFlags = 0);
 	// Call to End the Tab segment
 	void EndTab();
 
@@ -133,11 +133,9 @@ namespace EGUI
 			EGUI::EndChild();
 	======================================================================================================================= */
 	// Call to Start Child window in the current window you are in 
-	bool StartChild(const std::string&, const Math::Vec2& = { 0, 0 }, bool _showBorder = true,
-					const Math::Vec4& _colour = { 0.1f, 0.1f, 0.1f, 0.1f });
+	bool StartChild(const char*, const Math::Vec2& = { 0, 0 }, bool _showBorder = true);
 	// Call to Start Child window in the current window you are in 
-	bool StartChild(const std::string&, const float& = 0, const float& = 0, bool _showBorder = true, 
-					const Math::Vec4& _colour = { 0.1f, 0.1f, 0.1f, 0.1f });
+	bool StartChild(const char*, const float& = 0, const float& = 0, bool _showBorder = true);
 	// Call to end the child window and proceed back to the parent window
 	void EndChild();
 
@@ -177,8 +175,8 @@ namespace EGUI
 				char buffer[size];
 				EGUI::Display::TextField("This is an editable text field: ", &buffer, size);
 		======================================================================================================================= */
-		bool TextField(const std::string& _label, char *_pOutText, size_t _size, bool _showLabel = true, float _width = 250, bool _onlyEnterReturnsTrue = true);
-		bool TextField(const HashString& _label, HashString& _out, bool _showLabel = true, float _width = 250, bool _onlyEnterReturnsTrue = true);
+		bool TextField(const char * _label, char *_pOutText, size_t _size, bool _showLabel = true, float _width = 250, bool _onlyEnterReturnsTrue = true);
+		bool TextField(const char * _label, HashString& _out, bool _showLabel = true, float _width = 250, bool _onlyEnterReturnsTrue = true);
 		/* =======================================================================================================================
 		Brief:
 				Creates a vertical or horizontal selectable splitter (like a separator), allows you to drag child windows.
@@ -197,7 +195,7 @@ namespace EGUI
 		Usage:
 				EGUI::Display::EmptyBox("Accepting field", 100);
 		======================================================================================================================= */
-		bool EmptyBox(const std::string& _label, float _width, const std::string& _anythingToShowInside = "",
+		bool EmptyBox(const char * _label, float _width, const char * _anythingToShowInside = "",
 			bool _iteractive = false, bool _showLabel = true);
 		/* =======================================================================================================================
 		Brief:
@@ -209,7 +207,7 @@ namespace EGUI
 					// EGUI::Display::Label("Things inside this header");
 				}
 		======================================================================================================================= */
-		bool CollapsingHeader(const std::string& _label, bool defaultOpen = true);
+		bool CollapsingHeader(const char * _label, bool defaultOpen = true);
 		/* =======================================================================================================================
 		Brief:
 				Creates an editable vector field that is pre-arranged for you. Returns true if any of the variable is changed.
@@ -226,9 +224,9 @@ namespace EGUI
 					break;
 				}
 		======================================================================================================================= */
-		Array<eDragStatus, 3> VectorFields(const std::string& _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f,
+		Array<eDragStatus, 3> VectorFields(const char * _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f,
 			float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
-		Array<eDragStatus, 2> VectorFields(const std::string& _label, Math::Vector2 *_outputVec, float _dragSpeed = 1.0f,
+		Array<eDragStatus, 2> VectorFields(const char * _label, Math::Vector2 *_outputVec, float _dragSpeed = 1.0f,
 			float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
 		Array<eDragStatus, 2> VectorFieldsInt(const char *_label, Math::Vector2 *_outputVec, int _dragSpeed = 1,
 			int _min = 0, int _max = 1, float _width = 50.f);
@@ -242,7 +240,7 @@ namespace EGUI
 					// The checkbox is clicked (toggleMe if its true or false does not matter). Do something here:
 				}
 		======================================================================================================================= */
-		bool CheckBox(const std::string& _label, bool *_pOutBool, bool _showLabel = true);
+		bool CheckBox(const char * _label, bool *_pOutBool, bool _showLabel = true);
 		/* =======================================================================================================================
 		Brief:
 				Creates a draggable float editable field. Returns if the value is changed
@@ -257,11 +255,11 @@ namespace EGUI
 					break;
 				}
 		======================================================================================================================= */
-		eDragStatus DragFloat(const std::string& _label, float *_pOutFloat, float _dragSpeed = 1.0f,
+		eDragStatus DragFloat(const char * _label, float *_pOutFloat, float _dragSpeed = 1.0f,
 			float _min = 0.0f, float _max = 1.0f, bool _hideText = false, float _width = 100.f);
-		eDragStatus SliderFloat(const std::string& _label, float *_pOutFloat, float _min = 0.0f, float _max = 1.0f, 
+		eDragStatus SliderFloat(const char * _label, float *_pOutFloat, float _min = 0.0f, float _max = 1.0f,
 			bool _hideText = false, float _width = 100.f);
-		eDragStatus SliderInt(const HashString& _label, int *_pOutInt, int _min = 0, int _max = 1,
+		eDragStatus SliderInt(const char * _label, int *_pOutInt, int _min = 0, int _max = 1,
 			bool _hideText = false, float _width = 100.f);
 		/* =======================================================================================================================
 		Brief:
@@ -277,7 +275,7 @@ namespace EGUI
 					break;
 				}
 		======================================================================================================================= */
-		eDragStatus DragInt(const std::string& _label, int *_pOutInt, float _dragSpeed = 1.0f,
+		eDragStatus DragInt(const char * _label, int *_pOutInt, float _dragSpeed = 1.0f,
 			int _min = 0, int _max = 0, bool _hideText = false, float _width = 100.f);
 		/* =======================================================================================================================
 		Brief:
@@ -294,9 +292,9 @@ namespace EGUI
 				}
 		======================================================================================================================= */
 		// Creates a selectable text field with an output bool to toggle
-		bool SelectableTxt(const std::string& _label, bool *_pSelected);
+		bool SelectableTxt(const char* _label, bool *_pSelected);
 		// Creates a selectable text field with a bool to determine if it is highlighted (selected) or not
-		bool SelectableTxt(const std::string& _label, bool _highlight = false);
+		bool SelectableTxt(const char* _label, bool _highlight = false);
 		/* =======================================================================================================================
 		Brief:
 				Creates a double click selectable text field. Returns true only when the text field is double clicked
@@ -312,9 +310,9 @@ namespace EGUI
 				}
 		======================================================================================================================= */
 		// Creates a selectable text field with an output bool to toggle
-		bool SelectableTxtDouble(const std::string& _label, bool *_pSelected);
+		bool SelectableTxtDouble(const char*  _label, bool *_pSelected);
 		// Creates a selectable text field with a bool to determine if it is highlighted (selected) or not
-		bool SelectableTxtDouble(const std::string& _label, bool = false);
+		bool SelectableTxtDouble(const char* _label, bool = false);
 		/* =======================================================================================================================
 		Brief:
 				Start of a Tree Node (like the one you see in ResourceView I believe - 3 July 2018). Returns true if tree is opened.
@@ -337,10 +335,10 @@ namespace EGUI
 				}
 		======================================================================================================================= */
 		// Start a tree node 
-		bool StartTreeNode(const std::string& _label, bool* _outClicked = nullptr, bool _highlighted = false,
+		bool StartTreeNode(const char* _label, bool* _outClicked = nullptr, bool _highlighted = false,
 			bool _noArrow = false, bool _defaulPeeken = true, bool _singleClickOpen = false);
 		// Set a specific tree node to be collapsed (closed) or not
-		void OpenTreeNode(const std::string& _label, bool _open);
+		void OpenTreeNode(const char* _label, bool _open);
 		// opens the next tree node
 		void OpenTreeNode(bool _open = true);
 		//End a tree Node
@@ -352,7 +350,7 @@ namespace EGUI
 		Usage:
 				Very specific as of creation date.
 		======================================================================================================================= */
-		bool CustomPayload(const std::string& _uniqueId, const std::string& _label, const std::string& _tooltip,
+		bool CustomPayload(const char* _uniqueId, const char * _label, const char * _tooltip,
 			const Math::Vec2& _displaytSize, ePayloadTags _tagLoad, void* _pData, size_t _dataSize);
 		/* =======================================================================================================================
 		Brief:
@@ -366,7 +364,7 @@ namespace EGUI
 					EGUI::Display::EndPayload();
 				}
 		======================================================================================================================= */
-		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const std::string& _toolTip);
+		bool StartPayload(ePayloadTags _tagLoad, void* _pData, size_t _dataSize, const char* _toolTip);
 		// Call EndPayLoad at the end of StartPayLoad return true. See StartPayLoad usage
 		void EndPayload();
 		/* =======================================================================================================================
@@ -443,10 +441,10 @@ namespace EGUI
 					EGUI::Display::EndPopup();
 				}
 		======================================================================================================================= */
-		void OpenPopup(const std::string& _thePopupID, bool _toOpenAtMousePos = true);
+		void OpenPopup(const char* _thePopupID, bool _toOpenAtMousePos = true);
 		// Creates a popup window that is tied to the _uniqueID. Call OpenPopup with its ID to open it
-		bool StartPopup(const std::string& _uniqueID);
-		bool StartPopupModal(const std::string& _uniqueID, const std::string& _label);
+		bool StartPopup(const char* _uniqueID);
+		bool StartPopupModal(const char* _uniqueID, const char* _label);
 		void CloseCurrentPopup();
 		// call this at the end of the StartPopup function when it is true. Determines the end of the popup
 		void EndPopup();
@@ -462,15 +460,15 @@ namespace EGUI
 				arr.push_back("item2");
 				EGUI::Display::DropDownSelection("TestDropDown", i, arr);
 		======================================================================================================================= */
-		bool DropDownSelection(const std::string& _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width = 100);
+		bool DropDownSelection(const char* _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width = 100);
 		template<unsigned N>
-		bool DropDownSelection(const HashString& _label, int& _currentIndex, unsigned _under21, float _width = 100)
+		bool DropDownSelection(const char* _label, int& _currentIndex, unsigned _under21, float _width = 100)
 		{
 			static_assert(N >= 21, "Under 21");
 
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
-			Label(_label.c_str());
+			Label(_label);
 			SameLine(DefaultAlighnmentSpacing, GetLeftAlignStack().IsEmpty() ? DefaultAlignLeft : GetLeftAlignStack().Peek());
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			HashString inviLabel{ "##" };
@@ -480,7 +478,7 @@ namespace EGUI
 			return ret;
 		}
 		template<unsigned N>
-		bool DropDownSelection(const std::string& _label, int& _currentIndex, const std::string(&_arrOfItems)[N], float _width = 100)
+		bool DropDownSelection(const char* _label, int& _currentIndex, const std::string(&_arrOfItems)[N], float _width = 100)
 		{
 			const char* arrCharPtr[N];
 			for (unsigned i = 0; i < N; ++i)
@@ -488,10 +486,12 @@ namespace EGUI
 
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
-			Label(_label.c_str());
+			Label(_label);
 			SameLine(DefaultAlighnmentSpacing, GetLeftAlignStack().IsEmpty() ? DefaultAlignLeft : GetLeftAlignStack().Peek());
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
-			bool ret = ImGui::Combo(("##DropDownList" + _label).c_str(), &_currentIndex, arrCharPtr, N);
+			HashString invi{ "##DropDownList" };
+			invi += _label;
+			bool ret = ImGui::Combo(invi.c_str(), &_currentIndex, arrCharPtr, N);
 			ImGui::PopItemWidth();
 			return ret;
 		}
@@ -501,7 +501,7 @@ namespace EGUI
 		Usage:
 				EGUI::Display::Button("Demo", ImVec2{ 200, 20 });
 		======================================================================================================================= */
-		bool Button(const std::string& _label, const Math::Vec2& _size = Math::Vec2{ 50, 24 });
+		bool Button(const char* _label, const Math::Vec2& _size = Math::Vec2{ 50, 24 });
 		/* =======================================================================================================================
 		Brief:
 				Creates a dummy area. Used only to offset ImGui stuff. Does absolutely nothing except for manipulating UI
@@ -527,7 +527,7 @@ namespace EGUI
 		Usage:
 				EGUI::Display::IconFolder("something");
 		======================================================================================================================= */
-		bool IconFolder(const std::string& _uniqueId, float width = 15.f, float height = 9.f, bool _open = false,
+		bool IconFolder(const char* _uniqueId, float width = 15.f, float height = 9.f, bool _open = false,
 						const Math::Vec4& _colour = Math::Vec4{ 1.f, 1.f, 0.4f, 1.f });
 		/* =======================================================================================================================
 		Brief:
@@ -537,7 +537,7 @@ namespace EGUI
 		Usage:
 				EGUI::Display::IconCircle("something");
 		======================================================================================================================= */
-		bool IconCircle(const std::string& _uniqueID, float radius = 10.f, float offsetX = 0.f,
+		bool IconCircle(const char* _uniqueID, float radius = 10.f, float offsetX = 0.f,
 					    float offsetY = 0.f, const Math::Vec4& _colour = Math::Vec4{ 0.7f, 0.7f, 0.7f, 0.8f });
 		/* =======================================================================================================================
 		Brief:
@@ -547,7 +547,7 @@ namespace EGUI
 		Usage:
 				EGUI::Display::IconCross("something");
 		======================================================================================================================= */
-		bool IconCross(const std::string& _uniqueID, float radius = 10.f, float offsetX = 0.f,
+		bool IconCross(const char* _uniqueID, float radius = 10.f, float offsetX = 0.f,
 					   float offsetY = 0.f, const Math::Vec4& _colour = Math::Vec4{ 0.7f, 0.7f, 0.7f, 0.8f });
 		/* =======================================================================================================================
 		Brief:
@@ -555,14 +555,14 @@ namespace EGUI
 		Usage:
 				EGUI::Display::IconGameObj("something");
 		======================================================================================================================= */
-		bool IconGameObj(const std::string& _uniqueId, float _width = 10.f, float _height = 10.f);
+		bool IconGameObj(const char* _uniqueId, float _width = 10.f, float _height = 10.f);
 		/* =======================================================================================================================
 		Brief:
 				Creates a small File icon. Returns true when clicked
 		Usage:
 				EGUI::Display::IconFile("something");
 		======================================================================================================================= */
-		bool IconFile(const std::string& _uniqueId, float _width = 10.f, float _height = 10.f,
+		bool IconFile(const char* _uniqueId, float _width = 10.f, float _height = 10.f,
 					  const Math::Vec4& _colour = Math::Vec4{ 0.2f, 0.8f, 0.7f, 0.8f });
 		/* =======================================================================================================================
 		Brief:
@@ -579,22 +579,23 @@ namespace EGUI
 				EGUI::Display::LineGrap("MyGraph", arr, 10, 0, 11, Math::Vec2{100,20}, "hovering");
 		======================================================================================================================= */
 		template<size_t N>
-		void LineGraph(const std::string& _uniqueLabel, const float(&_array)[N], float _min = 0.f, 
-					   float _max = 1.f, const Math::Vec2& _size = Math::Vec2{100, 20}, const std::string& _overlapText = "")
+		void LineGraph(const char* _uniqueLabel, const float(&_array)[N], float _min = 0.f, float _max = 1.f, 
+					   const Math::Vec2& _size = Math::Vec2{ 100, 20 }, const char* _overlapText = "")
 		{
-			EGUI::Display::Label(_uniqueLabel.c_str());
-			std::string intercerptName = "##" + _uniqueLabel;
-			ImGui::PlotLines(intercerptName.c_str(), _array, N, 0, _overlapText.c_str(), _min, _max, ImVec2{ _size.x, _size.y });
+			EGUI::Display::Label(_uniqueLabel);
+			HashString invi{ "##" };
+			invi += _uniqueLabel;
+			ImGui::PlotLines(invi.c_str(), _array, N, 0, _overlapText, _min, _max, ImVec2{ _size.x, _size.y });
 		}
 		template<size_t N>
-		void LineGraph(const std::string& _uniqueLabel, const Array<float, N>& _array, float _min = 0.f,
-			float _max = 1.f, const Math::Vec2& _size = Math::Vec2{ 100, 20 }, const std::string& _overlapText = "")
+		void LineGraph(const char* _uniqueLabel, const Array<float, N>& _array, float _min = 0.f,
+			float _max = 1.f, const Math::Vec2& _size = Math::Vec2{ 100, 20 }, const char* _overlapText = "")
 		{
 			//EGUI::Display::Label(_uniqueLabel.c_str());
-			std::string intercerptName = "##LG" + _uniqueLabel;
-			
-			ImGui::PlotLines(intercerptName.c_str(), _array.begin(), static_cast<int>(_array.size()), 0,
-								_overlapText.c_str(), _min, _max, ImVec2{ _size.x, _size.y });
+			HashString invi{ "##LG" };
+			invi += _uniqueLabel;
+			ImGui::PlotLines(invi.c_str(), _array.begin(), static_cast<int>(_array.size()), 0,
+								_overlapText, _min, _max, ImVec2{ _size.x, _size.y });
 		}
 		/* =======================================================================================================================
 		Brief:

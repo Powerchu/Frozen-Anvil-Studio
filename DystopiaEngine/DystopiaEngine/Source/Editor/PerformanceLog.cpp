@@ -52,13 +52,7 @@ namespace Editor //Dystopia
 	}
 
 	/* ===================================================== The Performance Logger for handling items/datas ===================================================== */
-	//PerformanceLog* PerformanceLog::GetInstance()
-	//{
-	//	if (gpInstance) return gpInstance;
-	//
-	//	gpInstance = new PerformanceLog{};
-	//	return gpInstance;
-	//}
+
 	PerformanceLog::PerformanceLog(void)
 		: //EditorTab{ false },
 		mLabel{ "Performance" },
@@ -181,7 +175,7 @@ namespace Editor //Dystopia
 	{
 		_size.y = (_log.mIsBigGraph) ? mGraphBigY : mGraphSmallY;
 		EGUI::Display::LineGraph(_log.mLabel.c_str(), _log.mArrValues, 0, static_cast<float>(_log.mMax), _size,
-								 std::to_string(static_cast<int>(_log.mArrValues[_log.mCurrentIndex])));
+								 std::to_string(static_cast<int>(_log.mArrValues[_log.mCurrentIndex])).c_str());
 	}
 
 	void PerformanceLog::ShowTaskMgrBreakdown(void)

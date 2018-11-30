@@ -14,7 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _PERFORMANCE_LOG_H_
 #define _PERFORMANCE_LOG_H_
-//#include "Editor/EditorTab.h"
 #include "Editor/EditorPanel.h"
 #include "Editor/PLogInfo.h"
 

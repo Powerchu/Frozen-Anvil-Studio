@@ -307,8 +307,10 @@ namespace Editor
 				break;
 			}
 		}
-		std::string uniqueifyName = std::string{ _obj.GetName().c_str() } +"##" + std::to_string(_obj.GetID());
-		bool tree = EGUI::Display::StartTreeNode(uniqueifyName, &clicked, selected, false, true, false);
+		std::string uniqueifyName = _obj.GetName().c_str();
+		uniqueifyName += "##";
+		uniqueifyName += std::to_string(_obj.GetID());
+		bool tree = EGUI::Display::StartTreeNode(uniqueifyName.c_str(), &clicked, selected, false, true, false);
 		GameObjectPayload(_obj);
 		GameObjectPopups(_obj);
 
@@ -349,7 +351,7 @@ namespace Editor
 			}
 		}
 		std::string uniqueifyName = std::string{_obj.GetName().c_str()} + "##" + std::to_string(_obj.GetID());
-		if (EGUI::Display::SelectableTxt(uniqueifyName, selected))
+		if (EGUI::Display::SelectableTxt(uniqueifyName.c_str(), selected))
 		{
 			SelectedObj(_obj);
 		}	

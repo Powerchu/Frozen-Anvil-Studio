@@ -176,7 +176,7 @@ Math::Vec2 Editor::SpriteEditor::AdjustAspectSize(float _imgX, float _imgY, floa
 
 void Editor::SpriteEditor::FieldTexture(void)
 {
-	EGUI::Display::EmptyBox("Sprite Sheet", FIELD_SIZE, mpTexture ? mpTexture->GetName() : "-empty-");
+	EGUI::Display::EmptyBox("Sprite Sheet", FIELD_SIZE, mpTexture ? mpTexture->GetName().c_str() : "-empty-");
 	if (auto t = EGUI::Display::StartPayloadReceiver<Editor::File>(EGUI::ePayloadTags::ALL_IMG))
 	{
 		mpAtlas = nullptr;

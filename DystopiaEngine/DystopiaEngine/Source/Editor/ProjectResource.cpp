@@ -26,6 +26,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Texture2D.h"
 #include "System/File/FileSystem.h"
 #include "System/Input/InputSystem.h"
+#include "System/Time/ScopedTimer.h"
+#include "System/Profiler/Profiler.h"
+#include "System/Profiler/ProfilerAction.h"
 
 #include "Object/GameObject.h"
 
@@ -132,9 +135,13 @@ namespace Editor
 		}
 
 		Math::Vec2 fileWindowSize = Math::Vec2{ Size().x - 210, Size().y - 55 };
+
 		SearchWindow();
+
 		EGUI::Display::OpenTreeNode();
+
 		FolderWindow();
+
 		EGUI::SameLine(2);
 		ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4{ 0,0,0,0 });
 		EGUI::StartChild("FileWindow", fileWindowSize);
@@ -254,21 +261,25 @@ namespace Editor
 
 		EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
 		EGUI::Display::HorizontalSeparator();
-		for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
+
+		auto size = mpCurrentFolder->mArrPtrFiles.size();
+		for (unsigned int i = 0; i < size; ++i)
 		{
+
+			EGUI::PushID(i);
+
 			Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
-			HashString id = "ProjectResourceFileWindow" + pFile->mName;
-			id  += i;
-			if (i % columns) EGUI::SameLine();
-			if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{ 0,0,0,0 }))
+			if (i % columns)
+				EGUI::SameLine();
+			if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false))
 			{
 				EGUI::Indent(10);
-				EGUI::PushID(i);
 				FileUI(pFile);
-				EGUI::PopID();
 				EGUI::UnIndent(10);
 			}
 			EGUI::EndChild();
+
+			EGUI::PopID();
 		}
 	}
 	
@@ -285,19 +296,17 @@ namespace Editor
 		{
 			for (unsigned int i = 0; i < size; ++i)
 			{
+				EGUI::PushID(i);
 				Editor::File* pFile = mArrFilesSearchedThisFrame[i];
-				HashString id = "ProjectResourceSearchResultWindow" + pFile->mName;
-				id += i;
 				if (i % columns) EGUI::SameLine();
-				if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{ 0,0,0,0 }))
+				if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false))
 				{
 					EGUI::Indent(10);
-					EGUI::PushID(i);
 					FileUI(pFile);
-					EGUI::PopID();
 					EGUI::UnIndent(10);
 				}
 				EGUI::EndChild();
+				EGUI::PopID();
 			}
 		}
 		else

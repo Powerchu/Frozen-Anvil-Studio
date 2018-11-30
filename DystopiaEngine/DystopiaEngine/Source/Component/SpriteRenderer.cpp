@@ -364,7 +364,7 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 #if EDITOR
 
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
-	EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName() : "-empty-", true);
+	EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
 	if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
 	{
 		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&SpriteRenderer::SetTexture, mpTexture), 
@@ -401,7 +401,7 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 		}
 	}
 
-	if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName() : "-no mesh-", true))
+	if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName().c_str() : "-no mesh-", true))
 	{
 	}
 	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
