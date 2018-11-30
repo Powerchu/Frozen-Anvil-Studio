@@ -24,20 +24,33 @@ namespace Dystopia
 	{
 	public:
 
+		char const* GetName() const noexcept;
+		NodeXML* GetParent() const noexcept;
+		AutoArray<NodeXML> const& GetChildren() const noexcept;
+		AutoArray<std::pair<char const*, char const*>> const& GetFields() const noexcept;
 
 	private:
-		AutoArray<NodeXML> children;
+
+		char const* mstrName;
+		AutoArray<std::pair<char const*, char const*>> mFields;
+		AutoArray<NodeXML> mChildren;
+		NodeXML* mpParent;
+
+		friend class XMLParser;
 	};
 
 	class XMLParser
 	{
 	public:
 
-		static void Parse(const char*);
+		static NodeXML* Parse(const char*);
 
 	private:
 
-		explicit XMLParser(const char*);
+		static NodeXML* ActuallyParse(const char *);
+
+		template <typename Pred>
+		static char const* Skip(char const*);
 
 	};
 }
@@ -50,7 +63,14 @@ namespace Dystopia
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
-// Here
+template <typename Pred>
+inline char const* Dystopia::XMLParser::Skip(char const* _buf)
+{
+	while (*_buf && !Pred::f(_buf))
+		++_buf;
+
+	return _buf;
+}
 
 
 #endif		// INCLUDE GUARD
