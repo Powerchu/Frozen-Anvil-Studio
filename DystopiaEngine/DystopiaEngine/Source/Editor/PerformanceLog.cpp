@@ -186,16 +186,16 @@ namespace Editor //Dystopia
 		{
 			EGUI::Display::Dummy(0, 5.f);
 
-			EGUI::Display::Label(" Frame Rate (s)   : %.1f FPS", 1.f / mTaskMgrDetails.mFrameRate);
-			EGUI::Display::Label(" CPU Idle (%%)     : %.1f", mTaskMgrDetails.mCPUIdle);
-			EGUI::Display::Label(" CPU Busy (%%)     : %.1f", mTaskMgrDetails.mCPUBusy);
-			EGUI::Display::Label(" CPU OS   (%%)     : %.1f", mTaskMgrDetails.mCPUOS);
-			EGUI::Display::Label(" CPU Proc (%%)     : %.1f", mTaskMgrDetails.mCPUProc);
+			EGUI::Display::Label(" Frame Rate (s)   : %.2f FPS", 1.f / mTaskMgrDetails.mFrameRate);
+			EGUI::Display::Label(" CPU Idle (%%)     : %.2f", mTaskMgrDetails.mCPUIdle);
+			EGUI::Display::Label(" CPU Busy (%%)     : %.2f", mTaskMgrDetails.mCPUBusy);
+			EGUI::Display::Label(" CPU OS   (%%)     : %.2f", mTaskMgrDetails.mCPUOS);
+			EGUI::Display::Label(" CPU Proc (%%)     : %.2f", mTaskMgrDetails.mCPUProc);
 			EGUI::Display::Label(" Page Faults      : %d", mTaskMgrDetails.mPageFaults);
 			EGUI::Display::Label(" Memory Used (MB) : %d", mTaskMgrDetails.mMemUsed);
 			EGUI::Display::Label(" RAM Used (MB)    : %d", mTaskMgrDetails.mRamUsed);
 			EGUI::Display::Label(" Memory Available : %d", mTaskMgrDetails.mMemAvail);
-			EGUI::Display::Label(" Memory Load      : %.1f", mTaskMgrDetails.mMemLoad);
+			EGUI::Display::Label(" Memory Load      : %.2f", mTaskMgrDetails.mMemLoad);
 
 			EGUI::Display::Dummy(0, 5.f);
 			EGUI::Display::HorizontalSeparator();
