@@ -73,25 +73,29 @@ namespace
 		case WM_SIZE:
 			if(SIZE_MAXIMIZED == wParam)
 			{
+				const auto winMgr = Dystopia::EngineCore::Get<Dystopia::WindowManager>();
 				RECT scr;
 				SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
-				oldsz.first = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetWidth();
-				oldsz.second = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetHeight();
+				oldsz.first = winMgr->GetMainWindow().GetWidth();
+				oldsz.second = winMgr->GetMainWindow().GetHeight();
 
-				Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().
-					SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
+				winMgr->GetMainWindow().SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
 
-				Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(true);
+				if (winMgr->HasWindows()) 
+					winMgr->ToggleFullscreen(true);
 
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
+				const auto winMgr = Dystopia::EngineCore::Get<Dystopia::WindowManager>();
 				if (oldsz.first)
 				{
-					Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().SetSize(oldsz.first, oldsz.second, false);
+					winMgr->GetMainWindow().SetSize(oldsz.first, oldsz.second, false);
 					oldsz.first = 0; oldsz.second = 0;
 				}
-				Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->ToggleFullscreen(false);
+
+				if (winMgr->HasWindows())
+					winMgr->ToggleFullscreen(false);
 			}
 			return 0;
 
@@ -317,6 +321,11 @@ void Dystopia::WindowManager::DestroySplash(void)
 	ToggleFullscreen(mbFullscreen);
 
 	mWindows[0].Show();
+}
+
+bool Dystopia::WindowManager::HasWindows(void) const
+{
+	return !mWindows.IsEmpty();
 }
 
 void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)

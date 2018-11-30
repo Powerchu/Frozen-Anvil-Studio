@@ -65,7 +65,7 @@ namespace Gbl
 {
 	constexpr bool	FULLSCREEN      = true;
 	constexpr int   WINDOW_WIDTH    = 1600;
-	constexpr int   WINDOW_HEIGHT   = 1000;
+	constexpr int   WINDOW_HEIGHT   = 900;
 
 	constexpr auto  FIXEDUPDATE_DT  = 20000000Ui64;
 	constexpr float FIXEDUPDATE_FDT = float(FIXEDUPDATE_DT / 1e9);

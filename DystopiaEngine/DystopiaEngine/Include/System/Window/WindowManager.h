@@ -64,6 +64,7 @@ namespace Dystopia
 		unsigned long GetStyleEx(void) const;
 
 		void DestroySplash(void);
+		bool HasWindows(void) const;
 
 	private:
 
