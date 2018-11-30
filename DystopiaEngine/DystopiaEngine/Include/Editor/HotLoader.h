@@ -53,7 +53,7 @@ namespace Dystopia
 	};
 	struct DLLWrapper
 	{
-		DLLWrapper(std::wstring _DllPathName, std::wstring _DllFileName, HMODULE _DllModule)
+		DLLWrapper(const std::wstring& _DllPathName, const std::wstring& _DllFileName, HMODULE _DllModule)
 			:mDllPathName{ _DllPathName },
 			mDllFileName{ _DllFileName },
 			mDllModule{ _DllModule },
@@ -62,10 +62,10 @@ namespace Dystopia
 
 		}
 		DLLWrapper(std::wstring _DllPathName, std::wstring _DllFileName,std::wstring _DLLFullPath, HMODULE _DllModule)
-			:mDllPathName{ _DllPathName },
-			mDllFileName{ _DllFileName },
+			:mDllPathName{std::move(_DllPathName)},
+			mDllFileName{std::move(_DllFileName)},
 			mDllModule{ _DllModule },
-			mDllFullPath{ _DLLFullPath }
+			mDllFullPath{std::move(_DLLFullPath)}
 		{
 
 		}
@@ -74,7 +74,7 @@ namespace Dystopia
 			return _rhs.mDllPathName == mDllPathName && _rhs.mDllFileName == mDllFileName;
 		}
 
-		bool operator==(std::wstring _rhsName)
+		bool operator==(const std::wstring& _rhsName)
 		{
 			return _rhsName == mDllFileName;
 		}
@@ -126,7 +126,7 @@ namespace Dystopia
 		}
 
 		template<typename ReturnType, typename ... ParamType>
-		ReturnType(*GetDllFunc(std::string _FuncName) const) (ParamType ...)
+		ReturnType(*GetDllFunc(const std::string& _FuncName) const) (ParamType ...)
 		{
 			FARPROC dllFunc = GetProcAddress(mDllModule, _FuncName.c_str());
 			if (dllFunc)
@@ -884,12 +884,14 @@ namespace Dystopia
 		{
 
 			if(mDll_Handle != INVALID_HANDLE_VALUE)
-			CloseHandle(mDll_Handle);
+				CloseHandle(mDll_Handle);
+
 			if (mDll_Overlap.hEvent != INVALID_HANDLE_VALUE)
-			CloseHandle(mDll_Overlap.hEvent);
+				CloseHandle(mDll_Overlap.hEvent);
 
 			if (mTempDll_Handle != INVALID_HANDLE_VALUE)
 				CloseHandle(mTempDll_Handle);
+
 			if (mTempDll_Overlap.hEvent != INVALID_HANDLE_VALUE)
 				CloseHandle(mTempDll_Overlap.hEvent);
 

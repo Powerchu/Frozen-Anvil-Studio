@@ -72,8 +72,8 @@ namespace Dystopia
 		  1. There is files changes
 		  The number will reflect the number of changes detected
 		*/
-		unsigned DetectDirectoryChanges(std::string _FilePath, std::string * _ChangesBuffer, size_t _size);
-		bool     DetectFileChanges(std::string _FilePath, eFileDir _ParentDirectory = eFileDir::eResource);
+		unsigned DetectDirectoryChanges(const std::string& _FilePath, std::string * _ChangesBuffer, size_t _size);
+		bool     DetectFileChanges(const std::string& _FilePath, eFileDir _ParentDirectory = eFileDir::eResource);
 		FileErrorCode GetLastKnownError() const;
 
 		bool CheckFolderExist(const HashString& _folderName, const HashString& _path) const;

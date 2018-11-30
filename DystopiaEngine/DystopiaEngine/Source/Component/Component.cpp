@@ -53,6 +53,9 @@ bool Dystopia::Component::IsActive(void) const
 
 void Dystopia::Component::SetActive(const bool _bEnable)
 {
+	if (mnFlags & FLAG_REMOVE)
+		return;
+
 	mnFlags = _bEnable ? mnFlags | FLAG_ACTIVE : mnFlags & ~FLAG_ACTIVE;
 }
 

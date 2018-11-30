@@ -1,3 +1,4 @@
+#include <utility>
 #include "System/Collision/BoundingColliderNode.h"
 #include "Component/Collider.h"
 namespace Dystopia
@@ -8,7 +9,7 @@ namespace Dystopia
 	}
 
 	BoundingColliderNode::BoundingColliderNode(Collider * _MyCollider, BroadPhaseCircle _Circle, BoundingColliderNode * _parent)
-		: mBoundingCircle{ _Circle }, mCollider{ _MyCollider }, mChildrenNode{ {nullptr} }, mParent{ _parent }
+		: mBoundingCircle{std::move(_Circle)}, mCollider{ _MyCollider }, mChildrenNode{ {nullptr} }, mParent{ _parent }
 	{
 	}
 

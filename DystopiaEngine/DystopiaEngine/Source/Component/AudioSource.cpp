@@ -236,7 +236,7 @@ Dystopia::Channel& Dystopia::AudioSource::GetChannel(void)
 {
 	return mChannel;
 }
-void Dystopia::AudioSource::SetChannel(Dystopia::Channel _c)
+void Dystopia::AudioSource::SetChannel(const Channel & _c)
 {
 	mChannel = _c;
 }

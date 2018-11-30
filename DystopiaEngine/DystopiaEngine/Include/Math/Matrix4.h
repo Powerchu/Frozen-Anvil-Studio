@@ -42,7 +42,7 @@ namespace Math
 		) noexcept;
 		inline explicit Matrix4(const Vector4(&)[4]) noexcept;
 		inline explicit Matrix4(const float (&)[16]) noexcept;
-		inline explicit Matrix4(const Vector4, const Vector4, const Vector4, const Vector4) noexcept;
+		inline explicit Matrix4(const Vector4&, const Vector4&, const Vector4&, const Vector4&) noexcept;
 
 
 		// ==================================== MATRIX OPERATIONS ==================================== // 
@@ -182,8 +182,8 @@ inline Math::Matrix4::Matrix4(
 }
 
 inline Math::Matrix4::Matrix4(
-	const Vector4 _v1, const Vector4 _v2,
-	const Vector4 _v3, const Vector4 _v4
+	const Vector4& _v1, const Vector4& _v2,
+	const Vector4& _v3, const Vector4& _v4
 ) noexcept : mData{ _v1, _v2, _v3, _v4 }
 {
 }

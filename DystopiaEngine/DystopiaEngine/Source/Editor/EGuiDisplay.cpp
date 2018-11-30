@@ -941,7 +941,7 @@ namespace EGUI
 		{
 			const ImU32		col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
 			const ImU32		col32G = static_cast<ImColor>(ImVec4{ 0,1,0,1 });
-			const ImU32		col32B = static_cast<ImColor>(ImVec4{ 0,0,1,1 });
+			const ImU32		col32B = static_cast<ImColor>(ImVec4{ 0.2f,0.93f,1,1 });
 			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
 			ImVec2			pos		= ImGui::GetCursorScreenPos();
 			ImVec2 midPeek{ pos.x + (_width/2), pos.y };

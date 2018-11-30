@@ -48,20 +48,20 @@ void Editor::ProjectSettings::Update(float)
 
 void Editor::ProjectSettings::EditorUI(void)
 {
-	if (EGUI::Display::StartTreeNode("Graphics Settings"))
+	if (EGUI::Display::StartTreeNode("Graphics Settings",nullptr,false,false,true,true))
 	{
 		mpGfxSys->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
 	EGUI::Display::HorizontalSeparator();
-	if (EGUI::Display::StartTreeNode("Physics Settings"))
+	if (EGUI::Display::StartTreeNode("Physics Settings", nullptr, false, false, true, true))
 	{
 		mpPhySys->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
 	auto mpTimeSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::TimeSystem>();
 	EGUI::Display::HorizontalSeparator();
-	if (EGUI::Display::StartTreeNode("Time Settings"))
+	if (EGUI::Display::StartTreeNode("Time Settings", nullptr, false, false, true, true))
 	{
 		mpTimeSys->EditorUI();
 		EGUI::Display::EndTreeNode();

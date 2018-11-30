@@ -68,7 +68,7 @@ namespace Dystopia
 
 	void AiController::Update(float)
 	{
-		bTree.Update();
+		//bTree.Update();
 	}
 
 	void AiController::LateUpdate(float) const

@@ -51,9 +51,8 @@ namespace Dystopia
 #endif 
 			if (body.GetOwner())
 			{
-				if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+				if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 
-				
 
 				if (!body.Get_IsStaticState() && !body.Get_IsKinematic())
 				{
@@ -85,7 +84,8 @@ namespace Dystopia
 #if EDITOR
 			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if ( !body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING) continue;
+			if ( !body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING
+				|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 
 			if (!body.Get_IsStaticState() && body.GetIsAwake())
 			{
@@ -104,7 +104,8 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING) continue;
+				if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING
+					|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 
 				for (auto col : body.mparrCol)
 				{
@@ -127,7 +128,8 @@ namespace Dystopia
 #endif 
 			if (body.Get_IsStaticState() || !body.GetIsAwake() || body.Get_IsKinematic()) continue;
 
-			if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING) continue;
+			if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING
+				|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 
 			body.PreUpdatePosition(_dt);
 
@@ -141,7 +143,8 @@ namespace Dystopia
 #if EDITOR
 				if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING) continue;
+				if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING
+					|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 
 				for (auto col : body.mparrCol)
 				{
@@ -184,7 +187,9 @@ namespace Dystopia
 #endif 
 			if (body.Get_IsStaticState() || body.Get_IsKinematic()) continue;
 
-			if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING) continue;
+			if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE 
+				|| body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING 
+				|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 
 			body.UpdateResult(_dt);
 		}

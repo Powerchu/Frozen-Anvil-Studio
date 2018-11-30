@@ -192,7 +192,7 @@ namespace Dystopia
 		return std::filesystem::equivalent(_lhs, _rhs, err);
 	}
 
-	bool FileSystem::DetectFileChanges(std::string _FilePath, eFileDir _ParentDirectory)
+	bool FileSystem::DetectFileChanges(const std::string& _FilePath, eFileDir _ParentDirectory)
 	{
 		static std::string _ChangesBuffer[100];
 		size_t _size = 100;
@@ -302,7 +302,7 @@ namespace Dystopia
 		return 0;
 	}
 
-	unsigned FileSystem::DetectDirectoryChanges(std::string _FilePath, std::string * _ChangesBuffer, size_t _size)
+	unsigned FileSystem::DetectDirectoryChanges(const std::string& _FilePath, std::string * _ChangesBuffer, size_t _size)
 	{
 		DetectionInfo * pDetectionInfo = nullptr;
 		/*Find for existing Files*/
