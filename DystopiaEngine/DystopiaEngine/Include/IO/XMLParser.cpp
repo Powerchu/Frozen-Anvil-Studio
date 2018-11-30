@@ -98,8 +98,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ParseNode(const char *& _buf, NodeXML* _
 		case '/':
 			return _curr->GetParent();
 		case '>':
-			auto child = Alloc_t::ConstructAlloc();
-			child = 
+			break;
 		}
 	}
 

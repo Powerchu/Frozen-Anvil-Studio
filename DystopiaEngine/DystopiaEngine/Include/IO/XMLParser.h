@@ -33,7 +33,7 @@ namespace Dystopia
 
 		char const* mstrName;
 		AutoArray<std::pair<char const*, char const*>> mFields;
-		AutoArray<NodeXML> mChildren;
+		AutoArray<NodeXML*> mChildren;
 		NodeXML* mpParent;
 
 		friend class XMLParser;
