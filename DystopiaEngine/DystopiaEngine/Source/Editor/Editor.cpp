@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Window/WindowManager.h"
 
 #include "IO/XMLParser.h"
+#include "DataStructure/Array.h"
 
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int){
@@ -31,7 +32,9 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	auto x = Dystopia::XMLParser::Parse("C:/Users/t.jieweijacky/Desktop/New folder/asd");
+	Array<AutoArray<int>, 100> y;
+
+	auto x = Dystopia::XMLParser::Parse("D:/Users/Laptop/Desktop/asd");
 
 
 	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();

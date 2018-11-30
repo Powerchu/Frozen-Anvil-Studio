@@ -120,6 +120,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ParseNode(char *& _buf, NodeXML* _curr)
 		switch (*_buf)
 		{
 		case '/':
+			_buf += 2;
 			return _curr->GetParent();
 			break;
 
@@ -152,6 +153,14 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 	NodeXML* curr = root;
 
 	root->mpParent = nullptr;
+
+	_buf = Skip<WhiteSpace>(_buf);
+
+	if ('<' != *_buf)
+		return root;
+
+	curr = ParseNode(++_buf, root);
+
 	while (curr && *_buf)
 	{
 		_buf = Skip<WhiteSpace>(_buf);
@@ -159,7 +168,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 		if ('<' != *_buf)
 			return root;
 
-		if (auto& e = *_buf)
+		if (auto& e = *++_buf)
 		{
 			switch (e)
 			{
@@ -214,7 +223,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 				auto temp = Alloc_t::ConstructAlloc();
 				curr->mChildren.Insert(temp);
 				temp->mpParent = curr;
-				curr = ParseNode(++_buf, temp);
+				curr = ParseNode(_buf, temp);
 			}
 			break;
 			}
