@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 static ImVec4 yellow{ 1.f, 1.f,0.f ,0.9f };
 static constexpr int sizeGizA = 7;
 static constexpr int sizeGizS = 8;
-static constexpr float speedMult = 1.375f;
+static constexpr float speedMult = 1.2f;
 
 EGUI::eDragStatus EGUI::Gizmo2D::ArrowLeft(const std::string& _uniqueID, float& _outputValX, const Math::Vec2& _origin, float _vSpeed, const Math::Vec4& _col, bool* _pHovered, float _len, float _thickness)
 {

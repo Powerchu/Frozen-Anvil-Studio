@@ -485,7 +485,7 @@ namespace Dystopia
 	{
 		mNumPoints = int(mVertices.size());
 
-		if (EGUI::Display::CollapsingHeader("Points"))
+		if (EGUI::Display::CollapsingHeader("Points", false))
 		{
 			switch (EGUI::Display::DragInt("	Size		", &mNumPoints, 1, 4, 32, false, 128))
 			{
@@ -587,7 +587,7 @@ namespace Dystopia
 
 	void Convex::eNumberOfContactsLabel()
 	{
-		if (EGUI::Display::CollapsingHeader("Contacts"))
+		if (EGUI::Display::CollapsingHeader("Contacts", false))
 		{
 			for (unsigned int i = 0; i < marr_ContactSets.size(); ++i)
 			{

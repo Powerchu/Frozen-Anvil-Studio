@@ -52,8 +52,8 @@ namespace Dystopia
 
 		bool IsActive(void) const;
 		void SetActive(const bool _bEnable);
-		bool IsStatic() const;
-		void SetStatic(bool _bEnable);
+		bool IsDragging() const;
+		void SetDragging(bool _bEnable);
 
 		void Load(void);
 		void Awake(void);

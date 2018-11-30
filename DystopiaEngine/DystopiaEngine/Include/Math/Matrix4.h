@@ -74,6 +74,7 @@ namespace Math
 		inline Matrix4& _CALL operator+= (const Matrix4);
 		inline Matrix4& _CALL operator-= (const Matrix4);
 		inline Matrix4& _CALL operator*= (const Matrix4);
+		inline bool		_CALL operator== (const Matrix4) const;
 		inline Matrix4& _CALL operator*= (const float);
 		inline Matrix4& _CALL operator/= (const float);
 
@@ -330,6 +331,20 @@ inline Math::Matrix4& _CALL Math::Matrix4::operator*= (const Matrix4 _rhs)
 	return *this;
 }
 
+inline bool _CALL Math::Matrix4::operator== (const Matrix4 _rhs) const
+{
+	for (unsigned n = 0; n < 4; ++n)
+	{
+		if (mData[n] != _rhs.mData[n])
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
 inline Math::Matrix4& _CALL Math::Matrix4::operator*= (const float _rhs)
 {
 	for (unsigned n = 0; n < 4; ++n)
@@ -360,6 +375,7 @@ inline Math::Matrix4 _CALL Math::operator* (Matrix4 _lhs, const Matrix4 _rhs)
 {
 	return _lhs *= _rhs;
 }
+
 
 inline Math::Vector4 _CALL Math::Matrix4::operator* (const Vector4 _rhs) const
 {
