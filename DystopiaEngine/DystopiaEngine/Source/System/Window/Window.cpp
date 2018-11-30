@@ -33,6 +33,7 @@ constexpr unsigned DEFAULT_QUEUE_SIZE = 60;
 Dystopia::Window::Window(HWND _handle) :
 	mHandle{ _handle }, mDeviceContext{ GetDC(_handle) }, 
 	mInputQueue{ DEFAULT_QUEUE_SIZE }, mnWidth{ 0 }, mnHeight{ 0 }
+	, mbFullscreen(Gbl::FULLSCREEN)
 {
 
 }
@@ -195,6 +196,12 @@ void Dystopia::Window::ToggleFullscreen(bool _bFullscreen) noexcept
 
 		Show();
 	}
+	mbFullscreen = _bFullscreen;
+}
+
+bool Dystopia::Window::IsFullscreen() const
+{
+	return mbFullscreen;
 }
 
 

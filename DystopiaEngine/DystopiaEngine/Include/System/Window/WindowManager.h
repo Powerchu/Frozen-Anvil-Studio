@@ -48,7 +48,6 @@ namespace Dystopia
 		void LoadSettings(DysSerialiser_t&) override;
 		void SaveSettings(DysSerialiser_t&) override;
 
-		void ToggleFullscreen(bool _bFullscreen);
 		void ShowCursor(bool _bShow) const;
 
 		inline int GetScreenWidth(void) const noexcept;
@@ -58,7 +57,6 @@ namespace Dystopia
 
 		void RegisterMouseData(MouseData*);
 
-		bool IsFullscreen() const;
 
 		unsigned long GetStyle(void) const;
 		unsigned long GetStyleEx(void) const;

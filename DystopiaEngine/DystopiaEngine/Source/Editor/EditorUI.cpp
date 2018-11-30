@@ -116,7 +116,7 @@ void Editor::EditorUI::StartFrame(void)
 	const auto winMgr = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>();
 	auto& win	= winMgr->GetMainWindow();
 
-	if (winMgr->IsFullscreen())
+	if (win.IsFullscreen())
 	{
 		w = display_w = win.GetWidth() - GetSystemMetrics(SM_CXBORDER) + 1;
 		h = display_h = win.GetHeight() - GetSystemMetrics(SM_CYSIZE) - GetSystemMetrics(SM_CXBORDER);

@@ -31,9 +31,6 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	auto x = Dystopia::XMLParser::Parse("C:/Users/t.jieweijacky/Desktop/New folder/asd");
-
-
 	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
 	pMain->Init();
 	while (!pMain->IsClosing())
