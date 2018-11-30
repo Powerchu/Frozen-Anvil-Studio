@@ -447,7 +447,7 @@ bool Editor::EditorFactory::SavePrefab(const uint64_t& _objID, Dystopia::TextSer
 
 bool Editor::EditorFactory::LoadPrefab(Dystopia::GameObject& _obj, Dystopia::TextSerialiser& _in)
 {
-	unsigned count = LoadSegment(_obj, _in);
+	const unsigned count = LoadSegment(_obj, _in);
 	LoadSegmentC(_obj, count, _in);
 	LoadSegmentB(_obj, _in);
 

@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/Component.h"
 #include "System/Graphics/GraphicsDefs.h"
+#include "Math/Vector2.h"
 
 namespace Dystopia
 {
@@ -106,14 +107,18 @@ namespace Dystopia
 
 		bool DrawDebug(void) const noexcept;
 		void SetDebugDraw(bool) noexcept;
+		void SetSize(float _scale) const;
 
-		void EditorUI(void) noexcept;
+		void EditorUI(void) noexcept override;
+		void EditorProjectionDropdown();
+		void EditorOptions();
 
 		// TODO 
 		bool mbDebugDraw;
 	private:
 
 		Gfx::Viewport mViewport;
+		Gfx::ClippingPlane mClippingPlane;
 
 		Math::Mat4 mView;
 		Math::Mat4 mInvScreen;
@@ -121,6 +126,13 @@ namespace Dystopia
 
 		Framebuffer* mpSurface;
 		unsigned mnSurfaceID;
+		int mnProjectionIndex = 0;
+
+		// Orthographic Stuff
+		float mfOrthoSize = 1.f;
+
+		// Perspective Stuff
+		int mnPersFOV_deg = 50;
 	};
 }
 

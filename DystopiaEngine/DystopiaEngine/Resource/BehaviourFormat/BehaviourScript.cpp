@@ -38,7 +38,7 @@ namespace Dystopia
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendInternalMessage(_ptr, _FuncName, _Params...);
 		}
-		
+
 		template<typename ... Ts>
 		void SendExternalMessage(uint64_t _ObjectID, const char * _FuncName, Ts ... _Params)
 		{
@@ -49,13 +49,13 @@ namespace Dystopia
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
 		}
-		
+
 		template<typename ... Ts>
 		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
 		}
-		
+
 		template<typename ... Ts>
 		void SendAllMessage(const char * _FuncName, Ts ... _Params)
 		{
@@ -89,8 +89,12 @@ namespace Dystopia
 	void _SF_ClassName_::FixedUpdate(const float _fDeltaTime)
 	{
 	}
-	
+
 	void _SF_ClassName_::PostUpdate(void)
+	{
+	}
+
+	void _SF_ClassName_::GameObjectDestroy(void)
 	{
 	}
 
@@ -127,7 +131,7 @@ namespace Dystopia
 
 	_SF_ClassName_ * _SF_ClassName_::Duplicate() const
 	{
-		return new _SF_ClassName_{};
+		return new _SF_ClassName_{ *this };
 	}
 
 	void _SF_ClassName_::Serialise(TextSerialiser& _ser) const
@@ -146,20 +150,20 @@ namespace Dystopia
 
 	void _SF_ClassName_::EditorUI(void) noexcept
 	{
-		
-		
+
+
 	}
-	
+
 	TypeErasure::TypeEraseMetaData _SF_ClassName_::GetMetaData()
 	{
 		static MetaData<Dystopia::_SF_ClassName_> mMetaData;
-		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		static auto mReturn = TypeErasure::TypeEraseMetaData{ mMetaData };
 		return mReturn;
 	}
 	TypeErasure::TypeEraseMetaData const _SF_ClassName_::GetMetaData() const
 	{
 		static MetaData<Dystopia::_SF_ClassName_> mMetaData;
-		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
+		static auto mReturn = TypeErasure::TypeEraseMetaData{ mMetaData };
 		return mReturn;
 	}
 }
