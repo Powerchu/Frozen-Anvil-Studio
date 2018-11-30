@@ -443,8 +443,8 @@ namespace Dystopia
 
 	void Convex::eIsTriggerCheckBox()
 	{
-		auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
-		bool tempBool = mbIsTrigger;
+		//auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
+		//bool tempBool = mbIsTrigger;
 
 		if (EGUI::Display::CheckBox("Is Trigger		  ", &mbIsTrigger))
 		{

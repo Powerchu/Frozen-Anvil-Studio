@@ -20,7 +20,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "IO/TextSerialiser.h"
 #include "DataStructure/HashString.h"
-//#include "Editor/Editor.h"
+
+#if EDITOR
+#include "Editor/EditorMain.h"
+#endif 
 
 #include "Globals.h"
 #include "Utility/DebugAssert.h"
@@ -52,20 +55,20 @@ namespace
 		switch (message)
 		{
 		case WM_SETFOCUS:
-			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_GAIN);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_GAIN, 0);
 			break;
 
 		case WM_KILLFOCUS:
-			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_LOST);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_LOST, 0);
 			break;
 
 		case WM_ACTIVATE:
-			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::ACTIVATE);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::ACTIVATE, 0);
 			break;
 
 		case WM_SYSKEYUP:
-			if (wParam == VK_F4)
-				SendMessage(hWnd, WM_CLOSE, 0, 0);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::SYSKEY, wParam);
+			return 0;
 
 		case WM_SYSKEYDOWN:
 			return 0;
@@ -73,34 +76,33 @@ namespace
 		case WM_SIZE:
 			if(SIZE_MAXIMIZED == wParam)
 			{
-				const auto winMgr = Dystopia::EngineCore::Get<Dystopia::WindowManager>();
+				auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
+
 				RECT scr;
 				SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
-				oldsz.first = winMgr->GetMainWindow().GetWidth();
-				oldsz.second = winMgr->GetMainWindow().GetHeight();
+				oldsz.first  = w.GetWidth();
+				oldsz.second = w.GetHeight();
 
-				winMgr->GetMainWindow().SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
-
-				if (winMgr->HasWindows()) 
-					winMgr->ToggleFullscreen(true);
-
+				w.SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
+				if (w.HasWindows())
+					w.ToggleFullscreen(true);
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
-				const auto winMgr = Dystopia::EngineCore::Get<Dystopia::WindowManager>();
+				auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
 				if (oldsz.first)
 				{
-					winMgr->GetMainWindow().SetSize(oldsz.first, oldsz.second, false);
+					w.SetSize(oldsz.first, oldsz.second, false);
 					oldsz.first = 0; oldsz.second = 0;
 				}
 
-				if (winMgr->HasWindows())
-					winMgr->ToggleFullscreen(false);
+				if (w.HasWindows())
+					w.ToggleFullscreen(false);
 			}
 			return 0;
 
 		case WM_CLOSE:
-			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::QUIT);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::QUIT, 0);
 			return 0;
 
 		case WM_MOUSEWHEEL:
@@ -331,9 +333,8 @@ bool Dystopia::WindowManager::HasWindows(void) const
 void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 {
 	HDROP handle = reinterpret_cast<HDROP>(_wParam);
-	int files = DragQueryFile(handle, 0xFFFFFFFFu, 0, 0);
+	size_t files = DragQueryFile(handle, 0xFFFFFFFFu, 0, 0);
 
-	/*
 	AutoArray<wchar_t> buf;
 	AutoArray<HashString> paths{ files };
 
@@ -346,41 +347,8 @@ void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 
 		paths.back() = buf.begin();
 	}
-	*/
 
-	// For now only handle single file drop
-	if (1 == files)
-	{
-		AutoArray<wchar_t> buf;
-		std::wstring path, name;
-
-		buf.reserve(DragQueryFile(handle, 0, 0, 0) + 1);
-		DragQueryFile(handle, 0, buf.begin(), static_cast<unsigned>(buf.Cap()));
-		
-		path = buf.begin();
-		if (path == L"")
-			__debugbreak();
-
-		size_t pos = path.find_last_of(L'\\');
-		if (path.npos == pos)
-			pos = path.find_last_of(L'/');
-
-		name = path.substr(pos + 1);
-
-		pos = name.find_last_of(L'.');
-		if ((name.npos != pos) && (L"dscene" == name.substr(pos + 1)))
-		{
-			//Editor::GetInstance()->OpenScene(path, name);
-		}
-		else
-		{
-			DEBUG_PRINT(eLog::MESSAGE, "Window: Ignoring Unknown file %ls!", name.data());
-		}
-	}
-	else
-	{
-		DEBUG_PRINT(eLog::MESSAGE, "Window: %d files dropped, ignoring!", files);
-	}
+	Editor::EditorMain::GetInstance()->ExternalFile(paths);
 
 	DragFinish(handle);
 }
