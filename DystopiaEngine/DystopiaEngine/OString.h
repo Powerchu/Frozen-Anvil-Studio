@@ -4,7 +4,7 @@
 
 #define U_BUFSIZE  11
 #define ULL_BUFSIZE 16
-
+/**/
 #include <cstdint>
 #include <iostream>
 #include "Globals.h"
@@ -40,7 +40,7 @@ public:
 
 	template<size_t N>
 	OString(char const (&_literal)[N]);
-	template<typename T>
+	template<typename T, typename = Ut::EnableIf_t<typename Ut::IsCString<T>::type>>
 	OString(T _str);
 
 	/* Assignment operators */
@@ -152,14 +152,8 @@ inline OString::OString(char const (&_literal)[N])
 	mpCharBuffer{ nullptr }, mbRehash{ false }
 {}
 
-template<typename T>
+template<typename T, typename>
 inline OString::OString(T _str)
-{
-	static_assert(false, "Not accepted");
-}
-
-template<>
-inline OString::OString(const char * _cstr)
 	: mnCurSize{ strlen(_cstr) }, mnBufferSize{ mnCurSize + 1 }, mnID{ 0 }, mpLiteral{ nullptr },
 	mpCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(mnBufferSize) }, mbRehash{ true }
 {
@@ -172,6 +166,21 @@ inline OString::OString(const char * _cstr)
 			mpCharBuffer[i] = '\0';
 	}
 }
+
+//template<>
+//inline OString::OString(const char * _cstr)
+//	: mnCurSize{ strlen(_cstr) }, mnBufferSize{ mnCurSize + 1 }, mnID{ 0 }, mpLiteral{ nullptr },
+//	mpCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(mnBufferSize) }, mbRehash{ true }
+//{
+//	if (mpCharBuffer)
+//	{
+//		size_t i = 0;
+//		for (; i < mnCurSize; ++i)
+//			mpCharBuffer[i] = _cstr[i];
+//		for (; i < mnBufferSize; ++i)
+//			mpCharBuffer[i] = '\0';
+//	}
+//}
 
 template <unsigned N>
 inline OString& OString::operator=(const char(&_s)[N])

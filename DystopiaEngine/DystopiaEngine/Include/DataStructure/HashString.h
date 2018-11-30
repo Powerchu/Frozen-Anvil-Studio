@@ -20,7 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 //#include <iostream>
 //#include "Globals.h"
 //#include "Utility/Utility.h"
-//
 //#include "Allocator/DefaultAlloc.h"
 //#include "System/Time/Timer.h"
 #include "../../OString.h"
