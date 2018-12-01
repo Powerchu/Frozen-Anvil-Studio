@@ -436,7 +436,7 @@ HashID OString::id(void) const
 
 void OString::Rehash(void)
 {
-	mnID = mpCharBuffer ? StringHasher(mpCharBuffer) : 0;
+	mnID = mpLiteral ? StringHasher(mpLiteral): mpCharBuffer ? StringHasher(mpCharBuffer) : 0;
 	mbRehash = false;
 }
 

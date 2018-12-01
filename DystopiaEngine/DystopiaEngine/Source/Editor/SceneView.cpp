@@ -180,7 +180,7 @@ namespace Editor
 	{
 		if (_msg == eEMessage::SCENE_CHANGED)
 		{
-			if (!Dystopia::EngineCore::GetInstance()->GetSystem < Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject("Scene Camera"))
+			if (!Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject("Scene Camera"))
 			{
 				EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultSceneCamera();
 			}

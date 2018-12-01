@@ -128,7 +128,7 @@ namespace Editor
 		static int i = 0;
 		static int j = 0;
 
-		char buffer[MAX_SEARCH * 2] = "";
+		static char buffer[MAX_SEARCH * 2] = "";
 		std::string name = mpFocus->GetName().c_str();
 		strcpy_s(buffer, name.c_str());
 

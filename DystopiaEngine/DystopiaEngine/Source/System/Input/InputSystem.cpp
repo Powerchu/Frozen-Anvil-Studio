@@ -141,6 +141,10 @@ void Dystopia::InputManager::MapButton(const char* _name, eButton _button)
 }
 _DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(eButton _Btn) const noexcept
 {
+	if (_Btn >= eButton::XBUTTON_DPAD_UP)
+	{
+		return mGamePad.IsKeyTriggered(static_cast<eButton>(_Btn - eButton::XBUTTON_DPAD_UP));
+	}
 	KeyboardState::u32int const * prev_ptr = static_cast<KeyboardState::u32int const *>(mPrevKeyBoardState);
 	KeyboardState::u32int const * curr_ptr = static_cast<KeyboardState::u32int const *>(mKeyBoardState);
 
@@ -149,11 +153,16 @@ _DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(eButton _Btn) const noex
 
 	const bool prev = !(*(prev_ptr + GrpIndex) & BitChecker);
 	const bool cur  = (*(curr_ptr  + GrpIndex) & BitChecker);
+	
 	return prev & cur;
 }
 
 _DLL_EXPORT bool Dystopia::InputManager::IsKeyPressed(eButton _Btn) const noexcept
 {
+	if (_Btn >= eButton::XBUTTON_DPAD_UP)
+	{
+		return mGamePad.IsKeyPressed(static_cast<eButton>(_Btn - eButton::XBUTTON_DPAD_UP));
+	}
 	KeyboardState::u32int const * prev_ptr = static_cast<KeyboardState::u32int const *>(mPrevKeyBoardState);
 	KeyboardState::u32int const * curr_ptr = static_cast<KeyboardState::u32int const *>(mKeyBoardState);
 
@@ -165,6 +174,10 @@ _DLL_EXPORT bool Dystopia::InputManager::IsKeyPressed(eButton _Btn) const noexce
 
 _DLL_EXPORT bool Dystopia::InputManager::IsKeyReleased(eButton _Btn) const noexcept
 {
+	if (_Btn >= eButton::XBUTTON_DPAD_UP)
+	{
+		return mGamePad.IsKeyReleased(static_cast<eButton>(_Btn - eButton::XBUTTON_DPAD_UP));
+	}
 	KeyboardState::u32int const * prev_ptr = static_cast<KeyboardState::u32int const *>(mPrevKeyBoardState);
 	KeyboardState::u32int const * curr_ptr = static_cast<KeyboardState::u32int const *>(mKeyBoardState);
 

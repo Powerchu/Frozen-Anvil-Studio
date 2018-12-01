@@ -123,7 +123,7 @@ namespace Editor
 			break;
 		}
 
-		UpdateSearch();
+		//UpdateSearch();
 	}
 
 	void ProjectResource::EditorUI(void)
@@ -236,11 +236,12 @@ namespace Editor
 
 	void ProjectResource::SearchWindow(void)
 	{
+		static char buffer[256];
 		float width = Size().x - 20;
 		width = (width < 20) ? 20 : width;
 		EGUI::Indent(4);
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, false, width);
+		EGUI::Display::TextField("Search", buffer/*mSearchText*/, MAX_SEARCH, false, width);
 		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(4);
 		EGUI::Display::HorizontalSeparator();
