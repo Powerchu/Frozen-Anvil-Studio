@@ -138,13 +138,11 @@ namespace Editor
 		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 90 }, false))
 		{
 			auto activeState = mpFocus->IsActive();
-			EGUI::SameLine();
 			if (EGUI::Display::CheckBox("Active", &activeState, false))
 			{
 				mpFocus->SetActive(activeState);
-			};
-
-			EGUI::SameLine(5, 0);
+			}
+			ImGui::SameLine();
 			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 190.f) && strlen(buffer))
 			{
 				auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
