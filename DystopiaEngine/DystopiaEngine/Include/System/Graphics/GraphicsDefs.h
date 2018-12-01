@@ -35,6 +35,23 @@ namespace Dystopia
 		{
 			float mnX, mnY;
 			float mnWidth, mnHeight;
+
+			bool operator== (const Viewport _rhs) const
+			{
+				return (mnX == _rhs.mnX && mnY == _rhs.mnY
+					&& mnWidth == _rhs.mnWidth && mnHeight == _rhs.mnHeight);
+			}
+		};
+
+		struct ClippingPlane
+		{
+			float mnNear, mnFar;
+
+			bool operator== (const ClippingPlane _rhs) const
+			{
+				return (mnNear == _rhs.mnNear && mnFar == _rhs.mnFar);
+			}
+			
 		};
 
 		struct AbsViewport

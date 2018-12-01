@@ -136,9 +136,7 @@ void Editor::EditorMain::Update(void)
 		EditorPanel *p = mArrPanels[i];
 		p->SetSize(EGUI::Docking::GetTabSize(p->GetLabel().c_str()) - Math::Vec2{ 8, 12 });
 		p->SetPosition(EGUI::Docking::GetTabPosition(p->GetLabel().c_str()));
-		//p->SetSceneContext(&(mpSceneSystem->GetCurrentScene()));
 		{
-			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scopeT{ p->GetLabel().c_str(), "Update" };
 			p->Update(mfDelta);
 		}
 		{
@@ -161,6 +159,7 @@ void Editor::EditorMain::Update(void)
 
 void Editor::EditorMain::EndFrame(void)
 {
+	LogPerformance();
 	for (auto& s : mArrSystems)
 		s->EndFrame();
 
@@ -174,8 +173,8 @@ void Editor::EditorMain::EndFrame(void)
 			p->Message(eEMessage::STATE_CHANGED);
 	}
 
-	auto sceneSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
-	bool sceneChanged = (&sceneSys->GetCurrentScene() != &sceneSys->GetNextScene());
+	const auto sceneSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
+	const bool sceneChanged = (&sceneSys->GetCurrentScene() != &sceneSys->GetNextScene());
 
 	if (sceneChanged)
 	{
@@ -396,6 +395,40 @@ void Editor::EditorMain::ExternalFile(const AutoArray<HashString>& _arr)
 {
 	for (auto& e : _arr)
 		ExternalFile(e);
+}
+
+void Editor::EditorMain::LogPerformance(void)
+{
+	static constexpr float intervalS = 0.1f;
+	static float deltaAccu = 0.f;
+	deltaAccu += mfDelta;
+	if (deltaAccu > intervalS)
+	{
+		auto profiler = Dystopia::EngineCore::Get<Dystopia::Profiler>();
+		deltaAccu = 0;
+		auto& data = profiler->GetInfo();
+		for (auto& d : data)
+		{
+			auto& info = d.second.mTimes;
+			for (const auto& i : info)
+			{
+				Performance::LogDataS(d.first.c_str(), i.first.c_str(), static_cast<float>(info[i.first]));
+				Performance::LogDataG(d.first.c_str(), static_cast<float>(d.second.mTotal));
+			}
+		}
+		PLogTaskManager p;
+		p.mFrameRate = mfDelta;
+		p.mCPUIdle = profiler->GetCPUPercentageIdle();
+		p.mCPUBusy = profiler->GetCPUPercentageBusy();
+		p.mCPUOS = profiler->GetCPUPercentageOS();
+		p.mCPUProc = profiler->GetCPUPercentageProcess();
+		p.mPageFaults = profiler->GetNumPageFaults();
+		p.mMemUsed = profiler->GetUsedMemory();
+		p.mRamUsed = profiler->GetUsedPhysicalMemory();
+		p.mMemAvail = profiler->GetAvailablePhysicalMemory();
+		p.mMemLoad = profiler->GetSystemMemoryLoad();
+		Performance::LogTaskMgr(p);
+	}
 }
 
 #endif

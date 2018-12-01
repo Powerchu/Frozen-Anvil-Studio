@@ -77,7 +77,6 @@ namespace Dystopia
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine_Editor.lib", eCompile);
 		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL_Release", eFileDir::eAppData));
 #endif
-		//mHotloader->SetParentHWND(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetWindowHandle());
 		
 		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
@@ -316,7 +315,7 @@ namespace Dystopia
 				if(iter.second != nullptr)
 					if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
 					{
-						//delete iter.second;
+						delete iter.second;
 						iter.second = nullptr;
 						i.second.FastRemove(&iter);
 						//ToRemove.push_back(&iter);

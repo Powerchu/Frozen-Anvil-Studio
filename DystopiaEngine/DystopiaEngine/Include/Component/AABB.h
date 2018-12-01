@@ -36,7 +36,7 @@ namespace Dystopia
 		};
 
 #if EDITOR
-		static const std::string GetCompileName(void) { return "Box Collider2D"; }
+		static const std::string GetCompileName(void) { return "Box Collider 2D"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 #endif
 
@@ -79,8 +79,8 @@ namespace Dystopia
 		/* AABB - Point Collision*/
 		bool isColliding(const Math::Pt3D& _point);
 		bool isColliding(Math::Pt3D * const & _point);
-		bool isColliding(const Math::Mat3D _ownerTrans, const Math::Mat3D _transMat,
-						 const Math::Vec3D _offset, const Math::Pt3D _point);
+		bool isColliding(const Math::Mat3D& _ownerTrans, const Math::Mat3D& _transMat,
+						 const Math::Vec3D& _offset, const Math::Pt3D _point);
 
 
 		/* Gettors */

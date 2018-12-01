@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <functional>
 #include <string>
+#include <utility>
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -106,6 +107,7 @@ namespace Dystopia
 			return pComponent;
 		}
 
+
 		static bool RemoveC(GameObject* _pOwner)
 		{
 			C* pComponent = _pOwner->GetComponent<C>();
@@ -158,7 +160,6 @@ namespace Dystopia
 					return mData[_i](_owner);
 				return nullptr;
 			}
-
 			bool RemoveCommand(unsigned int _i, GameObject *_owner)
 			{
 				static auto mData = Ctor::MakeArray<bool(*)(GameObject *)>(RequestComponent<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::RemoveC...);
@@ -317,7 +318,7 @@ namespace Dystopia
 		template<>
 		void operator()(const char * _name, std::string value, std::function<void(std::string, void*)> _f, void* _addr)
 		{
-			std::string Temp = value;
+			std::string Temp = std::move(value);
 			char buffer[1024];
 			if (EGUI::Display::TextField(_name, buffer, 1024))
 			{

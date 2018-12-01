@@ -32,6 +32,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/SceneSystem.h"   
 #include "System/Scene/Scene.h"
 
+#if EDITOR
+#include "Component/ComponentList.h"
+#include "System/Base/ComponentDonor.h"
+#include "Editor/RuntimeMeta.h"
+#endif
+
 #define Ping(_ARR, _FUNC, ...)			\
 for (auto& e : _ARR)					\
 	if (e->IsActive())					\
@@ -40,6 +46,8 @@ for (auto& e : _ARR)					\
 #define ForcePing(_ARR, _FUNC, ...)		\
 for (auto& e : _ARR)					\
 	e-> ## _FUNC ##( __VA_ARGS__ )
+
+
 
 Dystopia::GameObject::GameObject(void) noexcept
 	: GameObject{ GUIDGenerator::INVALID }
@@ -87,6 +95,29 @@ void Dystopia::GameObject::SetActive(const bool _bEnable)
 		return;
 
 	mnFlags = _bEnable ? mnFlags | FLAG_ACTIVE : mnFlags & ~FLAG_ACTIVE;
+
+	for (auto& mComponent : mComponents)
+	{
+		mComponent->SetActive(_bEnable);
+	}
+
+	for (auto& mBehaviour : mBehaviours)
+	{
+		mBehaviour->SetActive(_bEnable);
+	}
+}
+
+bool Dystopia::GameObject::IsDragging() const
+{
+	return mnFlags & FLAG_DRAGGING;
+}
+
+void Dystopia::GameObject::SetDragging(bool _bEnable)
+{
+	if (mnFlags & FLAG_REMOVE)
+		return;
+
+	mnFlags = _bEnable ? mnFlags | FLAG_DRAGGING : mnFlags & ~FLAG_DRAGGING;
 }
 
 void Dystopia::GameObject::SetFlag(eObjFlag _flag)
@@ -210,7 +241,7 @@ void Dystopia::GameObject::Destroy(void)
 		c->GetOwner()->Destroy();
 
 	ForcePing(mComponents, GameObjectDestroy);
-	ForcePing(mBehaviours, GameObjectDestroy);
+	ForcePing(mBehaviours, BehaviourDestroy);
 
 	mnFlags = FLAG_REMOVE;
 }
@@ -398,6 +429,7 @@ void Dystopia::GameObject::Identify(void)
 		b->SetOwner(this);
 }
 
+#if EDITOR
 Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
 {
 	mnID    = _rhs.mnID;
@@ -413,6 +445,51 @@ Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
 	return *this;
 }
 
+Dystopia::GameObject& Dystopia::GameObject::operator=(const GameObject& _rhs)
+{
+	if (!(_rhs.GetFlags() & FLAG_EDITOR_OBJ))
+		__debugbreak();
+
+	if (mComponents.size() != _rhs.mComponents.size())
+		__debugbreak();
+
+	mnFlags = _rhs.mnFlags;
+	mnFlags &= ~FLAG_EDITOR_OBJ;
+
+	for (size_t i = 0; i < mComponents.size(); ++i)
+	{
+		auto c1 = mComponents[i];
+		auto c2 = _rhs.mComponents[i];
+
+		if (c1->GetRealComponentType() != c2->GetRealComponentType())
+			__debugbreak();
+	}
+
+	for (unsigned n = 0; n < mComponents.size(); ++n)
+	{
+		mComponents[n]->DestroyComponent();
+		mComponents.FastRemove(n);
+	}
+	for (unsigned n = 0; n < mBehaviours.size(); ++n)
+	{
+		mBehaviours[n]->DestroyComponent();
+		mBehaviours.FastRemove(n);
+	}
+
+	for (size_t i = 0; i < _rhs.mComponents.size(); ++i)
+		AddComponent(_rhs.mComponents[i]->Duplicate(), Component::TAG{});
+
+	for (auto& b : _rhs.mBehaviours)
+		AddComponent(EngineCore::GetInstance()->GetSystem<BehaviourSystem>()->RequestDuplicate(b, mnID), Behaviour::TAG{});
+
+	for (auto c : mComponents)
+		c->RemoveFlags(FLAG_EDITOR_OBJ);
+	for (auto b: mComponents)
+		b->RemoveFlags(FLAG_EDITOR_OBJ);
+
+	return *this;
+}
+#endif 
 
 #undef Ping
 #undef ForcePing

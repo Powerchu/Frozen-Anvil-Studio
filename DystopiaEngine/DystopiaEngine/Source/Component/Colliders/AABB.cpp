@@ -256,8 +256,8 @@ namespace Dystopia
 		return this->isColliding(*_point);
 	}
 
-	bool AABB::isColliding(const Math::Mat3D , const Math::Mat3D , 
-						   const Math::Vec3D ,	  const Math::Pt3D _point)
+	bool AABB::isColliding(const Math::Mat3D&, const Math::Mat3D&, 
+						   const Math::Vec3D&,	  const Math::Pt3D _point)
 	{
 		const auto MinPosA = mMin->mPosition;
 		const auto MaxPosA = mMax->mPosition;

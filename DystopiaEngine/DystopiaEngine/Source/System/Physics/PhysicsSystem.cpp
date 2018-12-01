@@ -46,13 +46,22 @@ namespace Dystopia
 		for (auto& body : mComponents)
 		{
 #if EDITOR
-			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (nullptr == body.GetOwner())	continue;
+			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 			if (body.GetOwner())
 			{
-				if (!body.Get_IsStaticState())
+				if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+
+
+				if (!body.Get_IsStaticState() && !body.Get_IsKinematic())
 				{
 					body.CheckSleeping(_dt);
+
+					if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING)
+					{
+						body.SetSleeping(false);
+					}
 
 					for (auto col : body.mparrCol)
 					{
@@ -73,9 +82,10 @@ namespace Dystopia
 		{
 			if (nullptr == body.GetOwner())	continue;
 #if EDITOR
-			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (!body.GetOwner()->IsActive()) continue;
+			if ( !body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING
+				|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 
 			if (!body.Get_IsStaticState() && body.GetIsAwake())
 			{
@@ -92,11 +102,10 @@ namespace Dystopia
 			{
 				if (body.GetOwner() == nullptr) continue;
 #if EDITOR
-				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+				if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				//if (body.Get_IsStaticState()) continue;
-
-				if (!body.GetOwner()->IsActive()) continue;
+				if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING
+					|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 
 				for (auto col : body.mparrCol)
 				{
@@ -115,11 +124,12 @@ namespace Dystopia
 		{
 			if (body.GetOwner() == nullptr) continue;
 #if EDITOR
-			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (body.Get_IsStaticState() || !body.GetIsAwake()) continue;
+			if (body.Get_IsStaticState() || !body.GetIsAwake() || body.Get_IsKinematic()) continue;
 
-			if (!body.GetOwner()->IsActive()) continue;
+			if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING
+				|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 
 			body.PreUpdatePosition(_dt);
 
@@ -131,12 +141,10 @@ namespace Dystopia
 			{
 				if (body.GetOwner() == nullptr) continue;
 #if EDITOR
-				if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+				if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-				//if (body.Get_IsStaticState()) continue;
-
-				if (!body.GetOwner()->IsActive()) continue;
-
+				if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING
+					|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 
 				for (auto col : body.mparrCol)
 				{
@@ -163,7 +171,6 @@ namespace Dystopia
 						}
 					}
 				}
-				//if (body.GetPosition().x == 0.f) __debugbreak();
 			}
 		}
 
@@ -176,11 +183,13 @@ namespace Dystopia
 		{
 			if (body.GetOwner() == nullptr) continue;
 #if EDITOR
-			if (body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-			if (body.Get_IsStaticState()) continue;
+			if (body.Get_IsStaticState() || body.Get_IsKinematic()) continue;
 
-			if (!body.GetOwner()->IsActive()) continue;
+			if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE 
+				|| body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING 
+				|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 
 			body.UpdateResult(_dt);
 		}
@@ -246,7 +255,9 @@ namespace Dystopia
 	{
 		for (auto& body : mComponents)
 		{
-			if (body.GetFlags() & FLAG_REMOVE)
+			if (nullptr == body.GetOwner()) continue;
+
+			if (body.GetOwner()->GetFlags() & FLAG_REMOVE)
 			{
 				mComponents.Remove(&body);
 			}

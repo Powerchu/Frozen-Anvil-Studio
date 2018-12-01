@@ -61,11 +61,11 @@ namespace Dystopia
 		// Apply Impulse
 		const Vec3D impulse = tmpJ * mEdgeNormal;
 
-		if (!bodyA->Get_IsStaticState())
+		if (!bodyA->Get_IsStaticState() && !bodyA->Get_IsKinematic())
 			bodyA->AddLinearImpulse(-impulse);
 			//bodyA->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
 
-		if (!bodyB->Get_IsStaticState() && mCollidedWith->IsActive())
+		if (!bodyB->Get_IsStaticState() && mCollidedWith->IsActive() && !bodyB->Get_IsKinematic())
 			bodyB->AddLinearImpulse(impulse);
 			//bodyB->AddLinearImpulseWithOrigin(-impulse, mCollisionPoint);
 
@@ -94,10 +94,10 @@ namespace Dystopia
 		else
 			frictionImpulse = -tmpJ * tangent * mfDynamicFrictionCof;
 
-		if (!bodyA->Get_IsStaticState())
+		if (!bodyA->Get_IsStaticState() && !bodyA->Get_IsKinematic())
 			bodyA->AddLinearImpulse(-frictionImpulse);
 
-		if (!bodyB->Get_IsStaticState() && mCollidedWith->IsActive())
+		if (!bodyB->Get_IsStaticState() && mCollidedWith->IsActive() && !bodyB->Get_IsKinematic())
 			bodyB->AddLinearImpulse(frictionImpulse);
 
 		/*if (!bodyA->Get_IsStaticState())
@@ -127,9 +127,9 @@ namespace Dystopia
 
 		const Vec3D correction = Math::Max(Math::Abs(mfPeneDepth) - slop, 0.0F) / (a_invmass + b_invmass) * perc * mEdgeNormal;
 
-		if (!bodyA->Get_IsStaticState() && bodyA->GetIsAwake())
+		if (!bodyA->Get_IsStaticState() && bodyA->GetIsAwake() && !bodyA->Get_IsKinematic())
 			bodyA->SetPosition(bodyA->GetPosition() - correction * a_invmass);
-		if (!bodyB->Get_IsStaticState() && bodyB->GetIsAwake() && mCollidedWith->IsActive())
+		if (!bodyB->Get_IsStaticState() && bodyB->GetIsAwake() && mCollidedWith->IsActive() && !bodyB->Get_IsKinematic())
 			bodyB->SetPosition(bodyB->GetPosition() + correction * b_invmass);
 
 		//if (bodyA->GetPosition().x == 0.f || bodyB->GetPosition().x == 0.f) __debugbreak();

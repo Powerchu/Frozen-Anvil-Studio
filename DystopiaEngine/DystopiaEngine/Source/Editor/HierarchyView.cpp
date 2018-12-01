@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 #include "Editor/EditorClipboard.h"
 #include "Editor/EditorCommands.h"
+#include "Editor/ProjectResource.h"
 
 #include "Object/GameObject.h"
 
@@ -208,7 +209,10 @@ namespace Editor
 			}
 		}
 		if (!exist)
+		{
+			EditorMain::GetInstance()->GetPanel<ProjectResource>()->RemoveFocusOnFile();
 			ed->AddGameObject(_obj.GetID());
+		}
 	}
 
 	void HierarchyView::GameObjectPopups(Dystopia::GameObject& _obj)
@@ -216,6 +220,7 @@ namespace Editor
 		auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
 		if (ImGui::BeginPopupContextItem())
 		{
+			EditorMain::GetInstance()->GetPanel<ProjectResource>()->RemoveFocusOnFile();
 			ed->ClearAll();
 			ed->AddGameObject(_obj.GetID());
 			if (EGUI::Display::SelectableTxt("Duplicate"))
@@ -302,8 +307,10 @@ namespace Editor
 				break;
 			}
 		}
-		std::string uniqueifyName = std::string{ _obj.GetName().c_str() } +"##" + std::to_string(_obj.GetID());
-		bool tree = EGUI::Display::StartTreeNode(uniqueifyName, &clicked, selected);
+		std::string uniqueifyName = _obj.GetName().c_str();
+		uniqueifyName += "##";
+		uniqueifyName += std::to_string(_obj.GetID());
+		bool tree = EGUI::Display::StartTreeNode(uniqueifyName.c_str(), &clicked, selected, false, true, false);
 		GameObjectPayload(_obj);
 		GameObjectPopups(_obj);
 
@@ -344,7 +351,7 @@ namespace Editor
 			}
 		}
 		std::string uniqueifyName = std::string{_obj.GetName().c_str()} + "##" + std::to_string(_obj.GetID());
-		if (EGUI::Display::SelectableTxt(uniqueifyName, selected))
+		if (EGUI::Display::SelectableTxt(uniqueifyName.c_str(), selected))
 		{
 			SelectedObj(_obj);
 		}	

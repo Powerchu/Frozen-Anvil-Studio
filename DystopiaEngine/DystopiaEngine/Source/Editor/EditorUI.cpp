@@ -113,20 +113,30 @@ void Editor::EditorUI::StartFrame(void)
 	// Setup display size (every frame to accommodate for window resizing)
 	int w, h, display_w, display_h;
 
-	auto winMgr = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>();
+	const auto winMgr = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>();
 	auto& win	= winMgr->GetMainWindow();
 
-	if (winMgr->IsFullscreen())
+	if (win.IsFullscreen())
 	{
 		w = display_w = win.GetWidth() - GetSystemMetrics(SM_CXBORDER) + 1;
-		h = display_h = win.GetHeight() - GetSystemMetrics(SM_CYSIZE) - 2 * GetSystemMetrics(SM_CXBORDER);
+		h = display_h = win.GetHeight() - GetSystemMetrics(SM_CYSIZE) - GetSystemMetrics(SM_CXBORDER);
 	}
 	else
 	{
 		const auto t = GetSystemMetrics(SM_CXSIZEFRAME) * GetSystemMetrics(SM_CXPADDEDBORDER);
-		w = display_w = win.GetWidth() - t;
-		h = display_h = win.GetHeight() - GetSystemMetrics(SM_CYSIZE) + 3 * GetSystemMetrics(SM_CYEDGE) - GetSystemMetrics(SM_CYCAPTION);
+		if (mbLauncherMode)
+		{
+			w = display_w = win.GetWidth() - t;
+			h = display_h = win.GetHeight() - GetSystemMetrics(SM_CYSIZE) + 3 * GetSystemMetrics(SM_CYEDGE) - GetSystemMetrics(SM_CYCAPTION);
+		}
+		else
+		{
+			w = display_w = win.GetWidth();
+			h = display_h = win.GetHeight() + GetSystemMetrics(SM_CYSIZE) + GetSystemMetrics(SM_CYEDGE) - GetSystemMetrics(SM_CYCAPTION);
+		}
+		
 	}
+
 	io.DisplaySize = ImVec2{ static_cast<float>(w), static_cast<float>(h) };
 	io.DisplayFramebufferScale = ImVec2{ w > 0 ? static_cast<float>(display_w / w) : 0,
 										 h > 0 ? static_cast<float>(display_h / h) : 0 };

@@ -52,13 +52,7 @@ namespace Editor //Dystopia
 	}
 
 	/* ===================================================== The Performance Logger for handling items/datas ===================================================== */
-	//PerformanceLog* PerformanceLog::GetInstance()
-	//{
-	//	if (gpInstance) return gpInstance;
-	//
-	//	gpInstance = new PerformanceLog{};
-	//	return gpInstance;
-	//}
+
 	PerformanceLog::PerformanceLog(void)
 		: //EditorTab{ false },
 		mLabel{ "Performance" },
@@ -96,16 +90,16 @@ namespace Editor //Dystopia
 		ShowTaskMgrBreakdown();
 		for (const auto& item : mArrLoggedData)
 		{
-			if (item.mShowGeneric && EGUI::Display::StartTreeNode(item.mGenericOverview.mLabel.c_str()))
+			if (item.mShowGeneric && EGUI::Display::StartTreeNode(item.mGenericOverview.mLabel.c_str(),nullptr,false,false,true,true))
 			{
 				EGUI::Indent(10);
 				ShowLog(item.mGenericOverview, mGraphSizeB);
-				if (item.mData.size() && EGUI::Display::StartTreeNode(item.mLabel.c_str(), nullptr, false, false, false))
+				if (item.mData.size() && EGUI::Display::StartTreeNode(item.mLabel.c_str(), nullptr, false, false, false, true))
 				{
-					for (unsigned int i = 0; i < item.mData.size(); ++i)
+					for (const auto& i : item.mData)
 					{
-						EGUI::Display::Label(item.mData[i].mLabel.c_str());
-						ShowLog(item.mData[i], mGraphSizeS);
+						EGUI::Display::Label(i.mLabel.c_str());
+						ShowLog(i, mGraphSizeS);
 					}
 					EGUI::Display::EndTreeNode();
 				}
@@ -181,27 +175,33 @@ namespace Editor //Dystopia
 	{
 		_size.y = (_log.mIsBigGraph) ? mGraphBigY : mGraphSmallY;
 		EGUI::Display::LineGraph(_log.mLabel.c_str(), _log.mArrValues, 0, static_cast<float>(_log.mMax), _size,
-								 std::to_string(static_cast<int>(_log.mArrValues[_log.mCurrentIndex])));
+								 std::to_string(static_cast<int>(_log.mArrValues[_log.mCurrentIndex])).c_str());
 	}
 
 	void PerformanceLog::ShowTaskMgrBreakdown(void)
 	{
-		static constexpr float sizeY = 200;
-		Math::Vec2 size{Size().x - 7.f, sizeY };
-		if (EGUI::StartChild("Task Manager Breakdown", size))
+		//static constexpr float sizeY = 200;
+		//Math::Vec2 size{Size().x - 7.f, sizeY };
+		//if (EGUI::StartChild("Task Manager Breakdown", size))
 		{
-			EGUI::Display::Label(" Frame Rate (s)   : %.1f FPS", 1.f / mTaskMgrDetails.mFrameRate);
-			EGUI::Display::Label(" CPU Idle (%%)     : %.1f", mTaskMgrDetails.mCPUIdle);
-			EGUI::Display::Label(" CPU Busy (%%)     : %.1f", mTaskMgrDetails.mCPUBusy);
-			EGUI::Display::Label(" CPU OS   (%%)     : %.1f", mTaskMgrDetails.mCPUOS);
-			EGUI::Display::Label(" CPU Proc (%%)     : %.1f", mTaskMgrDetails.mCPUProc);
+			EGUI::Display::Dummy(0, 5.f);
+
+			EGUI::Display::Label(" Frame Rate (s)   : %.2f FPS", 1.f / mTaskMgrDetails.mFrameRate);
+			EGUI::Display::Label(" CPU Idle (%%)     : %.2f", mTaskMgrDetails.mCPUIdle);
+			EGUI::Display::Label(" CPU Busy (%%)     : %.2f", mTaskMgrDetails.mCPUBusy);
+			EGUI::Display::Label(" CPU OS   (%%)     : %.2f", mTaskMgrDetails.mCPUOS);
+			EGUI::Display::Label(" CPU Proc (%%)     : %.2f", mTaskMgrDetails.mCPUProc);
 			EGUI::Display::Label(" Page Faults      : %d", mTaskMgrDetails.mPageFaults);
 			EGUI::Display::Label(" Memory Used (MB) : %d", mTaskMgrDetails.mMemUsed);
 			EGUI::Display::Label(" RAM Used (MB)    : %d", mTaskMgrDetails.mRamUsed);
 			EGUI::Display::Label(" Memory Available : %d", mTaskMgrDetails.mMemAvail);
-			EGUI::Display::Label(" Memory Load      : %.1f", mTaskMgrDetails.mMemLoad);
+			EGUI::Display::Label(" Memory Load      : %.2f", mTaskMgrDetails.mMemLoad);
+
+			EGUI::Display::Dummy(0, 5.f);
+			EGUI::Display::HorizontalSeparator();
+			EGUI::Display::Dummy(0, 5.f);
 		}
-		EGUI::EndChild();
+		//EGUI::EndChild();
 	}
 }
 

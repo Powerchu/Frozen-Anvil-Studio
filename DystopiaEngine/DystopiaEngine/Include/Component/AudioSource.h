@@ -71,7 +71,7 @@ namespace Dystopia
 		eSoundType	GetSoundType(void) const;
 		void		SetSoundType(eSoundType);
 		Channel&	GetChannel(void);
-		void		SetChannel(Channel);
+		void		SetChannel(const Channel &);
 
 		void Play(void);
 		void Pause(void);

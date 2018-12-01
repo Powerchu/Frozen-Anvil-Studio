@@ -176,7 +176,7 @@ Math::Vec2 Editor::SpriteEditor::AdjustAspectSize(float _imgX, float _imgY, floa
 
 void Editor::SpriteEditor::FieldTexture(void)
 {
-	EGUI::Display::EmptyBox("Sprite Sheet", FIELD_SIZE, mpTexture ? mpTexture->GetName() : "-empty-");
+	EGUI::Display::EmptyBox("Sprite Sheet", FIELD_SIZE, mpTexture ? mpTexture->GetName().c_str() : "-empty-");
 	if (auto t = EGUI::Display::StartPayloadReceiver<Editor::File>(EGUI::ePayloadTags::ALL_IMG))
 	{
 		mpAtlas = nullptr;
@@ -256,6 +256,8 @@ void Editor::SpriteEditor::DrawSelectedGrid(float _ox, float _oy, float _ix, flo
 		EGUI::Display::Label("%d", i);
 		ImGui::SetCursorScreenPos(screenOrigin);
 	}
+
+	//ImGui::GetWindowDrawList()->AddRect(rectMin, rectMax, ImGui::GetColorU32(ImVec4{ 1,1,1,1 }));
 }
 
 void Editor::SpriteEditor::DrawTempGrid(float _ox, float _oy, float _ix, float _iy)

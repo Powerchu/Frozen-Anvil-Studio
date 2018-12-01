@@ -20,7 +20,7 @@ namespace Dystopia
 	{
 		FLAG_NONE			= 0u,
 		FLAG_ACTIVE			= 1u << 0,
-		FLAG_STATIC			= 1u << 1,
+		FLAG_DRAGGING		= 1u << 1,
 
 		FLAG_LAYER_UI		= 1u << 5,
 		FLAG_LAYER_WORLD	= 1u << 6,

@@ -86,7 +86,7 @@ namespace Dystopia
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
 #if EDITOR
-			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -103,7 +103,7 @@ namespace Dystopia
 		for (auto & elem : ComponentDonor<AABB>::mComponents)
 		{
 #if EDITOR
-			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -121,7 +121,7 @@ namespace Dystopia
 		for (auto & elem : ComponentDonor<Circle>::mComponents)
 		{
 #if EDITOR
-			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
 			if (elem.GetOwner())
 			{

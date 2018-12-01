@@ -396,6 +396,11 @@ inline Math::Vector4 _CALL Math::Normalise(Vector4 _vec)
 inline Math::Vector4& _CALL Math::Vector4::Reciprocal(void)
 {
 	__m128 temp = _mm_rcp_ps(mData);
+	__m128 const mask = _mm_or_ps(
+		_mm_cmplt_ps(mData, _mm_set_ps1(-epsilon)),
+		_mm_cmpgt_ps(mData, _mm_set_ps1(epsilon))
+	);
+	temp = _mm_and_ps(temp, mask);
 
 	mData = _mm_mul_ps(mData, _mm_mul_ps(temp, temp));
 	mData = _mm_sub_ps(_mm_add_ps(temp, temp), mData);

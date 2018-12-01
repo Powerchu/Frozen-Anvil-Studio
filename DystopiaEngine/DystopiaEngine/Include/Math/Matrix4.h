@@ -42,7 +42,7 @@ namespace Math
 		) noexcept;
 		inline explicit Matrix4(const Vector4(&)[4]) noexcept;
 		inline explicit Matrix4(const float (&)[16]) noexcept;
-		inline explicit Matrix4(const Vector4, const Vector4, const Vector4, const Vector4) noexcept;
+		inline explicit Matrix4(const Vector4&, const Vector4&, const Vector4&, const Vector4&) noexcept;
 
 
 		// ==================================== MATRIX OPERATIONS ==================================== // 
@@ -74,6 +74,7 @@ namespace Math
 		inline Matrix4& _CALL operator+= (const Matrix4);
 		inline Matrix4& _CALL operator-= (const Matrix4);
 		inline Matrix4& _CALL operator*= (const Matrix4);
+		inline bool		_CALL operator== (const Matrix4) const;
 		inline Matrix4& _CALL operator*= (const float);
 		inline Matrix4& _CALL operator/= (const float);
 
@@ -181,8 +182,8 @@ inline Math::Matrix4::Matrix4(
 }
 
 inline Math::Matrix4::Matrix4(
-	const Vector4 _v1, const Vector4 _v2,
-	const Vector4 _v3, const Vector4 _v4
+	const Vector4& _v1, const Vector4& _v2,
+	const Vector4& _v3, const Vector4& _v4
 ) noexcept : mData{ _v1, _v2, _v3, _v4 }
 {
 }
@@ -330,6 +331,20 @@ inline Math::Matrix4& _CALL Math::Matrix4::operator*= (const Matrix4 _rhs)
 	return *this;
 }
 
+inline bool _CALL Math::Matrix4::operator== (const Matrix4 _rhs) const
+{
+	for (unsigned n = 0; n < 4; ++n)
+	{
+		if (mData[n] != _rhs.mData[n])
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
 inline Math::Matrix4& _CALL Math::Matrix4::operator*= (const float _rhs)
 {
 	for (unsigned n = 0; n < 4; ++n)
@@ -360,6 +375,7 @@ inline Math::Matrix4 _CALL Math::operator* (Matrix4 _lhs, const Matrix4 _rhs)
 {
 	return _lhs *= _rhs;
 }
+
 
 inline Math::Vector4 _CALL Math::Matrix4::operator* (const Vector4 _rhs) const
 {

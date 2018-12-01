@@ -1,6 +1,7 @@
 #include "System\Collision\BroadPhaseCircle.h"
+#include <utility>
 
-Dystopia::BroadPhaseCircle::BroadPhaseCircle(float _Radius, Math::Point3D _Origin)
+Dystopia::BroadPhaseCircle::BroadPhaseCircle(float _Radius, const Math::Point3D& _Origin)
 	:mRadius{_Radius} , mOrigin{_Origin}
 {
 
@@ -51,7 +52,7 @@ float Dystopia::BroadPhaseCircle::GetRadius() const
 
 float Dystopia::BroadPhaseCircle::GetRadiusGrowth(BroadPhaseCircle _other) const
 {
-	return BroadPhaseCircle{ *this,_other }.GetRadius() - GetRadius();
+	return BroadPhaseCircle{ *this, std::move(_other)}.GetRadius() - GetRadius();
 }
 
 Math::Point3D Dystopia::BroadPhaseCircle::GetOrigin() const
