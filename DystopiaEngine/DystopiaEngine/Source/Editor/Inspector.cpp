@@ -229,7 +229,7 @@ namespace Editor
 			EGUI::PopID();
 		}
 
-		auto& arrBehav = mpFocus->GetAllBehaviours();
+		auto arrBehav = mpFocus->GetAllBehaviours();
 		for (auto & c : arrBehav)
 		{
 			auto activeState = c->IsActive();

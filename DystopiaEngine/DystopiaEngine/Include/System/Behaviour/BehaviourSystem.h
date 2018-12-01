@@ -77,6 +77,8 @@ namespace Dystopia
 
 		void Unserialise(TextSerialiser &);
 
+		void DeleteBehaviour(Behaviour *);
+
 #if EDITOR
 
 		MagicArray<BehaviourWrap *> const & GetDllChanges() const;
