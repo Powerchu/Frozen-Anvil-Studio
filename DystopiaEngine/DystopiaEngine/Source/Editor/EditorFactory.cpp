@@ -183,6 +183,7 @@ bool Editor::EditorFactory::SaveAsPrefab(const uint64_t& _objID, Dystopia::TextS
 				if (c->GetOwner())
 					SaveChild(*c->GetOwner(), _out, _temp);
 
+
 			return true;
 		}
 	}

@@ -665,7 +665,7 @@ namespace EGUI
 		{
 			auto originalPos = ImGui::GetCursorPos();
 
-			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope{ "FULL ", "0" };
+			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope{ "FULL ", "0" };
 
 			auto pFile = static_cast<::Editor::File*>(_pData);
 			if (!pFile->mpImgData)
@@ -687,7 +687,7 @@ namespace EGUI
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 
-			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope1{ "FIRST ", "1" };
+			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope1{ "FIRST ", "1" };
 
 			//HashString invi{ "##CPLBtnI" };
 			//
@@ -696,7 +696,7 @@ namespace EGUI
 			//	invi += _uniqueId;
 			//}
 
-			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope3{ "THIRD", "3" };
+			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope3{ "THIRD", "3" };
 
 			bool btn = ImGui::Button(_uniqueId, _displaySize, true);
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);

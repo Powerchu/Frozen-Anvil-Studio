@@ -155,7 +155,8 @@ char OString::front(void) const
 
 const char* OString::cbegin(void) const
 {
-	DEBUG_ASSERT(0 == mnCurSize, "Empty string!");
+	if (!mnCurSize)
+		return nullptr;
 	if (mpLiteral)
 		return mpLiteral;
 	return mpCharBuffer;
@@ -163,7 +164,8 @@ const char* OString::cbegin(void) const
 
 const char*	OString::begin(void)
 {
-	DEBUG_ASSERT(0 == mnCurSize, "Empty string!");
+	if (!mnCurSize)
+		return nullptr;
 	if (mpLiteral)
 		return mpLiteral;
 	return mpCharBuffer;
@@ -171,7 +173,8 @@ const char*	OString::begin(void)
 
 const char* OString::cend(void) const
 {
-	DEBUG_ASSERT(0 == mnCurSize, "Empty string!");
+	if (!mnCurSize)
+		return nullptr;
 	if (mpLiteral)
 		return mpLiteral + mnCurSize;
 	return mpCharBuffer + mnCurSize;
@@ -179,7 +182,8 @@ const char* OString::cend(void) const
 
 const char*	OString::end(void)
 {
-	DEBUG_ASSERT(0 == mnCurSize, "Empty string!");
+	if (!mnCurSize)
+		return nullptr;
 	if (mpLiteral)
 		return mpLiteral + mnCurSize;
 	return mpCharBuffer + mnCurSize;
@@ -187,7 +191,8 @@ const char*	OString::end(void)
 
 const char* OString::clast(void) const
 {
-	DEBUG_ASSERT(0 == mnCurSize, "Empty string!");
+	if (!mnCurSize)
+		return nullptr;
 	if (mpLiteral)
 		return mpLiteral + mnCurSize - 1;
 	return mpCharBuffer + mnCurSize - 1;
@@ -195,7 +200,8 @@ const char* OString::clast(void) const
 
 const char*	OString::last(void)
 {
-	DEBUG_ASSERT(0 == mnCurSize, "Empty string!");
+	if (!mnCurSize)
+		return nullptr;
 	if (mpLiteral)
 		return mpLiteral + mnCurSize - 1;
 	return mpCharBuffer + mnCurSize - 1;
