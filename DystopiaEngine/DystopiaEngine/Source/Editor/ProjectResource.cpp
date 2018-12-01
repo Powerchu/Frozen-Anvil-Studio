@@ -97,7 +97,7 @@ namespace Editor
 	{
 		for (auto& f : mArrAllFiles)
 			if (HashString::nPos == f->mPath.find("Temp") && f->mTag == EGUI::ePayloadTags::PREFAB)
-				EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mPath);
+				EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mName);
 		return true;
 	}
 

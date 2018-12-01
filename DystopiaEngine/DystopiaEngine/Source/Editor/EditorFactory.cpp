@@ -91,9 +91,7 @@ void Editor::EditorFactory::Message(eEMessage _msg)
 					mArrFactoryObj.Remove(&mArrFactoryObj[j]);
 
 				mArrPrefabData.Remove(&mArrPrefabData[i]);
-
-				auto fp = Dystopia::EngineCore::Get<Dystopia::FileSystem>()->FindFilePath(prefName.c_str(), Dystopia::eFileDir::eCurrent);
-				LoadAsPrefab(fp.c_str());
+				LoadAsPrefab(prefName.c_str());
 			}
 		}
 	}
@@ -121,7 +119,7 @@ void Editor::EditorFactory::DefaultSceneCamera(void)
 	cam->Awake();
 }
 
-void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p, uint64_t c, bool _amComponent)
+bool Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p, uint64_t c, bool _amComponent)
 {
 	for (auto& object : mArrFactoryObj)
 	{
@@ -130,7 +128,7 @@ void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p, uint64_t c
 			if (c == object.GetID())
 			{
 				object.AddComponent(_p, Dystopia::Component::TAG{});
-				return;
+				return true;
 			}
 		}
 		else
@@ -139,17 +137,16 @@ void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p, uint64_t c
 			{
 				auto b = static_cast<Dystopia::Behaviour*>(_p);
 				object.AddComponent(b, Dystopia::Behaviour::TAG{});
-				return;
+				return true;
 			}
 		}
 	}
+
+	return false;
 }
 
 bool Editor::EditorFactory::SpawnPrefab(const HashString& _prefName, const Math::Pt3D& _pos, uint64_t& _outRootObjID)
 {
-	HashString check{ _prefName };
-	size_t pos = check.rfind(".");
-	check.erase(pos);
 	for (const auto& p : mArrPrefabData)
 	{
 		if (p.mPrefabFile == _prefName)
@@ -246,8 +243,9 @@ void Editor::EditorFactory::ValidatePrefabInstances(void)
 	}
 }
 
-bool Editor::EditorFactory::LoadAsPrefab(const HashString& _path)
+bool Editor::EditorFactory::LoadAsPrefab(const HashString& _name)
 {
+	auto _path = Dystopia::EngineCore::Get<Dystopia::FileSystem>()->FindFilePath(_name.c_str(), Dystopia::eFileDir::eResource);
 	auto _in = Dystopia::TextSerialiser::OpenFile(_path.c_str(), Dystopia::TextSerialiser::MODE_READ);
 	size_t currentIndex = mArrFactoryObj.size();
 	auto& obj = *mArrFactoryObj.Emplace(Dystopia::GUIDGenerator::GetUniqueID());

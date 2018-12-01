@@ -132,6 +132,16 @@ void Dystopia::GameObject::ReplaceFlag(unsigned _fullFlag)
 
 void Dystopia::GameObject::RemoveFlags(eObjFlag _flags)
 {
+#if EDITOR
+	if (_flags == FLAG_EDITOR_OBJ)
+	{
+		for (auto c : mComponents)
+			c->RemoveFlags(_flags);
+		for (auto b : mBehaviours)
+			b->RemoveFlags(_flags);
+	}
+#endif
+
 	mnFlags &= ~_flags;
 }
 
