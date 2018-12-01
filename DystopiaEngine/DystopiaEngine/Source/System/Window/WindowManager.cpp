@@ -68,7 +68,7 @@ namespace
 
 		case WM_SYSKEYUP:
 			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::SYSKEY, wParam);
-			return;
+			return 0;
 
 		case WM_SYSKEYDOWN:
 			return 0;
@@ -327,7 +327,7 @@ void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 	int files = DragQueryFile(handle, 0xFFFFFFFFu, 0, 0);
 
 	AutoArray<wchar_t> buf;
-	AutoArray<HashString> paths{ files };
+	AutoArray<HashString> paths{ (size_t)files };
 
 	for (int n = 0; n < files; ++n)
 	{

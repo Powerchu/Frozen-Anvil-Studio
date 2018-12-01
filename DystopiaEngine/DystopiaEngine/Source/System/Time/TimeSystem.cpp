@@ -91,7 +91,7 @@ void Dystopia::TimeSystem::Shutdown(void)
 
 float Dystopia::TimeSystem::GetDeltaTime(void) const noexcept
 {
-	return mfTimeScale * mbSimulateTime ? mfSimulatedDT : mTimeKeep.Elapsed();
+	return mfTimeScale * (mbSimulateTime ? mfSimulatedDT : mTimeKeep.Elapsed());
 }
 
 float Dystopia::TimeSystem::GetFixedDeltaTime(void) const noexcept

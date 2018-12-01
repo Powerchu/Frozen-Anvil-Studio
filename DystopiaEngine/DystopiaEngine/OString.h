@@ -40,7 +40,7 @@ public:
 
 	template<size_t N>
 	OString(char const (&_literal)[N]);
-	template<typename T, typename = Ut::EnableIf_t<typename Ut::IsCString<T>::type>>
+	template<typename T, typename = Ut::EnableIf_t<Ut::IsCString<T>::value>>
 	OString(T _str);
 
 	/* Assignment operators */
@@ -154,14 +154,14 @@ inline OString::OString(char const (&_literal)[N])
 
 template<typename T, typename>
 inline OString::OString(T _str)
-	: mnCurSize{ strlen(_cstr) }, mnBufferSize{ mnCurSize + 1 }, mnID{ 0 }, mpLiteral{ nullptr },
+	: mnCurSize{ strlen(_str) }, mnBufferSize{ mnCurSize + 1 }, mnID{ 0 }, mpLiteral{ nullptr },
 	mpCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(mnBufferSize) }, mbRehash{ true }
 {
 	if (mpCharBuffer)
 	{
 		size_t i = 0;
 		for (; i < mnCurSize; ++i)
-			mpCharBuffer[i] = _cstr[i];
+			mpCharBuffer[i] = _str[i];
 		for (; i < mnBufferSize; ++i)
 			mpCharBuffer[i] = '\0';
 	}
@@ -311,7 +311,7 @@ inline OString& OString::operator+=(T _element)
 }
 
 template<>
-inline OString& OString::operator+=(const char * _str)
+inline OString& OString::operator+=<const char*>(const char * _str)
 {
 	const size_t newSize = mnCurSize + strlen(_str);
 
@@ -375,7 +375,7 @@ inline OString& OString::operator+=(const char * _str)
 }
 
 template<>
-inline OString& OString::operator+=(const char _c)
+inline OString& OString::operator+=<const char>(const char _c)
 {
 	const size_t newSize = mnCurSize + 1;
 	if (mpLiteral)

@@ -32,7 +32,7 @@ namespace Editor
 	class EditorMain
 	{
 	public:
-		using ESystems = Ut::MetaAutoIndexer <
+		using ESystems = typename Ut::MetaAutoIndexer <
 			class EditorStates,
 			class EInput,
 			class EditorUI,
@@ -40,9 +40,9 @@ namespace Editor
 			class EditorResource,
 			class EditorCommands,
 			class EditorFactory
-		>;
+		>::result;
 
-		using EPanels = Ut::MetaAutoIndexer<
+		using EPanels = typename Ut::MetaAutoIndexer<
 			class Inspector,
 			class ConsoleLog,
 			class HierarchyView,
@@ -55,7 +55,7 @@ namespace Editor
 			class SpriteEditor,
 			class ProjectSettings,
 			class BehaviourTreeEditor
-		>;
+		>::result;
 
 		static EditorMain* GetInstance(void);
 		~EditorMain(void);

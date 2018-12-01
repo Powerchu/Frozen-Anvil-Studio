@@ -57,7 +57,7 @@ namespace Dystopia
 	{
 	}
 
-	void AISystem::SaveSettings(DysSerialiser_t& _out)
+	void AISystem::SaveSettings(DysSerialiser_t& )
 	{
 	}
 
