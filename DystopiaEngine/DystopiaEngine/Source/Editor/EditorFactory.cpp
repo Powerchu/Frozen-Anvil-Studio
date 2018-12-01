@@ -270,6 +270,9 @@ bool Editor::EditorFactory::LoadAsPrefab(const HashString& _path)
 
 			for (size_t subIndex = currentIndex; subIndex < mArrFactoryObj.size(); ++subIndex)
 			{
+				if (subIndex == index)
+					continue;
+
 				if (parentID == mArrFactoryObj[subIndex].GetID())
 				{
 					transform->SetParent(mArrFactoryObj[subIndex].GetComponent<Dystopia::Transform>());
@@ -444,7 +447,7 @@ bool Editor::EditorFactory::SavePrefab(const uint64_t& _objID, Dystopia::TextSer
 
 bool Editor::EditorFactory::LoadPrefab(Dystopia::GameObject& _obj, Dystopia::TextSerialiser& _in)
 {
-	unsigned count = LoadSegment(_obj, _in);
+	const unsigned count = LoadSegment(_obj, _in);
 	LoadSegmentC(_obj, count, _in);
 	LoadSegmentB(_obj, _in);
 

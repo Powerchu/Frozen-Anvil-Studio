@@ -243,10 +243,28 @@ namespace EGUI
 			return b;
 		}
 
+		// Helper operator for ImVec2 - Splitter
+		ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
+		{
+			return ImVec2{ lhs.x + rhs.x, lhs.y + rhs.y };
+		}
+
+		bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size)
+		{
+			using namespace ImGui;
+			ImGuiContext& g = *GImGui;
+			ImGuiWindow* window = g.CurrentWindow;
+			const ImGuiID id = window->GetID("##Splitter");
+			ImRect bb;
+			bb.Min = window->DC.CursorPos + (split_vertically ? ImVec2(*size1, 0.0f) : ImVec2(0.0f, *size1));
+			bb.Max = bb.Min + CalcItemSize(split_vertically ? ImVec2(thickness, splitter_long_axis_size) : ImVec2(splitter_long_axis_size, thickness), 0.0f, 0.0f);
+			return SplitterBehavior(id, bb, split_vertically ? ImGuiAxis_X : ImGuiAxis_Y, size1, size2, min_size1, min_size2, 0.0f);
+		}
+
 		bool EmptyBox(const char * _label, float _width, const char * _anythingToShowInside, bool _iteractive, bool _showLabel)
 		{
 			bool clicked = false;
-			bool show = _iteractive ? true : false;
+			const bool show = _iteractive;
 
 			if (_showLabel)
 			{
@@ -476,9 +494,12 @@ namespace EGUI
 			return Array<eDragStatus, 2>{statX, statY};
 		}
 
-		bool CollapsingHeader(const char * _label)
+		bool CollapsingHeader(const char * _label, bool defaultOpen)
 		{
-			return ImGui::CollapsingHeader(_label, ImGuiTreeNodeFlags_DefaultOpen);
+			if (defaultOpen)
+				return ImGui::CollapsingHeader(_label, ImGuiTreeNodeFlags_DefaultOpen);
+			//else
+			return ImGui::CollapsingHeader(_label, ImGuiTreeNodeFlags_Bullet);
 		}
 
 		bool SelectableTxt(const char* _label, bool _highlight)
@@ -536,7 +557,7 @@ namespace EGUI
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_AllowItemOverlap;
 			flags = _highlighted ? flags | ImGuiTreeNodeFlags_Selected : flags;
 			flags = _noArrow ? flags | ImGuiTreeNodeFlags_Leaf : flags;
-			flags = _singleClickOpen ? flags : flags | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			flags = _singleClickOpen ? flags : flags | ImGuiTreeNodeFlags_OpenOnDoubleClick|ImGuiTreeNodeFlags_OpenOnArrow;
 
 			if (_highlighted)
 			{
@@ -918,7 +939,7 @@ namespace EGUI
 		{
 			const ImU32		col32R = static_cast<ImColor>(ImVec4{ 1,0,0,1 });
 			const ImU32		col32G = static_cast<ImColor>(ImVec4{ 0,1,0,1 });
-			const ImU32		col32B = static_cast<ImColor>(ImVec4{ 0,0,1,1 });
+			const ImU32		col32B = static_cast<ImColor>(ImVec4{ 0.2f,0.93f,1,1 });
 			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
 			ImVec2			pos		= ImGui::GetCursorScreenPos();
 			ImVec2 midPeek{ pos.x + (_width/2), pos.y };

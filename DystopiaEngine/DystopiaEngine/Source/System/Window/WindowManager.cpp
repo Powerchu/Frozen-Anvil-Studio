@@ -76,22 +76,34 @@ namespace
 		case WM_SIZE:
 			if(SIZE_MAXIMIZED == wParam)
 			{
-				auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
+				if (Dystopia::EngineCore::Get<Dystopia::WindowManager>()->HasWindows())
+				{
+					auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
 
-				RECT scr;
-				SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
-				oldsz.first  = w.GetWidth();
-				oldsz.second = w.GetHeight();
+					RECT scr;
+					SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
+					oldsz.first = w.GetWidth();
+					oldsz.second = w.GetHeight();
 
-				w.SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
+					w.SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
+
+					w.ToggleFullscreen(true);
+				}
+				
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
-				if (oldsz.first)
+				if (Dystopia::EngineCore::Get<Dystopia::WindowManager>()->HasWindows())
 				{
 					auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
-					w.SetSize(oldsz.first, oldsz.second, false);
-					oldsz.first = 0; oldsz.second = 0;
+					if (oldsz.first)
+					{
+						w.SetSize(oldsz.first, oldsz.second, false);
+						oldsz.first = 0; oldsz.second = 0;
+					}
+
+
+					w.ToggleFullscreen(false);
 				}
 			}
 			return 0;
@@ -279,12 +291,12 @@ void Dystopia::WindowManager::SaveSettings(DysSerialiser_t& _in)
 	_in << mHeight;
 }
 
-void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
-{
-	mbFullscreen = _bFullscreen;
-
-	mWindows[0].ToggleFullscreen(_bFullscreen);
-}
+//void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
+//{
+//	mbFullscreen = _bFullscreen;
+//
+//	mWindows[0].ToggleFullscreen(_bFullscreen);
+//}
 
 void Dystopia::WindowManager::ShowCursor(bool _bShow) const
 {
@@ -298,10 +310,10 @@ void Dystopia::WindowManager::RegisterMouseData(MouseData* _pMouse)
 }
 
 
-bool Dystopia::WindowManager::IsFullscreen() const
-{
-	return mbFullscreen;
-}
+//bool Dystopia::WindowManager::IsFullscreen() const
+//{
+//	return mbFullscreen;
+//}
 
 Dystopia::Window& Dystopia::WindowManager::GetMainWindow(void) const
 {
@@ -315,18 +327,23 @@ void Dystopia::WindowManager::DestroySplash(void)
 	mWindows[0].SetStyle(mWindowStyle, mWindowStyleEx);
 	mWindows[0].SetSize(mWidth, mHeight);
 	mWindows[0].CenterWindow();
-	ToggleFullscreen(mbFullscreen);
+	mWindows[0].ToggleFullscreen(mbFullscreen);
 
 	mWindows[0].Show();
+}
+
+bool Dystopia::WindowManager::HasWindows(void) const
+{
+	return !mWindows.IsEmpty();
 }
 
 void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 {
 	HDROP handle = reinterpret_cast<HDROP>(_wParam);
-	int files = DragQueryFile(handle, 0xFFFFFFFFu, 0, 0);
+	size_t files = DragQueryFile(handle, 0xFFFFFFFFu, 0, 0);
 
 	AutoArray<wchar_t> buf;
-	AutoArray<HashString> paths{ (size_t)files };
+	AutoArray<HashString> paths{ files };
 
 	for (int n = 0; n < files; ++n)
 	{
@@ -338,9 +355,7 @@ void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 		paths.back() = buf.begin();
 	}
 
-#if EDITOR
 	Editor::EditorMain::GetInstance()->ExternalFile(paths);
-#endif 
 
 	DragFinish(handle);
 }

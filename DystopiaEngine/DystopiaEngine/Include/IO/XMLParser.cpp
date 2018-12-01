@@ -73,7 +73,7 @@ namespace
 	struct WhiteSpace {
 		static inline bool f(char const* _buf)
 		{
-			return std::isspace(*_buf);
+			return !std::isspace(*_buf);
 		}
 	};
 }
@@ -85,7 +85,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::Parse(char const* _strFile)
 	using Alloc_t = Dystopia::DefaultAllocator<char[]>;
 	std::basic_ifstream<char> file{ _strFile, ios::binary };
 
-	if (file.bad())
+	if (!file.good())
 	{
 		__debugbreak();
 		return nullptr;
@@ -111,6 +111,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ParseNode(char *& _buf, NodeXML* _curr)
 
 	_curr->mstrName = _buf;
 	_buf = Skip<Not<WhiteSpace>>(_buf);
+	*_buf++ = '\0';
 
 	while (*_buf)
 	{
@@ -119,6 +120,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ParseNode(char *& _buf, NodeXML* _curr)
 		switch (*_buf)
 		{
 		case '/':
+			_buf += 2;
 			return _curr->GetParent();
 			break;
 
@@ -133,8 +135,8 @@ Dystopia::NodeXML* Dystopia::XMLParser::ParseNode(char *& _buf, NodeXML* _curr)
 			*_buf++ = '\0';
 			_buf += '"' == *_buf;
 			_curr->mFields.EmplaceBack(name, _buf);
-			_buf = Skip<Or<FindChar<'"'>, WhiteSpace>>(_buf);
-			*_buf++ = '\0';
+			_buf = Skip<Or<FindChar<'"'>, Not<WhiteSpace>>>(_buf);
+			*_buf = '\0';
 			break;
 		}
 
@@ -150,7 +152,16 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 	NodeXML* root = Alloc_t::ConstructAlloc();
 	NodeXML* curr = root;
 
+	root->mpBuffer = _buf;
 	root->mpParent = nullptr;
+
+	_buf = Skip<WhiteSpace>(_buf);
+
+	if ('<' != *_buf)
+		return root;
+
+	curr = ParseNode(++_buf, root);
+
 	while (curr && *_buf)
 	{
 		_buf = Skip<WhiteSpace>(_buf);
@@ -158,7 +169,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 		if ('<' != *_buf)
 			return root;
 
-		if (auto& e = *_buf)
+		if (auto& e = *++_buf)
 		{
 			switch (e)
 			{
@@ -223,6 +234,16 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 	return root;
 }
 
+
+Dystopia::NodeXML::~NodeXML(void)
+{
+	using Alloc_t = DefaultAllocator<NodeXML>;
+
+	for (auto& e : mChildren)
+		Alloc_t::DestructFree(e);
+
+	DefaultAllocator<char const[]>::Free(mpBuffer);
+}
 
 char const* Dystopia::NodeXML::GetName() const noexcept
 {

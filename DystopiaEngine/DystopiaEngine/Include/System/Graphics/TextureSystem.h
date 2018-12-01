@@ -20,9 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Allocator/DefaultAlloc.h"
 #include "DataStructure/MagicArray.h"
 #include "DataStructure/HashString.h"
-#include "System/Time/ScopedTimer.h"
-#include "System/Profiler/Profiler.h"
-#include "System/Profiler/ProfilerAction.h"
 
 #include "IO/Image.h"
 #include "IO/ImageParser.h"

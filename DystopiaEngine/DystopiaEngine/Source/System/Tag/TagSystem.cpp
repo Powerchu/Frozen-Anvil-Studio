@@ -3,9 +3,13 @@
 namespace Dystopia
 {
 	TagSystem::TagSystem()
-		:mTags{ _TAG_(32) }
+		:mTags{ std::make_pair(Tags::TAG_0, "Untagged"),
+				std::make_pair(Tags::TAG_1, "Respawn"),
+				std::make_pair(Tags::TAG_2, "Finish"),
+				std::make_pair(Tags::TAG_3, "Player"),
+				std::make_pair(Tags::TAG_4, "Enemy"),
+				_TAG_(27) }
 	{
-
 	}
 
 	void TagSystem::MapNameToTag(HashString const& _name, Tags _TagsNum)
@@ -26,6 +30,11 @@ namespace Dystopia
 	}
 
 	void TagSystem::RemoveTag(HashString const&) const
+	{
+
+	}
+
+	void TagSystem::EditorUI()
 	{
 
 	}

@@ -311,7 +311,7 @@ namespace Editor
 		std::string uniqueifyName = _obj.GetName().c_str();
 		uniqueifyName += "##";
 		uniqueifyName += std::to_string(_obj.GetID());
-		bool tree = EGUI::Display::StartTreeNode(uniqueifyName.c_str(), &clicked, selected);
+		bool tree = EGUI::Display::StartTreeNode(uniqueifyName.c_str(), &clicked, selected, false, true, false);
 		GameObjectPayload(_obj);
 		GameObjectPopups(_obj);
 

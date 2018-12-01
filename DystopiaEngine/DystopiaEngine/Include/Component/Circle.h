@@ -35,7 +35,7 @@ namespace Dystopia
 		};
 
 #if EDITOR
-		static const std::string GetCompileName(void) { return "Circle Collider"; }
+		static const std::string GetCompileName(void) { return "Circle Collider 2D"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 #endif
 

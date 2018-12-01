@@ -138,7 +138,7 @@ namespace Dystopia
 			Task() = default;
 
 			Task(Blackboard::Ptr _blackboard) 
-				: mpBlackboard(_blackboard)
+				: mpBlackboard(std::move(_blackboard))
 			{
 			
 			}

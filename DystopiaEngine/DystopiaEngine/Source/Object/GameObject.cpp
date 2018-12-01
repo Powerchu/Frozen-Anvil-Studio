@@ -95,6 +95,29 @@ void Dystopia::GameObject::SetActive(const bool _bEnable)
 		return;
 
 	mnFlags = _bEnable ? mnFlags | FLAG_ACTIVE : mnFlags & ~FLAG_ACTIVE;
+
+	for (auto& mComponent : mComponents)
+	{
+		mComponent->SetActive(_bEnable);
+	}
+
+	for (auto& mBehaviour : mBehaviours)
+	{
+		mBehaviour->SetActive(_bEnable);
+	}
+}
+
+bool Dystopia::GameObject::IsDragging() const
+{
+	return mnFlags & FLAG_DRAGGING;
+}
+
+void Dystopia::GameObject::SetDragging(bool _bEnable)
+{
+	if (mnFlags & FLAG_REMOVE)
+		return;
+
+	mnFlags = _bEnable ? mnFlags | FLAG_DRAGGING : mnFlags & ~FLAG_DRAGGING;
 }
 
 void Dystopia::GameObject::SetFlag(eObjFlag _flag)
@@ -218,7 +241,7 @@ void Dystopia::GameObject::Destroy(void)
 		c->GetOwner()->Destroy();
 
 	ForcePing(mComponents, GameObjectDestroy);
-	ForcePing(mBehaviours, GameObjectDestroy);
+	ForcePing(mBehaviours, BehaviourDestroy);
 
 	mnFlags = FLAG_REMOVE;
 }

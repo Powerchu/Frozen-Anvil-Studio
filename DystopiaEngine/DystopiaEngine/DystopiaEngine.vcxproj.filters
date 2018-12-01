@@ -1403,6 +1403,9 @@
     <Filter Include="Game Engine\SubSystems\Factory">
       <UniqueIdentifier>{27de6ba2-f9b9-4828-a0cc-809fcef7c950}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Natvis">
+      <UniqueIdentifier>{6ab911e0-738f-4c7d-92ad-159d78c216e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Game Engine\SubSystems\Shader\Shader">
@@ -1430,5 +1433,13 @@
     <Image Include="Resource\Editor\icons\dystopia_x86_64.ico">
       <Filter>Resource</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Natvis\Arrays.natvis">
+      <Filter>Natvis</Filter>
+    </Natvis>
+    <Natvis Include="Natvis\NodeXML.natvis">
+      <Filter>Natvis</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>

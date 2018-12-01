@@ -45,7 +45,7 @@ static const std::string g_tPopip = "Tag List";
 namespace Editor
 {
 	using namespace Dystopia;
-	static std::string g_arr[3] = { "item1", "item2", "item3" };
+	//static std::string g_arr[3] = { "item1", "item2", "item3" };
 	static std::string g_arr2[3] = { "Invalid", "World", "UI" };
 
 	Inspector::Inspector(void)
@@ -87,7 +87,7 @@ namespace Editor
 		{
 			static constexpr Math::Vec2 btnSize{ 270, 20 };
 			const float mid = Size().x / 2;
-			float inde = mid - (btnSize.x / 2);
+			const float inde = mid - (btnSize.x / 2);
 
 			GameObjectDetails();
 			GameObjectComponents();
@@ -132,27 +132,36 @@ namespace Editor
 		std::string name = mpFocus->GetName().c_str();
 		strcpy_s(buffer, name.c_str());
 
+		EGUI::Display::Dummy(0.f,5.f);
 		EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
 		EGUI::SameLine(10);
-		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 60 }, false))
+		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 90 }, false))
 		{
+			auto activeState = mpFocus->IsActive();
 			EGUI::SameLine();
-			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 223.f) && strlen(buffer))
+			if (EGUI::Display::CheckBox("Active", &activeState, false))
+			{
+				mpFocus->SetActive(activeState);
+			};
+
+			EGUI::SameLine(5, 0);
+			if (EGUI::Display::TextField("Name", buffer, MAX_SEARCH, false, 190.f) && strlen(buffer))
 			{
 				auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
-				auto oFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, mpFocus->GetName());
-				auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, HashString{ buffer });
+				const auto oFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, mpFocus->GetName());
+				const auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, HashString{ buffer });
 				cmd->FunctionCommand(mpFocus->GetID(), oFn, nFn);
 			}
 			auto arr = mpFocus->GetAllTags_str();
-			if (EGUI::Display::DropDownSelection("Tag", i, arr, 32))
+			EGUI::PushLeftAlign(36.f);
+			if (EGUI::Display::DropDownSelection("Tag", i, arr, 175.f))
 			{
 
 			}
-			EGUI::SameLine();
-			EGUI::ChangeAlignmentYOffset(0);
+			//EGUI::SameLine();
+			//EGUI::ChangeAlignmentYOffset(0);
 			j = (mpFocus->GetFlags() & FLAG_LAYER_WORLD) ? 1 : (mpFocus->GetFlags() & FLAG_LAYER_UI) ? 2 : 0;
-			if (EGUI::Display::DropDownSelection("Layer", j, g_arr2, 80))
+			if (EGUI::Display::DropDownSelection("Layer", j, g_arr2, 175.f))
 			{
 				switch (j)
 				{
@@ -166,7 +175,8 @@ namespace Editor
 					break;
 				}
 			}
-			EGUI::ChangeAlignmentYOffset();
+			//EGUI::ChangeAlignmentYOffset();
+			EGUI::PopLeftAlign();
 		}
 		EGUI::EndChild();
 	}
@@ -179,23 +189,35 @@ namespace Editor
 		HashString uID{ tempTransform.GetEditorName().c_str() };
 		uID += "##";
 		uID += mpFocus->GetID();
+		EGUI::Display::Dummy(0.f, 25.f);
+		EGUI::SameLine(0, 0);
+		EGUI::ChangeAlignmentYOffset(5);
 		if (EGUI::Display::StartTreeNode(uID.c_str(), nullptr, false, false, true, true))
 		{
 			tempTransform.EditorUI();
 			EGUI::Display::EndTreeNode();
 		}
+		EGUI::ChangeAlignmentYOffset();
 
 		auto& arrComp = mpFocus->GetAllComponents();
 		for (unsigned int i = 0; i < arrComp.size(); ++i)
 		{
+			auto activeState = arrComp[i]->IsActive();
 			EGUI::PushID(i);
-			EGUI::Display::HorizontalSeparator(); 
+			EGUI::Display::Dummy(4.f, 2.f);
+			EGUI::Display::HorizontalSeparator();
+
+			if (EGUI::Display::CheckBox("Active", &activeState, false))
+			{
+				arrComp[i]->SetActive(activeState);
+			};
+
 			HashString uID2{ arrComp[i]->GetEditorName().c_str() };
 			uID2 += "##";
 			uID2 += mpFocus->GetID();
+			EGUI::SameLine(5, 0);
 			bool open = EGUI::Display::StartTreeNode(uID2.c_str(), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(arrComp[i]);
-
 
 			if (open)
 			{
@@ -203,19 +225,27 @@ namespace Editor
 					arrComp[i]->EditorUI();
 				EGUI::Display::EndTreeNode();
 			}
+
 			EGUI::PopID();
 		}
 
 		auto& arrBehav = mpFocus->GetAllBehaviours();
 		for (auto & c : arrBehav)
 		{
+			auto activeState = c->IsActive();
+			EGUI::Display::Dummy(4.f, 2.f);
 			EGUI::Display::HorizontalSeparator();
 			if (!c) continue;
+
+			if (EGUI::Display::CheckBox("Active", &activeState, false))
+			{
+				c->SetActive(activeState);
+			};
 
 			HashString uID3{ c->GetBehaviourName() };
 			uID3 += "##";
 			uID3 += mpFocus->GetID();
-
+			EGUI::SameLine(5, 0);
 			bool open = EGUI::Display::StartTreeNode(uID3.c_str(), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(c);
 			if (open)
@@ -259,6 +289,9 @@ namespace Editor
 			EGUI::Display::Dummy(235, 2);
 			for (unsigned int i = 0; i < numComponents; ++i)
 			{
+				// If Renderer, skip
+				if (i == 1) continue;
+
 				const auto& e = arr[i];
 				if (EGUI::Display::SelectableTxt(e.c_str(), false))
 				{

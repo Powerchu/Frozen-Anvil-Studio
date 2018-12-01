@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _DEFAULTALLOC_H_
 
 #include "Globals.h"
+#include "Utility/Meta.h"
 
 
 namespace Dystopia
@@ -68,7 +69,7 @@ namespace Dystopia
 
 		static inline void Free(Ty* _ptr) noexcept
 		{
-			Base::Free(static_cast<void*>(_ptr));
+			Base::Free(static_cast<void*>(const_cast<Ut::RemoveLowConst_t<Ty*>>(_ptr)));
 		}
 	};
 }

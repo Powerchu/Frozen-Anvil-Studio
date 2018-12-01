@@ -62,19 +62,25 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
 {
 	if (mpParent)
 		RemoveParent();
+
 	if (IsDescendant(_pParent))
 		return;
+
+	if (_pParent == this)
+		__debugbreak();
+
 	mpParent = _pParent;
+
     if (mpParent)
     {
 		// Convert our data to the parent's local coordinates
-        Math::Mat4 InvTrans = Math::AffineInverse(mpParent->GetTransformMatrix());
+        Math::Mat4 const InvTrans = Math::AffineInverse(mpParent->GetTransformMatrix());
 
-        mScale		= InvTrans * mScale;
+        mScale		= mpParent->GetGlobalScale().Reciprocal() * mScale;
         mPosition	= InvTrans * mPosition;
-        mRotation   = mpParent->GetRotation() * mRotation;
-        mbChanged	= true;
-		mnParentID = _pParent->GetOwnerID();
+		mRotation   = mpParent->GetGlobalRotation().Conjugate() * mRotation;
+		mbChanged	= true;
+		mnParentID = mpParent->GetOwnerID();
 
 		mpParent->OnChildAdd(this);
     }
@@ -83,11 +89,11 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
 void Dystopia::Transform::OnParentRemove(Transform* _pParent)
 {
 	// Convert our data to world coordinates
-	Math::Mat4 InvTrans = _pParent->GetTransformMatrix();
+	Math::Mat4 const Trans = _pParent->GetTransformMatrix();
 
-	mScale		= InvTrans * mScale;
-	mPosition	= InvTrans * mPosition;
-	mRotation  *= _pParent->GetRotation();
+	mScale		= _pParent->GetGlobalScale() * mScale;
+	mPosition	= Trans * mPosition;
+	mRotation   = _pParent->GetGlobalRotation() * mRotation;
 
 	mbChanged = true;
 }
@@ -171,7 +177,7 @@ void Dystopia::Transform::SetPosition(const Math::Point3D& _vPos)
 
 void Dystopia::Transform::SetPosition(const float _x, const float _y, const float _z)
 {
-	SetPosition(Math::Pt3D{ _x, _y, _z });
+	SetPosition(Math::Pt3D{ _x, _y, _z, 1.f });
 }
 
 void Dystopia::Transform::SetGlobalPosition(const Math::Point3D& _vPos)
@@ -321,14 +327,19 @@ void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 	_in >> mRotation[2];
 	_in >> mRotation[3];
 	_in >> mnParentID;
+
+	mPosition.w = 1.f;
 	_in.ConsumeEndBlock();
 }
 
 void Dystopia::Transform::EditorUI(void) noexcept
 {
 #if EDITOR
-	EGUI::PushLeftAlign(70);
-	auto arrResult = EGUI::Display::VectorFields("Position", &mPosition, 0.01f, -FLT_MAX, FLT_MAX);
+	EGUI::PushLeftAlign(20);
+	
+	EGUI::PushID(0);
+	EGUI::Display::LabelWrapped("Position");
+	auto arrResult = EGUI::Display::VectorFields("", &mPosition, 0.01f, -FLT_MAX, FLT_MAX, 60.f);
 
 	auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 	for (auto &e : arrResult)
@@ -348,8 +359,11 @@ void Dystopia::Transform::EditorUI(void) noexcept
 			break;
 		}
 	}
+	EGUI::PopID();
 
-	arrResult = EGUI::Display::VectorFields("Scale", &mScale, 0.01f, -FLT_MAX, FLT_MAX);
+	EGUI::PushID(1);
+	EGUI::Display::LabelWrapped("Scale");
+	arrResult = EGUI::Display::VectorFields("", &mScale, 0.01f, -FLT_MAX, FLT_MAX, 60.f);
 	for (auto &e : arrResult)
 	{
 		switch (e)
@@ -367,10 +381,13 @@ void Dystopia::Transform::EditorUI(void) noexcept
 			break;
 		}
 	}
+	EGUI::PopID();
 
+	EGUI::PushID(2);
+	EGUI::Display::LabelWrapped("Rotation");
 	static bool convertEuler = true;
 	static Math::Vector4 eulerAngle;
-	arrResult = EGUI::Display::VectorFields("Rotation", &eulerAngle, 0.01f, -FLT_MAX, FLT_MAX);
+	arrResult = EGUI::Display::VectorFields("", &eulerAngle, 0.01f, -FLT_MAX, FLT_MAX, 60.f);
 	for (auto& e : arrResult)
 	{
 		switch (e)
@@ -398,6 +415,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 
 	if(convertEuler)
 		eulerAngle = mRotation.ToEuler();
+	EGUI::PopID();
 
 	EGUI::PopLeftAlign();
 #endif 
