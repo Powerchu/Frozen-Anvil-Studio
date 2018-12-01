@@ -42,7 +42,7 @@ bool Editor::ProjectSettings::Init(void)
 	mpGfxSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>();
 	mpPhySys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::PhysicsSystem>();
 	mpInputSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::InputManager>();
-	mpTagSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::TagSystem>();
+	//mpTagSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::TagSystem>();
 	return true;
 }
 
@@ -73,7 +73,7 @@ void Editor::ProjectSettings::EditorUI(void)
 
 	if (EGUI::Display::StartTreeNode("Tag Manager", nullptr, false, false, true, true))
 	{
-		mpTagSystem->EditorUI();
+		//mpTagSystem->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
 
