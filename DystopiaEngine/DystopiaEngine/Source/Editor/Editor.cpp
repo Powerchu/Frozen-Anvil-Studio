@@ -23,19 +23,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 #include "System/Window/WindowManager.h"
 
-#include "IO/XMLParser.h"
-#include "DataStructure/Array.h"
-
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int){
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-
-	Array<AutoArray<int>, 100> y;
-
-	auto x = Dystopia::XMLParser::Parse("D:/Users/Laptop/Desktop/asd");
-
 
 	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
 	pMain->Init();
