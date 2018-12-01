@@ -19,6 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define U_BUFFER_SIZE  11
 #define ULL_BUFFER_SIZE 16
 
+#if !EDITOR 
+
 HashID StringHasher(const char* _s)
 {
 	if (!_s)
@@ -34,39 +36,50 @@ HashID StringHasher(const char* _s)
 	return hash;
 }
 
+/*************************************************************************************************************/
+
+
 /* constructors */
 HashString::HashString(void)
-	: mHashedID{ 0 }, mCharBuffer{ nullptr }, mSize{ 0 }, mbRehash{false}
+	: mHashedID{ 0 }, mCharBuffer{ nullptr }, mSize{ 0 }, mbRehash{false}, mpLiteral{nullptr}
 {}
 
 HashString::HashString(const HashString& _rhs)
-	: mHashedID{ _rhs.mHashedID }, mCharBuffer{ _rhs.mSize ? Dystopia::DefaultAllocator<char[]>::Alloc(_rhs.mSize + 1) : nullptr },
-	mSize{ _rhs.mSize }, mbRehash{ false }
+	: mHashedID{ _rhs.mHashedID }, mCharBuffer{ _rhs.mpLiteral ? nullptr : _rhs.mSize ? Dystopia::DefaultAllocator<char[]>::Alloc(_rhs.mSize + 1) : nullptr },
+	mSize{ _rhs.mSize }, mbRehash{ _rhs.mbRehash }, mpLiteral{ _rhs.mpLiteral }
 {
-	if (mSize)
+	if (!mpLiteral && mCharBuffer)
 	{
 		strcpy_s(mCharBuffer, _rhs.mSize + 1, _rhs.mCharBuffer);
 		mbRehash = true;
 	}
+	//if (mSize)
+	//{
+	//	//strcpy_s(mCharBuffer, _rhs.mSize + 1, _rhs.mCharBuffer);
+	//	mbRehash = true;
+	//}
 }
 
 HashString::HashString(HashString&& _rhs) noexcept
-	: mHashedID{ _rhs.mHashedID }, mCharBuffer{ _rhs.mCharBuffer }, mSize{ _rhs.mSize }, mbRehash{ _rhs.mbRehash }
+	: mHashedID{ _rhs.mHashedID }, mCharBuffer{ _rhs.mCharBuffer },
+	mSize{ _rhs.mSize }, mbRehash{ _rhs.mbRehash }, mpLiteral{ _rhs.mpLiteral }
 {
 	_rhs.mHashedID = 0;
 	_rhs.mCharBuffer = nullptr;
 	_rhs.mSize = 0;
 	_rhs.mbRehash = true;
+	_rhs.mpLiteral = nullptr;
 }
 
 HashString::HashString(const char * const _s)
-	: mHashedID{/* _s ? StringHasher(_s) :*/ 0 }, mCharBuffer{ _s ? Dystopia::DefaultAllocator<char[]>::Alloc(strlen(_s) + 1) : nullptr },
-	mSize{ _s ? strlen(_s) : 0 }, mbRehash{ false } 
+	: mHashedID{ 0 }, mCharBuffer{ _s ? Dystopia::DefaultAllocator<char[]>::Alloc(strlen(_s) + 1) : nullptr },
+	mSize{ _s ? strlen(_s) : 0 }, mbRehash{ false }, mpLiteral{ _s }
 {
 	if (_s)
 	{
-		strcpy_s(mCharBuffer, mSize + 1, _s);
+		mpLiteral = _s;
 		mbRehash = true;
+		//strcpy_s(mCharBuffer, mSize + 1, _s);
 	}
 }
 
@@ -89,13 +102,22 @@ HashString::~HashString(void)
 /* operators */
 HashString& HashString::operator=(const HashString& _rhs)
 {
-	Dystopia::DefaultAllocator<char[]>::Free(mCharBuffer);
+	if (mpLiteral)
+	{
+		mCharBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(mSize + _rhs.mSize + 1);
 
-	mHashedID = _rhs.mHashedID;
-	mCharBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(_rhs.mSize + 1);
-	strcpy_s(mCharBuffer, _rhs.mSize + 1, _rhs.mCharBuffer);
-	mSize = _rhs.mSize;
-	mbRehash = _rhs.mbRehash;
+		mpLiteral = nullptr;
+	}
+	else
+	{
+		Dystopia::DefaultAllocator<char[]>::Free(mCharBuffer);
+
+		mHashedID = _rhs.mHashedID;
+		mCharBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(_rhs.mSize + 1);
+		strcpy_s(mCharBuffer, _rhs.mSize + 1, _rhs.mCharBuffer);
+		mSize = _rhs.mSize;
+		mbRehash = _rhs.mbRehash;
+	}
 	return *this;
 }
 
@@ -639,3 +661,11 @@ bool operator>(const HashString& _lhs, const HashString& _rhs)
 {
 	return std::strcmp(_lhs.c_str(), _rhs.c_str()) > 0;
 }
+#endif 
+
+
+
+
+
+
+

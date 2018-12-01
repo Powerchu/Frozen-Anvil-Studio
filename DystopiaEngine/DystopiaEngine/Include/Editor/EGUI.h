@@ -336,7 +336,7 @@ namespace EGUI
 		======================================================================================================================= */
 		// Start a tree node 
 		bool StartTreeNode(const char* _label, bool* _outClicked = nullptr, bool _highlighted = false,
-			bool _noArrow = false, bool _defaulPeeken = true, bool _singleClickOpen = false);
+			bool _noArrow = false, bool _defaulPeeken = true, bool _singleClickOpen = true);
 		// Set a specific tree node to be collapsed (closed) or not
 		void OpenTreeNode(const char* _label, bool _open);
 		// opens the next tree node

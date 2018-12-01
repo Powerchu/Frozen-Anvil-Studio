@@ -102,7 +102,7 @@ template <typename A>
 	{
 		_sz = Math::Max(_sz, A::MIN_SIZE);
 
-		auto left = reinterpret_cast<uintptr_t>(ptr) - sizeof(A::METADATA_SZ);
+		auto left = reinterpret_cast<uintptr_t>(ptr) - A::METADATA_SZ;
 		auto right = reinterpret_cast<uintptr_t>(ptr) + _sz;
 
 		for (auto& e : mData)
@@ -138,6 +138,7 @@ void Dystopia::ProxyAlloc<A>::Deallocate(void* _ptr)
 	{
 		// Do something
 		DEBUG_BREAK(true, "Alloc Error: Attempted dellocation of non-allocated pointer!");
+		return;
 	}
 	else
 	{

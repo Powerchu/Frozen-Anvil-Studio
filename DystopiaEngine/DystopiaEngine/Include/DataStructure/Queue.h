@@ -57,7 +57,7 @@ public:
 	// Inserts an element to the back of the Queue
 	void Insert(const T&);
 
-	// In place inserts an element to the back of the Queue
+	// In-place inserts an element to the back of the Queue
 	template <typename ... Ty>
 	void EmplaceBack(Ty&& ...);
 

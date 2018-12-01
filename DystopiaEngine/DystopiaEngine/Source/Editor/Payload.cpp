@@ -88,11 +88,11 @@ namespace Editor//Dystopia::
 				if (strcmp(data.cFileName, ".") && strcmp(data.cFileName, "..") && data.dwFileAttributes != FILE_ATTRIBUTE_HIDDEN)
 				{
 					if (data.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
-						mArrPtrFolders.push_back(new Folder{ data.cFileName , mPath + "/" + data.cFileName, this });
+						mArrPtrFolders.push_back(new Folder{ HashString{data.cFileName}.c_str() , mPath + "/" + data.cFileName, this });
 					else
 					{
 						if (DeterminePathType(data.cFileName) != EGUI::ePayloadTags::UNKNOWN)
-							mArrPtrFiles.push_back(new File{ data.cFileName, mPath + "/" + data.cFileName, this });
+							mArrPtrFiles.push_back(new File{ HashString{ data.cFileName }.c_str(), mPath + "/" + data.cFileName, this });
 					}
 				}
 			} while (FindNextFileA(hfind, &data));

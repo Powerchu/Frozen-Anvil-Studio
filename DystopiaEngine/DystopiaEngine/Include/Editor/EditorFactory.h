@@ -65,7 +65,7 @@ namespace Editor
 		bool DettachPrefab(const uint64_t&);
 		void ValidatePrefabInstances(void);
 
-		bool LoadAsPrefab(const HashString& _path);
+		bool LoadAsPrefab(const HashString& _name);
 		void LoadIntoScene(Dystopia::TextSerialiser&);
 
 		bool FindMasterPrefab(const HashString& _prefabName, int& _outID);
@@ -99,6 +99,8 @@ namespace Editor
 		MagicArray<PrefabData> mArrPrefabData;
 
 		Dystopia::SceneSystem *mpSceneSys;
+
+		uint64_t mnLastSceneID;
 	};
 
 }

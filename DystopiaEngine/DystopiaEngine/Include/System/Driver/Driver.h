@@ -98,6 +98,7 @@ namespace Dystopia
 			eSysMessage mMsg;
 			size_t mParam;
 		};
+
 		Queue<SysMsg> mMessageQueue;
 
 		AutoArray<void*>	mSubSystems;

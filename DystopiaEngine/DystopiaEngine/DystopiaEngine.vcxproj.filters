@@ -349,6 +349,9 @@
     <ClCompile Include="Include\IO\XMLParser.cpp">
       <Filter>IO\XMLParser</Filter>
     </ClCompile>
+    <ClCompile Include="Source\DataStructure\OString.cpp">
+      <Filter>DataStructures\HashString</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -971,6 +974,9 @@
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\MeshBuilder.h">
       <Filter>Game Engine\SubSystems\Mesh\MeshBuilder</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\OString.h">
+      <Filter>DataStructures\HashString</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
