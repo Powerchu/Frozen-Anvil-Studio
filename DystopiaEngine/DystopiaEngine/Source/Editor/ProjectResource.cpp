@@ -48,7 +48,7 @@ namespace Editor
 		: 
 		mLabel{ "Project" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
 		mpCurrentFolder{ nullptr }, mArrAllFiles{100}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
-		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 90 },
+		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 100 },
 		mResetToFile{}, mResourcePath{}, mResourceName{}
 	{
 		EditorPanel::SetOpened(true);
@@ -255,8 +255,8 @@ namespace Editor
 
 	void ProjectResource::FileWindow(const Math::Vec2& _mySize)
 	{
-		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.5f };
-		unsigned int columns = static_cast<unsigned int>(_mySize.x / buffedSize.x);
+		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.25f };
+		unsigned int columns = static_cast<unsigned int>(_mySize.x / (buffedSize.x + 20));
 		columns = columns ? columns : 1 ;
 
 		EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
@@ -270,7 +270,7 @@ namespace Editor
 
 			Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
 			if (i % columns)
-				EGUI::SameLine();
+				ImGui::SameLine(0, 20);
 			if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false))
 			{
 				EGUI::Indent(10);

@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 //#include "Utility/Utility.h"
 //#include "Allocator/DefaultAlloc.h"
 //#include "System/Time/Timer.h"
-#include "../../OString.h"
+#include "DataStructure/OString.h"
 
 using HashString = OString;
 

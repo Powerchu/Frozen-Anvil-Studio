@@ -346,9 +346,11 @@
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp">
       <Filter>Game Engine\SubSystems\Texture\TextureSystem</Filter>
     </ClCompile>
-    <ClCompile Include="OString.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp">
       <Filter>IO\XMLParser</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DataStructure\OString.cpp">
+      <Filter>DataStructures\HashString</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -973,7 +975,9 @@
     <ClInclude Include="Include\System\Graphics\MeshBuilder.h">
       <Filter>Game Engine\SubSystems\Mesh\MeshBuilder</Filter>
     </ClInclude>
-    <ClInclude Include="OString.h" />
+    <ClInclude Include="Include\DataStructure\OString.h">
+      <Filter>DataStructures\HashString</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

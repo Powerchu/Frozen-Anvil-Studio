@@ -31,7 +31,6 @@ class _DLL_EXPORT_ONLY OString
 public:
 	static constexpr size_t nPos = static_cast<size_t>(-1);
 	/* Constructors */
-
 	OString(void);
 	OString(OString&& _moveCtor) noexcept;
 	OString(const OString& _copyCtor);
@@ -148,9 +147,12 @@ OString operator+(const char*, const OString& _rhs);
 
 template<size_t N>
 inline OString::OString(char const (&_literal)[N])
-	: mnCurSize{ N - 1 }, mnBufferSize{ 0 }, mnID{ StringHasher(_literal) }, mpLiteral{ &_literal[0] },
-	mpCharBuffer{ nullptr }, mbRehash{ false }
-{}
+	: mnCurSize{ 0 }, mnBufferSize{ 0 }, mnID{ StringHasher(_literal) }, mpLiteral{ &_literal[0] },
+	mpCharBuffer{ nullptr }, mbRehash{ true }
+{
+	while (_literal[mnCurSize] != '\0')
+		mnCurSize++;
+}
 
 template<typename T, typename>
 inline OString::OString(T _str)
@@ -185,9 +187,11 @@ inline OString::OString(T _str)
 template <unsigned N>
 inline OString& OString::operator=(const char(&_s)[N])
 {
-	mnCurSize = N - 1;
 	mbRehash = true;
 	mpLiteral = &_s[0];
+	mnCurSize = 0;
+	while (_s[mnCurSize] != '\0')
+		mnCurSize++;
 	return *this;
 }
 
@@ -197,7 +201,6 @@ inline OString& OString::operator=(T _str)
 	static_assert(false, "Not accepted");
 	return *this;
 }
-
 
 template<>
 inline OString& OString::operator=(const char * _str)
@@ -213,14 +216,16 @@ inline OString& OString::operator=(const char * _str)
 		if (mnBufferSize <= newSize)
 			Realloc(newSize + 1);
 	}
-	MyStrCopy(_str, newSize);
+	MyStrCopy(_str, newSize); 
 	return *this;
 }
 
 template<>
 inline OString& OString::operator=(const wchar_t * _str)
 {
-	const size_t newSize = strlen(reinterpret_cast<char const*>(_str));
+	size_t newSize = 0;
+	while (*(_str + newSize) != '\0')
+		newSize++;
 	if (mpLiteral)
 	{
 		Alloc(newSize);
@@ -240,11 +245,19 @@ inline OString& OString::operator=(const wchar_t * _str)
 	return *this;
 }
 
+template<>
+inline OString& OString::operator=(wchar_t * _str)
+{
+	return operator=(static_cast<const wchar_t*>(_str));
+}
 
 template<unsigned N>
 inline OString& OString::operator+=(const char(&_s)[N])
 {
-	const size_t newSize = mnCurSize + N - 1;
+	size_t otherSize = 0;
+	while (_s[otherSize] != '\0')
+		otherSize++;
+	const size_t newSize = mnCurSize + otherSize;
 	if (mpLiteral)
 	{ 
 		if (mpCharBuffer && mnBufferSize > newSize)
@@ -274,7 +287,7 @@ inline OString& OString::operator+=(const char(&_s)[N])
 				size_t i = 0, j = 0;
 				for (; i < mnCurSize; ++i)
 					tempBuffer[i] = mpCharBuffer[i];
-				for (; j < N; j++)
+				for (; j < otherSize; j++)
 					tempBuffer[i + j] = _s[j];
 
 				tempBuffer[newSize] = '\0';
@@ -294,7 +307,7 @@ inline OString& OString::operator+=(const char(&_s)[N])
 		{
 			Alloc(newSize);
 			size_t i = 0;
-			for (; i < N; ++i)
+			for (; i < otherSize; ++i)
 				mpCharBuffer[i] = _s[i];
 		}
 	}
@@ -375,7 +388,7 @@ inline OString& OString::operator+=<const char*>(const char * _str)
 }
 
 template<>
-inline OString& OString::operator+=<const char>(const char _c)
+inline OString& OString::operator+=<char>(char _c)
 {
 	const size_t newSize = mnCurSize + 1;
 	if (mpLiteral)

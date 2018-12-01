@@ -1,4 +1,4 @@
-#include "OString.h"
+#include "DataStructure/OString.h"
 
 #include "Utility/DebugAssert.h"
 #include "Utility/Utility.h"
@@ -25,21 +25,27 @@ OString::OString(void)
 {}
 
 OString::OString(OString&& _moveCtor) noexcept
-	: mnCurSize{ _moveCtor.mnCurSize }, mnBufferSize{ _moveCtor.mnBufferSize }, mnID{ _moveCtor.mnID }, mpLiteral{ _moveCtor.mpLiteral },
-	mpCharBuffer{ _moveCtor.mpCharBuffer }, mbRehash{ _moveCtor.mbRehash }
+	: mnCurSize{ Ut::Move(_moveCtor.mnCurSize) }, mnBufferSize{ Ut::Move(_moveCtor.mnBufferSize) }, mnID{ Ut::Move(_moveCtor.mnID) }, mpLiteral{ Ut::Move(_moveCtor.mpLiteral) },
+	mpCharBuffer{ Ut::Move(_moveCtor.mpCharBuffer) }, mbRehash{ Ut::Move(_moveCtor.mbRehash) }
 {
 	_moveCtor.mnCurSize = 0;
 	_moveCtor.mnBufferSize = 0;
 	_moveCtor.mnID = 0;
 	_moveCtor.mpLiteral = nullptr;
 	_moveCtor.mpCharBuffer = nullptr;
-	_moveCtor.mbRehash = false;
+	_moveCtor.mbRehash = true;
 }
 
 OString::OString(const OString& _copyCtor)
-	: mnCurSize{ _copyCtor.mnCurSize }, mnBufferSize{ _copyCtor.mnBufferSize }, mnID{ _copyCtor.mnID }, mpLiteral{ _copyCtor.mpLiteral },
-	mpCharBuffer{ _copyCtor.mpCharBuffer }, mbRehash{ _copyCtor.mbRehash }
-{}
+	: mnCurSize{ _copyCtor.mnCurSize }, mnBufferSize{ 0 }, mnID{ _copyCtor.mnID }, mpLiteral{ _copyCtor.mpLiteral },
+	mpCharBuffer{ nullptr }, mbRehash{ _copyCtor.mbRehash }
+{
+	if (!mpLiteral)
+	{
+		Alloc(mnCurSize);
+		MyStrCopy(_copyCtor.mpCharBuffer, mnCurSize);
+	}
+}
 
 OString::OString(const char* _cstrStart, const char* _cstrEnd)
 	: mnCurSize{ static_cast<size_t>(_cstrEnd - _cstrStart) }, mnBufferSize{ mnCurSize + 1 }, mnID{ 0 }, mpLiteral{ nullptr },
@@ -49,7 +55,7 @@ OString::OString(const char* _cstrStart, const char* _cstrEnd)
 	const auto end = mpCharBuffer + mnCurSize;
 	while (start != end)
 		*start++ = *_cstrStart++;
-	start[mnCurSize] = '\0';
+	mpCharBuffer[mnCurSize] = '\0';
 }
 
 OString::~OString(void)
@@ -63,7 +69,10 @@ OString::~OString(void)
 OString& OString::operator=(const OString& _rhs)
 {
 	if (_rhs.mpLiteral)
+	{
 		mpLiteral = _rhs.mpLiteral;
+		mbRehash = true;
+	}
 	else
 	{
 		Alloc(_rhs.mnCurSize);
@@ -97,7 +106,6 @@ void OString::clear(void)
 	mbRehash = true;
 	mnCurSize = 0;
 }
-
 
 /* element access */
 
@@ -557,8 +565,8 @@ OString operator+(const OString& _lhs, const OString& _rhs)
 
 OString operator+(const OString& _lhs, const char* _str)
 {
-	OString s{ _str };
-	s += _lhs;
+	OString s{ _lhs };
+	s += _str;
 	return s;
 }
 

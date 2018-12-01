@@ -25,7 +25,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 #include "System/Window/WindowManager.h"
 #include "DataStructure/HashString.h"
-#include "../../OString.h"
 #include <iostream>
 #include <Windows.h>						// Windows Header
 

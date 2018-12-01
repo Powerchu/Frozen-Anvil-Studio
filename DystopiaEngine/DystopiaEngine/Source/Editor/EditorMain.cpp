@@ -391,6 +391,12 @@ void Editor::EditorMain::ExternalFile(const HashString& _p)
 	}
 }
 
+void Editor::EditorMain::ExternalFile(const AutoArray<HashString>& _arrExternals)
+{
+	for (const auto & elem : _arrExternals)
+		ExternalFile(elem);
+}
+
 void Editor::EditorMain::LogPerformance(void)
 {
 	static constexpr float intervalS = 0.1f;

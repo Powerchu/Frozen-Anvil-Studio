@@ -87,10 +87,9 @@ namespace
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
-				auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
-
 				if (oldsz.first)
 				{
+					auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
 					w.SetSize(oldsz.first, oldsz.second, false);
 					oldsz.first = 0; oldsz.second = 0;
 				}
@@ -339,7 +338,9 @@ void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 		paths.back() = buf.begin();
 	}
 
+#if EDITOR
 	Editor::EditorMain::GetInstance()->ExternalFile(paths);
+#endif 
 
 	DragFinish(handle);
 }
