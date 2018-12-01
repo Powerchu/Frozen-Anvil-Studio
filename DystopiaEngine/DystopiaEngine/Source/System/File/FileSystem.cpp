@@ -381,7 +381,7 @@ namespace Dystopia
 			return GetChangesInfo(*pDetectionInfo, _ChangesBuffer, _size);
 		}
 
-		return 0;
+		//return 0;
 	}
 
 	FileErrorCode FileSystem::GetLastKnownError() const
