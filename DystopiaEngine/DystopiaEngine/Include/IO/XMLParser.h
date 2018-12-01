@@ -23,7 +23,7 @@ namespace Dystopia
 	class NodeXML
 	{
 	public:
-
+		~NodeXML(void);
 		char const* GetName() const noexcept;
 		NodeXML* GetParent() const noexcept;
 		AutoArray<NodeXML*> const& GetChildren() const noexcept;
@@ -31,6 +31,7 @@ namespace Dystopia
 
 	private:
 
+		char const* mpBuffer = nullptr;
 		char const* mstrName;
 		AutoArray<std::pair<char const*, char const*>> mFields;
 		AutoArray<NodeXML*> mChildren;

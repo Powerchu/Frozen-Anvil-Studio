@@ -152,6 +152,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 	NodeXML* root = Alloc_t::ConstructAlloc();
 	NodeXML* curr = root;
 
+	root->mpBuffer = _buf;
 	root->mpParent = nullptr;
 
 	_buf = Skip<WhiteSpace>(_buf);
@@ -233,6 +234,16 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 	return root;
 }
 
+
+Dystopia::NodeXML::~NodeXML(void)
+{
+	using Alloc_t = DefaultAllocator<NodeXML>;
+
+	for (auto& e : mChildren)
+		Alloc_t::DestructFree(e);
+
+	DefaultAllocator<char const[]>::Free(mpBuffer);
+}
 
 char const* Dystopia::NodeXML::GetName() const noexcept
 {
