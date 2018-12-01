@@ -345,6 +345,12 @@
   <ItemGroup>
     <Image Include="Resource\Editor\icons\dystopia_x86_64.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Natvis\Arrays.natvis">
+      <DeploymentContent>false</DeploymentContent>
+    </Natvis>
+    <Natvis Include="Natvis\NodeXML.natvis" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
