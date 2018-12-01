@@ -8212,7 +8212,9 @@ bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags
     const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
     RenderNavHighlight(bb, id);
     RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
-    RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, label, NULL, &label_size, style.ButtonTextAlign, &bb);
+	if (flags & ImGuiButtonFlags_HideText)
+		return pressed;
+	RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, label, NULL, &label_size, style.ButtonTextAlign, &bb);
 
     // Automatically close popups
     //if (pressed && !(flags & ImGuiButtonFlags_DontClosePopups) && (window->Flags & ImGuiWindowFlags_Popup))
@@ -8221,9 +8223,9 @@ bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags
     return pressed;
 }
 
-bool ImGui::Button(const char* label, const ImVec2& size_arg)
+bool ImGui::Button(const char* label, const ImVec2& size_arg, bool hide)
 {
-    return ButtonEx(label, size_arg, 0);
+    return ButtonEx(label, size_arg, hide ? ImGuiButtonFlags_HideText : 0);
 }
 
 // Small buttons fits within text without additional vertical spacing.
@@ -9531,8 +9533,8 @@ bool ImGui::SliderScalar(const char* label, ImGuiDataType data_type, void* v, co
     const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, v, format);
     RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f,0.5f));
 
-    if (label_size.x > 0.0f)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+    //if (label_size.x > 0.0f)
+    //    RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     return value_changed;
 }
@@ -9870,8 +9872,8 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* v, floa
     const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, v, format);
     RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.5f));
 
-    if (label_size.x > 0.0f)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, inner_bb.Min.y), label);
+    //if (label_size.x > 0.0f)
+    //    RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, inner_bb.Min.y), label);
 
     return value_changed;
 }
@@ -10223,8 +10225,8 @@ bool ImGui::Checkbox(const char* label, bool* v)
 
     if (g.LogEnabled)
         LogRenderedText(&text_bb.Min, *v ? "[x]" : "[ ]");
-    if (label_size.x > 0.0f)
-        RenderText(text_bb.Min, label);
+    //if (label_size.x > 0.0f)
+    //    RenderText(text_bb.Min, label);
 
     return pressed;
 }
@@ -11179,8 +11181,8 @@ bool ImGui::InputTextEx(const char* label, char* buf, int buf_size, const ImVec2
     if (g.LogEnabled && !is_password)
         LogRenderedText(&render_pos, buf_display, NULL);
 
-    if (label_size.x > 0)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+    //if (label_size.x > 0)
+    //    RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     if (value_changed)
         MarkItemValueChanged(id);
@@ -11425,8 +11427,8 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
     RenderFrameBorder(frame_bb.Min, frame_bb.Max, style.FrameRounding);
     if (preview_value != NULL && !(flags & ImGuiComboFlags_NoPreview))
         RenderTextClipped(frame_bb.Min + style.FramePadding, value_bb.Max, preview_value, NULL, NULL, ImVec2(0.0f,0.0f));
-    if (label_size.x > 0)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+    //if (label_size.x > 0)
+    //    RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     if ((pressed || g.NavActivateId == id) && !popup_open)
     {

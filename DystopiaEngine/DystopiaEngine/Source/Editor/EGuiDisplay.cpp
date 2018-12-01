@@ -216,9 +216,9 @@ namespace EGUI
 				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
-			HashString invi{ "##" };
-			invi += _label;
-			bool b = ImGui::InputText(invi.c_str(), _outputbuffer, _size, flags);
+			//HashString invi{ "##" };
+			//invi += _label;
+			bool b = ImGui::InputText(_label, _outputbuffer, _size, flags);
 			ImGui::PopItemWidth();
 			return b;
 		}
@@ -236,9 +236,9 @@ namespace EGUI
 				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
-			HashString inviLabel{ "##" };
-			inviLabel += _label;
-			bool b = ImGui::InputText(inviLabel.c_str(), _out.begin(), _out.size(), flags);
+			//HashString inviLabel{ "##" };
+			//inviLabel += _label;
+			bool b = ImGui::InputText(_label, _out.access_c(), _out.size(), flags);
 			ImGui::PopItemWidth();
 			return b;
 		}
@@ -279,8 +279,7 @@ namespace EGUI
 			inviLabel += _label;
 
 			ImGui::PushItemWidth(_width);
-			if (ImGui::Button(inviLabel.c_str() ,
-				ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize }))
+			if (ImGui::Button(inviLabel.c_str(), ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize }))
 			{
 				if (show) clicked = true;
 			}
@@ -297,9 +296,9 @@ namespace EGUI
 				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
-			HashString invi{ "##checkBox" };
-			invi += _label;
-			return ImGui::Checkbox(invi.c_str(), _outputBool);
+			//HashString invi{ "##checkBox" };
+			//invi += _label;
+			return ImGui::Checkbox(_label, _outputBool);
 		}
 
 		eDragStatus DragFloat(const char * _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText, float _width)
@@ -317,9 +316,9 @@ namespace EGUI
 			}
 			bool changing = false;
 			ImGui::PushItemWidth(_width);
-			HashString invi{ "##DragF" };
-			invi += _label;
-			changing = ImGui::DragFloat(invi.c_str(), _outputFloat, _dragSpeed, _min, _max, "%.3f");
+			//HashString invi{ "##DragF" };
+			//invi += _label;
+			changing = ImGui::DragFloat(_label, _outputFloat, _dragSpeed, _min, _max, "%.3f");
 			ImGui::PopItemWidth();
 
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
@@ -344,9 +343,9 @@ namespace EGUI
 			}
 			bool changing = false;
 			ImGui::PushItemWidth(_width);
-			HashString invi{ "##SliderF" };
-			invi += _label;
-			changing = ImGui::SliderFloat(invi.c_str(), _pOutFloat, _min, _max, "%.3f");
+			//HashString invi{ "##SliderF" };
+			//invi += _label;
+			changing = ImGui::SliderFloat(_label, _pOutFloat, _min, _max, "%.3f");
 			ImGui::PopItemWidth();
 
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
@@ -369,9 +368,9 @@ namespace EGUI
 			}
 			bool changing = false;
 			ImGui::PushItemWidth(_width);
-			HashString inviLabel{ "##" };
-			inviLabel += _label;
-			changing = ImGui::SliderInt(inviLabel.c_str(), _pOutInt, _min, _max);
+			//HashString inviLabel{ "##" };
+			//inviLabel += _label;
+			changing = ImGui::SliderInt(_label, _pOutInt, _min, _max);
 			ImGui::PopItemWidth();
 			
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
@@ -394,9 +393,9 @@ namespace EGUI
 			}
 			bool changing = false;
 			ImGui::PushItemWidth(_width);
-			HashString invi{ "##DragI" };
-			invi += _label;
-			changing = ImGui::DragInt(invi.c_str(), _outputInt, _dragSpeed, _min, _max);
+			//HashString invi{ "##DragI" };
+			//invi += _label;
+			changing = ImGui::DragInt(_label, _outputInt, _dragSpeed, _min, _max);
 			ImGui::PopItemWidth();
 
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive()) return eSTART_DRAG;
@@ -568,7 +567,6 @@ namespace EGUI
 
 			if (_defaulPeeken)
 				flags |= ImGuiTreeNodeFlags_DefaultOpen;
-
 			bool ret = ImGui::TreeNode(_label, _outClicked, flags);
 
 			if (_highlighted)
@@ -647,9 +645,9 @@ namespace EGUI
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
-			HashString invi{ "##CPLBtnP" };
-			invi += _uniqueId;
-			bool btn = ImGui::Button(invi.c_str(), _displaySize);
+			//HashString invi{ "##CPLBtnP" };
+			//invi += _uniqueId;
+			bool btn = ImGui::Button(_uniqueId, _displaySize, true);
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
 			ImGui::PopStyleColor();
 			ImGui::PopStyleVar();
@@ -667,7 +665,7 @@ namespace EGUI
 		{
 			auto originalPos = ImGui::GetCursorPos();
 
-			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope{ "FULL ", "0" };
+			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope{ "FULL ", "0" };
 
 			auto pFile = static_cast<::Editor::File*>(_pData);
 			if (!pFile->mpImgData)
@@ -689,18 +687,18 @@ namespace EGUI
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 
-			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope1{ "FIRST ", "1" };
+			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope1{ "FIRST ", "1" };
 
-			HashString invi{ "##CPLBtnI" };
+			//HashString invi{ "##CPLBtnI" };
+			//
+			//{
+			//	Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope2{ "+=", "2" };
+			//	invi += _uniqueId;
+			//}
 
-			{
-				Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope2{ "+=", "2" };
-				invi += _uniqueId;
-			}
+			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope3{ "THIRD", "3" };
 
-			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope3{ "THIRD", "3" };
-
-			bool btn = ImGui::Button(invi.c_str(), _displaySize);
+			bool btn = ImGui::Button(_uniqueId, _displaySize, true);
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
 			ImGui::PopStyleColor();
 			ImGui::PopStyleVar();
@@ -743,9 +741,9 @@ namespace EGUI
 			ImVec2 posText{ pos.x + 1, pos.y + iconHeight + (2* offsetY) };
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
-			HashString invi{ "##CPLBtn" };
-			invi += _uniqueId;
-			bool btn = ImGui::Button(invi.c_str(), size);
+			//HashString invi{ "##CPLBtn" };
+			//invi += _uniqueId;
+			bool btn = ImGui::Button(_uniqueId, size, true);
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
 			ImGui::PopStyleColor();
 			if (payload) EndPayload();
@@ -810,9 +808,9 @@ namespace EGUI
 			Label(_label);
 			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
-			HashString invi{ "##DDSel" };
-			invi += _label;
-			bool ret = ImGui::Combo(invi.c_str(), &_currentIndex, arrCharPtr.begin(), static_cast<int>(arrCharPtr.size()));
+			//HashString invi{ "##DDSel" };
+			//invi += _label;
+			bool ret = ImGui::Combo(_label, &_currentIndex, arrCharPtr.begin(), static_cast<int>(arrCharPtr.size()));
 			ImGui::PopItemWidth();
 			return ret;
 		}
@@ -896,9 +894,9 @@ namespace EGUI
 			}
 
 			//ImGui::Dummy(ImVec2{ width, height + offset });
-			HashString invi{ "##IconF" };
-			invi += _uniqueId;
-			return ImGui::InvisibleButton(invi.c_str(), ImVec2{ width, height + offset });
+			//HashString invi{ "##IconF" };
+			//invi += _uniqueId;
+			return ImGui::InvisibleButton(_uniqueId, ImVec2{ width, height + offset });
 		}
 
 		bool IconCircle(const char* _uniqueId, float radius, float offsetX, float offsetY, const Math::Vec4& _colour)
@@ -910,9 +908,9 @@ namespace EGUI
 			ImVec2 centre{ pos.x + radius + offsetX, pos.y + radius + offsetY };
 			pCanvas->AddCircle(centre, radius, col32);
 			pCanvas->AddCircleFilled(centre, radius / 4, col32);
-			HashString invi{ "##IconC" };
-			invi += _uniqueId;
-			return ImGui::InvisibleButton(invi.c_str(),
+			//HashString invi{ "##IconC" };
+			//invi += _uniqueId;
+			return ImGui::InvisibleButton(_uniqueId,
 				   ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
 		}
 
@@ -931,9 +929,9 @@ namespace EGUI
 			pCanvas->AddLine(ImVec2{ centre.x - r, centre.y + r },
 							 ImVec2{ centre.x + r, centre.y - r },
 							 col32);
-			HashString invi{ "##IconX" };
-			invi += _uniqueId;
-			return ImGui::InvisibleButton(invi.c_str(),
+			//HashString invi{ "##IconX" };
+			//invi += _uniqueId;
+			return ImGui::InvisibleButton(_uniqueId,
 					ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
 		}
 
@@ -970,9 +968,9 @@ namespace EGUI
 			pCanvas->PathLineTo(midRight);
 			pCanvas->PathStroke(col32R, false);
 
-			HashString invi{ "##IconG" };
-			invi += _uniqueId;
-			return ImGui::InvisibleButton(invi.c_str(), ImVec2{ _width, _height });
+			//HashString invi{ "##IconG" };
+			//invi += _uniqueId;
+			return ImGui::InvisibleButton(_uniqueId, ImVec2{ _width, _height });
 		}
 
 		bool IconFile(const char* _uniqueId, float _width, float _height, const Math::Vec4& _colour)
@@ -993,9 +991,9 @@ namespace EGUI
 			pCanvas->PathStroke(col32, true);
 			ImGui::SetCursorScreenPos(pos);
 
-			HashString invi{ "##IconFI" };
-			invi += _uniqueId;
-			return ImGui::InvisibleButton(invi.c_str(), size);;
+			//HashString invi{ "##IconFI" };
+			//invi += _uniqueId;
+			return ImGui::InvisibleButton(_uniqueId, size);;
 		}
 		
 		void Outline(float _x, float _y)

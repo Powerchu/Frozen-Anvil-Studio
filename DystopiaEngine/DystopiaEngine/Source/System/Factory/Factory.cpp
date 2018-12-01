@@ -41,11 +41,10 @@ Dystopia::Factory::~Factory(void)
 Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, const Math::Pt3D& _pos)
 {
 	auto fs = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
-	auto fp = fs->GetFullPath("Prefab", eFileDir::eResource);
-	HashString file{ fp.c_str() };
-	file += "\\";
-	file += _prefab;
-	auto _in = Dystopia::TextSerialiser::OpenFile(file.c_str(), Dystopia::Serialiser::MODE_READ);
+	auto fp = fs->GetFullPath(_prefab.c_str(), eFileDir::eResource);
+	if (!fp.size())
+		return nullptr;
+	auto _in = Dystopia::TextSerialiser::OpenFile(fp.c_str(), Dystopia::Serialiser::MODE_READ);
 
 	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
 	const size_t currentIndex = curScene.GetAllGameObjects().size();
@@ -133,10 +132,8 @@ void Dystopia::Factory::LoadSegmentC(GameObject& _obj, unsigned _count, Dystopia
 		_in.ConsumeEndBlock();
 	}
 
-	for (auto& c : _obj.GetAllComponents())
-	{
-		c->Init();
-	}
+	//for (auto& c : _obj.GetAllComponents())
+	//	c->Init();
 }
 
 void Dystopia::Factory::LoadSegmentB(GameObject& _obj, Dystopia::TextSerialiser& _in)
@@ -191,7 +188,6 @@ void Dystopia::Factory::LoadSegmentB(GameObject& _obj, Dystopia::TextSerialiser&
 			_obj.AddComponent(ptr, Dystopia::BehaviourTag{});
 		}
 	}
-
 	_obj.Identify();
 }
 

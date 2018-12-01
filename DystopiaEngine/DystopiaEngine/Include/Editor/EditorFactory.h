@@ -58,14 +58,14 @@ namespace Editor
 
 		void DefaultSceneCamera(void);
 
-		void ReattachToPrefab(Dystopia::Component* _p, uint64_t c, bool _amComponent = true);
+		bool ReattachToPrefab(Dystopia::Component* _p, uint64_t c, bool _amComponent = true);
 		bool SpawnPrefab(const HashString&, const Math::Pt3D&, uint64_t& _outRootObjID);
 		bool SaveAsPrefab(const uint64_t& _objID, Dystopia::TextSerialiser&, bool _temp = false);
 		bool SaveAsPrefabTemp(const uint64_t& _objID, Dystopia::TextSerialiser&);
 		bool DettachPrefab(const uint64_t&);
 		void ValidatePrefabInstances(void);
 
-		bool LoadAsPrefab(const HashString& _path);
+		bool LoadAsPrefab(const HashString& _name);
 		void LoadIntoScene(Dystopia::TextSerialiser&);
 
 		bool FindMasterPrefab(const HashString& _prefabName, int& _outID);
@@ -99,6 +99,8 @@ namespace Editor
 		MagicArray<PrefabData> mArrPrefabData;
 
 		Dystopia::SceneSystem *mpSceneSys;
+
+		uint64_t mnLastSceneID;
 	};
 
 }

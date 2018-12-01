@@ -138,10 +138,11 @@ namespace Editor
 
 	void HierarchyView::SearchBar()
 	{
+		static char buffer[256];
 		float width = Size().x - 70;
 		width = (width < 20) ? 20 : width;
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, false, width);
+		EGUI::Display::TextField("Search", buffer /*mSearchText*/, MAX_SEARCH, false, width);
 		EGUI::ChangeLabelSpacing();
 		EGUI::Display::HorizontalSeparator();
 	}

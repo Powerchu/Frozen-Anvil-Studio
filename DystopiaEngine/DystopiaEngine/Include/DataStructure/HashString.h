@@ -16,10 +16,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(push)
 #pragma warning(disable : 4251)
 
-#include <cstdint>
-#include <iostream>
-#include "Globals.h"
-#include "Allocator/DefaultAlloc.h"
+//#include <cstdint>
+//#include <iostream>
+//#include "Globals.h"
+//#include "Utility/Utility.h"
+//#include "Allocator/DefaultAlloc.h"
+//#include "System/Time/Timer.h"
+#include "DataStructure/OString.h"
+
+using HashString = OString;
+
+#if !EDITOR
 
 typedef uint64_t HashID;
 
@@ -34,11 +41,14 @@ constexpr HashID StringHasher(const char(&_s)[N], unsigned int I = N)
 
 HashID StringHasher(const char* _s);
 
+/*************************************************************************************************************/
+
 class _DLL_EXPORT_ONLY HashString
 {
 public:
 	static constexpr size_t nPos = static_cast<size_t>(-1);
 	/* constructors */
+
 	HashString(void);
 	HashString(const HashString&);
 	HashString(HashString&&) noexcept;
@@ -110,17 +120,23 @@ public:
 	
 	bool		NeedRehash(void) const;
 	void		Rehash(void) const;
+
 private:
+
 	size_t mSize;
+
 	bool mbRehash;
+
 	char* mCharBuffer;
+	const char* mpLiteral;
+
 	HashID mHashedID;
 };
 
 template <unsigned N>
 constexpr HashString::HashString(const char(&_s)[N])
 	: mSize{ N - 1 }
-	, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(N) }
+	, mCharBuffer{nullptr }
 	, mbRehash{ true }
 	, mHashedID{ 0 }
 {
@@ -197,8 +213,15 @@ HashString& HashString::operator+=(const char(&_s)[N])
 
 	return *this;
 }
+#endif
 
 #endif //_HASH_STRING_H_
+
+
+
+
+
+
 
 
 

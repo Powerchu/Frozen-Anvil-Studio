@@ -230,29 +230,45 @@ namespace Dystopia
 				++start;
 			}
 		}
-		for (auto & elem : mvRecentChanges)
-		{
-			std::wstring strName{ elem->mName.begin(), elem->mName.end() };
-			for (auto & i : mvBehaviours)
-			{
-				if (i.first == strName)
-				{
-					for (auto & iter : i.second)
-					{
-						if (iter.second != nullptr)
-							continue;
+		//for (auto & elem : mvRecentChanges)
+		//{
+		//	std::wstring strName{ elem->mName.begin(), elem->mName.end() };
+		//	for (auto & i : mvBehaviours)
+		//	{
+		//		if (i.first == strName)
+		//		{
+		//			for (auto & iter : i.second)
+		//			{
+		//				if (iter.second != nullptr)
+		//					continue;
 
-						auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-						auto ptr = elem->mpBehaviour->Duplicate();
-						if (auto x = SceneSys->FindGameObject(iter.first))
-							x->AddComponent(ptr, BehaviourTag{});
-						iter.second = ptr;
-					}
-				}
-			}
-		}
+		//				auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+		//				auto ptr = elem->mpBehaviour->Duplicate();
+		//				if (auto x = SceneSys->FindGameObject(iter.first))
+		//				{
+		//					x->AddComponent(ptr, BehaviourTag{});
+		//					iter.second = ptr;
+		//				}
+		//				else
+		//				{
+		//					/*Reattach to objects not found in game scene*/
+		//					if (::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, iter.first, false))
+		//					{
+		//						iter.second = ptr;
+		//					}
+		//					else
+		//					{
+		//						delete ptr;
+		//						iter.second = nullptr;
+		//						iter.first  = 0;
+		//					}
+		//				}
 
-		
+
+		//			}
+		//		}
+		//	}
+		//}
 
 		vTempFileName.clear();
 		mvRecentChanges.clear();
@@ -391,6 +407,7 @@ namespace Dystopia
 				_obj.InsertStartBlock("BEHAVIOUR_BLOCK");
 				/*Owner ID*/
 				_obj << iter.first;
+				_obj << static_cast<unsigned>(iter.second->GetOwner()->GetFlags());
 				/*Save the Member Data*/
 				if (iter.second)
 				{
@@ -446,7 +463,9 @@ namespace Dystopia
 						/*Make new Behaviour*/
 						_obj.ConsumeStartBlock(); /*Consume START BEHAVIOUR BLOCK*/
 						uint64_t _ID = 0;
+						unsigned _Flags = 0;
 						_obj >> _ID;
+						_obj >> _Flags;
 						auto * ptr = RequestBehaviour(_ID, elem.mName);
 						_obj.ConsumeStartBlock(); /*Consume Behaviour Member Variable Block*/
 						auto BehaviourMetaData = ptr->GetMetaData();
@@ -477,18 +496,31 @@ namespace Dystopia
 						/*Time to Super Set Functor*/
 						_obj.ConsumeEndBlock();  /*Consume END BEHAVIOUR BLOCK*/
 
-						/*Insert to GameObject*/
-						auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-						if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
+						if (_Flags & eObjFlag::FLAG_EDITOR_OBJ)
 						{
-							ptr->SetOwner(x);
-							x->AddComponent(ptr, BehaviourTag{});
+							/*Object is editor object*/
+							if (::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID, false))
+							{
+
+							}
+							else
+							{
+								DeleteBehaviour(ptr);
+							}
 						}
 						else
 						{
-							/*GameObject with ID that was serialise could not be found*/
-							/*Remove and delete the Behaviour from mvBehaviourReferences*/
-							::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID, false);
+							/*Insert to GameObject*/
+							auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+							if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
+							{
+								ptr->SetOwner(x);
+								x->AddComponent(ptr, BehaviourTag{});
+							}
+							else
+							{
+								DeleteBehaviour(ptr);
+							}
 						}
 					}
 					break;
@@ -496,6 +528,27 @@ namespace Dystopia
 			}
 		}
 #endif
+	}
+
+	void Dystopia::BehaviourSystem::DeleteBehaviour(Behaviour * _ptr)
+	{
+		for (auto & elem : mvBehaviours)
+		{
+			for (auto & b : elem.second)
+			{
+				if (b.second == _ptr)
+				{
+					GameObject * Owner = nullptr;
+					if ((Owner = b.second->GetOwner()) != nullptr)
+						Owner->RemoveComponent(b.second);
+
+					delete _ptr;
+					b.second = nullptr;
+					elem.second.FastRemove(&b);
+					return;
+				}
+			}
+		}
 	}
 
 #if EDITOR
@@ -574,10 +627,9 @@ namespace Dystopia
 			{
 				if (iter.second)
 				{
-					if (auto x = iter.second->GetOwner())
-						x->RemoveComponent(iter.second);
 					delete iter.second;
 					iter.second = nullptr;
+					iter.first  = 0;
 				}
 			}
 			i.second.clear();

@@ -50,7 +50,7 @@ namespace Editor
 		: 
 		mLabel{ "Project" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
 		mpCurrentFolder{ nullptr }, mArrAllFiles{100}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
-		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 90 },
+		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 100 },
 		mResetToFile{}, mResourcePath{}, mResourceName{}
 	{
 		EditorPanel::SetOpened(true);
@@ -97,7 +97,7 @@ namespace Editor
 	{
 		for (auto& f : mArrAllFiles)
 			if (HashString::nPos == f->mPath.find("Temp") && f->mTag == EGUI::ePayloadTags::PREFAB)
-				EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mPath);
+				EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mName);
 		return true;
 	}
 
@@ -125,7 +125,7 @@ namespace Editor
 			break;
 		}
 
-		UpdateSearch();
+		//UpdateSearch();
 	}
 
 	void ProjectResource::EditorUI(void)
@@ -177,11 +177,18 @@ namespace Editor
 				fopen_s(&pFile, fullPath.c_str(), "a");
 				fclose(pFile);
 
-				auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
-				if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
+				bool saved = false;
 				{
-					mResetToFile = fileName;
+					auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
+					if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
+					{
+
+						mResetToFile = fileName;
+						saved = true;
+					}
 				}
+				if (saved)
+					EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(fileName);
 				EGUI::Display::EndPayloadReceiver();
 			}
 			ImGui::SetCursorPos(origin);
@@ -248,11 +255,12 @@ namespace Editor
 
 	void ProjectResource::SearchWindow(void)
 	{
+		static char buffer[256];
 		float width = Size().x - 60;
 		width = (width < 20) ? 20 : width;
 		EGUI::Indent(4);
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, true, width);
+		EGUI::Display::TextField("Search", buffer/*mSearchText*/, MAX_SEARCH, false, width);
 		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(4);
 		EGUI::Display::HorizontalSeparator();
@@ -267,8 +275,8 @@ namespace Editor
 
 	void ProjectResource::FileWindow(const Math::Vec2& _mySize)
 	{
-		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.5f };
-		unsigned int columns = static_cast<unsigned int>(_mySize.x / buffedSize.x);
+		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.25f };
+		unsigned int columns = static_cast<unsigned int>(_mySize.x / (buffedSize.x + 20));
 		columns = columns ? columns : 1 ;
 
 		EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
@@ -282,7 +290,7 @@ namespace Editor
 
 			Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
 			if (i % columns)
-				EGUI::SameLine();
+				ImGui::SameLine(0, 20);
 			if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false))
 			{
 				EGUI::Indent(10);
