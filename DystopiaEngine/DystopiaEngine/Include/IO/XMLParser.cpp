@@ -120,6 +120,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ParseNode(char *& _buf, NodeXML* _curr)
 		switch (*_buf)
 		{
 		case '/':
+			_buf += 2;
 			return _curr->GetParent();
 			break;
 
@@ -151,7 +152,16 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 	NodeXML* root = Alloc_t::ConstructAlloc();
 	NodeXML* curr = root;
 
+	root->mpBuffer = _buf;
 	root->mpParent = nullptr;
+
+	_buf = Skip<WhiteSpace>(_buf);
+
+	if ('<' != *_buf)
+		return root;
+
+	curr = ParseNode(++_buf, root);
+
 	while (curr && *_buf)
 	{
 		_buf = Skip<WhiteSpace>(_buf);
@@ -159,7 +169,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 		if ('<' != *_buf)
 			return root;
 
-		if (auto& e = *_buf)
+		if (auto& e = *++_buf)
 		{
 			switch (e)
 			{
@@ -214,7 +224,7 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 				auto temp = Alloc_t::ConstructAlloc();
 				curr->mChildren.Insert(temp);
 				temp->mpParent = curr;
-				curr = ParseNode(++_buf, temp);
+				curr = ParseNode(_buf, temp);
 			}
 			break;
 			}
@@ -224,6 +234,16 @@ Dystopia::NodeXML* Dystopia::XMLParser::ActuallyParse(char* _buf)
 	return root;
 }
 
+
+Dystopia::NodeXML::~NodeXML(void)
+{
+	using Alloc_t = DefaultAllocator<NodeXML>;
+
+	for (auto& e : mChildren)
+		Alloc_t::DestructFree(e);
+
+	DefaultAllocator<char const[]>::Free(mpBuffer);
+}
 
 char const* Dystopia::NodeXML::GetName() const noexcept
 {

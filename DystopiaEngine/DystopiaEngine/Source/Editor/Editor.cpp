@@ -23,8 +23,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 #include "System/Window/WindowManager.h"
 
-#include "IO/XMLParser.h"
-
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int){
 #if defined(DEBUG) | defined(_DEBUG)

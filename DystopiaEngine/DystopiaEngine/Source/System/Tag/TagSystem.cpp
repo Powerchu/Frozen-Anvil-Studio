@@ -34,6 +34,11 @@ namespace Dystopia
 
 	}
 
+	void TagSystem::EditorUI()
+	{
+
+	}
+
 	AutoArray < std::string > TagSystem::GetAllTagsName() const
 	{
 		AutoArray < std::string > toRet;

@@ -23,7 +23,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
-#include "System/Graphics/Texture2D.h"
+#include "System/Window/Window.h"
+#include "System/Window/WindowManager.h"
+//#include "System/Graphics/Texture2D.h"
 #include "System/File/FileSystem.h"
 #include "System/Input/InputSystem.h"
 #include "System/Time/ScopedTimer.h"
@@ -36,7 +38,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <filesystem>
 #include <algorithm>
-#include <iostream>
+//#include <iostream>
 #include <Windows.h>
 #include <cstdlib>
 #include <tchar.h>
@@ -101,7 +103,7 @@ namespace Editor
 
 	void ProjectResource::Update(float)
 	{
-		auto input = EditorMain::GetInstance()->GetSystem<EInput>();
+		const auto input = EditorMain::GetInstance()->GetSystem<EInput>();
 		if (input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_LEFT) ||
 			input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_RIGHT))
 		{
@@ -128,28 +130,38 @@ namespace Editor
 
 	void ProjectResource::EditorUI(void)
 	{
+		const float h = Size().y - 55;
+		static float splitterSz = 425.f;
+		float sz1 = Size().x/2 - splitterSz - 5.f;
+		const float sz3 = Size().x/2 + splitterSz;
+
+		const Math::Vec2 folderWindowSize = Math::Vec2{ sz1, h };
+		const Math::Vec2 fileWindowSize = Math::Vec2{ sz3, h };
+		
+		
 		if (mResetToFile.length())
 		{
 			FocusOnFile(mResetToFile);
 			mResetToFile.clear();
 		}
 
-		Math::Vec2 fileWindowSize = Math::Vec2{ Size().x - 210, Size().y - 55 };
-
 		SearchWindow();
 
 		EGUI::Display::OpenTreeNode();
 
+		EGUI::Display::Splitter(true, 4.0f, &sz1, &splitterSz, 200.f, 100.f, h);
+		EGUI::StartChild("FolderWindow", folderWindowSize, true);
 		FolderWindow();
+		EGUI::EndChild();
 
-		EGUI::SameLine(2);
+		EGUI::SameLine();
 		ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4{ 0,0,0,0 });
-		EGUI::StartChild("FileWindow", fileWindowSize);
+		EGUI::StartChild("FileWindow", fileWindowSize, true);
 		if (mpCurrentFolder)
 		{
-			auto origin = ImGui::GetCursorPos();
+			const auto origin = ImGui::GetCursorPos();
 			EGUI::Display::Dummy(fileWindowSize.x, fileWindowSize.y);
-			if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+			if (const auto id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 			{
 				Dystopia::GameObject *t = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(*id);
 				HashString fullPath = mpCurrentFolder->mPath;
@@ -236,11 +248,11 @@ namespace Editor
 
 	void ProjectResource::SearchWindow(void)
 	{
-		float width = Size().x - 20;
+		float width = Size().x - 60;
 		width = (width < 20) ? 20 : width;
 		EGUI::Indent(4);
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, false, width);
+		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, true, width);
 		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(4);
 		EGUI::Display::HorizontalSeparator();
@@ -248,9 +260,9 @@ namespace Editor
 
 	void ProjectResource::FolderWindow(void)
 	{
-		EGUI::StartChild("FolderWindow", Math::Vec2{ 200, Size().y - 55 });
+		//EGUI::StartChild("FolderWindow", Math::Vec2{ 200, Size().y - 55 });
 		FolderUI(mpRootFolder);
-		EGUI::EndChild();
+		//EGUI::EndChild();
 	}
 
 	void ProjectResource::FileWindow(const Math::Vec2& _mySize)

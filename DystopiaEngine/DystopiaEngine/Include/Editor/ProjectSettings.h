@@ -46,8 +46,8 @@ namespace Editor
 	private:
 		HashString		mLabel;
 
-		Dystopia::GraphicsSystem *mpGfxSys;
-		Dystopia::PhysicsSystem	 *mpPhySys;
+		Dystopia::GraphicsSystem  *mpGfxSys;
+		Dystopia::PhysicsSystem	  *mpPhySys;
 		Dystopia::InputManager    *mpInputSys;
 		Dystopia::TagSystem       *mpTagSystem;
 
