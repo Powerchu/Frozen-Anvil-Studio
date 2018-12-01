@@ -14,7 +14,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _SCENE_VIEW_H_
 #define _SCENE_VIEW_H_
-//#include "EditorTab.h"
 #include "Editor/EditorPanel.h"
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/HashString.h"

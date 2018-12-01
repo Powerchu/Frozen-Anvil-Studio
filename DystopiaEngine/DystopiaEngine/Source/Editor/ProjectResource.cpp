@@ -177,11 +177,18 @@ namespace Editor
 				fopen_s(&pFile, fullPath.c_str(), "a");
 				fclose(pFile);
 
-				auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
-				if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
+				bool saved = false;
 				{
-					mResetToFile = fileName;
+					auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
+					if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
+					{
+
+						mResetToFile = fileName;
+						saved = true;
+					}
 				}
+				if (saved)
+					EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(fileName);
 				EGUI::Display::EndPayloadReceiver();
 			}
 			ImGui::SetCursorPos(origin);

@@ -37,7 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <string>
 
 Editor::EditorFactory::EditorFactory(void)
-	: mpSceneSys{ nullptr }, mArrFactoryObj{}
+	: mpSceneSys{ nullptr }, mArrFactoryObj{}, mnLastSceneID{0}
 {}
 
 Editor::EditorFactory::~EditorFactory(void)
@@ -53,7 +53,9 @@ bool Editor::EditorFactory::Init(void)
 }
 
 void Editor::EditorFactory::StartFrame(void)
-{}
+{
+	mnLastSceneID = Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene().GetSceneID();
+}
 
 void Editor::EditorFactory::Update(float)
 {}
@@ -80,19 +82,34 @@ void Editor::EditorFactory::Message(eEMessage _msg)
 	}
 	else if (_msg == eEMessage::SCENE_CHANGED)
 	{
-		ValidatePrefabInstances();
-		for (size_t i = 0; i < mArrPrefabData.size(); ++i)
+		if (Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene().GetSceneID() != mnLastSceneID)
 		{
-			if (!mArrPrefabData[i].mArrInstanced.size())
-			{
-				HashString prefName{ mArrPrefabData[i].mPrefabFile };
+			AutoArray<HashString> mArrTempPrefab;
+			for (auto& dat : mArrPrefabData)
+				mArrTempPrefab.push_back(dat.mPrefabFile);
 
-				for (size_t j = mArrPrefabData[i].mnStart; j < mArrPrefabData[i].mnEnd; j++)
-					mArrFactoryObj.Remove(&mArrFactoryObj[j]);
+			mArrPrefabData.clear();
+			mArrFactoryObj.clear();
 
-				mArrPrefabData.Remove(&mArrPrefabData[i]);
-				LoadAsPrefab(prefName.c_str());
-			}
+			for (auto& p : mArrTempPrefab)
+				LoadAsPrefab(p);
+		}
+		else
+		{
+			ValidatePrefabInstances();
+			//for (size_t i = 0; i < mArrPrefabData.size(); ++i)
+			//{
+			//	if (!mArrPrefabData[i].mArrInstanced.size())
+			//	{
+			//		HashString prefName{ mArrPrefabData[i].mPrefabFile };
+			//
+			//		for (size_t j = mArrPrefabData[i].mnStart; j < mArrPrefabData[i].mnEnd; j++)
+			//			mArrFactoryObj.Remove(&mArrFactoryObj[j]);
+			//
+			//		mArrPrefabData.Remove(&mArrPrefabData[i]);
+			//		LoadAsPrefab(prefName.c_str());
+			//	}
+			//}
 		}
 	}
 }
@@ -179,8 +196,6 @@ bool Editor::EditorFactory::SaveAsPrefab(const uint64_t& _objID, Dystopia::TextS
 			for (auto& c : allChild)
 				if (c->GetOwner())
 					SaveChild(*c->GetOwner(), _out, _temp);
-
-
 			return true;
 		}
 	}
@@ -245,6 +260,17 @@ void Editor::EditorFactory::ValidatePrefabInstances(void)
 
 bool Editor::EditorFactory::LoadAsPrefab(const HashString& _name)
 {
+	for (auto& prefabData : mArrPrefabData)
+	{
+		if (prefabData.mPrefabFile == _name)
+		{
+			for (size_t i = prefabData.mnStart; i < prefabData.mnEnd; ++i)
+			{
+				mArrFactoryObj.Remove(i);
+			}			
+		}
+	}
+
 	auto _path = Dystopia::EngineCore::Get<Dystopia::FileSystem>()->FindFilePath(_name.c_str(), Dystopia::eFileDir::eResource);
 	auto _in = Dystopia::TextSerialiser::OpenFile(_path.c_str(), Dystopia::TextSerialiser::MODE_READ);
 	size_t currentIndex = mArrFactoryObj.size();
@@ -696,7 +722,6 @@ void Editor::EditorFactory::ApplyChanges(Editor::EditorFactory::PrefabData* _p)
 
 	auto& curScene = Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene();
 	auto& arrInstances = _p->mArrInstanced;
-
 
 	for (auto& instArr : arrInstances)
 	{
