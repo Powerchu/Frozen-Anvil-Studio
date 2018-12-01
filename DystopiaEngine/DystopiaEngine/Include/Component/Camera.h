@@ -78,6 +78,7 @@ namespace Dystopia
 		void SetRotationDeg(const float);
 
 		void SetSurface(Framebuffer*);
+		void SetSurface(int);
 
 		// Set the area the camera renders to in relative coordinates, from 0.0 to 1.0
 		void SetViewport(float _x, float _y, float _nWidth, float _nHeight);
@@ -125,7 +126,7 @@ namespace Dystopia
 		Math::Mat4 mProjection;
 
 		Framebuffer* mpSurface;
-		unsigned mnSurfaceID;
+		int mnSurfaceID;
 		int mnProjectionIndex = 0;
 
 		// Orthographic Stuff

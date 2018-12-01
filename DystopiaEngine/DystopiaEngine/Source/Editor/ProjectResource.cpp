@@ -291,7 +291,7 @@ namespace Editor
 			Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
 			if (i % columns)
 				ImGui::SameLine(0, 20);
-			if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false))
+			if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false, true))
 			{
 				EGUI::Indent(10);
 				FileUI(pFile);
@@ -319,7 +319,7 @@ namespace Editor
 				EGUI::PushID(i);
 				Editor::File* pFile = mArrFilesSearchedThisFrame[i];
 				if (i % columns) EGUI::SameLine();
-				if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false))
+				if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false, true))
 				{
 					EGUI::Indent(10);
 					FileUI(pFile);

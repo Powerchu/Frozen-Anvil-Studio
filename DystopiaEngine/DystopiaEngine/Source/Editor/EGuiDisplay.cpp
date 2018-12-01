@@ -139,14 +139,14 @@ namespace EGUI
 		ImGui::Unindent(_spacing);
 	}
 
-	bool StartChild(const char* _label, const Math::Vec2& _size, bool _showBorder)
+	bool StartChild(const char* _label, const Math::Vec2& _size, bool _showBorder, bool _noScroll)
 	{
-		return ImGui::BeginChild(_label, ImVec2{ _size.x, _size.y }, _showBorder);
+		return ImGui::BeginChild(_label, ImVec2{ _size.x, _size.y }, _showBorder, _noScroll ? ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse : 0);
 	}
 
-	bool StartChild(const char* _label, const float& _x, const float& _y, bool _showBorder)
+	bool StartChild(const char* _label, const float& _x, const float& _y, bool _showBorder, bool _noScroll)
 	{
-		return StartChild(_label, Math::Vec2{ _x, _y }, _showBorder);
+		return StartChild(_label, Math::Vec2{ _x, _y }, _showBorder, _noScroll);
 	}
 
 	void EndChild()
