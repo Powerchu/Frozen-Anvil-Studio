@@ -136,7 +136,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 		EGUI::Display::EndPayloadReceiver();
 	}
 	EGUI::SameLine();
-	if (EGUI::Display::IconCross("Clear", 8.f))
+	if (EGUI::Display::IconCross("###Clear", 8.f))
 	{
 		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&AudioSource::SetSound, mpSound),
 										   cmd->MakeFnCommand(&AudioSource::SetSound, nullptr));
@@ -146,11 +146,11 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 	{
 		cmd->ChangeValue(GetOwnerID(), &AudioSource::mSoundType, old, mSoundType);
 	}
-	if (EGUI::Display::CheckBox("On Awake", &mPlayOnStart))
+	if (EGUI::Display::CheckBox("###On Awake", &mPlayOnStart))
 	{
 		cmd->ChangeValue(GetOwnerID(), &AudioSource::mPlayOnStart, !mPlayOnStart, mPlayOnStart);
 	}
-	if (EGUI::Display::CheckBox("Loop", &mLoop))
+	if (EGUI::Display::CheckBox("###Loop", &mLoop))
 	{
 		cmd->ChangeValue(GetOwnerID(), &AudioSource::mLoop, !mLoop, mLoop);
 		mChanged = true;

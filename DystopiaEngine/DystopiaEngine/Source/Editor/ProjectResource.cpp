@@ -150,13 +150,13 @@ namespace Editor
 		EGUI::Display::OpenTreeNode();
 
 		EGUI::Display::Splitter(true, 4.0f, &sz1, &splitterSz, 200.f, 100.f, h);
-		EGUI::StartChild("FolderWindow", folderWindowSize, true);
+		EGUI::StartChild("##FolderWindow", folderWindowSize, true);
 		FolderWindow();
 		EGUI::EndChild();
 
 		EGUI::SameLine();
 		ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4{ 0,0,0,0 });
-		EGUI::StartChild("FileWindow", fileWindowSize, true);
+		EGUI::StartChild("##FileWindow", fileWindowSize, true);
 		if (mpCurrentFolder)
 		{
 			const auto origin = ImGui::GetCursorPos();
@@ -260,7 +260,7 @@ namespace Editor
 		width = (width < 20) ? 20 : width;
 		EGUI::Indent(4);
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", buffer/*mSearchText*/, MAX_SEARCH, false, width);
+		EGUI::Display::TextField("Search", buffer/*mSearchText*/, MAX_SEARCH, true, width);
 		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(4);
 		EGUI::Display::HorizontalSeparator();

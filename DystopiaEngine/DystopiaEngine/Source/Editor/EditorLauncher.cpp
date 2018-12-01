@@ -443,14 +443,14 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 	{
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 20.f);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4{ 0.6f,0.6f,0.6f,1 });
-		ImGui::BeginChild("Emptiness", ImVec2{ 10.f, 40.f});
+		ImGui::BeginChild("##Emptiness", ImVec2{ 10.f, 40.f});
 		ImGui::EndChild();
 		ImGui::PopStyleColor();
 	}
 
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + itemWidth - folderX - offsetX + 3.f);
 	ImGui::SetCursorPosY(linePos.y + 6.f); 
-	if (EGUI::Display::IconFolder("BrowseDir", folderX, 18.f, true))
+	if (EGUI::Display::IconFolder("##BrowseDir", folderX, 18.f, true))
 	{
 		HashString folder;
 		if (Browse(folder))

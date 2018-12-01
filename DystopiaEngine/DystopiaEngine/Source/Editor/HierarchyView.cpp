@@ -142,7 +142,7 @@ namespace Editor
 		float width = Size().x - 70;
 		width = (width < 20) ? 20 : width;
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", buffer /*mSearchText*/, MAX_SEARCH, false, width);
+		EGUI::Display::TextField("##Search", buffer /*mSearchText*/, MAX_SEARCH, false, width);
 		EGUI::ChangeLabelSpacing();
 		EGUI::Display::HorizontalSeparator();
 	}
@@ -175,6 +175,7 @@ namespace Editor
 
 	void HierarchyView::CreatePopup()
 	{
+		//TODO
 		if (EGUI::Display::StartPopup(mPopupID.c_str()))
 		{
 			if (EGUI::Display::SelectableTxt("GameObject"))
@@ -369,7 +370,7 @@ namespace Editor
 			if (_obj.GetID() == id)
 				return;
 
-		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+		if (const auto id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
 			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id);
 			if (t)
