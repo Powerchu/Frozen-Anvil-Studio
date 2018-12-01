@@ -39,6 +39,8 @@ namespace Dystopia
 		Tags GetTag(HashString const & _TagName) const;
 
 		void RemoveTag(HashString const & _TagName) const;
+		
+		void EditorUI(void);
 
 		AutoArray < std::string > GetAllTagsName() const;
 

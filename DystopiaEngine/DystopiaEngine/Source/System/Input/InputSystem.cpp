@@ -279,6 +279,7 @@ float Dystopia::InputManager::GetMouseWheel(void) const noexcept
 
 void Dystopia::InputManager::EditorUI()
 {
+
 }
 
 Dystopia::InputManager::KeyBinding& Dystopia::InputManager::KeyBinding::operator = (eButton _nBtn)

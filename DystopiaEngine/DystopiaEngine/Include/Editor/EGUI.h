@@ -187,7 +187,7 @@ namespace EGUI
 				static float sz2 = 300;
 				EGUI::Display::Splitter(true, 8.0f, &sz1, &sz2, 8, 8, h);
 		======================================================================================================================= */
-		// bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f);
+		bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f);
 		/* =======================================================================================================================
 		Brief:
 				Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked.

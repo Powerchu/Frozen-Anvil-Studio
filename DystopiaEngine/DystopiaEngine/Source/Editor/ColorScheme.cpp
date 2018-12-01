@@ -62,8 +62,8 @@ bool Editor::ColorScheme::Init(void)
 	mArrColors[eCOLOR_DATA_HeaderHovered]  = Math::Vec4{ 0.858f, 0.118f, 0.257f, 0.8f };
 	mArrColors[eCOLOR_DATA_HeaderActive]  = Math::Vec4{ 1, 0.102f, 0.27f, 1 };
 	mArrColors[eCOLOR_DATA_Separator]  = Math::Vec4{ 0.195f, 0.195f, 0.195f, 1 };
-	mArrColors[eCOLOR_DATA_SeparatorHovered]  = Math::Vec4{ 0.1f, 0.4f, 0.75f, 0 };
-	mArrColors[eCOLOR_DATA_SeparatorActive]  = Math::Vec4{ 0.1f, 0.4f, 0.75f, 0 };
+	mArrColors[eCOLOR_DATA_SeparatorHovered]  = Math::Vec4{ 0.395f, 0.395f, 0.395f, 1 };
+	mArrColors[eCOLOR_DATA_SeparatorActive]  = Math::Vec4{ 0.595f, 0.595f, 0.595f, 1 };
 	mArrColors[eCOLOR_DATA_Resizer]  = Math::Vec4{ 0.26f, 0.59f, 0.98f, 0 };
 	mArrColors[eCOLOR_DATA_ResizerHovered]  = Math::Vec4{ 0.36f, 0.36f, 0.36f, 1 };
 	mArrColors[eCOLOR_DATA_ResizerActive]  = Math::Vec4{ 0.26f, 0.26f, 0.26f, 1 };
