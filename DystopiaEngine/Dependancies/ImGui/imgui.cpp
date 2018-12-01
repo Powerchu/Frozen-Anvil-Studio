@@ -9817,7 +9817,8 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* v, floa
     const ImGuiID id = window->GetID(label);
     const float w = CalcItemWidth();
 
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    ImVec2 label_size = CalcTextSize(label, NULL, true);
+	label_size.x = 0;
     const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y*2.0f));
     const ImRect inner_bb(frame_bb.Min + style.FramePadding, frame_bb.Max - style.FramePadding);
     const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));

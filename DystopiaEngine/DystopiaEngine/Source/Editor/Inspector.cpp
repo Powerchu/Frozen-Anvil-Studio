@@ -188,14 +188,14 @@ namespace Editor
 		//uID += "##";
 		//uID += mpFocus->GetID();
 		//EGUI::Display::Dummy(0.f, 25.f);
-		EGUI::SameLine(0, 0);
-		EGUI::ChangeAlignmentYOffset(5);
+		//EGUI::SameLine(0, 0);
+		//EGUI::ChangeAlignmentYOffset(5);
 		if (EGUI::Display::StartTreeNode(uID.c_str(), nullptr, false, false, true, true))
 		{
 			tempTransform.EditorUI();
 			EGUI::Display::EndTreeNode();
 		}
-		EGUI::ChangeAlignmentYOffset();
+		//EGUI::ChangeAlignmentYOffset();
 
 		auto& arrComp = mpFocus->GetAllComponents();
 		for (unsigned int i = 0; i < arrComp.size(); ++i)
@@ -212,7 +212,7 @@ namespace Editor
 			HashString uID2{ arrComp[i]->GetEditorName().c_str() };
 			//uID2 += "##";
 			//uID2 += mpFocus->GetID();
-			EGUI::SameLine(5, 0);
+			//EGUI::SameLine(5, 0);
 			bool open = EGUI::Display::StartTreeNode(uID2.c_str(), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(arrComp[i]);
 
@@ -240,7 +240,7 @@ namespace Editor
 		{
 			auto c = arrBehav[k];
 			EGUI::PushID(k + static_cast<int>(arrComp.size()));
-			EGUI::Display::Dummy(4.f, 2.f);
+			//EGUI::Display::Dummy(4.f, 2.f);
 			EGUI::Display::HorizontalSeparator();
 			if (!c) continue;
 
@@ -252,7 +252,7 @@ namespace Editor
 			HashString uID3{ c->GetBehaviourName() };
 			//uID3 += "##";
 			//uID3 += mpFocus->GetID();
-			EGUI::SameLine(5, 0);
+			//EGUI::SameLine(5, 0);
 			bool open = EGUI::Display::StartTreeNode(uID3.c_str(), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(c);
 			if (open)
