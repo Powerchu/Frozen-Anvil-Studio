@@ -42,7 +42,7 @@ bool Editor::ProjectSettings::Init(void)
 	mpGfxSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>();
 	mpPhySys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::PhysicsSystem>();
 	mpInputSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::InputManager>();
-	//mpTagSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::TagSystem>();
+	mpTagSystem = Dystopia::EngineCore::GetInstance()->Get<Dystopia::TagSystem>();
 	return true;
 }
 
