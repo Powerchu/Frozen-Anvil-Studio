@@ -124,22 +124,22 @@ private:
 
 };
 
-bool operator==(const OString& _lhs, const OString& _rhs);
-bool operator==(const OString& _lhs, const char * _rhs);
-bool operator==(const char * _lhs, const OString& _rhs);
-bool operator==(HashID _id, const OString& _rhs);
-bool operator==(const OString& _lhs, HashID _id);
-bool operator==(OString&& _lhs, OString&& _rhs);
-bool operator==(const OString& _lhs, OString&& _rhs);
-bool operator==(OString&& _lhs, const OString& _rhs);
-bool operator!=(const OString& _lhs, const OString& _rhs);
-bool operator<(const OString& _lhs, const OString& _rhs);
-bool operator>(const OString& _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator==(const OString& _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator==(const OString& _lhs, const char * _rhs);
+_DLL_EXPORT_ONLY bool operator==(const char * _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator==(HashID _id, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator==(const OString& _lhs, HashID _id);
+_DLL_EXPORT_ONLY bool operator==(OString&& _lhs, OString&& _rhs);
+_DLL_EXPORT_ONLY bool operator==(const OString& _lhs, OString&& _rhs);
+_DLL_EXPORT_ONLY bool operator==(OString&& _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator!=(const OString& _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator<(const OString& _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator>(const OString& _lhs, const OString& _rhs);
 std::ostream& operator<<(std::ostream& _os, const OString& _rhs);
 
-OString operator+(const OString& _lhs, const OString& _rhs);
-OString operator+(const OString& _lhs, const char*);
-OString operator+(const char*, const OString& _rhs);
+_DLL_EXPORT_ONLY OString operator+(const OString& _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY OString operator+(const OString& _lhs, const char*);
+_DLL_EXPORT_ONLY OString operator+(const char*, const OString& _rhs);
 
 
 
