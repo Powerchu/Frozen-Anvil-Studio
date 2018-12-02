@@ -94,7 +94,7 @@ namespace Editor
 
 	void GameView::EditorUI(void)
 	{
-		EGUI::UnIndent(2);
+		/*EGUI::UnIndent(2);
 		if (mpGameCamera)
 		{
 			if (EditorMain::GetInstance()->GetCurState() == eState::PLAY)
@@ -110,7 +110,7 @@ namespace Editor
 			EGUI::Display::Image(pTex->GetID(), mImgSize);
 			ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
 		}
-		EGUI::Indent(2);
+		EGUI::Indent(2);*/
 	}
 
 	void GameView::Shutdown(void)

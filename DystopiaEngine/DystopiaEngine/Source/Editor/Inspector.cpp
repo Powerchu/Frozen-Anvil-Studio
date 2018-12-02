@@ -148,7 +148,7 @@ namespace Editor
 			{
 				auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
 				const auto oFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, mpFocus->GetName());
-				const auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, HashString{ buffer });
+				const auto nFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, HashString{ static_cast<const char*>(buffer) });
 				cmd->FunctionCommand(mpFocus->GetID(), oFn, nFn);
 			}
 			auto arr = mpFocus->GetAllTags_str();
@@ -266,6 +266,7 @@ namespace Editor
 				}
 				EGUI::Display::EndTreeNode();
 			}
+			EGUI::PopID();
 		}
 	}
 
