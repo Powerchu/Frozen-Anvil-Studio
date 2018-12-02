@@ -111,6 +111,7 @@ namespace Dystopia
 
 		void EditorUI(void) noexcept override;
 		void EditorMasterCameraCheckbox();
+		void EditorDebugCheckbox();
 		void EditorProjectionDropdown();
 		void EditorOptions();
 

@@ -57,7 +57,9 @@ Dystopia::Camera::~Camera(void)
 
 void Dystopia::Camera::Awake(void)
 {
-	//SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
+	if (nullptr == mpSurface)
+		SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
+	
 	SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
 }
 
@@ -139,10 +141,10 @@ void Dystopia::Camera::SetPerspective(Math::Angle _fFOV, float _fAspectRatio, fl
 	float fDist = 1.f / std::tanf(_fFOV.Radians() * .5f);
 
 	mProjection = Math::Matrix4{
-		fDist * _fAspectRatio, .0f  , .0f          , .0f,
-		.0f                  , fDist, .0f          , .0f,
-		.0f                  , .0f  , -2.f * fDistZ, (_fFar + _fNear) * fDistZ,
-		.0f                  , .0f  , -1.f         , .0f
+		fDist * _fAspectRatio, .0f		, .0f				, .0f,
+		.0f                  , -fDist	, .0f				, .0f,
+		.0f                  , .0f		, -2.f * fDistZ		, (_fFar + _fNear) * fDistZ,
+		.0f                  , .0f		, -1.f				, .0f
 	};
 }
 
@@ -153,10 +155,10 @@ void Dystopia::Camera::SetPerspective(float _fLeft, float _fRight, float _fTop, 
 	float fHeight = 1.f / (_fTop - _fBottom);
 
 	mProjection = Math::Matrix4{
-		(2.f * _fNear) * fWidth, .0f                     , (_fRight + _fLeft) * fWidth , .0f,
-		.0f                    , (2.f * _fNear) * fHeight, (_fTop + _fBottom) * fHeight, .0f,
-		.0f                    , .0f                     , -(_fFar + _fNear) * fDistZ  , 2.f * _fFar * _fNear * fDistZ,
-		.0f                    , .0f                     , -1.f                        , .0f
+		(2.f * _fNear) * fWidth, .0f						, (_fRight + _fLeft) * fWidth  , .0f,
+		.0f                    , -(2.f * _fNear) * fHeight	, (_fTop + _fBottom) * fHeight , .0f,
+		.0f                    , .0f						, -(_fFar + _fNear) * fDistZ   , 2.f * _fFar * _fNear * fDistZ,
+		.0f                    , .0f						, -1.f                         , .0f
 	};
 }
 
@@ -278,6 +280,7 @@ void Dystopia::Camera::EditorUI(void) noexcept
 #if EDITOR
 	EGUI::PushLeftAlign(120.f);
 	EditorMasterCameraCheckbox();
+	EditorDebugCheckbox();
 	EditorProjectionDropdown();
 	EGUI::PopLeftAlign();
 	EditorOptions();
@@ -291,9 +294,18 @@ void Dystopia::Camera::EditorMasterCameraCheckbox()
 	const auto masterCam = EngineCore::GetInstance()->Get<CameraSystem>()->GetMasterCamera();
 	bool isMaster = (masterCam == this);
 
-	if (EGUI::Display::CheckBox("Master Camera?", &isMaster))
+	if (EGUI::Display::CheckBox("Master Camera", &isMaster))
 	{
 		EngineCore::GetInstance()->Get<CameraSystem>()->SetMasterCamera(this);
+	}
+}
+
+void Dystopia::Camera::EditorDebugCheckbox()
+{
+	bool tempBool = mbDebugDraw;
+	if (EGUI::Display::CheckBox("Debug Draw", &tempBool))
+	{
+		SetDebugDraw(tempBool);
 	}
 }
 
@@ -413,7 +425,7 @@ void Dystopia::Camera::EditorOptions(void)
 		}
 		break;
 	}
-	EGUI::SameLine(8);
+	EGUI::SameLine(2);
 	EGUI::ChangeAlignmentYOffset(0);
 	switch (EGUI::Display::DragFloat("Far", &mClippingPlane.mnFar, 0.01f, mClippingPlane.mnNear+0.01f, FLT_MAX, false, 100.f))
 	{

@@ -461,7 +461,7 @@ void Editor::EditorStates::PromptSaveN(void)
 			EGUI::Display::CloseCurrentPopup();
 		}
 		EGUI::SameLine(15);
-		if (EGUI::Display::Button("Don't save"))
+		if (EGUI::Display::Button("Don't Save", {70,24}))
 		{
 			New();
 			mbNewAttempt = false;
@@ -603,7 +603,7 @@ void Editor::EditorStates::PromptSaveO(void)
 			EGUI::Display::CloseCurrentPopup();
 		}
 		EGUI::SameLine(15);
-		if (EGUI::Display::Button("Don't Save"))
+		if (EGUI::Display::Button("Don't Save", {70,24}))
 		{
 			mbLoadAttempt = false;
 			if (mPendingLoad.size())

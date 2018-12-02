@@ -207,6 +207,12 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer(void) const noex
 	return mViews[2];
 }
 
+Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetSceneView(void) const noexcept
+{
+	return mViews[3];
+}
+
+
 Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetView(int _n) const
 {
 	return mViews[_n];
@@ -544,7 +550,8 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 #endif 
 
 		// If the camera is inactive, skip
-		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
+		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE
+			&& Cam.GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
 			Cam.SetCamera();
 			Math::Matrix4 View = Cam.GetViewMatrix();

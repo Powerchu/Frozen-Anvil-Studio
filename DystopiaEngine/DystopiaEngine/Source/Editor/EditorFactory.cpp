@@ -125,14 +125,14 @@ void Editor::EditorFactory::DefaultSceneCamera(void)
 	auto pCore = Dystopia::EngineCore::GetInstance();
 	auto& scene = pCore->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
 	auto cam = pCore->GetSystem<Dystopia::CameraSystem>()->RequestComponent();
-	cam->SetSurface(&(pCore->GetSystem<Dystopia::GraphicsSystem>()->GetView(3)));
+	cam->SetSurface(&pCore->GetSystem<Dystopia::GraphicsSystem>()->GetSceneView());
 
 	Dystopia::GameObject *pObject = scene.InsertGameObject(Dystopia::GUIDGenerator::GetUniqueID());
 	pObject->SetName("___Scene_Camera___");
-	pObject->SetActive(true);
 	pObject->AddComponent(cam, typename Dystopia::Camera::TAG{});
 	pObject->Identify();
 	pObject->SetFlag(Dystopia::eObjFlag::FLAG_ALL_LAYERS);
+	pObject->SetActive(true);
 	cam->Awake();
 }
 
@@ -141,11 +141,27 @@ void Editor::EditorFactory::DefaultGameCamera(void)
 	const auto pCore = Dystopia::EngineCore::GetInstance();
 	auto& scene = pCore->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
 	auto cam = pCore->GetSystem<Dystopia::CameraSystem>()->RequestComponent();
-	cam->SetSurface(&(pCore->GetSystem<Dystopia::GraphicsSystem>()->GetView(2)));
+	cam->SetSurface(&pCore->GetSystem<Dystopia::GraphicsSystem>()->GetGameView());
 	cam->SetMasterCamera();
 
 	Dystopia::GameObject *pObject = scene.InsertGameObject(Dystopia::GUIDGenerator::GetUniqueID());
 	pObject->SetName("Main Camera");
+	pObject->AddComponent(cam, typename Dystopia::Camera::TAG{});
+	pObject->Identify();
+	pObject->SetFlag(Dystopia::eObjFlag::FLAG_ALL_LAYERS);
+	pObject->SetActive(true);
+	cam->Awake();
+}
+
+void Editor::EditorFactory::DefaultUICamera(void)
+{
+	const auto pCore = Dystopia::EngineCore::GetInstance();
+	auto& scene = pCore->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	auto cam = pCore->GetSystem<Dystopia::CameraSystem>()->RequestComponent();
+	cam->SetSurface(&pCore->GetSystem<Dystopia::GraphicsSystem>()->GetUIView());
+
+	Dystopia::GameObject *pObject = scene.InsertGameObject(Dystopia::GUIDGenerator::GetUniqueID());
+	pObject->SetName("UI Canvas");
 	pObject->AddComponent(cam, typename Dystopia::Camera::TAG{});
 	pObject->Identify();
 	pObject->SetFlag(Dystopia::eObjFlag::FLAG_ALL_LAYERS);

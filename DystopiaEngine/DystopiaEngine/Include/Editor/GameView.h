@@ -39,6 +39,10 @@ namespace Editor
 		void Load(void);
 		bool Init(void);
 		void Update(float);
+		void AdjustImageSize(Dystopia::Texture* texture);
+		void AdjustDisplayPos();
+		Math::Vec2 GetAdjustedRatio(float _sX, float _sY, float _iX, float _iY);
+		Math::Vec2 GetAdjustedPosition(float _sX, float _sY, float _iX, float _iY);
 		void EditorUI(void);
 		void Shutdown(void);
 		void Message(eEMessage);
@@ -54,11 +58,13 @@ namespace Editor
 		Dystopia::Camera			*mpGameCamera = nullptr;
 		Dystopia::GraphicsSystem	*mpGfxSys = nullptr;
 		Dystopia::SceneSystem		*mpSceneSys = nullptr;
+		Dystopia::CameraSystem		*mpCamSys = nullptr;
+
+		Math::Vec2	mImgSize;
+		Math::Vec2	mImgPos;
 
 		Dystopia::Camera*		GetCamera();
-
-	
-		void		SceneChanged();
+		void					SceneChanged();
 	};
 
 }
