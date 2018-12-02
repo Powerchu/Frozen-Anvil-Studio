@@ -130,6 +130,7 @@ void Editor::EditorFactory::DefaultSceneCamera(void)
 	Dystopia::GameObject *pObject = scene.InsertGameObject(Dystopia::GUIDGenerator::GetUniqueID());
 	pObject->SetName("Scene Camera");
 	pObject->SetActive(true);
+	cam->SetActive(true);
 	pObject->AddComponent(cam, typename Dystopia::Camera::TAG{});
 	pObject->Identify();
 	pObject->SetFlag(Dystopia::eObjFlag::FLAG_ALL_LAYERS);
