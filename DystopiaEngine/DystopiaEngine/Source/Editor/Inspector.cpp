@@ -186,8 +186,8 @@ namespace Editor
 
 		Dystopia::Transform& tempTransform = *mpFocus->GetComponent<Dystopia::Transform>();
 		HashString uID{ tempTransform.GetEditorName().c_str() };
-		uID += "##";
-		uID += mpFocus->GetID();
+		//uID += "##";
+		//uID += mpFocus->GetID();
 		EGUI::Display::Dummy(0.f, 25.f);
 		EGUI::SameLine(0, 0);
 		EGUI::ChangeAlignmentYOffset(5);
@@ -196,7 +196,7 @@ namespace Editor
 			tempTransform.EditorUI();
 			EGUI::Display::EndTreeNode();
 		}
-		EGUI::ChangeAlignmentYOffset();
+		//EGUI::ChangeAlignmentYOffset();
 
 		auto& arrComp = mpFocus->GetAllComponents();
 		for (unsigned int i = 0; i < arrComp.size(); ++i)
@@ -212,8 +212,8 @@ namespace Editor
 			};
 
 			HashString uID2{ arrComp[i]->GetEditorName().c_str() };
-			uID2 += "##";
-			uID2 += mpFocus->GetID();
+			//uID2 += "##";
+			//uID2 += mpFocus->GetID();
 			EGUI::SameLine(5, 0);
 			bool open = EGUI::Display::StartTreeNode(uID2.c_str(), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(arrComp[i]);
@@ -232,6 +232,8 @@ namespace Editor
 		for (auto & c : arrBehav)
 		{
 			auto activeState = c->IsActive();
+			auto c = arrBehav[k];
+			EGUI::PushID(k + static_cast<int>(arrComp.size()));
 			EGUI::Display::Dummy(4.f, 2.f);
 			EGUI::Display::HorizontalSeparator();
 			if (!c) continue;
@@ -242,8 +244,8 @@ namespace Editor
 			};
 
 			HashString uID3{ c->GetBehaviourName() };
-			uID3 += "##";
-			uID3 += mpFocus->GetID();
+			//uID3 += "##";
+			//uID3 += mpFocus->GetID();
 			EGUI::SameLine(5, 0);
 			bool open = EGUI::Display::StartTreeNode(uID3.c_str(), nullptr, false, false, true, true);
 			bool show = !RemoveComponent(c);
@@ -350,9 +352,9 @@ namespace Editor
 			EGUI::Display::TextField("Creator   :", mBufferCreator, MAX_BUFFER_SIZE);
 			EGUI::Display::TextField("Login ID  :", mBufferLogin, MAX_BUFFER_SIZE);
 
-			mPromptCreateBehaviour = ((mBufferInput[0] != '\0') &&
-				(mBufferCreator[0] != '\0') &&
-				(mBufferLogin[0] != '\0')) ? true : false;
+			mPromptCreateBehaviour = ((mBufferInput[0] != '\0') && 
+									  (mBufferCreator[0] != '\0') && 
+									  (mBufferLogin[0] != '\0')) ? true : false;
 
 			if (EGUI::Display::Button("Close"))
 			{
@@ -372,9 +374,9 @@ namespace Editor
 		if (EGUI::Display::Button("Create"))
 		{
 			EGUI::Display::CloseCurrentPopup();
-			GenerateScript(std::string{ mBufferInput },
-				std::string{ mBufferCreator },
-				std::string{ mBufferLogin });
+			GenerateScript(std::string{ mBufferInput }, 
+						   std::string{ mBufferCreator }, 
+						   std::string{ mBufferLogin });
 			ResetBehaviourCreation();
 		}
 	}

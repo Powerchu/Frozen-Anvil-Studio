@@ -133,9 +133,9 @@ namespace EGUI
 	EGUI::EndChild();
 	======================================================================================================================= */
 	// Call to Start Child window in the current window you are in 
-	bool StartChild(const char*, const Math::Vec2& = { 0, 0 }, bool _showBorder = true);
+	bool StartChild(const char*, const Math::Vec2& = { 0, 0 }, bool _showBorder = true, bool _noScroll = false);
 	// Call to Start Child window in the current window you are in 
-	bool StartChild(const char*, const float& = 0, const float& = 0, bool _showBorder = true);
+	bool StartChild(const char*, const float& = 0, const float& = 0, bool _showBorder = true, bool _noScroll = false);
 	// Call to end the child window and proceed back to the parent window
 	void EndChild();
 

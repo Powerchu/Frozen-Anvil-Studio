@@ -118,6 +118,12 @@ void Dystopia::Camera::SetSurface(Framebuffer* _ptr)
 	mpSurface = _ptr;
 }
 
+void Dystopia::Camera::SetSurface(int _i)
+{
+	mnSurfaceID = _i;
+	SetSurface(&EngineCore::Get<GraphicsSystem>()->GetView(_i));
+}
+
 void Dystopia::Camera::SetViewport(float _x, float _y, float _nWidth, float _nHeight)
 {
 #if EDITOR
@@ -281,6 +287,15 @@ void Dystopia::Camera::EditorUI(void) noexcept
 	EGUI::PushLeftAlign(120.f);
 	EditorMasterCameraCheckbox();
 	EditorDebugCheckbox();
+
+	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
+	int surfaceID = mnSurfaceID;
+	if (EGUI::Display::DropDownSelection<21>("Surface", surfaceID, 4))
+	{
+		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Camera, int>(&Camera::SetSurface, mnSurfaceID),
+										   cmd->MakeFnCommand<Camera, int>(&Camera::SetSurface, surfaceID));
+	}
+
 	EditorProjectionDropdown();
 	EGUI::PopLeftAlign();
 	EditorOptions();
