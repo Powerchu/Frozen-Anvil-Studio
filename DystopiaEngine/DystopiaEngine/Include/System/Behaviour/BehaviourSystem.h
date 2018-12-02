@@ -170,7 +170,7 @@ namespace Dystopia
 				{
 					_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
 					_EDITOR_CODE(_GameObj->RemoveComponent(BehaveElem));
-					_EDITOR_CODE(BehaveElem->DestroyComponent());
+					_EDITOR_CODE(BehaveElem->DestroyComponent()); 
 				}
 
 			}
