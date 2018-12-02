@@ -156,8 +156,8 @@ namespace Dystopia
 		{
 			if (!_GameObj)
 				return;
+			
 			uint64_t _ID = _GameObj->GetID();
-			BehaviourMessage Message(_FuncParams...);
 
 			auto Array = _GameObj->GetAllBehaviours();
 			for (auto & BehaveElem : Array)
