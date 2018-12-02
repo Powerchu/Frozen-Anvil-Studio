@@ -66,7 +66,7 @@ namespace Dystopia
 
 		FileSys->CreateFiles("Dystopia/Temp", eFileDir::eAppData);
 		FileSys->CreateFiles("Behaviours/BehavioursScripts", eFileDir::eResource);
-		std::string PipePath = FileSys->GetProjectFolders<std::string>(eFileDir::eCurrent) + "\\Resource\\Piping\\BehaviourPiping.exe";
+		std::string PipePath = FileSys->GetProjectFolders<std::string>(eFileDir::eSolution) + "\\Resource\\Piping\\BehaviourPiping.exe";
 		mHotloader->SetPipeExePath(std::wstring{PipePath.begin(), PipePath.end()});
 
 #if _DEBUG
@@ -209,6 +209,8 @@ namespace Dystopia
 						if (BehaviourClone)
 						{
 							elem.mpBehaviour = BehaviourClone();
+							if (elem.mpBehaviour == nullptr)
+								__debugbreak();
 							found = true;
 
 							mvRecentChanges.Insert(&elem);
@@ -326,16 +328,41 @@ namespace Dystopia
 		//static AutoArray<std::pair<uint64_t, Behaviour*>*> ToRemove;
 		for (auto & i : mvBehaviours)
 		{
-			for (auto & iter : i.second)
+
+			for (size_t u = 0; u < i.second.size(); ++u)
 			{
-				if(iter.second != nullptr)
-					if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
+				if (i.second[u].second)
+				{
+					if (eObjFlag::FLAG_REMOVE & i.second[u].second->GetFlags())
 					{
-						delete iter.second;
-						iter.second = nullptr;
-						i.second.FastRemove(&iter);
+						delete i.second[u].second;
+						i.second[u].second = nullptr;
+						i.second.FastRemove(&i.second[u]);
+						u--;
 					}
+				}
+				else
+				{
+					i.second.FastRemove(&i.second[u]);
+					u--;
+				}
+
 			}
+			//for (auto & iter : i.second)
+			//{
+			//	if (iter.second != nullptr)
+			//	{
+			//		if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
+			//		{
+			//			delete iter.second;
+			//			iter.second = nullptr;
+			//			i.second.FastRemove(&iter);
+			//		}
+			//	}
+				//else
+				//{
+				//	i.second.FastRemove(&iter);
+				//}
 		}
 #endif
 	}
@@ -588,7 +615,12 @@ namespace Dystopia
 				{
 					if (i.first == std::wstring{ _name.begin(), _name.end() })
 					{
-						auto * ptr = elem.mpBehaviour->Duplicate();
+#if _DEBUG
+						if (elem.mpBehaviour == nullptr) __debugbreak();
+#endif
+						Behaviour * ptr = nullptr;
+						if(elem.mpBehaviour != nullptr)
+							 ptr = elem.mpBehaviour->Duplicate();
 
 						i.second.push_back(std::make_pair(_ID, ptr));
 						return ptr;

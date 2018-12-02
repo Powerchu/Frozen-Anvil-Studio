@@ -68,12 +68,12 @@ namespace Editor
 		
 		// Instantiate New Main Camera
 		EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultGameCamera();
-
+		SetScrollEnabled(false);
 		//SceneChanged();
 		return true;
 	}
 
-	void GameView::Update(float _dt)
+	void GameView::Update(float)
 	{
 		if (mpCamSys->GetMasterCamera())
 		{
@@ -149,6 +149,10 @@ namespace Editor
 
 	void GameView::AdjustImageSize(Dystopia::Texture* texture)
 	{
+		/*const auto camSize = mpGameCamera->GetSize();
+		static const float aspect = camSize.x / camSize.y;
+		float ix = static_cast<float>(aspect * texture->GetWidth());
+		float iy = static_cast<float>(texture->GetHeight());*/
 		float sx = Size().x;
 		float sy = Size().y - EGUI::TabsImageOffsetY;
 

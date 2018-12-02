@@ -296,3 +296,5 @@ __pycache__/
 /DystopiaEngine/DystopiaEngine/Resource/Asset/NPCs
 /DystopiaEngine/DystopiaEngine/Resource/Asset/Skills
 /DystopiaEngine/DystopiaEngine/Resource/Asset/UI
+/DystopiaEngine/DystopiaEngine/Goblin.cpp
+/DystopiaEngine/DystopiaEngine/Goblin.h

@@ -138,7 +138,7 @@ namespace Dystopia
 			Task() = default;
 
 			Task(Blackboard::Ptr _blackboard) 
-				: mpBlackboard(std::move(_blackboard))
+				: mpBlackboard(Ut::Move(_blackboard))
 			{
 			
 			}
@@ -196,6 +196,11 @@ namespace Dystopia
 			void SetBlackboard(const Blackboard::Ptr &blackboard)
 			{
 				mpBlackboard = blackboard;
+			}
+
+			bool IsValidTree(void) const
+			{
+				return (mpRoot.GetRaw() != nullptr);
 			}
 
 		private:

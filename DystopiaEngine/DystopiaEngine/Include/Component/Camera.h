@@ -83,6 +83,8 @@ namespace Dystopia
 
 		// Set the area the camera renders to in relative coordinates, from 0.0 to 1.0
 		void SetViewport(float _x, float _y, float _nWidth, float _nHeight);
+		void SetViewAspect(const Math::Vec2& _xy);
+		void SetViewAspect(float _x, float _y);
 
 		void SetPerspective(Math::Angle _fFOV, float _fAspectRatio, float _fNear, float _fFar);
 		void SetPerspective(float _fLeft, float _fRight, float _fTop, float _fBottom, float _fNear, float _fFar);
@@ -94,14 +96,16 @@ namespace Dystopia
 
 		Math::Vec4 GetSize(void) const;
 
+		float GetAspectRatio(void) const;
+
 		Framebuffer* GetSurface(void) const noexcept;
 		const Gfx::Viewport GetViewport(void) const;
 		const Math::Matrix4& GetViewMatrix(void) noexcept;
 		const Math::Matrix4& GetProjectionMatrix(void) noexcept;
 
-		Camera* Duplicate(void) const;
-		void Serialise(TextSerialiser&) const;
-		void Unserialise(TextSerialiser&);
+		Camera* Duplicate(void) const override;
+		void Serialise(TextSerialiser&) const override;
+		void Unserialise(TextSerialiser&) override;
 
 		// Applies the camera bounds to screen
 		// and calculates the camera matrices
@@ -119,10 +123,12 @@ namespace Dystopia
 
 		// TODO 
 		bool mbDebugDraw;
+		int  mnProjectionIndex = 0;
 	private:
 
 		Gfx::Viewport mViewport;
 		Gfx::ClippingPlane mClippingPlane;
+		Gfx::ViewAspect mViewAspect;
 
 		Math::Mat4 mView;
 		Math::Mat4 mInvScreen;
@@ -130,7 +136,6 @@ namespace Dystopia
 
 		Framebuffer* mpSurface;
 		int mnSurfaceID;
-		int mnProjectionIndex = 0;
 
 		// Orthographic Stuff
 		float mfOrthoSize = 1.f;

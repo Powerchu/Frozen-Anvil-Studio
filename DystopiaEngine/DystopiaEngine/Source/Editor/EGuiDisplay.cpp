@@ -261,6 +261,11 @@ namespace EGUI
 			return SplitterBehavior(id, bb, split_vertically ? ImGuiAxis_X : ImGuiAxis_Y, size1, size2, min_size1, min_size2, 0.0f);
 		}
 
+		bool ColorButton(const char * desc_id, const Math::Vec4 & col, ImGuiColorEditFlags flags, Math::Vec2 size)
+		{
+			return ImGui::ColorButton(desc_id, ImVec4{col.x,col.y,col.z,col.w}, flags, ImVec2{size.x,size.y});
+		}
+
 		bool EmptyBox(const char * _label, float _width, const char *, bool _iteractive, bool _showLabel)
 		{
 			bool clicked = false;

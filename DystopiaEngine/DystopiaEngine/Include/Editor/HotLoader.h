@@ -62,10 +62,10 @@ namespace Dystopia
 
 		}
 		DLLWrapper(std::wstring _DllPathName, std::wstring _DllFileName,std::wstring _DLLFullPath, HMODULE _DllModule)
-			:mDllPathName{std::move(_DllPathName)},
-			mDllFileName{std::move(_DllFileName)},
+			:mDllPathName{Ut::Move(_DllPathName)},
+			mDllFileName{Ut::Move(_DllFileName)},
 			mDllModule{ _DllModule },
-			mDllFullPath{std::move(_DLLFullPath)}
+			mDllFullPath{Ut::Move(_DLLFullPath)}
 		{
 
 		}
@@ -419,7 +419,7 @@ namespace Dystopia
 				SearchAndReplaceDll(GenerateDllName(elem));
 				std::error_code err;
 				std::wstring wstrFolderName{ mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
-				if (std::filesystem::exists((mTempDllFile + L'/' + elem).c_str(), err) )
+				if (std::filesystem::exists(mTempDllFile + L'/' + elem, err) )
 					std::filesystem::copy(mTempDllFile + L'/' + elem, wstrFolderName, std::filesystem::copy_options::overwrite_existing);
 				
 			}
@@ -459,7 +459,7 @@ namespace Dystopia
 
 						if (dllModule != NULL)
 						{
-							auto pointer = mvDLL.Emplace(DllDir, DllName, Fullpath, std::move(dllModule));
+							auto pointer = mvDLL.Emplace(DllDir, DllName, Fullpath, Ut::Move(dllModule));
 
 							if (_pDLLWrapperBuffer && ChangeCount < size)
 								*(_pDLLWrapperBuffer + ChangeCount++) = pointer;

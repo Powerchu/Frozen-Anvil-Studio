@@ -26,7 +26,7 @@ namespace Dystopia
 		class HungerCheck : public Task
 		{
 		public:
-			HungerCheck(Blackboard::Ptr _ptr) : Task(std::move(_ptr)) {}
+			HungerCheck(Blackboard::Ptr _ptr) : Task(Ut::Move(_ptr)) {}
 			eStatus Update() override
 			{
 				const auto a = mpBlackboard->GetFloat("Hunger");
@@ -46,7 +46,7 @@ namespace Dystopia
 		class HaveFood : public Task
 		{
 		public:
-			HaveFood(Blackboard::Ptr _ptr) : Task(std::move(_ptr)) {}
+			HaveFood(Blackboard::Ptr _ptr) : Task(Ut::Move(_ptr)) {}
 			eStatus Update() override
 			{
 				if (mpBlackboard->GetInt("Food") == 0)
@@ -65,7 +65,7 @@ namespace Dystopia
 		class FindFood : public Task
 		{
 		public:
-			FindFood(Blackboard::Ptr _ptr) : Task(std::move(_ptr)) {}
+			FindFood(Blackboard::Ptr _ptr) : Task(Ut::Move(_ptr)) {}
 			eStatus Update() override
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "Finding Food");
@@ -79,7 +79,7 @@ namespace Dystopia
 		class EatFood : public Task
 		{
 		public:
-			EatFood(NeuralTree::Blackboard::Ptr _ptr) : Task(std::move(_ptr)) {}
+			EatFood(NeuralTree::Blackboard::Ptr _ptr) : Task(Ut::Move(_ptr)) {}
 			eStatus Update() override
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "Eating food");

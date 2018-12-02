@@ -62,7 +62,7 @@ namespace Dystopia
 			template<>
 			void operator()(std::string _v, TextSerialiser& _obj, void*)
 			{
-				_obj << static_cast<std::string>(std::move(_v));
+				_obj << static_cast<std::string>(Ut::Move(_v));
 			}
 			template<>
 			void operator()(const char * _v, TextSerialiser& _obj, void*)

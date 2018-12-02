@@ -284,11 +284,11 @@ void Dystopia::WindowManager::LoadSettings(DysSerialiser_t& _out)
 
 void Dystopia::WindowManager::SaveSettings(DysSerialiser_t& _in)
 {
-	_in << mbFullscreen;
+	_in << Gbl::FULLSCREEN;
 	_in << mWindowStyle;
 	_in << mWindowStyleEx;
-	_in << mWidth;
-	_in << mHeight;
+	_in << Gbl::WINDOW_WIDTH;
+	_in << Gbl::WINDOW_HEIGHT;
 }
 
 //void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
