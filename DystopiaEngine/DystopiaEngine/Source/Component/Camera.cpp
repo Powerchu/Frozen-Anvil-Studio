@@ -30,21 +30,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #if EDITOR
 #include "Editor/EGUI.h"
+#include "Editor/EditorMain.h"
 #include "Editor/EditorCommands.h"
 #endif
 
 #include <cmath>
 
 
+
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
-mViewport{ 0, 0, _fWidth, _fHeight }, mClippingPlane{ -500.f,500.f }, mView{}, mProjection{},
+mViewport{ 0, 0, _fWidth, _fHeight }, mView{}, mProjection{},
 mInvScreen{}, mpSurface{ nullptr }, mbDebugDraw{ false }, mnSurfaceID{ 0 }
 {
 
 }
 
 Dystopia::Camera::Camera(const Camera& _oOther) : Component{ _oOther },
-mViewport{ _oOther.mViewport }, mClippingPlane{ _oOther.mClippingPlane }, mView{}, mProjection{ _oOther.mProjection },
+mViewport{ _oOther.mViewport }, mView{}, mProjection{ _oOther.mProjection },
 mInvScreen{}, mpSurface{ _oOther.mpSurface }, mbDebugDraw{ _oOther.mbDebugDraw },
 mnSurfaceID{ _oOther.mnSurfaceID }
 {
@@ -57,10 +59,8 @@ Dystopia::Camera::~Camera(void)
 
 void Dystopia::Camera::Awake(void)
 {
-	if (nullptr == mpSurface)
-		SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
-
-	SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
+	SetSurface(&EngineCore::Get<GraphicsSystem>()->GetView(mnSurfaceID));
+	SetOrthographic(800.f, 500.f, -500.f, 500.f);
 }
 
 void Dystopia::Camera::Init(void)
@@ -91,8 +91,17 @@ void Dystopia::Camera::InitiallyActive(bool b)
 
 bool Dystopia::Camera::IsWithinCameraBounds(const Math::Pt3D& _vCoords) const
 {
-	return !(mViewport.mnX > _vCoords.x || mViewport.mnY > _vCoords.y || mViewport.mnX + mViewport.mnWidth < _vCoords.x
-		|| mViewport.mnY + mViewport.mnHeight < _vCoords.y);
+	if (
+		mViewport.mnX > _vCoords.x ||
+		mViewport.mnY > _vCoords.y ||
+		mViewport.mnX + mViewport.mnWidth < _vCoords.x ||
+		mViewport.mnY + mViewport.mnHeight < _vCoords.y
+		)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 
@@ -118,10 +127,10 @@ void Dystopia::Camera::SetSurface(Framebuffer* _ptr)
 	mpSurface = _ptr;
 }
 
-void Dystopia::Camera::SetSurface(int _i)
+void Dystopia::Camera::SetSurface(int _id)
 {
-	mnSurfaceID = _i;
-	SetSurface(&EngineCore::Get<GraphicsSystem>()->GetView(_i));
+	mnSurfaceID = _id;
+	SetSurface(&EngineCore::Get<GraphicsSystem>()->GetView(_id));
 }
 
 void Dystopia::Camera::SetViewport(float _x, float _y, float _nWidth, float _nHeight)
@@ -147,10 +156,10 @@ void Dystopia::Camera::SetPerspective(Math::Angle _fFOV, float _fAspectRatio, fl
 	float fDist = 1.f / std::tanf(_fFOV.Radians() * .5f);
 
 	mProjection = Math::Matrix4{
-		fDist * _fAspectRatio, .0f		, .0f				, .0f,
-		.0f                  , -fDist	, .0f				, .0f,
-		.0f                  , .0f		, -2.f * fDistZ		, (_fFar + _fNear) * fDistZ,
-		.0f                  , .0f		, -1.f				, .0f
+		fDist * _fAspectRatio, .0f  , .0f          , .0f,
+		.0f                  , fDist, .0f          , .0f,
+		.0f                  , .0f  , -2.f * fDistZ, (_fFar + _fNear) * fDistZ,
+		.0f                  , .0f  , -1.f         , .0f
 	};
 }
 
@@ -161,10 +170,10 @@ void Dystopia::Camera::SetPerspective(float _fLeft, float _fRight, float _fTop, 
 	float fHeight = 1.f / (_fTop - _fBottom);
 
 	mProjection = Math::Matrix4{
-		(2.f * _fNear) * fWidth, .0f						, (_fRight + _fLeft) * fWidth  , .0f,
-		.0f                    , -(2.f * _fNear) * fHeight	, (_fTop + _fBottom) * fHeight , .0f,
-		.0f                    , .0f						, -(_fFar + _fNear) * fDistZ   , 2.f * _fFar * _fNear * fDistZ,
-		.0f                    , .0f						, -1.f                         , .0f
+		(2.f * _fNear) * fWidth, .0f                     , (_fRight + _fLeft) * fWidth , .0f,
+		.0f                    , (2.f * _fNear) * fHeight, (_fTop + _fBottom) * fHeight, .0f,
+		.0f                    , .0f                     , -(_fFar + _fNear) * fDistZ  , 2.f * _fFar * _fNear * fDistZ,
+		.0f                    , .0f                     , -1.f                        , .0f
 	};
 }
 
@@ -178,7 +187,6 @@ void Dystopia::Camera::SetOrthographic(float _fWidth, float _fHeight, float _fNe
 		.0f          , .0f               , -2.f * fDistZ, (_fNear + _fFar) * fDistZ,
 		.0f          , .0f               , .0f          , 1.f
 	};
-
 }
 
 
@@ -203,12 +211,6 @@ void Dystopia::Camera::SetCamera(void)
 void Dystopia::Camera::SetDebugDraw(bool _bDebugDraw) noexcept
 {
 	mbDebugDraw = _bDebugDraw;
-}
-
-void Dystopia::Camera::SetSize(float _scale) const
-{
-	const float z = GetSize().z;
-	GetOwner()->GetComponent<Transform>()->SetScale(_scale, _scale, z);
 }
 
 bool Dystopia::Camera::DrawDebug(void) const noexcept
@@ -280,6 +282,7 @@ void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 	_in >> mbDebugDraw;
 	_in.ConsumeEndBlock();
 }
+
 #if EDITOR
 void Dystopia::Camera::EditorUI(void) noexcept
 {
@@ -293,7 +296,7 @@ void Dystopia::Camera::EditorUI(void) noexcept
 	if (EGUI::Display::DropDownSelection<21>("Surface", surfaceID, 4))
 	{
 		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Camera, int>(&Camera::SetSurface, mnSurfaceID),
-			cmd->MakeFnCommand<Camera, int>(&Camera::SetSurface, surfaceID));
+		cmd->MakeFnCommand<Camera, int>(&Camera::SetSurface, surfaceID));
 	}
 
 	EditorProjectionDropdown();
@@ -552,5 +555,6 @@ void Dystopia::Camera::EditorOptions(void)
 }
 
 #endif
+
 
 

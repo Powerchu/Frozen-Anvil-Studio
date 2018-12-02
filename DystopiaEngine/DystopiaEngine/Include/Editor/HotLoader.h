@@ -419,7 +419,7 @@ namespace Dystopia
 				SearchAndReplaceDll(GenerateDllName(elem));
 				std::error_code err;
 				std::wstring wstrFolderName{ mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
-				if (std::filesystem::exists(/*(mTempDllFile + L'/' + elem, */wstrFolderName.c_str(), err) )
+				if (std::filesystem::exists((mTempDllFile + L'/' + elem).c_str(), err))
 					std::filesystem::copy(mTempDllFile + L'/' + elem, wstrFolderName, std::filesystem::copy_options::overwrite_existing);
 				
 			}
@@ -538,7 +538,7 @@ namespace Dystopia
 
 		void CompileFiles(unsigned _Index, std::wstring const & _FileName, bool _totemp = false)
 		{
-			static char buffer[1024];
+			char buffer[1024];
 			/*Search for exisiting opened DLL and close them to allow cl.exe to override*/
 			//SearchAndReplaceDll(GenerateDllName(_FileName));
 
@@ -628,7 +628,6 @@ namespace Dystopia
 					char outbuffer[mPipeBuffSize]{0};
 					while (ReadFile(mPipeHandle, outbuffer, mPipeBuffSize, NULL, NULL))
 					{
-
 						DEBUG_PRINT(eLog::WARNING, outbuffer);
 					}
 

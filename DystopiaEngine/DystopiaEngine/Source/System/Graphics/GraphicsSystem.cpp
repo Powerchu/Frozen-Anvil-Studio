@@ -4,9 +4,9 @@
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	BRIEF HERE
+BRIEF HERE
 
-	TODO: Draw batching.
+TODO: Draw batching.
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -210,12 +210,6 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer(void) const noex
 	return mViews[2];
 }
 
-Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetSceneView(void) const noexcept
-{
-	return mViews[3];
-}
-
-
 Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetView(int _n) const
 {
 	return mViews[_n];
@@ -239,10 +233,10 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	pWinSys->GetMainWindow().CenterWindow();
 
 	Math::Matrix4 View{}, Project{
-			2.f / w, .0f, .0f, .0f,
-			.0f, 2.f / h, .0f, .0f,
-			.0f, .0f, .0f, .0f,
-			.0f, .0f, .0f, 1.f
+		2.f / w, .0f, .0f, .0f,
+		.0f, 2.f / h, .0f, .0f,
+		.0f, .0f, .0f, .0f,
+		.0f, .0f, .0f, 1.f
 	};
 
 	glViewport(0, 0, w, h);
@@ -287,7 +281,7 @@ namespace
 
 		_renderer->Draw();
 
-		if(t) t->Unbind();
+		if (t) t->Unbind();
 	}
 }
 
@@ -414,7 +408,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 	Shader* s = shaderlist["Collider Shader"];
-	
+
 	s->Bind();
 	s->UploadUniform("ViewMat", _View);
 	s->UploadUniform("ProjectMat", _Proj);
@@ -432,15 +426,15 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 #endif 
 		GameObject* pOwner = Obj->GetOwner();
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
-		{		
-			if(Obj->GetColliderType() != eColliderType::CIRCLE)
+		{
+			if (Obj->GetColliderType() != eColliderType::CIRCLE)
 				s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix() * Math::Translate(Obj->GetOffSet())  * Obj->GetTransformationMatrix());
 			else
 			{
-				auto pos    = pOwner->GetComponent<Transform>()->GetGlobalPosition();
+				auto pos = pOwner->GetComponent<Transform>()->GetGlobalPosition();
 				auto scaleV = pOwner->GetComponent<Transform>()->GetScale();
 				//auto LocalScale = Math::Scale(scaleV.x, scaleV.y);
-				auto scale  = Math::Abs(scaleV[0]) > Math::Abs(scaleV[1]) ? Math::Abs(scaleV[0]) : Math::Abs(scaleV[1]);
+				auto scale = Math::Abs(scaleV[0]) > Math::Abs(scaleV[1]) ? Math::Abs(scaleV[0]) : Math::Abs(scaleV[1]);
 				auto scaleM = Math::Scale(scale, scale);
 				auto Translation = Math::Translate(pos.x, pos.y);
 				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(scaleV*Obj->GetOffSet()) * scaleM * Obj->GetTransformationMatrix());
@@ -491,8 +485,8 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 		EngineCore::GetInstance()->Get<TextureSystem>()->EditorUpdate();
 
 #		if defined(_DEBUG) | defined(DEBUG)
-			if (auto err = glGetError())
-				__debugbreak();
+		if (auto err = glGetError())
+			__debugbreak();
 #		endif 
 	}
 #   endif
@@ -505,31 +499,31 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 	/*
 	for (auto& e : mViews)
 	{
-		e.Bind();
-		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-		e.Unbind();
+	e.Bind();
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	e.Unbind();
 	}
 
-	// Do batching, depth sorting and grouping of translucent elements. 
+	// Do batching, depth sorting and grouping of translucent elements.
 	for (auto& e : ComponentDonor<Renderer>::mComponents)
 	{
-		auto flags = e.GetFlags();
+	auto flags = e.GetFlags();
 
-#   if EDITOR
-		if (flags & eObjFlag::FLAG_EDITOR_OBJ)
-			continue;
-#   endif
+	#   if EDITOR
+	if (flags & eObjFlag::FLAG_EDITOR_OBJ)
+	continue;
+	#   endif
 
-		if (flags & eObjFlag::FLAG_RESERVED)
-		{
-			// Remove the object from the pool
+	if (flags & eObjFlag::FLAG_RESERVED)
+	{
+	// Remove the object from the pool
 
-			// Modify the object's status in the render pool
-			if (flags & eObjFlag::FLAG_ACTIVE)
-			{
-				// Add the object back in, into the correct spot
-			}
-		}
+	// Modify the object's status in the render pool
+	if (flags & eObjFlag::FLAG_ACTIVE)
+	{
+	// Add the object back in, into the correct spot
+	}
+	}
 	}
 	*/
 
@@ -553,8 +547,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 #endif 
 
 		// If the camera is inactive, skip
-		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE
-			&& Cam.GetFlags() & eObjFlag::FLAG_ACTIVE)
+		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
 			Cam.SetCamera();
 			Math::Matrix4 View = Cam.GetViewMatrix();
@@ -563,16 +556,16 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			auto surface = Cam.GetSurface();
 			auto vp = Cam.GetViewport();
 
-			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY), 
-					   static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
+			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY),
+				static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
 
 			// Temporary code
 			surface->Bind();
 			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 			DrawScene(Cam, View, Proj);
-			
-			 if (Cam.DrawDebug())
+
+			if (Cam.DrawDebug())
 				DrawDebug(Cam, View, Proj);
 
 			// surface->Unbind();
@@ -801,14 +794,14 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	// Use to specify the color format we want and openGL support
 	PIXELFORMATDESCRIPTOR pfd{};
 
-	pfd.nSize		 = sizeof(PIXELFORMATDESCRIPTOR);	// Windows requirement
-	pfd.nVersion	 = 1;								// Windows requirement
-	pfd.dwFlags		 = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW;
-	pfd.iPixelType	 = PFD_TYPE_RGBA;
-	pfd.cColorBits	 = 32;
-	pfd.cDepthBits	 = 24;
+	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);	// Windows requirement
+	pfd.nVersion = 1;								// Windows requirement
+	pfd.dwFlags = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW;
+	pfd.iPixelType = PFD_TYPE_RGBA;
+	pfd.cColorBits = 32;
+	pfd.cDepthBits = 24;
 	pfd.cStencilBits = 8;
-	pfd.iLayerType	 = PFD_MAIN_PLANE;
+	pfd.iLayerType = PFD_MAIN_PLANE;
 
 	// Ask windows to give us a pixel format based on what we asked for
 	int nPxFormat = ChoosePixelFormat(_window.GetDeviceContext(), &pfd);
@@ -880,7 +873,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	}
 
 	glEnable(GL_BLEND);
-//	glEnable(GL_DEPTH_TEST);
+	//	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LINE_SMOOTH);
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -898,8 +891,8 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 		WGL_CONTEXT_FLAGS_ARB, 0,
 		0
 	};
-	mOpenGL		= nullptr;
-	mAvailable	= eGfxSettings::GRAPHICS_ALL;
+	mOpenGL = nullptr;
+	mAvailable = eGfxSettings::GRAPHICS_ALL;
 
 	// Try to create at least OpenGL 4.3
 	attrbs[3] = 3;
@@ -965,9 +958,7 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 		//EGUI::GetCommandHND()->InvokeCommand<Camera>(&Camera::mbDebugDraw, tempBool);
 	}
 
-	EGUI::Display::Label("Collider Debug Color");
-	EGUI::PushID(0);
-	auto result2 = EGUI::Display::VectorFields("", &mvDebugColour, 0.01f, 0.f, 1.f);
+	auto result2 = EGUI::Display::VectorFields("Debug Color ", &mvDebugColour, 0.01f, 0.f, 1.f);
 	for (const auto& elem : result2)
 	{
 		switch (elem)
@@ -985,7 +976,6 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 			break;
 		}
 	}
-	EGUI::PopID();
 
 	const auto result3 = EGUI::Display::DragFloat("Debug Line Threshold", &mfDebugLineThreshold, 0.01F, 0.F, 10.F);
 
@@ -1003,7 +993,7 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	default:
 		break;
 	}
-	
+
 
 #endif 
 }

@@ -76,34 +76,20 @@ namespace
 		case WM_SIZE:
 			if(SIZE_MAXIMIZED == wParam)
 			{
-				if (Dystopia::EngineCore::Get<Dystopia::WindowManager>()->HasWindows())
-				{
-					auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
+				RECT scr;
+				SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
+				oldsz.first = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetWidth();
+				oldsz.second = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetHeight();
 
-					RECT scr;
-					SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
-					oldsz.first = w.GetWidth();
-					oldsz.second = w.GetHeight();
-
-					w.SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
-
-					w.ToggleFullscreen(true);
-				}
-				
+				Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().
+					SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
-				if (Dystopia::EngineCore::Get<Dystopia::WindowManager>()->HasWindows())
+				if (oldsz.first)
 				{
-					auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
-					if (oldsz.first)
-					{
-						w.SetSize(oldsz.first, oldsz.second, false);
-						oldsz.first = 0; oldsz.second = 0;
-					}
-
-
-					w.ToggleFullscreen(false);
+					Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().SetSize(oldsz.first, oldsz.second, false);
+					oldsz.first = 0; oldsz.second = 0;
 				}
 			}
 			return 0;

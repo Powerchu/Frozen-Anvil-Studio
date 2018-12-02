@@ -238,8 +238,12 @@ namespace Dystopia
 				}
 					
 				else if (currentPos == 4)
+				{
 					//quit the game
 					DEBUG_PRINT(eLog::MESSAGE, "Selected Quit!");
+					EngineCore::GetInstance()->Quit();
+				}
+
 
 				isSelected = true;
 			}
@@ -271,8 +275,12 @@ namespace Dystopia
 				}
 				
 				else if (currentPos == 4)
-				//quit the game
-				DEBUG_PRINT(eLog::MESSAGE, "Returned from Quit!");
+				{
+					//quit the game
+					DEBUG_PRINT(eLog::MESSAGE, "Returned from Quit!");
+					//EngineCore::GetInstance()->Quit();
+				}
+
 
 				isSelected = false;
 			}

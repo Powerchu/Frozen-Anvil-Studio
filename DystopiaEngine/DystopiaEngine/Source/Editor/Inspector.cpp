@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorClipboard.h"
 #include "Editor/EditorFactory.h"
 #include "Editor/EditorCommands.h"
-#include "Editor/ProjectResource.h"
+#include "Editor/ProjectResource.h"   
 
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
@@ -231,7 +231,9 @@ namespace Editor
 		auto& arrBehav = mpFocus->GetAllBehaviours();
 		for (unsigned int k = 0; k < arrBehav.size(); ++k)
 		{
-			auto activeState = arrComp[k]->IsActive();
+			if (arrBehav[k] == nullptr) continue;
+			auto activeState = arrBehav[k]->IsActive();
+
 			auto c = arrBehav[k];
 			EGUI::PushID(k + static_cast<int>(arrBehav.size()));
 			EGUI::Display::Dummy(4.f, 2.f);

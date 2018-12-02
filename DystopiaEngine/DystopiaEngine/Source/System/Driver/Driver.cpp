@@ -330,7 +330,9 @@ void Dystopia::EngineCore::ParseMessage(const eSysMessage& msg, size_t)
 
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
-	
+//#if defined(DEBUG) | defined(_DEBUG)
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+//#endif
 	auto CORE = Dystopia::EngineCore::GetInstance();
 	Dystopia::EngineCore::GetInstance()->ExecuteGame();
 
