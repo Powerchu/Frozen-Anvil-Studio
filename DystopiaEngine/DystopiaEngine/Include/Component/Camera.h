@@ -99,9 +99,9 @@ namespace Dystopia
 		const Math::Matrix4& GetViewMatrix(void) noexcept;
 		const Math::Matrix4& GetProjectionMatrix(void) noexcept;
 
-		Camera* Duplicate(void) const;
-		void Serialise(TextSerialiser&) const;
-		void Unserialise(TextSerialiser&);
+		Camera* Duplicate(void) const override;
+		void Serialise(TextSerialiser&) const override;
+		void Unserialise(TextSerialiser&) override;
 
 		// Applies the camera bounds to screen
 		// and calculates the camera matrices
