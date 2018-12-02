@@ -241,6 +241,7 @@ inline OString& OString::operator=(const wchar_t * _str)
 		mpCharBuffer[i] = static_cast<char>(_str[i]);
 	for (; i < mnBufferSize; ++i)
 		mpCharBuffer[i] = '\0';
+	mnCurSize = newSize;
 	mbRehash = true;
 	return *this;
 }

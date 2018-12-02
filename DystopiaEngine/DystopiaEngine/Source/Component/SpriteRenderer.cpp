@@ -508,7 +508,7 @@ bool Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
 		strcpy_s(buffer, 256, anim.mstrName.c_str());
 		if (EGUI::Display::TextField("Name", buffer, maxSize, true, 150))
 		{
-			anim.mstrName = buffer;
+			anim.mstrName = static_cast<const char*>(buffer);
 		}
 
 		/******** Section ID *******/
