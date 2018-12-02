@@ -89,6 +89,8 @@ namespace Editor
 
 		if (temp)
 			mpSceneCamera = temp->GetComponent<Dystopia::Camera>();
+		if (!mpSceneCamera)
+			__debugbreak();
 
 		if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
 			mpGfxSys->Update(_dt);
@@ -114,6 +116,8 @@ namespace Editor
 
 		if (mpSceneCamera)
 			pTex = mpSceneCamera->GetSurface()->AsTexture();
+		else
+			__debugbreak();
 
 		AdjustImageSize(pTex);
 		AdjustDisplayPos();
@@ -134,17 +138,7 @@ namespace Editor
 				AcceptPrefab(t);
 				EGUI::Display::EndPayloadReceiver();
 			}
-			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
-			{
-				AcceptTexture(t);
-				EGUI::Display::EndPayloadReceiver();
-			}
-			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS))
-			{
-				AcceptTexture(t);
-				EGUI::Display::EndPayloadReceiver();
-			}
-			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP))
+			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
 			{
 				AcceptTexture(t);
 				EGUI::Display::EndPayloadReceiver();

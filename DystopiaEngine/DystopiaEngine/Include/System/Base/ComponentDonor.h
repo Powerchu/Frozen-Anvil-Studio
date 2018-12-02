@@ -64,18 +64,16 @@ template<typename Ty, typename Settings>
 inline void Dystopia::ComponentDonor<Ty, Settings>::Serialise(TextSerialiser & _Serialiser) const
 {
 	_Serialiser.InsertStartBlock("ComponentDonor");
-	//int n = 0;
-	//for(auto& e : mComponents)
-	//{
-	//	n += !(e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ);
-	//}
-	_Serialiser << mComponents.size();
+	int n = 0;
+	for (auto& e : mComponents)
+		n += !(e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ);
+	_Serialiser << n;
 	_Serialiser.InsertEndBlock("ComponentDonor End");
 
 	for (auto& elem : mComponents)
 	{
-		//if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
-		//	continue;
+		if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+			continue;
 		_Serialiser.InsertStartBlock("Component");
 		elem.Serialise(_Serialiser);
 		_Serialiser.InsertEndBlock("Component End");
@@ -89,13 +87,21 @@ inline void Dystopia::ComponentDonor<Ty, Settings>::Unserialise(TextSerialiser &
 {
 	/*Clear Current Components*/
 	unsigned Size = 0;
-	mComponents.clear();
+	int n = 0;
+	for (auto& e : mComponents)
+		n += !(e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ);
+	for (auto i = 0; i < n; i++)
+	{
+		if (mComponents[i].GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+			continue;
+		mComponents.Remove(&mComponents[i]);
+	}
+	//mComponents.clear();
 
 	_Serialiser.ConsumeStartBlock();
 	_Serialiser >> Size;
 	_Serialiser.ConsumeEndBlock();
 
-	
 	for (unsigned i = 0; i < Size; ++i)
 	{
 		_Serialiser.ConsumeStartBlock();

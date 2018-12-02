@@ -496,7 +496,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 
 	StartFrame();
 
-	glClearColor(.05f, .05f, .05f, 1.f);
+	glClearColor(.05f, .05f, .05f, .0f);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 
 	/*
@@ -542,6 +542,13 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 		}
 	}
 
+	for(auto& e : mViews)
+	{
+		e.Bind();
+
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	}
+
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
 	{
@@ -565,7 +572,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 
 			// Temporary code
 			surface->Bind();
-			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+			//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 			DrawScene(Cam, View, Proj);
 			
@@ -630,25 +637,30 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 
 #if EDITOR
 	auto& fb = GetFrameBuffer();
+	float const w = fb.AsTexture()->GetWidth(), h = fb.AsTexture()->GetHeight();
+
+	glViewport(0, 0, w, h);
 
 	fb.Bind();
 #endif
 
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	GetGameView().AsTexture()->Bind(0);
 	GetUIView().AsTexture()->Bind(1);
 
-	auto VP = Math::Mat4();
-	auto M = Math::Scale(2.f, 2.f, 1.f);
-
+	static Math::Matrix4 const Identity{};
+	auto const model =  Math::Scale(2.f, -2.f);
 	Shader* shader = shaderlist["FinalStage"];
 	shader->Bind();
-	shader->UploadUniform("ProjectViewMat", VP);
-	shader->UploadUniform("ModelMat", M);
+	shader->UploadUniform("ViewMat", Identity);
+	shader->UploadUniform("ProjectMat", Identity);
+	shader->UploadUniform("ModelMat", model);
 	//shader->UploadUniform("Gamma", mfGamma);
 
 	quad->DrawMesh(GL_TRIANGLES);
+	if (auto err = glGetError())
+		__debugbreak();
 
 #if EDITOR
 	fb.Unbind();
