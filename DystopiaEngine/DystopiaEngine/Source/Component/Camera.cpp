@@ -57,7 +57,7 @@ Dystopia::Camera::~Camera(void)
 
 void Dystopia::Camera::Awake(void)
 {
-	SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
+	SetSurface(mnSurfaceID);
 	if (mnProjectionIndex == 0)
 		SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
 	else
@@ -66,6 +66,7 @@ void Dystopia::Camera::Awake(void)
 
 void Dystopia::Camera::Init(void)
 {
+	SetSurface(mnSurfaceID);
 	if (mnFlags & eObjFlag::FLAG_RESERVED)
 		mnFlags |= eObjFlag::FLAG_ACTIVE;
 

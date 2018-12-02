@@ -29,7 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <iterator>
 
 template<typename T, class Container = AutoArray<T>>
-class _DLL_EXPORT Heap
+class _DLL_EXPORT_ONLY Heap
 {
 	Container mData;
 
@@ -64,7 +64,7 @@ public:
 	T& First(void) const;
 	
 	template <typename _T>
-	class _DLL_EXPORT HeapIterator
+	class _DLL_EXPORT_ONLY HeapIterator
 	{
 	public:
 
@@ -94,7 +94,7 @@ private:
 	template <typename Comp>
 	void SiftDown(unsigned, Comp);
 
-	struct _DLL_EXPORT DefaultCompare
+	struct _DLL_EXPORT_ONLY DefaultCompare
 	{
 		inline bool operator ()(const T&, const T&);
 	};
