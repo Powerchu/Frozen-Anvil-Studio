@@ -33,7 +33,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::SpriteRenderer::SpriteRenderer(void) noexcept
 	: Renderer{}, mAnimations{ 1 }, mnID{ 0 }, mnCol{ 0 }, mnRow{ 0 },
-	mfFrameTime{ 0.016f }, mfAccTime{ 0 }, mpAtlas{ nullptr }, mNextSectionPos{ 0,0 }, mbPlayOnStart{ false }, mbPlay{ false }, mbSimulate{false}
+	mfFrameTime{ 0.016f }, mfAccTime{ 0 }, mpAtlas{ nullptr }, mNextSectionPos{ 0,0 }, mbPlayOnStart{ false }, mbPlay{ false }, mbSimulate{ false },
+	mvTintCol(1, 1, 1, 1)
 {
 
 }
@@ -43,7 +44,7 @@ Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexce
 	mnID{ Ut::Move(_rhs.mnID) }, mnCol{ Ut::Move(_rhs.mnCol) }, mnRow{ Ut::Move(_rhs.mnRow) },
 	mfFrameTime{ Ut::Move(_rhs.mfFrameTime) }, mfAccTime{ Ut::Move(_rhs.mfAccTime) }, mpAtlas{ Ut::Move(_rhs.mpAtlas) }, 
 	mNextSectionPos{ Ut::Move(_rhs.mNextSectionPos) }, mbPlayOnStart{ Ut::Move(_rhs.mbPlayOnStart) }, mbPlay{ Ut::Move(_rhs.mbPlay) }, 
-mbSimulate{ Ut::Move(_rhs.mbSimulate) }
+mbSimulate{ Ut::Move(_rhs.mbSimulate) }, mvTintCol({Ut::Move(_rhs.mvTintCol)})
 {
 	_rhs.mAnimations.clear();
 	_rhs.mpAtlas = nullptr;
@@ -220,6 +221,7 @@ void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
 	}
 	_out << mnID;
 	_out << mbPlayOnStart;
+	_out << mvTintCol;
 	_out.InsertEndBlock("Sprite Renderer");
 }
 
@@ -244,6 +246,8 @@ void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 	}
 	_in >> mnID;
 	_in >> mbPlayOnStart;
+	_in >> mvTintCol;
+
 	_in.ConsumeEndBlock();
 }
 
@@ -251,8 +255,9 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 {
 #if EDITOR
 
-	EGUI::PushLeftAlign(80);
+	EGUI::PushLeftAlign(95);
 
+	TintColorPicker();
 	TextureFields();
 	AnimFields();
 
@@ -275,6 +280,7 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 		EGUI::PopLeftAlign();
 	}
 	EGUI::PopLeftAlign();
+
 #endif
 }
 
@@ -295,6 +301,23 @@ void Dystopia::SpriteRenderer::SetTexture(Texture* _pTexture) noexcept
 		mnID = mnRow = mnCol = 0;
 }
 
+void Dystopia::SpriteRenderer::SetColorA(const Math::Vec4& _col)
+{
+	mvTintCol = _col;
+}
+
+void Dystopia::SpriteRenderer::SetColor(const Math::Vec3D& _col)
+{
+	const auto tempW = mvTintCol.w;
+	mvTintCol = _col;
+	mvTintCol.w = tempW;
+}
+
+void Dystopia::SpriteRenderer::SetAlpha(float _a)
+{
+	mvTintCol.w = _a;
+}
+
 HashString Dystopia::SpriteRenderer::GetCurrentAnimation(void) const
 {
 	if (!mAnimations.size())
@@ -309,6 +332,11 @@ unsigned Dystopia::SpriteRenderer::GetCurrentIndex(void) const
 		return 0;
 
 	return mnCol + (mnRow * mAnimations[mnID].mnCol);
+}
+
+Math::Vec4 Dystopia::SpriteRenderer::GetTint() const
+{
+	return mvTintCol;
 }
 
 bool Dystopia::SpriteRenderer::IsPlaying(void) const
@@ -340,13 +368,13 @@ void Dystopia::SpriteRenderer::SetSpeed(float _s)
 	mfFrameTime = _s;
 }
 
-Math::Vec2 Dystopia::SpriteRenderer::Resized(void) const
+Math::Vec2 Dystopia::SpriteRenderer::Resized(float _multiplier) const
 {
 	if (mpTexture)
 	{
 		auto nScale = GetOwner()->GetComponent<Transform>()->GetScale();
-		nScale.x = static_cast<float>(mpTexture->GetWidth()) * 0.1f;
-		nScale.y = static_cast<float>(mpTexture->GetHeight()) * 0.1f;
+		nScale.x = static_cast<float>(mpTexture->GetWidth()) * _multiplier;
+		nScale.y = static_cast<float>(mpTexture->GetHeight()) * _multiplier;
 
 		if (mpAtlas && mnID < mAnimations.size())
 		{
@@ -357,6 +385,18 @@ Math::Vec2 Dystopia::SpriteRenderer::Resized(void) const
 		return Math::Vec2{ nScale.x, nScale.y };
 	}
 	return Math::Vec2{};
+}
+
+void Dystopia::SpriteRenderer::ResizeToFit(float _multiplier) const
+{
+	if (GetOwner())
+	{
+		auto size = Resized(_multiplier);
+		auto nScale = GetOwner()->GetComponent<Transform>()->GetScale();
+		nScale.x = size.x;
+		nScale.y = size.y;
+		GetOwner()->GetComponent<Transform>()->SetGlobalScale(nScale);
+	}
 }
 
 void Dystopia::SpriteRenderer::TextureFields(void)
@@ -384,20 +424,21 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 	if (mpTexture)
 	{
 		EGUI::Display::Label("Preview");
-		EGUI::SameLine(DefaultAlighnmentSpacing, 80);
+		EGUI::SameLine(DefaultAlighnmentSpacing+35);
 		const float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
 		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
 
+		EGUI::Display::Dummy(DefaultAlighnmentSpacing+80);
 		EGUI::SameLine();
-		if (EGUI::Display::Button("Auto", Math::Vec2{ 35, 30 }))
+		if (EGUI::Display::Button("Auto Resize", Math::Vec2{ 140, 25 }))
 		{
 			auto size = Resized();
 			auto scale = GetOwner()->GetComponent<Transform>()->GetScale();
 			auto nScale = GetOwner()->GetComponent<Transform>()->GetScale();
 			nScale.x = size.x;
 			nScale.y = size.y;
-			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, scale),
-											   cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, nScale));
+			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetGlobalScale, scale),
+											   cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetGlobalScale, nScale));
 		}
 	}
 
@@ -435,7 +476,7 @@ void Dystopia::SpriteRenderer::AnimFields(void)
 	if (EGUI::Display::CheckBox("On Awake", &mbPlayOnStart))
 		cmd->ChangeValue(GetOwnerID(), &SpriteRenderer::mbPlayOnStart, !mbPlayOnStart, mbPlayOnStart);
 
-	switch (EGUI::Display::DragFloat("Frame time", &mfFrameTime, 0.01f, 0.016f, 10.f))
+	switch (EGUI::Display::DragFloat("Frame Time", &mfFrameTime, 0.01f, 0.016f, 10.f))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
 		cmd->StartRec(&SpriteRenderer::mfFrameTime, this);
@@ -576,6 +617,17 @@ void Dystopia::SpriteRenderer::ResetFrames(void)
 		mnID = mnCol = mnRow = 0;
 
 	mfAccTime = 0;
+}
+
+void Dystopia::SpriteRenderer::TintColorPicker()
+{
+	EGUI::Display::Label("Tint");
+	EGUI::SameLine(60);
+	if (ImGui::ColorEdit4("Tint Color", &mvTintCol[0], (ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoLabel
+														| ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoOptions)))
+	{
+
+	}
 }
 
 

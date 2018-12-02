@@ -100,6 +100,7 @@ namespace Dystopia
 	private:
 
 		Math::Vector4 mvDebugColour;
+		Math::Vector4 mvClearCol;
 		float mfGamma;
 		float mfDebugLineThreshold;
 

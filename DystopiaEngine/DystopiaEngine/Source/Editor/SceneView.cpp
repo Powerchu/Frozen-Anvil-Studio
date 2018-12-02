@@ -496,11 +496,12 @@ namespace Editor
 				pNewRend->SetTexture(mpGfxSys->LoadTexture(_pFile->mPath.c_str()));
 				pNewRend->SetOwner(pGuaranteedTarget);
 				pNewRend->SetActive(pGuaranteedTarget->IsActive());
-				auto size = pNewRend->Resized();
+				pNewRend->ResizeToFit(0.1f);
+				/*auto size = pNewRend->Resized(0.1f);
 				auto nScale = pNewRend->GetOwner()->GetComponent<Dystopia::Transform>()->GetScale();
 				nScale.x = size.x;
 				nScale.y = size.y;
-				pNewRend->GetOwner()->GetComponent<Dystopia::Transform>()->SetGlobalScale(nScale);
+				pNewRend->GetOwner()->GetComponent<Dystopia::Transform>()->SetGlobalScale(nScale);*/
 				pNewRend->Awake();
 
 				if (pGuaranteedTarget->GetName() == defaultName)

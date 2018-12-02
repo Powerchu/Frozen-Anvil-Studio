@@ -190,6 +190,14 @@ namespace EGUI
 		bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f);
 		/* =======================================================================================================================
 		Brief:
+		Creates a vertical or horizontal selectable splitter (like a separator), allows you to drag child windows.
+		Created by Aaron.
+		Usage:
+
+		======================================================================================================================= */
+		bool ColorButton(const char* desc_id, const Math::Vec4& col, ImGuiColorEditFlags flags, Math::Vec2 size = {0,0});
+		/* =======================================================================================================================
+		Brief:
 		Creates an empty box. Great for using alongside payloads if you unsure. returns if the box is clicked.
 		If the last bool param is false, hovering wont show and clicking wont return true
 		Usage:

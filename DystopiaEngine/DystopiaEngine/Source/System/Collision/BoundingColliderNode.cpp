@@ -9,7 +9,7 @@ namespace Dystopia
 	}
 
 	BoundingColliderNode::BoundingColliderNode(Collider * _MyCollider, BroadPhaseCircle _Circle, BoundingColliderNode * _parent)
-		: mBoundingCircle{std::move(_Circle)}, mCollider{ _MyCollider }, mChildrenNode{ {nullptr} }, mParent{ _parent }
+		: mBoundingCircle{Ut::Move(_Circle)}, mCollider{ _MyCollider }, mChildrenNode{ {nullptr} }, mParent{ _parent }
 	{
 	}
 

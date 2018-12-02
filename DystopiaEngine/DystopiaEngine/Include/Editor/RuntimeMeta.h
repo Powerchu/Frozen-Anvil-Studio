@@ -318,7 +318,7 @@ namespace Dystopia
 		template<>
 		void operator()(const char * _name, std::string value, std::function<void(std::string, void*)> _f, void* _addr)
 		{
-			std::string Temp = std::move(value);
+			std::string Temp = Ut::Move(value);
 			char buffer[1024];
 			if (EGUI::Display::TextField(_name, buffer, 1024))
 			{
