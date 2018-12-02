@@ -73,7 +73,7 @@ namespace Editor
 		return true;
 	}
 
-	void GameView::Update(float _dt)
+	void GameView::Update(float)
 	{
 		if (mpCamSys->GetMasterCamera())
 		{
@@ -94,9 +94,9 @@ namespace Editor
 
 	void GameView::EditorUI(void)
 	{
-		/*EGUI::UnIndent(2);
 		if (mpGameCamera)
 		{
+			EGUI::UnIndent(2);
 			if (EditorMain::GetInstance()->GetCurState() == eState::PLAY)
 				ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 
@@ -109,8 +109,12 @@ namespace Editor
 			ImGui::SetCursorPos(ImVec2{ orig.x + mImgPos.x, orig.y + mImgPos.y - 1.f });
 			EGUI::Display::Image(pTex->GetID(), mImgSize);
 			ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
+
+			if (EditorMain::GetInstance()->GetCurState() == eState::PLAY)
+				ImGui::PopStyleVar();
+
+			EGUI::Indent(2);
 		}
-		EGUI::Indent(2);*/
 	}
 
 	void GameView::Shutdown(void)
@@ -173,7 +177,13 @@ namespace Editor
 
 	void GameView::SceneChanged()
 	{
- 		//mpGameCamera = mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___")->GetComponent<Dystopia::Camera>();
+		if (mpCamSys->GetMasterCamera())
+		{
+			if (nullptr != mpCamSys->GetMasterCamera()->GetOwner())
+			{
+				mpGameCamera = mpCamSys->GetMasterCamera();
+			}
+		}
 	}
 
 	Dystopia::Camera* GameView::GetCamera()

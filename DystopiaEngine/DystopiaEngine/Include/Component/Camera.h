@@ -79,6 +79,7 @@ namespace Dystopia
 
 		void SetSurface(Framebuffer*);
 		void SetSurface(int);
+		void SetSurfaceID(int _i);
 
 		// Set the area the camera renders to in relative coordinates, from 0.0 to 1.0
 		void SetViewport(float _x, float _y, float _nWidth, float _nHeight);
@@ -118,6 +119,7 @@ namespace Dystopia
 
 		// TODO 
 		bool mbDebugDraw;
+		int  mnProjectionIndex = 0;
 	private:
 
 		Gfx::Viewport mViewport;
@@ -129,7 +131,6 @@ namespace Dystopia
 
 		Framebuffer* mpSurface;
 		int mnSurfaceID;
-		int mnProjectionIndex = 0;
 
 		// Orthographic Stuff
 		float mfOrthoSize = 1.f;

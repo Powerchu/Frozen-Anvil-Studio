@@ -57,9 +57,7 @@ Dystopia::Camera::~Camera(void)
 
 void Dystopia::Camera::Awake(void)
 {
-	if (nullptr == mpSurface)
-		SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
-	
+	SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
 	SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
 }
 
@@ -121,7 +119,13 @@ void Dystopia::Camera::SetSurface(Framebuffer* _ptr)
 void Dystopia::Camera::SetSurface(int _i)
 {
 	mnSurfaceID = _i;
+
 	SetSurface(&EngineCore::Get<GraphicsSystem>()->GetView(_i));
+}
+
+void Dystopia::Camera::SetSurfaceID(int _i)
+{
+	mnSurfaceID = _i;
 }
 
 void Dystopia::Camera::SetViewport(float _x, float _y, float _nWidth, float _nHeight)

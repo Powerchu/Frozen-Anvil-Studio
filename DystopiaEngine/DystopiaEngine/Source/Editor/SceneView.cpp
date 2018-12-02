@@ -24,6 +24,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorClipboard.h"
 #include "Editor/EditorFactory.h"
 
+#include "../../Dependancies/ImGui/imgui_internal.h"
+
 #include "System/Input/InputSystem.h"
 #include "System/Driver/Driver.h"
 #include "System/Scene/Scene.h"
@@ -72,7 +74,9 @@ namespace Editor
 	}
 
 	void SceneView::Load(void)
-	{}
+	{
+
+	}
 
 	bool SceneView::Init(void)
 	{
@@ -86,8 +90,10 @@ namespace Editor
 	void SceneView::Update(float _dt)
 	{
 		Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___");
+
 		if (temp)
 			mpSceneCamera = temp->GetComponent<Dystopia::Camera>();
+
 		if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
 			mpGfxSys->Update(_dt);
 
@@ -113,6 +119,10 @@ namespace Editor
 		if (mpSceneCamera)
 			pTex = mpSceneCamera->GetSurface()->AsTexture();
 
+
+
+		const auto orig2 = ImGui::GetCursorPos();
+
 		AdjustImageSize(pTex);
 		AdjustDisplayPos();
 
@@ -123,7 +133,8 @@ namespace Editor
 			mAmFocused = true;
 		else
 			mAmFocused = false;
-		ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
+		
+
 
 		if (mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___"))
 		{
@@ -166,6 +177,20 @@ namespace Editor
 			mClearSelection = false;
 			//EditorMain::GetInstance()->ClearSelections();
 		}
+		const auto camPos = mpSceneCamera->GetPosition();
+		const auto camSize = mpSceneCamera->GetSize();
+		const auto isPers = (mpSceneCamera->mnProjectionIndex == 1);
+
+		const auto lastPos = ImGui::GetCursorPos();
+		ImGui::SetItemAllowOverlap();
+		ImGui::SetCursorPos(ImVec2{ orig2.x + 1.f, orig2.y - 1.f });
+		EGUI::Display::Label("Scene Cam Pos  : X[%.2f], Y[%.2f]", static_cast<float>(camPos.x), static_cast<float>(camPos.y));
+		ImGui::SetItemAllowOverlap();
+		EGUI::Display::Label("Scene Cam Scale: X[%.2f], Y[%.2f]", static_cast<float>(camSize.x), static_cast<float>(camSize.y));
+		ImGui::SetItemAllowOverlap();
+		EGUI::Display::Label("Camera: [%s]", (isPers ? "Perspective" : "Orthographic"));
+		ImGui::SetCursorPos(ImVec2{ lastPos.x, lastPos.y});
+
 		EGUI::Indent(2);
 	}
 
@@ -216,6 +241,8 @@ namespace Editor
 			const auto scale = mpSceneCamera->GetOwner()->GetComponent<Dystopia::Transform>()->GetGlobalScale();
 		
 			mpSceneCamera->GetOwner()->GetComponent<Dystopia::Transform>()->SetPosition(pos + Math::Pt3D{ vToMove.x * mMoveSens * scale.x, vToMove.y * mMoveSens * scale.y, 0.f });
+
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 	}
 
@@ -395,11 +422,17 @@ namespace Editor
 			if (ImGui::IsMouseClicked(1))
 				mDragging = true;
 		}
+
 		if (mAmFocused || mDragging)
 		{
-			if (mDragging)				Move();
+			if (mDragging)
+			{
+				Move();
+			}
+
 			if (mToZoom != eZOOM_NONE)  Zoom(eZOOM_IN == mToZoom);
 		}
+
 		mToZoom = eZOOM_NONE;
 	}
 
@@ -518,6 +551,36 @@ namespace Editor
 	{
 		mCurrGizTool = eGizTool::eSCALE;
 		EditorMain::GetInstance()->GetSystem<EditorStates>()->ChangeGizmo(eSCALE);
+	}
+
+	void SceneView::ResetSceneCam()
+	{
+		if (mpSceneCamera)
+		{
+			mpSceneCamera->SetPosition(0, 0, 0);
+			mpSceneCamera->SetSize(1.f);
+		}
+	}
+
+	void SceneView::FocusGobj()
+	{
+		if (mpSceneCamera)
+		{
+			const auto& selectedIDs = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetSelectedIDs();
+			if (!selectedIDs.size())
+				return;
+
+			if (selectedIDs.size() == 1)
+			{
+				if (const auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(selectedIDs[0]))
+				{
+					auto objPos = o->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					mpSceneCamera->SetPosition(objPos);
+				}
+				else
+					EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(selectedIDs[0]);
+			}
+		}
 	}
 
 	void SceneView::DrawGizmoMul(const AutoArray<uint64_t>& _arrIDs)
