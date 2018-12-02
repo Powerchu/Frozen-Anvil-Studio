@@ -196,13 +196,13 @@ namespace Editor
 			tempTransform.EditorUI();
 			EGUI::Display::EndTreeNode();
 		}
-		//EGUI::ChangeAlignmentYOffset();
+		EGUI::ChangeAlignmentYOffset();
 
 		auto& arrComp = mpFocus->GetAllComponents();
 		for (unsigned int i = 0; i < arrComp.size(); ++i)
 		{
 			auto activeState = arrComp[i]->IsActive();
-			EGUI::PushID(i);
+			EGUI::PushID(i + static_cast<int>(arrComp.size()));
 			EGUI::Display::Dummy(4.f, 2.f);
 			EGUI::Display::HorizontalSeparator();
 
@@ -229,11 +229,11 @@ namespace Editor
 		}
 
 		auto& arrBehav = mpFocus->GetAllBehaviours();
-		for (auto & c : arrBehav)
+		for (unsigned int k = 0; k < arrBehav.size(); ++k)
 		{
-			auto activeState = c->IsActive();
+			auto activeState = arrComp[k]->IsActive();
 			auto c = arrBehav[k];
-			EGUI::PushID(k + static_cast<int>(arrComp.size()));
+			EGUI::PushID(k + static_cast<int>(arrBehav.size()));
 			EGUI::Display::Dummy(4.f, 2.f);
 			EGUI::Display::HorizontalSeparator();
 			if (!c) continue;
