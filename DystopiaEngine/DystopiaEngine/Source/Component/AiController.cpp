@@ -88,5 +88,10 @@ namespace Dystopia
 	{
 		return Ctor::CreateShared<BehaviourTree>(bTree);
 	}
+
+	Blackboard::Ptr AiController::GetBlackboard() const
+	{
+		return bTree.GetBlackboard();
+	}
 }
 

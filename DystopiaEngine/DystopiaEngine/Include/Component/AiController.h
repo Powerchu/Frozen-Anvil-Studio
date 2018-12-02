@@ -62,6 +62,7 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 		BehaviourTree& GetTreeAsRef(void);
 		BehaviourTree::Ptr GetTreeAsPtr(void);
+		Blackboard::Ptr GetBlackboard(void) const;
 
 		// To print out properties
 		void DebugPrint();
