@@ -302,7 +302,7 @@ bool Editor::EditorFactory::LoadAsPrefab(const HashString& _name)
 		{
 			for (size_t i = prefabData.mnStart; i < prefabData.mnEnd; ++i)
 			{
-				mArrFactoryObj.Remove(i);
+				mArrFactoryObj.Remove(&mArrFactoryObj[i]);
 			}			
 		}
 	}

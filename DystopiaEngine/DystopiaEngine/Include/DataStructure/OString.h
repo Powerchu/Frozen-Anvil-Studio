@@ -18,13 +18,13 @@ typedef uint64_t HashID;
 static constexpr HashID FNV_PRIME = 1099511628211u;
 static constexpr HashID OFFSET_BASIS = 0xcbf29ce484222325;
 template<unsigned int N>
-constexpr HashID StringHasher(const char(&_s)[N], unsigned int I = N)
+_DLL_EXPORT_ONLY constexpr HashID StringHasher(const char(&_s)[N], unsigned int I = N)
 {
 	return I == 1 ? (OFFSET_BASIS ^ _s[0]) * FNV_PRIME :
 		(StringHasher(_s, I - 1) ^ (_s[I - 1])) * FNV_PRIME;
 }
 
-HashID _DLL_EXPORT_ONLY StringHasher(const char* _s);
+_DLL_EXPORT_ONLY HashID StringHasher(const char* _s);
 
 class _DLL_EXPORT_ONLY OString
 {

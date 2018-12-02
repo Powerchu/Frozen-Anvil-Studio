@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _SHADER_H_
 
 #include <string>
-
+#include "Globals.h"
 
 namespace Math
 {
@@ -28,7 +28,7 @@ namespace Math
 
 namespace Dystopia
 {
-	class Shader
+	class _DLL_EXPORT Shader
 	{
 	public:
 
