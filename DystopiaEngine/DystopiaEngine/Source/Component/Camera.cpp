@@ -37,16 +37,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
-	mViewport{0, 0, _fWidth, _fHeight}, mClippingPlane{ -500.f,500.f } , mView{}, mProjection{},
-	mInvScreen{}, mpSurface{ nullptr }, mbDebugDraw{ false }, mnSurfaceID{ 0 }
+	mbDebugDraw{ false }, mViewport{0, 0, _fWidth, _fHeight}, mClippingPlane{ -500.f,500.f } 
+	, mViewAspect{800.f,600.f}, mView{}, mInvScreen{}, mProjection{}, mpSurface{ nullptr }, mnSurfaceID{ 0 }
 {
 
 }
 
 Dystopia::Camera::Camera(const Camera& _oOther) : Component{ _oOther }, 
-	mViewport{ _oOther.mViewport }, mClippingPlane{ _oOther.mClippingPlane }, mView{}, mProjection{ _oOther.mProjection },
-	mInvScreen{}, mpSurface{ _oOther.mpSurface }, mbDebugDraw{ _oOther.mbDebugDraw }, 
-	mnSurfaceID{ _oOther.mnSurfaceID }
+	mbDebugDraw{ _oOther.mbDebugDraw }, mViewport{ _oOther.mViewport }, mClippingPlane{ _oOther.mClippingPlane }
+	, mViewAspect{ _oOther.mViewAspect}, mView{}, mInvScreen{}, mProjection{ _oOther.mProjection }
+	, mpSurface{ _oOther.mpSurface }, mnSurfaceID{ _oOther.mnSurfaceID }
 {
 
 }
@@ -59,7 +59,7 @@ void Dystopia::Camera::Awake(void)
 {
 	SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
 	if (mnProjectionIndex == 0)
-		SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
+		SetOrthographic(800.f, 600.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
 	else
 		SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, 0.625f, mClippingPlane.mnNear, mClippingPlane.mnFar);
 }
@@ -362,7 +362,7 @@ void Dystopia::Camera::EditorProjectionDropdown(void)
 		switch (mnProjectionIndex)
 		{
 		case 0: // Orthographic
-			SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
+			SetOrthographic(800.f, 600.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
 			break;
 		case 1: // Perspective
 			SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, 0.625f, mClippingPlane.mnNear, mClippingPlane.mnFar);

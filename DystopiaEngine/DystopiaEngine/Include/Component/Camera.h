@@ -124,6 +124,7 @@ namespace Dystopia
 
 		Gfx::Viewport mViewport;
 		Gfx::ClippingPlane mClippingPlane;
+		Gfx::ViewAspect mViewAspect;
 
 		Math::Mat4 mView;
 		Math::Mat4 mInvScreen;

@@ -148,7 +148,8 @@ namespace Editor
 
 	void GameView::AdjustImageSize(Dystopia::Texture* texture)
 	{
-		static constexpr float aspect = 16.f / 10.f;
+		const auto camSize = mpGameCamera->GetSize();
+		static const float aspect = camSize.x / camSize.y;
 		float ix = static_cast<float>(aspect * texture->GetWidth());
 		float iy = static_cast<float>(texture->GetHeight());
 		float sx = Size().x;

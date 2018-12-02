@@ -185,11 +185,12 @@ namespace Editor
 		const auto lastPos = ImGui::GetCursorPos();
 		ImGui::SetItemAllowOverlap();
 		ImGui::SetCursorPos(ImVec2{ orig2.x + 1.f, orig2.y - 1.f });
-		EGUI::Display::Label("Cam Pos  : X[%.2f], Y[%.2f]", static_cast<float>(camPos.x), static_cast<float>(camPos.y));
+		EGUI::Display::Label(" Cam Pos: X[%.2f], Y[%.2f]", static_cast<float>(camPos.x), static_cast<float>(camPos.y));
 		ImGui::SetItemAllowOverlap();
-		EGUI::Display::Label("Cam Scale: X[%.2f], Y[%.2f]", static_cast<float>(camSize.x), static_cast<float>(camSize.y));
+		EGUI::SameLine();
+		EGUI::Display::Label("Cam Scale: [%.2fx]", static_cast<float>(camSize.x));
 		ImGui::SetItemAllowOverlap();
-		EGUI::Display::Label("Camera: [%s]", (isPers ? "Perspective" : "Orthographic"));
+		EGUI::Display::Label(" Cam Mode: [%s]", (isPers ? "Perspective" : "Orthographic"));
 		ImGui::SetCursorPos(ImVec2{ lastPos.x, lastPos.y});
 
 		EGUI::Indent(2);
@@ -356,7 +357,8 @@ namespace Editor
 
 	void SceneView::AdjustImageSize(Dystopia::Texture *_pTex)
 	{
-		static constexpr float aspect = 16.f / 10.f;
+		const auto camSize = mpSceneCamera->GetSize();
+		static const float aspect = camSize.x / camSize.y;
 		float ix = static_cast<float>(aspect * _pTex->GetWidth());
 		float iy = static_cast<float>(_pTex->GetHeight());
 		float sx = Size().x;
