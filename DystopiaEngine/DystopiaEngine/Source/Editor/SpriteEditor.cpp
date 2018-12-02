@@ -212,7 +212,7 @@ void Editor::SpriteEditor::FieldAtlas(void)
 		auto& e = mpAtlas->GetAllSections()[mnSelectedSection];
 		mSectionPos  = Math::Vec2{ e.uStart, e.vStart };
 		mSectionSize = Math::Vec2{ e.uEnd - e.uStart, e.vEnd - e.vStart };
-		mSectionDime = Math::Vec2{ mSectionSize.x / e.mCol, mSectionSize.y / e.mRow };
+		mSectionDime = Math::Vec2{ roundf(mSectionSize.x / e.mCol), roundf(mSectionSize.y / e.mRow)};
 	}
 	else
 	{

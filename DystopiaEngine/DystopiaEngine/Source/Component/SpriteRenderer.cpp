@@ -524,14 +524,14 @@ bool Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
 
 		/******** Columns *********/
 		auto& curSec = mpAtlas->GetAllSections()[anim.mnID];
-		int maxC = static_cast<int>((curSec.uEnd - curSec.uStart) / curSec.mCol);
+		int maxC = static_cast<int>(roundf( (curSec.uEnd - curSec.uStart) / curSec.mCol));
 		auto col = anim.mnCol;
 		EGUI::Display::SliderInt("Columns", &col, 1, maxC);
 		anim.mnCol = Math::Clamp(col, 1, maxC);
 
 		/********* Rows *********/
 		auto row = anim.mnRow;
-		int maxR = static_cast<int>((curSec.vEnd - curSec.vStart) / curSec.mRow);
+		int maxR = static_cast<int>(roundf((curSec.vEnd - curSec.vStart) / curSec.mRow));
 		EGUI::Display::SliderInt("Rows", &row, 1, maxR);
 		anim.mnRow = Math::Clamp(row, 1, maxR);
 
