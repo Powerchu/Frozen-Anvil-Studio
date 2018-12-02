@@ -25,6 +25,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Globals.h"
 #include "IO/TextSerialiser.h"
 
+#include "Math/Vector2.h"
+
 #include <GL\glew.h>
 
 
@@ -98,8 +100,9 @@ Dystopia::TextureAtlas* Dystopia::TextureSystem::GenAtlas(Texture* _pTex)
 			auto serial = TextSerialiser::OpenFile(find.c_str(), TextSerialiser::MODE_READ);
 			pAtlas->LoadAtlas(serial);
 		}
+		else
+			pAtlas->AddSection(Math::Vec2{ 0,0 }, _pTex->GetWidth(), _pTex->GetHeight(), 1, 1);
 	}
-
 	return pAtlas;
 }
 

@@ -419,7 +419,7 @@ namespace Dystopia
 				SearchAndReplaceDll(GenerateDllName(elem));
 				std::error_code err;
 				std::wstring wstrFolderName{ mDll_Folder_Name.begin(), mDll_Folder_Name.end() };
-				if (std::filesystem::exists(/*(mTempDllFile + L'/' + elem, */wstrFolderName.c_str(), err) )
+				if (std::filesystem::exists(mTempDllFile + L'/' + elem, err) )
 					std::filesystem::copy(mTempDllFile + L'/' + elem, wstrFolderName, std::filesystem::copy_options::overwrite_existing);
 				
 			}

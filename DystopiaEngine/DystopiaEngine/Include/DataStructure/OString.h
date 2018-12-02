@@ -24,7 +24,7 @@ constexpr HashID StringHasher(const char(&_s)[N], unsigned int I = N)
 		(StringHasher(_s, I - 1) ^ (_s[I - 1])) * FNV_PRIME;
 }
 
-HashID StringHasher(const char* _s);
+HashID _DLL_EXPORT_ONLY StringHasher(const char* _s);
 
 class _DLL_EXPORT_ONLY OString
 {
