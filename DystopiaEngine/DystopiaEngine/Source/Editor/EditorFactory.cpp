@@ -70,32 +70,32 @@ void Editor::EditorFactory::Message(eEMessage _msg)
 {
 	if (_msg == eEMessage::SCENE_ABOUT_TO_CHANGE)
 	{
-		for (auto& object : mArrFactoryObj)
-		{
-			auto& allC = object.GetAllComponents();
-			for (unsigned n = 0; n < allC.size(); n++)
-				object.RemoveComponent(allC[n--]);
-			auto& allB = object.GetAllBehaviours();
-			for (unsigned n = 0; n < allB.size(); n++)
-				object.RemoveComponent(allB[n--]);
-		}
+		//for (auto& object : mArrFactoryObj)
+		//{
+		//	auto& allC = object.GetAllComponents();
+		//	for (unsigned n = 0; n < allC.size(); n++)
+		//		object.RemoveComponent(allC[n--]);
+		//	auto& allB = object.GetAllBehaviours();
+		//	for (unsigned n = 0; n < allB.size(); n++)
+		//		object.RemoveComponent(allB[n--]);
+		//}
 	}
 	else if (_msg == eEMessage::SCENE_CHANGED)
 	{
-		if (Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene().GetSceneID() != mnLastSceneID)
-		{
-			AutoArray<HashString> mArrTempPrefab;
-			for (auto& dat : mArrPrefabData)
-				mArrTempPrefab.push_back(dat.mPrefabFile);
-
-			mArrPrefabData.clear();
-			mArrFactoryObj.clear();
-
-			for (auto& p : mArrTempPrefab)
-				LoadAsPrefab(p);
-		}
-		else
-		{
+		//if (Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene().GetSceneID() != mnLastSceneID)
+		//{
+		//	AutoArray<HashString> mArrTempPrefab;
+		//	for (auto& dat : mArrPrefabData)
+		//		mArrTempPrefab.push_back(dat.mPrefabFile);
+		//
+		//	mArrPrefabData.clear();
+		//	mArrFactoryObj.clear();
+		//
+		//	for (auto& p : mArrTempPrefab)
+		//		LoadAsPrefab(p);
+		//}
+		//else
+		//{
 			ValidatePrefabInstances();
 			//for (size_t i = 0; i < mArrPrefabData.size(); ++i)
 			//{
@@ -110,7 +110,7 @@ void Editor::EditorFactory::Message(eEMessage _msg)
 			//		LoadAsPrefab(prefName.c_str());
 			//	}
 			//}
-		}
+		//}
 	}
 }
 
