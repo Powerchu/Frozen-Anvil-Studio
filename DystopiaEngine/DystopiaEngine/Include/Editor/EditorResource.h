@@ -42,6 +42,7 @@ namespace Editor
 
 		void AddComponent(Dystopia::Component* _p, const uint64_t&, bool);
 		void RemoveComponent(const uint64_t&);
+		void DestroyDelegate(const uint64_t&);
 		Dystopia::Component* GetComponent(const uint64_t&);
 
 		HashString GetCurrProjectPath(void) const;

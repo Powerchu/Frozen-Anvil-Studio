@@ -62,10 +62,10 @@ namespace Dystopia
 
 		}
 		DLLWrapper(std::wstring _DllPathName, std::wstring _DllFileName,std::wstring _DLLFullPath, HMODULE _DllModule)
-			:mDllPathName{std::move(_DllPathName)},
-			mDllFileName{std::move(_DllFileName)},
+			:mDllPathName{Ut::Move(_DllPathName)},
+			mDllFileName{Ut::Move(_DllFileName)},
 			mDllModule{ _DllModule },
-			mDllFullPath{std::move(_DLLFullPath)}
+			mDllFullPath{Ut::Move(_DLLFullPath)}
 		{
 
 		}
@@ -459,7 +459,7 @@ namespace Dystopia
 
 						if (dllModule != NULL)
 						{
-							auto pointer = mvDLL.Emplace(DllDir, DllName, Fullpath, std::move(dllModule));
+							auto pointer = mvDLL.Emplace(DllDir, DllName, Fullpath, Ut::Move(dllModule));
 
 							if (_pDLLWrapperBuffer && ChangeCount < size)
 								*(_pDLLWrapperBuffer + ChangeCount++) = pointer;

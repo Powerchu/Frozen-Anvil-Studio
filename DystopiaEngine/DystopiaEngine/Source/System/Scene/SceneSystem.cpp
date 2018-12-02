@@ -167,7 +167,12 @@ void Dystopia::SceneSystem::RestartScene(void)
 void Dystopia::SceneSystem::LoadScene(const char* _strName)
 {
 	auto fs = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
-	LoadScene(std::string{ fs->GetFullPath(_strName, eFileDir::eResource) });
+
+	HashString scene{ _strName };
+	if (scene.find(".dscene") == std::string::npos)
+		scene += ".dscene";
+
+	LoadScene(std::string{ fs->GetFullPath(scene.c_str(), eFileDir::eResource) });
 }
 
 void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)

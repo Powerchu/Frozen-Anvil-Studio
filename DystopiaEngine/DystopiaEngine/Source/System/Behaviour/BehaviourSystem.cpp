@@ -364,20 +364,6 @@ namespace Dystopia
 				//	i.second.FastRemove(&iter);
 				//}
 		}
-		//for(auto & elem : ToRemove)
-		//{
-		//	for (auto & i : mvBehaviours)
-		//	{
-		//		auto iter = i.second.Find(*elem);
-		//		if(iter != i.second.end())
-		//		{
-		//			i.second.Remove(iter);
-		//		}
-		//	}
-		//}
-
-
-		//ToRemove.clear();
 #endif
 	}
 
@@ -426,11 +412,21 @@ namespace Dystopia
 
 			_obj.InsertStartBlock("str");
 			_obj << str;
+
+			int n = 0;
+
+			for (auto& e : i.second)
+			{
+				if(e.second)
+					n += !(e.second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ);
+			}
+
+
 			/*Save the number of Pointers*/
-			_obj << i.second.size();
+			_obj << n;
 			for (auto & iter : i.second)
 			{
-				if (!iter.second) continue;
+				if (iter.second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 
 				_obj.InsertStartBlock("BEHAVIOUR_BLOCK");
 				/*Owner ID*/
@@ -526,15 +522,7 @@ namespace Dystopia
 
 						if (_Flags & eObjFlag::FLAG_EDITOR_OBJ)
 						{
-							/*Object is editor object*/
-							if (::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID, false))
-							{
-
-							}
-							else
-							{
-								DeleteBehaviour(ptr);
-							}
+							DeleteBehaviour(ptr);
 						}
 						else
 						{
@@ -574,6 +562,30 @@ namespace Dystopia
 					b.second = nullptr;
 					elem.second.FastRemove(&b);
 					return;
+				}
+			}
+		}
+	}
+
+	void BehaviourSystem::ClearAllEditorBehaviours()
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (size_t u = 0; u<i.second.size(); ++u)
+			{
+				if (i.second[u].second != nullptr)
+				{
+					if (!(i.second[u].second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ))
+					{
+
+					}
+					else
+					{
+						delete i.second[u].second;
+						i.second[u].second = nullptr;
+						i.second.FastRemove(&i.second[u]);
+						u--;
+					}
 				}
 			}
 		}
@@ -654,18 +666,24 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::ClearAllBehaviours()
 	{
-		for (auto & i : mvBehaviours)
+		for(auto & i : mvBehaviours)
 		{
-			for (auto & iter : i.second)
+			for(size_t u=0; u<i.second.size(); ++u)
 			{
-				if (iter.second)
+				if(i.second[u].second != nullptr)
 				{
-					delete iter.second;
-					iter.second = nullptr;
-					iter.first  = 0;
+					if(i.second[u].second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+					{
+					}
+					else
+					{
+						delete i.second[u].second;
+						i.second[u].second = nullptr;
+						i.second.FastRemove(&i.second[u]);
+						u--;
+					}
 				}
 			}
-			i.second.clear();
 		}
 	}
 

@@ -68,7 +68,10 @@ namespace Dystopia
 
 	void AiController::Update(float)
 	{
-		//bTree.Update();
+		if (bTree.IsValidTree())
+		{
+			bTree.Update();
+		}
 	}
 
 	void AiController::LateUpdate(float) const
@@ -76,5 +79,14 @@ namespace Dystopia
 
 	}
 
+	BehaviourTree& AiController::GetTreeAsRef()
+	{
+		return bTree;
+	}
+
+	BehaviourTree::Ptr AiController::GetTreeAsPtr()
+	{
+		return Ctor::CreateShared<BehaviourTree>(bTree);
+	}
 }
 

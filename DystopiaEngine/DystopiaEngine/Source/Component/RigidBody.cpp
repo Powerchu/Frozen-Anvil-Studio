@@ -94,7 +94,7 @@ namespace Dystopia
 		{
 			mPrevPosition = mPosition = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 
-			if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+			if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
 
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
@@ -125,7 +125,7 @@ namespace Dystopia
 		{
 			mPrevPosition = mPosition = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 
-			if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+			if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
 
 			mpPhysSys = EngineCore::GetInstance()->GetSystem<PhysicsSystem>();
 			mpOwnerTransform = GetOwner()->GetComponent<Transform>();
@@ -215,7 +215,8 @@ namespace Dystopia
 			return; // don't integrate when body is static
 		}
 
-		if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+		if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ ||
+			GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
 
 
 		/*********************************************************************
@@ -310,7 +311,7 @@ namespace Dystopia
 	 */
 	void RigidBody::CheckSleeping(const float _dt)
 	{
-		if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+		if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
 
 		if (!mbCanSleep) return;
 
@@ -382,7 +383,7 @@ namespace Dystopia
 
 	void RigidBody::PreUpdatePosition(float _dt)
 	{
-		if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+		if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
 
 		mPosition += mLinearVelocity * _dt;
 
@@ -478,7 +479,7 @@ namespace Dystopia
 
 	void RigidBody::DebugPrint()
 	{
-		if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
+		if (GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) return;
 
 		if (!mbIsStatic)
 			LoggerSystem::ConsoleLog(eLog::MESSAGE, "transform: (%f,%f) \n X vel: %f, Y vel: %f \n Awake: %i", float(mPosition.x), float(mPosition.y), float(mLinearVelocity.x), float(mLinearVelocity.y), mbIsAwake);

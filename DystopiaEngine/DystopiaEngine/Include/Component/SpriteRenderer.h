@@ -77,16 +77,22 @@ namespace Dystopia
 
 		void SetTexture(Texture* _pTexture) noexcept;
 
+		void SetColorA(const Math::Vec4& _col);
+		void SetColor(const Math::Vec3D& _col);
+		void SetAlpha(float _a);
 
 		HashString GetCurrentAnimation(void) const;
 		unsigned GetCurrentIndex(void) const;
+		Math::Vec4 GetTint(void) const;
+
 		bool IsPlaying(void) const;
 
 		void Play(void);
 		void Stop(void);
 		void SetSpeed(float);
 
-		Math::Vec2 Resized(void) const;
+		Math::Vec2 Resized(float _multiplier = 0.1f) const;
+		void ResizeToFit(float _multiplier) const;
 
 	private:
 		struct SpriteSheet
@@ -114,6 +120,9 @@ namespace Dystopia
 		int GetStartCol(void) const;
 		int GetStartRow(void) const;
 		void ResetFrames(void);
+
+		void TintColorPicker();
+		Math::Vec4 mvTintCol;
 	};
 }
 

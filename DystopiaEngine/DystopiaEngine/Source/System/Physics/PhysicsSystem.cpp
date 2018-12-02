@@ -47,7 +47,7 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (nullptr == body.GetOwner())	continue;
-			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 			if (body.GetOwner())
 			{
@@ -82,7 +82,7 @@ namespace Dystopia
 		{
 			if (nullptr == body.GetOwner())	continue;
 #if EDITOR
-			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 			if ( !body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING
 				|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
@@ -102,7 +102,7 @@ namespace Dystopia
 			{
 				if (body.GetOwner() == nullptr) continue;
 #if EDITOR
-				if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+				if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 				if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING
 					|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
@@ -124,7 +124,7 @@ namespace Dystopia
 		{
 			if (body.GetOwner() == nullptr) continue;
 #if EDITOR
-			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 			if (body.Get_IsStaticState() || !body.GetIsAwake() || body.Get_IsKinematic()) continue;
 
@@ -141,7 +141,7 @@ namespace Dystopia
 			{
 				if (body.GetOwner() == nullptr) continue;
 #if EDITOR
-				if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+				if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 				if (!body.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE || body.GetOwner()->GetFlags() & eObjFlag::FLAG_DRAGGING
 					|| !body.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
@@ -183,7 +183,7 @@ namespace Dystopia
 		{
 			if (body.GetOwner() == nullptr) continue;
 #if EDITOR
-			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (body.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || body.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
 			if (body.Get_IsStaticState() || body.Get_IsKinematic()) continue;
 
@@ -257,7 +257,7 @@ namespace Dystopia
 		{
 			if (nullptr == body.GetOwner()) continue;
 
-			if (body.GetOwner()->GetFlags() & FLAG_REMOVE)
+			if (body.GetFlags() & FLAG_REMOVE)
 			{
 				mComponents.Remove(&body);
 			}
@@ -301,6 +301,7 @@ namespace Dystopia
 	void PhysicsSystem::EditorUI(void)
 	{
 #if EDITOR			
+		EGUI::PushLeftAlign(160);
 		IsDebugUI();
 		GravityUI();
 		MaxVelocityUI();
@@ -308,6 +309,7 @@ namespace Dystopia
 		SleepBiasUI();
 		VelocityIterationUI();
 		PositionalIterationUI();
+		EGUI::PopLeftAlign();
 #endif 
 	}
 
@@ -326,7 +328,7 @@ namespace Dystopia
 #if EDITOR
 	void PhysicsSystem::GravityUI(void)
 	{
-		const auto result = EGUI::Display::DragFloat("Gravity     ", &mGravity, 0.01f, -FLT_MAX, FLT_MAX);
+		const auto result = EGUI::Display::DragFloat("Gravity", &mGravity, 0.01f, -FLT_MAX, FLT_MAX);
 		switch (result)
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
@@ -348,7 +350,7 @@ namespace Dystopia
 	void PhysicsSystem::IsDebugUI(void)
 	{
 		//bool tempBool = mbIsDebugActive;
-		if (EGUI::Display::CheckBox("Debug Draw  ", &mbIsDebugActive))
+		if (EGUI::Display::CheckBox("Debug Draw", &mbIsDebugActive))
 		{
 			//mbIsDebugActive = tempBool;
 			//EGUI::GetCommandHND()->InvokeCommand<PhysicsSystem>(&PhysicsSystem::mbIsDebugActive, tempBool);
@@ -399,7 +401,7 @@ namespace Dystopia
 
 	void PhysicsSystem::PositionalIterationUI()
 	{
-		const auto result = EGUI::Display::DragInt("Positional Iterations", &mPositionalIterations, 1, 1, 20);
+		const auto result = EGUI::Display::DragInt("Position Iterations", &mPositionalIterations, 1, 1, 20);
 		switch (result)
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
@@ -420,7 +422,7 @@ namespace Dystopia
 
 	void PhysicsSystem::SleepEpsilonUI()
 	{
-		const auto result = EGUI::Display::DragFloat("Sleep Velocity Tolerance", &mfSleepVelEpsilon, 0.001F, 0.001F, 5.0F);
+		const auto result = EGUI::Display::DragFloat("Sleep Tolerance", &mfSleepVelEpsilon, 0.001F, 0.001F, 5.0F);
 		switch (result)
 		{
 		case EGUI::eDragStatus::eEND_DRAG:

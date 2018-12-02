@@ -67,6 +67,7 @@ namespace Editor
 		mGizmoHovered{ false }, mCurrGizTool{ eTRANSLATE }, mpSceneSys{ nullptr }
 	{
 		EditorPanel::SetOpened(true);
+		EditorPanel::SetScrollEnabled(false);
 	}
 
 	SceneView::~SceneView(void)
@@ -94,6 +95,8 @@ namespace Editor
 
 		if (temp)
 			mpSceneCamera = temp->GetComponent<Dystopia::Camera>();
+		if (!mpSceneCamera)
+			__debugbreak();
 
 		if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
 			mpGfxSys->Update(_dt);
@@ -119,6 +122,8 @@ namespace Editor
 
 		if (mpSceneCamera)
 			pTex = mpSceneCamera->GetSurface()->AsTexture();
+		else
+			__debugbreak();
 
 
 
@@ -144,17 +149,7 @@ namespace Editor
 				AcceptPrefab(t);
 				EGUI::Display::EndPayloadReceiver();
 			}
-			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
-			{
-				AcceptTexture(t);
-				EGUI::Display::EndPayloadReceiver();
-			}
-			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS))
-			{
-				AcceptTexture(t);
-				EGUI::Display::EndPayloadReceiver();
-			}
-			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP))
+			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
 			{
 				AcceptTexture(t);
 				EGUI::Display::EndPayloadReceiver();
@@ -185,11 +180,12 @@ namespace Editor
 		const auto lastPos = ImGui::GetCursorPos();
 		ImGui::SetItemAllowOverlap();
 		ImGui::SetCursorPos(ImVec2{ orig2.x + 1.f, orig2.y - 1.f });
-		EGUI::Display::Label("Cam Pos  : X[%.2f], Y[%.2f]", static_cast<float>(camPos.x), static_cast<float>(camPos.y));
+		EGUI::Display::Label(" Cam Pos: X[%.2f], Y[%.2f]", static_cast<float>(camPos.x), static_cast<float>(camPos.y));
 		ImGui::SetItemAllowOverlap();
-		EGUI::Display::Label("Cam Scale: X[%.2f], Y[%.2f]", static_cast<float>(camSize.x), static_cast<float>(camSize.y));
+		EGUI::SameLine();
+		EGUI::Display::Label("Cam Scale: [%.2fx]", static_cast<float>(camSize.x));
 		ImGui::SetItemAllowOverlap();
-		EGUI::Display::Label("Camera: [%s]", (isPers ? "Perspective" : "Orthographic"));
+		EGUI::Display::Label(" Cam Mode: [%s]", (isPers ? "Perspective" : "Orthographic"));
 		ImGui::SetCursorPos(ImVec2{ lastPos.x, lastPos.y});
 
 		EGUI::Indent(2);
@@ -356,7 +352,7 @@ namespace Editor
 
 	void SceneView::AdjustImageSize(Dystopia::Texture *_pTex)
 	{
-		static constexpr float aspect = 16.f / 10.f;
+		const auto aspect = mpSceneCamera->GetAspectRatio();
 		float ix = static_cast<float>(aspect * _pTex->GetWidth());
 		float iy = static_cast<float>(_pTex->GetHeight());
 		float sx = Size().x;
@@ -496,11 +492,12 @@ namespace Editor
 				pNewRend->SetTexture(mpGfxSys->LoadTexture(_pFile->mPath.c_str()));
 				pNewRend->SetOwner(pGuaranteedTarget);
 				pNewRend->SetActive(pGuaranteedTarget->IsActive());
-				auto size = pNewRend->Resized();
+				pNewRend->ResizeToFit(0.1f);
+				/*auto size = pNewRend->Resized(0.1f);
 				auto nScale = pNewRend->GetOwner()->GetComponent<Dystopia::Transform>()->GetScale();
 				nScale.x = size.x;
 				nScale.y = size.y;
-				pNewRend->GetOwner()->GetComponent<Dystopia::Transform>()->SetGlobalScale(nScale);
+				pNewRend->GetOwner()->GetComponent<Dystopia::Transform>()->SetGlobalScale(nScale);*/
 				pNewRend->Awake();
 
 				if (pGuaranteedTarget->GetName() == defaultName)

@@ -562,7 +562,7 @@ public:
 	{
 		if (mpWrapper)
 		{
-			return mpWrapper->Fire(std::move(_param));
+			return mpWrapper->Fire(Ut::Move(_param));
 
 		}
 		return false;
@@ -585,7 +585,7 @@ public:
 	{
 		if (mpWrapper)
 		{
-			return mpWrapper->Fire(std::move(_param));
+			return mpWrapper->Fire(Ut::Move(_param));
 		}
 
 		return false;

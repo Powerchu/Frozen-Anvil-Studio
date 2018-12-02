@@ -37,36 +37,37 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
-	mViewport{0, 0, _fWidth, _fHeight}, mClippingPlane{ -500.f,500.f } , mView{}, mProjection{},
-	mInvScreen{}, mpSurface{ nullptr }, mbDebugDraw{ false }, mnSurfaceID{ 0 }
+	mbDebugDraw{ false }, mViewport{0, 0, _fWidth, _fHeight}, mClippingPlane{ -500.f,500.f } 
+	, mViewAspect{Gbl::WINDOW_WIDTH,Gbl::WINDOW_HEIGHT}, mView{}, mInvScreen{}, mProjection{}, mpSurface{ nullptr }, mnSurfaceID{ 0 }
 {
 
 }
 
 Dystopia::Camera::Camera(const Camera& _oOther) : Component{ _oOther }, 
-	mViewport{ _oOther.mViewport }, mClippingPlane{ _oOther.mClippingPlane }, mView{}, mProjection{ _oOther.mProjection },
-	mInvScreen{}, mpSurface{ _oOther.mpSurface }, mbDebugDraw{ _oOther.mbDebugDraw }, 
-	mnSurfaceID{ _oOther.mnSurfaceID }
+	mbDebugDraw{ _oOther.mbDebugDraw }, mViewport{ _oOther.mViewport }, mClippingPlane{ _oOther.mClippingPlane }
+	, mViewAspect{ _oOther.mViewAspect}, mView{}, mInvScreen{}, mProjection{ _oOther.mProjection }
+	, mpSurface{ _oOther.mpSurface }, mnSurfaceID{ _oOther.mnSurfaceID }
 {
 
 }
 
 Dystopia::Camera::~Camera(void)
 {
+
 }
 
 void Dystopia::Camera::Awake(void)
 {
-	SetSurface(mnSurfaceID);
+	SetSurface(&EngineCore::Get<GraphicsSystem>()->GetView(mnSurfaceID));
+
 	if (mnProjectionIndex == 0)
-		SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
+		SetOrthographic(mViewAspect.mnX, mViewAspect.mnY, mClippingPlane.mnNear, mClippingPlane.mnFar);
 	else
 		SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, 0.625f, mClippingPlane.mnNear, mClippingPlane.mnFar);
 }
 
 void Dystopia::Camera::Init(void)
 {
-	SetSurface(mnSurfaceID);
 	if (mnFlags & eObjFlag::FLAG_RESERVED)
 		mnFlags |= eObjFlag::FLAG_ACTIVE;
 
@@ -148,6 +149,15 @@ void Dystopia::Camera::SetViewport(float _x, float _y, float _nWidth, float _nHe
 	mViewport.mnHeight = _nHeight;
 }
 
+void Dystopia::Camera::SetViewAspect(const Math::Vec2& _view)
+{
+	mViewAspect = { _view.x, _view.y };
+}
+
+void Dystopia::Camera::SetViewAspect(float _x, float _y)
+{
+	mViewAspect = { _x,_y };
+}
 
 void Dystopia::Camera::SetPerspective(Math::Angle _fFOV, float _fAspectRatio, float _fNear, float _fFar)
 {
@@ -233,6 +243,11 @@ Math::Pt3D Dystopia::Camera::GetPosition(void) const
 Math::Vec3D Dystopia::Camera::GetSize(void) const
 {
 	return GetOwner()->GetComponent<Transform>()->GetScale();
+}
+
+float Dystopia::Camera::GetAspectRatio() const
+{
+	return mViewAspect.mnX / mViewAspect.mnY;
 }
 
 
@@ -363,7 +378,7 @@ void Dystopia::Camera::EditorProjectionDropdown(void)
 		switch (mnProjectionIndex)
 		{
 		case 0: // Orthographic
-			SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
+			SetOrthographic(mViewAspect.mnX, mViewAspect.mnY, mClippingPlane.mnNear, mClippingPlane.mnFar);
 			break;
 		case 1: // Perspective
 			SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, 0.625f, mClippingPlane.mnNear, mClippingPlane.mnFar);
@@ -458,7 +473,7 @@ void Dystopia::Camera::EditorOptions(void)
 	case EGUI::eDragStatus::eDRAGGING:
 		if (!mnProjectionIndex) // Ortho
 		{
-			SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
+			SetOrthographic(mViewAspect.mnX, mViewAspect.mnY, mClippingPlane.mnNear, mClippingPlane.mnFar);
 		}
 		else // pers
 		{
