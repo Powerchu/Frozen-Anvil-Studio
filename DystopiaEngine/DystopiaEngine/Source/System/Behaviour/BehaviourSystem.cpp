@@ -265,8 +265,6 @@ namespace Dystopia
 								iter.first  = 0;
 							}
 						}
-
-
 					}
 				}
 			}
@@ -348,21 +346,6 @@ namespace Dystopia
 				}
 
 			}
-			//for (auto & iter : i.second)
-			//{
-			//	if (iter.second != nullptr)
-			//	{
-			//		if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
-			//		{
-			//			delete iter.second;
-			//			iter.second = nullptr;
-			//			i.second.FastRemove(&iter);
-			//		}
-			//	}
-				//else
-				//{
-				//	i.second.FastRemove(&iter);
-				//}
 		}
 #endif
 	}
