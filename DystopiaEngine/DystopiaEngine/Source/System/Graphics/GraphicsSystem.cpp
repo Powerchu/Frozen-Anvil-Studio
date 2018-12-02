@@ -637,7 +637,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 
 #if EDITOR
 	auto& fb = GetFrameBuffer();
-	float const w = fb.AsTexture()->GetWidth(), h = fb.AsTexture()->GetHeight();
+	auto const w = fb.AsTexture()->GetWidth(), h = fb.AsTexture()->GetHeight();
 
 	glViewport(0, 0, w, h);
 
@@ -758,6 +758,11 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 }
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _strName)
+{
+	return EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadTexture(_strName);
+}
+
+Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const char * _strName)
 {
 	return EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadTexture(_strName);
 }
@@ -932,6 +937,11 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 	return mOpenGL != nullptr;
 }
 
+
+Dystopia::Shader* Dystopia::GraphicsSystem::GetShader(const char * _str) const
+{
+	return shaderlist.at(_str);
+}
 
 void Dystopia::GraphicsSystem::EditorUI(void)
 {

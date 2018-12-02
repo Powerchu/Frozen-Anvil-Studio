@@ -18,13 +18,13 @@ typedef uint64_t HashID;
 static constexpr HashID FNV_PRIME = 1099511628211u;
 static constexpr HashID OFFSET_BASIS = 0xcbf29ce484222325;
 template<unsigned int N>
-constexpr HashID StringHasher(const char(&_s)[N], unsigned int I = N)
+_DLL_EXPORT_ONLY constexpr HashID StringHasher(const char(&_s)[N], unsigned int I = N)
 {
 	return I == 1 ? (OFFSET_BASIS ^ _s[0]) * FNV_PRIME :
 		(StringHasher(_s, I - 1) ^ (_s[I - 1])) * FNV_PRIME;
 }
 
-HashID StringHasher(const char* _s);
+_DLL_EXPORT_ONLY HashID StringHasher(const char* _s);
 
 class _DLL_EXPORT_ONLY OString
 {
@@ -124,22 +124,22 @@ private:
 
 };
 
-bool operator==(const OString& _lhs, const OString& _rhs);
-bool operator==(const OString& _lhs, const char * _rhs);
-bool operator==(const char * _lhs, const OString& _rhs);
-bool operator==(HashID _id, const OString& _rhs);
-bool operator==(const OString& _lhs, HashID _id);
-bool operator==(OString&& _lhs, OString&& _rhs);
-bool operator==(const OString& _lhs, OString&& _rhs);
-bool operator==(OString&& _lhs, const OString& _rhs);
-bool operator!=(const OString& _lhs, const OString& _rhs);
-bool operator<(const OString& _lhs, const OString& _rhs);
-bool operator>(const OString& _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator==(const OString& _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator==(const OString& _lhs, const char * _rhs);
+_DLL_EXPORT_ONLY bool operator==(const char * _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator==(HashID _id, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator==(const OString& _lhs, HashID _id);
+_DLL_EXPORT_ONLY bool operator==(OString&& _lhs, OString&& _rhs);
+_DLL_EXPORT_ONLY bool operator==(const OString& _lhs, OString&& _rhs);
+_DLL_EXPORT_ONLY bool operator==(OString&& _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator!=(const OString& _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator<(const OString& _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY bool operator>(const OString& _lhs, const OString& _rhs);
 std::ostream& operator<<(std::ostream& _os, const OString& _rhs);
 
-OString operator+(const OString& _lhs, const OString& _rhs);
-OString operator+(const OString& _lhs, const char*);
-OString operator+(const char*, const OString& _rhs);
+_DLL_EXPORT_ONLY OString operator+(const OString& _lhs, const OString& _rhs);
+_DLL_EXPORT_ONLY OString operator+(const OString& _lhs, const char*);
+_DLL_EXPORT_ONLY OString operator+(const char*, const OString& _rhs);
 
 
 
