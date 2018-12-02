@@ -58,7 +58,10 @@ Dystopia::Camera::~Camera(void)
 void Dystopia::Camera::Awake(void)
 {
 	SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
-	SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
+	if (mnProjectionIndex == 0)
+		SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
+	else
+		SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, 0.625f, mClippingPlane.mnNear, mClippingPlane.mnFar);
 }
 
 void Dystopia::Camera::Init(void)
@@ -272,6 +275,15 @@ void Dystopia::Camera::Serialise(TextSerialiser& _out) const
 	Component::Serialise(_out);
 	_out << mnSurfaceID;
 	_out << mbDebugDraw;
+	_out << mnProjectionIndex;
+	_out << mClippingPlane.mnFar;
+	_out << mClippingPlane.mnNear;
+	_out << mViewport.mnHeight;
+	_out << mViewport.mnWidth;
+	_out << mViewport.mnX;
+	_out << mViewport.mnY;
+	_out << mfOrthoSize;
+	_out << mnPersFOV_deg;
 	_out.InsertEndBlock("Camera");
 }
 
@@ -282,6 +294,15 @@ void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 
 	_in >> mnSurfaceID;
 	_in >> mbDebugDraw;
+	_in >> mnProjectionIndex;
+	_in >> mClippingPlane.mnFar;
+	_in >> mClippingPlane.mnNear;
+	_in >> mViewport.mnHeight;
+	_in >> mViewport.mnWidth;
+	_in >> mViewport.mnX;
+	_in >> mViewport.mnY;
+	_in >> mfOrthoSize;
+	_in >> mnPersFOV_deg;
 	_in.ConsumeEndBlock();
 }
 
