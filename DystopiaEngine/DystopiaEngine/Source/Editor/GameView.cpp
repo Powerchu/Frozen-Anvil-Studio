@@ -73,7 +73,7 @@ namespace Editor
 		return true;
 	}
 
-	void GameView::Update(float _dt)
+	void GameView::Update(float)
 	{
 		if (mpCamSys->GetMasterCamera())
 		{

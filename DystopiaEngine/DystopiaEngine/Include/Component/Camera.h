@@ -119,6 +119,7 @@ namespace Dystopia
 
 		// TODO 
 		bool mbDebugDraw;
+		int  mnProjectionIndex = 0;
 	private:
 
 		Gfx::Viewport mViewport;
@@ -130,7 +131,6 @@ namespace Dystopia
 
 		Framebuffer* mpSurface;
 		int mnSurfaceID;
-		int mnProjectionIndex = 0;
 
 		// Orthographic Stuff
 		float mfOrthoSize = 1.f;

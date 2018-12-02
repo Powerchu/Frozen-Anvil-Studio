@@ -57,9 +57,7 @@ Dystopia::Camera::~Camera(void)
 
 void Dystopia::Camera::Awake(void)
 {
-	if (nullptr == mpSurface)
-		SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
-	
+	SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
 	SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
 }
 
