@@ -550,6 +550,22 @@ namespace Dystopia
 		}
 		return HashString{};
 	}
+
+	HashString FileSystem::GetFromResource(const char *_str)
+	{
+		std::filesystem::path DirPath{ GetProjectFolders<std::string>(eFileDir::eResource) };
+		std::error_code error;
+		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
+
+		for (auto const & elem : DirIter)
+		{
+			if (elem.path().filename().string() == _str || std::filesystem::equivalent(mPathTable[eFileDir::eResource] + _str, elem, error))
+				return HashString{ elem.path().string().c_str() };
+		}
+
+		return HashString{};
+	}
+
 }
 
 

@@ -781,6 +781,11 @@ Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _str
 	return EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadTexture(_strName);
 }
 
+Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const char * _strName)
+{
+	return EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadTexture(_strName);
+}
+
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)
 {
 	return nullptr;
@@ -951,6 +956,11 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 	return mOpenGL != nullptr;
 }
 
+
+Dystopia::Shader* Dystopia::GraphicsSystem::GetShader(const char * _str) const
+{
+	return shaderlist.at(_str);
+}
 
 
 #if EDITOR			
