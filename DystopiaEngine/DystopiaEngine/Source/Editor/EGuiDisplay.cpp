@@ -261,7 +261,7 @@ namespace EGUI
 			return SplitterBehavior(id, bb, split_vertically ? ImGuiAxis_X : ImGuiAxis_Y, size1, size2, min_size1, min_size2, 0.0f);
 		}
 
-		bool EmptyBox(const char * _label, float _width, const char * _anythingToShowInside, bool _iteractive, bool _showLabel)
+		bool EmptyBox(const char * _label, float _width, const char *, bool _iteractive, bool _showLabel)
 		{
 			bool clicked = false;
 			const bool show = _iteractive;
@@ -300,6 +300,20 @@ namespace EGUI
 		    //HashString invi{ "##checkBox" };
 			//invi += _label;
 			return ImGui::Checkbox(_label, _outputBool);
+		}
+
+		bool RadioBtn(const char * _label, int* _pValueStorage, int _btnValue, bool _showLabel)
+		{
+			if (_showLabel)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+			//HashString invi{ "##checkBox" };
+			//invi += _label;
+			return ImGui::RadioButton(_label, _pValueStorage, _btnValue);
 		}
 
 		eDragStatus DragFloat(const char * _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText, float _width)

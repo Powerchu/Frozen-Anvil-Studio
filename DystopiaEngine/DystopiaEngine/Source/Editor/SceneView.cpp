@@ -511,11 +511,13 @@ namespace Editor
 	void SceneView::SetGizmoTranslate(void)
 	{
 		mCurrGizTool = eGizTool::eTRANSLATE;
+		EditorMain::GetInstance()->GetSystem<EditorStates>()->ChangeGizmo(eTRANSLATE);
 	}
 
 	void SceneView::SetGizmoScaler(void)
 	{
 		mCurrGizTool = eGizTool::eSCALE;
+		EditorMain::GetInstance()->GetSystem<EditorStates>()->ChangeGizmo(eSCALE);
 	}
 
 	void SceneView::DrawGizmoMul(const AutoArray<uint64_t>& _arrIDs)

@@ -456,7 +456,7 @@ namespace Editor
 	{
 		if (_file == mFocusedFile) EGUI::Display::Outline(mPayloadRect.x, mPayloadRect.y);
 
-		if (EGUI::Display::CustomPayload(("###ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
+		if (EGUI::Display::CustomPayload(("ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
 			_file->mName.c_str(), mPayloadRect, _file->mTag, &(*_file), sizeof(Editor::File)))
 		{
 			mFocusedFile = _file;

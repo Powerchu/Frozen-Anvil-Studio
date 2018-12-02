@@ -133,9 +133,9 @@ namespace Editor
 		strcpy_s(buffer, name.c_str());
 
 		EGUI::Display::Dummy(0.f, 5.f);
-		EGUI::Display::IconGameObj("##GameObjIcon", 50, 50);
+		EGUI::Display::IconGameObj("GameObjIcon", 50, 50);
 		EGUI::SameLine(10);
-		if (EGUI::StartChild("##InfoArea", Math::Vec2{ Size().x - 60, 90 }, false))
+		if (EGUI::StartChild("InfoArea", Math::Vec2{ Size().x - 60, 90 }, false))
 		{
 			auto activeState = mpFocus->IsActive();
 			if (EGUI::Display::CheckBox("Active", &activeState, false))
@@ -144,7 +144,7 @@ namespace Editor
 			};
 
 			EGUI::SameLine(5, 0);
-			if (EGUI::Display::TextField("##Name", buffer, MAX_SEARCH, false, 190.f) && strlen(buffer))
+			if (EGUI::Display::TextField("##gobjName", buffer, MAX_SEARCH, false, 190.f) && strlen(buffer))
 			{
 				auto cmd = EditorMain::GetInstance()->GetSystem<EditorCommands>();
 				const auto oFn = cmd->MakeFnCommand(&Dystopia::GameObject::SetName, mpFocus->GetName());
@@ -206,7 +206,7 @@ namespace Editor
 			EGUI::Display::Dummy(4.f, 2.f);
 			EGUI::Display::HorizontalSeparator();
 
-			if (EGUI::Display::CheckBox("##comActive", &activeState, false))
+			if (EGUI::Display::CheckBox("comActive", &activeState, false))
 			{
 				arrComp[i]->SetActive(activeState);
 			};
@@ -236,7 +236,7 @@ namespace Editor
 			EGUI::Display::HorizontalSeparator();
 			if (!c) continue;
 
-			if (EGUI::Display::CheckBox("##behavActive", &activeState, false))
+			if (EGUI::Display::CheckBox("behavActive", &activeState, false))
 			{
 				c->SetActive(activeState);
 			};
@@ -493,20 +493,20 @@ namespace Editor
 
 			EGUI::Display::HorizontalSeparator();
 
-			EGUI::Display::IconGameObj("##pGameObjIcon", 50, 50);
+			EGUI::Display::IconGameObj("pGameObjIcon", 50, 50);
 			EGUI::SameLine(10);
-			if (EGUI::StartChild("##pInfoArea", Math::Vec2{ Size().x - 60, 60 }, false))
+			if (EGUI::StartChild("pInfoArea", Math::Vec2{ Size().x - 60, 60 }, false))
 			{
 				EGUI::SameLine();
 				EGUI::Display::Label("PREFAB %s", pPrefabData->mPrefabFile.c_str());
 				auto arr = prefObj.GetAllTags_str();
 				int selected = 0;
-				EGUI::Display::DropDownSelection("##pTag", selected, arr, 50);
+				EGUI::Display::DropDownSelection("Tag", selected, arr, 50);
 
 				EGUI::SameLine();
 				EGUI::ChangeAlignmentYOffset(0);
 				int j = (prefObj.GetFlags() & FLAG_LAYER_WORLD) ? 1 : (prefObj.GetFlags() & FLAG_LAYER_UI) ? 2 : 0;
-				if (EGUI::Display::DropDownSelection("##pLayer", j, g_arr2, 80))
+				if (EGUI::Display::DropDownSelection("pLayer", j, g_arr2, 80))
 				{
 					switch (j)
 					{
@@ -584,7 +584,7 @@ namespace Editor
 		switch (mnConfirmations)
 		{
 		case 1:
-			EGUI::Display::OpenPopup("##Confirm Detach");
+			EGUI::Display::OpenPopup("Confirm Detach");
 			if (EGUI::Display::StartPopupModal("Confirm Detach", "WARNING!"))
 			{
 				EGUI::Display::Label("CHANGES ARE PERMANENT!");
@@ -605,7 +605,7 @@ namespace Editor
 			break;
 
 		case 2:
-			EGUI::Display::OpenPopup("##Confirm Apply");
+			EGUI::Display::OpenPopup("Confirm Apply");
 			if (EGUI::Display::StartPopupModal("Confirm Apply", "WARNING!"))
 			{
 				EGUI::Display::Label("CHANGES ARE PERMANENT!");

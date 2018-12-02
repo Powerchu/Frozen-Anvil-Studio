@@ -30,10 +30,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #if EDITOR
 #include "Editor/EGUI.h"
+#include "Editor/EditorCommands.h"
 #endif
 
 #include <cmath>
-#include "Editor/EditorCommands.h"
 
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
@@ -277,12 +277,24 @@ void Dystopia::Camera::EditorUI(void) noexcept
 {
 #if EDITOR
 	EGUI::PushLeftAlign(120.f);
+	EditorMasterCameraCheckbox();
 	EditorProjectionDropdown();
 	EGUI::PopLeftAlign();
 	EditorOptions();
 
 
 #endif 
+}
+
+void Dystopia::Camera::EditorMasterCameraCheckbox()
+{
+	const auto masterCam = EngineCore::GetInstance()->Get<CameraSystem>()->GetMasterCamera();
+	bool isMaster = (masterCam == this);
+
+	if (EGUI::Display::CheckBox("Master Camera?", &isMaster))
+	{
+		EngineCore::GetInstance()->Get<CameraSystem>()->SetMasterCamera(this);
+	}
 }
 
 void Dystopia::Camera::EditorProjectionDropdown(void)

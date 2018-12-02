@@ -243,6 +243,20 @@ namespace EGUI
 		bool CheckBox(const char * _label, bool *_pOutBool, bool _showLabel = true);
 		/* =======================================================================================================================
 		Brief:
+		Creates a radio button for a boolean variable. Returns true when the radiois clicked, toggles the _pOutBool
+		Usage:
+		static int selected = 0;
+		// vertically aligned radio buttons
+		ImGui::RadioButton("Number 1", &selected, 1);
+		ImGui::RadioButton("Number 2", &selected, 2);
+		ImGui::RadioButton("Number 3", &selected, 3);
+		{
+		// The Radio is clicked (toggleMe if its true or false does not matter). Do something here:
+		}
+		======================================================================================================================= */
+		bool RadioBtn(const char * _label, int* _pValueStorage, int _btnValue, bool _showLabel);
+		/* =======================================================================================================================
+		Brief:
 		Creates a draggable float editable field. Returns if the value is changed
 		Usage:
 		switch (EGUI::Display::DragFloat("Test Float", &mpFocus->mTestFloat, 0.01f, -FLT_MAX, FLT_MAX))

@@ -110,6 +110,7 @@ namespace Dystopia
 		void SetSize(float _scale) const;
 
 		void EditorUI(void) noexcept override;
+		void EditorMasterCameraCheckbox();
 		void EditorProjectionDropdown();
 		void EditorOptions();
 
