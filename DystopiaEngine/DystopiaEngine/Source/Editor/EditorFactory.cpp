@@ -723,6 +723,10 @@ uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D
 		for (auto& b : allB)
 		{
 			auto dup = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::BehaviourSystem>()->RequestDuplicate(b, insertedO.GetID());
+			if(dup == nullptr)
+			{
+				dup = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::BehaviourSystem>()->RequestBehaviour(insertedO.GetID(), b->GetBehaviourName());
+			}
 			dup->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 			insertedO.AddComponent(dup, Dystopia::Behaviour::TAG{});
 		}

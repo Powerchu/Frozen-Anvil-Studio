@@ -65,6 +65,7 @@ namespace Editor
 		mGizmoHovered{ false }, mCurrGizTool{ eTRANSLATE }, mpSceneSys{ nullptr }
 	{
 		EditorPanel::SetOpened(true);
+		EditorPanel::SetScrollEnabled(false);
 	}
 
 	SceneView::~SceneView(void)

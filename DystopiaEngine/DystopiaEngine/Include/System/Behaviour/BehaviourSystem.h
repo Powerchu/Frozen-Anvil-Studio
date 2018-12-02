@@ -79,6 +79,8 @@ namespace Dystopia
 
 		void DeleteBehaviour(Behaviour *);
 
+		void ClearAllEditorBehaviours();
+
 #if EDITOR
 
 		MagicArray<BehaviourWrap *> const & GetDllChanges() const;
