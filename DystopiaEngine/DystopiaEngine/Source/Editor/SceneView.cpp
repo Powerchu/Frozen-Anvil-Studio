@@ -86,8 +86,10 @@ namespace Editor
 	void SceneView::Update(float _dt)
 	{
 		Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___");
+
 		if (temp)
 			mpSceneCamera = temp->GetComponent<Dystopia::Camera>();
+
 		if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
 			mpGfxSys->Update(_dt);
 
@@ -518,6 +520,36 @@ namespace Editor
 	{
 		mCurrGizTool = eGizTool::eSCALE;
 		EditorMain::GetInstance()->GetSystem<EditorStates>()->ChangeGizmo(eSCALE);
+	}
+
+	void SceneView::ResetSceneCam()
+	{
+		if (mpSceneCamera)
+		{
+			mpSceneCamera->SetPosition(0, 0, 0);
+			mpSceneCamera->SetSize(1.f);
+		}
+	}
+
+	void SceneView::FocusGobj()
+	{
+		if (mpSceneCamera)
+		{
+			const auto& selectedIDs = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetSelectedIDs();
+			if (!selectedIDs.size())
+				return;
+
+			if (selectedIDs.size() == 1)
+			{
+				if (const auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(selectedIDs[0]))
+				{
+					auto objPos = o->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					mpSceneCamera->SetPosition(objPos);
+				}
+				else
+					EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(selectedIDs[0]);
+			}
+		}
 	}
 
 	void SceneView::DrawGizmoMul(const AutoArray<uint64_t>& _arrIDs)

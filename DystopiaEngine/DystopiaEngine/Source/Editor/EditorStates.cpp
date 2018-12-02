@@ -154,6 +154,10 @@ void Editor::EditorStates::Update(float)
 			EditorMain::GetInstance()->GetPanel<SceneView>()->SetGizmoTranslate();
 		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_E))
 			EditorMain::GetInstance()->GetPanel<SceneView>()->SetGizmoScaler();
+		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_1))
+			EditorMain::GetInstance()->GetPanel<SceneView>()->ResetSceneCam();
+		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_F))
+			EditorMain::GetInstance()->GetPanel<SceneView>()->FocusGobj();
 	}
 
 	switch (mState)

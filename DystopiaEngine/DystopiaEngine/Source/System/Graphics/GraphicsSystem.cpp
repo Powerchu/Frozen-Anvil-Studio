@@ -557,8 +557,8 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			Math::Matrix4 View = Cam.GetViewMatrix();
 			Math::Matrix4 Proj = Cam.GetProjectionMatrix();
 
-			auto surface = Cam.GetSurface();
-			auto vp = Cam.GetViewport();
+			const auto surface = Cam.GetSurface();
+			const auto vp = Cam.GetViewport();
 
 			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY), 
 					   static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
@@ -569,10 +569,10 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 
 			DrawScene(Cam, View, Proj);
 			
-			 if (Cam.DrawDebug())
+			if (Cam.DrawDebug())
 				DrawDebug(Cam, View, Proj);
 
-			 surface->Unbind();
+			surface->Unbind();
 		}
 	}
 
