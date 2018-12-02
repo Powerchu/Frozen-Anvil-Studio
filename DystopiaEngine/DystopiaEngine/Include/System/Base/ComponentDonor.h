@@ -78,8 +78,6 @@ inline void Dystopia::ComponentDonor<Ty, Settings>::Serialise(TextSerialiser & _
 		elem.Serialise(_Serialiser);
 		_Serialiser.InsertEndBlock("Component End");
 	}
-
-
 }
 
 template<typename Ty, typename Settings>
@@ -124,7 +122,11 @@ template<typename Ty, typename Settings>
 inline void Dystopia::ComponentDonor<Ty, Settings>::InitComponents(void)
 {
 	for (auto& elem : mComponents)
+	{
+		if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+			continue;
 		elem.Init();
+	}
 }
 
 #endif		// INCLUDE GUARD

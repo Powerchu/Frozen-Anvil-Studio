@@ -400,8 +400,18 @@ namespace Dystopia
 
 			_obj.InsertStartBlock("str");
 			_obj << str;
+
+			int n = 0;
+
+			for (auto& e : i.second)
+			{
+				if(e.second)
+					n += !(e.second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ);
+			}
+
+
 			/*Save the number of Pointers*/
-			_obj << i.second.size();
+			_obj << n;
 			for (auto & iter : i.second)
 			{
 				_obj.InsertStartBlock("BEHAVIOUR_BLOCK");
@@ -499,14 +509,14 @@ namespace Dystopia
 						if (_Flags & eObjFlag::FLAG_EDITOR_OBJ)
 						{
 							/*Object is editor object*/
-							if (::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID, false))
-							{
-
-							}
-							else
-							{
-								DeleteBehaviour(ptr);
-							}
+							//if (::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID, false))
+							//{
+							//
+							//}
+							//else
+							//{
+							//	DeleteBehaviour(ptr);
+							//}
 						}
 						else
 						{
@@ -627,6 +637,9 @@ namespace Dystopia
 			{
 				if (iter.second)
 				{
+					if (iter.second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+						continue;
+
 					delete iter.second;
 					iter.second = nullptr;
 					iter.first  = 0;
