@@ -38,7 +38,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
 	mbDebugDraw{ false }, mViewport{0, 0, _fWidth, _fHeight}, mClippingPlane{ -500.f,500.f } 
-	, mViewAspect{800.f,600.f}, mView{}, mInvScreen{}, mProjection{}, mpSurface{ nullptr }, mnSurfaceID{ 0 }
+	, mViewAspect{Gbl::WINDOW_WIDTH,Gbl::WINDOW_HEIGHT}, mView{}, mInvScreen{}, mProjection{}, mpSurface{ nullptr }, mnSurfaceID{ 0 }
 {
 
 }
@@ -53,11 +53,13 @@ Dystopia::Camera::Camera(const Camera& _oOther) : Component{ _oOther },
 
 Dystopia::Camera::~Camera(void)
 {
+
 }
 
 void Dystopia::Camera::Awake(void)
 {
-	SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
+	SetSurface(&EngineCore::Get<GraphicsSystem>()->GetView(mnSurfaceID));
+
 	if (mnProjectionIndex == 0)
 		SetOrthographic(mViewAspect.mnX, mViewAspect.mnY, mClippingPlane.mnNear, mClippingPlane.mnFar);
 	else
@@ -147,6 +149,15 @@ void Dystopia::Camera::SetViewport(float _x, float _y, float _nWidth, float _nHe
 	mViewport.mnHeight = _nHeight;
 }
 
+void Dystopia::Camera::SetViewAspect(const Math::Vec2& _view)
+{
+	mViewAspect = { _view.x, _view.y };
+}
+
+void Dystopia::Camera::SetViewAspect(float _x, float _y)
+{
+	mViewAspect = { _x,_y };
+}
 
 void Dystopia::Camera::SetPerspective(Math::Angle _fFOV, float _fAspectRatio, float _fNear, float _fFar)
 {

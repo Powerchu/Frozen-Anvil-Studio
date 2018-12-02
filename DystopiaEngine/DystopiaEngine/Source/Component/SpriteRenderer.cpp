@@ -51,10 +51,11 @@ mbSimulate{ Ut::Move(_rhs.mbSimulate) }, mvTintCol({Ut::Move(_rhs.mvTintCol)})
 }
 
 Dystopia::SpriteRenderer::SpriteRenderer(const SpriteRenderer& _rhs) noexcept
-	: Renderer{ _rhs }, mAnimations{ _rhs.mAnimations },
-	mnID{ _rhs.mnID }, mnCol{ _rhs.mnCol }, mnRow{_rhs.mnRow },
-	mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, mpAtlas{ _rhs.mpAtlas }, 
-	mNextSectionPos{ _rhs.mNextSectionPos }, mbPlayOnStart{ _rhs.mbPlayOnStart }, mbPlay{ _rhs.mbPlay }, mbSimulate{ _rhs.mbSimulate }
+	: Renderer{ _rhs }, mpAtlas{ _rhs.mpAtlas },
+	mAnimations{ _rhs.mAnimations }, mnID{ _rhs.mnID }, mnCol{ _rhs.mnCol },
+	mnRow{_rhs.mnRow }, mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, 
+	mNextSectionPos{ _rhs.mNextSectionPos }, mbPlayOnStart{ _rhs.mbPlayOnStart }, 
+	mbSimulate{ _rhs.mbSimulate }, mbPlay{ _rhs.mbPlay }, mvTintCol{ _rhs.mvTintCol }
 {
 }
 
@@ -198,9 +199,7 @@ void Dystopia::SpriteRenderer::SetAnimation(unsigned _nID)
 
 Dystopia::SpriteRenderer* Dystopia::SpriteRenderer::Duplicate(void) const
 {
-	return static_cast<ComponentDonor<SpriteRenderer>*>(
-		EngineCore::GetInstance()->Get<GraphicsSystem>()
-	)->RequestComponent(*this);
+	return static_cast<ComponentDonor<SpriteRenderer>*>(EngineCore::GetInstance()->Get<GraphicsSystem>())->RequestComponent(*this);
 }
 
 void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const

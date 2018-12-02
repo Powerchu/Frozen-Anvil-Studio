@@ -144,6 +144,7 @@ void Editor::EditorFactory::DefaultGameCamera(void)
 	auto cam = pCore->GetSystem<Dystopia::CameraSystem>()->RequestComponent();
 	cam->SetSurface(0);
 	cam->SetMasterCamera();
+	cam->SetActive(true);
 
 	Dystopia::GameObject *pObject = scene.InsertGameObject(Dystopia::GUIDGenerator::GetUniqueID());
 	pObject->SetName("Main Camera");

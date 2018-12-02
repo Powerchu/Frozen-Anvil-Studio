@@ -83,6 +83,8 @@ namespace Dystopia
 
 		// Set the area the camera renders to in relative coordinates, from 0.0 to 1.0
 		void SetViewport(float _x, float _y, float _nWidth, float _nHeight);
+		void SetViewAspect(const Math::Vec2& _xy);
+		void SetViewAspect(float _x, float _y);
 
 		void SetPerspective(Math::Angle _fFOV, float _fAspectRatio, float _fNear, float _fFar);
 		void SetPerspective(float _fLeft, float _fRight, float _fTop, float _fBottom, float _fNear, float _fFar);

@@ -74,6 +74,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #if EDITOR
 #include "Editor/EGUI.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorCommands.h"
 #endif 
 
 
@@ -90,11 +92,10 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.0f },
-	mfDebugLineThreshold{ 0.958f }, mvDebugColour{ .0f, 1.f, .0f, .1f }, mbVsync{ false }
-    ,mvClearCol{0,0,0,1}
+	mvDebugColour{.0f, 1.f, .0f, .1f}, mvClearCol{0, 0, 0, 0}, mfGamma{2.0f}, mfDebugLineThreshold{0.958f}, mOpenGL{nullptr},
+	mPixelFormat{0}, mAvailable{0}, mSettings(0)
+	, mbVsync{false}, mvGlobalAspectRatio{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT,0,0}
 {
-
 }
 
 Dystopia::GraphicsSystem::~GraphicsSystem(void)
@@ -122,13 +123,25 @@ void Dystopia::GraphicsSystem::ToggleVsync(bool b) noexcept
 	}
 }
 
-void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw)
+void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw) const
 {
 	const auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
 	//auto bDebugDraw = !CamSys->GetMasterCamera()->DrawDebug();
 
 	for (auto& e : CamSys->GetAllCameras())
 		e.SetDebugDraw(_bDebugDraw);
+}
+
+void Dystopia::GraphicsSystem::SetAllCameraAspect(const float _x, const float _y) const
+{
+	const auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
+	//auto bDebugDraw = !CamSys->GetMasterCamera()->DrawDebug();
+
+	for (auto& c : CamSys->GetAllCameras())
+	{
+		c.SetViewAspect(_x, _y);
+		c.Awake();
+	}
 }
 
 bool Dystopia::GraphicsSystem::GetDebugDraw(void) const
@@ -190,6 +203,7 @@ void Dystopia::GraphicsSystem::PostInit(void)
 	if (auto err = glGetError())
 		__debugbreak();
 #   endif 
+	SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
 }
 
 
@@ -689,16 +703,17 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 	mViews.Emplace(2048u, 2048u, true);
 	mViews.Emplace(1024u, 1024u, true);
 	mViews.Emplace(
-		static_cast<unsigned>(Gbl::WINDOW_WIDTH),
-		static_cast<unsigned>(Gbl::WINDOW_HEIGHT),
+		static_cast<unsigned>(mvGlobalAspectRatio.x),
+		static_cast<unsigned>(mvGlobalAspectRatio.y),
 		false
 	);
 
 #if EDITOR
 	mViews.Emplace(2048u, 2048u, false);
 #endif
-	mvClearCol = { 0,0,0,1 };
+	mvClearCol = { 0,0,0,0 };
 	DRAW_MODE = GL_TRIANGLES;
+	SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
 }
 
 void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
@@ -723,8 +738,10 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 	_in >> mvDebugColour;
 	_in >> mbVsync;
 	_in >> mvClearCol;
+	_in >> mvGlobalAspectRatio;
 
 	ToggleVsync(mbVsync);
+	SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
 }
 
 void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
@@ -744,6 +761,7 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 	_out << mvDebugColour;
 	_out << mbVsync;
 	_out << mvClearCol;
+	_out << mvGlobalAspectRatio;
 }
 
 
@@ -937,10 +955,11 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 }
 
 
+
+#if EDITOR			
 void Dystopia::GraphicsSystem::EditorUI(void)
 {
 	mbDebugDrawCheckBox = GetDebugDraw();
-#if EDITOR			
 	//const auto pCore = EngineCore::GetInstance();
 	//const auto pCamSys = pCore->GetSystem<CameraSystem>();
 	EGUI::PushLeftAlign(160);
@@ -965,6 +984,8 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	{
 		ToggleVsync(mbVsync);
 	}
+
+	EditorAspectRatio();
 
 	//const auto& sceneCam = pCamSys->GetMasterCamera();
 	if (EGUI::Display::CheckBox("Debug Draw", &mbDebugDrawCheckBox))
@@ -1029,6 +1050,35 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 
 	EGUI::PopLeftAlign();
 
-#endif 
+
+
+
 }
 
+void Dystopia::GraphicsSystem::EditorAspectRatio()
+{
+	static int eAspect = 0;
+
+	std::string arr[3]{"1600x900px [16:9]", "1440x900px [16:10]", "1024x768px [4:3]",  };
+
+	if (EGUI::Display::DropDownSelection("Aspect Ratio", eAspect, arr, 120.f))
+	{
+		switch (eAspect)
+		{
+		case 0: // 16:9
+			mvGlobalAspectRatio = { 1600,900,0,0 };
+			break;
+		case 1: // 16:10
+			mvGlobalAspectRatio = { 1440,900,0,0 };
+			break;
+		case 2: // 4:3
+			mvGlobalAspectRatio = { 1024,768,0,0 };
+			break;
+		default:
+			break;
+		}
+
+		SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
+	}
+}
+#endif 
