@@ -68,7 +68,7 @@ namespace Editor
 		
 		// Instantiate New Main Camera
 		EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultGameCamera();
-
+		SetScrollEnabled(false);
 		//SceneChanged();
 		return true;
 	}
