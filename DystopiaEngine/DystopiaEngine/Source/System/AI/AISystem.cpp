@@ -57,13 +57,8 @@ namespace Dystopia
 	{
 	}
 
-	void AISystem::SaveSettings(DysSerialiser_t& _out)
+	void AISystem::SaveSettings(DysSerialiser_t& )
 	{
-	}
-
-	void AISystem::ReceiveMessage(const eSysMessage& _msg)
-	{
-
 	}
 
 	void AISystem::EditorUI()

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="Dystopia::NodeXML">
+    <DisplayString>{{Node = {mstrName,s}}}</DisplayString>
+    <Expand>
+      <Item Name="Parent">mpParent</Item>
+      <Item Name ="Attribs">mFields</Item>
+      <Item Name ="Children">mChildren</Item>
+    </Expand>
+  </Type>
+</AutoVisualizer>

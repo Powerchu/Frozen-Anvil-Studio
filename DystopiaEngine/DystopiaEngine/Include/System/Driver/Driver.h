@@ -76,7 +76,7 @@ namespace Dystopia
 		template <class T>
 		static inline T* const Get(void);
 
-		void BroadcastMessage(const eSysMessage&);
+		void BroadcastMessage(const eSysMessage&, size_t _nParam);
 
 		void LoadSettings(void);
 		void PreInit(void);
@@ -96,8 +96,14 @@ namespace Dystopia
 
 	private:
 
+		struct SysMsg
+		{
+			eSysMessage mMsg;
+			size_t mParam;
+		};
+
+		Queue<SysMsg> mMessageQueue;
 		bool mbQuit;
-		Queue<eSysMessage> mMessageQueue;
 
 		AutoArray<void*>	mSubSystems;
 		AutoArray<Systems*> mSystemList;
@@ -106,7 +112,7 @@ namespace Dystopia
 		EngineCore(void);
 
 		void SendMessage(void);
-		void ParseMessage(const eSysMessage&);
+		void ParseMessage(const eSysMessage&, size_t);
 	};
 
 }

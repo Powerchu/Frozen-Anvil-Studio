@@ -52,7 +52,7 @@ namespace Editor
 		void Undo(void);
 		void Redo(void);
 
-		void InsertNewGameObject(const Math::Pt3D& = Math::Pt3D{ 0, 0, 0 });
+		void InsertNewGameObject(const Math::Pt3D& = Math::Pt3D{ 0, 0, 0, 1.f });
 		void RemoveGameObject(const uint64_t&);
 		void RemoveGameObject(AutoArray<uint64_t>&);
 		void InstantiatePrefab(const HashString&, const Math::Pt3D& = Math::Pt3D{ 0, 0, 0, 1.f });
@@ -180,7 +180,7 @@ void Editor::EditorCommands::StartRec(T C::* _ptrMemVar, C* _obj)
 		return;
 
 	if (mpRecordingVal)
-		__debugbreak();
+		return;// __debugbreak();
 
 	mpRecordingVal = Dystopia::DefaultAllocator<RecordValue<T>>::ConstructAlloc(_obj->*_ptrMemVar);
 }
@@ -192,7 +192,7 @@ void Editor::EditorCommands::EndRec(T C::* _ptrMemVar, C* _obj, bool C::* _ptrNo
 		return;
 
 	if (!mpRecordingVal)
-		__debugbreak();
+		return; //__debugbreak();
 
 	T oldValue;
 	mpRecordingVal->GetValue(static_cast<void*>(&oldValue));

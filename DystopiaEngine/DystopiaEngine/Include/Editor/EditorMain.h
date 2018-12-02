@@ -32,30 +32,31 @@ namespace Editor
 	class EditorMain
 	{
 	public:
-		using ESystems = Ut::MetaSortT_t < Ut::MetaLessThan, Ut::Collection <
-			Ut::Indexer<0u, class EditorStates>,
-			Ut::Indexer<1u, class EInput>,
-			Ut::Indexer<2u, class EditorUI>,
-			Ut::Indexer<3u, class EditorClipboard>,
-			Ut::Indexer<4u, class EditorResource>,
-			Ut::Indexer<5u, class EditorCommands>,
-			Ut::Indexer<6u, class EditorFactory>
-		>>;
+		using ESystems = typename Ut::MetaAutoIndexer <
+			class EditorStates,
+			class EInput,
+			class EditorUI,
+			class EditorClipboard,
+			class EditorResource,
+			class EditorCommands,
+			class EditorFactory
+		>::result;
 
-		using EPanels = Ut::MetaSortT_t<Ut::MetaLessThan, Ut::Collection<
-			Ut::Indexer<0u, class Inspector>,
-			Ut::Indexer<1u, class ConsoleLog>,
-			Ut::Indexer<2u, class HierarchyView>,
-			Ut::Indexer<3u, class ColorScheme>,
-			Ut::Indexer<4u, class StyleScheme>,
-			Ut::Indexer<5u, class ProjectResource>,
-			Ut::Indexer<6u, class PerformanceLog>,
-			Ut::Indexer<7u, class SceneView>,
-			Ut::Indexer<8u, class SpritePreviewer>,
-			Ut::Indexer<9u, class SpriteEditor>,
-			Ut::Indexer<10u, class ProjectSettings>,
-			Ut::Indexer<11u, class BehaviourTreeEditor>
-			>>;
+		using EPanels = typename Ut::MetaAutoIndexer<
+			class Inspector,
+			class ConsoleLog,
+			class HierarchyView,
+			class ColorScheme,
+			class StyleScheme,
+			class ProjectResource,
+			class PerformanceLog,
+			class SceneView,
+			class SpritePreviewer,
+			class SpriteEditor,
+			class ProjectSettings,
+			class BehaviourTreeEditor,
+			class GameView
+		>::result;
 
 		static EditorMain* GetInstance(void);
 		~EditorMain(void);
@@ -88,6 +89,7 @@ namespace Editor
 
 		void ExternalFile(const wchar_t* const _p);
 		void ExternalFile(const HashString&);
+		void ExternalFile(const AutoArray<HashString>&);
 
 	private:
 		EditorMain(void);
@@ -95,6 +97,7 @@ namespace Editor
 		void ProjectLauncher(void);
 		void UpdatePaths(void);
 		void LoadProjSettings(void);
+		void LogPerformance(void);
 
 		AutoArray<EditorSystem*> mArrSystems;
 		AutoArray<EditorPanel*> mArrPanels;

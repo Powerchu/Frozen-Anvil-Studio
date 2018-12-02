@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <functional>
 #include <string>
+#include <utility>
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -106,6 +107,7 @@ namespace Dystopia
 			return pComponent;
 		}
 
+
 		static bool RemoveC(GameObject* _pOwner)
 		{
 			C* pComponent = _pOwner->GetComponent<C>();
@@ -158,7 +160,6 @@ namespace Dystopia
 					return mData[_i](_owner);
 				return nullptr;
 			}
-
 			bool RemoveCommand(unsigned int _i, GameObject *_owner)
 			{
 				static auto mData = Ctor::MakeArray<bool(*)(GameObject *)>(RequestComponent<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::RemoveC...);
@@ -289,7 +290,7 @@ namespace Dystopia
 		void operator()(const char * _name, float value, std::function<void(float, void*)> _f, void* _addr)
 		{
 			float Temp = value;
-			switch (EGUI::Display::DragFloat(_name, &Temp, 0.01f, 0.0f, 2.0f))
+			switch (EGUI::Display::DragFloat(_name, &Temp, 0.01f, -FLT_MAX, FLT_MAX))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
 				//EGUI::GetCommandHND()->EndRecording();
@@ -317,7 +318,7 @@ namespace Dystopia
 		template<>
 		void operator()(const char * _name, std::string value, std::function<void(std::string, void*)> _f, void* _addr)
 		{
-			std::string Temp = value;
+			std::string Temp = std::move(value);
 			char buffer[1024];
 			if (EGUI::Display::TextField(_name, buffer, 1024))
 			{
@@ -338,7 +339,7 @@ namespace Dystopia
 		void operator()(const char * _name, int value, std::function<void(int, void*)> _f, void*_addr)
 		{
 			int Temp = value;
-			switch (EGUI::Display::DragInt(_name, &Temp, 0.1f, 0, 2))
+			switch (EGUI::Display::DragInt(_name, &Temp, 1.f, -INT32_MAX, INT32_MAX))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
 				//EGUI::GetCommandHND()->EndRecording();
@@ -367,11 +368,21 @@ namespace Dystopia
 				break;
 			}
 		}
+
 		template<>
+		void operator()(const char * _name, bool _value, std::function<void(bool, void*)> _f, void* _addr)
+		{
+			bool Temp = _value;
+			if (EGUI::Display::CheckBox(_name, &Temp))
+			{
+				_f(Temp, _addr);
+			}
+		}
+		/*template<>
 		void operator()(const char *, double, std::function<void(double, void*)>, void*)
 		{
 
-		}
+		}*/
 	};
 	struct SuperGetFunctor
 	{

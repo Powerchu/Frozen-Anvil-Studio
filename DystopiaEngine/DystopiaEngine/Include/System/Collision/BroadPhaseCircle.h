@@ -12,7 +12,7 @@ namespace Dystopia
 		/*Default Constructor*/
 		BroadPhaseCircle() {}
 		/*Create a Circle of with Radius = _Radius and origin at _Origin*/
-		BroadPhaseCircle(float _Radius, Math::Point3D _Origin);
+		BroadPhaseCircle(float _Radius, const Math::Point3D& _Origin);
 
 		/*Generate a BroadPhaseCircle with 2 existing BroadPhaseCircle*/
 		BroadPhaseCircle(BroadPhaseCircle _c1, BroadPhaseCircle _c2);

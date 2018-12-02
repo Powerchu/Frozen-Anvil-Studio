@@ -73,6 +73,8 @@ namespace Dystopia
 
 		void Unserialise(TextSerialiser &);
 
+		void DeleteBehaviour(Behaviour *);
+
 		void NewBehaviourReference(BehaviourWrap _BWrap);
 		void InitAllBehaviours();
 

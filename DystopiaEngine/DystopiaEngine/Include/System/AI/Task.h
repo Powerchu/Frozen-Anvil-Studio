@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _LEAF_H_
 #define _LEAF_H_
+#include <utility>
 #include "NeuralTree.h"
 #include "Utility/DebugAssert.h"
 
@@ -25,7 +26,7 @@ namespace Dystopia
 		class HungerCheck : public Task
 		{
 		public:
-			HungerCheck(Blackboard::Ptr _ptr) : Task(_ptr) {}
+			HungerCheck(Blackboard::Ptr _ptr) : Task(std::move(_ptr)) {}
 			eStatus Update() override
 			{
 				const auto a = mpBlackboard->GetFloat("Hunger");
@@ -45,7 +46,7 @@ namespace Dystopia
 		class HaveFood : public Task
 		{
 		public:
-			HaveFood(Blackboard::Ptr _ptr) : Task(_ptr) {}
+			HaveFood(Blackboard::Ptr _ptr) : Task(std::move(_ptr)) {}
 			eStatus Update() override
 			{
 				if (mpBlackboard->GetInt("Food") == 0)
@@ -64,7 +65,7 @@ namespace Dystopia
 		class FindFood : public Task
 		{
 		public:
-			FindFood(Blackboard::Ptr _ptr) : Task(_ptr) {}
+			FindFood(Blackboard::Ptr _ptr) : Task(std::move(_ptr)) {}
 			eStatus Update() override
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "Finding Food");
@@ -78,7 +79,7 @@ namespace Dystopia
 		class EatFood : public Task
 		{
 		public:
-			EatFood(NeuralTree::Blackboard::Ptr _ptr) : Task(_ptr) {}
+			EatFood(NeuralTree::Blackboard::Ptr _ptr) : Task(std::move(_ptr)) {}
 			eStatus Update() override
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "Eating food");

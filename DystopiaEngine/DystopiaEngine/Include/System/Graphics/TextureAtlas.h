@@ -45,6 +45,7 @@ namespace Dystopia
 		void Unbind(void) const noexcept;
 
 		unsigned AddSection(const Math::Vec2& _vPos, unsigned _nWidth, unsigned _nHeight, unsigned _nCols = 1, unsigned _nRows = 1);
+		void UpdateSection(unsigned, const Math::Vec2& _vPos, unsigned _nWidth, unsigned _nHeight, unsigned _nCols = 1, unsigned _nRows = 1);
 
 		void SetSection(unsigned _nID, unsigned _nCol, unsigned _nRow, Shader const&);
 

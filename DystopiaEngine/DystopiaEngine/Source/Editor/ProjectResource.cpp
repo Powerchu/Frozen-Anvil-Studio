@@ -23,9 +23,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
-#include "System/Graphics/Texture2D.h"
+#include "System/Window/Window.h"
+#include "System/Window/WindowManager.h"
+//#include "System/Graphics/Texture2D.h"
 #include "System/File/FileSystem.h"
 #include "System/Input/InputSystem.h"
+#include "System/Time/ScopedTimer.h"
+#include "System/Profiler/Profiler.h"
+#include "System/Profiler/ProfilerAction.h"
 
 #include "Object/GameObject.h"
 
@@ -33,7 +38,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <filesystem>
 #include <algorithm>
-#include <iostream>
+//#include <iostream>
 #include <Windows.h>
 #include <cstdlib>
 #include <tchar.h>
@@ -45,7 +50,7 @@ namespace Editor
 		: 
 		mLabel{ "Project" }, mSearchText{ "" }, mSearchTextLastFrame{ "" }, mpRootFolder{ nullptr },
 		mpCurrentFolder{ nullptr }, mArrAllFiles{100}, mArrFilesSearchedThisFrame{}, mArrFilesSearchedLastFrame{},
-		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 90 },
+		mChangeHandle{}, mWaitStatus{}, mWaitFlags{}, mFocusedFile{ nullptr }, mPayloadRect{ 70, 100 },
 		mResetToFile{}, mResourcePath{}, mResourceName{}
 	{
 		EditorPanel::SetOpened(true);
@@ -92,25 +97,17 @@ namespace Editor
 	{
 		for (auto& f : mArrAllFiles)
 			if (HashString::nPos == f->mPath.find("Temp") && f->mTag == EGUI::ePayloadTags::PREFAB)
-				EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mPath);
+				EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mName);
 		return true;
 	}
 
 	void ProjectResource::Update(float)
 	{
-		auto input = EditorMain::GetInstance()->GetSystem<EInput>();
+		const auto input = EditorMain::GetInstance()->GetSystem<EInput>();
 		if (input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_LEFT) ||
 			input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_RIGHT))
 		{
-			auto index = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetPrefab();
-			if (index >= 0)
-			{
-				auto data = EditorMain::GetInstance()->GetSystem<EditorFactory>()->GetPrefabData(index);
-				if (!data)
-					RemoveFocusOnFile();
-			}
-			else
-				RemoveFocusOnFile();
+			RemoveFocusOnFile();
 		}
 
 		mWaitStatus = WaitForMultipleObjects(1, mChangeHandle, false, 0);
@@ -127,29 +124,44 @@ namespace Editor
 			ExitProcess(GetLastError());
 			break;
 		}
-		UpdateSearch();
+
+		//UpdateSearch();
 	}
 
 	void ProjectResource::EditorUI(void)
 	{
+		const float h = Size().y - 55;
+		static float splitterSz = 425.f;
+		float sz1 = Size().x/2 - splitterSz - 5.f;
+		const float sz3 = Size().x/2 + splitterSz;
+
+		const Math::Vec2 folderWindowSize = Math::Vec2{ sz1, h };
+		const Math::Vec2 fileWindowSize = Math::Vec2{ sz3, h };
+		
+		
 		if (mResetToFile.length())
 		{
 			FocusOnFile(mResetToFile);
 			mResetToFile.clear();
 		}
 
-		Math::Vec2 fileWindowSize = Math::Vec2{ Size().x - 210, Size().y - 55 };
 		SearchWindow();
+
 		EGUI::Display::OpenTreeNode();
+
+		EGUI::Display::Splitter(true, 4.0f, &sz1, &splitterSz, 200.f, 100.f, h);
+		EGUI::StartChild("##FolderWindow", folderWindowSize, true);
 		FolderWindow();
-		EGUI::SameLine(2);
+		EGUI::EndChild();
+
+		EGUI::SameLine();
 		ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4{ 0,0,0,0 });
-		EGUI::StartChild("FileWindow", fileWindowSize);
+		EGUI::StartChild("##FileWindow", fileWindowSize, true);
 		if (mpCurrentFolder)
 		{
-			auto origin = ImGui::GetCursorPos();
+			const auto origin = ImGui::GetCursorPos();
 			EGUI::Display::Dummy(fileWindowSize.x, fileWindowSize.y);
-			if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+			if (const auto id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 			{
 				Dystopia::GameObject *t = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(*id);
 				HashString fullPath = mpCurrentFolder->mPath;
@@ -165,11 +177,18 @@ namespace Editor
 				fopen_s(&pFile, fullPath.c_str(), "a");
 				fclose(pFile);
 
-				auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
-				if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
+				bool saved = false;
 				{
-					mResetToFile = fileName;
+					auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
+					if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
+					{
+
+						mResetToFile = fileName;
+						saved = true;
+					}
 				}
+				if (saved)
+					EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(fileName);
 				EGUI::Display::EndPayloadReceiver();
 			}
 			ImGui::SetCursorPos(origin);
@@ -236,11 +255,12 @@ namespace Editor
 
 	void ProjectResource::SearchWindow(void)
 	{
-		float width = Size().x - 20;
+		static char buffer[256];
+		float width = Size().x - 60;
 		width = (width < 20) ? 20 : width;
 		EGUI::Indent(4);
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, false, width);
+		EGUI::Display::TextField("Search", buffer/*mSearchText*/, MAX_SEARCH, true, width);
 		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(4);
 		EGUI::Display::HorizontalSeparator();
@@ -248,34 +268,38 @@ namespace Editor
 
 	void ProjectResource::FolderWindow(void)
 	{
-		EGUI::StartChild("FolderWindow", Math::Vec2{ 200, Size().y - 55 });
+		//EGUI::StartChild("FolderWindow", Math::Vec2{ 200, Size().y - 55 });
 		FolderUI(mpRootFolder);
-		EGUI::EndChild();
+		//EGUI::EndChild();
 	}
 
 	void ProjectResource::FileWindow(const Math::Vec2& _mySize)
 	{
-		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.5f };
-		unsigned int columns = static_cast<unsigned int>(_mySize.x / buffedSize.x);
+		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.25f };
+		unsigned int columns = static_cast<unsigned int>(_mySize.x / (buffedSize.x + 20));
 		columns = columns ? columns : 1 ;
 
 		EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
 		EGUI::Display::HorizontalSeparator();
-		for (unsigned int i = 0; i < mpCurrentFolder->mArrPtrFiles.size(); ++i)
+
+		auto size = mpCurrentFolder->mArrPtrFiles.size();
+		for (unsigned int i = 0; i < size; ++i)
 		{
+
+			EGUI::PushID(i);
+
 			Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
-			HashString id = "ProjectResourceFileWindow" + pFile->mName;
-			id  += i;
-			if (i % columns) EGUI::SameLine();
-			if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{ 0,0,0,0 }))
+			if (i % columns)
+				ImGui::SameLine(0, 20);
+			if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false, true))
 			{
 				EGUI::Indent(10);
-				EGUI::PushID(i);
 				FileUI(pFile);
-				EGUI::PopID();
 				EGUI::UnIndent(10);
 			}
 			EGUI::EndChild();
+
+			EGUI::PopID();
 		}
 	}
 	
@@ -292,19 +316,17 @@ namespace Editor
 		{
 			for (unsigned int i = 0; i < size; ++i)
 			{
+				EGUI::PushID(i);
 				Editor::File* pFile = mArrFilesSearchedThisFrame[i];
-				HashString id = "ProjectResourceSearchResultWindow" + pFile->mName;
-				id += i;
 				if (i % columns) EGUI::SameLine();
-				if (EGUI::StartChild(id.c_str(), buffedSize, false, Math::Vec4{ 0,0,0,0 }))
+				if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false, true))
 				{
 					EGUI::Indent(10);
-					EGUI::PushID(i);
 					FileUI(pFile);
-					EGUI::PopID();
 					EGUI::UnIndent(10);
 				}
 				EGUI::EndChild();
+				EGUI::PopID();
 			}
 		}
 		else
@@ -409,15 +431,15 @@ namespace Editor
 	{
 		bool clickedThisFrame = false;
 		bool clickedFolderIcon = false;
-		bool flagIt = (mpCurrentFolder == _folder) ? true : false;
-		bool hideArrow = _folder->mArrPtrFolders.size() ? false : true;
+		const bool flagIt = mpCurrentFolder == _folder;
+		const bool hideArrow = _folder->mArrPtrFolders.size() == 0;
 		if (EGUI::Display::IconFolder(_folder->mLowerCaseName.c_str(), 15, 9, flagIt))
 		{
 			clickedFolderIcon = true;
 			EGUI::Display::OpenTreeNode();
 		}
 		EGUI::SameLine();
-		if (EGUI::Display::StartTreeNode(_folder->mName.c_str(), &clickedThisFrame, flagIt, hideArrow))
+		if (EGUI::Display::StartTreeNode(_folder->mName.c_str(), &clickedThisFrame, flagIt, hideArrow,true,false))
 		{
 			for (auto& e : _folder->mArrPtrFolders)
 				FolderUI(e);
@@ -427,7 +449,6 @@ namespace Editor
 		{
 			mFocusedFile = nullptr;
 			mpCurrentFolder = _folder;
-			EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemovePrefab();
 		}
 	}
 
@@ -435,7 +456,7 @@ namespace Editor
 	{
 		if (_file == mFocusedFile) EGUI::Display::Outline(mPayloadRect.x, mPayloadRect.y);
 
-		if (EGUI::Display::CustomPayload(("###ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
+		if (EGUI::Display::CustomPayload(("ProjectView" + _file->mName).c_str(), _file->mName.c_str(), 
 			_file->mName.c_str(), mPayloadRect, _file->mTag, &(*_file), sizeof(Editor::File)))
 		{
 			mFocusedFile = _file;

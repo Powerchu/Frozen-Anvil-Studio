@@ -229,6 +229,7 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 	float w = _w - (2 * ImGui::GetStyle().WindowPadding.x);
 	float h = _h - (2 * ImGui::GetStyle().WindowPadding.y);
 	ImGui::BeginChild("Main Body", ImVec2{ _w, _h }, true);
+
 	if (mbProjectView)
 	{
 		auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
@@ -328,10 +329,11 @@ void Editor::EditorLauncher::SetWindowOptions(void)
 
 	win.Hide();
 	win.SetStyle(LauncherStyle, LauncherStyleEx);
-	win.SetSize(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
+	//win.SetSize(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
+	//win.CenterWindow();
+	win.SetSizeNoAdjust(LAUNCHER_WIDTH, LAUNCHER_HEIGHT, false);
 	win.CenterWindow();
-	win.SetSizeNoAdjust(LAUNCHER_WIDTH, LAUNCHER_HEIGHT);
-	win.CenterWindow();
+	win.PushToFront();
 	win.Show();
 
 	//wmgr->mWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -367,8 +369,8 @@ void Editor::EditorLauncher::SetWindowStyles(void)
 
 void Editor::EditorLauncher::RemoveWindowStyles(void)
 {
-	ImGui::PopStyleVar(3);
 	ImGui::PopStyleColor(2);
+	ImGui::PopStyleVar(3);
 }
 
 bool Editor::EditorLauncher::ProjectDetails(const HashString& _path, float _w, float, bool _highlight)
@@ -470,11 +472,8 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 		if (!active)
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, g_inactiveAlpha);
 
-		EditorMain::GetInstance()->GetSystem<EditorUI>()->PushFontSize(1);
-
 		if (ImGui::ButtonEx("Create", ImVec2{ btnX, btnY }, active ? 0 : ImGuiButtonFlags_Disabled))
 		{
-			EditorMain::GetInstance()->GetSystem<EditorUI>()->PopFontSize();
 
 			const auto& fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
 			bool firstF = true;

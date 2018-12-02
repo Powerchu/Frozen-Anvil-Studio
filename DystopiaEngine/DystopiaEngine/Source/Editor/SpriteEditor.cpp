@@ -176,7 +176,7 @@ Math::Vec2 Editor::SpriteEditor::AdjustAspectSize(float _imgX, float _imgY, floa
 
 void Editor::SpriteEditor::FieldTexture(void)
 {
-	EGUI::Display::EmptyBox("Sprite Sheet", FIELD_SIZE, mpTexture ? mpTexture->GetName() : "-empty-");
+	EGUI::Display::EmptyBox("Sprite Sheet", FIELD_SIZE, mpTexture ? mpTexture->GetName().c_str() : "-empty-");
 	if (auto t = EGUI::Display::StartPayloadReceiver<Editor::File>(EGUI::ePayloadTags::ALL_IMG))
 	{
 		mpAtlas = nullptr;
@@ -209,24 +209,50 @@ void Editor::SpriteEditor::FieldAtlas(void)
 
 	if (EGUI::Display::DropDownSelection<21>("Sections", mnSelectedSection, static_cast<unsigned>(allSections.size()), FIELD_SIZE))
 	{
-
+		auto& e = mpAtlas->GetAllSections()[mnSelectedSection];
+		mSectionPos  = Math::Vec2{ e.uStart, e.vStart };
+		mSectionSize = Math::Vec2{ e.uEnd - e.uStart, e.vEnd - e.vStart };
+		mSectionDime = Math::Vec2{ mSectionSize.x / e.mCol, mSectionSize.y / e.mRow };
+	}
+	else
+	{
+		mpAtlas->UpdateSection(mnSelectedSection,
+			Math::Vec2{ mSectionPos.x * static_cast<float>(mpTexture->GetWidth()), mSectionPos.y * static_cast<float>(mpTexture->GetHeight()) },
+			static_cast<unsigned>(mSectionSize.x * static_cast<float>(mpTexture->GetWidth())),
+			static_cast<unsigned>(mSectionSize.y * static_cast<float>(mpTexture->GetHeight())),
+			static_cast<unsigned>(mSectionDime.x), static_cast<unsigned>(mSectionDime.y)
+		);
 	}
 
 	EGUI::Display::HorizontalSeparator();
 
 	EGUI::Display::VectorFields("Start Pos", &mSectionPos, .01f, 0.f, 1, itemWidth);
+
 	EGUI::Display::VectorFields("Size", &mSectionSize, 0.01f, 0.f, 1, itemWidth);
 	EGUI::Display::VectorFieldsInt("Col & Row", &mSectionDime, 1, 1, INT_MAX, itemWidth);
 
+	EGUI::SameLine();
+	if (EGUI::Display::Button("Grow Col", Math::Vec2{ 100, 24 }))
+	{
+		mSectionSize.x += mSectionSize.x / mSectionDime.x;
+		mSectionDime.x += 1.f;
+	}
+	EGUI::SameLine();
+	if (EGUI::Display::Button("Grow Row", Math::Vec2{ 100, 24 }))
+	{
+		mSectionSize.y += mSectionSize.y / mSectionDime.y;
+		mSectionDime.y += 1.f;
+	}
+
 	if (EGUI::Display::Button("Add New Section", Math::Vec2{150, 24}))
 	{
-		mnSelectedSection = mpAtlas->AddSection(Math::Vec2{mSectionPos.x * static_cast<float>(mpTexture->GetWidth()), mSectionPos.y * static_cast<float>(mpTexture->GetHeight()) },
-												static_cast<unsigned>(mSectionSize.x * static_cast<float>(mpTexture->GetWidth())),
-												static_cast<unsigned>(mSectionSize.y * static_cast<float>(mpTexture->GetHeight())),
+		mnSelectedSection = mpAtlas->AddSection(Math::Vec2{ static_cast<float>(mpTexture->GetWidth()),static_cast<float>(mpTexture->GetHeight()) },
+												mpTexture->GetWidth(), mpTexture->GetHeight(),
 												static_cast<unsigned>(mSectionDime.x), static_cast<unsigned>(mSectionDime.y));
-		mSectionPos = Math::Vec2{ 0, 0 };
-		mSectionSize = Math::Vec2{ 0, 0 };
-		mSectionDime = Math::Vec2{ 1, 1 };
+		//mnSelectedSection = mpAtlas->AddSection(Math::Vec2{mSectionPos.x * static_cast<float>(mpTexture->GetWidth()), mSectionPos.y * static_cast<float>(mpTexture->GetHeight()) },
+		//										static_cast<unsigned>(mSectionSize.x * static_cast<float>(mpTexture->GetWidth())),
+		//										static_cast<unsigned>(mSectionSize.y * static_cast<float>(mpTexture->GetHeight())),
+		//										static_cast<unsigned>(mSectionDime.x), static_cast<unsigned>(mSectionDime.y));
 	}
 }
 
@@ -256,6 +282,8 @@ void Editor::SpriteEditor::DrawSelectedGrid(float _ox, float _oy, float _ix, flo
 		EGUI::Display::Label("%d", i);
 		ImGui::SetCursorScreenPos(screenOrigin);
 	}
+
+	//ImGui::GetWindowDrawList()->AddRect(rectMin, rectMax, ImGui::GetColorU32(ImVec4{ 1,1,1,1 }));
 }
 
 void Editor::SpriteEditor::DrawTempGrid(float _ox, float _oy, float _ix, float _iy)

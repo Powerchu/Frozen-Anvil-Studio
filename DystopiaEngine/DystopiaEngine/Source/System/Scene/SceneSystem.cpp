@@ -179,6 +179,12 @@ void Dystopia::SceneSystem::RestartScene(void)
 	mpNextScene = new Scene{};
 }
 
+void Dystopia::SceneSystem::LoadScene(const char* _strName)
+{
+	auto fs = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
+	LoadScene(std::string{ fs->GetFullPath(_strName, eFileDir::eResource) });
+}
+
 void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 {
 	TextSerialiser::OpenFile(_strFile.c_str(), TextSerialiser::MODE_READ); // just to check if file valid

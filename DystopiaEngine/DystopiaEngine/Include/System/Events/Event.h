@@ -7,6 +7,7 @@
 #include <type_traits>
 #include "Utility/Utility.h"
 #include <tuple>
+#include <utility>
 
 
 //struct EventParams
@@ -561,7 +562,7 @@ public:
 	{
 		if (mpWrapper)
 		{
-			return mpWrapper->Fire(_param);
+			return mpWrapper->Fire(std::move(_param));
 
 		}
 		return false;
@@ -584,7 +585,7 @@ public:
 	{
 		if (mpWrapper)
 		{
-			return mpWrapper->Fire(_param );
+			return mpWrapper->Fire(std::move(_param));
 		}
 
 		return false;

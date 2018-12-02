@@ -65,6 +65,23 @@ unsigned Dystopia::TextureAtlas::AddSection(const Math::Vec2 & _vPos, unsigned _
 	return static_cast<unsigned>(ret);
 }
 
+void Dystopia::TextureAtlas::UpdateSection(unsigned _nIndex, const Math::Vec2 & _vPos, unsigned _nWidth, unsigned _nHeight, unsigned _nCols, unsigned _nRows)
+{
+	auto& e = mSections[_nIndex];
+
+	auto w = 1.0 / mpTexture->GetWidth();
+	auto h = 1.0 / mpTexture->GetHeight();
+
+	e.uStart = static_cast<float>(w * _vPos.x);
+	e.vStart = static_cast<float>(h * _vPos.y);
+	e.uEnd = static_cast<float>(e.uStart + _nWidth * w);
+	e.vEnd = static_cast<float>(e.vStart + _nHeight * h);
+	const float uStride = (e.uEnd - e.uStart);
+	const float vStride = (e.vEnd - e.vStart);
+	e.mCol = float(uStride / _nCols);
+	e.mRow = float(vStride / _nRows);
+}
+
 void Dystopia::TextureAtlas::SetSection(unsigned _nID, unsigned _nCol, unsigned _nRow, Shader const& _Active)
 {
 	auto& section = mSections[_nID];

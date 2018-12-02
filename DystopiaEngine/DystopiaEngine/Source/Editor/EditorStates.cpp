@@ -37,8 +37,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Editor::EditorStates::EditorStates(void)
 	: mState{ eState::LAUNCHER }, mbQuitAttempt{ false }, mbNewAttempt{ false },
-	mnPlay{}, mnNew{}, mnOpen{}, mnSave{}, mnSaveAs{}, mnQuit{}, mArrTempFile{}, mbLoadAttempt{false},
-	mPendingLoad{}, mnClear{}
+	mbLoadAttempt{false}, mPendingLoad{}, mnPlay{}, mnNew{}, mnOpen{}, mnSave{}, mnSaveAs{}, mnQuit{},
+	mnClear{}, mnSelectedGizmo(0), mArrTempFile{}
 {
 }
 
@@ -93,7 +93,7 @@ void Editor::EditorStates::StartFrame(void)
 {
 	/******************************** NO UI TO BE CALLED HERE ********************************/
 
-	float dt = Editor::EditorMain::GetInstance()->GetDeltaTime();
+	const float dt = Editor::EditorMain::GetInstance()->GetDeltaTime();
 	switch (mState)
 	{
 	case eState::LAUNCHER:
@@ -105,6 +105,7 @@ void Editor::EditorStates::StartFrame(void)
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::Profiler>()->Update(dt);
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::BehaviourSystem>()->PollChanges();
 		break;
+	default: ;
 	}
 
 	auto& win = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow();
@@ -124,7 +125,8 @@ void Editor::EditorStates::StartFrame(void)
 
 void Editor::EditorStates::Update(float)
 {
-	auto input = EditorMain::GetInstance()->GetSystem<EInput>();
+	const auto input = EditorMain::GetInstance()->GetSystem<EInput>();
+
 	if (input->IsHotkeyTriggered(mnPlay))
 	{
 		if (mState == eState::MAIN)
@@ -160,6 +162,7 @@ void Editor::EditorStates::Update(float)
 		Dystopia::EngineCore::GetInstance()->FixedUpdate();
 		Dystopia::EngineCore::GetInstance()->Update();
 		break;
+	default: ;
 	}
 
 	ToolBar();
@@ -229,9 +232,6 @@ void Editor::EditorStates::Message(eEMessage _msg)
 		HashString name{ sceneSystem->GetCurrentScene().GetSceneName().c_str() };
 		win.SetTitle(std::wstring{ name.begin(), name.end() });
 
-		for (auto& e : mArrTempFile)
-			remove(e.c_str());
-		mArrTempFile.clear();
 	}
 }
 
@@ -309,7 +309,11 @@ void Editor::EditorStates::ToolBar(void)
 			}
 			EGUI::EndMenuHeader();
 		}
-		EGUI::EndMainMenuBar();
+
+		EditorPlayBar();
+		GizmoRadios();
+
+		EGUI::EndMainMenuBar(); // end of main menu
 	}
 }
 
@@ -338,6 +342,13 @@ void Editor::EditorStates::OpenScene(const HashString& _path)
 {
 	mPendingLoad = _path;
 	mbLoadAttempt = true;
+}
+
+void Editor::EditorStates::ChangeGizmo(const int& _gizmoVal)
+{
+	if (_gizmoVal < 0) mnSelectedGizmo = 0;
+	else if (_gizmoVal > 2) mnSelectedGizmo = 2;
+	else mnSelectedGizmo = _gizmoVal;
 }
 
 void Editor::EditorStates::LoadScene(void)
@@ -398,6 +409,18 @@ void Editor::EditorStates::Play(void)
 	Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors();
 }
 
+void Editor::EditorStates::Pause()
+{
+	//EditorMain::GetInstance()->ChangeState(eState::PAUSED);
+	Dystopia::EngineCore::GetInstance()->Interrupt();
+}
+
+void Editor::EditorStates::Resume()
+{
+	//EditorMain::GetInstance()->ChangeState(eState::PLAY);
+	Dystopia::EngineCore::GetInstance()->InterruptContinue();
+}
+
 void Editor::EditorStates::Stop(void)
 {
 	EditorMain::GetInstance()->ChangeState(eState::MAIN);
@@ -437,14 +460,14 @@ void Editor::EditorStates::PromptSaveN(void)
 			mbNewAttempt = false;
 			EGUI::Display::CloseCurrentPopup();
 		}
-		EGUI::SameLine();
-		if (EGUI::Display::Button("Don't save"))
+		EGUI::SameLine(15);
+		if (EGUI::Display::Button("Don't Save", {70,24}))
 		{
 			New();
 			mbNewAttempt = false;
 			EGUI::Display::CloseCurrentPopup();
 		}
-		EGUI::SameLine();
+		EGUI::SameLine(15);
 		if (EGUI::Display::Button("Cancel"))
 		{
 			mbNewAttempt = false;
@@ -465,13 +488,13 @@ void Editor::EditorStates::PromptSaveQ(void)
 			mbQuitAttempt = false;
 			EGUI::Display::CloseCurrentPopup();
 		}
-		EGUI::SameLine();
+		EGUI::SameLine(15);
 		if (EGUI::Display::Button("Cancel"))
 		{
 			mbQuitAttempt = false;
 			EGUI::Display::CloseCurrentPopup();
 		}
-		EGUI::SameLine();
+		EGUI::SameLine(15);
 		if (EGUI::Display::Button("Exit"))
 		{
 			mbQuitAttempt = false;
@@ -480,6 +503,84 @@ void Editor::EditorStates::PromptSaveQ(void)
 		}
 		EGUI::Display::EndPopup();
 	}
+}
+
+void Editor::EditorStates::EditorPlayBar()
+{
+	float playBarPos = ImGui::GetWindowWidth() * 0.5f - 123.f;
+	std::string state;
+
+	if (mState != eState::PLAY)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, { 0.5f,0.5f,0.5f,1.0f });
+		state = "Play";
+	}
+	else if (mState != eState::PAUSED)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, { 0.9f,0.1f,0.17f,0.5f });
+		state = "Stop";
+	}
+	
+
+	ImGui::SetCursorPosX(playBarPos);
+	EGUI::ChangeAlignmentYOffset(0);
+	if (EGUI::Display::Button(state.c_str(), Math::Vec2{ 50,23}))
+	{
+		if (mState != eState::PLAY)
+		{
+			Play();
+		}
+		else
+		{
+			Stop();
+		}
+	};
+
+	EGUI::SameLine();
+	if (EGUI::Display::Button("Pause", Math::Vec2{ 50,23 }))
+	{
+		
+	};
+	EGUI::SameLine();
+	if (EGUI::Display::Button("Step", Math::Vec2{ 50,23 }))
+	{
+		
+	};
+	EGUI::ChangeAlignmentYOffset();
+	ImGui::SetCursorPosX(0);
+
+	ImGui::PopStyleColor();
+
+}
+
+void Editor::EditorStates::GizmoRadios()
+{
+	EGUI::SameLine(10.f);
+	//ImGui::SetCursorPosX(gizmoRadioPos);
+	EGUI::Display::Label("Translate (W)");
+	EGUI::SameLine();
+	ImGui::SetCursorPosY(2.f);
+	if (EGUI::Display::RadioBtn("##transG", &mnSelectedGizmo, 0, false))
+	{
+		EditorMain::GetInstance()->GetPanel<SceneView>()->SetGizmoTranslate();
+	};
+	EGUI::SameLine(5.f);
+	ImGui::SetCursorPosY(0.f);
+	EGUI::Display::Label("Scale (E)");
+	EGUI::SameLine();
+	ImGui::SetCursorPosY(2.f);
+	if (EGUI::Display::RadioBtn("##scaleG", &mnSelectedGizmo, 1, false))
+	{
+		EditorMain::GetInstance()->GetPanel<SceneView>()->SetGizmoScaler();
+	};
+	EGUI::SameLine(5.f);
+	ImGui::SetCursorPosY(0.f);
+	EGUI::Display::Label("Rotate (R)");
+	EGUI::SameLine();
+	ImGui::SetCursorPosY(2.f);
+	EGUI::Display::RadioBtn("##rotG", &mnSelectedGizmo, 2, false);
+	ImGui::SetCursorPosY(0.f);
+	//ImGui::SetCursorPosX(0);
 }
 
 void Editor::EditorStates::PromptSaveO(void)
@@ -501,8 +602,8 @@ void Editor::EditorStates::PromptSaveO(void)
 				LoadScene();
 			EGUI::Display::CloseCurrentPopup();
 		}
-		EGUI::SameLine();
-		if (EGUI::Display::Button("Don't Save"))
+		EGUI::SameLine(15);
+		if (EGUI::Display::Button("Don't Save", {70,24}))
 		{
 			mbLoadAttempt = false;
 			if (mPendingLoad.size())
@@ -515,7 +616,7 @@ void Editor::EditorStates::PromptSaveO(void)
 				LoadScene();
 			EGUI::Display::CloseCurrentPopup();
 		}
-		EGUI::SameLine();
+		EGUI::SameLine(15);
 		if (EGUI::Display::Button("Cancel"))
 		{
 			mbLoadAttempt = false;

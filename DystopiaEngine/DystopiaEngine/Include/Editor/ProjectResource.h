@@ -46,29 +46,28 @@ namespace Editor
 		void RemoveFocusOnFile();
 
 	private:
-
-		const Editor::File*		mFocusedFile;
+		const Editor::File*			mFocusedFile;
 		AutoArray<Editor::File*>	mArrAllFiles;
 		AutoArray<Editor::File*>	mArrFilesSearchedThisFrame;
 		AutoArray<Editor::File*>	mArrFilesSearchedLastFrame;
-		HashString			mLabel;
-		HashString			mResetToFile;
-		char				mSearchText[MAX_SEARCH];
-		char				mSearchTextLastFrame[MAX_SEARCH];
-		Editor::Folder	*mpRootFolder;
-		Editor::Folder	*mpCurrentFolder;
-		HANDLE				mChangeHandle[1];
-		DWORD				mWaitStatus;
-		DWORD				mWaitFlags;
-		Math::Vec2			mPayloadRect;
-		HashString			mResourcePath;
-		HashString			mResourceName;
+		HashString					mLabel;
+		HashString					mResetToFile;
+		char						mSearchText[MAX_SEARCH];
+		char						mSearchTextLastFrame[MAX_SEARCH];
+		Editor::Folder				*mpRootFolder;
+		Editor::Folder				*mpCurrentFolder;
+		HANDLE						mChangeHandle[1];
+		DWORD						mWaitStatus;
+		DWORD						mWaitFlags;
+		Math::Vec2					mPayloadRect;
+		HashString					mResourcePath;
+		HashString					mResourceName;
 
 		bool				FindFirstOne(AutoArray<Editor::File*>& _outResult, const HashString& _item);
 		void				FindFile(AutoArray<Editor::File*>& _outResult, HashString& _item, const AutoArray<Editor::File*>& _fromArr);
 		void				GetAllFiles(AutoArray<Editor::File*>& _outResult, Editor::Folder*);
 		void				SortAllFiles(AutoArray<Editor::File*>& _outResult);
-		Editor::Folder*   FindFolder(const HashString& _name);
+		Editor::Folder*		FindFolder(const HashString& _name);
 		void				FullCrawl(Editor::Folder*);
 		void				FolderUI(Editor::Folder*);
 		void				FileUI(Editor::File*);

@@ -41,6 +41,8 @@
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\GoblinCombat.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\Parallax.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SkillManager.cpp" />
+    <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Source\DataStructure\OString.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
     <ClCompile Include="Source\Editor\CommandTypes.cpp" />
     <ClCompile Include="Source\Editor\EditorClipboard.cpp" />
@@ -55,6 +57,7 @@
     <ClCompile Include="Source\Editor\EditorStates.cpp" />
     <ClCompile Include="Source\Editor\EditorUI.cpp" />
     <ClCompile Include="Source\Editor\EInput.cpp" />
+    <ClCompile Include="Source\Editor\GameView.cpp" />
     <ClCompile Include="Source\Lib\GraphicsLib.cpp" />
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
@@ -173,6 +176,7 @@
     <ClInclude Include="Include\Editor\EInput.h" />
     <ClInclude Include="Include\Component\AiController.h" />
     <ClInclude Include="Include\Component\NodeList.h" />
+    <ClInclude Include="Include\Editor\GameView.h" />
     <ClInclude Include="Include\Factory\Factory.h" />
     <ClInclude Include="Include\System\AI\AISystem.h" />
     <ClInclude Include="Include\System\AI\Blackboard.h" />
@@ -346,6 +350,7 @@
     <ClInclude Include="Include\DataStructure\UniquePtr.h" />
     <ClInclude Include="Include\Math\MathFwd.h" />
     <ClInclude Include="Include\DataStructure\Map.h" />
+    <ClInclude Include="Include\DataStructure\OString.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h" />
     <ClInclude Include="Include\System\Input\XGamePad.h" />
@@ -370,6 +375,12 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\Editor\icons\dystopia_x86_64.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Natvis\Arrays.natvis">
+      <DeploymentContent>false</DeploymentContent>
+    </Natvis>
+    <Natvis Include="Natvis\NodeXML.natvis" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>
@@ -503,7 +514,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC /DDEBUGDEFAULTALLOC</AdditionalOptions>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>

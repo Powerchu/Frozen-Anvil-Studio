@@ -33,6 +33,7 @@ constexpr unsigned DEFAULT_QUEUE_SIZE = 60;
 Dystopia::Window::Window(HWND _handle) :
 	mHandle{ _handle }, mDeviceContext{ GetDC(_handle) }, 
 	mInputQueue{ DEFAULT_QUEUE_SIZE }, mnWidth{ 0 }, mnHeight{ 0 }
+	, mbFullscreen(Gbl::FULLSCREEN)
 {
 
 }
@@ -84,7 +85,7 @@ std::wstring Dystopia::Window::GetTitle(void) const noexcept
 {
 	static constexpr unsigned max = 254;
 	char buffer[max];
-	GetWindowTextA(mHandle, buffer, max);
+	::GetWindowTextA(mHandle, buffer, max);
 	std::string s{ buffer };
 	return std::wstring{ s.begin(), s.end() };
 }
@@ -108,7 +109,7 @@ void Dystopia::Window::SetSize(int _nWidth, int _nHeight, bool _bPush) noexcept
 	mnHeight = _nHeight;
 
 	RECT WindowRect{ 0, 0, _nWidth, _nHeight };
-	AdjustWindowRectEx(&WindowRect, mStyle, FALSE, mStyleEx);
+	::AdjustWindowRectEx(&WindowRect, mStyle, FALSE, mStyleEx);
 
 	mnFWidth  = WindowRect.right  - WindowRect.left;
 	mnFHeight = WindowRect.bottom - WindowRect.top;
@@ -134,16 +135,23 @@ void Dystopia::Window::CenterWindow(void) noexcept
 	PushSize(left, top, mnFWidth, mnFHeight);
 }
 
+void Dystopia::Window::PushToFront(void) noexcept
+{
+	::SetForegroundWindow(GetWindowHandle());
+
+	::UpdateWindow(GetWindowHandle());
+}
+
 void Dystopia::Window::PushSize(int w, int h) const noexcept
 {
 	RECT wr;
-	GetWindowRect(GetWindowHandle(), &wr);
+	::GetWindowRect(GetWindowHandle(), &wr);
 	PushSize(wr.left, wr.top, w, h);
 }
 
 void Dystopia::Window::PushSize(int x, int y, int w, int h) const noexcept
 {
-	SetWindowPos(GetWindowHandle(), NULL,
+	::SetWindowPos(GetWindowHandle(), NULL,
 		x, y, w, h,
 		SWP_NOZORDER | SWP_NOACTIVATE
 	);
@@ -157,12 +165,12 @@ void Dystopia::Window::ShowCursor(int _bShow) const noexcept
 
 void Dystopia::Window::Show(void) const noexcept
 {
-	ShowWindow(GetWindowHandle(), SW_SHOW);
+	::ShowWindow(GetWindowHandle(), SW_SHOW);
 }
 
 void Dystopia::Window::Hide(void) const noexcept
 {
-	ShowWindow(GetWindowHandle(), SW_HIDE);
+	::ShowWindow(GetWindowHandle(), SW_HIDE);
 }
 
 
@@ -177,7 +185,7 @@ void Dystopia::Window::ToggleFullscreen(bool _bFullscreen) noexcept
 			);
 #       endif
 
-		ShowWindow(GetWindowHandle(), SW_MAXIMIZE);
+		::ShowWindow(GetWindowHandle(), SW_MAXIMIZE);
 	}
 	else
 	{
@@ -188,12 +196,18 @@ void Dystopia::Window::ToggleFullscreen(bool _bFullscreen) noexcept
 
 		Show();
 	}
+	mbFullscreen = _bFullscreen;
+}
+
+bool Dystopia::Window::IsFullscreen() const
+{
+	return mbFullscreen;
 }
 
 
 void Dystopia::Window::SetAcceptFiles(bool _bAccept) const noexcept
 {
-	DragAcceptFiles(GetWindowHandle(), _bAccept ? TRUE : FALSE);
+	::DragAcceptFiles(GetWindowHandle(), _bAccept ? TRUE : FALSE);
 }
 
 

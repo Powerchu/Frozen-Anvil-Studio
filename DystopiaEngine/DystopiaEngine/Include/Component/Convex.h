@@ -50,7 +50,7 @@ namespace Dystopia
 		};
 
 #if EDITOR
-		static const std::string GetCompileName(void) { return "Convex Collider"; }
+		static const std::string GetCompileName(void) { return "Convex Collider 2D"; }
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 #endif
 		static const eColliderType ColliderType = eColliderType::CONVEX;

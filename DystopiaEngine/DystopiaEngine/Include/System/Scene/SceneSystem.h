@@ -50,6 +50,7 @@ namespace Dystopia
 
 		void RestartScene(void);
 		void LoadScene(const std::string& _strName);
+		void LoadScene(const char* _strName);
 		void SaveScene(const std::string & _strName, const std::string& _sceneName = "defaultSceneName");
 
 		inline Scene& GetCurrentScene(void) const;

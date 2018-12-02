@@ -49,6 +49,7 @@ namespace Dystopia
 		void SetSize(int _nWidth, int _nHeight, bool = true) noexcept;
 		void SetSizeNoAdjust(int _nWidth, int _nHeight, bool = true) noexcept;
 		void CenterWindow(void) noexcept;
+		void PushToFront(void) noexcept;
 
 		void ShowCursor(int _bShow) const noexcept;
 
@@ -56,6 +57,7 @@ namespace Dystopia
 		void Hide(void) const noexcept;
 
 		void ToggleFullscreen(bool _bFullscreen) noexcept;
+		bool IsFullscreen() const;
 
 		void SetAcceptFiles(bool) const noexcept;
 
@@ -69,6 +71,8 @@ namespace Dystopia
 		int mnWidth, mnHeight;
 		int mnFWidth, mnFHeight;
 		long mStyle, mStyleEx;
+
+		bool mbFullscreen;
 
 		void PushSize(int w, int h) const noexcept;
 		void PushSize(int x, int y, int w, int h) const noexcept;

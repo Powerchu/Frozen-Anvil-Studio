@@ -210,6 +210,12 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer(void) const noex
 	return mViews[2];
 }
 
+Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetSceneView(void) const noexcept
+{
+	return mViews[3];
+}
+
+
 Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetView(int _n) const
 {
 	return mViews[_n];
@@ -547,7 +553,8 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 #endif 
 
 		// If the camera is inactive, skip
-		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
+		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE
+			&& Cam.GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
 			Cam.SetCamera();
 			Math::Matrix4 View = Cam.GetViewMatrix();
@@ -958,7 +965,9 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 		//EGUI::GetCommandHND()->InvokeCommand<Camera>(&Camera::mbDebugDraw, tempBool);
 	}
 
-	auto result2 = EGUI::Display::VectorFields("Debug Color ", &mvDebugColour, 0.01f, 0.f, 1.f);
+	EGUI::Display::Label("Collider Debug Color");
+	EGUI::PushID(0);
+	auto result2 = EGUI::Display::VectorFields("", &mvDebugColour, 0.01f, 0.f, 1.f);
 	for (const auto& elem : result2)
 	{
 		switch (elem)
@@ -976,6 +985,7 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 			break;
 		}
 	}
+	EGUI::PopID();
 
 	const auto result3 = EGUI::Display::DragFloat("Debug Line Threshold", &mfDebugLineThreshold, 0.01F, 0.F, 10.F);
 

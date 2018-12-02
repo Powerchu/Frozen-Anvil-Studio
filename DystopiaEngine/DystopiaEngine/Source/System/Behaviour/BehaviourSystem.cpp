@@ -346,29 +346,45 @@ namespace Dystopia
 				++start;
 			}
 		}
-		for (auto & elem : mvRecentChanges)
-		{
-			std::wstring strName{ elem->mName.begin(), elem->mName.end() };
-			for (auto & i : mvBehaviours)
-			{
-				if (i.first == strName)
-				{
-					for (auto & iter : i.second)
-					{
-						if (iter.second != nullptr)
-							continue;
+		//for (auto & elem : mvRecentChanges)
+		//{
+		//	std::wstring strName{ elem->mName.begin(), elem->mName.end() };
+		//	for (auto & i : mvBehaviours)
+		//	{
+		//		if (i.first == strName)
+		//		{
+		//			for (auto & iter : i.second)
+		//			{
+		//				if (iter.second != nullptr)
+		//					continue;
 
-						auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-						auto ptr = elem->mpBehaviour->Duplicate();
-						if (auto x = SceneSys->FindGameObject(iter.first))
-							x->AddComponent(ptr, BehaviourTag{});
-						iter.second = ptr;
-					}
-				}
-			}
-		}
+		//				auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+		//				auto ptr = elem->mpBehaviour->Duplicate();
+		//				if (auto x = SceneSys->FindGameObject(iter.first))
+		//				{
+		//					x->AddComponent(ptr, BehaviourTag{});
+		//					iter.second = ptr;
+		//				}
+		//				else
+		//				{
+		//					/*Reattach to objects not found in game scene*/
+		//					if (::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, iter.first, false))
+		//					{
+		//						iter.second = ptr;
+		//					}
+		//					else
+		//					{
+		//						delete ptr;
+		//						iter.second = nullptr;
+		//						iter.first  = 0;
+		//					}
+		//				}
 
-		
+
+		//			}
+		//		}
+		//	}
+		//}
 
 		vTempFileName.clear();
 		mvRecentChanges.clear();
@@ -780,17 +796,25 @@ namespace Dystopia
 						_obj.ConsumeEndBlock();  /*Consume END BEHAVIOUR BLOCK*/
 
 												 /*Insert to GameObject*/
-						auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-						if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
+
+						if (_Flags & eObjFlag::FLAG_EDITOR_OBJ)
 						{
-							ptr->SetOwner(x);
-							x->AddComponent(ptr, BehaviourTag{});
+							/*Object is editor object*/
+							DeleteBehaviour(ptr);
 						}
 						else
 						{
-							/*GameObject with ID that was serialise could not be found*/
-							/*Remove and delete the Behaviour from mvBehaviourReferences*/
-							//::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID, false);
+							/*Insert to GameObject*/
+							auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+							if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
+							{
+								ptr->SetOwner(x);
+								x->AddComponent(ptr, BehaviourTag{});
+							}
+							else
+							{
+								DeleteBehaviour(ptr);
+							}
 						}
 					}
 					break;
@@ -800,8 +824,27 @@ namespace Dystopia
 #endif
 	}
 
-	void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
+	void Dystopia::BehaviourSystem::DeleteBehaviour(Behaviour * _ptr)
 	{
+		for (auto & elem : mvBehaviours)
+		{
+			for (auto & b : elem.second)
+			{
+				if (b.second == _ptr)
+				{
+					GameObject * Owner = nullptr;
+					if ((Owner = b.second->GetOwner()) != nullptr)
+						Owner->RemoveComponent(b.second);
+
+					delete _ptr;
+					b.second = nullptr;
+					elem.second.FastRemove(&b);
+					return;
+				}
+			}
+		}
+	}
+
 #if EDITOR
 
 #else
@@ -933,7 +976,22 @@ void Dystopia::BehaviourSystem::ClearAllBehaviours()
 		}
 	}
 
-
+	void Dystopia::BehaviourSystem::ClearAllBehaviours()
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.second)
+				{
+					delete iter.second;
+					iter.second = nullptr;
+					iter.first  = 0;
+				}
+			}
+			i.second.clear();
+		}
+	}
 
 #endif
 }

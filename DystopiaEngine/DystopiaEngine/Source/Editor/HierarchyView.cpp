@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 #include "Editor/EditorClipboard.h"
 #include "Editor/EditorCommands.h"
+#include "Editor/ProjectResource.h"
 
 #include "Object/GameObject.h"
 
@@ -137,10 +138,11 @@ namespace Editor
 
 	void HierarchyView::SearchBar()
 	{
+		static char buffer[256];
 		float width = Size().x - 70;
 		width = (width < 20) ? 20 : width;
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", mSearchText, MAX_SEARCH, false, width);
+		EGUI::Display::TextField("Search", buffer /*mSearchText*/, MAX_SEARCH, false, width);
 		EGUI::ChangeLabelSpacing();
 		EGUI::Display::HorizontalSeparator();
 	}
@@ -173,6 +175,7 @@ namespace Editor
 
 	void HierarchyView::CreatePopup()
 	{
+		//TODO
 		if (EGUI::Display::StartPopup(mPopupID.c_str()))
 		{
 			if (EGUI::Display::SelectableTxt("GameObject"))
@@ -208,7 +211,10 @@ namespace Editor
 			}
 		}
 		if (!exist)
+		{
+			EditorMain::GetInstance()->GetPanel<ProjectResource>()->RemoveFocusOnFile();
 			ed->AddGameObject(_obj.GetID());
+		}
 	}
 
 	void HierarchyView::GameObjectPopups(Dystopia::GameObject& _obj)
@@ -216,6 +222,7 @@ namespace Editor
 		auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
 		if (ImGui::BeginPopupContextItem())
 		{
+			EditorMain::GetInstance()->GetPanel<ProjectResource>()->RemoveFocusOnFile();
 			ed->ClearAll();
 			ed->AddGameObject(_obj.GetID());
 			if (EGUI::Display::SelectableTxt("Duplicate"))
@@ -244,6 +251,8 @@ namespace Editor
 		auto& selections = ed->GetSelectedIDs();
 		for (auto& obj : arrayOfGameObjects)
 		{
+			if (!strcmp(obj.GetName().c_str(), "___Scene_Camera___")) continue;
+
 			if (obj.GetComponent<Dystopia::Transform>()->GetParent())
 				continue;
 
@@ -302,8 +311,10 @@ namespace Editor
 				break;
 			}
 		}
-		std::string uniqueifyName = std::string{ _obj.GetName().c_str() } +"##" + std::to_string(_obj.GetID());
-		bool tree = EGUI::Display::StartTreeNode(uniqueifyName, &clicked, selected);
+		std::string uniqueifyName = _obj.GetName().c_str();
+		uniqueifyName += "##";
+		uniqueifyName += std::to_string(_obj.GetID());
+		bool tree = EGUI::Display::StartTreeNode(uniqueifyName.c_str(), &clicked, selected, false, true, false);
 		GameObjectPayload(_obj);
 		GameObjectPopups(_obj);
 
@@ -344,7 +355,7 @@ namespace Editor
 			}
 		}
 		std::string uniqueifyName = std::string{_obj.GetName().c_str()} + "##" + std::to_string(_obj.GetID());
-		if (EGUI::Display::SelectableTxt(uniqueifyName, selected))
+		if (EGUI::Display::SelectableTxt(uniqueifyName.c_str(), selected))
 		{
 			SelectedObj(_obj);
 		}	
@@ -361,7 +372,7 @@ namespace Editor
 			if (_obj.GetID() == id)
 				return;
 
-		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+		if (const auto id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
 			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id);
 			if (t)

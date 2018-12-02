@@ -70,7 +70,7 @@ namespace Math
 		inline Vector2& _CALL operator/=(const float);
 		inline Vector2& _CALL operator+=(const Vector2);
 		inline Vector2& _CALL operator-=(const Vector2);
-		inline bool _CALL operator==(const Vector2);
+		inline bool _CALL operator==(const Vector2) const;
 
 	private:
 
@@ -419,7 +419,7 @@ inline Math::Vector2 _CALL Math::operator-(Math::Vector2 _v)
 }
 
 
-inline bool _CALL Math::Vector2::operator==(const Vector2 _rhs)
+inline bool _CALL Math::Vector2::operator==(const Vector2 _rhs) const
 {
 	return
 		ApproxEq((*this)[0], _rhs[0]) &&

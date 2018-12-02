@@ -40,7 +40,10 @@ namespace
 #endif
 
 #if defined(DEBUGDEFAULTALLOC)
+#pragma warning(push)
+#pragma warning(disable : 4996)
 	static auto output = std::fopen("allocator_log.dystor", "w");
+#pragma warning(pop)
 #endif
 
 	template <typename T>

@@ -20,7 +20,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "IO/TextSerialiser.h"
 #include "DataStructure/HashString.h"
-//#include "Editor/Editor.h"
+
+#if EDITOR
+#include "Editor/EditorMain.h"
+#endif 
 
 #include "Globals.h"
 #include "Utility/DebugAssert.h"
@@ -52,20 +55,20 @@ namespace
 		switch (message)
 		{
 		case WM_SETFOCUS:
-			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_GAIN);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_GAIN, 0);
 			break;
 
 		case WM_KILLFOCUS:
-			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_LOST);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::FOCUS_LOST, 0);
 			break;
 
 		case WM_ACTIVATE:
-			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::ACTIVATE);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::ACTIVATE, 0);
 			break;
 
 		case WM_SYSKEYUP:
-			if (wParam == VK_F4)
-				SendMessage(hWnd, WM_CLOSE, 0, 0);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::SYSKEY, wParam);
+			return 0;
 
 		case WM_SYSKEYDOWN:
 			return 0;
@@ -73,27 +76,40 @@ namespace
 		case WM_SIZE:
 			if(SIZE_MAXIMIZED == wParam)
 			{
-				RECT scr;
-				auto const pWinSys = Dystopia::EngineCore::Get<Dystopia::WindowManager>();
+				if (Dystopia::EngineCore::Get<Dystopia::WindowManager>()->HasWindows())
+				{
+					auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
 
-				SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
-				oldsz.first  = pWinSys->GetMainWindow().GetWidth();
-				oldsz.second = pWinSys->GetMainWindow().GetHeight();
+					RECT scr;
+					SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
+					oldsz.first = w.GetWidth();
+					oldsz.second = w.GetHeight();
 
-				pWinSys->GetMainWindow().SetSizeNoAdjust(scr.right - scr.left, scr.bottom - scr.top, false);
+					w.SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
+
+					w.ToggleFullscreen(true);
+				}
+				
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
-				if (oldsz.first)
+				if (Dystopia::EngineCore::Get<Dystopia::WindowManager>()->HasWindows())
 				{
-					Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().SetSizeNoAdjust(oldsz.first, oldsz.second, false);
-					oldsz.first = 0; oldsz.second = 0;
+					auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
+					if (oldsz.first)
+					{
+						w.SetSize(oldsz.first, oldsz.second, false);
+						oldsz.first = 0; oldsz.second = 0;
+					}
+
+
+					w.ToggleFullscreen(false);
 				}
 			}
 			return 0;
 
 		case WM_CLOSE:
-			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::QUIT);
+			Dystopia::EngineCore::GetInstance()->BroadcastMessage(Dystopia::eSysMessage::QUIT, 0);
 			return 0;
 
 		case WM_MOUSEWHEEL:
@@ -275,12 +291,12 @@ void Dystopia::WindowManager::SaveSettings(DysSerialiser_t& _in)
 	_in << mHeight;
 }
 
-void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
-{
-	mbFullscreen = _bFullscreen;
-
-	mWindows[0].ToggleFullscreen(_bFullscreen);
-}
+//void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
+//{
+//	mbFullscreen = _bFullscreen;
+//
+//	mWindows[0].ToggleFullscreen(_bFullscreen);
+//}
 
 void Dystopia::WindowManager::ShowCursor(bool _bShow) const
 {
@@ -294,10 +310,10 @@ void Dystopia::WindowManager::RegisterMouseData(MouseData* _pMouse)
 }
 
 
-bool Dystopia::WindowManager::IsFullscreen() const
-{
-	return mbFullscreen;
-}
+//bool Dystopia::WindowManager::IsFullscreen() const
+//{
+//	return mbFullscreen;
+//}
 
 Dystopia::Window& Dystopia::WindowManager::GetMainWindow(void) const
 {
@@ -311,17 +327,21 @@ void Dystopia::WindowManager::DestroySplash(void)
 	mWindows[0].SetStyle(mWindowStyle, mWindowStyleEx);
 	mWindows[0].SetSize(mWidth, mHeight);
 	mWindows[0].CenterWindow();
-	ToggleFullscreen(mbFullscreen);
+	mWindows[0].ToggleFullscreen(mbFullscreen);
 
 	mWindows[0].Show();
+}
+
+bool Dystopia::WindowManager::HasWindows(void) const
+{
+	return !mWindows.IsEmpty();
 }
 
 void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 {
 	HDROP handle = reinterpret_cast<HDROP>(_wParam);
-	int files = DragQueryFile(handle, 0xFFFFFFFFu, 0, 0);
+	size_t files = DragQueryFile(handle, 0xFFFFFFFFu, 0, 0);
 
-	/*
 	AutoArray<wchar_t> buf;
 	AutoArray<HashString> paths{ files };
 
@@ -334,41 +354,8 @@ void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 
 		paths.back() = buf.begin();
 	}
-	*/
 
-	// For now only handle single file drop
-	if (1 == files)
-	{
-		AutoArray<wchar_t> buf;
-		std::wstring path, name;
-
-		buf.reserve(DragQueryFile(handle, 0, 0, 0) + 1);
-		DragQueryFile(handle, 0, buf.begin(), static_cast<unsigned>(buf.Cap()));
-		
-		path = buf.begin();
-		if (path == L"")
-			__debugbreak();
-
-		size_t pos = path.find_last_of(L'\\');
-		if (path.npos == pos)
-			pos = path.find_last_of(L'/');
-
-		name = path.substr(pos + 1);
-
-		pos = name.find_last_of(L'.');
-		if ((name.npos != pos) && (L"dscene" == name.substr(pos + 1)))
-		{
-			//Editor::GetInstance()->OpenScene(path, name);
-		}
-		else
-		{
-			DEBUG_PRINT(eLog::MESSAGE, "Window: Ignoring Unknown file %ls!", name.data());
-		}
-	}
-	else
-	{
-		DEBUG_PRINT(eLog::MESSAGE, "Window: %d files dropped, ignoring!", files);
-	}
+	Editor::EditorMain::GetInstance()->ExternalFile(paths);
 
 	DragFinish(handle);
 }

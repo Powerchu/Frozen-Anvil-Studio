@@ -45,7 +45,7 @@ namespace Dystopia
 		virtual void Serialise() const                  { };
 		virtual void Unserialise()                      { };
 
-		virtual void ReceiveMessage(const eSysMessage&) { };
+		virtual void ReceiveMessage(const eSysMessage&, size_t) { };
 
 		virtual ~Systems(void)						    = default;
 

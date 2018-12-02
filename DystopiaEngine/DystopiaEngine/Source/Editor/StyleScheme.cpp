@@ -49,28 +49,28 @@ bool Editor::StyleScheme::Init(void)
 {
 	auto& style = ImGui::GetStyle();
 
-	mArrVecData[eWINDOW_PADDING] = Editor::StyleScheme::StyleVarsV{ ImVec2{ 8, 10 }, 0.1f, gGenericMax };
-	mArrVecData[eWINDOW_MIN_SIZE] = Editor::StyleScheme::StyleVarsV{ style.WindowMinSize, 0.1f, gGenericMax };
-	mArrVecData[eWINDOW_TITLE_ALIGNMENT] = Editor::StyleScheme::StyleVarsV{ style.WindowTitleAlign, 0.1f, gGenericMax };
-	mArrVecData[eFRAME_PADDING] = Editor::StyleScheme::StyleVarsV{ style.FramePadding, 0.1f, gGenericMax };
-	mArrVecData[eITEM_SPACING] = Editor::StyleScheme::StyleVarsV{ style.ItemSpacing, 0.1f, gGenericMax };
-	mArrVecData[eITEM_SPACING_INNER] = Editor::StyleScheme::StyleVarsV{ style.ItemInnerSpacing, 0.1f, gGenericMax };
+	mArrVecData[eWINDOW_PADDING] = Editor::StyleScheme::StyleVarsV{ ImVec2{ 5, 10 }, 0.1f, gGenericMax };
+	mArrVecData[eWINDOW_MIN_SIZE] = Editor::StyleScheme::StyleVarsV{ ImVec2{256.f,256.f}, 0.1f, gGenericMax };
+	mArrVecData[eWINDOW_TITLE_ALIGNMENT] = Editor::StyleScheme::StyleVarsV{ ImVec2{0.005f, 0.5f}, 0.1f, gGenericMax };
+	mArrVecData[eFRAME_PADDING] = Editor::StyleScheme::StyleVarsV{ ImVec2{4,4}, 0.1f, gGenericMax };
+	mArrVecData[eITEM_SPACING] = Editor::StyleScheme::StyleVarsV{ ImVec2{10,4}, 0.1f, gGenericMax };
+	mArrVecData[eITEM_SPACING_INNER] = Editor::StyleScheme::StyleVarsV{ ImVec2{7,5}, 0.1f, gGenericMax };
 	mArrVecData[eBUTTON_TEXT_ALIGNMENT] = Editor::StyleScheme::StyleVarsV{ style.ButtonTextAlign, 0.1f, gGenericMax };
 
 	mArrFData[eALPHA] = Editor::StyleScheme::StyleVarsF{ style.Alpha, 0.1f, 1.0f };
-	mArrFData[eWINDOW_ROUNDING] = Editor::StyleScheme::StyleVarsF{ style.WindowRounding, 0.f, gGenericMax };
-	mArrFData[eWINDOW_BORDER] = Editor::StyleScheme::StyleVarsF{ style.WindowBorderSize, 0.f, gGenericMax };
-	mArrFData[eCHILD_ROUNDING] = Editor::StyleScheme::StyleVarsF{ style.ChildRounding, 0.f, gGenericMax };
-	mArrFData[eCHILD_BORDER] = Editor::StyleScheme::StyleVarsF{ style.ChildBorderSize, 0.f, gGenericMax };
-	mArrFData[ePOPUP_ROUNDING] = Editor::StyleScheme::StyleVarsF{ style.PopupRounding, 0.f, gGenericMax };
-	mArrFData[ePOPUP_BORDER] = Editor::StyleScheme::StyleVarsF{ style.PopupBorderSize, 0.f, gGenericMax };
-	mArrFData[eFRAME_ROUNDING] = Editor::StyleScheme::StyleVarsF{ style.FrameRounding, 0.f, gGenericMax };
-	mArrFData[eFRAME_BORDER] = Editor::StyleScheme::StyleVarsF{ style.FrameBorderSize, 0.f, gGenericMax };
-	mArrFData[eINDENT_SPACE] = Editor::StyleScheme::StyleVarsF{ style.IndentSpacing, 0.f,gGenericMax };
-	mArrFData[eSCROLL_SIZE] = Editor::StyleScheme::StyleVarsF{ style.ScrollbarSize, 0.f, gGenericMax };
-	mArrFData[eSCROLL_ROUNDING] = Editor::StyleScheme::StyleVarsF{ style.ScrollbarRounding, 0.f, gGenericMax };
-	mArrFData[eGRAB_SIZE] = Editor::StyleScheme::StyleVarsF{ style.GrabMinSize, 0.f, gGenericMax };
-	mArrFData[eGRAB_ROUNDING] = Editor::StyleScheme::StyleVarsF{ style.GrabRounding, 0.f, gGenericMax };
+	mArrFData[eWINDOW_ROUNDING] = Editor::StyleScheme::StyleVarsF{ 4.f, 0.f, gGenericMax };
+	mArrFData[eWINDOW_BORDER] = Editor::StyleScheme::StyleVarsF{ 1.f, 0.f, gGenericMax };
+	mArrFData[eCHILD_ROUNDING] = Editor::StyleScheme::StyleVarsF{ 0.f, 0.f, gGenericMax };
+	mArrFData[eCHILD_BORDER] = Editor::StyleScheme::StyleVarsF{ 0.f, 0.f, gGenericMax };
+	mArrFData[ePOPUP_ROUNDING] = Editor::StyleScheme::StyleVarsF{ 2.f, 0.f, gGenericMax };
+	mArrFData[ePOPUP_BORDER] = Editor::StyleScheme::StyleVarsF{ 0.f, 0.f, gGenericMax };
+	mArrFData[eFRAME_ROUNDING] = Editor::StyleScheme::StyleVarsF{ 7.f, 0.f, gGenericMax };
+	mArrFData[eFRAME_BORDER] = Editor::StyleScheme::StyleVarsF{ 0.f, 0.f, gGenericMax };
+	mArrFData[eINDENT_SPACE] = Editor::StyleScheme::StyleVarsF{ 10.f, 0.f,gGenericMax };
+	mArrFData[eSCROLL_SIZE] = Editor::StyleScheme::StyleVarsF{ 13.f, 0.f, gGenericMax };
+	mArrFData[eSCROLL_ROUNDING] = Editor::StyleScheme::StyleVarsF{ 10.f, 0.f, gGenericMax };
+	mArrFData[eGRAB_SIZE] = Editor::StyleScheme::StyleVarsF{ 4.f, 0.f, gGenericMax };
+	mArrFData[eGRAB_ROUNDING] = Editor::StyleScheme::StyleVarsF{ 2.f, 0.f, gGenericMax };
 	return true;
 }
 
@@ -193,11 +193,11 @@ HashString Editor::StyleScheme::ToName(eStyleDataVectors _i)
 	{
 	case eWINDOW_PADDING:				return "Window Padding";
 	case eWINDOW_MIN_SIZE:				return "Window Minimum Size";
-	case eWINDOW_TITLE_ALIGNMENT:		return "Window Title Alignemnt";
+	case eWINDOW_TITLE_ALIGNMENT:		return "Window Title Alignment";
 	case eFRAME_PADDING:				return "Frame Padding";
 	case eITEM_SPACING:					return "Item Spacing";
 	case eITEM_SPACING_INNER:			return "Item Spacing-Inner";
-	case eBUTTON_TEXT_ALIGNMENT:		return "Button Text Alignemnt";
+	case eBUTTON_TEXT_ALIGNMENT:		return "Button Text Alignment";
 	default: return "Error";
 	}
 }
@@ -218,8 +218,8 @@ HashString Editor::StyleScheme::ToName(eStyleDataFloats _i)
 	case eINDENT_SPACE:			return "Indent Space";
 	case eSCROLL_SIZE:			return "Scroll Size";
 	case eSCROLL_ROUNDING:		return "Scroll rounding";
-	case eGRAB_SIZE:			return "Scroll's Bar Size";
-	case eGRAB_ROUNDING:		return "Scroll's Bar Rounding";
+	case eGRAB_SIZE:			return "Corner Grab Size";
+	case eGRAB_ROUNDING:		return "Corner Grab Rounding";
 	default: return "Error";
 	}
 }

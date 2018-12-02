@@ -224,7 +224,8 @@ enum ImGuiButtonFlags_
     ImGuiButtonFlags_NoKeyModifiers         = 1 << 10,  // disable interaction if a key modifier is held
     ImGuiButtonFlags_NoHoldingActiveID      = 1 << 11,  // don't set ActiveId while holding the mouse (ImGuiButtonFlags_PressedOnClick only)
     ImGuiButtonFlags_PressedOnDragDropHold  = 1 << 12,  // press when held into while we are drag and dropping another item (used by e.g. tree nodes, collapsing headers)
-    ImGuiButtonFlags_NoNavFocus             = 1 << 13   // don't override navigation focus when activated
+    ImGuiButtonFlags_NoNavFocus             = 1 << 13,  // don't override navigation focus when activated
+	ImGuiButtonFlags_HideText				= 1 << 14
 };
 
 enum ImGuiSliderFlags_

@@ -37,7 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <string>
 
 Editor::EditorFactory::EditorFactory(void)
-	: mpSceneSys{ nullptr }, mArrFactoryObj{}
+	: mpSceneSys{ nullptr }, mArrFactoryObj{}, mnLastSceneID{0}
 {}
 
 Editor::EditorFactory::~EditorFactory(void)
@@ -53,7 +53,9 @@ bool Editor::EditorFactory::Init(void)
 }
 
 void Editor::EditorFactory::StartFrame(void)
-{}
+{
+	mnLastSceneID = Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene().GetSceneID();
+}
 
 void Editor::EditorFactory::Update(float)
 {}
@@ -80,7 +82,35 @@ void Editor::EditorFactory::Message(eEMessage _msg)
 	}
 	else if (_msg == eEMessage::SCENE_CHANGED)
 	{
-		ValidatePrefabInstances();
+		if (Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene().GetSceneID() != mnLastSceneID)
+		{
+			AutoArray<HashString> mArrTempPrefab;
+			for (auto& dat : mArrPrefabData)
+				mArrTempPrefab.push_back(dat.mPrefabFile);
+
+			mArrPrefabData.clear();
+			mArrFactoryObj.clear();
+
+			for (auto& p : mArrTempPrefab)
+				LoadAsPrefab(p);
+		}
+		else
+		{
+			ValidatePrefabInstances();
+			//for (size_t i = 0; i < mArrPrefabData.size(); ++i)
+			//{
+			//	if (!mArrPrefabData[i].mArrInstanced.size())
+			//	{
+			//		HashString prefName{ mArrPrefabData[i].mPrefabFile };
+			//
+			//		for (size_t j = mArrPrefabData[i].mnStart; j < mArrPrefabData[i].mnEnd; j++)
+			//			mArrFactoryObj.Remove(&mArrFactoryObj[j]);
+			//
+			//		mArrPrefabData.Remove(&mArrPrefabData[i]);
+			//		LoadAsPrefab(prefName.c_str());
+			//	}
+			//}
+		}
 	}
 }
 
@@ -95,18 +125,51 @@ void Editor::EditorFactory::DefaultSceneCamera(void)
 	auto pCore = Dystopia::EngineCore::GetInstance();
 	auto& scene = pCore->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
 	auto cam = pCore->GetSystem<Dystopia::CameraSystem>()->RequestComponent();
-	cam->SetSurface(&(pCore->GetSystem<Dystopia::GraphicsSystem>()->GetView(3)));
+	cam->SetSurface(&pCore->GetSystem<Dystopia::GraphicsSystem>()->GetSceneView());
 
 	Dystopia::GameObject *pObject = scene.InsertGameObject(Dystopia::GUIDGenerator::GetUniqueID());
-	pObject->SetName("Scene Camera");
-	pObject->SetActive(true);
+	pObject->SetName("___Scene_Camera___");
 	pObject->AddComponent(cam, typename Dystopia::Camera::TAG{});
 	pObject->Identify();
 	pObject->SetFlag(Dystopia::eObjFlag::FLAG_ALL_LAYERS);
+	pObject->SetActive(true);
 	cam->Awake();
 }
 
-void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p, uint64_t c, bool _amComponent)
+void Editor::EditorFactory::DefaultGameCamera(void)
+{
+	const auto pCore = Dystopia::EngineCore::GetInstance();
+	auto& scene = pCore->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	auto cam = pCore->GetSystem<Dystopia::CameraSystem>()->RequestComponent();
+	cam->SetSurface(&pCore->GetSystem<Dystopia::GraphicsSystem>()->GetGameView());
+	cam->SetMasterCamera();
+
+	Dystopia::GameObject *pObject = scene.InsertGameObject(Dystopia::GUIDGenerator::GetUniqueID());
+	pObject->SetName("Main Camera");
+	pObject->AddComponent(cam, typename Dystopia::Camera::TAG{});
+	pObject->Identify();
+	pObject->SetFlag(Dystopia::eObjFlag::FLAG_ALL_LAYERS);
+	pObject->SetActive(true);
+	cam->Awake();
+}
+
+void Editor::EditorFactory::DefaultUICamera(void)
+{
+	const auto pCore = Dystopia::EngineCore::GetInstance();
+	auto& scene = pCore->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	auto cam = pCore->GetSystem<Dystopia::CameraSystem>()->RequestComponent();
+	cam->SetSurface(&pCore->GetSystem<Dystopia::GraphicsSystem>()->GetUIView());
+
+	Dystopia::GameObject *pObject = scene.InsertGameObject(Dystopia::GUIDGenerator::GetUniqueID());
+	pObject->SetName("UI Canvas");
+	pObject->AddComponent(cam, typename Dystopia::Camera::TAG{});
+	pObject->Identify();
+	pObject->SetFlag(Dystopia::eObjFlag::FLAG_ALL_LAYERS);
+	pObject->SetActive(true);
+	cam->Awake();
+}
+
+bool Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p, uint64_t c, bool _amComponent)
 {
 	for (auto& object : mArrFactoryObj)
 	{
@@ -115,7 +178,7 @@ void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p, uint64_t c
 			if (c == object.GetID())
 			{
 				object.AddComponent(_p, Dystopia::Component::TAG{});
-				return;
+				return true;
 			}
 		}
 		else
@@ -124,17 +187,16 @@ void Editor::EditorFactory::ReattachToPrefab(Dystopia::Component* _p, uint64_t c
 			{
 				auto b = static_cast<Dystopia::Behaviour*>(_p);
 				object.AddComponent(b, Dystopia::Behaviour::TAG{});
-				return;
+				return true;
 			}
 		}
 	}
+
+	return false;
 }
 
 bool Editor::EditorFactory::SpawnPrefab(const HashString& _prefName, const Math::Pt3D& _pos, uint64_t& _outRootObjID)
 {
-	HashString check{ _prefName };
-	size_t pos = check.rfind(".");
-	check.erase(pos);
 	for (const auto& p : mArrPrefabData)
 	{
 		if (p.mPrefabFile == _prefName)
@@ -167,7 +229,6 @@ bool Editor::EditorFactory::SaveAsPrefab(const uint64_t& _objID, Dystopia::TextS
 			for (auto& c : allChild)
 				if (c->GetOwner())
 					SaveChild(*c->GetOwner(), _out, _temp);
-
 			return true;
 		}
 	}
@@ -230,8 +291,20 @@ void Editor::EditorFactory::ValidatePrefabInstances(void)
 	}
 }
 
-bool Editor::EditorFactory::LoadAsPrefab(const HashString& _path)
+bool Editor::EditorFactory::LoadAsPrefab(const HashString& _name)
 {
+	for (auto& prefabData : mArrPrefabData)
+	{
+		if (prefabData.mPrefabFile == _name)
+		{
+			for (size_t i = prefabData.mnStart; i < prefabData.mnEnd; ++i)
+			{
+				mArrFactoryObj.Remove(i);
+			}			
+		}
+	}
+
+	auto _path = Dystopia::EngineCore::Get<Dystopia::FileSystem>()->FindFilePath(_name.c_str(), Dystopia::eFileDir::eResource);
 	auto _in = Dystopia::TextSerialiser::OpenFile(_path.c_str(), Dystopia::TextSerialiser::MODE_READ);
 	size_t currentIndex = mArrFactoryObj.size();
 	auto& obj = *mArrFactoryObj.Emplace(Dystopia::GUIDGenerator::GetUniqueID());
@@ -255,6 +328,9 @@ bool Editor::EditorFactory::LoadAsPrefab(const HashString& _path)
 
 			for (size_t subIndex = currentIndex; subIndex < mArrFactoryObj.size(); ++subIndex)
 			{
+				if (subIndex == index)
+					continue;
+
 				if (parentID == mArrFactoryObj[subIndex].GetID())
 				{
 					transform->SetParent(mArrFactoryObj[subIndex].GetComponent<Dystopia::Transform>());
@@ -429,7 +505,7 @@ bool Editor::EditorFactory::SavePrefab(const uint64_t& _objID, Dystopia::TextSer
 
 bool Editor::EditorFactory::LoadPrefab(Dystopia::GameObject& _obj, Dystopia::TextSerialiser& _in)
 {
-	unsigned count = LoadSegment(_obj, _in);
+	const unsigned count = LoadSegment(_obj, _in);
 	LoadSegmentC(_obj, count, _in);
 	LoadSegmentB(_obj, _in);
 
@@ -613,6 +689,7 @@ uint64_t Editor::EditorFactory::PutToScene(const HashString& _fileName, const Ma
 uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D& _pos)
 {
 	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	auto initalIndex = curScene.GetAllGameObjects().size();
 	auto& arrInstance = _prefab.mArrInstanced.back();
 	for (size_t i = _prefab.mnStart; i < _prefab.mnEnd; ++i)
 	{
@@ -625,7 +702,7 @@ uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D
 		auto loadedTransform = loadedO.GetComponent<Dystopia::Transform>();
 		auto insertedTransform = insertedO.GetComponent<Dystopia::Transform>();
 		insertedTransform->SetScale(loadedTransform->GetGlobalScale());
-		insertedTransform->SetPosition(_pos);
+		insertedTransform->SetPosition(loadedTransform->GetGlobalPosition());
 		insertedTransform->SetRotation(loadedTransform->GetGlobalRotation());
 		insertedO.ReplaceFlag(loadedO.GetFlag());
 		insertedTransform->SetParentID(loadedTransform->GetParentID());
@@ -664,8 +741,38 @@ uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D
 			}
 		}
 	}
+	
+	if (initalIndex < curScene.GetAllGameObjects().size())
+		curScene.GetAllGameObjects()[initalIndex].GetComponent<Dystopia::Transform>()->SetGlobalPosition(_pos);
+
 	DEBUG_ASSERT(!arrInstance.size(), "Error at spawning prefab");
 	return arrInstance[0];
+}
+
+void Editor::EditorFactory::ApplyChanges(Editor::EditorFactory::PrefabData* _p)
+{
+	if (!_p) return;
+
+	auto& curScene = Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene();
+	auto& arrInstances = _p->mArrInstanced;
+
+	for (auto& instArr : arrInstances)
+	{
+		for (size_t i = 0; i < instArr.size(); ++i)
+		{
+			auto pObj = curScene.FindGameObject(instArr[i]);
+
+			if (!pObj) break;
+
+			if (_p->mnStart + i < _p->mnEnd)
+			{
+				auto& facVersion= mArrFactoryObj[_p->mnStart + i];
+				*pObj = facVersion;
+			}
+			else
+				__debugbreak();
+		}
+	}
 }
 
 Editor::EditorFactory::PrefabData::PrefabData(const HashString& _fileName, size_t _start, size_t _end)

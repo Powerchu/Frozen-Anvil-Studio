@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/Component.h"
 #include "System/Graphics/GraphicsDefs.h"
+#include "Math/Vector2.h"
 
 namespace Dystopia
 {
@@ -77,6 +78,7 @@ namespace Dystopia
 		void SetRotationDeg(const float);
 
 		void SetSurface(Framebuffer*);
+		void SetSurface(int);
 
 		// Set the area the camera renders to in relative coordinates, from 0.0 to 1.0
 		void SetViewport(float _x, float _y, float _nWidth, float _nHeight);
@@ -106,21 +108,34 @@ namespace Dystopia
 
 		bool DrawDebug(void) const noexcept;
 		void SetDebugDraw(bool) noexcept;
+		void SetSize(float _scale) const;
 
-		void EditorUI(void) noexcept;
+		void EditorUI(void) noexcept override;
+		void EditorMasterCameraCheckbox();
+		void EditorDebugCheckbox();
+		void EditorProjectionDropdown();
+		void EditorOptions();
 
 		// TODO 
 		bool mbDebugDraw;
 	private:
 
 		Gfx::Viewport mViewport;
+		Gfx::ClippingPlane mClippingPlane;
 
 		Math::Mat4 mView;
 		Math::Mat4 mInvScreen;
 		Math::Mat4 mProjection;
 
 		Framebuffer* mpSurface;
-		unsigned mnSurfaceID;
+		int mnSurfaceID;
+		int mnProjectionIndex = 0;
+
+		// Orthographic Stuff
+		float mfOrthoSize = 1.f;
+
+		// Perspective Stuff
+		int mnPersFOV_deg = 50;
 	};
 }
 

@@ -57,6 +57,10 @@ public:
 	// Inserts an element to the back of the Queue
 	void Insert(const T&);
 
+	// In-place inserts an element to the back of the Queue
+	template <typename ... Ty>
+	void EmplaceBack(Ty&& ...);
+
 	// Removes the front most element of the Queue
 	void Remove(void);
 
@@ -178,6 +182,14 @@ void Queue<T>::Insert(const T& _obj)
 {
 	++mnSize;
 	mpArray[mnBack] = _obj;
+	mnBack = Ut::LoopIncrement(mnBack, mnCap);
+}
+
+template <typename T> template <typename ... Ty>
+void Queue<T>::EmplaceBack(Ty&& ... _args)
+{
+	++mnSize;
+	::new (mpArray + mnBack) T{ _args... };
 	mnBack = Ut::LoopIncrement(mnBack, mnCap);
 }
 

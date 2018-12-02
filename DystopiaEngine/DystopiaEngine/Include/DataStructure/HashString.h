@@ -16,10 +16,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(push)
 #pragma warning(disable : 4251)
 
-#include <cstdint>
-#include <iostream>
-#include "Globals.h"
-#include "Allocator/DefaultAlloc.h"
+//#include <cstdint>
+//#include <iostream>
+//#include "Globals.h"
+//#include "Utility/Utility.h"
+//#include "Allocator/DefaultAlloc.h"
+//#include "System/Time/Timer.h"
+#include "DataStructure/OString.h"
+
+using HashString = OString;
+
+#if !EDITOR
 
 typedef uint64_t HashID;
 
@@ -34,11 +41,14 @@ constexpr HashID StringHasher(const char(&_s)[N], unsigned int I = N)
 
 HashID StringHasher(const char* _s);
 
+/*************************************************************************************************************/
+
 class _DLL_EXPORT_ONLY HashString
 {
 public:
 	static constexpr size_t nPos = static_cast<size_t>(-1);
 	/* constructors */
+
 	HashString(void);
 	HashString(const HashString&);
 	HashString(HashString&&) noexcept;
@@ -107,18 +117,28 @@ public:
 	char*		const last(void);
 
 	HashID      id(void) const;
+	
+	bool		NeedRehash(void) const;
+	void		Rehash(void) const;
 
 private:
+
 	size_t mSize;
+
+	bool mbRehash;
+
 	char* mCharBuffer;
+	const char* mpLiteral;
+
 	HashID mHashedID;
 };
 
 template <unsigned N>
 constexpr HashString::HashString(const char(&_s)[N])
 	: mSize{ N - 1 }
-	, mCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(N) }
-	, mHashedID{ StringHasher(_s) }
+	, mCharBuffer{nullptr }
+	, mbRehash{ true }
+	, mHashedID{ 0 }
 {
 }
 
@@ -127,6 +147,9 @@ bool operator==(const HashString& _lhs, const char * _rhs);
 bool operator==(const char * _lhs, const HashString& _rhs);
 bool operator==(HashID _id, const HashString& _rhs);
 bool operator==(const HashString& _lhs, HashID _id);
+bool operator==(HashString&& _lhs, HashString&& _rhs);
+bool operator==(const HashString& _lhs, HashString&& _rhs);
+bool operator==(HashString&& _lhs, const HashString& _rhs);
 bool operator!=(const HashString& _lhs, const HashString& _rhs);
 bool operator<(const HashString& _lhs, const HashString& _rhs);
 bool operator>(const HashString& _lhs, const HashString& _rhs);
@@ -155,10 +178,13 @@ HashString& HashString::operator=(const char(&_s)[N])
 {
 	Dystopia::DefaultAllocator<char[]>::Free(mCharBuffer);
 
-	mHashedID = StringHasher(_s);
+	mbRehash = true;
 	mCharBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(N);
 	strcpy_s(mCharBuffer, N, &_s);
 	mSize = N - 1;
+
+	//mHashedID = StringHasher(mCharBuffer);
+
 	return *this;
 }
 
@@ -181,11 +207,21 @@ HashString& HashString::operator+=(const char(&_s)[N])
 	mSize += N - 1;
 	Dystopia::DefaultAllocator<char[]>::Free(mCharBuffer);
 	mCharBuffer = buffer;
-	mHashedID = StringHasher(mCharBuffer);
+	mbRehash = true;
+
+	//mHashedID = StringHasher(mCharBuffer);
+
 	return *this;
 }
+#endif
 
 #endif //_HASH_STRING_H_
+
+
+
+
+
+
 
 
 

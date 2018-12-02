@@ -104,6 +104,37 @@ namespace Ut
 	using RemoveConst_t = typename RemoveConst<T>::type;
 
 
+	// RemoveLowConst
+	// ================ ====================================================
+
+	template <typename T>
+	struct RemoveLowConst
+	{
+		using type = T;
+	};
+
+	template<typename T>
+	struct RemoveLowConst<const T>
+	{
+		using type = const typename RemoveLowConst<T>::type;
+	};
+
+	template<typename T>
+	struct RemoveLowConst<T const*>
+	{
+		using type = T*;
+	};
+
+	template<typename T>
+	struct RemoveLowConst<T const&>
+	{
+		using type = T&;
+	};
+
+	template <typename T>
+	using RemoveLowConst_t = typename RemoveLowConst<T>::type;
+
+
 	// Decay
 	// ======== ============================================================
 
@@ -300,7 +331,7 @@ namespace Ut
 
 	template <typename T>
 	struct IsCString : Constant <bool,
-		IsSame<RemoveConst_t<ElemType_t<T>>, char>::value
+		IsSame<RemoveLowConst_t<Decay_t<T>>, char*>::value
 	>
 	{
 
@@ -308,7 +339,7 @@ namespace Ut
 
 	template <typename T>
 	struct IsWString : Constant <bool, 
-		IsSame<RemoveConst_t<ElemType_t<T>>, wchar_t>::value
+		IsSame<RemoveLowConst_t<Decay_t<T>>, wchar_t*>::value
 	>
 	{
 
