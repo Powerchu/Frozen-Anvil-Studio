@@ -61,8 +61,8 @@ void Editor::EditorResource::Shutdown(void)
 
 void Editor::EditorResource::Message(eEMessage _msg)
 {
-	if (_msg == eEMessage::SCENE_ABOUT_TO_CHANGE)
-		mArrComponentResource.clear();
+	//if (_msg == eEMessage::SCENE_ABOUT_TO_CHANGE)
+	//	mArrComponentResource.clear();
 }
 
 void Editor::EditorResource::SaveSettings(Dystopia::TextSerialiser& _out) const
@@ -91,6 +91,19 @@ void Editor::EditorResource::RemoveComponent(const uint64_t& _cID)
 	{
 		if (mArrComponentResource[i]->GetID() == _cID)
 		{
+			mArrComponentResource.FastRemove(i);
+			return;
+		}
+	}
+}
+void Editor::EditorResource::DestroyDelegate(const uint64_t& _cID)
+{
+	for (size_t i = 0; i < mArrComponentResource.size(); ++i)
+	{
+		if (mArrComponentResource[i]->GetID() == _cID)
+		{
+			mArrComponentResource[i]->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+			mArrComponentResource[i]->DestroyComponent();
 			mArrComponentResource.FastRemove(i);
 			return;
 		}

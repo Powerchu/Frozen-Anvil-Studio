@@ -100,7 +100,8 @@ namespace Editor
 			if (EditorMain::GetInstance()->GetCurState() == eState::PLAY)
 				ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 
-			Dystopia::Texture* pTex = mpGameCamera->GetSurface()->AsTexture();
+			// because game view should show final display with ui layer together, while game camera only paints world object
+			Dystopia::Texture* pTex = mpGfxSys->GetFrameBuffer().AsTexture();
 
 			AdjustImageSize(pTex);
 			AdjustDisplayPos();
@@ -148,13 +149,20 @@ namespace Editor
 
 	void GameView::AdjustImageSize(Dystopia::Texture* texture)
 	{
-		const auto camSize = mpGameCamera->GetSize();
+		/*const auto camSize = mpGameCamera->GetSize();
 		static const float aspect = camSize.x / camSize.y;
 		float ix = static_cast<float>(aspect * texture->GetWidth());
-		float iy = static_cast<float>(texture->GetHeight());
+		float iy = static_cast<float>(texture->GetHeight());*/
 		float sx = Size().x;
 		float sy = Size().y - EGUI::TabsImageOffsetY;
-		mImgSize = GetAdjustedRatio(sx, sy, ix, iy);
+
+		float minScale = Math::Min(sx / static_cast<float>(texture->GetWidth()), 
+								   sy / static_cast<float>(texture->GetHeight()));
+
+		//float ix = static_cast<float>(aspect * texture->GetWidth());
+		//float iy = static_cast<float>(texture->GetHeight());
+
+		mImgSize = Math::Vec2{ texture->GetWidth() * minScale, texture->GetHeight() * minScale};// GetAdjustedRatio(sx, sy, ix, iy);
 	}
 
 	void GameView::AdjustDisplayPos()
