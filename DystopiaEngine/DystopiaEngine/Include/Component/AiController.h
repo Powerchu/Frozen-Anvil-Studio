@@ -60,7 +60,8 @@ namespace Dystopia
 		void Update(float _dt);
 		void LateUpdate(float _dt) const;
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
-
+		BehaviourTree& GetTreeAsRef(void);
+		BehaviourTree::Ptr GetTreeAsPtr(void);
 
 		// To print out properties
 		void DebugPrint();

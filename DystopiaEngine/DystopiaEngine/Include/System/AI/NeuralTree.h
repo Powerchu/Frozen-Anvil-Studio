@@ -198,6 +198,11 @@ namespace Dystopia
 				mpBlackboard = blackboard;
 			}
 
+			bool IsValidTree(void) const
+			{
+				return (mpRoot.GetRaw() != nullptr);
+			}
+
 		private:
 			Node::Ptr mpRoot;
 			Blackboard::Ptr mpBlackboard;
