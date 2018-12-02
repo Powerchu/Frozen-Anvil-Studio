@@ -175,6 +175,7 @@ namespace Editor
 
 	void HierarchyView::CreatePopup()
 	{
+		//TODO
 		if (EGUI::Display::StartPopup(mPopupID.c_str()))
 		{
 			if (EGUI::Display::SelectableTxt("GameObject"))
@@ -250,6 +251,8 @@ namespace Editor
 		auto& selections = ed->GetSelectedIDs();
 		for (auto& obj : arrayOfGameObjects)
 		{
+			//if (!strcmp(obj.GetName().c_str(), "___Scene_Camera___")) continue;
+
 			if (obj.GetComponent<Dystopia::Transform>()->GetParent())
 				continue;
 
@@ -369,7 +372,7 @@ namespace Editor
 			if (_obj.GetID() == id)
 				return;
 
-		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+		if (const auto id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
 			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id);
 			if (t)

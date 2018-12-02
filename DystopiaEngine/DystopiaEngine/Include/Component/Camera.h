@@ -79,6 +79,7 @@ namespace Dystopia
 
 		void SetSurface(Framebuffer*);
 		void SetSurface(int);
+		void SetSurfaceID(int _i);
 
 		// Set the area the camera renders to in relative coordinates, from 0.0 to 1.0
 		void SetViewport(float _x, float _y, float _nWidth, float _nHeight);
@@ -111,6 +112,8 @@ namespace Dystopia
 		void SetSize(float _scale) const;
 
 		void EditorUI(void) noexcept override;
+		void EditorMasterCameraCheckbox();
+		void EditorDebugCheckbox();
 		void EditorProjectionDropdown();
 		void EditorOptions();
 

@@ -36,6 +36,7 @@ namespace Editor
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 
 		void OpenScene(const HashString& _path);
+		void ChangeGizmo(const int& _gizmoVal);
 
 	private:
 		eState mState;
@@ -45,14 +46,27 @@ namespace Editor
 		void LoadScene(void);
 		void SaveAs(void);
 		void New(void);
+
 		void Play(void);
+		void Pause(void);
+		void Resume(void);
 		void Stop(void);
+		
 		void TempSave(void);
 		void TempLoad(void);
 		void PromptSaveO(void);
 
 		void PromptSaveN(void);
 		void PromptSaveQ(void);
+
+		void EditorPlayBar(void);
+		void GizmoRadios(void);
+
+
+
+		/*
+		 * Member Variables
+		 */
 
 		bool mbQuitAttempt;
 		bool mbNewAttempt;
@@ -65,6 +79,8 @@ namespace Editor
 		size_t mnSaveAs;
 		size_t mnQuit;
 		size_t mnClear;
+
+		int mnSelectedGizmo;
 
 		AutoArray<HashString> mArrTempFile;
 	};

@@ -352,6 +352,9 @@
     <ClCompile Include="Source\DataStructure\OString.cpp">
       <Filter>DataStructures\HashString</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\GameView.cpp">
+      <Filter>Editor\Main\Panels\Game View</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -978,6 +981,9 @@
     <ClInclude Include="Include\DataStructure\OString.h">
       <Filter>DataStructures\HashString</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\GameView.h">
+      <Filter>Editor\Main\Panels\Game View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1405,6 +1411,9 @@
     </Filter>
     <Filter Include="Natvis">
       <UniqueIdentifier>{6ab911e0-738f-4c7d-92ad-159d78c216e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Panels\Game View">
+      <UniqueIdentifier>{7a07f2b3-aaf7-46b3-b537-bfc2e8756e8f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

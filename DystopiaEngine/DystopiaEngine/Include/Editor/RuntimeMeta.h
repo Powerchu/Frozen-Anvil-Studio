@@ -290,7 +290,7 @@ namespace Dystopia
 		void operator()(const char * _name, float value, std::function<void(float, void*)> _f, void* _addr)
 		{
 			float Temp = value;
-			switch (EGUI::Display::DragFloat(_name, &Temp, 0.01f, 0.0f, 2.0f))
+			switch (EGUI::Display::DragFloat(_name, &Temp, 0.01f, -FLT_MAX, FLT_MAX))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
 				//EGUI::GetCommandHND()->EndRecording();
@@ -339,7 +339,7 @@ namespace Dystopia
 		void operator()(const char * _name, int value, std::function<void(int, void*)> _f, void*_addr)
 		{
 			int Temp = value;
-			switch (EGUI::Display::DragInt(_name, &Temp, 0.1f, 0, 2))
+			switch (EGUI::Display::DragInt(_name, &Temp, 1.f, -INT32_MAX, INT32_MAX))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
 				//EGUI::GetCommandHND()->EndRecording();
@@ -368,11 +368,21 @@ namespace Dystopia
 				break;
 			}
 		}
+
 		template<>
+		void operator()(const char * _name, bool _value, std::function<void(bool, void*)> _f, void* _addr)
+		{
+			bool Temp = _value;
+			if (EGUI::Display::CheckBox(_name, &Temp))
+			{
+				_f(Temp, _addr);
+			}
+		}
+		/*template<>
 		void operator()(const char *, double, std::function<void(double, void*)>, void*)
 		{
 
-		}
+		}*/
 	};
 	struct SuperGetFunctor
 	{

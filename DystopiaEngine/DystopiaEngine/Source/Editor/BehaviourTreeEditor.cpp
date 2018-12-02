@@ -59,11 +59,12 @@ void Editor::BehaviourTreeEditor::Update(float)
 
 void Editor::BehaviourTreeEditor::EditorUI(void)
 {
-	if (EGUI::Display::EmptyBox("Behaviour Tree  ", 150, (mpTargetTexture) ? mTextureName.c_str() : "-empty-", true))
+	if (EGUI::Display::EmptyBox("WORK IN PROGRESS (GAM250) Behaviour Tree  ", 150.f, "WIP", false, true))
 	{
+
 	}
 
-	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
+	/*if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
 	{
 		mpTargetTexture = mpGfxSys->LoadTexture(t->mPath.c_str());
 		mTextureName = GetTextureName();
@@ -105,7 +106,7 @@ void Editor::BehaviourTreeEditor::EditorUI(void)
 		mDisplaySize = sratio > mImageRatio ? Math::Vec2{ mImageW * (sh / mImageH), sh } :
 											  Math::Vec2{ sw, mImageH * (sw / mImageW) };
 		EGUI::Display::Image(mpTargetTexture->GetID(), mDisplaySize, false, true);
-	}
+	}*/
 }
 
 void Editor::BehaviourTreeEditor::Shutdown(void)

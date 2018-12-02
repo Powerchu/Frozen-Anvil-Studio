@@ -44,7 +44,7 @@ namespace Dystopia
 		void SetMasterCamera(Camera*);
 		Camera* GetMasterCamera(void) const;
 
-		inline bool IsMasterCamera(Camera const*) const;
+		bool IsMasterCamera(Camera const*) const;
 
 		CameraArr& GetAllCameras(void);
 

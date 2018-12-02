@@ -57,6 +57,8 @@ namespace Editor
 		void LoadSettings(Dystopia::TextSerialiser&);
 
 		void DefaultSceneCamera(void);
+		void DefaultGameCamera();
+		void DefaultUICamera();
 
 		bool ReattachToPrefab(Dystopia::Component* _p, uint64_t c, bool _amComponent = true);
 		bool SpawnPrefab(const HashString&, const Math::Pt3D&, uint64_t& _outRootObjID);

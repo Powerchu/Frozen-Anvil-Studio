@@ -261,7 +261,7 @@ namespace EGUI
 			return SplitterBehavior(id, bb, split_vertically ? ImGuiAxis_X : ImGuiAxis_Y, size1, size2, min_size1, min_size2, 0.0f);
 		}
 
-		bool EmptyBox(const char * _label, float _width, const char * _anythingToShowInside, bool _iteractive, bool _showLabel)
+		bool EmptyBox(const char * _label, float _width, const char *, bool _iteractive, bool _showLabel)
 		{
 			bool clicked = false;
 			const bool show = _iteractive;
@@ -274,12 +274,13 @@ namespace EGUI
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
 
-			HashString inviLabel{ _anythingToShowInside };
-			inviLabel += "##";
-			inviLabel += _label;
+			//HashString inviLabel{ _anythingToShowInside };
+			//inviLabel += "##";
+			//inviLabel += _label;
 
 			ImGui::PushItemWidth(_width);
-			if (ImGui::Button(inviLabel.c_str(), ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize }))
+			if (ImGui::Button(_label,
+				ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize }))
 			{
 				if (show) clicked = true;
 			}
@@ -296,9 +297,23 @@ namespace EGUI
 				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			}
-			//HashString invi{ "##checkBox" };
+		    //HashString invi{ "##checkBox" };
 			//invi += _label;
 			return ImGui::Checkbox(_label, _outputBool);
+		}
+
+		bool RadioBtn(const char * _label, int* _pValueStorage, int _btnValue, bool _showLabel)
+		{
+			if (_showLabel)
+			{
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+				Label(_label);
+				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+			//HashString invi{ "##checkBox" };
+			//invi += _label;
+			return ImGui::RadioButton(_label, _pValueStorage, _btnValue);
 		}
 
 		eDragStatus DragFloat(const char * _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText, float _width)
@@ -356,7 +371,7 @@ namespace EGUI
 				return changing ? eDRAGGING : eNO_CHANGE;
 			return eNO_CHANGE;
 		}
-		
+
 		eDragStatus SliderInt(const char * _label, int *_pOutInt, int _min, int _max, bool _hideText, float _width)
 		{
 			if (!_hideText)
@@ -372,7 +387,7 @@ namespace EGUI
 			//inviLabel += _label;
 			changing = ImGui::SliderInt(_label, _pOutInt, _min, _max);
 			ImGui::PopItemWidth();
-			
+
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
 				return changing ? eINSTANT_CHANGE : eSTART_DRAG;
 			else if (ImGui::IsItemDeactivated())
@@ -437,7 +452,7 @@ namespace EGUI
 
 			return Array<eDragStatus, 3>{statX, statY, statZ};
 		}
-	
+
 		Array<eDragStatus, 2> VectorFields(const char * _label, Math::Vector2 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
 		{
 			std::string field1 = "##VecX", field2 = "##VecY";
@@ -557,7 +572,7 @@ namespace EGUI
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_AllowItemOverlap;
 			flags = _highlighted ? flags | ImGuiTreeNodeFlags_Selected : flags;
 			flags = _noArrow ? flags | ImGuiTreeNodeFlags_Leaf : flags;
-			flags = _singleClickOpen ? flags : flags | ImGuiTreeNodeFlags_OpenOnDoubleClick|ImGuiTreeNodeFlags_OpenOnArrow;
+			flags = _singleClickOpen ? flags : flags | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_OpenOnArrow;
 
 			if (_highlighted)
 			{
@@ -567,7 +582,8 @@ namespace EGUI
 
 			if (_defaulPeeken)
 				flags |= ImGuiTreeNodeFlags_DefaultOpen;
-			bool ret = ImGui::TreeNode(_label, _outClicked, flags);
+
+			const bool ret = ImGui::TreeNode(_label, _outClicked, flags);
 
 			if (_highlighted)
 				ImGui::PopStyleColor(2);
@@ -645,8 +661,10 @@ namespace EGUI
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
+			
 			//HashString invi{ "##CPLBtnP" };
 			//invi += _uniqueId;
+			
 			bool btn = ImGui::Button(_uniqueId, _displaySize, true);
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
 			ImGui::PopStyleColor();
@@ -681,7 +699,7 @@ namespace EGUI
 			float sx = imageMaxWidth;
 			float sy = imageMaxHeight;
 			auto mImgSize = (sx / sy) > (ix / iy) ? Math::Vec2{ ix * (sy / iy), sy } :
-													Math::Vec2{ sx, iy * (sx / ix) };
+				Math::Vec2{ sx, iy * (sx / ix) };
 			auto posImage = Math::Vec2{ (sx - mImgSize.x) / 2, (sy - mImgSize.y) / 2 };
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
@@ -690,14 +708,10 @@ namespace EGUI
 			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope1{ "FIRST ", "1" };
 
 			//HashString invi{ "##CPLBtnI" };
-			//
-			//{
-			//	Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope2{ "+=", "2" };
-			//	invi += _uniqueId;
-			//}
+
+			
 
 			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope3{ "THIRD", "3" };
-
 			bool btn = ImGui::Button(_uniqueId, _displaySize, true);
 			bool payload = StartPayload(_tagLoad, _pData, _dataSize, _tooltip);
 			ImGui::PopStyleColor();
@@ -718,11 +732,11 @@ namespace EGUI
 			{
 				//	FILE,
 				//	COMPONENT,
-			//case SCENE:
-			//	return false;
-			//case MP3:
-			//case WAV:
-			//	return false;
+				//case SCENE:
+				//	return false;
+				//case MP3:
+				//case WAV:
+				//	return false;
 			case PREFAB:
 				return PrefabPayload(_uniqueId, _label, _tooltip, _displaySize, _tagLoad, _pData, _dataSize);
 			case BMP:
@@ -776,7 +790,7 @@ namespace EGUI
 		bool StartPopupModal(const char* _uniqueID, const char* _label)
 		{
 			ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize |
-									 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+				ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
 
 			bool ret = ImGui::BeginPopupModal(_uniqueID, NULL, flags);
 			if (ret)
@@ -808,9 +822,9 @@ namespace EGUI
 			Label(_label);
 			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
-			//HashString invi{ "##DDSel" };
-			//invi += _label;
-			bool ret = ImGui::Combo(_label, &_currentIndex, arrCharPtr.begin(), static_cast<int>(arrCharPtr.size()));
+			std::string invi{ "##DDSel" };
+			invi += _label;
+			bool ret = ImGui::Combo(invi.c_str(), &_currentIndex, arrCharPtr.begin(), static_cast<int>(arrCharPtr.size()));
 			ImGui::PopItemWidth();
 			return ret;
 		}
@@ -844,15 +858,15 @@ namespace EGUI
 			ImDrawList*		pCanvas		= ImGui::GetWindowDrawList();
 			ImVec2			pos			= ImGui::GetCursorScreenPos();
 			const ImU32		col32		= static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
-			const ImU32		col32Dull	= static_cast<ImColor>(ImVec4{ _colour.x - 0.2f, _colour.y - 0.2f, _colour.z - 0.2f, _colour.w });
+			//const ImU32		col32Dull	= static_cast<ImColor>(ImVec4{ _colour.x - 0.2f, _colour.y - 0.2f, _colour.z - 0.2f, _colour.w });
 			const float iconWidth = (width * 0.8f);
 			const float offset = (height * 0.2f);
-			ImVec2 PeekLeft{ pos.x, pos.y + offset };
-			ImVec2 botLeft{ pos.x, PeekLeft.y + height - 1 };
-			ImVec2 PeekRight{ pos.x + iconWidth, PeekLeft.y + (height / 6.f) };
-			ImVec2 botRight{ PeekRight.x, botLeft.y };
-			ImVec2 tabPeek{ pos.x + (width * 0.3f), PeekLeft.y };
-			ImVec2 tabBot{ pos.x + (width * 0.4f), PeekRight.y };
+			const ImVec2 PeekLeft{ pos.x, pos.y + offset };
+			const ImVec2 botLeft{ pos.x, PeekLeft.y + height - 1 };
+			const ImVec2 PeekRight{ pos.x + iconWidth, PeekLeft.y + (height / 6.f) };
+			const ImVec2 botRight{ PeekRight.x, botLeft.y };
+			const ImVec2 tabPeek{ pos.x + (width * 0.3f), PeekLeft.y };
+			const ImVec2 tabBot{ pos.x + (width * 0.4f), PeekRight.y };
 
 			if (!_open)
 			{
@@ -903,7 +917,7 @@ namespace EGUI
 		{
 			ImDrawList*		pCanvas = ImGui::GetWindowDrawList();
 			ImVec2			pos		= ImGui::GetCursorScreenPos();
-			const ImU32		col32	= static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
+			const ImU32		col32	 = static_cast<ImColor>(ImVec4{ _colour.x , _colour.y, _colour.z, _colour.w });
 
 			ImVec2 centre{ pos.x + radius + offsetX, pos.y + radius + offsetY };
 			pCanvas->AddCircle(centre, radius, col32);
@@ -911,7 +925,7 @@ namespace EGUI
 			//HashString invi{ "##IconC" };
 			//invi += _uniqueId;
 			return ImGui::InvisibleButton(_uniqueId,
-				   ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
+				ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
 		}
 
 		bool IconCross(const char * _uniqueId, float radius, float offsetX, float offsetY, const Math::Vec4& _colour)
@@ -923,16 +937,16 @@ namespace EGUI
 			ImVec2 centre{ pos.x + radius + offsetX, pos.y + radius + offsetY };
 			pCanvas->AddCircle(centre, radius, col32);
 			float r = radius / 3.f;
-			pCanvas->AddLine(ImVec2{ centre.x - r, centre.y - r }, 
-							 ImVec2{ centre.x + r, centre.y + r }, 
-							 col32);
+			pCanvas->AddLine(ImVec2{ centre.x - r, centre.y - r },
+				ImVec2{ centre.x + r, centre.y + r },
+				col32);
 			pCanvas->AddLine(ImVec2{ centre.x - r, centre.y + r },
-							 ImVec2{ centre.x + r, centre.y - r },
-							 col32);
+				ImVec2{ centre.x + r, centre.y - r },
+				col32);
 			//HashString invi{ "##IconX" };
 			//invi += _uniqueId;
 			return ImGui::InvisibleButton(_uniqueId,
-					ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
+				ImVec2{ (2 * radius) + (2 * offsetX), (2 * radius) + (2 * offsetY) });
 		}
 
 		bool IconGameObj(const char* _uniqueId, float _width, float _height)
@@ -995,7 +1009,7 @@ namespace EGUI
 			//invi += _uniqueId;
 			return ImGui::InvisibleButton(_uniqueId, size);;
 		}
-		
+
 		void Outline(float _x, float _y)
 		{
 			ImGuiContext& g = *GImGui;
@@ -1016,16 +1030,16 @@ namespace EGUI
 		{
 			if (!_interactive)
 			{
-				ImGui::Image(reinterpret_cast<void*>(_imgID), _imgSize, 
-							 ImVec2{ 0,0 }, ImVec2{ 1,1 }, ImVec4{ 1,1,1,1 }, 
-							 (_outlineBG) ? ImGui::GetStyleColorVec4(ImGuiCol_Border) : ImVec4{ 0,0,0,0 });
+				ImGui::Image(reinterpret_cast<void*>(_imgID), _imgSize,
+					ImVec2{ 0,0 }, ImVec2{ 1,1 }, ImVec4{ 1,1,1,1 },
+					(_outlineBG) ? ImGui::GetStyleColorVec4(ImGuiCol_Border) : ImVec4{ 0,0,0,0 });
 				return false;
 			}
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0,0,0,0 });
-			bool ret = ImGui::ImageButton(reinterpret_cast<void*>(_imgID), _imgSize, 
-										  ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0, 
-										  (_outlineBG) ? ImGui::GetStyleColorVec4(ImGuiCol_BorderShadow) : ImVec4{ 0,0,0,0 },
-										  ImVec4{ 1,1,1,1 });
+			bool ret = ImGui::ImageButton(reinterpret_cast<void*>(_imgID), _imgSize,
+				ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0,
+				(_outlineBG) ? ImGui::GetStyleColorVec4(ImGuiCol_BorderShadow) : ImVec4{ 0,0,0,0 },
+				ImVec4{ 1,1,1,1 });
 			ImGui::PopStyleColor();
 			return ret;
 		}

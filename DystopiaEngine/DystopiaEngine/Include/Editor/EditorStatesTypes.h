@@ -21,6 +21,7 @@ namespace Editor
 		LAUNCHER = 0,
 		MAIN,
 		PLAY,
+		PAUSED,
 		EXIT
 	};
 }

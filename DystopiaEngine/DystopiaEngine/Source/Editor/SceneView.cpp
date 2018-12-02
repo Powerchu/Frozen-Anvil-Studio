@@ -85,9 +85,11 @@ namespace Editor
 
 	void SceneView::Update(float _dt)
 	{
-		Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera");
+		Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___");
+
 		if (temp)
 			mpSceneCamera = temp->GetComponent<Dystopia::Camera>();
+
 		if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
 			mpGfxSys->Update(_dt);
 
@@ -125,7 +127,7 @@ namespace Editor
 			mAmFocused = false;
 		ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
 
-		if (mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera"))
+		if (mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___"))
 		{
 			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PREFAB))
 			{
@@ -178,7 +180,7 @@ namespace Editor
 	{
 		if (_msg == eEMessage::SCENE_CHANGED)
 		{
-			if (!Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject("Scene Camera"))
+			if (!Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject("___Scene_Camera___"))
 			{
 				EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultSceneCamera();
 			}
@@ -323,7 +325,7 @@ namespace Editor
 
 	void SceneView::SceneChanged()
 	{
- 		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
+ 		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___")->GetComponent<Dystopia::Camera>();
 	}
 
 	void SceneView::AdjustImageSize(Dystopia::Texture *_pTex)
@@ -498,7 +500,7 @@ namespace Editor
 		auto pos = curPos;
 		pos.z = 1.f;
 		pos.w = 1.f;
-		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
+		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___")->GetComponent<Dystopia::Camera>();
 		if (!mpSceneCamera) return Math::Vec2{ 0,0 };
 
 		auto equation1 = mpSceneCamera->GetProjectionMatrix() * (Math::Inverse(mpSceneCamera->GetViewMatrix()) * pos);
@@ -511,11 +513,43 @@ namespace Editor
 	void SceneView::SetGizmoTranslate(void)
 	{
 		mCurrGizTool = eGizTool::eTRANSLATE;
+		EditorMain::GetInstance()->GetSystem<EditorStates>()->ChangeGizmo(eTRANSLATE);
 	}
 
 	void SceneView::SetGizmoScaler(void)
 	{
 		mCurrGizTool = eGizTool::eSCALE;
+		EditorMain::GetInstance()->GetSystem<EditorStates>()->ChangeGizmo(eSCALE);
+	}
+
+	void SceneView::ResetSceneCam()
+	{
+		if (mpSceneCamera)
+		{
+			mpSceneCamera->SetPosition(0, 0, 0);
+			mpSceneCamera->SetSize(1.f);
+		}
+	}
+
+	void SceneView::FocusGobj()
+	{
+		if (mpSceneCamera)
+		{
+			const auto& selectedIDs = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetSelectedIDs();
+			if (!selectedIDs.size())
+				return;
+
+			if (selectedIDs.size() == 1)
+			{
+				if (const auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(selectedIDs[0]))
+				{
+					auto objPos = o->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					mpSceneCamera->SetPosition(objPos);
+				}
+				else
+					EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(selectedIDs[0]);
+			}
+		}
 	}
 
 	void SceneView::DrawGizmoMul(const AutoArray<uint64_t>& _arrIDs)
