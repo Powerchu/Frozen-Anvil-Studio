@@ -352,8 +352,7 @@ namespace Editor
 
 	void SceneView::AdjustImageSize(Dystopia::Texture *_pTex)
 	{
-		const auto camSize = mpSceneCamera->GetSize();
-		static const float aspect = camSize.x / camSize.y;
+		const auto aspect = mpSceneCamera->GetAspectRatio();
 		float ix = static_cast<float>(aspect * _pTex->GetWidth());
 		float iy = static_cast<float>(_pTex->GetHeight());
 		float sx = Size().x;

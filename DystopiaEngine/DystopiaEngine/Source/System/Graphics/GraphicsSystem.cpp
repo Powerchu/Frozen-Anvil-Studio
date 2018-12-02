@@ -639,7 +639,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 
 #if EDITOR
 	auto& fb = GetFrameBuffer();
-	float const w = fb.AsTexture()->GetWidth(), h = fb.AsTexture()->GetHeight();
+	GLsizei const w = static_cast<GLsizei>(fb.AsTexture()->GetWidth()), h = static_cast<GLsizei>(fb.AsTexture()->GetHeight());
 
 	glViewport(0, 0, w, h);
 

@@ -59,7 +59,7 @@ void Editor::EditorResource::Shutdown(void)
 {
 }
 
-void Editor::EditorResource::Message(eEMessage _msg)
+void Editor::EditorResource::Message(eEMessage)
 {
 	//if (_msg == eEMessage::SCENE_ABOUT_TO_CHANGE)
 	//	mArrComponentResource.clear();

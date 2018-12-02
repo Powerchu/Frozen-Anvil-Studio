@@ -94,6 +94,8 @@ namespace Dystopia
 
 		Math::Vec4 GetSize(void) const;
 
+		float GetAspectRatio(void) const;
+
 		Framebuffer* GetSurface(void) const noexcept;
 		const Gfx::Viewport GetViewport(void) const;
 		const Math::Matrix4& GetViewMatrix(void) noexcept;
