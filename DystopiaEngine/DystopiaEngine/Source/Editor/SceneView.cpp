@@ -83,6 +83,7 @@ namespace Editor
 		mpGfxSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>();
 		mpSceneSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultSceneCamera();
+		SetScrollEnabled(false);
 		SceneChanged();
 		return true;
 	}
@@ -184,9 +185,9 @@ namespace Editor
 		const auto lastPos = ImGui::GetCursorPos();
 		ImGui::SetItemAllowOverlap();
 		ImGui::SetCursorPos(ImVec2{ orig2.x + 1.f, orig2.y - 1.f });
-		EGUI::Display::Label("Scene Cam Pos  : X[%.2f], Y[%.2f]", static_cast<float>(camPos.x), static_cast<float>(camPos.y));
+		EGUI::Display::Label("Cam Pos  : X[%.2f], Y[%.2f]", static_cast<float>(camPos.x), static_cast<float>(camPos.y));
 		ImGui::SetItemAllowOverlap();
-		EGUI::Display::Label("Scene Cam Scale: X[%.2f], Y[%.2f]", static_cast<float>(camSize.x), static_cast<float>(camSize.y));
+		EGUI::Display::Label("Cam Scale: X[%.2f], Y[%.2f]", static_cast<float>(camSize.x), static_cast<float>(camSize.y));
 		ImGui::SetItemAllowOverlap();
 		EGUI::Display::Label("Camera: [%s]", (isPers ? "Perspective" : "Orthographic"));
 		ImGui::SetCursorPos(ImVec2{ lastPos.x, lastPos.y});
