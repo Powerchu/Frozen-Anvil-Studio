@@ -386,9 +386,9 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		s->Bind();
 		s->UploadUniform("ProjectMat", _Proj);
 		s->UploadUniform("ViewMat", _View);
+		s->UploadUniform("vColor", r->GetTint());
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
-			s->UploadUniform("vColor", r->GetTint());
 			DrawRenderer(r, s, mfGamma);
 		}
 	}
