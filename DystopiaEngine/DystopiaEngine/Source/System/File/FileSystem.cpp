@@ -40,7 +40,8 @@ namespace Dystopia
 		std::make_pair(eFileDir::eResource,  "Resource"),
 		std::make_pair(eFileDir::eRoot    ,  "C:/"),
 		std::make_pair(eFileDir::eAppData ,  ""),
-		std::make_pair(eFileDir::eCurrent ,  "")
+		std::make_pair(eFileDir::eCurrent ,  ""),
+		std::make_pair(eFileDir::eSolution ,  "")
 	};
 
 

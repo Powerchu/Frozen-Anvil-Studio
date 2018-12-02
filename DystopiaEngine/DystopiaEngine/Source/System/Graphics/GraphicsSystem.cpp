@@ -203,7 +203,6 @@ void Dystopia::GraphicsSystem::PostInit(void)
 	if (auto err = glGetError())
 		__debugbreak();
 #   endif 
-	SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
 }
 
 
@@ -642,7 +641,7 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
-
+	SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
 }
 
 void Dystopia::GraphicsSystem::EndFrame(void)
@@ -713,7 +712,6 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 #endif
 	mvClearCol = { 0,0,0,0 };
 	DRAW_MODE = GL_TRIANGLES;
-	SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
 }
 
 void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
@@ -741,7 +739,6 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 	_in >> mvGlobalAspectRatio;
 
 	ToggleVsync(mbVsync);
-	SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
 }
 
 void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
@@ -1058,10 +1055,22 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 void Dystopia::GraphicsSystem::EditorAspectRatio()
 {
 	static int eAspect = 0;
+	if (mvGlobalAspectRatio == Math::Vec4{1600,900,0,0})
+	{
+		eAspect = 0;
+	}
+	else if (mvGlobalAspectRatio == Math::Vec4{ 1440,900,0,0 })
+	{
+		eAspect = 1;
+	}
+	else
+	{
+		eAspect = 2;
+	}
 
 	std::string arr[3]{"1600x900px [16:9]", "1440x900px [16:10]", "1024x768px [4:3]",  };
 
-	if (EGUI::Display::DropDownSelection("Aspect Ratio", eAspect, arr, 120.f))
+	if (EGUI::Display::DropDownSelection("Aspect Ratio", eAspect, arr, 100.f))
 	{
 		switch (eAspect)
 		{

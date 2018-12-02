@@ -22,6 +22,7 @@ namespace Dystopia
 		eSource,
 		eResource,
 		eCurrent,
+		eSolution,
 		eRoot,
 		eAppData,
 		eTotalFilePath
@@ -117,6 +118,7 @@ namespace Dystopia
 		case eFileDir::eHeader:
 		case eFileDir::eResource:
 		case eFileDir::eSource:
+		case eFileDir::eCurrent:
 		{
 			if constexpr (std::is_same_v<T, std::string>)
 			{
@@ -138,7 +140,7 @@ namespace Dystopia
 
 		}
 			break;
-		case eFileDir::eCurrent:
+		case eFileDir::eSolution:
 		{
 			if constexpr (std::is_same_v<T, std::string>)
 				retString = std::filesystem::current_path().string();
