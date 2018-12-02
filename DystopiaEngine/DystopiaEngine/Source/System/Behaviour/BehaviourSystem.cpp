@@ -549,6 +549,7 @@ namespace Dystopia
 				_obj.InsertStartBlock("BEHAVIOUR_BLOCK");
 				/*Owner ID*/
 				_obj << iter.first;
+				_obj << iter.second->GetOwner()->GetFlag();
 				/*Save the Member Data*/
 				if (iter.second)
 				{
@@ -657,7 +658,9 @@ namespace Dystopia
 						/*Make new Behaviour*/
 						_obj.ConsumeStartBlock(); /*Consume START BEHAVIOUR BLOCK*/
 						uint64_t _ID = 0;
+						unsigned _Flags = 0;
 						_obj >> _ID;
+						_obj >> _Flags;
 						auto * ptr = RequestBehaviour(_ID, elem.mName);
 						_obj.ConsumeStartBlock(); /*Consume Behaviour Member Variable Block*/
 						auto BehaviourMetaData = ptr->GetMetaData();
@@ -688,19 +691,34 @@ namespace Dystopia
 						/*Time to Super Set Functor*/
 						_obj.ConsumeEndBlock();  /*Consume END BEHAVIOUR BLOCK*/
 
-						/*Insert to GameObject*/
-						auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-						if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
-						{
-							ptr->SetOwner(x);
-							x->AddComponent(ptr, BehaviourTag{});
-						}
-						else
+						if(static_cast<eObjFlags>(_Flags) & eObjFlags::FLAG_EDITOR_OBJ)
 						{
 							/*GameObject with ID that was serialise could not be found*/
 							/*Remove and delete the Behaviour from mvBehaviourReferences*/
-							::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID, false);
+							if(::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID, false))
+							{
+								
+							}
+							else
+							{
+								
+							}
 						}
+						else
+						{
+							/*Insert to GameObject*/
+							auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+							if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
+							{
+								ptr->SetOwner(x);
+								x->AddComponent(ptr, BehaviourTag{});
+							}
+							else
+							{
+								
+							}
+						}
+
 					}
 					break;
 				}
