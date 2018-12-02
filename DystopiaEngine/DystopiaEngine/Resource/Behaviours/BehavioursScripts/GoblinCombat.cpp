@@ -26,7 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Editor/EGUI.h"
 #include "Utility/DebugAssert.h"
-
+#include "Component/Transform.h" 
 
 
 namespace Dystopia
@@ -44,11 +44,12 @@ namespace Dystopia
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
 		}
-		// template<typename ... Ts>
-		// void SendExternalMessage(GameObject const *  _ptr, const char * _FuncName, Ts ... _Params)
-		// {
-		// 	EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
-		// }
+		
+		template<typename ... Ts>
+		void SendExternalMessage(const GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+	 	{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
 		
 		template<typename ... Ts>
 		void SendExternalMessage(GameObject * _ptr, const char * _FuncName, Ts ... _Params)
@@ -59,10 +60,11 @@ namespace Dystopia
 		template<typename ... Ts>
 		void SendAllMessage(const char * _FuncName, Ts ... _Params)
 		{
-			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...); 
 		}
 	}
 	GoblinCombat::GoblinCombat()
+		: canAttack(true)
 	{
 	}
 
@@ -77,6 +79,7 @@ namespace Dystopia
 	void GoblinCombat::Awake()
 	{
 		SetFlags(FLAG_ACTIVE);
+		//get my parent goblin
 	}
 
 	void GoblinCombat::Init()
@@ -86,6 +89,11 @@ namespace Dystopia
 
 	void GoblinCombat::Update(const float _fDeltaTime)
 	{
+		if (mp_target != nullptr && canAttack)
+		{
+			GoblinCombat_MSG::SendExternalMessage(GetOwner()->GetComponent<Transform>()->GetParent()->GetOwner(), "Attacking"); 
+			canAttack = false; 
+		}
 	}
 
 	void GoblinCombat::FixedUpdate(const float _fDeltaTime)
@@ -128,6 +136,7 @@ namespace Dystopia
 			if (!strcmp(name, "Player"))
 			{
 				mp_target = (_obj);
+				DEBUG_PRINT(eLog::MESSAGE, "WEW");
 			}
 		}
 	}
@@ -151,7 +160,7 @@ namespace Dystopia
 
 	GoblinCombat * GoblinCombat::Duplicate() const
 	{
-		return new GoblinCombat{};
+		return new GoblinCombat{*this};
 	}
 
 	void GoblinCombat::Serialise(TextSerialiser& _ser) const
@@ -178,7 +187,8 @@ namespace Dystopia
 	{
 		if (mp_target)
 		{
-			GoblinCombat_MSG::SendExternalMessage(mp_target, "TakeDamage", 10);	
+			GoblinCombat_MSG::SendExternalMessage(mp_target, "TakeDamage", _dmg);	
+			canAttack = true;
 		}
 	}
 

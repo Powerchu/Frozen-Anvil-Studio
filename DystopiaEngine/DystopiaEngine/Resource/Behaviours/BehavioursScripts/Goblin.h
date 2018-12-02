@@ -31,163 +31,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class CheckDistNode : public NeuralTree::Task
-	{
-	public:
-		CheckDistNode(NeuralTree::Blackboard::Ptr _bb)
-			: Task(_bb)
-		{
-			
-		}
-
-		void Init() override
-		{
-			mTarget = mpBlackboard->GetVector("Target");
-			mOwner = mpBlackboard->GetVector("Owner");
-			mpOwnerObj = mpBlackboard->GetObject("Owner");
-		}
-
-		eStatus Update() override
-		{
-			Math::Vec4 own_Scale;
-			if (mpOwnerObj)
-			{
-				own_Scale = mpOwnerObj->GetComponent<Transform>()->GetScale();
-			}
-
-			const float dist = (mTarget - mOwner).Magnitude();
-
-			if (dist < 220.0F)
-			{
-				if (mpOwnerObj)
-				{
-					if ((mOwner.x-mTarget.x) > 0.0F) // player is left
-					{
-						if (isFacingRight)
-						{
-							mpOwnerObj->GetComponent<Transform>()->SetScale(-own_Scale.x, own_Scale.y, own_Scale.z);
-							isFacingRight = false;
-						}
-					}
-					else // player is right
-					{
-						if (!isFacingRight)
-						{
-							mpOwnerObj->GetComponent<Transform>()->SetScale(-own_Scale.x, own_Scale.y, own_Scale.z);
-							isFacingRight = true;
-						}
-					}
-				}
-				mpBlackboard->SetBool("IsFacingRight", isFacingRight);
-				return eStatus::SUCCESS;
-			}
-			mpBlackboard->SetBool("IsFacingRight", isFacingRight);
-			return eStatus::FAIL;
-		}
-
-		Math::Vec3D mTarget;
-		Math::Vec3D mOwner;
-		GameObject* mpOwnerObj = nullptr;
-		bool isFacingRight = false;
-	};
-
-	class CheckHealth : public NeuralTree::Task
-	{
-	public:
-		CheckHealth(NeuralTree::Blackboard::Ptr _bb)
-			: Task(_bb)
-		{
-
-		}
-
-		void Init() override
-		{
-			mfHealth = mpBlackboard->GetInt("Health");
-			//DEBUG_PRINT(eLog::MESSAGE, "CheckHealth");
-		}
-
-		eStatus Update() override
-		{
-			if (mfHealth > 25.0F)
-			{
-				return eStatus::SUCCESS;
-			}
-			return eStatus::FAIL;
-		}
-
-		int mfHealth;
-	};
-
-	class ChaseEnemy : public NeuralTree::Task
-	{
-	public:
-		ChaseEnemy(NeuralTree::Blackboard::Ptr _bb)
-			: Task(_bb)
-		{
-
-		}
-
-		void Init() override
-		{
-			mbIsFacingRight = mpBlackboard->GetBool("IsFacingRight");
-			myRigid = mpBlackboard->GetObject("Owner")->GetComponent<RigidBody>();
-			//DEBUG_PRINT(eLog::MESSAGE, "ChaseEnemy");
-		}
-
-		eStatus Update() override
-		{
-			if (mbIsFacingRight)
-			{
-				myRigid->AddLinearImpulse({ 15 * myRigid->GetMass(),0,0 });
-			}
-			else
-			{
-				myRigid->AddLinearImpulse({ -15 * myRigid->GetMass(),0,0 });
-			}
-
-			return eStatus::SUCCESS;
-		}
-
-		bool mbIsFacingRight = false;
-		RigidBody* myRigid = nullptr;
-	};
-
-	class RunAway : public NeuralTree::Task
-	{
-	public:
-		RunAway(NeuralTree::Blackboard::Ptr _bb)
-			: Task(_bb)
-		{
-
-		}
-
-		void Init() override
-		{
-			mTarget = mpBlackboard->GetVector("Target");
-			mOwner = mpBlackboard->GetVector("Owner");
-			my_rigid = mpBlackboard->GetObject("Owner")->GetComponent<RigidBody>();
-			//DEBUG_PRINT(eLog::MESSAGE, "RunAway");
-		}
-
-		eStatus Update() override
-		{
-			if ((mOwner.x - mTarget.x) > 0.0F) // player is left
-			{
-				my_rigid->AddLinearImpulse({ 15 * my_rigid->GetMass(),0,0 });
-			}
-			else // player is right
-			{
-				my_rigid->AddLinearImpulse({ -15 * my_rigid->GetMass(),0,0 });
-			}
-			return eStatus::SUCCESS;
-
-		}
-
-		Math::Vec3D mTarget;
-		Math::Vec3D mOwner;
-		RigidBody* my_rigid = nullptr;
-	};
-	
 	class Goblin : public Behaviour
 	{
 	public:
@@ -236,8 +79,9 @@ namespace Dystopia
 		
 		virtual void EditorUI(void) noexcept override;
 		
-		void TakeDamage(int _dmg, bool _isFacingRight);
+		void TakeDamage(int _dmg);
 		void Knock(int _amt, int _direction);
+		void Attacking();
 		
 		// Reflection Stuff
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
@@ -245,12 +89,16 @@ namespace Dystopia
 
 		int mHealth = 50;
 		RigidBody * rBody;
-		float mass;
-		
+		float theMass;
+		float damageDelay;
+		float damageCount;
+		float attackDelay;
+		float attackCount;
+		bool takenDamage;
+		bool isWinding;
 		bool isColliding = false;
-		NeuralTree::BehaviourTree bTree;
 		
-		PP_MEMBERFUNC(Dystopia::Goblin, TakeDamage, Knock)
+		PP_MEMBERFUNC(Dystopia::Goblin, TakeDamage, Knock, Attacking)
 		
 	private:
 		friend MetaData<Goblin>;
@@ -265,7 +113,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::Goblin, mHealth)
+PP_REFLECT(Dystopia::Goblin, mHealth, takenDamage, attackCount)
 
 #endif //_Goblin_H_
 

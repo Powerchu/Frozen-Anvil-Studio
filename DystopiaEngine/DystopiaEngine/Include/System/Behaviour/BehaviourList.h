@@ -22,6 +22,14 @@
 #include "../Resource/Behaviours/BehavioursScripts/GoblinCombat.h"
 #include "../Resource/Behaviours/BehavioursScripts/Parallax.h"
 #include "../Resource/Behaviours/BehavioursScripts/SkillManager.h"
+#include "../Resource/Behaviours/BehavioursScripts/SplashScreen.h"
+#include "../Resource/Behaviours/BehavioursScripts/SceneManager.h"
+#include "../Resource/Behaviours/BehavioursScripts/MenuManager.h"
+#include "../Resource/Behaviours/BehavioursScripts/Health.h"
+#include "../Resource/Behaviours/BehavioursScripts/FormTThree.h"
+#include "../Resource/Behaviours/BehavioursScripts/ForceTThree.h"
+#include "../Resource/Behaviours/BehavioursScripts/SplashScreen.h"
+
 #endif
 
 #if EDITOR
@@ -41,9 +49,17 @@ namespace Dystopia
 		class FormTTwo,
 		class FormTOne,
 		class Goblin,
-		class GoblinCombat,
+		//class GoblinCombat,
 		class Parallax,
-		class SkillManager
+		class SkillManager,
+		class SplashScreen,
+		class SceneManager,
+		class MenuManager,
+		class Health,
+		class FormTThree,
+		class ForceTThree,
+		class SplashScreen
+		/*Add Behaviours Here*/
 	>::result;
 }
 

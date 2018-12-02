@@ -123,7 +123,7 @@ namespace Dystopia
 
 	ChangeAudio * ChangeAudio::Duplicate() const
 	{
-		return new ChangeAudio{};
+		return new ChangeAudio{*this};
 	}
 
 	void ChangeAudio::Serialise(TextSerialiser& _ser) const

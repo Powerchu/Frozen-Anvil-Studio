@@ -148,7 +148,7 @@ namespace Dystopia
 
 	ForceTOne * ForceTOne::Duplicate() const
 	{
-		return new ForceTOne{};
+		return new ForceTOne{*this};
 	}
 
 	void ForceTOne::Serialise(TextSerialiser& _ser) const

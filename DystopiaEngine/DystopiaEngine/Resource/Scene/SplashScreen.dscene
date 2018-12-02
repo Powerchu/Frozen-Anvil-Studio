@@ -1,0 +1,106 @@
+[START_Scene]
+1978816000,"SplashScreen",3,[START_START_GO_DATA]
+1978817024,97,"Scene Camera",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.34174,0.34174,1,4.51096,-3.69079,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072466619904,65,"Splash Title",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+210,50.5,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1668443136,65,"SplashManager",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+1978816512,0,1978817024,0,0,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+18446744072407900672,1,18446744072466619904,"/Asset/Environment/DigiPen_RGB_White.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+18,[START_str]
+"ChangeAudio",0,[START_str]
+"CharacterController",0,[START_str]
+"CombatBox",0,[START_str]
+"DeleteSelf",0,[START_str]
+"FollowTarget",0,[START_str]
+"ForceTOne",0,[START_str]
+"ForceTThree",0,[START_str]
+"ForceTTwo",0,[START_str]
+"FormTOne",0,[START_str]
+"FormTThree",0,[START_str]
+"FormTTwo",0,[START_str]
+"Goblin",0,[START_str]
+"GoblinCombat",0,[START_str]
+"MenuManager",0,[START_str]
+"Parallax",0,[START_str]
+"SceneManager",0,[START_str]
+"SkillManager",0,[START_str]
+"SplashScreen",1,[START_BEHAVIOUR_BLOCK]
+1668443136,33,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"delay",[START_delay]
+4,[START_MEMBER VAR]
+"count",[START_count]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+
+[END_BEHAVIOUR_SYSTEM_BLOCK]
+
+[END_Scene]

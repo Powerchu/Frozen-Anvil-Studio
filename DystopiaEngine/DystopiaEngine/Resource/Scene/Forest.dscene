@@ -1,0 +1,265 @@
+[START_Scene]
+18446744072480115200,"Forest",10,[START_START_GO_DATA]
+18446744072480116224,97,"Scene Camera",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.420627,0.420627,1,82.5713,24.5559,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+351293952,65,"Floor",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,16,1,0,0,0,0,0,0,1,1276688384,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072840829440,65,"Character",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16,16,1,-21.9374,10.0447,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1987091456,65,"Floor 1",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,16,1,63.3602,0,0,0,0,0,1,1276688384,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072188112384,65,"Front Tree",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48,48,1,-10.2793,30.0123,-10,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071876686848,65,"Environment",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1276688384,65,"Layer 0",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,18446744071876686848,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072392588288,65,"Layer 1",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,18446744071876686848,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+804831232,65,"Floor 2",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,16,1,126.736,0,0,0,0,0,1,1276688384,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+903398912,65,"Floor 3",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+64,16,1,190.079,0,0,0,0,0,1,1276688384,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+18446744072480115712,0,18446744072480116224,0,0,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+5,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+863003136,1,18446744072840829440,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1840276992,2147483648,351293952,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1987092480,2147483648,1987091456,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+1388357632,536870912,351293952,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744073057905664,536870912,1987091456,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+18446744072568744448,536870912,1987091456,0,-0.2,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,0.6,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744073121342976,536870912,351293952,0,-0.2,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,0.6,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+1495818240,1,18446744072840829440,0,-0.33,0,0,0,0,0.3,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744071710991360,1,18446744072840829440,0,-0.03,0,0,0,0,0.3,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+6,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+18446744072197002752,1,351293952,"/Asset/Spritesheet/Set Two.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,10,"Rename this",1,1,0,0,0,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072219024896,1,18446744072840829440,"/Asset/Characters/sprite_ctr.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1987093504,1,1987091456,"/Asset/Spritesheet/Set Two.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,10,"Rename this",1,1,0,0,0,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1583395328,1,18446744072188112384,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,7,"Rename this",1,1,0,0,0,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+804832256,1,804831232,"/Asset/Spritesheet/Set Two.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,10,"Rename this",1,1,0,0,0,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+903399936,1,903398912,"/Asset/Spritesheet/Set Two.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,10,"Rename this",1,1,0,0,0,0,0,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+25,[START_str]
+"bbbbb",0,[START_str]
+"bvbvbvbv",0,[START_str]
+"ChangeAudio",0,[START_str]
+"CharacterController",0,[START_str]
+"CombatBox",0,[START_str]
+"dannehmanneh",0,[START_str]
+"DeleteSelf",0,[START_str]
+"FollowTarget",0,[START_str]
+"ForceTOne",0,[START_str]
+"ForceTThree",0,[START_str]
+"ForceTTwo",0,[START_str]
+"FormTOne",0,[START_str]
+"FormTThree",0,[START_str]
+"FormTTwo",0,[START_str]
+"gggg",0,[START_str]
+"Goblin",0,[START_str]
+"GoblinCombat",0,[START_str]
+"Health",0,[START_str]
+"MenuManager",0,[START_str]
+"nbnb",0,[START_str]
+"nmnmnm",0,[START_str]
+"Parallax",0,[START_str]
+"SceneManager",0,[START_str]
+"SkillManager",0,[START_str]
+"SplashScreen",0,
+[END_BEHAVIOUR_SYSTEM_BLOCK]
+
+[END_Scene]

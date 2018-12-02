@@ -46,6 +46,7 @@ namespace Dystopia
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
 		}
+		
 		template<typename ... Ts>
 		void SendExternalMessage(const GameObject * _ptr, const char * _FuncName, Ts ... _Params)
 		{
@@ -61,7 +62,7 @@ namespace Dystopia
 		template<typename ... Ts>
 		void SendAllMessage(const char * _FuncName, Ts ... _Params)
 		{
-			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...); 
 		}
 	}
 	SkillManager::SkillManager()
@@ -147,7 +148,7 @@ namespace Dystopia
 
 	SkillManager * SkillManager::Duplicate() const
 	{
-		return new SkillManager{};
+		return new SkillManager{*this};
 	}
 
 	void SkillManager::Serialise(TextSerialiser& _ser) const
@@ -196,7 +197,7 @@ namespace Dystopia
 		{
 			if (isFacingRight)
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSlamTwo.dobj", Math::Vec3D{x, y, z} + Math::Vec3D{2, 5, 0}))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSlamTwo.dobj", Math::Vec3D{x, y, z} + Math::Vec3D{0, 10, 0}))
 				{
 									 
 					if(ptr == GetOwner())
@@ -214,7 +215,7 @@ namespace Dystopia
 
 			else
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSlamTwo.dobj", Math::Vec3D{ x, y, z } +Math::Vec3D{-2, 5, 0 }))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSlamTwo.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{0, 10, 0 }))
 				{
 					if(ptr == GetOwner())
 						DEBUG_PRINT(eLog::MESSAGE,"Instantiate is same as me wtf");
@@ -222,9 +223,28 @@ namespace Dystopia
 					{
 						DEBUG_PRINT(eLog::MESSAGE,"Instantiate is different, %p", ptr);
 						DEBUG_PRINT(eLog::MESSAGE, "Instantiate ID %u", ptr->GetID());
-					}
+					} 
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
 				}
+			}
+		}
+
+		if (_skillNum == 2)
+		{
+			if (isFacingRight)
+			{
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{10, -1.5, 0}))
+					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 2);
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{30, -1.5, 0}))
+					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
+			}
+
+			else
+			{
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{10, -1.5, 0}))
+					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{30, -1.5, 0}))
+					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 2);
 			}
 		}
 	}
@@ -237,6 +257,7 @@ namespace Dystopia
 			{
 				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceFlameOne.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ 15, -2,0 }))
 				{
+					DEBUG_PRINT(eLog::MESSAGE, "FIRED A FLAMEEE");
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 2);
 				}
 			}
@@ -245,6 +266,8 @@ namespace Dystopia
 			{
 				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceFlameOne.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ -15, -2,0 }))
 				{
+					auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+					ptr->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z);
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
 				}
 			}
@@ -255,15 +278,34 @@ namespace Dystopia
 			if (isFacingRight)
 			{
 				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceBurstTwo.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ 15, -2,0 }))
-				{
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 2);
-				}
 			}
 			
 			else
 			{
 				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceBurstTwo.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ -15, -2,0 }))
 				{
+					auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+					ptr->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z);
+					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
+				}
+			}
+		}
+
+		else if (_skillNum == 2)
+		{
+			if (isFacingRight)
+			{
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceBlastThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{2, 0, 0}))
+					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
+			}
+
+			else
+			{
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceBlastThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{2, 0, 0}))
+				{
+					auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+					ptr->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z);
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
 				}
 			}
@@ -288,7 +330,7 @@ namespace Dystopia
 			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", Math::Vec3D{ currX, currY, currZ } + Math::Vec3D{ 20,-3,0 }))
 			{
 				auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
-				ptr->GetComponent<Transform>()->SetScale(scale.x, scale.y * 2, scale.z);
+				ptr->GetComponent<Transform>()->SetScale(scale.x, scale.y * 2, scale.z); 
 			}
 		}
 

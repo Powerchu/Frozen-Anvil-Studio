@@ -34,14 +34,20 @@
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\FollowTarget.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\ForceTOne.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ForceTThree.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\ForceTTwo.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\FormTOne.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FormTThree.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\FormTTwo.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\Goblin.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\GoblinCombat.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\Health.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\MenuManager.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\Parallax.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SceneManager.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SkillManager.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SplashScreen.cpp" />
     <ClCompile Include="Source\DataStructure\OString.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
     <ClCompile Include="Source\Editor\CommandTypes.cpp" />
@@ -362,13 +368,19 @@
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\FollowTarget.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\ForceTOne.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ForceTThree.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\ForceTTwo.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\FormTOne.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FormTThree.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\FormTTwo.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\Goblin.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\GoblinCombat.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\Health.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\MenuManager.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\Parallax.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SceneManager.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\SkillManager.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SplashScreen.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />

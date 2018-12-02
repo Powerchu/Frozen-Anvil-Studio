@@ -15,12 +15,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
+#include "System/Behaviour/BehaviourSystem.h"
 #include "Editor/EGUI.h"
 
 #include "System/Scene/SceneSystem.h"
 #include "Object/GameObject.h"
 #include "System/Collision/CollisionEvent.h" 
 #include "Component/SpriteRenderer.h"
+#include "Component/Transform.h"
 
 namespace Dystopia
 {
@@ -28,14 +30,20 @@ namespace Dystopia
 	namespace Goblin_MSG
 	{ 
 		template<typename ... Ts>
-		void SendInternalMessage(Behaviour * ptr, const char * _FuncName, Ts ... _Params)
+		void SendInternalMessage(Behaviour * _ptr, const char * _FuncName, Ts ... _Params)
 		{
-			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendInternalMessage(ptr, _FuncName, _Params...);
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendInternalMessage(_ptr, _FuncName, _Params...);
 		}
+		
 		template<typename ... Ts>
 		void SendExternalMessage(uint64_t _ObjectID, const char * _FuncName, Ts ... _Params)
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ObjectID, _FuncName, _Params...);
+		}
+		template<typename ... Ts>
+		void SendExternalMessage(const GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
 		}
 		
 		template<typename ... Ts>
@@ -52,6 +60,14 @@ namespace Dystopia
 	}
 	
 	Goblin::Goblin()
+		: theMass(0.f)
+		, takenDamage(false)
+		, damageCount(0.0f)
+		, damageDelay(1.0f)
+		, rBody(nullptr)
+		, attackCount(0.0f)
+		, attackDelay(1.5f)
+		, isWinding(false)
 	{
 	}
 
@@ -65,66 +81,38 @@ namespace Dystopia
     void Goblin::Awake(void)
 	{
 		rBody = GetOwner()->GetComponent<RigidBody>();
-		mass = rBody->GetMass();
+		if(rBody)
+			theMass = rBody->GetMass();
 		SetFlags(FLAG_ACTIVE);
 	}
 	void Goblin::Init()
 	{
-		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
-		auto blackboard = bTree.GetBlackboard();
-		Math::Vector4 vectorT;
-		if (mpTarget)
-		{
-			vectorT = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
-		}
-		blackboard->SetVector("Target", vectorT);
-		blackboard->SetVector("Owner", GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
-		blackboard->SetObject("Owner", GetOwner());
-		blackboard->SetInt("Health", mHealth);
-		NeuralTree::Builder()
-			.composite<NeuralTree::Sequence>()
-				.leaf<CheckDistNode>(blackboard) 
-				.decorator<NeuralTree::Inverter>()
-					.composite<NeuralTree::Sequence>()
-						.leaf<CheckHealth>(blackboard)
-						.leaf<ChaseEnemy>(blackboard)
-					.end()
-				.end()
-				.leaf<RunAway>(blackboard)
-			.end()
-		.Build(bTree);
-		
 		rBody = GetOwner()->GetComponent<RigidBody>();
-		mass = rBody->GetMass();
+		if(rBody)
+			theMass = rBody->GetMass();
 		SetFlags(FLAG_ACTIVE);
 	} 
 
 	void Goblin::Update(const float _fDeltaTime)
 	{
-		return;
-		const auto mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
-		auto blackboard = bTree.GetBlackboard();
-		Math::Vector4 vectorT;
-		if (mpTarget)
-		{
-			vectorT = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
-		}
-		blackboard->SetVector("Target", vectorT);
-		blackboard->SetVector("Owner", GetOwner()->GetComponent<Transform>()->GetPosition());
-		blackboard->SetInt("Health", mHealth);
-		
-		bTree.Update();
-		
-		if(EngineCore::GetInstance()->Get<InputManager>()->IsKeyTriggered(eButton::KEYBOARD_X) && isColliding)
-		{
-			mHealth -= 5;
-		}
+		if (damageCount <= damageDelay && takenDamage)
+			damageCount = damageCount + _fDeltaTime;
 
-        if(mHealth <= 0)
-        {
-            GetOwner()->Destroy();
-        }
+		if (damageCount >= damageDelay)
+		{
+			takenDamage = false;
+			damageCount = 0.0f;
+		}
+			
+		if (isWinding)
+			attackCount = attackCount + _fDeltaTime;
 
+		if (attackCount >= attackDelay)
+		{
+			isWinding = false;
+			attackCount = 0.0f;
+			Goblin_MSG::SendExternalMessage(GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner(), "DealDamage", 10);
+		}
 	}
 
 	void Goblin::FixedUpdate(const float _fDeltaTime)
@@ -146,46 +134,44 @@ namespace Dystopia
 
 	void Dystopia::Goblin::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
-		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_colEvent.mOtherID);
-		//if(EngineCore::GetInstance()->Get<InputManager>()->IsKeyPressed(eButton::KEYBOARD_RIGHT))
+		// auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_colEvent.mOtherID);
 			
-		if(ptr)
-		{
-			//const char * name = ptr->Get
-			const char * name = ptr->GetNamePtr();
-			if(!strcmp(name,"PlayerAttackTrig"))
-			{
-				isColliding = true; 
-			}
-			else if(!strcmp(name,"Fireball"))
-			{
-				mHealth -= 5;
-			}
-			else if(!strcmp(name,"Missle"))
-			{
-				mHealth -= 1;
-				isColliding = true;
-			}
-		}
+		// if(ptr)
+		// {
+		// 	const char * name = ptr->GetNamePtr();
+		// 	if(!strcmp(name,"PlayerAttackTrig"))
+		// 	{
+		// 		isColliding = true; 
+		// 	}
+		// 	else if(!strcmp(name,"Fireball"))
+		// 	{
+		// 		mHealth -= 5;
+		// 	}
+		// 	else if(!strcmp(name,"Missle"))
+		// 	{
+		// 		mHealth -= 1;
+		// 		isColliding = true;
+		// 	}
+		// }
 	}
 
 	void Dystopia::Goblin::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
-		auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_colEvent.mOtherID);
-		if(ptr)
-		{
-			//const char * name = ptr->Get
-			const char * name = ptr->GetNamePtr();
-			if(!strcmp(name,"PlayerAttackTrig"))
-			{
-				isColliding = true;
-			}
-			else if(!strcmp(name,"Missle"))
-			{
-				mHealth -= 1;
-				isColliding = true;
-			}
-		}
+		// auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_colEvent.mOtherID);
+		// if(ptr)
+		// {
+		// 	//const char * name = ptr->Get
+		// 	const char * name = ptr->GetNamePtr();
+		// 	if(!strcmp(name,"PlayerAttackTrig"))
+		// 	{
+		// 		isColliding = true;
+		// 	}
+		// 	else if(!strcmp(name,"Missle"))
+		// 	{
+		// 		mHealth -= 1;
+		// 		isColliding = true;
+		// 	}
+		// }
 	}
 
 	void Dystopia::Goblin::OnCollisionExit(const CollisionEvent& _colEvent)
@@ -195,30 +181,30 @@ namespace Dystopia
 
 	void Dystopia::Goblin::OnTriggerEnter(GameObject * const _obj)
 	{
-		if(_obj)
-		{
-			//const char * name = ptr->Get
-			const char * name = _obj->GetNamePtr();
-			if(!strcmp(name,"Missle"))
-			{
-				mHealth -= 1;
-				isColliding = true;
-			}	
-		}
+		// if(_obj)
+		// {
+		// 	//const char * name = ptr->Get
+		// 	const char * name = _obj->GetNamePtr();
+		// 	if(!strcmp(name,"Missle"))
+		// 	{
+		// 		mHealth -= 1;
+		// 		isColliding = true;
+		// 	}	
+		// }
 	}
 
 	void Dystopia::Goblin::OnTriggerStay(GameObject * const _obj)
 	{
-		if(_obj)
-		{
-			//const char * name = ptr->Get
-			const char * name = _obj->GetNamePtr();
-			if(!strcmp(name,"Missle"))
-			{
-				//if(_obj->GetComponent<SpriteRenderer>()->AnimationFinished())
-				isColliding = true;
-			}
-		}
+		// if(_obj)
+		// {
+		// 	//const char * name = ptr->Get
+		// 	const char * name = _obj->GetNamePtr();
+		// 	if(!strcmp(name,"Missle"))
+		// 	{
+		// 		//if(_obj->GetComponent<SpriteRenderer>()->AnimationFinished())
+		// 		isColliding = true;
+		// 	}
+		// }
 	}
 
 	void Dystopia::Goblin::OnTriggerExit(GameObject * const _obj)
@@ -228,7 +214,7 @@ namespace Dystopia
 
 	Goblin * Goblin::Duplicate() const
 	{
-		return new Goblin{}; 
+		return new Goblin{*this}; 
 	}
 
 	void Goblin::Serialise(TextSerialiser& _ser) const
@@ -251,17 +237,18 @@ namespace Dystopia
 		
 	}
 	
-	void Goblin::TakeDamage(int _dmg, bool _isFacingRight)
+	void Goblin::TakeDamage(int _dmg)
 	{
-		mHealth -= _dmg;
+		if (!takenDamage)
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "TOOK DMG");
+			mHealth -= _dmg;
 
-		if (mHealth <= 0)
-		GetOwner()->Destroy();
-
-		if (_isFacingRight)
-			rBody->AddLinearImpulse({30 * mass,0,0});
-		else
-			rBody->AddLinearImpulse({-30 * mass,0,0});
+			if (mHealth <= 0)
+				GetOwner()->Destroy();
+			
+			takenDamage = true;
+		}
 	}
 
 	void Goblin::Knock(int _amt, int _direction)
@@ -269,13 +256,18 @@ namespace Dystopia
 		DEBUG_PRINT(eLog::MESSAGE, "received Knock");
 		
 		if (_direction == 0) //knock up
-			rBody->AddLinearImpulse({0, _amt * mass, 0});
+			rBody->AddLinearImpulse({0, _amt * theMass, 0});
 
 		if (_direction == 1) //knock left
-			rBody->AddLinearImpulse({ -(_amt * mass), 0, 0 });
+			rBody->AddLinearImpulse({ -(_amt * theMass), 0, 0 });
 		
 		if (_direction == 2) //knock right
-			rBody->AddLinearImpulse({ _amt * mass, 0, 0 });
+			rBody->AddLinearImpulse({ _amt * theMass, 0, 0 });
+	}
+
+	void Goblin::Attacking()
+	{
+		isWinding = true;
 	}
 
 	TypeErasure::TypeEraseMetaData Goblin::GetMetaData()

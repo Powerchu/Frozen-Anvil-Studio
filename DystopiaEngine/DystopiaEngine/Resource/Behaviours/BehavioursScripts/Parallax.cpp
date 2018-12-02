@@ -133,7 +133,7 @@ namespace Dystopia
 
 	Parallax * Parallax::Duplicate() const
 	{
-		return new Parallax{};
+		return new Parallax{*this};
 	}
 
 	void Parallax::Serialise(TextSerialiser& _ser) const

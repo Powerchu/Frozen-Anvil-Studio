@@ -41,8 +41,7 @@ namespace Dystopia
 	};
 
 
-	class BehaviourSystem
-		: public Systems
+	class BehaviourSystem : public Systems
 	{
 	public:
 #if EDITOR
@@ -90,6 +89,7 @@ namespace Dystopia
 
 
 #endif
+
 		Behaviour * RequestBehaviour(uint64_t const & _ID, std::string const & _name);
 		Behaviour * RequestDuplicate(Behaviour * _PtrToDup, uint64_t _NewID);
 		void ReplaceID(uint64_t _old, uint64_t _new, GameObject * _newOwner);

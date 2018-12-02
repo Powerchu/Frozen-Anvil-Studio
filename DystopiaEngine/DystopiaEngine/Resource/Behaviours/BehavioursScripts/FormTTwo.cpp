@@ -151,7 +151,7 @@ namespace Dystopia
 
 	FormTTwo * FormTTwo::Duplicate() const
 	{
-		return new FormTTwo{};
+		return new FormTTwo{*this};
 	}
 
 	void FormTTwo::Serialise(TextSerialiser& _ser) const

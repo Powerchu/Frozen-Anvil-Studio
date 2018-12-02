@@ -126,12 +126,12 @@ namespace Dystopia
 			if (!strcmp(name, "Goblin"))
 			{
 				ForceTTwo_MSG::SendExternalMessage(_obj, "TakeDamage", 10);
-				ForceTTwo_MSG::SendExternalMessage(_obj, "Knock", 150, 2);
+				ForceTTwo_MSG::SendExternalMessage(_obj, "Knock", 150, firingDirection);
 			}
 
 			else if (!strcmp(name, "FormSlamTwo"))
 			{
-				ForceTTwo_MSG::SendExternalMessage(_obj, "Knock", 150, 2);
+				ForceTTwo_MSG::SendExternalMessage(_obj, "Knock", 150, firingDirection);
 			}
 		}
 
@@ -149,7 +149,7 @@ namespace Dystopia
 
 	ForceTTwo * ForceTTwo::Duplicate() const
 	{
-		return new ForceTTwo{};
+		return new ForceTTwo{*this};
 	}
 
 	void ForceTTwo::Serialise(TextSerialiser& _ser) const

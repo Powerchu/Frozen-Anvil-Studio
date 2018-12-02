@@ -354,9 +354,9 @@ void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 
 		paths.back() = buf.begin();
 	}
-
+#if EDITOR
 	Editor::EditorMain::GetInstance()->ExternalFile(paths);
-
+#endif
 	DragFinish(handle);
 }
 

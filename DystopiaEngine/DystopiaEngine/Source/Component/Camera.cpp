@@ -4,8 +4,8 @@
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Wrapper class for camera functions.
-	Graphics will render the screen based on the camera.
+Wrapper class for camera functions.
+Graphics will render the screen based on the camera.
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -37,16 +37,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
-	mViewport{0, 0, _fWidth, _fHeight}, mClippingPlane{ -500.f,500.f } , mView{}, mProjection{},
-	mInvScreen{}, mpSurface{ nullptr }, mbDebugDraw{ false }, mnSurfaceID{ 0 }
+mViewport{ 0, 0, _fWidth, _fHeight }, mClippingPlane{ -500.f,500.f }, mView{}, mProjection{},
+mInvScreen{}, mpSurface{ nullptr }, mbDebugDraw{ false }, mnSurfaceID{ 0 }
 {
 
 }
 
-Dystopia::Camera::Camera(const Camera& _oOther) : Component{ _oOther }, 
-	mViewport{ _oOther.mViewport }, mClippingPlane{ _oOther.mClippingPlane }, mView{}, mProjection{ _oOther.mProjection },
-	mInvScreen{}, mpSurface{ _oOther.mpSurface }, mbDebugDraw{ _oOther.mbDebugDraw }, 
-	mnSurfaceID{ _oOther.mnSurfaceID }
+Dystopia::Camera::Camera(const Camera& _oOther) : Component{ _oOther },
+mViewport{ _oOther.mViewport }, mClippingPlane{ _oOther.mClippingPlane }, mView{}, mProjection{ _oOther.mProjection },
+mInvScreen{}, mpSurface{ _oOther.mpSurface }, mbDebugDraw{ _oOther.mbDebugDraw },
+mnSurfaceID{ _oOther.mnSurfaceID }
 {
 
 }
@@ -59,7 +59,7 @@ void Dystopia::Camera::Awake(void)
 {
 	if (nullptr == mpSurface)
 		SetSurface(&EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->GetView(mnSurfaceID));
-	
+
 	SetOrthographic(800.f, 500.f, mClippingPlane.mnNear, mClippingPlane.mnFar);
 }
 
@@ -156,8 +156,8 @@ void Dystopia::Camera::SetPerspective(Math::Angle _fFOV, float _fAspectRatio, fl
 
 void Dystopia::Camera::SetPerspective(float _fLeft, float _fRight, float _fTop, float _fBottom, float _fNear, float _fFar)
 {
-	float fDistZ  = 1.f / (_fFar - _fNear);
-	float fWidth  = 1.f / (_fRight - _fLeft);
+	float fDistZ = 1.f / (_fFar - _fNear);
+	float fWidth = 1.f / (_fRight - _fLeft);
 	float fHeight = 1.f / (_fTop - _fBottom);
 
 	mProjection = Math::Matrix4{
@@ -189,13 +189,13 @@ void Dystopia::Camera::SetCamera(void)
 	mView = mTransform->GetTransformMatrix();
 
 	mInvScreen = mView * Math::AffineInverse(mProjection);
-		// * 
-		//Math::Mat4{
-		//	2.f / (masterView.mnWidth), .0f, -(1.f + 2.f * masterView.mnX) / masterView.mnWidth - 1.f, .0f,
-		//	.0f, 2.f / masterView.mnHeight, 1.f + (1.f + 2.f * masterView.mnY) / masterView.mnHeight, .0f,
-		//	.0f, .0f, .0f, .0f,
-		//	.0f, .0f, .0f, 1.f
-		//}; // Screen space -> Viewport space -> projection space
+	// * 
+	//Math::Mat4{
+	//	2.f / (masterView.mnWidth), .0f, -(1.f + 2.f * masterView.mnX) / masterView.mnWidth - 1.f, .0f,
+	//	.0f, 2.f / masterView.mnHeight, 1.f + (1.f + 2.f * masterView.mnY) / masterView.mnHeight, .0f,
+	//	.0f, .0f, .0f, .0f,
+	//	.0f, .0f, .0f, 1.f
+	//}; // Screen space -> Viewport space -> projection space
 
 	mView.AffineInverse();
 }
@@ -208,7 +208,7 @@ void Dystopia::Camera::SetDebugDraw(bool _bDebugDraw) noexcept
 void Dystopia::Camera::SetSize(float _scale) const
 {
 	const float z = GetSize().z;
-	GetOwner()->GetComponent<Transform>()->SetScale(_scale,_scale,z);
+	GetOwner()->GetComponent<Transform>()->SetScale(_scale, _scale, z);
 }
 
 bool Dystopia::Camera::DrawDebug(void) const noexcept
@@ -280,7 +280,7 @@ void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 	_in >> mbDebugDraw;
 	_in.ConsumeEndBlock();
 }
-
+#if EDITOR
 void Dystopia::Camera::EditorUI(void) noexcept
 {
 #if EDITOR
@@ -293,7 +293,7 @@ void Dystopia::Camera::EditorUI(void) noexcept
 	if (EGUI::Display::DropDownSelection<21>("Surface", surfaceID, 4))
 	{
 		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Camera, int>(&Camera::SetSurface, mnSurfaceID),
-										   cmd->MakeFnCommand<Camera, int>(&Camera::SetSurface, surfaceID));
+			cmd->MakeFnCommand<Camera, int>(&Camera::SetSurface, surfaceID));
 	}
 
 	EditorProjectionDropdown();
@@ -327,8 +327,8 @@ void Dystopia::Camera::EditorDebugCheckbox()
 void Dystopia::Camera::EditorProjectionDropdown(void)
 {
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
-	
-	std::string arr[2]{ " Orthographic"," Perspective"};
+
+	std::string arr[2]{ " Orthographic"," Perspective" };
 
 	if (EGUI::Display::DropDownSelection("Projection", mnProjectionIndex, arr, 160.f))
 	{
@@ -363,7 +363,7 @@ void Dystopia::Camera::EditorOptions(void)
 	auto scale = trans->GetScale();
 	float z = trans->GetScale().z;
 	float tempF = trans->GetScale().x;
-	Math::Vec4 tempScale{scale};
+	Math::Vec4 tempScale{ scale };
 
 	switch (mnProjectionIndex)
 	{
@@ -412,8 +412,8 @@ void Dystopia::Camera::EditorOptions(void)
 
 
 	/*
-	 * Clipping Plane
-	 */
+	* Clipping Plane
+	*/
 
 	EGUI::Display::LabelWrapped("Clipping Planes");
 	switch (EGUI::Display::DragFloat("Near", &mClippingPlane.mnNear, 0.01f, -500.f, FLT_MAX, false, 100.f))
@@ -442,7 +442,7 @@ void Dystopia::Camera::EditorOptions(void)
 	}
 	EGUI::SameLine(2);
 	EGUI::ChangeAlignmentYOffset(0);
-	switch (EGUI::Display::DragFloat("Far", &mClippingPlane.mnFar, 0.01f, mClippingPlane.mnNear+0.01f, FLT_MAX, false, 100.f))
+	switch (EGUI::Display::DragFloat("Far", &mClippingPlane.mnFar, 0.01f, mClippingPlane.mnNear + 0.01f, FLT_MAX, false, 100.f))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
 		cmd->StartRec(&Camera::mClippingPlane, this);
@@ -463,8 +463,8 @@ void Dystopia::Camera::EditorOptions(void)
 	EGUI::ChangeAlignmentYOffset();
 
 	/*
-	 * Viewport Rect
-	 */
+	* Viewport Rect
+	*/
 
 	EGUI::Display::LabelWrapped("Viewport Rect");
 	switch (EGUI::Display::DragFloat("X", &mViewport.mnX, 0.01f, 0, 1.f, false, 90.f))
@@ -550,5 +550,7 @@ void Dystopia::Camera::EditorOptions(void)
 
 
 }
+
+#endif
 
 

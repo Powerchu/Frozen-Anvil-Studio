@@ -87,6 +87,8 @@ namespace Dystopia
 		// Don't touch
 		virtual FormTOne * Duplicate() const;
 
+		void SetDirection(int _directionToSet);
+
 		// Don't touch
 		virtual void EditorUI(void) noexcept override;
 		
@@ -94,12 +96,16 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+		
+		PP_MEMBERFUNC(Dystopia::FormTOne, SetDirection)
+
 	private:
 		// Don't touch
 		friend MetaData<FormTOne>;
 
 	public:
 		const char * name = nullptr;
+		int firingDirection;
 	};
 
 	extern "C"

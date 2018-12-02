@@ -132,7 +132,7 @@ void Dystopia::EngineCore::LoadSettings(void)
 	if (pFileSys->CheckFileExist(SETTINGS_FILE, SETTINGS_DIR))
 	{
 		auto file = Serialiser::OpenFile<DysSerialiser_t>(
-			(pFileSys->GetProjectFolders<std::string>(SETTINGS_DIR) + '/' +
+			(pFileSys->GetProjectFolders<std::string>(SETTINGS_DIR)  +
 			SETTINGS_FILE).c_str()
 		);
 
@@ -245,11 +245,35 @@ bool Dystopia::EngineCore::GetQuitState() const
 	return mbQuit;
 }
 
+void Dystopia::EngineCore::ExecuteGame()
+{
+
+	LoadSettings();
+	PreInit();
+	Init();
+	PostInit();
+
+	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene("SplashScreen.dscene");
+
+	while (!mbQuit)
+	{
+		FixedUpdate();
+		Update();
+		PostUpdate();
+	}
+	Shutdown();
+	/*
+	CORE->ExecuteGame();
+	*/
+
+	return;
+}
+
 void Dystopia::EngineCore::Shutdown(void)
 {
 	//GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
 	auto s = Serialiser::OpenFile<DysSerialiser_t>(
-		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) + '/' +
+		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR)  +
 		SETTINGS_FILE).c_str(),
 		DysSerialiser_t::MODE_WRITE
 	);
@@ -293,7 +317,7 @@ void Dystopia::EngineCore::SendMessage(void)
 	mMessageQueue.clear();
 }
 
-void Dystopia::EngineCore::ParseMessage(const eSysMessage&, size_t)
+void Dystopia::EngineCore::ParseMessage(const eSysMessage& msg, size_t)
 {
 	if (eSysMessage::QUIT == msg)
 	{
@@ -308,24 +332,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
 	
 	auto CORE = Dystopia::EngineCore::GetInstance();
-	
-	Dystopia::EngineCore::GetInstance()->LoadSettings();
-	Dystopia::EngineCore::GetInstance()->PreInit();
-	Dystopia::EngineCore::GetInstance()->Init();
-	Dystopia::EngineCore::GetInstance()->PostInit();
-
-	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene("Resource/Scene/Dan2.dscene");
-
-	while (!Dystopia::EngineCore::GetInstance()->GetQuitState())
-	{
-		Dystopia::EngineCore::GetInstance()->FixedUpdate();
-		Dystopia::EngineCore::GetInstance()->Update();
-		Dystopia::EngineCore::GetInstance()->PostUpdate();
-	}
-	Dystopia::EngineCore::GetInstance()->Shutdown();
-	/*
-	CORE->ExecuteGame();
-	*/
+	Dystopia::EngineCore::GetInstance()->ExecuteGame();
 
 	return 0;
 }

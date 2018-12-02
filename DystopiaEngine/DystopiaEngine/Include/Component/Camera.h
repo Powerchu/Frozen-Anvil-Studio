@@ -109,12 +109,14 @@ namespace Dystopia
 		bool DrawDebug(void) const noexcept;
 		void SetDebugDraw(bool) noexcept;
 		void SetSize(float _scale) const;
-
+#if EDITOR
 		void EditorUI(void) noexcept override;
 		void EditorMasterCameraCheckbox();
 		void EditorDebugCheckbox();
 		void EditorProjectionDropdown();
 		void EditorOptions();
+
+#endif
 
 		// TODO 
 		bool mbDebugDraw;

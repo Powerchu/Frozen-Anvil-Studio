@@ -104,6 +104,7 @@ namespace Dystopia
 
 	public:
 		bool targetViable;
+		bool canAttack;
 		const char * name;
 		GameObject* mp_target = nullptr;
 	};
@@ -117,12 +118,12 @@ namespace Dystopia
 	}
 }
 /*Keep this if you do not want to show anything in Editor*/
-PP_REFLECT_EMPTY(Dystopia::GoblinCombat)
+//PP_REFLECT_EMPTY(Dystopia::GoblinCombat)
 /*
   Uncomment the line PP_REFLECT and add in the names of the variable you want to show
   Comment out PP_REFLECT_EMPTY.
 */
-//PP_REFLECT(Dystopia::GoblinCombat)
+PP_REFLECT(Dystopia::GoblinCombat, canAttack)
 #endif //_GoblinCombat_H_
 
 

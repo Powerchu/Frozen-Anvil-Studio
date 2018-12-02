@@ -458,7 +458,15 @@ namespace Dystopia
 		}
 #endif
 	}
+void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
+	{
+#if EDITOR
 
+#else
+		mvBehaviourReferences.Emplace(_BWrap);
+		mvBehaviours.push_back(std::make_pair(_BWrap.mName, AutoArray<BehaviourPair>{}));
+#endif
+	}
 	void Dystopia::BehaviourSystem::PostUpdate(void)
 	{
 #if EDITOR
@@ -707,7 +715,7 @@ namespace Dystopia
 						/*Time to Super Set Functor*/
 						_obj.ConsumeEndBlock();  /*Consume END BEHAVIOUR BLOCK*/
 
-						if(static_cast<eObjFlags>(_Flags) & eObjFlags::FLAG_EDITOR_OBJ)
+						if(static_cast<eObjFlag>(_Flags) & eObjFlag::FLAG_EDITOR_OBJ)
 						{
 							/*GameObject with ID that was serialise could not be found*/
 							/*Remove and delete the Behaviour from mvBehaviourReferences*/
@@ -764,7 +772,9 @@ namespace Dystopia
 						/*Make new Behaviour*/
 						_obj.ConsumeStartBlock(); /*Consume START BEHAVIOUR BLOCK*/
 						uint64_t _ID = 0;
+						unsigned _Flags = 0;
 						_obj >> _ID;
+						_obj >> _Flags;
 						auto * ptr = RequestBehaviour(_ID, elem.mName);
 						_obj.ConsumeStartBlock(); /*Consume Behaviour Member Variable Block*/
 						auto BehaviourMetaData = ptr->GetMetaData();
@@ -845,13 +855,6 @@ namespace Dystopia
 		}
 	}
 
-#if EDITOR
-
-#else
-		mvBehaviourReferences.Emplace(_BWrap);
-		mvBehaviours.push_back(std::make_pair(_BWrap.mName, AutoArray<BehaviourPair>{}));
-#endif
-	}
 
 	void BehaviourSystem::InitAllBehaviours()
 	{
@@ -909,23 +912,38 @@ namespace Dystopia
 #endif
 }
 
-void Dystopia::BehaviourSystem::ClearAllBehaviours()
-{
-	for (auto & i : mvBehaviours)
+	Behaviour* BehaviourSystem::RequestDuplicate(Behaviour* _PtrToDup, uint64_t _NewID)
 	{
-		for (auto & iter : i.second)
+		for (auto & i : mvBehaviours)
 		{
-			if (iter.second)
+			for (auto & iter : i.second)
 			{
-				if (auto x = iter.second->GetOwner())
-					x->RemoveComponent(iter.second);
-				delete iter.second;
-				iter.second = nullptr;
+				if (iter.second == _PtrToDup || (iter.first == _PtrToDup->GetOwnerID() && !std::strcmp(iter.second->GetBehaviourName(), _PtrToDup->GetBehaviourName())))
+				{
+					auto ptr = iter.second->Duplicate();
+					i.second.push_back(std::make_pair(_NewID, ptr));
+					return ptr;
+				}
 			}
 		}
-		i.second.clear();
+		return nullptr;
 	}
-}
+	void Dystopia::BehaviourSystem::ClearAllBehaviours()
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.second)
+				{
+					delete iter.second;
+					iter.second = nullptr;
+					iter.first = 0;
+				}
+			}
+			i.second.clear();
+		}
+	}
 
 #if EDITOR
 
@@ -940,25 +958,6 @@ void Dystopia::BehaviourSystem::ClearAllBehaviours()
 	MagicArray<BehaviourWrap> & BehaviourSystem::GetAllBehaviour()
 	{
 		return mvBehaviourReferences;
-	}
-
-
-	Behaviour* BehaviourSystem::RequestDuplicate(Behaviour* _PtrToDup, uint64_t _NewID)
-	{
-		for (auto & i : mvBehaviours)
-		{
-			for (auto & iter : i.second)
-			{
-				if (iter.second == _PtrToDup || (iter.first == _PtrToDup->GetOwnerID() && !std::strcmp(iter.second->GetBehaviourName(), _PtrToDup->GetBehaviourName())))
-				{
-					auto ptr = iter.second->Duplicate();
-					i.second.push_back(std::make_pair(_NewID, ptr));
-					//iter.first = _NewID;
-					return ptr;
-				}
-			}
-		}
-		return nullptr;
 	}
 
 	void BehaviourSystem::ReplaceID(uint64_t _old, uint64_t _new, GameObject * _newOwner)
@@ -976,22 +975,7 @@ void Dystopia::BehaviourSystem::ClearAllBehaviours()
 		}
 	}
 
-	void Dystopia::BehaviourSystem::ClearAllBehaviours()
-	{
-		for (auto & i : mvBehaviours)
-		{
-			for (auto & iter : i.second)
-			{
-				if (iter.second)
-				{
-					delete iter.second;
-					iter.second = nullptr;
-					iter.first  = 0;
-				}
-			}
-			i.second.clear();
-		}
-	}
+
 
 #endif
 }

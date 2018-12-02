@@ -63,6 +63,7 @@ namespace Dystopia
 		}
 	}
 	FormTOne::FormTOne()
+		: firingDirection(0)
 	{
 	}
 
@@ -131,7 +132,7 @@ namespace Dystopia
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "KNOCK!");
 				FormTOne_MSG::SendExternalMessage(_obj, "TakeDamage", 10);
-				FormTOne_MSG::SendExternalMessage(_obj, "Knock", 150, 0);
+				FormTOne_MSG::SendExternalMessage(_obj, "Knock", 150, firingDirection);
 			}
 		}
 	}
@@ -146,7 +147,7 @@ namespace Dystopia
 
 	FormTOne * FormTOne::Duplicate() const
 	{
-		return new FormTOne{};
+		return new FormTOne{*this};
 	}
 
 	void FormTOne::Serialise(TextSerialiser& _ser) const
@@ -180,6 +181,11 @@ namespace Dystopia
 		static MetaData<Dystopia::FormTOne> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{mMetaData};
 		return mReturn;
+	}
+
+	void FormTOne::SetDirection(int _directionToSet)
+	{
+		firingDirection = _directionToSet;
 	}
 }
 

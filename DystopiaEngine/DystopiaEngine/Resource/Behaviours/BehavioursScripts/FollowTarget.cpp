@@ -98,7 +98,7 @@ namespace Dystopia
 
 	FollowTarget * FollowTarget::Duplicate() const
 	{
-		return new FollowTarget{};
+		return new FollowTarget{*this};
 	}
 
 	void FollowTarget::Serialise(TextSerialiser& _ser) const

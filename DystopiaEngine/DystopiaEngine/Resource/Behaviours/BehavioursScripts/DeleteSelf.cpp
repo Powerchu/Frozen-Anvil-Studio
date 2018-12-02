@@ -70,6 +70,7 @@ namespace Dystopia
 
 	DeleteSelf::~DeleteSelf()
 	{
+		destroyCount = 0.f;
 	}
 
 	void DeleteSelf::Load()
@@ -79,23 +80,33 @@ namespace Dystopia
 	void DeleteSelf::Awake()
 	{
 		SetFlags(FLAG_ACTIVE);
+		destroyCount = 0.f;
 	}
 
 	void DeleteSelf::Init()
 	{
 		SetFlags(FLAG_ACTIVE);
+		destroyCount = 0.f;
 	}
 
 	void DeleteSelf::Update(const float _fDeltaTime)
 	{
 		if (nullptr == GetOwner()) return;
 		if (GetOwner()->GetFlag() & eObjFlag::FLAG_EDITOR_OBJ) return;
+		
+		
 
 		destroyCount = destroyCount + _fDeltaTime;
 
-		//if (destroyCount >= destroyDelay)
-		//	GetOwner()->Destroy();
-	}//
+		if (destroyCount >= destroyDelay)
+		{
+			/*DEBUG_PRINT(eLog::MESSAGE, "%p", this);
+			DEBUG_PRINT(eLog::MESSAGE, "%u", GetOwnerID());
+			DEBUG_PRINT(eLog::MESSAGE, "%f", destroyCount);
+			DEBUG_PRINT(eLog::MESSAGE, "DEATHHHH");*/
+			GetOwner()->Destroy();
+		}
+	}
 
 	void DeleteSelf::FixedUpdate(const float _fDeltaTime)
 	{
@@ -142,7 +153,7 @@ namespace Dystopia
 
 	DeleteSelf * DeleteSelf::Duplicate() const
 	{
-		return new DeleteSelf{};
+		return new DeleteSelf{*this};
 	}
 
 	void DeleteSelf::Serialise(TextSerialiser& _ser) const

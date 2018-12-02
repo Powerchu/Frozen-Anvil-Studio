@@ -355,19 +355,63 @@
     <ClCompile Include="Source\Editor\GameView.cpp">
       <Filter>Editor\Main\Panels\Game View</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\CharacterController.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\CombatBox.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FollowTarget.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ForceTOne.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ForceTTwo.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FormTOne.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FormTTwo.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\Goblin.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\GoblinCombat.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\Parallax.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SkillManager.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\CharacterController.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\CombatBox.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FollowTarget.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ForceTOne.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ForceTTwo.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FormTOne.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FormTTwo.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\Goblin.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\GoblinCombat.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\Parallax.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SkillManager.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ForceTThree.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FormTThree.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\Health.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\MenuManager.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SceneManager.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SplashScreen.cpp">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -997,20 +1041,66 @@
     <ClInclude Include="Include\Editor\GameView.h">
       <Filter>Editor\Main\Panels\Game View</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\CharacterController.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\CombatBox.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FollowTarget.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ForceTOne.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ForceTTwo.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FormTOne.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FormTTwo.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\Goblin.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\GoblinCombat.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\Parallax.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SkillManager.h" />
-    <ClInclude Include="Include\System\Behaviour\BehaviourList.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\CharacterController.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\CombatBox.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FollowTarget.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ForceTOne.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ForceTTwo.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FormTOne.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FormTTwo.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\Goblin.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\GoblinCombat.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\Parallax.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SkillManager.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Behaviour\BehaviourList.h">
+      <Filter>Game Engine\Systems\Behaviour</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ForceTThree.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FormTThree.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\Health.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\MenuManager.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SceneManager.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SplashScreen.h">
+      <Filter>Game Engine\Behaviours\Derive</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1441,6 +1531,9 @@
     </Filter>
     <Filter Include="Editor\Main\Panels\Game View">
       <UniqueIdentifier>{7a07f2b3-aaf7-46b3-b537-bfc2e8756e8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Behaviours\Derive">
+      <UniqueIdentifier>{51703a1d-03b1-4c9f-b170-8d1147fdf6c9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

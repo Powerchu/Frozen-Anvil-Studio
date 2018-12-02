@@ -153,7 +153,7 @@ namespace Dystopia
 
 	CombatBox * CombatBox::Duplicate() const
 	{
-		return new CombatBox{};
+		return new CombatBox{*this};
 	}
 
 	void CombatBox::Serialise(TextSerialiser& _ser) const
@@ -183,7 +183,7 @@ namespace Dystopia
 			if (auto target = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr(name))
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "Doing Damange to Goblin");	
-				CombatBox_MSG::SendExternalMessage(target, "TakeDamage", 10, _isFacingRight);
+				CombatBox_MSG::SendExternalMessage(target, "TakeDamage", 10);
 			}
 
 		}

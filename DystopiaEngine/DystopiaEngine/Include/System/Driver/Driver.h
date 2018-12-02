@@ -94,6 +94,8 @@ namespace Dystopia
 		void Quit();
 		bool GetQuitState() const;
 
+		void ExecuteGame();
+
 	private:
 
 		struct SysMsg
