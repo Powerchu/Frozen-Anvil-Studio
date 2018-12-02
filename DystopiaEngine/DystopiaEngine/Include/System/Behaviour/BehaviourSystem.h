@@ -156,14 +156,12 @@ namespace Dystopia
 		{
 			if (!_GameObj)
 				return;
-			DEBUG_PRINT(eLog::MESSAGE, "Valid Game Object");
 			uint64_t _ID = _GameObj->GetID();
 			BehaviourMessage Message(_FuncParams...);
 
 			auto Array = _GameObj->GetAllBehaviours();
 			for (auto & BehaveElem : Array)
 			{
-				DEBUG_PRINT(eLog::MESSAGE, "Sending Message to other behaviours");
 				/*Try to send Message to other components*/
 				_EDITOR_START_TRY
 					BehaveElem->ReceiveMessage(_FuncName, Message);
