@@ -251,6 +251,8 @@ namespace Editor
 		auto& selections = ed->GetSelectedIDs();
 		for (auto& obj : arrayOfGameObjects)
 		{
+			if (!strcmp(obj.GetName().c_str(), "___Scene_Camera___")) continue;
+
 			if (obj.GetComponent<Dystopia::Transform>()->GetParent())
 				continue;
 

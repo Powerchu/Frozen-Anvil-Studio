@@ -128,11 +128,28 @@ void Editor::EditorFactory::DefaultSceneCamera(void)
 	cam->SetSurface(&(pCore->GetSystem<Dystopia::GraphicsSystem>()->GetView(3)));
 
 	Dystopia::GameObject *pObject = scene.InsertGameObject(Dystopia::GUIDGenerator::GetUniqueID());
-	pObject->SetName("Scene Camera");
+	pObject->SetName("___Scene_Camera___");
 	pObject->SetActive(true);
 	pObject->AddComponent(cam, typename Dystopia::Camera::TAG{});
 	pObject->Identify();
 	pObject->SetFlag(Dystopia::eObjFlag::FLAG_ALL_LAYERS);
+	cam->Awake();
+}
+
+void Editor::EditorFactory::DefaultGameCamera(void)
+{
+	const auto pCore = Dystopia::EngineCore::GetInstance();
+	auto& scene = pCore->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
+	auto cam = pCore->GetSystem<Dystopia::CameraSystem>()->RequestComponent();
+	cam->SetSurface(&(pCore->GetSystem<Dystopia::GraphicsSystem>()->GetView(2)));
+	cam->SetMasterCamera();
+
+	Dystopia::GameObject *pObject = scene.InsertGameObject(Dystopia::GUIDGenerator::GetUniqueID());
+	pObject->SetName("Main Camera");
+	pObject->AddComponent(cam, typename Dystopia::Camera::TAG{});
+	pObject->Identify();
+	pObject->SetFlag(Dystopia::eObjFlag::FLAG_ALL_LAYERS);
+	pObject->SetActive(true);
 	cam->Awake();
 }
 

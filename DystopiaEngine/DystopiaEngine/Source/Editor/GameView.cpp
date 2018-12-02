@@ -64,14 +64,14 @@ namespace Editor
 	{
 		mpGfxSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>();
 		mpSceneSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
-		//EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultSceneCamera();
+		EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultGameCamera();
 		//SceneChanged();
 		return true;
 	}
 
 	void GameView::Update(float _dt)
 	{
-		/*Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera");
+		/*Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___");
 		if (temp)
 			mpGameCamera = temp->GetComponent<Dystopia::Camera>();
 		if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
@@ -101,7 +101,7 @@ namespace Editor
 			mAmFocused = false;
 		ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
 
-		if (mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera"))
+		if (mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___"))
 		{
 			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PREFAB))
 			{
@@ -147,13 +147,13 @@ namespace Editor
 
 	void GameView::Message(eEMessage _msg)
 	{
-		/*if (_msg == eEMessage::SCENE_CHANGED)
+		if (_msg == eEMessage::SCENE_CHANGED)
 		{
-			if (!Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject("Scene Camera"))
+			if (!Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject("Main Camera"))
 			{
-				EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultSceneCamera();
+				EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultGameCamera();
 			}
-		}*/
+		}
 	}
 
 	void GameView::SaveSettings(Dystopia::TextSerialiser&) const
@@ -169,7 +169,7 @@ namespace Editor
 
 	void GameView::SceneChanged()
 	{
- 		//mpGameCamera = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
+ 		//mpGameCamera = mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___")->GetComponent<Dystopia::Camera>();
 	}
 
 	Dystopia::Camera* GameView::GetCamera()

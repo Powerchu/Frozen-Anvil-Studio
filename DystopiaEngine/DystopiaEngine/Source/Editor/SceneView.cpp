@@ -85,7 +85,7 @@ namespace Editor
 
 	void SceneView::Update(float _dt)
 	{
-		Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera");
+		Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___");
 		if (temp)
 			mpSceneCamera = temp->GetComponent<Dystopia::Camera>();
 		if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
@@ -125,7 +125,7 @@ namespace Editor
 			mAmFocused = false;
 		ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
 
-		if (mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera"))
+		if (mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___"))
 		{
 			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PREFAB))
 			{
@@ -178,7 +178,7 @@ namespace Editor
 	{
 		if (_msg == eEMessage::SCENE_CHANGED)
 		{
-			if (!Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject("Scene Camera"))
+			if (!Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject("___Scene_Camera___"))
 			{
 				EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultSceneCamera();
 			}
@@ -323,7 +323,7 @@ namespace Editor
 
 	void SceneView::SceneChanged()
 	{
- 		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
+ 		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___")->GetComponent<Dystopia::Camera>();
 	}
 
 	void SceneView::AdjustImageSize(Dystopia::Texture *_pTex)
@@ -498,7 +498,7 @@ namespace Editor
 		auto pos = curPos;
 		pos.z = 1.f;
 		pos.w = 1.f;
-		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("Scene Camera")->GetComponent<Dystopia::Camera>();
+		mpSceneCamera = mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___")->GetComponent<Dystopia::Camera>();
 		if (!mpSceneCamera) return Math::Vec2{ 0,0 };
 
 		auto equation1 = mpSceneCamera->GetProjectionMatrix() * (Math::Inverse(mpSceneCamera->GetViewMatrix()) * pos);
