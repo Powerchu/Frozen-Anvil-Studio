@@ -153,16 +153,22 @@ namespace Dystopia
 			EGUI::Display::TextField("Key", buffer /*mSearchText*/, Editor::MAX_SEARCH, true, 128.f);
 
 			{
+				static bool Booler = false;
+				static int Inter = 0;
+				static float Floater = 0.0f;
 				EGUI::SameLine();
 				switch (keyTypeIndex)
 				{
 				case 0:
 					break;
 				case 1:
+					EGUI::Display::CheckBox("##check", &Booler);
 					break;
 				case 2:
+					EGUI::Display::DragInt("Int", &Inter);
 					break;
 				case 3:
+					EGUI::Display::DragFloat("Float", &Floater);
 					break;
 				case 4:
 					break;
