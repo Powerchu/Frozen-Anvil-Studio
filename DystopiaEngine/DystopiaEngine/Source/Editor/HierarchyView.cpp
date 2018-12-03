@@ -255,15 +255,18 @@ namespace Editor
 
 		auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
 		auto& selections = ed->GetSelectedIDs();
-		for (size_t i = 0; i < arrayOfGameObjects.size(); i++)
+		int j = 0;
+		for (auto& obj : arrayOfGameObjects)
 		{
-			auto& obj = arrayOfGameObjects[i];
-			if (StringHasher(obj.GetNamePtr()) == StringHasher("___Scene_Camera___")) continue;
+
+			j++;
+			if (StringHasher(obj.GetNamePtr()) == StringHasher("___Scene_Camera___")) 
+				continue;
 
 			if (obj.GetComponent<Dystopia::Transform>()->GetParent())
 				continue;
 
-			EGUI::PushID(static_cast<int>(i));
+			EGUI::PushID(j);
 			if (obj.GetComponent<Dystopia::Transform>()->GetAllChild().size())
 			{
 				ShowAsParent(obj, selections);
