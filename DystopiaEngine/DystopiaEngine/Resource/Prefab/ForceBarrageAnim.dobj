@@ -1,0 +1,27 @@
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072889142272,536870977,"ForceBarrageAnim",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+48.175,27.3,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072889143296,536870913,18446744072889142272,"/Asset/Spritesheet/Final Skill Sheet.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.04,1,1,"Rename this",8,6,0,0,46,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_Recursion Counter]
+0,
+[END_Recursion Counter]

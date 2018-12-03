@@ -191,39 +191,29 @@ namespace Dystopia
 		currZ = z;
 
 		if (_skillNum == 0)
+		{
+			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeAnim.dobj", Math::Vec3D{ currX, currY, currZ} + Math::Vec3D{40, 9, 0}))
+				DEBUG_PRINT(eLog::MESSAGE, "spike anim spawned");
+			else
+				DEBUG_PRINT(eLog::MESSAGE, "spike anim spawned nullptr");
+
 			spawningSpike = true;
+		}
 
 		if (_skillNum == 1)
 		{
 			if (isFacingRight)
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSlamTwo.dobj", Math::Vec3D{x, y, z} + Math::Vec3D{0, 10, 0}))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSlamTwo.dobj", Math::Vec3D{x, y, z} + Math::Vec3D{5, 30, 0}))
 				{
-									 
-					if(ptr == GetOwner())
-						DEBUG_PRINT(eLog::MESSAGE,"Instantiate is same as me wtf");
-					else
-					{
-						DEBUG_PRINT(eLog::MESSAGE, "Instantiate Position %f", static_cast<float>(ptr->GetComponent<Transform>()->GetGlobalPosition().x)); 
-						DEBUG_PRINT(eLog::MESSAGE, "Instantiate is different, %p", ptr);
-						DEBUG_PRINT(eLog::MESSAGE, "Instantiate ID %u", ptr->GetID());
-					}
-
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 2);
 				}
 			}
 
 			else
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSlamTwo.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{0, 10, 0 }))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSlamTwo.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{-5, 30, 0 }))
 				{
-					if(ptr == GetOwner())
-						DEBUG_PRINT(eLog::MESSAGE,"Instantiate is same as me wtf");
-					else
-					{
-						DEBUG_PRINT(eLog::MESSAGE,"Instantiate is different, %p", ptr);
-						DEBUG_PRINT(eLog::MESSAGE, "Instantiate ID %u", ptr->GetID());
-					} 
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
 				}
 			}
@@ -233,17 +223,21 @@ namespace Dystopia
 		{
 			if (isFacingRight)
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{10, -1.5, 0}))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashAnim.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{45, 12, 0}))
+					DEBUG_PRINT(eLog::MESSAGE, "SPAWNED ANIMATOR");
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{14, 8, 0}))
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 2);
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{30, -1.5, 0}))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{64, 8, 0}))
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
 			}
 
 			else
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{10, -1.5, 0}))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashAnim.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{45, 12, 0}))
+					DEBUG_PRINT(eLog::MESSAGE, "SPAWNED ANIMATOR");
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{14, 8, 0}))
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{30, -1.5, 0}))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{64, 8, 0}))
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 2);
 			}
 		}
@@ -255,7 +249,7 @@ namespace Dystopia
 		{
 			if (isFacingRight)
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceFlameOne.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ 15, -2,0 }))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceFlameOne.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ 35, 11.5, 0}))
 				{
 					DEBUG_PRINT(eLog::MESSAGE, "FIRED A FLAMEEE");
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 2);
@@ -264,7 +258,7 @@ namespace Dystopia
 			
 			else
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceFlameOne.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ -15, -2,0 }))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceFlameOne.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ -35, 11.5, 0}))
 				{
 					auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
 					ptr->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z);
@@ -277,13 +271,13 @@ namespace Dystopia
 		{
 			if (isFacingRight)
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceBurstTwo.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ 15, -2,0 }))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceExplosionTwo.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ 40, 10,0 }))
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 2);
 			}
 			
 			else
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceBurstTwo.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ -15, -2,0 }))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("ForceExplosionTwo.dobj", Math::Vec3D{ x, y, z } + Math::Vec3D{ -40, 10,0 }))
 				{
 					auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
 					ptr->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z);
@@ -315,31 +309,32 @@ namespace Dystopia
 
 	void SkillManager::CheckSpawn()
 	{
-		if (spawnCount > 0.25f && !oneSpawned)
+		if (!oneSpawned)
 		{
 			oneSpawned = true;
-			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", Math::Vec3D{ currX, currY, currZ } +Math::Vec3D{ 12,-5.5,0 }))
+			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", Math::Vec3D{ currX, currY, currZ } +Math::Vec3D{ 20, 1.5, 0 }))
 			{
-				
+				auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
+				ptr->GetComponent<Transform>()->SetScale(scale.x * 1.5f, scale.y * 1.5f, scale.z); 
 			}
 		}
 
-		else if (spawnCount > 0.5f && !twoSpawned)
+		else if (spawnCount > 0.2f && !twoSpawned)
 		{
 			twoSpawned = true;
-			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", Math::Vec3D{ currX, currY, currZ } + Math::Vec3D{ 20,-3,0 }))
+			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", Math::Vec3D{ currX, currY, currZ } + Math::Vec3D{ 33, 5, 0 }))
 			{
 				auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
-				ptr->GetComponent<Transform>()->SetScale(scale.x, scale.y * 2, scale.z); 
+				ptr->GetComponent<Transform>()->SetScale(scale.x * 1.75f, scale.y * 2.5f, scale.z); 
 			}
 		}
 
-		else if (spawnCount > 0.75f)
+		else if (spawnCount > 0.4f)
 		{
-			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", Math::Vec3D{ currX, currY, currZ } + Math::Vec3D{ 30,-1.5,0 }))
+			if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSpikeOne.dobj", Math::Vec3D{ currX, currY, currZ } + Math::Vec3D{ 50, 7, 0 }))
 			{
 				auto scale = ptr->GetComponent<Transform>()->GetGlobalScale();
-				ptr->GetComponent<Transform>()->SetScale(scale.x * 1.5f, scale.y * 2.5f, scale.z);
+				ptr->GetComponent<Transform>()->SetScale(scale.x * 2.5f, scale.y * 3.5f, scale.z);
 				spawningSpike = false;
 				spawnCount = 0.0f;
 				oneSpawned = false;

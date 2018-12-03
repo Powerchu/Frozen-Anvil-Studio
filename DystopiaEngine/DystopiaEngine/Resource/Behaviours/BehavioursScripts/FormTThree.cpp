@@ -23,6 +23,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
+#include "Component/RigidBody.h"
+#include "Component/Transform.h"
 
 #include "Editor/EGUI.h"
 #include "Utility/DebugAssert.h"
@@ -63,6 +65,8 @@ namespace Dystopia
 		}
 	}
 	FormTThree::FormTThree()
+		: rBody(nullptr)
+		, firingDirection(0)
 	{
 	}
 
@@ -76,10 +80,16 @@ namespace Dystopia
 
 	void FormTThree::Awake()
 	{
+		SetFlags(FLAG_ACTIVE);
+		if(GetOwner())
+			rBody = GetOwner()->GetComponent<RigidBody>();
 	}
 
 	void FormTThree::Init()
 	{
+		SetFlags(FLAG_ACTIVE);
+		if(GetOwner())
+			rBody = GetOwner()->GetComponent<RigidBody>();
 	}
 
 	void FormTThree::Update(const float _fDeltaTime)
@@ -179,6 +189,13 @@ namespace Dystopia
 	void FormTThree::SetDirection(int _directionToSet)
 	{
 		firingDirection = _directionToSet;
+		auto theMass = rBody->GetMass();
+
+		if (firingDirection == 1)
+			rBody->AddLinearImpulse({-35 * theMass, 0, 0});
+
+		else
+			rBody->AddLinearImpulse({35 * theMass, 0, 0});
 	}
 }
 

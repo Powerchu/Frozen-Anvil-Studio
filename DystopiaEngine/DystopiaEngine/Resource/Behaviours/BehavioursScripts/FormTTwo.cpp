@@ -198,16 +198,17 @@ namespace Dystopia
 		DEBUG_PRINT(eLog::MESSAGE, "MyOwner Position %f", static_cast<float>(GetOwner()->GetComponent<Transform>()->GetGlobalPosition().x));
 		DEBUG_PRINT(eLog::MESSAGE, "MyOwner %p", GetOwner());
 		DEBUG_PRINT(eLog::MESSAGE, "MyOwnerID %u", GetOwnerID()); 
+
 		//stone is flinging towards the right
 		if (_direction == 2)
 		{
-			rBody->AddLinearImpulse({100 * theMass, -75 * theMass, 0});
+			rBody->AddLinearImpulse({200 * theMass, -150 * theMass, 0});
 			firingDirection = _direction;
 		}
 
 		if (_direction == 1)
 		{
-			rBody->AddLinearImpulse({-100 * theMass, -75 * theMass, 0});
+			rBody->AddLinearImpulse({-200 * theMass, -150 * theMass, 0});
 			firingDirection = _direction;
 		}
 		DEBUG_PRINT(eLog::MESSAGE, "MyOwner Position after AddLinearImpluse %f", static_cast<float>(GetOwner()->GetComponent<Transform>()->GetGlobalPosition().x));

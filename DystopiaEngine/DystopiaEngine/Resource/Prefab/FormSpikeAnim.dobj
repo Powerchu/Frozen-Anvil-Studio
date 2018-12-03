@@ -1,0 +1,45 @@
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1800371200,536870977,"FormSpikeAnim",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+75,40,1,15.2366,23.8988,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072885338112,536870913,1800371200,"/Asset/Spritesheet/Final Skill Sheet.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.07,1,2,"Spike",8,7,0,30,39,0,1,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"DeleteSelf",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+2,
+[END_Behaviour  Meta Count]
+[START_destroyDelay]
+"destroyDelay",
+[END_destroyDelay]
+[START_Member Variable]
+0.83,
+[END_Member Variable]
+[START_destroyCount]
+"destroyCount",
+[END_destroyCount]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_Recursion Counter]
+0,
+[END_Recursion Counter]

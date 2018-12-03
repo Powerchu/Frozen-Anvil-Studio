@@ -129,7 +129,7 @@ namespace Dystopia
 				if (DirPath.has_root_path())
 					retString = mPathTable[_ParentDirectory];
 				else
-					retString = std::filesystem::current_path().string() + '/' + mPathTable[_ParentDirectory];
+					retString = std::filesystem::current_path().string() + '/' + mPathTable[_ParentDirectory] + '/';
 			}
 
 			else if constexpr (std::is_same_v<T, std::wstring>)

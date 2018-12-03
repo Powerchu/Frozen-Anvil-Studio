@@ -1,51 +1,57 @@
 [START_GO_PREFAB]
 2,[START_START_GO_DATA]
-18446744073050554368,536870977,"ForceFlameOne",0,
+1477800960,536870977,"ForceFlameOne",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-15,6,1,-31.5337,9.07937,0,0,0,0,1,18446744073709551615,
+75,25,1,14.429,29.1805,0,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 
 [END_GO_PREFAB]
 [START_Component]
-7,[START_Renderer]
-1492682240,536870913,18446744073050554368,"",
-[END_Renderer]
-[START_Sprite Renderer]
-0.016,0,0,0,
-[END_Sprite Renderer]
+4,[START_Convex_Collider]
+18446744073423649280,536870913,1477800960,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.65,0.7,1,0,0,0,1,1,
+[END_Convex_Collider]
 
 [END_Component]
 [START_Component]
-4,[START_Convex_Collider]
-729319424,536870913,18446744073050554368,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
-[END_Convex_Collider]
+7,[START_Renderer]
+1657632768,536870913,1477800960,"/Asset/Spritesheet/Force Flame Sheet.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.055,1,1,"Rename this",2,4,0,0,7,0,1,1,1,1,1,
+[END_Sprite Renderer]
 
 [END_Component]
 [START_Number of Behaviours]
 2,
 [END_Number of Behaviours]
 [START_Behaviour Names]
-"ForceTOne",
-[END_Behaviour Names]
-[START_Behaviour Meta Count]
-0,
-[END_Behaviour  Meta Count]
-[START_Behaviour Names]
 "DeleteSelf",
 [END_Behaviour Names]
 [START_Behaviour Meta Count]
-1,
+2,
 [END_Behaviour  Meta Count]
+[START_destroyDelay]
+"destroyDelay",
+[END_destroyDelay]
+[START_Member Variable]
+0.6,
+[END_Member Variable]
 [START_destroyCount]
 "destroyCount",
 [END_destroyCount]
 [START_Member Variable]
 0,
 [END_Member Variable]
+[START_Behaviour Names]
+"ForceTOne",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+0,
+[END_Behaviour  Meta Count]
 [START_Recursion Counter]
 0,
 [END_Recursion Counter]

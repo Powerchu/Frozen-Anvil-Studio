@@ -101,6 +101,7 @@ namespace Dystopia
 		
 	public:
 		const char * name = nullptr;
+		RigidBody * rBody;
 		int firingDirection;
 	};
 

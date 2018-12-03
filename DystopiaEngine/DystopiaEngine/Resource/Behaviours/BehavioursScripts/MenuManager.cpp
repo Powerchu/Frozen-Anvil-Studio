@@ -234,16 +234,12 @@ namespace Dystopia
 				{
 					//bring up credits board
 					DEBUG_PRINT(eLog::MESSAGE, "Selected Credits!");
-					creditMenu->GetComponent<Transform>()->SetGlobalPosition(creditMenu->GetComponent<Transform>()->GetGlobalPosition() - Math::Vec3D{ 200, 0, 0});
+					creditMenu->GetComponent<Transform>()->SetGlobalPosition(creditMenu->GetComponent<Transform>()->GetGlobalPosition() - Math::Vec3D{ 250, 0, 0});
 				}
 					
 				else if (currentPos == 4)
-				{
 					//quit the game
 					DEBUG_PRINT(eLog::MESSAGE, "Selected Quit!");
-					EngineCore::GetInstance()->Quit();
-				}
-
 
 				isSelected = true;
 			}
@@ -271,16 +267,12 @@ namespace Dystopia
 				{
 					//bring up credits board
 					DEBUG_PRINT(eLog::MESSAGE, "Returned from Credits!");
-					creditMenu->GetComponent<Transform>()->SetGlobalPosition(creditMenu->GetComponent<Transform>()->GetGlobalPosition() + Math::Vec3D{ 200, 0, 0});
+					creditMenu->GetComponent<Transform>()->SetGlobalPosition(creditMenu->GetComponent<Transform>()->GetGlobalPosition() + Math::Vec3D{ 250, 0, 0});
 				}
 				
 				else if (currentPos == 4)
-				{
-					//quit the game
-					DEBUG_PRINT(eLog::MESSAGE, "Returned from Quit!");
-					//EngineCore::GetInstance()->Quit();
-				}
-
+				//quit the game
+				DEBUG_PRINT(eLog::MESSAGE, "Returned from Quit!");
 
 				isSelected = false;
 			}

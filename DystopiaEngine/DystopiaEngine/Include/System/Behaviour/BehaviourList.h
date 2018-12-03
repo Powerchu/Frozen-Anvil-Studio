@@ -29,7 +29,11 @@
 #include "../Resource/Behaviours/BehavioursScripts/FormTThree.h"
 #include "../Resource/Behaviours/BehavioursScripts/ForceTThree.h"
 #include "../Resource/Behaviours/BehavioursScripts/SplashScreen.h"
-
+#include "../Resource/Behaviours/BehavioursScripts/PauseManager.h"
+#include "../Resource/Behaviours/BehavioursScripts/QuitButton.h"
+#include "../Resource/Behaviours/BehavioursScripts/RestartButton.h"
+#include "../Resource/Behaviours/BehavioursScripts/SettingsButton.h"
+#include "../Resource/Behaviours/BehavioursScripts/SpriteManager.h"
 #endif
 
 #if EDITOR
@@ -49,7 +53,7 @@ namespace Dystopia
 		class FormTTwo,
 		class FormTOne,
 		class Goblin,
-		//class GoblinCombat,
+		class GoblinCombat,
 		class Parallax,
 		class SkillManager,
 		class SplashScreen,
@@ -58,7 +62,12 @@ namespace Dystopia
 		class Health,
 		class FormTThree,
 		class ForceTThree,
-		class SplashScreen
+		class SplashScreen,
+		class PauseManager,
+		class QuitButton,
+		class RestartButton,
+		class SettingsButton,
+		class SpriteManager
 		/*Add Behaviours Here*/
 	>::result;
 }

@@ -1,38 +1,27 @@
-[START_GameObject]
-3,[START_START_GO_DATA]
-18446744072506215936,65,Goblin,
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072906356224,536870977,"Goblin",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-80,80,1,-104.069,-32.7544,0.099999,0,0,0,1,0,
+256,256,1,0,0,0,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 
-[END_GameObject]
+[END_GO_PREFAB]
 [START_Component]
-1,[START_Renderer]
-1952528384,1,18446744072506215936,..\DystopiaEngine\Resource\Asset\M_Basic Goblin.png,
+7,[START_Renderer]
+18446744073578494464,536870913,18446744072906356224,"/Asset/Spritesheet/Goblin Sheet.dds",
 [END_Renderer]
+[START_Sprite Renderer]
+0.033,5,1,"",10,3,1,0,28,2,"Rename this",1,1,1,0,0,3,"Rename this",1,1,1,0,0,4,"Rename this",10,5,1,0,45,5,"Rename this",10,3,1,6,23,0,1,
+[END_Sprite Renderer]
 
-[END_Component End]
-[START_Component]
-2,[START_RigidBody]
-1952528896,0,18446744072506215936,0,0.999,0.1,0.5,0.5,0.2,0,1.3,100,1,0,1,1,
-[END_RigidBody]
-
-[END_Component End]
-[START_Component]
-4,[START_Convex_Collider]
-1952529408,1,18446744072506215936,0.058,-0.269,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.17,0.367,1,0,0,0,1,0,
-[END_Convex_Collider]
-
-[END_Component End]
-[START_All Behaviours Block]
-1,Goblin,[START_Behaviour Block]
-1,mHealth,[START_MEMBER VAR]
-50,[START_MEMBER VAR END]
-
-[END_Behaviour Block]
-
-[END_All Behaviours Block]
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_Recursion Counter]
+0,
+[END_Recursion Counter]

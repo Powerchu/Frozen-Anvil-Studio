@@ -94,7 +94,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mvDebugColour{.0f, 1.f, .0f, .1f}, mvClearCol{0, 0, 0, 0}, mfGamma{2.0f}, mfDebugLineThreshold{0.958f}, mOpenGL{nullptr},
 	mPixelFormat{0}, mAvailable{0}, mSettings(0)
-	, mbVsync{false}, mvGlobalAspectRatio{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT,0,0}
+	, mbVsync{false}, mvResolution{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT}
 {
 }
 
@@ -637,7 +637,7 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
-	SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
+	//SetAllCameraAspect(mvResolution.x, mvResolution.y);
 }
 
 void Dystopia::GraphicsSystem::EndFrame(void)
@@ -645,18 +645,18 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	// TODO: Final draw to combine layers & draw to screen
 	// TODO: Draw a fullscreen quad fusing the GameView and UIView
 	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
-	auto& w = EngineCore::Get<WindowManager>()->GetMainWindow();
-
 	auto& fb = GetFrameBuffer();
-	GLsizei const w = static_cast<GLsizei>(fb.AsTexture()->GetWidth()), h = static_cast<GLsizei>(fb.AsTexture()->GetHeight());
-
-	glViewport(0, 0, w, h);
 
 #if EDITOR
 	fb.Bind();
+	GLsizei const w = static_cast<GLsizei>(fb.AsTexture()->GetWidth()), h = static_cast<GLsizei>(fb.AsTexture()->GetHeight());
+
+	glViewport(0, 0, w, h);
 #else
+	auto& win = EngineCore::Get<WindowManager>()->GetMainWindow();
+
 	fb.Unbind();
-	glViewport(0, 0, w.GetFullWidth(), w.GetFullHeight());
+	glViewport(0, 0, win.GetWidth(), win.GetHeight());
 #endif
 
 	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -680,7 +680,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 #if EDITOR
 	fb.Unbind();
 #else
-	SwapBuffers(w.GetDeviceContext());
+	SwapBuffers(win.GetDeviceContext());
 #endif
 }
 
@@ -702,8 +702,8 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 	mViews.Emplace(2048u, 2048u, true);
 	mViews.Emplace(1024u, 1024u, true);
 	mViews.Emplace(
-		static_cast<unsigned>(mvGlobalAspectRatio.x),
-		static_cast<unsigned>(mvGlobalAspectRatio.y),
+		static_cast<unsigned>(mvResolution.x),
+		static_cast<unsigned>(mvResolution.y),
 		false
 	);
 
@@ -712,6 +712,19 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 #endif
 	mvClearCol = { 0,0,0,0 };
 	DRAW_MODE = GL_TRIANGLES;
+}
+
+void Dystopia::GraphicsSystem::UpdateResolution(void) const noexcept
+{
+#if !EDITOR
+	EngineCore::Get<WindowManager>()->GetMainWindow().SetSize(
+		static_cast<unsigned>(mvResolution.x), static_cast<unsigned>(mvResolution.y)
+	);
+#endif
+
+	static_cast<Texture2D*>(GetFrameBuffer().AsTexture())->ReplaceTexture(
+		static_cast<unsigned>(mvResolution.x), static_cast<unsigned>(mvResolution.y), nullptr, false
+	);
 }
 
 void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
@@ -736,7 +749,7 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 	_in >> mvDebugColour;
 	_in >> mbVsync;
 	_in >> mvClearCol;
-	_in >> mvGlobalAspectRatio;
+	_in >> mvResolution;
 
 	ToggleVsync(mbVsync);
 }
@@ -758,7 +771,7 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 	_out << mvDebugColour;
 	_out << mbVsync;
 	_out << mvClearCol;
-	_out << mvGlobalAspectRatio;
+	_out << mvResolution;
 }
 
 
@@ -1065,11 +1078,11 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 void Dystopia::GraphicsSystem::EditorAspectRatio()
 {
 	static int eAspect = 0;
-	if (mvGlobalAspectRatio == Math::Vec4{1600,900,0,0})
+	if (mvResolution == Math::Vec2{ 1600, 900 })
 	{
 		eAspect = 0;
 	}
-	else if (mvGlobalAspectRatio == Math::Vec4{ 1440,900,0,0 })
+	else if (mvResolution == Math::Vec2{ 1440, 900 })
 	{
 		eAspect = 1;
 	}
@@ -1080,24 +1093,24 @@ void Dystopia::GraphicsSystem::EditorAspectRatio()
 
 	std::string arr[3]{"1600x900px [16:9]", "1440x900px [16:10]", "1024x768px [4:3]",  };
 
-	if (EGUI::Display::DropDownSelection("Aspect Ratio", eAspect, arr, 100.f))
+	if (EGUI::Display::DropDownSelection("Resolution", eAspect, arr, 100.f))
 	{
 		switch (eAspect)
 		{
 		case 0: // 16:9
-			mvGlobalAspectRatio = { 1600,900,0,0 };
+			mvResolution = { 1600, 900 };
 			break;
 		case 1: // 16:10
-			mvGlobalAspectRatio = { 1440,900,0,0 };
+			mvResolution = { 1600, 1000 };
 			break;
 		case 2: // 4:3
-			mvGlobalAspectRatio = { 1024,768,0,0 };
+			mvResolution = { 1024, 768 };
 			break;
 		default:
 			break;
 		}
 
-		SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
+		UpdateResolution();
 	}
 }
 #endif 

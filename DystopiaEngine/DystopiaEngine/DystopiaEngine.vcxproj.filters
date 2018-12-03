@@ -412,6 +412,11 @@
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SplashScreen.cpp">
       <Filter>Game Engine\Behaviours\Derive</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\PauseManager.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\QuitButton.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\RestartButton.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SettingsButton.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SpriteManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1101,6 +1106,11 @@
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\SplashScreen.h">
       <Filter>Game Engine\Behaviours\Derive</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\PauseManager.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\QuitButton.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\RestartButton.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SettingsButton.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SpriteManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

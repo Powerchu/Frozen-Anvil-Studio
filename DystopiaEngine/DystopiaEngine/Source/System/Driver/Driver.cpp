@@ -132,7 +132,7 @@ void Dystopia::EngineCore::LoadSettings(void)
 	if (pFileSys->CheckFileExist(SETTINGS_FILE, SETTINGS_DIR))
 	{
 		auto file = Serialiser::OpenFile<DysSerialiser_t>(
-			(pFileSys->GetProjectFolders<std::string>(SETTINGS_DIR)  +
+			(pFileSys->GetProjectFolders<std::string>(SETTINGS_DIR) + '/' +
 			SETTINGS_FILE).c_str()
 		);
 
@@ -333,7 +333,7 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int)
 //#if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 //#endif
-	auto CORE = Dystopia::EngineCore::GetInstance();
+
 	Dystopia::EngineCore::GetInstance()->ExecuteGame();
 
 	return 0;

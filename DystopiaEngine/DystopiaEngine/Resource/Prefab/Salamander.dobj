@@ -1,0 +1,27 @@
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072450224128,536870977,"Salamander",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+74.28,40.2875,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+1192768512,536870913,18446744072450224128,"/Asset/Spritesheet/FireBreath Sheet.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.033,1,1,"Rename this",5,8,1,0,37,0,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_Recursion Counter]
+0,
+[END_Recursion Counter]

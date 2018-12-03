@@ -57,6 +57,11 @@ namespace Dystopia
 		{
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
 		}
+		template<typename ... Ts>
+		void SendExternalMessage(const GameObject * _ptr, const char * _FuncName, Ts ... _Params)
+		{
+			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendExternalMessage(_ptr, _FuncName, _Params...);
+		}
 	}
 
 	CharacterController::CharacterController()
@@ -71,7 +76,10 @@ namespace Dystopia
 		, attackCount(0)
 		, attackDelay(0.0f)
 		, isAttacking(false)
+		, isCasting(false)
 		, currentType(true)
+		, isJumping(false)
+		, isFalling(false)
 	{
 	}
 
@@ -96,17 +104,10 @@ namespace Dystopia
 				rb->SetOwner(GetOwner());
 				rb->Init(); 
 			}
-
-			auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
-			if (s_rend)
-			{
-				//s_rend->SetPlay(true);
-			}
-
 			mpBody = GetOwner()->GetComponent<RigidBody>();
 		}
 
-		/*if (mpInputSys->IsController())
+		if (mpInputSys->IsController())
 		{
 			mpInputSys->MapButton("Run Left", eButton::XBUTTON_DPAD_LEFT);
 			mpInputSys->MapButton("Run Right", eButton::XBUTTON_DPAD_RIGHT);
@@ -125,11 +126,12 @@ namespace Dystopia
 			mpInputSys->MapButton("Skill B", eButton::KEYBOARD_C);
 			mpInputSys->MapButton("Skill Y", eButton::KEYBOARD_V);
 			mpInputSys->MapButton("Attack", eButton::KEYBOARD_X);
-		} */
+		}
 
 		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
 		sManagerName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("SkillManager");
-
+		spriteName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player Sprite");
+		DEBUG_PRINT(eLog::MESSAGE, "Sprite Name %p", spriteName);
 		playerHealth = 100;
 		SetFlags(FLAG_ACTIVE);
 	}
@@ -138,7 +140,8 @@ namespace Dystopia
 	{ 
 		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
 		sManagerName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("SkillManager");
-
+		spriteName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player Sprite");
+		DEBUG_PRINT(eLog::MESSAGE, "Sprite Name %p", spriteName);
 		SetFlags(FLAG_ACTIVE);  
 
 		if (mpInputSys->IsController())
@@ -165,11 +168,24 @@ namespace Dystopia
 
 	void CharacterController::Update(const float _fDeltaTime)
 	{
+		if (_fDeltaTime == 0)
+			return;
+
 		MovePlayer(_fDeltaTime);
 		CheckMoving();
-		CheckAttack();
 
 		attackDelay = attackDelay + _fDeltaTime;
+		if (attackDelay > 1.5f)
+		{
+			attackCount = 0;
+			attackDelay = 0.5f;
+		}
+
+		if (isJumping && mpBody->GetLinearVelocity().y < 0)
+		{
+			isFalling = true;
+			isJumping = false;
+		}
 	}
 
 	void CharacterController::FixedUpdate(const float _fDeltaTime)
@@ -196,6 +212,13 @@ namespace Dystopia
 		if (dotNormal > 0.65F && dotNormal < 1.1F && !colBTrigger)
 		{
 			mbIsGrounded = true;	
+			
+			if (isFalling)
+			{
+				isFalling = false;
+				DEBUG_PRINT(eLog::MESSAGE, "why is it  notjumping");
+				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 9);
+			}
 		}
 	}
 
@@ -337,14 +360,22 @@ namespace Dystopia
 			{
 				mpBody->AddLinearImpulse({ 0,JumpForce * mpBody->GetMass() * 10 + mpBody->GetLinearVelocity().y, 0 });
 				mbIsGrounded = false;
+				isJumping = true;
 			}
 		}
 
-		if (mpInputSys->IsKeyTriggered("Skill Y") || mpInputSys->IsKeyTriggered("Skill B"))
+		if (mpInputSys->IsKeyTriggered("Skill Y"))
 		{
 			const Math::Vec3D spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
 
 			CharacterController::CastLinked(1, currentType, float(spawnLocation.x), float(spawnLocation.y), float(spawnLocation.z));
+		}
+
+		if (mpInputSys->IsKeyTriggered("Skill B"))
+		{
+			const Math::Vec3D spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
+
+			CharacterController::CastLinked(2, currentType, float(spawnLocation.x), float(spawnLocation.y), float(spawnLocation.z));
 		}
 
 		if (mpInputSys->IsKeyTriggered("SetForm"))
@@ -384,7 +415,7 @@ namespace Dystopia
 				if (attackCount < 3)
 				{
 					attackCount++;
-					DEBUG_PRINT(eLog::MESSAGE, "Attacking! send msg, Add Increment and display functions");
+					DEBUG_PRINT(eLog::MESSAGE, "Attacking!");
 				}
 
 				else
@@ -399,14 +430,18 @@ namespace Dystopia
 				}
 
 				attackDelay = 0.0f;
+				CheckAttack();
 			}
 		}
 	}
 
 	void Dystopia::CharacterController::CastLinked(int _skill, bool _isForm, float x, float y, float z)
 	{
+
 		if (_isForm)
 		{
+			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 6);
+
 			if (_skill == 0)
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "Sending to SManager FORM");
@@ -421,8 +456,11 @@ namespace Dystopia
 		}
 
 		else
-		{
+		{	
+			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 5);
+
 			DEBUG_PRINT(eLog::MESSAGE, "Sending to SManager FORCE");
+
 			if (_skill == 0)
 				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForce", 0, mbIsFacingRight, x, y, z);
 
@@ -437,50 +475,68 @@ namespace Dystopia
 
 	void CharacterController::CheckAttack()
 	{
-		auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
-
-		if (attackDelay > 1.5f)
-		{
-			attackCount = 0;
-			attackDelay = 0.5f;
-		}
-
-		if (s_rend && attackDelay < 1.0f)
-		{
-			/*if (attackCount == 1)
+		if (!isAttacking)    
+		{	
+			if (attackCount == 1)
 			{
-				s_rend->SetAnimation("AttackOne");
+				DEBUG_PRINT(eLog::MESSAGE, "SENTTTT");
+				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 1);
+				isAttacking = true; 
 			}
 
 			if (attackCount == 2)
 			{
-				s_rend->SetAnimation("AttackTwo");
+				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 2);
+				isAttacking = true; 
 			}
 
 			if (attackCount == 3)
 			{
-				s_rend->SetAnimation("AttackThree");
-			}*/
+				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 3);
+				isAttacking = true; 
+			}
+
+			if (attackCount == 0)
+			{
+				if (currentType)
+				{
+					CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 6);
+					isCasting = true;
+				}
+
+				else
+				{
+					CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 5);
+					isCasting = true;
+				}
+			}
 		}
+	}         
+
+	void CharacterController::AnimationComplete()
+	{
+		if (isAttacking)
+			isAttacking = false;
+
+		if (isCasting)
+			isCasting = false;
 	}
 
 	void CharacterController::CheckMoving()
 	{
-		auto s_rend = GetOwner()->GetComponent<SpriteRenderer>();
-		if( s_rend)
-		{
-			if (mpInputSys->IsKeyTriggered("Run Left") || mpInputSys->IsKeyTriggered("Run Right"))
-			{
-				//s_rend->SetSpeed(0.080F);
-				s_rend->SetAnimation("Running");
-			}
+		//const auto leftThumb = mpInputSys->GetAnalogX(0);
 
-			if (mpInputSys->IsKeyReleased("Run Left") || mpInputSys->IsKeyReleased("Run Right"))
-			{
-				//s_rend->SetSpeed(0.16F);
-				s_rend->SetAnimation("Idle");
-			}			
-		}
+		if (mpInputSys->IsKeyTriggered("Run Left") || mpInputSys->IsKeyTriggered("Run Right"))
+			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4);
+
+		if (mpInputSys->IsKeyReleased("Run Left") || mpInputSys->IsKeyReleased("Run Right"))
+			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 0);
+
+		/*if (isJumping)
+			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 7);
+
+		if (isFalling)
+			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 8);*/
 	}
 
 	void CharacterController::TakeDamage(int _dmg)

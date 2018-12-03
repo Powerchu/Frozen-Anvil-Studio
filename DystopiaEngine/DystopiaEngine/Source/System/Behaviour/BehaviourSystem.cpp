@@ -499,26 +499,13 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 				}
 			}
 		}
-		//for (auto & i : mvBehaviours)
-		//{
-		//	for (auto & iter : i.second)
-		//	{
-		//		if(iter.second != nullptr)
-		//			if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
-		//			{
-		//				delete iter.second;
-		//				iter.second = nullptr;
-		//				i.second.FastRemove(&iter);
-		//			}
-		//	}
-		//}
 #else
 
 		for (auto & i : mvBehaviours)
 		{
 			for (size_t u = 0; u < i.second.size(); ++u)
 			{
-				if (i.second[u] != nullptr)
+				if (i.second[u].second != nullptr)
 				{
 					if (eObjFlag::FLAG_REMOVE & i.second[u].second->GetFlags())
 					{
@@ -663,8 +650,17 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 
 			_obj.InsertStartBlock("str");
 			_obj << str;
+			unsigned n = 0;
 			/*Save the number of Pointers*/
-			_obj << i.second.size();
+			for (auto& e : i.second)
+			{
+				if (e.second)
+					n += !(e.second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ);
+			}
+
+
+			/*Save the number of Pointers*/
+			_obj << n;
 			for (auto & iter : i.second)
 			{
 				_obj.InsertStartBlock("BEHAVIOUR_BLOCK");
@@ -763,16 +759,8 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 
 						if(static_cast<eObjFlag>(_Flags) & eObjFlag::FLAG_EDITOR_OBJ)
 						{
-							/*GameObject with ID that was serialise could not be found*/
-							/*Remove and delete the Behaviour from mvBehaviourReferences*/
-							if(::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, _ID, false))
-							{
-								
-							}
-							else
-							{
-								
-							}
+							/*Object is editor object*/
+							DeleteBehaviour(ptr);
 						}
 						else
 						{
@@ -903,6 +891,7 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 
 	void BehaviourSystem::ClearAllEditorBehaviours()
 	{
+#if EDITOR
 		for (auto & i : mvBehaviours)
 		{
 			for (size_t u = 0; u<i.second.size(); ++u)
@@ -923,9 +912,22 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 				}
 			}
 		}
+#else
+		for (auto & i : mvBehaviours)
+		{
+			for (size_t u = 0; u<i.second.size(); ++u)
+			{
+				if (i.second[u].second != nullptr)
+				{
+					delete i.second[u].second;
+					i.second[u].second = nullptr;
+				}
+			}
+			i.second.clear();
+		}
+#endif
 	}
 
-#if EDITOR
 
 	void BehaviourSystem::InitAllBehaviours()
 	{
@@ -941,7 +943,7 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 		}
 	}
 
-	Behaviour * BehaviourSystem::RequestBehaviour(uint64_t const & _ID, std::string const & _name)
+Behaviour * BehaviourSystem::RequestBehaviour(uint64_t const & _ID, std::string const & _name)
 {
 #if EDITOR
 	for (auto & elem : mvBehaviourReferences)
@@ -952,7 +954,9 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 			{
 				if (i.first == std::wstring{ _name.begin(), _name.end() })
 				{
-					auto * ptr = elem.mpBehaviour->Duplicate();
+					Behaviour * ptr = nullptr;
+					if (elem.mpBehaviour != nullptr)
+						ptr = elem.mpBehaviour->Duplicate();
 
 					i.second.push_back(std::make_pair(_ID, ptr));
 					return ptr;
@@ -970,8 +974,6 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 			{
 				if (i.first == _name)
 				{
-					if (elem.mpBehaviour == nullptr) __debugbreak();
-#endif
 					Behaviour * ptr = nullptr;
 					if (elem.mpBehaviour != nullptr)
 						ptr = elem.mpBehaviour->Duplicate();
@@ -1037,22 +1039,14 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 
 	void BehaviourSystem::ReplaceID(uint64_t _old, uint64_t _new, GameObject * _newOwner)
 	{
-		for(auto & i : mvBehaviours)
+		for (auto & i : mvBehaviours)
 		{
-			for(size_t u=0; u<i.second.size(); ++u)
+			for (auto & iter : i.second)
 			{
-				if(i.second[u].second != nullptr)
+				if (iter.first == _old)
 				{
-					if(i.second[u].second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
-					{
-					}
-					else
-					{
-						delete i.second[u].second;
-						i.second[u].second = nullptr;
-						i.second.FastRemove(&i.second[u]);
-						u--;
-					}
+					iter.first = _new;
+					iter.second->SetOwner(_newOwner);
 				}
 			}
 		}

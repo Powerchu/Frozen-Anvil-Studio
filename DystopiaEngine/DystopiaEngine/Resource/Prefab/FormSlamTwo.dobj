@@ -1,10 +1,10 @@
 [START_GO_PREFAB]
 3,[START_START_GO_DATA]
-2058968064,536870977,"FormSlamTwo",0,
+18446744072909175296,536870977,"FormSlamTwo",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-10,5,1,-50.5372,9.32856,0,0,0,0,1,18446744073709551615,
+25,18,1,11.7016,17.1735,0,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,23 +12,23 @@
 [END_GO_PREFAB]
 [START_Component]
 2,[START_RigidBody]
-18446744071690608640,536870913,2058968064,0,0.5,0.5,0.5,0.5,0.7,0.5,1,100,1,0,1,1,0,
+18446744072628157952,536870913,18446744072909175296,0,0.5,0.5,0.5,0.5,0.7,0,1,100,1,0,1,1,0,
 [END_RigidBody]
 
 [END_Component]
 [START_Component]
-4,[START_Convex_Collider]
-18446744073256133120,536870913,2058968064,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
-[END_Convex_Collider]
+7,[START_Renderer]
+18446744073496379392,536870913,18446744072909175296,"/Asset/Form Slam Rock.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
 
 [END_Component]
 [START_Component]
-7,[START_Renderer]
-779707392,536870913,2058968064,"/Asset/Environment/Prologue/rock_02_shade.png",
-[END_Renderer]
-[START_Sprite Renderer]
-0.016,0,0,0,
-[END_Sprite Renderer]
+4,[START_Convex_Collider]
+18446744072968946176,536870913,18446744072909175296,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
 
 [END_Component]
 [START_Number of Behaviours]
@@ -44,7 +44,7 @@
 "destroyDelay",
 [END_destroyDelay]
 [START_Member Variable]
-2,
+3,
 [END_Member Variable]
 [START_destroyCount]
 "destroyCount",

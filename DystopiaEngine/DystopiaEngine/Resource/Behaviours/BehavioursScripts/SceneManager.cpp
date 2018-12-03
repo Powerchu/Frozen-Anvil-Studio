@@ -147,7 +147,7 @@ namespace Dystopia
 	void SceneManager::EditorUI(void) noexcept
 	{
 		
-		
+		 
 	}
 	
 	TypeErasure::TypeEraseMetaData SceneManager::GetMetaData()

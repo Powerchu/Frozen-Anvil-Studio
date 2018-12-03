@@ -86,8 +86,9 @@ namespace Dystopia
 		void MovePlayer(float);
 		void CastLinked(int _skill, bool _isForm, float x, float y, float z);
 		void TakeDamage(int _dmg);
+		void AnimationComplete();
 
-		PP_MEMBERFUNC(Dystopia::CharacterController, TakeDamage)
+		PP_MEMBERFUNC(Dystopia::CharacterController, TakeDamage, AnimationComplete)
 	private:
 		friend MetaData<CharacterController>;
 
@@ -103,11 +104,15 @@ namespace Dystopia
 		float attackDelay;
 		GameObject * combatName;
 		GameObject * sManagerName;
+		GameObject * spriteName;
 	private:
 		bool mbIsGrounded;
 		bool mbIsCeilinged;
 		bool mbIsFacingRight;
 		bool isAttacking;
+		bool isCasting;
+		bool isJumping;
+		bool isFalling;
 		bool currentType;
 
 		RigidBody * mpBody;

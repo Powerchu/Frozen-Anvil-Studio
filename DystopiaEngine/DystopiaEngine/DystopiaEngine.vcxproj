@@ -44,10 +44,15 @@
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\Health.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\MenuManager.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\Parallax.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\PauseManager.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\QuitButton.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\RestartButton.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SceneManager.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SettingsButton.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SkillManager.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SplashScreen.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SpriteManager.cpp" />
     <ClCompile Include="Source\DataStructure\OString.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
     <ClCompile Include="Source\Editor\CommandTypes.cpp" />
@@ -378,9 +383,14 @@
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\Health.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\MenuManager.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\Parallax.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\PauseManager.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\QuitButton.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\RestartButton.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\SceneManager.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SettingsButton.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\SkillManager.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\SplashScreen.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SpriteManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />

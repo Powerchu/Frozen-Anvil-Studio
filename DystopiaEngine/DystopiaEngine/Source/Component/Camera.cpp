@@ -38,7 +38,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Camera::Camera(const float _fWidth, const float _fHeight) : Component{},
 	mbDebugDraw{ false }, mViewport{0, 0, _fWidth, _fHeight}, mClippingPlane{ -500.f,500.f } 
-	, mViewAspect{Gbl::WINDOW_WIDTH,Gbl::WINDOW_HEIGHT}, mView{}, mInvScreen{}, mProjection{}, mpSurface{ nullptr }, mnSurfaceID{ 0 }
+	, mViewAspect{ Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT }, mView{}, mInvScreen{}, mProjection{}, mpSurface{ nullptr }, mnSurfaceID{ 0 }
 {
 
 }
@@ -321,7 +321,7 @@ void Dystopia::Camera::Unserialise(TextSerialiser& _in)
 	_in >> mnPersFOV_deg;
 	_in.ConsumeEndBlock();
 }
-
+#if EDITOR
 void Dystopia::Camera::EditorUI(void) noexcept
 {
 #if EDITOR
@@ -592,4 +592,6 @@ void Dystopia::Camera::EditorOptions(void)
 
 }
 
+
+#endif
 

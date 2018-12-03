@@ -1,0 +1,1358 @@
+[START_Scene]
+983564288,"Forest_BackupNew",70,[START_START_GO_DATA]
+18446744073055277568,97,"___Scene_Camera___",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.133083,0.133083,1,-1.20257,26.8642,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073055279104,97,"Main Camera",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,100,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+497945600,65,"Floor",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+175.9,43.4,1,0,0,0,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1148064256,65,"Floor 2",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+175.9,43.4,1,175.206,0,0.01,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1959663616,65,"Tree",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+81.8999,106.4,1,-46.8619,71.3443,-4,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072584830464,65,"Tree 2",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+81.8999,106.4,1,93.4045,71.3443,-4,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072722195456,65,"Mid Bush",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+352.2,95.0002,1,87.8979,-13.7017,-5.1,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072070507008,65,"Tree 3",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+130,110,1,206.67,75.5179,-4,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073363927040,65,"Bush",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+100,25,1,17.0945,29.2176,-3,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073452533248,65,"Small Bush",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+40,24,1,-39.3326,27.4488,-3.1,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073227090944,65,"Small Bush_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+30,22,1,70.3522,27.4488,-3.1,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073437331968,65,"Bush_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+100,25,1,198.646,29.2176,-3,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072666105856,65,"Back Tree",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,106.4,1,145.819,74.8223,-9,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071619628544,65,"Back Tree_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+81.8999,106.4,1,-3.38707,71.3443,-7,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071930532864,65,"Back Tree_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+81.8999,106.4,1,61.3035,76.9091,-9,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+2073975296,65,"Flower",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+10,8,1,85.4848,13.9855,1,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1263951872,65,"Flower_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+10,8,1,63.3503,23.1131,0,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1515087360,65,"Rock",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+50,20,1,-61.2419,26.536,-3.5,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072811867136,65,"Further Tree",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,106.4,1,226.016,75.1531,-14,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+495350272,65,"Further Tree_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,106.4,1,-49.6265,80.5019,-14,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071848753152,65,"Further Tree_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,106.4,1,120.466,71.5872,-14,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+796294656,65,"Far Tree",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,106.4,1,169.675,70.874,-10,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1322681344,65,"Far Tree_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,106.4,1,33.8153,75.1531,-10,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073069824512,65,"Flower_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+10,8,1,-27.1304,21.8146,-0.4,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073409564672,65,"Mushy",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+15,15,1,149.671,31.0477,-3.5,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073536968192,65,"Mushy_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+10,8,1,94.2554,28.3226,-3,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+171351040,65,"Envionment",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+410951680,65,"Front Bush",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+150,32,1,97.6659,-18.7606,25,0,0,-0.0436194,0.999048,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073678530048,65,"Sky",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+550,350,1,87.5082,85.7144,-30,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072742153216,65,"Front Bush_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+150,32,1,211.438,-23.5966,25,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071923741184,65,"Front Bush_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+150,32,1,-31.1228,-14.4337,25,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073501325312,65,"Flower_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+30,25,1,-30.9595,-8.02122,9,0,0,0,1,171351040,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072087154176,65,"Envionment_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,341.968,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072087155200,65,"Floor_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+175.9,43.4,1,341.967,0,0,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072088205312,65,"Floor 2_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+175.9,43.4,1,517.173,0,0.01,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072089255424,65,"Tree_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+81.8999,106.4,1,295.106,71.3443,-4,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072090305536,65,"Tree 2_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+81.8999,106.4,1,435.372,71.3443,-4,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072090831360,65,"Mid Bush_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+352.2,95.0002,1,429.865,-13.7017,-5.1,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072091881472,65,"Tree 3_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+130,110,1,548.638,75.5179,-4,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072092931584,65,"Bush_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+100,25,1,359.062,29.2176,-3,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072093981696,65,"Small Bush_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+40,24,1,302.635,27.4488,-3.1,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072095031808,65,"Small Bush_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+30,22,1,412.32,27.4488,-3.1,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072096081920,65,"Bush_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+100,25,1,540.614,29.2176,-3,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072097132032,65,"Back Tree_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,106.4,1,487.786,74.8223,-9,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072098182144,65,"Back Tree_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+81.8999,106.4,1,338.58,71.3443,-7,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072099232256,65,"Back Tree_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+81.8999,106.4,1,403.271,76.9091,-9,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072099758080,65,"Flower_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+10,8,1,427.452,13.9855,1,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072100808192,65,"Flower_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+10,8,1,405.318,23.1131,0,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072101858304,65,"Rock_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+50,20,1,280.726,26.536,-3.5,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072102908416,65,"Further Tree_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,106.4,1,567.984,75.1531,-14,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072103958528,65,"Further Tree_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,106.4,1,292.341,80.5019,-14,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072105008640,65,"Further Tree_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,106.4,1,462.433,71.5872,-14,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072106058752,65,"Far Tree_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,106.4,1,511.642,70.874,-10,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072107108864,65,"Far Tree_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,106.4,1,375.783,75.1531,-10,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072108683264,65,"Flower_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+10,8,1,314.837,21.8146,-0.4,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072109209088,65,"Mushy_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+15,15,1,491.638,31.0477,-3.5,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072110259200,65,"Mushy_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+10,8,1,436.223,28.3226,-3,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072111833600,65,"Front Bush_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+150,32,1,439.633,-18.7606,25,0,0,-0.0436194,0.999048,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072112883712,65,"Sky_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+550,350,1,429.476,85.7144,-30,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072113933824,65,"Front Bush_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+150,32,1,553.406,-23.5966,25,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072114983936,65,"Front Bush_clone_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+150,32,1,318.594,-17.2012,25,0,0,0.0436194,0.999048,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072116034048,65,"Flower_clone_clone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+30,25,1,311.008,-12.1725,9,0,0,0,1,18446744072087154176,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072326967296,65,"Floor Collider",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,279.538,-19.4591,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1473213952,65,"Player Sprite",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+33.28,33.28,1,-20.2095,25.2786,25,0,0,0,1,1079481344,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1079481344,65,"Player",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1.3,1.3,1,-20.1074,14.8514,15,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071656062464,65,"Wall",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,-85.7383,40.5218,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073316929536,65,"SkillManager",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,-20.1074,14.8514,15,0,0,0,1,1079481344,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073694098432,65,"Combat Box",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,-5.9643,21.6391,3.24249e-05,0,0,0,1,1079481344,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+551731712,65,"FormSmashThree",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,-1.20257,26.8642,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1337640960,65,"FormSmashAnim",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+90,60,1,28.2333,25.3308,10,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+18446744073055277056,1,18446744073055277568,3,1,0,500,-500,1,1,0,0,1,50,
+[END_Camera]
+
+[END_Component End]
+[START_Component]
+[START_Camera]
+18446744073055278592,1,18446744073055279104,0,0,1,500,-500,1,1,0,0,1,159,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+4,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+300390912,1,1079481344,0,0.999,0.6,0.5,0.5,0.01,0,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744071950625792,1,18446744072326967296,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744073619086848,1,18446744071656062464,0,0.5,0.5,0.5,0.5,0.7,0.5,1,0,1,1,0,1,2,
+[END_RigidBody]
+
+[END_Component End]
+[START_Component]
+[START_RigidBody]
+18446744073606976000,1,551731712,0,0.5,0.5,0.5,0.5,0.7,0.5,0,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+4,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+1730638848,1,18446744072326967296,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1000,50,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1437745664,1,18446744071656062464,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,30,70,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+891896320,1,18446744073694098432,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,15,25,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+18446744072109606400,1,551731712,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,15,35,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+1172805632,1,1079481344,0,0,0,0,0,0,10,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_Component]
+[START_Circle_Collider2D]
+18446744071928779264,1,1079481344,0,10,0,0,0,0,10,0,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+60,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+18446744072842252288,1,497945600,"/Asset/Spritesheet/Set Two.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,10,"Rename this",1,1,0,0,0,0,0,1,0.99999,0.99999,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1148065280,1,1148064256,"/Asset/Spritesheet/Set Two.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,10,"Rename this",1,1,0,0,0,0,0,1,0.99999,0.99999,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1773542400,1,1959663616,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,2,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072584831488,1,18446744072584830464,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,3,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072722196480,1,18446744072722195456,"/Asset/Spritesheet/Set Five.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,3,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072070508032,1,18446744072070507008,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,11,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072085189632,1,18446744073363927040,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,17,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073452534272,1,18446744073452533248,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,15,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073227091968,1,18446744073227090944,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,14,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073437332992,1,18446744073437331968,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,16,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072666106880,1,18446744072666105856,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,5,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071619629568,1,18446744071619628544,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,8,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071930533888,1,18446744071930532864,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,9,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+2073976320,1,2073975296,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,1,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1263952896,1,1263951872,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,4,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1515088384,1,1515087360,"/Asset/Spritesheet/Set Two.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,5,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072811868160,1,18446744072811867136,"/Asset/Spritesheet/Set Four.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,9,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+495351296,1,495350272,"/Asset/Spritesheet/Set Four.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,5,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071848754176,1,18446744071848753152,"/Asset/Spritesheet/Set Four.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,8,"Rename this",1,1,0,0,0,0,0,1,0.99999,0.99999,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+796295680,1,796294656,"/Asset/Spritesheet/Set Four.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,6,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1322682368,1,1322681344,"/Asset/Spritesheet/Set Four.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,3,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073069825536,1,18446744073069824512,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,20,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073409565696,1,18446744073409564672,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,10,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073536969216,1,18446744073536968192,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,5,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071609689088,1,410951680,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072471095808,1,18446744073678530048,"/Asset/sky.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072742154240,1,18446744072742153216,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071923742208,1,18446744071923741184,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073501326336,1,18446744073501325312,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,7,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072087156224,1,18446744072087155200,"/Asset/Spritesheet/Set Two.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,10,"Rename this",1,1,0,0,0,0,0,1,0.99999,0.99999,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072088206336,1,18446744072088205312,"/Asset/Spritesheet/Set Two.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,10,"Rename this",1,1,0,0,0,0,0,1,0.99999,0.99999,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072089256448,1,18446744072089255424,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,2,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072090306560,1,18446744072090305536,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,3,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072090832384,1,18446744072090831360,"/Asset/Spritesheet/Set Five.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,3,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072091882496,1,18446744072091881472,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,11,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072092932608,1,18446744072092931584,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,17,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072093982720,1,18446744072093981696,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,15,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072095032832,1,18446744072095031808,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,14,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072096082944,1,18446744072096081920,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,16,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072097133056,1,18446744072097132032,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,5,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072098183168,1,18446744072098182144,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,8,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072099233280,1,18446744072099232256,"/Asset/Spritesheet/Set Three.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,9,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072099759104,1,18446744072099758080,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,1,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072100809216,1,18446744072100808192,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,4,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072101859328,1,18446744072101858304,"/Asset/Spritesheet/Set Two.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,5,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072102909440,1,18446744072102908416,"/Asset/Spritesheet/Set Four.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,9,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072103959552,1,18446744072103958528,"/Asset/Spritesheet/Set Four.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,5,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072105009664,1,18446744072105008640,"/Asset/Spritesheet/Set Four.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,8,"Rename this",1,1,0,0,0,0,0,1,0.99999,0.99999,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072106059776,1,18446744072106058752,"/Asset/Spritesheet/Set Four.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,6,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072107109888,1,18446744072107108864,"/Asset/Spritesheet/Set Four.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,3,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072108684288,1,18446744072108683264,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,20,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072109210112,1,18446744072109209088,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,10,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072110260224,1,18446744072110259200,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,5,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072111834624,1,18446744072111833600,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072112884736,1,18446744072112883712,"/Asset/sky.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072113934848,1,18446744072113933824,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072114984960,1,18446744072114983936,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072116035072,1,18446744072116034048,"/Asset/Spritesheet/Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,7,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072307046912,1,1473213952,"/Asset/Spritesheet/atlas_character_wilo_final_fix.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.066,10,1,"AttackOne",6,1,0,0,5,1,"AttackTwo",6,2,0,6,9,1,"AttackThree",6,3,0,10,16,4,"Idle",16,2,1,0,23,8,"Run",15,2,1,6,29,2,"CastForce",8,1,0,0,7,3,"CastForm",8,1,0,0,7,5,"Jump",15,1,0,7,11,5,"Fall",15,2,0,12,17,5,"Land",15,2,0,18,22,3,1,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1338166784,1,1337640960,"/Asset/Spritesheet/Final Skill Sheet.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.05,1,0,"Rename this",1,1,0,0,0,0,1,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+20,[START_str]
+"ChangeAudio",0,[START_str]
+"CharacterController",1,[START_BEHAVIOUR_BLOCK]
+1079481344,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"playerHealth",[START_playerHealth]
+100,[START_MEMBER VAR]
+"IsDodging",[START_IsDodging]
+0,[START_MEMBER VAR]
+"CharacterSpeed",[START_CharacterSpeed]
+15,[START_MEMBER VAR]
+"JumpForce",[START_JumpForce]
+25,[START_MEMBER VAR]
+"attackCount",[START_attackCount]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"CombatBox",1,[START_BEHAVIOUR_BLOCK]
+18446744073694098432,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"DeleteSelf",2,[START_BEHAVIOUR_BLOCK]
+551731712,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"destroyDelay",[START_destroyDelay]
+0.9,[START_MEMBER VAR]
+"destroyCount",[START_destroyCount]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_BEHAVIOUR_BLOCK]
+1337640960,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"destroyDelay",[START_destroyDelay]
+0.9,[START_MEMBER VAR]
+"destroyCount",[START_destroyCount]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"FollowTarget",0,[START_str]
+"ForceTOne",0,[START_str]
+"ForceTThree",0,[START_str]
+"ForceTTwo",0,[START_str]
+"FormTOne",0,[START_str]
+"FormTThree",1,[START_BEHAVIOUR_BLOCK]
+551731712,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"FormTTwo",0,[START_str]
+"Goblin",0,[START_str]
+"GoblinCombat",0,[START_str]
+"Health",0,[START_str]
+"MenuManager",0,[START_str]
+"Parallax",0,[START_str]
+"SceneManager",0,[START_str]
+"SkillManager",1,[START_BEHAVIOUR_BLOCK]
+18446744073316929536,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"SplashScreen",0,[START_str]
+"SpriteManager",1,[START_BEHAVIOUR_BLOCK]
+1473213952,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+
+[END_BEHAVIOUR_SYSTEM_BLOCK]
+
+[END_Scene]
