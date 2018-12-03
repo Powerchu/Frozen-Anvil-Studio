@@ -662,7 +662,6 @@ void Editor::EditorFactory::LoadSegmentB(Dystopia::GameObject& _obj, Dystopia::T
 			_obj.AddComponent(ptr, Dystopia::BehaviourTag{});
 		}
 	}
-
 	_obj.Identify();
 }
 

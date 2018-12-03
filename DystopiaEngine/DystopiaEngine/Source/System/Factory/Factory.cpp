@@ -90,11 +90,8 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 			}
 		}
 	}
-	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index) 
-	{
+	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
 		curScene.GetAllGameObjects()[index].Awake();
-	}
-
 	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
 	{
 		curScene.GetAllGameObjects()[index].RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
@@ -131,9 +128,6 @@ void Dystopia::Factory::LoadSegmentC(GameObject& _obj, unsigned _count, Dystopia
 		sceneSys->GetCurrentScene().FindGameObject(_obj.GetID())->AddComponent(pComponent, Component::TAG{});
 		_in.ConsumeEndBlock();
 	}
-
-	//for (auto& c : _obj.GetAllComponents())
-	//	c->Init();
 }
 
 void Dystopia::Factory::LoadSegmentB(GameObject& _obj, Dystopia::TextSerialiser& _in)

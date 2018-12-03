@@ -223,7 +223,7 @@ void Dystopia::GameObject::Init(void)
 		return;
 
 	mTransform.Init();
-	ForcePing(mComponents, Init);
+	//ForcePing(mComponents, Init);
 	ForcePing(mBehaviours, Init);
 }
 
