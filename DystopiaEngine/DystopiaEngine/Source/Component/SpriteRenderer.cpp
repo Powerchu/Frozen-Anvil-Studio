@@ -371,7 +371,7 @@ Math::Vec2 Dystopia::SpriteRenderer::Resized(float _xMult, float _yMult) const
 {
 	if (mpTexture)
 	{
-		auto nScale = GetOwner()->GetComponent<Transform>()->GetScale();
+		auto nScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 		nScale.x = static_cast<float>(mpTexture->GetWidth()) * _xMult;
 		nScale.y = static_cast<float>(mpTexture->GetHeight()) * _yMult;
 
@@ -391,7 +391,7 @@ void Dystopia::SpriteRenderer::ResizeToFit(float _xMult, float _yMult) const
 	if (GetOwner())
 	{
 		auto xy = Resized(_xMult, _yMult);
-		auto nScale = GetOwner()->GetComponent<Transform>()->GetScale();
+		auto nScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 		nScale.x = xy.x;
 		nScale.y = xy.y;
 		GetOwner()->GetComponent<Transform>()->SetGlobalScale(nScale);
@@ -432,8 +432,8 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 		if (EGUI::Display::Button("Auto Resize", Math::Vec2{ 140, 25 }))
 		{
 			auto size = Resized();
-			auto scale = GetOwner()->GetComponent<Transform>()->GetScale();
-			auto nScale = GetOwner()->GetComponent<Transform>()->GetScale();
+			auto scale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
+			auto nScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 			nScale.x = size.x;
 			nScale.y = size.y;
 			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetGlobalScale, scale),
