@@ -29,6 +29,20 @@ namespace Dystopia
 {
 	namespace NeuralTree
 	{
+		enum BlackBoardSelector
+		{
+			ePointer = 0,
+			eBool,
+			eInt,
+			eFloat,
+			eDouble,
+			eVector,
+			eObject,
+			eStrings,
+
+			TOTAL
+		};
+
 		class Blackboard
 		{
 		public:
@@ -138,11 +152,11 @@ namespace Dystopia
 			/*
 			* GameObject-String Map
 			*/
-			void SetObject(const std::string key, GameObject* value) { objs[key] = value; }
-			GameObject* GetObject(const std::string key)
+			void SetObject(const std::string key, uint64_t value) { objs[key] = value; }
+			uint64_t GetObject(const std::string key)
 			{
 				if (objs.find(key) == objs.end()) {
-					objs[key] = nullptr;
+					objs[key] = 0;
 				}
 				return objs[key];
 			}
@@ -150,15 +164,70 @@ namespace Dystopia
 
 			using Ptr = SharedPtr<Blackboard>;
 
+		public:
+			auto GetMapToPointers() const	{ return pointers; }
+			auto GetMapToBools() const		{ return bools; }
+			auto GetMapToInts() const		{ return ints; }
+			auto GetMapToFloats() const		{ return floats; }
+			auto GetMapToDoubles() const	{ return doubles; }
+			auto GetMapToVectors() const	{ return vectors; }
+			auto GetMapToObjs() const		{ return objs; }
+			auto GetMapToNames() const		{ return strings; }
+
+			/*
+			 * Member Functions
+			 */
+
+			void ClearAll(void)
+			{
+				for (int i = 0; i < BlackBoardSelector::TOTAL; ++i)
+				{
+					ClearSingle(static_cast<BlackBoardSelector>(i));
+				}
+			}
+
+			void ClearSingle(BlackBoardSelector _select)
+			{
+				switch (_select)
+				{
+				case 0:
+					pointers.clear();
+					break;
+				case 1:
+					bools.clear();
+					break;
+				case 2:
+					ints.clear();
+					break;
+				case 3:
+					floats.clear();
+					break;
+				case 4:
+					doubles.clear();
+					break;
+				case 5:
+					vectors.clear();
+					break;
+				case 6:
+					objs.clear();
+					break;
+				case 7:
+					strings.clear();
+					break;
+				default:
+					break;
+				}
+			}
+
 		protected:
-			std::unordered_map<std::string, void*>			pointers;
-			std::unordered_map<std::string, bool>			bools;
-			std::unordered_map<std::string, int>			ints;
-			std::unordered_map<std::string, float>			floats;
-			std::unordered_map<std::string, double>			doubles;
-			std::unordered_map<std::string, Math::Vector4>	vectors;
-			std::unordered_map<std::string, GameObject*>	objs;
-			std::unordered_map<std::string, std::string>	strings;
+			std::unordered_map<std::string, void*>			pointers;	// 0
+			std::unordered_map<std::string, bool>			bools;		// 1
+			std::unordered_map<std::string, int>			ints;		// 2
+			std::unordered_map<std::string, float>			floats;		// 3
+			std::unordered_map<std::string, double>			doubles;	// 4
+			std::unordered_map<std::string, Math::Vector4>	vectors;	// 5
+			std::unordered_map<std::string, uint64_t>		objs;		// 6
+			std::unordered_map<std::string, std::string>	strings;	// 7
 		};
 	}
 }

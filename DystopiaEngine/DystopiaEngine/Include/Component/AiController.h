@@ -64,19 +64,24 @@ namespace Dystopia
 		BehaviourTree::Ptr GetTreeAsPtr(void);
 		Blackboard::Ptr GetBlackboard(void) const;
 
-		// To print out properties
-		void DebugPrint();
+#if EDITOR
+		/*=================Editor Stuff=====================*/
+		void EditorFunctionNode();
+		void EditorStringNode();
+		void EditorObjectNode();
+		void EditorVectorNode();
+		void EditorDoubleNode();
+		void EditorFloatNode();
+		void EditorIntNode();
+		void EditorBoolNode();
 
 		// Editor UI		
-
+		void EditorUI(void) noexcept override;
 		/*Quaternion if needed*/
-
-		/*=================Editor Stuff=====================*/
-#if EDITOR
-
 #endif // EDITOR
 	private:
 		BehaviourTree bTree;
+		Blackboard::Ptr mpBlackboard;
 	};
 }
 #endif
