@@ -567,7 +567,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 #endif 
 
 		// If the camera is inactive, skip
-		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
+		if (Cam.GetOwner() && Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
 			Cam.SetCamera();
 			Math::Matrix4 View = Cam.GetViewMatrix();
