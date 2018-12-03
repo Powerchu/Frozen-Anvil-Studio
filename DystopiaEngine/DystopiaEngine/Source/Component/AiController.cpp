@@ -645,51 +645,75 @@ namespace Dystopia
 					if (tempC->GetID() == bTree.GetID()) //First Node
 					{
 						CompositeName = { "ROOT: " + tempC->GetEditorName() };
+
+						EGUI::PushID(static_cast<int>(tempC->GetID()));
+						if (EGUI::Display::CollapsingHeader(CompositeName.c_str()))
+						{
+							for (const auto& child : tempC->GetAllChildren())
+							{
+								if (child)
+									RecursiveTree(child);
+							}
+						}
+						EGUI::PopID();
 					}
 					else
 					{
 						CompositeName = { "Composite: " + tempC->GetEditorName() };
-					}
-					
-					if (EGUI::Display::CollapsingHeader(CompositeName.c_str()))
-					{
-						for (const auto& child : tempC->GetAllChildren())
+
+						EGUI::PushID(static_cast<int>(tempC->GetID()));
+						EGUI::Indent();
+						if (EGUI::Display::CollapsingHeader(CompositeName.c_str()))
 						{
-							if (child)
-								RecursiveTree(child);
+							for (const auto& child : tempC->GetAllChildren())
+							{
+								if (child)
+									RecursiveTree(child);
+							}
 						}
+						EGUI::UnIndent();
+						EGUI::PopID();
 					}
+
+					
 				}
 			}
 
 			else if (_node->GetNodeType() == 1) // Is Decorator Node
 			{
 				const Decorator* tempD = dynamic_cast<Decorator*>(_node.GetRaw());
-				EGUI::Indent();
 				HashString DecoratorName = { "Decorator: " + tempD->GetEditorName() };
-				if (EGUI::Display::CollapsingHeader(DecoratorName.c_str()))
+
+				if (tempD)
 				{
-					if (tempD)
+					EGUI::PushID(static_cast<int>(tempD->GetID()));
+					EGUI::Indent();
+					if (EGUI::Display::CollapsingHeader(DecoratorName.c_str()))
 					{
+					
 						if (const auto child = tempD->GetChild())
 						{
 							RecursiveTree(child);
 						}
 					}
+					EGUI::UnIndent();
+
+					EGUI::PopID();
 				}
-				EGUI::UnIndent();
 			}
 
 			else // Is Task Node
 			{
-				EGUI::Indent();
 				const Task* tempT = dynamic_cast<Task*>(_node.GetRaw());
 				if (tempT)
 				{
 					HashString TaskName = { "Task: " + tempT->GetEditorName() };
+					EGUI::PushID(static_cast<int>(tempT->GetID()));
+					EGUI::Indent();
 					ImGui::CollapsingHeader(TaskName.c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet);
+					EGUI::UnIndent();
+					EGUI::PopID();
 				}
-				EGUI::UnIndent();
 			}
 		}
 	}
