@@ -40,7 +40,7 @@ namespace Dystopia
 
 	void AiController::Awake()
 	{
-		bBlackboard = bTree.GetBlackboard();
+
 	}
 
 	void AiController::Init()
@@ -59,12 +59,18 @@ namespace Dystopia
 		return cc;
 	}
 
-	void AiController::Serialise(TextSerialiser&) const
+	void AiController::Serialise(TextSerialiser& _out) const
 	{
+		_out.InsertStartBlock("AI Controller");
+		Component::Serialise(_out);
+		_out.InsertEndBlock("AI Controller");
 	}
 
-	void AiController::Unserialise(TextSerialiser&)
+	void AiController::Unserialise(TextSerialiser& _in)
 	{
+		_in.ConsumeStartBlock();
+		Component::Unserialise(_in);
+		_in.ConsumeEndBlock();
 	}
 
 	void AiController::Update(float)

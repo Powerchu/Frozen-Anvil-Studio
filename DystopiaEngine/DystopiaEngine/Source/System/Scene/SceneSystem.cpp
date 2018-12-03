@@ -130,7 +130,7 @@ void Dystopia::SceneSystem::SceneChanged(void)
 			SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 			SerialObj.ConsumeEndBlock();
-			mpCurrScene->Init();
+			//mpCurrScene->Init();
 			Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors();
 		}
 	}

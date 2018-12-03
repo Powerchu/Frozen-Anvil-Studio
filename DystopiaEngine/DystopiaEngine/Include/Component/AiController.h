@@ -77,7 +77,6 @@ namespace Dystopia
 #endif // EDITOR
 	private:
 		BehaviourTree bTree;
-		Blackboard::Ptr bBlackboard;
 	};
 }
 #endif
