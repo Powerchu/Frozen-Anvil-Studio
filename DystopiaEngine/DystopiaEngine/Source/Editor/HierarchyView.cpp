@@ -80,7 +80,7 @@ namespace Editor
 
 		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
-			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope5{ "Show Game Object ", "0" };
+			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope5{ "Show Game Object ", "0" };
 			ShowGameObjects();
 			//auto& arrayOfGameObjects = GetCurrentScene()->GetAllGameObjects();
 			//for (auto& obj : arrayOfGameObjects)
