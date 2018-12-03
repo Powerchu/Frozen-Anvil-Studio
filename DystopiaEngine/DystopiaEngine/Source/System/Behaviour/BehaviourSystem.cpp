@@ -223,11 +223,14 @@ namespace Dystopia
 					BehaviourWrap wrap;
 					using fpClone = Behaviour * (*) ();
 					const fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
-					wrap.mName = DllName;
-					wrap.mpBehaviour = (BehaviourClone());
-					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Ut::Move(wrap)));
-					AutoArray< BehaviourPair> temp;
-					mvBehaviours.push_back(std::make_pair(std::wstring{ DllName.begin(), DllName.end() }, temp));
+					if (BehaviourClone)
+					{
+						wrap.mName = DllName;
+						wrap.mpBehaviour = (BehaviourClone());
+						mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Ut::Move(wrap)));
+						AutoArray< BehaviourPair> temp;
+						mvBehaviours.push_back(std::make_pair(std::wstring{ DllName.begin(), DllName.end() }, temp));
+					}
 				}
 				++start;
 			}
