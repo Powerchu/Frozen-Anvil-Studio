@@ -223,11 +223,14 @@ namespace Dystopia
 					BehaviourWrap wrap;
 					using fpClone = Behaviour * (*) ();
 					const fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
-					wrap.mName = DllName;
-					wrap.mpBehaviour = (BehaviourClone());
-					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Ut::Move(wrap)));
-					AutoArray< BehaviourPair> temp;
-					mvBehaviours.push_back(std::make_pair(std::wstring{ DllName.begin(), DllName.end() }, temp));
+					if (BehaviourClone)
+					{
+						wrap.mName = DllName;
+						wrap.mpBehaviour = (BehaviourClone());
+						mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Ut::Move(wrap)));
+						AutoArray< BehaviourPair> temp;
+						mvBehaviours.push_back(std::make_pair(std::wstring{ DllName.begin(), DllName.end() }, temp));
+					}
 				}
 				++start;
 			}
@@ -265,8 +268,6 @@ namespace Dystopia
 								iter.first  = 0;
 							}
 						}
-
-
 					}
 				}
 			}
@@ -348,21 +349,6 @@ namespace Dystopia
 				}
 
 			}
-			//for (auto & iter : i.second)
-			//{
-			//	if (iter.second != nullptr)
-			//	{
-			//		if (eObjFlag::FLAG_REMOVE & iter.second->GetFlags())
-			//		{
-			//			delete iter.second;
-			//			iter.second = nullptr;
-			//			i.second.FastRemove(&iter);
-			//		}
-			//	}
-				//else
-				//{
-				//	i.second.FastRemove(&iter);
-				//}
 		}
 #endif
 	}

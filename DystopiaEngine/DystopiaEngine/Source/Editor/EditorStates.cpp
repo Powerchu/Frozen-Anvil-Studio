@@ -225,7 +225,10 @@ void Editor::EditorStates::Message(eEMessage _msg)
 		auto oldState = mState;
 		mState = Editor::EditorMain::GetInstance()->GetCurState();
 		if (oldState == eState::MAIN && mState == eState::PLAY)
+		{
 			TempSave();
+			Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene().Init();
+		}
 		else if (oldState == eState::PLAY && mState == eState::MAIN)
 			TempLoad();
 	}
@@ -235,7 +238,6 @@ void Editor::EditorStates::Message(eEMessage _msg)
 		auto& win = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow();
 		HashString name{ sceneSystem->GetCurrentScene().GetSceneName().c_str() };
 		win.SetTitle(std::wstring{ name.begin(), name.end() });
-
 	}
 }
 
