@@ -63,7 +63,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Gbl
 {
-	constexpr bool	FULLSCREEN      = false;
+	constexpr bool	FULLSCREEN      = true;
 	constexpr int   WINDOW_WIDTH    = 1600;
 	constexpr int   WINDOW_HEIGHT   = 900;
 

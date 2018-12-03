@@ -6,7 +6,7 @@ in vec2 vUV;
 
 layout(location = 0) out vec4 fragColor;
 
-uniform float Gamma;
+uniform float Gamma = 1.f;
 uniform sampler2D texGame;
 uniform sampler2D texUI;
 
@@ -17,11 +17,11 @@ void main()
   vec4 color1 = texture(texGame, vUV);
   vec4 color2 = texture(texUI, vUV);
   
-  color1 = mix(color2, color1, color2.a);
+  color1 = mix(color1, color2, color2.a);
   
   // Gamma correction
   //color1.rgb = pow(color1.rgb, vec3(1.f / Gamma));
   
-  fragColor = color1;
+  fragColor = vec4(color1.xyz, 1);
 }
 

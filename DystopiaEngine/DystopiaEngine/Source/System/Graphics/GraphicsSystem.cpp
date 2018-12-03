@@ -93,8 +93,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mvDebugColour{.0f, 1.f, .0f, .1f}, mvClearCol{0, 0, 0, 0}, mfGamma{2.0f}, mfDebugLineThreshold{0.958f}, mOpenGL{nullptr},
-	mPixelFormat{0}, mAvailable{0}, mSettings(0)
-	, mbVsync{false}, mvResolution{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT}
+	mPixelFormat{0}, mAvailable{0}, mSettings(0), mbVsync{false}, mvResolution{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT}
 {
 }
 
@@ -135,7 +134,6 @@ void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw) const
 void Dystopia::GraphicsSystem::SetAllCameraAspect(const float _x, const float _y) const
 {
 	const auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
-	//auto bDebugDraw = !CamSys->GetMasterCamera()->DrawDebug();
 
 	for (auto& c : CamSys->GetAllCameras())
 	{
@@ -649,7 +647,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 
 #if EDITOR
 	fb.Bind();
-	GLsizei const w = static_cast<GLsizei>(fb.AsTexture()->GetWidth()), h = static_cast<GLsizei>(fb.AsTexture()->GetHeight());
+	unsigned const w = fb.AsTexture()->GetWidth(), h = fb.AsTexture()->GetHeight();
 
 	glViewport(0, 0, w, h);
 #else
@@ -921,7 +919,7 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	}
 
 	glEnable(GL_BLEND);
-	//	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LINE_SMOOTH);
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1069,10 +1067,6 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	}
 
 	EGUI::PopLeftAlign();
-
-
-
-
 }
 
 void Dystopia::GraphicsSystem::EditorAspectRatio()
