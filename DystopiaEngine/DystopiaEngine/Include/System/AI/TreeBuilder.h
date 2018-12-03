@@ -35,7 +35,7 @@ namespace Dystopia
 			CompositeBuilder(Parent* parent, Composite* node) : mpParent(parent), mpNode(node) {}
 
 			template <class NodeType, typename... Args>
-			CompositeBuilder<Parent> leaf(Args... args)
+			CompositeBuilder<Parent> task(Args... args)
 			{
 				auto child = Ctor::CreateShared<NodeType>((args)...);
 				mpNode->AddChild(child);
@@ -72,7 +72,7 @@ namespace Dystopia
 			DecoratorBuilder(Parent* parent, Decorator* node) : mpParent(parent), mpNode(node) {}
 
 			template <class NodeType, typename... Args>
-			DecoratorBuilder<Parent> leaf(Args... args)
+			DecoratorBuilder<Parent> task(Args... args)
 			{
 				auto child = Ctor::CreateShared<NodeType>((args)...);
 				mpNode->SetChild(child);
@@ -109,7 +109,7 @@ namespace Dystopia
 		{
 		public:
 			template <class NodeType, typename... Args>
-			Builder leaf(Args... args)
+			Builder task(Args... args)
 			{
 				mpRoot = Ctor::CreateShared<NodeType>((args)...);
 				return *this;

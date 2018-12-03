@@ -40,6 +40,7 @@ namespace Dystopia
 
 	void AiController::Awake()
 	{
+		bBlackboard = bTree.GetBlackboard();
 	}
 
 	void AiController::Init()
