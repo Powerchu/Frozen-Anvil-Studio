@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _AI_SYSTEM_H_
 #define _AI_SYSTEM_H_
 #include "System/Base/ComponentDonor.h"
+#include "System/Base/Systems.h"
 #include "System/AI/Blackboard.h"
 #include "System/AI/NeuralTree.h"
 #include "System/AI/TreeBuilder.h"
