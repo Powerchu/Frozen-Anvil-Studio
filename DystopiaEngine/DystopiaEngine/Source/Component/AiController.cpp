@@ -130,7 +130,7 @@ namespace Dystopia
 	{
 		return bTree.GetBlackboard();
 	}
-
+#if EDITOR
 	void AiController::EditorUI() noexcept
 	{
 		if (EGUI::Display::Button("Add Key", { 60,24 }))
@@ -583,5 +583,7 @@ namespace Dystopia
 			ImGui::EndPopup();
 		}
 	}
+
+#endif 
 }
 
