@@ -80,6 +80,7 @@ namespace Editor
 
 		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
+			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope5{ "Show Game Object ", "0" };
 			ShowGameObjects();
 			//auto& arrayOfGameObjects = GetCurrentScene()->GetAllGameObjects();
 			//for (auto& obj : arrayOfGameObjects)
@@ -241,7 +242,7 @@ namespace Editor
 		}
 
 		uint64_t id = _obj.GetID();
-		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &id, sizeof(uint64_t), _obj.GetName().c_str()))
+		if (EGUI::Display::StartPayload(EGUI::ePayloadTags::GAME_OBJ, &id, sizeof(uint64_t), _obj.GetNamePtr()))
 		{
 			EGUI::Display::EndPayload();
 		}
@@ -249,31 +250,29 @@ namespace Editor
 	
 	void HierarchyView::ShowGameObjects(void)
 	{
-		Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope{ "Show Game Object ", "0" };
-
 		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		auto& arrayOfGameObjects = ss->GetCurrentScene().GetAllGameObjects(); // GetCurrentScene()->GetAllGameObjects();
 
 		auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
 		auto& selections = ed->GetSelectedIDs();
-		for (auto& obj : arrayOfGameObjects)
+		for (size_t i = 0; i < arrayOfGameObjects.size(); i++)
 		{
-			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope2{ "Per Object", "Loop" };
-			if (obj.GetName() == StringHasher("___Scene_Camera___")) continue;
+			auto& obj = arrayOfGameObjects[i];
+			if (StringHasher(obj.GetNamePtr()) == StringHasher("___Scene_Camera___")) continue;
 
 			if (obj.GetComponent<Dystopia::Transform>()->GetParent())
 				continue;
 
+			EGUI::PushID(static_cast<int>(i));
 			if (obj.GetComponent<Dystopia::Transform>()->GetAllChild().size())
 			{
-				Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope3{ "Per Object", "ShowAsParent" };
 				ShowAsParent(obj, selections);
 			}
 			else
 			{
-				Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope4{ "Per Object", "ShoAsChild" };
 				ShowAsChild(obj, selections);
 			}
+			EGUI::PopID();
 		}
 
 		EGUI::Display::Dummy(Size().x, 50.f);
@@ -325,30 +324,29 @@ namespace Editor
 				break;
 			}
 		}
-		std::string uniqueifyName = _obj.GetName().c_str();
-		uniqueifyName += "##";
-		uniqueifyName += std::to_string(_obj.GetID());
-		bool tree = EGUI::Display::StartTreeNode(uniqueifyName.c_str(), &clicked, selected, false, true, false);
+		bool tree = EGUI::Display::StartTreeNode(_obj.GetNamePtr(), &clicked, selected, false, true, false);
 		GameObjectPayload(_obj);
 		GameObjectPopups(_obj);
-
 		if (tree)
 		{
 			if (clicked) 
 				SelectedObj(_obj);
 
 			auto& arrChild = _obj.GetComponent<Dystopia::Transform>()->GetAllChild();
-			for (auto& c : arrChild)
+			for (size_t n = 0; n < arrChild.size(); n++)
 			{
+				auto& c = arrChild[n];
 				Dystopia::GameObject *childObj = c->GetOwner();
 				if (childObj)
 				{
+					EGUI::PushID(static_cast<int>(n));
 					EGUI::Indent(20);
 					if (c->GetAllChild().size())
 						ShowAsParent(*childObj, _arr);
 					else
 						ShowAsChild(*childObj, _arr);
 					EGUI::UnIndent(20);
+					EGUI::PopID();
 				}
 			}
 			EGUI::Display::EndTreeNode();
@@ -359,7 +357,6 @@ namespace Editor
 
 	void HierarchyView::ShowAsChild(Dystopia::GameObject& _obj, const AutoArray<uint64_t>& _arr)
 	{
-		Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope{ "Show As Child", "full" };
 		bool selected = false;
 		for (auto& o : _arr)
 		{
@@ -369,26 +366,21 @@ namespace Editor
 				break;
 			}
 		}
-		std::string uniqueifyName = std::string{_obj.GetName().c_str()} + "##" + std::to_string(_obj.GetID());
-		Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope2{ "Show As Child", "SelectableTxt" };
-		if (EGUI::Display::SelectableTxt(uniqueifyName.c_str(), selected))
+		if (EGUI::Display::SelectableTxt(_obj.GetNamePtr(), selected))
 		{
 			SelectedObj(_obj);
 		}
-		Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope3{ "Show As Child", "GameObjectPayload" };
-		GameObjectPayload(_obj);
-		Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope4{ "Show As Child", "GameObjectPopups" };
+		if (!selected)
+		{
+			GameObjectPayload(_obj);
+		}
 		GameObjectPopups(_obj);
 	}
 
 	void HierarchyView::GameObjectPayload(Dystopia::GameObject& _obj)
 	{
 		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
-		auto allSelected = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetSelectedIDs();
-
-		for (auto& id : allSelected)
-			if (_obj.GetID() == id)
-				return;
+		auto& allSelected = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetSelectedIDs();
 
 		if (const auto id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{

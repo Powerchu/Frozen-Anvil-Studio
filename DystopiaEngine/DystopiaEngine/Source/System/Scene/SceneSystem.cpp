@@ -153,6 +153,8 @@ void Dystopia::SceneSystem::SceneChanged(void)
 		EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 		SerialObj.ConsumeEndBlock();
 		mNextSceneFile.clear();
+		for (auto& obj : mpCurrScene->GetAllGameObjects())
+			obj.Awake();
 		mpCurrScene->Init();
 		Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors();
 	}

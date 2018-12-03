@@ -415,7 +415,12 @@ uint64_t Dystopia::GameObject::GetID(void) const
 	return mnID;
 }
 
-HashString Dystopia::GameObject::GetName(void) const
+//HashString Dystopia::GameObject::GetName(void) const
+//{
+//	return mName;
+//}
+
+const HashString& Dystopia::GameObject::GetName(void) const
 {
 	return mName;
 }
