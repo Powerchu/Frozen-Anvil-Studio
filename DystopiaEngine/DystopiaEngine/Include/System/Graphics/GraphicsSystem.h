@@ -63,7 +63,9 @@ namespace Dystopia
 		void ToggleVsync(bool) noexcept;
 
 		bool GetDebugDraw(void) const;
-		void ToggleDebugDraw(bool);
+		void ToggleDebugDraw(bool) const;
+
+		void SetAllCameraAspect(float _x, float _y) const;
 
 		// Sets up Window for openGL rendering
 		bool InitOpenGL(Window&);
@@ -76,6 +78,7 @@ namespace Dystopia
 		void     LevelLoad(TextSerialiser&);
 		void     LoadMesh(const std::string&);
 		Texture* LoadTexture(const std::string&);
+		_DLL_EXPORT Texture* LoadTexture(const char *);
 		Shader*	 LoadShader(const std::string&);
 		Texture* LoadFont(const std::string&);
 
@@ -93,13 +96,18 @@ namespace Dystopia
 
 		// Temporary
 		std::map<std::string, Shader*> shaderlist;
+		_DLL_EXPORT Shader* GetShader(const char *) const;
 
+		void EditorAspectRatio(void);
 		void EditorUI(void);
 
 		void DrawSplash(void);
 	private:
 
 		Math::Vector4 mvDebugColour;
+		Math::Vector4 mvClearCol;
+		Math::Vector4 mvGlobalAspectRatio;
+
 		float mfGamma;
 		float mfDebugLineThreshold;
 

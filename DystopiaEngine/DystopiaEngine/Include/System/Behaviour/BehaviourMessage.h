@@ -69,7 +69,7 @@ namespace Dystopia
 		BehaviourMessage(void)
 			:mpWrapper{ new Wrapper<Tuple<>>{} }
 		{
-			
+
 		}
 
 		BehaviourMessage(const BehaviourMessage & _rhs)

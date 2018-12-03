@@ -37,12 +37,26 @@ namespace Dystopia
 
 		for (auto& cont : mComponents)
 		{
+			if (cont.GetOwner() == nullptr) continue;
+#if EDITOR
+			if (cont.GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ 
+				|| cont.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+#endif 
 			cont.Update(_dt);
 		}
 	}
 
 	void AISystem::PostUpdate()
 	{
+		for (auto& cont : mComponents)
+		{
+			if (nullptr == cont.GetOwner()) continue;
+
+			if (cont.GetFlags() & FLAG_REMOVE)
+			{
+				mComponents.Remove(&cont);
+			}
+		}
 	}
 
 	void AISystem::Shutdown()

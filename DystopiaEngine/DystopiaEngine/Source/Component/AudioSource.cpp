@@ -62,7 +62,8 @@ void Dystopia::AudioSource::Load(void)
 
 void Dystopia::AudioSource::Init(void)
 {
-	SetSound(EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(HashString{ mSoundName.c_str() }));
+	if (mSoundName.size())
+		SetSound(EngineCore::GetInstance()->GetSystem<SoundSystem>()->LoadSound(HashString{ mSoundName.c_str() }));
 	mReady = mPlayOnStart;
 }
 

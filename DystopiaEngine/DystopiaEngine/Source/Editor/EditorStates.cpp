@@ -154,6 +154,10 @@ void Editor::EditorStates::Update(float)
 			EditorMain::GetInstance()->GetPanel<SceneView>()->SetGizmoTranslate();
 		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_E))
 			EditorMain::GetInstance()->GetPanel<SceneView>()->SetGizmoScaler();
+		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_HOME))
+			EditorMain::GetInstance()->GetPanel<SceneView>()->ResetSceneCam();
+		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_F))
+			EditorMain::GetInstance()->GetPanel<SceneView>()->FocusGobj();
 	}
 
 	switch (mState)
@@ -221,7 +225,10 @@ void Editor::EditorStates::Message(eEMessage _msg)
 		auto oldState = mState;
 		mState = Editor::EditorMain::GetInstance()->GetCurState();
 		if (oldState == eState::MAIN && mState == eState::PLAY)
+		{
 			TempSave();
+			Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene().Init();
+		}
 		else if (oldState == eState::PLAY && mState == eState::MAIN)
 			TempLoad();
 	}
@@ -231,7 +238,6 @@ void Editor::EditorStates::Message(eEMessage _msg)
 		auto& win = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow();
 		HashString name{ sceneSystem->GetCurrentScene().GetSceneName().c_str() };
 		win.SetTitle(std::wstring{ name.begin(), name.end() });
-
 	}
 }
 

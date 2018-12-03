@@ -51,6 +51,8 @@ namespace Editor
 		float GetSensitivity(void) const;
 		void SetGizmoTranslate(void);
 		void SetGizmoScaler(void);
+		void ResetSceneCam(void);
+		void FocusGobj();
 
 	private:
 		enum eGizTool

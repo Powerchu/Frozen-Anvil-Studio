@@ -52,7 +52,7 @@ float Dystopia::BroadPhaseCircle::GetRadius() const
 
 float Dystopia::BroadPhaseCircle::GetRadiusGrowth(BroadPhaseCircle _other) const
 {
-	return BroadPhaseCircle{ *this, std::move(_other)}.GetRadius() - GetRadius();
+	return BroadPhaseCircle{ *this, Ut::Move(_other)}.GetRadius() - GetRadius();
 }
 
 Math::Point3D Dystopia::BroadPhaseCircle::GetOrigin() const

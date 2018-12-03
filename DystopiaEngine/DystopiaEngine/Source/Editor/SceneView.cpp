@@ -24,6 +24,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorClipboard.h"
 #include "Editor/EditorFactory.h"
 
+#include "../../Dependancies/ImGui/imgui_internal.h"
+
 #include "System/Input/InputSystem.h"
 #include "System/Driver/Driver.h"
 #include "System/Scene/Scene.h"
@@ -65,6 +67,7 @@ namespace Editor
 		mGizmoHovered{ false }, mCurrGizTool{ eTRANSLATE }, mpSceneSys{ nullptr }
 	{
 		EditorPanel::SetOpened(true);
+		EditorPanel::SetScrollEnabled(false);
 	}
 
 	SceneView::~SceneView(void)
@@ -72,13 +75,16 @@ namespace Editor
 	}
 
 	void SceneView::Load(void)
-	{}
+	{
+
+	}
 
 	bool SceneView::Init(void)
 	{
 		mpGfxSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::GraphicsSystem>();
 		mpSceneSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		EditorMain::GetInstance()->GetSystem<EditorFactory>()->DefaultSceneCamera();
+		SetScrollEnabled(false);
 		SceneChanged();
 		return true;
 	}
@@ -86,8 +92,12 @@ namespace Editor
 	void SceneView::Update(float _dt)
 	{
 		Dystopia::GameObject *temp = mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___");
+
 		if (temp)
 			mpSceneCamera = temp->GetComponent<Dystopia::Camera>();
+		if (!mpSceneCamera)
+			__debugbreak();
+
 		if (EditorMain::GetInstance()->GetCurState() == eState::MAIN)
 			mpGfxSys->Update(_dt);
 
@@ -112,6 +122,12 @@ namespace Editor
 
 		if (mpSceneCamera)
 			pTex = mpSceneCamera->GetSurface()->AsTexture();
+		else
+			__debugbreak();
+
+
+
+		const auto orig2 = ImGui::GetCursorPos();
 
 		AdjustImageSize(pTex);
 		AdjustDisplayPos();
@@ -123,7 +139,8 @@ namespace Editor
 			mAmFocused = true;
 		else
 			mAmFocused = false;
-		ImGui::SetCursorPos(ImVec2{ orig.x, orig.y + mImgSize.y });
+		
+
 
 		if (mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___"))
 		{
@@ -132,17 +149,7 @@ namespace Editor
 				AcceptPrefab(t);
 				EGUI::Display::EndPayloadReceiver();
 			}
-			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
-			{
-				AcceptTexture(t);
-				EGUI::Display::EndPayloadReceiver();
-			}
-			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS))
-			{
-				AcceptTexture(t);
-				EGUI::Display::EndPayloadReceiver();
-			}
-			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP))
+			if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
 			{
 				AcceptTexture(t);
 				EGUI::Display::EndPayloadReceiver();
@@ -166,6 +173,21 @@ namespace Editor
 			mClearSelection = false;
 			//EditorMain::GetInstance()->ClearSelections();
 		}
+		const auto camPos = mpSceneCamera->GetPosition();
+		const auto camSize = mpSceneCamera->GetSize();
+		const auto isPers = (mpSceneCamera->mnProjectionIndex == 1);
+
+		const auto lastPos = ImGui::GetCursorPos();
+		ImGui::SetItemAllowOverlap();
+		ImGui::SetCursorPos(ImVec2{ orig2.x + 1.f, orig2.y - 1.f });
+		EGUI::Display::Label(" Cam Pos: X[%.2f], Y[%.2f]", static_cast<float>(camPos.x), static_cast<float>(camPos.y));
+		ImGui::SetItemAllowOverlap();
+		EGUI::SameLine();
+		EGUI::Display::Label("Cam Scale: [%.2fx]", static_cast<float>(camSize.x));
+		ImGui::SetItemAllowOverlap();
+		EGUI::Display::Label(" Cam Mode: [%s]", (isPers ? "Perspective" : "Orthographic"));
+		ImGui::SetCursorPos(ImVec2{ lastPos.x, lastPos.y});
+
 		EGUI::Indent(2);
 	}
 
@@ -216,6 +238,8 @@ namespace Editor
 			const auto scale = mpSceneCamera->GetOwner()->GetComponent<Dystopia::Transform>()->GetGlobalScale();
 		
 			mpSceneCamera->GetOwner()->GetComponent<Dystopia::Transform>()->SetPosition(pos + Math::Pt3D{ vToMove.x * mMoveSens * scale.x, vToMove.y * mMoveSens * scale.y, 0.f });
+
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 	}
 
@@ -328,7 +352,7 @@ namespace Editor
 
 	void SceneView::AdjustImageSize(Dystopia::Texture *_pTex)
 	{
-		static constexpr float aspect = 16.f / 10.f;
+		const auto aspect = mpSceneCamera->GetAspectRatio();
 		float ix = static_cast<float>(aspect * _pTex->GetWidth());
 		float iy = static_cast<float>(_pTex->GetHeight());
 		float sx = Size().x;
@@ -395,11 +419,17 @@ namespace Editor
 			if (ImGui::IsMouseClicked(1))
 				mDragging = true;
 		}
+
 		if (mAmFocused || mDragging)
 		{
-			if (mDragging)				Move();
+			if (mDragging)
+			{
+				Move();
+			}
+
 			if (mToZoom != eZOOM_NONE)  Zoom(eZOOM_IN == mToZoom);
 		}
+
 		mToZoom = eZOOM_NONE;
 	}
 
@@ -462,11 +492,12 @@ namespace Editor
 				pNewRend->SetTexture(mpGfxSys->LoadTexture(_pFile->mPath.c_str()));
 				pNewRend->SetOwner(pGuaranteedTarget);
 				pNewRend->SetActive(pGuaranteedTarget->IsActive());
-				auto size = pNewRend->Resized();
+				pNewRend->ResizeToFit(0.1f);
+				/*auto size = pNewRend->Resized(0.1f);
 				auto nScale = pNewRend->GetOwner()->GetComponent<Dystopia::Transform>()->GetScale();
 				nScale.x = size.x;
 				nScale.y = size.y;
-				pNewRend->GetOwner()->GetComponent<Dystopia::Transform>()->SetGlobalScale(nScale);
+				pNewRend->GetOwner()->GetComponent<Dystopia::Transform>()->SetGlobalScale(nScale);*/
 				pNewRend->Awake();
 
 				if (pGuaranteedTarget->GetName() == defaultName)
@@ -518,6 +549,36 @@ namespace Editor
 	{
 		mCurrGizTool = eGizTool::eSCALE;
 		EditorMain::GetInstance()->GetSystem<EditorStates>()->ChangeGizmo(eSCALE);
+	}
+
+	void SceneView::ResetSceneCam()
+	{
+		if (mpSceneCamera)
+		{
+			mpSceneCamera->SetPosition(0, 0, 0);
+			mpSceneCamera->SetSize(1.f);
+		}
+	}
+
+	void SceneView::FocusGobj()
+	{
+		if (mpSceneCamera)
+		{
+			const auto& selectedIDs = EditorMain::GetInstance()->GetSystem<EditorClipboard>()->GetSelectedIDs();
+			if (!selectedIDs.size())
+				return;
+
+			if (selectedIDs.size() == 1)
+			{
+				if (const auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(selectedIDs[0]))
+				{
+					auto objPos = o->GetComponent<Dystopia::Transform>()->GetGlobalPosition();
+					mpSceneCamera->SetPosition(objPos);
+				}
+				else
+					EditorMain::GetInstance()->GetSystem<EditorClipboard>()->RemoveGameObject(selectedIDs[0]);
+			}
+		}
 	}
 
 	void SceneView::DrawGizmoMul(const AutoArray<uint64_t>& _arrIDs)

@@ -12348,7 +12348,7 @@ static void ColorPickerOptionsPopup(ImGuiColorEditFlags flags, const float* ref_
 // Edit colors components (each component in 0.0f..1.0f range).
 // See enum ImGuiColorEditFlags_ for available options. e.g. Only access 3 floats if ImGuiColorEditFlags_NoAlpha flag is set.
 // With typical options: Left-click on colored square to open color picker. Right-click to open option menu. CTRL-Click over input fields to edit them and TAB to go to next item.
-bool ImGui::ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flags)
+bool ImGui::ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flags, ImVec2)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)

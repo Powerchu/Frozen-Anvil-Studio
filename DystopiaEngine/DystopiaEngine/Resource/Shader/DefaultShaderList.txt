@@ -12,3 +12,5 @@
 "Font Shader","Resource/Shader/Font.dvert","Resource/Shader/FontFrag.dfrag",
 [START_SHADER]
 "Collider Shader","Resource/Shader/DefaultVert.dvert","Resource/Shader/Collider.dfrag",
+[START_SHADER]
+"Health","Resource/Shader/DefaultVert.dvert","Resource/Shader/HealthBar.dfrag",

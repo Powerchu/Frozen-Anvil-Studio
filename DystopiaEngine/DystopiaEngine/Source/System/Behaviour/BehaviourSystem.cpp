@@ -170,7 +170,8 @@ namespace Dystopia
 #endif
 		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
-		mHotloader->SetCompilerFlags(L"cl /W4 /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
+
+		mHotloader->SetCompilerFlags(L"cl /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
 
 
 		mHotloader->Init();
@@ -325,6 +326,8 @@ namespace Dystopia
 						if (BehaviourClone)
 						{
 							elem.mpBehaviour = BehaviourClone();
+							if (elem.mpBehaviour == nullptr)
+								__debugbreak();
 							found = true;
 
 							mvRecentChanges.Insert(&elem);
@@ -337,54 +340,55 @@ namespace Dystopia
 					BehaviourWrap wrap;
 					using fpClone = Behaviour * (*) ();
 					const fpClone BehaviourClone = (*start)->GetDllFunc<Behaviour *>(DllName + "Clone");
-					wrap.mName = DllName;
-					wrap.mpBehaviour = (BehaviourClone());
-					mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Ut::Move(wrap)));
-					AutoArray< BehaviourPair> temp;
-					mvBehaviours.push_back(std::make_pair(std::wstring{ DllName.begin(), DllName.end() }, temp));
+					if (BehaviourClone)
+					{
+						wrap.mName = DllName;
+						wrap.mpBehaviour = (BehaviourClone());
+						mvRecentChanges.Insert(mvBehaviourReferences.Emplace(Ut::Move(wrap)));
+						AutoArray< BehaviourPair> temp;
+						mvBehaviours.push_back(std::make_pair(std::wstring{ DllName.begin(), DllName.end() }, temp));
+					}
 				}
 				++start;
 			}
 		}
-		//for (auto & elem : mvRecentChanges)
-		//{
-		//	std::wstring strName{ elem->mName.begin(), elem->mName.end() };
-		//	for (auto & i : mvBehaviours)
-		//	{
-		//		if (i.first == strName)
-		//		{
-		//			for (auto & iter : i.second)
-		//			{
-		//				if (iter.second != nullptr)
-		//					continue;
+		for (auto & elem : mvRecentChanges)
+		{
+			std::wstring strName{ elem->mName.begin(), elem->mName.end() };
+			for (auto & i : mvBehaviours)
+			{
+				if (i.first == strName)
+				{
+					for (auto & iter : i.second)
+					{
+						if (iter.second != nullptr)
+							continue;
 
-		//				auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-		//				auto ptr = elem->mpBehaviour->Duplicate();
-		//				if (auto x = SceneSys->FindGameObject(iter.first))
-		//				{
-		//					x->AddComponent(ptr, BehaviourTag{});
-		//					iter.second = ptr;
-		//				}
-		//				else
-		//				{
-		//					/*Reattach to objects not found in game scene*/
-		//					if (::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, iter.first, false))
-		//					{
-		//						iter.second = ptr;
-		//					}
-		//					else
-		//					{
-		//						delete ptr;
-		//						iter.second = nullptr;
-		//						iter.first  = 0;
-		//					}
-		//				}
-
-
-		//			}
-		//		}
-		//	}
-		//}
+						auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+						auto ptr = elem->mpBehaviour->Duplicate();
+						if (auto x = SceneSys->FindGameObject(iter.first))
+						{
+							x->AddComponent(ptr, BehaviourTag{});
+							iter.second = ptr;
+						}
+						else
+						{
+							/*Reattach to objects not found in game scene*/
+							if (::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorFactory>()->ReattachToPrefab(ptr, iter.first, false))
+							{
+								iter.second = ptr;
+							}
+							else
+							{
+								delete ptr;
+								iter.second = nullptr;
+								iter.first  = 0;
+							}
+						}
+					}
+				}
+			}
+		}
 
 		vTempFileName.clear();
 		mvRecentChanges.clear();
@@ -595,14 +599,26 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 
 			_obj.InsertStartBlock("str");
 			_obj << str;
+
+			int n = 0;
+
+			for (auto& e : i.second)
+			{
+				if(e.second)
+					n += !(e.second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ);
+			}
+
+
 			/*Save the number of Pointers*/
-			_obj << i.second.size();
+			_obj << n;
 			for (auto & iter : i.second)
 			{
+				if (iter.second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+
 				_obj.InsertStartBlock("BEHAVIOUR_BLOCK");
 				/*Owner ID*/
 				_obj << iter.first;
-				_obj << iter.second->GetOwner()->GetFlag();
+				_obj << static_cast<unsigned>(iter.second->GetOwner()->GetFlags());
 				/*Save the Member Data*/
 				if (iter.second)
 				{
@@ -654,6 +670,7 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 				_obj.InsertStartBlock("BEHAVIOUR_BLOCK");
 				/*Owner ID*/
 				_obj << iter.first;
+				_obj << static_cast<unsigned>(iter.second->GetOwner()->GetFlags());
 				/*Save the Member Data*/
 				if (iter.second)
 				{
@@ -884,6 +901,31 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 		}
 	}
 
+	void BehaviourSystem::ClearAllEditorBehaviours()
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (size_t u = 0; u<i.second.size(); ++u)
+			{
+				if (i.second[u].second != nullptr)
+				{
+					if (!(i.second[u].second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ))
+					{
+
+					}
+					else
+					{
+						delete i.second[u].second;
+						i.second[u].second = nullptr;
+						i.second.FastRemove(&i.second[u]);
+						u--;
+					}
+				}
+			}
+		}
+	}
+
+#if EDITOR
 
 	void BehaviourSystem::InitAllBehaviours()
 	{
@@ -928,7 +970,11 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 			{
 				if (i.first == _name)
 				{
-					auto * ptr = elem.mpBehaviour->Duplicate();
+					if (elem.mpBehaviour == nullptr) __debugbreak();
+#endif
+					Behaviour * ptr = nullptr;
+					if (elem.mpBehaviour != nullptr)
+						ptr = elem.mpBehaviour->Duplicate();
 
 					i.second.push_back(std::make_pair(_ID, ptr));
 					return ptr;
@@ -991,14 +1037,22 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 
 	void BehaviourSystem::ReplaceID(uint64_t _old, uint64_t _new, GameObject * _newOwner)
 	{
-		for (auto & i : mvBehaviours)
+		for(auto & i : mvBehaviours)
 		{
-			for (auto & iter : i.second)
+			for(size_t u=0; u<i.second.size(); ++u)
 			{
-				if (iter.first == _old)
+				if(i.second[u].second != nullptr)
 				{
-					iter.first = _new;
-					iter.second->SetOwner(_newOwner);
+					if(i.second[u].second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+					{
+					}
+					else
+					{
+						delete i.second[u].second;
+						i.second[u].second = nullptr;
+						i.second.FastRemove(&i.second[u]);
+						u--;
+					}
 				}
 			}
 		}

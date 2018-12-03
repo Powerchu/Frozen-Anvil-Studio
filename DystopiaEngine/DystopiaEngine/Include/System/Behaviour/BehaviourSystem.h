@@ -35,6 +35,9 @@ namespace Dystopia
 			:mName{ _name }, mpBehaviour{ _pointer }
 		{
 		}
+		//BehaviourWrap(const BehaviourWrap &)            = delete;
+		BehaviourWrap& operator=(const BehaviourWrap&) = delete;
+
 		std::string mName;					      /*Name of BehaviourScript*/
 		Behaviour * mpBehaviour = nullptr;
 		//std::shared_ptr<Behaviour> mpBehaviour;   /*SharedPtr to Behaviour Component*/
@@ -76,6 +79,8 @@ namespace Dystopia
 
 		void NewBehaviourReference(BehaviourWrap _BWrap);
 		void InitAllBehaviours();
+
+		void ClearAllEditorBehaviours();
 
 #if EDITOR
 
@@ -174,9 +179,9 @@ namespace Dystopia
 		{
 			if (!_GameObj)
 				return;
-
-			uint64_t _ID = _GameObj->GetID();
 			BehaviourMessage Message(_FuncParams...);
+			
+			uint64_t _ID = _GameObj->GetID();
 
 			auto Array = _GameObj->GetAllBehaviours();
 			for (auto & BehaveElem : Array)
@@ -190,7 +195,7 @@ namespace Dystopia
 				{
 					_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
 					_EDITOR_CODE(_GameObj->RemoveComponent(BehaveElem));
-					_EDITOR_CODE(BehaveElem->DestroyComponent());
+					_EDITOR_CODE(BehaveElem->DestroyComponent()); 
 				}
 #else
 				BehaveElem->ReceiveMessage(_FuncName, Message);

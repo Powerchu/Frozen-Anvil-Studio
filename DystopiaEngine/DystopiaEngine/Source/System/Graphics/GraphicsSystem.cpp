@@ -74,6 +74,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #if EDITOR
 #include "Editor/EGUI.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorCommands.h"
 #endif 
 
 
@@ -90,10 +92,10 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mOpenGL{ nullptr }, mPixelFormat{ 0 }, mAvailable{ 0 }, mfGamma{ 2.0f },
-	mfDebugLineThreshold{ 0.958f }, mvDebugColour{ .0f, 1.f, .0f, .1f }, mbVsync{ false }
+	mvDebugColour{.0f, 1.f, .0f, .1f}, mvClearCol{0, 0, 0, 0}, mfGamma{2.0f}, mfDebugLineThreshold{0.958f}, mOpenGL{nullptr},
+	mPixelFormat{0}, mAvailable{0}, mSettings(0)
+	, mbVsync{false}, mvGlobalAspectRatio{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT,0,0}
 {
-
 }
 
 Dystopia::GraphicsSystem::~GraphicsSystem(void)
@@ -121,13 +123,25 @@ void Dystopia::GraphicsSystem::ToggleVsync(bool b) noexcept
 	}
 }
 
-void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw)
+void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw) const
 {
 	const auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
 	//auto bDebugDraw = !CamSys->GetMasterCamera()->DrawDebug();
 
 	for (auto& e : CamSys->GetAllCameras())
 		e.SetDebugDraw(_bDebugDraw);
+}
+
+void Dystopia::GraphicsSystem::SetAllCameraAspect(const float _x, const float _y) const
+{
+	const auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
+	//auto bDebugDraw = !CamSys->GetMasterCamera()->DrawDebug();
+
+	for (auto& c : CamSys->GetAllCameras())
+	{
+		c.SetViewAspect(_x, _y);
+		c.Awake();
+	}
 }
 
 bool Dystopia::GraphicsSystem::GetDebugDraw(void) const
@@ -369,6 +383,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		s->Bind();
 		s->UploadUniform("ProjectMat", _Proj);
 		s->UploadUniform("ViewMat", _View);
+		s->UploadUniform("vColor", r->GetTint());
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
 			DrawRenderer(r, s, mfGamma);
@@ -493,7 +508,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 
 	StartFrame();
 
-	glClearColor(.05f, .05f, .05f, .0f);
+	glClearColor(mvClearCol.x, mvClearCol.y, mvClearCol.z, mvClearCol.w);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 
 	/*
@@ -539,6 +554,13 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 		}
 	}
 
+	for(auto& e : mViews)
+	{
+		e.Bind();
+
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	}
+
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
 	{
@@ -553,22 +575,22 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			Math::Matrix4 View = Cam.GetViewMatrix();
 			Math::Matrix4 Proj = Cam.GetProjectionMatrix();
 
-			auto surface = Cam.GetSurface();
-			auto vp = Cam.GetViewport();
+			const auto surface = Cam.GetSurface();
+			const auto vp = Cam.GetViewport();
 
 			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY),
 				static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
 
 			// Temporary code
 			surface->Bind();
-			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+			//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 			DrawScene(Cam, View, Proj);
 
 			if (Cam.DrawDebug())
 				DrawDebug(Cam, View, Proj);
 
-			// surface->Unbind();
+			surface->Unbind();
 		}
 	}
 
@@ -615,7 +637,7 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
-
+	SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
 }
 
 void Dystopia::GraphicsSystem::EndFrame(void)
@@ -626,6 +648,9 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	auto& w = EngineCore::Get<WindowManager>()->GetMainWindow();
 
 	auto& fb = GetFrameBuffer();
+	GLsizei const w = static_cast<GLsizei>(fb.AsTexture()->GetWidth()), h = static_cast<GLsizei>(fb.AsTexture()->GetHeight());
+
+	glViewport(0, 0, w, h);
 
 #if EDITOR
 	fb.Bind();
@@ -634,22 +659,23 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	glViewport(0, 0, w.GetFullWidth(), w.GetFullHeight());
 #endif
 
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	GetGameView().AsTexture()->Bind(0);
 	GetUIView().AsTexture()->Bind(1);
 
-	auto const VP = Math::Mat4();
-	auto const M = Math::Scale(2.f, 2.f, 1.f);
-
+	static Math::Matrix4 const Identity{};
+	auto const model =  Math::Scale(2.f, -2.f);
 	Shader* shader = shaderlist["FinalStage"];
 	shader->Bind();
-	shader->UploadUniform("ProjectMat", VP);
-	shader->UploadUniform("ViewMat", VP);
-	shader->UploadUniform("ModelMat", M);
+	shader->UploadUniform("ViewMat", Identity);
+	shader->UploadUniform("ProjectMat", Identity);
+	shader->UploadUniform("ModelMat", model);
 	//shader->UploadUniform("Gamma", mfGamma);
 
 	quad->DrawMesh(GL_TRIANGLES);
+	if (auto err = glGetError())
+		__debugbreak();
 
 #if EDITOR
 	fb.Unbind();
@@ -676,15 +702,15 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 	mViews.Emplace(2048u, 2048u, true);
 	mViews.Emplace(1024u, 1024u, true);
 	mViews.Emplace(
-		static_cast<unsigned>(Gbl::WINDOW_WIDTH),
-		static_cast<unsigned>(Gbl::WINDOW_HEIGHT),
+		static_cast<unsigned>(mvGlobalAspectRatio.x),
+		static_cast<unsigned>(mvGlobalAspectRatio.y),
 		false
 	);
 
 #if EDITOR
 	mViews.Emplace(2048u, 2048u, false);
 #endif
-
+	mvClearCol = { 0,0,0,0 };
 	DRAW_MODE = GL_TRIANGLES;
 }
 
@@ -709,6 +735,8 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 	_in >> mfDebugLineThreshold;
 	_in >> mvDebugColour;
 	_in >> mbVsync;
+	_in >> mvClearCol;
+	_in >> mvGlobalAspectRatio;
 
 	ToggleVsync(mbVsync);
 }
@@ -729,6 +757,8 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 	_out << mfDebugLineThreshold;
 	_out << mvDebugColour;
 	_out << mbVsync;
+	_out << mvClearCol;
+	_out << mvGlobalAspectRatio;
 }
 
 
@@ -747,6 +777,11 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 }
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _strName)
+{
+	return EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadTexture(_strName);
+}
+
+Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const char * _strName)
 {
 	return EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadTexture(_strName);
 }
@@ -922,14 +957,20 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 }
 
 
+Dystopia::Shader* Dystopia::GraphicsSystem::GetShader(const char * _str) const
+{
+	return shaderlist.at(_str);
+}
+
+
+#if EDITOR			
 void Dystopia::GraphicsSystem::EditorUI(void)
 {
 	mbDebugDrawCheckBox = GetDebugDraw();
-#if EDITOR			
 	//const auto pCore = EngineCore::GetInstance();
 	//const auto pCamSys = pCore->GetSystem<CameraSystem>();
-
-	const auto result = EGUI::Display::DragFloat("Gamma       ", &mfGamma, 0.1f, 0.1f, 10.f);
+	EGUI::PushLeftAlign(160);
+	const auto result = EGUI::Display::DragFloat("Gamma", &mfGamma, 0.1f, 0.1f, 10.f);
 	switch (result)
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
@@ -946,36 +987,48 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	}
 
 	//const auto& sceneCam = pCamSys->GetMasterCamera();
-	if (EGUI::Display::CheckBox("V Sync      ", &mbVsync))
+	if (EGUI::Display::CheckBox("V Sync", &mbVsync))
 	{
 		ToggleVsync(mbVsync);
 	}
 
+	EditorAspectRatio();
+
 	//const auto& sceneCam = pCamSys->GetMasterCamera();
-	if (EGUI::Display::CheckBox("Debug Draw  ", &mbDebugDrawCheckBox))
+	if (EGUI::Display::CheckBox("Debug Draw", &mbDebugDrawCheckBox))
 	{
 		ToggleDebugDraw(mbDebugDrawCheckBox);
 		//EGUI::GetCommandHND()->InvokeCommand<Camera>(&Camera::mbDebugDraw, tempBool);
 	}
 
-	auto result2 = EGUI::Display::VectorFields("Debug Color ", &mvDebugColour, 0.01f, 0.f, 1.f);
-	for (const auto& elem : result2)
+	EGUI::Display::Label("Collider Color");
+	EGUI::SameLine(59);
+	if (ImGui::ColorEdit4("Active Color", &mvDebugColour[0], (ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoLabel
+		| ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoOptions)))
 	{
-		switch (elem)
-		{
-		case EGUI::eDragStatus::eSTART_DRAG:
-			//EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mvDebugColour);
-			break;
-		case EGUI::eDragStatus::eENTER:
-		case EGUI::eDragStatus::eEND_DRAG:
-		case EGUI::eDragStatus::eDEACTIVATED:
-			//EGUI::GetCommandHND()->EndRecording();
-			break;
-		case EGUI::eDragStatus::eDRAGGING:
-		default:
-			break;
-		}
+
 	}
+
+	//EGUI::PushID(0);
+	//auto result2 = EGUI::Display::VectorFields("", &mvDebugColour, 0.01f, 0.f, 1.f);
+	//for (const auto& elem : result2)
+	//{
+	//	switch (elem)
+	//	{
+	//	case EGUI::eDragStatus::eSTART_DRAG:
+	//		//EGUI::GetCommandHND()->StartRecording<GraphicsSystem>(&GraphicsSystem::mvDebugColour);
+	//		break;
+	//	case EGUI::eDragStatus::eENTER:
+	//	case EGUI::eDragStatus::eEND_DRAG:
+	//	case EGUI::eDragStatus::eDEACTIVATED:
+	//		//EGUI::GetCommandHND()->EndRecording();
+	//		break;
+	//	case EGUI::eDragStatus::eDRAGGING:
+	//	default:
+	//		break;
+	//	}
+	//}
+	//EGUI::PopID();
 
 	const auto result3 = EGUI::Display::DragFloat("Debug Line Threshold", &mfDebugLineThreshold, 0.01F, 0.F, 10.F);
 
@@ -994,7 +1047,57 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 		break;
 	}
 
+	EGUI::Display::Label("Background");
+	EGUI::SameLine(83);
+	if (ImGui::ColorEdit4("BG Color", &mvClearCol[0], (ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoLabel
+		| ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoOptions)))
+	{
+		
+	}
 
-#endif 
+	EGUI::PopLeftAlign();
+
+
+
+
 }
 
+void Dystopia::GraphicsSystem::EditorAspectRatio()
+{
+	static int eAspect = 0;
+	if (mvGlobalAspectRatio == Math::Vec4{1600,900,0,0})
+	{
+		eAspect = 0;
+	}
+	else if (mvGlobalAspectRatio == Math::Vec4{ 1440,900,0,0 })
+	{
+		eAspect = 1;
+	}
+	else
+	{
+		eAspect = 2;
+	}
+
+	std::string arr[3]{"1600x900px [16:9]", "1440x900px [16:10]", "1024x768px [4:3]",  };
+
+	if (EGUI::Display::DropDownSelection("Aspect Ratio", eAspect, arr, 100.f))
+	{
+		switch (eAspect)
+		{
+		case 0: // 16:9
+			mvGlobalAspectRatio = { 1600,900,0,0 };
+			break;
+		case 1: // 16:10
+			mvGlobalAspectRatio = { 1440,900,0,0 };
+			break;
+		case 2: // 4:3
+			mvGlobalAspectRatio = { 1024,768,0,0 };
+			break;
+		default:
+			break;
+		}
+
+		SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
+	}
+}
+#endif 

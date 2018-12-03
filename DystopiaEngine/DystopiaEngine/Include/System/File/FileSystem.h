@@ -11,6 +11,8 @@
 #include "DataStructure/HashString.h"
 #include "DataStructure/MagicArray.h"
 
+#include "Globals.h"
+
 namespace Dystopia
 {
 	/*Predeclaration*/
@@ -84,6 +86,7 @@ namespace Dystopia
 
 		void ChangeDirPath(eFileDir _dirToChange, const HashString& _newPath);
 		HashString FindFilePath(const HashString& _file, eFileDir _parentDir);
+		_DLL_EXPORT_ONLY HashString GetFromResource(const char *_str);
 
 	private:
 
@@ -118,7 +121,7 @@ namespace Dystopia
 		case eFileDir::eHeader:
 		case eFileDir::eResource:
 		case eFileDir::eSource:
-		case eFileDir::eAppData:
+		case eFileDir::eCurrent:
 		{
 			if constexpr (std::is_same_v<T, std::string>)
 			{
