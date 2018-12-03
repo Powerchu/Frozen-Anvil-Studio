@@ -80,7 +80,7 @@ namespace Editor
 
 		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
-			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope5{ "Show Game Object ", "0" };
+			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope5{ "Show Game Object ", "0" };
 			ShowGameObjects();
 			//auto& arrayOfGameObjects = GetCurrentScene()->GetAllGameObjects();
 			//for (auto& obj : arrayOfGameObjects)
@@ -255,15 +255,18 @@ namespace Editor
 
 		auto ed = EditorMain::GetInstance()->GetSystem<EditorClipboard>(); // GetMainEditor();
 		auto& selections = ed->GetSelectedIDs();
-		for (size_t i = 0; i < arrayOfGameObjects.size(); i++)
+		int j = 0;
+		for (auto& obj : arrayOfGameObjects)
 		{
-			auto& obj = arrayOfGameObjects[i];
-			if (StringHasher(obj.GetNamePtr()) == StringHasher("___Scene_Camera___")) continue;
+
+			j++;
+			if (StringHasher(obj.GetNamePtr()) == StringHasher("___Scene_Camera___")) 
+				continue;
 
 			if (obj.GetComponent<Dystopia::Transform>()->GetParent())
 				continue;
 
-			EGUI::PushID(static_cast<int>(i));
+			EGUI::PushID(j);
 			if (obj.GetComponent<Dystopia::Transform>()->GetAllChild().size())
 			{
 				ShowAsParent(obj, selections);

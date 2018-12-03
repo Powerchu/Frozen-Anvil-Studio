@@ -355,6 +355,16 @@ namespace Editor
 		GetAllFiles(mArrAllFiles, mpRootFolder);
 		SortAllFiles(mArrAllFiles);
 		mpCurrentFolder = FindFolder(currentSelectionName);
+
+		for (auto& f : mArrAllFiles)
+		{
+			if (HashString::nPos == f->mPath.find("Temp") && f->mTag == EGUI::ePayloadTags::PREFAB)
+			{
+				int out = -1;
+				if (!EditorMain::GetInstance()->GetSystem<EditorFactory>()->FindMasterPrefab(f->mName, out))
+					EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mName);
+			}
+		}
 	}
 
 	void ProjectResource::FocusOnFile(const HashString& _fileName)

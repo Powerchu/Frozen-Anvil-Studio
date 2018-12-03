@@ -688,7 +688,7 @@ namespace EGUI
 		{
 			auto originalPos = ImGui::GetCursorPos();
 
-			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope{ "FULL ", "0" };
+			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope{ "ImagePayload", "full" };
 
 			auto pFile = static_cast<::Editor::File*>(_pData);
 			if (!pFile->mpImgData)
@@ -710,8 +710,8 @@ namespace EGUI
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 
-			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope1{ "FIRST ", "1" };
 
+			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope2{ "ImagePayload", "2" };
 			//HashString invi{ "##CPLBtnI" };
 
 			
@@ -749,7 +749,6 @@ namespace EGUI
 			case DDS:
 				return ImagePayload(_uniqueId, _label, _tooltip, _displaySize, _tagLoad, _pData, _dataSize);
 			}
-
 			ImVec2 pos = ImGui::GetCursorScreenPos();
 			ImVec2 size{ _displaySize.x, _displaySize.y };
 			const float iconWidth = size.x / 2;
