@@ -184,6 +184,7 @@ void Dystopia::Factory::LoadSegmentB(GameObject& _obj, Dystopia::TextSerialiser&
 					}
 				}
 			}
+			ptr->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 			ptr->SetOwner(&_obj);
 			_obj.AddComponent(ptr, Dystopia::BehaviourTag{});
 		}
