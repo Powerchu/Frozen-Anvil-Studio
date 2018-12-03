@@ -24,6 +24,7 @@
 #include "System/Window/WindowManager.h"
 #include "System/Window/Window.h"
 #include "IO/TextSerialiser.h"
+#include "Component/AiController.h"
 #include <utility>
 
 namespace Dystopia
@@ -163,7 +164,14 @@ namespace Dystopia
 						{
 							//iter.first = iter.second->GetOwner()->GetID();
 							if (auto x = iter.second->GetOwner())
+							{
+								if (auto ai = x->GetComponent<AiController>())
+								{
+									if (ai->GetTreeAsRef().IsValidTree())
+										ai->ClearTree();
+								}
 								x->RemoveComponent(iter.second);
+							}
 							//iter.second->GetOwner()->RemoveComponent(iter.second);
 							delete iter.second;
 							iter.second = nullptr;

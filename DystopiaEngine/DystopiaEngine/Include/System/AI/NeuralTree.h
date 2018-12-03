@@ -43,11 +43,20 @@ namespace Dystopia
 				FAIL
 			};
 
+			virtual unsigned GetNodeType(void) const { return unsigned(-1); }
+			virtual HashString GetEditorName(void) const { return "Generic Node"; }
+
+			uint64_t GetID(void) const { return mnID; }
+			uint64_t GetParentID(void) const { return mnParentID; }
+			
+			void SetID(const uint64_t& _id) { mnID = _id; }
+			void SetParentId(const uint64_t& _id) { mnParentID = _id; }
+
 			virtual ~Node() = default;
 
 			virtual void Init() {}
 			virtual eStatus Update() = 0;
-			virtual std::string GetEditorName(void) const = 0;
+			
 			virtual void Exit(eStatus) {}
 
 			eStatus Tick() 
@@ -80,10 +89,8 @@ namespace Dystopia
 
 		protected:
 			eStatus mStatus = eStatus::INVALID;
-		private:
 			uint64_t mnID{ GUIDGenerator::GetUniqueID() };
-			uint64_t mnParentID{};
-			HashString mnName;
+			uint64_t mnParentID{unsigned(-1)};
 
 			SharedPtr<Node> mAssignedTree;
 		};
@@ -101,11 +108,26 @@ namespace Dystopia
 		class Composite : public Node
 		{
 		public:
+			unsigned GetNodeType(void) const override { return unsigned(0); }
+			HashString GetEditorName(void) const override { return "Composite Node"; }
+
 			Composite() : iter(mparrChildren.begin()) {}
 			virtual ~Composite() = default;
 
 			void AddChild(const Node::Ptr& child) { mparrChildren.Insert(child); }
 			bool HasChildren() const { return !mparrChildren.IsEmpty(); }
+
+			auto GetAllChildren(void) const
+			{
+				MagicArray<Node::Ptr> ToRet;
+
+				for (auto elem : mparrChildren)
+				{
+					ToRet.Emplace(elem);
+				}
+
+				return Ut::Move(ToRet);
+			}
 
 		protected:
 			MagicArray<Node::Ptr> mparrChildren;
@@ -120,10 +142,18 @@ namespace Dystopia
 		class Decorator : public Node
 		{
 		public:
+			unsigned GetNodeType(void) const override { return unsigned(1); }
+			HashString GetEditorName(void) const override { return "Decorator Node"; }
+
 			virtual ~Decorator() = default;
 
 			void SetChild(const Node::Ptr& node) { mpChild = node; }
 			bool HasChild() const { return mpChild != nullptr; }
+
+			Node::Ptr GetChild(void) const
+			{
+				return mpChild;
+			}
 
 		protected:
 			Node::Ptr mpChild;
@@ -137,6 +167,9 @@ namespace Dystopia
 		class Task : public Node
 		{
 		public:
+			unsigned GetNodeType(void) const override { return unsigned(2); }
+			HashString GetEditorName(void) const override { return "Task Node"; }
+
 			Task() = default;
 
 			Task(Blackboard::Ptr _blackboard) 
@@ -157,14 +190,14 @@ namespace Dystopia
 		public:
 			BehaviourTree()
 				: mpBlackboard(Ctor::CreateShared<Blackboard>())
-				, mnID{ GUIDGenerator::GetUniqueID() }
+				, mnID{ unsigned(-1) }
 			{
 
 			}
 
-			BehaviourTree(const std::string _name)
+			BehaviourTree(const HashString _name)
 				: mpBlackboard(Ctor::CreateShared<Blackboard>())
-				, mnID{ GUIDGenerator::GetUniqueID() }
+				, mnID{ unsigned(-1) }
 				, mnName(_name)
 			{
 
@@ -187,6 +220,7 @@ namespace Dystopia
 			void SetRoot(const Node::Ptr& node)
 			{
 				mpRoot = node;
+				mnID = mpRoot->GetID();
 			}
 
 			Blackboard::Ptr GetBlackboard() const
@@ -214,7 +248,8 @@ namespace Dystopia
 				return (mpRoot.GetRaw() != nullptr);
 			}
 
-			std::string GetEditorName(void) const override { return mnName; }
+			HashString GetEditorName(void) const override { return mnName; }
+			Composite::Ptr GetRoot() const { return mpRoot; }
 
 		private:
 			Node::Ptr mpRoot;
@@ -222,7 +257,7 @@ namespace Dystopia
 			Blackboard::Ptr mpSharedboard;
 
 			uint64_t mnID;
-			std::string mnName{ "Generic AI Tree" };
+			HashString mnName{ "Generic AI Tree" };
 		};
 
 	}

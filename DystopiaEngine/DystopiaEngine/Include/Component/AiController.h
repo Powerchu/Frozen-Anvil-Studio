@@ -64,8 +64,15 @@ namespace Dystopia
 		BehaviourTree::Ptr GetTreeAsPtr(void);
 		Blackboard::Ptr GetBlackboard(void) const;
 
+		void ClearTree(void);
+		
 #if EDITOR
 		/*=================Editor Stuff=====================*/
+		void EditorCurrentStatus();
+		void RecursiveTree(Node::Ptr) const;
+		void EditorTreeView();
+		void AddKeyToMap();
+
 		void EditorFunctionNode();
 		void EditorStringNode();
 		void EditorObjectNode();
@@ -82,6 +89,8 @@ namespace Dystopia
 	private:
 		BehaviourTree bTree;
 		Blackboard::Ptr mpBlackboard;
+
+		Node::eStatus mNodeStatus;
 	};
 }
 #endif

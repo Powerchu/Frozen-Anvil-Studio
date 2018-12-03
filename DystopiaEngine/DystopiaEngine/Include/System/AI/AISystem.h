@@ -26,6 +26,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	namespace AI
+	{
+		const auto& key_select = [](auto pair) {return pair.first; };
+		const auto& value_select = [](auto pair) {return pair.second; };
+
+		constexpr float DEFAULT_ALIGN = 5.f;
+		constexpr float BTN_SZ = 120.f;
+	}
+
 	using namespace NeuralTree;
 	class AiController;
 

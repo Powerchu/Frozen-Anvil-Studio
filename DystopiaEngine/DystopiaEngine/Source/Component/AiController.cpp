@@ -30,19 +30,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	namespace AI
-	{
-		const auto& key_select		= [](auto pair) {return pair.first; };
-		const auto& value_select	= [](auto pair) {return pair.second; };
-
-		constexpr float DEFAULT_ALIGN = 5.f;
-		constexpr float BTN_SZ = 120.f;
-	}
-
 	AiController::AiController(void)
-		:mpBlackboard(Ctor::CreateShared<Blackboard>())
+		: mpBlackboard(Ctor::CreateShared<Blackboard>()), mNodeStatus(Node::eStatus::INVALID)
 	{
-		
 	};
 
 	/*void AiController::Load()
@@ -52,29 +42,21 @@ namespace Dystopia
 	void AiController::Awake()
 	{
 		bTree.SetBlackboard(mpBlackboard);
+
+		/*const auto blackboard = mpBlackboard;
+
+		NeuralTree::Builder()
+			.composite<Selector>()
+				.decorator<Succeeder>()
+					.task<EatFood>(blackboard)
+				.end()
+			.end()
+		.Build(bTree);*/
 	}
 
 	void AiController::Init()
 	{
-		auto blackboard = mpBlackboard;
-
-
-		// if (mpTarget) 
-		// {
-		// 	vectorT = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
-		// }
-		if (blackboard != nullptr)
-		{
-			const auto CamObj = EngineCore::Get<SceneSystem>()->FindGameObject_cstr("Main Camera")->GetID();
-			DEBUG_PRINT(eLog::MESSAGE, "SetInt");
-			blackboard->SetBool("Health", false);
-			blackboard->SetBool("Test", true);
-			blackboard->SetInt("Test123", 123123);
-			blackboard->SetVector("Vector", {3,2,1,0});
-			blackboard->SetObject("Camera", CamObj);
-			blackboard->SetString("Camera", "camera");
-
-		}
+		
 	}
 
 	/*void AiController::Unload()
@@ -84,8 +66,6 @@ namespace Dystopia
 	AiController* AiController::Duplicate() const
 	{
 		const auto cc = EngineCore::GetInstance()->GetSystem<AISystem>()->RequestComponent(*this);
-		//cc->SetOwner(GetOwner());
-		//cc->Init();
 		return cc;
 	}
 
@@ -93,6 +73,7 @@ namespace Dystopia
 	{
 		_out.InsertStartBlock("AI Controller");
 		Component::Serialise(_out);
+		mpBlackboard->Serialise(_out);
 		_out.InsertEndBlock("AI Controller");
 	}
 
@@ -100,6 +81,7 @@ namespace Dystopia
 	{
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
+		mpBlackboard->Unserialise(_in);
 		_in.ConsumeEndBlock();
 	}
 
@@ -107,7 +89,7 @@ namespace Dystopia
 	{
 		if (bTree.IsValidTree())
 		{
-			bTree.Update();
+			mNodeStatus = bTree.Update();
 		}
 	}
 
@@ -131,94 +113,18 @@ namespace Dystopia
 		return bTree.GetBlackboard();
 	}
 
+	void AiController::ClearTree(void)
+	{
+		if (bTree.GetRoot() != nullptr)
+			bTree.GetRoot() = nullptr;
+	}
+
+	
+#if EDITOR
 	void AiController::EditorUI() noexcept
 	{
-		if (EGUI::Display::Button("Add Key", { 60,24 }))
-		{
-			EGUI::Display::OpenPopup("Add Key", false);
-		}
-
-		if (EGUI::Display::StartPopupModal("Add Key", "Adding New Key"))
-		{
-			static int keyTypeIndex = 0;
-			static char buffer[256];
-			std::string keyTypes[8]{"Pointer", "Bool", "Int", "Float", "Double",
-											   "Vector", "Object", "Names" };
-
-			if (EGUI::Display::DropDownSelection("Key Type:", keyTypeIndex, keyTypes))
-			{
-				
-			}
-
-			EGUI::Display::TextField("Key", buffer /*mSearchText*/, Editor::MAX_SEARCH, true, 128.f);
-
-			{
-				static bool Booler = false;
-				static int Inter = 0;
-				static float Floater = 0.0f;
-				EGUI::SameLine();
-				switch (keyTypeIndex)
-				{
-				case 0:
-					break;
-				case 1:
-					EGUI::Display::CheckBox("##check", &Booler);
-					break;
-				case 2:
-					EGUI::Display::DragInt("Int", &Inter);
-					break;
-				case 3:
-					EGUI::Display::DragFloat("Float", &Floater);
-					break;
-				case 4:
-					break;
-				case 5:
-					break;
-				case 6:
-					break;
-				case 7:
-					break;
-				default:
-					break;
-				}
-			}
-
-			if (EGUI::Display::Button("Confirm", {60,24}))
-			{
-				switch (keyTypeIndex)
-				{
-				case 0:
-					break;
-				case 1:
-					break;
-				case 2:
-					break;
-				case 3:
-					break;
-				case 4:
-					break;
-				case 5:
-					break;
-				case 6:
-					break;
-				case 7:
-					break;
-				default:
-					break;
-				}
-
-				EGUI::Display::CloseCurrentPopup();
-			}
-
-			EGUI::SameLine(15);
-			if (EGUI::Display::Button("Cancel", { 60,24 }))
-			{
-				EGUI::Display::CloseCurrentPopup();
-			}
-			EGUI::Display::EndPopup();
-		}
-		
-
+		EditorCurrentStatus();
+		AddKeyToMap();
 		EGUI::SameLine(0);
 		if (EGUI::Display::CollapsingHeader("Blackboard", false))
 		{
@@ -238,7 +144,9 @@ namespace Dystopia
 				mpBlackboard->ClearAll();
 			}
 		}
-		
+
+		EditorTreeView();
+
 	}
 
 	void AiController::EditorFunctionNode()
@@ -583,5 +491,214 @@ namespace Dystopia
 			ImGui::EndPopup();
 		}
 	}
+
+	void AiController::AddKeyToMap()
+	{
+		if (EGUI::Display::Button("Add Key", { 60,24 }))
+		{
+			EGUI::Display::OpenPopup("Add Key", false);
+		}
+
+		if (EGUI::Display::StartPopupModal("Add Key", "Adding New Key"))
+		{
+			//TODO clean up this damn mess
+			static int keyTypeIndex = 0;
+			static char buffer[256];
+			static bool Booler = false;
+			static int Inter = 0;
+			static float Floater = 0.0f;
+			static Math::Vector4 Vectorer{ 0,0,0 };
+			static char GameObjectBuf[256];
+			static char Stringer[256];
+
+			std::string keyTypes[8]{ "Pointer", "Bool", "Int", "Float", "Double",
+				"Vector", "Object", "Names" };
+
+			if (EGUI::Display::DropDownSelection("Key Type:", keyTypeIndex, keyTypes))
+			{
+
+			}
+
+			if (keyTypeIndex != 0 && keyTypeIndex != 4)
+			{
+				EGUI::Display::TextField("Key", buffer /*mSearchText*/, Editor::MAX_SEARCH, true, 128.f);
+				EGUI::SameLine(0);
+			}
+			else
+			{
+				EGUI::Display::Label("Key not yet available.");
+			}
+
+			{
+				switch (keyTypeIndex)
+				{
+				case 0:
+					break;
+				case 1:
+					EGUI::Display::CheckBox("Bool", &Booler,false);
+					break;
+				case 2:
+					EGUI::Display::DragInt("Int", &Inter, 1, -INT_MAX, INT_MAX,true);
+					break;
+				case 3:
+					EGUI::Display::DragFloat("Float", &Floater, 0.1f, -FLT_MAX, FLT_MAX, true);
+					break;
+				case 4:
+					break;
+				case 5:
+					EGUI::Display::VectorFields("Vector", &Vectorer, 0.1f, -FLT_MAX, FLT_MAX, true);
+					break;
+				case 6:
+					EGUI::Display::TextField("Obj Name", GameObjectBuf, Editor::MAX_SEARCH, false, 100.f,false);
+					break;
+				case 7:
+					EGUI::Display::TextField("String", Stringer, Editor::MAX_SEARCH, false, 100.f,false);
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (EGUI::Display::Button("Confirm", { 60,24 }))
+			{
+				switch (keyTypeIndex)
+				{
+				case 0:
+					break;
+				case 1:
+					mpBlackboard->SetBool(buffer, Booler);
+					break;
+				case 2:
+					mpBlackboard->SetInt(buffer, Inter);
+					break;
+				case 3:
+					mpBlackboard->SetFloat(buffer, Floater);
+					break;
+				case 4:
+					break;
+				case 5:
+					mpBlackboard->SetVector(buffer, Vectorer);
+					break;
+				case 6:
+				{
+					if (const auto pObj = EngineCore::Get<SceneSystem>()->FindGameObject_cstr(GameObjectBuf))
+					{
+						mpBlackboard->SetObject(buffer, pObj->GetID());
+					}
+				}
+				break;
+				case 7:
+					mpBlackboard->SetString(buffer, Stringer);
+					break;
+				default:
+					break;
+				}
+
+				EGUI::Display::CloseCurrentPopup();
+			}
+
+			EGUI::SameLine(15);
+			if (EGUI::Display::Button("Cancel", { 60,24 }))
+			{
+				EGUI::Display::CloseCurrentPopup();
+			}
+			EGUI::Display::EndPopup();
+		}
+	}
+
+	void AiController::EditorCurrentStatus()
+	{
+		if (bTree.IsValidTree())
+		{
+			HashString _eStatus = "INVALID";
+			switch (mNodeStatus)
+			{
+			case Node::eStatus::INVALID: break;
+			case Node::eStatus::CANCELLED: _eStatus = "CANCELLED"; break;
+			case Node::eStatus::RUNNING: _eStatus = "RUNNING"; break;
+			case Node::eStatus::SUCCESS: _eStatus = "SUCCESS"; break;
+			case Node::eStatus::FAIL: _eStatus = "FAIL"; break;
+			default:;
+			}
+			EGUI::Display::EmptyBox("Current eStatus:", 128.f, _eStatus.c_str());
+			EGUI::Display::Dummy(0, 15);
+		}
+	}
+
+	void AiController::RecursiveTree(Node::Ptr _node) const
+	{
+		if (_node) // if node is valid
+		{
+			if (_node->GetNodeType() == 0)	// Is Composite Node
+			{
+				const Composite* tempC = dynamic_cast<Composite*>(_node.GetRaw());
+				if (tempC)
+				{
+					HashString CompositeName;
+					if (tempC->GetID() == bTree.GetID()) //First Node
+					{
+						CompositeName = { "ROOT: " + tempC->GetEditorName() };
+					}
+					else
+					{
+						CompositeName = { "Composite: " + tempC->GetEditorName() };
+					}
+					
+					if (EGUI::Display::CollapsingHeader(CompositeName.c_str()))
+					{
+						for (const auto& child : tempC->GetAllChildren())
+						{
+							if (child)
+								RecursiveTree(child);
+						}
+					}
+				}
+			}
+
+			else if (_node->GetNodeType() == 1) // Is Decorator Node
+			{
+				const Decorator* tempD = dynamic_cast<Decorator*>(_node.GetRaw());
+				EGUI::Indent();
+				HashString DecoratorName = { "Decorator: " + tempD->GetEditorName() };
+				if (EGUI::Display::CollapsingHeader(DecoratorName.c_str()))
+				{
+					if (tempD)
+					{
+						if (const auto child = tempD->GetChild())
+						{
+							RecursiveTree(child);
+						}
+					}
+				}
+				EGUI::UnIndent();
+			}
+
+			else // Is Task Node
+			{
+				EGUI::Indent();
+				const Task* tempT = dynamic_cast<Task*>(_node.GetRaw());
+				if (tempT)
+				{
+					HashString TaskName = { "Task: " + tempT->GetEditorName() };
+					ImGui::CollapsingHeader(TaskName.c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet);
+				}
+				EGUI::UnIndent();
+			}
+		}
+	}
+
+	void AiController::EditorTreeView()
+	{
+		if (bTree.IsValidTree())
+		{
+			EGUI::Display::Label("AI Tree View");
+			RecursiveTree(bTree.GetRoot());
+		}
+	
+	}
+
+#endif // EDITOR
+
 }
+
 

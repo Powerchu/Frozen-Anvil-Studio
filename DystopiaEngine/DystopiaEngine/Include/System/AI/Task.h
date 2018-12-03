@@ -13,8 +13,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _LEAF_H_
-#define _LEAF_H_
+#ifndef _TASK_H_
+#define _TASK_H_
 #include <utility>
 #include "NeuralTree.h"
 #include "Utility/DebugAssert.h"
@@ -79,6 +79,8 @@ namespace Dystopia
 		class EatFood : public Task
 		{
 		public:
+			HashString GetEditorName(void) const override { return "EatFood Node"; }
+
 			EatFood(NeuralTree::Blackboard::Ptr _ptr) : Task(Ut::Move(_ptr)) {}
 			eStatus Update() override
 			{

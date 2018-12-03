@@ -54,6 +54,7 @@ namespace Dystopia
 
 			if (cont.GetFlags() & FLAG_REMOVE)
 			{
+				cont.ClearTree();
 				mComponents.Remove(&cont);
 			}
 		}

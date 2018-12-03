@@ -219,6 +219,189 @@ namespace Dystopia
 				}
 			}
 
+			void Serialise(TextSerialiser& _out) const
+			{
+				size_t map_size = bools.size();
+
+				/*
+				 * Bools
+				 */
+				_out << map_size;
+				for (auto& x : bools)
+				{
+					_out << x.first;
+					_out << x.second;
+				}
+
+				/*
+				* Ints
+				*/
+				map_size = ints.size();
+				_out << map_size;
+				for (auto& x : ints)
+				{
+					_out << x.first;
+					_out << x.second;
+				}
+
+				/*
+				* Floats
+				*/
+				map_size = floats.size();
+				_out << map_size;
+				for (auto& x : floats)
+				{
+					_out << x.first;
+					_out << x.second;
+				}
+
+				/*
+				* Doubles
+				*/
+				map_size = doubles.size();
+				_out << map_size;
+				for (auto& x : doubles)
+				{
+					_out << x.first;
+					_out << x.second;
+				}
+
+				/*
+				* Vectors
+				*/
+				map_size = vectors.size();
+				_out << map_size;
+				for (auto& x : vectors)
+				{
+					_out << x.first;
+					_out << x.second;
+				}
+
+				/*
+				* GObjects
+				*/
+				map_size = objs.size();
+				_out << map_size;
+				for (auto& x : objs)
+				{
+					_out << x.first;
+					_out << x.second;
+				}
+
+				/*
+				* Names
+				*/
+				map_size = strings.size();
+				_out << map_size;
+				for (auto& x : strings)
+				{
+					_out << x.first;
+					_out << x.second;
+				}	
+			}
+
+			void Unserialise(TextSerialiser& _in)
+			{
+				size_t map_size{};
+				/*
+				* Bools
+				*/
+				_in >> map_size;
+				for (size_t i=0;i<map_size;++i)
+				{
+					std::string first;
+					bool second;
+					_in >> first;
+					_in >> second;
+
+					SetBool(first, second);
+				}
+
+				/*
+				* Ints
+				*/
+				_in >> map_size;
+				for (size_t i = 0; i<map_size; ++i)
+				{
+					std::string first;
+					int second;
+					_in >> first;
+					_in >> second;
+
+					SetInt(first, second);
+				}
+
+				/*
+				* Floats
+				*/
+				_in >> map_size;
+				for (size_t i = 0; i<map_size; ++i)
+				{
+					std::string first;
+					float second;
+					_in >> first;
+					_in >> second;
+
+					SetFloat(first, second);
+				}
+
+				/*
+				* Doubles
+				*/
+				_in >> map_size;
+				for (size_t i = 0; i<map_size; ++i)
+				{
+					std::string first;
+					double second;
+					_in >> first;
+					_in >> second;
+
+					SetDouble(first, second);
+				}
+
+				/*
+				* Vectors
+				*/
+				_in >> map_size;
+				for (size_t i = 0; i<map_size; ++i)
+				{
+					std::string first;
+					Math::Vec4 second;
+					_in >> first;
+					_in >> second;
+
+					SetVector(first, second);
+				}
+
+				/*
+				* GObjects
+				*/
+				_in >> map_size;
+				for (size_t i = 0; i<map_size; ++i)
+				{
+					std::string first;
+					uint64_t second;
+					_in >> first;
+					_in >> second;
+
+					SetObject(first, second);
+				}
+
+				/*
+				* Names
+				*/
+				_in >> map_size;
+				for (size_t i = 0; i<map_size; ++i)
+				{
+					std::string first;
+					std::string second;
+					_in >> first;
+					_in >> second;
+
+					SetString(first, second);
+				}
+			}
+
 		protected:
 			std::unordered_map<std::string, void*>			pointers;	// 0
 			std::unordered_map<std::string, bool>			bools;		// 1

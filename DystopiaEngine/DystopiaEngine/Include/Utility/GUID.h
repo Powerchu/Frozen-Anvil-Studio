@@ -8,7 +8,7 @@
 	IDs are generated based on time stamps
 
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define NUM_MSCOUNT_BITS 10
 #define NUM_ID_BITS 45
 #include "Utility\Meta.h"
+#include "Globals.h"
 #include "Component\ComponentList.h"
 
 namespace Dystopia
@@ -40,7 +41,7 @@ Next 9 Bits can be used for anything you want
 ********************************************************************************************/
 	struct GUIDGenerator
 	{
-		static GUID_t GetUniqueID(void);
+		_DLL_EXPORT static GUID_t GetUniqueID(void);
 		static constexpr GUID_t INVALID = Ut::Constant<GUID_t, ~0>::value;
 	};
 }
