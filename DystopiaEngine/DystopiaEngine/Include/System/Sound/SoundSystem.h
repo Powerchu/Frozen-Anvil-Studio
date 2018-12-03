@@ -12,7 +12,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _SOUND_SYSTEM_H_
 #define _SOUND_SYSTEM_H_
-
 #include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
 #include "System/Sound/SoundTypes.h"
