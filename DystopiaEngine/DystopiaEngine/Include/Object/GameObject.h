@@ -94,7 +94,8 @@ namespace Dystopia
 		void SetID(const uint64_t&); //explicit purposes only
 		uint64_t GetID(void) const;
 		inline unsigned GetFlags(void) const;
-		HashString GetName(void) const;
+		//HashString GetName(void) const;
+		const HashString& GetName(void) const;
 		const char * GetNamePtr(void) const;
 
 		void SetName(const HashString&);
