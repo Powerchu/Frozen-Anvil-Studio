@@ -266,7 +266,7 @@ namespace EGUI
 			return ImGui::ColorButton(desc_id, ImVec4{col.x,col.y,col.z,col.w}, flags, ImVec2{size.x,size.y});
 		}
 
-		bool EmptyBox(const char * _label, float _width, const char *, bool _iteractive, bool _showLabel)
+		bool EmptyBox(const char * _label, float _width, const char * _inside, bool _iteractive, bool _showLabel)
 		{
 			bool clicked = false;
 			const bool show = _iteractive;
@@ -284,12 +284,24 @@ namespace EGUI
 			//inviLabel += _label;
 
 			ImGui::PushItemWidth(_width);
-			if (ImGui::Button(_label,
-				ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize }))
+			if (_inside == nullptr)
 			{
-				if (show) clicked = true;
+				if (ImGui::Button(_label,
+					ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize }))
+				{
+					if (show) clicked = true;
+				}
+			}
+			else
+			{
+				if (ImGui::Button(_inside,
+					ImVec2{ _width, (ImGui::GetStyle().FramePadding.y * 2.f) + GImGui->FontSize }))
+				{
+					if (show) clicked = true;
+				}
 			}
 			ImGui::PopItemWidth();
+
 			return clicked;
 		}
 

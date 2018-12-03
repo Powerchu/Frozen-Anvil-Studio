@@ -31,6 +31,9 @@ namespace Dystopia
 				mpChild->Tick();
 				return eStatus::SUCCESS;
 			}
+
+			std::string GetEditorName(void) const override { return "Succeeder"; }
+
 		};
 
 		// The Failer decorator returns failure, regardless of what happens to the mpChild.
@@ -42,6 +45,7 @@ namespace Dystopia
 				mpChild->Tick();
 				return eStatus::FAIL;
 			}
+			std::string GetEditorName(void) const override { return "Failer"; }
 		};
 
 		// The Inverter decorator inverts the mpChild node's status, 
@@ -64,6 +68,7 @@ namespace Dystopia
 					return status;
 				}
 			}
+			std::string GetEditorName(void) const override { return "Inverter"; }
 		};
 
 		// The Repeater decorator repeats infinitely or to a limit until the mpChild returns success.
@@ -88,6 +93,8 @@ namespace Dystopia
 				return eStatus::RUNNING;
 			}
 
+			std::string GetEditorName(void) const override { return "Repeater"; }
+
 		protected:
 			int limit;
 			int counter = 0;
@@ -107,6 +114,7 @@ namespace Dystopia
 					}
 				}
 			}
+			std::string GetEditorName(void) const override { return "Until Success"; }
 		};
 
 		// The UntilFailure decorator repeats until the mpChild returns fail and then returns success.
@@ -123,8 +131,10 @@ namespace Dystopia
 					}
 				}
 			}
+			std::string GetEditorName(void) const override { return "Until Failure"; }
 		};
 
+		// TODO WIP GAM250
 		class Limiter : public Decorator
 		{
 		public:

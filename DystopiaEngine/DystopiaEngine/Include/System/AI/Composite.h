@@ -67,6 +67,8 @@ namespace Dystopia
 				}
 				return eStatus::FAIL;
 			}
+
+			std::string GetEditorName(void) const override { return "Selector"; }
 		};
 
 		/* The Sequence composite ticks each child node in order.
@@ -98,6 +100,9 @@ namespace Dystopia
 				}
 				return eStatus::SUCCESS;
 			}
+
+			std::string GetEditorName(void) const override { return "Sequence"; }
+
 		};
 
 		/* The StatefulSelector composite ticks each child node in order, 
@@ -126,6 +131,9 @@ namespace Dystopia
 				iter = mparrChildren.begin();
 				return eStatus::FAIL;
 			}
+
+			std::string GetEditorName(void) const override { return "Stateful Selector"; }
+
 		};
 
 		/* The StatefulSequence composite ticks each child node in order,
@@ -154,6 +162,8 @@ namespace Dystopia
 				iter = mparrChildren.begin();
 				return eStatus::SUCCESS;
 			}
+
+			std::string GetEditorName(void) const override { return "Stateful Sequence"; }
 		};
 
 		/*
@@ -187,6 +197,8 @@ namespace Dystopia
 				
 				return eStatus::FAIL;
 			}
+
+			std::string GetEditorName(void) const override { return "Random Selector"; }
 		};
 
 		class RandomSequence : public Composite
@@ -216,6 +228,8 @@ namespace Dystopia
 
 				return eStatus::SUCCESS;
 			}
+
+			std::string GetEditorName(void) const override { return "Random Sequence"; }
 		};
 
 	}  // NeuralTree
