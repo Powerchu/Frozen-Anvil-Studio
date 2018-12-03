@@ -79,7 +79,6 @@ void Dystopia::Scene::PostUpdate(void)
 	while (b != e)
 	{
 		auto flag = b->GetFlags();
-
 		if (flag & eObjFlag::FLAG_REMOVE)
 		{
 			b->GetComponent<Transform>()->RemoveParent();
@@ -89,6 +88,13 @@ void Dystopia::Scene::PostUpdate(void)
 		{
 			b->PostUpdate();
 		}
+#if EDITOR
+		else if (flag & eObjFlag::FLAG_EDITOR_OBJ)
+		{
+			b->GetComponent<Transform>()->RemoveParent();
+			mGameObjs.Remove(&*b);
+		}
+#endif 
 
 		++b;
 	}

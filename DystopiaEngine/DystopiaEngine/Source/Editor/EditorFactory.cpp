@@ -354,10 +354,12 @@ bool Editor::EditorFactory::LoadAsPrefab(const HashString& _name)
 
 void Editor::EditorFactory::LoadIntoScene(Dystopia::TextSerialiser& _in)
 {
+	AutoArray<Dystopia::GameObject*> allSpawned;
 	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
-	size_t currentIndex = curScene.GetAllGameObjects().size();
+	//size_t currentIndex = curScene.GetAllGameObjects().size();
 
 	auto& obj = *curScene.InsertGameObject();
+	allSpawned.push_back(&obj);
 	unsigned count = LoadSegment(obj, _in);
 	LoadSegmentC(obj, count, _in);
 	LoadSegmentB(obj, _in);
@@ -376,6 +378,7 @@ void Editor::EditorFactory::LoadIntoScene(Dystopia::TextSerialiser& _in)
 	for (unsigned i = 0; i < childCounter; ++i)
 	{
 		auto& childObj = *curScene.InsertGameObject();
+		allSpawned.push_back(&childObj);
 		LoadSegmentC(childObj, LoadSegment(childObj, _in), _in);
 		LoadSegmentB(childObj, _in);
 
@@ -385,23 +388,41 @@ void Editor::EditorFactory::LoadIntoScene(Dystopia::TextSerialiser& _in)
 		for (auto& b : childObj.GetAllBehaviours())
 			b->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 	}
-	auto& allObj = curScene.GetAllGameObjects();
-	for (size_t index = currentIndex; index < allObj.size(); ++index)
+
+	for (size_t index = 0; index < allSpawned.size(); ++index)
 	{
-		auto transform = allObj[index].GetComponent<Dystopia::Transform>();
+		auto transform = allSpawned[index]->GetComponent<Dystopia::Transform>();
 		uint64_t parentID = transform->GetParentID();
-		for (size_t subIndex = currentIndex; subIndex < allObj.size(); ++subIndex)
+		for (size_t subIndex = 0; subIndex < allSpawned.size(); ++subIndex)
 		{
-			if (parentID == allObj[subIndex].GetID())
+			if (parentID == allSpawned[subIndex]->GetID())
 			{
-				transform->SetParent(allObj[subIndex].GetComponent<Dystopia::Transform>());
+				transform->SetParent(allSpawned[subIndex]->GetComponent<Dystopia::Transform>());
 				break;
 			}
 		}
 	}
+	
+	for (auto o : allSpawned)
+		o->Awake();
 
-	for (size_t index = currentIndex; index < allObj.size(); ++index)
-		allObj[index].Awake();
+	//auto& allObj = curScene.GetAllGameObjects();
+	//for (size_t index = currentIndex; index < allObj.size(); ++index)
+	//{
+	//	auto transform = allObj[index].GetComponent<Dystopia::Transform>();
+	//	uint64_t parentID = transform->GetParentID();
+	//	for (size_t subIndex = currentIndex; subIndex < allObj.size(); ++subIndex)
+	//	{
+	//		if (parentID == allObj[subIndex].GetID())
+	//		{
+	//			transform->SetParent(allObj[subIndex].GetComponent<Dystopia::Transform>());
+	//			break;
+	//		}
+	//	}
+	//}
+	//
+	//for (size_t index = currentIndex; index < allObj.size(); ++index)
+	//	allObj[index].Awake();
 }
 
 bool Editor::EditorFactory::FindMasterPrefab(const HashString& _prefabName, int& _outID)
@@ -690,8 +711,9 @@ uint64_t Editor::EditorFactory::PutToScene(const HashString& _fileName, const Ma
 
 uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D& _pos)
 {
+	AutoArray<Dystopia::GameObject*> allSpawned;
 	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
-	auto initalIndex = curScene.GetAllGameObjects().size();
+	//auto initalIndex = curScene.GetAllGameObjects().size();
 	auto& arrInstance = _prefab.mArrInstanced.back();
 	for (size_t i = _prefab.mnStart; i < _prefab.mnEnd; ++i)
 	{
@@ -699,6 +721,7 @@ uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D
 		auto insertedID = Dystopia::GUIDGenerator::GetUniqueID();
 		arrInstance.push_back(insertedID);
 		auto& insertedO = *(curScene.InsertGameObject(insertedID));
+		allSpawned.push_back(&insertedO);
 
 		insertedO.SetName(loadedO.GetName());
 		auto loadedTransform = loadedO.GetComponent<Dystopia::Transform>();
@@ -747,10 +770,12 @@ uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D
 			}
 		}
 	}
-	
-	if (initalIndex < curScene.GetAllGameObjects().size())
-		curScene.GetAllGameObjects()[initalIndex].GetComponent<Dystopia::Transform>()->SetGlobalPosition(_pos);
 
+	if (allSpawned.size())
+		allSpawned[0]->GetComponent<Dystopia::Transform>()->SetGlobalPosition(_pos);
+
+	//if (initalIndex < curScene.GetAllGameObjects().size())
+	//	curScene.GetAllGameObjects()[initalIndex].GetComponent<Dystopia::Transform>()->SetGlobalPosition(_pos);
 	DEBUG_ASSERT(!arrInstance.size(), "Error at spawning prefab");
 	return arrInstance[0];
 }
