@@ -31,6 +31,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Editor/RuntimeMeta.h"
 
+#include "DataStructure/MagicArray.h"
+
 Dystopia::Factory::Factory(void)
 {}
 
@@ -47,11 +49,13 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 	auto _in = Dystopia::TextSerialiser::OpenFile(fp.c_str(), Dystopia::Serialiser::MODE_READ);
 
 	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
-	const size_t currentIndex = curScene.GetAllGameObjects().size();
+	//const size_t currentIndex = curScene.GetAllGameObjects().size();
 
 	AutoArray<uint64_t> oldIDs;
+	AutoArray<GameObject*> allInstantiated;
 
-	auto& obj = *curScene.InsertGameObject();
+	auto& obj = *curScene.InsertGameObject();;
+	allInstantiated.push_back(&obj);
 	unsigned count = LoadSegment(obj, _in);
 	LoadSegmentC(obj, count, _in);
 	LoadSegmentB(obj, _in);
@@ -67,6 +71,7 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 	for (unsigned i = 0; i < childCounter; ++i)
 	{
 		auto& childObj = *curScene.InsertGameObject();
+		allInstantiated.push_back(&childObj);
 		LoadSegmentC(childObj, LoadSegment(childObj, _in), _in);
 		LoadSegmentB(childObj, _in);
 
@@ -74,29 +79,54 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 		obj.SetID(GUIDGenerator::GetUniqueID());
 	}
 
-	auto& allGameObject = curScene.GetAllGameObjects();
-	for (size_t index = currentIndex; index < allGameObject.size(); ++index)
+	for (size_t i = 0; i < allInstantiated.size(); ++i)
 	{
-		auto transform = allGameObject[index].GetComponent<Dystopia::Transform>();
+		auto transform = allInstantiated[i]->GetComponent<Dystopia::Transform>();
 		uint64_t parentID = transform->GetParentID();
-
-		for (size_t subIndex = currentIndex; subIndex < allGameObject.size(); ++subIndex)
+		
+		for (size_t j = 0; j < allInstantiated.size(); ++j)
 		{
-			if (parentID == oldIDs[subIndex - currentIndex])
+			if (parentID == oldIDs[j])
 			{
-				transform->SetParentID(allGameObject[subIndex].GetID());
-				transform->SetParent(allGameObject[subIndex].GetComponent<Dystopia::Transform>());
+				transform->SetParentID(allInstantiated[j]->GetID());
+				transform->SetParent(allInstantiated[j]->GetComponent<Dystopia::Transform>());
 				break;
 			}
 		}
 	}
-	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
-		curScene.GetAllGameObjects()[index].Awake();
-	for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
+	for (size_t i = 0; i < allInstantiated.size(); ++i)
 	{
-		curScene.GetAllGameObjects()[index].RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
-		Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors(curScene.GetAllGameObjects()[index].GetID());
+		allInstantiated[i]->Awake();
+		allInstantiated[i]->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	}
+	for (size_t i = 0; i < allInstantiated.size(); ++i)
+		Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors(allInstantiated[i]->GetID());
+
+	//auto& allGameObject = curScene.GetAllGameObjects();
+	//for (size_t index = currentIndex; index < allGameObject.size(); ++index)
+	//{
+	//	auto transform = allGameObject[index].GetComponent<Dystopia::Transform>();
+	//	uint64_t parentID = transform->GetParentID();
+	//
+	//	for (size_t subIndex = currentIndex; subIndex < allGameObject.size(); ++subIndex)
+	//	{
+	//		if (parentID == oldIDs[subIndex - currentIndex])
+	//		{
+	//			transform->SetParentID(allGameObject[subIndex].GetID());
+	//			transform->SetParent(allGameObject[subIndex].GetComponent<Dystopia::Transform>());
+	//			break;
+	//		}
+	//	}
+	//}
+
+
+	//for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
+	//	curScene.GetAllGameObjects()[index].Awake();
+	//for (size_t index = currentIndex; index < curScene.GetAllGameObjects().size(); ++index)
+	//{
+	//	curScene.GetAllGameObjects()[index].RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
+	//	Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors(curScene.GetAllGameObjects()[index].GetID());
+	//}
 
 	obj.GetComponent<Transform>()->SetGlobalPosition(_pos);
 	return &obj;
@@ -178,6 +208,7 @@ void Dystopia::Factory::LoadSegmentB(GameObject& _obj, Dystopia::TextSerialiser&
 					}
 				}
 			}
+			ptr->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 			ptr->SetOwner(&_obj);
 			_obj.AddComponent(ptr, Dystopia::BehaviourTag{});
 		}
