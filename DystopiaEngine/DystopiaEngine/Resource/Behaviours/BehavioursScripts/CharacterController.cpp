@@ -131,8 +131,9 @@ namespace Dystopia
 		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
 		sManagerName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("SkillManager");
 		spriteName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player Sprite");
-		DEBUG_PRINT(eLog::MESSAGE, "Sprite Name %p", spriteName);
-		playerHealth = 100;
+		hudName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("HUD");
+		playerHealth = 100.0f;
+		currentHealth = playerHealth;
 		SetFlags(FLAG_ACTIVE);
 	}
 
@@ -140,8 +141,7 @@ namespace Dystopia
 	{ 
 		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
 		sManagerName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("SkillManager");
-		spriteName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player Sprite");
-		DEBUG_PRINT(eLog::MESSAGE, "Sprite Name %p", spriteName);
+		spriteName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("HUD");
 		SetFlags(FLAG_ACTIVE);  
 
 		if (mpInputSys->IsController())
@@ -188,7 +188,7 @@ namespace Dystopia
 		}
 	}
 
-	void CharacterController::FixedUpdate(const float _fDeltaTime)
+	void CharacterController::FixedUpdate(const float )
 	{
 	}
 	
@@ -222,27 +222,27 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::CharacterController::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::CharacterController::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent& )
 	{
 		
 		
 		
 	}
 
-	void Dystopia::CharacterController::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::CharacterController::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::CharacterController::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::CharacterController::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::CharacterController::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::CharacterController::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -251,11 +251,11 @@ namespace Dystopia
 		return new CharacterController{*this};
 	}
 
-	void CharacterController::Serialise(TextSerialiser& _ser) const
+	void CharacterController::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void CharacterController::Unserialise(TextSerialiser& _ser)
+	void CharacterController::Unserialise(TextSerialiser& )
 	{
 	}
 
@@ -394,6 +394,8 @@ namespace Dystopia
 
 		if (mpInputSys->IsKeyTriggered("Attack"))
 		{
+			DEBUG_PRINT(eLog::MESSAGE, "TAKING DAMAGEscsds");
+			TakeDamage(10.0f);
 			const Math::Vec3D spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
 
 		    if (attackDelay > 0.5f)
@@ -534,13 +536,19 @@ namespace Dystopia
 			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 0, mbIsFacingRight);
 	}
 
-	void CharacterController::TakeDamage(int _dmg)
+	void CharacterController::TakeDamage(float _dmg)
 	{
-		playerHealth -= _dmg;
+		currentHealth = currentHealth - _dmg; 
+		DEBUG_PRINT(eLog::MESSAGE, "%f", currentHealth);
 
-		if (playerHealth < 0)
+		if (currentHealth > 0.0f)
 		{
-			DEBUG_PRINT(eLog::MESSAGE, "YOU DIED!");
+			CharacterController_MSG::SendExternalMessage(hudName, "UpdateHealth", currentHealth / playerHealth);
+		}
+
+		else
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "Death!"); 
 		}
 	}
 	

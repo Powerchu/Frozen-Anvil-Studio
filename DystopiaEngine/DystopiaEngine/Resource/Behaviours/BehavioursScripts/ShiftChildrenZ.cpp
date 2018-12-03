@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	Health.cpp
-\author Dan Kang (100%)
-\par    email: dan.kang\@digipen.edu
+\file	ShiftChildrenZ.cpp
+\author Shannon Tan (100%)
+\par    email: t.shannon\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Health.h"
+#include "ShiftChildrenZ.h"
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
@@ -27,11 +27,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Utility/DebugAssert.h"
 
-
+#include "Component/Transform.h"
 
 namespace Dystopia
 {
-	namespace Health_MSG
+	namespace ShiftChildrenZ_MSG
 	{
 		template<typename ... Ts>
 		void SendInternalMessage(Behaviour * _ptr, const char * _FuncName, Ts ... _Params)
@@ -62,107 +62,121 @@ namespace Dystopia
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
 		}
 	}
-	Health::Health()
+	ShiftChildrenZ::ShiftChildrenZ()
+		: EpsilonZ{0.001f}
 	{
 	}
 
-	Health::~Health()
+	ShiftChildrenZ::~ShiftChildrenZ()
 	{
 	}
 
-	void Health::Load()
+	void ShiftChildrenZ::Load()
 	{
 	}
 
-	void Health::Awake()
+	void ShiftChildrenZ::Awake()
 	{
 	}
 
-	void Health::Init()
+	void ShiftChildrenZ::Init()
+	{
+		EpsilonZ = 0.001f;
+	}
+
+	void ShiftChildrenZ::Update(const float )
+	{
+		if (EngineCore::Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_LEFT_SHOULDER))
+		{
+			EpsilonZ = 0.001f;
+			auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
+			for (auto& c : children)
+			{
+				auto pos = c->GetGlobalPosition();
+				pos.z = pos.z + EpsilonZ;
+				EpsilonZ += 0.001f;
+				c->SetGlobalPosition(pos);
+			}
+		}
+	}
+
+	void ShiftChildrenZ::FixedUpdate(const float )
 	{
 	}
 
-	void Health::Update(const float )
+	void ShiftChildrenZ::PostUpdate(void)
 	{
 	}
 
-	void Health::FixedUpdate(const float )
+	void ShiftChildrenZ::GameObjectDestroy(void)
 	{
 	}
 
-	void Health::PostUpdate(void)
+	void ShiftChildrenZ::Unload(void)
 	{
 	}
 
-	void Health::GameObjectDestroy(void)
-	{
-	}
-
-	void Health::Unload(void)
-	{
-	}
-
-	void Dystopia::Health::OnCollisionEnter(const CollisionEvent& )
+	void Dystopia::ShiftChildrenZ::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::Health::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::ShiftChildrenZ::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::Health::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::ShiftChildrenZ::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::Health::OnTriggerEnter(GameObject * const )
+	void Dystopia::ShiftChildrenZ::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::Health::OnTriggerStay(GameObject * const )
+	void Dystopia::ShiftChildrenZ::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::Health::OnTriggerExit(GameObject * const )
+	void Dystopia::ShiftChildrenZ::OnTriggerExit(GameObject * const )
 	{
 	}
 
-	Health * Health::Duplicate() const
+	ShiftChildrenZ * ShiftChildrenZ::Duplicate() const
 	{
-		return new Health{ *this };
+		return new ShiftChildrenZ{ *this };
 	}
 
-	void Health::Serialise(TextSerialiser& ) const
-	{
-	}
-
-	void Health::Unserialise(TextSerialiser& )
+	void ShiftChildrenZ::Serialise(TextSerialiser& ) const
 	{
 	}
 
-
-	const char * const Health::GetBehaviourName() const
+	void ShiftChildrenZ::Unserialise(TextSerialiser& )
 	{
-		return Health::BehaviourName;
 	}
 
-	void Health::EditorUI(void) noexcept
+
+	const char * const ShiftChildrenZ::GetBehaviourName() const
+	{
+		return ShiftChildrenZ::BehaviourName;
+	}
+
+	void ShiftChildrenZ::EditorUI(void) noexcept
 	{
 
 
 	}
 
-	TypeErasure::TypeEraseMetaData Health::GetMetaData()
+	TypeErasure::TypeEraseMetaData ShiftChildrenZ::GetMetaData()
 	{
-		static MetaData<Dystopia::Health> mMetaData;
+		static MetaData<Dystopia::ShiftChildrenZ> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{ mMetaData };
 		return mReturn;
 	}
-	TypeErasure::TypeEraseMetaData const Health::GetMetaData() const
+	TypeErasure::TypeEraseMetaData const ShiftChildrenZ::GetMetaData() const
 	{
-		static MetaData<Dystopia::Health> mMetaData;
+		static MetaData<Dystopia::ShiftChildrenZ> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{ mMetaData };
 		return mReturn;
 	}

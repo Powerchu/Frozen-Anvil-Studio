@@ -13,7 +13,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.14,0.14,1,79,11,0,0,0,0,1,18446744073709551615,
+1,1,1,0,0,0,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -375,7 +375,7 @@
 0,
 [END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-20,[START_str]
+21,[START_str]
 "ChangeAudio",0,[START_str]
 "CharacterController",0,[START_str]
 "CombatBox",0,[START_str]
@@ -406,6 +406,7 @@
 "Parallax",0,[START_str]
 "PauseManager",0,[START_str]
 "SceneManager",0,[START_str]
+"SkillManager",0,[START_str]
 "SplashScreen",0,[START_str]
 "SpriteManager",0,
 [END_BEHAVIOUR_SYSTEM_BLOCK]

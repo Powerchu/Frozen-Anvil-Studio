@@ -96,7 +96,7 @@ namespace Dystopia
 		}
 	}
 
-	void SplashScreen::FixedUpdate(const float _fDeltaTime)
+	void SplashScreen::FixedUpdate(const float )
 	{
 	}
 	
@@ -108,30 +108,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::SplashScreen::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::SplashScreen::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::SplashScreen::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::SplashScreen::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::SplashScreen::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::SplashScreen::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::SplashScreen::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::SplashScreen::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::SplashScreen::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::SplashScreen::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::SplashScreen::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::SplashScreen::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -140,11 +140,11 @@ namespace Dystopia
 		return new SplashScreen{};
 	}
 
-	void SplashScreen::Serialise(TextSerialiser& _ser) const
+	void SplashScreen::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void SplashScreen::Unserialise(TextSerialiser& _ser)
+	void SplashScreen::Unserialise(TextSerialiser& )
 	{
 	}
 

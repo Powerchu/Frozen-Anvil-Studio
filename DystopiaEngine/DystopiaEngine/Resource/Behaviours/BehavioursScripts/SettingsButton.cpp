@@ -82,11 +82,11 @@ namespace Dystopia
 	{
 	}
 
-	void SettingsButton::Update(const float _fDeltaTime)
+	void SettingsButton::Update(const float )
 	{
 	}
 
-	void SettingsButton::FixedUpdate(const float _fDeltaTime)
+	void SettingsButton::FixedUpdate(const float )
 	{
 	}
 
@@ -102,30 +102,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::SettingsButton::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::SettingsButton::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::SettingsButton::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::SettingsButton::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::SettingsButton::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::SettingsButton::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::SettingsButton::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::SettingsButton::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::SettingsButton::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::SettingsButton::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::SettingsButton::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::SettingsButton::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -134,11 +134,11 @@ namespace Dystopia
 		return new SettingsButton{ *this };
 	}
 
-	void SettingsButton::Serialise(TextSerialiser& _ser) const
+	void SettingsButton::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void SettingsButton::Unserialise(TextSerialiser& _ser)
+	void SettingsButton::Unserialise(TextSerialiser& )
 	{
 	}
 	void SettingsButton::ButtonPress()

@@ -82,11 +82,11 @@ namespace Dystopia
 	{
 	}
 
-	void RestartButton::Update(const float _fDeltaTime)
+	void RestartButton::Update(const float )
 	{
 	}
 
-	void RestartButton::FixedUpdate(const float _fDeltaTime)
+	void RestartButton::FixedUpdate(const float )
 	{
 	}
 
@@ -102,30 +102,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::RestartButton::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::RestartButton::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::RestartButton::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::RestartButton::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::RestartButton::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::RestartButton::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::RestartButton::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::RestartButton::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::RestartButton::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::RestartButton::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::RestartButton::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::RestartButton::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -134,11 +134,11 @@ namespace Dystopia
 		return new RestartButton{ *this };
 	}
 
-	void RestartButton::Serialise(TextSerialiser& _ser) const
+	void RestartButton::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void RestartButton::Unserialise(TextSerialiser& _ser)
+	void RestartButton::Unserialise(TextSerialiser& )
 	{
 	}
 

@@ -18,7 +18,7 @@ typedef uint64_t HashID;
 static constexpr HashID FNV_PRIME = 1099511628211u;
 static constexpr HashID OFFSET_BASIS = 0xcbf29ce484222325;
 template<unsigned int N>
-_DLL_EXPORT_ONLY constexpr HashID StringHasher(const char(&_s)[N], unsigned int I = N)
+constexpr HashID StringHasher(const char(&_s)[N], unsigned int I = N)
 {
 	return I == 1 ? (OFFSET_BASIS ^ _s[0]) * FNV_PRIME :
 		(StringHasher(_s, I - 1) ^ (_s[I - 1])) * FNV_PRIME;
@@ -119,7 +119,7 @@ private:
 	size_t		mnBufferSize;		// 8 bytes
 	HashID		mnID;				// 8 bytes
 	const char	*mpLiteral;			// 8 bytes
-	char		*mpCharBuffer;		// 8 bytes
+	char		*mpCharBuffer;		// 8 bytes	
 	bool		mbRehash;			// 2 bytes
 
 };

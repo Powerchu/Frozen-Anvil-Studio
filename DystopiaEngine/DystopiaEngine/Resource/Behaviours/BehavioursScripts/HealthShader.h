@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	GoblinCombat.h
-\author Dan Kang (100%)
-\par    email: dan.kang\@digipen.edu
+\file	HealthShader.h
+\author JackyTan (100%)
+\par    email: t.jieweijacky\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _GoblinCombat_H_
-#define _GoblinCombat_H_
+#ifndef _HealthShader_H_
+#define _HealthShader_H_
 
 #define str(s) #s
 
@@ -20,18 +20,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
 #include "Behaviour/BehaviourMemberFunc.h"
+#include "System/Graphics/Shader.h"
 
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
 {
-	class GameObject;
-	class GoblinCombat : public Behaviour
+	class HealthShader : public Behaviour
 	{
 	public:
-		static constexpr const char * BehaviourName = str(GoblinCombat);
+		static constexpr const char * BehaviourName = str(HealthShader);
 #if !EDITOR
-		
+
 		using SYSTEM = BehaviourSystem;
 		// unsigned GetBehaviourType(void) const
 		// {
@@ -39,25 +39,25 @@ namespace Dystopia
 		// };
 
 #endif
-		virtual const std::string GetEditorName(void) const override { return "GoblinCombat"; }
-		static uint64_t constexpr mGoblinCombatID = 18446744073248796160;
+		virtual const std::string GetEditorName(void) const override { return "HealthShader"; }
+		static uint64_t constexpr mHealthShaderID = 18446744072191244800;
 
 		// Default Constructor for this Behaviour - init your variables here
-		GoblinCombat();
+		HealthShader();
 		// Default Destructor for this Behaviour - don't touch if you dk, else ask the tech team
-		~GoblinCombat();
+		~HealthShader();
 
 		// Load will never be called
-		virtual void Load(void) override; 
+		virtual void Load(void) override;
 		// Awake occurs when the editor is first started
-		virtual void Awake(void) override; 
+		virtual void Awake(void) override;
 		// Init occurs when the scene is played
-		virtual void Init(void) override; 
+		virtual void Init(void) override;
 
 		// Update occurs every frame
-		virtual void Update(const float _fDeltaTime) override; 
+		virtual void Update(const float _fDeltaTime) override;
 		// FixedUpdate occurs every 0.02ms
-		virtual void FixedUpdate(const float _fDeltaTime) override; 
+		virtual void FixedUpdate(const float _fDeltaTime) override;
 		// PostUpdate occurs after the above two updates
 		virtual void PostUpdate(void) override;
 
@@ -69,16 +69,16 @@ namespace Dystopia
 		// If Owner has a Collider, and enters another collider, this occurs
 		virtual void OnCollisionEnter(const CollisionEvent&);
 		// If Owner has a Collider, and stays in another collider, this occurs
-		virtual void OnCollisionStay (const CollisionEvent&);
+		virtual void OnCollisionStay(const CollisionEvent&);
 		// If Owner has a Collider, and exits another collider, this occurs
-		virtual void OnCollisionExit (const CollisionEvent&);
+		virtual void OnCollisionExit(const CollisionEvent&);
 
 		// If Owner has a Trigger, and enters another trigger, this occurs
 		virtual void OnTriggerEnter(GameObject * const);
 		// If Owner has a Trigger, and stays in another trigger, this occurs
-		virtual void OnTriggerStay (GameObject * const);
+		virtual void OnTriggerStay(GameObject * const);
 		// If Owner has a Trigger, and exit another trigger, this occurs
-		virtual void OnTriggerExit (GameObject * const);
+		virtual void OnTriggerExit(GameObject * const);
 
 		virtual void Serialise(TextSerialiser&) const override;
 		virtual void Unserialise(TextSerialiser&) override;
@@ -86,44 +86,49 @@ namespace Dystopia
 		virtual const char * const GetBehaviourName() const;
 
 		// Don't touch
-		virtual GoblinCombat * Duplicate() const;
+		virtual HealthShader * Duplicate() const;
 
 		// Don't touch
 		virtual void EditorUI(void) noexcept override;
-		
-		void DealDamage(float _damage);
 
 		// Reflection Stuff - Don't Touch
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
-		PP_MEMBERFUNC(Dystopia::GoblinCombat, DealDamage)
+		float MaxHP, CurrentHP;
+		float Fun, Speed;
+		float TargetLerp;
+		
+		void ChangeHP(float);
+		void HPLerpTo(float);
+		PP_MEMBERFUNC(Dystopia::HealthShader, ChangeHP, HPLerpTo)
+			
 	private:
 		// Don't touch
-		friend MetaData<GoblinCombat>;
-
-	public:
-		bool targetViable;
-		bool canAttack;
-		const char * name;
-		GameObject* mp_target = nullptr;
+		friend MetaData<HealthShader>;
+		
+		float LerpHP(float);
+		
+		Shader* myShader;
 	};
 
 	extern "C"
 	{
-		inline DllExport GoblinCombat * GoblinCombatClone()
+		inline DllExport HealthShader * HealthShaderClone()
 		{
-			return new GoblinCombat{};
+			return new HealthShader;
 		}
 	}
 }
+
 /*Keep this if you do not want to show anything in Editor*/
-//PP_REFLECT_EMPTY(Dystopia::GoblinCombat)
+//PP_REFLECT_EMPTY(Dystopia::HealthShader)
 /*
-  Uncomment the line PP_REFLECT and add in the names of the variable you want to show
-  Comment out PP_REFLECT_EMPTY.
+Uncomment the line PP_REFLECT and add in the names of the variable you want to show
+Comment out PP_REFLECT_EMPTY.
 */
-PP_REFLECT(Dystopia::GoblinCombat, canAttack)
-#endif //_GoblinCombat_H_
+PP_REFLECT(Dystopia::HealthShader, MaxHP, CurrentHP, Speed, TargetLerp)
+
+#endif //_HealthShader_H_
 
 

@@ -90,8 +90,9 @@ namespace Dystopia
 	template <typename C, typename SFINAE = std::enable_if_t<!std::is_same_v<std::decay_t<C>, Component>, C>>
 	struct RequestComponent
 	{
-		static Component* Get(GameObject* _pRequester)
+		static Component* Get(GameObject*_pRequester)
 		{
+			UNUSED_PARAMETER(_pRequester);
 			C* pComponent = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent(); 
 #if EDITOR
 			::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>()->AddComponent<C>(_pRequester->GetID(), pComponent);
@@ -99,7 +100,7 @@ namespace Dystopia
 			return pComponent;
 		}
 
-		static Component* GetA(GameObject* _pRequester)
+		static Component* GetA(GameObject*_pRequester)
 		{
 			C* pComponent = static_cast<ComponentDonor<C>*>(EngineCore::GetInstance()->Get<typename C::SYSTEM>())->RequestComponent();
 			pComponent->SetActive(_pRequester->IsActive());

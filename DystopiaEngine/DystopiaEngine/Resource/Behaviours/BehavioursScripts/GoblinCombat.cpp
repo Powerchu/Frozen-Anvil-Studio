@@ -87,7 +87,7 @@ namespace Dystopia
 		SetFlags(FLAG_ACTIVE);
 	}
 
-	void GoblinCombat::Update(const float _fDeltaTime)
+	void GoblinCombat::Update(const float )
 	{
 		if (mp_target != nullptr && canAttack)
 		{
@@ -96,7 +96,7 @@ namespace Dystopia
 		}
 	}
 
-	void GoblinCombat::FixedUpdate(const float _fDeltaTime)
+	void GoblinCombat::FixedUpdate(const float )
 	{
 	}
 	
@@ -112,17 +112,17 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::GoblinCombat::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::GoblinCombat::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::GoblinCombat::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::GoblinCombat::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::GoblinCombat::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::GoblinCombat::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
@@ -141,7 +141,7 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::GoblinCombat::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::GoblinCombat::OnTriggerStay(GameObject * const )
 	{
 	}
 
@@ -163,11 +163,11 @@ namespace Dystopia
 		return new GoblinCombat{*this};
 	}
 
-	void GoblinCombat::Serialise(TextSerialiser& _ser) const
+	void GoblinCombat::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void GoblinCombat::Unserialise(TextSerialiser& _ser)
+	void GoblinCombat::Unserialise(TextSerialiser& )
 	{
 	}
 
@@ -183,12 +183,12 @@ namespace Dystopia
 		
 	}
 	
-	void GoblinCombat::DealDamage(int _dmg)
+	void GoblinCombat::DealDamage(float _dmg)
 	{
 		if (mp_target)
 		{
 			GoblinCombat_MSG::SendExternalMessage(mp_target, "TakeDamage", _dmg);	
-			canAttack = true;
+			canAttack = true; 
 		}
 	}
 

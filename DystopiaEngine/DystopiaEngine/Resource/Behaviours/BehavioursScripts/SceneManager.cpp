@@ -82,11 +82,11 @@ namespace Dystopia
 	{
 	}
 
-	void SceneManager::Update(const float _fDeltaTime)
+	void SceneManager::Update(const float )
 	{
 	}
 
-	void SceneManager::FixedUpdate(const float _fDeltaTime)
+	void SceneManager::FixedUpdate(const float )
 	{
 	}
 	
@@ -98,30 +98,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::SceneManager::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::SceneManager::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::SceneManager::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::SceneManager::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::SceneManager::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::SceneManager::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::SceneManager::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::SceneManager::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::SceneManager::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::SceneManager::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::SceneManager::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::SceneManager::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -130,11 +130,11 @@ namespace Dystopia
 		return new SceneManager{*this};
 	}
 
-	void SceneManager::Serialise(TextSerialiser& _ser) const
+	void SceneManager::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void SceneManager::Unserialise(TextSerialiser& _ser)
+	void SceneManager::Unserialise(TextSerialiser& )
 	{
 	}
 

@@ -108,7 +108,7 @@ namespace Dystopia
 		}
 	}
 
-	void DeleteSelf::FixedUpdate(const float _fDeltaTime)
+	void DeleteSelf::FixedUpdate(const float )
 	{
 	}
 	
@@ -124,30 +124,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::DeleteSelf::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::DeleteSelf::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::DeleteSelf::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::DeleteSelf::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::DeleteSelf::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::DeleteSelf::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::DeleteSelf::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::DeleteSelf::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::DeleteSelf::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::DeleteSelf::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::DeleteSelf::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::DeleteSelf::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -156,11 +156,11 @@ namespace Dystopia
 		return new DeleteSelf{*this};
 	}
 
-	void DeleteSelf::Serialise(TextSerialiser& _ser) const
+	void DeleteSelf::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void DeleteSelf::Unserialise(TextSerialiser& _ser)
+	void DeleteSelf::Unserialise(TextSerialiser& )
 	{
 	}
 

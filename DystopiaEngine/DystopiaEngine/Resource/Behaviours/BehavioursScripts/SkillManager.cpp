@@ -104,7 +104,7 @@ namespace Dystopia
 		}
 	}
 
-	void SkillManager::FixedUpdate(const float _fDeltaTime)
+	void SkillManager::FixedUpdate(const float )
 	{
 	}
 	
@@ -120,30 +120,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::SkillManager::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::SkillManager::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::SkillManager::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::SkillManager::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::SkillManager::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::SkillManager::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::SkillManager::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::SkillManager::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::SkillManager::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::SkillManager::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::SkillManager::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::SkillManager::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -152,11 +152,11 @@ namespace Dystopia
 		return new SkillManager{*this};
 	}
 
-	void SkillManager::Serialise(TextSerialiser& _ser) const
+	void SkillManager::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void SkillManager::Unserialise(TextSerialiser& _ser)
+	void SkillManager::Unserialise(TextSerialiser& )
 	{
 	}
 
@@ -244,8 +244,11 @@ namespace Dystopia
 		{
 			if (isFacingRight)
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashAnim.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{45, 12, 0}))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashAnim.dobj", Math::Vec3D{ x, y, z } +Math::Vec3D{ 45, 12, 0 }))
+				{
 					DEBUG_PRINT(eLog::MESSAGE, "SPAWNED ANIMATOR");
+				}
+
 				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{14, 8, 0}))
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 2);
 				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{64, 8, 0}))
@@ -254,8 +257,11 @@ namespace Dystopia
 
 			else
 			{
-				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashAnim.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{-45, 12, 0}))
+				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashAnim.dobj", Math::Vec3D{ x, y, z } +Math::Vec3D{ -45, 12, 0 }))
+				{
 					DEBUG_PRINT(eLog::MESSAGE, "SPAWNED ANIMATOR");
+				}
+
 				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{-14, 8, 0}))
 					SkillManager_MSG::SendExternalMessage(ptr, "SetDirection", 1);
 				if (const auto ptr = EngineCore::GetInstance()->Get<SceneSystem>()->Instantiate("FormSmashThree.dobj", Math::Vec3D{ x, y, z} + Math::Vec3D{-64, 8, 0}))

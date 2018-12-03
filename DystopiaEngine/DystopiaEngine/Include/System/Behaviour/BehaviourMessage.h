@@ -143,6 +143,8 @@ namespace Dystopia
 		template<typename Behaviour_t, typename MemPtr_t, typename ... Ts, size_t ... Indices>
 		void InvokeAux(Behaviour_t & _Behaviour, MemPtr_t _MemPtr, Tuple<Ts...> _ParamTypes, std::index_sequence<Indices...> _Indices)
 		{
+			UNUSED_PARAMETER(_Indices);
+			UNUSED_PARAMETER(_ParamTypes);
 			(_Behaviour.*_MemPtr)(_ParamTypes.Get<Indices>() ...);
 		}
 

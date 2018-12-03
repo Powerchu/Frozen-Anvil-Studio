@@ -114,12 +114,12 @@ namespace Dystopia
 		creditMenu = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("CRPopup");
 	}
 
-	void MenuManager::Update(const float _fDeltaTime)
+	void MenuManager::Update(const float )
 	{
 		UpdateSelection();
 	}
 
-	void MenuManager::FixedUpdate(const float _fDeltaTime)
+	void MenuManager::FixedUpdate(const float )
 	{
 	}
 	
@@ -131,30 +131,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::MenuManager::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::MenuManager::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::MenuManager::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::MenuManager::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::MenuManager::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::MenuManager::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::MenuManager::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::MenuManager::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::MenuManager::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::MenuManager::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::MenuManager::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::MenuManager::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -163,11 +163,11 @@ namespace Dystopia
 		return new MenuManager{*this};
 	}
 
-	void MenuManager::Serialise(TextSerialiser& _ser) const
+	void MenuManager::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void MenuManager::Unserialise(TextSerialiser& _ser)
+	void MenuManager::Unserialise(TextSerialiser& )
 	{
 	}
 
@@ -238,8 +238,12 @@ namespace Dystopia
 				}
 					
 				else if (currentPos == 4)
+				{
 					//quit the game
 					DEBUG_PRINT(eLog::MESSAGE, "Selected Quit!");
+
+				}
+
 
 				isSelected = true;
 			}
@@ -271,8 +275,11 @@ namespace Dystopia
 				}
 				
 				else if (currentPos == 4)
-				//quit the game
-				DEBUG_PRINT(eLog::MESSAGE, "Returned from Quit!");
+				{
+					//quit the game
+					DEBUG_PRINT(eLog::MESSAGE, "Returned from Quit!");
+				}
+
 
 				isSelected = false;
 			}

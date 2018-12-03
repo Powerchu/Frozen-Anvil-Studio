@@ -34,6 +34,10 @@
 #include "../Resource/Behaviours/BehavioursScripts/RestartButton.h"
 #include "../Resource/Behaviours/BehavioursScripts/SettingsButton.h"
 #include "../Resource/Behaviours/BehavioursScripts/SpriteManager.h"
+#include "../Resource/Behaviours/BehavioursScripts/EnergyShader.h"
+#include "../Resource/Behaviours/BehavioursScripts/HealthShader.h"
+#include "../Resource/Behaviours/BehavioursScripts/HUD.h"
+#include "../Resource/Behaviours/BehavioursScripts/ShiftChildrenZ.h"
 #endif
 
 #if EDITOR

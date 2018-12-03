@@ -85,11 +85,11 @@ namespace Dystopia
 		SetFlags(FLAG_ACTIVE);
 	}
 
-	void FormTOne::Update(const float _fDeltaTime)
+	void FormTOne::Update(const float )
 	{
 	}
 
-	void FormTOne::FixedUpdate(const float _fDeltaTime)
+	void FormTOne::FixedUpdate(const float )
 	{
 	}
 	
@@ -105,17 +105,17 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::FormTOne::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::FormTOne::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::FormTOne::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::FormTOne::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::FormTOne::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::FormTOne::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
@@ -142,11 +142,11 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::FormTOne::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::FormTOne::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::FormTOne::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::FormTOne::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -155,11 +155,11 @@ namespace Dystopia
 		return new FormTOne{*this};
 	}
 
-	void FormTOne::Serialise(TextSerialiser& _ser) const
+	void FormTOne::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void FormTOne::Unserialise(TextSerialiser& _ser)
+	void FormTOne::Unserialise(TextSerialiser& )
 	{
 	}
 

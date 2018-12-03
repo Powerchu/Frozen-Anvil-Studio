@@ -43,7 +43,7 @@ namespace Dystopia
 		mTargetOldPos = mTargetNewPos;
 	}
 
-	void Parallax::Update(const float _fDeltaTime)
+	void Parallax::Update(const float )
 	{
 		if(mFocalTarget)
 		{
@@ -82,7 +82,7 @@ namespace Dystopia
 
 	}
 
-	void Parallax::FixedUpdate(const float _fDeltaTime)
+	void Parallax::FixedUpdate(const float )
 	{
 	}
 	
@@ -104,30 +104,30 @@ namespace Dystopia
 		
 	}
 
-	void Dystopia::Parallax::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::Parallax::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::Parallax::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::Parallax::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::Parallax::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::Parallax::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::Parallax::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::Parallax::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::Parallax::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::Parallax::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::Parallax::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::Parallax::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -136,11 +136,11 @@ namespace Dystopia
 		return new Parallax{*this};
 	}
 
-	void Parallax::Serialise(TextSerialiser& _ser) const
+	void Parallax::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void Parallax::Unserialise(TextSerialiser& _ser)
+	void Parallax::Unserialise(TextSerialiser& )
 	{
 	}
 

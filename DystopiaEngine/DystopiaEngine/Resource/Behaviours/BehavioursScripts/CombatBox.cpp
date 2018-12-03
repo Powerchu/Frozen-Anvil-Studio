@@ -85,11 +85,11 @@ namespace Dystopia
 		SetFlags(FLAG_ACTIVE);
 	}
 
-	void CombatBox::Update(const float _fDeltaTime)
+	void CombatBox::Update(const float )
 	{
 	}
 
-	void CombatBox::FixedUpdate(const float _fDeltaTime)
+	void CombatBox::FixedUpdate(const float )
 	{
 	}
 	
@@ -105,17 +105,17 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::CombatBox::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::CombatBox::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::CombatBox::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::CombatBox::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::CombatBox::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::CombatBox::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
@@ -135,7 +135,7 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::CombatBox::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::CombatBox::OnTriggerStay(GameObject * const )
 	{
 	}
 
@@ -156,11 +156,11 @@ namespace Dystopia
 		return new CombatBox{*this};
 	}
 
-	void CombatBox::Serialise(TextSerialiser& _ser) const
+	void CombatBox::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void CombatBox::Unserialise(TextSerialiser& _ser)
+	void CombatBox::Unserialise(TextSerialiser& )
 	{
 	}
 
@@ -178,12 +178,13 @@ namespace Dystopia
 	
 	void CombatBox::DealDamage(int _damage, bool _isFacingRight)
 	{
+		UNUSED_PARAMETER(_isFacingRight);
 		if (targetViable)
 		{
 			if (auto target = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr(name))
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "Doing Damange to Goblin");	
-				CombatBox_MSG::SendExternalMessage(target, "TakeDamage", 10);
+				CombatBox_MSG::SendExternalMessage(target, "TakeDamage", _damage);
 			}
 
 		}

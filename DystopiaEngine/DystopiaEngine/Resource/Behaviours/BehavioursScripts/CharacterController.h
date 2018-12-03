@@ -85,7 +85,8 @@ namespace Dystopia
 		void CheckAttack();
 		void MovePlayer(float);
 		void CastLinked(int _skill, bool _isForm, float x, float y, float z);
-		void TakeDamage(int _dmg);
+		void TakeDamage(float _dmg);
+		void SpendEnergy(float _amt);
 		void AnimationComplete();
 
 		PP_MEMBERFUNC(Dystopia::CharacterController, TakeDamage, AnimationComplete)
@@ -96,7 +97,10 @@ namespace Dystopia
 
 	// Member Variables
 	public: 
-		int playerHealth;
+		float playerHealth;
+		float currentHealth;
+		float playerEnergy;
+		float currentEnergy;
 		bool IsDodging;
 		float CharacterSpeed;
 		float JumpForce;
@@ -105,6 +109,7 @@ namespace Dystopia
 		GameObject * combatName;
 		GameObject * sManagerName;
 		GameObject * spriteName;
+		GameObject * hudName;
 	private:
 		bool mbIsGrounded;
 		bool mbIsCeilinged;

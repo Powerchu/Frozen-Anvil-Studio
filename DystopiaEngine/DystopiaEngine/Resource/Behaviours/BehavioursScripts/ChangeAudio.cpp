@@ -40,11 +40,11 @@ namespace Dystopia
 	{
 	}
 
-	void ChangeAudio::Update(const float _fDeltaTime)
+	void ChangeAudio::Update(const float)
 	{
 	}
 
-	void ChangeAudio::FixedUpdate(const float _fDeltaTime)
+	void ChangeAudio::FixedUpdate(const float)
 	{
 	}
 	
@@ -60,17 +60,17 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::ChangeAudio::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::ChangeAudio::OnCollisionEnter(const CollisionEvent&)
 	{
 
 	}
 
-	void Dystopia::ChangeAudio::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::ChangeAudio::OnCollisionStay(const CollisionEvent&)
 	{
 
 	}
 
-	void Dystopia::ChangeAudio::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::ChangeAudio::OnCollisionExit(const CollisionEvent&)
 	{
 
 	}
@@ -96,7 +96,7 @@ namespace Dystopia
 		} 
 	}
 
-	void Dystopia::ChangeAudio::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::ChangeAudio::OnTriggerStay(GameObject * const )
 	{ 
 	}
 
@@ -126,11 +126,11 @@ namespace Dystopia
 		return new ChangeAudio{*this};
 	}
 
-	void ChangeAudio::Serialise(TextSerialiser& _ser) const
+	void ChangeAudio::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void ChangeAudio::Unserialise(TextSerialiser& _ser)
+	void ChangeAudio::Unserialise(TextSerialiser& )
 	{
 	}
 

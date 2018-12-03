@@ -59,9 +59,8 @@ namespace Dystopia
 					return mObj[_name];
 					//return ReadWriteObject{};
 				}
-				virtual ReadWriteObject operator[](const char * _name) const
+				virtual ReadWriteObject operator[](const char * ) const
 				{
-
 					return ReadWriteObject{};
 				}
 				//virtual std::map<char const*, ReadWriteObject, CustomMetaComp> GetAllReflectedData() override
@@ -79,7 +78,7 @@ namespace Dystopia
 						toRet.push_back(elem.first);
 					return toRet;
 				}
-				bool isThereMatch(const char * _name) 
+				bool isThereMatch(const char *) 
 				{
 					return false;
 				}

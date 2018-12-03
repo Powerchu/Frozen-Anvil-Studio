@@ -111,11 +111,11 @@ namespace Dystopia
 		{
 			isWinding = false;
 			attackCount = 0.0f;
-			Goblin_MSG::SendExternalMessage(GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner(), "DealDamage", 10);
+			Goblin_MSG::SendExternalMessage(GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner(), "DealDamage", 10.0f);
 		}
 	}
 
-	void Goblin::FixedUpdate(const float _fDeltaTime)
+	void Goblin::FixedUpdate(const float )
 	{
 	}
 	
@@ -132,7 +132,7 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::Goblin::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::Goblin::OnCollisionEnter(const CollisionEvent& )
 	{
 		// auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_colEvent.mOtherID);
 			
@@ -155,7 +155,7 @@ namespace Dystopia
 		// }
 	}
 
-	void Dystopia::Goblin::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::Goblin::OnCollisionStay(const CollisionEvent& )
 	{
 		// auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_colEvent.mOtherID);
 		// if(ptr)
@@ -174,12 +174,12 @@ namespace Dystopia
 		// }
 	}
 
-	void Dystopia::Goblin::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::Goblin::OnCollisionExit(const CollisionEvent& )
 	{
 		isColliding = false;
 	}
 
-	void Dystopia::Goblin::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::Goblin::OnTriggerEnter(GameObject * const )
 	{
 		// if(_obj)
 		// {
@@ -193,7 +193,7 @@ namespace Dystopia
 		// }
 	}
 
-	void Dystopia::Goblin::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::Goblin::OnTriggerStay(GameObject * const )
 	{
 		// if(_obj)
 		// {
@@ -207,7 +207,7 @@ namespace Dystopia
 		// }
 	}
 
-	void Dystopia::Goblin::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::Goblin::OnTriggerExit(GameObject * const )
 	{
 		isColliding = false;
 	}
@@ -217,11 +217,11 @@ namespace Dystopia
 		return new Goblin{*this}; 
 	}
 
-	void Goblin::Serialise(TextSerialiser& _ser) const
+	void Goblin::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void Goblin::Unserialise(TextSerialiser& _ser)
+	void Goblin::Unserialise(TextSerialiser& )
 	{
 	}
 
