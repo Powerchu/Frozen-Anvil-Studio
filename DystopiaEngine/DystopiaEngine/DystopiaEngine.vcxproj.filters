@@ -355,6 +355,9 @@
     <ClCompile Include="Source\Editor\GameView.cpp">
       <Filter>Editor\Main\Panels\Game View</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\AI\Blackboard.cpp">
+      <Filter>Game Engine\Systems\AI\Tree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">

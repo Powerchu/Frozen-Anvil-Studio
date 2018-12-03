@@ -26,7 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 using HashString = OString;
 
-#if !EDITOR
+#if 0
 
 typedef uint64_t HashID;
 

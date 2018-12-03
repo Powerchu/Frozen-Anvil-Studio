@@ -45,7 +45,6 @@ namespace Dystopia
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 
-		// Default Constructor - Quad shape, Mass = 100.0f, Friction & Elasticity = 0.5F
 		AiController(void);
 
 		// ================================ VIRTUAL FUNCTIONS ================================== // 
@@ -84,13 +83,12 @@ namespace Dystopia
 
 		// Editor UI		
 		void EditorUI(void) noexcept override;
-		/*Quaternion if needed*/
+		Node::eStatus mNodeStatus;
+		Blackboard::Ptr mpBlackboard;
 #endif // EDITOR
 	private:
 		BehaviourTree bTree;
-		Blackboard::Ptr mpBlackboard;
 
-		Node::eStatus mNodeStatus;
 	};
 }
 #endif

@@ -50,6 +50,7 @@
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
     <ClCompile Include="Source\Editor\SpriteEditor.cpp" />
     <ClCompile Include="Source\System\AI\AISystem.cpp" />
+    <ClCompile Include="Source\System\AI\Blackboard.cpp" />
     <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
     <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
     <ClCompile Include="Source\Component\SpriteRenderer.cpp" />

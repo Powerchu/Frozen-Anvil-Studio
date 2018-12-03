@@ -3,7 +3,7 @@
 #include "Utility/DebugAssert.h"
 #include "Utility/Utility.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 
 HashID StringHasher(const char* _s)
 {

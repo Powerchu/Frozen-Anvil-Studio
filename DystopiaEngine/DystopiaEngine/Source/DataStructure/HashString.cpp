@@ -10,16 +10,16 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "DataStructure/HashString.h"
-#include "Utility/Utility.h"
-#include "Utility/DebugAssert.h"
+//#include "DataStructure/HashString.h"
+//#include "Utility/Utility.h"
+//#include "Utility/DebugAssert.h"
 
-#include <stdlib.h>
+//#include <stdlib.h>
 
 #define U_BUFFER_SIZE  11
 #define ULL_BUFFER_SIZE 16
 
-#if !EDITOR 
+#if 0
 
 HashID StringHasher(const char* _s)
 {
