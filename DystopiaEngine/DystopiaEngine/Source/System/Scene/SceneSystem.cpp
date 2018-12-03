@@ -31,6 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/GameObject.h"
 
 #include "Factory/Factory.h"
+#include "Editor/RuntimeMeta.h"
 
 Dystopia::SceneSystem::SceneSystem(void) :
 	mpCurrScene{ nullptr }, mpNextScene{ nullptr }, mLastSavedData{ "" }, mNextSceneFile{ "" }, mbRestartScene { false }
@@ -129,9 +130,8 @@ void Dystopia::SceneSystem::SceneChanged(void)
 			SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 			SerialObj.ConsumeEndBlock();
-			auto& allObj = mpCurrScene->GetAllGameObjects();
-			for (auto& obj : allObj)
-				obj.Awake();
+			mpCurrScene->Init();
+			Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors();
 		}
 	}
 	else
@@ -152,9 +152,8 @@ void Dystopia::SceneSystem::SceneChanged(void)
 		EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 		SerialObj.ConsumeEndBlock();
 		mNextSceneFile.clear();
-		auto& allObj = mpCurrScene->GetAllGameObjects();
-		for (auto& obj : allObj)
-			obj.Awake();
+		mpCurrScene->Init();
+		Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors();
 	}
 }
 

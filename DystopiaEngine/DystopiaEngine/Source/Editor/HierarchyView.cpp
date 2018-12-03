@@ -30,6 +30,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Camera/CameraSystem.h"
 #include "System/Driver/Driver.h"
 
+#include "System/Time/ScopedTimer.h"
+#include "System/Profiler/Profiler.h"
+#include "System/Profiler/ProfilerAction.h"
+
+
 #include <algorithm>
 #include <cctype>
 
@@ -244,6 +249,8 @@ namespace Editor
 	
 	void HierarchyView::ShowGameObjects(void)
 	{
+		Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope{ "Show Game Object ", "0" };
+
 		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		auto& arrayOfGameObjects = ss->GetCurrentScene().GetAllGameObjects(); // GetCurrentScene()->GetAllGameObjects();
 
@@ -251,15 +258,22 @@ namespace Editor
 		auto& selections = ed->GetSelectedIDs();
 		for (auto& obj : arrayOfGameObjects)
 		{
-			if (!strcmp(obj.GetName().c_str(), "___Scene_Camera___")) continue;
+			Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope2{ "Per Object", "Loop" };
+			if (obj.GetName() == StringHasher("___Scene_Camera___")) continue;
 
 			if (obj.GetComponent<Dystopia::Transform>()->GetParent())
 				continue;
 
 			if (obj.GetComponent<Dystopia::Transform>()->GetAllChild().size())
+			{
+				Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope3{ "Per Object", "ShowAsParent" };
 				ShowAsParent(obj, selections);
+			}
 			else
+			{
+				Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope4{ "Per Object", "ShoAsChild" };
 				ShowAsChild(obj, selections);
+			}
 		}
 
 		EGUI::Display::Dummy(Size().x, 50.f);
@@ -345,6 +359,7 @@ namespace Editor
 
 	void HierarchyView::ShowAsChild(Dystopia::GameObject& _obj, const AutoArray<uint64_t>& _arr)
 	{
+		Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope{ "Show As Child", "full" };
 		bool selected = false;
 		for (auto& o : _arr)
 		{
@@ -355,11 +370,14 @@ namespace Editor
 			}
 		}
 		std::string uniqueifyName = std::string{_obj.GetName().c_str()} + "##" + std::to_string(_obj.GetID());
+		Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope2{ "Show As Child", "SelectableTxt" };
 		if (EGUI::Display::SelectableTxt(uniqueifyName.c_str(), selected))
 		{
 			SelectedObj(_obj);
-		}	
+		}
+		Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope3{ "Show As Child", "GameObjectPayload" };
 		GameObjectPayload(_obj);
+		Dystopia::ScopedTimer<Dystopia::ProfilerAction> scope4{ "Show As Child", "GameObjectPopups" };
 		GameObjectPopups(_obj);
 	}
 
