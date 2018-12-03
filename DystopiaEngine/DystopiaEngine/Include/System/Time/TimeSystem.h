@@ -37,7 +37,7 @@ namespace Dystopia
 		float GetDeltaTime(void) const noexcept;
 		float GetFixedDeltaTime(void) const noexcept;
 
-		void SetTimeScale(float) noexcept;
+		_DLL_EXPORT void SetTimeScale(float) noexcept;
 
 		void StopTime(void) noexcept;
 		void ResumeTime(void) noexcept;
