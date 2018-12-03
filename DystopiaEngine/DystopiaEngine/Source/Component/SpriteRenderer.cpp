@@ -367,13 +367,13 @@ void Dystopia::SpriteRenderer::SetSpeed(float _s)
 	mfFrameTime = _s;
 }
 
-Math::Vec2 Dystopia::SpriteRenderer::Resized(float _multiplier) const
+Math::Vec2 Dystopia::SpriteRenderer::Resized(float _xMult, float _yMult) const
 {
 	if (mpTexture)
 	{
 		auto nScale = GetOwner()->GetComponent<Transform>()->GetScale();
-		nScale.x = static_cast<float>(mpTexture->GetWidth()) * _multiplier;
-		nScale.y = static_cast<float>(mpTexture->GetHeight()) * _multiplier;
+		nScale.x = static_cast<float>(mpTexture->GetWidth()) * _xMult;
+		nScale.y = static_cast<float>(mpTexture->GetHeight()) * _yMult;
 
 		if (mpAtlas && mnID < mAnimations.size())
 		{
@@ -386,14 +386,14 @@ Math::Vec2 Dystopia::SpriteRenderer::Resized(float _multiplier) const
 	return Math::Vec2{};
 }
 
-void Dystopia::SpriteRenderer::ResizeToFit(float _multiplier) const
+void Dystopia::SpriteRenderer::ResizeToFit(float _xMult, float _yMult) const
 {
 	if (GetOwner())
 	{
-		auto size = Resized(_multiplier);
+		auto xy = Resized(_xMult, _yMult);
 		auto nScale = GetOwner()->GetComponent<Transform>()->GetScale();
-		nScale.x = size.x;
-		nScale.y = size.y;
+		nScale.x = xy.x;
+		nScale.y = xy.y;
 		GetOwner()->GetComponent<Transform>()->SetGlobalScale(nScale);
 	}
 }
