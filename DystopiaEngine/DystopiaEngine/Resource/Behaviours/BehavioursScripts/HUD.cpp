@@ -106,75 +106,75 @@ namespace Dystopia
 			FFMode = 2;
 			ChangeFF(FFMode);
 		}
-		else if (EngineCore::Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_A))
-		{
-			auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
-			for (auto& c : children)
-			{
-				if (c->GetOwner()->GetName() == HashString{"Health"})
-				{
-					DEBUG_PRINT(eLog::MESSAGE, "Health! 0");
-					HUD_MSG::SendExternalMessage(c->GetOwner(), "HPLerpTo", 0.0f);
-					return;
-				}
-			}
-		}
-		else if (EngineCore::Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_Y))
-		{
-			auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
-			for (auto& c : children)
-			{
-				if (c->GetOwner()->GetName() == HashString{"FFBar"})
-				{
-					DEBUG_PRINT(eLog::MESSAGE, "Bar! 1");
-					HUD_MSG::SendExternalMessage(c->GetOwner(), "EnergyLerpTo", 1.f);
-					return;
-				}
-			}
-		}
-		else if (EngineCore::Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_B))
-		{
-			auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
-			for (auto& c : children)
-			{
-				if (c->GetOwner()->GetName() == HashString{"Health"})
-				{
-					DEBUG_PRINT(eLog::MESSAGE, "Health! 1");
-					HUD_MSG::SendExternalMessage(c->GetOwner(), "HPLerpTo", 1.f);
-					return;
-				}
-			}
-		}
-		else if (EngineCore::Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_X))
-		{
-			auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
-			for (auto& c : children)
-			{
-				if (c->GetOwner()->GetName() == HashString{"FFBar"})
-				{
-					DEBUG_PRINT(eLog::MESSAGE, "Bar! 0");
-					HUD_MSG::SendExternalMessage(c->GetOwner(), "EnergyLerpTo", 0.f);
-					return;
-				}
-			}
-		}
-		else if (auto d = EngineCore::Get<InputManager>()->GetAnalogX(0))
-		{
-			ChangeHealth(d > 0 ? _fDeltaTime : -1.f * _fDeltaTime);
-		}
-		else if (EngineCore::Get<InputManager>()->GetTriggers(0))
-		{
-			Fade(true);
-		}
-		else if (EngineCore::Get<InputManager>()->GetTriggers(1))
-		{
-			Fade(false);
-		}
-	
-		ChangeAllAlpha(_fDeltaTime, FadeSpeed);
+		//else if (EngineCore::Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_A))
+		//{
+		//	auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
+		//	for (auto& c : children)
+		//	{
+		//		if (c->GetOwner()->GetName() == HashString{"Health"})
+		//		{
+		//			DEBUG_PRINT(eLog::MESSAGE, "Health! 0");
+		//			HUD_MSG::SendExternalMessage(c->GetOwner(), "HPLerpTo", 0.0f);
+		//			return;
+		//		}
+		//	}
+		//}
+		//else if (EngineCore::Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_Y))
+		//{
+		//	auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
+		//	for (auto& c : children)
+		//	{
+		//		if (c->GetOwner()->GetName() == HashString{"FFBar"})
+		//		{
+		//			DEBUG_PRINT(eLog::MESSAGE, "Bar! 1");
+		//			HUD_MSG::SendExternalMessage(c->GetOwner(), "EnergyLerpTo", 1.f);
+		//			return;
+		//		}
+		//	}
+		//}
+		//else if (EngineCore::Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_B))
+		//{
+		//	auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
+		//	for (auto& c : children)
+		//	{
+		//		if (c->GetOwner()->GetName() == HashString{"Health"})
+		//		{
+		//			DEBUG_PRINT(eLog::MESSAGE, "Health! 1");
+		//			HUD_MSG::SendExternalMessage(c->GetOwner(), "HPLerpTo", 1.f);
+		//			return;
+		//		}
+		//	}
+		//}
+		//else if (EngineCore::Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_X))
+		//{
+		//	auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
+		//	for (auto& c : children)
+		//	{
+		//		if (c->GetOwner()->GetName() == HashString{"FFBar"})
+		//		{
+		//			DEBUG_PRINT(eLog::MESSAGE, "Bar! 0");
+		//			HUD_MSG::SendExternalMessage(c->GetOwner(), "EnergyLerpTo", 0.f);
+		//			return;
+		//		}
+		//	}
+		//}
+		//else if (auto d = EngineCore::Get<InputManager>()->GetAnalogX(0))
+		//{
+		//	ChangeHealth(d > 0 ? _fDeltaTime : -1.f * _fDeltaTime);
+		//}
+		//else if (EngineCore::Get<InputManager>()->GetTriggers(0))
+		//{
+		//	Fade(true);
+		//}
+		//else if (EngineCore::Get<InputManager>()->GetTriggers(1))
+		//{
+		//	Fade(false);
+		//}
+	    //
+		//ChangeAllAlpha(_fDeltaTime, FadeSpeed);
 	}
 
-	void HUD::FixedUpdate(const float )
+	void HUD::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 
@@ -190,30 +190,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::HUD::OnCollisionEnter(const CollisionEvent& )
+	void Dystopia::HUD::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::HUD::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::HUD::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::HUD::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::HUD::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::HUD::OnTriggerEnter(GameObject * const )
+	void Dystopia::HUD::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::HUD::OnTriggerStay(GameObject * const )
+	void Dystopia::HUD::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::HUD::OnTriggerExit(GameObject * const )
+	void Dystopia::HUD::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
@@ -222,11 +222,11 @@ namespace Dystopia
 		return new HUD{ *this };
 	}
 
-	void HUD::Serialise(TextSerialiser& ) const
+	void HUD::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-	void HUD::Unserialise(TextSerialiser& )
+	void HUD::Unserialise(TextSerialiser& _ser)
 	{
 	}
 
@@ -252,7 +252,7 @@ namespace Dystopia
 			if (c->GetOwner()->GetName() == HashString{"FFIcon"})
 			{ 
 				c->GetOwner()->GetComponent<SpriteRenderer>()->SetTexture(
-				EngineCore::Get<GraphicsSystem>()->LoadTexture( _i == 2 ? 
+				EngineCore::Get<GraphicsSystem>()->LoadTexture( _i == 1 ? 
 				EngineCore::Get<FileSystem>()->GetFromResource("Form.png").c_str() : 
 				EngineCore::Get<FileSystem>()->GetFromResource("Force.png").c_str()
 				));
@@ -260,7 +260,7 @@ namespace Dystopia
 			if (c->GetOwner()->GetName() == HashString{"FFBar"})
 			{ 
 				c->GetOwner()->GetComponent<SpriteRenderer>()->SetTexture(
-				EngineCore::Get<GraphicsSystem>()->LoadTexture( _i == 2 ? 
+				EngineCore::Get<GraphicsSystem>()->LoadTexture( _i == 1 ? 
 				EngineCore::Get<FileSystem>()->GetFromResource("form bar.png").c_str() : 
 				EngineCore::Get<FileSystem>()->GetFromResource("force bar.png").c_str()
 				));
@@ -293,7 +293,7 @@ namespace Dystopia
 		HUDAlpha += modifier;
 		
 		if (HUDAlpha < 0)
-			FadeMode = static_cast<int>(HUDAlpha = 0);
+			FadeMode = HUDAlpha = 0;
 		else if ( HUDAlpha > 1)
 		{
 			FadeMode = 0;

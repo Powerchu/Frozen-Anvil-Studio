@@ -134,6 +134,8 @@ namespace Dystopia
 		hudName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("HUD");
 		playerHealth = 100.0f;
 		currentHealth = playerHealth;
+		playerEnergy = 100.0f;
+		currentEnergy = playerEnergy; 
 		SetFlags(FLAG_ACTIVE);
 	}
 
@@ -141,7 +143,8 @@ namespace Dystopia
 	{ 
 		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
 		sManagerName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("SkillManager");
-		spriteName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("HUD");
+		spriteName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player Sprite");
+		hudName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("HUD");
 		SetFlags(FLAG_ACTIVE);  
 
 		if (mpInputSys->IsController())
@@ -186,9 +189,15 @@ namespace Dystopia
 			isFalling = true;
 			isJumping = false;
 		}
+
+		if (currentEnergy < playerEnergy)
+		{
+			currentEnergy = currentEnergy + (_fDeltaTime * 5.f);
+			SpendEnergy(0.0f);
+		}
 	}
 
-	void CharacterController::FixedUpdate(const float )
+	void CharacterController::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
@@ -216,33 +225,32 @@ namespace Dystopia
 			if (isFalling)
 			{
 				isFalling = false;
-				DEBUG_PRINT(eLog::MESSAGE, "why is it  notjumping");
 				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 9, mbIsFacingRight);
 			}
 		}
 	}
 
-	void Dystopia::CharacterController::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::CharacterController::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
 		
 		
 		
 	}
 
-	void Dystopia::CharacterController::OnTriggerEnter(GameObject * const )
+	void Dystopia::CharacterController::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::CharacterController::OnTriggerStay(GameObject * const )
+	void Dystopia::CharacterController::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::CharacterController::OnTriggerExit(GameObject * const )
+	void Dystopia::CharacterController::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
@@ -251,11 +259,11 @@ namespace Dystopia
 		return new CharacterController{*this};
 	}
 
-	void CharacterController::Serialise(TextSerialiser& ) const
+	void CharacterController::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-	void CharacterController::Unserialise(TextSerialiser& )
+	void CharacterController::Unserialise(TextSerialiser& _ser)
 	{
 	}
 
@@ -281,7 +289,7 @@ namespace Dystopia
 
 		if (mpInputSys->IsController())
 		{
-			const auto leftThumb = mpInputSys->GetAnalogX(0);
+			const auto leftThumb = mpInputSys->GetAnalogX(0); 
 			const auto leftTriggerFloat = mpInputSys->GetTriggers(0);
 
 			if (leftThumb < -0.1F) // Moving Left
@@ -291,15 +299,42 @@ namespace Dystopia
 				{
 					GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
 					mbIsFacingRight = false;
+					CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
+				}
+				else if(auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
+				{
+					if (r->GetCurrentAnimation() == HashString{"Idle"})
+					{
+						CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
+					}
 				}
 			}
 			else if (leftThumb > 0.1F)// Moving Right
 			{
+				DEBUG_PRINT(eLog::MESSAGE,"RIGHT");
 				mpBody->AddLinearImpulse({ leftThumb * CharacterSpeed * mpBody->GetMass(),0,0 });
 				if (!mbIsFacingRight)
 				{
 					GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
 					mbIsFacingRight = true;
+					CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
+				}
+				else if(auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
+				{
+					if (r->GetCurrentAnimation() == HashString{"Idle"})
+					{
+						CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
+					}
+				}
+			}
+			else
+			{
+				if (auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
+				{
+					if (r->IsPlaying() && r->GetCurrentAnimation() == HashString{"Run"})
+					{
+						CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 0, mbIsFacingRight);
+					}
 				}
 			}
 
@@ -311,6 +346,7 @@ namespace Dystopia
 				{
 					IsDodging = true;
 					mpBody->AddLinearImpulse({ side * CharacterSpeed * mpBody->GetMass() * 20 * leftTriggerFloat,0,0 });
+					CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 10, mbIsFacingRight);
 				}
 				else
 				{
@@ -332,7 +368,7 @@ namespace Dystopia
 			}
 		} // Controller Scheme end
 
-		if (mpInputSys->IsKeyPressed("Run Left") && !mpInputSys->IsKeyPressed("Run Right"))
+		if (mpInputSys->IsKeyPressed(eButton::XBUTTON_DPAD_LEFT) && !mpInputSys->IsKeyPressed(eButton::XBUTTON_DPAD_RIGHT))
 		{			
 			mpBody->AddLinearImpulse({ -1 * CharacterSpeed * mpBody->GetMass(),0,0 });
 			//mpBody->AddTorque({0, 0,1 * CharacterSpeed});
@@ -343,7 +379,7 @@ namespace Dystopia
 			}
 		}
 
-		if (mpInputSys->IsKeyPressed("Run Right") && !mpInputSys->IsKeyPressed("Run Left"))
+		if (mpInputSys->IsKeyPressed(eButton::XBUTTON_DPAD_RIGHT) && !mpInputSys->IsKeyPressed(eButton::XBUTTON_DPAD_LEFT))
 		{
 			mpBody->AddLinearImpulse({CharacterSpeed * mpBody->GetMass(),0,0 });
 			//mpBody->AddTorque({0, 0,-1 * CharacterSpeed}); 
@@ -354,7 +390,7 @@ namespace Dystopia
 			}
 		}
 
-		if (mpInputSys->IsKeyPressed("Jump"))
+		if (mpInputSys->IsKeyPressed(eButton::XBUTTON_A))
 		{
 			if (mbIsGrounded)
 			{
@@ -366,39 +402,37 @@ namespace Dystopia
 			}
 		}
 
-		if (mpInputSys->IsKeyTriggered("Skill Y"))
+		if (mpInputSys->IsKeyTriggered(eButton::XBUTTON_Y))
 		{
 			const Math::Vec3D spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
 
 			CharacterController::CastLinked(1, currentType, float(spawnLocation.x), float(spawnLocation.y), float(spawnLocation.z));
 		}
 
-		if (mpInputSys->IsKeyTriggered("Skill B"))
+		if (mpInputSys->IsKeyTriggered(eButton::XBUTTON_B))
 		{
 			const Math::Vec3D spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
 
 			CharacterController::CastLinked(2, currentType, float(spawnLocation.x), float(spawnLocation.y), float(spawnLocation.z));
 		}
 
-		if (mpInputSys->IsKeyTriggered("SetForm"))
+		if (mpInputSys->IsKeyTriggered(eButton::XBUTTON_LEFT_SHOULDER))
 		{
 			currentType = true;
-			DEBUG_PRINT(eLog::MESSAGE, "Form!");
+			CharacterController_MSG::SendExternalMessage(hudName, "ChangeFF", 1);
 		}
 
-		if (mpInputSys->IsKeyTriggered("SetForce"))
+		if (mpInputSys->IsKeyTriggered(eButton::XBUTTON_RIGHT_SHOULDER))
 		{
 			currentType = false;
-			DEBUG_PRINT(eLog::MESSAGE, "Force!");
+			CharacterController_MSG::SendExternalMessage(hudName, "ChangeFF", 2);
 		}
 
-		if (mpInputSys->IsKeyTriggered("Attack"))
+		if (mpInputSys->IsKeyTriggered(eButton::XBUTTON_X))
 		{
-			DEBUG_PRINT(eLog::MESSAGE, "TAKING DAMAGEscsds");
-			TakeDamage(10.0f);
 			const Math::Vec3D spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
 
-		    if (attackDelay > 0.5f)
+		    if (attackDelay > 0.f)
 			{
 				if (combatName)
 				{
@@ -419,7 +453,6 @@ namespace Dystopia
 				if (attackCount < 3)
 				{
 					attackCount++;
-					DEBUG_PRINT(eLog::MESSAGE, "Attacking!");
 				}
 
 				else
@@ -441,6 +474,11 @@ namespace Dystopia
 
 	void Dystopia::CharacterController::CastLinked(int _skill, bool _isForm, float x, float y, float z)
 	{
+		if (currentEnergy < 10.0f)
+			return;
+
+
+		DEBUG_PRINT(eLog::MESSAGE, "WTF %d", _isForm);
 
 		if (_isForm)
 		{
@@ -448,7 +486,6 @@ namespace Dystopia
 
 			if (_skill == 0)
 			{
-				DEBUG_PRINT(eLog::MESSAGE, "Sending to SManager FORM %d", mbIsFacingRight);
 				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 0, mbIsFacingRight, x, y, z);
 			}
 
@@ -463,8 +500,6 @@ namespace Dystopia
 		{	
 			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 5, mbIsFacingRight);
 
-			DEBUG_PRINT(eLog::MESSAGE, "Sending to SManager FORCE");
-
 			if (_skill == 0)
 				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForce", 0, mbIsFacingRight, x, y, z);
 
@@ -474,7 +509,8 @@ namespace Dystopia
 			else if (_skill == 2)
 				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForce", 2, mbIsFacingRight, x, y, z);
 		}
-			
+
+		SpendEnergy(10.0f);
 	}
 
 	void CharacterController::CheckAttack()
@@ -483,7 +519,8 @@ namespace Dystopia
 		{	
 			if (attackCount == 1)
 			{
-				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 1, mbIsFacingRight);
+				DEBUG_PRINT(eLog::MESSAGE, "Test is ondsffsdfsd");
+				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", int(1), mbIsFacingRight);
 				isAttacking = true; 
 			}
 
@@ -527,19 +564,16 @@ namespace Dystopia
 
 	void CharacterController::CheckMoving()
 	{
-		//const auto leftThumb = mpInputSys->GetAnalogX(0);
-
-		if (mpInputSys->IsKeyTriggered("Run Left") || mpInputSys->IsKeyTriggered("Run Right"))
+		if (mpInputSys->IsKeyTriggered(eButton::XBUTTON_DPAD_LEFT) || mpInputSys->IsKeyTriggered(eButton::XBUTTON_DPAD_RIGHT))
 			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
 
-		if (mpInputSys->IsKeyReleased("Run Left") || mpInputSys->IsKeyReleased("Run Right"))
-			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 0, mbIsFacingRight);
+		if (mpInputSys->IsKeyReleased(eButton::XBUTTON_DPAD_LEFT) || mpInputSys->IsKeyReleased(eButton::XBUTTON_DPAD_RIGHT))
+			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 0, mbIsFacingRight); 
 	}
 
 	void CharacterController::TakeDamage(float _dmg)
 	{
 		currentHealth = currentHealth - _dmg; 
-		DEBUG_PRINT(eLog::MESSAGE, "%f", currentHealth);
 
 		if (currentHealth > 0.0f)
 		{
@@ -548,8 +582,15 @@ namespace Dystopia
 
 		else
 		{
-			DEBUG_PRINT(eLog::MESSAGE, "Death!"); 
+			EngineCore::Get<SceneSystem>()->RestartScene();
 		}
+	}
+
+	void CharacterController::SpendEnergy(float _amt)
+	{
+		currentEnergy = currentEnergy - _amt; 
+
+		CharacterController_MSG::SendExternalMessage(hudName, "UpdateEnergy", currentEnergy / playerEnergy);
 	}
 	
 	TypeErasure::TypeEraseMetaData CharacterController::GetMetaData()

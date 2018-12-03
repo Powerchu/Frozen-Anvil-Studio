@@ -81,8 +81,10 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
-		float xOffset, yOffset, accDt;
-		Math::Vec2 prevV;
+		float xOffset, yOffset;
+		float xWeight, yWeight;
+		float prev;
+		Math::Vec4 vPos;
 		
 	private:
 		GameObject* mpTarget = nullptr;
@@ -98,7 +100,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::FollowTarget, xOffset , yOffset)
+PP_REFLECT(Dystopia::FollowTarget, xOffset , yOffset, xWeight, yWeight)
 
 #endif //_FollowTarget_H_
 

@@ -119,7 +119,6 @@ namespace Dystopia
 		bool isJumping;
 		bool isFalling;
 		bool currentType;
-
 		RigidBody * mpBody;
 		InputManager * mpInputSys;
 	};

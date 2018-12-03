@@ -38,6 +38,7 @@
 #include "../Resource/Behaviours/BehavioursScripts/HealthShader.h"
 #include "../Resource/Behaviours/BehavioursScripts/HUD.h"
 #include "../Resource/Behaviours/BehavioursScripts/ShiftChildrenZ.h"
+#include "../Resource/Behaviours/BehavioursScripts/LoadNext.h"
 #endif
 
 #if EDITOR
@@ -71,7 +72,12 @@ namespace Dystopia
 		class QuitButton,
 		class RestartButton,
 		class SettingsButton,
-		class SpriteManager
+		class SpriteManager,
+		class EnergyShader,
+		class HealthShader,
+		class HUD,
+		class ShiftChildrenZ,
+		class LoadNext
 		/*Add Behaviours Here*/
 	>::result;
 }

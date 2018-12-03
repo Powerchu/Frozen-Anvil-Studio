@@ -90,13 +90,12 @@ namespace Dystopia
 		SetFlags(FLAG_ACTIVE);  
 	}
 
-	void SpriteManager::Update(const float )
+	void SpriteManager::Update(const float _fDeltaTime)
 	{
-		if(!myRenderer->IsPlaying())
-			IsPlaying();
+		IsPlaying();
 	}
 
-	void SpriteManager::FixedUpdate(const float )
+	void SpriteManager::FixedUpdate(const float _fDeltaTime)
 	{
 	} 
 
@@ -112,30 +111,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::SpriteManager::OnCollisionEnter(const CollisionEvent& )
+	void Dystopia::SpriteManager::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::SpriteManager::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::SpriteManager::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::SpriteManager::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::SpriteManager::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::SpriteManager::OnTriggerEnter(GameObject * const )
+	void Dystopia::SpriteManager::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::SpriteManager::OnTriggerStay(GameObject * const )
+	void Dystopia::SpriteManager::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::SpriteManager::OnTriggerExit(GameObject * const )
+	void Dystopia::SpriteManager::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
@@ -144,11 +143,11 @@ namespace Dystopia
 		return new SpriteManager{ *this };
 	}
 
-	void SpriteManager::Serialise(TextSerialiser& ) const
+	void SpriteManager::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-	void SpriteManager::Unserialise(TextSerialiser& )
+	void SpriteManager::Unserialise(TextSerialiser& _ser)
 	{
 	}
 
@@ -166,14 +165,14 @@ namespace Dystopia
 
 	void SpriteManager::PlayAnimation(int animNum, bool isFacingRight)
 	{
-		DEBUG_PRINT(eLog::MESSAGE, "animNum %d!", animNum);
+		DEBUG_PRINT(eLog::MESSAGE, "testingsdfgd");         
 		if (auto ptr = GetOwner()->GetComponent<SpriteRenderer>())
 		{
 			facingRight = isFacingRight;
 			messageSent = true;
 
 			if (!messageSent)
-				return; 
+				return;
 			
 			messageSent = false;
 
@@ -181,7 +180,7 @@ namespace Dystopia
 			{
 				myRenderer->Stop();
 				myRenderer->SetAnimation("AttackOne");
-				myRenderer->ResizeToFit( isFacingRight ? 0.1f : -0.1f );
+				myRenderer->ResizeToFit( isFacingRight ? 0.15f : -0.15f , 0.15f);
 				myRenderer->SetSpeed(0.066f);
 				myRenderer->Play();
 			}
@@ -190,8 +189,8 @@ namespace Dystopia
 			{
 				myRenderer->Stop();
 				myRenderer->SetAnimation("AttackTwo");
-				myRenderer->ResizeToFit( isFacingRight ? 0.1f : -0.1f );
-				myRenderer->SetSpeed(0.086f);
+				myRenderer->ResizeToFit( isFacingRight ? 0.15f : -0.15f , 0.15f);
+				myRenderer->SetSpeed(0.086f); 
 				myRenderer->Play();
 			}
 
@@ -199,7 +198,7 @@ namespace Dystopia
 			{
 				myRenderer->Stop();
 				myRenderer->SetAnimation("AttackThree");
-				myRenderer->ResizeToFit( isFacingRight ? 0.1f : -0.1f );
+				myRenderer->ResizeToFit( isFacingRight ? 0.15f : -0.15f , 0.15f);
 				myRenderer->SetSpeed(0.066f);
 				myRenderer->Play();
 			}
@@ -208,8 +207,8 @@ namespace Dystopia
 			{
 				myRenderer->Stop();
 				myRenderer->SetAnimation("Run");
-				myRenderer->ResizeToFit( isFacingRight ? 0.1f : -0.1f );
-				myRenderer->SetSpeed(0.066f);
+				myRenderer->ResizeToFit( isFacingRight ? 0.15f : -0.15f , 0.15f);
+				myRenderer->SetSpeed(0.046f);
 				myRenderer->Play();
 			}
 			
@@ -217,7 +216,7 @@ namespace Dystopia
 			{
 				myRenderer->Stop();
 				myRenderer->SetAnimation("Idle");
-				myRenderer->ResizeToFit( isFacingRight ? 0.1f : -0.1f );
+				myRenderer->ResizeToFit( isFacingRight ? 0.15f : -0.15f , 0.15f);
 				myRenderer->SetSpeed(0.066f);
 				myRenderer->Play();
 			}
@@ -226,7 +225,7 @@ namespace Dystopia
 			{
 				myRenderer->Stop();
 				myRenderer->SetAnimation("CastForce");
-				myRenderer->ResizeToFit( isFacingRight ? 0.1f : -0.1f );
+				myRenderer->ResizeToFit( isFacingRight ? 0.15f : -0.15f , 0.15f);
 				myRenderer->SetSpeed(0.066f);
 				myRenderer->Play();
 			}
@@ -235,8 +234,8 @@ namespace Dystopia
 			{
 				myRenderer->Stop();
 				myRenderer->SetAnimation("CastForm");
-				myRenderer->ResizeToFit( isFacingRight ? 0.1f : -0.1f );
-				myRenderer->SetSpeed(0.066f);
+				myRenderer->ResizeToFit( isFacingRight ? 0.15f : -0.15f , 0.15f);
+				myRenderer->SetSpeed(0.066f); 
 				myRenderer->Play();
 			}
 
@@ -244,7 +243,7 @@ namespace Dystopia
 			{
 				myRenderer->Stop();
 				myRenderer->SetAnimation("Jump");
-				myRenderer->ResizeToFit( isFacingRight ? 0.1f : -0.1f );
+				myRenderer->ResizeToFit( isFacingRight ? 0.15f : -0.15f , 0.15f);
 				myRenderer->SetSpeed(0.066f);
 				myRenderer->Play();
 				isJumping = true; 
@@ -254,7 +253,7 @@ namespace Dystopia
 			{
 				myRenderer->Stop();
 				myRenderer->SetAnimation("Fall");
-				myRenderer->ResizeToFit( isFacingRight ? 0.1f : -0.1f );
+				myRenderer->ResizeToFit( isFacingRight ? 0.15f : -0.15f , 0.15f);
 				myRenderer->SetSpeed(0.066f);
 				myRenderer->Play();
 			}
@@ -263,24 +262,32 @@ namespace Dystopia
 			{
 				myRenderer->Stop();
 				myRenderer->SetAnimation("Land");
-				myRenderer->ResizeToFit( isFacingRight ? 0.1f : -0.1f );
+				myRenderer->ResizeToFit( isFacingRight ? 0.15f : -0.15f , 0.15f);
 				myRenderer->SetSpeed(0.066f);
 				myRenderer->Play();  
 			}
 
+			else if (animNum == 10)
+			{
+				myRenderer->Stop();
+				myRenderer->SetAnimation("Roll");
+				myRenderer->ResizeToFit( isFacingRight ? 0.15f : -0.15f , 0.15f);
+				myRenderer->SetSpeed(0.016f);
+				myRenderer->Play();  
+			}
 		}
 	}
 
 	void SpriteManager::IsPlaying()
 	{
-		if (!messageSent)
+		if (!myRenderer->IsPlaying() && !messageSent)
 		{
 			if (!isJumping)
 			{
 				SpriteManager_MSG::SendExternalMessage(GetOwner()->GetComponent<Transform>()->GetParent()->GetOwner(), "AnimationComplete");
 				myRenderer->Stop();
 				myRenderer->SetAnimation("Idle");
-				myRenderer->ResizeToFit( facingRight ? 0.1f : -0.1f );
+				myRenderer->ResizeToFit( facingRight ? 0.15f : -0.15f, 0.15f );
 				myRenderer->Play();
 			}
 
@@ -289,7 +296,7 @@ namespace Dystopia
 				SpriteManager_MSG::SendExternalMessage(GetOwner()->GetComponent<Transform>()->GetParent()->GetOwner(), "AnimationComplete");
 				myRenderer->Stop();
 				myRenderer->SetAnimation("Fall");
-				myRenderer->ResizeToFit( facingRight ? 0.1f : -0.1f );
+				myRenderer->ResizeToFit( facingRight ? 0.15f : -0.15f, 0.15f );
 				myRenderer->Play();
 				isJumping = false;
 			}

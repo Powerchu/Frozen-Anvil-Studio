@@ -198,8 +198,8 @@ namespace Dystopia
 		if(mPauseState)
 		{
 			bool isDown    = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eButton::XBUTTON_DPAD_DOWN) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_DOWN);
-			bool isUp      = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(XBUTTON_DPAD_UP) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_UP);
-			bool isPress   = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(XBUTTON_A) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_ENTER);
+			bool isUp  = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(XBUTTON_DPAD_UP) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_UP);
+			bool isPress = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(XBUTTON_A) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_ENTER);
 			if(isPress)
 			{
 				if(selection == 0)
@@ -211,9 +211,8 @@ namespace Dystopia
 					EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f); 
 					mPauseState = false;
 					selection = 0;
-
 					auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
-					for (auto & c : children)
+					for(auto & c : children)
 					{
 						c->GetOwner()->RemoveFlags(eObjFlag::FLAG_ACTIVE);
 						if (auto s = c->GetOwner()->GetComponent<SpriteRenderer>())
@@ -229,6 +228,7 @@ namespace Dystopia
 						if (auto s = c->GetOwner()->GetComponent<SpriteRenderer>())
 							s->RemoveFlags(eObjFlag::FLAG_ACTIVE);
 					}
+					selection = 0;
 				}
 				else
 				{

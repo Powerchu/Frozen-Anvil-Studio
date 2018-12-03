@@ -45,6 +45,7 @@
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\Health.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\HealthShader.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\HUD.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\LoadNext.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\MenuManager.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\Parallax.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\PauseManager.cpp" />
@@ -388,6 +389,7 @@
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\Health.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\HealthShader.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\HUD.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\LoadNext.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\MenuManager.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\Parallax.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\PauseManager.h" />

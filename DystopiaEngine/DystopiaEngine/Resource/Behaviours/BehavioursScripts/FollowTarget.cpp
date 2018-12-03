@@ -25,9 +25,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Transform.h"
 namespace Dystopia
 {
-	static float z = 0;
 	FollowTarget::FollowTarget()
-		:xOffset{0}, yOffset{0}, accDt{0}, prevV{0,0}
+		:xOffset{0}, yOffset{0}, xWeight{0}, yWeight{0}
 	{
 	}
 
@@ -41,8 +40,8 @@ namespace Dystopia
 
 	void FollowTarget::Init()
 	{
-		mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
-		z = GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
+		mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("CameraPivot");
+		vPos = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
 	}
 
 	void FollowTarget::Update(const float _fDeltaTime)
@@ -53,20 +52,36 @@ namespace Dystopia
 			return; 
 		}
 		
+		auto newPos = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
+		if(Math::ApproxEq(newPos[0], vPos[0]) && Math::ApproxEq(newPos[1], vPos[1]))
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "SKIPPING");
+			return;
+		}
+		
+		
 		Math::Vec4 currPos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
-		Math::Vec4 newPos  = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
 		newPos.x = newPos.x + xOffset;
 		newPos.y = newPos.y + yOffset;
-		float spd = .5f;  
-		Math::Vec2 currentV = Math::Vec2{newPos.x - currPos.x, newPos.y - currPos.y };
 		
-		auto lerpedR = Math::Lerp(prevV, currentV, spd);
-		currPos.x = currPos.x + lerpedR.x * 2 * _fDeltaTime;
-		currPos.y = currPos.y + lerpedR.y * 2 * _fDeltaTime;
+		currPos.x = Math::Lerp<float>(currPos.x, newPos.x, xWeight * _fDeltaTime);
+		currPos.y = Math::Lerp<float>(currPos.y, newPos.y, yWeight * _fDeltaTime);
+		
+		//newPos = (newPos - currPos);
+		//prev = (prev  * .7f + newPos.Magnitude() * .3f) * _fDeltaTime;
+		//newPos.Normalise();
+	    //
+		//newPos *= prev;
+		//
+		//vPos.x += newPos.x * xWeight;
+		//vPos.y += newPos.y * yWeight;
+		
+		//currPos.x = currPos.x + lerpC.x * _fDeltaTime;
+		//currPos.y = currPos.y + lerpC.y * _fDeltaTime;
 		GetOwner()->GetComponent<Transform>()->SetGlobalPosition(currPos);
+		vPos = newPos;
 		
-		
-		prevV = lerpedR;
+		//prevV = lerpC;
 		//auto lerpPos = Math::Lerp(currPos, newPos, 0.03F);
 		//lerpPos.z = z;
 		//if ((newPos - currPos).MagnitudeSqr() < 0.00001F)
@@ -80,7 +95,7 @@ namespace Dystopia
 
 	}
 
-	void FollowTarget::FixedUpdate(const float )
+	void FollowTarget::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
@@ -96,30 +111,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::FollowTarget::OnCollisionEnter(const CollisionEvent& )
+	void Dystopia::FollowTarget::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::FollowTarget::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::FollowTarget::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::FollowTarget::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::FollowTarget::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::FollowTarget::OnTriggerEnter(GameObject * const )
+	void Dystopia::FollowTarget::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::FollowTarget::OnTriggerStay(GameObject * const )
+	void Dystopia::FollowTarget::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::FollowTarget::OnTriggerExit(GameObject * const )
+	void Dystopia::FollowTarget::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
@@ -128,11 +143,11 @@ namespace Dystopia
 		return new FollowTarget{*this};
 	}
 
-	void FollowTarget::Serialise(TextSerialiser& ) const
+	void FollowTarget::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-	void FollowTarget::Unserialise(TextSerialiser& )
+	void FollowTarget::Unserialise(TextSerialiser& _ser)
 	{
 	}
 

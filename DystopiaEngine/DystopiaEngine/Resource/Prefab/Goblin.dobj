@@ -1,27 +1,114 @@
 [START_GO_PREFAB]
-1,[START_START_GO_DATA]
-18446744072906356224,536870977,"Goblin",0,
+4,[START_START_GO_DATA]
+18446744072446456832,536870977,"Goblin",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-256,256,1,0,0,0,0,0,0,1,18446744073709551615,
+33.9697,34.785,1,314.12,27.7734,8,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 
 [END_GO_PREFAB]
 [START_Component]
+2,[START_RigidBody]
+18446744072702880768,536870913,18446744072446456832,0,0.5,0.5,0.5,0.5,0,0.5,1,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component]
+[START_Component]
+5,[START_Circle_Collider2D]
+720812032,536870913,18446744072446456832,-0.03,0.13,0,0,0,0,0.5,0,
+[END_Circle_Collider2D]
+
+[END_Component]
+[START_Component]
+5,[START_Circle_Collider2D]
+720812032,536870913,18446744072446456832,-0.03,0.13,0,0,0,0,0.5,0,
+[END_Circle_Collider2D]
+
+[END_Component]
+[START_Component]
 7,[START_Renderer]
-18446744073578494464,536870913,18446744072906356224,"/Asset/Spritesheet/Goblin Sheet.dds",
+18446744073653351424,536870913,18446744072446456832,"/Asset/Spritesheet/Goblin Sheet.dds",
 [END_Renderer]
 [START_Sprite Renderer]
-0.033,5,1,"",10,3,1,0,28,2,"Rename this",1,1,1,0,0,3,"Rename this",1,1,1,0,0,4,"Rename this",10,5,1,0,45,5,"Rename this",10,3,1,6,23,0,1,
+0.033,5,1,"Attack",10,3,0,0,28,2,"Flinch",1,1,0,0,0,3,"Idle",1,1,0,0,0,4,"Rally",10,5,0,0,45,5,"Run",10,3,1,6,23,4,0,1,1,1,1,
 [END_Sprite Renderer]
 
 [END_Component]
 [START_Number of Behaviours]
-0,
+1,
 [END_Number of Behaviours]
-[START_Recursion Counter]
+[START_Behaviour Names]
+"Goblin",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+5,
+[END_Behaviour  Meta Count]
+[START_mHealth]
+"mHealth",
+[END_mHealth]
+[START_Member Variable]
+50,
+[END_Member Variable]
+[START_takenDamage]
+"takenDamage",
+[END_takenDamage]
+[START_Member Variable]
 0,
+[END_Member Variable]
+[START_attackDelay]
+"attackDelay",
+[END_attackDelay]
+[START_Member Variable]
+0.95,
+[END_Member Variable]
+[START_attackCount]
+"attackCount",
+[END_attackCount]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_isWinding]
+"isWinding",
+[END_isWinding]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_Recursion Counter]
+1,
 [END_Recursion Counter]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1842265600,536870977,"GoblinCombat",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+23.5749,34.2284,1,330.947,24.3701,7.99979,0,0,0,1,18446744072446456832,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+4,[START_Convex_Collider]
+18446744071777188864,536870913,1842265600,-0.19,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"GoblinCombat",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+1,
+[END_Behaviour  Meta Count]
+[START_canAttack]
+"canAttack",
+[END_canAttack]
+[START_Member Variable]
+1,
+[END_Member Variable]

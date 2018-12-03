@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/SpriteRenderer.h"
 #include "Component/Transform.h"
 
+
 namespace Dystopia
 {
 	
@@ -64,10 +65,11 @@ namespace Dystopia
 		, takenDamage(false)
 		, damageCount(0.0f)
 		, damageDelay(1.0f)
-		, rBody(nullptr)
+		, rBody(nullptr) 
 		, attackCount(0.0f)
-		, attackDelay(1.5f)
-		, isWinding(false)
+		, attackDelay(0.95f)
+		, isWinding(true)
+		, playerTarget{nullptr}
 	{
 	}
 
@@ -80,6 +82,15 @@ namespace Dystopia
 	}
     void Goblin::Awake(void)
 	{
+		playerTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
+
+		if (auto s = GetOwner()->GetComponent<SpriteRenderer>())
+		{
+			s->Stop();
+			s->SetAnimation("Run");
+			s->Play();
+		}
+
 		rBody = GetOwner()->GetComponent<RigidBody>();
 		if(rBody)
 			theMass = rBody->GetMass();
@@ -87,6 +98,8 @@ namespace Dystopia
 	}
 	void Goblin::Init()
 	{
+		playerTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
+
 		rBody = GetOwner()->GetComponent<RigidBody>();
 		if(rBody)
 			theMass = rBody->GetMass();
@@ -95,6 +108,53 @@ namespace Dystopia
 
 	void Goblin::Update(const float _fDeltaTime)
 	{
+		auto Position   = playerTarget->GetComponent<Transform>()->GetGlobalPosition();
+		auto myPosition = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+		auto v          = (Position - myPosition);
+		//rBody->AddLinearImpulse(Math::MakeVector3D(-2000000.f,0,0));
+		if (isWinding)
+		{
+			attackCount = attackCount + _fDeltaTime;
+			if (auto s = GetOwner()->GetComponent<SpriteRenderer>())
+			{
+				if (s->IsPlaying() && s->GetCurrentAnimation() == HashString{"Run"})
+				{
+					s->Stop();
+					s->SetAnimation("Attack"); 
+					s->Play();	
+				}
+			}
+		}
+		else if (v.Magnitude() < 100.f)
+		{
+			if (auto s = GetOwner()->GetComponent<SpriteRenderer>())
+			{
+				if (!s->IsPlaying())
+				{
+					s->Stop();
+					s->SetAnimation("Run");
+					s->Play();	
+				}
+			}
+
+			if(rBody)
+			{
+				auto scale = GetOwner()->GetComponent<Transform>()->GetScale();
+				if(v.x < 0 && scale.x > 0)
+				{
+					GetOwner()->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z  );
+
+
+				}
+				else if(v.x > 0 && scale.x < 0)
+				{
+					GetOwner()->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z  );
+
+				}
+				rBody->AddLinearImpulse(Math::MakeVector3D(70.f * scale.x/abs(scale.x), 0,0));
+			}
+		}
+						
 		if (damageCount <= damageDelay && takenDamage)
 			damageCount = damageCount + _fDeltaTime;
 
@@ -103,9 +163,6 @@ namespace Dystopia
 			takenDamage = false;
 			damageCount = 0.0f;
 		}
-			
-		if (isWinding)
-			attackCount = attackCount + _fDeltaTime;
 
 		if (attackCount >= attackDelay)
 		{
@@ -115,7 +172,7 @@ namespace Dystopia
 		}
 	}
 
-	void Goblin::FixedUpdate(const float )
+	void Goblin::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
@@ -132,7 +189,7 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::Goblin::OnCollisionEnter(const CollisionEvent& )
+	void Dystopia::Goblin::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 		// auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_colEvent.mOtherID);
 			
@@ -155,7 +212,7 @@ namespace Dystopia
 		// }
 	}
 
-	void Dystopia::Goblin::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::Goblin::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 		// auto * ptr = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject(_colEvent.mOtherID);
 		// if(ptr)
@@ -174,12 +231,12 @@ namespace Dystopia
 		// }
 	}
 
-	void Dystopia::Goblin::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::Goblin::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
 		isColliding = false;
 	}
 
-	void Dystopia::Goblin::OnTriggerEnter(GameObject * const)
+	void Dystopia::Goblin::OnTriggerEnter(GameObject * const _obj)
 	{
 		// if(_obj)
 		// {
@@ -193,7 +250,7 @@ namespace Dystopia
 		// }
 	}
 
-	void Dystopia::Goblin::OnTriggerStay(GameObject * const )
+	void Dystopia::Goblin::OnTriggerStay(GameObject * const _obj)
 	{
 		// if(_obj)
 		// {
@@ -207,7 +264,7 @@ namespace Dystopia
 		// }
 	}
 
-	void Dystopia::Goblin::OnTriggerExit(GameObject * const )
+	void Dystopia::Goblin::OnTriggerExit(GameObject * const _obj)
 	{
 		isColliding = false;
 	}
@@ -217,11 +274,11 @@ namespace Dystopia
 		return new Goblin{*this}; 
 	}
 
-	void Goblin::Serialise(TextSerialiser& ) const
+	void Goblin::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-	void Goblin::Unserialise(TextSerialiser& )
+	void Goblin::Unserialise(TextSerialiser& _ser)
 	{
 	}
 
@@ -243,6 +300,16 @@ namespace Dystopia
 		{
 			DEBUG_PRINT(eLog::MESSAGE, "TOOK DMG");
 			mHealth -= _dmg;
+			
+			if (auto s = GetOwner()->GetComponent<SpriteRenderer>())
+			{
+				if (!s->IsPlaying())
+				{
+					s->Stop();
+					s->SetAnimation("Flinch");
+					s->Play();	
+				}
+			}
 
 			if (mHealth <= 0)
 				GetOwner()->Destroy();
@@ -268,6 +335,12 @@ namespace Dystopia
 	void Goblin::Attacking()
 	{
 		isWinding = true;
+		if (auto s = GetOwner()->GetComponent<SpriteRenderer>())
+		{
+			s->Stop();
+			s->SetAnimation("Run");
+			s->Play();	
+		}
 	}
 
 	TypeErasure::TypeEraseMetaData Goblin::GetMetaData()

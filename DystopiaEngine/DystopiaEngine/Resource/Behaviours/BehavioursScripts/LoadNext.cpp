@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	SettingsButton.cpp
-\author Keith Goh (100%)
-\par    email: keith.goh\@digipen.edu
+\file	LoadNext.cpp
+\author ShannonTan (100%)
+\par    email: t.shannon\@digipen.edu
 \brief
 INSERT BRIEF HERE
 
@@ -11,7 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "SettingsButton.h"
+#include "LoadNext.h"
 #include "System/Input/InputSystem.h"
 #include "System/Input/InputMap.h"
 #include "System/Driver/Driver.h"
@@ -27,11 +27,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Utility/DebugAssert.h"
 
-
-
 namespace Dystopia
 {
-	namespace SettingsButton_MSG
+	namespace LoadNext_MSG
 	{
 		template<typename ... Ts>
 		void SendInternalMessage(Behaviour * _ptr, const char * _FuncName, Ts ... _Params)
@@ -62,111 +60,113 @@ namespace Dystopia
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->SendAllMessage(_FuncName, _Params...);
 		}
 	}
-	SettingsButton::SettingsButton()
+	LoadNext::LoadNext()
 	{
 	}
 
-	SettingsButton::~SettingsButton()
+	LoadNext::~LoadNext()
 	{
 	}
 
-	void SettingsButton::Load()
+	void LoadNext::Load()
 	{
 	}
 
-	void SettingsButton::Awake()
+	void LoadNext::Awake()
 	{
 	}
 
-	void SettingsButton::Init()
+	void LoadNext::Init()
+	{
+		Component::SetActive(true);
+	}
+
+	void LoadNext::Update(const float _fDeltaTime)
 	{
 	}
 
-	void SettingsButton::Update(const float _fDeltaTime)
+	void LoadNext::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 
-	void SettingsButton::FixedUpdate(const float _fDeltaTime)
+	void LoadNext::PostUpdate(void)
 	{
 	}
 
-	void SettingsButton::PostUpdate(void)
+	void LoadNext::GameObjectDestroy(void)
 	{
 	}
 
-	void SettingsButton::GameObjectDestroy(void)
+	void LoadNext::Unload(void)
 	{
 	}
 
-	void SettingsButton::Unload(void)
-	{
-	}
-
-	void Dystopia::SettingsButton::OnCollisionEnter(const CollisionEvent& _colEvent)
-	{
-
-	}
-
-	void Dystopia::SettingsButton::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::LoadNext::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::SettingsButton::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::LoadNext::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::SettingsButton::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::LoadNext::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
-	}
-
-	void Dystopia::SettingsButton::OnTriggerStay(GameObject * const _obj)
-	{
-	}
-
-	void Dystopia::SettingsButton::OnTriggerExit(GameObject * const _obj)
-	{
-	}
-
-	SettingsButton * SettingsButton::Duplicate() const
-	{
-		return new SettingsButton{ *this };
-	}
-
-	void SettingsButton::Serialise(TextSerialiser& _ser) const
-	{
-	}
-
-	void SettingsButton::Unserialise(TextSerialiser& _ser)
-	{
-	}
-	void SettingsButton::ButtonPress()
-	{ 
-		/*Open Settings Menu*/
-		DEBUG_PRINT(eLog::MESSAGE, "Settings Screen Open");
-	}
-
-	const char * const SettingsButton::GetBehaviourName() const
-	{
-		return SettingsButton::BehaviourName;
-	}
-
-	void SettingsButton::EditorUI(void) noexcept
-	{
-
 
 	}
 
-	TypeErasure::TypeEraseMetaData SettingsButton::GetMetaData()
+	void Dystopia::LoadNext::OnTriggerEnter(GameObject * const _obj)
 	{
-		static MetaData<Dystopia::SettingsButton> mMetaData;
+		if (_obj->GetName() == HashString{"Player"})
+		{
+			EngineCore::Get<SceneSystem>()->LoadScene("Town.dscene");
+			DEBUG_PRINT(eLog::MESSAGE, "LOAD");
+		}
+	}
+
+	void Dystopia::LoadNext::OnTriggerStay(GameObject * const _obj)
+	{
+	}
+
+	void Dystopia::LoadNext::OnTriggerExit(GameObject * const _obj)
+	{
+	}
+
+	LoadNext * LoadNext::Duplicate() const
+	{
+		return new LoadNext{ *this };
+	}
+
+	void LoadNext::Serialise(TextSerialiser& _ser) const
+	{
+	}
+
+	void LoadNext::Unserialise(TextSerialiser& _ser)
+	{
+	}
+
+
+	const char * const LoadNext::GetBehaviourName() const
+	{
+		return LoadNext::BehaviourName;
+	}
+
+	void LoadNext::EditorUI(void) noexcept
+	{
+
+
+	}
+
+	TypeErasure::TypeEraseMetaData LoadNext::GetMetaData()
+	{
+		static MetaData<Dystopia::LoadNext> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{ mMetaData };
 		return mReturn;
 	}
-	TypeErasure::TypeEraseMetaData const SettingsButton::GetMetaData() const
+	TypeErasure::TypeEraseMetaData const LoadNext::GetMetaData() const
 	{
-		static MetaData<Dystopia::SettingsButton> mMetaData;
+		static MetaData<Dystopia::LoadNext> mMetaData;
 		static auto mReturn = TypeErasure::TypeEraseMetaData{ mMetaData };
 		return mReturn;
 	}

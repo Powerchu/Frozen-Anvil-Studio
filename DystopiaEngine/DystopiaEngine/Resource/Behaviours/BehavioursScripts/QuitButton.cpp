@@ -83,12 +83,12 @@ namespace Dystopia
 		Component::SetFlags(FLAG_ACTIVE);  
 	}
 
-	void QuitButton::Update(const float )
+	void QuitButton::Update(const float _fDeltaTime)
 	{
 		
 	}
 
-	void QuitButton::FixedUpdate(const float )
+	void QuitButton::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 
@@ -110,30 +110,30 @@ namespace Dystopia
 		DEBUG_PRINT(eLog::MESSAGE, "Quiting Level");
 		EngineCore::Get<SceneSystem>()->LoadScene("MainMenu.dscene");
 	}
-	void Dystopia::QuitButton::OnCollisionEnter(const CollisionEvent& )
+	void Dystopia::QuitButton::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::QuitButton::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::QuitButton::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::QuitButton::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::QuitButton::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::QuitButton::OnTriggerEnter(GameObject * const )
+	void Dystopia::QuitButton::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::QuitButton::OnTriggerStay(GameObject * const )
+	void Dystopia::QuitButton::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::QuitButton::OnTriggerExit(GameObject * const )
+	void Dystopia::QuitButton::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
@@ -142,11 +142,11 @@ namespace Dystopia
 		return new QuitButton{ *this };
 	}
 
-	void QuitButton::Serialise(TextSerialiser& ) const
+	void QuitButton::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-	void QuitButton::Unserialise(TextSerialiser& )
+	void QuitButton::Unserialise(TextSerialiser& _ser)
 	{
 	}
 

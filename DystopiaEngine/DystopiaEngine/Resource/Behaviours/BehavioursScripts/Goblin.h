@@ -97,6 +97,8 @@ namespace Dystopia
 		bool takenDamage;
 		bool isWinding;
 		bool isColliding = false;
+
+		GameObject * playerTarget = nullptr;
 		
 		PP_MEMBERFUNC(Dystopia::Goblin, TakeDamage, Knock, Attacking)
 		
@@ -113,7 +115,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::Goblin, mHealth, takenDamage, attackCount)
+PP_REFLECT(Dystopia::Goblin, mHealth, takenDamage, attackDelay, attackCount, isWinding)
 
 #endif //_Goblin_H_
 

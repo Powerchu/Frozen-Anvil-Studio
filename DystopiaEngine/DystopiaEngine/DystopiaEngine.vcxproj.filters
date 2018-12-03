@@ -439,6 +439,7 @@
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\ShiftChildrenZ.cpp">
       <Filter>Game Engine\Behaviours\Derive</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\LoadNext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1155,6 +1156,7 @@
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\ShiftChildrenZ.h">
       <Filter>Game Engine\Behaviours\Derive</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\LoadNext.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
