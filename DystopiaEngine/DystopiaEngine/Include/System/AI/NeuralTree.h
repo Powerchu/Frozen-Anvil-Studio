@@ -44,9 +44,9 @@ namespace Dystopia
 
 			virtual ~Node() = default;
 
-			virtual void Init() {};
+			virtual void Init() {}
 			virtual eStatus Update() = 0;
-			virtual void Exit(eStatus) {};
+			virtual void Exit(eStatus) {}
 
 			eStatus Tick() 
 			{
@@ -157,6 +157,7 @@ namespace Dystopia
 				: mpBlackboard(Ctor::CreateShared<Blackboard>())
 				, mnID(0)
 			{
+
 			}
 
 			BehaviourTree(const Node::Ptr& rootNode) 
@@ -198,7 +199,7 @@ namespace Dystopia
 				mpBlackboard = blackboard;
 			}
 
-			bool IsValidTree(void) const
+			bool IsValidTree(void) const 
 			{
 				return (mpRoot.GetRaw() != nullptr);
 			}

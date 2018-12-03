@@ -105,7 +105,8 @@ Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject_cstr(const char* con
 Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const HashString& _prefabName, const Math::Pt3D& _position)
 {
 	auto obj = EngineCore::GetInstance()->GetSubSystem<Factory>()->SpawnPrefab(_prefabName, _position);
-	obj->GetComponent<Transform>()->SetGlobalPosition(_position);
+	if (obj)
+		obj->GetComponent<Transform>()->SetGlobalPosition(_position);
 	return obj;
 }
 
@@ -130,7 +131,7 @@ void Dystopia::SceneSystem::SceneChanged(void)
 			SceneSystemHelper::SystemFunction< std::make_index_sequence< size >>::SystemUnserialise(SerialObj);
 			EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 			SerialObj.ConsumeEndBlock();
-			mpCurrScene->Init();
+			//mpCurrScene->Init();
 			Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors();
 		}
 	}
