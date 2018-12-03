@@ -11,9 +11,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Sound/SoundSystem.h"
+#include "System/File/FileSystem.h"
+#include "System/Driver/Driver.h"
+
 #include "Component/AudioSource.h"
 #include "Object/ObjectFlags.h"
 #include "fmod.hpp"
+
+#include "Math/MathUtility.h"
 
 #include <Windows.h>
 
@@ -27,7 +32,8 @@ static const HashString g_GroupNames[Dystopia::eSOUND_LAST] =
 Dystopia::SoundSystem::SoundSystem(void)
 	: mpFMOD{ nullptr }, 
 	mDefaultSoundFolder{ "Resource/Audio/" },
-	mMapOfSounds{}, mArrGroups{ nullptr }
+	mMapOfSounds{}, mArrGroups{ nullptr }, mMasterVol{ 1 },
+	mBGMVol{ 1 }, mFXVol{ 1 }, mbUpdateVol{ true }
 {
 }
 
@@ -69,6 +75,15 @@ void Dystopia::SoundSystem::FixedUpdate(float)
 void Dystopia::SoundSystem::Update(float _dt)
 {
 	mpFMOD->update();
+
+	if (mbUpdateVol)
+	{
+		mArrGroups[eSOUND_MASTER]->setVolume(mMasterVol);
+		mArrGroups[eSOUND_BGM]->setVolume(mBGMVol);
+		mArrGroups[eSOUND_FX]->setVolume(mFXVol);
+		mbUpdateVol = false;
+	}
+
 	for (auto& c : mComponents)
 	{
 #if EDITOR
@@ -137,7 +152,7 @@ void Dystopia::SoundSystem::ReceiveMessage(const eSysMessage&)
 Dystopia::Sound* Dystopia::SoundSystem::LoadSound(const HashString& _file)
 {
 	size_t pos = _file.find_last_of("/");
-	std::string path = mDefaultSoundFolder + _file.c_str();
+	auto path = EngineCore::Get<FileSystem>()->GetFullPath(_file.c_str(), eFileDir::eResource);
 	std::string soundName = _file.c_str();
 
 	if (pos != HashString::nPos)
@@ -156,3 +171,35 @@ Dystopia::Sound* Dystopia::SoundSystem::LoadSound(const HashString& _file)
 
 	return nullptr;
 }
+
+void Dystopia::SoundSystem::SetMaster(float _f)
+{
+	if (Math::ApproxEq(_f, mMasterVol))
+		return;
+
+	mMasterVol = _f;
+	mbUpdateVol = true;
+}
+
+void Dystopia::SoundSystem::SetBGM(float _f)
+{
+	if (Math::ApproxEq(_f, mBGMVol))
+		return;
+
+	mBGMVol = _f;
+	mbUpdateVol = true;
+}
+
+void Dystopia::SoundSystem::SetFX(float _f)
+{
+	if (Math::ApproxEq(_f, mFXVol))
+		return;
+
+	mFXVol = _f;
+	mbUpdateVol = true;
+}
+
+
+
+
+

@@ -203,7 +203,7 @@ namespace EGUI
 		Usage:
 		EGUI::Display::EmptyBox("Accepting field", 100);
 		======================================================================================================================= */
-		bool EmptyBox(const char * _label, float _width, const char * _anythingToShowInside = "",
+		bool EmptyBox(const char * _label, float _width, const char * _anythingToShowInside = nullptr,
 			bool _iteractive = false, bool _showLabel = true);
 		/* =======================================================================================================================
 		Brief:

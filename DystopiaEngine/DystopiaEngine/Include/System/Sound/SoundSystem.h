@@ -12,13 +12,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _SOUND_SYSTEM_H_
 #define _SOUND_SYSTEM_H_
-
 #include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
 #include "System/Sound/SoundTypes.h"
 
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/Array.h"
+
+#include "Globals.h"
 
 #include <string>
 #include <map>
@@ -53,10 +54,15 @@ namespace Dystopia
 		void ReceiveMessage(const eSysMessage&);
 		Sound* LoadSound(const HashString& _file);
 
+		_DLL_EXPORT_ONLY void SetMaster(float);
+		_DLL_EXPORT_ONLY void SetBGM(float);
+		_DLL_EXPORT_ONLY void SetFX(float);
+
 	private:
 		float mMasterVol;
 		float mBGMVol;
 		float mFXVol;
+		bool mbUpdateVol;
 
 		FMOD::System *mpFMOD;
 		std::string	mDefaultSoundFolder;

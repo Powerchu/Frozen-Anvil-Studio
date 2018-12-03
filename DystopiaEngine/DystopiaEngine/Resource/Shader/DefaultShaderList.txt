@@ -14,3 +14,5 @@
 "Collider Shader","Resource/Shader/DefaultVert.dvert","Resource/Shader/Collider.dfrag",
 [START_SHADER]
 "Health","Resource/Shader/DefaultVert.dvert","Resource/Shader/HealthBar.dfrag",
+[START_SHADER]
+"Energy","Resource/Shader/DefaultVert.dvert","Resource/Shader/EnergyBar.dfrag",

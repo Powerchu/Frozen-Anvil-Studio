@@ -692,7 +692,7 @@ void Dystopia::GraphicsSystem::Shutdown(void)
 void Dystopia::GraphicsSystem::LoadDefaults(void)
 {
 	mViews.Emplace(2048u, 2048u, true);
-	mViews.Emplace(1024u, 1024u, true);
+	mViews.Emplace(2048u, 2048u, true);
 	mViews.Emplace(
 		static_cast<unsigned>(mvResolution.x),
 		static_cast<unsigned>(mvResolution.y),

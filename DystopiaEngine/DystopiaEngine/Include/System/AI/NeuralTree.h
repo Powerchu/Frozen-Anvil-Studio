@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <utility>
 #include "Globals.h"
+#include "Utility/GUID.h"
 #include "DataStructure/MagicArray.h"
 #include "DataStructure/SharedPtr.h"
 
@@ -46,6 +47,7 @@ namespace Dystopia
 
 			virtual void Init() {}
 			virtual eStatus Update() = 0;
+			virtual std::string GetEditorName(void) const = 0;
 			virtual void Exit(eStatus) {}
 
 			eStatus Tick() 
@@ -79,7 +81,7 @@ namespace Dystopia
 		protected:
 			eStatus mStatus = eStatus::INVALID;
 		private:
-			uint64_t mnID{};
+			uint64_t mnID{ GUIDGenerator::GetUniqueID() };
 			uint64_t mnParentID{};
 			HashString mnName;
 
@@ -155,7 +157,15 @@ namespace Dystopia
 		public:
 			BehaviourTree()
 				: mpBlackboard(Ctor::CreateShared<Blackboard>())
-				, mnID(0)
+				, mnID{ GUIDGenerator::GetUniqueID() }
+			{
+
+			}
+
+			BehaviourTree(const std::string _name)
+				: mpBlackboard(Ctor::CreateShared<Blackboard>())
+				, mnID{ GUIDGenerator::GetUniqueID() }
+				, mnName(_name)
 			{
 
 			}
@@ -204,12 +214,15 @@ namespace Dystopia
 				return (mpRoot.GetRaw() != nullptr);
 			}
 
+			std::string GetEditorName(void) const override { return mnName; }
+
 		private:
 			Node::Ptr mpRoot;
 			Blackboard::Ptr mpBlackboard;
 			Blackboard::Ptr mpSharedboard;
 
 			uint64_t mnID;
+			std::string mnName{ "Generic AI Tree" };
 		};
 
 	}
