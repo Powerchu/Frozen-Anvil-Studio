@@ -13,7 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _TRANSFORM_H_
 #define _TRANSFORM_H_
-
+#pragma warning(push)
+#pragma warning(disable : 4251)
 #include "Component/Component.h"		// Base Class
 #include "Component/ComponentList.h"	// TRANSFORM
 
@@ -118,6 +119,6 @@ namespace Dystopia
 }
 
 
-
+#pragma warning(pop)
 #endif
 

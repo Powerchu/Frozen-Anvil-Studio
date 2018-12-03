@@ -86,7 +86,7 @@ namespace Dystopia
 
 		void ChangeDirPath(eFileDir _dirToChange, const HashString& _newPath);
 		HashString FindFilePath(const HashString& _file, eFileDir _parentDir);
-		_DLL_EXPORT_ONLY HashString GetFromResource(const char *_str);
+		_DLL_EXPORT HashString GetFromResource(const char *_str);
 
 	private:
 

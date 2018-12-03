@@ -176,9 +176,8 @@ namespace Dystopia
 		
 	}
 	
-	void CombatBox::DealDamage(int _damage, bool _isFacingRight)
+	void CombatBox::DealDamage(int _damage, bool)
 	{
-		UNUSED_PARAMETER(_isFacingRight);
 		if (targetViable)
 		{
 			if (auto target = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr(name))

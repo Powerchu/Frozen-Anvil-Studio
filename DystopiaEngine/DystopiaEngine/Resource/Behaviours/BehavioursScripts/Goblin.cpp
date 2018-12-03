@@ -179,7 +179,7 @@ namespace Dystopia
 		isColliding = false;
 	}
 
-	void Dystopia::Goblin::OnTriggerEnter(GameObject * const )
+	void Dystopia::Goblin::OnTriggerEnter(GameObject * const)
 	{
 		// if(_obj)
 		// {

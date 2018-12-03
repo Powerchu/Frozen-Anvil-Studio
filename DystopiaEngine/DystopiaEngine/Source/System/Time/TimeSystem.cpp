@@ -128,6 +128,7 @@ void Dystopia::TimeSystem::LoadSettings(DysSerialiser_t& _in)
 	_in >> mFixedDT;
 	_in >> mSimulatedDT;
 	_in >> mfSimulatedDT;
+	SetTimeScale(1.f);
 }
 
 void Dystopia::TimeSystem::SaveSettings(DysSerialiser_t& _out)

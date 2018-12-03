@@ -77,6 +77,15 @@ namespace Dystopia
 
 	void ShiftChildrenZ::Awake()
 	{
+		EpsilonZ = 0.001f;
+		auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
+		for (auto& c : children)
+		{
+			auto pos = c->GetGlobalPosition();
+			pos.z = pos.z + EpsilonZ;
+			EpsilonZ += 0.001f;
+			c->SetGlobalPosition(pos);
+		}
 	}
 
 	void ShiftChildrenZ::Init()

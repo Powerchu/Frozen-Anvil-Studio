@@ -166,13 +166,14 @@ namespace Dystopia
 
 	void SpriteManager::PlayAnimation(int animNum, bool isFacingRight)
 	{
+		DEBUG_PRINT(eLog::MESSAGE, "animNum %d!", animNum);
 		if (auto ptr = GetOwner()->GetComponent<SpriteRenderer>())
 		{
 			facingRight = isFacingRight;
 			messageSent = true;
 
 			if (!messageSent)
-				return;
+				return; 
 			
 			messageSent = false;
 

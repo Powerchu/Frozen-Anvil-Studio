@@ -241,7 +241,7 @@ namespace Dystopia
 				{
 					//quit the game
 					DEBUG_PRINT(eLog::MESSAGE, "Selected Quit!");
-
+					EngineCore::GetInstance()->Quit();
 				}
 
 
@@ -278,6 +278,7 @@ namespace Dystopia
 				{
 					//quit the game
 					DEBUG_PRINT(eLog::MESSAGE, "Returned from Quit!");
+
 				}
 
 

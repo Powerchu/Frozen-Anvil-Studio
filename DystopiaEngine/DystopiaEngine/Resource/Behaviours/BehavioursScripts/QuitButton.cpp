@@ -80,7 +80,7 @@ namespace Dystopia
 
 	void QuitButton::Init()
 	{
-		SetFlags(FLAG_ACTIVE);	
+		Component::SetFlags(FLAG_ACTIVE);  
 	}
 
 	void QuitButton::Update(const float )

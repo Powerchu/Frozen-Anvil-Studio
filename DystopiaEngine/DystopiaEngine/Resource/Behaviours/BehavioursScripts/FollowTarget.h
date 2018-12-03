@@ -22,6 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/HashString.h"
 #include "Object/GameObject.h"
 
+#include "Math/Vector2.h"
+
 #include <string>
 
 #define DllExport   __declspec( dllexport )
@@ -79,6 +81,9 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+		float xOffset, yOffset, accDt;
+		Math::Vec2 prevV;
+		
 	private:
 		GameObject* mpTarget = nullptr;
 		friend MetaData<FollowTarget>;
@@ -93,7 +98,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT_EMPTY(Dystopia::FollowTarget)
+PP_REFLECT(Dystopia::FollowTarget, xOffset , yOffset)
 
 #endif //_FollowTarget_H_
 

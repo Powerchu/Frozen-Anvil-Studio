@@ -1,0 +1,270 @@
+[START_GO_PREFAB]
+0,[START_START_GO_DATA]
+12459008,536870977,"PauseSystem",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_Recursion Counter]
+10,
+[END_Recursion Counter]
+[START_GO_PREFAB]
+0,[START_START_GO_DATA]
+1778198016,536870945,"PauseMenu",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,26.9015,50,0,0,0,1,12459008,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"PauseManager",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+0,
+[END_Behaviour  Meta Count]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072904059904,536870944,"Restart_Button",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+16.4,3.1,1,0,42.9015,51,0,0,0,1,1778198016,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072333637120,536870912,18446744072904059904,"/Asset/UI/restart.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,0.999997,0.99999,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"RestartButton",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+0,
+[END_Behaviour  Meta Count]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744073541597184,536870944,"Quit_Button",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+13.9,6.1,1,0,26.9015,51,0,0,0,1,1778198016,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072294739456,536870912,18446744073541597184,"/Asset/UI/QuitUnselected.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"QuitButton",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+0,
+[END_Behaviour  Meta Count]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072693196800,536870944,"Settings_Button",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+22.6,6.1,1,0,34.9015,51,0,0,0,1,1778198016,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+1597221888,536870912,18446744072693196800,"/Asset/UI/SettingsUnselected.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,0.99999,0.99999,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744071954477056,536870944,"Resume_Button",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+15.9,3,1,0,50.9015,51,0,0,0,1,1778198016,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744073220109312,536870912,18446744071954477056,"/Asset/UI/resume.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072021221888,536870944,"Banner",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+42.5,108,1,0,47.0667,50.1,0,0,0,1,1778198016,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072551802368,536870912,18446744072021221888,"/Asset/UI/banner.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,0.999998,1,0.99999,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744071697258496,536870944,"Title",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+49,34.4,1,0,72.2965,51.1,0,0,0,1,1778198016,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+1520360448,536870912,18446744071697258496,"/Asset/UI/title.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+775593984,536870944,"Select_Button",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+4.9,5,1,17,50.9015,51,0,0,0,1,12459008,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744071674962944,536870912,775593984,"/Asset/UI/Abutton.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744073172063744,536870944,"SelectionLines",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+36.1,14,1,-0.127357,51.4508,51.0988,0,0,0,1,775593984,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+1608948224,536870912,18446744073172063744,"/Asset/UI/Selector.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+2,[START_START_GO_DATA]
+2124939776,536870945,"UI Cam",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.1,0.1,1,0,48.326,0,0,0,0,1,12459008,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+0,[START_Camera]
+918029824,536870913,2124939776,1,0,0,500,-500,1,1,0,0,1,60,
+[END_Camera]
+
+[END_Component]
+[START_Component]
+4,[START_Convex_Collider]
+535300096,536870913,2124939776,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]

@@ -28,7 +28,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Utility/DebugAssert.h"
 
-
+#include "Component/Transform.h"
+#include "Component/SpriteRenderer.h"
 
 namespace Dystopia
 {
@@ -64,7 +65,9 @@ namespace Dystopia
 		}
 	}
 	PauseManager::PauseManager()
-	:mPauseState{false}
+	:mPauseState{false},
+	mButtons{nullptr},
+	selection{0}
 	{
 	}  
 
@@ -85,6 +88,16 @@ namespace Dystopia
 		SetFlags(FLAG_ACTIVE);
 		mPauseState = false;
 		EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f); 
+		mButtons[0] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Resume_Button");
+		mButtons[1] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Restart_Button");
+		mButtons[2] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Settings_Button");
+		mButtons[3] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Quit_Button");
+		mSelector   = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Select_Button");
+		selection = 0;
+		if(mSelector && mButtons[selection])
+		{
+			mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(17,0,0));
+		}
 	}
 
 	void PauseManager::Init()
@@ -92,30 +105,157 @@ namespace Dystopia
 		DEBUG_PRINT(eLog::MESSAGE, "Init");
 		SetFlags(FLAG_ACTIVE);
 		mPauseState = false;
-		EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f); 
+		EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f);
+		mButtons[0] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Resume_Button");
+		mButtons[1] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Restart_Button");
+		mButtons[2] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Settings_Button");
+		mButtons[3] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Quit_Button");
+		mArrScale[0] = mButtons[0]->GetComponent<Transform>()->GetGlobalScale();
+		mArrScale[1] = mButtons[1]->GetComponent<Transform>()->GetGlobalScale();
+		mArrScale[2] = mButtons[2]->GetComponent<Transform>()->GetGlobalScale();
+		mArrScale[3] = mButtons[3]->GetComponent<Transform>()->GetGlobalScale();
+		mSelector   = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Select_Button");
+		selection = 0;
+		if(mSelector && mButtons[selection])
+		{
+			mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(17,0,0));
+			mSelector->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+			if (auto sr = mSelector->GetComponent<SpriteRenderer>())
+				sr->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+			auto& sChildren = mSelector->GetComponent<Transform>()->GetAllChild();
+			for (auto&c : sChildren)
+			{
+				c->GetOwner()->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+				if (auto s = c->GetOwner()->GetComponent<SpriteRenderer>())
+					s->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+			}
+		}
+		auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
+		for(auto & c : children)
+		{
+			c->GetOwner()->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+			if (auto s = c->GetOwner()->GetComponent<SpriteRenderer>())
+				s->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+		}
 	}
 
 	void PauseManager::Update(const float)
 	{
-
 		bool isPaused = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(XBUTTON_START) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(KEYBOARD_ESCAPE);
 		if(isPaused) 
 		{
 			if(mPauseState)
 			{
-				DEBUG_PRINT(eLog::MESSAGE, "paused!");
+				DEBUG_PRINT(eLog::MESSAGE, "unpaused!");
 				mPauseState = false;
-				EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f); 
+				EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f);
+				auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
+				for(auto & c : children)
+				{
+					c->GetOwner()->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+					if (auto s = c->GetOwner()->GetComponent<SpriteRenderer>())
+						s->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+				}
+				mSelector->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+				if (auto sr = mSelector->GetComponent<SpriteRenderer>())
+					sr->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+				auto& sChildren = mSelector->GetComponent<Transform>()->GetAllChild();
+				for (auto&c : sChildren)
+				{
+					c->GetOwner()->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+					if (auto s = c->GetOwner()->GetComponent<SpriteRenderer>())
+						s->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+				}
+				selection = 0;
 			} 
 			else
 			{
-				DEBUG_PRINT(eLog::MESSAGE, "unpaused!"); 
+				DEBUG_PRINT(eLog::MESSAGE, "paused!"); 
 				EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(0.f); 
 				mPauseState = true;   
+				auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
+				for(auto & c : children)
+				{
+					c->GetOwner()->SetFlag(eObjFlag::FLAG_ACTIVE);
+					if (auto s = c->GetOwner()->GetComponent<SpriteRenderer>())
+						s->SetFlags(eObjFlag::FLAG_ACTIVE);
+				}
+				mSelector->SetFlag(eObjFlag::FLAG_ACTIVE);
+				if (auto sr = mSelector->GetComponent<SpriteRenderer>())
+					sr->SetFlags(eObjFlag::FLAG_ACTIVE);
+				auto& sChildren = mSelector->GetComponent<Transform>()->GetAllChild();
+				for (auto&c : sChildren)
+				{
+					c->GetOwner()->SetFlag(eObjFlag::FLAG_ACTIVE);
+					if (auto s = c->GetOwner()->GetComponent<SpriteRenderer>())
+						s->SetFlags(eObjFlag::FLAG_ACTIVE);
+				}
+				selection = 0;
 			} 
-
+			HighlightScale();
 		}
 		
+		if(mPauseState)
+		{
+			bool isDown    = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eButton::XBUTTON_DPAD_DOWN) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_DOWN);
+			bool isUp      = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(XBUTTON_DPAD_UP) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_UP);
+			bool isPress   = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(XBUTTON_A) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_ENTER);
+			if(isPress)
+			{
+				if(selection == 0)
+				{
+					if(mButtons[selection])
+						PauseManager_MSG::SendExternalMessage(mButtons[selection],"ButtonPress");
+					
+					DEBUG_PRINT(eLog::MESSAGE, "unpaused!"); 
+					EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f); 
+					mPauseState = false;
+					selection = 0;
+
+					auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
+					for (auto & c : children)
+					{
+						c->GetOwner()->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+						if (auto s = c->GetOwner()->GetComponent<SpriteRenderer>())
+							s->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+					}
+					mSelector->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+					if (auto sr = mSelector->GetComponent<SpriteRenderer>())
+						sr->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+					auto& sChildren = mSelector->GetComponent<Transform>()->GetAllChild();
+					for (auto&c : sChildren)
+					{
+						c->GetOwner()->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+						if (auto s = c->GetOwner()->GetComponent<SpriteRenderer>())
+							s->RemoveFlags(eObjFlag::FLAG_ACTIVE);
+					}
+				}
+				else
+				{
+					if(mButtons[selection])
+						PauseManager_MSG::SendExternalMessage(mButtons[selection], "ButtonPress");
+				}
+
+			}
+			if(isUp)
+			{
+				selection = selection - 1 < 0 ? 3 : selection - 1;
+				if(mSelector && mButtons[selection])
+				{
+					mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(17,0,0));
+				}
+				HighlightScale();
+			}
+			if(isDown)
+			{
+				selection = selection + 1 > 3 ? 0 : selection + 1;
+				if(mSelector && mButtons[selection])
+				{
+					mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(17,0,0));
+				}
+				HighlightScale();
+			}
+		}
 	}
 
 	void PauseManager::FixedUpdate(const float)
@@ -184,6 +324,33 @@ namespace Dystopia
 	{
 
 
+	}
+	
+	void PauseManager::HighlightScale(void)
+	{
+		float scale = 1.3f;
+		for (size_t i = 0; i < 4; ++i)
+		{
+			if (selection == i)
+			{
+				auto o = mButtons[selection]->GetComponent<Transform>()->GetGlobalScale();
+				o.x = mArrScale[selection].x * scale;
+				o.y = mArrScale[selection].y * scale;
+				mButtons[selection]->GetComponent<Transform>()->SetGlobalScale(o);
+				if (auto s = mButtons[selection]->GetComponent<SpriteRenderer>())
+					s->SetColorA(Math::Vector4{1.f, 0.8f, .1f, 1.f});
+				DEBUG_PRINT(eLog::MESSAGE, "SetColorA %d", selection);
+			}
+			else
+			{
+				auto o = mButtons[i]->GetComponent<Transform>()->GetGlobalScale();
+				o.x = mArrScale[i].x;
+				o.y = mArrScale[i].y;
+				mButtons[i]->GetComponent<Transform>()->SetGlobalScale(o);
+				if (auto s2 = mButtons[i]->GetComponent<SpriteRenderer>())
+					s2->SetColorA(Math::Vector4{1.f, 1.f, 1.f, 1.f}); 
+			}
+		}
 	}
 
 	TypeErasure::TypeEraseMetaData PauseManager::GetMetaData()

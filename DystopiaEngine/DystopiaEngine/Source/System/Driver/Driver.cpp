@@ -262,10 +262,6 @@ void Dystopia::EngineCore::ExecuteGame()
 		PostUpdate();
 	}
 	Shutdown();
-	/*
-	CORE->ExecuteGame();
-	*/
-
 	return;
 }
 

@@ -25,7 +25,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Transform.h"
 namespace Dystopia
 {
+	static float z = 0;
 	FollowTarget::FollowTarget()
+		:xOffset{0}, yOffset{0}, accDt{0}, prevV{0,0}
 	{
 	}
 
@@ -39,18 +41,43 @@ namespace Dystopia
 
 	void FollowTarget::Init()
 	{
-		mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player_Hero");
+		mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
+		z = GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	}
 
-	void FollowTarget::Update(const float )
+	void FollowTarget::Update(const float _fDeltaTime)
 	{
-		const auto currPos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
-		const auto newPos  = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
-		auto lerpPos = Math::Lerp(currPos, newPos, 0.05F);
+		if (!mpTarget)
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "No target to follow");
+			return; 
+		}
 		
-		if ((newPos - currPos).MagnitudeSqr() < 1.0F) return;
+		Math::Vec4 currPos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+		Math::Vec4 newPos  = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
+		newPos.x = newPos.x + xOffset;
+		newPos.y = newPos.y + yOffset;
+		float spd = .5f;  
+		Math::Vec2 currentV = Math::Vec2{newPos.x - currPos.x, newPos.y - currPos.y };
 		
-		GetOwner()->GetComponent<Transform>()->SetGlobalPosition(lerpPos);
+		auto lerpedR = Math::Lerp(prevV, currentV, spd);
+		currPos.x = currPos.x + lerpedR.x * 2 * _fDeltaTime;
+		currPos.y = currPos.y + lerpedR.y * 2 * _fDeltaTime;
+		GetOwner()->GetComponent<Transform>()->SetGlobalPosition(currPos);
+		
+		
+		prevV = lerpedR;
+		//auto lerpPos = Math::Lerp(currPos, newPos, 0.03F);
+		//lerpPos.z = z;
+		//if ((newPos - currPos).MagnitudeSqr() < 0.00001F)
+		//{
+		//	GetOwner()->GetComponent<Transform>()->SetGlobalPosition(newPos);
+		//}
+		//else
+		//{
+		//	GetOwner()->GetComponent<Transform>()->SetGlobalPosition(lerpPos);
+		//}
+
 	}
 
 	void FollowTarget::FixedUpdate(const float )

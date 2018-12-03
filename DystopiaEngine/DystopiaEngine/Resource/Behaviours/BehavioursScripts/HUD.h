@@ -90,8 +90,8 @@ namespace Dystopia
 		// Don't touch
 		virtual void EditorUI(void) noexcept override;
 
-		void UpdateEnergy(float percentage);
 		void UpdateHealth(float percentage);
+		void UpdateEnergy(float percentage);
 		// Reflection Stuff - Don't Touch
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
@@ -103,7 +103,7 @@ namespace Dystopia
 		
 		void Fade(bool);
 
-		PP_MEMBERFUNC(Dystopia::HUD, UpdateEnergy, UpdateHealth)
+		PP_MEMBERFUNC(Dystopia::HUD, UpdateHealth, UpdateEnergy)
 		
 	private:
 		// Don't touch

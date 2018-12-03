@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
 #include "Behaviour/BehaviourMemberFunc.h"
+#include "Math/Vector4.h"
 
 #define DllExport   __declspec( dllexport )
 
@@ -95,10 +96,16 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 		bool mPauseState;
+		int selection;
+		GameObject * mButtons[4];
+		GameObject * mSelector = nullptr; 
+		Math::Vector4 mArrScale[4];
 		
 	private:
 		// Don't touch
 		friend MetaData<PauseManager>;
+		
+		void HighlightScale(void);
 	};
 
 	extern "C"

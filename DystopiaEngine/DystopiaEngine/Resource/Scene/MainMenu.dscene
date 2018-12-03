@@ -13,7 +13,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,0,0,0,0,0,0,1,18446744073709551615,
+0.15,0.15,1,77.4358,12.6254,0,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -103,7 +103,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-40.8,10.4,1,93,187.631,1,0,0,0,1,18446744072809402368,
+40.8,10.4,1,93,187.631,2,0,0,0,1,18446744072809402368,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -121,7 +121,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-40.8,10.4,1,343.167,57.7583,1,0,0,0,1,18446744072169774080,
+40.8,10.4,1,343.167,57.7583,2.01,0,0,0,1,18446744072169774080,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -139,7 +139,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-82.2,83.5,1,92.778,-119.293,1,0,0,0,1,742975488,
+82.2,83.5,1,92.778,-119.293,2.01,0,0,0,1,742975488,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -148,7 +148,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-40.8,10.4,1,93,-72.5,1,0,0,0,1,742975488,
+40.8,10.4,1,93,-72.5,2,0,0,0,1,742975488,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -375,11 +375,12 @@
 0,
 [END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-21,[START_str]
+24,[START_str]
 "ChangeAudio",0,[START_str]
 "CharacterController",0,[START_str]
 "CombatBox",0,[START_str]
 "DeleteSelf",0,[START_str]
+"EnergyShader",0,[START_str]
 "FollowTarget",0,[START_str]
 "ForceTOne",0,[START_str]
 "ForceTThree",0,[START_str]
@@ -390,6 +391,7 @@
 "Goblin",0,[START_str]
 "GoblinCombat",0,[START_str]
 "Health",0,[START_str]
+"HealthShader",0,[START_str]
 "MenuManager",1,[START_BEHAVIOUR_BLOCK]
 315670016,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
 "yOffset",[START_yOffset]
@@ -406,6 +408,7 @@
 "Parallax",0,[START_str]
 "PauseManager",0,[START_str]
 "SceneManager",0,[START_str]
+"ShiftChildrenZ",0,[START_str]
 "SkillManager",0,[START_str]
 "SplashScreen",0,[START_str]
 "SpriteManager",0,

@@ -1009,16 +1009,22 @@ Behaviour * BehaviourSystem::RequestBehaviour(uint64_t const & _ID, std::string 
 	{
 		for (auto & i : mvBehaviours)
 		{
-			for (auto & iter : i.second)
+			for (size_t u = 0; u<i.second.size(); ++u)
 			{
-				if (iter.second)
+				if (i.second[u].second != nullptr)
 				{
-					delete iter.second;
-					iter.second = nullptr;
-					iter.first = 0;
+					if (i.second[u].second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+					{
+					}
+					else
+					{
+						delete i.second[u].second;
+						i.second[u].second = nullptr;
+						i.second.FastRemove(&i.second[u]);
+						u--;
+					}
 				}
 			}
-			i.second.clear();
 		}
 	}
 

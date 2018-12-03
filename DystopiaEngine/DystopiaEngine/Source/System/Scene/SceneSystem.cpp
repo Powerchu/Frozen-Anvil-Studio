@@ -133,7 +133,9 @@ void Dystopia::SceneSystem::SceneChanged(void)
 			SerialObj.ConsumeEndBlock();
 			for (auto& obj : mpCurrScene->GetAllGameObjects())
 				obj.Awake();
-			//mpCurrScene->Init();
+#if !EDITOR
+			mpCurrScene->Init();
+#endif
 			Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors();
 		}
 	}
@@ -175,7 +177,6 @@ void Dystopia::SceneSystem::LoadScene(const char* _strName)
 	HashString scene{ _strName };
 	if (scene.find(".dscene") == std::string::npos)
 		scene += ".dscene";
-
 	LoadScene(std::string{ fs->GetFullPath(scene.c_str(), eFileDir::eResource) });
 }
 
@@ -184,6 +185,7 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 	TextSerialiser::OpenFile(_strFile.c_str(), TextSerialiser::MODE_READ); // just to check if file valid
 
 	mNextSceneFile = _strFile;
+	mLastSavedData = _strFile;
 	mpNextScene = nullptr;//new Scene{};
 }
 

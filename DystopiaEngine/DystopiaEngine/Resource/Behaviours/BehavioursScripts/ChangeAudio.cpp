@@ -40,11 +40,11 @@ namespace Dystopia
 	{
 	}
 
-	void ChangeAudio::Update(const float)
+	void ChangeAudio::Update(const float )
 	{
 	}
 
-	void ChangeAudio::FixedUpdate(const float)
+	void ChangeAudio::FixedUpdate(const float )
 	{
 	}
 	
@@ -60,17 +60,17 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::ChangeAudio::OnCollisionEnter(const CollisionEvent&)
+	void Dystopia::ChangeAudio::OnCollisionEnter(const CollisionEvent & )
 	{
 
 	}
 
-	void Dystopia::ChangeAudio::OnCollisionStay(const CollisionEvent&)
+	void Dystopia::ChangeAudio::OnCollisionStay(const CollisionEvent & )
 	{
 
 	}
 
-	void Dystopia::ChangeAudio::OnCollisionExit(const CollisionEvent&)
+	void Dystopia::ChangeAudio::OnCollisionExit(const CollisionEvent & )
 	{
 
 	}
