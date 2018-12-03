@@ -189,13 +189,14 @@ namespace Dystopia
 	void FormTThree::SetDirection(int _directionToSet)
 	{
 		firingDirection = _directionToSet;
+		
 		auto theMass = rBody->GetMass();
 
-		if (firingDirection == 1)
-			rBody->AddLinearImpulse({-35 * theMass, 0, 0});
+		if(firingDirection == 2)
+			rBody->AddLinearImpulse({30 * theMass, 0, 0}); 
 
 		else
-			rBody->AddLinearImpulse({35 * theMass, 0, 0});
+			rBody->AddLinearImpulse({-30 * theMass, 0, 0});
 	}
 }
 

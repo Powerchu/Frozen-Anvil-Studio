@@ -58,6 +58,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Globals.h"
 #include "Utility/DebugAssert.h"			// DEBUG_ASSERT
+#include "Math/Vector4.h"
+#include "Math/Vector2.h"
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable Window header min & max macros
@@ -506,17 +508,10 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 
 	StartFrame();
 
-	glClearColor(mvClearCol.x, mvClearCol.y, mvClearCol.z, mvClearCol.w);
+	glClearColor(0, 0, 0, 0);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 
 	/*
-	for (auto& e : mViews)
-	{
-	e.Bind();
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	e.Unbind();
-	}
-
 	// Do batching, depth sorting and grouping of translucent elements.
 	for (auto& e : ComponentDonor<Renderer>::mComponents)
 	{
@@ -655,15 +650,14 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 
 	fb.Unbind();
 	glViewport(0, 0, win.GetWidth(), win.GetHeight());
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 #endif
-
-	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	GetGameView().AsTexture()->Bind(0);
 	GetUIView().AsTexture()->Bind(1);
 
 	static Math::Matrix4 const Identity{};
-	auto const model =  Math::Scale(2.f, -2.f);
+	auto const model =  Math::Scale(2.f, (float) Ut::Constant<int, EDITOR ? -2 : 2>::value);
 	Shader* shader = shaderlist["FinalStage"];
 	shader->Bind();
 	shader->UploadUniform("ViewMat", Identity);
@@ -710,6 +704,12 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 #endif
 	mvClearCol = { 0,0,0,0 };
 	DRAW_MODE = GL_TRIANGLES;
+}
+
+void Dystopia::GraphicsSystem::SetResolution(unsigned w, unsigned h) noexcept
+{
+	mvResolution.x = static_cast<float>(w);
+	mvResolution.y = static_cast<float>(h);
 }
 
 void Dystopia::GraphicsSystem::UpdateResolution(void) const noexcept

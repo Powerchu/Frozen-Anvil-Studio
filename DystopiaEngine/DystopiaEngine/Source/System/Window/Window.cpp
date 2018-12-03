@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Window/Window.h"		 // File Header
 #include "System/Window/WindowManager.h"
+#include "System/Graphics/GraphicsSystem.h"
 #include "System/Input/InputMap.h"		 // eButton
 #include "System/Driver/Driver.h"
 

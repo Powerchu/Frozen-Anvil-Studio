@@ -1,10 +1,10 @@
 [START_GO_PREFAB]
-4,[START_START_GO_DATA]
-525898752,536870977,"Player",0,
+3,[START_START_GO_DATA]
+1079481344,536870977,"Player",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-16,16,1,-42.6319,10.4158,0,0,0,0,1,0,
+1.3,1.3,1,-20.1074,12.6815,15,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,29 +12,20 @@
 [END_GO_PREFAB]
 [START_Component]
 2,[START_RigidBody]
-18446744071608240640,536870913,525898752,0,0.999,0.5,0.5,0.5,0,0,1,100,1,0,1,1,0,
+300390912,536870913,1079481344,0,0.999,0.6,0.5,0.5,0.01,0,1,100,1,0,1,1,0,
 [END_RigidBody]
 
 [END_Component]
 [START_Component]
 5,[START_Circle_Collider2D]
-18446744072379991552,536870913,525898752,0,-0.02,0,0,0,0,0.3,0,
+1172805632,536870913,1079481344,0,0,0,0,0,0,10,0,
 [END_Circle_Collider2D]
 
 [END_Component]
 [START_Component]
 5,[START_Circle_Collider2D]
-18446744072379991552,536870913,525898752,0,-0.02,0,0,0,0,0.3,0,
+1172805632,536870913,1079481344,0,0,0,0,0,0,10,0,
 [END_Circle_Collider2D]
-
-[END_Component]
-[START_Component]
-7,[START_Renderer]
-1603585024,536870913,525898752,"/Asset/sprite_ctr.png",
-[END_Renderer]
-[START_Sprite Renderer]
-0.016,0,0,
-[END_Sprite Renderer]
 
 [END_Component]
 [START_Number of Behaviours]
@@ -62,13 +53,13 @@
 "CharacterSpeed",
 [END_CharacterSpeed]
 [START_Member Variable]
-5,
+15,
 [END_Member Variable]
 [START_JumpForce]
 "JumpForce",
 [END_JumpForce]
 [START_Member Variable]
-15,
+25,
 [END_Member Variable]
 [START_attackCount]
 "attackCount",
@@ -77,42 +68,45 @@
 0,
 [END_Member Variable]
 [START_Recursion Counter]
-2,
+3,
 [END_Recursion Counter]
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-1498475520,536870977,"Combat Box",0,
+1473213952,536870977,"Player Sprite",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.8,0.96,1,-37.8097,7.66602,0,0,0,0,1,525898752,
+33.28,33.28,1,-20.2095,23.1087,25,0,0,0,1,1079481344,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 
 [END_GO_PREFAB]
 [START_Component]
-4,[START_Convex_Collider]
-437318144,536870913,1498475520,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,6,9,1,0,0,0,1,1,
-[END_Convex_Collider]
+7,[START_Renderer]
+18446744072307046912,536870913,1473213952,"/Asset/Spritesheet/atlas_character_wilo_final_fix.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.066,10,1,"AttackOne",6,1,0,0,5,1,"AttackTwo",6,2,0,6,9,1,"AttackThree",6,3,0,10,16,4,"Idle",16,2,1,0,23,8,"Run",15,2,1,6,29,2,"CastForce",8,1,0,0,7,3,"CastForm",8,1,0,0,7,5,"Jump",15,1,0,7,11,5,"Fall",15,2,0,12,17,5,"Land",15,2,0,18,22,3,1,1,1,1,1,
+[END_Sprite Renderer]
 
 [END_Component]
 [START_Number of Behaviours]
 1,
 [END_Number of Behaviours]
 [START_Behaviour Names]
-"CombatBox",
+"SpriteManager",
 [END_Behaviour Names]
 [START_Behaviour Meta Count]
 0,
 [END_Behaviour  Meta Count]
 [START_GO_PREFAB]
 0,[START_START_GO_DATA]
-1606531584,536870977,"SkillManager",0,
+18446744073316929536,536870977,"SkillManager",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.666667,0.666667,1,-42.627,10.4158,0,0,0,0,1,525898752,
+1,1,1,-20.1074,12.6815,15,0,0,0,1,1079481344,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -123,6 +117,33 @@
 [END_Number of Behaviours]
 [START_Behaviour Names]
 "SkillManager",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+0,
+[END_Behaviour  Meta Count]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744073694098432,536870977,"Combat Box",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,-5.9643,19.4692,3.24249e-05,0,0,0,1,1079481344,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+4,[START_Convex_Collider]
+891896320,536870913,18446744073694098432,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,15,25,1,0,0,0,1,1,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"CombatBox",
 [END_Behaviour Names]
 [START_Behaviour Meta Count]
 0,

@@ -64,8 +64,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Gbl
 {
 	constexpr bool	FULLSCREEN      = true;
-	constexpr int   WINDOW_WIDTH    = 1600;
-	constexpr int   WINDOW_HEIGHT   = 900;
+	constexpr int   WINDOW_WIDTH    = 1920;
+	constexpr int   WINDOW_HEIGHT   = 1080;
 
 	constexpr auto  FIXEDUPDATE_DT  = 20000000Ui64;
 	constexpr float FIXEDUPDATE_FDT = float(FIXEDUPDATE_DT / 1e9);

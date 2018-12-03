@@ -95,6 +95,7 @@ namespace Dystopia
 		static const int& GetDrawMode(void) noexcept;
 		static void SetDrawMode(int) noexcept;
 
+		void SetResolution(unsigned w, unsigned h) noexcept;
 		void UpdateResolution(void) const noexcept;
 
 		// Temporary

@@ -1,15 +1,6 @@
 [START_Scene]
-1182793728,"SplashScreen",4,[START_START_GO_DATA]
-18446744072110475264,65,"___Scene_Camera___",0,
-[END_END_GO_DATA]
-[START_START_GO_TRANSFORM]
-[START_Transform]
-0.793614,0.793614,1,0,0,0,0,0,0,1,18446744073709551615,
-[END_Transform]
-
-[END_END_GO_TRANSFORM]
-[START_START_GO_DATA]
-18446744072110476800,65,"Main Camera",0,
+2080899072,"SplashScreen",3,[START_START_GO_DATA]
+1177196544,65,"___Scene_Camera___",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
@@ -18,185 +9,35 @@
 
 [END_END_GO_TRANSFORM]
 [START_START_GO_DATA]
-18446744072896385536,65,"Logo",0,
+1177198080,65,"Main Camera",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-700,500,1,0,0,0,0,0,0,1,18446744073709551615,
+1,1,1,0,0,0,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 [START_START_GO_DATA]
-320346112,65,"GameCamera",0,
+2010294272,65,"Logo",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,0,0,-39,0,0,0,1,18446744073709551615,
+1680,404,1,0,0,0,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 [START_ComponentDonor]
-27,
+2,
 [END_ComponentDonor End]
 [START_Component]
 [START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
+1177196032,1,1177196544,3,0,0,500,-500,1,1,0,0,1,50,
 [END_Camera]
 
 [END_Component End]
 [START_Component]
 [START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-0,0,18446744073709551615,0,0,0,0,0,0,0,0,0,0,0,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-18446744072110474752,1,18446744072110475264,3,0,0,500,-500,1,1,0,0,1,50,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-18446744072110476288,1,18446744072110476800,0,0,0,500,-500,1,1,0,0,1,50,
-[END_Camera]
-
-[END_Component End]
-[START_Component]
-[START_Camera]
-18446744072118868992,1,320346112,0,0,0,200,1,1,1,0,0,1,50,
+1177197568,1,1177198080,0,0,0,500,-500,1,1,0,0,1,50,
 [END_Camera]
 
 [END_Component End]
@@ -223,7 +64,7 @@
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
-850400768,1,18446744072896385536,"/Asset/Environment/DigiPen_RGB_White.png",
+1379052544,1,2010294272,"/Asset/UI/DigiPen_RGB_White.png",
 [END_Renderer]
 [START_Sprite Renderer]
 0.016,0,0,0,1,1,1,1,
@@ -237,7 +78,7 @@
 0,
 [END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-23,[START_str]
+20,[START_str]
 "ChangeAudio",0,[START_str]
 "CharacterController",0,[START_str]
 "CombatBox",0,[START_str]
@@ -255,14 +96,11 @@
 "MenuManager",0,[START_str]
 "Parallax",0,[START_str]
 "PauseManager",0,[START_str]
-"QuitButton",0,[START_str]
-"RestartButton",0,[START_str]
 "SceneManager",0,[START_str]
-"SettingsButton",0,[START_str]
 "SplashScreen",1,[START_BEHAVIOUR_BLOCK]
-18446744072896385536,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+2010294272,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
 "delay",[START_delay]
-0,[START_MEMBER VAR]
+4,[START_MEMBER VAR]
 "count",[START_count]
 0,[START_MEMBER VAR]
 "END",

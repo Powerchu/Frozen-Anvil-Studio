@@ -218,9 +218,9 @@ void Dystopia::EngineCore::FixedUpdate(void)
 void Dystopia::EngineCore::Update(void)
 {
 	auto TimeSys = GetSystem<TimeSystem>();
+	float dt = TimeSys->GetDeltaTime();
 	TimeSys->AdvanceTime();
 
-	float dt = TimeSys->GetDeltaTime();
 	for (auto& e : mSystemList)
 	{
 		e->Update(dt);

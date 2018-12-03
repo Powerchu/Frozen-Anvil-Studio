@@ -125,7 +125,7 @@ namespace Dystopia
 			mpInputSys->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
 			mpInputSys->MapButton("Skill B", eButton::KEYBOARD_C);
 			mpInputSys->MapButton("Skill Y", eButton::KEYBOARD_V);
-			mpInputSys->MapButton("Attack", eButton::KEYBOARD_X);
+			mpInputSys->MapButton("Attack", eButton::KEYBOARD_X); 
 		}
 
 		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
@@ -217,7 +217,7 @@ namespace Dystopia
 			{
 				isFalling = false;
 				DEBUG_PRINT(eLog::MESSAGE, "why is it  notjumping");
-				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 9);
+				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 9, mbIsFacingRight);
 			}
 		}
 	}
@@ -360,6 +360,8 @@ namespace Dystopia
 			{
 				mpBody->AddLinearImpulse({ 0,JumpForce * mpBody->GetMass() * 10 + mpBody->GetLinearVelocity().y, 0 });
 				mbIsGrounded = false;
+
+				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 7, mbIsFacingRight);
 				isJumping = true;
 			}
 		}
@@ -440,11 +442,11 @@ namespace Dystopia
 
 		if (_isForm)
 		{
-			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 6);
+			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 6, mbIsFacingRight);
 
 			if (_skill == 0)
 			{
-				DEBUG_PRINT(eLog::MESSAGE, "Sending to SManager FORM");
+				DEBUG_PRINT(eLog::MESSAGE, "Sending to SManager FORM %d", mbIsFacingRight);
 				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 0, mbIsFacingRight, x, y, z);
 			}
 
@@ -457,7 +459,7 @@ namespace Dystopia
 
 		else
 		{	
-			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 5);
+			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 5, mbIsFacingRight);
 
 			DEBUG_PRINT(eLog::MESSAGE, "Sending to SManager FORCE");
 
@@ -479,20 +481,19 @@ namespace Dystopia
 		{	
 			if (attackCount == 1)
 			{
-				DEBUG_PRINT(eLog::MESSAGE, "SENTTTT");
-				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 1);
+				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 1, mbIsFacingRight);
 				isAttacking = true; 
 			}
 
 			if (attackCount == 2)
 			{
-				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 2);
+				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 2, mbIsFacingRight);
 				isAttacking = true; 
 			}
 
 			if (attackCount == 3)
 			{
-				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 3);
+				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 3, mbIsFacingRight);
 				isAttacking = true; 
 			}
 
@@ -500,13 +501,13 @@ namespace Dystopia
 			{
 				if (currentType)
 				{
-					CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 6);
+					CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 6, mbIsFacingRight);
 					isCasting = true;
 				}
 
 				else
 				{
-					CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 5);
+					CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 5, mbIsFacingRight);
 					isCasting = true;
 				}
 			}
@@ -527,16 +528,10 @@ namespace Dystopia
 		//const auto leftThumb = mpInputSys->GetAnalogX(0);
 
 		if (mpInputSys->IsKeyTriggered("Run Left") || mpInputSys->IsKeyTriggered("Run Right"))
-			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4);
+			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
 
 		if (mpInputSys->IsKeyReleased("Run Left") || mpInputSys->IsKeyReleased("Run Right"))
-			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 0);
-
-		/*if (isJumping)
-			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 7);
-
-		if (isFalling)
-			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 8);*/
+			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 0, mbIsFacingRight);
 	}
 
 	void CharacterController::TakeDamage(int _dmg)

@@ -94,7 +94,7 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
-		void PlayAnimation(int animNum);
+		void PlayAnimation(int animNum, bool isFacingRight);
 		void IsPlaying();
 
 		PP_MEMBERFUNC(Dystopia::SpriteManager, PlayAnimation)
@@ -106,6 +106,8 @@ namespace Dystopia
 
 		SpriteRenderer * myRenderer;
 		bool messageSent;
+		bool isJumping;
+		bool facingRight;
 	};
 
 	extern "C"

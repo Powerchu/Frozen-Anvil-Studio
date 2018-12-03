@@ -95,9 +95,6 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 		bool mPauseState;
-		int selection;
-		GameObject * mButtons[4];
-		GameObject * mAButton;
 		
 	private:
 		// Don't touch

@@ -116,6 +116,7 @@ namespace Dystopia
 		bool spawningSpike;
 		bool oneSpawned;
 		bool twoSpawned;
+		bool facingRight;
 	};
 
 	extern "C"

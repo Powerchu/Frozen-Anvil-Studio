@@ -64,10 +64,7 @@ namespace Dystopia
 		}
 	}
 	PauseManager::PauseManager()
-	:mPauseState{false},
-	mButtons{nullptr},
-	selection{0},
-	mAButton{nullptr}
+	:mPauseState{false}
 	{
 	}  
 
@@ -88,12 +85,6 @@ namespace Dystopia
 		SetFlags(FLAG_ACTIVE);
 		mPauseState = false;
 		EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f); 
-		mButtons[0] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Resume_Button");
-		mButtons[1] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Restart_Button");
-		mButtons[2] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Settings_Button");
-		mButtons[3] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Quit_Button");
-		mAButton     = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("AcceptButton");
-		selection = 0;
 	}
 
 	void PauseManager::Init()
@@ -101,13 +92,7 @@ namespace Dystopia
 		DEBUG_PRINT(eLog::MESSAGE, "Init");
 		SetFlags(FLAG_ACTIVE);
 		mPauseState = false;
-		EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f);
-		mButtons[0] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Resume_Button");
-		mButtons[1] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Restart_Button");
-		mButtons[2] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Settings_Button");
-		mButtons[3] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Quit_Button");
-		mAButton     = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("AcceptButton");
-		selection = 0;
+		EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f); 
 	}
 
 	void PauseManager::Update(const float)
@@ -118,94 +103,17 @@ namespace Dystopia
 		{
 			if(mPauseState)
 			{
-				DEBUG_PRINT(eLog::MESSAGE, "unpaused!");
+				DEBUG_PRINT(eLog::MESSAGE, "paused!");
 				mPauseState = false;
-				EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f);
-				for(auto & elem : mButtons)
-				{
-					if(mButtons[selection]) 
-						mButtons[selection]->RemoveFlags(eObjFlag::FLAG_ACTIVE);
-				}  
-				selection = 0;
+				EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f); 
 			} 
 			else
 			{
-				DEBUG_PRINT(eLog::MESSAGE, "paused!"); 
+				DEBUG_PRINT(eLog::MESSAGE, "unpaused!"); 
 				EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(0.f); 
 				mPauseState = true;   
-				for(auto & elem : mButtons)
-				{
-					if(mButtons[selection])
-						mButtons[selection]->SetFlag(eObjFlag::FLAG_ACTIVE);
-				}
-				selection = 0;
 			} 
 
-		}
-		
-		if(mPauseState)
-		{
-			bool isDown    = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eButton::XBUTTON_DPAD_DOWN) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_DOWN);
-			bool isUp  = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(XBUTTON_DPAD_UP) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_UP);
-			bool isPress = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(XBUTTON_A) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_ENTER);
-			if(isPress)
-			{
-				if(selection == 0)
-				{
-					if(mButtons[selection])
-						PauseManager_MSG::SendExternalMessage(mButtons[selection],"ButtonPress");
-					
-					DEBUG_PRINT(eLog::MESSAGE, "unpaused!"); 
-					EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f); 
-					mPauseState = false;
-					selection = 0;
-					for(auto & elem : mButtons)
-					{
-						if(mButtons[selection])
-							mButtons[selection]->RemoveFlags(eObjFlag::FLAG_ACTIVE);
-					}
-				}
-				else
-				{
-					if(mButtons[selection])
-						PauseManager_MSG::SendExternalMessage(mButtons[selection], "ButtonPress");
-				}
-
-			}
-			if(isUp)
-			{
-				selection = selection - 1 < 0 ? 3 : selection - 1;
-				if(mButtons[selection] != nullptr)
-				{
-					if(mAButton != nullptr)
-					{
-						auto ptr = mAButton->GetComponent<Transform>();
-						auto mButtonTransform = mButtons[selection]->GetComponent<Transform>();
-						if(ptr && mButtonTransform)
-						{
-							ptr->SetGlobalPosition(mButtonTransform->GetGlobalPosition() + Math::MakeVector3D(30,0,0));   
-							
-						}
-					}
-				}
-			}
-			if(isDown)
-			{
-				selection = selection + 1 > 3 ? 0 : selection + 1;
-				if(mButtons[selection] != nullptr)
-				{
-					if(mAButton != nullptr)
-					{
-						auto ptr = mAButton->GetComponent<Transform>();
-						auto mButtonTransform = mButtons[selection]->GetComponent<Transform>();
-						if(ptr && mButtonTransform)
-						{
-							ptr->SetGlobalPosition(mButtonTransform->GetGlobalPosition() + Math::MakeVector3D(30,0,0));
-							
-						}
-					}
-				}
-			}
 		}
 		
 	}
