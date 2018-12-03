@@ -397,6 +397,8 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 		o->mTransform.SetParentID(p->GetID());
 		o->Awake();
 	}
+	p->mTransform.SetGlobalPosition(mTransform.GetGlobalPosition());
+	p->mTransform.SetGlobalScale(mTransform.GetGlobalScale());
 	p->Awake();
 	return p;
 }
