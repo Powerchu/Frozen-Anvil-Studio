@@ -17,7 +17,7 @@ void main()
   vec4 color1 = texture(texGame, vUV);
   vec4 color2 = texture(texUI, vUV);
   
-  color1 = mix(color1, color2, color2.a);
+  color1 = color1 * (1.f - color2.a) * (1.f - color2.a) + color2;
   
   // Gamma correction
   //color1.rgb = pow(color1.rgb, vec3(1.f / Gamma));
