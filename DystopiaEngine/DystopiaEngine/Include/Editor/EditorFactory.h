@@ -34,12 +34,10 @@ namespace Editor
 	public:
 		struct PrefabData
 		{
-			PrefabData(const HashString&, size_t, size_t);
+			PrefabData(const HashString&);
 
 			HashString mPrefabFile;
-			size_t mnStart;
-			size_t mnEnd;
-
+			AutoArray<Dystopia::GameObject*> mArrObjects;
 			AutoArray<AutoArray<uint64_t>> mArrInstanced;
 		};
 
