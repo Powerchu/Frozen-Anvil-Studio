@@ -360,8 +360,8 @@ namespace Editor
 		{
 			if (HashString::nPos == f->mPath.find("Temp") && f->mTag == EGUI::ePayloadTags::PREFAB)
 			{
-				int out = -1;
-				if (!EditorMain::GetInstance()->GetSystem<EditorFactory>()->FindMasterPrefab(f->mName, out))
+				EditorFactory::PrefabData *pOut = nullptr;
+				if (!EditorMain::GetInstance()->GetSystem<EditorFactory>()->FindMasterPrefab(f->mName, pOut))
 					EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mName);
 			}
 		}

@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _EDITOR_CLIPBOARD_H_
 #include "DataStructure/AutoArray.h"
 #include "Editor/EditorSystem.h"
+#include "Editor/EditorFactory.h"	// cant foward declare nested class
 
 namespace Dystopia
 {
@@ -53,15 +54,15 @@ namespace Editor
 
 		AutoArray<uint64_t>& GetSelectedIDs(void);
 
-		int AddPrefab(File*);
-		int GetPrefab(void) const;
+		void AddPrefab(File*);
+		EditorFactory::PrefabData* GetPrefab(void) const;
 		void RemovePrefab(void);
 
 	private:
 		AutoArray<uint64_t> mArrSelectedIDs;
 		AutoArray<uint64_t> mArrCopiedBufer;
 
-		int mnPrefabFocus;
+		EditorFactory::PrefabData* mpPrefabFocus;
 
 		size_t mnCopyID;
 		size_t mnPasteID;

@@ -433,16 +433,16 @@ void Editor::EditorFactory::LoadIntoScene(Dystopia::TextSerialiser& _in)
 	//	allObj[index].Awake();
 }
 
-bool Editor::EditorFactory::FindMasterPrefab(const HashString& _prefabName, int& _outID)
+bool Editor::EditorFactory::FindMasterPrefab(const HashString& _prefabName, PrefabData*& _outP)
 {
-	//for (auto& prefData : mArrPrefabData)
-	//{
-	//	if (prefData.mPrefabFile == _prefabName)
-	//	{
-	//		_outID = static_cast<int>(prefData.mnStart);
-	//		return true;
-	//	}
-	//}
+	for (auto& prefData : mArrPrefabData)
+	{
+		if (prefData.mPrefabFile == _prefabName)
+		{
+			_outP = &prefData;
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -451,15 +451,15 @@ MagicArray<Dystopia::GameObject>& Editor::EditorFactory::GetAllFactoryObjects(vo
 	return mArrFactoryObj;
 }
 
-Editor::EditorFactory::PrefabData* Editor::EditorFactory::GetPrefabData(const int& _id)
-{
-	//for (auto& data : mArrPrefabData)
-	//{
-	//	if (data.mnStart == _id)
-	//		return &data;
-	//}
-	return nullptr;
-}
+//Editor::EditorFactory::PrefabData* Editor::EditorFactory::GetPrefabData(const int& _id)
+//{
+//	//for (auto& data : mArrPrefabData)
+//	//{
+//	//	if (data.mnStart == _id)
+//	//		return &data;
+//	//}
+//	return nullptr;
+//}
 
 /********************************************** Private Fn Definition **********************************************/
 
@@ -815,23 +815,17 @@ void Editor::EditorFactory::ApplyChanges(Editor::EditorFactory::PrefabData* _p)
 	auto& curScene = Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene();
 	auto& arrInstances = _p->mArrInstanced;
 
-	//for (auto& instArr : arrInstances)
-	//{
-	//	for (size_t i = 0; i < instArr.size(); ++i)
-	//	{
-	//		auto pObj = curScene.FindGameObject(instArr[i]);
-	//
-	//		if (!pObj) break;
-	//
-	//		if (_p->mnStart + i < _p->mnEnd)
-	//		{
-	//			auto& facVersion= mArrFactoryObj[_p->mnStart + i];
-	//			*pObj = facVersion;
-	//		}
-	//		else
-	//			__debugbreak();
-	//	}
-	//}
+	for (auto& instArr : arrInstances)
+	{
+		for (size_t i = 0; i < instArr.size(); ++i)
+		{
+			auto pObj = curScene.FindGameObject(instArr[i]);
+	
+			if (!pObj)  break;
+			if (i < _p->mArrObjects.size())
+				*pObj = *_p->mArrObjects[i];
+		}
+	}
 }
 
 Editor::EditorFactory::PrefabData::PrefabData(const HashString& _fileName)

@@ -37,6 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Editor::EditorClipboard::EditorClipboard(void)
 	: mArrSelectedIDs{}, mArrCopiedBufer{}, mnCopyID{ nPos }, mnDeleteID{ nPos }, mnPasteID{ nPos }, mnDupliID{ nPos }
+	, mpPrefabFocus{ nullptr }
 {}
 
 Editor::EditorClipboard::~EditorClipboard(void)
@@ -123,7 +124,7 @@ void Editor::EditorClipboard::LoadSettings(Dystopia::TextSerialiser&)
 void Editor::EditorClipboard::AddGameObject(const uint64_t& _id)
 {
 	auto inputMgr = EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager();
-	if (!inputMgr->IsKeyPressed(eButton::KEYBOARD_CTRL) || mnPrefabFocus != -1)
+	if (!inputMgr->IsKeyPressed(eButton::KEYBOARD_CTRL) || mpPrefabFocus)
 		ClearAll();
 	mArrSelectedIDs.Insert(_id);
 }
@@ -155,7 +156,7 @@ void Editor::EditorClipboard::RemoveGameObjectP(const uint64_t& _objID)
 void Editor::EditorClipboard::ClearAll(void)
 {
 	mArrSelectedIDs.clear();
-	mnPrefabFocus = -1;
+	mpPrefabFocus = nullptr;
 }
 
 void Editor::EditorClipboard::Copy(void)
@@ -195,24 +196,24 @@ AutoArray<uint64_t>& Editor::EditorClipboard::GetSelectedIDs(void)
 	return mArrSelectedIDs;
 }
 
-int Editor::EditorClipboard::AddPrefab(Editor::File* _file)
+void Editor::EditorClipboard::AddPrefab(Editor::File* _file)
 {
 	ClearAll();
 
-	if (!_file) return -1;
+	if (!_file) 
+		return;
 
-	EditorMain::GetInstance()->GetSystem<EditorFactory>()->FindMasterPrefab(_file->mName, mnPrefabFocus);
-	return mnPrefabFocus;
+	EditorMain::GetInstance()->GetSystem<EditorFactory>()->FindMasterPrefab(_file->mName, mpPrefabFocus);
 }
 
-int Editor::EditorClipboard::GetPrefab(void) const
+Editor::EditorFactory::PrefabData* Editor::EditorClipboard::GetPrefab(void) const
 {
-	return mnPrefabFocus;
+	return mpPrefabFocus;
 }
 
 void Editor::EditorClipboard::RemovePrefab(void)
 {
-	mnPrefabFocus = -1;
+	mpPrefabFocus = nullptr;
 }
 
 #endif

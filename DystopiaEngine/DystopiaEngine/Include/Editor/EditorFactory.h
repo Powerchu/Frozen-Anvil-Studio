@@ -68,10 +68,10 @@ namespace Editor
 		bool LoadAsPrefab(const HashString& _name);
 		void LoadIntoScene(Dystopia::TextSerialiser&);
 
-		bool FindMasterPrefab(const HashString& _prefabName, int& _outID);
+		bool FindMasterPrefab(const HashString& _prefabName, PrefabData*& _outID);
 
 		MagicArray<Dystopia::GameObject>& GetAllFactoryObjects(void);
-		PrefabData* GetPrefabData(const int&);
+		//PrefabData* GetPrefabData(const int&);
 
 		void ApplyChanges(PrefabData*);
 

@@ -455,20 +455,16 @@ namespace Editor
 	void Inspector::PrefabObject(void)
 	{
 		auto clip = EditorMain::GetInstance()->GetSystem<EditorClipboard>();
-		auto fac = EditorMain::GetInstance()->GetSystem<EditorFactory>();
-		const auto index = clip->GetPrefab();
-		if (index > -1)
+		//auto fac = EditorMain::GetInstance()->GetSystem<EditorFactory>();
+		auto pPrefab = clip->GetPrefab();
+		if (pPrefab)
 		{
-			auto pPrefabData = fac->GetPrefabData(index);
-			if (!pPrefabData) return;
-
-			auto& allFac = fac->GetAllFactoryObjects();
-			auto& prefObj = allFac[pPrefabData->mnStart];
-			auto& allInstances = pPrefabData->mArrInstanced;
+			auto& objects = pPrefab->mArrObjects;
+			auto& allInstances = pPrefab->mArrInstanced;
 			auto& curScene = Dystopia::EngineCore::Get<Dystopia::SceneSystem>()->GetCurrentScene();
 
 			EGUI::StartChild("##Archetype Editor", Math::Vec2{ Size().x - 60, 100 }, false);
-			EGUI::Display::Label("Has childrens:   %s", pPrefabData->mnEnd - pPrefabData->mnStart ? "True" : "False");
+			EGUI::Display::Label("Has childrens:   %s", objects.size() > 1 ? "True" : "False");
 			EGUI::Display::Label("No. of Instance: %d", allInstances.size());
 			for (size_t i = 0; i < allInstances.size(); i++)
 			{
@@ -503,25 +499,25 @@ namespace Editor
 			if (EGUI::StartChild("pInfoArea", Math::Vec2{ Size().x - 60, 60 }, false))
 			{
 				EGUI::SameLine();
-				EGUI::Display::Label("PREFAB %s", pPrefabData->mPrefabFile.c_str());
-				auto arr = prefObj.GetAllTags_str();
+				EGUI::Display::Label("PREFAB %s", pPrefab->mPrefabFile.c_str());
+				auto arr = objects[0]->GetAllTags_str();
 				int selected = 0;
 				EGUI::Display::DropDownSelection("Tag", selected, arr, 50);
 
 				EGUI::SameLine();
 				EGUI::ChangeAlignmentYOffset(0);
-				int j = (prefObj.GetFlags() & FLAG_LAYER_WORLD) ? 1 : (prefObj.GetFlags() & FLAG_LAYER_UI) ? 2 : 0;
+				int j = (objects[0]->GetFlags() & FLAG_LAYER_WORLD) ? 1 : (objects[0]->GetFlags() & FLAG_LAYER_UI) ? 2 : 0;
 				if (EGUI::Display::DropDownSelection("pLayer", j, g_arr2, 80))
 				{
 					switch (j)
 					{
 					case 1:
-						prefObj.RemoveFlags(FLAG_LAYER_UI);
-						prefObj.SetFlag(FLAG_LAYER_WORLD);
+						objects[0]->RemoveFlags(FLAG_LAYER_UI);
+						objects[0]->SetFlag(FLAG_LAYER_WORLD);
 						break;
 					case 2:
-						prefObj.RemoveFlags(FLAG_LAYER_WORLD);
-						prefObj.SetFlag(FLAG_LAYER_UI);
+						objects[0]->RemoveFlags(FLAG_LAYER_WORLD);
+						objects[0]->SetFlag(FLAG_LAYER_UI);
 					}
 				}
 				EGUI::ChangeAlignmentYOffset();
@@ -530,14 +526,14 @@ namespace Editor
 
 			EGUI::Display::HorizontalSeparator();
 
-			Dystopia::Transform& tempTransform = *prefObj.GetComponent<Dystopia::Transform>();
+			Dystopia::Transform& tempTransform = *objects[0]->GetComponent<Dystopia::Transform>();
 			if (EGUI::Display::StartTreeNode(tempTransform.GetEditorName().c_str(), nullptr, false, false, true, true))
 			{
 				tempTransform.EditorUI();
 				EGUI::Display::EndTreeNode();
 			}
 
-			auto& arrComp = prefObj.GetAllComponents();
+			auto& arrComp = objects[0]->GetAllComponents();
 			for (unsigned int i = 0; i < arrComp.size(); ++i)
 			{
 				EGUI::PushID(i);
@@ -553,7 +549,7 @@ namespace Editor
 				EGUI::PopID();
 			}
 
-			auto& arrBehav = prefObj.GetAllBehaviours();
+			auto& arrBehav = objects[0]->GetAllBehaviours();
 			for (auto & c : arrBehav)
 			{
 				EGUI::Display::HorizontalSeparator();
@@ -580,7 +576,7 @@ namespace Editor
 				}
 			}
 
-			Confirmations(static_cast<void*>(pPrefabData));
+			Confirmations(static_cast<void*>(pPrefab));
 		}
 	}
 
