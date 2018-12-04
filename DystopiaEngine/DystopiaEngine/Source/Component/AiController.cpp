@@ -236,7 +236,7 @@ namespace Dystopia
 
 	void AiController::EditorObjectNode()
 	{
-		const auto map = mpBlackboard->GetMapToObjs();
+		auto& map = mpBlackboard->GetMapToObjs();
 		const size_t map_size = map.size();
 
 		
@@ -247,6 +247,8 @@ namespace Dystopia
 		{
 			std::vector<HashString> keys(map_size);
 			std::vector<uint64_t> values(map_size);
+
+			HashString gObjName{"Empty"};
 
 			transform(map.begin(), map.end(), keys.begin(), AI::key_select);
 			transform(map.begin(), map.end(), values.begin(), AI::value_select);
@@ -261,13 +263,14 @@ namespace Dystopia
 				EGUI::ChangeAlignmentYOffset(0);
 				if (const auto obj = EngineCore::Get<SceneSystem>()->FindGameObject(val))
 				{
-					const auto gObjName = obj->GetName();
-					EGUI::Display::EmptyBox("V", AI::BTN_SZ, gObjName.c_str());
+					gObjName = obj->GetName();
 				}
 				else
 				{
-					EGUI::Display::EmptyBox("V", AI::BTN_SZ, "Invalid");
+					gObjName = "Invalid Obj";
 				}
+				EGUI::Display::EmptyBox("V", AI::BTN_SZ, gObjName.c_str());
+
 				EGUI::ChangeAlignmentYOffset();
 				EGUI::PopID();
 			}
