@@ -603,6 +603,12 @@ void Editor::EditorFactory::SaveSegment(const AutoArray<Dystopia::Behaviour*>& _
 				}
 			}
 		}
+		else
+		{
+			_out.InsertStartBlock("Behaviour Meta Count");
+			_out << 0;
+			_out.InsertEndBlock("Behaviour  Meta Count");
+		}
 	}
 }
 
@@ -646,14 +652,14 @@ void Editor::EditorFactory::LoadSegmentB(Dystopia::GameObject& _obj, Dystopia::T
 		_in >> name;
 		_in.ConsumeEndBlock();
 
+		unsigned size = 0;
+
+		_in.ConsumeStartBlock();
+		_in >> size;
+		_in.ConsumeEndBlock();
+
 		if (auto ptr = Dystopia::EngineCore::GetInstance()->Get<Dystopia::BehaviourSystem>()->RequestBehaviour(_obj.GetID(), name.c_str()))
 		{
-			unsigned size = 0;
-
-			_in.ConsumeStartBlock();
-			_in >> size;
-			_in.ConsumeEndBlock();
-
 			auto BehaviourMetadata = ptr->GetMetaData();
 			if (BehaviourMetadata)
 			{
@@ -681,6 +687,16 @@ void Editor::EditorFactory::LoadSegmentB(Dystopia::GameObject& _obj, Dystopia::T
 			}
 			ptr->SetOwner(&_obj);
 			_obj.AddComponent(ptr, Dystopia::BehaviourTag{});
+		}
+		else
+		{
+			for (unsigned j = 0; j < size; ++j)
+			{
+				_in.ConsumeStartBlock();
+				_in.ConsumeEndBlock();
+				_in.ConsumeStartBlock();
+				_in.ConsumeEndBlock();
+			}
 		}
 	}
 	_obj.Identify();
@@ -746,11 +762,12 @@ uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D
 		{
 			auto dup = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::BehaviourSystem>()->RequestDuplicate(b, insertedO.GetID());
 			if(dup == nullptr)
-			{
 				dup = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::BehaviourSystem>()->RequestBehaviour(insertedO.GetID(), b->GetBehaviourName());
+			if (dup)
+			{
+				dup->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+				insertedO.AddComponent(dup, Dystopia::Behaviour::TAG{});
 			}
-			dup->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-			insertedO.AddComponent(dup, Dystopia::Behaviour::TAG{});
 		}
 	}
 	

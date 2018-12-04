@@ -175,14 +175,14 @@ void Dystopia::Factory::LoadSegmentB(GameObject& _obj, Dystopia::TextSerialiser&
 		_in >> name;
 		_in.ConsumeEndBlock();
 
+		unsigned size = 0;
+
+		_in.ConsumeStartBlock();
+		_in >> size;
+		_in.ConsumeEndBlock();
+
 		if (auto ptr = Dystopia::EngineCore::GetInstance()->Get<Dystopia::BehaviourSystem>()->RequestBehaviour(_obj.GetID(), name.c_str()))
 		{
-			unsigned size = 0;
-
-			_in.ConsumeStartBlock();
-			_in >> size;
-			_in.ConsumeEndBlock();
-
 			auto BehaviourMetadata = ptr->GetMetaData();
 			if (BehaviourMetadata)
 			{
@@ -211,6 +211,16 @@ void Dystopia::Factory::LoadSegmentB(GameObject& _obj, Dystopia::TextSerialiser&
 			ptr->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 			ptr->SetOwner(&_obj);
 			_obj.AddComponent(ptr, Dystopia::BehaviourTag{});
+		}
+		else
+		{
+			for (unsigned j = 0; j < size; ++j)
+			{
+				_in.ConsumeStartBlock();
+				_in.ConsumeEndBlock();
+				_in.ConsumeStartBlock();
+				_in.ConsumeEndBlock();
+			}
 		}
 	}
 	_obj.Identify();
