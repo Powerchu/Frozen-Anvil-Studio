@@ -731,7 +731,7 @@ namespace Dystopia
 	{
 		if (bTree->IsValidTree())
 		{
-			EGUI::Display::Label("AI Tree View");
+			EGUI::Display::Label(bTree->GetEditorName().c_str());
 			RecursiveTree(bTree->GetRoot());
 		}
 	
