@@ -7,107 +7,107 @@ namespace Dystopia
 		/*
 		* Bool-String Map
 		*/
-		void Blackboard::SetBool(const HashString key, const bool value)
+		void Blackboard::SetBool(const HashString& key, const bool value)
 		{
 			bools[key] = value;
 		}
 
-		bool Blackboard::GetBool(const HashString key)
+		bool Blackboard::GetBool(const HashString& key)
 		{
 			if (bools.find(key) == bools.end()) {
-				return false;
+				this->SetBool(key, false);
 			}
 			return bools[key];
 		}
-		bool Blackboard::HasBool(const HashString key) const { return bools.find(key) != bools.end(); }
+		bool Blackboard::HasBool(const HashString& key) const { return bools.find(key) != bools.end(); }
 
 		/*
 		* Int-String Map
 		*/
-		void Blackboard::SetInt(const HashString key, const int value) { ints[key] = value; }
-		int Blackboard::GetInt(const HashString key)
+		void Blackboard::SetInt(const HashString& key, const int value) { ints[key] = value; }
+		int Blackboard::GetInt(const HashString& key)
 		{
 			if (ints.find(key) == ints.end()) {
-				return 0;
+				this->SetInt(key, 0);
 			}
 			return ints[key];
 		}
-		bool Blackboard::HasInt(const HashString key) const { return ints.find(key) != ints.end(); }
+		bool Blackboard::HasInt(const HashString& key) const { return ints.find(key) != ints.end(); }
 
 		/*
 		* Float-String Map
 		*/
-		void Blackboard::SetFloat(const HashString key, const float value) { floats[key] = value; }
+		void Blackboard::SetFloat(const HashString& key, const float value) { floats[key] = value; }
 
-		float Blackboard::GetFloat(const HashString key)
+		float Blackboard::GetFloat(const HashString& key)
 		{
 			if (floats.find(key) == floats.end()) {
-				return 0.0f;
+				this->SetFloat(key, 0.f);
 			}
 			return floats[key];
 		}
-		bool Blackboard::HasFloat(const HashString key) const { return floats.find(key) != floats.end(); }
+		bool Blackboard::HasFloat(const HashString& key) const { return floats.find(key) != floats.end(); }
 
 		/*
 		* Double-String Map
 		*/
-		void Blackboard::SetDouble(const HashString key, const double value) { doubles[key] = value; }
-		double Blackboard::GetDouble(const HashString key)
+		void Blackboard::SetDouble(const HashString& key, const double value) { doubles[key] = value; }
+		double Blackboard::GetDouble(const HashString& key)
 		{
 			if (doubles.find(key) == doubles.end()) {
-				return 0.0f;
+				this->SetDouble(key, 0.0);
 			}
 			return doubles[key];
 		}
-		bool Blackboard::HasDouble(const HashString key) const { return doubles.find(key) != doubles.end(); }
+		bool Blackboard::HasDouble(const HashString& key) const { return doubles.find(key) != doubles.end(); }
 
 		/*
 		* String-String Map
 		*/
-		void Blackboard::SetString(const HashString key, const HashString value) { strings[key] = value; }
+		void Blackboard::SetString(const HashString& key, const HashString value) { strings[key] = value; }
 		HashString Blackboard::GetString(const HashString key)
 		{
 			if (strings.find(key) == strings.end()) {
-				return HashString{};
+				this->SetString(key, "New Key");
 			}
 			return strings[key];
 		}
-		bool Blackboard::HasString(const HashString key) const { return strings.find(key) != strings.end(); }
+		bool Blackboard::HasString(const HashString& key) const { return strings.find(key) != strings.end(); }
 
 		/*
 		* Void*-String Map
 		*/
-		void Blackboard::SetPointer(const HashString key, void* value) { pointers[key] = value; }
-		void* Blackboard::GetPointer(const HashString key)
+		void Blackboard::SetPointer(const HashString& key, void* value) { pointers[key] = value; }
+		void* Blackboard::GetPointer(const HashString& key)
 		{
 			if (pointers.find(key) == pointers.end()) {
 				return nullptr;
 			}
 			return pointers[key];
 		}
-		bool Blackboard::HasPointer(const HashString key) const { return pointers.find(key) != pointers.end(); }
+		bool Blackboard::HasPointer(const HashString& key) const { return pointers.find(key) != pointers.end(); }
 
 		/*
 		* Vector4-String Map
 		*/
-		void Blackboard::SetVector(const HashString key, const Math::Vector4 value) { vectors[key] = value; }
+		void Blackboard::SetVector(const HashString& key, const Math::Vector4 value) { vectors[key] = value; }
 		Math::Vector4 Blackboard::GetVector(const HashString key)
 		{
 			if (vectors.find(key) == vectors.end()) {
-				return Math::Vector4{ 0,0,0,0 };
+				this->SetVector(key, { 0,0,0,0 });
 			}
 			return vectors[key];
 		}
-		bool Blackboard::HasVector(const HashString key) const { return vectors.find(key) != vectors.end(); }
+		bool Blackboard::HasVector(const HashString& key) const { return vectors.find(key) != vectors.end(); }
 
 		/*
 		* GameObject-String Map
 		*/
-		void Blackboard::SetObject(const HashString key, uint64_t value) { objs[key] = value; }
-		uint64_t Blackboard::GetObject(const HashString key)
+		void Blackboard::SetObject(const HashString& key, const uint64_t value) { objs[key] = value; }
+		uint64_t Blackboard::GetObject(const HashString& key)
 		{
 			if (objs.find(key) == objs.end()) {
-				return 0u;
+				this->SetObject(key, static_cast<uint64_t>(-1));
 			}
 			return objs[key];
 		}
@@ -126,10 +126,9 @@ namespace Dystopia
 		* Member Functions
 		*/
 
-		Blackboard Blackboard::Clone() const
+		Blackboard::Ptr Blackboard::Clone() const
 		{
-			Blackboard temp{ *this };
-			return temp;
+			return Ctor::CreateShared<Blackboard>(*this);
 		}
 
 		void Blackboard::ClearAll(void)

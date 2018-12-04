@@ -31,8 +31,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	AiController::AiController(void)
-		: mpBlackboard(Ctor::CreateShared<Blackboard>()), mNodeStatus(Node::eStatus::INVALID)
+		: mNodeStatus(Node::eStatus::INVALID), bTree(Ctor::CreateShared<BehaviourTree>())
+		
 	{
+		// Share ownership
+		mpBlackboard = bTree->GetBlackboard();
+	};
+
+	AiController::AiController(const AiController& _copy)
+		: mNodeStatus(Node::eStatus::INVALID), bTree(Ctor::CreateShared<BehaviourTree>())
+
+	{
+		// Share ownership
+		bTree->SetBlackboard(_copy.mpBlackboard->Clone());
+		mpBlackboard = bTree->GetBlackboard();
 	};
 
 	/*void AiController::Load()
@@ -41,17 +53,7 @@ namespace Dystopia
 
 	void AiController::Awake()
 	{
-		bTree.SetBlackboard(mpBlackboard);
-
-		/*const auto blackboard = mpBlackboard;
-
-		NeuralTree::Builder()
-			.composite<Selector>()
-				.decorator<Succeeder>()
-					.task<EatFood>(blackboard)
-				.end()
-			.end()
-		.Build(bTree);*/
+		
 	}
 
 	void AiController::Init()
@@ -65,8 +67,7 @@ namespace Dystopia
 
 	AiController* AiController::Duplicate() const
 	{
-		const auto cc = EngineCore::GetInstance()->GetSystem<AISystem>()->RequestComponent();
-		cc->mpBlackboard = Ctor::CreateShared<Blackboard>(mpBlackboard->Clone());
+		const auto cc = EngineCore::GetInstance()->GetSystem<AISystem>()->RequestComponent(*this);
 		cc->SetActive(true);
 		return cc;
 	}
@@ -89,9 +90,9 @@ namespace Dystopia
 
 	void AiController::Update(float)
 	{
-		if (bTree.IsValidTree())
+		if (bTree->IsValidTree())
 		{
-			mNodeStatus = bTree.Update();
+			mNodeStatus = bTree->Update();
 		}
 	}
 
@@ -100,32 +101,35 @@ namespace Dystopia
 
 	}
 
-	BehaviourTree& AiController::GetTreeAsRef()
+	SharedPtr<BehaviourTree>& AiController::GetTreeAsRef()
 	{
 		return bTree;
 	}
 
-	BehaviourTree::Ptr AiController::GetTreeAsPtr()
+	BehaviourTree::Ptr AiController::GetTreeAsPtr() const
 	{
-		return Ctor::CreateShared<BehaviourTree>(bTree);
+		return bTree;
 	}
 
-	Blackboard::Ptr AiController::GetBlackboard() const
+	Blackboard::Ptr& AiController::GetBlackboard()
 	{
-		return bTree.GetBlackboard();
+		return mpBlackboard;
 	}
 
 	void AiController::ClearTree(void)
 	{
-		if (bTree.IsValidTree())
+		if (bTree->IsValidTree())
 		{
-			if (bTree.GetRoot() != nullptr)
-				bTree.GetRoot() = nullptr;
-
+			bTree = nullptr;
 		}
 	}
 
-	
+	void AiController::SetTree(const SharedPtr<BehaviourTree>& _root)
+	{
+		bTree = _root;
+	}
+
+
 #if EDITOR
 	void AiController::EditorUI() noexcept
 	{
@@ -187,6 +191,7 @@ namespace Dystopia
 
 	void AiController::EditorStringNode()
 	{
+		static HashString buffer;
 		const auto map = mpBlackboard->GetMapToNames();
 		const size_t map_size = map.size();
 
@@ -210,7 +215,8 @@ namespace Dystopia
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, ( keys[i].c_str()));
 				EGUI::SameLine(AI::DEFAULT_ALIGN);
 				EGUI::ChangeAlignmentYOffset(0);
-				EGUI::Display::EmptyBox("V", AI::BTN_SZ, str.c_str());
+				EGUI::Display::TextField("V", buffer, true, AI::BTN_SZ);
+				//EGUI::Display::EmptyBox("V", AI::BTN_SZ, str.c_str());
 				EGUI::ChangeAlignmentYOffset();
 				EGUI::PopID();
 			}
@@ -615,7 +621,7 @@ namespace Dystopia
 
 	void AiController::EditorCurrentStatus()
 	{
-		if (bTree.IsValidTree())
+		if (bTree->IsValidTree())
 		{
 			HashString _eStatus = "INVALID";
 			switch (mNodeStatus)
@@ -642,7 +648,7 @@ namespace Dystopia
 				if (tempC)
 				{
 					HashString CompositeName;
-					if (tempC->GetID() == bTree.GetID()) //First Node
+					if (tempC->GetID() == bTree->GetID()) //First Node
 					{
 						CompositeName = { "ROOT: " + tempC->GetEditorName() };
 
@@ -720,10 +726,10 @@ namespace Dystopia
 
 	void AiController::EditorTreeView()
 	{
-		if (bTree.IsValidTree())
+		if (bTree->IsValidTree())
 		{
 			EGUI::Display::Label("AI Tree View");
-			RecursiveTree(bTree.GetRoot());
+			RecursiveTree(bTree->GetRoot());
 		}
 	
 	}

@@ -195,7 +195,7 @@ namespace Dystopia
 
 			}
 
-			BehaviourTree(const HashString _name)
+			BehaviourTree(const HashString& _name)
 				: mpBlackboard(Ctor::CreateShared<Blackboard>())
 				, mnID{ unsigned(-1) }
 				, mnName(_name)
@@ -249,7 +249,7 @@ namespace Dystopia
 			}
 
 			HashString GetEditorName(void) const override { return mnName; }
-			Composite::Ptr GetRoot() const { return mpRoot; }
+			Ptr GetRoot() const { return mpRoot; }
 
 		private:
 			Node::Ptr mpRoot;

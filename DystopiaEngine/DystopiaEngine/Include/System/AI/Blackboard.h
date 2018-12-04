@@ -49,36 +49,36 @@ namespace Dystopia
 
 			~Blackboard() = default;
 
-			void SetBool(const HashString key, const bool value);
-			bool GetBool(HashString key);
-			bool HasBool(HashString key) const;
+			void SetBool(const HashString& key, const bool value);
+			bool GetBool(const HashString& key);
+			bool HasBool(const HashString& key) const;
 
-			void SetInt(HashString key, int value);
-			int GetInt(HashString key);
-			bool HasInt(HashString key) const;
+			void SetInt(const HashString& key, int value);
+			int GetInt(const HashString& key);
+			bool HasInt(const HashString& key) const;
 
-			void SetFloat(HashString key, float value);
-			float GetFloat(HashString key);
-			bool HasFloat(HashString key) const;
+			void SetFloat(const HashString& key, float value);
+			float GetFloat(const HashString& key);
+			bool HasFloat(const HashString& key) const;
 
-			void SetDouble(HashString key, double value);
-			double GetDouble(HashString key);
-			bool HasDouble(HashString key) const;
+			void SetDouble(const HashString& key, double value);
+			double GetDouble(const HashString& key);
+			bool HasDouble(const HashString& key) const;
 
-			void SetString(HashString key, HashString value);
+			void SetString(const HashString& key, HashString value);
 			HashString GetString(HashString key);
-			bool HasString(HashString key) const;
+			bool HasString(const HashString& key) const;
 
-			void SetPointer(HashString key, void* value);
-			void* GetPointer(HashString key);
-			bool HasPointer(HashString key) const;
+			void SetPointer(const HashString& key, void* value);
+			void* GetPointer(const HashString& key);
+			bool HasPointer(const HashString& key) const;
 
-			void SetVector(HashString key, Math::Vector4 value);
+			void SetVector(const HashString& key, Math::Vector4 value);
 			Math::Vector4 GetVector(HashString key);
-			bool HasVector(HashString key) const;
+			bool HasVector(const HashString& key) const;
 
-			void SetObject(HashString key, uint64_t value);
-			uint64_t GetObject(HashString key);
+			void SetObject(const HashString& key, uint64_t value);
+			uint64_t GetObject(const HashString& key);
 			bool HasObject(HashString key) const;
 
 
@@ -91,7 +91,7 @@ namespace Dystopia
 			std::unordered_map<HashString, uint64_t>		& GetMapToObjs()		;
 			std::unordered_map<HashString, HashString>		& GetMapToNames()		;
 
-			Blackboard Clone() const;
+			Blackboard::Ptr Blackboard::Clone() const;
 
 			void ClearAll();
 

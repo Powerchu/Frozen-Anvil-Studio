@@ -144,6 +144,16 @@ namespace Dystopia
 				return tree;
 			}
 
+			SharedPtr<BehaviourTree> Build(Blackboard::Ptr& _bb, const OString& _name = "Generic AI Tree")
+			{
+				assert(mpRoot != nullptr && "The Behavior Tree is empty!");
+				auto tree = Ctor::CreateShared<BehaviourTree>(_name);
+				tree->SetRoot(mpRoot);
+				tree->SetID(mpRoot->GetID());
+				tree->SetBlackboard(_bb);
+				return tree;
+			}
+
 			void Build(BehaviourTree& _tree) const
 			{
 				assert(mpRoot != nullptr && "The Behavior Tree is empty!");

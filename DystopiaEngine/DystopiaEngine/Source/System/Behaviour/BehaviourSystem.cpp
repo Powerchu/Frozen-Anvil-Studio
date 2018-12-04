@@ -167,7 +167,7 @@ namespace Dystopia
 							{
 								if (auto ai = x->GetComponent<AiController>())
 								{
-									if (ai->GetTreeAsRef().IsValidTree())
+									if (ai->GetTreeAsRef()->IsValidTree())
 										ai->ClearTree();
 								}
 								x->RemoveComponent(iter.second);
