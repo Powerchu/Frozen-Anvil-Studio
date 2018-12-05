@@ -60,6 +60,7 @@ void Dystopia::Transform::Awake(void)
 
 void Dystopia::Transform::Init(void)
 {
+	if (!mfOpacity) SetOpacity(1.f);
 }
 
 void Dystopia::Transform::SetParent(Transform* _pParent)

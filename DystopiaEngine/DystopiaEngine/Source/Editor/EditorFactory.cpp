@@ -333,6 +333,9 @@ bool Editor::EditorFactory::LoadAsPrefab(const HashString& _name)
 			}
 		}
 
+		for (auto p : mLoadedObj)
+			p->GetComponent<Dystopia::Transform>()->SetOpacity(1.f);
+
 		for (auto& data : mArrPrefabData)
 		{
 			if (data.mPrefabFile == _name)
