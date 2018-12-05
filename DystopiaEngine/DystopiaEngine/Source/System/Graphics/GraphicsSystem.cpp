@@ -641,7 +641,7 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
-	SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
+	//SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
 }
 
 void Dystopia::GraphicsSystem::EndFrame(void)
