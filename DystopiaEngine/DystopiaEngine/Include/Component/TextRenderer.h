@@ -41,6 +41,17 @@ namespace Dystopia
 	class  TextureAtlas;
 	class  GraphicsSystem;
 
+	namespace TextEditor
+	{
+		enum eTextState
+		{
+			DEFAULT,
+			ON_HOVER,
+			ON_CLICK,
+			DISABLED
+		};
+	}
+
 	class _DLL_EXPORT TextRenderer : public Renderer
 	{
 	public:
@@ -77,9 +88,24 @@ namespace Dystopia
 		void SetFont(const char*);
 		void SetFont(const std::string&);
 
+		void SetFontSize(float _sz);
+		
+		void SetColor(const Math::Vec3D& _rgb);
+		void SetColorA(const Math::Vec4 _rgba);
+		void SetColor(float r, float g, float b);
+		void SetColor(float r, float g, float b, float a);
+		void SetAlpha(float _a);
+
 		TextRenderer* Duplicate(void) const;
 		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
+
+		void ChangeState(TextEditor::eTextState _state);
+		void RevertState();
+		void ApplyChanges();
+
+		TextEditor::eTextState mCurrState = TextEditor::DEFAULT;
+		TextEditor::eTextState mPrevState;
 
 #if EDITOR
 		void EditorUI(void) noexcept override;
@@ -91,8 +117,13 @@ namespace Dystopia
 		HashString mText;
 		AutoArray<Gfx::Vertex> mVerts;
 		int mnAnchorX, mnAnchorY;
-
+		
 		Math::Vector4 mColor;
+
+		Math::Vector4 mDefaultCol = { 1.f,1.f,1.f,1.f };
+		Math::Vector4 mHoverCol   = {.5f, .1f, .1f, 1.f};
+		Math::Vector4 mClickColor = {.7f,.2f,.2f,1.f};
+		Math::Vector4 mDisabledColor = {.5f,.5f,.5f,1.f};
 
 		void RegenMesh(void);
 
