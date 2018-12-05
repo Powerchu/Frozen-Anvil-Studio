@@ -32,6 +32,7 @@
 #include "Editor/HotLoader.h"
 #include "Utility/Meta.h"
 #include "Utility/Utility.h"
+#include "Component/AiController.h"
 #include <utility>
 #include "DataStructure/Array.h"
 
@@ -280,7 +281,14 @@ namespace Dystopia
 						{
 							//iter.first = iter.second->GetOwner()->GetID();
 							if (auto x = iter.second->GetOwner())
+							{
+								if (auto ai = x->GetComponent<AiController>())
+								{
+									if (ai->GetTreeAsRef()->IsValidTree())
+										ai->ClearTree();
+								}
 								x->RemoveComponent(iter.second);
+							}
 							//iter.second->GetOwner()->RemoveComponent(iter.second);
 							delete iter.second;
 							iter.second = nullptr;

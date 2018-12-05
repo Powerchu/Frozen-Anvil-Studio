@@ -39,6 +39,7 @@ namespace Dystopia
 			{
 				auto child = Ctor::CreateShared<NodeType>((args)...);
 				mpNode->AddChild(child);
+				child->SetParentId(mpNode->GetID());
 				return *this;
 			}
 
@@ -47,6 +48,7 @@ namespace Dystopia
 			{
 				auto child = Ctor::CreateShared<CompositeType>((args)...);
 				mpNode->AddChild(child);
+				child->SetParentId(mpNode->GetID());
 				return CompositeBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.GetRaw()));
 			}
 
@@ -55,6 +57,7 @@ namespace Dystopia
 			{
 				auto child = Ctor::CreateShared<DecoratorType>((args)...);
 				mpNode->AddChild(child);
+				child->SetParentId(mpNode->GetID());
 				return DecoratorBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.GetRaw()));
 			}
 
@@ -76,6 +79,7 @@ namespace Dystopia
 			{
 				auto child = Ctor::CreateShared<NodeType>((args)...);
 				mpNode->SetChild(child);
+				child->SetParentId(mpNode->GetID());
 				return *this;
 			}
 
@@ -84,6 +88,7 @@ namespace Dystopia
 			{
 				auto child = Ctor::CreateShared<CompositeType>((args)...);
 				mpNode->SetChild(child);
+				child->SetParentId(mpNode->GetID());
 				return CompositeBuilder<DecoratorBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.GetRaw()));
 			}
 
@@ -92,6 +97,7 @@ namespace Dystopia
 			{
 				auto child = Ctor::CreateShared<DecoratorType>((args)...);
 				mpNode->SetChild(child);
+				child->SetParentId(mpNode->GetID());
 				return DecoratorBuilder<DecoratorBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.GetRaw()));
 			}
 
@@ -134,6 +140,17 @@ namespace Dystopia
 				assert(mpRoot != nullptr && "The Behavior Tree is empty!");
 				auto tree = Ctor::CreateShared<BehaviourTree>();
 				tree->SetRoot(mpRoot);
+				tree->SetID(mpRoot->GetID());
+				return tree;
+			}
+
+			SharedPtr<BehaviourTree> Build(Blackboard::Ptr& _bb, const OString& _name = "Generic AI Tree")
+			{
+				assert(mpRoot != nullptr && "The Behavior Tree is empty!");
+				auto tree = Ctor::CreateShared<BehaviourTree>(_name);
+				tree->SetRoot(mpRoot);
+				tree->SetID(mpRoot->GetID());
+				tree->SetBlackboard(_bb);
 				return tree;
 			}
 
@@ -141,6 +158,7 @@ namespace Dystopia
 			{
 				assert(mpRoot != nullptr && "The Behavior Tree is empty!");
 				_tree.SetRoot(mpRoot);
+				_tree.SetID(mpRoot->GetID());
 			}
 
 		private:

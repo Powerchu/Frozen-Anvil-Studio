@@ -593,7 +593,6 @@ bool ::Editor::AddComponent<C>::Do(void)
 			c->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 			c->SetOwner(obj);
 			c->SetActive(obj->IsActive());
-			c->Awake();
 			EditorMain::GetInstance()->GetSystem<EditorFactory>()->DettachPrefab(mnID);
 			return true;
 		}
@@ -614,7 +613,7 @@ bool ::Editor::AddComponent<C>::Undo(void)
 			mnCID = c->GetID();
 			c->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 			c->SetOwner(obj);
-			c->SetActive(false);
+			c->SetActive(obj->IsActive());
 			EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(c, mnID, Ut::IsSame<typename C::TAG, typename Dystopia::Component::TAG>::value);
 			obj->RemoveComponent(obj->GetComponent<C>());
 			return true;
@@ -655,7 +654,7 @@ bool ::Editor::RemoveComponent<C>::Do(void)
 			mnCID = c->GetID();
 			c->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
 			c->SetOwner(obj);
-			c->SetActive(false);
+			c->SetActive(true);
 			EditorMain::GetInstance()->GetSystem<EditorResource>()->AddComponent(c, mnID, Ut::IsSame<typename C::TAG, typename Dystopia::Component::TAG>::value);
 			obj->RemoveComponent(obj->GetComponent<C>());
 			EditorMain::GetInstance()->GetSystem<EditorFactory>()->DettachPrefab(mnID);

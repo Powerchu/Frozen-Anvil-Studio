@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Utility.h"
 
 #include <GL/glew.h>
+#include <utility>
 
 
 Dystopia::Texture::Texture(void) noexcept :
@@ -25,7 +26,7 @@ Dystopia::Texture::Texture(void) noexcept :
 }
 
 Dystopia::Texture::Texture(unsigned _nType, const std::string& _strPath) noexcept :
-	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ _nType }, mnID{ 0 }, mstrPath{ _strPath }
+	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ _nType }, mnID{ 0 }, mstrPath{std::move(_strPath)}
 {
 	glGenTextures(1, &mnID);
 }

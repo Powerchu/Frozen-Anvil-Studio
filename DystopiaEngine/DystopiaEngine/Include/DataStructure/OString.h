@@ -467,6 +467,21 @@ inline OString operator+(const OString& _lhs, const char(&_s)[N])
 	return _lhs + s;
 }
 
+namespace std
+{
+	template <typename>
+	struct hash;
+
+	template <>
+	struct hash<OString>
+	{
+		inline size_t operator() (const OString& str) const
+		{
+			return str.id();
+		}
+	};
+}
+
 #endif 
 
 

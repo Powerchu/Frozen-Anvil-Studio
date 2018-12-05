@@ -440,6 +440,9 @@
       <Filter>Game Engine\Behaviours\Derive</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\LoadNext.cpp" />
+    <ClCompile Include="Source\System\AI\Blackboard.cpp">
+      <Filter>Game Engine\Systems\AI\Tree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">

@@ -33,17 +33,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif
 
 #include <GL/glew.h>
+#include "Editor/EditorClipboard.h"
 
 
 Dystopia::TextRenderer::TextRenderer(void) noexcept
-	: Renderer{}, mText {}, mColor{ 1.f, 1.f, 1.f, 1.f },
-	mpData{ nullptr }, mnAnchorX{ 0 }, mnAnchorY{ 0 }
+	: Renderer{}, mPrevState(mCurrState), mpData{ nullptr },
+	mText {}, mnAnchorX{ 0 }, mnAnchorY{ 0 }, mColor{ 1.f, 1.f, 1.f, 1.f }
 {
 }
 
 Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
-	: Renderer{ _rhs }, mText{ _rhs.mText }, mColor{ _rhs.mColor },
-	mpData{ _rhs.mpData }, mnAnchorX{ _rhs.mnAnchorX }, mnAnchorY{ _rhs.mnAnchorY }
+	: Renderer{ _rhs }, mCurrState(_rhs.mCurrState), mPrevState(_rhs.mCurrState),
+	mpData{ _rhs.mpData }, mText{ _rhs.mText }, mnAnchorX{ _rhs.mnAnchorX }, mnAnchorY{ _rhs.mnAnchorY }
+	,mColor{ _rhs.mColor },mDefaultCol(_rhs.mDefaultCol),mHoverCol(_rhs.mHoverCol),mClickColor(_rhs.mClickColor),mDisabledColor(_rhs.mDisabledColor)
 {
 	mpTexture = _rhs.mpTexture;
 }
@@ -99,8 +101,45 @@ void Dystopia::TextRenderer::SetFont(const std::string& _strPath)
 	mpTexture = mpData->mpAtlas->GetInternal();
 }
 
+void Dystopia::TextRenderer::SetFontSize(float _sz)
+{
+	float z = GetOwner()->GetComponent<Transform>()->GetGlobalScale().z;
+	GetOwner()->GetComponent<Transform>()->SetGlobalScale(_sz, _sz, z);
+
+}
+
+void Dystopia::TextRenderer::SetColor(const Math::Vec3D& _rgb)
+{
+	const float alpha = mColor.w;
+	mColor = _rgb;
+	mColor.w = alpha;
+}
+
+void Dystopia::TextRenderer::SetColorA(const Math::Vec4 _rgba)
+{
+	mColor = _rgba;
+}
+
+void Dystopia::TextRenderer::SetColor(float r, float g, float b)
+{
+	SetColor(Math::Vec3D{r,g,b});
+}
+
+void Dystopia::TextRenderer::SetColor(float r, float g, float b, float a)
+{
+	SetColorA(Math::Vec4{ r,g,b,a });
+}
+
+void Dystopia::TextRenderer::SetAlpha(float _a)
+{
+	mColor.w = _a;
+}
+
 void Dystopia::TextRenderer::RegenMesh(void)
 {
+	if (mpData == nullptr) return;
+	if (mpData->mSpaces.IsEmpty()) return;
+
 	AutoArray<Gfx::Vertex> verts;
 	AutoArray<Gfx::UV> uvs;
 	AutoArray<short> indices;
@@ -202,11 +241,18 @@ void Dystopia::TextRenderer::Serialise(TextSerialiser& _out) const
 	_out << mColor;
 	_out << mnAnchorX;
 	_out << mnAnchorY;
+	_out << static_cast<int>(mCurrState);
+	_out << static_cast<int>(mPrevState);
+	_out << mDefaultCol;
+	_out << mHoverCol;
+	_out << mClickColor;
+	_out << mDisabledColor;
 }
 
 void Dystopia::TextRenderer::Unserialise(TextSerialiser& _in)
 {
 	std::string font;
+	int currState, prevState;
 	Component::Unserialise(_in);
 
 	_in >> font;
@@ -214,6 +260,62 @@ void Dystopia::TextRenderer::Unserialise(TextSerialiser& _in)
 	_in >> mColor;
 	_in >> mnAnchorX;
 	_in >> mnAnchorY;
+	_in >> currState;
+	_in >> prevState;
+	_in >> mDefaultCol;
+	_in >> mHoverCol;
+	_in >> mClickColor;
+	_in >> mDisabledColor;
+
+	mCurrState = static_cast<TextEditor::eTextState>(currState);
+	mPrevState = static_cast<TextEditor::eTextState>(prevState);
+	ApplyChanges();
+	SetFont(font);
+
+}
+
+void Dystopia::TextRenderer::ChangeState(TextEditor::eTextState _state)
+{
+	const auto temp = mCurrState;
+	mCurrState = _state;
+	mPrevState = temp;
+
+	ApplyChanges();
+}
+
+void Dystopia::TextRenderer::RevertState()
+{
+	ChangeState(mPrevState);
+
+	ApplyChanges();
+}
+
+void Dystopia::TextRenderer::ApplyChanges()
+{
+	switch (mCurrState)
+	{
+	case TextEditor::DEFAULT:
+	{
+		mColor = mDefaultCol;
+		break;
+	}
+	case TextEditor::ON_CLICK:
+	{
+		mColor = mClickColor;
+		break;
+	}
+	case TextEditor::ON_HOVER:
+	{
+		mColor = mHoverCol;
+		break;
+	}
+	case TextEditor::DISABLED:
+	{
+		mColor = mDisabledColor;
+		break;
+	}
+	default:;
+	}
 }
 
 #if EDITOR
@@ -238,13 +340,36 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 	}
 
 	*(Ut::Copy(mText, &buf[0])) = '\0';
-	if (EGUI::Display::TextField("Text ", buf, 256, true, 225, false))
+
+	if (EGUI::Display::TextField("Text ", static_cast<char*>(buf), 512, true, 225, false))
 	{
 		mText.clear();
 		mText = buf;
 
 		bRegenMesh = true;
 	}
+
+	auto trans = GetOwner()->GetComponent<Transform>();
+	auto scale = trans->GetGlobalScale();
+	float z = scale.z;
+	int tempF = static_cast<int>(scale.x);
+
+	switch (EGUI::Display::SliderInt("Font Size", &tempF, 0, 1024))
+	{
+	case EGUI::eDragStatus::eSTART_DRAG:
+		break;
+	case EGUI::eDragStatus::eTABBED:
+	case EGUI::eDragStatus::eDEACTIVATED:
+	case EGUI::eDragStatus::eEND_DRAG:
+	case EGUI::eDragStatus::eENTER:
+		break;
+	default:
+	case EGUI::eDragStatus::eNO_CHANGE:
+	case EGUI::eDragStatus::eDRAGGING:
+		trans->SetGlobalScale(static_cast<float>(tempF), static_cast<float>(tempF), z);
+		break;
+	}
+
 	EGUI::Display::EmptyBox("Font ", 200, (mpData) ? mpData->mstrName.c_str() : "-empty-", true);
 
 	::Editor::File* t = nullptr;
@@ -267,9 +392,32 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 										   cmd->MakeFnCommand<TextRenderer, const char*>(&TextRenderer::SetFont, ""));
 	}
 
-	if (ImGui::ColorPicker4("Color", &mColor[0]))
-	{
+	int currIndex = static_cast<int>(mCurrState);
+	static std::string textStates[4]{ "Default",  "Hover", "Clicked" , "Disabled" };
 
+	if (EGUI::Display::DropDownSelection("Current State", currIndex, textStates))
+	{
+		ChangeState(static_cast<TextEditor::eTextState>(currIndex));
+	}
+
+	if (ImGui::ColorEdit4("Default Color", &mDefaultCol[0], (ImGuiColorEditFlags_NoSidePreview| ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoOptions)))
+	{
+		ApplyChanges();
+	}
+
+	if (ImGui::ColorEdit4("Hover Color", &mHoverCol[0], (ImGuiColorEditFlags_NoSidePreview	| ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoOptions)))
+	{
+		ApplyChanges();
+	}
+
+	if (ImGui::ColorEdit4("Clicked Color", &mClickColor[0], (ImGuiColorEditFlags_NoSidePreview	| ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoOptions)))
+	{
+		ApplyChanges();
+	}
+
+	if (ImGui::ColorEdit4("Disabled Color", &mDisabledColor[0], (ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoOptions)))
+	{
+		ApplyChanges();
 	}
 
 	if (bRegenMesh)

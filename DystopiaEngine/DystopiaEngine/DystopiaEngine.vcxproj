@@ -79,6 +79,7 @@
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
     <ClCompile Include="Source\Editor\SpriteEditor.cpp" />
     <ClCompile Include="Source\System\AI\AISystem.cpp" />
+    <ClCompile Include="Source\System\AI\Blackboard.cpp" />
     <ClCompile Include="Source\System\Collision\BoundingColliderNode.cpp" />
     <ClCompile Include="Source\System\Collision\BroadPhaseCircle.cpp" />
     <ClCompile Include="Source\Component\SpriteRenderer.cpp" />
@@ -615,7 +616,7 @@
       <SDLCheck>
       </SDLCheck>
       <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\aaron\source\repos\Frozen-Anvil-Studio\DystopiaEngine\DystopiaEngine\Include;$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>

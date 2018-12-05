@@ -560,7 +560,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 #if EDITOR
 		if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 #endif 
-
+		if (Cam.GetOwner() == nullptr) continue;
 		// If the camera is inactive, skip
 		if (Cam.GetOwner() && Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{

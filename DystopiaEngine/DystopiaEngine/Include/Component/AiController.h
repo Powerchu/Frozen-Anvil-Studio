@@ -45,8 +45,8 @@ namespace Dystopia
 
 
 		// ====================================== CONSTRUCTORS ======================================= // 
-		// Default Constructor - Quad shape, Mass = 100.0f, Friction & Elasticity = 0.5F
 		AiController(void);
+		AiController(const AiController& _copy);
 
 		// ================================ VIRTUAL FUNCTIONS ================================== // 
 		//void Load(void);
@@ -60,12 +60,22 @@ namespace Dystopia
 		void Update(float _dt);
 		void LateUpdate(float _dt) const;
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
-		BehaviourTree& GetTreeAsRef(void);
-		BehaviourTree::Ptr GetTreeAsPtr(void);
-		Blackboard::Ptr GetBlackboard(void) const;
+		SharedPtr<BehaviourTree>& GetTreeAsRef(void);
+		BehaviourTree::Ptr GetTreeAsPtr(void) const;
+		Blackboard::Ptr& GetBlackboard(void);
 
+		void ClearTree(void);
+		void SetTree(const SharedPtr<BehaviourTree>&  _root);
+
+		Node::eStatus mNodeStatus;
+		Blackboard::Ptr mpBlackboard;
 #if EDITOR
 		/*=================Editor Stuff=====================*/
+		void EditorCurrentStatus();
+		void RecursiveTree(Node::Ptr) const;
+		void EditorTreeView();
+		void AddKeyToMap();
+
 		void EditorFunctionNode();
 		void EditorStringNode();
 		void EditorObjectNode();
@@ -77,11 +87,11 @@ namespace Dystopia
 
 		// Editor UI		
 		void EditorUI(void) noexcept override;
-		/*Quaternion if needed*/
+		
 #endif // EDITOR
 	private:
-		BehaviourTree bTree;
-		Blackboard::Ptr mpBlackboard;
+		SharedPtr<BehaviourTree> bTree;
+
 	};
 }
 #endif
