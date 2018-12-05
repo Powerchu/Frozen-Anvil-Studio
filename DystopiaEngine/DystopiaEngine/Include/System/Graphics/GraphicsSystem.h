@@ -58,8 +58,8 @@ namespace Dystopia
 		void PostUpdate(void) override;
 		void Shutdown(void) override;
 
-		void SetGamma(float) noexcept;
-		float GetGamma(void) noexcept;
+		_DLL_EXPORT void SetGamma(float) noexcept;
+		_DLL_EXPORT float GetGamma(void) noexcept;
 
 		_DLL_EXPORT  void ToggleVsync(bool) noexcept;
 
