@@ -627,6 +627,7 @@ unsigned Editor::EditorFactory::LoadSegment(Dystopia::GameObject& _obj, Dystopia
 	_in >> n;
 	_obj.Unserialise(_in);
 	_in.ConsumeEndBlock();
+	_obj.GetComponent<Dystopia::Transform>()->SetOpacity(1.f);
 	return n;
 }
 
