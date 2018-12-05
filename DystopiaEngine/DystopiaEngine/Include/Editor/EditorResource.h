@@ -47,6 +47,8 @@ namespace Editor
 
 		HashString GetCurrProjectPath(void) const;
 
+		void ExternalFileHandling(const char*);
+
 	private:
 
 		HashString mCurrProjectPath;

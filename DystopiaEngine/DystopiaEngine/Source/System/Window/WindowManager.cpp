@@ -336,7 +336,7 @@ void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 		paths.EmplaceBack();
 
 		buf.reserve(DragQueryFile(handle, n, 0, 0) + 1);
-		DragQueryFile(handle, 0, buf.begin(), static_cast<unsigned>(buf.Cap()));
+		DragQueryFile(handle, n, buf.begin(), static_cast<unsigned>(buf.Cap()));
 
 		paths.back() = buf.begin();
 	}
