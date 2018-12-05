@@ -1,8 +1,18 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	BehaviourSystem.cpp
+\author Goh Kai Jie Keith (100%)
+\par    email: keith.goh\@digipen.edu
+\brief
 
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
 #include "Math/MathLib.h"
-
 #if EDITOR
-
 #include "Editor/EditorMain.h"
 #include "Editor/EditorFactory.h"
 #else
@@ -1059,16 +1069,16 @@ Behaviour* BehaviourSystem::RequestDuplicate(Behaviour* _PtrToDup, uint64_t _New
 #else
 		for (auto & i : mvBehaviours)
 		{
-			for (for auto & elem : i.second)
+			for (auto & elem : i.second)
 			{
 				if (elem.second != nullptr)
 				{
-					delete i.second[u].second;
-					i.second[u].second = nullptr;
+					delete elem.second;
+					elem.second = nullptr;
 				}
 			}
 
-			elem.second.clear();
+			i.second.clear();
 		}
 #endif
 	}

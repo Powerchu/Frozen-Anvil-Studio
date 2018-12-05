@@ -1,3 +1,18 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	AABB.cpp
+\author Goh Kai Jie Keith (70%)
+        Aaron Chu         (30%)
+\par    email: keith.goh\@digipen.edu
+               m.chu\@digipen.edu
+\brief
+
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
 #include "Component/AABB.h"
 #include "Component/RigidBody.h"
 #include "System/Collision/CollisionSystem.h"

@@ -127,15 +127,15 @@ namespace Dystopia
 		}
 		else if (v.Magnitude() < 100.f)
 		{
-			if (auto s = GetOwner()->GetComponent<SpriteRenderer>())
-			{
-				if (!s->IsPlaying())
-				{
-					s->Stop();
-					s->SetAnimation("Run");
-					s->Play();	
-				}
-			}
+			// if (auto s = GetOwner()->GetComponent<SpriteRenderer>())
+			// {
+				// if (!s->IsPlaying())
+				// {
+					// s->Stop();
+					// s->SetAnimation("Run");
+					// s->Play();	
+				// }
+			// }
 
 			if(rBody)
 			{
@@ -264,7 +264,7 @@ namespace Dystopia
 		// }
 	}
 
-	void Dystopia::Goblin::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::Goblin::OnTriggerExit(GameObject * const )
 	{
 		isColliding = false;
 	}

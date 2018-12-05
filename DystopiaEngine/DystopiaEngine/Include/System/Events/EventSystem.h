@@ -1,8 +1,10 @@
 /* HEADER *********************************************************************************/
 /*!
 \file	EventSystem.h
-\author Shannon Tan (100%)
+\author Shannon Tan (50%)
+        Goh Kai Jie Keith (50%)
 \par    email: t.shannon\@digipen.edu
+               keith.goh\@digipen.edu
 \brief
 
 possible example of a use case : 

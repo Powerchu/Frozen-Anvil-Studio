@@ -1,3 +1,18 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	CollisionSystem.cpp
+\author keith.goh (100%)
+\par    email: keith.goh\@digipen.edu
+\brief
+
+	Collision System Implementation
+
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
 #include "Component/ColliderList.h"
 #include "Component/RigidBody.h"
 #include "Component/Transform.h"

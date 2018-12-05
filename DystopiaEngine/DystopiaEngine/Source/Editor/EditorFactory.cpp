@@ -741,7 +741,7 @@ uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D
 	auto& arrInstance = _prefab.mArrInstanced.back();
 	for (size_t i = 0; i < _prefab.mArrObjects.size(); ++i)
 	{
-		auto& loadedO = *_prefab.mArrObjects[0];
+		auto& loadedO = *_prefab.mArrObjects[i];
 		auto insertedID = Dystopia::GUIDGenerator::GetUniqueID();
 		arrInstance.push_back(insertedID);
 		auto& insertedO = *(curScene.InsertGameObject(insertedID));

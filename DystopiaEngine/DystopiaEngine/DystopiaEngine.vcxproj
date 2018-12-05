@@ -225,7 +225,6 @@
     <ClInclude Include="Include\Allocator\ProxyAlloc.h" />
     <ClInclude Include="Include\Component\AABB.h" />
     <ClInclude Include="Include\Component\AudioSource.h" />
-    <ClInclude Include="Include\Component\BehaviourList.h" />
     <ClInclude Include="Include\Component\Circle.h" />
     <ClInclude Include="Include\Component\ColliderList.h" />
     <ClInclude Include="Include\Component\Convex.h" />

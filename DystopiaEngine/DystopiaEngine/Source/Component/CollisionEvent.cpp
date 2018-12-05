@@ -1,3 +1,18 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	CollisionEvent.cpp
+\author Goh Kai Jie Keith (50%)
+        Aaron Chu (50%)
+\par    email: keith.goh\@digipen.edu
+               m.chu\@digipen.edu
+\brief
+
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
 #include "System/Collision/CollisionEvent.h"
 #include "Object/GameObject.h"
 #include "Component/RigidBody.h"

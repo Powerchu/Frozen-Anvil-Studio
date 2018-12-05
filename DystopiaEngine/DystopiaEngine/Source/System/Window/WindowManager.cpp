@@ -182,7 +182,7 @@ void Dystopia::WindowManager::PreInit(void)
 #endif
 
 	mWindows.EmplaceBack(window);
-//	mWindows[0].ShowCursor(EDITOR);
+	mWindows[0].ShowCursor(EDITOR);
 }
 
 bool Dystopia::WindowManager::Init(void)
@@ -315,7 +315,7 @@ void Dystopia::WindowManager::DestroySplash(void)
 	mWindows[0].CenterWindow();
 	mWindows[0].ToggleFullscreen(mbFullscreen);
 
-	mWindows[0].Show();
+	//mWindows[0].Show();
 }
 
 bool Dystopia::WindowManager::HasWindows(void) const

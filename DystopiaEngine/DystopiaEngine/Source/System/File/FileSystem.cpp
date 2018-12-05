@@ -1,3 +1,17 @@
+/* HEADER *********************************************************************************/
+/*!
+\file	FileSystem.cpp
+\author keith.goh (100%)
+\par    email: keith.goh\@digipen.edu
+\brief
+
+	Implementation for file system
+
+All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* HEADER END *****************************************************************************/
 #include "System/File/FileSystem.h"
 
 #include <filesystem>

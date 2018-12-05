@@ -1,8 +1,8 @@
 /* HEADER *********************************************************************************/
 /*!
 \file	InputSystem.cpp
-\author Tan Jie Wei Jacky (100%)
-\par    email: t.jieweijacky\@digipen.edu
+\author Goh Kai Jie Keith (100%)
+\par    email: keith.goh\@digipen.edu
 \brief
 	Creates and manages Win32 windows.
 

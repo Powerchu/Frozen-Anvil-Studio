@@ -35,7 +35,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/Component.h"
 #include "Component/ComponentList.h"
-#include "Component/BehaviourList.h"
 
 #include "Component/AiController.h"
 #include "Component/AABB.h"
