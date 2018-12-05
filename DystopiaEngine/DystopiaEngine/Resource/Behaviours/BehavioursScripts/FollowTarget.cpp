@@ -66,33 +66,14 @@ namespace Dystopia
 		
 		currPos.x = Math::Lerp<float>(currPos.x, newPos.x, xWeight * _fDeltaTime);
 		currPos.y = Math::Lerp<float>(currPos.y, newPos.y, yWeight * _fDeltaTime);
-		
-		//newPos = (newPos - currPos);
-		//prev = (prev  * .7f + newPos.Magnitude() * .3f) * _fDeltaTime;
-		//newPos.Normalise();
-	    //
-		//newPos *= prev;
-		//
-		//vPos.x += newPos.x * xWeight;
-		//vPos.y += newPos.y * yWeight;
-		
-		//currPos.x = currPos.x + lerpC.x * _fDeltaTime;
-		//currPos.y = currPos.y + lerpC.y * _fDeltaTime;
 		GetOwner()->GetComponent<Transform>()->SetGlobalPosition(currPos);
 		vPos = newPos;
-		
-		//prevV = lerpC;
-		//auto lerpPos = Math::Lerp(currPos, newPos, 0.03F);
-		//lerpPos.z = z;
-		//if ((newPos - currPos).MagnitudeSqr() < 0.00001F)
-		//{
-		//	GetOwner()->GetComponent<Transform>()->SetGlobalPosition(newPos);
-		//}
-		//else
-		//{
-		//	GetOwner()->GetComponent<Transform>()->SetGlobalPosition(lerpPos);
-		//}
-
+	}
+	
+	void FollowTarget::Awake(void)
+	{
+		mpTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("CameraPivot");
+		vPos = mpTarget->GetComponent<Transform>()->GetGlobalPosition();
 	}
 
 	void FollowTarget::FixedUpdate(const float )

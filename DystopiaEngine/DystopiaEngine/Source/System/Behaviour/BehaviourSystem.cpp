@@ -973,9 +973,12 @@ Behaviour * BehaviourSystem::RequestBehaviour(uint64_t const & _ID, std::string 
 				{
 					Behaviour * ptr = nullptr;
 					if (elem.mpBehaviour != nullptr)
+					{
 						ptr = elem.mpBehaviour->Duplicate();
 
-					i.second.push_back(std::make_pair(_ID, ptr));
+						i.second.push_back(std::make_pair(_ID, ptr));
+					}
+
 					return ptr;
 				}
 			}
@@ -1006,7 +1009,7 @@ Behaviour * BehaviourSystem::RequestBehaviour(uint64_t const & _ID, std::string 
 #endif
 }
 
-	Behaviour* BehaviourSystem::RequestDuplicate(Behaviour* _PtrToDup, uint64_t _NewID)
+Behaviour* BehaviourSystem::RequestDuplicate(Behaviour* _PtrToDup, uint64_t _NewID)
 	{
 		for (auto & i : mvBehaviours)
 		{
@@ -1024,6 +1027,7 @@ Behaviour * BehaviourSystem::RequestBehaviour(uint64_t const & _ID, std::string 
 	}
 	void Dystopia::BehaviourSystem::ClearAllBehaviours()
 	{
+#if EDITOR
 		for (auto & i : mvBehaviours)
 		{
 			for (size_t u = 0; u<i.second.size(); ++u)
@@ -1043,6 +1047,22 @@ Behaviour * BehaviourSystem::RequestBehaviour(uint64_t const & _ID, std::string 
 				}
 			}
 		}
+
+#else
+		for (auto & i : mvBehaviours)
+		{
+			for (for auto & elem : i.second)
+			{
+				if (elem.second != nullptr)
+				{
+					delete i.second[u].second;
+					i.second[u].second = nullptr;
+				}
+			}
+
+			elem.second.clear();
+		}
+#endif
 	}
 
 #if EDITOR

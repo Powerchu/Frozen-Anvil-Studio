@@ -368,7 +368,7 @@ namespace Dystopia
 			}
 		} // Controller Scheme end
 
-		if (mpInputSys->IsKeyPressed("Run Left") && !mpInputSys->IsKeyPressed("Run Left"))
+		if (mpInputSys->IsKeyPressed(KEYBOARD_LEFT) && !mpInputSys->IsKeyPressed("Run Left"))
 		{			
 			mpBody->AddLinearImpulse({ -1 * CharacterSpeed * mpBody->GetMass(),0,0 });
 			//mpBody->AddTorque({0, 0,1 * CharacterSpeed});

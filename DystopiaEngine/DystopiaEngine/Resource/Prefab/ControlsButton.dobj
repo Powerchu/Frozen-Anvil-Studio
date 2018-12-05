@@ -1,10 +1,10 @@
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-853068800,536870977,"ControlsButton",0,
+941584896,536870977,"ControlsButton",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-25,7,1,-66.5806,-9,0,0,0,0,1,18446744073709551615,
+25,7,1,-400.114,-202.105,1.19999,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,10 +12,10 @@
 [END_GO_PREFAB]
 [START_Component]
 7,[START_Renderer]
-853069824,536870913,853068800,"/Asset/Environment/ControlsUnselected.png",
+941585920,536870913,941584896,"/Asset/Environment/ControlsUnselected.png",
 [END_Renderer]
 [START_Sprite Renderer]
-0.016,0,0,0,
+0.016,0,0,0,0,0,0,0,
 [END_Sprite Renderer]
 
 [END_Component]

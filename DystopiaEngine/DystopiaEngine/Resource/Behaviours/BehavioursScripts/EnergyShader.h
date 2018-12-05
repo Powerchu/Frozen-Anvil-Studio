@@ -106,7 +106,7 @@ namespace Dystopia
 		friend MetaData<EnergyShader>;
 		float LerpHP(float);
 		
-		Shader* myShader;
+		Shader* myShader = nullptr;
 	};
 
 	extern "C"
