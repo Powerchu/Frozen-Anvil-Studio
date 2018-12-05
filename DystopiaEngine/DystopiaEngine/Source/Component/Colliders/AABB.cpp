@@ -296,6 +296,7 @@ namespace Dystopia
 		return mfHeight / 2;
 	}
 
+#if EDITOR
 	void AABB::eIsTriggerCheckBox()
 	{
 		if (EGUI::Display::CheckBox("Is Trigger		  ", &mbIsTrigger))
@@ -330,5 +331,5 @@ namespace Dystopia
 			}
 		}
 	}
-
+#endif
 }

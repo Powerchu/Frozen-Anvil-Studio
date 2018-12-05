@@ -76,34 +76,20 @@ namespace
 		case WM_SIZE:
 			if(SIZE_MAXIMIZED == wParam)
 			{
-				if (Dystopia::EngineCore::Get<Dystopia::WindowManager>()->HasWindows())
-				{
-					auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
+				RECT scr;
+				SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
+				oldsz.first = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetWidth();
+				oldsz.second = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetHeight();
 
-					RECT scr;
-					SystemParametersInfo(SPI_GETWORKAREA, 0, &scr, 0);
-					oldsz.first = w.GetWidth();
-					oldsz.second = w.GetHeight();
-
-					w.SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
-
-					w.ToggleFullscreen(true);
-				}
-				
+				Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().
+					SetSize(scr.right - scr.left, scr.bottom - scr.top, false);
 			}
 			else if (SIZE_RESTORED == wParam)
 			{
-				if (Dystopia::EngineCore::Get<Dystopia::WindowManager>()->HasWindows())
+				if (oldsz.first)
 				{
-					auto& w = Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow();
-					if (oldsz.first)
-					{
-						w.SetSize(oldsz.first, oldsz.second, false);
-						oldsz.first = 0; oldsz.second = 0;
-					}
-
-
-					w.ToggleFullscreen(false);
+					Dystopia::EngineCore::Get<Dystopia::WindowManager>()->GetMainWindow().SetSize(oldsz.first, oldsz.second, false);
+					oldsz.first = 0; oldsz.second = 0;
 				}
 			}
 			return 0;
@@ -284,11 +270,11 @@ void Dystopia::WindowManager::LoadSettings(DysSerialiser_t& _out)
 
 void Dystopia::WindowManager::SaveSettings(DysSerialiser_t& _in)
 {
-	_in << Gbl::FULLSCREEN;
+	_in << mbFullscreen;
 	_in << mWindowStyle;
 	_in << mWindowStyleEx;
-	_in << Gbl::WINDOW_WIDTH;
-	_in << Gbl::WINDOW_HEIGHT;
+	_in << mWidth;
+	_in << mHeight;
 }
 
 //void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
@@ -354,9 +340,9 @@ void Dystopia::WindowManager::HandleFileInput(uint64_t _wParam)
 
 		paths.back() = buf.begin();
 	}
-
+#if EDITOR
 	Editor::EditorMain::GetInstance()->ExternalFile(paths);
-
+#endif
 	DragFinish(handle);
 }
 

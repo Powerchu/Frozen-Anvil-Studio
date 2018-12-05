@@ -1,0 +1,422 @@
+[START_Scene]
+18446744073392357376,"MainMenu",20,[START_START_GO_DATA]
+18446744072479609344,97,"___Scene_Camera___",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.143145,0.143145,1,79.414,11.0741,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072479610880,97,"Main Camera",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.12,0.12,1,79.41,11.07,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073553354752,65,"ControlsButton",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+25,7,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071987832320,65,"CreditsButton",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+25,7,1,0,-12,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072594959360,65,"StartButton",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+15,6,1,0,24,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072216949248,65,"SettingsButton",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+25,7,1,0,12,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+299415552,65,"QuitButton",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+13.9,6.1,1,0,-24,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+315670016,65,"MenuManager",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1154532352,33,"Indicator",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+4.9,5,1,18.5,24,5,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1155058176,33,"InSelector",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+34.3,15,1,-0.567209,24.1851,10,0,0,0,1,1154532352,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072809402368,33,"SPopup",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+120,130,1,93,142,1,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072809403904,33,"SettingTitle",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+40.8,10.4,1,93,187.631,1,0,0,0,1,18446744072809402368,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072169774080,33,"CRPopup",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+120,130,1,343,12,1,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072170299904,33,"CreditTitle",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+40.8,10.4,1,343.167,57.7583,1,0,0,0,1,18446744072169774080,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+742975488,33,"CPopup",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+120,130,1,93,-118,1,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+743501312,33,"ControllerPop",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+82.2,83.5,1,92.778,-119.293,1,0,0,0,1,742975488,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+743502848,33,"ControllerTitle",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+40.8,10.4,1,93,-72.5,1,0,0,0,1,742975488,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+507574784,33,"MenuBar",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+267.982,170.534,1,76.0517,1.28372,-1,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1741750272,33,"Background",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+311.2,200,1,77.6005,0,-10,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1649688576,33,"Wilo",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+141.636,126.401,1,126.954,2.77845,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+18446744072479608832,1,18446744072479609344,3,0,0,500,-500,1,1,0,0,1,50,
+[END_Camera]
+
+[END_Component End]
+[START_Component]
+[START_Camera]
+18446744072479610368,1,18446744072479610880,0,0,0,500,-500,1,1,0,0,1,50,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+17,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+18446744073553355776,1,18446744073553354752,"/Asset/UI/ControlsUnselected.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071987833344,1,18446744071987832320,"/Asset/UI/CreditsUnselected.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072594960384,1,18446744072594959360,"/Asset/UI/PlayUnselected.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072216950272,1,18446744072216949248,"/Asset/UI/SettingsUnselected.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+299416576,1,299415552,"/Asset/UI/QuitUnselected.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1154533376,1,1154532352,"/Asset/UI/Abutton.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1155059200,1,1155058176,"/Asset/UI/Selector.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072809403392,1,18446744072809402368,"/Asset/UI/Popup.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072809404928,1,18446744072809403904,"/Asset/UI/SettingsUnselected.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072169775104,1,18446744072169774080,"/Asset/UI/Popup.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072170300928,1,18446744072170299904,"/Asset/UI/CreditsUnselected.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+742976512,1,742975488,"/Asset/UI/Popup.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+743502336,1,743501312,"/Asset/UI/xboxConytrolz.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+743503872,1,743502848,"/Asset/UI/ControlsUnselected.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+507575808,1,507574784,"/Asset/UI/MenuBar.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072695120896,1,1741750272,"/Asset/guide.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,0,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072808055808,1,1649688576,"/Asset/UI/wilomockup_menu.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+29,[START_str]
+"ChangeAudio",0,[START_str]
+"CharacterController",0,[START_str]
+"CombatBox",0,[START_str]
+"DeleteSelf",0,[START_str]
+"EnergyShader",0,[START_str]
+"FollowTarget",0,[START_str]
+"ForceTOne",0,[START_str]
+"ForceTThree",0,[START_str]
+"ForceTTwo",0,[START_str]
+"FormTOne",0,[START_str]
+"FormTThree",0,[START_str]
+"FormTTwo",0,[START_str]
+"Goblin",0,[START_str]
+"GoblinCombat",0,[START_str]
+"Health",0,[START_str]
+"HealthShader",0,[START_str]
+"HUD",0,[START_str]
+"LoadNext",0,[START_str]
+"MenuManager",1,[START_BEHAVIOUR_BLOCK]
+315670016,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"yOffset",[START_yOffset]
+12,[START_MEMBER VAR]
+"currentPos",[START_currentPos]
+0,[START_MEMBER VAR]
+"isSelected",[START_isSelected]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"Parallax",0,[START_str]
+"PauseManager",0,[START_str]
+"QuitButton",0,[START_str]
+"RestartButton",0,[START_str]
+"SceneManager",0,[START_str]
+"SettingsButton",0,[START_str]
+"ShiftChildrenZ",0,[START_str]
+"SkillManager",0,[START_str]
+"SplashScreen",0,[START_str]
+"SpriteManager",0,
+[END_BEHAVIOUR_SYSTEM_BLOCK]
+
+[END_Scene]

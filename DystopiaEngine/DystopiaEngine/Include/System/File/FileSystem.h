@@ -86,7 +86,7 @@ namespace Dystopia
 
 		void ChangeDirPath(eFileDir _dirToChange, const HashString& _newPath);
 		HashString FindFilePath(const HashString& _file, eFileDir _parentDir);
-		_DLL_EXPORT_ONLY HashString GetFromResource(const char *_str);
+		_DLL_EXPORT HashString GetFromResource(const char *_str);
 
 	private:
 
@@ -129,7 +129,7 @@ namespace Dystopia
 				if (DirPath.has_root_path())
 					retString = mPathTable[_ParentDirectory];
 				else
-					retString = std::filesystem::current_path().string() + '/' + mPathTable[_ParentDirectory];
+					retString = std::filesystem::current_path().string() + '/' + mPathTable[_ParentDirectory] + '/';
 			}
 
 			else if constexpr (std::is_same_v<T, std::wstring>)

@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Window/Window.h"		 // File Header
 #include "System/Window/WindowManager.h"
+#include "System/Graphics/GraphicsSystem.h"
 #include "System/Input/InputMap.h"		 // eButton
 #include "System/Driver/Driver.h"
 
@@ -178,7 +179,7 @@ void Dystopia::Window::ToggleFullscreen(bool _bFullscreen) noexcept
 {
 	if (_bFullscreen)
 	{
-#       if !defined(EDITOR)
+#       if !EDITOR
 			PushStyle(
 				mStyle & Ut::Constant<long, ~(WS_CAPTION | WS_SIZEBOX)>::value,
 				mStyleEx & Ut::Constant<long, ~(WS_EX_WINDOWEDGE)>::value
@@ -189,7 +190,7 @@ void Dystopia::Window::ToggleFullscreen(bool _bFullscreen) noexcept
 	}
 	else
 	{
-#       if !defined(EDITOR)
+#       if !EDITOR
 			PushStyle(mStyle, mStyleEx);
 			SetSize(mnWidth, mnHeight, true);
 #       endif

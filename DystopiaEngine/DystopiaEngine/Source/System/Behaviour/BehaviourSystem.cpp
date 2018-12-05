@@ -2,10 +2,14 @@
 #include "Math/MathLib.h"
 
 #if EDITOR
-#include "Editor/HotLoader.h"
+
 #include "Editor/EditorMain.h"
 #include "Editor/EditorFactory.h"
+#else
+#include "System/Behaviour/BehaviourList.h"
+
 #endif
+
 #include "System/Behaviour/BehaviourSystem.h"
 #undef ERROR
 
@@ -22,17 +26,104 @@
 #include "System/Logger/LoggerSystem.h"
 #include "System/Logger/LogPriority.h"
 #include "System/Window/WindowManager.h"
-#include "System/Window/Window.h"
+
 #include "IO/TextSerialiser.h"
+
+#include "Editor/HotLoader.h"
+#include "Utility/Meta.h"
+#include "Utility/Utility.h"
 #include <utility>
+#include "DataStructure/Array.h"
 
 namespace Dystopia
 {
-	
+
+#if EDITOR
+
+
+#else
+	namespace BehaviourSystemHelper
+	{
+		template<typename T>
+		struct BehaviourSystemFunction;
+
+		template<unsigned ... Seq>
+		struct BehaviourSystemFunction<std::index_sequence<Seq...>>
+		{
+			template<typename C>
+			struct BehaviourFunctionHelper
+			{
+				static void Insert()
+				{
+					C * ptr = new C;
+					Dystopia::BehaviourWrap wrap;
+
+					wrap.mName = ptr->GetBehaviourName();
+					wrap.mpBehaviour = ptr;
+					EngineCore::GetInstance()->Get<BehaviourSystem>()->NewBehaviourReference(wrap);
+				}
+			};
+
+			template<bool, typename T>
+			struct RemoveRepeatAux
+			{
+				using type = typename Ut::TypeList<T>;
+				static constexpr bool value = true;
+			};
+			template<typename T>
+			struct RemoveRepeatAux<false, T>
+			{
+				using type = typename Ut::TypeList<>;
+				static constexpr bool value = false;
+			};
+
+			template<bool ... Bools>
+			struct isAllTrue
+			{
+				static constexpr bool value = (Bools & ...);
+			};
+			template <typename ... Ts>
+			struct RemoveRepeat;
+
+			template<typename Head, typename ... Rest>
+			struct RemoveRepeat<Head, Rest...>
+			{
+				//using type = typename RemoveRepeat<Rest...>::type;
+				using type = typename Ut::MetaConcat< typename RemoveRepeatAux< (isAllTrue<Ut::IsSame<Head, Rest>::value...>::value), Rest ...>::type, typename RemoveRepeat<Rest...>::type >::type;
+				static constexpr unsigned Size = (Ut::IsSame<Head, Rest>::value ? 1 : 0) + RemoveRepeat<Rest...>::Size;
+			};
+
+			template<typename Head>
+			struct RemoveRepeat<Head>
+			{
+				using type = typename Ut::TypeList<Head>;
+				static constexpr unsigned Size = 1;
+			};
+
+			static void Insert()
+			{
+				using pLoadFunc = void(*)();
+
+				static auto SysArray = Ctor::MakeArray<pLoadFunc>
+					    (
+							static_cast<pLoadFunc>(&BehaviourFunctionHelper<typename Ut::MetaExtract<Seq, BehaviourList>::result::type>::Insert) ...
+						);
+
+				for (unsigned i = 0; i < sizeof...(Seq); ++i)
+				{
+					SysArray[i]();
+				}
+			}
+		};
+	}
+
+#endif
 
 	BehaviourSystem::BehaviourSystem()
 #if EDITOR
 		:mHotloader{ new Hotloader<1>() }
+#else
+
 #endif
 	{
 
@@ -77,16 +168,11 @@ namespace Dystopia
 		mHotloader->AddFilesToCrawl(L"DystopiaEngine_Editor.lib", eCompile);
 		mHotloader->SetDllFolderPath(FileSys->GetFullPath("BehaviourDLL_Release", eFileDir::eAppData));
 #endif
-		
 		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
 
 		mHotloader->SetCompilerFlags(L"cl /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
 
-#else
-
-#endif
-#if EDITOR
 
 		mHotloader->Init();
 		auto const & ArrayDlls = mHotloader->GetDlls();
@@ -105,8 +191,16 @@ namespace Dystopia
 				mvBehaviourReferences.Emplace(Ut::Move(wrap));
 				mvBehaviours.push_back(std::make_pair(name, AutoArray<BehaviourPair>{}));
 			}
-			//mvBehaviourReferences.Emplace(BehaviourClone());
+
 		}
+#else
+		static constexpr size_t size = Ut::SizeofList<BehaviourList>::value;
+		BehaviourSystemHelper::BehaviourSystemFunction<std::make_index_sequence< size >>::Insert();
+
+#endif
+
+#if EDITOR
+
 
 #endif
 
@@ -117,14 +211,37 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::BehaviourSystem::FixedUpdate(float)
+	void Dystopia::BehaviourSystem::FixedUpdate(float _dt)
 	{
-	}
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.second)
+				{
+					if (auto p = iter.second->GetOwner())
+					{
+						if (p->GetFlag() & eObjFlag::FLAG_EDITOR_OBJ)
+						{
+							continue;
+						}
+						if (p->GetFlag() & eObjFlag::FLAG_ACTIVE)
+						{
+							iter.second->FixedUpdate(_dt);
+						}
+					}
+					else
+					{
+						iter.second->DestroyComponent();
+					}
+				}
 
+			}
+		}
+	}
+#if EDITOR
 	void Dystopia::BehaviourSystem::PollChanges(void)
 	{
-#if EDITOR
-
 		bool hasChange   = false;
 		bool hasSaveFile = false;
 		/*Update Hotloader*/
@@ -278,9 +395,8 @@ namespace Dystopia
 
 		if (hasSaveFile)
 			EngineCore::GetInstance()->GetSystem<SceneSystem>()->LoadScene(FileSys->GetFullPath(EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName() + ".dscene", eFileDir::eResource));
-#endif
 	}
-
+#endif
 	void Dystopia::BehaviourSystem::Update(float _dt)
 	{
 #if EDITOR
@@ -317,22 +433,56 @@ namespace Dystopia
 
 			}
 		}
+#else
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.second)
+				{
+					iter.first = iter.second->GetOwnerID();
+					if (auto p = iter.second->GetOwner())
+					{
+						if (p->GetFlag() & eObjFlag::FLAG_EDITOR_OBJ)
+						{
+							continue;
+						}
+						if (p->GetFlag() & eObjFlag::FLAG_ACTIVE)
+						{
+							iter.second->Update(_dt);
+						}
+					}
+					else
+					{
+						iter.second->DestroyComponent();
+					}
+				}
+
+			}
+		}
 #endif
 	}
+void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
+	{
+#if EDITOR
 
+#else
+		mvBehaviourReferences.Emplace(_BWrap);
+		mvBehaviours.push_back(std::make_pair(_BWrap.mName, AutoArray<BehaviourPair>{}));
+#endif
+	}
 	void Dystopia::BehaviourSystem::PostUpdate(void)
 	{
 #if EDITOR
 
 		/*Clear the recently change*/
 		mvRecentChanges.clear();
-		//static AutoArray<std::pair<uint64_t, Behaviour*>*> ToRemove;
-		for (auto & i : mvBehaviours)
-		{
 
-			for (size_t u = 0; u < i.second.size(); ++u)
+		for(auto & i : mvBehaviours)
+		{
+			for(size_t u=0; u < i.second.size(); ++u)
 			{
-				if (i.second[u].second)
+				if(i.second[u].second != nullptr)
 				{
 					if (eObjFlag::FLAG_REMOVE & i.second[u].second->GetFlags())
 					{
@@ -347,7 +497,29 @@ namespace Dystopia
 					i.second.FastRemove(&i.second[u]);
 					u--;
 				}
+			}
+		}
+#else
 
+		for (auto & i : mvBehaviours)
+		{
+			for (size_t u = 0; u < i.second.size(); ++u)
+			{
+				if (i.second[u].second != nullptr)
+				{
+					if (eObjFlag::FLAG_REMOVE & i.second[u].second->GetFlags())
+					{
+						delete i.second[u].second;
+						i.second[u].second = nullptr;
+						i.second.FastRemove(&i.second[u]);
+						u--;
+					}
+				}
+				else
+				{
+					i.second.FastRemove(&i.second[u]);
+					u--;
+				}
 			}
 		}
 #endif
@@ -360,14 +532,30 @@ namespace Dystopia
 		{
 			for (auto & iter : i.second)
 			{
-				/*SOMEONE IS DELETEING THIS - COMMENT : PURGE COMPONENT IS KILLING MY BEHAVIOUR*/
 				delete iter.second;
 			}
 		}
 
 		for (auto const & elem : mvBehaviourReferences)
-		delete elem.mpBehaviour;
+			delete elem.mpBehaviour;
+#else
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				delete iter.second;
+			}
+		}
+
+		for (auto const & elem : mvBehaviourReferences)
+			delete elem.mpBehaviour;
+
+		for (auto & elem : mvDllInstance)
+		{
+			delete elem;
+		}
 #endif
+
 	}
 
 	void Dystopia::BehaviourSystem::LoadDefaults(void)
@@ -444,7 +632,70 @@ namespace Dystopia
 			}
 		}
 		_obj.InsertEndBlock("BEHAVIOUR_SYSTEM_BLOCK");
+#else
+		_obj.InsertStartBlock("BEHAVIOUR_SYSTEM_BLOCK");
+		/*Save number of Behaviours*/
+		_obj << mvBehaviours.size();
+		for (auto & i : mvBehaviours)
+		{
+			/*Save Behaviour Name*/
+			auto * ptr = i.first.c_str();
+			std::string str;
+			while(*ptr != L'\0')
+			{
+				char c = static_cast<char>(*ptr);
+				str += c;
+				++ptr;
+			}
+
+			_obj.InsertStartBlock("str");
+			_obj << str;
+			unsigned n = 0;
+			/*Save the number of Pointers*/
+			for (auto& e : i.second)
+			{
+				if (e.second)
+					n += !(e.second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ);
+			}
+
+
+			/*Save the number of Pointers*/
+			_obj << n;
+			for (auto & iter : i.second)
+			{
+				_obj.InsertStartBlock("BEHAVIOUR_BLOCK");
+				/*Owner ID*/
+				_obj << iter.first;
+				_obj << static_cast<unsigned>(iter.second->GetOwner()->GetFlags());
+				/*Save the Member Data*/
+				if (iter.second)
+				{
+					auto && BehaviourMetaData = iter.second->GetMetaData();
+					if (BehaviourMetaData)
+					{
+						_obj.InsertStartBlock("BEHAVIOUR_MEMBER_VARIABLE_BLOCK");
+						auto Allnames = BehaviourMetaData.GetAllNames();
+						for (auto names : Allnames)
+						{
+							if (BehaviourMetaData[names])
+							{
+								_obj << names;
+								_obj.InsertStartBlock(names);
+								BehaviourMetaData[names].Serialise(iter.second, _obj, BehaviourHelper::SuperSerialiseFunctor{});
+								_obj.InsertStartBlock("MEMBER VAR");
+							}
+						}
+						_obj << "END";
+						_obj.InsertEndBlock("BEHAVIOUR_MEMBER_VARIABLE_BLOCK");
+					}
+				}
+				_obj.InsertEndBlock("BEHAVIOUR_BLOCK");
+			}
+		}
+		_obj.InsertEndBlock("BEHAVIOUR_SYSTEM_BLOCK");
 #endif
+
+
 	}
 
 	void Dystopia::BehaviourSystem::Unserialise(TextSerialiser & _obj)
@@ -523,8 +774,93 @@ namespace Dystopia
 						/*Time to Super Set Functor*/
 						_obj.ConsumeEndBlock();  /*Consume END BEHAVIOUR BLOCK*/
 
+						if(static_cast<eObjFlag>(_Flags) & eObjFlag::FLAG_EDITOR_OBJ)
+						{
+							/*Object is editor object*/
+							DeleteBehaviour(ptr);
+						}
+						else
+						{
+							/*Insert to GameObject*/
+							auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+							if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
+							{
+								ptr->SetOwner(x);
+								x->AddComponent(ptr, BehaviourTag{});
+							}
+							else
+							{
+								DeleteBehaviour(ptr);
+							}
+						}
+
+					}
+					break;
+				}
+			}
+		}
+#else
+		/*Clear all current Behaviour*/
+		ClearAllBehaviours();
+		/*Consume "BEHAVIOUR_SYSTEM BLOCK"*/
+		_obj.ConsumeStartBlock();
+		/*Get Number of Behaviour Scripts*/
+		unsigned size = 0;
+		_obj >> size;
+		for (unsigned i = 0; i < size; ++i)
+		{
+			_obj.ConsumeStartBlock();
+			std::string BehaviourScriptName;
+			_obj >> BehaviourScriptName;
+			for (auto const & elem : mvBehaviourReferences)
+			{
+				if (elem.mName == BehaviourScriptName)
+				{
+					unsigned NumOfBehaviour = 0;
+					_obj >> NumOfBehaviour;
+					for (unsigned u = 0; u < NumOfBehaviour; ++u)
+					{
+						/*Make new Behaviour*/
+						_obj.ConsumeStartBlock(); /*Consume START BEHAVIOUR BLOCK*/
+						uint64_t _ID = 0;
+						unsigned _Flags = 0;
+						_obj >> _ID;
+						_obj >> _Flags;
+						auto * ptr = RequestBehaviour(_ID, elem.mName);
+						_obj.ConsumeStartBlock(); /*Consume Behaviour Member Variable Block*/
+						auto BehaviourMetaData = ptr->GetMetaData();
+						if (BehaviourMetaData)
+						{
+
+							std::string Var;
+							_obj >> Var;
+							while (Var != "END")
+							{
+								if (BehaviourMetaData[Var.c_str()])
+								{
+									_obj.ConsumeStartBlock();
+									/*Call Unserialise*/
+									BehaviourMetaData[Var.c_str()].Unserialise(ptr, _obj, BehaviourHelper::SuperUnserialiseFunctor{});
+									_obj.ConsumeStartBlock();
+								}
+								else
+								{
+									_obj.ConsumeStartBlock();
+									/*Call Unserialise*/
+									_obj.ConsumeStartBlock();
+								}
+								_obj >> Var;
+							}
+						}
+						_obj.ConsumeEndBlock();   /*Consume Behaviour Member Variable Block*/
+												  /*Time to Super Set Functor*/
+						_obj.ConsumeEndBlock();  /*Consume END BEHAVIOUR BLOCK*/
+
+												 /*Insert to GameObject*/
+
 						if (_Flags & eObjFlag::FLAG_EDITOR_OBJ)
 						{
+							/*Object is editor object*/
 							DeleteBehaviour(ptr);
 						}
 						else
@@ -572,6 +908,7 @@ namespace Dystopia
 
 	void BehaviourSystem::ClearAllEditorBehaviours()
 	{
+#if EDITOR
 		for (auto & i : mvBehaviours)
 		{
 			for (size_t u = 0; u<i.second.size(); ++u)
@@ -581,6 +918,120 @@ namespace Dystopia
 					if (!(i.second[u].second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ))
 					{
 
+					}
+					else
+					{
+						delete i.second[u].second;
+						i.second[u].second = nullptr;
+						i.second.FastRemove(&i.second[u]);
+						u--;
+					}
+				}
+			}
+		}
+#else
+		for (auto & i : mvBehaviours)
+		{
+			for (size_t u = 0; u<i.second.size(); ++u)
+			{
+				if (i.second[u].second != nullptr)
+				{
+					delete i.second[u].second;
+					i.second[u].second = nullptr;
+				}
+			}
+			i.second.clear();
+		}
+#endif
+	}
+
+
+	void BehaviourSystem::InitAllBehaviours()
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.second)
+				{
+					iter.second->Init();
+				}
+			}
+		}
+	}
+
+Behaviour * BehaviourSystem::RequestBehaviour(uint64_t const & _ID, std::string const & _name)
+{
+#if EDITOR
+	for (auto & elem : mvBehaviourReferences)
+	{
+		if (elem.mName == _name)
+		{
+			for (auto & i : mvBehaviours)
+			{
+				if (i.first == std::wstring{ _name.begin(), _name.end() })
+				{
+					Behaviour * ptr = nullptr;
+					if (elem.mpBehaviour != nullptr)
+						ptr = elem.mpBehaviour->Duplicate();
+
+					i.second.push_back(std::make_pair(_ID, ptr));
+					return ptr;
+				}
+			}
+		}
+	}
+	return nullptr;
+#else
+	for (auto & elem : mvBehaviourReferences)
+	{
+		if (elem.mName == _name)
+		{
+			for (auto & i : mvBehaviours)
+			{
+				if (i.first == _name)
+				{
+					Behaviour * ptr = nullptr;
+					if (elem.mpBehaviour != nullptr)
+						ptr = elem.mpBehaviour->Duplicate();
+
+					i.second.push_back(std::make_pair(_ID, ptr));
+					return ptr;
+				}
+			}
+		}
+	}
+	return nullptr;
+
+#endif
+}
+
+	Behaviour* BehaviourSystem::RequestDuplicate(Behaviour* _PtrToDup, uint64_t _NewID)
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (auto & iter : i.second)
+			{
+				if (iter.second == _PtrToDup || (iter.first == _PtrToDup->GetOwnerID() && !std::strcmp(iter.second->GetBehaviourName(), _PtrToDup->GetBehaviourName())))
+				{
+					auto ptr = iter.second->Duplicate();
+					i.second.push_back(std::make_pair(_NewID, ptr));
+					return ptr;
+				}
+			}
+		}
+		return nullptr;
+	}
+	void Dystopia::BehaviourSystem::ClearAllBehaviours()
+	{
+		for (auto & i : mvBehaviours)
+		{
+			for (size_t u = 0; u<i.second.size(); ++u)
+			{
+				if (i.second[u].second != nullptr)
+				{
+					if (i.second[u].second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+					{
 					}
 					else
 					{
@@ -608,49 +1059,6 @@ namespace Dystopia
 	{
 		return mvBehaviourReferences;
 	}
-	Behaviour * BehaviourSystem::RequestBehaviour(uint64_t const & _ID, std::string const & _name)
-	{
-		for (auto & elem : mvBehaviourReferences)
-		{
-			if (elem.mName == _name)
-			{
-				for (auto & i : mvBehaviours)
-				{
-					if (i.first == std::wstring{ _name.begin(), _name.end() })
-					{
-#if _DEBUG
-						if (elem.mpBehaviour == nullptr) __debugbreak();
-#endif
-						Behaviour * ptr = nullptr;
-						if(elem.mpBehaviour != nullptr)
-							 ptr = elem.mpBehaviour->Duplicate();
-
-						i.second.push_back(std::make_pair(_ID, ptr));
-						return ptr;
-					}
-				}
-			}
-		}
-		return nullptr;
-	}
-
-	Behaviour* BehaviourSystem::RequestDuplicate(Behaviour* _PtrToDup, uint64_t _NewID)
-	{
-		for (auto & i : mvBehaviours)
-		{
-			for (auto & iter : i.second)
-			{
-				if (iter.second == _PtrToDup || (iter.first == _PtrToDup->GetOwnerID() && !std::strcmp(iter.second->GetBehaviourName(), _PtrToDup->GetBehaviourName())))
-				{
-					auto ptr = iter.second->Duplicate();
-					i.second.push_back(std::make_pair(_NewID, ptr));
-					//iter.first = _NewID;
-					return ptr;
-				}
-			}
-		}
-		return nullptr;
-	}
 
 	void BehaviourSystem::ReplaceID(uint64_t _old, uint64_t _new, GameObject * _newOwner)
 	{
@@ -667,28 +1075,7 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::BehaviourSystem::ClearAllBehaviours()
-	{
-		for(auto & i : mvBehaviours)
-		{
-			for(size_t u=0; u<i.second.size(); ++u)
-			{
-				if(i.second[u].second != nullptr)
-				{
-					if(i.second[u].second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
-					{
-					}
-					else
-					{
-						delete i.second[u].second;
-						i.second[u].second = nullptr;
-						i.second.FastRemove(&i.second[u]);
-						u--;
-					}
-				}
-			}
-		}
-	}
+
 
 #endif
 }

@@ -91,6 +91,11 @@ namespace Dystopia
 
 		void PostUpdate(void);
 
+		void Quit();
+		bool GetQuitState() const;
+
+		void ExecuteGame();
+
 	private:
 
 		struct SysMsg
@@ -100,6 +105,7 @@ namespace Dystopia
 		};
 
 		Queue<SysMsg> mMessageQueue;
+		bool mbQuit;
 
 		AutoArray<void*>	mSubSystems;
 		AutoArray<Systems*> mSystemList;

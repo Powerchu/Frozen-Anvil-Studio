@@ -1,0 +1,27 @@
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072522618880,536870977,"QuitButton",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+13.9,6.1,1,-66.5806,-33,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072522619904,536870913,18446744072522618880,"/Asset/Environment/QuitUnselected.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_Recursion Counter]
+0,
+[END_Recursion Counter]

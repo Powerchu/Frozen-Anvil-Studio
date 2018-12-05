@@ -1,0 +1,255 @@
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072203133952,536870945,"UICAM",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,107.332,-270.099,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+0,[START_Camera]
+1282795520,536870913,18446744072203133952,1,0,0,500,-500,1,1,0,0,1,50,
+[END_Camera]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_Recursion Counter]
+6,
+[END_Recursion Counter]
+[START_GO_PREFAB]
+0,[START_START_GO_DATA]
+541440000,536870945,"HUD",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+2,2,1,-496.85,82.3569,24.1,0,0,0,1,18446744072203133952,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"HUD",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+4,
+[END_Behaviour  Meta Count]
+[START_FFMode]
+"FFMode",
+[END_FFMode]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_HUDAlpha]
+"HUDAlpha",
+[END_HUDAlpha]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_FadeMode]
+"FadeMode",
+[END_FadeMode]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_FadeSpeed]
+"FadeSpeed",
+[END_FadeSpeed]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+541441536,536870945,"BlackBorder",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+381.2,139.8,1,-464.509,79.9075,24,0,0,0,1,541440000,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+541442560,536870913,541441536,"/Asset/UI/backborder.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+541443072,536870945,"GoldRing",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+115.6,115.4,1,-586.029,80.1414,24.1,0,0,0,1,541440000,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+541444096,536870913,541443072,"/Asset/UI/gold ring.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+541968896,536870945,"FFIcon",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+72.2,94.4,1,-586.509,79.4055,24.1,0,0,0,1,541440000,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+541969920,536870913,541968896,"/Asset/UI/Force.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+542494720,536870945,"FFBar",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+310.046,133.506,1,-495.909,80.3934,24.1,0,0,0,1,541440000,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+542495744,536870913,542494720,"/Asset/UI/force bar.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"EnergyShader",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+5,
+[END_Behaviour  Meta Count]
+[START_MaxHP]
+"MaxHP",
+[END_MaxHP]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_CurrentHP]
+"CurrentHP",
+[END_CurrentHP]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_ThreshCut]
+"ThreshCut",
+[END_ThreshCut]
+[START_Member Variable]
+0.4,
+[END_Member Variable]
+[START_Speed]
+"Speed",
+[END_Speed]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_TargetLerp]
+"TargetLerp",
+[END_TargetLerp]
+[START_Member Variable]
+-1,
+[END_Member Variable]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+542496768,536870945,"Health",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+256.6,60.4,1,-408.389,74.9895,24.1,0,0,0,1,541440000,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+542497792,536870913,542496768,"/Asset/UI/health.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"HealthShader",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+4,
+[END_Behaviour  Meta Count]
+[START_MaxHP]
+"MaxHP",
+[END_MaxHP]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_CurrentHP]
+"CurrentHP",
+[END_CurrentHP]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_Speed]
+"Speed",
+[END_Speed]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_TargetLerp]
+"TargetLerp",
+[END_TargetLerp]
+[START_Member Variable]
+-1,
+[END_Member Variable]

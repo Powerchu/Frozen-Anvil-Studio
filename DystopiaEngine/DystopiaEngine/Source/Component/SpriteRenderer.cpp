@@ -523,10 +523,9 @@ void Dystopia::SpriteRenderer::AddAnimations(void)
 #endif 
 }
 
+#if EDITOR
 bool Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
 {
-#if EDITOR
-
 	bool toRemove = false;
 	auto& anim = mAnimations[_i];
 	HashString identifier{ "Animation_" };
@@ -591,9 +590,8 @@ bool Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
 		EGUI::Display::EndTreeNode();
 	}
 	return toRemove;
-
-#endif
 }
+#endif
 
 int Dystopia::SpriteRenderer::GetStartCol(void) const
 {
@@ -620,6 +618,7 @@ void Dystopia::SpriteRenderer::ResetFrames(void)
 
 void Dystopia::SpriteRenderer::TintColorPicker()
 {
+#if EDITOR
 	EGUI::Display::Label("Tint");
 	EGUI::SameLine(60);
 	if (ImGui::ColorEdit4("Tint Color", &mvTintCol[0], (ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoLabel
@@ -627,7 +626,11 @@ void Dystopia::SpriteRenderer::TintColorPicker()
 	{
 
 	}
+
+#endif
 }
+
+
 
 
 

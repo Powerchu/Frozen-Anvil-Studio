@@ -4,9 +4,9 @@
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	BRIEF HERE
+BRIEF HERE
 
-	TODO: Draw batching.
+TODO: Draw batching.
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -58,6 +58,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Globals.h"
 #include "Utility/DebugAssert.h"			// DEBUG_ASSERT
+#include "Math/Vector4.h"
+#include "Math/Vector2.h"
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable Window header min & max macros
@@ -93,8 +95,7 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mvDebugColour{.0f, 1.f, .0f, .1f}, mvClearCol{0, 0, 0, 0}, mfGamma{2.0f}, mfDebugLineThreshold{0.958f}, mOpenGL{nullptr},
-	mPixelFormat{0}, mAvailable{0}, mSettings(0)
-	, mbVsync{false}, mvGlobalAspectRatio{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT,0,0}
+	mPixelFormat{0}, mAvailable{0}, mSettings(0), mbVsync{false}, mvResolution{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT}
 {
 }
 
@@ -135,7 +136,6 @@ void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw) const
 void Dystopia::GraphicsSystem::SetAllCameraAspect(const float _x, const float _y) const
 {
 	const auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
-	//auto bDebugDraw = !CamSys->GetMasterCamera()->DrawDebug();
 
 	for (auto& c : CamSys->GetAllCameras())
 	{
@@ -152,7 +152,7 @@ bool Dystopia::GraphicsSystem::GetDebugDraw(void) const
 
 void Dystopia::GraphicsSystem::PreInit(void)
 {
-	Window& window = EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow();
+	Window& window = EngineCore::Get<WindowManager>()->GetMainWindow();
 	InitOpenGL(window);
 	BindOpenGL(window);
 
@@ -170,8 +170,11 @@ void Dystopia::GraphicsSystem::PreInit(void)
 		pMeshSys->LoadMesh(MeshPath);
 	}
 	pMeshSys->EndMesh();
-
+#if EDITOR
 	DrawSplash();
+#else
+	window.Show();
+#endif
 }
 
 bool Dystopia::GraphicsSystem::Init(void)
@@ -221,12 +224,6 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer(void) const noex
 	return mViews[2];
 }
 
-Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetSceneView(void) const noexcept
-{
-	return mViews[3];
-}
-
-
 Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetView(int _n) const
 {
 	return mViews[_n];
@@ -250,10 +247,10 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	pWinSys->GetMainWindow().CenterWindow();
 
 	Math::Matrix4 View{}, Project{
-			2.f / w, .0f, .0f, .0f,
-			.0f, 2.f / h, .0f, .0f,
-			.0f, .0f, .0f, .0f,
-			.0f, .0f, .0f, 1.f
+		2.f / w, .0f, .0f, .0f,
+		.0f, 2.f / h, .0f, .0f,
+		.0f, .0f, .0f, .0f,
+		.0f, .0f, .0f, 1.f
 	};
 
 	glViewport(0, 0, w, h);
@@ -298,7 +295,7 @@ namespace
 
 		_renderer->Draw();
 
-		if(t) t->Unbind();
+		if (t) t->Unbind();
 	}
 }
 
@@ -426,7 +423,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 	Shader* s = shaderlist["Collider Shader"];
-	
+
 	s->Bind();
 	s->UploadUniform("ViewMat", _View);
 	s->UploadUniform("ProjectMat", _Proj);
@@ -444,15 +441,15 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 #endif 
 		GameObject* pOwner = Obj->GetOwner();
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
-		{		
-			if(Obj->GetColliderType() != eColliderType::CIRCLE)
+		{
+			if (Obj->GetColliderType() != eColliderType::CIRCLE)
 				s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix() * Math::Translate(Obj->GetOffSet())  * Obj->GetTransformationMatrix());
 			else
 			{
-				auto pos    = pOwner->GetComponent<Transform>()->GetGlobalPosition();
+				auto pos = pOwner->GetComponent<Transform>()->GetGlobalPosition();
 				auto scaleV = pOwner->GetComponent<Transform>()->GetScale();
 				//auto LocalScale = Math::Scale(scaleV.x, scaleV.y);
-				auto scale  = Math::Abs(scaleV[0]) > Math::Abs(scaleV[1]) ? Math::Abs(scaleV[0]) : Math::Abs(scaleV[1]);
+				auto scale = Math::Abs(scaleV[0]) > Math::Abs(scaleV[1]) ? Math::Abs(scaleV[0]) : Math::Abs(scaleV[1]);
 				auto scaleM = Math::Scale(scale, scale);
 				auto Translation = Math::Translate(pos.x, pos.y);
 				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(scaleV*Obj->GetOffSet()) * scaleM * Obj->GetTransformationMatrix());
@@ -503,45 +500,38 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 		EngineCore::GetInstance()->Get<TextureSystem>()->EditorUpdate();
 
 #		if defined(_DEBUG) | defined(DEBUG)
-			if (auto err = glGetError())
-				__debugbreak();
+		if (auto err = glGetError())
+			__debugbreak();
 #		endif 
 	}
 #   endif
 
 	StartFrame();
 
-	glClearColor(mvClearCol.x, mvClearCol.y, mvClearCol.z, mvClearCol.w);
+	glClearColor(0, 0, 0, 0);
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 
 	/*
-	for (auto& e : mViews)
-	{
-		e.Bind();
-		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-		e.Unbind();
-	}
-
-	// Do batching, depth sorting and grouping of translucent elements. 
+	// Do batching, depth sorting and grouping of translucent elements.
 	for (auto& e : ComponentDonor<Renderer>::mComponents)
 	{
-		auto flags = e.GetFlags();
+	auto flags = e.GetFlags();
 
-#   if EDITOR
-		if (flags & eObjFlag::FLAG_EDITOR_OBJ)
-			continue;
-#   endif
+	#   if EDITOR
+	if (flags & eObjFlag::FLAG_EDITOR_OBJ)
+	continue;
+	#   endif
 
-		if (flags & eObjFlag::FLAG_RESERVED)
-		{
-			// Remove the object from the pool
+	if (flags & eObjFlag::FLAG_RESERVED)
+	{
+	// Remove the object from the pool
 
-			// Modify the object's status in the render pool
-			if (flags & eObjFlag::FLAG_ACTIVE)
-			{
-				// Add the object back in, into the correct spot
-			}
-		}
+	// Modify the object's status in the render pool
+	if (flags & eObjFlag::FLAG_ACTIVE)
+	{
+	// Add the object back in, into the correct spot
+	}
+	}
 	}
 	*/
 
@@ -572,8 +562,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 #endif 
 
 		// If the camera is inactive, skip
-		if (Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE
-			&& Cam.GetFlags() & eObjFlag::FLAG_ACTIVE)
+		if (Cam.GetOwner() && Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
 			Cam.SetCamera();
 			Math::Matrix4 View = Cam.GetViewMatrix();
@@ -582,15 +571,15 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			const auto surface = Cam.GetSurface();
 			const auto vp = Cam.GetViewport();
 
-			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY), 
-					   static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
+			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY),
+				static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
 
 			// Temporary code
 			surface->Bind();
 			//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 			DrawScene(Cam, View, Proj);
-			
+
 			if (Cam.DrawDebug())
 				DrawDebug(Cam, View, Proj);
 
@@ -641,7 +630,7 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
-	SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
+	//SetAllCameraAspect(mvResolution.x, mvResolution.y);
 }
 
 void Dystopia::GraphicsSystem::EndFrame(void)
@@ -649,23 +638,26 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	// TODO: Final draw to combine layers & draw to screen
 	// TODO: Draw a fullscreen quad fusing the GameView and UIView
 	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
+	auto& fb = GetFrameBuffer();
 
 #if EDITOR
-	auto& fb = GetFrameBuffer();
-	GLsizei const w = static_cast<GLsizei>(fb.AsTexture()->GetWidth()), h = static_cast<GLsizei>(fb.AsTexture()->GetHeight());
+	fb.Bind();
+	unsigned const w = fb.AsTexture()->GetWidth(), h = fb.AsTexture()->GetHeight();
 
 	glViewport(0, 0, w, h);
+#else
+	auto& win = EngineCore::Get<WindowManager>()->GetMainWindow();
 
-	fb.Bind();
+	fb.Unbind();
+	glViewport(0, 0, win.GetWidth(), win.GetHeight());
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 #endif
-
-	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	GetGameView().AsTexture()->Bind(0);
 	GetUIView().AsTexture()->Bind(1);
 
 	static Math::Matrix4 const Identity{};
-	auto const model =  Math::Scale(2.f, -2.f);
+	auto const model =  Math::Scale(2.f, (float) Ut::Constant<int, EDITOR ? -2 : 2>::value);
 	Shader* shader = shaderlist["FinalStage"];
 	shader->Bind();
 	shader->UploadUniform("ViewMat", Identity);
@@ -680,7 +672,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 #if EDITOR
 	fb.Unbind();
 #else
-	SwapBuffers(EngineCore::GetInstance()->GetSystem<WindowManager>()->GetMainWindow().GetDeviceContext());
+	SwapBuffers(win.GetDeviceContext());
 #endif
 }
 
@@ -702,8 +694,8 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 	mViews.Emplace(2048u, 2048u, true);
 	mViews.Emplace(2048u, 2048u, true);
 	mViews.Emplace(
-		static_cast<unsigned>(mvGlobalAspectRatio.x),
-		static_cast<unsigned>(mvGlobalAspectRatio.y),
+		static_cast<unsigned>(mvResolution.x),
+		static_cast<unsigned>(mvResolution.y),
 		false
 	);
 
@@ -712,6 +704,25 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 #endif
 	mvClearCol = { 0,0,0,0 };
 	DRAW_MODE = GL_TRIANGLES;
+}
+
+void Dystopia::GraphicsSystem::SetResolution(unsigned w, unsigned h) noexcept
+{
+	mvResolution.x = static_cast<float>(w);
+	mvResolution.y = static_cast<float>(h);
+}
+
+void Dystopia::GraphicsSystem::UpdateResolution(void) const noexcept
+{
+#if !EDITOR
+	EngineCore::Get<WindowManager>()->GetMainWindow().SetSize(
+		static_cast<unsigned>(mvResolution.x), static_cast<unsigned>(mvResolution.y)
+	);
+#endif
+
+	static_cast<Texture2D*>(GetFrameBuffer().AsTexture())->ReplaceTexture(
+		static_cast<unsigned>(mvResolution.x), static_cast<unsigned>(mvResolution.y), nullptr, false
+	);
 }
 
 void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
@@ -736,7 +747,7 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 	_in >> mvDebugColour;
 	_in >> mbVsync;
 	_in >> mvClearCol;
-	_in >> mvGlobalAspectRatio;
+	_in >> mvResolution;
 
 	ToggleVsync(mbVsync);
 }
@@ -758,7 +769,7 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 	_out << mvDebugColour;
 	_out << mbVsync;
 	_out << mvClearCol;
-	_out << mvGlobalAspectRatio;
+	_out << mvResolution;
 }
 
 
@@ -829,14 +840,14 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	// Use to specify the color format we want and openGL support
 	PIXELFORMATDESCRIPTOR pfd{};
 
-	pfd.nSize		 = sizeof(PIXELFORMATDESCRIPTOR);	// Windows requirement
-	pfd.nVersion	 = 1;								// Windows requirement
-	pfd.dwFlags		 = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW;
-	pfd.iPixelType	 = PFD_TYPE_RGBA;
-	pfd.cColorBits	 = 32;
-	pfd.cDepthBits	 = 24;
+	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);	// Windows requirement
+	pfd.nVersion = 1;								// Windows requirement
+	pfd.dwFlags = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW;
+	pfd.iPixelType = PFD_TYPE_RGBA;
+	pfd.cColorBits = 32;
+	pfd.cDepthBits = 24;
 	pfd.cStencilBits = 8;
-	pfd.iLayerType	 = PFD_MAIN_PLANE;
+	pfd.iLayerType = PFD_MAIN_PLANE;
 
 	// Ask windows to give us a pixel format based on what we asked for
 	int nPxFormat = ChoosePixelFormat(_window.GetDeviceContext(), &pfd);
@@ -926,8 +937,8 @@ bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
 		WGL_CONTEXT_FLAGS_ARB, 0,
 		0
 	};
-	mOpenGL		= nullptr;
-	mAvailable	= eGfxSettings::GRAPHICS_ALL;
+	mOpenGL = nullptr;
+	mAvailable = eGfxSettings::GRAPHICS_ALL;
 
 	// Try to create at least OpenGL 4.3
 	attrbs[3] = 3;
@@ -1056,20 +1067,16 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	}
 
 	EGUI::PopLeftAlign();
-
-
-
-
 }
 
 void Dystopia::GraphicsSystem::EditorAspectRatio()
 {
 	static int eAspect = 0;
-	if (mvGlobalAspectRatio == Math::Vec4{1600,900,0,0})
+	if (mvResolution == Math::Vec2{ 1600, 900 })
 	{
 		eAspect = 0;
 	}
-	else if (mvGlobalAspectRatio == Math::Vec4{ 1440,900,0,0 })
+	else if (mvResolution == Math::Vec2{ 1440, 900 })
 	{
 		eAspect = 1;
 	}
@@ -1080,24 +1087,24 @@ void Dystopia::GraphicsSystem::EditorAspectRatio()
 
 	std::string arr[3]{"1600x900px [16:9]", "1440x900px [16:10]", "1024x768px [4:3]",  };
 
-	if (EGUI::Display::DropDownSelection("Aspect Ratio", eAspect, arr, 100.f))
+	if (EGUI::Display::DropDownSelection("Resolution", eAspect, arr, 100.f))
 	{
 		switch (eAspect)
 		{
 		case 0: // 16:9
-			mvGlobalAspectRatio = { 1600,900,0,0 };
+			mvResolution = { 1600, 900 };
 			break;
 		case 1: // 16:10
-			mvGlobalAspectRatio = { 1440,900,0,0 };
+			mvResolution = { 1600, 1000 };
 			break;
 		case 2: // 4:3
-			mvGlobalAspectRatio = { 1024,768,0,0 };
+			mvResolution = { 1024, 768 };
 			break;
 		default:
 			break;
 		}
 
-		SetAllCameraAspect(mvGlobalAspectRatio.x, mvGlobalAspectRatio.y);
+		UpdateResolution();
 	}
 }
 #endif 

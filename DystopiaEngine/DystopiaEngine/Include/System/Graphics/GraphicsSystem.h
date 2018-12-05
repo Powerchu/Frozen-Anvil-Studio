@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Framebuffer.h"
 #include "Math/MathFwd.h"
 #include "Math/Vector4.h"
+#include "Math/Vector2.h"
 
 #include "Utility/Utility.h"
 
@@ -94,6 +95,9 @@ namespace Dystopia
 		static const int& GetDrawMode(void) noexcept;
 		static void SetDrawMode(int) noexcept;
 
+		void SetResolution(unsigned w, unsigned h) noexcept;
+		void UpdateResolution(void) const noexcept;
+
 		// Temporary
 		std::map<std::string, Shader*> shaderlist;
 		_DLL_EXPORT Shader* GetShader(const char *) const;
@@ -106,7 +110,7 @@ namespace Dystopia
 
 		Math::Vector4 mvDebugColour;
 		Math::Vector4 mvClearCol;
-		Math::Vector4 mvGlobalAspectRatio;
+		Math::Vector2 mvResolution;
 
 		float mfGamma;
 		float mfDebugLineThreshold;

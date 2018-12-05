@@ -30,6 +30,7 @@ namespace Dystopia
 		void GenerateMipmap(void) const;
 
 		void LoadTexture(Image const *);
+		void ReplaceTexture(unsigned w, unsigned h, void* _pData, bool _bAlpha = true);
 
 	private:
 		void InitTexture(Image const*);

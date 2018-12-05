@@ -15,16 +15,25 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #if EDITOR
 #include "Editor/Payloads.h"
-#include <algorithm>
-#include <iostream>
-#include <Windows.h>
-#include <cstdlib>
-#include <tchar.h>
-#include <string>
 
 #include "System/Graphics/Texture.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Driver/Driver.h"
+
+#include <algorithm>
+#include <iostream>
+#include <cstdlib>
+#include <tchar.h>
+#include <string>
+
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#undef NOMINMAX
+#undef WIN32_LEAN_AND_MEAN
+#ifdef ERROR
+#undef ERROR
+#endif
 
 namespace Editor//Dystopia::
 {

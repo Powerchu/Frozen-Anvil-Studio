@@ -102,15 +102,17 @@ namespace
 	}
 }
 
+#if EDITOR
+#define DEFAULT_PRINT_FUNC PrintToConsoleLog
+#else
+#define DEFAULT_PRINT_FUNC nullptr
+#endif
 
 Dystopia::LoggerSystem::LoggerSystem(void) noexcept
-#if EDITOR
-	: mpOut{ PrintToConsoleLog }, mActiveFlags{ eLog::DEFAULT }
-#endif
+	: mpOut{ DEFAULT_PRINT_FUNC }, mActiveFlags{ eLog::DEFAULT }
 {
-#if EDITOR
 	std::set_terminate(ProgramTerminate);
-#endif
+
 
 #if defined(COMMANDPROMPT)
 
@@ -149,6 +151,8 @@ Dystopia::LoggerSystem* Dystopia::LoggerSystem::GetInstance(void) noexcept
 
 void Dystopia::LoggerSystem::RedirectOutput(void(*_pOut)(const std::string&))
 {
+	if (!mpOut)
+		return;
 	mpOut = _pOut;
 	mActiveFlags = mpOut ? mActiveFlags : eLog::NONE;
 }
@@ -164,6 +168,8 @@ Dystopia::FileLogger Dystopia::LoggerSystem::FileLog(const std::string& _strFile
 
 void Dystopia::LoggerSystem::SendOutput(const char* _strOutput)
 {
+	if (!mpOut)
+		return;
 	std::string output = _strOutput;
 	mpOut(output);
 }

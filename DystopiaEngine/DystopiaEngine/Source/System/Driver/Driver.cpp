@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Driver/Driver.h"
+#include "System/SystemMessage.h"
 
 #include "Globals.h"
 #include "IO/TextSerialiser.h"
@@ -117,7 +118,7 @@ Dystopia::EngineCore* Dystopia::EngineCore::GetInstance(void) noexcept
 }
 
 Dystopia::EngineCore::EngineCore(void) :
-	mMessageQueue{ 60 }, mSystemList{ Ut::SizeofList<AllSys>::value },
+	mbQuit{ false }, mMessageQueue{ 60 }, mSystemList{ Ut::SizeofList<AllSys>::value },
 	mSubSystems { MakeAutoArray<void*>(Ut::MakeTypeList_t<Ut::TypeList, SubSys>{}) },
 	mSystemTable{ MakeAutoArray<Systems*>(Ut::MakeTypeList_t<Ut::TypeList, AllSys>{}) }
 {
@@ -217,9 +218,9 @@ void Dystopia::EngineCore::FixedUpdate(void)
 void Dystopia::EngineCore::Update(void)
 {
 	auto TimeSys = GetSystem<TimeSystem>();
+	float dt = TimeSys->GetDeltaTime();
 	TimeSys->AdvanceTime();
 
-	float dt = TimeSys->GetDeltaTime();
 	for (auto& e : mSystemList)
 	{
 		e->Update(dt);
@@ -234,11 +235,42 @@ void Dystopia::EngineCore::PostUpdate(void)
 	}
 }
 
+void Dystopia::EngineCore::Quit()
+{
+	mbQuit = true;
+}
+
+bool Dystopia::EngineCore::GetQuitState() const
+{
+	return mbQuit;
+}
+
+void Dystopia::EngineCore::ExecuteGame()
+{
+
+	LoadSettings();
+	PreInit();
+	Init();
+	PostInit();
+
+	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene("SplashScreen.dscene");
+
+	while (!mbQuit)
+	{
+		SendMessage();
+		FixedUpdate();
+		Update();
+		PostUpdate();
+	}
+	Shutdown();
+	return;
+}
+
 void Dystopia::EngineCore::Shutdown(void)
 {
 	//GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
 	auto s = Serialiser::OpenFile<DysSerialiser_t>(
-		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR) + '/' +
+		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR)  +
 		SETTINGS_FILE).c_str(),
 		DysSerialiser_t::MODE_WRITE
 	);
@@ -282,8 +314,19 @@ void Dystopia::EngineCore::SendMessage(void)
 	mMessageQueue.clear();
 }
 
-void Dystopia::EngineCore::ParseMessage(const eSysMessage&, size_t)
+void Dystopia::EngineCore::ParseMessage(const eSysMessage& msg, size_t _vk)
 {
+	if (eSysMessage::QUIT == msg)
+	{
+		mbQuit = true;
+	}
+	if (eSysMessage::SYSKEY == msg)
+	{
+		if (eButton::KEYBOARD_F4 == _vk)
+		{
+			mbQuit = true;
+		}
+	}
 }
 
 
@@ -291,11 +334,11 @@ void Dystopia::EngineCore::ParseMessage(const eSysMessage&, size_t)
 
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
-	auto CORE = Dystopia::EngineCore::GetInstance();
+//#if defined(DEBUG) | defined(_DEBUG)
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+//#endif
 
-	/*
-	CORE->ExecuteGame();
-	*/
+	Dystopia::EngineCore::GetInstance()->ExecuteGame();
 
 	return 0;
 }

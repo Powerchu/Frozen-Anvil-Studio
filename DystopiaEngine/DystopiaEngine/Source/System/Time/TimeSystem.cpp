@@ -113,7 +113,7 @@ void Dystopia::TimeSystem::FlushQueue(void)
 
 void Dystopia::TimeSystem::LoadDefaults(void)
 {
-	mbSimulateTime = true;
+	mbSimulateTime = false;
 
 	mfTimeScale   = 1.f;
 	mFixedDT      = 20000000ll;
@@ -121,9 +121,14 @@ void Dystopia::TimeSystem::LoadDefaults(void)
 	mfSimulatedDT = 1.f / 60.f;
 }
 
-void Dystopia::TimeSystem::LoadSettings(DysSerialiser_t&)
+void Dystopia::TimeSystem::LoadSettings(DysSerialiser_t& _in)
 {
-	LoadDefaults();
+	_in >> mbSimulateTime;
+	_in >> mfTimeScale;
+	_in >> mFixedDT;
+	_in >> mSimulatedDT;
+	_in >> mfSimulatedDT;
+	SetTimeScale(1.f);
 }
 
 void Dystopia::TimeSystem::SaveSettings(DysSerialiser_t& _out)

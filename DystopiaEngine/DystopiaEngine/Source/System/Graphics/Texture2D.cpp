@@ -89,6 +89,13 @@ void Dystopia::Texture2D::InitTexture(Image const* _pData)
 	Unbind();
 }
 
+void Dystopia::Texture2D::ReplaceTexture(unsigned w, unsigned h, void* _pData, bool _bAlpha)
+{
+	auto format = _bAlpha ? GL_RGBA : GL_RGB;
+
+	glTexImage2D(mnType, 0, format, w, h, 0, format, GL_UNSIGNED_BYTE, _pData);
+}
+
 void Dystopia::Texture2D::InitCompressedTexture(Image const* _pData)
 {
 	Bind();

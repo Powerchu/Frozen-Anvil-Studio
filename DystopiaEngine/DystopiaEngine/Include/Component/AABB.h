@@ -88,8 +88,10 @@ namespace Dystopia
 		float GetHeight() const;
 		float GetHalfWidth() const;
 		float GetHalfHeight() const;
+#if EDITOR
 		void eIsTriggerCheckBox();
 		void ePositionOffsetVectorFields();
+#endif
 
 	private:
 		float mfWidth;

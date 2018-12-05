@@ -73,6 +73,8 @@ namespace Dystopia
 
 		virtual Behaviour * Duplicate() const;
 
+
+		/*Non virtual*/
 		void BehaviourDestroy();
 	};
 }
