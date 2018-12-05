@@ -105,6 +105,13 @@ void Dystopia::GameObject::SetActive(const bool _bEnable)
 	{
 		mBehaviour->SetActive(_bEnable);
 	}
+
+	const auto AllChild = GetComponent<Transform>()->GetAllChild();
+
+	for (auto child : AllChild)
+	{
+		child->GetOwner()->SetActive(_bEnable);
+	}
 }
 
 bool Dystopia::GameObject::IsDragging() const

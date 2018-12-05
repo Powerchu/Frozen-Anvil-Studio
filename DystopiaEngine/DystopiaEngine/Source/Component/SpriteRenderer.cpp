@@ -44,7 +44,7 @@ Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexce
 	mnID{ Ut::Move(_rhs.mnID) }, mnCol{ Ut::Move(_rhs.mnCol) }, mnRow{ Ut::Move(_rhs.mnRow) },
 	mfFrameTime{ Ut::Move(_rhs.mfFrameTime) }, mfAccTime{ Ut::Move(_rhs.mfAccTime) }, mpAtlas{ Ut::Move(_rhs.mpAtlas) }, 
 	mNextSectionPos{ Ut::Move(_rhs.mNextSectionPos) }, mbPlayOnStart{ Ut::Move(_rhs.mbPlayOnStart) }, mbPlay{ Ut::Move(_rhs.mbPlay) }, 
-mbSimulate{ Ut::Move(_rhs.mbSimulate) }, mvTintCol({Ut::Move(_rhs.mvTintCol)})
+mbSimulate{ Ut::Move(_rhs.mbSimulate) }, mvTintCol{Ut::Move(_rhs.mvTintCol)}, mfTintPerc{Ut::Move(_rhs.mfTintPerc)}
 {
 	_rhs.mAnimations.clear();
 	_rhs.mpAtlas = nullptr;
@@ -55,7 +55,7 @@ Dystopia::SpriteRenderer::SpriteRenderer(const SpriteRenderer& _rhs) noexcept
 	mAnimations{ _rhs.mAnimations }, mnID{ _rhs.mnID }, mnCol{ _rhs.mnCol },
 	mnRow{_rhs.mnRow }, mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, 
 	mNextSectionPos{ _rhs.mNextSectionPos }, mbPlayOnStart{ _rhs.mbPlayOnStart }, 
-	mbSimulate{ _rhs.mbSimulate }, mbPlay{ _rhs.mbPlay }, mvTintCol{ _rhs.mvTintCol }
+	mbSimulate{ _rhs.mbSimulate }, mbPlay{ _rhs.mbPlay }, mvTintCol{ _rhs.mvTintCol }, mfTintPerc(_rhs.mfTintPerc)
 {
 }
 
@@ -221,6 +221,7 @@ void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
 	_out << mnID;
 	_out << mbPlayOnStart;
 	_out << mvTintCol;
+	_out << mfTintPerc;
 	_out.InsertEndBlock("Sprite Renderer");
 }
 
@@ -246,6 +247,7 @@ void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 	_in >> mnID;
 	_in >> mbPlayOnStart;
 	_in >> mvTintCol;
+	_in >> mfTintPerc;
 
 	_in.ConsumeEndBlock();
 }
@@ -317,6 +319,13 @@ void Dystopia::SpriteRenderer::SetAlpha(float _a)
 	mvTintCol.w = _a;
 }
 
+void Dystopia::SpriteRenderer::SetAlphaPerc(float _perc)
+{
+	if (_perc <= 0.f) _perc = 0.f;
+	else if (_perc >= 1.f) _perc = 1.0f;
+	mfTintPerc = _perc;
+}
+
 HashString Dystopia::SpriteRenderer::GetCurrentAnimation(void) const
 {
 	if (!mAnimations.size())
@@ -336,6 +345,11 @@ unsigned Dystopia::SpriteRenderer::GetCurrentIndex(void) const
 Math::Vec4 Dystopia::SpriteRenderer::GetTint() const
 {
 	return mvTintCol;
+}
+
+float Dystopia::SpriteRenderer::GetTintPerc() const
+{
+	return mfTintPerc;
 }
 
 bool Dystopia::SpriteRenderer::IsPlaying(void) const

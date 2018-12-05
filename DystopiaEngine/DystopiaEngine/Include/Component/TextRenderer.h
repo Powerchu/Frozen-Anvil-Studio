@@ -95,6 +95,7 @@ namespace Dystopia
 		void SetColor(float r, float g, float b);
 		void SetColor(float r, float g, float b, float a);
 		void SetAlpha(float _a);
+		void SetAlphaPerc(float _perc);
 
 		TextRenderer* Duplicate(void) const;
 		void Serialise(TextSerialiser&) const;
@@ -119,6 +120,7 @@ namespace Dystopia
 		int mnAnchorX, mnAnchorY;
 		
 		Math::Vector4 mColor;
+		float mfTintPerc = 1.f;
 
 		Math::Vector4 mDefaultCol = { 1.f,1.f,1.f,1.f };
 		Math::Vector4 mHoverCol   = {.5f, .1f, .1f, 1.f};

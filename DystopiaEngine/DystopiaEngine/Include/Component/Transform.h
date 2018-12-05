@@ -28,6 +28,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	namespace Gfx
+	{
+		struct Vertex;
+	}
+
 	class _DLL_EXPORT Transform : public Component
 	{
 	public:
@@ -96,6 +101,8 @@ namespace Dystopia
 		uint64_t GetParentID(void) const;
 		void SetParentID(uint64_t);
 
+		void SetOpacity(float _perc);
+
 	private:
 
 		bool mbChanged;
@@ -109,6 +116,8 @@ namespace Dystopia
 		Math::Vec3D mScale;
 		Math::Point3D mPosition;
 		Math::Quaternion mRotation;
+
+		float mfOpacity = 1.f;
 
 		void OnChildAdd(Transform*);
 		void OnChildRemove(Transform*);

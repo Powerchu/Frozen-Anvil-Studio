@@ -80,10 +80,12 @@ namespace Dystopia
 		void SetColorA(const Math::Vec4& _col);
 		void SetColor(const Math::Vec3D& _col);
 		void SetAlpha(float _a);
+		void SetAlphaPerc(float _perc);
 
 		HashString GetCurrentAnimation(void) const;
 		unsigned GetCurrentIndex(void) const;
 		Math::Vec4 GetTint(void) const;
+		float GetTintPerc() const;
 
 		bool IsPlaying(void) const;
 
@@ -123,6 +125,7 @@ namespace Dystopia
 
 		void TintColorPicker();
 		Math::Vec4 mvTintCol;
+		float mfTintPerc = 1.f;
 	};
 }
 

@@ -20,6 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
 #include "Utility/GUID.h"
+#include "Component/SpriteRenderer.h"
+#include "Component/TextRenderer.h"
+#include "System/Graphics/VertexDefs.h"
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -40,6 +43,7 @@ Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
 Dystopia::Transform::Transform(const Transform& _oOther) :
 	mRotation{ _oOther.mRotation }, mScale{ _oOther.mScale }, mPosition{ _oOther.mPosition },
 	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, mnParentID{ _oOther.mnParentID }, Component{ _oOther }
+	,mfOpacity(_oOther.mfOpacity)
 {
 
 }
@@ -310,6 +314,7 @@ void Dystopia::Transform::Serialise(TextSerialiser& _out) const
 	_out << static_cast<float>(r[2]);
 	_out << static_cast<float>(r[3]);
 	_out << mnParentID;
+	_out << mfOpacity;
 	_out.InsertEndBlock("Transform");
 }
 
@@ -327,6 +332,7 @@ void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 	_in >> mRotation[2];
 	_in >> mRotation[3];
 	_in >> mnParentID;
+	_in >> mfOpacity;
 
 	mPosition.w = 1.f;
 	_in.ConsumeEndBlock();
@@ -335,13 +341,33 @@ void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 void Dystopia::Transform::EditorUI(void) noexcept
 {
 #if EDITOR
-	EGUI::PushLeftAlign(20);
-	
+
+	auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
+
+	EGUI::PushLeftAlign(80);
+
+	switch (EGUI::Display::SliderFloat("Opacity", &mfOpacity,0.01f))
+	{
+	case EGUI::eEND_DRAG: 
+	case EGUI::eENTER: 
+	case EGUI::eDEACTIVATED:
+		cmd->EndRec(&Transform::mfOpacity, this);
+		break;
+	case EGUI::eSTART_DRAG:
+		cmd->StartRec(&Transform::mfOpacity, this);
+		break;
+	case EGUI::eDRAGGING:
+		SetOpacity(mfOpacity);
+		break;
+	default: ;
+	};
+	EGUI::PopLeftAlign();
+
 	EGUI::PushID(0);
+	EGUI::PushLeftAlign(20);
 	EGUI::Display::LabelWrapped("Position");
 	auto arrResult = EGUI::Display::VectorFields("", &mPosition, 0.01f, -FLT_MAX, FLT_MAX, 60.f);
 
-	auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 	for (auto &e : arrResult)
 	{
 		switch (e)
@@ -440,6 +466,37 @@ uint64_t Dystopia::Transform::GetParentID(void) const
 void Dystopia::Transform::SetParentID(uint64_t _id)
 {
 	mnParentID = _id;
+}
+
+void Dystopia::Transform::SetOpacity(float _perc)
+{
+	if (_perc <= 0.01f) _perc = 0.01f;
+	else if (_perc > 1.0f) _perc = 1.0f;
+
+	mfOpacity = _perc;
+
+	if (const auto spriteRend = GetOwner()->GetComponent<SpriteRenderer>())
+	{
+		spriteRend->SetAlphaPerc(mfOpacity);
+	}
+
+	if (const auto textRend = GetOwner()->GetComponent<TextRenderer>())
+	{
+		textRend->SetAlphaPerc(mfOpacity);
+	}
+
+	for (const auto childT : mChildren)
+	{
+		if (const auto spriteRend = childT->GetOwner()->GetComponent<SpriteRenderer>())
+		{
+			spriteRend->SetAlphaPerc(mfOpacity);
+		}
+
+		if (const auto textRend = childT->GetOwner()->GetComponent<TextRenderer>())
+		{
+			textRend->SetAlphaPerc(mfOpacity);
+		}
+	}
 }
 
 bool Dystopia::Transform::IsDescendant(Transform* _toBeParent)
