@@ -46,6 +46,7 @@ Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
 	: Renderer{ _rhs }, mCurrState(_rhs.mCurrState), mPrevState(_rhs.mCurrState),
 	mpData{ _rhs.mpData }, mText{ _rhs.mText }, mnAnchorX{ _rhs.mnAnchorX }, mnAnchorY{ _rhs.mnAnchorY }
 	,mColor{ _rhs.mColor },mDefaultCol(_rhs.mDefaultCol),mHoverCol(_rhs.mHoverCol),mClickColor(_rhs.mClickColor),mDisabledColor(_rhs.mDisabledColor)
+	,mfTintPerc(_rhs.mfTintPerc)
 {
 	mpTexture = _rhs.mpTexture;
 }
@@ -73,7 +74,7 @@ void Dystopia::TextRenderer::Awake(void)
 
 void Dystopia::TextRenderer::Draw(void) const noexcept
 {
-	GetShader()->UploadUniform("vColor", mColor);
+	GetShader()->UploadUniform("vColor", mColor*mfTintPerc);
 	Renderer::Draw();
 }
 
@@ -135,11 +136,16 @@ void Dystopia::TextRenderer::SetAlpha(float _a)
 	mColor.w = _a;
 }
 
+void Dystopia::TextRenderer::SetAlphaPerc(float _perc)
+{
+	if (_perc <= 0.f) _perc = 0.f;
+	else if (_perc >= 1.f) _perc = 1.0f;
+
+	mfTintPerc = _perc;
+}
+
 void Dystopia::TextRenderer::RegenMesh(void)
 {
-	if (mpData == nullptr) return;
-	if (mpData->mSpaces.IsEmpty()) return;
-
 	AutoArray<Gfx::Vertex> verts;
 	AutoArray<Gfx::UV> uvs;
 	AutoArray<short> indices;
@@ -247,6 +253,7 @@ void Dystopia::TextRenderer::Serialise(TextSerialiser& _out) const
 	_out << mHoverCol;
 	_out << mClickColor;
 	_out << mDisabledColor;
+	_out << mfTintPerc;
 }
 
 void Dystopia::TextRenderer::Unserialise(TextSerialiser& _in)
@@ -266,6 +273,7 @@ void Dystopia::TextRenderer::Unserialise(TextSerialiser& _in)
 	_in >> mHoverCol;
 	_in >> mClickColor;
 	_in >> mDisabledColor;
+	_in >> mfTintPerc;
 
 	mCurrState = static_cast<TextEditor::eTextState>(currState);
 	mPrevState = static_cast<TextEditor::eTextState>(prevState);
@@ -341,10 +349,10 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 
 	*(Ut::Copy(mText, &buf[0])) = '\0';
 
-	if (EGUI::Display::TextField("Text ", static_cast<char*>(buf), 512, true, 225, false))
+	if (EGUI::Display::TextField("Text ", buf, 512, true, 225, false))
 	{
 		mText.clear();
-		mText = buf;
+		mText = static_cast<const char *>(buf);
 
 		bRegenMesh = true;
 	}
@@ -363,10 +371,10 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 	case EGUI::eDragStatus::eEND_DRAG:
 	case EGUI::eDragStatus::eENTER:
 		break;
-	default:
-	case EGUI::eDragStatus::eNO_CHANGE:
 	case EGUI::eDragStatus::eDRAGGING:
 		trans->SetGlobalScale(static_cast<float>(tempF), static_cast<float>(tempF), z);
+		break;
+	default:
 		break;
 	}
 

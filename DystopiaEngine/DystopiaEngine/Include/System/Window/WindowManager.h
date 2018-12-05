@@ -63,6 +63,8 @@ namespace Dystopia
 
 		void DestroySplash(void);
 		bool HasWindows(void) const;
+		_DLL_EXPORT void ToggleFullscreen(bool _bFullscreen);
+		bool IsFullscreen() const;
 
 		void ToggleFullscreen(bool _bFullscreen);
 

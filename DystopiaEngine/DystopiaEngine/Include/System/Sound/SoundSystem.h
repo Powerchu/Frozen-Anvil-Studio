@@ -54,9 +54,9 @@ namespace Dystopia
 		void ReceiveMessage(const eSysMessage&);
 		Sound* LoadSound(const HashString& _file);
 
-		_DLL_EXPORT_ONLY void SetMaster(float);
-		_DLL_EXPORT_ONLY void SetBGM(float);
-		_DLL_EXPORT_ONLY void SetFX(float);
+		_DLL_EXPORT void SetMaster(float);
+		_DLL_EXPORT void SetBGM(float);
+		_DLL_EXPORT void SetFX(float);
 
 	private:
 		float mMasterVol;
