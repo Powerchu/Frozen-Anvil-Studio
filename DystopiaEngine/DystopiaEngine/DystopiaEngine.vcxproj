@@ -27,8 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.cpp" />
+	<ClCompile Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\CharacterController.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\CombatBox.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.cpp" />
@@ -55,9 +54,12 @@
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SettingsButton.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\ShiftChildrenZ.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SkillManager.cpp" />
-    <ClCompile Include="Include\IO\XMLParser.cpp" />
-    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SplashScreen.cpp" />
+	<ClCompile Include="Resource\Behaviours\BehavioursScripts\SplashScreen.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SpriteManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
+    <ClCompile Include="Include\IO\XMLParser.cpp" />
     <ClCompile Include="Source\DataStructure\OString.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
     <ClCompile Include="Source\Editor\CommandTypes.cpp" />
@@ -372,7 +374,7 @@
     <ClInclude Include="Include\System\Input\XGamePad.h" />
     <ClInclude Include="Include\IO\XMLParser.h" />
     <ClInclude Include="Include\Editor\RuntimeMeta.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.h" />
+	<ClInclude Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\CharacterController.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\CombatBox.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.h" />
@@ -400,8 +402,7 @@
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\ShiftChildrenZ.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\SkillManager.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\SplashScreen.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SpriteManager.h" />
-  </ItemGroup>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SpriteManager.h" />  </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />
   </ItemGroup>
