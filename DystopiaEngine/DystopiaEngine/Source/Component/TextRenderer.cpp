@@ -146,9 +146,6 @@ void Dystopia::TextRenderer::SetAlphaPerc(float _perc)
 
 void Dystopia::TextRenderer::RegenMesh(void)
 {
-	if (mpData == nullptr) return;
-	if (mpData->mSpaces.IsEmpty()) return;
-
 	AutoArray<Gfx::Vertex> verts;
 	AutoArray<Gfx::UV> uvs;
 	AutoArray<short> indices;

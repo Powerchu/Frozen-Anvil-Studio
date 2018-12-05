@@ -102,6 +102,7 @@ namespace Dystopia
 		void SetParentID(uint64_t);
 
 		void SetOpacity(float _perc);
+		float GetOpacity() const;
 
 	private:
 

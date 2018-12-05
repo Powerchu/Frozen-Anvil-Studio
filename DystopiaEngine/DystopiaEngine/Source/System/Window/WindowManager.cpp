@@ -291,12 +291,12 @@ void Dystopia::WindowManager::SaveSettings(DysSerialiser_t& _in)
 	_in << Gbl::WINDOW_HEIGHT;
 }
 
-//void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
-//{
-//	mbFullscreen = _bFullscreen;
-//
-//	mWindows[0].ToggleFullscreen(_bFullscreen);
-//}
+void Dystopia::WindowManager::ToggleFullscreen(bool _bFullscreen)
+{
+	mbFullscreen = _bFullscreen;
+
+	mWindows[0].ToggleFullscreen(_bFullscreen);
+}
 
 void Dystopia::WindowManager::ShowCursor(bool _bShow) const
 {
@@ -310,10 +310,10 @@ void Dystopia::WindowManager::RegisterMouseData(MouseData* _pMouse)
 }
 
 
-//bool Dystopia::WindowManager::IsFullscreen() const
-//{
-//	return mbFullscreen;
-//}
+bool Dystopia::WindowManager::IsFullscreen() const
+{
+	return mWindows[0].IsFullscreen();
+}
 
 Dystopia::Window& Dystopia::WindowManager::GetMainWindow(void) const
 {

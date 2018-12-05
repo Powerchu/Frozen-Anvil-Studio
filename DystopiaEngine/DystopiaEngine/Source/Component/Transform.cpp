@@ -499,6 +499,11 @@ void Dystopia::Transform::SetOpacity(float _perc)
 	}
 }
 
+float Dystopia::Transform::GetOpacity() const
+{
+	return mfOpacity;
+}
+
 bool Dystopia::Transform::IsDescendant(Transform* _toBeParent)
 {
 	for (auto& child : mChildren)
