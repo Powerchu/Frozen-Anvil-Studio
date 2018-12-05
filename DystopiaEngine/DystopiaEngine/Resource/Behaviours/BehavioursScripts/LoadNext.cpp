@@ -81,11 +81,11 @@ namespace Dystopia
 		Component::SetActive(true);
 	}
 
-	void LoadNext::Update(const float _fDeltaTime)
+	void LoadNext::Update(const float )
 	{
 	}
 
-	void LoadNext::FixedUpdate(const float _fDeltaTime)
+	void LoadNext::FixedUpdate(const float )
 	{
 	}
 
@@ -101,17 +101,17 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::LoadNext::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::LoadNext::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::LoadNext::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::LoadNext::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::LoadNext::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::LoadNext::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
@@ -125,11 +125,11 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::LoadNext::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::LoadNext::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::LoadNext::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::LoadNext::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -138,11 +138,11 @@ namespace Dystopia
 		return new LoadNext{ *this };
 	}
 
-	void LoadNext::Serialise(TextSerialiser& _ser) const
+	void LoadNext::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void LoadNext::Unserialise(TextSerialiser& _ser)
+	void LoadNext::Unserialise(TextSerialiser& )
 	{
 	}
 

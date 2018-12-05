@@ -192,8 +192,21 @@ namespace Dystopia
 			{
 				_TypeEraseRhs.mpWrapper = nullptr;
 			}
-			ReadWriteObject& operator=(ReadWriteObject const & _rhs) = delete;
 
+			ReadWriteObject& operator=(ReadWriteObject const & _rhs)
+			{
+				delete mpWrapper;
+				if (_rhs.mpWrapper)
+					mpWrapper = _rhs.mpWrapper->Duplicate();
+				else
+					mpWrapper = nullptr;
+				return *this;
+			}
+			ReadWriteObject& operator=(ReadWriteObject && _rhs)
+			{
+				Ut::Swap(mpWrapper, _rhs.mpWrapper);
+				return *this;
+			}
 			template <typename SF>
 			void Get(void * _Address, SF)
 			{

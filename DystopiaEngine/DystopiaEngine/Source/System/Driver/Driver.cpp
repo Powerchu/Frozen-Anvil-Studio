@@ -257,6 +257,7 @@ void Dystopia::EngineCore::ExecuteGame()
 
 	while (!mbQuit)
 	{
+		SendMessage();
 		FixedUpdate();
 		Update();
 		PostUpdate();
@@ -313,11 +314,18 @@ void Dystopia::EngineCore::SendMessage(void)
 	mMessageQueue.clear();
 }
 
-void Dystopia::EngineCore::ParseMessage(const eSysMessage& msg, size_t)
+void Dystopia::EngineCore::ParseMessage(const eSysMessage& msg, size_t _vk)
 {
 	if (eSysMessage::QUIT == msg)
 	{
 		mbQuit = true;
+	}
+	if (eSysMessage::SYSKEY == msg)
+	{
+		if (eButton::KEYBOARD_F4 == _vk)
+		{
+			mbQuit = true;
+		}
 	}
 }
 

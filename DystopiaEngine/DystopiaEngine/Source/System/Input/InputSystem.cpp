@@ -75,6 +75,7 @@ bool Dystopia::InputManager::Init(void)
 {
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
 	LoadDefaults();
+	mGamePad.PollInputs();
 	return true;
 }
 

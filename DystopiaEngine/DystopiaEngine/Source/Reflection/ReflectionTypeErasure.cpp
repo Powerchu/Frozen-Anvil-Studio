@@ -19,6 +19,23 @@ Dystopia::TypeErasure::TypeEraseMetaData::TypeEraseMetaData(TypeEraseMetaData &&
 	_TypeEraseRhs.mpWrapper = nullptr;
 }
 
+
+Dystopia::TypeErasure::TypeEraseMetaData Dystopia::TypeErasure::TypeEraseMetaData::operator=(Dystopia::TypeErasure::TypeEraseMetaData const & _TypeEraseRhs)
+{
+	delete mpWrapper;
+	if (_TypeEraseRhs.mpWrapper)
+		mpWrapper = _TypeEraseRhs.mpWrapper->Duplicate();
+	else
+		mpWrapper = nullptr;
+	return *this;
+}
+
+Dystopia::TypeErasure::TypeEraseMetaData Dystopia::TypeErasure::TypeEraseMetaData::operator=(Dystopia::TypeErasure::TypeEraseMetaData && _TypeEraseRhs)
+{
+	Ut::Swap(mpWrapper, _TypeEraseRhs.mpWrapper);
+	return *this;
+}
+
 Dystopia::TypeErasure::TypeEraseMetaData::~TypeEraseMetaData()
 {
 	

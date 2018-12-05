@@ -95,7 +95,7 @@ namespace Dystopia
 
 	}
 
-	void FollowTarget::FixedUpdate(const float _fDeltaTime)
+	void FollowTarget::FixedUpdate(const float )
 	{
 	}
 	
@@ -111,30 +111,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::FollowTarget::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::FollowTarget::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::FollowTarget::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::FollowTarget::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::FollowTarget::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::FollowTarget::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::FollowTarget::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::FollowTarget::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::FollowTarget::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::FollowTarget::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::FollowTarget::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::FollowTarget::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -143,11 +143,11 @@ namespace Dystopia
 		return new FollowTarget{*this};
 	}
 
-	void FollowTarget::Serialise(TextSerialiser& _ser) const
+	void FollowTarget::Serialise(TextSerialiser&) const
 	{
 	}
 
-	void FollowTarget::Unserialise(TextSerialiser& _ser)
+	void FollowTarget::Unserialise(TextSerialiser&)
 	{
 	}
 

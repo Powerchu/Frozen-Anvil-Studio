@@ -102,6 +102,10 @@ namespace Dystopia
 
 			TypeEraseMetaData(TypeEraseMetaData  && _TypeEraseRhs);
 
+			TypeEraseMetaData operator=(TypeEraseMetaData const & _TypeEraseRhs);
+
+			TypeEraseMetaData operator=(TypeEraseMetaData && _TypeEraseRhs);
+
 			~TypeEraseMetaData();
 
 			ReadWriteObject        operator[](const char * _name);

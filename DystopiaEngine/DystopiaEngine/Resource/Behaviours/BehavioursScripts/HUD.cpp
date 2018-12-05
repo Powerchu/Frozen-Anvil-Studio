@@ -94,7 +94,7 @@ namespace Dystopia
 		ChangeFF(FFMode);
 	}
 
-	void HUD::Update(const float _fDeltaTime)
+	void HUD::Update(const float )
 	{
 		if (EngineCore::Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_LEFT_SHOULDER))
 		{
@@ -174,7 +174,7 @@ namespace Dystopia
 		//ChangeAllAlpha(_fDeltaTime, FadeSpeed);
 	}
 
-	void HUD::FixedUpdate(const float _fDeltaTime)
+	void HUD::FixedUpdate(const float )
 	{
 	}
 
@@ -190,30 +190,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::HUD::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::HUD::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::HUD::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::HUD::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::HUD::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::HUD::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::HUD::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::HUD::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::HUD::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::HUD::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::HUD::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::HUD::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -222,11 +222,11 @@ namespace Dystopia
 		return new HUD{ *this };
 	}
 
-	void HUD::Serialise(TextSerialiser& _ser) const
+	void HUD::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void HUD::Unserialise(TextSerialiser& _ser)
+	void HUD::Unserialise(TextSerialiser& )
 	{
 	}
 
@@ -293,7 +293,7 @@ namespace Dystopia
 		HUDAlpha += modifier;
 		
 		if (HUDAlpha < 0)
-			FadeMode = HUDAlpha = 0;
+			FadeMode = static_cast<int>(HUDAlpha = 0);
 		else if ( HUDAlpha > 1)
 		{
 			FadeMode = 0;

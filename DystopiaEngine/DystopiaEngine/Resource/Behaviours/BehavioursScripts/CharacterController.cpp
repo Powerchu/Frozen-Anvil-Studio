@@ -120,12 +120,12 @@ namespace Dystopia
 		}
 		else
 		{
-			mpInputSys->MapButton("Run Left", eButton::KEYBOARD_LEFT);
+			mpInputSys->MapButton("Run Left",  eButton::KEYBOARD_LEFT);
 			mpInputSys->MapButton("Run Right", eButton::KEYBOARD_RIGHT);
-			mpInputSys->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
-			mpInputSys->MapButton("Skill B", eButton::KEYBOARD_C);
-			mpInputSys->MapButton("Skill Y", eButton::KEYBOARD_V);
-			mpInputSys->MapButton("Attack", eButton::KEYBOARD_X); 
+			mpInputSys->MapButton("Jump",      eButton::KEYBOARD_SPACEBAR);
+			mpInputSys->MapButton("Skill B",   eButton::KEYBOARD_C);
+			mpInputSys->MapButton("Skill Y",   eButton::KEYBOARD_V);
+			mpInputSys->MapButton("Attack",    eButton::KEYBOARD_X); 
 		}
 
 		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
@@ -197,7 +197,7 @@ namespace Dystopia
 		}
 	}
 
-	void CharacterController::FixedUpdate(const float _fDeltaTime)
+	void CharacterController::FixedUpdate(const float )
 	{
 	}
 	
@@ -230,27 +230,27 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::CharacterController::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::CharacterController::OnCollisionStay(const CollisionEvent&)
 	{
 
 	}
 
-	void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent&)
 	{
 		
 		
 		
 	}
 
-	void Dystopia::CharacterController::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::CharacterController::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::CharacterController::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::CharacterController::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::CharacterController::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::CharacterController::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -259,11 +259,11 @@ namespace Dystopia
 		return new CharacterController{*this};
 	}
 
-	void CharacterController::Serialise(TextSerialiser& _ser) const
+	void CharacterController::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void CharacterController::Unserialise(TextSerialiser& _ser)
+	void CharacterController::Unserialise(TextSerialiser&)
 	{
 	}
 
@@ -368,7 +368,7 @@ namespace Dystopia
 			}
 		} // Controller Scheme end
 
-		if (mpInputSys->IsKeyPressed(eButton::XBUTTON_DPAD_LEFT) && !mpInputSys->IsKeyPressed(eButton::XBUTTON_DPAD_RIGHT))
+		if (mpInputSys->IsKeyPressed("Run Left") && !mpInputSys->IsKeyPressed("Run Left"))
 		{			
 			mpBody->AddLinearImpulse({ -1 * CharacterSpeed * mpBody->GetMass(),0,0 });
 			//mpBody->AddTorque({0, 0,1 * CharacterSpeed});
@@ -379,7 +379,7 @@ namespace Dystopia
 			}
 		}
 
-		if (mpInputSys->IsKeyPressed(eButton::XBUTTON_DPAD_RIGHT) && !mpInputSys->IsKeyPressed(eButton::XBUTTON_DPAD_LEFT))
+		if (mpInputSys->IsKeyPressed("Run Left") && !mpInputSys->IsKeyPressed("Run Left"))
 		{
 			mpBody->AddLinearImpulse({CharacterSpeed * mpBody->GetMass(),0,0 });
 			//mpBody->AddTorque({0, 0,-1 * CharacterSpeed}); 
@@ -390,7 +390,7 @@ namespace Dystopia
 			}
 		}
 
-		if (mpInputSys->IsKeyPressed(eButton::XBUTTON_A))
+		if (mpInputSys->IsKeyPressed("Jump"))
 		{
 			if (mbIsGrounded)
 			{
@@ -402,33 +402,33 @@ namespace Dystopia
 			}
 		}
 
-		if (mpInputSys->IsKeyTriggered(eButton::XBUTTON_Y))
+		if (mpInputSys->IsKeyTriggered("Skill Y"))
 		{
 			const Math::Vec3D spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
 
 			CharacterController::CastLinked(1, currentType, float(spawnLocation.x), float(spawnLocation.y), float(spawnLocation.z));
 		}
 
-		if (mpInputSys->IsKeyTriggered(eButton::XBUTTON_B))
+		if (mpInputSys->IsKeyTriggered("Skill B"))
 		{
 			const Math::Vec3D spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
 
 			CharacterController::CastLinked(2, currentType, float(spawnLocation.x), float(spawnLocation.y), float(spawnLocation.z));
 		}
 
-		if (mpInputSys->IsKeyTriggered(eButton::XBUTTON_LEFT_SHOULDER))
+		if (mpInputSys->IsKeyTriggered("SetForm"))
 		{
 			currentType = true;
 			CharacterController_MSG::SendExternalMessage(hudName, "ChangeFF", 1);
 		}
 
-		if (mpInputSys->IsKeyTriggered(eButton::XBUTTON_RIGHT_SHOULDER))
+		if (mpInputSys->IsKeyTriggered("SetForce"))
 		{
 			currentType = false;
 			CharacterController_MSG::SendExternalMessage(hudName, "ChangeFF", 2);
 		}
 
-		if (mpInputSys->IsKeyTriggered(eButton::XBUTTON_X))
+		if (mpInputSys->IsKeyTriggered("Attack"))
 		{
 			const Math::Vec3D spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
 

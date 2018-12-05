@@ -773,7 +773,7 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 							}
 							else
 							{
-								
+								DeleteBehaviour(ptr);
 							}
 						}
 
