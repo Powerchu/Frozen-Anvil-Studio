@@ -296,16 +296,14 @@ void Editor::EditorFactory::ValidatePrefabInstances(void)
 
 bool Editor::EditorFactory::LoadAsPrefab(const HashString& _name)
 {
-	bool hasFound = false;
 	for (auto& prefabData : mArrPrefabData)
 	{
-		if (prefabData.mPrefabFile == _name && !hasFound)
+		if (prefabData.mPrefabFile == _name)
 		{
 			for (size_t i = prefabData.mnStart; i < prefabData.mnEnd; ++i)
 			{
 				mArrFactoryObj.Remove(&mArrFactoryObj[i]);
 			}
-			hasFound = true;
 		}
 	}
 
