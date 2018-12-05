@@ -333,6 +333,9 @@ bool Editor::EditorFactory::LoadAsPrefab(const HashString& _name)
 			}
 		}
 
+		for (auto p : mLoadedObj)
+			p->GetComponent<Dystopia::Transform>()->SetOpacity(1.f);
+
 		for (auto& data : mArrPrefabData)
 		{
 			if (data.mPrefabFile == _name)
@@ -627,7 +630,6 @@ unsigned Editor::EditorFactory::LoadSegment(Dystopia::GameObject& _obj, Dystopia
 	_in >> n;
 	_obj.Unserialise(_in);
 	_in.ConsumeEndBlock();
-	_obj.GetComponent<Dystopia::Transform>()->SetOpacity(1.f);
 	return n;
 }
 

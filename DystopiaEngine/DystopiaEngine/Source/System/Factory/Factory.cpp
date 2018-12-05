@@ -128,6 +128,9 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 	//	Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors(curScene.GetAllGameObjects()[index].GetID());
 	//}
 
+	for (auto o : allInstantiated)
+		o->GetComponent<Transform>()->SetOpacity(1.f);
+
 	obj.GetComponent<Transform>()->SetGlobalPosition(_pos);
 	return &obj;
 }
