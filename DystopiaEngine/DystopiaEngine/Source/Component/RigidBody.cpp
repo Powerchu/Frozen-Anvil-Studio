@@ -289,14 +289,14 @@ namespace Dystopia
 		}
 
 		//Clamp to velocity max for numerical stability
-		if (Dot(mLinearVelocity, mLinearVelocity) > mpPhysSys->mMaxVelSquared)
+		if (Dot(mLinearVelocity, mLinearVelocity) > mpPhysSys->mMaxVelocityConstant * mpPhysSys->mMaxVelocityConstant)
 		{
 			mLinearVelocity = Math::Normalise(mLinearVelocity);
 			mLinearVelocity *= mpPhysSys->mMaxVelocityConstant;
 		}
 
 		//Clamp to velocity max for numerical stability
-		if (Dot(mAngularVelocity, mAngularVelocity) > mpPhysSys->mMaxVelSquared * 0.5F)
+		if (Dot(mAngularVelocity, mAngularVelocity) > mpPhysSys->mMaxVelocityConstant * mpPhysSys->mMaxVelocityConstant * 0.5F)
 		{
 			mAngularVelocity = Math::Normalise(mAngularVelocity);
 			mAngularVelocity *= mpPhysSys->mMaxVelocityConstant * 0.5F;
