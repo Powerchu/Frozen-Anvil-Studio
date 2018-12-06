@@ -798,35 +798,8 @@
     <ClInclude Include="Include\Reflection\Reflection.h">
       <Filter>Reflection</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Reflection\PPVariadicSize.h">
-      <Filter>Reflection\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Reflection\PPToSequence.h">
-      <Filter>Reflection\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Reflection\PPPopFront.h">
-      <Filter>Reflection\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Reflection\PPRemove.h">
-      <Filter>Reflection\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Reflection\PPConcat.h">
-      <Filter>Reflection\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Reflection\PPExtract.h">
-      <Filter>Reflection\Preprocessor</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Reflection\MetaData.h">
       <Filter>Reflection\Metadata</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Reflection\PPForEach.h">
-      <Filter>Reflection\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Reflection\PPUtils.h">
-      <Filter>Reflection\Preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Reflection\PPStringify.h">
-      <Filter>Reflection\Preprocessor</Filter>
     </ClInclude>
     <ClInclude Include="Include\Reflection\ReflectedData.h">
       <Filter>Reflection\Metadata</Filter>
@@ -1161,6 +1134,39 @@
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\SpriteManager.h">
       <Filter>Behaviours</Filter>
     </ClInclude>
+    <ClInclude Include="Include\PP\PPConcat.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\PP\PPExtract.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\PP\PPForEach.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\PP\PPIf.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\PP\PPIsEmpty.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\PP\PPPopFront.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\PP\PPRemove.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\PP\PPStringify.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\PP\PPUtils.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\PP\PPVariadicSize.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\PP\PPVaToSeq.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1382,9 +1388,6 @@
     <Filter Include="Reflection">
       <UniqueIdentifier>{c13d8e9d-1ea4-40c5-b67f-f2713024e57a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Reflection\Preprocessor">
-      <UniqueIdentifier>{af73041d-894d-4be1-9ac1-a597e6a69bf5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Reflection\Metadata">
       <UniqueIdentifier>{7b27b49c-13db-4784-8317-6eb1859a099c}</UniqueIdentifier>
     </Filter>
@@ -1594,6 +1597,9 @@
     </Filter>
     <Filter Include="Behaviours">
       <UniqueIdentifier>{5652e60c-bb69-46ef-84fe-584ef83e99a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Preprocessor">
+      <UniqueIdentifier>{af73041d-894d-4be1-9ac1-a597e6a69bf5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

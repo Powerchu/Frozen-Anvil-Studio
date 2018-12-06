@@ -15,11 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _REFLECTIONLIB_H_
 
 #include "Reflection/MetaData.h"
-#include "Reflection/PPForEach.h"
-#include "Reflection/PPStringify.h"
-#include "Reflection/PPToSequence.h"
 #include "Reflection/ReflectedData.h"
 #include "Reflection/ReadWriteObject.h"
+#include "PP/PPForEach.h"
+#include "PP/PPStringify.h"
+#include "PP/PPVaToSeq.h"
 
 #include <map>
 
@@ -38,7 +38,12 @@ using Map_t = std::pair<char const*, Dystopia::TypeErasure::ReadWriteObject>[PP_
 
 #define STRINGIFY(_NAME_) #_NAME_
 
-#define PP_REFLECT(_STRUCT_, ...)                                                                                             \
+#define PP_REFLECT(_STRUCT_, ...) PP_REFLECT_AUX (                 \
+PP_IF(PP_IS_EMPTY(__VA_ARGS__),PP_REFLECT_EMPTY,PP_REFLECT_STUFF), \
+PP_IF(PP_IS_EMPTY(__VA_ARGS__),(_STRUCT_),(_STRUCT_,__VA_ARGS__)))
+#define PP_REFLECT_AUX(macro, args) PP_CONCAT(macro,args)
+
+#define PP_REFLECT_STUFF(_STRUCT_, ...)                                                                                       \
 template <>                                                                                                                   \
 struct MetaData<_STRUCT_>                                                                                                     \
 {                                                                                                                             \

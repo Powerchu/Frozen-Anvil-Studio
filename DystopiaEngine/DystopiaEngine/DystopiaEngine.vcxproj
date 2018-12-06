@@ -27,7 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-	<ClCompile Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\CharacterController.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\CombatBox.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.cpp" />
@@ -54,7 +54,7 @@
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SettingsButton.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\ShiftChildrenZ.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SkillManager.cpp" />
-	<ClCompile Include="Resource\Behaviours\BehavioursScripts\SplashScreen.cpp" />
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\SplashScreen.cpp" />
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SpriteManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +197,17 @@
     <ClInclude Include="Include\Component\NodeList.h" />
     <ClInclude Include="Include\Editor\GameView.h" />
     <ClInclude Include="Include\Factory\Factory.h" />
+    <ClInclude Include="Include\PP\PPConcat.h" />
+    <ClInclude Include="Include\PP\PPExtract.h" />
+    <ClInclude Include="Include\PP\PPForEach.h" />
+    <ClInclude Include="Include\PP\PPIf.h" />
+    <ClInclude Include="Include\PP\PPIsEmpty.h" />
+    <ClInclude Include="Include\PP\PPPopFront.h" />
+    <ClInclude Include="Include\PP\PPRemove.h" />
+    <ClInclude Include="Include\PP\PPStringify.h" />
+    <ClInclude Include="Include\PP\PPUtils.h" />
+    <ClInclude Include="Include\PP\PPVariadicSize.h" />
+    <ClInclude Include="Include\PP\PPVaToSeq.h" />
     <ClInclude Include="Include\System\AI\AISystem.h" />
     <ClInclude Include="Include\System\AI\Blackboard.h" />
     <ClInclude Include="Include\System\AI\Composite.h" />
@@ -241,15 +252,6 @@
     <ClInclude Include="Include\Editor\StyleScheme.h" />
     <ClInclude Include="Include\Math\MetaMath\MetaFloat.h" />
     <ClInclude Include="Include\Reflection\MetaData.h" />
-    <ClInclude Include="Include\Reflection\PPConcat.h" />
-    <ClInclude Include="Include\Reflection\PPExtract.h" />
-    <ClInclude Include="Include\Reflection\PPStringify.h" />
-    <ClInclude Include="Include\Reflection\PPUtils.h" />
-    <ClInclude Include="Include\Reflection\PPForEach.h" />
-    <ClInclude Include="Include\Reflection\PPPopFront.h" />
-    <ClInclude Include="Include\Reflection\PPRemove.h" />
-    <ClInclude Include="Include\Reflection\PPToSequence.h" />
-    <ClInclude Include="Include\Reflection\PPVariadicSize.h" />
     <ClInclude Include="Include\Reflection\ReflectedData.h" />
     <ClInclude Include="Include\Reflection\Reflection.h" />
     <ClInclude Include="Include\System\Collision\CollisionEvent.h" />
@@ -374,7 +376,7 @@
     <ClInclude Include="Include\System\Input\XGamePad.h" />
     <ClInclude Include="Include\IO\XMLParser.h" />
     <ClInclude Include="Include\Editor\RuntimeMeta.h" />
-	<ClInclude Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.h" />
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\ChangeAudio.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\CharacterController.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\CombatBox.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\DeleteSelf.h" />
@@ -402,7 +404,8 @@
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\ShiftChildrenZ.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\SkillManager.h" />
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\SplashScreen.h" />
-    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SpriteManager.h" />  </ItemGroup>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\SpriteManager.h" />
+  </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />
   </ItemGroup>
