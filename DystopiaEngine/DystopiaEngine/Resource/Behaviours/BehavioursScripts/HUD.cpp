@@ -92,9 +92,15 @@ namespace Dystopia
 	void HUD::Init()
 	{
 		ChangeFF(FFMode);
+		SetActive(true);
+		HUDAlpha = 0.f;
+		auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
+		for (auto& c : children)
+			if (auto s = c->GetOwner()->GetComponent<SpriteRenderer>())
+				s->SetAlpha(HUDAlpha);
 	}
 
-	void HUD::Update(const float )
+	void HUD::Update(const float _fDeltaTime)
 	{
 		if (EngineCore::Get<InputManager>()->IsKeyTriggered(eButton::XBUTTON_LEFT_SHOULDER))
 		{
@@ -171,10 +177,10 @@ namespace Dystopia
 		//	Fade(false);
 		//}
 	    //
-		//ChangeAllAlpha(_fDeltaTime, FadeSpeed);
+		ChangeAllAlpha(_fDeltaTime, FadeSpeed);
 	}
 
-	void HUD::FixedUpdate(const float )
+	void HUD::FixedUpdate(const float ) 
 	{
 	}
 
@@ -277,7 +283,7 @@ namespace Dystopia
 			{ 
 				HUD_MSG::SendExternalMessage(c->GetOwner(), "ChangeHP", _dir);
 				return;
-			}
+			} 
 		}
 	}
 	
@@ -285,6 +291,9 @@ namespace Dystopia
 	{
 		if (!FadeMode) 
 			return;
+		
+		if (_dt <= 0.0001f)
+			_dt = 0.016f;
 		
 		float modifier = _dt * _speed;
 		

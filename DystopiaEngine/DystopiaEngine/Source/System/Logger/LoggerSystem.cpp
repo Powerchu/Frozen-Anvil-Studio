@@ -84,6 +84,7 @@ namespace
 
 	[[noreturn]] void ProgramTerminate(void)
 	{{
+#if EDITOR
 		Dystopia::FileLogger log{ "CrashReport.dystor", "w+" };
 		if (log.Good())
 		{
@@ -96,7 +97,7 @@ namespace
 			Dystopia::Alloc::WriteFreeMemory(log);
 #       endif
 		}
-
+#endif 
 		// Let it crash
 		} std::abort();
 	}

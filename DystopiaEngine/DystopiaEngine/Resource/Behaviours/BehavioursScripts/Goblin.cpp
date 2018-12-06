@@ -64,7 +64,7 @@ namespace Dystopia
 		: theMass(0.f)
 		, takenDamage(false)
 		, damageCount(0.0f)
-		, damageDelay(1.0f)
+		, damageDelay(0.1f)
 		, rBody(nullptr) 
 		, attackCount(0.0f)
 		, attackDelay(0.95f)
@@ -94,12 +94,14 @@ namespace Dystopia
 		rBody = GetOwner()->GetComponent<RigidBody>();
 		if(rBody)
 			theMass = rBody->GetMass();
-		SetFlags(FLAG_ACTIVE);
+		SetFlags(FLAG_ACTIVE); 
 	}
 	void Goblin::Init()
 	{
 		playerTarget = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player");
-
+		auto pos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+		pos.z = playerTarget->GetComponent<Transform>()->GetGlobalPosition().z - 0.01f;
+		GetOwner()->GetComponent<Transform>()->SetGlobalPosition(pos);
 		rBody = GetOwner()->GetComponent<RigidBody>();
 		if(rBody)
 			theMass = rBody->GetMass();
@@ -122,20 +124,26 @@ namespace Dystopia
 					s->Stop();
 					s->SetAnimation("Attack"); 
 					s->Play();	
+					rBody->SetLinearVel(Math::MakeVector3D(0,0,0));
 				}
 			}
 		}
-		else if (v.Magnitude() < 100.f)
+		else if (v.Magnitude() < 1800.f)
 		{
-			// if (auto s = GetOwner()->GetComponent<SpriteRenderer>())
-			// {
-				// if (!s->IsPlaying())
-				// {
-					// s->Stop();
-					// s->SetAnimation("Run");
-					// s->Play();	
-				// }
-			// }
+			if (auto o = EngineCore::Get<SceneSystem>()->FindGameObject("Player"))
+			{
+				Goblin_MSG::SendExternalMessage(o, "FadeHUD", true);
+			}
+			
+			if (auto s = GetOwner()->GetComponent<SpriteRenderer>())
+			{
+				if (!s->IsPlaying())
+				{
+					s->Stop();
+					s->SetAnimation("Run");
+					s->Play();	
+				}
+			}
 
 			if(rBody)
 			{
@@ -143,20 +151,29 @@ namespace Dystopia
 				if(v.x < 0 && scale.x > 0)
 				{
 					GetOwner()->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z  );
-
-
 				}
 				else if(v.x > 0 && scale.x < 0)
 				{
 					GetOwner()->GetComponent<Transform>()->SetScale(-scale.x, scale.y, scale.z  );
-
 				}
-				rBody->AddLinearImpulse(Math::MakeVector3D(70.f * scale.x/abs(scale.x), 0,0));
+				rBody->AddLinearImpulse(Math::MakeVector3D(2200.f * scale.x/abs(scale.x), 0,0));
+			}
+		}
+		else
+		{
+			if (auto s = GetOwner()->GetComponent<SpriteRenderer>())
+			{
+				if (s->GetCurrentAnimation() != HashString{"Idle"} )
+				{
+					s->Stop();
+					s->SetAnimation("Idle");
+					s->Play();	
+				}
 			}
 		}
 						
 		if (damageCount <= damageDelay && takenDamage)
-			damageCount = damageCount + _fDeltaTime;
+			damageCount += _fDeltaTime;
 
 		if (damageCount >= damageDelay)
 		{
@@ -298,7 +315,7 @@ namespace Dystopia
 	{
 		if (!takenDamage)
 		{
-			DEBUG_PRINT(eLog::MESSAGE, "TOOK DMG");
+			DEBUG_PRINT(eLog::MESSAGE, "TOOK DMG %d", _dmg);
 			mHealth -= _dmg;
 			
 			if (auto s = GetOwner()->GetComponent<SpriteRenderer>())
@@ -315,6 +332,7 @@ namespace Dystopia
 				GetOwner()->Destroy();
 			
 			takenDamage = true;
+			damageCount = 0.f;
 		}
 	}
 

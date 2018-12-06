@@ -52,6 +52,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/Behaviours/BehavioursScripts/HUD.h"
 #include "../Resource/Behaviours/BehavioursScripts/ShiftChildrenZ.h"
 #include "../Resource/Behaviours/BehavioursScripts/LoadNext.h"
+#include "../Resource/Behaviours/BehavioursScripts/BossAI.h"
+#include "../Resource/Behaviours/BehavioursScripts/BossCombat.h"
+#include "../Resource/Behaviours/BehavioursScripts/FadeSprite.h"
+#include "../Resource/Behaviours/BehavioursScripts/GameOver.h"
+#include "../Resource/Behaviours/BehavioursScripts/GoblinAI.h"
+#include "../Resource/Behaviours/BehavioursScripts/HowToPlay.h"
+#include "../Resource/Behaviours/BehavioursScripts/Opening.h"
+#include "../Resource/Behaviours/BehavioursScripts/PlayerVsBoss.h"
+#include "../Resource/Behaviours/BehavioursScripts/TownLoader.h"
+#include "../Resource/Behaviours/BehavioursScripts/TransitLevel.h"
 #endif
 
 #if EDITOR
@@ -90,7 +100,17 @@ namespace Dystopia
 		class HealthShader,
 		class HUD,
 		class ShiftChildrenZ,
-		class LoadNext
+		class LoadNext,
+		class BossAI,
+		class BossCombat,
+		class FadeSprite,
+		class GameOver,
+		class GoblinAI,
+		class HowToPlay,
+		class Opening,
+		class PlayerVsBoss,
+		class TownLoader,
+		class TransitLevel
 		/*Add Behaviours Here*/
 	>::result;
 }

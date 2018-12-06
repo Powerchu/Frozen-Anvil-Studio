@@ -1,10 +1,10 @@
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-18446744072878652416,536870977,"ForceBarrageThree",0,
+567197696,536870977,"ForceBarrageThree",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,816.186,-42.6838,-29.875,0,0,0,1,18446744073709551615,
+1,1,1,315.064,-837.742,0,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,19 +12,13 @@
 [END_GO_PREFAB]
 [START_Component]
 4,[START_Convex_Collider]
-18446744072878653440,536870913,18446744072878652416,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,40,10,1,0,0,0,1,1,
+18446744072077363712,536870913,567197696,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,500,150,1,0,0,0,1,1,
 [END_Convex_Collider]
 
 [END_Component]
 [START_Number of Behaviours]
 2,
 [END_Number of Behaviours]
-[START_Behaviour Names]
-"ForceTThree",
-[END_Behaviour Names]
-[START_Behaviour Meta Count]
-0,
-[END_Behaviour  Meta Count]
 [START_Behaviour Names]
 "DeleteSelf",
 [END_Behaviour Names]
@@ -35,7 +29,7 @@
 "destroyDelay",
 [END_destroyDelay]
 [START_Member Variable]
-0.8,
+0.9,
 [END_Member Variable]
 [START_destroyCount]
 "destroyCount",
@@ -43,6 +37,12 @@
 [START_Member Variable]
 0,
 [END_Member Variable]
+[START_Behaviour Names]
+"ForceTThree",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+0,
+[END_Behaviour  Meta Count]
 [START_Recursion Counter]
 0,
 [END_Recursion Counter]

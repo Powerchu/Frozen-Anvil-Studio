@@ -88,8 +88,10 @@ namespace Dystopia
 		void TakeDamage(float _dmg);
 		void SpendEnergy(float _amt);
 		void AnimationComplete();
+		void DisableControls(bool);
+		void FadeHUD(bool);
 
-		PP_MEMBERFUNC(Dystopia::CharacterController, TakeDamage, AnimationComplete)
+		PP_MEMBERFUNC(Dystopia::CharacterController, TakeDamage, AnimationComplete, DisableControls, FadeHUD)
 	private:
 		friend MetaData<CharacterController>;
 
@@ -101,9 +103,11 @@ namespace Dystopia
 		float currentHealth;
 		float playerEnergy;
 		float currentEnergy;
+		bool isCasting;
 		bool IsDodging;
 		float CharacterSpeed;
 		float JumpForce;
+		float CurrentSpeed;
 		int attackCount;
 		float attackDelay;
 		GameObject * combatName;
@@ -115,10 +119,11 @@ namespace Dystopia
 		bool mbIsCeilinged;
 		bool mbIsFacingRight;
 		bool isAttacking;
-		bool isCasting;
 		bool isJumping;
 		bool isFalling;
 		bool currentType;
+		bool disableControls;
+		bool isInvulnerable;
 		RigidBody * mpBody;
 		InputManager * mpInputSys;
 	};
@@ -132,7 +137,7 @@ namespace Dystopia
 	}
 }
 
-PP_REFLECT(Dystopia::CharacterController, playerHealth, IsDodging, CharacterSpeed, JumpForce, attackCount);
+PP_REFLECT(Dystopia::CharacterController, playerHealth, IsDodging, CharacterSpeed, JumpForce, attackCount, isCasting);
 
 #endif //_CharacterController_H_
 

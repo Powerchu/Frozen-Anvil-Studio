@@ -21,6 +21,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Reflection/ReflectionTypeErasure.h"
 #include "Behaviour/BehaviourMemberFunc.h"
 
+#include "DataStructure/AutoArray.h"
+
 #define DllExport   __declspec( dllexport )
 
 namespace Dystopia
@@ -104,6 +106,8 @@ namespace Dystopia
 	private:
 		// Don't touch
 		friend MetaData<FormTTwo>;
+		
+		AutoArray<GameObject*> ArrDealt;
 
 	public:
 		const char * name = nullptr;

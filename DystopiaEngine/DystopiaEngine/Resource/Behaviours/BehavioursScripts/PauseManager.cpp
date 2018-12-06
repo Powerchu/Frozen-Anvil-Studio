@@ -89,14 +89,13 @@ namespace Dystopia
 		mPauseState = false;
 		EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f); 
 		mButtons[0] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Resume_Button");
-		mButtons[1] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Restart_Button");
-		mButtons[2] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Settings_Button");
-		mButtons[3] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Quit_Button");
+		mButtons[1] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("HowToPlay");
+		mButtons[2] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Quit_Button");
 		mSelector   = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Select_Button");
 		selection = 0;
 		if(mSelector && mButtons[selection])
 		{
-			mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(17,0,0));
+			mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(320,0,0));
 		}
 	}
 
@@ -107,18 +106,16 @@ namespace Dystopia
 		mPauseState = false;
 		EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f);
 		mButtons[0] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Resume_Button");
-		mButtons[1] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Restart_Button");
-		mButtons[2] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Settings_Button");
-		mButtons[3] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Quit_Button");
-		mArrScale[0] = mButtons[0]->GetComponent<Transform>()->GetGlobalScale();
+		mButtons[1] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("HowToPlay");
+		mButtons[2] = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Quit_Button");
+		mArrScale[0] = mButtons[0]->GetComponent<Transform>()->GetGlobalScale(); 
 		mArrScale[1] = mButtons[1]->GetComponent<Transform>()->GetGlobalScale();
 		mArrScale[2] = mButtons[2]->GetComponent<Transform>()->GetGlobalScale();
-		mArrScale[3] = mButtons[3]->GetComponent<Transform>()->GetGlobalScale();
 		mSelector   = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Select_Button");
 		selection = 0;
 		if(mSelector && mButtons[selection])
 		{
-			mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(17,0,0));
+			mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(320,0,0));
 			mSelector->RemoveFlags(eObjFlag::FLAG_ACTIVE);
 			if (auto sr = mSelector->GetComponent<SpriteRenderer>())
 				sr->RemoveFlags(eObjFlag::FLAG_ACTIVE);
@@ -137,6 +134,8 @@ namespace Dystopia
 			if (auto s = c->GetOwner()->GetComponent<SpriteRenderer>())
 				s->RemoveFlags(eObjFlag::FLAG_ACTIVE);
 		}
+		
+		GetOwner()->GetComponent<Transform>()->SetOpacity(0.f);
 	}
 
 	void PauseManager::Update(const float)
@@ -144,8 +143,12 @@ namespace Dystopia
 		bool isPaused = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(XBUTTON_START) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(KEYBOARD_ESCAPE);
 		if(isPaused) 
 		{
+			if(mOff)
+				return;
+			
 			if(mPauseState)
 			{
+				GetOwner()->GetComponent<Transform>()->SetOpacity(0.f);
 				DEBUG_PRINT(eLog::MESSAGE, "unpaused!");
 				mPauseState = false;
 				EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(1.f);
@@ -167,9 +170,11 @@ namespace Dystopia
 						s->RemoveFlags(eObjFlag::FLAG_ACTIVE);
 				}
 				selection = 0;
+				mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(320,0,0));
 			} 
 			else
 			{
+				GetOwner()->GetComponent<Transform>()->SetOpacity(1.f);
 				DEBUG_PRINT(eLog::MESSAGE, "paused!"); 
 				EngineCore::GetInstance()->Get<TimeSystem>()->SetTimeScale(0.f); 
 				mPauseState = true;   
@@ -191,17 +196,23 @@ namespace Dystopia
 						s->SetFlags(eObjFlag::FLAG_ACTIVE);
 				}
 				selection = 0;
+				mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(320,0,0));
 			} 
 			HighlightScale();
 		}
 		
 		if(mPauseState)
 		{
+
 			bool isDown    = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(eButton::XBUTTON_DPAD_DOWN) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_DOWN);
 			bool isUp  = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(XBUTTON_DPAD_UP) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_UP);
 			bool isPress = EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered(XBUTTON_A) || EngineCore::GetInstance()->GetSystem<InputManager>()->IsKeyTriggered( eButton::KEYBOARD_ENTER);
+			if(mOff)
+				return;
+				
 			if(isPress)
 			{
+
 				if(selection == 0)
 				{
 					if(mButtons[selection])
@@ -229,6 +240,12 @@ namespace Dystopia
 							s->RemoveFlags(eObjFlag::FLAG_ACTIVE);
 					}
 					selection = 0;
+					GetOwner()->GetComponent<Transform>()->SetOpacity(0.f);
+				}
+				else if(selection == 1)
+				{
+					PauseManager_MSG::SendExternalMessage(mButtons[selection], "ButtonPress");
+					mOff = true;
 				}
 				else
 				{
@@ -239,19 +256,20 @@ namespace Dystopia
 			}
 			if(isUp)
 			{
-				selection = selection - 1 < 0 ? 3 : selection - 1;
+
+				selection = selection - 1 < 0 ? 2 : selection - 1;
 				if(mSelector && mButtons[selection])
 				{
-					mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(17,0,0));
+					mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(320,0,0));
 				}
 				HighlightScale();
 			}
 			if(isDown)
 			{
-				selection = selection + 1 > 3 ? 0 : selection + 1;
+				selection = selection + 1 > 2 ? 0 : selection + 1;
 				if(mSelector && mButtons[selection])
 				{
-					mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(17,0,0));
+					mSelector->GetComponent<Transform>()->SetGlobalPosition(mButtons[selection]->GetComponent<Transform>()->GetGlobalPosition() + Math::MakeVector3D(320,0,0));
 				}
 				HighlightScale();
 			}
@@ -262,6 +280,11 @@ namespace Dystopia
 	{
 	}
 
+	void PauseManager::Show(void)
+	{
+		mOff = false; 
+		GetOwner()->GetComponent<Transform>()->SetOpacity(1.f);
+	}
 	void PauseManager::PostUpdate(void)
 	{
 	}
@@ -329,7 +352,7 @@ namespace Dystopia
 	void PauseManager::HighlightScale(void)
 	{
 		float scale = 1.3f;
-		for (size_t i = 0; i < 4; ++i)
+		for (size_t i = 0; i < 3; ++i)
 		{
 			if (selection == i)
 			{

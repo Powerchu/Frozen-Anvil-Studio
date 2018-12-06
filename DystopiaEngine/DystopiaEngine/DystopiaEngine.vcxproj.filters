@@ -445,6 +445,36 @@
     <ClCompile Include="Resource\Behaviours\BehavioursScripts\SpriteManager.cpp">
       <Filter>Behaviours</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\BossAI.cpp">
+      <Filter>Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\BossCombat.cpp">
+      <Filter>Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\FadeSprite.cpp">
+      <Filter>Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\GameOver.cpp">
+      <Filter>Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\GoblinAI.cpp">
+      <Filter>Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\HowToPlay.cpp">
+      <Filter>Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\Opening.cpp">
+      <Filter>Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\PlayerVsBoss.cpp">
+      <Filter>Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\TownLoader.cpp">
+      <Filter>Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Behaviours\BehavioursScripts\TransitLevel.cpp">
+      <Filter>Behaviours</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1132,6 +1162,36 @@
       <Filter>Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Behaviours\BehavioursScripts\SpriteManager.h">
+      <Filter>Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\BossAI.h">
+      <Filter>Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\BossCombat.h">
+      <Filter>Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\FadeSprite.h">
+      <Filter>Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\GameOver.h">
+      <Filter>Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\GoblinAI.h">
+      <Filter>Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\HowToPlay.h">
+      <Filter>Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\Opening.h">
+      <Filter>Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\PlayerVsBoss.h">
+      <Filter>Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\TownLoader.h">
+      <Filter>Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Behaviours\BehavioursScripts\TransitLevel.h">
       <Filter>Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="Include\PP\PPConcat.h">

@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaDataStructures.h" // TypeList
 #include "Allocator/DefaultAlloc.h"		// DefaultAllocator
 
+
 #include <new>				// operator new
 #include <cstring>			// memcpy
 #include <initializer_list> // init-list

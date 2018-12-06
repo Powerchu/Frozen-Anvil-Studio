@@ -1,10 +1,10 @@
 [START_GO_PREFAB]
 2,[START_START_GO_DATA]
-1644793856,536870977,"ForceExplosionTwo",0,
+18446744073631813632,536870977,"ForceExplosionTwo",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-102.4,50.9749,1,1050.64,-48.4021,-29.875,0,0,0,1,18446744073709551615,
+950,750,1,913.665,0,0,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,16 +12,16 @@
 [END_GO_PREFAB]
 [START_Component]
 4,[START_Convex_Collider]
-1644794880,536870913,1644793856,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.5,-0.7,1,0,0,0,1,0,
+903790080,536870913,18446744073631813632,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.5,0.75,1,0,0,0,1,1,
 [END_Convex_Collider]
 
 [END_Component]
 [START_Component]
 7,[START_Renderer]
-1644795392,536870913,1644793856,"/Asset/Spritesheet/Force Explosion Sheet.dds",
+18446744073272153088,536870913,18446744073631813632,"/Asset/Spritesheet/Force Explosion Sheet.dds",
 [END_Renderer]
 [START_Sprite Renderer]
-0.04,1,1,"Rename this",3,4,0,0,11,0,1,1,1,1,1,
+0.05,1,1,"Rename this",3,4,0,0,10,0,1,1,1,1,1,
 [END_Sprite Renderer]
 
 [END_Component]
@@ -38,7 +38,7 @@
 "destroyDelay",
 [END_destroyDelay]
 [START_Member Variable]
-0.535,
+0.5,
 [END_Member Variable]
 [START_destroyCount]
 "destroyCount",

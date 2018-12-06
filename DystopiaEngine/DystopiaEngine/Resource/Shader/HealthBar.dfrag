@@ -7,6 +7,7 @@ in vec2 vUV;
 layout(location = 0) out vec4 fragColor;
 
 uniform float fHealth = 1.f;
+uniform float fRed = 1.f;
 uniform float fWave = .0f;
 uniform vec4 vColor = vec4(1,1,1,1);
 uniform sampler2D texSampler;
@@ -23,10 +24,15 @@ void main()
     discard;
   
   if ((vUV.x + offset) > fHealth)
-	discard;
+  {
+    if ((vUV.x + offset) > fRed)
+      discard;
+	
+	color = color.grba;
+  }
   
   // Gamma correction
-  color.rgb = pow(color.rgb, vec3(1.f / Gamma));
+  //color.rgb = pow(color.rgb, vec3(1.f / Gamma));
   
   fragColor = color;
 }

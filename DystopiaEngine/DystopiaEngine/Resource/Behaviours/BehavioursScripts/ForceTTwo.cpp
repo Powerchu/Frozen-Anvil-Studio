@@ -126,20 +126,17 @@ namespace Dystopia
 			if (!strcmp(name, "Goblin"))
 			{
 				ForceTTwo_MSG::SendExternalMessage(_obj, "TakeDamage", 10);
-				ForceTTwo_MSG::SendExternalMessage(_obj, "Knock", 300, firingDirection);
+				ForceTTwo_MSG::SendExternalMessage(_obj, "Knock", 1000, firingDirection);
 			}
-
 			else if (!strcmp(name, "FormSlamTwo"))
 			{
-				ForceTTwo_MSG::SendExternalMessage(_obj, "Knock", 300, firingDirection);
+				ForceTTwo_MSG::SendExternalMessage(_obj, "Knock", 2500, firingDirection);
 			}
 		}
-
 	}
 
-	void Dystopia::ForceTTwo::OnTriggerStay(GameObject * const )
+	void Dystopia::ForceTTwo::OnTriggerStay(GameObject * const)
 	{
-
 	}
 
 	void Dystopia::ForceTTwo::OnTriggerExit(GameObject * const )

@@ -133,7 +133,7 @@ namespace Dystopia
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "Flamestrike");
 				ForceTOne_MSG::SendExternalMessage(_obj, "TakeDamage", 10);
-				ForceTOne_MSG::SendExternalMessage(_obj, "Knock", 150, firingDirection);
+				ForceTOne_MSG::SendExternalMessage(_obj, "Knock", 500, firingDirection);
 			}
 		}
 	}

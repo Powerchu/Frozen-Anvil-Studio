@@ -130,7 +130,7 @@ namespace Dystopia
 						/*If behaviour throws, remove it from game object*/
 						_EDITOR_CATCH(std::exception& e)
 						{
-							//_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+							_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
 							_EDITOR_CODE(pGameObject->RemoveComponent(BehaveElem));
 							_EDITOR_CODE(BehaveElem->DestroyComponent());
 						}

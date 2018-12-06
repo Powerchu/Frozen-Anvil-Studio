@@ -107,8 +107,8 @@ namespace Dystopia
 	void QuitButton::ButtonPress()
 	{
 		/*Quit the level*/
-		DEBUG_PRINT(eLog::MESSAGE, "Quiting Level");
-		EngineCore::Get<SceneSystem>()->LoadScene("MainMenu.dscene");
+		//DEBUG_PRINT(eLog::MESSAGE, "Quiting Level");
+		EngineCore::GetInstance()->Quit();
 	}
 	void Dystopia::QuitButton::OnCollisionEnter(const CollisionEvent& )
 	{

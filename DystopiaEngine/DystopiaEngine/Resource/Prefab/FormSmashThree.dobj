@@ -1,10 +1,10 @@
 [START_GO_PREFAB]
 2,[START_START_GO_DATA]
-18446744072352284160,536870977,"FormSmashThree",0,
+18446744072138092032,536870977,"FormSmashThree",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,1026.62,-66.7005,-29.775,0,0,0,1,18446744073709551615,
+1,1,1,439.739,-46.4903,0,0,0,0,1,18446744073709551615,1,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,19 +12,25 @@
 [END_GO_PREFAB]
 [START_Component]
 2,[START_RigidBody]
-18446744072352285184,536870913,18446744072352284160,0,0.5,0.5,0.5,0.5,0.7,0.5,0,100,1,0,1,1,0,
+18446744071881719296,536870913,18446744072138092032,0,0.5,0.5,0.5,0.5,0.7,0.5,1,10,0,0,1,1,0,
 [END_RigidBody]
 
 [END_Component]
 [START_Component]
 4,[START_Convex_Collider]
-18446744072352285696,536870913,18446744072352284160,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,15,35,1,0,0,0,1,1,
+18446744073001595392,536870913,18446744072138092032,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,150,300,1,0,0,0,1,1,
 [END_Convex_Collider]
 
 [END_Component]
 [START_Number of Behaviours]
 2,
 [END_Number of Behaviours]
+[START_Behaviour Names]
+"FormTThree",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+0,
+[END_Behaviour  Meta Count]
 [START_Behaviour Names]
 "DeleteSelf",
 [END_Behaviour Names]
@@ -35,7 +41,7 @@
 "destroyDelay",
 [END_destroyDelay]
 [START_Member Variable]
-0.9,
+0.8,
 [END_Member Variable]
 [START_destroyCount]
 "destroyCount",
@@ -43,12 +49,6 @@
 [START_Member Variable]
 0,
 [END_Member Variable]
-[START_Behaviour Names]
-"FormTThree",
-[END_Behaviour Names]
-[START_Behaviour Meta Count]
-0,
-[END_Behaviour  Meta Count]
 [START_Recursion Counter]
 0,
 [END_Recursion Counter]
