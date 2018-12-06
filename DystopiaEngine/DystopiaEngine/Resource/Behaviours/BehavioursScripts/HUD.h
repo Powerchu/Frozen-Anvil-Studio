@@ -102,14 +102,14 @@ namespace Dystopia
 		float FadeSpeed;
 		
 		void Fade(bool);
+		void ChangeFF(int);
 
-		PP_MEMBERFUNC(Dystopia::HUD, UpdateHealth, UpdateEnergy)
+		PP_MEMBERFUNC(Dystopia::HUD, UpdateHealth, UpdateEnergy, Fade, ChangeFF)
 		
 	private:
 		// Don't touch
 		friend MetaData<HUD>;
 		
-		void ChangeFF(int);
 		void ChangeHealth(float);
 		void ChangeAllAlpha(float,float);
 	};

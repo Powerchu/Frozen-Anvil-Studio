@@ -80,6 +80,9 @@ namespace Dystopia
 		, currentType(true)
 		, isJumping(false)
 		, isFalling(false)
+		, CurrentSpeed(CharacterSpeed)
+		, disableControls{false}
+		, isInvulnerable(false)
 	{
 	}
 
@@ -120,21 +123,23 @@ namespace Dystopia
 		}
 		else
 		{
-			mpInputSys->MapButton("Run Left",  eButton::KEYBOARD_LEFT);
+			mpInputSys->MapButton("Run Left", eButton::KEYBOARD_LEFT);
 			mpInputSys->MapButton("Run Right", eButton::KEYBOARD_RIGHT);
-			mpInputSys->MapButton("Jump",      eButton::KEYBOARD_SPACEBAR);
-			mpInputSys->MapButton("Skill B",   eButton::KEYBOARD_C);
-			mpInputSys->MapButton("Skill Y",   eButton::KEYBOARD_V);
-			mpInputSys->MapButton("Attack",    eButton::KEYBOARD_X); 
+			mpInputSys->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
+			mpInputSys->MapButton("Skill B", eButton::KEYBOARD_C);
+			mpInputSys->MapButton("Skill Y", eButton::KEYBOARD_V);
+			mpInputSys->MapButton("Attack", eButton::KEYBOARD_X); 
+			mpInputSys->MapButton("Cheat One", eButton::KEYBOARD_1);
+			mpInputSys->MapButton("Cheat Two", eButton::KEYBOARD_2);
 		}
 
 		combatName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Combat Box");
 		sManagerName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("SkillManager");
 		spriteName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("Player Sprite");
 		hudName = EngineCore::GetInstance()->Get<SceneSystem>()->FindGameObject_cstr("HUD");
-		playerHealth = 100.0f;
+		//playerHealth = 100.0f;
 		currentHealth = playerHealth;
-		playerEnergy = 100.0f;
+		playerEnergy = 70.0f;
 		currentEnergy = playerEnergy; 
 		SetFlags(FLAG_ACTIVE);
 	}
@@ -163,25 +168,60 @@ namespace Dystopia
 			mpInputSys->MapButton("Run Left", eButton::KEYBOARD_LEFT);
 			mpInputSys->MapButton("Run Right", eButton::KEYBOARD_RIGHT);
 			mpInputSys->MapButton("Jump", eButton::KEYBOARD_SPACEBAR);
-			mpInputSys->MapButton("Skill B", eButton::KEYBOARD_C);
-			mpInputSys->MapButton("Skill Y", eButton::KEYBOARD_V);
+			mpInputSys->MapButton("Skill B", eButton::KEYBOARD_V);
+			mpInputSys->MapButton("Skill Y", eButton::KEYBOARD_C);
 			mpInputSys->MapButton("Attack", eButton::KEYBOARD_X);
+			mpInputSys->MapButton("SetForm", eButton::KEYBOARD_D);
+			mpInputSys->MapButton("SetForce", eButton::KEYBOARD_F);
+			mpInputSys->MapButton("Roll", eButton::KEYBOARD_LCTRL);
+			mpInputSys->MapButton("Cheat One", eButton::KEYBOARD_1);
+			mpInputSys->MapButton("Cheat Two", eButton::KEYBOARD_2);
 		}
+		CurrentSpeed = CharacterSpeed;
+		mpBody = GetOwner()->GetComponent<RigidBody>();
+		playerEnergy = 70.0f;
+		currentEnergy = playerEnergy; 
 	}
 
 	void CharacterController::Update(const float _fDeltaTime)
 	{
+		if (disableControls)
+		{
+			if(auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
+			{
+				if (r->GetCurrentAnimation() != HashString{"Idle"})
+				{
+					r->Stop();
+					r->SetAnimation("Idle");
+					r->SetSpeed(0.066f);
+					r->Play();
+				}
+			}
+			return;
+		}
+		
+		if(auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
+		{
+			if (r->GetCurrentAnimation() == HashString{"CastForce"} || 
+				r->GetCurrentAnimation() == HashString{"CastForm"} )
+				isCasting = true;
+			else 
+				isCasting = false;
+		}
+
+		CurrentSpeed = isAttacking ? CurrentSpeed : CharacterSpeed;
+ 
 		if (_fDeltaTime == 0)
 			return;
 
 		MovePlayer(_fDeltaTime);
-		CheckMoving();
+		//CheckMoving();
 
 		attackDelay = attackDelay + _fDeltaTime;
-		if (attackDelay > 1.5f)
+		if (attackDelay > 1.2f)
 		{
 			attackCount = 0;
-			attackDelay = 0.5f;
+			attackDelay = 0.f;
 		}
 
 		if (isJumping && mpBody->GetLinearVelocity().y < 0)
@@ -190,14 +230,14 @@ namespace Dystopia
 			isJumping = false;
 		}
 
-		if (currentEnergy < playerEnergy)
+		if (currentEnergy < playerEnergy && !isCasting)
 		{
-			currentEnergy = currentEnergy + (_fDeltaTime * 5.f);
+			currentEnergy = currentEnergy + (_fDeltaTime * 15.f);
 			SpendEnergy(0.0f);
 		}
 	}
 
-	void CharacterController::FixedUpdate(const float )
+	void CharacterController::FixedUpdate(const float)
 	{
 	}
 	
@@ -230,12 +270,12 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::CharacterController::OnCollisionStay(const CollisionEvent&)
+	void Dystopia::CharacterController::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent&)
+	void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent& )
 	{
 		
 		
@@ -263,7 +303,7 @@ namespace Dystopia
 	{
 	}
 
-	void CharacterController::Unserialise(TextSerialiser&)
+	void CharacterController::Unserialise(TextSerialiser& )
 	{
 	}
 
@@ -282,6 +322,11 @@ namespace Dystopia
 	/*
 	 * Helper Functions
 	 */
+	void CharacterController::DisableControls(bool _b)
+	{
+		disableControls = _b;
+	}
+	
 	void CharacterController::MovePlayer(float)
 	{
 		if (mpBody == nullptr) return;
@@ -291,39 +336,51 @@ namespace Dystopia
 		{
 			const auto leftThumb = mpInputSys->GetAnalogX(0); 
 			const auto leftTriggerFloat = mpInputSys->GetTriggers(0);
-
-			if (leftThumb < -0.1F) // Moving Left
+			if (!IsDodging && !isCasting)
 			{
-				mpBody->AddLinearImpulse({ leftThumb * CharacterSpeed * mpBody->GetMass(),0,0 });
-				if (mbIsFacingRight)
+				if (leftThumb < -0.1F) // Moving Left
 				{
-					GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
-					mbIsFacingRight = false;
-					CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
-				}
-				else if(auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
-				{
-					if (r->GetCurrentAnimation() == HashString{"Idle"})
+					mpBody->AddLinearImpulse({ 2 * leftThumb * CurrentSpeed * mpBody->GetMass(),0,0 });
+					if (mbIsFacingRight)
 					{
+						GetOwner()->GetComponent<Transform>()->SetScale(-1.f * Math::Abs<float>(tScale.x), tScale.y, tScale.z);
+						mbIsFacingRight = false;
 						CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
 					}
-				}
-			}
-			else if (leftThumb > 0.1F)// Moving Right
-			{
-				DEBUG_PRINT(eLog::MESSAGE,"RIGHT");
-				mpBody->AddLinearImpulse({ leftThumb * CharacterSpeed * mpBody->GetMass(),0,0 });
-				if (!mbIsFacingRight)
-				{
-					GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
-					mbIsFacingRight = true;
-					CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
-				}
-				else if(auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
-				{
-					if (r->GetCurrentAnimation() == HashString{"Idle"})
+					else if(auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
 					{
+						if (r->GetCurrentAnimation() == HashString{"Idle"})
+						{
+							CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
+						}
+					}
+				}
+				else if (leftThumb > 0.1F)// Moving Right
+				{
+					DEBUG_PRINT(eLog::MESSAGE,"RIGHT");
+					mpBody->AddLinearImpulse({ 2 * leftThumb * CurrentSpeed * mpBody->GetMass(),0,0 });
+					if (!mbIsFacingRight)
+					{
+						GetOwner()->GetComponent<Transform>()->SetScale(Math::Abs<float>(tScale.x), tScale.y, tScale.z);
+						mbIsFacingRight = true;
 						CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
+					}
+					else if(auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
+					{
+						if (r->GetCurrentAnimation() == HashString{"Idle"})
+						{
+							CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
+						}
+					}
+				}
+				else
+				{
+					if (auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
+					{
+						if (r->IsPlaying() && r->GetCurrentAnimation() == HashString{"Run"})
+						{
+							CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 0, mbIsFacingRight);
+						}
 					}
 				}
 			}
@@ -331,13 +388,16 @@ namespace Dystopia
 			{
 				if (auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
 				{
-					if (r->IsPlaying() && r->GetCurrentAnimation() == HashString{"Run"})
-					{
-						CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 0, mbIsFacingRight);
+					if (!r->IsPlaying())
+					{				
+						IsDodging = false;
+						mpInputSys->StopVibrate();
 					}
+					else
+						mpInputSys->SetVibrate(static_cast<unsigned short>(Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 32000) 
+										  ,static_cast<unsigned short>(Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 16000));
 				}
 			}
-
 			const auto side = mbIsFacingRight ? 1.F : -1.F;
 
 			if (leftTriggerFloat > 0.2F && mbIsGrounded)
@@ -348,58 +408,122 @@ namespace Dystopia
 					mpBody->AddLinearImpulse({ side * CharacterSpeed * mpBody->GetMass() * 20 * leftTriggerFloat,0,0 });
 					CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 10, mbIsFacingRight);
 				}
-				else
+				// else
+				// {
+				// 	if (Math::Abs(float(mpBody->GetLinearVelocity().x)) > 0.01F)
+				// 	{
+				// 		mpInputSys->SetVibrate(static_cast<unsigned short>(Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 32000) 
+				// 						  ,static_cast<unsigned short>(Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 16000));
+				// 	}
+				// 	else
+				// 	{
+				// 		mpInputSys->StopVibrate();
+				// 	}
+				// }	
+			}
+			// else
+			// {
+			// 	IsDodging = false;
+			// 	mpInputSys->StopVibrate();
+			// }
+		} // Controller Scheme end
+		else
+		{
+			if (!IsDodging && !isCasting)
+			{
+				
+				if (mpInputSys->IsKeyPressed("Run Left"))
+				{		
+					mpBody->AddLinearImpulse({ -2 * CurrentSpeed * mpBody->GetMass(),0,0 });
+					if (mbIsFacingRight)
+					{
+						GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
+						mbIsFacingRight = false;
+						CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
+					}
+					else if(auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
+					{
+						if (r->GetCurrentAnimation() == HashString{"Idle"})
+						{
+							CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
+						}
+					}
+				}
+
+				if (mpInputSys->IsKeyPressed("Run Right"))
 				{
-					if (Math::Abs(float(mpBody->GetLinearVelocity().x)) > 0.01F)
+					DEBUG_PRINT(eLog::MESSAGE, "Running");
+					mpBody->AddLinearImpulse({ 2 * CurrentSpeed * mpBody->GetMass(),0,0 });
+					if (!mbIsFacingRight)
 					{
-						mpInputSys->SetVibrate(static_cast<unsigned short>(Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 32000) 
-										  ,static_cast<unsigned short>(Math::Min(leftTriggerFloat + 0.1F, 1.0F) * 16000));
+						GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
+						mbIsFacingRight = true;
+						CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
 					}
-					else
+					else if(auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
 					{
-						mpInputSys->StopVibrate();
+						if (r->GetCurrentAnimation() == HashString{"Idle"})
+						{
+							CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
+						}
 					}
-				}	
+				}
+
+				if (mpInputSys->IsKeyReleased("Run Right") || mpInputSys->IsKeyReleased("Run Left"))
+				{
+					if (auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
+					{
+						if (r->IsPlaying() && r->GetCurrentAnimation() == HashString{"Run"})
+						{
+							CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 0, mbIsFacingRight);
+						}
+					}
+				}
+
+				if (mpInputSys->IsKeyTriggered("Roll") && mbIsGrounded)
+				{
+					if (!IsDodging)
+					{
+						IsDodging = true;
+						auto roll = CharacterSpeed * mpBody->GetMass() * 50;
+						roll = mbIsFacingRight ? roll : roll * -1.f;
+						mpBody->AddLinearImpulse(Math::Vector3D{roll,0,0 });
+						CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 10, mbIsFacingRight);
+					}	
+				}
 			}
 			else
 			{
-				IsDodging = false;
-				mpInputSys->StopVibrate();
-			}
-		} // Controller Scheme end
-
-		if (mpInputSys->IsKeyPressed(KEYBOARD_LEFT) && !mpInputSys->IsKeyPressed("Run Left"))
-		{			
-			mpBody->AddLinearImpulse({ -1 * CharacterSpeed * mpBody->GetMass(),0,0 });
-			//mpBody->AddTorque({0, 0,1 * CharacterSpeed});
-			if (mbIsFacingRight && Math::Abs(static_cast<float>(mpBody->GetLinearVelocity().x)) > 5.0F)
-			{
-				mbIsFacingRight = false;
-				GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
+				if (auto r = GetOwner()->GetComponent<Transform>()->GetAllChild()[0]->GetOwner()->GetComponent<SpriteRenderer>())
+					if (!r->IsPlaying() || r->GetCurrentAnimation() == HashString{"Idle"})
+						IsDodging = false;
 			}
 		}
 
-		if (mpInputSys->IsKeyPressed("Run Left") && !mpInputSys->IsKeyPressed("Run Left"))
-		{
-			mpBody->AddLinearImpulse({CharacterSpeed * mpBody->GetMass(),0,0 });
-			//mpBody->AddTorque({0, 0,-1 * CharacterSpeed}); 
-			if (!mbIsFacingRight && Math::Abs(static_cast<float>(mpBody->GetLinearVelocity().x)) > 5.0F)
-			{
-				mbIsFacingRight = true;
-				GetOwner()->GetComponent<Transform>()->SetScale(-tScale.x, tScale.y, tScale.z);
-			}
-		}
-
-		if (mpInputSys->IsKeyPressed("Jump"))
+		if (mpInputSys->IsKeyTriggered("Jump"))
 		{
 			if (mbIsGrounded)
 			{
-				mpBody->AddLinearImpulse({ 0,JumpForce * mpBody->GetMass() * 10 + mpBody->GetLinearVelocity().y, 0 });
+				mpBody->AddLinearImpulse(Math::Vector3D{ 0,JumpForce * mpBody->GetMass() * 10 + mpBody->GetLinearVelocity().y, 0 });
 				mbIsGrounded = false;
 
 				CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 7, mbIsFacingRight);
 				isJumping = true;
 			}
+		}
+
+		if (mpInputSys->IsKeyTriggered("Cheat One"))
+		{
+			if (!isInvulnerable)
+				isInvulnerable = true;
+			
+			else
+				isInvulnerable = false;
+		}
+		
+		if (mpInputSys->IsKeyTriggered("Cheat Two"))
+		{
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->LoadScene("Town.dscene");
 		}
 
 		if (mpInputSys->IsKeyTriggered("Skill Y"))
@@ -432,19 +556,11 @@ namespace Dystopia
 		{
 			const Math::Vec3D spawnLocation = GetOwner()->GetComponent<Transform>()->GetPosition();
 
-		    if (attackDelay > 0.f)
+		    if (attackDelay >= 0.35f)
 			{
 				if (combatName)
 				{
-					if (!mbIsFacingRight)
-					{
-						CharacterController_MSG::SendExternalMessage(combatName, "DealDamage", 10, mbIsFacingRight);
-					}
-
-					else
-					{
-						CharacterController_MSG::SendExternalMessage(combatName, "DealDamage", 10, mbIsFacingRight);
-					}
+					CharacterController_MSG::SendExternalMessage(combatName, "DealDamage", 10, mbIsFacingRight);
 				}
 				else
 					DEBUG_PRINT(eLog::MESSAGE, "Combat Box not found");
@@ -452,9 +568,9 @@ namespace Dystopia
 
 				if (attackCount < 3)
 				{
+					CurrentSpeed = CharacterSpeed * 0.25f;
 					attackCount++;
 				}
-
 				else
 				{
 					attackCount = 0;
@@ -474,16 +590,17 @@ namespace Dystopia
 
 	void Dystopia::CharacterController::CastLinked(int _skill, bool _isForm, float x, float y, float z)
 	{
-		if (currentEnergy < 10.0f)
+		if (currentEnergy < 20.0f)
 			return;
 
 
+		isCasting = true;
 		DEBUG_PRINT(eLog::MESSAGE, "WTF %d", _isForm);
 
 		if (_isForm)
 		{
 			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 6, mbIsFacingRight);
-
+ 
 			if (_skill == 0)
 			{
 				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForm", 0, mbIsFacingRight, x, y, z);
@@ -510,7 +627,7 @@ namespace Dystopia
 				CharacterController_MSG::SendExternalMessage(sManagerName, "CastForce", 2, mbIsFacingRight, x, y, z);
 		}
 
-		SpendEnergy(10.0f);
+		SpendEnergy(20.0f);
 	}
 
 	void CharacterController::CheckAttack()
@@ -556,23 +673,39 @@ namespace Dystopia
 	void CharacterController::AnimationComplete()
 	{
 		if (isAttacking)
+		{
+			CurrentSpeed = CharacterSpeed;
 			isAttacking = false;
+		}
 
-		if (isCasting)
-			isCasting = false;
+		// if (isCasting)
+		// 	isCasting = false;
 	}
 
 	void CharacterController::CheckMoving()
 	{
-		if (mpInputSys->IsKeyTriggered(eButton::XBUTTON_DPAD_LEFT) || mpInputSys->IsKeyTriggered(eButton::XBUTTON_DPAD_RIGHT))
+		if (mpInputSys->IsKeyTriggered("Run Left") || mpInputSys->IsKeyTriggered("Run Right"))
 			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 4, mbIsFacingRight);
 
-		if (mpInputSys->IsKeyReleased(eButton::XBUTTON_DPAD_LEFT) || mpInputSys->IsKeyReleased(eButton::XBUTTON_DPAD_RIGHT))
+		if (mpInputSys->IsKeyReleased("Run Left") || mpInputSys->IsKeyReleased("Run Right"))
 			CharacterController_MSG::SendExternalMessage(spriteName, "PlayAnimation", 0, mbIsFacingRight); 
 	}
 
+	void CharacterController::FadeHUD(bool _b)
+	{
+		if(_b && currentHealth > 0.f)
+		{
+			CharacterController_MSG::SendExternalMessage(hudName, "Fade", true);
+		}
+		else
+			CharacterController_MSG::SendExternalMessage(hudName, "Fade", false);
+	}
+	
 	void CharacterController::TakeDamage(float _dmg)
 	{
+		if (isInvulnerable)
+			return;
+		
 		currentHealth = currentHealth - _dmg; 
 
 		if (currentHealth > 0.0f)
@@ -582,7 +715,11 @@ namespace Dystopia
 
 		else
 		{
-			EngineCore::Get<SceneSystem>()->RestartScene();
+			//EngineCore::Get<SceneSystem>()->RestartScene();
+			if (auto o = EngineCore::Get<SceneSystem>()->FindGameObject_cstr("GameOver"))
+				CharacterController_MSG::SendExternalMessage(o, "ActivateGameOver");
+			if (auto o = EngineCore::Get<SceneSystem>()->FindGameObject_cstr("HUD"))
+				CharacterController_MSG::SendExternalMessage(o, "Fade", false);
 		}
 	}
 

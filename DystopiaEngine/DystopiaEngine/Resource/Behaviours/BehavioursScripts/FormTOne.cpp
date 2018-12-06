@@ -132,12 +132,12 @@ namespace Dystopia
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "KNOCK!");
 				FormTOne_MSG::SendExternalMessage(_obj, "TakeDamage", 10);
-				FormTOne_MSG::SendExternalMessage(_obj, "Knock", 150, firingDirection);
+				FormTOne_MSG::SendExternalMessage(_obj, "Knock", 1200, firingDirection);
 			}
 
 			else if (!strcmp(name, "FormSlamTwo"))
 			{
-				FormTOne_MSG::SendExternalMessage(_obj, "Knock", 100, 0);
+				FormTOne_MSG::SendExternalMessage(_obj, "Knock", 1500, 0);
 			}
 		}
 	}

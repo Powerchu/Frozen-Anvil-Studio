@@ -20,6 +20,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Reflection/Reflection.h"
 #include "Reflection/ReflectionTypeErasure.h"
 #include "Behaviour/BehaviourMemberFunc.h"
+#include "Component/TextRenderer.h"
+#include "System/Sound/SoundSystem.h"
+#include "System/Graphics/GraphicsSystem.h"	// File header
+#include "System/Window/WindowManager.h"	// File Header
+#include "System/Window/Window.h"
 
 #define DllExport   __declspec( dllexport )
 
@@ -92,21 +97,53 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
 		void UpdateSelection();
+		void UpdatePanel(float _dt);
 
 	private:
 		// Don't touch
 		friend MetaData<MenuManager>;
 
 		InputManager * mpInputSys;
+		TextRenderer * PlayButton   = nullptr;
+		TextRenderer * SettingsBtn  = nullptr;
+		TextRenderer * ControlsBtn  = nullptr;
+		TextRenderer * CreditsBtn  = nullptr;
+		TextRenderer * QuitBtn  = nullptr;
+
+		TextRenderer * fullBtn   = nullptr;
+		TextRenderer * vsyncBtn  = nullptr;
+		TextRenderer * bgmBtn  = nullptr;
+		TextRenderer * sfxBtn  = nullptr;
+		TextRenderer * gammaBtn  = nullptr;
+
+		bool isFullScreen = true;
+		bool isVsync = true;
+		bool hasBgm = true;
+		bool hasSfx = true;
 
 	public:
-		GameObject * theIndicator;
-		GameObject * controllerMenu;
-		GameObject * settingMenu;
-		GameObject * creditMenu;
+		GameObject * theIndicator  = nullptr;
+		GameObject * controllerMenu  = nullptr;
+		GameObject * settingMenu  = nullptr;
+		GameObject * creditMenu  = nullptr;
+		GameObject * splashMenu  = nullptr;
+		GameObject * mainMenu = nullptr;
+
+		GameObject * fullTick = nullptr;
+		GameObject * vsyncTick = nullptr;
+		GameObject * bgmTick = nullptr;
+		GameObject * sfxTick = nullptr;
+
 		float yOffset;
 		int currentPos;
 		bool isSelected;
+		float animateSpeed = 3;
+		bool isAnimating = false;
+
+		// -1 = Splash, 0 = Main, 1 = Settings, 2 = How To Play, 3 = Credits, 4 = Quit
+		int currentMenu = -1; 
+		int prevMenu = -1;
+		int nextMenu = -1;
 	};
 
 	extern "C"
@@ -124,7 +161,7 @@ namespace Dystopia
   Uncomment the line PP_REFLECT and add in the names of the variable you want to show
   Comment out PP_REFLECT_EMPTY.
 */
-PP_REFLECT(Dystopia::MenuManager, yOffset, currentPos, isSelected);
+PP_REFLECT(Dystopia::MenuManager, yOffset, currentPos, isSelected, animateSpeed);
 
 #endif //_MenuManager_H_
 

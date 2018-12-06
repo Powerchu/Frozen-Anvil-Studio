@@ -67,11 +67,13 @@ namespace Dystopia
 	FormTTwo::FormTTwo()
 		: rBody(nullptr)
 		, firingDirection(0)
+		, ArrDealt{}
 	{
 	}
 
 	FormTTwo::~FormTTwo()
 	{
+		ArrDealt.clear();
 	}
 
 	void FormTTwo::Load()
@@ -90,6 +92,7 @@ namespace Dystopia
 		SetFlags(FLAG_ACTIVE);
 		if(GetOwner())
 			rBody = GetOwner()->GetComponent<RigidBody>();
+		ArrDealt.clear();
 	}
 
 	void FormTTwo::Update(const float )
@@ -120,9 +123,15 @@ namespace Dystopia
 
 			if (!strcmp(name, "Goblin"))
 			{
+				for (auto o : ArrDealt)
+				{
+					if (o == _colEvent.mCollidedWith)
+						return;
+				}
 				DEBUG_PRINT(eLog::MESSAGE, "Knock Enemy!!!");
 				FormTTwo_MSG::SendExternalMessage(_colEvent.mCollidedWith, "TakeDamage", 10);
-				FormTTwo_MSG::SendExternalMessage(_colEvent.mCollidedWith, "Knock", 150, firingDirection);
+				FormTTwo_MSG::SendExternalMessage(_colEvent.mCollidedWith, "Knock", 250, firingDirection);
+				ArrDealt.push_back(_colEvent.mCollidedWith);
 			}
 		}
 	}
@@ -202,13 +211,13 @@ namespace Dystopia
 		//stone is flinging towards the right
 		if (_direction == 2)
 		{
-			rBody->AddLinearImpulse({200 * theMass, -150 * theMass, 0});
+			rBody->AddLinearImpulse({1600 * theMass, -1500 * theMass, 0});
 			firingDirection = _direction;
 		}
 
 		if (_direction == 1)
 		{
-			rBody->AddLinearImpulse({-200 * theMass, -150 * theMass, 0});
+			rBody->AddLinearImpulse({-1600 * theMass, -1500 * theMass, 0});
 			firingDirection = _direction;
 		}
 		DEBUG_PRINT(eLog::MESSAGE, "MyOwner Position after AddLinearImpluse %f", static_cast<float>(GetOwner()->GetComponent<Transform>()->GetGlobalPosition().x));

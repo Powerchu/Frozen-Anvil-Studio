@@ -846,28 +846,44 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 						_obj >> _Flags;
 						auto * ptr = RequestBehaviour(_ID, elem.mName);
 						_obj.ConsumeStartBlock(); /*Consume Behaviour Member Variable Block*/
-						auto BehaviourMetaData = ptr->GetMetaData();
-						if (BehaviourMetaData)
+						if (!ptr)
 						{
-
 							std::string Var;
 							_obj >> Var;
 							while (Var != "END")
 							{
-								if (BehaviourMetaData[Var.c_str()])
-								{
-									_obj.ConsumeStartBlock();
-									/*Call Unserialise*/
-									BehaviourMetaData[Var.c_str()].Unserialise(ptr, _obj, BehaviourHelper::SuperUnserialiseFunctor{});
-									_obj.ConsumeStartBlock();
-								}
-								else
-								{
-									_obj.ConsumeStartBlock();
-									/*Call Unserialise*/
-									_obj.ConsumeStartBlock();
-								}
+								_obj.ConsumeStartBlock();
+								/*Call Unserialise*/
+								_obj.ConsumeStartBlock();
 								_obj >> Var;
+							}
+
+						}
+						else
+						{
+							auto BehaviourMetaData = ptr->GetMetaData();
+							if (BehaviourMetaData)
+							{
+
+								std::string Var;
+								_obj >> Var;
+								while (Var != "END")
+								{
+									if (BehaviourMetaData[Var.c_str()])
+									{
+										_obj.ConsumeStartBlock();
+										/*Call Unserialise*/
+										BehaviourMetaData[Var.c_str()].Unserialise(ptr, _obj, BehaviourHelper::SuperUnserialiseFunctor{});
+										_obj.ConsumeStartBlock();
+									}
+									else
+									{
+										_obj.ConsumeStartBlock();
+										/*Call Unserialise*/
+										_obj.ConsumeStartBlock();
+									}
+									_obj >> Var;
+								}
 							}
 						}
 						_obj.ConsumeEndBlock();   /*Consume Behaviour Member Variable Block*/

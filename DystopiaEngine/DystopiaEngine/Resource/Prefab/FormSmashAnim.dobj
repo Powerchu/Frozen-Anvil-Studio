@@ -1,10 +1,10 @@
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-786019840,536870977,"FormSmashAnim",0,
+211482624,536870977,"FormSmashAnim",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-75,75,1,1247.34,-64.4133,-49.9,0,0,0,1,18446744073709551615,
+900,600,1,192.989,417.386,0,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,10 +12,10 @@
 [END_GO_PREFAB]
 [START_Component]
 7,[START_Renderer]
-786020864,536870913,786019840,"/Asset/Spritesheet/Final Skill Sheet.dds",
+1549466624,536870913,211482624,"/Asset/Spritesheet/Final Skill Sheet.dds",
 [END_Renderer]
 [START_Sprite Renderer]
-0.05,1,2,"Smash",8,4,0,7,29,0,1,1,1,1,1,
+0.046,1,2,"Rename this",8,4,0,7,29,0,1,1,1,1,1,
 [END_Sprite Renderer]
 
 [END_Component]
@@ -32,7 +32,7 @@
 "destroyDelay",
 [END_destroyDelay]
 [START_Member Variable]
-0.9,
+1.05,
 [END_Member Variable]
 [START_destroyCount]
 "destroyCount",

@@ -42,6 +42,7 @@ Dystopia::TextureSystem::~TextureSystem(void) noexcept
 
 void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 {
+#if EDITOR
 	auto pFileSys = EngineCore::Get<FileSystem>();
 	std::string buf;
 
@@ -65,10 +66,12 @@ void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 		if (auto err = glGetError())
 			__debugbreak();
 #	endif 
+#endif
 }
 
 void Dystopia::TextureSystem::Shutdown(void) noexcept
 {
+#if EDITOR
 	for (auto& a : mAtlas)
 	{
 		auto fp = EngineCore::Get<FileSystem>()->FindFilePath(a.GetName().c_str(), eFileDir::eCurrent);
@@ -80,6 +83,7 @@ void Dystopia::TextureSystem::Shutdown(void) noexcept
 	}
 
 	mTextures.clear();
+#endif
 }
 
 Dystopia::TextureAtlas* Dystopia::TextureSystem::GenAtlas(Texture* _pTex)

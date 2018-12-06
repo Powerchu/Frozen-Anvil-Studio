@@ -95,11 +95,16 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+		void Show(void);
+		
 		bool mPauseState;
 		int selection;
-		GameObject * mButtons[4];
+		bool mOff = false;
+		GameObject * mButtons[3];
 		GameObject * mSelector = nullptr; 
-		Math::Vector4 mArrScale[4];
+		Math::Vector4 mArrScale[3];
+		
+		PP_MEMBERFUNC(Dystopia::PauseManager, Show)
 		
 	private:
 		// Don't touch

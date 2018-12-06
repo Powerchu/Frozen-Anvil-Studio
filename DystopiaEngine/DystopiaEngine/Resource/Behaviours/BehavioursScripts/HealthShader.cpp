@@ -119,6 +119,8 @@ namespace Dystopia
 			p = GetOwner()->GetComponent<SpriteRenderer>();
 			p->SetShader(myShader); 
 		}
+		
+		TargetLerp = 1.f;
 	}
 
 	void HealthShader::Update(const float _fDeltaTime)
@@ -131,7 +133,8 @@ namespace Dystopia
 		if (myShader)
 		{
 			myShader->Bind();
-			myShader->UploadUniform("fHealth", hp);
+			myShader->UploadUniform("fHealth", TargetLerp);
+			myShader->UploadUniform("fRed", hp);
 			myShader->UploadUniform("fWave", Fun);
 			myShader->Unbind();
 		}
@@ -222,7 +225,7 @@ namespace Dystopia
 		float ratio = (CurrentHP / MaxHP);
 		if (Math::ApproxEq(ratio, TargetLerp))
 		{
-			TargetLerp = -1.f;
+			TargetLerp = ratio;
 			return ratio;
 		}
 		

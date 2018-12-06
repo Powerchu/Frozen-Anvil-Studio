@@ -1,0 +1,78 @@
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1420123648,536870945,"GameOver",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+10000,100000,1,-2911.97,133.284,50.59,0,0,0,1,18446744073709551615,0.01,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+1820156416,536870913,1420123648,"/Asset/sky.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,0,0,0,0,0.01,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"GameOver",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+0,
+[END_Behaviour  Meta Count]
+[START_Recursion Counter]
+2,
+[END_Recursion Counter]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+246823424,536870945,"GameOverText",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+189,189,1,-2917.31,75.3556,65.59,0,0,0,1,1420123648,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+8,18446744073708913152,536870913,246823424,"Times New Roman.ttf","Game Over",1,1,1,1,1,0,0,0,1,1,1,1,0.5,0.1,0.1,1,0.7,0.2,0.2,1,0.5,0.5,0.5,1,0.01,
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+2,[START_START_GO_DATA]
+18446744072524932608,536870945,"GameObjectPressA",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+89,89,1,-3300,-266.659,65.59,0,0,0,1,1420123648,1,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744073473894912,536870913,18446744072524932608,"/Asset/Xbox UI Button/XboxOne_A.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,0.01,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Component]
+8,1861496832,536870913,18446744072524932608,"Times New Roman.ttf","  to continue...",1,1,1,1,0,1,0,0,1,1,1,1,0.5,0.1,0.1,1,0.7,0.2,0.2,1,0.5,0.5,0.5,1,0.01,
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]

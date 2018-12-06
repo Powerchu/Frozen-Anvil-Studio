@@ -1,10 +1,10 @@
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-18446744072941564928,536870977,"ForceBarrageAnim",0,
+642696192,536870977,"ForceBarrageAnim",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-80,50,1,672.767,-36.0803,-29.875,0,0,0,1,18446744073709551615,
+1208.09,678.405,1,0,-704.796,0,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,10 +12,10 @@
 [END_GO_PREFAB]
 [START_Component]
 7,[START_Renderer]
-18446744072941565952,536870913,18446744072941564928,"/Asset/Spritesheet/Final Skill Sheet.dds",
+18446744073676441600,536870913,642696192,"/Asset/Spritesheet/Final Skill Sheet.dds",
 [END_Renderer]
 [START_Sprite Renderer]
-0.025,1,1,"Barrage",8,6,0,0,44,0,1,1,1,1,1,
+0.03,1,1,"Rename this",8,6,1,0,38,0,1,1,1,1,1,
 [END_Sprite Renderer]
 
 [END_Component]
@@ -32,7 +32,7 @@
 "destroyDelay",
 [END_destroyDelay]
 [START_Member Variable]
-1.15,
+1,
 [END_Member Variable]
 [START_destroyCount]
 "destroyCount",

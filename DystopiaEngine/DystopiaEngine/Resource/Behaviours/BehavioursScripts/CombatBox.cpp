@@ -135,8 +135,13 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::CombatBox::OnTriggerStay(GameObject * const )
+	void Dystopia::CombatBox::OnTriggerStay(GameObject * const _obj)
 	{
+		if (!name && _obj && _obj->GetName() == HashString{"Goblin"})
+		{
+			targetViable = true;
+			name = _obj->GetNamePtr();
+		}
 	}
 
 	void Dystopia::CombatBox::OnTriggerExit(GameObject * const _obj)
@@ -185,7 +190,6 @@ namespace Dystopia
 				DEBUG_PRINT(eLog::MESSAGE, "Doing Damange to Goblin");	
 				CombatBox_MSG::SendExternalMessage(target, "TakeDamage", _damage);
 			}
-
 		}
 	}
 

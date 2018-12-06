@@ -268,6 +268,7 @@ void Dystopia::EngineCore::ExecuteGame()
 
 void Dystopia::EngineCore::Shutdown(void)
 {
+#if EDITOR
 	//GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
 	auto s = Serialiser::OpenFile<DysSerialiser_t>(
 		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR)  +
@@ -277,12 +278,14 @@ void Dystopia::EngineCore::Shutdown(void)
 
 	s << "SENTRY";
 	s.InsertStartBlock("SETTINGS");
-
+#endif
 	for (auto& e : mSystemList)
 	{
+#if EDITOR
 		s.InsertStartBlock("SYSTEM");
 		e->SaveSettings(s);
 		s.InsertEndBlock("SYSTEM");
+#endif
 		e->Shutdown();
 	}
 
@@ -335,7 +338,7 @@ void Dystopia::EngineCore::ParseMessage(const eSysMessage& msg, size_t _vk)
 int WinMain(HINSTANCE, HINSTANCE, char *, int)
 {
 //#if defined(DEBUG) | defined(_DEBUG)
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 //#endif
 
 	Dystopia::EngineCore::GetInstance()->ExecuteGame();

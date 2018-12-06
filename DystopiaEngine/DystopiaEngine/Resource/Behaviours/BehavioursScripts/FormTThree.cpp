@@ -135,7 +135,7 @@ namespace Dystopia
 			{
 				DEBUG_PRINT(eLog::MESSAGE, "KNOCK!");
 				FormTThree_MSG::SendExternalMessage(_obj, "TakeDamage", 10);
-				FormTThree_MSG::SendExternalMessage(_obj, "Knock", 150, firingDirection);
+				FormTThree_MSG::SendExternalMessage(_obj, "Knock", 500, firingDirection);
 			}
 		}
 	}
@@ -193,10 +193,10 @@ namespace Dystopia
 		auto theMass = rBody->GetMass();
 
 		if(firingDirection == 2)
-			rBody->AddLinearImpulse({30 * theMass, 0, 0}); 
+			rBody->AddLinearImpulse({700 * theMass, 0, 0}); 
 
 		else
-			rBody->AddLinearImpulse({-30 * theMass, 0, 0});
+			rBody->AddLinearImpulse({-700 * theMass, 0, 0});
 	}
 }
 
