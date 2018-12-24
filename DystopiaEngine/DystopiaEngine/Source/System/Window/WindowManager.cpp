@@ -112,7 +112,7 @@ namespace
 }
 
 Dystopia::WindowManager::WindowManager(void) : 
-	mbFullscreen{ Gbl::FULLSCREEN }, mHInstance { GetModuleHandle(nullptr) },
+	mbFullscreen{ !EDITOR ? Gbl::FULLSCREEN : false }, mHInstance { GetModuleHandle(nullptr) },
 	mWindows{ 1 }
 {
 
