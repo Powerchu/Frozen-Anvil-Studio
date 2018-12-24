@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
+    <ClInclude Include="Include\DataStructure\Delegate.h" />
     <ClInclude Include="Include\Editor\BehaviourTreeEditor.h" />
     <ClInclude Include="Include\Editor\EditorFactory.h" />
     <ClInclude Include="Include\Editor\EditorLauncher.h" />

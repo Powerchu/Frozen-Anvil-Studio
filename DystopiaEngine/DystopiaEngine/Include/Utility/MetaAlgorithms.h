@@ -181,6 +181,32 @@ namespace Ut
 	{
 		static constexpr T value = _val;
 	};
+
+
+	// ============================================= MEMBER FINDER ============================================ //
+
+
+	namespace Helper
+	{
+		template <typename T, typename, typename, typename ... R>
+		struct MemberFinderReal : public MemberFinderReal <T, Ut::MetaExtract_t<0, R...>, R...>
+		{};
+
+		template <typename T, typename _1, typename _2>
+		struct MemberFinderReal<T, _1, _2>;
+
+		template <typename T, typename Ty, typename ... R>
+		struct MemberFinderReal<T, Ut::Type_t<decltype(static_cast<Ty>(&T::operator()))>, Ty, R...>
+		{
+			using type = Ty;
+		};
+	}
+
+	template <typename T, typename F, typename ... R>
+	struct MemberFinder : public Helper::MemberFinderReal<T, F, F, R...>
+	{
+
+	};
 }
 
 

@@ -40,6 +40,22 @@ namespace Ut
 		return static_cast<T&&>(_obj);
 	}
 
+	template <typename T>
+	constexpr T&&(*Fwd)(RemoveRef_t<T>&) = &Forward<T>;
+
+	template <typename To, typename Fr>
+	inline To pun_cast(const Fr& _obj)
+	{
+		union temp
+		{
+			To result;
+			Fr input;
+		};
+
+		temp t;
+		t.input = Ut::Move(_obj);
+		return t.result;
+	}
 
 	// Increments the value by 1 and
 	// wraps the value back to 0 when it reaches Limit

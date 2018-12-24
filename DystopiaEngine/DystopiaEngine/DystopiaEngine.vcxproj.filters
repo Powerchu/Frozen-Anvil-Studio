@@ -777,9 +777,6 @@
     <ClInclude Include="Include\Reflection\ReadWriteObject.h">
       <Filter>Reflection\TypeErasure</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DataStructure\Function.h">
-      <Filter>DataStructures</Filter>
-    </ClInclude>
     <ClInclude Include="Include\DataStructure\Map.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
@@ -992,6 +989,12 @@
     </ClInclude>
     <ClInclude Include="Include\PP\PPVaToSeq.h">
       <Filter>Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Function.h">
+      <Filter>DataStructures\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Delegate.h">
+      <Filter>DataStructures\Functions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1426,6 +1429,9 @@
     </Filter>
     <Filter Include="Preprocessor">
       <UniqueIdentifier>{af73041d-894d-4be1-9ac1-a597e6a69bf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataStructures\Functions">
+      <UniqueIdentifier>{c1022da9-8d12-4aa9-973f-a4fcb8191288}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
