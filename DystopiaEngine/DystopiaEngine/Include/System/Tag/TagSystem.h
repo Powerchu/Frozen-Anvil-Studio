@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Tags.h"
 #include "DataStructure/HashString.h"
 #include "DataStructure/AutoArray.h"
-#include "Reflection/PPUtils.h"
+#include "PP/PPUtils.h"
 
 /*STL*/
 #include <map>

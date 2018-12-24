@@ -102,8 +102,8 @@ namespace Dystopia
 		uint64_t GetParentID(void) const;
 		void SetParentID(uint64_t);
 
-		void SetOpacity(float _perc);
-		float GetOpacity() const;
+		//void SetOpacity(float _perc);
+		//float GetOpacity() const;
 
 	private:
 
@@ -119,7 +119,7 @@ namespace Dystopia
 		Math::Point3D mPosition;
 		Math::Quaternion mRotation;
 
-		float mfOpacity = 1.f;
+		//float mfOpacity = 1.f;
 
 		void OnChildAdd(Transform*);
 		void OnChildRemove(Transform*);

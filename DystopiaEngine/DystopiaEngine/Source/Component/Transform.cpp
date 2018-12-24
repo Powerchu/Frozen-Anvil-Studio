@@ -43,7 +43,7 @@ Dystopia::Transform::Transform(GameObject* _pOwner) noexcept
 Dystopia::Transform::Transform(const Transform& _oOther) :
 	mRotation{ _oOther.mRotation }, mScale{ _oOther.mScale }, mPosition{ _oOther.mPosition },
 	mMatrix{}, mbChanged{ true }, mpParent{ nullptr }, mnParentID{ _oOther.mnParentID }, Component{ _oOther }
-	,mfOpacity(_oOther.mfOpacity)
+	//,mfOpacity(_oOther.mfOpacity)
 {
 
 }
@@ -60,7 +60,7 @@ void Dystopia::Transform::Awake(void)
 
 void Dystopia::Transform::Init(void)
 {
-	if (!mfOpacity) SetOpacity(1.f);
+	//if (!mfOpacity) SetOpacity(1.f);
 }
 
 void Dystopia::Transform::SetParent(Transform* _pParent)
@@ -315,7 +315,7 @@ void Dystopia::Transform::Serialise(TextSerialiser& _out) const
 	_out << static_cast<float>(r[2]);
 	_out << static_cast<float>(r[3]);
 	_out << mnParentID;
-	_out << mfOpacity;
+	//_out << mfOpacity;
 	_out.InsertEndBlock("Transform");
 }
 
@@ -333,7 +333,7 @@ void Dystopia::Transform::Unserialise(TextSerialiser& _in)
 	_in >> mRotation[2];
 	_in >> mRotation[3];
 	_in >> mnParentID;
-	_in >> mfOpacity;
+	//_in >> mfOpacity;
 
 	mPosition.w = 1.f;
 	_in.ConsumeEndBlock();
@@ -345,7 +345,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 
 	auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 
-	EGUI::PushLeftAlign(80);
+	/*EGUI::PushLeftAlign(80);
 
 	switch (EGUI::Display::SliderFloat("Opacity", &mfOpacity,0.01f))
 	{
@@ -362,7 +362,7 @@ void Dystopia::Transform::EditorUI(void) noexcept
 		break;
 	default: ;
 	};
-	EGUI::PopLeftAlign();
+	EGUI::PopLeftAlign();*/
 
 	EGUI::PushID(0);
 	EGUI::PushLeftAlign(20);
@@ -469,41 +469,41 @@ void Dystopia::Transform::SetParentID(uint64_t _id)
 	mnParentID = _id;
 }
 
-void Dystopia::Transform::SetOpacity(float _perc)
-{
-	if (_perc <= 0.01f) _perc = 0.01f;
-	else if (_perc > 1.0f) _perc = 1.0f;
-
-	mfOpacity = _perc;
-
-	if (const auto spriteRend = GetOwner()->GetComponent<SpriteRenderer>())
-	{
-		spriteRend->SetAlphaPerc(mfOpacity);
-	}
-
-	if (const auto textRend = GetOwner()->GetComponent<TextRenderer>())
-	{
-		textRend->SetAlphaPerc(mfOpacity);
-	}
-
-	for (const auto childT : mChildren)
-	{
-		if (const auto spriteRend = childT->GetOwner()->GetComponent<SpriteRenderer>())
-		{
-			spriteRend->SetAlphaPerc(mfOpacity);
-		}
-
-		if (const auto textRend = childT->GetOwner()->GetComponent<TextRenderer>())
-		{
-			textRend->SetAlphaPerc(mfOpacity);
-		}
-	}
-}
-
-float Dystopia::Transform::GetOpacity() const
-{
-	return mfOpacity;
-}
+//void Dystopia::Transform::SetOpacity(float _perc)
+//{
+//	if (_perc <= 0.01f) _perc = 0.01f;
+//	else if (_perc > 1.0f) _perc = 1.0f;
+//
+//	mfOpacity = _perc;
+//
+//	if (const auto spriteRend = GetOwner()->GetComponent<SpriteRenderer>())
+//	{
+//		spriteRend->SetAlphaPerc(mfOpacity);
+//	}
+//
+//	if (const auto textRend = GetOwner()->GetComponent<TextRenderer>())
+//	{
+//		textRend->SetAlphaPerc(mfOpacity);
+//	}
+//
+//	for (const auto childT : mChildren)
+//	{
+//		if (const auto spriteRend = childT->GetOwner()->GetComponent<SpriteRenderer>())
+//		{
+//			spriteRend->SetAlphaPerc(mfOpacity);
+//		}
+//
+//		if (const auto textRend = childT->GetOwner()->GetComponent<TextRenderer>())
+//		{
+//			textRend->SetAlphaPerc(mfOpacity);
+//		}
+//	}
+//}
+//
+//float Dystopia::Transform::GetOpacity() const
+//{
+//	return mfOpacity;
+//}
 
 bool Dystopia::Transform::IsDescendant(Transform* _toBeParent)
 {
