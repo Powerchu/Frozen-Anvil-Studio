@@ -16,10 +16,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _BEHVAIOUR_MEMBER_FUNC_H
 
 #include "System/Behaviour/BehaviourMessage.h"
-#include "Reflection/MetaData.h"
-#include "Reflection/PPForEach.h"
-#include "Reflection/PPStringify.h"
-#include "Reflection/PPToSequence.h"
+#include "PP/MetaData.h"
+#include "PP/PPForEach.h"
+#include "PP/PPStringify.h"
+#include "PP/PPToSequence.h"
 
 namespace Dystopia
 {
