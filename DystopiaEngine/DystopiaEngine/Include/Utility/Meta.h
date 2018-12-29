@@ -150,6 +150,12 @@ namespace Ut
 		using type = typename Decay<RemoveRef_t<T>>::type;
 	};
 
+	template <typename T>
+	struct Decay<T&&>
+	{
+		using type = typename Decay<RemoveRef_t<T>>::type;
+	};
+
 	template <typename T, typename ... Ty>
 	struct Decay<T(Ty...)>
 	{
@@ -419,21 +425,48 @@ namespace Ut
 #pragma warning(push)
 #pragma warning(disable : 4244)
 	template <typename Ty, typename U>
-	constexpr bool TryCast(U&&) { return decltype(TryCaster<Ty>{}(Ut::declval<U>()))::value; }
+	inline constexpr bool TryCast(U&&) { return decltype(TryCaster<Ty>{}(Ut::declval<U>()))::value; }
 #pragma warning(pop)
+
+
+	// HasVTable	   
+	// ============== ======================================================
+
+	template <typename T>
+	struct HasVTable
+	{
+	private:
+		struct Base : Ut::RemoveRef_t<T> { virtual void dummy() {}; };
+
+	public:
+		static constexpr bool value = sizeof(Base) == sizeof(Ut::RemoveRef_t<T>);
+	};
 
 
 	// IsEmptyClass	   
 	// ============== ======================================================
 
+	// TODO: Multiple and virtual inheritance
 	template <typename T>
 	struct IsEmptyClass
 	{
 	private:
-		struct Base : T { char dummy[1]; };
+		struct Base : T { char dummy; };
+
+		constexpr static bool eval(void)
+		{
+			if constexpr (HasVTable<T>::value)
+			{
+				return sizeof(T) == sizeof(void*);
+			}
+			else
+			{
+				return sizeof(Base) == sizeof(T);
+			}
+		}
 
 	public:
-		constexpr static bool value = sizeof(Base) == sizeof(T);
+		constexpr static bool value = eval();
 	};
 }
 

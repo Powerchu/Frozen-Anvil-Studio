@@ -996,6 +996,9 @@
     <ClInclude Include="Include\DataStructure\Delegate.h">
       <Filter>DataStructures\Functions</Filter>
     </ClInclude>
+    <ClInclude Include="Include\PP\PPIsExpandable.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

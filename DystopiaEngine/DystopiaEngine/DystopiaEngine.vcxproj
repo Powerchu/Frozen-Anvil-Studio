@@ -172,6 +172,7 @@
     <ClInclude Include="Include\PP\PPForEach.h" />
     <ClInclude Include="Include\PP\PPIf.h" />
     <ClInclude Include="Include\PP\PPIsEmpty.h" />
+    <ClInclude Include="Include\PP\PPIsExpandable.h" />
     <ClInclude Include="Include\PP\PPPopFront.h" />
     <ClInclude Include="Include\PP\PPRemove.h" />
     <ClInclude Include="Include\PP\PPStringify.h" />

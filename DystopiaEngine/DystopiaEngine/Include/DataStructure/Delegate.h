@@ -23,6 +23,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Allocator/DefaultAlloc.h"
 
+#include <memory> // std::addressof
+
 
 template <typename>
 class Delegate;
@@ -47,6 +49,8 @@ public:
 
 	Delegate(Delegate&&) noexcept;
 	Delegate(const Delegate&) = delete;
+
+	~Delegate(void) noexcept;
 
 
 	// =================================== CONTAINER FUNCTIONS =================================== // 
@@ -83,7 +87,8 @@ private:
 		}
 	};
 
-	D*  mObj;
+	void(*mAlloc)(D*);
+	D *mDel = nullptr, *mObj;
 	Func_t mFunc;
 
 	template <typename Ty>
@@ -94,8 +99,8 @@ private:
 	template <typename Ty>
 	inline decltype(auto) DeduceObject(Ty&&) noexcept;
 
-	template <typename To, typename From>
-	decltype(auto) MemPtrCast(From&&) noexcept;
+	template <typename To, typename From, typename Ty>
+	decltype(auto) MemPtrCast(From&&, Ty&&) noexcept;
 };
 
 
@@ -113,34 +118,42 @@ inline Delegate<R_t (P...)>::Delegate(Ty&& _f) noexcept
 
 template <typename R_t, typename ... P> template <typename C>
 inline Delegate<R_t (P...)>::Delegate(C* _obj, R_t(C::*_f)(P...)) noexcept
-	: mObj{ reinterpret_cast<D*>(_obj) }, mFunc{ MemPtrCast<Func_t>(_f) }
+	: mAlloc{ nullptr }, mObj{ reinterpret_cast<D*>(_obj) }, mFunc{ MemPtrCast<Func_t>(_f, Ut::Fwd<C>(_obj)) }
 {
 }
 
 template <typename R_t, typename ... P> template <typename C>
 inline Delegate<R_t (P...)>::Delegate(C* _obj, R_t(C::*_f)(P...) const) noexcept
-	: mObj{ reinterpret_cast<D*>(_obj) }, mFunc{ MemPtrCast<Func_t>(_f) }
+	: mAlloc{ nullptr }, mObj{ reinterpret_cast<D*>(_obj) }, mFunc{ MemPtrCast<Func_t>(_f, Ut::Fwd<C>(_obj)) }
 {
 }
 
 template <typename R_t, typename ... P> template <typename C>
 inline Delegate<R_t (P...)>::Delegate(C&& _obj, R_t(Ut::Decay_t<C>::*_f)(P...)) noexcept
-	: mObj{ GetObject(Ut::Fwd<C>(_obj)) }, mFunc{ MemPtrCast<Func_t>(_f) }
+	: mAlloc{ nullptr }, mObj{ GetObject(Ut::Fwd<C>(_obj)) }, mFunc{ MemPtrCast<Func_t>(_f, Ut::Fwd<C>(_obj)) }
 {
 }
 
 template <typename R_t, typename ... P> template <typename C>
 inline Delegate<R_t (P...)>::Delegate(C&& _obj, R_t(Ut::Decay_t<C>::*_f)(P...) const) noexcept
-	: mObj{ GetObject(Ut::Fwd<C>(_obj)) }, mFunc{ MemPtrCast<Func_t>(_f) }
+	: mAlloc{ nullptr }, mObj{ GetObject(Ut::Fwd<C>(_obj)) }, mFunc{ MemPtrCast<Func_t>(_f, Ut::Fwd<C>(_obj)) }
 {
 }
 
 template <typename R_t, typename ... P>
 inline Delegate<R_t (P...)>::Delegate(Delegate&& _rhs) noexcept
-	: mObj{ Ut::Move(_rhs.mObj) }, mFunc{ Ut::Move(_rhs.mFunc) }
+	: mAlloc{ _rhs.mAlloc }, mDel{ Ut::Move(_rhs.mDel) }, mObj{ Ut::Move(_rhs.mObj) }, mFunc{ Ut::Move(_rhs.mFunc) }
 {
-	_rhs.mObj  = nullptr;
-	_rhs.mFunc = nullptr;
+	_rhs.mAlloc = nullptr;
+	_rhs.mDel   = nullptr;
+	_rhs.mObj   = nullptr;
+	_rhs.mFunc  = nullptr;
+}
+
+template<typename R_t, typename ...P>
+inline Delegate<R_t(P...)>::~Delegate(void) noexcept
+{
+	if (mAlloc) mAlloc(mDel);
 }
 
 
@@ -165,8 +178,6 @@ inline auto Delegate<R_t (P...)>::DeduceFunc(void) noexcept
 		using MemPtrC = R_t(Ut::Decay_t<Ty>::*)(P...) const;
 		using Result  = typename Ut::MemberFinder<Ut::Decay_t<Ty>, MemPtr, MemPtrC>::type;
 
-		static_assert(Ut::IsSame<Result, MemPtrC>::value);
-
 		return static_cast<Result>(&Ut::Decay_t<Ty>::operator());
 	}
 }
@@ -187,11 +198,9 @@ inline decltype(auto) Delegate<R_t (P...)>::DeduceObject(Ty&& _f) noexcept
 template <typename R_t, typename ... P> template <typename Ty>
 inline auto Delegate<R_t (P...)>::GetObject(Ty&& _obj) noexcept(Ut::IsLvalueRef<Ty>::value || Ut::IsEmptyClass<Ut::Decay_t<Ty>>::value)
 {
-	if constexpr (Ut::IsLvalueRef<Ty>::value)
-	{
-		return reinterpret_cast<D*>(&_obj);
-	}
-	else if constexpr(Ut::IsEmptyClass<Ut::Decay_t<Ty>>::value)
+	using T = Ut::Decay_t<Ty>;
+
+	if constexpr(Ut::IsEmptyClass<T>::value)
 	{
 		UNUSED_PARAMETER(_obj);
 
@@ -201,17 +210,23 @@ inline auto Delegate<R_t (P...)>::GetObject(Ty&& _obj) noexcept(Ut::IsLvalueRef<
 	}
 	else
 	{
-    // Here we're ask ourselves do we want to support handling the lifetime of the object
-    // If yes, we have to figure out if we're required to delete it
-    // compilcating the implementation and adding the need to somehow store that information
-    // If no, we keep our implementation much simpler
-		static_assert(false);
-		return reinterpret_cast<D*>(Dystopia::DefaultAllocator<Ty>::ConstructAlloc(Ut::Fwd<Ty>(_obj)));
+		if constexpr (Ut::IsLvalueRef<Ty>::value)
+		{
+			// std::addressof uses compiler instrinsic, can't get around it
+			return const_cast<D*>(reinterpret_cast<D const*>(std::addressof(_obj)));
+		}
+		else
+		{
+			mDel = reinterpret_cast<D*>(Dystopia::DefaultAllocator<Ty>::ConstructAlloc(Ut::Fwd<Ty>(_obj)));
+			mAlloc = reinterpret_cast<void(*)(D*)>(&Dystopia::DefaultAllocator<Ty>::DestructFree);
+
+			return mDel;
+		}
 	}
 }
 
-template <typename R_t, typename ... P> template <typename To, typename From>
-inline decltype(auto) Delegate<R_t (P...)>::MemPtrCast(From&& _f) noexcept
+template <typename R_t, typename ... P> template <typename To, typename From, typename Ty>
+inline decltype(auto) Delegate<R_t (P...)>::MemPtrCast(From&& _f, Ty&&) noexcept
 {
 	constexpr auto fptr_sz = sizeof(void(*)(void));
 	constexpr auto item_sz = sizeof(Ut::Decay_t<From>);
@@ -227,14 +242,21 @@ inline decltype(auto) Delegate<R_t (P...)>::MemPtrCast(From&& _f) noexcept
 		return reinterpret_cast<Func_t>(_f);
 	}
   // Either 1. Virtual Function 2. Virtual Inheritance, 3. Multi Inheritance
-	else if constexpr (fptr_sz + sizeof(int) == item_sz)
+	else if constexpr (fptr_sz + sizeof(void*) == item_sz)
 	{
-		static_assert(false);
+		struct Internal {
+			Func_t ptr;
+			int a, b;
+		};
+		auto p = Ut::pun_cast<Internal>(Ut::Fwd<From>(_f));
+
+		mObj = reinterpret_cast<D*>(reinterpret_cast<uintptr_t>(mObj) + p.a);
+
+		return p.ptr;
 	}
-  // Either 1. Unknown class type, 2. Has everything
-	else if constexpr (fptr_sz + 2 * sizeof(int) == item_sz)
+	else
 	{
-		static_assert(false);
+		static_assert(false, "Please notify the programmer in charge.");
 	}
 }
 
