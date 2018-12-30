@@ -66,8 +66,8 @@ public:
 	template <typename Ty>
 	auto operator = (Ty&&) -> Ut::EnableIf_t <!Ut::IsSame <Ut::Decay_t<Ty>, Delegate>::value, Delegate&>;
 
-	Delegate& operator = (Delegate&&);
-	Delegate& operator = (const Delegate&);
+	Delegate& operator = (Delegate&&) noexcept;
+	Delegate& operator = (const Delegate&) = delete;
 
 
 private:
@@ -215,11 +215,22 @@ inline auto Delegate<R_t (P...)>::GetObject(Ty&& _obj) noexcept(Ut::IsLvalueRef<
 			// std::addressof uses compiler instrinsic, can't get around it
 			return const_cast<D*>(reinterpret_cast<D const*>(std::addressof(_obj)));
 		}
+
+		// Small value optimisation...
+		else if constexpr (sizeof(mDel) >= sizeof(T))
+		{
+			::new (&mDel) T{ Ut::Fwd<Ty>(_obj) };
+			mAlloc = reinterpret_cast<void(*)(D*)>(static_cast<void(*)(T*)>([](T* _p) { reinterpret_cast<T*>(&_p)->~T(); }));
+
+			return reinterpret_cast<D*>(&mDel);
+		}
+
 		else
 		{
 			mDel = reinterpret_cast<D*>(Dystopia::DefaultAllocator<Ty>::ConstructAlloc(Ut::Fwd<Ty>(_obj)));
 			mAlloc = reinterpret_cast<void(*)(D*)>(&Dystopia::DefaultAllocator<Ty>::DestructFree);
 
+			static_assert(false);
 			return mDel;
 		}
 	}
@@ -258,6 +269,38 @@ inline decltype(auto) Delegate<R_t (P...)>::MemPtrCast(From&& _f, Ty&&) noexcept
 	{
 		static_assert(false, "Please notify the programmer in charge.");
 	}
+}
+
+
+
+template<typename R_t, typename ...P>
+inline Delegate<R_t(P...)>::operator bool() const
+{
+	return !!mFunc;
+}
+
+template <typename R_t, typename ... P> template <typename Ty>
+inline auto Delegate<R_t(P...)>::operator=(Ty&& _obj) -> Ut::EnableIf_t<!Ut::IsSame<Ut::Decay_t<Ty>, Delegate>::value, Delegate&>
+{
+	~Delegate();
+	mAlloc = nullptr;
+	mDel   = nullptr;
+
+	mObj   = GetObject(DeduceObject(Ut::Fwd<Ty>(_obj)));
+	mFunc  = MemPtrCast(DeduceFunc<Ty>(), Ut::Fwd<Ty>(_obj));
+		   
+	return *this;
+}
+
+template <typename R_t, typename ... P>
+inline Delegate<R_t(P...)>& Delegate<R_t(P...)>::operator = (Delegate&& _rhs) noexcept
+{
+	Ut::Swap(mAlloc, _rhs.mAlloc);
+	Ut::Swap(mDel  , _rhs.mDel  );
+	Ut::Swap(mObj  , _rhs.mObj  );
+	Ut::Swap(mFunc , _rhs.mFunc );
+
+	return *this;
 }
 
 
