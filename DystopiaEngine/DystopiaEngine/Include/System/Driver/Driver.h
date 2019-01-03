@@ -117,6 +117,7 @@ namespace Dystopia
 		void ParseMessage(const eSysMessage&, size_t);
 	};
 
+	using CORE = EngineCore;
 }
 
 

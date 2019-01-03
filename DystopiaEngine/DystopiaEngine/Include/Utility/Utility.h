@@ -43,6 +43,12 @@ namespace Ut
 	template <typename T>
 	constexpr T&&(*Fwd)(RemoveRef_t<T>&) = &Forward<T>;
 
+	template <typename T>
+	auto AsConstRef(T&& _obj)
+	{
+		return static_cast<typename AddLowConst<T&>::type>(_obj);
+	}
+
 	template <typename To, typename Fr>
 	inline To pun_cast(const Fr& _obj)
 	{

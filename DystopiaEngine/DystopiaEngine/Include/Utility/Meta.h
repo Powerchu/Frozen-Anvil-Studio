@@ -131,8 +131,51 @@ namespace Ut
 		using type = T&;
 	};
 
+	template<typename T>
+	struct RemoveLowConst<T const &&>
+	{
+		using type = T&&;
+	};
+
 	template <typename T>
 	using RemoveLowConst_t = typename RemoveLowConst<T>::type;
+
+
+	// AddLowConst
+	// ================ ====================================================
+
+	template <typename T>
+	struct AddLowConst
+	{
+		using type = T;
+	};
+
+	template<typename T>
+	struct AddLowConst<const T>
+	{
+		using type = const typename AddLowConst<T>::type;
+	};
+
+	template<typename T>
+	struct AddLowConst<T*>
+	{
+		using type = T const*;
+	};
+
+	template<typename T>
+	struct AddLowConst<T&>
+	{
+		using type = T const&;
+	};
+
+	template<typename T>
+	struct AddLowConst<T&&>
+	{
+		using type = T const &&;
+	};
+
+	template <typename T>
+	using AddLowConst_t = typename AddLowConst<T>::type;
 
 
 	// Decay

@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	template <typename Ty = void>
-	struct  DefaultAllocator : public DefaultAllocator<void>
+	struct DefaultAllocator : public DefaultAllocator<void>
 	{
 		using Base = DefaultAllocator<void>;
 
@@ -51,7 +51,7 @@ namespace Dystopia
 	};
 
 	template <>
-	struct  _DLL_EXPORT DefaultAllocator<void>
+	struct _DLL_EXPORT DefaultAllocator<void>
 	{
 		[[nodiscard]] static void* Alloc(size_t _sz, size_t _align = 8);
 		static void Free(void* _ptr) noexcept;

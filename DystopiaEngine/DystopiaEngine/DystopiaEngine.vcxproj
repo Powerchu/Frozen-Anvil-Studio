@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Source\Allocator\StackAlloc.cpp" />
     <ClCompile Include="Source\DataStructure\OString.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
     <ClCompile Include="Source\Editor\CommandTypes.cpp" />
@@ -78,6 +79,7 @@
     <ClCompile Include="Source\System\Graphics\FontSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
     <ClCompile Include="Source\System\Graphics\MeshBuilder.cpp" />
+    <ClCompile Include="Source\System\Graphics\ShaderProgram.cpp" />
     <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp" />
@@ -144,6 +146,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="Include\Allocator\StackAlloc.h" />
+    <ClInclude Include="Include\Allocator\StackAllocImpl.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
     <ClInclude Include="Include\DataStructure\Delegate.h" />
     <ClInclude Include="Include\Editor\BehaviourTreeEditor.h" />
@@ -167,6 +171,8 @@
     <ClInclude Include="Include\Component\NodeList.h" />
     <ClInclude Include="Include\Editor\GameView.h" />
     <ClInclude Include="Include\Factory\Factory.h" />
+    <ClInclude Include="Include\Lib\Gfx\OpenGLAPI.h" />
+    <ClInclude Include="Include\Lib\Gfx\Shaders.h" />
     <ClInclude Include="Include\PP\PPConcat.h" />
     <ClInclude Include="Include\PP\PPExtract.h" />
     <ClInclude Include="Include\PP\PPForEach.h" />
@@ -234,6 +240,7 @@
     <ClInclude Include="Include\System\Graphics\Font.h" />
     <ClInclude Include="Include\System\Graphics\FontSystem.h" />
     <ClInclude Include="Include\System\Graphics\MeshBuilder.h" />
+    <ClInclude Include="Include\System\Graphics\ShaderProgram.h" />
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />

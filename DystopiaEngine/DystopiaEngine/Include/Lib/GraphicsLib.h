@@ -11,17 +11,39 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _GRAPHICSLIB_H_
-#define _GRAPHICSLIB_H_
+#ifndef _LIB_GFX_GRAPHICSLIB_H_
+#define _LIB_GFX_GRAPHICSLIB_H_
 
 namespace Gfx
 {
 	enum class GfxMode
 	{
+		NONE,
 		OPENGL,
 	};
 
+	class GraphicsAPI
+	{
+	public:
+		
 
+	protected:
+		GraphicsAPI(void) {};
+
+	private:
+		GraphicsAPI(GraphicsAPI&&)                   = delete;
+		GraphicsAPI(GraphicsAPI const&)              = delete;
+		GraphicsAPI& operator = (GraphicsAPI&&)      = delete;
+		GraphicsAPI& operator = (GraphicsAPI const&) = delete;
+	};
+
+	using GfxAPI = GraphicsAPI;
+
+	GfxAPI* GetInstance(void) noexcept;
+	GfxMode GetActiveMode(void) noexcept;
+
+	void    InitGraphicsAPI(GfxMode = GfxMode::OPENGL);
+	void    ShutdownGraphicsAPI(void) noexcept;
 }
 
 
