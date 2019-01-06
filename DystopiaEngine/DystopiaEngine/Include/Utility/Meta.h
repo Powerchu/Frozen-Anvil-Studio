@@ -458,18 +458,18 @@ namespace Ut
 	// TryCast	   
 	// ============== ======================================================
 
-	template <typename Result_t>
-	struct TryCaster
-	{
-		constexpr auto operator() (...)      { return Constant<bool, false>{}; };
-		constexpr auto operator() (Result_t) { return Constant<bool, true>{};  };
-	};
+	template <typename From, typename To, typename = To>
+	struct TryCaster : public Ut::Constant<bool, false>
+	{};
 
-#pragma warning(push)
-#pragma warning(disable : 4244)
+	template <typename From, typename To>
+	struct TryCaster<From, To, Type_t<decltype(static_cast<To>(declval<From>()))>> : public Constant<bool, true>
+	{};
+
 	template <typename Ty, typename U>
-	inline constexpr bool TryCast(U&&) { return decltype(TryCaster<Ty>{}(Ut::declval<U>()))::value; }
-#pragma warning(pop)
+	inline constexpr bool TryCast(U&&) { return Ut::TryCaster<U, Ty, Ty>::value; }
+	template <typename Ty>
+	inline constexpr bool TryCast(Ty&&) { return true; }
 
 
 	// HasVTable	   

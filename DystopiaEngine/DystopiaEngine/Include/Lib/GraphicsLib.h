@@ -25,6 +25,11 @@ namespace Gfx
 	class GraphicsAPI
 	{
 	public:
+
+		virtual unsigned CreateShaderProgram(void) noexcept = 0;
+		virtual unsigned CreateShader(Gfx::ShaderStage) noexcept = 0;
+		virtual unsigned CompileGLSL(void const* _pData) noexcept = 0;
+		//virtual unsigned CompilSPRIV(void* _pData) noexcept = 0;
 		
 
 	protected:
@@ -42,8 +47,8 @@ namespace Gfx
 	GfxAPI* GetInstance(void) noexcept;
 	GfxMode GetActiveMode(void) noexcept;
 
-	void    InitGraphicsAPI(GfxMode = GfxMode::OPENGL);
-	void    ShutdownGraphicsAPI(void) noexcept;
+	bool InitGraphicsAPI(void* phwnd, GfxMode = GfxMode::OPENGL);
+	void ShutdownGraphicsAPI(void) noexcept;
 }
 
 

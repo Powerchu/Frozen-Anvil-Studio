@@ -364,6 +364,9 @@
     <ClCompile Include="Source\Allocator\StackAlloc.cpp">
       <Filter>Allocator\StackAllocator</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Lib\OpenGLAPI.cpp">
+      <Filter>Lib\GraphicsLib\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">

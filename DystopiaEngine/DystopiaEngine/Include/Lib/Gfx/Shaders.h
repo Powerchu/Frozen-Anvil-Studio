@@ -22,12 +22,6 @@ namespace Gfx
 		FRAGMENT  = 0x2,
 		GEOMETRY  = 0x4,
 	};
-
-	enum class ShaderLanguage
-	{
-		GLSL,
-		SPIRV,
-	};
 }
 
 

@@ -47,6 +47,7 @@
     <ClCompile Include="Source\Editor\EInput.cpp" />
     <ClCompile Include="Source\Editor\GameView.cpp" />
     <ClCompile Include="Source\Lib\GraphicsLib.cpp" />
+    <ClCompile Include="Source\Lib\OpenGLAPI.cpp" />
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
     <ClCompile Include="Source\Editor\SpriteEditor.cpp" />
