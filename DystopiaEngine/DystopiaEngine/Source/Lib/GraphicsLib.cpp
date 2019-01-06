@@ -33,7 +33,7 @@ Gfx::GfxMode Gfx::GetActiveMode(void) noexcept
 	return ActiveMode;
 }
 
-bool Gfx::InitGraphicsAPI(void* phwnd, GfxMode _mode)
+bool Gfx::InitGraphicsAPI(void const* phwnd, GfxMode _mode)
 {
 #   if defined(DEBUG) | defined(_DEBUG)
 		if (pInstance)

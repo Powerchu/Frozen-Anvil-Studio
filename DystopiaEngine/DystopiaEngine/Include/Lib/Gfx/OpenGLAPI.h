@@ -25,16 +25,22 @@ namespace Gfx
 
 		OpenGL_API(void) noexcept;
 
+		void PrintEnvironment(void) const noexcept override;
+
 		unsigned CreateShaderProgram(void) noexcept override;
-		unsigned CreateShader(Gfx::ShaderStage) noexcept override;
-		unsigned CompileGLSL(void const* _pData) noexcept override;
+		unsigned CompileGLSL(Gfx::ShaderStage, void const* _pData) noexcept override;
+		bool LinkShaderImpl(unsigned, unsigned const*, size_t) noexcept override;
 
+		void DestroyShaderProgram(unsigned&) noexcept override;
 
-		bool InitGraphicsAPI(void*) noexcept;
+		bool InitGraphicsAPI(void const*) noexcept;
 
 	private:
 		void* mOpenGL;
 
+		unsigned CreateShader(Gfx::ShaderStage) noexcept;
+
+		bool BindContext(void*) noexcept;
 		bool VersionSelect(void* const&) noexcept;
 	};
 }

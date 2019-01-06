@@ -21,6 +21,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <new>
 
+#ifndef _NODISCARD
+#define _NODISCARD [[nodiscard]]
+#endif // _NODISCARD defined by microsoft headers
+
 
 namespace Dystopia
 {
@@ -30,7 +34,7 @@ namespace Dystopia
 		using Base = StackAlloc<void>;
 
 		template <typename ... Ps>
-		[[nodiscard]] static inline Ty* ConstructAlloc(Ps&& ... _args)
+		_NODISCARD static inline Ty* ConstructAlloc(Ps&& ... _args)
 		{
 			Ty* temp = static_cast<Ty*>(Base::Alloc(sizeof(Ty), [](void* _p) {
 				static_cast<Ty*>(_p)->~Ty();
@@ -43,11 +47,18 @@ namespace Dystopia
 	template <>
 	struct StackAlloc<void>
 	{
-		[[nodiscard]] static void* Alloc(size_t _sz, void(*)(void*) = nullptr);
+		_NODISCARD static void* Alloc(size_t _sz, void(*)(void*) = nullptr);
 		static void Free(unsigned _n) noexcept;
+
+		template <typename Ty = void>
+		_NODISCARD static inline Ty* GetBufferAs(void) noexcept
+		{
+			return static_cast<Ty*>(GetBuffer());
+		}
 
 		static void* GetBuffer(void) noexcept;
 		static size_t GetUsableSize(void) noexcept;
+
 	};
 
 	template <typename Ty, unsigned N>
@@ -56,7 +67,7 @@ namespace Dystopia
 		using Base = StackAlloc<void>;
 
 		template <typename ... Ps>
-		[[nodiscard]] static inline Ty* ConstructAlloc(Ps&& ... _args)
+		_NODISCARD static inline Ty* ConstructAlloc(Ps&& ... _args)
 		{
 			Ty* temp = Base::Alloc(sizeof(Ty) * N, [](void* _p) {
 				Ty* end = static_cast<Ty*>(_p) + N;
@@ -85,7 +96,7 @@ namespace Dystopia
 		using Base = StackAlloc<void>;
 
 		template <typename ... Ps>
-		[[nodiscard]] static inline Ty* ConstructAlloc(size_t _sz, Ps&& ... _args)
+		_NODISCARD static inline Ty* ConstructAlloc(size_t _sz, Ps&& ... _args)
 		{
 			Ty* temp = Base::Alloc(sizeof(Ty) * _sz, [](void* _p) {
 				auto sz = static_cast<size_t*>(_p)[-1] / sizeof(Ty);

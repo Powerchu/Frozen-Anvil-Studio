@@ -31,11 +31,23 @@ namespace Dystopia
 
 		void EditorUpdate(void);
 
+		void Shutdown(void) noexcept;
+
+		Shader* GetShader(char const*) const noexcept;
+		
+
+		inline Shader* operator[] (char const*) const noexcept;
 
 	private:
 
 		MagicArray<Shader> mPrograms;
 	};
+}
+
+
+inline Dystopia::Shader* Dystopia::ShaderSystem::operator[](char const * _str) const noexcept
+{
+	return GetShader(_str);
 }
 
 

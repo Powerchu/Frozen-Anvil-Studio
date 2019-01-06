@@ -13,6 +13,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Lib/Gfx/OpenGLAPI.h"
 
+#include "Utility/DebugAssert.h"
+#include "Allocator/StackAlloc.h"
+
 #include <gl/glew.h>
 #include <gl/wglew.h>
 #define NOMINMAX
@@ -25,10 +28,42 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #undef WIN32_LEAN_AND_MEAN
 
 
+namespace
+{
+#define PRINT_GFX_SHADER_ERROR(_SHADER_, _PROC_, _ERR_MSG_)                                 \
+	do {																			        \
+		using StackA_t = Dystopia::StackAlloc_t;											\
+		auto buffer = Dystopia::StackAlloc_t::GetBufferAs<char>();					        \
+		_PROC_(_SHADER_, static_cast<GLsizei>(StackA_t::GetUsableSize()), nullptr, buffer); \
+														                                    \
+		DEBUG_PRINT(eLog::ERROR, _ERR_MSG_ ": %s", buffer);                                 \
+	} while (false)
+}
+
 Gfx::OpenGL_API::OpenGL_API(void) noexcept
 	: mOpenGL{ nullptr }
 {
 
+}
+
+void Gfx::OpenGL_API::PrintEnvironment(void) const noexcept
+{
+	// Gets for the openGL version
+	int a, b, c;
+	glGetIntegerv(GL_MAJOR_VERSION, &a);
+	glGetIntegerv(GL_MINOR_VERSION, &b);
+
+	DEBUG_PRINT(eLog::SYSINFO, "Using %s, %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+	DEBUG_PRINT(eLog::SYSINFO, "OpenGL Version %d.%d\n", a, b);
+
+	glGetIntegerv(GL_ALPHA_BITS  , &a);
+	glGetIntegerv(GL_RED_BITS    , &b); a += b;
+	glGetIntegerv(GL_BLUE_BITS   , &b); a += b;
+	glGetIntegerv(GL_GREEN_BITS  , &b); a += b;
+	glGetIntegerv(GL_DEPTH_BITS  , &b);
+	glGetIntegerv(GL_STENCIL_BITS, &c);
+
+	DEBUG_PRINT(eLog::SYSINFO, "%d bit colour, %d bit depth, %d bit stencil\n", a, b, c);
 }
 
 unsigned Gfx::OpenGL_API::CreateShaderProgram(void) noexcept
@@ -36,6 +71,12 @@ unsigned Gfx::OpenGL_API::CreateShaderProgram(void) noexcept
 	auto ret = glCreateProgram();
 	glProgramParameteri(ret, GL_PROGRAM_SEPARABLE, GL_TRUE);
 	return ret;
+}
+
+void Gfx::OpenGL_API::DestroyShaderProgram(unsigned& _n) noexcept
+{
+	glDeleteProgram(_n);
+	_n = 0;
 }
 
 unsigned Gfx::OpenGL_API::CreateShader(Gfx::ShaderStage _stage) noexcept
@@ -58,14 +99,47 @@ unsigned Gfx::OpenGL_API::CreateShader(Gfx::ShaderStage _stage) noexcept
 	return glCreateShader(stage);
 }
 
-unsigned Gfx::OpenGL_API::CompileGLSL(void const * _pData) noexcept
+unsigned Gfx::OpenGL_API::CompileGLSL(Gfx::ShaderStage _stage, void const * _pData) noexcept
 {
+	if (auto shader = CreateShader(_stage))
+	{
+		glShaderSource(shader, 1, reinterpret_cast<GLchar const* const*>(&_pData), nullptr);
+		glCompileShader(shader);
+
+		int nStatus;
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &nStatus);
+
+		if (GL_FALSE == nStatus)
+		{
+			PRINT_GFX_SHADER_ERROR(shader, glGetShaderInfoLog, "Shader Compile Error");
+		}
+
+		return shader;
+	}
+
 	return 0;
 }
 
-bool Gfx::OpenGL_API::InitGraphicsAPI(void* _phwnd) noexcept
+bool Gfx::OpenGL_API::LinkShaderImpl(unsigned _nProgram, unsigned const* _pShaders, size_t _sz) noexcept
 {
-	HWND hwnd = *static_cast<HWND*>(_phwnd);
+	for (size_t n = 0; n < _sz; ++n)
+		glAttachShader(_nProgram, _pShaders[n]);
+	glLinkProgram(_nProgram);
+
+	int nStatus;
+	glGetShaderiv(_nProgram, GL_LINK_STATUS, &nStatus);
+
+	if (GL_FALSE == nStatus)
+	{
+		PRINT_GFX_SHADER_ERROR(_nProgram, glGetProgramInfoLog, "Shader Link Error");
+	}
+
+	return GL_TRUE == nStatus;
+}
+
+bool Gfx::OpenGL_API::InitGraphicsAPI(void const* _phwnd) noexcept
+{
+	HWND const& hwnd = *static_cast<HWND const*>(_phwnd);
 	HDC dc = GetDC(hwnd);
 
 	// Use to specify the color format we want and openGL support
@@ -81,7 +155,7 @@ bool Gfx::OpenGL_API::InitGraphicsAPI(void* _phwnd) noexcept
 	pfd.iLayerType = PFD_MAIN_PLANE;
 
 	// Ask windows to give us a pixel format based on what we asked for
-	int nPxFormat = ChoosePixelFormat(_window.GetDeviceContext(), &pfd);
+	int nPxFormat = ChoosePixelFormat(dc, &pfd);
 
 	if (0 == nPxFormat) // Check if we got something back
 	{
@@ -90,7 +164,7 @@ bool Gfx::OpenGL_API::InitGraphicsAPI(void* _phwnd) noexcept
 	}
 
 	// Attempt to set the format based on the returned pixel formal
-	BOOL bResult = SetPixelFormat(_window.GetDeviceContext(), nPxFormat, &pfd);
+	BOOL bResult = SetPixelFormat(dc, nPxFormat, &pfd);
 
 	if (!bResult) // This shouldn't happen
 	{
@@ -100,7 +174,7 @@ bool Gfx::OpenGL_API::InitGraphicsAPI(void* _phwnd) noexcept
 
 	// Create a fake context so we can create context
 	HGLRC dummyGL = wglCreateContext(dc);
-	wglMakeCurrent(_window.GetDeviceContext(), dummyGL);
+	wglMakeCurrent(dc, dummyGL);
 
 	// attempt to init glew so that there is an active GL context
 	if (glewInit() != GLEW_OK)
@@ -123,9 +197,12 @@ bool Gfx::OpenGL_API::InitGraphicsAPI(void* _phwnd) noexcept
 	wglDeleteContext(dummyGL);
 
 	// Make our newly created context the active context
-	wglMakeCurrent(dc, static_cast<HGLRC>(mOpenGL));
+	return BindContext(dc);
+}
 
-	return false;
+bool Gfx::OpenGL_API::BindContext(void* _deviceContext) noexcept
+{
+	return wglMakeCurrent(static_cast<HDC>(_deviceContext), static_cast<HGLRC>(mOpenGL));
 }
 
 bool Gfx::OpenGL_API::VersionSelect(void* const& hdc) noexcept
@@ -138,7 +215,7 @@ bool Gfx::OpenGL_API::VersionSelect(void* const& hdc) noexcept
 	};
 
 	mOpenGL = nullptr;
-	mAvailable = eGfxSettings::GRAPHICS_ALL;
+//	mAvailable = eGfxSettings::GRAPHICS_ALL;
 
 	// Try to create at least OpenGL 4.3
 	attrbs[3] = 3;
@@ -149,7 +226,7 @@ bool Gfx::OpenGL_API::VersionSelect(void* const& hdc) noexcept
 	}
 
 	// Failed, try 3.2...
-	mAvailable &= ~(eGfxSettings::GRAPHICS_COMPUTE | eGfxSettings::GRAPHICS_TESS);
+//	mAvailable &= ~(eGfxSettings::GRAPHICS_COMPUTE | eGfxSettings::GRAPHICS_TESS);
 
 	attrbs[1] = 3; attrbs[3] = 2;
 	mOpenGL = wglCreateContextAttribsARB(static_cast<HDC>(hdc), NULL, attrbs);
@@ -159,12 +236,16 @@ bool Gfx::OpenGL_API::VersionSelect(void* const& hdc) noexcept
 	}
 
 	// Failed, try 3.1...
-	mAvailable &= ~(eGfxSettings::GRAPHICS_MSAA);
+//	mAvailable &= ~(eGfxSettings::GRAPHICS_MSAA);
 
 	attrbs[3] = 1;
 	mOpenGL = wglCreateContextAttribsARB(static_cast<HDC>(hdc), NULL, attrbs);
 
 	return !!mOpenGL;
 }
+
+
+
+#undef PRINT_GFX_SHADER_ERROR
 
 

@@ -24,13 +24,15 @@ namespace Dystopia
 	public:
 
 		ShaderProgram(void) noexcept;
+		~ShaderProgram(void) noexcept;
 
-		bool LoadProgram(Gfx::ShaderStage, void const*, Gfx::ShaderLanguage = Gfx::ShaderLanguage::GLSL);
+		bool LoadProgram(Gfx::ShaderStage, char const*) noexcept;
 
 
 	private:
 
 		unsigned mnProgram;
+		Gfx::ShaderStage mStage;
 	};
 }
 

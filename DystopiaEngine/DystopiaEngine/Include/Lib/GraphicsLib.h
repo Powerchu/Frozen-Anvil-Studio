@@ -22,18 +22,27 @@ namespace Gfx
 		OPENGL,
 	};
 
+	enum class ShaderStage : unsigned;
+
 	class GraphicsAPI
 	{
 	public:
 
+		virtual void PrintEnvironment(void) const noexcept = 0;
+
 		virtual unsigned CreateShaderProgram(void) noexcept = 0;
-		virtual unsigned CreateShader(Gfx::ShaderStage) noexcept = 0;
-		virtual unsigned CompileGLSL(void const* _pData) noexcept = 0;
+		virtual void DestroyShaderProgram(unsigned&) noexcept = 0;
+		virtual unsigned CompileGLSL(Gfx::ShaderStage, void const* _pData) noexcept = 0;
 		//virtual unsigned CompilSPRIV(void* _pData) noexcept = 0;
 		
+		template <typename ... T>
+		inline bool LinkShader(unsigned _nProgram, T ... _nArgs) noexcept;
+
 
 	protected:
 		GraphicsAPI(void) {};
+
+		virtual bool LinkShaderImpl(unsigned, unsigned const*, size_t) noexcept = 0;
 
 	private:
 		GraphicsAPI(GraphicsAPI&&)                   = delete;
@@ -47,8 +56,30 @@ namespace Gfx
 	GfxAPI* GetInstance(void) noexcept;
 	GfxMode GetActiveMode(void) noexcept;
 
-	bool InitGraphicsAPI(void* phwnd, GfxMode = GfxMode::OPENGL);
+	bool InitGraphicsAPI(void const* phwnd, GfxMode = GfxMode::OPENGL);
 	void ShutdownGraphicsAPI(void) noexcept;
+}
+
+
+
+
+
+// =====
+
+template <typename ... T>
+inline bool Gfx::GraphicsAPI::LinkShader(unsigned _nProgram, T ... _nArgs) noexcept
+{
+	if constexpr (sizeof...(_nArgs) > 0)
+	{
+		static_assert((Ut::IsSame<Ut::RemoveRef_t<T>, unsigned>::value && ...), "All values must be a shader!");
+
+		unsigned shaders[]{ _nArgs... };
+		return LinkShaderImpl(_nProgram, shaders, sizeof...(_nArgs));
+	}
+	else
+	{
+		return false;
+	}
 }
 
 
