@@ -38,6 +38,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Profiler/Profiler.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/AI/AISystem.h"
+#include "System/Editor/EditorIntermediary.h"
 
 // SubSystems
 #include "System/Graphics/MeshSystem.h"
@@ -301,7 +302,11 @@ void Dystopia::EngineCore::Shutdown(void)
 
 void Dystopia::EngineCore::BroadcastMessage(const eSysMessage& _Message, size_t _nParam)
 {
+#if EDITOR
+	Get<EditorIntermediary>()->ReceiveMessage(_Message, _nParam);
+#else
 	mMessageQueue.EmplaceBack(_Message, _nParam);
+#endif
 }
 
 void Dystopia::EngineCore::SendMessage(void)

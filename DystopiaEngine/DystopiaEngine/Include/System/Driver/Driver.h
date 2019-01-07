@@ -47,7 +47,8 @@ namespace Dystopia
 			Ut::Indexer<eSYSTEMS::COLLISION_SYSTEM, class CollisionSystem>,
 			Ut::Indexer<eSYSTEMS::PHYSICS_SYSTEM  , class PhysicsSystem  >,
 			Ut::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >,
-			Ut::Indexer<eSYSTEMS::AI_SYSTEM		  , class AISystem		 >
+			Ut::Indexer<eSYSTEMS::AI_SYSTEM		  , class AISystem		 >,
+			Ut::Indexer<eSYSTEMS::INTERMEDIARY_SYSTEM, class EditorIntermediary	>
 		>>;
 
 		using SubSys = typename Ut::MetaAutoIndexer <
