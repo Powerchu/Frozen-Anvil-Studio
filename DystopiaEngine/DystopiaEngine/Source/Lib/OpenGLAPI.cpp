@@ -49,7 +49,7 @@ Gfx::OpenGL_API::OpenGL_API(void) noexcept
 void Gfx::OpenGL_API::PrintEnvironment(void) const noexcept
 {
 	// Gets for the openGL version
-	int a, b, c;
+	GLint a, b, c;
 	glGetIntegerv(GL_MAJOR_VERSION, &a);
 	glGetIntegerv(GL_MINOR_VERSION, &b);
 
@@ -66,16 +66,16 @@ void Gfx::OpenGL_API::PrintEnvironment(void) const noexcept
 	DEBUG_PRINT(eLog::SYSINFO, "%d bit colour, %d bit depth, %d bit stencil\n", a, b, c);
 }
 
-unsigned Gfx::OpenGL_API::CreateShaderProgram(void) noexcept
+Gfx::ShaderProg Gfx::OpenGL_API::CreateShaderProgram(void) noexcept
 {
 	auto ret = glCreateProgram();
 	glProgramParameteri(ret, GL_PROGRAM_SEPARABLE, GL_TRUE);
-	return ret;
+	return { reinterpret_cast<ShaderProg>(static_cast<uintptr_t>(ret)) };
 }
 
-void Gfx::OpenGL_API::DestroyShaderProgram(unsigned& _n) noexcept
+void Gfx::OpenGL_API::FreeShaderProgram(ShaderProg& _n) noexcept
 {
-	glDeleteProgram(_n);
+	glDeleteProgram(reinterpret_cast<GLuint>(_n));
 	_n = 0;
 }
 
@@ -99,7 +99,7 @@ unsigned Gfx::OpenGL_API::CreateShader(Gfx::ShaderStage _stage) noexcept
 	return glCreateShader(stage);
 }
 
-unsigned Gfx::OpenGL_API::CompileGLSL(Gfx::ShaderStage _stage, void const * _pData) noexcept
+Gfx::Shader Gfx::OpenGL_API::CompileGLSL(Gfx::ShaderStage _stage, void const * _pData) noexcept
 {
 	if (auto shader = CreateShader(_stage))
 	{
@@ -114,24 +114,24 @@ unsigned Gfx::OpenGL_API::CompileGLSL(Gfx::ShaderStage _stage, void const * _pDa
 			PRINT_GFX_SHADER_ERROR(shader, glGetShaderInfoLog, "Shader Compile Error");
 		}
 
-		return shader;
+		return { reinterpret_cast<Shader>(shader) };
 	}
 
-	return 0;
+	return { 0 };
 }
 
-bool Gfx::OpenGL_API::LinkShaderImpl(unsigned _nProgram, unsigned const* _pShaders, size_t _sz) noexcept
+bool Gfx::OpenGL_API::LinkShaderImpl(ShaderProg const& _nProgram, Shader const* _pShaders, size_t _sz) noexcept
 {
 	for (size_t n = 0; n < _sz; ++n)
-		glAttachShader(_nProgram, _pShaders[n]);
-	glLinkProgram(_nProgram);
+		glAttachShader(reinterpret_cast<GLuint>(_nProgram), reinterpret_cast<GLuint>(_pShaders[n]));
+	glLinkProgram(reinterpret_cast<GLuint>(_nProgram));
 
 	int nStatus;
-	glGetShaderiv(_nProgram, GL_LINK_STATUS, &nStatus);
+	glGetShaderiv(reinterpret_cast<GLuint>(_nProgram), GL_LINK_STATUS, &nStatus);
 
 	if (GL_FALSE == nStatus)
 	{
-		PRINT_GFX_SHADER_ERROR(_nProgram, glGetProgramInfoLog, "Shader Link Error");
+		PRINT_GFX_SHADER_ERROR(reinterpret_cast<GLuint>(_nProgram), glGetProgramInfoLog, "Shader Link Error");
 	}
 
 	return GL_TRUE == nStatus;

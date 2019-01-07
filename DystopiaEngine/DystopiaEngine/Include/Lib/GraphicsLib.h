@@ -14,15 +14,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _LIB_GFX_GRAPHICSLIB_H_
 #define _LIB_GFX_GRAPHICSLIB_H_
 
+#include "Lib/Gfx/Shaders.h"
+
+
 namespace Gfx
 {
 	enum class GfxMode
 	{
 		NONE,
 		OPENGL,
-	};
 
-	enum class ShaderStage : unsigned;
+		DEFAULT = OPENGL,
+	};
 
 	class GraphicsAPI
 	{
@@ -30,19 +33,24 @@ namespace Gfx
 
 		virtual void PrintEnvironment(void) const noexcept = 0;
 
-		virtual unsigned CreateShaderProgram(void) noexcept = 0;
-		virtual void DestroyShaderProgram(unsigned&) noexcept = 0;
-		virtual unsigned CompileGLSL(Gfx::ShaderStage, void const* _pData) noexcept = 0;
+		virtual ShaderProg CreateShaderProgram(void) noexcept = 0;
+		virtual Shader CompileGLSL(Gfx::ShaderStage, void const* _pData) noexcept = 0;
 		//virtual unsigned CompilSPRIV(void* _pData) noexcept = 0;
-		
+
 		template <typename ... T>
-		inline bool LinkShader(unsigned _nProgram, T ... _nArgs) noexcept;
+		inline bool LinkShader(ShaderProg const& _nProgram, T&& ... _nArgs) noexcept;
+
+		template <typename T>
+		inline void Free(T&) noexcept;
 
 
 	protected:
 		GraphicsAPI(void) {};
 
-		virtual bool LinkShaderImpl(unsigned, unsigned const*, size_t) noexcept = 0;
+		virtual bool LinkShaderImpl(ShaderProg const&, Shader const*, size_t) noexcept = 0;
+
+		virtual void FreeShader(Shader&) noexcept = 0;
+		virtual void FreeShaderProgram(ShaderProg&) noexcept = 0;
 
 	private:
 		GraphicsAPI(GraphicsAPI&&)                   = delete;
@@ -56,7 +64,7 @@ namespace Gfx
 	GfxAPI* GetInstance(void) noexcept;
 	GfxMode GetActiveMode(void) noexcept;
 
-	bool InitGraphicsAPI(void const* phwnd, GfxMode = GfxMode::OPENGL);
+	bool InitGraphicsAPI(void const* phwnd, GfxMode = GfxMode::DEFAULT);
 	void ShutdownGraphicsAPI(void) noexcept;
 }
 
@@ -67,19 +75,35 @@ namespace Gfx
 // =====
 
 template <typename ... T>
-inline bool Gfx::GraphicsAPI::LinkShader(unsigned _nProgram, T ... _nArgs) noexcept
+inline bool Gfx::GraphicsAPI::LinkShader(ShaderProg const& _nProgram, T&& ... _nArgs) noexcept
 {
 	if constexpr (sizeof...(_nArgs) > 0)
 	{
-		static_assert((Ut::IsSame<Ut::RemoveRef_t<T>, unsigned>::value && ...), "All values must be a shader!");
+		static_assert((Ut::IsSame<Ut::RemoveRef_t<T>, Shader>::value && ...), "All values must be a shader!");
 
-		unsigned shaders[]{ _nArgs... };
+		Shader shaders[]{ Ut::Fwd<T>(_nArgs)... };
 		return LinkShaderImpl(_nProgram, shaders, sizeof...(_nArgs));
 	}
 	else
 	{
 		return false;
 	}
+}
+
+template <typename T>
+inline void Gfx::GraphicsAPI::Free(T&) noexcept
+{
+	static_assert(false, "Graphics Lib: Unable to free unknown type!");
+}
+template <>
+inline void Gfx::GraphicsAPI::Free<Gfx::Shader>(Shader& _arg) noexcept
+{
+	FreeShader(_arg);
+}
+template <>
+inline void Gfx::GraphicsAPI::Free<Gfx::ShaderProg>(ShaderProg& _arg) noexcept
+{
+	FreeShaderProgram(_arg);
 }
 
 

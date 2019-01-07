@@ -30,130 +30,37 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Shader::Shader(void) noexcept :
-	mnShaderID{ glCreateProgram() }
+	mStages{ ::Gfx::ShaderStage::NONE }
 {
 
 }
 
 Dystopia::Shader::~Shader(void)
 {
-	glDeleteProgram(mnShaderID);
 }
 
 void Dystopia::Shader::CreateShader(const std::string& _strVert, const std::string& _strFrag)
 {
-	unsigned vert = glCreateShader(GL_VERTEX_SHADER),
-			 frag = glCreateShader(GL_FRAGMENT_SHADER);
 
-	// Give OpenGL the shader data to compile
-	LoadShader(vert, _strVert);
-	LoadShader(frag, _strFrag);
-
-	// Attach compiled shader to program
-	glAttachShader(mnShaderID, vert);
-	glAttachShader(mnShaderID, frag);
-	glLinkProgram(mnShaderID);
-
-	// Free the vertex and fragment shaders
-	glDetachShader(mnShaderID, vert);
-	glDetachShader(mnShaderID, frag);
-	glDeleteShader(vert);
-	glDeleteShader(frag);
-
-
-#if PRINT_ERRORS
-
-	int nStatus = 0;
-	glGetProgramiv(mnShaderID, GL_LINK_STATUS, &nStatus);
-
-	if (GL_FALSE == nStatus)
-	{
-		glGetProgramiv(mnShaderID, GL_INFO_LOG_LENGTH, &nStatus);
-
-		std::string log;
-		log.reserve(nStatus);
-
-		glGetProgramInfoLog(mnShaderID, nStatus, nullptr, &log[0]);
-
-		std::printf("Shader Link Error : %s", log.c_str());
-	}
-
-#endif		// PRINT_ERRORS
 }
 
 void Dystopia::Shader::CreateShader(const std::string& _strVert, const std::string& _strFrag, const std::string& _strGeo)
 {
-	// Create and attach the geometry shader
-	unsigned geo = glCreateShader(GL_GEOMETRY_SHADER);
-	LoadShader(geo, _strGeo);
-	glAttachShader(mnShaderID, geo);
 
-	// Create the rest of the Shader Program
-	CreateShader(_strVert, _strFrag);
-
-	// Free geometry shader
-	glDetachShader(mnShaderID, geo);
-	glDeleteShader(geo);
 }
 
 void Dystopia::Shader::Bind(void) const
 {
-	glUseProgram(mnShaderID);
 }
 
 void Dystopia::Shader::Unbind(void) const
 {
-	glUseProgram(0);
 }
 
-unsigned Dystopia::Shader::GetID(void) const
-{
-	return mnShaderID;
-}
-
-void Dystopia::Shader::LoadShader(unsigned _nProg, const std::string& _path)
-{
-	std::ifstream file;
-	std::stringstream buffer;
-	const char* str;
-
-	file.open(_path);
-	buffer << file.rdbuf();
-	std::string proxy = buffer.str();
-	file.close();
-
-	str = proxy.c_str();
-	glShaderSource(_nProg, 1, &str, nullptr);
-	glCompileShader(_nProg);
-
-
-#if PRINT_ERRORS
-
-	int nStatus = 0;
-	glGetShaderiv(_nProg, GL_COMPILE_STATUS, &nStatus);
-
-	if (GL_FALSE == nStatus)
-	{
-		glGetShaderiv(_nProg, GL_INFO_LOG_LENGTH, &nStatus);
-
-		std::string log;
-		log.reserve(nStatus);
-
-		glGetShaderInfoLog(_nProg, nStatus, &nStatus, &log[0]);
-
-		DEBUG_PRINT(eLog::ERROR, "Shader Compile Error : %s", log.c_str());
-
-#   if defined(_DEBUG) | defined(DEBUG)
-		__debugbreak();
-#   endif 
-	}
-
-#endif		//  PRINT_ERRORS
-}
 
 int Dystopia::Shader::GetUniformLocation(char const* _strName) const
 {
-	return glGetUniformLocation(mnShaderID, _strName);
+	return -1; //glGetUniformLocation(mnShaderID, _strName);
 }
 
 

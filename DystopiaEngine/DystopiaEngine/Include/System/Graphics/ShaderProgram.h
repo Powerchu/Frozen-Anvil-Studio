@@ -31,7 +31,7 @@ namespace Dystopia
 
 	private:
 
-		unsigned mnProgram;
+		Gfx::ShaderProg mnProgram;
 		Gfx::ShaderStage mStage;
 	};
 }

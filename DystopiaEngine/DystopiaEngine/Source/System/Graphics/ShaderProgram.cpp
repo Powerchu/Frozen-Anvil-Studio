@@ -21,14 +21,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::ShaderProgram::ShaderProgram(void) noexcept
-	: mnProgram{ Gfx::GetInstance()->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::FRAGMENT }
+	: mnProgram{ Gfx::GetInstance()->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }
 {
 
 }
 
 Dystopia::ShaderProgram::~ShaderProgram(void) noexcept
 {
-	Gfx::GetInstance()->DestroyShaderProgram(mnProgram);
+	Gfx::GetInstance()->Free(mnProgram);
 }
 
 bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _file) noexcept

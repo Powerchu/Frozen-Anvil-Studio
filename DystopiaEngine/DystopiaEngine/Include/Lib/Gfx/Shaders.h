@@ -21,8 +21,63 @@ namespace Gfx
 		VERTEX    = 0x1,
 		FRAGMENT  = 0x2,
 		GEOMETRY  = 0x4,
+
+		NONE = 0x0,
 	};
+
+	using Shader = class SHADER_ *;
+	using ShaderProg = class SHADERPROGRAM_ *;
 }
+
+
+
+
+
+// ====
+
+inline Gfx::ShaderStage operator | (Gfx::ShaderStage const& _lhs, Gfx::ShaderStage const& _rhs)
+{
+	return static_cast<Gfx::ShaderStage>(
+		static_cast<unsigned>(_lhs) | static_cast<unsigned>(_rhs)
+	);
+}
+
+inline Gfx::ShaderStage operator & (Gfx::ShaderStage const& _lhs, Gfx::ShaderStage const& _rhs)
+{
+	return static_cast<Gfx::ShaderStage>(
+		static_cast<unsigned>(_lhs) & static_cast<unsigned>(_rhs)
+	);
+}
+
+inline Gfx::ShaderStage operator ^ (Gfx::ShaderStage const& _lhs, Gfx::ShaderStage const& _rhs)
+{
+	return static_cast<Gfx::ShaderStage>(
+		static_cast<unsigned>(_lhs) ^ static_cast<unsigned>(_rhs)
+	);
+}
+
+inline Gfx::ShaderStage operator ~ (Gfx::ShaderStage const& _v)
+{
+	return static_cast<Gfx::ShaderStage>(
+		~static_cast<unsigned>(_v)
+	);
+}
+
+inline Gfx::ShaderStage& operator |= (Gfx::ShaderStage& _lhs, Gfx::ShaderStage const& _rhs)
+{
+	return _lhs = _lhs | _rhs;
+}
+
+inline Gfx::ShaderStage& operator &= (Gfx::ShaderStage& _lhs, Gfx::ShaderStage const& _rhs)
+{
+	return _lhs = _lhs & _rhs;
+}
+
+inline Gfx::ShaderStage& operator ^= (Gfx::ShaderStage& _lhs, Gfx::ShaderStage const& _rhs)
+{
+	return _lhs = _lhs ^ _rhs;
+}
+
 
 
 #endif      // INCLUDE GUARD

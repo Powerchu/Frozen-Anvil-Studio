@@ -14,17 +14,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SHADER_H_
 #define _SHADER_H_
 
-#include <string>
 #include "Globals.h"
+#include "Math/MathFwd.h"
 
-namespace Math
-{
-	union  Vector2;
-	union  Vector4;
-	struct Matrix2;
-	struct Matrix4;
-	union  Quaternion;
-}
+#include "Lib/Gfx/Shaders.h"
+#include "System/Graphics/ShaderProgram.h"
+
+#include <string>
+
 
 namespace Dystopia
 {
@@ -36,20 +33,20 @@ namespace Dystopia
 		~Shader(void);
 
 		void CreateShader(
-			const std::string& _strVert,
-			const std::string& _strFrag
+			std::string const& _strVert,
+			std::string const& _strFrag
 		);
 
 		void CreateShader(
-			const std::string& _strVert, 
-			const std::string& _strFrag,
-			const std::string& _strGeo
+			std::string const& _strVert,
+			std::string const& _strFrag,
+			std::string const& _strGeo
 		);
+
+		void AttachProgram(ShaderProgram*);
 
 		void Bind(void) const;
 		void Unbind(void) const;
-
-		unsigned GetID(void) const;
 
 		void UploadUniform(char const*, const Math::Vector2&) const;
 		void UploadUniform(char const*, const Math::Vector4&) const;
@@ -65,7 +62,7 @@ namespace Dystopia
 
 	private:
 
-		unsigned mnShaderID;
+		::Gfx::ShaderStage mStages;
 
 		int GetUniformLocation(char const*) const;
 		void LoadShader(unsigned, const std::string&);

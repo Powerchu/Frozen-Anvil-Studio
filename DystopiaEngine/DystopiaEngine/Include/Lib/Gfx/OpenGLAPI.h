@@ -27,11 +27,11 @@ namespace Gfx
 
 		void PrintEnvironment(void) const noexcept override;
 
-		unsigned CreateShaderProgram(void) noexcept override;
-		unsigned CompileGLSL(Gfx::ShaderStage, void const* _pData) noexcept override;
-		bool LinkShaderImpl(unsigned, unsigned const*, size_t) noexcept override;
+		ShaderProg CreateShaderProgram(void) noexcept override;
+		Shader CompileGLSL(Gfx::ShaderStage, void const* _pData) noexcept override;
+		bool LinkShaderImpl(ShaderProg const&, Shader const*, size_t) noexcept override;
 
-		void DestroyShaderProgram(unsigned&) noexcept override;
+		void FreeShaderProgram(ShaderProg&) noexcept override;
 
 		bool InitGraphicsAPI(void const*) noexcept;
 
