@@ -38,7 +38,8 @@ void Dystopia::EditorIntermediary::Shutdown(void)
 void Dystopia::EditorIntermediary::ReceiveMessage(const eSysMessage& _msg, size_t)
 {
 #if EDITOR
-	if (_msg == Dystopia::eSysMessage::QUIT)
-		Editor::EditorMain::GetInstance()->Broadcast(Editor::eEMessage::WINDOWS_QUIT);
+	auto editor = Editor::EditorMain::GetInstance();
+	if (_msg == Dystopia::eSysMessage::QUIT && editor->GetCurState() == Editor::eState::MAIN)
+		editor->Broadcast(Editor::eEMessage::WINDOWS_QUIT);
 #endif
 }

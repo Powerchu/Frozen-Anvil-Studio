@@ -272,7 +272,7 @@ void Dystopia::EngineCore::Shutdown(void)
 #if EDITOR
 	//GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
 	auto s = Serialiser::OpenFile<DysSerialiser_t>(
-		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR)  +
+		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR)  + '/' + 
 		SETTINGS_FILE).c_str(),
 		DysSerialiser_t::MODE_WRITE
 	);

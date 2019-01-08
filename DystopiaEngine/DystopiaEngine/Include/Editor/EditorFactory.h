@@ -78,7 +78,7 @@ namespace Editor
 	private:
 
 		void SaveChild(Dystopia::GameObject&, Dystopia::TextSerialiser&, bool _temp = false);
-		void LoadChild(Dystopia::GameObject&, Dystopia::TextSerialiser&);
+		//void LoadChild(Dystopia::GameObject&, Dystopia::TextSerialiser&);
 		bool SavePrefab(const uint64_t& _objID, Dystopia::TextSerialiser&, bool _temp = false);
 		bool LoadPrefab(Dystopia::GameObject&, Dystopia::TextSerialiser&);
 

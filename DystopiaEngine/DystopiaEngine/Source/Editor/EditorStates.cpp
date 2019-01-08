@@ -239,6 +239,10 @@ void Editor::EditorStates::Message(eEMessage _msg)
 		HashString name{ sceneSystem->GetCurrentScene().GetSceneName().c_str() };
 		win.SetTitle(std::wstring{ name.begin(), name.end() });
 	}
+	else if (_msg == eEMessage::WINDOWS_QUIT)
+	{
+		mbQuitAttempt = true;
+	}
 }
 
 void Editor::EditorStates::SaveSettings(Dystopia::TextSerialiser&) const
