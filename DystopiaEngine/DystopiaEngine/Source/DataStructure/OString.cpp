@@ -22,7 +22,8 @@ HashID StringHasher(const char* _s)
 /****** Constructors ******/
 OString::OString(void)
 	: mnCurSize{ 0 }, mnBufferSize{ 0 }, mnID{ 0 }, mpLiteral{ nullptr }, mpCharBuffer{ nullptr }, mbRehash{ false }
-{}
+{
+}
 
 OString::OString(OString&& _moveCtor) noexcept
 	: mnCurSize{ Ut::Move(_moveCtor.mnCurSize) }, mnBufferSize{ Ut::Move(_moveCtor.mnBufferSize) }, mnID{ Ut::Move(_moveCtor.mnID) }, mpLiteral{ Ut::Move(_moveCtor.mpLiteral) },
@@ -40,7 +41,7 @@ OString::OString(const OString& _copyCtor)
 	: mnCurSize{ _copyCtor.mnCurSize }, mnBufferSize{ 0 }, mnID{ _copyCtor.mnID }, mpLiteral{ _copyCtor.mpLiteral },
 	mpCharBuffer{ nullptr }, mbRehash{ _copyCtor.mbRehash }
 {
-	if (!mpLiteral)
+	if (!mpLiteral && mnCurSize)
 	{
 		Alloc(mnCurSize);
 		MyStrCopy(_copyCtor.mpCharBuffer, mnCurSize);
@@ -450,13 +451,16 @@ void OString::Rehash(void)
 
 void OString::MyStrCopy(const char *_toCopyFrom, const size_t& _newCurSize)
 {
-	size_t i = 0;
-	mnCurSize = _newCurSize;
-	for (; i < mnCurSize; ++i)
-		mpCharBuffer[i] = _toCopyFrom[i];
-	for (; i < mnBufferSize; ++i)
-		mpCharBuffer[i] = '\0';
-	mbRehash = true;
+	if (_toCopyFrom)
+	{
+		size_t i = 0;
+		mnCurSize = _newCurSize;
+		for (; i < mnCurSize; ++i)
+			mpCharBuffer[i] = _toCopyFrom[i];
+		for (; i < mnBufferSize; ++i)
+			mpCharBuffer[i] = '\0';
+		mbRehash = true;
+	}
 }
 
 void OString::Realloc(size_t _newBufferSize)
@@ -508,12 +512,12 @@ bool operator==(const OString& _lhs, const OString& _rhs)
 
 bool operator==(const OString& _lhs, const char * _rhs)
 {
-	return _lhs.id() == StringHasher(_rhs);
+	return _lhs.id() == (_rhs ? StringHasher(_rhs) : 0);
 }
 
 bool operator==(const char * _lhs, const OString& _rhs)
 {
-	return _rhs.id() == StringHasher(_lhs);
+	return _rhs.id() == (_lhs ? StringHasher(_lhs) : 0 );
 }
 
 bool operator==(HashID _id, const OString& _rhs)

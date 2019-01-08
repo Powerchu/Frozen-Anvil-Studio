@@ -34,79 +34,12 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	/*
-	if (AllocConsole())
-	{
-		FILE* file;
 
-		freopen_s(&file, "CONOUT$", "wt", stdout);
-		freopen_s(&file, "CONOUT$", "wt", stderr);
-		//		freopen_s(&file, "CONOUT$", "wt", stdin);
-
-		//SetConsoleTitle(L"Dystopia Engine");
-	}
-
-	unsigned long long times[20];
-	Dystopia::Timer x;
-	const OString literal{ "Am a const literal" };
-
-	while (1)
-	{
-		int i = 0;
-
-		x.Lap();
-		auto t0 = x.Time();
-		OString literalCtor{ "Literal constructed" };
-		x.Lap();
-		times[i++] = (x.Time() - t0).count();
-
-		OString emptyCtored{ "" };
-		x.Lap();
-		t0 = x.Time();
-		emptyCtored = literalCtor;
-		x.Lap();
-		times[i++] = (x.Time() - t0).count();
-
-		emptyCtored = "Reassigned with literal";
-		emptyCtored.erase(2, 23);
-		x.Lap();
-		t0 = x.Time();
-		const char a = emptyCtored.front();
-		x.Lap();
-		times[i++] = (x.Time() - t0).count();
-
-		OString temp{ "Apple" };
-		emptyCtored = temp.c_str();
-		emptyCtored = "reliteral";
-		x.Lap();
-		t0 = x.Time();
-		emptyCtored += " Orange";
-		x.Lap();
-		times[i++] = (x.Time() - t0).count();
-
-		OString assignToLiteral{"Pera "};
-		x.Lap();
-		t0 = x.Time();
-		assignToLiteral += "Literal";
-		x.Lap();
-		times[i++] = (x.Time() - t0).count();
-
-		OString asda{ "asd " };
-		asda = emptyCtored.c_str();
-		x.Lap();
-		t0 = x.Time();
-		asda += assignToLiteral.c_str();
-		size_t p = asda.find("era");
-		size_t q = asda.rfind("era");
-		x.Lap();
-		times[i++] = (x.Time() - t0).count();
-
-		for (int j = 0; j < i; ++j)
-			std::cout << times[j] << std::endl;
-
-		system("CLS");
-	}
-	*/
+	OString def{};
+	OString a{ def.c_str() };
+	OString b{ def };
+	OString c{ "ASD" };
+	bool asd = c == def;
 
 	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
 	pMain->Init();
