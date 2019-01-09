@@ -31,6 +31,9 @@ namespace Gfx
 		Shader CompileGLSL(Gfx::ShaderStage, void const* _pData) noexcept override;
 		bool LinkShaderImpl(ShaderProg const&, Shader const*, size_t) noexcept override;
 
+		unsigned GetUniformLocation(ShaderProg, char const*) noexcept override;
+
+		void FreeShader(Shader&) noexcept override;
 		void FreeShaderProgram(ShaderProg&) noexcept override;
 
 		bool InitGraphicsAPI(void const*) noexcept;

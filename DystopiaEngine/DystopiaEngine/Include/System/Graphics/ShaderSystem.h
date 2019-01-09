@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class Shader;
+	class ShaderProgram;
 
 	class ShaderSystem
 	{
@@ -30,17 +31,17 @@ namespace Dystopia
 		~ShaderSystem(void) noexcept;
 
 		void EditorUpdate(void);
-
 		void Shutdown(void) noexcept;
 
-		Shader* GetShader(char const*) const noexcept;
+		Shader* GetShader(char const* _strName) const noexcept;
 		
 
-		inline Shader* operator[] (char const*) const noexcept;
+		inline Shader* operator[] (char const* _strName) const noexcept;
 
 	private:
 
-		MagicArray<Shader> mPrograms;
+		MagicArray<Shader> mShaders;
+		MagicArray<ShaderProgram> mPrograms;
 	};
 }
 

@@ -38,6 +38,32 @@ namespace
 														                                    \
 		DEBUG_PRINT(eLog::ERROR, _ERR_MSG_ ": %s", buffer);                                 \
 	} while (false)
+
+	template <typename T, typename U>
+	inline T StrongToGLType(U _v) noexcept
+	{
+		if constexpr (Ut::IsSigned<T>::value)
+		{
+			return static_cast<T>(reinterpret_cast<intptr_t>(_v));
+		}
+		else
+		{
+			return static_cast<T>(reinterpret_cast<uintptr_t>(_v));
+		}
+	}
+
+	template <typename T, typename U>
+	inline T GLToStrongType(U _v) noexcept
+	{
+		if constexpr (Ut::IsSigned<T>::value)
+		{
+			return reinterpret_cast<T>(static_cast<intptr_t>(_v));
+		}
+		else
+		{
+			return reinterpret_cast<T>(static_cast<uintptr_t>(_v));
+		}
+	}
 }
 
 Gfx::OpenGL_API::OpenGL_API(void) noexcept
@@ -70,12 +96,18 @@ Gfx::ShaderProg Gfx::OpenGL_API::CreateShaderProgram(void) noexcept
 {
 	auto ret = glCreateProgram();
 	glProgramParameteri(ret, GL_PROGRAM_SEPARABLE, GL_TRUE);
-	return { reinterpret_cast<ShaderProg>(static_cast<uintptr_t>(ret)) };
+	return { GLToStrongType<ShaderProg>(ret) };
+}
+
+void Gfx::OpenGL_API::FreeShader(Shader& _n) noexcept
+{
+	glDeleteShader(StrongToGLType<GLuint>(_n));
+	_n = 0;
 }
 
 void Gfx::OpenGL_API::FreeShaderProgram(ShaderProg& _n) noexcept
 {
-	glDeleteProgram(reinterpret_cast<GLuint>(_n));
+	glDeleteProgram(StrongToGLType<GLuint>(_n));
 	_n = 0;
 }
 
@@ -112,9 +144,11 @@ Gfx::Shader Gfx::OpenGL_API::CompileGLSL(Gfx::ShaderStage _stage, void const * _
 		if (GL_FALSE == nStatus)
 		{
 			PRINT_GFX_SHADER_ERROR(shader, glGetShaderInfoLog, "Shader Compile Error");
+			glDeleteShader(shader);
+			shader = 0;
 		}
 
-		return { reinterpret_cast<Shader>(shader) };
+		return { GLToStrongType<Shader>(shader) };
 	}
 
 	return { 0 };
@@ -123,15 +157,15 @@ Gfx::Shader Gfx::OpenGL_API::CompileGLSL(Gfx::ShaderStage _stage, void const * _
 bool Gfx::OpenGL_API::LinkShaderImpl(ShaderProg const& _nProgram, Shader const* _pShaders, size_t _sz) noexcept
 {
 	for (size_t n = 0; n < _sz; ++n)
-		glAttachShader(reinterpret_cast<GLuint>(_nProgram), reinterpret_cast<GLuint>(_pShaders[n]));
-	glLinkProgram(reinterpret_cast<GLuint>(_nProgram));
+		glAttachShader(StrongToGLType<GLuint>(_nProgram), StrongToGLType<GLuint>(_pShaders[n]));
+	glLinkProgram(StrongToGLType<GLuint>(_nProgram));
 
 	int nStatus;
-	glGetShaderiv(reinterpret_cast<GLuint>(_nProgram), GL_LINK_STATUS, &nStatus);
+	glGetShaderiv(StrongToGLType<GLuint>(_nProgram), GL_LINK_STATUS, &nStatus);
 
 	if (GL_FALSE == nStatus)
 	{
-		PRINT_GFX_SHADER_ERROR(reinterpret_cast<GLuint>(_nProgram), glGetProgramInfoLog, "Shader Link Error");
+		PRINT_GFX_SHADER_ERROR(StrongToGLType<GLuint>(_nProgram), glGetProgramInfoLog, "Shader Link Error");
 	}
 
 	return GL_TRUE == nStatus;

@@ -31,7 +31,14 @@ namespace Gfx
 	{
 	public:
 
+		// Generics
+		
 		virtual void PrintEnvironment(void) const noexcept = 0;
+
+		template <typename T>
+		inline void Free(T&) noexcept;
+
+		// ====== SHADER
 
 		virtual ShaderProg CreateShaderProgram(void) noexcept = 0;
 		virtual Shader CompileGLSL(Gfx::ShaderStage, void const* _pData) noexcept = 0;
@@ -40,8 +47,7 @@ namespace Gfx
 		template <typename ... T>
 		inline bool LinkShader(ShaderProg const& _nProgram, T&& ... _nArgs) noexcept;
 
-		template <typename T>
-		inline void Free(T&) noexcept;
+		virtual unsigned GetUniformLocation(ShaderProg, char const*) noexcept = 0;
 
 
 	protected:
