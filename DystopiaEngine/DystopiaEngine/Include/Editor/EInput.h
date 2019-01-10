@@ -99,21 +99,21 @@ bool Editor::EInput::HKDerived<N>::Occured(Dystopia::InputManager *mpInputMgr) c
 		switch (mArrStates[i])
 		{
 		case eHK_HOLD:
-			if (!mpInputMgr->IsKeyPressed(mArrKeys[i]))
+			if (!mpInputMgr->GetKey(mArrKeys[i]))
 				return false;
 			break;
 		case eHK_RELEASED:
-			if (!mpInputMgr->IsKeyReleased(mArrKeys[i]))
+			if (!mpInputMgr->GetKeyUp(mArrKeys[i]))
 				return false;
 			break;
 		case eHK_TRIGGERED:
-			if (!mpInputMgr->IsKeyTriggered(mArrKeys[i]))
+			if (!mpInputMgr->GetKeyDown(mArrKeys[i]))
 				return false;
 			break;
 		case eHK_NEGATE:
-			if (mpInputMgr->IsKeyTriggered(mArrKeys[i]) ||
-				mpInputMgr->IsKeyReleased(mArrKeys[i]) ||
-				mpInputMgr->IsKeyPressed(mArrKeys[i]))
+			if (mpInputMgr->GetKeyDown(mArrKeys[i]) ||
+				mpInputMgr->GetKeyUp(mArrKeys[i]) ||
+				mpInputMgr->GetKey(mArrKeys[i]))
 				return false;
 			break;
 		}

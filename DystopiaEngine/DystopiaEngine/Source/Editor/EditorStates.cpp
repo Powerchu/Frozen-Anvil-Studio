@@ -150,13 +150,13 @@ void Editor::EditorStates::Update(float)
 		else if (input->IsHotkeyTriggered(mnClear))
 			EditorMain::GetInstance()->GetSystem<EditorCommands>()->ClearAllCommmands();
 
-		if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_W))
+		if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->GetKeyDown(eButton::KEYBOARD_W))
 			EditorMain::GetInstance()->GetPanel<SceneView>()->SetGizmoTranslate();
-		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_E))
+		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->GetKeyDown(eButton::KEYBOARD_E))
 			EditorMain::GetInstance()->GetPanel<SceneView>()->SetGizmoScaler();
-		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_HOME))
+		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->GetKeyDown(eButton::KEYBOARD_HOME))
 			EditorMain::GetInstance()->GetPanel<SceneView>()->ResetSceneCam();
-		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_F))
+		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->GetKeyDown(eButton::KEYBOARD_F))
 			EditorMain::GetInstance()->GetPanel<SceneView>()->FocusGobj();
 	}
 

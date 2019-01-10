@@ -18,7 +18,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 
 #include "Math/Vector2.h"
-#include "Math/Vector4.h"
 
 #include <utility>
 
@@ -28,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/ObjectFlags.h"
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
+#include "Editor/EGUI.h"
 #undef  WIN32_LEAN_AND_MEAN			// Stop define from spilling into code
 #undef NOMINMAX
 
@@ -40,7 +40,8 @@ namespace
 
 void Dystopia::InputManager::LoadDefaultUserKeys(void)
 {
-
+	MapButton("Left", KEYBOARD_LEFT);
+	MapButton("Right", KEYBOARD_RIGHT);
 }
 
 
@@ -79,7 +80,7 @@ bool Dystopia::InputManager::Init(void)
 	return true;
 }
 
-void Dystopia::InputManager::Update(const float)
+void Dystopia::InputManager::Update(const float _dt)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Input System", "Update" };
 	using Type = BYTE[256];
@@ -97,6 +98,21 @@ void Dystopia::InputManager::Update(const float)
 			*(ptr + GroupIndex) |= static_cast<bool>(elem & 0x80) ? (0x00000001ui32) << BitShiftAmt: 0;
 			++count;
 		}
+	}
+
+	for (auto const&[key, btn] : mAxisMapping)
+	{
+		if (GetKey(btn.mPosBtn) || GetKey(btn.mAltPosBtn))
+		{
+			btn.Modify(1 * btn.mfSensitivity);
+		}
+
+		if (GetKey(btn.mNegBtn) || GetKey(btn.mAltNegBtn))
+		{
+			
+		}
+
+		
 	}
 
 	/*Commenting this out makes the input smoother*/
@@ -140,17 +156,18 @@ void Dystopia::InputManager::MapButton(const char* _name, eButton _button)
 {
 	mButtonMapping[_name] = _button;
 }
-_DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(eButton _Btn) const noexcept
+
+_DLL_EXPORT bool Dystopia::InputManager::GetKeyDown(eButton _Key) const noexcept
 {
-	if (_Btn >= eButton::XBUTTON_DPAD_UP)
+	if (_Key >= eButton::XBUTTON_DPAD_UP)
 	{
-		return mGamePad.IsKeyTriggered(static_cast<eButton>(_Btn - eButton::XBUTTON_DPAD_UP));
+		return mGamePad.IsKeyTriggered(static_cast<eButton>(_Key - eButton::XBUTTON_DPAD_UP));
 	}
 	KeyboardState::u32int const * prev_ptr = static_cast<KeyboardState::u32int const *>(mPrevKeyBoardState);
 	KeyboardState::u32int const * curr_ptr = static_cast<KeyboardState::u32int const *>(mKeyBoardState);
 
-	const KeyboardState::u32int BitChecker = (0x00000001ui32 << _Btn % (sizeof(KeyboardState::u32int) * 8));
-	const KeyboardState::u32int GrpIndex   = _Btn / (sizeof(KeyboardState::u32int) * 8);
+	const KeyboardState::u32int BitChecker = (0x00000001ui32 << _Key % (sizeof(KeyboardState::u32int) * 8));
+	const KeyboardState::u32int GrpIndex   = _Key / (sizeof(KeyboardState::u32int) * 8);
 
 	const bool prev = !(*(prev_ptr + GrpIndex) & BitChecker);
 	const bool cur  = (*(curr_ptr  + GrpIndex) & BitChecker);
@@ -158,76 +175,98 @@ _DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(eButton _Btn) const noex
 	return prev & cur;
 }
 
-_DLL_EXPORT bool Dystopia::InputManager::IsKeyPressed(eButton _Btn) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::GetKey(eButton _Key) const noexcept
 {
-	if (_Btn >= eButton::XBUTTON_DPAD_UP)
+	if (_Key >= eButton::XBUTTON_DPAD_UP)
 	{
-		return mGamePad.IsKeyPressed(static_cast<eButton>(_Btn - eButton::XBUTTON_DPAD_UP));
+		return mGamePad.IsKeyPressed(static_cast<eButton>(_Key - eButton::XBUTTON_DPAD_UP));
 	}
 	KeyboardState::u32int const * prev_ptr = static_cast<KeyboardState::u32int const *>(mPrevKeyBoardState);
 	KeyboardState::u32int const * curr_ptr = static_cast<KeyboardState::u32int const *>(mKeyBoardState);
 
-	const KeyboardState::u32int BitChecker = (0x00000001ui32 << _Btn % (sizeof(KeyboardState::u32int) * 8));
-	const KeyboardState::u32int GrpIndex   = _Btn / (sizeof(KeyboardState::u32int) * 8);
+	const KeyboardState::u32int BitChecker = (0x00000001ui32 << _Key % (sizeof(KeyboardState::u32int) * 8));
+	const KeyboardState::u32int GrpIndex   = _Key / (sizeof(KeyboardState::u32int) * 8);
 
 	return (*(prev_ptr + GrpIndex) & BitChecker) && (*(curr_ptr + GrpIndex) & BitChecker);
 }
 
-_DLL_EXPORT bool Dystopia::InputManager::IsKeyReleased(eButton _Btn) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::GetKeyUp(eButton _Key) const noexcept
 {
-	if (_Btn >= eButton::XBUTTON_DPAD_UP)
+	if (_Key >= eButton::XBUTTON_DPAD_UP)
 	{
-		return mGamePad.IsKeyReleased(static_cast<eButton>(_Btn - eButton::XBUTTON_DPAD_UP));
+		return mGamePad.IsKeyReleased(static_cast<eButton>(_Key - eButton::XBUTTON_DPAD_UP));
 	}
 	KeyboardState::u32int const * prev_ptr = static_cast<KeyboardState::u32int const *>(mPrevKeyBoardState);
 	KeyboardState::u32int const * curr_ptr = static_cast<KeyboardState::u32int const *>(mKeyBoardState);
 
-	const KeyboardState::u32int BitChecker = (0x00000001ui32 << _Btn % (sizeof(KeyboardState::u32int) * 8));
-	const KeyboardState::u32int GrpIndex = _Btn / (sizeof(KeyboardState::u32int) * 8);
+	const KeyboardState::u32int BitChecker = (0x00000001ui32 << _Key % (sizeof(KeyboardState::u32int) * 8));
+	const KeyboardState::u32int GrpIndex = _Key / (sizeof(KeyboardState::u32int) * 8);
 
 	return ((*(prev_ptr + GrpIndex) & BitChecker) && !(*(curr_ptr + GrpIndex) & BitChecker));
 }
 
-_DLL_EXPORT bool Dystopia::InputManager::IsKeyTriggered(const char* _ButtonName) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::GetButtonDown(const char* _KeyName) const noexcept
 {
-	const auto iterator = mButtonMapping.find(_ButtonName);
-	if (iterator == mButtonMapping.end())
+	const auto iterator = mAxisMapping.find(_KeyName);
+	if (iterator == mAxisMapping.end())
 	{
 		return false;
 	}
-	if (iterator->second >= eButton::XBUTTON_DPAD_UP)
+	if (iterator->second.mPosBtn >= eButton::XBUTTON_DPAD_UP)
 	{
-		return mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second - eButton::XBUTTON_DPAD_UP));
+		return mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP));
 	}
-	return IsKeyTriggered(iterator->second);
+	if (iterator->second.mAltPosBtn >= eButton::XBUTTON_DPAD_UP)
+	{
+		return mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
+	}
+	return GetKeyDown(iterator->second.mPosBtn) || GetKeyDown(iterator->second.mAltPosBtn);
 }
 
-_DLL_EXPORT bool Dystopia::InputManager::IsKeyPressed(const char* _ButtonName) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::GetButton(const char* _KeyName) const noexcept
 {
-	const auto iterator = mButtonMapping.find(_ButtonName);
-	if (iterator == mButtonMapping.end())
+	const auto iterator = mAxisMapping.find(_KeyName);
+	if (iterator == mAxisMapping.end())
 	{
 		return false;
 	}
-	if (iterator->second >= eButton::XBUTTON_DPAD_UP)
+	if (iterator->second.mPosBtn >= eButton::XBUTTON_DPAD_UP)
 	{
-		return mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second - eButton::XBUTTON_DPAD_UP));
+		return mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP));
 	}
-	return IsKeyPressed(iterator->second);
+	if (iterator->second.mAltPosBtn >= eButton::XBUTTON_DPAD_UP)
+	{
+		return mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
+	}
+	return GetKey(iterator->second.mPosBtn) || GetKey(iterator->second.mAltPosBtn);
 }
 
-_DLL_EXPORT bool Dystopia::InputManager::IsKeyReleased(const char* _ButtonName) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::GetButtonUp(const char* _KeyName) const noexcept
 {
-	const auto iterator = mButtonMapping.find(_ButtonName);
-	if (iterator == mButtonMapping.end())
+	const auto iterator = mAxisMapping.find(_KeyName);
+	if (iterator == mAxisMapping.end())
 	{
 		return false;
 	}
-	if (iterator->second >= eButton::XBUTTON_DPAD_UP)
+	if (iterator->second.mPosBtn >= eButton::XBUTTON_DPAD_UP)
 	{
-		return mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second - eButton::XBUTTON_DPAD_UP));
+		return mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP));
 	}
-	return IsKeyReleased(iterator->second);
+	if (iterator->second.mAltPosBtn >= eButton::XBUTTON_DPAD_UP)
+	{
+		return mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
+	}
+	return GetKeyUp(iterator->second.mPosBtn) || GetKeyUp(iterator->second.mAltPosBtn);
+}
+
+_DLL_EXPORT float Dystopia::InputManager::GetAxis(const char * _BtnName) const noexcept
+{
+	const auto it = mAxisMapping.find(_BtnName);
+	if (it == mAxisMapping.end())
+	{
+		return false;
+	}
+	return it->second.mfRetValue;
 }
 
 bool Dystopia::InputManager::IsController() const
@@ -293,7 +332,13 @@ float Dystopia::InputManager::GetMouseWheel(void) const noexcept
 
 void Dystopia::InputManager::EditorUI()
 {
-
+	if (EGUI::Display::CollapsingHeader("Axes"))
+	{
+		for (auto const&[key, val] : mButtonMapping)
+		{
+			EGUI::Display::CollapsingHeader(key.c_str());
+		}
+	}
 }
 
 Dystopia::InputManager::KeyBinding& Dystopia::InputManager::KeyBinding::operator = (eButton _nBtn)
