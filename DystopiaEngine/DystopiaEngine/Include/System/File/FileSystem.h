@@ -178,6 +178,7 @@ namespace Dystopia
 
 		/*Callback Function for ReadDirectoryChangesExW*/
 		void FileTrackCallBack (unsigned long dwErrorCode, unsigned long dwNumOfBytes, _OVERLAPPED * lpOverlapped);
+		friend void FileTrackCallBack(unsigned long dwErrorCode, unsigned long dwNumOfBytes, _OVERLAPPED * lpOverlapped);
 	};
 
 
@@ -269,6 +270,10 @@ namespace Dystopia
 		return _File;
 
 	}
+
+	void FileTrackCallBack(unsigned long dwErrorCode, unsigned long dwNumOfBytes, _OVERLAPPED * lpOverlapped);
+
+
 }
 
 #endif

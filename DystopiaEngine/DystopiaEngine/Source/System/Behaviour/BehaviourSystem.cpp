@@ -221,7 +221,10 @@ namespace Dystopia
 	void Dystopia::BehaviourSystem::PostInit(void)
 	{
 		/*TESTING*/
-		EngineCore::Get<FileSystem>()->RegisterFileTrackEvent("Behaviours/BehavioursScripts", &Dystopia::BehaviourSystem::PreInit, this, eFileDir::eResource);
+		auto ptr = EngineCore::Get<FileSystem>();
+		auto fullname = ptr->GetFullPath("sample.cpp", eFileDir::eResource);
+		ptr->TrackFile(fullname.c_str());
+		EngineCore::Get<FileSystem>()->RegisterFileTrackEvent(fullname.c_str(), &Dystopia::BehaviourSystem::PreInit, this, eFileDir::eResource);
 	}
 
 	void Dystopia::BehaviourSystem::FixedUpdate(float _dt)

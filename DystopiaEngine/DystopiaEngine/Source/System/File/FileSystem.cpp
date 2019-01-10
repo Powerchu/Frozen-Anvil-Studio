@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/File/FileSystem.h"
+#include "System/Driver/Driver.h"
 
 #include <filesystem>
 #include <Windows.h>
@@ -529,6 +530,8 @@ namespace Dystopia
 		break;
 		}
 
+		DWORD byte_read;
+
 		/*Loop through list of registered events tied to a event which the same file path as the detected file*/
 		/*Fire the event. The event registered should not require any arguement to be invoked*/
 		for (auto & elem : mDetectionFiles)
@@ -547,17 +550,36 @@ namespace Dystopia
 					if (FileNames == elem->mFileName)
 					{
 						/*Registered File Path of event is same as detected change*/
-						/*Fire the registered event*/
+						/*Fire the registered events*/
+						for (auto & TrackElem : mArrayOfTrackInfo)
+						{
+							if (TrackElem.first == FileNames.c_str())
+							{
+								for (auto & EventElem : TrackElem.second)
+									EventElem.second();
+							}
+						}
 
 						/*Once the event is fired, restart the tracking*/
+						if (ReadDirectoryChangesW((elem)->mFileHandle,
+							&(elem)->mFileInfo.front(),
+							static_cast<DWORD>((elem)->mFileInfo.size()),
+							false,
+							FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+							&byte_read,
+							&(elem)->mOverlappedInfo,
+							&Dystopia::FileTrackCallBack))
+
+						{
+							/*Success*/
+						}
+
 						return;
 					}
 				}
 			}
 
 		}
-
-
 	}
 
 	bool FileSystem::CheckFolderExist(const HashString& _folderName, const HashString& _path) const
@@ -637,16 +659,94 @@ namespace Dystopia
 
 	FileTrackInfoID_t FileSystem::TrackFile(const HashString & _EventName)
 	{
+		bool found = false;
 		for (auto const & elem : mArrayOfTrackInfo)
 		{
 			if (elem.first == _EventName)
-				return _EventName.id();
+				found = true;
 		}
-		FileTrackInfo temp = std::make_pair(_EventName, AutoArray<EventInfo>{});
-		mArrayOfTrackInfo.push_back(temp);
-		return _EventName.id();
+		if (!found)
+		{
+			FileTrackInfo temp = std::make_pair(_EventName, AutoArray<EventInfo>{});
+			mArrayOfTrackInfo.push_back(temp);
+		}
+
+		DetectionInfo * pDetectionInfo = nullptr;
+		/*Find for existing Files*/
+		for (auto const & elem : mDetectionFiles)
+		{
+			if (elem->mFileName == _EventName.c_str())
+			{
+				pDetectionInfo = elem;
+				break;
+			}
+
+		}
+
+		if (!pDetectionInfo)
+		{
+			HANDLE hand = CreateFileA(_EventName.c_str(),
+				FILE_LIST_DIRECTORY,
+				FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+				NULL,
+				OPEN_EXISTING,
+				FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
+				NULL);
+
+			if (hand != INVALID_HANDLE_VALUE)
+			{
+				_OVERLAPPED _overlapObj;
+				DWORD       byte_read;
+				_overlapObj.hEvent = CreateEventA(NULL, true, false, _EventName.c_str());
+
+				if (_overlapObj.hEvent == INVALID_HANDLE_VALUE)
+				{
+					/*Failed to create a Event/_OVERLAPPED*/
+					CloseHandle(hand);
+					mLastKnownError = eFileSystemError::CREATE_OVERLAP_ERROR;
+					return 0;
+				}
+
+				DetectionInfo ** ptr = mDetectionFiles.Emplace(new DetectionInfo{ _EventName.c_str(), hand, _overlapObj });
+				if (ReadDirectoryChangesW((*ptr)->mFileHandle,
+					&(*ptr)->mFileInfo.front(),
+					static_cast<DWORD>((*ptr)->mFileInfo.size()),
+					true,
+					FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+					&byte_read,
+					&(*ptr)->mOverlappedInfo,
+					&Dystopia::FileTrackCallBack
+				   ))
+
+				{
+					/*Success*/
+					mLastKnownError = eFileSystemError::NONE;
+					return _EventName.id();
+				}
+				else
+				{
+					DebugBreak();
+				}
+				if (GetLastError() == ERROR_NOTIFY_ENUM_DIR || byte_read == 0)
+				{
+					/*Failed to read directory successfully*/
+					mLastKnownError = eFileSystemError::READ_DIRECTORY_ERROR;
+					CloseHandle((*ptr)->mFileHandle);
+					CloseHandle((*ptr)->mOverlappedInfo.hEvent);
+					(*ptr)->mOverlappedInfo.hEvent = (*ptr)->mFileHandle = INVALID_HANDLE_VALUE;
+				}
+			}
+		}
+		return 0;
+	}
+
+	void FileTrackCallBack(unsigned long dwErrorCode, unsigned long dwNumOfBytes, _OVERLAPPED * lpOverlapped)
+	{
+		EngineCore::Get<FileSystem>()->FileTrackCallBack(dwErrorCode, dwNumOfBytes, lpOverlapped);
 	}
 
 }
+
+
 
 
