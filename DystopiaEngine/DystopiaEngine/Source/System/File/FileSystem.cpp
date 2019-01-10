@@ -478,6 +478,7 @@ namespace Dystopia
 				}
 
 				mLastKnownError = eFileSystemError::NONE;
+
 			}
 			/*Do ReadFirst Function again*/
 			if (ReadDirectoryChangesW((_DetectionInfo).mFileHandle,
@@ -657,35 +658,39 @@ namespace Dystopia
 		return HashString{};
 	}
 
-	FileTrackInfoID_t FileSystem::TrackFile(const HashString & _EventName)
+	FileTrackInfoID_t FileSystem::TrackFile(const HashString & _EventName, eFileDir _ParentDirectory)
 	{
-		bool found = false;
-		for (auto const & elem : mArrayOfTrackInfo)
-		{
-			if (elem.first == _EventName)
-				found = true;
-		}
-		if (!found)
-		{
-			FileTrackInfo temp = std::make_pair(_EventName, AutoArray<EventInfo>{});
-			mArrayOfTrackInfo.push_back(temp);
-		}
 
 		DetectionInfo * pDetectionInfo = nullptr;
 		/*Find for existing Files*/
 		for (auto const & elem : mDetectionFiles)
 		{
-			if (elem->mFileName == _EventName.c_str())
+			if (elem->mFileName == GetFullPath(_EventName.c_str(), _ParentDirectory))
 			{
 				pDetectionInfo = elem;
-				break;
-			}
 
+				bool found = false;
+				for (auto const & elem2 : mArrayOfTrackInfo)
+				{
+					if (elem2.first == elem->mFileHandle)
+					{
+						found = true;
+						return elem2.first;
+					}
+
+				}
+				if (!found)
+				{
+					FileTrackInfo temp = std::make_pair(elem->mFileHandle, AutoArray<EventInfo>{});
+					mArrayOfTrackInfo.push_back(Ut::Move(temp));
+					return elem->mFileHandle;
+				}
+			}
 		}
 
 		if (!pDetectionInfo)
 		{
-			HANDLE hand = CreateFileA(_EventName.c_str(),
+			HANDLE hand = CreateFileA(mPathTable[_ParentDirectory].c_str(),
 				FILE_LIST_DIRECTORY,
 				FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
 				NULL,
@@ -697,9 +702,9 @@ namespace Dystopia
 			{
 				_OVERLAPPED _overlapObj;
 				DWORD       byte_read;
-				_overlapObj.hEvent = CreateEventA(NULL, true, false, _EventName.c_str());
-
-				if (_overlapObj.hEvent == INVALID_HANDLE_VALUE)
+				_overlapObj.hEvent = CreateEventA(NULL, false, false, _EventName.c_str());
+				auto error1 = GetLastError();
+				if (_overlapObj.hEvent == INVALID_HANDLE_VALUE || !_overlapObj.hEvent)
 				{
 					/*Failed to create a Event/_OVERLAPPED*/
 					CloseHandle(hand);
@@ -707,9 +712,9 @@ namespace Dystopia
 					return 0;
 				}
 
-				DetectionInfo ** ptr = mDetectionFiles.Emplace(new DetectionInfo{ _EventName.c_str(), hand, _overlapObj });
+				DetectionInfo ** ptr = mDetectionFiles.Emplace(new DetectionInfo{ GetFullPath(_EventName.c_str(), _ParentDirectory), hand, _overlapObj });
 				if (ReadDirectoryChangesW((*ptr)->mFileHandle,
-					&(*ptr)->mFileInfo.front(),
+					&(*ptr)->mFileInfo[0],
 					static_cast<DWORD>((*ptr)->mFileInfo.size()),
 					true,
 					FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
@@ -721,12 +726,14 @@ namespace Dystopia
 				{
 					/*Success*/
 					mLastKnownError = eFileSystemError::NONE;
-					return _EventName.id();
+
+					FileTrackInfo temp = std::make_pair((*ptr)->mFileHandle, AutoArray<EventInfo>{});
+					mArrayOfTrackInfo.push_back(Ut::Move(temp));
+
+					return (*ptr)->mFileHandle;
 				}
-				else
-				{
-					DebugBreak();
-				}
+
+				auto error = GetLastError();
 				if (GetLastError() == ERROR_NOTIFY_ENUM_DIR || byte_read == 0)
 				{
 					/*Failed to read directory successfully*/

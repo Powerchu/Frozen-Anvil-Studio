@@ -222,9 +222,9 @@ namespace Dystopia
 	{
 		/*TESTING*/
 		auto ptr = EngineCore::Get<FileSystem>();
-		auto fullname = ptr->GetFullPath("sample.cpp", eFileDir::eResource);
-		ptr->TrackFile(fullname.c_str());
-		EngineCore::Get<FileSystem>()->RegisterFileTrackEvent(fullname.c_str(), &Dystopia::BehaviourSystem::PreInit, this, eFileDir::eResource);
+		auto fullname = ptr->GetFullPath("Test.txt", eFileDir::eResource);
+		auto temp = ptr->TrackFile("FileTest.txt", eFileDir::eResource);
+		EngineCore::Get<FileSystem>()->RegisterFileTrackEvent(temp, &Dystopia::BehaviourSystem::PreInit, this, eFileDir::eResource);
 	}
 
 	void Dystopia::BehaviourSystem::FixedUpdate(float _dt)
@@ -522,6 +522,7 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 				}
 			}
 		}
+
 #else
 
 		for (auto & i : mvBehaviours)

@@ -59,8 +59,8 @@ namespace Dystopia
 
 	} FileErrorCode;
 
-	typedef HashID FileTrackInfoID_t;
-	typedef GUID_t FileEventID_t;
+	typedef void* FileTrackInfoID_t;
+	typedef GUID_t FileEventCallBack_t;
 
 	class FileSystem
 	{
@@ -109,19 +109,20 @@ namespace Dystopia
 		_DLL_EXPORT HashString GetFromResource(const char *_str);
 
 		/*EXPERIMENTAL FUNCTIONS*/
+
 		void RegisterFileTrackEvent (const HashString & _FileName, CallBackEvent const & _Event, eFileDir _ParentDirectory = eFileDir::eResource);
 
 		/*Create a Track File Event, The EventName should be the filepath*/
-		FileTrackInfoID_t TrackFile(const HashString & _FileName);
+		FileTrackInfoID_t TrackFile(const HashString & _FileName, eFileDir _ParentDirectory = eFileDir::eResource);
 
 		/*Bind a Function to the event created*/
 		template<class Caller, typename Ret_t, typename ...params_t>
-		FileEventID_t RegisterFileTrackEvent(const HashString & _FileName, Ret_t(Caller::*_fn)(params_t...), Caller* const _user, eFileDir _ParentDirectory = eFileDir::eResource)
+		FileEventCallBack_t RegisterFileTrackEvent(const FileTrackInfoID_t & _FileTrackID, Ret_t(Caller::*_fn)(params_t...), Caller* const _user, eFileDir _ParentDirectory = eFileDir::eResource)
 		{
 			/*Check for existing EventInfo who has a filepath that is equilivent*/
 			for (auto & elem : mArrayOfTrackInfo)
 			{
-				if (IsSameFile(GetFullPath(_FileName.c_str(), _ParentDirectory), elem.first.c_str()))
+				if (_FileTrackID == elem.first)
 				{
 					auto temp = GUIDGenerator::GetUniqueID();
 					elem.second.push_back(EventInfo{temp , CallBackEvent{_user, _fn } });
@@ -132,10 +133,16 @@ namespace Dystopia
 			EventInfo tempInfo = { id, CallBackEvent{ _user, _fn } };
 			AutoArray<EventInfo> temp;
 			temp.EmplaceBack(tempInfo);
-			mArrayOfTrackInfo.push_back(std::make_pair(_FileName, Ut::Move(temp)));
+			mArrayOfTrackInfo.push_back(std::make_pair(_FileTrackID, Ut::Move(temp)));
 			return id;
 		}
 
+		void Test()
+		{
+			std::string a[100];
+			for (auto & elem : mDetectionFiles)
+				GetChangesInfo(*elem, a, 100);
+		}
 		///*Bind a Function to the event created*/
 		//template<class Caller, typename Ret_t, typename ...params_t>
 		//FileSystemEventID RegisterFileTrackEvent(const HashString & _FileName, Ret_t(Caller::*_fn)(params_t...), eFileDir _ParentDirectory = eFileDir::eResource)
@@ -160,7 +167,7 @@ namespace Dystopia
 
 		using PathTable     = std::map<eFileDir, std::string>;
 		using EventInfo     = std::pair<GUID_t, CallBackEvent>;
-		using FileTrackInfo = std::pair<HashString, AutoArray<EventInfo>>;
+		using FileTrackInfo = std::pair<FileTrackInfoID_t, AutoArray<EventInfo>>;
 
 		/*Static Members*/
 		static PathTable            mPathTable;
