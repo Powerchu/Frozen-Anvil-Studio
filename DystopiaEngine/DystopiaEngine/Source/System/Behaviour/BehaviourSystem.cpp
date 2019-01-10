@@ -182,7 +182,7 @@ namespace Dystopia
 		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
 
-		mHotloader->SetCompilerFlags(L"cl /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
+		mHotloader->SetCompilerFlags(L"cl /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 /Zi /DEBUG:FULL " + IncludeFolderPath);
 
 
 		mHotloader->Init();
@@ -220,6 +220,8 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::PostInit(void)
 	{
+		/*TESTING*/
+		EngineCore::Get<FileSystem>()->RegisterFileTrackEvent("Behaviours/BehavioursScripts", &Dystopia::BehaviourSystem::PreInit, this, eFileDir::eResource);
 	}
 
 	void Dystopia::BehaviourSystem::FixedUpdate(float _dt)

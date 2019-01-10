@@ -542,7 +542,7 @@ namespace Dystopia
 				if (!results)
 					return;
 
-				for (auto & FileNames : _temp)
+				for (auto  const & FileNames : _temp)
 				{
 					if (FileNames == elem->mFileName)
 					{
@@ -633,6 +633,18 @@ namespace Dystopia
 		}
 
 		return HashString{};
+	}
+
+	FileTrackInfoID_t FileSystem::TrackFile(const HashString & _EventName)
+	{
+		for (auto const & elem : mArrayOfTrackInfo)
+		{
+			if (elem.first == _EventName)
+				return _EventName.id();
+		}
+		FileTrackInfo temp = std::make_pair(_EventName, AutoArray<EventInfo>{});
+		mArrayOfTrackInfo.push_back(temp);
+		return _EventName.id();
 	}
 
 }
