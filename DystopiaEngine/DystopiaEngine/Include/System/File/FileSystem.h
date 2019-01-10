@@ -26,6 +26,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Globals.h"
 
+struct _OVERLAPPED;
+
 namespace Dystopia
 {
 	/*Predeclaration*/
@@ -53,6 +55,7 @@ namespace Dystopia
 		READ_DIRECTORY_ERROR,
 
 	} FileErrorCode;
+
 
 
 	class FileSystem
@@ -115,6 +118,11 @@ namespace Dystopia
 
 		/*Private Function*/
 		unsigned GetChangesInfo(DetectionInfo & _DetectionInfo, std::string * _ChangesBuffer, size_t _size);
+
+		/*EXPERIMENTAL STUFF*/
+
+		/*Callback Function for ReadDirectoryChangesExW*/
+		void FileTrackCallBack (unsigned long dwErrorCode, unsigned long dwNumOfBytes, _OVERLAPPED * lpOverlapped);
 	};
 
 

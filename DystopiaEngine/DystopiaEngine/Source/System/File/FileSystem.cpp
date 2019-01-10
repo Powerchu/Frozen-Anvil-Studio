@@ -505,6 +505,61 @@ namespace Dystopia
 		return 0;
 	}
 
+	void FileSystem::FileTrackCallBack(unsigned long dwErrorCode, unsigned long /*dwNumOfBytes*/, _OVERLAPPED * lpOverlapped)
+	{
+		/*Extract following info from OVERLAPPED object
+		- Name of Detected File
+		- Type of action
+		*/
+		switch (dwErrorCode)
+		{
+		case 0:{
+			/*Success*/
+		}
+		break;
+
+		default:{
+#if __DEBUG | DEBUG
+		/*Throw a error*/
+#else
+		/*Warning*/
+#endif
+			return;
+		}
+		break;
+		}
+
+		/*Loop through list of registered events tied to a event which the same file path as the detected file*/
+		/*Fire the event. The event registered should not require any arguement to be invoked*/
+		for (auto & elem : mDetectionFiles)
+		{
+			if (elem->mOverlappedInfo.hEvent == lpOverlapped->hEvent)
+			{
+				static std::string _temp[100];
+				unsigned int && results = GetChangesInfo(*elem, _temp, 100);
+
+				/*If there is no changes detected*/
+				if (!results)
+					return;
+
+				for (auto & FileNames : _temp)
+				{
+					if (FileNames == elem->mFileName)
+					{
+						/*Registered File Path of event is same as detected change*/
+						/*Fire the registered event*/
+
+						/*Once the event is fired, restart the tracking*/
+						return;
+					}
+				}
+			}
+
+		}
+
+
+	}
+
 	bool FileSystem::CheckFolderExist(const HashString& _folderName, const HashString& _path) const
 	{
 		if (CheckPathExist(_path))
