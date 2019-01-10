@@ -44,6 +44,7 @@
     <ClCompile Include="Source\Editor\EditorStates.cpp" />
     <ClCompile Include="Source\Editor\EditorUI.cpp" />
     <ClCompile Include="Source\Editor\EInput.cpp" />
+    <ClCompile Include="Source\Editor\FlowChart.cpp" />
     <ClCompile Include="Source\Editor\GameView.cpp" />
     <ClCompile Include="Source\Lib\GraphicsLib.cpp" />
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Include\Editor\EInput.h" />
     <ClInclude Include="Include\Component\AiController.h" />
     <ClInclude Include="Include\Component\NodeList.h" />
+    <ClInclude Include="Include\Editor\FlowChart.h" />
     <ClInclude Include="Include\Editor\GameView.h" />
     <ClInclude Include="Include\Factory\Factory.h" />
     <ClInclude Include="Include\PP\PPConcat.h" />

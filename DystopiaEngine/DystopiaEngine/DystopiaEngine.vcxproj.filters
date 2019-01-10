@@ -361,6 +361,9 @@
     <ClCompile Include="Source\System\Editor\EditorIntermediary.cpp">
       <Filter>Game Engine\Systems\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\FlowChart.cpp">
+      <Filter>Editor\Main\Panels\FlowChart</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -999,6 +1002,9 @@
     <ClInclude Include="Include\System\Editor\EditorIntermediary.h">
       <Filter>Game Engine\Systems\Editor</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\FlowChart.h">
+      <Filter>Editor\Main\Panels\FlowChart</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1435,6 +1441,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Editor">
       <UniqueIdentifier>{3eec429a-e71a-4642-8c21-307a1bf738d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Panels\FlowChart">
+      <UniqueIdentifier>{14032cc1-abb6-4027-9462-082b28d5d5ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -57,6 +57,8 @@ namespace Editor//Dystopia::
 			return EGUI::ePayloadTags::WAV;
 		else if (_path.find(g_PayloadTTFEx.c_str()) == _path.length() - 4)
 			return EGUI::ePayloadTags::TTF;
+		else if (_path.find(g_PayloadTxtEx.c_str()) == _path.length() - 4)
+			return EGUI::ePayloadTags::TXT;
 		return EGUI::ePayloadTags::UNKNOWN;
 	}
 
