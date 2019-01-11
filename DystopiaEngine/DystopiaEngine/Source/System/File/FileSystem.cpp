@@ -42,6 +42,7 @@ namespace Dystopia
 
 			mFileHandle = mOverlappedInfo.hEvent = INVALID_HANDLE_VALUE;
 		}
+		std::string mParentDirectory;
 		std::string mFileName;
 		HANDLE      mFileHandle;
 		_OVERLAPPED mOverlappedInfo;
