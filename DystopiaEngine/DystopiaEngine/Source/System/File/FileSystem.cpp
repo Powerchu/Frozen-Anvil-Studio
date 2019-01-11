@@ -108,11 +108,39 @@ namespace Dystopia
 
 	bool FileSystem::Init(void)
 	{
-		return false;
+		return true;
 	}
 
 	void FileSystem::Update(float _dt)
 	{
+		/*Loop through all File Tracking Jobs and poll for updates*/
+		static std::string ListOfFileNames[100];
+		for (auto & TrackJob : mDetectionFiles)
+		{
+			/*Get the list of file changes in the directory*/
+			GetChangesInfo(*TrackJob, ListOfFileNames, 100);
+			for (auto const & names : ListOfFileNames)
+			{
+				/*
+				  Check that the list of names contains the file that the user is
+				  interested in(Stored in DetectionInfo.FileName
+				*/
+				if (names == TrackJob->mFileName)
+				{
+					/*Find the Arrays of EventCallBack for the current Job and invoke them*/
+					for (auto & e : mArrayOfTrackInfo)
+					{
+						if (e.first == TrackJob->mFileHandle)
+						{
+							for (auto & f : e.second)
+								f.second();
+						}
+					}
+					break;
+				}
+
+			}
+		}
 	}
 
 	void FileSystem::Shutdown(void)
@@ -741,7 +769,7 @@ namespace Dystopia
 					return 0;
 				}
 
-				DetectionInfo ** ptr = mDetectionFiles.Emplace(new DetectionInfo{ GetFullPath(_EventName.c_str(), _ParentDirectory), hand, _overlapObj });
+				DetectionInfo ** ptr = mDetectionFiles.Emplace(new DetectionInfo{ _EventName.c_str(), hand, _overlapObj });
 				if (ReadDirectoryChangesW((*ptr)->mFileHandle,
 					&(*ptr)->mFileInfo[0],
 					static_cast<DWORD>((*ptr)->mFileInfo.size()),
@@ -758,7 +786,7 @@ namespace Dystopia
 
 					FileTrackInfo temp = std::make_pair((*ptr)->mFileHandle, AutoArray<EventInfo>{});
 					mArrayOfTrackInfo.push_back(Ut::Move(temp));
-					SleepEx(1000000, true);
+					//SleepEx(1000000, true);
 					return (*ptr)->mFileHandle;
 				}
 
