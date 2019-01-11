@@ -332,7 +332,7 @@ void Editor::EditorStates::Save(void)
 		HashString sceneFile{ sceneName };
 		sceneFile += ".";
 		sceneFile += Gbl::SCENE_EXT;
-		auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+		auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 		auto fp = fs->FindFilePath(sceneFile, Dystopia::eFileDir::eResource);
 
 		sceneSystem->SaveScene(fp.c_str(), sceneName.c_str());
@@ -389,7 +389,7 @@ void Editor::EditorStates::SaveAs(void)
 void Editor::EditorStates::New(void)
 {
 	auto sceneSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
-	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 	auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
 
 	HashString file{ fp.c_str() };
@@ -434,7 +434,7 @@ void Editor::EditorStates::Stop(void)
 
 void Editor::EditorStates::TempSave(void)
 {
-	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 	auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
 	auto sceneSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 

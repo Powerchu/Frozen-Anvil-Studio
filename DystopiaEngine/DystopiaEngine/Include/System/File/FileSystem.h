@@ -62,12 +62,29 @@ namespace Dystopia
 	typedef void* FileTrackInfoID_t;
 	typedef GUID_t FileEventCallBack_t;
 
-	class FileSystem
+	class FileSystem : public Systems
 	{
 	public:
 
+		/*System Functions*/
 		FileSystem();
 		~FileSystem();
+
+		bool Init(void);
+		void Update(float _dt);
+		void Shutdown(void);
+
+		void PostUpdate() override;
+
+		void LoadDefaults(void) override;
+		void LoadSettings(DysSerialiser_t&) override;
+		void SaveSettings(DysSerialiser_t&) override;
+
+		void Serialise(TextSerialiser &) const;
+
+		void Unserialise(TextSerialiser &);
+
+
 		std::string  GetFullPath (std::string const & _FileName, eFileDir _ParentDirectory);
 		std::wstring GetFullPath_w(std::wstring const & _FileName, eFileDir _ParentDirectory);
 		HashString    ConvertToRelative(HashString const & _FullPath, eFileDir _ParentDirectory = eFileDir::eResource) const; 

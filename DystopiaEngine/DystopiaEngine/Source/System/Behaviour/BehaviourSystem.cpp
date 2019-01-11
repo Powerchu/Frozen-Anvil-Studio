@@ -156,7 +156,7 @@ namespace Dystopia
 		/*Init Hotloader*/
 #if EDITOR
 
-		FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
+		FileSys = EngineCore::GetInstance()->Get<FileSystem>();
 
 		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
 

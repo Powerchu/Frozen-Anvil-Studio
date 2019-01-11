@@ -106,6 +106,35 @@ namespace Dystopia
 
 	}
 
+	bool FileSystem::Init(void)
+	{
+		return false;
+	}
+
+	void FileSystem::Update(float _dt)
+	{
+	}
+
+	void FileSystem::Shutdown(void)
+	{
+	}
+
+	void FileSystem::PostUpdate()
+	{
+	}
+
+	void FileSystem::LoadDefaults(void)
+	{
+	}
+
+	void FileSystem::LoadSettings(DysSerialiser_t &)
+	{
+	}
+
+	void FileSystem::SaveSettings(DysSerialiser_t &)
+	{
+	}
+
 	std::string FileSystem::GetFullPath(std::string const & _FileName, eFileDir _ParentDirectory)
 	{
 		std::filesystem::path DirPath{ GetProjectFolders<std::string>(_ParentDirectory) };
@@ -702,7 +731,7 @@ namespace Dystopia
 			{
 				_OVERLAPPED _overlapObj;
 				DWORD       byte_read;
-				_overlapObj.hEvent = CreateEventA(NULL, false, false, _EventName.c_str());
+				_overlapObj.hEvent = CreateEventA(NULL, false, true, _EventName.c_str());
 				auto error1 = GetLastError();
 				if (_overlapObj.hEvent == INVALID_HANDLE_VALUE || !_overlapObj.hEvent)
 				{
@@ -729,7 +758,7 @@ namespace Dystopia
 
 					FileTrackInfo temp = std::make_pair((*ptr)->mFileHandle, AutoArray<EventInfo>{});
 					mArrayOfTrackInfo.push_back(Ut::Move(temp));
-
+					SleepEx(1000000, true);
 					return (*ptr)->mFileHandle;
 				}
 
