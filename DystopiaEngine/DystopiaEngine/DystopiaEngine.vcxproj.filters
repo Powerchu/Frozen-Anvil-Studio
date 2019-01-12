@@ -364,6 +364,9 @@
     <ClCompile Include="Source\Editor\FlowChart.cpp">
       <Filter>Editor\Main\Panels\FlowChart</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\FlowChartData.cpp">
+      <Filter>Editor\Main\Panels\FlowChart</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1003,6 +1006,9 @@
       <Filter>Game Engine\Systems\Editor</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\FlowChart.h">
+      <Filter>Editor\Main\Panels\FlowChart</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\FlowChartData.h">
       <Filter>Editor\Main\Panels\FlowChart</Filter>
     </ClInclude>
   </ItemGroup>

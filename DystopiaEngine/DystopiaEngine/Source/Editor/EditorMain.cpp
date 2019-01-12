@@ -144,7 +144,8 @@ void Editor::EditorMain::Update(void)
 		{
 			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scopeT{ p->GetLabel().c_str(), "Editor UI" };
 			ImGuiWindowFlags f = p->IsScrollEnabled() ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar;
-			if (EGUI::StartTab(p->GetLabel().c_str(), &p->GetOpenedBool(), f))
+			bool open = p->IsOpened();
+			if (EGUI::StartTab(p->GetLabel().c_str(), &open, f))
 			{
 				EGUI::Indent(4);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
@@ -152,6 +153,7 @@ void Editor::EditorMain::Update(void)
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 4);
 				EGUI::UnIndent(4);
 			}
+			p->SetOpened(open);
 			EGUI::EndTab();
 		}
 		EGUI::PopID();

@@ -36,6 +36,7 @@ namespace Editor
 		virtual void LoadSettings(Dystopia::TextSerialiser& _in) = 0;
 		virtual HashString GetLabel(void) const = 0;
 		virtual ~EditorPanel(void) {}
+		virtual void PanelClosing(void) {}
 
 
 		/******************************* General panel stuff *******************************/
@@ -43,7 +44,7 @@ namespace Editor
 		bool IsScrollEnabled(void) const { return mbScrollEnabled; }
 		void SetScrollEnabled(bool _b) { mbScrollEnabled = _b; }
 		bool IsOpened(void) const { return mbOpened; }
-		void SetOpened(bool _b) { mbOpened = _b; }
+		void SetOpened(bool _b);
 		bool& GetOpenedBool(void) { return mbOpened; }
 		Math::Vec2 Size() const { return mSize; }
 		Math::Vec2 Position() const { return mPos; }
@@ -58,6 +59,13 @@ namespace Editor
 		Math::Vec2 mPos;
 	};
 	
+}
+
+inline void Editor::EditorPanel::SetOpened(bool _b)
+{
+	if (mbOpened && !_b)
+		PanelClosing();
+	mbOpened = _b;
 }
 
 #endif 

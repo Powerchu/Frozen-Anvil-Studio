@@ -13,12 +13,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _FLOW_CHART_H_
 #define _FLOW_CHART_H_
+#include "DataStructure/AutoArray.h"
 #include "DataStructure/HashString.h"
 #include "Math/Vector2.h"
 #include "Editor/EditorPanel.h"
+#include "Editor/FlowChartData.h"
+
+#include <vector>
+#include <string>
 
 namespace Editor
 {
+	struct File;
 	class FlowChart : public EditorPanel
 	{
 	public:
@@ -34,12 +40,33 @@ namespace Editor
 		void SaveSettings(Dystopia::TextSerialiser& _out) const;
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 		HashString GetLabel(void) const;
+		void PanelClosing(void);
 
 	private:
+
 		HashString mLabel;
 		HashString mCurrentDataFile;
+		int mnWidth;
+		int mnHeight;
 
-		void ProcessData(const HashString&);
+		AutoArray<UserItem> mItems;
+		AutoArray<UserLinks> mLinks;
+
+		HashString GetWord(const char *);
+		void ProcessData(File*);
+		void ParseItems(FILE*);
+		void ParseSubItem(int, FILE*);
+		int AddItem(const HashString&);
+		int FindItem(const HashString&) const;
+		int FindItem(const uint64_t&) const;
+		void ProcessLinks(void);
+		void MakeFiles(void);
+
+		void ParseHeaders(AutoArray<HashString>&);
+		void ParseBodies(AutoArray<HashString>&);
+		void ParseStates();
+		AutoArray<HashString> ExtractAllLines(void* _stream, const char* _exitCode);
+		std::vector<std::string> ClearBetweenCodes(const char* _file, const char * _entry, const char* _exit);
 	};
 }
 
