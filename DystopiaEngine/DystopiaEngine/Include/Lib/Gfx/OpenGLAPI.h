@@ -28,13 +28,33 @@ namespace Gfx
 		void PrintEnvironment(void) const noexcept override;
 
 		ShaderProg CreateShaderProgram(void) noexcept override;
-		Shader CompileGLSL(Gfx::ShaderStage, void const* _pData) noexcept override;
+		ShaderPipeline CreateShaderPipeline(void) noexcept override;
+		Shader CompileGLSL(Gfx::ShaderStage const&, void const* _pData) noexcept override;
 		bool LinkShaderImpl(ShaderProg const&, Shader const*, size_t) noexcept override;
 
-		unsigned GetUniformLocation(ShaderProg, char const*) noexcept override;
+		int GetUniformLocation(ShaderProg const&, char const*) noexcept override;
+		void UploadUniform1f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept override;
+		void UploadUniform2f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept override;
+		void UploadUniform3f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept override;
+		void UploadUniform4f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept override;
+		void UploadUniform1i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept override;
+		void UploadUniform2i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept override;
+		void UploadUniform3i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept override;
+		void UploadUniform4i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept override;
+		void UploadUniform1u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept override;
+		void UploadUniform2u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept override;
+		void UploadUniform3u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept override;
+		void UploadUniform4u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept override;
+
+		void UploadMatrix2(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept override;
+		void UploadMatrix4(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept override;
+
+		void UseShaderPipeline(ShaderPipeline const&) noexcept override;
+		void AttachShaderProgram(ShaderPipeline const&, ShaderProg const&, ShaderStage const&) noexcept override;
 
 		void FreeShader(Shader&) noexcept override;
 		void FreeShaderProgram(ShaderProg&) noexcept override;
+		void FreeShaderPipeline(ShaderPipeline&) noexcept override;
 
 		bool InitGraphicsAPI(void const*) noexcept;
 
@@ -42,6 +62,7 @@ namespace Gfx
 		void* mOpenGL;
 
 		unsigned CreateShader(Gfx::ShaderStage) noexcept;
+		unsigned StageToBitmask(Gfx::ShaderStage) noexcept;
 
 		bool BindContext(void*) noexcept;
 		bool VersionSelect(void* const&) noexcept;

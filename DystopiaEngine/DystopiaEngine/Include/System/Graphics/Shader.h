@@ -20,52 +20,52 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Lib/Gfx/Shaders.h"
 #include "System/Graphics/ShaderProgram.h"
 
-#include <string>
+#include "DataStructure/OString.h"
+#include "DataStructure/AutoArray.h"
 
 
 namespace Dystopia
 {
-	class _DLL_EXPORT Shader
+	class Shader
 	{
 	public:
 
 		Shader(void) noexcept;
 		~Shader(void);
 
-		void CreateShader(
-			std::string const& _strVert,
-			std::string const& _strFrag
-		);
-
-		void CreateShader(
-			std::string const& _strVert,
-			std::string const& _strFrag,
-			std::string const& _strGeo
-		);
+		void CreateShader(char const* _strVert, char const* _strFrag);
+		void CreateShader(char const* _strVert, char const* _strFrag, char const* _strGeo);
 
 		void AttachProgram(ShaderProgram*);
+		void DetachProgram(ShaderProgram*);
+		void DetachProgram(::Gfx::ShaderStage);
+		void ReattachProgram(ShaderProgram*);
+		void Finalise(void);
 
 		void Bind(void) const;
 		void Unbind(void) const;
 
-		void UploadUniform(char const*, const Math::Vector2&) const;
-		void UploadUniform(char const*, const Math::Vector4&) const;
-		void UploadUniform(char const*, const Math::Matrix2&) const;
-		void UploadUniform(char const*, const Math::Matrix4&) const;
-		void UploadUniform3(char const*, const Math::Vector4&) const;
+		void UploadUniform(char const*, const Math::Vector2&) const noexcept;
+		void UploadUniform(char const*, const Math::Vector4&) const noexcept;
+		void UploadUniform(char const*, const Math::Matrix2&) const noexcept;
+		void UploadUniform(char const*, const Math::Matrix4&) const noexcept;
+		void UploadUniform3(char const*, const Math::Vector4&) const noexcept;
 
-		void UploadUniform(char const*, float) const;
-		void UploadUniform(char const*, float, float) const;
-		void UploadUniform(char const*, float, float, float) const;
-		void UploadUniform(char const*, float, float, float, float) const;
+		void UploadUniform(char const*, float) const noexcept;
+		void UploadUniform(char const*, float, float) const noexcept;
+		void UploadUniform(char const*, float, float, float) const noexcept;
+		void UploadUniform(char const*, float, float, float, float) const noexcept;
 
+		OString const& GetName(void) const noexcept;
+
+		void OnEditorUI(void) const;
 
 	private:
 
+		OString mstrName;
+		::Gfx::ShaderPipeline mID;
 		::Gfx::ShaderStage mStages;
-
-		int GetUniformLocation(char const*) const;
-		void LoadShader(unsigned, const std::string&);
+		AutoArray<ShaderProgram*> mPrograms;
 	};
 }
 

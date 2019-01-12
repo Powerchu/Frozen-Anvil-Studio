@@ -41,13 +41,32 @@ namespace Gfx
 		// ====== SHADER
 
 		virtual ShaderProg CreateShaderProgram(void) noexcept = 0;
-		virtual Shader CompileGLSL(Gfx::ShaderStage, void const* _pData) noexcept = 0;
+		virtual ShaderPipeline CreateShaderPipeline(void) noexcept = 0;
+		virtual Shader CompileGLSL(Gfx::ShaderStage const&, void const* _pData) noexcept = 0;
 		//virtual unsigned CompilSPRIV(void* _pData) noexcept = 0;
+
+		virtual void UseShaderPipeline(ShaderPipeline const&) noexcept = 0;
+		virtual void AttachShaderProgram(ShaderPipeline const&, ShaderProg const&, ShaderStage const&) noexcept = 0;
 
 		template <typename ... T>
 		inline bool LinkShader(ShaderProg const& _nProgram, T&& ... _nArgs) noexcept;
 
-		virtual unsigned GetUniformLocation(ShaderProg, char const*) noexcept = 0;
+		virtual int GetUniformLocation(ShaderProg const&, char const*) noexcept = 0;
+		virtual void UploadUniform1f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept = 0;
+		virtual void UploadUniform2f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept = 0;
+		virtual void UploadUniform3f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept = 0;
+		virtual void UploadUniform4f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept = 0;
+		virtual void UploadUniform1i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept = 0;
+		virtual void UploadUniform2i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept = 0;
+		virtual void UploadUniform3i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept = 0;
+		virtual void UploadUniform4i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept = 0;
+		virtual void UploadUniform1u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
+		virtual void UploadUniform2u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
+		virtual void UploadUniform3u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
+		virtual void UploadUniform4u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
+
+		virtual void UploadMatrix2(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept = 0;
+		virtual void UploadMatrix4(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept = 0;
 
 
 	protected:
@@ -57,6 +76,7 @@ namespace Gfx
 
 		virtual void FreeShader(Shader&) noexcept = 0;
 		virtual void FreeShaderProgram(ShaderProg&) noexcept = 0;
+		virtual void FreeShaderPipeline(ShaderPipeline&) noexcept = 0;
 
 	private:
 		GraphicsAPI(GraphicsAPI&&)                   = delete;
@@ -67,7 +87,7 @@ namespace Gfx
 
 	using GfxAPI = GraphicsAPI;
 
-	GfxAPI* GetInstance(void) noexcept;
+	GfxAPI* const& GetInstance(void) noexcept;
 	GfxMode GetActiveMode(void) noexcept;
 
 	bool InitGraphicsAPI(void const* phwnd, GfxMode = GfxMode::DEFAULT);
@@ -78,7 +98,8 @@ namespace Gfx
 
 
 
-// =====
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 template <typename ... T>
 inline bool Gfx::GraphicsAPI::LinkShader(ShaderProg const& _nProgram, T&& ... _nArgs) noexcept
@@ -110,6 +131,11 @@ template <>
 inline void Gfx::GraphicsAPI::Free<Gfx::ShaderProg>(ShaderProg& _arg) noexcept
 {
 	FreeShaderProgram(_arg);
+}
+template <>
+inline void Gfx::GraphicsAPI::Free<Gfx::ShaderPipeline>(ShaderPipeline& _arg) noexcept
+{
+	FreeShaderPipeline(_arg);
 }
 
 

@@ -23,7 +23,7 @@ namespace
 	static Gfx::GfxAPI* pInstance  = nullptr;
 }
 
-Gfx::GfxAPI* Gfx::GetInstance(void) noexcept
+Gfx::GfxAPI* const& Gfx::GetInstance(void) noexcept
 {
 	return pInstance;
 }
@@ -50,6 +50,7 @@ bool Gfx::InitGraphicsAPI(void const* phwnd, GfxMode _mode)
 
 	default:
 		__debugbreak();
+		break;
 	}
 
 	return false;

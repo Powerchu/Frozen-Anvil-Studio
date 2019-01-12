@@ -21,19 +21,23 @@ namespace Gfx
 		VERTEX    = 0x1,
 		FRAGMENT  = 0x2,
 		GEOMETRY  = 0x4,
+		COMPUTE   = 0x20,
 
 		NONE = 0x0,
+		ALL  = 0xFFFFFFFF,
 	};
 
 	using Shader = class SHADER_ *;
 	using ShaderProg = class SHADERPROGRAM_ *;
+	using ShaderPipeline = class SHADERPIPELINE_ *;
 }
 
 
 
 
 
-// ====
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 inline Gfx::ShaderStage operator | (Gfx::ShaderStage const& _lhs, Gfx::ShaderStage const& _rhs)
 {

@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/GraphicsDefs.h"	// eGraphicSettings
 #include "System/Graphics/CharSpace.h"
 #include "System/Driver/Driver.h"			// EngineCore
+#include "Lib/GraphicsLib.h"
 
 // Mesh Includes
 #include "System/Graphics/MeshSystem.h"
@@ -30,6 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 // Shader Includes
 #include "System/Graphics/Shader.h"
+#include "System/Graphics/ShaderSystem.h"
 
 // Camera Includes
 #include "System/Camera/CameraSystem.h"     // Camera System
@@ -152,9 +154,8 @@ bool Dystopia::GraphicsSystem::GetDebugDraw(void) const
 
 void Dystopia::GraphicsSystem::PreInit(void)
 {
-	Window& window = EngineCore::Get<WindowManager>()->GetMainWindow();
-	InitOpenGL(window);
-	BindOpenGL(window);
+	Window& window = CORE::Get<WindowManager>()->GetMainWindow();
+	::Gfx::InitGraphicsAPI(reinterpret_cast<void const*>(&window.GetWindowHandle()), ::Gfx::GfxMode::OPENGL);
 
 	LoadShader("Resource/Shader/DefaultShaderList.txt");
 	auto file = Serialiser::OpenFile<TextSerialiser>("Resource/Meshes/DefaultMeshList.txt", Serialiser::MODE_READ);
@@ -233,12 +234,13 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetView(int _n) const
 void Dystopia::GraphicsSystem::DrawSplash(void)
 {
 	auto pCore = EngineCore::GetInstance();
-	MeshSystem*   pMeshSys = pCore->GetSubSystem<MeshSystem>();
-	TextureSystem* pTexSys = pCore->GetSubSystem<TextureSystem>();
-	WindowManager* pWinSys = pCore->GetSystem<WindowManager>();
+	MeshSystem    *pMeshSys   = pCore->GetSubSystem <MeshSystem   >();
+	TextureSystem *pTexSys    = pCore->GetSubSystem <TextureSystem>();
+	ShaderSystem  *pShaderSys = pCore->GetSubSystem <ShaderSystem >();
+	WindowManager *pWinSys    = pCore->GetSystem    <WindowManager>();
 
-	Mesh*   mesh = pMeshSys->GetMesh("Quad");
-	Shader* shader = shaderlist["Logo Shader"];
+	Mesh*      mesh    = pMeshSys->GetMesh("Quad");
+	Shader*    shader  = (*pShaderSys)["Logo Shader"];
 	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/EditorStartup.png");
 
 	unsigned w = texture->GetWidth(), h = texture->GetHeight();
@@ -309,25 +311,25 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 
 	for (auto& e : ComponentDonor<Renderer>::mComponents)
 	{
-#if EDITOR
-		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-#endif 
+		if constexpr (EDITOR)
+			if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+
 		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
 			set1.Insert(&e);
 	}
 	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
 	{
-#if EDITOR
-		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-#endif 
+		if constexpr (EDITOR)
+			if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+
 		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
 			set2.Insert(&e);
 	}
 	for (auto& e : ComponentDonor<TextRenderer>::mComponents)
 	{
-#if EDITOR
-		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-#endif 
+		if constexpr(EDITOR)
+			if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+
 		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
 			set3.Insert(&e);
 	}
@@ -349,9 +351,9 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 
 	for (auto& r : set1)
 	{
-#if EDITOR
-		if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-#endif 
+		if constexpr (EDITOR)
+			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+
 		auto s = r->GetShader();
 		if (s && r->GetTexture())
 		{
@@ -375,9 +377,9 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 
 	for (auto& r : set2)
 	{
-#if EDITOR
-		if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-#endif 
+		if constexpr (EDITOR)
+			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+		
 		auto s = r->GetShader();
 		s = r->GetTexture() ? s : shaderlist["No Texture"];
 		s->Bind();
@@ -397,9 +399,9 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 
 	for (auto& r : set3)
 	{
-#if EDITOR
-		if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-#endif 
+		if constexpr (EDITOR)
+			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+		
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
 			DrawRenderer(r, s, mfGamma);
@@ -436,9 +438,9 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 	// Draw the game objects to screen based on the camera
 	for (auto& Obj : AllObj)
 	{
-#if EDITOR
-		if (Obj->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-#endif 
+		if constexpr (EDITOR)
+			if (Obj->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+		
 		GameObject* pOwner = Obj->GetOwner();
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
 		{
@@ -494,17 +496,17 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 
 void Dystopia::GraphicsSystem::Update(float _fDT)
 {
-#   if defined(EDITOR)
+	if constexpr (EDITOR)
 	{
 		ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Editor Update" };
-		EngineCore::GetInstance()->Get<TextureSystem>()->EditorUpdate();
+		EngineCore::Get<TextureSystem>()->EditorUpdate();
+		EngineCore::Get<ShaderSystem >()->EditorUpdate();
 
 #		if defined(_DEBUG) | defined(DEBUG)
 		if (auto err = glGetError())
 			__debugbreak();
 #		endif 
 	}
-#   endif
 
 	StartFrame();
 
@@ -538,9 +540,8 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
 	{
 		auto flags = e.GetFlags();
-#if EDITOR
-		if (flags & eObjFlag::FLAG_EDITOR_OBJ) continue;
-#endif 
+		if constexpr (EDITOR)
+			if (flags & eObjFlag::FLAG_EDITOR_OBJ) continue;
 		if (flags & eObjFlag::FLAG_ACTIVE)
 		{
 			e.Update(_fDT);
@@ -557,9 +558,9 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
 	{
-#if EDITOR
-		if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-#endif 
+		if constexpr (EDITOR)
+			if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+
 		if (Cam.GetOwner() == nullptr) continue;
 		// If the camera is inactive, skip
 		if (Cam.GetOwner() && Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
@@ -587,9 +588,9 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 		}
 	}
 
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
+#  if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
 #   endif 
 
 	EndFrame();
@@ -640,7 +641,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
 	auto& fb = GetFrameBuffer();
 
-#if EDITOR
+#if (EDITOR)
 	fb.Bind();
 	unsigned const w = fb.AsTexture()->GetWidth(), h = fb.AsTexture()->GetHeight();
 
@@ -658,7 +659,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 
 	static Math::Matrix4 const Identity{};
 	auto const model =  Math::Scale(2.f, (float) Ut::Constant<int, EDITOR ? -2 : 2>::value);
-	Shader* shader = shaderlist["FinalStage"];
+	Shader* shader = CORE::Get<ShaderSystem>()->GetShader("FinalStage");
 	shader->Bind();
 	shader->UploadUniform("ViewMat", Identity);
 	shader->UploadUniform("ProjectMat", Identity);
@@ -669,7 +670,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	if (auto err = glGetError())
 		__debugbreak();
 
-#if EDITOR
+#if (EDITOR)
 	fb.Unbind();
 #else
 	SwapBuffers(win.GetDeviceContext());
@@ -678,15 +679,10 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 
 void Dystopia::GraphicsSystem::Shutdown(void)
 {
-	auto pCore = EngineCore::GetInstance();
-
-	for (auto& e : shaderlist)
-		delete e.second;
-	shaderlist.clear();
-
 	// We are responsible for this
-	pCore->GetSubSystem<MeshSystem>()->Shutdown();
-	pCore->GetSubSystem<TextureSystem>()->Shutdown();
+	CORE::Get<MeshSystem   >()->Shutdown();
+	CORE::Get<TextureSystem>()->Shutdown();
+	CORE::Get<ShaderSystem >()->Shutdown();
 }
 
 void Dystopia::GraphicsSystem::LoadDefaults(void)
@@ -837,82 +833,6 @@ void Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
 
 bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 {
-	// Use to specify the color format we want and openGL support
-	PIXELFORMATDESCRIPTOR pfd{};
-
-	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);	// Windows requirement
-	pfd.nVersion = 1;								// Windows requirement
-	pfd.dwFlags = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW;
-	pfd.iPixelType = PFD_TYPE_RGBA;
-	pfd.cColorBits = 32;
-	pfd.cDepthBits = 24;
-	pfd.cStencilBits = 8;
-	pfd.iLayerType = PFD_MAIN_PLANE;
-
-	// Ask windows to give us a pixel format based on what we asked for
-	int nPxFormat = ChoosePixelFormat(_window.GetDeviceContext(), &pfd);
-
-	if (0 == nPxFormat) // Check if we got something back
-	{
-		DEBUG_PRINT(eLog::ERROR, "Graphics System Error: ChoosePixelFormat fail! \n");
-
-		return false;
-	}
-
-	// Attempt to set the format based on the returned pixel formal
-	BOOL bResult = SetPixelFormat(_window.GetDeviceContext(), nPxFormat, &pfd);
-
-	if (!bResult) // This shouldn't happen
-	{
-		DEBUG_PRINT(eLog::ERROR, "Graphics System Error: SetPixelFormat fail! \n");
-
-		return false;
-	}
-
-	// Create a fake context so we can create context
-	HGLRC dummyGL = wglCreateContext(_window.GetDeviceContext());
-	wglMakeCurrent(_window.GetDeviceContext(), dummyGL);
-
-	// attempt to init glew so that there is an active GL context
-	unsigned err = glewInit();
-
-	if (err != GLEW_OK)
-	{
-		DEBUG_PRINT(eLog::ERROR, "Graphics System Error: GLEW init fail! \n");
-
-		return false;
-	}
-
-	// Check if gl 3.1 and above context is supported
-	if (wglewIsSupported("WGL_ARB_create_context") == 1 && !SelectOpenGLVersion(_window))
-	{
-		DEBUG_PRINT(eLog::ERROR, "Graphics System Error: OpenGL 3.1 and above not supported! \n");
-
-		return false;
-	}
-
-	// Unbind the dummy context
-	wglMakeCurrent(nullptr, nullptr);
-
-	// Delete the dummy context
-	wglDeleteContext(dummyGL);
-
-	// Make our newly created context the active context
-	wglMakeCurrent(_window.GetDeviceContext(), static_cast<HGLRC>(mOpenGL));
-
-#if EDITOR
-
-	// Gets for the openGL version
-	int mOpenGLMajor, mOpenGLMinor;
-	glGetIntegerv(GL_MAJOR_VERSION, &mOpenGLMajor);
-	glGetIntegerv(GL_MINOR_VERSION, &mOpenGLMinor);
-
-	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: %s, %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
-	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: Using OpenGL Version %d.%d\n", mOpenGLMajor, mOpenGLMinor);
-	LoggerSystem::ConsoleLog(eLog::SYSINFO, "Graphics System: %d bit colour, %d bit depth, %d bit stencil\n", pfd.cColorBits, pfd.cDepthBits, pfd.cStencilBits);
-
-#endif
-
 	if (!wglewIsSupported("WGL_EXT_swap_control"))
 	{
 		mAvailable &= ~(eGfxSettings::GRAPHICS_VSYNC);
@@ -928,49 +848,10 @@ bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
 	return true;
 }
 
-bool Dystopia::GraphicsSystem::SelectOpenGLVersion(Window& _window) noexcept
+
+Dystopia::Shader* Dystopia::GraphicsSystem::GetShader(const char * _str) const noexcept
 {
-	int attrbs[] =
-	{
-		WGL_CONTEXT_MAJOR_VERSION_ARB, 4,	// OpenGL minimum Major ver
-		WGL_CONTEXT_MINOR_VERSION_ARB, 3,	// OpenGL minimum Minor ver
-		WGL_CONTEXT_FLAGS_ARB, 0,
-		0
-	};
-	mOpenGL = nullptr;
-	mAvailable = eGfxSettings::GRAPHICS_ALL;
-
-	// Try to create at least OpenGL 4.3
-	attrbs[3] = 3;
-	mOpenGL = wglCreateContextAttribsARB(_window.GetDeviceContext(), NULL, attrbs);
-	if (mOpenGL)
-	{
-		return true;
-	}
-
-	// Failed, try 3.2...
-	mAvailable &= ~(eGfxSettings::GRAPHICS_COMPUTE | eGfxSettings::GRAPHICS_TESS);
-
-	attrbs[1] = 3; attrbs[3] = 2;
-	mOpenGL = wglCreateContextAttribsARB(_window.GetDeviceContext(), NULL, attrbs);
-	if (mOpenGL)
-	{
-		return true;
-	}
-
-	// Failed, try 3.1...
-	mAvailable &= ~(eGfxSettings::GRAPHICS_MSAA);
-
-	attrbs[3] = 1;
-	mOpenGL = wglCreateContextAttribsARB(_window.GetDeviceContext(), NULL, attrbs);
-
-	return mOpenGL != nullptr;
-}
-
-
-Dystopia::Shader* Dystopia::GraphicsSystem::GetShader(const char * _str) const
-{
-	return shaderlist.at(_str);
+	return CORE::Get<ShaderSystem>()->GetShader(_str);
 }
 
 

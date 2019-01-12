@@ -92,23 +92,33 @@ void Gfx::OpenGL_API::PrintEnvironment(void) const noexcept
 	DEBUG_PRINT(eLog::SYSINFO, "%d bit colour, %d bit depth, %d bit stencil\n", a, b, c);
 }
 
+unsigned Gfx::OpenGL_API::StageToBitmask(Gfx::ShaderStage _stage) noexcept
+{
+	unsigned stage{ 0 };
+
+	if (Gfx::ShaderStage::ALL == (Gfx::ShaderStage::ALL & _stage))
+		return GL_ALL_SHADER_BITS;
+
+	stage |= GL_VERTEX_SHADER_BIT * (Gfx::ShaderStage::VERTEX == (Gfx::ShaderStage::VERTEX   & _stage));
+	stage |= GL_FRAGMENT_SHADER_BIT * (Gfx::ShaderStage::FRAGMENT == (Gfx::ShaderStage::FRAGMENT & _stage));
+	stage |= GL_GEOMETRY_SHADER_BIT * (Gfx::ShaderStage::GEOMETRY == (Gfx::ShaderStage::GEOMETRY & _stage));
+	stage |= GL_COMPUTE_SHADER_BIT * (Gfx::ShaderStage::COMPUTE == (Gfx::ShaderStage::COMPUTE  & _stage));
+
+	return stage;
+}
+
 Gfx::ShaderProg Gfx::OpenGL_API::CreateShaderProgram(void) noexcept
 {
 	auto ret = glCreateProgram();
 	glProgramParameteri(ret, GL_PROGRAM_SEPARABLE, GL_TRUE);
-	return { GLToStrongType<ShaderProg>(ret) };
+	return GLToStrongType<ShaderProg>(ret);
 }
 
-void Gfx::OpenGL_API::FreeShader(Shader& _n) noexcept
+Gfx::ShaderPipeline Gfx::OpenGL_API::CreateShaderPipeline(void) noexcept
 {
-	glDeleteShader(StrongToGLType<GLuint>(_n));
-	_n = 0;
-}
-
-void Gfx::OpenGL_API::FreeShaderProgram(ShaderProg& _n) noexcept
-{
-	glDeleteProgram(StrongToGLType<GLuint>(_n));
-	_n = 0;
+	GLuint ret;
+	glCreateProgramPipelines(1, &ret);
+	return GLToStrongType<ShaderPipeline>(ret);
 }
 
 unsigned Gfx::OpenGL_API::CreateShader(Gfx::ShaderStage _stage) noexcept
@@ -131,7 +141,7 @@ unsigned Gfx::OpenGL_API::CreateShader(Gfx::ShaderStage _stage) noexcept
 	return glCreateShader(stage);
 }
 
-Gfx::Shader Gfx::OpenGL_API::CompileGLSL(Gfx::ShaderStage _stage, void const * _pData) noexcept
+Gfx::Shader Gfx::OpenGL_API::CompileGLSL(Gfx::ShaderStage const& _stage, void const * _pData) noexcept
 {
 	if (auto shader = CreateShader(_stage))
 	{
@@ -154,6 +164,27 @@ Gfx::Shader Gfx::OpenGL_API::CompileGLSL(Gfx::ShaderStage _stage, void const * _
 	return { 0 };
 }
 
+
+void Gfx::OpenGL_API::FreeShader(Shader& _n) noexcept
+{
+	glDeleteShader(StrongToGLType<GLuint>(_n));
+	_n = 0;
+}
+
+void Gfx::OpenGL_API::FreeShaderProgram(ShaderProg& _n) noexcept
+{
+	glDeleteProgram(StrongToGLType<GLuint>(_n));
+	_n = 0;
+}
+
+void Gfx::OpenGL_API::FreeShaderPipeline(ShaderPipeline& _n) noexcept
+{
+	GLuint data = StrongToGLType<GLuint>(_n);
+	glDeleteProgramPipelines(1, &data);
+	_n = 0;
+}
+
+
 bool Gfx::OpenGL_API::LinkShaderImpl(ShaderProg const& _nProgram, Shader const* _pShaders, size_t _sz) noexcept
 {
 	for (size_t n = 0; n < _sz; ++n)
@@ -171,6 +202,93 @@ bool Gfx::OpenGL_API::LinkShaderImpl(ShaderProg const& _nProgram, Shader const* 
 	return GL_TRUE == nStatus;
 }
 
+void Gfx::OpenGL_API::UseShaderPipeline(ShaderPipeline const& _pipeline) noexcept
+{
+	glBindProgramPipeline(StrongToGLType<GLuint>(_pipeline));
+}
+
+void Gfx::OpenGL_API::AttachShaderProgram(ShaderPipeline const& _pipeline, ShaderProg const& _prog, ShaderStage const& _stages) noexcept
+{
+	glUseProgramStages(StrongToGLType<GLuint>(_pipeline), StageToBitmask(_stages), StrongToGLType<GLuint>(_prog));
+}
+
+
+int Gfx::OpenGL_API::GetUniformLocation(ShaderProg const& _prog, char const* _strName) noexcept
+{
+	return glGetUniformLocation(StrongToGLType<GLuint>(_prog), _strName);
+}
+
+void Gfx::OpenGL_API::UploadUniform1f(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal) noexcept
+{
+	glProgramUniform1fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadUniform2f(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal) noexcept
+{
+	glProgramUniform2fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadUniform3f(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal) noexcept
+{
+	glProgramUniform3fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadUniform4f(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal) noexcept
+{
+	glProgramUniform4fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadUniform1i(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, int const* _pVal) noexcept
+{
+	glProgramUniform1iv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadUniform2i(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, int const* _pVal) noexcept
+{
+	glProgramUniform2iv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadUniform3i(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, int const* _pVal) noexcept
+{
+	glProgramUniform3iv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadUniform4i(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, int const* _pVal) noexcept
+{
+	glProgramUniform4iv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadUniform1u(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, unsigned const* _pVal) noexcept
+{
+	glProgramUniform1uiv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadUniform2u(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, unsigned const* _pVal) noexcept
+{
+	glProgramUniform2uiv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadUniform3u(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, unsigned const* _pVal) noexcept
+{
+	glProgramUniform3uiv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadUniform4u(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, unsigned const* _pVal) noexcept
+{
+	glProgramUniform4uiv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadMatrix2(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal, bool _bTranspose = true) noexcept
+{
+	glProgramUniformMatrix2fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _bTranspose ? GL_TRUE : GL_FALSE, _pVal);
+}
+
+void Gfx::OpenGL_API::UploadMatrix4(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal, bool _bTranspose = true) noexcept
+{
+	glProgramUniformMatrix4fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _bTranspose ? GL_TRUE : GL_FALSE, _pVal);
+}
+
+
 bool Gfx::OpenGL_API::InitGraphicsAPI(void const* _phwnd) noexcept
 {
 	HWND const& hwnd = *static_cast<HWND const*>(_phwnd);
@@ -180,7 +298,7 @@ bool Gfx::OpenGL_API::InitGraphicsAPI(void const* _phwnd) noexcept
 	PIXELFORMATDESCRIPTOR pfd{};
 
 	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);	// Windows requirement
-	pfd.nVersion = 1;								// Windows requirement
+	pfd.nVersion = 1;							// Windows requirement
 	pfd.dwFlags = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW;
 	pfd.iPixelType = PFD_TYPE_RGBA;
 	pfd.cColorBits = 32;

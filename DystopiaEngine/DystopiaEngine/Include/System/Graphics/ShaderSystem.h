@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SHADERSYS_H_
 #define _SHADERSYS_H_
 
+#include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
 
 #include <map>
@@ -33,12 +34,16 @@ namespace Dystopia
 		void EditorUpdate(void);
 		void Shutdown(void) noexcept;
 
+		ShaderProgram* CreateShaderProgram(char const* _strName) noexcept;
+
 		Shader* GetShader(char const* _strName) const noexcept;
-		
+		ShaderProgram* GetShaderProgram(char const* _strName) const noexcept;
 
 		inline Shader* operator[] (char const* _strName) const noexcept;
 
 	private:
+
+		AutoArray<ShaderProgram*> mChanges;
 
 		MagicArray<Shader> mShaders;
 		MagicArray<ShaderProgram> mPrograms;

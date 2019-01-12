@@ -202,6 +202,12 @@ namespace Ut
 	{
 		return Interns::RangeMaker<T>{ Forward<T>(_begin), Forward<T>(_end) };
 	}
+	template <typename T>
+	auto Range(T&& _container)
+	{
+		using It_t = decltype(_container.begin());
+		return Interns::RangeMaker<It_t>{ _container.begin(), _container.end() };
+	}
 
 
 	/*!

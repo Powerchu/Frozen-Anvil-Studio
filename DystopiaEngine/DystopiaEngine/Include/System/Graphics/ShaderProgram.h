@@ -14,7 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SHADER_PROGRAM_H_
 #define _SHADER_PROGRAM_H_
 
-#include "Lib\Gfx\Shaders.h"
+#include "Lib/Gfx/Shaders.h"
+
+#include "DataStructure/OString.h"
 
 
 namespace Dystopia
@@ -26,13 +28,17 @@ namespace Dystopia
 		ShaderProgram(void) noexcept;
 		~ShaderProgram(void) noexcept;
 
-		bool LoadProgram(Gfx::ShaderStage, char const*) noexcept;
+		bool LoadProgram(::Gfx::ShaderStage, char const* _strFile) noexcept;
 
+		::Gfx::ShaderStage const& GetStage(void) const noexcept;
+		::Gfx::ShaderProg const& GetID(void) const noexcept;
+		OString const& GetName(void) const noexcept;
 
 	private:
 
-		Gfx::ShaderProg mnProgram;
-		Gfx::ShaderStage mStage;
+		OString mstrName;
+		::Gfx::ShaderProg mProgram;
+		::Gfx::ShaderStage mStage;
 	};
 }
 

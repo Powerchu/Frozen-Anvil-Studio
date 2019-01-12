@@ -61,7 +61,7 @@ namespace Dystopia
 		_DLL_EXPORT void SetGamma(float) noexcept;
 		_DLL_EXPORT float GetGamma(void) noexcept;
 
-		_DLL_EXPORT  void ToggleVsync(bool) noexcept;
+		_DLL_EXPORT void ToggleVsync(bool) noexcept;
 
 		bool GetDebugDraw(void) const;
 		void ToggleDebugDraw(bool) const;
@@ -99,8 +99,7 @@ namespace Dystopia
 		void UpdateResolution(void) const noexcept;
 
 		// Temporary
-		std::map<std::string, Shader*> shaderlist;
-		_DLL_EXPORT Shader* GetShader(const char *) const;
+		_DLL_EXPORT Shader* GetShader(const char *) const noexcept;
 
 		void EditorAspectRatio(void);
 		void EditorUI(void);

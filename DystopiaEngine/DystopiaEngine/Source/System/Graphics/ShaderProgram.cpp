@@ -16,19 +16,35 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Lib/GraphicsLib.h"
 #include "Utility/DebugAssert.h"
 #include "Allocator/StackAlloc.h"
+#include "DataStructure/OString.h"
 
 #include <fstream>
 
 
 Dystopia::ShaderProgram::ShaderProgram(void) noexcept
-	: mnProgram{ Gfx::GetInstance()->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }
+	: mProgram{ Gfx::GetInstance()->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }
 {
 
 }
 
 Dystopia::ShaderProgram::~ShaderProgram(void) noexcept
 {
-	Gfx::GetInstance()->Free(mnProgram);
+	Gfx::GetInstance()->Free(mProgram);
+}
+
+::Gfx::ShaderStage const& Dystopia::ShaderProgram::GetStage(void) const noexcept
+{
+	return mStage;
+}
+
+::Gfx::ShaderProg const & Dystopia::ShaderProgram::GetID(void) const noexcept
+{
+	return mProgram;
+}
+
+OString const& Dystopia::ShaderProgram::GetName(void) const noexcept
+{
+	return mstrName;
 }
 
 bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _file) noexcept
@@ -58,9 +74,10 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 	if (!shader)
 		return false;
 
-	pAPI->LinkShader(mnProgram, shader);
+	pAPI->LinkShader(mProgram, shader);
 
 	mStage = _stage;
+	mstrName = _file;
 	return true;
 }
 
