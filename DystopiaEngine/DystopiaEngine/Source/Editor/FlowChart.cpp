@@ -280,7 +280,11 @@ void Editor::FlowChart::MakeFiles(void)
 	std::string line;
 	AutoArray<HashString> mFormatFSHeader, mFormatFSBody;
 
-	std::ifstream stream("C:/cygwin64/home/shann/CharacterController/Formats.txt", std::ios::in);
+	auto filepath = Dystopia::EngineCore::Get<Dystopia::FileSystem>()->FindFilePath("StateFormats.txt", Dystopia::eFileDir::eSolution);
+	if (!filepath.length())
+		return;
+
+	std::ifstream stream(filepath.c_str(), std::ios::in);
 	while (std::getline(stream, line))
 	{
 		if (line == "<FS_HEADER>")
