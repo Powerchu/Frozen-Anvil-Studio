@@ -133,7 +133,7 @@ namespace Dystopia
 					auto & ref = mMapOfTrackInfo[TrackJob->mFileHandle];
 					for (auto & f : ref)
 					{
-						f.second(TrackJob->mFileName);
+						f.second(TrackJob->mFileName.c_str());
 					}
 					break;
 				}
@@ -800,6 +800,21 @@ namespace Dystopia
 			}
 		}
 		return 0;
+	}
+
+	void FileSystem::UnbindFileTrackEvent(FileEventCallBack_t _EventID, FileTrackInfoID_t _TrackID)
+	{
+		mMapOfTrackInfo[_TrackID].erase(_EventID);
+	}
+
+	void FileSystem::UnbindAllTrackEvent(FileTrackInfoID_t _TrackID)
+	{
+		mMapOfTrackInfo[_TrackID].clear();
+	}
+
+	void FileSystem::StopTrackFile(FileTrackInfoID_t _TrackID)
+	{
+		mMapOfTrackInfo.erase(_TrackID);
 	}
 
 	void FileTrackCallBack(unsigned long dwErrorCode, unsigned long dwNumOfBytes, _OVERLAPPED * lpOverlapped)
