@@ -123,11 +123,43 @@ namespace Dystopia
 	bool PointCollider::isColliding(Convex * const & other_col)
 	{
 		auto && AllEdge = other_col->GetConvexEdges();
+		Edge * ClosestEdge = nullptr;
+		float  ClosestDistance = 0.f;
+		/*Check against all the edges*/
 		for (auto & edge : AllEdge)
 		{
+			/*Check if the point is within the Edge's Inside Halfspaces*/
 			if (edge.mNorm3.Dot(GetGlobalPosition() - edge.mPos) > 0.f)
-				return false;
+			{
+				/*If there is no closest edge, that means it is the first iteration*/
+				if (!ClosestEdge)
+				{
+					/*Assign the cloesest edge*/
+					ClosestEdge     = &edge;
+					/*Update the closest distance*/
+					ClosestDistance = -edge.mNorm3.Dot(GetGlobalPosition() - edge.mPos);
+				}
+				else
+				{
+					/*Get the distance from the point to the edge origin*/
+					float dist = -edge.mNorm3.Dot(GetGlobalPosition() - edge.mPos);
+					/*If this edge is closer to the Point, assign it as the collided edge*/
+					if (dist < ClosestDistance)
+					{
+						ClosestEdge     = &edge;
+						ClosestDistance = dist;
+					}
+				}
+			}
+			return false;
 		}
+		CollisionEvent ColEvent{ GetOwner(), other_col->GetOwner() };
+		/*The normal of the edge the PointCollider collided with*/
+		/*I negated the edge normal because the normal will be negated again in the physics side*/
+		ColEvent.mEdgeNormal = -ClosestEdge->mNorm3;
+		ColEvent.mEdgeVector = ClosestEdge->mVec3;
+		/*Add in a new contact/collision event*/
+		marr_ContactSets.push_back(Ut::Move(ColEvent));
 		return true;
 	}
 	bool PointCollider::isColliding(PointCollider & other_col)
