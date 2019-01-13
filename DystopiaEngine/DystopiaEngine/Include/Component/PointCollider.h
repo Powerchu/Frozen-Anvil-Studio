@@ -24,7 +24,12 @@ namespace Dystopia
 
 		static const eColliderType ColliderType = eColliderType::POINT;
 		virtual const eColliderType GetColliderType(void) const override { return ColliderType; }
+		
+		/*Constructors*/
+		PointCollider(void);
+		PointCollider(Math::Point3D const & _Pos, Math::Vec3D const & _Offset = { 0,0,0 });
 
+		/*Member Functions*/
 
 		void Awake(void);
 		/*Load the Component*/
@@ -48,7 +53,7 @@ namespace Dystopia
 		virtual void Unserialise(TextSerialiser&);
 
 		/*Collision Check Functions*/
-		bool isColliding(Circle & other_col, Math::Vec3D other_pos);
+		bool isColliding(Circle & other_col);
 		bool isColliding(Circle * const & other_col);
 
 		/*Collision Check Functions*/

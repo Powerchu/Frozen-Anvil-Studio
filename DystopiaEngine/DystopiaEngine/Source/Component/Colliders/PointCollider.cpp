@@ -1,7 +1,29 @@
 #include "Component/PointCollider.h"
+
+#include "System/Collision/CollisionSystem.h"
+#include "System/Collision/CollisionEvent.h"
+#include "System/Scene/SceneSystem.h"
+#include "System/Graphics/VertexDefs.h"
+#include "System/Graphics/MeshSystem.h"
+#include "Object/GameObject.h"
+#include "Object/ObjectFlags.h"
+#include "Math/Vector4.h"
+#include "Component/RigidBody.h"
+#include "Component/Circle.h"
+#include "Component/Convex.h"
+#include "Component/AABB.h"
+
 #include "IO/TextSerialiser.h"
 namespace Dystopia
 {
+	PointCollider::PointCollider(void)
+		:Collider{}
+	{
+	}
+	PointCollider::PointCollider(Math::Point3D const & _Pos, Math::Vec3D const & _Offset)
+		:Collider{ _Offset,_Pos }
+	{
+	}
 	void PointCollider::Awake(void)
 	{
 	}
@@ -22,11 +44,11 @@ namespace Dystopia
 	}
 	PointCollider * PointCollider::Duplicate() const
 	{
-		return nullptr;
+		return static_cast<ComponentDonor<PointCollider> *>(EngineCore::GetInstance()->GetSystem<PointCollider::SYSTEM>())->RequestComponent(*this);
 	}
 	BroadPhaseCircle PointCollider::GenerateBoardPhaseCircle() const
 	{
-		return BroadPhaseCircle();
+		return BroadPhaseCircle(0.f, GetGlobalPosition());
 	}
 	void PointCollider::Serialise(TextSerialiser & _out) const
 	{
@@ -60,28 +82,52 @@ namespace Dystopia
 
 		mDebugVertices.clear();
 	}
-	bool PointCollider::isColliding(Circle & other_col, Math::Vec3D other_pos)
+	bool PointCollider::isColliding(Circle & other_col)
 	{
-		return false;
+		return  (GetGlobalPosition() - other_col.GetGlobalPosition()).MagnitudeSqr() < other_col.GetRadius() * other_col.GetRadius();
 	}
 	bool PointCollider::isColliding(Circle * const & other_col)
 	{
-		return false;
+		return  (GetGlobalPosition() - other_col->GetGlobalPosition()).MagnitudeSqr() < other_col->GetRadius() * other_col->GetRadius();
 	}
 	bool PointCollider::isColliding(const AABB & other_col)
 	{
-		return false;
+		auto && AllEdge = other_col.GetConvexEdges();
+		for (auto & edge : AllEdge)
+		{
+			if (edge.mNorm3.Dot(GetGlobalPosition() - edge.mPos) > 0.f)
+				return false;
+		}
+		return true;
 	}
 	bool PointCollider::isColliding(const AABB * const & other_col)
 	{
-		return false;
+		auto && AllEdge = other_col->GetConvexEdges();
+		for (auto & edge : AllEdge)
+		{
+			if (edge.mNorm3.Dot(GetGlobalPosition() - edge.mPos) > 0.f)
+				return false;
+		}
+		return true;
 	}
 	bool PointCollider::isColliding(Convex & other_col)
 	{
-		return false;
+		auto && AllEdge = other_col.GetConvexEdges();
+		for (auto & edge : AllEdge)
+		{
+			if (edge.mNorm3.Dot(GetGlobalPosition() - edge.mPos) > 0.f)
+				return false;
+		}
+		return true;
 	}
 	bool PointCollider::isColliding(Convex * const & other_col)
 	{
-		return false;
+		auto && AllEdge = other_col->GetConvexEdges();
+		for (auto & edge : AllEdge)
+		{
+			if (edge.mNorm3.Dot(GetGlobalPosition() - edge.mPos) > 0.f)
+				return false;
+		}
+		return true;
 	}
 }
