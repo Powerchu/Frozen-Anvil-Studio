@@ -23,8 +23,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Base/Systems.h"
 #include "DataStructure/HashString.h"
 #include "DataStructure/MagicArray.h"
+#include "System/Events/Event.h"
+#include "DataStructure/AutoArray.h"
+#include "Utility/GUID.h"
 
 #include "Globals.h"
+
+struct _OVERLAPPED;
 
 namespace Dystopia
 {
@@ -54,13 +59,32 @@ namespace Dystopia
 
 	} FileErrorCode;
 
+	typedef void* FileTrackInfoID_t;
+	typedef GUID_t FileEventCallBack_t;
 
-	class FileSystem
+	class FileSystem : public Systems
 	{
 	public:
 
+		/*System Functions*/
 		FileSystem();
 		~FileSystem();
+
+		bool Init(void);
+		void Update(float _dt);
+		void Shutdown(void);
+
+		void PostUpdate() override;
+
+		void LoadDefaults(void) override;
+		void LoadSettings(DysSerialiser_t&) override;
+		void SaveSettings(DysSerialiser_t&) override;
+
+		void Serialise(TextSerialiser &) const;
+
+		void Unserialise(TextSerialiser &);
+
+
 		std::string  GetFullPath (std::string const & _FileName, eFileDir _ParentDirectory);
 		std::wstring GetFullPath_w(std::wstring const & _FileName, eFileDir _ParentDirectory);
 		HashString    ConvertToRelative(HashString const & _FullPath, eFileDir _ParentDirectory = eFileDir::eResource) const; 
@@ -101,20 +125,60 @@ namespace Dystopia
 		HashString FindFilePath(const HashString& _file, eFileDir _parentDir);
 		_DLL_EXPORT HashString GetFromResource(const char *_str);
 
+		/*EXPERIMENTAL FUNCTIONS*/
+
+		/*Create a Track File Event, The EventName should be the filepath*/
+		FileTrackInfoID_t TrackFile(const HashString & _FileName, eFileDir _ParentDirectory = eFileDir::eResource);
+
+		void UnbindFileTrackEvent(FileEventCallBack_t _EventID, FileTrackInfoID_t _TrackID);
+		void UnbindAllTrackEvent (FileTrackInfoID_t _TrackID);
+		void StopTrackFile       (FileTrackInfoID_t _TrackID);
+
+		/*Bind a Function to the event created*/
+		template<class Caller, typename Ret_t, typename ...params_t>
+		FileEventCallBack_t BindFileTrackEvent(const FileTrackInfoID_t & _FileTrackID, Ret_t(Caller::*_fn)(params_t...), Caller* const _user)
+		{
+			/*Check for existing EventInfo who has a filepath that is equilivent*/
+			auto id     = GUIDGenerator::GetUniqueID();
+			mMapOfTrackInfo[_FileTrackID][id] = CallBackEvent { _user,_fn };
+			return id;
+		}
+
+		/*Bind a Function to the event created*/
+		template<class Caller, typename Ret_t, typename ...params_t>
+		FileEventCallBack_t BindFileTrackEvent(const FileTrackInfoID_t & _FileName, Ret_t(Caller::*_fn)(params_t...))
+		{
+			/*Check for existing EventInfo who has a filepath that is equilivent*/
+			auto id = GUIDGenerator::GetUniqueID();
+			mMapOfTrackInfo[_FileTrackID][id] = CallBackEvent{ _fn };
+			return id;
+		}
+
+
+		
 	private:
 
-		using PathTable = std::map<eFileDir, std::string>;
+		using PathTable     = std::map<eFileDir, std::string>;
+		using EventInfo     = std::pair<GUID_t, CallBackEvent>;
+		using FileTrackInfo = std::map<FileTrackInfoID_t, std::map<GUID_t, CallBackEvent>>;
 
 		/*Static Members*/
 		static PathTable            mPathTable;
 		MagicArray<DetectionInfo *> mDetectionFiles;
 		/*Private Members*/
 		eFileSystemError            mLastKnownError;
-
+		/*EXPERIMENTAL MEMBERS*/
+		FileTrackInfo               mMapOfTrackInfo;
 
 
 		/*Private Function*/
 		unsigned GetChangesInfo(DetectionInfo & _DetectionInfo, std::string * _ChangesBuffer, size_t _size);
+
+		/*EXPERIMENTAL STUFF*/
+
+		/*Callback Function for ReadDirectoryChangesExW*/
+		void FileTrackCallBack       (unsigned long dwErrorCode, unsigned long dwNumOfBytes, _OVERLAPPED * lpOverlapped);
+		friend void FileTrackCallBack(unsigned long dwErrorCode, unsigned long dwNumOfBytes, _OVERLAPPED * lpOverlapped);
 	};
 
 
@@ -206,6 +270,10 @@ namespace Dystopia
 		return _File;
 
 	}
+
+	void FileTrackCallBack(unsigned long dwErrorCode, unsigned long dwNumOfBytes, _OVERLAPPED * lpOverlapped);
+
+
 }
 
 #endif

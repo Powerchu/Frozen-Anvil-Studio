@@ -358,6 +358,9 @@
     <ClCompile Include="Source\System\AI\Blackboard.cpp">
       <Filter>Game Engine\Systems\AI\Tree</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\PointCollider.cpp">
+		<Filter>Game Engine\Components\Colliders</Filter>
+	</ClInclude>
     <ClCompile Include="Source\System\Graphics\ShaderProgram.cpp">
       <Filter>Game Engine\SubSystems\Shader\ShaderProgram</Filter>
     </ClCompile>
@@ -996,6 +999,9 @@
     <ClInclude Include="Include\PP\PPVaToSeq.h">
       <Filter>Preprocessor</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\PointCollider.h">
+		<Filter>Game Engine\Components\Colliders</Filter>
+	</ClInclude>
     <ClInclude Include="Include\DataStructure\Function.h">
       <Filter>DataStructures\Functions</Filter>
     </ClInclude>

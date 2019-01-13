@@ -18,6 +18,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Triangle.h"
 #include "Component/AABB.h"
 #include "Component/Circle.h"
-
+#include "Component/PointCollider.h"
 #endif
 

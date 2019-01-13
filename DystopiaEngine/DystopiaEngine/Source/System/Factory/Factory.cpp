@@ -42,7 +42,7 @@ Dystopia::Factory::~Factory(void)
 
 Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, const Math::Pt3D& _pos)
 {
-	auto fs = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
+	auto fs = EngineCore::GetInstance()->Get<FileSystem>();
 	auto fp = fs->GetFullPath(_prefab.c_str(), eFileDir::eResource);
 	if (!fp.size())
 		return nullptr;
