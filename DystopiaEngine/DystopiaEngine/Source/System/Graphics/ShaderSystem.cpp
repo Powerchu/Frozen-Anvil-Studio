@@ -25,6 +25,11 @@ namespace
 }
 
 
+Dystopia::ShaderSystem::ShaderSystem(void) noexcept
+{
+
+}
+
 Dystopia::ShaderSystem::~ShaderSystem(void) noexcept
 {
 }
@@ -35,7 +40,6 @@ void Dystopia::ShaderSystem::Shutdown(void) noexcept
 
 void Dystopia::ShaderSystem::EditorUpdate(void)
 {
-	auto GfxAPI = ::Gfx::GetInstance();
 	for (auto& e : mChanges)
 	{
 		ShaderProgram temp{};

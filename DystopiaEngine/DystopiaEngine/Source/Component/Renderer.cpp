@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Mesh.h"
 #include "System/Graphics/MeshSystem.h"
 #include "System/Graphics/Shader.h"
+#include "System/Graphics/ShaderSystem.h"
 #include "System/Graphics/Texture2D.h"
 #include "System/Driver/Driver.h"
 #include "System/File/FileSystem.h"
@@ -57,7 +58,7 @@ Dystopia::Renderer::Renderer(const Renderer& _rhs) noexcept
 void Dystopia::Renderer::Awake(void)
 {
 	SetMesh("Quad");
-	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
+	SetShader(CORE::Get<ShaderSystem>()->GetShader("Default Shader"));
 
 	if (mTexturePath.length())
 	{

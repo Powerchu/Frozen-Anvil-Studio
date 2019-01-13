@@ -72,7 +72,7 @@ size_t Dystopia::StackAllocImpl::GetUsableSize(void) noexcept
 {
 	_sz = (_sz & ~0xFull) + 0x10 * !!(_sz & 0xF);
 
-	if (GetUsableSize() >= (_sz + 0x10))
+	if (GetUsableSize() >= (_sz + sizeof(Dtor_t) * 2))
 	{
 		auto ret = mpNext - _sz;
 		mpNext -= _sz + sizeof(Dtor_t) * 2;

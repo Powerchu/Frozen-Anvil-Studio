@@ -200,7 +200,7 @@ bool Gfx::OpenGL_API::LinkShaderImpl(ShaderProg const& _nProgram, Shader const* 
 	glLinkProgram(StrongToGLType<GLuint>(_nProgram));
 
 	int nStatus;
-	glGetShaderiv(StrongToGLType<GLuint>(_nProgram), GL_LINK_STATUS, &nStatus);
+	glGetProgramiv(StrongToGLType<GLuint>(_nProgram), GL_LINK_STATUS, &nStatus);
 
 	if (GL_FALSE == nStatus)
 	{

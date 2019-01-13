@@ -31,6 +31,7 @@ namespace Dystopia
 	{
 	public:
 
+		ShaderSystem(void) noexcept;
 		~ShaderSystem(void) noexcept;
 
 		void EditorUpdate(void);

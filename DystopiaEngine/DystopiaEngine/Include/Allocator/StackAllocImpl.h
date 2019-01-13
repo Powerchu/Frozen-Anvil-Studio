@@ -41,8 +41,8 @@ namespace Dystopia
 		size_t GetUsableSize(void) noexcept;
 
 	private:
-		std::byte* mpNext;
 		std::byte* mpBuffer;
+		std::byte* mpNext;
 
 		static constexpr size_t DEFAULT_SZ = 8 * 1048576ull;
 	};

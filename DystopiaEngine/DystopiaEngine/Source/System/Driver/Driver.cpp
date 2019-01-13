@@ -42,6 +42,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 // SubSystems
 #include "System/Graphics/MeshSystem.h"
 #include "System/Graphics/FontSystem.h"
+#include "System/Graphics/ShaderSystem.h"
 #include "System/Graphics/TextureSystem.h"
 #include "System/File/FileSystem.h"
 #include "System/Logger/LoggerSystem.h"

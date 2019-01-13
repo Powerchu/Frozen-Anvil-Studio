@@ -25,9 +25,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 #include "System/Window/WindowManager.h"
 
-#include "DataStructure/Delegate.h"
-#include "Allocator/StackAlloc.h"
-
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>						// Windows Header
@@ -45,21 +42,13 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	if (AllocConsole())
-	{
-		FILE* file;
-	
-		freopen_s(&file, "CONOUT$", "wt", stdout);
-		freopen_s(&file, "CONOUT$", "wt", stderr);
-	}
-
-	printf("%zu\n", Dystopia::StackAlloc_t::GetUsableSize());
-
-	auto f = Dystopia::StackAlloc<float>::ConstructAlloc(5.14f);
-	printf("%f, %zu\n", *f, Dystopia::StackAlloc_t::GetUsableSize());
-
-	Dystopia::StackAlloc_t::Free(-1);
-	printf("%zu\n", Dystopia::StackAlloc_t::GetUsableSize());
+	//if (AllocConsole())
+	//{
+	//	FILE* file;
+	//
+	//	freopen_s(&file, "CONOUT$", "wt", stdout);
+	//	freopen_s(&file, "CONOUT$", "wt", stderr);
+	//}
 
 	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
 	pMain->Init();

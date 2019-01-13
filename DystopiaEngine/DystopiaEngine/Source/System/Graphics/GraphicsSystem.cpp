@@ -82,6 +82,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorCommands.h"
 #endif 
 
+namespace
+{
+	static auto const& pGfxAPI = ::Gfx::GetInstance();
+}
+
 
 int Dystopia::GraphicsSystem::DRAW_MODE = GL_TRIANGLES;
 const int& Dystopia::GraphicsSystem::GetDrawMode(void) noexcept
@@ -116,14 +121,11 @@ float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 	return mfGamma;
 }
 
-void Dystopia::GraphicsSystem::ToggleVsync(bool b) noexcept
+void Dystopia::GraphicsSystem::ToggleVsync(bool _b) noexcept
 {
-	mSettings |= b * eGfxSettings::GRAPHICS_VSYNC;
+	mSettings &= _b ? eGfxSettings::GRAPHICS_ALL : ~eGfxSettings::GRAPHICS_VSYNC;
 
-	if (mAvailable & eGfxSettings::GRAPHICS_VSYNC)
-	{
-		wglSwapIntervalEXT(b ? -1 : 0);
-	}
+	pGfxAPI->ToggleVSync(_b);
 }
 
 void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw) const
@@ -171,6 +173,7 @@ void Dystopia::GraphicsSystem::PreInit(void)
 		pMeshSys->LoadMesh(MeshPath);
 	}
 	pMeshSys->EndMesh();
+
 #if EDITOR
 	DrawSplash();
 #else
@@ -181,17 +184,14 @@ void Dystopia::GraphicsSystem::PreInit(void)
 bool Dystopia::GraphicsSystem::Init(void)
 {
 	DEBUG_BREAK(mViews.size() < 3, "Graphics System Error: Graphics did not load settings properly!\n");
+	auto pShaderSys = CORE::Get<ShaderSystem>();
 
 	for (auto& e : mViews)
 		e.Init();
 
-	auto id = shaderlist["FinalStage"]->GetID();
-	auto gameView = glGetUniformLocation(id, "texGame");
-	auto uiView = glGetUniformLocation(id, "texUI");
-	shaderlist["FinalStage"]->Bind();
-	glUniform1i(gameView, 0);
-	glUniform1i(uiView, 1);
-	shaderlist["FinalStage"]->Unbind();
+	auto shader = pShaderSys->GetShader("FinalStage");
+	shader->UploadUniformi("texGame", 0);
+	shader->UploadUniformi("texUI", 1);
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
@@ -362,7 +362,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		}
 		else
 		{
-			s = shaderlist["No Texture"];
+			s = CORE::Get<ShaderSystem>()->GetShader("No Texture");
 			s->Bind();
 		}
 
@@ -381,7 +381,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 		
 		auto s = r->GetShader();
-		s = r->GetTexture() ? s : shaderlist["No Texture"];
+		s = r->GetTexture() ? s : CORE::Get<ShaderSystem>()->GetShader("No Texture");
 		s->Bind();
 		s->UploadUniform("ProjectMat", _Proj);
 		s->UploadUniform("ViewMat", _View);
@@ -392,7 +392,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		}
 	}
 
-	auto s = shaderlist["Font Shader"];
+	auto s = CORE::Get<ShaderSystem>()->GetShader("Font Shader");
 	s->Bind();
 	s->UploadUniform("ProjectMat", _Proj);
 	s->UploadUniform("ViewMat", _View);
@@ -424,7 +424,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
 
 	glClear(GL_DEPTH_BUFFER_BIT);
-	Shader* s = shaderlist["Collider Shader"];
+	Shader* s = CORE::Get<ShaderSystem>()->GetShader("Collider Shader");
 
 	s->Bind();
 	s->UploadUniform("ViewMat", _View);
@@ -800,26 +800,36 @@ Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)
 
 Dystopia::Shader* Dystopia::GraphicsSystem::LoadShader(const std::string& _filePath)
 {
+	auto pShaderSys = CORE::Get<ShaderSystem>();
 	auto file = Serialiser::OpenFile<TextSerialiser>(_filePath.c_str(), Serialiser::MODE_READ);
 	std::string strName, strVert, strGeo, strFrag;
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 
 	file.ConsumeStartBlock();
 	while (!file.EndOfInput())
 	{
 		file >> strName;
-		file >> strVert;
-		file >> strFrag;
+		auto pShader = pShaderSys->CreateShader(strName.c_str());
 
-		shaderlist[strName] = new Shader{};
-		if (file.EndOfInput())
+		if (pShader)
 		{
-			shaderlist[strName]->CreateShader(strVert, strFrag);
+			file >> strVert;
+			file >> strFrag;
+
+			pShader->AttachProgram(pShaderSys->CreateShaderProgram(::Gfx::ShaderStage::VERTEX, strVert.c_str()));
+			pShader->AttachProgram(pShaderSys->CreateShaderProgram(::Gfx::ShaderStage::FRAGMENT, strFrag.c_str()));
+
+			if (!file.EndOfInput())
+			{
+				file >> strGeo;
+				pShader->AttachProgram(pShaderSys->CreateShaderProgram(::Gfx::ShaderStage::GEOMETRY, strGeo.c_str()));
+			}
 		}
-		else
-		{
-			file >> strGeo;
-			shaderlist[strName]->CreateShader(strVert, strFrag, strGeo);
-		}
+
 		file.ConsumeStartBlock();
 	}
 
@@ -831,13 +841,8 @@ void Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
 	wglMakeCurrent(_window.GetDeviceContext(), static_cast<HGLRC>(mOpenGL));
 }
 
-bool Dystopia::GraphicsSystem::InitOpenGL(Window& _window)
+bool Dystopia::GraphicsSystem::InitOpenGL(Window&)
 {
-	if (!wglewIsSupported("WGL_EXT_swap_control"))
-	{
-		mAvailable &= ~(eGfxSettings::GRAPHICS_VSYNC);
-	}
-
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LINE_SMOOTH);

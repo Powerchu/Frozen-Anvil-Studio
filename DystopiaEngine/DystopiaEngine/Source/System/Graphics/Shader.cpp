@@ -188,19 +188,45 @@ void Dystopia::Shader::UploadUniform(char const* _strName, float _f1, float _f2,
 	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform4f, _strName, 1u, tempArr);
 }
 
+void Dystopia::Shader::UploadUniformi(char const* _strName, int _n) const noexcept
+{
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform1i, _strName, 1u, &_n);
+}
+
+void Dystopia::Shader::UploadUniformi(char const* _strName, int _n1, int _n2) const noexcept
+{
+	int tempArr[]{ _n1, _n2 };
+
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform2i, _strName, 1u, tempArr);
+}
+
+void Dystopia::Shader::UploadUniformi(char const* _strName, int _n1, int _n2, int _n3) const noexcept
+{
+	int tempArr[]{ _n1, _n2, _n3 };
+
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform3i, _strName, 1u, tempArr);
+}
+
+void Dystopia::Shader::UploadUniformi(char const* _strName, int _n1, int _n2, int _n3, int _n4) const noexcept
+{
+	int tempArr[]{ _n1, _n2, _n3, _n4 };
+
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform4i, _strName, 1u, tempArr);
+}
+
 void Dystopia::Shader::UploadUniform(char const * _strName, const Math::Vector2& _v) const noexcept
 {
 	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform2f, _strName, 1u, reinterpret_cast<float const*>(&_v));
 }
 
-void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Vector4& _v) const noexcept
-{
-	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform4f, _strName, 1u, reinterpret_cast<float const*>(&_v));
-}
-
 void Dystopia::Shader::UploadUniform3(char const* _strName, const Math::Vector4& _v) const noexcept
 {
 	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform3f, _strName, 1u, reinterpret_cast<float const*>(&_v));
+}
+
+void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Vector4& _v) const noexcept
+{
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform4f, _strName, 1u, reinterpret_cast<float const*>(&_v));
 }
 
 void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Matrix2& _m) const noexcept

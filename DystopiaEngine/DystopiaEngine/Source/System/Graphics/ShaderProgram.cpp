@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/OString.h"
 
 #include <fstream>
+#include "GL/glew.h"
 
 namespace
 {
@@ -73,16 +74,19 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 	char* pData = StackAlloc_t::GetBufferAs<char>();
 
 	file.read(pData, sz);
+	pData[sz] = '\0';
 	auto shader = pGfxAPI->CompileGLSL(_stage, pData);
 
 	if (!shader)
 		return false;
 
-	pGfxAPI->LinkShader(mProgram, shader);
+	bool ret = pGfxAPI->LinkShader(mProgram, shader);
+
+	pGfxAPI->Free(shader);
 
 	mStage = _stage;
 	mstrName = _file;
-	return true;
+	return ret;
 }
 
 

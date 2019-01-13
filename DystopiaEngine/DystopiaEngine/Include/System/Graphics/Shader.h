@@ -56,6 +56,11 @@ namespace Dystopia
 		void UploadUniform(char const*, float, float, float) const noexcept;
 		void UploadUniform(char const*, float, float, float, float) const noexcept;
 
+		void UploadUniformi(char const*, int) const noexcept;
+		void UploadUniformi(char const*, int, int) const noexcept;
+		void UploadUniformi(char const*, int, int, int) const noexcept;
+		void UploadUniformi(char const*, int, int, int, int) const noexcept;
+
 		OString const& GetName(void) const noexcept;
 
 		void OnEditorUI(void) const;
