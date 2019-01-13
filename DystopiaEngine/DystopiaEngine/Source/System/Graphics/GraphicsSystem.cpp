@@ -203,6 +203,8 @@ bool Dystopia::GraphicsSystem::Init(void)
 
 void Dystopia::GraphicsSystem::PostInit(void)
 {
+	pGfxAPI->PrintEnvironment();
+
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
 		__debugbreak();

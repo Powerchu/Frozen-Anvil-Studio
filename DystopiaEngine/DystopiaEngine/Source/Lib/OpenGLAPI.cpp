@@ -75,21 +75,12 @@ Gfx::OpenGL_API::OpenGL_API(void) noexcept
 void Gfx::OpenGL_API::PrintEnvironment(void) const noexcept
 {
 	// Gets for the openGL version
-	GLint a, b, c;
+	GLint a, b;
 	glGetIntegerv(GL_MAJOR_VERSION, &a);
 	glGetIntegerv(GL_MINOR_VERSION, &b);
 
 	DEBUG_PRINT(eLog::SYSINFO, "Using %s, %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 	DEBUG_PRINT(eLog::SYSINFO, "OpenGL Version %d.%d\n", a, b);
-
-	glGetIntegerv(GL_ALPHA_BITS  , &a);
-	glGetIntegerv(GL_RED_BITS    , &b); a += b;
-	glGetIntegerv(GL_BLUE_BITS   , &c); a += c;
-	glGetIntegerv(GL_GREEN_BITS  , &b); a += b;
-	glGetIntegerv(GL_DEPTH_BITS  , &b);
-	glGetIntegerv(GL_STENCIL_BITS, &c);
-
-	DEBUG_PRINT(eLog::SYSINFO, "%d bit colour, %d bit depth, %d bit stencil\n", a, b, c);
 }
 
 void Gfx::OpenGL_API::ToggleVSync(bool _b) const noexcept
