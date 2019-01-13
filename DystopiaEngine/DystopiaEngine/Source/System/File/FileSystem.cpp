@@ -113,7 +113,7 @@ namespace Dystopia
 		return true;
 	}
 
-	void FileSystem::Update(float _dt)
+	void FileSystem::Update(float)
 	{
 		/*Loop through all File Tracking Jobs and poll for updates*/
 		static std::string ListOfFileNames[100];
@@ -759,7 +759,7 @@ namespace Dystopia
 				_OVERLAPPED _overlapObj;
 				DWORD       byte_read;
 				_overlapObj.hEvent = CreateEventA(NULL, false, true, _EventName.c_str());
-				auto error1 = GetLastError();
+
 				if (_overlapObj.hEvent == INVALID_HANDLE_VALUE || !_overlapObj.hEvent)
 				{
 					/*Failed to create a Event/_OVERLAPPED*/
@@ -788,7 +788,6 @@ namespace Dystopia
 					return (*ptr)->mFileHandle;
 				}
 
-				auto error = GetLastError();
 				if (GetLastError() == ERROR_NOTIFY_ENUM_DIR || byte_read == 0)
 				{
 					/*Failed to read directory successfully*/

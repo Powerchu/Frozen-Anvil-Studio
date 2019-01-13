@@ -57,8 +57,8 @@ namespace Dystopia
 		bool isColliding(Circle * const & other_col);
 
 		/*Collision Check Functions*/
-		bool isColliding(const AABB & other_col);
-		bool isColliding(const AABB * const & other_col);
+		bool isColliding(AABB & other_col);
+		bool isColliding(AABB * const & other_col);
 
 		/*Collision Check Functions*/
 		bool isColliding(Convex& other_col);
