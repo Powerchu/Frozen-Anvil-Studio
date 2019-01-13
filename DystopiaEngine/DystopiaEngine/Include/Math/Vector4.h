@@ -79,7 +79,7 @@ namespace Math
 	\brief
 		Generic Math 4 Dimensional Space Vector. 
 	*/
-	union __declspec(align (ALLIGN)) _DLL_EXPORT Vector4
+	union alignas(ALLIGN) _DLL_EXPORT Vector4
 	{
 		// ====================================== CONSTRUCTORS ======================================= // 
 

@@ -36,31 +36,40 @@ namespace
 }
 
 
-Dystopia::Shader::Shader(void) noexcept :
-	mID{ ::Gfx::GetInstance()->CreateShaderPipeline() }, mStages { ::Gfx::ShaderStage::NONE }
+Dystopia::Shader::Shader(OString const& _strName) noexcept :
+	mID{ pGfxAPI->CreateShaderPipeline() }, mStages{ ::Gfx::ShaderStage::NONE }, mstrName{ _strName }
 {
 
 }
 
 Dystopia::Shader::~Shader(void)
 {
-	::Gfx::GetInstance()->Free(mID);
+	pGfxAPI->Free(mID);
 }
 
-void Dystopia::Shader::CreateShader(char const* _strVert, char const* _strFrag)
-{
-	AttachProgram(CORE::Get<ShaderSystem>()->CreateShaderProgram(_strVert));
-	AttachProgram(CORE::Get<ShaderSystem>()->CreateShaderProgram(_strFrag));
-}
-
-void Dystopia::Shader::CreateShader(char const* _strVert, char const* _strFrag, char const* _strGeo)
-{
-	AttachProgram(CORE::Get<ShaderSystem>()->CreateShaderProgram(_strGeo));
-	CreateShader(_strVert, _strFrag);
-}
+//void Dystopia::Shader::CreateShader(char const* _strVert, char const* _strFrag)
+//{
+//	auto pShaderSys = CORE::Get<ShaderSystem>();
+//	
+//	if (auto prog = pShaderSys->CreateShaderProgram(::Gfx::ShaderStage::VERTEX, _strVert))
+//		AttachProgram(prog);
+//
+//	if (auto prog = pShaderSys->CreateShaderProgram(::Gfx::ShaderStage::FRAGMENT, _strFrag))
+//		AttachProgram(prog);
+//}
+//
+//void Dystopia::Shader::CreateShader(char const* _strVert, char const* _strFrag, char const* _strGeo)
+//{
+//	if (auto prog = CORE::Get<ShaderSystem>()->CreateShaderProgram(::Gfx::ShaderStage::GEOMETRY, _strGeo))
+//		AttachProgram(prog);
+//
+//	CreateShader(_strVert, _strFrag);
+//}
 
 void Dystopia::Shader::AttachProgram(ShaderProgram* _prog)
 {
+	if (!_prog) return;
+
 	if (static_cast<unsigned>(mStages & _prog->GetStage()))
 	{
 		for (auto& e : mPrograms)

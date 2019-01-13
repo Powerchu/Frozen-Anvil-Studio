@@ -14,6 +14,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _LIB_GFX_SHADERS_
 #define _LIB_GFX_SHADERS_
 
+#include "Utility/EnumOps.h"
+
+
 namespace Gfx
 {
 	enum class ShaderStage : unsigned
@@ -32,54 +35,13 @@ namespace Gfx
 	using ShaderPipeline = class SHADERPIPELINE_ *;
 }
 
-
-
-
-
-
-// ============================================ FUNCTION DEFINITIONS ============================================ // 
-
-inline Gfx::ShaderStage operator | (Gfx::ShaderStage const& _lhs, Gfx::ShaderStage const& _rhs)
+namespace Ut
 {
-	return static_cast<Gfx::ShaderStage>(
-		static_cast<unsigned>(_lhs) | static_cast<unsigned>(_rhs)
-	);
-}
-
-inline Gfx::ShaderStage operator & (Gfx::ShaderStage const& _lhs, Gfx::ShaderStage const& _rhs)
-{
-	return static_cast<Gfx::ShaderStage>(
-		static_cast<unsigned>(_lhs) & static_cast<unsigned>(_rhs)
-	);
-}
-
-inline Gfx::ShaderStage operator ^ (Gfx::ShaderStage const& _lhs, Gfx::ShaderStage const& _rhs)
-{
-	return static_cast<Gfx::ShaderStage>(
-		static_cast<unsigned>(_lhs) ^ static_cast<unsigned>(_rhs)
-	);
-}
-
-inline Gfx::ShaderStage operator ~ (Gfx::ShaderStage const& _v)
-{
-	return static_cast<Gfx::ShaderStage>(
-		~static_cast<unsigned>(_v)
-	);
-}
-
-inline Gfx::ShaderStage& operator |= (Gfx::ShaderStage& _lhs, Gfx::ShaderStage const& _rhs)
-{
-	return _lhs = _lhs | _rhs;
-}
-
-inline Gfx::ShaderStage& operator &= (Gfx::ShaderStage& _lhs, Gfx::ShaderStage const& _rhs)
-{
-	return _lhs = _lhs & _rhs;
-}
-
-inline Gfx::ShaderStage& operator ^= (Gfx::ShaderStage& _lhs, Gfx::ShaderStage const& _rhs)
-{
-	return _lhs = _lhs ^ _rhs;
+	template <>
+	struct EnumBitOps<::Gfx::ShaderStage>
+	{
+		static constexpr bool value = true;
+	};
 }
 
 

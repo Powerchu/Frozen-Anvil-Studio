@@ -4,7 +4,7 @@
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	TODO: Adaptor class to unify Graphics API calls
+	Adaptor class to unify Graphics API calls
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
@@ -34,6 +34,8 @@ namespace Gfx
 		// Generics
 		
 		virtual void PrintEnvironment(void) const noexcept = 0;
+
+		virtual void ToggleVSync(bool) const noexcept = 0;
 
 		template <typename T>
 		inline void Free(T&) noexcept;

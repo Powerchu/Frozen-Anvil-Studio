@@ -1023,6 +1023,12 @@
     <ClInclude Include="Include\Allocator\StackAllocImpl.h">
       <Filter>Allocator\StackAllocator</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Lib\Gfx\GfxOptions.h">
+      <Filter>Lib\GraphicsLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\EnumOps.h">
+      <Filter>Utility\EnumOps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1471,6 +1477,9 @@
     </Filter>
     <Filter Include="Allocator\StackAllocator">
       <UniqueIdentifier>{273b1a29-b088-48a8-b305-4faa3d8656b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\EnumOps">
+      <UniqueIdentifier>{f7a8de23-cec3-49c2-8894-8d65ca9a6691}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

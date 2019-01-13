@@ -20,16 +20,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <fstream>
 
+namespace
+{
+	static auto const& pGfxAPI = ::Gfx::GetInstance();
+}
+
 
 Dystopia::ShaderProgram::ShaderProgram(void) noexcept
-	: mProgram{ Gfx::GetInstance()->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }
+	: mProgram{ pGfxAPI->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }
 {
 
 }
 
 Dystopia::ShaderProgram::~ShaderProgram(void) noexcept
 {
-	Gfx::GetInstance()->Free(mProgram);
+	pGfxAPI->Free(mProgram);
 }
 
 ::Gfx::ShaderStage const& Dystopia::ShaderProgram::GetStage(void) const noexcept
@@ -49,7 +54,6 @@ OString const& Dystopia::ShaderProgram::GetName(void) const noexcept
 
 bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _file) noexcept
 {
-	auto pAPI = Gfx::GetInstance();
 	std::ifstream file{ _file, std::ios::ate | std::ios::in | std::ios::binary };
 
 	if (file.fail())
@@ -69,12 +73,12 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 	char* pData = StackAlloc_t::GetBufferAs<char>();
 
 	file.read(pData, sz);
-	auto shader = pAPI->CompileGLSL(_stage, pData);
+	auto shader = pGfxAPI->CompileGLSL(_stage, pData);
 
 	if (!shader)
 		return false;
 
-	pAPI->LinkShader(mProgram, shader);
+	pGfxAPI->LinkShader(mProgram, shader);
 
 	mStage = _stage;
 	mstrName = _file;

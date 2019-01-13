@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _LIB_GFX_OPENGL_API_H_
 
 #include "Shaders.h"
+#include "GfxOptions.h"
 #include "../GraphicsLib.h"
 
 namespace Gfx
@@ -26,6 +27,7 @@ namespace Gfx
 		OpenGL_API(void) noexcept;
 
 		void PrintEnvironment(void) const noexcept override;
+		void ToggleVSync(bool) const noexcept override;
 
 		ShaderProg CreateShaderProgram(void) noexcept override;
 		ShaderPipeline CreateShaderPipeline(void) noexcept override;
@@ -60,6 +62,7 @@ namespace Gfx
 
 	private:
 		void* mOpenGL;
+		Opts mAvailable;
 
 		unsigned CreateShader(Gfx::ShaderStage) noexcept;
 		unsigned StageToBitmask(Gfx::ShaderStage) noexcept;

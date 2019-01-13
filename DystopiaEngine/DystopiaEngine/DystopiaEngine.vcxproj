@@ -172,6 +172,7 @@
     <ClInclude Include="Include\Component\NodeList.h" />
     <ClInclude Include="Include\Editor\GameView.h" />
     <ClInclude Include="Include\Factory\Factory.h" />
+    <ClInclude Include="Include\Lib\Gfx\GfxOptions.h" />
     <ClInclude Include="Include\Lib\Gfx\OpenGLAPI.h" />
     <ClInclude Include="Include\Lib\Gfx\Shaders.h" />
     <ClInclude Include="Include\PP\PPConcat.h" />
@@ -338,6 +339,7 @@
     <ClInclude Include="Include\System\Window\Window.h" />
     <ClInclude Include="Include\System\Window\WindowManager.h" />
     <ClInclude Include="Include\Utility\DebugAssert.h" />
+    <ClInclude Include="Include\Utility\EnumOps.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Utility\Meta.h" />
     <ClInclude Include="Include\Utility\MetaAlgorithms.h" />

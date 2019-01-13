@@ -30,12 +30,12 @@ namespace Dystopia
 	{
 	public:
 
-		Shader(void) noexcept;
+		Shader(OString const& = "") noexcept;
 		~Shader(void);
 
-		void CreateShader(char const* _strVert, char const* _strFrag);
-		void CreateShader(char const* _strVert, char const* _strFrag, char const* _strGeo);
-
+		//void CreateShader(char const* _strVert, char const* _strFrag);
+		//void CreateShader(char const* _strVert, char const* _strFrag, char const* _strGeo);
+		
 		void AttachProgram(ShaderProgram*);
 		void DetachProgram(ShaderProgram*);
 		void DetachProgram(::Gfx::ShaderStage);

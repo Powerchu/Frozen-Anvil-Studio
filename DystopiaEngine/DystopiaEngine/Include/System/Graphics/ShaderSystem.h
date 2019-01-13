@@ -17,6 +17,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
 
+#include "Lib/Gfx/Shaders.h"
+
 #include <map>
 
 
@@ -34,7 +36,8 @@ namespace Dystopia
 		void EditorUpdate(void);
 		void Shutdown(void) noexcept;
 
-		ShaderProgram* CreateShaderProgram(char const* _strName) noexcept;
+		Shader* CreateShader(char const* _strName) noexcept;
+		ShaderProgram* CreateShaderProgram(::Gfx::ShaderStage, char const* _strName) noexcept;
 
 		Shader* GetShader(char const* _strName) const noexcept;
 		ShaderProgram* GetShaderProgram(char const* _strName) const noexcept;

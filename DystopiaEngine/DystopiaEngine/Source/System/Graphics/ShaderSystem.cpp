@@ -13,9 +13,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/ShaderSystem.h"
 #include "System/Graphics/Shader.h"
+
 #include "Lib/GraphicsLib.h"
+#include "Lib/Gfx/Shaders.h"
 
 #include "DataStructure/OString.h"
+
+namespace
+{
+	static auto const& pGfxAPI = ::Gfx::GetInstance();
+}
 
 
 Dystopia::ShaderSystem::~ShaderSystem(void) noexcept
@@ -51,12 +58,25 @@ Dystopia::Shader* Dystopia::ShaderSystem::GetShader(char const* _strName) const 
 	return nullptr;
 }
 
-Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(char const* _strName) noexcept
+Dystopia::Shader* Dystopia::ShaderSystem::CreateShader(char const* _strName) noexcept
+{
+	if (auto p = GetShader(_strName))
+		return p;
+
+	return mShaders.Emplace(_strName);
+}
+
+Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(::Gfx::ShaderStage _stage, char const* _strName) noexcept
 {
 	if (auto ret = GetShaderProgram(_strName))
 		return ret;
 
-	return mPrograms.Emplace();
+	auto p = mPrograms.Emplace();
+	if (p->LoadProgram(_stage, _strName))
+		return p;
+
+	mPrograms.Remove(p);
+	return nullptr;
 }
 
 Dystopia::ShaderProgram* Dystopia::ShaderSystem::GetShaderProgram(char const* _strName) const noexcept

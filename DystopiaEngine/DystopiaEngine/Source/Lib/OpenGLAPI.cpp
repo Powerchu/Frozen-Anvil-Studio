@@ -67,7 +67,7 @@ namespace
 }
 
 Gfx::OpenGL_API::OpenGL_API(void) noexcept
-	: mOpenGL{ nullptr }
+	: mOpenGL{ nullptr }, mAvailable{ Opts::GRAPHICS_ALL }
 {
 
 }
@@ -84,12 +84,20 @@ void Gfx::OpenGL_API::PrintEnvironment(void) const noexcept
 
 	glGetIntegerv(GL_ALPHA_BITS  , &a);
 	glGetIntegerv(GL_RED_BITS    , &b); a += b;
-	glGetIntegerv(GL_BLUE_BITS   , &b); a += b;
+	glGetIntegerv(GL_BLUE_BITS   , &c); a += c;
 	glGetIntegerv(GL_GREEN_BITS  , &b); a += b;
 	glGetIntegerv(GL_DEPTH_BITS  , &b);
 	glGetIntegerv(GL_STENCIL_BITS, &c);
 
 	DEBUG_PRINT(eLog::SYSINFO, "%d bit colour, %d bit depth, %d bit stencil\n", a, b, c);
+}
+
+void Gfx::OpenGL_API::ToggleVSync(bool _b) const noexcept
+{
+	if (Opts::GRAPHICS_VSYNC == (mAvailable & Opts::GRAPHICS_VSYNC))
+	{
+		wglSwapIntervalEXT(_b ? -1 : 1);
+	}
 }
 
 unsigned Gfx::OpenGL_API::StageToBitmask(Gfx::ShaderStage _stage) noexcept
@@ -99,10 +107,10 @@ unsigned Gfx::OpenGL_API::StageToBitmask(Gfx::ShaderStage _stage) noexcept
 	if (Gfx::ShaderStage::ALL == (Gfx::ShaderStage::ALL & _stage))
 		return GL_ALL_SHADER_BITS;
 
-	stage |= GL_VERTEX_SHADER_BIT * (Gfx::ShaderStage::VERTEX == (Gfx::ShaderStage::VERTEX   & _stage));
+	stage |= GL_VERTEX_SHADER_BIT   * (Gfx::ShaderStage::VERTEX   == (Gfx::ShaderStage::VERTEX   & _stage));
 	stage |= GL_FRAGMENT_SHADER_BIT * (Gfx::ShaderStage::FRAGMENT == (Gfx::ShaderStage::FRAGMENT & _stage));
 	stage |= GL_GEOMETRY_SHADER_BIT * (Gfx::ShaderStage::GEOMETRY == (Gfx::ShaderStage::GEOMETRY & _stage));
-	stage |= GL_COMPUTE_SHADER_BIT * (Gfx::ShaderStage::COMPUTE == (Gfx::ShaderStage::COMPUTE  & _stage));
+	stage |= GL_COMPUTE_SHADER_BIT  * (Gfx::ShaderStage::COMPUTE  == (Gfx::ShaderStage::COMPUTE  & _stage));
 
 	return stage;
 }
@@ -278,14 +286,14 @@ void Gfx::OpenGL_API::UploadUniform4u(ShaderProg const& _prog, unsigned _nLoc, u
 	glProgramUniform4uiv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadMatrix2(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal, bool _bTranspose = true) noexcept
+void Gfx::OpenGL_API::UploadMatrix2(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal, bool _bTrans) noexcept
 {
-	glProgramUniformMatrix2fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _bTranspose ? GL_TRUE : GL_FALSE, _pVal);
+	glProgramUniformMatrix2fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _bTrans ? GL_TRUE : GL_FALSE, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadMatrix4(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal, bool _bTranspose = true) noexcept
+void Gfx::OpenGL_API::UploadMatrix4(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal, bool _bTrans) noexcept
 {
-	glProgramUniformMatrix4fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _bTranspose ? GL_TRUE : GL_FALSE, _pVal);
+	glProgramUniformMatrix4fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _bTrans ? GL_TRUE : GL_FALSE, _pVal);
 }
 
 
@@ -336,7 +344,13 @@ bool Gfx::OpenGL_API::InitGraphicsAPI(void const* _phwnd) noexcept
 	}
 
 	// Check if gl 3.1 and above context is supported
-	if (wglewIsSupported("WGL_ARB_create_context") == 1 && !VersionSelect(dc))
+	if (!wglewIsSupported("WGL_ARB_create_context"))
+	{
+		__debugbreak();
+		return false;
+	}
+
+	if (!VersionSelect(dc))
 	{
 		__debugbreak();
 		return false;
@@ -347,6 +361,11 @@ bool Gfx::OpenGL_API::InitGraphicsAPI(void const* _phwnd) noexcept
 
 	// Delete the dummy context
 	wglDeleteContext(dummyGL);
+
+	if (!wglewIsSupported("WGL_EXT_swap_control"))
+	{
+		mAvailable &= ~Opts::GRAPHICS_VSYNC;
+	}
 
 	// Make our newly created context the active context
 	return BindContext(dc);
@@ -367,10 +386,16 @@ bool Gfx::OpenGL_API::VersionSelect(void* const& hdc) noexcept
 	};
 
 	mOpenGL = nullptr;
-//	mAvailable = eGfxSettings::GRAPHICS_ALL;
 
 	// Try to create at least OpenGL 4.3
-	attrbs[3] = 3;
+	mOpenGL = wglCreateContextAttribsARB(static_cast<HDC>(hdc), NULL, attrbs);
+	if (mOpenGL)
+	{
+		return true;
+	}
+
+	// Try 4.1...
+	attrbs[3] = 1;
 	mOpenGL = wglCreateContextAttribsARB(static_cast<HDC>(hdc), NULL, attrbs);
 	if (mOpenGL)
 	{
@@ -378,7 +403,7 @@ bool Gfx::OpenGL_API::VersionSelect(void* const& hdc) noexcept
 	}
 
 	// Failed, try 3.2...
-//	mAvailable &= ~(eGfxSettings::GRAPHICS_COMPUTE | eGfxSettings::GRAPHICS_TESS);
+	mAvailable &= ~(Opts::GRAPHICS_COMPUTE | Opts::GRAPHICS_TESS);
 
 	attrbs[1] = 3; attrbs[3] = 2;
 	mOpenGL = wglCreateContextAttribsARB(static_cast<HDC>(hdc), NULL, attrbs);
@@ -388,7 +413,7 @@ bool Gfx::OpenGL_API::VersionSelect(void* const& hdc) noexcept
 	}
 
 	// Failed, try 3.1...
-//	mAvailable &= ~(eGfxSettings::GRAPHICS_MSAA);
+	mAvailable &= ~(Opts::GRAPHICS_MSAA);
 
 	attrbs[3] = 1;
 	mOpenGL = wglCreateContextAttribsARB(static_cast<HDC>(hdc), NULL, attrbs);
