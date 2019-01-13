@@ -359,8 +359,8 @@
       <Filter>Game Engine\Systems\AI\Tree</Filter>
     </ClCompile>
     <ClCompile Include="Source\Component\Colliders\PointCollider.cpp">
-		<Filter>Game Engine\Components\Colliders</Filter>
-	</ClInclude>
+		  <Filter>Game Engine\Components\Colliders</Filter>
+	  </ClCompile>
     <ClCompile Include="Source\System\Graphics\ShaderProgram.cpp">
       <Filter>Game Engine\SubSystems\Shader\ShaderProgram</Filter>
     </ClCompile>
