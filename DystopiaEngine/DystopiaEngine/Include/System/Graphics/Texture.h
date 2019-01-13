@@ -15,7 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
+
+#include "DataStructure/HashString.h"
+
 #include <string>
+
 
 namespace Dystopia
 {
@@ -26,12 +30,11 @@ namespace Dystopia
 	public:
 
 		Texture(void) noexcept;
-		explicit Texture(unsigned _nType, const std::string& _strPath) noexcept;
+		explicit Texture(unsigned _nType, HashString const& _strPath) noexcept;
 		explicit Texture(unsigned _nWidth, unsigned _nHeight, unsigned _nType) noexcept;
 
 		Texture(Texture&&) noexcept;
-
-		virtual ~Texture(void);
+		~Texture(void);
 
 		void Bind(int = 0) const noexcept;
 		void Unbind(void) const noexcept;
@@ -45,14 +48,14 @@ namespace Dystopia
 
 		unsigned GetID(void) const noexcept;
 
-		std::string GetName(void) const;
-		std::string const& GetPath(void) const noexcept;
+		HashString GetName(void) const;
+		HashString const& GetPath(void) const noexcept;
 
 		Texture& operator= (Texture&&) noexcept;
 
 	protected:
 
-		std::string mstrPath;
+		HashString mstrPath;
 		unsigned mnWidth, mnHeight, mnType, mnID;
 	};
 }

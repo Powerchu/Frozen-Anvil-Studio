@@ -14,6 +14,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/File/FileSystem.h"
 #include "System/Driver/Driver.h"
+#include "System/Time/ScopedTimer.h"
+#include "System/Profiler/ProfilerAction.h"
 
 #include <filesystem>
 #include <Windows.h>
@@ -115,6 +117,8 @@ namespace Dystopia
 
 	void FileSystem::Update(float _dt)
 	{
+		ScopedTimer<ProfilerAction> profiler{ "FileSystem", "Update" };
+
 		/*Loop through all File Tracking Jobs and poll for updates*/
 		static std::string ListOfFileNames[100];
 		for (auto & TrackJob : mDetectionFiles)
@@ -127,13 +131,14 @@ namespace Dystopia
 				  Check that the list of names contains the file that the user is
 				  interested in(Stored in DetectionInfo.FileName
 				*/
-				if (IsSameFile(TrackJob->mParentDirectory + "/" +  names , TrackJob->mParentDirectory + "/" + TrackJob->mFileName))
+				if (IsSameFile(TrackJob->mParentDirectory + "/" + names, TrackJob->mFileName) || IsSameFile(TrackJob->mParentDirectory + "/" +  names , TrackJob->mParentDirectory + "/" + TrackJob->mFileName))
 				{
 					/*Find the Arrays of EventCallBack for the current Job and invoke them*/
 					auto & ref = mMapOfTrackInfo[TrackJob->mFileHandle];
 					for (auto & f : ref)
 					{
 						f.second(TrackJob->mFileName.c_str());
+						f.second();
 					}
 					break;
 				}
@@ -758,7 +763,7 @@ namespace Dystopia
 			{
 				_OVERLAPPED _overlapObj;
 				DWORD       byte_read;
-				_overlapObj.hEvent = CreateEventA(NULL, false, true, _EventName.c_str());
+				_overlapObj.hEvent = CreateEventA(NULL, false, true, NULL);
 				auto error1 = GetLastError();
 				if (_overlapObj.hEvent == INVALID_HANDLE_VALUE || !_overlapObj.hEvent)
 				{

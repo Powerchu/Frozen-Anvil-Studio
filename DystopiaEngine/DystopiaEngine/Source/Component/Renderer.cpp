@@ -62,7 +62,7 @@ void Dystopia::Renderer::Awake(void)
 
 	if (mTexturePath.length())
 	{
-		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mTexturePath);
+		mpTexture = CORE::Get<GraphicsSystem>()->LoadTexture(mTexturePath);
 	}
 }
 
@@ -155,7 +155,7 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 	Component::Unserialise(_in);
 	_in >> path;
 	_in.ConsumeEndBlock();
-	mTexturePath = EngineCore::GetInstance()->Get<FileSystem>()->GetFullPath(path, eFileDir::eResource);
+	mTexturePath = CORE::Get<FileSystem>()->GetFullPath(path, eFileDir::eResource).c_str();
 }
 
 void Dystopia::Renderer::EditorUI(void) noexcept

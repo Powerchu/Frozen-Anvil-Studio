@@ -43,6 +43,8 @@ namespace Dystopia
 		Shader* GetShader(char const* _strName) const noexcept;
 		ShaderProgram* GetShaderProgram(char const* _strName) const noexcept;
 
+		void NotifyReplace(ShaderProgram*);
+
 		inline Shader* operator[] (char const* _strName) const noexcept;
 
 	private:

@@ -12,6 +12,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/ShaderProgram.h"
+#include "System/Graphics/ShaderSystem.h"
+#include "System/Driver/Driver.h"
 
 #include "Lib/GraphicsLib.h"
 #include "Utility/DebugAssert.h"
@@ -53,20 +55,25 @@ OString const& Dystopia::ShaderProgram::GetName(void) const noexcept
 	return mstrName;
 }
 
+void Dystopia::ShaderProgram::TrackChangesCallback(void)
+{
+	CORE::Get<ShaderSystem>()->NotifyReplace(this);
+}
+
 bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _file) noexcept
 {
 	std::ifstream file{ _file, std::ios::ate | std::ios::in | std::ios::binary };
 
 	if (file.fail())
 	{
-		DEBUG_PRINT(eLog::ERROR, "Shader LoadProgram failed! File %s not found!", _file);
+		DEBUG_PRINT(eLog::ERROR, "Shader LoadProgram failed! File %s not found!\n", _file);
 		return false;
 	}
 
 	size_t sz = file.tellg();
 	if (StackAlloc_t::GetUsableSize() < sz)
 	{
-		DEBUG_PRINT(eLog::ERROR, "Shader LoadProgram failed! Insufficient Memory, %uzbytes required!", sz);
+		DEBUG_PRINT(eLog::ERROR, "Shader LoadProgram failed! Insufficient Memory, %uzbytes required!\n", sz);
 		return false;
 	}
 

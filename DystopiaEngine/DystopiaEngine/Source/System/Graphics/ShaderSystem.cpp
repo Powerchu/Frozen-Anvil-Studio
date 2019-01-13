@@ -13,6 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/ShaderSystem.h"
 #include "System/Graphics/Shader.h"
+#include "System/File/FileSystem.h"
+#include "System/Driver/Driver.h"
 
 #include "Lib/GraphicsLib.h"
 #include "Lib/Gfx/Shaders.h"
@@ -76,8 +78,16 @@ Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(::Gfx::Shad
 		return ret;
 
 	auto p = mPrograms.Emplace();
-	if (p->LoadProgram(_stage, _strName))
+	auto path = CORE::Get<FileSystem>()->GetFullPath(_strName, eFileDir::eSolution);
+	if (p->LoadProgram(_stage, path.c_str()))
+	{
+#		if EDITOR
+			auto id = CORE::Get<FileSystem>()->TrackFile(_strName, eFileDir::eSolution);
+			CORE::Get<FileSystem>()->BindFileTrackEvent(id, &ShaderProgram::TrackChangesCallback, p);
+#		endif
+
 		return p;
+	}
 
 	mPrograms.Remove(p);
 	return nullptr;
@@ -92,6 +102,11 @@ Dystopia::ShaderProgram* Dystopia::ShaderSystem::GetShaderProgram(char const* _s
 			return &e;
 
 	return nullptr;
+}
+
+void Dystopia::ShaderSystem::NotifyReplace(ShaderProgram* _p)
+{
+	mChanges.EmplaceBack(_p);
 }
 
 

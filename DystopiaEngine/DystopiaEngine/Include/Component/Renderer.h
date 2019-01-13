@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Component.h"		// Base Class
 #include "Component/ComponentList.h"
 #include "DataStructure/AutoArray.h"
+#include "DataStructure/HashString.h"
 #include "Utility/MetaAlgorithms.h"
 
 #include <string>
@@ -88,7 +89,7 @@ namespace Dystopia
 		Mesh* mpMesh;
 		Shader* mpShader;
 		Texture* mpTexture;
-		std::string mTexturePath;
+		HashString mTexturePath;
 
 #   if EDITOR
 		void TextureField();

@@ -783,14 +783,14 @@ void Dystopia::GraphicsSystem::LoadMesh(const std::string& _filePath)
 	sys->EndMesh();
 }
 
-Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const std::string& _strName)
+Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(HashString const& _strName)
 {
-	return EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadTexture(_strName);
+	return CORE::Get<TextureSystem>()->LoadTexture(_strName);
 }
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const char * _strName)
 {
-	return EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadTexture(_strName);
+	return CORE::Get<TextureSystem>()->LoadTexture(_strName);
 }
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)
