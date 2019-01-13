@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 Dystopia::Behaviour::Behaviour(void) :
 	Component{}
 {
-
+	SetActive(true);
 }
 
 void Dystopia::Behaviour::Load(void)

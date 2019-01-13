@@ -1,28 +1,46 @@
 <FS_HEADER>
 //_FS_NAME_
-struct _FS_NAME_ : IFiniteState;
+struct _FS_NAME_ : IFiniteState
 {
-    _FS_NAME_(void);
+    _FS_NAME_(CharacterController*);
     ~_FS_NAME_(void);
     void Update(float);
-    void OnEnterState(void);
-    void OnExitState(void);
-}
+    bool OnEnterState(float);
+    bool OnExitState(float);
+};
 </FS_HEADER>
 
 <FS_BODY>
 //_FS_NAME_
-_FS_NAME_::_FS_NAME_(void) 
-{}
-_FS_NAME_::~_FS_NAME_(void) 
-{}
-void _FS_NAME_::Update(float)
+CharacterController::_FS_NAME_::_FS_NAME_(CharacterController* _o) : IFiniteState{_o}{}
+CharacterController::_FS_NAME_::~_FS_NAME_(){}
+void CharacterController::_FS_NAME_::Update(float)
 {
+    //<FS_CONDITION>
+    //</FS_CONDITION>
 }
-void _FS_NAME_::OnEnterState(void)
+bool CharacterController::_FS_NAME_::OnEnterState(float)
 {
+    return true;
 }
-void _FS_NAME_::OnExitState(void)
+bool CharacterController::_FS_NAME_::OnExitState(float)
 { 
+    return true;
 }
 </FS_BODY>
+
+<FS_VAR>
+FStateTypes mNextState;
+FStateTypes mCurrentState;
+IFiniteState* mStates[OUT_OF_RANGE];
+</FS_VAR>
+
+<CONDITION>
+// Condition for _FS_RES_
+if (_FS_CON_)
+    mNextState = _FS_RES_;
+</CONDITION>
+
+<LOAD_STATES>
+mStates[_FS_COUNT_] = new _FS_NAME_{this};
+</LOAD_STATES>

@@ -272,7 +272,7 @@ void Dystopia::GameObject::Unload(void)
 
 void Dystopia::GameObject::OnCollisionEnter(const CollisionEvent& _pEvent)
 {
-	Ping(mBehaviours, OnCollisionEnter, _pEvent);
+ 	Ping(mBehaviours, OnCollisionEnter, _pEvent);
 }
 
 void Dystopia::GameObject::OnCollisionStay(const CollisionEvent& _pEvent)
