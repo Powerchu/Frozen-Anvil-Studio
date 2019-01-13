@@ -358,6 +358,7 @@
     <ClCompile Include="Source\System\AI\Blackboard.cpp">
       <Filter>Game Engine\Systems\AI\Tree</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\PointCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -993,6 +994,7 @@
     <ClInclude Include="Include\PP\PPVaToSeq.h">
       <Filter>Preprocessor</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\PointCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
