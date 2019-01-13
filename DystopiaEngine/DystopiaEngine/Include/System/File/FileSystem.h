@@ -132,59 +132,37 @@ namespace Dystopia
 		/*Create a Track File Event, The EventName should be the filepath*/
 		FileTrackInfoID_t TrackFile(const HashString & _FileName, eFileDir _ParentDirectory = eFileDir::eResource);
 
+		void UnbindFileTrackEvent(FileEventCallBack_t _EventID, FileTrackInfoID_t _TrackID);
+		void UnbindAllTrackEvent (FileTrackInfoID_t _TrackID);
+		void StopTrackFile       (FileTrackInfoID_t _TrackID);
+
 		/*Bind a Function to the event created*/
 		template<class Caller, typename Ret_t, typename ...params_t>
-		FileEventCallBack_t RegisterFileTrackEvent(const FileTrackInfoID_t & _FileTrackID, Ret_t(Caller::*_fn)(params_t...), Caller* const _user, eFileDir _ParentDirectory = eFileDir::eResource)
+		FileEventCallBack_t BindFileTrackEvent(const FileTrackInfoID_t & _FileTrackID, Ret_t(Caller::*_fn)(params_t...), Caller* const _user)
 		{
 			/*Check for existing EventInfo who has a filepath that is equilivent*/
-			for (auto & elem : mArrayOfTrackInfo)
-			{
-				if (_FileTrackID == elem.first)
-				{
-					auto temp = GUIDGenerator::GetUniqueID();
-					elem.second.push_back(EventInfo{temp , CallBackEvent{_user, _fn } });
-					return temp;
-				}
-			}
-			auto id = GUIDGenerator::GetUniqueID();
-			EventInfo tempInfo = { id, CallBackEvent{ _user, _fn } };
-			AutoArray<EventInfo> temp;
-			temp.EmplaceBack(tempInfo);
-			mArrayOfTrackInfo.push_back(std::make_pair(_FileTrackID, Ut::Move(temp)));
+			auto id     = GUIDGenerator::GetUniqueID();
+			mMapOfTrackInfo[_FileTrackID][id] = CallBackEvent { _user,_fn };
 			return id;
 		}
 
-		void Test()
+		/*Bind a Function to the event created*/
+		template<class Caller, typename Ret_t, typename ...params_t>
+		FileEventCallBack_t BindFileTrackEvent(const FileTrackInfoID_t & _FileName, Ret_t(Caller::*_fn)(params_t...))
 		{
-			std::string a[100];
-			for (auto & elem : mDetectionFiles)
-				GetChangesInfo(*elem, a, 100);
+			/*Check for existing EventInfo who has a filepath that is equilivent*/
+			auto id = GUIDGenerator::GetUniqueID();
+			mMapOfTrackInfo[_FileTrackID][id] = CallBackEvent{ _fn };
+			return id;
 		}
-		///*Bind a Function to the event created*/
-		//template<class Caller, typename Ret_t, typename ...params_t>
-		//FileSystemEventID RegisterFileTrackEvent(const HashString & _FileName, Ret_t(Caller::*_fn)(params_t...), eFileDir _ParentDirectory = eFileDir::eResource)
-		//{
-		//	/*Check for existing EventInfo who has a filepath that is equilivent*/
-		//	for (auto & elem : mArrayOfEventInfo)
-		//	{
-		//		if (IsSameFile(GetFullPath(_FileName, _ParentDirectory), elem.first))
-		//		{
-		//			elem.second.push_back(CallBackEvent{ _user, _fn });
-		//			return elem.first.id();
-		//		}
-		//	}
 
-		//	AutoArray<CallBackEvent> temp;
-		//	temp.EmplaceBack(_fn);
-		//	mArrayOfEventInfo.push_back(std::make_pair(_FileName, Ut::Move(temp)));
-		//	return _FileName.id();
-		//}
+
 		
 	private:
 
 		using PathTable     = std::map<eFileDir, std::string>;
 		using EventInfo     = std::pair<GUID_t, CallBackEvent>;
-		using FileTrackInfo = std::pair<FileTrackInfoID_t, AutoArray<EventInfo>>;
+		using FileTrackInfo = std::map<FileTrackInfoID_t, std::map<GUID_t, CallBackEvent>>;
 
 		/*Static Members*/
 		static PathTable            mPathTable;
@@ -192,7 +170,7 @@ namespace Dystopia
 		/*Private Members*/
 		eFileSystemError            mLastKnownError;
 		/*EXPERIMENTAL MEMBERS*/
-		AutoArray<FileTrackInfo>    mArrayOfTrackInfo;
+		FileTrackInfo               mMapOfTrackInfo;
 
 
 		/*Private Function*/
@@ -201,7 +179,7 @@ namespace Dystopia
 		/*EXPERIMENTAL STUFF*/
 
 		/*Callback Function for ReadDirectoryChangesExW*/
-		void FileTrackCallBack (unsigned long dwErrorCode, unsigned long dwNumOfBytes, _OVERLAPPED * lpOverlapped);
+		void FileTrackCallBack       (unsigned long dwErrorCode, unsigned long dwNumOfBytes, _OVERLAPPED * lpOverlapped);
 		friend void FileTrackCallBack(unsigned long dwErrorCode, unsigned long dwNumOfBytes, _OVERLAPPED * lpOverlapped);
 	};
 

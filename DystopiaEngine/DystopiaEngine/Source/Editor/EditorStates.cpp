@@ -104,6 +104,7 @@ void Editor::EditorStates::StartFrame(void)
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->Update(dt);
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::Profiler>()->Update(dt);
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::BehaviourSystem>()->PollChanges();
+		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::FileSystem>()->Update(dt);
 		break;
 	default: ;
 	}

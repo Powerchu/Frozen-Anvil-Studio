@@ -30,8 +30,8 @@ namespace Dystopia
 		static constexpr unsigned NumOfFileInfo = 256;
 		using  FileInfo = std::array<char, NumOfFileInfo * MAX_PATH * sizeof(WCHAR)>;
 
-		DetectionInfo(std::string const & _name, HANDLE _FileHandle, _OVERLAPPED _OverlapObj)
-			:mFileName{ _name }, mFileHandle{ _FileHandle }, mOverlappedInfo{ _OverlapObj }
+		DetectionInfo(std::string const & _name, HANDLE _FileHandle, _OVERLAPPED _OverlapObj, std::string _ParentDirectory = "")
+			:mFileName{ _name }, mFileHandle{ _FileHandle }, mOverlappedInfo{ _OverlapObj }, mParentDirectory{_ParentDirectory}
 		{}
 		~DetectionInfo()
 		{
@@ -42,6 +42,7 @@ namespace Dystopia
 
 			mFileHandle = mOverlappedInfo.hEvent = INVALID_HANDLE_VALUE;
 		}
+
 		std::string mParentDirectory;
 		std::string mFileName;
 		HANDLE      mFileHandle;
@@ -120,26 +121,23 @@ namespace Dystopia
 		{
 			/*Get the list of file changes in the directory*/
 			GetChangesInfo(*TrackJob, ListOfFileNames, 100);
-			for (auto const & names : ListOfFileNames)
+			for (auto & names : ListOfFileNames)
 			{
 				/*
 				  Check that the list of names contains the file that the user is
 				  interested in(Stored in DetectionInfo.FileName
 				*/
-				if (names == TrackJob->mFileName)
+				if (IsSameFile(TrackJob->mParentDirectory + "/" +  names , TrackJob->mParentDirectory + "/" + TrackJob->mFileName))
 				{
 					/*Find the Arrays of EventCallBack for the current Job and invoke them*/
-					for (auto & e : mArrayOfTrackInfo)
+					auto & ref = mMapOfTrackInfo[TrackJob->mFileHandle];
+					for (auto & f : ref)
 					{
-						if (e.first == TrackJob->mFileHandle)
-						{
-							for (auto & f : e.second)
-								f.second();
-						}
+						f.second(TrackJob->mFileName);
 					}
 					break;
 				}
-
+				names = "";
 			}
 		}
 	}
@@ -610,7 +608,7 @@ namespace Dystopia
 					{
 						/*Registered File Path of event is same as detected change*/
 						/*Fire the registered events*/
-						for (auto & TrackElem : mArrayOfTrackInfo)
+						for (auto & TrackElem : mMapOfTrackInfo)
 						{
 							if (TrackElem.first == FileNames.c_str())
 							{
@@ -728,7 +726,7 @@ namespace Dystopia
 				pDetectionInfo = elem;
 
 				bool found = false;
-				for (auto const & elem2 : mArrayOfTrackInfo)
+				for (auto const & elem2 : mMapOfTrackInfo)
 				{
 					if (elem2.first == elem->mFileHandle)
 					{
@@ -739,8 +737,8 @@ namespace Dystopia
 				}
 				if (!found)
 				{
-					FileTrackInfo temp = std::make_pair(elem->mFileHandle, AutoArray<EventInfo>{});
-					mArrayOfTrackInfo.push_back(Ut::Move(temp));
+					//FileTrackInfo temp = std::make_pair(elem->mFileHandle, AutoArray<EventInfo>{});
+					mMapOfTrackInfo[elem->mFileHandle];
 					return elem->mFileHandle;
 				}
 			}
@@ -770,7 +768,7 @@ namespace Dystopia
 					return 0;
 				}
 
-				DetectionInfo ** ptr = mDetectionFiles.Emplace(new DetectionInfo{ _EventName.c_str(), hand, _overlapObj });
+				DetectionInfo ** ptr = mDetectionFiles.Emplace(new DetectionInfo{ _EventName.c_str(), hand, _overlapObj,mPathTable[_ParentDirectory] });
 				if (ReadDirectoryChangesW((*ptr)->mFileHandle,
 					&(*ptr)->mFileInfo[0],
 					static_cast<DWORD>((*ptr)->mFileInfo.size()),
@@ -784,10 +782,9 @@ namespace Dystopia
 				{
 					/*Success*/
 					mLastKnownError = eFileSystemError::NONE;
-
-					FileTrackInfo temp = std::make_pair((*ptr)->mFileHandle, AutoArray<EventInfo>{});
-					mArrayOfTrackInfo.push_back(Ut::Move(temp));
-					//SleepEx(1000000, true);
+					mMapOfTrackInfo[(*ptr)->mFileHandle];
+					//FileTrackInfo temp = std::make_pair((*ptr)->mFileHandle, AutoArray<EventInfo>{});
+					//mMapOfTrackInfo.push_back(Ut::Move(temp));
 					return (*ptr)->mFileHandle;
 				}
 
