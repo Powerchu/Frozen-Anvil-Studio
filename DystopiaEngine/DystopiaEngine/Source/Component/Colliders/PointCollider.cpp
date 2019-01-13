@@ -130,4 +130,12 @@ namespace Dystopia
 		}
 		return true;
 	}
+	bool PointCollider::isColliding(PointCollider & other_col)
+	{
+		return GetGlobalPosition() == other_col.GetGlobalPosition();
+	}
+	bool PointCollider::isColliding(PointCollider * const & other_col)
+	{
+		return GetGlobalPosition() == other_col->GetGlobalPosition();
+	}
 }

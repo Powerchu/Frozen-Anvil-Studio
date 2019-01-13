@@ -65,6 +65,11 @@ namespace Dystopia
 			if (col.GetFlags() & FLAG_REMOVE)
 				ComponentDonor<Circle>::mComponents.Remove(&col);
 		}
+		for (auto & col : ComponentDonor<PointCollider>::mComponents)
+		{
+			if (col.GetFlags() & FLAG_REMOVE)
+				ComponentDonor<PointCollider>::mComponents.Remove(&col);
+		}
 	}
 
 	void CollisionSystem::FixedUpdate(float _dt)
@@ -332,6 +337,55 @@ namespace Dystopia
 		const bool isColliding = pConvex->isColliding((*pCircle));
 
 		return isColliding;
+	}
+
+	bool CollisionSystem::PointVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * a, * b;
+		a = dynamic_cast<PointCollider *>(_ColA);
+		b = dynamic_cast<PointCollider *>(_ColB);
+		
+		return (a && b) || a->isColliding(b);
+	}
+
+	bool CollisionSystem::PointVsConvex(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * a;
+		Convex *b;
+		a = dynamic_cast<PointCollider *>(_ColA);
+		b = dynamic_cast<Convex *>(_ColB);
+
+		return (a && b) || a->isColliding(b);
+	}
+
+	bool CollisionSystem::ConvexVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		return false;
+	}
+
+	bool CollisionSystem::PointVsCircle(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * a;
+		Circle *b;
+		a = dynamic_cast<PointCollider *>(_ColA);
+		b = dynamic_cast<Circle *>(_ColB);
+
+		return (a && b) || a->isColliding(b);
+	}
+
+	bool CollisionSystem::CircleVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		return false;
+	}
+
+	bool CollisionSystem::PointVsAABB(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		return false;
+	}
+
+	bool CollisionSystem::AABBVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		return false;
 	}
 
 	AutoArray<Collider*> CollisionSystem::GetAllColliders() const

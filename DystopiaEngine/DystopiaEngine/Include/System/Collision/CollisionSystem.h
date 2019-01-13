@@ -66,6 +66,30 @@ namespace Dystopia
 		bool ConvexVsCircle(Collider * const & _ColA,
 							Collider * const & _ColB) const;
 
+		bool PointVsPoint(Collider * const & _ColA,
+			              Collider * const & _ColB) const;
+
+		bool PointVsConvex(Collider * const & _ColA,
+			               Collider * const & _ColB) const;
+
+
+		bool ConvexVsPoint(Collider * const & _ColA,
+			               Collider * const & _ColB) const;
+
+		bool PointVsCircle(Collider * const & _ColA,
+						   Collider * const & _ColB) const;
+
+
+		bool CircleVsPoint(Collider * const & _ColA,
+						   Collider * const & _ColB) const;
+
+		bool PointVsAABB(Collider * const & _ColA,
+			             Collider * const & _ColB) const;
+
+
+		bool AABBVsPoint(Collider * const & _ColA,
+			             Collider * const & _ColB) const;
+
 		AutoArray<Collider *> GetAllColliders() const;
 
 	private:
