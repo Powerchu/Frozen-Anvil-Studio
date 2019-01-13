@@ -107,18 +107,18 @@ struct MetaData<_STRUCT_>                                                       
 
 //MetaData<_STRUCT_>::Map_t MetaData<_STRUCT_>::mMetaMap {PP_FOREACH(REFLECT_AUX, (_STRUCT_), __VA_ARGS__)   };                 
 
-template <auto _type>
-struct  GET_MEMPTR_TYPE {};
+template <typename T>
+struct  GET_MEMPTR_TYPE;
 
-template <typename T, typename C, T C::* _type>
-struct  GET_MEMPTR_TYPE<_type>
+template <typename T, typename C>
+struct  GET_MEMPTR_TYPE<T C::*>
 {
 	using type = T;
 };
 
 
 
-#define GENERATE_REFLECT_DATA(_TYPE_, _MEMBER_) ReflectedData<_TYPE_, typename GET_MEMPTR_TYPE<&_TYPE_::_MEMBER_>::type >{ &_TYPE_::_MEMBER_ }
+#define GENERATE_REFLECT_DATA(_TYPE_, _MEMBER_) ReflectedData<_TYPE_, typename GET_MEMPTR_TYPE<decltype(&_TYPE_::_MEMBER_)>::type >{ &_TYPE_::_MEMBER_ }
 
 #define REFLECT_AUX(_TYPE_, _MEMBER_)           std::pair<const char*,Dystopia::TypeErasure::ReadWriteObject> { STRINGIFY(_MEMBER_),  GENERATE_REFLECT_DATA(_TYPE_,_MEMBER_).Get() } \
 

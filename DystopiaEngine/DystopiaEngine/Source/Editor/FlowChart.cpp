@@ -278,7 +278,7 @@ void Editor::FlowChart::ProcessLinks(void)
 void Editor::FlowChart::MakeFiles(void)
 {
 	std::string line;
-	AutoArray<HashString> mFormatFSHeader, mFormatFSBody, mFromatVars, mFormatsConditions, mFormatLoadState;
+	AutoArray<HashString> mFormatFSHeader, mFormatFSBody;
 
 	auto filepath = Dystopia::EngineCore::Get<Dystopia::FileSystem>()->FindFilePath("StateFormats.txt", Dystopia::eFileDir::eSolution);
 	if (!filepath.length())
@@ -291,20 +291,12 @@ void Editor::FlowChart::MakeFiles(void)
 			mFormatFSHeader = ExtractAllLines(static_cast<void*>(&stream), "</FS_HEADER>");
 		else if (line == "<FS_BODY>")
 			mFormatFSBody = ExtractAllLines(static_cast<void*>(&stream), "</FS_BODY>");
-		else if (line == "<FS_VAR>")
-			mFromatVars = ExtractAllLines(static_cast<void*>(&stream), "</FS_VAR>");
-		else if (line == "<CONDITION>")
-			mFormatsConditions = ExtractAllLines(static_cast<void*>(&stream), "</CONDITION>");
-		else if (line == "<LOAD_STATES>")
-			mFormatLoadState = ExtractAllLines(static_cast<void*>(&stream), "</LOAD_STATES>");
 	}
 	stream.close();
 
 	ParseHeaders(mFormatFSHeader);
-	ParseBodies(mFormatFSBody, mFormatsConditions);
-	ParseVars(mFromatVars);
+	ParseBodies(mFormatFSBody);
 	ParseStates();
-	ParseLoadState(mFormatLoadState);
 }
 
 void Editor::FlowChart::ParseHeaders(AutoArray<HashString>& _allLines)
@@ -358,7 +350,7 @@ void Editor::FlowChart::ParseHeaders(AutoArray<HashString>& _allLines)
 	outstream.close();
 }
 
-void Editor::FlowChart::ParseBodies(AutoArray<HashString>& _allLines, AutoArray<HashString>& _condFormat)
+void Editor::FlowChart::ParseBodies(AutoArray<HashString>& _allLines)
 {
 	static const std::string token = "_FS_NAME_";
 	auto filepath = Dystopia::EngineCore::Get<Dystopia::FileSystem>()->FindFilePath("CharacterController.cpp", Dystopia::eFileDir::eCurrent);
@@ -387,8 +379,6 @@ void Editor::FlowChart::ParseBodies(AutoArray<HashString>& _allLines, AutoArray<
 			}
 		}
 
-		ParseConditions(mBodyLines, _condFormat, &item);
-
 		for (int i = 0; i < currFileLines.size(); i++)
 		{
 			size_t pos = currFileLines[i].find("//</AllStates>");
@@ -411,76 +401,6 @@ void Editor::FlowChart::ParseBodies(AutoArray<HashString>& _allLines, AutoArray<
 	outstream.close();
 }
 
-void Editor::FlowChart::ParseVars(AutoArray<HashString>& _allLines)
-{
-	auto filepath = Dystopia::EngineCore::Get<Dystopia::FileSystem>()->FindFilePath("CharacterController.h", Dystopia::eFileDir::eCurrent);
-	if (!filepath.length())
-		return;
-
-	std::vector<std::string> currFileLines = ClearBetweenCodes(filepath.c_str(), "//<FS_VAR>", "//</FS_VAR>");
-
-	/* convert to std vector of std string for now */
-	/* need to insert at position for auto array, then will remove this */
-	std::vector<std::string> mVarLines;
-	for (const auto& elem : _allLines)
-		mVarLines.push_back(elem.c_str());
-
-	for (int i = 0; i < currFileLines.size(); i++)
-	{
-		size_t pos = currFileLines[i].find("//</FS_VAR>");
-		if (pos != std::string::npos && currFileLines[i-1].find("//<FS_VAR>") != std::string::npos)
-		{
-			int repeat = 0;
-			for (int j = 0; j < mVarLines.size(); j++)
-			{
-				for (int k = 0; k < pos; k++)
-					mVarLines[j].insert(mVarLines[j].begin(), ' ');
-				currFileLines.insert(currFileLines.begin() + i + repeat++, mVarLines[j]);
-			}
-			break;
-		}
-	}
-
-	std::ofstream outstream{ filepath.c_str(), std::ios::out };
-	for (const auto& l : currFileLines)
-		outstream << l << "\n";
-	outstream.close();
-}
-
-void Editor::FlowChart::ParseConditions(std::vector<std::string>& _outResult, AutoArray<HashString>& _format, const UserItem* _pcurItem)
-{
-	static const std::string token = "_FS_RES_";
-	const auto& links = _pcurItem->GetLinks();
-	for (const auto& id : links)
-	{
-		int index = FindItem(id);
-		if (index >= 0)
-		{
-			std::string stateName = mItems[index].GetName().c_str();
-			stateName.insert(stateName.begin(), 'e');
-
-			for (int i = 0; i < _outResult.size(); i++)
-			{
-				size_t pos = _outResult[i].find("//</FS_CONDITION>");
-				if (pos != std::string::npos)
-				{
-					for (int j = 0; j < _format.size(); j++)
-					{
-						std::string line = _format[j].c_str();
-						for (size_t k = 0; k < pos; k++)
-							line.insert(line.begin(), ' ');
-						size_t p = line.find(token);
-						if (p != std::string::npos)
-							line.replace(line.begin() + p, line.begin() + p + token.length(), stateName);
-						_outResult.insert(_outResult.begin() + i + j, line);
-					}
-					break;
-				}
-			}
-		}
-	}
-}
-
 void Editor::FlowChart::ParseStates()
 {
 	auto filepath = Dystopia::EngineCore::Get<Dystopia::FileSystem>()->FindFilePath("CharacterController.h", Dystopia::eFileDir::eCurrent);
@@ -497,7 +417,6 @@ void Editor::FlowChart::ParseStates()
 			for (int j = 0; j < mItems.size(); j++)
 			{
 				std::string word{ mItems[j].GetName().c_str() };
-				word.insert(word.begin(), 'e');
 				word.append(",");
 				for (size_t k = 0; k < pos; k++)
 					word.insert(word.begin(), ' ');
@@ -507,46 +426,6 @@ void Editor::FlowChart::ParseStates()
 		}
 	}
 	
-	std::ofstream outstream{ filepath.c_str(), std::ios::out };
-	for (const auto& elem : currFileLines)
-		outstream << elem << "\n";
-	outstream.close();
-}
-
-void Editor::FlowChart::ParseLoadState(AutoArray<HashString>& _format)
-{
-	auto filepath = Dystopia::EngineCore::Get<Dystopia::FileSystem>()->FindFilePath("CharacterController.cpp", Dystopia::eFileDir::eCurrent);
-	if (!filepath.length())
-		return;
-
-	static const std::string token = "_FS_NAME_";
-	static const std::string tokenC = "_FS_COUNT_";
-	std::vector<std::string> currFileLines = ClearBetweenCodes(filepath.c_str(), "//<LoadState>", "//</LoadState>");
-	for (int i = 0; i < currFileLines.size(); i++)
-	{
-		size_t pos = currFileLines[i].find("//</LoadState>");
-		if (pos != std::string::npos && currFileLines[i-1].find("//<LoadState>") != std::string::npos)
-		{
-			int repeat = 0;
-			for (int k = 0; k < mItems.size(); k++)
-			{
-				for (int j = 0; j < _format.size(); j++)
-				{
-					std::string line = _format[j].c_str();
-					for (size_t l = 0; l < pos; l++)
-						line.insert(line.begin(), ' ');
-					size_t p = line.find(token);
-					if (p != std::string::npos)
-						line.replace(line.begin() + p, line.begin() + p + token.length(), mItems[k].GetName().c_str());
-					size_t p2 = line.find(tokenC);
-					if (p2 != std::string::npos)
-						line.replace(line.begin() + p2, line.begin() + p2 + tokenC.length(), std::to_string(k));
-					currFileLines.insert(currFileLines.begin() + i + repeat++, line);
-				}
-			}
-		}
-	}
-
 	std::ofstream outstream{ filepath.c_str(), std::ios::out };
 	for (const auto& elem : currFileLines)
 		outstream << elem << "\n";
@@ -564,7 +443,6 @@ AutoArray<HashString> Editor::FlowChart::ExtractAllLines(void* _stream, const ch
 			break;
 		if (!line.length())
 			line = "\n";
-
 		allLines.Insert(line.c_str());
 	}
 	return allLines;
@@ -576,15 +454,7 @@ std::vector<std::string> Editor::FlowChart::ClearBetweenCodes(const char* _file,
 	std::string line;
 	std::ifstream instream(_file, std::ios::in);
 	while (std::getline(instream, line))
-	{
-		size_t pos = line.find('\t');
-		while (pos != std::string::npos)
-		{
-			line.replace(line.begin() + pos, line.begin() + pos + 1, "    ");
-			pos = line.find('\t');
-		}
 		currFileLines.push_back(line);
-	}
 	instream.close();
 
 	bool clearing = false;
@@ -599,6 +469,7 @@ std::vector<std::string> Editor::FlowChart::ClearBetweenCodes(const char* _file,
 				currFileLines.erase(currFileLines.begin() + j);
 				j--;
 			}
+			break;
 		}
 		clearing = currFileLines[i].find(_entry) != std::string::npos;
 	}

@@ -63,11 +63,8 @@ namespace Editor
 		void MakeFiles(void);
 
 		void ParseHeaders(AutoArray<HashString>&);
-		void ParseBodies(AutoArray<HashString>&, AutoArray<HashString>&);
-		void ParseVars(AutoArray<HashString>&);
-		void ParseConditions(std::vector<std::string>&, AutoArray<HashString>&, const UserItem*);
+		void ParseBodies(AutoArray<HashString>&);
 		void ParseStates();
-		void ParseLoadState(AutoArray<HashString>&);
 		AutoArray<HashString> ExtractAllLines(void* _stream, const char* _exitCode);
 		std::vector<std::string> ClearBetweenCodes(const char* _file, const char * _entry, const char* _exit);
 	};
