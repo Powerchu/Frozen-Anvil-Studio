@@ -619,6 +619,7 @@ namespace EGUI
 			ImGui::PlotLines(invi.c_str(), _array.begin(), static_cast<int>(_array.size()), 0,
 				_overlapText, _min, _max, ImVec2{ _size.x, _size.y });
 		}
+
 		/* =======================================================================================================================
 		Brief:
 		Creates aN IMAGE as either a button or not (_interactive)
@@ -630,6 +631,137 @@ namespace EGUI
 		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize = Math::Vec2{ 30, 30 },
 			bool _interactive = false, bool _outlineBG = false);
 
+		
+		struct ComboFilterState
+		{
+			int  activeIdx;         // Index of currently 'active' item by use of up/down keys
+			bool selectionChanged;  // Flag to help focus the correct item when selecting active item
+		};
+
+		/* ====================================================================================================================
+		Brief:
+		This is a helper function for ComboFilter to draw the popup. 
+		Usage:
+		*To be written*
+		======================================================================================================================= */
+		inline bool ComboFilter_DrawPopup(ComboFilterState& state, int START, const char **ENTRIES, const int ENTRY_COUNT)
+		{
+			UNUSED_PARAMETER(START);
+
+			using namespace ImGui;
+			bool clicked = false;
+
+			// Grab the position for the popup
+			ImVec2 pos = GetItemRectMin(); pos.y += GetItemRectSize().y;
+			const ImVec2 size = ImVec2(GetItemRectSize().x - 60, GetItemsLineHeightWithSpacing() * 4);
+
+			PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+
+			const ImGuiWindowFlags flags =
+				ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoResize |
+				ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_HorizontalScrollbar |
+				ImGuiWindowFlags_NoSavedSettings |
+				0; //ImGuiWindowFlags_ShowBorders;
+
+			SetNextWindowFocus();
+
+			SetNextWindowPos(pos);
+			SetNextWindowSize(size);
+			Begin("##combo_filter", nullptr, flags);
+
+			PushAllowKeyboardFocus(false);
+
+			for (int i = 0; i < ENTRY_COUNT; i++) {
+				// Track if we're drawing the active index so we
+				// can scroll to it if it has changed
+				const bool isIndexActive = state.activeIdx == i;
+
+				if (isIndexActive) {
+					// Draw the currently 'active' item differently
+					// ( used appropriate colors for your own style )
+					PushStyleColor(ImGuiCol_Border, ImVec4(1, 1, 0, 1));
+				}
+
+				PushID(i);
+				if (Selectable(ENTRIES[i], isIndexActive)) {
+					// And item was clicked, notify the input
+					// callback so that it can modify the input buffer
+					state.activeIdx = i;
+					clicked = true;
+				}
+				if (IsItemFocused() && IsKeyPressed(GetIO().KeyMap[ImGuiKey_Enter])) {
+					// Allow ENTER key to select current highlighted item (w/ keyboard navigation)
+					state.activeIdx = i;
+					clicked = true;
+				}
+				PopID();
+
+				if (isIndexActive) {
+					if (state.selectionChanged) {
+						// Make sure we bring the currently 'active' item into view.
+						SetScrollHere();
+						state.selectionChanged = false;
+					}
+
+					PopStyleColor(1);
+				}
+			}
+
+			PopAllowKeyboardFocus();
+			End();
+			PopStyleVar(1);
+
+			return clicked;
+		}
+
+
+		/* =======================================================================================================================
+		Brief:
+		Creates an ImGUI Combo Field (Like Dropdown but with text)
+		Usage:
+		{
+			// requisite: hints must be alphabetically sorted beforehand
+			const char *hints[] = 
+			{
+				"AnimGraphNode_CopyBone",
+				"ce skipaa",
+				"ce skipscreen",
+				"ce skipsplash",
+				"ce skipsplashscreen",
+				"client_unit.cpp",
+				"letrograd",
+				"level",
+				"leveler",
+				"MacroCallback.cpp",
+				"Miskatonic university",
+				"MockAI.h",
+				"MockGameplayTasks.h",
+				"MovieSceneColorTrack.cpp",
+				"r.maxfps",
+				"r.maxsteadyfps",
+				"reboot",
+				"rescale",
+				"reset",
+				"resource",
+				"restart",
+				"retrocomputer",
+				"retrograd",
+				"return",
+				"slomo 10",
+			};
+
+			static ComboFilterState s = {0};
+			static char buf[128] = "type text here...";
+			
+			if( ComboFilter("my combofilter", buf, IM_ARRAYSIZE(buf), hints, IM_ARRAYSIZE(hints), s) ) 
+			{
+				puts( buf );
+			}
+		}
+		======================================================================================================================= */
+		bool ComboFilter(const char *id, char *buffer, int bufferlen, const char **hints, int num_hints, ComboFilterState &s);
 
 	}
 }

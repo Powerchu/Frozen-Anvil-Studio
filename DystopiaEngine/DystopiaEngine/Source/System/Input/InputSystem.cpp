@@ -28,6 +28,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
 #include "Editor/EGUI.h"
+#include "Editor/EditorMain.h"
+#include "Editor/RuntimeMeta.h"
 #undef  WIN32_LEAN_AND_MEAN			// Stop define from spilling into code
 #undef NOMINMAX
 
@@ -35,13 +37,132 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace
 {
 	constexpr float MOUSEWHEEL_SCALE = 1.f / 120.f;
+
+	// Button Mapping
+	const char *hints[] =
+	{
+		"NONE",
+
+		"KEYBOARD_A",
+		"KEYBOARD_B",
+		"KEYBOARD_C",
+		"KEYBOARD_D",
+		"KEYBOARD_E",
+		"KEYBOARD_F",
+		"KEYBOARD_G",
+		"KEYBOARD_H",
+		"KEYBOARD_I",
+		"KEYBOARD_J",
+		"KEYBOARD_K",
+		"KEYBOARD_L",
+		"KEYBOARD_M",
+		"KEYBOARD_N",
+		"KEYBOARD_O",
+		"KEYBOARD_P",
+		"KEYBOARD_Q",
+		"KEYBOARD_R",
+		"KEYBOARD_S",
+		"KEYBOARD_T",
+		"KEYBOARD_U",
+		"KEYBOARD_V",
+		"KEYBOARD_W",
+		"KEYBOARD_X",
+		"KEYBOARD_Y",
+		"KEYBOARD_Z",
+		"KEYBOARD_F1",
+		"KEYBOARD_F2",
+		"KEYBOARD_F3",
+		"KEYBOARD_F4",
+		"KEYBOARD_F5",
+		"KEYBOARD_F6",
+		"KEYBOARD_F7",
+		"KEYBOARD_F8",
+		"KEYBOARD_F9",
+		"KEYBOARD_F10",
+		"KEYBOARD_F11",
+		"KEYBOARD_F12",
+		"KEYBOARD_0",
+		"KEYBOARD_1",
+		"KEYBOARD_2",
+		"KEYBOARD_3",
+		"KEYBOARD_4",
+		"KEYBOARD_5",
+		"KEYBOARD_6",
+		"KEYBOARD_7",
+		"KEYBOARD_8",
+		"KEYBOARD_9",
+		"KEYBOARD_NUMPAD_0",
+		"KEYBOARD_NUMPAD_1",
+		"KEYBOARD_NUMPAD_2",
+		"KEYBOARD_NUMPAD_3",
+		"KEYBOARD_NUMPAD_4",
+		"KEYBOARD_NUMPAD_5",
+		"KEYBOARD_NUMPAD_6",
+		"KEYBOARD_NUMPAD_7",
+		"KEYBOARD_NUMPAD_8",
+		"KEYBOARD_NUMPAD_9",
+
+		"KEYBOARD_OEM_1",
+		"KEYBOARD_OEM_PLUS",
+		"KEYBOARD_OEM_COMMA",
+		"KEYBOARD_OEM_MINUS",
+		"KEYBOARD_OEM_PERIOD",
+
+		"KEYBOARD_BACKSPACE",
+		"KEYBOARD_TAB",
+		"KEYBOARD_ENTER",
+		"KEYBOARD_SHIFT",
+		"KEYBOARD_CTRL",
+		"KEYBOARD_ALT",
+		"KEYBOARD_ESCAPE",
+		"KEYBOARD_LSHIFT",
+		"KEYBOARD_RSHIFT",
+		"KEYBOARD_LCTRL",
+		"KEYBOARD_RCTRL",
+		"KEYBOARD_LALT",
+		"KEYBOARD_RALT",
+		"KEYBOARD_SPACEBAR",
+		"KEYBOARD_PAGEUP",
+		"KEYBOARD_PAGEDOWN",
+		"KEYBOARD_END",
+		"KEYBOARD_HOME",
+		"KEYBOARD_PRNTSRC",
+		"KEYBOARD_INSERT",
+		"KEYBOARD_DELETE",
+		"KEYBOARD_LEFT",
+		"KEYBOARD_UP",
+		"KEYBOARD_RIGHT",
+		"KEYBOARD_DOWN",
+
+		"MOUSE_LEFT",
+		"MOUSE_RIGHT",
+		"MOUSE_MIDDLE",
+		"MOUSE_X1",
+		"MOUSE_X2",
+
+		"XBUTTON_DPAD_UP",
+		"XBUTTON_DPAD_DOWN",
+		"XBUTTON_DPAD_LEFT",
+		"XBUTTON_DPAD_RIGHT",
+		"XBUTTON_START",
+		"XBUTTON_BACK",
+		"XBUTTON_LEFT_THUMB",
+		"XBUTTON_RIGHT_THUMB",
+		"XBUTTON_LEFT_SHOULDER",
+		"XBUTTON_RIGHT_SHOULDER",
+		"XBUTTON_A",
+		"XBUTTON_B",
+		"XBUTTON_X",
+		"XBUTTON_Y",
+		"XBUTTON_LAST",
+	};
 }
 
 
 void Dystopia::InputManager::LoadDefaultUserKeys(void)
 {
-	MapButton("Left", KEYBOARD_LEFT);
-	MapButton("Right", KEYBOARD_RIGHT);
+	MapButton("Horizontal", KEYBOARD_RIGHT, KEYBOARD_LEFT);
+	//MapButton("Vertical", KEYBOARD_UP, KEYBOARD_DOWN);
 }
 
 
@@ -100,19 +221,23 @@ void Dystopia::InputManager::Update(const float _dt)
 		}
 	}
 
-	for (auto const&[key, btn] : mAxisMapping)
+	for (auto &[key, btn] : mAxisMapping)
 	{
 		if (GetKey(btn.mPosBtn) || GetKey(btn.mAltPosBtn))
 		{
-			btn.Modify(1 * btn.mfSensitivity);
+			btn.Modify(1 * btn.mfSensitivity * _dt);
 		}
 
 		if (GetKey(btn.mNegBtn) || GetKey(btn.mAltNegBtn))
 		{
-			
+			btn.Modify(-1 * btn.mfSensitivity * _dt);
 		}
 
-		
+		if (!GetKey(btn.mPosBtn) && !GetKey(btn.mAltPosBtn)
+			&& !GetKey(btn.mNegBtn) && !GetKey(btn.mAltNegBtn))
+		{
+			btn.Update(_dt);
+		}
 	}
 
 	/*Commenting this out makes the input smoother*/
@@ -152,9 +277,10 @@ void Dystopia::InputManager::MapUserButton(eUserButton, eButton )
 	
 }
 
-void Dystopia::InputManager::MapButton(const char* _name, eButton _button)
+void Dystopia::InputManager::MapButton(const char* _name, eButton _posBtn, eButton _negBtn)
 {
-	mButtonMapping[_name] = _button;
+	//mButtonMapping[_name] = _button;
+	mAxisMapping[_name] = VirtualButton(_name, _posBtn, _negBtn);
 }
 
 _DLL_EXPORT bool Dystopia::InputManager::GetKeyDown(eButton _Key) const noexcept
@@ -332,12 +458,176 @@ float Dystopia::InputManager::GetMouseWheel(void) const noexcept
 
 void Dystopia::InputManager::EditorUI()
 {
+	if (EGUI::Display::Button("Add New Axis", { 128,24 }))
+	{
+		EGUI::Display::OpenPopup("Add Axis", false);
+	}
+
+	if (EGUI::Display::StartPopupModal("Add Axis", "Adding New Axis"))
+	{
+		if (EGUI::Display::Button("Cancel", { 60,24 }))
+		{
+			EGUI::Display::CloseCurrentPopup();
+		}
+
+		EGUI::Display::EndPopup();
+	}
+
 	if (EGUI::Display::CollapsingHeader("Axes"))
 	{
-		for (auto const&[key, val] : mButtonMapping)
+		
+		static char buffer1[512];
+
+		EGUI::Indent();
+		for (auto &[key, val] : mAxisMapping)
 		{
-			EGUI::Display::CollapsingHeader(key.c_str());
+			if (EGUI::Display::CollapsingHeader(key.c_str()))
+			{
+				EGUI::Indent(10);
+				EGUI::PushLeftAlign(128.f);
+				// Name
+				strcpy_s(buffer1, 512, key.c_str());
+				if (EGUI::Display::TextField("Name", buffer1, 128, true, 150))
+				{
+					val.mName = static_cast<const char *>(buffer1);
+					auto nodeHandler = mAxisMapping.extract(key);
+					nodeHandler.key() = val.mName;
+					mAxisMapping.insert(Ut::Move(nodeHandler));
+				}
+
+				// Description
+				strcpy_s(buffer1, 512, val.mPosDescription.c_str());
+				if (EGUI::Display::TextField("(+) Desc", buffer1, 128, true, 150))
+				{
+					val.mPosDescription = static_cast<const char *>(buffer1);
+				}
+				strcpy_s(buffer1, 512, val.mNegDescription.c_str());
+				if (EGUI::Display::TextField("(-) Desc", buffer1, 128, true, 150))
+				{
+					val.mNegDescription = static_cast<const char *>(buffer1);
+				}
+
+				/*
+				 * Combo States
+				 */
+				static EGUI::Display::ComboFilterState sP = { 0 };
+				static EGUI::Display::ComboFilterState sN = { 0 };
+				static EGUI::Display::ComboFilterState sAP = { 0 };
+				static EGUI::Display::ComboFilterState sAN = { 0 };
+				static char buf1[256] = "Type Button Name Here...";
+
+				/*
+				 * Positive Button
+				 */
+
+				auto mBtnTemp = mButtonNames.find(val.mPosBtn);
+				static HashString mBtnTempName;
+				if (mBtnTemp != mButtonNames.end())
+				{
+					mBtnTempName = mBtnTemp->second;
+					strcpy_s(buf1, 256, mBtnTempName.c_str());
+				}
+
+				EGUI::Display::Label("(+) Button");
+				EGUI::SameLine();
+				if (EGUI::Display::ComboFilter("btnCombo", buf1, IM_ARRAYSIZE(buf1), hints, IM_ARRAYSIZE(hints), sP))
+				{
+					for (auto &[btn, name] : mButtonNames)
+					{
+						if (name == buf1)
+						{
+							val.MapBtn(btn);
+							break;
+						}
+					}
+				}
+
+				/*
+				* Negative Button
+				*/
+
+				mBtnTemp = mButtonNames.find(val.mNegBtn);
+				if (mBtnTemp != mButtonNames.end())
+				{
+					mBtnTempName = mBtnTemp->second;
+					strcpy_s(buf1, 256, mBtnTempName.c_str());
+				}
+
+				EGUI::Display::Label("(-) Button");
+				EGUI::SameLine();
+				if (EGUI::Display::ComboFilter("btnNegCombo", buf1, IM_ARRAYSIZE(buf1), hints, IM_ARRAYSIZE(hints), sN))
+				{
+					for (auto &[btn, name] : mButtonNames)
+					{
+						if (name == buf1)
+						{
+							val.MapBtn(btn, 1);
+							break;
+						}
+					}
+				}
+
+				/*
+				* Alt Positive Button
+				*/
+
+				mBtnTemp = mButtonNames.find(val.mAltPosBtn);
+				if (mBtnTemp != mButtonNames.end())
+				{
+					mBtnTempName = mBtnTemp->second;
+					strcpy_s(buf1, 256, mBtnTempName.c_str());
+				}
+
+				EGUI::Display::Label("Alt (+) Button");
+				EGUI::SameLine();
+				if (EGUI::Display::ComboFilter("btnAltPosCombo", buf1, IM_ARRAYSIZE(buf1), hints, IM_ARRAYSIZE(hints), sAP))
+				{
+					for (auto &[btn, name] : mButtonNames)
+					{
+						if (name == buf1)
+						{
+							val.MapAltBtn(btn);
+							break;
+						}
+					}
+				}
+
+				/*
+				* Alt Negative Button
+				*/
+
+				mBtnTemp = mButtonNames.find(val.mAltNegBtn);
+				if (mBtnTemp != mButtonNames.end())
+				{
+					mBtnTempName = mBtnTemp->second;
+					strcpy_s(buf1, 256, mBtnTempName.c_str());
+				}
+
+				EGUI::Display::Label("Alt (-) Button");
+				EGUI::SameLine();
+				if (EGUI::Display::ComboFilter("btnAltNegCombo", buf1, IM_ARRAYSIZE(buf1), hints, IM_ARRAYSIZE(hints), sAN))
+				{
+					for (auto &[btn, name] : mButtonNames)
+					{
+						if (name == buf1)
+						{
+							val.MapAltBtn(btn,1);
+							break;
+						}
+					}
+				}
+
+
+				/* Other Settings */
+				EGUI::Display::DragFloat("Gravity", &val.mfGravity, 0.05f, -100.f, 100.f,false,64.f);
+				EGUI::Display::DragFloat("Dead", &val.mfDeadRange, 0.005f, -100.f, 100.f, false, 64.f);
+				EGUI::Display::DragFloat("Sensitivity", &val.mfSensitivity, 0.05f, -100.f, 100.f, false, 64.f);
+
+				EGUI::PopLeftAlign();
+				EGUI::UnIndent(10);
+			}
 		}
+		EGUI::UnIndent();
 	}
 }
 

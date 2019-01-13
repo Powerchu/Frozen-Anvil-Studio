@@ -65,7 +65,7 @@ namespace Dystopia
 		void SaveSettings(DysSerialiser_t&) override;
 
 		_DLL_EXPORT void  MapUserButton(eUserButton, eButton);
-		_DLL_EXPORT void  MapButton(const char* _name, eButton _Button);
+		_DLL_EXPORT void  MapButton(const char* _name, eButton _posBtn, eButton _negBtn = NONE);
 
 		// Returns true while the user holds down the key identified by _Key.
 		_DLL_EXPORT bool  GetKey(eButton _Key)   const noexcept;
@@ -76,9 +76,9 @@ namespace Dystopia
 
 		// Returns true while the virtual button identified by _BtnName is held down.
 		_DLL_EXPORT bool  GetButton(const char* _KeyName)   const noexcept;
-		// Returns true during the frame the user pressed down the virtual button identified by _BtnName.
+		// Returns true during the frame the user pressed down the virtual button identified by _BtnName (single).
 		_DLL_EXPORT bool  GetButtonDown(const char* _BtnName) const noexcept;
-		// Returns true the first frame the user releases the virtual button identified by _BtnName.
+		// Returns true the first frame the user releases the virtual button identified by _BtnName (single).
 		_DLL_EXPORT bool  GetButtonUp(const char* _BtnName)  const noexcept;
 
 		// Returns the value of the virtual axis identified by axisName.
@@ -108,6 +108,8 @@ namespace Dystopia
 #endif
 
 	private:
+		void LoadDefaultUserKeys(void);
+
 		struct KeyBinding
 		{
 			unsigned mnKey;
@@ -119,8 +121,32 @@ namespace Dystopia
 			KeyBinding& operator = (eButton);
 		};
 
+		MouseData mMouseInput;
+		XGamePad mGamePad;
+
+		KeyboardState mKeyBoardState;
+		KeyboardState mPrevKeyBoardState;
+
 		struct VirtualButton
 		{
+			VirtualButton()
+				: mName("")
+				, mPosDescription("Description for Positive Button")
+				, mNegDescription("Description for Negative Button")
+			{
+				
+			}
+
+			VirtualButton(const char* _name, eButton _posBtn = NONE, eButton _negBtn = NONE)
+				: mName(_name)
+				, mPosDescription("Description for Positive Button")
+				, mNegDescription("Description for Negative Button")
+				, mPosBtn(_posBtn)
+				, mNegBtn(_negBtn)
+			{
+				
+			}
+
 			HashString mName;
 			HashString mPosDescription;
 			HashString mNegDescription;
@@ -133,41 +159,185 @@ namespace Dystopia
 			// A RetValue of 0.f means neutral, and is in a range from -1 to 1
 			float mfRetValue		= 0.000f;
 			float mfGravity			= 3.000F;
-			float mfDeadRange		= 0.001F;
+			float mfDeadRange		= 0.010F;
 			float mfSensitivity		= 3.000F;
 
 			bool mbSnapping	= false;
 			bool mbInvert	= false;
 
+			void UpdateName(const char* _newName)
+			{
+				mName = _newName;
+			}
+
+			// Update either Positive or Negative Btn Description (0 = +ve, 1 = -ve)
+			void UpdateBtnDesc(const char* _newDesc, int _neg = 0)
+			{
+				if (_neg) mNegDescription = _newDesc;
+				else mPosDescription = _newDesc;
+			}
+
+			// Update either +ve or -ve Button Mapping
+			void MapBtn(eButton _newBtn, int _neg = 0)
+			{
+				if (_neg) mNegBtn = _newBtn;
+				else mPosBtn = _newBtn;
+			}
+
+			// Update either +ve or -ve alternate Button Mapping
+			void MapAltBtn(eButton _newBtn, int _neg = 0)
+			{
+				if (_neg) mAltNegBtn = _newBtn;
+				else mAltPosBtn = _newBtn;
+			}
+
 			void Modify(const float& _val)
 			{
-				float tempV = _val;
-				if (tempV <= -1.f) tempV = -1.f;
-				else if (tempV >= 1.f) tempV = 1.f;
+				mfRetValue += _val;
 
-				mfRetValue += tempV;
+				if (mfRetValue < -1.0f) mfRetValue = -1.f;
+				else if (mfRetValue > 1.0f) mfRetValue = 1.f;
 			}
 
 			void Update(const float& _dt)
 			{
-				if (mfRetValue <= mfDeadRange)
+				if (mfRetValue <= mfDeadRange && mfRetValue >= -mfDeadRange)
 				{
 					mfRetValue = 0.000F;
 				}
+
+				if (mfRetValue < 0.f)
+				{
+					mfRetValue += mfGravity * _dt;
+				}
+				else if (mfRetValue > 0.f)
+				{
+					mfRetValue -= mfGravity * _dt;
+				}
 			}
 		};
-
-		MouseData mMouseInput;
-
-		KeyboardState mKeyBoardState;
-		KeyboardState mPrevKeyBoardState;
-
-		void LoadDefaultUserKeys(void);
-
-		std::map<std::string, eButton> mButtonMapping;
+		
+		// Virtual Button/Axis Mapping
 		std::map<HashString, VirtualButton> mAxisMapping;
 
-		XGamePad mGamePad;
+		// Button Strings
+		std::map<eButton, HashString> mButtonNames
+		{
+			{ NONE,							"NONE" },
+			
+			{ KEYBOARD_A,					"KEYBOARD_A" },
+			{ KEYBOARD_B,					"KEYBOARD_B" },
+			{ KEYBOARD_C,					"KEYBOARD_C" },
+			{ KEYBOARD_D,					"KEYBOARD_D" },
+			{ KEYBOARD_E,					"KEYBOARD_E" },
+			{ KEYBOARD_F,					"KEYBOARD_F" },
+			{ KEYBOARD_G,					"KEYBOARD_G" },
+			{ KEYBOARD_H,					"KEYBOARD_H" },
+			{ KEYBOARD_I,					"KEYBOARD_I" },
+			{ KEYBOARD_J,					"KEYBOARD_J" },
+			{ KEYBOARD_K,					"KEYBOARD_K" },
+			{ KEYBOARD_L,					"KEYBOARD_L" },
+			{ KEYBOARD_M,					"KEYBOARD_M" },
+			{ KEYBOARD_N,					"KEYBOARD_N" },
+			{ KEYBOARD_O,					"KEYBOARD_O" },
+			{ KEYBOARD_P,					"KEYBOARD_P" },
+			{ KEYBOARD_Q,					"KEYBOARD_Q" },
+			{ KEYBOARD_R,					"KEYBOARD_R" },
+			{ KEYBOARD_S,					"KEYBOARD_S" },
+			{ KEYBOARD_T,					"KEYBOARD_T" },
+			{ KEYBOARD_U,					"KEYBOARD_U" },
+			{ KEYBOARD_V,					"KEYBOARD_V" },
+			{ KEYBOARD_W,					"KEYBOARD_W" },
+			{ KEYBOARD_X,					"KEYBOARD_X" },
+			{ KEYBOARD_Y,					"KEYBOARD_Y" },
+			{ KEYBOARD_Z,					"KEYBOARD_Z" },
+			{ KEYBOARD_F1,					"KEYBOARD_F1" },
+			{ KEYBOARD_F2,					"KEYBOARD_F2" },
+			{ KEYBOARD_F3,					"KEYBOARD_F3" },
+			{ KEYBOARD_F4,					"KEYBOARD_F4" },
+			{ KEYBOARD_F5,					"KEYBOARD_F5" },
+			{ KEYBOARD_F6,					"KEYBOARD_F6" },
+			{ KEYBOARD_F7,					"KEYBOARD_F7" },
+			{ KEYBOARD_F8,					"KEYBOARD_F8" },
+			{ KEYBOARD_F9,					"KEYBOARD_F9" },
+			{ KEYBOARD_F10,					"KEYBOARD_F10" },
+			{ KEYBOARD_F11,					"KEYBOARD_F11" },
+			{ KEYBOARD_F12,					"KEYBOARD_F12" },
+			{ KEYBOARD_0,					"KEYBOARD_0" },
+			{ KEYBOARD_1,					"KEYBOARD_1" },
+			{ KEYBOARD_2,					"KEYBOARD_2" },
+			{ KEYBOARD_3,					"KEYBOARD_3" },
+			{ KEYBOARD_4,					"KEYBOARD_4" },
+			{ KEYBOARD_5,					"KEYBOARD_5" },
+			{ KEYBOARD_6,					"KEYBOARD_6" },
+			{ KEYBOARD_7,					"KEYBOARD_7" },
+			{ KEYBOARD_8,					"KEYBOARD_8" },
+			{ KEYBOARD_9,					"KEYBOARD_9" },
+			{ KEYBOARD_NUMPAD_0,			"KEYBOARD_NUMPAD_0" },
+			{ KEYBOARD_NUMPAD_1,			"KEYBOARD_NUMPAD_1" },
+			{ KEYBOARD_NUMPAD_2,			"KEYBOARD_NUMPAD_2" },
+			{ KEYBOARD_NUMPAD_3,			"KEYBOARD_NUMPAD_3" },
+			{ KEYBOARD_NUMPAD_4,			"KEYBOARD_NUMPAD_4" },
+			{ KEYBOARD_NUMPAD_5,			"KEYBOARD_NUMPAD_5" },
+			{ KEYBOARD_NUMPAD_6,			"KEYBOARD_NUMPAD_6" },
+			{ KEYBOARD_NUMPAD_7,			"KEYBOARD_NUMPAD_7" },
+			{ KEYBOARD_NUMPAD_8,			"KEYBOARD_NUMPAD_8" },
+			{ KEYBOARD_NUMPAD_9,			"KEYBOARD_NUMPAD_9" },
+
+			{ KEYBOARD_OEM_1,				"KEYBOARD_OEM_1" },
+			{ KEYBOARD_OEM_PLUS,			"KEYBOARD_OEM_PLUS" },
+			{ KEYBOARD_OEM_COMMA,			"KEYBOARD_OEM_COMMA" },
+			{ KEYBOARD_OEM_MINUS,			"KEYBOARD_OEM_MINUS" },
+			{ KEYBOARD_OEM_PERIOD,			"KEYBOARD_OEM_PERIOD" },
+
+			{ KEYBOARD_BACKSPACE,			"KEYBOARD_BACKSPACE" },
+			{ KEYBOARD_TAB,					"KEYBOARD_TAB" },
+			{ KEYBOARD_ENTER,				"KEYBOARD_ENTER" },
+			{ KEYBOARD_SHIFT,				"KEYBOARD_SHIFT" },
+			{ KEYBOARD_CTRL,				"KEYBOARD_CTRL" },
+			{ KEYBOARD_ALT,					"KEYBOARD_ALT" },
+			{ KEYBOARD_ESCAPE,				"KEYBOARD_ESCAPE" },
+			{ KEYBOARD_LSHIFT,				"KEYBOARD_LSHIFT" },
+			{ KEYBOARD_RSHIFT,				"KEYBOARD_RSHIFT" },
+			{ KEYBOARD_LCTRL,				"KEYBOARD_LCTRL" },
+			{ KEYBOARD_RCTRL,				"KEYBOARD_RCTRL" },
+			{ KEYBOARD_LALT,				"KEYBOARD_LALT" },
+			{ KEYBOARD_RALT,				"KEYBOARD_RALT" },
+			{ KEYBOARD_SPACEBAR,			"KEYBOARD_SPACEBAR" },
+			{ KEYBOARD_PAGEUP,				"KEYBOARD_PAGEUP" },
+			{ KEYBOARD_PAGEDOWN,			"KEYBOARD_PAGEDOWN" },
+			{ KEYBOARD_END,					"KEYBOARD_END" },
+			{ KEYBOARD_HOME,				"KEYBOARD_HOME" },
+			{ KEYBOARD_PRNTSRC,				"KEYBOARD_PRNTSRC" },
+			{ KEYBOARD_INSERT,				"KEYBOARD_INSERT" },
+			{ KEYBOARD_DELETE,				"KEYBOARD_DELETE" },
+			{ KEYBOARD_LEFT,				"KEYBOARD_LEFT" },
+			{ KEYBOARD_UP,					"KEYBOARD_UP" },
+			{ KEYBOARD_RIGHT,				"KEYBOARD_RIGHT" },
+			{ KEYBOARD_DOWN,				"KEYBOARD_DOWN" },
+
+			{ MOUSE_LEFT,					"MOUSE_LEFT" },
+			{ MOUSE_RIGHT,					"MOUSE_RIGHT" },
+			{ MOUSE_MIDDLE,					"MOUSE_MIDDLE" },
+			{ MOUSE_X1,						"MOUSE_X1" },
+			{ MOUSE_X2,						"MOUSE_X2" },
+
+			{ XBUTTON_DPAD_UP,				"XBUTTON_DPAD_UP" },
+			{ XBUTTON_DPAD_DOWN,			"XBUTTON_DPAD_DOWN" },
+			{ XBUTTON_DPAD_LEFT,			"XBUTTON_DPAD_LEFT" },
+			{ XBUTTON_DPAD_RIGHT,			"XBUTTON_DPAD_RIGHT" },
+			{ XBUTTON_START,				"XBUTTON_START" },
+			{ XBUTTON_BACK,					"XBUTTON_BACK" },
+			{ XBUTTON_LEFT_THUMB,			"XBUTTON_LEFT_THUMB" },
+			{ XBUTTON_RIGHT_THUMB,			"XBUTTON_RIGHT_THUMB" },
+			{ XBUTTON_LEFT_SHOULDER,		"XBUTTON_LEFT_SHOULDER" },
+			{ XBUTTON_RIGHT_SHOULDER,		"XBUTTON_RIGHT_SHOULDER" },
+			{ XBUTTON_A,					"XBUTTON_A" },
+			{ XBUTTON_B,					"XBUTTON_B" },
+			{ XBUTTON_X,					"XBUTTON_X" },
+			{ XBUTTON_Y,					"XBUTTON_Y" },
+			{ XBUTTON_LAST,					"XBUTTON_LAST" }
+		};
 
 	};
 

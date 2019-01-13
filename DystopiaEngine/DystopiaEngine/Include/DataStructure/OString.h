@@ -3,7 +3,7 @@
 #define _O_STRING_H_
 
 #define U_BUFSIZE  11
-#define ULL_BUFSIZE 16
+#define ULL_BUFSIZE 21
 /**/
 #include <cstdint>
 #include <iostream>
