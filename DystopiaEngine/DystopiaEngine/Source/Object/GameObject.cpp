@@ -69,7 +69,7 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	mBehaviours{ Ut::Move(_obj.mBehaviours) },
 	mTransform{ _obj.mTransform }
 	, mbIsStatic(false),
-	mTags(0)
+	mTags(_obj.mTags)
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
@@ -207,6 +207,15 @@ void Dystopia::GameObject::ClearTags()
 	mTags = 0;
 }
 
+bool Dystopia::GameObject::HasTag(const HashString& _tagName)
+{
+	return mTags & static_cast<unsigned>(EngineCore::GetInstance()->Get<TagSystem>()->GetTag(_tagName));
+}
+
+bool Dystopia::GameObject::HasTag(const char * _tagName)
+{
+	return HasTag(HashString{ _tagName });
+}
 
 void Dystopia::GameObject::Load(void)
 {
@@ -387,6 +396,7 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	p->mName		= mName;
 	p->mName		+= "_clone";
 	p->mTransform	= mTransform;
+	p->mTags		= mTags;
 
 	p->mTransform.SetOwner(p);
 	
@@ -462,6 +472,7 @@ Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
 	mnID    = _rhs.mnID;
 	mnFlags = _rhs.mnFlags;
 	mName   = _rhs.mName;
+	mTags	= _rhs.mTags;
 
 	mTransform = _rhs.mTransform;
 	Ut::Swap(mComponents, _rhs.mComponents);
@@ -480,6 +491,7 @@ Dystopia::GameObject& Dystopia::GameObject::operator=(const GameObject& _rhs)
 	if (mComponents.size() != _rhs.mComponents.size())
 		__debugbreak();
 
+	mTags = _rhs.mTags;
 	mnFlags = _rhs.mnFlags;
 	mnFlags &= ~FLAG_EDITOR_OBJ;
 

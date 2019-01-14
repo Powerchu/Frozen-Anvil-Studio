@@ -104,7 +104,11 @@ Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject_cstr(const char* con
 
 Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const HashString& _prefabName, const Math::Pt3D& _position)
 {
-	auto obj = EngineCore::GetInstance()->GetSubSystem<Factory>()->SpawnPrefab(_prefabName, _position);
+	HashString file = _prefabName;
+	if (_prefabName.rfind(".dobj") == HashString::nPos)
+		file += ".dobj";
+
+	auto obj = EngineCore::GetInstance()->GetSubSystem<Factory>()->SpawnPrefab(file, _position);
 	if (obj)
 		obj->GetComponent<Transform>()->SetGlobalPosition(_position);
 	return obj;

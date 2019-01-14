@@ -254,6 +254,11 @@ void Editor::SpriteEditor::FieldAtlas(void)
 		//										static_cast<unsigned>(mSectionSize.y * static_cast<float>(mpTexture->GetHeight())),
 		//										static_cast<unsigned>(mSectionDime.x), static_cast<unsigned>(mSectionDime.y));
 	}
+	if (EGUI::Display::Button("Save Atlas", Math::Vec2{ 150, 24 }))
+	{
+		if (mpTextSys)
+			mpTextSys->SaveAtlases();
+	}
 }
 
 void Editor::SpriteEditor::DrawSelectedGrid(float _ox, float _oy, float _ix, float _iy)

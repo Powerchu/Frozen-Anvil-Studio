@@ -115,6 +115,8 @@ namespace Dystopia
 		void AddTag(const char * _TagName);
 		void RemoveTag(Tags _Tag);
 		void ClearTags();
+		bool HasTag(const HashString& _tagName);
+		bool HasTag(const char * _tagName);
 
 
 		template<class T>

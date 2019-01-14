@@ -180,6 +180,9 @@ namespace Editor
 				auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
 				if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
 				{
+					{ 
+						auto tricks = Ut::Move(serial);
+					}
 					mResetToFile = fileName;
 					EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(fileName);
 				}

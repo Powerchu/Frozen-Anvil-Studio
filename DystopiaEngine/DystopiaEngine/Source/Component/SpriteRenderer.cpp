@@ -381,6 +381,13 @@ void Dystopia::SpriteRenderer::SetSpeed(float _s)
 	mfFrameTime = _s;
 }
 
+unsigned Dystopia::SpriteRenderer::GetFrameSize(unsigned _i) const
+{
+	if (_i < mAnimations.size())
+		return mAnimations[_i].mnEnd - mAnimations[_i].mnStart + 1;
+	return 0;
+}
+
 Math::Vec2 Dystopia::SpriteRenderer::Resized(float _xMult, float _yMult) const
 {
 	if (mpTexture)

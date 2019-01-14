@@ -329,8 +329,11 @@ namespace Editor
 				if (EGUI::Display::SelectableTxt(elem.mName.c_str()))
 				{
 					auto ptr = mpBehaviourSys->RequestBehaviour(mpFocus->GetID(), elem.mName);
-					ptr->SetActive(mpFocus->IsActive());
-					if (ptr) mpFocus->AddComponent(ptr, Dystopia::BehaviourTag{});
+					if (ptr)
+					{
+						mpFocus->AddComponent(ptr, Dystopia::BehaviourTag{});
+						ptr->SetActive(mpFocus->IsActive());
+					}
 				}
 			}
 

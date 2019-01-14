@@ -169,7 +169,7 @@ void Editor::EditorCommands::InsertNewGameObject(const Math::Pt3D& _pos)
 
 void Editor::EditorCommands::RemoveGameObject(const uint64_t& _objID)
 {
-	if (mbDisableCommands)
+	if (mbDisableCommands || mpRecordingVal)
 		return;
 
 	ExecuteDo(Dystopia::DefaultAllocator<DeleteGameObject>::ConstructAlloc(_objID));
@@ -177,7 +177,7 @@ void Editor::EditorCommands::RemoveGameObject(const uint64_t& _objID)
 
 void Editor::EditorCommands::RemoveGameObject(AutoArray<uint64_t>& _arrIDs)
 {
-	if (mbDisableCommands)
+	if (mbDisableCommands || mpRecordingVal)
 		return;
 
 	if (_arrIDs.size() == 1)
