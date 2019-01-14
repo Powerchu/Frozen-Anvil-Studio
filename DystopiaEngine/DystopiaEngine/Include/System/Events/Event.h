@@ -528,6 +528,12 @@ protected:
 
 public:
 
+	CallBackEvent()
+		:mpWrapper{ nullptr }
+	{
+
+	}
+
 	template<typename Class_t, typename RetType, typename ... Params_t>
 	CallBackEvent(Class_t* _pClass, RetType(Class_t::* _MemFunc)(Params_t ... ))
 		:mpWrapper{new Model<RetType(Class_t::*)(Params_t ...)>{_pClass, _MemFunc}}, mpGenericComparison{static_cast<void*>(_pClass)}

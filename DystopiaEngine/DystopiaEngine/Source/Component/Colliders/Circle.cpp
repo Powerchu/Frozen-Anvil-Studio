@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Circle.h"
 #include "IO/TextSerialiser.h"
 #include "Component/Convex.h"
+#include "Component/PointCollider.h"
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -355,6 +356,36 @@ namespace Dystopia
 	bool Circle::isColliding(Convex * const & other_col)
 	{
 		return this->isColliding(*other_col);
+	}
+
+	bool Circle::isColliding(PointCollider & other_col)
+	{
+		/*Distance Squared from Point to Circle*/
+		float dist = (GetGlobalPosition() - other_col.GetGlobalPosition()).MagnitudeSqr();
+		/*Radius squared of Circle*/
+		float r2 = GetRadius() * GetRadius();
+		/*If the distance squared is less than the radius squared, there is collision*/
+		if (dist < r2)
+		{
+			/*New Collision Event*/
+			CollisionEvent ColEvent{ GetOwner(), other_col.GetOwner() };
+			/*
+			  The collision event is other - me because physics will negate the normal on its side
+			  which will become me - other (which is the correct version)
+			 */
+			ColEvent.mEdgeNormal = other_col.GetGlobalPosition() - GetGlobalPosition();
+			ColEvent.mfPeneDepth = sqrtf(r2 - dist);
+			/*Add the collision Event*/
+			marr_ContactSets.push_back(Ut::Move(ColEvent));
+			mbColliding = true;
+			return true;
+		}
+		return false;
+	}
+
+	bool Circle::isColliding(PointCollider * const & other_col)
+	{
+		return isColliding(*other_col);
 	}
 
 	

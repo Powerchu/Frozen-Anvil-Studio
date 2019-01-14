@@ -80,6 +80,7 @@ namespace Dystopia
 		virtual void Shutdown(void);
 
 
+
 		virtual void LoadDefaults(void);
 		virtual void LoadSettings(TextSerialiser&);
 

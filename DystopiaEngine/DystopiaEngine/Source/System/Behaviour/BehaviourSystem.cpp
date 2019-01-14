@@ -149,6 +149,7 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::PreInit(void)
 	{
+
 	}
 
 	bool Dystopia::BehaviourSystem::Init(void)
@@ -156,7 +157,7 @@ namespace Dystopia
 		/*Init Hotloader*/
 #if EDITOR
 
-		FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
+		FileSys = EngineCore::GetInstance()->Get<FileSystem>();
 
 		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
 
@@ -182,7 +183,7 @@ namespace Dystopia
 		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
 
-		mHotloader->SetCompilerFlags(L"cl /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
+		mHotloader->SetCompilerFlags(L"cl /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 /Zi /DEBUG:FULL " + IncludeFolderPath);
 
 
 		mHotloader->Init();
@@ -220,6 +221,11 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::PostInit(void)
 	{
+		/*TESTING*/
+		auto ptr = EngineCore::Get<FileSystem>();
+		auto fullname = ptr->GetFullPath("Test.txt", eFileDir::eResource);
+		auto temp = ptr->TrackFile("Font\\\\FileTest.txt", eFileDir::eResource);
+		EngineCore::Get<FileSystem>()->BindFileTrackEvent(temp, &Dystopia::BehaviourSystem::PreInit, this);
 	}
 
 	void Dystopia::BehaviourSystem::FixedUpdate(float _dt)
@@ -517,6 +523,7 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 				}
 			}
 		}
+
 #else
 
 		for (auto & i : mvBehaviours)

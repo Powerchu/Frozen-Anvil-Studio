@@ -14,10 +14,12 @@ namespace Dystopia
 	class AABB;
 	class Convex;
 	class Circle;
+	class PointCollider;
 
 	class CollisionSystem : public Systems, public ComponentDonor<Convex>,
 											public ComponentDonor<Circle>, 
-											public ComponentDonor<AABB>
+											public ComponentDonor<AABB>,
+		                                    public ComponentDonor<PointCollider>
 	{
 	public:
 
@@ -63,6 +65,30 @@ namespace Dystopia
 
 		bool ConvexVsCircle(Collider * const & _ColA,
 							Collider * const & _ColB) const;
+
+		bool PointVsPoint(Collider * const & _ColA,
+			              Collider * const & _ColB) const;
+
+		bool PointVsConvex(Collider * const & _ColA,
+			               Collider * const & _ColB) const;
+
+
+		bool ConvexVsPoint(Collider * const & _ColA,
+			               Collider * const & _ColB) const;
+
+		bool PointVsCircle(Collider * const & _ColA,
+						   Collider * const & _ColB) const;
+
+
+		bool CircleVsPoint(Collider * const & _ColA,
+						   Collider * const & _ColB) const;
+
+		bool PointVsAABB(Collider * const & _ColA,
+			             Collider * const & _ColB) const;
+
+
+		bool AABBVsPoint(Collider * const & _ColA,
+			             Collider * const & _ColB) const;
 
 		AutoArray<Collider *> GetAllColliders() const;
 

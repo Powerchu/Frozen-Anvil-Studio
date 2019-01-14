@@ -87,7 +87,7 @@ Editor::DeleteGameObject::DeleteGameObject(uint64_t _id)
 
 Editor::DeleteGameObject::~DeleteGameObject(void)
 {
-	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 	auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
 	HashString file{ fp.c_str() };
 	file += "\\";
@@ -101,7 +101,7 @@ bool Editor::DeleteGameObject::Do(void)
 {
 	if (auto o = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(mnObjID))
 	{
-		auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+		auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 		auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
 		HashString file{ fp.c_str() };
 		file += "\\";
@@ -122,7 +122,7 @@ bool Editor::DeleteGameObject::Undo(void)
 {
 	if (!Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene().FindGameObject(mnObjID))
 	{
-		auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+		auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 		auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
 		HashString file{ fp.c_str() };
 		file += "\\";

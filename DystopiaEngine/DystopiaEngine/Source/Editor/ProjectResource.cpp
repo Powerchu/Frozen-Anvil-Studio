@@ -66,7 +66,7 @@ namespace Editor
 			FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE |
 			FILE_NOTIFY_CHANGE_LAST_WRITE;
 
-		auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+		auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 		auto resFolder = fs->GetProjectFolders<std::string>(Dystopia::eFileDir::eResource);
 		size_t pos = resFolder.rfind("\\");
 		if (pos == std::string::npos)

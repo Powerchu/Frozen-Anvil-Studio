@@ -127,7 +127,7 @@ void Editor::EditorLauncher::Shutdown(void)
 
 void Editor::EditorLauncher::SaveSettings(Dystopia::TextSerialiser& _out)
 {
-	const auto& fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	const auto& fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 	for (size_t i = 0; i < mArrProjFolders.size(); ++i)
 	{
 		if (!fs->CheckPathExist(mArrProjFolders[i]))
@@ -232,7 +232,7 @@ void Editor::EditorLauncher::MainBody(float _w, float _h)
 
 	if (mbProjectView)
 	{
-		auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+		auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 		for (size_t i = 0; i < mArrProjFolders.size(); ++i)
 		{
 			if (!(fs->CheckPathExist(mArrProjFolders[i])))
@@ -475,7 +475,7 @@ void Editor::EditorLauncher::CreateFields(float _x, float _y)
 		if (ImGui::ButtonEx("Create", ImVec2{ btnX, btnY }, active ? 0 : ImGuiButtonFlags_Disabled))
 		{
 
-			const auto& fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+			const auto& fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 			bool firstF = true;
 			unsigned failCount = 1;
 			HashString tempName = mNameBuffer;

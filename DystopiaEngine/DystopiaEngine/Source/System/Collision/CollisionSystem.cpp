@@ -65,6 +65,11 @@ namespace Dystopia
 			if (col.GetFlags() & FLAG_REMOVE)
 				ComponentDonor<Circle>::mComponents.Remove(&col);
 		}
+		for (auto & col : ComponentDonor<PointCollider>::mComponents)
+		{
+			if (col.GetFlags() & FLAG_REMOVE)
+				ComponentDonor<PointCollider>::mComponents.Remove(&col);
+		}
 	}
 
 	void CollisionSystem::FixedUpdate(float _dt)
@@ -91,7 +96,12 @@ namespace Dystopia
 			{ CollisionTable{ eColliderType::CIRCLE,  eColliderType::AABB }    ,&CollisionSystem::CircleVsAABB },
 			{ CollisionTable{ eColliderType::AABB,    eColliderType::CIRCLE }  ,&CollisionSystem::AABBvsCircle },
 			{ CollisionTable{ eColliderType::CIRCLE,  eColliderType::CONVEX }  ,&CollisionSystem::CircleVsConvex },
-			{ CollisionTable{ eColliderType::CONVEX,  eColliderType::CIRCLE }  ,&CollisionSystem::ConvexVsCircle }
+			{ CollisionTable{ eColliderType::CONVEX,  eColliderType::CIRCLE }  ,&CollisionSystem::ConvexVsCircle },
+			{ CollisionTable{ eColliderType::POINT,   eColliderType::POINT }   ,&CollisionSystem::PointVsPoint },
+			{ CollisionTable{ eColliderType::POINT,   eColliderType::CONVEX }  ,&CollisionSystem::PointVsConvex },
+			{ CollisionTable{ eColliderType::POINT,   eColliderType::CIRCLE }  ,&CollisionSystem::PointVsCircle },
+			{ CollisionTable{ eColliderType::CONVEX,  eColliderType::POINT }   ,&CollisionSystem::ConvexVsPoint },
+			{ CollisionTable{ eColliderType::CIRCLE,  eColliderType::POINT }   ,&CollisionSystem::CircleVsPoint }
 			};
 			return i;
 		}();
@@ -134,6 +144,22 @@ namespace Dystopia
 		}
 
 		for (auto & elem : ComponentDonor<Circle>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			if (elem.GetOwner())
+			{
+				elem.ClearCurrentCollisionEvent(); //clear collision table
+				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
+				elem.SetOwnerTransform(gobjMatrix);
+				elem.SetColliding(false);
+				mColliders.push_back(&elem);
+				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
+			}
+		}
+
+		for (auto & elem : ComponentDonor<PointCollider>::mComponents)
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
@@ -332,6 +358,69 @@ namespace Dystopia
 		const bool isColliding = pConvex->isColliding((*pCircle));
 
 		return isColliding;
+	}
+
+	bool CollisionSystem::PointVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * a, * b;
+		a = dynamic_cast<PointCollider *>(_ColA);
+		b = dynamic_cast<PointCollider *>(_ColB);
+		
+		return (a && b) || a->isColliding(b);
+	}
+
+	bool CollisionSystem::PointVsConvex(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * a;
+		Convex *b;
+		a = dynamic_cast<PointCollider *>(_ColA);
+		b = dynamic_cast<Convex *>(_ColB);
+
+		return (a && b) || a->isColliding(b);
+	}
+
+	bool CollisionSystem::ConvexVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * b;
+		Convex *a;
+		a = dynamic_cast<Convex * const>(_ColA);
+		b = dynamic_cast<PointCollider * const>(_ColB);
+		
+		return (!a && !b) && a->isColliding(b);
+	}
+
+	bool CollisionSystem::PointVsCircle(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * a;
+		Circle *b;
+		a = dynamic_cast<PointCollider *>(_ColA);
+		b = dynamic_cast<Circle *>(_ColB);
+
+		return (a && b) || a->isColliding(b);
+	}
+
+	bool CollisionSystem::CircleVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * b;
+		Circle *a;
+		a = dynamic_cast<Circle * const>(_ColA);
+		b = dynamic_cast<PointCollider * const>(_ColB);
+
+		return (!a && !b) && a->isColliding(b);
+	}
+
+	bool CollisionSystem::PointVsAABB(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		_ColA;
+		_ColB;
+		return false;
+	}
+
+	bool CollisionSystem::AABBVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		_ColA;
+		_ColB;
+		return false;
 	}
 
 	AutoArray<Collider*> CollisionSystem::GetAllColliders() const
