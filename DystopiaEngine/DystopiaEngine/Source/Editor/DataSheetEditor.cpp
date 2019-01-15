@@ -123,6 +123,7 @@ void Editor::DataSheetEditor::HandleData(Dystopia::DataSheet& _dat)
 	for (int i = 0; i < allElements.size(); ++i)
 	{
 		EGUI::Display::Label("%s", allElements[i]->mName.c_str());
+		auto v = _dat.MagicGet(allElements[i]->mName);
 		ImGui::NextColumn();
 	}
 	EGUI::Display::HorizontalSeparator();

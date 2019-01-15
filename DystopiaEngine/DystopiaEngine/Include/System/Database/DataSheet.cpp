@@ -84,8 +84,9 @@ void Dystopia::DataSheet::SaveSheet(void)
 		HashString label{ "_" };
 		label += static_cast<unsigned>(i);
 
-		file.InsertStartBlock(label.c_str());
-		DelegateSaveElement(mArrSheetElements[i]->GetTypeN(), mArrSheetElements[i], file);
+		file.InsertStartBlock(label.c_str()); 
+		auxHelper.SaveElement(this, mArrSheetElements[i], file);
+		//DelegateSaveElement(mArrSheetElements[i]->GetTypeN(), mArrSheetElements[i], file);
 		file.InsertEndBlock(label.c_str());
 	}
 }
@@ -105,7 +106,8 @@ void Dystopia::DataSheet::LoadSheet()
 		file.ConsumeStartBlock();
 		file >> typeN;
 		if (typeN >= 0)
-			DelegateLoadElement(typeN, file);
+			auxHelper.LoadElement(this, typeN, file);
+			//DelegateLoadElement(typeN, file);
 		file.ConsumeEndBlock();
 	}
 }

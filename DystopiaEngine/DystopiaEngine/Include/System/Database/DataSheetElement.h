@@ -17,7 +17,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Utility.h"
 #include "Utility/MetaAlgorithms.h"
 
-// remember go to DataSheet's DelegateSaveElement/DelegateLoadElement functions and add to the switch statement
 using AcceptableTypes = Ut::Collection< Ut::Indexer<0, int>, 
 										Ut::Indexer<1, float>, 
 										Ut::Indexer<2, bool>, 
