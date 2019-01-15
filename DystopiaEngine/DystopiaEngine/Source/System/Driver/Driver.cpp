@@ -47,6 +47,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/File/FileSystem.h"
 #include "System/Logger/LoggerSystem.h"
 #include "System/Tag/TagSystem.h"
+#include "System/Database/DatabaseSystem.h"
 #include "Factory/Factory.h"
 
 #include "System/Time/Timer.h"

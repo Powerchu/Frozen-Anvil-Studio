@@ -54,6 +54,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Profiler/Profiler.h"
 #include "System/Profiler/ProfilerAction.h"
 
+#include "System/Database/DataSheet.h"
+
 #include "../../Dependancies/ImGui/imgui.h"
 #include "../../Dependancies/ImGui/imgui_internal.h"
 

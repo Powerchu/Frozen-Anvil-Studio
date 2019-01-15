@@ -367,6 +367,12 @@
     <ClCompile Include="Source\Editor\FlowChartData.cpp">
       <Filter>Editor\Main\Panels\FlowChart</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Database\DatabaseSystem.cpp">
+      <Filter>Game Engine\SubSystems\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="Include\System\Database\DataSheet.cpp">
+      <Filter>Game Engine\SubSystems\Database</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1011,6 +1017,15 @@
     <ClInclude Include="Include\Editor\FlowChartData.h">
       <Filter>Editor\Main\Panels\FlowChart</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Database\DatabaseSystem.h">
+      <Filter>Game Engine\SubSystems\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Database\DataSheet.h">
+      <Filter>Game Engine\SubSystems\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Database\DataSheetElement.h">
+      <Filter>Game Engine\SubSystems\Database</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1450,6 +1465,9 @@
     </Filter>
     <Filter Include="Editor\Main\Panels\FlowChart">
       <UniqueIdentifier>{14032cc1-abb6-4027-9462-082b28d5d5ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Database">
+      <UniqueIdentifier>{dda9b7bb-de84-43a5-b913-b15fc3672765}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

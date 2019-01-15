@@ -58,7 +58,8 @@ namespace Dystopia
 			class LoggerSystem,
 			class TextureSystem,
 			class TagSystem,
-			class Factory
+			class Factory,
+			class DatabaseSystem
 		>::result;
 
 		static EngineCore* GetInstance(void) noexcept;

@@ -419,12 +419,14 @@ size_t OString::bufferSize(void) const
 
 size_t OString::length(void) const
 {
+	if (mpLiteral)
+		return strlen(mpLiteral);
 	return mnCurSize;
 }
 
 size_t OString::size(void) const
 {
-	return mnCurSize;
+	return length();
 }
 
 const char * OString::c_str(void) const
