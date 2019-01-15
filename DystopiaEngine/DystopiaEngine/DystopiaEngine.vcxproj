@@ -33,6 +33,7 @@
     <ClCompile Include="Source\DataStructure\OString.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
     <ClCompile Include="Source\Editor\CommandTypes.cpp" />
+    <ClCompile Include="Source\Editor\DataSheetEditor.cpp" />
     <ClCompile Include="Source\Editor\EditorClipboard.cpp" />
     <ClCompile Include="Source\Editor\EditorCommands.cpp" />
     <ClCompile Include="Source\Editor\EditorFactory.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
     <ClInclude Include="Include\Editor\BehaviourTreeEditor.h" />
+    <ClInclude Include="Include\Editor\DataSheetEditor.h" />
     <ClInclude Include="Include\Editor\EditorFactory.h" />
     <ClInclude Include="Include\Editor\EditorLauncher.h" />
     <ClInclude Include="Include\Editor\EditorResource.h" />

@@ -19,18 +19,54 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <string>
 
-Dystopia::DatabaseSystem::DatabaseSystem(void) noexcept
+Dystopia::DatabaseSystem::DatabaseSystem(void) 
 {
 }
 
-Dystopia::DatabaseSystem::~DatabaseSystem(void) noexcept
+Dystopia::DatabaseSystem::~DatabaseSystem(void) 
 {
 }
 
-void Dystopia::DatabaseSystem::Shutdown(void) noexcept
+bool Dystopia::DatabaseSystem::Init(void)
+{
+	return true;
+}
+
+void Dystopia::DatabaseSystem::Update(float)
+{
+}
+
+void Dystopia::DatabaseSystem::Shutdown(void)
 {
 	for (auto& elem : mArrDataSheets)
 		elem.second.CloseSheet();
+
+	mArrDataSheets.clear();
+	mArrSheetNames.clear();
+}
+
+void Dystopia::DatabaseSystem::LoadDefaults(void)
+{
+}
+
+void Dystopia::DatabaseSystem::LoadSettings(DysSerialiser_t& _in)
+{
+	size_t n = 0;
+	_in >> n;
+	for (size_t i = 0; i < n; ++i)
+	{
+		HashString name;
+		_in >> name;
+		if (name.length())
+			NewData(name);
+	}
+}
+
+void Dystopia::DatabaseSystem::SaveSettings(DysSerialiser_t& _out)
+{
+	_out << mArrDataSheets.size();
+	for (auto& sheet : mArrDataSheets)
+		_out << sheet.first;
 }
 
 bool Dystopia::DatabaseSystem::NewData(const HashString& _name)
@@ -39,7 +75,24 @@ bool Dystopia::DatabaseSystem::NewData(const HashString& _name)
 		if (elem.first == _name)
 			return false;
 
-	mArrDataSheets.Insert(std::make_pair(_name, DataSheet{ GetPathFormatted(_name).c_str() }));
+	auto n = GetPathFormatted(_name);
+	if (!n.length())
+		return false;
+
+	mArrDataSheets.Insert(std::make_pair(_name, DataSheet{ n.c_str() }));
+	mArrSheetNames.Insert(mArrDataSheets.back().first.c_str());
+
+	HashString temp{ _name };
+	if (temp.find(".ddata") == HashString::nPos)
+	{
+		temp += '.';
+		temp += Gbl::DATASHEET_EXT;
+	}
+
+	auto found = EngineCore::Get<FileSystem>()->GetFullPath(temp.c_str(), eFileDir::eResource);
+	if (!found.length())
+		auto file = TextSerialiser::OpenFile(n.c_str(), Serialiser::MODE_WRITE);
+
 	return true;
 }
 
@@ -73,6 +126,20 @@ bool Dystopia::DatabaseSystem::CloseData(const HashString& _name)
 	return false;
 }
 
+void Dystopia::DatabaseSystem::UnloadData(const HashString& _name)
+{
+	for (size_t i = 0; i < mArrDataSheets.size(); i++)
+	{
+		if (mArrDataSheets[i].first == _name)
+		{
+			mArrDataSheets[i].second.CloseSheet();
+			mArrDataSheets.FastRemove(i);
+			mArrSheetNames.FastRemove(i);
+			break;
+		}
+	}
+}
+
 Dystopia::DataSheet* Dystopia::DatabaseSystem::GetDatabase(const HashString& _name)
 {
 	for (auto& elem : mArrDataSheets)
@@ -92,7 +159,11 @@ void Dystopia::DatabaseSystem::SaveAllSheets(void)
 
 HashString Dystopia::DatabaseSystem::GetPathFormatted(const HashString& _name)
 {
-	auto path = EngineCore::Get<FileSystem>()->GetProjectFolders<std::string>(eFileDir::eCurrent);
+	auto path = EngineCore::Get<FileSystem>()->GetProjectFolders<std::string>(eFileDir::eResource);
+
+	if (!path.length())
+		return HashString{};
+
 	path += '/';
 	path += _name.c_str();
 
@@ -103,6 +174,17 @@ HashString Dystopia::DatabaseSystem::GetPathFormatted(const HashString& _name)
 	}
 	return path.c_str();
 }
+
+AutoArray<std::pair<HashString, Dystopia::DataSheet>>& Dystopia::DatabaseSystem::GetAllSheets(void)
+{
+	return mArrDataSheets;
+}
+
+AutoArray<const char *>& Dystopia::DatabaseSystem::GetAllNames(void)
+{
+	return mArrSheetNames;
+}
+
 
 
 

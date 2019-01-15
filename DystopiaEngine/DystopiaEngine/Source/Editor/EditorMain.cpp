@@ -40,6 +40,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/BehaviourTreeEditor.h"
 #include "Editor/GameView.h"
 #include "Editor/FlowChart.h"
+#include "Editor/DataSheetEditor.h"
 
 #include "Allocator/DefaultAlloc.h"
 
@@ -146,6 +147,9 @@ void Editor::EditorMain::Update(void)
 		{
 			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scopeT{ p->GetLabel().c_str(), "Editor UI" };
 			ImGuiWindowFlags f = p->IsScrollEnabled() ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar;
+			if (p->IsHorizontalEnabled())
+				f |= ImGuiWindowFlags_HorizontalScrollbar;
+
 			bool open = p->IsOpened();
 			if (EGUI::StartTab(p->GetLabel().c_str(), &open, f))
 			{

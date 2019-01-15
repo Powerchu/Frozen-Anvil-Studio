@@ -482,6 +482,7 @@ namespace EGUI
 		arr.push_back("item2");
 		EGUI::Display::DropDownSelection("TestDropDown", i, arr);
 		======================================================================================================================= */
+		bool DropDownSelection(const char* _label, int& _currentIndex, AutoArray<const char *>& _arrOfItems, float _width = 100);
 		bool DropDownSelection(const char* _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width = 100);
 		template<unsigned N>
 		bool DropDownSelection(const char* _label, int& _currentIndex, unsigned _under21, float _width = 100)

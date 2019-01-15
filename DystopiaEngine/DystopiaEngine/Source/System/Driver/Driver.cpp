@@ -39,6 +39,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/AI/AISystem.h"
 #include "System/Editor/EditorIntermediary.h"
+#include "System/Database/DatabaseSystem.h"
 
 // SubSystems
 #include "System/Graphics/MeshSystem.h"
@@ -47,7 +48,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/File/FileSystem.h"
 #include "System/Logger/LoggerSystem.h"
 #include "System/Tag/TagSystem.h"
-#include "System/Database/DatabaseSystem.h"
 #include "Factory/Factory.h"
 
 #include "System/Time/Timer.h"

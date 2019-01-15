@@ -36,14 +36,16 @@ namespace Dystopia
 		bool OpenSheet(void);
 		bool CloseSheet(bool = true);
 		bool IsOpened(void) const;
-		HashString GetOpened(void) const;
+		const HashString& GetOpened(void) const;
+
+		AutoArray<DataSheetElementBase*>& GetAllElements(void);
 
 		template<typename T, typename SFNAE = Ut::EnableIf_t<Ut::IsSame<T, int>::value ||
 			Ut::IsSame<T, float>::value ||
 			Ut::IsSame<T, bool>::value ||
 			Ut::IsSame<T, char>::value ||
 			Ut::IsSame<T, HashString>::value, T>>
-			T GetElement(const HashString& _name);
+			T GetElement(const HashString& _name) const;
 		template<typename T, typename SFNAE = Ut::EnableIf_t<Ut::IsSame<T, int>::value ||
 			Ut::IsSame<T, float>::value ||
 			Ut::IsSame<T, bool>::value ||
@@ -79,7 +81,7 @@ namespace Dystopia
 // ============================================ DEFINITIONS ============================================ // 
 
 template<typename T, typename SFNAE>
-inline T Dystopia::DataSheet::GetElement(const HashString & _name)
+inline T Dystopia::DataSheet::GetElement(const HashString&  _name) const
 {
 	for (const auto& elem : mArrSheetElements)
 		if (elem->mName == _name)

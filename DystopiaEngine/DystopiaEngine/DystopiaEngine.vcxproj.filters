@@ -368,10 +368,13 @@
       <Filter>Editor\Main\Panels\FlowChart</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Database\DatabaseSystem.cpp">
-      <Filter>Game Engine\SubSystems\Database</Filter>
+      <Filter>Game Engine\Systems\Database</Filter>
     </ClCompile>
     <ClCompile Include="Include\System\Database\DataSheet.cpp">
-      <Filter>Game Engine\SubSystems\Database</Filter>
+      <Filter>Game Engine\Systems\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\DataSheetEditor.cpp">
+      <Filter>Editor\Main\Panels\Datasheet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1018,13 +1021,16 @@
       <Filter>Editor\Main\Panels\FlowChart</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Database\DatabaseSystem.h">
-      <Filter>Game Engine\SubSystems\Database</Filter>
+      <Filter>Game Engine\Systems\Database</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Database\DataSheet.h">
-      <Filter>Game Engine\SubSystems\Database</Filter>
+      <Filter>Game Engine\Systems\Database</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Database\DataSheetElement.h">
-      <Filter>Game Engine\SubSystems\Database</Filter>
+      <Filter>Game Engine\Systems\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Editor\DataSheetEditor.h">
+      <Filter>Editor\Main\Panels\Datasheet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1466,7 +1472,10 @@
     <Filter Include="Editor\Main\Panels\FlowChart">
       <UniqueIdentifier>{14032cc1-abb6-4027-9462-082b28d5d5ae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\SubSystems\Database">
+    <Filter Include="Editor\Main\Panels\Datasheet">
+      <UniqueIdentifier>{5d398e8a-3866-4ebc-8375-6494df803486}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Database">
       <UniqueIdentifier>{dda9b7bb-de84-43a5-b913-b15fc3672765}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

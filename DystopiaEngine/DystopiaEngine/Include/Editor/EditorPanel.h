@@ -42,7 +42,9 @@ namespace Editor
 		/******************************* General panel stuff *******************************/
 
 		bool IsScrollEnabled(void) const { return mbScrollEnabled; }
+		bool IsHorizontalEnabled(void) const { return mbHorizontal; }
 		void SetScrollEnabled(bool _b) { mbScrollEnabled = _b; }
+		void SetHorizontalEnabled(bool _b) { mbHorizontal = _b; }
 		bool IsOpened(void) const { return mbOpened; }
 		void SetOpened(bool _b);
 		bool& GetOpenedBool(void) { return mbOpened; }
@@ -55,6 +57,7 @@ namespace Editor
 	private:
 		bool mbOpened = false;
 		bool mbScrollEnabled = true;
+		bool mbHorizontal = false;
 		Math::Vec2 mSize;
 		Math::Vec2 mPos;
 	};

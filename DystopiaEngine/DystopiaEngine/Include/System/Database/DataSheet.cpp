@@ -11,10 +11,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Database/DataSheet.h"
+#include "System/Driver/Driver.h"
+#include "System/File/FileSystem.h"
 #include "IO/TextSerialiser.h"
 
 #include <string>
-
 
 Dystopia::DataSheet::DataSheet(const HashString& _fullpath)
 	: mbIsOpened{ false }, mCurrentSheetPath{ _fullpath }
@@ -28,6 +29,13 @@ Dystopia::DataSheet::~DataSheet(void)
 
 bool Dystopia::DataSheet::OpenSheet()
 {
+	if(mbIsOpened)
+		return mbIsOpened;
+
+	if (!std::filesystem::exists(mCurrentSheetPath.c_str()))
+		return false;
+
+	mbIsOpened = true;
 	LoadSheet();
 	return mbIsOpened;
 }
@@ -51,12 +59,17 @@ bool Dystopia::DataSheet::CloseSheet(bool _save)
 
 bool Dystopia::DataSheet::IsOpened(void) const
 {
-	return mCurrentSheetPath.length() != 0;
+	return mbIsOpened;
 }
 
-HashString Dystopia::DataSheet::GetOpened(void) const
+const HashString& Dystopia::DataSheet::GetOpened(void) const
 {
 	return mCurrentSheetPath;
+}
+
+AutoArray<DataSheetElementBase*>& Dystopia::DataSheet::GetAllElements(void)
+{
+	return mArrSheetElements;
 }
 
 void Dystopia::DataSheet::SaveSheet(void)

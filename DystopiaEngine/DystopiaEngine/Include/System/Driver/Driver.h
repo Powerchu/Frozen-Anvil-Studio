@@ -48,7 +48,8 @@ namespace Dystopia
 			Ut::Indexer<eSYSTEMS::PHYSICS_SYSTEM  , class PhysicsSystem  >,
 			Ut::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >,
 			Ut::Indexer<eSYSTEMS::AI_SYSTEM		  , class AISystem		 >,
-			Ut::Indexer<eSYSTEMS::INTERMEDIARY_SYSTEM, class EditorIntermediary	>
+			Ut::Indexer<eSYSTEMS::INTERMEDIARY_SYSTEM, class EditorIntermediary	>,
+			Ut::Indexer<eSYSTEMS::DATABASE_SYSTEM, class DatabaseSystem	>
 		>>;
 
 		using SubSys = typename Ut::MetaAutoIndexer <
@@ -58,8 +59,7 @@ namespace Dystopia
 			class LoggerSystem,
 			class TextureSystem,
 			class TagSystem,
-			class Factory,
-			class DatabaseSystem
+			class Factory
 		>::result;
 
 		static EngineCore* GetInstance(void) noexcept;
