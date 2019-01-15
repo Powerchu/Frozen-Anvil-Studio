@@ -426,10 +426,6 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 void Dystopia::GameObject::SetID(const uint64_t& _id)
 {
 	mnID = _id;
-	for (auto& c : mComponents)
-		c->SetOwner(this);
-	for (auto& b : mBehaviours)
-		b->SetOwner(this);
 }
 
 uint64_t Dystopia::GameObject::GetID(void) const

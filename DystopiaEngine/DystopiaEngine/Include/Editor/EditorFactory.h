@@ -92,6 +92,8 @@ namespace Editor
 
 		void RecursiveCounter(Dystopia::GameObject&, unsigned&);
 
+		void MakeUnique(Dystopia::GameObject&);
+
 		uint64_t PutToScene(const HashString&, const Math::Pt3D&);
 		uint64_t PutToScene(PrefabData&, const Math::Pt3D&);
 
