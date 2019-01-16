@@ -217,6 +217,11 @@ bool Dystopia::GameObject::HasTag(const char * _tagName)
 	return HasTag(HashString{ _tagName });
 }
 
+void Dystopia::GameObject::SetTag(unsigned _tag)
+{
+	mTags = _tag;
+}
+
 void Dystopia::GameObject::Load(void)
 {
 //	ForcePing(mComponents, Load);

@@ -49,7 +49,6 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 	auto _in = Dystopia::TextSerialiser::OpenFile(fp.c_str(), Dystopia::Serialiser::MODE_READ);
 
 	auto& curScene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->GetCurrentScene();
-	//const size_t currentIndex = curScene.GetAllGameObjects().size();
 
 	AutoArray<uint64_t> oldIDs;
 	AutoArray<GameObject*> allInstantiated;

@@ -51,13 +51,11 @@ void Editor::DataSheetEditor::EditorUI(void)
 	static char buffer[256];
 
 	EGUI::PushLeftAlign(150.f);
-	if (EGUI::Display::TextField("Make a Data sheet", buffer, 256, true))
-	{
-	}
+	EGUI::Display::TextField("Make a Data sheet", buffer, 256, true);
 	ImGui::SameLine();
 	if (EGUI::Display::Button("Create") && strlen(buffer))
 	{
-		HashString name{ buffer };
+		HashString name{ static_cast<const char*>(buffer) };
 		if (!db->NewData(name))
 			DEBUG_PRINT(eLog::MESSAGE, "Failed to make (already existed?) a data sheet %s", name.c_str());
 		else
@@ -67,9 +65,7 @@ void Editor::DataSheetEditor::EditorUI(void)
 		}
 	}
 
-	if (EGUI::Display::EmptyBox("Load Data sheet ", 150, mNewAdditionName.length() ? mNewAdditionName.c_str() : "-empty-", true))
-	{
-	}
+	EGUI::Display::EmptyBox("Load Data sheet ", 150, mNewAdditionName.length() ? mNewAdditionName.c_str() : "-empty-", true);
 	if (File *t = EGUI::Display::StartPayloadReceiver<File>(EGUI::DATA_SHEET))
 	{
 		mNewAdditionName = t->mName;

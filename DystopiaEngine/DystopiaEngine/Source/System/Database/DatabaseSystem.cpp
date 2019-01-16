@@ -79,7 +79,8 @@ bool Dystopia::DatabaseSystem::NewData(const HashString& _name)
 	if (!n.length())
 		return false;
 
-	mArrDataSheets.Insert(std::make_pair(_name, DataSheet{ n.c_str() }));
+	HashString name{ _name };
+	mArrDataSheets.Insert(std::make_pair(name, DataSheet{ n.c_str() }));
 	mArrSheetNames.Insert(mArrDataSheets.back().first.c_str());
 
 	HashString temp{ _name };
@@ -93,8 +94,7 @@ bool Dystopia::DatabaseSystem::NewData(const HashString& _name)
 	if (!found.length())
 		auto file = TextSerialiser::OpenFile(n.c_str(), Serialiser::MODE_WRITE);
 
-	mArrDataSheets.back().second.OpenSheet();
-	return true;
+	return mArrDataSheets.back().second.OpenSheet();
 }
 
 bool Dystopia::DatabaseSystem::OpenData(const HashString& _name)

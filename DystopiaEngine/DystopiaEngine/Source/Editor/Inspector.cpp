@@ -100,7 +100,7 @@ namespace Editor
 		}
 		else
 		{
-			PrefabObject();
+			//PrefabObject();
 		}
 	}
 
@@ -458,7 +458,6 @@ namespace Editor
 	void Inspector::PrefabObject(void)
 	{
 		auto clip = EditorMain::GetInstance()->GetSystem<EditorClipboard>();
-		//auto fac = EditorMain::GetInstance()->GetSystem<EditorFactory>();
 		auto pPrefab = clip->GetPrefab();
 		if (pPrefab)
 		{

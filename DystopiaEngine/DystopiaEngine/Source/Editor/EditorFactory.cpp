@@ -787,6 +787,7 @@ uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D
 		allSpawned.push_back(&insertedO);
 
 		insertedO.SetName(loadedO.GetName());
+		insertedO.SetTag(loadedO.GetTags());
 		auto loadedTransform = loadedO.GetComponent<Dystopia::Transform>();
 		auto insertedTransform = insertedO.GetComponent<Dystopia::Transform>();
 		insertedTransform->SetScale(loadedTransform->GetGlobalScale());

@@ -182,7 +182,7 @@ namespace Dystopia
 		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
 
-		mHotloader->SetCompilerFlags(L"cl /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 /Zi /DEBUG:FULL " + IncludeFolderPath);
+		mHotloader->SetCompilerFlags(L"cl /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
 
 
 		mHotloader->Init();
