@@ -244,7 +244,9 @@ bool Editor::EditorFactory::SaveAsPrefab(const uint64_t& _objID, Dystopia::TextS
 void Editor::EditorFactory::MakeUnique(Dystopia::GameObject& _obj)
 {
 	uint64_t newID = Dystopia::GUIDGenerator::GetUniqueID();
+	uint64_t old = _obj.GetID();
 	_obj.SetID(newID);
+	Dystopia::EngineCore::Get<Dystopia::BehaviourSystem>()->ReplaceID(old, newID, &_obj);
 	auto& childrens = _obj.GetComponent<Dystopia::Transform>()->GetAllChild();
 	for (auto & child : childrens)
 	{
