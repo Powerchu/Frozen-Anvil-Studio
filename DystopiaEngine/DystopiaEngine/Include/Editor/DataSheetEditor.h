@@ -48,15 +48,15 @@ namespace Editor
 		struct UIVisitor
 		{
 			template<typename T>
-			void operator()(T _variant);
+			void operator()(const T& _variant);
 			template<>
-			void operator()(int _variant);
+			void operator()(const int& _variant);
 			template<>
-			void operator()(float _variant);
+			void operator()(const float& _variant);
 			template<>
-			void operator()(bool _variant);
+			void operator()(const bool& _variant);
 			template<>
-			void operator()(char _variant);
+			void operator()(const char& _variant);
 			template<>
 			void operator()(const HashString& _variant);
 		};
@@ -66,10 +66,18 @@ namespace Editor
 		HashString mLabel;
 		HashString mNewAdditionName;
 		int mnCurrentSheet;
+		int mnSheetSelection;
+		int mnTypeSelection;
+		int mnRemoveSheetSelection;
+		int mnRemoveElementSelection;
 		Dystopia::DatabaseSystem *mpDB;
 		UIVisitor mUIVisitor;
 
-		void HandleData(Dystopia::DataSheet&);
+		void HandleSheets(void);
+		bool HandleInserting(const char*, unsigned);
+		void HandleRemove(void);
+		void TableHeaders(void);
+		void HandleData(const HashString&, Dystopia::DataSheet&);
 
 	};
 
@@ -78,27 +86,27 @@ namespace Editor
 
 
 	template<typename T>
-	inline void DataSheetEditor::UIVisitor::operator()(T _variant)
+	inline void DataSheetEditor::UIVisitor::operator()(const T& _variant)
 	{
 		EGUI::Display::Label("ERROR in DataSheetEditor::UIVisitor");
 	}
 	template<>
-	inline void DataSheetEditor::UIVisitor::operator()(int _variant)
+	inline void DataSheetEditor::UIVisitor::operator()(const int& _variant)
 	{
 		EGUI::Display::Label("%d", _variant);
 	}
 	template<>
-	inline void DataSheetEditor::UIVisitor::operator()(float _variant)
+	inline void DataSheetEditor::UIVisitor::operator()(const float& _variant)
 	{
 		EGUI::Display::Label("%f", _variant);
 	}
 	template<>
-	inline void DataSheetEditor::UIVisitor::operator()(bool _variant)
+	inline void DataSheetEditor::UIVisitor::operator()(const bool& _variant)
 	{
 		EGUI::Display::Label("%s", _variant ? "true" : "false");
 	}
 	template<>
-	inline void DataSheetEditor::UIVisitor::operator()(char _variant)
+	inline void DataSheetEditor::UIVisitor::operator()(const char& _variant)
 	{
 		EGUI::Display::Label("%c", _variant);
 	}

@@ -45,6 +45,7 @@ namespace Dystopia
 		const HashString& GetOpened(void) const;
 
 		AutoArray<DataSheetElementBase*>& GetAllElements(void);
+		AutoArray<const char*>& GetAllNames(void);
 
 		template<typename T, typename SFNAE = Ut::EnableIf_t<Ut::IsSame<T, int>::value ||
 			Ut::IsSame<T, float>::value ||
@@ -65,6 +66,7 @@ namespace Dystopia
 			Ut::IsSame<T, HashString>::value, T>>
 			bool InsertElement(const HashString& _name, const T& _val);
 
+
 		template<typename A>
 		struct AuxIndex;
 		template<size_t ... Ns>
@@ -75,6 +77,7 @@ namespace Dystopia
 			template<size_t N>
 			struct Aux
 			{
+				using Type = typename Ut::MetaExtract_t<N, AcceptableTypes>::type;
 				static void SaveDelegate(DataSheet* _call, DataSheetElementBase * _target, TextSerialiser& _out)
 				{
 					_call->SaveElement<N>(_target, _out);
@@ -85,7 +88,7 @@ namespace Dystopia
 				}
 				static MasterVar GetDelegate(DataSheet* _call, const HashString& _name)
 				{
-					auto v = _call->GetElement<typename Ut::MetaExtract_t<N, AcceptableTypes>::type>(_name);
+					auto v = _call->GetElement<Type>(_name);
 					return MasterVar{ v };
 				}
 			};
@@ -113,9 +116,10 @@ namespace Dystopia
 			}
 		};
 
-		auto MagicGet(const HashString& _name)
+		using AuxIndexer = AuxIndex<std::make_index_sequence<NElements>>;
+		AuxIndexer::MasterVar MagicGet(const HashString& _name)
 		{
-			return auxHelper.GetElement(this, _name);
+			return AuxIndexer::MasterVar{ Ut::Move(auxHelper.GetElement(this, _name)) };
 		}
 
 	private:
@@ -123,7 +127,8 @@ namespace Dystopia
 		HashString mCurrentSheetPath;
 		bool mbIsOpened;
 		AutoArray<DataSheetElementBase*> mArrSheetElements;
-		AuxIndex<std::make_index_sequence<NElements>> auxHelper;
+		AutoArray<const char*> mArrNames;
+		AuxIndexer auxHelper;
 
 		void SaveSheet(void);
 		void LoadSheet(void);

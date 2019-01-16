@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Utility.h"
 #include "Utility/MetaAlgorithms.h"
 
+static constexpr const char* AcceptableTypeStrings[] = { "int", "float", "bool", "char", "HashString" };
 using AcceptableTypes = Ut::Collection< Ut::Indexer<0, int>, 
 										Ut::Indexer<1, float>, 
 										Ut::Indexer<2, bool>, 

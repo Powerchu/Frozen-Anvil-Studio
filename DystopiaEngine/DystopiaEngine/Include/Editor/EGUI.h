@@ -518,6 +518,20 @@ namespace EGUI
 			ImGui::PopItemWidth();
 			return ret;
 		}
+		template<unsigned N>
+		bool DropDownSelection(const char* _label, int& _currentIndex, const char * const(&_arrOfItems)[N], float _width = 100)
+		{
+			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label);
+			SameLine(DefaultAlighnmentSpacing, GetLeftAlignStack().IsEmpty() ? DefaultAlignLeft : GetLeftAlignStack().Peek());
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			HashString invi{ "##DropDownList" };
+			invi += _label;
+			bool ret = ImGui::Combo(invi.c_str(), &_currentIndex, _arrOfItems, N);
+			ImGui::PopItemWidth();
+			return ret;
+		}
 		/* =======================================================================================================================
 		Brief:
 		Creates a button

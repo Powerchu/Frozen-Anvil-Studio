@@ -93,6 +93,7 @@ bool Dystopia::DatabaseSystem::NewData(const HashString& _name)
 	if (!found.length())
 		auto file = TextSerialiser::OpenFile(n.c_str(), Serialiser::MODE_WRITE);
 
+	mArrDataSheets.back().second.OpenSheet();
 	return true;
 }
 

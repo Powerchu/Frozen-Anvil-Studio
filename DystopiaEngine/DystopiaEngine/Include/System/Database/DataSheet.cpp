@@ -25,6 +25,7 @@ Dystopia::DataSheet::DataSheet(const HashString& _fullpath)
 Dystopia::DataSheet::~DataSheet(void)
 {
 	CloseSheet();
+	mCurrentSheetPath.clear();
 }
 
 bool Dystopia::DataSheet::OpenSheet()
@@ -51,7 +52,6 @@ bool Dystopia::DataSheet::CloseSheet(bool _save)
 			Dystopia::DefaultAllocator<DataSheetElementBase>::DestructFree(elem);
 
 		mArrSheetElements.clear();
-		mCurrentSheetPath.clear();
 	}
 	mbIsOpened = false;
 	return !mbIsOpened;
@@ -70,6 +70,11 @@ const HashString& Dystopia::DataSheet::GetOpened(void) const
 AutoArray<DataSheetElementBase*>& Dystopia::DataSheet::GetAllElements(void)
 {
 	return mArrSheetElements;
+}
+
+AutoArray<const char*>& Dystopia::DataSheet::GetAllNames(void)
+{
+	return mArrNames;
 }
 
 void Dystopia::DataSheet::SaveSheet(void)
