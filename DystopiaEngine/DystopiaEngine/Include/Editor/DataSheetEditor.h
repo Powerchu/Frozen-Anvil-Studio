@@ -16,7 +16,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/HashString.h"
+#include "Utility/Utility.h"
+
 #include "Editor/EditorPanel.h"
+#include "Editor/EGUI.h"
 
 namespace Dystopia
 {
@@ -42,16 +45,70 @@ namespace Editor
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 		HashString GetLabel(void) const;
 
+		struct UIVisitor
+		{
+			template<typename T>
+			void operator()(T _variant);
+			template<>
+			void operator()(int _variant);
+			template<>
+			void operator()(float _variant);
+			template<>
+			void operator()(bool _variant);
+			template<>
+			void operator()(char _variant);
+			template<>
+			void operator()(const HashString& _variant);
+		};
+
 	private:
 
 		HashString mLabel;
 		HashString mNewAdditionName;
 		int mnCurrentSheet;
 		Dystopia::DatabaseSystem *mpDB;
+		UIVisitor mUIVisitor;
 
 		void HandleData(Dystopia::DataSheet&);
 
 	};
+
+
+	// ============================================ DEFINITIONS ============================================ // 
+
+
+	template<typename T>
+	inline void DataSheetEditor::UIVisitor::operator()(T _variant)
+	{
+		EGUI::Display::Label("ERROR in DataSheetEditor::UIVisitor");
+	}
+	template<>
+	inline void DataSheetEditor::UIVisitor::operator()(int _variant)
+	{
+		EGUI::Display::Label("%d", _variant);
+	}
+	template<>
+	inline void DataSheetEditor::UIVisitor::operator()(float _variant)
+	{
+		EGUI::Display::Label("%f", _variant);
+	}
+	template<>
+	inline void DataSheetEditor::UIVisitor::operator()(bool _variant)
+	{
+		EGUI::Display::Label("%s", _variant ? "true" : "false");
+	}
+	template<>
+	inline void DataSheetEditor::UIVisitor::operator()(char _variant)
+	{
+		EGUI::Display::Label("%c", _variant);
+	}
+	template<>
+	inline void DataSheetEditor::UIVisitor::operator()(const HashString& _variant)
+	{
+		EGUI::Display::Label("%s", _variant.c_str());
+	}
+
+
 }
 
 

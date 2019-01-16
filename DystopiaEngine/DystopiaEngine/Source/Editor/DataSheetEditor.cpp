@@ -13,7 +13,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #include "Editor/DataSheetEditor.h"
 #include "Editor/EditorMain.h"
-#include "Editor/EGUI.h"
 #include "Editor/Payloads.h"
 
 #include "Editor/CommandTypes.h"
@@ -25,7 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/DebugAssert.h"
 
 Editor::DataSheetEditor::DataSheetEditor(void)
-	: mLabel{ "DataSheets" }, mNewAdditionName{}, mnCurrentSheet{ 0 }
+	: mLabel{ "DataSheets" }, mNewAdditionName{}, mnCurrentSheet{ 0 }, mUIVisitor{}
 {}
 
 Editor::DataSheetEditor::~DataSheetEditor(void)
@@ -124,6 +123,7 @@ void Editor::DataSheetEditor::HandleData(Dystopia::DataSheet& _dat)
 	{
 		EGUI::Display::Label("%s", allElements[i]->mName.c_str());
 		auto v = _dat.MagicGet(allElements[i]->mName);
+		v.Visit(mUIVisitor);
 		ImGui::NextColumn();
 	}
 	EGUI::Display::HorizontalSeparator();

@@ -34,6 +34,8 @@ namespace Dystopia
 	{
 	public:
 
+		static constexpr size_t NElements = Ut::SizeofList<AcceptableTypes>::value;
+
 		DataSheet(const HashString& _fullpath);
 		~DataSheet(void);
 
@@ -62,29 +64,6 @@ namespace Dystopia
 			Ut::IsSame<T, char>::value ||
 			Ut::IsSame<T, HashString>::value, T>>
 			bool InsertElement(const HashString& _name, const T& _val);
-
-		auto MagicGet(const HashString& _name)
-		{
-			return auxHelper.GetElement(this, _name);
-		}
-
-	private:
-
-		HashString mCurrentSheetPath;
-		bool mbIsOpened;
-		AutoArray<DataSheetElementBase*> mArrSheetElements;
-
-		void SaveSheet(void);
-		void LoadSheet(void);
-		void DelegateSaveElement(unsigned, DataSheetElementBase*, TextSerialiser&);
-		void DelegateLoadElement(unsigned, TextSerialiser&);
-
-		template <unsigned N, class T = typename Ut::MetaExtract_t<N, AcceptableTypes>::type>
-		void SaveElement(DataSheetElementBase*, TextSerialiser&);
-		template <unsigned N, class T = typename Ut::MetaExtract_t<N, AcceptableTypes>::type>
-		void LoadElement(TextSerialiser&);
-
-		static constexpr size_t NElements = Ut::SizeofList<AcceptableTypes>::value;
 
 		template<typename A>
 		struct AuxIndex;
@@ -133,7 +112,28 @@ namespace Dystopia
 				return mData[n](_call, _name);
 			}
 		};
+
+		auto MagicGet(const HashString& _name)
+		{
+			return auxHelper.GetElement(this, _name);
+		}
+
+	private:
+
+		HashString mCurrentSheetPath;
+		bool mbIsOpened;
+		AutoArray<DataSheetElementBase*> mArrSheetElements;
 		AuxIndex<std::make_index_sequence<NElements>> auxHelper;
+
+		void SaveSheet(void);
+		void LoadSheet(void);
+		void DelegateSaveElement(unsigned, DataSheetElementBase*, TextSerialiser&);
+		void DelegateLoadElement(unsigned, TextSerialiser&);
+
+		template <unsigned N, class T = typename Ut::MetaExtract_t<N, AcceptableTypes>::type>
+		void SaveElement(DataSheetElementBase*, TextSerialiser&);
+		template <unsigned N, class T = typename Ut::MetaExtract_t<N, AcceptableTypes>::type>
+		void LoadElement(TextSerialiser&);
 
 	};
 }
