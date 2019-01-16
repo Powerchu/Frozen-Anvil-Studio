@@ -262,7 +262,13 @@ namespace Dystopia
 		if (vTempFileName.size() > 0)
 		{
 			std::string SceneName = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName();
-			if (FileSys->GetFullPath(SceneName + ".dscene", eFileDir::eResource) != "")
+			if (SceneName.empty() || SceneName == "Untitled")
+			{
+				SceneName = FileSys->GetProjectFolders<std::string>(eFileDir::eResource) + "/Temp/Untitled.dscene";
+				EngineCore::GetInstance()->GetSystem<SceneSystem>()->SaveScene(SceneName, "Untitled");
+				hasSaveFile = true;
+			}
+			else if (FileSys->GetFullPath( SceneName + ".dscene", eFileDir::eResource) != "")
 			{
 				EngineCore::GetInstance()->GetSystem<SceneSystem>()->SaveScene(FileSys->GetFullPath(SceneName + ".dscene", eFileDir::eResource), SceneName);
 				hasSaveFile = true;
@@ -412,7 +418,11 @@ namespace Dystopia
 		mvRecentChanges.clear();
 
 		if (hasSaveFile)
-			EngineCore::GetInstance()->GetSystem<SceneSystem>()->LoadScene(FileSys->GetFullPath(EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName() + ".dscene", eFileDir::eResource));
+		{
+			std::string && SceneName = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName();
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->LoadScene(FileSys->GetFullPath((SceneName) + ".dscene", eFileDir::eResource));
+		}
+			
 	}
 #endif
 	void Dystopia::BehaviourSystem::Update(float _dt)
