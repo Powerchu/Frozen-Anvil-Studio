@@ -52,6 +52,7 @@ bool Dystopia::DataSheet::CloseSheet(bool _save)
 			Dystopia::DefaultAllocator<DataSheetElementBase>::DestructFree(elem);
 
 		mArrSheetElements.clear();
+		mArrNames.clear();
 	}
 	mbIsOpened = false;
 	return !mbIsOpened;
@@ -77,6 +78,20 @@ AutoArray<const char*>& Dystopia::DataSheet::GetAllNames(void)
 	return mArrNames;
 }
 
+bool Dystopia::DataSheet::RemoveElement(const HashString& _name)
+{
+	for (size_t i = 0; i < mArrSheetElements.size(); ++i)
+	{
+		if (mArrSheetElements[i]->mName == _name)
+		{
+			mArrNames.FastRemove(i);
+			mArrSheetElements.FastRemove(i);
+			return true;
+		}
+	}
+	return false;
+}
+
 void Dystopia::DataSheet::SaveSheet(void)
 {
 	auto file = TextSerialiser::OpenFile(mCurrentSheetPath.c_str(), Serialiser::MODE_WRITE);
@@ -91,7 +106,6 @@ void Dystopia::DataSheet::SaveSheet(void)
 
 		file.InsertStartBlock(label.c_str()); 
 		auxHelper.SaveElement(this, mArrSheetElements[i], file);
-		//DelegateSaveElement(mArrSheetElements[i]->GetTypeN(), mArrSheetElements[i], file);
 		file.InsertEndBlock(label.c_str());
 	}
 }
@@ -112,35 +126,9 @@ void Dystopia::DataSheet::LoadSheet()
 		file >> typeN;
 		if (typeN >= 0)
 			auxHelper.LoadElement(this, typeN, file);
-			//DelegateLoadElement(typeN, file);
 		file.ConsumeEndBlock();
 	}
 }
-
-void Dystopia::DataSheet::DelegateSaveElement(unsigned _typeN, DataSheetElementBase* _target, TextSerialiser & _out)
-{
-	switch (_typeN)
-	{
-	case 0: SaveElement<0>(_target, _out); break;
-	case 1: SaveElement<1>(_target, _out); break;
-	case 2: SaveElement<2>(_target, _out); break;
-	case 3: SaveElement<3>(_target, _out); break;
-	case 4: SaveElement<4>(_target, _out); break;
-	};
-}
-
-void Dystopia::DataSheet::DelegateLoadElement(unsigned _typeN, TextSerialiser & _in)
-{
-	switch (_typeN)
-	{
-	case 0: LoadElement<0>(_in); break;			   
-	case 1: LoadElement<1>(_in); break;			   
-	case 2: LoadElement<2>(_in); break;			   
-	case 3: LoadElement<3>(_in); break;			   
-	case 4: LoadElement<4>(_in); break;
-	};
-}
-
 
 
 

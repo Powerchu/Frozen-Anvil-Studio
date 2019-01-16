@@ -46,6 +46,7 @@ namespace Dystopia
 
 		AutoArray<DataSheetElementBase*>& GetAllElements(void);
 		AutoArray<const char*>& GetAllNames(void);
+		bool RemoveElement(const HashString& _name);
 
 		template<typename T, typename SFNAE = Ut::EnableIf_t<Ut::IsSame<T, int>::value ||
 			Ut::IsSame<T, float>::value ||
@@ -132,8 +133,6 @@ namespace Dystopia
 
 		void SaveSheet(void);
 		void LoadSheet(void);
-		void DelegateSaveElement(unsigned, DataSheetElementBase*, TextSerialiser&);
-		void DelegateLoadElement(unsigned, TextSerialiser&);
 
 		template <unsigned N, class T = typename Ut::MetaExtract_t<N, AcceptableTypes>::type>
 		void SaveElement(DataSheetElementBase*, TextSerialiser&);
@@ -176,6 +175,7 @@ inline bool Dystopia::DataSheet::InsertElement(const HashString & _name, const T
 	
 	auto ptr = DefaultAllocator<DataSheetElement<T>>::ConstructAlloc(_name, _val);
 	mArrSheetElements.Insert(ptr);
+	mArrNames.Insert(ptr->mName.c_str());
 	return true;
 }
 

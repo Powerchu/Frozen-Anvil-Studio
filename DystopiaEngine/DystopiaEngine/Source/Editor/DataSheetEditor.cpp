@@ -127,10 +127,7 @@ void Editor::DataSheetEditor::HandleSheets(void)
 	mnSheetSelection = Math::Clamp(mnSheetSelection, 0, static_cast<int>(db->GetAllNames().size()));
 	mnTypeSelection = Math::Clamp(mnTypeSelection, 0, static_cast<int>(Dystopia::DataSheet::NElements));
 	EGUI::Display::HorizontalSeparator();
-	if (EGUI::Display::DropDownSelection("Add To Sheet", mnSheetSelection, db->GetAllNames(), 150.f))
-	{
-
-	}
+	EGUI::Display::DropDownSelection("Add To Sheet", mnSheetSelection, db->GetAllNames(), 150.f);
 	if (mnSheetSelection >= 0 && mnSheetSelection < db->GetAllNames().size())
 	{
 		EGUI::Display::TextField("Element Name", buffer1, 256, true);
@@ -197,8 +194,6 @@ bool Editor::DataSheetEditor::HandleInserting(const char* _name, unsigned _n)
 void Editor::DataSheetEditor::HandleRemove(void)
 {
 	auto db = Dystopia::EngineCore::Get<Dystopia::DatabaseSystem>();
-	if (db->GetAllSheets().size() < 0)
-		return;
 	
 	mnRemoveSheetSelection = Math::Clamp(mnRemoveSheetSelection, 0, static_cast<int>(db->GetAllNames().size()));
 	auto prev = mnRemoveSheetSelection;
@@ -207,11 +202,14 @@ void Editor::DataSheetEditor::HandleRemove(void)
 		if (prev != mnRemoveSheetSelection)
 			mnRemoveElementSelection = 0;
 	}
+
+	if (db->GetAllSheets().size() < 1)
+		return;
+
 	auto& sheet = db->GetAllSheets()[mnRemoveSheetSelection].second;
 	auto& elems = sheet.GetAllElements();
 
 	mnRemoveElementSelection = Math::Clamp(mnRemoveElementSelection, 0, static_cast<int>(elems.size()));
-	EGUI::SameLine();
 	if (!sheet.IsOpened())
 	{
 		EGUI::Display::Label("Sheet is <closed>");
@@ -222,9 +220,15 @@ void Editor::DataSheetEditor::HandleRemove(void)
 		EGUI::Display::Label("Sheet is <empty>");
 		return;
 	}
-
-
-	EGUI::Display::DropDownSelection("The Element Name", mnRemoveElementSelection,);
+	EGUI::Display::DropDownSelection("The Element Named", mnRemoveElementSelection, sheet.GetAllNames(), 150.f);
+	EGUI::SameLine();
+	if (EGUI::Display::Button("Delete") && mnRemoveElementSelection < elems.size())
+	{
+		if (sheet.RemoveElement(elems[mnRemoveElementSelection]->mName))
+			DEBUG_PRINT(eLog::MESSAGE, "Successfully deleted element");
+		else
+			DEBUG_PRINT(eLog::MESSAGE, "Failed to delete element");
+	}
 }
 
 void Editor::DataSheetEditor::TableHeaders(void)
@@ -271,6 +275,7 @@ void Editor::DataSheetEditor::HandleData(const HashString& _name, Dystopia::Data
 	else
 	{
 		bool close = false;
+		bool unload = false;
 		ImGui::BeginGroup();
 		ImGui::Columns(4, _dat.GetOpened().c_str());
 		for (int i = 0; i < allElements.size(); ++i)
@@ -279,8 +284,7 @@ void Editor::DataSheetEditor::HandleData(const HashString& _name, Dystopia::Data
 			if (!ImGui::GetColumnIndex() && i == midpoint)
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0.f, 0.f });
-				if (EGUI::Display::Button("Unload", btnSize))
-					db->UnloadData(_name);
+				unload = EGUI::Display::Button("Unload", btnSize);
 				EGUI::SameLine();
 				EGUI::Display::Label("%s", _name.c_str());
 				EGUI::SameLine();
@@ -298,6 +302,8 @@ void Editor::DataSheetEditor::HandleData(const HashString& _name, Dystopia::Data
 		ImGui::EndGroup();
 		if (close)
 			_dat.CloseSheet();
+		if (unload)
+			db->UnloadData(_name);
 	}
 	ImGui::Separator();
 }
