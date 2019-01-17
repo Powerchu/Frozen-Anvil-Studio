@@ -83,6 +83,9 @@ namespace Dystopia
 		bool isColliding(Convex& other_col);
 		bool isColliding(Convex * const & other_col);
 
+		bool isColliding(PointCollider & other_col);
+		bool isColliding(PointCollider * const & other_col);
+
 	private:
 		float m_radius;
 

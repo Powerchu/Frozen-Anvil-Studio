@@ -107,8 +107,23 @@ struct MetaData<_STRUCT_>                                                       
 
 //MetaData<_STRUCT_>::Map_t MetaData<_STRUCT_>::mMetaMap {PP_FOREACH(REFLECT_AUX, (_STRUCT_), __VA_ARGS__)   };                 
 
+template <typename T>
+struct  GET_MEMPTR_TYPE_AUX
+{
+
+};
+
+template <typename T, typename C>
+struct  GET_MEMPTR_TYPE_AUX<T C::*>
+{
+	using type = T;
+};
+
 template <auto _type>
-struct  GET_MEMPTR_TYPE {};
+struct  GET_MEMPTR_TYPE 
+{
+	using type = typename GET_MEMPTR_TYPE_AUX<decltype(_type)>::type;
+};
 
 template <typename T, typename C, T C::* _type>
 struct  GET_MEMPTR_TYPE<_type>
@@ -116,9 +131,15 @@ struct  GET_MEMPTR_TYPE<_type>
 	using type = T;
 };
 
+template <typename C, typename T>
+constexpr auto GenReflectedData(T C::* ptr)
+{
+	return ReflectedData<C, T>{ ptr };
+}
 
 
-#define GENERATE_REFLECT_DATA(_TYPE_, _MEMBER_) ReflectedData<_TYPE_, typename GET_MEMPTR_TYPE<&_TYPE_::_MEMBER_>::type >{ &_TYPE_::_MEMBER_ }
+
+#define GENERATE_REFLECT_DATA(_TYPE_, _MEMBER_) GenReflectedData( &_TYPE_::_MEMBER_ )
 
 #define REFLECT_AUX(_TYPE_, _MEMBER_)           std::pair<const char*,Dystopia::TypeErasure::ReadWriteObject> { STRINGIFY(_MEMBER_),  GENERATE_REFLECT_DATA(_TYPE_,_MEMBER_).Get() } \
 

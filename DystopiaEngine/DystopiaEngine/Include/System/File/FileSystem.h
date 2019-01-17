@@ -128,7 +128,7 @@ namespace Dystopia
 		/*EXPERIMENTAL FUNCTIONS*/
 
 		/*Create a Track File Event, The EventName should be the filepath*/
-		FileTrackInfoID_t TrackFile(const HashString & _FileName, eFileDir _ParentDirectory = eFileDir::eResource);
+		FileTrackInfoID_t TrackFile(HashString _FileName, eFileDir _ParentDirectory = eFileDir::eResource);
 
 		void UnbindFileTrackEvent(FileEventCallBack_t _EventID, FileTrackInfoID_t _TrackID);
 		void UnbindAllTrackEvent (FileTrackInfoID_t _TrackID);
