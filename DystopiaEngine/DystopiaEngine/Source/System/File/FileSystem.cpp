@@ -120,20 +120,38 @@ namespace Dystopia
 		for (auto & TrackJob : mDetectionFiles)
 		{
 			/*Get the list of file changes in the directory*/
-			GetChangesInfo(*TrackJob, ListOfFileNames, 100);
-			for (auto & names : ListOfFileNames)
+			auto num = GetChangesInfo(*TrackJob, ListOfFileNames, 100);
+
+			for (unsigned i=0;i<num;++i)
 			{
+				auto & names = ListOfFileNames[i];
 				/*
 				  Check that the list of names contains the file that the user is
 				  interested in(Stored in DetectionInfo.FileName
 				*/
-				if (IsSameFile(TrackJob->mParentDirectory + "/" + names, TrackJob->mFileName) || IsSameFile(TrackJob->mParentDirectory + "/" +  names , TrackJob->mParentDirectory + "/" + TrackJob->mFileName))
+				size_t pos;
+				while ((pos = names.find_first_of("//")) != OString::nPos)
+				{
+					names.replace(pos, strlen("//") - 1, "/");
+				}
+				while ((pos = names.find_first_of("\\\\")) != OString::nPos)
+				{
+					names.replace(pos, strlen("\\\\") - 1, "/");
+				}
+				while ((pos = names.find_first_of("\\"))  != OString::nPos)
+				{
+					names.replace(pos, strlen("\\") - 1, "/");
+				}
+
+				names = Ut::Move(TrackJob->mParentDirectory + "/" + names);
+				if ((names  == TrackJob->mFileName) || names == TrackJob->mParentDirectory + "/" + TrackJob->mFileName)
 				{
 					/*Find the Arrays of EventCallBack for the current Job and invoke them*/
 					auto & ref = mMapOfTrackInfo[TrackJob->mFileHandle];
 					for (auto & f : ref)
 					{
 						f.second(TrackJob->mFileName.c_str());
+						f.second();
 					}
 					break;
 				}
@@ -714,10 +732,27 @@ namespace Dystopia
 		return HashString{};
 	}
 
-	FileTrackInfoID_t FileSystem::TrackFile(const HashString & _EventName, eFileDir _ParentDirectory)
+	FileTrackInfoID_t FileSystem::TrackFile(HashString _EventName, eFileDir _ParentDirectory)
 	{
+		size_t pos;
+		while ((pos = _EventName.find_first_of("//")) != OString::nPos)
+		{
+			_EventName[pos] = '/';
+			_EventName.erase(pos+1, 1);
+		}
+		while ((pos = _EventName.find_first_of("\\\\")) != OString::nPos)
+		{
+			_EventName[pos] = '/';
+			_EventName.erase(pos + 1, 1);
+		}
+		while ((pos = _EventName.find_first_of("\\")) != OString::nPos)
+		{
+			_EventName[pos] = '/';
+		}
+
 
 		DetectionInfo * pDetectionInfo = nullptr;
+
 		/*Find for existing Files*/
 		for (auto const & elem : mDetectionFiles)
 		{
