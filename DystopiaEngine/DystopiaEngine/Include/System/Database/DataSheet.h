@@ -160,7 +160,7 @@ inline void Dystopia::DataSheet::SetElement(const HashString& _name, const T& _v
 {
 	for (const auto& elem : mArrSheetElements)
 		if (elem->mName == _name)
-			(*static_cast<const DataSheetElement<T>*>(elem))(_val);
+			(*static_cast<DataSheetElement<T>*>(elem))(_val);
 }
 
 template<typename T, typename SFNAE>
@@ -170,8 +170,13 @@ inline bool Dystopia::DataSheet::InsertElement(const HashString & _name, const T
 		return false;
 
 	for (const auto& elem : mArrSheetElements)
+	{
 		if (elem->mName == _name)
-			return false;
+		{
+			SetElement<T>(_name, _val);
+			return true;
+		}
+	}
 	
 	auto ptr = DefaultAllocator<DataSheetElement<T>>::ConstructAlloc(_name, _val);
 	mArrSheetElements.Insert(ptr);

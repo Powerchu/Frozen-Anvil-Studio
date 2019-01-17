@@ -171,7 +171,7 @@ bool Editor::DataSheetEditor::HandleInserting(const char* _name, unsigned _n)
 			}
 			if (success)
 			{
-				DEBUG_PRINT(eLog::MESSAGE, "Successfully inserted element");
+				DEBUG_PRINT(eLog::MESSAGE, "Successfully inserted element OR updated existing element");
 				strcpy_s(buffer2, 256, "");
 				i = 0;
 				f = 0.f;

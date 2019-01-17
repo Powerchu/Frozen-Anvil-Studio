@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
 #include <string>
+#include "Globals.h"
 
 namespace Dystopia
 {
@@ -36,8 +37,8 @@ namespace Dystopia
 		void Bind(int = 0) const noexcept;
 		void Unbind(void) const noexcept;
 
-		unsigned GetWidth(void) const noexcept;
-		unsigned GetHeight(void) const noexcept;
+		_DLL_EXPORT unsigned GetWidth(void) const noexcept;
+		_DLL_EXPORT unsigned GetHeight(void) const noexcept;
 
 		void SetWidth(unsigned) noexcept;
 		void SetHeight(unsigned) noexcept;
