@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Globals.h"
 #include <map>
 #include <utility>
+#include "Editor/EGUI.h"
 
 
 namespace Dystopia
@@ -54,9 +55,9 @@ namespace Dystopia
 		InputManager(void);
 		~InputManager(void);
 
-		bool Init(void);
-		void Update(float _dt);
-		void Shutdown(void);
+		bool Init(void) override;
+		void Update(float _dt) override;
+		void Shutdown(void) override;
 
 		void PostUpdate() override;
 
@@ -127,6 +128,19 @@ namespace Dystopia
 		KeyboardState mKeyBoardState;
 		KeyboardState mPrevKeyBoardState;
 
+#if EDITOR	
+		struct ComboStruct final
+		{
+			EGUI::Display::ComboFilterState PosFilter;
+			EGUI::Display::ComboFilterState NegFilter;
+			EGUI::Display::ComboFilterState AltPosFilter;
+			EGUI::Display::ComboFilterState AltNegFilter;
+
+			int TypeSelectedInd = 0;
+			int AxisSelectedInd = 0;
+		};
+#endif
+
 		struct VirtualButton
 		{
 			VirtualButton()
@@ -161,9 +175,7 @@ namespace Dystopia
 			float mfGravity			= 3.000F;
 			float mfDeadRange		= 0.010F;
 			float mfSensitivity		= 3.000F;
-
-			bool mbSnapping	= false;
-			bool mbInvert	= false;
+			
 
 			void UpdateName(const char* _newName)
 			{
@@ -216,7 +228,13 @@ namespace Dystopia
 				}
 			}
 		};
-		
+
+		bool mbSnapping = false;
+		bool mbInvert = false;
+
+		// ComboFilterStates Array
+		AutoArray<ComboStruct> marrCombos;
+
 		// Virtual Button/Axis Mapping
 		std::map<HashString, VirtualButton> mAxisMapping;
 

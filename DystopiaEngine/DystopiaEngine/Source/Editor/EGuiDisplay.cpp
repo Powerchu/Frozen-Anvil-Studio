@@ -11,6 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#include "System/Input/InputSystem.h"
 #if EDITOR
 #include <Windows.h>
 #include <consoleapi2.h>
@@ -305,7 +306,7 @@ namespace EGUI
 			return clicked;
 		}
 
-		bool CheckBox(const char * _label, bool* _outputBool, bool _showLabel)
+		bool CheckBox(const char * _label, bool* _outputBool, bool _showLabel, const char* _tooltip)
 		{
 			if (_showLabel)
 			{
@@ -313,6 +314,17 @@ namespace EGUI
 				Label(_label);
 				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+
+			if (nullptr != _tooltip)
+			{
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::Text(_tooltip);
+					ImGui::Separator();
+					ImGui::EndTooltip();
+				}
 			}
 		    //HashString invi{ "##checkBox" };
 			//invi += _label;
@@ -1060,7 +1072,83 @@ namespace EGUI
 			return ret;
 		}
 
-		bool ComboFilter(const char *id, char *buffer, int bufferlen, const char **hints, int num_hints, ComboFilterState &s) {
+		bool ComboFilter_DrawPopup(ComboFilterState& state, int START, const char** ENTRIES, const int ENTRY_COUNT)
+		{
+			UNUSED_PARAMETER(START);
+			using namespace ImGui;
+			bool clicked = false;
+
+			// Grab the position for the popup
+			ImVec2 pos = GetItemRectMin(); pos.y += GetItemRectSize().y;
+			const ImVec2 size = ImVec2(GetItemRectSize().x - 280, GetItemsLineHeightWithSpacing() * 4);
+
+			PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+
+			const ImGuiWindowFlags flags =
+				ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoResize |
+				ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_AlwaysVerticalScrollbar |
+				ImGuiWindowFlags_NoSavedSettings |
+				0; //ImGuiWindowFlags_ShowBorders;
+
+			SetNextWindowFocus();
+
+			SetNextWindowPos(pos);
+			SetNextWindowSize(size);
+			Begin("##combo_filter", nullptr, flags);
+
+			PushAllowKeyboardFocus(true);
+
+			for (int i = 0; i < ENTRY_COUNT; i++) 
+			{
+				// Track if we're drawing the active index so we
+				// can scroll to it if it has changed
+				const bool isIndexActive = state.activeIdx == i;
+
+				if (isIndexActive) {
+					// Draw the currently 'active' item differently
+					// ( used appropriate colors for your own style )
+					PushStyleColor(ImGuiCol_Border, ImVec4(1, 1, 0, 1));
+				}
+
+				PushID(i);
+				if (Selectable(ENTRIES[i], isIndexActive, ImGuiSelectableFlags_PressedOnClick, ImVec2(0, GetItemsLineHeightWithSpacing() * 0.5f))) {
+					// And item was clicked, notify the input
+					// callback so that it can modify the input buffer
+					state.activeIdx = i;
+					clicked = true;
+				}
+
+				//if (IsKeyPressed(GetIO().KeyMap[ImGuiKey_Enter])) {
+				//	// Allow ENTER key to select current highlighted item (w/ keyboard navigation)
+				//	state.activeIdx = i;
+				//	clicked = true;
+				//}
+
+				if (isIndexActive) {
+					if (state.selectionChanged) {
+						// Make sure we bring the currently 'active' item into view.
+						SetScrollHere();
+						state.selectionChanged = false;
+					}
+
+					PopStyleColor(1);
+				}
+
+				PopID();
+
+			}
+
+			PopAllowKeyboardFocus();
+			End();
+			PopStyleVar(1);
+
+			return clicked;
+		}
+
+
+		bool ComboFilter(const char *id, char *buffer, const int bufferlen, const char **hints, const int num_hints, ComboFilterState &s) {
 			struct fuzzy {
 				static int score(const char *str1, const char *str2)
 				{
@@ -1104,8 +1192,9 @@ namespace EGUI
 			};
 
 			using namespace ImGui;
-
+			ImGui::PushItemWidth(220.f);
 			bool done = InputText(id, buffer, bufferlen, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue);
+			ImGui::PopItemWidth();
 			const bool hot = s.activeIdx >= 0 && strcmp(buffer, hints[s.activeIdx]);
 			if (hot) {
 				int new_idx = fuzzy::search(buffer, num_hints, hints);

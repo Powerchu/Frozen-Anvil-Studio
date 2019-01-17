@@ -34,6 +34,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Gizmo.h"
 
 #include "../../Dependancies/ImGui/imgui.h"
+#include "../../../Dependancies/ImGui/imgui_internal.h"
 #include <string>
 
 /* forward declare just becuz */
@@ -248,7 +249,7 @@ namespace EGUI
 		// The checkbox is clicked (toggleMe if its true or false does not matter). Do something here:
 		}
 		======================================================================================================================= */
-		bool CheckBox(const char * _label, bool *_pOutBool, bool _showLabel = true);
+		bool CheckBox(const char * _label, bool *_pOutBool, bool _showLabel = true, const char* _tooltip = nullptr);
 		/* =======================================================================================================================
 		Brief:
 		Creates a radio button for a boolean variable. Returns true when the radiois clicked, toggles the _pOutBool
@@ -634,8 +635,8 @@ namespace EGUI
 		
 		struct ComboFilterState
 		{
-			int  activeIdx;         // Index of currently 'active' item by use of up/down keys
-			bool selectionChanged;  // Flag to help focus the correct item when selecting active item
+			int  activeIdx = 0;         // Index of currently 'active' item by use of up/down keys
+			bool selectionChanged = false;  // Flag to help focus the correct item when selecting active item
 		};
 
 		/* ====================================================================================================================
@@ -644,77 +645,7 @@ namespace EGUI
 		Usage:
 		*To be written*
 		======================================================================================================================= */
-		inline bool ComboFilter_DrawPopup(ComboFilterState& state, int START, const char **ENTRIES, const int ENTRY_COUNT)
-		{
-			UNUSED_PARAMETER(START);
-
-			using namespace ImGui;
-			bool clicked = false;
-
-			// Grab the position for the popup
-			ImVec2 pos = GetItemRectMin(); pos.y += GetItemRectSize().y;
-			const ImVec2 size = ImVec2(GetItemRectSize().x - 60, GetItemsLineHeightWithSpacing() * 4);
-
-			PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-
-			const ImGuiWindowFlags flags =
-				ImGuiWindowFlags_NoTitleBar |
-				ImGuiWindowFlags_NoResize |
-				ImGuiWindowFlags_NoMove |
-				ImGuiWindowFlags_HorizontalScrollbar |
-				ImGuiWindowFlags_NoSavedSettings |
-				0; //ImGuiWindowFlags_ShowBorders;
-
-			SetNextWindowFocus();
-
-			SetNextWindowPos(pos);
-			SetNextWindowSize(size);
-			Begin("##combo_filter", nullptr, flags);
-
-			PushAllowKeyboardFocus(false);
-
-			for (int i = 0; i < ENTRY_COUNT; i++) {
-				// Track if we're drawing the active index so we
-				// can scroll to it if it has changed
-				const bool isIndexActive = state.activeIdx == i;
-
-				if (isIndexActive) {
-					// Draw the currently 'active' item differently
-					// ( used appropriate colors for your own style )
-					PushStyleColor(ImGuiCol_Border, ImVec4(1, 1, 0, 1));
-				}
-
-				PushID(i);
-				if (Selectable(ENTRIES[i], isIndexActive)) {
-					// And item was clicked, notify the input
-					// callback so that it can modify the input buffer
-					state.activeIdx = i;
-					clicked = true;
-				}
-				if (IsItemFocused() && IsKeyPressed(GetIO().KeyMap[ImGuiKey_Enter])) {
-					// Allow ENTER key to select current highlighted item (w/ keyboard navigation)
-					state.activeIdx = i;
-					clicked = true;
-				}
-				PopID();
-
-				if (isIndexActive) {
-					if (state.selectionChanged) {
-						// Make sure we bring the currently 'active' item into view.
-						SetScrollHere();
-						state.selectionChanged = false;
-					}
-
-					PopStyleColor(1);
-				}
-			}
-
-			PopAllowKeyboardFocus();
-			End();
-			PopStyleVar(1);
-
-			return clicked;
-		}
+		bool ComboFilter_DrawPopup(ComboFilterState& state, int START, const char **ENTRIES, const int ENTRY_COUNT);
 
 
 		/* =======================================================================================================================

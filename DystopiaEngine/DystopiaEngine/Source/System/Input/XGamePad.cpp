@@ -54,7 +54,7 @@ XGamePad::~XGamePad(void)
 
 void XGamePad::PollInputs(void)
 {
-	DWORD prevPacket = mpxState->dwPacketNumber;
+	const DWORD prevPacket = mpxState->dwPacketNumber;
 	ZeroMemory(&*mpxState, sizeof(XINPUT_STATE));
 	mbConnected = XInputGetState(mdwID, &*mpxState) == ERROR_SUCCESS;
 	mbChangeDetected = prevPacket != mpxState->dwPacketNumber;
@@ -153,7 +153,7 @@ void XGamePad::UpdateButtons(void)
 	msButtons = mpxState->Gamepad.wButtons;
 	for (unsigned i = eButton::XBUTTON_DPAD_UP, Index = 0; i < eButton::XBUTTON_LAST; ++Index,++i)
 	{
-		bool pressed = msButtons & g_ControllerHexa[Index];
+		const bool pressed = msButtons & g_ControllerHexa[Index];
 		auto& btn = mArrXBtnStates[Index];
 
 		btn.mbTriggered = pressed && !btn.mbPressed;
@@ -199,16 +199,19 @@ float XGamePad::GetTriggers(int _i) const
 
 bool XGamePad::IsKeyPressed(eButton _btn) const
 {
+	if (_btn > eXBUTTON_LAST) return false;
 	return mArrXBtnStates[_btn].mbPressed;
 }
 
 bool XGamePad::IsKeyTriggered(eButton _btn) const
 {
+	if (_btn > eXBUTTON_LAST) return false;
 	return mArrXBtnStates[_btn].mbTriggered;
 }
 
 bool XGamePad::IsKeyReleased(eButton _btn) const
 {
+	if (_btn > eXBUTTON_LAST) return false;
 	return mArrXBtnStates[_btn].mbReleased;
 }
 

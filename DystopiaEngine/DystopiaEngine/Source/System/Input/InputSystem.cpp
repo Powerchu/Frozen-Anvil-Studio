@@ -162,7 +162,7 @@ namespace
 void Dystopia::InputManager::LoadDefaultUserKeys(void)
 {
 	MapButton("Horizontal", KEYBOARD_RIGHT, KEYBOARD_LEFT);
-	//MapButton("Vertical", KEYBOARD_UP, KEYBOARD_DOWN);
+	MapButton("Vertical", KEYBOARD_UP, KEYBOARD_DOWN);
 }
 
 
@@ -225,11 +225,19 @@ void Dystopia::InputManager::Update(const float _dt)
 	{
 		if (GetKey(btn.mPosBtn) || GetKey(btn.mAltPosBtn))
 		{
+			if (mbSnapping && btn.mfRetValue < 0.f)
+			{
+				btn.mfRetValue = 0.0f;
+			}
 			btn.Modify(1 * btn.mfSensitivity * _dt);
 		}
 
 		if (GetKey(btn.mNegBtn) || GetKey(btn.mAltNegBtn))
 		{
+			if (mbSnapping && btn.mfRetValue > 0.f)
+			{
+				btn.mfRetValue = 0.0f;
+			}
 			btn.Modify(-1 * btn.mfSensitivity * _dt);
 		}
 
@@ -338,15 +346,17 @@ _DLL_EXPORT bool Dystopia::InputManager::GetButtonDown(const char* _KeyName) con
 	{
 		return false;
 	}
-	if (iterator->second.mPosBtn >= eButton::XBUTTON_DPAD_UP)
+	/*if (iterator->second.mPosBtn >= eButton::XBUTTON_DPAD_UP)
 	{
 		return mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP));
 	}
 	if (iterator->second.mAltPosBtn >= eButton::XBUTTON_DPAD_UP)
 	{
 		return mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
-	}
-	return GetKeyDown(iterator->second.mPosBtn) || GetKeyDown(iterator->second.mAltPosBtn);
+	}*/
+	return GetKeyDown(iterator->second.mPosBtn) || GetKeyDown(iterator->second.mAltPosBtn)
+			|| mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP))
+			|| mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
 }
 
 _DLL_EXPORT bool Dystopia::InputManager::GetButton(const char* _KeyName) const noexcept
@@ -356,15 +366,17 @@ _DLL_EXPORT bool Dystopia::InputManager::GetButton(const char* _KeyName) const n
 	{
 		return false;
 	}
-	if (iterator->second.mPosBtn >= eButton::XBUTTON_DPAD_UP)
+	/*if (iterator->second.mPosBtn >= eButton::XBUTTON_DPAD_UP)
 	{
 		return mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP));
 	}
 	if (iterator->second.mAltPosBtn >= eButton::XBUTTON_DPAD_UP)
 	{
 		return mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
-	}
-	return GetKey(iterator->second.mPosBtn) || GetKey(iterator->second.mAltPosBtn);
+	}*/
+	return GetKey(iterator->second.mPosBtn) || GetKey(iterator->second.mAltPosBtn)
+		|| mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP))
+		|| mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
 }
 
 _DLL_EXPORT bool Dystopia::InputManager::GetButtonUp(const char* _KeyName) const noexcept
@@ -374,15 +386,17 @@ _DLL_EXPORT bool Dystopia::InputManager::GetButtonUp(const char* _KeyName) const
 	{
 		return false;
 	}
-	if (iterator->second.mPosBtn >= eButton::XBUTTON_DPAD_UP)
+	/*if (iterator->second.mPosBtn >= eButton::XBUTTON_DPAD_UP)
 	{
 		return mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP));
 	}
 	if (iterator->second.mAltPosBtn >= eButton::XBUTTON_DPAD_UP)
 	{
 		return mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
-	}
-	return GetKeyUp(iterator->second.mPosBtn) || GetKeyUp(iterator->second.mAltPosBtn);
+	}*/
+	return GetKeyUp(iterator->second.mPosBtn) || GetKeyUp(iterator->second.mAltPosBtn)
+		|| mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP))
+		|| mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
 }
 
 _DLL_EXPORT float Dystopia::InputManager::GetAxis(const char * _BtnName) const noexcept
@@ -475,19 +489,26 @@ void Dystopia::InputManager::EditorUI()
 
 	if (EGUI::Display::CollapsingHeader("Axes"))
 	{
-		
 		static char buffer1[512];
 
+		auto tempComboStateCount = mAxisMapping.size();
+		for (auto i = 0; i < tempComboStateCount; i++)
+		{
+			marrCombos.Insert(ComboStruct());
+		}
+
 		EGUI::Indent();
+		int mapCount = 0;
 		for (auto &[key, val] : mAxisMapping)
 		{
+			EGUI::PushID(val.mPosBtn);
 			if (EGUI::Display::CollapsingHeader(key.c_str()))
 			{
-				EGUI::Indent(10);
-				EGUI::PushLeftAlign(128.f);
+				EGUI::Indent();
+				EGUI::PushLeftAlign(140.f);
 				// Name
 				strcpy_s(buffer1, 512, key.c_str());
-				if (EGUI::Display::TextField("Name", buffer1, 128, true, 150))
+				if (EGUI::Display::TextField("Name", buffer1, 128, true, 220))
 				{
 					val.mName = static_cast<const char *>(buffer1);
 					auto nodeHandler = mAxisMapping.extract(key);
@@ -497,12 +518,12 @@ void Dystopia::InputManager::EditorUI()
 
 				// Description
 				strcpy_s(buffer1, 512, val.mPosDescription.c_str());
-				if (EGUI::Display::TextField("(+) Desc", buffer1, 128, true, 150))
+				if (EGUI::Display::TextField("(+) Desc", buffer1, 128, true, 220))
 				{
 					val.mPosDescription = static_cast<const char *>(buffer1);
 				}
 				strcpy_s(buffer1, 512, val.mNegDescription.c_str());
-				if (EGUI::Display::TextField("(-) Desc", buffer1, 128, true, 150))
+				if (EGUI::Display::TextField("(-) Desc", buffer1, 128, true, 220))
 				{
 					val.mNegDescription = static_cast<const char *>(buffer1);
 				}
@@ -510,11 +531,7 @@ void Dystopia::InputManager::EditorUI()
 				/*
 				 * Combo States
 				 */
-				static EGUI::Display::ComboFilterState sP = { 0 };
-				static EGUI::Display::ComboFilterState sN = { 0 };
-				static EGUI::Display::ComboFilterState sAP = { 0 };
-				static EGUI::Display::ComboFilterState sAN = { 0 };
-				static char buf1[256] = "Type Button Name Here...";
+				static char buf1[128] = "Type Button Name Here...";
 
 				/*
 				 * Positive Button
@@ -525,12 +542,13 @@ void Dystopia::InputManager::EditorUI()
 				if (mBtnTemp != mButtonNames.end())
 				{
 					mBtnTempName = mBtnTemp->second;
-					strcpy_s(buf1, 256, mBtnTempName.c_str());
+					strcpy_s(buf1, 128, mBtnTempName.c_str());
 				}
 
 				EGUI::Display::Label("(+) Button");
-				EGUI::SameLine();
-				if (EGUI::Display::ComboFilter("btnCombo", buf1, IM_ARRAYSIZE(buf1), hints, IM_ARRAYSIZE(hints), sP))
+				EGUI::SameLine(24.f);
+				EGUI::PushID(static_cast<int>(mBtnTempName.id()));
+				if (EGUI::Display::ComboFilter("btnCombo", buf1, IM_ARRAYSIZE(buf1), hints, IM_ARRAYSIZE(hints), marrCombos[mapCount].PosFilter))
 				{
 					for (auto &[btn, name] : mButtonNames)
 					{
@@ -541,6 +559,8 @@ void Dystopia::InputManager::EditorUI()
 						}
 					}
 				}
+				EGUI::PopID();
+
 
 				/*
 				* Negative Button
@@ -550,12 +570,13 @@ void Dystopia::InputManager::EditorUI()
 				if (mBtnTemp != mButtonNames.end())
 				{
 					mBtnTempName = mBtnTemp->second;
-					strcpy_s(buf1, 256, mBtnTempName.c_str());
+					strcpy_s(buf1, 128, mBtnTempName.c_str());
 				}
 
 				EGUI::Display::Label("(-) Button");
-				EGUI::SameLine();
-				if (EGUI::Display::ComboFilter("btnNegCombo", buf1, IM_ARRAYSIZE(buf1), hints, IM_ARRAYSIZE(hints), sN))
+				EGUI::SameLine(24.f);
+				EGUI::PushID(static_cast<int>(mBtnTempName.id()));
+				if (EGUI::Display::ComboFilter("btnNegCombo", buf1, IM_ARRAYSIZE(buf1), hints, IM_ARRAYSIZE(hints), marrCombos[mapCount].NegFilter))
 				{
 					for (auto &[btn, name] : mButtonNames)
 					{
@@ -566,6 +587,7 @@ void Dystopia::InputManager::EditorUI()
 						}
 					}
 				}
+				EGUI::PopID();
 
 				/*
 				* Alt Positive Button
@@ -575,12 +597,13 @@ void Dystopia::InputManager::EditorUI()
 				if (mBtnTemp != mButtonNames.end())
 				{
 					mBtnTempName = mBtnTemp->second;
-					strcpy_s(buf1, 256, mBtnTempName.c_str());
+					strcpy_s(buf1, 128, mBtnTempName.c_str());
 				}
 
-				EGUI::Display::Label("Alt (+) Button");
-				EGUI::SameLine();
-				if (EGUI::Display::ComboFilter("btnAltPosCombo", buf1, IM_ARRAYSIZE(buf1), hints, IM_ARRAYSIZE(hints), sAP))
+				EGUI::Display::Label("Alt (+) Btn");
+				EGUI::SameLine(16.f);
+				EGUI::PushID(static_cast<int>(mBtnTempName.id()));
+				if (EGUI::Display::ComboFilter("btnAltPosCombo", buf1, IM_ARRAYSIZE(buf1), hints, IM_ARRAYSIZE(hints), marrCombos[mapCount].AltPosFilter))
 				{
 					for (auto &[btn, name] : mButtonNames)
 					{
@@ -591,6 +614,7 @@ void Dystopia::InputManager::EditorUI()
 						}
 					}
 				}
+				EGUI::PopID();
 
 				/*
 				* Alt Negative Button
@@ -600,12 +624,13 @@ void Dystopia::InputManager::EditorUI()
 				if (mBtnTemp != mButtonNames.end())
 				{
 					mBtnTempName = mBtnTemp->second;
-					strcpy_s(buf1, 256, mBtnTempName.c_str());
+					strcpy_s(buf1, 128, mBtnTempName.c_str());
 				}
 
-				EGUI::Display::Label("Alt (-) Button");
-				EGUI::SameLine();
-				if (EGUI::Display::ComboFilter("btnAltNegCombo", buf1, IM_ARRAYSIZE(buf1), hints, IM_ARRAYSIZE(hints), sAN))
+				EGUI::Display::Label("Alt (-) Btn");
+				EGUI::SameLine(16.f);
+				EGUI::PushID(static_cast<int>(mBtnTempName.id()));
+				if (EGUI::Display::ComboFilter("btnAltNegCombo", buf1, IM_ARRAYSIZE(buf1), hints, IM_ARRAYSIZE(hints), marrCombos[mapCount].AltNegFilter))
 				{
 					for (auto &[btn, name] : mButtonNames)
 					{
@@ -616,6 +641,7 @@ void Dystopia::InputManager::EditorUI()
 						}
 					}
 				}
+				EGUI::PopID();
 
 
 				/* Other Settings */
@@ -623,9 +649,30 @@ void Dystopia::InputManager::EditorUI()
 				EGUI::Display::DragFloat("Dead", &val.mfDeadRange, 0.005f, -100.f, 100.f, false, 64.f);
 				EGUI::Display::DragFloat("Sensitivity", &val.mfSensitivity, 0.05f, -100.f, 100.f, false, 64.f);
 
+				// Snapping Checkbox
+				EGUI::Display::CheckBox("Snap", &mbSnapping,true
+										, "if we have input in opposite direction of current, \ndo we jump to neutral and continue from there?");
+	
+				// Invert Checkbox
+				EGUI::Display::CheckBox("Invert", &mbInvert, true, "flip positive and negative?");
+
+				static std::string textStates[3]{ "Key or Mouse Button", "Mouse Movement", "Joystick Axis" };
+				if (EGUI::Display::DropDownSelection("Type", marrCombos[mapCount].TypeSelectedInd, textStates, 220.f))
+				{
+					
+				};
+				static std::string axisStates[7]{ "X axis", "Y axis", "Scrollwheel", "L Analog", "R Analog", "L Trigger", "R Trigger" };
+				if (EGUI::Display::DropDownSelection("Axis", marrCombos[mapCount].AxisSelectedInd, axisStates, 220.f))
+				{
+
+				};
+
+
 				EGUI::PopLeftAlign();
-				EGUI::UnIndent(10);
+				EGUI::UnIndent();
 			}
+			mapCount++;
+			EGUI::PopID();
 		}
 		EGUI::UnIndent();
 	}
