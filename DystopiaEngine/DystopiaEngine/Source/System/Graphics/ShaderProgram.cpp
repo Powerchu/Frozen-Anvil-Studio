@@ -93,6 +93,9 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 
 	mStage = _stage;
 	mstrName = _file;
+
+	pGfxAPI->QueryVariables(mProgram);
+
 	return ret;
 }
 

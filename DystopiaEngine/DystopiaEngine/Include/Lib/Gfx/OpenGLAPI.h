@@ -54,6 +54,8 @@ namespace Gfx
 		void UseShaderPipeline(ShaderPipeline const&) noexcept override;
 		void AttachShaderProgram(ShaderPipeline const&, ShaderProg const&, ShaderStage const&) noexcept override;
 
+		void QueryVariables(ShaderProg const&);
+
 		void FreeShader(Shader&) noexcept override;
 		void FreeShaderProgram(ShaderProg&) noexcept override;
 		void FreeShaderPipeline(ShaderPipeline&) noexcept override;

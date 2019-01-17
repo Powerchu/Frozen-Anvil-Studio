@@ -53,6 +53,8 @@ namespace Gfx
 		template <typename ... T>
 		inline bool LinkShader(ShaderProg const& _nProgram, T&& ... _nArgs) noexcept;
 
+		virtual void QueryVariables(ShaderProg const&) = 0;
+
 		virtual int GetUniformLocation(ShaderProg const&, char const*) noexcept = 0;
 		virtual void UploadUniform1f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept = 0;
 		virtual void UploadUniform2f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept = 0;

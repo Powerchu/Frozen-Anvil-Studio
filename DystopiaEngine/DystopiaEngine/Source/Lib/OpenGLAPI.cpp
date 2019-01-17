@@ -15,6 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility/DebugAssert.h"
 #include "Allocator/StackAlloc.h"
+#include "DataStructure/AutoArray.h"
+#include "DataStructure/HashString.h"
 
 #include <gl/glew.h>
 #include <gl/wglew.h>
@@ -40,7 +42,7 @@ namespace
 	} while (false)
 
 	template <typename T, typename U>
-	inline T StrongToGLType(U _v) noexcept
+	inline T StrongToGLType(U const& _v) noexcept
 	{
 		if constexpr (Ut::IsSigned<T>::value)
 		{
@@ -209,6 +211,32 @@ void Gfx::OpenGL_API::UseShaderPipeline(ShaderPipeline const& _pipeline) noexcep
 void Gfx::OpenGL_API::AttachShaderProgram(ShaderPipeline const& _pipeline, ShaderProg const& _prog, ShaderStage const& _stages) noexcept
 {
 	glUseProgramStages(StrongToGLType<GLuint>(_pipeline), StageToBitmask(_stages), StrongToGLType<GLuint>(_prog));
+}
+
+
+void Gfx::OpenGL_API::QueryVariables(ShaderProg const& _nProgram)
+{
+	auto nProg = StrongToGLType<GLuint>(_nProgram);
+	GLint count = 0;
+
+	glGetProgramiv(nProg, GL_ACTIVE_UNIFORMS, &count);
+
+	GLint typeBuffer[100];
+	GLuint indices[100];
+	char nameBuffer[256];
+
+	for (GLint n = 0; n < count; ++n)
+		indices[n] = n;
+
+	glGetActiveUniformsiv(nProg, count, indices, GL_UNIFORM_TYPE, typeBuffer);
+
+	AutoArray<std::pair<HashString, unsigned>> ty( count );
+
+	for (GLint n = 0; n < count; ++n)
+	{
+		glGetActiveUniformName(nProg, n, 256, nullptr, nameBuffer);
+		ty.EmplaceBack(static_cast<char*>(nameBuffer), typeBuffer[n]);
+	}
 }
 
 

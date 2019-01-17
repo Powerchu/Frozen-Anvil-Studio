@@ -74,11 +74,11 @@ Dystopia::Shader* Dystopia::ShaderSystem::CreateShader(char const* _strName) noe
 
 Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(::Gfx::ShaderStage _stage, char const* _strName) noexcept
 {
-	if (auto ret = GetShaderProgram(_strName))
+	auto path = CORE::Get<FileSystem>()->GetFullPath(_strName, eFileDir::eSolution);
+	if (auto ret = GetShaderProgram(path.c_str()))
 		return ret;
 
 	auto p = mPrograms.Emplace();
-	auto path = CORE::Get<FileSystem>()->GetFullPath(_strName, eFileDir::eSolution);
 	if (p->LoadProgram(_stage, path.c_str()))
 	{
 #		if EDITOR
