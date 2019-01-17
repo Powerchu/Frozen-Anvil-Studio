@@ -32,6 +32,7 @@ namespace Dystopia
 		float				mfRestitution;		//Total summed (min) restitution
 		float				mfStaticFrictionCof;		//Total friction averaged (sqrt)
 		float				mfDynamicFrictionCof;
+		float               mTimeIntersection;
 		u64int              mOtherID;
 
 		void ApplyImpulse();

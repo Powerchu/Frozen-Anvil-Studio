@@ -114,7 +114,7 @@ namespace Dystopia
 	bool Dystopia::RayCollider::isColliding(Circle & other_col)
 	{
 		/*Check if it is infinite ray*/
-					/*Ray going in opposite direction of Collider*/
+	    /*Ray going in opposite direction of Collider*/
 		Math::Vec3D && v = other_col.GetGlobalPosition() - GetGlobalPosition();
 		if (mRayDir.Dot(v) < 0.f)
 			return false;
@@ -137,8 +137,10 @@ namespace Dystopia
 			mbColliding = true;
 			/*Insert Collision Info*/
 			CollisionEvent ColEvent{ GetOwner(), other_col.GetOwner() };
-
+			ColEvent.mEdgeNormal = other_col.GetGlobalPosition() - GetGlobalPosition() + (mRayDir*t);
+			ColEvent.mTimeIntersection = t;
 			marr_ContactSets.push_back(Ut::Move(ColEvent));
+
 			return true;
 			break;
 		}
@@ -147,11 +149,13 @@ namespace Dystopia
 
 	bool Dystopia::RayCollider::isColliding(Circle * const & other_col)
 	{
-		return false;
+		return isColliding(*other_col);
 	}
 
 	bool Dystopia::RayCollider::isColliding(AABB & other_col)
 	{
+
+
 		return false;
 	}
 
@@ -162,6 +166,18 @@ namespace Dystopia
 
 	bool Dystopia::RayCollider::isColliding(Convex & other_col)
 	{
+		/*Check if ray is travelling toward object*/
+		Math::Vec3D && v = other_col.GetGlobalPosition() - GetGlobalPosition();
+		if (v.Dot(mRayDir) < 0.f)
+			return false;
+		auto && ListOfEdge = other_col.GetConvexEdges();
+		for (auto const & elem : ListOfEdge)
+		{
+			/*Check if the edge normal is facing the ray*/
+			if (elem.mNorm3.Dot(mRayDir) >= 0.f)
+				continue;
+			/*Check if the ray lies within the edge*/
+		}
 		return false;
 	}
 
