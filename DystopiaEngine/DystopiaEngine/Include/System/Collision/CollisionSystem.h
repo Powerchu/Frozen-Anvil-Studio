@@ -15,11 +15,13 @@ namespace Dystopia
 	class Convex;
 	class Circle;
 	class PointCollider;
+	class RayCollider;
 
 	class CollisionSystem : public Systems, public ComponentDonor<Convex>,
 											public ComponentDonor<Circle>, 
 											public ComponentDonor<AABB>,
-		                                    public ComponentDonor<PointCollider>
+		                                    public ComponentDonor<PointCollider>,
+											public ComponentDonor<RayCollider>
 	{
 	public:
 

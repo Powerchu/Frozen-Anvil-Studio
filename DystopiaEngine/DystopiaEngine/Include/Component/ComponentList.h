@@ -40,7 +40,8 @@ namespace Dystopia
 		class AudioSource,
 		class SpriteRenderer,
 		class TextRenderer,
-		class AiController
+		class AiController,
+		class RayCollider
 		//class Particle
 	>::result;
 

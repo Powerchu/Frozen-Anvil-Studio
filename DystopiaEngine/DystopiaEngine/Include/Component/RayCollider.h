@@ -1,10 +1,11 @@
 #pragma once
-#ifndef _POINT_COLLIDER_H
-#define _POINT_COLLIDER_H
+#ifndef _RAY_COLLIDER_H
+#define _RAY_COLLIDER_H
 #include "Component/Collider.h"
+
 namespace Dystopia
 {
-	class _DLL_EXPORT PointCollider : public Collider
+	class _DLL_EXPORT RayCollider : public Collider
 	{
 	public:
 		using SYSTEM = CollisionSystem;
@@ -19,16 +20,16 @@ namespace Dystopia
 		};
 
 #if EDITOR
-		static const std::string GetCompileName(void) { return "Point Collider"; }
-		const std::string GetEditorName(void) const { return GetCompileName(); }
+		static const std::string GetCompileName(void) { return "Ray Collider";   }
+		const std::string GetEditorName(void) const   { return GetCompileName(); }
 #endif
 
-		static const eColliderType ColliderType = eColliderType::POINT;
+		static const eColliderType ColliderType = eColliderType::RAY;
 		virtual const eColliderType GetColliderType(void) const override { return ColliderType; }
-		
+
 		/*Constructors*/
-		PointCollider(void);
-		PointCollider(Math::Point3D const & _Pos, Math::Vec3D const & _Offset = { 0,0,0 });
+		RayCollider(void);
+		RayCollider(Math::Point3D const & _Pos, Math::Vec3D const & _Dir, float const & _MaxLength = 0.f, Math::Vec3D const & _Offset = { 0,0,0 });
 
 		/*Member Functions*/
 
@@ -44,7 +45,7 @@ namespace Dystopia
 		/*Unload the Component*/
 		virtual void Unload(void);
 		/*Duplicate the Component*/
-		virtual PointCollider* Duplicate() const;
+		virtual RayCollider* Duplicate() const;
 
 		//virtual Math::Matrix3D   GetTransformationMatrix() const;
 		virtual BroadPhaseCircle GenerateBoardPhaseCircle() const;
@@ -69,11 +70,23 @@ namespace Dystopia
 		bool isColliding(PointCollider& other_col);
 		bool isColliding(PointCollider * const & other_col);
 
+		/*Collision Check Functions*/
+		bool isColliding(RayCollider & other_col);
+		bool isColliding(RayCollider * const & other_col);
+
+		bool isFinite() const;
+
+		CollisionEvent GetFirstHitEvent() const;
+		Collider*      GetFirstHit()      const;
+
 	private:
+		Math::Vec3D mRayDir;
+		float       mMaxLength;
+		float       mTimeIntersect;
 	};
 }
 
 
-
-
 #endif
+
+

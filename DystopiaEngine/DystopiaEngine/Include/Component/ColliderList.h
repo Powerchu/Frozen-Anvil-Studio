@@ -19,5 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/AABB.h"
 #include "Component/Circle.h"
 #include "Component/PointCollider.h"
+#include "Component/RayCollider.h"
 #endif
 
