@@ -366,8 +366,12 @@ bool Editor::EditorFactory::LoadAsPrefab(const HashString& _name)
 			/*if trying to load something already existing, replace the prefab data instead*/
 			if (data.mPrefabFile == _name)
 			{
+				data.mArrInstanced.clear();
 				for (auto p : data.mArrObjects)
+				{
+					p->Destroy();
 					mArrFactoryObj.Remove(&*p);
+				}
 
 				data.mArrObjects.clear();
 				for (auto p : mLoadedObj)
@@ -707,6 +711,9 @@ void Editor::EditorFactory::LoadSegmentB(Dystopia::GameObject& _obj, Dystopia::T
 					_in.ConsumeStartBlock();
 					_in >> MemVarName;
 					_in.ConsumeEndBlock();
+
+					if (MemVarName == "mfAnalogSens")
+						int i = 5;
 
 					if (BehaviourMetadata[MemVarName.c_str()])
 					{

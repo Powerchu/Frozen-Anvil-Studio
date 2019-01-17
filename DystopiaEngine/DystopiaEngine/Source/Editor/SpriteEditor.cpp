@@ -229,7 +229,7 @@ void Editor::SpriteEditor::FieldAtlas(void)
 	EGUI::Display::VectorFields("Start Pos", &mSectionPos, .01f, 0.f, 1, itemWidth);
 
 	EGUI::Display::VectorFields("Size", &mSectionSize, 0.01f, 0.f, 1, itemWidth);
-	EGUI::Display::VectorFieldsInt("Col & Row", &mSectionDime, 1, 1, INT_MAX, itemWidth);
+	EGUI::Display::VectorFieldsInt("Col & Row", &mSectionDime, 1, 1, 100, itemWidth);
 
 	EGUI::SameLine();
 	if (EGUI::Display::Button("Grow Col", Math::Vec2{ 100, 24 }))
@@ -307,6 +307,8 @@ void Editor::SpriteEditor::DrawTempGrid(float _ox, float _oy, float _ix, float _
 
 	unsigned col = static_cast<unsigned>(mSectionDime.x);
 	unsigned row = static_cast<unsigned>(mSectionDime.y);
+	col = Math::Clamp(col, 0, 100);
+	row = Math::Clamp(row, 0, 100);
 	unsigned total = col * row;
 	float xLen = (iEnd.x - iStart.x) / col;
 	float yLen = (iEnd.y - iStart.y) / row;

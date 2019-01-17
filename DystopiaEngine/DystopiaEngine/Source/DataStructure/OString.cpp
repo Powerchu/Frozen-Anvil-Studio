@@ -564,7 +564,10 @@ bool operator>(const OString& _lhs, const OString& _rhs)
 
 std::ostream& operator<<(std::ostream& _os, const OString& _rhs)
 {
-	_os << _rhs.c_str();
+	if (_rhs.length())
+		_os << _rhs.c_str();
+	else
+		_os << "";
 	return _os;
 }
 

@@ -184,7 +184,6 @@ namespace Dystopia
 
 		mHotloader->SetCompilerFlags(L"cl /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
 
-
 		mHotloader->Init();
 		auto const & ArrayDlls = mHotloader->GetDlls();
 		for (auto & elem : ArrayDlls)
@@ -802,7 +801,7 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 						/*Time to Super Set Functor*/
 						_obj.ConsumeEndBlock();  /*Consume END BEHAVIOUR BLOCK*/
 
-						if(static_cast<eObjFlag>(_Flags) & eObjFlag::FLAG_EDITOR_OBJ)
+						if(ptr && static_cast<eObjFlag>(_Flags) & eObjFlag::FLAG_EDITOR_OBJ)
 						{
 							/*Object is editor object*/
 							DeleteBehaviour(ptr);
@@ -1081,7 +1080,7 @@ Behaviour* BehaviourSystem::RequestDuplicate(Behaviour* _PtrToDup, uint64_t _New
 			{
 				if (i.second[u].second != nullptr)
 				{
-					if (i.second[u].second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+					if ((i.second[u].second->GetFlags() | i.second[u].second->GetOwner()->GetFlags()) & eObjFlag::FLAG_EDITOR_OBJ)
 					{
 					}
 					else

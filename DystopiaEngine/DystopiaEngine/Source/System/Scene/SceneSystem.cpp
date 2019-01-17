@@ -110,10 +110,7 @@ Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const HashString& _pre
 
 	auto obj = EngineCore::GetInstance()->GetSubSystem<Factory>()->SpawnPrefab(file, _position);
 	if (obj)
-	{
 		obj->GetComponent<Transform>()->SetGlobalPosition(_position);
-		obj->Init();
-	}
 	return obj;
 }
 

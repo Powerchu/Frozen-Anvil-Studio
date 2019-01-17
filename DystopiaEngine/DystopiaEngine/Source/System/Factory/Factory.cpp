@@ -75,7 +75,7 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 		LoadSegmentB(childObj, _in);
 
 		oldIDs.push_back(childObj.GetID());
-		obj.SetID(GUIDGenerator::GetUniqueID());
+		childObj.SetID(GUIDGenerator::GetUniqueID());
 	}
 
 	for (size_t i = 0; i < allInstantiated.size(); ++i)
@@ -96,6 +96,8 @@ Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, 
 	for (size_t i = 0; i < allInstantiated.size(); ++i)
 	{
 		allInstantiated[i]->Awake();
+		if (allInstantiated[i]->IsActive())
+			allInstantiated[i]->Init();
 		allInstantiated[i]->RemoveFlags(eObjFlag::FLAG_EDITOR_OBJ);
 	}
 	for (size_t i = 0; i < allInstantiated.size(); ++i)
