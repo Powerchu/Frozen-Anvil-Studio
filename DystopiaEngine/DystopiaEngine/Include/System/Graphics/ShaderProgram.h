@@ -32,6 +32,7 @@ namespace Dystopia
 
 		::Gfx::ShaderStage const& GetStage(void) const noexcept;
 		::Gfx::ShaderProg const& GetID(void) const noexcept;
+
 		OString const& GetName(void) const noexcept;
 
 		void TrackChangesCallback(void);

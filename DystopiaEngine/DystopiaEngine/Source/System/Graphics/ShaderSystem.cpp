@@ -20,6 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Lib/Gfx/Shaders.h"
 
 #include "DataStructure/OString.h"
+#include "IO/TextSerialiser.h"
+#include "Globals.h"
+
 
 namespace
 {
@@ -72,18 +75,20 @@ Dystopia::Shader* Dystopia::ShaderSystem::CreateShader(char const* _strName) noe
 	return mShaders.Emplace(_strName);
 }
 
-Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(::Gfx::ShaderStage _stage, char const* _strName) noexcept
+Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(::Gfx::ShaderStage _stage, char const* _strName, bool _bTrack) noexcept
 {
-	auto path = CORE::Get<FileSystem>()->GetFullPath(_strName, eFileDir::eSolution);
-	if (auto ret = GetShaderProgram(path.c_str()))
+	if (auto ret = GetShaderProgram(_strName))
 		return ret;
 
 	auto p = mPrograms.Emplace();
-	if (p->LoadProgram(_stage, path.c_str()))
+	if (p->LoadProgram(_stage, _strName))
 	{
 #		if EDITOR
-			auto id = CORE::Get<FileSystem>()->TrackFile(_strName, eFileDir::eSolution);
+		if (_bTrack)
+		{
+			auto id = CORE::Get<FileSystem>()->TrackFile(_strName);
 			CORE::Get<FileSystem>()->BindFileTrackEvent(id, &ShaderProgram::TrackChangesCallback, p);
+		}
 #		endif
 
 		return p;
@@ -104,9 +109,65 @@ Dystopia::ShaderProgram* Dystopia::ShaderSystem::GetShaderProgram(char const* _s
 	return nullptr;
 }
 
-void Dystopia::ShaderSystem::NotifyReplace(ShaderProgram* _p)
+Dystopia::ShaderProgram* Dystopia::ShaderSystem::ResolveShaderProgram(std::string const& _strPath)
+{
+	OString const ext = _strPath.substr(_strPath.rfind('.') + 1).c_str();
+	ShaderProgram* ret = nullptr;
+
+	if (Gbl::VERTSHADER_EXT == ext)
+	{
+
+	}
+	else if (Gbl::FRAGSHADER_EXT == ext)
+	{
+
+	}
+	else if (Gbl::GEOGSHADER_EXT == ext)
+	{
+
+	}
+
+	return ret;
+}
+
+void Dystopia::ShaderSystem::NotifyReplace(ShaderProgram* _p) noexcept
 {
 	mChanges.EmplaceBack(_p);
 }
 
+void Dystopia::ShaderSystem::LoadShaderList(char const* _strPath, eFileDir _dir, bool _bTrack) noexcept
+{
+	auto pFileSys = CORE::Get<FileSystem>();
+	auto pShaderSys = CORE::Get<ShaderSystem>();
+	auto file = Serialiser::OpenFile<TextSerialiser>(_strPath, Serialiser::MODE_READ);
+	std::string strName;
+
+	// Load shader programs
+	file.ConsumeStartBlock();
+	while (!file.EndOfInput())
+	{
+		file >> strName;
+		pFileSys->GetFullPath(strName, _dir);
+
+		ResolveShaderProgram(strName);
+	}
+
+	file.ConsumeStartBlock();
+	while (!file.EndOfInput())
+	{
+		file >> strName;
+		auto pShader = pShaderSys->CreateShader(strName.c_str());
+
+		if (pShader)
+		{
+			do
+			{
+				file >> strName;
+				pShader->AttachProgram(GetShaderProgram(strName.c_str()));
+			} while (!file.EndOfInput());
+		}
+
+		file.ConsumeStartBlock();
+	}
+}
 

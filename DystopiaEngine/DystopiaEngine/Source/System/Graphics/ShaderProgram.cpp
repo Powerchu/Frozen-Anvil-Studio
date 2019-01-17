@@ -30,7 +30,7 @@ namespace
 
 
 Dystopia::ShaderProgram::ShaderProgram(void) noexcept
-	: mProgram{ pGfxAPI->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }
+	: mProgram{ pGfxAPI->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }, mstrName{}
 {
 
 }
@@ -45,7 +45,7 @@ Dystopia::ShaderProgram::~ShaderProgram(void) noexcept
 	return mStage;
 }
 
-::Gfx::ShaderProg const & Dystopia::ShaderProgram::GetID(void) const noexcept
+::Gfx::ShaderProg const& Dystopia::ShaderProgram::GetID(void) const noexcept
 {
 	return mProgram;
 }
@@ -91,8 +91,8 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 
 	pGfxAPI->Free(shader);
 
-	mStage = _stage;
-	mstrName = _file;
+	mStage   = _stage;
+	mstrPath = _file;
 
 	pGfxAPI->QueryVariables(mProgram);
 

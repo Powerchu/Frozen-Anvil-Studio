@@ -149,6 +149,11 @@ OString const& Dystopia::Shader::GetName(void) const noexcept
 }
 
 
+void Dystopia::Shader::OnEditorUI(void) const
+{
+}
+
+
 namespace
 {
 	template <typename T, typename C, typename ... U>

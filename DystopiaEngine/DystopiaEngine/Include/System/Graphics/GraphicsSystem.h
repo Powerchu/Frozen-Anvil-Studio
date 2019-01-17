@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Base/Systems.h"		 // System
 #include "System/Base/ComponentDonor.h"
 #include "System/Graphics/Framebuffer.h"
+#include "System/File/FileSystem.h"      // eFileDir
 #include "Math/MathFwd.h"
 #include "Math/Vector4.h"
 #include "Math/Vector2.h"
@@ -80,7 +81,6 @@ namespace Dystopia
 		void     LoadMesh(const std::string&);
 		Texture* LoadTexture(HashString const&);
 		_DLL_EXPORT Texture* LoadTexture(const char *);
-		Shader*	 LoadShader(const std::string&);
 		Texture* LoadFont(const std::string&);
 
 		Framebuffer& GetGameView(void) const noexcept;
@@ -97,9 +97,6 @@ namespace Dystopia
 
 		void SetResolution(unsigned w, unsigned h) noexcept;
 		void UpdateResolution(void) const noexcept;
-
-		// Temporary
-		_DLL_EXPORT Shader* GetShader(const char *) const noexcept;
 
 		void EditorAspectRatio(void);
 		void EditorUI(void);

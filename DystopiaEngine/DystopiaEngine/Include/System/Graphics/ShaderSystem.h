@@ -14,12 +14,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SHADERSYS_H_
 #define _SHADERSYS_H_
 
+#include "DataStructure/Array.h"
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
 
 #include "Lib/Gfx/Shaders.h"
+#include "System/File/FileSystem.h"
 
 #include <map>
+#include <string>
 
 
 namespace Dystopia
@@ -38,16 +41,20 @@ namespace Dystopia
 		void Shutdown(void) noexcept;
 
 		Shader* CreateShader(char const* _strName) noexcept;
-		ShaderProgram* CreateShaderProgram(::Gfx::ShaderStage, char const* _strName) noexcept;
+		ShaderProgram* CreateShaderProgram(::Gfx::ShaderStage, char const* _strName, bool _bTrack = true) noexcept;
 
 		Shader* GetShader(char const* _strName) const noexcept;
 		ShaderProgram* GetShaderProgram(char const* _strName) const noexcept;
 
 		void NotifyReplace(ShaderProgram*);
 
+		void LoadShaderList(char const* _strPath, eFileDir, bool _bTrack) noexcept;
+
 		inline Shader* operator[] (char const* _strName) const noexcept;
 
 	private:
+
+		ShaderProgram* ResolveShaderProgram(std::string const&);
 
 		AutoArray<ShaderProgram*> mChanges;
 
