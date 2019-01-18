@@ -97,6 +97,12 @@ void Dystopia::SceneSystem::LoadSettings(TextSerialiser&)
 {
 
 }
+
+AutoArray<Dystopia::GameObject*>& Dystopia::SceneSystem::FindGameObjectByTag(const HashString& _tag)
+{
+	return mpCurrScene->FindGameObjectByTag(_tag);
+}
+
 Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject_cstr(const char* const _str)
 {
 	return FindGameObject(HashString{ _str });

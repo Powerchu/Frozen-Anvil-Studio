@@ -24,7 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Scene::Scene(void) :
-	mGameObjs{ }, mName{ "Untitled" }, mID{ GUIDGenerator::GetUniqueID() }
+	mGameObjs{ }, mName{ "Untitled" }, mID{ GUIDGenerator::GetUniqueID() }, mLastSearch{}
 {
 }
 
@@ -48,6 +48,16 @@ Dystopia::GameObject* Dystopia::Scene::FindGameObject(const HashString& _strName
 			return &e;
 
 	return nullptr;
+}
+
+AutoArray<Dystopia::GameObject*>& Dystopia::Scene::FindGameObjectByTag(const HashString& _tag)
+{
+	mLastSearch.clear();
+	for (auto& e : mGameObjs)
+		if (e.HasTag(_tag))
+			mLastSearch.Insert(&e);
+
+	return mLastSearch;
 }
 
 void Dystopia::Scene::Init(void)
@@ -105,6 +115,7 @@ void Dystopia::Scene::Shutdown(void)
 	for (auto& g : mGameObjs)
 		g.Destroy();
 	mGameObjs.clear();
+	mLastSearch.clear();
 }
 
 void Dystopia::Scene::Serialise(TextSerialiser & _TextSerialiser) const

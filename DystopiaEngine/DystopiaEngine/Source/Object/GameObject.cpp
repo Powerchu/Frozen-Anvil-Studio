@@ -328,6 +328,10 @@ void Dystopia::GameObject::PurgeComponents(void)
 
 void Dystopia::GameObject::AddComponent(Component* _p, ComponentTag)
 {
+	for (auto c : mComponents)
+		if (c == _p)
+			return;
+
 	mComponents.Insert(_p);
 	_p->SetOwner(this);
 	_p->Awake();
@@ -335,6 +339,10 @@ void Dystopia::GameObject::AddComponent(Component* _p, ComponentTag)
 
 void Dystopia::GameObject::AddComponent(Behaviour* _p, BehaviourTag)
 {
+	for (auto b : mBehaviours)
+		if (b == _p)
+			return;
+
 	mBehaviours.Insert(_p);
 	_p->SetOwner(this);
 	_p->Awake();

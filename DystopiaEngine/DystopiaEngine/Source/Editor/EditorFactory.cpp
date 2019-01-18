@@ -712,9 +712,6 @@ void Editor::EditorFactory::LoadSegmentB(Dystopia::GameObject& _obj, Dystopia::T
 					_in >> MemVarName;
 					_in.ConsumeEndBlock();
 
-					if (MemVarName == "mfAnalogSens")
-						int i = 5;
-
 					if (BehaviourMetadata[MemVarName.c_str()])
 					{
 						_in.ConsumeStartBlock();

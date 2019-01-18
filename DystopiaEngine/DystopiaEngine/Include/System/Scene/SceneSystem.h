@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Base/Systems.h"
 #include "System/Scene/Scene.h"
+#include "System/Tag/Tags.h"
 #include "Globals.h"
 //#include "DataStructure/Stack.h"
 
@@ -60,6 +61,8 @@ namespace Dystopia
 		inline GameObject* FindGameObject(uint64_t _nID);
 		inline GameObject* FindGameObject(const HashString& _strName);
 		inline GameObject* FindGameObject_cstr(const char * const _str);
+
+		AutoArray<GameObject*>& FindGameObjectByTag(const HashString& _tag);
 
 		GameObject* Instantiate(const HashString& _prefabName, const Math::Pt3D& _position);
 
