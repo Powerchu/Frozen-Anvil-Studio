@@ -30,7 +30,7 @@ namespace
 
 
 Dystopia::ShaderProgram::ShaderProgram(void) noexcept
-	: mProgram{ pGfxAPI->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }, mstrName{}
+	: mProgram{ pGfxAPI->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }, mstrName{}, mVars{}
 {
 
 }
@@ -60,6 +60,11 @@ void Dystopia::ShaderProgram::TrackChangesCallback(void)
 	CORE::Get<ShaderSystem>()->NotifyReplace(this);
 }
 
+AutoArray<std::pair<HashString, Gfx::eUniform_t>> const& Dystopia::ShaderProgram::GetVariables(void) noexcept
+{
+	return mVars;
+}
+
 bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _file) noexcept
 {
 	std::ifstream file{ _file, std::ios::ate | std::ios::in | std::ios::binary };
@@ -87,14 +92,37 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 	if (!shader)
 		return false;
 
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
+
 	bool ret = pGfxAPI->LinkShader(mProgram, shader);
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 
 	pGfxAPI->Free(shader);
 
-	mStage   = _stage;
-	mstrPath = _file;
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 
-	pGfxAPI->QueryVariables(mProgram);
+	mStage   = _stage;
+	mstrName = _file;
+	mstrName = mstrName.substr(mstrName.find_last_of("\\/") + 1);
+
+#	if EDITOR
+		mVars = pGfxAPI->QueryVariables(mProgram);
+#	endif
+
+#   if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#   endif 
 
 	return ret;
 }

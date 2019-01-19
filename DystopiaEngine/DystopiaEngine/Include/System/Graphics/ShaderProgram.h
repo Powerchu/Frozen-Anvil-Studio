@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Lib/Gfx/Shaders.h"
 
 #include "DataStructure/OString.h"
+#include "DataStructure/AutoArray.h"
 
 
 namespace Dystopia
@@ -36,12 +37,15 @@ namespace Dystopia
 		OString const& GetName(void) const noexcept;
 
 		void TrackChangesCallback(void);
+		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> const& GetVariables(void) noexcept;
 
 	private:
 
 		OString mstrName;
 		::Gfx::ShaderProg mProgram;
 		::Gfx::ShaderStage mStage;
+
+		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> mVars;
 	};
 }
 

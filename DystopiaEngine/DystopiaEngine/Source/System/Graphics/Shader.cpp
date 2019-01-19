@@ -37,7 +37,7 @@ namespace
 
 
 Dystopia::Shader::Shader(OString const& _strName) noexcept :
-	mID{ pGfxAPI->CreateShaderPipeline() }, mStages{ ::Gfx::ShaderStage::NONE }, mstrName{ _strName }
+	mID{ pGfxAPI->CreateShaderPipeline() }, mStages{ ::Gfx::ShaderStage::NONE }, mstrName{ _strName }, mbUpdate{ true }
 {
 
 }
@@ -86,6 +86,7 @@ void Dystopia::Shader::AttachProgram(ShaderProgram* _prog)
 	}
 
 	pGfxAPI->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
+	mbUpdate = true;
 }
 
 void Dystopia::Shader::ReattachProgram(ShaderProgram* _prog)
@@ -96,6 +97,8 @@ void Dystopia::Shader::ReattachProgram(ShaderProgram* _prog)
 			pGfxAPI->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
 			break;
 		}
+
+	mbUpdate = true;
 }
 
 void Dystopia::Shader::DetachProgram(ShaderProgram* _prog)
@@ -112,6 +115,8 @@ void Dystopia::Shader::DetachProgram(ShaderProgram* _prog)
 		pGfxAPI->AttachShaderProgram(mID, 0, _prog->GetStage());
 		mStages &= ~_prog->GetStage();
 	}
+
+	mbUpdate = true;
 }
 
 void Dystopia::Shader::DetachProgram(Gfx::ShaderStage _stage)
@@ -129,6 +134,8 @@ void Dystopia::Shader::DetachProgram(Gfx::ShaderStage _stage)
 
 		mStages &= ~_stage;
 	}
+
+	mbUpdate = true;
 }
 
 
@@ -151,6 +158,39 @@ OString const& Dystopia::Shader::GetName(void) const noexcept
 
 void Dystopia::Shader::OnEditorUI(void) const
 {
+}
+
+AutoArray<std::pair<OString, Gfx::eUniform_t>> const& Dystopia::Shader::GetVariables(void) noexcept
+{
+	if (mbUpdate)
+		ImportVariables();
+
+	return mVars;
+}
+
+void Dystopia::Shader::ImportVariables(void) noexcept
+{
+	mVars.clear();
+
+	for (auto& p : mPrograms)
+	{
+		for (auto& e : p->GetVariables())
+		{
+			bool bNew = true;
+			for (auto& var : mVars)
+			{
+				if (var.first == e.first)
+				{
+					bNew = false;
+					break;
+				}
+			}
+
+			if (bNew) mVars.EmplaceBack(e);
+		}
+	}
+
+	mbUpdate = false;
 }
 
 

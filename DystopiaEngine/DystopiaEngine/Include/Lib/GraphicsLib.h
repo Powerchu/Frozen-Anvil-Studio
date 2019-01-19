@@ -16,6 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Lib/Gfx/Shaders.h"
 
+#include "DataStructure/OString.h"
+#include "DataStructure/AutoArray.h"
+
 
 namespace Gfx
 {
@@ -53,7 +56,7 @@ namespace Gfx
 		template <typename ... T>
 		inline bool LinkShader(ShaderProg const& _nProgram, T&& ... _nArgs) noexcept;
 
-		virtual void QueryVariables(ShaderProg const&) = 0;
+		virtual AutoArray<std::pair<OString, eUniform_t>> QueryVariables(ShaderProg const&) = 0;
 
 		virtual int GetUniformLocation(ShaderProg const&, char const*) noexcept = 0;
 		virtual void UploadUniform1f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept = 0;

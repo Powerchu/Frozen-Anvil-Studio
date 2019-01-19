@@ -83,6 +83,7 @@ namespace Dystopia
 		void EditorUI(void) noexcept override;
 
 	protected:
+		using ShaderVariant_t = Variant<int, bool, float, Math::Vec2, Math::Vec4, Math::Mat2, Math::Mat4>;
 
 		unsigned mnUnique;
 
@@ -90,6 +91,7 @@ namespace Dystopia
 		Shader* mpShader;
 		Texture* mpTexture;
 		HashString mTexturePath;
+		AutoArray<Tuple<OString, ::Gfx::eUniform_t, ShaderVariant_t>> mOverride;
 
 #   if EDITOR
 		void TextureField();
@@ -98,6 +100,17 @@ namespace Dystopia
 #   endif
 	};
 }
+
+
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+template <typename T>
+void SetManualShaderOverride(char const*, T&&);
 
 
 #pragma warning(pop)

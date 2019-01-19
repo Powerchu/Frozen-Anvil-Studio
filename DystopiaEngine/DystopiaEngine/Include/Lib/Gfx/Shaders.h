@@ -30,6 +30,18 @@ namespace Gfx
 		ALL  = 0xFFFFFFFF,
 	};
 
+	enum class eUniform_t : unsigned
+	{
+		BOOL,
+		FLOAT,
+		INT, UINT,
+		VEC2, MAT2,
+		VEC3, MAT3,
+		VEC4, MAT4,
+		TEXTURE_2D,
+		ERROR,
+	};
+
 	using Shader = class SHADER_ *;
 	using ShaderProg = class SHADERPROGRAM_ *;
 	using ShaderPipeline = class SHADERPIPELINE_ *;

@@ -35,8 +35,8 @@ public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
 	inline constexpr Variant(void) noexcept;
-	inline Variant(Variant&&) noexcept = default;
-	inline Variant(const Variant&) noexcept = default;
+	inline Variant(Variant&&) noexcept;
+	inline Variant(const Variant&) noexcept;
 
 	template <typename U, typename Actual_t = VARIANT_TYPE_RESOLUTION(U)>
 	inline explicit Variant(U&&) noexcept(std::is_nothrow_constructible_v<Actual_t, U>);
@@ -96,6 +96,21 @@ inline constexpr Variant<Ty...>::Variant(void) noexcept
 }
 
 template <typename ... Ty>
+inline constexpr Variant<Ty...>::Variant(Variant const& _rhs) noexcept
+	: Variant{}
+{
+	*this = _rhs;
+}
+
+template <typename ... Ty>
+inline constexpr Variant<Ty...>::Variant(Variant&& _rhs) noexcept
+	: raw{}, mType{ _rhs.mType }
+{
+	std::memcpy(this, &_rhs, sizeof(raw));
+	_rhs.mType = mInvalidType;
+}
+
+template <typename ... Ty>
 inline Variant<Ty...>::~Variant(void) noexcept
 {
 	if (IsValidType())
@@ -106,7 +121,7 @@ template< typename ... Ty> template <typename U, typename Actual_t>
 inline Variant<Ty...>::Variant(U&& _obj) noexcept(std::is_nothrow_constructible_v<Actual_t, U>) :
 	mType{ Ut::MetaFind_t<Actual_t, AllTypes>::value }
 {
-	::new (reinterpret_cast<void*>(&raw)) Actual_t ( Ut::Move(_obj) );
+	::new (reinterpret_cast<void*>(&raw)) Actual_t ( Ut::Fwd<U>(_obj) );
 }
 
 
@@ -176,7 +191,7 @@ inline auto Variant<Ty...>::operator = (U&& _rhs) -> VARIANT_ENABLE_IF_SFINAE(VA
 
 	DestroyCurrent();
 	mType = Ut::MetaFind_t<Ut::Decay_t<Actual_t>, AllTypes>::value;
-	::new (reinterpret_cast<void*>(&raw)) Ut::Decay_t<Actual_t> ( Ut::Move(_rhs) );
+	::new (reinterpret_cast<void*>(&raw)) Ut::Decay_t<Actual_t> ( Ut::Fwd<U>(_rhs) );
 
 	return *this;
 }
@@ -195,15 +210,15 @@ Variant<Ty...>& Variant<Ty...>::operator = (Variant<Ty...>&& _rhs)
 }
 
 template <typename ... Ty>
-Variant<Ty...>& Variant<Ty...>::operator=(const Variant<Ty...>& _rhs)
+Variant<Ty...>& Variant<Ty...>::operator=(Variant<Ty...> const& _rhs)
 {
-	static void(*SwitchDifferent[])(char*, const Variant<Ty...>&) = {
+	static void(*SwitchDifferent[])(char*, Variant<Ty...> const&) = {
 		[](char* _raw, const Variant<Ty...>& _rhs) -> void {
 			::new (reinterpret_cast<void*>(_raw)) Ty { _rhs.As<Ty>() };
 		} ...
 	};
 
-	static void(*SwitchEqual[])(char*, const Variant<Ty...>&) = {
+	static void(*SwitchEqual[])(char*, Variant<Ty...> const&) = {
 		[](char* _raw, const Variant<Ty...>& _rhs) -> void {
 			*reinterpret_cast<Ty*>(_raw) = _rhs.As<Ty>();
 		} ...

@@ -46,15 +46,15 @@ namespace Dystopia
 		Shader* GetShader(char const* _strName) const noexcept;
 		ShaderProgram* GetShaderProgram(char const* _strName) const noexcept;
 
-		void NotifyReplace(ShaderProgram*);
+		void NotifyReplace(ShaderProgram*) noexcept;
 
-		void LoadShaderList(char const* _strPath, eFileDir, bool _bTrack) noexcept;
+		void LoadShaderList(char const* _strPath, eFileDir, bool _bTrack = true) noexcept;
 
 		inline Shader* operator[] (char const* _strName) const noexcept;
 
 	private:
 
-		ShaderProgram* ResolveShaderProgram(std::string const&);
+		ShaderProgram* ResolveShaderProgram(std::string const&, bool);
 
 		AutoArray<ShaderProgram*> mChanges;
 
@@ -62,6 +62,13 @@ namespace Dystopia
 		MagicArray<ShaderProgram> mPrograms;
 	};
 }
+
+
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 
 inline Dystopia::Shader* Dystopia::ShaderSystem::operator[](char const * _str) const noexcept

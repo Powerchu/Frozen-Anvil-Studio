@@ -82,7 +82,7 @@ void Gfx::OpenGL_API::PrintEnvironment(void) const noexcept
 	glGetIntegerv(GL_MINOR_VERSION, &b);
 
 	DEBUG_PRINT(eLog::SYSINFO, "Using %s, %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
-	DEBUG_PRINT(eLog::SYSINFO, "OpenGL Version %d.%d\n", a, b);
+	DEBUG_PRINT(eLog::SYSINFO, "OpenGL Version %s\n", glGetString(GL_VERSION));
 }
 
 void Gfx::OpenGL_API::ToggleVSync(bool _b) const noexcept
@@ -214,10 +214,38 @@ void Gfx::OpenGL_API::AttachShaderProgram(ShaderPipeline const& _pipeline, Shade
 }
 
 
-void Gfx::OpenGL_API::QueryVariables(ShaderProg const& _nProgram)
+namespace
+{
+	Gfx::eUniform_t ResolveUniformType(GLuint ty)
+	{
+		switch (ty)
+		{
+		case GL_INT:		  return Gfx::eUniform_t::INT;
+		case GL_BOOL:		  return Gfx::eUniform_t::BOOL;
+		case GL_FLOAT:		  return Gfx::eUniform_t::FLOAT;
+		case GL_FLOAT_VEC2:	  return Gfx::eUniform_t::VEC2;
+		case GL_FLOAT_VEC3:	  return Gfx::eUniform_t::VEC3;
+		case GL_FLOAT_VEC4:	  return Gfx::eUniform_t::VEC4;
+		case GL_FLOAT_MAT2:	  return Gfx::eUniform_t::MAT2;
+		case GL_FLOAT_MAT3:	  return Gfx::eUniform_t::MAT3;
+		case GL_FLOAT_MAT4:	  return Gfx::eUniform_t::MAT4;
+		case GL_SAMPLER_2D:	  return Gfx::eUniform_t::TEXTURE_2D;
+		case GL_UNSIGNED_INT: return Gfx::eUniform_t::UINT;
+		}
+
+		return Gfx::eUniform_t::ERROR;
+	}
+}
+
+AutoArray<std::pair<HashString, Gfx::eUniform_t>> Gfx::OpenGL_API::QueryVariables(ShaderProg const& _nProgram)
 {
 	auto nProg = StrongToGLType<GLuint>(_nProgram);
 	GLint count = 0;
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 
 	glGetProgramiv(nProg, GL_ACTIVE_UNIFORMS, &count);
 
@@ -225,18 +253,53 @@ void Gfx::OpenGL_API::QueryVariables(ShaderProg const& _nProgram)
 	GLuint indices[100];
 	char nameBuffer[256];
 
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
+
+	count = Ut::Min(count, Ut::Constant<GLint, sizeof(indices)/sizeof(GLuint)>::value);
 	for (GLint n = 0; n < count; ++n)
 		indices[n] = n;
 
 	glGetActiveUniformsiv(nProg, count, indices, GL_UNIFORM_TYPE, typeBuffer);
 
-	AutoArray<std::pair<HashString, unsigned>> ty( count );
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
+
+	AutoArray<std::pair<HashString, eUniform_t>> ty( count );
 
 	for (GLint n = 0; n < count; ++n)
 	{
-		glGetActiveUniformName(nProg, n, 256, nullptr, nameBuffer);
-		ty.EmplaceBack(static_cast<char*>(nameBuffer), typeBuffer[n]);
+		switch (typeBuffer[n])
+		{
+		case GL_INT:
+		case GL_BOOL:
+		case GL_FLOAT:
+		case GL_FLOAT_VEC2:
+		case GL_FLOAT_VEC3:
+		case GL_FLOAT_VEC4:
+		//case GL_FLOAT_MAT2:
+		//case GL_FLOAT_MAT3:
+		//case GL_FLOAT_MAT4:
+		//case GL_SAMPLER_2D:
+		case GL_UNSIGNED_INT:
+			glGetActiveUniformName(nProg, n, 256, nullptr, nameBuffer);
+			ty.EmplaceBack(static_cast<char*>(nameBuffer), ResolveUniformType(typeBuffer[n]));
+			break;
+		default:
+			break;
+		}
 	}
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
+
+	return ty;
 }
 
 

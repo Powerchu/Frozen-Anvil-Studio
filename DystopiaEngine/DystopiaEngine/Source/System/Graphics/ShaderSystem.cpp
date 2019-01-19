@@ -23,6 +23,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO/TextSerialiser.h"
 #include "Globals.h"
 
+#include <GL/glew.h>
+
 
 namespace
 {
@@ -77,7 +79,9 @@ Dystopia::Shader* Dystopia::ShaderSystem::CreateShader(char const* _strName) noe
 
 Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(::Gfx::ShaderStage _stage, char const* _strName, bool _bTrack) noexcept
 {
-	if (auto ret = GetShaderProgram(_strName))
+	OString strName{ _strName };
+	strName = strName.substr(strName.find_last_of("/\\") + 1);
+	if (auto ret = GetShaderProgram(strName.c_str()))
 		return ret;
 
 	auto p = mPrograms.Emplace();
@@ -109,22 +113,23 @@ Dystopia::ShaderProgram* Dystopia::ShaderSystem::GetShaderProgram(char const* _s
 	return nullptr;
 }
 
-Dystopia::ShaderProgram* Dystopia::ShaderSystem::ResolveShaderProgram(std::string const& _strPath)
+Dystopia::ShaderProgram* Dystopia::ShaderSystem::ResolveShaderProgram(std::string const& _strPath, bool _bTrack)
 {
 	OString const ext = _strPath.substr(_strPath.rfind('.') + 1).c_str();
 	ShaderProgram* ret = nullptr;
 
 	if (Gbl::VERTSHADER_EXT == ext)
 	{
+		ret = CreateShaderProgram(::Gfx::ShaderStage::VERTEX, _strPath.c_str(), _bTrack);
 
 	}
 	else if (Gbl::FRAGSHADER_EXT == ext)
 	{
-
+		ret = CreateShaderProgram(::Gfx::ShaderStage::FRAGMENT, _strPath.c_str(), _bTrack);
 	}
 	else if (Gbl::GEOGSHADER_EXT == ext)
 	{
-
+		ret = CreateShaderProgram(::Gfx::ShaderStage::GEOMETRY, _strPath.c_str(), _bTrack);
 	}
 
 	return ret;
@@ -140,6 +145,7 @@ void Dystopia::ShaderSystem::LoadShaderList(char const* _strPath, eFileDir _dir,
 	auto pFileSys = CORE::Get<FileSystem>();
 	auto pShaderSys = CORE::Get<ShaderSystem>();
 	auto file = Serialiser::OpenFile<TextSerialiser>(_strPath, Serialiser::MODE_READ);
+	//auto file = Serialiser::OpenFile<TextSerialiser>(pFileSys->GetFullPath(_strPath, _dir).c_str(), Serialiser::MODE_READ);
 	std::string strName;
 
 	// Load shader programs
@@ -147,9 +153,9 @@ void Dystopia::ShaderSystem::LoadShaderList(char const* _strPath, eFileDir _dir,
 	while (!file.EndOfInput())
 	{
 		file >> strName;
-		pFileSys->GetFullPath(strName, _dir);
+		//strName = pFileSys->GetFullPath(strName, _dir);
 
-		ResolveShaderProgram(strName);
+		ResolveShaderProgram(strName, _bTrack);
 	}
 
 	file.ConsumeStartBlock();

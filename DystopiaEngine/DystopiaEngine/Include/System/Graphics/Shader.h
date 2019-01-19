@@ -20,12 +20,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Lib/Gfx/Shaders.h"
 #include "System/Graphics/ShaderProgram.h"
 
+#include "DataStructure/Tuple.h"
+#include "DataStructure/Variant.h"
 #include "DataStructure/OString.h"
 #include "DataStructure/AutoArray.h"
 
 
 namespace Dystopia
 {
+	class Texture;
+
 	class Shader
 	{
 	public:
@@ -40,7 +44,6 @@ namespace Dystopia
 		void DetachProgram(ShaderProgram*);
 		void DetachProgram(::Gfx::ShaderStage);
 		void ReattachProgram(ShaderProgram*);
-		void Finalise(void);
 
 		void Bind(void) const;
 		void Unbind(void) const;
@@ -65,12 +68,19 @@ namespace Dystopia
 
 		void OnEditorUI(void) const;
 
+		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> const& GetVariables(void) noexcept;
+
 	private:
+
+		void ImportVariables(void) noexcept;
 
 		OString mstrName;
 		::Gfx::ShaderPipeline mID;
 		::Gfx::ShaderStage mStages;
 		AutoArray<ShaderProgram*> mPrograms;
+
+		bool mbUpdate;
+		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> mVars;
 	};
 }
 

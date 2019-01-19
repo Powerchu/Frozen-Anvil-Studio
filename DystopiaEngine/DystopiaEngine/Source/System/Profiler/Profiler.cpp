@@ -109,16 +109,16 @@ bool Dystopia::Profiler::Init(void)
 		std::memcpy(buf2 + 16, ExData[3].begin(), sizeof(ExData[0]));
 		std::memcpy(buf2 + 32, ExData[4].begin(), sizeof(ExData[0]));
 
-		LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: Using %s, %s!\n", buf1, buf2);
+		LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: Using %s, %s\n", buf1, buf2);
 	}
 	else
 	{
-		LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: Using %s!", buf1);
+		LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: Using %s\n", buf1);
 	}
 
 	// Get available instruction sets (Just in case! -- We're using these)
 #define AVAIL_MSG(_X_) ((_X_) ? "Available" : "Not Supported")
-	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE %s, SSE2 %s, SSE3 %s, SSE4.1 %s, SSE4.2 %s, FMA %s!", 
+	LoggerSystem::ConsoleLog(eLog::SYSINFO, "System: SSE %s, SSE2 %s, SSE3 %s, SSE4.1 %s, SSE4.2 %s, FMA %s\n", 
 		AVAIL_MSG(data[1][25]), AVAIL_MSG(data[1][26]), AVAIL_MSG(data[0][0]),
 		AVAIL_MSG(data[0][19]), AVAIL_MSG(data[0][20]), AVAIL_MSG(data[0][12])
 	);

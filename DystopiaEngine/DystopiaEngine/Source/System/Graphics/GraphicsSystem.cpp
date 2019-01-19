@@ -151,7 +151,7 @@ void Dystopia::GraphicsSystem::SetAllCameraAspect(const float _x, const float _y
 
 bool Dystopia::GraphicsSystem::GetDebugDraw(void) const
 {
-	return EngineCore::GetInstance()->Get<CameraSystem>()->GetMasterCamera()->DrawDebug();
+	return CORE::Get<CameraSystem>()->GetMasterCamera()->DrawDebug();
 }
 
 
@@ -160,9 +160,9 @@ void Dystopia::GraphicsSystem::PreInit(void)
 	Window& window = CORE::Get<WindowManager>()->GetMainWindow();
 	::Gfx::InitGraphicsAPI(reinterpret_cast<void const*>(&window.GetWindowHandle()), ::Gfx::GfxMode::OPENGL);
 
-	LoadShaderList("Resource/Shader/DefaultShaderList.txt", eFileDir::eSource, false);
+	CORE::Get<ShaderSystem>()->LoadShaderList("Resource/Shader/DefaultShaderList.txt", eFileDir::eSource, false);
 	auto file = Serialiser::OpenFile<TextSerialiser>("Resource/Meshes/DefaultMeshList.txt", Serialiser::MODE_READ);
-	MeshSystem* pMeshSys = EngineCore::GetInstance()->GetSubSystem<MeshSystem>();
+	MeshSystem* pMeshSys = CORE::Get<MeshSystem>();
 
 	std::string MeshPath;
 
@@ -206,7 +206,8 @@ void Dystopia::GraphicsSystem::PostInit(void)
 {
 	pGfxAPI->PrintEnvironment();
 
-	LoadShaderList("Shader/ShaderList.txt", eFileDir::eResource);
+	if (CORE::Get<FileSystem>()->CheckFileExist("Shader/ShaderList.txt", eFileDir::eResource))
+		CORE::Get<ShaderSystem>()->LoadShaderList("Shader/ShaderList.txt", eFileDir::eResource);
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
@@ -265,6 +266,10 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->Bind();
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 	texture->Bind();
 
 	shader->UploadUniform("ViewMat", View);
@@ -273,6 +278,10 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	shader->UploadUniform("Gamma", mfGamma);
 
 	mesh->DrawMesh(GL_TRIANGLES);
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 	texture->Unbind();
 
 	pWinSys->GetMainWindow().Show();
@@ -390,7 +399,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		s->Bind();
 		s->UploadUniform("ProjectMat", _Proj);
 		s->UploadUniform("ViewMat", _View);
-		s->UploadUniform("vColor", r->GetTint()*r->GetTintPerc());
+		s->UploadUniform("vColor", r->GetTint());
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
 			DrawRenderer(r, s, mfGamma);

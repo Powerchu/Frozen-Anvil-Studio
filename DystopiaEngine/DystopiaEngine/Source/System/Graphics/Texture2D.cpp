@@ -53,6 +53,11 @@ void Dystopia::Texture2D::LoadTexture(Image const * _pData)
 	auto id = CORE::Get<FileSystem>()->TrackFile(GetPath());
 	CORE::Get<FileSystem>()->BindFileTrackEvent(id, &Texture2D::ReloadImage, this);
 
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
+
 	if (_pData->mbCompressed)
 		InitCompressedTexture(_pData);
 	else
