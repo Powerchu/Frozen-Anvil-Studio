@@ -574,7 +574,7 @@ bool Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
 		/******** Section ID *******/
 		auto sID = static_cast<int>(anim.mnID);
 		auto max = static_cast<unsigned>(mpAtlas->GetAllSections().size());
-		if (EGUI::Display::DropDownSelection<21>("Section", sID, max))
+		if (EGUI::Display::DropDownSelection<59>("Section", sID, max))
 		{
 			anim.mnID = sID;
 		}

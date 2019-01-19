@@ -69,9 +69,14 @@ End...
 ======================================================================================================================= */
 namespace EGUI
 {
-	inline const Array<const char*, 21> g_ArrIndexName =
+	inline const Array<const char*, 60> g_ArrIndexName =
 	{
-		"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13" , "14", "15", "16", "17", "18", "19", "20"
+		"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", 
+		"10", "11", "12", "13" , "14", "15", "16", "17", "18", "19",
+		"20", "21", "22", "23" , "24", "25", "26", "27", "28", "29",
+		"30", "31", "32", "33" , "34", "35", "36", "37", "38", "39",
+		"40", "41", "42", "43" , "44", "45", "46", "47", "48", "49",
+		"50", "51", "52", "53" , "54", "55", "56", "57", "58", "59"
 	};
 
 	static constexpr float TabsImageOffsetY = 27.f;
@@ -485,9 +490,9 @@ namespace EGUI
 		bool DropDownSelection(const char* _label, int& _currentIndex, AutoArray<const char *>& _arrOfItems, float _width = 100);
 		bool DropDownSelection(const char* _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width = 100);
 		template<unsigned N>
-		bool DropDownSelection(const char* _label, int& _currentIndex, unsigned _under21, float _width = 100)
+		bool DropDownSelection(const char* _label, int& _currentIndex, unsigned _under60, float _width = 100)
 		{
-			static_assert(N >= 21, "Under 21");
+			static_assert(N < 60, "Under 60");
 
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
@@ -496,7 +501,7 @@ namespace EGUI
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			HashString inviLabel{ "##" };
 			inviLabel += _label;
-			const bool ret = ImGui::Combo(inviLabel.c_str(), &_currentIndex, g_ArrIndexName.begin(), Math::Min(_under21, N));
+			const bool ret = ImGui::Combo(inviLabel.c_str(), &_currentIndex, g_ArrIndexName.begin(), Math::Min(_under60, N));
 			ImGui::PopItemWidth();
 			return ret;
 		}

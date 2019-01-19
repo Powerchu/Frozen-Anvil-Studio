@@ -190,6 +190,11 @@ void Editor::SpriteEditor::FieldTexture(void)
 			mnSelectedSection = 0;
 			if (!mpAtlas->GetAllSections().size())
 				mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
+
+			auto& sec = mpAtlas->GetAllSections()[mnSelectedSection];
+			mSectionPos = Math::Vec2{ sec.uStart, sec.vStart };
+			mSectionSize = Math::Vec2{ sec.uEnd - sec.uStart, sec.vEnd - sec.vStart };
+			mSectionDime = Math::Vec2{ sec.mCol, sec.mRow };
 		}
 		EGUI::Display::EndPayloadReceiver();
 	}
@@ -207,12 +212,14 @@ void Editor::SpriteEditor::FieldAtlas(void)
 	static constexpr float itemWidth = 60.f;
 	const auto& allSections = mpAtlas->GetAllSections();
 
-	if (EGUI::Display::DropDownSelection<21>("Sections", mnSelectedSection, static_cast<unsigned>(allSections.size()), FIELD_SIZE))
+	if (EGUI::Display::DropDownSelection<59>("Sections", mnSelectedSection, static_cast<unsigned>(allSections.size()), FIELD_SIZE))
 	{
 		auto& e = mpAtlas->GetAllSections()[mnSelectedSection];
 		mSectionPos  = Math::Vec2{ e.uStart, e.vStart };
 		mSectionSize = Math::Vec2{ e.uEnd - e.uStart, e.vEnd - e.vStart };
 		mSectionDime = Math::Vec2{ roundf(mSectionSize.x / e.mCol), roundf(mSectionSize.y / e.mRow)};
+		mSectionDime.x = Math::Clamp(static_cast<float>(mSectionDime.x), 0, 100);
+		mSectionDime.y = Math::Clamp(static_cast<float>(mSectionDime.y), 0, 100);
 	}
 	else
 	{
