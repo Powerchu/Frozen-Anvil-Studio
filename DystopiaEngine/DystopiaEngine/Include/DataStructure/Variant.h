@@ -54,8 +54,12 @@ public:
 	template <typename U>
 	inline auto As(void) const noexcept -> VARIANT_ENABLE_IF_SFINAE(U, U const&);
 
+	inline auto KeepType(void) noexcept;
+
 	template <typename Visitor>
 	inline void Visit(Visitor&&);
+
+	inline unsigned short GetTypeID(void) const noexcept;
 
 
 	// ======================================== OPERATORS ======================================== // 
@@ -77,8 +81,24 @@ private:
 	bool IsValidType(void) const noexcept;
 
 	template <typename U>
-	static void Destroy(U*) noexcept;
+	static void Destroy(Ut::Type_t<U>*) noexcept;
 	inline void DestroyCurrent(void) noexcept;
+
+	struct VariantTypeEnforcer
+	{
+		Variant& original;
+
+		template <typename U>
+		auto operator = (U&& _rhs) -> VARIANT_ENABLE_IF_SFINAE(VARIANT_TYPE_RESOLUTION(U), VariantTypeEnforcer&)
+		{
+			using Actual_t = VARIANT_TYPE_RESOLUTION(U);
+
+			if (original.GetTypeID() == Ut::MetaFind_t<Ut::Decay_t<Actual_t>, AllTypes>::value)
+				original.As<Actual_t>() = Ut::Fwd<U>(_rhs);
+
+			return *this;
+		}
+	};
 };
 
 
@@ -96,14 +116,14 @@ inline constexpr Variant<Ty...>::Variant(void) noexcept
 }
 
 template <typename ... Ty>
-inline constexpr Variant<Ty...>::Variant(Variant const& _rhs) noexcept
+inline Variant<Ty...>::Variant(Variant const& _rhs) noexcept
 	: Variant{}
 {
 	*this = _rhs;
 }
 
 template <typename ... Ty>
-inline constexpr Variant<Ty...>::Variant(Variant&& _rhs) noexcept
+inline Variant<Ty...>::Variant(Variant&& _rhs) noexcept
 	: raw{}, mType{ _rhs.mType }
 {
 	std::memcpy(this, &_rhs, sizeof(raw));
@@ -144,6 +164,12 @@ inline auto Variant<Ty...>::As(void) const noexcept -> VARIANT_ENABLE_IF_SFINAE(
 	return *reinterpret_cast<U const*>(&raw);
 }
 
+template <typename ... Ty>
+inline auto Variant<Ty...>::KeepType(void) noexcept
+{
+	return VariantTypeEnforcer{ *this };
+}
+
 template <typename ... Ty> template <typename Visitor>
 inline void Variant<Ty...>::Visit(Visitor&& _visitor)
 {
@@ -163,6 +189,12 @@ inline bool Variant<Ty...>::IsValidType(void) const noexcept
 }
 
 template <typename ... Ty>
+inline unsigned short Variant<Ty...>::GetTypeID(void) const noexcept
+{
+	return mType;
+}
+
+template <typename ... Ty>
 inline void Variant<Ty...>::DestroyCurrent(void) noexcept
 {
 	static void(*SwitchTable[])(char*) = {
@@ -174,7 +206,7 @@ inline void Variant<Ty...>::DestroyCurrent(void) noexcept
 }
 
 template <typename ... Ty> template <typename U>
-static inline void Variant<Ty...>::Destroy(U* _ptr) noexcept
+static inline void Variant<Ty...>::Destroy(Ut::Type_t<U>* _ptr) noexcept
 {
 	_ptr->~U();
 }

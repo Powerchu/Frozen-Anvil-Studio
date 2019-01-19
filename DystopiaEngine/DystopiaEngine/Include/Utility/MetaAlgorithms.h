@@ -198,7 +198,8 @@ namespace Ut
 		template <typename T, typename Ty, typename ... R>
 		struct MemberFinderReal<T, Ut::Type_t<decltype(static_cast<Ty>(&T::operator()))>, Ty, R...>
 		{
-			using type = Ty;
+			using type   = Ty;
+			using result = Ty;
 		};
 	}
 
@@ -207,6 +208,31 @@ namespace Ut
 	{
 
 	};
+
+
+	// ================================================= UNIQUE =============================================== //
+
+
+	template <typename ... Ty>
+	struct MetaUnique
+	{
+		using type   = MetaUnique<Ty...>;
+		using result = type;
+	};
+
+	template <typename T, typename ... Ty>
+	struct MetaUnique<T, Ty...>
+	{
+		using result = typename IfElse<
+			MetaFind<T, Ty...>::value,
+			typename MetaConcat<T, typename MetaUnique<Ty...>::result>::result,
+			typename MetaUnique<Ty...>::result>::result;
+
+		using type = result;
+	};
+
+	template <typename ... Ty>
+	using MetaUnique_t = typename MetaUnique<Ty ...>::type;
 }
 
 

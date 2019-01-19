@@ -347,6 +347,7 @@
     <ClInclude Include="Include\Utility\MetaAlgorithms.h" />
     <ClInclude Include="Include\Utility\MetaDataStructures.h" />
     <ClInclude Include="Include\Utility\MetaHelper.h" />
+    <ClInclude Include="Include\Utility\MetaSet.h" />
     <ClInclude Include="Include\Utility\Utility.h" />
     <ClInclude Include="Include\Math\Vector2.h" />
     <ClInclude Include="Include\Utility\UtilityInternals.h" />

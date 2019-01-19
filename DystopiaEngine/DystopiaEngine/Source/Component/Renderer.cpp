@@ -132,6 +132,15 @@ bool Dystopia::Renderer::HasTransparency(void) const noexcept
 	return (mnFlags & eObjFlag::FLAG_RESERVED) != 0;
 }
 
+std::pair<OString, ::Gfx::eUniform_t> const* Dystopia::Renderer::FindUniformInShader(const char* _strName)
+{
+	for (auto& e : mpShader->GetVariables())
+		if (e.first == _strName)
+			return &e;
+
+	return nullptr;
+}
+
 
 Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 {

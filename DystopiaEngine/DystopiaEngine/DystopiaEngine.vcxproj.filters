@@ -359,8 +359,8 @@
       <Filter>Game Engine\Systems\AI\Tree</Filter>
     </ClCompile>
     <ClCompile Include="Source\Component\Colliders\PointCollider.cpp">
-		  <Filter>Game Engine\Components\Colliders</Filter>
-	  </ClCompile>
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
     <ClCompile Include="Source\System\Graphics\ShaderProgram.cpp">
       <Filter>Game Engine\SubSystems\Shader\ShaderProgram</Filter>
     </ClCompile>
@@ -1000,8 +1000,8 @@
       <Filter>Preprocessor</Filter>
     </ClInclude>
     <ClInclude Include="Include\Component\PointCollider.h">
-		<Filter>Game Engine\Components\Colliders</Filter>
-	</ClInclude>
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClInclude>
     <ClInclude Include="Include\DataStructure\Function.h">
       <Filter>DataStructures\Functions</Filter>
     </ClInclude>
@@ -1034,6 +1034,9 @@
     </ClInclude>
     <ClInclude Include="Include\Utility\EnumOps.h">
       <Filter>Utility\EnumOps</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\MetaSet.h">
+      <Filter>Utility\Meta\Sets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1486,6 +1489,9 @@
     </Filter>
     <Filter Include="Utility\EnumOps">
       <UniqueIdentifier>{f7a8de23-cec3-49c2-8894-8d65ca9a6691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Meta\Sets">
+      <UniqueIdentifier>{fef2c618-0eca-496f-9443-d642f1cb61af}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
