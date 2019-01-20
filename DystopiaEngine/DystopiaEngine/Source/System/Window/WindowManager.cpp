@@ -150,7 +150,7 @@ void Dystopia::WindowManager::PreInit(void)
 	HWND window = CreateWindowEx(
 		WS_EX_APPWINDOW,
 		L"MainWindow",
-		L"Dystopia 2018.01.1a",
+		L"Dystopia 2019.02.0a",
 		WS_POPUP,
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		100, 100,

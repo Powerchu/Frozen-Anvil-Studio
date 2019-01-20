@@ -161,8 +161,24 @@ namespace
 
 void Dystopia::InputManager::LoadDefaultUserKeys(void)
 {
-	MapButton("Horizontal", KEYBOARD_RIGHT, KEYBOARD_LEFT);
-	MapButton("Vertical", KEYBOARD_UP, KEYBOARD_DOWN);
+	MapButton("Horizontal", KEYBOARD_RIGHT, KEYBOARD_LEFT, XBUTTON_DPAD_RIGHT, XBUTTON_DPAD_LEFT);
+	MapButton("Vertical", KEYBOARD_UP, KEYBOARD_DOWN, XBUTTON_DPAD_UP, XBUTTON_DPAD_UP);
+	MapButton("L Stick Horizontal", 2, 0);
+	MapButton("L Stick Vertical", 2, 1);
+	MapButton("Camera X", 2, 2);
+	MapButton("Camera Y", 2, 3);
+	MapButton("Left Trigger", 2, 4);
+	MapButton("Right Trigger", 2, 5);
+	MapButton("IceMode", KEYBOARD_Q, NONE, XBUTTON_LEFT_SHOULDER);
+	MapButton("FireMode", KEYBOARD_E, NONE, XBUTTON_RIGHT_SHOULDER);
+	MapButton("Attack", KEYBOARD_CTRL, NONE, XBUTTON_X);
+	MapButton("Jump", KEYBOARD_SPACEBAR, NONE, XBUTTON_A);
+	MapButton("Skill1", KEYBOARD_F, NONE, XBUTTON_Y);
+	MapButton("Skill2", KEYBOARD_A, NONE, XBUTTON_B);
+	MapButton("Pause", KEYBOARD_ESCAPE, NONE, XBUTTON_START);
+	MapButton("Select", KEYBOARD_ENTER, NONE, XBUTTON_A);
+	MapButton("Back", KEYBOARD_ESCAPE, NONE, XBUTTON_B);
+
 }
 
 
@@ -220,9 +236,12 @@ void Dystopia::InputManager::Update(const float _dt)
 			++count;
 		}
 	}
+	
+
 
 	for (auto &[key, btn] : mAxisMapping)
 	{
+
 		if (GetKey(btn.mPosBtn) || GetKey(btn.mAltPosBtn))
 		{
 			if (mbSnapping && btn.mfRetValue < 0.f)
@@ -246,6 +265,7 @@ void Dystopia::InputManager::Update(const float _dt)
 		{
 			btn.Update(_dt);
 		}
+
 	}
 
 	/*Commenting this out makes the input smoother*/
@@ -261,7 +281,9 @@ void Dystopia::InputManager::PostUpdate()
 {
 	mPrevKeyBoardState = mKeyBoardState;
 	for (auto & elem : mKeyBoardState.mKeyPressFlags)
+	{
 		elem = 0;
+	}
 	mMouseInput.mnWheel = 0;
 }
 
@@ -270,25 +292,85 @@ void Dystopia::InputManager::LoadDefaults(void)
 	LoadDefaultUserKeys();
 }
 
-void Dystopia::InputManager::LoadSettings(DysSerialiser_t&)
+void Dystopia::InputManager::LoadSettings(DysSerialiser_t& _in)
 {
+	int mapSize = 0;
+	_in >> mapSize;
 
+	for(int i = 0; i < mapSize; ++i)
+	{
+		HashString name;
+		HashString mPosDes;
+		HashString mNegDes;
+		int mPosBtn;
+		int mNegBtn;
+		int mAltPosBtn;
+		int mAltNegBtn;
+		float grav;
+		float deadR;
+		float sens;
+		int type;
+		int axis;
+
+		_in >> name;
+		_in >> mPosDes;
+		_in >> mNegDes;
+		_in >> mPosBtn;
+		_in >> mNegBtn;
+		_in >> mAltPosBtn;
+		_in >> mAltNegBtn;
+		_in >> grav;
+		_in >> deadR;
+		_in >> sens;
+		_in >> type;
+		_in >> axis;
+
+		MapButton(VirtualButton(name, mPosDes, mNegDes, static_cast<eButton>(mPosBtn), static_cast<eButton>(mNegBtn)
+								, static_cast<eButton>(mAltPosBtn), static_cast<eButton>(mAltNegBtn), grav, deadR, sens, type, axis));
+	}
 }
 
-void Dystopia::InputManager::SaveSettings(DysSerialiser_t&)
+void Dystopia::InputManager::SaveSettings(DysSerialiser_t& _out)
 {
-
+	_out << mAxisMapping.size();
+	for (auto &[key, val] : mAxisMapping)
+	{
+		_out << val.mName;
+		_out << val.mPosDescription;
+		_out << val.mNegDescription;
+		_out << static_cast<int>(val.mPosBtn);
+		_out << static_cast<int>(val.mNegBtn);
+		_out << static_cast<int>(val.mAltPosBtn);
+		_out << static_cast<int>(val.mAltNegBtn);
+		_out << val.mfGravity;
+		_out << val.mfDeadRange;
+		_out << val.mfSensitivity;
+		_out << val.TypeSelectedInd;
+		_out << val.AxisSelectedInd;
+	}
 }
 
-void Dystopia::InputManager::MapUserButton(eUserButton, eButton )
+
+void Dystopia::InputManager::MapUserButton(eUserButton, eButton ) const
 {
 	
 }
 
-void Dystopia::InputManager::MapButton(const char* _name, eButton _posBtn, eButton _negBtn)
+void Dystopia::InputManager::MapButton(const char* _name, eButton _posBtn, eButton _negBtn, eButton _altPosBtn, eButton _altNegBtn)
 {
 	//mButtonMapping[_name] = _button;
-	mAxisMapping[_name] = VirtualButton(_name, _posBtn, _negBtn);
+	mAxisMapping[_name] = VirtualButton(_name, _posBtn, _negBtn, _altPosBtn, _altNegBtn);
+}
+
+void Dystopia::InputManager::MapButton(const char* _name, int _type, int _axis)
+{
+	//mButtonMapping[_name] = _button;
+	mAxisMapping[_name] = VirtualButton(_name, _type,_axis);
+}
+
+void Dystopia::InputManager::MapButton(const VirtualButton& _vBtn)
+{
+	mAxisMapping[_vBtn.mName] = _vBtn;
 }
 
 _DLL_EXPORT bool Dystopia::InputManager::GetKeyDown(eButton _Key) const noexcept
@@ -406,7 +488,49 @@ _DLL_EXPORT float Dystopia::InputManager::GetAxis(const char * _BtnName) const n
 	{
 		return false;
 	}
-	return it->second.mfRetValue;
+	if (it->second.TypeSelectedInd == 0) // Is Keyboard/Mouse/Controller Button (1 or 0 only)
+	{
+		return it->second.mfRetValue;
+	}
+
+	else if (it->second.TypeSelectedInd == 1) // Is Mouse Movement (X, Y or Scroll)
+	{
+		switch (it->second.AxisSelectedInd)
+		{
+		case 0: // X Axis
+			return GetMouseDelta().x;
+		case 1: // Y Axis
+			return GetMouseDelta().y;
+		case 2: // ScrollWheel
+			return GetMouseWheel();
+		default:
+			break;
+		}
+	}
+
+	// Is Joystick
+	else
+	{
+		switch (it->second.AxisSelectedInd)
+		{
+		case 0: // Left Thumb X
+			return GetAnalogX(0);
+		case 1: // Left Thumb Y Axis
+			return GetAnalogY(0);
+		case 2: // Right Thumb X
+			return GetAnalogX(1);
+		case 3: // Right Thumb Y
+			return GetAnalogY(1);
+		case 4: // Left Trigger
+			return GetTriggers(0);
+		case 5: // Right Trigger
+			return GetTriggers(1);
+		default:
+			break;
+		}
+	}
+
+	return false;
 }
 
 bool Dystopia::InputManager::IsController() const
@@ -470,25 +594,32 @@ float Dystopia::InputManager::GetMouseWheel(void) const noexcept
 	return mMouseInput.mnWheel * MOUSEWHEEL_SCALE;
 }
 
+#if EDITOR
 void Dystopia::InputManager::EditorUI()
 {
 	if (EGUI::Display::Button("Add New Axis", { 128,24 }))
 	{
-		EGUI::Display::OpenPopup("Add Axis", false);
+		MapButton("[NEW AXIS]");
 	}
 
-	if (EGUI::Display::StartPopupModal("Add Axis", "Adding New Axis"))
+	EGUI::SameLine();
+	if (EGUI::Display::Button("Restore Defaults", {128,24}))
 	{
-		if (EGUI::Display::Button("Cancel", { 60,24 }))
-		{
-			EGUI::Display::CloseCurrentPopup();
-		}
-
-		EGUI::Display::EndPopup();
+		mAxisMapping.clear();
+		LoadDefaults();
 	}
 
 	if (EGUI::Display::CollapsingHeader("Axes"))
 	{
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (EGUI::Display::SelectableTxt("Remove All"))
+			{
+				mAxisMapping.clear();
+			}
+			ImGui::EndPopup();
+		}
+
 		static char buffer1[512];
 
 		auto tempComboStateCount = mAxisMapping.size();
@@ -504,6 +635,18 @@ void Dystopia::InputManager::EditorUI()
 			EGUI::PushID(val.mPosBtn);
 			if (EGUI::Display::CollapsingHeader(key.c_str()))
 			{
+				if (ImGui::BeginPopupContextItem())
+				{
+					if (EGUI::Display::SelectableTxt("Remove This Key"))
+					{
+						mAxisMapping.erase(key);
+					}
+					ImGui::EndPopup();
+				}
+
+				marrCombos[mapCount].TypeSelectedInd = val.TypeSelectedInd;
+				marrCombos[mapCount].AxisSelectedInd = val.AxisSelectedInd;
+
 				EGUI::Indent();
 				EGUI::PushLeftAlign(140.f);
 				// Name
@@ -659,24 +802,62 @@ void Dystopia::InputManager::EditorUI()
 				static std::string textStates[3]{ "Key or Mouse Button", "Mouse Movement", "Joystick Axis" };
 				if (EGUI::Display::DropDownSelection("Type", marrCombos[mapCount].TypeSelectedInd, textStates, 220.f))
 				{
+					val.TypeSelectedInd = marrCombos[mapCount].TypeSelectedInd;
+
+					// If selected Type is not Joystick
+					if (marrCombos[mapCount].TypeSelectedInd != 2)
+					{
+						val.mfGravity = 3.0f;
+						val.mfDeadRange = 0.001f;
+						val.mfSensitivity = 3.0f;
+					}
+					else
+					{
+						val.mfGravity = 0.0f;
+						val.mfDeadRange = 0.19f;
+						val.mfSensitivity = 1.0f;
+					}
 					
 				};
-				static std::string axisStates[7]{ "X axis", "Y axis", "Scrollwheel", "L Analog", "R Analog", "L Trigger", "R Trigger" };
-				if (EGUI::Display::DropDownSelection("Axis", marrCombos[mapCount].AxisSelectedInd, axisStates, 220.f))
+
+				static std::string ncAxisStates[3]{ "X axis", "Y axis", "Scrollwheel"};
+				static std::string cAxisStates[6]{ "Left Thumb X", "Left Thumb Y", "Right Thumb X", "Right Thumb Y", "L Trigger", "R Trigger" };
+
+				// If selected Type is not Joystick
+				if (marrCombos[mapCount].TypeSelectedInd != 2)
 				{
-
-				};
-
+					if (EGUI::Display::DropDownSelection("Axis", marrCombos[mapCount].AxisSelectedInd, ncAxisStates, 220.f))
+					{
+						val.AxisSelectedInd = marrCombos[mapCount].AxisSelectedInd, ncAxisStates;
+					};
+				}
+				else // if selected Type is Joystick
+				{
+					if (EGUI::Display::DropDownSelection("Axis", marrCombos[mapCount].AxisSelectedInd, cAxisStates, 220.f))
+					{
+						val.AxisSelectedInd = marrCombos[mapCount].AxisSelectedInd, ncAxisStates;
+					};
+				}
 
 				EGUI::PopLeftAlign();
 				EGUI::UnIndent();
 			}
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove This Key"))
+				{
+					mAxisMapping.erase(key);
+				}
+				ImGui::EndPopup();
+			}
+
 			mapCount++;
 			EGUI::PopID();
 		}
 		EGUI::UnIndent();
 	}
 }
+#endif
 
 Dystopia::InputManager::KeyBinding& Dystopia::InputManager::KeyBinding::operator = (eButton _nBtn)
 {

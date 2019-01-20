@@ -36,6 +36,7 @@ namespace Dystopia
 
 	class  InputManager : public Systems
 	{
+		struct VirtualButton;
 	public:
 
 		struct KeyboardState
@@ -65,8 +66,10 @@ namespace Dystopia
 		void LoadSettings(DysSerialiser_t&) override;
 		void SaveSettings(DysSerialiser_t&) override;
 
-		_DLL_EXPORT void  MapUserButton(eUserButton, eButton);
-		_DLL_EXPORT void  MapButton(const char* _name, eButton _posBtn, eButton _negBtn = NONE);
+		_DLL_EXPORT void  MapUserButton(eUserButton, eButton) const;
+		_DLL_EXPORT void  MapButton(const char* _name, eButton _posBtn, eButton _negBtn = NONE, eButton _altPosBtn = NONE, eButton _altNegBtn = NONE);
+		_DLL_EXPORT void  MapButton(const char* _name, int _type, int _axis);
+		_DLL_EXPORT void  MapButton(const VirtualButton& _vBtn);
 
 		// Returns true while the user holds down the key identified by _Key.
 		_DLL_EXPORT bool  GetKey(eButton _Key)   const noexcept;
@@ -82,7 +85,13 @@ namespace Dystopia
 		// Returns true the first frame the user releases the virtual button identified by _BtnName (single).
 		_DLL_EXPORT bool  GetButtonUp(const char* _BtnName)  const noexcept;
 
-		// Returns the value of the virtual axis identified by axisName.
+		/*
+		 *  Returns the value of the virtual axis identified by _BtnName.
+		 *  Neutral is 0
+		 *  For Key/Mouse/Joystick Buttons, value return will always be from -1 to 1
+		 *  For Mouse Movement, value will 0 to any positive float value (Mouse Delta)
+		 *  For Joystick, value will also be from -1 to 1
+		 */
 		_DLL_EXPORT float GetAxis(const char* _BtnName) const noexcept;
 
 		_DLL_EXPORT bool IsController() const;
@@ -151,12 +160,45 @@ namespace Dystopia
 				
 			}
 
-			VirtualButton(const char* _name, eButton _posBtn = NONE, eButton _negBtn = NONE)
+			VirtualButton(const char* _name, eButton _posBtn = NONE, eButton _negBtn = NONE, eButton _altPosBtn = NONE, eButton _altNegBtn = NONE)
 				: mName(_name)
 				, mPosDescription("Description for Positive Button")
 				, mNegDescription("Description for Negative Button")
 				, mPosBtn(_posBtn)
 				, mNegBtn(_negBtn)
+				, mAltPosBtn(_altPosBtn)
+				, mAltNegBtn(_altNegBtn)
+			{
+				
+			}
+
+			VirtualButton(HashString _name, HashString _posDesc, HashString _negDesc
+						 , eButton _posBtn = NONE, eButton _negBtn = NONE
+						 , eButton _altPosBtn = NONE, eButton _altNegBtn = NONE
+						 , float _grav = 3.0f, float _deadR = 0.001f, float _sens = 3.0f
+						 , int _type = 0, int _axis = 0)
+				: mName(_name)
+				, mPosDescription(_posDesc)
+				, mNegDescription(_negDesc)
+				, mPosBtn(_posBtn)
+				, mNegBtn(_negBtn)
+				, mAltPosBtn(_altPosBtn)
+				, mAltNegBtn(_altNegBtn)
+				, mfGravity(_grav)
+				, mfDeadRange(_deadR)
+				, mfSensitivity(_sens)
+				, TypeSelectedInd(_type)
+				, AxisSelectedInd(_axis)
+			{
+
+			}
+
+			VirtualButton(const char* _name, int _type, int _axis)
+				: mName(_name)
+				, mPosDescription("Desc")
+				, mNegDescription("Desc")
+				, TypeSelectedInd(_type)
+				, AxisSelectedInd(_axis)
 			{
 				
 			}
@@ -175,7 +217,9 @@ namespace Dystopia
 			float mfGravity			= 3.000F;
 			float mfDeadRange		= 0.010F;
 			float mfSensitivity		= 3.000F;
-			
+
+			int TypeSelectedInd = 0;
+			int AxisSelectedInd = 0;
 
 			void UpdateName(const char* _newName)
 			{
