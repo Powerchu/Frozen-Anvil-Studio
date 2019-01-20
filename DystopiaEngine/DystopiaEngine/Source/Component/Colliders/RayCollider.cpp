@@ -323,14 +323,42 @@ namespace Dystopia
 			/*Check if the ray lies within the edge*/
 			auto && v1 = _RayDir - elem.mPos;
 			auto && v2 = _RayDir - (elem.mPos + elem.mVec3);
+			/*If either results are negative, the ray lies outside of the cone*/
+			if (v1.Dot(elem.mVec3) < 0.f)
+			{
 #if CLOCKWISE
 
 #else
-			v1.Negate<Math::NegateFlag::Y>();
-			v2.Negate<Math::NegateFlag::Y>();
+				v1.xyzw = v1.yxzw;
+				v2.xyzw = v2.yxzw;
+				v1.Negate<Math::NegateFlag::Y>();
+				v2.Negate<Math::NegateFlag::X>();
 #endif
-			/*If either results are negative, the ray lies outside of the cone*/
-			if (v1.Dot(_RayDir) < 0.f || v2.Dot(_RayDir) < 0.f)
+
+			}
+			else if (v1.Dot(elem.mVec3) > elem.mVec3.Dot(elem.mVec3) )
+			{
+#if CLOCKWISE
+
+#else
+				v1.xyzw = v1.yxzw;
+				v2.xyzw = v2.yxzw;
+				v1.Negate<Math::NegateFlag::Y>();
+				v2.Negate<Math::NegateFlag::X>();
+#endif
+			}
+			else
+			{
+#if CLOCKWISE
+
+#else
+				v1.xyzw = v1.yxzw;
+				v2.xyzw = v2.yxzw;
+				v1.Negate<Math::NegateFlag::Y>();
+				v2.Negate<Math::NegateFlag::X>();
+#endif
+			}
+			if (v1.Dot(_RayDir) > 0.f || v2.Dot(_RayDir) > 0.f)
 				return false;
 			/*Get the intersection time*/
 			float cosTheta = _RayDir.Dot(elem.mNorm3);
