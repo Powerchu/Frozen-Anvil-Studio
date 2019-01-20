@@ -29,7 +29,7 @@ namespace Dystopia
 		ShaderProgram(void) noexcept;
 		~ShaderProgram(void) noexcept;
 
-		bool LoadProgram(::Gfx::ShaderStage, char const* _strFile) noexcept;
+		bool LoadProgram(::Gfx::ShaderStage, char const* _strFile, char const* _strName) noexcept;
 
 		::Gfx::ShaderStage const& GetStage(void) const noexcept;
 		::Gfx::ShaderProg const& GetID(void) const noexcept;

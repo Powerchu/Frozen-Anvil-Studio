@@ -48,12 +48,16 @@ void Dystopia::ShaderSystem::Shutdown(void) noexcept
 
 void Dystopia::ShaderSystem::EditorUpdate(void)
 {
+	auto pFileSys = CORE::Get<FileSystem>();
 	for (auto& e : mChanges)
 	{
 		ShaderProgram temp{};
 
-		if (temp.LoadProgram(e->GetStage(), e->GetName().c_str()))
+		if (temp.LoadProgram(e->GetStage(), pFileSys->GetFullPath(e->GetName(), eFileDir::eResource).c_str(), e->GetName().c_str()))
 			Ut::Swap(*e, temp);
+
+		for (auto& s : mShaders)
+			s.ReattachProgram(e);
 	}
 
 	mChanges.clear();
@@ -86,7 +90,7 @@ Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(::Gfx::Shad
 		return ret;
 
 	auto p = mPrograms.Emplace();
-	if (p->LoadProgram(_stage, _strName))
+	if (p->LoadProgram(_stage, _strName, strName.c_str()))
 	{
 #		if EDITOR
 			if (_bTrack)

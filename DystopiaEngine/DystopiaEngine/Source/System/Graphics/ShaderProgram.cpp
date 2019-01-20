@@ -65,7 +65,7 @@ AutoArray<std::pair<HashString, Gfx::eUniform_t>> const& Dystopia::ShaderProgram
 	return mVars;
 }
 
-bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _file) noexcept
+bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _file, char const* _strName) noexcept
 {
 	std::ifstream file{ _file, std::ios::ate | std::ios::in | std::ios::binary };
 
@@ -97,7 +97,7 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 
 	mStage   = _stage;
 	mstrName = _file;
-	mstrName = mstrName.substr(mstrName.find_last_of("\\/") + 1);
+	mstrName = _strName;
 
 #	if EDITOR
 		mVars = pGfxAPI->QueryVariables(mProgram);
