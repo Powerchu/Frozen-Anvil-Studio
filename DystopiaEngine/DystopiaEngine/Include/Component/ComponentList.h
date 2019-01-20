@@ -36,11 +36,11 @@ namespace Dystopia
 		class AABB,
 		class Convex,
 		class Circle,
-		class PointCollider,
 		class AudioSource,
 		class SpriteRenderer,
 		class TextRenderer,
 		class AiController,
+		class PointCollider,
 		class RayCollider
 		//class Particle
 	>::result;

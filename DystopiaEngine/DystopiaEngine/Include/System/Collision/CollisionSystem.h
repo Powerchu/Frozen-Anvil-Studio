@@ -17,6 +17,7 @@ namespace Dystopia
 	class PointCollider;
 	class RayCollider;
 	struct CollisionEvent;
+	class GameObject;
 	class CollisionSystem : public Systems, public ComponentDonor<Convex>,
 											public ComponentDonor<Circle>, 
 											public ComponentDonor<AABB>,
@@ -94,7 +95,7 @@ namespace Dystopia
 
 		AutoArray<Collider *> GetAllColliders() const;
 
-		_DLL_EXPORT bool RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength = 0.f) const;
+		_DLL_EXPORT bool RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos, CollisionEvent * _Output, GameObject ** _IgnoreList = nullptr, unsigned _count = 0, float _MaxLength = 0.f) const;
 		_DLL_EXPORT bool RaycastAllHits (Math::Vec3D const & _Dir, Math::Point3D const & _mPos,AutoArray<CollisionEvent> & _Output, float _MaxLength = 0.f) const;
 
 	private:

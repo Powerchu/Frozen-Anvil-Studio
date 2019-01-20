@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Include\System\Database\DataSheet.cpp" />
     <ClCompile Include="Source\Component\Colliders\PointCollider.cpp" />
     <ClCompile Include="Source\Component\Colliders\RayCollider.cpp" />
     <ClCompile Include="Source\DataStructure\OString.cpp" />

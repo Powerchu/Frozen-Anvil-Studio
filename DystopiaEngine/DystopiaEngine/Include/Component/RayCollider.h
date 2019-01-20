@@ -16,7 +16,7 @@ namespace Dystopia
 		};
 		unsigned GetRealComponentType(void) const
 		{
-			return Ut::MetaFind_t<Ut::Decay_t<PointCollider>, UsableComponents>::value;
+			return Ut::MetaFind_t<Ut::Decay_t<RayCollider>, UsableComponents>::value;
 		};
 
 #if EDITOR

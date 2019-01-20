@@ -370,9 +370,6 @@
     <ClCompile Include="Source\System\Database\DatabaseSystem.cpp">
       <Filter>Game Engine\Systems\Database</Filter>
     </ClCompile>
-    <ClCompile Include="Include\System\Database\DataSheet.cpp">
-      <Filter>Game Engine\Systems\Database</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\DataSheetEditor.cpp">
       <Filter>Editor\Main\Panels\Datasheet</Filter>
     </ClCompile>
@@ -380,6 +377,9 @@
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
     <ClCompile Include="Source\Component\Colliders\RayCollider.cpp" />
+    <ClCompile Include="Include\System\Database\DataSheet.cpp">
+      <Filter>Game Engine\Systems\Database</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">

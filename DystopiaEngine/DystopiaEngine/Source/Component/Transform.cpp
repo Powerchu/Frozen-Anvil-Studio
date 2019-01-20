@@ -93,7 +93,7 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
 
 void Dystopia::Transform::OnParentRemove(Transform* _pParent)
 {
-	// Convert our data to world coordinates
+	// Convert our data to world coordinatesF
 	Math::Mat4 const Trans = _pParent->GetTransformMatrix();
 
 	mScale		= _pParent->GetGlobalScale() * mScale;

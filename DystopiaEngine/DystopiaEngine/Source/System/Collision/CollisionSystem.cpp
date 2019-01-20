@@ -442,17 +442,37 @@ namespace Dystopia
 		return Ut::Move(ToRet);
 	}
 
-	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength) const
+	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output,GameObject ** _IgnoreList, unsigned _count, float _MaxLength) const
 	{
 		bool isColliding = false;
+		_Output->mTimeIntersection = 999999.f;
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
+			CollisionEvent Col;
+			Col.mTimeIntersection = 99999.f;
 			if (elem.GetOwner())
 			{
-				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
+				if (RayCollider::Raycast(_Dir, _mPos, &elem, &Col, _MaxLength))
+				{
+					bool ignore = false;
+					if (_IgnoreList)
+					{
+						for (unsigned i = 0; i < _count; ++i)
+						{
+							if (_IgnoreList[i] == Col.mCollidedWith)
+							{
+								ignore = true;
+							}
+						}
+					}
+					if (ignore) continue;
+					isColliding |= true;
+					if(_Output->mTimeIntersection > Col.mTimeIntersection ? Col.mTimeIntersection : _Output->mTimeIntersection)
+					*_Output = Col;
+				}
 			}
 		}
 
@@ -473,9 +493,28 @@ namespace Dystopia
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
+			CollisionEvent Col;
+			Col.mTimeIntersection = 99999.f;
 			if (elem.GetOwner())
 			{
-				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
+				if (RayCollider::Raycast(_Dir, _mPos, &elem, &Col, _MaxLength))
+				{
+					bool ignore = false;
+					if (_IgnoreList)
+					{
+						for (unsigned i = 0; i < _count; ++i)
+						{
+							if (_IgnoreList[i] == Col.mCollidedWith)
+							{
+								ignore = true;
+							}
+						}
+					}
+					if (ignore) continue;
+					isColliding |= true;
+					if (_Output->mTimeIntersection > Col.mTimeIntersection ? Col.mTimeIntersection : _Output->mTimeIntersection)
+						*_Output = Col;
+				}
 			}
 		}
 

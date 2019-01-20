@@ -318,13 +318,14 @@ namespace Dystopia
 		for (auto const & elem : ListOfEdge)
 		{
 			/*Check if the edge normal is facing the ray*/
-			if (elem.mNorm3.Dot(_RayDir) >= 0.f)
+			if (elem.mNorm3.Dot(_RayDir) >= 0.f || (_Pos - elem.mPos).Dot(_RayDir) > 0.f)
 				continue;
 			/*Check if the ray lies within the edge*/
-			auto && v1 = _RayDir - elem.mPos;
-			auto && v2 = _RayDir - (elem.mPos + elem.mVec3);
+			auto && v1 = _Pos - elem.mPos;
+			auto && v2 = _Pos - (elem.mPos + elem.mVec3);
 #if CLOCKWISE
-
+			v1.Negate<Math::NegateFlag::X>();
+			v2.Negate<Math::NegateFlag::X>();
 #else
 			v1.Negate<Math::NegateFlag::Y>();
 			v2.Negate<Math::NegateFlag::Y>();
@@ -333,12 +334,20 @@ namespace Dystopia
 			if (v1.Dot(_RayDir) < 0.f || v2.Dot(_RayDir) < 0.f)
 				return false;
 			/*Get the intersection time*/
-			float cosTheta = _RayDir.Dot(elem.mNorm3);
+			float cosTheta = _RayDir.Dot(-elem.mNorm3);
 			float adj = Math::Abs(v1.Dot(elem.mNorm3));
 			float time = adj / cosTheta;
 			/*If the time of intersection to the edge is less than the current time of intersection, update it*/
 			if (time < _OutputResult->mTimeIntersection)
 			{
+				if ((_OutputResult->mTimeIntersection * _RayDir).MagnitudeSqr() > _MaxLength * _MaxLength)
+					continue;
+				DEBUG_PRINT(eLog::ERROR, "My Pos      %f %f %f \n", static_cast<float>(_Pos.x), static_cast<float>(_Pos.y), static_cast<float>(_Pos.z));
+				DEBUG_PRINT(eLog::ERROR, "Edge origin %f %f %f \n", static_cast<float>(elem.mPos.x), static_cast<float>(elem.mPos.y), static_cast<float>(elem.mPos.z));
+				DEBUG_PRINT(eLog::ERROR, "Edge Normal %f %f %f \n", static_cast<float>(elem.mNorm3.x), static_cast<float>(elem.mNorm3.y), static_cast<float>(elem.mNorm3.z));
+				DEBUG_PRINT(eLog::ERROR, "CosTheta    %f", cosTheta);
+				DEBUG_PRINT(eLog::ERROR, "Adj         %f", adj);
+				DEBUG_PRINT(eLog::ERROR, "Time         %f",time);
 				_OutputResult->mTimeIntersection = _OutputResult->mTimeIntersection > time ? time : _OutputResult->mTimeIntersection;
 				_OutputResult->mEdgeNormal = elem.mNorm3;
 				_OutputResult->mfPeneDepth = 0;
