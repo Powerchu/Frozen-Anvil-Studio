@@ -25,8 +25,8 @@ Dystopia::Texture::Texture(void) noexcept :
 	glGenTextures(1, &mnID);
 }
 
-Dystopia::Texture::Texture(unsigned _nType, const std::string& _strPath) noexcept :
-	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ _nType }, mnID{ 0 }, mstrPath{std::move(_strPath)}
+Dystopia::Texture::Texture(unsigned _nType, HashString const& _strPath) noexcept :
+	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ _nType }, mnID{ 0 }, mstrPath{ _strPath }
 {
 	glGenTextures(1, &mnID);
 }
@@ -95,12 +95,12 @@ unsigned Dystopia::Texture::GetID(void) const noexcept
 	return mnID;
 }
 
-std::string Dystopia::Texture::GetName(void) const
+HashString Dystopia::Texture::GetName(void) const
 {
 	return mstrPath.substr(mstrPath.find_last_of("/\\") + 1);
 }
 
-std::string const& Dystopia::Texture::GetPath(void) const noexcept
+HashString const& Dystopia::Texture::GetPath(void) const noexcept
 {
 	return mstrPath;
 }

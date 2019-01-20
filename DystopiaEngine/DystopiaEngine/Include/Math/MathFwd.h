@@ -17,11 +17,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Math
 {
 	union Vector2;
-	union __declspec(align(16)) Vector4;
-	union __declspec(align(16)) Quaternion;
+	union alignas(16) Vector4;
+	union alignas(16) Quaternion;
 
-	struct __declspec(align(16)) Matrix2;
-	struct __declspec(align(16)) Matrix4;
+	struct alignas(16) Matrix2;
+	struct alignas(16) Matrix4;
 
 	class Radians;
 	class Degrees;

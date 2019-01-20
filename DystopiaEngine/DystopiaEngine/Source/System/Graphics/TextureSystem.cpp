@@ -43,25 +43,24 @@ Dystopia::TextureSystem::~TextureSystem(void) noexcept
 void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 {
 #if EDITOR
-
-	auto pFileSys = EngineCore::Get<FileSystem>();
-	std::string buf;
-
-	for (auto& e : mTextures)
-	{
-		if (pFileSys->DetectFileChanges(e.GetPath()))
-		{
-			while (pFileSys->DetectFileChanges(e.GetPath()));
-
-			if (Image* pImg = LoadImage(e.GetPath()))
-			{
-				Texture* pTex = LoadRaw<Texture2D>(pImg, e.GetPath().c_str());
-				
-				Ut::Swap(e, *pTex);
-				mTextures.Remove(pTex);
-			}
-		}
-	}
+	//auto pFileSys = EngineCore::Get<FileSystem>();
+	//std::string buf;
+	//
+	//for (auto& e : mTextures)
+	//{
+	//	if (pFileSys->DetectFileChanges(e.GetPath()))
+	//	{
+	//		while (pFileSys->DetectFileChanges(e.GetPath()));
+	//
+	//		if (Image* pImg = LoadImage(e.GetPath()))
+	//		{
+	//			Texture* pTex = LoadRaw<Texture2D>(pImg, e.GetPath().c_str());
+	//			
+	//			Ut::Swap(e, *pTex);
+	//			mTextures.Remove(pTex);
+	//		}
+	//	}
+	//}
 
 #	if defined(_DEBUG) | defined(DEBUG)
 		if (auto err = glGetError())
@@ -83,7 +82,7 @@ void Dystopia::TextureSystem::SaveAtlases(void)
 #if EDITOR
 	for (auto& a : mAtlas)
 	{
-		auto fp = EngineCore::Get<FileSystem>()->FindFilePath(a.GetName().c_str(), eFileDir::eCurrent);
+		auto fp = CORE::Get<FileSystem>()->FindFilePath(a.GetName().c_str(), eFileDir::eCurrent);
 		HashString folder{ fp };
 		folder += '.';
 		folder += Gbl::ATLAS_EXT;
@@ -105,7 +104,7 @@ Dystopia::TextureAtlas* Dystopia::TextureSystem::GenAtlas(Texture* _pTex)
 		HashString file{ pAtlas->GetName().c_str() };
 		file += '.';
 		file += Gbl::ATLAS_EXT;
-		auto find = EngineCore::Get<FileSystem>()->FindFilePath(file.c_str(), eFileDir::eCurrent);
+		auto find = CORE::Get<FileSystem>()->FindFilePath(file.c_str(), eFileDir::eCurrent);
 		if (find.size())
 		{
 			auto serial = TextSerialiser::OpenFile(find.c_str(), TextSerialiser::MODE_READ);
@@ -117,7 +116,7 @@ Dystopia::TextureAtlas* Dystopia::TextureSystem::GenAtlas(Texture* _pTex)
 	return pAtlas;
 }
 
-Dystopia::TextureAtlas* Dystopia::TextureSystem::GetAtlas(const std::string& _strName)
+Dystopia::TextureAtlas* Dystopia::TextureSystem::GetAtlas(HashString const& _strName)
 {
 	auto it = Ut::Find(mAtlas.begin(), mAtlas.end(), [&_strName](const TextureAtlas& _t) {
 		return _strName == _t.GetName();
@@ -129,7 +128,7 @@ Dystopia::TextureAtlas* Dystopia::TextureSystem::GetAtlas(const std::string& _st
 }
 
 template <>
-Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(const std::string& _strPath)
+Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(HashString const& _strPath)
 {
 	// Hardcoded default texture settings
 	// Because we have no idea what the texture should be loaded as
@@ -138,7 +137,7 @@ Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(const std::string& _strP
 	return LoadTexture<Texture2D>(_strPath);
 }
 
-Dystopia::Image* Dystopia::TextureSystem::ImportImage(const HashString& _strPath)
+Dystopia::Image* Dystopia::TextureSystem::ImportImage(HashString const& _strPath)
 {
 	Image* pImg = nullptr;
 	auto meta = _strPath + "." + Gbl::METADATA_EXT;

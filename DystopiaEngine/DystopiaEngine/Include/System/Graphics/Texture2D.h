@@ -24,8 +24,7 @@ namespace Dystopia
 	{
 	public:
 
-		explicit Texture2D(const std::string&) noexcept;
-		~Texture2D(void) noexcept;
+		explicit Texture2D(HashString const&) noexcept;
 
 		void GenerateMipmap(void) const;
 
@@ -35,6 +34,8 @@ namespace Dystopia
 	private:
 		void InitTexture(Image const*);
 		void InitCompressedTexture(Image const*);
+
+		void ReloadImage(void);
 	};
 }
 

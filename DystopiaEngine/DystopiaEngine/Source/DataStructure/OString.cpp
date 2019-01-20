@@ -156,14 +156,15 @@ char OString::front(void) const
 
 const char* OString::cbegin(void) const
 {
-	if (!mnCurSize)
-		return nullptr;
-	if (mpLiteral)
-		return mpLiteral;
-	return mpCharBuffer;
+	//if (!mnCurSize)
+	//	return nullptr;
+	//if (mpLiteral)
+	//	return mpLiteral;
+	//return mpCharBuffer;
+	return begin();
 }
 
-const char*	OString::begin(void)
+const char* OString::begin(void) const
 {
 	if (!mnCurSize)
 		return nullptr;
@@ -174,14 +175,15 @@ const char*	OString::begin(void)
 
 const char* OString::cend(void) const
 {
-	if (!mnCurSize)
-		return nullptr;
-	if (mpLiteral)
-		return mpLiteral + mnCurSize;
-	return mpCharBuffer + mnCurSize;
+	//if (!mnCurSize)
+	//	return nullptr;
+	//if (mpLiteral)
+	//	return mpLiteral + mnCurSize;
+	//return mpCharBuffer + mnCurSize;
+	return end();
 }
 
-const char*	OString::end(void)
+const char*	OString::end(void) const
 {
 	if (!mnCurSize)
 		return nullptr;

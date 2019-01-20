@@ -502,7 +502,7 @@ namespace EGUI
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			HashString inviLabel{ "##" };
 			inviLabel += _label;
-			const bool ret = ImGui::Combo(inviLabel.c_str(), &_currentIndex, g_ArrIndexName.begin(), Math::Min(_under60, N));
+			const bool ret = ImGui::Combo(inviLabel.c_str(), &_currentIndex, g_ArrIndexName.cbegin(), Math::Min(_under60, N));
 			ImGui::PopItemWidth();
 			return ret;
 		}

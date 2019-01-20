@@ -32,6 +32,7 @@
     <ClCompile Include="Include\System\Database\DataSheet.cpp" />
     <ClCompile Include="Source\Component\Colliders\PointCollider.cpp" />
     <ClCompile Include="Source\Component\Colliders\RayCollider.cpp" />
+    <ClCompile Include="Source\Allocator\StackAlloc.cpp" />
     <ClCompile Include="Source\DataStructure\OString.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
     <ClCompile Include="Source\Editor\CommandTypes.cpp" />
@@ -52,6 +53,7 @@
     <ClCompile Include="Source\Editor\FlowChartData.cpp" />
     <ClCompile Include="Source\Editor\GameView.cpp" />
     <ClCompile Include="Source\Lib\GraphicsLib.cpp" />
+    <ClCompile Include="Source\Lib\OpenGLAPI.cpp" />
     <ClCompile Include="Source\Reflection\ReflectionTypeErasure.cpp" />
     <ClCompile Include="Source\DataStructure\HashString.cpp" />
     <ClCompile Include="Source\Editor\SpriteEditor.cpp" />
@@ -86,6 +88,7 @@
     <ClCompile Include="Source\System\Graphics\FontSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\Framebuffer.cpp" />
     <ClCompile Include="Source\System\Graphics\MeshBuilder.cpp" />
+    <ClCompile Include="Source\System\Graphics\ShaderProgram.cpp" />
     <ClCompile Include="Source\System\Graphics\ShaderSystem.cpp" />
     <ClCompile Include="Source\System\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp" />
@@ -152,9 +155,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
+    <ClInclude Include="Include\Allocator\StackAlloc.h" />
+    <ClInclude Include="Include\Allocator\StackAllocImpl.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
     <ClInclude Include="Include\Component\RayCollider.h" />
     <ClInclude Include="Include\Component\PointCollider.h" />
+    <ClInclude Include="Include\DataStructure\Delegate.h" />
     <ClInclude Include="Include\Editor\BehaviourTreeEditor.h" />
     <ClInclude Include="Include\Editor\DataSheetEditor.h" />
     <ClInclude Include="Include\Editor\EditorFactory.h" />
@@ -179,11 +185,15 @@
     <ClInclude Include="Include\Editor\FlowChartData.h" />
     <ClInclude Include="Include\Editor\GameView.h" />
     <ClInclude Include="Include\Factory\Factory.h" />
+    <ClInclude Include="Include\Lib\Gfx\GfxOptions.h" />
+    <ClInclude Include="Include\Lib\Gfx\OpenGLAPI.h" />
+    <ClInclude Include="Include\Lib\Gfx\Shaders.h" />
     <ClInclude Include="Include\PP\PPConcat.h" />
     <ClInclude Include="Include\PP\PPExtract.h" />
     <ClInclude Include="Include\PP\PPForEach.h" />
     <ClInclude Include="Include\PP\PPIf.h" />
     <ClInclude Include="Include\PP\PPIsEmpty.h" />
+    <ClInclude Include="Include\PP\PPIsExpandable.h" />
     <ClInclude Include="Include\PP\PPPopFront.h" />
     <ClInclude Include="Include\PP\PPRemove.h" />
     <ClInclude Include="Include\PP\PPStringify.h" />
@@ -249,6 +259,7 @@
     <ClInclude Include="Include\System\Graphics\Font.h" />
     <ClInclude Include="Include\System\Graphics\FontSystem.h" />
     <ClInclude Include="Include\System\Graphics\MeshBuilder.h" />
+    <ClInclude Include="Include\System\Graphics\ShaderProgram.h" />
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
@@ -345,11 +356,13 @@
     <ClInclude Include="Include\System\Window\Window.h" />
     <ClInclude Include="Include\System\Window\WindowManager.h" />
     <ClInclude Include="Include\Utility\DebugAssert.h" />
+    <ClInclude Include="Include\Utility\EnumOps.h" />
     <ClInclude Include="Include\Utility\GUID.h" />
     <ClInclude Include="Include\Utility\Meta.h" />
     <ClInclude Include="Include\Utility\MetaAlgorithms.h" />
     <ClInclude Include="Include\Utility\MetaDataStructures.h" />
     <ClInclude Include="Include\Utility\MetaHelper.h" />
+    <ClInclude Include="Include\Utility\MetaSet.h" />
     <ClInclude Include="Include\Utility\Utility.h" />
     <ClInclude Include="Include\Math\Vector2.h" />
     <ClInclude Include="Include\Utility\UtilityInternals.h" />
@@ -507,7 +520,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC /DDEBUGDEFAULTALLOC</AdditionalOptions>
+      <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC /DCOMMANDPROMPT</AdditionalOptions>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>

@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Math/Vector2.h"
 #include "IO/TextSerialiser.h"
+#include "DataStructure/HashString.h"
 
 
 Dystopia::TextureAtlas::TextureAtlas(Texture* _ptr) noexcept
@@ -27,7 +28,7 @@ Dystopia::TextureAtlas::TextureAtlas(Texture* _ptr) noexcept
 {
 }
 
-Dystopia::TextureAtlas::TextureAtlas(const std::string& _strName)
+Dystopia::TextureAtlas::TextureAtlas(HashString const& _strName)
 	: mpTexture{ EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GetTexture(_strName) }
 {
 }
@@ -104,12 +105,12 @@ AutoArray<Dystopia::TextureAtlas::SubTexture>& Dystopia::TextureAtlas::GetAllSec
 	return mSections;
 }
 
-std::string Dystopia::TextureAtlas::GetName(void) const
+HashString Dystopia::TextureAtlas::GetName(void) const
 {
 	return mpTexture->GetName();
 }
 
-const std::string& Dystopia::TextureAtlas::GetPath(void) const noexcept
+const HashString& Dystopia::TextureAtlas::GetPath(void) const noexcept
 {
 	return mpTexture->GetPath();
 }

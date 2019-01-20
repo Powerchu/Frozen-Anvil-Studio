@@ -92,8 +92,8 @@ void Editor::StyleScheme::EditorUI(void)
 		EGUI::PushID(i);
 		EGUI::Display::Label(ToName(static_cast<eStyleDataVectors>(i)).c_str());
 		ImGui::SameLine(160);
-		auto v = EGUI::Display::VectorFields("", &mArrVecData[i].mValue, 0.1f, mArrVecData[i].mMin, mArrVecData[i].mMax);
-		for (auto e : v)
+		const auto v = EGUI::Display::VectorFields("", &mArrVecData[i].mValue, 0.1f, mArrVecData[i].mMin, mArrVecData[i].mMax);
+		for (const auto& e : v)
 		{
 			switch (e)
 			{
@@ -118,11 +118,11 @@ void Editor::StyleScheme::SaveSettings(Dystopia::TextSerialiser& _out) const
 	_out.InsertStartBlock("Style");
 	_out << mArrFData.size();
 	_out << mArrVecData.size();
-	for (auto& e : mArrFData)
+	for (const auto& e : mArrFData)
 	{
 		_out << e.mValue;
 	}
-	for (auto& e : mArrVecData)
+	for (const auto& e : mArrVecData)
 	{
 		for (unsigned int i = 0; i < 2; ++i)
 		{

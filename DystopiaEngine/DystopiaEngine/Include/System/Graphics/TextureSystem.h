@@ -47,18 +47,18 @@ namespace Dystopia
 		Image* ImportImage(const HashString&);
 
 		template <typename Ty = Texture>
-		Ty* GetTexture(std::string const& _strName);
+		Ty* GetTexture(HashString const& _strName);
 
 		TextureAtlas* GenAtlas(Texture* = nullptr);
-		TextureAtlas* GetAtlas(std::string const& _strName);
+		TextureAtlas* GetAtlas(HashString const& _strName);
 
 		template <typename Ty = Texture>
-		Ty* LoadTexture(std::string const&);
+		Ty* LoadTexture(HashString const&);
 
 		template <typename Ty>
 		Ty* LoadRaw(Image const*);
 		template <typename Ty>
-		Ty* LoadRaw(Image const*, std::string const&);
+		Ty* LoadRaw(Image const*, HashString const&);
 
 		void SaveAtlases(void);
 
@@ -82,7 +82,7 @@ namespace Dystopia
 
 
 template <typename Ty>
-Ty* Dystopia::TextureSystem::GetTexture(std::string const& _strName)
+Ty* Dystopia::TextureSystem::GetTexture(HashString const& _strName)
 {
 	auto it = Ut::Find(mTextures.begin(), mTextures.end(), [&_strName](const Texture& _t) {
 		return _strName == _t.GetName();
@@ -94,11 +94,11 @@ Ty* Dystopia::TextureSystem::GetTexture(std::string const& _strName)
 }
 
 template<typename Ty>
-Ty* Dystopia::TextureSystem::LoadTexture(std::string const& _strPath)
+Ty* Dystopia::TextureSystem::LoadTexture(HashString const& _strPath)
 {
 	auto pFileSys = EngineCore::Get<FileSystem>();
 	auto it = Ut::Find(mTextures.begin(), mTextures.end(), [&](const Texture& _t) {
-		return pFileSys->IsSameFile(_strPath, _t.GetPath()) || (_strPath == _t.GetPath());
+		return pFileSys->IsSameFile(_strPath.c_str(), _t.GetPath().c_str()) || (_strPath.c_str() == _t.GetPath().c_str());
 	});
 
 	if (it != mTextures.end())
@@ -106,7 +106,7 @@ Ty* Dystopia::TextureSystem::LoadTexture(std::string const& _strPath)
 		return static_cast<Ty*>(&*it);
 	}
 
-	auto loaded = LoadImage(_strPath);
+	auto loaded = LoadImage(_strPath.c_str());
 
 	if (loaded)
 	{
@@ -125,12 +125,12 @@ Ty* Dystopia::TextureSystem::LoadTexture(std::string const& _strPath)
 }
 
 template <>
-Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(std::string const&);
+Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(HashString const&);
 
 template<typename Ty>
 Ty* Dystopia::TextureSystem::LoadRaw(Image const *_ptr)
 {
-	auto ret = mTextures.EmplaceAs<Ty>(std::to_string(reinterpret_cast<uintptr_t>(_ptr)));
+	auto ret = mTextures.EmplaceAs<Ty>(std::to_string(reinterpret_cast<uintptr_t>(_ptr)).c_str());
 
 	ret->LoadTexture(_ptr);
 
@@ -138,7 +138,7 @@ Ty* Dystopia::TextureSystem::LoadRaw(Image const *_ptr)
 }
 
 template<typename Ty>
-Ty* Dystopia::TextureSystem::LoadRaw(Image const *_ptr, std::string const& _strName)
+Ty* Dystopia::TextureSystem::LoadRaw(Image const *_ptr, HashString const& _strName)
 {
 	auto ret = mTextures.EmplaceAs<Ty>(_strName);
 

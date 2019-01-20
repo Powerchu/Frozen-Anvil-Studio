@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/CharSpace.h"
 #include "System/Graphics/FontSystem.h"
 #include "System/Graphics/Shader.h"
+#include "System/Graphics/ShaderSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
 
 #include "Object/GameObject.h"
@@ -53,7 +54,7 @@ Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
 
 void Dystopia::TextRenderer::Awake(void)
 {
-	mpShader = EngineCore::GetInstance()->Get<GraphicsSystem>()->shaderlist["Font Shader"];
+	mpShader = CORE::Get<ShaderSystem>()->GetShader("Font Shader");
 
 	if (!mpMesh)
 	{

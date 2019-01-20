@@ -13,6 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/Texture2D.h"
 #include "System/Graphics/Texture.h"
+#include "System/Driver/Driver.h"
+#include "System/File/FileSystem.h"
 
 #include "IO/Image.h"
 #include "IO/ImageParser.h"
@@ -23,7 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <GL/glew.h>
 
 
-Dystopia::Texture2D::Texture2D(const std::string& _strPath) noexcept
+Dystopia::Texture2D::Texture2D(HashString const& _strPath) noexcept
 	: Texture{ GL_TEXTURE_2D, _strPath }
 {
 	Bind();
@@ -34,10 +36,6 @@ Dystopia::Texture2D::Texture2D(const std::string& _strPath) noexcept
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	Unbind();
-}
-
-Dystopia::Texture2D::~Texture2D(void) noexcept
-{
 }
 
 void Dystopia::Texture2D::GenerateMipmap(void) const
@@ -52,6 +50,14 @@ void Dystopia::Texture2D::GenerateMipmap(void) const
 
 void Dystopia::Texture2D::LoadTexture(Image const * _pData)
 {
+	auto id = CORE::Get<FileSystem>()->TrackFile(GetPath());
+	CORE::Get<FileSystem>()->BindFileTrackEvent(id, &Texture2D::ReloadImage, this);
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
+
 	if (_pData->mbCompressed)
 		InitCompressedTexture(_pData);
 	else
@@ -130,6 +136,11 @@ void Dystopia::Texture2D::InitCompressedTexture(Image const* _pData)
 	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
 	Unbind();
+}
+
+void Dystopia::Texture2D::ReloadImage(void)
+{
+	__debugbreak();
 }
 
 

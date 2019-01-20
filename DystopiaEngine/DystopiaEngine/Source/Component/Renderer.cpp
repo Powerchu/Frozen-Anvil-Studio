@@ -18,9 +18,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Mesh.h"
 #include "System/Graphics/MeshSystem.h"
 #include "System/Graphics/Shader.h"
+#include "System/Graphics/ShaderSystem.h"
 #include "System/Graphics/Texture2D.h"
 #include "System/Driver/Driver.h"
 #include "System/File/FileSystem.h"
+
+#include "Math/MathLib.h"
+#include "DataStructure/Tuple.h"
+#include "DataStructure/Variant.h"
+#include "DataStructure/AutoArray.h"
+#include "DataStructure/HashString.h"
 
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
@@ -57,11 +64,11 @@ Dystopia::Renderer::Renderer(const Renderer& _rhs) noexcept
 void Dystopia::Renderer::Awake(void)
 {
 	SetMesh("Quad");
-	SetShader(EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->shaderlist["Default Shader"]);
+	SetShader(CORE::Get<ShaderSystem>()->GetShader("Default Shader"));
 
 	if (mTexturePath.length())
 	{
-		mpTexture = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(mTexturePath);
+		mpTexture = CORE::Get<GraphicsSystem>()->LoadTexture(mTexturePath);
 	}
 }
 
@@ -131,6 +138,22 @@ bool Dystopia::Renderer::HasTransparency(void) const noexcept
 	return (mnFlags & eObjFlag::FLAG_RESERVED) != 0;
 }
 
+std::pair<OString, ::Gfx::eUniform_t> const* Dystopia::Renderer::FindUniformInShader(const char* _strName)
+{
+	for (auto& e : mpShader->GetVariables())
+		if (e.first == _strName)
+			return &e;
+
+	return nullptr;
+}
+
+void Dystopia::Renderer::ResetOverride(void)
+{
+	for(auto& e : Ut::Range(mOverride).Reverse())
+		if (!FindUniformInShader(e.Get<0>().c_str()))
+			mOverride.FastRemove(&e);
+}
+
 
 Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 {
@@ -158,7 +181,7 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 	Component::Unserialise(_in);
 	_in >> path;
 	_in.ConsumeEndBlock();
-	mTexturePath = EngineCore::GetInstance()->Get<FileSystem>()->GetFullPath(path, eFileDir::eResource);
+	mTexturePath = CORE::Get<FileSystem>()->GetFullPath(path, eFileDir::eResource).c_str();
 }
 
 void Dystopia::Renderer::EditorUI(void) noexcept
@@ -241,7 +264,27 @@ void Dystopia::Renderer::MeshField()
 
 void Dystopia::Renderer::ShaderField()
 {
-	if (EGUI::Display::EmptyBox("Shader", 150, "shader has no name or id", true))
+	static void(*x[])(ShaderVariant_t&) {
+		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<0, ShaderTypeList>::type{}; },
+		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<1, ShaderTypeList>::type{}; },
+		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<2, ShaderTypeList>::type{}; },
+		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<3, ShaderTypeList>::type{}; },
+		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<4, ShaderTypeList>::type{}; }
+	};
+	static ::Gfx::eUniform_t(*y[])(void) {
+		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<0, ShaderTypeList>::value); },
+		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<1, ShaderTypeList>::value); },
+		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<2, ShaderTypeList>::value); },
+		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<3, ShaderTypeList>::value); },
+		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<4, ShaderTypeList>::value); }
+	};
+
+	char const* str = "No Shader";
+	if (mpShader)
+	{
+		str = mpShader->GetName().c_str();
+	}
+	if (EGUI::Display::EmptyBox("Shader", 150, str, true))
 	{
 
 	}
@@ -249,5 +292,77 @@ void Dystopia::Renderer::ShaderField()
 	{
 		EGUI::Display::EndPayloadReceiver();
 	}
+
+	auto& vars = mpShader->GetVariables();
+	mOverrideNames.clear();
+	mOverrideNames.reserve(vars.size() + 1);
+
+	mOverrideNames.EmplaceBack("Select");
+	for (auto& e : vars)
+		mOverrideNames.EmplaceBack(e.first.c_str());
+
+	static int sele = 0;
+	if (EGUI::Display::DropDownSelection("Manual Override", sele, mOverrideNames))
+	{
+		::Gfx::eUniform_t type;
+		ShaderVariant_t myVariant;
+
+		if ([&]() {
+			for (auto& e : mOverride)
+				if (e.Get<0>() == mOverrideNames[sele])
+					return false;
+				return true;
+		}())
+		{
+			for (int n = 0; n < 5; ++n)
+				if (y[n]() == vars[sele - 1].second)
+				{
+					type = vars[sele - 1].second;
+					x[n](myVariant);
+					break;
+				}
+
+			mOverride.EmplaceBack(mOverrideNames[sele], type, Ut::Move(myVariant));
+		}
+		sele = 0;
+	}
+
+	int n = 0;
+	for (auto& e : Ut::Range(mOverride).Reverse())
+	{
+		e.Get<2>().Visit(UIVisitor{ e.Get<0>() });
+
+		EGUI::PushID(++n);
+		EGUI::SameLine();
+		if (EGUI::Display::IconCross("Clear", 9.f))
+			mOverride.FastRemove(&e);
+		EGUI::PopID();
+	}
+}
+
+template<>
+inline void Dystopia::Renderer::UIVisitor::operator()(int& _variant)
+{
+	EGUI::Display::DragInt(strName.c_str(), &_variant, 1, -INT_MAX, INT_MAX);
+}
+template<>
+inline void Dystopia::Renderer::UIVisitor::operator()(float& _variant)
+{
+	EGUI::Display::DragFloat(strName.c_str(), &_variant, 0.1f, -FLT_MAX, FLT_MAX);
+}
+template<>
+inline void Dystopia::Renderer::UIVisitor::operator()(bool& _variant)
+{
+	EGUI::Display::CheckBox(strName.c_str(), &_variant);
+}
+template<>
+inline void Dystopia::Renderer::UIVisitor::operator()(Math::Vec2& _variant)
+{
+	EGUI::Display::VectorFields(strName.c_str(), &_variant, 0.1f, -FLT_MAX, FLT_MAX);
+}
+template<>
+inline void Dystopia::Renderer::UIVisitor::operator()(Math::Vec4& _variant)
+{
+	EGUI::Display::VectorFields(strName.c_str(), &_variant, 0.1f, -FLT_MAX, FLT_MAX);
 }
 #endif

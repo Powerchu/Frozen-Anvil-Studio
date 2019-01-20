@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Math/MathFwd.h"
 #include "DataStructure/AutoArray.h"
+#include "DataStructure/HashString.h"
 
 #include <string>
 
@@ -38,7 +39,7 @@ namespace Dystopia
 		};
 
 		explicit TextureAtlas(Texture* = nullptr) noexcept;
-		explicit TextureAtlas(const std::string&);
+		explicit TextureAtlas(HashString const&);
 		~TextureAtlas(void) noexcept;
 
 		void Bind(void) const noexcept;
@@ -53,8 +54,8 @@ namespace Dystopia
 
 		AutoArray<SubTexture>& GetAllSections(void) noexcept;
 
-		std::string GetName(void) const;
-		std::string const& GetPath(void) const noexcept;
+		HashString GetName(void) const;
+		HashString const& GetPath(void) const noexcept;
 
 		void SaveAtlas(TextSerialiser&) const noexcept;
 		void LoadAtlas(TextSerialiser&) noexcept;

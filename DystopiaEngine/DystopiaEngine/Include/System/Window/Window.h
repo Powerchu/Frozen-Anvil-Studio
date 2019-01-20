@@ -33,8 +33,8 @@ namespace Dystopia
 
 		const Queue<eButton>& GetInputQueue(void) const noexcept;
 
-		HWND GetWindowHandle(void) const noexcept;
-		HDC GetDeviceContext(void) const noexcept;
+		HWND const& GetWindowHandle(void) const noexcept;
+		HDC const& GetDeviceContext(void) const noexcept;
 
 		int GetWidth(void) const noexcept;
 		int GetHeight(void) const noexcept;

@@ -25,8 +25,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <windows.h>						// Windows Header
 #include <shellapi.h>
 
-#undef  WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
-#undef  NOMINMAX
+#undef WIN32_LEAN_AND_MEAN					// Stop defines from spilling into code
+#undef NOMINMAX
+#undef ERROR
+#undef near
+#undef far
 
 constexpr unsigned DEFAULT_QUEUE_SIZE = 60;
 
@@ -39,12 +42,12 @@ Dystopia::Window::Window(HWND _handle) :
 
 }
 
-HWND Dystopia::Window::GetWindowHandle(void) const noexcept
+HWND const& Dystopia::Window::GetWindowHandle(void) const noexcept
 {
 	return mHandle;
 }
 
-HDC Dystopia::Window::GetDeviceContext(void) const noexcept
+HDC const& Dystopia::Window::GetDeviceContext(void) const noexcept
 {
 	return mDeviceContext;
 }
@@ -84,11 +87,10 @@ void Dystopia::Window::SetTitle(const std::wstring& _strTitle)
 
 std::wstring Dystopia::Window::GetTitle(void) const noexcept
 {
-	static constexpr unsigned max = 254;
-	char buffer[max];
-	::GetWindowTextA(mHandle, buffer, max);
-	std::string s{ buffer };
-	return std::wstring{ s.begin(), s.end() };
+	static constexpr unsigned max = 256;
+	wchar_t buffer[max];
+	GetWindowText(mHandle, buffer, max);
+	return std::wstring{ buffer };
 }
 
 
