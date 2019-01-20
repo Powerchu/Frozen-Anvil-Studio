@@ -95,7 +95,10 @@ namespace Dystopia
 				break;
 			}
 		}
-		
+		mPathTable[eFileDir::eSolution] = GetProjectFolders<std::string>(eFileDir::eSolution);
+		mPathTable[eFileDir::eHeader] = GetProjectFolders<std::string>(eFileDir::eHeader);
+		mPathTable[eFileDir::eSource] = GetProjectFolders<std::string>(eFileDir::eSource);
+		mPathTable[eFileDir::eResource] = GetProjectFolders<std::string>(eFileDir::eResource);
 	}
 
 	FileSystem::~FileSystem()
@@ -130,18 +133,19 @@ namespace Dystopia
 				  interested in(Stored in DetectionInfo.FileName
 				*/
 				size_t pos;
-				while ((pos = names.find_first_of("//")) != OString::nPos)
-				{
-					names.replace(pos, strlen("//") - 1, "/");
-				}
-				while ((pos = names.find_first_of("\\\\")) != OString::nPos)
-				{
-					names.replace(pos, strlen("\\\\") - 1, "/");
-				}
-				while ((pos = names.find_first_of("\\"))  != OString::nPos)
-				{
-					names.replace(pos, strlen("\\") - 1, "/");
-				}
+				names = Normalize(names);
+				//while ((pos = names.find_first_of("//")) != OString::nPos)
+				//{
+				//	names.replace(pos, strlen("//") - 1, "/");
+				//}
+				//while ((pos = names.find_first_of("\\\\")) != OString::nPos)
+				//{
+				//	names.replace(pos, strlen("\\\\") - 1, "/");
+				//}
+				//while ((pos = names.find_first_of("\\"))  != OString::nPos)
+				//{
+				//	names.replace(pos, strlen("\\") - 1, "/");
+				//}
 
 				names = Ut::Move(TrackJob->mParentDirectory + "/" + names);
 				if ((names  == TrackJob->mFileName) || names == TrackJob->mParentDirectory + "/" + TrackJob->mFileName)
@@ -182,14 +186,19 @@ namespace Dystopia
 
 	std::string FileSystem::GetFullPath(std::string const & _FileName, eFileDir _ParentDirectory)
 	{
-		std::filesystem::path DirPath{ GetProjectFolders<std::string>(_ParentDirectory) };
+		std::filesystem::path DirPath{ mPathTable[_ParentDirectory] };
 		std::error_code error; 
 		std::filesystem::recursive_directory_iterator DirIter { DirPath, std::filesystem::directory_options::skip_permission_denied, error };
-
+		std::string fullpath = Normalize(DirPath.string() + "/" + _FileName);
 		for (auto const & elem : DirIter )
 		{
-			if (elem.path().filename().string() == _FileName || std::filesystem::equivalent(mPathTable[_ParentDirectory] + _FileName,elem,error))
+			std::string FullName = Normalize(elem.path().string());
+			if (elem.path().filename().string() == _FileName || FullName == fullpath)
+			{
+				//|| std::filesystem::equivalent(DirPath.wstring + "/"+ _FileName,elem,error))
 				return elem.path().string();
+			}
+
 		}
 
 		return std::string{};
@@ -264,12 +273,15 @@ namespace Dystopia
 	{
 		std::filesystem::path DirPath{ mPathTable[_Directory] };
 		std::error_code error;
+		std::string name = Normalize(_FileName);
+		std::string Full = Normalize(mPathTable[_Directory] + "/" + _FileName);
 		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
-		std::wstring wstrFileName{ _FileName.begin(), _FileName.end() };
+		std::wstring wstrFileName{ name.begin(), name.end() };
 		for (auto const & elem : DirIter)
 		{
 			std::wstring filename = elem.path().filename().wstring();
-			if (filename == wstrFileName || std::filesystem::equivalent(elem,_FileName, error))
+			std::string  full     = Normalize(elem.path().string());
+			if (filename == wstrFileName || (full == name) || (full == Full))
 				return true;
 		}
 
@@ -280,6 +292,24 @@ namespace Dystopia
 	{
 		std::error_code err;
 		return std::filesystem::equivalent(_lhs, _rhs, err);
+	}
+
+	std::string FileSystem::Normalize(std::string _FileName) const
+	{
+		size_t pos;
+		while ((pos = _FileName.find("//")) != OString::nPos)
+		{
+			_FileName.replace(pos, strlen("//"), "/");
+		}
+		while ((pos = _FileName.find("\\\\")) != OString::nPos)
+		{
+			_FileName.replace(pos, strlen("\\\\"), "/");
+		}
+		while ((pos = _FileName.find("\\")) != OString::nPos)
+		{
+			_FileName.replace(pos, strlen("\\"), "/");
+		}
+		return _FileName;
 	}
 
 	bool FileSystem::DetectFileChanges(const std::string& _FilePath, eFileDir _ParentDirectory)
@@ -735,20 +765,21 @@ namespace Dystopia
 	FileTrackInfoID_t FileSystem::TrackFile(HashString _EventName, eFileDir _ParentDirectory)
 	{
 		size_t pos;
-		while ((pos = _EventName.find_first_of("//")) != OString::nPos)
-		{
-			_EventName[pos] = '/';
-			_EventName.erase(pos+1, 1);
-		}
-		while ((pos = _EventName.find_first_of("\\\\")) != OString::nPos)
-		{
-			_EventName[pos] = '/';
-			_EventName.erase(pos + 1, 1);
-		}
-		while ((pos = _EventName.find_first_of("\\")) != OString::nPos)
-		{
-			_EventName[pos] = '/';
-		}
+		_EventName = Normalize(_EventName.c_str()).c_str();
+		//while ((pos = _EventName.find_first_of("//")) != OString::nPos)
+		//{
+		//	_EventName[pos] = '/';
+		//	_EventName.erase(pos+1, 1);
+		//}
+		//while ((pos = _EventName.find_first_of("\\\\")) != OString::nPos)
+		//{
+		//	_EventName[pos] = '/';
+		//	_EventName.erase(pos + 1, 1);
+		//}
+		//while ((pos = _EventName.find_first_of("\\")) != OString::nPos)
+		//{
+		//	_EventName[pos] = '/';
+		//}
 
 
 		DetectionInfo * pDetectionInfo = nullptr;

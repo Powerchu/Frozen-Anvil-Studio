@@ -101,6 +101,7 @@ namespace Dystopia
 
 		bool IsSameFile(std::string const& _lhs, std::string const& _rhs);
 
+		std::string Normalize(std::string _FileName) const;
 		/*
 		  Detect changes in the file path provided. 
 		  The FilesNames return is relative to the _FilePath provided.
