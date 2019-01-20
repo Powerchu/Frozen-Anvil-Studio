@@ -114,7 +114,19 @@ struct  GET_MEMPTR_TYPE_AUX
 };
 
 template <typename T, typename C>
-struct  GET_MEMPTR_TYPE<T C::*>
+struct  GET_MEMPTR_TYPE_AUX<T C::*>
+{
+	using type = T;
+};
+
+template <auto _type>
+struct  GET_MEMPTR_TYPE
+{
+	using type = typename GET_MEMPTR_TYPE_AUX<decltype(_type)>::type;
+};
+
+template <typename T, typename C, T C::* _type>
+struct  GET_MEMPTR_TYPE<_type>
 {
 	using type = T;
 };

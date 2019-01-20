@@ -363,11 +363,11 @@ namespace Dystopia
 	void PhysicsSystem::IsDebugUI(void)
 	{
 		//bool tempBool = mbIsDebugActive;
-		if (EGUI::Display::CheckBox("Debug Draw", &mbIsDebugActive))
-		{
-			//mbIsDebugActive = tempBool;
-			//EGUI::GetCommandHND()->InvokeCommand<PhysicsSystem>(&PhysicsSystem::mbIsDebugActive, tempBool);
-		}
+		//if (EGUI::Display::CheckBox("Debug Draw", &mbIsDebugActive))
+		//{
+		//	//mbIsDebugActive = tempBool;
+		//	//EGUI::GetCommandHND()->InvokeCommand<PhysicsSystem>(&PhysicsSystem::mbIsDebugActive, tempBool);
+		//}
 	}
 
 	void PhysicsSystem::MaxVelocityUI()

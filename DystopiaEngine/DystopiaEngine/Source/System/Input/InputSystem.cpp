@@ -24,12 +24,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN			// Exclude rare stuff from Window's header
 #include <Windows.h>
+#undef ERROR
 #include "Object/ObjectFlags.h"
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
+#if EDITOR
 #include "Editor/EGUI.h"
 #include "Editor/EditorMain.h"
 #include "Editor/RuntimeMeta.h"
+#endif
 #undef  WIN32_LEAN_AND_MEAN			// Stop define from spilling into code
 #undef NOMINMAX
 

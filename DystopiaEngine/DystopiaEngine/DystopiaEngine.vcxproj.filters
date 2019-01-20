@@ -1082,7 +1082,7 @@
     </ClInclude>
     <ClInclude Include="Include\Component\RayCollider.h">
       <Filter>Game Engine\Components\Colliders</Filter>
-    </ClCompile>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
