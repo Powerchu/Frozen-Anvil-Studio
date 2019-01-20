@@ -79,11 +79,11 @@ namespace Dystopia
 		_DLL_EXPORT bool  GetKeyUp(eButton _Key)  const noexcept;
 
 		// Returns true while the virtual button identified by _BtnName is held down.
-		_DLL_EXPORT bool  GetButton(const char* _KeyName)   const noexcept;
+		_DLL_EXPORT bool  GetButton(const char* _KeyName, bool isNeg = false)   const noexcept;
 		// Returns true during the frame the user pressed down the virtual button identified by _BtnName (single).
-		_DLL_EXPORT bool  GetButtonDown(const char* _BtnName) const noexcept;
+		_DLL_EXPORT bool  GetButtonDown(const char* _BtnName, bool isNeg = false) const noexcept;
 		// Returns true the first frame the user releases the virtual button identified by _BtnName (single).
-		_DLL_EXPORT bool  GetButtonUp(const char* _BtnName)  const noexcept;
+		_DLL_EXPORT bool  GetButtonUp(const char* _BtnName, bool isNeg = false)  const noexcept;
 
 		/*
 		 *  Returns the value of the virtual axis identified by _BtnName.
@@ -144,6 +144,7 @@ namespace Dystopia
 			EGUI::Display::ComboFilterState NegFilter;
 			EGUI::Display::ComboFilterState AltPosFilter;
 			EGUI::Display::ComboFilterState AltNegFilter;
+
 
 			int TypeSelectedInd = 0;
 			int AxisSelectedInd = 0;
@@ -218,6 +219,9 @@ namespace Dystopia
 			float mfDeadRange		= 0.010F;
 			float mfSensitivity		= 3.000F;
 
+			bool mbSnapping = false;
+			bool mbInvert = false;
+
 			int TypeSelectedInd = 0;
 			int AxisSelectedInd = 0;
 
@@ -273,8 +277,6 @@ namespace Dystopia
 			}
 		};
 
-		bool mbSnapping = false;
-		bool mbInvert = false;
 
 		// ComboFilterStates Array
 		AutoArray<ComboStruct> marrCombos;

@@ -167,18 +167,18 @@ void Dystopia::InputManager::LoadDefaultUserKeys(void)
 	MapButton("L Stick Vertical", 2, 1);
 	MapButton("Camera X", 2, 2);
 	MapButton("Camera Y", 2, 3);
-	MapButton("Left Trigger", 2, 4);
+	MapButton("C_Roll", 2, 4);
 	MapButton("Right Trigger", 2, 5);
-	MapButton("IceMode", KEYBOARD_Q, NONE, XBUTTON_LEFT_SHOULDER);
-	MapButton("FireMode", KEYBOARD_E, NONE, XBUTTON_RIGHT_SHOULDER);
+	MapButton("SetForm", KEYBOARD_Q, NONE, XBUTTON_LEFT_SHOULDER);
+	MapButton("SetForce", KEYBOARD_E, NONE, XBUTTON_RIGHT_SHOULDER);
 	MapButton("Attack", KEYBOARD_CTRL, NONE, XBUTTON_X);
 	MapButton("Jump", KEYBOARD_SPACEBAR, NONE, XBUTTON_A);
-	MapButton("Skill1", KEYBOARD_F, NONE, XBUTTON_Y);
-	MapButton("Skill2", KEYBOARD_A, NONE, XBUTTON_B);
+	MapButton("Skill Y", KEYBOARD_F, NONE, XBUTTON_Y);
+	MapButton("Skill B", KEYBOARD_A, NONE, XBUTTON_B);
 	MapButton("Pause", KEYBOARD_ESCAPE, NONE, XBUTTON_START);
 	MapButton("Select", KEYBOARD_ENTER, NONE, XBUTTON_A);
 	MapButton("Back", KEYBOARD_ESCAPE, NONE, XBUTTON_B);
-
+	MapButton("Roll", KEYBOARD_LALT, NONE);
 }
 
 
@@ -244,7 +244,7 @@ void Dystopia::InputManager::Update(const float _dt)
 
 		if (GetKey(btn.mPosBtn) || GetKey(btn.mAltPosBtn))
 		{
-			if (mbSnapping && btn.mfRetValue < 0.f)
+			if (btn.mbSnapping && btn.mfRetValue < 0.f)
 			{
 				btn.mfRetValue = 0.0f;
 			}
@@ -253,7 +253,7 @@ void Dystopia::InputManager::Update(const float _dt)
 
 		if (GetKey(btn.mNegBtn) || GetKey(btn.mAltNegBtn))
 		{
-			if (mbSnapping && btn.mfRetValue > 0.f)
+			if (btn.mbSnapping && btn.mfRetValue > 0.f)
 			{
 				btn.mfRetValue = 0.0f;
 			}
@@ -421,7 +421,7 @@ _DLL_EXPORT bool Dystopia::InputManager::GetKeyUp(eButton _Key) const noexcept
 	return ((*(prev_ptr + GrpIndex) & BitChecker) && !(*(curr_ptr + GrpIndex) & BitChecker));
 }
 
-_DLL_EXPORT bool Dystopia::InputManager::GetButtonDown(const char* _KeyName) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::GetButtonDown(const char* _KeyName, bool isNeg) const noexcept
 {
 	const auto iterator = mAxisMapping.find(_KeyName);
 	if (iterator == mAxisMapping.end())
@@ -436,12 +436,22 @@ _DLL_EXPORT bool Dystopia::InputManager::GetButtonDown(const char* _KeyName) con
 	{
 		return mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
 	}*/
-	return GetKeyDown(iterator->second.mPosBtn) || GetKeyDown(iterator->second.mAltPosBtn)
+	if (!isNeg)
+	{
+		return GetKeyDown(iterator->second.mPosBtn) || GetKeyDown(iterator->second.mAltPosBtn)
 			|| mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP))
 			|| mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
+	}
+	else
+	{
+		return GetKeyDown(iterator->second.mNegBtn) || GetKeyDown(iterator->second.mAltNegBtn)
+			|| mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second.mNegBtn - eButton::XBUTTON_DPAD_UP))
+			|| mGamePad.IsKeyTriggered(static_cast<eButton>(iterator->second.mAltNegBtn - eButton::XBUTTON_DPAD_UP));
+	}
+
 }
 
-_DLL_EXPORT bool Dystopia::InputManager::GetButton(const char* _KeyName) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::GetButton(const char* _KeyName, bool isNeg) const noexcept
 {
 	const auto iterator = mAxisMapping.find(_KeyName);
 	if (iterator == mAxisMapping.end())
@@ -456,12 +466,22 @@ _DLL_EXPORT bool Dystopia::InputManager::GetButton(const char* _KeyName) const n
 	{
 		return mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
 	}*/
-	return GetKey(iterator->second.mPosBtn) || GetKey(iterator->second.mAltPosBtn)
-		|| mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP))
-		|| mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
+	if (!isNeg)
+	{
+		return GetKey(iterator->second.mPosBtn) || GetKey(iterator->second.mAltPosBtn)
+			|| mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP))
+			|| mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
+	}
+	else
+	{
+		return GetKey(iterator->second.mNegBtn) || GetKey(iterator->second.mAltNegBtn)
+			|| mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mNegBtn - eButton::XBUTTON_DPAD_UP))
+			|| mGamePad.IsKeyPressed(static_cast<eButton>(iterator->second.mAltNegBtn - eButton::XBUTTON_DPAD_UP));
+	}
+	
 }
 
-_DLL_EXPORT bool Dystopia::InputManager::GetButtonUp(const char* _KeyName) const noexcept
+_DLL_EXPORT bool Dystopia::InputManager::GetButtonUp(const char* _KeyName, bool isNeg) const noexcept
 {
 	const auto iterator = mAxisMapping.find(_KeyName);
 	if (iterator == mAxisMapping.end())
@@ -476,9 +496,19 @@ _DLL_EXPORT bool Dystopia::InputManager::GetButtonUp(const char* _KeyName) const
 	{
 		return mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
 	}*/
-	return GetKeyUp(iterator->second.mPosBtn) || GetKeyUp(iterator->second.mAltPosBtn)
-		|| mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP))
-		|| mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
+	if (!isNeg)
+	{
+		return GetKeyUp(iterator->second.mPosBtn) || GetKeyUp(iterator->second.mAltPosBtn)
+			|| mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mPosBtn - eButton::XBUTTON_DPAD_UP))
+			|| mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mAltPosBtn - eButton::XBUTTON_DPAD_UP));
+	}
+	else
+	{
+		return GetKeyUp(iterator->second.mNegBtn) || GetKeyUp(iterator->second.mAltNegBtn)
+			|| mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mNegBtn - eButton::XBUTTON_DPAD_UP))
+			|| mGamePad.IsKeyReleased(static_cast<eButton>(iterator->second.mAltNegBtn - eButton::XBUTTON_DPAD_UP));
+	}
+	
 }
 
 _DLL_EXPORT float Dystopia::InputManager::GetAxis(const char * _BtnName) const noexcept
@@ -635,14 +665,14 @@ void Dystopia::InputManager::EditorUI()
 			EGUI::PushID(val.mPosBtn);
 			if (EGUI::Display::CollapsingHeader(key.c_str()))
 			{
-				if (ImGui::BeginPopupContextItem())
+				/*if (ImGui::BeginPopupContextItem())
 				{
 					if (EGUI::Display::SelectableTxt("Remove This Key"))
 					{
 						mAxisMapping.erase(key);
 					}
 					ImGui::EndPopup();
-				}
+				}*/
 
 				marrCombos[mapCount].TypeSelectedInd = val.TypeSelectedInd;
 				marrCombos[mapCount].AxisSelectedInd = val.AxisSelectedInd;
@@ -793,11 +823,11 @@ void Dystopia::InputManager::EditorUI()
 				EGUI::Display::DragFloat("Sensitivity", &val.mfSensitivity, 0.05f, -100.f, 100.f, false, 64.f);
 
 				// Snapping Checkbox
-				EGUI::Display::CheckBox("Snap", &mbSnapping,true
+				EGUI::Display::CheckBox("Snap", &val.mbSnapping,true
 										, "if we have input in opposite direction of current, \ndo we jump to neutral and continue from there?");
 	
 				// Invert Checkbox
-				EGUI::Display::CheckBox("Invert", &mbInvert, true, "flip positive and negative?");
+				EGUI::Display::CheckBox("Invert", &val.mbInvert, true, "flip positive and negative?");
 
 				static std::string textStates[3]{ "Key or Mouse Button", "Mouse Movement", "Joystick Axis" };
 				if (EGUI::Display::DropDownSelection("Type", marrCombos[mapCount].TypeSelectedInd, textStates, 220.f))
@@ -842,14 +872,14 @@ void Dystopia::InputManager::EditorUI()
 				EGUI::PopLeftAlign();
 				EGUI::UnIndent();
 			}
-			if (ImGui::BeginPopupContextItem())
+			/*if (ImGui::BeginPopupContextItem())
 			{
 				if (EGUI::Display::SelectableTxt("Remove This Key"))
 				{
 					mAxisMapping.erase(key);
 				}
 				ImGui::EndPopup();
-			}
+			}*/
 
 			mapCount++;
 			EGUI::PopID();
