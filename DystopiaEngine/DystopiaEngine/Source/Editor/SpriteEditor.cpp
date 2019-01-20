@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/TextureAtlas.h"
 #include "System/Graphics/TextureSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
+#include "Math/MathLib.h"
 
 #define FIELD_SIZE 140
 

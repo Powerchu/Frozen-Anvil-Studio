@@ -78,7 +78,7 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 	size_t sz = file.tellg();
 	if (StackAlloc_t::GetUsableSize() < sz)
 	{
-		DEBUG_PRINT(eLog::ERROR, "Shader LoadProgram failed! Insufficient Memory, %uzbytes required!\n", sz);
+		DEBUG_PRINT(eLog::ERROR, "Shader LoadProgram failed!\nInsufficient Memory: %uzbytes available, %uzbytes required!\n", StackAlloc_t::GetUsableSize(), sz);
 		return false;
 	}
 
@@ -92,24 +92,8 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 	if (!shader)
 		return false;
 
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif 
-
 	bool ret = pGfxAPI->LinkShader(mProgram, shader);
-
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif 
-
 	pGfxAPI->Free(shader);
-
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif 
 
 	mStage   = _stage;
 	mstrName = _file;

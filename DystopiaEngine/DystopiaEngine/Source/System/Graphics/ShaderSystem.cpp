@@ -88,11 +88,11 @@ Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(::Gfx::Shad
 	if (p->LoadProgram(_stage, _strName))
 	{
 #		if EDITOR
-		if (_bTrack)
-		{
-			auto id = CORE::Get<FileSystem>()->TrackFile(_strName);
-			CORE::Get<FileSystem>()->BindFileTrackEvent(id, &ShaderProgram::TrackChangesCallback, p);
-		}
+			if (_bTrack)
+			{
+				auto id = CORE::Get<FileSystem>()->TrackFile(_strName);
+				CORE::Get<FileSystem>()->BindFileTrackEvent(id, &ShaderProgram::TrackChangesCallback, p);
+			}
 #		endif
 
 		return p;
@@ -121,7 +121,6 @@ Dystopia::ShaderProgram* Dystopia::ShaderSystem::ResolveShaderProgram(std::strin
 	if (Gbl::VERTSHADER_EXT == ext)
 	{
 		ret = CreateShaderProgram(::Gfx::ShaderStage::VERTEX, _strPath.c_str(), _bTrack);
-
 	}
 	else if (Gbl::FRAGSHADER_EXT == ext)
 	{
@@ -146,7 +145,7 @@ void Dystopia::ShaderSystem::LoadShaderList(char const* _strPath, eFileDir _dir,
 	auto pShaderSys = CORE::Get<ShaderSystem>();
 	auto file = Serialiser::OpenFile<TextSerialiser>(_strPath, Serialiser::MODE_READ);
 	//auto file = Serialiser::OpenFile<TextSerialiser>(pFileSys->GetFullPath(_strPath, _dir).c_str(), Serialiser::MODE_READ);
-	std::string strName;
+	std::string strName = pFileSys->GetFullPath(_strPath, _dir).c_str();
 
 	// Load shader programs
 	file.ConsumeStartBlock();

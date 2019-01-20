@@ -242,7 +242,7 @@ Variant<Ty...>& Variant<Ty...>::operator = (Variant<Ty...>&& _rhs)
 }
 
 template <typename ... Ty>
-Variant<Ty...>& Variant<Ty...>::operator=(Variant<Ty...> const& _rhs)
+Variant<Ty...>& Variant<Ty...>::operator = (Variant<Ty...> const& _rhs)
 {
 	static void(*SwitchDifferent[])(char*, Variant<Ty...> const&) = {
 		[](char* _raw, const Variant<Ty...>& _rhs) -> void {

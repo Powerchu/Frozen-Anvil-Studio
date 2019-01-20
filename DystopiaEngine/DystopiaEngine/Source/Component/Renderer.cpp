@@ -23,6 +23,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 #include "System/File/FileSystem.h"
 
+#include "Math/MathLib.h"
+
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
 #include "IO/TextSerialiser.h"
@@ -255,5 +257,18 @@ void Dystopia::Renderer::ShaderField()
 	{
 		EGUI::Display::EndPayloadReceiver();
 	}
+
+	auto& vars = mpShader->GetVariables();
+	AutoArray<const char*> arr{ vars.size() };
+
+	for (auto& e : vars)
+		arr.EmplaceBack(e.first.c_str());
+
+	static int sele = 0;
+
+	//if (EGUI::Display::DropDownSelection("Manual Override", sele, ))
+	//{
+
+//	}
 }
 #endif

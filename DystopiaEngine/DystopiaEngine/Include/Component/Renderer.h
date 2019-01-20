@@ -131,8 +131,22 @@ void Dystopia::Renderer::SetManualShaderOverride(char const* _strName, T&& _obj)
 		}
 
 	if (auto f = FindUniformInShader(_strName))
-		// TODO : CHECK FOR CORRECT TYPE
-		mOverride.EmplaceBack(f->first, f->second, Ut::Fwd<T>(_obj));
+	{
+		using TypeCheck = Ut::Collection<
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::INT  ), int>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::BOOL ), bool>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::FLOAT), float>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC2 ), Math::Vec2>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC4 ), Math::Vec4>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::MAT2 ), Math::Mat2>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::MAT4 ), Math::Mat4>>;
+
+		using Result = typename Ut::MetaFind<Ut::Decay_t<T>, TypeCheck>;
+		static_assert(Result::value, "Not a valid uniform type!");
+		
+		if (static_cast<::Gfx::eUniform_t>(Result::result::value) == f->second)
+			mOverride.EmplaceBack(f->first, f->second, ShaderVariant_t{ Ut::Fwd<T>(_obj) });
+	}
 }
 
 
