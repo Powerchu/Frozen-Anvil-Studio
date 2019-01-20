@@ -35,8 +35,8 @@ public:
 	// ====================================== CONSTRUCTORS ======================================= // 
 
 	inline constexpr Variant(void) noexcept;
-	inline Variant(Variant&&) noexcept = default;
-	inline Variant(const Variant&) noexcept = default;
+	inline Variant(Variant&&) noexcept;
+	inline Variant(const Variant&) noexcept;
 
 	template <typename U, typename Actual_t = VARIANT_TYPE_RESOLUTION(U)>
 	inline explicit Variant(U&&) noexcept(std::is_nothrow_constructible_v<Actual_t, U>);
@@ -93,6 +93,20 @@ template <typename ... Ty>
 inline constexpr Variant<Ty...>::Variant(void) noexcept
 	: raw{}, mType{ mInvalidType }
 {
+}
+
+template<typename ... Ty>
+inline Variant<Ty...>::Variant(Variant&& _obj) noexcept
+{
+	memcpy(this, &_obj, sizeof(Variant));
+	_obj.mType = mInvalidType;
+}
+
+template<typename ... Ty>
+inline Variant<Ty...>::Variant(const Variant& _obj) noexcept
+	: Variant{}
+{
+	*this = _obj;
 }
 
 template <typename ... Ty>

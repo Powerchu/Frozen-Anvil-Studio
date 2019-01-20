@@ -37,6 +37,8 @@ namespace EGUI
 		DDS,
 		WAV,
 		TTF,
+		TXT,
+		DATA_SHEET,
 
 		ALL_IMG,
 		ALL_AUDIO,
@@ -59,6 +61,8 @@ namespace EGUI
 		case DDS:			return "DDS";
 		case WAV:			return "WAV";
 		case TTF:			return "TTF";
+		case TXT:			return "TXT";
+		case DATA_SHEET: 	return "DATA_SHEET";
 		case ALL_IMG:		return "A_IMG";
 		case ALL_AUDIO:		return "A_AUDIO";
 		default:			return "UNKNOWN";
@@ -77,6 +81,8 @@ namespace Editor //Dystopia
 	static const std::string g_PayloadDDSEx = Gbl::DDS_EXT;
 	static const std::string g_PayloadWavEx = Gbl::WAV_EXT;
 	static const std::string g_PayloadTTFEx = ".ttf";
+	static const std::string g_PayloadTxtEx = ".txt";
+	static const std::string g_PayloadSheetEx = Gbl::DATASHEET_EXT;
 
 	/********************************************************************* FILE & FOLDER *********************************************************************/
 	char my_tolower(char const ch);

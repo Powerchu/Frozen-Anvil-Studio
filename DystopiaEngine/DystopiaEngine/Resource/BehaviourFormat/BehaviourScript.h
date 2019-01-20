@@ -114,7 +114,7 @@ PP_REFLECT_EMPTY(Dystopia::_SF_ClassName_)
   Uncomment the line PP_REFLECT and add in the names of the variable you want to show
   Comment out PP_REFLECT_EMPTY.
 */
-//PP_REFLECT(Dystopia::_SF_ClassName_)
+//PP_REFLECT_STUFF(Dystopia::_SF_ClassName_)
 
 #endif //_SF_DefineScriptName_H_
 

@@ -55,7 +55,9 @@ namespace Editor
 			class SpriteEditor,
 			class ProjectSettings,
 			class BehaviourTreeEditor,
-			class GameView
+			class GameView,
+			class FlowChart,
+			class DataSheetEditor
 		>::result;
 
 		static EditorMain* GetInstance(void);

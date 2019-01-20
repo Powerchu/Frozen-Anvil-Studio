@@ -160,6 +160,14 @@ void Dystopia::Component::Unserialise(TextSerialiser& _in)
 
 		if (owner)
 			owner->AddComponent(this, Component::TAG{});
+		else
+		{
+#if EDITOR
+			::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorResource>()->AddComponent(this, nOwner, true);
+#else 
+			__debugbreak(); // something went wrong
+#endif 
+		}
 	}
 #if EDITOR
 	else

@@ -44,6 +44,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Convex.h"
 #include "Component/Collider.h"
 #include "Component/PointCollider.h"
+#include "Component/RayCollider.h"
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
 #include "Component/SpriteRenderer.h"

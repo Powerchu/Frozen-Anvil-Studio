@@ -331,7 +331,7 @@ void Dystopia::Camera::EditorUI(void) noexcept
 
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 	int surfaceID = mnSurfaceID;
-	if (EGUI::Display::DropDownSelection<21>("Surface", surfaceID, 4))
+	if (EGUI::Display::DropDownSelection<59>("Surface", surfaceID, 4))
 	{
 		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Camera, int>(&Camera::SetSurface, mnSurfaceID),
 										   cmd->MakeFnCommand<Camera, int>(&Camera::SetSurface, surfaceID));

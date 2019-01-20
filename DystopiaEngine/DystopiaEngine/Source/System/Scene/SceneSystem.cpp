@@ -97,6 +97,12 @@ void Dystopia::SceneSystem::LoadSettings(TextSerialiser&)
 {
 
 }
+
+AutoArray<Dystopia::GameObject*>& Dystopia::SceneSystem::FindGameObjectByTag(const HashString& _tag)
+{
+	return mpCurrScene->FindGameObjectByTag(_tag);
+}
+
 Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject_cstr(const char* const _str)
 {
 	return FindGameObject(HashString{ _str });
@@ -104,7 +110,11 @@ Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject_cstr(const char* con
 
 Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const HashString& _prefabName, const Math::Pt3D& _position)
 {
-	auto obj = EngineCore::GetInstance()->GetSubSystem<Factory>()->SpawnPrefab(_prefabName, _position);
+	HashString file = _prefabName;
+	if (_prefabName.rfind(".dobj") == HashString::nPos)
+		file += ".dobj";
+
+	auto obj = EngineCore::GetInstance()->GetSubSystem<Factory>()->SpawnPrefab(file, _position);
 	if (obj)
 		obj->GetComponent<Transform>()->SetGlobalPosition(_position);
 	return obj;

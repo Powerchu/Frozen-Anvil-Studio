@@ -56,7 +56,8 @@ void XGamePad::PollInputs(void)
 {
 	const DWORD prevPacket = mpxState->dwPacketNumber;
 	ZeroMemory(&*mpxState, sizeof(XINPUT_STATE));
-	mbConnected = XInputGetState(mdwID, &*mpxState) == ERROR_SUCCESS;
+	auto res = XInputGetState(mdwID, &*mpxState);
+	mbConnected = res == ERROR_SUCCESS;
 	mbChangeDetected = prevPacket != mpxState->dwPacketNumber;
 	if (mbConnected)
 	{

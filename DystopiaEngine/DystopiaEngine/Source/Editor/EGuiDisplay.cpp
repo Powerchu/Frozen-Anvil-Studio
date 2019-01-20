@@ -857,6 +857,20 @@ namespace EGUI
 			return ret;
 		}
 
+		bool DropDownSelection(const char* _label, int& _currentIndex, AutoArray<const char *>& _arrOfItems, float _width)
+		{
+			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			std::string invi{ "##DDSel" };
+			invi += _label;
+			bool ret = ImGui::Combo(invi.c_str(), &_currentIndex, _arrOfItems.begin(), static_cast<int>(_arrOfItems.size()));
+			ImGui::PopItemWidth();
+			return ret;
+		}
+
 		bool Button(const char* _label, const Math::Vec2& _size)
 		{
 			return ImGui::Button(_label, ImVec2{ _size.x, _size.y });

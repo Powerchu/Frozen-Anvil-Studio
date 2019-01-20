@@ -232,10 +232,27 @@ bool Editor::EditorFactory::SaveAsPrefab(const uint64_t& _objID, Dystopia::TextS
 			for (auto& c : allChild)
 				if (c->GetOwner())
 					SaveChild(*c->GetOwner(), _out, _temp);
+
+			MakeUnique(*pObject);
+
 			return true;
 		}
 	}
 	return false;
+}
+
+void Editor::EditorFactory::MakeUnique(Dystopia::GameObject& _obj)
+{
+	uint64_t newID = Dystopia::GUIDGenerator::GetUniqueID();
+	uint64_t old = _obj.GetID();
+	_obj.SetID(newID);
+	Dystopia::EngineCore::Get<Dystopia::BehaviourSystem>()->ReplaceID(old, newID, &_obj);
+	auto& childrens = _obj.GetComponent<Dystopia::Transform>()->GetAllChild();
+	for (auto & child : childrens)
+	{
+		MakeUnique(*child->GetOwner());
+		child->SetParentID(newID);
+	}
 }
 
 bool Editor::EditorFactory::SaveAsPrefabTemp(const uint64_t& _objID, Dystopia::TextSerialiser& _out)
@@ -312,7 +329,8 @@ bool Editor::EditorFactory::LoadAsPrefab(const HashString& _name)
 		{
 			mLoadedObj.push_back(mArrFactoryObj.Emplace(Dystopia::GUIDGenerator::GetUniqueID()));
 			auto& childObj = *mLoadedObj.back();
-			LoadChild(childObj, _in);
+			//LoadChild(childObj, _in);
+			LoadPrefab(childObj, _in);
 		}
 
 		for (size_t index = 0; index < mLoadedObj.size(); ++index)
@@ -333,15 +351,27 @@ bool Editor::EditorFactory::LoadAsPrefab(const HashString& _name)
 			}
 		}
 
-		//for (auto p : mLoadedObj)
-			//p->GetComponent<Dystopia::Transform>()->SetOpacity(1.f);
+		for (auto& o : mLoadedObj)
+		{
+			o->SetFlag(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+			for (auto& c : o->GetAllComponents())
+				c->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+			for (auto& b : o->GetAllBehaviours())
+				b->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+		}
 
+		/* Go through all loaded prefabs */ 
 		for (auto& data : mArrPrefabData)
 		{
+			/*if trying to load something already existing, replace the prefab data instead*/
 			if (data.mPrefabFile == _name)
 			{
+				data.mArrInstanced.clear();
 				for (auto p : data.mArrObjects)
+				{
+					p->Destroy();
 					mArrFactoryObj.Remove(&*p);
+				}
 
 				data.mArrObjects.clear();
 				for (auto p : mLoadedObj)
@@ -350,14 +380,15 @@ bool Editor::EditorFactory::LoadAsPrefab(const HashString& _name)
 			}
 		}
 
+		/* else just add a new prefab data */
 		size_t cut = _path.rfind("\\");
 		if (cut == HashString::nPos)
 			cut = _path.rfind('/');
 		cut++;
-
 		auto pref = mArrPrefabData.Emplace(PrefabData{HashString{ _path.cbegin() + cut, _path.cend() }});
 		for (auto p : mLoadedObj)
 			pref->mArrObjects.push_back(p);
+
 		return true;
 	}
 	return false;
@@ -466,31 +497,31 @@ MagicArray<Dystopia::GameObject>& Editor::EditorFactory::GetAllFactoryObjects(vo
 
 /********************************************** Private Fn Definition **********************************************/
 
-void Editor::EditorFactory::SaveChild(Dystopia::GameObject& _obj, Dystopia::TextSerialiser& _out, bool _temp)
+void Editor::EditorFactory::SaveChild(Dystopia::GameObject& _obj, Dystopia::TextSerialiser& _out, bool)
 {
 	auto& allC = _obj.GetAllComponents();
 	auto& allB = _obj.GetAllBehaviours();
-	if (!_temp)
-	{
-		_obj.SetFlag(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-		for (auto& c : allC)
-			c->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-		for (auto& b : allB)
-			b->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-	}
+	//if (!_temp)
+	//{
+	//	_obj.SetFlag(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+	//	for (auto& c : allC)
+	//		c->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+	//	for (auto& b : allB)
+	//		b->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+	//}
 
 	SaveSegment(_obj, _out);
 	SaveSegment(_obj, allC, _out);
 	SaveSegment(allB, _out);
 
-	if (!_temp)
-	{
-		_obj.RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-		for (auto& c : allC)
-			c->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-		for (auto& b : allB)
-			b->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-	}
+	//if (!_temp)
+	//{
+	//	_obj.RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+	//	for (auto& c : allC)
+	//		c->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+	//	for (auto& b : allB)
+	//		b->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+	//}
 
 	auto& allChild = _obj.GetComponent<Dystopia::Transform>()->GetAllChild();
 	for (auto& c : allChild)
@@ -498,12 +529,12 @@ void Editor::EditorFactory::SaveChild(Dystopia::GameObject& _obj, Dystopia::Text
 			SaveChild(*c->GetOwner(), _out);
 }
 
-void Editor::EditorFactory::LoadChild(Dystopia::GameObject& _obj, Dystopia::TextSerialiser& _in)
-{
-	LoadPrefab(_obj, _in);
-}
+//void Editor::EditorFactory::LoadChild(Dystopia::GameObject& _obj, Dystopia::TextSerialiser& _in)
+//{
+//	LoadPrefab(_obj, _in);
+//}
 
-bool Editor::EditorFactory::SavePrefab(const uint64_t& _objID, Dystopia::TextSerialiser& _out, bool _temp)
+bool Editor::EditorFactory::SavePrefab(const uint64_t& _objID, Dystopia::TextSerialiser& _out, bool)
 {
 	Dystopia::GameObject *pObject = mpSceneSys->GetCurrentScene().FindGameObject(_objID);
 
@@ -512,27 +543,27 @@ bool Editor::EditorFactory::SavePrefab(const uint64_t& _objID, Dystopia::TextSer
 		const auto& allC = pObject->GetAllComponents();
 		const auto& allB = pObject->GetAllBehaviours();
 
-		if (!_temp)
-		{
-			pObject->SetFlag(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-			for (auto& c : allC)
-				c->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-			for (auto& b : allB)
-				b->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-		}
+		//if (!_temp)
+		//{
+		//	pObject->SetFlag(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+		//	for (auto& c : allC)
+		//		c->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+		//	for (auto& b : allB)
+		//		b->SetFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+		//}
 
 		SaveSegment(*pObject, _out);
 		SaveSegment(*pObject, allC, _out);
 		SaveSegment(allB, _out);
 
-		if (!_temp)
-		{
-			pObject->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-			for (auto& c : allC)
-				c->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-			for (auto& b : allB)
-				b->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
-		}
+		//if (!_temp)
+		//{
+		//	pObject->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+		//	for (auto& c : allC)
+		//		c->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+		//	for (auto& b : allB)
+		//		b->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);
+		//}
 		return true;
 	}
 	return false;
@@ -671,8 +702,7 @@ void Editor::EditorFactory::LoadSegmentB(Dystopia::GameObject& _obj, Dystopia::T
 
 		if (auto ptr = Dystopia::EngineCore::GetInstance()->Get<Dystopia::BehaviourSystem>()->RequestBehaviour(_obj.GetID(), name.c_str()))
 		{
-			auto BehaviourMetadata = ptr->GetMetaData();
-			if (BehaviourMetadata)
+			if (auto BehaviourMetadata = ptr->GetMetaData())
 			{
 				for (unsigned u = 0; u < size; ++u)
 				{
@@ -696,11 +726,23 @@ void Editor::EditorFactory::LoadSegmentB(Dystopia::GameObject& _obj, Dystopia::T
 					}
 				}
 			}
+			else
+			{
+				/* consume all excess data that belongs to the behaviour*/
+				for (unsigned j = 0; j < size; ++j)
+				{
+					_in.ConsumeStartBlock();
+					_in.ConsumeEndBlock();
+					_in.ConsumeStartBlock();
+					_in.ConsumeEndBlock();
+				}
+			}
 			ptr->SetOwner(&_obj);
 			_obj.AddComponent(ptr, Dystopia::BehaviourTag{});
 		}
 		else
 		{
+			/* consume all excess data that belongs to the behaviour*/
 			for (unsigned j = 0; j < size; ++j)
 			{
 				_in.ConsumeStartBlock();
@@ -751,6 +793,7 @@ uint64_t Editor::EditorFactory::PutToScene(PrefabData& _prefab, const Math::Pt3D
 		allSpawned.push_back(&insertedO);
 
 		insertedO.SetName(loadedO.GetName());
+		insertedO.SetTag(loadedO.GetTags());
 		auto loadedTransform = loadedO.GetComponent<Dystopia::Transform>();
 		auto insertedTransform = insertedO.GetComponent<Dystopia::Transform>();
 		insertedTransform->SetScale(loadedTransform->GetGlobalScale());

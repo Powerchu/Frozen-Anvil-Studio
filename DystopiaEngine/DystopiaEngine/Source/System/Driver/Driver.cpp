@@ -38,6 +38,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Profiler/Profiler.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/AI/AISystem.h"
+#include "System/Editor/EditorIntermediary.h"
+#include "System/Database/DatabaseSystem.h"
 
 // SubSystems
 #include "System/Graphics/MeshSystem.h"
@@ -271,7 +273,7 @@ void Dystopia::EngineCore::Shutdown(void)
 #if EDITOR
 	//Get<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
 	auto s = Serialiser::OpenFile<DysSerialiser_t>(
-		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR)  +
+		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR)  + '/' + 
 		SETTINGS_FILE).c_str(),
 		DysSerialiser_t::MODE_WRITE
 	);
@@ -301,7 +303,11 @@ void Dystopia::EngineCore::Shutdown(void)
 
 void Dystopia::EngineCore::BroadcastMessage(const eSysMessage& _Message, size_t _nParam)
 {
+#if EDITOR
+	Get<EditorIntermediary>()->ReceiveMessage(_Message, _nParam);
+#else
 	mMessageQueue.EmplaceBack(_Message, _nParam);
+#endif
 }
 
 void Dystopia::EngineCore::SendMessage(void)

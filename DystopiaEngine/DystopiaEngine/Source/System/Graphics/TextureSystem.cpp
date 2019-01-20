@@ -73,6 +73,14 @@ void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 void Dystopia::TextureSystem::Shutdown(void) noexcept
 {
 #if EDITOR
+	SaveAtlases();
+	mTextures.clear();
+#endif
+}
+
+void Dystopia::TextureSystem::SaveAtlases(void)
+{
+#if EDITOR
 	for (auto& a : mAtlas)
 	{
 		auto fp = EngineCore::Get<FileSystem>()->FindFilePath(a.GetName().c_str(), eFileDir::eCurrent);
@@ -82,8 +90,6 @@ void Dystopia::TextureSystem::Shutdown(void) noexcept
 		auto serial = TextSerialiser::OpenFile(folder.c_str(), TextSerialiser::MODE_WRITE);
 		a.SaveAtlas(serial);
 	}
-
-	mTextures.clear();
 #endif
 }
 

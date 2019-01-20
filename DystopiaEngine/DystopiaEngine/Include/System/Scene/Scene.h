@@ -42,6 +42,7 @@ namespace Dystopia
 
 		GameObject* FindGameObject(const uint64_t _nID);
 		GameObject* FindGameObject(const HashString& _strName);
+		AutoArray<GameObject*>& FindGameObjectByTag(const HashString& _tag);
 
 		inline MagicArray<GameObject>& GetAllGameObjects(void);
 
@@ -66,6 +67,7 @@ namespace Dystopia
 		uint64_t			  mID;
 		std::string			  mName;
 		MagicArray<GameObject> mGameObjs;
+		AutoArray<GameObject*> mLastSearch;
 
 		//Ctor::MagicArrayBuilder<GameObject>::SetBlockLimit<16>::SetBlockSize<256>::type mGameObjs;
 	};

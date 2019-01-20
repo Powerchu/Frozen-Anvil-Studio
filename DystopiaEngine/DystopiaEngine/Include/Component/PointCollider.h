@@ -1,5 +1,6 @@
 #pragma once
 #ifndef _POINT_COLLIDER_H
+#define _POINT_COLLIDER_H
 #include "Component/Collider.h"
 namespace Dystopia
 {
