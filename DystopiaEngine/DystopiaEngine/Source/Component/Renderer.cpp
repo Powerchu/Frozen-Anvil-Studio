@@ -291,24 +291,48 @@ void Dystopia::Renderer::ShaderField()
 
 	auto& vars = mpShader->GetVariables();
 	mOverrideNames.clear();
-	mOverrideNames.reserve(vars.size());
+	mOverrideNames.reserve(vars.size() + 1);
 
+	mOverrideNames.EmplaceBack("Select");
 	for (auto& e : vars)
 		mOverrideNames.EmplaceBack(e.first.c_str());
 
 	static int sele = 0;
 	if (EGUI::Display::DropDownSelection("Manual Override", sele, mOverrideNames))
 	{
+		::Gfx::eUniform_t type;
 		ShaderVariant_t myVariant;
 
-		for (int n = 0; n < 5; ++n)
-			if (y[n]() == vars[sele].second)
-			{
-				x[n](myVariant);
-				break;
-			}
+		if ([&]() {
+			for (auto& e : mOverride)
+				if (e.Get<0>() == mOverrideNames[sele])
+					return false;
+				return true;
+		}())
+		{
+			for (int n = 0; n < 5; ++n)
+				if (y[n]() == vars[sele - 1].second)
+				{
+					type = vars[sele - 1].second;
+					x[n](myVariant);
+					break;
+				}
 
+			mOverride.EmplaceBack(mOverrideNames[sele], type, Ut::Move(myVariant));
+		}
+		sele = 0;
+	}
 
+	int n = 0;
+	for (auto& e : Ut::Range(mOverride).Reverse())
+	{
+		e.Get<2>().Visit(UIVisitor{ e.Get<0>() });
+
+		EGUI::PushID(++n);
+		EGUI::SameLine();
+		if (EGUI::Display::IconCross("Clear", 9.f))
+			mOverride.FastRemove(&e);
+		EGUI::PopID();
 	}
 }
 

@@ -280,6 +280,8 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	}
 	EGUI::PopLeftAlign();
 
+	Renderer::ShaderField();
+
 #endif
 }
 
