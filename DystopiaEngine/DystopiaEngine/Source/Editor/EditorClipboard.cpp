@@ -124,7 +124,7 @@ void Editor::EditorClipboard::LoadSettings(Dystopia::TextSerialiser&)
 void Editor::EditorClipboard::AddGameObject(const uint64_t& _id)
 {
 	auto inputMgr = EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager();
-	if (!inputMgr->IsKeyPressed(eButton::KEYBOARD_CTRL) || mpPrefabFocus)
+	if (!inputMgr->GetKey(eButton::KEYBOARD_CTRL) || mpPrefabFocus)
 		ClearAll();
 	mArrSelectedIDs.Insert(_id);
 }

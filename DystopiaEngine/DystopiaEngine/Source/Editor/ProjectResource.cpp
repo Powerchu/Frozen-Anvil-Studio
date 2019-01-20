@@ -104,8 +104,8 @@ namespace Editor
 	void ProjectResource::Update(float)
 	{
 		const auto input = EditorMain::GetInstance()->GetSystem<EInput>();
-		if (input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_LEFT) ||
-			input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_RIGHT))
+		if (input->GetInputManager()->GetKeyDown(eButton::MOUSE_LEFT) ||
+			input->GetInputManager()->GetKeyDown(eButton::MOUSE_RIGHT))
 		{
 			RemoveFocusOnFile();
 		}
