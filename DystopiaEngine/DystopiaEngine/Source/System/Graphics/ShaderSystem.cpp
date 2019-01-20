@@ -53,7 +53,7 @@ void Dystopia::ShaderSystem::EditorUpdate(void)
 	{
 		ShaderProgram temp{};
 
-		if (temp.LoadProgram(e->GetStage(), pFileSys->GetFullPath(e->GetName(), eFileDir::eResource).c_str(), e->GetName().c_str()))
+		if (temp.LoadProgram(e->GetStage(), pFileSys->GetFullPath(e->GetName().c_str(), eFileDir::eResource).c_str(), e->GetName().c_str()))
 			Ut::Swap(*e, temp);
 
 		for (auto& s : mShaders)
