@@ -152,14 +152,14 @@ namespace Dystopia
 		return isColliding(*other_col);
 	}
 
-	bool Dystopia::RayCollider::isColliding(AABB & other_col)
+	bool Dystopia::RayCollider::isColliding(AABB & )
 	{
 
 
 		return false;
 	}
 
-	bool Dystopia::RayCollider::isColliding(AABB * const & other_col)
+	bool Dystopia::RayCollider::isColliding(AABB * const & )
 	{
 		return false;
 	}
@@ -213,27 +213,27 @@ namespace Dystopia
 		return isColliding;
 	}
 
-	bool Dystopia::RayCollider::isColliding(Convex * const & other_col)
+	bool Dystopia::RayCollider::isColliding(Convex * const & )
 	{
 		return false;
 	}
 
-	bool Dystopia::RayCollider::isColliding(PointCollider & other_col)
+	bool Dystopia::RayCollider::isColliding(PointCollider & )
 	{
 		return false;
 	}
 
-	bool Dystopia::RayCollider::isColliding(PointCollider * const & other_col)
+	bool Dystopia::RayCollider::isColliding(PointCollider * const & )
 	{
 		return false;
 	}
 
-	bool Dystopia::RayCollider::isColliding(RayCollider & other_col)
+	bool Dystopia::RayCollider::isColliding(RayCollider & )
 	{
 		return false;
 	}
 
-	bool Dystopia::RayCollider::isColliding(RayCollider * const & other_col)
+	bool Dystopia::RayCollider::isColliding(RayCollider * const & )
 	{
 		return false;
 	}
@@ -243,7 +243,7 @@ namespace Dystopia
 	}
 	Math::Vec3D RayCollider::GetGlobalRay() const
 	{
-		return mOwnerTransformation * Math::Translate(mv3Offset.x, mv3Offset.y, mv3Offset.z) * GetTransformationMatrix() * mRayDir;
+		return (mOwnerTransformation * Math::Translate(mv3Offset.x, mv3Offset.y, mv3Offset.z) * GetTransformationMatrix() * mRayDir).Normalise();
 	}
 	CollisionEvent RayCollider::GetFirstHitEvent() const
 	{
@@ -253,26 +253,28 @@ namespace Dystopia
 	{
 		return nullptr;
 	}
-	bool RayCollider::Raycast(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Collider * _Collider, CollisionEvent * _OutputResult)
+	bool RayCollider::Raycast(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Collider * _Collider, CollisionEvent * _OutputResult, float _MaxLength)
 	{
 		if (auto * ptr = dynamic_cast<Convex*>(_Collider))
 		{
-			return Raycast_Convex(_RayDir, _Pos, ptr, _OutputResult);
+			return Raycast_Convex(_RayDir, _Pos, ptr, _OutputResult, _MaxLength);
 		}
-		else if (auto * ptr = dynamic_cast<Circle*>(_Collider))
+		else if (auto * ptr2 = dynamic_cast<Circle*>(_Collider))
 		{
-			return Raycast_Circle(_RayDir, _Pos, ptr, _OutputResult);
+			return Raycast_Circle(_RayDir, _Pos, ptr2, _OutputResult, _MaxLength);
 		}
 		else
 		{
 			/*Default Collider*/
+			return false;
 		}
 	}
-	bool RayCollider::Raycast_Circle(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Circle * _Collider, CollisionEvent * _OutputResult)
+	bool RayCollider::Raycast_Circle(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Circle * _Collider, CollisionEvent * _OutputResult, float _MaxLength)
 	{
 		/*Check if it is infinite ray*/
         /*Ray going in opposite direction of Collider*/
 		Math::Vec3D && v = _Collider->GetGlobalPosition() - _Pos;
+		bool isFinite    = _MaxLength;
 		if (_RayDir.Dot(v) < 0.f)
 			return false;
 		auto l = v.Dot(_RayDir);
@@ -280,14 +282,31 @@ namespace Dystopia
 		auto && u = w - v;
 		if (u.MagnitudeSqr() > _Collider->GetRadius() * _Collider->GetRadius())
 			return false;
+
+
+
 		auto && n = sqrtf(_Collider->GetRadius() * _Collider->GetRadius() - u.MagnitudeSqr());
 		auto && t = l - n;
 
-		_OutputResult->mEdgeNormal = _Collider->GetGlobalPosition() - _Pos + (_RayDir*t);
-		_OutputResult->mTimeIntersection = t;
-		return true;
+		switch (isFinite)
+		{
+		case true:
+			if (t > _MaxLength)
+				return false;
+			/*No break here on purpose*/
+		case false:
+
+			/*Insert Collision Info*/
+			_OutputResult->mEdgeNormal       = _Collider->GetGlobalPosition() - _Pos + (_RayDir*t);
+			_OutputResult->mTimeIntersection = t;
+			_OutputResult->mCollisionPoint   = _Pos + (_RayDir*t);
+			_OutputResult->mCollidedWith     = _Collider->GetOwner();
+			return true;
+			break;
+		}
+		return false;
 	}
-	bool RayCollider::Raycast_Convex(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Convex * _Collider, CollisionEvent * _OutputResult)
+	bool RayCollider::Raycast_Convex(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Convex * _Collider, CollisionEvent * _OutputResult, float _MaxLength)
 	{
 		/*Check if ray is travelling toward object*/
 		Math::Vec3D && v = _Collider->GetGlobalPosition() - _Pos;
@@ -295,7 +314,7 @@ namespace Dystopia
 			return false;
 		auto && ListOfEdge = _Collider->GetConvexEdges();
 		bool    isColliding = false;
-		_OutputResult->mTimeIntersection = 9999.f;
+		_OutputResult->mTimeIntersection = _MaxLength ? _MaxLength : 9999.f;
 		for (auto const & elem : ListOfEdge)
 		{
 			/*Check if the edge normal is facing the ray*/
@@ -324,6 +343,7 @@ namespace Dystopia
 				_OutputResult->mEdgeNormal = elem.mNorm3;
 				_OutputResult->mfPeneDepth = 0;
 				_OutputResult->mCollisionPoint = _Pos + _OutputResult->mTimeIntersection * _RayDir;
+				_OutputResult->mCollidedWith = _Collider->GetOwner();
 				isColliding = true;
 			}
 		}

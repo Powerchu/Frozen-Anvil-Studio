@@ -80,14 +80,14 @@ namespace Dystopia
 		CollisionEvent GetFirstHitEvent() const;
 		Collider*      GetFirstHit()      const;
 
-		static bool Raycast(Math::Vec3D const & _RayDir,Math::Point3D const & _Pos, Collider * _Collider, CollisionEvent * _OutputResult);
+		static bool Raycast(Math::Vec3D const & _RayDir,Math::Point3D const & _Pos, Collider * _Collider, CollisionEvent * _OutputResult, float _MaxLength  = 0);
 	private:
 		Math::Vec3D mRayDir;
 		float       mMaxLength;
 		float       mTimeIntersect;
 
-		static bool Raycast_Circle(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Circle * _Collider, CollisionEvent * _OutputResult);
-		static bool Raycast_Convex(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Convex * _Collider, CollisionEvent * _OutputResult);
+		static bool Raycast_Circle(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Circle * _Collider, CollisionEvent * _OutputResult, float _MaxLength);
+		static bool Raycast_Convex(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Convex * _Collider, CollisionEvent * _OutputResult, float _MaxLength);
 	};
 }
 
