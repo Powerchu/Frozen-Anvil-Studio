@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/Variant.h"
 #include "DataStructure/OString.h"
 #include "DataStructure/AutoArray.h"
+#include "IO/TextSerialiser.h"
 
 
 namespace Dystopia
@@ -65,6 +66,8 @@ namespace Dystopia
 		void UploadUniformi(char const*, int, int, int, int) const noexcept;
 
 		OString const& GetName(void) const noexcept;
+
+		void Unserialize(TextSerialiser&);
 
 		void OnEditorUI(void) const;
 

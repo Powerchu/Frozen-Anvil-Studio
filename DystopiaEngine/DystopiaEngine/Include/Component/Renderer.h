@@ -94,7 +94,27 @@ namespace Dystopia
 
 		std::pair<OString, ::Gfx::eUniform_t> const* FindUniformInShader(const char*);
 
-		using ShaderVariant_t = Variant<int, bool, float, Math::Vec2, Math::Vec4, Math::Mat2, Math::Mat4>;
+		using ShaderVariant_t = Variant<int, bool, float, Math::Vec2, Math::Vec4>;
+		using ShaderTypeList = Ut::Collection<
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::INT  ), int>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::BOOL ), bool>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::FLOAT), float>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC2 ), Math::Vec2>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC4 ), Math::Vec4>>;
+
+		struct UIVisitor
+		{
+			OString& strName;
+
+			template<typename T>
+			void operator()(T&);
+
+			template<> void operator()(int&);
+			template<> void operator()(float&);
+			template<> void operator()(bool&);
+			template<> void operator()(Math::Vec2&);
+			template<> void operator()(Math::Vec4&);
+		};
 
 		unsigned mnUnique;
 
@@ -104,7 +124,11 @@ namespace Dystopia
 		HashString mTexturePath;
 		AutoArray<Tuple<OString, ::Gfx::eUniform_t, ShaderVariant_t>> mOverride;
 
+		void ResetOverride(void);
+
 #   if EDITOR
+		AutoArray<char const*> mOverrideNames;
+
 		void TextureField();
 		void MeshField();
 		void ShaderField();
@@ -132,22 +156,21 @@ void Dystopia::Renderer::SetManualShaderOverride(char const* _strName, T&& _obj)
 
 	if (auto f = FindUniformInShader(_strName))
 	{
-		using TypeCheck = Ut::Collection<
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::INT  ), int>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::BOOL ), bool>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::FLOAT), float>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC2 ), Math::Vec2>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC4 ), Math::Vec4>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::MAT2 ), Math::Mat2>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::MAT4 ), Math::Mat4>>;
-
-		using Result = typename Ut::MetaFind<Ut::Decay_t<T>, TypeCheck>;
+		using Result = typename Ut::MetaFind<Ut::Decay_t<T>, ShaderTypeList>;
 		static_assert(Result::value, "Not a valid uniform type!");
 		
 		if (static_cast<::Gfx::eUniform_t>(Result::result::value) == f->second)
 			mOverride.EmplaceBack(f->first, f->second, ShaderVariant_t{ Ut::Fwd<T>(_obj) });
 	}
 }
+
+
+template<typename T>
+inline void Dystopia::Renderer::UIVisitor::operator()(T&)
+{
+	static_assert(false, "ERROR in DataSheetEditor::UIVisitor");
+}
+
 
 
 #pragma warning(pop)

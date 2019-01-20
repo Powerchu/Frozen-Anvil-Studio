@@ -64,9 +64,9 @@ public:
 	char&   front(void);
 	char	front(void) const;
 	const char* cbegin(void) const;
-	const char*	begin(void);
+	const char*	begin(void) const;
 	const char* cend(void) const;
-	const char*	end(void);
+	const char*	end(void) const;
 	const char* clast(void) const;
 	const char*	last(void);
 	char * access_c(void);

@@ -1,5 +1,5 @@
 [START_PROGRAMS]
-"Resource\\Shader\\DefaultVert.dvert","Resource\\Shader\\DefaultFrag.dfrag","Resource\\Shader\\NoTextureFrag.dfrag","Resource\\Shader\\ColourFrag.dfrag","Resource\\Shader\\FinalStage.dfrag","Resource\\Shader\\LogoFrag.dfrag","Resource\\Shader\\Font.dvert","Resource\\Shader\\FontFrag.dfrag","Resource\\Shader\\Collider.dfrag",
+"Shader\\DefaultVert.dvert","Shader\\DefaultFrag.dfrag","Shader\\NoTextureFrag.dfrag","Shader\\ColourFrag.dfrag","Shader\\FinalStage.dfrag","Shader\\LogoFrag.dfrag","Shader\\Font.dvert","Shader\\FontFrag.dfrag","Shader\\Collider.dfrag",
 [START_SHADER]
 "Default Shader","DefaultVert.dvert","DefaultFrag.dfrag",
 [START_SHADER]

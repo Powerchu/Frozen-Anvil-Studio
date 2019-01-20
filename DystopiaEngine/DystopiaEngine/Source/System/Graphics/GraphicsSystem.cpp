@@ -160,7 +160,7 @@ void Dystopia::GraphicsSystem::PreInit(void)
 	Window& window = CORE::Get<WindowManager>()->GetMainWindow();
 	::Gfx::InitGraphicsAPI(reinterpret_cast<void const*>(&window.GetWindowHandle()), ::Gfx::GfxMode::OPENGL);
 
-	CORE::Get<ShaderSystem>()->LoadShaderList("DefaultShaderList.txt", eFileDir::eSource, false);
+	CORE::Get<ShaderSystem>()->LoadShaderList("Shader/DefaultShaderList.txt", eFileDir::eResource, false);
 	auto file = Serialiser::OpenFile<TextSerialiser>("Resource/Meshes/DefaultMeshList.txt", Serialiser::MODE_READ);
 	MeshSystem* pMeshSys = CORE::Get<MeshSystem>();
 
@@ -206,8 +206,8 @@ void Dystopia::GraphicsSystem::PostInit(void)
 {
 	pGfxAPI->PrintEnvironment();
 
-	if (CORE::Get<FileSystem>()->CheckFileExist("ShaderList.txt", eFileDir::eResource))
-		CORE::Get<ShaderSystem>()->LoadShaderList("ShaderList.txt", eFileDir::eResource);
+	if (CORE::Get<FileSystem>()->CheckFileExist("Shader/ShaderList.txt", eFileDir::eResource))
+		CORE::Get<ShaderSystem>()->LoadShaderList("Shader/ShaderList.txt", eFileDir::eResource);
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())

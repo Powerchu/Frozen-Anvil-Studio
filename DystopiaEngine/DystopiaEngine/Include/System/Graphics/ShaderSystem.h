@@ -54,7 +54,8 @@ namespace Dystopia
 
 	private:
 
-		ShaderProgram* ResolveShaderProgram(std::string const&, bool);
+		void SaveCustomShaders(void) noexcept;
+		ShaderProgram* ResolveShaderProgram(std::string const&, eFileDir, bool);
 
 		AutoArray<ShaderProgram*> mChanges;
 

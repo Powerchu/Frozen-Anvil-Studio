@@ -155,6 +155,12 @@ OString const& Dystopia::Shader::GetName(void) const noexcept
 	return mstrName;
 }
 
+void Dystopia::Shader::Unserialize(TextSerialiser& _file)
+{
+	for (auto& e : mPrograms)
+		_file << e->GetName();
+}
+
 
 void Dystopia::Shader::OnEditorUI(void) const
 {
