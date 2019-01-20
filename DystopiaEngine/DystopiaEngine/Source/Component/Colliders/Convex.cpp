@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO/TextSerialiser.h"
 #include "Component/Circle.h"
 #include "Component/Transform.h"
+#include "Component/PointCollider.h"
 #include "Math/Quaternion.h"
 #include "Editor/EditorCommands.h"
 
@@ -340,6 +341,111 @@ namespace Dystopia
 		return isColliding(*_pColB);
 	}
 
+	bool Convex::isColliding(PointCollider & _ColB)
+	{
+		auto && AllEdge = GetConvexEdges();
+		Edge * ClosestEdge     = nullptr;
+		float  ClosestDistance = 0.f;
+		float dist             = 0.f;
+
+		CollisionEvent ColEvent { GetOwner(), _ColB.GetOwner() };
+		/*Check against all the edges*/
+		for (auto & edge : AllEdge)
+		{
+			
+
+			/*Ceck if the point is within the Edge's Inside Halfspaces*/
+			if (edge.mNorm3.Dot(_ColB.GetGlobalPosition() - edge.mPos) > 0.f)
+			{
+				Vec3D v = edge.mVec3;
+				Vec3D w = _ColB.GetGlobalPosition() - edge.mPos;
+				Vec3D norm;
+				float c1 = v.Dot((w));
+				float c2 = v.Dot(v);
+				float ratio = 0.f;
+				Point3D PointOfImpact;
+				/*
+				Determine which part of the edge does the point lies on
+
+				  Point(.)
+				            --------------
+
+						OR
+						       Point(.)
+				 ------------ 
+				        OR
+
+					Point(.)
+				-----------------
+				*/
+
+				/*Case One*/
+				if (c1 < 0)
+				{
+					ClosestDistance = w.Magnitude();
+					norm = w;
+				}
+				/*Case Two*/
+				else if (c1 > c2)
+				{
+					/*Get the distance from the end point of the line to the Point collider*/
+					ClosestDistance = (_ColB.GetGlobalPosition() - (edge.mPos + edge.mVec3)).Magnitude();
+					/*The normal is from the other position to the line end point. (This is because physics side will negate again)
+					  Originally should be line end point - other position*/
+					norm = (_ColB.GetGlobalPosition() - (v + edge.mPos));
+				}
+				/*Case Three*/
+				else
+				{
+					/*Calculate the barycentric ratio*/
+					ratio = c1 / c2;
+					/*Get the point directly under the point collider*/
+					PointOfImpact = edge.mPos + ratio * edge.mVec3;
+					/*Get the closest distance which is the point directly under to _ColB*/
+					ClosestDistance = (_ColB.GetGlobalPosition() - PointOfImpact).Magnitude();
+					/*The normal is from PointDirectly below to the Collider position (This is negated because physics side negates)
+					  Original(PointOfImpact - _ColB's Position)*/
+					norm = (_ColB.GetGlobalPosition() - PointOfImpact);
+				}
+
+				/*If there is no closest edge, that means it is the first iteration*/
+				if (!ClosestEdge)
+				{
+					/*Store the Collision Event*/
+					ColEvent.mfPeneDepth = (PointOfImpact - _ColB.GetGlobalPosition()).Magnitude();
+					ColEvent.mEdgeNormal = norm;
+					ColEvent.mEdgeVector = Math::Vec3D{ ColEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
+					ColEvent.mCollisionPoint = PointOfImpact;
+					ClosestEdge = &edge;
+				}
+				else
+				{
+					/*Get the distance from the point to the edge origin*/
+					/*If this edge is closer to the Point, assign it as the collided edge*/
+					if (dist < ClosestDistance)
+					{
+						/*Store the Collision Event*/
+						ColEvent.mfPeneDepth = (PointOfImpact - _ColB.GetGlobalPosition()).Magnitude();
+						ColEvent.mEdgeNormal = norm;
+						ColEvent.mEdgeVector = Math::Vec3D{ ColEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
+						ColEvent.mCollisionPoint = PointOfImpact;
+						ClosestEdge = &edge;
+					}
+				}
+			}
+			else
+				return false;
+		}
+		/*Add in a new contact/collision event*/
+		marr_ContactSets.push_back(Ut::Move(ColEvent));
+		return true;
+	}
+
+	bool Convex::isColliding(PointCollider * const &)
+	{
+		return false;
+	}
+
 	Vertice Convex::GetFarthestPoint(const Math::Vec3D & _Dir) const
 	{
 		return Convex::GetFarthestPoint(*this, _Dir);
@@ -406,6 +512,7 @@ namespace Dystopia
 			Edge e;
 			e.mVec3         = end - start;
 			e.mNorm3.xyzw   = e.mVec3.yxzw;
+			
 			e.mSimplexIndex = i;
 			e.mOrthogonalDistance = start.Magnitude();
 			e.mPos          = start;
@@ -420,6 +527,7 @@ namespace Dystopia
 			e.mNorm3.z = 0;
 			e.mPos.z   = 0;
 			e.mVec3.z  = 0;
+			e.mNorm3 = Math::Normalise(e.mNorm3);
 			ToRet.push_back(e);
 		}
 		return ToRet;

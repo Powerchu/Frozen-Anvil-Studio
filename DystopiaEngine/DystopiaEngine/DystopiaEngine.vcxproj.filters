@@ -376,6 +376,10 @@
     <ClCompile Include="Source\Editor\DataSheetEditor.cpp">
       <Filter>Editor\Main\Panels\Datasheet</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\PointCollider.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\RayCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1032,6 +1036,10 @@
     <ClInclude Include="Include\Editor\DataSheetEditor.h">
       <Filter>Editor\Main\Panels\Datasheet</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\PointCollider.h">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\RayCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

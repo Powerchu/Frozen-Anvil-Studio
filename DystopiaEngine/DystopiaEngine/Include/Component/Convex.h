@@ -102,6 +102,10 @@ namespace Dystopia
 		bool isColliding(Circle & _ColB);
 		bool isColliding(Circle * const & _pColB);
 
+		/*Convex to Point Collision Detection*/
+		bool isColliding(PointCollider & _ColB);
+		bool isColliding(PointCollider * const & _pColB);
+
 
 		/*Static Member Functions*/
 

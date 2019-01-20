@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/RigidBody.h"
 #include "Component/Transform.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Collision/CollisionEvent.h"
 #include "System/Graphics/MeshSystem.h"
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
@@ -65,6 +66,11 @@ namespace Dystopia
 			if (col.GetFlags() & FLAG_REMOVE)
 				ComponentDonor<Circle>::mComponents.Remove(&col);
 		}
+		for (auto & col : ComponentDonor<PointCollider>::mComponents)
+		{
+			if (col.GetFlags() & FLAG_REMOVE)
+				ComponentDonor<PointCollider>::mComponents.Remove(&col);
+		}
 	}
 
 	void CollisionSystem::FixedUpdate(float _dt)
@@ -91,7 +97,12 @@ namespace Dystopia
 			{ CollisionTable{ eColliderType::CIRCLE,  eColliderType::AABB }    ,&CollisionSystem::CircleVsAABB },
 			{ CollisionTable{ eColliderType::AABB,    eColliderType::CIRCLE }  ,&CollisionSystem::AABBvsCircle },
 			{ CollisionTable{ eColliderType::CIRCLE,  eColliderType::CONVEX }  ,&CollisionSystem::CircleVsConvex },
-			{ CollisionTable{ eColliderType::CONVEX,  eColliderType::CIRCLE }  ,&CollisionSystem::ConvexVsCircle }
+			{ CollisionTable{ eColliderType::CONVEX,  eColliderType::CIRCLE }  ,&CollisionSystem::ConvexVsCircle },
+			{ CollisionTable{ eColliderType::POINT,   eColliderType::POINT }   ,&CollisionSystem::PointVsPoint },
+			{ CollisionTable{ eColliderType::POINT,   eColliderType::CONVEX }  ,&CollisionSystem::PointVsConvex },
+			{ CollisionTable{ eColliderType::POINT,   eColliderType::CIRCLE }  ,&CollisionSystem::PointVsCircle },
+			{ CollisionTable{ eColliderType::CONVEX,  eColliderType::POINT }   ,&CollisionSystem::ConvexVsPoint },
+			{ CollisionTable{ eColliderType::CIRCLE,  eColliderType::POINT }   ,&CollisionSystem::CircleVsPoint }
 			};
 			return i;
 		}();
@@ -134,6 +145,22 @@ namespace Dystopia
 		}
 
 		for (auto & elem : ComponentDonor<Circle>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			if (elem.GetOwner())
+			{
+				elem.ClearCurrentCollisionEvent(); //clear collision table
+				Math::Matrix3D gobjMatrix = elem.GetOwner()->GetComponent<Transform>()->GetTransformMatrix();
+				elem.SetOwnerTransform(gobjMatrix);
+				elem.SetColliding(false);
+				mColliders.push_back(&elem);
+				mCollisionTree.Insert(&elem, elem.GetBroadPhaseCircle());
+			}
+		}
+
+		for (auto & elem : ComponentDonor<PointCollider>::mComponents)
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
@@ -334,6 +361,69 @@ namespace Dystopia
 		return isColliding;
 	}
 
+	bool CollisionSystem::PointVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * a, * b;
+		a = dynamic_cast<PointCollider *>(_ColA);
+		b = dynamic_cast<PointCollider *>(_ColB);
+		
+		return (a && b) || a->isColliding(b);
+	}
+
+	bool CollisionSystem::PointVsConvex(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * a;
+		Convex *b;
+		a = dynamic_cast<PointCollider *>(_ColA);
+		b = dynamic_cast<Convex *>(_ColB);
+
+		return (a && b) || a->isColliding(b);
+	}
+
+	bool CollisionSystem::ConvexVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * b;
+		Convex *a;
+		a = dynamic_cast<Convex * const>(_ColA);
+		b = dynamic_cast<PointCollider * const>(_ColB);
+		
+		return (!a && !b) && a->isColliding(b);
+	}
+
+	bool CollisionSystem::PointVsCircle(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * a;
+		Circle *b;
+		a = dynamic_cast<PointCollider *>(_ColA);
+		b = dynamic_cast<Circle *>(_ColB);
+
+		return (a && b) || a->isColliding(b);
+	}
+
+	bool CollisionSystem::CircleVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		PointCollider * b;
+		Circle *a;
+		a = dynamic_cast<Circle * const>(_ColA);
+		b = dynamic_cast<PointCollider * const>(_ColB);
+
+		return (!a && !b) && a->isColliding(b);
+	}
+
+	bool CollisionSystem::PointVsAABB(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		_ColA;
+		_ColB;
+		return false;
+	}
+
+	bool CollisionSystem::AABBVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
+	{
+		_ColA;
+		_ColB;
+		return false;
+	}
+
 	AutoArray<Collider*> CollisionSystem::GetAllColliders() const
 	{
 		AutoArray<Collider*> ToRet;
@@ -350,6 +440,94 @@ namespace Dystopia
 			ToRet.push_back(&elem);
 		}
 		return Ut::Move(ToRet);
+	}
+
+	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength) const
+	{
+		bool isColliding = false;
+		for (auto & elem : ComponentDonor<Convex>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			if (elem.GetOwner())
+			{
+				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
+			}
+		}
+
+		for (auto & elem : ComponentDonor<AABB>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			if (elem.GetOwner())
+			{
+				//isColliding = RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
+			}
+
+		}
+
+		for (auto & elem : ComponentDonor<Circle>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			if (elem.GetOwner())
+			{
+				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
+			}
+		}
+
+		return isColliding;
+	}
+
+	bool CollisionSystem::RaycastAllHits(Math::Vec3D const & _Dir, Math::Point3D const & _mPos, AutoArray<CollisionEvent>& _Output, float _MaxLength) const
+	{
+		bool isColliding = false;
+		for (auto & elem : ComponentDonor<Convex>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			if (elem.GetOwner())
+			{
+				CollisionEvent ColEvent{ nullptr, elem.GetOwner() };
+				bool result = RayCollider::Raycast(_Dir, _mPos, &elem, &ColEvent, _MaxLength);
+				if (result)
+					_Output.push_back(Ut::Move(ColEvent));
+				isColliding |= result;
+			}
+		}
+
+		for (auto & elem : ComponentDonor<AABB>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			if (elem.GetOwner())
+			{
+				//isColliding = RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
+			}
+
+		}
+
+		for (auto & elem : ComponentDonor<Circle>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			if (elem.GetOwner())
+			{
+				CollisionEvent ColEvent{ nullptr, elem.GetOwner() };
+				bool result = RayCollider::Raycast(_Dir, _mPos, &elem, &ColEvent, _MaxLength);
+				if (result)
+					_Output.push_back(Ut::Move(ColEvent));
+				isColliding |= result;
+			}
+		}
+
+		return isColliding;
 	}
 
 	CollisionSystem::CollisionSystem()

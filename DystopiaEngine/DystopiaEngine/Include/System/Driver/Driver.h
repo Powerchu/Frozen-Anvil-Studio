@@ -50,11 +50,11 @@ namespace Dystopia
 			Ut::Indexer<eSYSTEMS::AI_SYSTEM		  , class AISystem		 >,
 			Ut::Indexer<eSYSTEMS::INTERMEDIARY_SYSTEM, class EditorIntermediary	>,
 			Ut::Indexer<eSYSTEMS::DATABASE_SYSTEM, class DatabaseSystem	>
+			Ut::Indexer<eSYSTEMS::FILE_SYSTEM     , class FileSystem     >
 		>>;
 
 		using SubSys = typename Ut::MetaAutoIndexer <
 			class MeshSystem,
-			class FileSystem,
 			class FontSystem,
 			class LoggerSystem,
 			class TextureSystem,

@@ -73,6 +73,8 @@ namespace Dystopia
 		TRIANGLE,       /*Status : Not Done*/
 		CONVEX,
 		CONCAVE,		/*This is a dream*/
+		POINT,
+		RAY,
 
 		TOTAL
 	};

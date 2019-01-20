@@ -43,6 +43,7 @@ Dystopia::TextureSystem::~TextureSystem(void) noexcept
 void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 {
 #if EDITOR
+
 	auto pFileSys = EngineCore::Get<FileSystem>();
 	std::string buf;
 

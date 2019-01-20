@@ -14,10 +14,14 @@ namespace Dystopia
 	class AABB;
 	class Convex;
 	class Circle;
-
+	class PointCollider;
+	class RayCollider;
+	struct CollisionEvent;
 	class CollisionSystem : public Systems, public ComponentDonor<Convex>,
 											public ComponentDonor<Circle>, 
-											public ComponentDonor<AABB>
+											public ComponentDonor<AABB>,
+		                                    public ComponentDonor<PointCollider>,
+											public ComponentDonor<RayCollider>
 	{
 	public:
 
@@ -64,7 +68,34 @@ namespace Dystopia
 		bool ConvexVsCircle(Collider * const & _ColA,
 							Collider * const & _ColB) const;
 
+		bool PointVsPoint(Collider * const & _ColA,
+			              Collider * const & _ColB) const;
+
+		bool PointVsConvex(Collider * const & _ColA,
+			               Collider * const & _ColB) const;
+
+
+		bool ConvexVsPoint(Collider * const & _ColA,
+			               Collider * const & _ColB) const;
+
+		bool PointVsCircle(Collider * const & _ColA,
+						   Collider * const & _ColB) const;
+
+
+		bool CircleVsPoint(Collider * const & _ColA,
+						   Collider * const & _ColB) const;
+
+		bool PointVsAABB(Collider * const & _ColA,
+			             Collider * const & _ColB) const;
+
+
+		bool AABBVsPoint(Collider * const & _ColA,
+			             Collider * const & _ColB) const;
+
 		AutoArray<Collider *> GetAllColliders() const;
+
+		_DLL_EXPORT bool RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength = 0.f) const;
+		_DLL_EXPORT bool RaycastAllHits (Math::Vec3D const & _Dir, Math::Point3D const & _mPos,AutoArray<CollisionEvent> & _Output, float _MaxLength = 0.f) const;
 
 	private:
 

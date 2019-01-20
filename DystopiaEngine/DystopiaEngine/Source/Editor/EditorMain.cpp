@@ -286,7 +286,7 @@ HashString Editor::EditorMain::GetCurProjFile(void) const
 
 void Editor::EditorMain::ProjectLauncher(void)
 {
-	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 	fs->CreateFiles("Dystopia", Dystopia::eFileDir::eAppData);
 
 	HashString fileName = g_ProjectLauncherSave;
@@ -321,7 +321,7 @@ void Editor::EditorMain::ProjectLauncher(void)
 
 void Editor::EditorMain::UpdatePaths(void)
 {
-	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 
 	HashString subFolder = mProjFile;
 	size_t pos = subFolder.find_last_of(".");

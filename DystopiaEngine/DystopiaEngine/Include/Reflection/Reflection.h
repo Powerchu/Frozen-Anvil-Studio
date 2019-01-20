@@ -33,7 +33,7 @@ struct _DLL_EXPORT CustomMetaComp
 
 /*
 If std::map still giving problems, use
-using Map_t = std::pair<char const*, Dystopia::TypeErasure::ReadWriteObject>[PP_VARIADIC_SIZE(__VA_ARGS__)];
+using Map_t = std::pair<char const*, Dystopia::TypeErasure::ReadWriteObject>[PP_VARIADIC_SIZE(__VA_ARGS__)];              
 */
 
 #define STRINGIFY(_NAME_) #_NAME_
@@ -61,7 +61,7 @@ struct MetaData<_STRUCT_>                                                       
 																															  \
 };																															  \
 
-//inline Dystopia::TypeErasure::TypeEraseMetaData _STRUCT_::GetMetaData()											  \
+		//inline Dystopia::TypeErasure::TypeEraseMetaData _STRUCT_::GetMetaData()											  \
 		//{																													  \
 		//	static MetaData<Dystopia::_STRUCT_> mMetaData;																	  \
 		//	static auto mReturn = TypeErasure::TypeEraseMetaData{ mMetaData };												  \
@@ -120,7 +120,7 @@ struct  GET_MEMPTR_TYPE_AUX<T C::*>
 };
 
 template <auto _type>
-struct  GET_MEMPTR_TYPE
+struct  GET_MEMPTR_TYPE 
 {
 	using type = typename GET_MEMPTR_TYPE_AUX<decltype(_type)>::type;
 };
@@ -149,18 +149,18 @@ constexpr auto GenReflectedData(T C::* ptr)
 
 /*
  * Expanded to
- *
+ * 
 
-template <>
-class MetaData<_STRUCT_>
-{
-
-	static std::map<char const*, Dystopia::TypeErasure::ReadWriteObject> mMetaMap;
+template <>                                                     
+class MetaData<_STRUCT_>                                        
+{                                                               
+																
+	static std::map<char const*, Dystopia::TypeErasure::ReadWriteObject> mMetaMap;     						                    
 }
 
-MetaData<_STRUCT_>::mMetaMap
-{
-	std::pair<const char *, ReflectData<_STRUCT_, float>{float _STRUCT_::*>{"MyMember", &_STRUCT_::MyMember}.Get() }
+MetaData<_STRUCT_>::mMetaMap 
+{ 
+	std::pair<const char *, ReflectData<_STRUCT_, float>{float _STRUCT_::*>{"MyMember", &_STRUCT_::MyMember}.Get() } 
 };
 
  */

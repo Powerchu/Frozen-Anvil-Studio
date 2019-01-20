@@ -366,13 +366,16 @@ size_t OString::find_first_of(const char* _s, size_t _pos) const
 	const char* it2 = _s;
 	while (it1 < cend())
 	{
-		it2 = _s;
-		while (*it2 != '\0')
-		{
-			if (*it1 == *it2)
-				return it1 - cbegin();
-			it2++;
-		}
+		//it2 = _s;
+		//while (*it2 != '\0')
+		//{
+		//	if (*it1 == *it2)
+		//		return it1 - cbegin();
+		//	it2++;
+		//}
+		if(!strncmp(it1, it2,strlen(it2)))
+			return it1 - cbegin();
+
 		it1++;
 	}
 	return OString::nPos;
