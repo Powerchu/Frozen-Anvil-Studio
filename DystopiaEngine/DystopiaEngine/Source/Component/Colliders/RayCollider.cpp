@@ -322,46 +322,21 @@ namespace Dystopia
 				continue;
 			/*Check if the ray lies within the edge*/
 			auto && v1 = _Pos - elem.mPos;
+			auto && v1_cpy = v1;
 			auto && v2 = _Pos - (elem.mPos + elem.mVec3);
-			if (v1.Dot(elem.mVec3) < 0.f)
-			{
 #if CLOCKWISE
 
 #else
-				v1.xyzw = v1.yxzw;
-				v2.xyzw = v2.yxzw;
-				v1.Negate<Math::NegateFlag::Y>();
-				v2.Negate<Math::NegateFlag::X>();
+			v1.xyzw = v1.yxzw;
+			v2.xyzw = v2.yxzw;
+			v1.Negate<Math::NegateFlag::Y>();
+			v2.Negate<Math::NegateFlag::X>();
 #endif
-
-		}
-			else if (v1.Dot(elem.mVec3) > elem.mVec3.Dot(elem.mVec3))
-			{
-#if CLOCKWISE
-
-#else
-				v1.xyzw = v1.yxzw;
-				v2.xyzw = v2.yxzw;
-				v1.Negate<Math::NegateFlag::Y>();
-				v2.Negate<Math::NegateFlag::X>();
-#endif
-			}
-			else
-			{
-#if CLOCKWISE
-
-#else
-				v1.xyzw = v1.yxzw;
-				v2.xyzw = v2.yxzw;
-				v1.Negate<Math::NegateFlag::Y>();
-				v2.Negate<Math::NegateFlag::X>();
-#endif
-			}
 			if (v1.Dot(_RayDir) > 0.f || v2.Dot(_RayDir) > 0.f)
 				return false;
 			/*Get the intersection time*/
 			float cosTheta = _RayDir.Dot(-elem.mNorm3);
-			float adj = Math::Abs(v1.Dot(elem.mNorm3));
+			float adj = Math::Abs(v1_cpy.Dot(elem.mNorm3));
 			float time = adj / cosTheta;
 			/*If the time of intersection to the edge is less than the current time of intersection, update it*/
 
