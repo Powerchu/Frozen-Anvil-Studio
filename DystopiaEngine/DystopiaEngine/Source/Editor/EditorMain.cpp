@@ -39,6 +39,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/SpriteEditor.h"
 #include "Editor/BehaviourTreeEditor.h"
 #include "Editor/GameView.h"
+#include "Editor/FlowChart.h"
+#include "Editor/DataSheetEditor.h"
 
 #include "Allocator/DefaultAlloc.h"
 
@@ -52,6 +54,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Time/ScopedTimer.h"
 #include "System/Profiler/Profiler.h"
 #include "System/Profiler/ProfilerAction.h"
+
+#include "System/Database/DataSheet.h"
 
 #include "../../Dependancies/ImGui/imgui.h"
 #include "../../Dependancies/ImGui/imgui_internal.h"
@@ -143,7 +147,11 @@ void Editor::EditorMain::Update(void)
 		{
 			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scopeT{ p->GetLabel().c_str(), "Editor UI" };
 			ImGuiWindowFlags f = p->IsScrollEnabled() ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar;
-			if (EGUI::StartTab(p->GetLabel().c_str(), &p->GetOpenedBool(), f))
+			if (p->IsHorizontalEnabled())
+				f |= ImGuiWindowFlags_HorizontalScrollbar;
+
+			bool open = p->IsOpened();
+			if (EGUI::StartTab(p->GetLabel().c_str(), &open, f))
 			{
 				EGUI::Indent(4);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
@@ -151,6 +159,7 @@ void Editor::EditorMain::Update(void)
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 4);
 				EGUI::UnIndent(4);
 			}
+			p->SetOpened(open);
 			EGUI::EndTab();
 		}
 		EGUI::PopID();

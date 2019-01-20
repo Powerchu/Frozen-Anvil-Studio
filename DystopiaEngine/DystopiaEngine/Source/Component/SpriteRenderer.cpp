@@ -378,6 +378,13 @@ void Dystopia::SpriteRenderer::SetSpeed(float _s)
 	mfFrameTime = _s;
 }
 
+unsigned Dystopia::SpriteRenderer::GetFrameSize(unsigned _i) const
+{
+	if (_i < mAnimations.size())
+		return mAnimations[_i].mnEnd - mAnimations[_i].mnStart + 1;
+	return 0;
+}
+
 Math::Vec2 Dystopia::SpriteRenderer::Resized(float _xMult, float _yMult) const
 {
 	if (mpTexture)
@@ -564,7 +571,7 @@ bool Dystopia::SpriteRenderer::SpriteSheetFields(const size_t& _i)
 		/******** Section ID *******/
 		auto sID = static_cast<int>(anim.mnID);
 		auto max = static_cast<unsigned>(mpAtlas->GetAllSections().size());
-		if (EGUI::Display::DropDownSelection<21>("Section", sID, max))
+		if (EGUI::Display::DropDownSelection<59>("Section", sID, max))
 		{
 			anim.mnID = sID;
 		}

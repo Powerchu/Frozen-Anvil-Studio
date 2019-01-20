@@ -20,7 +20,8 @@ namespace Editor
 	{
 		STATE_CHANGED = 0,
 		SCENE_CHANGED,
-		SCENE_ABOUT_TO_CHANGE
+		SCENE_ABOUT_TO_CHANGE,
+		WINDOWS_QUIT
 	};
 }
 #endif 

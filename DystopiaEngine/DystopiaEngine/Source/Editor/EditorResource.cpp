@@ -188,6 +188,8 @@ void Editor::EditorResource::ExternalFileHandling(const char* _file)
 			PrintToConsoleLog(result);
 		}
 	}
+	else
+		PrintToConsoleLog("Unknown type. Action discarded!");
 }
 
 #endif 

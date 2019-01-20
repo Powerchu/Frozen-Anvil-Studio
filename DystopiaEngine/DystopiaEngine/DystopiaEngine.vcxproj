@@ -29,11 +29,13 @@
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Include\System\Database\DataSheet.cpp" />
     <ClCompile Include="Source\Component\Colliders\PointCollider.cpp" />
     <ClCompile Include="Source\Allocator\StackAlloc.cpp" />
     <ClCompile Include="Source\DataStructure\OString.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
     <ClCompile Include="Source\Editor\CommandTypes.cpp" />
+    <ClCompile Include="Source\Editor\DataSheetEditor.cpp" />
     <ClCompile Include="Source\Editor\EditorClipboard.cpp" />
     <ClCompile Include="Source\Editor\EditorCommands.cpp" />
     <ClCompile Include="Source\Editor\EditorFactory.cpp" />
@@ -46,6 +48,8 @@
     <ClCompile Include="Source\Editor\EditorStates.cpp" />
     <ClCompile Include="Source\Editor\EditorUI.cpp" />
     <ClCompile Include="Source\Editor\EInput.cpp" />
+    <ClCompile Include="Source\Editor\FlowChart.cpp" />
+    <ClCompile Include="Source\Editor\FlowChartData.cpp" />
     <ClCompile Include="Source\Editor\GameView.cpp" />
     <ClCompile Include="Source\Lib\GraphicsLib.cpp" />
     <ClCompile Include="Source\Lib\OpenGLAPI.cpp" />
@@ -73,6 +77,8 @@
     <ClCompile Include="Source\IO\DDSParser.cpp" />
     <ClCompile Include="Source\IO\PNGParser.cpp" />
     <ClCompile Include="Source\Math\Vector4.cpp" />
+    <ClCompile Include="Source\System\Database\DatabaseSystem.cpp" />
+    <ClCompile Include="Source\System\Editor\EditorIntermediary.cpp" />
     <ClCompile Include="Source\System\Events\Events.cpp" />
     <ClCompile Include="Source\System\Factory\Factory.cpp" />
     <ClCompile Include="Source\System\File\FileSystem.cpp" />
@@ -154,6 +160,7 @@
     <ClInclude Include="Include\Component\PointCollider.h" />
     <ClInclude Include="Include\DataStructure\Delegate.h" />
     <ClInclude Include="Include\Editor\BehaviourTreeEditor.h" />
+    <ClInclude Include="Include\Editor\DataSheetEditor.h" />
     <ClInclude Include="Include\Editor\EditorFactory.h" />
     <ClInclude Include="Include\Editor\EditorLauncher.h" />
     <ClInclude Include="Include\Editor\EditorResource.h" />
@@ -172,6 +179,8 @@
     <ClInclude Include="Include\Editor\EInput.h" />
     <ClInclude Include="Include\Component\AiController.h" />
     <ClInclude Include="Include\Component\NodeList.h" />
+    <ClInclude Include="Include\Editor\FlowChart.h" />
+    <ClInclude Include="Include\Editor\FlowChartData.h" />
     <ClInclude Include="Include\Editor\GameView.h" />
     <ClInclude Include="Include\Factory\Factory.h" />
     <ClInclude Include="Include\Lib\Gfx\GfxOptions.h" />
@@ -197,6 +206,10 @@
     <ClInclude Include="Include\System\AI\NeuralTree.h" />
     <ClInclude Include="Include\System\AI\TreeBuilder.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourList.h" />
+    <ClInclude Include="Include\System\Database\DatabaseSystem.h" />
+    <ClInclude Include="Include\System\Database\DataSheet.h" />
+    <ClInclude Include="Include\System\Database\DataSheetElement.h" />
+    <ClInclude Include="Include\System\Editor\EditorIntermediary.h" />
     <ClInclude Include="Include\System\Events\Event.h" />
     <ClInclude Include="Include\Behaviour\BehaviourMemberFunc.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourMessage.h" />

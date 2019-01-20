@@ -96,7 +96,7 @@ namespace Editor
 	bool ProjectResource::Init(void)
 	{
 		for (auto& f : mArrAllFiles)
-			if (HashString::nPos == f->mPath.find("Temp") && f->mTag == EGUI::ePayloadTags::PREFAB)
+			if (HashString::nPos == f->mpParentFolder->mName.find("Temp") && f->mTag == EGUI::ePayloadTags::PREFAB)
 				EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mName);
 		return true;
 	}
@@ -177,18 +177,15 @@ namespace Editor
 				fopen_s(&pFile, fullPath.c_str(), "a");
 				fclose(pFile);
 
-				bool saved = false;
+				auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
+				if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
 				{
-					auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
-					if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
-					{
-
-						mResetToFile = fileName;
-						saved = true;
+					{ 
+						auto tricks = Ut::Move(serial);
 					}
-				}
-				if (saved)
+					mResetToFile = fileName;
 					EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(fileName);
+				}
 				EGUI::Display::EndPayloadReceiver();
 			}
 			ImGui::SetCursorPos(origin);

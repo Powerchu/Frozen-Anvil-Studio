@@ -60,6 +60,8 @@ namespace Dystopia
 		template <typename Ty>
 		Ty* LoadRaw(Image const*, HashString const&);
 
+		void SaveAtlases(void);
+
 	private:
 
 		std::map<HashString, Image> mImageData;

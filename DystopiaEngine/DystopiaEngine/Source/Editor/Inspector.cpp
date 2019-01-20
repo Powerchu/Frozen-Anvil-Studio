@@ -100,7 +100,7 @@ namespace Editor
 		}
 		else
 		{
-			PrefabObject();
+			//PrefabObject();
 		}
 	}
 
@@ -329,8 +329,11 @@ namespace Editor
 				if (EGUI::Display::SelectableTxt(elem.mName.c_str()))
 				{
 					auto ptr = mpBehaviourSys->RequestBehaviour(mpFocus->GetID(), elem.mName);
-					ptr->SetActive(mpFocus->IsActive());
-					if (ptr) mpFocus->AddComponent(ptr, Dystopia::BehaviourTag{});
+					if (ptr)
+					{
+						mpFocus->AddComponent(ptr, Dystopia::BehaviourTag{});
+						ptr->SetActive(mpFocus->IsActive());
+					}
 				}
 			}
 
@@ -455,7 +458,6 @@ namespace Editor
 	void Inspector::PrefabObject(void)
 	{
 		auto clip = EditorMain::GetInstance()->GetSystem<EditorClipboard>();
-		//auto fac = EditorMain::GetInstance()->GetSystem<EditorFactory>();
 		auto pPrefab = clip->GetPrefab();
 		if (pPrefab)
 		{

@@ -3,7 +3,7 @@
 #define _O_STRING_H_
 
 #define U_BUFSIZE  11
-#define ULL_BUFSIZE 16
+#define ULL_BUFSIZE 21
 /**/
 #include <cstdint>
 #include <iostream>
@@ -156,8 +156,8 @@ inline OString::OString(char const (&_literal)[N])
 
 template<typename T, typename>
 inline OString::OString(T _str)
-	: mnCurSize{ strlen(_str) }, mnBufferSize{ mnCurSize + 1 }, mnID{ 0 }, mpLiteral{ nullptr },
-	mpCharBuffer{ Dystopia::DefaultAllocator<char[]>::Alloc(mnBufferSize) }, mbRehash{ true }
+	: mnCurSize{ _str ? strlen(_str) : 0 }, mnBufferSize{ mnCurSize ? mnCurSize + 1 : 0}, mnID{ 0 }, mpLiteral{ nullptr },
+	mpCharBuffer{ mnCurSize ? Dystopia::DefaultAllocator<char[]>::Alloc(mnBufferSize) : nullptr }, mbRehash{ true }
 {
 	if (mpCharBuffer)
 	{
@@ -205,44 +205,50 @@ inline OString& OString::operator=(T _str)
 template<>
 inline OString& OString::operator=(const char * _str)
 {
-	const size_t newSize = strlen(_str);
-	if (mpLiteral)
+	if (_str)
 	{
-		Alloc(newSize);
-		mpLiteral = nullptr;
+		const size_t newSize = strlen(_str);
+		if (mpLiteral)
+		{
+			Alloc(newSize);
+			mpLiteral = nullptr;
+		}
+		else
+		{
+			if (mnBufferSize <= newSize)
+				Realloc(newSize + 1);
+		}
+		MyStrCopy(_str, newSize);
 	}
-	else
-	{
-		if (mnBufferSize <= newSize)
-			Realloc(newSize + 1);
-	}
-	MyStrCopy(_str, newSize); 
 	return *this;
 }
 
 template<>
 inline OString& OString::operator=(const wchar_t * _str)
 {
-	size_t newSize = 0;
-	while (*(_str + newSize) != '\0')
-		newSize++;
-	if (mpLiteral)
+	if (_str)
 	{
-		Alloc(newSize);
-		mpLiteral = nullptr;
+		size_t newSize = 0;
+		while (*(_str + newSize) != '\0')
+			newSize++;
+		if (mpLiteral)
+		{
+			Alloc(newSize);
+			mpLiteral = nullptr;
+		}
+		else
+		{
+			if (mnBufferSize <= newSize)
+				Realloc(newSize + 1);
+		}
+		size_t i = 0;
+		for (; i < newSize; ++i)
+			mpCharBuffer[i] = static_cast<char>(_str[i]);
+		for (; i < mnBufferSize; ++i)
+			mpCharBuffer[i] = '\0';
+		mnCurSize = newSize;
+		mbRehash = true;
 	}
-	else
-	{
-		if (mnBufferSize <= newSize)
-			Realloc(newSize + 1);
-	}
-	size_t i = 0;
-	for (; i < newSize; ++i)
-		mpCharBuffer[i] = static_cast<char>(_str[i]);
-	for (; i < mnBufferSize; ++i)
-		mpCharBuffer[i] = '\0';
-	mnCurSize = newSize;
-	mbRehash = true;
 	return *this;
 }
 
@@ -327,64 +333,67 @@ inline OString& OString::operator+=(T _element)
 template<>
 inline OString& OString::operator+=<const char*>(const char * _str)
 {
-	const size_t newSize = mnCurSize + strlen(_str);
+	if (_str)
+	{
+		const size_t newSize = mnCurSize + strlen(_str);
 
-	if (mpLiteral)
-	{
-		if (mpCharBuffer && mnBufferSize > newSize)
+		if (mpLiteral)
 		{
-			CopyFromLiteral();
-			size_t i = mnCurSize;
-			for (; i < newSize; i++)
-				mpCharBuffer[i] = _str[i - mnCurSize];
-			for (; i < mnBufferSize; i++)
-				mpCharBuffer[i] = '\0';
-		}
-		else
-		{
-			Alloc(newSize);
-			CopyFromLiteral();
-			for (size_t k = mnCurSize; k < mnBufferSize; k++)
-				mpCharBuffer[k] = _str[k - mnCurSize];
-			mpCharBuffer[newSize] = '\0';
-		}
-	}
-	else
-	{
-		if (mpCharBuffer)
-		{
-			if (mnBufferSize <= newSize)
+			if (mpCharBuffer && mnBufferSize > newSize)
 			{
-				char *tempBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(newSize + 1);
-				size_t i = 0, j = 0;
-				for (; i < mnCurSize; ++i)
-					tempBuffer[i] = mpCharBuffer[i];
-				for (; j < strlen(_str); j++)
-					tempBuffer[i + j] = _str[j];
-
-				tempBuffer[newSize] = '\0';
-				Dystopia::DefaultAllocator<char[]>::Free(mpCharBuffer);
-				mpCharBuffer = tempBuffer;
-				mnBufferSize = newSize + 1;
+				CopyFromLiteral();
+				size_t i = mnCurSize;
+				for (; i < newSize; i++)
+					mpCharBuffer[i] = _str[i - mnCurSize];
+				for (; i < mnBufferSize; i++)
+					mpCharBuffer[i] = '\0';
 			}
 			else
 			{
-				size_t i = mnCurSize;
-				for (; i < newSize; ++i)
-					mpCharBuffer[i] = _str[i - mnCurSize];
+				Alloc(newSize);
+				CopyFromLiteral();
+				for (size_t k = mnCurSize; k < mnBufferSize; k++)
+					mpCharBuffer[k] = _str[k - mnCurSize];
 				mpCharBuffer[newSize] = '\0';
 			}
 		}
 		else
 		{
-			Alloc(newSize);
-			size_t i = 0;
-			for (; i < strlen(_str); ++i)
-				mpCharBuffer[i] = _str[i];
+			if (mpCharBuffer)
+			{
+				if (mnBufferSize <= newSize)
+				{
+					char *tempBuffer = Dystopia::DefaultAllocator<char[]>::Alloc(newSize + 1);
+					size_t i = 0, j = 0;
+					for (; i < mnCurSize; ++i)
+						tempBuffer[i] = mpCharBuffer[i];
+					for (; j < strlen(_str); j++)
+						tempBuffer[i + j] = _str[j];
+
+					tempBuffer[newSize] = '\0';
+					Dystopia::DefaultAllocator<char[]>::Free(mpCharBuffer);
+					mpCharBuffer = tempBuffer;
+					mnBufferSize = newSize + 1;
+				}
+				else
+				{
+					size_t i = mnCurSize;
+					for (; i < newSize; ++i)
+						mpCharBuffer[i] = _str[i - mnCurSize];
+					mpCharBuffer[newSize] = '\0';
+				}
+			}
+			else
+			{
+				Alloc(newSize);
+				size_t i = 0;
+				for (; i < strlen(_str); ++i)
+					mpCharBuffer[i] = _str[i];
+			}
 		}
+		mnCurSize = newSize;
+		mbRehash = true;
 	}
-	mnCurSize = newSize;
-	mbRehash = true;
 	return *this;
 }
 

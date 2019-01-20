@@ -88,12 +88,18 @@ inline void Dystopia::ComponentDonor<Ty, Settings>::Unserialise(TextSerialiser &
 	int n = 0;
 	for (auto& e : mComponents)
 		n += !(e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ);
-	for (auto i = 0; i < n; i++)
+	for (auto& e : mComponents)
 	{
-		if (mComponents[i].GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+		if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
 			continue;
-		mComponents.Remove(&mComponents[i]);
+		mComponents.Remove(&e);
 	}
+	//for (auto i = 0; i < n; i++)
+	//{
+	//	if (mComponents[i].GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+	//		continue;
+	//	mComponents.Remove(&mComponents[i]);
+	//}
 	//mComponents.clear();
 
 	_Serialiser.ConsumeStartBlock();
