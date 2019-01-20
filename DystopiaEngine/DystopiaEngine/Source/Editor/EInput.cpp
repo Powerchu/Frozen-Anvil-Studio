@@ -52,7 +52,7 @@ void Editor::EInput::StartFrame(void)
 
 	ImGuiIO&	io = ImGui::GetIO();
 	const auto&	iquene = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow().GetInputQueue();
-	bool		shft = mpInputMgr->IsKeyPressed(eButton::KEYBOARD_SHIFT);
+	bool		shft = mpInputMgr->GetKey(eButton::KEYBOARD_SHIFT);
 	float		scrollV = mpInputMgr->GetMouseWheel();
 
 	io.KeysDown[eButton::KEYBOARD_ENTER] = false;
@@ -88,8 +88,8 @@ void Editor::EInput::StartFrame(void)
 		io.MouseWheel += scrollV;
 
 	io.KeyShift = shft;
-	io.KeyAlt = mpInputMgr->IsKeyPressed(eButton::KEYBOARD_ALT);
-	io.KeyCtrl = mpInputMgr->IsKeyPressed(eButton::KEYBOARD_CTRL);
+	io.KeyAlt = mpInputMgr->GetKey(eButton::KEYBOARD_ALT);
+	io.KeyCtrl = mpInputMgr->GetKey(eButton::KEYBOARD_CTRL);
 }
 
 void Editor::EInput::Update(float)

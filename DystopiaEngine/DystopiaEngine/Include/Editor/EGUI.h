@@ -34,6 +34,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Gizmo.h"
 
 #include "../../Dependancies/ImGui/imgui.h"
+#include "../../../Dependancies/ImGui/imgui_internal.h"
 #include <string>
 
 /* forward declare just becuz */
@@ -253,7 +254,7 @@ namespace EGUI
 		// The checkbox is clicked (toggleMe if its true or false does not matter). Do something here:
 		}
 		======================================================================================================================= */
-		bool CheckBox(const char * _label, bool *_pOutBool, bool _showLabel = true);
+		bool CheckBox(const char * _label, bool *_pOutBool, bool _showLabel = true, const char* _tooltip = nullptr);
 		/* =======================================================================================================================
 		Brief:
 		Creates a radio button for a boolean variable. Returns true when the radiois clicked, toggles the _pOutBool
@@ -639,6 +640,7 @@ namespace EGUI
 			ImGui::PlotLines(invi.c_str(), _array.begin(), static_cast<int>(_array.size()), 0,
 				_overlapText, _min, _max, ImVec2{ _size.x, _size.y });
 		}
+
 		/* =======================================================================================================================
 		Brief:
 		Creates aN IMAGE as either a button or not (_interactive)
@@ -650,6 +652,67 @@ namespace EGUI
 		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize = Math::Vec2{ 30, 30 },
 			bool _interactive = false, bool _outlineBG = false);
 
+		
+		struct ComboFilterState
+		{
+			int  activeIdx = 0;         // Index of currently 'active' item by use of up/down keys
+			bool selectionChanged = false;  // Flag to help focus the correct item when selecting active item
+		};
+
+		/* ====================================================================================================================
+		Brief:
+		This is a helper function for ComboFilter to draw the popup. 
+		Usage:
+		*To be written*
+		======================================================================================================================= */
+		bool ComboFilter_DrawPopup(ComboFilterState& state, int START, const char **ENTRIES, const int ENTRY_COUNT);
+
+
+		/* =======================================================================================================================
+		Brief:
+		Creates an ImGUI Combo Field (Like Dropdown but with text)
+		Usage:
+		{
+			// requisite: hints must be alphabetically sorted beforehand
+			const char *hints[] = 
+			{
+				"AnimGraphNode_CopyBone",
+				"ce skipaa",
+				"ce skipscreen",
+				"ce skipsplash",
+				"ce skipsplashscreen",
+				"client_unit.cpp",
+				"letrograd",
+				"level",
+				"leveler",
+				"MacroCallback.cpp",
+				"Miskatonic university",
+				"MockAI.h",
+				"MockGameplayTasks.h",
+				"MovieSceneColorTrack.cpp",
+				"r.maxfps",
+				"r.maxsteadyfps",
+				"reboot",
+				"rescale",
+				"reset",
+				"resource",
+				"restart",
+				"retrocomputer",
+				"retrograd",
+				"return",
+				"slomo 10",
+			};
+
+			static ComboFilterState s = {0};
+			static char buf[128] = "type text here...";
+			
+			if( ComboFilter("my combofilter", buf, IM_ARRAYSIZE(buf), hints, IM_ARRAYSIZE(hints), s) ) 
+			{
+				puts( buf );
+			}
+		}
+		======================================================================================================================= */
+		bool ComboFilter(const char *id, char *buffer, int bufferlen, const char **hints, int num_hints, ComboFilterState &s);
 
 	}
 }
