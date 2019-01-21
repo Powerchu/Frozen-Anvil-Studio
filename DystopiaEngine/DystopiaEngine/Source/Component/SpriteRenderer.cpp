@@ -280,6 +280,7 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	}
 	EGUI::PopLeftAlign();
 
+	EGUI::Display::HorizontalSeparator();
 	Renderer::ShaderField();
 
 #endif
@@ -461,20 +462,20 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 		}
 	}
 
-	if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName().c_str() : "-no mesh-", true))
-	{
-	}
-	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
-	{
-		EGUI::Display::EndPayloadReceiver();
-	}
-	if (EGUI::Display::EmptyBox("Shader", 150, "shader has no name or id", true))
-	{
-	}
-	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
-	{
-		EGUI::Display::EndPayloadReceiver();
-	}
+	//if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName().c_str() : "-no mesh-", true))
+	//{
+	//}
+	//if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
+	//{
+	//	EGUI::Display::EndPayloadReceiver();
+	//}
+	//if (EGUI::Display::EmptyBox("Shader", 150, "shader has no name or id", true))
+	//{
+	//}
+	//if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
+	//{
+	//	EGUI::Display::EndPayloadReceiver();
+	//}
 
 #endif
 }

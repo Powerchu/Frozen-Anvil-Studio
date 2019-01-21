@@ -167,12 +167,10 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 	_out.InsertStartBlock("Renderer");
 	Component::Serialise(_out);
 	//_out << EngineCore::GetInstance()->Get<FileSystem>()->ConvertToRelative(mTexturePath);
-	//auto rp = EngineCore::GetInstance()->Get<FileSystem>()->ConvertToRelative(mTexturePath);
-	static_assert(false, "TO FIX");
-#error
-	//auto pos = rp.find_last_of("/\\");
-	//if (pos != std::string::npos)
-	//	_out << rp.substr(pos + 1);
+	std::string rp = EngineCore::GetInstance()->Get<FileSystem>()->ConvertToRelative(std::string{ mTexturePath.c_str() });
+	auto pos = rp.find_last_of("/\\");
+	if (pos != std::string::npos)
+		_out << rp.substr(pos + 1);
 	_out.InsertEndBlock("Renderer");
 }
 
@@ -183,7 +181,10 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 	Component::Unserialise(_in);
 	_in >> path;
 	_in.ConsumeEndBlock();
-	mTexturePath = CORE::Get<FileSystem>()->GetFullPath(path, eFileDir::eResource).c_str();
+	auto pos = path.find_last_of("/\\");
+	if (pos != std::string::npos)
+		path = path.substr(pos + 1);
+	mTexturePath = CORE::Get<FileSystem>()->Normalize(CORE::Get<FileSystem>()->GetFullPath(path, eFileDir::eResource)).c_str();
 }
 
 void Dystopia::Renderer::EditorUI(void) noexcept
@@ -266,6 +267,7 @@ void Dystopia::Renderer::MeshField()
 
 void Dystopia::Renderer::ShaderField()
 {
+	EGUI::PushLeftAlign(80);
 	static void(*x[])(ShaderVariant_t&) {
 		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<0, ShaderTypeList>::type{}; },
 		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<1, ShaderTypeList>::type{}; },
@@ -304,7 +306,7 @@ void Dystopia::Renderer::ShaderField()
 		mOverrideNames.EmplaceBack(e.first.c_str());
 
 	static int sele = 0;
-	if (EGUI::Display::DropDownSelection("Manual Override", sele, mOverrideNames))
+	if (EGUI::Display::DropDownSelection("Overrides", sele, mOverrideNames) && sele)
 	{
 		::Gfx::eUniform_t type;
 		ShaderVariant_t myVariant;
@@ -332,25 +334,30 @@ void Dystopia::Renderer::ShaderField()
 	int n = 0;
 	for (auto& e : Ut::Range(mOverride).Reverse())
 	{
-		e.Get<2>().Visit(UIVisitor{ e.Get<0>() });
-
 		EGUI::PushID(++n);
+
+		e.Get<2>().Visit(UIVisitor{ e.Get<0>() });
 		EGUI::SameLine();
 		if (EGUI::Display::IconCross("Clear", 9.f))
 			mOverride.FastRemove(&e);
+
 		EGUI::PopID();
 	}
+
+	EGUI::PopLeftAlign();
 }
 
 template<>
 inline void Dystopia::Renderer::UIVisitor::operator()(int& _variant)
 {
-	EGUI::Display::DragInt(strName.c_str(), &_variant, 1, -INT_MAX, INT_MAX);
+	EGUI::Display::LabelWrapped(strName.c_str());
+	EGUI::Display::DragInt(strName.c_str(), &_variant, 1, -INT_MAX, INT_MAX, true);
 }
 template<>
 inline void Dystopia::Renderer::UIVisitor::operator()(float& _variant)
 {
-	EGUI::Display::DragFloat(strName.c_str(), &_variant, 0.1f, -FLT_MAX, FLT_MAX);
+	EGUI::Display::LabelWrapped(strName.c_str());
+	EGUI::Display::DragFloat(strName.c_str(), &_variant, 0.1f, -FLT_MAX, FLT_MAX, true);
 }
 template<>
 inline void Dystopia::Renderer::UIVisitor::operator()(bool& _variant)
@@ -360,11 +367,13 @@ inline void Dystopia::Renderer::UIVisitor::operator()(bool& _variant)
 template<>
 inline void Dystopia::Renderer::UIVisitor::operator()(Math::Vec2& _variant)
 {
-	EGUI::Display::VectorFields(strName.c_str(), &_variant, 0.1f, -FLT_MAX, FLT_MAX);
+	EGUI::Display::LabelWrapped(strName.c_str());
+	EGUI::Display::VectorFields("", &_variant, 0.1f, -FLT_MAX, FLT_MAX);
 }
 template<>
 inline void Dystopia::Renderer::UIVisitor::operator()(Math::Vec4& _variant)
 {
-	EGUI::Display::VectorFields(strName.c_str(), &_variant, 0.1f, -FLT_MAX, FLT_MAX);
+	EGUI::Display::LabelWrapped(strName.c_str());
+	EGUI::Display::VectorFields("", &_variant, 0.1f, -FLT_MAX, FLT_MAX);
 }
 #endif
