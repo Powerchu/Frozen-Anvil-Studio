@@ -811,12 +811,6 @@ void Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
 
 bool Dystopia::GraphicsSystem::InitOpenGL(Window&)
 {
-	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LINE_SMOOTH);
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	// Return true to indicate success
 	return true;
 }

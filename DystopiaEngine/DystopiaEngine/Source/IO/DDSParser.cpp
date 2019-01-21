@@ -176,7 +176,7 @@ Image* ImageParser::LoadDDS(const std::string& _path, Image* _pImage)
 	sz = sz + (sz >> 1);
 
 	// Minimum of 64 bit blocks so we should be safe copying 64bits at a time
-	auto buf = static_cast<char*>(Dystopia::DefaultAllocator<void>::Alloc(sz));
+	auto buf = static_cast<uint64_t*>(Dystopia::DefaultAllocator<void>::Alloc(sz));
 	_pImage->mpImageData = buf;
 
 	while (!file.EndOfInput())

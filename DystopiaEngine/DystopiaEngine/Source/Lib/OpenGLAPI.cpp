@@ -450,7 +450,16 @@ bool Gfx::OpenGL_API::InitGraphicsAPI(void const* _phwnd) noexcept
 	}
 
 	// Make our newly created context the active context
-	return BindContext(dc);
+	auto ret = BindContext(dc);
+
+	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LINE_SMOOTH);
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+	return ret;
 }
 
 bool Gfx::OpenGL_API::BindContext(void* _deviceContext) noexcept
