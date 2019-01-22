@@ -172,6 +172,9 @@ namespace Dystopia
 		virtual Math::Point3D GetGlobalPosition() const;
 		virtual Math::Quaternion GetGlobalRotation() const;
 		Math::Vec3D           GetOffSet()   const;
+		void SetOffSet(Math::Vec3D _offset);
+		Math::Vec3D GetScale() const;
+		void SetScale(Math::Vec3D _scale);
 		bool                  HasCollision() const;
 		bool				  IsTrigger() const;
 		bool				  IsSleeping() const;

@@ -212,7 +212,6 @@ Dystopia::InputManager::~InputManager(void)
 bool Dystopia::InputManager::Init(void)
 {
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
-	LoadDefaults();
 	mGamePad.PollInputs();
 	return true;
 }
@@ -294,6 +293,7 @@ void Dystopia::InputManager::LoadDefaults(void)
 
 void Dystopia::InputManager::LoadSettings(DysSerialiser_t& _in)
 {
+	mAxisMapping.clear();
 	int mapSize = 0;
 	_in >> mapSize;
 
@@ -311,6 +311,8 @@ void Dystopia::InputManager::LoadSettings(DysSerialiser_t& _in)
 		float sens;
 		int type;
 		int axis;
+		bool snap;
+		bool invert;
 
 		_in >> name;
 		_in >> mPosDes;
@@ -324,9 +326,11 @@ void Dystopia::InputManager::LoadSettings(DysSerialiser_t& _in)
 		_in >> sens;
 		_in >> type;
 		_in >> axis;
+		_in >> snap;
+		_in >> invert;
 
 		MapButton(VirtualButton(name, mPosDes, mNegDes, static_cast<eButton>(mPosBtn), static_cast<eButton>(mNegBtn)
-								, static_cast<eButton>(mAltPosBtn), static_cast<eButton>(mAltNegBtn), grav, deadR, sens, type, axis));
+								, static_cast<eButton>(mAltPosBtn), static_cast<eButton>(mAltNegBtn), grav, deadR, sens, type, axis, snap, invert));
 	}
 }
 
@@ -347,6 +351,8 @@ void Dystopia::InputManager::SaveSettings(DysSerialiser_t& _out)
 		_out << val.mfSensitivity;
 		_out << val.TypeSelectedInd;
 		_out << val.AxisSelectedInd;
+		_out << val.mbSnapping;
+		_out << val.mbInvert;
 	}
 }
 
@@ -652,13 +658,17 @@ void Dystopia::InputManager::EditorUI()
 
 		static char buffer1[512];
 
-		auto tempComboStateCount = mAxisMapping.size();
-		for (auto i = 0; i < tempComboStateCount; i++)
+		const auto tempComboStateCount = mAxisMapping.size();
+		if (marrCombos.size() < tempComboStateCount)
 		{
-			marrCombos.Insert(ComboStruct());
+			for (auto i = 0; i < tempComboStateCount; i++)
+			{
+				marrCombos.Insert(ComboStruct());
+			}
 		}
 
 		EGUI::Indent();
+
 		int mapCount = 0;
 		for (auto &[key, val] : mAxisMapping)
 		{
