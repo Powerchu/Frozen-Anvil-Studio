@@ -190,7 +190,7 @@ void Editor::SpriteEditor::FieldTexture(void)
 
 			mnSelectedSection = 0;
 			if (!mpAtlas->GetAllSections().size())
-				mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
+				mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight(), 1, 1);
 
 			auto& sec = mpAtlas->GetAllSections()[mnSelectedSection];
 			mSectionPos = Math::Vec2{ sec.uStart, sec.vStart };
