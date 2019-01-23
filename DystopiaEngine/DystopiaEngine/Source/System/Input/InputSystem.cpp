@@ -574,14 +574,19 @@ bool Dystopia::InputManager::IsController() const
 	return mGamePad.IsConnected();
 }
 
-void Dystopia::InputManager::SetVibrate(unsigned short _ltrg, unsigned short _rtrg)
+void Dystopia::InputManager::SetVibrate(unsigned short _ltrg, unsigned short _rtrg) const
 {
 	mGamePad.Vibrate(_ltrg, _rtrg); //0-65534
 }
 
-void Dystopia::InputManager::StopVibrate()
+void Dystopia::InputManager::StopVibrate() const
 {
 	mGamePad.StopVibrate();
+}
+
+void Dystopia::InputManager::OneShotVibrate(float intensity, float _lBalance, float _dt)
+{
+	mGamePad.VibrateOneShot(intensity, 3.0f, _lBalance, _dt);
 }
 
 float Dystopia::InputManager::GetAnalogY(int _state) const

@@ -6,7 +6,7 @@
 \brief
 	Creates and manages Win32 windows.
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -97,8 +97,9 @@ namespace Dystopia
 		_DLL_EXPORT bool IsController() const;
 
 		// left is low frequency motor, right is high frequency motor
-		_DLL_EXPORT void SetVibrate(unsigned short _ltrg = 32000, unsigned short _rtrg = 16000); //0-65534
-		_DLL_EXPORT void StopVibrate();
+		_DLL_EXPORT void SetVibrate(unsigned short _ltrg = 32000, unsigned short _rtrg = 16000) const; //0-65534
+		_DLL_EXPORT void StopVibrate() const;
+		_DLL_EXPORT void OneShotVibrate(float intensity, float _lBalance, float _dt);
 
 		_DLL_EXPORT float GetAnalogY(int) const;	//0 for left analog, all others for right
 		_DLL_EXPORT float GetAnalogX(int) const;	//0 for left analog, all others for right

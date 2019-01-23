@@ -27,7 +27,7 @@ static constexpr unsigned short g_ControllerHexa[14] =
 	XINPUT_GAMEPAD_Y                
 };
 
-XGamePad::XGamePad(const unsigned _id)
+XGamePad::XGamePad(const unsigned _id, float maxTimer)
 	:
 	mArrXBtnStates{},
 	mxLeftThumb{},
@@ -42,7 +42,9 @@ XGamePad::XGamePad(const unsigned _id)
 	mfDeadZoneR{ XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE }, 
 	mfTriggerThresh{ XINPUT_GAMEPAD_TRIGGER_THRESHOLD },
 	mfMaxThumbVal{ 32767 },
-	mpxVibrate{ new XINPUT_VIBRATION{} }
+	mpxVibrate{ new XINPUT_VIBRATION{} },
+	mfMaxTimer(maxTimer),
+	mfTimer(maxTimer)
 {
 }
 
@@ -163,8 +165,9 @@ void XGamePad::UpdateButtons(void)
 	}
 }
 
-void XGamePad::Vibrate(unsigned short _speedL, unsigned short _speedR)
+void XGamePad::Vibrate(unsigned short _speedL, unsigned short _speedR) const
 {
+	//0-65534
 	if (mbConnected)
 	{
 		ZeroMemory(&*mpxVibrate, sizeof(XINPUT_VIBRATION));
@@ -174,9 +177,44 @@ void XGamePad::Vibrate(unsigned short _speedL, unsigned short _speedR)
 	}
 }
 
-void XGamePad::StopVibrate(void)
+void XGamePad::StopVibrate(void) const
 {
 	Vibrate(0, 0);
+}
+
+void XGamePad::VibrateOneShot(float intensity, float maxTime, float _lBalance, float _dt)
+{
+	//0-65534
+	if (_lBalance > 1.f) _lBalance = 1.f;
+	else if (_lBalance < 0.f) _lBalance = 0.f;
+
+	if (intensity > 1.f) intensity = 1.f;
+	else if (intensity < 0.f) intensity = 0.f;
+
+	if (maxTime > mfMaxTimer) maxTime = mfMaxTimer;
+
+	const auto _rBalance = 1.0 - _lBalance;
+
+	if (mfTimer <= 0.f)
+		mfTimer = maxTime;
+	else
+	{
+		VibrateHelper(intensity, _lBalance, _rBalance, _dt);
+	}
+}
+
+void XGamePad::VibrateHelper(float intensity, float _lBalance, float _rBalance, float _dt)
+{
+	mfTimer -= _dt;
+
+	if (mfTimer > 0.f)
+	{
+		Vibrate(intensity*_lBalance * 65534, intensity*_rBalance * 65534);
+	}
+	else
+	{
+		StopVibrate();
+	}
 }
 
 float XGamePad::GetAnalogX(int _i) const
