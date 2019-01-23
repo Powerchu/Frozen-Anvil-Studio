@@ -512,6 +512,7 @@ namespace Dystopia
 			Edge e;
 			e.mVec3         = end - start;
 			e.mNorm3.xyzw   = e.mVec3.yxzw;
+			
 			e.mSimplexIndex = i;
 			e.mOrthogonalDistance = start.Magnitude();
 			e.mPos          = start;
@@ -526,6 +527,7 @@ namespace Dystopia
 			e.mNorm3.z = 0;
 			e.mPos.z   = 0;
 			e.mVec3.z  = 0;
+			e.mNorm3 = Math::Normalise(e.mNorm3);
 			ToRet.push_back(e);
 		}
 		return ToRet;

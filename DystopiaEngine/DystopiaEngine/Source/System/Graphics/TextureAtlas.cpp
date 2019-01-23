@@ -22,6 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO/TextSerialiser.h"
 #include "DataStructure/HashString.h"
 
+#define MAX_ROW_COL 100
+
 
 Dystopia::TextureAtlas::TextureAtlas(Texture* _ptr) noexcept
 	: mpTexture{ _ptr }
@@ -79,8 +81,8 @@ void Dystopia::TextureAtlas::UpdateSection(unsigned _nIndex, const Math::Vec2 & 
 	e.vEnd = static_cast<float>(e.vStart + _nHeight * h);
 	const float uStride = (e.uEnd - e.uStart);
 	const float vStride = (e.vEnd - e.vStart);
-	e.mCol = float(uStride / _nCols);
-	e.mRow = float(vStride / _nRows);
+	e.mCol = Math::Clamp(float(uStride / _nCols), 0, MAX_ROW_COL);
+	e.mRow = Math::Clamp(float(vStride / _nRows), 0, MAX_ROW_COL);
 }
 
 void Dystopia::TextureAtlas::SetSection(unsigned _nID, unsigned _nCol, unsigned _nRow, Shader const& _Active)

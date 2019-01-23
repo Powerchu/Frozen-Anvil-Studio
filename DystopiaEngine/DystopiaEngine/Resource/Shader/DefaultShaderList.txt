@@ -1,16 +1,16 @@
 [START_PROGRAMS]
 "Shader\\DefaultVert.dvert","Shader\\DefaultFrag.dfrag","Shader\\NoTextureFrag.dfrag","Shader\\ColourFrag.dfrag","Shader\\FinalStage.dfrag","Shader\\LogoFrag.dfrag","Shader\\Font.dvert","Shader\\FontFrag.dfrag","Shader\\Collider.dfrag",
 [START_SHADER]
-"Default Shader","DefaultVert.dvert","DefaultFrag.dfrag",
+"Default Shader","Shader\DefaultVert.dvert","Shader\DefaultFrag.dfrag",
 [START_SHADER]
-"No Texture","DefaultVert.dvert","NoTextureFrag.dfrag"
+"No Texture","Shader\DefaultVert.dvert","Shader\NoTextureFrag.dfrag"
 [START_SHADER]
-"Colour Shader","DefaultVert.dvert","ColourFrag.dfrag",
+"Colour Shader","Shader\DefaultVert.dvert","Shader\ColourFrag.dfrag",
 [START_SHADER]
-"FinalStage","DefaultVert.dvert","FinalStage.dfrag",
+"FinalStage","Shader\DefaultVert.dvert","Shader\FinalStage.dfrag",
 [START_SHADER]
-"Logo Shader","DefaultVert.dvert","LogoFrag.dfrag",
+"Logo Shader","Shader\DefaultVert.dvert","Shader\LogoFrag.dfrag",
 [START_SHADER]
-"Font Shader","Font.dvert","FontFrag.dfrag",
+"Font Shader","Shader\Font.dvert","Shader\FontFrag.dfrag",
 [START_SHADER]
-"Collider Shader","DefaultVert.dvert","Collider.dfrag",
+"Collider Shader","Shader\DefaultVert.dvert","Shader\Collider.dfrag",

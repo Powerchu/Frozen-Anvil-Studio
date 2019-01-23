@@ -129,6 +129,8 @@ void Dystopia::Texture2D::InitCompressedTexture(Image const* _pData)
 			__debugbreak();
 #   endif
 	}
+	if (auto err = glGetError())
+		__debugbreak();
 
 	//if(n > 1)
 	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);

@@ -1,4 +1,9 @@
-#version 330 core
+#version 410 core
+
+out gl_PerVertex
+{
+  vec4 gl_Position;
+};
 
 uniform mat4 ProjectMat;
 uniform mat4 ViewMat;

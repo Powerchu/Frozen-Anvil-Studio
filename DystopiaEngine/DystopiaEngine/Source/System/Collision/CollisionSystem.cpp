@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/RigidBody.h"
 #include "Component/Transform.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Collision/CollisionEvent.h"
 #include "System/Graphics/MeshSystem.h"
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
@@ -439,6 +440,133 @@ namespace Dystopia
 			ToRet.push_back(&elem);
 		}
 		return Ut::Move(ToRet);
+	}
+
+	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output,GameObject ** _IgnoreList, unsigned _count, float _MaxLength) const
+	{
+		bool isColliding = false;
+		_Output->mTimeIntersection = 999999.f;
+		for (auto & elem : ComponentDonor<Convex>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			CollisionEvent Col;
+			Col.mTimeIntersection = 99999.f;
+			if (elem.GetOwner())
+			{
+				if (RayCollider::Raycast(_Dir, _mPos, &elem, &Col, _MaxLength))
+				{
+					bool ignore = false;
+					if (_IgnoreList)
+					{
+						for (unsigned i = 0; i < _count; ++i)
+						{
+							if (_IgnoreList[i] == Col.mCollidedWith)
+							{
+								ignore = true;
+							}
+						}
+					}
+					if (ignore) continue;
+					isColliding |= true;
+					if(_Output->mTimeIntersection > Col.mTimeIntersection ? Col.mTimeIntersection : _Output->mTimeIntersection)
+					*_Output = Col;
+				}
+			}
+		}
+
+		for (auto & elem : ComponentDonor<AABB>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			if (elem.GetOwner())
+			{
+				//isColliding = RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
+			}
+
+		}
+
+		for (auto & elem : ComponentDonor<Circle>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			CollisionEvent Col;
+			Col.mTimeIntersection = 99999.f;
+			if (elem.GetOwner())
+			{
+				if (RayCollider::Raycast(_Dir, _mPos, &elem, &Col, _MaxLength))
+				{
+					bool ignore = false;
+					if (_IgnoreList)
+					{
+						for (unsigned i = 0; i < _count; ++i)
+						{
+							if (_IgnoreList[i] == Col.mCollidedWith)
+							{
+								ignore = true;
+							}
+						}
+					}
+					if (ignore) continue;
+					isColliding |= true;
+					if (_Output->mTimeIntersection > Col.mTimeIntersection ? Col.mTimeIntersection : _Output->mTimeIntersection)
+						*_Output = Col;
+				}
+			}
+		}
+
+		return isColliding;
+	}
+
+	bool CollisionSystem::RaycastAllHits(Math::Vec3D const & _Dir, Math::Point3D const & _mPos, AutoArray<CollisionEvent>& _Output, float _MaxLength) const
+	{
+		bool isColliding = false;
+		for (auto & elem : ComponentDonor<Convex>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			if (elem.GetOwner())
+			{
+				CollisionEvent ColEvent{ nullptr, elem.GetOwner() };
+				bool result = RayCollider::Raycast(_Dir, _mPos, &elem, &ColEvent, _MaxLength);
+				if (result)
+					_Output.push_back(Ut::Move(ColEvent));
+				isColliding |= result;
+			}
+		}
+
+		for (auto & elem : ComponentDonor<AABB>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			if (elem.GetOwner())
+			{
+				//isColliding = RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
+			}
+
+		}
+
+		for (auto & elem : ComponentDonor<Circle>::mComponents)
+		{
+#if EDITOR
+			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#endif 
+			if (elem.GetOwner())
+			{
+				CollisionEvent ColEvent{ nullptr, elem.GetOwner() };
+				bool result = RayCollider::Raycast(_Dir, _mPos, &elem, &ColEvent, _MaxLength);
+				if (result)
+					_Output.push_back(Ut::Move(ColEvent));
+				isColliding |= result;
+			}
+		}
+
+		return isColliding;
 	}
 
 	CollisionSystem::CollisionSystem()

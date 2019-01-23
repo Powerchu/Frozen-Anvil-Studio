@@ -74,6 +74,7 @@ namespace Dystopia
 		CONVEX,
 		CONCAVE,		/*This is a dream*/
 		POINT,
+		RAY,
 
 		TOTAL
 	};

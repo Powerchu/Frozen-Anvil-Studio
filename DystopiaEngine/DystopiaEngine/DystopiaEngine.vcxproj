@@ -31,6 +31,7 @@
     <ClCompile Include="Include\IO\XMLParser.cpp" />
     <ClCompile Include="Include\System\Database\DataSheet.cpp" />
     <ClCompile Include="Source\Component\Colliders\PointCollider.cpp" />
+    <ClCompile Include="Source\Component\Colliders\RayCollider.cpp" />
     <ClCompile Include="Source\Allocator\StackAlloc.cpp" />
     <ClCompile Include="Source\DataStructure\OString.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="Include\Allocator\StackAlloc.h" />
     <ClInclude Include="Include\Allocator\StackAllocImpl.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
+    <ClInclude Include="Include\Component\RayCollider.h" />
     <ClInclude Include="Include\Component\PointCollider.h" />
     <ClInclude Include="Include\DataStructure\Delegate.h" />
     <ClInclude Include="Include\Editor\BehaviourTreeEditor.h" />

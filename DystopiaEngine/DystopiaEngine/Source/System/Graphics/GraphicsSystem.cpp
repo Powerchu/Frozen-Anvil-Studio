@@ -266,10 +266,6 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->Bind();
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif 
 	texture->Bind();
 
 	shader->UploadUniform("ViewMat", View);
@@ -278,10 +274,6 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	shader->UploadUniform("Gamma", mfGamma);
 
 	mesh->DrawMesh(GL_TRIANGLES);
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif 
 	texture->Unbind();
 
 	pWinSys->GetMainWindow().Show();
@@ -819,12 +811,6 @@ void Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
 
 bool Dystopia::GraphicsSystem::InitOpenGL(Window&)
 {
-	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LINE_SMOOTH);
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	// Return true to indicate success
 	return true;
 }

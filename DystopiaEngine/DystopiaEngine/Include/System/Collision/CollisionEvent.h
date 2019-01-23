@@ -15,12 +15,12 @@ namespace Dystopia
 		eIntersect,  /*Collider edge is inside another collider*/
 	};
 
-	struct CollisionEvent
+	struct _DLL_EXPORT CollisionEvent
 	{
 		using mpcGobj = GameObject * ;
 		using u64int  = unsigned long long;
 		CollisionEvent(GameObject* _Self, GameObject * _Target);
-
+		CollisionEvent();
 		mpcGobj				mThisCollider;		//Gameobject Collision This
 		mpcGobj				mCollidedWith;		//Gameobject Collision That
 
@@ -32,6 +32,7 @@ namespace Dystopia
 		float				mfRestitution;		//Total summed (min) restitution
 		float				mfStaticFrictionCof;		//Total friction averaged (sqrt)
 		float				mfDynamicFrictionCof;
+		float               mTimeIntersection;
 		u64int              mOtherID;
 
 		void ApplyImpulse();

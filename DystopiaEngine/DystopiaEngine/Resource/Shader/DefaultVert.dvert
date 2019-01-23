@@ -1,17 +1,23 @@
-#version 330 core
+#version 410 core
+
+out gl_PerVertex
+{
+  vec4 gl_Position;
+};
 
 uniform mat4 ProjectMat;
 uniform mat4 ViewMat;
 uniform mat4 ModelMat;
 uniform vec4 vUVBounds = vec4(0, 0, 1, 1);
 
+
 layout(location = 0) in vec3 vertexPos;
 layout(location = 1) in vec3 vertexNorm;
 layout(location = 2) in vec2 vertexUV;
 
-out vec3 vPosition;
-out vec3 vNormal;
-out vec2 vUV;
+layout(location = 0)out vec3 vPosition;
+layout(location = 1)out vec3 vNormal;
+layout(location = 2)out vec2 vUV;
 
 void main()
 {

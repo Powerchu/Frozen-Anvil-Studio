@@ -358,9 +358,6 @@
     <ClCompile Include="Source\System\AI\Blackboard.cpp">
       <Filter>Game Engine\Systems\AI\Tree</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Component\Colliders\PointCollider.cpp">
-      <Filter>Game Engine\Components\Colliders</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Graphics\ShaderProgram.cpp">
       <Filter>Game Engine\SubSystems\Shader\ShaderProgram</Filter>
     </ClCompile>
@@ -382,11 +379,17 @@
     <ClCompile Include="Source\System\Database\DatabaseSystem.cpp">
       <Filter>Game Engine\Systems\Database</Filter>
     </ClCompile>
-    <ClCompile Include="Include\System\Database\DataSheet.cpp">
-      <Filter>Game Engine\Systems\Database</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\DataSheetEditor.cpp">
       <Filter>Editor\Main\Panels\Datasheet</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\PointCollider.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Colliders\RayCollider.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Include\System\Database\DataSheet.cpp">
+      <Filter>Game Engine\Systems\Database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1017,9 +1020,6 @@
     <ClInclude Include="Include\PP\PPVaToSeq.h">
       <Filter>Preprocessor</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\PointCollider.h">
-      <Filter>Game Engine\Components\Colliders</Filter>
-    </ClInclude>
     <ClInclude Include="Include\DataStructure\Function.h">
       <Filter>DataStructures\Functions</Filter>
     </ClInclude>
@@ -1076,6 +1076,12 @@
     </ClInclude>
     <ClInclude Include="Include\Editor\DataSheetEditor.h">
       <Filter>Editor\Main\Panels\Datasheet</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\PointCollider.h">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\RayCollider.h">
+      <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

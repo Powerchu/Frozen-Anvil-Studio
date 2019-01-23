@@ -35,22 +35,22 @@ namespace Dystopia
 	{
 	public:
 		using AllSys = Ut::MetaSortT_t <Ut::MetaLessThan, Ut::Collection <
-			Ut::Indexer<eSYSTEMS::BEHAVIOUR_SYSTEM   , class BehaviourSystem   >,
-			Ut::Indexer<eSYSTEMS::TIME_SYSTEM        , class TimeSystem        >,
-			Ut::Indexer<eSYSTEMS::INPUT_SYSTEM       , class InputManager      >,
-			Ut::Indexer<eSYSTEMS::WINDOW_SYSTEM      , class WindowManager     >,
-			Ut::Indexer<eSYSTEMS::SOUND_SYSTEM       , class SoundSystem       >, 
-			Ut::Indexer<eSYSTEMS::SCENE_SYSTEM       , class SceneSystem       >,
-			Ut::Indexer<eSYSTEMS::CAMERA_SYSTEM      , class CameraSystem      >,
-			Ut::Indexer<eSYSTEMS::GRAPHIC_SYSTEM     , class GraphicsSystem    >,
-			Ut::Indexer<eSYSTEMS::EVENT_SYSTEM       , class EventSystem       >,
-			Ut::Indexer<eSYSTEMS::COLLISION_SYSTEM   , class CollisionSystem   >,
-			Ut::Indexer<eSYSTEMS::PHYSICS_SYSTEM     , class PhysicsSystem     >,
-			Ut::Indexer<eSYSTEMS::PROFILER_SYSTEM    , class Profiler          >,
-			Ut::Indexer<eSYSTEMS::AI_SYSTEM		     , class AISystem		   >,
-			Ut::Indexer<eSYSTEMS::INTERMEDIARY_SYSTEM, class EditorIntermediary>,
-			Ut::Indexer<eSYSTEMS::DATABASE_SYSTEM    , class DatabaseSystem	   >,
-			Ut::Indexer<eSYSTEMS::FILE_SYSTEM        , class FileSystem        >
+			Ut::Indexer<eSYSTEMS::BEHAVIOUR_SYSTEM, class BehaviourSystem>,
+			Ut::Indexer<eSYSTEMS::TIME_SYSTEM     , class TimeSystem     >,
+			Ut::Indexer<eSYSTEMS::INPUT_SYSTEM    , class InputManager   >,
+			Ut::Indexer<eSYSTEMS::WINDOW_SYSTEM   , class WindowManager  >,
+			Ut::Indexer<eSYSTEMS::SOUND_SYSTEM    , class SoundSystem    >, 
+			Ut::Indexer<eSYSTEMS::SCENE_SYSTEM    , class SceneSystem    >,
+			Ut::Indexer<eSYSTEMS::CAMERA_SYSTEM   , class CameraSystem   >,
+			Ut::Indexer<eSYSTEMS::GRAPHIC_SYSTEM  , class GraphicsSystem >,
+			Ut::Indexer<eSYSTEMS::EVENT_SYSTEM    , class EventSystem    >,
+			Ut::Indexer<eSYSTEMS::COLLISION_SYSTEM, class CollisionSystem>,
+			Ut::Indexer<eSYSTEMS::PHYSICS_SYSTEM  , class PhysicsSystem  >,
+			Ut::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >,
+			Ut::Indexer<eSYSTEMS::AI_SYSTEM		  , class AISystem		 >,
+			Ut::Indexer<eSYSTEMS::DATABASE_SYSTEM , class DatabaseSystem  >,
+			Ut::Indexer<eSYSTEMS::FILE_SYSTEM     , class FileSystem      >,
+			Ut::Indexer<eSYSTEMS::INTERMEDIARY_SYSTEM, class EditorIntermediary	>
 		>>;
 
 		using SubSys = typename Ut::MetaAutoIndexer <

@@ -31,6 +31,17 @@ namespace Dystopia
 	{
 
 	}
+	CollisionEvent::CollisionEvent()
+		: mThisCollider{ nullptr }
+		, mCollidedWith{ nullptr }
+		, mfPeneDepth(0.0F)
+		, mfRestitution(0.0F)
+		, mfStaticFrictionCof(0.5F)
+		, mfDynamicFrictionCof(0.7F)
+		, mOtherID{ 0 }
+	{
+
+	}
 
 	void CollisionEvent::ApplyImpulse()
 	{

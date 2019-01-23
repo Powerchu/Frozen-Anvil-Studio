@@ -61,7 +61,7 @@ struct MetaData<_STRUCT_>                                                       
 																															  \
 };																															  \
 
-		//inline Dystopia::TypeErasure::TypeEraseMetaData _STRUCT_::GetMetaData()											  \
+//inline Dystopia::TypeErasure::TypeEraseMetaData _STRUCT_::GetMetaData()											  \
 		//{																													  \
 		//	static MetaData<Dystopia::_STRUCT_> mMetaData;																	  \
 		//	static auto mReturn = TypeErasure::TypeEraseMetaData{ mMetaData };												  \
@@ -120,7 +120,7 @@ struct  GET_MEMPTR_TYPE_AUX<T C::*>
 };
 
 template <auto _type>
-struct  GET_MEMPTR_TYPE 
+struct  GET_MEMPTR_TYPE
 {
 	using type = typename GET_MEMPTR_TYPE_AUX<decltype(_type)>::type;
 };
