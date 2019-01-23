@@ -462,22 +462,22 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 				auto Translation = Math::Translate(pos.x, pos.y);
 				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(scaleV*Obj->GetOffSet()) * scaleM * Obj->GetTransformationMatrix());
 			}
-
+			
 			if (Obj->IsSleeping())
 			{
 				activeColor = SleepingColor;
 			}
-
+			
 			else if (Obj->HasCollision())
 			{
 				activeColor = CollidingColor;
 			}
-
+			
 			else if (Obj->IsTrigger())
 			{
 				activeColor = TriggerColor;
 			}
-
+			
 			else
 			{
 				activeColor = mvDebugColour;
