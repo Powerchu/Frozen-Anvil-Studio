@@ -8,7 +8,7 @@ email: m.chu\@digipen.edu
 \brief
 Collider2D for 2D Sprites.
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -172,9 +172,9 @@ namespace Dystopia
 		virtual Math::Point3D GetGlobalPosition() const;
 		virtual Math::Quaternion GetGlobalRotation() const;
 		Math::Vec3D           GetOffSet()   const;
-		void SetOffSet(Math::Vec3D _offset);
-		Math::Vec3D GetScale() const;
-		void SetScale(Math::Vec3D _scale);
+		void				  SetOffSet(Math::Vec3D _offset);
+		Math::Vec3D			  GetScale() const;
+		void				  SetScale(Math::Vec3D _scale);
 		bool                  HasCollision() const;
 		bool				  IsTrigger() const;
 		bool				  IsSleeping() const;
