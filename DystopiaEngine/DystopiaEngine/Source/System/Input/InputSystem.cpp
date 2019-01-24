@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Window/WindowManager.h"
 #include "System/Window/Window.h"
 #include "System/Driver/Driver.h"
-
+#include "System/Time/TimeSystem.h"
 #include "Math/Vector2.h"
 
 #include <utility>
@@ -266,6 +266,11 @@ void Dystopia::InputManager::Update(const float _dt)
 		}
 
 	}
+
+	if (mGamePad.mfTimer > 0.0f)
+		mGamePad.mfTimer -= mfDecay * _dt;
+
+	mGamePad.VibrateHelper();
 
 	/*Commenting this out makes the input smoother*/
 	//SetKeyboardState(Reset);
@@ -584,9 +589,10 @@ void Dystopia::InputManager::StopVibrate() const
 	mGamePad.StopVibrate();
 }
 
-void Dystopia::InputManager::OneShotVibrate(float intensity, float _lBalance, float _dt)
+void Dystopia::InputManager::InvokeVibration(float _intensity, float _decay, float _maxTime, float _balance)
 {
-	mGamePad.VibrateOneShot(intensity, 3.0f, _lBalance, _dt);
+	mfDecay = _decay;
+	mGamePad.SetVibrationSetting(_intensity, _maxTime, _balance);
 }
 
 float Dystopia::InputManager::GetAnalogY(int _state) const

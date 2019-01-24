@@ -99,7 +99,9 @@ namespace Dystopia
 		// left is low frequency motor, right is high frequency motor
 		_DLL_EXPORT void SetVibrate(unsigned short _ltrg = 32000, unsigned short _rtrg = 16000) const; //0-65534
 		_DLL_EXPORT void StopVibrate() const;
-		_DLL_EXPORT void OneShotVibrate(float intensity, float _lBalance, float _dt);
+
+		//
+		_DLL_EXPORT void InvokeVibration(float _intensity, float _decay = 1.0f, float _maxTime = 3.0f, float _balance = 0.0f);
 
 		_DLL_EXPORT float GetAnalogY(int) const;	//0 for left analog, all others for right
 		_DLL_EXPORT float GetAnalogX(int) const;	//0 for left analog, all others for right
@@ -134,6 +136,8 @@ namespace Dystopia
 
 		MouseData mMouseInput;
 		XGamePad mGamePad;
+
+		float mfDecay = 1.0f;
 
 		KeyboardState mKeyBoardState;
 		KeyboardState mPrevKeyBoardState;

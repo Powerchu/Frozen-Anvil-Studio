@@ -44,7 +44,7 @@ XGamePad::XGamePad(const unsigned _id, float maxTimer)
 	mfMaxThumbVal{ 32767 },
 	mpxVibrate{ new XINPUT_VIBRATION{} },
 	mfMaxTimer(maxTimer),
-	mfTimer(maxTimer)
+	mfTimer(0.0f)
 {
 }
 
@@ -182,37 +182,38 @@ void XGamePad::StopVibrate(void) const
 	Vibrate(0, 0);
 }
 
-void XGamePad::VibrateOneShot(float intensity, float maxTime, float _lBalance, float _dt)
+void XGamePad::SetVibrationSetting(float intensity, float maxTime, float bal)
 {
-	//0-65534
-	if (_lBalance > 1.f) _lBalance = 1.f;
-	else if (_lBalance < 0.f) _lBalance = 0.f;
-
 	if (intensity > 1.f) intensity = 1.f;
 	else if (intensity < 0.f) intensity = 0.f;
 
-	if (maxTime > mfMaxTimer) maxTime = mfMaxTimer;
+	if (maxTime > mfMaxTimer) mfMaxTimer = maxTime;
 
-	const auto _rBalance = 1.0 - _lBalance;
-
-	if (mfTimer <= 0.f)
-		mfTimer = maxTime;
-	else
-	{
-		VibrateHelper(intensity, _lBalance, _rBalance, _dt);
-	}
+	mfTimer = mfMaxTimer;
+	mfIntensity = intensity;
+	mfBalance = bal;
 }
 
-void XGamePad::VibrateHelper(float intensity, float _lBalance, float _rBalance, float _dt)
+void XGamePad::VibrateHelper()
 {
-	mfTimer -= _dt;
+	if (mfIntensity <= 0 || mfTimer <= 0) return;
+
+	//0-65534
+	if (mfBalance > 1.f) mfBalance = 1.f;
+	else if (mfBalance < -1.f) mfBalance = -1.f;
+
+	const unsigned maxFreq = 65535;
+	const unsigned _lowFreq = static_cast<unsigned>((1.f - (mfBalance + 1.f)) * (static_cast<float>(maxFreq) / 2) + (static_cast<float>(maxFreq) / 2));
+	const unsigned _highFreq = maxFreq - _lowFreq;
 
 	if (mfTimer > 0.f)
 	{
-		Vibrate(intensity * 65534, intensity * 65534);
+		Vibrate( static_cast<unsigned short>( mfIntensity * _lowFreq * (mfTimer/mfMaxTimer)), static_cast<unsigned short>(mfIntensity * _highFreq * (mfTimer / mfMaxTimer)));
 	}
 	else
 	{
+		mfTimer = 0.0f;
+		mfIntensity = 0.0f;
 		StopVibrate();
 	}
 }

@@ -29,7 +29,7 @@ typedef unsigned long DWORD;
 class XGamePad
 {
 public:
-	XGamePad(unsigned _id, float _maxTimer = 3.0f);
+	XGamePad(unsigned _id, float _maxTimer = 10.0f);
 	~XGamePad(void);
 
 	void PollInputs(void);
@@ -40,8 +40,8 @@ public:
 	// left is low frequency motor, right is high frequency motor
 	void Vibrate(unsigned short _speedL = 32000, unsigned short _speedR = 16000) const; //0-65534
 	void StopVibrate(void) const;
-	void VibrateOneShot(float intensity, float maxTime, float _lBalance, float _dt);
-	void VibrateHelper(float intensity, float _lBalance, float _rBalance, float _deltaT);
+	void SetVibrationSetting(float intensity, float maxTime, float bal);
+	void VibrateHelper();
 
 	bool IsKeyPressed(eButton) const;
 	bool IsKeyTriggered(eButton) const;
@@ -53,8 +53,9 @@ public:
 	float GetTriggers(int) const;	// 0 for left trigger, all others for right
 									// values returned are between: mfTriggerThresh ~ 255
 
-	float mfTimer;
+	float mfTimer = 0.0f;
 	float mfMaxTimer;
+	float mfIntensity = 0.0f;
 
 private:
 	void UpdateLeftThumb(void);
@@ -92,6 +93,8 @@ private:
 	float			mfDeadZoneR;		//0-65534
 	float			mfTriggerThresh;	//30
 	float			mfMaxThumbVal;		//32767
+
+	float			mfBalance = 0.0f;
 
 	XINPUT_VIBRATION *mpxVibrate;
 };
