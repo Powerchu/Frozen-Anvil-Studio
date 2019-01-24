@@ -24,13 +24,13 @@ namespace Dystopia
 {
 	Collider::Collider()
 		: mv3Offset{0, 0, 0, 0}, mpMesh{nullptr}, mbColliding{false}, mPosition{Math::MakePoint3D(0.f, 0.f, 0.f)},
-		  mbIsTrigger(false), mbIsSleeping(false), mScale{1, 1, 1}, mBoundingCircle{GenerateBoardPhaseCircle()}
+		  mbIsTrigger(false), mbIsSleeping(false), mScale{1, 1, 1}, mBoundingCircle{GenerateBoardPhaseCircle()}, mColLayer{ eColLayer::LAYER_NONE }
 	{
 	}
 
 	Collider::Collider(const Math::Point3D & _offset, const Math::Point3D & _origin)
 		: mv3Offset{_offset}, mpMesh{nullptr}, mbColliding{false}, mPosition{_origin}, mbIsTrigger(false),
-		  mbIsSleeping(false), mScale{1, 1, 1}, mBoundingCircle{GenerateBoardPhaseCircle()}
+		  mbIsSleeping(false), mScale{1, 1, 1}, mBoundingCircle{GenerateBoardPhaseCircle()}, mColLayer{ eColLayer::LAYER_NONE }
 	{
 	}
 
@@ -133,6 +133,16 @@ namespace Dystopia
 				return &elem;
 
 		return nullptr;
+	}
+
+	void Collider::ResetColLayer()
+	{
+		mColLayer = eColLayer::LAYER_NONE;
+	}
+
+	void Collider::RemoveColLayer(eColLayer _Layer)
+	{
+		mColLayer = static_cast<eColLayer>(mColLayer & (_Layer ^ 0xFFFFFFFFu));
 	}
 
 	void Collider::ClearCollisionEvent()
@@ -263,6 +273,11 @@ namespace Dystopia
 		return false;
 	}
 
+	eColLayer Collider::GetColLayer() const
+	{
+		return mColLayer;
+	}
+
 	BroadPhaseCircle Collider::GetBroadPhaseCircle() const
 	{
 		return mBoundingCircle;
@@ -307,6 +322,11 @@ namespace Dystopia
 	void Collider::SetRotation(Math::Quaternion const& _rot)
 	{
 		mRotation = _rot;
+	}
+
+	void Collider::SetColLayer(eColLayer _Layer)
+	{
+		mColLayer  = static_cast<eColLayer>(mColLayer | _Layer);
 	}
 
 	Math::Point3D Collider::GetGlobalPosition() const

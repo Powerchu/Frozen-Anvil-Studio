@@ -85,11 +85,13 @@ namespace Dystopia
 		_out << static_cast<float>(mRayDir[1]);
 		_out << static_cast<float>(mRayDir[2]);
 		_out << mMaxLength;
+		_out << static_cast<unsigned>(mColLayer);
 		_out.InsertEndBlock("Ray_Collider2D");
 	}
 
 	void Dystopia::RayCollider::Unserialise(TextSerialiser & _in)
 	{
+		unsigned collayer_temp = 0;
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
 		_in >> mv3Offset[0];
@@ -105,10 +107,11 @@ namespace Dystopia
 		_in >> mRayDir[1];
 		_in >> mRayDir[2];
 		_in >> mMaxLength;
-
+		_in >> collayer_temp;
 		_in.ConsumeEndBlock();
 
 		mDebugVertices.clear();
+		mColLayer = static_cast<eColLayer>(collayer_temp);
 	}
 
 	bool Dystopia::RayCollider::isColliding(Circle & other_col)

@@ -132,7 +132,6 @@ namespace Dystopia
 				  Check that the list of names contains the file that the user is
 				  interested in(Stored in DetectionInfo.FileName
 				*/
-				size_t pos;
 				names = Normalize(names);
 				//while ((pos = names.find_first_of("//")) != OString::nPos)
 				//{
@@ -764,7 +763,6 @@ namespace Dystopia
 
 	FileTrackInfoID_t FileSystem::TrackFile(HashString _EventName, eFileDir _ParentDirectory)
 	{
-		size_t pos;
 		_EventName = Normalize(_EventName.c_str()).c_str();
 		//while ((pos = _EventName.find_first_of("//")) != OString::nPos)
 		//{

@@ -62,12 +62,13 @@ namespace Dystopia
 		_out << static_cast<float>(mPosition[1]);
 		_out << static_cast<float>(mPosition[2]);
 		_out << mbIsTrigger;
-
+		_out << static_cast<unsigned>(mColLayer);
 		_out.InsertEndBlock("Circle_Collider2D");
 
 	}
 	void PointCollider::Unserialise(TextSerialiser & _in)
 	{
+		unsigned collayer_temp = 0;
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
 		_in >> mv3Offset[0];
@@ -78,9 +79,11 @@ namespace Dystopia
 		_in >> (mPosition[1]);
 		_in >> (mPosition[2]);
 		_in >> mbIsTrigger;
+		_in >> collayer_temp;
 		_in.ConsumeEndBlock();
 
 		mDebugVertices.clear();
+		mColLayer = static_cast<eColLayer>(collayer_temp);
 	}
 	bool PointCollider::isColliding(Circle & other_col)
 	{

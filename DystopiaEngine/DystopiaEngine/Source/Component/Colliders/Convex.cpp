@@ -115,13 +115,14 @@ namespace Dystopia
 		_out << static_cast<float>(mRotation[2]);
 		_out << static_cast<float>(mRotation[3]);
 		_out << mbIsTrigger;
-
+		_out << static_cast<unsigned>(mColLayer);
 		_out.InsertEndBlock("Convex_Collider");
 	}
 
 	void Convex::Unserialise(TextSerialiser& _in)
 	{
 		int arr_vert_size;
+		unsigned collayer_temp = 0;
 		float tmp_x, tmp_y, tmp_z;
 
 		_in.ConsumeStartBlock();
@@ -155,9 +156,10 @@ namespace Dystopia
 		_in >> mRotation[3];
 
 		_in >> mbIsTrigger;
-
+		_in >> collayer_temp;
 		_in.ConsumeEndBlock();
 
+		mColLayer = static_cast<eColLayer>(collayer_temp);
 	}
 
 	Convex * Convex::Duplicate() const

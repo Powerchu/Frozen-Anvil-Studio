@@ -191,6 +191,9 @@ namespace Dystopia
 
 			if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
 			{
+				/*Check if there is a common collision layer*/
+				if (!(bodyA->GetColLayer() & bodyB->GetColLayer()))
+					continue;
 				if (rigidA && rigidB)
 				{
 					// if both bodies are static, continue
