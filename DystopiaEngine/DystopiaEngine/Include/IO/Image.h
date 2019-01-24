@@ -35,6 +35,9 @@ namespace Dystopia
 		~Image(void) noexcept;
 
 		void OnEditorUI(void);
+
+		Image& operator = (Image&&) noexcept;
+		Image& operator = (Image const&) = delete;
 	};
 }
 

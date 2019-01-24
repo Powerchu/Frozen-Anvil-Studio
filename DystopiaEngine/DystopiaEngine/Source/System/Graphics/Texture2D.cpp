@@ -79,6 +79,11 @@ void Dystopia::Texture2D::ResolveLoad(void)
 	else
 		__debugbreak();
 #endif
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif
 }
 
 void Dystopia::Texture2D::InitTexture(void)
@@ -165,8 +170,9 @@ void Dystopia::Texture2D::ReloadImageTrigger(void)
 
 void Dystopia::Texture2D::ReloadImage(Image& _img)
 {
-#error TODO
-	//ResolveLoad();
+	mData = Ut::Move(_img);
+
+	ResolveLoad();
 }
 
 
