@@ -114,7 +114,7 @@ namespace Dystopia
 		LAYER_30     = 0x01u << 29,
 		LAYER_31     = 0x01u << 30,
 		LAYER_32     = 0x01u << 31,
-		LAYER_GLOBAL = 0xFFu,
+		LAYER_GLOBAL = 0xFFFFFFFFu,
 	};
 
 	struct _DLL_EXPORT Vertice
@@ -267,16 +267,19 @@ namespace Dystopia
 		AutoArray<short>  mIndexBuffer;
 		BroadPhaseCircle  mBoundingCircle;
 		void Triangulate();
+		virtual void EditorUI(void) noexcept;
+		virtual void AddLayerUI(void) noexcept;
 
 		
 		/*Matrix*/
 		Math::Matrix3D		mOwnerTransformation;
 		Math::Quaternion    mRotation;
 #if EDITOR
-
+		static std::string arrColLayer[33];
 #endif
 
 	private:
+		int indexDropDown = 0;
 
 
 	};

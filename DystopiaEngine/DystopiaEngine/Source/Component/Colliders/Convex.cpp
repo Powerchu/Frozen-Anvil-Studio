@@ -564,6 +564,7 @@ namespace Dystopia
 		eSetScale(); 
 		ePointVerticesVectorArray();
 		eNumberOfContactsLabel();
+		Collider::EditorUI();
 	}
 
 	void Convex::eIsTriggerCheckBox()

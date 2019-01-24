@@ -493,6 +493,7 @@ namespace Dystopia
 		ePositionOffsetVectorFields();
 		eScaleField();
 		eNumberOfContactsLabel();
+		Collider::EditorUI();
 	}
 #endif
 }
