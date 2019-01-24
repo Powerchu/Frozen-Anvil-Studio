@@ -209,7 +209,7 @@ void XGamePad::VibrateHelper(float intensity, float _lBalance, float _rBalance, 
 
 	if (mfTimer > 0.f)
 	{
-		Vibrate(intensity*_lBalance * 65534, intensity*_rBalance * 65534);
+		Vibrate(intensity * 65534, intensity * 65534);
 	}
 	else
 	{
