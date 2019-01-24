@@ -22,7 +22,7 @@ namespace Dystopia
 	struct Image
 	{
 		HashString mstrName;
-		bool mbCompressed, mbRGB;
+		bool mbChanged, mbCompressed, mbRGB;
 		unsigned mnRawFormat, mnFormat;
 		unsigned mnWidth, mnHeight;
 		unsigned mnChannels, mnMipMaps;
@@ -30,7 +30,7 @@ namespace Dystopia
 
 		Image(void) noexcept;
 		Image(const HashString&, bool, bool, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, void*) noexcept;
-		//Image(const Image&);
+		//Image(Image const&);
 		Image(Image&&) noexcept;
 		~Image(void) noexcept;
 

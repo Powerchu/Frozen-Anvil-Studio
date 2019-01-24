@@ -17,14 +17,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/File/FileSystem.h"
 
 #include "Utility/Utility.h"
-#include "Allocator/DefaultAlloc.h"
+#include "DataStructure/Delegate.h"
+#include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
 #include "DataStructure/HashString.h"
 
 #include "IO/Image.h"
 #include "IO/ImageParser.h"
 
-#include <map>
 #include <string>
 
 
@@ -61,15 +61,19 @@ namespace Dystopia
 		Ty* LoadRaw(Image const*, HashString const&);
 
 		void SaveAtlases(void);
+		void SaveTexture(Texture const*);
+
+		void RegisterReload(Texture* _strPath, Delegate<void(Image&)>&&);
 
 	private:
 
-		std::map<HashString, Image> mImageData;
 		MagicArray<Texture> mTextures;
 		MagicArray<TextureAtlas> mAtlas;
+		AutoArray<Tuple<Texture*, Delegate<void(Image&)>>> mReloads;
 
-		Image* LoadImage(std::string const& _strPath);
-		void SaveTextureSetting(Image*);
+		Image* LoadImage(std::string const& _strPath, Image*);
+
+		void SaveTextureSetting(Image const&);
 	};
 }
 
@@ -96,29 +100,19 @@ Ty* Dystopia::TextureSystem::GetTexture(HashString const& _strName)
 template<typename Ty>
 Ty* Dystopia::TextureSystem::LoadTexture(HashString const& _strPath)
 {
-	auto pFileSys = EngineCore::Get<FileSystem>();
+	auto pFileSys = CORE::Get<FileSystem>();
 	auto it = Ut::Find(mTextures.begin(), mTextures.end(), [&](const Texture& _t) {
 		return pFileSys->IsSameFile(_strPath.c_str(), _t.GetPath().c_str()) || (_strPath.c_str() == _t.GetPath().c_str());
 	});
 
 	if (it != mTextures.end())
-	{
 		return static_cast<Ty*>(&*it);
-	}
 
-	auto loaded = LoadImage(_strPath.c_str());
+	auto import = ImportImage(_strPath);
+	auto loaded = LoadImage(_strPath.c_str(), import);
 
 	if (loaded)
-	{
-		auto ret = mTextures.EmplaceAs<Ty>(_strPath);
-		ret->LoadTexture(loaded);
-
-		DefaultAllocator<void>::Free(loaded->mpImageData);
-		loaded->mpImageData = nullptr;
-		mImageData.emplace(HashString{ _strPath.c_str() }, Ut::Move(*loaded));
-		DefaultAllocator<Image>::DestructFree(loaded);
-		return ret;
-	}
+		return mTextures.EmplaceAs<Ty>(_strPath, *loaded);
 
 	DEBUG_BREAK(!loaded, "Texture System Error: Failed to load texture \"%s\"", _strPath.c_str());
 	return nullptr;
