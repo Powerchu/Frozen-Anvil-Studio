@@ -32,7 +32,7 @@ namespace Math
 	\brief
 		Representing rotations
 	*/
-	union alignas(16) _DLL_EXPORT Quaternion
+	struct alignas(16) _DLL_EXPORT Quaternion
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 

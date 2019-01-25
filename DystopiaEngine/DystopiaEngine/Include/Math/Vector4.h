@@ -44,35 +44,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <smmintrin.h>  // SSE 4.1
 #include <immintrin.h>  // FMA
 
+
 namespace Math
 {
 	#define _CALL	__vectorcall
 	#define ALLIGN	16
 	#define USE_DP	1
-
-	struct Matrix4;
-
-	enum class NegateFlag : unsigned char
-	{
-		X = 1 << 0,
-		Y = 1 << 1,
-		Z = 1 << 2,
-		W = 1 << 3,
-
-		XY = X | Y,
-		XZ = X | Z,
-		XW = X | W,
-		YZ = Y | Z,
-		YW = Y | W,
-		ZW = Z | W,
-
-		XYZ = XY | Z,
-		XYW = XY | W,
-		XZW = XZ | W,
-		YZW = YZ | Z,
-
-		XYZW = XY | ZW
-	};
 
 	/*!
 	\struct Vector4
@@ -184,15 +161,36 @@ namespace Math
 			static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
 		};
 
+		template <unsigned X, unsigned Y>
+		struct _DLL_EXPORT SwizzleMask<X, Y>
+		{
+			inline SwizzleMask<X, Y>& _CALL operator= (float _rhs);
+			inline _CALL operator Math::Vector2 (void) const;
+
+		private:
+			__m128 mData;
+
+			static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
+		};
+
+		template <unsigned X, unsigned Y, unsigned Z>
+		struct _DLL_EXPORT SwizzleMask<X, Y, Z>
+		{
+			inline SwizzleMask<X, Y>& _CALL operator= (float _rhs);
+			inline _CALL operator Math::Vector3(void) const;
+
+		private:
+			__m128 mData;
+
+			static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
+		};
+
 		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
 		struct IsLvalueSwizzle
 		{
 			static constexpr bool value = (X != Y) && (X != Z) && (X != W) && (Y != Z) && (Y != W) && (Z != W);
 		};
-		
-		// While we're at it, might as well add swizzle masks
-		// SwizzleMask  -> 1 shuffle (read)
-		// SwizzleMask -> 1 shuffle (read & write)
+
 		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
 		struct SwizzleMask<X, Y, Z, W>
 		{
@@ -236,42 +234,29 @@ namespace Math
 		SwizzleMask<2> z;
 		SwizzleMask<3> w;
 
-		SwizzleMask<0, 0, 0, 0> xxxx;
-		SwizzleMask<0, 0, 1, 1> xxyy;
-		SwizzleMask<0, 0, 1, 2> xxyz;
-		SwizzleMask<0, 0, 2, 2> xxzz;
-		SwizzleMask<0, 1, 0, 1> xyxy;
-		SwizzleMask<0, 1, 1, 1> xyyy;
-		SwizzleMask<0, 1, 2, 3> xyzw;
-		SwizzleMask<0, 1, 3, 2> xywz;
-		SwizzleMask<0, 2, 1, 1> xzyy;
-		SwizzleMask<0, 2, 1, 3> xzyw;
+		SwizzleMask<0, 0, 0> xxx; SwizzleMask<1, 0, 0> yxx; SwizzleMask<2, 0, 0> zxx;
+		SwizzleMask<0, 0, 1> xxy; SwizzleMask<1, 0, 1> yxy;	SwizzleMask<2, 0, 1> zxy;
+		SwizzleMask<0, 0, 2> xxz; SwizzleMask<1, 0, 2> yxz;	SwizzleMask<2, 0, 2> zxz;
+		SwizzleMask<0, 1, 0> xyx; SwizzleMask<1, 1, 0> yyx;	SwizzleMask<2, 1, 0> zyx;
+		SwizzleMask<0, 1, 1> xyy; SwizzleMask<1, 1, 1> yyy;	SwizzleMask<2, 1, 1> zyy;
+		SwizzleMask<0, 1, 2> xyz; SwizzleMask<1, 1, 2> yyz;	SwizzleMask<2, 1, 2> zyz;
+		SwizzleMask<0, 2, 0> xzx; SwizzleMask<1, 2, 0> yzx;	SwizzleMask<2, 2, 0> zzx;
+		SwizzleMask<0, 2, 1> xzy; SwizzleMask<1, 2, 1> yzy;	SwizzleMask<2, 2, 1> zzy;
+		SwizzleMask<0, 2, 2> xzz; SwizzleMask<1, 2, 2> yzz;	SwizzleMask<2, 2, 2> zzz;
+
+		SwizzleMask<0, 0, 0, 0> xxxx; SwizzleMask<1, 0, 1, 0> yxyx;	SwizzleMask<2, 0, 1, 3> zxyw; SwizzleMask<3, 1, 2, 0> wyzx;
+		SwizzleMask<0, 0, 1, 1> xxyy; SwizzleMask<1, 0, 2, 3> yxzw;	SwizzleMask<2, 0, 3, 1> zxwy; SwizzleMask<3, 2, 0, 1> wzxy;
+		SwizzleMask<0, 0, 1, 2> xxyz; SwizzleMask<1, 0, 3, 2> yxwz;	SwizzleMask<2, 1, 2, 1> zyzy; SwizzleMask<3, 2, 1, 0> wzyx;
+		SwizzleMask<0, 0, 2, 2> xxzz; SwizzleMask<1, 1, 1, 1> yyyy;	SwizzleMask<2, 2, 2, 3> zzzw; SwizzleMask<3, 2, 2, 3> wzzw;
+		SwizzleMask<0, 1, 0, 1> xyxy; SwizzleMask<1, 3, 0, 2> ywxz;	SwizzleMask<2, 2, 2, 2> zzzz; SwizzleMask<3, 2, 3, 2> wzwz;
+		SwizzleMask<0, 1, 1, 1> xyyy; SwizzleMask<1, 3, 1, 3> ywyw;	SwizzleMask<2, 3, 0, 0> zwxx; SwizzleMask<3, 3, 3, 3> wwww;
+		SwizzleMask<0, 1, 2, 3> xyzw; SwizzleMask<1, 3, 2, 0> ywzx;	SwizzleMask<2, 3, 0, 1> zwxy;
+		SwizzleMask<0, 1, 3, 2> xywz;								SwizzleMask<2, 3, 1, 0> zwyx;
+		SwizzleMask<0, 2, 1, 1> xzyy;								SwizzleMask<2, 3, 2, 3> zwzw;
+		SwizzleMask<0, 2, 1, 3> xzyw;								SwizzleMask<2, 3, 3, 2> zwwz;
 		SwizzleMask<0, 3, 0, 3> xwxw;
 		SwizzleMask<0, 3, 1, 2> xwyz;
 		SwizzleMask<0, 3, 2, 3> xwzw;
-		SwizzleMask<1, 0, 1, 0> yxyx;
-		SwizzleMask<1, 0, 2, 3> yxzw;
-		SwizzleMask<1, 0, 3, 2> yxwz;
-		SwizzleMask<1, 1, 1, 1> yyyy;
-		SwizzleMask<1, 3, 0, 2> ywxz;
-		SwizzleMask<1, 3, 1, 3> ywyw;
-		SwizzleMask<1, 3, 2, 0> ywzx;
-		SwizzleMask<2, 0, 1, 3> zxyw;
-		SwizzleMask<2, 0, 3, 1> zxwy;
-		SwizzleMask<2, 1, 2, 1> zyzy;
-		SwizzleMask<2, 2, 2, 3> zzzw;
-		SwizzleMask<2, 2, 2, 2> zzzz;
-		SwizzleMask<2, 3, 0, 0> zwxx;
-		SwizzleMask<2, 3, 0, 1> zwxy;
-		SwizzleMask<2, 3, 1, 0> zwyx;
-		SwizzleMask<2, 3, 2, 3> zwzw;
-		SwizzleMask<2, 3, 3, 2> zwwz;
-		SwizzleMask<3, 1, 2, 0> wyzx;
-		SwizzleMask<3, 2, 0, 1> wzxy;
-		SwizzleMask<3, 2, 1, 0> wzyx;
-		SwizzleMask<3, 2, 2, 3> wzzw;
-		SwizzleMask<3, 2, 3, 2> wzwz;
-		SwizzleMask<3, 3, 3, 3> wwww;
 
 		inline __m128 _CALL GetRaw(void) const noexcept;
 	};

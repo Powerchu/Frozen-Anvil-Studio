@@ -17,8 +17,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Math
 {
 	union Vector2;
+	union Vector3;
 	union alignas(16) Vector4;
-	union alignas(16) Quaternion;
+	struct alignas(16) Quaternion;
 
 	struct alignas(16) Matrix2;
 	struct alignas(16) Matrix4;
@@ -31,6 +32,28 @@ namespace Math
 	using Pt3D = Vector4;
 	using Mat2 = Matrix2;
 	using Mat4 = Matrix4;
+
+	enum class NegateFlag : unsigned char
+	{
+		X = 1 << 0,
+		Y = 1 << 1,
+		Z = 1 << 2,
+		W = 1 << 3,
+
+		XY = X | Y,
+		XZ = X | Z,
+		XW = X | W,
+		YZ = Y | Z,
+		YW = Y | W,
+		ZW = Z | W,
+
+		XYZ = XY | Z,
+		XYW = XY | W,
+		XZW = XZ | W,
+		YZW = YZ | Z,
+
+		XYZW = XY | ZW
+	};
 }
 
 

@@ -391,6 +391,12 @@
     <ClCompile Include="Include\System\Database\DataSheet.cpp">
       <Filter>Game Engine\Systems\Database</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\Particle\Emitter.cpp">
+      <Filter>Game Engine\Components\Emitter</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Particle\ParticleSystem.cpp">
+      <Filter>Game Engine\Systems\Particle\ParticleSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1083,6 +1089,15 @@
     <ClInclude Include="Include\Component\RayCollider.h">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Particle\ParticleSystem.h">
+      <Filter>Game Engine\Systems\Particle\ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Emitter.h">
+      <Filter>Game Engine\Components\Emitter</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vector3.h">
+      <Filter>Math\Vector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1549,6 +1564,15 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Database">
       <UniqueIdentifier>{dda9b7bb-de84-43a5-b913-b15fc3672765}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle">
+      <UniqueIdentifier>{362babf2-f82e-4408-a11a-5f958686d001}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\ParticleSystem">
+      <UniqueIdentifier>{7575db40-39e4-4d67-853b-147bc26dc099}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Emitter">
+      <UniqueIdentifier>{179d56d1-c7a5-4165-9547-c4f0f0080531}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

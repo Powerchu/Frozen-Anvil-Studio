@@ -30,9 +30,11 @@
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
     <ClCompile Include="Include\System\Database\DataSheet.cpp" />
+    <ClCompile Include="Source\System\Particle\ParticleSystem.cpp" />
     <ClCompile Include="Source\Component\Colliders\PointCollider.cpp" />
     <ClCompile Include="Source\Component\Colliders\RayCollider.cpp" />
     <ClCompile Include="Source\Allocator\StackAlloc.cpp" />
+    <ClCompile Include="Source\Component\Particle\Emitter.cpp" />
     <ClCompile Include="Source\DataStructure\OString.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
     <ClCompile Include="Source\Editor\CommandTypes.cpp" />
@@ -188,6 +190,7 @@
     <ClInclude Include="Include\Lib\Gfx\GfxOptions.h" />
     <ClInclude Include="Include\Lib\Gfx\OpenGLAPI.h" />
     <ClInclude Include="Include\Lib\Gfx\Shaders.h" />
+    <ClInclude Include="Include\Math\Vector3.h" />
     <ClInclude Include="Include\PP\PPConcat.h" />
     <ClInclude Include="Include\PP\PPExtract.h" />
     <ClInclude Include="Include\PP\PPForEach.h" />
@@ -262,6 +265,8 @@
     <ClInclude Include="Include\System\Graphics\ShaderProgram.h" />
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
+    <ClInclude Include="Include\Component\Emitter.h" />
+    <ClInclude Include="Include\System\Particle\ParticleSystem.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Renderer.h" />

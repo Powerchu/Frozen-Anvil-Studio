@@ -21,9 +21,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Lib/Gfx/Shaders.h"
 #include "System/File/FileSystem.h"
 
-#include <map>
-#include <string>
-
 
 namespace Dystopia
 {
