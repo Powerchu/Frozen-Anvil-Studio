@@ -193,7 +193,7 @@ void Dystopia::Camera::SetOrthographic(float _fWidth, float _fHeight, float _fNe
 	mProjection = Math::Matrix4{
 		2.f / _fWidth, .0f               , .0f          , .0f,
 		.0f          , -2.f / _fHeight   , .0f          , .0f,
-		.0f          , .0f               , -2.f * fDistZ, (_fNear + _fFar) * fDistZ,
+		.0f          , .0f               , 2.f * fDistZ , (_fNear + _fFar) * fDistZ,
 		.0f          , .0f               , .0f          , 1.f
 	};
 

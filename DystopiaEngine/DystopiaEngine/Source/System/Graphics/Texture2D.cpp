@@ -31,11 +31,11 @@ Dystopia::Texture2D::Texture2D(HashString const& _strPath, Image& _Image) noexce
 {
 	Bind();
 
-	Load();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	Load();
 
 	Unbind();
 }
@@ -55,30 +55,21 @@ void Dystopia::Texture2D::Load(void)
 	auto id = CORE::Get<FileSystem>()->TrackFile(GetPath());
 	CORE::Get<FileSystem>()->BindFileTrackEvent(id, &Texture2D::ReloadImageTrigger, this);
 
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif
-
 	ResolveLoad();
 }
 
 void Dystopia::Texture2D::ResolveLoad(void)
 {
+	if (mData.mbCompressed)
+		InitCompressedTexture();
+	else
+		InitTexture();
+
 	if (mData.mpImageData)
 	{
-		if (mData.mbCompressed)
-			InitCompressedTexture();
-		else
-			InitTexture();
-
 		DefaultAllocator<void>::Free(mData.mpImageData);
 		mData.mpImageData = nullptr;
 	}
-#if EDITOR
-	else
-		__debugbreak();
-#endif
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
@@ -150,13 +141,8 @@ void Dystopia::Texture2D::InitCompressedTexture(void)
 #   endif
 	}
 
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif
-
-	//if(n > 1)
-	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+	if(n > 1)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
 	Unbind();
 }

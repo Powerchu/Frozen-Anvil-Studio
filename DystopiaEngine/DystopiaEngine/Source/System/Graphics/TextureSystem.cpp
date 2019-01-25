@@ -58,6 +58,9 @@ void Dystopia::TextureSystem::EditorUpdate(void) noexcept
 			__debugbreak();
 #	endif 
 	}
+
+	mReloads.clear();
+
 #endif
 }
 
@@ -193,17 +196,22 @@ Dystopia::Image* Dystopia::TextureSystem::LoadImage(std::string const& _strPath,
 
 void Dystopia::TextureSystem::SaveTextureSetting(Image const& _img)
 {
-	auto path = CORE::Get<FileSystem>()->GetFullPath(_img.mstrName.c_str(), eFileDir::eResource) + "." + Gbl::METADATA_EXT;
-	auto metaFile = Serialiser::OpenFile<TextSerialiser>(path.c_str(), Serialiser::MODE_WRITE);
+	auto path = CORE::Get<FileSystem>()->GetFullPath(_img.mstrName.c_str(), eFileDir::eResource);
 
-	if (!metaFile.EndOfInput())
+	if (path.size())
 	{
-		metaFile.InsertStartBlock()
-			<< _img.mstrName
-			<< _img.mbCompressed
-			<< _img.mbRGB
-			<< _img.mnRawFormat
-			<< _img.mnFormat;
+		path = path + "." + Gbl::METADATA_EXT;
+		auto metaFile = Serialiser::OpenFile<TextSerialiser>(path.c_str(), Serialiser::MODE_WRITE);
+
+		if (!metaFile.EndOfInput())
+		{
+			metaFile.InsertStartBlock()
+				<< _img.mstrName
+				<< _img.mbCompressed
+				<< _img.mbRGB
+				<< _img.mnRawFormat
+				<< _img.mnFormat;
+		}
 	}
 }
 

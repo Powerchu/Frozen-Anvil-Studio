@@ -58,8 +58,8 @@ void Dystopia::Image::OnEditorUI(void)
 
 Dystopia::Image& Dystopia::Image::operator = (Image&& _obj) noexcept
 {
-	std::memcpy(this, &_obj, sizeof(Image));
-	_obj.mpImageData = nullptr;
+	std::memcpy(this, &_obj, sizeof(Image) - sizeof(void*));
+	Ut::Swap(mpImageData, _obj.mpImageData);
 
 	return *this;
 }
